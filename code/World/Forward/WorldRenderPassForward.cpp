@@ -16,10 +16,9 @@ enum { MaxForwardLightCount = 2 };
 
 bool s_handlesInitialized = false;
 render::handle_t s_techniqueDefault;
-render::handle_t s_handleProjection;
-render::handle_t s_handleSquareProjection;
 render::handle_t s_handleView;
 render::handle_t s_handleWorld;
+render::handle_t s_handleWorldView;
 render::handle_t s_handleColorMap;
 render::handle_t s_handleLightEnableComplex;
 render::handle_t s_handleLightPositionAndType;
@@ -34,7 +33,6 @@ render::handle_t s_handleShadowEnable;
 render::handle_t s_handleShadowMask;
 render::handle_t s_handleDepthEnable;
 render::handle_t s_handleDepthMap;
-render::handle_t s_handleTime;
 
 void initializeHandles()
 {
@@ -43,10 +41,9 @@ void initializeHandles()
 
 	s_techniqueDefault = render::getParameterHandle(L"World_ForwardColor");
 
-	s_handleProjection = render::getParameterHandle(L"Projection");
-	s_handleSquareProjection = render::getParameterHandle(L"SquareProjection");
 	s_handleView = render::getParameterHandle(L"View");
 	s_handleWorld = render::getParameterHandle(L"World");
+	s_handleWorldView = render::getParameterHandle(L"WorldView");
 	s_handleColorMap = render::getParameterHandle(L"ColorMap");
 	s_handleLightEnableComplex = render::getParameterHandle(L"LightEnableComplex");
 	s_handleLightPositionAndType = render::getParameterHandle(L"LightPositionAndType");
@@ -61,7 +58,6 @@ void initializeHandles()
 	s_handleShadowMask = render::getParameterHandle(L"ShadowMask");
 	s_handleDepthEnable = render::getParameterHandle(L"DepthEnable");
 	s_handleDepthMap = render::getParameterHandle(L"DepthMap");
-	s_handleTime = render::getParameterHandle(L"Time");
 
 	s_handlesInitialized = true;
 }
@@ -224,11 +220,9 @@ void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* pro
 
 void WorldRenderPassForward::setWorldProgramParameters(render::ProgramParameters* programParams, const Matrix44& world) const
 {
-	programParams->setFloatParameter(s_handleTime, m_worldRenderView.getTime());
-	programParams->setMatrixParameter(s_handleProjection, m_worldRenderView.getProjection());
-	programParams->setMatrixParameter(s_handleSquareProjection, m_worldRenderView.getSquareProjection());
 	programParams->setMatrixParameter(s_handleView, m_worldRenderView.getView());
 	programParams->setMatrixParameter(s_handleWorld, world);
+	programParams->setMatrixParameter(s_handleWorldView, m_worldRenderView.getView() * world);
 }
 
 void WorldRenderPassForward::setLightProgramParameters(render::ProgramParameters* programParams) const

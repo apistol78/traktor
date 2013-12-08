@@ -136,6 +136,13 @@ public:
 	 */
 	Ref< ISharedMemory > createSharedMemory(const std::wstring& name, uint32_t size) const;
 
+	/*! \brief Set own process priority bias.
+	 *
+	 * \param priorityBias Priority bias, -1 = below normal, 0 = normal and 1 = above normal.
+	 * \return True if priority bias applied successfully.
+	 */
+	bool setOwnProcessPriorityBias(int32_t priorityBias);
+
 protected:
 	OS();
 

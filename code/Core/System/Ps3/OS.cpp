@@ -130,6 +130,11 @@ Ref< ISharedMemory > OS::createSharedMemory(const std::wstring& name, uint32_t s
 	return 0;
 }
 
+bool OS::setOwnProcessPriorityBias(int32_t priorityBias)
+{
+	return false;
+}
+
 OS::OS()
 :	m_handle(0)
 {

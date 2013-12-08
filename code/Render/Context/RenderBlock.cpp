@@ -19,10 +19,10 @@ void NullRenderBlock::render(IRenderView* renderView, const ProgramParameters* g
 {
 	T_CONTEXT_PUSH_MARKER(renderView, name);
 
-	if (programParams)
-		programParams->fixup(program);
 	if (globalParameters)
 		globalParameters->fixup(program);
+	if (programParams)
+		programParams->fixup(program);
 
 	T_CONTEXT_POP_MARKER(renderView);
 }
@@ -31,10 +31,10 @@ void SimpleRenderBlock::render(IRenderView* renderView, const ProgramParameters*
 {
 	T_CONTEXT_PUSH_MARKER(renderView, name);
 
-	if (programParams)
-		programParams->fixup(program);
 	if (globalParameters)
 		globalParameters->fixup(program);
+	if (programParams)
+		programParams->fixup(program);
 
 	renderView->draw(
 		vertexBuffer,
@@ -50,10 +50,10 @@ void InstancingRenderBlock::render(IRenderView* renderView, const ProgramParamet
 {
 	T_CONTEXT_PUSH_MARKER(renderView, name);
 
-	if (programParams)
-		programParams->fixup(program);
 	if (globalParameters)
 		globalParameters->fixup(program);
+	if (programParams)
+		programParams->fixup(program);
 
 	renderView->draw(
 		vertexBuffer,
@@ -72,10 +72,10 @@ void NonIndexedRenderBlock::render(IRenderView* renderView, const ProgramParamet
 
 	T_CONTEXT_PUSH_MARKER(renderView, name);
 
-	if (programParams)
-		programParams->fixup(program);
 	if (globalParameters)
 		globalParameters->fixup(program);
+	if (programParams)
+		programParams->fixup(program);
 
 	renderView->draw(
 		vertexBuffer,
@@ -93,10 +93,10 @@ void IndexedRenderBlock::render(IRenderView* renderView, const ProgramParameters
 
 	T_CONTEXT_PUSH_MARKER(renderView, name);
 
-	if (programParams)
-		programParams->fixup(program);
 	if (globalParameters)
 		globalParameters->fixup(program);
+	if (programParams)
+		programParams->fixup(program);
 
 	renderView->draw(
 		vertexBuffer,

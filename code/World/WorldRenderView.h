@@ -40,8 +40,6 @@ public:
 
 	void setProjection(const Matrix44& projection);
 
-	void setSquareProjection(const Matrix44& squareProjection);
-
 	void setView(const Matrix44& view);
 
 	void setViewSize(const Vector2& viewSize);
@@ -76,10 +74,6 @@ public:
 
 	T_FORCE_INLINE const Matrix44& getProjection() const {
 		return m_projection;
-	}
-
-	T_FORCE_INLINE const Matrix44& getSquareProjection() const {
-		return m_squareProjection;
 	}
 
 	T_FORCE_INLINE const Matrix44& getView() const {
@@ -142,7 +136,6 @@ private:
 	Frustum m_viewFrustum;
 	Frustum m_cullFrustum;
 	Matrix44 m_projection;
-	Matrix44 m_squareProjection;
 	Matrix44 m_view;
 	Vector2 m_viewSize;
 	Light m_lights[MaxLightCount];

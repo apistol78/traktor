@@ -97,6 +97,8 @@ private:
 	struct Slice
 	{
 		Ref< WorldContext > shadow;
+		Matrix44 shadowLightProjection;
+		Matrix44 shadowLightSquareProjection;
 		Matrix44 viewToLightSpace;
 	};
 
@@ -109,13 +111,15 @@ private:
 		Matrix44 view;
 		Matrix44 viewToLightSpace;
 		Frustum viewFrustum;
+		float time;
 		float A;
 		float B;
 		bool haveDepth;
 		bool haveShadows;
 
 		Frame()
-		:	A(0.0f)
+		:	time(0.0f)
+		,	A(0.0f)
 		,	B(0.0f)
 		,	haveDepth(false)
 		,	haveShadows(false)

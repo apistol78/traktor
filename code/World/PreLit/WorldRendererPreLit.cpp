@@ -57,8 +57,17 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRendererPreLit", 0, WorldRen
 render::handle_t WorldRendererPreLit::ms_techniquePreLitColor = 0;
 render::handle_t WorldRendererPreLit::ms_techniqueGBuffer = 0;
 render::handle_t WorldRendererPreLit::ms_techniqueShadow = 0;
+render::handle_t WorldRendererPreLit::ms_handleTime = 0;
+render::handle_t WorldRendererPreLit::ms_handleView = 0;
 render::handle_t WorldRendererPreLit::ms_handleProjection = 0;
+render::handle_t WorldRendererPreLit::ms_handleSquareProjection = 0;
+render::handle_t WorldRendererPreLit::ms_handleColorMap = 0;
+render::handle_t WorldRendererPreLit::ms_handleDepthMap = 0;
+render::handle_t WorldRendererPreLit::ms_handleLightMap = 0;
+render::handle_t WorldRendererPreLit::ms_handleNormalMap = 0;
 render::handle_t WorldRendererPreLit::ms_handleReflectionMap = 0;
+render::handle_t WorldRendererPreLit::ms_handleFogDistanceAndDensity = 0;
+render::handle_t WorldRendererPreLit::ms_handleFogColor = 0;
 
 WorldRendererPreLit::WorldRendererPreLit()
 :	m_shadowsQuality(QuDisabled)
@@ -72,8 +81,17 @@ WorldRendererPreLit::WorldRendererPreLit()
 	ms_techniqueShadow = render::getParameterHandle(L"World_ShadowWrite");
 
 	// Global parameters.
+	ms_handleTime = render::getParameterHandle(L"Time");
+	ms_handleView = render::getParameterHandle(L"View");
 	ms_handleProjection = render::getParameterHandle(L"Projection");
+	ms_handleSquareProjection = render::getParameterHandle(L"SquareProjection");
+	ms_handleColorMap = render::getParameterHandle(L"ColorMap");
+	ms_handleDepthMap = render::getParameterHandle(L"DepthMap");
+	ms_handleLightMap = render::getParameterHandle(L"LightMap");
+	ms_handleNormalMap = render::getParameterHandle(L"NormalMap");
 	ms_handleReflectionMap = render::getParameterHandle(L"ReflectionMap");
+	ms_handleFogDistanceAndDensity = render::getParameterHandle(L"FogDistanceAndDensity");
+	ms_handleFogColor = render::getParameterHandle(L"FogColor");
 }
 
 bool WorldRendererPreLit::create(
@@ -91,6 +109,14 @@ bool WorldRendererPreLit::create(
 	m_ambientOcclusionQuality = desc.ambientOcclusionQuality;
 	m_antiAliasQuality = desc.antiAliasQuality;
 	m_frames.resize(desc.frameCount);
+
+	// Pack fog parameters.
+	m_fogDistanceAndDensity = Vector4(
+		m_settings.fogDistanceY,
+		m_settings.fogDistanceZ,
+		m_settings.fogDensityY,
+		m_settings.fogDensityZ
+	);
 
 	float fogColor[4];
 	m_settings.fogColor.getRGBA32F(fogColor);
@@ -691,6 +717,9 @@ void WorldRendererPreLit::endBuild(WorldRenderView& worldRenderView, int frame)
 	worldRenderView.setEyePosition(viewInverse.translation().xyz1());
 	worldRenderView.setEyeDirection(viewInverse.axisZ().xyz0());
 
+	// Store some global values.
+	f.time = worldRenderView.getTime();
+
 	// Prepare occluders.
 	if (f.culling)
 	{
@@ -764,16 +793,16 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 		projection = f.projection;
 	}
 
-	// Prepare global program parameters.
-	render::ProgramParameters programParams;
-	programParams.beginParameters(m_globalContext);
-	programParams.setMatrixParameter(ms_handleProjection, projection);
-	programParams.setTextureParameter(ms_handleReflectionMap, m_reflectionMap);
-	programParams.endParameters(m_globalContext);
-
 	// Render depth map; use as z-prepass if able to share depth buffer with primary.
 	if ((flags & (WrfDepthMap | WrfNormalMap)) != 0)
 	{
+		render::ProgramParameters depthProgramParams;
+		depthProgramParams.beginParameters(m_globalContext);
+		depthProgramParams.setFloatParameter(ms_handleTime, f.time);
+		depthProgramParams.setMatrixParameter(ms_handleView, f.view);
+		depthProgramParams.setMatrixParameter(ms_handleProjection, projection);
+		depthProgramParams.endParameters(m_globalContext);
+
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Depth and normals");
 		if (m_renderView->begin(m_gbufferTargetSet))
 		{
@@ -786,7 +815,7 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 			m_renderView->clear(render::CfColor | render::CfDepth, clearColors, 1.0f, 0);
 
 			if (f.haveGBuffer)
-				f.gbuffer->getRenderContext()->render(m_renderView, render::RpOpaque, &programParams);
+				f.gbuffer->getRenderContext()->render(m_renderView, render::RpOpaque, &depthProgramParams);
 
 			m_renderView->end();
 		}
@@ -810,12 +839,20 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 				// Combine all shadow slices into a screen shadow mask.
 				for (int32_t j = 0; j < m_shadowSettings.cascadingSlices; ++j)
 				{
+					render::ProgramParameters shadowProgramParams;
+					shadowProgramParams.beginParameters(m_globalContext);
+					shadowProgramParams.setFloatParameter(ms_handleTime, f.time);
+					shadowProgramParams.setMatrixParameter(ms_handleView, f.slice[j].shadowLightView[i]);
+					shadowProgramParams.setMatrixParameter(ms_handleProjection, f.slice[j].shadowLightProjection[i]);
+					shadowProgramParams.setMatrixParameter(ms_handleSquareProjection, f.slice[j].shadowLightSquareProjection[i]);
+					shadowProgramParams.endParameters(m_globalContext);
+
 					T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map");
 					if (m_renderView->begin(m_shadowTargetSet, 0))
 					{
 						const Color4f shadowClear(1.0f, 1.0f, 1.0f, 1.0f);
 						m_renderView->clear(render::CfColor | render::CfDepth, &shadowClear, 1.0f, 0);
-						f.slice[j].shadow[i]->getRenderContext()->render(m_renderView, render::RpOpaque, 0);
+						f.slice[j].shadow[i]->getRenderContext()->render(m_renderView, render::RpOpaque, &shadowProgramParams);
 						m_renderView->end();
 					}
 					T_RENDER_POP_MARKER(m_renderView);
@@ -896,7 +933,7 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 
 						m_lightRenderer->render(
 							m_renderView,
-							f.projection,
+							projection,
 							f.view,
 							f.lights[i],
 							m_gbufferTargetSet->getColorTexture(0),
@@ -931,7 +968,7 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 					T_RENDER_PUSH_MARKER(m_renderView, "World: Light primitive (no shadow)");
 					m_lightRenderer->render(
 						m_renderView,
-						f.projection,
+						projection,
 						f.view,
 						f.lights[i],
 						m_gbufferTargetSet->getColorTexture(0),
@@ -965,8 +1002,22 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 	// Render opaque visuals.
 	if ((flags & WrfVisualOpaque) != 0)
 	{
+		render::ProgramParameters visualProgramParams;
+		visualProgramParams.beginParameters(m_globalContext);
+		visualProgramParams.setFloatParameter(ms_handleTime, f.time);
+		visualProgramParams.setVectorParameter(ms_handleFogDistanceAndDensity, m_fogDistanceAndDensity);
+		visualProgramParams.setVectorParameter(ms_handleFogColor, m_fogColor);
+		visualProgramParams.setMatrixParameter(ms_handleView, f.view);
+		visualProgramParams.setMatrixParameter(ms_handleProjection, projection);
+		visualProgramParams.setTextureParameter(ms_handleColorMap, m_colorTargetSet->getColorTexture(0));
+		visualProgramParams.setTextureParameter(ms_handleDepthMap, m_gbufferTargetSet->getColorTexture(0));
+		visualProgramParams.setTextureParameter(ms_handleNormalMap, m_gbufferTargetSet->getColorTexture(1));
+		visualProgramParams.setTextureParameter(ms_handleLightMap, m_lightMapTargetSet->getColorTexture(0));
+		visualProgramParams.setTextureParameter(ms_handleReflectionMap, m_reflectionMap);
+		visualProgramParams.endParameters(m_globalContext);
+
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual opaque");
-		f.visual->getRenderContext()->render(m_renderView, render::RpSetup | render::RpOpaque, &programParams);
+		f.visual->getRenderContext()->render(m_renderView, render::RpSetup | render::RpOpaque, &visualProgramParams);
 		T_RENDER_POP_MARKER(m_renderView);
 
 		{
@@ -995,7 +1046,7 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 		}
 
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual post opaque");
-		f.visual->getRenderContext()->render(m_renderView, render::RpPostOpaque, &programParams);
+		f.visual->getRenderContext()->render(m_renderView, render::RpPostOpaque, &visualProgramParams);
 		T_RENDER_POP_MARKER(m_renderView);
 
 		if (m_ambientOcclusion)
@@ -1022,8 +1073,22 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 	// Render alpha blend visuals.
 	if ((flags & (WrfVisualAlphaBlend)) != 0)
 	{
+		render::ProgramParameters visualProgramParams;
+		visualProgramParams.beginParameters(m_globalContext);
+		visualProgramParams.setFloatParameter(ms_handleTime, f.time);
+		visualProgramParams.setVectorParameter(ms_handleFogDistanceAndDensity, m_fogDistanceAndDensity);
+		visualProgramParams.setVectorParameter(ms_handleFogColor, m_fogColor);
+		visualProgramParams.setMatrixParameter(ms_handleView, f.view);
+		visualProgramParams.setMatrixParameter(ms_handleProjection, projection);
+		visualProgramParams.setTextureParameter(ms_handleColorMap, m_colorTargetSet->getColorTexture(0));
+		visualProgramParams.setTextureParameter(ms_handleDepthMap, m_gbufferTargetSet->getColorTexture(0));
+		visualProgramParams.setTextureParameter(ms_handleNormalMap, m_gbufferTargetSet->getColorTexture(1));
+		visualProgramParams.setTextureParameter(ms_handleLightMap, m_lightMapTargetSet->getColorTexture(0));
+		visualProgramParams.setTextureParameter(ms_handleReflectionMap, m_reflectionMap);
+		visualProgramParams.endParameters(m_globalContext);
+
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual alpha blend");
-		f.visual->getRenderContext()->render(m_renderView, render::RpAlphaBlend, &programParams);
+		f.visual->getRenderContext()->render(m_renderView, render::RpAlphaBlend, &visualProgramParams);
 		T_RENDER_POP_MARKER(m_renderView);
 
 		{
@@ -1052,7 +1117,7 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 		}
 
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual post alpha blend");
-		f.visual->getRenderContext()->render(m_renderView, render::RpPostAlphaBlend | render::RpOverlay, &programParams);
+		f.visual->getRenderContext()->render(m_renderView, render::RpPostAlphaBlend | render::RpOverlay, &visualProgramParams);
 		T_RENDER_POP_MARKER(m_renderView);
 	}
 
@@ -1229,7 +1294,6 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 				WorldRenderView shadowRenderView;
 				shadowRenderView.resetLights();
 				shadowRenderView.setProjection(shadowLightProjection);
-				shadowRenderView.setSquareProjection(shadowLightSquareProjection);
 				shadowRenderView.setView(shadowLightView);
 				shadowRenderView.setViewFrustum(shadowFrustum);
 				shadowRenderView.setCullFrustum(shadowFrustum);
@@ -1248,6 +1312,9 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 					f.slice[slice].shadow[i]->build(shadowRenderView, shadowPass, *j);
 				f.slice[slice].shadow[i]->flush(shadowRenderView, shadowPass);
 				
+				f.slice[slice].shadowLightView[i] = shadowLightView;
+				f.slice[slice].shadowLightProjection[i] = shadowLightProjection;
+				f.slice[slice].shadowLightSquareProjection[i] = shadowLightSquareProjection;
 				f.slice[slice].viewToLightSpace[i] = shadowLightSquareProjection * shadowLightProjection * shadowLightView * viewInverse;
 			}
 
@@ -1280,15 +1347,7 @@ void WorldRendererPreLit::buildVisual(WorldRenderView& worldRenderView, int fram
 		ms_techniquePreLitColor,
 		worldRenderView,
 		m_settings.fogEnabled,
-		m_settings.fogDistanceY,
-		m_settings.fogDistanceZ,
-		m_settings.fogDensityY,
-		m_settings.fogDensityZ,
-		m_fogColor,
-		m_colorTargetSet->getColorTexture(0),
-		m_gbufferTargetSet->getColorTexture(0),
-		m_gbufferTargetSet->getColorTexture(1),
-		m_lightMapTargetSet->getColorTexture(0)
+		m_gbufferTargetSet->getColorTexture(0) != 0
 	);
 	for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
 		f.visual->build(worldRenderView, defaultPreLitPass, *i);

@@ -224,6 +224,11 @@ Ref< ISharedMemory > OS::createSharedMemory(const std::wstring& name, uint32_t s
 	return new SharedMemoryLinux(size);
 }
 
+bool OS::setOwnProcessPriorityBias(int32_t priorityBias)
+{
+	return false;
+}
+
 OS::OS()
 {
 }

@@ -348,10 +348,23 @@ private:
 	Ref< net::BidirectionalObjectTransport > m_transport;
 };
 
+struct ScopePriorityBias
+{
+	ScopePriorityBias()
+	{
+		OS::getInstance().setOwnProcessPriorityBias(1);
+	}
 
+	~ScopePriorityBias()
+	{
+		OS::getInstance().setOwnProcessPriorityBias(0);
+	}
+};
 
 bool perform(const PipelineParameters* params)
 {
+	T_ANONYMOUS_VAR(ScopePriorityBias)();
+
 	if (!FileSystem::getInstance().setCurrentVolumeAndDirectory(params->getWorkingDirectory()))
 	{
 		traktor::log::error << L"Unable to change working directory" << Endl;

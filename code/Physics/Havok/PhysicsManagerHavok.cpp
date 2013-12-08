@@ -840,7 +840,7 @@ void PhysicsManagerHavok::querySweep(
 	float radius,
 	uint32_t group,
 	uint32_t ignoreClusterId,
-	RefArray< Body >& outResult
+	AlignedVector< QueryResult >& outResult
 ) const
 {
 }
