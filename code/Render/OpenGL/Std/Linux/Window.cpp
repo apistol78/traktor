@@ -59,11 +59,6 @@ bool Window::create(int32_t width, int32_t height)
         WhitePixel(m_display, m_screen)
     );
 
-	// Initially place window centered on desktop.
-	int32_t centerX = (XDisplayWidth(m_display, m_screen) - width) / 2;
-	int32_t centerY = (XDisplayHeight(m_display, m_screen)- height) / 2;
-    XMoveWindow(m_display, m_window, centerX, centerY);
-
     XSelectInput(
 		m_display,
 		m_window,
@@ -193,41 +188,39 @@ void Window::setWindowedStyle(int32_t width, int32_t height)
 		m_originalConfig = 0;
 	}
 
-	m_width = width;
-	m_height = height;
+	if (m_width != width || m_height != height)
+	{
+        m_width = width;
+        m_height = height;
 
-	XSetWindowAttributes attr;
-	attr.override_redirect = False;
-	XChangeWindowAttributes(m_display, m_window, CWOverrideRedirect, &attr);
+        XSetWindowAttributes attr;
+        attr.override_redirect = False;
+        XChangeWindowAttributes(m_display, m_window, CWOverrideRedirect, &attr);
 
-	// Remove fullscreen WM state from window.
-	XEvent evt;
-	std::memset(&evt, 0, sizeof(evt));
-	evt.type = ClientMessage;
-	evt.xclient.window = m_window;
-	evt.xclient.message_type = wmState;
-	evt.xclient.format = 32;
-	evt.xclient.data.l[0] = 0;
-	evt.xclient.data.l[1] = fullScreen;
-	evt.xclient.data.l[2] = 0;
+        // Remove fullscreen WM state from window.
+        XEvent evt;
+        std::memset(&evt, 0, sizeof(evt));
+        evt.type = ClientMessage;
+        evt.xclient.window = m_window;
+        evt.xclient.message_type = wmState;
+        evt.xclient.format = 32;
+        evt.xclient.data.l[0] = 0;
+        evt.xclient.data.l[1] = fullScreen;
+        evt.xclient.data.l[2] = 0;
 
-	XSendEvent(
-		m_display,
-		RootWindow(m_display, m_screen),
-		False,
-		SubstructureNotifyMask,
-		&evt
-	);
+        XSendEvent(
+            m_display,
+            RootWindow(m_display, m_screen),
+            False,
+            SubstructureNotifyMask,
+            &evt
+        );
 
-	XResizeWindow(m_display, m_window, width, height);
+        XResizeWindow(m_display, m_window, width, height);
+        XFlush(m_display);
 
-	int32_t centerX = (XDisplayWidth(m_display, m_screen) - width) / 2;
-	int32_t centerY = (XDisplayHeight(m_display, m_screen)- height) / 2;
-    XMoveWindow(m_display, m_window, centerX, centerY);
-
-	XFlush(m_display);
-
-	m_fullScreen = false;
+        m_fullScreen = false;
+    }
 }
 
 void Window::showCursor()
@@ -257,6 +250,14 @@ void Window::show()
     XMapWindow(m_display, m_window);
 }
 
+void Window::center()
+{
+    int32_t centerX = (XDisplayWidth(m_display, m_screen) - m_width) / 2;
+    int32_t centerY = (XDisplayHeight(m_display, m_screen)- m_height) / 2;
+    XMoveWindow(m_display, m_window, centerX, centerY);
+    XFlush(m_display);
+}
+
 bool Window::update(RenderEvent& outEvent)
 {
     XEvent evt;
@@ -275,8 +276,6 @@ bool Window::update(RenderEvent& outEvent)
 				outEvent.type = ReResize;
 				outEvent.resize.width = evt.xconfigure.width;
 				outEvent.resize.height = evt.xconfigure.height;
-				T_DEBUG(L"Resize event " << outEvent.resize.width << L" x " << outEvent.resize.height);
-				T_DEBUG(L"  from " << m_width << L" x " << m_height);
 				return true;
 			}
     	}

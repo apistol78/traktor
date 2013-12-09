@@ -33,23 +33,11 @@ private:
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptResourceLua", 0, ScriptResourceLua, IScriptResource)
 
-ScriptResourceLua::ScriptResourceLua()
-:	m_precompiled(false)
-,	m_bufferSize(0)
-{
-}
-
 void ScriptResourceLua::serialize(ISerializer& s)
 {
 	s >> Member< std::string >(L"fileName", m_fileName);
 	s >> MemberStlList< SourceMapping, MemberSourceMapping >(L"map", m_map);
-	s >> Member< bool >(L"precompiled", m_precompiled);
-	s >> Member< uint32_t >(L"bufferSize", m_bufferSize);
-
-	if (s.getDirection() == ISerializer::SdRead)
-		m_buffer.reset(new uint8_t [m_bufferSize]);
-
-	s >> Member< void* >(L"buffer", m_buffer.ptr(), m_bufferSize);
+	s >> Member< std::string >(L"script", m_script);
 }
 
 	}

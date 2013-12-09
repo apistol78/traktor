@@ -64,6 +64,8 @@ private:
 	};
 
 	lua_State* m_luaState;
+	void* m_defaultAllocFn;
+	void* m_defaultAllocOpaque;
 	int32_t m_objectTableRef;
 	mutable Semaphore m_lock;
 	std::vector< RegisteredClass > m_classRegistry;
@@ -110,11 +112,9 @@ private:
 
 	static int classEqualMethod(lua_State* luaState);
 
+	static void* luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize);
+
 	static int luaPanic(lua_State* luaState);
-
-	static int luaDumpWriter(lua_State* luaState, const void* p, size_t sz, void* ud);
-
-	static const char* luaDumpReader(lua_State* luaState, void* data, size_t* size);
 };
 
 	}
