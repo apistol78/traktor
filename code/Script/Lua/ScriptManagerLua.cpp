@@ -61,14 +61,22 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.script.TableContainerLua", TableContainerLua, O
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptManagerLua", 0, ScriptManagerLua, IScriptManager)
 
 ScriptManagerLua::ScriptManagerLua()
-:	m_lockContext(0)
+:	m_luaState(0)
+,	m_defaultAllocFn(0)
+,	m_defaultAllocOpaque(0)
+,	m_lockContext(0)
 ,	m_collectStepFrequency(10.0)
 ,	m_collectSteps(-1)
 ,	m_collectTargetSteps(0.0f)
 ,	m_totalMemoryUse(0)
 ,	m_lastMemoryUse(0)
 {
-	m_luaState = lua_newstate(&luaAlloc, &m_totalMemoryUse);
+	m_luaState = luaL_newstate();
+
+	// Hook default allocator to intercept allocation stats.
+	m_defaultAllocFn = (void*)lua_getallocf(m_luaState, &m_defaultAllocOpaque);
+	T_FATAL_ASSERT (m_defaultAllocFn);
+	lua_setallocf(m_luaState, &luaAlloc, this);
 
 	lua_atpanic(m_luaState, luaPanic);
 
@@ -301,40 +309,12 @@ Ref< IScriptResource > ScriptManagerLua::compile(const std::wstring& fileName, c
 		return 0;
 	}
 
-#if defined(T_USE_LUA_DUMP)
-	DynamicMemoryStream stream(false, true);
-
-	result = lua_dump(m_luaState, &luaDumpWriter, reinterpret_cast< void* >(&stream));
-	if (result != 0)
-	{
-		log::error << L"LUA dump error \"" << mbstows(lua_tostring(m_luaState, -1)) << L"\"" << Endl;
-		lua_pop(m_luaState, 1);
-		return 0;
-	}
-
-	lua_pop(m_luaState, 1);
-
-	const std::vector< uint8_t >& buffer = stream.getBuffer();
-	T_ASSERT (!buffer.empty());
-
-	Ref< ScriptResourceLua > resource = new ScriptResourceLua();
-	resource->m_fileName = wstombs(fileName);
-	resource->m_map = map ? *map : source_map_t();
-	resource->m_precompiled = true;
-	resource->m_bufferSize = uint32_t(buffer.size());
-	resource->m_buffer.reset(new uint8_t [buffer.size()]);
-	std::memcpy(resource->m_buffer.ptr(), &buffer[0], buffer.size());
-#else
 	lua_pop(m_luaState, 1);
 
 	Ref< ScriptResourceLua > resource = new ScriptResourceLua();
 	resource->m_fileName = wstombs(fileName);
 	resource->m_map = map ? *map : source_map_t();
-	resource->m_precompiled = false;
-	resource->m_bufferSize = uint32_t(text.size());
-	resource->m_buffer.reset(new uint8_t [text.size()]);
-	std::memcpy(resource->m_buffer.ptr(), text.c_str(), text.size());
-#endif
+	resource->m_script = text;
 
 	return resource;
 }
@@ -364,20 +344,12 @@ Ref< IScriptContext > ScriptManagerLua::createContext(const IScriptResource* scr
 	std::string fileName = "@" + scriptResourceLua->m_fileName;
 	int32_t result;
 
-	if (scriptResourceLua->m_precompiled)
-		result = lua_load(
-			m_luaState,
-			&luaDumpReader,
-			(void*)scriptResourceLua,
-			fileName.c_str()
-		);
-	else
-		result = luaL_loadbuffer(
-			m_luaState,
-			(const char*)scriptResourceLua->m_buffer.c_ptr(),
-			scriptResourceLua->m_bufferSize,
-			fileName.c_str()
-		);
+	result = luaL_loadbuffer(
+		m_luaState,
+		(const char*)scriptResourceLua->m_script.c_str(),
+		scriptResourceLua->m_script.length(),
+		fileName.c_str()
+	);
 
 	if (result != 0)
 	{
@@ -908,23 +880,49 @@ int ScriptManagerLua::classEqualMethod(lua_State* luaState)
 	return 0;
 }
 
+void* ScriptManagerLua::luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize)
+{
+	ScriptManagerLua* this_ = reinterpret_cast< ScriptManagerLua* >(ud);
+	T_ASSERT (this_);
+
+	if (nsize > 0)
+	{
+		//if (osize >= nsize)
+		//	return ptr;
+
+		//void* nptr = getAllocator()->alloc(nsize, 16, "LUA");
+		//if (!nptr)
+		//	return 0;
+
+		this_->m_totalMemoryUse += nsize;
+
+		if (ptr && osize > 0)
+		{
+			//std::memcpy(nptr, ptr, std::min(osize, nsize));
+			//getAllocator()->free(ptr);
+
+			T_ASSERT (osize <= this_->m_totalMemoryUse);
+			this_->m_totalMemoryUse -= osize;
+		}
+
+		//return nptr;
+	}
+	else if (ptr && osize > 0)
+	{
+		//getAllocator()->free(ptr);
+
+		T_ASSERT (osize <= this_->m_totalMemoryUse);
+		this_->m_totalMemoryUse -= osize;
+	}
+	//return 0;
+
+	return ((lua_Alloc)(this_->m_defaultAllocFn))(this_->m_defaultAllocOpaque, ptr, osize, nsize);
+}
+
 int ScriptManagerLua::luaPanic(lua_State* luaState)
 {
 	log::error << L"LUA PANIC; Unrecoverable error \"" << mbstows(lua_tostring(luaState, lua_gettop(luaState))) << L"\"" << Endl;
 	return 0;
-}
-
-int ScriptManagerLua::luaDumpWriter(lua_State* luaState, const void* p, size_t sz, void* ud)
-{
-	IStream* stream = reinterpret_cast< IStream* >(ud);
-	return stream->write(p, sz) == sz ? 0 : 1;
-}
-
-const char* ScriptManagerLua::luaDumpReader(lua_State* luaState, void* data, size_t* size)
-{
-	ScriptResourceLua* resource = reinterpret_cast< ScriptResourceLua* >(data);
-	*size = size_t(resource->m_bufferSize);
-	return reinterpret_cast< const char* >(resource->m_buffer.c_ptr());
 }
 
 	}

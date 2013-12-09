@@ -610,6 +610,8 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 	else
 		m_window->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
 
+	m_window->center();
+
 	int attribs[] = { GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, desc.depthBits, None };
 	XVisualInfo* visual = glXChooseVisual(m_display, DefaultScreen(m_display), attribs);
 	if (!visual)

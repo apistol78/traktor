@@ -34,6 +34,8 @@ public:
 
     void show();
 
+    void center();
+
     bool update(RenderEvent& outEvent);
 
     int32_t getWidth() const { return m_width; }

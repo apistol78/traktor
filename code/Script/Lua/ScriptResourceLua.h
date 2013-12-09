@@ -15,8 +15,6 @@ class ScriptResourceLua : public IScriptResource
 	T_RTTI_CLASS;
 
 public:
-	ScriptResourceLua();
-
 	virtual void serialize(ISerializer& s);
 
 private:
@@ -24,9 +22,7 @@ private:
 
 	std::string m_fileName;
 	source_map_t m_map;
-	bool m_precompiled;
-	uint32_t m_bufferSize;
-	AutoArrayPtr< uint8_t > m_buffer;
+	std::string m_script;
 };
 
 	}

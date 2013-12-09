@@ -289,7 +289,7 @@ bool SteamMatchMaking::getMaxParticipantCount(uint64_t lobbyHandle, uint32_t& ou
 
 bool SteamMatchMaking::getFriendsCount(uint64_t lobbyHandle, uint32_t& outCount) const
 {
-	outCount = SteamFriends()->GetFriendCountFromSource(lobbyHandle);
+	outCount = SteamFriends()->GetFriendCountFromSource(uint64(lobbyHandle));
 	return true;
 }
 

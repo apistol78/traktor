@@ -80,7 +80,7 @@ struct ErrorCallback : public IErrorCallback
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptPipeline", 17, ScriptPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptPipeline", 19, ScriptPipeline, editor::DefaultPipeline)
 
 ScriptPipeline::~ScriptPipeline()
 {

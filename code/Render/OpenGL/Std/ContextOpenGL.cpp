@@ -89,7 +89,7 @@ ContextOpenGL::ContextOpenGL(Window* window, GLXContext context)
 ,	m_width(0)
 ,	m_height(0)
 ,	m_permitDepth(true)
-,	m_currentRenderStateList(~0UL)
+,	m_currentRenderStateList(~0U)
 
 #endif
 {
@@ -443,7 +443,7 @@ void ContextOpenGL::bindRenderStateObject(uint32_t renderStateObject)
 	else
 		{ T_OGL_SAFE(glDisable(GL_STENCIL_TEST)); }
 
-	T_OGL_SAFE(glStencilMask(~0UL));
+	T_OGL_SAFE(glStencilMask(~0U));
 	T_OGL_SAFE(glStencilOp(rs.stencilOpFail, rs.stencilOpZFail, rs.stencilOpZPass));
 
 	m_currentRenderStateList = renderStateObject;

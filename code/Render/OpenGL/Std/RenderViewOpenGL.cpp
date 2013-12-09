@@ -163,12 +163,14 @@ bool RenderViewOpenGL::nextEvent(RenderEvent& outEvent)
 
 #elif defined(__LINUX__)
 
-    if (m_window)
-        return m_window->update(outEvent);
+    if (!m_window)
+        return false;
 
-#endif
+    return m_window->update(outEvent);
 
+#else
 	return false;
+#endif
 }
 
 void RenderViewOpenGL::close()
@@ -449,7 +451,7 @@ void RenderViewOpenGL::clear(uint32_t clearMask, const Color4f* color, float dep
 
 	if (cm & GL_STENCIL_BUFFER_BIT)
 	{
-		T_OGL_SAFE(glStencilMask(~0UL));
+		T_OGL_SAFE(glStencilMask(~0U));
 		T_OGL_SAFE(glClearStencil(stencil));
 	}
 
