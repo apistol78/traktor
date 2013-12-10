@@ -207,27 +207,27 @@ bool read_string(const Ref< IStream >& stream, uint32_t u8len, std::wstring& out
 {
 	if (u8len > 0)
 	{
-		AutoArrayPtr< uint8_t > buf(new uint8_t [u8len * sizeof(uint8_t) + u8len * sizeof(wchar_t) + 8]);
+		outString.clear();
+		outString.reserve(u8len);
+
+		AutoArrayPtr< uint8_t > buf(new uint8_t [u8len * sizeof(uint8_t)]);
 		if (!buf.ptr())
 			return false;
 
 		uint8_t* u8str = buf.ptr();
-		wchar_t* wstr = (wchar_t*)(buf.ptr() + u8len * sizeof(uint8_t));
-		wchar_t* wptr = wstr;
-
 		if (!read_block(stream, u8str, u8len, sizeof(uint8_t)))
 			return false;
 
 		Utf8Encoding utf8enc;
 		for (uint32_t i = 0; i < u8len; )
 		{
-			int n = utf8enc.translate(u8str + i, u8len - i, *wptr++);
+			wchar_t ch;
+			int n = utf8enc.translate(u8str + i, u8len - i, ch);
 			if (n <= 0)
 				return false;
+			outString += ch;
 			i += n;
 		}
-
-		outString = std::wstring(wstr, wptr);
 	}
 	else
 		outString.clear();
@@ -281,21 +281,20 @@ bool write_string(const Ref< IStream >& stream, const std::wstring& str)
 
 bool read_string(const Ref< IStream >& stream, uint32_t u8len, std::string& outString)
 {
+	outString.clear();
 	if (u8len > 0)
 	{
-		AutoArrayPtr< uint8_t > buf(new uint8_t [u8len * sizeof(uint8_t) + u8len * sizeof(wchar_t) + 8]);
-		if (!buf.ptr())
-			return false;
-
-		uint8_t* u8str = buf.ptr();
-		if (!read_block(stream, u8str, u8len, sizeof(uint8_t)))
-			return false;
-
-		outString = std::string(u8str, u8str + u8len);
+		outString.reserve(u8len);
+		for (uint32_t i = 0; i < u8len; ++i)
+		{
+			uint8_t ch;
+			if (!read_primitive< uint8_t >(stream, ch))
+				return false;
+			outString += ch;
+		}
 	}
 	else
 		outString.clear();
-
 	return true;
 }
 

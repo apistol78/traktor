@@ -8229,6 +8229,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(EMSCRIPTEN_ROOT)/system/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -8246,6 +8247,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(EMSCRIPTEN_ROOT)/system/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -8263,6 +8265,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(EMSCRIPTEN_ROOT)/system/include</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -8279,6 +8282,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(EMSCRIPTEN_ROOT)/system/include</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
