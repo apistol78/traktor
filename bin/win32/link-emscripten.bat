@@ -1,11 +1,11 @@
 @echo off
 
-rem Add Emscripten SDK to path.
+:: Add Emscripten SDK to path.
 pushd "C:\Program Files (x86)\Emscripten"
 call emsdk_add_path.bat
 popd
 
-set EXECUTABLE=%1
+set EXECUTABLE=%2
 set LIBPATH=%TRAKTOR_HOME%\bin\latest\emscripten\releasestatic
 
 set LIBRARIES=^
@@ -18,6 +18,7 @@ set LIBRARIES=^
  %LIBPATH%\Traktor.Resource.bc^
  %LIBPATH%\Traktor.Compress.bc^
  %LIBPATH%\Traktor.Database.bc^
+ %LIBPATH%\Traktor.Database.Compact.bc^
  %LIBPATH%\Traktor.Database.Remote.bc^
  %LIBPATH%\Traktor.Database.Remote.Client.bc^
  %LIBPATH%\Traktor.Xml.bc^
@@ -63,5 +64,9 @@ set LIBRARIES=^
  %LIBPATH%\Extern.libtheora-1.1.1.bc^
  %LIBPATH%\Extern.libvorbis-1.3.3.bc
 
-rem emcc -O2 -g4 --js-opts 0 --closure 0 -s PRECISE_I64_MATH=1 -s ASSERTIONS=1 -s SAFE_HEAP=1 -s TOTAL_MEMORY=536870912 %LIBRARIES% -o %EXECUTABLE%.html --preload-file Application.config
-emcc -O2 -g4 --js-opts 0 --closure 0 -s PRECISE_I64_MATH=1 -s ASSERTIONS=1 -s SAFE_HEAP=0 -s TOTAL_MEMORY=536870912 %LIBRARIES% -o %EXECUTABLE%.html --preload-file Application.config
+if /i "%1%"=="html" (
+	emcc -O2 -g4 --js-opts 0 --closure 0 -s PRECISE_I64_MATH=1 -s ASSERTIONS=1 -s SAFE_HEAP=0 -s TOTAL_MEMORY=536870912 %LIBRARIES% -o %EXECUTABLE%.html --preload-file Application.config --preload-file Content.compact
+)
+if /i "%1%"=="js" (
+	emcc -O2 -g4 --js-opts 0 --closure 0 -s PRECISE_I64_MATH=1 -s ASSERTIONS=1 -s SAFE_HEAP=0 -s TOTAL_MEMORY=536870912 %LIBRARIES% -o %EXECUTABLE%.js --embed-file Application.config
+)

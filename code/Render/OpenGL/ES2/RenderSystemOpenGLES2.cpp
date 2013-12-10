@@ -201,7 +201,7 @@ Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewDefau
 	desc2.stereoscopic = false;
 
 	return createRenderView(desc2);
-#elif defined(__PNACL__)
+#elif defined(__PNACL__) || defined(__EMSCRIPTEN__)
 	Ref< ContextOpenGLES2 > context = ContextOpenGLES2::createContext(
 		m_globalContext,
 		m_nativeHandle,

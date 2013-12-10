@@ -2,10 +2,23 @@
 <object type="SolutionBuilderMsvcSettings">
   <slnVersion>11.00</slnVersion>
   <vsVersion>10</vsVersion>
-  <project type="SolutionBuilderMsvcVCXProj">
+  <project type="SolutionBuilderMsvcVCXProj" version="2">
     <platform>Emscripten</platform>
     <keyword>Win32Proj</keyword>
-    <buildDefinitionsDebug>
+    <toolset/>
+    <targetPrefixes>
+      <item/>
+      <item/>
+      <item/>
+      <item/>
+    </targetPrefixes>
+    <targetExts>
+      <item>.bc</item>
+      <item>.bc</item>
+      <item>.bc</item>
+      <item>.bc</item>
+    </targetExts>
+      <buildDefinitionsDebug>
       <!-- Static library -->
       <item>
         <item type="SolutionBuilderMsvcVCXDefinition">

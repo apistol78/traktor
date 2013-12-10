@@ -1,8 +1,9 @@
 @echo off
 
+:: Setup default environment.
 call %~dp0config.bat
 
-rem Add Emscripten SDK to path.
+:: Add Emscripten SDK to environment.
 pushd "C:\Program Files (x86)\Emscripten"
 call emsdk_add_path.bat
 popd

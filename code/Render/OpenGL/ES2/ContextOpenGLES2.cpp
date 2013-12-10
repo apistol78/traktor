@@ -123,19 +123,22 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createResourceContext(void* nativeHand
 #if defined(T_OPENGL_ES2_HAVE_EGL)
 #	if defined(_WIN32)
 	EGLSurface surface = eglCreateWindowSurface(ms_display, ms_config, ms_hWnd, 0);
+#	elif defined(__EMSCRIPTEN__)
+	EGLSurface surface = eglCreateWindowSurface(ms_display, ms_config, 0, 0);
 #	else
 	EGLint surfaceAttrs[] =
 	{
 		EGL_NONE
 	};
 	EGLSurface surface = eglCreatePbufferSurface(ms_display, ms_config, surfaceAttrs);
+#	endif
+
 	if (surface == EGL_NO_SURFACE)
 	{
 		EGLint error = eglGetError();
 		log::error << L"Create OpenGL ES2.0 context failed; unable to create EGL surface (" << getEGLErrorString(error) << L")" << Endl;
 		return 0;
 	}
-#	endif
 
 	eglBindAPI(EGL_OPENGL_ES_API);
 
@@ -276,7 +279,9 @@ void ContextOpenGLES2::leave()
 		stack->back()->m_context->makeCurrent();
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
 	eglMakeCurrent(ms_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+#	if !defined(__EMSCRIPTEN__)
 	eglReleaseThread();
+#	endif
 	if (!stack->empty())
 		eglMakeCurrent(
 			ms_display,
