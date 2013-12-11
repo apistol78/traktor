@@ -1,19 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.StageData" version="1">
+<object type="traktor.amalgam.StageData" version="2">
 	<layers>
 		<item type="traktor.amalgam.WorldLayerData">
 			<name>world</name>
 			<scene>{F90EB2B9-5F1E-8440-A3F5-F79139083C52}</scene>
 			<entities/>
 		</item>
-		<item type="traktor.amalgam.FlashLayerData">
-			<name>ui</name>
-			<movie>{1DF9692D-5528-404B-923F-FBE2FD8C13A5}</movie>
-			<clearBackground>false</clearBackground>
-			<enableSound>false</enableSound>
-		</item>
 	</layers>
 	<script>{A520CEA9-6D9C-1841-A190-E766C4E05E29}</script>
 	<transitions/>
 	<resourceBundle>{00000000-0000-0000-0000-000000000000}</resourceBundle>
+	<localizationDictionary>{00000000-0000-0000-0000-000000000000}</localizationDictionary>
 </object>

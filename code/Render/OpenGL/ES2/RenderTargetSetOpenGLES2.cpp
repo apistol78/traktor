@@ -219,10 +219,12 @@ void RenderTargetSetOpenGLES2::destroy()
 
 	for (int32_t i = 0; i < m_desc.count; ++i)
 	{
-		if (m_context)
+		if (m_context && m_targetFBO[i])
 			m_context->deleteResource(new DeleteFramebufferCallback(m_targetFBO[i]));
 		m_targetFBO[i] = 0;
 	}
+
+	m_context = 0;
 }
 
 int RenderTargetSetOpenGLES2::getWidth() const

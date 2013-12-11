@@ -1,411 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.scene.SceneAsset" version="3">
-	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="19">
-    <viewNearZ>1</viewNearZ>
-    <viewFarZ>1000</viewFarZ>
-    <linearLighting>true</linearLighting>
-    <occlusionCullingEnabled>false</occlusionCullingEnabled>
-    <depthPassEnabled>true</depthPassEnabled>
-    <shadowSettings>
-      <disabled>
-        <projection>SpUniform</projection>
-        <farZ>0</farZ>
-        <resolution>128</resolution>
-        <bias>0</bias>
-        <biasCoeff>0</biasCoeff>
-        <cascadingSlices>1</cascadingSlices>
-        <cascadingLambda>1</cascadingLambda>
-        <quantizeProjection>false</quantizeProjection>
-        <maskDenominator>1</maskDenominator>
-        <maskProject>{00000000-0000-0000-0000-000000000000}</maskProject>
-        <maskFilter>{00000000-0000-0000-0000-000000000000}</maskFilter>
-      </disabled>
-      <low>
-        <projection>SpUniform</projection>
-        <farZ>200</farZ>
-        <resolution>2048</resolution>
-        <bias>0.175</bias>
-        <biasCoeff>0</biasCoeff>
-        <cascadingSlices>2</cascadingSlices>
-        <cascadingLambda>1.8</cascadingLambda>
-        <quantizeProjection>true</quantizeProjection>
-        <maskDenominator>2</maskDenominator>
-        <maskProject>{F751F3EB-33D2-9247-9E3F-54B1A0E3522C}</maskProject>
-        <maskFilter>{7D4D38B9-1E43-8046-B1A4-705CFEF9B8EB}</maskFilter>
-      </low>
-      <medium>
-        <projection>SpUniform</projection>
-        <farZ>220</farZ>
-        <resolution>2048</resolution>
-        <bias>0.175</bias>
-        <biasCoeff>0</biasCoeff>
-        <cascadingSlices>2</cascadingSlices>
-        <cascadingLambda>1.9</cascadingLambda>
-        <quantizeProjection>true</quantizeProjection>
-        <maskDenominator>2</maskDenominator>
-        <maskProject>{F751F3EB-33D2-9247-9E3F-54B1A0E3522C}</maskProject>
-        <maskFilter>{57FD53AF-547A-9F46-8C94-B4D24EFB63BC}</maskFilter>
-      </medium>
-      <high>
-        <projection>SpUniform</projection>
-        <farZ>250</farZ>
-        <resolution>4096</resolution>
-        <bias>0.175</bias>
-        <biasCoeff>0</biasCoeff>
-        <cascadingSlices>2</cascadingSlices>
-        <cascadingLambda>1.75</cascadingLambda>
-        <quantizeProjection>true</quantizeProjection>
-        <maskDenominator>1</maskDenominator>
-        <maskProject>{F751F3EB-33D2-9247-9E3F-54B1A0E3522C}</maskProject>
-        <maskFilter>{FABC4017-4D65-604D-B9AB-9FC03FE3CE43}</maskFilter>
-      </high>
-      <ultra>
-        <projection>SpUniform</projection>
-        <farZ>300</farZ>
-        <resolution>4096</resolution>
-        <bias>0.175</bias>
-        <biasCoeff>0</biasCoeff>
-        <cascadingSlices>3</cascadingSlices>
-        <cascadingLambda>2</cascadingLambda>
-        <quantizeProjection>true</quantizeProjection>
-        <maskDenominator>1</maskDenominator>
-        <maskProject>{F751F3EB-33D2-9247-9E3F-54B1A0E3522C}</maskProject>
-        <maskFilter>{5AFC153E-6FCE-3142-9E1B-DD3722DA447F}</maskFilter>
-      </ultra>
-    </shadowSettings>
-    <fogEnabled>false</fogEnabled>
-    <fogDistance>90</fogDistance>
-    <fogRange>10</fogRange>
-    <fogColor>255, 255, 255, 255</fogColor>
-  </worldRenderSettings>
+<object type="traktor.scene.SceneAsset" version="5">
+	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="21">
+		<viewNearZ>1</viewNearZ>
+		<viewFarZ>1000</viewFarZ>
+		<linearLighting>true</linearLighting>
+		<occlusionCullingEnabled>false</occlusionCullingEnabled>
+		<depthPassEnabled>true</depthPassEnabled>
+		<shadowSettings>
+			<disabled>
+				<projection>SpUniform</projection>
+				<farZ>0</farZ>
+				<resolution>128</resolution>
+				<bias>0</bias>
+				<biasCoeff>0</biasCoeff>
+				<cascadingSlices>1</cascadingSlices>
+				<cascadingLambda>1</cascadingLambda>
+				<quantizeProjection>false</quantizeProjection>
+				<maskDenominator>1</maskDenominator>
+				<maskProject>{00000000-0000-0000-0000-000000000000}</maskProject>
+				<maskFilter>{00000000-0000-0000-0000-000000000000}</maskFilter>
+			</disabled>
+			<low>
+				<projection>SpUniform</projection>
+				<farZ>200</farZ>
+				<resolution>2048</resolution>
+				<bias>0.175</bias>
+				<biasCoeff>0</biasCoeff>
+				<cascadingSlices>2</cascadingSlices>
+				<cascadingLambda>1.8</cascadingLambda>
+				<quantizeProjection>true</quantizeProjection>
+				<maskDenominator>2</maskDenominator>
+				<maskProject>{F751F3EB-33D2-9247-9E3F-54B1A0E3522C}</maskProject>
+				<maskFilter>{7D4D38B9-1E43-8046-B1A4-705CFEF9B8EB}</maskFilter>
+			</low>
+			<medium>
+				<projection>SpUniform</projection>
+				<farZ>220</farZ>
+				<resolution>2048</resolution>
+				<bias>0.175</bias>
+				<biasCoeff>0</biasCoeff>
+				<cascadingSlices>2</cascadingSlices>
+				<cascadingLambda>1.9</cascadingLambda>
+				<quantizeProjection>true</quantizeProjection>
+				<maskDenominator>2</maskDenominator>
+				<maskProject>{F751F3EB-33D2-9247-9E3F-54B1A0E3522C}</maskProject>
+				<maskFilter>{57FD53AF-547A-9F46-8C94-B4D24EFB63BC}</maskFilter>
+			</medium>
+			<high>
+				<projection>SpUniform</projection>
+				<farZ>250</farZ>
+				<resolution>4096</resolution>
+				<bias>0.175</bias>
+				<biasCoeff>0</biasCoeff>
+				<cascadingSlices>2</cascadingSlices>
+				<cascadingLambda>1.75</cascadingLambda>
+				<quantizeProjection>true</quantizeProjection>
+				<maskDenominator>1</maskDenominator>
+				<maskProject>{F751F3EB-33D2-9247-9E3F-54B1A0E3522C}</maskProject>
+				<maskFilter>{FABC4017-4D65-604D-B9AB-9FC03FE3CE43}</maskFilter>
+			</high>
+			<ultra>
+				<projection>SpUniform</projection>
+				<farZ>300</farZ>
+				<resolution>4096</resolution>
+				<bias>0.175</bias>
+				<biasCoeff>0</biasCoeff>
+				<cascadingSlices>3</cascadingSlices>
+				<cascadingLambda>2</cascadingLambda>
+				<quantizeProjection>true</quantizeProjection>
+				<maskDenominator>1</maskDenominator>
+				<maskProject>{F751F3EB-33D2-9247-9E3F-54B1A0E3522C}</maskProject>
+				<maskFilter>{5AFC153E-6FCE-3142-9E1B-DD3722DA447F}</maskFilter>
+			</ultra>
+		</shadowSettings>
+		<fogEnabled>false</fogEnabled>
+		<fogDistanceY>0</fogDistanceY>
+		<fogDistanceZ>90</fogDistanceZ>
+		<fogDensityY>0</fogDensityY>
+		<fogDensityZ>0</fogDensityZ>
+		<fogColor>255, 255, 255, 255</fogColor>
+		<reflectionMap>{00000000-0000-0000-0000-000000000000}</reflectionMap>
+	</worldRenderSettings>
 	<postProcessSettings>{00000000-0000-0000-0000-000000000000}</postProcessSettings>
-	<entityData type="traktor.world.GroupEntityData">
-		<name>Root</name>
-		<transform>
-			<translation>0, 0, 0, 0</translation>
-			<rotation>0, 0, 0, 1</rotation>
-		</transform>
-		<entityData>
-			<item type="traktor.world.DirectionalLightEntityData" version="1">
-				<name>Sun</name>
-				<transform>
-					<translation>-3.593981, 1.013193, 0, 0</translation>
-					<rotation>-0.393518, -0.146114, -0.063506, 0.905407</rotation>
-				</transform>
-				<sunColor>1.5, 1.5, 1.4, 0</sunColor>
-				<baseColor>0.8, 0.8, 0.7, 0</baseColor>
-				<shadowColor>0.4, 0.4, 0.3, 0</shadowColor>
-				<castShadow>true</castShadow>
-			</item>
-			<item type="traktor.world.ExternalEntityData" version="1">
-				<name>Dea</name>
-				<transform>
-					<translation>1.631132, 0.195384, 2.703615, 0</translation>
-					<rotation>0, 0, 0, 1</rotation>
-				</transform>
-				<entityData>{014C3D74-00D4-C54A-AE38-2D3EEA44254C}</entityData>
-			</item>
-			<item type="traktor.world.NullEntityData">
-				<name>Camera</name>
-				<transform>
-					<translation>19.564407, -1.940594, 0.574546, 0</translation>
-					<rotation>0.232484, 0.138162, -0.033384, 0.962158</rotation>
-				</transform>
-			</item>
-			<item type="traktor.weather.SkyEntityData" version="1">
-				<name>Sky</name>
-				<transform>
-					<translation>0, 0, 0, 0</translation>
-					<rotation>0, 0, 0, 1</rotation>
-				</transform>
-				<shader>{4CF929EB-3A8B-C340-AA0A-0C5C80625BF1}</shader>
-				<sunDirection>0, 1, 0, 0</sunDirection>
-			</item>
-			<item type="traktor.mesh.MeshEntityData">
-				<name>IronMan</name>
-				<transform>
-					<translation>7.417967, 0, 3.191367, 0</translation>
-					<rotation>-0.051438, -0.816636, -0.073679, 0.570116</rotation>
-				</transform>
-				<mesh>{14AB57C0-FB60-EE4E-96FE-D5B2F6260297}</mesh>
-			</item>
-			<item type="traktor.mesh.MeshEntityData">
-				<name>Blu</name>
-				<transform>
-					<translation>14.782788, -1.45669, 2.884084, 0</translation>
-					<rotation>0.000008, -0.939545, 0.000021, 0.342426</rotation>
-				</transform>
-				<mesh>{64E18A86-01B5-B04C-9CD6-B281BE5E38F1}</mesh>
-			</item>
-			<item type="traktor.mesh.MeshEntityData">
-				<name>Buck</name>
-				<transform>
-					<translation>20.167072, -3.887853, 3.133392, 0</translation>
-					<rotation>0.000018, -0.575558, 0.000013, 0.817761</rotation>
-				</transform>
-				<mesh>{854514F6-3137-9B49-8110-15723C500C01}</mesh>
-			</item>
-			<item type="traktor.animation.PathEntityData">
-				<name>Smoke path</name>
-				<transform>
-					<translation>0, 0, 0, 0</translation>
-					<rotation>0, 0, 0, 1</rotation>
-				</transform>
-				<path>
-					<keys>
-						<item>
-							<T>0</T>
-							<tcb>0, 0, 0, 0</tcb>
-							<value>
-								<position>3, 0, 3, 1</position>
-								<orientation>0, 0, 0, 0</orientation>
-							</value>
-						</item>
-						<item>
-							<T>1</T>
-							<tcb>0, 0, 0, 0</tcb>
-							<value>
-								<position>5, 2, 0, 1</position>
-								<orientation>0, 0, 0, 0</orientation>
-							</value>
-						</item>
-						<item>
-							<T>2</T>
-							<tcb>0, 0, 0, 0</tcb>
-							<value>
-								<position>12, -1, 0, 1</position>
-								<orientation>0, 0, 0, 0</orientation>
-							</value>
-						</item>
-						<item>
-							<T>3</T>
-							<tcb>0, 0, 0, 0</tcb>
-							<value>
-								<position>20, 0, 0, 1</position>
-								<orientation>0, 0, 0, 0</orientation>
-							</value>
-						</item>
-						<item>
-							<T>4</T>
-							<tcb>0, 0, 0, 0</tcb>
-							<value>
-								<position>15, 0, 5, 1</position>
-								<orientation>0, 0, 0, 0</orientation>
-							</value>
-						</item>
-						<item>
-							<T>5</T>
-							<tcb>0, 0, 0, 0</tcb>
-							<value>
-								<position>3, 0, 3, 1</position>
-								<orientation>0, 0, 0, 0</orientation>
-							</value>
-						</item>
-					</keys>
-				</path>
-				<timeMode>TmLoop</timeMode>
-				<entityData type="traktor.world.ExternalEntityData" version="1">
-					<name>Smoke</name>
+	<postProcessParams/>
+	<layers>
+		<item type="traktor.world.LayerEntityData">
+			<name>Root</name>
+			<transform>
+				<translation>0, 0, 0, 0</translation>
+				<rotation>0, 0, 0, 1</rotation>
+			</transform>
+			<entityData>
+				<item type="traktor.world.DirectionalLightEntityData" version="1">
+					<name>Sun</name>
+					<transform>
+						<translation>-3.593981, 1.013193, 0, 0</translation>
+						<rotation>-0.393518, -0.146114, -0.063506, 0.905407</rotation>
+					</transform>
+					<sunColor>1.5, 1.5, 1.4, 0</sunColor>
+					<baseColor>0.8, 0.8, 0.7, 0</baseColor>
+					<shadowColor>0.4, 0.4, 0.3, 0</shadowColor>
+					<castShadow>true</castShadow>
+				</item>
+				<item type="traktor.world.NullEntityData">
+					<name>Camera</name>
+					<transform>
+						<translation>19.564407, -1.940594, 0.574546, 0</translation>
+						<rotation>0.232484, 0.138162, -0.033384, 0.962158</rotation>
+					</transform>
+				</item>
+				<item type="traktor.weather.SkyEntityData" version="2">
+					<name>Sky</name>
 					<transform>
 						<translation>0, 0, 0, 0</translation>
 						<rotation>0, 0, 0, 1</rotation>
 					</transform>
-					<entityData>{60020255-D0E2-1846-AC57-D76F38F39424}</entityData>
-				</entityData>
-			</item>
-			<item type="traktor.mesh.MeshEntityData">
-				<name>Sand</name>
-				<transform>
-					<translation>0.004606, -3.826225, 0, 0</translation>
-					<rotation>0.000022, 0, 0, 1</rotation>
-				</transform>
-				<mesh>{CC5E6537-56FD-DF47-B38E-D931AE8AFEA7}</mesh>
-			</item>
-			<item type="traktor.world.NullEntityData">
-				<name>Camera Look At</name>
-				<transform>
-					<translation>-2.824869, -0.005375, 7.75157, 0</translation>
-					<rotation>-0.013506, -0.869965, -0.023865, 0.492351</rotation>
-				</transform>
-			</item>
-			<item type="traktor.mesh.MeshEntityData">
-				<name>Wire</name>
-				<transform>
-					<translation>-4.533275, 0.10574, 9.831888, 0</translation>
-					<rotation>0, -0.198669, 0, 0.980067</rotation>
-				</transform>
-				<mesh>{A0FB9E6B-014D-7346-9A5E-B6DB1A4EACFE}</mesh>
-			</item>
-			<item type="traktor.world.GroupEntityData">
-				<name>Trees</name>
-				<transform>
-					<translation>-0.384074, 0, 0, 0</translation>
-					<rotation>0, 0.029995, 0, 0.99955</rotation>
-				</transform>
-				<entityData>
-					<item type="traktor.mesh.MeshEntityData">
-						<name>Tree</name>
-						<transform>
-							<translation>24.000628, -4.773187, 6.869393, 0</translation>
-							<rotation>-0.009482, 0.948223, 0.028435, 0.316188</rotation>
-						</transform>
-						<mesh>{D70FE9E4-E271-AA40-8D90-1DDA193BDCDC}</mesh>
-					</item>
-					<item type="traktor.mesh.MeshEntityData">
-						<name>Tree</name>
-						<transform>
-							<translation>26.430073, -3.997243, 0.332429, 0</translation>
-							<rotation>0.007176, -0.698004, 0.006995, 0.716024</rotation>
-						</transform>
-						<mesh>{D70FE9E4-E271-AA40-8D90-1DDA193BDCDC}</mesh>
-					</item>
-					<item type="traktor.mesh.MeshEntityData">
-						<name>Tree</name>
-						<transform>
-							<translation>16.906765, -5.044054, 10.366591, 0</translation>
-							<rotation>0.016264, -0.583077, 0.011675, 0.81217</rotation>
-						</transform>
-						<mesh>{D70FE9E4-E271-AA40-8D90-1DDA193BDCDC}</mesh>
-					</item>
-					<item type="traktor.mesh.MeshEntityData">
-						<name>Tree</name>
-						<transform>
-							<translation>9.415627, -5.610875, 11.397597, 0</translation>
-							<rotation>-0.026598, -0.745816, -0.029833, 0.664952</rotation>
-						</transform>
-						<mesh>{D70FE9E4-E271-AA40-8D90-1DDA193BDCDC}</mesh>
-					</item>
-					<item type="traktor.mesh.MeshEntityData">
-						<name>Tree</name>
-						<transform>
-							<translation>13.878647, -5.971957, 16.607544, 0</translation>
-							<rotation>0.01491, 0.927231, -0.037129, 0.372347</rotation>
-						</transform>
-						<mesh>{D70FE9E4-E271-AA40-8D90-1DDA193BDCDC}</mesh>
-					</item>
-					<item type="traktor.mesh.MeshEntityData">
-						<name>Tree</name>
-						<transform>
-							<translation>1.309058, -4.670291, 10.473563, 0</translation>
-							<rotation>0.00709, -0.983387, 0.039378, 0.177059</rotation>
-						</transform>
-						<mesh>{D70FE9E4-E271-AA40-8D90-1DDA193BDCDC}</mesh>
-					</item>
-					<item type="traktor.mesh.MeshEntityData">
-						<name>Tree</name>
-						<transform>
-							<translation>4.869059, -5.90189, 17.231747, 0</translation>
-							<rotation>-0.010016, 0.978472, 0.048944, 0.20024</rotation>
-						</transform>
-						<mesh>{D70FE9E4-E271-AA40-8D90-1DDA193BDCDC}</mesh>
-					</item>
-					<item type="traktor.mesh.MeshEntityData">
-						<name>Tree</name>
-						<transform>
-							<translation>-5.844534, -4.754095, 12.978285, 0</translation>
-							<rotation>-0.011577, -0.814795, -0.016281, 0.579406</rotation>
-						</transform>
-						<mesh>{D70FE9E4-E271-AA40-8D90-1DDA193BDCDC}</mesh>
-					</item>
-					<item type="traktor.mesh.MeshEntityData">
-						<name>Tree</name>
-						<transform>
-							<translation>-11.056827, -4.105049, 7.730351, 0</translation>
-							<rotation>0.003548, -0.983978, 0.019703, 0.177165</rotation>
-						</transform>
-						<mesh>{D70FE9E4-E271-AA40-8D90-1DDA193BDCDC}</mesh>
-					</item>
-					<item type="traktor.mesh.MeshEntityData">
-						<name>Tree</name>
-						<transform>
-							<translation>-7.391698, -3.267359, 5.052382, 0</translation>
-							<rotation>0.003548, -0.983978, 0.019703, 0.177165</rotation>
-						</transform>
-						<mesh>{D70FE9E4-E271-AA40-8D90-1DDA193BDCDC}</mesh>
-					</item>
-					<item type="traktor.mesh.MeshEntityData">
-						<name>Tree</name>
-						<transform>
-							<translation>-6.696642, -3.714342, 9.517556, 0</translation>
-							<rotation>0.003548, -0.983978, 0.019703, 0.177165</rotation>
-						</transform>
-						<mesh>{D70FE9E4-E271-AA40-8D90-1DDA193BDCDC}</mesh>
-					</item>
-					<item type="traktor.mesh.MeshEntityData">
-						<name>Tree</name>
-						<transform>
-							<translation>-1.986913, -4.337317, 11.05251, 0</translation>
-							<rotation>0.000238, 0.999729, -0.020019, 0.011856</rotation>
-						</transform>
-						<mesh>{D70FE9E4-E271-AA40-8D90-1DDA193BDCDC}</mesh>
-					</item>
-					<item type="traktor.mesh.MeshEntityData">
-						<name>Tree</name>
-						<transform>
-							<translation>6.354884, -4.65512, 12.971629, 0</translation>
-							<rotation>0.010772, -0.842734, 0.016875, 0.537958</rotation>
-						</transform>
-						<mesh>{D70FE9E4-E271-AA40-8D90-1DDA193BDCDC}</mesh>
-					</item>
-					<item type="traktor.mesh.MeshEntityData">
-						<name>Tree</name>
-						<transform>
-							<translation>0.158214, -4.996297, 16.99469, 0</translation>
-							<rotation>0.007946, -0.917676, 0.018376, 0.396825</rotation>
-						</transform>
-						<mesh>{D70FE9E4-E271-AA40-8D90-1DDA193BDCDC}</mesh>
-					</item>
-					<item type="traktor.mesh.MeshEntityData">
-						<name>Tree</name>
-						<transform>
-							<translation>10.388918, -5.269692, 19.528147, 0</translation>
-							<rotation>0.003548, -0.983978, 0.019703, 0.177165</rotation>
-						</transform>
-						<mesh>{D70FE9E4-E271-AA40-8D90-1DDA193BDCDC}</mesh>
-					</item>
-					<item type="traktor.mesh.MeshEntityData">
-						<name>Tree</name>
-						<transform>
-							<translation>20.300791, -5.956574, 18.982855, 0</translation>
-							<rotation>0.004917, -0.969176, 0.019407, 0.245553</rotation>
-						</transform>
-						<mesh>{D70FE9E4-E271-AA40-8D90-1DDA193BDCDC}</mesh>
-					</item>
-					<item type="traktor.mesh.MeshEntityData">
-						<name>Tree</name>
-						<transform>
-							<translation>26.654648, -6.282297, 18.447096, 0</translation>
-							<rotation>0.005111, -0.966672, 0.019357, 0.255233</rotation>
-						</transform>
-						<mesh>{D70FE9E4-E271-AA40-8D90-1DDA193BDCDC}</mesh>
-					</item>
-					<item type="traktor.mesh.MeshEntityData">
-						<name>Tree</name>
-						<transform>
-							<translation>30.476465, -5.927465, 16.683508, 0</translation>
-							<rotation>0.016208, 0.58688, -0.011751, 0.809426</rotation>
-						</transform>
-						<mesh>{D70FE9E4-E271-AA40-8D90-1DDA193BDCDC}</mesh>
-					</item>
-					<item type="traktor.mesh.MeshEntityData">
-						<name>Tree</name>
-						<transform>
-							<translation>36.832554, -6.222652, 16.855061, 0</translation>
-							<rotation>0.004989, 0.968257, -0.019388, 0.249154</rotation>
-						</transform>
-						<mesh>{D70FE9E4-E271-AA40-8D90-1DDA193BDCDC}</mesh>
-					</item>
-					<item type="traktor.mesh.MeshEntityData">
-						<name>Tree</name>
-						<transform>
-							<translation>39.989529, -5.595076, 8.043609, 0</translation>
-							<rotation>0.003548, -0.983978, 0.019703, 0.177165</rotation>
-						</transform>
-						<mesh>{D70FE9E4-E271-AA40-8D90-1DDA193BDCDC}</mesh>
-					</item>
-				</entityData>
-			</item>
-		</entityData>
-	</entityData>
+					<shader>{4CF929EB-3A8B-C340-AA0A-0C5C80625BF1}</shader>
+					<sunDirection>0, 1, 0, 0</sunDirection>
+					<offset>0</offset>
+				</item>
+				<item type="traktor.mesh.MeshEntityData" version="1">
+					<name>Blu</name>
+					<transform>
+						<translation>19.507839, -4.282065, 3.132771, 0</translation>
+						<rotation>0.000022, -0.277604, 0.000006, 0.960696</rotation>
+					</transform>
+					<mesh>{64E18A86-01B5-B04C-9CD6-B281BE5E38F1}</mesh>
+					<screenSpaceCulling>true</screenSpaceCulling>
+				</item>
+				<item type="traktor.mesh.MeshEntityData" version="1">
+					<name>Buck</name>
+					<transform>
+						<translation>20.962875, -3.989851, 2.78523, 0</translation>
+						<rotation>0.000021, 0.367867, -0.000008, 0.929879</rotation>
+					</transform>
+					<mesh>{854514F6-3137-9B49-8110-15723C500C01}</mesh>
+					<screenSpaceCulling>true</screenSpaceCulling>
+				</item>
+			</entityData>
+			<visible>true</visible>
+			<locked>false</locked>
+			<include>true</include>
+			<dynamic>false</dynamic>
+		</item>
+	</layers>
 	<controllerData/>
 </object>

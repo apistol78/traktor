@@ -333,9 +333,9 @@ bool ProgramOpenGLES2::activate(StateCache* stateCache, float targetSize[2], flo
 	{
 		if (m_targetSize[0] != targetSize[0] || m_targetSize[1] != targetSize[1])
 		{
-			T_OGL_SAFE(glUniform2fv(m_locationTargetSize, 1, targetSize));
 			m_targetSize[0] = targetSize[0];
 			m_targetSize[1] = targetSize[1];
+			T_OGL_SAFE(glUniform4fv(m_locationTargetSize, 1, m_targetSize));
 		}
 	}
 	
@@ -399,7 +399,9 @@ ProgramOpenGLES2::ProgramOpenGLES2(ContextOpenGLES2* resourceContext, GLuint pro
 	const ProgramResourceOpenGL* resourceOpenGL = checked_type_cast< const ProgramResourceOpenGL* >(resource);
 
 	m_targetSize[0] =
-	m_targetSize[1] = 0.0f;
+	m_targetSize[1] =
+	m_targetSize[2] =
+	m_targetSize[3] = 0.0f;
 	
 	// Get target size parameter.
 	m_locationTargetSize = glGetUniformLocation(m_program, "_gl_targetSize");

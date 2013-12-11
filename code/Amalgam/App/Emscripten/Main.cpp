@@ -38,8 +38,11 @@ Ref< PropertyGroup > loadSettings(const Path& settingsFile)
 
 }
 
+static int32_t g_counter = 0;
+
 void mainLoop()
 {
+	traktor::log::info << L"Tick-tack " << g_counter++ << Endl;
 	if (g_application)
 	{
 		if (!g_application->update())

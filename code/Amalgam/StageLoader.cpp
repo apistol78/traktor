@@ -62,13 +62,16 @@ Ref< Stage > StageLoader::get()
 
 Ref< StageLoader > StageLoader::createAsync(amalgam::IEnvironment* environment, const Guid& stageGuid, const Object* params)
 {
+#if !defined(__EMSCRIPTEN__)
 	Ref< StageLoader > stageLoader = new StageLoader();
-
 	stageLoader->m_job = JobManager::getInstance().add(makeStaticFunctor< amalgam::IEnvironment*, const Guid&, Ref< const Object >, Ref< StageLoader >, Ref< Stage >& >(&jobLoader, environment, stageGuid, params, stageLoader, stageLoader->m_stage));
-	if (!stageLoader->m_job)
+	if (stageLoader->m_job)
+		return stageLoader;
+	else
 		return 0;
-
-	return stageLoader;
+#else
+	return create(environment, stageGuid, params);
+#endif
 }
 
 Ref< StageLoader > StageLoader::create(amalgam::IEnvironment* environment, const Guid& stageGuid, const Object* params)
