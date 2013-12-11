@@ -18,7 +18,7 @@
 #	include "Spray/Ps3/Spu/JobModifierUpdate.h"
 #endif
 
-#if !TARGET_OS_IPHONE && !defined(_WINCE)
+#if !TARGET_OS_IPHONE && !defined(_WINCE) && !defined(__EMSCRIPTEN__)
 #	define T_USE_UPDATE_JOBS
 #endif
 

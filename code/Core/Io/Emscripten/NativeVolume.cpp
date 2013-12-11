@@ -1,15 +1,8 @@
-#include <sstream>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <dirent.h>
-#include <errno.h>
+#include <cstdio>
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Linux/NativeVolume.h"
 #include "Core/Io/Linux/NativeStream.h"
-#include "Core/Log/Log.h"
-#include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
-#include "Core/Misc/WildCompare.h"
 
 namespace traktor
 {
@@ -28,76 +21,12 @@ std::wstring NativeVolume::getDescription() const
 
 Ref< File > NativeVolume::get(const Path& path)
 {
-	struct stat st;
-
-	std::wstring systemPath = getSystemPath(path);
-	if (stat(wstombs(systemPath).c_str(), &st) != 0)
-		return 0;
-
-	DateTime adt(uint64_t(st.st_atime));
-	DateTime mdt(uint64_t(st.st_mtime));
-
-	uint32_t flags = File::FfNormal;
-
-	if ((st.st_mode & S_IWUSR) == 0)
-		flags |= File::FfReadOnly;
-
-	return new File(
-		path,
-		st.st_size,
-		flags,
-		mdt,
-		adt,
-		mdt
-	);
+	return 0;
 }
 
 int NativeVolume::find(const Path& mask, RefArray< File >& out)
 {
-	struct dirent* dp;
-
-	std::wstring maskPath = mask.getPathOnly();
-	std::wstring systemPath = getSystemPath(maskPath);
-	std::wstring fileMask = mask.getFileName();
-
-	WildCompare maskCompare(fileMask);
-
-	DIR* dirp = opendir(wstombs(systemPath.empty() ? L"." : systemPath).c_str());
-	if (!dirp)
-	{
-		log::warning << L"Unable to open directory \"" << systemPath << L"\"" << Endl;
-		return 0;
-	}
-
-	if (!maskPath.empty())
-		maskPath += L"/";
-
-	while ((dp = readdir(dirp)) != 0)
-	{
-		if (maskCompare.match(mbstows(dp->d_name)))
-		{
-			if (dp->d_type == DT_DIR)
-			{
-				out.push_back(new File(
-					maskPath + mbstows(dp->d_name),
-					0,
-					File::FfDirectory
-				));
-			}
-			else	// Assumes it's a normal file.
-			{
-				Path filePath = maskPath + mbstows(dp->d_name);
-				Ref< File > file = get(filePath);
-				if (file)
-					out.push_back(file);
-				else
-					log::warning << L"Unable to stat file \"" << filePath.getPathName() << L"\"" << Endl;
-			}
-		}
-	}
-	closedir(dirp);
-
-	return int(out.size());
+	return 0;
 }
 
 bool NativeVolume::modify(const Path& fileName, uint32_t flags)
@@ -116,8 +45,7 @@ Ref< IStream > NativeVolume::open(const Path& filename, uint32_t mode)
 
 bool NativeVolume::exist(const Path& filename)
 {
-	struct stat sb;
-	return bool(stat(wstombs(getSystemPath(filename)).c_str(), &sb) == 0);
+	return false;
 }
 
 bool NativeVolume::remove(const Path& filename)
@@ -137,10 +65,7 @@ bool NativeVolume::copy(const Path& fileName, const std::wstring& newName, bool 
 
 bool NativeVolume::makeDirectory(const Path& directory)
 {
-	int status = mkdir(wstombs(directory.getPathName()).c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-	if (status != 0 && errno != EEXIST)
-		return false;
-	return true;
+	return false;
 }
 
 bool NativeVolume::removeDirectory(const Path& directory)
@@ -176,19 +101,14 @@ Path NativeVolume::getCurrentDirectory() const
 
 void NativeVolume::mountVolumes(FileSystem& fileSystem)
 {
-	std::wstring workingDirectory = L"C:";
-	log::info << L"Current working directory \"" << workingDirectory << L"\"" << Endl;
-
-	Ref< IVolume > volume = new NativeVolume(workingDirectory);
+	Ref< IVolume > volume = new NativeVolume(L"C:\\");
 	fileSystem.mount(L"C", volume);
 	fileSystem.setCurrentVolume(volume);
 }
 
 std::wstring NativeVolume::getSystemPath(const Path& path) const
 {
-	std::wstring systemPath = path.getPathNameNoVolume();
-	log::info << L"\"" << path.getPathName() << L"\" => \"" << systemPath << L"\"" << Endl;
-	return systemPath;
+	return path.getPathNameNoVolume();
 }
 
 }

@@ -290,6 +290,13 @@ void VertexBufferOpenGLES2::activate(StateCache* stateCache)
 	{
 		stateCache->setVertexArrayObject(0);
 		
+		GLint maxAttributeIndex = 0;
+		glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxAttributeIndex);
+		for (GLint i = 0; i < maxAttributeIndex; ++i)
+		{
+			T_OGL_SAFE(glDisableVertexAttribArray(i));
+		}
+
 		for (AlignedVector< AttributeDesc >::const_iterator i = m_attributes.begin(); i != m_attributes.end(); ++i)
 		{
 			T_OGL_SAFE(glEnableVertexAttribArray(i->location));

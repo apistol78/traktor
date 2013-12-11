@@ -88,7 +88,7 @@ private:
 	std::vector< Sampler > m_samplers;						//!< Samplers.
 	AlignedVector< float > m_uniformData;					//!< Scalar uniform data.
 	RefArray< ITexture > m_textures;
-	float m_targetSize[2];
+	float m_targetSize[4];
 	
 	ProgramOpenGLES2(ContextOpenGLES2* resourceContext, GLuint program, const ProgramResource* resource);
 };

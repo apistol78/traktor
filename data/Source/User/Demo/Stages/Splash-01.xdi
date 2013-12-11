@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.StageData" version="1">
+<object type="traktor.amalgam.StageData" version="2">
 	<layers>
-		<item type="traktor.amalgam.FlashLayerData">
+		<item type="traktor.amalgam.FlashLayerData" version="2">
 			<name>ui</name>
 			<movie>{74D151AC-F0BE-9F49-9D90-2166D8F695BC}</movie>
+			<externalMovies/>
+			<postProcess>{00000000-0000-0000-0000-000000000000}</postProcess>
 			<clearBackground>true</clearBackground>
 			<enableSound>false</enableSound>
 		</item>
@@ -16,4 +18,5 @@
 		</item>
 	</transitions>
 	<resourceBundle>{00000000-0000-0000-0000-000000000000}</resourceBundle>
+	<localizationDictionary>{00000000-0000-0000-0000-000000000000}</localizationDictionary>
 </object>

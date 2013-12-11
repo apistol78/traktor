@@ -6,7 +6,7 @@ call emsdk_add_path.bat
 popd
 
 set EXECUTABLE=%2
-set LIBPATH=%TRAKTOR_HOME%\bin\latest\emscripten\releasestatic
+set LIBPATH=%DEPLOY_PROJECT_ROOT:/=\%\bin\latest\emscripten\releasestatic
 
 set LIBRARIES=^
  %LIBPATH%\Traktor.Amalgam.App.bc^
@@ -62,11 +62,12 @@ set LIBRARIES=^
  %LIBPATH%\Extern.libflac-1.2.1.bc^
  %LIBPATH%\Extern.lpng128.bc^
  %LIBPATH%\Extern.libtheora-1.1.1.bc^
- %LIBPATH%\Extern.libvorbis-1.3.3.bc
+ %LIBPATH%\Extern.libvorbis-1.3.3.bc^
+ %LIBPATH%\Extern.mpg123-1.13.2.bc
 
 if /i "%1%"=="html" (
-	emcc -O2 -g4 --js-opts 0 --closure 0 -s PRECISE_I64_MATH=1 -s ASSERTIONS=1 -s SAFE_HEAP=0 -s TOTAL_MEMORY=536870912 %LIBRARIES% -o %EXECUTABLE%.html --preload-file Application.config --preload-file Content.compact
+	emcc -O2 --js-opts 1 --closure 1 -s PRECISE_I64_MATH=1 -s ASSERTIONS=0 -s SAFE_HEAP=0 -s TOTAL_MEMORY=536870912 %LIBRARIES% -o %EXECUTABLE%.html --preload-file Application.config --preload-file Content.compact
 )
 if /i "%1%"=="js" (
-	emcc -O2 -g4 --js-opts 0 --closure 0 -s PRECISE_I64_MATH=1 -s ASSERTIONS=1 -s SAFE_HEAP=0 -s TOTAL_MEMORY=536870912 %LIBRARIES% -o %EXECUTABLE%.js --embed-file Application.config
+	emcc -O2 --js-opts 1 --closure 1 -s PRECISE_I64_MATH=1 -s ASSERTIONS=0 -s SAFE_HEAP=0 -s TOTAL_MEMORY=536870912 %LIBRARIES% -o %EXECUTABLE%.js --embed-file Application.config
 )
