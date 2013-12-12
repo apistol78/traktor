@@ -156,7 +156,7 @@ struct ActionValueCast< Ref< Type >, false >
 	typedef Type base_t;
 
 	static ActionValue set(ActionContext* cx, const Ref< base_t >& v) { return ActionValue(v ? v->getAsObject(cx) : 0); }
-	static Ref< base_t > get(ActionContext* cx, const ActionValue& value) { return value.getObject()->getRelay< base_t >(); }
+	static Ref< base_t > get(ActionContext* cx, const ActionValue& value) { return value.getObject() ? value.getObject()->getRelay< base_t >() : 0; }
 };
 
 template < typename Type >
@@ -165,7 +165,7 @@ struct ActionValueCast< Type, true >
 	typedef typename IsPointer< Type >::base_t base_t;
 
 	static ActionValue set(ActionContext* cx, base_t* v) { return ActionValue(v ? v->getAsObject(cx) : 0); }
-	static base_t* get(ActionContext* cx, const ActionValue& value) { return value.getObject()->getRelay< base_t >(); }
+	static base_t* get(ActionContext* cx, const ActionValue& value) { return value.getObject() ? value.getObject()->getRelay< base_t >() : 0; }
 };
 
 extern void T_DLLCLASS trapInvalidCast();
