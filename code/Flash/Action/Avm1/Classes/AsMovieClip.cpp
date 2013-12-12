@@ -525,11 +525,24 @@ void AsMovieClip::MovieClip_endFill(FlashSpriteInstance* self) const
 	canvas->endFill();
 }
 
-void AsMovieClip::MovieClip_getBounds(FlashSpriteInstance* self) const
+Ref< ActionObject > AsMovieClip::MovieClip_getBounds(FlashSpriteInstance* self, const FlashCharacterInstance* reference) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"MovieClip::getBounds not implemented" << Endl;
-	)
+	Aabb2 bounds = self->getLocalBounds();
+
+	if (reference)
+	{
+		Matrix33 transform = reference->getTransform();
+		bounds.mn = transform * bounds.mn;
+		bounds.mx = transform * bounds.mx;
+	}
+
+	Ref< ActionObject > result = new ActionObject(getContext());
+	result->setMember("xMin", ActionValue(bounds.mn.x / 20.0f));
+	result->setMember("yMin", ActionValue(bounds.mn.y / 20.0f));
+	result->setMember("xMax", ActionValue(bounds.mx.x / 20.0f));
+	result->setMember("yMax", ActionValue(bounds.mx.y / 20.0f));
+
+	return result;
 }
 
 int32_t AsMovieClip::MovieClip_getBytesLoaded(FlashSpriteInstance* self) const
@@ -564,11 +577,24 @@ int32_t AsMovieClip::MovieClip_getNextHighestDepth(FlashSpriteInstance* self) co
 	return self->getDisplayList().getNextHighestDepth();
 }
 
-void AsMovieClip::MovieClip_getRect(FlashSpriteInstance* self) const
+Ref< ActionObject > AsMovieClip::MovieClip_getRect(FlashSpriteInstance* self, const FlashCharacterInstance* reference) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"MovieClip::getRect not implemented" << Endl;
-	)
+	Aabb2 bounds = self->getLocalBounds();
+
+	if (reference)
+	{
+		Matrix33 transform = reference->getTransform();
+		bounds.mn = transform * bounds.mn;
+		bounds.mx = transform * bounds.mx;
+	}
+
+	Ref< ActionObject > result = new ActionObject(getContext());
+	result->setMember("xMin", ActionValue(bounds.mn.x / 20.0f));
+	result->setMember("yMin", ActionValue(bounds.mn.y / 20.0f));
+	result->setMember("xMax", ActionValue(bounds.mx.x / 20.0f));
+	result->setMember("yMax", ActionValue(bounds.mx.y / 20.0f));
+
+	return result;
 }
 
 int32_t AsMovieClip::MovieClip_getSWFVersion(FlashSpriteInstance* self) const

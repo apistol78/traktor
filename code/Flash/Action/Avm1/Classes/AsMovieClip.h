@@ -73,7 +73,7 @@ private:
 
 	void MovieClip_endFill(FlashSpriteInstance* self) const;
 
-	void MovieClip_getBounds(FlashSpriteInstance* self) const;
+	Ref< ActionObject > MovieClip_getBounds(FlashSpriteInstance* self, const FlashCharacterInstance* reference) const;
 
 	int32_t MovieClip_getBytesLoaded(FlashSpriteInstance* self) const;
 
@@ -85,7 +85,7 @@ private:
 
 	int32_t MovieClip_getNextHighestDepth(FlashSpriteInstance* self) const;
 
-	void MovieClip_getRect(FlashSpriteInstance* self) const;
+	Ref< ActionObject > MovieClip_getRect(FlashSpriteInstance* self, const FlashCharacterInstance* reference) const;
 
 	int32_t MovieClip_getSWFVersion(FlashSpriteInstance* self) const;
 
