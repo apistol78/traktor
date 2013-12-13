@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Serialization/DeepClone.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
@@ -56,6 +57,17 @@ bool EntityEventSetPipeline::buildOutput(
 	uint32_t reason
 ) const
 {
+	Ref< EntityEventSetData > eventSet = DeepClone(sourceAsset).create< EntityEventSetData >();
+	T_FATAL_ASSERT (eventSet);
+
+	for (std::map< std::wstring, Ref< IEntityEventData > >::iterator i = eventSet->m_eventData.begin(); i != eventSet->m_eventData.end(); )
+	{
+		if (!i->second)
+			i = eventSet->m_eventData.erase(i);
+		else
+			++i;
+	}
+
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);
 	if (!outputInstance)
 	{
@@ -63,7 +75,7 @@ bool EntityEventSetPipeline::buildOutput(
 		return false;
 	}
 
-	outputInstance->setObject(sourceAsset);
+	outputInstance->setObject(eventSet);
 
 	if (!outputInstance->commit())
 	{
