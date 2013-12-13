@@ -48,6 +48,16 @@ Ref< ISerializable > EffectEntityPipeline::buildOutput(
 		if (effectEntityData->getEffect().isNull())
 			return 0;
 	}
+	else if (const SoundEventData* soundEventData = dynamic_type_cast< const SoundEventData* >(sourceAsset))
+	{
+		if (soundEventData->m_sound.isNull())
+			return 0;
+	}
+	else if (const SpawnEffectEventData* spawnEventData = dynamic_type_cast< const SpawnEffectEventData* >(sourceAsset))
+	{
+		if (spawnEventData->getEffect().isNull())
+			return 0;
+	}
 
 	return world::EntityPipeline::buildOutput(pipelineBuilder, sourceAsset);
 }
