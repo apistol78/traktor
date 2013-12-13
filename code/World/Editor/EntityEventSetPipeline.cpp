@@ -62,10 +62,9 @@ bool EntityEventSetPipeline::buildOutput(
 
 	for (std::map< std::wstring, Ref< IEntityEventData > >::iterator i = eventSet->m_eventData.begin(); i != eventSet->m_eventData.end(); )
 	{
-		if (!i->second)
-			i = eventSet->m_eventData.erase(i);
-		else
-			++i;
+		std::map< std::wstring, Ref< IEntityEventData > >::iterator at = i++;
+		if (!at->second)
+			eventSet->m_eventData.erase(at);
 	}
 
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);
