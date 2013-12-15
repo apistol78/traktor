@@ -667,7 +667,7 @@ bool Application::update()
 			{
 				Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
 				if (currentThread)
-					currentThread->sleep(50);
+					currentThread->sleep(10);
 			}
 		}
 

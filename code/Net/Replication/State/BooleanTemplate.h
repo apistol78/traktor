@@ -21,7 +21,7 @@ class T_DLLCLASS BooleanTemplate : public IValueTemplate
 	T_RTTI_CLASS;
 
 public:
-	BooleanTemplate(float threshold = 0.95f);
+	BooleanTemplate(float threshold = 0.0f);
 
 	virtual const TypeInfo& getValueType() const;
 
