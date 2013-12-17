@@ -213,6 +213,21 @@ void Replicator::setStateTemplate(const StateTemplate* stateTemplate)
 
 void Replicator::setState(const State* state)
 {
+	T_FATAL_ASSERT (m_stateTemplate);
+	
+	// Clear count-down timer if state is critical which
+	// will cause the state to be replicated at next update
+	// to all peers.
+	if (state != 0 && m_stateTemplate->critical(m_state, state))
+	{
+		for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
+		{
+			Peer& peer = i->second;
+			if (peer.state == PsEstablished)
+				peer.timeUntilTx = 0.0f;
+		}
+	}
+
 	m_state = state;
 }
 

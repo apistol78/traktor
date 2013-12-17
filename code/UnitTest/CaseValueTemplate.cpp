@@ -25,7 +25,7 @@ void CaseValueTemplate::run()
 {
 	{
 		net::StateTemplate st;
-		st.declare(new net::FloatTemplate(1.0f));
+		st.declare(new net::FloatTemplate());
 
 		net::State s0;
 		s0.pack< net::FloatValue >(0.0f);

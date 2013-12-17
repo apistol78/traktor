@@ -111,6 +111,8 @@ public:
 	 *
 	 * Each peer have multiple ghost states which mirrors
 	 * each peer real state.
+	 *
+	 * \param state Our current state.
 	 */
 	void setState(const State* state);
 
@@ -288,7 +290,6 @@ private:
 		bool direct;
 		uint8_t status;
 		int32_t timeUntilTx;
-		//int32_t timeUntilTxMin;
 		int32_t lastTimeLocal;
 		int32_t lastTimeRemote;
 		CircularVector< int32_t, MaxRoundTrips > roundTrips;
@@ -309,7 +310,6 @@ private:
 		,	direct(false)
 		,	status(0)
 		,	timeUntilTx(0)
-		//,	timeUntilTxMin(0)
 		,	lastTimeLocal(0)
 		,	lastTimeRemote(0)
 		,	latencyMedian(0)

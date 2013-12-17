@@ -31,6 +31,8 @@ public:
 
 	virtual Ref< const IValue > extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, float T) const;
 
+	virtual bool threshold(const IValue* Vn1, const IValue* V) const;
+
 private:
 	float m_threshold;
 };

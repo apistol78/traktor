@@ -21,7 +21,7 @@ namespace traktor
 		{
 
 const uint32_t c_stripeLength = 64;
-const uint32_t c_trailCount = 8;
+const uint32_t c_trailCount = 16;
 
 render::handle_t s_handleTimeAndAge = 0;
 
@@ -47,7 +47,7 @@ TrailRenderer::TrailRenderer(render::IRenderSystem* renderSystem)
 		T_ASSERT_M (m_vertexBuffers[i], L"Unable to create vertex buffer");
 	}
 
-	m_indexBuffer = renderSystem->createIndexBuffer(render::ItUInt16, c_trailCount * c_stripeLength * 3 * 2 * sizeof(uint16_t), false);
+	m_indexBuffer = renderSystem->createIndexBuffer(render::ItUInt16, c_trailCount * c_stripeLength * 2 * sizeof(uint16_t), false);
 	T_ASSERT_M (m_indexBuffer, L"Unable to create index buffer");
 
 	uint16_t* index = static_cast< uint16_t* >(m_indexBuffer->lock());

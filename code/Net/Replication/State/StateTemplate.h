@@ -21,6 +21,8 @@ public:
 
 	bool match(const State* S) const;
 
+	bool critical(const State* Sn1, const State* S0) const;
+
 	Ref< const State > extrapolate(const State* Sn2, float Tn2, const State* Sn1, float Tn1, const State* S0, float T0, float T) const;
 
 	uint32_t pack(const State* S, void* buffer, uint32_t bufferSize) const;

@@ -52,6 +52,29 @@ bool StateTemplate::match(const State* S) const
 	return true;
 }
 
+bool StateTemplate::critical(const State* Sn1, const State* S0) const
+{
+	if (!Sn1 || !S0)
+		return bool(S0 != 0);
+
+	const RefArray< const IValue >& Vn1 = Sn1->getValues();
+	const RefArray< const IValue >& V0 = S0->getValues();
+
+	if (Vn1.size() != m_valueTemplates.size() || V0.size() != m_valueTemplates.size())
+		return false;
+
+	for (uint32_t i = 0; i < m_valueTemplates.size(); ++i)
+	{
+		const IValueTemplate* valueTemplate = m_valueTemplates[i];
+		T_ASSERT (valueTemplate);
+
+		if (valueTemplate->threshold(Vn1[i], V0[i]))
+			return true;
+	}
+
+	return false;
+}
+
 Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const State* Sn1, float Tn1, const State* S0, float T0, float T) const
 {
 	RefArray< const IValue > Vr(m_valueTemplates.size());

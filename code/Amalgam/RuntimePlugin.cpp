@@ -14,6 +14,7 @@
 #include "Amalgam/Classes/DatabaseClasses.h"
 #include "Amalgam/Classes/DrawingClasses.h"
 #include "Amalgam/Classes/FlashClasses.h"
+#include "Amalgam/Classes/I18NClasses.h"
 #include "Amalgam/Classes/InputClasses.h"
 #include "Amalgam/Classes/MeshClasses.h"
 #include "Amalgam/Classes/NetClasses.h"
@@ -61,6 +62,7 @@ bool RuntimePlugin::startup(amalgam::IEnvironment* environment)
 	registerOnlineClasses(scriptManager);
 	registerTerrainClasses(scriptManager);
 	registerSprayClasses(scriptManager);
+	registerI18NClasses(scriptManager);
 
 	return true;
 }
