@@ -75,5 +75,10 @@ Ref< const IValue > BooleanTemplate::extrapolate(const IValue* Vn2, float Tn2, c
 	return new BooleanValue(F0);
 }
 
+bool BooleanTemplate::threshold(const IValue* Vn1, const IValue* V) const
+{
+	return false;
+}
+
 	}
 }

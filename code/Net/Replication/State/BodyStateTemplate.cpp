@@ -235,5 +235,10 @@ Ref< const IValue > BodyStateTemplate::extrapolate(const IValue* Vn2, float Tn2,
 	return new BodyStateValue(Sf);
 }
 
+bool BodyStateTemplate::threshold(const IValue* Vn1, const IValue* V) const
+{
+	return false;
+}
+
 	}
 }

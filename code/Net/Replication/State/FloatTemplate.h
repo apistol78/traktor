@@ -1,6 +1,7 @@
 #ifndef traktor_net_FloatTemplate_H
 #define traktor_net_FloatTemplate_H
 
+#include <climits>
 #include "Net/Replication/State/IValueTemplate.h"
 
 // import/export mechanism.
@@ -29,9 +30,9 @@ class T_DLLCLASS FloatTemplate : public IValueTemplate
 	T_RTTI_CLASS;
 
 public:
-	FloatTemplate(float errorScale);
+	FloatTemplate(float threshold = std::numeric_limits< float >::max());
 
-	explicit FloatTemplate(float errorScale, float min, float max, FloatTemplatePrecision precision);
+	explicit FloatTemplate(float threshold, float min, float max, FloatTemplatePrecision precision);
 
 	virtual const TypeInfo& getValueType() const;
 
@@ -41,8 +42,10 @@ public:
 
 	virtual Ref< const IValue > extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, float T) const;
 
+	virtual bool threshold(const IValue* Vn1, const IValue* V) const;
+
 private:
-	float m_errorScale;
+	float m_threshold;
 	float m_min;
 	float m_max;
 	FloatTemplatePrecision m_precision;

@@ -29,16 +29,16 @@ float safeDeltaTime(float v)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.FloatTemplate", FloatTemplate, IValueTemplate)
 
-FloatTemplate::FloatTemplate(float errorScale)
-:	m_errorScale(errorScale)
+FloatTemplate::FloatTemplate(float threshold)
+:	m_threshold(threshold)
 ,	m_min(std::numeric_limits< float >::max())
 ,	m_max(-std::numeric_limits< float >::max())
 ,	m_precision(Ftp32)
 {
 }
 
-FloatTemplate::FloatTemplate(float errorScale, float min, float max, FloatTemplatePrecision precision)
-:	m_errorScale(errorScale)
+FloatTemplate::FloatTemplate(float threshold, float min, float max, FloatTemplatePrecision precision)
+:	m_threshold(threshold)
 ,	m_min(min)
 ,	m_max(max)
 ,	m_precision(precision)
@@ -60,19 +60,19 @@ void FloatTemplate::pack(BitWriter& writer, const IValue* V) const
 		break;
 	case Ftp16:
 		{
-			uint32_t uf = uint32_t(clamp((f - m_min) / (m_max - m_min), 0.0f, 1.0f) * 65535.0f);
+			uint32_t uf = uint32_t(clamp((f - m_min) / (m_max - m_min), 0.0f, 1.0f) * 65534.0f + 0.5f);
 			writer.writeUnsigned(16, uf);
 		}
 		break;
 	case Ftp8:
 		{
-			uint32_t uf = uint32_t(clamp((f - m_min) / (m_max - m_min), 0.0f, 1.0f) * 255.0f);
+			uint32_t uf = uint32_t(clamp((f - m_min) / (m_max - m_min), 0.0f, 1.0f) * 254.0f + 0.5f);
 			writer.writeUnsigned(8, uf);
 		}
 		break;
 	case Ftp4:
 		{
-			uint32_t uf = uint32_t(clamp((f - m_min) / (m_max - m_min), 0.0f, 1.0f) * 15.0f);
+			uint32_t uf = uint32_t(clamp((f - m_min) / (m_max - m_min), 0.0f, 1.0f) * 14.0f + 0.5f);
 			writer.writeUnsigned(4, uf);
 		}
 		break;
@@ -91,19 +91,19 @@ Ref< const IValue > FloatTemplate::unpack(BitReader& reader) const
 	case Ftp16:
 		{
 			uint32_t uf = reader.readUnsigned(16);
-			float f = (uf / 65535.0f) * (m_max - m_min) + m_min;
+			float f = (uf / 65534.0f) * (m_max - m_min) + m_min;
 			return new FloatValue(f);
 		}
 	case Ftp8:
 		{
 			uint32_t uf = reader.readUnsigned(8);
-			float f = (uf / 255.0f) * (m_max - m_min) + m_min;
+			float f = (uf / 254.0f) * (m_max - m_min) + m_min;
 			return new FloatValue(f);
 		}
 	case Ftp4:
 		{
 			uint32_t uf = reader.readUnsigned(4);
-			float f = (uf / 15.0f) * (m_max - m_min) + m_min;
+			float f = (uf / 14.0f) * (m_max - m_min) + m_min;
 			return new FloatValue(f);
 		}
 	}
@@ -135,6 +135,13 @@ Ref< const IValue > FloatTemplate::extrapolate(const IValue* Vn2, float Tn2, con
 		Fo = clamp(Fo, m_min, m_max);
 
 	return new FloatValue(Fo);
+}
+
+bool FloatTemplate::threshold(const IValue* Vn1, const IValue* V) const
+{
+	float Fn1 = *checked_type_cast< const FloatValue* >(Vn1);
+	float F0 = *checked_type_cast< const FloatValue* >(V);
+	return traktor::abs(Fn1 - F0) > m_threshold;
 }
 
 	}
