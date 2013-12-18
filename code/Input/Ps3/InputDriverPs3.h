@@ -26,6 +26,8 @@ class T_DLLCLASS InputDriverPs3 : public IInputDriver
 public:
 	InputDriverPs3(int padCount = 4);
 
+	virtual bool create(const SystemWindow& systemWindow, uint32_t inputCategories);
+
 	virtual int getDeviceCount();
 
 	virtual Ref< IInputDevice > getDevice(int index);

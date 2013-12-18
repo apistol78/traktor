@@ -94,13 +94,13 @@ void InputDriverIPhoneImpl::touchesCancelled(NSSet* touches, UIEvent* event)
 	m_deviceMouse->touchesCancelled(touches, event);
 }
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDriverIPhone", InputDriverIPhone, IInputDriver)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InputDriverIPhone", 0, InputDriverIPhone, IInputDriver)
 
 InputDriverIPhone::InputDriverIPhone()
 {
 }
 
-bool InputDriverIPhone::create(const SystemWindow& systemWindow)
+bool InputDriverIPhone::create(const SystemWindow& systemWindow, uint32_t inputCategories)
 {
 	m_impl = new InputDriverIPhoneImpl();
 	if (!m_impl->create(systemWindow.view))

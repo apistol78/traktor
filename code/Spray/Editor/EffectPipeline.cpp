@@ -14,6 +14,45 @@ namespace traktor
 {
 	namespace spray
 	{
+		namespace
+		{
+
+void buildEffectDependencies(editor::IPipelineDepends* pipelineDepends, const EffectData* effectData)
+{
+	const RefArray< EffectLayerData >& layers = effectData->getLayers();
+	for (RefArray< EffectLayerData >::const_iterator i = layers.begin(); i != layers.end(); ++i)
+	{
+		const EmitterData* emitter = (*i)->getEmitter();
+		if (emitter)
+		{
+			pipelineDepends->addDependency(emitter->getShader(), editor::PdfBuild | editor::PdfResource);
+			pipelineDepends->addDependency(emitter->getMesh(), editor::PdfBuild | editor::PdfResource);
+
+			if (emitter->getEffect())
+				buildEffectDependencies(pipelineDepends, emitter->getEffect());
+
+			const PointSetSourceData* pointSetSource = dynamic_type_cast< const PointSetSourceData* >(emitter->getSource());
+			if (pointSetSource)
+				pipelineDepends->addDependency(pointSetSource->getPointSet(), editor::PdfBuild | editor::PdfResource);
+		}
+
+		const TrailData* trail = (*i)->getTrail();
+		if (trail)
+			pipelineDepends->addDependency(trail->getShader(), editor::PdfBuild | editor::PdfResource);
+
+		const SequenceData* sequence = (*i)->getSequence();
+		if (sequence)
+		{
+			for (std::vector< SequenceData::Key >::const_iterator i = sequence->getKeys().begin(); i != sequence->getKeys().end(); ++i)
+				pipelineDepends->addDependency(i->event);
+		}
+
+		pipelineDepends->addDependency((*i)->getTriggerEnable());
+		pipelineDepends->addDependency((*i)->getTriggerDisable());
+	}
+}
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectPipeline", 2, EffectPipeline, editor::IPipeline)
 
@@ -42,36 +81,7 @@ bool EffectPipeline::buildDependencies(
 ) const
 {
 	const EffectData* effectData = checked_type_cast< const EffectData* >(sourceAsset);
-
-	const RefArray< EffectLayerData >& layers = effectData->getLayers();
-	for (RefArray< EffectLayerData >::const_iterator i = layers.begin(); i != layers.end(); ++i)
-	{
-		const EmitterData* emitter = (*i)->getEmitter();
-		if (emitter)
-		{
-			pipelineDepends->addDependency(emitter->getShader(), editor::PdfBuild | editor::PdfResource);
-			pipelineDepends->addDependency(emitter->getMesh(), editor::PdfBuild | editor::PdfResource);
-
-			const PointSetSourceData* pointSetSource = dynamic_type_cast< const PointSetSourceData* >(emitter->getSource());
-			if (pointSetSource)
-				pipelineDepends->addDependency(pointSetSource->getPointSet(), editor::PdfBuild | editor::PdfResource);
-		}
-
-		const TrailData* trail = (*i)->getTrail();
-		if (trail)
-			pipelineDepends->addDependency(trail->getShader(), editor::PdfBuild | editor::PdfResource);
-
-		const SequenceData* sequence = (*i)->getSequence();
-		if (sequence)
-		{
-			for (std::vector< SequenceData::Key >::const_iterator i = sequence->getKeys().begin(); i != sequence->getKeys().end(); ++i)
-				pipelineDepends->addDependency(i->event);
-		}
-
-		pipelineDepends->addDependency((*i)->getTriggerEnable());
-		pipelineDepends->addDependency((*i)->getTriggerDisable());
-	}
-
+	buildEffectDependencies(pipelineDepends, effectData);
 	return true;
 }
 

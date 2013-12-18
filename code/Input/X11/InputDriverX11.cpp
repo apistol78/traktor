@@ -9,7 +9,7 @@ namespace traktor
     namespace input
     {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDriverX11", InputDriverX11, IInputDriver)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InputDriverX11", 0, InputDriverX11, IInputDriver)
 
 InputDriverX11::InputDriverX11()
 :	m_display(0)

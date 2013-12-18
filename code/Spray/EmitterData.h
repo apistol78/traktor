@@ -36,9 +36,17 @@ class Shader;
 
 	}
 
+	namespace world
+	{
+
+class IEntityBuilder;
+
+	}
+
 	namespace spray
 	{
 
+class EffectData;
 class Emitter;
 class ModifierData;
 class SourceData;
@@ -53,7 +61,7 @@ class T_DLLCLASS EmitterData : public ISerializable
 public:
 	EmitterData();
 
-	Ref< Emitter > createEmitter(resource::IResourceManager* resourceManager) const;
+	Ref< Emitter > createEmitter(resource::IResourceManager* resourceManager, const world::IEntityBuilder* entityBuilder) const;
 
 	virtual void serialize(ISerializer& s);
 
@@ -63,11 +71,14 @@ public:
 
 	const resource::Id< mesh::InstanceMesh >& getMesh() const { return m_mesh; }
 
+	const EffectData* getEffect() const { return m_effect; }
+
 private:
 	Ref< SourceData > m_source;
 	RefArray< ModifierData > m_modifiers;
 	resource::Id< render::Shader > m_shader;
 	resource::Id< mesh::InstanceMesh > m_mesh;
+	Ref< EffectData > m_effect;
 	float m_middleAge;
 	float m_cullNearDistance;
 	float m_cullMeshDistance;

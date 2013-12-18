@@ -3,8 +3,9 @@
 
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
-#include "Input/IInputDevice.h"
+#include "Core/Containers/CircularVector.h"
 #include "Core/Misc/ComRef.h"
+#include "Input/IInputDevice.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -60,10 +61,14 @@ public:
 
 private:
 	HWND m_hWnd;
+	WNDPROC m_pWndProc;
 	ComRef< IDirectInputDevice8 > m_device;
 	std::wstring m_name;
 	uint8_t m_state[256];
+	CircularVector< KeyEvent, 16 > m_keyEvents;
 	bool m_connected;
+
+	static LRESULT WINAPI wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 };
 
 	}

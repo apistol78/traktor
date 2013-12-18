@@ -32,6 +32,7 @@ class Shader;
 	namespace spray
 	{
 
+class Effect;
 class EmitterInstance;
 class Modifier;
 class Source;
@@ -49,6 +50,7 @@ public:
 		const RefArray< const Modifier >& modifiers,
 		const resource::Proxy< render::Shader >& shader,
 		const resource::Proxy< mesh::InstanceMesh >& mesh,
+		const Effect* effect,
 		float middleAge,
 		float cullNearDistance,
 		float cullMeshDistance,
@@ -68,6 +70,8 @@ public:
 	const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
 
 	const resource::Proxy< mesh::InstanceMesh >& getMesh() const { return m_mesh; }
+
+	const Effect* getEffect() const { return m_effect; }
 
 	float getMiddleAge() const { return m_middleAge; }
 
@@ -90,6 +94,7 @@ private:
 	RefArray< const Modifier > m_modifiers;
 	resource::Proxy< render::Shader > m_shader;
 	resource::Proxy< mesh::InstanceMesh > m_mesh;
+	Ref< const Effect > m_effect;
 	float m_middleAge;
 	float m_cullNearDistance;
 	float m_cullMeshDistance;

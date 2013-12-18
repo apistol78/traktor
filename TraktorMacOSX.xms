@@ -14901,10 +14901,6 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[82]"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
 								<project ref="/object/projects/item[14]/dependencies/item[5]/project/dependencies/item[4]/project"/>
 							</item>
 							<item type="ProjectDependency" version="1">
@@ -15810,16 +15806,16 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[84]/dependencies/item[8]/project/dependencies/item[23]/project"/>
+					<project ref="/object/projects/item[84]/dependencies/item[8]/project/dependencies/item[22]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[84]/dependencies/item[8]/project/dependencies/item[23]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[84]/dependencies/item[8]/project/dependencies/item[22]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[84]/dependencies/item[8]/project/dependencies/item[23]/project/dependencies/item[1]/project"/>
-		<item ref="/object/projects/item[84]/dependencies/item[8]/project/dependencies/item[23]/project"/>
+		<item ref="/object/projects/item[84]/dependencies/item[8]/project/dependencies/item[22]/project/dependencies/item[1]/project"/>
+		<item ref="/object/projects/item[84]/dependencies/item[8]/project/dependencies/item[22]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Extern.LuaJIT-2.0.0</name>

@@ -8319,10 +8319,6 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[23]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
 					<project type="Project" version="1">
 						<enable>true</enable>
 						<name>Traktor.Online</name>
@@ -8608,7 +8604,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[63]/dependencies/item[22]/project"/>
+					<project ref="/object/projects/item[63]/dependencies/item[21]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -8739,7 +8735,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[63]/dependencies/item[22]/project"/>
+		<item ref="/object/projects/item[63]/dependencies/item[21]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Online.Local</name>
@@ -8827,7 +8823,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[63]/dependencies/item[22]/project"/>
+					<project ref="/object/projects/item[63]/dependencies/item[21]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>

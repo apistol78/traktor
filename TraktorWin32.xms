@@ -19615,18 +19615,6 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[36]"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[37]"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[38]"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
 								<project type="Project" version="1">
 									<enable>true</enable>
 									<name>Traktor.Ai</name>
@@ -20960,11 +20948,11 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[100]/dependencies/item[8]/project/dependencies/item[25]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[100]/dependencies/item[8]/project/dependencies/item[22]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[100]/dependencies/item[8]/project/dependencies/item[25]/project"/>
+					<project ref="/object/projects/item[100]/dependencies/item[8]/project/dependencies/item[22]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -20988,8 +20976,8 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[100]/dependencies/item[8]/project/dependencies/item[25]/project/dependencies/item[1]/project"/>
-		<item ref="/object/projects/item[100]/dependencies/item[8]/project/dependencies/item[25]/project"/>
+		<item ref="/object/projects/item[100]/dependencies/item[8]/project/dependencies/item[22]/project/dependencies/item[1]/project"/>
+		<item ref="/object/projects/item[100]/dependencies/item[8]/project/dependencies/item[22]/project"/>
 		<item type="Project" version="1">
 			<enable>false</enable>
 			<name>Traktor.Net.RelayServer.App</name>

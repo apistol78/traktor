@@ -192,7 +192,7 @@ HWND getMyProcessWindow()
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDriverDi8", InputDriverDi8, IInputDriver)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InputDriverDi8", 0, InputDriverDi8, IInputDriver)
 
 InputDriverDi8::InputDriverDi8()
 :	m_directInput(0)
@@ -204,6 +204,11 @@ InputDriverDi8::InputDriverDi8()
 InputDriverDi8::~InputDriverDi8()
 {
 	destroy();
+}
+
+void InputDriverDi8::destroy()
+{
+	m_directInput.release();
 }
 
 bool InputDriverDi8::create(const SystemWindow& systemWindow, uint32_t inputCategories)
@@ -236,11 +241,6 @@ bool InputDriverDi8::create(const SystemWindow& systemWindow, uint32_t inputCate
 	}
 
 	return true;
-}
-
-void InputDriverDi8::destroy()
-{
-	m_directInput.release();
 }
 
 int InputDriverDi8::getDeviceCount()
@@ -306,7 +306,7 @@ bool InputDriverDi8::addDevice(const DIDEVICEINSTANCE* deviceInstance)
 	if (FAILED(hr)) 
 		return false;
 
-	hr = device->SetCooperativeLevel(m_hWnd, DISCL_FOREGROUND | /*DISCL_EXCLUSIVE | DISCL_NOWINKEY*/ DISCL_NONEXCLUSIVE);
+	hr = device->SetCooperativeLevel(m_hWnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
 	if (FAILED(hr)) 
 		return false;
 

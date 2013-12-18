@@ -32,9 +32,9 @@ public:
 
 	virtual ~InputDriverDi8();
 
-	bool create(const SystemWindow& systemWindow, uint32_t inputCategories);
-
 	void destroy();
+
+	virtual bool create(const SystemWindow& systemWindow, uint32_t inputCategories);
 
 	virtual int getDeviceCount();
 

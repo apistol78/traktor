@@ -2,6 +2,7 @@
 #define traktor_spray_EmitterInstance_H
 
 #include "Core/Object.h"
+#include "Core/RefArray.h"
 #include "Core/Math/Transform.h"
 #include "Core/Math/Plane.h"
 #include "Core/Math/Aabb3.h"
@@ -27,9 +28,11 @@ class Job;
 	namespace spray
 	{
 
+class EffectInstance;
 class Emitter;
 class MeshRenderer;
 class PointRenderer;
+class TrailRenderer;
 
 /*! \brief Emitter instance.
  * \ingroup Spray
@@ -49,7 +52,9 @@ public:
 		render::handle_t technique,
 		PointRenderer* pointRenderer,
 		MeshRenderer* meshRenderer,
+		TrailRenderer* trailRenderer,
 		const Transform& transform,
+		const Vector4& cameraPosition,
 		const Plane& cameraPlane
 	);
 
@@ -78,6 +83,7 @@ private:
 	Plane m_sortPlane;
 	PointVector m_points;
 	PointVector m_renderPoints;
+	RefArray< EffectInstance > m_effectInstances;
 	float m_totalTime;
 	float m_emitFraction;
 	bool m_warm;
