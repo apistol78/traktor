@@ -76,6 +76,10 @@ EffectPreviewControl::EffectPreviewControl(editor::IEditor* editor)
 ,	m_velocityVisible(false)
 ,	m_moveEmitter(false)
 {
+	// Allocate "global" parameter context; as it's reset for each render
+	// call this can be fairly small.
+	m_globalContext = new render::RenderContext(4096);
+
 	m_context.deltaTime = 0.0f;
 	m_context.random = RandomGeometry(c_initialRandomSeed);
 	m_context.eventManager = 0;
@@ -494,8 +498,17 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 		m_meshRenderer->flush(m_renderContext, defaultPass);
 		m_trailRenderer->flush(m_renderContext, defaultPass);
 
-		m_renderContext->render(m_renderView, render::RpAll, 0);
+		render::ProgramParameters visualProgramParams;
+		visualProgramParams.beginParameters(m_globalContext);
+		visualProgramParams.setFloatParameter(L"Time", time);
+		visualProgramParams.setMatrixParameter(L"View", viewTransform);
+		visualProgramParams.setMatrixParameter(L"Projection", projectionTransform);
+		visualProgramParams.endParameters(m_globalContext);
+
+		m_renderContext->render(m_renderView, render::RpAll, &visualProgramParams);
 		m_renderContext->flush();
+
+		m_globalContext->flush();
 
 		m_lastDeltaTime = deltaTime;
 	}

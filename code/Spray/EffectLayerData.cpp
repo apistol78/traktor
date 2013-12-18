@@ -32,7 +32,7 @@ Ref< EffectLayer > EffectLayerData::createEffectLayer(resource::IResourceManager
 
 	if (m_emitter)
 	{
-		emitter = m_emitter->createEmitter(resourceManager);
+		emitter = m_emitter->createEmitter(resourceManager, entityBuilder);
 		if (!emitter)
 			return 0;
 	}

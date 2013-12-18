@@ -16,6 +16,7 @@ Emitter::Emitter(
 	const RefArray< const Modifier >& modifiers,
 	const resource::Proxy< render::Shader >& shader,
 	const resource::Proxy< mesh::InstanceMesh >& mesh,
+	const Effect* effect,
 	float middleAge,
 	float cullNearDistance,
 	float cullMeshDistance,
@@ -29,6 +30,7 @@ Emitter::Emitter(
 ,	m_modifiers(modifiers)
 ,	m_shader(shader)
 ,	m_mesh(mesh)
+,	m_effect(effect)
 ,	m_middleAge(middleAge)
 ,	m_cullNearDistance(cullNearDistance)
 ,	m_cullMeshDistance(cullMeshDistance)

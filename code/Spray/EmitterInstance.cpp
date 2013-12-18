@@ -4,6 +4,8 @@
 #include "Core/Thread/JobManager.h"
 #include "Mesh/Instance/InstanceMesh.h"
 #include "Render/Shader.h"
+#include "Spray/Effect.h"
+#include "Spray/EffectInstance.h"
 #include "Spray/Emitter.h"
 #include "Spray/EmitterInstance.h"
 #include "Spray/Types.h"
@@ -52,7 +54,7 @@ int pointPredicate(const void* lh, const void* rh, void* context)
 	const Plane& cameraPlane = *static_cast< const Plane* >(context);
 	const Point& plh = *static_cast< const Point* >(lh);
 	const Point& prh = *static_cast< const Point* >(rh);
-	return (cameraPlane.distance(plh.position) > cameraPlane.distance(prh.position)) ? 1 : -1;
+	return (cameraPlane.distance(plh.position) < cameraPlane.distance(prh.position)) ? 1 : -1;
 }
 
 		}
@@ -241,7 +243,9 @@ void EmitterInstance::render(
 	render::handle_t technique,
 	PointRenderer* pointRenderer,
 	MeshRenderer* meshRenderer,
+	TrailRenderer* trailRenderer,
 	const Transform& transform,
+	const Vector4& cameraPosition,
 	const Plane& cameraPlane
 )
 {
@@ -287,6 +291,30 @@ void EmitterInstance::render(
 			m_emitter->meshOrientationFromVelocity(),
 			m_renderPoints
 		);
+	}
+
+	if (
+		m_emitter->getEffect()
+	)
+	{
+		T_ASSERT (m_renderPoints.size() == m_effectInstances.size());
+		for (uint32_t i = 0; i < m_renderPoints.size(); ++i)
+		{
+			if (!m_effectInstances[i])
+				continue;
+
+			const Point& point = m_renderPoints[i];
+
+			m_effectInstances[i]->render(
+				technique,
+				pointRenderer,
+				meshRenderer,
+				trailRenderer,
+				Transform(point.position),
+				cameraPosition,
+				cameraPlane
+			);
+		}
 	}
 }
 
@@ -350,9 +378,39 @@ void EmitterInstance::updateTask(float deltaTime)
 		qsort_s(m_renderPoints.ptr(), m_renderPoints.size(), sizeof(Point), pointPredicate, &m_sortPlane);
 #elif defined(__LINUX__)
 		qsort_r(m_renderPoints.ptr(), m_renderPoints.size(), sizeof(Point), pointPredicate, &m_sortPlane);
-#elif !defined(__EMSCRIPTEN__)
+#elif !defined(__EMSCRIPTEN__) && !defined(__PNACL__)
 		qsort_r(m_renderPoints.ptr(), m_renderPoints.size(), sizeof(Point), &m_sortPlane, &pointPredicate);
 #endif
+	}
+
+	if (m_emitter->getEffect())
+	{
+		// Create new effect instances for each new particle point.
+		uint32_t size = m_effectInstances.size();
+		m_effectInstances.resize(m_renderPoints.size());
+		for (uint32_t i = size; i < m_renderPoints.size(); ++i)
+			m_effectInstances[i] = m_emitter->getEffect()->createInstance();
+
+		// Update child effect instances.
+		Context childContext;
+		childContext.deltaTime = deltaTime;
+		childContext.owner = 0;
+		childContext.eventManager = 0;
+		childContext.soundPlayer = 0;
+
+		for (uint32_t i = 0; i < m_renderPoints.size(); ++i)
+		{
+			if (!m_effectInstances[i])
+				continue;
+
+			const Point& point = m_renderPoints[i];
+
+			m_effectInstances[i]->update(
+				childContext,
+				Transform(point.position),
+				true
+			);
+		}
 	}
 
 	m_count++;

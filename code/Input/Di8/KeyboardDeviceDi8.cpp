@@ -13,14 +13,23 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.input.KeyboardDeviceDi8", KeyboardDeviceDi8, II
 
 KeyboardDeviceDi8::KeyboardDeviceDi8(HWND hWnd, IDirectInputDevice8* device, const DIDEVICEINSTANCE* deviceInstance)
 :	m_hWnd(hWnd)
+,	m_pWndProc(0)
 ,	m_device(device)
 ,	m_connected(false)
 {
+	// Subclass window to get access to window events.
+	m_pWndProc = (WNDPROC)GetWindowLongPtr(m_hWnd, GWLP_WNDPROC);
+	SetWindowLongPtr(m_hWnd, GWLP_WNDPROC, (LONG)&KeyboardDeviceDi8::wndProc);
+	SetWindowLongPtr(m_hWnd, GWLP_USERDATA, (LONG)this);
+
+	// Setup data format.
 	m_device->SetDataFormat(&c_dfDIKeyboard);
 	m_name = tstows(deviceInstance->tszInstanceName);
 
+	// Initially reset state.
 	resetState();
 
+	// Try to acquire device.
 	HRESULT hr = device->Acquire();
 	m_connected = SUCCEEDED(hr);
 }
@@ -150,12 +159,19 @@ bool KeyboardDeviceDi8::getDefaultControl(InputDefaultControlType controlType, b
 
 bool KeyboardDeviceDi8::getKeyEvent(KeyEvent& outEvent)
 {
-	return false;
+	if (m_keyEvents.empty())
+		return false;
+
+	outEvent = m_keyEvents.front();
+	m_keyEvents.pop_front();
+
+	return true;
 }
 
 void KeyboardDeviceDi8::resetState()
 {
 	std::memset(&m_state, 0, sizeof(m_state));
+	m_keyEvents.clear();
 }
 
 void KeyboardDeviceDi8::readState()
@@ -197,14 +213,55 @@ void KeyboardDeviceDi8::setRumble(const InputRumble& rumble)
 
 void KeyboardDeviceDi8::setExclusive(bool exclusive)
 {
-	// Ensure device is unaquired, cannot change cooperative level if acquired.
+	// Ensure device is un-aquired, cannot change cooperative level if acquired.
 	m_device->Unacquire();
 	m_connected = false;
 
 	// Change cooperative level.
-	HRESULT hr = m_device->SetCooperativeLevel(m_hWnd, exclusive ? (DISCL_FOREGROUND | DISCL_EXCLUSIVE) : (DISCL_FOREGROUND | DISCL_NONEXCLUSIVE));
+	HRESULT hr = m_device->SetCooperativeLevel(m_hWnd, exclusive ? (DISCL_FOREGROUND | DISCL_EXCLUSIVE | DISCL_NOWINKEY) : (DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY));
 	if (FAILED(hr))
 		log::warning << L"Unable to set cooperative level on keyboard device" << Endl;
+}
+
+LRESULT WINAPI KeyboardDeviceDi8::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	KeyboardDeviceDi8* this_ = reinterpret_cast< KeyboardDeviceDi8* >(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+	T_ASSERT (this_);
+
+	if (uMsg == WM_CHAR)
+	{
+		if (wParam != '\r')
+		{
+			KeyEvent ke;
+			ke.type = KtCharacter;
+			ke.character = (wchar_t)wParam;
+			this_->m_keyEvents.push_back(ke);
+		}
+	}
+	else if (uMsg == WM_KEYDOWN)
+	{
+		uint32_t keyCode = translateFromVk(uint32_t(wParam));
+		if (keyCode != 0)
+		{
+			KeyEvent ke;
+			ke.type = KtDown;
+			ke.keyCode = keyCode;
+			this_->m_keyEvents.push_back(ke);
+		}
+	}
+	else if (uMsg == WM_KEYUP)
+	{
+		uint32_t keyCode = translateFromVk(uint32_t(wParam));
+		if (keyCode != 0)
+		{
+			KeyEvent ke;
+			ke.type = KtUp;
+			ke.keyCode = keyCode;
+			this_->m_keyEvents.push_back(ke);
+		}
+	}
+
+	return CallWindowProc(this_->m_pWndProc, hWnd, uMsg, wParam, lParam);
 }
 
 	}

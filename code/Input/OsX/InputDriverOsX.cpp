@@ -47,7 +47,7 @@ InputDriverOsX::InputDriverOsX()
 {
 }
 
-bool InputDriverOsX::create(uint32_t categories)
+bool InputDriverOsX::create(const SystemWindow& systemWindow, uint32_t inputCategories)
 {
 	IOHIDManagerRef managerRef = IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone);
 	if (!managerRef)
@@ -63,7 +63,7 @@ bool InputDriverOsX::create(uint32_t categories)
 	);
 
 	// Keyboard matching dictionary.
-	if (categories & CtKeyboard)
+	if (inputCategories & CtKeyboard)
 	{
 		CFDictionaryRef matchingCFDictRef = createMatchingDictionary(
 			kHIDPage_GenericDesktop,
@@ -79,7 +79,7 @@ bool InputDriverOsX::create(uint32_t categories)
 	}
 
 	// Mouse matching dictionary.
-	if (categories & CtMouse)
+	if (inputCategories & CtMouse)
 	{
 		CFDictionaryRef matchingCFDictRef = createMatchingDictionary(
 			kHIDPage_GenericDesktop,
@@ -95,7 +95,7 @@ bool InputDriverOsX::create(uint32_t categories)
 	}
 	
 	// Gamepad matching dictionary.
-	if (categories & CtJoystick)
+	if (inputCategories & CtJoystick)
 	{
 		CFDictionaryRef matchingCFDictRef = createMatchingDictionary(
 			kHIDPage_GenericDesktop,
@@ -111,7 +111,7 @@ bool InputDriverOsX::create(uint32_t categories)
 	}
 
 	// Joystick matching dictionary.
-	if (categories & CtJoystick)
+	if (inputCategories & CtJoystick)
 	{
 		CFDictionaryRef matchingCFDictRef = createMatchingDictionary(
 			kHIDPage_GenericDesktop,
@@ -132,10 +132,6 @@ bool InputDriverOsX::create(uint32_t categories)
 	
 	log::info << L"HID manager initialized successful" << Endl;
 	return true;
-}
-
-void InputDriverOsX::destroy()
-{
 }
 
 int InputDriverOsX::getDeviceCount()

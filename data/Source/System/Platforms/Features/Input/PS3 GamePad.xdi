@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature">
+<object type="traktor.amalgam.Feature" version="2">
 	<description>PlayStation 3 GamePad</description>
 	<platforms>
 		<ios>false</ios>
@@ -10,6 +10,8 @@
 		<win32>false</win32>
 		<win64>false</win64>
 		<xbox360>false</xbox360>
+		<emscripten>false</emscripten>
+		<android>false</android>
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">
 		<value>
@@ -44,6 +46,14 @@
 					<value>
 						<item>Traktor.Input</item>
 						<item>Traktor.Input.Ps3</item>
+					</value>
+				</second>
+			</item>
+			<item>
+				<first>Input.DriverTypes</first>
+				<second type="traktor.PropertyStringSet">
+					<value>
+						<item>traktor.input.InputDriverPs3</item>
 					</value>
 				</second>
 			</item>

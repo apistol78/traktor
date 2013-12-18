@@ -104,6 +104,7 @@ private:
 	Ref< ui::EventHandler > m_idleHandler;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderView > m_renderView;
+	Ref< render::RenderContext > m_globalContext;
 	resource::Proxy< render::ISimpleTexture > m_background;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< render::RenderContext > m_renderContext;

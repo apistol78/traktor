@@ -114,7 +114,7 @@ void EffectLayerInstance::render(
 ) const
 {
 	if (m_emitterInstance && time >= m_start)
-		m_emitterInstance->render(technique, pointRenderer, meshRenderer, transform, cameraPlane);
+		m_emitterInstance->render(technique, pointRenderer, meshRenderer, trailRenderer, transform, cameraPosition, cameraPlane);
 	if (m_trailInstance && time >= m_start)
 		m_trailInstance->render(technique, trailRenderer, transform, cameraPosition, cameraPlane);
 }

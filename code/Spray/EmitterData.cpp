@@ -5,6 +5,7 @@
 #include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
+#include "Spray/EffectData.h"
 #include "Spray/Emitter.h"
 #include "Spray/EmitterData.h"
 #include "Spray/SourceData.h"
@@ -15,7 +16,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EmitterData", 5, EmitterData, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EmitterData", 6, EmitterData, ISerializable)
 
 EmitterData::EmitterData()
 :	m_middleAge(0.2f)
@@ -29,7 +30,7 @@ EmitterData::EmitterData()
 {
 }
 
-Ref< Emitter > EmitterData::createEmitter(resource::IResourceManager* resourceManager) const
+Ref< Emitter > EmitterData::createEmitter(resource::IResourceManager* resourceManager, const world::IEntityBuilder* entityBuilder) const
 {
 	if (!m_source)
 		return 0;
@@ -39,7 +40,8 @@ Ref< Emitter > EmitterData::createEmitter(resource::IResourceManager* resourceMa
 
 	if (
 		!resourceManager->bind(m_shader, shader) &&
-		!resourceManager->bind(m_mesh, mesh)
+		!resourceManager->bind(m_mesh, mesh) &&
+		!m_effect
 	)
 		return 0;
 
@@ -55,11 +57,16 @@ Ref< Emitter > EmitterData::createEmitter(resource::IResourceManager* resourceMa
 			modifiers.push_back(modifier);
 	}
 
+	Ref< const Effect > effect;
+	if (m_effect)
+		effect = m_effect->createEffect(resourceManager, entityBuilder);
+
 	return new Emitter(
 		source,
 		modifiers,
 		shader,
 		mesh,
+		effect,
 		m_middleAge,
 		m_cullNearDistance,
 		m_cullMeshDistance,
@@ -79,6 +86,9 @@ void EmitterData::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 3)
 		s >> resource::Member< mesh::InstanceMesh >(L"mesh", m_mesh);
+
+	if (s.getVersion() >= 6)
+		s >> MemberRef< EffectData >(L"effect", m_effect);
 
 	s >> Member< float >(L"middleAge", m_middleAge);
 	s >> Member< float >(L"cullNearDistance", m_cullNearDistance);

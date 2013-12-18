@@ -26,11 +26,9 @@ class T_DLLCLASS InputDriverOsX : public IInputDriver
 
 public:
 	InputDriverOsX();
-	
-	bool create(uint32_t categories);
-	
-	void destroy();
 
+	virtual bool create(const SystemWindow& systemWindow, uint32_t inputCategories);
+	
 	virtual int getDeviceCount();
 
 	virtual Ref< IInputDevice > getDevice(int index);

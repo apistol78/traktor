@@ -49,6 +49,12 @@
 					</value>
 				</second>
 			</item>
+			<item>
+				<first>Input.DriverTypes</first>
+				<second type="traktor.PropertyStringSet">
+					<value/>
+				</second>
+			</item>
 		</value>
 	</runtimeProperties>
 </object>

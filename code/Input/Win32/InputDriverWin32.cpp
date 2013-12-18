@@ -9,7 +9,7 @@ namespace traktor
 	namespace input
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDriverWin32", InputDriverWin32, IInputDriver)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InputDriverWin32", 0, InputDriverWin32, IInputDriver)
 
 InputDriverWin32::InputDriverWin32()
 {
