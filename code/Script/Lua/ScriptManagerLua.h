@@ -96,6 +96,8 @@ private:
 
 	Any toAny(int32_t index);
 
+	void toAny(int32_t base, int32_t count, Any* outAnys);
+
 	void collectGarbageFull();
 
 	void collectGarbagePartial();

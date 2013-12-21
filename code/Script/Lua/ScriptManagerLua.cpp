@@ -617,6 +617,55 @@ Any ScriptManagerLua::toAny(int32_t index)
 	return Any();
 }
 
+void ScriptManagerLua::toAny(int32_t base, int32_t count, Any* outAnys)
+{
+	CHECK_LUA_STACK(m_luaState, 0);
+
+	for (int32_t i = 0; i < count; ++i)
+	{
+		int32_t index = base + i;
+
+		if (lua_isnumber(m_luaState, index))
+			outAnys[i] = Any::fromFloat(float(lua_tonumber(m_luaState, index)));
+		else if (lua_isboolean(m_luaState, index))
+			outAnys[i] = Any::fromBoolean(bool(lua_toboolean(m_luaState, index) != 0));
+		else if (lua_isstring(m_luaState, index))
+			outAnys[i] = Any::fromString(lua_tostring(m_luaState, index));
+		else if (lua_isuserdata(m_luaState, index))
+		{
+			Object* object = *reinterpret_cast< Object** >(lua_touserdata(m_luaState, index));
+			if (object)
+				outAnys[i] = Any::fromObject(object);
+		}
+		else if (lua_isfunction(m_luaState, index))
+		{
+			// Box LUA function into C++ container.
+			lua_pushvalue(m_luaState, index);
+			outAnys[i] = Any::fromObject(new ScriptDelegateLua(this, m_lockContext, m_luaState));
+		}
+		else if (lua_istable(m_luaState, index))
+		{
+			// Unbox wrapped native type.
+			lua_rawgeti(m_luaState, index, c_tableKey_class);
+			if (lua_isuserdata(m_luaState, -1))
+			{
+				const IScriptClass* scriptClass = reinterpret_cast< const IScriptClass* >(lua_touserdata(m_luaState, -1));
+				lua_pop(m_luaState, 1);
+				if (scriptClass)
+				{
+					outAnys[i] = Any::fromTypeInfo(&scriptClass->getExportType());
+					continue;
+				}
+			}
+			lua_pop(m_luaState, 1);
+
+			// Box LUA table into C++ container.
+			lua_pushvalue(m_luaState, index);
+			outAnys[i] = Any::fromObject(new TableContainerLua(m_luaState));
+		}
+	}
+}
+
 void ScriptManagerLua::collectGarbageFull()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
@@ -708,8 +757,6 @@ int ScriptManagerLua::classIndexLookup(lua_State* luaState)
 
 int ScriptManagerLua::classCallConstructor(lua_State* luaState)
 {
-	Any argv[8];
-
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
 	T_ASSERT (manager);
 
@@ -720,8 +767,8 @@ int ScriptManagerLua::classCallConstructor(lua_State* luaState)
 	if (top < 1)
 		return 0;
 
-	for (int32_t i = 2; i <= top; ++i)
-		argv[i - 2] = manager->toAny(i);
+	Any argv[8];
+	manager->toAny(2, top - 1, argv);
 
 	IScriptClass::InvokeParam param;
 	param.object = 0;
@@ -761,8 +808,7 @@ int ScriptManagerLua::classCallMethod(lua_State* luaState)
 	}
 
 	Any argv[10];
-	for (int32_t i = 2; i <= top; ++i)
-		argv[i - 2] = manager->toAny(i);
+	manager->toAny(2, top - 1, argv);
 
 	IScriptClass::InvokeParam param;
 	param.object = object;
@@ -789,8 +835,7 @@ int ScriptManagerLua::classCallStaticMethod(lua_State* luaState)
 		return 0;
 
 	Any argv[10];
-	for (int32_t i = 1; i <= top; ++i)
-		argv[i - 1] = manager->toAny(i);
+	manager->toAny(1, top, argv);
 
 	Any returnValue = scriptClass->invokeStatic(methodId, top, argv);
 
@@ -800,8 +845,6 @@ int ScriptManagerLua::classCallStaticMethod(lua_State* luaState)
 
 int ScriptManagerLua::classCallUnknownMethod(lua_State* luaState)
 {
-	Any argv[8];
-
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(2)));
 	T_ASSERT (manager);
 
@@ -819,8 +862,8 @@ int ScriptManagerLua::classCallUnknownMethod(lua_State* luaState)
 	if (!object)
 		return 0;
 
-	for (int32_t i = 2; i <= top; ++i)
-		argv[i - 2] = manager->toAny(i);
+	Any argv[8];
+	manager->toAny(2, top - 1, argv);
 
 	IScriptClass::InvokeParam param;
 	param.object = object;
