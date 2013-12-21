@@ -436,12 +436,20 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 		// Define target rule depending on format.
 		if (configuration->getTargetFormat() == Configuration::TfStaticLibrary)
 		{
+			std::wstring profile = L"$(AR_FLAGS";
+			if (configuration->getTargetProfile() == Configuration::TpDebug)
+				profile += L"_DEBUG";
+			else if (configuration->getTargetProfile() == Configuration::TpRelease)
+				profile += L"_RELEASE";
+			profile += L"_STATIC";
+			profile += L")";
+
 			if (m_platform == MpWin32)
-				s << L"\t$(AR) $(" << configuration->getName() << L"_OBJECTS) /OUT:" << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << L".lib" << Endl;
+				s << L"\t$(AR) " << profile << L" $(" << configuration->getName() << L"_OBJECTS) /OUT:" << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << L".lib" << Endl;
 			else if (m_platform == MpMacOSX)
-				s << L"\t$(AR) -static -o " << toLower(configuration->getName()) << L"/lib" << project->getName() << productSuffix << L".a $(" << configuration->getName() << L"_OBJECTS)" << Endl;
+				s << L"\t$(AR) " << profile << L" -static -o " << toLower(configuration->getName()) << L"/lib" << project->getName() << productSuffix << L".a $(" << configuration->getName() << L"_OBJECTS)" << Endl;
 			else if (m_platform == MpLinux)
-				s << L"\t$(AR) rcs " << toLower(configuration->getName()) << L"/lib" << project->getName() << productSuffix << L".a $(" << configuration->getName() << L"_OBJECTS)" << Endl;
+				s << L"\t$(AR) " << profile << L" " << toLower(configuration->getName()) << L"/lib" << project->getName() << productSuffix << L".a $(" << configuration->getName() << L"_OBJECTS)" << Endl;
 		}
 		else	// Shared or executable, perform actual linkage.
 		{

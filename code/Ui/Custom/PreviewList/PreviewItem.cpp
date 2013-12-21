@@ -14,11 +14,27 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.PreviewItem", PreviewItem, AutoWidgetCell)
 
+PreviewItem::PreviewItem()
+:	m_selected(false)
+{
+	m_bitmapFrame = ui::Bitmap::load(c_ResourcePreviewFrame, sizeof(c_ResourcePreviewFrame), L"png");
+}
+
 PreviewItem::PreviewItem(const std::wstring& text)
 :	m_text(text)
 ,	m_selected(false)
 {
 	m_bitmapFrame = ui::Bitmap::load(c_ResourcePreviewFrame, sizeof(c_ResourcePreviewFrame), L"png");
+}
+
+void PreviewItem::setText(const std::wstring& text)
+{
+	m_text = text;
+}
+
+const std::wstring& PreviewItem::getText() const
+{
+	return m_text;
 }
 
 void PreviewItem::setImage(ui::Bitmap* image)
