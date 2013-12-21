@@ -76,7 +76,7 @@ bool KeyboardDeviceX11::isControlAnalogue(int32_t control) const
 
 bool KeyboardDeviceX11::isControlStable(int32_t control) const
 {
-	return false;
+	return true;
 }
 
 float KeyboardDeviceX11::getControlValue(int32_t control)
@@ -149,8 +149,6 @@ void KeyboardDeviceX11::setExclusive(bool exclusive)
 		XISetMask(mask, XI_KeyPress);
 		XISetMask(mask, XI_KeyRelease);
 
-		XAutoRepeatOff(m_display);
-
 #if !defined(_DEBUG)
 		XIGrabDevice(
 			m_display,
@@ -170,7 +168,6 @@ void KeyboardDeviceX11::setExclusive(bool exclusive)
 #if !defined(_DEBUG)
 		XIUngrabDevice(m_display, m_deviceId, CurrentTime);
 #endif
-		XAutoRepeatOn(m_display);
 	}
 }
 
@@ -195,12 +192,34 @@ void KeyboardDeviceX11::consumeEvent(XEvent& evt)
 				&ksym
 			);
 
-            for (uint32_t i = 0; i < sizeof_array(c_x11ControlKeys); ++i)
-            {
-				if (c_x11ControlKeys[i] == ksym)
+			if ((event->flags & XIKeyRepeat) == 0)
+			{
+				for (uint32_t i = 0; i < sizeof_array(c_x11ControlKeys); ++i)
+	            {
+					if (c_x11ControlKeys[i] == ksym)
+					{
+						// Set state down.
+						m_keyStates[i] = 0xff;
+
+						// Push key initially down event.
+						KeyEvent ke;
+						ke.type = KtDown;
+						ke.character = i;
+						m_keyEvents.push_back(ke);
+						break;
+					}
+				}
+			}
+
+			char* chrs = XKeysymToString(ksym);
+			if (chrs)
+			{
+				for (char* i = chrs; *i; ++i)
 				{
-					m_keyStates[i] = 0xff;
-					break;
+					KeyEvent ke;
+					ke.type = KtCharacter;
+					ke.character = (wchar_t)*i;
+					m_keyEvents.push_back(ke);
 				}
 			}
 		}
@@ -223,7 +242,14 @@ void KeyboardDeviceX11::consumeEvent(XEvent& evt)
             {
 				if (c_x11ControlKeys[i] == ksym)
 				{
+					// Set state raised.
 					m_keyStates[i] = 0x00;
+
+					// Push key up event.
+					KeyEvent ke;
+					ke.type = KtUp;
+					ke.character = i;
+					m_keyEvents.push_back(ke);
 					break;
 				}
 			}
