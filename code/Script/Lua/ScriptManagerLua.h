@@ -25,6 +25,7 @@ namespace traktor
 class Any;
 class ScriptContextLua;
 class ScriptDebuggerLua;
+class ScriptProfilerLua;
 
 /*! \brief LUA script manager.
  * \ingroup LUA Script
@@ -47,6 +48,8 @@ public:
 	virtual Ref< IScriptContext > createContext(const IScriptResource* scriptResource, const IScriptContext* contextPrototype);
 
 	virtual Ref< IScriptDebugger > createDebugger();
+
+	virtual Ref< IScriptProfiler > createProfiler();
 
 	virtual void collectGarbage(bool full);
 
@@ -73,6 +76,7 @@ private:
 	RefArray< ScriptContextLua > m_contexts;
 	ScriptContextLua* m_lockContext;
 	Ref< ScriptDebuggerLua > m_debugger;
+	Ref< ScriptProfilerLua > m_profiler;
 	Timer m_timer;
 	float m_collectStepFrequency;
 	int32_t m_collectSteps;

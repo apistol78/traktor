@@ -190,14 +190,18 @@ bool Application::create(
 	{
 		T_DEBUG(L"Creating script server...");
 		m_scriptServer = new ScriptServer();
-		if (settings->getProperty< PropertyBoolean >(L"Script.AttachDebugger", false) && m_targetManagerConnection)
+
+		bool attachDebugger = settings->getProperty< PropertyBoolean >(L"Script.AttachDebugger", false);
+		bool attachProfiler = settings->getProperty< PropertyBoolean >(L"Script.AttachProfiler", false);
+
+		if ((attachDebugger || attachProfiler) && m_targetManagerConnection)
 		{
-			if (!m_scriptServer->create(settings, true, m_targetManagerConnection->getTransport()))
+			if (!m_scriptServer->create(settings, attachDebugger, attachProfiler, m_targetManagerConnection->getTransport()))
 				return false;
 		}
 		else
 		{
-			if (!m_scriptServer->create(settings, false, 0))
+			if (!m_scriptServer->create(settings, false, false, 0))
 				return false;
 		}
 	}

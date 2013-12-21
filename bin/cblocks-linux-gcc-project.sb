@@ -32,7 +32,7 @@
 					productType = "1"
 				end
 
-				local productPath = "../" .. configuration:getName() .. "/" .. productFile
+				local productPath = "../" .. configuration:getName():lower() .. "/" .. productFile
 				local intermediatePath = "obj/" .. configuration:getName()
 
 --?>
@@ -174,7 +174,7 @@ function collectLinkProducts(solution, project, configuration, outLibraries, out
 
 			if externalProject:getEnable() then
 				local externalRelPath = fileSystem:getRelativePath(
-					Path(externalSolution:getRootPath() .. "/" .. configuration:getName()),
+					Path(externalSolution:getRootPath() .. "/" .. configuration:getName():lower()),
 					projectPath
 				)
 
@@ -198,7 +198,7 @@ end
 					local librariesExternal = {}
 					local libraryPaths = {}
 
-					table.insert(libraryPaths, "../" .. configuration:getName())
+					table.insert(libraryPaths, "../" .. configuration:getName():lower())
 					collectLinkProducts(
 						solution,
 						project,

@@ -92,6 +92,15 @@ bool read_float(BitReader& r, float& value)
 	return true;
 }
 
+bool read_double(BitReader& r, double& value)
+{
+	uint32_t lo = r.readUnsigned(32);
+	uint32_t hi = r.readUnsigned(32);
+	uint64_t v = (uint64_t(hi) << 32) | lo;
+	value = *(double*)&v;
+	return true;
+}
+
 bool write_bool(BitWriter& w, bool v)
 {
 	w.writeBit(v);
@@ -197,6 +206,16 @@ bool write_half(BitWriter& w, half_t v)
 bool write_float(BitWriter& w, float v)
 {
 	w.writeUnsigned(32, *(uint32_t*)&v);
+	return true;
+}
+
+bool write_double(BitWriter& w, double v)
+{
+	uint64_t qw = *(uint64_t*)&v;
+	uint32_t lo = uint32_t(qw);
+	uint32_t hi = uint32_t(qw >> 32);
+	w.writeUnsigned(32, lo);
+	w.writeUnsigned(32, hi);
 	return true;
 }
 
@@ -488,7 +507,10 @@ void CompactSerializer::operator >> (const Member< float >& m)
 
 void CompactSerializer::operator >> (const Member< double >& m)
 {
-	T_FATAL_ERROR;
+	if (m_direction == SdRead)
+		read_double(m_reader, m);
+	else
+		write_double(m_writer, m);
 }
 
 void CompactSerializer::operator >> (const Member< std::string >& m)

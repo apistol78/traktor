@@ -158,16 +158,9 @@ bool RenderViewOpenGL::nextEvent(RenderEvent& outEvent)
 		return false;
 
 #elif defined(__APPLE__)
-
 	return cglwUpdateWindow(m_windowHandle, outEvent);
-
 #elif defined(__LINUX__)
-
-    if (!m_window)
-        return false;
-
-    return m_window->update(outEvent);
-
+	return m_window ? m_window->update(outEvent) : false;
 #else
 	return false;
 #endif
@@ -272,10 +265,9 @@ int RenderViewOpenGL::getHeight() const
 bool RenderViewOpenGL::isActive() const
 {
 #if defined(__APPLE__)
-	if (!m_windowHandle)
-		return false;
-
-	return cglwIsActive(m_windowHandle);
+	return m_windowHandle ? cglwIsActive(m_windowHandle) : false;
+#elif defined(__LINUX__)
+	return m_window->isActive();
 #else
 	return true;
 #endif
@@ -284,10 +276,7 @@ bool RenderViewOpenGL::isActive() const
 bool RenderViewOpenGL::isFullScreen() const
 {
 #if defined(__APPLE__)
-	if (!m_windowHandle)
-		return false;
-
-	return cglwIsFullscreen(m_windowHandle);
+	return m_windowHandle ? cglwIsFullscreen(m_windowHandle) : false;
 #elif defined(__LINUX__)
 	return m_window->isFullScreen();
 #else
@@ -300,7 +289,7 @@ void RenderViewOpenGL::showCursor()
 	if (!m_cursorVisible)
 	{
 #if defined(__APPLE__)
-	cglwSetCursorVisible(m_windowHandle, true);
+		cglwSetCursorVisible(m_windowHandle, true);
 #elif defined(__LINUX__)
 		m_window->showCursor();
 #endif

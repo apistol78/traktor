@@ -22,6 +22,7 @@ class BidirectionalObjectTransport;
 
 class TargetScriptDebugger;
 class TargetScriptDebuggerSessions;
+class TargetScriptProfiler;
 
 class TargetConnection : public Object
 {
@@ -47,6 +48,7 @@ private:
 	Ref< ILogTarget > m_targetLog;
 	Ref< TargetScriptDebuggerSessions > m_targetDebuggerSessions;
 	Ref< TargetScriptDebugger > m_targetDebugger;
+	Ref< TargetScriptProfiler > m_targetProfiler;
 	TargetPerformance m_performance;
 	Semaphore m_lock;
 };

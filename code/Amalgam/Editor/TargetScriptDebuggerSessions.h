@@ -12,15 +12,16 @@ namespace traktor
 	{
 
 class TargetScriptDebugger;
+class TargetScriptProfiler;
 
 class TargetScriptDebuggerSessions : public script::IScriptDebuggerSessions
 {
 	T_RTTI_CLASS;
 
 public:
-	void beginSession(TargetScriptDebugger* scriptDebugger);
+	void beginSession(TargetScriptDebugger* scriptDebugger, TargetScriptProfiler* scriptProfiler);
 
-	void endSession(TargetScriptDebugger* scriptDebugger);
+	void endSession(TargetScriptDebugger* scriptDebugger, TargetScriptProfiler* scriptProfiler);
 
 	virtual bool setBreakpoint(const Guid& scriptId, int32_t lineNumber);
 
@@ -33,7 +34,12 @@ public:
 	virtual void removeListener(IListener* listener);
 
 private:
-	RefArray< TargetScriptDebugger > m_scriptDebuggers;
+	struct Session
+	{
+		Ref< TargetScriptDebugger > debugger;
+		Ref< TargetScriptProfiler > profiler;
+	};
+	std::list< Session > m_sessions;
 	std::map< int32_t, std::set< Guid > > m_breakpoints;
 	std::list< IListener* > m_listeners;
 };

@@ -6,12 +6,10 @@
 #include <Core/Io/FileOutputStream.h>
 #include <Core/Io/AnsiEncoding.h>
 #include <Core/Io/StringReader.h>
-#include <Core/Serialization/BinarySerializer.h>
 #include <Core/Misc/String.h>
 #include <Core/Misc/MD5.h>
 #include <Core/Log/Log.h>
 #include "SolutionBuilderLIB/Make/SolutionBuilderMake.h"
-#include "SolutionBuilderLIB/Make/DependencyCache.h"
 #include "SolutionBuilderLIB/Solution.h"
 #include "SolutionBuilderLIB/Project.h"
 #include "SolutionBuilderLIB/ProjectDependency.h"
@@ -34,6 +32,11 @@ void collectFiles(const Project* project, const RefArray< ProjectItem >& items, 
 			fileItem->getSystemFiles(project->getSourcePath(), outFiles);
 		collectFiles(project, (*i)->getItems(), outFiles);
 	}
+}
+
+bool enabledProject(const Project* project)
+{
+	return project ? project->getEnable() : false;
 }
 
 }
@@ -92,25 +95,10 @@ bool SolutionBuilderMake::create(const CommandLine& cmdLine)
 
 bool SolutionBuilderMake::generate(Solution* solution)
 {
-	std::wstring solutionMake = solution->getRootPath() + L"/" + solution->getName() + L".mak";
+	std::wstring solutionMake = solution->getRootPath() + L"/makefile";
 
-	if (!FileSystem::getInstance().makeDirectory(solution->getRootPath()))
+	if (!FileSystem::getInstance().makeAllDirectories(solution->getRootPath()))
 		return false;
-
-	// Read dependency cache if available.
-	{
-		Ref< IStream > file = FileSystem::getInstance().open(solution->getRootPath() + L"/DependencyCache.bin", traktor::File::FmRead);
-		if (file)
-		{
-			m_dependencyCache = BinarySerializer(file).readObject< DependencyCache >();
-			file->close();
-		}
-	}
-	if (!m_dependencyCache)
-	{
-		traktor::log::info << L"Creating new dependency cache..." << Endl;
-		m_dependencyCache = new DependencyCache();
-	}
 
 	Ref< IStream > file = FileSystem::getInstance().open(
 		solutionMake,
@@ -119,10 +107,17 @@ bool SolutionBuilderMake::generate(Solution* solution)
 	if (!file)
 		return false;
 
-	FileOutputStream s(file, new AnsiEncoding());
-
-	// Sort projects by their dependencies.
+	// Get enabled projects only.
 	RefArray< Project > projects = solution->getProjects();
+	for (RefArray< Project >::iterator i = projects.begin(); i != projects.end(); )
+	{
+		if (!enabledProject(*i))
+			i = projects.erase(i);
+		else
+			++i;
+	}
+
+	// Sort projects by their dependencies; also remove non-enabled projects.
 	RefArray< Project > generate;
 	while (!projects.empty())
 	{
@@ -161,13 +156,15 @@ bool SolutionBuilderMake::generate(Solution* solution)
 	}
 
 	// Generate "master" makefile.
+	FileOutputStream s(file, new AnsiEncoding());
+
 	s << L"# This makefile is automatically generated, DO NOT EDIT!" << Endl;
 	s << Endl;
 
-	s << L".PHONY : All" << Endl;
-	s << L"All :" << Endl;
+	s << L".PHONY : all" << Endl;
+	s << L"all :" << Endl;
 	for (RefArray< Project >::iterator i = generate.begin(); i != generate.end(); ++i)
-		s << L"\t-$(MAKE) -f " << (*i)->getName() << L"/" << (*i)->getName() << L".mak All" << Endl;
+		s << L"\t-$(MAKE) -f " << (*i)->getName() << L"/" << (*i)->getName() << L".mak all" << Endl;
 	s << Endl;
 
 	for (std::set< std::wstring >::iterator i = configurationNames.begin(); i != configurationNames.end(); ++i)
@@ -189,10 +186,10 @@ bool SolutionBuilderMake::generate(Solution* solution)
 		s << Endl;
 	}
 
-	s << L".PHONY : Clean" << Endl;
-	s << L"Clean :" << Endl;
+	s << L".PHONY : clean" << Endl;
+	s << L"clean :" << Endl;
 	for (RefArray< Project >::iterator i = generate.begin(); i != generate.end(); ++i)
-		s << L"\t-$(MAKE) -f " << (*i)->getName() << L"/" << (*i)->getName() << L".mak Clean" << Endl;
+		s << L"\t-$(MAKE) -f " << (*i)->getName() << L"/" << (*i)->getName() << L".mak clean" << Endl;
 	s << Endl;
 
 	s.close();
@@ -202,19 +199,6 @@ bool SolutionBuilderMake::generate(Solution* solution)
 	{
 		if (!generateProject(solution, *i))
 			return false;
-	}
-
-	// Write dependency cache.
-	if (m_dependencyCache)
-	{
-		Ref< IStream > file = FileSystem::getInstance().open(solution->getRootPath() + L"/DependencyCache.bin", traktor::File::FmWrite);
-		if (file)
-		{
-			BinarySerializer(file).writeObject(m_dependencyCache);
-			file->close();
-		}
-		else
-			traktor::log::warning << L"Unable to save dependency cache" << Endl;
 	}
 
 	return true;
@@ -237,7 +221,7 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 	// Create directory for project.
 	if (!FileSystem::getInstance().makeDirectory(solution->getRootPath() + L"/" + project->getName()))
 		return false;
-	
+
 	// Create directory for each configuration.
 	for (RefArray< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
 	{
@@ -260,28 +244,46 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 
 	s << L"# This makefile is automatically generated, DO NOT EDIT!" << Endl;
 	s << Endl;
-	
+
 	// Include user configuration.
-	if (m_dialect == MdNMake)
-		s << L"!INCLUDE " << m_config << Endl;
-	if (m_dialect == MdGnuMake)
-		s << L"include " << m_config << Endl;
-	s << Endl;
-	
-	Path rootPath = FileSystem::getInstance().getAbsolutePath(solution->getRootPath());
+	Path configPath;
+	if (FileSystem::getInstance().getRelativePath(
+		m_config,
+		solution->getRootPath(),
+		configPath
+	))
+	{
+		if (m_dialect == MdNMake)
+			s << L"!INCLUDE " << configPath.getPathName() << Endl;
+		if (m_dialect == MdGnuMake)
+			s << L"include " << configPath.getPathName() << Endl;
+		s << Endl;
+	}
+	else
+		log::warning << L"Unable to resolve relative path of \"" << m_config << L"\"" << Endl;
 
 	// Build include strings for each configuration.
 	for (RefArray< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
 	{
 		Configuration* configuration = *j;
-		
+
 		s << toUpper(configuration->getName()) + L"_INCLUDE=";
 
 		// Add path to makefile in include search path; needed by resources.
-		if (m_platform == MpWin32)
-			s << L"/I" << makeFilePath << L"/" << configuration->getName() << L" ";
-		else if (m_platform == MpMacOSX || m_platform == MpLinux)
-			s << L"-I" << makeFilePath << L"/" << configuration->getName() << L" ";
+		Path resourcePath;
+		if (FileSystem::getInstance().getRelativePath(
+			makeFilePath + L"/" + configuration->getName(),
+			solution->getRootPath(),
+			resourcePath
+		))
+		{
+			if (m_platform == MpWin32)
+				s << L"/I" << resourcePath.getPathName() << L" ";
+			else if (m_platform == MpMacOSX || m_platform == MpLinux)
+				s << L"-I" << resourcePath.getPathName() << L" ";
+		}
+		else
+			log::warning << L"Unable to resolve relative path of \"" << makeFilePath << L"/" << configuration->getName() << L"\"" << Endl;
 
 		const std::vector< std::wstring >& includePaths = configuration->getIncludePaths();
 		for (std::vector< std::wstring >::const_iterator k = includePaths.begin(); k != includePaths.end(); ++k)
@@ -293,8 +295,8 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 			{
 				Path includePath;
 				FileSystem::getInstance().getRelativePath(
-					FileSystem::getInstance().getAbsolutePath(configurationIncludePath),
-					rootPath,
+					configurationIncludePath,
+					solution->getRootPath(),
 					includePath
 				);
 				if (m_platform == MpWin32)
@@ -317,7 +319,7 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 	for (RefArray< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
 	{
 		Configuration* configuration = *j;
-		
+
 		s << toUpper(configuration->getName()) + L"_DEFINES=";
 
 		std::vector< std::wstring > definitions = solution->getDefinitions();
@@ -336,27 +338,27 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 	}
 	s << Endl;
 
-	// Define the "All" target.
-	s << L".PHONY : All" << Endl;
-	s << L"All : \\" << Endl;
+	// Define the "all" target.
+	s << L".PHONY : all" << Endl;
+	s << L"all : \\" << Endl;
 	for (RefArray< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
 	{
 		Configuration* configuration = *j;
 		s << L"\t" << configuration->getName() << (*j != configurations.back() ? L" \\" : L"") << Endl;
 	}
-	s << L"\t@echo All" << Endl;
+	s << L"\t@echo all" << Endl;
 	s << Endl;
 
-	// Define the "Clean" target.
-	s << L".PHONY : Clean" << Endl;
-	s << L"Clean :" << Endl;
+	// Define the "clean" target.
+	s << L".PHONY : clean" << Endl;
+	s << L"clean :" << Endl;
 	for (RefArray< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
 	{
 		Configuration* configuration = *j;
 		if (m_platform == MpWin32)
 			s << L"\tdel /F /Q " << project->getName() << L"\\\\" << toLower(configuration->getName()) << L"\\\\*.*" << Endl;
 		else if (m_platform == MpMacOSX || m_platform == MpLinux)
-			s << L"\trm " << project->getName() << L"/" << toLower(configuration->getName()) << L"/*.*" << Endl;
+			s << L"\trm -f " << project->getName() << L"/" << configuration->getName() << L"/*" << Endl;
 	}
 	s << Endl;
 
@@ -603,7 +605,7 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 
 			for (std::set< std::wstring >::iterator j = resolvedDependencies.begin(); j != resolvedDependencies.end(); ++j)
 				s << L" \\" << Endl << L"\t" << *j;
-			
+
 			s << Endl;
 
 			std::wstring profile = (extension != L"mm") ? L"$(CC_FLAGS" : L"$(MM_FLAGS";
@@ -745,37 +747,8 @@ bool SolutionBuilderMake::scanDependencies(
 	std::set< std::wstring >& outDependencies
 )
 {
-	std::wstring key = fileName + L"_" + configuration->getName();
-
-	// Calculate MD5 hash of source file.
-	Ref< IStream > file = FileSystem::getInstance().open(fileName, traktor::File::FmRead);
-	if (!file)
-		return false;
-
-	MD5 md5;
-	md5.begin();
-	while (file->available() > 0)
-	{
-		uint8_t buf[1024];
-		uint32_t nread = file->read(buf, sizeof(buf));
-		md5.feed(buf, nread);
-	}
-	md5.end();
-
-	file->close();
-
-	if (m_dependencyCache->get(key, md5, outDependencies))
-		return true;
-
-	// Not in dependency cache, need to manually resolve all dependencies.
 	std::set< std::wstring > visitiedDependencies;
-	if (!scanDependencies(solution, configuration, fileName, visitiedDependencies, outDependencies))
-		return false;
-
-	// Add dependencies to cache.
-	m_dependencyCache->set(key, md5, outDependencies);
-
-	return true;
+	return scanDependencies(solution, configuration, fileName, visitiedDependencies, outDependencies);
 }
 
 bool SolutionBuilderMake::scanDependencies(

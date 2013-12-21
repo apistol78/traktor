@@ -37,6 +37,8 @@ public:
 
 	virtual Ref< IScriptDebugger > createDebugger();
 
+	virtual Ref< IScriptProfiler > createProfiler();
+
 	virtual void collectGarbage(bool full);
 
 	virtual void getStatistics(ScriptStatistics& outStatistics) const;

@@ -29,7 +29,6 @@ KeyboardDeviceX11::KeyboardDeviceX11(Display* display, Window window, int device
 	XISetMask(mask, XI_KeyRelease);
 
 	XISelectEvents(m_display, m_window, &evmask, 1);
-	XAutoRepeatOff(m_display);
 
 	m_kbdesc = XkbGetKeyboard(m_display, XkbAllComponentsMask, XkbUseCoreKbd);
 
@@ -150,6 +149,8 @@ void KeyboardDeviceX11::setExclusive(bool exclusive)
 		XISetMask(mask, XI_KeyPress);
 		XISetMask(mask, XI_KeyRelease);
 
+		XAutoRepeatOff(m_display);
+
 #if !defined(_DEBUG)
 		XIGrabDevice(
 			m_display,
@@ -169,6 +170,7 @@ void KeyboardDeviceX11::setExclusive(bool exclusive)
 #if !defined(_DEBUG)
 		XIUngrabDevice(m_display, m_deviceId, CurrentTime);
 #endif
+		XAutoRepeatOn(m_display);
 	}
 }
 

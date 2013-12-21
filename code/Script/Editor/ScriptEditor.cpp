@@ -11,10 +11,12 @@
 #include "Editor/TypeBrowseFilter.h"
 #include "I18N/Text.h"
 #include "Script/CallStack.h"
+#include "Script/IScriptProfiler.h"
 #include "Script/Editor/Preprocessor.h"
 #include "Script/Editor/Script.h"
 #include "Script/Editor/ScriptDebuggerView.h"
 #include "Script/Editor/ScriptEditor.h"
+#include "Script/Editor/ScriptProfilerView.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
 #include "Ui/FloodLayout.h"
@@ -283,16 +285,23 @@ void ScriptEditor::otherError(const std::wstring& message)
 	m_compileStatus->setText(ss.str());
 }
 
-void ScriptEditor::notifyDebuggerBeginSession(IScriptDebugger* scriptDebugger)
+void ScriptEditor::notifyBeginSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler)
 {
 	Ref< ui::TabPage > tabPageSession = new ui::TabPage();
 	tabPageSession->create(m_tabSessions, L"Session 0", new ui::FloodLayout());
 
+	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
+	splitter->create(tabPageSession, true, 70, true);
+
 	Ref< ScriptDebuggerView > debuggerView = new ScriptDebuggerView(scriptDebugger);
-	debuggerView->create(tabPageSession);
+	debuggerView->create(splitter);
 	debuggerView->addBreakPointEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventBreakPoint));
 
+	Ref< ScriptProfilerView > profilerView = new ScriptProfilerView(scriptProfiler);
+	profilerView->create(splitter);
+
 	tabPageSession->setData(L"DEBUGGER", scriptDebugger);
+	tabPageSession->setData(L"PROFILER", scriptProfiler);
 	tabPageSession->setData(L"VIEW", debuggerView);
 
 	m_tabSessions->addPage(tabPageSession);
@@ -300,7 +309,7 @@ void ScriptEditor::notifyDebuggerBeginSession(IScriptDebugger* scriptDebugger)
 	m_tabSessions->update();
 }
 
-void ScriptEditor::notifyDebuggerEndSession(IScriptDebugger* scriptDebugger)
+void ScriptEditor::notifyEndSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler)
 {
 	int32_t pageCount = m_tabSessions->getPageCount();
 	for (int32_t i = 0; i < pageCount; ++i)
@@ -318,7 +327,7 @@ void ScriptEditor::notifyDebuggerEndSession(IScriptDebugger* scriptDebugger)
 	m_tabSessions->update();
 }
 
-void ScriptEditor::notifyDebuggerSetBreakpoint(const Guid& scriptId, int32_t lineNumber)
+void ScriptEditor::notifySetBreakpoint(const Guid& scriptId, int32_t lineNumber)
 {
 	if (scriptId == m_instance->getGuid())
 	{
@@ -327,7 +336,7 @@ void ScriptEditor::notifyDebuggerSetBreakpoint(const Guid& scriptId, int32_t lin
 	}
 }
 
-void ScriptEditor::notifyDebuggerRemoveBreakpoint(const Guid& scriptId, int32_t lineNumber)
+void ScriptEditor::notifyRemoveBreakpoint(const Guid& scriptId, int32_t lineNumber)
 {
 	if (scriptId == m_instance->getGuid())
 	{

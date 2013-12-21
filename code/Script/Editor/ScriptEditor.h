@@ -101,13 +101,13 @@ private:
 	/*! \name IScriptDebuggerSessions::IListener */
 	/*! \{ */
 
-	virtual void notifyDebuggerBeginSession(IScriptDebugger* scriptDebugger);
+	virtual void notifyBeginSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler);
 
-	virtual void notifyDebuggerEndSession(IScriptDebugger* scriptDebugger);
+	virtual void notifyEndSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler);
 
-	virtual void notifyDebuggerSetBreakpoint(const Guid& scriptId, int32_t lineNumber);
+	virtual void notifySetBreakpoint(const Guid& scriptId, int32_t lineNumber);
 
-	virtual void notifyDebuggerRemoveBreakpoint(const Guid& scriptId, int32_t lineNumber);
+	virtual void notifyRemoveBreakpoint(const Guid& scriptId, int32_t lineNumber);
 
 	/*! \} */
 

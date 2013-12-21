@@ -129,6 +129,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_toolTweaks->add(new ui::MenuItem(L"Physics 2*dT", true, 0));
 	m_toolTweaks->add(new ui::MenuItem(L"Supersample *4", true, 0));
 	m_toolTweaks->add(new ui::MenuItem(L"Attach Script Debugger", true, 0));
+	m_toolTweaks->add(new ui::MenuItem(L"Attach Script Profiler", true, 0));
 	m_toolBar->addItem(m_toolTweaks);
 
 	// Create target configuration list control.
@@ -388,6 +389,8 @@ void EditorPlugin::eventTargetListPlay(ui::Event* event)
 				tweakSettings->setProperty< PropertyInteger >(L"World.SuperSample", 4);
 			if (m_toolTweaks->get(5)->isChecked())
 				tweakSettings->setProperty< PropertyBoolean >(L"Script.AttachDebugger", true);
+			if (m_toolTweaks->get(6)->isChecked())
+				tweakSettings->setProperty< PropertyBoolean >(L"Script.AttachProfiler", true);
 
 			// Add deploy and launch actions.
 			action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsDeploying);
