@@ -20,6 +20,7 @@ class Guid;
 	{
 
 class IScriptDebugger;
+class IScriptProfiler;
 
 /*! \brief
  * \ingroup Script
@@ -31,13 +32,13 @@ class T_DLLCLASS IScriptDebuggerSessions : public Object
 public:
 	struct IListener
 	{
-		virtual void notifyDebuggerBeginSession(IScriptDebugger* scriptDebugger) = 0;
+		virtual void notifyBeginSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler) = 0;
 
-		virtual void notifyDebuggerEndSession(IScriptDebugger* scriptDebugger) = 0;
+		virtual void notifyEndSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler) = 0;
 
-		virtual void notifyDebuggerSetBreakpoint(const Guid& scriptId, int32_t lineNumber) = 0;
+		virtual void notifySetBreakpoint(const Guid& scriptId, int32_t lineNumber) = 0;
 
-		virtual void notifyDebuggerRemoveBreakpoint(const Guid& scriptId, int32_t lineNumber) = 0;
+		virtual void notifyRemoveBreakpoint(const Guid& scriptId, int32_t lineNumber) = 0;
 	};
 
 	virtual bool setBreakpoint(const Guid& scriptId, int32_t lineNumber) = 0;

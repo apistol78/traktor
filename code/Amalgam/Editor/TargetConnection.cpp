@@ -1,10 +1,14 @@
-#include "Core/Log/Log.h"
-#include "Core/Thread/Acquire.h"
+#pragma optimize( "", off )
+
 #include "Amalgam/Editor/TargetConnection.h"
 #include "Amalgam/Editor/TargetScriptDebugger.h"
 #include "Amalgam/Editor/TargetScriptDebuggerSessions.h"
+#include "Amalgam/Editor/TargetScriptProfiler.h"
 #include "Amalgam/Impl/ScriptDebuggerHalted.h"
+#include "Amalgam/Impl/ScriptProfilerCallMeasured.h"
 #include "Amalgam/Impl/TargetLog.h"
+#include "Core/Log/Log.h"
+#include "Core/Thread/Acquire.h"
 #include "Net/BidirectionalObjectTransport.h"
 
 namespace traktor
@@ -20,11 +24,13 @@ TargetConnection::TargetConnection(net::BidirectionalObjectTransport* transport,
 ,	m_targetDebuggerSessions(targetDebuggerSessions)
 {
 	m_targetDebugger = new TargetScriptDebugger(m_transport);
-	m_targetDebuggerSessions->beginSession(m_targetDebugger);
+	m_targetProfiler = new TargetScriptProfiler(m_transport);
+	m_targetDebuggerSessions->beginSession(m_targetDebugger, m_targetProfiler);
 }
 
 TargetConnection::~TargetConnection()
 {
+	T_ASSERT (!m_targetProfiler);
 	T_ASSERT (!m_targetDebugger);
 	T_ASSERT (!m_transport);
 }
@@ -33,11 +39,11 @@ void TargetConnection::destroy()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-	if (m_targetDebugger)
+	if (m_targetDebuggerSessions)
 	{
-		T_ASSERT (m_targetDebuggerSessions);
-		m_targetDebuggerSessions->endSession(m_targetDebugger);
+		m_targetDebuggerSessions->endSession(m_targetDebugger, m_targetProfiler);
 		m_targetDebuggerSessions = 0;
+		m_targetProfiler = 0;
 		m_targetDebugger = 0;
 	}
 
@@ -89,6 +95,19 @@ bool TargetConnection::update()
 		{
 			const script::CallStack& cs = debugger->getCallStack();
 			m_targetDebugger->notifyListeners(cs);
+		}
+	}
+
+	{
+		Ref< ScriptProfilerCallMeasured > measured;
+		while (m_transport->recv< ScriptProfilerCallMeasured >(0, measured) == net::BidirectionalObjectTransport::RtSuccess)
+		{
+			m_targetProfiler->notifyListeners(
+				measured->getFunction(),
+				measured->getTimeStamp(),
+				measured->getInclusiveDuration(),
+				measured->getExclusiveDuration()
+			);
 		}
 	}
 

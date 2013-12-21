@@ -15,7 +15,6 @@ class StreamAdapter;
 
 class Project;
 class Configuration;
-class DependencyCache;
 
 class SolutionBuilderMake : public SolutionBuilder
 {
@@ -27,7 +26,7 @@ public:
 		MdNMake,	// Microsoft NMake
 		MdGnuMake	// GNU make
 	};
-	
+
 	enum Platform
 	{
 		MpWin32,
@@ -36,9 +35,9 @@ public:
 	};
 
 	SolutionBuilderMake();
-	
+
 	virtual bool create(const traktor::CommandLine& cmdLine);
-	
+
 	virtual bool generate(Solution* solution);
 
 	virtual void showOptions() const;
@@ -47,7 +46,6 @@ private:
 	Dialect m_dialect;
 	Platform m_platform;
 	std::wstring m_config;
-	traktor::Ref< DependencyCache > m_dependencyCache;
 
 	bool generateProject(Solution* solution, Project* project);
 

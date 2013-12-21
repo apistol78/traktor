@@ -4,6 +4,7 @@
 #include "Amalgam/Impl/ScriptDebuggerBreakpoint.h"
 #include "Amalgam/Impl/ScriptDebuggerControl.h"
 #include "Amalgam/Impl/ScriptDebuggerHalted.h"
+#include "Amalgam/Impl/ScriptProfilerCallMeasured.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -26,7 +27,7 @@ ScriptServer::ScriptServer()
 {
 }
 
-bool ScriptServer::create(const PropertyGroup* settings, bool debugger, net::BidirectionalObjectTransport* transport)
+bool ScriptServer::create(const PropertyGroup* settings, bool debugger, bool profiler, net::BidirectionalObjectTransport* transport)
 {
 	std::wstring scriptType = settings->getProperty< PropertyString >(L"Script.Type");
 
@@ -52,6 +53,17 @@ bool ScriptServer::create(const PropertyGroup* settings, bool debugger, net::Bid
 			log::warning << L"Unable to create script debugger" << Endl;
 	}
 
+	if (profiler)
+	{
+		m_scriptProfiler = m_scriptManager->createProfiler();
+		if (m_scriptProfiler)
+		{
+			m_scriptProfiler->addListener(this);
+		}
+		else
+			log::warning << L"Unable to create script profiler" << Endl;
+	}
+
 	return true;
 }
 
@@ -68,6 +80,12 @@ void ScriptServer::destroy()
 		m_scriptDebuggerThread->stop();
 		ThreadManager::getInstance().destroy(m_scriptDebuggerThread);
 		m_scriptDebuggerThread = 0;
+	}
+
+	if (m_scriptProfiler)
+	{
+		m_scriptProfiler->removeListener(this);
+		m_scriptProfiler = 0;
 	}
 
 	safeDestroy(m_scriptManager);
@@ -146,6 +164,12 @@ void ScriptServer::breakpointReached(script::IScriptDebugger* scriptDebugger, co
 {
 	ScriptDebuggerHalted halted(callStack);
 	m_transport->send(&halted);
+}
+
+void ScriptServer::callMeasured(const std::wstring& function, double timeStamp, double inclusiveDuration, double exclusiveDuration)
+{
+	ScriptProfilerCallMeasured measured(function, timeStamp, inclusiveDuration, exclusiveDuration);
+	m_transport->send(&measured);
 }
 
 	}

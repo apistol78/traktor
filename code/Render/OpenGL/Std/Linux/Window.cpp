@@ -5,12 +5,12 @@
 
 namespace traktor
 {
-    namespace render
-    {
+	namespace render
+	{
 
 Window::Window(::Display* display)
-:   m_display(display)
-,   m_window(None)
+:	m_display(display)
+,	m_window(None)
 ,	m_screen(0)
 ,	m_width(0)
 ,	m_height(0)
@@ -47,24 +47,24 @@ bool Window::create(int32_t width, int32_t height)
 	m_width = width;
 	m_height = height;
 
-    m_window = XCreateSimpleWindow(
-        m_display,
-        RootWindow(m_display, m_screen),
-        10,
-        10,
-        width,
-        height,
-        1,
-        BlackPixel(m_display, m_screen),
-        WhitePixel(m_display, m_screen)
-    );
+	m_window = XCreateSimpleWindow(
+		m_display,
+		RootWindow(m_display, m_screen),
+		10,
+		10,
+		width,
+		height,
+		1,
+		BlackPixel(m_display, m_screen),
+		WhitePixel(m_display, m_screen)
+	);
 
-    XSelectInput(
+	XSelectInput(
 		m_display,
 		m_window,
 		StructureNotifyMask
 	);
-    return true;
+	return true;
 }
 
 void Window::setTitle(const wchar_t* title)
@@ -190,37 +190,37 @@ void Window::setWindowedStyle(int32_t width, int32_t height)
 
 	if (m_width != width || m_height != height)
 	{
-        m_width = width;
-        m_height = height;
+		m_width = width;
+		m_height = height;
 
-        XSetWindowAttributes attr;
-        attr.override_redirect = False;
-        XChangeWindowAttributes(m_display, m_window, CWOverrideRedirect, &attr);
+		XSetWindowAttributes attr;
+		attr.override_redirect = False;
+		XChangeWindowAttributes(m_display, m_window, CWOverrideRedirect, &attr);
 
-        // Remove fullscreen WM state from window.
-        XEvent evt;
-        std::memset(&evt, 0, sizeof(evt));
-        evt.type = ClientMessage;
-        evt.xclient.window = m_window;
-        evt.xclient.message_type = wmState;
-        evt.xclient.format = 32;
-        evt.xclient.data.l[0] = 0;
-        evt.xclient.data.l[1] = fullScreen;
-        evt.xclient.data.l[2] = 0;
+		// Remove fullscreen WM state from window.
+		XEvent evt;
+		std::memset(&evt, 0, sizeof(evt));
+		evt.type = ClientMessage;
+		evt.xclient.window = m_window;
+		evt.xclient.message_type = wmState;
+		evt.xclient.format = 32;
+		evt.xclient.data.l[0] = 0;
+		evt.xclient.data.l[1] = fullScreen;
+		evt.xclient.data.l[2] = 0;
 
-        XSendEvent(
-            m_display,
-            RootWindow(m_display, m_screen),
-            False,
-            SubstructureNotifyMask,
-            &evt
-        );
+		XSendEvent(
+			m_display,
+			RootWindow(m_display, m_screen),
+			False,
+			SubstructureNotifyMask,
+			&evt
+		);
 
-        XResizeWindow(m_display, m_window, width, height);
-        XFlush(m_display);
+		XResizeWindow(m_display, m_window, width, height);
+		XFlush(m_display);
 
-        m_fullScreen = false;
-    }
+		m_fullScreen = false;
+	}
 }
 
 void Window::showCursor()
@@ -247,30 +247,30 @@ void Window::hideCursor()
 
 void Window::show()
 {
-    XMapWindow(m_display, m_window);
+	XMapWindow(m_display, m_window);
 }
 
 void Window::center()
 {
-    int32_t centerX = (XDisplayWidth(m_display, m_screen) - m_width) / 2;
-    int32_t centerY = (XDisplayHeight(m_display, m_screen)- m_height) / 2;
-    XMoveWindow(m_display, m_window, centerX, centerY);
-    XFlush(m_display);
+	int32_t centerX = (XDisplayWidth(m_display, m_screen) - m_width) / 2;
+	int32_t centerY = (XDisplayHeight(m_display, m_screen)- m_height) / 2;
+	XMoveWindow(m_display, m_window, centerX, centerY);
+	XFlush(m_display);
 }
 
 bool Window::update(RenderEvent& outEvent)
 {
-    XEvent evt;
-    if (XCheckWindowEvent(m_display, m_window, StructureNotifyMask, &evt))
-    {
-    	if (
+	XEvent evt;
+	if (XCheckWindowEvent(m_display, m_window, StructureNotifyMask, &evt))
+	{
+		if (
 			evt.type == ConfigureNotify &&
 			(
 				evt.xconfigure.width != m_width ||
 				evt.xconfigure.height != m_height
 			)
 		)
-    	{
+		{
 			if (!m_fullScreen)
 			{
 				outEvent.type = ReResize;
@@ -278,10 +278,11 @@ bool Window::update(RenderEvent& outEvent)
 				outEvent.resize.height = evt.xconfigure.height;
 				return true;
 			}
-    	}
-    }
-    return false;
+		}
+	}
+	return false;
 }
 
-    }
+	}
 }
+

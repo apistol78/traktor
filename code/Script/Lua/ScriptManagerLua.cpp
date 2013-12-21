@@ -12,6 +12,7 @@
 #include "Script/Lua/ScriptDebuggerLua.h"
 #include "Script/Lua/ScriptDelegateLua.h"
 #include "Script/Lua/ScriptManagerLua.h"
+#include "Script/Lua/ScriptProfilerLua.h"
 #include "Script/Lua/ScriptResourceLua.h"
 #include "Script/Lua/ScriptUtilitiesLua.h"
 
@@ -21,8 +22,6 @@ namespace traktor
 	{
 		namespace
 		{
-
-//#define T_SCRIPT_PROFILE_CALLS
 
 const int32_t c_tableKey_class = -1;
 const int32_t c_maxTargetSteps = 100;
@@ -125,6 +124,7 @@ void ScriptManagerLua::destroy()
 	T_ANONYMOUS_VAR(Ref< ScriptManagerLua >)(this);
 
 	m_debugger = 0;
+	m_profiler = 0;
 
 	while (!m_contexts.empty())
 		m_contexts.back()->destroy();
@@ -451,6 +451,16 @@ Ref< IScriptDebugger > ScriptManagerLua::createDebugger()
 	return m_debugger;
 }
 
+Ref< IScriptProfiler > ScriptManagerLua::createProfiler()
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+	if (!m_profiler)
+		m_profiler = new ScriptProfilerLua(this, m_luaState);
+
+	return m_profiler;
+}
+
 void ScriptManagerLua::collectGarbage(bool full)
 {
 	if (!full)
@@ -757,18 +767,7 @@ int ScriptManagerLua::classCallMethod(lua_State* luaState)
 	IScriptClass::InvokeParam param;
 	param.object = object;
 
-#if defined(T_SCRIPT_PROFILE_CALLS)
-	Timer timer;
-	timer.start();
-#endif
-
 	Any returnValue = scriptClass->invoke(param, methodId, top - 1, argv);
-
-#if defined(T_SCRIPT_PROFILE_CALLS)
-	double call = timer.getElapsedTime();
-	if (call > 1.0f / 1000.0)
-		log::debug << L"PROFILE: \"" << scriptClass->getExportType().getName() << L"::" << scriptClass->getMethodName(methodId) << L" took " << float(call * 1000.0) << L" ms" << Endl;
-#endif
 
 	manager->pushAny(returnValue);
 
@@ -793,21 +792,9 @@ int ScriptManagerLua::classCallStaticMethod(lua_State* luaState)
 	for (int32_t i = 1; i <= top; ++i)
 		argv[i - 1] = manager->toAny(i);
 
-#if defined(T_SCRIPT_PROFILE_CALLS)
-	Timer timer;
-	timer.start();
-#endif
-
 	Any returnValue = scriptClass->invokeStatic(methodId, top, argv);
 
-#if defined(T_SCRIPT_PROFILE_CALLS)
-	double call = timer.getElapsedTime();
-	if (call > 1.0f / 1000.0)
-		log::debug << L"PROFILE: \"" << scriptClass->getExportType().getName() << L"::" << scriptClass->getMethodName(methodId) << L" took " << float(call * 1000.0) << L" ms" << Endl;
-#endif
-
 	manager->pushAny(returnValue);
-
 	return 1;
 }
 
@@ -838,21 +825,9 @@ int ScriptManagerLua::classCallUnknownMethod(lua_State* luaState)
 	IScriptClass::InvokeParam param;
 	param.object = object;
 
-#if defined(T_SCRIPT_PROFILE_CALLS)
-	Timer timer;
-	timer.start();
-#endif
-
 	Any returnValue = scriptClass->invokeUnknown(param, methodName, top - 1, argv);
 
-#if defined(T_SCRIPT_PROFILE_CALLS)
-	double call = timer.getElapsedTime();
-	if (call > 1.0f / 1000.0)
-		log::debug << L"PROFILE: Unknown \"" << scriptClass->getExportType().getName() << L"::" << mbstows(methodName) << L" took " << float(call * 1000.0) << L" ms" << Endl;
-#endif
-
 	manager->pushAny(returnValue);
-
 	return 1;
 }
 

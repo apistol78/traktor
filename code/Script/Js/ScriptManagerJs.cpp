@@ -46,6 +46,11 @@ Ref< IScriptDebugger > ScriptManagerJs::createDebugger()
 	return 0;
 }
 
+Ref< IScriptProfiler > ScriptManagerJs::createProfiler()
+{
+	return 0;
+}
+
 void ScriptManagerJs::collectGarbage(bool full)
 {
 }

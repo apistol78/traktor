@@ -9,9 +9,7 @@ pushd $TRAKTOR_HOME
 mkdir -p bin/latest/linux/releaseshared
 cd bin/latest/linux/releaseshared
 
-TRAKTOR_BUILD=$TRAKTOR_HOME/build/linux/ReleaseShared
-
 # Copy binaries.
-cp -f $TRAKTOR_BUILD/* .
+cp -f $TRAKTOR_HOME/build/linux/releaseshared/* .
 
 popd
