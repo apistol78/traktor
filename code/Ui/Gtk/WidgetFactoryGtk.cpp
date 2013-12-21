@@ -1,13 +1,19 @@
 #include "Ui/Gtk/BitmapGtk.h"
 #include "Ui/Gtk/ButtonGtk.h"
+#include "Ui/Gtk/CheckBoxGtk.h"
 #include "Ui/Gtk/ContainerGtk.h"
 #include "Ui/Gtk/DialogGtk.h"
+#include "Ui/Gtk/DropDownGtk.h"
+#include "Ui/Gtk/EditGtk.h"
 #include "Ui/Gtk/FormGtk.h"
 #include "Ui/Gtk/ListBoxGtk.h"
+#include "Ui/Gtk/ListViewGtk.h"
 #include "Ui/Gtk/MenuBarGtk.h"
 #include "Ui/Gtk/PopupMenuGtk.h"
 #include "Ui/Gtk/ScrollBarGtk.h"
+#include "Ui/Gtk/StaticGtk.h"
 #include "Ui/Gtk/ToolFormGtk.h"
+#include "Ui/Gtk/TreeViewGtk.h"
 #include "Ui/Gtk/UserWidgetGtk.h"
 #include "Ui/Gtk/WidgetFactoryGtk.h"
 
@@ -23,7 +29,7 @@ IButton* WidgetFactoryGtk::createButton(EventSubject* owner)
 
 ICheckBox* WidgetFactoryGtk::createCheckBox(EventSubject* owner)
 {
-	return 0;
+	return new CheckBoxGtk(owner);
 }
 
 IComboBox* WidgetFactoryGtk::createComboBox(EventSubject* owner)
@@ -43,12 +49,12 @@ IDialog* WidgetFactoryGtk::createDialog(EventSubject* owner)
 
 IDropDown* WidgetFactoryGtk::createDropDown(EventSubject* owner)
 {
-	return 0;
+	return new DropDownGtk(owner);
 }
 
 IEdit* WidgetFactoryGtk::createEdit(EventSubject* owner)
 {
-	return 0;
+	return new EditGtk(owner);
 }
 
 IFileDialog* WidgetFactoryGtk::createFileDialog(EventSubject* owner)
@@ -68,7 +74,7 @@ IListBox* WidgetFactoryGtk::createListBox(EventSubject* owner)
 
 IListView* WidgetFactoryGtk::createListView(EventSubject* owner)
 {
-	return 0;
+	return new ListViewGtk(owner);
 }
 
 IMenuBar* WidgetFactoryGtk::createMenuBar(EventSubject* owner)
@@ -118,7 +124,7 @@ ISlider* WidgetFactoryGtk::createSlider(EventSubject* owner)
 
 IStatic* WidgetFactoryGtk::createStatic(EventSubject* owner)
 {
-	return 0;
+	return new StaticGtk(owner);
 }
 
 IToolForm* WidgetFactoryGtk::createToolForm(EventSubject* owner)
@@ -128,7 +134,7 @@ IToolForm* WidgetFactoryGtk::createToolForm(EventSubject* owner)
 
 ITreeView* WidgetFactoryGtk::createTreeView(EventSubject* owner)
 {
-	return 0;
+	return new TreeViewGtk(owner);
 }
 
 IUserWidget* WidgetFactoryGtk::createUserWidget(EventSubject* owner)

@@ -26,7 +26,13 @@ class T_DLLCLASS PreviewItem : public AutoWidgetCell
 	T_RTTI_CLASS;
 
 public:
+	PreviewItem();
+
 	PreviewItem(const std::wstring& text);
+
+	void setText(const std::wstring& text);
+
+	const std::wstring& getText() const;
 
 	void setImage(ui::Bitmap* image);
 
