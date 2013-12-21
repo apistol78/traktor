@@ -9,8 +9,8 @@ pushd $TRAKTOR_HOME
 popd
 
 pushd $TRAKTOR_HOME/build/linux
-make -j 8 DebugShared 2>&1 | tee build.log
-make -j 8 ReleaseShared 2>&1 | tee build.log
+make -j 8 DebugShared 2>build.log
+make -j 8 ReleaseShared 2>>build.log
 popd
 
 # Put built binaries into place
