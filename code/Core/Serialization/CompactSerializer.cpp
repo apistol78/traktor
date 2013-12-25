@@ -883,7 +883,7 @@ void CompactSerializer::operator >> (const Member< void* >& m)
 		if (size > 0)
 		{
 			m_reader.alignByte();
-			if (!ensure(m_reader.getStream()->read(m.getBlob(), size)))
+			if (!ensure(m_reader.getStream()->read(m.getBlob(), size) == size))
 				return;
 		}
 	}
@@ -897,7 +897,7 @@ void CompactSerializer::operator >> (const Member< void* >& m)
 		if (size > 0)
 		{
 			m_writer.flush();
-			if (!ensure(m_writer.getStream()->write(m.getBlob(), size)))
+			if (!ensure(m_writer.getStream()->write(m.getBlob(), size) == size))
 				return;
 		}
 	}

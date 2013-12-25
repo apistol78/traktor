@@ -16,6 +16,7 @@ class Command;
 
 class GridRow;
 class GridView;
+class ToolBar;
 
 		}
 	}
@@ -38,6 +39,8 @@ public:
 
 	void destroy();
 
+	bool handleCommand(const ui::Command& command);
+
 private:
 	struct ProfileEntry
 	{
@@ -55,8 +58,13 @@ private:
 	};
 
 	Ref< IScriptProfiler > m_scriptProfiler;
+	Ref< ui::custom::ToolBar > m_profilerTools;
 	Ref< ui::custom::GridView > m_profileGrid;
 	std::map< std::wstring, ProfileEntry > m_profile;
+
+	void updateProfileGrid();
+
+	void eventProfilerToolClick(ui::Event* event);
 
 	/*! \name IScriptProfiler::IListener */
 	/*! \{ */

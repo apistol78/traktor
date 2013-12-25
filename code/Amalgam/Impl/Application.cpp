@@ -118,7 +118,7 @@ bool Application::create(
 #endif
 
 	// Sub step configuration.
-	m_maxSimulationUpdates = settings->getProperty< PropertyInteger >(L"Amalgam.MaxSimulationUpdates", 4);
+	m_maxSimulationUpdates = defaultSettings->getProperty< PropertyInteger >(L"Amalgam.MaxSimulationUpdates", 4);
 	m_maxSimulationUpdates = max(m_maxSimulationUpdates, 1);
 
 	m_stateManager = new StateManager();
@@ -571,6 +571,8 @@ bool Application::update()
 			m_updateInfo.m_simulationDeltaTime = c_simulationDeltaTime;
 			m_updateInfo.m_simulationFrequency = c_simulationFrequency;
 
+			// Calculate number of required updates in order to
+			// keep game in sync with render time.
 			float simulationEndTime = m_updateInfo.m_stateTime;
 			updateCount = std::min(int32_t((simulationEndTime - m_updateInfo.m_simulationTime) / c_simulationDeltaTime), m_maxSimulationUpdates);
 

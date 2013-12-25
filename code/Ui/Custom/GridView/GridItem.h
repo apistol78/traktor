@@ -42,7 +42,7 @@ public:
 
 	void setText(const std::wstring& text);
 
-	const std::wstring& getText() const;
+	virtual std::wstring getText() const;
 
 	void setFont(Font* font);
 

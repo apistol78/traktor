@@ -222,7 +222,7 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 	size = m_points.size();
 #	if defined(T_USE_UPDATE_JOBS)
 	// Execute modifiers.
-	if (size >= 16)
+	if (size >= 64)
 	{
 		JobManager& jobManager = JobManager::getInstance();
 		m_job = jobManager.add(makeFunctor< EmitterInstance, float >(
@@ -372,7 +372,12 @@ void EmitterInstance::updateTask(float deltaTime)
 		}
 	}
 
-	if (m_emitter->getSort() && !m_renderPoints.empty())
+	// \note Do not sort furthest lod.
+	if (
+		!m_renderPoints.empty() &&
+		m_emitter->getSort() &&
+		m_skip < 4
+	)
 	{
 #if defined(_WIN32)
 		qsort_s(m_renderPoints.ptr(), m_renderPoints.size(), sizeof(Point), pointPredicate, &m_sortPlane);
