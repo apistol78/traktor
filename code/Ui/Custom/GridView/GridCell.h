@@ -24,6 +24,8 @@ class T_DLLCLASS GridCell : public AutoWidgetCell
 
 public:
 	virtual int32_t getHeight() const = 0;
+
+	virtual std::wstring getText() const = 0;
 };
 
 		}

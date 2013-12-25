@@ -212,6 +212,11 @@ int32_t GridRow::getHeight() const
 	return rowHeight;
 }
 
+std::wstring GridRow::getText() const
+{
+	return L"";
+}
+
 int32_t GridRow::getDepth() const
 {
 	int32_t depth = 0;

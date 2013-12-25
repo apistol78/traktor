@@ -46,6 +46,12 @@ public:
 		GfSelectedOnly = 4
 	};
 
+	enum SortMode
+	{
+		SmLexical = 0,
+		SmNumerical = 1
+	};
+
 	GridView();
 
 	bool create(Widget* parent, uint32_t style);
@@ -53,6 +59,8 @@ public:
 	void addColumn(GridColumn* column);
 
 	const RefArray< GridColumn >& getColumns() const;
+
+	void setSortColumn(int32_t columnIndex, bool ascending, SortMode mode);
 
 	int32_t getColumnIndex(int32_t x) const;
 
@@ -78,6 +86,9 @@ private:
 	RefArray< GridRow > m_rows;
 	Ref< GridRow > m_clickRow;
 	int32_t m_clickColumn;
+	int32_t m_sortColumnIndex;
+	bool m_sortAscending;
+	SortMode m_sortMode;
 
 	virtual void layoutCells(const Rect& rc);
 

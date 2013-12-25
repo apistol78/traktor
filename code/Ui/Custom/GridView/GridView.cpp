@@ -1,4 +1,5 @@
 #include <stack>
+#include "Core/Misc/String.h"
 #include "Ui/Application.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/Events/CommandEvent.h"
@@ -20,13 +21,62 @@ namespace traktor
 
 const int32_t c_headerSize = 24;
 
+struct SortRowPredicateLexical
+{
+	int32_t columnIndex;
+	bool ascending;
+
+	SortRowPredicateLexical(int32_t columnIndex_, bool ascending_)
+	:	columnIndex(columnIndex_)
+	,	ascending(ascending_)
+	{
+	}
+
+	bool operator () (const GridRow* row1, const GridRow* row2) const
+	{
+		const GridCell* cell1 = row1->get().at(columnIndex);
+		const GridCell* cell2 = row2->get().at(columnIndex);
+		int32_t cmp = cell1->getText().compare(cell2->getText());
+		if (cmp < 0)
+			return !ascending;
+		else
+			return ascending;
+	}
+};
+
+struct SortRowPredicateNumerical
+{
+	int32_t columnIndex;
+	bool ascending;
+
+	SortRowPredicateNumerical(int32_t columnIndex_, bool ascending_)
+	:	columnIndex(columnIndex_)
+	,	ascending(ascending_)
+	{
+	}
+
+	bool operator () (const GridRow* row1, const GridRow* row2) const
+	{
+		const GridCell* cell1 = row1->get().at(columnIndex);
+		const GridCell* cell2 = row2->get().at(columnIndex);
+		
+		float num1 = parseString< float >(cell1->getText());
+		float num2 = parseString< float >(cell2->getText());
+
+		if (num1 < num2)
+			return !ascending;
+		else
+			return ascending;
+	}
+};
+
 int32_t indexOf(const RefArray< GridRow >& rows, const GridRow* row)
 {
 	RefArray< GridRow >::const_iterator i = std::find(rows.begin(), rows.end(), row);
-	if (i == rows.end())
+	if (i != rows.end())
+		return int32_t(std::distance(rows.begin(), i));
+	else
 		return -1;
-
-	return int32_t(std::distance(rows.begin(), i));
 }
 
 			}
@@ -35,6 +85,9 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.GridView", GridView, AutoWidget)
 
 GridView::GridView()
 :	m_clickColumn(-1)
+,	m_sortColumnIndex(-1)
+,	m_sortAscending(false)
+,	m_sortMode(SmLexical)
 {
 }
 
@@ -61,6 +114,13 @@ void GridView::addColumn(GridColumn* column)
 const RefArray< GridColumn >& GridView::getColumns() const
 {
 	return m_columns;
+}
+
+void GridView::setSortColumn(int32_t columnIndex, bool ascending, SortMode mode)
+{
+	m_sortColumnIndex = columnIndex;
+	m_sortAscending = ascending;
+	m_sortMode = mode;
 }
 
 int32_t GridView::getColumnIndex(int32_t x) const
@@ -172,6 +232,22 @@ void GridView::layoutCells(const Rect& rc)
 
 	RefArray< GridRow > rows;
 	getRows(rows, GfDescendants | GfExpandedOnly);
+
+#if !defined(__APPLE__)
+	if (m_sortColumnIndex >= 0)
+	{
+		if (m_sortMode == SmLexical)
+		{
+			SortRowPredicateLexical sortPredicate(m_sortColumnIndex, m_sortAscending);
+			std::sort(rows.begin(), rows.end(), sortPredicate);
+		}
+		else if (m_sortMode == SmNumerical)
+		{
+			SortRowPredicateNumerical sortPredicate(m_sortColumnIndex, m_sortAscending);
+			std::sort(rows.begin(), rows.end(), sortPredicate);
+		}
+	}
+#endif
 
 	Rect rcRow(rcLayout.left, rcLayout.top, rcLayout.right, rcLayout.top);
 	for (RefArray< GridRow >::iterator i = rows.begin(); i != rows.end(); ++i)

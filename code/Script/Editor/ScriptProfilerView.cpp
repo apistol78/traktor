@@ -9,7 +9,12 @@
 #include "Ui/Custom/GridView/GridItem.h"
 #include "Ui/Custom/GridView/GridRow.h"
 #include "Ui/Custom/GridView/GridView.h"
+#include "Ui/Custom/ToolBar/ToolBar.h"
+#include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Events/CommandEvent.h"
+
+// Resources
+#include "Resources/Debug.h"
 
 namespace traktor
 {
@@ -31,8 +36,16 @@ ScriptProfilerView::~ScriptProfilerView()
 
 bool ScriptProfilerView::create(ui::Widget* parent)
 {
-	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0, 0)))
+	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
+
+	m_profilerTools = new ui::custom::ToolBar();
+	if (!m_profilerTools->create(this))
+		return false;
+
+	m_profilerTools->addImage(ui::Bitmap::load(c_ResourceDebug, sizeof(c_ResourceDebug), L"png"), 4);
+	m_profilerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_CLEAR_PROFILE"), 1, ui::Command(L"Script.Editor.ClearProfile")));
+	m_profilerTools->addClickEventHandler(ui::createMethodHandler(this, &ScriptProfilerView::eventProfilerToolClick));
 
 	m_profileGrid = new ui::custom::GridView();
 	m_profileGrid->create(this, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader);
@@ -51,14 +64,21 @@ void ScriptProfilerView::destroy()
 	ui::Container::destroy();
 }
 
-void ScriptProfilerView::callMeasured(const std::wstring& function, double timeStamp, double inclusiveDuration, double exclusiveDuration)
+bool ScriptProfilerView::handleCommand(const ui::Command& command)
 {
-	ProfileEntry& pe = m_profile[function];
-	pe.inclusiveDuration += inclusiveDuration;
-	pe.exclusiveDuration += exclusiveDuration;
-	pe.count++;
+	if (command == L"Script.Editor.ClearProfile")
+	{
+		m_profileGrid->removeAllRows();
+		m_profile.clear();
+		updateProfileGrid();
+		return true;
+	}
+	else
+		return false;
+}
 
-	// Calculate total durations.
+void ScriptProfilerView::updateProfileGrid()
+{
 	double totalInclusiveDuration = 0.0;
 	double totalExclusiveDuration = 0.0;
 	for (std::map< std::wstring, ProfileEntry >::const_iterator i = m_profile.begin(); i != m_profile.end(); ++i)
@@ -67,14 +87,13 @@ void ScriptProfilerView::callMeasured(const std::wstring& function, double timeS
 		totalExclusiveDuration += i->second.exclusiveDuration;
 	}
 
-	// Update profile presentation.
 	for (std::map< std::wstring, ProfileEntry >::iterator i = m_profile.begin(); i != m_profile.end(); ++i)
 	{
 		ProfileEntry& pe = i->second;
 		if (!pe.row)
 		{
 			pe.row = new ui::custom::GridRow();
-			pe.row->add(new ui::custom::GridItem(function));
+			pe.row->add(new ui::custom::GridItem(i->first));
 			pe.row->add(new ui::custom::GridItem(toString(pe.inclusiveDuration * 1000.0, 2)));
 			pe.row->add(new ui::custom::GridItem(toString(pe.exclusiveDuration * 1000.0, 2)));
 			pe.row->add(new ui::custom::GridItem(toString(pe.inclusiveDuration * 100.0 / totalInclusiveDuration, 2)));
@@ -92,7 +111,23 @@ void ScriptProfilerView::callMeasured(const std::wstring& function, double timeS
 		}
 	}
 
+	m_profileGrid->setSortColumn(2, true, ui::custom::GridView::SmNumerical);
 	m_profileGrid->update();
+}
+
+void ScriptProfilerView::eventProfilerToolClick(ui::Event* event)
+{
+	const ui::CommandEvent* cmdEvent = checked_type_cast< const ui::CommandEvent* >(event);
+	handleCommand(cmdEvent->getCommand());
+}
+
+void ScriptProfilerView::callMeasured(const std::wstring& function, double timeStamp, double inclusiveDuration, double exclusiveDuration)
+{
+	ProfileEntry& pe = m_profile[function];
+	pe.inclusiveDuration += inclusiveDuration;
+	pe.exclusiveDuration += exclusiveDuration;
+	pe.count++;
+	updateProfileGrid();
 }
 
 	}

@@ -32,7 +32,7 @@ class T_DLLCLASS FloatTemplate : public IValueTemplate
 public:
 	FloatTemplate(float threshold = std::numeric_limits< float >::max());
 
-	explicit FloatTemplate(float threshold, float min, float max, FloatTemplatePrecision precision);
+	explicit FloatTemplate(float threshold, float min, float max, FloatTemplatePrecision precision, bool cyclic);
 
 	virtual const TypeInfo& getValueType() const;
 
@@ -49,6 +49,7 @@ private:
 	float m_min;
 	float m_max;
 	FloatTemplatePrecision m_precision;
+	bool m_cyclic;
 };
 
 	}

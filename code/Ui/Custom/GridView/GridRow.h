@@ -83,6 +83,8 @@ public:
 
 	virtual int32_t getHeight() const;
 
+	virtual std::wstring getText() const;
+
 private:
 	friend class GridView;
 

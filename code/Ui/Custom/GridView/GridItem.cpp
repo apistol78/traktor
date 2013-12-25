@@ -44,7 +44,7 @@ void GridItem::setText(const std::wstring& text)
 	m_text = text;
 }
 
-const std::wstring& GridItem::getText() const
+std::wstring GridItem::getText() const
 {
 	return m_text;
 }

@@ -25,6 +25,30 @@ float safeDeltaTime(float v)
 		return v;
 }
 
+float cyclicLerp(float a, float b, float t, float mn, float mx)
+{
+	float bh = b + (mx - mn);
+	float bl = b - (mx - mn);
+
+	if (abs(bh - a) < abs(b - a))
+	{
+		float o = lerp(a, bh, t);
+		if (o > mx)
+			o -= (mx - mn);
+		return o;
+	}
+	
+	if (abs(bl - a) < abs(b - a))
+	{
+		float o = lerp(a, bl, t);
+		if (o < mn)
+			o += (mx - mn);
+		return o;
+	}
+
+	return lerp(a, b, t);
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.FloatTemplate", FloatTemplate, IValueTemplate)
@@ -37,11 +61,12 @@ FloatTemplate::FloatTemplate(float threshold)
 {
 }
 
-FloatTemplate::FloatTemplate(float threshold, float min, float max, FloatTemplatePrecision precision)
+FloatTemplate::FloatTemplate(float threshold, float min, float max, FloatTemplatePrecision precision, bool cyclic)
 :	m_threshold(threshold)
 ,	m_min(min)
 ,	m_max(max)
 ,	m_precision(precision)
+,	m_cyclic(cyclic)
 {
 }
 
@@ -127,9 +152,19 @@ Ref< const IValue > FloatTemplate::extrapolate(const IValue* Vn2, float Tn2, con
 
 	float Fo = 0.0f;
 	if (T <= Tn1)
-		Fo = lerp(Fn2, Fn1, (T - Tn2) / dT_n2_n1);
+	{
+		if (m_cyclic)
+			Fo = cyclicLerp(Fn2, Fn1, (T - Tn2) / dT_n2_n1, m_min, m_max);
+		else
+			Fo = lerp(Fn2, Fn1, (T - Tn2) / dT_n2_n1);
+	}
 	else
-		Fo = lerp(Fn1, F0, (T - Tn1) / dT_n1_0);
+	{
+		if (m_cyclic)
+			Fo = cyclicLerp(Fn1, F0, (T - Tn1) / dT_n1_0, m_min, m_max);
+		else
+			Fo = lerp(Fn1, F0, (T - Tn1) / dT_n1_0);
+	}
 
 	if (m_min < m_max)
 		Fo = clamp(Fo, m_min, m_max);
