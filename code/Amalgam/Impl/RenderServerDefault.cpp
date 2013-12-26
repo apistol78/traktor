@@ -182,9 +182,9 @@ bool RenderServerDefault::create(PropertyGroup* settings, void* nativeHandle)
 		}
 	}
 
-	m_renderViewDesc.depthBits = settings->getProperty< PropertyInteger >(L"Render.DepthBits", 16);
-	m_renderViewDesc.stencilBits = settings->getProperty< PropertyInteger >(L"Render.StencilBits", 4);
-	m_renderViewDesc.multiSample = settings->getProperty< PropertyInteger >(L"Render.MultiSample", 4);
+	m_renderViewDesc.depthBits = settings->getProperty< PropertyInteger >(L"Render.DepthBits", 24);
+	m_renderViewDesc.stencilBits = settings->getProperty< PropertyInteger >(L"Render.StencilBits", 8);
+	m_renderViewDesc.multiSample = settings->getProperty< PropertyInteger >(L"Render.MultiSample", 0);
 	m_renderViewDesc.waitVBlank = settings->getProperty< PropertyBoolean >(L"Render.WaitVBlank", true);
 	m_renderViewDesc.title = settings->getProperty< PropertyString >(L"Render.Title", L"Traktor");
 	m_renderViewDesc.fullscreen = settings->getProperty< PropertyBoolean >(L"Render.FullScreen", false);
