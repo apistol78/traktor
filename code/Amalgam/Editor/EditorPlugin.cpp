@@ -386,7 +386,7 @@ void EditorPlugin::eventTargetListPlay(ui::Event* event)
 			if (m_toolTweaks->get(3)->isChecked())
 				tweakSettings->setProperty< PropertyFloat >(L"Physics.TimeScale", 2.0f);
 			if (m_toolTweaks->get(4)->isChecked())
-				tweakSettings->setProperty< PropertyInteger >(L"World.SuperSample", 4);
+				tweakSettings->setProperty< PropertyInteger >(L"World.SuperSample", 2);
 			if (m_toolTweaks->get(5)->isChecked())
 				tweakSettings->setProperty< PropertyBoolean >(L"Script.AttachDebugger", true);
 			if (m_toolTweaks->get(6)->isChecked())

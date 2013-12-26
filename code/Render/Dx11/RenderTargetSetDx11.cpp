@@ -50,7 +50,7 @@ bool RenderTargetSetDx11::create(ID3D11Device* d3dDevice, const RenderTargetSetC
 		dtd.MipLevels = 1;
 		dtd.ArraySize = 1;
 		if (desc.ignoreStencil)
-			dtd.Format = DXGI_FORMAT_D16_UNORM;
+			dtd.Format = DXGI_FORMAT_D32_FLOAT;
 		else
 			dtd.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 		dtd.SampleDesc.Count = 1;
