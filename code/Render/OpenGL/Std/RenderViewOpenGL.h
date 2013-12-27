@@ -2,6 +2,7 @@
 #define traktor_render_RenderViewOpenGL_H
 
 #include <list>
+#include "Core/Containers/AlignedVector.h"
 #include "Render/IRenderView.h"
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/Std/ContextOpenGL.h"
@@ -127,6 +128,10 @@ private:
 	{
 		Ref< RenderTargetSetOpenGL > renderTargetSet;
 		int32_t renderTarget;
+		uint32_t clearMask;
+		Color4f clearColor;
+		float clearDepth;
+		int32_t clearStencil;
 	};
 
 #if defined(_WIN32)
@@ -140,11 +145,14 @@ private:
 	Ref< ContextOpenGL > m_resourceContext;
 	RenderTargetSetCreateDesc m_primaryTargetDesc;
 	Ref< RenderTargetSetOpenGL > m_primaryTarget;
-	std::list< TargetScope > m_targetStack;
+	AlignedVector< TargetScope > m_targetStack;
 	bool m_cursorVisible;
 	bool m_waitVBlank;
+	bool m_targetsDirty;
 	uint32_t m_drawCalls;
 	uint32_t m_primitiveCount;
+
+	void bindTargets();
 
 #if defined(_WIN32)
 

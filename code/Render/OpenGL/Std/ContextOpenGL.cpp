@@ -130,10 +130,8 @@ void ContextOpenGL::swapBuffers(bool waitVBlank)
 #elif defined(__APPLE__)
 	cglwSwapBuffers(m_context, waitVBlank);
 #elif defined(__LINUX__)
-	glXSwapBuffers(
-		m_window->getDisplay(),
-		 m_window->getWindow()
-	);
+	glXSwapIntervalEXT(m_window->getDisplay(), m_window->getWindow(), waitVBlank ? 1 : 0);
+	glXSwapBuffers(m_window->getDisplay(), m_window->getWindow());
 #endif
 }
 
