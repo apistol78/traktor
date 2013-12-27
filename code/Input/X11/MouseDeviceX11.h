@@ -60,9 +60,10 @@ private:
 	int m_deviceId;
 	bool m_connected;
 	bool m_exclusive;
-	float m_raw[2];
-	float m_axis[2];
-	float m_position[2];
+	float m_raw[3];
+	float m_axis[3];
+	int32_t m_position[2];
+	int32_t m_warped[2];
 	float m_button[3];
 	int m_width;
 	int m_height;

@@ -15,6 +15,7 @@ Window::Window(::Display* display)
 ,	m_width(0)
 ,	m_height(0)
 ,	m_fullScreen(false)
+,	m_active(true)
 ,	m_originalConfig(0)
 ,	m_originalSizeIndex(-1)
 ,	m_originalRate(0)
@@ -62,7 +63,7 @@ bool Window::create(int32_t width, int32_t height)
 	XSelectInput(
 		m_display,
 		m_window,
-		StructureNotifyMask
+		StructureNotifyMask | FocusChangeMask
 	);
 	return true;
 }
@@ -228,8 +229,9 @@ void Window::showCursor()
 #if !defined(_DEBUG)
 	Cursor cursor;
 	cursor = XCreateFontCursor(m_display, XC_left_ptr);
-	XDefineCursor(m_display, DefaultRootWindow(m_display), cursor);
+	XDefineCursor(m_display, m_window, cursor);
 	XFreeCursor(m_display, cursor);
+	XFlush(m_display);
 #endif
 }
 
@@ -238,10 +240,11 @@ void Window::hideCursor()
 #if !defined(_DEBUG)
 	static const char c_invisibleCursor[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 	XColor black; std::memset(&black, 0, sizeof(black));
-	Pixmap bitmapInvisibleCursor = XCreateBitmapFromData(m_display, DefaultRootWindow(m_display), c_invisibleCursor, 8, 8);
+	Pixmap bitmapInvisibleCursor = XCreateBitmapFromData(m_display, m_window, c_invisibleCursor, 8, 8);
 	Cursor invisibleCursor = XCreatePixmapCursor(m_display, bitmapInvisibleCursor, bitmapInvisibleCursor, &black, &black, 0, 0);
-	XDefineCursor(m_display, DefaultRootWindow(m_display), invisibleCursor);
+	XDefineCursor(m_display, m_window, invisibleCursor);
 	XFreeCursor(m_display, invisibleCursor);
+	XFlush(m_display);
 #endif
 }
 
@@ -261,7 +264,7 @@ void Window::center()
 bool Window::update(RenderEvent& outEvent)
 {
 	XEvent evt;
-	if (XCheckWindowEvent(m_display, m_window, StructureNotifyMask, &evt))
+	if (XCheckWindowEvent(m_display, m_window, StructureNotifyMask | FocusChangeMask, &evt))
 	{
 		if (
 			evt.type == ConfigureNotify &&
@@ -271,6 +274,7 @@ bool Window::update(RenderEvent& outEvent)
 			)
 		)
 		{
+			log::info << L"Render window resized" << Endl;
 			if (!m_fullScreen)
 			{
 				outEvent.type = ReResize;
@@ -279,7 +283,12 @@ bool Window::update(RenderEvent& outEvent)
 				return true;
 			}
 		}
+		else if (evt.type == FocusIn)
+			m_active = true;
+		else if (evt.type == FocusOut)
+			m_active = false;
 	}
+
 	return false;
 }
 

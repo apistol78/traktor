@@ -19,17 +19,18 @@ const struct MouseControlMap
 c_mouseControlMap[] =
 {
 	{ L"Left mouse button", DtButton1, false, true },
-	{ L"Right mouse button", DtButton2, false, true },
 	{ L"Middle mouse button", DtButton3, false, true },
+	{ L"Right mouse button", DtButton2, false, true },
 	{ L"Mouse X axis", DtAxisX, true, true },
 	{ L"Mouse Y axis", DtAxisY, true, true },
+	{ L"Mouse Z axis", DtAxisZ, true, true },
 	{ L"Mouse X axis", DtPositionX, true, false },
 	{ L"Mouse Y axis", DtPositionY, true, false }
 };
 
-const float c_mouseMargin = 16.0f;
-const float c_mouseDeltaScale = 4.0f;
-const float c_mouseDeltaLimit = 100.0f;
+const float c_mouseDeltaScale = 3.0f;
+const float c_mouseDeltaLimit = 200.0f;
+const float c_mouseWheelDelta = 1.0f;
 
 		}
 
@@ -53,19 +54,9 @@ MouseDeviceX11::MouseDeviceX11(Display* display, Window window, int deviceId)
 	evmask.deviceid = m_deviceId;
 
 	XISetMask(mask, XI_Motion);
-
+	XISetMask(mask, XI_ButtonPress);
+	XISetMask(mask, XI_ButtonRelease);
 	XISelectEvents(m_display, m_window, &evmask, 1);
-
-	// Select raw events from default root window.
-	evmask.mask = mask;
-	evmask.mask_len = sizeof(mask);
-	evmask.deviceid = XIAllDevices; //m_deviceId;
-
-	XISetMask(mask, XI_RawMotion);
-	XISetMask(mask, XI_RawButtonPress);
-	XISetMask(mask, XI_RawButtonRelease);
-
-	XISelectEvents(m_display, DefaultRootWindow(m_display), &evmask, 1);
 
 	resetState();
 }
@@ -120,10 +111,12 @@ float MouseDeviceX11::getControlValue(int32_t control)
 		return m_axis[0];
 	else if (mc.controlType == DtAxisY)
 		return m_axis[1];
+	else if (mc.controlType == DtAxisZ)
+		return m_axis[2];
 	else if (mc.controlType == DtPositionX)
-		return m_position[0];
+		return float(m_position[0]);
 	else if (mc.controlType == DtPositionY)
-		return m_position[1];
+		return float(m_position[1]);
 	else if (mc.controlType == DtButton1)
 		return m_button[0];
 	else if (mc.controlType == DtButton2)
@@ -178,12 +171,20 @@ bool MouseDeviceX11::getKeyEvent(KeyEvent& outEvent)
 
 void MouseDeviceX11::resetState()
 {
-	for (int i = 0; i < 2; ++i)
-	{
-		m_raw[i] = 0.0f;
-		m_axis[i] = 0.0f;
-		m_position[i] = 0.0f;
-	}
+	m_raw[0] = 0.0f;
+	m_raw[1] = 0.0f;
+	m_raw[2] = 0.0f;
+
+	m_axis[0] = 0.0f;
+	m_axis[1] = 0.0f;
+	m_axis[2] = 0.0f;
+
+	m_position[0] = 0;
+	m_position[1] = 0;
+
+	m_warped[0] = -1;
+	m_warped[1] = -1;
+
 	m_button[0] = 0.0f;
 	m_button[1] = 0.0f;
 	m_button[2] = 0.0f;
@@ -200,7 +201,7 @@ void MouseDeviceX11::readState()
 	m_width = attr.width;
 	m_height = attr.height;
 
-	for (int i = 0; i < 2; ++i)
+	for (int i = 0; i < 3; ++i)
 	{
 		m_axis[i] = m_raw[i];
 		m_raw[i] = 0.0f;
@@ -208,20 +209,46 @@ void MouseDeviceX11::readState()
 
 	if (m_exclusive)
 	{
-		m_position[0] = clamp< float >(m_position[0], c_mouseMargin, m_width - c_mouseMargin);
-		m_position[1] = clamp< float >(m_position[1], c_mouseMargin, m_height - c_mouseMargin);
+		bool confined = true;
 
-		XWarpPointer(
-			m_display,
-			None,
-			m_window,
-			0,
-			0,
-			0,
-			0,
-			int(m_position[0]),
-			int(m_position[1])
-		);
+		if (m_position[0] < 0)
+		{
+			m_position[0] = 0;
+			confined = false;
+		}
+		if (m_position[0] >= m_width)
+		{
+			m_position[0] = m_width - 1;
+			confined = false;
+		}
+		if (m_position[1] < 0)
+		{
+			m_position[1] = 0;
+			confined = false;
+		}
+		if (m_position[1] >= m_height)
+		{
+			m_position[1] = m_height - 1;
+			confined = false;
+		}
+
+		if (!confined)
+		{
+			m_warped[0] = m_position[0];
+			m_warped[1] = m_position[1];
+
+			XWarpPointer(
+				m_display,
+				None,
+				m_window,
+				0,
+				0,
+				0,
+				0,
+				m_position[0],
+				m_position[1]
+			);
+		}
 	}
 }
 
@@ -243,17 +270,17 @@ void MouseDeviceX11::setExclusive(bool exclusive)
 
 		evmask.mask = mask;
 		evmask.mask_len = sizeof(mask);
-		evmask.deviceid = XIAllDevices; //m_deviceId;
+		evmask.deviceid = XIAllDevices;
 
-		XISetMask(mask, XI_RawMotion);
-		XISetMask(mask, XI_RawButtonPress);
-		XISetMask(mask, XI_RawButtonRelease);
+		XISetMask(mask, XI_Motion);
+		XISetMask(mask, XI_ButtonPress);
+		XISetMask(mask, XI_ButtonRelease);
 
 #if !defined(_DEBUG)
 		XIGrabDevice(
 			m_display,
 			m_deviceId,
-			DefaultRootWindow(m_display),
+			m_window,
 			CurrentTime,
 			None,
 			GrabModeAsync,
@@ -285,44 +312,35 @@ void MouseDeviceX11::consumeEvent(XEvent& evt)
 			if (event->deviceid != m_deviceId)
 				return;
 
-			m_position[0] = float(event->event_x);
-			m_position[1] = float(event->event_y);
-		}
-		break;
-
-	case XI_RawMotion:
-		{
-			XIRawEvent* event = (XIRawEvent*)evt.xcookie.data;
-			if (event->deviceid != m_deviceId)
-				return;
-
-			// Use filtered values if available; otherwise use the values directly from the device.
-			const double* values = event->valuators.values;
-			if (!values)
-				values = event->raw_values;
-
-			for (uint32_t i = 0, j = 0; i < event->valuators.mask_len * 8; ++i)
+			// Need to check if event's position differ from warped position.
+			if (event->event_x != m_warped[0] || event->event_y != m_warped[1])
 			{
-				if (!XIMaskIsSet(event->valuators.mask, i))
-					continue;
+				int32_t dx = event->event_x - m_position[0];
+				int32_t dy = event->event_y - m_position[1];
 
-				m_raw[j++] = clamp(float(values[i] * c_mouseDeltaScale), -c_mouseDeltaLimit, c_mouseDeltaLimit);
-				if (j >= 2)
-					break;
+				m_raw[0] += clamp(float(dx * c_mouseDeltaScale), -c_mouseDeltaLimit, c_mouseDeltaLimit);
+				m_raw[1] += clamp(float(dy * c_mouseDeltaScale), -c_mouseDeltaLimit, c_mouseDeltaLimit);
 			}
+
+			m_position[0] = event->event_x;
+			m_position[1] = event->event_y;
+
+			m_warped[0] = -1;
+			m_warped[1] = -1;
 		}
 		break;
 
-	case XI_RawButtonPress:
-	case XI_RawButtonRelease:
+	case XI_ButtonPress:
+	case XI_ButtonRelease:
 		{
-			XIRawEvent* event = (XIRawEvent*)evt.xcookie.data;
-			/*
+			XIDeviceEvent* event = (XIDeviceEvent*)evt.xcookie.data;
 			if (event->deviceid != m_deviceId)
 				return;
-			*/
+
 			if (event->detail >= 1 && event->detail <= 3)
-				m_button[event->detail - 1] = (xi->evtype == XI_RawButtonPress) ? 1.0f : 0.0f;
+				m_button[event->detail - 1] = (xi->evtype == XI_ButtonPress) ? 1.0f : 0.0f;
+			else if (xi->evtype == XI_ButtonPress && (event->detail == 4 || event->detail == 5))
+				m_raw[2] += (event->detail == 4) ? c_mouseWheelDelta : -c_mouseWheelDelta;
 		}
 		break;
 

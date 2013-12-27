@@ -44,7 +44,7 @@ public:
 
 	bool isFullScreen() const { return m_fullScreen; }
 
-	bool isActive() const { return true; }
+	bool isActive() const { return m_active; }
 
 	::Display* getDisplay() const { return m_display; }
 
@@ -57,6 +57,7 @@ private:
 	int32_t m_width;
 	int32_t m_height;
 	bool m_fullScreen;
+	bool m_active;
 	XRRScreenConfiguration* m_originalConfig;
 	int32_t m_originalSizeIndex;
 	int32_t m_originalRate;
