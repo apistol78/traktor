@@ -185,72 +185,103 @@ void RenderViewOpenGL::close()
 
 bool RenderViewOpenGL::reset(const RenderViewDefaultDesc& desc)
 {
-	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
+	// Invalidate all created RT FBOs.
+	RenderTargetSetOpenGL::ms_primaryTargetTag++;
 
-	safeDestroy(m_primaryTarget);
+	{
+		T_ANONYMOUS_VAR(IContext::Scope)(m_renderContext);
+
+		// Ensure no FBO is currently bound.
+		T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+		T_OGL_SAFE(glFinish());
+	}
+	{
+		T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
+		safeDestroy(m_primaryTarget);
+
+		// Clean pending resources.
+		m_resourceContext->deleteResources();
 
 #if defined(_WIN32)
-
-	m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - OpenGL Renderer");
-
-	if (desc.fullscreen)
-		m_window->setFullScreenStyle(desc.displayMode.width, desc.displayMode.height);
-	else
-		m_window->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
-
+		m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - OpenGL Renderer");
+		if (desc.fullscreen)
+			m_window->setFullScreenStyle(desc.displayMode.width, desc.displayMode.height);
+		else
+			m_window->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
 #elif defined(__APPLE__)
-
-	cglwModifyWindow(m_windowHandle, desc.displayMode, desc.fullscreen);
-
+		cglwModifyWindow(m_windowHandle, desc.displayMode, desc.fullscreen);
 #elif defined(__LINUX__)
-
-	m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - OpenGL Renderer");
-
-	if (desc.fullscreen)
-		m_window->setFullScreenStyle(desc.displayMode.width, desc.displayMode.height);
-	else
-		m_window->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
-
+		m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - OpenGL Renderer");
+		if (desc.fullscreen)
+			m_window->setFullScreenStyle(desc.displayMode.width, desc.displayMode.height);
+		else
+			m_window->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
 #endif
 
-	// Update render context to ensure dimensions are set.
-	m_renderContext->update();
+		// Update render context to ensure dimensions are set.
+		m_renderContext->update();
 
-	// Re-create primary FBO target.
-	m_primaryTargetDesc.width = m_renderContext->getWidth();
-	m_primaryTargetDesc.height = m_renderContext->getHeight();
-	m_primaryTargetDesc.multiSample = desc.multiSample;
+		// Re-create primary FBO target.
+		m_primaryTargetDesc.width = desc.displayMode.width;
+		m_primaryTargetDesc.height = desc.displayMode.height;
+		m_primaryTargetDesc.multiSample = desc.multiSample;
 
-	log::info << L"Creating primary target " << m_primaryTargetDesc.width << L" x " << m_primaryTargetDesc.height << Endl;
-	if (m_primaryTargetDesc.width > 0 && m_primaryTargetDesc.height > 0)
-	{
-		m_primaryTarget = new RenderTargetSetOpenGL(m_resourceContext);
-		if (!m_primaryTarget->create(m_primaryTargetDesc))
-			return false;
+		log::info << L"Creating primary target " << m_primaryTargetDesc.width << L" x " << m_primaryTargetDesc.height << Endl;
+		if (m_primaryTargetDesc.width > 0 && m_primaryTargetDesc.height > 0)
+		{
+			m_primaryTarget = new RenderTargetSetOpenGL(m_resourceContext);
+			if (!m_primaryTarget->create(m_primaryTargetDesc))
+			{
+				log::error << L"Failed to create primary target" << Endl;
+				return false;
+			}
+		}
 	}
 
 	m_waitVBlank = desc.waitVBlank;
-	m_targetsDirty = true;
-
+	m_targetsDirty = false;
 	return true;
 }
 
 bool RenderViewOpenGL::reset(int32_t width, int32_t height)
 {
-	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
+	// Invalidate all created RT FBOs.
+	RenderTargetSetOpenGL::ms_primaryTargetTag++;
 
-	safeDestroy(m_primaryTarget);
+	{
+		T_ANONYMOUS_VAR(IContext::Scope)(m_renderContext);
 
-	// Update render context to ensure dimensions are set.
-	m_renderContext->update();
+		// Ensure no FBO is currently bound.
+		T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+		T_OGL_SAFE(glFinish());
+	}
+	{
+		T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
+		safeDestroy(m_primaryTarget);
 
-	// Re-create primary FBO target.
-	m_primaryTargetDesc.width = m_renderContext->getWidth();
-	m_primaryTargetDesc.height = m_renderContext->getHeight();
+		// Clean pending resources.
+		m_resourceContext->deleteResources();
 
-	m_primaryTarget = new RenderTargetSetOpenGL(m_resourceContext);
-	m_primaryTarget->create(m_primaryTargetDesc);
+		// Update render context to ensure dimensions are set.
+		m_renderContext->update();
 
+		// Re-create primary FBO target.
+		m_primaryTargetDesc.width = m_renderContext->getWidth();
+		m_primaryTargetDesc.height = m_renderContext->getHeight();
+
+		log::info << L"Creating primary target " << m_primaryTargetDesc.width << L" x " << m_primaryTargetDesc.height << Endl;
+		if (m_primaryTargetDesc.width > 0 && m_primaryTargetDesc.height > 0)
+		{
+			m_primaryTarget = new RenderTargetSetOpenGL(m_resourceContext);
+			if (!m_primaryTarget->create(m_primaryTargetDesc))
+			{
+				log::error << L"Failed to create primary target" << Endl;
+				return false;
+			}
+		}
+	}
+
+	m_targetsDirty = false;
 	return true;
 }
 
@@ -374,6 +405,8 @@ SystemWindow RenderViewOpenGL::getSystemWindow()
 
 bool RenderViewOpenGL::begin(EyeType eye)
 {
+	T_ASSERT (!m_targetsDirty);
+
 	if (!m_primaryTarget)
 		return false;
 
@@ -388,23 +421,45 @@ bool RenderViewOpenGL::begin(EyeType eye)
 
 bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet)
 {
+	// Ensure deferred clears on targets are executed.
+	if (m_targetsDirty)
+	{
+		T_ASSERT (!m_targetStack.empty());
+		TargetScope& ts = m_targetStack.back();
+		if (ts.clearMask != 0)
+			bindTargets();
+	}
+
 	TargetScope ts;
 	ts.renderTargetSet = checked_type_cast< RenderTargetSetOpenGL* >(renderTargetSet);
 	ts.renderTarget = -1;
 	ts.clearMask = 0;
+	
 	m_targetStack.push_back(ts);
 	m_targetsDirty = true;
+
 	return true;
 }
 
 bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 {
+	// Ensure deferred clears on targets are executed.
+	if (m_targetsDirty)
+	{
+		T_FATAL_ASSERT (!m_targetStack.empty());
+		TargetScope& ts = m_targetStack.back();
+		if (ts.clearMask != 0)
+			bindTargets();
+	}
+
 	TargetScope ts;
 	ts.renderTargetSet = checked_type_cast< RenderTargetSetOpenGL* >(renderTargetSet);
 	ts.renderTarget = renderTarget;
 	ts.clearMask = 0;
+	
 	m_targetStack.push_back(ts);
 	m_targetsDirty = true;
+
 	return true;
 }
 

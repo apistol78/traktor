@@ -213,10 +213,16 @@ void Stage::render(render::EyeType eye, uint32_t frame)
 	}
 }
 
-void Stage::reconfigured()
+void Stage::preReconfigured()
 {
 	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-		(*i)->reconfigured();
+		(*i)->preReconfigured();
+}
+
+void Stage::postReconfigured()
+{
+	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+		(*i)->postReconfigured();
 }
 
 bool Stage::validateScriptContext()

@@ -49,7 +49,9 @@ public:
 
 	virtual void render(render::EyeType eye, uint32_t frame) = 0;
 
-	virtual void reconfigured() = 0;
+	virtual void preReconfigured() = 0;
+
+	virtual void postReconfigured() = 0;
 
 	Stage* getStage() const { return m_stage; }
 

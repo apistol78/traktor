@@ -623,20 +623,10 @@ bool WorldRendererPreLit::create(
 
 void WorldRendererPreLit::destroy()
 {
+	m_frames.clear();
+	m_buildEntities.clear();
+
 	safeDestroy(m_lightRenderer);
-
-	for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
-	{
-		for (int32_t j = 0; j < MaxSliceCount; ++j)
-		{
-			for (int32_t k = 0; k < MaxLightShadowCount; ++k)
-				i->slice[j].shadow[k] = 0;
-		}
-
-		i->visual = 0;
-		i->gbuffer = 0;
-	}
-
 	safeDestroy(m_gammaCorrectionPostProcess);
 	safeDestroy(m_visualPostProcess);
 	safeDestroy(m_antiAlias);
@@ -644,16 +634,28 @@ void WorldRendererPreLit::destroy()
 	safeDestroy(m_colorTargetCopy);
 	safeDestroy(m_shadowMaskFilter);
 	safeDestroy(m_shadowMaskProject);
+
 	m_reflectionMap.clear();
+	m_globalContext = 0;
+
+	safeDestroy(m_lightMapTargetSet);
+
+	for (RefArray< render::RenderTargetSet >::iterator i = m_shadowMaskFilterTargetSet.begin(); i != m_shadowMaskFilterTargetSet.end(); ++i)
+	{
+		if (*i)
+			(*i)->destroy();
+	}
 	m_shadowMaskFilterTargetSet.clear();
+
 	safeDestroy(m_shadowMaskProjectTargetSet);
 	safeDestroy(m_shadowTargetSet);
-	safeDestroy(m_lightMapTargetSet);
 	safeDestroy(m_colorTargetSet);
 	safeDestroy(m_gbufferTargetSet);
 	safeDestroy(m_intermediateTargetSet);
 	safeDestroy(m_visualTargetSet);
 
+	m_shadowProjection = 0;
+	m_shadowProjection0 = 0;
 	m_renderView = 0;
 }
 

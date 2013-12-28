@@ -12,8 +12,22 @@ namespace traktor
 		namespace
 		{
 
-		namespace
-		{
+struct DeleteRenderBufferCallback : public IContext::IDeleteCallback
+{
+	GLuint m_renderBufferName;
+
+	DeleteRenderBufferCallback(GLuint renderBufferName)
+	:	m_renderBufferName(renderBufferName)
+	{
+	}
+
+	virtual void deleteResource()
+	{
+		T_OGL_SAFE(glDeleteRenderbuffers(1, &m_renderBufferName));
+		T_OGL_SAFE(glFinish());
+		delete this;
+	}
+};
 
 struct DeleteFramebufferCallback : public IContext::IDeleteCallback
 {
@@ -27,20 +41,22 @@ struct DeleteFramebufferCallback : public IContext::IDeleteCallback
 	virtual void deleteResource()
 	{
 		T_OGL_SAFE(glDeleteFramebuffers(1, &m_framebufferName));
+		T_OGL_SAFE(glFinish());
 		delete this;
 	}
 };
 
 		}
 
-		}
-
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetOpenGL", RenderTargetSetOpenGL, RenderTargetSet)
+
+uint32_t RenderTargetSetOpenGL::ms_primaryTargetTag = 1;
 
 RenderTargetSetOpenGL::RenderTargetSetOpenGL(ContextOpenGL* resourceContext)
 :	m_resourceContext(resourceContext)
 ,	m_targetFBO(0)
 ,	m_depthBuffer(0)
+,	m_currentTag(0)
 {
 }
 
@@ -102,6 +118,13 @@ void RenderTargetSetOpenGL::destroy()
 {
 	for (uint32_t i = 0; i < sizeof_array(m_renderTargets); ++i)
 		safeDestroy(m_renderTargets[i]);
+
+	if (m_depthBuffer)
+	{
+		if (m_resourceContext)
+			m_resourceContext->deleteResource(new DeleteRenderBufferCallback(m_depthBuffer));
+		m_depthBuffer = 0;
+	}
 
 	if (m_targetFBO)
 	{
@@ -244,9 +267,16 @@ void RenderTargetSetOpenGL::blit()
 bool RenderTargetSetOpenGL::createFramebuffer(GLuint primaryDepthBuffer)
 {
 	// Already created?
-	if (m_targetFBO != 0)
+	if (m_targetFBO != 0 && (!m_desc.usingPrimaryDepthStencil || m_currentTag == ms_primaryTargetTag))
 		return true;
-		
+
+	// If re-creating then we need to make sure we don't leak FBOs.
+	if (m_targetFBO)
+	{
+		if (m_resourceContext)
+			m_resourceContext->deleteResource(new DeleteFramebufferCallback(m_targetFBO));
+	}
+
 	T_OGL_SAFE(glGenFramebuffers(1, &m_targetFBO));
 	T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, m_targetFBO));
 
@@ -317,6 +347,7 @@ bool RenderTargetSetOpenGL::createFramebuffer(GLuint primaryDepthBuffer)
 		));
 	}
 
+	m_currentTag = ms_primaryTargetTag;
 	return true;
 }
 

@@ -274,7 +274,7 @@ bool Window::update(RenderEvent& outEvent)
 			)
 		)
 		{
-			log::info << L"Render window resized" << Endl;
+			log::info << L"Render window resized " << evt.xconfigure.width << L" x " << evt.xconfigure.height << Endl;
 			if (!m_fullScreen)
 			{
 				outEvent.type = ReResize;

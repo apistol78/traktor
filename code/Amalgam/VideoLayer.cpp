@@ -91,7 +91,11 @@ void VideoLayer::render(render::EyeType eye, uint32_t frame)
 	}
 }
 
-void VideoLayer::reconfigured()
+void VideoLayer::preReconfigured()
+{
+}
+
+void VideoLayer::postReconfigured()
 {
 }
 

@@ -74,7 +74,9 @@ public:
 
 	virtual void render(render::EyeType eye, uint32_t frame);
 
-	virtual void reconfigured();
+	virtual void preReconfigured();
+
+	virtual void postReconfigured();
 
 	Ref< world::EntityData > getEntityData(const std::wstring& name) const;
 

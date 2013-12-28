@@ -89,7 +89,9 @@ public:
 
 	void render(render::EyeType eye, uint32_t frame);
 
-	void reconfigured();
+	void preReconfigured();
+
+	void postReconfigured();
 
 	amalgam::IEnvironment* getEnvironment() { return m_environment; }
 
