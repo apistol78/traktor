@@ -28,11 +28,14 @@ class T_DLLCLASS ReconfigureEvent : public IEvent
 	T_RTTI_CLASS;
 
 public:
-	ReconfigureEvent(int32_t result);
+	ReconfigureEvent(bool finished, int32_t result);
+
+	bool isFinished() const;
 
 	int32_t getResult() const;
 
 private:
+	bool m_finished;
 	int32_t m_result;
 };
 

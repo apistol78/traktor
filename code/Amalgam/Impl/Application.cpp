@@ -448,6 +448,13 @@ bool Application::update()
 		// Synchronize rendering thread first as renderer might be reconfigured.
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
 
+		// Emit action in current state as we're about to reconfigured servers.
+		if ((currentState = m_stateManager->getCurrent()) != 0)
+		{
+			ReconfigureEvent configureEvent(false, 0);
+			currentState->take(&configureEvent);
+		}
+
 		// Execute configuration on all servers.
 		int32_t result = m_environment->executeReconfigure();
 		if (result == CrFailed)
@@ -456,7 +463,7 @@ bool Application::update()
 		// Emit action in current state as we've successfully reconfigured servers.
 		if ((currentState = m_stateManager->getCurrent()) != 0)
 		{
-			ReconfigureEvent configureEvent(result);
+			ReconfigureEvent configureEvent(true, result);
 			currentState->take(&configureEvent);
 		}
 	}

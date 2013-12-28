@@ -22,6 +22,8 @@ class RenderTargetSetOpenGL : public RenderTargetSet
 	T_RTTI_CLASS;
 
 public:
+	static uint32_t ms_primaryTargetTag;	//!< Tag to indicate state of primary depth buffer; each time the depth buffer is resized this needs to be incremented.
+
 	RenderTargetSetOpenGL(ContextOpenGL* resourceContext);
 
 	virtual ~RenderTargetSetOpenGL();
@@ -55,6 +57,7 @@ private:
 	GLuint m_depthBuffer;
 	GLuint m_targetTextures[8];
 	Ref< RenderTargetOpenGL > m_renderTargets[8];
+	uint32_t m_currentTag;
 
 	bool createFramebuffer(GLuint primaryDepthBuffer);
 };

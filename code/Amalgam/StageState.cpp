@@ -62,7 +62,10 @@ bool StageState::take(const amalgam::IEvent* event)
 {
 	if (const amalgam::ReconfigureEvent* reconfigureEvent = dynamic_type_cast< const amalgam::ReconfigureEvent* >(event))
 	{
-		m_stage->reconfigured();
+		if (!reconfigureEvent->isFinished())
+			m_stage->preReconfigured();
+		else
+			m_stage->postReconfigured();
 	}
 	return true;
 }

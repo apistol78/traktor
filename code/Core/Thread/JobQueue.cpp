@@ -33,21 +33,24 @@ bool JobQueue::create(uint32_t workerThreads, Thread::Priority priority)
 		if (m_workerThreads[i])
 			m_workerThreads[i]->start(priority);
 		else
+		{
+			m_workerThreads[i] = 0;
 			return false;
+		}
 	}
 	return true;
 }
 
 void JobQueue::destroy()
 {
-	// Signal all worker threads we're stopping.
+#if !defined(__LINUX__)
 	for (uint32_t i = 0; i < uint32_t(m_workerThreads.size()); ++i)
 		m_workerThreads[i]->stop(0);
+#endif
 
-	// Destroy worker threads.
 	for (uint32_t i = 0; i < uint32_t(m_workerThreads.size()); ++i)
 	{
-		m_workerThreads[i]->wait();
+		m_workerThreads[i]->stop();
 		ThreadManager::getInstance().destroy(m_workerThreads[i]);
 	}
 

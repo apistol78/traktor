@@ -407,6 +407,7 @@ int32_t RenderServerDefault::reconfigure(IEnvironment* environment, const Proper
 		m_renderViewDesc = rvdd;
 		if (!m_renderView->reset(rvdd))
 		{
+			log::error << L"Failed to apply changes to render view; current is kept" << Endl;
 			m_renderViewDesc = current;
 			return CrFailed;
 		}

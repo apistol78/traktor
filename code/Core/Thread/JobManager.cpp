@@ -1,3 +1,4 @@
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Thread/JobManager.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/System/OS.h"
@@ -25,6 +26,7 @@ JobManager& JobManager::getInstance()
 
 void JobManager::destroy()
 {
+	safeDestroy(m_queue);
 	delete this;
 }
 

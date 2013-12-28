@@ -7,9 +7,15 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ReconfigureEvent", ReconfigureEvent, IEvent)
 
-ReconfigureEvent::ReconfigureEvent(int32_t result)
-:	m_result(result)
+ReconfigureEvent::ReconfigureEvent(bool finished, int32_t result)
+:	m_finished(finished)
+,	m_result(result)
 {
+}
+
+bool ReconfigureEvent::isFinished() const
+{
+	return m_finished;
 }
 
 int32_t ReconfigureEvent::getResult() const

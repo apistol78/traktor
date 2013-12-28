@@ -136,7 +136,11 @@ void AudioLayer::render(render::EyeType eye, uint32_t frame)
 {
 }
 
-void AudioLayer::reconfigured()
+void AudioLayer::preReconfigured()
+{
+}
+
+void AudioLayer::postReconfigured()
 {
 }
 

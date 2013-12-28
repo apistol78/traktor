@@ -384,7 +384,13 @@ void FlashLayer::render(render::EyeType eye, uint32_t frame)
 	}
 }
 
-void FlashLayer::reconfigured()
+void FlashLayer::preReconfigured()
+{
+	// Discard post processing; need to be fully re-created if used.
+	m_postProcess = 0;
+}
+
+void FlashLayer::postReconfigured()
 {
 	// Post resize to movie player; adjust width to keep aspect ratio.
 	if (m_moviePlayer)
@@ -398,9 +404,6 @@ void FlashLayer::reconfigured()
 
 		m_moviePlayer->postViewResize(width, height);
 	}
-
-	// Discard post processing; need to be fully re-created if used.
-	m_postProcess = 0;
 }
 
 flash::FlashMoviePlayer* FlashLayer::getMoviePlayer()

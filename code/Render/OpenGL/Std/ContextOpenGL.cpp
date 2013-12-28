@@ -126,6 +126,8 @@ void ContextOpenGL::update()
 void ContextOpenGL::swapBuffers(bool waitVBlank)
 {
 #if defined(_WIN32)
+	if (wglSwapIntervalEXT)
+		wglSwapIntervalEXT(waitVBlank ? 1 : 0);
 	SwapBuffers(m_hDC);
 #elif defined(__APPLE__)
 	cglwSwapBuffers(m_context, waitVBlank);

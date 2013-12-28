@@ -162,7 +162,6 @@ bool RenderSystemOpenGL::create(const RenderSystemDesc& desc)
 	{
 		GLX_RENDER_TYPE, GLX_RGBA_BIT,
 		GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
-		GLX_DOUBLEBUFFER, True,
 		GLX_RED_SIZE, 1,
 		GLX_GREEN_SIZE, 1,
 		GLX_BLUE_SIZE, 1,
@@ -612,7 +611,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 
 	m_window->center();
 
-	int attribs[] = { GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, desc.depthBits, None };
+	int attribs[] = { GLX_RGBA, None };
 	XVisualInfo* visual = glXChooseVisual(m_display, DefaultScreen(m_display), attribs);
 	if (!visual)
 		return 0;
@@ -626,9 +625,6 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 
 	if (glewInit() != GLEW_OK)
 		return 0;
-
-	glHint(GL_FRAGMENT_SHADER_DERIVATIVE_HINT, GL_NICEST);
-	glHint(GL_TEXTURE_COMPRESSION_HINT, GL_NICEST);
 
 	context->leave();
 

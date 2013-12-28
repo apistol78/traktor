@@ -1,6 +1,7 @@
 #include "Amalgam/IEnvironment.h"
 #include "Amalgam/IUpdateInfo.h"
 #include "Amalgam/WorldLayer.h"
+#include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyFloat.h"
@@ -204,6 +205,7 @@ void WorldLayer::render(render::EyeType eye, uint32_t frame)
 
 	if (m_worldRenderer->beginRender(frame, eye, c_clearColor))
 	{
+		// Bind per-scene post processing parameters.
 		world::PostProcess* postProcess = m_worldRenderer->getVisualPostProcess();
 		if (postProcess)
 		{
@@ -211,9 +213,9 @@ void WorldLayer::render(render::EyeType eye, uint32_t frame)
 				postProcess->setTextureParameter(i->first, i->second);
 		}
 
+		// Render world.
 		m_worldRenderer->render(
-			world::WrfDepthMap | world::WrfNormalMap | world::WrfShadowMap | world::WrfLightMap |
-			world::WrfVisualOpaque | world::WrfVisualAlphaBlend,
+			world::WrfDepthMap | world::WrfNormalMap | world::WrfShadowMap | world::WrfLightMap | world::WrfVisualOpaque | world::WrfVisualAlphaBlend,
 			frame,
 			eye
 		);
@@ -222,9 +224,17 @@ void WorldLayer::render(render::EyeType eye, uint32_t frame)
 	}
 }
 
-void WorldLayer::reconfigured()
+void WorldLayer::preReconfigured()
 {
-	createWorldRenderer();
+	// Destroy previous world renderer; do this
+	// before re-configuration of servers as world
+	// renderer might have heavy resources already created
+	// such as render targets and textures.
+	safeDestroy(m_worldRenderer);
+}
+
+void WorldLayer::postReconfigured()
+{
 }
 
 Ref< world::EntityData > WorldLayer::getEntityData(const std::wstring& name) const
@@ -430,9 +440,6 @@ void WorldLayer::createWorldRenderer()
 {
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
 
-	// Destroy previous world renderer.
-	safeDestroy(m_worldRenderer);
-
 	// Get render view dimensions.
 	int32_t width = renderView->getWidth();
 	int32_t height = renderView->getHeight();
@@ -443,7 +450,10 @@ void WorldLayer::createWorldRenderer()
 		m_scene->getPostProcessSettings()
 	);
 	if (!m_worldRenderer)
+	{
+		log::error << L"Unable to create world renderer; world layer disabled" << Endl;
 		return;
+	}
 
 	// Create world render view.
 	world::WorldViewPerspective worldViewPort;

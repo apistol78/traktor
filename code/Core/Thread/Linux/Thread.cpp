@@ -110,8 +110,10 @@ bool Thread::start(Priority priority)
 bool Thread::wait(int timeout)
 {
 	Internal* in = reinterpret_cast< Internal* >(m_handle);
+	if (!in)
+		return true;
 
-	int status;
+	void* dummy = 0;
 	int rc;
 
 	if (timeout >= 0)
@@ -143,7 +145,7 @@ bool Thread::wait(int timeout)
 
 	rc = pthread_join(
 		in->thread,
-		(void**)&status
+		&dummy
 	);
 
 	return bool(rc == 0);
