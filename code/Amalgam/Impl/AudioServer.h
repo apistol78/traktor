@@ -49,6 +49,7 @@ private:
 	Ref< sound::SoundSystem > m_soundSystem;
 	Ref< sound::SoundPlayer > m_soundPlayer;
 	Ref< sound::SurroundEnvironment > m_surroundEnvironment;
+	std::wstring m_audioType;
 	bool m_autoMute;
 	bool m_soundMuted;
 	float m_soundMutedVolume;

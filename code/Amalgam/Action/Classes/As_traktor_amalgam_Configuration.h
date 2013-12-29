@@ -12,6 +12,7 @@ namespace traktor
 
 class AsConfiguration;
 class AsDisplayMode;
+class AsSoundDriver;
 
 class As_traktor_amalgam_Configuration : public flash::ActionClass
 {
@@ -86,6 +87,10 @@ private:
 	bool Configuration_get_rumbleEnable(const AsConfiguration* self) const;
 
 	void Configuration_set_rumbleEnable(AsConfiguration* self, bool rumbleEnable) const;
+
+	Ref< AsSoundDriver > Configuration_get_soundDriver(const AsConfiguration* self) const;
+
+	void Configuration_set_soundDriver(AsConfiguration* self, const AsSoundDriver* soundDriver) const;
 
 	bool Configuration_get_autoMute(const AsConfiguration* self) const;
 

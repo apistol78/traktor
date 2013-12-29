@@ -1,4 +1,5 @@
 #include <cstring>
+#include <unistd.h>
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Render/OpenGL/Std/Linux/Window.h"
@@ -7,6 +8,72 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+const int32_t _NET_WM_STATE_REMOVE = 0;
+const int32_t _NET_WM_STATE_ADD = 1;
+const int32_t _NET_WM_STATE_TOGGLE = 2;
+
+void setProperty(::Display* display, int32_t screen, ::Window window, const char* propertyName, int32_t value)
+{
+	Atom wmState = XInternAtom(display, "_NET_WM_STATE", False);
+	Atom property = XInternAtom(display, propertyName, False);
+
+	XEvent evt;
+	std::memset(&evt, 0, sizeof(evt));
+	evt.type = ClientMessage;
+	evt.xclient.window = window;
+	evt.xclient.message_type = wmState;
+	evt.xclient.format = 32;
+	evt.xclient.data.l[0] = value;
+	evt.xclient.data.l[1] = property;
+	evt.xclient.data.l[2] = 0;
+
+	XSendEvent(
+		display,
+		RootWindow(display, screen),
+		False,
+		SubstructureNotifyMask,
+		&evt
+	);
+}			
+
+void setProperty(::Display* display, int32_t screen, ::Window window, const char* propertyName1, const char* propertyName2, int32_t value)
+{
+	Atom wmState = XInternAtom(display, "_NET_WM_STATE", False);
+	Atom property1 = XInternAtom(display, propertyName1, False);
+	Atom property2 = XInternAtom(display, propertyName2, False);
+
+	XEvent evt;
+	std::memset(&evt, 0, sizeof(evt));
+	evt.type = ClientMessage;
+	evt.xclient.window = window;
+	evt.xclient.message_type = wmState;
+	evt.xclient.format = 32;
+	evt.xclient.data.l[0] = value;
+	evt.xclient.data.l[1] = property1;
+	evt.xclient.data.l[2] = property2;
+	evt.xclient.data.l[3] = 0;
+
+	XSendEvent(
+		display,
+		RootWindow(display, screen),
+		False,
+		SubstructureNotifyMask,
+		&evt
+	);
+}
+
+void discardX11Events(::Display* display, ::Window window, uint32_t mask)
+{
+	XEvent evt;
+	XFlush(display);
+	while (XCheckWindowEvent(display, window, mask, &evt))
+		;
+}
+
+		}
 
 Window::Window(::Display* display)
 :	m_display(display)
@@ -60,11 +127,19 @@ bool Window::create(int32_t width, int32_t height)
 		WhitePixel(m_display, m_screen)
 	);
 
+	// Disable WM compositor running on our window; this will save performance
+	// by reducing offscreen copies.
+	const long _NET_WM_BYPASS_COMPOSITOR_HINT_ON = 1;
+	Atom wmBypassCompositor = XInternAtom(m_display, "_NET_WM_BYPASS_COMPOSITOR", False);
+    XChangeProperty(m_display, m_window, wmBypassCompositor, XA_CARDINAL, 32, PropModeReplace, (uint8_t*)&_NET_WM_BYPASS_COMPOSITOR_HINT_ON, 1);
+
+    // Register event masks.
 	XSelectInput(
 		m_display,
 		m_window,
-		StructureNotifyMask | FocusChangeMask
+		ExposureMask | StructureNotifyMask | FocusChangeMask
 	);
+
 	return true;
 }
 
@@ -81,9 +156,6 @@ void Window::setTitle(const wchar_t* title)
 
 void Window::setFullScreenStyle(int32_t width, int32_t height)
 {
-	Atom wmState = XInternAtom(m_display, "_NET_WM_STATE", False);
-	Atom fullScreen = XInternAtom(m_display, "_NET_WM_STATE_FULLSCREEN", False);
-
 	// Get screen configuration.
 	XRRScreenConfiguration* xrrc = XRRGetScreenInfo(m_display, RootWindow(m_display, m_screen));
 	if (!xrrc)
@@ -139,40 +211,35 @@ void Window::setFullScreenStyle(int32_t width, int32_t height)
 
 	XRRFreeScreenConfigInfo(xrrc);
 
-	XSetWindowAttributes attr;
-	attr.override_redirect = True;
-	XChangeWindowAttributes(m_display, m_window, CWOverrideRedirect, &attr);
+	if (!m_fullScreen)
+	{
+		// Remove WM borders; ie WM control.
+		XSetWindowAttributes attr;
+		attr.override_redirect = True;
+		XChangeWindowAttributes(m_display, m_window, CWOverrideRedirect, &attr);
+		XFlush(m_display);
 
-	// Set window in WM fullscreen mode.
-	XEvent evt;
-	std::memset(&evt, 0, sizeof(evt));
-	evt.type = ClientMessage;
-	evt.xclient.window = m_window;
-	evt.xclient.message_type = wmState;
-	evt.xclient.format = 32;
-	evt.xclient.data.l[0] = 1;
-	evt.xclient.data.l[1] = fullScreen;
-	evt.xclient.data.l[2] = 0;
+		// Set window in WM fullscreen mode.
+		setProperty(m_display, m_screen, m_window, "_NET_WM_STATE_FULLSCREEN", _NET_WM_STATE_ADD);
 
-	XSendEvent(
-		m_display,
-		RootWindow(m_display, m_screen),
-		False,
-		SubstructureNotifyMask,
-		&evt
-	);
+		// Consume X11 configure notifications from resize.
+		discardX11Events(m_display, m_window, ExposureMask | StructureNotifyMask);
+
+		// \hack Wait a bit, WM might be abit nasty.
+		usleep(10 * 1000L);
+	}
 
 	XMoveResizeWindow(m_display, m_window, 0, 0, width, height);
-	XFlush(m_display);
+	XRaiseWindow(m_display, m_window);
+
+	// Consume X11 configure notifications from resize.
+	discardX11Events(m_display, m_window, ExposureMask | StructureNotifyMask);
 
 	m_fullScreen = true;
 }
 
 void Window::setWindowedStyle(int32_t width, int32_t height)
 {
-	Atom wmState = XInternAtom(m_display, "_NET_WM_STATE", False);
-	Atom fullScreen = XInternAtom(m_display, "_NET_WM_STATE_FULLSCREEN", False);
-
 	// Set default resolution.
 	if (m_originalConfig)
 	{
@@ -189,39 +256,47 @@ void Window::setWindowedStyle(int32_t width, int32_t height)
 		m_originalConfig = 0;
 	}
 
-	if (m_width != width || m_height != height)
+	if (m_fullScreen || m_width != width || m_height != height)
 	{
 		m_width = width;
 		m_height = height;
 
-		XSetWindowAttributes attr;
-		attr.override_redirect = False;
-		XChangeWindowAttributes(m_display, m_window, CWOverrideRedirect, &attr);
+		if (m_fullScreen)
+		{
+			// Remove fullscreen WM state from window.
+			setProperty(m_display, m_screen, m_window, "_NET_WM_STATE_FULLSCREEN", _NET_WM_STATE_REMOVE);
 
-		// Remove fullscreen WM state from window.
-		XEvent evt;
-		std::memset(&evt, 0, sizeof(evt));
-		evt.type = ClientMessage;
-		evt.xclient.window = m_window;
-		evt.xclient.message_type = wmState;
-		evt.xclient.format = 32;
-		evt.xclient.data.l[0] = 0;
-		evt.xclient.data.l[1] = fullScreen;
-		evt.xclient.data.l[2] = 0;
+			// Remove maximized properties.
+			setProperty(m_display, m_screen, m_window, "_NET_WM_STATE_MAXIMIZED_VERT", "_NET_WM_STATE_MAXIMIZED_HORZ", _NET_WM_STATE_REMOVE);
 
-		XSendEvent(
-			m_display,
-			RootWindow(m_display, m_screen),
-			False,
-			SubstructureNotifyMask,
-			&evt
-		);
+			// Consume X11 configure notifications from resize.
+			discardX11Events(m_display, m_window, ExposureMask | StructureNotifyMask);
 
-		XResizeWindow(m_display, m_window, width, height);
-		XFlush(m_display);
+			// \hack Wait a bit, WM might be abit nasty.
+			usleep(10 * 1000L);
+		}
+
+		// Get window size; see if we actually need to resize window.
+		XWindowAttributes attr;
+		XGetWindowAttributes(m_display, m_window, &attr);
+		if (attr.width != width || attr.height != height)
+			XResizeWindow(m_display, m_window, width, height);
+		XRaiseWindow(m_display, m_window);
+
+		// Re-add WM borders; ie WM control.
+		XSetWindowAttributes setAttr;
+		setAttr.override_redirect = False;
+		XChangeWindowAttributes(m_display, m_window, CWOverrideRedirect, &setAttr);
+
+		// Consume X11 configure notifications from resize.
+		discardX11Events(m_display, m_window, ExposureMask | StructureNotifyMask);
 
 		m_fullScreen = false;
 	}
+
+	// Setup close response from WM.	
+	Atom wmDeleteWindow = XInternAtom(m_display, "WM_DELETE_WINDOW", False);
+	XSetWMProtocols(m_display, m_window, &wmDeleteWindow, 1);
 }
 
 void Window::showCursor()
@@ -250,7 +325,7 @@ void Window::hideCursor()
 
 void Window::show()
 {
-	XMapWindow(m_display, m_window);
+	XMapRaised(m_display, m_window);
 }
 
 void Window::center()
@@ -264,6 +339,20 @@ void Window::center()
 bool Window::update(RenderEvent& outEvent)
 {
 	XEvent evt;
+
+	// First check for explicit Client message; cannot use masked function.
+	if (XCheckTypedWindowEvent(m_display, m_window, ClientMessage, &evt))
+	{
+		Atom wmDeleteWindow = XInternAtom(m_display, "WM_DELETE_WINDOW", False);
+		if ((Atom)evt.xclient.data.l[0] == wmDeleteWindow)
+		{
+			log::info << L"Window closed from WM" << Endl;
+			outEvent.type = ReClose;
+			return true;
+		}	
+	}
+
+	// Then check for other events we're interested in.
 	if (XCheckWindowEvent(m_display, m_window, StructureNotifyMask | FocusChangeMask, &evt))
 	{
 		if (
@@ -274,7 +363,6 @@ bool Window::update(RenderEvent& outEvent)
 			)
 		)
 		{
-			log::info << L"Render window resized " << evt.xconfigure.width << L" x " << evt.xconfigure.height << Endl;
 			if (!m_fullScreen)
 			{
 				outEvent.type = ReResize;

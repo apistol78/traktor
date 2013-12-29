@@ -1,10 +1,12 @@
 #include "Amalgam/IEnvironment.h"
 #include "Amalgam/Action/AsConfiguration.h"
 #include "Amalgam/Action/AsDisplayMode.h"
+#include "Amalgam/Action/AsSoundDriver.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyFloat.h"
-#include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/PropertyString.h"
 #include "Render/IRenderSystem.h"
 
 namespace traktor
@@ -57,6 +59,7 @@ Ref< AsConfiguration > AsConfiguration::getCurrent(amalgam::IEnvironment* enviro
 	current->m_particleQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.ParticleQuality", QtMedium);
 	current->m_oceanQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.OceanQuality", QtMedium);
 	current->m_rumbleEnable = settings->getProperty< PropertyBoolean >(L"Input.Rumble", true);
+	current->m_soundDriver = settings->getProperty< PropertyString >(L"Audio.Type");
 	current->m_masterVolume = settings->getProperty< PropertyFloat >(L"Audio.MasterVolume", 1.0f);
 	current->m_autoMute = settings->getProperty< PropertyBoolean >(L"Audio.AutoMute", true);
 
@@ -210,6 +213,17 @@ void AsConfiguration::setRumbleEnable(bool rumbleEnable)
 	m_rumbleEnable = rumbleEnable;
 }
 
+Ref< AsSoundDriver > AsConfiguration::getSoundDriver() const
+{
+	return new AsSoundDriver(TypeInfo::find(m_soundDriver));
+}
+
+void AsConfiguration::setSoundDriver(const AsSoundDriver* soundDriver)
+{
+	if (soundDriver)
+		m_soundDriver = soundDriver->getName();
+}
+
 float AsConfiguration::getVolume() const
 {
 	return m_masterVolume;
@@ -311,6 +325,7 @@ bool AsConfiguration::apply(amalgam::IEnvironment* environment)
 	settings->setProperty< PropertyInteger >(L"World.ParticleQuality", m_particleQuality);
 	settings->setProperty< PropertyInteger >(L"World.OceanQuality", m_oceanQuality);
 	settings->setProperty< PropertyBoolean >(L"Input.Rumble", m_rumbleEnable);
+	settings->setProperty< PropertyString >(L"Audio.Type", m_soundDriver);
 	settings->setProperty< PropertyFloat >(L"Audio.MasterVolume", m_masterVolume);
 	settings->setProperty< PropertyBoolean >(L"Audio.AutoMute", m_autoMute);
 

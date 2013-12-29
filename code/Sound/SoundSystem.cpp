@@ -146,6 +146,60 @@ void SoundSystem::destroy()
 	}
 }
 
+bool SoundSystem::reset(ISoundDriver* driver)
+{
+	Ref< ISoundMixer > mixer;
+
+	if (!driver->create(m_desc.driverDesc, mixer))
+		return false;
+
+	// If driver didn't create an alternative sound mixer we create the default mixer.
+	if (!mixer)
+		mixer = new SoundMixer();
+
+	// Tear down current driver and threads.
+	if (m_threadSubmit)
+	{
+		m_threadSubmit->stop();
+		ThreadManager::getInstance().destroy(m_threadSubmit);
+		m_threadSubmit = 0;
+	}
+
+	if (m_threadMixer)
+	{
+		m_threadMixer->stop();
+		ThreadManager::getInstance().destroy(m_threadMixer);
+		m_threadMixer = 0;
+	}
+
+	m_mixer = 0;
+	safeDestroy(m_driver);
+
+	// Replace mixer and driver.
+	m_mixer = mixer;
+	m_driver = driver;
+
+	// Restart mixer and submission threads.
+	m_threadMixer = ThreadManager::getInstance().create(makeFunctor(this, &SoundSystem::threadMixer), L"Sound mixer", 1);
+	if (!m_threadMixer)
+	{
+		m_driver->destroy();
+		return false;
+	}
+
+	m_threadSubmit = ThreadManager::getInstance().create(makeFunctor(this, &SoundSystem::threadSubmit), L"Sound submit", 2);
+	if (!m_threadSubmit)
+	{
+		m_driver->destroy();
+		return false;
+	}
+
+	m_threadMixer->start(Thread::Above);
+	m_threadSubmit->start(Thread::Highest);
+
+	return true;
+}
+
 void SoundSystem::setVolume(float volume)
 {
 	m_volume = volume;

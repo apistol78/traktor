@@ -19,8 +19,8 @@ const struct MouseControlMap
 c_mouseControlMap[] =
 {
 	{ L"Left mouse button", DtButton1, false, true },
-	{ L"Middle mouse button", DtButton3, false, true },
 	{ L"Right mouse button", DtButton2, false, true },
+	{ L"Middle mouse button", DtButton3, false, true },
 	{ L"Mouse X axis", DtAxisX, true, true },
 	{ L"Mouse Y axis", DtAxisY, true, true },
 	{ L"Mouse Z axis", DtAxisZ, true, true },
@@ -28,7 +28,7 @@ c_mouseControlMap[] =
 	{ L"Mouse Y axis", DtPositionY, true, false }
 };
 
-const float c_mouseDeltaScale = 3.0f;
+const float c_mouseDeltaScale = 1.0f;
 const float c_mouseDeltaLimit = 200.0f;
 const float c_mouseWheelDelta = 1.0f;
 
@@ -120,9 +120,9 @@ float MouseDeviceX11::getControlValue(int32_t control)
 	else if (mc.controlType == DtButton1)
 		return m_button[0];
 	else if (mc.controlType == DtButton2)
-		return m_button[1];
-	else if (mc.controlType == DtButton3)
 		return m_button[2];
+	else if (mc.controlType == DtButton3)
+		return m_button[1];
 	else
 		return 0.0f;
 }
@@ -171,9 +171,9 @@ bool MouseDeviceX11::getKeyEvent(KeyEvent& outEvent)
 
 void MouseDeviceX11::resetState()
 {
-	m_raw[0] = 0.0f;
-	m_raw[1] = 0.0f;
-	m_raw[2] = 0.0f;
+	m_raw[0] = 0;
+	m_raw[1] = 0;
+	m_raw[2] = 0;
 
 	m_axis[0] = 0.0f;
 	m_axis[1] = 0.0f;
@@ -201,54 +201,37 @@ void MouseDeviceX11::readState()
 	m_width = attr.width;
 	m_height = attr.height;
 
+	// Update virtual position of pointer.
+	if (m_exclusive)
+	{
+		m_position[0] = clamp(m_position[0] + m_raw[0], 0, m_width - 1);
+		m_position[1] = clamp(m_position[1] + m_raw[1], 0, m_height - 1);
+	}
+
+	// Calculate axis deltas from raw deltas.
 	for (int i = 0; i < 3; ++i)
 	{
-		m_axis[i] = m_raw[i];
-		m_raw[i] = 0.0f;
+		m_axis[i] = clamp(float(m_raw[i] * c_mouseDeltaScale), -c_mouseDeltaLimit, c_mouseDeltaLimit);
+		m_raw[i] = 0;
 	}
 
 	if (m_exclusive)
 	{
-		bool confined = true;
+		// Warp pointer to center of window.
+		m_warped[0] = m_width / 2;
+		m_warped[1] = m_height / 2;
 
-		if (m_position[0] < 0)
-		{
-			m_position[0] = 0;
-			confined = false;
-		}
-		if (m_position[0] >= m_width)
-		{
-			m_position[0] = m_width - 1;
-			confined = false;
-		}
-		if (m_position[1] < 0)
-		{
-			m_position[1] = 0;
-			confined = false;
-		}
-		if (m_position[1] >= m_height)
-		{
-			m_position[1] = m_height - 1;
-			confined = false;
-		}
-
-		if (!confined)
-		{
-			m_warped[0] = m_position[0];
-			m_warped[1] = m_position[1];
-
-			XWarpPointer(
-				m_display,
-				None,
-				m_window,
-				0,
-				0,
-				0,
-				0,
-				m_position[0],
-				m_position[1]
-			);
-		}
+		XWarpPointer(
+			m_display,
+			None,
+			m_window,
+			0,
+			0,
+			0,
+			0,
+			m_warped[0],
+			m_warped[1]
+		);
 	}
 }
 
@@ -315,15 +298,35 @@ void MouseDeviceX11::consumeEvent(XEvent& evt)
 			// Need to check if event's position differ from warped position.
 			if (event->event_x != m_warped[0] || event->event_y != m_warped[1])
 			{
-				int32_t dx = event->event_x - m_position[0];
-				int32_t dy = event->event_y - m_position[1];
+				if (!m_exclusive)
+				{
+					int32_t dx = event->event_x - m_position[0];
+					int32_t dy = event->event_y - m_position[1];
 
-				m_raw[0] += clamp(float(dx * c_mouseDeltaScale), -c_mouseDeltaLimit, c_mouseDeltaLimit);
-				m_raw[1] += clamp(float(dy * c_mouseDeltaScale), -c_mouseDeltaLimit, c_mouseDeltaLimit);
+					m_raw[0] += dx;
+					m_raw[1] += dy;
+				}
+				else
+				{
+					int32_t cx = m_width / 2;
+					int32_t cy = m_height / 2;
+
+					// In exclusive mode the pointer is continiously warped back to center,
+					// thus the motion is relative center.
+					int32_t dx = event->event_x - cx;
+					int32_t dy = event->event_y - cy;
+
+					m_raw[0] += dx;
+					m_raw[1] += dy;
+				}
 			}
 
-			m_position[0] = event->event_x;
-			m_position[1] = event->event_y;
+			// In exclusive mode the position is accumulated in readState.
+			if (!m_exclusive)
+			{
+				m_position[0] = event->event_x;
+				m_position[1] = event->event_y;
+			}
 
 			m_warped[0] = -1;
 			m_warped[1] = -1;

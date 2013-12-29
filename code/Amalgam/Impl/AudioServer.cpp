@@ -33,10 +33,10 @@ AudioServer::AudioServer()
 
 bool AudioServer::create(const PropertyGroup* settings)
 {
-	std::wstring audioType = settings->getProperty< PropertyString >(L"Audio.Type");
+	m_audioType = settings->getProperty< PropertyString >(L"Audio.Type");
 
 	// Create sound driver.
-	Ref< sound::ISoundDriver > soundDriver = loadAndInstantiate< sound::ISoundDriver >(audioType);
+	Ref< sound::ISoundDriver > soundDriver = loadAndInstantiate< sound::ISoundDriver >(m_audioType);
 	if (!soundDriver)
 		return false;
 
@@ -196,6 +196,17 @@ int32_t AudioServer::reconfigure(const PropertyGroup* settings)
 {
 	if (!m_soundSystem)
 		return CrUnaffected;
+
+	// Replace audio driver.
+	std::wstring audioType = settings->getProperty< PropertyString >(L"Audio.Type");
+	if (audioType != m_audioType)
+	{
+		Ref< sound::ISoundDriver > soundDriver = loadAndInstantiate< sound::ISoundDriver >(audioType);
+		if (soundDriver && m_soundSystem->reset(soundDriver))
+			m_audioType = audioType;
+		else
+			log::warning << L"Unable to replace sound driver" << Endl;
+	}
 
 	// Set master volume.
 	m_soundSystem->setVolume(settings->getProperty< PropertyFloat >(L"Audio.MasterVolume", 1.0f));
