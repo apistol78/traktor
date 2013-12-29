@@ -15,6 +15,7 @@ class IPropertyValue;
 	{
 
 class AsDisplayMode;
+class AsSoundDriver;
 
 class AsConfiguration : public flash::ActionObjectRelay
 {
@@ -86,6 +87,10 @@ public:
 
 	void setRumbleEnable(bool rumbleEnable);
 
+	Ref< AsSoundDriver > getSoundDriver() const;
+
+	void setSoundDriver(const AsSoundDriver* soundDriver);
+
 	float getVolume() const;
 
 	void setVolume(float volume);
@@ -128,6 +133,7 @@ private:
 	Quality m_particleQuality;
 	Quality m_oceanQuality;
 	bool m_rumbleEnable;
+	std::wstring m_soundDriver;
 	float m_masterVolume;
 	bool m_autoMute;
 	std::map< std::wstring, float > m_volumes;

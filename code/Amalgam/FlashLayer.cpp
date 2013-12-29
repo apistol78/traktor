@@ -7,6 +7,7 @@
 #include "Amalgam/Action/Classes/As_traktor_amalgam_DisplayMode.h"
 #include "Amalgam/Action/Classes/As_traktor_amalgam_I18N.h"
 #include "Amalgam/Action/Classes/As_traktor_amalgam_InputFabricator.h"
+#include "Amalgam/Action/Classes/As_traktor_amalgam_SoundDriver.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Flash/FlashMovie.h"
@@ -590,6 +591,7 @@ void FlashLayer::createMoviePlayer()
 			asAmalgam->setMember("DisplayMode", flash::ActionValue(new As_traktor_amalgam_DisplayMode(context, m_environment)));
 			asAmalgam->setMember("I18N", flash::ActionValue(new As_traktor_amalgam_I18N(context)));
 			asAmalgam->setMember("InputFabricator", flash::ActionValue(new As_traktor_amalgam_InputFabricator(context, m_environment)));
+			asAmalgam->setMember("SoundDriver", flash::ActionValue(new As_traktor_amalgam_SoundDriver(context)));
 		}
 		asTraktor->setMember("amalgam", flash::ActionValue(asAmalgam));
 	}

@@ -47,6 +47,10 @@ public:
 
 	void destroy();
 
+	/*! \brief Reset sound system.
+	 */
+	bool reset(ISoundDriver* driver);
+
 	/*! \brief Set global volume.
 	 *
 	 * \param volume Volume (0-1)

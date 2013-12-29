@@ -1,5 +1,6 @@
 #include "Amalgam/Action/AsConfiguration.h"
 #include "Amalgam/Action/AsDisplayMode.h"
+#include "Amalgam/Action/AsSoundDriver.h"
 #include "Amalgam/Action/Classes/As_traktor_amalgam_Configuration.h"
 #include "Flash/Action/Classes/Array.h"
 #include "Render/IRenderSystem.h"
@@ -47,12 +48,12 @@ As_traktor_amalgam_Configuration::As_traktor_amalgam_Configuration(flash::Action
 	prototype->addProperty("rumbleEnable", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_rumbleEnable), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_rumbleEnable));
 
 	// Audio
+	prototype->addProperty("soundDriver", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_soundDriver), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_soundDriver));
 	prototype->addProperty("autoMute", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_autoMute), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_autoMute));
 	prototype->setMember("getMasterVolume", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_getMasterVolume)));
 	prototype->setMember("setMasterVolume", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_setMasterVolume)));
 	prototype->setMember("getVolume", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_getVolume)));
 	prototype->setMember("setVolume", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_setVolume)));
-	prototype->setMember("apply", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_apply)));
 
 	// User
 	prototype->setMember("getBoolean", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_getBoolean)));
@@ -62,6 +63,7 @@ As_traktor_amalgam_Configuration::As_traktor_amalgam_Configuration(flash::Action
 	prototype->setMember("getFloat", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_getFloat)));
 	prototype->setMember("setFloat", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_setFloat)));
 
+	prototype->setMember("apply", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_apply)));
 	prototype->setMember("constructor", flash::ActionValue(this));
 	prototype->setReadOnly();
 
@@ -226,6 +228,16 @@ bool As_traktor_amalgam_Configuration::Configuration_get_rumbleEnable(const AsCo
 void As_traktor_amalgam_Configuration::Configuration_set_rumbleEnable(AsConfiguration* self, bool rumbleEnable) const
 {
 	self->setRumbleEnable(rumbleEnable);
+}
+
+Ref< AsSoundDriver > As_traktor_amalgam_Configuration::Configuration_get_soundDriver(const AsConfiguration* self) const
+{
+	return self->getSoundDriver();
+}
+
+void As_traktor_amalgam_Configuration::Configuration_set_soundDriver(AsConfiguration* self, const AsSoundDriver* soundDriver) const
+{
+	self->setSoundDriver(soundDriver);
 }
 
 bool As_traktor_amalgam_Configuration::Configuration_get_autoMute(const AsConfiguration* self) const
