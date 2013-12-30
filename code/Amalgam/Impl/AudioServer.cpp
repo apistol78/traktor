@@ -11,6 +11,7 @@
 #include "Resource/IResourceManager.h"
 #include "Sound/ISoundDriver.h"
 #include "Sound/SoundChannel.h"
+#include "Sound/SoundDriverNull.h"
 #include "Sound/SoundDriverWriteOut.h"
 #include "Sound/SoundFactory.h"
 #include "Sound/SoundSystem.h"
@@ -69,9 +70,15 @@ bool AudioServer::create(const PropertyGroup* settings)
 
 	if (!m_soundSystem->create(sscd))
 	{
-		log::error << L"Audio server failed; unable to create sound system, sound muted" << Endl;
-		m_soundSystem = 0;
-		return true;
+		soundDriver = new sound::SoundDriverNull();
+		m_soundSystem = new sound::SoundSystem(soundDriver);
+		if (!m_soundSystem->create(sscd))
+		{
+			log::error << L"Audio server failed; unable to create sound system." << Endl;
+			m_soundSystem = 0;
+			return true;
+		}
+		log::error << L"Audio server failed; unable to create sound driver, using null driver..." << Endl;
 	}
 
 	// Set master volume.

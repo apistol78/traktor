@@ -29,7 +29,7 @@ public:
 
 	virtual ~SoundDriverAlsa();
 
-	virtual bool create(const SoundDriverCreateDesc& desc);
+	virtual bool create(const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer);
 
 	virtual void destroy();
 
@@ -43,7 +43,7 @@ private:
 	_snd_pcm_hw_params* m_hw_params;
 	_snd_pcm_sw_params* m_sw_params;
 	int16_t* m_buffer;
-	uint32_t m_bufferCount;
+	bool m_started;
 };
 
 	}

@@ -741,9 +741,9 @@ bool emitMatrixOut(GlslContext& cx, MatrixOut* node)
 		assign(f, xaxis) <<
 			L"vec4(" << 
 				in->getName() << L"[0][0], " <<
-				in->getName() << L"[1][0], " <<
-				in->getName() << L"[2][0], " <<
-				in->getName() << L"[3][0]" <<
+				in->getName() << L"[0][1], " <<
+				in->getName() << L"[0][2], " <<
+				in->getName() << L"[0][3]" <<
 			L");" << Endl;
 	}
 
@@ -752,10 +752,10 @@ bool emitMatrixOut(GlslContext& cx, MatrixOut* node)
 	{
 		assign(f, yaxis) <<
 			L"vec4(" << 
-				in->getName() << L"[0][1], " <<
+				in->getName() << L"[1][0], " <<
 				in->getName() << L"[1][1], " <<
-				in->getName() << L"[2][1], " <<
-				in->getName() << L"[3][1]" <<
+				in->getName() << L"[1][2], " <<
+				in->getName() << L"[1][3]" <<
 			L");" << Endl;
 	}
 
@@ -764,10 +764,10 @@ bool emitMatrixOut(GlslContext& cx, MatrixOut* node)
 	{
 		assign(f, zaxis) <<
 			L"vec4(" << 
-				in->getName() << L"[0][2], " <<
-				in->getName() << L"[1][2], " <<
+				in->getName() << L"[2][0], " <<
+				in->getName() << L"[2][1], " <<
 				in->getName() << L"[2][2], " <<
-				in->getName() << L"[3][2]" <<
+				in->getName() << L"[2][3]" <<
 			L");" << Endl;
 	}
 
@@ -776,9 +776,9 @@ bool emitMatrixOut(GlslContext& cx, MatrixOut* node)
 	{
 		assign(f, translate) <<
 			L"vec4(" << 
-				in->getName() << L"[0][3], " <<
-				in->getName() << L"[1][3], " <<
-				in->getName() << L"[2][3], " <<
+				in->getName() << L"[3][0], " <<
+				in->getName() << L"[3][1], " <<
+				in->getName() << L"[3][2], " <<
 				in->getName() << L"[3][3]" <<
 			L");" << Endl;
 	}

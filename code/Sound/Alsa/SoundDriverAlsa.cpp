@@ -12,7 +12,7 @@ namespace traktor
 		namespace
 		{
 
-const char* c_device = "plughw:0,0";
+const char* c_device = "default"; // "plughw:0,0";
 
 		}
 
@@ -22,7 +22,7 @@ SoundDriverAlsa::SoundDriverAlsa()
 :	m_handle(0)
 ,	m_hw_params(0)
 ,	m_buffer(0)
-,	m_bufferCount(0)
+,	m_started(false)
 {
 }
 
@@ -31,11 +31,11 @@ SoundDriverAlsa::~SoundDriverAlsa()
 	T_ASSERT (!m_handle);
 }
 
-bool SoundDriverAlsa::create(const SoundDriverCreateDesc& desc)
+bool SoundDriverAlsa::create(const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer)
 {
 	int res;
 
-	res = snd_pcm_open(&m_handle, c_device, SND_PCM_STREAM_PLAYBACK, 0);
+	res = snd_pcm_open(&m_handle, c_device, SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK);
 	if (res < 0)
 	{
 		log::error << L"Unable to open audio device \"" << mbstows(c_device) << L" - " << mbstows(snd_strerror(res)) << Endl;
@@ -85,6 +85,22 @@ bool SoundDriverAlsa::create(const SoundDriverCreateDesc& desc)
 		return false;
 	}
 
+	snd_pcm_uframes_t frames = snd_pcm_uframes_t(desc.frameSamples);
+	res = snd_pcm_hw_params_set_period_size_near(m_handle, m_hw_params, &frames, NULL);
+	if (res < 0)
+	{
+		log::error << L"Unable to set period size - " << mbstows(snd_strerror(res)) << Endl;
+		return false;
+	}
+
+	uint32_t periods = 2;
+	res = snd_pcm_hw_params_set_periods_near(m_handle, m_hw_params, &periods, NULL);
+	if (res < 0)
+	{
+		log::error << L"Unable to set periods - " << mbstows(snd_strerror(res)) << Endl;
+		return false;
+	}
+
 	res = snd_pcm_hw_params(m_handle, m_hw_params);
 	if (res < 0)
 	{
@@ -113,7 +129,7 @@ bool SoundDriverAlsa::create(const SoundDriverCreateDesc& desc)
 		return false;
 	}
 
-	res = snd_pcm_sw_params_set_start_threshold(m_handle, m_sw_params, desc.frameSamples);
+	res = snd_pcm_sw_params_set_start_threshold(m_handle, m_sw_params, 1);
 	if (res < 0)
 	{
 		log::error << L"Unable to set start threshold - " << mbstows(snd_strerror(res)) << Endl;
@@ -135,12 +151,9 @@ bool SoundDriverAlsa::create(const SoundDriverCreateDesc& desc)
 	}
 
 	m_desc = desc;
+	m_buffer = new int16_t [desc.frameSamples * desc.hwChannels];
 
-	m_buffer = new int16_t [desc.frameSamples * 3 * desc.hwChannels];
-	m_bufferCount = 0;
-
-	std::memset(m_buffer, 0, desc.frameSamples * 3 * desc.hwChannels * sizeof(int16_t));
-
+	log::info << L"ALSA sound driver initialized successfully" << Endl;
 	return true;
 }
 
@@ -160,51 +173,50 @@ void SoundDriverAlsa::destroy()
 
 void SoundDriverAlsa::wait()
 {
-	snd_pcm_wait(m_handle, 5000);
+	snd_pcm_wait(m_handle, -1);
 }
 
 void SoundDriverAlsa::submit(const SoundBlock& soundBlock)
 {
-	// Convert samples into buffer.
-	if (m_desc.frameSamples * 3 - m_bufferCount >= soundBlock.samplesCount)
-	{
-		int16_t* bufferAt = &m_buffer[m_bufferCount * m_desc.hwChannels];
+	// Step 1) Swizzle into intermediate output buffer.
 
-		for (uint32_t j = 0; j < soundBlock.samplesCount; ++j)
+	// How many samples can we consume, discard samples if not enough space.
+	int32_t samplesCount = soundBlock.samplesCount;
+	samplesCount = std::min< int32_t >(samplesCount, m_desc.frameSamples);
+
+	// Convert samples into output buffer.
+	int16_t* bufferAt = m_buffer;
+	for (uint32_t j = 0; j < samplesCount; ++j)
+	{
+		for (uint32_t i = 0; i < m_desc.hwChannels; ++i)
 		{
-			for (uint32_t i = 0; i < m_desc.hwChannels; ++i)
-			{
-				if (soundBlock.samples[i])
-					*bufferAt++ = int16_t(soundBlock.samples[i][j] * std::numeric_limits< int16_t >::max());
-				else
-					*bufferAt++ = 0;
-			}
+			if (soundBlock.samples[i])
+				*bufferAt++ = int16_t(soundBlock.samples[i][j] * std::numeric_limits< int16_t >::max());
+			else
+				*bufferAt++ = 0;
 		}
-
-		m_bufferCount += soundBlock.samplesCount;
 	}
-	else
-		log::error << L"Out of buffer space, sound block skipped" << Endl;
 
-	// Feed samples from buffer into Alsa.
-	int32_t framesAvail = snd_pcm_avail_update(m_handle);
-	if (framesAvail == -EPIPE)
-		return;
+	// Step 2) Write as many samples into Alsa as we can.
 
-	if (framesAvail > m_bufferCount)
+	// Feed samples into alsa.
+	int32_t status = 0;
+	do
 	{
-		framesAvail = m_bufferCount;
-		log::warning << L"Buffer unrun, cannot keep up with playback" << Endl;
+		status = snd_pcm_writei(m_handle, m_buffer, samplesCount);
+		if (-status == EAGAIN)
+			continue;
 	}
+	while (false);
 
-	int32_t framesWritten = snd_pcm_writei(m_handle, m_buffer, framesAvail);
-	if (framesWritten > 0)
+	if (status < 0)
 	{
-		std::memmove(m_buffer, &m_buffer[framesWritten * m_desc.hwChannels], sizeof(int16_t) * ((m_desc.frameSamples * 3 - framesWritten) * m_desc.hwChannels));
-		m_bufferCount -= framesWritten;
+		status = snd_pcm_recover(m_handle, status, 0);
+		if (status < 0)
+			log::error << L"Write PCM failed; unable to recover" << Endl;
 	}
-
-	log::info << m_bufferCount << Endl;
+	else if (status < samplesCount)
+		log::warning << L"Not all samples written; " << status << L" of " << samplesCount << Endl;
 }
 
 	}

@@ -26,8 +26,8 @@
 		<item type="traktor.render.Transform">
 			<comment/>
 			<position>
-				<first>234</first>
-				<second>715</second>
+				<first>316</first>
+				<second>693</second>
 			</position>
 		</item>
 		<item type="traktor.render.Add">
@@ -490,8 +490,15 @@ Age
 		<item type="traktor.render.Transpose">
 			<comment/>
 			<position>
-				<first>56</first>
-				<second>731</second>
+				<first>-6</first>
+				<second>887</second>
+			</position>
+		</item>
+		<item type="traktor.render.Platform">
+			<comment/>
+			<position>
+				<first>150</first>
+				<second>775</second>
 			</position>
 		</item>
 	</nodes>
@@ -1048,22 +1055,42 @@ Age
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[52]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Transform</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[3]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[50]"/>
 				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[52]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[53]"/>
+				<name>Other</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[53]"/>
+				<name>OpenGL</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[53]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Transform</name>
 			</destination>
 		</item>
 	</edges>
