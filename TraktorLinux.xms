@@ -12838,7 +12838,7 @@
 		</item>
 		<item ref="/object/projects/item[28]/dependencies/item[7]/project"/>
 		<item type="Project" version="1">
-			<enable>false</enable>
+			<enable>true</enable>
 			<name>Traktor.Sound.Alsa</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Sound/Alsa</sourcePath>
 			<configurations>

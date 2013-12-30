@@ -148,15 +148,6 @@ void SoundSystem::destroy()
 
 bool SoundSystem::reset(ISoundDriver* driver)
 {
-	Ref< ISoundMixer > mixer;
-
-	if (!driver->create(m_desc.driverDesc, mixer))
-		return false;
-
-	// If driver didn't create an alternative sound mixer we create the default mixer.
-	if (!mixer)
-		mixer = new SoundMixer();
-
 	// Tear down current driver and threads.
 	if (m_threadSubmit)
 	{
@@ -175,9 +166,15 @@ bool SoundSystem::reset(ISoundDriver* driver)
 	m_mixer = 0;
 	safeDestroy(m_driver);
 
-	// Replace mixer and driver.
-	m_mixer = mixer;
+	// Create new driver and mixer.
+	if (!driver->create(m_desc.driverDesc, m_mixer))
+		return false;
+
 	m_driver = driver;
+
+	// If driver didn't create an alternative sound mixer we create the default mixer.
+	if (!m_mixer)
+		m_mixer = new SoundMixer();
 
 	// Restart mixer and submission threads.
 	m_threadMixer = ThreadManager::getInstance().create(makeFunctor(this, &SoundSystem::threadMixer), L"Sound mixer", 1);

@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <spawn.h>
 #include <unistd.h>
@@ -92,7 +93,8 @@ std::wstring OS::getWritableFolderPath() const
 
 bool OS::openFile(const std::wstring& file) const
 {
-	return false;
+	system(("xdg-open " + wstombs(file)).c_str());
+	return true;
 }
 
 bool OS::editFile(const std::wstring& file) const
