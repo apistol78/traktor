@@ -108,12 +108,10 @@ bool Application::create(
 	for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
 	{
 		Ref< Library > library = new Library();
-		if (!library->open(*i))
-		{
-			log::error << L"Application failed; unable to load module \"" << *i << L"\"" << Endl;
-			return false;
-		}
-		m_libraries.push_back(library);
+		if (library->open(*i))
+			m_libraries.push_back(library);
+		else
+			log::warning << L"Unable to load module \"" << *i << L"\"" << Endl;
 	}
 #endif
 
