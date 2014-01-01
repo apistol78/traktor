@@ -82,7 +82,7 @@ void* TrackAllocator::alloc(size_t size, size_t align, const char* const tag)
 	if (!ptr)
 		return 0;
 
-	Block block;
+	Block& block = m_aliveBlocks[ptr];
 	block.tag = tag;
 	block.size = size;
 
@@ -90,12 +90,11 @@ void* TrackAllocator::alloc(size_t size, size_t align, const char* const tag)
 		block.at[i] = 0;
 
 	getCallStack(sizeof_array(block.at), block.at, 1);
-
-	m_aliveBlocks.insert(std::make_pair(ptr, block));
 	
-	m_allocStats[block.at[0]].tag = tag;
-	m_allocStats[block.at[0]].count++;
-	m_allocStats[block.at[0]].memory += size;
+	Stats& stats = m_allocStats[block.at[0]];
+	stats.tag = tag;
+	stats.count++;
+	stats.memory += size;
 
 	return ptr;
 }
@@ -106,7 +105,10 @@ void TrackAllocator::free(void* ptr)
 
 	std::map< void*, Block >::iterator i = m_aliveBlocks.find(ptr);
 	if (i != m_aliveBlocks.end())
+	{
+		Block toBeFreed = i->second; (void)toBeFreed;
 		m_aliveBlocks.erase(i);
+	}
 
 	m_systemAllocator->free(ptr);
 }

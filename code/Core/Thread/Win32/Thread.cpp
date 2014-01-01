@@ -65,7 +65,6 @@ bool Thread::start(Priority priority)
 	}
 #endif
 
-#if defined(_DEBUG)
 	THREADNAME_INFO threadInfo;
 	threadInfo.dwType = 0x1000;
 	threadInfo.szName = m_name.c_str();
@@ -77,7 +76,6 @@ bool Thread::start(Priority priority)
 #	if defined(_XBOX)
 	PIXNameThread(m_name.c_str());
 #	endif
-#endif
 
 	ResumeThread(m_handle);
 	return bool(m_handle != 0);

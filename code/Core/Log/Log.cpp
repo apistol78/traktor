@@ -18,11 +18,11 @@ public:
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 #if !defined(WINCE)
 		if (level == 0)
-			std::wcout << str << std::endl;
+			fwprintf(stdout, L"%s\n", str.c_str());
 		else if (level == 1)
-			std::wcout << L"(WARN) " << str << std::endl;
+			fwprintf(stdout, L"(WARN) %s\n", str.c_str());
 		else
-			std::wcerr << L"(ERROR) " << str << std::endl;
+			fwprintf(stderr, L"(ERROR) %s\n", str.c_str());
 #endif
 #if defined(_WIN32)
 		tstring tss = wstots(str + L"\n");
