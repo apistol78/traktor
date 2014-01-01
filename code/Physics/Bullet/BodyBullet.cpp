@@ -67,9 +67,10 @@ void BodyBullet::destroy()
 
 void BodyBullet::setTransform(const Transform& transform)
 {
-	btTransform bt = toBtTransform(transform * Transform(m_centerOfGravity));
+	if (!m_body)
+		return;
 
-	T_ASSERT (m_body);
+	btTransform bt = toBtTransform(transform * Transform(m_centerOfGravity));
 	m_body->setWorldTransform(bt);
 
 	// Update motion state's transform as well in case if kinematic body.
@@ -79,7 +80,6 @@ void BodyBullet::setTransform(const Transform& transform)
 
 Transform BodyBullet::getTransform() const
 {
-	T_ASSERT (m_body);
 	if (m_body)
 		return fromBtTransform(m_body->getWorldTransform()) * Transform(-m_centerOfGravity);
 	else
@@ -88,33 +88,33 @@ Transform BodyBullet::getTransform() const
 
 Transform BodyBullet::getCenterTransform() const
 {
-	T_ASSERT (m_body);
-	return fromBtTransform(m_body->getWorldTransform());
+	return m_body ? fromBtTransform(m_body->getWorldTransform()) : Transform();
 }
 
 bool BodyBullet::isStatic() const
 {
-	return m_body->isStaticOrKinematicObject();
+	return m_body ? m_body->isStaticOrKinematicObject() : false;
 }
 
 bool BodyBullet::isKinematic() const
 {
-	return m_body->isKinematicObject();
+	return m_body ? m_body->isKinematicObject() : false;
 }
 
 void BodyBullet::setActive(bool active)
 {
-	m_body->forceActivationState(active ? ACTIVE_TAG : ISLAND_SLEEPING);
+	if (m_body)
+		m_body->forceActivationState(active ? ACTIVE_TAG : ISLAND_SLEEPING);
 }
 
 bool BodyBullet::isActive() const
 {
-	return m_body->isActive();
+	return m_body ? m_body->isActive() : false;
 }
 
 void BodyBullet::setEnable(bool enable)
 {
-	if (enable == m_enable)
+	if (enable == m_enable || !m_body)
 		return;
 
 	if (!enable)
@@ -140,34 +140,37 @@ bool BodyBullet::isEnable() const
 
 void BodyBullet::reset()
 {
-	T_ASSERT (m_body);
-	m_body->clearForces();
-	m_body->setLinearVelocity(btVector3(0.0f, 0.0f, 0.0f));
-	m_body->setAngularVelocity(btVector3(0.0f, 0.0f, 0.0f));
+	if (m_body)
+	{
+		m_body->clearForces();
+		m_body->setLinearVelocity(btVector3(0.0f, 0.0f, 0.0f));
+		m_body->setAngularVelocity(btVector3(0.0f, 0.0f, 0.0f));
+	}
 }
 
 void BodyBullet::setMass(float mass, const Vector4& inertiaTensor)
 {
-	T_ASSERT (m_body);
-	T_ASSERT (!isNanOrInfinite(mass));
-	m_body->setMassProps(mass, toBtVector3(inertiaTensor));
+	if (m_body)
+	{
+		T_ASSERT (!isNanOrInfinite(mass));
+		m_body->setMassProps(mass, toBtVector3(inertiaTensor));
+	}
 }
 
 float BodyBullet::getInverseMass() const
 {
-	T_ASSERT (m_body);
-	return m_body->getInvMass();
+	return m_body ? m_body->getInvMass() : 0.0f;
 }
 
 Matrix33 BodyBullet::getInertiaTensorInverseWorld() const
 {
-	T_ASSERT (m_body);
-	return fromBtMatrix(m_body->getInvInertiaTensorWorld());
+	return m_body ? fromBtMatrix(m_body->getInvInertiaTensorWorld()) : Matrix33::identity();
 }
 
 void BodyBullet::addForceAt(const Vector4& at, const Vector4& force, bool localSpace)
 {
-	T_ASSERT (m_body);
+	if (!m_body)
+		return;
 
 	Vector4 at0 = (localSpace ? (at + m_centerOfGravity) : at).xyz1();
 
@@ -183,68 +186,73 @@ void BodyBullet::addForceAt(const Vector4& at, const Vector4& force, bool localS
 
 void BodyBullet::addTorque(const Vector4& torque, bool localSpace)
 {
-	T_ASSERT (m_body);
-	Vector4 torque_ = convert(this, torque, localSpace);
-	m_body->applyTorque(toBtVector3(torque_));
+	if (m_body)
+	{
+		Vector4 torque_ = convert(this, torque, localSpace);
+		m_body->applyTorque(toBtVector3(torque_));
+	}
 }
 
 void BodyBullet::addLinearImpulse(const Vector4& linearImpulse, bool localSpace)
 {
-	T_ASSERT (m_body);
-	Vector4 linearImpulse_ = convert(this, linearImpulse, localSpace);
-	m_body->applyCentralImpulse(toBtVector3(linearImpulse_));
+	if (m_body)
+	{
+		Vector4 linearImpulse_ = convert(this, linearImpulse, localSpace);
+		m_body->applyCentralImpulse(toBtVector3(linearImpulse_));
+	}
 }
 
 void BodyBullet::addAngularImpulse(const Vector4& angularImpulse, bool localSpace)
 {
-	T_ASSERT (m_body);
-	Vector4 angularImpulse_ = convert(this, angularImpulse, localSpace);
-	m_body->applyTorqueImpulse(toBtVector3(angularImpulse_));
+	if (m_body)
+	{
+		Vector4 angularImpulse_ = convert(this, angularImpulse, localSpace);
+		m_body->applyTorqueImpulse(toBtVector3(angularImpulse_));
+	}
 }
 
 void BodyBullet::addImpulse(const Vector4& at, const Vector4& impulse, bool localSpace)
 {
-	T_ASSERT (m_body);
+	if (m_body)
+	{
+		Vector4 at0 = (localSpace ? (at + m_centerOfGravity) : at).xyz1();
+		Vector4 at_ = convert(this, at0, localSpace);
+		Vector4 impulse_ = convert(this, impulse, localSpace);
+		Vector4 relativeAt = at_ - fromBtVector3(m_body->getCenterOfMassPosition(), 1.0f);
 
-	Vector4 at0 = (localSpace ? (at + m_centerOfGravity) : at).xyz1();
-
-	Vector4 at_ = convert(this, at0, localSpace);
-	Vector4 impulse_ = convert(this, impulse, localSpace);
-	Vector4 relativeAt = at_ - fromBtVector3(m_body->getCenterOfMassPosition(), 1.0f);
-
-	m_body->applyImpulse(
-		toBtVector3(impulse_),
-		toBtVector3(relativeAt)
-	);
+		m_body->applyImpulse(
+			toBtVector3(impulse_),
+			toBtVector3(relativeAt)
+		);
+	}
 }
 
 void BodyBullet::setLinearVelocity(const Vector4& linearVelocity)
 {
-	T_ASSERT (m_body);
-	m_body->setLinearVelocity(toBtVector3(linearVelocity));
+	if (m_body)
+		m_body->setLinearVelocity(toBtVector3(linearVelocity));
 }
 
 Vector4 BodyBullet::getLinearVelocity() const
 {
-	T_ASSERT (m_body);
-	return fromBtVector3(m_body->getLinearVelocity(), 0.0f);
+	return m_body ? fromBtVector3(m_body->getLinearVelocity(), 0.0f) : Vector4::zero();
 }
 
 void BodyBullet::setAngularVelocity(const Vector4& angularVelocity)
 {
-	T_ASSERT (m_body);
-	m_body->setAngularVelocity(toBtVector3(angularVelocity));
+	if (m_body)
+		m_body->setAngularVelocity(toBtVector3(angularVelocity));
 }
 
 Vector4 BodyBullet::getAngularVelocity() const
 {
-	T_ASSERT (m_body);
-	return fromBtVector3(m_body->getAngularVelocity(), 0.0f);
+	return m_body ? fromBtVector3(m_body->getAngularVelocity(), 0.0f) : Vector4::zero();
 }
 
 Vector4 BodyBullet::getVelocityAt(const Vector4& at, bool localSpace) const
 {
-	T_ASSERT (m_body);
+	if (!m_body)
+		return Vector4::zero();
 
 	Transform Tb = fromBtTransform(m_body->getWorldTransform());
 
@@ -298,12 +306,15 @@ BodyState BodyBullet::getState() const
 
 void BodyBullet::integrate(float deltaTime)
 {
-	btTransform predictedTransform;
-	m_body->applyCentralForce(m_dynamicsWorld->getGravity());
-	m_body->integrateVelocities(deltaTime * m_timeScale);
-	m_body->predictIntegratedTransform(deltaTime * m_timeScale, predictedTransform);
-	m_body->setCenterOfMassTransform(predictedTransform);
-	m_body->clearForces();
+	if (m_body)
+	{
+		btTransform predictedTransform;
+		m_body->applyCentralForce(m_dynamicsWorld->getGravity());
+		m_body->integrateVelocities(deltaTime * m_timeScale);
+		m_body->predictIntegratedTransform(deltaTime * m_timeScale, predictedTransform);
+		m_body->setCenterOfMassTransform(predictedTransform);
+		m_body->clearForces();
+	}
 }
 
 void BodyBullet::addConstraint(btTypedConstraint* constraint)
@@ -326,8 +337,7 @@ void BodyBullet::removeConstraint(btTypedConstraint* constraint)
 
 Transform BodyBullet::getBodyTransform() const
 {
-	T_ASSERT (m_body);
-	return fromBtTransform(m_body->getWorldTransform());
+	return m_body ? fromBtTransform(m_body->getWorldTransform()) : Transform();
 }
 
 	}
