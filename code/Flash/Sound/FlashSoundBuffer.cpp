@@ -63,7 +63,7 @@ bool FlashSoundBuffer::getBlock(sound::ISoundBufferCursor* cursor, const sound::
 	// Calculate number of samples to convert for this block.
 	uint32_t samplesCount = m_sound->getSamplesCount() - position;
 	samplesCount = std::min< uint32_t >(samplesCount, outBlock.samplesCount);
-	samplesCount = alignUp(samplesCount, 4);
+	samplesCount = alignDown(samplesCount, 4);
 	samplesCount = std::min< uint32_t >(samplesCount, 4096);
 
 	// Convert samples into fp32 buffer.
