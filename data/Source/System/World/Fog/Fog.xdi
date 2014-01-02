@@ -272,6 +272,14 @@ Fog density
 			</position>
 			<swizzle>z</swizzle>
 		</item>
+		<item type="traktor.render.OutputPort">
+			<comment/>
+			<position>
+				<first>2080</first>
+				<second>779</second>
+			</position>
+			<name>Factor</name>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -622,6 +630,16 @@ Fog density
 			<destination>
 				<node ref="/object/nodes/item[20]"/>
 				<name>Density</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[29]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>
