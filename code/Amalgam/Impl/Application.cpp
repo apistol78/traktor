@@ -432,7 +432,10 @@ bool Application::update()
 	if (m_targetManagerConnection)
 	{
 		if (!m_targetManagerConnection->update())
+		{
+			log::warning << L"Connection to target manager lost; terminating application..." << Endl;
 			return false;
+		}
 	}
 
 	// Update render server.
@@ -456,7 +459,10 @@ bool Application::update()
 		// Execute configuration on all servers.
 		int32_t result = m_environment->executeReconfigure();
 		if (result == CrFailed)
+		{
+			log::error << L"Failed to reconfigure application; cannot continue." << Endl;
 			return false;
+		}
 
 		// Emit action in current state as we've successfully reconfigured servers.
 		if ((currentState = m_stateManager->getCurrent()) != 0)
@@ -482,7 +488,7 @@ bool Application::update()
 
 		if (m_threadRender && !m_signalRenderFinish.wait(1000))
 		{
-			log::error << L"Unable to synchronize render thread; render thread seems to be stuck" << Endl;
+			log::error << L"Unable to synchronize render thread; render thread seems to be stuck." << Endl;
 			return false;
 		}
 
@@ -517,7 +523,7 @@ bool Application::update()
 
 			// Assume state's active from start.
 			m_renderViewActive = true;
-			log::info << L"State transition complete" << Endl;
+			log::info << L"State transition complete." << Endl;
 		}
 	}
 
@@ -798,12 +804,8 @@ bool Application::update()
 		m_fps = m_fps * 0.9f + (1.0f / m_updateInfo.m_frameDeltaTime) * 0.1f;
 
 		// Publish performance to target manager.
-		if (m_targetManagerConnection)
+		if (m_targetManagerConnection && m_targetManagerConnection->connected())
 		{
-			// First ensure target manager still connected.
-			if (!m_targetManagerConnection->connected())
-				return false;
-
 			render::RenderViewStatistics rvs;
 			m_renderServer->getRenderView()->getStatistics(rvs);
 

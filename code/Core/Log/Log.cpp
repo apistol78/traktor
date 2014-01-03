@@ -1,4 +1,4 @@
-#include <iostream>
+#include <cstdio>
 #include "Core/Platform.h"
 #include "Core/Log/Log.h"
 #include "Core/Io/StringOutputStream.h"
@@ -18,11 +18,11 @@ public:
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 #if !defined(WINCE)
 		if (level == 0)
-			fwprintf(stdout, L"%s\n", str.c_str());
+			fwprintf(stdout, L"%ls\n", str.c_str());
 		else if (level == 1)
-			fwprintf(stdout, L"(WARN) %s\n", str.c_str());
+			fwprintf(stdout, L"(WARN) %ls\n", str.c_str());
 		else
-			fwprintf(stderr, L"(ERROR) %s\n", str.c_str());
+			fwprintf(stderr, L"(ERROR) %ls\n", str.c_str());
 #endif
 #if defined(_WIN32)
 		tstring tss = wstots(str + L"\n");
@@ -45,7 +45,7 @@ public:
 		ss << L"(" << uint32_t(GetCurrentThreadId()) << L") " << str << Endl;
 		OutputDebugString(wstots(ss.str()).c_str());
 #elif defined(_DEBUG) || defined(TARGET_OS_IPHONE)
-		std::wcout << L"(DEBUG) " << str << std::endl;
+		fwprintf(stdout, L"(DEBUG) %ls\n", str.c_str());
 #endif
 	}
 

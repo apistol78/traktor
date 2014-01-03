@@ -71,13 +71,13 @@ bool InputServer::create(const PropertyGroup* defaultSettings, PropertyGroup* se
 		if (!driver)
 		{
 			log::error << L"Input server failed; unable to instantiate driver \"" << *i << L"\"" << Endl;
-			return false;
+			continue;
 		}
 
 		if (!driver->create(systemWindow, input::CtKeyboard | input::CtMouse | input::CtJoystick))
 		{
 			log::error << L"Input server failed; unable to create driver \"" << *i << L"\"" << Endl;
-			return false;
+			continue;
 		}
 
 		m_inputSystem->addDriver(driver);
