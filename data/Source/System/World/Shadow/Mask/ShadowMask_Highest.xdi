@@ -36,7 +36,7 @@
 				</item>
 			</sources>
 			<direction>2, 0, 0, 0</direction>
-			<taps>12</taps>
+			<taps>16</taps>
 			<blurType>BtGaussian</blurType>
 		</item>
 		<item type="traktor.world.PostProcessStepSetTarget">

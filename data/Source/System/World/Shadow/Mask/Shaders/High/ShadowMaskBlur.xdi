@@ -51,7 +51,7 @@
 				<second>220</second>
 			</position>
 			<from>0</from>
-			<to>7</to>
+			<to>11</to>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
@@ -77,7 +77,7 @@
 			<parameterName>GaussianOffsetWeights</parameterName>
 			<type>PtVector</type>
 			<frequency>UfFrame</frequency>
-			<length>8</length>
+			<length>12</length>
 		</item>
 		<item type="traktor.render.Lerp">
 			<comment/>
@@ -380,16 +380,6 @@ discontinuitites.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[18]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[6]"/>
 				<name>Output</name>
 			</source>
@@ -635,6 +625,16 @@ discontinuitites.
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[7]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
 				<name>Input2</name>
 			</destination>
 		</item>

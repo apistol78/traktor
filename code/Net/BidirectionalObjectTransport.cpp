@@ -2,7 +2,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Serialization/CompactSerializer.h"
 #include "Net/BidirectionalObjectTransport.h"
-#include "Net/SocketStream.h"
 #include "Net/TcpSocket.h"
 
 namespace traktor
@@ -50,31 +49,45 @@ void BidirectionalObjectTransport::close()
 
 bool BidirectionalObjectTransport::send(const ISerializable* object)
 {
-	if (m_socket)
-	{
-		MemoryStream dms(m_buffer.ptr() + 4, c_maxObjectSize, false, true);
-		if (!CompactSerializer(&dms, 0).writeObject(object))
-			return false;
-
-		uint32_t objectSize = dms.tell();
-		if (objectSize >= c_maxObjectSize)
-		{
-			log::error << L"BidirectionalObjectTransport failed; object too big" << Endl;
-			return false;
-		}
-
-		*(uint32_t*)m_buffer.ptr() = objectSize;
-
-		if (m_socket->send(m_buffer.ptr(), 4 + objectSize) == 4 + objectSize)
-			return true;
-		else
-		{
-			m_socket = 0;
-			return false;
-		}
-	}
-	else
+	if (!m_socket)
 		return false;
+
+	MemoryStream dms(m_buffer.ptr() + 4, c_maxObjectSize, false, true);
+	if (!CompactSerializer(&dms, 0).writeObject(object))
+		return false;
+
+	uint32_t objectSize = dms.tell();
+	if (objectSize >= c_maxObjectSize)
+	{
+		log::error << L"BidirectionalObjectTransport failed; object too big" << Endl;
+		return false;
+	}
+
+	*(uint32_t*)m_buffer.ptr() = objectSize;
+
+	uint8_t* sendPtr = m_buffer.ptr();
+	int32_t sendCount = 4 + objectSize;
+	int32_t result = 0;
+
+	while (sendCount > 0)
+	{
+		result = m_socket->send(sendPtr, sendCount);
+		if (result <= 0 || result > sendCount)
+			break;
+
+		sendPtr += result;
+		sendCount -= result;
+	}
+
+	if (result <= 0)
+	{
+		if (result < 0)
+			log::info << L"Unable to send object (" << result << L"); connection closed unexpectedly." << Endl;
+		m_socket = 0;
+		return false;
+	}
+
+	return true;
 }
 
 bool BidirectionalObjectTransport::wait(int32_t timeout)
@@ -106,6 +119,8 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 		int32_t result = m_socket->recv(&objectSize, 4);
 		if (result <= 0)
 		{
+			if (result < 0)
+				log::warning << L"Unable to read object size; connection closed unexpectedly (" << result << L")." << Endl;
 			m_socket = 0;
 			m_inQueue.clear();
 			return RtDisconnected;
@@ -113,8 +128,22 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 		if (result != 4 || objectSize == 0)
 			continue;
 
-		if (net::SocketStream(m_socket, true, false).read(m_buffer.ptr(), objectSize) != objectSize)
+		uint8_t* recvPtr = m_buffer.ptr();
+		int32_t recvCount = objectSize;
+
+		while (recvCount > 0)
 		{
+			result = m_socket->recv(recvPtr, recvCount);
+			if (result <= 0 || result > recvCount)
+				break;
+
+			recvPtr += result;
+			recvCount -= result;
+		}
+
+		if (result <= 0)
+		{
+			log::warning << L"Unable to read object; connection closed unexpectedly (" << result << L")." << Endl;
 			m_socket = 0;
 			m_inQueue.clear();
 			return RtDisconnected;

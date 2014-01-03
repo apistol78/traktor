@@ -70,12 +70,16 @@ ScriptManagerLua::ScriptManagerLua()
 ,	m_totalMemoryUse(0)
 ,	m_lastMemoryUse(0)
 {
+#if !defined(__LP64__) && !defined(_LP64)
+	m_luaState = lua_newstate(&luaAlloc, this);
+#else
 	m_luaState = luaL_newstate();
 
 	// Hook default allocator to intercept allocation stats.
 	m_defaultAllocFn = (void*)lua_getallocf(m_luaState, &m_defaultAllocOpaque);
 	T_FATAL_ASSERT (m_defaultAllocFn);
 	lua_setallocf(m_luaState, &luaAlloc, this);
+#endif
 
 	lua_atpanic(m_luaState, luaPanic);
 
@@ -903,38 +907,50 @@ void* ScriptManagerLua::luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize
 	ScriptManagerLua* this_ = reinterpret_cast< ScriptManagerLua* >(ud);
 	T_ASSERT (this_);
 
+	size_t& totalMemoryUse = this_->m_totalMemoryUse;
+
 	if (nsize > 0)
 	{
-		//if (osize >= nsize)
-		//	return ptr;
+#if !defined(__LP64__) && !defined(_LP64)
+		if (osize >= nsize)
+			return ptr;
 
-		//void* nptr = getAllocator()->alloc(nsize, 16, "LUA");
-		//if (!nptr)
-		//	return 0;
+		void* nptr = getAllocator()->alloc(nsize, 16, "LUA");
+		if (!nptr)
+			return 0;
+#endif
 
-		this_->m_totalMemoryUse += nsize;
+		totalMemoryUse += nsize;
 
 		if (ptr && osize > 0)
 		{
-			//std::memcpy(nptr, ptr, std::min(osize, nsize));
-			//getAllocator()->free(ptr);
-
-			T_ASSERT (osize <= this_->m_totalMemoryUse);
-			this_->m_totalMemoryUse -= osize;
+#if !defined(__LP64__) && !defined(_LP64)
+			std::memcpy(nptr, ptr, std::min(osize, nsize));
+			getAllocator()->free(ptr);
+#endif
+			T_ASSERT (osize <= totalMemoryUse);
+			totalMemoryUse -= osize;
 		}
 
-		//return nptr;
+#if !defined(__LP64__) && !defined(_LP64)
+		return nptr;
+#endif
 	}
 	else if (ptr && osize > 0)
 	{
-		//getAllocator()->free(ptr);
+#if !defined(__LP64__) && !defined(_LP64)
+		getAllocator()->free(ptr);
+#endif
 
-		T_ASSERT (osize <= this_->m_totalMemoryUse);
-		this_->m_totalMemoryUse -= osize;
+		T_ASSERT (osize <= totalMemoryUse);
+		totalMemoryUse -= osize;
 	}
-	//return 0;
 
+#if !defined(__LP64__) && !defined(_LP64)
+	return 0;
+#else
 	return ((lua_Alloc)(this_->m_defaultAllocFn))(this_->m_defaultAllocOpaque, ptr, osize, nsize);
+#endif
 }
 
 int ScriptManagerLua::luaPanic(lua_State* luaState)

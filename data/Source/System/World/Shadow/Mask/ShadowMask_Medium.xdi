@@ -2,22 +2,26 @@
 <object type="traktor.world.PostProcessSettings" version="1">
 	<requireHighRange>false</requireHighRange>
 	<definitions>
-		<item type="traktor.world.PostProcessDefineTarget" version="1">
+		<item type="traktor.world.PostProcessDefineTarget" version="3">
 			<id>Flip</id>
 			<width>0</width>
 			<height>0</height>
-			<screenDenom>1</screenDenom>
+			<screenWidthDenom>1</screenWidthDenom>
+			<screenHeightDenom>1</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
 			<format>TfR8</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>true</preferTiled>
 			<multiSample>0</multiSample>
+			<clearColor>0, 0, 0, 0</clearColor>
 		</item>
 	</definitions>
 	<steps>
 		<item type="traktor.world.PostProcessStepSetTarget">
 			<target>Flip</target>
 		</item>
-		<item type="traktor.world.PostProcessStepBlur" version="1">
+		<item type="traktor.world.PostProcessStepBlur" version="2">
 			<shader>{7B24A14D-9B1D-7D41-8758-7EA20C944C04}</shader>
 			<sources>
 				<item>
@@ -25,14 +29,20 @@
 					<source>InputColor</source>
 					<index>0</index>
 				</item>
+				<item>
+					<param>Depth</param>
+					<source>InputDepth</source>
+					<index>0</index>
+				</item>
 			</sources>
-			<direction>2, 0, 0, 0</direction>
-			<taps>15</taps>
+			<direction>1.5, 0, 0, 0</direction>
+			<taps>8</taps>
+			<blurType>BtGaussian</blurType>
 		</item>
 		<item type="traktor.world.PostProcessStepSetTarget">
 			<target>Output</target>
 		</item>
-		<item type="traktor.world.PostProcessStepBlur" version="1">
+		<item type="traktor.world.PostProcessStepBlur" version="2">
 			<shader>{7B24A14D-9B1D-7D41-8758-7EA20C944C04}</shader>
 			<sources>
 				<item>
@@ -40,9 +50,15 @@
 					<source>Flip</source>
 					<index>0</index>
 				</item>
+				<item>
+					<param>Depth</param>
+					<source>InputDepth</source>
+					<index>0</index>
+				</item>
 			</sources>
-			<direction>0, 2, 0, 0</direction>
-			<taps>15</taps>
+			<direction>0, 1.5, 0, 0</direction>
+			<taps>8</taps>
+			<blurType>BtGaussian</blurType>
 		</item>
 	</steps>
 </object>

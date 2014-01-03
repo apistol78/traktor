@@ -195,10 +195,20 @@ int main(int argc, const char** argv)
 	))
 	{
 		// Enter main loop.
-		for (;;)
+		try
 		{
-			if (!application->update())
-				break;
+			for (;;)
+			{
+				if (!application->update())
+				{
+					traktor::log::info << L"Update returned false; terminating application..." << Endl;
+					break;
+				}
+			}
+		}
+		catch(...)
+		{
+			traktor::log::error << L"Unhandled exception occured; terminating application..." << Endl;
 		}
 
 		safeDestroy(application);

@@ -217,8 +217,9 @@ void KeyboardDeviceDi8::setExclusive(bool exclusive)
 	m_device->Unacquire();
 	m_connected = false;
 
-	// Change cooperative level.
-	HRESULT hr = m_device->SetCooperativeLevel(m_hWnd, exclusive ? (DISCL_FOREGROUND | DISCL_EXCLUSIVE | DISCL_NOWINKEY) : (DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY));
+	// Change cooperative level; do not use exclusive mode as it prevents toggle fullscreen etc.
+	// But at least we can prevent win key from breaking out of game.
+	HRESULT hr = m_device->SetCooperativeLevel(m_hWnd, exclusive ? (DISCL_FOREGROUND | DISCL_NOWINKEY) : DISCL_FOREGROUND);
 	if (FAILED(hr))
 		log::warning << L"Unable to set cooperative level on keyboard device" << Endl;
 }
