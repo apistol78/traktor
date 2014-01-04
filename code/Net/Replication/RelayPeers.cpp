@@ -137,8 +137,6 @@ int32_t RelayPeers::receive(void* data, int32_t size, handle_t& outFromHandle)
 
 bool RelayPeers::send(handle_t handle, const void* data, int32_t size, bool reliable)
 {
-	State& state = m_state[handle];
-
 	// Create transport envelope.
 	Envelope e;
 	e.flags = (reliable ? 0x80 : 0x00);

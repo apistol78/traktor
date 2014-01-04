@@ -249,7 +249,7 @@ bool Database::getEvent(Ref< const IEvent >& outEvent, bool& outRemote)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-		if (const EvtGroupRenamed* groupRenamed = dynamic_type_cast< const EvtGroupRenamed* >(outEvent))
+		if (dynamic_type_cast< const EvtGroupRenamed* >(outEvent))
 		{
 			m_instanceMap.clear();
 			buildInstanceMap(m_rootGroup, m_instanceMap);

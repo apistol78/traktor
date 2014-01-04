@@ -170,9 +170,6 @@ bool Heightfield::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRa
 	if (!boundingBox.intersectRay(worldRayOrigin, worldRayDirection, kIn, kOut))
 		return false;
 
-	float dx = m_worldExtent.x() / (m_size - 1);
-	float dz = m_worldExtent.z() / (m_size - 1);
-
 	Winding3 w;
 	w.points.resize(3);
 
