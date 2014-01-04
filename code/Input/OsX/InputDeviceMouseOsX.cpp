@@ -255,7 +255,10 @@ void InputDeviceMouseOsX::readState()
 	{
 		float centerX, centerY;
 		if (getMouseCenterPosition(centerX, centerY))
-			CGWarpMouseCursorPosition(CGPointMake(centerX, centerY));
+        {
+            CGRect bounds = CGDisplayBounds(kCGDirectMainDisplay);
+			CGWarpMouseCursorPosition(CGPointMake(centerX, bounds.size.height - centerY));
+        }
 	}
 	
 	// As long as user keps mouse button pressed we cannot

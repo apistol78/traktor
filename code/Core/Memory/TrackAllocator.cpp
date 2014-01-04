@@ -14,9 +14,9 @@ TrackAllocator::TrackAllocator(IAllocator* systemAllocator)
 
 TrackAllocator::~TrackAllocator()
 {
+#if defined(_WIN32)
 	wchar_t buf[512];
 
-#if defined(_WIN32)
 	wsprintf(buf, L"\nAllocation stats:\n");
 	OutputDebugString(buf);
 

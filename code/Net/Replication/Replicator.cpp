@@ -720,8 +720,6 @@ void Replicator::sendEvents()
 			msg.type = MtEvent0;
 			msg.time = m_time;
 
-			uint32_t totalPayLoadSize = 0;
-
 			uint8_t data[sizeof(msg.event.data) + 1];	// Add a padding to be able to detect if a single object exceed max size.
 			uint8_t* msgDataPtr = msg.event.data;
 			uint8_t* msgDataEndPtr = msgDataPtr + sizeof(msg.event.data);
@@ -914,7 +912,6 @@ void Replicator::receiveMessages()
 			Peer& peer = m_peers[handle];
 
 			int32_t pingTime = msg.pong.time0;
-			int32_t pongTime = msg.time;
 			int32_t roundTrip = max(m_time0 - pingTime, 0);
 
 			peer.roundTrips.push_back(roundTrip);

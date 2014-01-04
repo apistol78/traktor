@@ -1817,8 +1817,6 @@ bool emitTargetSize(GlslContext& cx, TargetSize* node)
 
 bool emitTextureSize(GlslContext& cx, TextureSize* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-
 	GlslVariable* in = cx.emitInput(node, L"Input");
 	if (!in || in->getType() < GtTexture2D)
 		return false;
@@ -1830,6 +1828,8 @@ bool emitTextureSize(GlslContext& cx, TextureSize* node)
 		uniformName,
 		GtFloat4
 	);
+    if (!out)
+        return false;
 
 	const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
 	if (uniforms.find(uniformName) == uniforms.end())
