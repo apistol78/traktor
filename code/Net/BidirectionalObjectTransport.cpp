@@ -1,5 +1,6 @@
 #include "Core/Io/MemoryStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/CompactSerializer.h"
 #include "Net/BidirectionalObjectTransport.h"
 #include "Net/TcpSocket.h"
@@ -35,16 +36,17 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.net.BidirectionalObjectTransport", Bidirectiona
 BidirectionalObjectTransport::BidirectionalObjectTransport(TcpSocket* socket)
 :	m_socket(socket)
 {
-	m_buffer.reset(new uint8_t [4 + c_maxObjectSize]);
+}
+
+BidirectionalObjectTransport::~BidirectionalObjectTransport()
+{
+	for (std::vector< uint8_t* >::iterator i = m_buffers.begin(); i != m_buffers.end(); ++i)
+		delete[] *i;
 }
 
 void BidirectionalObjectTransport::close()
 {
-	if (m_socket)
-	{
-		m_socket->close();
-		m_socket = 0;
-	}
+	safeClose(m_socket);
 }
 
 bool BidirectionalObjectTransport::send(const ISerializable* object)
@@ -52,7 +54,15 @@ bool BidirectionalObjectTransport::send(const ISerializable* object)
 	if (!m_socket)
 		return false;
 
-	MemoryStream dms(m_buffer.ptr() + 4, c_maxObjectSize, false, true);
+	uint8_t* buffer = static_cast< uint8_t* >(m_threadBuffer.get());
+	if (!buffer)
+	{
+		buffer = new uint8_t [4 + c_maxObjectSize];
+		m_buffers.push_back(buffer);
+		m_threadBuffer.set(buffer);
+	}
+
+	MemoryStream dms(buffer + 4, c_maxObjectSize, false, true);
 	if (!CompactSerializer(&dms, 0).writeObject(object))
 		return false;
 
@@ -63,9 +73,9 @@ bool BidirectionalObjectTransport::send(const ISerializable* object)
 		return false;
 	}
 
-	*(uint32_t*)m_buffer.ptr() = objectSize;
+	*(uint32_t*)buffer = objectSize;
 
-	uint8_t* sendPtr = m_buffer.ptr();
+	uint8_t* sendPtr = buffer;
 	int32_t sendCount = 4 + objectSize;
 	int32_t result = 0;
 
@@ -128,7 +138,15 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 		if (result != 4 || objectSize == 0)
 			continue;
 
-		uint8_t* recvPtr = m_buffer.ptr();
+		uint8_t* buffer = static_cast< uint8_t* >(m_threadBuffer.get());
+		if (!buffer)
+		{
+			buffer = new uint8_t [4 + c_maxObjectSize];
+			m_buffers.push_back(buffer);
+			m_threadBuffer.set(buffer);
+		}
+
+		uint8_t* recvPtr = buffer;
 		int32_t recvCount = objectSize;
 
 		while (recvCount > 0)
@@ -149,7 +167,7 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 			return RtDisconnected;
 		}
 
-		MemoryStream ms(m_buffer.ptr(), objectSize, true, false);
+		MemoryStream ms(buffer, objectSize, true, false);
 		CompactSerializer s(&ms, 0);
 
 		Ref< ISerializable > object = s.readObject();

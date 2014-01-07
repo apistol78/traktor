@@ -182,6 +182,8 @@ public:
 	static Vector4 zero() { return Vector4::zero(); }
 
 	static Vector4 origo() { return Vector4::origo(); }
+
+	static Vector4 lerp(const Vector4& a, const Vector4& b, float c) { return traktor::lerp(a, b, Scalar(c)); }
 	
 	const Vector4& unbox() const { return m_value; }
 
@@ -233,6 +235,8 @@ public:
 	static Quaternion fromEulerAngles(float head, float pitch, float bank);
 
 	static Quaternion fromAxisAngle(const Vector4& axisAngle);
+
+	static Quaternion lerp(const Quaternion& a, const Quaternion& b, float c) { return traktor::lerp(a, b, c); }
 	
 	const Quaternion& unbox() const { return m_value; }
 
@@ -313,6 +317,8 @@ public:
 	Vector4 transform(const Vector4& v) const;
 	
 	static Transform identity() { return Transform::identity(); }
+
+	static Transform lerp(const Transform& a, const Transform& b, float c) { return traktor::lerp(a, b, Scalar(c)); }
 
 	const Transform& unbox() const { return m_value; }
 

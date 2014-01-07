@@ -5,7 +5,7 @@
 			<comment/>
 			<position>
 				<first>313</first>
-				<second>333</second>
+				<second>337</second>
 			</position>
 			<fragmentGuid>{7F2F8712-3B18-0000-6B1C-E9A3CADFF480}</fragmentGuid>
 			<inputPins>
@@ -46,6 +46,10 @@
 					<optional>true</optional>
 				</item>
 				<item>
+					<name>RefractiveCoefficient</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<name>RefractiveTintColor</name>
 					<optional>true</optional>
 				</item>
@@ -63,6 +67,10 @@
 				</item>
 				<item>
 					<name>SpecularTerm</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<name>State</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
@@ -93,6 +101,10 @@
 					<second>0</second>
 				</item>
 				<item>
+					<first>RefractiveCoefficient</first>
+					<second>0.025</second>
+				</item>
+				<item>
 					<first>RefractiveTintColor</first>
 					<second>1</second>
 				</item>
@@ -111,6 +123,10 @@
 				<item>
 					<first>SpecularTerm</first>
 					<second>1</second>
+				</item>
+				<item>
+					<first>State</first>
+					<second>0</second>
 				</item>
 			</values>
 		</item>
@@ -166,6 +182,10 @@
 					<name>SpecularTerm</name>
 					<optional>true</optional>
 				</item>
+				<item>
+					<name>State</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins/>
 			<values>
@@ -201,13 +221,17 @@
 					<first>SpecularTerm</first>
 					<second>1</second>
 				</item>
+				<item>
+					<first>State</first>
+					<second>0</second>
+				</item>
 			</values>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
 				<first>313</first>
-				<second>699</second>
+				<second>711</second>
 			</position>
 			<fragmentGuid>{6B7A8D95-D3D4-A94F-8A99-4943A2470A55}</fragmentGuid>
 			<inputPins>
@@ -232,7 +256,7 @@
 			<comment/>
 			<position>
 				<first>313</first>
-				<second>612</second>
+				<second>636</second>
 			</position>
 			<fragmentGuid>{6EF33326-74C7-B640-BB38-5C57D2199FB4}</fragmentGuid>
 			<inputPins>
@@ -256,7 +280,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-421</first>
+				<first>-417</first>
 				<second>302</second>
 			</position>
 			<name>SurfaceColor</name>
@@ -267,7 +291,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-418</first>
+				<first>-414</first>
 				<second>334</second>
 			</position>
 			<name>DiffuseTerm</name>
@@ -278,7 +302,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-418</first>
+				<first>-414</first>
 				<second>494</second>
 			</position>
 			<name>ViewNormal</name>
@@ -289,7 +313,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-406</first>
+				<first>-402</first>
 				<second>526</second>
 			</position>
 			<name>Reflection</name>
@@ -300,7 +324,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-419</first>
+				<first>-415</first>
 				<second>558</second>
 			</position>
 			<name>RimIntensity</name>
@@ -311,7 +335,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-402</first>
+				<first>-398</first>
 				<second>590</second>
 			</position>
 			<name>RimColor</name>
@@ -322,7 +346,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-426</first>
+				<first>-422</first>
 				<second>366</second>
 			</position>
 			<name>SpecularTerm</name>
@@ -333,7 +357,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-421</first>
+				<first>-417</first>
 				<second>462</second>
 			</position>
 			<name>ViewPosition</name>
@@ -344,7 +368,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-457</first>
+				<first>-453</first>
 				<second>398</second>
 			</position>
 			<name>SpecularRoughness</name>
@@ -355,7 +379,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-381</first>
+				<first>-377</first>
 				<second>622</second>
 			</position>
 			<name>Mask</name>
@@ -366,7 +390,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-398</first>
+				<first>-394</first>
 				<second>430</second>
 			</position>
 			<name>Emissive</name>
@@ -414,7 +438,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-406</first>
+				<first>-402</first>
 				<second>654</second>
 			</position>
 			<name>Refractive</name>
@@ -425,8 +449,8 @@
 		<item type="traktor.render.Conditional" version="1">
 			<comment/>
 			<position>
-				<first>-105</first>
-				<second>688</second>
+				<first>27</first>
+				<second>814</second>
 			</position>
 			<branch>BrAuto</branch>
 			<operator>CoGreater</operator>
@@ -434,15 +458,15 @@
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>-291</first>
-				<second>749</second>
+				<first>-159</first>
+				<second>875</second>
 			</position>
 			<value>0</value>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-448</first>
+				<first>-444</first>
 				<second>686</second>
 			</position>
 			<name>RefractiveAmount</name>
@@ -453,13 +477,35 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-454</first>
+				<first>-450</first>
 				<second>718</second>
 			</position>
 			<name>RefractiveTintColor</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
 			<defaultValue>1</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>-458</first>
+				<second>750</second>
+			</position>
+			<name>RefractiveCoefficient</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>0.025</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>-376</first>
+				<second>782</second>
+			</position>
+			<name>State</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>
@@ -831,6 +877,36 @@
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<name>RefractiveTintColor</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[21]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>RefractiveCoefficient</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[22]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>State</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[22]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>State</name>
 			</destination>
 		</item>
 	</edges>

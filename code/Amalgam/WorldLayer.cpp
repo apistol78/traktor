@@ -421,10 +421,10 @@ void WorldLayer::feedbackValues(spray::FeedbackType type, const float* values, i
 {
 	if (type == spray::FbtCamera)
 	{
-		T_ASSERT (count >= 3);
+		T_ASSERT (count >= 4);
 		m_cameraOffset = Transform(
 			Vector4(values[0], values[1], values[2]),
-			Quaternion::identity()
+			Quaternion::fromEulerAngles(0.0f, 0.0f, values[3])
 		);
 	}
 	else if (type == spray::FbtPostProcess)
