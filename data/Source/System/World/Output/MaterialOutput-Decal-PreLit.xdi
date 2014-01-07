@@ -215,7 +215,7 @@
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
-		<item type="traktor.render.Sampler" version="2">
+		<item type="traktor.render.Sampler" version="3">
 			<comment/>
 			<position>
 				<first>525</first>
@@ -228,6 +228,7 @@
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
 			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
@@ -446,7 +447,7 @@
 		<item type="traktor.render.Conditional" version="1">
 			<comment/>
 			<position>
-				<first>2832</first>
+				<first>3024</first>
 				<second>760</second>
 			</position>
 			<branch>BrAuto</branch>
@@ -479,8 +480,8 @@ read-back color buffer.
 			]]>
 			</comment>
 			<position>
-				<first>2656</first>
-				<second>901</second>
+				<first>2624</first>
+				<second>888</second>
 			</position>
 			<priority>
 				<setup>false</setup>
@@ -524,8 +525,8 @@ No refraction; render as normal opaque geometry.
 			]]>
 			</comment>
 			<position>
-				<first>2656</first>
-				<second>982</second>
+				<first>2611</first>
+				<second>1109</second>
 			</position>
 			<priority>
 				<setup>false</setup>
@@ -848,14 +849,6 @@ No refraction; render as normal opaque geometry.
 				<second>1203</second>
 			</position>
 		</item>
-		<item type="traktor.render.Scalar">
-			<comment/>
-			<position>
-				<first>1354</first>
-				<second>1270</second>
-			</position>
-			<value>-0.025</value>
-		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
@@ -919,6 +912,35 @@ No refraction; render as normal opaque geometry.
 			<connectable>true</connectable>
 			<optional>true</optional>
 			<defaultValue>1</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>1240</first>
+				<second>1294</second>
+			</position>
+			<name>RefractiveCoefficient</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>0.025</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>2587</first>
+				<second>993</second>
+			</position>
+			<name>State</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.Type">
+			<comment/>
+			<position>
+				<first>2816</first>
+				<second>973</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -1344,16 +1366,6 @@ No refraction; render as normal opaque geometry.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[39]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[35]"/>
-				<name>CaseFalse</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[35]"/>
 				<name>Output</name>
 			</source>
@@ -1714,26 +1726,6 @@ No refraction; render as normal opaque geometry.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[56]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[55]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[55]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[55]"/>
 				<name>Output</name>
 			</source>
@@ -1778,17 +1770,7 @@ No refraction; render as normal opaque geometry.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[59]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[61]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[62]"/>
 				<name>Mask</name>
 			</destination>
 		</item>
@@ -1798,13 +1780,13 @@ No refraction; render as normal opaque geometry.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[62]"/>
+				<node ref="/object/nodes/item[61]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[62]"/>
+				<node ref="/object/nodes/item[61]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1814,7 +1796,7 @@ No refraction; render as normal opaque geometry.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[63]"/>
+				<node ref="/object/nodes/item[62]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1828,13 +1810,13 @@ No refraction; render as normal opaque geometry.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[64]"/>
+				<node ref="/object/nodes/item[63]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[64]"/>
+				<node ref="/object/nodes/item[63]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1854,11 +1836,11 @@ No refraction; render as normal opaque geometry.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[65]"/>
+				<node ref="/object/nodes/item[64]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[64]"/>
+				<node ref="/object/nodes/item[63]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
@@ -1870,6 +1852,76 @@ No refraction; render as normal opaque geometry.
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<name>ViewPosition</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[55]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[56]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[55]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[65]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[59]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[66]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[67]"/>
+				<name>Type</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[66]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[67]"/>
+				<name>State</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[39]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[67]"/>
+				<name>Default</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[67]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[35]"/>
+				<name>CaseFalse</name>
 			</destination>
 		</item>
 	</edges>
