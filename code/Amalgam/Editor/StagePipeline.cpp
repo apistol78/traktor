@@ -1,9 +1,9 @@
-#include "Amalgam/AudioLayerData.h"
-#include "Amalgam/StageData.h"
-#include "Amalgam/FlashLayerData.h"
-#include "Amalgam/VideoLayerData.h"
-#include "Amalgam/WorldLayerData.h"
 #include "Amalgam/Editor/StagePipeline.h"
+#include "Amalgam/Engine/AudioLayerData.h"
+#include "Amalgam/Engine/StageData.h"
+#include "Amalgam/Engine/FlashLayerData.h"
+#include "Amalgam/Engine/VideoLayerData.h"
+#include "Amalgam/Engine/WorldLayerData.h"
 #include "Editor/IPipelineDepends.h"
 
 namespace traktor

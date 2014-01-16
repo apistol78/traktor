@@ -105,7 +105,7 @@
 						<item>
 							<first>Width</first>
 							<second type="traktor.PropertyInteger">
-								<value>640</value>
+								<value>320</value>
 							</second>
 						</item>
 					</value>

@@ -57,8 +57,6 @@
 	<string>$DEPLOY_PROJECT_NAME</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
-	<key>UIInterfaceOrientation</key>
-	<string>UIInterfaceOrientationLandscapeLeft</string>
 	<key>UIPrerenderedIcon</key>
 	<true/>
 	<key>DTPlatformBuild</key>

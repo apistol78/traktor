@@ -176,7 +176,13 @@ Viewport RenderViewOpenGLES2::getViewport()
 
 SystemWindow RenderViewOpenGLES2::getSystemWindow()
 {
+#if defined(_WIN32)
+	SystemWindow sw;
+	sw.hWnd = ContextOpenGLES2::getHWND();
+	return sw;
+#else
 	return SystemWindow();
+#endif
 }
 
 bool RenderViewOpenGLES2::begin(EyeType eye)
