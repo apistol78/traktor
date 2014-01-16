@@ -59,6 +59,10 @@ public:
 
 	GLuint getPrimaryDepth() const;
 
+#if defined(_WIN32)
+	static HWND getHWND() { return ms_hWnd; }
+#endif
+
 private:
 	static ThreadLocal ms_contextStack;
 #if defined(TARGET_OS_IPHONE)

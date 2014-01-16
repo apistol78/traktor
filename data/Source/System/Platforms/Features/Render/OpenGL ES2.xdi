@@ -134,7 +134,7 @@
 			<item>
 				<first>Render.FullScreen</first>
 				<second type="traktor.PropertyBoolean">
-					<value>false</value>
+					<value>true</value>
 				</second>
 			</item>
 			<item>

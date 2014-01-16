@@ -16268,24 +16268,6 @@
 								</items>
 							</item>
 							<item type="Filter">
-								<name>Action</name>
-								<items>
-									<item type="File">
-										<fileName>Action/*.*</fileName>
-										<items/>
-									</item>
-									<item type="Filter">
-										<name>Classes</name>
-										<items>
-											<item type="File">
-												<fileName>Action/Classes/*.*</fileName>
-												<items/>
-											</item>
-										</items>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
 								<name>Events</name>
 								<items>
 									<item type="File">
@@ -16295,11 +16277,38 @@
 								</items>
 							</item>
 							<item type="Filter">
-								<name>Classes</name>
+								<name>Engine</name>
 								<items>
 									<item type="File">
-										<fileName>Classes/*.*</fileName>
+										<fileName>Engine/*.*</fileName>
 										<items/>
+									</item>
+									<item type="Filter">
+										<name>Classes</name>
+										<items>
+											<item type="File">
+												<fileName>Engine/Classes/*.*</fileName>
+												<items/>
+											</item>
+										</items>
+									</item>
+									<item type="Filter">
+										<name>Action</name>
+										<items>
+											<item type="Filter">
+												<name>Classes</name>
+												<items>
+													<item type="File">
+														<fileName>Engine/Action/Classes/*.*</fileName>
+														<items/>
+													</item>
+												</items>
+											</item>
+											<item type="File">
+												<fileName>Engine/Action/*.*</fileName>
+												<items/>
+											</item>
+										</items>
 									</item>
 								</items>
 							</item>
@@ -16831,6 +16840,10 @@
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[8]/project"/>
 				</item>
 			</dependencies>
 		</item>

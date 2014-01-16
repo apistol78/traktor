@@ -14408,6 +14408,10 @@
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[49]"/>
 				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[6]/project"/>
+				</item>
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
@@ -14508,26 +14512,35 @@
 					</items>
 				</item>
 				<item type="Filter">
-					<name>Classes</name>
+					<name>Engine</name>
 					<items>
 						<item type="File">
-							<fileName>Classes/*.*</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>Action</name>
-					<items>
-						<item type="File">
-							<fileName>Action/*.*</fileName>
+							<fileName>Engine/*.*</fileName>
 							<items/>
 						</item>
 						<item type="Filter">
 							<name>Classes</name>
 							<items>
 								<item type="File">
-									<fileName>Action/Classes/*.*</fileName>
+									<fileName>Engine/Classes/*.*</fileName>
+									<items/>
+								</item>
+							</items>
+						</item>
+						<item type="Filter">
+							<name>Action</name>
+							<items>
+								<item type="Filter">
+									<name>Classes</name>
+									<items>
+										<item type="File">
+											<fileName>Engine/Action/Classes/*.*</fileName>
+											<items/>
+										</item>
+									</items>
+								</item>
+								<item type="File">
+									<fileName>Engine/Action/*.*</fileName>
 									<items/>
 								</item>
 							</items>

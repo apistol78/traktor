@@ -5,13 +5,14 @@ ARG_BUNDLE=${1}
 ARG_EXECUTABLE=${2}
 ARG_MODULES=${*:3}
 
-LD=/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/clang++
-SDK_SYSROOT=/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk
+LD=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++
+SDK_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator7.0.sdk
 FORCE="-Xlinker -force_load -Xlinker "
 
 # Mandatory modules.
 LD_MODULES="
 	$FORCE libTraktor.Amalgam.App.a
+	$FORCE libTraktor.Ai.a
 	$FORCE libTraktor.Animation.a
 	$FORCE libTraktor.Core.a
 	$FORCE libTraktor.World.a
@@ -39,12 +40,12 @@ LD_MODULES="
 	$FORCE libTraktor.Video.a
 	$FORCE libTraktor.Online.a
 	$FORCE libTraktor.Amalgam.a
-	libExtern.bullet-2.80.a
-	libExtern.expat-2.0.0.a
+	libExtern.bullet.a
+	libExtern.expat-2.1.0.a
 	libExtern.jpeg-6b.a
 	libExtern.libflac-1.2.1.a
-	libExtern.libogg-1.2.0.a
-	libExtern.libvorbis-1.3.1.a
+	libExtern.libogg-1.3.0.a
+	libExtern.libvorbis-1.3.3.a
 	libExtern.lpng128.a
 	libExtern.lua-5.1.4.a
 	libExtern.zlib-1.2.3.a
@@ -53,6 +54,9 @@ LD_MODULES="
 	libExtern.mpg123-1.13.2.a
 	libExtern.sqlite-3.7.6.3.a
 	libExtern.libtheora-1.1.1.a
+	libExtern.stb_vorbis.a
+	libExtern.detour.a
+	libExtern.recast.a
 "
 
 # Add dynamic modules from command line.
@@ -75,11 +79,11 @@ rm -Rf $ARG_EXECUTABLE
 $LD \
 	-arch i386 \
 	-isysroot $SDK_SYSROOT \
-	-mmacosx-version-min=10.6 \
+	-miphoneos-version-min=7.0 \
 	-Xlinker -objc_abi_version -Xlinker 2 \
 	-Xlinker -no_implicit_dylibs \
 	-Xlinker -u -Xlinker _main \
-	-D__IPHONE_OS_VERSION_MIN_REQUIRED=50000 \
+	-D__IPHONE_OS_VERSION_MIN_REQUIRED=70000 \
 	$LD_FRAMEWORKS \
 	$LD_MODULES \
 	-o $ARG_EXECUTABLE
