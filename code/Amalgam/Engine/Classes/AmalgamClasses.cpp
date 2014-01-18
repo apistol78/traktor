@@ -191,6 +191,8 @@ void registerAmalgamClasses(script::IScriptManager* scriptManager)
 	Ref< script::AutoScriptClass< amalgam::IUpdateControl > > classIUpdateControl = new script::AutoScriptClass< amalgam::IUpdateControl >();
 	classIUpdateControl->addMethod("setPause", &amalgam::IUpdateControl::setPause);
 	classIUpdateControl->addMethod("getPause", &amalgam::IUpdateControl::getPause);
+	classIUpdateControl->addMethod("setTimeScale", &amalgam::IUpdateControl::setTimeScale);
+	classIUpdateControl->addMethod("getTimeScale", &amalgam::IUpdateControl::getTimeScale);
 	scriptManager->registerClass(classIUpdateControl);
 
 	Ref< script::AutoScriptClass< amalgam::IUpdateInfo > > classIUpdateInfo = new script::AutoScriptClass< amalgam::IUpdateInfo >();

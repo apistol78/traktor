@@ -4,6 +4,7 @@
 #include "Online/Impl/TaskQueue.h"
 #include "Online/Impl/Tasks/TaskEnumSaveData.h"
 #include "Online/Impl/Tasks/TaskGetSaveData.h"
+#include "Online/Impl/Tasks/TaskRemoveSaveData.h"
 #include "Online/Impl/Tasks/TaskSetSaveData.h"
 
 namespace traktor
@@ -56,6 +57,16 @@ Ref< Result > SaveData::set(const std::wstring& saveDataId, const SaveDataDesc& 
 		return result;
 	else
 		return 0;
+}
+
+Ref< Result > SaveData::remove(const std::wstring& saveDataId)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	Ref< Result > result = new Result();
+	if (m_taskQueue->add(new TaskRemoveSaveData(m_provider, saveDataId, result)))
+		return result;
+	else
+		return 0;	
 }
 
 SaveData::SaveData(ISaveDataProvider* provider, TaskQueue* taskQueue)

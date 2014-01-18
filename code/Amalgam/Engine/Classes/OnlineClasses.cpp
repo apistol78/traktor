@@ -280,6 +280,7 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 	classISaveData->addMethod("enumerate", &online_ISaveData_enumerate);
 	classISaveData->addMethod("get", &online::ISaveData::get);
 	classISaveData->addMethod("set", &online_ISaveData_set);
+	classISaveData->addMethod("remove", &online::ISaveData::remove);
 	scriptManager->registerClass(classISaveData);
 
 	Ref< script::AutoScriptClass< online::ISessionManager > > classISessionManager = new script::AutoScriptClass< online::ISessionManager >();

@@ -1006,6 +1006,9 @@ void PhysicsManagerBullet::update(bool issueCollisionEvents)
 			info.contacts.resize(0);
 			info.contacts.reserve(contacts);
 
+			int32_t material1 = wrapperBody0->getMaterial();
+			int32_t material2 = wrapperBody1->getMaterial();
+
 			for (int32_t j = 0; j < contacts; ++j)
 			{
 				const btManifoldPoint& pt = manifold->getContactPoint(j);
@@ -1015,6 +1018,8 @@ void PhysicsManagerBullet::update(bool issueCollisionEvents)
 					cc.depth = -pt.getDistance();
 					cc.normal = fromBtVector3(pt.m_normalWorldOnB, 0.0f);
 					cc.position = fromBtVector3(pt.m_positionWorldOnA, 1.0f);
+					cc.material1 = material1;
+					cc.material2 = material2;
 					info.contacts.push_back(cc);
 				}
 			}

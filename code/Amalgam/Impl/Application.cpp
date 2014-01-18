@@ -630,10 +630,7 @@ bool Application::update()
 				physicsDuration += physicsTimeEnd - physicsTimeStart;
 
 				m_updateDuration = float(physicsTimeEnd - physicsTimeStart + inputTimeEnd - inputTimeStart + updateTimeEnd - updateTimeStart);
-
-				m_updateInfo.m_simulationTime += c_simulationDeltaTime;
-				m_updateInfo.m_totalTime += c_simulationDeltaTime;
-				m_updateInfo.m_stateTime += c_simulationDeltaTime;
+				m_updateInfo.m_simulationTime += c_simulationDeltaTime / m_updateControl.m_timeScale;
 
 				if (result == IState::UrExit || result == IState::UrFailed)
 				{
@@ -648,8 +645,8 @@ bool Application::update()
 					break;
 			}
 
-			m_updateInfo.m_totalTime += m_updateInfo.m_frameDeltaTime - updateCount * c_simulationDeltaTime;
-			m_updateInfo.m_stateTime += m_updateInfo.m_frameDeltaTime - updateCount * c_simulationDeltaTime;
+			m_updateInfo.m_totalTime += m_updateInfo.m_frameDeltaTime;
+			m_updateInfo.m_stateTime += m_updateInfo.m_frameDeltaTime;
 		}
 		else
 		{
@@ -658,7 +655,6 @@ bool Application::update()
 				m_inputServer->update(m_updateInfo.m_frameDeltaTime, inputEnabled);
 
 			// No physics; update in same rate as rendering.
-			m_updateInfo.m_simulationTime = m_updateInfo.m_stateTime;
 			m_updateInfo.m_simulationDeltaTime = m_updateInfo.m_frameDeltaTime;
 			m_updateInfo.m_simulationFrequency = uint32_t(1.0f / m_updateInfo.m_frameDeltaTime);
 
@@ -668,6 +664,7 @@ bool Application::update()
 			updateDuration += updateTimeEnd - updateTimeStart;
 			updateCount++;
 
+			m_updateInfo.m_simulationTime += m_updateInfo.m_frameDeltaTime / m_updateControl.m_timeScale;
 			m_updateInfo.m_totalTime += m_updateInfo.m_frameDeltaTime;
 			m_updateInfo.m_stateTime += m_updateInfo.m_frameDeltaTime;
 

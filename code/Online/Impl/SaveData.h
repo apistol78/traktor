@@ -25,6 +25,8 @@ public:
 
 	virtual Ref< Result > set(const std::wstring& saveDataId, const SaveDataDesc& saveDataDesc, const ISerializable* attachment, bool replace);
 
+	virtual Ref< Result > remove(const std::wstring& saveDataId);
+
 private:
 	friend class SessionManager;
 

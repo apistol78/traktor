@@ -30,6 +30,8 @@ public:
 	virtual bool get(const std::wstring& saveDataId, Ref< ISerializable >& outAttachment) = 0;
 
 	virtual bool set(const std::wstring& saveDataId, const SaveDataDesc& saveDataDesc, const ISerializable* attachment, bool replace) = 0;
+
+	virtual bool remove(const std::wstring& saveDataId) = 0;
 };
 
 	}

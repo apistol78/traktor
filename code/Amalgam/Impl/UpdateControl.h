@@ -15,15 +15,21 @@ class UpdateControl : public IUpdateControl
 
 public:
 	bool m_pause;
+	float m_timeScale;
 
 	UpdateControl()
 	:	m_pause(false)
+	,	m_timeScale(1.0f)
 	{
 	}
 
 	virtual void setPause(bool pause) { m_pause = pause; }
 
 	virtual bool getPause() const { return m_pause; }
+
+	virtual void setTimeScale(float timeScale) { m_timeScale = timeScale; }
+
+	virtual float getTimeScale() const { return m_timeScale; }
 };
 
 	}

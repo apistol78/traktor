@@ -270,6 +270,8 @@ bool Database::getEvent(Ref< const IEvent >& outEvent, bool& outRemote)
 					if (!group->internalAddExtGroup(*i))
 						log::error << L"Unable to add instance; Remotely created group not found" << Endl;
 					group = findChildGroup(group, FindGroupByName(*i));
+					if (!group)
+						log::error << L"Unable to add instance; Group \"" << *i << L"\" not found" << Endl;
 				}
 			}
 

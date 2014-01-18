@@ -29,6 +29,8 @@ struct CollisionContact
 	Vector4 position;
 	Vector4 normal;
 	float depth;
+	int32_t material1;
+	int32_t material2;
 };
 
 struct CollisionInfo
