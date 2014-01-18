@@ -65,5 +65,11 @@ bool SteamCloudSaveData::set(const std::wstring& saveDataId, const SaveDataDesc&
 	return true;
 }
 
+bool SteamCloudSaveData::remove(const std::wstring& saveDataId)
+{
+	std::string fileName = wstombs(saveDataId);
+	return SteamRemoteStorage()->FileDelete(fileName.c_str());
+}
+
 	}
 }

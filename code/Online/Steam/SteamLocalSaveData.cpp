@@ -64,5 +64,11 @@ bool SteamLocalSaveData::set(const std::wstring& saveDataId, const SaveDataDesc&
 	return result;
 }
 
+bool SteamLocalSaveData::remove(const std::wstring& saveDataId)
+{
+	std::wstring saveFile = OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB/Save/" + saveDataId + L".save";
+	return FileSystem::getInstance().remove(saveFile);
+}
+
 	}
 }

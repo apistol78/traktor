@@ -32,6 +32,8 @@ public:
 	virtual Ref< AttachmentResult > get(const std::wstring& saveDataId) const = 0;
 
 	virtual Ref< Result > set(const std::wstring& saveDataId, const SaveDataDesc& saveDataDesc, const ISerializable* attachment, bool replace) = 0;
+
+	virtual Ref< Result > remove(const std::wstring& saveDataId) = 0;
 };
 
 	}

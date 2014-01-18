@@ -34,6 +34,10 @@ public:
 	virtual void setPause(bool pause) = 0;
 
 	virtual bool getPause() const = 0;
+
+	virtual void setTimeScale(float timeScale) = 0;
+
+	virtual float getTimeScale() const = 0;
 };
 
 	}

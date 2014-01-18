@@ -82,5 +82,10 @@ bool LocalSaveData::set(const std::wstring& saveDataId, const SaveDataDesc& save
 	return true;
 }
 
+bool LocalSaveData::remove(const std::wstring& saveDataId)
+{
+	return m_db->executeUpdate(L"delete from SaveData where id='" + saveDataId + L"'") > 0;
+}
+
 	}
 }
