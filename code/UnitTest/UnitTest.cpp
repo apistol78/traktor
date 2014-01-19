@@ -26,6 +26,7 @@
 #include "UnitTest/CaseRenderSw.h"
 #include "UnitTest/CaseSound.h"
 #include "UnitTest/CaseStreamCopy.h"
+#include "UnitTest/CaseSemaphore.h"
 
 using namespace traktor;
 
@@ -42,20 +43,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//log::info << L"Case atomic" << Endl;
 	//traktor::CaseAtomic().execute(context);
 
-	log::info << L"Case clone" << Endl;
-	traktor::CaseClone().execute(context);
+	//log::info << L"Case clone" << Endl;
+	//traktor::CaseClone().execute(context);
 
 	//log::info << L"Case cycle debugger" << Endl;
 	//traktor::CaseCycleDebugger().execute(context);
 
-	log::info << L"Case bitreader" << Endl;
-	traktor::CaseBitReader().execute(context);
+	//log::info << L"Case bitreader" << Endl;
+	//traktor::CaseBitReader().execute(context);
 
-	log::info << L"Case bodystate" << Endl;
-	traktor::CaseBodyState().execute(context);
+	//log::info << L"Case bodystate" << Endl;
+	//traktor::CaseBodyState().execute(context);
 
-	log::info << L"Case meta" << Endl;
-	traktor::CaseMeta().execute(context);
+	//log::info << L"Case meta" << Endl;
+	//traktor::CaseMeta().execute(context);
 
 	//log::info << L"Case process" << Endl;
 	//traktor::CaseProcess().execute(context);
@@ -66,41 +67,41 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//log::info << L"Case job" << Endl;
 	//traktor::CaseJob().execute(context);
 
-	log::info << L"Case math" << Endl;
-	traktor::CaseMath().execute(context);
+	//log::info << L"Case math" << Endl;
+	//traktor::CaseMath().execute(context);
 
-	log::info << L"Case matrix 3x3" << Endl;
-	traktor::CaseMatrix33().execute(context);
+	//log::info << L"Case matrix 3x3" << Endl;
+	//traktor::CaseMatrix33().execute(context);
 
-	log::info << L"Case matrix 4x4" << Endl;
-	traktor::CaseMatrix44().execute(context);
+	//log::info << L"Case matrix 4x4" << Endl;
+	//traktor::CaseMatrix44().execute(context);
 
-	log::info << L"Case quaternion" << Endl;
-	traktor::CaseQuaternion().execute(context);
+	//log::info << L"Case quaternion" << Endl;
+	//traktor::CaseQuaternion().execute(context);
 
-	log::info << L"Case small map" << Endl;
-	traktor::CaseSmallMap().execute(context);
+	//log::info << L"Case small map" << Endl;
+	//traktor::CaseSmallMap().execute(context);
 
-	log::info << L"Case transform" << Endl;
-	traktor::CaseTransform().execute(context);
+	//log::info << L"Case transform" << Endl;
+	//traktor::CaseTransform().execute(context);
 
-	log::info << L"Case value template" << Endl;
-	traktor::CaseValueTemplate().execute(context);
+	//log::info << L"Case value template" << Endl;
+	//traktor::CaseValueTemplate().execute(context);
 
-	log::info << L"Case winding" << Endl;
-	traktor::CaseWinding().execute(context);
+	//log::info << L"Case winding" << Endl;
+	//traktor::CaseWinding().execute(context);
 
-	log::info << L"Case path" << Endl;
-	traktor::CasePath().execute(context);
+	//log::info << L"Case path" << Endl;
+	//traktor::CasePath().execute(context);
 
-	log::info << L"Case xml pull parser" << Endl;
-	traktor::CaseXmlPullParser().execute(context);
+	//log::info << L"Case xml pull parser" << Endl;
+	//traktor::CaseXmlPullParser().execute(context);
 
-	log::info << L"Case xml document" << Endl;
-	traktor::CaseXmlDocument().execute(context);
+	//log::info << L"Case xml document" << Endl;
+	//traktor::CaseXmlDocument().execute(context);
 
-	log::info << L"Case zip" << Endl;
-	traktor::CaseZip().execute(context);
+	//log::info << L"Case zip" << Endl;
+	//traktor::CaseZip().execute(context);
 
 	//log::info << L"Case software renderer" << Endl;
 	//traktor::CaseRenderSw().execute(context);
@@ -108,8 +109,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//log::info << L"Case sound" << Endl;
 	//traktor::CaseSound().execute(context);
 
-	log::info << L"Case stream copy" << Endl;
-	traktor::CaseStreamCopy().execute(context);
+	//log::info << L"Case stream copy" << Endl;
+	//traktor::CaseStreamCopy().execute(context);
+
+	log::info << L"Case semaphore" << Endl;
+	traktor::CaseSemaphore().execute(context);
 
 	log::info << L"Finished" << Endl;
 	log::info << IncreaseIndent;

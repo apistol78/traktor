@@ -57,11 +57,11 @@ private:
 		Ref< SurroundFilter > surroundFilter;
 		Ref< LowPassFilter > lowPassFilter;
 		Ref< EchoFilter > echoFilter;
-		const Sound* sound;
+		Ref< const Sound > sound;
 		SoundChannel* soundChannel;
 		uint32_t priority;
-		float time;
 		float fadeOff;
+		float time;
 		Ref< SoundHandle > handle;
 	};
 
