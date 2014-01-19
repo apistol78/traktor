@@ -1,6 +1,7 @@
 #include "Ai/NavMeshEntityFactory.h"
 #include "Ai/NavMeshFactory.h"
 #include "Ai/Editor/AiEditorProfile.h"
+#include "Ai/Editor/NavMeshEntityEditorFactory.h"
 #include "Scene/Editor/SceneEditorContext.h"
 
 namespace traktor
@@ -20,6 +21,7 @@ void AiEditorProfile::getGuideDrawIds(
 	std::set< std::wstring >& outIds
 ) const
 {
+	outIds.insert(L"Ai.NavMesh");
 }
 
 void AiEditorProfile::createEditorPlugins(
@@ -66,6 +68,7 @@ void AiEditorProfile::createEntityEditorFactories(
 	RefArray< const scene::IEntityEditorFactory >& outEntityEditorFactories
 ) const
 {
+	outEntityEditorFactories.push_back(new NavMeshEntityEditorFactory());
 }
 
 Ref< world::EntityData > AiEditorProfile::createEntityData(

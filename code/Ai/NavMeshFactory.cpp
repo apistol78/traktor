@@ -52,19 +52,61 @@ Ref< Object > NavMeshFactory::create(resource::IResourceManager* resourceManager
 	if (!stream)
 		return 0;
 
+	Ref< NavMesh > outputNavMesh = new NavMesh();
+	Reader r(stream);
+
 	uint8_t version;
-	Reader(stream) >> version;
-	if (version != 1)
+	r >> version;
+	if (version != 2)
 		return 0;
 
 	int32_t navDataSize;
-	Reader(stream) >> navDataSize;
+	r >> navDataSize;
 	if (navDataSize <= 0)
 		return 0;
 
 	uint8_t* navData = (uint8_t*)dtAlloc(navDataSize, DT_ALLOC_PERM);
 	if (stream->read(navData, navDataSize) != navDataSize)
 		return 0;
+
+	bool haveGeometry;
+	r >> haveGeometry;
+
+	if (haveGeometry)
+	{
+		uint32_t numVertices;
+		r >> numVertices;
+
+		outputNavMesh->m_navMeshVertices.resize(numVertices);
+		for (uint32_t i = 0; i < numVertices; ++i)
+		{
+			float x, y, z;
+			r >> x;
+			r >> y;
+			r >> z;
+			outputNavMesh->m_navMeshVertices[i].set(x, y, z, 1.0f);
+		}
+
+		uint32_t numPolygons;
+		r >> numPolygons;
+
+		outputNavMesh->m_navMeshPolygons.reserve(numPolygons * 4);
+		for (uint32_t i = 0; i < numPolygons; ++i)
+		{
+			uint8_t numPolygonVertices;
+			r >> numPolygonVertices;
+
+			outputNavMesh->m_navMeshPolygons.push_back(numPolygonVertices);
+
+			for (uint32_t j = 0; j < numPolygonVertices; ++j)
+			{
+				uint16_t polygonIndex;
+				r >> polygonIndex;
+
+				outputNavMesh->m_navMeshPolygons.push_back(polygonIndex);
+			}
+		}
+	}
 
 	stream->close();
 	stream = 0;
@@ -77,7 +119,6 @@ Ref< Object > NavMeshFactory::create(resource::IResourceManager* resourceManager
 	if (dtStatusFailed(status))
 		return 0;
 
-	Ref< NavMesh > outputNavMesh = new NavMesh();
 	outputNavMesh->m_navMesh = navMesh;
 
 	return outputNavMesh;
