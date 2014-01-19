@@ -2,6 +2,7 @@
 #define traktor_ai_NavMesh_H
 
 #include "Core/Object.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Vector4.h"
 
 // import/export mechanism.
@@ -34,8 +35,11 @@ public:
 
 private:
 	friend class NavMeshFactory;
+	friend class NavMeshEntityEditor;
 
 	dtNavMesh* m_navMesh;
+	AlignedVector< Vector4 > m_navMeshVertices;
+	AlignedVector< uint16_t > m_navMeshPolygons;
 };
 
 	}

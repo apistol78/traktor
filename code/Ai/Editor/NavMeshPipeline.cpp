@@ -6,6 +6,7 @@
 #include "Ai/NavMeshResource.h"
 #include "Ai/Editor/NavMeshAsset.h"
 #include "Ai/Editor/NavMeshPipeline.h"
+#include "Animation/AnimatedMeshEntityData.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
@@ -98,7 +99,10 @@ Ref< ISerializable > resolveAllExternal(PipelineType* pipeline, const ISerializa
 			if (!externalEntityData)
 				return 0;
 
-			Ref< world::EntityData > resolvedEntityData = dynamic_type_cast< world::EntityData* >(resolveAllExternal(pipeline, externalEntityData));
+			Ref< world::EntityData > resolvedEntityData = dynamic_type_cast< world::EntityData* >(resolveAllExternal(
+				pipeline,
+				externalEntityData
+			));
 			if (!resolvedEntityData)
 				return 0;
 
@@ -109,14 +113,17 @@ Ref< ISerializable > resolveAllExternal(PipelineType* pipeline, const ISerializa
 		}
 		else if (objectMember->get())
 		{
-			objectMember->set(resolveAllExternal(pipeline, objectMember->get()));
+			objectMember->set(resolveAllExternal(
+				pipeline,
+				objectMember->get()
+			));
 		}
 	}
 
 	return reflection->clone();
 }
 
-void collectNavigationEntities(const ISerializable* object, const Transform& transform, RefArray< world::EntityData >& outEntityData)
+void collectNavigationEntities(const ISerializable* object, RefArray< world::EntityData >& outEntityData)
 {
 	Ref< Reflection > reflection = Reflection::create(object);
 
@@ -131,6 +138,10 @@ void collectNavigationEntities(const ISerializable* object, const Transform& tra
 		if (mesh::MeshEntityData* meshEntityData = dynamic_type_cast< mesh::MeshEntityData* >(objectMember->get()))
 		{
 			outEntityData.push_back(meshEntityData);
+		}
+		else if (animation::AnimatedMeshEntityData* animatedMeshEntityData = dynamic_type_cast< animation::AnimatedMeshEntityData* >(objectMember->get()))
+		{
+			outEntityData.push_back(animatedMeshEntityData);
 		}
 		else if (terrain::TerrainEntityData* terrainEntityData = dynamic_type_cast< terrain::TerrainEntityData* >(objectMember->get()))
 		{
@@ -147,7 +158,6 @@ void collectNavigationEntities(const ISerializable* object, const Transform& tra
 
 			collectNavigationEntities(
 				objectMember->get(),
-				layerEntityData->getTransform(),
 				outEntityData
 			);
 		}
@@ -155,7 +165,6 @@ void collectNavigationEntities(const ISerializable* object, const Transform& tra
 		{
 			collectNavigationEntities(
 				objectMember->get(),
-				entityData->getTransform(),
 				outEntityData
 			);
 		}
@@ -164,7 +173,7 @@ void collectNavigationEntities(const ISerializable* object, const Transform& tra
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.NavMeshPipeline", 11, NavMeshPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.NavMeshPipeline", 12, NavMeshPipeline, editor::DefaultPipeline)
 
 NavMeshPipeline::NavMeshPipeline()
 :	m_editor(false)
@@ -240,7 +249,7 @@ bool NavMeshPipeline::buildOutput(
 	sourceData = resolveAllExternal(pipelineBuilder, sourceData);
 
 	RefArray< world::EntityData > entityData;
-	collectNavigationEntities(sourceData, Transform::identity(), entityData);
+	collectNavigationEntities(sourceData, entityData);
 
 	log::info << L"Found " << int32_t(entityData.size()) << L" entity(s)" << Endl;
 
@@ -257,6 +266,47 @@ bool NavMeshPipeline::buildOutput(
 			if (const mesh::MeshEntityData* meshEntityData = dynamic_type_cast< const mesh::MeshEntityData* >(*i))
 			{
 				const resource::Id< mesh::IMesh >& mesh = meshEntityData->getMesh();
+
+				Ref< const mesh::MeshAsset > meshAsset = pipelineBuilder->getObjectReadOnly< mesh::MeshAsset >(mesh);
+				if (!meshAsset)
+					continue;
+
+				std::map< std::wstring, Ref< const model::Model > >::const_iterator j = modelCache.find(meshAsset->getFileName().getOriginal());
+				if (j != modelCache.end())
+				{
+					navModels.push_back(NavMeshSourceModel(j->second, (*i)->getTransform()));
+				}
+				else
+				{
+					Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), meshAsset->getFileName().getOriginal());
+					if (!file)
+					{
+						log::warning << L"Unable to open file \"" << meshAsset->getFileName().getOriginal() << L"\"" << Endl;
+						continue;
+					}
+
+					Ref< model::Model > meshModel = model::ModelFormat::readAny(
+						file,
+						meshAsset->getFileName().getExtension(),
+						model::ModelFormat::IfMeshPositions |
+						model::ModelFormat::IfMeshVertices |
+						model::ModelFormat::IfMeshPolygons
+					);
+					if (!meshModel)
+					{
+						log::warning << L"Unable to read model \"" << meshAsset->getFileName().getOriginal() << L"\"" << Endl;
+						continue;
+					}
+
+					model::Triangulate().apply(*meshModel);
+
+					modelCache[meshAsset->getFileName().getOriginal()] = meshModel;
+					navModels.push_back(NavMeshSourceModel(meshModel, (*i)->getTransform()));
+				}
+			}
+			else if (const animation::AnimatedMeshEntityData* animatedMeshEntityData = dynamic_type_cast< const animation::AnimatedMeshEntityData* >(*i))
+			{
+				const resource::Id< mesh::SkinnedMesh >& mesh = animatedMeshEntityData->getMesh();
 
 				Ref< const mesh::MeshAsset > meshAsset = pipelineBuilder->getObjectReadOnly< mesh::MeshAsset >(mesh);
 				if (!meshAsset)
@@ -745,14 +795,47 @@ bool NavMeshPipeline::buildOutput(
 		return false;
 	}
 
-	Writer(stream) << uint8_t(1);
-	Writer(stream) << navDataSize;
+	Writer w(stream);
+
+	w << uint8_t(2);
+	w << navDataSize;
 
 	if (stream->write(navData, navDataSize) != navDataSize)
 	{
 		log::error << L"NavMesh pipeline failed; unable to write to data stream" << Endl;
 		outputInstance->revert();
 		return false;
+	}
+
+	// Append geometry last in NavMesh resource; currently useful for editor
+	// but might come in handy later.
+	w << m_editor;
+	if (m_editor)
+	{
+		w << uint32_t(pmesh->nverts);
+		for (int32_t i = 0; i < pmesh->nverts; ++i)
+		{
+			w << pmesh->bmin[0] + pmesh->verts[i * 3 + 0] * pmesh->cs;
+			w << pmesh->bmin[1] + pmesh->verts[i * 3 + 1] * pmesh->ch;
+			w << pmesh->bmin[2] + pmesh->verts[i * 3 + 2] * pmesh->cs;
+		}
+
+		w << uint32_t(pmesh->npolys);
+		for (int32_t i = 0; i < pmesh->npolys; ++i)
+		{
+			const uint16_t* p = &pmesh->polys[i * pmesh->nvp * 2];
+
+			uint32_t nvp = 0;
+			for (; nvp < pmesh->nvp; ++nvp)
+			{
+				if (p[nvp] == RC_MESH_NULL_IDX)
+					break;
+			}
+
+			w << uint8_t(nvp);
+			for (uint32_t j = 0; j < nvp; ++j)
+				w << uint16_t(p[j]);
+		}
 	}
 
 	stream->close();

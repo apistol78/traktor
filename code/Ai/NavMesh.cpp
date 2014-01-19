@@ -10,7 +10,7 @@ namespace traktor
 		namespace
 		{
 
-const float c_searchExtents[3] = { 16.0f, 32.0f, 16.0f };
+const float c_searchExtents[3] = { 512.0f, 1024.0f, 512.0f };
 
 		}
 
