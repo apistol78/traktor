@@ -81,8 +81,14 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-		// First try to associate sound with non-playing channel;
-		// also check if sound has recently been played.
+		// First check if this sound already has been recently played.
+		for (AlignedVector< Channel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
+		{
+			if (i->sound == sound && i->time + c_recentTimeOffset >= time)
+				return 0;
+		}
+
+		// First try to associate sound with non-playing channel.
 		for (AlignedVector< Channel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
 		{
 			if (!i->soundChannel->isPlaying())
@@ -105,20 +111,11 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 				i->soundChannel->setFilter(0);
 				i->soundChannel->setVolume(1.0f);
 				i->priority = priority;
-				i->time = time;
 				i->fadeOff = -1.0f;
+				i->time = time;
 				i->handle = new SoundHandle(i->soundChannel, i->position, i->fadeOff);
 
 				return i->handle;
-			}
-			else if (i->time + c_recentTimeOffset >= time)
-			{
-				if (i->sound == sound)
-				{
-					i->time = time;
-					i->fadeOff = -1.0f;
-					return 0;
-				}
 			}
 		}
 
@@ -145,8 +142,8 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 				i->soundChannel->setFilter(0);
 				i->soundChannel->setVolume(1.0f);
 				i->priority = priority;
-				i->time = time;
 				i->fadeOff = -1.0f;
+				i->time = time;
 				i->handle = new SoundHandle(i->soundChannel, i->position, i->fadeOff);
 
 				return i->handle;
@@ -164,6 +161,8 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 
 	if (!m_surroundEnvironment)
 		return play(sound, priority);
+
+	float time = float(m_timer.getElapsedTime());
 
 	float maxDistance = sound->getRange();
 	if (maxDistance <= m_surroundEnvironment->getInnerRadius())
@@ -188,7 +187,6 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 	// Surround filter.
 	Ref< SurroundFilter > surroundFilter = new SurroundFilter(m_surroundEnvironment, position.xyz1());
 
-	/*
 	// Calculate initial cut-off frequency.
 	float cutOff = lerp(c_nearCutOff, c_farCutOff, clamp(std::sqrt(k0), 0.0f, 1.0f));
 	Ref< LowPassFilter > lowPassFilter = new LowPassFilter(cutOff);
@@ -212,15 +210,18 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 		groupFilter = new GroupFilter(lowPassFilter, echoFilter, surroundFilter);
 	else
 		groupFilter = new GroupFilter(lowPassFilter, surroundFilter);
-	*/
-
-	float time = float(m_timer.getElapsedTime());
 
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-		// First try to associate sound with non-playing channel (or far away);
-		// also check if sound has recently been played.
+		// First check if this sound already has been recently played.
+		for (AlignedVector< Channel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
+		{
+			if (i->sound == sound && i->time + c_recentTimeOffset >= time)
+				return 0;
+		}
+
+		// First try to associate sound with non-playing channel (or far away).
 		for (AlignedVector< Channel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
 		{
 			Scalar channelDistance = (i->position - listenerPosition).xyz0().length();
@@ -234,8 +235,8 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 
 				i->position = position.xyz1();
 				i->surroundFilter = surroundFilter;
-				//i->lowPassFilter = lowPassFilter;
-				//i->echoFilter = echoFilter;
+				i->lowPassFilter = lowPassFilter;
+				i->echoFilter = echoFilter;
 				i->sound = sound;
 				i->soundChannel->play(
 					sound->getBuffer(),
@@ -244,23 +245,14 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 					presence,
 					sound->getPresenceRate()
 				);
-				i->soundChannel->setFilter(/*groupFilter*/surroundFilter);
+				i->soundChannel->setFilter(groupFilter);
 				i->soundChannel->setVolume(1.0f);
 				i->priority = priority;
-				i->time = time;
 				i->fadeOff = -1.0f;
+				i->time = time;
 				i->handle = new SoundHandle(i->soundChannel, i->position, i->fadeOff);
 
 				return i->handle;
-			}
-			else if (i->time + c_recentTimeOffset >= time)
-			{
-				if (i->sound == sound)
-				{
-					i->time = time;
-					i->fadeOff = -1.0f;
-					return 0;
-				}
 			}
 		}
 
@@ -274,8 +266,8 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 
 				i->position = position.xyz1();
 				i->surroundFilter = surroundFilter;
-				//i->lowPassFilter = lowPassFilter;
-				//i->echoFilter = echoFilter;
+				i->lowPassFilter = lowPassFilter;
+				i->echoFilter = echoFilter;
 				i->sound = sound;
 				i->soundChannel->play(
 					sound->getBuffer(),
@@ -284,11 +276,11 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 					presence,
 					sound->getPresenceRate()
 				);
-				i->soundChannel->setFilter(surroundFilter/*groupFilter*/);
+				i->soundChannel->setFilter(groupFilter);
 				i->soundChannel->setVolume(1.0f);
 				i->priority = priority;
-				i->time = time;
 				i->fadeOff = -1.0f;
+				i->time = time;
 				i->handle = new SoundHandle(i->soundChannel, i->position, i->fadeOff);
 
 				return i->handle;
@@ -310,8 +302,8 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 
 				i->position = position.xyz1();
 				i->surroundFilter = surroundFilter;
-				//i->lowPassFilter = lowPassFilter;
-				//i->echoFilter = echoFilter;
+				i->lowPassFilter = lowPassFilter;
+				i->echoFilter = echoFilter;
 				i->sound = sound;
 				i->soundChannel->play(
 					sound->getBuffer(),
@@ -320,11 +312,11 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 					presence,
 					sound->getPresenceRate()
 				);
-				i->soundChannel->setFilter(surroundFilter/*groupFilter*/);
+				i->soundChannel->setFilter(groupFilter);
 				i->soundChannel->setVolume(1.0f);
 				i->priority = priority;
-				i->time = time;
 				i->fadeOff = -1.0f;
+				i->time = time;
 				i->handle = new SoundHandle(i->soundChannel, i->position, i->fadeOff);
 
 				return i->handle;
