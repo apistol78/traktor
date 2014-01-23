@@ -93,6 +93,7 @@ VertexBufferDynamicVBO::VertexBufferDynamicVBO(IContext* resourceContext, const 
 	T_OGL_SAFE(glGenBuffers(1, &m_buffer));
 	T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, m_buffer));
 
+#if !defined(__APPLE__)
 	if (GLEW_ARB_buffer_storage && GLEW_VERSION_4_4)
 	{
 		T_OGL_SAFE(glBufferStorage(
@@ -103,6 +104,7 @@ VertexBufferDynamicVBO::VertexBufferDynamicVBO(IContext* resourceContext, const 
 		));
 	}
 	else
+#endif
 	{
 		T_OGL_SAFE(glBufferData(
 			GL_ARRAY_BUFFER, 
@@ -269,19 +271,24 @@ void VertexBufferDynamicVBO::activate(const GLint* attributeLocs)
 
 		if (m_dirty)
 		{
+#if !defined(__APPLE__)
 			bool usePersistent = bool(GLEW_ARB_buffer_storage && GLEW_VERSION_4_4);
-
 			if ( !usePersistent )
 				m_mapped = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
 			else if (!m_mapped)
 				m_mapped = glMapBufferRange(GL_ARRAY_BUFFER, 0, getBufferSize(), GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
+#else
+			m_mapped = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+#endif
 
 			if (!m_mapped)
 				return;
 
 			copyBuffer((uint8_t*)m_mapped, (const uint8_t*)&m_data[0], getBufferSize());
 
+#if !defined(__APPLE__)
 			if ( !usePersistent )
+#endif
 			{
 				T_OGL_SAFE(glUnmapBuffer(GL_ARRAY_BUFFER));
 			}
