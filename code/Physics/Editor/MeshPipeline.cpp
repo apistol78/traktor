@@ -1,5 +1,6 @@
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
 #include "Core/Math/Format.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
@@ -9,6 +10,7 @@
 #include "Model/Model.h"
 #include "Model/ModelFormat.h"
 #include "Model/Operations/CalculateConvexHull.h"
+#include "Model/Operations/CalculateTangents.h"
 #include "Model/Operations/CleanDuplicates.h"
 #include "Model/Operations/ScaleAlongNormal.h"
 #include "Model/Operations/Triangulate.h"
@@ -22,7 +24,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshPipeline", 5, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshPipeline", 7, MeshPipeline, editor::IPipeline)
 
 bool MeshPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -102,13 +104,20 @@ bool MeshPipeline::buildOutput(
 		return false;
 	}
 
-	// Shrink model by margin.
-	model::ScaleAlongNormal(-meshAsset->m_margin).apply(*model);
-
 	// Cleanup model suitable for physics.
 	model->clear(model::Model::CfMaterials | model::Model::CfColors | model::Model::CfNormals | model::Model::CfTexCoords | model::Model::CfJoints);
 	model::CleanDuplicates().apply(*model);
 	model::Triangulate().apply(*model);
+
+	// Shrink model by margin; need to calculate normals from positions only
+	// as we don't want smooth groups or anything else mess with the normals.
+	if (abs(meshAsset->m_margin) > FUZZY_EPSILON)
+	{
+		model::CalculateTangents().apply(*model);
+		model::ScaleAlongNormal(-meshAsset->m_margin).apply(*model);
+		model->clear(model::Model::CfNormals);
+		model::CleanDuplicates().apply(*model);
+	}
 
 	// Calculate bounding box; used for center of gravity estimation.
 	Aabb3 boundingBox = model->getBoundingBox();

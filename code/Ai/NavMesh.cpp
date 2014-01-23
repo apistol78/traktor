@@ -2,6 +2,8 @@
 #include "Ai/MoveQuery.h"
 #include "Ai/NavMesh.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Random.h"
+#include "Core/Misc/AutoPtr.h"
 
 namespace traktor
 {
@@ -11,6 +13,12 @@ namespace traktor
 		{
 
 const float c_searchExtents[3] = { 512.0f, 1024.0f, 512.0f };
+
+float random()
+{
+	static Random s_rnd;
+	return s_rnd.nextFloat();
+}
 
 		}
 
@@ -99,13 +107,15 @@ Ref< MoveQuery > NavMesh::createMoveQuery(const Vector4& startPosition, const Ve
 
 bool NavMesh::findClosestPoint(const Vector4& searchFrom, Vector4& outPoint) const
 {
-	dtStatus status;
-
 	dtNavMeshQuery* navQuery = dtAllocNavMeshQuery();
 	if (!navQuery)
 		return false;
 
-	dtQueryFilter* filter = new dtQueryFilter();
+	dtStatus status = navQuery->init(m_navMesh, 2048);
+	if (dtStatusFailed(status))
+		return 0;
+
+	AutoPtr< dtQueryFilter > filter(new dtQueryFilter());
 
 	float T_MATH_ALIGN16 startPos[4];
 	searchFrom.storeAligned(startPos);
@@ -116,21 +126,102 @@ bool NavMesh::findClosestPoint(const Vector4& searchFrom, Vector4& outPoint) con
 	status = navQuery->findNearestPoly(
 		startPos,
 		c_searchExtents,
-		filter,
+		filter.ptr(),
 		&startRef,
 		startPosN
 	);
 	if (dtStatusFailed(status))
 	{
 		dtFreeNavMeshQuery(navQuery);
-		delete filter;
 		return false;
 	}
 
 	outPoint = Vector4::loadAligned(startPosN).xyz1();
 
 	dtFreeNavMeshQuery(navQuery);
-	delete filter;
+	return true;
+}
+
+bool NavMesh::findRandomPoint(Vector4& outPoint) const
+{
+	dtNavMeshQuery* navQuery = dtAllocNavMeshQuery();
+	if (!navQuery)
+		return false;
+
+	dtStatus status = navQuery->init(m_navMesh, 2048);
+	if (dtStatusFailed(status))
+		return 0;
+
+	AutoPtr< dtQueryFilter > filter(new dtQueryFilter());
+
+	dtPolyRef randomRef;
+	float T_MATH_ALIGN16 randomPosN[4];
+
+	status = navQuery->findRandomPoint(
+		filter.ptr(),
+		&random,
+		&randomRef,
+		randomPosN
+	);
+	if (dtStatusFailed(status))
+	{
+		dtFreeNavMeshQuery(navQuery);
+		return false;
+	}
+
+	outPoint = Vector4::loadAligned(randomPosN).xyz1();
+
+	dtFreeNavMeshQuery(navQuery);
+	return true;
+}
+
+bool NavMesh::findRandomPoint(const Vector4& center, float radius, Vector4& outPoint) const
+{
+	dtNavMeshQuery* navQuery = dtAllocNavMeshQuery();
+	if (!navQuery)
+		return false;
+
+	dtStatus status = navQuery->init(m_navMesh, 2048);
+	if (dtStatusFailed(status))
+		return 0;
+
+	AutoPtr< dtQueryFilter > filter(new dtQueryFilter());
+
+	float T_MATH_ALIGN16 centerPos[4];
+	center.storeAligned(centerPos);
+
+	dtPolyRef startRef;
+	float T_MATH_ALIGN16 startPosN[4];
+
+	status = navQuery->findNearestPoly(
+		centerPos,
+		c_searchExtents,
+		filter.ptr(),
+		&startRef,
+		startPosN
+	);
+
+	dtPolyRef randomRef;
+	float T_MATH_ALIGN16 randomPosN[4];
+
+	status = navQuery->findRandomPointAroundCircle(
+		startRef,
+		centerPos,
+		radius,
+		filter.ptr(),
+		&random,
+		&randomRef,
+		randomPosN
+	);
+	if (dtStatusFailed(status))
+	{
+		dtFreeNavMeshQuery(navQuery);
+		return false;
+	}
+
+	outPoint = Vector4::loadAligned(randomPosN).xyz1();
+
+	dtFreeNavMeshQuery(navQuery);
 	return true;
 }
 
