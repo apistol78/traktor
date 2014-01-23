@@ -108,7 +108,8 @@ void TextLayout::insertText(const std::wstring& text)
 	for (StringSplit< std::wstring >::const_iterator i = split.begin(); i != split.end(); ++i)
 	{
 		const std::wstring& word = *i;
-		T_ASSERT (!word.empty());
+		if (word.empty())
+			continue;
 
 		float wordWidth = 0.0f;
 

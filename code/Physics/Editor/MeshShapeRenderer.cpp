@@ -44,26 +44,34 @@ void MeshShapeRenderer::draw(
 
 		if (hullTriangles.empty())
 		{
+			Scalar margin(mesh->getMargin());
 			for (std::vector< Mesh::Triangle >::const_iterator i = shapeTriangles.begin(); i != shapeTriangles.end(); ++i)
 			{
 				const Vector4& V0 = vertices[i->indices[0]];
 				const Vector4& V1 = vertices[i->indices[1]];
 				const Vector4& V2 = vertices[i->indices[2]];
 
-				primitiveRenderer->drawSolidTriangle(V0, V1, V2, Color4ub(128, 255, 255, 128));
-				primitiveRenderer->drawWireTriangle(V0, V1, V2, Color4ub(0, 255, 255, 180));
+				Vector4 N = cross(V0 - V1, V2 - V1).normalized();
+				Vector4 offset = N * margin;
+
+				primitiveRenderer->drawSolidTriangle(V0 + offset, V1 + offset, V2 + offset, Color4ub(128, 255, 255, 128));
+				primitiveRenderer->drawWireTriangle(V0 + offset, V1 + offset, V2 + offset, Color4ub(0, 255, 255, 180));
 			}
 		}
 		else
 		{
+			Scalar margin(mesh->getMargin());
 			for (std::vector< Mesh::Triangle >::const_iterator i = hullTriangles.begin(); i != hullTriangles.end(); ++i)
 			{
 				const Vector4& V0 = vertices[i->indices[0]];
 				const Vector4& V1 = vertices[i->indices[1]];
 				const Vector4& V2 = vertices[i->indices[2]];
 
-				primitiveRenderer->drawSolidTriangle(V0, V1, V2, Color4ub(128, 255, 255, 128));
-				primitiveRenderer->drawWireTriangle(V0, V1, V2, Color4ub(0, 255, 255, 180));
+				Vector4 N = cross(V0 - V1, V2 - V1).normalized();
+				Vector4 offset = N * margin;
+
+				primitiveRenderer->drawSolidTriangle(V0 + offset, V1 + offset, V2 + offset, Color4ub(128, 255, 255, 128));
+				primitiveRenderer->drawWireTriangle(V0 + offset, V1 + offset, V2 + offset, Color4ub(0, 255, 255, 180));
 			}
 		}
 

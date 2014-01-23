@@ -221,6 +221,16 @@ MD5::MD5()
 	begin();
 }
 
+MD5::MD5(const void* md5)
+{
+	begin();
+
+	m_md5[0] = *((const uint32_t*)md5 + 0);
+	m_md5[1] = *((const uint32_t*)md5 + 1);
+	m_md5[2] = *((const uint32_t*)md5 + 2);
+	m_md5[3] = *((const uint32_t*)md5 + 3);
+}
+
 bool MD5::create(const std::wstring& md5)
 {
 	if (md5.length() != 32)

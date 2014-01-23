@@ -50,6 +50,7 @@ private:
 	AttributeDesc m_attributeDesc[T_OGL_MAX_USAGE_INDEX];
 	const GLint* m_attributeLocs;
 	uint8_t* m_lock;
+	GLvoid* m_mapped;
 	AlignedVector< uint8_t > m_data;
 	bool m_dirty;
 };

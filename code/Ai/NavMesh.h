@@ -33,6 +33,10 @@ public:
 
 	bool findClosestPoint(const Vector4& searchFrom, Vector4& outPoint) const;
 
+	bool findRandomPoint(Vector4& outPoint) const;
+
+	bool findRandomPoint(const Vector4& center, float radius, Vector4& outPoint) const;
+
 private:
 	friend class NavMeshFactory;
 	friend class NavMeshEntityEditor;

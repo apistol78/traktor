@@ -26,6 +26,8 @@ class T_DLLCLASS MD5 : public ISerializable
 public:
 	MD5();
 
+	explicit MD5(const void* md5);
+
 	/*! \brief Create object from MD5 checksum string.
 	 *
 	 * \param md5 32 character hex encoded MD5.

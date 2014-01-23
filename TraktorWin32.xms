@@ -13093,7 +13093,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/glew-1.10.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_OPENGL_EXPORT</item>
@@ -13116,7 +13116,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/glew-1.10.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_OPENGL_EXPORT</item>
@@ -13139,7 +13139,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/glew-1.10.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -13162,7 +13162,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/glew-1.10.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -13216,8 +13216,8 @@
 					<linkWithProduct>true</linkWithProduct>
 					<project type="Project" version="1">
 						<enable>true</enable>
-						<name>Extern.glew-1.9.0</name>
-						<sourcePath>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/src</sourcePath>
+						<name>Extern.glew-1.10.0</name>
+						<sourcePath>$(TRAKTOR_HOME)/3rdp/glew-1.10.0/src</sourcePath>
 						<configurations>
 							<item type="Configuration" version="1">
 								<name>DebugShared</name>
@@ -13225,7 +13225,7 @@
 								<targetProfile>TpDebug</targetProfile>
 								<precompiledHeader/>
 								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/glew-1.10.0/include</item>
 								</includePaths>
 								<definitions>
 									<item>_DEBUG</item>
@@ -13242,7 +13242,7 @@
 								<targetProfile>TpRelease</targetProfile>
 								<precompiledHeader/>
 								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/glew-1.10.0/include</item>
 								</includePaths>
 								<definitions>
 									<item>NDEBUG</item>
@@ -13259,7 +13259,7 @@
 								<targetProfile>TpDebug</targetProfile>
 								<precompiledHeader/>
 								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/glew-1.10.0/include</item>
 								</includePaths>
 								<definitions>
 									<item>_DEBUG</item>
@@ -13276,7 +13276,7 @@
 								<targetProfile>TpRelease</targetProfile>
 								<precompiledHeader/>
 								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/glew-1.10.0/include</item>
 								</includePaths>
 								<definitions>
 									<item>NDEBUG</item>
