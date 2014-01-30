@@ -32,7 +32,7 @@ void NavMeshEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 			return;
 
 		primitiveRenderer->pushWorld(/*getEntityAdapter()->getTransform().toMatrix44()*/ Matrix44::identity());
-		primitiveRenderer->pushDepthEnable(true);
+		primitiveRenderer->pushDepthState(true, false);
 
 		const uint16_t* nmp = navMesh->m_navMeshPolygons.c_ptr();
 		T_ASSERT (nmp);
@@ -58,8 +58,8 @@ void NavMeshEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 			i += npv;
 		}
 
-		primitiveRenderer->popDepthEnable();
-		primitiveRenderer->pushDepthEnable(false);
+		primitiveRenderer->popDepthState();
+		primitiveRenderer->pushDepthState(false, false);
 
 		for (uint32_t i = 0; i < navMesh->m_navMeshPolygons.size(); )
 		{
@@ -80,7 +80,7 @@ void NavMeshEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 			i += npv;
 		}
 
-		primitiveRenderer->popDepthEnable();
+		primitiveRenderer->popDepthState();
 		primitiveRenderer->popWorld();
 	}
 

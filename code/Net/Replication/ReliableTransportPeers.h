@@ -82,8 +82,8 @@ private:
 		uint8_t sequence0;
 		uint8_t sequence1;
 		std::list< ControlEnvelope > sent;
-		CircularVector< uint8_t, 16 > last0;
-		CircularVector< uint8_t, 16 > last1;
+		CircularVector< uint8_t, 32 > last0;
+		CircularVector< uint8_t, 32 > last1;
 		bool alive;
 		bool faulty;
 

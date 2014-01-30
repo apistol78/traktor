@@ -195,6 +195,11 @@ uint32_t SessionManager::receiveP2PData(void* data, uint32_t size, Ref< IUser >&
 	return received;
 }
 
+uint32_t SessionManager::getCurrentGameCount() const
+{
+	return m_provider->getCurrentGameCount();
+}
+
 IAchievements* SessionManager::getAchievements() const
 {
 	return waitUntilReady(m_achievements);

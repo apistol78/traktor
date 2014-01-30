@@ -21,7 +21,7 @@ public:
 
 	virtual Ref< LobbyArrayResult > findMatchingLobbies(const LobbyFilter* filter);
 
-	virtual Ref< LobbyResult > createLobby(uint32_t maxUsers);
+	virtual Ref< LobbyResult > createLobby(uint32_t maxUsers, LobbyAccess access);
 
 	virtual Ref< ILobby > acceptLobby();
 

@@ -238,7 +238,7 @@ void DebugRenderControl::eventPaint(ui::Event* event)
 			m_primitiveRenderer->setClipDistance(100.0f);
 			m_primitiveRenderer->pushProjection(projection);
 			m_primitiveRenderer->pushView(Matrix44::identity());
-			m_primitiveRenderer->pushDepthEnable(false);
+			m_primitiveRenderer->pushDepthState(false, false);
 
 			for (uint32_t i = 0; i < textures.size(); ++i)
 			{

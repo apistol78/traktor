@@ -689,7 +689,7 @@ void TerrainEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer) con
 	float radius = m_context->getGuideSize();
 
 	primitiveRenderer->drawSolidPoint(m_center, 8, Color4ub(255, 0, 0, 255));
-	primitiveRenderer->pushDepthEnable(false);
+	primitiveRenderer->pushDepthState(false, false);
 
 	float a0 = 0.0f;
 	float x0 = m_center.x() + cosf(a0) * radius;
@@ -716,7 +716,7 @@ void TerrainEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer) con
 		y0 = y1;
 	}
 
-	primitiveRenderer->popDepthEnable();
+	primitiveRenderer->popDepthState();
 }
 
 void TerrainEditModifier::setBrush(const std::wstring& brush)

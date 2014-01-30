@@ -12,7 +12,7 @@ namespace traktor
 
 struct FlashSoundBufferCursor : public RefCountImpl< sound::ISoundBufferCursor >
 {
-	uint32_t m_position;
+	int32_t m_position;
 	AutoArrayPtr< float, AllocatorFree > m_samples[2];
 
 	FlashSoundBufferCursor()
@@ -56,15 +56,18 @@ bool FlashSoundBuffer::getBlock(sound::ISoundBufferCursor* cursor, const sound::
 	T_ASSERT (fsbc);
 
 	// Have we reached the end?
-	uint32_t position = fsbc->m_position;
+	int32_t position = fsbc->m_position;
 	if (position >= m_sound->getSamplesCount())
 		return false;
 
 	// Calculate number of samples to convert for this block.
-	uint32_t samplesCount = m_sound->getSamplesCount() - position;
+	int32_t samplesCount = m_sound->getSamplesCount() - position;
 	samplesCount = std::min< uint32_t >(samplesCount, outBlock.samplesCount);
 	samplesCount = alignDown(samplesCount, 4);
 	samplesCount = std::min< uint32_t >(samplesCount, 4096);
+	
+	if (samplesCount == 0)
+		return false;
 
 	// Convert samples into fp32 buffer.
 	for (uint8_t ii = 0; ii < m_sound->getChannels(); ++ii)
@@ -72,7 +75,7 @@ bool FlashSoundBuffer::getBlock(sound::ISoundBufferCursor* cursor, const sound::
 		const int16_t* ss = m_sound->getSamples(ii) + position;
 		float* ds = fsbc->m_samples[ii].ptr();
 
-		for (uint32_t i = 0; i < samplesCount; ++i)
+		for (int32_t i = 0; i < samplesCount; ++i)
 			*ds++ = float(*ss++) / 32767.0f;
 
 		outBlock.samples[ii] = fsbc->m_samples[ii].ptr();

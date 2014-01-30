@@ -203,7 +203,7 @@ bool HeightfieldTexturePipeline::buildOutput(
 	}
 	else if (asset->m_output == HeightfieldTextureAsset::OtNormals)
 	{
-		Ref< drawing::Image > outputMap = new drawing::Image(drawing::PixelFormat::getX8R8G8B8(), size, size);
+		Ref< drawing::Image > outputMap = new drawing::Image(drawing::PixelFormat::getR8G8B8(), size, size);
 		for (int32_t v = 0; v < size; ++v)
 		{
 			for (int32_t u = 0; u < size; ++u)

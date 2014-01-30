@@ -12,7 +12,7 @@ bool LocalMatchMaking::findMatchingLobbies(const LobbyFilter* filter, std::vecto
 	return false;
 }
 
-bool LocalMatchMaking::createLobby(uint32_t maxUsers, uint64_t& outLobbyHandle)
+bool LocalMatchMaking::createLobby(uint32_t maxUsers, LobbyAccess access, uint64_t& outLobbyHandle)
 {
 	outLobbyHandle = 0;
 	return true;

@@ -61,6 +61,12 @@
 			local rs = db:executeQuery("select sum(size) from Report_Sound"); rs:next()
 			soundSize = rs:getInt32(0) / 1024
 		end
+
+		local physMeshSize = 0
+		if db:tableExists("Report_PhysMesh") then
+			local rs = db:executeQuery("select sum(size) from Report_PhysMesh"); rs:next()
+			physMeshSize = rs:getInt32(0) / 1024
+		end		
 --?>
 
 		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -74,7 +80,8 @@
 					['Textures', <?-- output:print(textureSize) --?>],
 					['Meshes', <?-- output:print(meshSize) --?>],
 					['Shaders', <?-- output:print(shaderSize) --?>],
-					['Sounds', <?-- output:print(soundSize) --?>]
+					['Sounds', <?-- output:print(soundSize) --?>],
+					['PhysMesh', <?-- output:print(physMeshSize) --?>]
 				]);
 
 				var options = {
@@ -89,7 +96,7 @@
 	<body>
 		<center>
 			<h1>Pipeline Report</h1>
-			<a href="Textures.html">Textures</a>&nbsp;<a href="Meshes.html">Meshes</a>&nbsp;<a href="Shaders.html">Shaders</a>&nbsp;<a href="Sounds.html">Sounds</a><br/>
+			<a href="Textures.html">Textures</a>&nbsp;<a href="Meshes.html">Meshes</a>&nbsp;<a href="Shaders.html">Shaders</a>&nbsp;<a href="Sounds.html">Sounds</a>&nbsp;<a href="PhysMeshes.html">PhysMeshes</a><br/>
 			<div id="piechart" style="width: 900px; height: 500px;"></div>
 		</center>
 	</body>

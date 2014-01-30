@@ -23,6 +23,7 @@ public:
 		uint64_t handle,
 		int32_t from,
 		int32_t to,
+		bool friends,
 		ScoreArrayResult* result
 	);
 
@@ -34,6 +35,7 @@ private:
 	uint64_t m_handle;
 	int32_t m_from;
 	int32_t m_to;
+	bool m_friends;
 	Ref< ScoreArrayResult > m_result;
 };
 

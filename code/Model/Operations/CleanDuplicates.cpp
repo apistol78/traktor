@@ -9,6 +9,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.CleanDuplicates", CleanDuplicates, IModelOperation)
 
+CleanDuplicates::CleanDuplicates(float positionDistance)
+:	m_positionDistance(positionDistance)
+{
+}
+
 bool CleanDuplicates::apply(Model& model) const
 {
 	Model cleaned;
@@ -40,7 +45,7 @@ bool CleanDuplicates::apply(Model& model) const
 
 			id = vertex.getPosition();
 			if (id != c_InvalidIndex)
-				cleanedVertex.setPosition(cleaned.addUniquePosition(model.getPosition(id)));
+				cleanedVertex.setPosition(cleaned.addUniquePosition(model.getPosition(id), m_positionDistance));
 
 			id = vertex.getColor();
 			if (id != c_InvalidIndex)

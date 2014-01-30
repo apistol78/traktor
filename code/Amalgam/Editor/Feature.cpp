@@ -10,11 +10,20 @@ namespace traktor
 	namespace amalgam
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.amalgam.Feature", 2, Feature, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.amalgam.Feature", 3, Feature, ISerializable)
+
+Feature::Feature()
+:	m_priority(0)
+{
+}
 
 void Feature::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"description", m_description);
+
+	if (s.getVersion() >= 3)
+		s >> Member< int32_t >(L"priority", m_priority);
+
 	s >> MemberComposite< Platforms >(L"platforms", m_platforms);
 	s >> MemberRef< PropertyGroup >(L"pipelineProperties", m_pipelineProperties);
 	s >> MemberRef< PropertyGroup >(L"migrateProperties", m_migrateProperties);

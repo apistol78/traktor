@@ -1,5 +1,7 @@
 #include "Amalgam/Engine/Classes/I18NClasses.h"
+#include "I18N/Dictionary.h"
 #include "I18N/Format.h"
+#include "I18N/I18N.h"
 #include "I18N/Text.h"
 #include "Script/AutoScriptClass.h"
 #include "Script/IScriptManager.h"
@@ -25,11 +27,25 @@ i18n::Format::Argument convertArgument(const script::Any& value)
 		return i18n::Format::Argument();
 }
 
+std::wstring i18n_Dictionary_get(i18n::Dictionary* self, const std::wstring& id)
+{
+	std::wstring tmp;
+	if (self->get(id, tmp))
+		return tmp;
+	else
+		return L"";
+}
+
 class I18N : public Object
 {
 	T_RTTI_CLASS;
 
 public:
+	static void appendDictionary(const i18n::Dictionary* dictionary, bool overrideExisting)
+	{
+		i18n::I18N::getInstance().appendDictionary(dictionary, overrideExisting);
+	}
+
 	static std::wstring text(const std::wstring& id)
 	{
 		return i18n::Text(id);
@@ -62,7 +78,15 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.I18N", I18N, Object)
 
 void registerI18NClasses(script::IScriptManager* scriptManager)
 {
+	Ref< script::AutoScriptClass< i18n::Dictionary > > classDictionary = new script::AutoScriptClass< i18n::Dictionary >();
+	classDictionary->addConstructor();
+	classDictionary->addMethod("has", &i18n::Dictionary::has);
+	classDictionary->addMethod("set", &i18n::Dictionary::set);
+	classDictionary->addMethod("get", &i18n_Dictionary_get);
+	scriptManager->registerClass(classDictionary);
+
 	Ref< script::AutoScriptClass< I18N > > classI18N = new script::AutoScriptClass< I18N >();
+	classI18N->addStaticMethod("appendDictionary", &I18N::appendDictionary);
 	classI18N->addStaticMethod("text", &I18N::text);
 	classI18N->addStaticMethod("format", &I18N::format_1);
 	classI18N->addStaticMethod("format", &I18N::format_2);

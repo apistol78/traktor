@@ -99,7 +99,7 @@ public:
 
 	uint32_t addPosition(const Vector4& position);
 
-	uint32_t addUniquePosition(const Vector4& position);
+	uint32_t addUniquePosition(const Vector4& position, float distance = 0.01f);
 
 	uint32_t getPositionCount() const { return m_positions.size(); }
 

@@ -31,32 +31,32 @@ const AlignedVector< Vector4 >& Mesh::getVertices() const
 	return m_vertices;
 }
 
-void Mesh::setShapeTriangles(const std::vector< Triangle >& shapeTriangles)
+void Mesh::setShapeTriangles(const AlignedVector< Triangle >& shapeTriangles)
 {
 	m_shapeTriangles = shapeTriangles;
 }
 
-const std::vector< Mesh::Triangle >& Mesh::getShapeTriangles() const
+const AlignedVector< Mesh::Triangle >& Mesh::getShapeTriangles() const
 {
 	return m_shapeTriangles;
 }
 
-void Mesh::setHullTriangles(const std::vector< Triangle >& hullTriangles)
+void Mesh::setHullTriangles(const AlignedVector< Triangle >& hullTriangles)
 {
 	m_hullTriangles = hullTriangles;
 }
 
-const std::vector< Mesh::Triangle >& Mesh::getHullTriangles() const
+const AlignedVector< Mesh::Triangle >& Mesh::getHullTriangles() const
 {
 	return m_hullTriangles;
 }
 
-void Mesh::setHullIndices(const std::vector< uint32_t >& hullIndices)
+void Mesh::setHullIndices(const AlignedVector< uint32_t >& hullIndices)
 {
 	m_hullIndices = hullIndices;
 }
 
-const std::vector< uint32_t >& Mesh::getHullIndices() const
+const AlignedVector< uint32_t >& Mesh::getHullIndices() const
 {
 	return m_hullIndices;
 }

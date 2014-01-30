@@ -158,7 +158,7 @@ Ref< ISerializable > BatchMeshEntityPipeline::buildOutput(
 			continue;
 		}
 
-		model::MergeModel(*partModel, (*i)->getTransform()).apply(*mergedModel);
+		model::MergeModel(*partModel, (*i)->getTransform(), 0.01f).apply(*mergedModel);
 	}
 
 	// Build output mesh from merged model.

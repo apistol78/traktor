@@ -180,9 +180,9 @@ uint32_t Model::addPosition(const Vector4& position)
 	return m_positions.add(position);
 }
 
-uint32_t Model::addUniquePosition(const Vector4& position)
+uint32_t Model::addUniquePosition(const Vector4& position, float distance)
 {
-	uint32_t id = m_positions.get(position, 0.01f);
+	uint32_t id = m_positions.get(position, distance);
 	return id != m_positions.InvalidIndex ? id : m_positions.add(position);
 }
 

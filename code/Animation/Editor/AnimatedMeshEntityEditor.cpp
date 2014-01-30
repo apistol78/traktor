@@ -42,7 +42,7 @@ void AnimatedMeshEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRen
 	if (getContext()->shouldDrawGuide(L"Animation.Skeleton"))
 	{
 		primitiveRenderer->pushWorld(getEntityAdapter()->getTransform().toMatrix44());
-		primitiveRenderer->pushDepthEnable(false);
+		primitiveRenderer->pushDepthState(false, false);
 
 		if (animatedEntity)
 		{
@@ -98,7 +98,7 @@ void AnimatedMeshEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRen
 			}
 		}
 
-		primitiveRenderer->popDepthEnable();
+		primitiveRenderer->popDepthState();
 		primitiveRenderer->popWorld();
 	}
 

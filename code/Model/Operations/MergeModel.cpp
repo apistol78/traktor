@@ -29,9 +29,10 @@ int32_t predicateAxis(float a, float b)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.MergeModel", MergeModel, IModelOperation)
 
-MergeModel::MergeModel(const Model& sourceModel, const Transform& sourceTransform)
+MergeModel::MergeModel(const Model& sourceModel, const Transform& sourceTransform, float positionDistance)
 :	m_sourceModel(sourceModel)
 ,	m_sourceTransform(sourceTransform)
+,	m_positionDistance(positionDistance)
 {
 }
 
@@ -62,7 +63,7 @@ bool MergeModel::apply(Model& model) const
 
 		uint32_t position = sourceVertex.getPosition();
 		if (position != c_InvalidIndex)
-			position = model.addUniquePosition(m_sourceTransform * m_sourceModel.getPosition(position).xyz1());
+			position = model.addUniquePosition(m_sourceTransform * m_sourceModel.getPosition(position).xyz1(), m_positionDistance);
 
 		uint32_t color = sourceVertex.getColor();
 		if (color != c_InvalidIndex)

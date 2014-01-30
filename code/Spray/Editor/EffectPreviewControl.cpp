@@ -373,7 +373,7 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 		{
 			m_primitiveRenderer->pushProjection(Matrix44::identity());
 			m_primitiveRenderer->pushView(Matrix44::identity());
-			m_primitiveRenderer->pushDepthEnable(false);
+			m_primitiveRenderer->pushDepthState(false, false);
 
 			m_primitiveRenderer->drawTextureQuad(
 				Vector4(-1.0f,  1.0f, 1.0f, 1.0f), Vector2(0.0f, 0.0f),
@@ -384,7 +384,7 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 				m_background
 			);
 
-			m_primitiveRenderer->popDepthEnable();
+			m_primitiveRenderer->popDepthState();
 			m_primitiveRenderer->popView();
 			m_primitiveRenderer->popProjection();
 		}

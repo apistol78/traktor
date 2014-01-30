@@ -1,7 +1,7 @@
 #ifndef traktor_net_FloatTemplate_H
 #define traktor_net_FloatTemplate_H
 
-#include <climits>
+#include <limits>
 #include "Net/Replication/State/IValueTemplate.h"
 
 // import/export mechanism.

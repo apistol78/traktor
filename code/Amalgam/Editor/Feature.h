@@ -35,7 +35,11 @@ public:
 		void serialize(ISerializer& s);
 	};
 
+	Feature();
+
 	const std::wstring& getDescription() const { return m_description; }
+
+	int32_t getPriority() const { return m_priority; }
 
 	const Platforms& getPlatforms() const { return m_platforms; }
 
@@ -49,6 +53,7 @@ public:
 
 private:
 	std::wstring m_description;
+	int32_t m_priority;
 	Platforms m_platforms;
 	Ref< PropertyGroup > m_pipelineProperties;
 	Ref< PropertyGroup > m_migrateProperties;

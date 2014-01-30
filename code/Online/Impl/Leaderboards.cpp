@@ -111,7 +111,7 @@ Ref< Result > Leaderboards::addScore(const std::wstring& leaderboardId, int32_t 
 		return 0;
 }
 
-Ref< ScoreArrayResult > Leaderboards::getScores(const std::wstring& leaderboardId, int32_t from, int32_t to)
+Ref< ScoreArrayResult > Leaderboards::getGlobalScores(const std::wstring& leaderboardId, int32_t from, int32_t to)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ASSERT (from <= to);
@@ -130,6 +130,36 @@ Ref< ScoreArrayResult > Leaderboards::getScores(const std::wstring& leaderboardI
 		i->second.handle,
 		from,
 		to,
+		false,
+		result
+	)))
+	{
+		return result;
+	}
+	else
+		return 0;
+}
+
+Ref< ScoreArrayResult > Leaderboards::getFriendScores(const std::wstring& leaderboardId, int32_t from, int32_t to)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ASSERT (from <= to);
+
+	std::map< std::wstring, ILeaderboardsProvider::LeaderboardData >::iterator i = m_leaderboards.find(leaderboardId);
+	if (i == m_leaderboards.end())
+	{
+		log::warning << L"Leaderboard error; No such leaderboard provided, \"" << leaderboardId << L"\"" << Endl;
+		return 0;
+	}
+
+	Ref< ScoreArrayResult > result = new ScoreArrayResult();
+	if (m_taskQueue->add(new TaskGetScores(
+		m_provider,
+		m_userCache,
+		i->second.handle,
+		from,
+		to,
+		true,
 		result
 	)))
 	{

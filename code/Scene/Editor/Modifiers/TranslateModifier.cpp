@@ -236,7 +236,7 @@ void TranslateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 	primitiveRenderer->pushWorld(translate(m_center));
 
 	// Infinite "trace" lines.
-	primitiveRenderer->pushDepthEnable(true);
+	primitiveRenderer->pushDepthState(true, false);
 	if (m_axisHot & 1)
 		primitiveRenderer->drawLine(
 			Vector4(-c_infinite, 0.0f, 0.0f, 1.0f),
@@ -258,9 +258,9 @@ void TranslateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 			1.0f,
 			Color4ub(0, 0, 255, 100)
 		);
-	primitiveRenderer->popDepthEnable();
+	primitiveRenderer->popDepthState();
 
-	primitiveRenderer->pushDepthEnable(false);
+	primitiveRenderer->pushDepthState(false, false);
 
 	// Drag circles.
 	primitiveRenderer->drawWireCircle(
@@ -362,7 +362,7 @@ void TranslateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 		Color4ub(0, 0, 255, 255)
 	);
 
-	primitiveRenderer->popDepthEnable();
+	primitiveRenderer->popDepthState();
 
 	primitiveRenderer->popWorld();
 }

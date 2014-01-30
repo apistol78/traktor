@@ -83,6 +83,8 @@ SteamSessionManager::SteamSessionManager()
 ,	m_receivedStatsSucceeded(false)
 ,	m_requestAttempts(0)
 ,	m_maxRequestAttempts(0)
+,	m_updateGameCountTicks(0)
+,	m_currentGameCount(0)
 ,	m_callbackUserStatsReceived(this, &SteamSessionManager::OnUserStatsReceived)
 ,	m_callbackOverlay(this, &SteamSessionManager::OnOverlayActivated)
 ,	m_callbackSessionRequest(this, &SteamSessionManager::OnP2PSessionRequest)
@@ -194,6 +196,13 @@ bool SteamSessionManager::update()
 		}
 		else
 			m_requestAttempts = 0;
+	}
+
+	if (m_updateGameCountTicks-- <= 0)
+	{
+		SteamAPICall_t call = SteamUserStats()->GetNumberOfCurrentPlayers();
+		m_callbackGameCount.Set(call, this, &SteamSessionManager::OnCurrentGameCount);
+		m_updateGameCountTicks = 60;
 	}
 
 	SteamAPI_RunCallbacks();
@@ -330,6 +339,11 @@ uint32_t SteamSessionManager::receiveP2PData(void* data, uint32_t size, uint64_t
 	return receivedSize;
 }
 
+uint32_t SteamSessionManager::getCurrentGameCount() const
+{
+	return m_currentGameCount;
+}
+
 IAchievementsProvider* SteamSessionManager::getAchievements() const
 {
 	return m_achievements;
@@ -406,6 +420,12 @@ void SteamSessionManager::OnOverlayActivated(GameOverlayActivated_t* pCallback)
 void SteamSessionManager::OnP2PSessionRequest(P2PSessionRequest_t* pP2PSessionRequest)
 {
 	SteamNetworking()->AcceptP2PSessionWithUser(pP2PSessionRequest->m_steamIDRemote);
+}
+
+void SteamSessionManager::OnCurrentGameCount(NumberOfCurrentPlayers_t* pParam, bool bIOFailure)
+{
+	if (pParam->m_bSuccess)
+		m_currentGameCount = uint32_t(pParam->m_cPlayers);
 }
 
 	}

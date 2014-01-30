@@ -242,8 +242,8 @@ Ref< Body > PhysicsManagerPhysX::createBody(resource::IResourceManager* resource
 		}
 
 		const AlignedVector< Vector4 >& vertices = mesh->getVertices();
-		const std::vector< Mesh::Triangle >& shapeTriangles = mesh->getShapeTriangles();
-		const std::vector< Mesh::Triangle >& hullTriangles = mesh->getHullTriangles();
+		const AlignedVector< Mesh::Triangle >& shapeTriangles = mesh->getShapeTriangles();
+		const AlignedVector< Mesh::Triangle >& hullTriangles = mesh->getHullTriangles();
 
 		physx::PxTriangleMeshDesc meshDesc;
 		meshDesc.points.count = vertices.size();

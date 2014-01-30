@@ -172,8 +172,16 @@ bool StaticSoundBuffer::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* 
 
 	int32_t samplesCount = m_samplesCount - position;
 	samplesCount = std::min< int32_t >(samplesCount, outBlock.samplesCount);
-	samplesCount = alignUp(samplesCount, 4);
+	samplesCount = alignDown(samplesCount, 4);
 	samplesCount = std::min< int32_t >(samplesCount, 4096);
+
+	if (samplesCount <= 0)
+		return false;
+
+#if defined(USE_XMM_INTRINSICS)
+	const float T_ALIGN16 c_scale[] = { 1.0f / 32768.0f, 1.0f / 32768.0f, 1.0f / 32768.0f, 1.0f / 32768.0f };
+	__m128 scale = _mm_load_ps(c_scale);
+#endif
 
 	for (int32_t i = 0; i < m_channelsCount; ++i)
 	{
@@ -184,7 +192,6 @@ bool StaticSoundBuffer::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* 
 #if defined(USE_XMM_INTRINSICS)
 		for (; j < samplesCount - 7; j += 8)
 		{
-			const float T_ALIGN16 c_scale[] = { 1.0f / 32768.0f, 1.0f / 32768.0f, 1.0f / 32768.0f, 1.0f / 32768.0f };
 			__m128i is = _mm_load_si128((const __m128i*)&m_samples[i][position + j]);
 			__m128i tl0 = _mm_unpacklo_epi16(is, is);
 			__m128i isl = _mm_srai_epi32(tl0, 16);
@@ -192,7 +199,6 @@ bool StaticSoundBuffer::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* 
 			__m128i ish = _mm_srai_epi32(th0, 16);
 			__m128 fl = _mm_cvtepi32_ps(isl);
 			__m128 fh = _mm_cvtepi32_ps(ish);
-			__m128 scale = _mm_load_ps(c_scale);
 			fl = _mm_mul_ps(fl, scale);
 			fh = _mm_mul_ps(fh, scale);
 			_mm_store_ps(&ssbc->m_samples[i][j], fl);

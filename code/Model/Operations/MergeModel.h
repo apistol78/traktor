@@ -24,13 +24,14 @@ class T_DLLCLASS MergeModel : public IModelOperation
 	T_RTTI_CLASS;
 
 public:
-	MergeModel(const Model& sourceModel, const Transform& sourceTransform);
+	MergeModel(const Model& sourceModel, const Transform& sourceTransform, float positionDistance);
 
 	virtual bool apply(Model& model) const;
 
 private:
 	const Model& m_sourceModel;
 	Transform m_sourceTransform;
+	float m_positionDistance;
 };
 
 	}

@@ -290,8 +290,8 @@ Ref< Body > PhysicsManagerHavok::createBody(resource::IResourceManager* resource
 		}
 
 		const AlignedVector< Vector4 >& vertices = mesh->getVertices();
-		const std::vector< Mesh::Triangle >& shapeTriangles = mesh->getShapeTriangles();
-		//const std::vector< Mesh::Triangle >& hullTriangles = mesh->getHullTriangles();
+		const AlignedVector< Mesh::Triangle >& shapeTriangles = mesh->getShapeTriangles();
+		//const AlignedVector< Mesh::Triangle >& hullTriangles = mesh->getHullTriangles();
 
 		if (is_a< DynamicBodyDesc >(desc))
 		{
@@ -304,7 +304,7 @@ Ref< Body > PhysicsManagerHavok::createBody(resource::IResourceManager* resource
 
 			hkArray<hkVector4> planes;
 
-			//for (std::vector< Mesh::Triangle >::const_iterator i = hullTriangles.begin(); i != hullTriangles.end(); ++i)
+			//for (AlignedVector< Mesh::Triangle >::const_iterator i = hullTriangles.begin(); i != hullTriangles.end(); ++i)
 			//{
 			//	Plane pl(vertices[i->indices[0]], vertices[i->indices[1]], vertices[i->indices[2]]);
 			//	planes.pushBack(toHkVector4(pl.eq));
@@ -332,7 +332,7 @@ Ref< Body > PhysicsManagerHavok::createBody(resource::IResourceManager* resource
 			for (AlignedVector< Vector4 >::const_iterator i = vertices.begin(); i != vertices.end(); ++i)
 				meshShape->m_vertices.pushBack(toHkVector4(*i));
 
-			for (std::vector< Mesh::Triangle >::const_iterator i = shapeTriangles.begin(); i != shapeTriangles.end(); ++i)
+			for (AlignedVector< Mesh::Triangle >::const_iterator i = shapeTriangles.begin(); i != shapeTriangles.end(); ++i)
 			{
 				hkpSimpleMeshShape::Triangle triangle;
 				triangle.m_a = i->indices[0];

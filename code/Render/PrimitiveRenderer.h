@@ -80,9 +80,9 @@ public:
 
 	void popWorld();
 
-	void pushDepthEnable(bool depthEnable);
+	void pushDepthState(bool depthTest, bool depthWrite);
 
-	void popDepthEnable();
+	void popDepthState();
 
 	void setClipDistance(float nearZ);
 
@@ -289,13 +289,14 @@ private:
 	struct Batch
 	{
 		uint8_t shaderId;
+		std::pair< bool, bool > depthState;
 		Ref< ITexture > texture;
 		Primitives primitives;
 	};
 
 	resource::Proxy< Shader > m_shader;
 	render::IRenderView* m_renderView;
-	Ref< VertexBuffer > m_vertexBuffers[2];
+	Ref< VertexBuffer > m_vertexBuffers[16];
 	int m_currentBuffer;
 	struct Vertex* m_vertexStart;
 	struct Vertex* m_vertex;
@@ -303,7 +304,7 @@ private:
 	AlignedVector< Matrix44 > m_projection;
 	AlignedVector< Matrix44 > m_view;
 	AlignedVector< Matrix44 > m_world;
-	AlignedVector< bool > m_depthEnable;
+	AlignedVector< std::pair< bool, bool > > m_depthState;
 	Matrix44 m_worldView;
 	Matrix44 m_worldViewProj;
 	float m_viewNearZ;

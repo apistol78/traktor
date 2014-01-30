@@ -60,6 +60,8 @@ public:
 
 	virtual uint32_t receiveP2PData(void* data, uint32_t size, Ref< IUser >& outFromUser) const = 0;
 
+	virtual uint32_t getCurrentGameCount() const = 0;
+
 	virtual IAchievements* getAchievements() const = 0;
 
 	virtual ILeaderboards* getLeaderboards() const = 0;

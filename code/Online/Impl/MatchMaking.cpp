@@ -31,13 +31,14 @@ Ref< LobbyArrayResult > MatchMaking::findMatchingLobbies(const LobbyFilter* filt
 		return 0;
 }
 
-Ref< LobbyResult > MatchMaking::createLobby(uint32_t maxUsers)
+Ref< LobbyResult > MatchMaking::createLobby(uint32_t maxUsers, LobbyAccess access)
 {
 	Ref< LobbyResult > result = new LobbyResult();
 	if (m_taskQueue->add(new TaskCreateLobby(
 		m_matchMakingProvider,
 		m_userCache,
 		maxUsers,
+		access,
 		result
 	)))
 		return result;

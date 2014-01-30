@@ -31,6 +31,14 @@ namespace traktor
 const uint16_t c_remoteDatabasePort = 34001;
 const uint16_t c_targetConnectionPort = 34002;
 
+struct FeaturePriorityPred
+{
+	bool operator () (const Feature* l, const Feature* r) const
+	{
+		return l->getPriority() < r->getPriority();
+	}
+};
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.DeployTargetAction", DeployTargetAction, ITargetAction)
@@ -76,9 +84,11 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 	// Create target application configuration.
 	Ref< PropertyGroup > applicationConfiguration = new PropertyGroup();
 
-	// Insert features into runtime configuration.
-	const std::list< Guid >& features = m_targetConfiguration->getFeatures();
-	for (std::list< Guid >::const_iterator i = features.begin(); i != features.end(); ++i)
+	// Get features; sorted by priority.
+	const std::list< Guid >& featureIds = m_targetConfiguration->getFeatures();
+
+	RefArray< const Feature > features;
+	for (std::list< Guid >::const_iterator i = featureIds.begin(); i != featureIds.end(); ++i)
 	{
 		Ref< const Feature > feature = m_database->getObjectReadOnly< Feature >(*i);
 		if (!feature)
@@ -86,6 +96,16 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 			log::warning << L"Unable to get feature \"" << i->format() << L"\"; feature skipped." << Endl;
 			continue;
 		}
+		features.push_back(feature);
+	}
+
+	features.sort(FeaturePriorityPred());
+
+	// Insert target's features into pipeline configuration.
+	for (RefArray< const Feature >::const_iterator i = features.begin(); i != features.end(); ++i)
+	{
+		const Feature* feature = *i;
+		T_ASSERT (feature);
 
 		Ref< const PropertyGroup > runtimeProperties = feature->getRuntimeProperties();
 		if (!runtimeProperties)

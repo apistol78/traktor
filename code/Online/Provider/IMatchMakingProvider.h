@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "Core/Object.h"
+#include "Online/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -26,7 +27,7 @@ class T_DLLCLASS IMatchMakingProvider : public Object
 public:
 	virtual bool findMatchingLobbies(const LobbyFilter* filter, std::vector< uint64_t >& outLobbyHandles) = 0;
 
-	virtual bool createLobby(uint32_t maxUsers, uint64_t& outLobbyHandle) = 0;
+	virtual bool createLobby(uint32_t maxUsers, LobbyAccess access, uint64_t& outLobbyHandle) = 0;
 
 	virtual bool acceptLobby(uint64_t& outLobbyHandle) = 0;
 

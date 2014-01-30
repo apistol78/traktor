@@ -8,8 +8,6 @@
 #include "Core/Serialization/MemberRefArray.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Database/Database.h"
-#include "I18N/Dictionary.h"
-#include "I18N/I18N.h"
 #include "Render/IRenderSystem.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
@@ -21,7 +19,7 @@ namespace traktor
 	namespace amalgam
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.amalgam.StageData", 2, StageData, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.amalgam.StageData", 3, StageData, ISerializable)
 
 Ref< Stage > StageData::createInstance(amalgam::IEnvironment* environment, const Object* params) const
 {
@@ -48,14 +46,6 @@ Ref< Stage > StageData::createInstance(amalgam::IEnvironment* environment, const
 			log::warning << L"Pre-loading of resources skipped due to poor graphics card" << Endl;
 	}
 #endif
-
-	// Load localization dictionary.
-	if (m_localizationDictionary.isNotNull())
-	{
-		Ref< const i18n::Dictionary > dictionary = environment->getDatabase()->getObjectReadOnly< i18n::Dictionary >(m_localizationDictionary);
-		if (dictionary)
-			i18n::I18N::getInstance().appendDictionary(dictionary, true);
-	}
 
 	// Bind proxies to resource manager.
 	if (m_script && !resourceManager->bind(m_script, script))
@@ -84,8 +74,11 @@ void StageData::serialize(ISerializer& s)
 	if (s.getVersion() >= 1)
 		s >> Member< Guid >(L"resourceBundle", m_resourceBundle, AttributeType(type_of< resource::ResourceBundle >()));
 
-	if (s.getVersion() >= 2)
-		s >> Member< Guid >(L"localizationDictionary", m_localizationDictionary, AttributeType(type_of< i18n::Dictionary >()));
+	if (s.getVersion() == 2)
+	{
+		Guid dummy;
+		s >> Member< Guid >(L"localizationDictionary", dummy);
+	}
 }
 
 	}
