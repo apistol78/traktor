@@ -20,7 +20,7 @@ public:
 
 	virtual bool findMatchingLobbies(const LobbyFilter* filter, std::vector< uint64_t >& outLobbyHandles);
 
-	virtual bool createLobby(uint32_t maxUsers, uint64_t& outLobbyHandle);
+	virtual bool createLobby(uint32_t maxUsers, LobbyAccess access, uint64_t& outLobbyHandle);
 
 	virtual bool acceptLobby(uint64_t& outLobbyHandle);
 

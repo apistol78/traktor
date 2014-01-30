@@ -219,11 +219,11 @@ void TargetInstanceListItem::paint(ui::custom::AutoWidget* widget, ui::Canvas& c
 	performanceRect.top = rect.top + 28;
 	performanceRect.bottom = performanceRect.top + c_performanceHeight;
 
-	canvas.setClipRect(performanceRect);
-
 	for (uint32_t i = 0; i < connections.size(); ++i)
 	{
 		const TargetPerformance& performance = connections[i]->getPerformance();
+
+		canvas.setClipRect(performanceRect);
 
 		ui::Rect topRect = performanceRect;
 		topRect.bottom = topRect.top + 12;

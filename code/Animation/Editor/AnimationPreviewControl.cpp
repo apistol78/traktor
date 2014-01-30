@@ -406,7 +406,7 @@ void AnimationPreviewControl::eventPaint(ui::Event* event)
 
 		if (m_entity && m_entity->getSkeleton())
 		{
-			m_primitiveRenderer->pushDepthEnable(false);
+			m_primitiveRenderer->pushDepthState(false, false);
 
 			const resource::Proxy< Skeleton >& skeleton = m_entity->getSkeleton();
 
@@ -459,7 +459,7 @@ void AnimationPreviewControl::eventPaint(ui::Event* event)
 				}
 			}
 
-			m_primitiveRenderer->popDepthEnable();
+			m_primitiveRenderer->popDepthState();
 		}
 
 		m_primitiveRenderer->end();

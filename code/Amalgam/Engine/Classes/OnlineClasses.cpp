@@ -123,6 +123,22 @@ std::wstring online_ILobby_getParticipantMetaValue(online::ILobby* self, const o
 	return value;
 }
 
+Ref< online::LobbyResult > online_IMatchMaking_createLobby(online::IMatchMaking* self, uint32_t maxUsers, const std::wstring& access)
+{
+	online::LobbyAccess la;
+
+	if (compareIgnoreCase< std::wstring >(access, L"public") == 0)
+		la = online::LaPublic;
+	else if (compareIgnoreCase< std::wstring >(access, L"private") == 0)
+		la = online::LaPrivate;
+	else if (compareIgnoreCase< std::wstring >(access, L"friends") == 0)
+		la = online::LaFriends;
+	else
+		return 0;
+
+	return self->createLobby(maxUsers, la);
+}
+
 std::vector< std::wstring > online_ISaveData_enumerate(online::ISaveData* self)
 {
 	std::set< std::wstring > saveDataIds;
@@ -248,7 +264,8 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 	classILeaderboards->addMethod("getScore", &online_ILeaderboards_getScore);
 	classILeaderboards->addMethod("setScore", &online::ILeaderboards::setScore);
 	classILeaderboards->addMethod("addScore", &online::ILeaderboards::addScore);
-	classILeaderboards->addMethod("getScores", &online::ILeaderboards::getScores);
+	classILeaderboards->addMethod("getGlobalScores", &online::ILeaderboards::getGlobalScores);
+	classILeaderboards->addMethod("getFriendScores", &online::ILeaderboards::getFriendScores);
 	scriptManager->registerClass(classILeaderboards);
 
 	Ref< script::AutoScriptClass< online::ILobby > > classILobby = new script::AutoScriptClass< online::ILobby >();
@@ -271,7 +288,7 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 	Ref< script::AutoScriptClass< online::IMatchMaking > > classIMatchMaking = new script::AutoScriptClass< online::IMatchMaking >();
 	classIMatchMaking->addMethod("ready", &online::IMatchMaking::ready);
 	classIMatchMaking->addMethod("findMatchingLobbies", &online::IMatchMaking::findMatchingLobbies);
-	classIMatchMaking->addMethod("createLobby", &online::IMatchMaking::createLobby);
+	classIMatchMaking->addMethod("createLobby", &online_IMatchMaking_createLobby);
 	classIMatchMaking->addMethod("acceptLobby", &online::IMatchMaking::acceptLobby);
 	scriptManager->registerClass(classIMatchMaking);
 
@@ -295,6 +312,7 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 	classISessionManager->addMethod("getFriends", &online_ISessionManager_getFriends);
 	classISessionManager->addMethod("findFriend", &online_ISessionManager_findFriend);
 	classISessionManager->addMethod("haveP2PData", &online::ISessionManager::haveP2PData);
+	classISessionManager->addMethod("getCurrentGameCount", &online::ISessionManager::getCurrentGameCount);
 	classISessionManager->addMethod("getAchievements", &online::ISessionManager::getAchievements);
 	classISessionManager->addMethod("getLeaderboards", &online::ISessionManager::getLeaderboards);
 	classISessionManager->addMethod("getMatchMaking", &online::ISessionManager::getMatchMaking);

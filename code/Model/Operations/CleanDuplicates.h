@@ -24,7 +24,12 @@ class T_DLLCLASS CleanDuplicates : public IModelOperation
 	T_RTTI_CLASS;
 
 public:
+	CleanDuplicates(float positionDistance);
+
 	virtual bool apply(Model& model) const;
+
+private:
+	float m_positionDistance;
 };
 
 	}

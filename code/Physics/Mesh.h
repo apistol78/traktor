@@ -42,17 +42,17 @@ public:
 
 	const AlignedVector< Vector4 >& getVertices() const;
 
-	void setShapeTriangles(const std::vector< Triangle >& shapeTriangles);
+	void setShapeTriangles(const AlignedVector< Triangle >& shapeTriangles);
 
-	const std::vector< Triangle >& getShapeTriangles() const;
+	const AlignedVector< Triangle >& getShapeTriangles() const;
 
-	void setHullTriangles(const std::vector< Triangle >& hullTriangles);
+	void setHullTriangles(const AlignedVector< Triangle >& hullTriangles);
 
-	const std::vector< Triangle >& getHullTriangles() const;
+	const AlignedVector< Triangle >& getHullTriangles() const;
 
-	void setHullIndices(const std::vector< uint32_t >& hullIndices);
+	void setHullIndices(const AlignedVector< uint32_t >& hullIndices);
 
-	const std::vector< uint32_t >& getHullIndices() const;
+	const AlignedVector< uint32_t >& getHullIndices() const;
 
 	void setOffset(const Vector4& offset);
 
@@ -68,9 +68,9 @@ public:
 
 private:
 	AlignedVector< Vector4 > m_vertices;
-	std::vector< Triangle > m_shapeTriangles;
-	std::vector< Triangle > m_hullTriangles;
-	std::vector< uint32_t > m_hullIndices;
+	AlignedVector< Triangle > m_shapeTriangles;
+	AlignedVector< Triangle > m_hullTriangles;
+	AlignedVector< uint32_t > m_hullIndices;
 	Vector4 m_offset;
 	float m_margin;
 };

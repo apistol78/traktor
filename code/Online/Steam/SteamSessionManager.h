@@ -62,6 +62,8 @@ public:
 
 	virtual uint32_t receiveP2PData(void* data, uint32_t size, uint64_t& outFromUserHandle) const;
 
+	virtual uint32_t getCurrentGameCount() const;
+
 	virtual IAchievementsProvider* getAchievements() const;
 
 	virtual ILeaderboardsProvider* getLeaderboards() const;
@@ -93,12 +95,17 @@ private:
 	bool m_receivedStatsSucceeded;
 	uint32_t m_maxRequestAttempts;
 	uint32_t m_requestAttempts;
+	uint32_t m_updateGameCountTicks;
+	uint32_t m_currentGameCount;
+	CCallResult< SteamSessionManager, NumberOfCurrentPlayers_t > m_callbackGameCount;
 
 	STEAM_CALLBACK(SteamSessionManager, OnUserStatsReceived, UserStatsReceived_t, m_callbackUserStatsReceived);
 
 	STEAM_CALLBACK(SteamSessionManager, OnOverlayActivated, GameOverlayActivated_t, m_callbackOverlay);
 
 	STEAM_CALLBACK(SteamSessionManager, OnP2PSessionRequest, P2PSessionRequest_t, m_callbackSessionRequest);
+
+	void OnCurrentGameCount(NumberOfCurrentPlayers_t* pParam, bool bIOFailure);
 };
 
 	}

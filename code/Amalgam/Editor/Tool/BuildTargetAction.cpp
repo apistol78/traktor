@@ -25,6 +25,18 @@ namespace traktor
 {
 	namespace amalgam
 	{
+		namespace
+		{
+
+struct FeaturePriorityPred
+{
+	bool operator () (const Feature* l, const Feature* r) const
+	{
+		return l->getPriority() < r->getPriority();
+	}
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.BuildTargetAction", BuildTargetAction, ITargetAction)
 
@@ -59,9 +71,11 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	// Create target pipeline configuration.
 	Ref< PropertyGroup > pipelineConfiguration = new PropertyGroup();
 
-	// Insert target's features into pipeline configuration.
-	const std::list< Guid >& features = m_targetConfiguration->getFeatures();
-	for (std::list< Guid >::const_iterator i = features.begin(); i != features.end(); ++i)
+	// Get features; sorted by priority.
+	const std::list< Guid >& featureIds = m_targetConfiguration->getFeatures();
+
+	RefArray< const Feature > features;
+	for (std::list< Guid >::const_iterator i = featureIds.begin(); i != featureIds.end(); ++i)
 	{
 		Ref< const Feature > feature = m_database->getObjectReadOnly< Feature >(*i);
 		if (!feature)
@@ -69,6 +83,16 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 			log::warning << L"Unable to get feature \"" << i->format() << L"\"; feature skipped." << Endl;
 			continue;
 		}
+		features.push_back(feature);
+	}
+
+	features.sort(FeaturePriorityPred());
+
+	// Insert target's features into pipeline configuration.
+	for (RefArray< const Feature >::const_iterator i = features.begin(); i != features.end(); ++i)
+	{
+		const Feature* feature = *i;
+		T_ASSERT (feature);
 
 		Ref< const PropertyGroup > pipelineProperties = feature->getPipelineProperties();
 		if (!pipelineProperties)

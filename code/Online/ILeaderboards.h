@@ -34,7 +34,9 @@ public:
 
 	virtual Ref< Result > addScore(const std::wstring& leaderboardId, int32_t score) = 0;
 
-	virtual Ref< ScoreArrayResult > getScores(const std::wstring& leaderboardId, int32_t from, int32_t to) = 0;
+	virtual Ref< ScoreArrayResult > getGlobalScores(const std::wstring& leaderboardId, int32_t from, int32_t to) = 0;
+
+	virtual Ref< ScoreArrayResult > getFriendScores(const std::wstring& leaderboardId, int32_t from, int32_t to) = 0;
 };
 
 	}

@@ -23,7 +23,9 @@ public:
 
 	virtual bool set(uint64_t handle, int32_t score);
 
-	virtual bool getScores(uint64_t handle, int32_t from, int32_t to, std::vector< std::pair< uint64_t, int32_t > >& outScores);
+	virtual bool getGlobalScores(uint64_t handle, int32_t from, int32_t to, std::vector< std::pair< uint64_t, int32_t > >& outScores);
+
+	virtual bool getFriendScores(uint64_t handle, int32_t from, int32_t to, std::vector< std::pair< uint64_t, int32_t > >& outScores);
 
 private:
 	SteamSessionManager* m_sessionManager;

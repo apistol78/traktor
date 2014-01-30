@@ -14,11 +14,13 @@ TaskCreateLobby::TaskCreateLobby(
 	IMatchMakingProvider* matchMakingProvider,
 	UserCache* userCache,
 	uint32_t maxUsers,
+	LobbyAccess access,
 	LobbyResult* result
 )
 :	m_matchMakingProvider(matchMakingProvider)
 ,	m_userCache(userCache)
 ,	m_maxUsers(maxUsers)
+,	m_access(access)
 ,	m_result(result)
 {
 }
@@ -30,7 +32,7 @@ void TaskCreateLobby::execute(TaskQueue* taskQueue)
 	T_ASSERT (m_result);
 
 	uint64_t lobbyHandle;
-	if (m_matchMakingProvider->createLobby(m_maxUsers, lobbyHandle))
+	if (m_matchMakingProvider->createLobby(m_maxUsers, m_access, lobbyHandle))
 	{
 		m_result->succeed(new Lobby(
 			m_matchMakingProvider,

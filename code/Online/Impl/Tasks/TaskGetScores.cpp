@@ -18,6 +18,7 @@ TaskGetScores::TaskGetScores(
 	uint64_t handle,
 	int32_t from,
 	int32_t to,
+	bool friends,
 	ScoreArrayResult* result
 )
 :	m_leaderboardProvider(leaderboardProvider)
@@ -25,6 +26,7 @@ TaskGetScores::TaskGetScores(
 ,	m_handle(handle)
 ,	m_from(from)
 ,	m_to(to)
+,	m_friends(friends)
 ,	m_result(result)
 {
 }
@@ -34,7 +36,13 @@ void TaskGetScores::execute(TaskQueue* taskQueue)
 	std::vector< std::pair< uint64_t, int32_t > > providerScores;
 	RefArray< Score > scores;
 
-	if (m_leaderboardProvider->getScores(m_handle, m_from, m_to, providerScores))
+	bool result = false;
+	if (!m_friends)
+		result = m_leaderboardProvider->getGlobalScores(m_handle, m_from, m_to, providerScores);
+	else
+		result = m_leaderboardProvider->getFriendScores(m_handle, m_from, m_to, providerScores);
+
+	if (result)
 	{
 		scores.reserve(providerScores.size());
 		for (std::vector< std::pair< uint64_t, int32_t > >::const_iterator i = providerScores.begin(); i != providerScores.end(); ++i)

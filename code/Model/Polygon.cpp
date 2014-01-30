@@ -118,6 +118,11 @@ const std::vector< uint32_t >& Polygon::getVertices() const
 	return m_vertices;
 }
 
+std::vector< uint32_t >& Polygon::getVertices()
+{
+	return m_vertices;
+}
+
 bool Polygon::operator == (const Polygon& r) const
 {
 	return m_material == r.m_material && m_vertices == r.m_vertices;

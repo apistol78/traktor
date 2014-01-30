@@ -642,7 +642,7 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 
 			m_primitiveRenderer->pushProjection(orthoLh(-1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 1.0f));
 			m_primitiveRenderer->pushView(Matrix44::identity());
-			m_primitiveRenderer->pushDepthEnable(false);
+			m_primitiveRenderer->pushDepthState(false, false);
 
 			m_primitiveRenderer->drawSolidQuad(
 				projectUnit(innerRect, m_selectionRectangle.getTopLeft()),
@@ -659,7 +659,7 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 				Color4ub(120, 190, 250, 255)
 			);
 
-			m_primitiveRenderer->popDepthEnable();
+			m_primitiveRenderer->popDepthState();
 			m_primitiveRenderer->popView();
 			m_primitiveRenderer->popProjection();
 		}

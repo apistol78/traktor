@@ -21,16 +21,15 @@ const int c_bufferCount = 16 * 1024;
 
 enum ShaderId
 {
-	SiWire,
-	SiSolid,
-	SiTexture,
-	SiWireDepth,
-	SiSolidDepth,
-	SiTextureDepth
+	SiWire = 0,
+	SiSolid = 1,
+	SiTexture = 2
 };
 
 static render::handle_t s_handles[6];
-static render::handle_t s_textureHandle;
+static render::handle_t s_handleDepthTest;
+static render::handle_t s_handleDepthWrite;
+static render::handle_t s_handleTexture;
 
 		}
 
@@ -71,10 +70,9 @@ PrimitiveRenderer::PrimitiveRenderer()
 	s_handles[0] = render::getParameterHandle(L"Wire");
 	s_handles[1] = render::getParameterHandle(L"Solid");
 	s_handles[2] = render::getParameterHandle(L"Texture");
-	s_handles[3] = render::getParameterHandle(L"WireDepth");
-	s_handles[4] = render::getParameterHandle(L"SolidDepth");
-	s_handles[5] = render::getParameterHandle(L"TextureDepth");
-	s_textureHandle = render::getParameterHandle(L"Texture");
+	s_handleDepthTest = render::getParameterHandle(L"DepthTest");
+	s_handleDepthWrite = render::getParameterHandle(L"DepthWrite");
+	s_handleTexture = render::getParameterHandle(L"Texture");
 }
 
 bool PrimitiveRenderer::create(
@@ -131,7 +129,7 @@ bool PrimitiveRenderer::create(
 	m_projection.push_back(Matrix44::identity());
 	m_view.push_back(Matrix44::identity());
 	m_world.push_back(Matrix44::identity());
-	m_depthEnable.push_back(true);
+	m_depthState.push_back(std::make_pair(true, false));
 
 	updateTransforms();
 	return true;
@@ -195,15 +193,15 @@ void PrimitiveRenderer::popWorld()
 	updateTransforms();
 }
 
-void PrimitiveRenderer::pushDepthEnable(bool depthEnable)
+void PrimitiveRenderer::pushDepthState(bool depthTest, bool depthWrite)
 {
-	m_depthEnable.push_back(depthEnable);
+	m_depthState.push_back(std::make_pair(depthTest, depthWrite));
 }
 
-void PrimitiveRenderer::popDepthEnable()
+void PrimitiveRenderer::popDepthState()
 {
-	m_depthEnable.pop_back();
-	T_ASSERT (!m_depthEnable.empty());
+	m_depthState.pop_back();
+	T_ASSERT (!m_depthState.empty());
 }
 
 void PrimitiveRenderer::setClipDistance(float nearZ)
@@ -223,11 +221,16 @@ void PrimitiveRenderer::drawLine(
 	Vector4 v1 = m_worldViewProj * start.xyz1();
 	Vector4 v2 = m_worldViewProj * end.xyz1();
 
-	uint8_t shaderId = m_depthEnable.back() ? SiWireDepth : SiWire;
-	if (m_batches.empty() || m_batches.back().shaderId != shaderId || m_batches.back().primitives.type != PtLines)
+	if (
+		m_batches.empty() ||
+		m_batches.back().shaderId != SiWire ||
+		m_batches.back().depthState != m_depthState.back() ||
+		m_batches.back().primitives.type != PtLines
+	)
 	{
 		Batch batch;
-		batch.shaderId = shaderId;
+		batch.shaderId = SiWire;
+		batch.depthState = m_depthState.back();
 		batch.primitives = Primitives(PtLines, int(m_vertex - m_vertexStart), 0);
 		m_batches.push_back(batch);
 	}
@@ -310,11 +313,16 @@ void PrimitiveRenderer::drawLine(
 	Scalar dx2 = dx * cs2.w();
 	Scalar dy2 = dy * cs2.w();
 
-	uint8_t shaderId = m_depthEnable.back() ? SiSolidDepth : SiSolid;
-	if (m_batches.empty() || m_batches.back().shaderId != shaderId || m_batches.back().primitives.type != PtTriangles)
+	if (
+		m_batches.empty() ||
+		m_batches.back().shaderId != SiSolid ||
+		m_batches.back().depthState != m_depthState.back() ||
+		m_batches.back().primitives.type != PtTriangles
+	)
 	{
 		Batch batch;
-		batch.shaderId = shaderId;
+		batch.shaderId = SiSolid;
+		batch.depthState = m_depthState.back();
 		batch.primitives = Primitives(PtTriangles, int(m_vertex - m_vertexStart), 0);
 		m_batches.push_back(batch);
 	}
@@ -624,11 +632,16 @@ void PrimitiveRenderer::drawSolidPoint(
 	Scalar dx = cc.w() * Scalar(size / m_viewWidth);
 	Scalar dy = cc.w() * Scalar(size / m_viewHeight);
 
-	uint8_t shaderId = m_depthEnable.back() ? SiSolidDepth : SiSolid;
-	if (m_batches.empty() || m_batches.back().shaderId != shaderId || m_batches.back().primitives.type != PtTriangles)
+	if (
+		m_batches.empty() ||
+		m_batches.back().shaderId != SiSolid ||
+		m_batches.back().depthState != m_depthState.back() ||
+		m_batches.back().primitives.type != PtTriangles
+	)
 	{
 		Batch batch;
-		batch.shaderId = shaderId;
+		batch.shaderId = SiSolid;
+		batch.depthState = m_depthState.back();
 		batch.primitives = Primitives(PtTriangles, int(m_vertex - m_vertexStart), 0);
 		m_batches.push_back(batch);
 	}
@@ -732,11 +745,15 @@ void PrimitiveRenderer::drawSolidTriangle(
 	Vector4 v2 = m_worldViewProj * Vector4(vert2.x(), vert2.y(), vert2.z(), 1.0f);
 	Vector4 v3 = m_worldViewProj * Vector4(vert3.x(), vert3.y(), vert3.z(), 1.0f);
 
-	uint8_t shaderId = m_depthEnable.back() ? SiSolidDepth : SiSolid;
-	if (m_batches.empty() || m_batches.back().shaderId != shaderId || m_batches.back().primitives.type != PtTriangles)
+	if (
+		m_batches.empty() ||
+		m_batches.back().shaderId != SiSolid ||
+		m_batches.back().primitives.type != PtTriangles
+	)
 	{
 		Batch batch;
-		batch.shaderId = shaderId;
+		batch.shaderId = SiSolid;
+		batch.depthState = m_depthState.back();
 		batch.primitives = Primitives(PtTriangles, int(m_vertex - m_vertexStart), 0);
 		m_batches.push_back(batch);
 	}
@@ -802,16 +819,17 @@ void PrimitiveRenderer::drawTextureTriangle(
 	Vector4 v2 = m_worldViewProj * Vector4(vert2.x(), vert2.y(), vert2.z(), 1.0f);
 	Vector4 v3 = m_worldViewProj * Vector4(vert3.x(), vert3.y(), vert3.z(), 1.0f);
 
-	uint8_t shaderId = m_depthEnable.back() ? SiTextureDepth : SiTexture;
 	if (
 		m_batches.empty() ||
-		m_batches.back().shaderId != shaderId ||
+		m_batches.back().shaderId != SiTexture ||
+		m_batches.back().depthState != m_depthState.back() ||
 		m_batches.back().texture != texture ||
 		m_batches.back().primitives.type != PtTriangles
 	)
 	{
 		Batch batch;
-		batch.shaderId = shaderId;
+		batch.shaderId = SiTexture;
+		batch.depthState = m_depthState.back();
 		batch.texture = texture;
 		batch.primitives = Primitives(PtTriangles, int(m_vertex - m_vertexStart), 0);
 		m_batches.push_back(batch);
@@ -1011,7 +1029,7 @@ bool PrimitiveRenderer::begin(IRenderView* renderView)
 	m_projection.push_back(Matrix44::identity());
 	m_view.push_back(Matrix44::identity());
 	m_world.push_back(Matrix44::identity());
-	m_depthEnable.push_back(true);
+	m_depthState.push_back(std::make_pair(true, false));
 
 	updateTransforms();
 
@@ -1030,8 +1048,10 @@ void PrimitiveRenderer::end()
 	for (AlignedVector< Batch >::iterator i = m_batches.begin(); i != m_batches.end(); ++i)
 	{
 		m_shader->setTechnique(s_handles[i->shaderId]);
+		m_shader->setCombination(s_handleDepthTest, i->depthState.first);
+		m_shader->setCombination(s_handleDepthWrite, i->depthState.second);
 		if (i->texture)
-			m_shader->setTextureParameter(s_textureHandle, i->texture);
+			m_shader->setTextureParameter(s_handleTexture, i->texture);
 		m_shader->draw(
 			m_renderView,
 			m_vertexBuffers[m_currentBuffer],
@@ -1049,7 +1069,7 @@ void PrimitiveRenderer::end()
 	m_projection.resize(0);
 	m_view.resize(0);
 	m_world.resize(0);
-	m_depthEnable.resize(0);
+	m_depthState.resize(0);
 }
 
 void PrimitiveRenderer::flush()
@@ -1062,7 +1082,7 @@ void PrimitiveRenderer::flush()
 	{
 		m_shader->setTechnique(s_handles[i->shaderId]);
 		if (i->texture)
-			m_shader->setTextureParameter(s_textureHandle, i->texture);
+			m_shader->setTextureParameter(s_handleTexture, i->texture);
 		m_shader->draw(
 			m_renderView,
 			m_vertexBuffers[m_currentBuffer],

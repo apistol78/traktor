@@ -39,13 +39,13 @@ void MeshShapeRenderer::draw(
 
 		const AlignedVector< Vector4 >& vertices = mesh->getVertices();
 
-		const std::vector< Mesh::Triangle >& shapeTriangles = mesh->getShapeTriangles();
-		const std::vector< Mesh::Triangle >& hullTriangles = mesh->getHullTriangles();
+		const AlignedVector< Mesh::Triangle >& shapeTriangles = mesh->getShapeTriangles();
+		const AlignedVector< Mesh::Triangle >& hullTriangles = mesh->getHullTriangles();
 
 		if (hullTriangles.empty())
 		{
 			Scalar margin(mesh->getMargin());
-			for (std::vector< Mesh::Triangle >::const_iterator i = shapeTriangles.begin(); i != shapeTriangles.end(); ++i)
+			for (AlignedVector< Mesh::Triangle >::const_iterator i = shapeTriangles.begin(); i != shapeTriangles.end(); ++i)
 			{
 				const Vector4& V0 = vertices[i->indices[0]];
 				const Vector4& V1 = vertices[i->indices[1]];
@@ -61,7 +61,7 @@ void MeshShapeRenderer::draw(
 		else
 		{
 			Scalar margin(mesh->getMargin());
-			for (std::vector< Mesh::Triangle >::const_iterator i = hullTriangles.begin(); i != hullTriangles.end(); ++i)
+			for (AlignedVector< Mesh::Triangle >::const_iterator i = hullTriangles.begin(); i != hullTriangles.end(); ++i)
 			{
 				const Vector4& V0 = vertices[i->indices[0]];
 				const Vector4& V1 = vertices[i->indices[1]];

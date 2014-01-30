@@ -195,12 +195,36 @@ bool SteamLeaderboards::set(uint64_t handle, int32_t score)
 	return m_uploadedScoreSucceeded;
 }
 
-bool SteamLeaderboards::getScores(uint64_t handle, int32_t from, int32_t to, std::vector< std::pair< uint64_t, int32_t > >& outScores)
+bool SteamLeaderboards::getGlobalScores(uint64_t handle, int32_t from, int32_t to, std::vector< std::pair< uint64_t, int32_t > >& outScores)
 {
 	if (!handle || !::SteamUser()->BLoggedOn())
 		return false;
 
 	SteamAPICall_t call = SteamUserStats()->DownloadLeaderboardEntries(handle, k_ELeaderboardDataRequestGlobal, from + 1, to + 1);
+	if (call == 0)
+		return false;
+
+	m_downloadedScore = false;
+	m_outScores = &outScores;
+	m_callbackLeaderboardDownloaded.Set(call, this, &SteamLeaderboards::OnLeaderboardDownloaded);
+
+	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
+	while (!m_downloadedScore)
+	{
+		m_sessionManager->update();
+		if (!m_uploadedScore && currentThread)
+			currentThread->wait(100);
+	}
+
+	return m_downloadedScoreSucceeded;
+}
+
+bool SteamLeaderboards::getFriendScores(uint64_t handle, int32_t from, int32_t to, std::vector< std::pair< uint64_t, int32_t > >& outScores)
+{
+	if (!handle || !::SteamUser()->BLoggedOn())
+		return false;
+
+	SteamAPICall_t call = SteamUserStats()->DownloadLeaderboardEntries(handle, k_ELeaderboardDataRequestFriends, from + 1, to + 1);
 	if (call == 0)
 		return false;
 

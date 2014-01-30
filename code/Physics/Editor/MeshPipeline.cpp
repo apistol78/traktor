@@ -6,11 +6,13 @@
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineReport.h"
 #include "Editor/IPipelineSettings.h"
 #include "Model/Model.h"
 #include "Model/ModelFormat.h"
 #include "Model/Operations/CalculateConvexHull.h"
 #include "Model/Operations/CalculateTangents.h"
+#include "Model/Operations/CleanDegenerate.h"
 #include "Model/Operations/CleanDuplicates.h"
 #include "Model/Operations/ScaleAlongNormal.h"
 #include "Model/Operations/Triangulate.h"
@@ -24,7 +26,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshPipeline", 7, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshPipeline", 9, MeshPipeline, editor::IPipeline)
 
 bool MeshPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -106,8 +108,7 @@ bool MeshPipeline::buildOutput(
 
 	// Cleanup model suitable for physics.
 	model->clear(model::Model::CfMaterials | model::Model::CfColors | model::Model::CfNormals | model::Model::CfTexCoords | model::Model::CfJoints);
-	model::CleanDuplicates().apply(*model);
-	model::Triangulate().apply(*model);
+	model::CleanDuplicates(0.01f).apply(*model);
 
 	// Shrink model by margin; need to calculate normals from positions only
 	// as we don't want smooth groups or anything else mess with the normals.
@@ -116,8 +117,13 @@ bool MeshPipeline::buildOutput(
 		model::CalculateTangents().apply(*model);
 		model::ScaleAlongNormal(-meshAsset->m_margin).apply(*model);
 		model->clear(model::Model::CfNormals);
-		model::CleanDuplicates().apply(*model);
+		model::CleanDuplicates(0.01f).apply(*model);
 	}
+
+	// Triangulate and ensure no degenerate polygons.
+	model::Triangulate().apply(*model);
+	model::CleanDegenerate().apply(*model);
+	model::CleanDuplicates(0.01f).apply(*model);
 
 	// Calculate bounding box; used for center of gravity estimation.
 	Aabb3 boundingBox = model->getBoundingBox();
@@ -128,9 +134,9 @@ bool MeshPipeline::buildOutput(
 	for (AlignedVector< Vector4 >::iterator i = positions.begin(); i != positions.end(); ++i)
 		*i -= centerOfGravity;
 
-	std::vector< Mesh::Triangle > meshShapeTriangles;
-	std::vector< Mesh::Triangle > meshHullTriangles;
-	std::vector< uint32_t > meshHullIndices;
+	AlignedVector< Mesh::Triangle > meshShapeTriangles;
+	AlignedVector< Mesh::Triangle > meshHullTriangles;
+	AlignedVector< uint32_t > meshHullIndices;
 
 	const std::vector< model::Polygon >& shapeTriangles = model->getPolygons();
 	for (std::vector< model::Polygon >::const_iterator i = shapeTriangles.begin(); i != shapeTriangles.end(); ++i)
@@ -171,12 +177,13 @@ bool MeshPipeline::buildOutput(
 			for (int j = 0; j < 3; ++j)
 				uniqueIndices.insert(hull.getVertex(i->getVertex(j)).getPosition());
 		}
-		meshHullIndices = std::vector< uint32_t >(uniqueIndices.begin(), uniqueIndices.end());
+		for (std::set< uint32_t >::const_iterator i = uniqueIndices.begin(); i != uniqueIndices.end(); ++i)
+			meshHullIndices.push_back(*i);
 
 		// Improve center of gravity by weighting in volumes of each hull face tetrahedron.
 		Vector4 Voffset = Vector4::zero();
 		float Vtotal = 0.0f;
-		for (std::vector< Mesh::Triangle >::const_iterator i = meshHullTriangles.begin(); i != meshHullTriangles.end(); ++i)
+		for (AlignedVector< Mesh::Triangle >::const_iterator i = meshHullTriangles.begin(); i != meshHullTriangles.end(); ++i)
 		{
 			const Vector4 a = positions[i->indices[0]];
 			const Vector4 b = positions[i->indices[1]];
@@ -234,10 +241,32 @@ bool MeshPipeline::buildOutput(
 		return false;
 	}
 
+	int32_t dataSize = stream->tell();
+
 	mesh.write(stream);
+
+	dataSize = stream->tell() - dataSize;
 	stream->close();
 
-	return instance->commit();
+	// Commit resource.
+	if (!instance->commit())
+	{
+		log::error << L"Phys mesh pipeline failed; unable to commit output instance" << Endl;
+		return false;
+	}
+
+	// Create report.
+	Ref< editor::IPipelineReport > report = pipelineBuilder->createReport(L"PhysMesh", outputGuid);
+	if (report)
+	{
+		report->set(L"path", outputPath);
+		report->set(L"vertexCount", positions.size());
+		report->set(L"shapeTriangleCount", meshShapeTriangles.size());
+		report->set(L"hullTriangleCount", meshHullTriangles.size());
+		report->set(L"size", dataSize);
+	}
+
+	return true;
 }
 
 Ref< ISerializable > MeshPipeline::buildOutput(

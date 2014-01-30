@@ -200,6 +200,11 @@ uint32_t LocalSessionManager::receiveP2PData(void* data, uint32_t size, uint64_t
 	return 0;
 }
 
+uint32_t LocalSessionManager::getCurrentGameCount() const
+{
+	return 1;
+}
+
 IAchievementsProvider* LocalSessionManager::getAchievements() const
 {
 	return m_achievements;

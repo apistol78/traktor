@@ -75,7 +75,7 @@ public:
 	virtual void getLockedVertexIndexBase(unsigned char **vertexbase, int& numverts,PHY_ScalarType& type, int& stride,unsigned char **indexbase,int & indexstride,int& numfaces,PHY_ScalarType& indicestype,int subpart=0)
 	{
 		const AlignedVector< Vector4 >& vertices = m_mesh->getVertices();
-		const std::vector< Mesh::Triangle >& shapeTriangles = m_mesh->getShapeTriangles();
+		const AlignedVector< Mesh::Triangle >& shapeTriangles = m_mesh->getShapeTriangles();
 
 		numverts = int(vertices.size());
 		(*vertexbase) = (unsigned char *)&vertices[0];
@@ -90,7 +90,7 @@ public:
 	virtual void getLockedReadOnlyVertexIndexBase(const unsigned char **vertexbase, int& numverts,PHY_ScalarType& type, int& stride,const unsigned char **indexbase,int & indexstride,int& numfaces,PHY_ScalarType& indicestype,int subpart=0) const
 	{
 		const AlignedVector< Vector4 >& vertices = m_mesh->getVertices();
-		const std::vector< Mesh::Triangle >& shapeTriangles = m_mesh->getShapeTriangles();
+		const AlignedVector< Mesh::Triangle >& shapeTriangles = m_mesh->getShapeTriangles();
 
 		numverts = int(vertices.size());
 		(*vertexbase) = (const unsigned char *)&vertices[0];
@@ -565,12 +565,13 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 		}
 
 		const AlignedVector< Vector4 >& vertices = mesh->getVertices();
-		const std::vector< Mesh::Triangle >& shapeTriangles = mesh->getShapeTriangles();
-		const std::vector< Mesh::Triangle >& hullTriangles = mesh->getHullTriangles();
-		const std::vector< uint32_t >& hullIndices = mesh->getHullIndices();
+		const AlignedVector< Mesh::Triangle >& shapeTriangles = mesh->getShapeTriangles();
 
 		if (is_a< DynamicBodyDesc >(desc))
 		{
+			const AlignedVector< Mesh::Triangle >& hullTriangles = mesh->getHullTriangles();
+			const AlignedVector< uint32_t >& hullIndices = mesh->getHullIndices();
+
 			if (hullTriangles.empty())
 			{
 				log::error << L"Unable to create body, mesh hull empty" << Endl;
@@ -580,7 +581,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 			// Build point list, only hull points.
 			AlignedVector< Vector4 > hullPoints;
 			hullPoints.reserve(hullIndices.size());
-			for (std::vector< uint32_t >::const_iterator j = hullIndices.begin(); j != hullIndices.end(); ++j)
+			for (AlignedVector< uint32_t >::const_iterator j = hullIndices.begin(); j != hullIndices.end(); ++j)
 				hullPoints.push_back(vertices[*j]);
 
 			// Create Bullet shape.
@@ -1076,7 +1077,6 @@ void PhysicsManagerBullet::solveConstraints(const RefArray< Body >& bodies, cons
 		joints.size(),
 		m_dynamicsWorld->getSolverInfo(),
 		0,
-		m_dynamicsWorld->getStackAlloc(),
 		m_dynamicsWorld->getDispatcher()
 	);
 }
@@ -1394,14 +1394,14 @@ void PhysicsManagerBullet::queryOverlap(
 	RefArray< Body >& outResult
 ) const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	++m_queryCount;
+	//T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	//++m_queryCount;
 
-	btRigidBody* rigidBody = checked_type_cast< const BodyBullet* >(body)->getBtRigidBody();
-	T_ASSERT (rigidBody);
+	//btRigidBody* rigidBody = checked_type_cast< const BodyBullet* >(body)->getBtRigidBody();
+	//T_ASSERT (rigidBody);
 
-	ContactResultCallback callback(rigidBody, outResult);
-	m_dynamicsWorld->contactTest(rigidBody, callback);
+	//ContactResultCallback callback(rigidBody, outResult);
+	//m_dynamicsWorld->contactTest(rigidBody, callback);
 }
 
 void PhysicsManagerBullet::getStatistics(PhysicsStatistics& outStatistics) const

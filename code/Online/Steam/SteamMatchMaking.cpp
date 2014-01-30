@@ -145,13 +145,20 @@ bool SteamMatchMaking::findMatchingLobbies(const LobbyFilter* filter, std::vecto
 	return result;
 }
 
-bool SteamMatchMaking::createLobby(uint32_t maxUsers, uint64_t& outLobbyHandle)
+bool SteamMatchMaking::createLobby(uint32_t maxUsers, LobbyAccess access, uint64_t& outLobbyHandle)
 {
+	const ELobbyType lobbyAccess[] =
+	{
+		k_ELobbyTypePublic,
+		k_ELobbyTypePrivate,
+		k_ELobbyTypeFriendsOnly
+	};
+
 	leaveLobby(m_joinedLobby);
 
 	m_outLobby = &outLobbyHandle;
 
-	SteamAPICall_t hSteamAPICall = SteamMatchmaking()->CreateLobby(k_ELobbyTypePublic, maxUsers);
+	SteamAPICall_t hSteamAPICall = SteamMatchmaking()->CreateLobby(lobbyAccess[access], maxUsers);
 	m_callbackLobbyCreated.Set(hSteamAPICall, this, &SteamMatchMaking::OnLobbyCreated);
 
 	bool result = performCall(m_sessionManager, m_callbackLobbyCreated);

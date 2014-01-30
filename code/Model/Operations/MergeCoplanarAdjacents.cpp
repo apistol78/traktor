@@ -1,6 +1,8 @@
-#include "Core/Log/Log.h"
+#include <functional>
 #include "Core/Math/Const.h"
 #include "Model/Model.h"
+#include "Model/ModelAdjacency.h"
+#include "Model/Operations/CleanDuplicates.h"
 #include "Model/Operations/MergeCoplanarAdjacents.h"
 
 namespace traktor
@@ -10,35 +12,8 @@ namespace traktor
 		namespace
 		{
 
-struct Adjacency
-{
-	uint32_t left;
-	uint32_t leftCount;
-	uint32_t right;
-	uint32_t rightCount;
-
-	Adjacency()
-	:	left(c_InvalidIndex)
-	,	leftCount(0)
-	,	right(c_InvalidIndex)
-	,	rightCount(0)
-	{
-	}
-};
-
-struct VertexDirection
-{
-	Vector4 direction;
-	bool have;
-	bool curve;
-
-	VertexDirection()
-	:	direction(Vector4::zero())
-	,	have(false)
-	,	curve(false)
-	{
-	}
-};
+const float c_planarAngleThreshold = deg2rad(1.0f);
+const float c_vertexDistanceThreshold = 0.1f;
 
 struct NoVerticesPred
 {
@@ -52,9 +27,14 @@ struct NoVerticesPred
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.MergeCoplanarAdjacents", MergeCoplanarAdjacents, IModelOperation)
 
+MergeCoplanarAdjacents::MergeCoplanarAdjacents(bool allowConvexOnly)
+:	m_allowConvexOnly(allowConvexOnly)
+{
+}
+
 bool MergeCoplanarAdjacents::apply(Model& model) const
 {
-	std::vector< Polygon > polygons = model.getPolygons();
+	std::vector< Polygon >& polygons = model.getPolygons();
 
 	// Calculate polygon normals.
 	AlignedVector< Vector4 > normals(polygons.size(), Vector4::zero());
@@ -88,181 +68,140 @@ bool MergeCoplanarAdjacents::apply(Model& model) const
 		normals[i] = cross(ep[0], ep[1]).normalized();
 	}
 
-	// Build polygon adjacency map.
-	std::map< uint64_t, Adjacency > adjacency;
-	for (uint32_t i = 0; i < uint32_t(polygons.size()); ++i)
-	{
-		const Polygon& pol = polygons[i];
-		const std::vector< uint32_t >& vertices = pol.getVertices();
-		for (uint32_t j = 0; j < uint32_t(vertices.size()); ++j)
-		{
-			uint32_t v0 = vertices[j];
-			uint32_t v1 = vertices[(j + 1) % uint32_t(vertices.size())];
-
-			adjacency[uint64_t(v0) | (uint64_t(v1) << 32ULL)].left = i;
-			adjacency[uint64_t(v0) | (uint64_t(v1) << 32ULL)].leftCount++;
-
-			adjacency[uint64_t(v1) | (uint64_t(v0) << 32ULL)].right = i;
-			adjacency[uint64_t(v1) | (uint64_t(v0) << 32ULL)].rightCount++;
-		}
-	}
+	// Build model adjacency information.
+	ModelAdjacency adjacency(&model, ModelAdjacency::MdByPosition);
+	std::vector< uint32_t > sharedEdges;
+	std::vector< uint32_t > removeIndices;
 
 	// Keep iterating until no more polygons are merged.
 	for (;;)
 	{
-		uint32_t merged = 0;
+		int32_t merged = 0;
 		for (uint32_t i = 0; i < uint32_t(polygons.size()); ++i)
 		{
-			Polygon& polLeft = polygons[i];
-		
-			const std::vector< uint32_t >& vertices = polLeft.getVertices();
-
-			uint32_t j = 0;
-			while (j < uint32_t(vertices.size()))
+			Polygon& leftPolygon = polygons[i];
+			for (uint32_t j = 0; j < leftPolygon.getVertexCount(); ++j)
 			{
-				uint32_t v0 = vertices[j];
-				uint32_t v1 = vertices[(j + 1) % uint32_t(vertices.size())];
-
-				const Adjacency adj = adjacency[uint64_t(v0) | (uint64_t(v1) << 32ULL)];
-				if (adj.leftCount != 1 || adj.rightCount != 1 || adj.left == adj.right)
-				{
-					++j;
+				adjacency.getSharedEdges(i, j, sharedEdges);
+				if (sharedEdges.size() != 1)
 					continue;
-				}
 
-				if (dot3(normals[i], normals[adj.right]) < 1.0f - FUZZY_EPSILON)
-				{
-					++j;
+				uint32_t sharedEdge = sharedEdges.front();
+				uint32_t sharedPolygon = adjacency.getPolygon(sharedEdge);
+				
+				// In case the source model contain internal edges or something
+				// gets broken during merging.
+				if (sharedPolygon == i)
 					continue;
-				}
 
-				T_FATAL_ASSERT (adj.left == i);
-				T_FATAL_ASSERT (adj.right != i);
-
-				Polygon& polRight = polygons[adj.right];
-				T_FATAL_ASSERT (polRight.getVertexCount() > 0);
-
-				// Only merge with right if it's "simple"; ie doesn't have multiple adjacencies on any same edge.
-				bool simple = true;
-				for (uint32_t ii = 0; ii < polRight.getVertexCount(); ++ii)
+				float phi = acos(dot3(normals[i], normals[sharedPolygon]));
+				if (phi <= c_planarAngleThreshold)
 				{
-					uint32_t rv0 = polRight.getVertex(ii);
-					uint32_t rv1 = polRight.getVertex((ii + 1) % polRight.getVertexCount());
+					Polygon& rightPolygon = polygons[sharedPolygon];
 
-					const Adjacency& adjr = adjacency[uint64_t(rv0) | (uint64_t(rv1) << 32ULL)];
-					if (adjr.rightCount > 1)
+					std::vector< uint32_t > leftVertices = leftPolygon.getVertices();
+					std::vector< uint32_t > rightVertices = rightPolygon.getVertices();
+
+					if (leftVertices.size() < 3 || rightVertices.size() < 3)
+						continue;
+
+					// Rotate polygons so sharing edge is first on both left and right polygon.
+					std::rotate(leftVertices.begin(), leftVertices.begin() + j, leftVertices.end());
+					std::rotate(rightVertices.begin(), rightVertices.begin() + adjacency.getPolygonEdge(sharedEdge), rightVertices.end());
+
+					// Merge polygons, except sharing edges.
+					std::vector< uint32_t > mergedVertices;
+					mergedVertices.insert(mergedVertices.end(), rightVertices.begin() + 1, rightVertices.end());
+					mergedVertices.insert(mergedVertices.end(), leftVertices.begin() + 1, leftVertices.end());
+					if (mergedVertices.size() <= 2)
+						continue;
+
+					// Remove internal loops.
+					for (uint32_t k = 0; k < mergedVertices.size(); ++k)
 					{
-						simple = false;
-						break;
+						uint32_t i0 = mergedVertices[k];
+						uint32_t i1 = mergedVertices[(k + 2) % mergedVertices.size()];
+						if (i0 == i1)
+						{
+							mergedVertices.erase(mergedVertices.begin() + k);
+							mergedVertices.erase(mergedVertices.begin() + k % mergedVertices.size());
+							break;
+						}
 					}
-				}
-				if (!simple)
-				{
-					++j;
-					continue;
-				}
 
-				// Found merge pair; assimilate right into left.
-				std::vector< uint32_t > verticesLeft = polLeft.getVertices();
-				std::rotate(
-					verticesLeft.begin(),
-					std::find(verticesLeft.begin(), verticesLeft.end(), v1),
-					verticesLeft.end()
-				);
-				T_FATAL_ASSERT (verticesLeft.back() == v0);
+					// Remove non-silhouette vertices.
+					removeIndices.resize(0);
 
-				std::vector< uint32_t > verticesRight = polRight.getVertices();
-				std::rotate(
-					verticesRight.begin(),
-					std::find(verticesRight.begin(), verticesRight.end(), v0),
-					verticesRight.end()
-				);
-				T_FATAL_ASSERT (verticesRight.back() == v1);
-
-				std::vector< uint32_t > verticesMerged;
-				verticesMerged.insert(verticesMerged.end(), verticesRight.begin(), verticesRight.end() - 1);
-				verticesMerged.insert(verticesMerged.end(), verticesLeft.begin(), verticesLeft.end() - 1);
-				T_ASSERT (verticesMerged.size() >= 3);
-
-				// Save adjacency list in-case non-valid polygon.
-				std::map< uint64_t, Adjacency > adjacencySave = adjacency;
-
-				// Remove connecting edge from adjacency.
-				adjacency.erase(uint64_t(v0) | (uint64_t(v1) << 32ULL));
-				adjacency.erase(uint64_t(v1) | (uint64_t(v0) << 32ULL));
-
-				for (std::map< uint64_t, Adjacency >::iterator ii = adjacency.begin(); ii != adjacency.end(); ++ii)
-				{
-					Adjacency& adj2 = ii->second;
-					if (adj2.left == adj.right)
-						adj2.left = adj.left;
-					if (adj2.right == adj.right)
-						adj2.right = adj.left;
-				}
-
-				// All adjacent edges which connect same polygon must be removed.
-				for (uint32_t ii = 0; ii < uint32_t(verticesMerged.size()); )
-				{
-					uint32_t mv0 = verticesMerged[ii];
-					uint32_t mv1 = verticesMerged[(ii + 1) % uint32_t(verticesMerged.size())];
-
-					Adjacency& adj2 = adjacency[uint64_t(mv0) | (uint64_t(mv1) << 32ULL)];
-					adj2.left = i;
-
-					if (adj2.right == i)
+					for (uint32_t i0 = 0; i0 < mergedVertices.size(); ++i0)
 					{
-						T_FATAL_ASSERT (adj2.leftCount == 1);
-						T_FATAL_ASSERT (adj2.rightCount == 1);
+						uint32_t i1 = (i0 + 1) % mergedVertices.size();
+						uint32_t i2 = (i0 + 2) % mergedVertices.size();
 
-						verticesMerged.erase(verticesMerged.begin() + ii % uint32_t(verticesMerged.size()));
-						verticesMerged.erase(verticesMerged.begin() + ii % uint32_t(verticesMerged.size()));
+						const Vector4& v0 = model.getVertexPosition(mergedVertices[i0]);
+						const Vector4& v1 = model.getVertexPosition(mergedVertices[i1]);
+						const Vector4& v2 = model.getVertexPosition(mergedVertices[i2]);
 
-						adjacency.erase(uint64_t(mv0) | (uint64_t(mv1) << 32ULL));
-						adjacency.erase(uint64_t(mv1) | (uint64_t(mv0) << 32ULL));
+						Vector4 v0_2 = (v2 - v0).xyz0();
+						Vector4 v0_1 = (v1 - v0).xyz0();
 
-						ii = 0;
+						Scalar k = dot3(v0_2, v0_1) / v0_2.length2();
+						if (k >= 0.0f && k <= 1.0f)
+						{
+							Vector4 vp = v0 + v0_2 * k;
+							Scalar dist = (v1 - vp).xyz0().length();
+							if (dist <= c_vertexDistanceThreshold)
+								removeIndices.push_back(i1);
+						}
 					}
-					else
-						++ii;
-				}
 
-				// Finally check if merged polygon is convex.
-				bool convex = true;
-				for (uint32_t ii = 0; ii < uint32_t(verticesMerged.size()); ++ii)
-				{
-					uint32_t mv0 = verticesMerged[ii];
-					uint32_t mv1 = verticesMerged[(ii + 1) % uint32_t(verticesMerged.size())];
-					uint32_t mv2 = verticesMerged[(ii + 2) % uint32_t(verticesMerged.size())];
-
-					const Vector4& p0 = model.getVertexPosition(mv0);
-					const Vector4& p1 = model.getVertexPosition(mv1);
-					const Vector4& p2 = model.getVertexPosition(mv2);
-
-					Vector4 n = cross(p0 - p1, p2 - p1).normalized();
-					if (dot3(normals[i], n) < -FUZZY_EPSILON)
+					if (!removeIndices.empty())
 					{
-						convex = false;
-						break;
+						std::sort(removeIndices.begin(), removeIndices.end(), std::greater< uint32_t >());
+						for (std::vector< uint32_t >::const_iterator it = removeIndices.begin(); it != removeIndices.end(); ++it)
+							mergedVertices.erase(mergedVertices.begin() + *it);
 					}
+
+					// Ensure merged polygon is still convex.
+					if (m_allowConvexOnly)
+					{
+						uint32_t sign = 0;
+						for (uint32_t i0 = 0; i0 < mergedVertices.size() && sign != 3; ++i0)
+						{
+							uint32_t i1 = (i0 + 1) % mergedVertices.size();
+							uint32_t i2 = (i0 + 2) % mergedVertices.size();
+
+							const Vector4& v0 = model.getVertexPosition(mergedVertices[i0]);
+							const Vector4& v1 = model.getVertexPosition(mergedVertices[i1]);
+							const Vector4& v2 = model.getVertexPosition(mergedVertices[i2]);
+
+							Vector4 v0_1 = (v1 - v0).xyz0();
+							Vector4 v1_2 = (v2 - v1).xyz0();
+
+							float phi = dot3(cross(v0_1, v1_2), normals[i]);
+							if (phi < -FUZZY_EPSILON)
+								sign |= 1;
+							else if (phi > FUZZY_EPSILON)
+								sign |= 2;
+						}
+						if (sign == 3)
+							continue;
+					}
+					
+					// Set all vertices in left polygon and null out right polygon.
+					leftPolygon.setVertices(mergedVertices);
+					rightPolygon.setVertices(std::vector< uint32_t >());
+
+					// Re-build adjacency.
+					adjacency.remove(sharedPolygon);
+					adjacency.remove(i);
+					adjacency.add(i);
+
+					++merged;
+					break;
 				}
-
-				if (!convex)
-				{
-					adjacency = adjacencySave;
-					++j;
-					continue;
-				}
-
-				// Finally update polygons.
-				polLeft.setVertices(verticesMerged);
-				polRight.setVertices(std::vector< uint32_t >());
-
-				++merged;
-				j = 0;
 			}
 		}
-
-		if (!merged)
+		if (merged == 0)
 			break;
 	}
 
@@ -270,29 +209,10 @@ bool MergeCoplanarAdjacents::apply(Model& model) const
 	std::vector< Polygon >::iterator it = std::remove_if(polygons.begin(), polygons.end(), NoVerticesPred());
 	polygons.erase(it, polygons.end());
 
-	for (uint32_t i = 0; i < uint32_t(polygons.size()); ++i)
-	{
-		std::vector< uint32_t > vertices = polygons[i].getVertices();
+	// Cleanup model from unused vertices etc.
+	if (!CleanDuplicates(0.1f).apply(model))
+		return false;
 
-		// Erase degenerate vertices.
-		for (uint32_t j = 0; j < uint32_t(vertices.size()); )
-		{
-			const Vector4& p0 = model.getVertexPosition(vertices[j]);
-			const Vector4& p1 = model.getVertexPosition(vertices[(j + 1) % vertices.size()]);
-			const Vector4& p2 = model.getVertexPosition(vertices[(j + 2) % vertices.size()]);
-
-			if (dot3((p1 - p0).normalized(), (p2 - p1).normalized()) >= 1.0f - FUZZY_EPSILON)
-			{
-				vertices.erase(vertices.begin() + (j + 1) % uint32_t(vertices.size()));
-			}
-			else
-				++j;
-		}
-
-		polygons[i].setVertices(vertices);
-	}
-
-	model.setPolygons(polygons);
 	return true;
 }
 

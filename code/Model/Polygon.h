@@ -60,6 +60,8 @@ public:
 
 	const std::vector< uint32_t >& getVertices() const;
 
+	std::vector< uint32_t >& getVertices();
+
 	bool operator == (const Polygon& r) const;
 
 private:

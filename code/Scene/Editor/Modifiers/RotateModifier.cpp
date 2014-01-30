@@ -279,7 +279,7 @@ void RotateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 	Matrix44 mp = rotateX(m_basePitch + m_deltaPitch);
 	Matrix44 mb = rotateZ(m_baseBank + m_deltaBank);
 
-	primitiveRenderer->pushDepthEnable(false);
+	primitiveRenderer->pushDepthState(false, false);
 
 	// Head
 	primitiveRenderer->pushWorld(translate(m_center) * mh);
@@ -353,7 +353,7 @@ void RotateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 	);
 	primitiveRenderer->popWorld();
 
-	primitiveRenderer->popDepthEnable();
+	primitiveRenderer->popDepthState();
 }
 
 	}

@@ -3,6 +3,7 @@
 
 #include "Online/LobbyResult.h"
 #include "Online/LobbyArrayResult.h"
+#include "Online/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -29,7 +30,7 @@ public:
 
 	virtual Ref< LobbyArrayResult > findMatchingLobbies(const LobbyFilter* filter) = 0;
 
-	virtual Ref< LobbyResult > createLobby(uint32_t maxUsers) = 0;
+	virtual Ref< LobbyResult > createLobby(uint32_t maxUsers, LobbyAccess access) = 0;
 
 	virtual Ref< ILobby > acceptLobby() = 0;
 };
