@@ -247,7 +247,7 @@ bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)
 	return result;
 }
 
-void EditorPlugin::handleDatabaseEvent(const Guid& eventId)
+void EditorPlugin::handleDatabaseEvent(db::Database* database, const Guid& eventId)
 {
 }
 

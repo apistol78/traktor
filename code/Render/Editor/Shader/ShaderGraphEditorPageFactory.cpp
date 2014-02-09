@@ -40,7 +40,6 @@ void ShaderGraphEditorPageFactory::getCommands(std::list< ui::Command >& outComm
 	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.EvenSpaceHorizontally"));
 	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.EvenSpaceVertically"));
 	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.FindInDatabase"));
-	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.OpenReferee"));
 	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.PlatformPermutation"));
 	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.QuickMenu"));
 	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.RemoveUnusedNodes"));

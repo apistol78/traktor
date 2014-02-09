@@ -22,6 +22,7 @@ CanvasDirect2DWin32::CanvasDirect2DWin32()
 :	m_hDC(0)
 ,	m_ownDC(false)
 ,	m_strokeWidth(1.0f)
+,	m_underline(false)
 ,	m_clip(false)
 {
 	m_gradientStops[0].color = D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f);
@@ -217,6 +218,8 @@ void CanvasDirect2DWin32::setFont(const Font& font)
 
 	if (m_dwTextFormat)
 		m_dwTextFormat->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
+
+	m_underline = font.isUnderline();
 }
 
 void CanvasDirect2DWin32::setLineStyle(LineStyle lineStyle)
@@ -542,6 +545,14 @@ void CanvasDirect2DWin32::drawText(const Point& at, const std::wstring& text)
 	if (!dwLayout)
 		return;
 
+	if (m_underline)
+	{
+		DWRITE_TEXT_RANGE range;
+		range.startPosition = 0;
+		range.length = text.length();
+		dwLayout->SetUnderline(TRUE, range);
+	}
+
 	m_d2dRenderTarget->DrawTextLayout(
 		D2D1::Point2F(at.x, at.y),
 		dwLayout,
@@ -599,6 +610,14 @@ void CanvasDirect2DWin32::drawText(const Rect& rc, const std::wstring& text, Ali
 	);
 	if (!dwLayout)
 		return;
+
+	if (m_underline)
+	{
+		DWRITE_TEXT_RANGE range;
+		range.startPosition = 0;
+		range.length = text.length();
+		dwLayout->SetUnderline(TRUE, range);
+	}
 
 	m_d2dRenderTarget->DrawTextLayout(
 		D2D1::Point2F(rc2.left, rc2.top),

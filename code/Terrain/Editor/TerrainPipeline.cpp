@@ -47,7 +47,7 @@ const Guid c_guidTerrainDetailShaderTemplate_VFetch(L"{68565BF3-8F72-8848-8FBA-3
 const Guid c_guidSurfaceShaderTemplate(L"{BAD675B3-9799-7D49-A045-BDA471DD5A3E}");
 const Guid c_guidSurfaceShaderPlaceholder(L"{23790224-9E2A-4C43-9C3B-F659BE962E10}");
 
-class FragmentReaderAdapter : public render::FragmentLinker::FragmentReader
+class FragmentReaderAdapter : public render::FragmentLinker::IFragmentReader
 {
 public:
 	FragmentReaderAdapter(editor::IPipelineBuilder* pipelineBuilder, const render::ShaderGraph* surfaceShaderImpl)
@@ -56,7 +56,7 @@ public:
 	{
 	}
 
-	virtual Ref< const render::ShaderGraph > read(const Guid& fragmentGuid)
+	virtual Ref< const render::ShaderGraph > read(const Guid& fragmentGuid) const
 	{
 		if (fragmentGuid == c_guidSurfaceShaderPlaceholder)
 			return m_surfaceShaderImpl;

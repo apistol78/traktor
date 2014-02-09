@@ -42,10 +42,6 @@
 					<optional>false</optional>
 				</item>
 				<item>
-					<name>WorldPosition</name>
-					<optional>false</optional>
-				</item>
-				<item>
 					<name>DiffuseTerm</name>
 					<optional>true</optional>
 				</item>
@@ -81,6 +77,39 @@
 					<second>0</second>
 				</item>
 			</values>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>2196</first>
+				<second>359</second>
+			</position>
+			<name>DeepColor</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>2208</first>
+				<second>387</second>
+			</position>
+			<name>DeepOffset</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>2221</first>
+				<second>416</second>
+			</position>
+			<name>DeepRange</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Sub">
 			<comment/>
@@ -222,6 +251,22 @@ Surface point
 				<second>544</second>
 			</position>
 		</item>
+		<item type="traktor.render.Discard">
+			<comment/>
+			<position>
+				<first>-518</first>
+				<second>431</second>
+			</position>
+			<operator>CoLess</operator>
+		</item>
+		<item type="traktor.render.Swizzle">
+			<comment/>
+			<position>
+				<first>-731</first>
+				<second>411</second>
+			</position>
+			<swizzle>y</swizzle>
+		</item>
 		<item type="traktor.render.Transform">
 			<comment/>
 			<position>
@@ -265,6 +310,16 @@ Surface point
 			</position>
 			<parameterName>ViewInverse</parameterName>
 			<type>PtMatrix</type>
+			<frequency>UfFrame</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="1">
+			<comment/>
+			<position>
+				<first>-810</first>
+				<second>463</second>
+			</position>
+			<parameterName>OceanAltitude</parameterName>
+			<type>PtScalar</type>
 			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Div">
@@ -324,31 +379,12 @@ Surface point
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Discard">
+		<item type="traktor.render.MatrixOut">
 			<comment/>
 			<position>
-				<first>-518</first>
-				<second>431</second>
+				<first>1669</first>
+				<second>612</second>
 			</position>
-			<operator>CoLess</operator>
-		</item>
-		<item type="traktor.render.Swizzle">
-			<comment/>
-			<position>
-				<first>-731</first>
-				<second>411</second>
-			</position>
-			<swizzle>y</swizzle>
-		</item>
-		<item type="traktor.render.Uniform" version="1">
-			<comment/>
-			<position>
-				<first>-810</first>
-				<second>463</second>
-			</position>
-			<parameterName>OceanAltitude</parameterName>
-			<type>PtScalar</type>
-			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment/>
@@ -387,54 +423,6 @@ Surface point
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.MatrixOut">
-			<comment/>
-			<position>
-				<first>1669</first>
-				<second>612</second>
-			</position>
-		</item>
-		<item type="traktor.render.InputPort" version="1">
-			<comment/>
-			<position>
-				<first>2196</first>
-				<second>359</second>
-			</position>
-			<name>DeepColor</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="1">
-			<comment/>
-			<position>
-				<first>2221</first>
-				<second>416</second>
-			</position>
-			<name>DeepRange</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="1">
-			<comment/>
-			<position>
-				<first>2208</first>
-				<second>387</second>
-			</position>
-			<name>DeepOffset</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.Vector">
-			<comment/>
-			<position>
-				<first>1205</first>
-				<second>791</second>
-			</position>
-			<value>0, 1, 0, 0</value>
-		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -444,7 +432,7 @@ Surface point
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
-				<name>Depth</name>
+				<name>DeepColor</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -453,8 +441,8 @@ Surface point
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<name>Input1</name>
+				<node ref="/object/nodes/item"/>
+				<name>DeepOffset</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -463,18 +451,18 @@ Surface point
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<name>DepthMap</name>
+				<node ref="/object/nodes/item"/>
+				<name>DeepRange</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[4]"/>
-				<name>TexCoord</name>
+				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<name>DepthMapUV</name>
+				<node ref="/object/nodes/item"/>
+				<name>Depth</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -483,8 +471,8 @@ Surface point
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<name>Input2</name>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -494,17 +482,17 @@ Surface point
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
-				<name>Input</name>
+				<name>DepthMap</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[7]"/>
-				<name>Output</name>
+				<name>TexCoord</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Input</name>
+				<node ref="/object/nodes/item[5]"/>
+				<name>DepthMapUV</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -513,8 +501,8 @@ Surface point
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Input</name>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -534,7 +522,7 @@ Surface point
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
-				<name>Input1</name>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -543,8 +531,8 @@ Surface point
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Input2</name>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -554,7 +542,7 @@ Surface point
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[11]"/>
-				<name>Input1</name>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -564,7 +552,7 @@ Surface point
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[12]"/>
-				<name>Input</name>
+				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -573,8 +561,18 @@ Surface point
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[13]"/>
-				<name>Input</name>
+				<node ref="/object/nodes/item[12]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[15]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[14]"/>
+				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -595,16 +593,6 @@ Surface point
 			<destination>
 				<node ref="/object/nodes/item[16]"/>
 				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<name>TexCoord</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[17]"/>
-				<name>UV</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -613,18 +601,8 @@ Surface point
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[15]"/>
-				<name>Transform</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[14]"/>
-				<name>Input2</name>
+				<node ref="/object/nodes/item[17]"/>
+				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -633,8 +611,8 @@ Surface point
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[11]"/>
-				<name>Input2</name>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -644,7 +622,7 @@ Surface point
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[19]"/>
-				<name>Input1</name>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -654,16 +632,6 @@ Surface point
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[20]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[21]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -673,18 +641,28 @@ Surface point
 				<name>Output</name>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[21]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<name>TexCoord</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[22]"/>
+				<name>UV</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[23]"/>
+				<name>Output</name>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[20]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[23]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[19]"/>
-				<name>Input2</name>
+				<name>Transform</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -693,18 +671,28 @@ Surface point
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[23]"/>
-				<name>Input</name>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Reference</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[12]"/>
+				<node ref="/object/nodes/item[20]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[24]"/>
-				<name>Input</name>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Pass</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[13]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[17]"/>
+				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -713,8 +701,18 @@ Surface point
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Transform</name>
+				<node ref="/object/nodes/item[14]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[26]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[25]"/>
+				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -724,12 +722,12 @@ Surface point
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[26]"/>
-				<name>Input</name>
+				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[15]"/>
+				<node ref="/object/nodes/item[13]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -744,17 +742,7 @@ Surface point
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[26]"/>
-				<name>Reference</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<name>TexCoord</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>UV</name>
+				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -763,48 +751,18 @@ Surface point
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>ViewNormal</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[30]"/>
-				<name>Position</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[31]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[29]"/>
-				<name>Transform</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>ViewPosition</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[25]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[30]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>View</name>
+				<node ref="/object/nodes/item[29]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -813,28 +771,28 @@ Surface point
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[26]"/>
-				<name>Pass</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[26]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[14]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[25]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[32]"/>
+				<node ref="/object/nodes/item[30]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[31]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Transform</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<name>TexCoord</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>UV</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -849,22 +807,22 @@ Surface point
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item[31]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[32]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[33]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
-				<name>DeepColor</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[35]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>DeepOffset</name>
+				<name>ViewNormal</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -873,28 +831,48 @@ Surface point
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>DeepRange</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[30]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[29]"/>
+				<node ref="/object/nodes/item[33]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[8]"/>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[34]"/>
+				<name>Position</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[35]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[33]"/>
+				<name>Transform</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
-				<name>WorldPosition</name>
+				<name>ViewPosition</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[31]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>View</name>
 			</destination>
 		</item>
 	</edges>

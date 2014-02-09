@@ -32,21 +32,21 @@ class T_DLLCLASS FragmentLinker : public Object
 	T_RTTI_CLASS;
 
 public:
-	struct FragmentReader
+	struct IFragmentReader
 	{
-		virtual ~FragmentReader() {}
+		virtual ~IFragmentReader() {}
 
 		/*! \brief Read callback.
 		 *
 		 * Read fragments from user defined source,
 		 * Will automatically be resolved.
 		 */
-		virtual Ref< const ShaderGraph > read(const Guid& fragmentGuid) = 0;
+		virtual Ref< const ShaderGraph > read(const Guid& fragmentGuid) const = 0;
 	};
 
 	FragmentLinker();
 
-	FragmentLinker(FragmentReader& fragmentReader);
+	FragmentLinker(const IFragmentReader& fragmentReader);
 
 	/*! \brief Resolve shader graph.
 	 *
@@ -55,12 +55,13 @@ public:
 	 *
 	 * \param shaderGraph Shader graph to resolve.
 	 * \param fullResolve Perform full resolve, child external references as well.
+	 * \param optionalShaderGraphGuid GUID of shader graph to be resolved.
 	 * \return Resolved shader graph.
 	 */
-	Ref< ShaderGraph > resolve(const ShaderGraph* shaderGraph, bool fullResolve);
+	Ref< ShaderGraph > resolve(const ShaderGraph* shaderGraph, bool fullResolve, const Guid* optionalShaderGraphGuid = 0) const;
 
 private:
-	FragmentReader* m_fragmentReader;
+	const IFragmentReader* m_fragmentReader;
 };
 
 	}

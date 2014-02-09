@@ -17,6 +17,7 @@ enum { MaxForwardLightCount = 2 };
 bool s_handlesInitialized = false;
 render::handle_t s_techniqueDefault;
 render::handle_t s_handleView;
+render::handle_t s_handleViewInverse;
 render::handle_t s_handleWorld;
 render::handle_t s_handleWorldView;
 render::handle_t s_handleColorMap;
@@ -42,6 +43,7 @@ void initializeHandles()
 	s_techniqueDefault = render::getParameterHandle(L"World_ForwardColor");
 
 	s_handleView = render::getParameterHandle(L"View");
+	s_handleViewInverse = render::getParameterHandle(L"ViewInverse");
 	s_handleWorld = render::getParameterHandle(L"World");
 	s_handleWorldView = render::getParameterHandle(L"WorldView");
 	s_handleColorMap = render::getParameterHandle(L"ColorMap");
@@ -221,6 +223,7 @@ void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* pro
 void WorldRenderPassForward::setWorldProgramParameters(render::ProgramParameters* programParams, const Matrix44& world) const
 {
 	programParams->setMatrixParameter(s_handleView, m_worldRenderView.getView());
+	programParams->setMatrixParameter(s_handleViewInverse, m_worldRenderView.getView().inverse());
 	programParams->setMatrixParameter(s_handleWorld, world);
 	programParams->setMatrixParameter(s_handleWorldView, m_worldRenderView.getView() * world);
 }

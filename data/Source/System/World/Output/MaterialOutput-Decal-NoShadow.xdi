@@ -5,7 +5,7 @@
 			<comment/>
 			<position>
 				<first>124</first>
-				<second>327</second>
+				<second>329</second>
 			</position>
 			<fragmentGuid>{7F2F8712-3B18-0000-6B1C-E9A3CADFF480}</fragmentGuid>
 			<inputPins>
@@ -102,7 +102,7 @@
 			<comment/>
 			<position>
 				<first>124</first>
-				<second>105</second>
+				<second>93</second>
 			</position>
 			<fragmentGuid>{DB61FE22-1D18-0000-A7CB-095CD836EEAD}</fragmentGuid>
 			<inputPins>
@@ -150,6 +150,10 @@
 					<name>SpecularTerm</name>
 					<optional>true</optional>
 				</item>
+				<item>
+					<name>State</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins/>
 			<values>
@@ -184,6 +188,10 @@
 				<item>
 					<first>SpecularTerm</first>
 					<second>1</second>
+				</item>
+				<item>
+					<first>State</first>
+					<second>0</second>
 				</item>
 			</values>
 		</item>
@@ -315,7 +323,7 @@
 			<comment/>
 			<position>
 				<first>124</first>
-				<second>643</second>
+				<second>641</second>
 			</position>
 			<fragmentGuid>{A18C08DA-399A-B949-AD8D-4E22CFCC2FE4}</fragmentGuid>
 			<inputPins>

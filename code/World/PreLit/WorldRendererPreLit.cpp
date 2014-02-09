@@ -59,6 +59,7 @@ render::handle_t WorldRendererPreLit::ms_techniqueGBuffer = 0;
 render::handle_t WorldRendererPreLit::ms_techniqueShadow = 0;
 render::handle_t WorldRendererPreLit::ms_handleTime = 0;
 render::handle_t WorldRendererPreLit::ms_handleView = 0;
+render::handle_t WorldRendererPreLit::ms_handleViewInverse = 0;
 render::handle_t WorldRendererPreLit::ms_handleProjection = 0;
 render::handle_t WorldRendererPreLit::ms_handleSquareProjection = 0;
 render::handle_t WorldRendererPreLit::ms_handleColorMap = 0;
@@ -83,6 +84,7 @@ WorldRendererPreLit::WorldRendererPreLit()
 	// Global parameters.
 	ms_handleTime = render::getParameterHandle(L"Time");
 	ms_handleView = render::getParameterHandle(L"View");
+	ms_handleViewInverse = render::getParameterHandle(L"ViewInverse");
 	ms_handleProjection = render::getParameterHandle(L"Projection");
 	ms_handleSquareProjection = render::getParameterHandle(L"SquareProjection");
 	ms_handleColorMap = render::getParameterHandle(L"ColorMap");
@@ -802,6 +804,7 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 		depthProgramParams.beginParameters(m_globalContext);
 		depthProgramParams.setFloatParameter(ms_handleTime, f.time);
 		depthProgramParams.setMatrixParameter(ms_handleView, f.view);
+		depthProgramParams.setMatrixParameter(ms_handleViewInverse, f.view.inverse());
 		depthProgramParams.setMatrixParameter(ms_handleProjection, projection);
 		depthProgramParams.endParameters(m_globalContext);
 
@@ -845,6 +848,7 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 					shadowProgramParams.beginParameters(m_globalContext);
 					shadowProgramParams.setFloatParameter(ms_handleTime, f.time);
 					shadowProgramParams.setMatrixParameter(ms_handleView, f.slice[j].shadowLightView[i]);
+					shadowProgramParams.setMatrixParameter(ms_handleViewInverse, f.slice[j].shadowLightView[i].inverse());
 					shadowProgramParams.setMatrixParameter(ms_handleProjection, f.slice[j].shadowLightProjection[i]);
 					shadowProgramParams.setMatrixParameter(ms_handleSquareProjection, f.slice[j].shadowLightSquareProjection[i]);
 					shadowProgramParams.endParameters(m_globalContext);
@@ -1010,6 +1014,7 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 		visualProgramParams.setVectorParameter(ms_handleFogDistanceAndDensity, m_fogDistanceAndDensity);
 		visualProgramParams.setVectorParameter(ms_handleFogColor, m_fogColor);
 		visualProgramParams.setMatrixParameter(ms_handleView, f.view);
+		visualProgramParams.setMatrixParameter(ms_handleViewInverse, f.view.inverse());
 		visualProgramParams.setMatrixParameter(ms_handleProjection, projection);
 		visualProgramParams.setTextureParameter(ms_handleColorMap, m_colorTargetSet->getColorTexture(0));
 		visualProgramParams.setTextureParameter(ms_handleDepthMap, m_gbufferTargetSet->getColorTexture(0));
@@ -1081,6 +1086,7 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 		visualProgramParams.setVectorParameter(ms_handleFogDistanceAndDensity, m_fogDistanceAndDensity);
 		visualProgramParams.setVectorParameter(ms_handleFogColor, m_fogColor);
 		visualProgramParams.setMatrixParameter(ms_handleView, f.view);
+		visualProgramParams.setMatrixParameter(ms_handleViewInverse, f.view.inverse());
 		visualProgramParams.setMatrixParameter(ms_handleProjection, projection);
 		visualProgramParams.setTextureParameter(ms_handleColorMap, m_colorTargetSet->getColorTexture(0));
 		visualProgramParams.setTextureParameter(ms_handleDepthMap, m_gbufferTargetSet->getColorTexture(0));

@@ -171,7 +171,7 @@ bool DictionaryEditorPage::handleCommand(const ui::Command& command)
 	return false;
 }
 
-void DictionaryEditorPage::handleDatabaseEvent(const Guid& eventId)
+void DictionaryEditorPage::handleDatabaseEvent(db::Database* database, const Guid& eventId)
 {
 }
 

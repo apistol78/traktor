@@ -26,6 +26,27 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+class FragmentReaderAdapter : public FragmentLinker::IFragmentReader
+{
+public:
+	FragmentReaderAdapter(db::Database* db)
+	:	m_db(db)
+	{
+	}
+
+	virtual Ref< const ShaderGraph > read(const Guid& fragmentGuid) const
+	{
+		return m_db->getObjectReadOnly< ShaderGraph >(fragmentGuid);
+	}
+
+private:
+	Ref< db::Database > m_db;
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderViewer", ShaderViewer, ui::Container)
 
@@ -100,34 +121,26 @@ void ShaderViewer::threadReflect()
 	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
 	while (!currentThread->stopped())
 	{
+		// Don't do anything while the viewer is hidden.
+		if (!isVisible(true))
+		{
+			currentThread->sleep(250);
+			continue;
+		}
+
+		// Grab enqueued shader graph for reflection.
 		{
 			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_reflectLock);
 			m_shaderGraph = m_reflectShaderGraph;
 			m_reflectShaderGraph = 0;
 		}
 
+		// In case no new graph for reflection.
 		if (!m_shaderGraph)
 		{
 			currentThread->sleep(250);
 			continue;
 		}
-
-		class FragmentReaderAdapter : public FragmentLinker::FragmentReader
-		{
-		public:
-			FragmentReaderAdapter(db::Database* db)
-			:	m_db(db)
-			{
-			}
-
-			virtual Ref< const ShaderGraph > read(const Guid& fragmentGuid)
-			{
-				return m_db->getObjectReadOnly< ShaderGraph >(fragmentGuid);
-			}
-
-		private:
-			Ref< db::Database > m_db;
-		};
 
 		// Link shader fragments.
 		FragmentReaderAdapter fragmentReader(m_editor->getSourceDatabase());

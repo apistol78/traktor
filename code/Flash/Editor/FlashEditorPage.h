@@ -83,7 +83,7 @@ public:
 
 	virtual bool handleCommand(const ui::Command& command);
 
-	virtual void handleDatabaseEvent(const Guid& eventId);
+	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId);
 
 	// IProfileCallback
 

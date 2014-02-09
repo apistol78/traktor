@@ -147,7 +147,7 @@ bool VideoEditorPage::handleCommand(const ui::Command& command)
 	return false;
 }
 
-void VideoEditorPage::handleDatabaseEvent(const Guid& eventId)
+void VideoEditorPage::handleDatabaseEvent(db::Database* database, const Guid& eventId)
 {
 }
 

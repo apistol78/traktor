@@ -57,7 +57,7 @@ public:
 			uint32_t index;
 		};
 
-		InstanceGrain(const PostProcessStepGrain* step, const resource::Proxy< render::Shader >& shader, const std::vector< Source >& sources, render::ISimpleTexture* noiseTexture);
+		InstanceGrain(const PostProcessStepGrain* step, const resource::Proxy< render::Shader >& shader, const std::vector< Source >& sources);
 
 		virtual void destroy();
 
@@ -72,12 +72,10 @@ public:
 		Ref< const PostProcessStepGrain > m_step;
 		resource::Proxy< render::Shader > m_shader;
 		std::vector< Source > m_sources;
-		Ref< render::ISimpleTexture > m_noiseTexture;
 		float m_time;
 		Random m_random;
 		render::handle_t m_handleTime;
 		render::handle_t m_handleDeltaTime;
-		render::handle_t m_handleNoiseTexture;
 		render::handle_t m_handleNoiseOffset;
 	};
 

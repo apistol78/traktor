@@ -31,9 +31,9 @@ bool EditorPluginSite::handleCommand(const ui::Command& command, bool result)
 	return m_editorPlugin->handleCommand(command, result);
 }
 
-void EditorPluginSite::handleDatabaseEvent(const Guid& eventId)
+void EditorPluginSite::handleDatabaseEvent(db::Database* database, const Guid& eventId)
 {
-	m_editorPlugin->handleDatabaseEvent(eventId);
+	m_editorPlugin->handleDatabaseEvent(database, eventId);
 }
 
 void EditorPluginSite::handleWorkspaceOpened()

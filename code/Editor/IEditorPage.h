@@ -17,8 +17,9 @@ namespace traktor
 	namespace db
 	{
 
-class Instance;
+class Database;
 class Event;
+class Instance;
 
 	}
 
@@ -119,7 +120,7 @@ public:
 	 *
 	 * \param eventId Guid of database instance which caused the event.
 	 */
-	virtual void handleDatabaseEvent(const Guid& eventId) = 0;
+	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId) = 0;
 };
 
 	}

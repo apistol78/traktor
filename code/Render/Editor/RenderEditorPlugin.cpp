@@ -6,6 +6,7 @@
 #include "Editor/IEditor.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Editor/RenderEditorPlugin.h"
+#include "Render/Editor/Shader/ShaderDependencyTracker.h"
 #include "Ui/MessageBox.h"
 
 namespace traktor
@@ -22,6 +23,7 @@ RenderEditorPlugin::RenderEditorPlugin(editor::IEditor* editor)
 
 bool RenderEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 {
+	// Create render system.
 	std::wstring renderSystemTypeName = m_editor->getSettings()->getProperty< PropertyString >(L"Editor.RenderSystem");
 
 	const TypeInfo* renderSystemType = TypeInfo::find(renderSystemTypeName);
@@ -64,16 +66,23 @@ bool RenderEditorPlugin::handleCommand(const ui::Command& command, bool result)
 	return false;
 }
 
-void RenderEditorPlugin::handleDatabaseEvent(const Guid& eventId)
+void RenderEditorPlugin::handleDatabaseEvent(db::Database* database, const Guid& eventId)
 {
+	if (m_tracker && database == m_editor->getSourceDatabase())
+		m_tracker->scan(database, eventId);
 }
 
 void RenderEditorPlugin::handleWorkspaceOpened()
 {
+	m_tracker = new ShaderDependencyTracker();
+	m_tracker->scan(m_editor->getSourceDatabase());
+	m_editor->setStoreObject(L"ShaderDependencyTracker", m_tracker);
 }
 
 void RenderEditorPlugin::handleWorkspaceClosed()
 {
+	m_editor->setStoreObject(L"ShaderDependencyTracker", 0);
+	m_tracker = 0;
 }
 
 	}

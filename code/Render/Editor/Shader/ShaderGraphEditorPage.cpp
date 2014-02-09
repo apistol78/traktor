@@ -20,6 +20,8 @@
 #include "Render/Shader/Edge.h"
 #include "Render/Editor/Shader/NodeCategories.h"
 #include "Render/Editor/Shader/NodeFacade.h"
+#include "Render/Editor/Shader/ShaderDependencyPane.h"
+#include "Render/Editor/Shader/ShaderDependencyTracker.h"
 #include "Render/Editor/Shader/ShaderGraphCombinations.h"
 #include "Render/Editor/Shader/ShaderGraphEditorClipboardData.h"
 #include "Render/Editor/Shader/ShaderGraphEditorPage.h"
@@ -72,37 +74,6 @@ namespace traktor
 		namespace
 		{
 
-class RefereeFilter : public editor::IBrowseFilter
-{
-public:
-	RefereeFilter(const Guid& fragmentGuid)
-	:	m_fragmentGuid(fragmentGuid)
-	{
-	}
-
-	virtual bool acceptable(db::Instance* instance) const
-	{
-		Ref< ShaderGraph > shaderGraph = instance->getObject< ShaderGraph >();
-		if (!shaderGraph)
-			return false;
-
-		RefArray< External > externalNodes;
-		if (!shaderGraph->findNodesOf< External >(externalNodes))
-			return false;
-
-		for (RefArray< External >::iterator i = externalNodes.begin(); i != externalNodes.end(); ++i)
-		{
-			if ((*i)->getFragmentGuid() == m_fragmentGuid)
-				return true;
-		}
-
-		return false;
-	}
-
-private:
-	Guid m_fragmentGuid;
-};
-
 struct RemoveInputPortPred
 {
 	bool m_connectable;
@@ -145,7 +116,6 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(container);
 	m_toolBar->addImage(ui::Bitmap::load(c_ResourceAlignment, sizeof(c_ResourceAlignment), L"png"), 14);
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_OPEN_REFEREE"), 6, ui::Command(L"ShaderGraph.Editor.OpenReferee")));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_CENTER"), 7, ui::Command(L"ShaderGraph.Editor.Center")));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_ALIGN_LEFT"), 0, ui::Command(L"ShaderGraph.Editor.AlignLeft")));
@@ -188,11 +158,17 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_editorGraph->addEdgeConnectEventHandler(ui::createMethodHandler(this, &ShaderGraphEditorPage::eventEdgeConnect));
 	m_editorGraph->addEdgeDisconnectEventHandler(ui::createMethodHandler(this, &ShaderGraphEditorPage::eventEdgeDisconnect));
 
+	// Create shader graph referee view.
+	m_dependencyPane = new ShaderDependencyPane(m_editor, m_document->getInstance(0)->getGuid());
+	m_dependencyPane->create(parent);
+	m_dependencyPane->setVisible(m_editor->getSettings()->getProperty< PropertyBoolean >(L"ShaderEditor.ShaderDependencyPaneVisible", true));
+	m_site->createAdditionalPanel(m_dependencyPane, 400, false);
+
 	// Create shader graph output view.
 	m_shaderViewer = new ShaderViewer(m_editor);
 	m_shaderViewer->create(parent);
-	m_site->createAdditionalPanel(m_shaderViewer, 400, false);
 	m_shaderViewer->setVisible(m_editor->getSettings()->getProperty< PropertyBoolean >(L"ShaderEditor.ShaderViewVisible", true));
+	m_site->createAdditionalPanel(m_shaderViewer, 400, false);
 
 	// Modify graph control settings.
 	Ref< ui::custom::PaintSettings > paintSettings = m_editorGraph->getPaintSettings();
@@ -270,8 +246,14 @@ void ShaderGraphEditorPage::destroy()
 	{
 		m_editor->checkoutGlobalSettings()->setProperty< PropertyBoolean >(L"ShaderEditor.ShaderViewVisible", m_shaderViewer->isVisible(true));
 		m_editor->commitGlobalSettings();
-
 		m_site->destroyAdditionalPanel(m_shaderViewer);
+	}
+
+	if (m_dependencyPane)
+	{
+		m_editor->checkoutGlobalSettings()->setProperty< PropertyBoolean >(L"ShaderEditor.ShaderDependencyPaneVisible", m_dependencyPane->isVisible(true));
+		m_editor->commitGlobalSettings();
+		m_site->destroyAdditionalPanel(m_dependencyPane);
 	}
 
 	m_nodeFacades.clear();
@@ -525,26 +507,6 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 			m_site->setPropertyObject(0);
 		}
 	}
-	else if (command == L"ShaderGraph.Editor.OpenReferee")
-	{
-		RefereeFilter filter(m_document->getInstance(0)->getGuid());
-		if ((ui::Application::getInstance()->getEventLoop()->getAsyncKeyState() & ui::KsShift) == 0)
-		{
-			Ref< db::Instance > refereeInstance = m_editor->browseInstance(&filter);
-			if (refereeInstance)
-				m_editor->openEditor(refereeInstance);
-		}
-		else
-		{
-			RefArray< db::Instance > shaderGraphs;
-			db::recursiveFindChildInstances(m_editor->getSourceDatabase()->getRootGroup(), db::FindInstanceByType(type_of< ShaderGraph >()), shaderGraphs);
-			for (RefArray< db::Instance >::const_iterator i = shaderGraphs.begin(); i != shaderGraphs.end(); ++i)
-			{
-				if (filter.acceptable(*i))
-					m_editor->openEditor(*i);
-			}
-		}
-	}
 	else if (command == L"ShaderGraph.Editor.Center")
 	{
 		m_editorGraph->center();
@@ -778,9 +740,9 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	return true;
 }
 
-void ShaderGraphEditorPage::handleDatabaseEvent(const Guid& eventId)
+void ShaderGraphEditorPage::handleDatabaseEvent(db::Database* database, const Guid& eventId)
 {
-	if (m_shaderGraph && m_shaderViewer->isVisible(true))
+	if (m_shaderGraph)
 		m_shaderViewer->reflect(m_shaderGraph);
 }
 

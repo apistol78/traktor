@@ -455,7 +455,7 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 	return true;
 }
 
-void StateGraphEditorPage::handleDatabaseEvent(const Guid& eventId)
+void StateGraphEditorPage::handleDatabaseEvent(db::Database* database, const Guid& eventId)
 {
 }
 

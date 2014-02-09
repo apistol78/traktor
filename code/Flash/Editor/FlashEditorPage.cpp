@@ -185,7 +185,7 @@ bool FlashEditorPage::handleCommand(const ui::Command& command)
 	return result;
 }
 
-void FlashEditorPage::handleDatabaseEvent(const Guid& eventId)
+void FlashEditorPage::handleDatabaseEvent(db::Database* database, const Guid& eventId)
 {
 	if (m_resourceManager)
 		m_resourceManager->reload(eventId);

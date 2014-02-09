@@ -31,7 +31,7 @@ public:
 
 	virtual bool handleCommand(const ui::Command& command, bool result);
 
-	virtual void handleDatabaseEvent(const Guid& eventId);
+	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId);
 
 	virtual void handleWorkspaceOpened();
 

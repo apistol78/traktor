@@ -354,8 +354,13 @@ void InspectReflector::operator >> (const Member< Color4ub >& m)
 
 void InspectReflector::operator >> (const Member< Color4f >& m)
 {
-	VectorPropertyItem::vector_t value = { m->getRed(), m->getGreen(), m->getBlue(), m->getAlpha() };
-	addPropertyItem(new VectorPropertyItem(stylizeMemberName(m.getName()), value, 4));
+	Color4ub value(
+		uint8_t(m->getRed() * 255),
+		uint8_t(m->getGreen() * 255),
+		uint8_t(m->getBlue() * 255),
+		uint8_t(m->getAlpha() * 255)
+	);
+	addPropertyItem(new ColorPropertyItem(stylizeMemberName(m.getName()), value));
 }
 
 void InspectReflector::operator >> (const Member< Scalar >& m)

@@ -29,7 +29,7 @@
 			<external>{DE17AA8C-526F-5D4A-BB05-BBD50D564FFA}</external>
 			<type>PtTexture2D</type>
 		</item>
-		<item type="traktor.render.Sampler" version="2">
+		<item type="traktor.render.Sampler" version="3">
 			<comment/>
 			<position>
 				<first>739</first>
@@ -42,6 +42,7 @@
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
 			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Swizzle">
@@ -55,8 +56,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>916</first>
-				<second>231</second>
+				<first>911</first>
+				<second>279</second>
 			</position>
 			<fragmentGuid>{D934947E-5481-1143-B5C6-2594394B706F}</fragmentGuid>
 			<inputPins>
@@ -166,7 +167,7 @@
 				<second>467</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sampler" version="2">
+		<item type="traktor.render.Sampler" version="3">
 			<comment/>
 			<position>
 				<first>731</first>
@@ -179,6 +180,7 @@
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
 			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.External" version="1">
@@ -241,8 +243,8 @@
 		<item type="traktor.render.Texture">
 			<comment/>
 			<position>
-				<first>562</first>
-				<second>39</second>
+				<first>601</first>
+				<second>-35</second>
 			</position>
 			<external>{512E0C34-E249-3E4D-A63F-AC81E4287561}</external>
 			<type>PtTexture2D</type>

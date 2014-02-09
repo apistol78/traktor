@@ -687,7 +687,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 	return result;
 }
 
-void SceneEditorPage::handleDatabaseEvent(const Guid& eventId)
+void SceneEditorPage::handleDatabaseEvent(db::Database* database, const Guid& eventId)
 {
 	if (!m_context)
 		return;
