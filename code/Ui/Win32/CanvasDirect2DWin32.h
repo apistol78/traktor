@@ -98,6 +98,7 @@ private:
 	ComRef< IDWriteTextFormat > m_dwTextFormat;
 	std::map< const IBitmap*, ComRef< ID2D1Bitmap > > m_d2dBitmaps;
 	float m_strokeWidth;
+	bool m_underline;
 	bool m_clip;
 
 	ID2D1Bitmap* getCachedBitmap(const IBitmap* bm);

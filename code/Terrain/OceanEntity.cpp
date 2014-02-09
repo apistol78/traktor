@@ -1,4 +1,6 @@
 #include <limits>
+#include "Core/Math/Float.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Heightfield/Heightfield.h"
 #include "Render/IndexBuffer.h"
 #include "Render/IRenderSystem.h"
@@ -23,32 +25,27 @@ namespace traktor
 		namespace
 		{
 
+render::handle_t s_handleReflectionMap;
 render::handle_t s_handleReflectionEnable;
-render::handle_t s_handleViewEdgeTopLeft;
-render::handle_t s_handleViewEdgeTopRight;
-render::handle_t s_handleViewEdgeBottomLeft;
-render::handle_t s_handleViewEdgeBottomRight;
-render::handle_t s_handleMagicCoeffs;
-render::handle_t s_handleView;
-render::handle_t s_handleViewInverse;
-render::handle_t s_handleProjection;
 render::handle_t s_handleEye;
-render::handle_t s_handleOceanAltitude;
+render::handle_t s_handleShallowTint;
+render::handle_t s_handleReflectionTint;
+render::handle_t s_handleDeepColor;
+render::handle_t s_handleOpacity;
+render::handle_t s_handleWavesA;
+render::handle_t s_handleWavesB;
 
-struct OceanRenderBlock : public render::RenderBlock
+#pragma pack(1)
+struct OceanVertex
 {
-	render::ScreenRenderer* screenRenderer;
-
-	virtual void render(render::IRenderView* renderView, const render::ProgramParameters* globalParameters) const
-	{
-		if (programParams)
-			programParams->fixup(program);
-		if (globalParameters)
-			globalParameters->fixup(program);
-
-		screenRenderer->draw(renderView, program);
-	}
+	float pos[2];
+	float edge;
 };
+#pragma pack()
+
+const int32_t c_gridSize = 128;
+const int32_t c_gridInfSize = 16;
+const int32_t c_gridCells = (c_gridSize - 1) * (c_gridSize - 1);
 
 		}
 
@@ -56,31 +53,124 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.OceanEntity", OceanEntity, world::Entit
 
 OceanEntity::OceanEntity()
 :	m_transform(Transform::identity())
+,	m_opacity(0.0f)
+,	m_allowSSReflections(true)
 {
+	s_handleReflectionMap = render::getParameterHandle(L"ReflectionMap");
 	s_handleReflectionEnable = render::getParameterHandle(L"ReflectionEnable");
-	s_handleViewEdgeTopLeft = render::getParameterHandle(L"ViewEdgeTopLeft");
-	s_handleViewEdgeTopRight = render::getParameterHandle(L"ViewEdgeTopRight");
-	s_handleViewEdgeBottomLeft = render::getParameterHandle(L"ViewEdgeBottomLeft");
-	s_handleViewEdgeBottomRight = render::getParameterHandle(L"ViewEdgeBottomRight");
-	s_handleMagicCoeffs = render::getParameterHandle(L"MagicCoeffs");
-	s_handleView = render::getParameterHandle(L"View");
-	s_handleViewInverse = render::getParameterHandle(L"ViewInverse");
-	s_handleProjection = render::getParameterHandle(L"Projection");
 	s_handleEye = render::getParameterHandle(L"Eye");
-	s_handleOceanAltitude = render::getParameterHandle(L"OceanAltitude");
+	s_handleShallowTint = render::getParameterHandle(L"ShallowTint");
+	s_handleReflectionTint = render::getParameterHandle(L"ReflectionTint");
+	s_handleDeepColor = render::getParameterHandle(L"DeepColor");
+	s_handleOpacity = render::getParameterHandle(L"Opacity");
+	s_handleWavesA = render::getParameterHandle(L"WavesA");
+	s_handleWavesB = render::getParameterHandle(L"WavesB");
 }
 
 bool OceanEntity::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const OceanEntityData& data)
 {
-	m_screenRenderer = new render::ScreenRenderer();
-	if (!m_screenRenderer->create(renderSystem))
-		return 0;
+	std::vector< render::VertexElement > vertexElements;
+	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(OceanVertex, pos)));
+	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat1, offsetof(OceanVertex, edge)));
 
-	if (!resourceManager->bind(data.m_shaderComposite, m_shaderComposite))
+	m_vertexBuffer = renderSystem->createVertexBuffer(vertexElements, c_gridSize * c_gridSize * sizeof(OceanVertex), false);
+	if (!m_vertexBuffer)
 		return false;
 
+	OceanVertex* vertex = reinterpret_cast< OceanVertex* >(m_vertexBuffer->lock());
+	T_ASSERT (vertex);
+
+	for (int32_t iz = 0; iz < c_gridSize; ++iz)
+	{
+		float fz = float(iz) * 2.0f / c_gridSize - 1.0f;
+
+		float ez0 = clamp(1.0f - float(iz) / c_gridInfSize, 0.0f, 1.0f);
+		float ez1 = clamp(1.0f - float(c_gridSize - 1 - iz) / c_gridInfSize, 0.0f, 1.0f);
+
+		for (int32_t ix = 0; ix < c_gridSize; ++ix)
+		{
+			float fx = float(ix) * 2.0f / c_gridSize - 1.0f;
+
+			float ex0 = clamp(1.0f - float(ix) / c_gridInfSize, 0.0f, 1.0f);
+			float ex1 = clamp(1.0f - float(c_gridSize - 1 - ix) / c_gridInfSize, 0.0f, 1.0f);
+			float f = std::pow(max(max(ex0, ex1), max(ez0, ez1)), 8);
+
+			vertex->pos[0] = fx;
+			vertex->pos[1] = fz;
+			vertex->edge = lerp(300.0f, 20000.0f, f);
+
+			vertex++;
+		}
+	}
+
+	m_vertexBuffer->unlock();
+
+	m_indexBuffer = renderSystem->createIndexBuffer(render::ItUInt16, c_gridCells * 6 * sizeof(uint16_t), false);
+	if (!m_indexBuffer)
+		return false;
+
+	uint16_t* index = reinterpret_cast< uint16_t* >(m_indexBuffer->lock());
+	T_ASSERT (index);
+
+	for (int32_t iz = 0; iz < c_gridSize - 1; ++iz)
+	{
+		int32_t base = iz * c_gridSize;
+		for (int32_t ix = 0; ix < c_gridSize - 1; ++ix)
+		{
+			int32_t quad[] =
+			{
+				base + ix,
+				base + ix + 1,
+				base + ix + 1 + c_gridSize,
+				base + ix + c_gridSize
+			};
+
+			*index++ = uint16_t(quad[0]);
+			*index++ = uint16_t(quad[1]);
+			*index++ = uint16_t(quad[2]);
+
+			*index++ = uint16_t(quad[2]);
+			*index++ = uint16_t(quad[3]);
+			*index++ = uint16_t(quad[0]);
+		}
+	}
+
+	m_indexBuffer->unlock();
+
+	m_primitives.setIndexed(render::PtTriangles, 0, c_gridCells * 2, 0, c_gridSize * c_gridSize - 1);
+
+	if (!resourceManager->bind(data.m_shader, m_shader))
+		return false;
+
+	if (data.m_reflectionMap)
+	{
+		if (!resourceManager->bind(data.m_reflectionMap, m_reflectionMap))
+			return false;
+	}
+
 	m_transform = data.getTransform();
+
+	m_shallowTint = data.m_shallowTint;
+	m_reflectionTint = data.m_reflectionTint;
+	m_deepColor = data.m_deepColor;
+	m_opacity = data.m_opacity;
+	m_allowSSReflections = data.m_allowSSReflections;
+
+	for (int32_t i = 0; i < sizeof_array(m_wavesA); ++i)
+	{
+		m_wavesA[i] = Vector4(data.m_waves[i].center.x, data.m_waves[i].center.y, data.m_waves[i].rate, 0.0f);
+		m_wavesB[i] = Vector4(data.m_waves[i].amplitude, data.m_waves[i].frequency, data.m_waves[i].phase, data.m_waves[i].pinch);
+	}
+
 	return true;
+}
+
+void OceanEntity::destroy()
+{
+	safeDestroy(m_vertexBuffer);
+	safeDestroy(m_indexBuffer);
+	m_reflectionMap.clear();
+	m_shader.clear();
 }
 
 void OceanEntity::render(
@@ -99,50 +189,46 @@ void OceanEntity::render(
 	if (eye.y() < m_transform.translation().y())
 		return;
 
-	Scalar p11 = projection.get(0, 0);
-	Scalar p22 = projection.get(1, 1);
-	Vector4 viewEdgeTopLeft = viewFrustum.corners[4];
-	Vector4 viewEdgeTopRight = viewFrustum.corners[5];
-	Vector4 viewEdgeBottomLeft = viewFrustum.corners[7];
-	Vector4 viewEdgeBottomRight = viewFrustum.corners[6];
+	worldRenderPass.setShaderTechnique(m_shader);
+	worldRenderPass.setShaderCombination(m_shader);
 
-	worldRenderPass.setShaderTechnique(m_shaderComposite);
-	worldRenderPass.setShaderCombination(m_shaderComposite);
+	m_shader->setCombination(s_handleReflectionEnable, reflectionEnable && m_allowSSReflections);
 
-	m_shaderComposite->setCombination(s_handleReflectionEnable, reflectionEnable);
-
-	render::IProgram* program = m_shaderComposite->getCurrentProgram();
+	render::IProgram* program = m_shader->getCurrentProgram();
 	if (!program)
 		return;
 
-	OceanRenderBlock* renderBlock = renderContext->alloc< OceanRenderBlock >("Ocean");
+	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("Ocean");
 
-	renderBlock->screenRenderer = m_screenRenderer;
 	renderBlock->distance = std::numeric_limits< float >::max();
 	renderBlock->program = program;
-	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+	renderBlock->indexBuffer = m_indexBuffer;
+	renderBlock->vertexBuffer = m_vertexBuffer;
+	renderBlock->primitives = &m_primitives;
 
+	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 	renderBlock->programParams->beginParameters(renderContext);
+	renderBlock->programParams->setVectorParameter(s_handleEye, eye);
+	renderBlock->programParams->setVectorParameter(s_handleShallowTint, m_shallowTint);
+	renderBlock->programParams->setVectorParameter(s_handleReflectionTint, m_reflectionTint);
+	renderBlock->programParams->setVectorParameter(s_handleDeepColor, m_deepColor);
+	renderBlock->programParams->setFloatParameter(s_handleOpacity, m_opacity);
+	renderBlock->programParams->setVectorArrayParameter(s_handleWavesA, m_wavesA, sizeof_array(m_wavesA));
+	renderBlock->programParams->setVectorArrayParameter(s_handleWavesB, m_wavesB, sizeof_array(m_wavesB));
 
 	worldRenderPass.setProgramParameters(
 		renderBlock->programParams,
-		m_shaderComposite->getCurrentPriority()
+		m_shader->getCurrentPriority(),
+		m_transform.toMatrix44(),
+		Aabb3()
 	);
 
-	renderBlock->programParams->setVectorParameter(s_handleViewEdgeTopLeft, viewEdgeTopLeft);
-	renderBlock->programParams->setVectorParameter(s_handleViewEdgeTopRight, viewEdgeTopRight);
-	renderBlock->programParams->setVectorParameter(s_handleViewEdgeBottomLeft, viewEdgeBottomLeft);
-	renderBlock->programParams->setVectorParameter(s_handleViewEdgeBottomRight, viewEdgeBottomRight);
-	renderBlock->programParams->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
-	renderBlock->programParams->setMatrixParameter(s_handleView, view);
-	renderBlock->programParams->setMatrixParameter(s_handleViewInverse, viewInv);
-	renderBlock->programParams->setMatrixParameter(s_handleProjection, projection);
-	renderBlock->programParams->setVectorParameter(s_handleEye, eye);
-	renderBlock->programParams->setFloatParameter(s_handleOceanAltitude, m_transform.translation().y());
+	if (m_reflectionMap)
+		renderBlock->programParams->setTextureParameter(s_handleReflectionMap, m_reflectionMap);
 
 	renderBlock->programParams->endParameters(renderContext);
 
-	renderContext->draw(m_shaderComposite->getCurrentPriority(), renderBlock);
+	renderContext->draw(m_shader->getCurrentPriority(), renderBlock);
 }
 
 void OceanEntity::setTransform(const Transform& transform)

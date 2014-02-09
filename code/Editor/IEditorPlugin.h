@@ -14,6 +14,13 @@
 
 namespace traktor
 {
+	namespace db
+	{
+
+class Database;
+
+	}
+
 	namespace ui
 	{
 
@@ -61,7 +68,7 @@ public:
 	 *
 	 * \param eventId Instance guid.
 	 */
-	virtual void handleDatabaseEvent(const Guid& eventId) = 0;
+	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId) = 0;
 
 	/*! \brief Workspace opened.
 	 */

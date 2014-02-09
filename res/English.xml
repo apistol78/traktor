@@ -1573,8 +1573,8 @@
       <second>Move dependency down</second>
     </item>
     <item>
-      <first>SHADERGRAPH_OPEN_REFEREE</first>
-      <second>Open referee</second>
+      <first>SHADERGRAPH_REFEREES</first>
+      <second>Referees</second>
     </item>
     <item>
       <first>SHADERGRAPH_ALIGN_LEFT</first>

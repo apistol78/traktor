@@ -29,31 +29,6 @@ Ref< PostProcessStep::Instance > PostProcessStepGrain::create(
 	if (!resourceManager->bind(m_shader, shader))
 		return 0;
 
-	AutoArrayPtr< uint8_t > data(new uint8_t [256 * 256]);
-	Random random;
-
-	for (uint32_t y = 0; y < 256; ++y)
-	{
-		for (uint32_t x = 0; x < 256; ++x)
-		{
-			data[x + y * 256] = uint8_t(random.nextFloat() * 255.0f);
-		}
-	}
-
-	render::SimpleTextureCreateDesc desc;
-	desc.width = 256;
-	desc.height = 256;
-	desc.mipCount = 1;
-	desc.format = render::TfR8;
-	desc.immutable = true;
-	desc.initialData[0].data = data.ptr();
-	desc.initialData[0].pitch = 256;
-	desc.initialData[0].slicePitch = 0;
-
-	Ref< render::ISimpleTexture > noiseTexture = renderSystem->createSimpleTexture(desc);
-	if (!noiseTexture)
-		return 0;
-
 	std::vector< InstanceGrain::Source > sources(m_sources.size());
 	for (uint32_t i = 0; i < m_sources.size(); ++i)
 	{
@@ -62,7 +37,7 @@ Ref< PostProcessStep::Instance > PostProcessStepGrain::create(
 		sources[i].index = m_sources[i].index;
 	}
 
-	return new InstanceGrain(this, shader, sources, noiseTexture);
+	return new InstanceGrain(this, shader, sources);
 }
 
 void PostProcessStepGrain::serialize(ISerializer& s)
@@ -85,16 +60,14 @@ void PostProcessStepGrain::Source::serialize(ISerializer& s)
 
 // Instance
 
-PostProcessStepGrain::InstanceGrain::InstanceGrain(const PostProcessStepGrain* step, const resource::Proxy< render::Shader >& shader, const std::vector< Source >& sources, render::ISimpleTexture* noiseTexture)
+PostProcessStepGrain::InstanceGrain::InstanceGrain(const PostProcessStepGrain* step, const resource::Proxy< render::Shader >& shader, const std::vector< Source >& sources)
 :	m_step(step)
 ,	m_shader(shader)
 ,	m_sources(sources)
-,	m_noiseTexture(noiseTexture)
 ,	m_time(0.0f)
 {
 	m_handleTime = render::getParameterHandle(L"Time");
 	m_handleDeltaTime = render::getParameterHandle(L"DeltaTime");
-	m_handleNoiseTexture = render::getParameterHandle(L"NoiseTexture");
 	m_handleNoiseOffset = render::getParameterHandle(L"NoiseOffset");
 }
 
@@ -119,7 +92,6 @@ void PostProcessStepGrain::InstanceGrain::render(
 		0.0f,
 		0.0f
 	));
-	m_shader->setTextureParameter(m_handleNoiseTexture, m_noiseTexture);
 
 	for (std::vector< Source >::const_iterator i = m_sources.begin(); i != m_sources.end(); ++i)
 	{

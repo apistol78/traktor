@@ -1,5 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
+#include "Core/Math/Random.h"
 #include "Core/Serialization/AttributeDirection.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
@@ -17,6 +18,12 @@ namespace traktor
 {
 	namespace world
 	{
+		namespace
+		{
+
+Random s_random;
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessStepBlur", 2, PostProcessStepBlur, PostProcessStep)
 
@@ -118,10 +125,45 @@ Ref< PostProcessStepBlur::Instance > PostProcessStepBlur::create(
 		}
 		totalWeight = float(m_taps);
 	}
+	else if (m_blurType == BtBox2D)
+	{
+		for (int i = 0; i < m_taps; ++i)
+		{
+			float x = s_random.nextFloat() * 2.0f - 1.0f;
+			float y = s_random.nextFloat() * 2.0f - 1.0f;
+			gaussianOffsetWeights[i].set(
+				x,
+				y,
+				0.0f,
+				0.0f
+			);
+		}
+	}
+	else if (m_blurType == BtCircle2D)
+	{
+		for (int i = 0; i < m_taps; )
+		{
+			float x = s_random.nextFloat() * 2.0f - 1.0f;
+			float y = s_random.nextFloat() * 2.0f - 1.0f;
+			if (std::sqrt(x * x + y * y) <= 1.0f)
+			{
+				gaussianOffsetWeights[i].set(
+					x,
+					y,
+					0.0f,
+					0.0f
+				);
+				++i;
+			}
+		}
+	}
 
-	Vector4 invWeight(1.0f, 1.0f / totalWeight, 1.0f, 1.0f);
-	for (int i = 0; i < m_taps; ++i)
-		gaussianOffsetWeights[i] *= invWeight;
+	if (totalWeight > FUZZY_EPSILON)
+	{
+		Vector4 invWeight(1.0f, 1.0f / totalWeight, 1.0f, 1.0f);
+		for (int i = 0; i < m_taps; ++i)
+			gaussianOffsetWeights[i] *= invWeight;
+	}
 
 	return new InstanceBlur(
 		shader,
@@ -145,6 +187,8 @@ void PostProcessStepBlur::serialize(ISerializer& s)
 			{ L"BtGaussian", BtGaussian },
 			{ L"BtSine", BtSine },
 			{ L"BtBox", BtBox },
+			{ L"BtBox2D", BtBox2D },
+			{ L"BtCircle2D", BtCircle2D },
 			{ 0 }
 		};
 		s >> MemberEnum< BlurType >(L"blurType", m_blurType, c_BlurType_Keys);
@@ -179,6 +223,7 @@ PostProcessStepBlur::InstanceBlur::InstanceBlur(
 	m_handleGaussianOffsetWeights = render::getParameterHandle(L"GaussianOffsetWeights");
 	m_handleDirection = render::getParameterHandle(L"Direction");
 	m_handleViewFar = render::getParameterHandle(L"ViewFar");
+	m_handleNoiseOffset = render::getParameterHandle(L"NoiseOffset");
 }
 
 void PostProcessStepBlur::InstanceBlur::destroy()
@@ -204,6 +249,12 @@ void PostProcessStepBlur::InstanceBlur::render(
 	m_shader->setVectorArrayParameter(m_handleGaussianOffsetWeights, &m_gaussianOffsetWeights[0], m_gaussianOffsetWeights.size());
 	m_shader->setVectorParameter(m_handleDirection, m_direction * Scalar(0.5f));
 	m_shader->setFloatParameter(m_handleViewFar, params.viewFrustum.getFarZ());
+	m_shader->setVectorParameter(m_handleNoiseOffset, Vector4(
+		s_random.nextFloat(),
+		s_random.nextFloat(),
+		0.0f,
+		0.0f
+	));
 
 	screenRenderer->draw(renderView, m_shader);
 }

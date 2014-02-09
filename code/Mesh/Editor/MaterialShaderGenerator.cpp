@@ -53,7 +53,7 @@ const Guid c_implTransparencyMap0(L"{F7F9394F-912A-9243-A38D-0A1527920FEF}");
 const Guid c_implTransparencyMap1(L"{63451E3C-CC4E-A245-B721-8498E0AE5D0D}");
 const Guid c_implVertex(L"{5CCADFD7-6421-9848-912E-205358848F37}");
 
-class FragmentReaderAdapter : public render::FragmentLinker::FragmentReader
+class FragmentReaderAdapter : public render::FragmentLinker::IFragmentReader
 {
 public:
 	FragmentReaderAdapter(db::Database* database)
@@ -61,7 +61,7 @@ public:
 	{
 	}
 
-	virtual Ref< const render::ShaderGraph > read(const Guid& fragmentGuid)
+	virtual Ref< const render::ShaderGraph > read(const Guid& fragmentGuid) const
 	{
 		return m_database->getObjectReadOnly< render::ShaderGraph >(fragmentGuid);
 	}

@@ -35,7 +35,7 @@ public:
 
 	bool handleCommand(const ui::Command& command, bool result);
 
-	void handleDatabaseEvent(const Guid& eventId);
+	void handleDatabaseEvent(db::Database* database, const Guid& eventId);
 
 	void handleWorkspaceOpened();
 

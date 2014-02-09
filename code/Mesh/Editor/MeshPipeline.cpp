@@ -49,7 +49,7 @@ namespace traktor
 
 const static Guid c_guidVertexInterfaceGuid(L"{0A9BE5B4-4B45-B84A-AE16-57F6483436FC}");
 
-class FragmentReaderAdapter : public render::FragmentLinker::FragmentReader
+class FragmentReaderAdapter : public render::FragmentLinker::IFragmentReader
 {
 public:
 	FragmentReaderAdapter(editor::IPipelineBuilder* pipelineBuilder, const Guid& vertexFragmentGuid)
@@ -58,7 +58,7 @@ public:
 	{
 	}
 
-	virtual Ref< const render::ShaderGraph > read(const Guid& fragmentGuid)
+	virtual Ref< const render::ShaderGraph > read(const Guid& fragmentGuid) const
 	{
 		if (fragmentGuid == c_guidVertexInterfaceGuid)
 			return m_pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(m_vertexFragmentGuid);

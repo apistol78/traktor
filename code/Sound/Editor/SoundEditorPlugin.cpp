@@ -36,7 +36,7 @@ bool SoundEditorPlugin::handleCommand(const ui::Command& command, bool result)
 	return false;
 }
 
-void SoundEditorPlugin::handleDatabaseEvent(const Guid& eventId)
+void SoundEditorPlugin::handleDatabaseEvent(db::Database* database, const Guid& eventId)
 {
 }
 

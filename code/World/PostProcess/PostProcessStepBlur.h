@@ -80,6 +80,7 @@ public:
 		render::handle_t m_handleGaussianOffsetWeights;
 		render::handle_t m_handleDirection;
 		render::handle_t m_handleViewFar;
+		render::handle_t m_handleNoiseOffset;
 	};
 
 	PostProcessStepBlur();
@@ -98,9 +99,13 @@ public:
 private:
 	enum BlurType
 	{
+		// 1D separable
 		BtGaussian,
 		BtSine,
-		BtBox
+		BtBox,
+		// 2D combined
+		BtBox2D,
+		BtCircle2D
 	};
 
 	resource::Id< render::Shader > m_shader;

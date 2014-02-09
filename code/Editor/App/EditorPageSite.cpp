@@ -55,7 +55,7 @@ void EditorPageSite::setPropertyObject(Object* properties)
 
 void EditorPageSite::createAdditionalPanel(ui::Widget* widget, int size, bool south)
 {
-	m_panelWidgets.insert(std::make_pair(widget, true));
+	m_panelWidgets.insert(std::make_pair(widget, widget->isVisible(true)));
 
 	if (!m_active)
 		widget->hide();

@@ -208,7 +208,7 @@
 				<first>-143</first>
 				<second>645</second>
 			</position>
-			<value>16</value>
+			<value>15</value>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>

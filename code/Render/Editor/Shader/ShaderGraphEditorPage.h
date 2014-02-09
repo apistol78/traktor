@@ -51,6 +51,7 @@ class External;
 class Node;
 class NodeFacade;
 class QuickMenuTool;
+class ShaderDependencyPane;
 class ShaderGraph;
 class ShaderViewer;
 
@@ -73,7 +74,7 @@ public:
 
 	virtual bool handleCommand(const ui::Command& command);
 
-	virtual void handleDatabaseEvent(const Guid& eventId);
+	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId);
 
 private:
 	editor::IEditor* m_editor;
@@ -83,6 +84,7 @@ private:
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::ToolBarDropDown > m_toolPlatform;
 	Ref< ui::custom::GraphControl > m_editorGraph;
+	Ref< ShaderDependencyPane > m_dependencyPane;
 	Ref< ShaderViewer > m_shaderViewer;
 	Ref< ui::PopupMenu > m_menuPopup;
 	Ref< QuickMenuTool > m_menuQuick;

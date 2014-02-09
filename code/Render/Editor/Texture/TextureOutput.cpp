@@ -8,7 +8,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutput", 9, TextureOutput, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutput", 10, TextureOutput, ISerializable)
 
 TextureOutput::TextureOutput()
 :	m_textureFormat(TfInvalid)
@@ -32,6 +32,7 @@ TextureOutput::TextureOutput()
 ,	m_generateSphereMap(false)
 ,	m_preserveAlphaCoverage(false)
 ,	m_alphaCoverageReference(0.5f)
+,	m_systemTexture(false)
 {
 }
 
@@ -125,6 +126,9 @@ void TextureOutput::serialize(ISerializer& s)
 		s >> Member< bool >(L"preserveAlphaCoverage", m_preserveAlphaCoverage);
 		s >> Member< float >(L"alphaCoverageReference", m_alphaCoverageReference, AttributeRange(0.0f, 1.0f));
 	}
+
+	if (s.getVersion() >= 10)
+		s >> Member< bool >(L"systemTexture", m_systemTexture);
 }
 
 	}

@@ -137,9 +137,9 @@ void ApplyReflector::operator >> (const Member< Color4ub >& m)
 
 void ApplyReflector::operator >> (const Member< Color4f >& m)
 {
-	VectorPropertyItem* propertyItem = checked_type_cast< VectorPropertyItem*, false >(*m_propertyItemIterator++);
-	const VectorPropertyItem::vector_t& value = propertyItem->getValue();
-	m = Color4f(value[0], value[1], value[2], value[3]);
+	ColorPropertyItem* propertyItem = checked_type_cast< ColorPropertyItem*, false >(*m_propertyItemIterator++);
+	const Color4ub& value = propertyItem->getValue();
+	m = Color4f(value.r / 255.0f, value.g / 255.0f, value.b / 255.0f, value.a / 255.0f);
 }
 
 void ApplyReflector::operator >> (const Member< Scalar >& m)

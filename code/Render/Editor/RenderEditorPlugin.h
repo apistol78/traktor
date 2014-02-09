@@ -15,6 +15,8 @@ class IEditor;
 	namespace render
 	{
 
+class ShaderDependencyTracker;
+
 /*! \brief Render editor plugin.
  * \ingroup Render
  */
@@ -31,7 +33,7 @@ public:
 
 	virtual bool handleCommand(const ui::Command& command, bool result);
 
-	virtual void handleDatabaseEvent(const Guid& eventId);
+	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId);
 
 	virtual void handleWorkspaceOpened();
 
@@ -39,6 +41,7 @@ public:
 
 private:
 	editor::IEditor* m_editor;
+	Ref< ShaderDependencyTracker > m_tracker;
 };
 
 	}

@@ -64,7 +64,7 @@ uint32_t getPriority(const render::ShaderGraph* shaderGraph)
 	return priority;
 }
 
-class FragmentReaderAdapter : public FragmentLinker::FragmentReader
+class FragmentReaderAdapter : public FragmentLinker::IFragmentReader
 {
 public:
 	FragmentReaderAdapter(editor::IPipelineCommon* pipeline)
@@ -72,7 +72,7 @@ public:
 	{
 	}
 
-	virtual Ref< const ShaderGraph > read(const Guid& fragmentGuid)
+	virtual Ref< const ShaderGraph > read(const Guid& fragmentGuid) const
 	{
 		Ref< const ShaderGraph > shaderGraph = m_pipeline->getObjectReadOnly< ShaderGraph >(fragmentGuid);
 		if (shaderGraph && ShaderGraphValidator(shaderGraph).validateIntegrity())

@@ -577,6 +577,27 @@ bool emitMatrixIn(HlslContext& cx, MatrixIn* node)
 	return true;
 }
 
+bool emitMatrixOut(HlslContext& cx, MatrixOut* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
+	HlslVariable* in = cx.emitInput(node, L"Input");
+	if (!in)
+		return false;
+	HlslVariable* xaxis = cx.emitOutput(node, L"XAxis", HtFloat4);
+	if (xaxis)
+		assign(f, xaxis) << in->getName() << L"._11_21_31_41;" << Endl;
+	HlslVariable* yaxis = cx.emitOutput(node, L"YAxis", HtFloat4);
+	if (yaxis)
+		assign(f, yaxis) << in->getName() << L"._12_22_32_42;" << Endl;
+	HlslVariable* zaxis = cx.emitOutput(node, L"ZAxis", HtFloat4);
+	if (zaxis)
+		assign(f, zaxis) << in->getName() << L"._13_23_33_43;" << Endl;
+	HlslVariable* translate = cx.emitOutput(node, L"Translate", HtFloat4);
+	if (translate)
+		assign(f, translate) << in->getName() << L"._14_24_34_44;" << Endl;
+	return true;
+}
+
 bool emitMax(HlslContext& cx, Max* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
@@ -1763,6 +1784,7 @@ HlslEmitter::HlslEmitter()
 	m_emitters[&type_of< Lerp >()] = new EmitterCast< Lerp >(emitLerp);
 	m_emitters[&type_of< Log >()] = new EmitterCast< Log >(emitLog);
 	m_emitters[&type_of< MatrixIn >()] = new EmitterCast< MatrixIn >(emitMatrixIn);
+	m_emitters[&type_of< MatrixOut >()] = new EmitterCast< MatrixOut >(emitMatrixOut);
 	m_emitters[&type_of< Max >()] = new EmitterCast< Max >(emitMax);
 	m_emitters[&type_of< Min >()] = new EmitterCast< Min >(emitMin);
 	m_emitters[&type_of< MixIn >()] = new EmitterCast< MixIn >(emitMixIn);

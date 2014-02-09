@@ -484,7 +484,7 @@ bool AnimationEditorPage::handleCommand(const ui::Command& command)
 	return true;
 }
 
-void AnimationEditorPage::handleDatabaseEvent(const Guid& eventId)
+void AnimationEditorPage::handleDatabaseEvent(db::Database* database, const Guid& eventId)
 {
 	if (m_resourceManager)
 		m_resourceManager->reload(eventId);

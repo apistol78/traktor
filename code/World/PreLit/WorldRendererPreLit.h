@@ -145,6 +145,7 @@ private:
 	static render::handle_t ms_techniqueShadow;
 	static render::handle_t ms_handleTime;
 	static render::handle_t ms_handleView;
+	static render::handle_t ms_handleViewInverse;
 	static render::handle_t ms_handleProjection;
 	static render::handle_t ms_handleSquareProjection;
 	static render::handle_t ms_handleColorMap;

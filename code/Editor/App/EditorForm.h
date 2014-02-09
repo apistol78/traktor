@@ -192,7 +192,7 @@ private:
 	Ref< IEditorPage > m_activeEditorPage;
 	Ref< Document > m_activeDocument;
 	Ref< EditorPageSite > m_activeEditorPageSite;
-	std::vector< Guid > m_eventIds;
+	std::vector< std::pair< db::Database*, Guid > > m_eventIds;
 	Thread* m_threadAssetMonitor;
 	Thread* m_threadBuild;
 	Semaphore m_lockBuild;

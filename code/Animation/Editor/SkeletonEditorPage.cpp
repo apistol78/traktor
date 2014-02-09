@@ -270,7 +270,7 @@ bool SkeletonEditorPage::handleCommand(const ui::Command& command)
 	return true;
 }
 
-void SkeletonEditorPage::handleDatabaseEvent(const Guid& eventId)
+void SkeletonEditorPage::handleDatabaseEvent(db::Database* database, const Guid& eventId)
 {
 	if (m_resourceManager)
 		m_resourceManager->reload(eventId);

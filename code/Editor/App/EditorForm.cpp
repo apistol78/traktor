@@ -2629,16 +2629,19 @@ void EditorForm::eventTimer(ui::Event* /*event*/)
 	// source database.
 	if (m_sourceDatabase)
 	{
-		bool committed = false;
+		bool anyCommitted = false;
 		while (m_sourceDatabase->getEvent(event, remote))
 		{
-			if (remote == false && is_a< db::EvtInstanceCommitted >(event))
-				committed = true;
-
-			if (remote)
-				updateView = true;
+			const db::EvtInstanceCommitted* committed = dynamic_type_cast< const db::EvtInstanceCommitted* >(event);
+			if (committed)
+			{
+				T_DEBUG((remote ? L"Remotely" : L"Locally") << L" modified instance " << committed->getInstanceGuid().format() << L" detected (1); propagate to editor pages...");
+				m_eventIds.push_back(std::make_pair(m_sourceDatabase, committed->getInstanceGuid()));
+				anyCommitted = true;
+			}
+			updateView |= remote;
 		}
-		if (committed && m_mergedSettings->getProperty< PropertyBoolean >(L"Editor.BuildWhenSourceModified"))
+		if (anyCommitted && m_mergedSettings->getProperty< PropertyBoolean >(L"Editor.BuildWhenSourceModified"))
 			buildAssets(false);
 	}
 
@@ -2648,13 +2651,11 @@ void EditorForm::eventTimer(ui::Event* /*event*/)
 	{
 		while (m_outputDatabase->getEvent(event, remote))
 		{
-			// Gather guids of commited instances; so we can know
-			// which has been modified and thus needs to be rebuilt.
 			const db::EvtInstanceCommitted* committed = dynamic_type_cast< const db::EvtInstanceCommitted* >(event);
 			if (committed)
 			{
-				T_DEBUG((remote ? L"Remotely" : L"Locally") << L" modified instance " << committed->getInstanceGuid().format() << L" detected; propagate to editor pages...");
-				m_eventIds.push_back(committed->getInstanceGuid());
+				T_DEBUG((remote ? L"Remotely" : L"Locally") << L" modified instance " << committed->getInstanceGuid().format() << L" detected (2); propagate to editor pages...");
+				m_eventIds.push_back(std::make_pair(m_outputDatabase, committed->getInstanceGuid()));
 			}
 		}
 	}
@@ -2672,16 +2673,16 @@ void EditorForm::eventTimer(ui::Event* /*event*/)
 			Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
 			if (editorPage)
 			{
-				for (std::vector< Guid >::iterator j = m_eventIds.begin(); j != m_eventIds.end(); ++j)
-					editorPage->handleDatabaseEvent(*j);
+				for (std::vector< std::pair< db::Database*, Guid > >::iterator j = m_eventIds.begin(); j != m_eventIds.end(); ++j)
+					editorPage->handleDatabaseEvent(j->first, j->second);
 			}
 		}
 
 		// Propagate database event to editor plugins.
 		for (RefArray< EditorPluginSite >::iterator i = m_editorPluginSites.begin(); i != m_editorPluginSites.end(); ++i)
 		{
-			for (std::vector< Guid >::iterator j = m_eventIds.begin(); j != m_eventIds.end(); ++j)
-				(*i)->handleDatabaseEvent(*j);
+			for (std::vector< std::pair< db::Database*, Guid > >::iterator j = m_eventIds.begin(); j != m_eventIds.end(); ++j)
+				(*i)->handleDatabaseEvent(j->first, j->second);
 		}
 
 		m_eventIds.resize(0);
