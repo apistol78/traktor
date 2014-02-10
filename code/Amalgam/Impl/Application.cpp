@@ -404,12 +404,12 @@ void Application::destroy()
 	safeDestroy(m_stateManager);
 	safeDestroy(m_resourceServer);
 	safeDestroy(m_worldServer);
-	safeDestroy(m_scriptServer);
 	safeDestroy(m_physicsServer);
 	safeDestroy(m_onlineServer);
 	safeDestroy(m_inputServer);
 	safeDestroy(m_audioServer);
 	safeDestroy(m_renderServer);
+	safeDestroy(m_scriptServer);
 
 	m_environment = 0;
 
