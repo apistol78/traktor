@@ -30,9 +30,9 @@ c_mouseControlMap[] =
 	{ L"Aux 3 mouse button", DtButton5, false, true, 5 },
 	{ L"Aux 4 mouse button", DtButton6, false, true, 6 },
 	{ L"Aux 5 mouse button", DtButton7, false, true, 7 },
-	{ L"Mouse X axis", DtAxisX, true, true, 8 },
-	{ L"Mouse Y axis", DtAxisY, true, true, 9 },
-	{ L"Mouse Z axis", DtAxisZ, true, true, 10 },
+	{ L"Mouse X axis", DtAxisX, true, false, 8 },
+	{ L"Mouse Y axis", DtAxisY, true, false, 9 },
+	{ L"Mouse Z axis", DtAxisZ, true, false, 10 },
 	{ L"Mouse X axis", DtPositionX, true, false, 11 },
 	{ L"Mouse Y axis", DtPositionY, true, false, 12 }
 };

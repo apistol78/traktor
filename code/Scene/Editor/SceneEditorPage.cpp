@@ -689,11 +689,13 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 
 void SceneEditorPage::handleDatabaseEvent(db::Database* database, const Guid& eventId)
 {
-	if (!m_context)
+	if (!m_context || database == m_editor->getSourceDatabase())
 		return;
 
+	// Flush resource from manager.
 	m_context->getResourceManager()->reload(eventId);
 
+	// Check if guid is used as an external reference.
 	RefArray< EntityAdapter > entityAdapters;
 	m_context->getEntities(entityAdapters);
 

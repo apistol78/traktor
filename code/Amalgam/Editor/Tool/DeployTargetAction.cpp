@@ -28,8 +28,8 @@ namespace traktor
 		namespace
 		{
 
-const uint16_t c_remoteDatabasePort = 34001;
-const uint16_t c_targetConnectionPort = 34002;
+const uint16_t c_remoteDatabasePort = 35000;
+const uint16_t c_targetConnectionPort = 36000;
 
 struct FeaturePriorityPred
 {

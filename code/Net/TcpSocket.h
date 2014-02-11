@@ -33,10 +33,10 @@ public:
 	TcpSocket(SOCKET socket_);
 
 	/*! \brief Bind to local address. */
-	bool bind(const SocketAddressIPv4& socketAddress);
+	bool bind(const SocketAddressIPv4& socketAddress, bool reuseAddr = false);
 
 	/*! \brief Bind to local address. */
-	bool bind(const SocketAddressIPv6& socketAddress);
+	bool bind(const SocketAddressIPv6& socketAddress, bool reuseAddr = false);
 
 	/*! \brief Connect to remote host. */
 	bool connect(const SocketAddressIPv4& socketAddress);

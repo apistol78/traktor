@@ -1,6 +1,3 @@
-//#if defined(_WIN32)
-//#	include <Windows.h>
-//#endif
 #include <iostream>
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/FileOutputStream.h"
@@ -31,6 +28,7 @@
 #include "Database/Traverse.h"
 #include "Database/Compact/CompactDatabase.h"
 #include "Database/Events/EvtInstanceCommitted.h"
+#include "Database/Events/EvtInstanceCreated.h"
 #include "Database/Local/LocalDatabase.h"
 #include "Editor/Assets.h"
 #include "Editor/IPipeline.h"
@@ -51,6 +49,8 @@
 #include "Xml/XmlDeserializer.h"
 
 using namespace traktor;
+
+const uint16_t c_defaultIPCPort = 52412;
 
 class LogStreamTarget : public ILogTarget
 {
@@ -188,7 +188,15 @@ void updateDatabases()
 		{
 			if (remote)
 			{
-				if (const db::EvtInstanceCommitted* instanceCommited = dynamic_type_cast< const db::EvtInstanceCommitted* >(event))
+				if (const db::EvtInstanceCreated* instanceCreated = dynamic_type_cast< const db::EvtInstanceCreated* >(event))
+				{
+					Ref< db::Instance > instance = i->second->getInstance(instanceCreated->getInstanceGuid());
+					if (instance)
+						log::info << L"Database event; instance \"" << instance->getName() << L"\" created" << Endl;
+					else
+						log::info << L"Database event; instance \"" << instanceCreated->getInstanceGuid().format() << L"\" created" << Endl;
+				}
+				else if (const db::EvtInstanceCommitted* instanceCommited = dynamic_type_cast< const db::EvtInstanceCommitted* >(event))
 				{
 					Ref< db::Instance > instance = i->second->getInstance(instanceCommited->getInstanceGuid());
 					if (instance)
@@ -196,6 +204,8 @@ void updateDatabases()
 					else
 						log::info << L"Database event; instance \"" << instanceCommited->getInstanceGuid().format() << L"\" committed" << Endl;
 				}
+				else
+					log::info << L"Database event; " << type_name(event) << Endl;
 			}
 		}
 	}
@@ -565,14 +575,18 @@ int slave(const CommandLine& cmdLine)
 	SetConsoleCtrlHandler((PHANDLER_ROUTINE)consoleCtrlHandler, TRUE);
 #endif
 
-	traktor::log::info << L"Waiting..." << Endl;
+	uint16_t port = c_defaultIPCPort;
+	if (cmdLine.hasOption(L"port"))
+		port = uint16_t(cmdLine.getOption(L"port").getInteger());
 
 	net::TcpSocket socket;
-	if (!socket.bind(net::SocketAddressIPv4(52100)))
+	if (!socket.bind(net::SocketAddressIPv4(port)))
 	{
-		traktor::log::error << L"Unable to bind socket to port 52100" << Endl;
+		traktor::log::error << L"Unable to bind socket to port " << port << Endl;
 		return 1;
 	}
+
+	traktor::log::info << L"Waiting..." << Endl;
 
 	if (!socket.listen())
 	{
@@ -645,6 +659,10 @@ int master(const CommandLine& cmdLine)
 			traktor::log::error << L"Unable to create log file; logging only to std pipes" << Endl;
 	}
 
+	uint16_t port = c_defaultIPCPort;
+	if (cmdLine.hasOption(L"port"))
+		port = uint16_t(cmdLine.getOption(L"port").getInteger());
+
 	if (!g_pipelineMutex.existing())
 	{
 		// Get full path to our executable.
@@ -683,9 +701,9 @@ int master(const CommandLine& cmdLine)
 	}
 
 	Ref< net::TcpSocket > socket = new net::TcpSocket();
-	if (!socket->connect(net::SocketAddressIPv4(L"localhost", 52100)))
+	if (!socket->connect(net::SocketAddressIPv4(L"localhost", port)))
 	{
-		traktor::log::error << L"Unable to establish connection with pipeline slave" << Endl;
+		traktor::log::error << L"Unable to establish connection with pipeline slave using port " << port << Endl;
 		return 1;
 	}
 
