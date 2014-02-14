@@ -2389,10 +2389,10 @@
 			<dependencies>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project type="Project" version="1">
+					<project type="Project" version="2">
 						<enable>true</enable>
 						<name>Extern.zlib-1.2.3</name>
-						<sourcePath>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</sourcePath>
+									<sourcePath>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</sourcePath>
 						<configurations>
 							<item type="Configuration" version="1">
 								<name>DebugStatic</name>
@@ -5131,10 +5131,10 @@
 			<dependencies>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project type="Project" version="1">
+					<project type="Project" version="2">
 						<enable>true</enable>
 						<name>Traktor.Core</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/Core</sourcePath>
+									<sourcePath>$(TRAKTOR_HOME)/code/Core</sourcePath>
 						<configurations>
 							<item type="Configuration" version="1">
 								<name>DebugShared</name>
@@ -5459,10 +5459,10 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project type="Project" version="1">
+					<project type="Project" version="2">
 						<enable>true</enable>
 						<name>Traktor.World</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/World</sourcePath>
+									<sourcePath>$(TRAKTOR_HOME)/code/World</sourcePath>
 						<configurations>
 							<item type="Configuration" version="1">
 								<name>DebugShared</name>
@@ -5600,10 +5600,10 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project type="Project" version="1">
+								<project type="Project" version="2">
 									<enable>true</enable>
 									<name>Traktor.Render</name>
-									<sourcePath>$(TRAKTOR_HOME)/code/Render</sourcePath>
+															<sourcePath>$(TRAKTOR_HOME)/code/Render</sourcePath>
 									<configurations>
 										<item type="Configuration" version="1">
 											<name>DebugShared</name>
@@ -5732,10 +5732,10 @@
 										</item>
 										<item type="ProjectDependency" version="1">
 											<linkWithProduct>true</linkWithProduct>
-											<project type="Project" version="1">
+											<project type="Project" version="2">
 												<enable>true</enable>
 												<name>Traktor.Resource</name>
-												<sourcePath>$(TRAKTOR_HOME)/code/Resource</sourcePath>
+																					<sourcePath>$(TRAKTOR_HOME)/code/Resource</sourcePath>
 												<configurations>
 													<item type="Configuration" version="1">
 														<name>DebugShared</name>
@@ -5822,10 +5822,10 @@
 										</item>
 										<item type="ProjectDependency" version="1">
 											<linkWithProduct>true</linkWithProduct>
-											<project type="Project" version="1">
+											<project type="Project" version="2">
 												<enable>true</enable>
 												<name>Traktor.Compress</name>
-												<sourcePath>$(TRAKTOR_HOME)/code/Compress</sourcePath>
+																					<sourcePath>$(TRAKTOR_HOME)/code/Compress</sourcePath>
 												<configurations>
 													<item type="Configuration" version="1">
 														<name>DebugShared</name>
@@ -5956,10 +5956,10 @@
 													</item>
 													<item type="ProjectDependency" version="1">
 														<linkWithProduct>true</linkWithProduct>
-														<project type="Project" version="1">
+														<project type="Project" version="2">
 															<enable>true</enable>
 															<name>Extern.minilzo-2.05</name>
-															<sourcePath>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</sourcePath>
+																											<sourcePath>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</sourcePath>
 															<configurations>
 																<item type="Configuration" version="1">
 																	<name>DebugShared</name>
@@ -6049,10 +6049,10 @@
 													</item>
 													<item type="ProjectDependency" version="1">
 														<linkWithProduct>true</linkWithProduct>
-														<project type="Project" version="1">
+														<project type="Project" version="2">
 															<enable>true</enable>
 															<name>Extern.liblzf-3.6</name>
-															<sourcePath>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</sourcePath>
+																											<sourcePath>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</sourcePath>
 															<configurations>
 																<item type="Configuration" version="1">
 																	<name>DebugShared</name>
@@ -6164,10 +6164,10 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project type="Project" version="1">
+								<project type="Project" version="2">
 									<enable>true</enable>
 									<name>Traktor.Database</name>
-									<sourcePath>$(TRAKTOR_HOME)/code/Database</sourcePath>
+															<sourcePath>$(TRAKTOR_HOME)/code/Database</sourcePath>
 									<configurations>
 										<item type="Configuration" version="1">
 											<name>DebugShared</name>
@@ -6269,10 +6269,10 @@
 										</item>
 										<item type="ProjectDependency" version="1">
 											<linkWithProduct>true</linkWithProduct>
-											<project type="Project" version="1">
+											<project type="Project" version="2">
 												<enable>true</enable>
 												<name>Traktor.Xml</name>
-												<sourcePath>$(TRAKTOR_HOME)/code/Xml</sourcePath>
+																					<sourcePath>$(TRAKTOR_HOME)/code/Xml</sourcePath>
 												<configurations>
 													<item type="Configuration" version="1">
 														<name>DebugShared</name>
@@ -6373,10 +6373,10 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project type="Project" version="1">
+					<project type="Project" version="2">
 						<enable>true</enable>
 						<name>Traktor.Mesh</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/Mesh</sourcePath>
+									<sourcePath>$(TRAKTOR_HOME)/code/Mesh</sourcePath>
 						<configurations>
 							<item type="Configuration" version="1">
 								<name>DebugShared</name>
@@ -6564,10 +6564,10 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project type="Project" version="1">
+					<project type="Project" version="2">
 						<enable>true</enable>
 						<name>Traktor.Physics</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/Physics</sourcePath>
+									<sourcePath>$(TRAKTOR_HOME)/code/Physics</sourcePath>
 						<configurations>
 							<item type="Configuration" version="1">
 								<name>DebugShared</name>
@@ -6672,10 +6672,10 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project type="Project" version="1">
+								<project type="Project" version="2">
 									<enable>true</enable>
 									<name>Traktor.Heightfield</name>
-									<sourcePath>$(TRAKTOR_HOME)/code/Heightfield</sourcePath>
+															<sourcePath>$(TRAKTOR_HOME)/code/Heightfield</sourcePath>
 									<configurations>
 										<item type="Configuration" version="1">
 											<name>DebugShared</name>
@@ -6957,10 +6957,10 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project type="Project" version="1">
+					<project type="Project" version="2">
 						<enable>true</enable>
 						<name>Traktor.Editor</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/Editor</sourcePath>
+									<sourcePath>$(TRAKTOR_HOME)/code/Editor</sourcePath>
 						<configurations>
 							<item type="Configuration" version="1">
 								<name>DebugShared</name>
@@ -7053,10 +7053,10 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project type="Project" version="1">
+								<project type="Project" version="2">
 									<enable>true</enable>
 									<name>Traktor.Ui</name>
-									<sourcePath>$(TRAKTOR_HOME)/code/Ui</sourcePath>
+															<sourcePath>$(TRAKTOR_HOME)/code/Ui</sourcePath>
 									<configurations>
 										<item type="Configuration" version="1">
 											<name>DebugShared</name>
@@ -7179,10 +7179,10 @@
 										</item>
 										<item type="ProjectDependency" version="1">
 											<linkWithProduct>true</linkWithProduct>
-											<project type="Project" version="1">
+											<project type="Project" version="2">
 												<enable>true</enable>
 												<name>Traktor.Drawing</name>
-												<sourcePath>$(TRAKTOR_HOME)/code/Drawing</sourcePath>
+																					<sourcePath>$(TRAKTOR_HOME)/code/Drawing</sourcePath>
 												<configurations>
 													<item type="Configuration" version="1">
 														<name>DebugShared</name>
@@ -7322,10 +7322,10 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project type="Project" version="1">
+								<project type="Project" version="2">
 									<enable>true</enable>
 									<name>Traktor.Net</name>
-									<sourcePath>$(TRAKTOR_HOME)/code/Net</sourcePath>
+															<sourcePath>$(TRAKTOR_HOME)/code/Net</sourcePath>
 									<configurations>
 										<item type="Configuration" version="1">
 											<name>DebugShared</name>
@@ -7496,10 +7496,10 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project type="Project" version="1">
+								<project type="Project" version="2">
 									<enable>true</enable>
 									<name>Traktor.Sql.Sqlite3</name>
-									<sourcePath>$(TRAKTOR_HOME)/code/Sql/Sqlite3</sourcePath>
+															<sourcePath>$(TRAKTOR_HOME)/code/Sql/Sqlite3</sourcePath>
 									<configurations>
 										<item type="Configuration" version="1">
 											<name>DebugShared</name>
@@ -7587,10 +7587,10 @@
 										</item>
 										<item type="ProjectDependency" version="1">
 											<linkWithProduct>true</linkWithProduct>
-											<project type="Project" version="1">
+											<project type="Project" version="2">
 												<enable>true</enable>
 												<name>Traktor.Sql</name>
-												<sourcePath>$(TRAKTOR_HOME)/code/Sql</sourcePath>
+																					<sourcePath>$(TRAKTOR_HOME)/code/Sql</sourcePath>
 												<configurations>
 													<item type="Configuration" version="1">
 														<name>DebugShared</name>
@@ -7677,10 +7677,10 @@
 										</item>
 										<item type="ProjectDependency" version="1">
 											<linkWithProduct>true</linkWithProduct>
-											<project type="Project" version="1">
+											<project type="Project" version="2">
 												<enable>true</enable>
 												<name>Extern.sqlite-3.7.6.3</name>
-												<sourcePath>$(TRAKTOR_HOME)/3rdp/sqlite-3.7.6.3</sourcePath>
+																					<sourcePath>$(TRAKTOR_HOME)/3rdp/sqlite-3.7.6.3</sourcePath>
 												<configurations>
 													<item type="Configuration" version="1">
 														<name>DebugShared</name>
@@ -7781,10 +7781,10 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project type="Project" version="1">
+								<project type="Project" version="2">
 									<enable>true</enable>
 									<name>Traktor.Database.Remote</name>
-									<sourcePath>$(TRAKTOR_HOME)/code/Database/Remote</sourcePath>
+															<sourcePath>$(TRAKTOR_HOME)/code/Database/Remote</sourcePath>
 									<configurations>
 										<item type="Configuration" version="1">
 											<name>DebugShared</name>
@@ -7888,10 +7888,10 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project type="Project" version="1">
+								<project type="Project" version="2">
 									<enable>true</enable>
 									<name>Traktor.Database.Remote.Server</name>
-									<sourcePath>$(TRAKTOR_HOME)/code/Database/Remote/Server</sourcePath>
+															<sourcePath>$(TRAKTOR_HOME)/code/Database/Remote/Server</sourcePath>
 									<configurations>
 										<item type="Configuration" version="1">
 											<name>DebugShared</name>
@@ -8005,10 +8005,10 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project type="Project" version="1">
+					<project type="Project" version="2">
 						<enable>true</enable>
 						<name>Traktor.Ui.Custom</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/Ui/Custom</sourcePath>
+									<sourcePath>$(TRAKTOR_HOME)/code/Ui/Custom</sourcePath>
 						<configurations>
 							<item type="Configuration" version="1">
 								<name>DebugShared</name>
@@ -8357,10 +8357,10 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project type="Project" version="1">
+					<project type="Project" version="2">
 						<enable>true</enable>
 						<name>Traktor.Scene.Editor</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/Scene/Editor</sourcePath>
+									<sourcePath>$(TRAKTOR_HOME)/code/Scene/Editor</sourcePath>
 						<configurations>
 							<item type="Configuration" version="1">
 								<name>DebugShared</name>
@@ -8514,10 +8514,10 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project type="Project" version="1">
+								<project type="Project" version="2">
 									<enable>true</enable>
 									<name>Traktor.Scene</name>
-									<sourcePath>$(TRAKTOR_HOME)/code/Scene</sourcePath>
+															<sourcePath>$(TRAKTOR_HOME)/code/Scene</sourcePath>
 									<configurations>
 										<item type="Configuration" version="1">
 											<name>DebugShared</name>
@@ -8620,10 +8620,10 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project type="Project" version="1">
+								<project type="Project" version="2">
 									<enable>true</enable>
 									<name>Traktor.Weather</name>
-									<sourcePath>$(TRAKTOR_HOME)/code/Weather</sourcePath>
+															<sourcePath>$(TRAKTOR_HOME)/code/Weather</sourcePath>
 									<configurations>
 										<item type="Configuration" version="1">
 											<name>DebugShared</name>
@@ -8748,10 +8748,10 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project type="Project" version="1">
+								<project type="Project" version="2">
 									<enable>true</enable>
 									<name>Traktor.I18N</name>
-									<sourcePath>$(TRAKTOR_HOME)/code/I18N</sourcePath>
+															<sourcePath>$(TRAKTOR_HOME)/code/I18N</sourcePath>
 									<configurations>
 										<item type="Configuration" version="1">
 											<name>DebugShared</name>
@@ -8842,10 +8842,10 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project type="Project" version="1">
+								<project type="Project" version="2">
 									<enable>true</enable>
 									<name>Traktor.World.Editor</name>
-									<sourcePath>$(TRAKTOR_HOME)/code/World/Editor</sourcePath>
+															<sourcePath>$(TRAKTOR_HOME)/code/World/Editor</sourcePath>
 									<configurations>
 										<item type="Configuration" version="1">
 											<name>DebugShared</name>
@@ -9001,10 +9001,10 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project type="Project" version="1">
+					<project type="Project" version="2">
 						<enable>true</enable>
 						<name>Traktor.Mesh.Editor</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/Mesh/Editor</sourcePath>
+									<sourcePath>$(TRAKTOR_HOME)/code/Mesh/Editor</sourcePath>
 						<configurations>
 							<item type="Configuration" version="1">
 								<name>DebugShared</name>
@@ -9176,10 +9176,10 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project type="Project" version="1">
+								<project type="Project" version="2">
 									<enable>true</enable>
 									<name>Traktor.Model</name>
-									<sourcePath>$(TRAKTOR_HOME)/code/Model</sourcePath>
+															<sourcePath>$(TRAKTOR_HOME)/code/Model</sourcePath>
 									<configurations>
 										<item type="Configuration" version="1">
 											<name>DebugShared</name>
@@ -9336,10 +9336,10 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project type="Project" version="1">
+								<project type="Project" version="2">
 									<enable>true</enable>
 									<name>Traktor.Render.Editor</name>
-									<sourcePath>$(TRAKTOR_HOME)/code/Render/Editor</sourcePath>
+															<sourcePath>$(TRAKTOR_HOME)/code/Render/Editor</sourcePath>
 									<configurations>
 										<item type="Configuration" version="1">
 											<name>DebugShared</name>
@@ -10142,10 +10142,10 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project type="Project" version="1">
+					<project type="Project" version="2">
 						<enable>true</enable>
 						<name>Traktor.Ui.Win32</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/Ui/Win32</sourcePath>
+									<sourcePath>$(TRAKTOR_HOME)/code/Ui/Win32</sourcePath>
 						<configurations>
 							<item type="Configuration" version="1">
 								<name>DebugShared</name>
@@ -10505,10 +10505,10 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project type="Project" version="1">
+					<project type="Project" version="2">
 						<enable>true</enable>
 						<name>Traktor.Html</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/Html</sourcePath>
+									<sourcePath>$(TRAKTOR_HOME)/code/Html</sourcePath>
 						<configurations>
 							<item type="Configuration" version="1">
 								<name>DebugShared</name>
@@ -10595,10 +10595,10 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project type="Project" version="1">
+					<project type="Project" version="2">
 						<enable>true</enable>
 						<name>Traktor.Sound</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/Sound</sourcePath>
+									<sourcePath>$(TRAKTOR_HOME)/code/Sound</sourcePath>
 						<configurations>
 							<item type="Configuration" version="1">
 								<name>DebugShared</name>
@@ -10746,10 +10746,10 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project type="Project" version="1">
+								<project type="Project" version="2">
 									<enable>true</enable>
 									<name>Extern.mpg123-1.13.2</name>
-									<sourcePath>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2</sourcePath>
+															<sourcePath>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2</sourcePath>
 									<configurations>
 										<item type="Configuration" version="1">
 											<name>DebugShared</name>
@@ -11065,10 +11065,10 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project type="Project" version="1">
+								<project type="Project" version="2">
 									<enable>true</enable>
 									<name>Extern.stb_vorbis</name>
-									<sourcePath>$(TRAKTOR_HOME)/3rdp/stb_vorbis</sourcePath>
+															<sourcePath>$(TRAKTOR_HOME)/3rdp/stb_vorbis</sourcePath>
 									<configurations>
 										<item type="Configuration" version="1">
 											<name>DebugShared</name>
@@ -11277,10 +11277,10 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project type="Project" version="1">
+					<project type="Project" version="2">
 						<enable>true</enable>
 						<name>Traktor.Graphics</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/Graphics</sourcePath>
+									<sourcePath>$(TRAKTOR_HOME)/code/Graphics</sourcePath>
 						<configurations>
 							<item type="Configuration" version="1">
 								<name>DebugShared</name>
@@ -11375,10 +11375,10 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project type="Project" version="1">
+					<project type="Project" version="2">
 						<enable>true</enable>
 						<name>Traktor.Sound.Editor</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/Sound/Editor</sourcePath>
+									<sourcePath>$(TRAKTOR_HOME)/code/Sound/Editor</sourcePath>
 						<configurations>
 							<item type="Configuration" version="1">
 								<name>DebugShared</name>
@@ -12800,6 +12800,15 @@
 					<fileName>*.*</fileName>
 					<items/>
 				</item>
+				<item type="Filter">
+					<name>Win32</name>
+					<items>
+						<item type="File">
+							<fileName>Win32/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="1">
@@ -13214,10 +13223,10 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project type="Project" version="1">
+					<project type="Project" version="2">
 						<enable>true</enable>
 						<name>Extern.glew-1.10.0</name>
-						<sourcePath>$(TRAKTOR_HOME)/3rdp/glew-1.10.0/src</sourcePath>
+									<sourcePath>$(TRAKTOR_HOME)/3rdp/glew-1.10.0/src</sourcePath>
 						<configurations>
 							<item type="Configuration" version="1">
 								<name>DebugShared</name>
@@ -13415,10 +13424,10 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project type="Project" version="1">
+					<project type="Project" version="2">
 						<enable>true</enable>
 						<name>Extern.angle.libEGL</name>
-						<sourcePath>$(TRAKTOR_HOME)/3rdp/angle/src/libEGL</sourcePath>
+									<sourcePath>$(TRAKTOR_HOME)/3rdp/angle/src/libEGL</sourcePath>
 						<configurations>
 							<item type="Configuration" version="1">
 								<name>DebugShared</name>
@@ -13621,10 +13630,10 @@
 						<dependencies>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project type="Project" version="1">
+								<project type="Project" version="2">
 									<enable>true</enable>
 									<name>Extern.angle.libGLESv2</name>
-									<sourcePath>$(TRAKTOR_HOME)/3rdp/angle/src/libGLESv2</sourcePath>
+															<sourcePath>$(TRAKTOR_HOME)/3rdp/angle/src/libGLESv2</sourcePath>
 									<configurations>
 										<item type="Configuration" version="1">
 											<name>DebugShared</name>
@@ -13951,10 +13960,10 @@
 									<dependencies>
 										<item type="ProjectDependency" version="1">
 											<linkWithProduct>true</linkWithProduct>
-											<project type="Project" version="1">
+											<project type="Project" version="2">
 												<enable>true</enable>
 												<name>Extern.angle.translator_common</name>
-												<sourcePath>$(TRAKTOR_HOME)/3rdp/angle/src/compiler</sourcePath>
+																					<sourcePath>$(TRAKTOR_HOME)/3rdp/angle/src/compiler</sourcePath>
 												<configurations>
 													<item type="Configuration" version="1">
 														<name>DebugShared</name>
@@ -14474,10 +14483,10 @@
 										</item>
 										<item type="ProjectDependency" version="1">
 											<linkWithProduct>true</linkWithProduct>
-											<project type="Project" version="1">
+											<project type="Project" version="2">
 												<enable>true</enable>
 												<name>Extern.angle.translator_hlsl</name>
-												<sourcePath>$(TRAKTOR_HOME)/3rdp/angle/src/compiler</sourcePath>
+																					<sourcePath>$(TRAKTOR_HOME)/3rdp/angle/src/compiler</sourcePath>
 												<configurations>
 													<item type="Configuration" version="1">
 														<name>DebugShared</name>
@@ -14625,10 +14634,10 @@
 										</item>
 										<item type="ProjectDependency" version="1">
 											<linkWithProduct>true</linkWithProduct>
-											<project type="Project" version="1">
+											<project type="Project" version="2">
 												<enable>true</enable>
 												<name>Extern.angle.preprocessor</name>
-												<sourcePath>$(TRAKTOR_HOME)/3rdp/angle/src/compiler/preprocessor/new</sourcePath>
+																					<sourcePath>$(TRAKTOR_HOME)/3rdp/angle/src/compiler/preprocessor/new</sourcePath>
 												<configurations>
 													<item type="Configuration" version="1">
 														<name>DebugShared</name>
@@ -14832,10 +14841,10 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project type="Project" version="1">
+					<project type="Project" version="2">
 						<enable>true</enable>
 						<name>Extern.mesaglsl2</name>
-						<sourcePath>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master</sourcePath>
+									<sourcePath>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master</sourcePath>
 						<configurations>
 							<item type="Configuration" version="1">
 								<name>DebugStatic</name>
@@ -17316,10 +17325,10 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project type="Project" version="1">
+					<project type="Project" version="2">
 						<enable>true</enable>
 						<name>Traktor.Heightfield.Editor</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/Heightfield/Editor</sourcePath>
+									<sourcePath>$(TRAKTOR_HOME)/code/Heightfield/Editor</sourcePath>
 						<configurations>
 							<item type="Configuration" version="1">
 								<name>DebugShared</name>
@@ -19399,10 +19408,10 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project type="Project" version="1">
+					<project type="Project" version="2">
 						<enable>true</enable>
 						<name>Traktor.Amalgam</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/Amalgam</sourcePath>
+									<sourcePath>$(TRAKTOR_HOME)/code/Amalgam</sourcePath>
 						<configurations>
 							<item type="Configuration" version="1">
 								<name>DebugShared</name>
@@ -19624,10 +19633,10 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project type="Project" version="1">
+								<project type="Project" version="2">
 									<enable>true</enable>
 									<name>Traktor.Ai</name>
-									<sourcePath>$(TRAKTOR_HOME)/code/Ai</sourcePath>
+															<sourcePath>$(TRAKTOR_HOME)/code/Ai</sourcePath>
 									<configurations>
 										<item type="Configuration" version="1">
 											<name>DebugShared</name>
@@ -19715,10 +19724,10 @@
 										</item>
 										<item type="ProjectDependency" version="1">
 											<linkWithProduct>true</linkWithProduct>
-											<project type="Project" version="1">
+											<project type="Project" version="2">
 												<enable>true</enable>
 												<name>Extern.detour</name>
-												<sourcePath>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour</sourcePath>
+																					<sourcePath>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour</sourcePath>
 												<configurations>
 													<item type="Configuration" version="1">
 														<name>DebugShared</name>

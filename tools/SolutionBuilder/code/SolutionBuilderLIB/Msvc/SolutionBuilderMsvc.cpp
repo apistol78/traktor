@@ -25,6 +25,7 @@
 #include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcLinkerTool.h"
 #include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcManifestTool.h"
 #include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcVCXProj.h"
+#include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcVCXProjVGDB.h"
 #include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcVCXBuildTool.h"
 #include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcVCXCustomBuildTool.h"
 #include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcVCXDefinition.h"
@@ -99,6 +100,7 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 	T_FORCE_LINK_REF(SolutionBuilderMsvcLinkerTool)
 	T_FORCE_LINK_REF(SolutionBuilderMsvcManifestTool)
 	T_FORCE_LINK_REF(SolutionBuilderMsvcVCXProj)
+	T_FORCE_LINK_REF(SolutionBuilderMsvcVCXProjVGDB)
 	T_FORCE_LINK_REF(SolutionBuilderMsvcVCXBuildTool)
 	T_FORCE_LINK_REF(SolutionBuilderMsvcVCXCustomBuildTool)
 	T_FORCE_LINK_REF(SolutionBuilderMsvcVCXDefinition)

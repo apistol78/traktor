@@ -6366,7 +6366,7 @@
 														<project type="Project" version="1">
 															<enable>true</enable>
 															<name>Extern.minilzo-2.05</name>
-															<sourcePath>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</sourcePath>
+															<sourcePath>$(TRAKTOR_HOME)/3rdp/lzo-2.05</sourcePath>
 															<configurations>
 																<item type="Configuration" version="1">
 																	<name>DebugShared</name>
@@ -6442,13 +6442,18 @@
 																</item>
 															</configurations>
 															<items>
-																<item type="File">
-																	<fileName>minilzo.c</fileName>
-																	<items/>
-																</item>
-																<item type="File">
-																	<fileName>minilzo.h</fileName>
-																	<items/>
+																<item type="Filter">
+																	<name>minilzo</name>
+																	<items>
+																		<item type="File">
+																			<fileName>minilzo/*.c</fileName>
+																			<items/>
+																		</item>
+																		<item type="File">
+																			<fileName>minilzo/*.h</fileName>
+																			<items/>
+																		</item>
+																	</items>
 																</item>
 															</items>
 															<dependencies/>
@@ -7776,6 +7781,10 @@
 										<item type="ProjectDependency" version="1">
 											<linkWithProduct>true</linkWithProduct>
 											<project ref="/object/projects/item[15]/dependencies/item/project"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>false</linkWithProduct>
+											<project ref="/object/projects/item[15]/dependencies/item[5]/project"/>
 										</item>
 									</dependencies>
 								</project>
@@ -10738,15 +10747,6 @@
 						<item type="Filter">
 							<name>Avm2</name>
 							<items>
-								<item type="Filter">
-									<name>Classes</name>
-									<items>
-										<item type="File">
-											<fileName>Action/Avm2/Classes/*.*</fileName>
-											<items/>
-										</item>
-									</items>
-								</item>
 								<item type="File">
 									<fileName>Action/Avm2/*.*</fileName>
 									<items/>
@@ -11358,6 +11358,10 @@
 													<fileName>src/libmpg123/dct64_i386.c</fileName>
 													<items/>
 												</item>
+												<item type="File">
+													<fileName>src/libmpg123/mpg123.h.in</fileName>
+													<items/>
+												</item>
 											</items>
 										</item>
 										<item type="Filter">
@@ -11452,6 +11456,10 @@
 							</item>
 						</dependencies>
 					</project>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -12305,7 +12313,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/glew-1.10.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_OPENGL_EXPORT</item>
@@ -12330,7 +12338,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/glew-1.10.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_OPENGL_EXPORT</item>
@@ -12355,7 +12363,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/glew-1.10.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -12380,7 +12388,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/glew-1.10.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -12436,8 +12444,8 @@
 					<linkWithProduct>true</linkWithProduct>
 					<project type="Project" version="1">
 						<enable>true</enable>
-						<name>Extern.glew-1.9.0</name>
-						<sourcePath>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/src</sourcePath>
+						<name>Extern.glew-1.10.0</name>
+						<sourcePath>$(TRAKTOR_HOME)/3rdp/glew-1.10.0/src</sourcePath>
 						<configurations>
 							<item type="Configuration" version="1">
 								<name>DebugShared</name>
@@ -12445,7 +12453,7 @@
 								<targetProfile>TpDebug</targetProfile>
 								<precompiledHeader/>
 								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/glew-1.10.0/include</item>
 								</includePaths>
 								<definitions>
 									<item>_DEBUG</item>
@@ -12462,7 +12470,7 @@
 								<targetProfile>TpRelease</targetProfile>
 								<precompiledHeader/>
 								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/glew-1.10.0/include</item>
 								</includePaths>
 								<definitions>
 									<item>NDEBUG</item>
@@ -12479,7 +12487,7 @@
 								<targetProfile>TpDebug</targetProfile>
 								<precompiledHeader/>
 								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/glew-1.10.0/include</item>
 								</includePaths>
 								<definitions>
 									<item>_DEBUG</item>
@@ -12496,7 +12504,7 @@
 								<targetProfile>TpRelease</targetProfile>
 								<precompiledHeader/>
 								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/glew-1.10.0/include</item>
 								</includePaths>
 								<definitions>
 									<item>NDEBUG</item>
@@ -15302,15 +15310,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[8]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
