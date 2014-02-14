@@ -5,6 +5,7 @@
 #include <Core/Serialization/ISerializer.h>
 #include <Core/Serialization/Member.h>
 #include <Core/Serialization/MemberStaticArray.h>
+#include <Core/Serialization/MemberStl.h>
 #include <Core/Serialization/MemberRefArray.h>
 #include <Core/Misc/String.h>
 #include <Core/Misc/MD5.h>
@@ -33,7 +34,7 @@ namespace
 
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXProj", 2, SolutionBuilderMsvcVCXProj, SolutionBuilderMsvcProject)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXProj", 3, SolutionBuilderMsvcVCXProj, SolutionBuilderMsvcProject)
 
 SolutionBuilderMsvcVCXProj::SolutionBuilderMsvcVCXProj()
 {
@@ -75,22 +76,73 @@ bool SolutionBuilderMsvcVCXProj::generate(
 {
 	if (!generateProject(context, solution, project))
 		return false;
+	
 	if (!generateFilters(context, solution, project))
 		return false;
+
 	return true;
 }
 
 void SolutionBuilderMsvcVCXProj::serialize(traktor::ISerializer& s)
 {
+	std::wstring toolset;
+
 	s >> Member< std::wstring >(L"platform", m_platform);
 	s >> Member< std::wstring >(L"keyword", m_keyword);
-	if (s.getVersion() >= 1)
-		s >> Member< std::wstring >(L"toolset", m_toolset);
+	
+	if (s.getVersion() >= 1 && s.getVersion() < 3)
+		s >> Member< std::wstring >(L"toolset", toolset);
+
 	if (s.getVersion() >= 2)
 	{
 		s >> MemberStaticArray< std::wstring, sizeof_array(m_targetPrefixes) >(L"targetPrefixes", m_targetPrefixes);
 		s >> MemberStaticArray< std::wstring, sizeof_array(m_targetExts) >(L"targetExts", m_targetExts);
 	}
+
+	if (s.getVersion() >= 3)
+	{
+		const wchar_t* itemNames[] = { L"staticLibrary", L"sharedLibrary", L"executable", L"executableConsole" };
+
+		s >> MemberStaticArray<
+			std::map< std::wstring, std::wstring >,
+			4,
+			MemberStlMap< std::wstring, std::wstring >
+		>(L"configurationDefinitionsDebug", m_configurationDefinitionsDebug, itemNames);
+
+		s >> MemberStaticArray<
+			std::map< std::wstring, std::wstring >,
+			4,
+			MemberStlMap< std::wstring, std::wstring >
+		>(L"configurationDefinitionsRelease", m_configurationDefinitionsRelease, itemNames);
+	}
+	else
+	{
+		m_configurationDefinitionsDebug[0].insert(std::make_pair(L"CharacterSet", L"MultiByte"));
+		m_configurationDefinitionsDebug[0].insert(std::make_pair(L"ConfigurationType", L"StaticLibrary"));
+		m_configurationDefinitionsDebug[0].insert(std::make_pair(L"WholeProgramOptimization", L"false"));
+		m_configurationDefinitionsDebug[0].insert(std::make_pair(L"PlatformToolset", toolset));
+
+		m_configurationDefinitionsDebug[1].insert(std::make_pair(L"CharacterSet", L"MultiByte"));
+		m_configurationDefinitionsDebug[1].insert(std::make_pair(L"ConfigurationType", L"DynamicLibrary"));
+		m_configurationDefinitionsDebug[1].insert(std::make_pair(L"WholeProgramOptimization", L"false"));
+		m_configurationDefinitionsDebug[1].insert(std::make_pair(L"PlatformToolset", toolset));
+
+		m_configurationDefinitionsDebug[2].insert(std::make_pair(L"CharacterSet", L"MultiByte"));
+		m_configurationDefinitionsDebug[2].insert(std::make_pair(L"ConfigurationType", L"Application"));
+		m_configurationDefinitionsDebug[2].insert(std::make_pair(L"WholeProgramOptimization", L"false"));
+		m_configurationDefinitionsDebug[2].insert(std::make_pair(L"PlatformToolset", toolset));
+
+		m_configurationDefinitionsDebug[3].insert(std::make_pair(L"CharacterSet", L"MultiByte"));
+		m_configurationDefinitionsDebug[3].insert(std::make_pair(L"ConfigurationType", L"Application"));
+		m_configurationDefinitionsDebug[3].insert(std::make_pair(L"WholeProgramOptimization", L"false"));
+		m_configurationDefinitionsDebug[3].insert(std::make_pair(L"PlatformToolset", toolset));
+
+		m_configurationDefinitionsRelease[0] = m_configurationDefinitionsDebug[0];
+		m_configurationDefinitionsRelease[1] = m_configurationDefinitionsDebug[1];
+		m_configurationDefinitionsRelease[2] = m_configurationDefinitionsDebug[2];
+		m_configurationDefinitionsRelease[3] = m_configurationDefinitionsDebug[3];
+	}
+
 	s >> MemberStaticArray<
 			RefArray< SolutionBuilderMsvcVCXDefinition >,
 			sizeof_array(m_buildDefinitionsDebug),
@@ -151,7 +203,8 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 	const RefArray< Configuration >& configurations = project->getConfigurations();
 	for (RefArray< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
 	{
-		Ref< const Configuration > configuration = *i;
+		const Configuration* configuration = *i;
+		T_ASSERT (configuration);
 
 		os << L"<ProjectConfiguration Include=\"" << configuration->getName() << L"|" << m_platform << L"\">" << Endl;
 		os << IncreaseIndent;
@@ -169,9 +222,13 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 	// Globals
 	os << L"<PropertyGroup Label=\"Globals\">" << Endl;
 	os << IncreaseIndent;
-	os << L"<Keyword>" << m_keyword << L"</Keyword>" << Endl;
+
+	if (!m_keyword.empty())
+		os << L"<Keyword>" << m_keyword << L"</Keyword>" << Endl;
+
 	os << L"<ProjectGUID>" << projectGuid << L"</ProjectGUID>" << Endl;
 	os << L"<RootNamespace>" << project->getName() << L"</RootNamespace>" << Endl;
+
 	os << DecreaseIndent;
 	os << L"</PropertyGroup>" << Endl;
 
@@ -180,32 +237,24 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 	// Configurations
 	for (RefArray< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
 	{
-		Ref< const Configuration > configuration = *i;
+		const Configuration* configuration = *i;
+		T_ASSERT (configuration);
 
 		os << L"<PropertyGroup Label=\"Configuration\" Condition=\"'$(Configuration)|$(Platform)'=='" << configuration->getName() << L"|" << m_platform << L"'\">" << Endl;
 		os << IncreaseIndent;
-		os << L"<CharacterSet>MultiByte</CharacterSet>" << Endl;
 
-		switch (configuration->getTargetFormat())
+		if (configuration->getTargetProfile() == Configuration::TpDebug)
 		{
-		case Configuration::TfStaticLibrary:
-			os << L"<ConfigurationType>StaticLibrary</ConfigurationType>" << Endl;
-			break;
-
-		case Configuration::TfSharedLibrary:
-			os << L"<ConfigurationType>DynamicLibrary</ConfigurationType>" << Endl;
-			break;
-
-		case Configuration::TfExecutable:
-		case Configuration::TfExecutableConsole:
-			os << L"<ConfigurationType>Application</ConfigurationType>" << Endl;
-			break;
+			const std::map< std::wstring, std::wstring >& cd = m_configurationDefinitionsDebug[configuration->getTargetFormat()];
+			for (std::map< std::wstring, std::wstring >::const_iterator i = cd.begin(); i != cd.end(); ++i)
+				os << L"<" << i->first << L">" << i->second << L"</" << i->first << L">" << Endl;
 		}
-		
-		os << L"<WholeProgramOptimization>false</WholeProgramOptimization>" << Endl;
-
-		if (!m_toolset.empty())
-			os << L"<PlatformToolset>" << m_toolset << L"</PlatformToolset>" << Endl;
+		else
+		{
+			const std::map< std::wstring, std::wstring >& cd = m_configurationDefinitionsRelease[configuration->getTargetFormat()];
+			for (std::map< std::wstring, std::wstring >::const_iterator i = cd.begin(); i != cd.end(); ++i)
+				os << L"<" << i->first << L">" << i->second << L"</" << i->first << L">" << Endl;
+		}
 
 		os << DecreaseIndent;
 		os << L"</PropertyGroup>" << Endl;
@@ -224,7 +273,9 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 	os << L"<_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>" << Endl;
 	for (RefArray< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
 	{
-		Ref< const Configuration > configuration = *i;
+		const Configuration* configuration = *i;
+		T_ASSERT (configuration);
+
 		std::wstring name = configuration->getName();
 		std::wstring projectName = m_targetPrefixes[int(configuration->getTargetFormat())] + project->getName();
 

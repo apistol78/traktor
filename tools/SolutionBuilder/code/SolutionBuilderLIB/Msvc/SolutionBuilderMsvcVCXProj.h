@@ -35,12 +35,14 @@ public:
 
 	virtual void serialize(traktor::ISerializer& s);
 
-private:
+protected:
 	std::wstring m_platform;
 	std::wstring m_keyword;
 	std::wstring m_toolset;
 	std::wstring m_targetPrefixes[4];
 	std::wstring m_targetExts[4];
+	std::map< std::wstring, std::wstring > m_configurationDefinitionsDebug[4];
+	std::map< std::wstring, std::wstring > m_configurationDefinitionsRelease[4];
 	traktor::RefArray< SolutionBuilderMsvcVCXDefinition > m_buildDefinitionsDebug[4];
 	traktor::RefArray< SolutionBuilderMsvcVCXDefinition > m_buildDefinitionsRelease[4];
 	traktor::RefArray< SolutionBuilderMsvcVCXBuildTool > m_buildTools;
