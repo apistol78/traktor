@@ -73,6 +73,7 @@ public:
 		s >> Member< GLboolean >(L"depthTestEnable", m_ref.depthTestEnable);
 		s >> Member< uint32_t >(L"colorMask", m_ref.colorMask);
 		s >> Member< GLboolean >(L"depthMask", m_ref.depthMask);
+		s >> Member< GLenum >(L"depthFunc", m_ref.depthFunc);
 		s >> Member< GLboolean >(L"alphaTestEnable", m_ref.alphaTestEnable);
 		s >> Member< GLenum >(L"alphaFunc", m_ref.alphaFunc);
 		s >> Member< GLclampf >(L"alphaRef", m_ref.alphaRef);
@@ -91,7 +92,7 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceOpenGL", 6, ProgramResourceOpenGL, ProgramResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceOpenGL", 7, ProgramResourceOpenGL, ProgramResource)
 
 ProgramResourceOpenGL::ProgramResourceOpenGL()
 :	m_hash(0)
@@ -116,7 +117,7 @@ ProgramResourceOpenGL::ProgramResourceOpenGL(
 
 void ProgramResourceOpenGL::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion() >= 6);
+	T_ASSERT (s.getVersion() >= 7);
 
 	s >> Member< std::string >(L"vertexShader", m_vertexShader);
 	s >> Member< std::string >(L"fragmentShader", m_fragmentShader);

@@ -762,6 +762,7 @@ int master(const CommandLine& cmdLine)
 
 	if (!g_pipelineMutex.existing())
 	{
+#if defined(_WIN32)
 		// Get full path to our executable.
 		TCHAR szFileName[MAX_PATH];
 		if (!GetModuleFileName(NULL, szFileName, sizeof(szFileName)))
@@ -780,6 +781,7 @@ int master(const CommandLine& cmdLine)
 
 		if (!slaveProcess)
 			return 1;
+#endif
 	}
 
 	std::vector< Guid > roots;

@@ -42,7 +42,7 @@ private:
 	void collectLinkDependencies(
 		Solution* solution,
 		Project* project,
-		const std::wstring& configurationName,
+		const Configuration* configuration,
 		std::vector< std::wstring >& outLibraries
 	) const;
 };
