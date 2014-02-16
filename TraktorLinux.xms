@@ -15,7 +15,6 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(BULLET_SDK)/include</item>
 						<item>$(BULLET_SDK)/src</item>
 					</includePaths>
 					<definitions>
@@ -32,7 +31,6 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(BULLET_SDK)/include</item>
 						<item>$(BULLET_SDK)/src</item>
 					</includePaths>
 					<definitions>
@@ -49,7 +47,6 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(BULLET_SDK)/include</item>
 						<item>$(BULLET_SDK)/src</item>
 					</includePaths>
 					<definitions>
@@ -66,7 +63,6 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(BULLET_SDK)/include</item>
 						<item>$(BULLET_SDK)/src</item>
 					</includePaths>
 					<definitions>
@@ -12061,7 +12057,6 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(BULLET_SDK)/include</item>
 						<item>$(BULLET_SDK)/src</item>
 					</includePaths>
 					<definitions>
@@ -12080,7 +12075,6 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(BULLET_SDK)/include</item>
 						<item>$(BULLET_SDK)/src</item>
 					</includePaths>
 					<definitions>
@@ -12099,7 +12093,6 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(BULLET_SDK)/include</item>
 						<item>$(BULLET_SDK)/src</item>
 					</includePaths>
 					<definitions>
@@ -12118,7 +12111,6 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(BULLET_SDK)/include</item>
 						<item>$(BULLET_SDK)/src</item>
 					</includePaths>
 					<definitions>
@@ -15747,7 +15739,7 @@
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Pipeline.App</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Pipeline</sourcePath>
+			<sourcePath>$(TRAKTOR_HOME)/code/Pipeline/App</sourcePath>
 			<configurations>
 				<item type="Configuration" version="1">
 					<name>DebugShared</name>
@@ -15838,6 +15830,18 @@
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[6]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -16375,8 +16379,13 @@
 						<item>_DEBUG</item>
 						<item>T_USE_LUA_DUMP</item>
 					</definitions>
-					<libraryPaths/>
-					<libraries/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0/linux32</item>
+						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0/linux64</item>
+					</libraryPaths>
+					<libraries>
+						<item>lj_vm</item>
+					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 				</item>
@@ -16394,8 +16403,13 @@
 						<item>NDEBUG</item>
 						<item>T_USE_LUA_DUMP</item>
 					</definitions>
-					<libraryPaths/>
-					<libraries/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0/linux32</item>
+						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0/linux64</item>
+					</libraryPaths>
+					<libraries>
+						<item>lj_vm</item>
+					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 				</item>
@@ -16413,8 +16427,13 @@
 						<item>_DEBUG</item>
 						<item>T_USE_LUA_DUMP</item>
 					</definitions>
-					<libraryPaths/>
-					<libraries/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0/linux32</item>
+						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0/linux64</item>
+					</libraryPaths>
+					<libraries>
+						<item>lj_vm</item>
+					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 				</item>
@@ -16432,8 +16451,13 @@
 						<item>NDEBUG</item>
 						<item>T_USE_LUA_DUMP</item>
 					</definitions>
-					<libraryPaths/>
-					<libraries/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0/linux32</item>
+						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0/linux64</item>
+					</libraryPaths>
+					<libraries>
+						<item>lj_vm</item>
+					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 				</item>

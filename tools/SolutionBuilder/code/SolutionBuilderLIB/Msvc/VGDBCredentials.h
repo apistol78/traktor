@@ -14,9 +14,15 @@ public:
 
 	const std::wstring& getUser() const { return m_user; }
 
+	const std::wstring& getLocalPath() const { return m_localPath; }
+
+	const std::wstring& getRemotePath() const { return m_remotePath; }
+
 private:
 	std::wstring m_host;
 	std::wstring m_user;
+	std::wstring m_localPath;
+	std::wstring m_remotePath;
 };
 
 #endif	// VGDBCredentials_H

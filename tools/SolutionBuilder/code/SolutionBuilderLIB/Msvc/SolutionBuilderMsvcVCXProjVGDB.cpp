@@ -470,9 +470,6 @@ bool SolutionBuilderMsvcVCXProjVGDB::generateMakefiles(
 		os << L"LIBRARY_LDFLAGS += $(ADDITIONAL_LINKER_INPUTS)" << Endl;
 		os << Endl;
 
-		os << L"all_make_files := Makefile $(CONFIGURATION_FLAGS_FILE) $(ADDITIONAL_MAKE_FILES)" << Endl;
-		os << Endl;
-
 		os << L"ifeq ($(STARTUPFILES),)" << Endl;
 		os << L"	all_source_files := $(SOURCEFILES)" << Endl;
 		os << L"else" << Endl;
@@ -549,11 +546,13 @@ bool SolutionBuilderMsvcVCXProjVGDB::generateMakefiles(
 
 				if (ext == L"c")
 				{
-					os << L"$(BINARYDIR)/" << sourcePath.getFileNameNoExtension() << L".o : " << sourcePath.getPathName() << L" $(all_make_files)" << Endl;					os << L"	$(CC) $(CFLAGS) -c $< -o $@ -MD -MF $(@:.o=.dep)" << Endl;
+					os << L"$(BINARYDIR)/" << sourcePath.getFileNameNoExtension() << L".o : " << sourcePath.getPathName() << Endl;
+					os << L"	$(CC) $(CFLAGS) -c $< -o $@ -MD -MF $(@:.o=.dep)" << Endl;
 				}
 				else
 				{
-					os << L"$(BINARYDIR)/" << sourcePath.getFileNameNoExtension() << L".o : " << sourcePath.getPathName() << L" $(all_make_files)" << Endl;					os << L"	$(CXX) $(CXXFLAGS) -c $< -o $@ -MD -MF $(@:.o=.dep)" << Endl;
+					os << L"$(BINARYDIR)/" << sourcePath.getFileNameNoExtension() << L".o : " << sourcePath.getPathName() << Endl;
+					os << L"	$(CXX) $(CXXFLAGS) -c $< -o $@ -MD -MF $(@:.o=.dep)" << Endl;
 				}
 
 				os << Endl;
@@ -583,18 +582,27 @@ bool SolutionBuilderMsvcVCXProjVGDB::generateMakefiles(
 
 		std::wstring includeDirectories = L"";
 		std::wstring definitions = L"";
+		std::wstring libraries = L"";
+		std::wstring libraryPaths = L"";
+		std::wstring additionalCompileOptions = L"";
+		std::wstring additionalLinkOptions = L"";
 
 		// Include directories.
 		for (std::vector< std::wstring >::const_iterator i = configuration->getIncludePaths().begin(); i != configuration->getIncludePaths().end(); ++i)
 		{
-			Path relativePath;
-			FileSystem& fileSystem = FileSystem::getInstance();
-			if (fileSystem.getRelativePath(
-				fileSystem.getAbsolutePath(*i),
-				fileSystem.getAbsolutePath(projectPath),
-				relativePath
-			))
-				includeDirectories += relativePath.getPathName() + L" ";
+			if (startsWith< std::wstring >(*i, L"`"))
+				additionalCompileOptions += *i + L" ";
+			else
+			{
+				Path relativePath;
+				FileSystem& fileSystem = FileSystem::getInstance();
+				if (fileSystem.getRelativePath(
+					fileSystem.getAbsolutePath(*i),
+					fileSystem.getAbsolutePath(projectPath),
+					relativePath
+				))
+					includeDirectories += relativePath.getPathName() + L" ";
+			}
 		}
 
 		// Preprocessor definitions.
@@ -602,6 +610,32 @@ bool SolutionBuilderMsvcVCXProjVGDB::generateMakefiles(
 			definitions += *i + L" ";
 		for (std::vector< std::wstring >::const_iterator i = configuration->getDefinitions().begin(); i != configuration->getDefinitions().end(); ++i)
 			definitions += *i + L" ";
+
+		// Libraries.
+		for (std::vector< std::wstring >::const_iterator i = configuration->getLibraries().begin(); i != configuration->getLibraries().end(); ++i)
+		{
+			if (startsWith< std::wstring >(*i, L"`"))
+				additionalLinkOptions += *i + L" ";
+			else
+				libraries += *i + L" ";
+		}
+
+		for (std::vector< std::wstring >::const_iterator i = configuration->getLibraryPaths().begin(); i != configuration->getLibraryPaths().end(); ++i)
+		{
+			if (startsWith< std::wstring >(*i, L"`"))
+				additionalLinkOptions += *i + L" ";
+			else
+			{
+				Path relativePath;
+				FileSystem& fileSystem = FileSystem::getInstance();
+				if (fileSystem.getRelativePath(
+					fileSystem.getAbsolutePath(*i),
+					fileSystem.getAbsolutePath(projectPath),
+					relativePath
+				))
+					libraryPaths += relativePath.getPathName() + L" ";
+			}
+		}
 
 		std::vector< uint8_t > buffer;
 		buffer.reserve(40000);
@@ -623,12 +657,12 @@ bool SolutionBuilderMsvcVCXProjVGDB::generateMakefiles(
 			switch (configuration->getTargetFormat())
 			{
 			case Configuration::TfStaticLibrary:
-				os << L"TARGETNAME := " << project->getName() << L".a" << Endl;
+				os << L"TARGETNAME := lib" << project->getName() << L"_d.a" << Endl;
 				os << L"TARGETTYPE := STATIC" << Endl;
 				break;
 
 			case Configuration::TfSharedLibrary:
-				os << L"TARGETNAME := " << project->getName() << L".so" << Endl;
+				os << L"TARGETNAME := lib" << project->getName() << L"_d.so" << Endl;
 				os << L"TARGETTYPE := SHARED" << Endl;
 				break;
 
@@ -640,11 +674,11 @@ bool SolutionBuilderMsvcVCXProjVGDB::generateMakefiles(
 			}
 			os << Endl;
 
-			std::vector< std::wstring > libraries;
-			collectLinkDependencies(solution, project, configuration->getName(), libraries);
+			std::vector< std::wstring > externalLibraries;
+			collectLinkDependencies(solution, project, configuration, externalLibraries);
 
 			os << L"EXTERNAL_LIBS :=";
-			for (std::vector< std::wstring >::const_iterator i = libraries.begin(); i != libraries.end(); ++i)
+			for (std::vector< std::wstring >::const_iterator i = externalLibraries.begin(); i != externalLibraries.end(); ++i)
 				os << L" " << *i;
 			os << Endl;
 			os << Endl;
@@ -661,29 +695,14 @@ bool SolutionBuilderMsvcVCXProjVGDB::generateMakefiles(
 			os << L"#Additional flags" << Endl;
 			os << L"PREPROCESSOR_MACROS := __LINUX__ " << definitions << Endl;
 			os << L"INCLUDE_DIRS := . " << includeDirectories << Endl;
-			
-			{
-				const std::vector< std::wstring >& libraries = configuration->getLibraries();
-				const std::vector< std::wstring >& libraryPaths = configuration->getLibraryPaths();
-
-				os << L"LIBRARY_NAMES :=";
-				for (std::vector< std::wstring >::const_iterator i = libraries.begin(); i != libraries.end(); ++i)
-					os << L" " << *i;
-				os << Endl;
-				os << L"LIBRARY_DIRS :=";
-				for (std::vector< std::wstring >::const_iterator i = libraryPaths.begin(); i != libraryPaths.end(); ++i)
-					os << L" " << *i;
-				os << Endl;
-			}
-
-			os << L"ADDITIONAL_LINKER_INPUTS := " << Endl;
-			os << L"MACOS_FRAMEWORKS := " << Endl;
+			os << L"LIBRARY_NAMES := " << libraries << Endl;
+			os << L"LIBRARY_DIRS := " << libraryPaths << Endl;
 			os << Endl;
 
-			os << L"CFLAGS := -ggdb -ffunction-sections -march=core2 -fPIC -O0" << Endl;
-			os << L"CXXFLAGS := -ggdb -ffunction-sections -march=core2 -fPIC -O0" << Endl;
+			os << L"CFLAGS := -ggdb -ffunction-sections -march=core2 -fPIC -O0 " << additionalCompileOptions << Endl;
+			os << L"CXXFLAGS := -ggdb -ffunction-sections -march=core2 -fPIC -O0 " << additionalCompileOptions << Endl;
 			os << L"ASFLAGS := " << Endl;
-			os << L"LDFLAGS := -Wl,-gc-sections" << Endl;
+			os << L"LDFLAGS := -Wl,-gc-sections " << additionalLinkOptions << Endl;
 			os << L"COMMONFLAGS := " << Endl;
 			os << Endl;
 
@@ -708,12 +727,12 @@ bool SolutionBuilderMsvcVCXProjVGDB::generateMakefiles(
 			switch (configuration->getTargetFormat())
 			{
 			case Configuration::TfStaticLibrary:
-				os << L"TARGETNAME := " << project->getName() << L".a" << Endl;
+				os << L"TARGETNAME := lib" << project->getName() << L".a" << Endl;
 				os << L"TARGETTYPE := STATIC" << Endl;
 				break;
 
 			case Configuration::TfSharedLibrary:
-				os << L"TARGETNAME := " << project->getName() << L".so" << Endl;
+				os << L"TARGETNAME := lib" << project->getName() << L".so" << Endl;
 				os << L"TARGETTYPE := SHARED" << Endl;
 				break;
 
@@ -725,11 +744,11 @@ bool SolutionBuilderMsvcVCXProjVGDB::generateMakefiles(
 			}
 			os << Endl;
 
-			std::vector< std::wstring > libraries;
-			collectLinkDependencies(solution, project, configuration->getName(), libraries);
+			std::vector< std::wstring > externalLibraries;
+			collectLinkDependencies(solution, project, configuration, externalLibraries);
 
 			os << L"EXTERNAL_LIBS :=";
-			for (std::vector< std::wstring >::const_iterator i = libraries.begin(); i != libraries.end(); ++i)
+			for (std::vector< std::wstring >::const_iterator i = externalLibraries.begin(); i != externalLibraries.end(); ++i)
 				os << L" " << *i;
 			os << Endl;
 			os << Endl;
@@ -746,29 +765,14 @@ bool SolutionBuilderMsvcVCXProjVGDB::generateMakefiles(
 			os << L"#Additional flags" << Endl;
 			os << L"PREPROCESSOR_MACROS := __LINUX__ " << definitions << Endl;
 			os << L"INCLUDE_DIRS := . " << includeDirectories << Endl;
-
-			{
-				const std::vector< std::wstring >& libraries = configuration->getLibraries();
-				const std::vector< std::wstring >& libraryPaths = configuration->getLibraryPaths();
-
-				os << L"LIBRARY_NAMES :=";
-				for (std::vector< std::wstring >::const_iterator i = libraries.begin(); i != libraries.end(); ++i)
-					os << L" " << *i;
-				os << Endl;
-				os << L"LIBRARY_DIRS :=";
-				for (std::vector< std::wstring >::const_iterator i = libraryPaths.begin(); i != libraryPaths.end(); ++i)
-					os << L" " << *i;
-				os << Endl;
-			}
-
-			os << L"ADDITIONAL_LINKER_INPUTS := " << Endl;
-			os << L"MACOS_FRAMEWORKS := " << Endl;
+			os << L"LIBRARY_NAMES := " << libraries << Endl;
+			os << L"LIBRARY_DIRS := " << libraryPaths << Endl;
 			os << Endl;
 
-			os << L"CFLAGS := -ggdb -ffunction-sections -march=core2 -fPIC -O3" << Endl;
-			os << L"CXXFLAGS := -ggdb -ffunction-sections -march=core2 -fPIC -O3" << Endl;
+			os << L"CFLAGS := -ggdb -ffunction-sections -march=core2 -fPIC -O3 " << additionalCompileOptions << Endl;
+			os << L"CXXFLAGS := -ggdb -ffunction-sections -march=core2 -fPIC -O3 " << additionalCompileOptions << Endl;
 			os << L"ASFLAGS := " << Endl;
-			os << L"LDFLAGS := -Wl,-gc-sections" << Endl;
+			os << L"LDFLAGS := -Wl,-gc-sections " << additionalLinkOptions << Endl;
 			os << L"COMMONFLAGS := " << Endl;
 			os << Endl;
 
@@ -819,22 +823,47 @@ bool SolutionBuilderMsvcVCXProjVGDB::generateMakefiles(
 		os << L"      <Transport>SSH</Transport>" << Endl;
 		os << L"      <UserName>" << credentials->getUser() << L"</UserName>" << Endl;
 		os << L"    </BuildHost>" << Endl;
-		os << L"    <MainSourceTransferCommand>" << Endl;
-		os << L"      <SkipWhenRunningCommandList>false</SkipWhenRunningCommandList>" << Endl;
-		os << L"      <RemoteHost>" << Endl;
-		os << L"        <HostName>" << credentials->getHost() << L"</HostName>" << Endl;
-		os << L"        <Transport>SSH</Transport>" << Endl;
-		os << L"        <UserName>" << credentials->getUser() << L"</UserName>" << Endl;
-		os << L"      </RemoteHost>" << Endl;
-		os << L"      <LocalDirectory>$(ProjectDir)</LocalDirectory>" << Endl;
-		os << L"      <RemoteDirectory>/tmp/VisualGDB/$(ProjectDirUnixStyle)</RemoteDirectory>" << Endl;
-		os << L"      <FileMasks>" << Endl;
-		os << L"        <string>*.mak</string>" << Endl;
-		os << L"        <string>Makefile</string>" << Endl;
-		os << L"      </FileMasks>" << Endl;
-		os << L"      <TransferNewFilesOnly>true</TransferNewFilesOnly>" << Endl;
-		os << L"      <IncludeSubdirectories>true</IncludeSubdirectories>" << Endl;
-		os << L"    </MainSourceTransferCommand>" << Endl;
+
+		if (credentials->getLocalPath().empty())
+		{
+			os << L"    <MainSourceTransferCommand>" << Endl;
+			os << L"      <SkipWhenRunningCommandList>false</SkipWhenRunningCommandList>" << Endl;
+			os << L"      <RemoteHost>" << Endl;
+			os << L"        <HostName>" << credentials->getHost() << L"</HostName>" << Endl;
+			os << L"        <Transport>SSH</Transport>" << Endl;
+			os << L"        <UserName>" << credentials->getUser() << L"</UserName>" << Endl;
+			os << L"      </RemoteHost>" << Endl;
+			os << L"      <LocalDirectory>$(ProjectDir)</LocalDirectory>" << Endl;
+			os << L"      <RemoteDirectory>/tmp/VisualGDB/$(ProjectDirUnixStyle)</RemoteDirectory>" << Endl;
+			os << L"      <FileMasks>" << Endl;
+			os << L"        <string>*.mak</string>" << Endl;
+			os << L"        <string>Makefile</string>" << Endl;
+			os << L"      </FileMasks>" << Endl;
+			os << L"      <TransferNewFilesOnly>true</TransferNewFilesOnly>" << Endl;
+			os << L"      <IncludeSubdirectories>true</IncludeSubdirectories>" << Endl;
+			os << L"    </MainSourceTransferCommand>" << Endl;
+		}
+		else
+		{
+			Path relativePath;
+			FileSystem::getInstance().getRelativePath(
+				projectPath,
+				credentials->getLocalPath(),
+				relativePath
+			);
+
+			os << L"    <MountInfo>" << Endl;
+			os << L"      <Mode>UserProvidedMount</Mode>" << Endl;
+			os << L"      <RemoteHost>" << Endl;
+			os << L"        <HostName>" << credentials->getHost() << L"</HostName>" << Endl;
+			os << L"        <Transport>SSH</Transport>" << Endl;
+			os << L"        <UserName>" << credentials->getUser() << L"</UserName>" << Endl;
+			os << L"      </RemoteHost>" << Endl;
+			os << L"      <LocalDirectory>" << credentials->getLocalPath() << L"\\" << relativePath.getPathName() << L"</LocalDirectory>" << Endl;
+			os << L"      <RemoteDirectory>" << credentials->getRemotePath() << L"/" << relativePath.getPathName() << L"</RemoteDirectory>" << Endl;
+			os << L"    </MountInfo>" << Endl;
+		}
+
 		os << L"    <AllowChangingHostForMainCommands>false</AllowChangingHostForMainCommands>" << Endl;
 		os << L"    <SkipBuildIfNoSourceFilesChanged>false</SkipBuildIfNoSourceFilesChanged>" << Endl;
 		os << L"  </Project>" << Endl;
@@ -930,7 +959,7 @@ bool SolutionBuilderMsvcVCXProjVGDB::generateMakefiles(
 		os << L"    </LaunchGDBSettings>" << Endl;
 
 		os << L"    <GenerateCtrlBreakInsteadOfCtrlC>false</GenerateCtrlBreakInsteadOfCtrlC>" << Endl;
-		os << L"    <X11WindowMode>Local</X11WindowMode>" << Endl;
+		os << L"    <X11WindowMode>Remote</X11WindowMode>" << Endl;
 		os << L"    <KeepConsoleAfterExit>false</KeepConsoleAfterExit>" << Endl;
 		os << L"    <RunGDBUnderSudo>false</RunGDBUnderSudo>" << Endl;
 		os << L"    <SkipDeployment>false</SkipDeployment>" << Endl;
@@ -938,8 +967,9 @@ bool SolutionBuilderMsvcVCXProjVGDB::generateMakefiles(
 		os << L"  <CustomBuild>" << Endl;
 		os << L"    <PreBuildActions>" << Endl;
 
-		// Add default source transfer.
+		if (credentials->getLocalPath().empty())
 		{
+			// Add default source transfer.
 			Path sourcePath;
 			FileSystem::getInstance().getRelativePath(
 				FileSystem::getInstance().getAbsolutePath(project->getSourcePath()),
@@ -995,7 +1025,7 @@ bool SolutionBuilderMsvcVCXProjVGDB::generateMakefiles(
 
 					haveResources = true;
 				}
-				else
+				else if (credentials->getLocalPath().empty())
 				{
 					Path sourcePath;
 
@@ -1025,53 +1055,92 @@ bool SolutionBuilderMsvcVCXProjVGDB::generateMakefiles(
 			}
 		}
 
-		// Transfer converted resources.
-		if (haveResources)
+		if (credentials->getLocalPath().empty())
 		{
-			os << L"      <CustomActionBase xsi:type=\"SourceTransferAction\">" << Endl;
-			os << L"        <SkipWhenRunningCommandList>false</SkipWhenRunningCommandList>" << Endl;
-			os << L"        <RemoteHost>" << Endl;
-			os << L"          <HostName>" << credentials->getHost() << L"</HostName>" << Endl;
-			os << L"          <Transport>SSH</Transport>" << Endl;
-			os << L"          <UserName>" << credentials->getUser() << L"</UserName>" << Endl;
-			os << L"        </RemoteHost>" << Endl;
-			os << L"        <LocalDirectory>$(ProjectDir)/Resources</LocalDirectory>" << Endl;
-			os << L"        <RemoteDirectory>/tmp/VisualGDB/$(ProjectDirUnixStyle)/Resources</RemoteDirectory>" << Endl;
-			os << L"        <FileMasks>" << Endl;
-			os << L"          <string>*.h</string>" << Endl;
-			os << L"        </FileMasks>" << Endl;
-			os << L"        <TransferNewFilesOnly>true</TransferNewFilesOnly>" << Endl;
-			os << L"        <IncludeSubdirectories>false</IncludeSubdirectories>" << Endl;
-			os << L"      </CustomActionBase>" << Endl;
-		}
+			// Transfer converted resources.
+			if (haveResources)
+			{
+				os << L"      <CustomActionBase xsi:type=\"SourceTransferAction\">" << Endl;
+				os << L"        <SkipWhenRunningCommandList>false</SkipWhenRunningCommandList>" << Endl;
+				os << L"        <RemoteHost>" << Endl;
+				os << L"          <HostName>" << credentials->getHost() << L"</HostName>" << Endl;
+				os << L"          <Transport>SSH</Transport>" << Endl;
+				os << L"          <UserName>" << credentials->getUser() << L"</UserName>" << Endl;
+				os << L"        </RemoteHost>" << Endl;
+				os << L"        <LocalDirectory>$(ProjectDir)/Resources</LocalDirectory>" << Endl;
+				os << L"        <RemoteDirectory>/tmp/VisualGDB/$(ProjectDirUnixStyle)/Resources</RemoteDirectory>" << Endl;
+				os << L"        <FileMasks>" << Endl;
+				os << L"          <string>*.h</string>" << Endl;
+				os << L"        </FileMasks>" << Endl;
+				os << L"        <TransferNewFilesOnly>true</TransferNewFilesOnly>" << Endl;
+				os << L"        <IncludeSubdirectories>false</IncludeSubdirectories>" << Endl;
+				os << L"      </CustomActionBase>" << Endl;
+			}
 
-		// Setup actions to transfer include files.
-		const std::vector< std::wstring >& includePaths = configuration->getIncludePaths();
-		for (std::vector< std::wstring >::const_iterator i = includePaths.begin(); i != includePaths.end(); ++i)
-		{
-			// Transform include path to being relative to project path. Include paths are relative to source path by convention.
-			Path sourcePath;
-			FileSystem::getInstance().getRelativePath(
-				(Path(project->getSourcePath()) + Path(*i)).normalized(),
-				projectPath,
-				sourcePath
-			);
+			// Setup actions to transfer include files.
+			const std::vector< std::wstring >& includePaths = configuration->getIncludePaths();
+			for (std::vector< std::wstring >::const_iterator i = includePaths.begin(); i != includePaths.end(); ++i)
+			{
+				if (startsWith< std::wstring >(*i, L"`"))
+					continue;
 
-			os << L"      <CustomActionBase xsi:type=\"SourceTransferAction\">" << Endl;
-			os << L"        <SkipWhenRunningCommandList>false</SkipWhenRunningCommandList>" << Endl;
-			os << L"        <RemoteHost>" << Endl;
-			os << L"          <HostName>" << credentials->getHost() << L"</HostName>" << Endl;
-			os << L"          <Transport>SSH</Transport>" << Endl;
-			os << L"          <UserName>" << credentials->getUser() << L"</UserName>" << Endl;
-			os << L"        </RemoteHost>" << Endl;
-			os << L"        <LocalDirectory>$(ProjectDir)/" << sourcePath.getPathName() << L"</LocalDirectory>" << Endl;
-			os << L"        <RemoteDirectory>/tmp/VisualGDB/$(ProjectDirUnixStyle)/" << sourcePath.getPathName() << L"</RemoteDirectory>" << Endl;
-			os << L"        <FileMasks>" << Endl;
-			os << L"          <string>*.*</string>" << Endl;
-			os << L"        </FileMasks>" << Endl;
-			os << L"        <TransferNewFilesOnly>true</TransferNewFilesOnly>" << Endl;
-			os << L"        <IncludeSubdirectories>true</IncludeSubdirectories>" << Endl;
-			os << L"      </CustomActionBase>" << Endl;
+				// Transform include path to being relative to project path. Include paths are relative to source path by convention.
+				Path sourcePath;
+				FileSystem::getInstance().getRelativePath(
+					(Path(project->getSourcePath()) + Path(*i)).normalized(),
+					projectPath,
+					sourcePath
+				);
+
+				os << L"      <CustomActionBase xsi:type=\"SourceTransferAction\">" << Endl;
+				os << L"        <SkipWhenRunningCommandList>false</SkipWhenRunningCommandList>" << Endl;
+				os << L"        <RemoteHost>" << Endl;
+				os << L"          <HostName>" << credentials->getHost() << L"</HostName>" << Endl;
+				os << L"          <Transport>SSH</Transport>" << Endl;
+				os << L"          <UserName>" << credentials->getUser() << L"</UserName>" << Endl;
+				os << L"        </RemoteHost>" << Endl;
+				os << L"        <LocalDirectory>$(ProjectDir)/" << sourcePath.getPathName() << L"</LocalDirectory>" << Endl;
+				os << L"        <RemoteDirectory>/tmp/VisualGDB/$(ProjectDirUnixStyle)/" << sourcePath.getPathName() << L"</RemoteDirectory>" << Endl;
+				os << L"        <FileMasks>" << Endl;
+				os << L"          <string>*.*</string>" << Endl;
+				os << L"        </FileMasks>" << Endl;
+				os << L"        <TransferNewFilesOnly>true</TransferNewFilesOnly>" << Endl;
+				os << L"        <IncludeSubdirectories>true</IncludeSubdirectories>" << Endl;
+				os << L"      </CustomActionBase>" << Endl;
+			}
+
+			// Setup action to transfer explicit libraries.
+			const std::vector< std::wstring >& libraryPaths = configuration->getLibraryPaths();
+			for (std::vector< std::wstring >::const_iterator i = libraryPaths.begin(); i != libraryPaths.end(); ++i)
+			{
+				if (startsWith< std::wstring >(*i, L"`"))
+					continue;
+
+				Path relativePath;
+				FileSystem& fileSystem = FileSystem::getInstance();
+				if (fileSystem.getRelativePath(
+					fileSystem.getAbsolutePath(*i),
+					fileSystem.getAbsolutePath(projectPath),
+					relativePath
+				))
+				{
+					os << L"      <CustomActionBase xsi:type=\"SourceTransferAction\">" << Endl;
+					os << L"        <SkipWhenRunningCommandList>false</SkipWhenRunningCommandList>" << Endl;
+					os << L"        <RemoteHost>" << Endl;
+					os << L"          <HostName>" << credentials->getHost() << L"</HostName>" << Endl;
+					os << L"          <Transport>SSH</Transport>" << Endl;
+					os << L"          <UserName>" << credentials->getUser() << L"</UserName>" << Endl;
+					os << L"        </RemoteHost>" << Endl;
+					os << L"        <LocalDirectory>$(ProjectDir)/" << relativePath.getPathName() << L"</LocalDirectory>" << Endl;
+					os << L"        <RemoteDirectory>/tmp/VisualGDB/$(ProjectDirUnixStyle)/" << relativePath.getPathName() << L"</RemoteDirectory>" << Endl;
+					os << L"        <FileMasks>" << Endl;
+					os << L"          <string>*.*</string>" << Endl;
+					os << L"        </FileMasks>" << Endl;
+					os << L"        <TransferNewFilesOnly>true</TransferNewFilesOnly>" << Endl;
+					os << L"        <IncludeSubdirectories>true</IncludeSubdirectories>" << Endl;
+					os << L"      </CustomActionBase>" << Endl;
+				}
+			}
 		}
 
 		os << L"    </PreBuildActions>" << Endl;
@@ -1137,7 +1206,7 @@ bool SolutionBuilderMsvcVCXProjVGDB::collectFiles(
 void SolutionBuilderMsvcVCXProjVGDB::collectLinkDependencies(
 	Solution* solution,
 	Project* project,
-	const std::wstring& configurationName,
+	const Configuration* configuration,
 	std::vector< std::wstring >& outLibraries
 ) const
 {
@@ -1167,23 +1236,35 @@ void SolutionBuilderMsvcVCXProjVGDB::collectLinkDependencies(
 		T_ASSERT (dependentSolution);
 		T_ASSERT (dependentProject);
 
-		Ref< Configuration > configuration = dependentProject->getConfiguration(configurationName);
-		if (configuration)
+		Ref< Configuration > dependentConfiguration = dependentProject->getConfiguration(configuration->getName());
+		if (dependentConfiguration)
 		{
-			Configuration::TargetFormat format = configuration->getTargetFormat();
+			Configuration::TargetFormat format = dependentConfiguration->getTargetFormat();
 			if (format == Configuration::TfStaticLibrary || format == Configuration::TfSharedLibrary)
 			{
-				std::wstring dependentProductPath = dependentSolution->getRootPath() + L"/" + configurationName;
-				std::wstring dependentProduct = dependentProductPath + L"/" + dependentProject->getName();
+				std::wstring dependentProductPath = dependentSolution->getRootPath() + L"/" + dependentConfiguration->getName();
+				std::wstring dependentProduct = dependentProductPath + L"/lib" + dependentProject->getName();
+
+				if (dependentConfiguration->getTargetProfile() == Configuration::TpDebug)
+				{
+					if (format == Configuration::TfStaticLibrary)
+						dependentProduct += L"_d.a";
+					else
+						dependentProduct += L"_d.so";
+				}
+				else
+				{
+					if (format == Configuration::TfStaticLibrary)
+						dependentProduct += L".a";
+					else
+						dependentProduct += L".so";
+				}
 
 				Path libraryPathRelative;
 				if (!FileSystem::getInstance().getRelativePath(dependentProduct, projectPath, libraryPathRelative))
 					continue;
 
-				if (format == Configuration::TfStaticLibrary)
-					outLibraries.push_back(libraryPathRelative.getPathName() + L".a");
-				else
-					outLibraries.push_back(libraryPathRelative.getPathName() + L".so");
+				outLibraries.push_back(libraryPathRelative.getPathName());
 			}
 		}
 	}

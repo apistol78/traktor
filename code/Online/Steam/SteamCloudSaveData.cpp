@@ -1,3 +1,4 @@
+#include <cstring>
 #include <steam/steam_api.h>
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Log/Log.h"

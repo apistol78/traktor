@@ -10,4 +10,6 @@ void VGDBCredentials::serialize(traktor::ISerializer& s)
 {
 	s >> Member< std::wstring >(L"host", m_host);
 	s >> Member< std::wstring >(L"user", m_user);
+	s >> Member< std::wstring >(L"localPath", m_localPath);
+	s >> Member< std::wstring >(L"remotePath", m_remotePath);
 }

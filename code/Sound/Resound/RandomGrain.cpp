@@ -58,13 +58,18 @@ RandomGrain::RandomGrain(
 
 Ref< ISoundBufferCursor > RandomGrain::createCursor() const
 {
-	int32_t index = int32_t(m_random.nextFloat() * m_grains.size());
+	if (m_grains.empty())
+		return 0;
+
+	int32_t index = int32_t(m_random.nextFloat() * (m_grains.size() - 1) + 0.5f);
 	if (m_humanize && m_grains.size() >= 2)
 	{
 		while (index == m_last)
-			index = int32_t(m_random.nextFloat() * m_grains.size());
+			index = int32_t(m_random.nextFloat() * (m_grains.size() - 1) + 0.5f);
 		m_last = index;
 	}
+	T_ASSERT (index >= 0);
+	T_ASSERT (index < m_grains.size());
 
 	Ref< RandomGrainCursor > cursor = new RandomGrainCursor();
 	cursor->m_grain = m_grains[index];

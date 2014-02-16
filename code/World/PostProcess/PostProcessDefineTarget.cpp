@@ -50,7 +50,7 @@ bool PostProcessDefineTarget::define(PostProcess* postProcess, render::IRenderSy
 	Ref< render::RenderTargetSet > renderTargetSet = renderSystem->createRenderTargetSet(desc);
 	if (!renderTargetSet)
 	{
-		log::error << L"Unable to create render target (" << desc.width << L"*" << desc.height << L", msaa " << desc.multiSample << L")" << Endl;
+		log::error << L"Unable to create render target (" << desc.width << L"*" << desc.height << L" " << render::getTextureFormatName(m_format) << L")" << Endl;
 		return false;
 	}
 
@@ -60,7 +60,7 @@ bool PostProcessDefineTarget::define(PostProcess* postProcess, render::IRenderSy
 		m_clearColor
 	);
 
-	T_DEBUG(L"Post process target \"" << m_id << L"\" " << desc.width << L"*" << desc.height << L" created");
+	T_DEBUG(L"Post process target \"" << m_id << L"\" (" << desc.width << L"*" << desc.height << L" " << render::getTextureFormatName(m_format) << L") created");
 	return true;
 }
 

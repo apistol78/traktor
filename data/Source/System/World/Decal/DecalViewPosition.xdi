@@ -145,16 +145,16 @@
 		<item type="traktor.render.Vector">
 			<comment/>
 			<position>
-				<first>196</first>
-				<second>326</second>
+				<first>198</first>
+				<second>327</second>
 			</position>
 			<value>2, -2, 0, 0</value>
 		</item>
 		<item type="traktor.render.Vector">
 			<comment/>
 			<position>
-				<first>231</first>
-				<second>388</second>
+				<first>197</first>
+				<second>359</second>
 			</position>
 			<value>-1, 1, 0, 0</value>
 		</item>
