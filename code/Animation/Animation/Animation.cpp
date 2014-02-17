@@ -44,13 +44,18 @@ struct KeyPoseAccessor
 		int minRange, maxRange;
 		indices.range(minRange, maxRange);
 
+		const Scalar sw0(w0);
+		const Scalar sw1(w1);
+		const Scalar sw2(w2);
+		const Scalar sw3(w3);
+
 		for (int i = minRange; i < maxRange; ++i)
 		{
 			if (!indices(i))
 				continue;
 
-			pose.setJointOffset(i, v0.getJointOffset(i) * Scalar(w0) + v1.getJointOffset(i) * Scalar(w1) + v2.getJointOffset(i) * Scalar(w2) + v3.getJointOffset(i) * Scalar(w3));
-			pose.setJointOrientation(i, v0.getJointOrientation(i) * Scalar(w0) + v1.getJointOrientation(i) * Scalar(w1) + v2.getJointOrientation(i) * Scalar(w2) + v3.getJointOrientation(i) * Scalar(w3));
+			pose.setJointOffset(i, v0.getJointOffset(i) * sw0 + v1.getJointOffset(i) * sw1 + v2.getJointOffset(i) * sw2 + v3.getJointOffset(i) * sw3);
+			pose.setJointOrientation(i, v0.getJointOrientation(i) * sw0 + v1.getJointOrientation(i) * sw1 + v2.getJointOrientation(i) * sw2 + v3.getJointOrientation(i) * sw3);
 		}
 
 		return pose;
