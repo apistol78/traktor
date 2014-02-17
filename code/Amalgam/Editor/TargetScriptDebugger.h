@@ -46,6 +46,7 @@ public:
 private:
 	Ref< net::BidirectionalObjectTransport > m_transport;
 	std::list< IListener* > m_listeners;
+	Ref< script::CallStack > m_currentCallStack;
 };
 
 	}

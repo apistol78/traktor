@@ -84,7 +84,12 @@ void WorldLayer::destroy()
 		feedbackManager->removeListener(spray::FbtCamera, this);
 	}
 
-	m_scene.clear();
+	if (m_scene)
+	{
+		m_scene->destroy();
+		m_scene.clear();
+	}
+
 	m_entities.clear();
 
 	safeDestroy(m_renderGroup);
