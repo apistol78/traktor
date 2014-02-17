@@ -36,12 +36,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptDebuggerView", ScriptDebuggerView,
 ScriptDebuggerView::ScriptDebuggerView(IScriptDebugger* scriptDebugger)
 :	m_scriptDebugger(scriptDebugger)
 {
-	m_scriptDebugger->addListener(this);
 }
 
 ScriptDebuggerView::~ScriptDebuggerView()
 {
-	m_scriptDebugger->removeListener(this);
+	T_ASSERT (!m_scriptDebugger);
 }
 
 bool ScriptDebuggerView::create(ui::Widget* parent)
@@ -89,11 +88,17 @@ bool ScriptDebuggerView::create(ui::Widget* parent)
 	tabDebugger->setActivePage(tabPageCallStack);
 	tabDebugger->update();
 
+	m_scriptDebugger->addListener(this);
 	return true;
 }
 
 void ScriptDebuggerView::destroy()
 {
+	if (m_scriptDebugger)
+	{
+		m_scriptDebugger->removeListener(this);
+		m_scriptDebugger = 0;
+	}
 	ui::Container::destroy();
 }
 
