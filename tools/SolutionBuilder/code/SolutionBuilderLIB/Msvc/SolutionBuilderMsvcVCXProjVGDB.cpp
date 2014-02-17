@@ -10,6 +10,8 @@
 #include <Core/Misc/String.h>
 #include <Core/Misc/MD5.h>
 #include <Core/Log/Log.h>
+#include <Xml/Document.h>
+#include <Xml/Element.h>
 #include <Xml/XmlDeserializer.h>
 #include "SolutionBuilderLIB/Configuration.h"
 #include "SolutionBuilderLIB/ExternalDependency.h"
@@ -32,6 +34,18 @@ namespace
 	std::wstring systemPath(const Path& path)
 	{
 		return replaceAll< std::wstring >(path.getPathName(), L'/', L'\\');
+	}
+
+	std::wstring getElementValue(xml::Document* document, const std::wstring& elementPath, const std::wstring& defaultValue)
+	{
+		if (!document)
+			return defaultValue;
+
+		xml::Element* element = document->getSingle(elementPath);
+		if (element)
+			return element->getValue();
+		else
+			return defaultValue;
 	}
 
 }
@@ -804,6 +818,23 @@ bool SolutionBuilderMsvcVCXProjVGDB::generateMakefiles(
 		const Configuration* configuration = *i;
 		T_ASSERT (configuration);
 
+		Ref< xml::Document > current;
+
+		// Read existing settings file; so we can keep some debug changes etc.
+		Ref< IStream > file = FileSystem::getInstance().open(
+			projectPath + L"/" + project->getName() + L"-" + configuration->getName() + L".vgdbsettings",
+			traktor::File::FmRead
+		);
+		if (file)
+		{
+			current = new xml::Document();
+			if (!current->loadFromStream(file))
+				current = 0;
+
+			file->close();
+			file = 0;
+		}
+
 		std::vector< uint8_t > buffer;
 		buffer.reserve(40000);
 
@@ -952,17 +983,33 @@ bool SolutionBuilderMsvcVCXProjVGDB::generateMakefiles(
 		os << L"          </Record>" << Endl;
 		os << L"        </Records>" << Endl;
 		os << L"      </GDBEnvironment>" << Endl;
-		os << L"      <DebuggedProgram>/tmp/VisualGDB/$(ProjectDirUnixStyle)/../" << configuration->getName() << L"/" << project->getName() << L"</DebuggedProgram>" << Endl;
+
+		std::wstring binaryOutputPath;
+		if (credentials->getRemotePath().empty())
+			binaryOutputPath = L"/tmp/VisualGDB/$(ProjectDirUnixStyle)/../" + configuration->getName();
+		else
+		{
+			Path relativePath;
+			FileSystem::getInstance().getRelativePath(
+				projectPath,
+				credentials->getLocalPath(),
+				relativePath
+			);
+			binaryOutputPath = credentials->getRemotePath() + L"/" + relativePath.getPathName() + L"/" + configuration->getName();
+		}
+
+		os << L"      <DebuggedProgram>" << getElementValue(current, L"/VisualGDBProjectSettings2/Debug/LaunchGDBSettings/DebuggedProgram", binaryOutputPath + L"/" + project->getName()) << L"</DebuggedProgram>" << Endl;
 		os << L"      <GDBServerPort>2000</GDBServerPort>" << Endl;
-		os << L"      <ProgramArguments />" << Endl;
-		os << L"      <WorkingDirectory>/tmp/VisualGDB/$(ProjectDirUnixStyle)/../" << configuration->getName() << L"</WorkingDirectory>" << Endl;
+		os << L"      <ProgramArguments>" << getElementValue(current, L"/VisualGDBProjectSettings2/Debug/LaunchGDBSettings/ProgramArguments", L"") << L"</ProgramArguments>" << Endl;
+		os << L"      <WorkingDirectory>" << getElementValue(current, L"/VisualGDBProjectSettings2/Debug/LaunchGDBSettings/WorkingDirectory", binaryOutputPath) << L"</WorkingDirectory>" << Endl;
 		os << L"    </LaunchGDBSettings>" << Endl;
 
 		os << L"    <GenerateCtrlBreakInsteadOfCtrlC>false</GenerateCtrlBreakInsteadOfCtrlC>" << Endl;
-		os << L"    <X11WindowMode>Remote</X11WindowMode>" << Endl;
+		os << L"    <X11WindowMode>" << getElementValue(current, L"/VisualGDBProjectSettings2/Debug/X11WindowMode", L"Remote") << L"</X11WindowMode>" << Endl;
 		os << L"    <KeepConsoleAfterExit>false</KeepConsoleAfterExit>" << Endl;
 		os << L"    <RunGDBUnderSudo>false</RunGDBUnderSudo>" << Endl;
 		os << L"    <SkipDeployment>false</SkipDeployment>" << Endl;
+		os << L"    <LdLibraryPath>" << getElementValue(current, L"/VisualGDBProjectSettings2/Debug/LdLibraryPath", L"") << L"</LdLibraryPath>" << Endl;
 		os << L"  </Debug>" << Endl;
 		os << L"  <CustomBuild>" << Endl;
 		os << L"    <PreBuildActions>" << Endl;

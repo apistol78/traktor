@@ -940,7 +940,7 @@ int main(int argc, const char** argv)
 	try
 #endif
 	{
-#if !defined(_DEBUG)
+#if defined(_WIN32) && !defined(_DEBUG)
 		SetErrorMode(SEM_NOGPFAULTERRORBOX);
 		PVOID eh = AddVectoredExceptionHandler(1, exceptionVectoredHandler);
 #endif
@@ -951,13 +951,14 @@ int main(int argc, const char** argv)
 			result = standalone(cmdLine);
 		else
 			result = master(cmdLine);
-#if !defined(_DEBUG)
+#if defined(_WIN32) && !defined(_DEBUG)
 		RemoveVectoredExceptionHandler(eh);
 #endif
 	}
 #if !defined(_DEBUG)
 	catch (...)
 	{
+#	if defined(_WIN32)
 		HMODULE hCrashModule;
 		if (GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, reinterpret_cast<LPCTSTR>(g_exceptionAddress), &hCrashModule))
 		{
@@ -967,6 +968,9 @@ int main(int argc, const char** argv)
 		}
 		else
 			log::error << L"Unhandled exception occurred at 0x" << g_exceptionAddress << Endl;
+#	else
+		log::error << L"Unhandled exception occurred" << Endl;
+#	endif
 	}
 #endif
 

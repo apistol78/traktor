@@ -269,7 +269,7 @@ bool ProgramOpenGL::activate(ContextOpenGL* renderContext, float targetSize[2])
 		T_OGL_SAFE(glStencilFunc(
 			m_renderState.stencilFunc,
 			m_renderState.stencilRef,
-			~0UL
+			~0U
 		));
 	}
 	
