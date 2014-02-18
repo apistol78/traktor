@@ -9,6 +9,7 @@
 #include "World/PostProcess/PostProcessStepChain.h"
 #include "World/PostProcess/PostProcessStepGodRay.h"
 #include "World/PostProcess/PostProcessStepGrain.h"
+#include "World/PostProcess/PostProcessStepLensDirt.h"
 #include "World/PostProcess/PostProcessStepLuminance.h"
 #include "World/PostProcess/PostProcessStepRepeat.h"
 #include "World/PostProcess/PostProcessStepSimple.h"
@@ -71,6 +72,8 @@ bool PostProcessPipeline::buildDependencies(
 			pipelineDepends->addDependency(stepGodRay->getShader(), editor::PdfBuild | editor::PdfResource);
 		else if (const PostProcessStepGrain* stepGrain = dynamic_type_cast< const PostProcessStepGrain* >(step))
 			pipelineDepends->addDependency(stepGrain->getShader(), editor::PdfBuild | editor::PdfResource);
+		else if (const PostProcessStepLensDirt* stepLensDirt = dynamic_type_cast< const PostProcessStepLensDirt* >(step))
+			pipelineDepends->addDependency(stepLensDirt->getShader(), editor::PdfBuild | editor::PdfResource);
 		else if (const PostProcessStepLuminance* stepLuminance = dynamic_type_cast< const PostProcessStepLuminance* >(step))
 			pipelineDepends->addDependency(stepLuminance->getShader(), editor::PdfBuild | editor::PdfResource);
 		else if (const PostProcessStepRepeat* stepRepeat = dynamic_type_cast< const PostProcessStepRepeat* >(step))
