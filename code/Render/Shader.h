@@ -99,6 +99,13 @@ public:
 	 */
 	void draw(IRenderView* renderView, VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, const Primitives& primitives);
 
+	/*! \brief Draw primitives with this shader.
+	 *
+	 * \param renderView Render primitives view.
+	 * \param primitives Primitives.
+	 */
+	void draw(IRenderView* renderView, VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, const Primitives& primitives, uint32_t instanceCount);
+
 	/*! \name Program access
 	 */
 	//@{

@@ -134,6 +134,20 @@ void Shader::draw(IRenderView* renderView, VertexBuffer* vertexBuffer, IndexBuff
 	);
 }
 
+void Shader::draw(IRenderView* renderView, VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, const Primitives& primitives, uint32_t instanceCount)
+{
+	if (!m_currentProgram)
+		return;
+
+	renderView->draw(
+		vertexBuffer,
+		indexBuffer,
+		m_currentProgram,
+		primitives,
+		instanceCount
+	);
+}
+
 void Shader::updateCurrentProgram()
 {
 	m_currentProgram = 0;
