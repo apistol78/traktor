@@ -83,14 +83,18 @@ public:
 	virtual bool getBackBufferContent(void* buffer) const;
 
 private:
+	struct ProfileCapture
+	{
+		const wchar_t* name;
+		intptr_t begin;
+		intptr_t end;
+	};
+
 	Ref< IRenderSystem > m_renderSystem;
 	Ref< IRenderView > m_renderView;
-	bool m_captureFrame;
-	Ref< RenderTargetSet > m_captureTarget;
-	Ref< drawing::Image > m_captureImage;
-	int32_t m_captureDepth;
-	uint32_t m_drawCount;
-	uint32_t m_frameCount;
+	Ref< ITimeQuery > m_timeQuery;
+	int32_t m_targetDepth;
+	std::vector< ProfileCapture > m_timeStamps;
 };
 
 	}

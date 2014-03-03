@@ -27,7 +27,7 @@ Vertex::Vertex(uint32_t position)
 
 void Vertex::clearTexCoords()
 {
-	m_texCoords.resize(0);
+	m_texCoords.clear();
 }
 
 void Vertex::setTexCoord(uint32_t channel, uint32_t texCoord)
@@ -52,7 +52,7 @@ uint32_t Vertex::getTexCoordCount() const
 
 void Vertex::clearJointInfluences()
 {
-	m_jointInfluences.resize(0);
+	m_jointInfluences.clear();
 }
 
 void Vertex::setJointInfluence(uint32_t jointIndex, float influence)

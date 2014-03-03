@@ -78,14 +78,26 @@ RenderServerEmbedded::RenderServerEmbedded(net::BidirectionalObjectTransport* tr
 bool RenderServerEmbedded::create(PropertyGroup* settings, void* nativeHandle, void* nativeWindowHandle)
 {
 	std::wstring renderType = settings->getProperty< PropertyString >(L"Render.Type");
+	std::wstring captureRenderType = settings->getProperty< PropertyString >(L"Render.CaptureType");
 
 	Ref< render::IRenderSystem > renderSystem = loadAndInstantiate< render::IRenderSystem >(renderType);
 	if (!renderSystem)
 		return false;
 
+	Ref< render::IRenderSystem > captureRenderSystem;
+	if (!captureRenderType.empty())
+	{
+		captureRenderSystem = loadAndInstantiate< render::IRenderSystem >(captureRenderType);
+		if (!captureRenderSystem)
+			return false;
+
+		std::swap(captureRenderSystem, renderSystem);
+	}
+
 	int32_t textureQuality = settings->getProperty< PropertyInteger >(L"Render.TextureQuality", 2);
 
 	render::RenderSystemDesc rsd;
+	rsd.capture = captureRenderSystem;
 	rsd.nativeHandle = nativeHandle;
 	rsd.adapter = settings->getProperty< PropertyInteger >(L"Render.Adapter", -1);
 	rsd.mipBias = settings->getProperty< PropertyFloat >(L"Render.MipBias", 0.0f);

@@ -1,3 +1,4 @@
+#include "Render/Capture/ProgramCapture.h"
 #include "Render/Capture/RenderSystemCapture.h"
 #include "Render/Capture/RenderViewCapture.h"
 
@@ -6,15 +7,13 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderSystemCapture", RenderSystemCapture, IRenderSystem)
-
-RenderSystemCapture::RenderSystemCapture(IRenderSystem* renderSystem)
-:	m_renderSystem(renderSystem)
-{
-}
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemCapture", 0, RenderSystemCapture, IRenderSystem)
 
 bool RenderSystemCapture::create(const RenderSystemDesc& desc)
 {
+	if ((m_renderSystem = desc.capture) == 0)
+		return false;
+
 	return m_renderSystem->create(desc);
 }
 
@@ -101,14 +100,20 @@ Ref< RenderTargetSet > RenderSystemCapture::createRenderTargetSet(const RenderTa
 	return m_renderSystem->createRenderTargetSet(desc);
 }
 
-Ref< IProgram > RenderSystemCapture::createProgram(const ProgramResource* programResource)
+Ref< IProgram > RenderSystemCapture::createProgram(const ProgramResource* programResource, const wchar_t* const tag)
 {
-	return m_renderSystem->createProgram(programResource);
+	Ref< IProgram > program = m_renderSystem->createProgram(programResource, tag);
+	return program ? new ProgramCapture(program, tag) : 0;
 }
 
 Ref< IProgramCompiler > RenderSystemCapture::createProgramCompiler() const
 {
 	return m_renderSystem->createProgramCompiler();
+}
+
+Ref< ITimeQuery > RenderSystemCapture::createTimeQuery() const
+{
+	return m_renderSystem->createTimeQuery();
 }
 
 void RenderSystemCapture::getStatistics(RenderSystemStatistics& outStatistics) const

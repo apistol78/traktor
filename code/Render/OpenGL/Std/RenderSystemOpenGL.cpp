@@ -825,7 +825,7 @@ Ref< RenderTargetSet > RenderSystemOpenGL::createRenderTargetSet(const RenderTar
 	return renderTargetSet;
 }
 
-Ref< IProgram > RenderSystemOpenGL::createProgram(const ProgramResource* programResource)
+Ref< IProgram > RenderSystemOpenGL::createProgram(const ProgramResource* programResource, const wchar_t* const tag)
 {
 	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
 	return ProgramOpenGL::create(m_resourceContext, programResource);
@@ -834,6 +834,11 @@ Ref< IProgram > RenderSystemOpenGL::createProgram(const ProgramResource* program
 Ref< IProgramCompiler > RenderSystemOpenGL::createProgramCompiler() const
 {
 	return new ProgramCompilerOpenGL();
+}
+
+Ref< ITimeQuery > RenderSystemOpenGL::createTimeQuery() const
+{
+	return 0;
 }
 
 void RenderSystemOpenGL::getStatistics(RenderSystemStatistics& outStatistics) const

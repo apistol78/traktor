@@ -288,7 +288,6 @@ public:
 private:
 	struct Batch
 	{
-		uint8_t shaderId;
 		std::pair< bool, bool > depthState;
 		Ref< ITexture > texture;
 		Primitives primitives;

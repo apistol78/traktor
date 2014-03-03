@@ -22,6 +22,18 @@ T_MATH_INLINE Vector2::Vector2(float x, float y)
 	this->y = y;
 }
 
+T_MATH_INLINE const Vector2& Vector2::zero()
+{
+	static const Vector2 c_zero(0.0f, 0.0f);
+	return c_zero;
+}
+
+T_MATH_INLINE const Vector2& Vector2::one()
+{
+	static const Vector2 c_one(1.0f, 1.0f);
+	return c_one;
+}
+
 T_MATH_INLINE void Vector2::set(float x, float y)
 {
 	this->x = x;

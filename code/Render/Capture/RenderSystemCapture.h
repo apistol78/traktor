@@ -29,8 +29,6 @@ class T_DLLCLASS RenderSystemCapture : public IRenderSystem
 	T_RTTI_CLASS;
 
 public:
-	RenderSystemCapture(IRenderSystem* renderSystem);
-
 	virtual bool create(const RenderSystemDesc& desc);
 
 	virtual void destroy();
@@ -63,9 +61,11 @@ public:
 
 	virtual Ref< RenderTargetSet > createRenderTargetSet(const RenderTargetSetCreateDesc& desc);
 
-	virtual Ref< IProgram > createProgram(const ProgramResource* programResource);
+	virtual Ref< IProgram > createProgram(const ProgramResource* programResource, const wchar_t* const tag);
 
 	virtual Ref< IProgramCompiler > createProgramCompiler() const;
+
+	virtual Ref< ITimeQuery > createTimeQuery() const;
 
 	virtual void getStatistics(RenderSystemStatistics& outStatistics) const;
 

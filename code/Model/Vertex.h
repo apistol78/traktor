@@ -1,8 +1,8 @@
 #ifndef traktor_model_Vertex_H
 #define traktor_model_Vertex_H
 
-#include <vector>
 #include "Core/Config.h"
+#include "Core/Containers/StaticVector.h"
 #include "Model/Types.h"
 
 // import/export mechanism.
@@ -74,8 +74,8 @@ private:
 	uint32_t m_normal;
 	uint32_t m_tangent;
 	uint32_t m_binormal;
-	std::vector< uint32_t > m_texCoords;
-	std::vector< float > m_jointInfluences;
+	StaticVector< uint32_t, 4 > m_texCoords;
+	StaticVector< float, 8 > m_jointInfluences;
 };
 
 	}

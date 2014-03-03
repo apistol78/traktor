@@ -8,12 +8,14 @@
 #include "Model/Operations/CleanDegenerate.h"
 #include "Model/Operations/CleanDuplicates.h"
 #include "Model/Operations/Quantize.h"
+#include "Model/Operations/Reduce.h"
 #include "Model/Operations/Transform.h"
 #include "Model/Operations/Triangulate.h"
 #include "Model/Operations/MergeCoplanarAdjacents.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/PrimitiveRenderer.h"
+#include "Resource/IResourceManager.h"
 #include "Ui/FileDialog.h"
 #include "Ui/ListBox.h"
 #include "Ui/MethodHandler.h"
@@ -32,6 +34,12 @@ namespace traktor
 {
 	namespace model
 	{
+		namespace
+		{
+	
+const resource::Id< render::ITexture > c_textureDebug(Guid(L"{0163BEDD-9297-A64F-AAD5-360E27E37C6E}"));
+		
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.ModelToolDialog", ModelToolDialog, ui::Dialog)
 
@@ -64,6 +72,7 @@ bool ModelToolDialog::create(ui::Widget* parent)
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Clean Degenerate", ui::Command(L"ModelTool.CleanDegenerate"), ui::custom::ToolBarButton::BsText));
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Clean Duplicates", ui::Command(L"ModelTool.CleanDuplicates"), ui::custom::ToolBarButton::BsText));
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Quantize", ui::Command(L"ModelTool.Quantize"), ui::custom::ToolBarButton::BsText));
+	toolBar->addItem(new ui::custom::ToolBarButton(L"Reduce", ui::Command(L"ModelTool.Reduce"), ui::custom::ToolBarButton::BsText));
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Merge Coplanar", ui::Command(L"ModelTool.MergeCoplanar"), ui::custom::ToolBarButton::BsText));
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Convex Hull", ui::Command(L"ModelTool.ConvexHull"), ui::custom::ToolBarButton::BsText));
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Triangulate", ui::Command(L"ModelTool.Triangulate"), ui::custom::ToolBarButton::BsText));
@@ -112,6 +121,8 @@ bool ModelToolDialog::create(ui::Widget* parent)
 	m_primitiveRenderer = new render::PrimitiveRenderer();
 	if (!m_primitiveRenderer->create(m_resourceManager, m_renderSystem))
 		return false;
+
+	m_resourceManager->bind(c_textureDebug, m_textureDebug);
 
 	update();
 	show();
@@ -237,6 +248,11 @@ void ModelToolDialog::eventToolBarClick(ui::Event* event)
 	else if (cmd == L"ModelTool.Quantize")
 	{
 		Ref< IModelOperation > operation = new Quantize(0.5f);
+		applyOperation(operation);
+	}
+	else if (cmd == L"ModelTool.Reduce")
+	{
+		Ref< IModelOperation > operation = new Reduce(0.5f);
 		applyOperation(operation);
 	}
 	else if (cmd == L"ModelTool.MergeCoplanar")
@@ -417,12 +433,30 @@ void ModelToolDialog::eventRenderPaint(ui::Event* event)
 					Vector4 N = cross(p[0] - p[1], p[2] - p[1]).normalized();
 					float diffuse = abs(dot3(lightDir, N)) * 0.5f + 0.5f;
 
-					m_primitiveRenderer->drawSolidTriangle(p[2], p[1], p[0], Color4ub(
-						int32_t(diffuse * 81),
-						int32_t(diffuse * 105),
-						int32_t(diffuse * 195),
-						255
-					));
+					if (vertices[indices[0]].getTexCoordCount() > 0)
+					{
+						m_primitiveRenderer->drawTextureTriangle(
+							p[2], m_modelTris->getTexCoord(vertices[indices[2]].getTexCoord(0)),
+							p[1], m_modelTris->getTexCoord(vertices[indices[1]].getTexCoord(0)),
+							p[0], m_modelTris->getTexCoord(vertices[indices[0]].getTexCoord(0)),
+							Color4ub(
+								int32_t(diffuse * 255),
+								int32_t(diffuse * 255),
+								int32_t(diffuse * 255),
+								255
+							),
+							m_textureDebug
+						);
+					}
+					else
+					{
+						m_primitiveRenderer->drawSolidTriangle(p[2], p[1], p[0], Color4ub(
+							int32_t(diffuse * 81),
+							int32_t(diffuse * 105),
+							int32_t(diffuse * 195),
+							255
+						));
+					}
 				}
 				m_primitiveRenderer->popDepthState();
 			}
@@ -435,7 +469,7 @@ void ModelToolDialog::eventRenderPaint(ui::Event* event)
 			// Render wire-frame.
 			if (m_toolWire->isToggled())
 			{
-				m_primitiveRenderer->pushDepthState(false, false);
+				m_primitiveRenderer->pushDepthState(true, false);
 				for (std::vector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
 				{
 					const std::vector< uint32_t >& indices = i->getVertices();
@@ -456,7 +490,7 @@ void ModelToolDialog::eventRenderPaint(ui::Event* event)
 
 			if (m_toolNormals->isToggled())
 			{
-				m_primitiveRenderer->pushDepthState(false, false);
+				m_primitiveRenderer->pushDepthState(true, false);
 				for (std::vector< Vertex >::const_iterator i = vertices.begin(); i != vertices.end(); ++i)
 				{
 					if (i->getNormal() != c_InvalidIndex)
@@ -472,7 +506,7 @@ void ModelToolDialog::eventRenderPaint(ui::Event* event)
 
 			if (m_toolVertices->isToggled())
 			{
-				m_primitiveRenderer->pushDepthState(false, false);
+				m_primitiveRenderer->pushDepthState(true, false);
 				for (AlignedVector< Vector4 >::const_iterator i = positions.begin(); i != positions.end(); ++i)
 				{
 					m_primitiveRenderer->drawSolidPoint(*i, 3.0f, Color4ub(255, 255, 0, 200));

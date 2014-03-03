@@ -294,7 +294,7 @@ Ref< RenderTargetSet > RenderSystemOpenGLES2::createRenderTargetSet(const Render
 #endif
 }
 
-Ref< IProgram > RenderSystemOpenGLES2::createProgram(const ProgramResource* programResource)
+Ref< IProgram > RenderSystemOpenGLES2::createProgram(const ProgramResource* programResource, const wchar_t* const tag)
 {
 #if !defined(T_OFFLINE_ONLY)
 	T_ANONYMOUS_VAR(IContext::Scope)(m_globalContext);
@@ -307,6 +307,11 @@ Ref< IProgram > RenderSystemOpenGLES2::createProgram(const ProgramResource* prog
 Ref< IProgramCompiler > RenderSystemOpenGLES2::createProgramCompiler() const
 {
 	return new ProgramCompilerOpenGLES2();
+}
+
+Ref< ITimeQuery > RenderSystemOpenGLES2::createTimeQuery() const
+{
+	return 0;
 }
 
 void RenderSystemOpenGLES2::getStatistics(RenderSystemStatistics& outStatistics) const

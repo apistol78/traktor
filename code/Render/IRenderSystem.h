@@ -19,17 +19,18 @@ namespace traktor
 	namespace render
 	{
 
-class IRenderView;
-class VertexElement;
-class VertexBuffer;
 class IndexBuffer;
-class ISimpleTexture;
 class ICubeTexture;
-class IVolumeTexture;
-class RenderTargetSet;
-class ProgramResource;
 class IProgram;
 class IProgramCompiler;
+class IRenderView;
+class ISimpleTexture;
+class ITimeQuery;
+class IVolumeTexture;
+class ProgramResource;
+class RenderTargetSet;
+class VertexBuffer;
+class VertexElement;
 
 /*! \brief Render system interface.
  * \ingroup Render
@@ -138,13 +139,19 @@ public:
 	 * \param shaderResource Compiled shader resource.
 	 * \return Shader suitable for rendering with this render system.
 	 */
-	virtual Ref< IProgram > createProgram(const ProgramResource* programResource) = 0;
+	virtual Ref< IProgram > createProgram(const ProgramResource* programResource, const wchar_t* const tag) = 0;
 
 	/*! \brief Create runtime program compiler.
 	 *
 	 * \return Runtime program compiler.
 	 */
 	virtual Ref< IProgramCompiler > createProgramCompiler() const = 0;
+
+	/*! \brief Create GPU time query object.
+	 *
+	 * \return Time query object.
+	 */
+	virtual Ref< ITimeQuery > createTimeQuery() const = 0;
 
 	//@}
 

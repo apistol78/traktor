@@ -30,7 +30,7 @@ public:
 
 	virtual ~Emitter();
 
-	void emit(EmitterContext& c, Node* node);
+	bool emit(EmitterContext& c, Node* node);
 
 private:
 	std::map< const TypeInfo*, EmitterImpl* > m_emitters;

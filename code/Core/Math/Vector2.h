@@ -40,6 +40,10 @@ public:
 
 	explicit T_MATH_INLINE Vector2(float x, float y);
 
+	static T_MATH_INLINE const Vector2& zero();
+
+	static T_MATH_INLINE const Vector2& one();
+
 	T_MATH_INLINE void set(float x, float y);
 
 	T_MATH_INLINE float length() const;

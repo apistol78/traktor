@@ -399,7 +399,7 @@ Ref< RenderTargetSet > RenderSystemWin32::createRenderTargetSet(const RenderTarg
 	return renderTargetSet;
 }
 
-Ref< IProgram > RenderSystemWin32::createProgram(const ProgramResource* programResource)
+Ref< IProgram > RenderSystemWin32::createProgram(const ProgramResource* programResource, const wchar_t* const tag)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
 
@@ -417,6 +417,11 @@ Ref< IProgram > RenderSystemWin32::createProgram(const ProgramResource* programR
 Ref< IProgramCompiler > RenderSystemWin32::createProgramCompiler() const
 {
 	return new ProgramCompilerWin32();
+}
+
+Ref< ITimeQuery > RenderSystemWin32::createTimeQuery() const
+{
+	return 0;
 }
 
 void RenderSystemWin32::getStatistics(RenderSystemStatistics& outStatistics) const

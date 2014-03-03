@@ -23,6 +23,8 @@
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/PropertyString.h"
+#include "Core/Settings/PropertyStringSet.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Database/Database.h"
@@ -130,6 +132,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_toolTweaks->add(new ui::MenuItem(L"Supersample *4", true, 0));
 	m_toolTweaks->add(new ui::MenuItem(L"Attach Script Debugger", true, 0));
 	m_toolTweaks->add(new ui::MenuItem(L"Attach Script Profiler", true, 0));
+	m_toolTweaks->add(new ui::MenuItem(L"Profile Rendering", true, 0));
 	m_toolBar->addItem(m_toolTweaks);
 
 	// Create target configuration list control.
@@ -391,6 +394,13 @@ void EditorPlugin::eventTargetListPlay(ui::Event* event)
 				tweakSettings->setProperty< PropertyBoolean >(L"Script.AttachDebugger", true);
 			if (m_toolTweaks->get(6)->isChecked())
 				tweakSettings->setProperty< PropertyBoolean >(L"Script.AttachProfiler", true);
+			if (m_toolTweaks->get(7)->isChecked())
+			{
+				std::set< std::wstring > modules = tweakSettings->getProperty< PropertyStringSet >(L"Amalgam.Modules");
+				modules.insert(L"Traktor.Render.Capture");
+				tweakSettings->setProperty< PropertyStringSet >(L"Amalgam.Modules", modules);
+				tweakSettings->setProperty< PropertyString >(L"Render.CaptureType", L"traktor.render.RenderSystemCapture");
+			}
 
 			// Add deploy and launch actions.
 			action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsDeploying);

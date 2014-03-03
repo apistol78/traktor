@@ -86,17 +86,103 @@ void ModelAdjacency::remove(uint32_t polygon)
 	}
 }
 
-void ModelAdjacency::getSharedEdges(uint32_t polygon, uint32_t edge, std::vector< uint32_t >& outSharedEdges) const
+void ModelAdjacency::update(uint32_t polygon)
+{
+	remove(polygon);
+	add(polygon);
+}
+
+void ModelAdjacency::getEnteringEdges(uint32_t vertexId, std::vector< uint32_t >& outEnteringEdges) const
+{
+	if (m_mode == MdByPosition)
+		vertexId = m_model->getVertex(vertexId).getPosition();
+
+	outEnteringEdges.resize(0);
+	for (uint32_t i = 0; i < m_edges.size(); ++i)
+	{
+		const Edge& edge = m_edges[i];
+
+		const Polygon& polygon = m_model->getPolygon(edge.polygon);
+		uint32_t vertexId1 = polygon.getVertex((edge.index + 1) % polygon.getVertexCount());
+
+		if (m_mode == MdByVertex)
+		{
+			if (vertexId1 == vertexId)
+				outEnteringEdges.push_back(i);
+		}
+		else if (m_mode == MdByPosition)
+		{
+			uint32_t positionId1 = m_model->getVertex(vertexId1).getPosition();
+			if (positionId1 == vertexId)
+				outEnteringEdges.push_back(i);
+		}
+	}
+}
+
+void ModelAdjacency::getLeavingEdges(uint32_t vertexId, std::vector< uint32_t >& outLeavingEdges) const
+{
+	if (m_mode == MdByPosition)
+		vertexId = m_model->getVertex(vertexId).getPosition();
+
+	outLeavingEdges.resize(0);
+	for (uint32_t i = 0; i < m_edges.size(); ++i)
+	{
+		const Edge& edge = m_edges[i];
+
+		const Polygon& polygon = m_model->getPolygon(edge.polygon);
+		uint32_t vertexId0 = polygon.getVertex(edge.index);
+
+		if (m_mode == MdByVertex)
+		{
+			if (vertexId0 == vertexId)
+				outLeavingEdges.push_back(i);
+		}
+		else if (m_mode == MdByPosition)
+		{
+			uint32_t positionId0 = m_model->getVertex(vertexId0).getPosition();
+			if (positionId0 == vertexId)
+				outLeavingEdges.push_back(i);
+		}
+	}
+}
+
+void ModelAdjacency::getSharedEdges(uint32_t edge, std::vector< uint32_t >& outSharedEdges) const
+{
+	if (m_edges[edge].share)
+		outSharedEdges = *(m_edges[edge].share);
+	else
+		outSharedEdges.resize(0);
+}
+
+void ModelAdjacency::getSharedEdges(uint32_t polygon, uint32_t polygonEdge, std::vector< uint32_t >& outSharedEdges) const
 {
 	outSharedEdges.resize(0);
 	for (std::vector< Edge >::const_iterator i = m_edges.begin(); i != m_edges.end(); ++i)
 	{
-		if (i->polygon == polygon && i->index == edge)
+		if (i->polygon == polygon && i->index == polygonEdge)
 		{
 			outSharedEdges = *(i->share);
 			break;
 		}
 	}
+}
+
+uint32_t ModelAdjacency::getSharedEdgeCount(uint32_t edge) const
+{
+	if (m_edges[edge].share)
+		return m_edges[edge].share->size();
+	else
+		return 0;
+}
+
+uint32_t ModelAdjacency::getSharedEdgeCount(uint32_t polygon, uint32_t polygonEdge) const
+{
+	for (std::vector< Edge >::const_iterator i = m_edges.begin(); i != m_edges.end(); ++i)
+	{
+		if (i->polygon == polygon && i->index == polygonEdge)
+			return i->share->size();
+	}
+	return 0;
 }
 
 uint32_t ModelAdjacency::getPolygon(uint32_t edge) const
@@ -107,6 +193,11 @@ uint32_t ModelAdjacency::getPolygon(uint32_t edge) const
 uint32_t ModelAdjacency::getPolygonEdge(uint32_t edge) const
 {
 	return m_edges[edge].index;
+}
+
+uint32_t ModelAdjacency::getEdgeCount() const
+{
+	return m_edges.size();
 }
 
 void ModelAdjacency::getMatchIndices(const Edge& edge, uint32_t& outIndex0, uint32_t& outIndex1) const

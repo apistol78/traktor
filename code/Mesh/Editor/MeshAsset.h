@@ -67,6 +67,10 @@ public:
 
 	bool getGenerateOccluder() const { return m_generateOccluder; }
 
+	void setAutoDetailLevel(float autoDetailLevel) { m_autoDetailLevel = autoDetailLevel; }
+
+	float getAutoDetailLevel() const { return m_autoDetailLevel; }
+
 private:
 	MeshType m_meshType;
 	std::map< std::wstring, Guid > m_materialTemplates;
@@ -75,6 +79,7 @@ private:
 	bool m_bakeOcclusion;
 	bool m_cullDistantFaces;
 	bool m_generateOccluder;
+	float m_autoDetailLevel;
 };
 
 	}
