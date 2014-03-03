@@ -103,6 +103,8 @@ public:
 
 	uint32_t getPositionCount() const { return m_positions.size(); }
 
+	void setPosition(uint32_t index, const Vector4& position) { m_positions.set(index, position); }
+
 	const Vector4& getPosition(uint32_t index) const { return m_positions.get(index); }
 
 	const Vector4& getVertexPosition(uint32_t vertexIndex) const { return getPosition(getVertex(vertexIndex).getPosition()); }

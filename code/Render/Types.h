@@ -326,12 +326,10 @@ struct RenderViewStatistics
 	// Last frame.
 	uint32_t drawCalls;
 	uint32_t primitiveCount;
-	double duration;
 
 	RenderViewStatistics()
 	:	drawCalls(0)
 	,	primitiveCount(0)
-	,	duration(0.0)
 	{
 	}
 };
@@ -406,6 +404,7 @@ struct RenderSystemInformation
 /*! \brief Descriptor for render system. */
 struct RenderSystemDesc
 {
+	class IRenderSystem* capture;
 	void* nativeHandle;
 	int32_t adapter;
 	float mipBias;
@@ -413,7 +412,8 @@ struct RenderSystemDesc
 	bool verbose;
 
 	RenderSystemDesc()
-	:	nativeHandle(0)
+	:	capture(0)
+	,	nativeHandle(0)
 	,	adapter(-1)
 	,	mipBias(0.0f)
 	,	maxAnisotropy(1)

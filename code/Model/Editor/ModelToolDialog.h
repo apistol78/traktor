@@ -1,6 +1,7 @@
 #ifndef traktor_model_ModelToolDialog_H
 #define traktor_model_ModelToolDialog_H
 
+#include "Resource/Proxy.h"
 #include "Ui/Dialog.h"
 
 namespace traktor
@@ -10,6 +11,7 @@ namespace traktor
 
 class IRenderSystem;
 class IRenderView;
+class ITexture;
 class PrimitiveRenderer;
 
 	}
@@ -59,6 +61,7 @@ private:
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
+	resource::Proxy< render::ITexture > m_textureDebug;
 	Ref< ui::custom::ToolBarButton > m_toolSolid;
 	Ref< ui::custom::ToolBarButton > m_toolWire;
 	Ref< ui::custom::ToolBarButton > m_toolNormals;

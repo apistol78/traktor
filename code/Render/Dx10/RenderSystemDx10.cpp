@@ -320,7 +320,7 @@ Ref< RenderTargetSet > RenderSystemDx10::createRenderTargetSet(const RenderTarge
 	return renderTargetSet;
 }
 
-Ref< IProgram > RenderSystemDx10::createProgram(const ProgramResource* programResource)
+Ref< IProgram > RenderSystemDx10::createProgram(const ProgramResource* programResource, const wchar_t* const tag)
 {
 	Ref< const ProgramResourceDx10 > resource = dynamic_type_cast< const ProgramResourceDx10* >(programResource);
 	if (!resource)
@@ -336,6 +336,11 @@ Ref< IProgram > RenderSystemDx10::createProgram(const ProgramResource* programRe
 Ref< IProgramCompiler > RenderSystemDx10::createProgramCompiler() const
 {
 	return new ProgramCompilerDx10();
+}
+
+Ref< ITimeQuery > RenderSystemDx10::createTimeQuery() const
+{
+	return 0;
 }
 
 void RenderSystemDx10::getStatistics(RenderSystemStatistics& outStatistics) const

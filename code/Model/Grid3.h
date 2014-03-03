@@ -61,6 +61,39 @@ public:
 		return m_values[index];
 	}
 
+	void set(uint32_t index, const ValueType& v)
+	{
+		// Remove index from cell.
+		{
+			Vector4 p = PositionAccessor::get(m_values[index]) / m_cellSize;
+
+			int32_t x = int32_t(p.x());
+			int32_t y = int32_t(p.y());
+			int32_t z = int32_t(p.z());
+
+			uint32_t hash = HashFunction::get(x, y, z);
+			AlignedVector< uint32_t >& indices = m_indices[hash];
+			AlignedVector< uint32_t >::iterator it = std::find(indices.begin(), indices.end(), index);
+			if (it != indices.end())
+				indices.erase(it);
+		}
+
+		// Add index to new cell.
+		{
+			Vector4 p = PositionAccessor::get(m_values[index]) / m_cellSize;
+
+			int32_t x = int32_t(p.x());
+			int32_t y = int32_t(p.y());
+			int32_t z = int32_t(p.z());
+
+			uint32_t hash = HashFunction::get(x, y, z);
+			m_indices[hash].push_back(index);
+		}
+
+		// Modify value.
+		m_values[index] = v;
+	}
+
 	uint32_t get(const ValueType& v, float distance) const
 	{
 		T_ASSERT (distance <= m_cellSize / 2.0f);

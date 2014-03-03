@@ -17,14 +17,17 @@ bool CleanDegenerate::apply(Model& model) const
 		Polygon& polygon = polygons[i];
 
 		std::vector< uint32_t >& vertices = polygon.getVertices();
-		for (uint32_t j = 0; j < vertices.size() - 1; )
+		if (vertices.size() > 1)
 		{
-			uint32_t p0 = model.getVertex(vertices[j]).getPosition();
-			uint32_t p1 = model.getVertex(vertices[j + 1]).getPosition();
-			if (p0 == p1)
-				vertices.erase(vertices.begin() + j);
-			else
-				++j;
+			for (uint32_t j = 0; j < vertices.size() - 1; )
+			{
+				uint32_t p0 = model.getVertex(vertices[j]).getPosition();
+				uint32_t p1 = model.getVertex(vertices[j + 1]).getPosition();
+				if (p0 == p1)
+					vertices.erase(vertices.begin() + j);
+				else
+					++j;
+			}
 		}
 
 		if (vertices.size() <= 2)

@@ -12,6 +12,7 @@
 #include "Render/Dx11/RenderViewDx11.h"
 #include "Render/Dx11/ResourceCache.h"
 #include "Render/Dx11/SimpleTextureDx11.h"
+#include "Render/Dx11/TimeQueryDx11.h"
 #include "Render/Dx11/TypesDx11.h"
 #include "Render/Dx11/Utilities.h"
 #include "Render/Dx11/VertexBufferDynamicDx11.h"
@@ -380,39 +381,41 @@ Ref< IndexBuffer > RenderSystemDx11::createIndexBuffer(IndexType indexType, uint
 Ref< ISimpleTexture > RenderSystemDx11::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
 	Ref< SimpleTextureDx11 > texture = new SimpleTextureDx11(m_context);
-	if (!texture->create(desc))
+	if (texture->create(desc))
+		return texture;
+	else
 		return 0;
-	return texture;
 }
 
 Ref< ICubeTexture > RenderSystemDx11::createCubeTexture(const CubeTextureCreateDesc& desc)
 {
 	Ref< CubeTextureDx11 > texture = new CubeTextureDx11(m_context);
-	if (!texture->create(desc))
+	if (texture->create(desc))
+		return texture;
+	else
 		return 0;
-	return texture;
 }
 
 Ref< IVolumeTexture > RenderSystemDx11::createVolumeTexture(const VolumeTextureCreateDesc& desc)
 {
 	Ref< VolumeTextureDx11 > texture = new VolumeTextureDx11(m_context);
-	if (!texture->create(desc))
+	if (texture->create(desc))
+		return texture;
+	else
 		return 0;
-	return texture;
 }
 
 Ref< RenderTargetSet > RenderSystemDx11::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_context->getLock());
-
 	Ref< RenderTargetSetDx11 > renderTargetSet = new RenderTargetSetDx11(m_context);
-	if (!renderTargetSet->create(m_context->getD3DDevice(), desc))
+	if (renderTargetSet->create(m_context->getD3DDevice(), desc))
+		return renderTargetSet;
+	else
 		return 0;
-
-	return renderTargetSet;
 }
 
-Ref< IProgram > RenderSystemDx11::createProgram(const ProgramResource* programResource)
+Ref< IProgram > RenderSystemDx11::createProgram(const ProgramResource* programResource, const wchar_t* const tag)
 {
 	Ref< const ProgramResourceDx11 > resource = dynamic_type_cast< const ProgramResourceDx11* >(programResource);
 	if (!resource)
@@ -428,6 +431,16 @@ Ref< IProgram > RenderSystemDx11::createProgram(const ProgramResource* programRe
 Ref< IProgramCompiler > RenderSystemDx11::createProgramCompiler() const
 {
 	return new ProgramCompilerDx11();
+}
+
+Ref< ITimeQuery > RenderSystemDx11::createTimeQuery() const
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_context->getLock());
+	Ref< TimeQueryDx11 > timeQuery = new TimeQueryDx11(m_context);
+	if (timeQuery->create())
+		return timeQuery;
+	else
+		return 0;
 }
 
 void RenderSystemDx11::getStatistics(RenderSystemStatistics& outStatistics) const

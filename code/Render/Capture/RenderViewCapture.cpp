@@ -1,14 +1,13 @@
-#if defined(_WIN32)
-#	include <windows.h>
-#endif
-#include "Render/Capture/RenderViewCapture.h"
-#include "Render/IRenderSystem.h"
-#include "Render/RenderTargetSet.h"
-#include "Drawing/Image.h"
-#include "Drawing/PixelFormat.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
+#include "Drawing/Image.h"
+#include "Drawing/PixelFormat.h"
+#include "Render/IRenderSystem.h"
+#include "Render/ITimeQuery.h"
+#include "Render/RenderTargetSet.h"
+#include "Render/Capture/ProgramCapture.h"
+#include "Render/Capture/RenderViewCapture.h"
 
 namespace traktor
 {
@@ -20,11 +19,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewCapture", RenderViewCapture, I
 RenderViewCapture::RenderViewCapture(IRenderSystem* renderSystem, IRenderView* renderView)
 :	m_renderSystem(renderSystem)
 ,	m_renderView(renderView)
-,	m_captureFrame(false)
-,	m_captureDepth(0)
-,	m_drawCount(0)
-,	m_frameCount(0)
 {
+	m_timeQuery = renderSystem->createTimeQuery();
 }
 
 bool RenderViewCapture::nextEvent(RenderEvent& outEvent)
@@ -107,60 +103,20 @@ bool RenderViewCapture::begin(EyeType eye)
 	if (!m_renderView->begin(eye))
 		return false;
 
-#if defined(_DEBUG)
-	static bool s_captureFrame = false;
-	if (s_captureFrame)
+	if (m_timeQuery)
 	{
-		m_captureFrame = true;
-		s_captureFrame = false;
-	}
-#endif
+		m_timeQuery->begin();
 
-#if defined(_WIN32)
-	if (GetAsyncKeyState(VK_F12) & 0x8000)
-	{
-		log::info << L"Render capture begun" << Endl;
-		m_captureFrame = true;
-	}
-#endif
+		ProfileCapture pc;
+		pc.name = L"Frame";
+		pc.begin = m_timeQuery->stamp();
+		pc.end = 0;
 
-	if (m_captureFrame)
-	{
-		// Create off screen render target matching dimensions of this view.
-		Viewport vp = m_renderView->getViewport();
-
-		RenderTargetSetCreateDesc rtscd;
-		rtscd.count = 1;
-		rtscd.width = vp.width;
-		rtscd.height = vp.height;
-		rtscd.multiSample = 0;
-		rtscd.createDepthStencil = true;
-		rtscd.usingPrimaryDepthStencil = false;
-		rtscd.targets[0].format = TfR8G8B8A8;
-
-		m_captureTarget = m_renderSystem->createRenderTargetSet(rtscd);
-		if (!m_captureTarget)
-		{
-			m_captureFrame = false;
-			return m_renderView->begin(EtCyclop);
-		}
-
-		if (!m_renderView->begin(m_captureTarget, 0))
-		{
-			m_captureFrame = false;
-			m_captureTarget->destroy();
-			m_captureTarget = 0;
-			return m_renderView->begin(EtCyclop);
-		}
-
-		m_captureImage = new drawing::Image(
-			drawing::PixelFormat::getR8G8B8A8(),
-			vp.width,
-			vp.height
-		);
+		m_timeStamps.resize(0);
+		m_timeStamps.push_back(pc);
 	}
 
-	m_captureDepth = 0;
+	m_targetDepth = 1;
 	return true;
 }
 
@@ -169,7 +125,7 @@ bool RenderViewCapture::begin(RenderTargetSet* renderTargetSet)
 	if (!m_renderView->begin(renderTargetSet))
 		return false;
 
-	m_captureDepth++;
+	++m_targetDepth;
 	return true;
 }
 
@@ -178,7 +134,7 @@ bool RenderViewCapture::begin(RenderTargetSet* renderTargetSet, int renderTarget
 	if (!m_renderView->begin(renderTargetSet, renderTarget))
 		return false;
 
-	m_captureDepth++;
+	++m_targetDepth;
 	return true;
 }
 
@@ -189,83 +145,66 @@ void RenderViewCapture::clear(uint32_t clearMask, const Color4f* color, float de
 
 void RenderViewCapture::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)
 {
-	m_renderView->draw(vertexBuffer, indexBuffer, program, primitives);
-	m_drawCount++;
+	ProgramCapture* programCapture = checked_type_cast< ProgramCapture* >(program);
+	if (!programCapture)
+		return;
 
-	if (m_captureFrame && m_captureDepth == 0)
+	if (m_timeQuery)
 	{
-		m_renderView->end();
+		ProfileCapture pc;
+		pc.name = programCapture->m_tag.c_str();
+		pc.begin = m_timeQuery->stamp();
 
-		if (m_captureTarget->read(0, m_captureImage->getData()))
-		{
-			FileSystem::getInstance().makeDirectory(L"capture");
+		m_renderView->draw(vertexBuffer, indexBuffer, programCapture->m_program, primitives);
 
-			StringOutputStream ss;
-			ss << L"capture/frame" << m_frameCount << L"_draw" << m_drawCount << L".tga";
-
-			if (m_captureImage->save(ss.str()))
-				log::info << L"Captured draw " << m_drawCount << L", frame " << m_frameCount << Endl;
-			else
-				log::error << L"Unable to save captured image \"" << ss.str() << L"\"" << Endl;
-		}
-		else
-			log::error << L"Unable to capture image" << Endl;
-
-		if (!m_renderView->begin(m_captureTarget, 0))
-			log::error << L"Unable to continue capture; failed to rebind capture target" << Endl;
+		pc.end = m_timeQuery->stamp();
+		m_timeStamps.push_back(pc);
 	}
 }
 
 void RenderViewCapture::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
 {
-	m_renderView->draw(vertexBuffer, indexBuffer, program, primitives, instanceCount);
-	m_drawCount++;
+	ProgramCapture* programCapture = checked_type_cast< ProgramCapture* >(program);
+	if (!programCapture)
+		return;
 
-	if (m_captureFrame && m_captureDepth == 0)
+	if (m_timeQuery)
 	{
-		m_renderView->end();
+		ProfileCapture pc;
+		pc.name = programCapture->m_tag.c_str();
+		pc.begin = m_timeQuery->stamp();
 
-		if (m_captureTarget->read(0, m_captureImage->getData()))
-		{
-			FileSystem::getInstance().makeDirectory(L"capture");
+		m_renderView->draw(vertexBuffer, indexBuffer, programCapture->m_program, primitives, instanceCount);
 
-			StringOutputStream ss;
-			ss << L"capture/frame" << m_frameCount << L"_draw" << m_drawCount << L".tga";
-
-			if (m_captureImage->save(ss.str()))
-				log::info << L"Captured draw " << m_drawCount << L", frame " << m_frameCount << Endl;
-			else
-				log::error << L"Unable to save captured image \"" << ss.str() << L"\"" << Endl;
-		}
-		else
-			log::error << L"Unable to capture image" << Endl;
-
-		if (!m_renderView->begin(m_captureTarget, 0))
-			log::error << L"Unable to continue capture; failed to rebind capture target" << Endl;
+		pc.end = m_timeQuery->stamp();
+		m_timeStamps.push_back(pc);
 	}
 }
 
 void RenderViewCapture::end()
 {
-	if (m_captureFrame && m_captureDepth == 0)
+	if (--m_targetDepth == 0)
 	{
-		m_renderView->end();
-
-		m_captureFrame = false;
-		m_captureTarget->destroy();
-		m_captureTarget = 0;
-
-		log::info << L"Render capture finished" << Endl;
+		if (m_timeQuery)
+		{
+			ProfileCapture& pc = m_timeStamps.front();
+			pc.end = m_timeQuery->stamp();
+			m_timeQuery->end();
+		}
 	}
 
 	m_renderView->end();
-	m_captureDepth--;
 }
 
 void RenderViewCapture::present()
 {
 	m_renderView->present();
-	m_frameCount++;
+	for (std::vector< ProfileCapture >::const_iterator i = m_timeStamps.begin(); i != m_timeStamps.end(); ++i)
+	{
+		uint64_t timeBegin = m_timeQuery->get(i->begin);
+		uint64_t timeEnd = m_timeQuery->get(i->end);
+		log::info << i->name << L" -> " << (timeEnd - timeBegin) / 1000.0f << L" ms" << Endl;
+	}
 }
 
 void RenderViewCapture::pushMarker(const char* const marker)

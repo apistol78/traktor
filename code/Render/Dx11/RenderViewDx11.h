@@ -6,7 +6,6 @@
 #include "Core/Misc/ComRef.h"
 #include "Render/IRenderView.h"
 #include "Render/Dx11/Platform.h"
-#include "Render/Dx11/Profiler.h"
 #include "Render/Dx11/StateCache.h"
 #include "Render/Dx11/Window.h"
 
@@ -99,6 +98,12 @@ public:
 	virtual bool getBackBufferContent(void* buffer) const;
 
 private:
+	enum
+	{
+		TimeQueryFrames = 4,
+		TimeQueryCount = 2048
+	};
+
 	struct RenderState
 	{
 		D3D11_VIEWPORT d3dViewport;
@@ -116,7 +121,6 @@ private:
 	ComRef< ID3D11Texture2D > m_d3dDepthStencil;
 	ComRef< ID3D11DepthStencilView > m_d3dDepthStencilView;
 	D3D11_VIEWPORT m_d3dViewport;
-	Profiler m_profiler;
 	StateCache m_stateCache;
 	bool m_fullScreen;
 	bool m_waitVBlank;

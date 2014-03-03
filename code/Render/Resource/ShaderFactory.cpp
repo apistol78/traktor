@@ -75,9 +75,15 @@ bool ShaderFactory::isCacheable() const
 
 Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
 {
-	Ref< ShaderResource > shaderResource = m_database->getObjectReadOnly< ShaderResource >(guid);
+	Ref< db::Instance > shaderResourceInstance = m_database->getInstance(guid);
+	if (!shaderResourceInstance)
+		return 0;
+
+	Ref< ShaderResource > shaderResource = shaderResourceInstance->getObject< ShaderResource >();
 	if (!shaderResource)
 		return 0;
+
+	std::wstring shaderName = shaderResourceInstance->getName();
 
 	Ref< Shader > shader = new Shader();
 
@@ -90,6 +96,8 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 	const std::vector< ShaderResource::Technique >& techniques = shaderResource->getTechniques();
 	for (std::vector< ShaderResource::Technique >::const_iterator i = techniques.begin(); i != techniques.end(); ++i)
 	{
+		std::wstring programName = shaderName + L"." + i->name;
+
 		Shader::Technique& technique = shader->m_techniques[getParameterHandle(i->name)];
 		technique.mask = i->mask;
 
@@ -117,7 +125,7 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 			combination.mask = j->mask;
 			combination.value = j->value;
 			combination.priority = j->priority;
-			combination.program = m_renderSystem->createProgram(programResource);
+			combination.program = m_renderSystem->createProgram(programResource, programName.c_str());
 			if (!combination.program)
 				return 0;
 

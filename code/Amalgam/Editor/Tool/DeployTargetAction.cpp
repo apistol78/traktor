@@ -150,7 +150,7 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 
 	// Append tweaks.
 	if (m_tweakSettings)
-		applicationConfiguration = applicationConfiguration->mergeReplace(m_tweakSettings);
+		applicationConfiguration = applicationConfiguration->mergeJoin(m_tweakSettings);
 
 	// Write generated application configuration in output directory.
 	Ref< IStream > file = FileSystem::getInstance().open(

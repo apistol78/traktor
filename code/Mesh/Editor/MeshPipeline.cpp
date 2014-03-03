@@ -1,6 +1,7 @@
 #include <list>
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
 #include "Core/Math/Format.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/WildCompare.h"
@@ -31,6 +32,7 @@
 #include "Model/Operations/BakeVertexOcclusion.h"
 #include "Model/Operations/CalculateOccluder.h"
 #include "Model/Operations/CullDistantFaces.h"
+#include "Model/Operations/Reduce.h"
 #include "Render/Shader/External.h"
 #include "Render/Shader/Nodes.h"
 #include "Render/Shader/ShaderGraph.h"
@@ -265,6 +267,12 @@ bool MeshPipeline::buildOutput(
 			log::info << L"Culling distant faces..." << Endl;
 			const Aabb3 viewerRegion(Vector4(-40.0f, -40.0f, -40.0f), Vector4(40.0f, 40.0f, 40.0f));
 			model::CullDistantFaces(viewerRegion).apply(*model);
+		}
+
+		if (asset->getAutoDetailLevel() < 1.0f - FUZZY_EPSILON)
+		{
+			log::info << L"Generating reduced detail mesh..." << Endl;
+			model::Reduce(asset->getAutoDetailLevel()).apply(*model);
 		}
 
 		const std::vector< model::Material >& modelMaterials = model->getMaterials();

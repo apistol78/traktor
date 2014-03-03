@@ -280,7 +280,7 @@ Ref< RenderTargetSet > RenderSystemSw::createRenderTargetSet(const RenderTargetS
 	return renderTargetSet;
 }
 
-Ref< IProgram > RenderSystemSw::createProgram(const ProgramResource* programResource)
+Ref< IProgram > RenderSystemSw::createProgram(const ProgramResource* programResource, const wchar_t* const tag)
 {
 	Ref< const ProgramResourceSw > resource = dynamic_type_cast< const ProgramResourceSw* >(programResource);
 	if (!resource)
@@ -318,6 +318,11 @@ Ref< IProgram > RenderSystemSw::createProgram(const ProgramResource* programReso
 Ref< IProgramCompiler > RenderSystemSw::createProgramCompiler() const
 {
 	return new ProgramCompilerSw();
+}
+
+Ref< ITimeQuery > RenderSystemSw::createTimeQuery() const
+{
+	return 0;
 }
 
 void RenderSystemSw::getStatistics(RenderSystemStatistics& outStatistics) const

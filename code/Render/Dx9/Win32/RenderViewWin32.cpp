@@ -356,7 +356,6 @@ void RenderViewWin32::getStatistics(RenderViewStatistics& outStatistics) const
 {
 	outStatistics.drawCalls = m_drawCalls;
 	outStatistics.primitiveCount = m_primitiveCount;
-	outStatistics.duration = 0.0;
 }
 
 bool RenderViewWin32::getBackBufferContent(void* buffer) const

@@ -1,3 +1,4 @@
+#include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberStl.h"
@@ -8,13 +9,14 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 6, MeshAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 7, MeshAsset, editor::Asset)
 
 MeshAsset::MeshAsset()
 :	m_meshType(MtInvalid)
 ,	m_bakeOcclusion(false)
 ,	m_cullDistantFaces(false)
 ,	m_generateOccluder(false)
+,	m_autoDetailLevel(1.0f)
 {
 }
 
@@ -54,6 +56,9 @@ void MeshAsset::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 5)
 		s >> Member< bool >(L"generateOccluder", m_generateOccluder);
+
+	if (s.getVersion() >= 7)
+		s >> Member< float >(L"autoDetailLevel", m_autoDetailLevel, AttributeRange(0.0f, 1.0f));
 }
 
 	}
