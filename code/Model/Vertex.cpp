@@ -32,9 +32,12 @@ void Vertex::clearTexCoords()
 
 void Vertex::setTexCoord(uint32_t channel, uint32_t texCoord)
 {
-	while (channel >= uint32_t(m_texCoords.size()))
-		m_texCoords.push_back(c_InvalidIndex);
-	m_texCoords[channel] = texCoord;
+	if (channel < m_texCoords.capacity())
+	{
+		while (channel >= uint32_t(m_texCoords.size()))
+			m_texCoords.push_back(c_InvalidIndex);
+		m_texCoords[channel] = texCoord;
+	}
 }
 
 uint32_t Vertex::getTexCoord(uint32_t channel) const
