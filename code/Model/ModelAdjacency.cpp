@@ -82,7 +82,6 @@ void ModelAdjacency::remove(uint32_t polygon)
 			}
 		}
 
-		delete m_edges[i].share;
 		m_edges.erase(m_edges.begin() + i);
 	}
 }
