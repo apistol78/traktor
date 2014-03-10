@@ -7,6 +7,9 @@ namespace traktor
 
 bool BspTree::build(const AlignedVector< Winding3 >& polygons)
 {
+	if (polygons.empty())
+		return false;
+
 	AlignedVector< Winding3 > mutablePolygons = polygons;
 	std::vector< uint32_t > mutablePlanes(polygons.size());
 

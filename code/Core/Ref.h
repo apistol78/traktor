@@ -36,6 +36,14 @@ public:
 		T_SAFE_ADDREF(m_ptr);
 	}
 
+#if defined(T_CXX11)
+	Ref(Ref&& ref)
+	:	m_ptr(ref.m_ptr)
+	{
+		ref.m_ptr = 0;
+	}
+#endif
+
 	Ref(pointer ptr)
 	:	m_ptr(ptr)
 	{
@@ -119,6 +127,16 @@ public:
 		replace(ref.m_ptr);
 		return *this;
 	}
+
+#if defined(T_CXX11)
+	Ref& operator = (Ref&& ref)
+	{
+		T_SAFE_RELEASE(m_ptr);
+		m_ptr = ref.m_ptr;
+		ref.m_ptr = 0;
+		return *this;
+	}
+#endif
 
 	Ref& operator = (pointer ptr)
 	{

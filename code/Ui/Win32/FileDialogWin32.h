@@ -36,7 +36,7 @@ private:
 	OPENFILENAME m_ofn;
 	TCHAR m_filters[256];
 	TCHAR m_title[64];
-	TCHAR m_fileName[MAX_PATH * 64];
+	TCHAR m_fileName[MAX_PATH * 256];
 };
 
 	}

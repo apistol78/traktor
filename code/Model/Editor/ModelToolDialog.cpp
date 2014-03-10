@@ -4,6 +4,7 @@
 #include "Model/Model.h"
 #include "Model/ModelFormat.h"
 #include "Model/Editor/ModelToolDialog.h"
+#include "Model/Operations/Boolean.h"
 #include "Model/Operations/CalculateConvexHull.h"
 #include "Model/Operations/CleanDegenerate.h"
 #include "Model/Operations/CleanDuplicates.h"
@@ -76,6 +77,7 @@ bool ModelToolDialog::create(ui::Widget* parent)
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Merge Coplanar", ui::Command(L"ModelTool.MergeCoplanar"), ui::custom::ToolBarButton::BsText));
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Convex Hull", ui::Command(L"ModelTool.ConvexHull"), ui::custom::ToolBarButton::BsText));
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Triangulate", ui::Command(L"ModelTool.Triangulate"), ui::custom::ToolBarButton::BsText));
+	toolBar->addItem(new ui::custom::ToolBarButton(L"Union", ui::Command(L"ModelTool.Union"), ui::custom::ToolBarButton::BsText));
 	toolBar->addItem(new ui::custom::ToolBarSeparator());
 
 	m_toolSolid = new ui::custom::ToolBarButton(L"Solid", ui::Command(L"ModelTool.ToggleSolid"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggled);
@@ -90,13 +92,16 @@ bool ModelToolDialog::create(ui::Widget* parent)
 	m_toolVertices = new ui::custom::ToolBarButton(L"Vertices", ui::Command(L"ModelTool.ToggleVertices"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggled);
 	toolBar->addItem(m_toolVertices);
 
+	m_toolCull = new ui::custom::ToolBarButton(L"Cull Backfaces", ui::Command(L"ModelTool.ToggleCullBackfaces"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggled);
+	toolBar->addItem(m_toolCull);
+
 	toolBar->addClickEventHandler(ui::createMethodHandler(this, &ModelToolDialog::eventToolBarClick));
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
 	splitter->create(this, true, 200, false);
 
 	m_modelList = new ui::ListBox();
-	m_modelList->create(splitter, L"", ui::WsClientBorder);
+	m_modelList->create(splitter, L"", ui::ListBox::WsMultiple | ui::WsClientBorder);
 	m_modelList->addSelectEventHandler(ui::createMethodHandler(this, &ModelToolDialog::eventModelListSelect));
 
 	m_renderWidget = new ui::Widget();
@@ -110,7 +115,7 @@ bool ModelToolDialog::create(ui::Widget* parent)
 	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 16;
 	desc.stencilBits = 0;
-	desc.multiSample = 0; //m_editor->getSettings()->getProperty< PropertyInteger >(L"Editor.MultiSample", 4);
+	desc.multiSample = 0;
 	desc.waitVBlank = false;
 	desc.nativeWindowHandle = m_renderWidget->getIWidget()->getSystemHandle();
 
@@ -270,6 +275,23 @@ void ModelToolDialog::eventToolBarClick(ui::Event* event)
 		Ref< IModelOperation > operation = new Triangulate();
 		applyOperation(operation);
 	}
+	else if (cmd == L"ModelTool.Union")
+	{
+		std::vector< int32_t > selected;
+		m_modelList->getSelected(selected);
+		if (selected.size() == 2)
+		{
+			Ref< Model > model1 = m_modelList->getData< model::Model >(selected[0]);
+			Ref< Model > model2 = m_modelList->getData< model::Model >(selected[1]);
+
+			Ref< Model > model = new Model();
+			if (Boolean(*model1, traktor::Transform::identity(), *model2, traktor::Transform::identity()).apply(*model))
+			{
+				m_modelList->add(m_modelName + L" Boolean", model);
+				m_modelList->update();
+			}
+		}
+	}
 
 	m_renderWidget->update();
 }
@@ -410,6 +432,9 @@ void ModelToolDialog::eventRenderPaint(ui::Event* event)
 			// Render solid.
 			if (m_toolSolid->isToggled())
 			{
+				bool cull = m_toolCull->isToggled();
+
+				Vector4 eyePosition = viewTransform.inverse().translation().xyz1();	// Eye position in object space.
 				Vector4 lightDir = viewTransform.inverse().axisZ();	// Light direction in object space.
 
 				const std::vector< Vertex >& vertices = m_modelTris->getVertices();
@@ -432,6 +457,12 @@ void ModelToolDialog::eventRenderPaint(ui::Event* event)
 
 					Vector4 N = cross(p[0] - p[1], p[2] - p[1]).normalized();
 					float diffuse = abs(dot3(lightDir, N)) * 0.5f + 0.5f;
+
+					if (cull)
+					{
+						if (dot3(eyePosition - p[0], N) < 0)
+							continue;
+					}
 
 					if (vertices[indices[0]].getTexCoordCount() > 0)
 					{

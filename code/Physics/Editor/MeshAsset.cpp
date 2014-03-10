@@ -11,7 +11,7 @@ T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.MeshAsset", 2, MeshAsset, editor::
 
 MeshAsset::MeshAsset()
 :	m_calculateConvexHull(true)
-,	m_margin(0.04)
+,	m_margin(0.04f)
 {
 }
 

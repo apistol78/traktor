@@ -56,6 +56,37 @@ bool Aabb3::inside(const Vector4& pt) const
 		compareAllLessEqual(pt.xyz0(), mx.xyz1());
 }
 
+bool Aabb3::outside(const Vector4& pt) const
+{
+	return !inside(pt);
+}
+
+bool Aabb3::surface(const Vector4& pt, float margin) const
+{
+	Vector4 x = (mx - mn).normalized() * Scalar(margin);
+	if (
+		compareAllGreaterEqual(pt.xyz1(), (mn - x).xyz0()) &&
+		compareAllLessEqual(pt.xyz0(), (mx + x).xyz1())
+	)
+	{
+		// Point inside box+margin.
+		if (
+			compareAllGreaterEqual(pt.xyz1(), (mn + x).xyz0()) &&
+			compareAllLessEqual(pt.xyz0(), (mx - x).xyz1())
+		)
+		{
+			// Point inside box-margin.
+			return false;
+		}
+		return true;
+	}
+	else
+	{
+		// Point outside box+margin.
+		return false;
+	}
+}
+
 bool Aabb3::intersectRay(const Vector4& p, const Vector4& d, Scalar& outDistance) const
 {
 	Scalar distanceExitDummy;

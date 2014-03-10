@@ -66,6 +66,7 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolWire;
 	Ref< ui::custom::ToolBarButton > m_toolNormals;
 	Ref< ui::custom::ToolBarButton > m_toolVertices;
+	Ref< ui::custom::ToolBarButton > m_toolCull;
 	Ref< ui::ListBox > m_modelList;
 	Ref< ui::Widget > m_renderWidget;
 	Ref< Model > m_model;
