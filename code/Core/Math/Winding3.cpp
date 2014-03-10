@@ -1,5 +1,4 @@
 #include <numeric>
-#include "Core/Math/Aabb3.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/Vector2.h"
@@ -29,17 +28,6 @@ bool Winding3::angleIndices(uint32_t& outI1, uint32_t& outI2, uint32_t& outI3) c
 	if (points.size() < 3)
 		return false;
 
-	// Calculate bounding box of all winding's points.
-	Aabb3 boundingBox;
-	for (AlignedVector< Vector4 >::const_iterator i = points.begin(); i != points.end(); ++i)
-		boundingBox.contain(*i);
-
-	const Scalar c_margin(FUZZY_EPSILON);
-	boundingBox.mn += c_margin;
-	boundingBox.mx -= c_margin;
-
-	// Find non-concave point to use as basis for normal; assuming
-	// points on bounding box surface should suffice.
 	for (size_t p = points.size() - 1, i = 0; i < points.size(); p = i++)
 	{
 		size_t n = (i + 1) % points.size();
@@ -47,9 +35,6 @@ bool Winding3::angleIndices(uint32_t& outI1, uint32_t& outI2, uint32_t& outI3) c
 		const Vector4& p1 = points[p];
 		const Vector4& p2 = points[i];
 		const Vector4& p3 = points[n];
-
-		if (boundingBox.inside(p2))
-			continue;
 
 		Vector4 e1 = p1 - p2;
 		Vector4 e2 = p3 - p2;
