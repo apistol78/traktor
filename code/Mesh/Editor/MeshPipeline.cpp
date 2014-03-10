@@ -218,10 +218,17 @@ bool MeshPipeline::buildOutput(
 	// are procedurally generated.
 	if (buildParams)
 	{
-		log::info << L"Using parameter model" << Endl;
-		models.push_back(checked_type_cast< model::Model* >(
+		Ref< model::Model > model = checked_type_cast< model::Model* >(
 			const_cast< Object* >(buildParams)
-		));
+		);
+
+		if (model->getPolygonCount() == 0)
+		{
+			log::error << L"Mesh pipeline failed; no polygons in parameter source model" << Endl;
+			return false;
+		}
+
+		models.push_back(model);
 	}
 	else
 	{
@@ -239,6 +246,12 @@ bool MeshPipeline::buildOutput(
 		if (!model)
 		{
 			log::error << L"Mesh pipeline failed; unable to read source model (" << asset->getFileName().getOriginal() << L")" << Endl;
+			return false;
+		}
+
+		if (model->getPolygonCount() == 0)
+		{
+			log::error << L"Mesh pipeline failed; no polygons in source model (" << asset->getFileName().getOriginal() << L")" << Endl;
 			return false;
 		}
 

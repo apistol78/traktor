@@ -17,6 +17,9 @@
 #	if defined(WINCE)
 #		define T_UNALIGNED __unaligned
 #	endif
+#	if _MSC_VER >= 1700
+#		define T_CXX11
+#	endif
 #elif defined(__GNUC__) || defined(__ANDROID__) || defined(__EMSCRIPTEN__) || defined(__PNACL__)
 #	if !defined(T_STATIC)
 #		define T_DLLIMPORT __attribute__((visibility("default")))
@@ -25,6 +28,9 @@
 #	endif
 #	define T_FORCE_INLINE inline
 #	define T_ALIGN16 __attribute__((aligned(16)))
+#	if __cplusplus >= 201103L
+#		define T_CXX11
+#	endif
 #endif
 
 #if !defined(T_DLLIMPORT)

@@ -2,6 +2,7 @@
 #define traktor_model_ModelAdjacency_H
 
 #include "Core/Object.h"
+#include "Core/Containers/StaticVector.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -29,9 +30,11 @@ public:
 		MdByPosition
 	};
 
+	typedef StaticVector< uint32_t, 4 > share_vector_t;
+
 	ModelAdjacency(const Model* model, Mode mode);
 
-	virtual ~ModelAdjacency();
+	ModelAdjacency(const Model* model, const std::vector< uint32_t >& polygons, Mode mode);
 
 	/*! \brief Insert a new polygon into adjacency structure.
 	 */
@@ -44,6 +47,10 @@ public:
 	/*! \brief Update polygon in adjacency structure.
 	 */
 	void update(uint32_t polygon);
+
+	/*! \brief Return half edge from polygon edge.
+	 */
+	uint32_t getEdge(uint32_t polygon, uint32_t polygonEdge) const;
 
 	/*! \brief Get edges "entering" given vertex.
 	 */
@@ -81,19 +88,21 @@ public:
 	 */
 	uint32_t getEdgeCount() const;
 
+	/*! \brief Get edge matching indices.
+	 */
+	void getEdgeIndices(uint32_t edge, uint32_t& outIndex0, uint32_t& outIndex1) const;
+
 private:
 	struct Edge
 	{
 		uint32_t polygon;
 		uint32_t index;
-		std::vector< uint32_t >* share;
+		share_vector_t share;
 	};
 
 	Ref< const Model > m_model;
 	Mode m_mode;
 	std::vector< Edge > m_edges;
-
-	void getMatchIndices(const Edge& edge, uint32_t& outIndex0, uint32_t& outIndex1) const;
 };
 
 	}

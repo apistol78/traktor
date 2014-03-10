@@ -313,7 +313,7 @@ void createSectors(
 				input.vertices.push_back(vertices[*k]);
 
 			AlignedVector< BspPolygon > clipped;
-			i->second.bsp.clip< BspPolygon >(input, clipped);
+			i->second.bsp.clip< BspPolygon >(input, BspTree::CmFront, clipped);
 			if (clipped.empty())
 				continue;
 

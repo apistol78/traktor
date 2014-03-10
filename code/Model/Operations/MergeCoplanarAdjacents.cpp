@@ -1,5 +1,6 @@
-#include <functional>
+#include <deque>
 #include "Core/Math/Const.h"
+#include "Core/Math/Winding3.h"
 #include "Model/Model.h"
 #include "Model/ModelAdjacency.h"
 #include "Model/Operations/CleanDuplicates.h"
@@ -12,16 +13,19 @@ namespace traktor
 		namespace
 		{
 
-const float c_planarAngleThreshold = deg2rad(1.0f);
-const float c_vertexDistanceThreshold = 0.1f;
+const float c_normalThreshold = 0.01f;
+const float c_distanceThreshold = 0.05f;
 
-struct NoVerticesPred
+bool comparePlanesEqual(const Plane& lh, const Plane& rh)
 {
-	bool operator () (const Polygon& pol) const
-	{
-		return pol.getVertexCount() == 0;
-	}
-};
+	if (dot3(lh.normal(), rh.normal()) < Scalar(1.0f - c_normalThreshold))
+		return false;
+
+	if (abs(lh.distance() - rh.distance()) > Scalar(c_distanceThreshold))
+		return false;
+
+	return true;
+}
 
 		}
 
@@ -34,185 +38,180 @@ MergeCoplanarAdjacents::MergeCoplanarAdjacents(bool allowConvexOnly)
 
 bool MergeCoplanarAdjacents::apply(Model& model) const
 {
-	std::vector< Polygon >& polygons = model.getPolygons();
+	AlignedVector< Plane > planes;
+	SmallMap< uint32_t, std::vector< uint32_t > > planePolygons;
+	Winding3 winding;
+	Plane plane;
+	Model result;
 
-	// Calculate polygon normals.
-	AlignedVector< Vector4 > normals(polygons.size(), Vector4::zero());
-	for (uint32_t i = 0; i < uint32_t(polygons.size()); ++i)
+	// 	Group polygons which share same plane.
+	for (uint32_t i = 0; i < model.getPolygonCount(); ++i)
 	{
-		const Polygon& polygon = polygons[i];
-		if (polygon.getVertexCount() < 3)
-			continue;
+		const Polygon& polygon = model.getPolygon(i);
 
-		const uint32_t baseIndex = 0;
+		winding.points.resize(polygon.getVertexCount());
+		for (uint32_t j = 0; j < polygon.getVertexCount(); ++j)
+			winding.points[j] = model.getVertexPosition(polygon.getVertex(j));
 
-		const std::vector< uint32_t >& vertices = polygon.getVertices();
-		const Vertex* v[] =
+		if (winding.getPlane(plane))
 		{
-			&model.getVertex(vertices[baseIndex]),
-			&model.getVertex(vertices[(baseIndex + 1) % vertices.size()]),
-			&model.getVertex(vertices[(baseIndex + 2) % vertices.size()])
-		};
-
-		Vector4 p[] =
-		{
-			model.getPosition(v[0]->getPosition()),
-			model.getPosition(v[1]->getPosition()),
-			model.getPosition(v[2]->getPosition())
-		};
-
-		Vector4 ep[] = { p[2] - p[0], p[1] - p[0] };
-		T_ASSERT (ep[0].length() > FUZZY_EPSILON);
-		T_ASSERT (ep[1].length() > FUZZY_EPSILON);
-
-		normals[i] = cross(ep[0], ep[1]).normalized();
-	}
-
-	// Build model adjacency information.
-	ModelAdjacency adjacency(&model, ModelAdjacency::MdByPosition);
-	std::vector< uint32_t > sharedEdges;
-	std::vector< uint32_t > removeIndices;
-
-	// Keep iterating until no more polygons are merged.
-	for (;;)
-	{
-		int32_t merged = 0;
-		for (uint32_t i = 0; i < uint32_t(polygons.size()); ++i)
-		{
-			Polygon& leftPolygon = polygons[i];
-			for (uint32_t j = 0; j < leftPolygon.getVertexCount(); ++j)
+			bool foundPlane = false;
+			for (uint32_t j = 0; j < planes.size(); ++j)
 			{
-				adjacency.getSharedEdges(i, j, sharedEdges);
-				if (sharedEdges.size() != 1)
-					continue;
-
-				uint32_t sharedEdge = sharedEdges.front();
-				uint32_t sharedPolygon = adjacency.getPolygon(sharedEdge);
-				
-				// In case the source model contain internal edges or something
-				// gets broken during merging.
-				if (sharedPolygon == i)
-					continue;
-
-				float phi = acos(dot3(normals[i], normals[sharedPolygon]));
-				if (phi <= c_planarAngleThreshold)
+				if (comparePlanesEqual(planes[j], plane))
 				{
-					Polygon& rightPolygon = polygons[sharedPolygon];
-
-					std::vector< uint32_t > leftVertices = leftPolygon.getVertices();
-					std::vector< uint32_t > rightVertices = rightPolygon.getVertices();
-
-					if (leftVertices.size() < 3 || rightVertices.size() < 3)
-						continue;
-
-					// Rotate polygons so sharing edge is first on both left and right polygon.
-					std::rotate(leftVertices.begin(), leftVertices.begin() + j, leftVertices.end());
-					std::rotate(rightVertices.begin(), rightVertices.begin() + adjacency.getPolygonEdge(sharedEdge), rightVertices.end());
-
-					// Merge polygons, except sharing edges.
-					std::vector< uint32_t > mergedVertices;
-					mergedVertices.insert(mergedVertices.end(), rightVertices.begin() + 1, rightVertices.end());
-					mergedVertices.insert(mergedVertices.end(), leftVertices.begin() + 1, leftVertices.end());
-					if (mergedVertices.size() <= 2)
-						continue;
-
-					// Remove internal loops.
-					for (uint32_t k = 0; k < mergedVertices.size(); ++k)
-					{
-						uint32_t i0 = mergedVertices[k];
-						uint32_t i1 = mergedVertices[(k + 2) % mergedVertices.size()];
-						if (i0 == i1)
-						{
-							mergedVertices.erase(mergedVertices.begin() + k);
-							mergedVertices.erase(mergedVertices.begin() + k % mergedVertices.size());
-							break;
-						}
-					}
-
-					// Remove non-silhouette vertices.
-					removeIndices.resize(0);
-
-					for (uint32_t i0 = 0; i0 < mergedVertices.size(); ++i0)
-					{
-						uint32_t i1 = (i0 + 1) % mergedVertices.size();
-						uint32_t i2 = (i0 + 2) % mergedVertices.size();
-
-						const Vector4& v0 = model.getVertexPosition(mergedVertices[i0]);
-						const Vector4& v1 = model.getVertexPosition(mergedVertices[i1]);
-						const Vector4& v2 = model.getVertexPosition(mergedVertices[i2]);
-
-						Vector4 v0_2 = (v2 - v0).xyz0();
-						Vector4 v0_1 = (v1 - v0).xyz0();
-
-						Scalar k = dot3(v0_2, v0_1) / v0_2.length2();
-						if (k >= 0.0f && k <= 1.0f)
-						{
-							Vector4 vp = v0 + v0_2 * k;
-							Scalar dist = (v1 - vp).xyz0().length();
-							if (dist <= c_vertexDistanceThreshold)
-								removeIndices.push_back(i1);
-						}
-					}
-
-					if (!removeIndices.empty())
-					{
-						std::sort(removeIndices.begin(), removeIndices.end(), std::greater< uint32_t >());
-						for (std::vector< uint32_t >::const_iterator it = removeIndices.begin(); it != removeIndices.end(); ++it)
-							mergedVertices.erase(mergedVertices.begin() + *it);
-					}
-
-					// Ensure merged polygon is still convex.
-					if (m_allowConvexOnly)
-					{
-						uint32_t sign = 0;
-						for (uint32_t i0 = 0; i0 < mergedVertices.size() && sign != 3; ++i0)
-						{
-							uint32_t i1 = (i0 + 1) % mergedVertices.size();
-							uint32_t i2 = (i0 + 2) % mergedVertices.size();
-
-							const Vector4& v0 = model.getVertexPosition(mergedVertices[i0]);
-							const Vector4& v1 = model.getVertexPosition(mergedVertices[i1]);
-							const Vector4& v2 = model.getVertexPosition(mergedVertices[i2]);
-
-							Vector4 v0_1 = (v1 - v0).xyz0();
-							Vector4 v1_2 = (v2 - v1).xyz0();
-
-							float phi = dot3(cross(v0_1, v1_2), normals[i]);
-							if (phi < -FUZZY_EPSILON)
-								sign |= 1;
-							else if (phi > FUZZY_EPSILON)
-								sign |= 2;
-						}
-						if (sign == 3)
-							continue;
-					}
-					
-					// Set all vertices in left polygon and null out right polygon.
-					leftPolygon.setVertices(mergedVertices);
-					rightPolygon.setVertices(std::vector< uint32_t >());
-
-					// Re-build adjacency.
-					adjacency.remove(sharedPolygon);
-					adjacency.remove(i);
-					adjacency.add(i);
-
-					++merged;
+					planePolygons[j].push_back(i);
+					foundPlane = true;
 					break;
 				}
 			}
+			if (!foundPlane)
+			{
+				planes.push_back(plane);
+				planePolygons[planes.size() - 1].push_back(i);
+			}
 		}
-		if (merged == 0)
-			break;
 	}
 
-	// Remove all polygons with no vertices.
-	std::vector< Polygon >::iterator it = std::remove_if(polygons.begin(), polygons.end(), NoVerticesPred());
-	polygons.erase(it, polygons.end());
+	// For each plane, find isolated groups of polygons which are connected.
+	for (SmallMap< uint32_t, std::vector< uint32_t > >::const_iterator i = planePolygons.begin(); i != planePolygons.end(); ++i)
+	{
+		const Plane& plane = planes[i->first];
+		const std::vector< uint32_t >& polygonIds = i->second;
+		std::deque< uint32_t > edgeHeap;
 
-	// Cleanup model from unused vertices etc.
-	if (!CleanDuplicates(0.1f).apply(model))
-		return false;
+		// Create adjacency information only on polygons on plane.
+		ModelAdjacency adjacency(&model, polygonIds, ModelAdjacency::MdByPosition);
 
+		// Create a heap of un-shared edges.
+		for (uint32_t j = 0; j < polygonIds.size(); ++j)
+		{
+			const Polygon& polygon = model.getPolygon(polygonIds[j]);
+			const std::vector< uint32_t >& vertexIds = polygon.getVertices();
+			for (uint32_t k = 0; k < vertexIds.size(); ++k)
+			{
+				uint32_t edge = adjacency.getEdge(polygonIds[j], k);
+				if (adjacency.getSharedEdgeCount(edge) == 0)
+					edgeHeap.push_back(edge);
+			}
+		}
+
+		// Create edge loops.
+		while (!edgeHeap.empty())
+		{
+			std::vector< uint32_t > outline;
+
+			uint32_t edge = edgeHeap.front();
+			edgeHeap.pop_front();
+
+			uint32_t index1a, index1b;
+			adjacency.getEdgeIndices(edge, index1a, index1b);
+			outline.push_back(index1a);
+
+			while (!edgeHeap.empty())
+			{
+				bool foundEdge = false;
+				for (std::deque< uint32_t >::iterator i = edgeHeap.begin(); i != edgeHeap.end(); ++i)
+				{
+					uint32_t index2a, index2b;
+					adjacency.getEdgeIndices(*i, index2a, index2b);
+
+					if (index1b == index2a)
+					{
+						edge = *i;
+						edgeHeap.erase(i);
+						foundEdge = true;
+						break;
+					}
+				}
+				if (!foundEdge)
+					break;
+
+				adjacency.getEdgeIndices(edge, index1a, index1b);
+				outline.push_back(index1a);
+
+				if (index1b == outline.front())
+					break;
+			}
+
+			if (outline.size() >= 3)
+			{
+				// \note 1) if outline has opposite winding then it's a hole.
+				// \note 2) possibly able to remove colinear vertices from winding; "should" be safe.
+
+				Winding3 outlineWinding;
+				for (std::vector< uint32_t >::const_iterator i = outline.begin(); i != outline.end(); ++i)
+				{
+					const Vector4& position = model.getPosition(*i);
+					outlineWinding.points.push_back(position);
+				}
+
+				Plane outlinePlane;
+				if (outlineWinding.getPlane(outlinePlane))
+				{
+					if (dot3(outlinePlane.normal(), plane.normal()) > 0.0f)
+					{
+						for (uint32_t i = 0; i < outlineWinding.points.size(); )
+						{
+							uint32_t i1 = (i + 1) % outlineWinding.points.size();
+							uint32_t i2 = (i + 2) % outlineWinding.points.size();
+
+							const Vector4& x0 = outlineWinding.points[i1];
+							const Vector4& x1 = outlineWinding.points[i];
+							const Vector4& x2 = outlineWinding.points[i2];
+
+							Vector4 A = x2 - x1;
+							Scalar Aln = A.length();
+
+							if (Aln < c_distanceThreshold)
+							{
+								// Too short edge.
+								outlineWinding.points.erase(outlineWinding.points.begin() + i);
+								outlineWinding.points.erase(outlineWinding.points.begin() + i);
+								continue;
+							}
+
+							Vector4 B = x1 - x0;
+							Scalar Bln = B.length();
+
+							if (Bln < c_distanceThreshold)
+							{
+								// Point to close.
+								outlineWinding.points.erase(outlineWinding.points.begin() + i1);
+								continue;
+
+							}
+
+							Scalar d = cross(A, x1 - x0).length() / Aln;
+							if (d < c_distanceThreshold)
+							{
+								// Point collinear.
+								outlineWinding.points.erase(outlineWinding.points.begin() + i1);
+								continue;
+							}
+
+							++i;
+						}
+
+						if (outlineWinding.points.size() >= 3)
+						{
+							Polygon outlinePolygon;
+							for (AlignedVector< Vector4 >::const_iterator i = outlineWinding.points.begin(); i != outlineWinding.points.end(); ++i)
+							{
+								Vertex outlineVertex;
+								outlineVertex.setPosition(result.addUniquePosition(*i));
+								outlinePolygon.addVertex(result.addUniqueVertex(outlineVertex));
+							}
+							result.addPolygon(outlinePolygon);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Replace model with result.
+	model = result;
 	return true;
 }
 

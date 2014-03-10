@@ -46,6 +46,21 @@ public:
 	 */
 	bool inside(const Vector4& pt) const;
 
+	/*! \brief Return true if point is outside bounding box.
+	*
+	* \param pt Point
+	* \return True if outside.
+	*/
+	bool outside(const Vector4& pt) const;
+
+	/*! \brief Return true if point is on bounding box surface.
+	 *
+	 * \param pt Point
+	 * \param margin Surface margin.
+	 * \return True if on surface.
+	 */
+	bool surface(const Vector4& pt, float margin) const;
+
 	/*! \brief Ray intersection query.
 	 *
 	 * \param p Start point.
