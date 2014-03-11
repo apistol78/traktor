@@ -589,27 +589,32 @@ void RenderViewDx11::clear(uint32_t clearMask, const Color4f* colors, float dept
 
 	const RenderState& rs = m_renderStateStack.back();
 
-	for (int32_t i = 0; i < 2; ++i)
+	if ((clearMask & CfColor) == CfColor)
 	{
-		if (rs.d3dRenderView[i] != 0 && (clearMask & CfColor) == CfColor)
+		float T_MATH_ALIGN16 tmp[4];
+		if (rs.d3dRenderView[0] != 0)
 		{
-			float T_MATH_ALIGN16 tmp[4];
-			colors[i].storeAligned(tmp);
-			m_context->getD3DDeviceContext()->ClearRenderTargetView(rs.d3dRenderView[i], tmp);
+			colors[0].storeAligned(tmp);
+			m_context->getD3DDeviceContext()->ClearRenderTargetView(rs.d3dRenderView[0], tmp);
+		}
+		if (rs.d3dRenderView[1] != 0)
+		{
+			colors[1].storeAligned(tmp);
+			m_context->getD3DDeviceContext()->ClearRenderTargetView(rs.d3dRenderView[1], tmp);
 		}
 	}
 
 	if ((clearMask & (CfDepth | CfStencil)) != 0)
 	{
-		UINT d3dClear = 0;
-
-		if ((clearMask & CfDepth) != 0)
-			d3dClear |= D3D11_CLEAR_DEPTH;
-		if ((clearMask & CfStencil) != 0)
-			d3dClear |= D3D11_CLEAR_STENCIL;
-
 		if (rs.d3dDepthStencilView)
+		{
+			UINT d3dClear = 0;
+			if ((clearMask & CfDepth) != 0)
+				d3dClear |= D3D11_CLEAR_DEPTH;
+			if ((clearMask & CfStencil) != 0)
+				d3dClear |= D3D11_CLEAR_STENCIL;
 			m_context->getD3DDeviceContext()->ClearDepthStencilView(rs.d3dDepthStencilView, d3dClear, depth, stencil);
+		}
 	}
 }
 

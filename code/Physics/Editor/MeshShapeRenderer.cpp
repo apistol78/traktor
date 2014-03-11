@@ -37,8 +37,9 @@ void MeshShapeRenderer::draw(
 
 		primitiveRenderer->pushWorld(T.toMatrix44());
 
-		const AlignedVector< Vector4 >& vertices = mesh->getVertices();
+		Vector4 eyePosition = (primitiveRenderer->getView() * primitiveRenderer->getWorld()).inverse().translation().xyz1();
 
+		const AlignedVector< Vector4 >& vertices = mesh->getVertices();
 		const AlignedVector< Mesh::Triangle >& shapeTriangles = mesh->getShapeTriangles();
 		const AlignedVector< Mesh::Triangle >& hullTriangles = mesh->getHullTriangles();
 
@@ -52,10 +53,12 @@ void MeshShapeRenderer::draw(
 				const Vector4& V2 = vertices[i->indices[2]];
 
 				Vector4 N = cross(V0 - V1, V2 - V1).normalized();
-				Vector4 offset = N * margin;
-
-				primitiveRenderer->drawSolidTriangle(V0 + offset, V1 + offset, V2 + offset, Color4ub(128, 255, 255, 128));
-				primitiveRenderer->drawWireTriangle(V0 + offset, V1 + offset, V2 + offset, Color4ub(0, 255, 255, 180));
+				if (dot3(eyePosition - V0, N) >= 0.0f)
+				{
+					Vector4 offset = N * margin;
+					primitiveRenderer->drawSolidTriangle(V0 + offset, V1 + offset, V2 + offset, Color4ub(128, 255, 255, 128));
+					primitiveRenderer->drawWireTriangle(V0 + offset, V1 + offset, V2 + offset, Color4ub(0, 255, 255, 180));
+				}
 			}
 		}
 		else
@@ -68,10 +71,12 @@ void MeshShapeRenderer::draw(
 				const Vector4& V2 = vertices[i->indices[2]];
 
 				Vector4 N = cross(V0 - V1, V2 - V1).normalized();
-				Vector4 offset = N * margin;
-
-				primitiveRenderer->drawSolidTriangle(V0 + offset, V1 + offset, V2 + offset, Color4ub(128, 255, 255, 128));
-				primitiveRenderer->drawWireTriangle(V0 + offset, V1 + offset, V2 + offset, Color4ub(0, 255, 255, 180));
+				if (dot3(eyePosition - V0, N) >= 0.0f)
+				{
+					Vector4 offset = N * margin;
+					primitiveRenderer->drawSolidTriangle(V0 + offset, V1 + offset, V2 + offset, Color4ub(128, 255, 255, 128));
+					primitiveRenderer->drawWireTriangle(V0 + offset, V1 + offset, V2 + offset, Color4ub(0, 255, 255, 180));
+				}
 			}
 		}
 

@@ -1077,6 +1077,7 @@ void PhysicsManagerBullet::solveConstraints(const RefArray< Body >& bodies, cons
 		joints.size(),
 		m_dynamicsWorld->getSolverInfo(),
 		0,
+		m_dynamicsWorld->getStackAlloc(),
 		m_dynamicsWorld->getDispatcher()
 	);
 }
