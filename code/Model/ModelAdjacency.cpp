@@ -210,7 +210,13 @@ void ModelAdjacency::getEdgeIndices(uint32_t edge, uint32_t& outIndex0, uint32_t
 {
 	const Edge& e = m_edges[edge];
 	const Polygon& polygon = m_model->getPolygon(e.polygon);
+
 	const std::vector< uint32_t >& polygonVertices = polygon.getVertices();
+	if (polygonVertices.size() < 2)
+	{
+		outIndex0 =
+		outIndex1 = c_InvalidIndex;
+	}
 
 	uint32_t vertexId0 = polygonVertices[e.index];
 	uint32_t vertexId1 = polygonVertices[(e.index + 1) % polygonVertices.size()];

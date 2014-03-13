@@ -18,7 +18,7 @@ namespace traktor
 class T_DLLCLASS Winding2
 {
 public:
-	AlignedVector< Vector2 > p;
+	AlignedVector< Vector2 > points;
 
 	/*! \brief Calculate convex hull from a random point set. */
 	static Winding2 convexHull(const Vector2* pnts, int npnts);
