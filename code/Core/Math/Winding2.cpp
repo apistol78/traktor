@@ -31,26 +31,26 @@ Winding2 Winding2::convexHull(const Vector2* pnts, int npnts)
 		P[i] = pnts[i];
 	std::sort(P.begin(), P.end(), ChainSortPred());
 	
-	hull.p.resize(2 * npnts);
+	hull.points.resize(2 * npnts);
 
 	int k = 0;
 	for (int i = 0; i < npnts; ++i)
 	{
-		while (k >= 2 && isLeft(hull.p[k - 2], hull.p[k - 1], P[i]) <= 0.0f)
+		while (k >= 2 && isLeft(hull.points[k - 2], hull.points[k - 1], P[i]) <= 0.0f)
 			--k;
-		hull.p[k++] = P[i];
+		hull.points[k++] = P[i];
 	}
 	for (int i = npnts - 2, t = k + 1; i >= 0; --i)
 	{
-		while (k >= t && isLeft(hull.p[k - 2], hull.p[k - 1], P[i]) <= 0.0f)
+		while (k >= t && isLeft(hull.points[k - 2], hull.points[k - 1], P[i]) <= 0.0f)
 			--k;
-		hull.p[k++] = P[i];
+		hull.points[k++] = P[i];
 	}
 	
 	if (k > 0)
 		--k;
 
-	hull.p.resize(k);
+	hull.points.resize(k);
 	return hull;
 }
 
@@ -62,9 +62,9 @@ Winding2 Winding2::convexHull(const AlignedVector< Vector2 >& pnts)
 bool Winding2::inside(const Vector2& pnt) const
 {
 	bool c = false;
-	for (int32_t i = 0, j = int32_t(p.size()) - 1; i < int32_t(p.size()); j = i++)
+	for (int32_t i = 0, j = int32_t(points.size()) - 1; i < int32_t(points.size()); j = i++)
 	{
-		if ((((p[i].y <= pnt.y) && (pnt.y < p[j].y)) || ((p[j].y <= pnt.y) && (pnt.y < p[i].y))) && (pnt.x < (p[j].x - p[i].x) * (pnt.y - p[i].y) / (p[j].y - p[i].y) + p[i].x))
+		if ((((points[i].y <= pnt.y) && (pnt.y < points[j].y)) || ((points[j].y <= pnt.y) && (pnt.y < points[i].y))) && (pnt.x < (points[j].x - points[i].x) * (pnt.y - points[i].y) / (points[j].y - points[i].y) + points[i].x))
 			c = !c;
 	}
 	return c;

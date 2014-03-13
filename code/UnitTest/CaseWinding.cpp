@@ -44,7 +44,7 @@ void CaseWinding::run()
 		};
 
 		Winding2 hull = Winding2::convexHull(points, sizeof_array(points));
-		CASE_ASSERT_EQUAL (hull.p.size(), 4);
+		CASE_ASSERT_EQUAL (hull.points.size(), 4);
 	}
 
 	// Find angle indices.

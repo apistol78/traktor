@@ -99,13 +99,13 @@ bool TranslateModifier::cursorMoved(
 	// Check combo squares.
 	{
 		Winding2 w;
-		w.p.resize(4);
+		w.points.resize(4);
 
 		// XY
-		w.p[0] = center;
-		w.p[1] = square[0];
-		w.p[2] = square[3];
-		w.p[3] = square[1];
+		w.points[0] = center;
+		w.points[1] = square[0];
+		w.points[2] = square[3];
+		w.points[3] = square[1];
 		if (w.inside(cursorPosition))
 		{
 			m_axisHot |= 1 | 2;
@@ -113,10 +113,10 @@ bool TranslateModifier::cursorMoved(
 		}
 
 		// XZ
-		w.p[0] = center;
-		w.p[1] = square[0];
-		w.p[2] = square[4];
-		w.p[3] = square[2];
+		w.points[0] = center;
+		w.points[1] = square[0];
+		w.points[2] = square[4];
+		w.points[3] = square[2];
 		if (w.inside(cursorPosition))
 		{
 			m_axisHot |= 1 | 4;
@@ -124,10 +124,10 @@ bool TranslateModifier::cursorMoved(
 		}
 
 		// YZ
-		w.p[0] = center;
-		w.p[1] = square[1];
-		w.p[2] = square[5];
-		w.p[3] = square[2];
+		w.points[0] = center;
+		w.points[1] = square[1];
+		w.points[2] = square[5];
+		w.points[3] = square[2];
 		if (w.inside(cursorPosition))
 		{
 			m_axisHot |= 2 | 4;
