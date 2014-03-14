@@ -1,3 +1,5 @@
+#pragma optimize( "", off )
+
 #include "Model/Model.h"
 #include "Model/ModelAdjacency.h"
 
@@ -68,7 +70,7 @@ void ModelAdjacency::remove(uint32_t polygon)
 
 		for (uint32_t j = 0; j < m_edges.size(); ++j)
 		{
-			StaticVector< uint32_t, 4 >& edgeShare = m_edges[j].share;
+			share_vector_t& edgeShare = m_edges[j].share;
 			for (uint32_t k = 0; k < edgeShare.size(); )
 			{
 				if (edgeShare[k] == i)

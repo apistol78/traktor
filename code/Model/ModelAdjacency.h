@@ -30,7 +30,7 @@ public:
 		MdByPosition
 	};
 
-	typedef StaticVector< uint32_t, 4 > share_vector_t;
+	typedef StaticVector< uint32_t, 8 > share_vector_t;
 
 	ModelAdjacency(const Model* model, Mode mode);
 
