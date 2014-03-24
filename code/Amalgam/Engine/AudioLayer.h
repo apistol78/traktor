@@ -56,6 +56,8 @@ public:
 
 	void tweenParameter(const std::wstring& parameterName, float fromValue, float toValue, float duration);
 
+	virtual void transition(Layer* fromLayer);
+
 	virtual void prepare();
 
 	virtual void update(amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info);

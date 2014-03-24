@@ -15,11 +15,14 @@
 #include "Core/Misc/TString.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/System/OS.h"
+#include "Core/System/ResolveEnv.h"
 #include "Core/System/Linux/ProcessLinux.h"
 #include "Core/System/Linux/SharedMemoryLinux.h"
 
 namespace traktor
 {
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.OS", OS, Object)
 
 OS& OS::getInstance()
 {
@@ -153,42 +156,65 @@ Ref< IProcess > OS::execute(
 	int envc = 0;
 	int argc = 0;
 	int err;
+	std::string executable;
+	std::string arguments;
 
-	std::string fileName = wstombs(file.getPathNameNoVolume());
+	// Resolve entire command line.
+	std::wstring resolvedCommandLine = resolveEnv(commandLine);
+
+	// Extract executable file from command line.
+	if (resolvedCommandLine.empty())
+		return 0;
+
+	if (resolvedCommandLine[0] == L'\"')
+	{
+		size_t i = resolvedCommandLine.find(L'\"', 1);
+		if (i == resolvedCommandLine.npos)
+			return 0;
+		executable = wstombs(resolvedCommandLine.substr(1, i - 1));
+		arguments = wstombs(resolvedCommandLine.substr(i + 1));
+	}
+	else
+	{
+		size_t i = resolvedCommandLine.find(L' ');
+		if (i != resolvedCommandLine.npos)
+		{
+			executable = wstombs(resolvedCommandLine.substr(0, i));
+			arguments = wstombs(resolvedCommandLine.substr(i + 1));
+		}
+		else
+			executable = wstombs(resolvedCommandLine);
+	}
 
 	// Convert all arguments; append bash if executing shell script.
-	if (compareIgnoreCase< std::wstring >(file.getExtension(), L"sh") == 0)
-		argv[argc++] = strdup("/bin/bash");
+	if (endsWith< std::string >(executable, ".sh"))
+		argv[argc++] = strdup("/bin/sh");
 	else
 	{
 		// Ensure file has executable permission.
 		struct stat st;
-		if (stat(fileName.c_str(), &st) == 0)
+		if (stat(executable.c_str(), &st) == 0)
 		{
-			if (chmod(fileName.c_str(), st.st_mode | S_IXUSR) != 0)
-				log::warning << L"Unable to set mode of file \"" << file.getPathName() << L"\"" << Endl;
+			if (chmod(executable.c_str(), st.st_mode | S_IXUSR) != 0)
+				log::warning << L"Unable to set mode of executable" << Endl;
 		}
 		else
-			log::warning << L"Unable to get mode of file \"" << file.getPathName() << L"\"" << Endl;
+			log::warning << L"Unable to get mode of executable" << Endl;
 	}
-
-	argv[argc++] = strdup(fileName.c_str());
-
-	StringSplit< std::wstring > s(commandLine, L" ");
-	for (StringSplit< std::wstring >::const_iterator i = s.begin(); i != s.end(); ++i)
-		argv[argc++] = strdup(wstombs(*i).c_str());
-
+	
+	argv[argc++] = strdup(executable.c_str());
+	
+	StringSplit< std::string > s(arguments, " ");
+	for (StringSplit< std::string >::const_iterator i = s.begin(); i != s.end(); ++i)
+		argv[argc++] = strdup((*i).c_str());
+	
 	// Convert environment variables.
-	envmap_t pem = getEnvironment();
 	if (envmap)
 	{
 		for (envmap_t::const_iterator i = envmap->begin(); i != envmap->end(); ++i)
-			pem.insert(std::make_pair(i->first, i->second));
+			envv[envc++] = strdup(wstombs(i->first + L"=" + i->second).c_str());
 	}
-
-	for (envmap_t::const_iterator i = pem.begin(); i != pem.end(); ++i)
-		envv[envc++] = strdup(wstombs(i->first + L"=" + i->second).c_str());
-
+	
 	// Terminate argument and environment vectors.
 	envv[envc] = 0;
 	argv[argc] = 0;
@@ -241,7 +267,7 @@ OS::~OS()
 
 void OS::destroy()
 {
-	delete this;
+	T_SAFE_RELEASE(this);
 }
 
 }

@@ -244,7 +244,7 @@ struct CastAny < const Ref< Type >&, false >
 template < typename Type >
 struct CastAny < Type, false >
 {
-	typedef typename IsReference< Type >::base_t type_t;
+	typedef typename IsConst< typename IsReference< Type >::base_t >::type_t type_t;
 
 	static Any set(const type_t& value) {
 		return Any::fromObject(new type_t(value));

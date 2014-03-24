@@ -120,6 +120,8 @@ void ProjectPropertyPage::updateDependencyList()
 	RefArray< Dependency > dependencies = m_project->getDependencies();
 	Ref< ui::ListViewItems > dependencyItems = new ui::ListViewItems();
 
+	const wchar_t* c_link[] = { L"No", L"Yes", L"Force" };
+
 	// Sort all dependencies.
 	dependencies.sort(DependencyPredicate());
 
@@ -132,7 +134,7 @@ void ProjectPropertyPage::updateDependencyList()
 		Ref< ui::ListViewItem > dependencyItem = new ui::ListViewItem();
 		dependencyItem->setText(0, (*i)->getName());
 		dependencyItem->setText(1, (*i)->getLocation());
-		dependencyItem->setText(2, (*i)->shouldLinkWithProduct() ? L"Yes" : L"No");
+		dependencyItem->setText(2, c_link[(*i)->getLink()]);
 		dependencyItem->setData(L"DEPENDENCY", *i);
 		dependencyItems->add(dependencyItem);
 	}
@@ -146,7 +148,7 @@ void ProjectPropertyPage::updateDependencyList()
 		Ref< ui::ListViewItem > dependencyItem = new ui::ListViewItem();
 		dependencyItem->setText(0, (*i)->getName());
 		dependencyItem->setText(1, (*i)->getLocation());
-		dependencyItem->setText(2, (*i)->shouldLinkWithProduct() ? L"Yes" : L"No");
+		dependencyItem->setText(2, c_link[(*i)->getLink()]);
 		dependencyItem->setData(L"DEPENDENCY", *i);
 		dependencyItems->add(dependencyItem);
 	}
@@ -228,7 +230,8 @@ void ProjectPropertyPage::eventDependencyDoubleClick(ui::Event* event)
 	}
 	else
 	{
-		dependency->setLinkWithProduct(!dependency->shouldLinkWithProduct());
+		int32_t link = (dependency->getLink() + 1) % (Dependency::LnkForce + 1);
+		dependency->setLink((Dependency::Link)link);
 		updateDependencyList();
 	}
 }

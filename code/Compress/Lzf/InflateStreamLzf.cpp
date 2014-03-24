@@ -138,7 +138,7 @@ public:
 					&m_compressedBlock[0],
 					compressedBlockSize,
 					&m_decompressedBuffer[0],
-					m_decompressedBuffer.size()
+					uint32_t(m_decompressedBuffer.size())
 				);
 				if (!m_decompressedBufferSize)
 				{

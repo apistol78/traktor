@@ -9,7 +9,7 @@ namespace traktor
 void CaseProcess::run()
 {
 	{
-		Ref< IProcess > process = OS::getInstance().execute(L"$(TRAKTOR_HOME)/bin/unittest-process-1.bat", L"", L"", 0, false, false, false);
+		Ref< IProcess > process = OS::getInstance().execute(L"$(TRAKTOR_HOME)/bin/unittest-process-1.bat", L"", 0, false, false, false);
 		CASE_ASSERT(process != 0);
 
 		if (process)
@@ -23,7 +23,7 @@ void CaseProcess::run()
 	}
 
 	{
-		Ref< IProcess > process = OS::getInstance().execute(L"$(TRAKTOR_HOME)/bin/unittest-process-2.bat", L"Hello", L"", 0, false, false, false);
+		Ref< IProcess > process = OS::getInstance().execute(L"$(TRAKTOR_HOME)/bin/unittest-process-2.bat Hello", L"", 0, false, false, false);
 		CASE_ASSERT(process != 0);
 
 		if (process)

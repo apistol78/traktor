@@ -61,7 +61,8 @@ bool AggregationPropertyPage::create(ui::Widget* parent)
 	m_listDependencies = new ui::ListView();
 	m_listDependencies->create(container, ui::WsClientBorder | ui::ListView::WsReport);
 	m_listDependencies->addColumn(L"Dependency", 130);
-	m_listDependencies->addColumn(L"Location", 300);
+	m_listDependencies->addColumn(L"Location", 270);
+	m_listDependencies->addColumn(L"Link", 50);
 	m_listDependencies->addDoubleClickEventHandler(ui::createMethodHandler(this, &AggregationPropertyPage::eventDependencyDoubleClick));
 
 	Ref< ui::Static > staticAvailable = new ui::Static();
@@ -112,6 +113,8 @@ void AggregationPropertyPage::updateDependencyList()
 	RefArray< Dependency > dependencies = m_aggregation->getDependencies();
 	Ref< ui::ListViewItems > dependencyItems = new ui::ListViewItems();
 
+	const wchar_t* c_link[] = { L"No", L"Yes", L"Force" };
+
 	// Sort all dependencies.
 	dependencies.sort(DependencyPredicate());
 
@@ -124,6 +127,7 @@ void AggregationPropertyPage::updateDependencyList()
 		Ref< ui::ListViewItem > dependencyItem = new ui::ListViewItem();
 		dependencyItem->setText(0, (*i)->getName());
 		dependencyItem->setText(1, (*i)->getLocation());
+		dependencyItem->setText(2, c_link[(*i)->getLink()]);
 		dependencyItem->setData(L"DEPENDENCY", *i);
 		dependencyItems->add(dependencyItem);
 	}
@@ -137,6 +141,7 @@ void AggregationPropertyPage::updateDependencyList()
 		Ref< ui::ListViewItem > dependencyItem = new ui::ListViewItem();
 		dependencyItem->setText(0, (*i)->getName());
 		dependencyItem->setText(1, (*i)->getLocation());
+		dependencyItem->setText(2, c_link[(*i)->getLink()]);
 		dependencyItem->setData(L"DEPENDENCY", *i);
 		dependencyItems->add(dependencyItem);
 	}
@@ -209,7 +214,8 @@ void AggregationPropertyPage::eventDependencyDoubleClick(ui::Event* event)
 	}
 	else
 	{
-		dependency->setLinkWithProduct(!dependency->shouldLinkWithProduct());
+		int32_t link = (dependency->getLink() + 1) % (Dependency::LnkForce + 1);
+		dependency->setLink((Dependency::Link)link);
 		updateDependencyList();
 	}
 }

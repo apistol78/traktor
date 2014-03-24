@@ -161,8 +161,8 @@ void UndergrowthEntity::render(
 									float pz = i->center.z() + dz;
 
 									m_plants[j] = Vector4(
-										i->center.x() + (m_random.nextFloat() * 2.0f - 1.0f) * m_settings.cellRadius,
-										i->center.z() + (m_random.nextFloat() * 2.0f - 1.0f) * m_settings.cellRadius,
+										px,
+										pz,
 										m_random.nextFloat() * TWO_PI,
 										float(i->plant - 1)
 									);
@@ -190,7 +190,7 @@ void UndergrowthEntity::render(
 		return;
 
 	Vector4 instanceData[InstanceCount];
-	uint32_t count = 0;
+	uint32_t plantCount = 0;
 
 	for (AlignedVector< Cluster >::const_iterator i = m_clusters.begin(); i != m_clusters.end(); ++i)
 	{
@@ -237,7 +237,7 @@ void UndergrowthEntity::render(
 		);
 
 		// Only allowed to draw 1/4th of all clusters.
-		if (++count > m_settings.density / 4)
+		if (++plantCount > m_settings.density / 4)
 			break;
 	}
 }

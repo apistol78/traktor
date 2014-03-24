@@ -91,7 +91,7 @@ void ActionVMImage1::serialize(ISerializer& s)
 {
 	T_ASSERT (!m_prepared);
 
-	uint32_t size = m_byteCode.size();
+	uint32_t size = uint32_t(m_byteCode.size());
 	s >> Member< uint32_t >(L"byteCodeSize", size);
 
 	if (s.getDirection() == ISerializer::SdRead)

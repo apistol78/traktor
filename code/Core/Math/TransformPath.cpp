@@ -313,7 +313,8 @@ void TransformPath::insert(float at, const Frame& frame)
 				const Key& k2 = m_keys[i + 1];
 				if (at > k1.T && at < k2.T)
 				{
-					AlignedVector< Key >::iterator iter = m_keys.begin(); std::advance(iter, i + 1);
+					AlignedVector< Key >::iterator iter = m_keys.begin();
+                    std::advance(iter, int(i + 1));
 					m_keys.insert(iter, key);
 					break;
 				}

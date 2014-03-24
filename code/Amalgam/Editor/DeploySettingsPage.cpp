@@ -33,7 +33,7 @@ bool DeploySettingsPage::create(ui::Container* parent, PropertyGroup* settings, 
 		return false;
 
 	Ref< ui::Container > containerInner = new ui::Container();
-	containerInner->create(container, ui::WsNone, new ui::TableLayout(L"*,100%", L"*,*", 0, 4));
+	containerInner->create(container, ui::WsNone, new ui::TableLayout(L"*,100%", L"*,*,*", 0, 4));
 
 	Ref< ui::Static > staticTargetManagerPort = new ui::Static();
 	staticTargetManagerPort->create(containerInner, L"Target manager port");
@@ -41,11 +41,20 @@ bool DeploySettingsPage::create(ui::Container* parent, PropertyGroup* settings, 
 	m_editTargetManagerPort = new ui::Edit();
 	m_editTargetManagerPort->create(containerInner, toString(c_targetConnectionPort), ui::WsClientBorder, new ui::NumericEditValidator(false, 0, 65535, 0));
 
-	m_checkInheritCache = new ui::CheckBox();
-	m_checkInheritCache->create(container, L"Inherit editor cache(s)");
-
 	int32_t targetManagerPort = settings->getProperty< PropertyInteger >(L"Amalgam.TargetManagerPort", c_targetConnectionPort);
 	m_editTargetManagerPort->setText(toString(targetManagerPort));
+
+	Ref< ui::Static > staticCertificate = new ui::Static();
+	staticCertificate->create(containerInner, L"Certificate");
+
+	m_editCertificate = new ui::Edit();
+	m_editCertificate->create(containerInner, L"", ui::WsClientBorder);
+
+	std::wstring certificate = settings->getProperty< PropertyString >(L"Amalgam.Certificate");
+	m_editCertificate->setText(certificate);
+
+	m_checkInheritCache = new ui::CheckBox();
+	m_checkInheritCache->create(container, L"Inherit editor cache(s)");
 
 	bool inheritCache = settings->getProperty< PropertyBoolean >(L"Amalgam.InheritCache", true);
 	m_checkInheritCache->setChecked(inheritCache);
@@ -90,6 +99,9 @@ bool DeploySettingsPage::apply(PropertyGroup* settings)
 {
 	int32_t targetManagerPort = parseString< int32_t >(m_editTargetManagerPort->getText());
 	settings->setProperty< PropertyInteger >(L"Amalgam.TargetManagerPort", targetManagerPort);
+
+	std::wstring certificate = m_editCertificate->getText();
+	settings->setProperty< PropertyString >(L"Amalgam.Certificate", certificate);
 
 	bool inheritCache = m_checkInheritCache->isChecked();
 	settings->setProperty< PropertyBoolean >(L"Amalgam.InheritCache", inheritCache);

@@ -147,6 +147,76 @@ struct Constructor_5 : public IConstructor
 	}
 };
 
+template<
+	typename ClassType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type,
+	typename Argument5Type,
+	typename Argument6Type
+>
+struct Constructor_6 : public IConstructor
+{
+	virtual Ref< Object > construct(uint32_t argc, const Any* argv) const
+	{
+		return new ClassType(
+			CastAny< Argument1Type >::get(argv[0]),
+			CastAny< Argument2Type >::get(argv[1]),
+			CastAny< Argument3Type >::get(argv[2]),
+			CastAny< Argument4Type >::get(argv[3]),
+			CastAny< Argument5Type >::get(argv[4]),
+			CastAny< Argument6Type >::get(argv[5])
+		);
+	}
+};
+
+template<
+	typename ClassType,
+	typename Argument1Type
+>
+struct FnConstructor_1 : public IConstructor
+{
+	typedef Ref< ClassType > (*fn_t)(Argument1Type a1);
+	fn_t fn;
+
+	FnConstructor_1(fn_t fn_)
+	:	fn(fn_)
+	{
+	}
+
+	virtual Ref< Object > construct(uint32_t argc, const Any* argv) const
+	{
+		return (*fn)(
+			CastAny< Argument1Type >::get(argv[0])
+		);
+	}
+};
+
+template<
+	typename ClassType,
+	typename Argument1Type,
+	typename Argument2Type
+>
+struct FnConstructor_2 : public IConstructor
+{
+	typedef Ref< ClassType > (*fn_t)(Argument1Type a1, Argument2Type a2);
+	fn_t fn;
+
+	FnConstructor_2(fn_t fn_)
+	:	fn(fn_)
+	{
+	}
+
+	virtual Ref< Object > construct(uint32_t argc, const Any* argv) const
+	{
+		return (*fn)(
+			CastAny< Argument1Type >::get(argv[0]),
+			CastAny< Argument2Type >::get(argv[1])
+		);
+	}
+};
+
 /*! \} */
 
 /*! \name Method signatures */
@@ -2160,6 +2230,36 @@ public:
 	void addConstructor()
 	{
 		addConstructor(5, new Constructor_5< ClassType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type >());
+	}
+
+	template <
+		typename Argument1Type,
+		typename Argument2Type,
+		typename Argument3Type,
+		typename Argument4Type,
+		typename Argument5Type,
+		typename Argument6Type
+	>
+	void addConstructor()
+	{
+		addConstructor(6, new Constructor_6< ClassType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type >());
+	}
+
+	template <
+		typename Argument1Type
+	>
+	void addConstructor(typename FnConstructor_1< ClassType, Argument1Type >::fn_t fn)
+	{
+		addConstructor(1, new FnConstructor_1< ClassType, Argument1Type >(fn));
+	}
+
+	template <
+		typename Argument1Type,
+		typename Argument2Type
+	>
+	void addConstructor(typename FnConstructor_2< ClassType, Argument1Type, Argument2Type >::fn_t fn)
+	{
+		addConstructor(2, new FnConstructor_2< ClassType, Argument1Type, Argument2Type >(fn));
 	}
 
 	/*! \} */

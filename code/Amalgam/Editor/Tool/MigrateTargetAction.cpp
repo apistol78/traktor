@@ -4,8 +4,8 @@
 #include "Amalgam/Editor/Target.h"
 #include "Amalgam/Editor/TargetConfiguration.h"
 #include "Amalgam/Editor/Tool/MigrateTargetAction.h"
-#include "Amalgam/Editor/Tool/PipeReader.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Io/IStream.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Split.h"
@@ -15,6 +15,7 @@
 #include "Core/Settings/PropertyStringSet.h"
 #include "Core/System/IProcess.h"
 #include "Core/System/OS.h"
+#include "Core/System/PipeReader.h"
 #include "Database/ConnectionString.h"
 #include "Database/Database.h"
 #include "Xml/XmlDeserializer.h"
@@ -144,6 +145,9 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 	applicationConfiguration->setProperty< PropertyString >(L"Input.Default", m_targetConfiguration->getDefaultInput().format());
 	applicationConfiguration->setProperty< PropertyString >(L"Online.Config", m_targetConfiguration->getOnlineConfig().format());
 
+	// Append application title.
+	applicationConfiguration->setProperty< PropertyString >(L"Render.Title", m_targetName);
+
 	// Write generated configurations in output directory.
 	Ref< IStream > file = FileSystem::getInstance().open(
 		m_outputPath + L"/Migrate.config",
@@ -175,6 +179,9 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 		return false;
 	}
 
+	// Get list of used modules from application configuration.
+	std::set< std::wstring > runtimeModules = applicationConfiguration->getProperty< PropertyStringSet >(L"Amalgam.Modules");
+
 	// Launch migration through deploy tool; set cwd to output directory.
 	Path projectRoot = FileSystem::getInstance().getCurrentVolume()->getCurrentDirectory();
 	OS::envmap_t envmap = OS::getInstance().getEnvironment();
@@ -188,20 +195,22 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 	envmap[L"DEPLOY_PROJECT_ICON"] = m_targetConfiguration->getIcon();
 	envmap[L"DEPLOY_TARGET_HOST"] = m_deployHost;
 	envmap[L"DEPLOY_EXECUTABLE"] = m_targetConfiguration->getExecutable();
+	envmap[L"DEPLOY_MODULES"] = implode(runtimeModules.begin(), runtimeModules.end(), L" ");
 	envmap[L"DEPLOY_OUTPUT_PATH"] = m_outputPath;
+	envmap[L"DEPLOY_CERTIFICATE"] = m_globalSettings->getProperty< PropertyString >(L"Amalgam.Certificate", L"");
 
 	const DeployTool& deployTool = platform->getDeployTool();
 	envmap.insert(deployTool.getEnvironment().begin(), deployTool.getEnvironment().end());
 
-	StringOutputStream ss;
-	ss << L"migrate";
-
 	Ref< IProcess > process = OS::getInstance().execute(
-		deployTool.getExecutable(),
-		ss.str(),
+		deployTool.getExecutable() + L" migrate",
 		m_outputPath,
 		&envmap,
+#if defined(_DEBUG)
+		false, false, false
+#else
 		true, true, false
+#endif
 	);
 	if (!process)
 	{
@@ -219,7 +228,7 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 	std::list< std::wstring > errors;
 	std::wstring str;
 
-	while (!process->wait(100))
+	do
 	{
 		while (stdOutReader.readLine(str, 10))
 		{
@@ -241,19 +250,25 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 					}
 				}
 			}
+			else
+				log::info << str << Endl;
 		}
 
 		while (stdErrReader.readLine(str, 10))
 		{
 			str = trim(str);
 			if (!str.empty())
+			{
+				log::error << str << Endl;
 				errors.push_back(str);
+			}
 		}
 	}
+	while (!process->wait(100));
 
 	if (!errors.empty())
 	{
-		log::error << L"Unsuccessful build, error(s):" << Endl;
+		log::error << L"Unsuccessful migrate, error(s):" << Endl;
 		for (std::list< std::wstring >::const_iterator i = errors.begin(); i != errors.end(); ++i)
 			log::error << L"\t" << *i << Endl;
 	}

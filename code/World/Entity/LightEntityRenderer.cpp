@@ -92,7 +92,7 @@ void LightEntityRenderer::render(
 		Transform transform;
 		spotLightEntity->getTransform(transform);
 
-		Vector4 center = worldRenderView.getView() * transform.translation().xyz1();
+		//Vector4 center = worldRenderView.getView() * transform.translation().xyz1();
 		//if (worldRenderView.getCullFrustum().inside(center, Scalar(spotLightEntity->getRange())) == Frustum::IrOutside)
 		//	return;
 

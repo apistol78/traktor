@@ -3,7 +3,7 @@
 #include "ProjectDependency.h"
 #include "Project.h"
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"ProjectDependency", 1, ProjectDependency, Dependency)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"ProjectDependency", 2, ProjectDependency, Dependency)
 
 ProjectDependency::ProjectDependency(Project* project)
 :	m_project(project)

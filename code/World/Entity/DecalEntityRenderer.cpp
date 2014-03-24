@@ -141,7 +141,7 @@ void DecalEntityRenderer::flush(
 	const Vector4 magicCoeffs(1.0f / p11, 1.0f / p22, 0.0f, 0.0f);
 
 	// Render all decal boxes.
-	uint32_t decalsCount = std::min< uint32_t >(m_decalEntities.size(), c_maxRenderDecals);
+	uint32_t decalsCount = std::min< uint32_t >(uint32_t(m_decalEntities.size()), c_maxRenderDecals);
 	for (uint32_t i = 0; i < decalsCount; ++i)
 	{
 		DecalEntity* decal = m_decalEntities[i];

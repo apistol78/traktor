@@ -153,7 +153,7 @@ bool ReliableTransportPeers::setPrimaryPeerHandle(handle_t handle)
 uint32_t ReliableTransportPeers::getPeers(std::vector< PeerInfo >& outPeers) const
 {
 	outPeers = m_info;
-	return outPeers.size();
+	return uint32_t(outPeers.size());
 }
 
 int32_t ReliableTransportPeers::receive(void* data, int32_t size, handle_t& outFromHandle)

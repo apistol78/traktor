@@ -42,7 +42,7 @@ void As_traktor_amalgam_SoundDriver::SoundDriver_get_available(flash::CallArgs& 
 {
 	RefArray< AsSoundDriver > soundDrivers = AsSoundDriver::getAvailable();
 	
-	Ref< flash::Array > soundDriversArr = new flash::Array(soundDrivers.size());
+	Ref< flash::Array > soundDriversArr = new flash::Array(uint32_t(soundDrivers.size()));
 	for (uint32_t i = 0; i < soundDrivers.size(); ++i)
 	{
 		soundDriversArr->push(flash::ActionValue(

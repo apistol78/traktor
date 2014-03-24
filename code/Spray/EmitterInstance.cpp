@@ -127,7 +127,7 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 		const Source* source = m_emitter->getSource();
 		if (source)
 		{
-			uint32_t avail = m_points.capacity() - size;
+			uint32_t avail = uint32_t(m_points.capacity() - size);
 			Vector4 dm = (lastPosition - m_transform.translation()).xyz0();
 
 			if (!singleShot)
@@ -391,7 +391,7 @@ void EmitterInstance::updateTask(float deltaTime)
 	if (m_emitter->getEffect())
 	{
 		// Create new effect instances for each new particle point.
-		uint32_t size = m_effectInstances.size();
+		uint32_t size = uint32_t(m_effectInstances.size());
 		m_effectInstances.resize(m_renderPoints.size());
 		for (uint32_t i = size; i < m_renderPoints.size(); ++i)
 			m_effectInstances[i] = m_emitter->getEffect()->createInstance();

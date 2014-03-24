@@ -49,6 +49,10 @@ bool VideoLayer::playing() const
 		return false;
 }
 
+void VideoLayer::transition(Layer* fromLayer)
+{
+}
+
 void VideoLayer::prepare()
 {
 }

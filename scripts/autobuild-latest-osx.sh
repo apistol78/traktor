@@ -3,21 +3,15 @@
 source ../config.sh
 
 # Build Traktor
-#---------------
 pushd $TRAKTOR_HOME
-/bin/sh build-projects-xcode-osx.sh
+/bin/sh build-projects-make-osx.sh
 
-pushd build/macosx-shared
-xcodebuild -alltargets -configuration Release
-popd
-
-pushd build/macosx-static
-xcodebuild -alltargets -configuration Release
+pushd build/osx
+make ReleaseShared
 popd
 
 popd
 
 # Put built binaries into place
-#-------------------------------
 /bin/sh copy-latest-osx.sh
 

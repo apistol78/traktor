@@ -1,0 +1,177 @@
+
+
+function generateImage(fileName, image, width, height)
+	local output = image:clone(true)
+	output:apply(ScaleFilter(width, height))
+	output:save(fileName)
+end
+
+
+function build(args)
+	stdout:printLn("Building asset(s)...")
+	local cmdline = "$(DEPLOY_PROJECT_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App -p -s=Pipeline"
+	for i = 1, args:size() - 1 do
+		cmdline = cmdline .. " " .. args:get(i)
+	end
+	return run:execute(cmdline)
+end
+
+
+function deploy(args)
+	stdout:printLn("Generating iOS default images...")
+	local defaultImage = Image.loadFromFile("$(DEPLOY_PROJECT_ROOT)/res/deploy/ios/Default.png")
+	if defaultImage ~= nil then
+		generateImage("Default.png", defaultImage, 320, 480)
+		generateImage("Default@2x.png", defaultImage, 640, 960)
+		generateImage("Default-568h@2x.png", defaultImage, 640, 1136)
+		generateImage("Default-ipad.png", defaultImage, 768, 1024)
+		generateImage("Default@2x-ipad.png", defaultImage, 1536, 2048)
+	else
+		stderr:printLn("Failed to generate iOS default images; unable to read source image")
+		return 1
+	end
+
+	stdout:printLn("Generating iOS icon images...")
+	local iconImage = Image.loadFromFile("$(DEPLOY_PROJECT_ROOT)/res/deploy/ios/Icon.png")
+	if iconImage ~= nil then
+		generateImage("Icon.png", iconImage, 60, 60)
+		generateImage("Icon@2x.png", iconImage, 120, 120)
+		generateImage("Icon-76.png", iconImage, 76, 76)
+		generateImage("Icon-76@2x.png", iconImage, 152, 152)
+		generateImage("Icon-Small.png", iconImage, 29, 29)
+		generateImage("Icon-Small@2x.png", iconImage, 58, 58)
+		generateImage("Icon-Small-50.png", iconImage, 50, 50)
+	else
+		stderr:printLn("Failed to generate iOS icon images; unable to read source image")
+		return 1
+	end
+
+	stdout:printLn("Generating Info.plist...")
+	if run:run("$(DEPLOY_PROJECT_ROOT)/res/deploy/ios/Info.plist.template", "Info.plist") ~= 0 then
+		stderr:printLn("Failed to generate Info.plist")
+		return 1
+	end
+
+	stdout:printLn("Generating Main.cpp...")
+	if run:run("$(DEPLOY_PROJECT_ROOT)/res/deploy/ios/Main.cpp.template", "Main.cpp") ~= 0 then
+		stderr:printLn("Failed to generate Main.cpp")
+		return 1
+	end
+
+	stdout:printLn("Generating Xcode project...")
+	run:mkdir("$(DEPLOY_PROJECT_NAME).xcodeproj")
+	if run:run("$(DEPLOY_PROJECT_ROOT)/res/deploy/ios/project.pbxproj.template", "$(DEPLOY_PROJECT_NAME).xcodeproj/project.pbxproj") ~= 0 then
+		stderr:printLn("Failed to generate Xcode project")
+		return 1
+	end
+
+	stdout:printLn("Deploying resources to target host...")
+	run:pushd("$(TRAKTOR_HOME)/bin/osx")
+	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) kick-open.sh", "null")
+	run:popd()
+	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) *.plist *.png *.cpp Application.config", "null")
+	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) \"$(DEPLOY_PROJECT_NAME).xcodeproj/project.pbxproj\"", "null")
+
+	stdout:printLn("Deploying binaries to target host...")
+	run:pushd("$(DEPLOY_PROJECT_ROOT)/bin/latest/ios/releasestatic")
+	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) *.a", "null")
+	run:popd()
+
+	stdout:printLn("Deploy finished")
+	return 0
+end
+
+
+function launch(args)
+	stdout:printLn("Launching iOS...")
+	return run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteLaunch $(DEPLOY_TARGET_HOST) kick-open.sh \"$(DEPLOY_PROJECT_NAME)\"", "null")
+end
+
+
+function migrate(args)
+	stdout:printLn("Migrating iOS...")
+	if run:execute("$(DEPLOY_PROJECT_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Database.Migrate.App -p -s=Migrate", "null") ~= 0 then
+		stderr:printLn("Failed to migrate iOS database")
+		return 1
+	end
+
+	stdout:printLn("Generating iOS default images...")
+	local defaultImage = Image.loadFromFile("$(DEPLOY_PROJECT_ROOT)/res/deploy/ios/Default.png")
+	if defaultImage ~= nil then
+		generateImage("Default.png", defaultImage, 320, 480)
+		generateImage("Default@2x.png", defaultImage, 640, 960)
+		generateImage("Default-568h@2x.png", defaultImage, 640, 1136)
+		generateImage("Default-ipad.png", defaultImage, 768, 1024)
+		generateImage("Default@2x-ipad.png", defaultImage, 1536, 2048)
+	else
+		stderr:printLn("Failed to generate iOS default images; unable to read source image")
+		return 1
+	end
+
+	stdout:printLn("Generating iOS icon images...")
+	local iconImage = Image.loadFromFile("$(DEPLOY_PROJECT_ROOT)/res/deploy/ios/Icon.png")
+	if iconImage ~= nil then
+		generateImage("Icon.png", iconImage, 60, 60)
+		generateImage("Icon@2x.png", iconImage, 120, 120)
+		generateImage("Icon-76.png", iconImage, 76, 76)
+		generateImage("Icon-76@2x.png", iconImage, 152, 152)
+		generateImage("Icon-Small.png", iconImage, 29, 29)
+		generateImage("Icon-Small@2x.png", iconImage, 58, 58)
+		generateImage("Icon-Small-50.png", iconImage, 50, 50)
+	else
+		stderr:printLn("Failed to generate iOS icon images; unable to read source image")
+		return 1
+	end
+
+	stdout:printLn("Generating Info.plist...")
+	if run:run("$(DEPLOY_PROJECT_ROOT)/res/deploy/ios/Info.plist.template", "Info.plist") ~= 0 then
+		stderr:printLn("Failed to generate Info.plist")
+		return 1
+	end
+
+	stdout:printLn("Generating Main.cpp...")
+	if run:run("$(DEPLOY_PROJECT_ROOT)/res/deploy/ios/Main.cpp.template", "Main.cpp") ~= 0 then
+		stderr:printLn("Failed to generate Main.cpp")
+		return 1
+	end
+
+	stdout:printLn("Generating Xcode project...")
+	run:mkdir("$(DEPLOY_PROJECT_NAME).xcodeproj")
+	if run:run("$(DEPLOY_PROJECT_ROOT)/res/deploy/ios/project.pbxproj.template", "$(DEPLOY_PROJECT_NAME).xcodeproj/project.pbxproj") ~= 0 then
+		stderr:printLn("Failed to generate Xcode project")
+		return 1
+	end
+
+	stdout:printLn("Deploying resources to target host...")
+	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) *.plist *.png *.cpp Content.compact Application.config", "null")
+	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) \"$(DEPLOY_PROJECT_NAME).xcodeproj/project.pbxproj\"", "null")
+
+	stdout:printLn("Deploying binaries to target host...")
+	run:pushd("$(DEPLOY_PROJECT_ROOT)/bin/latest/ios/releasestatic")
+	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) *.a", "null")
+	run:popd()
+
+	stdout:printLn("Launching Xcode on target host...")
+	if run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteLaunch $(DEPLOY_TARGET_HOST) kick-open.sh \"$(DEPLOY_PROJECT_NAME)\"", "null") ~= 0 then
+		stderr:printLn("Failed to launch Xcode")
+		return 1
+	end
+
+	stdout:printLn("Migrate finished")
+	return 0	
+end
+
+
+function main(args)
+	local action = args:get(0)
+	if action == "build" then
+		return build(args)
+	elseif action == "deploy" then
+		return deploy(args)
+	elseif action == "launch" then
+		return launch(args)
+	elseif action == "migrate" then
+		return migrate(args)
+	end
+	return 1
+end

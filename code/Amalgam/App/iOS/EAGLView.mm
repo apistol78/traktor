@@ -50,34 +50,32 @@ void updateApplicationThread(amalgam::Application* app)
     return [CAEAGLLayer class];
 }
 
-- (id) initWithFrame: (CGRect)frame
-{    
-    if ((self = [super initWithFrame:frame]))
+- (BOOL) createApplication
+{
+	m_thread = 0;
+
+	// Load settings.
+	Ref< PropertyGroup > defaultSettings = loadSettings(L"Application.config");
+	if (!defaultSettings)
 	{
-		m_thread = 0;
-
-		// Load settings.
-		Ref< PropertyGroup > defaultSettings = loadSettings(L"$(BUNDLE_PATH)/Application.config");
-		if (!defaultSettings)
-		{
-			traktor::log::error << L"Unable to read application settings \"Application.config\"" << Endl;
-			return 0;
-		}
-		
-		Ref< PropertyGroup > settings = DeepClone(defaultSettings).create< PropertyGroup >();
-		T_FATAL_ASSERT (settings);
-
-		// Create application.
-		m_application = new amalgam::Application();
-		if (!m_application->create(
-			defaultSettings,
-			settings,
-			(void*)self
-		))
-			return 0;
-    }
+		traktor::log::error << L"Unable to read application settings \"Application.config\"" << Endl;
+		return NO;
+	}
 	
-    return self;
+	Ref< PropertyGroup > settings = DeepClone(defaultSettings).create< PropertyGroup >();
+	T_FATAL_ASSERT (settings);
+
+	// Create application.
+	m_application = new amalgam::Application();
+	if (m_application->create(
+		defaultSettings,
+		settings,
+        0,
+		(void*)self
+	))
+		return YES;
+	else
+		return NO;
 }
 
 - (void) drawView:(id)sender

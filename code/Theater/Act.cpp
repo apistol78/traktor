@@ -58,7 +58,7 @@ bool Act::update(scene::Scene* scene, float time, float deltaTime) const
 	if (!m_infinite && time > m_duration + FUZZY_EPSILON)
 		return false;
 
-	uint32_t ntracks = m_tracks.size();
+	uint32_t ntracks = uint32_t(m_tracks.size());
 
 	TransformPath::Frame frame;
 	Transform lookAtTransform;

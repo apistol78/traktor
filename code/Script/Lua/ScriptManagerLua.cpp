@@ -328,7 +328,7 @@ Ref< IScriptContext > ScriptManagerLua::createContext(const IScriptResource* scr
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	CHECK_LUA_STACK(m_luaState, 0);
 
-	const ScriptResourceLua* scriptResourceLua = checked_type_cast< const ScriptResourceLua*, false >(scriptResource);
+	const ScriptResourceLua* scriptResourceLua = checked_type_cast< const ScriptResourceLua* >(scriptResource);
 
 	// Create local environment.
 	lua_newtable(m_luaState);
@@ -345,35 +345,42 @@ Ref< IScriptContext > ScriptManagerLua::createContext(const IScriptResource* scr
 	lua_pop(m_luaState, 1);
 
 	// Load script into environment.
-	std::string fileName = "@" + scriptResourceLua->m_fileName;
-	int32_t result;
-
-	result = luaL_loadbuffer(
-		m_luaState,
-		(const char*)scriptResourceLua->m_script.c_str(),
-		scriptResourceLua->m_script.length(),
-		fileName.c_str()
-	);
-
-	if (result != 0)
+	Ref< ScriptContextLua > context;
+	if (scriptResourceLua)
 	{
-		log::error << L"LUA load error \"" << mbstows(lua_tostring(m_luaState, -1)) << L"\"" << Endl;
-		lua_pop(m_luaState, 1);
-		return 0;
+		std::string fileName = "@" + scriptResourceLua->m_fileName;
+		int32_t result;
+
+		result = luaL_loadbuffer(
+			m_luaState,
+			(const char*)scriptResourceLua->m_script.c_str(),
+			scriptResourceLua->m_script.length(),
+			fileName.c_str()
+		);
+
+		if (result != 0)
+		{
+			log::error << L"LUA load error \"" << mbstows(lua_tostring(m_luaState, -1)) << L"\"" << Endl;
+			lua_pop(m_luaState, 1);
+			return 0;
+		}
+
+		context = new ScriptContextLua(
+			this,
+			m_luaState,
+			environmentRef,
+			scriptResourceLua->m_map
+		);
 	}
-
-	// Create new context.
-	Ref< ScriptContextLua > context = new ScriptContextLua(
-		this,
-		m_luaState,
-		environmentRef,
-		scriptResourceLua->m_map
-	);
-
-	// Call script.
-	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, environmentRef);
-	lua_setfenv(m_luaState, -2);
-	lua_call(m_luaState, 0, 0);
+	else
+	{
+		context = new ScriptContextLua(
+			this,
+			m_luaState,
+			environmentRef,
+			source_map_t()
+		);
+	}
 
 	// Copy global member values from prototype.
 	if (contextPrototype)
@@ -439,6 +446,14 @@ Ref< IScriptContext > ScriptManagerLua::createContext(const IScriptResource* scr
 		// -2 = sourceContext->m_environmentRef
 		// -1 = environmentRef
 		lua_pop(m_luaState, 2);
+	}
+
+	// Call script.
+	if (scriptResourceLua)
+	{
+		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, environmentRef);
+		lua_setfenv(m_luaState, -2);
+		lua_call(m_luaState, 0, 0);
 	}
 
 	m_contexts.push_back(context);

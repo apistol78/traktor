@@ -929,7 +929,6 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 	Matrix44 viewInverse = worldRenderView.getView().inverse();
 	Frustum viewFrustum = worldRenderView.getViewFrustum();
 	Aabb3 shadowBox = worldRenderView.getShadowBox();
-	Vector4 eyePosition = viewInverse.translation();
 
 	for (int32_t slice = 0; slice < m_shadowSettings.cascadingSlices; ++slice)
 	{

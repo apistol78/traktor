@@ -64,9 +64,6 @@ Ref< Pin > IpolNodeShape::getPinAt(const Node* node, const Point& pt)
 void IpolNodeShape::paint(const Node* node, const PaintSettings* settings, Canvas* canvas, const Size& offset)
 {
 	Rect rc = node->calculateRect().offset(offset);
-
-	Color4ub modulate = node->isSelected() ? Color4ub(224, 224, 255) : Color4ub(255, 255, 255);
-
 	int ofx = node->isSelected() ? 32 : 0;
 
 	canvas->drawBitmap(

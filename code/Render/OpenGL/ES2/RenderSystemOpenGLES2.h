@@ -74,12 +74,6 @@ public:
 private:
 	void* m_nativeHandle;
 	Ref< ContextOpenGLES2 > m_globalContext;
-
-#if defined(_WIN32)
-	HWND m_hWnd;
-
-	static LRESULT wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-#endif
 };
 
 	}

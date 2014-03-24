@@ -57,7 +57,7 @@ Ref< IPoseController > RagDollPoseControllerData::createInstance(
 		trackPoseController->estimateVelocities(skeleton, velocities);
 	}
 
-	for (uint32_t i = velocities.size(); i < jointTransforms.size(); ++i)
+	for (uint32_t i = uint32_t(velocities.size()); i < uint32_t(jointTransforms.size()); ++i)
 	{
 		IPoseController::Velocity velocity;
 		velocity.linear =

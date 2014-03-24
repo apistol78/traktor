@@ -40,7 +40,7 @@ public:
 	void feed(const std::wstring& value)
 	{
 		if (!value.empty())
-			feed(value.c_str(), value.length());
+			feed(value.c_str(), uint32_t(value.length()));
 	}
 
 private:

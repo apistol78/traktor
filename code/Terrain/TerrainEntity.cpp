@@ -486,10 +486,7 @@ void TerrainEntity::update(const world::UpdateParams& update)
 
 bool TerrainEntity::updatePatches()
 {
-	const Vector4& worldExtent = m_heightfield->getWorldExtent();
-
 	uint32_t patchDim = m_terrain->getPatchDim();
-	uint32_t detailSkip = m_terrain->getDetailSkip();
 	uint32_t heightfieldSize = m_heightfield->getSize();
 
 	for (uint32_t pz = 0; pz < m_patchCount; ++pz)

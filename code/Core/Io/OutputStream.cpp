@@ -114,7 +114,7 @@ const wchar_t* ftoa__(T value, int fractions, wchar_t* buf)
 
 			do
 			{
-				*p-- = L'0' + int_t(vf % 10);
+				*p-- = wchar_t(L'0' + vf % 10);
 				vf /= 10;
 				nf--;
 			}
@@ -134,7 +134,7 @@ const wchar_t* ftoa__(T value, int fractions, wchar_t* buf)
 	{
 		do 
 		{
-			*p-- = L'0' + int_t(vi % 10);
+			*p-- = wchar_t(L'0' + vi % 10);
 			vi /= 10;
 		}
 		while (vi);

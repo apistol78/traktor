@@ -92,7 +92,7 @@ public:
 		mpg123_feedseek(m_handle, 0, SEEK_SET, &offset);
 
 		// Move to correct position in our stream.
-		m_stream->seek(IStream::SeekSet, offset);
+		m_stream->seek(IStream::SeekSet, int(offset));
 
 		// Flush buffers.
 		m_decodedCount = 0;
@@ -153,7 +153,7 @@ public:
 
 				if (m_channels > 0)
 				{
-					int32_t sampleCount = bytes / (m_channels * sizeof(float));
+					int32_t sampleCount = int32_t(bytes / (m_channels * sizeof(float)));
 					int32_t channels = std::min(m_channels, 2);
 					for (int32_t i = 0; i < sampleCount * m_channels; i += m_channels)
 					{
@@ -172,7 +172,7 @@ public:
 		outSoundBlock.samples[SbcLeft] = m_decoded[SbcLeft];
 		outSoundBlock.samples[SbcRight] = m_decoded[SbcRight];
 		outSoundBlock.samplesCount = alignDown(std::min(m_decodedCount, outSoundBlock.samplesCount), 4);
-		outSoundBlock.sampleRate = m_sampleRate;
+		outSoundBlock.sampleRate = uint32_t(m_sampleRate);
 		outSoundBlock.maxChannel = m_channels;
 
 		m_consumedCount = outSoundBlock.samplesCount;

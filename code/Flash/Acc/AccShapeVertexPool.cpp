@@ -10,12 +10,6 @@ namespace traktor
 {
 	namespace flash
 	{
-		namespace
-		{
-
-const uint32_t c_vertexPoolSize = 65536;
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AccShapeVertexPool", AccShapeVertexPool, Object)
 

@@ -23,7 +23,9 @@ namespace traktor
 		namespace
 		{
 
+#if defined(T_USE_UPDATE_JOBS)
 const uint32_t c_vertexCountFork = 1000;	//< Fork blend update on multiple threads if vertex count exceed this value.
+#endif
 
 struct BlendMeshTask
 {

@@ -59,7 +59,6 @@ Ref< PostProcessStepBlur::Instance > PostProcessStepBlur::create(
 	if (m_blurType == BtGaussian)
 	{
 		float sigma = m_taps / 4.73f;
-		float sigma0 = sigma;
 
 		// Iterate to prevent under or over sigma.
 		for (int32_t i = 0; i < 10; ++i)
@@ -246,7 +245,7 @@ void PostProcessStepBlur::InstanceBlur::render(
 			m_shader->setTextureParameter(i->param, source->getColorTexture(i->index));
 	}
 
-	m_shader->setVectorArrayParameter(m_handleGaussianOffsetWeights, &m_gaussianOffsetWeights[0], m_gaussianOffsetWeights.size());
+	m_shader->setVectorArrayParameter(m_handleGaussianOffsetWeights, &m_gaussianOffsetWeights[0], uint32_t(m_gaussianOffsetWeights.size()));
 	m_shader->setVectorParameter(m_handleDirection, m_direction * Scalar(0.5f));
 	m_shader->setFloatParameter(m_handleViewFar, params.viewFrustum.getFarZ());
 	m_shader->setVectorParameter(m_handleNoiseOffset, Vector4(

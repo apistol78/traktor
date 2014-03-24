@@ -50,9 +50,9 @@ bool Winding3::angleIndices(uint32_t& outI1, uint32_t& outI2, uint32_t& outI3) c
 			Scalar phi = dot3(e1, e2);
 			if (abs(phi) < 1.0f - FUZZY_EPSILON)
 			{
-				outI1 = p;
-				outI2 = i;
-				outI3 = n;
+				outI1 = uint32_t(p);
+				outI2 = uint32_t(i);
+				outI3 = uint32_t(n);
 				return true;
 			}
 		}

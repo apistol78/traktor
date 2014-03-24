@@ -6,8 +6,10 @@
 #include "Core/Thread/Acquire.h"
 #include "Render/OpenGL/ES2/ContextOpenGLES2.h"
 
-#if TARGET_OS_IPHONE
-#	include "Render/OpenGL/ES2/IPhone/EAGLContextWrapper.h"
+#if defined(_WIN32)
+#	include "Render/OpenGL/ES2/Win32/Window.h"
+#elif defined(__IOS__)
+#	include "Render/OpenGL/ES2/iOS/EAGLContextWrapper.h"
 #elif defined(__PNACL__)
 #	include "Render/OpenGL/ES2/PNaCl/PPContextWrapper.h"
 #endif
@@ -31,39 +33,23 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ContextOpenGLES2", ContextOpenGLES2, ICo
 
 ThreadLocal ContextOpenGLES2::ms_contextStack;
 
-#if defined(T_OPENGL_ES2_HAVE_EGL)
-#	if defined(_WIN32)
-HWND ContextOpenGLES2::ms_hWnd = 0;
-#	endif
-EGLDisplay ContextOpenGLES2::ms_display = 0;
-EGLConfig ContextOpenGLES2::ms_config = 0;
-#endif
-
-bool ContextOpenGLES2::initialize()
+Ref< ContextOpenGLES2 > ContextOpenGLES2::createResourceContext(void* nativeHandle)
 {
-#if defined(T_OPENGL_ES2_HAVE_EGL)
-#	if defined(_WIN32)
-	ms_hWnd = CreateWindow(
-		_T("RenderSystemOpenGLES2_FullScreen"),
-		_T("Traktor 2.0 OpenGL ES 2.0 Renderer (Resource)"),
-		WS_POPUPWINDOW,
-		0,
-		0,
-		16,
-		16,
-		NULL,
-		NULL,
-		static_cast< HMODULE >(GetModuleHandle(NULL)),
-		0
-	);
-	T_ASSERT (ms_hWnd != NULL);
+	Ref< ContextOpenGLES2 > context = new ContextOpenGLES2();
 
-	ms_display = eglGetDisplay(GetDC(ms_hWnd));
-	if (ms_display == EGL_NO_DISPLAY) 
+#if defined(T_OPENGL_ES2_HAVE_EGL)
+
+#	if defined(_WIN32)
+	context->m_window = new Window();
+	if (!context->m_window->create())
+		return 0;
+
+	context->m_display = eglGetDisplay(GetDC(*context->m_window));
+	if (context->m_display == EGL_NO_DISPLAY) 
 #	endif
 	{
-		ms_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-		if (ms_display == EGL_NO_DISPLAY)
+		context->m_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+		if (context->m_display == EGL_NO_DISPLAY)
 		{
 			EGLint error = eglGetError();
 			log::error << L"Create OpenGL ES2.0 failed; unable to get EGL display (" << getEGLErrorString(error) << L")" << Endl;
@@ -71,7 +57,7 @@ bool ContextOpenGLES2::initialize()
 		}
 	}
 
-	if (!eglInitialize(ms_display, 0, 0)) 
+	if (!eglInitialize(context->m_display, 0, 0)) 
 	{
 		EGLint error = eglGetError();
 		log::error << L"Create OpenGL ES2.0 failed; unable to initialize EGL (" << getEGLErrorString(error) << L")" << Endl;
@@ -93,7 +79,7 @@ bool ContextOpenGLES2::initialize()
 	EGLint numMatchingConfigs = 0;
 
 	EGLBoolean success = eglChooseConfig(
-		ms_display,
+		context->m_display,
 		configAttribs,
 		matchingConfigs,
 		c_maxMatchConfigs,
@@ -113,27 +99,21 @@ bool ContextOpenGLES2::initialize()
 		return false;
 	}
 
-	ms_config = matchingConfigs[0];
-#endif
-	return true;
-}
+	context->m_config = matchingConfigs[0];
 
-Ref< ContextOpenGLES2 > ContextOpenGLES2::createResourceContext(void* nativeHandle)
-{
-#if defined(T_OPENGL_ES2_HAVE_EGL)
 #	if defined(_WIN32)
-	EGLSurface surface = eglCreateWindowSurface(ms_display, ms_config, ms_hWnd, 0);
+	context->m_surface = eglCreateWindowSurface(context->m_display, context->m_config, *context->m_window, 0);
 #	elif defined(__EMSCRIPTEN__)
-	EGLSurface surface = eglCreateWindowSurface(ms_display, ms_config, 0, 0);
+	context->m_surface = eglCreateWindowSurface(context->m_display, context->m_config, 0, 0);
 #	else
 	EGLint surfaceAttrs[] =
 	{
 		EGL_NONE
 	};
-	EGLSurface surface = eglCreatePbufferSurface(ms_display, ms_config, surfaceAttrs);
+	context->m_surface = eglCreatePbufferSurface(context->m_display, context->m_config, surfaceAttrs);
 #	endif
 
-	if (surface == EGL_NO_SURFACE)
+	if (context->m_surface == EGL_NO_SURFACE)
 	{
 		EGLint error = eglGetError();
 		log::error << L"Create OpenGL ES2.0 context failed; unable to create EGL surface (" << getEGLErrorString(error) << L")" << Endl;
@@ -148,53 +128,91 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createResourceContext(void* nativeHand
 		EGL_NONE
 	};
 
-	EGLContext context = eglCreateContext(
-		ms_display,
-		ms_config,
+	context->m_context = eglCreateContext(
+		context->m_display,
+		context->m_config,
 		EGL_NO_CONTEXT,
 		contextAttribs
 	);
-	if (context == EGL_NO_CONTEXT)
+	if (context->m_context == EGL_NO_CONTEXT)
 	{
 		EGLint error = eglGetError();
 		log::error << L"Create OpenGL ES2.0 context failed; unable to create EGL context (" << getEGLErrorString(error) << L")" << Endl;
 		return 0;
 	}
 
-	return new ContextOpenGLES2(surface, context);
-#elif TARGET_OS_IPHONE
-	EAGLContextWrapper* wrapper = new EAGLContextWrapper();
-	if (wrapper->create())
-		return new ContextOpenGLES2(wrapper);
+#elif defined(__IOS__)
+
+	context->m_context = new EAGLContextWrapper();
+	if (!context->m_context->create())
+		return 0;
+
 #elif defined(__PNACL__)
-	Ref< PPContextWrapper > wrapper = PPContextWrapper::createResourceContext((pp::Instance*)nativeHandle);
-	if (wrapper)
-		return new ContextOpenGLES2(wrapper);
+
+	context->m_context = PPContextWrapper::createResourceContext((pp::Instance*)nativeHandle);
+	if (!context->m_context)
+		return 0;
+
 #endif
-	return 0;
+
+	return context;
 }
 
-Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(ContextOpenGLES2* resourceContext, void* nativeHandle, void* nativeWindowHandle)
+Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(ContextOpenGLES2* resourceContext, void* nativeHandle, const RenderViewDefaultDesc& desc)
 {
-#if TARGET_OS_IPHONE
-	EAGLContextWrapper* wrapper = new EAGLContextWrapper();
-	if (wrapper->create(
-		resourceContext ? resourceContext->m_context : 0,
-		nativeWindowHandle
-	))
-		return new ContextOpenGLES2(wrapper);
-#elif defined(__PNACL__)
-	Ref< PPContextWrapper > wrapper = PPContextWrapper::createRenderContext(
-		(pp::Instance*)nativeHandle,
-		resourceContext ? resourceContext->m_context : 0
-	);
-	if (wrapper)
-		return new ContextOpenGLES2(wrapper);
-#elif defined(T_OPENGL_ES2_HAVE_EGL)
-	EGLNativeWindowType nativeWindow = (EGLNativeWindowType)nativeWindowHandle;
+	Ref< ContextOpenGLES2 > context = new ContextOpenGLES2();
 
-	EGLSurface surface = eglCreateWindowSurface(ms_display, ms_config, nativeWindow, 0);
-	if (surface == EGL_NO_SURFACE)
+#if defined(T_OPENGL_ES2_HAVE_EGL)
+
+	context->m_window = resourceContext->m_window;
+	context->m_display = resourceContext->m_display;
+	context->m_config = resourceContext->m_config;
+	context->m_surface = resourceContext->m_surface;
+
+	context->m_window->setTitle(desc.title.c_str());
+	context->m_window->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
+
+	eglBindAPI(EGL_OPENGL_ES_API);
+
+	const EGLint contextAttribs[] = 
+	{
+		EGL_CONTEXT_CLIENT_VERSION, 2,
+		EGL_NONE
+	};
+
+	context->m_context = eglCreateContext(
+		context->m_display,
+		context->m_config,
+		resourceContext->m_context,
+		contextAttribs
+	);
+	if (context->m_context == EGL_NO_CONTEXT)
+	{
+		EGLint error = eglGetError();
+		log::error << L"Create OpenGL ES2.0 context failed; unable to create EGL context (" << getEGLErrorString(error) << L")" << Endl;
+		return 0;
+	}
+
+#else
+
+	return 0;
+
+#endif
+
+	return context;
+}
+
+Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(ContextOpenGLES2* resourceContext, void* nativeHandle, const RenderViewEmbeddedDesc& desc)
+{
+	Ref< ContextOpenGLES2 > context = new ContextOpenGLES2();
+
+#if defined(T_OPENGL_ES2_HAVE_EGL)
+
+	context->m_display = resourceContext->m_display;
+	context->m_config = resourceContext->m_config;
+
+	context->m_surface = eglCreateWindowSurface(resourceContext->m_display, resourceContext->m_config, (EGLNativeWindowType)desc.nativeWindowHandle, 0);
+	if (context->m_surface == EGL_NO_SURFACE)
 	{
 		EGLint error = eglGetError();
 		log::error << L"Create OpenGL ES2.0 context failed; unable to create EGL surface (" << getEGLErrorString(error) << L")" << Endl;
@@ -209,22 +227,40 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(ContextOpenGLES2* resour
 		EGL_NONE
 	};
 
-	EGLContext context = eglCreateContext(
-		ms_display,
-		ms_config,
-		resourceContext ? resourceContext->m_context : EGL_NO_CONTEXT,
+	context->m_context = eglCreateContext(
+		resourceContext->m_display,
+		resourceContext->m_config,
+		resourceContext->m_context,
 		contextAttribs
 	);
-	if (context == EGL_NO_CONTEXT)
+	if (context->m_context == EGL_NO_CONTEXT)
 	{
 		EGLint error = eglGetError();
 		log::error << L"Create OpenGL ES2.0 context failed; unable to create EGL context (" << getEGLErrorString(error) << L")" << Endl;
 		return 0;
 	}
 
-	return new ContextOpenGLES2(surface, context);
+#elif defined(__IOS__)
+
+	context->m_context = new EAGLContextWrapper();
+	if (!context->m_context->create(
+		resourceContext->m_context,
+		desc.nativeWindowHandle
+	))
+		return 0;
+
+#elif defined(__PNACL__)
+
+	context->m_context = PPContextWrapper::createRenderContext(
+		(pp::Instance*)nativeHandle,
+		resourceContext->m_context
+	);
+	if (!context->m_context)
+		return 0;
+
 #endif
-	return 0;
+
+	return context;
 }
 
 bool ContextOpenGLES2::enter()
@@ -239,12 +275,12 @@ bool ContextOpenGLES2::enter()
 		ms_contextStack.set(stack);
 	}
 
-#if TARGET_OS_IPHONE
+#if defined(__IOS__)
 	if (!EAGLContextWrapper::setCurrent(m_context))
 #elif defined(__PNACL__)
 	if (!m_context->makeCurrent())
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
-	if (!eglMakeCurrent(ms_display, m_surface, m_surface, m_context))
+	if (!eglMakeCurrent(m_display, m_surface, m_surface, m_context))
 #endif
 	{
 #if defined(T_OPENGL_ES2_HAVE_EGL)
@@ -269,7 +305,7 @@ void ContextOpenGLES2::leave()
 
 	stack->pop_back();
 
-#if TARGET_OS_IPHONE
+#if defined(__IOS__)
 	if (!stack->empty())
 		EAGLContextWrapper::setCurrent(stack->back()->m_context);
 	else
@@ -278,13 +314,13 @@ void ContextOpenGLES2::leave()
 	if (!stack->empty())
 		stack->back()->m_context->makeCurrent();
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
-	eglMakeCurrent(ms_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+	eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 #	if !defined(__EMSCRIPTEN__)
 	eglReleaseThread();
 #	endif
 	if (!stack->empty())
 		eglMakeCurrent(
-			ms_display,
+			m_display,
 			stack->back()->m_surface,
 			stack->back()->m_surface,
 			stack->back()->m_context
@@ -359,13 +395,13 @@ bool ContextOpenGLES2::resize(int32_t width, int32_t height)
 
 int32_t ContextOpenGLES2::getWidth() const
 {
-#if TARGET_OS_IPHONE
+#if defined(__IOS__)
 	return m_context->getWidth();
 #elif defined(__PNACL__)
 	return m_context->getWidth();
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
 	EGLint width;
-	eglQuerySurface(ms_display, m_surface, EGL_WIDTH, &width);
+	eglQuerySurface(m_display, m_surface, EGL_WIDTH, &width);
 	return width;
 #else
 	return 0;
@@ -374,13 +410,13 @@ int32_t ContextOpenGLES2::getWidth() const
 
 int32_t ContextOpenGLES2::getHeight() const
 {
-#if TARGET_OS_IPHONE
+#if defined(__IOS__)
 	return m_context->getHeight();
 #elif defined(__PNACL__)
 	return m_context->getHeight();
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
 	EGLint height;
-	eglQuerySurface(ms_display, m_surface, EGL_HEIGHT, &height);
+	eglQuerySurface(m_display, m_surface, EGL_HEIGHT, &height);
 	return height;
 #else
 	return 0;
@@ -389,7 +425,7 @@ int32_t ContextOpenGLES2::getHeight() const
 
 bool ContextOpenGLES2::getLandscape() const
 {
-#if TARGET_OS_IPHONE
+#if defined(__IOS__)
 	return m_context->getLandscape();
 #else
 	return false;
@@ -399,10 +435,10 @@ bool ContextOpenGLES2::getLandscape() const
 void ContextOpenGLES2::swapBuffers()
 {
 #if defined(T_OPENGL_ES2_HAVE_EGL)
-	eglSwapBuffers(ms_display, m_surface);
+	eglSwapBuffers(m_display, m_surface);
 #elif defined(__PNACL__)
 	m_context->swapBuffers();
-#elif TARGET_OS_IPHONE
+#elif defined(__IOS__)
 	m_context->swapBuffers();
 #endif
 }
@@ -414,7 +450,7 @@ Semaphore& ContextOpenGLES2::lock()
 
 void ContextOpenGLES2::bindPrimary()
 {
-#if defined(TARGET_OS_IPHONE)
+#if defined(__IOS__)
 	T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, m_context->getFrameBuffer()));
 #else
 	T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, 0));
@@ -451,21 +487,18 @@ GLuint ContextOpenGLES2::getPrimaryDepth() const
 #endif
 }
 
-#if defined(TARGET_OS_IPHONE)
-ContextOpenGLES2::ContextOpenGLES2(EAGLContextWrapper* context)
-:	m_context(context)
+#if defined(__IOS__)
+ContextOpenGLES2::ContextOpenGLES2()
+:	m_context(0)
 {
 }
 #elif defined(__PNACL__)
-ContextOpenGLES2::ContextOpenGLES2(PPContextWrapper* context)
-:	m_context(context)
+ContextOpenGLES2::ContextOpenGLES2()
 {
 }
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
-ContextOpenGLES2::ContextOpenGLES2(EGLSurface surface, EGLContext context)
-:	m_surface(surface)
-,	m_context(context)
-,	m_primaryDepth(0)
+ContextOpenGLES2::ContextOpenGLES2()
+:	m_primaryDepth(0)
 {
 }
 #endif

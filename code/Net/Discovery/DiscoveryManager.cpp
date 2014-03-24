@@ -207,9 +207,10 @@ bool DiscoveryManager::sendMessage(UdpSocket* socket, const SocketAddressIPv4& a
 		return false;
 
 	const std::vector< uint8_t >& buffer = dms->getBuffer();
-	T_ASSERT (buffer.size() <= 1024);
+	if (buffer.size() >= 1024)
+        return false;
 
-	return socket->sendTo(address, &buffer[0], buffer.size()) == buffer.size();
+	return socket->sendTo(address, &buffer[0], uint32_t(buffer.size())) == buffer.size();
 }
 
 Ref< IDiscoveryMessage > DiscoveryManager::recvMessage(UdpSocket* socket, SocketAddressIPv4* fromAddress, int32_t timeout)

@@ -770,8 +770,7 @@ int master(const CommandLine& cmdLine)
 
 		// Spawn slave process.
 		Ref< IProcess > slaveProcess = OS::getInstance().execute(
-			tstows(szFileName),
-			L"-slave",
+			tstows(szFileName) + L" -slave",
 			L"",
 			&OS::getInstance().getEnvironment(),
 			false,

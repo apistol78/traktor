@@ -23,7 +23,6 @@ namespace traktor
 
 const int c_marginWidth = 4;	/*< Distance from image edge to "visual" edge. */
 const int c_textMargin = 8;
-const int c_textPad = 8;
 const int c_textHeight = 16;
 const int c_minExtent = 30;
 const int c_pinHitWidth = 14;	/*< Width of pin hit area from visual edge. */

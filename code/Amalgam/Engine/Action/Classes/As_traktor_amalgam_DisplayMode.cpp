@@ -59,7 +59,7 @@ void As_traktor_amalgam_DisplayMode::DisplayMode_get_availableModes(flash::CallA
 {
 	RefArray< AsDisplayMode > displayMode = AsDisplayMode::getAvailableModes(m_environment);
 	
-	Ref< flash::Array > displayModeArr = new flash::Array(displayMode.size());
+	Ref< flash::Array > displayModeArr = new flash::Array(uint32_t(displayMode.size()));
 	for (uint32_t i = 0; i < displayMode.size(); ++i)
 	{
 		displayModeArr->push(flash::ActionValue(

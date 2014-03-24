@@ -27,7 +27,11 @@ void StageState::enter()
 
 void StageState::leave()
 {
-	safeDestroy(m_stage);
+	if (m_stage)
+	{
+		m_stage->transition();
+		safeDestroy(m_stage);
+	}
 }
 
 StageState::UpdateResult StageState::update(amalgam::IStateManager* stateManager, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)

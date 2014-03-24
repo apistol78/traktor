@@ -131,7 +131,7 @@ bool RecordPeers::setPrimaryPeerHandle(handle_t handle)
 uint32_t RecordPeers::getPeers(std::vector< PeerInfo >& outPeers) const
 {
 	outPeers = m_info;
-	return outPeers.size();
+	return uint32_t(outPeers.size());
 }
 
 int32_t RecordPeers::receive(void* data, int32_t size, handle_t& outFromHandle)

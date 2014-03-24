@@ -65,6 +65,9 @@ bool SolutionBuilderMsvcCompilerTool::generate(GeneratorContext& context, Soluti
 	case Configuration::TfSharedLibrary:
 		os << L"_USRDLL;";
 		break;
+
+    default:
+        break;
 	}
 
 	std::map< std::wstring, std::wstring >::const_iterator i2 = m_staticOptions.find(L"PreprocessorDefinitions");

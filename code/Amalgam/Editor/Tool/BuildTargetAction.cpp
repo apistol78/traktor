@@ -3,7 +3,6 @@
 #include "Amalgam/Editor/Target.h"
 #include "Amalgam/Editor/TargetConfiguration.h"
 #include "Amalgam/Editor/Tool/BuildTargetAction.h"
-#include "Amalgam/Editor/Tool/PipeReader.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/StringOutputStream.h"
@@ -16,6 +15,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Core/System/IProcess.h"
 #include "Core/System/OS.h"
+#include "Core/System/PipeReader.h"
 #include "Database/ConnectionString.h"
 #include "Database/Database.h"
 #include "Xml/XmlDeserializer.h"
@@ -204,12 +204,13 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	envmap[L"DEPLOY_PROJECT_ROOT"] = projectRoot.getPathNameNoVolume();
 #endif
 	envmap[L"DEPLOY_OUTPUT_PATH"] = m_outputPath;
+	envmap[L"DEPLOY_CERTIFICATE"] = m_globalSettings->getProperty< PropertyString >(L"Amalgam.Certificate", L"");
 
 	const DeployTool& deployTool = platform->getDeployTool();
 	envmap.insert(deployTool.getEnvironment().begin(), deployTool.getEnvironment().end());
 
 	StringOutputStream ss;
-	ss << L"build";
+	ss << deployTool.getExecutable() << L" build";
 
 	Guid root = m_targetConfiguration->getRoot();
 	if (root.isValid() && !root.isNull())
@@ -228,11 +229,14 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 		ss << L" " << onlineConfig.format();
 
 	Ref< IProcess > process = OS::getInstance().execute(
-		deployTool.getExecutable(),
 		ss.str(),
 		m_outputPath,
 		&envmap,
+#if defined(_DEBUG)
+		false, false, false
+#else
 		true, true, false
+#endif
 	);
 	if (!process)
 	{
@@ -250,18 +254,15 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	std::list< std::wstring > errors;
 	std::wstring str;
 
-	while (!process->wait(100))
+	do
 	{
 		while (stdOutReader.readLine(str, 10))
 		{
-			str = trim(str);
-			if (str.empty())
-				continue;
-
-			if (str[0] == L':')
+			std::wstring tmp = trim(str);
+			if (!tmp.empty() && tmp[0] == L':')
 			{
 				std::vector< std::wstring > out;
-				if (Split< std::wstring >::any(str, L":", out) == 2)
+				if (Split< std::wstring >::any(tmp, L":", out) == 2)
 				{
 					int32_t index = parseString< int32_t >(out[0]);
 					int32_t count = parseString< int32_t >(out[1]);
@@ -272,15 +273,21 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 					}
 				}
 			}
+			else
+				log::info << str << Endl;
 		}
 
 		while (stdErrReader.readLine(str, 10))
 		{
 			str = trim(str);
 			if (!str.empty())
+			{
+				log::error << str << Endl;
 				errors.push_back(str);
+			}
 		}
 	}
+	while (!process->wait(100));
 
 	if (!errors.empty())
 	{

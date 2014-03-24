@@ -24,8 +24,6 @@ namespace traktor
 const int c_marginWidth = 1;
 const int c_marginHeight = 1;
 const int c_itemPad = 2;
-const int c_buttonAddWidth = 8;
-const int c_buttonAddHeight = 8;
 
 			}
 
@@ -238,9 +236,7 @@ void ToolBar::eventPaint(Event* event)
 {
 	PaintEvent* paintEvent = checked_type_cast< PaintEvent* >(event);
 	Canvas& canvas = paintEvent->getCanvas();
-
 	Rect rc = getInnerRect();
-	int mid = rc.getCenter().y;
 
 	Color4ub c1 = getSystemColor(ScMenuBackground);
 	Color4ub c0 = lerp(c1, Color4ub(255, 255, 255), 0.5f);

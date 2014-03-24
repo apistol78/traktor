@@ -26,7 +26,7 @@ public:
 
 	bool empty() const;
 
-	std::wstring str();
+	std::wstring str() const;
 
 	void reset();
 
@@ -52,7 +52,7 @@ public:
 
 	bool empty() const;
 
-	std::wstring str();
+	std::wstring str() const;
 
 	void reset();
 

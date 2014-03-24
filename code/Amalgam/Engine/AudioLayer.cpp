@@ -89,6 +89,18 @@ void AudioLayer::tweenParameter(const std::wstring& parameterName, float fromVal
 	m_tweens.push_back(tween);
 }
 
+void AudioLayer::transition(Layer* fromLayer)
+{
+	AudioLayer* fromAudioLayer = checked_type_cast< AudioLayer*, false >(fromLayer);
+	if (m_sound == fromAudioLayer->m_sound)
+	{
+		m_handle = fromAudioLayer->m_handle;
+		m_tweens = fromAudioLayer->m_tweens;
+		fromAudioLayer->m_handle = 0;
+		fromAudioLayer->m_tweens.clear();
+	}
+}
+
 void AudioLayer::prepare()
 {
 }

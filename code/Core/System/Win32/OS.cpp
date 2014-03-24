@@ -12,6 +12,7 @@
 #include "Core/Misc/TString.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/System/OS.h"
+#include "Core/System/ResolveEnv.h"
 #include "Core/System/Win32/ProcessWin32.h"
 #include "Core/System/Win32/SharedMemoryWin32.h"
 
@@ -29,12 +30,15 @@ IEGETWRITEABLEFOLDERPATHPROC* s_IEGetWriteableFolderPath = 0;
 
 	}
 
+T_IMPLEMENT_RTTI_CLASS(L"traktor.OS", OS, Object)
+
 OS& OS::getInstance()
 {
 	static OS* s_instance = 0;
 	if (!s_instance)
 	{
 		s_instance = new OS();
+		s_instance->addRef(0);
 		SingletonManager::getInstance().add(s_instance);
 	}
 	return *s_instance;
@@ -45,6 +49,13 @@ uint32_t OS::getCPUCoreCount() const
 	SYSTEM_INFO si;
 	GetSystemInfo(&si);
 	return si.dwNumberOfProcessors;
+}
+
+Path OS::getExecutable() const
+{
+	wchar_t fileName[MAX_PATH];
+	GetModuleFileName(NULL, fileName, MAX_PATH);
+	return Path(fileName);
 }
 
 std::wstring OS::getCommandLine() const
@@ -258,7 +269,6 @@ bool OS::getEnvironment(const std::wstring& name, std::wstring& outValue) const
 }
 
 Ref< IProcess > OS::execute(
-	const Path& file,
 	const std::wstring& commandLine,
 	const Path& workingDirectory,
 	const envmap_t* envmap,
@@ -272,8 +282,39 @@ Ref< IProcess > OS::execute(
 	HANDLE hStdOutRead = 0, hStdOutWrite = 0;
 	HANDLE hStdErrRead = 0, hStdErrWrite = 0;
 	AutoArrayPtr< wchar_t > environment;
+	std::wstring executable;
+	std::wstring arguments;
 
-	Path fileAbs = FileSystem::getInstance().getAbsolutePath(file);
+	// Resolve entire command line.
+	std::wstring resolvedCommandLine = resolveEnv(commandLine);
+
+	// Extract executable file from command line.
+	if (resolvedCommandLine.empty())
+		return 0;
+
+	if (resolvedCommandLine[0] == L'\"')
+	{
+		size_t i = resolvedCommandLine.find(L'\"', 1);
+		if (i == resolvedCommandLine.npos)
+			return 0;
+
+		executable = resolvedCommandLine.substr(1, i - 1);
+		arguments = resolvedCommandLine.substr(i + 1);
+	}
+	else
+	{
+		size_t i = resolvedCommandLine.find(L' ');
+		if (i != resolvedCommandLine.npos)
+		{
+			executable = resolvedCommandLine.substr(0, i);
+			arguments = resolvedCommandLine.substr(i + 1);
+		}
+		else
+			executable = resolvedCommandLine;
+	}
+
+	// Resolve absolute paths.
+	Path fileAbs = FileSystem::getInstance().getAbsolutePath(executable);
 	Path workingDirectoryAbs = FileSystem::getInstance().getAbsolutePath(workingDirectory);
 
 	// Create environment variables.
@@ -304,8 +345,8 @@ Ref< IProcess > OS::execute(
 	{
 		StringOutputStream ss;
 		ss << L"\"" << fileAbs.getPathName() << L"\"";
-		if (!commandLine.empty())
-			ss << L" " << commandLine;
+		if (!arguments.empty())
+			ss << L" " << arguments;
 
 #if !defined(WINCE)
 		_tcscpy_s(cmd, wstots(ss.str()).c_str());
@@ -520,7 +561,7 @@ OS::~OS()
 
 void OS::destroy()
 {
-	delete this;
+	T_SAFE_RELEASE(this);
 }
 
 }

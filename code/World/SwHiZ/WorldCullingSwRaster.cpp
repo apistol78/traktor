@@ -266,8 +266,6 @@ void WorldCullingSwRaster::endPrecull()
 	for (int32_t i = 1; i < mipCount; ++i)
 	{
 		int32_t fromMipWidth = std::max(c_width >> (i - 1), 1);
-		int32_t fromMipHeight = std::max(c_height >> (i - 1), 1);
-
 		int32_t targetMipWidth = std::max(c_width >> i, 1);
 		int32_t targetMipHeight = std::max(c_height >> i, 1);
 

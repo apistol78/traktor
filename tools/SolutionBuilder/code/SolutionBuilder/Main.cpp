@@ -10,6 +10,7 @@
 #include "SolutionBuilderLIB/Solution.h"
 #include "SolutionBuilderLIB/SolutionLoader.h"
 #include "SolutionBuilderLIB/CBlocks/SolutionBuilderCBlocks.h"
+#include "SolutionBuilderLIB/Dependencies/SolutionBuilderDependencies.h"
 #include "SolutionBuilderLIB/Eclipse/SolutionBuilderEclipse.h"
 #include "SolutionBuilderLIB/GraphViz/SolutionBuilderGraphViz.h"
 #include "SolutionBuilderLIB/Make/SolutionBuilderMake.h"
@@ -18,7 +19,7 @@
 
 using namespace traktor;
 
-#define TITLE L"SolutionBuilder v2.8"
+#define TITLE L"SolutionBuilder v2.9"
 
 #define ERROR_UNKNOWN_FORMAT 1
 #define ERROR_UNABLE_TO_READ_SOLUTION 2
@@ -33,8 +34,6 @@ int main(int argc, const char** argv)
 
 	CommandLine cmdLine(argc, argv);
 	Ref< SolutionBuilder > builder;
-
-	traktor::log::info << TITLE << Endl;
 
 	if (cmdLine.hasOption('f', L"format"))
 	{
@@ -51,6 +50,8 @@ int main(int argc, const char** argv)
 			builder = new SolutionBuilderMsvc();
 		else if (ide == L"xcode")
 			builder = new SolutionBuilderXcode();
+		else if (ide == L"dependencies")
+			builder = new SolutionBuilderDependencies();
 		else
 		{
 			traktor::log::error << L"Unknown format \"" << ide << L"\"" << Endl;
@@ -62,9 +63,11 @@ int main(int argc, const char** argv)
 
 	if (cmdLine.hasOption('?') || cmdLine.hasOption('h', L"help") || cmdLine.getCount() <= 0)
 	{
+		traktor::log::info << TITLE << Endl;
 		traktor::log::info << L"Usage : " << Path(cmdLine.getFile()).getFileName() << L" -[options] [solution]" << Endl;
-		traktor::log::info << L"\t-f,-format=[format]	[\"cblocks\", \"eclipse\", \"graphviz\", \"msvc\"*, \"make\", \"xcode\"]" << Endl;
+		traktor::log::info << L"\t-f,-format=[format]	[\"cblocks\", \"eclipse\", \"graphviz\", \"msvc\"*, \"make\", \"xcode\", \"dependencies\"]" << Endl;
 		traktor::log::info << L"\t-rootPath=Path		Override solution root path" << Endl;
+		traktor::log::info << L"\t-v,verbose			Verbose" << Endl;
 		if (builder)
 			builder->showOptions();
 		return 0;
@@ -75,7 +78,11 @@ int main(int argc, const char** argv)
 
 	SolutionLoader solutionLoader;
 
-	traktor::log::info << L"Loading solution \"" << cmdLine.getString(0) << L"\"..." << Endl;
+	if (cmdLine.hasOption('v', L"verbose"))
+	{
+		traktor::log::info << TITLE << Endl;
+		traktor::log::info << L"Loading solution \"" << cmdLine.getString(0) << L"\"..." << Endl;
+	}
 
 	Ref< Solution > solution = solutionLoader.load(cmdLine.getString(0));
 	if (!solution)
@@ -90,8 +97,11 @@ int main(int argc, const char** argv)
 		solution->setRootPath(rootPath.normalized().getPathName());
 	}
 
-	traktor::log::info << L"Using root path \"" << solution->getRootPath() << L"\"" << Endl;
-	traktor::log::info << L"Resolving dependencies..." << Endl;
+	if (cmdLine.hasOption('v', L"verbose"))
+	{
+		traktor::log::info << L"Using root path \"" << solution->getRootPath() << L"\"" << Endl;
+		traktor::log::info << L"Resolving dependencies..." << Endl;
+	}
 
 	const RefArray< Project >& projects = solution->getProjects();
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
@@ -127,7 +137,8 @@ int main(int argc, const char** argv)
 		return ERROR_UNABLE_TO_CREATE_BUILDER;
 	}
 
-	traktor::log::info << L"Generating target solution..." << Endl;
+	if (cmdLine.hasOption('v', L"verbose"))
+		traktor::log::info << L"Generating target solution..." << Endl;
 
 	if (!builder->generate(solution))
 	{
@@ -137,6 +148,8 @@ int main(int argc, const char** argv)
 
 	timer.stop();
 	
-	traktor::log::info << L"Target solution created successfully, " << timer.getElapsedTime() << L" second(s)" << Endl;
+	if (cmdLine.hasOption('v', L"verbose"))
+		traktor::log::info << L"Target solution created successfully, " << timer.getElapsedTime() << L" second(s)" << Endl;
+
 	return 0;
 }

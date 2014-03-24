@@ -106,7 +106,7 @@ void AsMath::Math_log(CallArgs& ca)
 void AsMath::Math_max(CallArgs& ca)
 {
 	avm_number_t n1 = ca.args[0].getNumber();
-	for (size_t i = 1; i < ca.args.size(); ++i)
+	for (uint32_t i = 1; i < ca.args.size(); ++i)
 	{
 		avm_number_t n = ca.args[i].getNumber();
 		if (n > n1)
@@ -118,7 +118,7 @@ void AsMath::Math_max(CallArgs& ca)
 void AsMath::Math_min(CallArgs& ca)
 {
 	avm_number_t n1 = ca.args[0].getNumber();
-	for (size_t i = 1; i < ca.args.size(); ++i)
+	for (uint32_t i = 1; i < ca.args.size(); ++i)
 	{
 		avm_number_t n = ca.args[i].getNumber();
 		if (n < n1)

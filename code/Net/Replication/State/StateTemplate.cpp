@@ -15,12 +15,6 @@ namespace traktor
 {
 	namespace net
 	{
-		namespace
-		{
-
-const float c_equalErrorThreshold = 0.01f;
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.StateTemplate", StateTemplate, Object)
 

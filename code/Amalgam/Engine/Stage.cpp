@@ -184,6 +184,7 @@ bool Stage::update(amalgam::IStateManager* stateManager, amalgam::IUpdateControl
 		if (m_fade > 1.0f)
 		{
 			stateManager->enter(new StageState(m_environment, m_pendingStage));
+			m_transitionStage = m_pendingStage;
 			m_pendingStage = 0;
 		}
 	}
@@ -211,6 +212,27 @@ void Stage::render(render::EyeType eye, uint32_t frame)
 			m_shaderFade
 		);
 	}
+}
+
+void Stage::transition()
+{
+	if (!m_transitionStage)
+		return;
+
+	// Transition layers; layers of same type and name has the chance
+	// to transition data, such as playing music etc.
+	for (RefArray< Layer >::iterator i = m_transitionStage->m_layers.begin(); i != m_transitionStage->m_layers.end(); ++i)
+	{
+		std::wstring layerName = (*i)->getName();
+		if (layerName.empty())
+			continue;
+
+		Layer* currentLayer = findLayer(layerName);
+		if (currentLayer != 0 && &type_of(currentLayer) == &type_of(*i))
+			(*i)->transition(currentLayer);
+	}
+
+	m_transitionStage = 0;
 }
 
 void Stage::preReconfigured()

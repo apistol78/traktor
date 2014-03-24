@@ -10,11 +10,18 @@ class Dependency : public traktor::ISerializable
 	T_RTTI_CLASS;
 
 public:
+	enum Link
+	{
+		LnkNo,		//<! Do not link; only ensure dependency is built up-to-date.
+		LnkYes,		//<! Link with product.
+		LnkForce	//<! Link with product, MUST keep all symbols.
+	};
+
 	Dependency();
 
-	void setLinkWithProduct(bool linkWithProduct);
+	void setLink(Link link);
 
-	bool shouldLinkWithProduct() const;
+	Link getLink() const;
 
 	virtual std::wstring getName() const = 0;
 
@@ -25,7 +32,7 @@ public:
 	virtual void serialize(traktor::ISerializer& s);
 
 private:
-	bool m_linkWithProduct;
+	Link m_link;
 };
 
 #endif	// Dependency_H

@@ -64,7 +64,7 @@ int DynamicMemoryStream::tell() const
 
 int DynamicMemoryStream::available() const
 {
-	return m_buffer->size() - m_readPosition;
+	return int(m_buffer->size() - m_readPosition);
 }
 
 int DynamicMemoryStream::seek(SeekOriginType origin, int offset)
@@ -72,7 +72,7 @@ int DynamicMemoryStream::seek(SeekOriginType origin, int offset)
 	if (origin == SeekCurrent)
 		m_readPosition += offset;
 	else if (origin == SeekEnd)
-		m_readPosition = m_buffer->size() + offset;
+		m_readPosition = uint32_t(m_buffer->size() + offset);
 	else if (origin == SeekSet)
 		m_readPosition = offset;
 	return m_readPosition;

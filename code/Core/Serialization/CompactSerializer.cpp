@@ -919,7 +919,7 @@ void CompactSerializer::operator >> (const MemberArray& m)
 	}
 	else
 	{
-		uint32_t size = m.size();
+		uint32_t size = uint32_t(m.size());
 		if (!ensure(write_uint32(m_writer, size)))
 			return;
 

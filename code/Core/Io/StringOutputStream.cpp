@@ -13,7 +13,7 @@ bool StringOutputStreamBuffer::empty() const
 	return m_internal.empty();
 }
 
-std::wstring StringOutputStreamBuffer::str()
+std::wstring StringOutputStreamBuffer::str() const
 {
 	if (m_internal.empty())
 		return std::wstring();
@@ -56,7 +56,7 @@ bool StringOutputStream::empty() const
 	return m_buffer.empty();
 }
 
-std::wstring StringOutputStream::str()
+std::wstring StringOutputStream::str() const
 {
 	return m_buffer.str();
 }

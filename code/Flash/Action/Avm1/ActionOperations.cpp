@@ -109,7 +109,6 @@ void setMemberOrProperty(ExecutionState& state, ActionObject* self, int32_t vari
 
 ActionValue getVariable(ExecutionState& state, const ActionValue& variable)
 {
-	ActionValueStack& stack = state.frame->getStack();
 	ActionValue value;
 
 	// Resolve variable numeric id.
