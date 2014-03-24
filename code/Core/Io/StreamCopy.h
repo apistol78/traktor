@@ -2,6 +2,7 @@
 #define traktor_StreamCopy_H
 
 #include <limits>
+#include "Core/Object.h"
 #include "Core/Ref.h"
 
 // import/export mechanism.
@@ -23,8 +24,10 @@ class IStream;
  * Copy entire stream data from one stream
  * to another.
  */
-class T_DLLCLASS StreamCopy
+class T_DLLCLASS StreamCopy : public Object
 {
+	T_RTTI_CLASS;
+
 public:
 	StreamCopy(IStream* target, IStream* source);
 

@@ -15,6 +15,7 @@
 #include "Core/Settings/PropertyStringSet.h"
 #include "Core/System/IProcess.h"
 #include "Core/System/OS.h"
+#include "Core/System/PipeReader.h"
 #include "Database/ConnectionString.h"
 #include "Database/Database.h"
 #include "Net/SocketAddressIPv4.h"
@@ -169,8 +170,7 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 	}
 
 	// Get list of used modules from application configuration.
-	std::set< std::wstring > modules = applicationConfiguration->getProperty< PropertyStringSet >(L"Amalgam.Modules");
-	std::wstring mm = implode(modules.begin(), modules.end(), L" ");
+	std::set< std::wstring > runtimeModules = applicationConfiguration->getProperty< PropertyStringSet >(L"Amalgam.Modules");
 
 	// Launch deploy tool to ensure platform is ready for launch.
 	Path projectRoot = FileSystem::getInstance().getCurrentVolume()->getCurrentDirectory();
@@ -185,8 +185,9 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 	envmap[L"DEPLOY_PROJECT_ICON"] = m_targetConfiguration->getIcon();
 	envmap[L"DEPLOY_TARGET_HOST"] = m_deployHost;
 	envmap[L"DEPLOY_EXECUTABLE"] = m_targetConfiguration->getExecutable();
-	envmap[L"DEPLOY_MODULES"] = mm;
+	envmap[L"DEPLOY_MODULES"] = implode(runtimeModules.begin(), runtimeModules.end(), L" ");
 	envmap[L"DEPLOY_OUTPUT_PATH"] = m_outputPath;
+	envmap[L"DEPLOY_CERTIFICATE"] = m_globalSettings->getProperty< PropertyString >(L"Amalgam.Certificate", L"");
 
 	// Merge tool environment variables.
 	const DeployTool& deployTool = platform->getDeployTool();
@@ -212,21 +213,34 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 
 	// Launch deploy process.
 	Ref< IProcess > process = OS::getInstance().execute(
-		deployTool.getExecutable(),
-		L"deploy",
+		deployTool.getExecutable() + L" deploy",
 		m_outputPath,
 		&envmap,
-#if defined(_DEBUG)
-		false, false, false
-#else
 		true, true, false
-#endif
 	);
-	if (!process || !process->wait())
+	if (!process)
 	{
 		log::error << L"Failed to launch process \"" << deployTool.getExecutable() << L"\"" << Endl;
 		return false;
 	}
+
+	PipeReader stdOutReader(
+		process->getPipeStream(IProcess::SpStdOut)
+	);
+	PipeReader stdErrReader(
+		process->getPipeStream(IProcess::SpStdErr)
+	);
+
+	std::wstring str;
+	do
+	{
+		while (stdOutReader.readLine(str, 10))
+			log::info << str << Endl;
+
+		while (stdErrReader.readLine(str, 10))
+			log::info << str << Endl;
+	}
+	while (!process->wait(100));
 
 	int32_t exitCode = process->exitCode();
 	if (exitCode != 0)

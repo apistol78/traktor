@@ -30,7 +30,7 @@ void CapturedScreenShot::serialize(ISerializer& s)
 	if (s.getDirection() == ISerializer::SdRead)
 		m_data.resize(m_width * m_height);
 
-	uint32_t size = m_data.size() * sizeof(uint32_t);
+	uint32_t size = uint32_t(m_data.size() * sizeof(uint32_t));
 	s >> Member< void* >(L"data", m_data.ptr(), size);
 }
 

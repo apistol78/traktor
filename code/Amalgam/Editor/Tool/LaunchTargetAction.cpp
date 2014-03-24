@@ -66,6 +66,7 @@ bool LaunchTargetAction::execute(IProgressListener* progressListener)
 	envmap[L"DEPLOY_TARGET_HOST"] = m_deployHost;
 	envmap[L"DEPLOY_EXECUTABLE"] = m_targetConfiguration->getExecutable();
 	envmap[L"DEPLOY_OUTPUT_PATH"] = m_outputPath;
+	envmap[L"DEPLOY_CERTIFICATE"] = m_globalSettings->getProperty< PropertyString >(L"Amalgam.Certificate", L"");
 
 	// Merge tool environment variables.
 	const DeployTool& deployTool = platform->getDeployTool();
@@ -91,8 +92,7 @@ bool LaunchTargetAction::execute(IProgressListener* progressListener)
 
 	// Launch deploy process.
 	Ref< IProcess > process = OS::getInstance().execute(
-		deployTool.getExecutable(),
-		L"launch",
+		deployTool.getExecutable() + L" launch",
 		m_outputPath,
 		&envmap,
 #if defined(_DEBUG)

@@ -1263,7 +1263,7 @@ void SolutionBuilderMsvcVCXProjVGDB::collectLinkDependencies(
 	const RefArray< Dependency >& dependencies = project->getDependencies();
 	for (RefArray< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 	{
-		if (!(*i)->shouldLinkWithProduct())
+		if ((*i)->getLink() == Dependency::LnkNo)
 			continue;
 
 		Ref< Solution > dependentSolution;

@@ -1,9 +1,14 @@
 #ifndef traktor_render_RenderViewOpenGLES2_H
 #define traktor_render_RenderViewOpenGLES2_H
 
+#include <list>
 #include <stack>
 #include "Render/IRenderView.h"
 #include "Render/OpenGL/Platform.h"
+
+#if defined(_WIN32)
+#	include "Render/OpenGL/ES2/Win32/Window.h"
+#endif
 
 namespace traktor
 {
@@ -23,7 +28,11 @@ class StateCache;
 /*!
  * \ingroup OGL
  */
-class RenderViewOpenGLES2 : public IRenderView
+class RenderViewOpenGLES2
+:	public IRenderView
+#if defined(_WIN32)
+,	public IWindowListener
+#endif
 {
 	T_RTTI_CLASS;
 
@@ -102,6 +111,13 @@ private:
 	Ref< StateCache > m_stateCache;
 	std::stack< RenderTargetStack > m_renderTargetStack;
 	Viewport m_viewport;
+	bool m_landscape;
+	bool m_cursorVisible;
+	std::list< RenderEvent > m_eventQueue;
+
+#if defined(_WIN32)
+	bool windowListenerEvent(Window* window, UINT message, WPARAM wParam, LPARAM lParam, LRESULT& outResult);
+#endif
 };
 
 #endif

@@ -66,6 +66,8 @@ bool SolutionBuilderMake::create(const CommandLine& cmdLine)
 			m_platform = MpMacOSX;
 		else if (platform == L"linux")
 			m_platform = MpLinux;
+		else if (platform == L"ios")
+			m_platform = MpiOS;
 		else
 			return false;
 	}
@@ -86,18 +88,25 @@ bool SolutionBuilderMake::create(const CommandLine& cmdLine)
 		case MpLinux:
 			m_config += L"linux.inc";
 			break;
+		case MpiOS:
+			m_config += L"ios.inc";
+			break;
 		}
 		traktor::log::info << L"Using configuration file \"" << m_config << L"\"" << Endl;
 	}
+
+	if (cmdLine.hasOption('r', L"make-root-suffix"))
+		m_rootSuffix = cmdLine.getOption('r', L"make-root-suffix").getString();
 
 	return true;
 }
 
 bool SolutionBuilderMake::generate(Solution* solution)
 {
-	std::wstring solutionMake = solution->getRootPath() + L"/makefile";
+	std::wstring rootPath = solution->getRootPath() + m_rootSuffix;
+	std::wstring solutionMake = rootPath + L"/makefile";
 
-	if (!FileSystem::getInstance().makeAllDirectories(solution->getRootPath()))
+	if (!FileSystem::getInstance().makeAllDirectories(rootPath))
 		return false;
 
 	Ref< IStream > file = FileSystem::getInstance().open(
@@ -208,29 +217,33 @@ void SolutionBuilderMake::showOptions() const
 {
 	traktor::log::info << L"\t-c,-make-configuration=[configuration file]	[$(TRAKTOR_HOME)/bin/make-config-(platform).inc]" << Endl;
 	traktor::log::info << L"\t-d,-make-dialect=[dialect]					[\"gnu\" *, \"nmake\"]" << Endl;
-	traktor::log::info << L"\t-p,-make-platform=[platform]					[\"macosx\" *, \"win32\", \"linux\"]" << Endl;
+	traktor::log::info << L"\t-p,-make-platform=[platform]					[\"macosx\" *, \"win32\", \"linux\", \"ios\"]" << Endl;
+	traktor::log::info << L"\t-r,-make-root-suffix=[suffix]" << Endl;
+
 }
 
 bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 {
+	std::wstring rootPath = solution->getRootPath() + m_rootSuffix;
+
 	std::set< ::Path > files;
 	collectFiles(project, project->getItems(), files);
 
 	const RefArray< Configuration >& configurations = project->getConfigurations();
 
 	// Create directory for project.
-	if (!FileSystem::getInstance().makeDirectory(solution->getRootPath() + L"/" + project->getName()))
+	if (!FileSystem::getInstance().makeDirectory(rootPath + L"/" + project->getName()))
 		return false;
 
 	// Create directory for each configuration.
 	for (RefArray< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
 	{
 		Configuration* configuration = *i;
-		if (!FileSystem::getInstance().makeDirectory(solution->getRootPath() + L"/" + toLower(configuration->getName())))
+		if (!FileSystem::getInstance().makeDirectory(rootPath + L"/" + toLower(configuration->getName())))
 			return false;
 	}
 
-	std::wstring makeFilePath = solution->getRootPath() + L"/" + project->getName();
+	std::wstring makeFilePath = rootPath + L"/" + project->getName();
 	std::wstring makeFile = makeFilePath + L"/" + project->getName() + L".mak";
 
 	traktor::log::info << L"Generating makefile \"" << makeFile << L"\"" << Endl;
@@ -249,7 +262,7 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 	Path configPath;
 	if (FileSystem::getInstance().getRelativePath(
 		m_config,
-		solution->getRootPath(),
+		rootPath,
 		configPath
 	))
 	{
@@ -273,13 +286,13 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 		Path resourcePath;
 		if (FileSystem::getInstance().getRelativePath(
 			makeFilePath + L"/" + configuration->getName(),
-			solution->getRootPath(),
+			rootPath,
 			resourcePath
 		))
 		{
 			if (m_platform == MpWin32)
 				s << L"/I" << resourcePath.getPathName() << L" ";
-			else if (m_platform == MpMacOSX || m_platform == MpLinux)
+			else
 				s << L"-I" << resourcePath.getPathName() << L" ";
 		}
 		else
@@ -296,12 +309,12 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 				Path includePath;
 				FileSystem::getInstance().getRelativePath(
 					configurationIncludePath,
-					solution->getRootPath(),
+					rootPath,
 					includePath
 				);
 				if (m_platform == MpWin32)
 					s << L"/I" << std::wstring(includePath.getPathName()) << L" ";
-				else if (m_platform == MpMacOSX || m_platform == MpLinux)
+				else
 					s << L"-I" << std::wstring(includePath.getPathName()) << L" ";
 			}
 			else
@@ -330,7 +343,7 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 				s << L" ";
 			if (m_platform == MpWin32)
 				s << L"/D" << *k;
-			else if (m_platform == MpMacOSX || m_platform == MpLinux)
+			else
 				s << L"-D " << *k;
 		}
 
@@ -357,7 +370,7 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 		Configuration* configuration = *j;
 		if (m_platform == MpWin32)
 			s << L"\tdel /F /Q " << project->getName() << L"\\\\" << toLower(configuration->getName()) << L"\\\\*.*" << Endl;
-		else if (m_platform == MpMacOSX || m_platform == MpLinux)
+		else
 			s << L"\trm -f " << project->getName() << L"/" << configuration->getName() << L"/*" << Endl;
 	}
 	s << Endl;
@@ -391,7 +404,7 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 
 				if (m_platform == MpWin32)
 					s << L"\t" << project->getName() << L"/" << configuration->getName() << L"/" << fileNameNoExt << L"_" << targetCount << L".obj";
-				else if (m_platform == MpMacOSX || m_platform == MpLinux)
+				else
 					s << L"\t" << project->getName() << L"/" << configuration->getName() << L"/" << fileNameNoExt << L"_" << targetCount << L".o";
 
 				firstTarget = false;
@@ -446,8 +459,8 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 
 			if (m_platform == MpWin32)
 				s << L"\t$(AR) " << profile << L" $(" << configuration->getName() << L"_OBJECTS) /OUT:" << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << L".lib" << Endl;
-			else if (m_platform == MpMacOSX)
-				s << L"\t$(AR) " << profile << L" -static -o " << toLower(configuration->getName()) << L"/lib" << project->getName() << productSuffix << L".a $(" << configuration->getName() << L"_OBJECTS)" << Endl;
+			else if (m_platform == MpMacOSX || m_platform == MpiOS)
+				s << L"\t$(AR) " << profile << L" -o " << toLower(configuration->getName()) << L"/lib" << project->getName() << productSuffix << L".a $(" << configuration->getName() << L"_OBJECTS)" << Endl;
 			else if (m_platform == MpLinux)
 				s << L"\t$(AR) " << profile << L" " << toLower(configuration->getName()) << L"/lib" << project->getName() << productSuffix << L".a $(" << configuration->getName() << L"_OBJECTS)" << Endl;
 		}
@@ -508,7 +521,7 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 				else if (configuration->getTargetFormat() == Configuration::TfExecutableConsole)
 					s << L"\t$(LINK) $(" << configuration->getName() << L"_OBJECTS) " << libs << L" /MACHINE:X86 /SUBSYSTEM:WINDOWS $(ADDITIONAL_LIBRARY_PATHS) /OUT:" << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << L".exe" << Endl;
 			}
-			else if (m_platform == MpMacOSX)
+			else if (m_platform == MpMacOSX || m_platform == MpiOS)
 			{
 				if (configuration->getTargetFormat() == Configuration::TfSharedLibrary)
 				{
@@ -535,7 +548,7 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 		}
 		s << Endl;
 
-		if (!FileSystem::getInstance().makeDirectory(solution->getRootPath() + L"/" + project->getName() + L"/" + configuration->getName()))
+		if (!FileSystem::getInstance().makeDirectory(rootPath + L"/" + project->getName() + L"/" + configuration->getName()))
 			return false;
 
 		// Create custom build rules.
@@ -545,7 +558,7 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 			if (extension != L"png" && extension != L"xdi")
 				continue;
 
-			Path absoluteRootPath = FileSystem::getInstance().getAbsolutePath(solution->getRootPath());
+			Path absoluteRootPath = FileSystem::getInstance().getAbsolutePath(rootPath);
 			Path absoluteFilePath = FileSystem::getInstance().getAbsolutePath(k->normalized());
 
 			Path relativePath;
@@ -578,7 +591,7 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 			if (extension != L"c" && extension != L"cc" && extension != L"cpp" && extension != L"mm")
 				continue;
 
-			Path absoluteRootPath = FileSystem::getInstance().getAbsolutePath(solution->getRootPath());
+			Path absoluteRootPath = FileSystem::getInstance().getAbsolutePath(rootPath);
 			Path absoluteFilePath = FileSystem::getInstance().getAbsolutePath(k->normalized());
 
 			Path relativePath;
@@ -607,7 +620,7 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 
 			if (m_platform == MpWin32)
 				s << project->getName() << L"/" << configuration->getName() << L"/" << fileNameNoExt << L"_" << targetCount << L".obj : \\" << Endl;
-			else if (m_platform == MpMacOSX || m_platform == MpLinux)
+			else
 				s << project->getName() << L"/" << configuration->getName() << L"/" << fileNameNoExt << L"_" << targetCount << L".o : \\" << Endl;
 			s << L"\t" << relativePath.getPathName();
 
@@ -631,7 +644,7 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 
 			if (m_platform == MpWin32)
 				s << L"\t$(CC) " << profile << L" $(" << toUpper(configuration->getName()) << L"_INCLUDE) $(" << toUpper(configuration->getName()) << L"_DEFINES) " << relativePath.getPathName() << L" /Fo$@" << Endl;
-			else if (m_platform == MpMacOSX)
+			else if (m_platform == MpMacOSX || m_platform == MpiOS)
 			{
 				if (extension == L"mm")
 					s << L"\t$(MM) -c " << profile << L" $(" << toUpper(configuration->getName()) << L"_INCLUDE) $(" << toUpper(configuration->getName()) << L"_DEFINES) " << relativePath.getPathName() << L" -o $@" << Endl;
@@ -672,6 +685,8 @@ void SolutionBuilderMake::collectLinkDependencies(
 	std::vector< std::wstring >& outLibraryNames
 )
 {
+	std::wstring rootPath = buildSolution->getRootPath() + m_rootSuffix;
+
 	// Add 3rd-party libraries.
 	Ref< Configuration > configuration = project->getConfiguration(configurationName);
 	if (configuration)
@@ -680,7 +695,11 @@ void SolutionBuilderMake::collectLinkDependencies(
 		const std::vector< std::wstring >& externalLibraryNames = configuration->getLibraries();
 
 		for (std::vector< std::wstring >::const_iterator j = externalLibraryPaths.begin(); j != externalLibraryPaths.end(); ++j)
-			outLibraryPaths.insert(*j);
+		{
+			Path libraryPath;
+			FileSystem::getInstance().getRelativePath(*j, rootPath, libraryPath);
+			outLibraryPaths.insert(libraryPath.getPathName());
+		}
 
 		for (std::vector< std::wstring >::const_iterator j = externalLibraryNames.begin(); j != externalLibraryNames.end(); ++j)
 		{
@@ -716,11 +735,11 @@ void SolutionBuilderMake::collectLinkDependencies(
 		if (configuration)
 		{
 			// Add library paths.
-			Path libraryPath = dependentSolution->getRootPath() + L"/" + toLower(configuration->getName());
+			Path libraryPath = dependentSolution->getRootPath() + m_rootSuffix + L"/" + toLower(configuration->getName());
 
 			// Ensure both paths are absolute.
 			libraryPath = FileSystem::getInstance().getAbsolutePath(libraryPath);
-			Path rootPath = FileSystem::getInstance().getAbsolutePath(buildSolution->getRootPath());
+			Path rootPath = FileSystem::getInstance().getAbsolutePath(buildSolution->getRootPath() + m_rootSuffix);
 
 			// Create relative library path.
 			Path libraryPathRelative;
@@ -820,7 +839,7 @@ bool SolutionBuilderMake::scanDependencies(
 			Path relativeDependencyName;
 			FileSystem::getInstance().getRelativePath(
 				dependencyName,
-				solution->getRootPath(),
+				solution->getRootPath() + m_rootSuffix,
 				relativeDependencyName
 			);
 			if (relativeDependencyName.getPathName().empty())

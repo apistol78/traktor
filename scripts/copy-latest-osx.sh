@@ -8,10 +8,7 @@ pushd $TRAKTOR_HOME
 mkdir -p bin/latest/osx/releaseshared
 cd bin/latest/osx/releaseshared
 
-TRAKTOR_BUILD=$TRAKTOR_HOME/build/macosx-shared/build/Release
-
-# Copy bundles.
-cp -Rf $TRAKTOR_BUILD/Editor.app .
+TRAKTOR_BUILD=$TRAKTOR_HOME/build/osx/releaseshared
 
 # Copy binaries.
 cp -f $TRAKTOR_BUILD/*.dylib .

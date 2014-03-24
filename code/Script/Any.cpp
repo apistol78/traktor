@@ -17,7 +17,7 @@ namespace traktor
 
 char* refStringCreate(const char* s)
 {
-	uint32_t len = strlen(s);
+	size_t len = strlen(s);
 	
 	void* ptr = getAllocator()->alloc(sizeof(uint16_t) + (len + 1) * sizeof(char), 4, T_FILE_LINE);
 	if (!ptr)

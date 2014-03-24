@@ -86,6 +86,9 @@ bool SolutionBuilderMsvcLinkerTool::generate(GeneratorContext& context, Solution
 			else
 				os << L"OutputFile=\"$(OutDir)/" << project->getName() << L".exe\"" << Endl;
 			break;
+
+		default:
+			break;
 		}
 	}
 
@@ -198,7 +201,7 @@ void SolutionBuilderMsvcLinkerTool::collectAdditionalLibraries(
 	for (RefArray< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 	{
 		// Skip dependencies with we shouldn't link with.
-		if (!(*i)->shouldLinkWithProduct())
+		if ((*i)->getLink() == Dependency::LnkNo)
 			continue;
 
 		// Traverse all static library dependencies and add their "additional libraries" as well.

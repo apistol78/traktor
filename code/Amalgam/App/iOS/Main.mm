@@ -1,5 +1,3 @@
-#include <Core/Misc/CommandLine.h>
-
 #import <UIKit/UIKit.h>
 #import "Amalgam/App/iOS/EAGLView.h"
 #import "Amalgam/App/iOS/LaunchAppDelegate.h"

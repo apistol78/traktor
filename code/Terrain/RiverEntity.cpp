@@ -96,7 +96,7 @@ bool RiverEntity::create(resource::IResourceManager* resourceManager, render::IR
 
 	m_vertexBuffer = renderSystem->createVertexBuffer(
 		vertexElements,
-		silouette.size() * sizeof(float) * 6,
+		uint32_t(silouette.size() * sizeof(float) * 6),
 		false
 	);
 	if (!m_vertexBuffer)
@@ -120,7 +120,7 @@ bool RiverEntity::create(resource::IResourceManager* resourceManager, render::IR
 
 	m_vertexBuffer->unlock();
 
-	uint32_t triangleCount = silouette.size() - 2;
+	uint32_t triangleCount = uint32_t(silouette.size() - 2);
 
 	m_indexBuffer = renderSystem->createIndexBuffer(
 		render::ItUInt16,
@@ -151,7 +151,7 @@ bool RiverEntity::create(resource::IResourceManager* resourceManager, render::IR
 		0,
 		triangleCount,
 		0,
-		silouette.size() - 1
+		uint32_t(silouette.size() - 1)
 	);
 
 	if (!resourceManager->bind(data.getShader(), m_shader))

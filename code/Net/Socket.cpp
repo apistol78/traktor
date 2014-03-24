@@ -72,12 +72,12 @@ int Socket::select(bool read, bool write, bool except, int timeout)
 
 int Socket::send(const void* data, int length)
 {
-	return ::send(m_socket, static_cast<const char*>(data), length, 0);
+	return int(::send(m_socket, static_cast<const char*>(data), length, 0));
 }
 
 int Socket::recv(void* data, int length)
 {
-	return ::recv(m_socket, static_cast<char*>(data), length, 0);
+	return int(::recv(m_socket, static_cast<char*>(data), length, 0));
 }
 
 int Socket::send(int byte)

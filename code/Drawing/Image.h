@@ -128,7 +128,7 @@ public:
 	void* getData();
 
 	/*! \brief Get size of data in bytes. */
-	uint32_t getDataSize() const;
+	size_t getDataSize() const;
 
 	/*! \brief Attach image meta data. */
 	void setImageInfo(ImageInfo* imageInfo);

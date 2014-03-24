@@ -424,7 +424,7 @@ void* Image::getData()
 	return m_data;
 }
 
-uint32_t Image::getDataSize() const
+size_t Image::getDataSize() const
 {
 	return m_size;
 }

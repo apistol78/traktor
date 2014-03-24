@@ -98,13 +98,13 @@ Ref< Image > ImageFormatPng::read(IStream* stream)
 			pixelFormat = PixelFormat::getR8G8B8A8();
 #endif
 
-		image = new Image(pixelFormat, width, height);
+		image = new Image(pixelFormat, uint32_t(width), uint32_t(height));
 
 		char* data = (char *)image->getData();
 		const void** rows = (const void **)png_get_rows(png_ptr, info_ptr);
 		for (uint32_t i = 0; i < height; ++i)
 		{
-			int rowsize = image->getPixelFormat().getByteSize() * width;
+			int rowsize = image->getPixelFormat().getByteSize() * uint32_t(width);
 			std::memcpy(
 				data,
 				rows[i],

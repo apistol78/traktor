@@ -49,7 +49,7 @@ bool StreamMesh::supportTechnique(render::handle_t technique) const
 
 uint32_t StreamMesh::getFrameCount() const
 {
-	return m_frameOffsets.size();
+	return uint32_t(m_frameOffsets.size());
 }
 
 Ref< StreamMesh::Instance > StreamMesh::createInstance() const

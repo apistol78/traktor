@@ -97,6 +97,10 @@ void WorldLayer::destroy()
 	safeDestroy(m_worldRenderer);
 }
 
+void WorldLayer::transition(Layer* fromLayer)
+{
+}
+
 void WorldLayer::prepare()
 {
 	if (m_scene.changed())

@@ -91,6 +91,21 @@ namespace
 		}
 	}
 
+	std::wstring Dependency_getLink(Dependency* dependency)
+	{
+		switch (dependency->getLink())
+		{
+		case Dependency::LnkNo:
+			return L"No";
+		case Dependency::LnkYes:
+			return L"Yes";
+		case Dependency::LnkForce:
+			return L"Force";
+		default:
+			return L"";
+		}
+	}
+
 	RefArray< Path > File_getSystemFiles(::File* file, const std::wstring& sourcePath)
 	{
 		std::set< Path > systemFiles;
@@ -210,7 +225,7 @@ bool ScriptProcessor::create()
 	m_scriptManager->registerClass(classFilter);
 
 	Ref< script::AutoScriptClass< Dependency > > classDependency = new script::AutoScriptClass< Dependency >();
-	classDependency->addMethod("shouldLinkWithProduct", &Dependency::shouldLinkWithProduct);
+	classDependency->addMethod("getLink", &Dependency_getLink);
 	classDependency->addMethod("getName", &Dependency::getName);
 	classDependency->addMethod("getLocation", &Dependency::getLocation);
 	m_scriptManager->registerClass(classDependency);

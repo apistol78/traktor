@@ -165,12 +165,16 @@ bool Application::create(
 
 	// Input
 	T_DEBUG(L"Creating input server...");
+	SystemWindow inputWindow = m_renderServer->getRenderView()->getSystemWindow();
+#if defined(__IOS__)
+	inputWindow.view = nativeWindowHandle;
+#endif
 	m_inputServer = new InputServer();
 	if (!m_inputServer->create(
 		defaultSettings,
 		settings,
 		m_database,
-		m_renderServer->getRenderView()->getSystemWindow()
+		inputWindow
 	))
 		return false;
 
@@ -825,7 +829,7 @@ bool Application::update()
 			performance.steps = float(updateCount);
 			performance.interval = updateInterval;
 			performance.collisions = m_renderCollisions;
-			performance.memInUse = Alloc::allocated();
+			performance.memInUse = uint32_t(Alloc::allocated());
 			performance.memInUseScript = ss.memoryUsage;
 			performance.heapObjects = Object::getHeapObjectCount();
 			performance.build = float(buildTimeEnd - buildTimeStart);

@@ -26,11 +26,16 @@ class Application;
 	traktor::Thread* m_thread;
 }
 
-- (id) initWithFrame: (CGRect)frame;
+- (BOOL) createApplication;
+
 - (void) drawView:(id)sender;
+
 - (void) layoutSubviews;
+
 - (void) startAnimation;
+
 - (void) stopAnimation;
+
 - (void) dealloc;
 
 @end

@@ -127,7 +127,7 @@ bool PlayGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, S
 	}
 
 	// Apply filter chain.
-	uint32_t nfilters = m_filters.size();
+	uint32_t nfilters = uint32_t(m_filters.size());
 	for (uint32_t i = 0; i < nfilters; ++i)
 	{
 		if (m_filters[i])

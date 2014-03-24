@@ -17,7 +17,7 @@ void EntitySchema::insertEntity(const Entity* parentEntity, const std::wstring& 
 	info.parent = parentEntity;
 	info.entity = entity;
 
-	uint32_t index = m_entityInfo.size();
+	uint32_t index = uint32_t(m_entityInfo.size());
 	m_entityInfo.push_back(info);
 
 	m_global.name[name].push_back(index);

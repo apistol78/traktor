@@ -1,7 +1,7 @@
 #ifndef traktor_DateTime_H
 #define traktor_DateTime_H
 
-#include "Core/Config.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -14,13 +14,13 @@
 namespace traktor
 {
 
-class ISerializer;
-
 /*! \brief Date and time class.
  * \ingroup Core
  */
-class T_DLLCLASS DateTime
+class T_DLLCLASS DateTime : public ISerializable
 {
+	T_RTTI_CLASS;
+
 public:
 	DateTime();
 
@@ -89,7 +89,7 @@ public:
 	operator uint64_t () const;
 
 	/*! \brief Serialize object. */
-	void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	uint64_t m_epoch;

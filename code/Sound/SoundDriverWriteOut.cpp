@@ -62,7 +62,7 @@ void SoundDriverWriteOut::wait()
 		m_childDriver->wait();
 	else
 	{
-		long ms = m_desc.frameSamples * 1000L / m_desc.sampleRate;
+		int32_t ms = int32_t(m_desc.frameSamples * 1000L / m_desc.sampleRate);
 		ThreadManager::getInstance().getCurrentThread()->sleep(ms);
 	}
 }

@@ -418,22 +418,10 @@ bool SolutionBuilderXcode::create(const CommandLine& cmdLine)
 	if (cmdLine.hasOption('i', L"xcode-configuration"))
 	{
 		m_iphone = true;
-
-		std::wstring ip = cmdLine.getOption('i', L"xcode-configuration").getString();
-		if (!ip.empty())
-		{
-			m_projectConfigurationFileDebug = L"$(TRAKTOR_HOME)/bin/xcode-project-debug-" + ip + L".inc";
-			m_projectConfigurationFileRelease = L"$(TRAKTOR_HOME)/bin/xcode-project-release-" + ip + L".inc";
-			m_targetConfigurationFileDebug = L"$(TRAKTOR_HOME)/bin/xcode-target-debug-" + ip + L".inc";
-			m_targetConfigurationFileRelease = L"$(TRAKTOR_HOME)/bin/xcode-target-release-" + ip + L".inc";
-		}
-		else
-		{
-			m_projectConfigurationFileDebug = L"$(TRAKTOR_HOME)/bin/xcode-project-debug-iphone.inc";
-			m_projectConfigurationFileRelease = L"$(TRAKTOR_HOME)/bin/xcode-project-release-iphone.inc";
-			m_targetConfigurationFileDebug = L"$(TRAKTOR_HOME)/bin/xcode-target-debug-iphone.inc";
-			m_targetConfigurationFileRelease = L"$(TRAKTOR_HOME)/bin/xcode-target-release-iphone.inc";
-		}
+		m_projectConfigurationFileDebug = L"$(TRAKTOR_HOME)/bin/xcode-project-debug-ios.inc";
+		m_projectConfigurationFileRelease = L"$(TRAKTOR_HOME)/bin/xcode-project-release-ios.inc";
+		m_targetConfigurationFileDebug = L"$(TRAKTOR_HOME)/bin/xcode-target-debug-ios.inc";
+		m_targetConfigurationFileRelease = L"$(TRAKTOR_HOME)/bin/xcode-target-release-ios.inc";
 	}
 	else
 	{
@@ -506,7 +494,8 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 		collectProjectFiles(*i, files);
 
-	std::wstring xcodeProjectPath = solution->getRootPath() + m_rootSuffix + L"/" + solution->getName() + L".xcodeproj";
+	std::wstring solutionRoot = FileSystem::getInstance().getAbsolutePath(solution->getRootPath()).getPathName();
+	std::wstring xcodeProjectPath = solutionRoot + m_rootSuffix + L"/" + solution->getName() + L".xcodeproj";
 
 	if (!FileSystem::getInstance().makeAllDirectories(xcodeProjectPath))
 		return false;
@@ -781,8 +770,9 @@ void SolutionBuilderXcode::generatePBXContainerItemProxySection(OutputStream& s,
 		{
 			if (!j->external || externalProjects.find(j->project) != externalProjects.end())
 				continue;
-				
-			Path externalXcodeProjectPath = j->solution->getRootPath() + m_rootSuffix + L"/" + j->solution->getName() + L".xcodeproj";
+			
+			std::wstring externalSolutionRoot = FileSystem::getInstance().getAbsolutePath(j->solution->getRootPath()).getPathName();
+			Path externalXcodeProjectPath = externalSolutionRoot + m_rootSuffix + L"/" + j->solution->getName() + L".xcodeproj";
 
 			Configuration::TargetFormat targetFormat = getTargetFormat(j->project);
 			std::wstring externalProductName = getProductName(j->project, targetFormat);
@@ -810,7 +800,8 @@ void SolutionBuilderXcode::generatePBXContainerItemProxySection(OutputStream& s,
 			if (!j->external || externalProjects.find(j->project) != externalProjects.end())
 				continue;
 
-			Path externalXcodeProjectPath = j->solution->getRootPath() + m_rootSuffix + L"/" + j->solution->getName() + L".xcodeproj";
+			std::wstring externalSolutionRoot = FileSystem::getInstance().getAbsolutePath(j->solution->getRootPath()).getPathName();
+			Path externalXcodeProjectPath = externalSolutionRoot + m_rootSuffix + L"/" + j->solution->getName() + L".xcodeproj";
 
 			Configuration::TargetFormat targetFormat = getTargetFormat(j->project);
 			std::wstring externalProductName = getProductName(j->project, targetFormat);
@@ -1811,26 +1802,46 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 					s << L"$(inherited) \\\"$(SRCROOT)/build/Debug\\\"\";" << Endl;
 				}
 
-				const std::vector< std::wstring >& libraries = configurations[0]->getLibraries();
-				if (!libraries.empty())
 				{
-					s << L"\t\t\t\tOTHER_LDFLAGS = \"";
+					s << L"\t\t\t\tOTHER_LDFLAGS = (" << Endl;
 
-					bool first = true;
+					// Add explicit libraries.
+					const std::vector< std::wstring >& libraries = configurations[0]->getLibraries();
 					for (std::vector< std::wstring >::const_iterator j = libraries.begin(); j != libraries.end(); ++j)
 					{
 						if (endsWith< std::wstring >(*j, L".framework"))
 							continue;
 
-						if (!first)
-							s << L" ";
-
-						s << L"-l" << *j;
-
-						first = false;
+						s << L"\t\t\t\t\t-l" << *j << L"," << Endl;
 					}
 
-					s << L"\";" << Endl;
+					// Add "force load" of all dependencies.
+					const RefArray< Dependency >& dependencies = (*i)->getDependencies();
+					for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+					{
+						if ((*j)->getLink() != Dependency::LnkForce)
+							continue;
+
+						std::wstring productName;
+						
+						if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*j))
+						{
+							Configuration::TargetFormat targetFormat = getTargetFormat(projectDependency->getProject());
+							productName = getProductName(projectDependency->getProject(), targetFormat);
+						}
+						else if (const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*j))
+						{
+							Configuration::TargetFormat targetFormat = getTargetFormat(externalDependency->getProject());
+							productName = getProductName(externalDependency->getProject(), targetFormat);
+						}
+						else
+							continue;
+
+						s << L"\t\t\t\t\t\"-force_load\"," << Endl;
+						s << L"\t\t\t\t\t$BUILT_PRODUCTS_DIR/" << productName << L"," << Endl;
+					}
+
+					s << L"\t\t\t\t);" << Endl;
 				}
 			}
 
@@ -1904,26 +1915,46 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 					s << L"$(inherited) \\\"$(SRCROOT)/build/Release\\\"\";" << Endl;
 				}
 
-				const std::vector< std::wstring >& libraries = configurations[0]->getLibraries();
-				if (!libraries.empty())
 				{
-					s << L"\t\t\t\tOTHER_LDFLAGS = \"";
+					s << L"\t\t\t\tOTHER_LDFLAGS = (" << Endl;
 
-					bool first = true;
+					// Add explicit libraries.
+					const std::vector< std::wstring >& libraries = configurations[1]->getLibraries();
 					for (std::vector< std::wstring >::const_iterator j = libraries.begin(); j != libraries.end(); ++j)
 					{
 						if (endsWith< std::wstring >(*j, L".framework"))
 							continue;
 
-						if (!first)
-							s << L" ";
-
-						s << L"-l" << *j;
-
-						first = false;
+						s << L"\t\t\t\t\t-l" << *j << L"," << Endl;
 					}
 
-					s << L"\";" << Endl;
+					// Add "force load" of all dependencies.
+					const RefArray< Dependency >& dependencies = (*i)->getDependencies();
+					for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+					{
+						if ((*j)->getLink() != Dependency::LnkForce)
+							continue;
+
+						std::wstring productName;
+
+						if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*j))
+						{
+							Configuration::TargetFormat targetFormat = getTargetFormat(projectDependency->getProject());
+							productName = getProductName(projectDependency->getProject(), targetFormat);
+						}
+						else if (const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*j))
+						{
+							Configuration::TargetFormat targetFormat = getTargetFormat(externalDependency->getProject());
+							productName = getProductName(externalDependency->getProject(), targetFormat);
+						}
+						else
+							continue;
+
+						s << L"\t\t\t\t\t\"-force_load\"," << Endl;
+						s << L"\t\t\t\t\t$BUILT_PRODUCTS_DIR/" << productName << L"," << Endl;
+					}
+
+					s << L"\t\t\t\t);" << Endl;
 				}
 			}
 
@@ -2087,7 +2118,7 @@ void SolutionBuilderXcode::collectLinkDependencies(
 	const RefArray< Dependency >& dependencies = project->getDependencies();
 	for (RefArray< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 	{
-		if (!(*i)->shouldLinkWithProduct())
+		if ((*i)->getLink() == Dependency::LnkNo)
 			continue;
 
 		ResolvedDependency dependency;

@@ -45,7 +45,7 @@
 				<second type="traktor.PropertyStringSet">
 					<value>
 						<item>Traktor.Input</item>
-						<item>Traktor.Input.iPhone</item>
+						<item>Traktor.Input.iOS</item>
 					</value>
 				</second>
 			</item>
@@ -53,7 +53,7 @@
 				<first>Input.DriverTypes</first>
 				<second type="traktor.PropertyStringSet">
 					<value>
-						<item>traktor.input.InputDriverIPhone</item>
+						<item>traktor.input.InputDriveriOS</item>
 					</value>
 				</second>
 			</item>

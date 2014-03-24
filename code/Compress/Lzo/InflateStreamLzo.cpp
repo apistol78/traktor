@@ -97,7 +97,7 @@ public:
 				break;
 
 			T_ASSERT (m_decompressedBufferSize == 0);
-			m_decompressedBufferSize = m_decompressedBuffer.size();
+			m_decompressedBufferSize = int32_t(m_decompressedBuffer.size());
 
 			int r = lzo1x_decompress_safe(
 				&m_compressedBlock[0],

@@ -7,8 +7,9 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Core/Serialization/MemberStl.h"
+#include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Database/Database.h"
-#include "Render/IRenderSystem.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 #include "Resource/ResourceBundle.h"
@@ -23,7 +24,6 @@ T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.amalgam.StageData", 3, StageData, ISeriali
 
 Ref< Stage > StageData::createInstance(amalgam::IEnvironment* environment, const Object* params) const
 {
-	render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 	resource::Proxy< script::IScriptContext > script;
 
@@ -31,19 +31,15 @@ Ref< Stage > StageData::createInstance(amalgam::IEnvironment* environment, const
 	// Load resource bundle.
 	if (m_resourceBundle.isNotNull())
 	{
-		// Get amount of dedicated video memory; we cannot preload
-		// if too little amount of memory available.
-		render::RenderSystemInformation rsi;
-		renderSystem->getInformation(rsi);
-
-		if (rsi.dedicatedMemoryTotal > 128 * 1024 * 1024)
+		bool skipPreload = environment->getSettings()->getProperty< PropertyBoolean >(L"Amalgam.SkipPreloadResources", false);
+		if (!skipPreload)
 		{
 			Ref< const resource::ResourceBundle > resourceBundle = environment->getDatabase()->getObjectReadOnly< resource::ResourceBundle >(m_resourceBundle);
 			if (resourceBundle)
 				resourceManager->load(resourceBundle);
 		}
 		else
-			log::warning << L"Pre-loading of resources skipped due to poor graphics card" << Endl;
+			log::warning << L"Pre-loading of resources skipped" << Endl;
 	}
 #endif
 

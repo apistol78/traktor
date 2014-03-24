@@ -31,6 +31,7 @@ public:
 
 private:
 	Ref< ui::Edit > m_editTargetManagerPort;
+	Ref< ui::Edit > m_editCertificate;
 	Ref< ui::CheckBox > m_checkInheritCache;
 };
 

@@ -10,8 +10,6 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_outputSamplesBlockCount = 8;
-
 struct InLoopOutGrainCursor : public RefCountImpl< ISoundBufferCursor >
 {
 	handle_t m_id;

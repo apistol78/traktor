@@ -100,7 +100,6 @@ void triangle(
 		{
 			if(CX1 > 0 && CX2 > 0 && CX3 > 0)
 			{
-				int x1 = x;
 				for (; x <= maxx; x++)
 				{
 					// Calculate barycentric coordinates.

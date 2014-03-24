@@ -89,6 +89,8 @@ public:
 
 	void render(render::EyeType eye, uint32_t frame);
 
+	void transition();
+
 	void preReconfigured();
 
 	void postReconfigured();
@@ -108,6 +110,7 @@ private:
 	std::map< std::wstring, Guid > m_transitions;
 	Ref< const Object > m_params;
 	Ref< Stage > m_pendingStage;
+	Ref< Stage > m_transitionStage;
 	bool m_initialized;
 	bool m_running;
 	float m_fade;

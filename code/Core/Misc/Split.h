@@ -44,7 +44,7 @@ struct ConvertPolicy< std::wstring, int32_t >
 #if defined(WIN32)
 		return int32_t(_wtoi(piece.c_str()));
 #else
-		return std::wcstol(piece.c_str(), 0, 0);
+		return int32_t(std::wcstol(piece.c_str(), 0, 0));
 #endif
 	}
 };

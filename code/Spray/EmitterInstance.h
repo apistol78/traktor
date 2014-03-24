@@ -72,7 +72,7 @@ public:
 
 	Point* addPoints(uint32_t points)
 	{
-		uint32_t offset = m_points.size();
+		uint32_t offset = uint32_t(m_points.size());
 		m_points.resize(offset + points);
 		return &m_points[offset];
 	}

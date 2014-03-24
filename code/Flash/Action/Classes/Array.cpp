@@ -26,14 +26,14 @@ Array::Array(const ActionValueArray& values)
 
 Ref< Array > Array::concat() const
 {
-	Ref< Array > out = new Array(m_values.size());
+	Ref< Array > out = new Array(uint32_t(m_values.size()));
 	out->m_values.insert(out->m_values.end(), m_values.begin(), m_values.end());
 	return out;
 }
 
 Ref< Array > Array::concat(const ActionValueArray& values) const
 {
-	Ref< Array > out = new Array(m_values.size() + values.size());
+	Ref< Array > out = new Array(uint32_t(m_values.size() + values.size()));
 	out->m_values.insert(out->m_values.end(), m_values.begin(), m_values.end());
 	for (uint32_t i = 0; i < values.size(); ++i)
 		out->m_values.push_back(values[i]);

@@ -15,8 +15,8 @@
 #include "Render/OpenGL/ES2/SimpleTextureOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderTargetSetOpenGLES2.h"
 #include "Render/OpenGL/ES2/ContextOpenGLES2.h"
-#if defined(TARGET_OS_IPHONE)
-#	include "Render/OpenGL/ES2/IPhone/EAGLContextWrapper.h"
+#if defined(__IOS__)
+#	include "Render/OpenGL/ES2/iOS/EAGLContextWrapper.h"
 #endif
 
 namespace traktor
@@ -28,39 +28,12 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemOpenGLES2", 0, Rende
 
 RenderSystemOpenGLES2::RenderSystemOpenGLES2()
 :	m_nativeHandle(0)
-#if defined(_WIN32)
-,	m_hWnd(0)
-#endif
 {
 }
 
 bool RenderSystemOpenGLES2::create(const RenderSystemDesc& desc)
 {
-#if defined(_WIN32)
-	WNDCLASS wc;
-
-#	if defined(WINCE)
-	wc.style = 0;
-#	else
-	wc.style = CS_OWNDC;
-#	endif
-	wc.lpfnWndProc = (WNDPROC)wndProc;
-	wc.cbClsExtra = 0;
-	wc.cbWndExtra = 0;
-	wc.hInstance = (HINSTANCE)GetModuleHandle(NULL);
-	wc.hIcon = NULL;
-	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
-	wc.lpszMenuName = NULL;
-	wc.lpszClassName = _T("RenderSystemOpenGLES2_FullScreen");
-
-	RegisterClass(&wc);
-#endif
-
 #if !defined(T_OFFLINE_ONLY)
-	if (!ContextOpenGLES2::initialize())
-		return false;
-
 	m_globalContext = ContextOpenGLES2::createResourceContext(desc.nativeHandle);
 	if (!m_globalContext)
 		return false;
@@ -131,10 +104,13 @@ DisplayMode RenderSystemOpenGLES2::getCurrentDisplayMode() const
 
 float RenderSystemOpenGLES2::getDisplayAspectRatio() const
 {
-#if defined(TARGET_OS_IPHONE)
-	return 480.0f / 320.0f;
-#elif defined(TARGET_OS_IPAD)
-	return 1024.0f / 768.0f;
+#if defined(__IOS__)
+	bool landscape = m_globalContext->getLandscape();
+#	if __IOS__
+	return landscape ? 480.0f / 320.0f : 320.0f / 480.0f;
+#	else
+	return landscape ? 1024.0f / 768.0f : 768.0f / 1024.0f;
+#	endif
 #else
 	return 0.0f;
 #endif
@@ -143,64 +119,12 @@ float RenderSystemOpenGLES2::getDisplayAspectRatio() const
 Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewDefaultDesc& desc)
 {
 #if defined(_WIN32)
-	if (m_hWnd)
-		return 0;
-
-	if (desc.fullscreen)
-	{
-		m_hWnd = CreateWindow(
-			_T("RenderSystemOpenGLES2_FullScreen"),
-			_T("Traktor 2.0 OpenGL ES 2.0 Renderer"),
-			WS_POPUPWINDOW,
-			0,
-			0,
-			0,
-			0,
-			NULL,
-			NULL,
-			static_cast< HMODULE >(GetModuleHandle(NULL)),
-			this
-		);
-		if (!m_hWnd)
-			return 0;
-
-		SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, desc.displayMode.width, desc.displayMode.height, SWP_NOMOVE);
-	}
-	else
-	{
-		RECT rc;
-		SetRect(&rc, 0, 0, desc.displayMode.width, desc.displayMode.height);
-		AdjustWindowRectEx(&rc, WS_OVERLAPPEDWINDOW, false, 0);
-
-		m_hWnd = CreateWindow(
-			_T("RenderSystemOpenGLES2_FullScreen"),
-			_T("Traktor 2.0 OpenGL ES 2.0 Renderer"),
-			WS_OVERLAPPEDWINDOW,
-			CW_USEDEFAULT,
-			CW_USEDEFAULT,
-			rc.right - rc.left,
-			rc.bottom - rc.top,
-			NULL,
-			NULL,
-			static_cast< HMODULE >(GetModuleHandle(NULL)),
-			this
-		);
-		if (!m_hWnd)
-			return 0;
-	}
-
-	ShowWindow(m_hWnd, SW_SHOWNORMAL);
-	UpdateWindow(m_hWnd);
-
-	RenderViewEmbeddedDesc desc2;
-	desc2.depthBits = desc.depthBits;
-	desc2.stencilBits = desc.stencilBits;
-	desc2.multiSample = desc.multiSample;
-	desc2.waitVBlank = desc.waitVBlank;
-	desc2.nativeWindowHandle = m_hWnd;
-	desc2.stereoscopic = false;
-
-	return createRenderView(desc2);
+	Ref< ContextOpenGLES2 > context = ContextOpenGLES2::createContext(
+		m_globalContext,
+		m_nativeHandle,
+		desc
+	);
+	return new RenderViewOpenGLES2(m_globalContext, context);
 #elif defined(__PNACL__) || defined(__EMSCRIPTEN__)
 	Ref< ContextOpenGLES2 > context = ContextOpenGLES2::createContext(
 		m_globalContext,
@@ -219,7 +143,7 @@ Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewEmbed
 	Ref< ContextOpenGLES2 > context = ContextOpenGLES2::createContext(
 		m_globalContext,
 		m_nativeHandle,
-		desc.nativeWindowHandle
+		desc
 	);
 	return new RenderViewOpenGLES2(m_globalContext, context);
 #else
@@ -317,48 +241,6 @@ Ref< ITimeQuery > RenderSystemOpenGLES2::createTimeQuery() const
 void RenderSystemOpenGLES2::getStatistics(RenderSystemStatistics& outStatistics) const
 {
 }
-
-#if defined(_WIN32)
-
-LRESULT RenderSystemOpenGLES2::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	RenderSystemOpenGLES2* renderSystem = reinterpret_cast< RenderSystemOpenGLES2* >(GetWindowLongPtr(hWnd, 0));
-	LPCREATESTRUCT createStruct;
-	LRESULT result = TRUE;
-
-	switch (uMsg)
-	{
-	case WM_CREATE:
-		createStruct = reinterpret_cast< LPCREATESTRUCT >(lParam);
-		renderSystem = reinterpret_cast< RenderSystemOpenGLES2* >(createStruct->lpCreateParams);
-		SetWindowLongPtr(hWnd, 0, reinterpret_cast< LONG_PTR >(renderSystem));
-		break;
-
-	case WM_CLOSE:
-		DestroyWindow(hWnd);
-		break;
-
-	case WM_DESTROY:
-		SetWindowLongPtr(hWnd, 0, 0);
-		PostQuitMessage(0);
-		break;
-
-	case WM_ERASEBKGND:
-		break;
-
-	case WM_SETCURSOR:
-		SetCursor(NULL);
-		break;
-
-	default:
-		result = DefWindowProc(hWnd, uMsg, wParam, lParam);
-		break;
-	}
-
-	return result;
-}
-
-#endif
 
 	}
 }

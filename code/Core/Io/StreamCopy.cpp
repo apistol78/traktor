@@ -5,6 +5,8 @@
 namespace traktor
 {
 
+T_IMPLEMENT_RTTI_CLASS(L"traktor.StreamCopy", StreamCopy, Object)
+
 StreamCopy::StreamCopy(IStream* target, IStream* source)
 :	m_target(target)
 ,	m_source(source)

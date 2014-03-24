@@ -17,6 +17,25 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+struct RenderEventTypePred
+{
+	RenderEventType m_type;
+
+	RenderEventTypePred(RenderEventType type)
+	:	m_type(type)
+	{
+	}
+
+	bool operator () (const RenderEvent& evt) const
+	{
+		return evt.type == m_type;
+	}
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewOpenGLES2", RenderViewOpenGLES2, IRenderView)
 
@@ -27,7 +46,13 @@ RenderViewOpenGLES2::RenderViewOpenGLES2(
 :	m_globalContext(globalContext)
 ,	m_context(context)
 ,	m_stateCache(new StateCache())
+,	m_landscape(context->getLandscape())
+,	m_cursorVisible(true)
 {
+#if defined(_WIN32)
+	m_context->getWindow()->addListener(this);
+#endif
+
 	m_viewport = Viewport(
 		0,
 		0,
@@ -59,20 +84,47 @@ bool RenderViewOpenGLES2::nextEvent(RenderEvent& outEvent)
 		DispatchMessage(&msg);
 	}
 
+#elif TARGET_OS_IPHONE
+
+	if (m_landscape != m_context->getLandscape())
+	{
+		m_landscape = m_context->getLandscape();
+		log::info << L"Device orientation changed; into landspace = " << m_landscape << Endl;
+
+		// Post a resize event as we need all systems to re-create
+		// resources if necessary.
+		outEvent.type = ReResize;
+		outEvent.resize.width = m_context->getWidth();
+		outEvent.resize.height = m_context->getHeight();
+		return true;
+	}
+
 #endif
 
-	return false;
+	if (!m_eventQueue.empty())
+	{
+		outEvent = m_eventQueue.front();
+		m_eventQueue.pop_front();
+		return true;
+	}
+	else
+		return false;
 }
 
 void RenderViewOpenGLES2::close()
 {
+#if defined(_WIN32)
+	if (m_context->getWindow())
+		m_context->getWindow()->removeListener(this);
+#endif
+
 	m_context = 0;
 	m_globalContext = 0;
 }
 
 bool RenderViewOpenGLES2::reset(const RenderViewDefaultDesc& desc)
 {
-	return false;
+	return true;
 }
 
 bool RenderViewOpenGLES2::reset(int32_t width, int32_t height)
@@ -116,15 +168,17 @@ bool RenderViewOpenGLES2::isFullScreen() const
 
 void RenderViewOpenGLES2::showCursor()
 {
+	m_cursorVisible = true;
 }
 
 void RenderViewOpenGLES2::hideCursor()
 {
+	m_cursorVisible = false;
 }
 
 bool RenderViewOpenGLES2::isCursorVisible() const
 {
-	return true;
+	return m_cursorVisible;
 }
 
 bool RenderViewOpenGLES2::setGamma(float gamma)
@@ -178,7 +232,7 @@ SystemWindow RenderViewOpenGLES2::getSystemWindow()
 {
 #if defined(_WIN32)
 	SystemWindow sw;
-	sw.hWnd = ContextOpenGLES2::getHWND();
+	sw.hWnd = *m_context->getWindow();
 	return sw;
 #else
 	return SystemWindow();
@@ -636,6 +690,92 @@ bool RenderViewOpenGLES2::getBackBufferContent(void* buffer) const
 {
 	return false;
 }
+
+#if defined(_WIN32)
+bool RenderViewOpenGLES2::windowListenerEvent(Window* window, UINT message, WPARAM wParam, LPARAM lParam, LRESULT& outResult)
+{
+	if (message == WM_CLOSE)
+	{
+		RenderEvent evt;
+		evt.type = ReClose;
+		m_eventQueue.push_back(evt);
+	}
+	else if (message == WM_SIZE)
+	{
+		// Remove all pending resize events.
+		m_eventQueue.remove_if(RenderEventTypePred(ReResize));
+
+		// Push new resize event if not matching current size.
+		int32_t width = LOWORD(lParam);
+		int32_t height = HIWORD(lParam);
+
+		if (width <= 0 || height <= 0)
+			return false;
+
+		//if (width != m_context->getWidth() || height != m_context->getHeight())
+		{
+			RenderEvent evt;
+			evt.type = ReResize;
+			evt.resize.width = width;
+			evt.resize.height = height;
+			m_eventQueue.push_back(evt);
+		}
+	}
+	else if (message == WM_SIZING)
+	{
+		RECT* rcWindowSize = (RECT*)lParam;
+
+		int32_t width = rcWindowSize->right - rcWindowSize->left;
+		int32_t height = rcWindowSize->bottom - rcWindowSize->top;
+
+		if (width < 320)
+			width = 320;
+		if (height < 200)
+			height = 200;
+
+		if (wParam == WMSZ_RIGHT || wParam == WMSZ_TOPRIGHT || wParam == WMSZ_BOTTOMRIGHT)
+			rcWindowSize->right = rcWindowSize->left + width;
+		if (wParam == WMSZ_LEFT || wParam == WMSZ_TOPLEFT || wParam == WMSZ_BOTTOMLEFT)
+			rcWindowSize->left = rcWindowSize->right - width;
+
+		if (wParam == WMSZ_BOTTOM || wParam == WMSZ_BOTTOMLEFT || wParam == WMSZ_BOTTOMRIGHT)
+			rcWindowSize->bottom = rcWindowSize->top + height;
+		if (wParam == WMSZ_TOP || wParam == WMSZ_TOPLEFT || wParam == WMSZ_TOPRIGHT)
+			rcWindowSize->top = rcWindowSize->bottom - height;
+
+		outResult = TRUE;
+	}
+	else if (message == WM_SYSKEYDOWN)
+	{
+		if (wParam == VK_RETURN && (lParam & (1 << 29)) != 0)
+		{
+			RenderEvent evt;
+			evt.type = ReToggleFullScreen;
+			m_eventQueue.push_back(evt);
+		}
+	}
+	else if (message == WM_KEYDOWN)
+	{
+		if (wParam == VK_RETURN && (GetAsyncKeyState(VK_CONTROL) & 0x8000) != 0)
+		{
+			RenderEvent evt;
+			evt.type = ReToggleFullScreen;
+			m_eventQueue.push_back(evt);
+		}
+	}
+	else if (message == WM_SETCURSOR)
+	{
+		if (m_cursorVisible)
+			SetCursor(LoadCursor(NULL, IDC_ARROW));
+		else
+			SetCursor(NULL);
+	}
+	else
+		return false;
+
+	return true;
+}
+#endif
 
 	}
 }

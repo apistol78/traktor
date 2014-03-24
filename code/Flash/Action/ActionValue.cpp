@@ -39,7 +39,7 @@ struct StringType
 
 char* refStringCreate(const char* s, int32_t id)
 {
-	uint32_t len = strlen(s);
+	uint32_t len = uint32_t(strlen(s));
 	T_ASSERT (len < 4096);
 	
 	void* ptr = getAllocator()->alloc(sizeof(StringType) + (len + 1) * sizeof(char), 4, T_FILE_LINE);

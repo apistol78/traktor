@@ -58,6 +58,8 @@ public:
 
 	bool playing() const;
 
+	virtual void transition(Layer* fromLayer);
+
 	virtual void prepare();
 
 	virtual void update(amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info);

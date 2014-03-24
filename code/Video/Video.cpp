@@ -70,7 +70,7 @@ bool Video::update(float deltaTime)
 		render::ITexture::Lock lock;
 		if (texture->lock(0, lock))
 		{
-			m_playing = m_decoder->decode(frame, lock.bits, lock.pitch);
+			m_playing = m_decoder->decode(frame, lock.bits, uint32_t(lock.pitch));
 			texture->unlock(0);
 
 			m_frame = frame;

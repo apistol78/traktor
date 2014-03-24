@@ -7,6 +7,11 @@
 
 namespace traktor
 {
+
+#if defined(__IOS__)
+extern void NSLogCpp(const wchar_t* s);
+#endif
+
 	namespace
 	{
 
@@ -23,6 +28,9 @@ public:
 			fwprintf(stdout, L"(WARN) %ls\n", str.c_str());
 		else
 			fwprintf(stderr, L"(ERROR) %ls\n", str.c_str());
+#endif
+#if defined(__IOS__)
+		NSLogCpp(str.c_str());
 #endif
 #if defined(_WIN32)
 		tstring tss = wstots(str + L"\n");
@@ -44,7 +52,9 @@ public:
 		StringOutputStream ss;
 		ss << L"(" << uint32_t(GetCurrentThreadId()) << L") " << str << Endl;
 		OutputDebugString(wstots(ss.str()).c_str());
-#elif defined(_DEBUG) || defined(TARGET_OS_IPHONE)
+#elif defined(__IOS__)
+		NSLogCpp(str.c_str());
+#elif defined(_DEBUG)
 		fwprintf(stdout, L"(DEBUG) %ls\n", str.c_str());
 #endif
 	}

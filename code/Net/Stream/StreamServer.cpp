@@ -208,9 +208,8 @@ void StreamServer::threadClient(Ref< TcpSocket > clientSocket)
 							m_streams.erase(i);
 					}
 
-					double end = timer.getElapsedTime();
-
 #if T_MEASURE_THROUGHPUT
+					double end = timer.getElapsedTime();
 					log::info << L"Stream " << streamId << L", duration " << int32_t((end - start) * 1000) << L" ms" << Endl;
 					log::info << L"RX " << totalRx << L" -- " << int32_t(totalRx / (end - start)) << L" bytes/s (" << countRx << L")" << Endl;
 					log::info << L"TX " << totalTx << L" -- " << int32_t(totalTx / (end - start)) << L" bytes/s (" << countTx << L")" << Endl;

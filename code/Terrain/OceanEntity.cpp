@@ -180,8 +180,6 @@ void OceanEntity::render(
 	bool reflectionEnable
 )
 {
-	const Frustum& viewFrustum = worldRenderView.getViewFrustum();
-	const Matrix44& projection = worldRenderView.getProjection();
 	const Matrix44& view = worldRenderView.getView();
 
 	Matrix44 viewInv = view.inverse();

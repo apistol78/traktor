@@ -15,6 +15,9 @@
 #		include "Core/Io/WinCE/NativeVolume.h"
 #	endif
 #	define HAS_NATIVE_VOLUME
+#elif defined(__IOS__)		// IOS
+#	include "Core/Io/iOS/NativeVolume.h"
+#	define HAS_NATIVE_VOLUME
 #elif defined(__APPLE__)	// MAC
 #	include "Core/Io/OsX/NativeVolume.h"
 #	define HAS_NATIVE_VOLUME

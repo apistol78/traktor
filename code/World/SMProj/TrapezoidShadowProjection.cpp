@@ -123,7 +123,6 @@ void TrapezoidShadowProjection::calculate(
 	Matrix44 NT = T0 * M0;
 
 	// Update light view matrix with bounding box centered.
-	Vector4 center = viewFrustumBox.getCenter();
 	Vector4 extent = viewFrustumBox.getExtent() * Scalar(2.0f);
 
 	float nz = viewFrustum.getNearZ();

@@ -1,6 +1,8 @@
 #ifndef traktor_amalgam_Feature_H
 #define traktor_amalgam_Feature_H
 
+#include <list>
+#include "Core/Guid.h"
 #include "Core/Ref.h"
 #include "Core/Serialization/ISerializable.h"
 

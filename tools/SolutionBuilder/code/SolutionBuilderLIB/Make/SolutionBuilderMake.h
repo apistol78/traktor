@@ -31,7 +31,8 @@ public:
 	{
 		MpWin32,
 		MpMacOSX,
-		MpLinux
+		MpLinux,
+		MpiOS
 	};
 
 	SolutionBuilderMake();
@@ -46,6 +47,7 @@ private:
 	Dialect m_dialect;
 	Platform m_platform;
 	std::wstring m_config;
+	std::wstring m_rootSuffix;
 
 	bool generateProject(Solution* solution, Project* project);
 

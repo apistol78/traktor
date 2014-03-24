@@ -50,7 +50,7 @@ public:
 	iterator find(const Key& key)
 	{
 		uint32_t is = 0;
-		uint32_t ie = m_data.size();
+		uint32_t ie = uint32_t(m_data.size());
 
 		while (is < ie)
 		{
@@ -69,7 +69,7 @@ public:
 	const_iterator find(const Key& key) const
 	{
 		uint32_t is = 0;
-		uint32_t ie = m_data.size();
+		uint32_t ie = uint32_t(m_data.size());
 
 		while (is < ie)
 		{
@@ -88,7 +88,7 @@ public:
 	void insert(const pair_t& pair)
 	{
 		uint32_t is = 0;
-		uint32_t ie = m_data.size();
+		uint32_t ie = uint32_t(m_data.size());
 
 		while (is < ie)
 		{
@@ -139,13 +139,13 @@ public:
 
 	uint32_t size() const
 	{
-		return m_data.size();
+		return uint32_t(m_data.size());
 	}
 
 	Item& operator [] (const Key& key)
 	{
 		uint32_t is = 0;
-		uint32_t ie = m_data.size();
+		uint32_t ie = uint32_t(m_data.size());
 
 		while (is < ie)
 		{

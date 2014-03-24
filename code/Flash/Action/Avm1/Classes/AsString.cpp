@@ -41,8 +41,6 @@ AsString::AsString(ActionContext* context)
 
 void AsString::initialize(ActionObject* self)
 {
-	ActionContext* context = getContext();
-
 	self->addProperty("length", createNativeFunction(getContext(), this, &AsString::String_get_length), 0);
 }
 
@@ -171,7 +169,7 @@ void AsString::String_split(CallArgs& ca)
 		words.push_back(st);
 	}
 
-	Ref< Array > arr = new Array(words.size());
+	Ref< Array > arr = new Array(uint32_t(words.size()));
 	for (std::vector< std::string >::const_iterator i = words.begin(); i != words.end(); ++i)
 		arr->push(ActionValue(*i));
 

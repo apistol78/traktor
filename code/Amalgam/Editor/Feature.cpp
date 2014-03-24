@@ -4,6 +4,7 @@
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberRef.h"
+#include "Core/Serialization/MemberStl.h"
 
 namespace traktor
 {
@@ -25,6 +26,7 @@ void Feature::serialize(ISerializer& s)
 		s >> Member< int32_t >(L"priority", m_priority);
 
 	s >> MemberComposite< Platforms >(L"platforms", m_platforms);
+
 	s >> MemberRef< PropertyGroup >(L"pipelineProperties", m_pipelineProperties);
 	s >> MemberRef< PropertyGroup >(L"migrateProperties", m_migrateProperties);
 	s >> MemberRef< PropertyGroup >(L"runtimeProperties", m_runtimeProperties);

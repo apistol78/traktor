@@ -30,14 +30,14 @@ public:
 		m_stream = 0;
 	}
 
-	int write(const void* block, int nbytes)
+	int write(const void* block, int32_t nbytes)
 	{
 		const uint8_t* top = static_cast< const uint8_t* >(block);
 		const uint8_t* ptr = static_cast< const uint8_t* >(block);
 
 		while (nbytes > 0)
 		{
-			int32_t ncopy = std::min< int32_t >(nbytes, m_uncompressedBuffer.size() - m_uncompressedBufferCount);
+			int32_t ncopy = std::min< int32_t >(nbytes, int32_t(m_uncompressedBuffer.size() - m_uncompressedBufferCount));
 			std::memcpy(&m_uncompressedBuffer[m_uncompressedBufferCount], ptr, ncopy);
 			m_uncompressedBufferCount += ncopy;
 			ptr += ncopy;
@@ -49,7 +49,7 @@ public:
 					&m_uncompressedBuffer[0],
 					m_uncompressedBufferCount,
 					&m_compressedBlock[0],
-					m_compressedBlock.size()
+					uint32_t(m_compressedBlock.size())
 				);
 				if (compressedBlockSize)
 				{
@@ -85,7 +85,7 @@ public:
 				&m_uncompressedBuffer[0],
 				m_uncompressedBufferCount,
 				&m_compressedBlock[0],
-				m_compressedBlock.size()
+				uint32_t(m_compressedBlock.size())
 			);
 
 			if (compressedBlockSize)

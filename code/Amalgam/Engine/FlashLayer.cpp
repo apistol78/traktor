@@ -148,12 +148,25 @@ void FlashLayer::destroy()
 	safeDestroy(m_soundRenderer);
 }
 
+void FlashLayer::transition(Layer* fromLayer)
+{
+	FlashLayer* fromFlashLayer = checked_type_cast< FlashLayer*, false >(fromLayer);
+
+	// Ensure matching settings.
+	if (m_clearBackground != fromFlashLayer->m_clearBackground)
+		return;
+
+	// Keep display and sound renderer.
+	m_displayRenderer = fromFlashLayer->m_displayRenderer;
+	m_soundRenderer = fromFlashLayer->m_soundRenderer;
+	fromFlashLayer->m_displayRenderer = 0;
+	fromFlashLayer->m_soundRenderer = 0;
+}
+
 void FlashLayer::prepare()
 {
 	if (m_movie.changed())
 	{
-		m_displayRenderer = 0;
-		m_soundRenderer = 0;
 		m_moviePlayer = 0;
 		m_movie.consume();
 	}
@@ -256,15 +269,15 @@ void FlashLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdate
 
 				LastMouseState& last = m_lastMouse[i];
 
-				int32_t positionX, positionY;
+				int32_t positionX = -1, positionY = -1;
 				mouseDevice->getDefaultControl(input::DtPositionX, true, positionX);
 				mouseDevice->getDefaultControl(input::DtPositionY, true, positionY);
 
-				int32_t button1, button2;
+				int32_t button1 = -1, button2 = -1;
 				mouseDevice->getDefaultControl(input::DtButton1, false, button1);
 				mouseDevice->getDefaultControl(input::DtButton2, false, button2);
 
-				int32_t axisZ;
+				int32_t axisZ = -1;
 				mouseDevice->getDefaultControl(input::DtAxisZ, true, axisZ);
 
 				float minX, minY;
@@ -304,11 +317,14 @@ void FlashLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdate
 						last.button = mb;
 					}
 
-					int32_t wheel = int32_t(mouseDevice->getControlValue(axisZ) * 3.0f);
-					if (wheel != last.wheel)
+					if (axisZ != -1)
 					{
-						m_moviePlayer->postMouseWheel(mx, my, wheel);
-						last.wheel = wheel;
+						int32_t wheel = int32_t(mouseDevice->getControlValue(axisZ) * 3.0f);
+						if (wheel != last.wheel)
+						{
+							m_moviePlayer->postMouseWheel(mx, my, wheel);
+							last.wheel = wheel;
+						}
 					}
 				}
 			}
@@ -544,31 +560,42 @@ void FlashLayer::createMoviePlayer()
 	width = int32_t(width * aspectRatio / viewRatio);
 
 	// Create accelerated Flash renderer.
-	Ref< flash::AccDisplayRenderer > displayRenderer = new flash::AccDisplayRenderer();
-	if (!displayRenderer->create(
-		m_environment->getResource()->getResourceManager(),
-		m_environment->getRender()->getRenderSystem(),
-		m_environment->getWorld()->getFrameCount(),
-		m_clearBackground,
-		0.006f
-	))
+	if (!m_displayRenderer)
 	{
-		log::error << L"Unable to create display renderer" << Endl;
-		return;
+		Ref< flash::AccDisplayRenderer > displayRenderer = new flash::AccDisplayRenderer();
+		if (!displayRenderer->create(
+			m_environment->getResource()->getResourceManager(),
+			m_environment->getRender()->getRenderSystem(),
+			m_environment->getWorld()->getFrameCount(),
+			m_clearBackground,
+			0.006f
+		))
+		{
+			log::error << L"Unable to create display renderer" << Endl;
+			return;
+		}
+		m_displayRenderer = displayRenderer;
 	}
 
 	// Create sound Flash renderer.
-	Ref< flash::SoundRenderer > soundRenderer;
-	if (m_enableSound && m_environment->getAudio())
+	if (!m_soundRenderer)
 	{
-		soundRenderer = new flash::SoundRenderer();
-		soundRenderer->create(m_environment->getAudio()->getSoundPlayer());
+		if (m_enableSound && m_environment->getAudio())
+		{
+			Ref< flash::SoundRenderer > soundRenderer = new flash::SoundRenderer();
+			if (!soundRenderer->create(m_environment->getAudio()->getSoundPlayer()))
+			{
+				log::error << L"Unable to create sound renderer" << Endl;
+				return;
+			}
+			m_soundRenderer = soundRenderer;
+		}
 	}
 
 	// Create Flash movie player.
 	Ref< flash::FlashMoviePlayer > moviePlayer = new flash::FlashMoviePlayer(
-		displayRenderer,
-		soundRenderer,
+		m_displayRenderer,
+		m_soundRenderer,
 		new CustomFlashMovieLoader(m_environment->getDatabase(), m_externalMovies)
 	);
 	if (!moviePlayer->create(m_movie, width, height))
@@ -604,8 +631,6 @@ void FlashLayer::createMoviePlayer()
 	while (!moviePlayer->progressFrame(1.0f / 60.0f));
 
 	// All success, replace instances.
-	m_displayRenderer = displayRenderer;
-	m_soundRenderer = soundRenderer;
 	m_moviePlayer = moviePlayer;
 }
 

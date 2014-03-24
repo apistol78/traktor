@@ -46,7 +46,7 @@ void PointSetSource::emit(
 	if (points.empty())
 		return;
 
-	Point* point = emitterInstance.addPoints(points.size());
+	Point* point = emitterInstance.addPoints(uint32_t(points.size()));
 
 	for (uint32_t i = 0; i < uint32_t(points.size()); ++i)
 	{

@@ -2,6 +2,7 @@
 #define traktor_OS_H
 
 #include <map>
+#include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/Singleton/ISingleton.h"
 
@@ -23,8 +24,12 @@ class ISharedMemory;
 /*! \brief Operative System information.
  * \ingroup Core
  */
-class T_DLLCLASS OS : public ISingleton
+class T_DLLCLASS OS
+:	public Object
+,	public ISingleton
 {
+	T_RTTI_CLASS;
+
 public:
 	typedef std::map< std::wstring, std::wstring > envmap_t;
 
@@ -35,6 +40,12 @@ public:
 	 * \return Number of CPU cores.
 	 */
 	uint32_t getCPUCoreCount() const;
+
+	/*! \brief Get path to current executable.
+	 *
+	 * \return Executable path.
+	 */
+	Path getExecutable() const;
 
 	/*! \brief Get command line.
 	 *
@@ -109,7 +120,6 @@ public:
 
 	/*! \brief Execute command.
 	 *
-	 * \param file Path to executable.
 	 * \param commandLine Execute command line.
 	 * \param workingDirectory Process's initial working directory.
 	 * \param envmap Optional environment variables.
@@ -119,7 +129,6 @@ public:
 	 * \return Process instance, null if unable to execute.
 	 */
 	Ref< IProcess > execute(
-		const Path& file,
 		const std::wstring& commandLine,
 		const Path& workingDirectory,
 		const envmap_t* envmap,

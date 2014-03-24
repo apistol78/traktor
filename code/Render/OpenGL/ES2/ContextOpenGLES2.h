@@ -18,6 +18,7 @@ namespace traktor
 
 class EAGLContextWrapper;
 class PPContextWrapper;
+class Window;
 
 /*! \brief OpenGL ES2 context.
  * \ingroup OGL
@@ -27,11 +28,11 @@ class ContextOpenGLES2 : public IContext
 	T_RTTI_CLASS;
 
 public:
-	static bool initialize();
-
 	static Ref< ContextOpenGLES2 > createResourceContext(void* nativeHandle);
 
-	static Ref< ContextOpenGLES2 > createContext(ContextOpenGLES2* resourceContext, void* nativeHandle, void* nativeWindowHandle);
+	static Ref< ContextOpenGLES2 > createContext(ContextOpenGLES2* resourceContext, void* nativeHandle, const RenderViewDefaultDesc& desc);
+
+	static Ref< ContextOpenGLES2 > createContext(ContextOpenGLES2* resourceContext, void* nativeHandle, const RenderViewEmbeddedDesc& desc);
 
 	virtual bool enter();
 
@@ -60,7 +61,7 @@ public:
 	GLuint getPrimaryDepth() const;
 
 #if defined(_WIN32)
-	static HWND getHWND() { return ms_hWnd; }
+	Window* getWindow() const { return m_window; }
 #endif
 
 private:
@@ -71,10 +72,10 @@ private:
 	Ref< PPContextWrapper > m_context;
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
 #	if defined(_WIN32)
-	static HWND ms_hWnd;
+	Ref< Window > m_window;
 #	endif
-	static EGLDisplay ms_display;
-	static EGLConfig ms_config;
+	EGLDisplay m_display;
+	EGLConfig m_config;
 	EGLSurface m_surface;
 	EGLContext m_context;
 	GLuint m_primaryDepth;
@@ -83,13 +84,7 @@ private:
 	std::vector< IDeleteCallback* > m_deleteResources;
 	std::map< uint32_t, GLuint > m_shaderObjects;
 
-#if defined(TARGET_OS_IPHONE)
-	ContextOpenGLES2(EAGLContextWrapper* context);
-#elif defined(__PNACL__)
-	ContextOpenGLES2(PPContextWrapper* context);
-#elif defined(T_OPENGL_ES2_HAVE_EGL)
-	ContextOpenGLES2(EGLSurface surface, EGLContext context);
-#endif
+	ContextOpenGLES2();
 };
 
 #endif

@@ -41,6 +41,8 @@ public:
 
 	void destroy();
 
+	virtual void transition(Layer* fromLayer) = 0;
+
 	virtual void prepare() = 0;
 
 	virtual void update(amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info) = 0;

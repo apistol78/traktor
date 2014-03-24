@@ -35,7 +35,7 @@ public:
 
 		while (nbytes > 0)
 		{
-			int32_t ncopy = std::min< int32_t >(nbytes, m_uncompressedBuffer.size() - m_uncompressedBufferCount);
+			int32_t ncopy = std::min< int32_t >(nbytes, int32_t(m_uncompressedBuffer.size() - m_uncompressedBufferCount));
 			std::memcpy(&m_uncompressedBuffer[m_uncompressedBufferCount], ptr, ncopy);
 			m_uncompressedBufferCount += ncopy;
 			ptr += ncopy;
@@ -56,7 +56,7 @@ public:
 				Writer(m_stream) << uint32_t(compressedBlockSize);
 
 				// Write content of compressed block.
-				if (m_stream->write(&m_compressedBlock[0], compressedBlockSize) != compressedBlockSize)
+				if (m_stream->write(&m_compressedBlock[0], int32_t(compressedBlockSize)) != compressedBlockSize)
 					break;
 
 				m_uncompressedBufferCount = 0;
@@ -83,7 +83,7 @@ public:
 			Writer(m_stream) << uint32_t(compressedBlockSize);
 
 			// Write content of compressed block.
-			if (m_stream->write(&m_compressedBlock[0], compressedBlockSize) != compressedBlockSize)
+			if (m_stream->write(&m_compressedBlock[0], int32_t(compressedBlockSize)) != compressedBlockSize)
 				log::error << L"Failed to flush LZO stream; unable to write compressed block" << Endl;
 
 			m_uncompressedBufferCount = 0;

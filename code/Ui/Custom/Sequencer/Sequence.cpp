@@ -115,7 +115,7 @@ void Sequence::mouseDown(SequencerControl* sequencer, const Point& at, const Rec
 			rc.bottom
 		);
 
-		for (uint32_t j = m_keys.size(); j > 0; --j)
+		for (size_t j = m_keys.size(); j > 0; --j)
 		{
 			Key* key = m_keys[j - 1];
 
@@ -213,7 +213,7 @@ void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc
 
 	// Draw sequence buttons.
 	Rect rcButton;
-	rcButton.left = rc.left + separator - c_buttonSize - 4 - m_buttons.size() * (c_buttonSize + 2);
+	rcButton.left = rc.left + separator - c_buttonSize - 4 - int32_t(m_buttons.size()) * (c_buttonSize + 2);
 	rcButton.top = rc.top + (rc.getHeight() - c_buttonSize) / 2;
 	rcButton.right = rcButton.left + c_buttonSize;
 	rcButton.bottom = rcButton.top + c_buttonSize;

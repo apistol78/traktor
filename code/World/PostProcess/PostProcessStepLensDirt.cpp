@@ -77,7 +77,7 @@ Ref< PostProcessStep::Instance > PostProcessStepLensDirt::create(
 	{
 		float x = random.nextFloat() * 2.0f - 1.0f;
 		float y = random.nextFloat() * 2.0f - 1.0f;
-		float s = std::sqrtf(x * x + y * y) / 1.414214f;
+		float s = traktor::sqrtf(x * x + y * y) / 1.414214f;
 		instance->m_instances[i] = Vector4(
 			x,
 			y,

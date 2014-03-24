@@ -118,7 +118,7 @@ bool UdpSocket::connect(const SocketAddressIPv6& socketAddress)
 int UdpSocket::sendTo(const SocketAddressIPv4& socketAddress, const void* data, int length)
 {
 	struct sockaddr_in to = socketAddress.getSockAddr();
-	return ::sendto(m_socket, static_cast<const char*>(data), length, 0, (sockaddr *)&to, sizeof(to));
+	return int(::sendto(m_socket, static_cast<const char*>(data), length, 0, (sockaddr *)&to, sizeof(to)));
 }
 
 int UdpSocket::recvFrom(void* data, int length, SocketAddressIPv4* outSocketAddress)
@@ -126,7 +126,7 @@ int UdpSocket::recvFrom(void* data, int length, SocketAddressIPv4* outSocketAddr
 	struct sockaddr_in from;
 
 	socklen_t fromlen = sizeof(from);
-	int nrecv = ::recvfrom(m_socket, static_cast<char*>(data), length, 0, (sockaddr *)&from, &fromlen);
+	int nrecv = int(::recvfrom(m_socket, static_cast<char*>(data), length, 0, (sockaddr *)&from, &fromlen));
 	if (nrecv <= 0)
 		return 0;
 

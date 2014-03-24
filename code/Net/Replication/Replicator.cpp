@@ -32,7 +32,6 @@ const int32_t c_nearTimeUntilTx = 80;
 const int32_t c_farTimeUntilTx = 200;
 const int32_t c_timeUntilIAm = 500;
 const int32_t c_timeUntilPing = 2000;
-const uint32_t c_maxPendingPing = 16;
 const uint32_t c_maxErrorCount = 128;
 const uint32_t c_maxDeltaStates = 4;
 
@@ -714,7 +713,7 @@ void Replicator::sendEvents()
 		// Pack as many events into same message as possible.
 		for (uint32_t j = 0; j < peerEventsOut.size(); )
 		{
-			uint32_t count = peerEventsOut.size() - j;
+			uint32_t count = uint32_t(peerEventsOut.size() - j);
 			T_ASSERT (count > 0);
 
 			msg.type = MtEvent0;

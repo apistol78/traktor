@@ -319,7 +319,7 @@ bool Document::loadFromText(const std::wstring& text)
 	for (std::vector< wchar_t >::iterator i = buffer.begin(); i != buffer.end(); ++i)
 		swap8in16(*i);
 #endif
-	Ref< MemoryStream > stream = new MemoryStream(&buffer[0], buffer.size() * sizeof(wchar_t));
+	Ref< MemoryStream > stream = new MemoryStream(&buffer[0], uint32_t(buffer.size() * sizeof(wchar_t)));
 	Ref< IEncoding > encoding = CreateEncoding< sizeof(wchar_t) >::createInstance();
 
 	return loadFromStream(stream, encoding);

@@ -248,7 +248,7 @@ uint32_t OnlinePeers::getPeers(std::vector< PeerInfo >& outPeers) const
 		outPeers.push_back(info);
 	}
 
-	return outPeers.size();
+	return uint32_t(outPeers.size());
 }
 
 int32_t OnlinePeers::receive(void* data, int32_t size, net::handle_t& outFromHandle)

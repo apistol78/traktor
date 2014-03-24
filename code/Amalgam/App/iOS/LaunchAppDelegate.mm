@@ -1,6 +1,10 @@
 #import "Amalgam/App/iOS/EAGLView.h"
 #import "Amalgam/App/iOS/LaunchAppDelegate.h"
 
+#include "Core/Log/Log.h"
+
+using namespace traktor;
+
 @implementation LaunchAppDelegate
 
 @synthesize window;
@@ -15,13 +19,14 @@
 	// Create view.
 	glView = [[EAGLView alloc] initWithFrame: window.bounds];
 	[window addSubview: glView];
-
-	// Make window visible.
 	[window makeKeyAndVisible];
-	
+
+	// Create application.
+	if ([glView createApplication] != YES)
+		return NO;
+
 	// Begin animation thread.
 	[glView startAnimation];
-	
     return YES;
 }
 

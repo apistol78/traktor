@@ -60,8 +60,8 @@ void AsFunction::Function_apply(CallArgs& ca)
 	if (args)
 	{
 		const AlignedVector< ActionValue >& argValues = args->getValues();
-		ActionValueArray argv(getContext()->getPool(), argValues.size());
-		for (size_t i = 0; i < argValues.size(); ++i)
+		ActionValueArray argv(getContext()->getPool(), uint32_t(argValues.size()));
+		for (uint32_t i = 0; i < uint32_t(argValues.size()); ++i)
 			argv[i] = argValues[i];
 		ca.ret = function->call(self, argv);
 	}
