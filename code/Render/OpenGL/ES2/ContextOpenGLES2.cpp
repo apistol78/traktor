@@ -482,6 +482,8 @@ GLuint ContextOpenGLES2::getPrimaryDepth() const
 {
 #if defined(T_OPENGL_ES2_HAVE_EGL)
 	return m_primaryDepth;
+#elif defined(__IOS__)
+	return m_context->getDepthBuffer();
 #else
 	return 0;
 #endif

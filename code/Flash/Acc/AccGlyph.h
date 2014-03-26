@@ -48,7 +48,6 @@ public:
 	void add(
 		const Aabb2& bounds,
 		const Matrix33& transform,
-		const SwfCxTransform& cxform,
 		const Vector4& textureOffset
 	);
 
@@ -61,6 +60,7 @@ public:
 		render::ITexture* texture,
 		uint8_t maskReference,
 		uint8_t glyphFilter,
+		const SwfColor& glyphColor,
 		const SwfColor& glyphFilterColor
 	);
 

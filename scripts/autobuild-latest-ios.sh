@@ -12,20 +12,20 @@ pushd $TRAKTOR_HOME
 /bin/sh build-projects-make-ios.sh
 
 pushd build/ios-i386
-make ReleaseStatic 2>$BUILD_LOG_DIR/build-stderr.log
+make -j 8 ReleaseStatic 2>$BUILD_LOG_DIR/build-stderr.log
 popd
-pushd build/ios-x86_64
-make ReleaseStatic 2>>$BUILD_LOG_DIR/build-stderr.log
-popd
+#pushd build/ios-x86_64
+#make -j 8 ReleaseStatic 2>>$BUILD_LOG_DIR/build-stderr.log
+#popd
 pushd build/ios-armv7
-make ReleaseStatic 2>>$BUILD_LOG_DIR/build-stderr.log
+make -j 8 ReleaseStatic 2>>$BUILD_LOG_DIR/build-stderr.log
 popd
-pushd build/ios-armv7s
-make ReleaseStatic 2>>$BUILD_LOG_DIR/build-stderr.log
-popd
-pushd build/ios-arm64
-make ReleaseStatic 2>>$BUILD_LOG_DIR/build-stderr.log
-popd
+#pushd build/ios-armv7s
+#make -j 8 ReleaseStatic 2>>$BUILD_LOG_DIR/build-stderr.log
+#popd
+#pushd build/ios-arm64
+#make -j 8 ReleaseStatic 2>>$BUILD_LOG_DIR/build-stderr.log
+#popd
 
 popd
 

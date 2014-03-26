@@ -64,5 +64,11 @@ bool GcSaveData::set(const std::wstring& saveDataId, const SaveDataDesc& saveDat
 	return result;
 }
 
+bool GcSaveData::remove(const std::wstring& saveDataId)
+{
+	std::wstring saveFile = OS::getInstance().getWritableFolderPath() + L"/Save/" + saveDataId + L".save";
+	return FileSystem::getInstance().remove(saveFile);	
+}
+
 	}
 } 

@@ -262,6 +262,7 @@ end
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
+				VALID_ARCHS = armv7;
 			};
 			name = Debug;
 		};
@@ -279,6 +280,7 @@ end
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
+				VALID_ARCHS = armv7;
 			};
 			name = Release;
 		};

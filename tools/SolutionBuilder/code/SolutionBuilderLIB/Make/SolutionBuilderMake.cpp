@@ -1,3 +1,4 @@
+#include <Core/Functor/Functor.h>
 #include <Core/Io/FileSystem.h>
 #include <Core/Io/File.h>
 #include <Core/Io/IStream.h>
@@ -6,9 +7,10 @@
 #include <Core/Io/FileOutputStream.h>
 #include <Core/Io/AnsiEncoding.h>
 #include <Core/Io/StringReader.h>
+#include <Core/Log/Log.h>
 #include <Core/Misc/String.h>
 #include <Core/Misc/MD5.h>
-#include <Core/Log/Log.h>
+#include <Core/Thread/JobManager.h>
 #include "SolutionBuilderLIB/Make/SolutionBuilderMake.h"
 #include "SolutionBuilderLIB/Solution.h"
 #include "SolutionBuilderLIB/Project.h"
@@ -204,11 +206,11 @@ bool SolutionBuilderMake::generate(Solution* solution)
 	s.close();
 
 	// Generate project makefiles.
+	RefArray< Functor > jobs;
 	for (RefArray< Project >::iterator i = generate.begin(); i != generate.end(); ++i)
-	{
-		if (!generateProject(solution, *i))
-			return false;
-	}
+		jobs.push_back(makeFunctor< SolutionBuilderMake, Solution*, Project* >(this, &SolutionBuilderMake::generateProject, solution, *i));
+
+	JobManager::getInstance().fork(jobs);
 
 	return true;
 }
@@ -219,10 +221,9 @@ void SolutionBuilderMake::showOptions() const
 	traktor::log::info << L"\t-d,-make-dialect=[dialect]					[\"gnu\" *, \"nmake\"]" << Endl;
 	traktor::log::info << L"\t-p,-make-platform=[platform]					[\"macosx\" *, \"win32\", \"linux\", \"ios\"]" << Endl;
 	traktor::log::info << L"\t-r,-make-root-suffix=[suffix]" << Endl;
-
 }
 
-bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
+void SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 {
 	std::wstring rootPath = solution->getRootPath() + m_rootSuffix;
 
@@ -233,14 +234,14 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 
 	// Create directory for project.
 	if (!FileSystem::getInstance().makeDirectory(rootPath + L"/" + project->getName()))
-		return false;
+		return;
 
 	// Create directory for each configuration.
 	for (RefArray< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
 	{
 		Configuration* configuration = *i;
 		if (!FileSystem::getInstance().makeDirectory(rootPath + L"/" + toLower(configuration->getName())))
-			return false;
+			return;
 	}
 
 	std::wstring makeFilePath = rootPath + L"/" + project->getName();
@@ -549,7 +550,7 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 		s << Endl;
 
 		if (!FileSystem::getInstance().makeDirectory(rootPath + L"/" + project->getName() + L"/" + configuration->getName()))
-			return false;
+			return;
 
 		// Create custom build rules.
 		for (std::set< ::Path >::iterator k = files.begin(); k != files.end(); ++k)
@@ -668,13 +669,13 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 			traktor::File::FmWrite
 		);
 		if (!file)
-			return false;
+			return;
 
 		file->write(&buffer[0], int(buffer.size()));
 		file->close();
 	}
 
-	return true;
+	return;
 }
 
 void SolutionBuilderMake::collectLinkDependencies(

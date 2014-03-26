@@ -9,7 +9,7 @@ namespace traktor
 		namespace
 		{
 
-const UINT WM_ENDMODAL = WM_USER + 1;
+const UINT WM_ENDMODAL = WM_USER + 2000;
 
 		}
 

@@ -1,7 +1,9 @@
+#include <cstring>
 #include <pthread.h>
 #include <sched.h>
 #include <unistd.h>
 #include <sys/time.h>
+#include "Core/Misc/TString.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Functor/Functor.h"
 
@@ -15,6 +17,7 @@ struct Internal
 	pthread_t thread;
 	pthread_mutex_t mutex;
 	pthread_cond_t signal;
+	char name[32];
 	Functor* functor;
 	bool finished;
 };
@@ -22,6 +25,9 @@ struct Internal
 void* trampoline(void* data)
 {
 	Internal* in = reinterpret_cast< Internal* >(data);
+
+	if (in->name)
+		pthread_setname_np(in->name);
 
 	(in->functor->operator())();
 	in->finished = true;
@@ -39,11 +45,17 @@ Thread::Thread(Functor* functor, const std::wstring& name, int hardwareCore)
 ,	m_stopped(false)
 ,	m_functor(functor)
 {
+	Internal* in = new Internal();
+	std::strcpy(in->name, !name.empty() ? wstombs(name).c_str() : "Unnamed");
+	in->functor = m_functor;
+	in->finished = false;
+	m_handle = in;
 }
 
 Thread::~Thread()
 {
-	delete reinterpret_cast< Internal* >(m_handle);
+	Internal* in = reinterpret_cast< Internal* >(m_handle);
+	delete in;
 }
 
 bool Thread::start(Priority priority)
@@ -52,9 +64,9 @@ bool Thread::start(Priority priority)
 	sched_param param;
 	int rc;
 	
-	Internal* in = new Internal();
+	Internal* in = reinterpret_cast< Internal* >(m_handle);
+	T_ASSERT (in);
 
-	in->functor = m_functor;
 	in->finished = false;
 	
 	pthread_mutex_init(&in->mutex, NULL);
@@ -95,14 +107,8 @@ bool Thread::start(Priority priority)
 		trampoline,
 		(void*)in
 	);
-	
-	pthread_attr_destroy(&attr);
 
-	if (rc == 0)
-		m_handle = in;
-	else
-		delete in;
-	
+	pthread_attr_destroy(&attr);
 	return bool(rc == 0);
 }
 
@@ -182,16 +188,13 @@ bool Thread::stopped() const
 bool Thread::current() const
 {
 	Internal* in = reinterpret_cast< Internal* >(m_handle);
-	if (!in)
-		return false;
-
 	return bool(pthread_equal(in->thread, pthread_self()) == 1);
 }
 
 bool Thread::finished() const
 {
 	Internal* in = reinterpret_cast< Internal* >(m_handle);
-	return in ? in->finished : true;
+	return in->finished;
 }
 
 }

@@ -6,6 +6,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Serialization/DeepClone.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
@@ -61,7 +62,21 @@ void updateApplicationThread(amalgam::Application* app)
 		traktor::log::error << L"Unable to read application settings \"Application.config\"" << Endl;
 		return NO;
 	}
-	
+
+	// "Activate" retina display if application want's to use it.
+	if (defaultSettings->getProperty< PropertyBoolean >(L"Amalgam.SupportRetina", false))
+	{
+		// Adjust scale as we want full resolution of a retina display.
+		float scale = [UIScreen mainScreen].scale;
+
+		// Set contentScale Factor to 2.
+		self.contentScaleFactor = scale;
+
+		// Also set our glLayer contentScale Factor to 2.
+		CAEAGLLayer* eaglLayer = (CAEAGLLayer*)self.layer;
+		eaglLayer.contentsScale = scale;
+	}
+
 	Ref< PropertyGroup > settings = DeepClone(defaultSettings).create< PropertyGroup >();
 	T_FATAL_ASSERT (settings);
 
