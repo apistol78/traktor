@@ -49,7 +49,7 @@ private:
 	std::wstring m_config;
 	std::wstring m_rootSuffix;
 
-	bool generateProject(Solution* solution, Project* project);
+	void generateProject(Solution* solution, Project* project);
 
 	void collectLinkDependencies(
 		Solution* buildSolution,

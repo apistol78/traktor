@@ -141,6 +141,7 @@ private:
 	bool m_maskIncrement;
 	uint8_t m_maskReference;
 	uint8_t m_glyphFilter;
+	SwfColor m_glyphColor;
 	SwfColor m_glyphFilterColor;
 	render::handle_t m_handleScreenOffset;
 

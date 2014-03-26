@@ -24,7 +24,6 @@ struct Vertex
 	float pos[2];
 	float texCoord[2];
 	float texOffsetAndScale[4];
-	uint8_t color[4];
 };
 #pragma pack()
 
@@ -51,6 +50,7 @@ render::handle_t s_handleViewSize;
 render::handle_t s_handleViewOffset;
 render::handle_t s_handleScreenOffsetScale;
 render::handle_t s_handleTexture;
+render::handle_t s_handleColor;
 render::handle_t s_handleFilterColor;
 render::handle_t s_handleTechniqueDefault;
 render::handle_t s_handleTechniqueDropShadow;
@@ -79,6 +79,7 @@ bool AccGlyph::create(
 		s_handleViewOffset = render::getParameterHandle(L"Flash_ViewOffset");
 		s_handleScreenOffsetScale = render::getParameterHandle(L"Flash_ScreenOffsetScale");
 		s_handleTexture = render::getParameterHandle(L"Flash_Texture");
+		s_handleColor = render::getParameterHandle(L"Flash_Color");
 		s_handleFilterColor = render::getParameterHandle(L"Flash_FilterColor");
 		s_handleTechniqueDefault = render::getParameterHandle(L"Default");
 		s_handleTechniqueDropShadow = render::getParameterHandle(L"DropShadow");
@@ -96,7 +97,6 @@ bool AccGlyph::create(
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(Vertex, pos)));
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat2, offsetof(Vertex, texCoord)));
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(Vertex, texOffsetAndScale), 1));
-	vertexElements.push_back(render::VertexElement(render::DuColor, render::DtByte4N, offsetof(Vertex, color)));
 	T_ASSERT (render::getVertexSize(vertexElements) == sizeof(Vertex));
 
 	for (uint32_t i = 0; i < sizeof_array(m_vertexBuffers); ++i)
@@ -145,7 +145,6 @@ void AccGlyph::destroy()
 void AccGlyph::add(
 	const Aabb2& bounds,
 	const Matrix33& transform,
-	const SwfCxTransform& cxform,
 	const Vector4& textureOffset
 )
 {
@@ -185,13 +184,6 @@ void AccGlyph::add(
 	);
 
 	Matrix44 m = m1 * m2;
-	uint8_t color[4] =
-	{
-		uint8_t(cxform.red[0] * 255),
-		uint8_t(cxform.green[0] * 255),
-		uint8_t(cxform.blue[0] * 255),
-		uint8_t(cxform.alpha[0] * 255)
-	};
 
 	Vertex* vertex = (Vertex*)m_vertex;
 	for (uint32_t i = 0; i < sizeof_array(c_glyphTemplate); ++i)
@@ -202,16 +194,12 @@ void AccGlyph::add(
 		vertex->pos[1] = pos.y();
 		vertex->texCoord[0] = c_glyphTemplate[i].texCoord.x;
 		vertex->texCoord[1] = c_glyphTemplate[i].texCoord.y;
-		vertex->color[0] = color[0];
-		vertex->color[1] = color[1];
-		vertex->color[2] = color[2];
-		vertex->color[3] = color[3];
 
 		vertex->texOffsetAndScale[0] = textureOffset.x();
 		vertex->texOffsetAndScale[1] = textureOffset.y();
 
-		vertex->texOffsetAndScale[2] = bounds.mx.x - bounds.mn.x;
-		vertex->texOffsetAndScale[3] = bounds.mx.y - bounds.mn.y;
+		vertex->texOffsetAndScale[2] = qb.mx.x - qb.mn.x;
+		vertex->texOffsetAndScale[3] = qb.mx.y - qb.mn.y;
 
 		vertex++;
 	}
@@ -229,6 +217,7 @@ void AccGlyph::render(
 	render::ITexture* texture,
 	uint8_t maskReference,
 	uint8_t glyphFilter,
+	const SwfColor& glyphColor,
 	const SwfColor& glyphFilterColor
 )
 {
@@ -267,6 +256,13 @@ void AccGlyph::render(
 	renderBlock->programParams->setFloatParameter(s_handleScreenOffsetScale, screenOffsetScale);
 	renderBlock->programParams->setStencilReference(maskReference);
 	renderBlock->programParams->setTextureParameter(s_handleTexture, texture);
+
+	renderBlock->programParams->setVectorParameter(s_handleColor, Vector4(
+		glyphColor.red / 255.0f,
+		glyphColor.green / 255.0f,
+		glyphColor.blue / 255.0f,
+		glyphColor.alpha / 255.0f
+	));
 
 	if (glyphFilter != 0)
 		renderBlock->programParams->setVectorParameter(s_handleFilterColor, Vector4(

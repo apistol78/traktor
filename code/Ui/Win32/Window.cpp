@@ -284,7 +284,12 @@ LRESULT CALLBACK Window::dlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 	// Reflect messages sent to parents back to issuing child.
 	if (message == WM_COMMAND)
 	{
-		HWND hWndControl = (HWND)lParam;
+		HWND hWndControl = NULL;
+		if (HIWORD(wParam) == 0)
+			hWndControl = GetDlgItem(hWnd, LOWORD(wParam));
+		else
+			hWndControl = (HWND)lParam;
+
 		if (hWndControl)
 		{
 			result = invokeMessageHandlers(hWndControl, GWLP_USERDATA, WM_REFLECTED_COMMAND, wParam, lParam, pass);

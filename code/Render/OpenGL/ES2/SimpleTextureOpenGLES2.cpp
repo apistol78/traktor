@@ -1,5 +1,6 @@
 #include <cstring>
 #include "Core/Log/Log.h"
+#include "Core/Math/Log2.h"
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/IContext.h"
 #include "Render/OpenGL/ES2/SimpleTextureOpenGLES2.h"
@@ -116,6 +117,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTextureOpenGLES2", SimpleTextureOp
 SimpleTextureOpenGLES2::SimpleTextureOpenGLES2(IContext* context)
 :	m_context(context)
 ,	m_textureName(0)
+,	m_pot(false)
 ,	m_width(0)
 ,	m_height(0)
 ,	m_pixelSize(0)
@@ -131,6 +133,7 @@ SimpleTextureOpenGLES2::~SimpleTextureOpenGLES2()
 
 bool SimpleTextureOpenGLES2::create(const SimpleTextureCreateDesc& desc)
 {
+	m_pot = isLog2(desc.width) && isLog2(desc.height);
 	m_width = desc.width;
 	m_height = desc.height;
 
@@ -147,8 +150,16 @@ bool SimpleTextureOpenGLES2::create(const SimpleTextureCreateDesc& desc)
 	// Set default parameters as its might help driver.
 	T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
 	T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-	T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
-	T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
+	if (m_pot)
+	{
+		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
+		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
+	}
+	else
+	{
+		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));		
+	}
 
 	// Allocate data buffer.
 	uint32_t texturePitch = getTextureMipPitch(desc.format, desc.width, desc.height);
@@ -276,16 +287,19 @@ void SimpleTextureOpenGLES2::bindSampler(GLuint unit, const SamplerStateOpenGL& 
 		m_shadowState.magFilter = samplerState.magFilter;
 	}
 
-	if (m_shadowState.wrapS != samplerState.wrapS)
+	if (m_pot)
 	{
-		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, samplerState.wrapS));
-		m_shadowState.wrapS = samplerState.wrapS;
-	}
+		if (m_shadowState.wrapS != samplerState.wrapS)
+		{
+			T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, samplerState.wrapS));
+			m_shadowState.wrapS = samplerState.wrapS;
+		}
 
-	if (m_shadowState.wrapT != samplerState.wrapT)
-	{
-		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, samplerState.wrapT));
-		m_shadowState.wrapT = samplerState.wrapT;
+		if (m_shadowState.wrapT != samplerState.wrapT)
+		{
+			T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, samplerState.wrapT));
+			m_shadowState.wrapT = samplerState.wrapT;
+		}
 	}
 
 	T_OGL_SAFE(glUniform1i(locationTexture, unit));

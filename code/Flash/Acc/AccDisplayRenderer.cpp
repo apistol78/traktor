@@ -108,6 +108,8 @@ AccDisplayRenderer::AccDisplayRenderer()
 ,	m_glyphFilter(0)
 ,	m_handleScreenOffset(render::getParameterHandle(L"Flash_ScreenOffset"))
 {
+	std::memset(&m_glyphColor, 0, sizeof(SwfColor));
+	std::memset(&m_glyphFilterColor, 0, sizeof(SwfColor));
 }
 
 AccDisplayRenderer::~AccDisplayRenderer()
@@ -383,10 +385,19 @@ void AccDisplayRenderer::renderMorphShape(const FlashDictionary& dictionary, con
 
 void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& shape, const SwfColor& color, const SwfCxTransform& cxform, uint8_t filter, const SwfColor& filterColor)
 {
-	if (m_glyphFilter != filter)
+	SwfColor glyphColor = 
+	{
+		uint8_t(color.red * cxform.red[0] + cxform.red[1] * 255.0f),
+		uint8_t(color.green * cxform.green[0] + cxform.green[1] * 255.0f),
+		uint8_t(color.blue * cxform.blue[0] + cxform.blue[1] * 255.0f),
+		uint8_t(color.alpha * cxform.alpha[0] + cxform.alpha[1] * 255.0f)
+	};
+
+	if (std::memcmp(&glyphColor, &m_glyphColor, sizeof(SwfColor)) != 0 || m_glyphFilter != filter)
 	{
 		renderEnqueuedGlyphs();
 		m_glyphFilter = filter;
+		m_glyphColor = glyphColor;
 		m_glyphFilterColor = filterColor;
 	}
 
@@ -505,22 +516,12 @@ void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Ma
 		it1->second.index = index;
 	}
 
-	// Draw glyph quad.
-	SwfCxTransform cxf =
-	{
-		{ (color.red * cxform.red[0]) / 255.0f + cxform.red[1], 0.0f, },
-		{ (color.green * cxform.green[0]) / 255.0f + cxform.green[1], 0.0f },
-		{ (color.blue * cxform.blue[0]) / 255.0f + cxform.blue[1], 0.0f },
-		{ (color.alpha * cxform.alpha[0]) / 255.0f + cxform.alpha[1], 0.0f }
-	};
-
 	int32_t column = it1->second.index & (c_cacheGlyphCountX - 1);
 	int32_t row = it1->second.index / c_cacheGlyphCountX;
 
 	m_glyph->add(
 		bounds,
 		transform,
-		cxf,
 		Vector4(
 			float(column) / c_cacheGlyphCountX,
 			float(row) / c_cacheGlyphCountY,
@@ -661,6 +662,7 @@ void AccDisplayRenderer::renderEnqueuedGlyphs()
 		m_renderTargetGlyphs->getColorTexture(0),
 		m_maskReference,
 		m_glyphFilter,
+		m_glyphColor,
 		m_glyphFilterColor
 	);
 }

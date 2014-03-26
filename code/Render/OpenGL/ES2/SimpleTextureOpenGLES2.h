@@ -48,6 +48,7 @@ public:
 private:
 	Ref< IContext > m_context;
 	GLuint m_textureName;
+	bool m_pot;
 	int m_width;
 	int m_height;
 	int m_pixelSize;

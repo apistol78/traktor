@@ -28,6 +28,8 @@ public:
 	bool getLandscape() const;
 
 	GLuint getFrameBuffer() const { return m_frameBuffer; }
+
+	GLuint getDepthBuffer() const { return m_depthBuffer; }
 	
 	GLint getWidth() const { return m_width; }
 	

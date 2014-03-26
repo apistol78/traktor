@@ -35,12 +35,10 @@ IAllocator* getAllocator()
 		s_stdAllocator = allocConstruct< StdAllocator >();
 		s_stdAllocator->addRef(0);
 
-#if defined(__EMSCRIPTEN__) || defined(__PNACL__)
+#if defined(_PS3) || defined(__IOS__) || defined(__EMSCRIPTEN__) || defined(__PNACL__)
 		s_allocator = s_stdAllocator;
 #elif !defined(_DEBUG)
 		s_allocator = allocConstruct< FastAllocator >(s_stdAllocator);
-#elif defined(_PS3)
-		s_allocator = s_stdAllocator;
 #else
 		s_allocator = allocConstruct< TrackAllocator >(s_stdAllocator);
 #endif
