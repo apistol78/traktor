@@ -3,6 +3,7 @@
 #include "Core/System/PipeReader.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
+#include "Core/Timer/Timer.h"
 
 namespace traktor
 {
@@ -25,6 +26,8 @@ bool PipeReader::readLine(std::wstring& outLine, int32_t timeout)
 	char ch;
 	char pch = 0;
 
+	Timer timer;
+	timer.start();
 	for (;;)
 	{
 		for (;;)
@@ -40,14 +43,10 @@ bool PipeReader::readLine(std::wstring& outLine, int32_t timeout)
 				break;
 
 			// No character available; wait for more.
-			if (timeout > 0)
-			{
-				ThreadManager::getInstance().getCurrentThread()->sleep(100);
-				timeout -= 100;
-			}
-			else
-				// No more time to wait; no line read.
+			if (int32_t(1000.0f * timer.getElapsedTime()) > timeout)
 				return false;
+
+			ThreadManager::getInstance().getCurrentThread()->yield();
 		}
 		
 		// Extract character from stream.

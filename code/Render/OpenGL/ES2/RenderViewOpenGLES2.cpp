@@ -668,7 +668,7 @@ void RenderViewOpenGLES2::present()
 	m_context->swapBuffers();
 	m_context->leave();
 
-#if !TARGET_OS_IPHONE
+#if !defined(__IOS__)
 	m_globalContext->lock().release();
 #endif
 	m_globalContext->deleteResources();
@@ -676,10 +676,16 @@ void RenderViewOpenGLES2::present()
 
 void RenderViewOpenGLES2::pushMarker(const char* const marker)
 {
+#if defined(__IOS__)
+	glPushGroupMarkerEXT(0, marker);
+#endif
 }
 
 void RenderViewOpenGLES2::popMarker()
 {
+#if defined(__IOS__)
+	glPopGroupMarkerEXT();
+#endif
 }
 
 void RenderViewOpenGLES2::getStatistics(RenderViewStatistics& outStatistics) const
