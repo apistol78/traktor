@@ -140,6 +140,16 @@ void EAGLContextWrapper::destroyFrameBuffer()
 	m_depthBuffer = 0;
 }
 
+int32_t EAGLContextWrapper::getCurrentWidth()
+{
+	return [UIScreen mainScreen].bounds.size.width;
+}
+
+int32_t EAGLContextWrapper::getCurrentHeight()
+{
+	return [UIScreen mainScreen].bounds.size.height;
+}
+
 	}
 }
 

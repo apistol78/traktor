@@ -34,6 +34,10 @@ public:
 	GLint getWidth() const { return m_width; }
 	
 	GLint getHeight() const { return m_height; }
+
+	static int32_t getCurrentWidth();
+
+	static int32_t getCurrentHeight();
 	
 private:
 	void* m_layer;

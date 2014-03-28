@@ -97,6 +97,15 @@ DisplayMode RenderSystemOpenGLES2::getCurrentDisplayMode() const
 	dm.colorBits = (uint16_t)dmgl.dmBitsPerPel;
 	return dm;
 
+#elif defined(__IOS__)
+
+	DisplayMode dm;
+	dm.width = EAGLContextWrapper::getCurrentWidth();
+	dm.height = EAGLContextWrapper::getCurrentHeight();
+	dm.refreshRate = 60;
+	dm.colorBits = 32;
+	return dm;
+
 #else
 	return DisplayMode();
 #endif
@@ -106,11 +115,8 @@ float RenderSystemOpenGLES2::getDisplayAspectRatio() const
 {
 #if defined(__IOS__)
 	bool landscape = m_globalContext->getLandscape();
-#	if __IOS__
-	return landscape ? 480.0f / 320.0f : 320.0f / 480.0f;
-#	else
-	return landscape ? 1024.0f / 768.0f : 768.0f / 1024.0f;
-#	endif
+	float ratio = float(EAGLContextWrapper::getCurrentWidth()) / EAGLContextWrapper::getCurrentHeight();
+	return landscape ? 1.0f / ratio : ratio;
 #else
 	return 0.0f;
 #endif

@@ -230,7 +230,7 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 
 	do
 	{
-		while (stdOutReader.readLine(str, 10))
+		while (stdOutReader.readLine(str, 100))
 		{
 			str = trim(str);
 			if (str.empty())
@@ -254,7 +254,7 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 				log::info << str << Endl;
 		}
 
-		while (stdErrReader.readLine(str, 10))
+		while (stdErrReader.readLine(str, 100))
 		{
 			str = trim(str);
 			if (!str.empty())
@@ -264,7 +264,7 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 			}
 		}
 	}
-	while (!process->wait(100));
+	while (!process->wait(0));
 
 	if (!errors.empty())
 	{

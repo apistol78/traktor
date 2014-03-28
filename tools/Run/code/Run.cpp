@@ -61,13 +61,20 @@ int32_t Run::execute(const std::wstring& command, const std::wstring& saveOutput
 	);
 
 	Ref< FileOutputStream > fileOutput;
+	bool nullOutput = false;
+
 	if (!saveOutputAs.empty())
 	{
-		Ref< traktor::IStream > output = FileSystem::getInstance().open(saveOutputAs, File::FmWrite);
-		if (!output)
-			return -1;
+		if (saveOutputAs != L"(null)")
+		{
+			Ref< traktor::IStream > output = FileSystem::getInstance().open(saveOutputAs, File::FmWrite);
+			if (!output)
+				return -1;
 
-		fileOutput = new FileOutputStream(output, new Utf8Encoding());
+			fileOutput = new FileOutputStream(output, new Utf8Encoding());
+		}
+		else
+			nullOutput = true;
 	}
 	
 	StringOutputStream stdOut;
@@ -75,23 +82,24 @@ int32_t Run::execute(const std::wstring& command, const std::wstring& saveOutput
 	std::wstring str;
 	do
 	{
-		while (stdOutReader.readLine(str, 10))
+		while (stdOutReader.readLine(str, 100))
 		{
 			if (fileOutput)
 				(*fileOutput) << str << Endl;
-			else
+			else if (!nullOutput)
 				log::info << str << Endl;
 
 			stdOut << str << Endl;
 		}
 
-		while (stdErrReader.readLine(str, 10))
+		while (stdErrReader.readLine(str, 100))
 		{
-			log::info << str << Endl;
+			if (!nullOutput)
+				log::error << str << Endl;
 			stdErr << str << Endl;
 		}
 	}
-	while (!process->wait(100));
+	while (!process->wait(0));
 
 	safeClose(fileOutput);
 
