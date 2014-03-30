@@ -141,7 +141,6 @@ bool OS::getEnvironment(const std::wstring& name, std::wstring& outValue) const
 }
 
 Ref< IProcess > OS::execute(
-	const Path& file,
 	const std::wstring& commandLine,
 	const Path& workingDirectory,
 	const envmap_t* envmap,
