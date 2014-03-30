@@ -37,7 +37,7 @@ SequencerControl::SequencerControl()
 ,	m_timeScale(8)
 ,	m_length(5000)
 ,	m_cursor(0)
-,	m_moveTrack(0)
+,	m_moveTrack(-1)
 ,	m_dropIndex(-1)
 {
 }
@@ -348,6 +348,8 @@ void SequencerControl::eventButtonDown(Event* e)
 		m_moveTrack = 1;
 		m_dropIndex = -1;
 	}
+	else
+		m_moveTrack = -1;
 
 	setCapture();
 	update();

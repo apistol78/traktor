@@ -31,6 +31,8 @@ public:
 
 	ISerializable* get() const { return m_value; }
 
+	virtual bool replace(const ReflectionMember* source);
+
 private:
 	Ref< ISerializable > m_value;
 };

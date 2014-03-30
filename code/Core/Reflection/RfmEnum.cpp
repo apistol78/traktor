@@ -11,4 +11,15 @@ RfmEnum::RfmEnum(const wchar_t* name, const std::wstring& value)
 {
 }
 
+bool RfmEnum::replace(const ReflectionMember* source)
+{
+	if (const RfmEnum* sourceEnum = dynamic_type_cast< const RfmEnum* >(source))
+	{
+		m_value = sourceEnum->m_value;
+		return true;
+	}
+	else
+		return false;
+}
+
 }

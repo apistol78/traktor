@@ -37,7 +37,11 @@ public:
 
 	const RefArray< ReflectionMember >& getMembers() const;
 
+	ReflectionMember* findMember(const ReflectionMemberPredicate& predicate) const;
+
 	void findMembers(const ReflectionMemberPredicate& predicate, RefArray< ReflectionMember >& outMembers) const;
+
+	virtual bool replace(const ReflectionMember* source);
 
 private:
 	RefArray< ReflectionMember > m_members;

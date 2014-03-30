@@ -609,6 +609,10 @@
       <second>Edit import batch</second>
     </item>
     <item>
+      <first>EFFECT_EDITOR_REPLACE_EMITTER_SOURCE</first>
+      <second>Replace emitter source...</second>
+    </item>
+    <item>
       <first>EFFECT_EDITOR_TOGGLE_GUIDE</first>
       <second>Show guide lines</second>
     </item>

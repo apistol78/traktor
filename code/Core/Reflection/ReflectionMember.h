@@ -24,6 +24,8 @@ class T_DLLCLASS ReflectionMember : public Object
 public:
 	const wchar_t* getName() const;
 
+	virtual bool replace(const ReflectionMember* source) = 0;
+
 protected:
 	ReflectionMember(const wchar_t* name);
 
