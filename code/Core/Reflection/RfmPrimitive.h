@@ -35,6 +35,18 @@ public:
 
 	const type_t& get() const { return m_value; }
 
+	virtual bool replace(const ReflectionMember* source)
+	{
+		typedef RfmPrimitive< PrimitiveType > type_t;
+		if (const type_t* sourceType = dynamic_type_cast< const type_t* >(source))
+		{
+			m_value = sourceType->m_value;
+			return true;
+		}
+		else
+			return false;
+	}
+
 private:
 	type_t T_ALIGN16 m_value;
 };

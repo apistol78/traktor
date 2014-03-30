@@ -39,6 +39,16 @@ const RefArray< ReflectionMember >& RfmCompound::getMembers() const
 	return m_members;
 }
 
+ReflectionMember* RfmCompound::findMember(const ReflectionMemberPredicate& predicate) const
+{
+	for (RefArray< ReflectionMember >::const_iterator i = m_members.begin(); i != m_members.end(); ++i)
+	{
+		if (predicate(*i))
+			return *i;
+	}
+	return 0;
+}
+
 void RfmCompound::findMembers(const ReflectionMemberPredicate& predicate, RefArray< ReflectionMember >& outMembers) const
 {
 	for (RefArray< ReflectionMember >::const_iterator i = m_members.begin(); i != m_members.end(); ++i)
@@ -48,6 +58,17 @@ void RfmCompound::findMembers(const ReflectionMemberPredicate& predicate, RefArr
 		if (const RfmCompound* compoundMember = dynamic_type_cast< const RfmCompound* >(*i))
 			compoundMember->findMembers(predicate, outMembers);
 	}
+}
+
+bool RfmCompound::replace(const ReflectionMember* source)
+{
+	if (const RfmCompound* sourceCompound = dynamic_type_cast< const RfmCompound* >(source))
+	{
+		m_members = sourceCompound->m_members;
+		return true;
+	}
+	else
+		return false;
 }
 
 }

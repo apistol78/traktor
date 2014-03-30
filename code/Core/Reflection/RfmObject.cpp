@@ -11,4 +11,15 @@ RfmObject::RfmObject(const wchar_t* name, ISerializable* value)
 {
 }
 
+bool RfmObject::replace(const ReflectionMember* source)
+{
+	if (const RfmObject* sourceObject = dynamic_type_cast< const RfmObject* >(source))
+	{
+		m_value = sourceObject->m_value;
+		return true;
+	}
+	else
+		return false;
+}
+
 }

@@ -26,6 +26,7 @@ class IDocument;
 	{
 
 class Event;
+class PopupMenu;
 
 		namespace custom
 		{
@@ -88,6 +89,7 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolToggleMove;
 	Ref< EffectPreviewControl > m_previewControl;
 	Ref< ui::custom::SequencerControl > m_sequencer;
+	Ref< ui::PopupMenu > m_popupMenu;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< sound::SoundSystem > m_soundSystem;
 	bool m_velocityVisible;
@@ -100,15 +102,17 @@ private:
 
 	void eventToolClick(ui::Event* event);
 
-	void eventLayerSelect(ui::Event* event);
+	void eventSequencerLayerSelect(ui::Event* event);
 
-	void eventTimeCursorMove(ui::Event* event);
+	void eventSequencerTimeCursorMove(ui::Event* event);
 
-	void eventLayerRearranged(ui::Event* event);
+	void eventSequencerLayerRearranged(ui::Event* event);
 
-	void eventKeyMove(ui::Event* event);
+	void eventSequencerKeyMove(ui::Event* event);
 
-	void eventLayerClick(ui::Event* event);
+	void eventSequencerLayerClick(ui::Event* event);
+
+	void eventSequencerButtonDown(ui::Event* event);
 };
 
 	}

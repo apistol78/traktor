@@ -65,6 +65,8 @@ public:
 
 	virtual void serialize(ISerializer& s);
 
+	void setSource(SourceData* source)  { m_source = source; }
+
 	const SourceData* getSource() const { return m_source; }
 
 	const resource::Id< render::Shader >& getShader() const { return m_shader; }

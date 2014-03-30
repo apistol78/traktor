@@ -1,5 +1,7 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Reflection/Reflection.h"
+#include "Core/Reflection/RfpMemberName.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -19,7 +21,9 @@
 #include "Spray/EffectData.h"
 #include "Spray/EffectFactory.h"
 #include "Spray/EffectLayerData.h"
+#include "Spray/EmitterData.h"
 #include "Spray/SequenceData.h"
+#include "Spray/SourceData.h"
 #include "Spray/Editor/ClipboardData.h"
 #include "Spray/Editor/EffectEditorPage.h"
 #include "Spray/Editor/EffectPreviewControl.h"
@@ -29,8 +33,11 @@
 #include "Ui/Command.h"
 #include "Ui/Container.h"
 #include "Ui/MethodHandler.h"
+#include "Ui/PopupMenu.h"
+#include "Ui/MenuItem.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Events/CommandEvent.h"
+#include "Ui/Events/MouseEvent.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
@@ -156,11 +163,16 @@ bool EffectEditorPage::create(ui::Container* parent)
 
 	m_sequencer = new ui::custom::SequencerControl();
 	m_sequencer->create(splitter, ui::WsDoubleBuffer | ui::WsClientBorder);
-	m_sequencer->addSelectEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventLayerSelect));
-	m_sequencer->addCursorMoveEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventTimeCursorMove));
-	m_sequencer->addMovedSequenceItemEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventLayerRearranged));
-	m_sequencer->addKeyMoveEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventKeyMove));
-	m_sequencer->addClickEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventLayerClick));
+	m_sequencer->addSelectEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventSequencerLayerSelect));
+	m_sequencer->addCursorMoveEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventSequencerTimeCursorMove));
+	m_sequencer->addMovedSequenceItemEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventSequencerLayerRearranged));
+	m_sequencer->addKeyMoveEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventSequencerKeyMove));
+	m_sequencer->addClickEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventSequencerLayerClick));
+	m_sequencer->addButtonDownEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventSequencerButtonDown));
+
+	m_popupMenu = new ui::PopupMenu();
+	m_popupMenu->create();
+	m_popupMenu->add(new ui::MenuItem(ui::Command(L"Effect.Editor.ReplaceEmitterSource"), i18n::Text(L"EFFECT_EDITOR_REPLACE_EMITTER_SOURCE")));
 
 	m_site->setPropertyObject(m_effectData);
 
@@ -181,6 +193,7 @@ void EffectEditorPage::destroy()
 	m_editor->commitGlobalSettings();
 	m_soundSystem = 0;
 
+	safeDestroy(m_popupMenu);
 	safeDestroy(m_previewControl);
 	safeDestroy(m_resourceManager);
 }
@@ -252,6 +265,52 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 		{
 			m_editor->buildAsset(textureInstance->getGuid(), false);
 			m_previewControl->setBackground(resource::Id< render::ISimpleTexture >(textureInstance->getGuid()));
+		}
+	}
+	else if (command == L"Effect.Editor.ReplaceEmitterSource")
+	{
+		const TypeInfo* sourceType = m_editor->browseType(&type_of< SourceData >());
+		if (sourceType)
+		{
+			RefArray< ui::custom::SequenceItem > selectedItems;
+			if (m_sequencer->getSequenceItems(selectedItems, ui::custom::SequencerControl::GfSelectedOnly) > 0)
+			{
+				for (RefArray< ui::custom::SequenceItem >::iterator i = selectedItems.begin(); i != selectedItems.end(); ++i)
+				{
+					Ref< EffectLayerData > layer = (*i)->getData< EffectLayerData >(L"LAYER");
+					
+					EmitterData* emitter = layer->getEmitter();
+					if (!emitter)
+						continue;
+
+					Ref< SourceData > source = checked_type_cast< SourceData*, false >(sourceType->createInstance());
+
+					const SourceData* oldSource = emitter->getSource();
+					if (oldSource)
+					{
+						// Extract parameters from old source and insert into new source.
+						Ref< Reflection > sourceReflection = Reflection::create(source);
+						T_ASSERT (sourceReflection);
+
+						Ref< Reflection > oldSourceReflection = Reflection::create(oldSource);
+						T_ASSERT (oldSourceReflection);
+
+						for (uint32_t i = 0; i < sourceReflection->getMemberCount(); ++i)
+						{
+							ReflectionMember* sourceMember = sourceReflection->getMember(i);
+							ReflectionMember* oldSourceMember = oldSourceReflection->findMember(RfpMemberName(sourceMember->getName()));
+							if (oldSourceMember)
+								sourceMember->replace(oldSourceMember);
+						}
+
+						sourceReflection->apply(source);
+					}
+
+					emitter->setSource(source);
+				}
+			}
+
+			updateEffectPreview();
 		}
 	}
 	else if (command == L"Editor.PropertiesChanging")
@@ -434,7 +493,7 @@ void EffectEditorPage::eventToolClick(ui::Event* event)
 	handleCommand(command);
 }
 
-void EffectEditorPage::eventLayerSelect(ui::Event* event)
+void EffectEditorPage::eventSequencerLayerSelect(ui::Event* event)
 {
 	RefArray< ui::custom::SequenceItem > selectedItems;
 	if (m_sequencer->getSequenceItems(selectedItems, ui::custom::SequencerControl::GfSelectedOnly) == 1)
@@ -459,7 +518,7 @@ void EffectEditorPage::eventLayerSelect(ui::Event* event)
 		m_site->setPropertyObject(m_effectData);
 }
 
-void EffectEditorPage::eventTimeCursorMove(ui::Event* event)
+void EffectEditorPage::eventSequencerTimeCursorMove(ui::Event* event)
 {
 	float time = m_sequencer->getCursor() / 1000.0f;
 	m_previewControl->setTimeScale(0.0f);
@@ -467,7 +526,7 @@ void EffectEditorPage::eventTimeCursorMove(ui::Event* event)
 	m_previewControl->syncEffect();
 }
 
-void EffectEditorPage::eventLayerRearranged(ui::Event* event)
+void EffectEditorPage::eventSequencerLayerRearranged(ui::Event* event)
 {
 	ui::custom::MovedEvent* movedEvent = checked_type_cast< ui::custom::MovedEvent* >(event);
 	
@@ -483,7 +542,7 @@ void EffectEditorPage::eventLayerRearranged(ui::Event* event)
 	updateEffectPreview();
 }
 
-void EffectEditorPage::eventKeyMove(ui::Event* event)
+void EffectEditorPage::eventSequencerKeyMove(ui::Event* event)
 {
 	ui::CommandEvent* commandEvent = checked_type_cast< ui::CommandEvent* >(event);
 	
@@ -536,9 +595,20 @@ void EffectEditorPage::eventKeyMove(ui::Event* event)
 	updateEffectPreview();
 }
 
-void EffectEditorPage::eventLayerClick(ui::Event* event)
+void EffectEditorPage::eventSequencerLayerClick(ui::Event* event)
 {
 	updateEffectPreview();
+}
+
+void EffectEditorPage::eventSequencerButtonDown(ui::Event* event)
+{
+	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent*, false >(event);
+	if (mouseEvent->getButton() == ui::MouseEvent::BtRight)
+	{
+		Ref< ui::MenuItem > selectedItem = m_popupMenu->show(m_sequencer, mouseEvent->getPosition());
+		if (selectedItem != 0)
+			handleCommand(selectedItem->getCommand());
+	}
 }
 
 	}
