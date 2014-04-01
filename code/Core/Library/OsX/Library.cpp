@@ -25,35 +25,39 @@ bool Library::open(const Path& libraryName)
 
 bool Library::open(const Path& libraryName, const std::vector< Path >& searchPaths, bool includeDefaultPaths)
 {
-	std::wstring resolved = libraryName.getPathName();
+#if !defined(_DEBUG)
+	std::wstring resolved = std::wstring(L"lib") + libraryName.getPathName() + L".dylib";
+#else
+	std::wstring resolved = std::wstring(L"lib") + libraryName.getPathName() + L"_d.dylib";
+#endif
 	
 	m_handle = 0;
 	
 	// Use executable path first.
 	{
-		std::wstring library = L"@executable_path/" + resolved + L".dylib";
+		std::wstring library = L"@executable_path/" + resolved;
 		std::string tmp1 = wstombs(library);
 		m_handle = dlopen(tmp1.c_str(), RTLD_LAZY | RTLD_GLOBAL);
 		if (m_handle)
 		{
-			log::debug << L"Library \"@executable_path/" << resolved << L".dylib\" loaded" << Endl;
+            T_DEBUG(L"Library \"" << library << L"\" loaded");
 			return true;
 		}
 	}
 	
 	// Try default paths second.
 	{
-		std::wstring library = resolved + L".dylib";
+		std::wstring library = resolved;
 		std::string tmp1 = wstombs(library);
 		m_handle = dlopen(tmp1.c_str(), RTLD_LAZY | RTLD_GLOBAL);
 		if (m_handle)
 		{
-			log::debug << L"Library \"" << resolved << L".dylib\" loaded" << Endl;
+            T_DEBUG(L"Library \"" << library << L"\" loaded");
 			return true;
 		}
 	}
 	
-	log::error << L"Unable to open library, " << mbstows(dlerror()) << Endl;
+	log::error << L"Unable to open library \"" << resolved << L"\", " << mbstows(dlerror()) << Endl;
 	return false;
 }
 
