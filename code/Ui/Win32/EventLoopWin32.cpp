@@ -118,7 +118,7 @@ int EventLoopWin32::execute(EventSubject* owner)
 				HWND hwndFocus = GetFocus();
 				HWND hwndTop = hwndFocus;
 
-				for (; GetParent(hwndTop) != NULL; hwndTop = GetParent(hwndTop))
+				for (; hwndTop != NULL && GetParent(hwndTop) != NULL; hwndTop = GetParent(hwndTop))
 					;
 
 				BOOL handled = FALSE;

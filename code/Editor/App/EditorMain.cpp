@@ -43,7 +43,7 @@ int main(int argc, const char** argv)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 {
 	wchar_t file[MAX_PATH] = L"";
-	GetModuleFileName(NULL, file, sizeof(file));
+	GetModuleFileName(NULL, file, sizeof_array(file));
 
 	CommandLine cmdLine(file, mbstows(szCmdLine));
 #endif
