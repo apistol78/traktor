@@ -106,7 +106,7 @@ void WorldRenderView::addLight(const Light& light)
 
 	if (light.castShadow)
 	{
-		for (int32_t i = m_lightCount; i >= 0; --i)
+		for (int32_t i = m_lightCount - 1; i >= 0; --i)
 			m_lights[i + 1] = m_lights[i];
 
 		m_lights[0] = light;

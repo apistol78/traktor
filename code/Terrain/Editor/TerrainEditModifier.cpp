@@ -766,20 +766,24 @@ void TerrainEditModifier::setFallOff(const std::wstring& fallOff)
 void TerrainEditModifier::setSymmetry(uint32_t symmetry)
 {
 	m_symmetry = symmetry;
-
 	m_spatialBrush = m_drawBrush;
+
+	int32_t scale[] = { 1, 1 };
+	int32_t offset[] = { 0, 0 };
+
 	if (m_symmetry & 1)
 	{
-		int32_t scale[] = { -1, 1 };
-		int32_t offset[] = { m_heightfield->getSize(), 0 };
-		m_spatialBrush = new SymmetricalBrush(scale, offset, m_spatialBrush);
+		scale[0] = -1;
+		offset[0] = m_heightfield->getSize();
 	}
 	if (m_symmetry & 2)
 	{
-		int32_t scale[] = { 1, -1 };
-		int32_t offset[] = { 0, m_heightfield->getSize() };
-		m_spatialBrush = new SymmetricalBrush(scale, offset, m_spatialBrush);
+		scale[1] = -1;
+		offset[1] = m_heightfield->getSize();
 	}
+
+	if (m_symmetry != 0)
+		m_spatialBrush = new SymmetricalBrush(scale, offset, m_spatialBrush);
 }
 
 void TerrainEditModifier::setStrength(float strength)
