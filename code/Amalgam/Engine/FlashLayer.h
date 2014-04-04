@@ -75,7 +75,7 @@ public:
 		const std::wstring& name,
 		amalgam::IEnvironment* environment,
 		const resource::Proxy< flash::FlashMovie >& movie,
-		const std::map< std::wstring, resource::Id< flash::FlashMovie > >& externalMovies,
+		const std::map< std::wstring, resource::Proxy< flash::FlashMovie > >& externalMovies,
 		const resource::Proxy< world::PostProcessSettings >& postProcessSettings,
 		bool clearBackground,
 		bool enableSound
@@ -132,7 +132,7 @@ private:
 
 	Ref< amalgam::IEnvironment > m_environment;
 	resource::Proxy< flash::FlashMovie > m_movie;
-	std::map< std::wstring, resource::Id< flash::FlashMovie > > m_externalMovies;
+	std::map< std::wstring, resource::Proxy< flash::FlashMovie > > m_externalMovies;
 	Ref< flash::FlashMoviePlayer > m_moviePlayer;
 	Ref< flash::AccDisplayRenderer > m_displayRenderer;
 	Ref< flash::ISoundRenderer > m_soundRenderer;

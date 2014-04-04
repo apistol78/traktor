@@ -77,7 +77,7 @@ uint32_t translateInputKeyCode(uint32_t inputKeyCode)
 class CustomFlashMovieLoader : public flash::FlashMovieLoader
 {
 public:
-	CustomFlashMovieLoader(db::Database* database, const std::map< std::wstring, resource::Id< flash::FlashMovie > >& externalMovies)
+	CustomFlashMovieLoader(db::Database* database, const std::map< std::wstring, resource::Proxy< flash::FlashMovie > >& externalMovies)
 	:	flash::FlashMovieLoader(database)
 	,	m_externalMovies(externalMovies)
 	{
@@ -85,15 +85,15 @@ public:
 
 	virtual Ref< flash::FlashMovie > load(const std::wstring& name) const
 	{
-		std::map< std::wstring, resource::Id< flash::FlashMovie > >::const_iterator i = m_externalMovies.find(name);
+		std::map< std::wstring, resource::Proxy< flash::FlashMovie > >::const_iterator i = m_externalMovies.find(name);
 		if (i != m_externalMovies.end())
-			return flash::FlashMovieLoader::load(((const Guid&)i->second).format());
+			return i->second.getResource();
 		else
-			return flash::FlashMovieLoader::load(name);
+			return 0;
 	}
 
 private:
-	const std::map< std::wstring, resource::Id< flash::FlashMovie > >& m_externalMovies;
+	const std::map< std::wstring, resource::Proxy< flash::FlashMovie > >& m_externalMovies;
 };
 
 		}
@@ -105,7 +105,7 @@ FlashLayer::FlashLayer(
 	const std::wstring& name,
 	amalgam::IEnvironment* environment,
 	const resource::Proxy< flash::FlashMovie >& movie,
-	const std::map< std::wstring, resource::Id< flash::FlashMovie > >& externalMovies,
+	const std::map< std::wstring, resource::Proxy< flash::FlashMovie > >& externalMovies,
 	const resource::Proxy< world::PostProcessSettings >& postProcessSettings,
 	bool clearBackground,
 	bool enableSound
