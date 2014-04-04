@@ -30,7 +30,16 @@ Ref< Layer > FlashLayerData::createInstance(Stage* stage, amalgam::IEnvironment*
 	// Bind proxies to resource manager.
 	if (!resourceManager->bind(m_movie, movie))
 		return 0;
+
+	// Bind external movies.
+	std::map< std::wstring, resource::Proxy< flash::FlashMovie > > externalMovies;
+	for (std::map< std::wstring, resource::Id< flash::FlashMovie > >::const_iterator i = m_externalMovies.begin(); i != m_externalMovies.end(); ++i)
+	{
+		if (!resourceManager->bind(i->second, externalMovies[i->first]))
+			return 0;
+	}
 	
+	// Bind optional post processing.
 	if (m_postProcess)
 	{
 		if (!resourceManager->bind(m_postProcess, postProcess))
@@ -43,7 +52,7 @@ Ref< Layer > FlashLayerData::createInstance(Stage* stage, amalgam::IEnvironment*
 		m_name,
 		environment,
 		movie,
-		m_externalMovies,
+		externalMovies,
 		postProcess,
 		m_clearBackground,
 		m_enableSound

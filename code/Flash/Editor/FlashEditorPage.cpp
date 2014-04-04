@@ -193,7 +193,7 @@ void FlashEditorPage::handleDatabaseEvent(db::Database* database, const Guid& ev
 
 uint32_t FlashEditorPage::getProfileValue() const
 {
-	return FlashCharacterInstance::getInstanceCount();
+	return Collectable::getInstanceCount();
 }
 
 void FlashEditorPage::updateTreeObject(ui::TreeViewItem* parentItem, const ActionObject* asObject, std::set< const ActionObject* >& objectStack, std::map< const void*, uint32_t >& pointerHash, uint32_t& nextPointerHash)

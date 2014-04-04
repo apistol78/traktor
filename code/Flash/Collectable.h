@@ -35,6 +35,9 @@ public:
 
 	virtual void release(void* owner) const;
 
+	/*! \brief Get alive collectible instance count. */
+	static int32_t getInstanceCount();
+
 protected:
 	virtual void trace(const IVisitor& visitor) const = 0;
 
@@ -67,6 +70,7 @@ private:
 		virtual void operator () (Collectable* memberObject) const;
 	};
 
+	static int32_t ms_instanceCount;
 	Collectable* m_prev;	//!< Intrusive list chain members.
 	Collectable* m_next;
 	mutable TraceColor m_traceColor;

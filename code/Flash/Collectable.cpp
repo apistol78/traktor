@@ -8,6 +8,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.Collectable", Collectable, Object)
 
+int32_t Collectable::ms_instanceCount = 0;
+
 Collectable::Collectable()
 :	m_prev(0)
 ,	m_next(0)
@@ -15,12 +17,14 @@ Collectable::Collectable()
 ,	m_traceBuffered(false)
 ,	m_traceRefCount(0)
 {
+	Atomic::increment(ms_instanceCount);
 }
 
 Collectable::~Collectable()
 {
 	T_ASSERT (m_next == 0);
 	T_ASSERT (m_prev == 0);
+	Atomic::decrement(ms_instanceCount);
 }
 
 void Collectable::addRef(void* owner) const
@@ -50,6 +54,11 @@ void Collectable::release(void* owner) const
 		}
 	}
 	Object::release(owner);
+}
+
+int32_t Collectable::getInstanceCount()
+{
+	return ms_instanceCount;
 }
 
 void Collectable::traceMarkGray()
