@@ -51,7 +51,6 @@ public:
 		const Vector4& frameSize,
 		const Vector4& viewSize,
 		const Vector4& viewOffset,
-		float screenOffsetScale,
 		const SwfCxTransform& cxform,
 		render::ITexture* texture,
 		const Vector4& textureOffset,

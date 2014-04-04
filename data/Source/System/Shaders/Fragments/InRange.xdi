@@ -13,8 +13,8 @@
 		<item type="traktor.render.Conditional" version="1">
 			<comment/>
 			<position>
-				<first>606</first>
-				<second>335</second>
+				<first>763</first>
+				<second>287</second>
 			</position>
 			<branch>BrAuto</branch>
 			<operator>CoLess</operator>
@@ -33,7 +33,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>284</first>
+				<first>274</first>
 				<second>295</second>
 			</position>
 			<name>Min</name>
@@ -44,7 +44,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>289</first>
+				<first>272</first>
 				<second>382</second>
 			</position>
 			<name>Max</name>
@@ -55,31 +55,24 @@
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>325</first>
-				<second>508</second>
+				<first>407</first>
+				<second>353</second>
 			</position>
 			<value>0</value>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>324</first>
-				<second>478</second>
+				<first>407</first>
+				<second>326</second>
 			</position>
 			<value>1</value>
-		</item>
-		<item type="traktor.render.Mul">
-			<comment/>
-			<position>
-				<first>801</first>
-				<second>313</second>
-			</position>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>985</first>
-				<second>338</second>
+				<first>945</first>
+				<second>323</second>
 			</position>
 			<name>Output</name>
 		</item>
@@ -147,16 +140,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<name>CaseTrue</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[5]"/>
 				<name>Output</name>
 			</source>
@@ -167,31 +150,21 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>CaseTrue</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[1]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[7]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[8]"/>
 				<name>Input</name>
 			</destination>
 		</item>

@@ -67,5 +67,10 @@ void ToolForm::addNcMouseWheelEventHandler(EventHandler* eventHandler)
 	addEventHandler(EiNcMouseWheel, eventHandler);
 }
 
+bool ToolForm::acceptLayout() const
+{
+	return false;
+}
+
 	}
 }

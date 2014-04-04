@@ -143,6 +143,12 @@ public:
 	virtual Size getPreferedSize() const;
 	
 	virtual Size getMaximumSize() const;
+
+	/*! \brief If this widget accepts to be part of layout.
+	 * For instance child dialogs cannot be part of a layout
+	 * as it's not logical, thus should return false.
+	 */
+	virtual bool acceptLayout() const;
 	
 	void link(Widget* parent);
 	

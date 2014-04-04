@@ -26,7 +26,8 @@ namespace traktor
 Ref< ui::Bitmap > s_bitmapPlatforms;
 Ref< ui::Bitmap > s_bitmapTargetControl;
 
-const int32_t c_performanceHeight = 48;
+const int32_t c_performanceLineHeight = 14;
+const int32_t c_performanceHeight = 5 * c_performanceLineHeight;
 
 std::wstring formatPerformanceTime(float time)
 {
@@ -162,8 +163,8 @@ void TargetInstanceListItem::paint(ui::custom::AutoWidget* widget, ui::Canvas& c
 	performanceRect.bottom = performanceRect.top + c_performanceHeight;
 	for (uint32_t i = 0; i < connections.size(); ++i)
 	{
-		canvas.setForeground(Color4ub(180, 180, 180));
-		canvas.setBackground(Color4ub(200, 200, 200));
+		canvas.setForeground(Color4ub(200, 200, 200));
+		canvas.setBackground(Color4ub(220, 220, 220));
 		canvas.fillGradientRect(performanceRect);
 		performanceRect = performanceRect.offset(0, performanceRect.getHeight());
 	}
@@ -212,7 +213,7 @@ void TargetInstanceListItem::paint(ui::custom::AutoWidget* widget, ui::Canvas& c
 
 	ui::Font widgetFont = widget->getFont();
 	ui::Font performanceFont = widgetFont; performanceFont.setSize(8);
-	canvas.setFont(performanceFont);
+	ui::Font performanceBoldFont = performanceFont; performanceBoldFont.setBold(true);
 
 	performanceRect = rect;
 	performanceRect.right -= 34;
@@ -225,8 +226,17 @@ void TargetInstanceListItem::paint(ui::custom::AutoWidget* widget, ui::Canvas& c
 
 		canvas.setClipRect(performanceRect);
 
+		ui::Rect nameRect = performanceRect;
+		nameRect.bottom = nameRect.top + c_performanceLineHeight;
+
+		nameRect.left += 6;
+		canvas.setFont(performanceBoldFont);
+		canvas.drawText(nameRect, connections[i]->getName(), ui::AnLeft, ui::AnCenter);
+		canvas.setFont(performanceFont);
+
 		ui::Rect topRect = performanceRect;
-		topRect.bottom = topRect.top + 12;
+		topRect.top = performanceRect.top + c_performanceLineHeight;
+		topRect.bottom = topRect.top + c_performanceLineHeight;
 
 		topRect.left += 6;
 		canvas.drawText(topRect, toString(int32_t(performance.fps)), ui::AnLeft, ui::AnCenter);
@@ -244,8 +254,8 @@ void TargetInstanceListItem::paint(ui::custom::AutoWidget* widget, ui::Canvas& c
 		canvas.drawText(topRect, L"GC: " + formatPerformanceTime(performance.garbageCollect), ui::AnLeft, ui::AnCenter);
 
 		ui::Rect middleRect = performanceRect;
-		middleRect.top = performanceRect.top + 12;
-		middleRect.bottom = performanceRect.top + 24;
+		middleRect.top = performanceRect.top + c_performanceLineHeight * 2;
+		middleRect.bottom = middleRect.top + c_performanceLineHeight;
 
 		middleRect.left += 26;
 		canvas.drawText(middleRect, L"P: " + formatPerformanceTime(performance.physics), ui::AnLeft, ui::AnCenter);
@@ -257,8 +267,8 @@ void TargetInstanceListItem::paint(ui::custom::AutoWidget* widget, ui::Canvas& c
 		canvas.drawText(middleRect, L"Sim: " + toString(int32_t(performance.steps)) + L", " + formatPerformanceTime(performance.interval) + L", " + toString(performance.collisions), ui::AnLeft, ui::AnCenter);
 
 		ui::Rect middleRect2 = performanceRect;
-		middleRect2.top = performanceRect.top + 24;
-		middleRect2.bottom = performanceRect.top + 36;
+		middleRect2.top = performanceRect.top + c_performanceLineHeight * 3;
+		middleRect2.bottom = middleRect2.top + c_performanceLineHeight;
 
 		middleRect2.left += 26;
 		canvas.drawText(middleRect2, L"Draw: " + toString(performance.drawCalls), ui::AnLeft, ui::AnCenter);
@@ -273,7 +283,8 @@ void TargetInstanceListItem::paint(ui::custom::AutoWidget* widget, ui::Canvas& c
 		canvas.drawText(middleRect2, L"Snd: " + toString(performance.activeSoundChannels), ui::AnLeft, ui::AnCenter);
 
 		ui::Rect bottomRect = performanceRect;
-		bottomRect.top = performanceRect.top + 36;
+		bottomRect.top = performanceRect.top + c_performanceLineHeight * 4;
+		bottomRect.bottom = bottomRect.top + c_performanceLineHeight;
 
 		bottomRect.left += 26;
 		canvas.drawText(bottomRect, L"Mem: " + toString(performance.memInUse / 1024) + L" KiB", ui::AnLeft, ui::AnCenter);
@@ -287,7 +298,7 @@ void TargetInstanceListItem::paint(ui::custom::AutoWidget* widget, ui::Canvas& c
 		bottomRect.left += 100;
 		canvas.drawText(bottomRect, L"Res: " + toString(performance.residentResourcesCount) + L", " + toString(performance.exclusiveResourcesCount), ui::AnLeft, ui::AnCenter);
 
-		performanceRect = performanceRect.offset(0, performanceRect.getHeight());
+		performanceRect = performanceRect.offset(0, c_performanceHeight);
 	}
 
 	canvas.resetClipRect();

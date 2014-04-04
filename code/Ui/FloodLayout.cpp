@@ -43,7 +43,7 @@ Ref< Widget > FloodLayout::getFirstVisibleChild(Widget* widget)
 {
 	for (Ref< Widget > child = widget->getFirstChild(); child; child = child->getNextSibling())
 	{
-		if (child->isVisible(false))
+		if (child->acceptLayout() && child->isVisible(false))
 			return child;
 	}
 	return 0;

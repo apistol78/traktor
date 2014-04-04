@@ -26,9 +26,6 @@ bool Dialog::create(Widget* parent, const std::wstring& text, int width, int hei
 		return false;
 	}
 
-	while (parent && parent->getParent())
-		parent = parent->getParent();
-
 	if (!dialog->create(parent ? parent->getIWidget() : 0, text, width, height, style))
 	{
 		dialog->destroy();
@@ -78,6 +75,11 @@ bool Dialog::isModal() const
 void Dialog::addCloseEventHandler(EventHandler* eventHandler)
 {
 	addEventHandler(EiClose, eventHandler);
+}
+
+bool Dialog::acceptLayout() const
+{
+	return false;
 }
 
 void Dialog::eventChild(Event* event)

@@ -46,7 +46,7 @@ bool PipeReader::readLine(std::wstring& outLine, int32_t timeout)
 			if (int32_t(1000.0f * timer.getElapsedTime()) > timeout)
 				return false;
 
-			ThreadManager::getInstance().getCurrentThread()->yield();
+			ThreadManager::getInstance().getCurrentThread()->sleep(10);
 		}
 		
 		// Extract character from stream.

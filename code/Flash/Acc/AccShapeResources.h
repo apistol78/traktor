@@ -27,6 +27,7 @@ public:
 	void destroy();
 
 private:
+	friend class AccQuad;
 	friend class AccShape;
 
 	resource::Proxy< render::Shader > m_shaderSolid;

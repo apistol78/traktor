@@ -103,7 +103,6 @@ void AccQuad::render(
 	const Vector4& frameSize,
 	const Vector4& viewSize,
 	const Vector4& viewOffset,
-	float screenOffsetScale,
 	const SwfCxTransform& cxform,
 	render::ITexture* texture,
 	const Vector4& textureOffset,
@@ -151,7 +150,7 @@ void AccQuad::render(
 	renderBlock->programParams->setVectorParameter(s_handleFrameSize, frameSize);
 	renderBlock->programParams->setVectorParameter(s_handleViewSize, viewSize);
 	renderBlock->programParams->setVectorParameter(s_handleViewOffset, viewOffset);
-	renderBlock->programParams->setFloatParameter(s_handleScreenOffsetScale, screenOffsetScale);
+	renderBlock->programParams->setFloatParameter(s_handleScreenOffsetScale, 0.0f);
 	renderBlock->programParams->setVectorParameter(s_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
 	renderBlock->programParams->setVectorParameter(s_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
 	renderBlock->programParams->setStencilReference(maskReference);

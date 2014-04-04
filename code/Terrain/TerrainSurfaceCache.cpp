@@ -23,14 +23,12 @@ struct TerrainSurfaceRenderBlock : public render::RenderBlock
 	render::ScreenRenderer* screenRenderer;
 	render::RenderTargetSet* renderTargetSet;
 	TerrainSurfaceRenderBlock* next;
-	bool top;
 	bool clear;
 
 	TerrainSurfaceRenderBlock()
 	:	screenRenderer(0)
 	,	renderTargetSet(0)
 	,	next(0)
-	,	top(false)
 	,	clear(false)
 	{
 	}
@@ -42,13 +40,12 @@ struct TerrainSurfaceRenderBlock : public render::RenderBlock
 		if (programParams)
 			programParams->fixup(program);
 
-		if (top)
+		if (renderTargetSet)
 		{
 			renderView->begin(renderTargetSet, 0);
-			
 			if (clear)
 			{
-				const Color4f cc(0.0f, 0.0f, 0.0f, 0.0f);
+				const static Color4f cc(0.0f, 0.0f, 0.0f, 0.0f);
 				renderView->clear(render::CfColor, &cc, 1.0f, 0);
 			}
 		}
@@ -58,7 +55,7 @@ struct TerrainSurfaceRenderBlock : public render::RenderBlock
 		if (next)
 			next->render(renderView, globalParameters);
 
-		if (top)
+		if (renderTargetSet)
 			renderView->end();
 	}
 };
@@ -161,6 +158,8 @@ void TerrainSurfaceCache::flush()
 
 void TerrainSurfaceCache::begin()
 {
+	if (!m_pool->isContentValid())
+		flush();
 }
 
 void TerrainSurfaceCache::get(
@@ -182,11 +181,9 @@ void TerrainSurfaceCache::get(
 	{
 		if (
 			m_entries[patchId].lod == surfaceLod &&
-			m_entries[patchId].tile.dim > 0 &&
-			m_pool->isContentValid()
+			m_entries[patchId].tile.dim > 0
 		)
 		{
-			outRenderBlock = 0;
 			outTextureOffset = offsetFromTile(m_entries[patchId].tile);
 			return;
 		}
@@ -210,14 +207,10 @@ void TerrainSurfaceCache::get(
 	}
 	if (!tile.dim)
 	{
-		outRenderBlock = 0;
 		outTextureOffset = Vector4::zero();
 		T_DEBUG(L"Unable to allocate terrain surface tile; out of memory");
 		return;
 	}
-
-	// Composite surface.
-	TerrainSurfaceRenderBlock* renderBlockChain = 0;
 
 	Vector4 patchOriginM = patchOrigin;
 	patchOriginM -= Vector4(1.0f / 4096.0f, 0.0f, 1.0f / 4096.0f, 0.0f) * Scalar(10.0f);
@@ -235,7 +228,6 @@ void TerrainSurfaceCache::get(
 	TerrainSurfaceRenderBlock* renderBlock = renderContext->alloc< TerrainSurfaceRenderBlock >("Terrain surface");
 
 	renderBlock->screenRenderer = m_screenRenderer;
-	renderBlock->renderTargetSet = m_pool;
 	renderBlock->distance = 0.0f;
 	renderBlock->program = shader->getCurrentProgram();
 	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
@@ -258,18 +250,17 @@ void TerrainSurfaceCache::get(
 	renderBlock->programParams->setVectorParameter(m_handleTextureOffset, textureOffset);
 	renderBlock->programParams->endParameters(renderContext);
 
-	if (!renderBlockChain)
+	renderBlock->renderTargetSet = m_pool;
+	renderBlock->clear = m_clearCache;
+
+	if (outRenderBlock)
 	{
-		renderBlock->top = true;
-		renderBlock->clear = m_clearCache;
-		renderBlockChain = renderBlock;
-		outRenderBlock = renderBlock;
-	}
-	else
-	{
-		renderBlock->top = false;
-		renderBlockChain->next = renderBlock;
-		renderBlockChain = renderBlock;
+		TerrainSurfaceRenderBlock* renderBlockChain = static_cast< TerrainSurfaceRenderBlock* >(outRenderBlock);
+
+		renderBlockChain->renderTargetSet = 0;
+		renderBlockChain->clear = false;
+
+		renderBlock->next = renderBlockChain;
 	}
 	
 	m_clearCache = false;
@@ -279,6 +270,7 @@ void TerrainSurfaceCache::get(
 	m_entries[patchId].tile = tile;
 
 	outTextureOffset = offsetFromTile(tile);
+	outRenderBlock = renderBlock;
 }
 
 render::ITexture* TerrainSurfaceCache::getVirtualTexture() const

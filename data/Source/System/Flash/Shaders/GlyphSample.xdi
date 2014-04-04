@@ -28,9 +28,9 @@
 				<first>948</first>
 				<second>369</second>
 			</position>
-			<minFilter>FtLinear</minFilter>
-			<mipFilter>FtLinear</mipFilter>
-			<magFilter>FtLinear</magFilter>
+			<minFilter>FtPoint</minFilter>
+			<mipFilter>FtPoint</mipFilter>
+			<magFilter>FtPoint</magFilter>
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
@@ -246,14 +246,6 @@
 				<first>271</first>
 				<second>199</second>
 			</position>
-		</item>
-		<item type="traktor.render.Scalar">
-			<comment/>
-			<position>
-				<first>495</first>
-				<second>395</second>
-			</position>
-			<value>0</value>
 		</item>
 	</nodes>
 	<edges>

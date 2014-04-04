@@ -53,6 +53,8 @@ public:
 	
 	void addCloseEventHandler(EventHandler* eventHandler);
 
+	virtual bool acceptLayout() const;
+
 private:
 	bool m_modal;
 

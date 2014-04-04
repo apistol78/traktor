@@ -72,5 +72,10 @@ void Form::addCloseEventHandler(EventHandler* eventHandler)
 	addEventHandler(EiClose, eventHandler);
 }
 
+bool Form::acceptLayout() const
+{
+	return false;
+}
+
 	}
 }
