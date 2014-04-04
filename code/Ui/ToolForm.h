@@ -44,6 +44,8 @@ public:
 	void addNcMouseMoveEventHandler(EventHandler* eventHandler);
 
 	void addNcMouseWheelEventHandler(EventHandler* eventHandler);
+
+	virtual bool acceptLayout() const;
 };
 
 	}

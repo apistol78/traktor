@@ -318,6 +318,8 @@ void TerrainEntity::render(
 	// Update all patch surfaces.
 	if (updateCache)
 	{
+		render::RenderBlock* renderBlock = 0;
+
 		m_surfaceCache->begin();
 		for (AlignedVector< CullPatch >::const_iterator i = visiblePatches.begin(); i != visiblePatches.end(); ++i)
 		{
@@ -351,7 +353,6 @@ void TerrainEntity::render(
 			patch.lastSurfaceLod = surfaceLod;
 
 			// Update surface cache.
-			render::RenderBlock* renderBlock = 0;
 			m_surfaceCache->get(
 				worldContext.getRenderContext(),
 				m_terrain,
@@ -366,15 +367,15 @@ void TerrainEntity::render(
 				patch.surfaceOffset
 			);
 
-			// Queue render block.
-			if (renderBlock)
-				worldContext.getRenderContext()->draw(render::RpOpaque, renderBlock);
-
 			// Queue patch instance.
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 			patchLodInstances[patchLod].push_back(&(*i));
 #endif
 		}
+
+		// Queue surface cache render block.
+		if (renderBlock)
+			worldContext.getRenderContext()->draw(render::RpOpaque, renderBlock);
 	}
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 	else

@@ -50,7 +50,7 @@ bool RenderTargetSetDx11::create(ID3D11Device* d3dDevice, const RenderTargetSetC
 		dtd.MipLevels = 1;
 		dtd.ArraySize = 1;
 		if (desc.ignoreStencil)
-			dtd.Format = DXGI_FORMAT_D32_FLOAT;
+			dtd.Format = DXGI_FORMAT_D16_UNORM;
 		else
 			dtd.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 		dtd.SampleDesc.Count = 1;
@@ -60,7 +60,7 @@ bool RenderTargetSetDx11::create(ID3D11Device* d3dDevice, const RenderTargetSetC
 		dtd.CPUAccessFlags = 0;
 		dtd.MiscFlags = 0;
 
-		if (!setupSampleDesc(d3dDevice, desc.multiSample, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_D16_UNORM, dtd.SampleDesc))
+		if (!setupSampleDesc(d3dDevice, desc.multiSample, DXGI_FORMAT_R8G8B8A8_UNORM, dtd.Format, dtd.SampleDesc))
 		{
 			log::error << L"Unable to create render target; unsupported MSAA" << Endl;
 			return false;

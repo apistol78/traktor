@@ -29,6 +29,9 @@ void GridLayout::update(Widget* widget)
 	int i = 0;
 	for (Ref< Widget > child = widget->getFirstChild(); child != 0; child = child->getNextSibling())
 	{
+		if (!child->acceptLayout())
+			continue;
+
 		int c = i % m_columns;
 		int r = i / m_columns;
 		if (r >= m_rows)

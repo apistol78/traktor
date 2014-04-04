@@ -146,10 +146,11 @@ TableLayout::TableLayout(const std::wstring& cdef, const std::wstring& rdef, int
 bool TableLayout::fit(Widget* widget, const Size& bounds, Size& result)
 {
 	std::vector< Widget* > children;
-
 	for (Widget* child = widget->getFirstChild(); child != 0; child = child->getNextSibling())
-		children.push_back(child);
-
+	{
+		if (child->acceptLayout())
+			children.push_back(child);
+	}
 	if (children.size() <= 0)
 		return false;
 
@@ -162,18 +163,19 @@ bool TableLayout::fit(Widget* widget, const Size& bounds, Size& result)
 
 	result.cx = std::accumulate(w.begin(), w.end(), m_margin.cx * 2 + m_pad.cx * (nc - 1));
 	result.cy = std::accumulate(h.begin(), h.end(), m_margin.cy * 2 + m_pad.cy * (nr - 1));
-
 	return true;
 }
 
 void TableLayout::update(Widget* widget)
 {
 	Rect inner = widget->getInnerRect();
+
 	std::vector< Widget* > children;
-
 	for (Widget* child = widget->getFirstChild(); child != 0; child = child->getNextSibling())
-		children.push_back(child);
-
+	{
+		if (child->acceptLayout())
+			children.push_back(child);
+	}
 	if (children.size() <= 0)
 		return;
 

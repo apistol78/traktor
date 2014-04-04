@@ -55,6 +55,8 @@ public:
 	bool isMinimized() const;
 
 	void addCloseEventHandler(EventHandler* eventHandler);
+
+	virtual bool acceptLayout() const;
 };
 
 	}

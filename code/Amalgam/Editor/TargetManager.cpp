@@ -99,6 +99,12 @@ bool TargetManager::update()
 		Ref< net::TcpSocket > socket = m_listenSocket->accept();
 		if (socket)
 		{
+			// Get name of connecting target host.
+			std::wstring targetName = L"(unknown)";
+			Ref< net::SocketAddress > remoteAddress = socket->getRemoteAddress();
+			if (remoteAddress)
+				targetName = remoteAddress->getHostName();
+
 			Ref< net::BidirectionalObjectTransport > transport = new net::BidirectionalObjectTransport(socket);
 			socket->setNoDelay(true);
 
@@ -122,7 +128,7 @@ bool TargetManager::update()
 				if (instance)
 				{
 					// Create connection object and add to instance.
-					instance->addConnection(new TargetConnection(transport, m_targetLog, m_targetDebuggerSessions));
+					instance->addConnection(new TargetConnection(targetName, transport, m_targetLog, m_targetDebuggerSessions));
 					needUpdate |= true;
 					log::info << L"New target connection accepted; ID " << targetId->getId().format() << Endl;
 				}

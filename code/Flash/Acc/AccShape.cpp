@@ -329,9 +329,9 @@ void AccShape::render(
 		return;
 
 	Matrix44 m(
-		transform.e11, transform.e12, std::floor(transform.e13), 0.0f,
-		transform.e21, transform.e22, std::floor(transform.e23), 0.0f,
-		transform.e31, transform.e32, std::floor(transform.e33), 0.0f,
+		transform.e11, transform.e12, transform.e13, 0.0f,
+		transform.e21, transform.e22, transform.e23, 0.0f,
+		transform.e31, transform.e32, transform.e33, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
 	);
 

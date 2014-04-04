@@ -54,8 +54,8 @@ namespace traktor
 const int32_t c_databasePollInterval = 5;
 const uint32_t c_simulationFrequency = 60;
 const float c_simulationDeltaTime = 1.0f / c_simulationFrequency;
-const float c_maxDeltaTime = 0.5f;
-const float c_minDeltaTime = 0.0f;
+const float c_maxDeltaTime = 1.0f / 20.0f;
+const float c_minDeltaTime = 1.0f / 200.0f;
 const float c_deltaTimeFilterCoeff = 0.99f;
 
 		}
@@ -528,6 +528,10 @@ bool Application::update()
 			// Assume state's active from start.
 			m_renderViewActive = true;
 			log::info << L"State transition complete." << Endl;
+
+			// Reset timer's delta time as this will be very high
+			// after a state change.
+			m_timer.getDeltaTime();
 		}
 	}
 

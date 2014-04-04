@@ -53,6 +53,9 @@ void FlowLayout::calculateRects(Widget* widget, std::vector< WidgetRect >& outRe
 	Rect innerRect = widget->getInnerRect();
 	for (Widget* child = widget->getFirstChild(); child != 0; child = child->getNextSibling())
 	{
+		if (!child->acceptLayout())
+			continue;
+
 		Size pref = child->getPreferedSize();
 		Point ext = pos + pref;
 		

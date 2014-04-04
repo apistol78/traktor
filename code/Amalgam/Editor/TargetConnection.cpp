@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include "Amalgam/Editor/TargetConnection.h"
 #include "Amalgam/Editor/TargetScriptDebugger.h"
 #include "Amalgam/Editor/TargetScriptDebuggerSessions.h"
@@ -18,8 +16,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.TargetConnection", TargetConnection, Object)
 
-TargetConnection::TargetConnection(net::BidirectionalObjectTransport* transport, ILogTarget* targetLog, TargetScriptDebuggerSessions* targetDebuggerSessions)
-:	m_transport(transport)
+TargetConnection::TargetConnection(const std::wstring& name, net::BidirectionalObjectTransport* transport, ILogTarget* targetLog, TargetScriptDebuggerSessions* targetDebuggerSessions)
+:	m_name(name)
+,	m_transport(transport)
 ,	m_targetLog(targetLog)
 ,	m_targetDebuggerSessions(targetDebuggerSessions)
 {

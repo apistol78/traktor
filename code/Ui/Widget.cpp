@@ -322,6 +322,11 @@ Size Widget::getMaximumSize() const
 	return m_widget->getMaximumSize();
 }
 
+bool Widget::acceptLayout() const
+{
+	return true;
+}
+
 void Widget::link(Widget* parent)
 {
 	if (parent)

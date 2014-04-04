@@ -29,7 +29,7 @@ class TargetConnection : public Object
 	T_RTTI_CLASS;
 
 public:
-	TargetConnection(net::BidirectionalObjectTransport* transport, ILogTarget* targetLog, TargetScriptDebuggerSessions* targetDebuggerSessions);
+	TargetConnection(const std::wstring& name, net::BidirectionalObjectTransport* transport, ILogTarget* targetLog, TargetScriptDebuggerSessions* targetDebuggerSessions);
 
 	virtual ~TargetConnection();
 
@@ -39,11 +39,14 @@ public:
 
 	bool update();
 
+	const std::wstring& getName() const { return m_name; }
+
 	net::BidirectionalObjectTransport* getTransport() const { return m_transport; }
 
 	const TargetPerformance& getPerformance() const { return m_performance; }
 
 private:
+	std::wstring m_name;
 	Ref< net::BidirectionalObjectTransport > m_transport;
 	Ref< ILogTarget > m_targetLog;
 	Ref< TargetScriptDebuggerSessions > m_targetDebuggerSessions;

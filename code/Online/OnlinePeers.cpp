@@ -39,7 +39,10 @@ bool OnlinePeers::update()
 {
 	// Ensure we're still connected to back-end.
 	if (!m_sessionManager->isConnected())
+	{
+		log::error << L"Steam disconnected; unable to continue" << Endl;
 		return false;
+	}
 
 	// Get lobby users.
 	RefArray< IUser > users = m_lobby->getParticipants();
