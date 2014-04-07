@@ -87,7 +87,7 @@ public:
 
 	// IProfileCallback
 
-	virtual uint32_t getProfileValue() const;
+	virtual void getProfileValues(uint32_t* outValues) const;
 
 private:
 	editor::IEditor* m_editor;

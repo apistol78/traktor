@@ -1255,7 +1255,7 @@ void opx_getMember(ExecutionState& state)
 	Ref< ActionObject > target = targetValue.getObjectAlways(state.context);
 
 	// Special case for arrays; we cannot use string table for all entries thus need to explicitly access elements.
-	const IActionObjectRelay* relay = target->getRelay();
+	const ActionObjectRelay* relay = target->getRelay();
 	if (
 		relay != 0 &&
 		&type_of(relay) == &type_of< Array >()
@@ -1335,7 +1335,7 @@ void opx_setMember(ExecutionState& state)
 	Ref< ActionObject > target = targetValue.getObjectAlways(state.context);
 
 	// Special case for arrays; we cannot use string table for all entries thus need to explicitly access elements.
-	IActionObjectRelay* relay = target->getRelay();
+	ActionObjectRelay* relay = target->getRelay();
 	if (relay != 0 && &type_of(relay) == &type_of< Array >())
 	{
 		Array* arr = checked_type_cast< Array* >(relay);
@@ -1564,7 +1564,7 @@ void opx_enum2(ExecutionState& state)
 				));
 		}
 
-		const IActionObjectRelay* relay = object->getRelay();
+		const ActionObjectRelay* relay = object->getRelay();
 		if (relay)
 		{
 			std::vector< uint32_t > memberNames;

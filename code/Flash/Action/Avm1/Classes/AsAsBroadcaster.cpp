@@ -17,6 +17,7 @@ AsAsBroadcaster::AsAsBroadcaster(ActionContext* context)
 {
 	setMember("initialize", ActionValue(createNativeFunction(context, this, &AsAsBroadcaster::AsBroadcaster_initialize)));
 	setMember("addListener", ActionValue(createNativeFunction(context, this, &AsAsBroadcaster::AsBroadcaster_addListener)));
+	setMember("addListenerWeak", ActionValue(createNativeFunction(context, this, &AsAsBroadcaster::AsBroadcaster_addListenerWeak)));
 	setMember("broadcastMessage", ActionValue(createNativeFunction(context, this, &AsAsBroadcaster::AsBroadcaster_broadcastMessage)));
 	setMember("removeListener", ActionValue(createNativeFunction(context, this, &AsAsBroadcaster::AsBroadcaster_removeListener)));
 
@@ -40,17 +41,19 @@ ActionValue AsAsBroadcaster::xplicit(const ActionValueArray& args)
 	return ActionValue();
 }
 
-void AsAsBroadcaster::initializeSubject(ActionObject* subjectObject)
+void AsAsBroadcaster::initializeSubject(ActionObject* subjectObject, bool useWeakReferences)
 {
 	Ref< Array > listenerArray = new Array(0);
 	subjectObject->setMember("_listeners", ActionValue(listenerArray->getAsObject(getContext())));
 
 	ActionValue functionValue;
 
-	getMember("addListener", functionValue);
+	getMember(useWeakReferences ? "addListenerWeak" : "addListener", functionValue);
 	subjectObject->setMember("addListener", functionValue);
+
 	getMember("broadcastMessage", functionValue);
 	subjectObject->setMember("broadcastMessage", functionValue);
+
 	getMember("removeListener", functionValue);
 	subjectObject->setMember("removeListener", functionValue);
 }
@@ -61,34 +64,61 @@ void AsAsBroadcaster::AsBroadcaster_initialize(CallArgs& ca)
 	if (!subjectObject)
 		return;
 
-	initializeSubject(subjectObject);
+	initializeSubject(subjectObject, false);
 }
 
 void AsAsBroadcaster::AsBroadcaster_addListener(CallArgs& ca)
 {
-	bool result = false;
+	ca.ret = ActionValue(false);
 
-	ActionValue listenerValue;
-	if (ca.args.size() > 0)
-		listenerValue = ca.args[0];
+	if (ca.args.size() <= 0)
+		return;
+
+	if (!ca.args[0].isObject())
+		return;
+
+	ActionValue listenerValue(ca.args[0].getObject());
+	if (!listenerValue.isObject())
+		return;
 
 	ActionValue listenersArrayValue;
 	ca.self->getMember("_listeners", listenersArrayValue);
+	if (!listenersArrayValue.isObject())
+		return;
 
-	if (listenersArrayValue.isObject())
+	Array* listenersArray = listenersArrayValue.getObject()->getRelay< Array >();
+	if (listenersArray && listenersArray->indexOf(listenerValue) < 0)
 	{
-		Array* listenersArray = listenersArrayValue.getObject()->getRelay< Array >();
-		if (listenersArray)
-		{
-			if (listenersArray->indexOf(listenerValue) < 0)
-			{
-				listenersArray->push(listenerValue);
-				result = true;
-			}
-		}
+		listenersArray->push(listenerValue);
+		ca.ret = ActionValue(true);
 	}
+}
 
-	ca.ret = ActionValue(result);
+void AsAsBroadcaster::AsBroadcaster_addListenerWeak(CallArgs& ca)
+{
+	ca.ret = ActionValue(false);
+
+	if (ca.args.size() <= 0)
+		return;
+
+	if (!ca.args[0].isObject())
+		return;
+
+	ActionValue listenerValue(ca.args[0].getObject(), true);
+	if (!listenerValue.isObject())
+		return;
+
+	ActionValue listenersArrayValue;
+	ca.self->getMember("_listeners", listenersArrayValue);
+	if (!listenersArrayValue.isObject())
+		return;
+
+	Array* listenersArray = listenersArrayValue.getObject()->getRelay< Array >();
+	if (listenersArray && listenersArray->indexOf(listenerValue) < 0)
+	{
+		listenersArray->push(listenerValue);
+		ca.ret = ActionValue(true);
+	}
 }
 
 void AsAsBroadcaster::AsBroadcaster_broadcastMessage(CallArgs& ca)

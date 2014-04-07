@@ -15,23 +15,35 @@ namespace traktor
 
 const double c_profileTime = 10.0;
 
+const Color4ub c_channelColors[] =
+{
+	Color4ub(200, 255, 200),
+	Color4ub(255, 255, 200),
+	Color4ub(200, 255, 255),
+	Color4ub(255, 200, 255)
+};
+
 			}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.ProfileControl", ProfileControl, Widget)
 
 ProfileControl::ProfileControl()
-:	m_peekCount(0)
-,	m_callBack(0)
+:	m_callBack(0)
 {
 }
 
-bool ProfileControl::create(Widget* parent, int time, int minSample, int maxSample, int style, IProfileCallback* callBack)
+bool ProfileControl::create(Widget* parent, int channels, int time, int minSample, int maxSample, int style, IProfileCallback* callBack)
 {
 	if (!Widget::create(parent, style))
 		return false;
 
-	Sample s = { 0.0, 0 };
-	m_samples.push_back(s);
+	m_channels.resize(channels);
+	for (int i = 0; i < channels; ++i)
+	{
+		Sample s = { 0.0, 0 };
+		m_channels[i].peekCount = 0;
+		m_channels[i].samples.push_back(s);
+	}
 
 	m_callBack = callBack;
 
@@ -65,31 +77,35 @@ void ProfileControl::eventPaint(Event* event)
 	for (int y = rc.top; y < rc.bottom; y += 16)
 		canvas.drawLine(rc.left, y, rc.right, y);
 
-	StringOutputStream ss1;
-	ss1 << m_samples.back().count << L" object(s)";
-
-	canvas.setForeground(Color4ub(200, 255, 200));
-	canvas.drawText(Point(0,  0), ss1.str());
-
-	if (!m_samples.empty())
+	for (int i = 0; i < int(m_channels.size()); ++i)
 	{
-		double Ts = m_samples.front().at;
+		const std::list< Sample >& samples = m_channels[i].samples;
 
-		std::list< Sample >::iterator i = m_samples.begin();
+		StringOutputStream ss1;
+		ss1 << samples.back().count << L" object(s)";
 
-		int x1 = int(rc.right - rc.getWidth() * (c_profileTime - i->at + Ts) / c_profileTime);
-		int y1 = int(rc.bottom - (rc.getHeight() * i->count) / (m_peekCount + 1));
+		canvas.setForeground(c_channelColors[i]);
+		canvas.drawText(Point(0,  i * 14), ss1.str());
 
-		for (++i; i != m_samples.end(); ++i)
+		if (!samples.empty())
 		{
-			int x2 = int(rc.right - rc.getWidth() * (c_profileTime - i->at + Ts) / c_profileTime);
-			int y2 = int(rc.bottom - (rc.getHeight() * i->count) / (m_peekCount + 1));
+			double Ts = samples.front().at;
 
-			canvas.setForeground(Color4ub(200, 255, 200));
-			canvas.drawLine(x1, y1, x2, y2);
+			std::list< Sample >::const_iterator it = samples.begin();
 
-			x1 = x2;
-			y1 = y2;
+			int x1 = int(rc.right - rc.getWidth() * (c_profileTime - it->at + Ts) / c_profileTime);
+			int y1 = int(rc.bottom - (rc.getHeight() * it->count) / (m_channels[i].peekCount + 1));
+
+			for (++it; it != samples.end(); ++it)
+			{
+				int x2 = int(rc.right - rc.getWidth() * (c_profileTime - it->at + Ts) / c_profileTime);
+				int y2 = int(rc.bottom - (rc.getHeight() * it->count) / (m_channels[i].peekCount + 1));
+
+				canvas.drawLine(x1, y1, x2, y2);
+
+				x1 = x2;
+				y1 = y2;
+			}
 		}
 	}
 
@@ -100,19 +116,25 @@ void ProfileControl::eventTimer(Event* event)
 {
 	double T = m_timer->getElapsedTime();
 
-	while (!m_samples.empty() && m_samples.front().at < T - c_profileTime)
-		m_samples.pop_front();
+	uint32_t values[4];
+	m_callBack->getProfileValues(values);
 
-	uint32_t count = m_callBack->getProfileValue();
-
-	Sample sample =
+	for (int i = 0; i < int(m_channels.size()); ++i)
 	{
-		T,
-		count
-	};
-	m_samples.push_back(sample);
+		std::list< Sample >& samples = m_channels[i].samples;
 
-	m_peekCount = std::max(sample.count, m_peekCount);
+		while (!samples.empty() && samples.front().at < T - c_profileTime)
+			samples.pop_front();
+
+		Sample sample =
+		{
+			T,
+			values[i]
+		};
+		samples.push_back(sample);
+
+		m_channels[i].peekCount = std::max(sample.count, m_channels[i].peekCount);
+	}
 
 	update();
 }

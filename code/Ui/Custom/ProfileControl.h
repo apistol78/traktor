@@ -35,12 +35,12 @@ class T_DLLCLASS ProfileControl : public Widget
 public:
 	struct IProfileCallback
 	{
-		virtual uint32_t getProfileValue() const = 0;
+		virtual void getProfileValues(uint32_t* outValues) const = 0;
 	};
 
 	ProfileControl();
 
-	bool create(Widget* parent, int time, int minSample, int maxSample, int style, IProfileCallback* callBack);
+	bool create(Widget* parent, int channels, int time, int minSample, int maxSample, int style, IProfileCallback* callBack);
 
 	virtual Size getPreferedSize() const;
 
@@ -51,10 +51,15 @@ private:
 		uint32_t count;
 	};
 
+	struct Channel
+	{
+		std::list< Sample > samples;
+		uint32_t peekCount;
+	};
+
 	IProfileCallback* m_callBack;
 	Ref< Timer > m_timer;
-	std::list< Sample > m_samples;
-	uint32_t m_peekCount;
+	std::vector< Channel > m_channels;
 
 	void eventPaint(Event* event);
 

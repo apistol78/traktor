@@ -26,12 +26,14 @@ public:
 
 	virtual ActionValue xplicit(const ActionValueArray& args);
 
-	void initializeSubject(ActionObject* subject);
+	void initializeSubject(ActionObject* subject, bool useWeakReferences);
 
 private:
 	void AsBroadcaster_initialize(CallArgs& ca);
 
 	void AsBroadcaster_addListener(CallArgs& ca);
+
+	void AsBroadcaster_addListenerWeak(CallArgs& ca);
 
 	void AsBroadcaster_broadcastMessage(CallArgs& ca);
 

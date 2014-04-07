@@ -125,7 +125,7 @@ bool FlashEditorPage::create(ui::Container* parent)
 	m_treeMovie->addSelectEventHandler(ui::createMethodHandler(this, &FlashEditorPage::eventTreeMovieSelect));
 
 	m_profileMovie = new ui::custom::ProfileControl();
-	m_profileMovie->create(splitterV, 10, 0, 10000, ui::WsClientBorder | ui::WsDoubleBuffer, this);
+	m_profileMovie->create(splitterV, 2, 10, 0, 10000, ui::WsClientBorder | ui::WsDoubleBuffer, this);
 
 	m_previewControl = new FlashPreviewControl();
 	m_previewControl->create(splitter, ui::WsClientBorder, database, m_resourceManager, renderSystem, m_soundSystem);
@@ -191,9 +191,10 @@ void FlashEditorPage::handleDatabaseEvent(db::Database* database, const Guid& ev
 		m_resourceManager->reload(eventId);
 }
 
-uint32_t FlashEditorPage::getProfileValue() const
+void FlashEditorPage::getProfileValues(uint32_t* outValues) const
 {
-	return Collectable::getInstanceCount();
+	outValues[0] = Collectable::getInstanceCount();
+	outValues[1] = FlashCharacterInstance::getInstanceCount();
 }
 
 void FlashEditorPage::updateTreeObject(ui::TreeViewItem* parentItem, const ActionObject* asObject, std::set< const ActionObject* >& objectStack, std::map< const void*, uint32_t >& pointerHash, uint32_t& nextPointerHash)
@@ -343,7 +344,20 @@ void FlashEditorPage::updateTreeMovie()
 			{
 				std::map< const void*, uint32_t > pointerHash;
 				uint32_t nextPointerHash = 0;
-				updateTreeCharacter(0, movieInstance, pointerHash, nextPointerHash);
+
+				Ref< ui::TreeViewItem > memberItemRoot = m_treeMovie->createItem(0, L"_root", 0, 0);
+				updateTreeCharacter(memberItemRoot, movieInstance, pointerHash, nextPointerHash);
+
+				ActionContext* actionContext = movieInstance->getContext();
+				T_ASSERT (actionContext);
+
+				ActionObject* global = actionContext->getGlobal();
+				T_ASSERT (global);
+
+				Ref< ui::TreeViewItem > memberItemGlobal = m_treeMovie->createItem(0, L"_global", 0, 0);
+				std::set< const ActionObject* > objectStack;
+				updateTreeObject(memberItemGlobal, global, objectStack, pointerHash, nextPointerHash);
+
 				log::info << L"Last object index @" << nextPointerHash << Endl;
 			}
 		}

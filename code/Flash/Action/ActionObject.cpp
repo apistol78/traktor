@@ -6,7 +6,7 @@
 #include "Flash/Action/ActionFunction.h"
 #include "Flash/Action/ActionObject.h"
 #include "Flash/Action/ActionValueArray.h"
-#include "Flash/Action/IActionObjectRelay.h"
+#include "Flash/Action/ActionObjectRelay.h"
 #include "Flash/Action/Avm1/ActionClass.h"	// \fixme Move headers.
 #include "Flash/Action/Avm1/ActionSuper.h"
 
@@ -17,7 +17,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionObject", ActionObject, Collectable)
 
-ActionObject::ActionObject(ActionContext* context, IActionObjectRelay* relay)
+ActionObject::ActionObject(ActionContext* context, ActionObjectRelay* relay)
 :	m_context(context)
 ,	m_readOnly(false)
 {
@@ -25,7 +25,7 @@ ActionObject::ActionObject(ActionContext* context, IActionObjectRelay* relay)
 	setRelay(relay);
 }
 
-ActionObject::ActionObject(ActionContext* context, const std::string& prototypeName, IActionObjectRelay* relay)
+ActionObject::ActionObject(ActionContext* context, const std::string& prototypeName, ActionObjectRelay* relay)
 :	m_context(context)
 ,	m_readOnly(false)
 {
@@ -33,7 +33,7 @@ ActionObject::ActionObject(ActionContext* context, const std::string& prototypeN
 	setRelay(relay);
 }
 
-ActionObject::ActionObject(ActionContext* context, ActionObject* prototype, IActionObjectRelay* relay)
+ActionObject::ActionObject(ActionContext* context, ActionObject* prototype, ActionObjectRelay* relay)
 :	m_context(context)
 ,	m_readOnly(false)
 {
@@ -41,12 +41,20 @@ ActionObject::ActionObject(ActionContext* context, ActionObject* prototype, IAct
 	setRelay(relay);
 }
 
-void ActionObject::release(void* owner)
+void ActionObject::release(void* owner) const
 {
-	// Explicitly break cyclic reference if object's
-	// last external reference is released.
-	if (getReferenceCount() <= 2)
-		m_relay = 0;
+	//// Explicitly break cyclic reference if object's
+	//// last external reference is released.
+	//if (getReferenceCount() == 2)
+	//{
+	//	if (m_relay && m_relay->getAsObject() == this)
+	//	{
+	//		ActionObjectRelay* relay = m_relay.disown();
+	//		relay->setAsObject(0);
+	//		T_SAFE_RELEASE(relay);
+	//	}
+	//}
+
 	Collectable::release(owner);
 }
 
@@ -343,7 +351,7 @@ bool ActionObject::getLocalPropertySet(uint32_t propertyName, Ref< ActionFunctio
 	return true;
 }
 
-void ActionObject::setRelay(IActionObjectRelay* relay)
+void ActionObject::setRelay(ActionObjectRelay* relay)
 {
 	if (m_relay)
 		m_relay->setAsObject(0);
@@ -385,7 +393,7 @@ void ActionObject::trace(const IVisitor& visitor) const
 {
 	for (member_map_t::const_iterator i = m_members.begin(); i != m_members.end(); ++i)
 	{
-		if (i->second.isObject())
+		if (i->second.isObjectStrong())
 			visitor(i->second.getObject());
 	}
 
@@ -410,7 +418,7 @@ void ActionObject::dereference()
 	m_relay = 0;
 }
 
-void ActionObject::setOverrideRelay(IActionObjectRelay* relay)
+void ActionObject::setOverrideRelay(ActionObjectRelay* relay)
 {
 	m_relay = relay;
 }

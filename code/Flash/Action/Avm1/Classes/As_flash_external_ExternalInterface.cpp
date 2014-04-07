@@ -52,11 +52,13 @@ void As_flash_external_ExternalInterface::trace(const IVisitor& visitor) const
 		if (i->second.method)
 			visitor(i->second.method);
 	}
+	ActionObject::trace(visitor);
 }
 
 void As_flash_external_ExternalInterface::dereference()
 {
 	m_callbacks.clear();
+	ActionObject::dereference();
 }
 
 void As_flash_external_ExternalInterface::ExternalInterface_get_available(CallArgs& ca)

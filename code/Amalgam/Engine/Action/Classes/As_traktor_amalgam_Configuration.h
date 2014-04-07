@@ -84,6 +84,10 @@ private:
 
 	void Configuration_set_oceanQuality(AsConfiguration* self, int32_t oceanQuality) const;
 
+	float Configuration_get_mouseSensitivity(const AsConfiguration* self) const;
+
+	void Configuration_set_mouseSensitivity(AsConfiguration* self, float mouseSensitivity) const;
+
 	bool Configuration_get_rumbleEnable(const AsConfiguration* self) const;
 
 	void Configuration_set_rumbleEnable(AsConfiguration* self, bool rumbleEnable) const;

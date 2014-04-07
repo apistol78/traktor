@@ -31,7 +31,7 @@ class ActionObject;
  * An action value can be of several different
  * types and are dynamically cast as needed.
  */
-class T_DLLCLASS ActionValue
+class T_DLLCLASS ActionValue : public Collectable::IWeakRefDispose
 {
 public:
 	enum Type
@@ -40,7 +40,8 @@ public:
 		AvtBoolean,
 		AvtNumber,
 		AvtString,
-		AvtObject
+		AvtObject,
+		AvtObjectWeak
 	};
 
 	ActionValue();
@@ -60,6 +61,8 @@ public:
 	explicit ActionValue(const std::wstring& s, int32_t id = -1);
 
 	explicit ActionValue(ActionObject* o);
+
+	explicit ActionValue(ActionObject* o, bool weak);
 
 	virtual ~ActionValue();
 
@@ -87,12 +90,18 @@ public:
 	/*! \brief Check if string. */
 	bool isString() const { return m_type == AvtString; }
 
+	/*! \brief Check if strong object. */
+	bool isObjectStrong() const { return m_type == AvtObject; }
+
+	/*! \brief Check if weak object. */
+	bool isObjectWeak() const { return m_type == AvtObjectWeak; }
+
 	/*! \brief Check if object. */
-	bool isObject() const { return m_type == AvtObject; }
+	bool isObject() const { return m_type == AvtObject || m_type == AvtObjectWeak; }
 
 	/*! \brief Check if object. */
 	template < typename ObjectType >
-	bool isObject() const { return (m_type == AvtObject) && is_a< ObjectType >(m_value.o); }
+	bool isObject() const { return (m_type == AvtObject || m_type == AvtObjectWeak) && is_a< ObjectType >(m_value.o); }
 
 	/*! \brief Get boolean value. */
 	bool getBoolean() const;
@@ -107,7 +116,7 @@ public:
 	std::wstring getWideString() const;
 
 	/*! \brief Get object. */
-	ActionObject* getObject() const { return (m_type == AvtObject) ? m_value.o : 0; }
+	ActionObject* getObject() const { return (m_type == AvtObject || m_type == AvtObjectWeak) ? m_value.o : 0; }
 
 	/*! \brief Get object. */
 	template < typename ObjectType >
@@ -152,6 +161,8 @@ private:
 
 	Type m_type;
 	Value m_value;
+
+	virtual void disposeReference(Collectable* collectable);
 };
 
 	}

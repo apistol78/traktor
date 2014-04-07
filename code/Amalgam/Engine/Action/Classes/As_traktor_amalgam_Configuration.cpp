@@ -45,6 +45,7 @@ As_traktor_amalgam_Configuration::As_traktor_amalgam_Configuration(flash::Action
 	prototype->addProperty("oceanQuality", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_oceanQuality), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_oceanQuality));
 
 	// Input
+	prototype->addProperty("mouseSensitivity", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_mouseSensitivity), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_mouseSensitivity));
 	prototype->addProperty("rumbleEnable", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_rumbleEnable), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_rumbleEnable));
 
 	// Audio
@@ -218,6 +219,16 @@ int32_t As_traktor_amalgam_Configuration::Configuration_get_oceanQuality(const A
 void As_traktor_amalgam_Configuration::Configuration_set_oceanQuality(AsConfiguration* self, int32_t oceanQuality) const
 {
 	self->setOceanQuality((AsConfiguration::Quality)oceanQuality);
+}
+
+float As_traktor_amalgam_Configuration::Configuration_get_mouseSensitivity(const AsConfiguration* self) const
+{
+	return self->getMouseSensitivity();
+}
+
+void As_traktor_amalgam_Configuration::Configuration_set_mouseSensitivity(AsConfiguration* self, float mouseSensitivity) const
+{
+	self->setMouseSensitivity(mouseSensitivity);
 }
 
 bool As_traktor_amalgam_Configuration::Configuration_get_rumbleEnable(const AsConfiguration* self) const

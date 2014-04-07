@@ -1,7 +1,7 @@
 #ifndef traktor_flash_ActionObjectRelay_H
 #define traktor_flash_ActionObjectRelay_H
 
-#include "Flash/Action/IActionObjectRelay.h"
+#include "Flash/Collectable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,12 +16,16 @@ namespace traktor
 	namespace flash
 	{
 
-class T_DLLCLASS ActionObjectRelay : public IActionObjectRelay
+class ActionContext;
+class ActionObject;
+class ActionValue;
+
+class T_DLLCLASS ActionObjectRelay : public Collectable
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual void release(void* owner);
+	virtual void release(void* owner) const;
 
 	virtual void setAsObject(ActionObject* asObject);
 
@@ -44,7 +48,7 @@ protected:
 
 private:
 	const char* const m_prototype;
-	Ref< ActionObject > m_asObject;
+	mutable Ref< ActionObject > m_asObject;
 };
 
 	}

@@ -2,6 +2,7 @@
 #define traktor_flash_Collectable_H
 
 #include "Core/Object.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Containers/IntrusiveList.h"
 
 // import/export mechanism.
@@ -27,6 +28,11 @@ public:
 		virtual void operator () (Collectable* childCollectable) const = 0;
 	};
 
+	struct IWeakRefDispose
+	{
+		virtual void disposeReference(Collectable* collectable) = 0;
+	};
+
 	Collectable();
 
 	virtual ~Collectable();
@@ -34,6 +40,10 @@ public:
 	virtual void addRef(void* owner) const;
 
 	virtual void release(void* owner) const;
+
+	void addWeakRef(IWeakRefDispose* weakRefDispose);
+
+	void releaseWeakRef(IWeakRefDispose* weakRefDispose);
 
 	/*! \brief Get alive collectible instance count. */
 	static int32_t getInstanceCount();
@@ -73,6 +83,7 @@ private:
 	static int32_t ms_instanceCount;
 	Collectable* m_prev;	//!< Intrusive list chain members.
 	Collectable* m_next;
+	mutable AlignedVector< IWeakRefDispose* > m_weakRefDisposes;
 	mutable TraceColor m_traceColor;
 	mutable bool m_traceBuffered;
 	mutable int32_t m_traceRefCount;

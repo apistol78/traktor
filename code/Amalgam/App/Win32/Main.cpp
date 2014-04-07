@@ -235,7 +235,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 	std::vector< std::wstring > argv;
 
 	wchar_t szFilename[MAX_PATH] = L"";
-	GetModuleFileName(NULL, szFilename, sizeof(szFilename));
+	GetModuleFileName(NULL, szFilename, sizeof_array(szFilename));
 	argv.push_back(szFilename);
 
 #if !defined(WINCE)

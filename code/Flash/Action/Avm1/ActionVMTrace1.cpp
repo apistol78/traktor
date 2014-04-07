@@ -3,7 +3,7 @@
 #include "Core/Misc/String.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionFunction.h"
-#include "Flash/Action/IActionObjectRelay.h"
+#include "Flash/Action/ActionObjectRelay.h"
 #include "Flash/Action/Avm1/ActionOperations.h"
 #include "Flash/Action/Avm1/ActionSuper.h"
 #include "Flash/Action/Avm1/ActionVMTrace1.h"
@@ -58,7 +58,7 @@ std::wstring describeValue(const ActionValue& v)
 			else
 				ss << L"[object Object] (object @" << getObjectId(object);
 
-			IActionObjectRelay* relay = object->getRelay();
+			ActionObjectRelay* relay = object->getRelay();
 			if (relay)
 				ss << L", relay @" << getObjectId(relay) << L" " << type_name(relay);
 
