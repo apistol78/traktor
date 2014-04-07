@@ -125,7 +125,6 @@ private:
 	uint32_t m_lastSoundFrame;
 	uint32_t m_skipEnterFrame;
 	bool m_initialized;
-	bool m_removed;
 	bool m_playing;
 	bool m_visible;
 	bool m_enabled;

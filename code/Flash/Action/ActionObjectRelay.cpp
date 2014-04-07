@@ -6,20 +6,28 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionObjectRelay", ActionObjectRelay, IActionObjectRelay)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionObjectRelay", ActionObjectRelay, Collectable)
 
-void ActionObjectRelay::release(void* owner)
+void ActionObjectRelay::release(void* owner) const
 {
-	// Explicitly break cyclic reference if relay object's
-	// last external reference is released.
-	if (getReferenceCount() <= 2)
-		m_asObject = 0;
-	IActionObjectRelay::release(owner);
+	//// Explicitly break cyclic reference if relay object's
+	//// last external reference is released.
+	//if (getReferenceCount() == 2)
+	//{
+	//	if (m_asObject && m_asObject->getRelay() == this)
+	//	{
+	//		ActionObject* asObject = m_asObject.disown();
+	//		asObject->setOverrideRelay(0);
+	//		T_SAFE_RELEASE(asObject);
+	//	}
+	//}
+
+	Collectable::release(owner);
 }
 
 void ActionObjectRelay::setAsObject(ActionObject* asObject)
 {
-	T_ASSERT (m_asObject == 0);
+	T_ASSERT (asObject == 0 || m_asObject == 0);
 	m_asObject = asObject;
 }
 

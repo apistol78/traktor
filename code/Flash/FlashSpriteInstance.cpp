@@ -29,7 +29,6 @@ FlashSpriteInstance::FlashSpriteInstance(ActionContext* context, FlashCharacterI
 ,	m_lastSoundFrame(~0U)
 ,	m_skipEnterFrame(0)
 ,	m_initialized(false)
-,	m_removed(false)
 ,	m_playing(true)
 ,	m_visible(false)
 ,	m_enabled(true)
@@ -218,12 +217,19 @@ void FlashSpriteInstance::removeMovieClip()
 	{
 		FlashDisplayList& parentDisplayList = parentClipInstance->getDisplayList();
 		parentDisplayList.removeObject(this);
+
+		if (parentClipInstance->m_mask == this)
+			parentClipInstance->m_mask = 0;
+
+		parentClipInstance->m_visibleCharacters.remove(this);
 	}
 
+	postDispatchEvents();
+
 	m_displayList.reset();
+	m_visibleCharacters.clear();
 	m_mask = 0;
 	m_canvas = 0;
-	m_removed = true;
 
 	setParent(0);
 }

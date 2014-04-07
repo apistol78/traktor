@@ -95,7 +95,7 @@ void ActionFunction1::trace(const IVisitor& visitor) const
 {
 	for (SmallMap< uint32_t, ActionValue >::const_iterator i = m_variables.begin(); i != m_variables.end(); ++i)
 	{
-		if (i->second.isObject())
+		if (i->second.isObjectStrong())
 			visitor(i->second.getObject());
 	}
 	ActionFunction::trace(visitor);

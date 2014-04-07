@@ -174,7 +174,7 @@ void Array::trace(const IVisitor& visitor) const
 {
 	for (AlignedVector< ActionValue >::const_iterator i = m_values.begin(); i != m_values.end(); ++i)
 	{
-		if (i->isObject())
+		if (i->isObjectStrong())
 			visitor(i->getObject());
 	}
 	ActionObjectRelay::trace(visitor);

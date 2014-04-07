@@ -163,13 +163,13 @@ ActionGlobal::ActionGlobal(ActionContext* context)
 	Ref< AsAsBroadcaster > broadcaster = new AsAsBroadcaster(context);
 
 	Ref< AsKey > key = new AsKey(context);
-	broadcaster->initializeSubject(key);
+	broadcaster->initializeSubject(key, false);
 	Ref< AsMouse > mouse = new AsMouse(context);
-	broadcaster->initializeSubject(mouse);
+	broadcaster->initializeSubject(mouse, false);
 	Ref< AsSelection > selection = new AsSelection(context);
-	broadcaster->initializeSubject(selection);
+	broadcaster->initializeSubject(selection, false);
 	Ref< AsStage > stage = new AsStage(context);
-	broadcaster->initializeSubject(stage);
+	broadcaster->initializeSubject(stage, false);
 
 	setMember("AsBroadcaster", ActionValue(broadcaster));
 	setMember("Key", ActionValue(key));

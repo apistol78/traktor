@@ -77,9 +77,12 @@ public:
 
 	void replace(pointer ptr)
 	{
-		T_SAFE_ADDREF(ptr);
-		T_SAFE_RELEASE(m_ptr);
-		m_ptr = ptr;
+		if (ptr != m_ptr)
+		{
+			T_SAFE_ADDREF(ptr);
+			T_SAFE_RELEASE(m_ptr);
+			m_ptr = ptr;
+		}
 	}
 
 	pointer disown()

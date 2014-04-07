@@ -20,10 +20,16 @@ namespace traktor
 
 #if defined(_DEBUG)
 #	define T_VALIDATE(av) \
-	T_ASSERT ((av).getType() >= ActionValue::AvtUndefined && (av).getType() <= ActionValue::AvtObject);
+	T_ASSERT ((av).getType() >= ActionValue::AvtUndefined && (av).getType() <= ActionValue::AvtObjectWeak);
 #else
 #	define T_VALIDATE(av)
 #endif
+
+#define T_SAFE_ADD_WEAK_REF(o) \
+	{ if ((o) != 0) (o)->addWeakRef(this); }
+
+#define T_SAFE_RELEASE_WEAK_REF(o) \
+	{ if ((o) != 0) (o)->releaseWeakRef(this); }
 
 #if defined(_DEBUG)
 static int32_t s_stringCount = 0;
@@ -109,6 +115,11 @@ ActionValue::ActionValue(const ActionValue& v)
 		T_SAFE_ADDREF (v.m_value.o);
 		m_value.o = v.m_value.o;
 	}
+	else if (m_type == AvtObjectWeak)
+	{
+		T_SAFE_ADD_WEAK_REF(v.m_value.o);
+		m_value.o = v.m_value.o;
+	}
 	else
 		m_value = v.m_value;
 }
@@ -158,6 +169,14 @@ ActionValue::ActionValue(ActionObject* o)
 	m_value.o = o;
 }
 
+ActionValue::ActionValue(ActionObject* o, bool weak)
+:	m_type(AvtObjectWeak)
+{
+	T_ASSERT (weak);
+	T_SAFE_ADD_WEAK_REF(o);
+	m_value.o = o;
+}
+
 ActionValue::~ActionValue()
 {
 	T_EXCEPTION_GUARD_BEGIN
@@ -165,8 +184,10 @@ ActionValue::~ActionValue()
 	T_VALIDATE(*this);
 	if (m_type == AvtString && m_value.s)
 		refStringDec(m_value.s);
-	else if (m_type == AvtObject && m_value.o)
-		T_SAFE_RELEASE (m_value.o);
+	else if (m_type == AvtObject)
+		{ T_SAFE_RELEASE (m_value.o); }
+	else if (m_type == AvtObjectWeak)
+		{ T_SAFE_RELEASE_WEAK_REF(m_value.o); }
 
 	T_EXCEPTION_GUARD_END
 }
@@ -186,6 +207,7 @@ bool ActionValue::getBoolean() const
 		return std::strlen(m_value.s) > 0;
 
 	case AvtObject:
+	case AvtObjectWeak:
 		return m_value.o ? m_value.o->valueOf().getBoolean() : false;
 
 	default:
@@ -206,6 +228,7 @@ avm_number_t ActionValue::getNumber() const
 		return m_value.n;
 
 	case AvtObject:
+	case AvtObjectWeak:
 		return m_value.o ? m_value.o->valueOf().getNumber() : avm_number_t(0);
 
 	default:
@@ -229,6 +252,7 @@ std::string ActionValue::getString() const
 		return m_value.s;
 
 	case AvtObject:
+	case AvtObjectWeak:
 		return m_value.o ? m_value.o->toString().getString() : "null";
 
 	default:
@@ -257,6 +281,7 @@ Ref< ActionObject > ActionValue::getObjectAlways(ActionContext* context) const
 		return (new String(m_value.s))->getAsObject(context);
 
 	case AvtObject:
+	case AvtObjectWeak:
 		return m_value.o ? m_value.o : new ActionObject(context);
 
 	default:
@@ -280,6 +305,7 @@ void ActionValue::serialize(ISerializer& s)
 		{ L"AvtNumber", AvtNumber },
 		{ L"AvtString", AvtString },
 		{ L"AvtObject", AvtObject },
+		{ L"AvtObjectWeak", AvtObjectWeak },
 		{ 0, 0 }
 	};
 
@@ -326,12 +352,16 @@ ActionValue& ActionValue::operator = (const ActionValue& v)
 	if (v.m_type == AvtString)
 		refStringInc(v.m_value.s);
 	else if (v.m_type == AvtObject)
-		T_SAFE_ADDREF(v.m_value.o);
+		{ T_SAFE_ADDREF(v.m_value.o); }
+	else if (v.m_type == AvtObjectWeak)
+		{ T_SAFE_ADD_WEAK_REF(v.m_value.o); }
 
 	if (m_type == AvtString)
 		refStringDec(m_value.s);
 	else if (m_type == AvtObject)
-		T_SAFE_RELEASE(m_value.o);
+		{ T_SAFE_RELEASE(m_value.o); }
+	else if (m_type == AvtObjectWeak)
+		{ T_SAFE_RELEASE_WEAK_REF(m_value.o); }
 
 	m_type = v.m_type;
 	m_value = v.m_value;
@@ -434,6 +464,13 @@ bool ActionValue::operator == (const ActionValue& r) const
 		return true;
 	else
 		return false;
+}
+
+void ActionValue::disposeReference(Collectable* collectable)
+{
+	T_ASSERT (m_type == AvtObjectWeak);
+	T_ASSERT (m_value.o == collectable);
+	m_value.o = 0;
 }
 
 	}

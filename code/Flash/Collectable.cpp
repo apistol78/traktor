@@ -35,7 +35,8 @@ void Collectable::addRef(void* owner) const
 
 void Collectable::release(void* owner) const
 {
-	if (getReferenceCount() <= 1)
+	int32_t referenceCount = getReferenceCount();
+	if (referenceCount <= 1)
 	{
 		m_traceColor = TcBlack;
 		if (m_traceBuffered)
@@ -43,6 +44,9 @@ void Collectable::release(void* owner) const
 			m_traceBuffered = false;
 			GC::getInstance().removeCandidate(const_cast< Collectable* >(this));
 		}
+
+		for (AlignedVector< IWeakRefDispose* >::iterator i = m_weakRefDisposes.begin(); i != m_weakRefDisposes.end(); ++i)
+			(*i)->disposeReference(const_cast< Collectable* >(this));
 	}
 	else
 	{
@@ -53,7 +57,20 @@ void Collectable::release(void* owner) const
 			GC::getInstance().addCandidate(const_cast< Collectable* >(this));
 		}
 	}
+
 	Object::release(owner);
+}
+
+void Collectable::addWeakRef(IWeakRefDispose* weakRefDispose)
+{
+	m_weakRefDisposes.push_back(weakRefDispose);
+}
+
+void Collectable::releaseWeakRef(IWeakRefDispose* weakRefDispose)
+{
+	AlignedVector< IWeakRefDispose* >::iterator it = std::find(m_weakRefDisposes.begin(), m_weakRefDisposes.end(), weakRefDispose);
+	T_ASSERT (it != m_weakRefDisposes.end());
+	m_weakRefDisposes.erase(it);
 }
 
 int32_t Collectable::getInstanceCount()

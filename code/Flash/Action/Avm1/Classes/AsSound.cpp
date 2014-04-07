@@ -3,7 +3,7 @@
 #include "Flash/FlashSoundPlayer.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunctionNative.h"
-#include "Flash/Action/IActionObjectRelay.h"
+#include "Flash/Action/ActionObjectRelay.h"
 #include "Flash/Action/Avm1/Classes/AsSound.h"
 
 namespace traktor
@@ -13,38 +13,31 @@ namespace traktor
 		namespace
 		{
 
-class T_DLLCLASS FlashSoundRelay : public IActionObjectRelay
+class T_DLLCLASS FlashSoundRelay : public ActionObjectRelay
 {
 	T_RTTI_CLASS;
 
 public:
 	FlashSoundRelay(const FlashSound* sound)
-	:	m_sound(sound)
+	:	ActionObjectRelay("Sound")
+	,	m_sound(sound)
 	{
 	}
-
-	virtual void setAsObject(ActionObject* asObject) {}
-
-	virtual ActionObject* getAsObject(ActionContext* context) { return 0; }
-
-	virtual bool enumerateMembers(std::vector< uint32_t >& outMemberNames) const { return false; }
-
-	virtual bool setMember(ActionContext* context, uint32_t memberName, const ActionValue& memberValue) { return false; }
-
-	virtual bool getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue) { return false; }
 
 	const FlashSound* getSound() const { return m_sound; }
 
 protected:
-	virtual void trace(const IVisitor& visitor) const {}
-
-	virtual void dereference() { m_sound = 0; }
+	virtual void dereference()
+	{
+		m_sound = 0;
+		ActionObjectRelay::dereference();
+	}
 
 private:
 	Ref< const FlashSound > m_sound;
 };
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashSoundRelay", FlashSoundRelay, IActionObjectRelay)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashSoundRelay", FlashSoundRelay, ActionObjectRelay)
 
 		}
 

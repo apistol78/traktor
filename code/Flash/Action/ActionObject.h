@@ -24,7 +24,7 @@ namespace traktor
 class ActionContext;
 class ActionFunction;
 class ActionValue;
-class IActionObjectRelay;
+class ActionObjectRelay;
 
 /*! \brief ActionScript object.
  * \ingroup Flash
@@ -37,13 +37,13 @@ public:
 	typedef SmallMap< uint32_t, ActionValue > member_map_t;
 	typedef SmallMap< uint32_t, std::pair< Ref< ActionFunction >, Ref< ActionFunction > > > property_map_t;
 
-	explicit ActionObject(ActionContext* context, IActionObjectRelay* relay = 0);
+	explicit ActionObject(ActionContext* context, ActionObjectRelay* relay = 0);
 
-	explicit ActionObject(ActionContext* context, const std::string& prototypeName, IActionObjectRelay* relay = 0);
+	explicit ActionObject(ActionContext* context, const std::string& prototypeName, ActionObjectRelay* relay = 0);
 
-	explicit ActionObject(ActionContext* context, ActionObject* prototype, IActionObjectRelay* relay = 0);
+	explicit ActionObject(ActionContext* context, ActionObject* prototype, ActionObjectRelay* relay = 0);
 
-	virtual void release(void* owner);
+	virtual void release(void* owner) const;
 
 	virtual void addInterface(ActionObject* intrface);
 
@@ -87,9 +87,9 @@ public:
 
 	bool getLocalPropertySet(uint32_t propertyName, Ref< ActionFunction >& outPropertySet) const;
 
-	void setRelay(IActionObjectRelay* relay);
+	void setRelay(ActionObjectRelay* relay);
 
-	IActionObjectRelay* getRelay() const { return m_relay; }
+	ActionObjectRelay* getRelay() const { return m_relay; }
 
 	template < typename RelayedType >
 	RelayedType* getRelay() const { return dynamic_type_cast< RelayedType* >(getRelay()); }
@@ -120,11 +120,13 @@ public:
 	// \}
 
 protected:
+	friend class ActionObjectRelay;
+
 	virtual void trace(const IVisitor& visitor) const;
 
 	virtual void dereference();
 
-	void setOverrideRelay(IActionObjectRelay* relay);
+	void setOverrideRelay(ActionObjectRelay* relay);
 
 private:
 	ActionContext* m_context;
@@ -132,7 +134,7 @@ private:
 	mutable member_map_t m_members;
 	property_map_t m_properties;
 	Ref< ActionObject > m__proto__;		//!< Cached "__proto__" member value.
-	Ref< IActionObjectRelay > m_relay;
+	mutable Ref< ActionObjectRelay > m_relay;
 
 	ActionObject(const ActionObject&) {}	// Not permitted
 
