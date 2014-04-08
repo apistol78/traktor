@@ -200,34 +200,32 @@ void FlashSpriteInstance::updateSounds(FlashSoundPlayer* soundPlayer)
 		m_lastSoundFrame = m_currentFrame;
 	}
 
+	m_displayList.getVisibleObjects(m_visibleCharacters);
 	for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
 	{
 		if (&type_of(*i) == &type_of< FlashSpriteInstance >())
 			static_cast< FlashSpriteInstance* >(*i)->updateSounds(soundPlayer);
 	}
+	m_visibleCharacters.resize(0);
 }
 
 void FlashSpriteInstance::removeMovieClip()
 {
+	if (!getParent())
+		return;
+
 	if (FlashCharacterInstance::getFocus() == this)
 		FlashCharacterInstance::setFocus(0);
 
-	FlashSpriteInstance* parentClipInstance = checked_type_cast< FlashSpriteInstance*, true >(getParent());
-	if (parentClipInstance)
-	{
-		FlashDisplayList& parentDisplayList = parentClipInstance->getDisplayList();
-		parentDisplayList.removeObject(this);
+	Ref< FlashSpriteInstance > parentClipInstance = checked_type_cast< FlashSpriteInstance*, false >(getParent());
 
-		if (parentClipInstance->m_mask == this)
-			parentClipInstance->m_mask = 0;
+	FlashDisplayList& parentDisplayList = parentClipInstance->getDisplayList();
+	parentDisplayList.removeObject(this);
 
-		parentClipInstance->m_visibleCharacters.remove(this);
-	}
-
-	postDispatchEvents();
+	if (parentClipInstance->m_mask == this)
+		parentClipInstance->m_mask = 0;
 
 	m_displayList.reset();
-	m_visibleCharacters.clear();
 	m_mask = 0;
 	m_canvas = 0;
 
