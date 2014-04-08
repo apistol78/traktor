@@ -217,9 +217,8 @@ void MouseDeviceDi8::readState()
 
 	GetCursorPos(&m_position);
 
-	HWND hWndActive = GetActiveWindow();
-	ScreenToClient(hWndActive, &m_position);
-	GetClientRect(hWndActive, &m_rect);
+	ScreenToClient(m_hWnd, &m_position);
+	GetClientRect(m_hWnd, &m_rect);
 
 	if (m_position.x < 0)
 		m_position.x = 0;
@@ -237,7 +236,7 @@ void MouseDeviceDi8::readState()
 	if (m_exclusive && m_connected)
 	{
 		POINT position = m_position;
-		ClientToScreen(hWndActive, &position);
+		ClientToScreen(m_hWnd, &position);
 		SetCursorPos(position.x, position.y);
 	}
 }

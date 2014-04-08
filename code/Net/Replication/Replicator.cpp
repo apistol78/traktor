@@ -727,7 +727,7 @@ void Replicator::sendEvents()
 			while (jj < peerEventsOut.size() && msg.type < MtEvent4)
 			{
 				MemoryStream s(data, sizeof(data), false, true);
-				CompactSerializer cs(&s, &m_eventTypes[0]);
+				CompactSerializer cs(&s, &m_eventTypes[0], m_eventTypes.size());
 				cs.writeObject(peerEventsOut[jj].object);
 				cs.flush();
 
@@ -1073,7 +1073,7 @@ void Replicator::receiveMessages()
 				for (uint32_t i = 0; i < eventObjectCount; ++i)
 				{
 					MemoryStream s(msgDataPtr, uint32_t(msgDataEndPtr - msgDataPtr));
-					Ref< ISerializable > eventObject = CompactSerializer(&s, &m_eventTypes[0]).readObject< ISerializable >();
+					Ref< ISerializable > eventObject = CompactSerializer(&s, &m_eventTypes[0], m_eventTypes.size()).readObject< ISerializable >();
 					if (eventObject)
 					{
 						EventIn e;

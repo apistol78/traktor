@@ -21,7 +21,7 @@ class T_DLLCLASS CompactSerializer : public Serializer
 	T_RTTI_CLASS;
 
 public:
-	CompactSerializer(IStream* stream, const TypeInfo** types);
+	CompactSerializer(IStream* stream, const TypeInfo** types, uint32_t ntypes);
 
 	void flush();
 	
@@ -85,6 +85,7 @@ public:
 	
 private:
 	const TypeInfo** m_types;
+	uint32_t m_ntypes;
 	Direction m_direction;
 	BitReader m_reader;
 	BitWriter m_writer;

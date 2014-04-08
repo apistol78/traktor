@@ -22,7 +22,6 @@
 #include "Render/RenderTargetSet.h"
 #include "Render/Context/RenderContext.h"
 
-#define T_DEBUG_GLYPH_CACHE 0
 #define T_FLUSH_CACHE 0
 
 namespace traktor
@@ -89,6 +88,20 @@ bool rectangleVisible(
 		return false;
 
 	return true;
+}
+
+bool colorsEqual(const SwfColor& a, const SwfColor& b)
+{
+	if (abs(int32_t(a.red) - int32_t(b.red)) > 2)
+		return false;
+	else if (abs(int32_t(a.green) - int32_t(b.green)) > 2)
+		return false;
+	else if (abs(int32_t(a.blue) - int32_t(b.blue)) > 2)
+		return false;
+	else if (abs(int32_t(a.alpha) - int32_t(b.alpha)) > 2)
+		return false;
+	else
+		return true;
 }
 
 		}
@@ -394,7 +407,7 @@ void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Ma
 		uint8_t(color.alpha * cxform.alpha[0] + cxform.alpha[1] * 255.0f)
 	};
 
-	if (std::memcmp(&glyphColor, &m_glyphColor, sizeof(SwfColor)) != 0 || m_glyphFilter != filter)
+	if (m_glyphFilter != filter || !colorsEqual(glyphColor, m_glyphColor))
 	{
 		renderEnqueuedGlyphs();
 		m_glyphFilter = filter;
@@ -603,24 +616,6 @@ void AccDisplayRenderer::renderCanvas(const FlashDictionary& dictionary, const M
 void AccDisplayRenderer::end()
 {
 	renderEnqueuedGlyphs();
-
-#if T_DEBUG_GLYPH_CACHE
-	// Overlay glyph cache.
-	const Aabb2 bounds = { Vector2(0.0f, 0.0f), Vector2(c_cacheGlyphCountX * 1024, c_cacheGlyphCountY * 1024) };
-	m_quad->render(
-		m_renderContext,
-		bounds,
-		Matrix33::identity(),
-		m_frameSize,
-		m_viewSize,
-		m_viewOffset,
-		0.0f,
-		c_cxfIdentity,
-		m_renderTargetGlyphs->getColorTexture(0),
-		Vector4(0.0f, 0.0f, 1.0f, 1.0f),
-		0
-	);
-#endif
 
 #if T_FLUSH_CACHE
 	// Don't flush cache if it doesn't contain that many shapes.
