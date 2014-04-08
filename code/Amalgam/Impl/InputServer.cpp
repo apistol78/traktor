@@ -7,6 +7,7 @@
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyObject.h"
 #include "Core/Settings/PropertyString.h"
@@ -59,6 +60,15 @@ bool anyControlPressed(input::InputSystem* inputSystem, input::InputCategory dev
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.InputServer", InputServer, IInputServer)
 
+InputServer::InputServer()
+:	m_inputFabricatorAbortControl(0)
+,	m_inputFabricatorAbortUnbind(false)
+,	m_inputFabricatorAborted(false)
+,	m_inputActive(false)
+,	m_mouseSensitivity(1.0f)
+{
+}
+
 bool InputServer::create(const PropertyGroup* defaultSettings, PropertyGroup* settings, db::Database* db, const SystemWindow& systemWindow)
 {
 	m_settings = settings;
@@ -101,6 +111,8 @@ bool InputServer::create(const PropertyGroup* defaultSettings, PropertyGroup* se
 	if (!m_inputMappingSourceData)
 		m_inputMappingSourceData = DeepClone(m_inputMappingDefaultSourceData).create< input::InputMappingSourceData >();
 
+	m_mouseSensitivity = settings->getProperty< PropertyFloat >(L"Input.MouseSensitivity", 0.5f);
+
 	if (settings->getProperty< PropertyBoolean >(L"Input.Rumble", true))
 		m_rumbleEffectPlayer = new input::RumbleEffectPlayer();
 
@@ -111,6 +123,7 @@ bool InputServer::create(const PropertyGroup* defaultSettings, PropertyGroup* se
 	{
 		m_inputMapping = new input::InputMapping();
 		m_inputMapping->create(m_inputSystem, m_inputMappingSourceData, m_inputMappingStateData);
+		m_inputMapping->setValue(L"GLOBAL_MOUSE_SENSITIVITY", m_mouseSensitivity);
 	}
 
 	return true;
@@ -134,22 +147,23 @@ int32_t InputServer::reconfigure(const PropertyGroup* settings)
 {
 	int32_t result = CrUnaffected;
 
+	float mouseSensitivity = settings->getProperty< PropertyFloat >(L"Input.MouseSensitivity", 0.5f);
+
 	Ref< input::InputMappingSourceData > inputMappingSourceData = dynamic_type_cast< input::InputMappingSourceData* >(settings->getProperty< PropertyObject >(L"Input.Sources"));
 	if (!inputMappingSourceData)
 		inputMappingSourceData = DeepClone(m_inputMappingDefaultSourceData).create< input::InputMappingSourceData >();
 
-	if (DeepHash(inputMappingSourceData) != DeepHash(m_inputMappingSourceData))
+	if (mouseSensitivity != m_mouseSensitivity || DeepHash(inputMappingSourceData) != DeepHash(m_inputMappingSourceData))
 	{
+		m_mouseSensitivity = mouseSensitivity;
+
 		if (m_inputMappingSourceData && m_inputMappingStateData)
 		{
 			if (!m_inputMapping)
 				m_inputMapping = new input::InputMapping();
 
-			m_inputMapping->create(
-				m_inputSystem,
-				m_inputMappingSourceData,
-				m_inputMappingStateData
-			);
+			m_inputMapping->create(m_inputSystem, m_inputMappingSourceData, m_inputMappingStateData);
+			m_inputMapping->setValue(L"GLOBAL_MOUSE_SENSITIVITY", m_mouseSensitivity);
 		}
 		else
 			m_inputMapping = 0;
@@ -223,6 +237,7 @@ void InputServer::update(float deltaTime, bool renderViewActive)
 						m_inputMapping = new input::InputMapping();
 
 					m_inputMapping->create(m_inputSystem, m_inputMappingSourceData, m_inputMappingStateData);
+					m_inputMapping->setValue(L"GLOBAL_MOUSE_SENSITIVITY", m_mouseSensitivity);
 					m_inputMapping->update(deltaTime);
 				}
 				else
@@ -265,6 +280,7 @@ void InputServer::update(float deltaTime, bool renderViewActive)
 					m_inputMapping = new input::InputMapping();
 
 				m_inputMapping->create(m_inputSystem, m_inputMappingSourceData, m_inputMappingStateData);
+				m_inputMapping->setValue(L"GLOBAL_MOUSE_SENSITIVITY", m_mouseSensitivity);
 				m_inputMapping->update(deltaTime);
 			}
 			else
@@ -341,6 +357,8 @@ bool InputServer::createInputMapping(const input::InputMappingStateData* stateDa
 		m_inputMapping = new input::InputMapping();
 
 	m_inputMapping->create(m_inputSystem, m_inputMappingSourceData, m_inputMappingStateData);
+	m_inputMapping->setValue(L"GLOBAL_MOUSE_SENSITIVITY", m_mouseSensitivity);
+
 	return true;
 }
 
@@ -396,6 +414,7 @@ bool InputServer::resetInputSource(const std::wstring& sourceId)
 			m_inputMapping = new input::InputMapping();
 
 		m_inputMapping->create(m_inputSystem, m_inputMappingSourceData, m_inputMappingStateData);
+		m_inputMapping->setValue(L"GLOBAL_MOUSE_SENSITIVITY", m_mouseSensitivity);
 		m_inputMapping->update(1.0f / 30.0f);
 	}
 	else
@@ -438,6 +457,7 @@ void InputServer::revert()
 			m_inputMapping = new input::InputMapping();
 
 		m_inputMapping->create(m_inputSystem, m_inputMappingSourceData, m_inputMappingStateData);
+		m_inputMapping->setValue(L"GLOBAL_MOUSE_SENSITIVITY", m_mouseSensitivity);
 		m_inputMapping->update(1.0f / 60.0f);
 	}
 	else

@@ -31,7 +31,7 @@ AsConfiguration::AsConfiguration()
 ,	m_antiAliasQuality(QtMedium)
 ,	m_particleQuality(QtMedium)
 ,	m_oceanQuality(QtMedium)
-,	m_mouseSensitivity(1.0f)
+,	m_mouseSensitivity(0.5f)
 ,	m_rumbleEnable(true)
 ,	m_masterVolume(1.0f)
 ,	m_autoMute(true)
@@ -59,7 +59,7 @@ Ref< AsConfiguration > AsConfiguration::getCurrent(amalgam::IEnvironment* enviro
 	current->m_antiAliasQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.AntiAliasQuality", QtMedium);
 	current->m_particleQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.ParticleQuality", QtMedium);
 	current->m_oceanQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.OceanQuality", QtMedium);
-	current->m_mouseSensitivity = settings->getProperty< PropertyFloat >(L"Input.MouseSensitivity", 1.0f);
+	current->m_mouseSensitivity = settings->getProperty< PropertyFloat >(L"Input.MouseSensitivity", 0.5f);
 	current->m_rumbleEnable = settings->getProperty< PropertyBoolean >(L"Input.Rumble", true);
 	current->m_soundDriver = settings->getProperty< PropertyString >(L"Audio.Type");
 	current->m_masterVolume = settings->getProperty< PropertyFloat >(L"Audio.MasterVolume", 1.0f);
@@ -336,6 +336,7 @@ bool AsConfiguration::apply(amalgam::IEnvironment* environment)
 	settings->setProperty< PropertyInteger >(L"World.AntiAliasQuality", m_antiAliasQuality);
 	settings->setProperty< PropertyInteger >(L"World.ParticleQuality", m_particleQuality);
 	settings->setProperty< PropertyInteger >(L"World.OceanQuality", m_oceanQuality);
+	settings->setProperty< PropertyFloat >(L"Input.MouseSensitivity", m_mouseSensitivity);
 	settings->setProperty< PropertyBoolean >(L"Input.Rumble", m_rumbleEnable);
 	settings->setProperty< PropertyString >(L"Audio.Type", m_soundDriver);
 	settings->setProperty< PropertyFloat >(L"Audio.MasterVolume", m_masterVolume);

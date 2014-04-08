@@ -35,6 +35,8 @@ class InputServer : public IInputServer
 	T_RTTI_CLASS;
 
 public:
+	InputServer();
+
 	bool create(const PropertyGroup* defaultSettings, PropertyGroup* settings, db::Database* db, const SystemWindow& systemWindow);
 
 	void destroy();
@@ -83,6 +85,7 @@ private:
 	bool m_inputFabricatorAbortUnbind;
 	bool m_inputFabricatorAborted;
 	bool m_inputActive;
+	float m_mouseSensitivity;
 	Ref< input::RumbleEffectPlayer > m_rumbleEffectPlayer;
 };
 
