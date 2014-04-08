@@ -25,8 +25,6 @@ class T_DLLCLASS ActionObjectRelay : public Collectable
 	T_RTTI_CLASS;
 
 public:
-	virtual void release(void* owner) const;
-
 	virtual void setAsObject(ActionObject* asObject);
 
 	virtual ActionObject* getAsObject(ActionContext* context);

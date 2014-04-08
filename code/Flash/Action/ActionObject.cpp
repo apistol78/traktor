@@ -41,23 +41,6 @@ ActionObject::ActionObject(ActionContext* context, ActionObject* prototype, Acti
 	setRelay(relay);
 }
 
-void ActionObject::release(void* owner) const
-{
-	//// Explicitly break cyclic reference if object's
-	//// last external reference is released.
-	//if (getReferenceCount() == 2)
-	//{
-	//	if (m_relay && m_relay->getAsObject() == this)
-	//	{
-	//		ActionObjectRelay* relay = m_relay.disown();
-	//		relay->setAsObject(0);
-	//		T_SAFE_RELEASE(relay);
-	//	}
-	//}
-
-	Collectable::release(owner);
-}
-
 void ActionObject::addInterface(ActionObject* intrface)
 {
 	T_ASSERT (!m_readOnly);

@@ -198,6 +198,8 @@ void FlashMoviePlayer::executeFrame()
 	// the play head and other aspects of the movie.
 
 	m_movieInstance->updateDisplayList();
+	if (m_soundPlayer)
+		m_movieInstance->updateSounds(m_soundPlayer);
 
 	m_movieInstance->preDispatchEvents();
 
@@ -259,10 +261,6 @@ void FlashMoviePlayer::executeFrame()
 
 	// Notify frame listeners.
 	context->notifyFrameListeners(avm_number_t(m_timeCurrent));
-
-	// Trigger sounds placed in this frame.
-	if (m_soundPlayer)
-		m_movieInstance->updateSounds(m_soundPlayer);
 
 	// End of frame events.
 	m_movieInstance->postDispatchEvents();
