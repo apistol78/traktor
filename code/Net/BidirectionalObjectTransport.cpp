@@ -63,7 +63,7 @@ bool BidirectionalObjectTransport::send(const ISerializable* object)
 	}
 
 	MemoryStream dms(buffer + 4, c_maxObjectSize, false, true);
-	if (!CompactSerializer(&dms, 0).writeObject(object))
+	if (!CompactSerializer(&dms, 0, 0).writeObject(object))
 		return false;
 
 	uint32_t objectSize = dms.tell();
@@ -168,7 +168,7 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 		}
 
 		MemoryStream ms(buffer, objectSize, true, false);
-		CompactSerializer s(&ms, 0);
+		CompactSerializer s(&ms, 0, 0);
 
 		Ref< ISerializable > object = s.readObject();
 		if (object)

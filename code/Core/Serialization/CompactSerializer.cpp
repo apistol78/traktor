@@ -383,8 +383,9 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.CompactSerializer", CompactSerializer, Serializ
 #define T_CHECK_STATUS \
 	if (failed()) return;
 
-CompactSerializer::CompactSerializer(IStream* stream, const TypeInfo** types)
+CompactSerializer::CompactSerializer(IStream* stream, const TypeInfo** types, uint32_t ntypes)
 :	m_types(types)
+,	m_ntypes(ntypes)
 ,	m_direction(stream->canRead() ? SdRead : SdWrite)
 ,	m_reader(stream)
 ,	m_writer(stream)
@@ -800,10 +801,12 @@ void CompactSerializer::operator >> (const Member< ISerializable* >& m)
 			typeId != 0x1f
 		)
 		{
-			T_FATAL_ASSERT (m_types);
+			if (typeId - 1 >= m_ntypes)
+				return;
 
 			const TypeInfo* type = m_types[typeId - 1];
-			T_FATAL_ASSERT (type);
+			if (!ensure(type != 0))
+				return;
 
 			if (!(object = checked_type_cast< ISerializable* >(type->createInstance())))
 				return;
@@ -840,14 +843,14 @@ void CompactSerializer::operator >> (const Member< ISerializable* >& m)
 
 			// Find type in type table.
 			uint8_t typeId = 0;
-			while (m_types && m_types[typeId])
+			while (m_types && typeId < m_ntypes && m_types[typeId])
 			{
 				if (m_types[typeId] == &type)
 					break;
 				++typeId;
 			}
 
-			if (m_types && m_types[typeId] == &type)
+			if (m_types && typeId < m_ntypes && m_types[typeId] == &type)
 			{
 				m_writer.writeUnsigned(5, typeId + 1);
 				serialize(object, type.getVersion());

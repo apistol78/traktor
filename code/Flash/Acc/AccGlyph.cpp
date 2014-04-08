@@ -29,7 +29,7 @@ struct Vertex
 
 const resource::Id< render::Shader > c_idShaderGlyph(Guid(L"{A8BC2D03-EB52-B744-8D4B-29E39FF0B4F5}"));
 const resource::Id< render::Shader > c_idShaderGlyphMask(Guid(L"{C8FEF24B-D775-A14D-9FF3-E34A17495FB4}"));
-const uint32_t c_glyphCount = 1000;
+const uint32_t c_glyphCount = 800;
 
 const struct TemplateVertex
 {

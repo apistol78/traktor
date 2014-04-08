@@ -81,12 +81,21 @@ bool SteamUser::isP2PRelayed(uint64_t userHandle) const
 	if (!SteamNetworking()->GetP2PSessionState(uint64(userHandle), &ss))
 		return false;
 
-	return ss.m_bUsingRelay;
+	return ss.m_bUsingRelay != 0;
 }
 
 bool SteamUser::sendP2PData(uint64_t userHandle, const void* data, size_t size)
 {
-	return SteamNetworking()->SendP2PPacket(uint64(userHandle), data, uint32(size), k_EP2PSendUnreliableNoDelay);
+	bool result = false;
+	T_EXCEPTION_GUARD_BEGIN
+	
+	if (data && size > 0)
+		result = SteamNetworking()->SendP2PPacket(uint64(userHandle), data, uint32(size), k_EP2PSendUnreliableNoDelay);
+	else
+		result = true;
+
+	T_EXCEPTION_GUARD_END
+	return result;
 }
 
 void SteamUser::OnP2PSessionConnectFail(P2PSessionConnectFail_t* pP2PSessionConnectFail)
