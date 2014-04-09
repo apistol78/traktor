@@ -202,10 +202,14 @@ bool SteamSessionManager::update()
 	{
 		SteamAPICall_t call = SteamUserStats()->GetNumberOfCurrentPlayers();
 		m_callbackGameCount.Set(call, this, &SteamSessionManager::OnCurrentGameCount);
-		m_updateGameCountTicks = 60;
+		m_updateGameCountTicks = 120;
 	}
 
-	SteamAPI_RunCallbacks();
+	// Pump systems a couple of times; this is an experiment
+	// so see if it improves P2P networking.
+	for (int32_t i = 0; i < 8; ++i)
+		SteamAPI_RunCallbacks();
+
 	return true;
 }
 
