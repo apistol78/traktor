@@ -296,7 +296,20 @@ bool SteamMatchMaking::getMaxParticipantCount(uint64_t lobbyHandle, uint32_t& ou
 
 bool SteamMatchMaking::getFriendsCount(uint64_t lobbyHandle, uint32_t& outCount) const
 {
-	outCount = SteamFriends()->GetFriendCountFromSource(uint64(lobbyHandle));
+	outCount = 0;
+
+	int32_t friendsCount = SteamFriends()->GetFriendCount(k_EFriendFlagImmediate);
+	for (int32_t i = 0; i < friendsCount; ++i) 
+	{
+		FriendGameInfo_t friendGameInfo;
+		CSteamID steamIDFriend = SteamFriends()->GetFriendByIndex(i, k_EFriendFlagImmediate);
+		if (SteamFriends()->GetFriendGamePlayed(steamIDFriend, &friendGameInfo) && friendGameInfo.m_steamIDLobby.IsValid())
+		{
+			if (friendGameInfo.m_steamIDLobby == lobbyHandle)
+				++outCount;
+		}
+	}
+
 	return true;
 }
 

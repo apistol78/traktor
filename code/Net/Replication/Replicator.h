@@ -56,17 +56,51 @@ public:
 		) = 0;
 	};
 
+	struct Configuration
+	{
+		float nearDistance;
+		float farDistance;
+		int32_t nearTimeUntilTx;
+		int32_t farTimeUntilTx;
+		int32_t timeUntilIAm;
+		int32_t timeUntilPing;
+		uint32_t maxErrorCount;
+		uint32_t maxDeltaStates;
+		bool deltaCompression;
+
+		Configuration()
+		:	nearDistance(8.0f)
+		,	farDistance(90.0f)
+		,	nearTimeUntilTx(100)
+		,	farTimeUntilTx(300)
+		,	timeUntilIAm(500)
+		,	timeUntilPing(2000)
+		,	maxErrorCount(120)
+		,	maxDeltaStates(4)
+		,	deltaCompression(false)
+		{
+		}
+	};
+
 	Replicator();
 
 	virtual ~Replicator();
 
 	/*! \brief
 	 */
-	bool create(IReplicatorPeers* replicatorPeers);
+	bool create(IReplicatorPeers* replicatorPeers, const Configuration& configuration);
 
 	/*! \brief
 	 */
 	void destroy();
+
+	/*! \brief
+	 */
+	void setConfiguration(const Configuration& configuration);
+
+	/*! \brief
+	 */
+	const Configuration& getConfiguration() const;
 
 	/*! \brief
 	 */
@@ -238,10 +272,6 @@ public:
 	 */
 	float getTime() const { return m_time / 1000.0f; }
 
-	/*! \brief
-	 */
-	void setDeltaCompressionEnable(bool deltaCompression) { m_deltaCompression = deltaCompression; }
-
 private:
 	enum { MaxRoundTrips = 17 };
 
@@ -324,6 +354,7 @@ private:
 	};
 
 	uint32_t m_id;
+	Configuration m_configuration;
 	std::vector< const TypeInfo* > m_eventTypes;
 	Ref< IReplicatorPeers > m_replicatorPeers;
 	RefArray< IListener > m_listeners;
@@ -337,7 +368,6 @@ private:
 	int32_t m_time;
 	uint32_t m_pingCount;
 	uint32_t m_timeUntilPing;
-	bool m_deltaCompression;
 
 	void updatePeers(int32_t dT);
 

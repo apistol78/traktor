@@ -22,6 +22,64 @@ namespace traktor
 		namespace
 		{
 
+class ReplicatorConfiguration : public Object
+{
+	T_RTTI_CLASS;
+
+public:
+	ReplicatorConfiguration()
+	{
+	}
+
+	ReplicatorConfiguration(const net::Replicator::Configuration& configuration)
+	:	m_configuration(configuration)
+	{
+	}
+
+	void setNearDistance(float nearDistance) { m_configuration.nearDistance = nearDistance; }
+
+	float getNearDistance() const { return m_configuration.nearDistance; }
+
+	void setFarDistance(float farDistance) { m_configuration.farDistance = farDistance; }
+
+	float getFarDistance() const { return m_configuration.farDistance; }
+
+	void setNearTimeUntilTx(int32_t nearTimeUntilTx) { m_configuration.nearTimeUntilTx = nearTimeUntilTx; }
+
+	int32_t getNearTimeUntilTx() const { return m_configuration.nearTimeUntilTx; }
+
+	void setFarTimeUntilTx(int32_t farTimeUntilTx) { m_configuration.farTimeUntilTx = farTimeUntilTx; }
+
+	int32_t getFarTimeUntilTx() const { return m_configuration.farTimeUntilTx; }
+
+	void setTimeUntilIAm(int32_t timeUntilIAm) { m_configuration.timeUntilIAm = timeUntilIAm; }
+
+	int32_t getTimeUntilIAm() const { return m_configuration.timeUntilIAm; }
+
+	void setTimeUntilPing(int32_t timeUntilPing) { m_configuration.timeUntilPing = timeUntilPing; }
+
+	int32_t getTimeUntilPing() const { return m_configuration.timeUntilPing; }
+
+	void setMaxErrorCount(uint32_t maxErrorCount) { m_configuration.maxErrorCount = maxErrorCount; }
+
+	uint32_t getMaxErrorCount() const { return m_configuration.maxErrorCount; }
+
+	void setMaxDeltaStates(uint32_t maxDeltaStates) { m_configuration.maxDeltaStates = maxDeltaStates; }
+
+	uint32_t getMaxDeltaStates() const { return m_configuration.maxDeltaStates; }
+
+	void setDeltaCompression(bool deltaCompression) { m_configuration.deltaCompression = deltaCompression; }
+
+	bool getDeltaCompression() const { return m_configuration.deltaCompression; }
+
+	const net::Replicator::Configuration& getConfiguration() const { return m_configuration; }
+
+private:
+	net::Replicator::Configuration m_configuration;
+};
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ReplicatorConfiguration", ReplicatorConfiguration, Object)
+
 class ReplicatorListener : public net::Replicator::IListener
 {
 	T_RTTI_CLASS;
@@ -51,6 +109,21 @@ private:
 };
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ReplicatorListener", ReplicatorListener, net::Replicator::IListener)
+
+bool net_Replicator_create(net::Replicator* self, net::IReplicatorPeers* replicatorPeers, const ReplicatorConfiguration* configuration)
+{
+	return self->create(replicatorPeers, configuration ? configuration->getConfiguration() : net::Replicator::Configuration());
+}
+
+void net_Replicator_setConfiguration(net::Replicator* self, const ReplicatorConfiguration* configuration)
+{
+	self->setConfiguration(configuration ? configuration->getConfiguration() : net::Replicator::Configuration());
+}
+
+Ref< ReplicatorConfiguration > net_Replicator_getConfiguration(net::Replicator* self)
+{
+	return new ReplicatorConfiguration(self->getConfiguration());
+}
 
 		}
 
@@ -95,14 +168,38 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	Ref< script::AutoScriptClass< net::Replicator::IListener > > classReplicatorIListener = new script::AutoScriptClass< net::Replicator::IListener >();
 	scriptManager->registerClass(classReplicatorIListener);
 
+	Ref< script::AutoScriptClass< ReplicatorConfiguration > > classReplicatorConfiguration = new script::AutoScriptClass< ReplicatorConfiguration >();
+	classReplicatorConfiguration->addConstructor();
+	classReplicatorConfiguration->addMethod("setNearDistance", &ReplicatorConfiguration::setNearDistance);
+	classReplicatorConfiguration->addMethod("getNearDistance", &ReplicatorConfiguration::getNearDistance);
+	classReplicatorConfiguration->addMethod("setFarDistance", &ReplicatorConfiguration::setFarDistance);
+	classReplicatorConfiguration->addMethod("getFarDistance", &ReplicatorConfiguration::getFarDistance);
+	classReplicatorConfiguration->addMethod("setNearTimeUntilTx", &ReplicatorConfiguration::setNearTimeUntilTx);
+	classReplicatorConfiguration->addMethod("getNearTimeUntilTx", &ReplicatorConfiguration::getNearTimeUntilTx);
+	classReplicatorConfiguration->addMethod("setFarTimeUntilTx", &ReplicatorConfiguration::setFarTimeUntilTx);
+	classReplicatorConfiguration->addMethod("getFarTimeUntilTx", &ReplicatorConfiguration::getFarTimeUntilTx);
+	classReplicatorConfiguration->addMethod("setTimeUntilIAm", &ReplicatorConfiguration::setTimeUntilIAm);
+	classReplicatorConfiguration->addMethod("getTimeUntilIAm", &ReplicatorConfiguration::getTimeUntilIAm);
+	classReplicatorConfiguration->addMethod("setTimeUntilPing", &ReplicatorConfiguration::setTimeUntilPing);
+	classReplicatorConfiguration->addMethod("getTimeUntilPing", &ReplicatorConfiguration::getTimeUntilPing);
+	classReplicatorConfiguration->addMethod("setMaxErrorCount", &ReplicatorConfiguration::setMaxErrorCount);
+	classReplicatorConfiguration->addMethod("getMaxErrorCount", &ReplicatorConfiguration::getMaxErrorCount);
+	classReplicatorConfiguration->addMethod("setMaxDeltaStates", &ReplicatorConfiguration::setMaxDeltaStates);
+	classReplicatorConfiguration->addMethod("getMaxDeltaStates", &ReplicatorConfiguration::getMaxDeltaStates);
+	classReplicatorConfiguration->addMethod("setDeltaCompression", &ReplicatorConfiguration::setDeltaCompression);
+	classReplicatorConfiguration->addMethod("getDeltaCompression", &ReplicatorConfiguration::getDeltaCompression);
+	scriptManager->registerClass(classReplicatorConfiguration);
+
 	Ref< script::AutoScriptClass< ReplicatorListener > > classReplicatorListener = new script::AutoScriptClass< ReplicatorListener >();
 	classReplicatorListener->addConstructor< script::IScriptDelegate* >();
 	scriptManager->registerClass(classReplicatorListener);
 
 	Ref< script::AutoScriptClass< net::Replicator > > classReplicator = new script::AutoScriptClass< net::Replicator >();
 	classReplicator->addConstructor();
-	classReplicator->addMethod("create", &net::Replicator::create);
+	classReplicator->addMethod("create", &net_Replicator_create);
 	classReplicator->addMethod("destroy", &net::Replicator::destroy);
+	classReplicator->addMethod("setConfiguration", &net_Replicator_setConfiguration);
+	classReplicator->addMethod("getConfiguration", &net_Replicator_getConfiguration);
 	classReplicator->addMethod("addEventType", &net::Replicator::addEventType);
 	classReplicator->addMethod("addListener", &net::Replicator::addListener);
 	classReplicator->addMethod("update", &net::Replicator::update);
@@ -140,7 +237,6 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	classReplicator->addMethod("getLoopBackState", &net::Replicator::getLoopBackState);
 	classReplicator->addMethod("getState", &net::Replicator::getState);
 	classReplicator->addMethod("getTime", &net::Replicator::getTime);
-	classReplicator->addMethod("setDeltaCompressionEnable", &net::Replicator::setDeltaCompressionEnable);
 	scriptManager->registerClass(classReplicator);
 }
 
