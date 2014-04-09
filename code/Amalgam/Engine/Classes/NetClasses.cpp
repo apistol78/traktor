@@ -68,6 +68,10 @@ public:
 
 	uint32_t getMaxDeltaStates() const { return m_configuration.maxDeltaStates; }
 
+	void setMaxExtrapolationDelta(float maxExtrapolationDelta) { m_configuration.maxExtrapolationDelta = maxExtrapolationDelta; }
+
+	float getMaxExtrapolationDelta() const { return m_configuration.maxExtrapolationDelta; }
+
 	void setDeltaCompression(bool deltaCompression) { m_configuration.deltaCompression = deltaCompression; }
 
 	bool getDeltaCompression() const { return m_configuration.deltaCompression; }
@@ -186,6 +190,8 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	classReplicatorConfiguration->addMethod("getMaxErrorCount", &ReplicatorConfiguration::getMaxErrorCount);
 	classReplicatorConfiguration->addMethod("setMaxDeltaStates", &ReplicatorConfiguration::setMaxDeltaStates);
 	classReplicatorConfiguration->addMethod("getMaxDeltaStates", &ReplicatorConfiguration::getMaxDeltaStates);
+	classReplicatorConfiguration->addMethod("setMaxExtrapolationDelta", &ReplicatorConfiguration::setMaxExtrapolationDelta);
+	classReplicatorConfiguration->addMethod("getMaxExtrapolationDelta", &ReplicatorConfiguration::getMaxExtrapolationDelta);
 	classReplicatorConfiguration->addMethod("setDeltaCompression", &ReplicatorConfiguration::setDeltaCompression);
 	classReplicatorConfiguration->addMethod("getDeltaCompression", &ReplicatorConfiguration::getDeltaCompression);
 	scriptManager->registerClass(classReplicatorConfiguration);

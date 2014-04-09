@@ -62,7 +62,10 @@ Ref< IFilterInstance > GroupFilter::createInstance() const
 {
 	Ref< GroupFilterInstance > gfi = new GroupFilterInstance();
 	for (RefArray< IFilter >::const_iterator i = m_filters.begin(); i != m_filters.end(); ++i)
-		gfi->m_instances.push_back((*i)->createInstance());
+	{
+		Ref< IFilterInstance > instance = (*i)->createInstance();
+		gfi->m_instances.push_back(instance);
+	}
 	return gfi;
 }
 
@@ -71,7 +74,10 @@ void GroupFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 	GroupFilterInstance* gfi = static_cast< GroupFilterInstance* >(instance);
 	uint32_t nfilters = uint32_t(m_filters.size());
 	for (uint32_t i = 0; i < nfilters; ++i)
-		m_filters[i]->apply(gfi->m_instances[i], outBlock);
+	{
+		if (gfi->m_instances[i])
+			m_filters[i]->apply(gfi->m_instances[i], outBlock);
+	}
 }
 
 void GroupFilter::serialize(ISerializer& s)

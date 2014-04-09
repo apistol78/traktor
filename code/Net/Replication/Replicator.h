@@ -66,6 +66,7 @@ public:
 		int32_t timeUntilPing;
 		uint32_t maxErrorCount;
 		uint32_t maxDeltaStates;
+		float maxExtrapolationDelta;
 		bool deltaCompression;
 
 		Configuration()
@@ -77,6 +78,7 @@ public:
 		,	timeUntilPing(2000)
 		,	maxErrorCount(120)
 		,	maxDeltaStates(4)
+		,	maxExtrapolationDelta(0.6f)
 		,	deltaCompression(false)
 		{
 		}
