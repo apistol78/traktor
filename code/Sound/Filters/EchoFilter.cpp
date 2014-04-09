@@ -2,11 +2,13 @@
 #include "Core/Containers/CircularVector.h"
 #include "Core/Math/Const.h"
 #include "Core/Memory/Alloc.h"
+#include "Core/Memory/BlockAllocator.h"
 #include "Core/Memory/IAllocator.h"
 #include "Core/Memory/MemoryConfig.h"
 #include "Core/Misc/Align.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Thread/Acquire.h"
 #include "Sound/Filters/EchoFilter.h"
 
 namespace traktor
@@ -18,6 +20,35 @@ namespace traktor
 
 const int32_t c_maxEchos = 4;
 const float c_maxDelay = 1.0f;
+const int32_t c_maxSimultaneousEchos = 8;
+
+Semaphore s_historyAllocLock;
+BlockAllocator* s_historyAlloc = 0;
+
+float* allocHistory()
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_historyAllocLock);
+	if (!s_historyAlloc)
+	{
+		int32_t samples = c_maxEchos * alignUp(int32_t(c_maxDelay * 48000), 4);
+		int32_t size = alignUp(samples * sizeof(float) * SbcMaxChannelCount, 16);
+
+		void* ptr = Alloc::acquireAlign(c_maxSimultaneousEchos * size, 16, T_FILE_LINE);
+		T_FATAL_ASSERT (ptr);
+
+		s_historyAlloc = new BlockAllocator(ptr, c_maxSimultaneousEchos, size);
+		T_FATAL_ASSERT (s_historyAlloc);
+	}
+
+	return static_cast< float* >(s_historyAlloc->alloc());
+}
+
+void freeHistory(float* ptr)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_historyAllocLock);
+	T_ASSERT (s_historyAlloc);
+	s_historyAlloc->free(ptr);
+}
 
 struct EchoFilterInstance : public RefCountImpl< IFilterInstance >
 {
@@ -37,7 +68,7 @@ struct EchoFilterInstance : public RefCountImpl< IFilterInstance >
 		T_EXCEPTION_GUARD_BEGIN
 
 		if (m_history[0])
-			Alloc::freeAlign(m_history[0]);
+			freeHistory(m_history[0]);
 
 		T_EXCEPTION_GUARD_END
 	}
@@ -76,7 +107,7 @@ Ref< IFilterInstance > EchoFilter::createInstance() const
 	int32_t nechos = min(int32_t(1.0f / m_decay), c_maxEchos);
 	int32_t samples = nechos * alignUp(int32_t(m_delay * 48000), 4);
 
-	float* history = static_cast< float* >(Alloc::acquireAlign(samples * sizeof(float) * SbcMaxChannelCount, 16, T_FILE_LINE));
+	float* history = allocHistory();
 	if (!history)
 		return 0;
 

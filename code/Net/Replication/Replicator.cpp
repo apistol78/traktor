@@ -26,14 +26,6 @@ namespace traktor
 
 const handle_t c_broadcastHandle = 0UL;
 const int32_t c_initialTimeOffset = 50;
-//const float m_configuration.nearDistance = 8.0f;
-//const float m_configuration.farDistance = 90.0f;
-//const int32_t m_configuration.nearTimeUntilTx = 100;
-//const int32_t m_configuration.farTimeUntilTx = 300;
-//const int32_t m_configuration.timeUntilIAm = 500;
-//const int32_t m_configuration.timeUntilPing = 2000;
-//const uint32_t m_configuration.maxErrorCount = 128;
-//const uint32_t m_configuration.maxDeltaStates = 4;
 
 Timer g_timer;
 Random g_random;
@@ -448,10 +440,10 @@ Ref< const State > Replicator::getGhostState(handle_t peerHandle, float timeOffs
 		const Peer& peer = i->second;
 
 		float delta = timeOffset - peer.ghost->T0 / 1000.0f;
-		if (abs(delta) > 0.3f)
+		if (abs(delta) > m_configuration.maxExtrapolationDelta)
 			T_REPLICATOR_DEBUG(L"WARNING: Peer " << peer.name << L" extrapolation delta out-of-range, delta = " << delta);
 
-		delta = clamp(delta, -0.3f, 0.3f);
+		delta = clamp(delta, -m_configuration.maxExtrapolationDelta, m_configuration.maxExtrapolationDelta);
 		timeOffset = peer.ghost->T0 / 1000.0f + delta;
 
 		const StateTemplate* stateTemplate = peer.ghost->stateTemplate;
