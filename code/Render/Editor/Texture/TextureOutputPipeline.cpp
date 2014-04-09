@@ -130,7 +130,8 @@ struct ScaleTextureTask : public Object
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 29, TextureOutputPipeline, editor::IPipeline)
 
 TextureOutputPipeline::TextureOutputPipeline()
-:	m_skipMips(0)
+:	m_generateMipsThread(false)
+,	m_skipMips(0)
 ,	m_clampSize(0)
 ,	m_compressionMethod(CmDXTn)
 ,	m_compressionQuality(1)
@@ -141,6 +142,7 @@ TextureOutputPipeline::TextureOutputPipeline()
 
 bool TextureOutputPipeline::create(const editor::IPipelineSettings* settings)
 {
+	m_generateMipsThread = settings->getProperty< PropertyBoolean >(L"TexturePipeline.GenerateMipsThread", false);
 	m_skipMips = settings->getProperty< PropertyInteger >(L"TexturePipeline.SkipMips", 0);
 	m_clampSize = settings->getProperty< PropertyInteger >(L"TexturePipeline.ClampSize", 0);
 	m_compressionQuality = settings->getProperty< PropertyInteger >(L"TexturePipeline.CompressionQuality", 1);
@@ -561,10 +563,8 @@ bool TextureOutputPipeline::buildOutput(
 
 		// Generate each mip level.
 		{
-			//RefArray< ScaleTextureTask > tasks;
-			//RefArray< Job > jobs;
-
-			//log::info << L"Executing mip generation task(s)..." << Endl;
+			RefArray< ScaleTextureTask > tasks(mipCount);
+			RefArray< Job > jobs(mipCount);
 
 			// Estimate alpha coverage if desired.
 			float alphaCoverage = -1.0f;
@@ -590,61 +590,79 @@ bool TextureOutputPipeline::buildOutput(
 				int32_t mipWidth = std::max(width >> i, 1);
 				int32_t mipHeight = std::max(height >> i, 1);
 
-				//log::info << L"Executing mip generation task " << i << L" (" << mipWidth << L"*" << mipHeight << L")..." << Endl;
 				log::info << L"Generating mip " << i << L" (" << mipWidth << L"*" << mipHeight << L")..." << Endl;
 
-				// Create chain of image filters.
-				Ref< drawing::ChainFilter > taskFilters = new drawing::ChainFilter();
+				if (mipWidth != image->getWidth() || mipHeight != image->getHeight() || isNormalMap || mipFilters)
+				{
+					// Create chain of image filters.
+					Ref< drawing::ChainFilter > taskFilters = new drawing::ChainFilter();
 
-				// First add scaling filter to desired mip size.
-				taskFilters->add(new drawing::ScaleFilter(
-					mipWidth,
-					mipHeight,
-					drawing::ScaleFilter::MnAverage,
-					drawing::ScaleFilter::MgLinear,
-					textureOutput->m_keepZeroAlpha
-				));
+					// First add scaling filter to desired mip size.
+					taskFilters->add(new drawing::ScaleFilter(
+						mipWidth,
+						mipHeight,
+						drawing::ScaleFilter::MnAverage,
+						drawing::ScaleFilter::MgLinear,
+						textureOutput->m_keepZeroAlpha
+					));
 
-				// Ensure each pixel is renormalized after scaling.
-				if (isNormalMap)
-					taskFilters->add(new drawing::NormalizeFilter());
+					// Ensure each pixel is renormalized after scaling.
+					if (isNormalMap)
+						taskFilters->add(new drawing::NormalizeFilter());
 
-				// Append mip filters for compression etc.
-				if (mipFilters)
-					taskFilters->add(mipFilters);
+					// Append mip filters for compression etc.
+					if (mipFilters)
+						taskFilters->add(mipFilters);
 
-				Ref< ScaleTextureTask > task = new ScaleTextureTask();
-				task->image = image->clone();
-				task->filter = taskFilters;
-				task->alphaCoverageDesired = alphaCoverage;
-				task->alphaCoverageRef = textureOutput->m_alphaCoverageReference;
+					Ref< ScaleTextureTask > task = new ScaleTextureTask();
+					task->image = image->clone();
+					task->filter = taskFilters;
+					task->alphaCoverageDesired = alphaCoverage;
+					task->alphaCoverageRef = textureOutput->m_alphaCoverageReference;
 
-				//Ref< Job > job = JobManager::getInstance().add(makeFunctor(task.ptr(), &ScaleTextureTask::execute));
-				//T_ASSERT (job);
+					if (m_generateMipsThread)
+					{
+						Ref< Job > job = JobManager::getInstance().add(makeFunctor(task.ptr(), &ScaleTextureTask::execute));
+						T_ASSERT (job);
 
-				//tasks.push_back(task);
-				//jobs.push_back(job);
+						tasks[i] = task;
+						jobs[i] = job;
+					}
+					else
+					{
+						task->execute();
 
-				task->execute();
-
-				mipImages[i] = task->image;
-				T_ASSERT (mipImages[i]);
+						mipImages[i] = task->image;
+						T_ASSERT (mipImages[i]);
+					}
+				}
+				else
+				{
+					// No need to actually process the image; it's already in the format and size we want.
+					// \note We're not cloning the image as we want to keep memory usage lower, this
+					// assumes the image isn't modified.
+					mipImages[i] = image;
+					T_ASSERT (mipImages[i]);
+				}
 			}
 
-			//log::info << L"Collecting task(s)..." << Endl;
+			// Gather generated mips from jobs.
+			if (m_generateMipsThread)
+			{
+				for (size_t i = 0; i < jobs.size(); ++i)
+				{
+					if (!mipImages[i])
+					{
+						jobs[i]->wait();
+						jobs[i] = 0;
 
-			//for (size_t i = 0; i < jobs.size(); ++i)
-			//{
-			//	jobs[i]->wait();
-			//	jobs[i] = 0;
+						mipImages[i] = tasks[i]->image;
+						T_ASSERT (mipImages[i]);
 
-			//	mipImages[i] = tasks[i]->output;
-			//	T_ASSERT (mipImages[i]);
-
-			//	tasks[i] = 0;
-			//}
-
-			//log::info << L"All task(s) collected" << Endl;
+						tasks[i] = 0;
+					}
+				}
+			}
 		}
 
 		Ref< ICompressor > compressor;

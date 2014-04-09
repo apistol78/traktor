@@ -26,14 +26,14 @@ namespace traktor
 
 const handle_t c_broadcastHandle = 0UL;
 const int32_t c_initialTimeOffset = 50;
-const float c_nearDistance = 10.0f;
-const float c_farDistance = 100.0f;
-const int32_t c_nearTimeUntilTx = 80;
-const int32_t c_farTimeUntilTx = 200;
-const int32_t c_timeUntilIAm = 500;
-const int32_t c_timeUntilPing = 2000;
-const uint32_t c_maxErrorCount = 128;
-const uint32_t c_maxDeltaStates = 4;
+//const float m_configuration.nearDistance = 8.0f;
+//const float m_configuration.farDistance = 90.0f;
+//const int32_t m_configuration.nearTimeUntilTx = 100;
+//const int32_t m_configuration.farTimeUntilTx = 300;
+//const int32_t m_configuration.timeUntilIAm = 500;
+//const int32_t m_configuration.timeUntilPing = 2000;
+//const uint32_t m_configuration.maxErrorCount = 128;
+//const uint32_t m_configuration.maxDeltaStates = 4;
 
 Timer g_timer;
 Random g_random;
@@ -68,7 +68,6 @@ Replicator::Replicator()
 ,	m_time(0)
 ,	m_pingCount(0)
 ,	m_timeUntilPing(0)
-,	m_deltaCompression(true)
 {
 	m_id = uint32_t(g_timer.getElapsedTime());
 }
@@ -78,10 +77,11 @@ Replicator::~Replicator()
 	destroy();
 }
 
-bool Replicator::create(IReplicatorPeers* replicatorPeers)
+bool Replicator::create(IReplicatorPeers* replicatorPeers, const Configuration& configuration)
 {
 	std::vector< IReplicatorPeers::PeerInfo > info;
 
+	m_configuration = configuration;
 	m_replicatorPeers = replicatorPeers;
 	m_state = 0;
 
@@ -142,6 +142,16 @@ void Replicator::destroy()
 
 	safeDestroy(m_replicatorPeers);
 	m_state = 0;
+}
+
+void Replicator::setConfiguration(const Configuration& configuration)
+{
+	m_configuration = configuration;
+}
+
+const Replicator::Configuration& Replicator::getConfiguration() const
+{
+	return m_configuration;
 }
 
 void Replicator::addEventType(const TypeInfo& eventType)
@@ -551,14 +561,14 @@ void Replicator::updatePeers(int32_t dT)
 					peer.pendingIAm = 0;
 				}
 
-				peer.timeUntilTx = int32_t(c_timeUntilIAm * (1.0f + g_random.nextFloat()));
+				peer.timeUntilTx = int32_t(m_configuration.timeUntilIAm * (1.0f + g_random.nextFloat()));
 			}
 		}
 
 		// Check if peer doesn't respond, timeout;ed or unable to communicate.
 		else if (peer.state == PsEstablished)
 		{
-			if (peer.errorCount >= c_maxErrorCount)
+			if (peer.errorCount >= m_configuration.maxErrorCount)
 			{
 				T_REPLICATOR_DEBUG(L"WARNING: Peer \"" << peer.name << L"\" failing, unable to communicate with peer");
 
@@ -620,9 +630,9 @@ void Replicator::sendState(int32_t dT)
 		// Send delta frames only if we've successfully sent
 		// an iframe and we're not experiencing package loss.
 		if (
-			m_deltaCompression &&
+			m_configuration.deltaCompression &&
 			peer.iframe &&
-			peer.stateCount % c_maxDeltaStates > 0
+			peer.stateCount % m_configuration.maxDeltaStates > 0
 		)
 		{
 			// Pack delta frame from last sent state.
@@ -658,7 +668,7 @@ void Replicator::sendState(int32_t dT)
 
 		if (send(i->first, &msg, msgSize, false))
 		{
-			peer.timeUntilTx = c_farTimeUntilTx;
+			peer.timeUntilTx = m_configuration.farTimeUntilTx;
 			peer.errorCount = 0;
 			peer.stateCount++;
 			peer.iframe = m_state;
@@ -667,7 +677,7 @@ void Replicator::sendState(int32_t dT)
 		{
 			if (!peer.errorCount)
 				log::error << L"ERROR: Unable to send state to peer " << peer.name << Endl;
-			peer.timeUntilTx = c_farTimeUntilTx;
+			peer.timeUntilTx = m_configuration.farTimeUntilTx;
 			peer.errorCount++;
 			peer.stateCount = 0;
 			peer.iframe = 0;
@@ -675,8 +685,8 @@ void Replicator::sendState(int32_t dT)
 
 		Vector4 ghostToPlayer = m_origin.translation() - peer.ghost->origin.translation();
 		Scalar distanceToPeer = ghostToPlayer.length();
-		float t = clamp((distanceToPeer - c_nearDistance) / (c_farDistance - c_nearDistance), 0.0f, 1.0f);
-		peer.timeUntilTx = (int32_t)lerp(c_nearTimeUntilTx, c_farTimeUntilTx, t);
+		float t = clamp((distanceToPeer - m_configuration.nearDistance) / (m_configuration.farDistance - m_configuration.nearDistance), 0.0f, 1.0f);
+		peer.timeUntilTx = (int32_t)lerp(m_configuration.nearTimeUntilTx, m_configuration.farTimeUntilTx, t);
 	}
 }
 
@@ -787,10 +797,10 @@ void Replicator::sendPings(int32_t dT)
 			++peer.pendingPing;
 		}
 
-		m_timeUntilPing = c_timeUntilPing / m_peers.size();
+		m_timeUntilPing = m_configuration.timeUntilPing / m_peers.size();
 	}
 	else
-		m_timeUntilPing = c_timeUntilPing;
+		m_timeUntilPing = m_configuration.timeUntilPing;
 }
 
 void Replicator::receiveMessages()

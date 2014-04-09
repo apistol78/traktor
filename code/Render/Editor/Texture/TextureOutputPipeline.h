@@ -63,6 +63,7 @@ private:
 		CmPVRTC
 	};
 
+	bool m_generateMipsThread;
 	int32_t m_skipMips;
 	int32_t m_clampSize;
 	CompressionMethod m_compressionMethod;
