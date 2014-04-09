@@ -678,7 +678,7 @@ void Replicator::sendState(int32_t dT)
 		Vector4 ghostToPlayer = m_origin.translation() - peer.ghost->origin.translation();
 		Scalar distanceToPeer = ghostToPlayer.length();
 		float t = clamp((distanceToPeer - m_configuration.nearDistance) / (m_configuration.farDistance - m_configuration.nearDistance), 0.0f, 1.0f);
-		peer.timeUntilTx = (int32_t)lerp(m_configuration.nearTimeUntilTx, m_configuration.farTimeUntilTx, t);
+		peer.timeUntilTx = (int32_t)lerp(m_configuration.nearTimeUntilTx, m_configuration.farTimeUntilTx + int32_t((g_random.nextFloat() - 0.5f) * (m_configuration.farTimeUntilTx - m_configuration.nearTimeUntilTx) * 0.5f), t);
 	}
 }
 
