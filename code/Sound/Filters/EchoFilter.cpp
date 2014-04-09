@@ -9,6 +9,7 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Thread/Acquire.h"
+#include "Core/Thread/Semaphore.h"
 #include "Sound/Filters/EchoFilter.h"
 
 namespace traktor
