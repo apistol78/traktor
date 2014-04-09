@@ -62,6 +62,30 @@ physics::BodyState interpolate(const physics::BodyState& bs0, float T0, const ph
 #endif
 }
 
+template < int32_t IntBits, int32_t FractBits >
+class GenericFixedPoint
+{
+	const static int32_t ms_factor = 1 << FractBits;
+
+public:
+	GenericFixedPoint(int32_t v)
+	:	m_v(v)
+	{
+	}
+
+	GenericFixedPoint(float v)
+	:	m_v(int32_t(v * ms_factor))
+	{
+	}
+
+	int32_t raw() const { return m_v; }
+
+	operator float () const { return float(m_v) / ms_factor; }
+
+private:
+	int32_t m_v;
+};
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.BodyStateTemplate", BodyStateTemplate, IValueTemplate)
@@ -85,13 +109,19 @@ void BodyStateTemplate::pack(BitWriter& writer, const IValue* V) const
 	float e[4];
 	uint8_t u[3];
 
-	// 3 * 32
+	// 3 * (13+10)
 	T.translation().storeUnaligned(e);
 	for (uint32_t i = 0; i < 3; ++i)
-		writer.writeUnsigned(32, *(uint32_t*)&e[i]);
+	{
+		writer.writeSigned(
+			13+10,
+			GenericFixedPoint< 13, 10 >(e[i]).raw()
+		);
+	}
 
-	// 3 * 8 + 16
+	// 3 * 8 + (3+7)
 	Vector4 R = T.rotation().toAxisAngle();
+	
 	float a = R.length();
 	if (abs(a) > FUZZY_EPSILON)
 		R /= Scalar(a);
@@ -100,7 +130,10 @@ void BodyStateTemplate::pack(BitWriter& writer, const IValue* V) const
 	writer.writeUnsigned(8, u[0]);
 	writer.writeUnsigned(8, u[1]);
 	writer.writeUnsigned(8, u[2]);
-	writer.writeUnsigned(16, floatToHalf(a));
+	writer.writeSigned(
+		3+7,
+		GenericFixedPoint< 3, 7 >(a).raw()
+	);
 
 	{
 		Vector4 linearVelocity = v.getLinearVelocity().xyz0();
@@ -149,8 +182,7 @@ Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 
 	for (uint32_t i = 0; i < 3; ++i)
 	{
-		uint32_t uf = reader.readUnsigned(32);
-		f[i] = *(float*)&uf;
+		f[i] = GenericFixedPoint< 13, 10 >(reader.readSigned(13+10));
 		T_FATAL_ASSERT(!isNanOrInfinite(f[i]));
 	}
 
@@ -158,7 +190,7 @@ Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 	u[1] = reader.readUnsigned(8);
 	u[2] = reader.readUnsigned(8);
 	Vector4 R = unpackUnit(u);
-	float Ra = halfToFloat(reader.readUnsigned(16));
+	float Ra = GenericFixedPoint< 3, 7 >(reader.readSigned(3+7));
 
 	T = Transform(
 		Vector4(f[0], f[1], f[2], 1.0f),
