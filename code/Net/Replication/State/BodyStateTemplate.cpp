@@ -3,7 +3,6 @@
 #include "Core/Io/BitWriter.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
-#include "Core/Math/Half.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/MathUtils.h"
 #include "Net/Replication/Pack.h"
@@ -105,36 +104,24 @@ void BodyStateTemplate::pack(BitWriter& writer, const IValue* V) const
 {
 	physics::BodyState v = *checked_type_cast< const BodyStateValue* >(V);
 	const Transform& T = v.getTransform();
+	float T_MATH_ALIGN16 e[4];
 
-	float e[4];
-	uint8_t u[3];
-
-	// 3 * (13+10)
-	T.translation().storeUnaligned(e);
+	// 3 * (13+9)
+	T.translation().storeAligned(e);
 	for (uint32_t i = 0; i < 3; ++i)
-	{
-		writer.writeSigned(
-			13+10,
-			GenericFixedPoint< 13, 10 >(e[i]).raw()
-		);
-	}
+		writer.writeSigned(13+9, GenericFixedPoint< 13, 9 >(e[i]).raw());
 
-	// 3 * 8 + (3+7)
+	// 16 + (3+7)
 	Vector4 R = T.rotation().toAxisAngle();
 	
 	float a = R.length();
 	if (abs(a) > FUZZY_EPSILON)
 		R /= Scalar(a);
 
-	packUnit(R, u);
-	writer.writeUnsigned(8, u[0]);
-	writer.writeUnsigned(8, u[1]);
-	writer.writeUnsigned(8, u[2]);
-	writer.writeSigned(
-		3+7,
-		GenericFixedPoint< 3, 7 >(a).raw()
-	);
+	writer.writeUnsigned(16, PackedUnitVector(R).raw());
+	writer.writeSigned(4+7, GenericFixedPoint< 4, 7 >(a).raw());
 
+	// 16 + (7+8)
 	{
 		Vector4 linearVelocity = v.getLinearVelocity().xyz0();
 		Scalar ln = linearVelocity.length();
@@ -142,17 +129,11 @@ void BodyStateTemplate::pack(BitWriter& writer, const IValue* V) const
 		if (ln > FUZZY_EPSILON)
 			linearVelocity /= ln;
 
-		// 3 * 8
-		packUnit(linearVelocity, u);
-		writer.writeUnsigned(8, u[0]);
-		writer.writeUnsigned(8, u[1]);
-		writer.writeUnsigned(8, u[2]);
-
-		// 16
-		half_t lnf16 = floatToHalf(ln);
-		writer.writeUnsigned(16, lnf16);
+		writer.writeUnsigned(16, PackedUnitVector(linearVelocity).raw());
+		writer.writeSigned(7+8, GenericFixedPoint< 7, 8 >(ln).raw());
 	}
 
+	// 16 + (5+8)
 	{
 		Vector4 angularVelocity = v.getAngularVelocity().xyz0();
 		Scalar ln = angularVelocity.length();
@@ -160,15 +141,8 @@ void BodyStateTemplate::pack(BitWriter& writer, const IValue* V) const
 		if (ln > FUZZY_EPSILON)
 			angularVelocity /= ln;
 
-		// 3 * 8
-		packUnit(angularVelocity, u);
-		writer.writeUnsigned(8, u[0]);
-		writer.writeUnsigned(8, u[1]);
-		writer.writeUnsigned(8, u[2]);
-
-		// 16
-		half_t lnf16 = floatToHalf(ln);
-		writer.writeUnsigned(16, lnf16);
+		writer.writeUnsigned(16, PackedUnitVector(angularVelocity).raw());
+		writer.writeSigned(5+8, GenericFixedPoint< 5, 8 >(ln).raw());
 	}
 }
 
@@ -176,21 +150,18 @@ Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 {
 	Vector4 linearVelocity, angularVelocity;
 	Transform T;
-
-	float f[4];
-	uint8_t u[3];
+	float T_MATH_ALIGN16 f[4];
+	uint16_t u;
 
 	for (uint32_t i = 0; i < 3; ++i)
 	{
-		f[i] = GenericFixedPoint< 13, 10 >(reader.readSigned(13+10));
+		f[i] = GenericFixedPoint< 13, 9 >(reader.readSigned(13+9));
 		T_FATAL_ASSERT(!isNanOrInfinite(f[i]));
 	}
 
-	u[0] = reader.readUnsigned(8);
-	u[1] = reader.readUnsigned(8);
-	u[2] = reader.readUnsigned(8);
-	Vector4 R = unpackUnit(u);
-	float Ra = GenericFixedPoint< 3, 7 >(reader.readSigned(3+7));
+	u = reader.readUnsigned(16);
+	Vector4 R = PackedUnitVector(u).unpack();
+	float Ra = GenericFixedPoint< 4, 7 >(reader.readSigned(4+7));
 
 	T = Transform(
 		Vector4(f[0], f[1], f[2], 1.0f),
@@ -199,21 +170,13 @@ Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 			Quaternion::identity()
 	);
 
-	u[0] = reader.readUnsigned(8);
-	u[1] = reader.readUnsigned(8);
-	u[2] = reader.readUnsigned(8);
-	linearVelocity = unpackUnit(u);
+	u = reader.readUnsigned(16);
+	linearVelocity = PackedUnitVector(u).unpack();
+	linearVelocity *= Scalar(GenericFixedPoint< 7, 8 >(reader.readSigned(7+8)));
 
-	half_t lnvf16 = reader.readUnsigned(16);
-	linearVelocity *= Scalar(halfToFloat(lnvf16));
-
-	u[0] = reader.readUnsigned(8);
-	u[1] = reader.readUnsigned(8);
-	u[2] = reader.readUnsigned(8);
-	angularVelocity = unpackUnit(u);
-
-	half_t lnaf16 = reader.readUnsigned(16);
-	angularVelocity *= Scalar(halfToFloat(lnaf16));
+	u = reader.readUnsigned(16);
+	angularVelocity = PackedUnitVector(u).unpack();
+	angularVelocity *= Scalar(GenericFixedPoint< 5, 8 >(reader.readSigned(5+8)));
 
 	physics::BodyState S;
 	S.setTransform(T);
