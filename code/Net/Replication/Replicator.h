@@ -44,7 +44,8 @@ public:
 			ReConnected = 1,
 			ReDisconnected = 2,
 			ReBroadcastEvent = 3,
-			ReState = 4
+			ReState = 4,
+			ReLost = 5
 		};
 
 		virtual void notify(
