@@ -511,7 +511,7 @@ void Replicator::updatePeers(int32_t dT)
 
 			// Need to notify listeners immediately as peer becomes dismounted.
 			for (RefArray< IListener >::iterator j = m_listeners.begin(); j != m_listeners.end(); ++j)
-				(*j)->notify(this, 0, IListener::ReDisconnected, i->first, 0);
+				(*j)->notify(this, 0, IListener::ReLost, i->first, 0);
 
 			if (peer.ghost)
 			{
@@ -566,7 +566,7 @@ void Replicator::updatePeers(int32_t dT)
 
 				// Need to notify listeners immediately as peer becomes dismounted.
 				for (RefArray< IListener >::iterator j = m_listeners.begin(); j != m_listeners.end(); ++j)
-					(*j)->notify(this, 0, IListener::ReDisconnected, i->handle, 0);
+					(*j)->notify(this, 0, IListener::ReLost, i->handle, 0);
 
 				if (peer.ghost)
 				{
@@ -952,13 +952,10 @@ void Replicator::receiveMessages()
 			if (msg.time > peer.lastTimeRemote)
 			{
 				// Check network time.
-				if (m_replicatorPeers->getPrimaryPeerHandle() == handle)
-				{
-					int32_t offset = msg.time + peer.latencyMedian - m_time;
-					int32_t adjust = offset < 30 ? offset / 4 : offset / 2;
-					if (abs(adjust) > 2)
-						adjustTime(adjust);
-				}
+				int32_t offset = msg.time + peer.latencyMedian - m_time;
+				int32_t adjust = offset < 30 ? offset / 4 : offset / 2;
+				if (adjust >= 4)
+					adjustTime(adjust);
 
 				if (peer.ghost->stateTemplate)
 				{
