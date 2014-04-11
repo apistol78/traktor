@@ -97,7 +97,6 @@ bool Replicator::create(IReplicatorPeers* replicatorPeers, const Configuration& 
 		peer.state = PsInitial;
 		peer.name = i->name;
 		peer.endSite = i->endSite;
-		peer.precursor = true;
 	}
 
 	return true;
@@ -172,6 +171,7 @@ bool Replicator::update(float /*T*/, float dT)
 	sendEvents();
 	sendPings(idT);
 	receiveMessages();
+	updateTimeSynchronization();
 	dispatchEventListeners();
 
 	m_time0 += idT;
@@ -951,11 +951,9 @@ void Replicator::receiveMessages()
 			// messages can arrive out-of-order.
 			if (msg.time > peer.lastTimeRemote)
 			{
-				// Check network time.
+				// Accumulate time offsets.
 				int32_t offset = msg.time + peer.latencyMedian - m_time;
-				int32_t adjust = offset < 30 ? offset / 4 : offset / 2;
-				if (adjust >= 4)
-					adjustTime(adjust);
+				peer.timeOffsets.push_back(offset < 30 ? offset / 4 : offset / 2);
 
 				if (peer.ghost->stateTemplate)
 				{
@@ -1089,6 +1087,35 @@ void Replicator::receiveMessages()
 	}
 }
 
+void Replicator::updateTimeSynchronization()
+{
+	// Check if all peers have a complete set of time offsets.
+	for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
+	{
+		Peer& peer = i->second;
+		if (peer.state == PsEstablished && peer.errorCount == 0 && peer.timeOffsets.size() < peer.timeOffsets.capacity())
+			return;
+	}
+
+	// Get max median time offset.
+	int32_t timeOffset = 0;
+	for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
+	{
+		Peer& peer = i->second;
+		if (peer.state == PsEstablished && peer.errorCount == 0)
+		{
+			std::sort(peer.timeOffsets.begin(), peer.timeOffsets.end());
+			timeOffset = std::max(timeOffset, peer.timeOffsets[peer.timeOffsets.capacity() / 2]);
+			peer.timeOffsets.clear();
+		}
+	}
+
+	// Adjust time; don't adjust entire offset at once as it's, at best, an approximation.
+	timeOffset = (timeOffset < 30) ? timeOffset / 2 : (timeOffset * 2) / 3;
+	if (timeOffset > 0)
+		adjustTime(timeOffset);
+}
+
 void Replicator::dispatchEventListeners()
 {
 	for (std::list< EventIn >::const_iterator i = m_eventsIn.begin(); i != m_eventsIn.end(); ++i)
@@ -1153,16 +1180,16 @@ void Replicator::adjustTime(int32_t offset)
 {
 	m_time += offset;
 
-	// Also adjust all old states as well.
+	// Adjust all ghost states.
 	for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
 	{
 		Ghost* ghost = i->second.ghost;
-		if (!ghost)
-			continue;
-
-		ghost->Tn2 += offset;
-		ghost->Tn1 += offset;
-		ghost->T0 += offset;
+		if (ghost)
+		{
+			ghost->Tn2 += offset;
+			ghost->Tn1 += offset;
+			ghost->T0 += offset;
+		}
 	}
 
 	// Adjust on all queued events also.

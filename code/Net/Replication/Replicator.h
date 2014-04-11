@@ -5,6 +5,7 @@
 #include <map>
 #include "Core/RefArray.h"
 #include "Core/Containers/CircularVector.h"
+#include "Core/Containers/StaticVector.h"
 #include "Core/Math/Transform.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Net/Replication/ReplicatorTypes.h"
@@ -276,7 +277,11 @@ public:
 	float getTime() const { return m_time / 1000.0f; }
 
 private:
-	enum { MaxRoundTrips = 17 };
+	enum
+	{
+		MaxRoundTrips = 17,
+		Adjustments = 7
+	};
 
 	struct EventIn
 	{
@@ -319,13 +324,13 @@ private:
 		std::wstring name;
 		Object* endSite;
 		Ghost* ghost;
-		bool precursor;
 		bool direct;
 		uint8_t status;
 		int32_t timeUntilTx;
 		int32_t lastTimeLocal;
 		int32_t lastTimeRemote;
 		CircularVector< int32_t, MaxRoundTrips > roundTrips;
+		StaticVector< int32_t, Adjustments > timeOffsets;
 		int32_t latencyMedian;
 		int32_t latencyMinimum;
 		int32_t latencyReversed;
@@ -339,7 +344,6 @@ private:
 		:	state(PsInitial)
 		,	endSite(0)
 		,	ghost(0)
-		,	precursor(false)
 		,	direct(false)
 		,	status(0)
 		,	timeUntilTx(0)
@@ -381,6 +385,8 @@ private:
 	void sendPings(int32_t dT);
 
 	void receiveMessages();
+
+	void updateTimeSynchronization();
 
 	void dispatchEventListeners();
 
