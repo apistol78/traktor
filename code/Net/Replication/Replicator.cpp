@@ -1093,19 +1093,24 @@ void Replicator::updateTimeSynchronization()
 	for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
 	{
 		Peer& peer = i->second;
-		if (peer.state == PsEstablished && peer.errorCount == 0 && peer.timeOffsets.size() < peer.timeOffsets.capacity())
+		if (peer.state == PsEstablished && peer.errorCount == 0 && !peer.timeOffsets.full())
 			return;
 	}
 
 	// Get max median time offset.
+	std::vector< int32_t > timeOffsets(Adjustments);
 	int32_t timeOffset = 0;
 	for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
 	{
 		Peer& peer = i->second;
 		if (peer.state == PsEstablished && peer.errorCount == 0)
 		{
-			std::sort(peer.timeOffsets.begin(), peer.timeOffsets.end());
-			timeOffset = std::max(timeOffset, peer.timeOffsets[peer.timeOffsets.capacity() / 2]);
+			for (uint32_t j = 0; j < Adjustments; ++j)
+				timeOffsets[j] = peer.timeOffsets[j];
+
+			std::sort(timeOffsets.begin(), timeOffsets.end());
+			timeOffset = std::max(timeOffset, timeOffsets[Adjustments / 2]);
+
 			peer.timeOffsets.clear();
 		}
 	}

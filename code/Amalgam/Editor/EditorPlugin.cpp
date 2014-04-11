@@ -201,53 +201,7 @@ void EditorPlugin::destroy()
 
 bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)
 {
-	bool result = true;
-
-	if (command == L"Editor.Build")
-	{
-		// Refresh all running targets.
-		for (RefArray< TargetInstance >::iterator i = m_targetInstances.begin(); i != m_targetInstances.end(); ++i)
-		{
-			TargetInstance* targetInstance = *i;
-
-			if (targetInstance->getState() != TsIdle)
-				continue;
-			if (targetInstance->getConnections().empty())
-				continue;
-
-			targetInstance->setState(TsPending);
-			targetInstance->setBuildProgress(0);
-
-			{
-				T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_targetActionQueueLock);
-
-				ActionChain chain;
-				chain.targetInstance = targetInstance;
-
-				Action action;
-
-				// Add build output data action.
-				action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsBuilding);
-				action.action = new BuildTargetAction(
-					m_editor->getSourceDatabase(),
-					m_editor->getSettings(),
-					targetInstance->getTarget(),
-					targetInstance->getTargetConfiguration(),
-					targetInstance->getOutputPath()
-				);
-				chain.actions.push_back(action);
-
-				m_targetActionQueue.push_back(chain);
-				m_targetActionQueueSignal.set();
-			}
-		}
-
-		m_targetList->update();
-	}
-	else
-		result = false;
-
-	return result;
+	return false;
 }
 
 void EditorPlugin::handleDatabaseEvent(db::Database* database, const Guid& eventId)
@@ -365,11 +319,21 @@ void EditorPlugin::eventTargetListPlay(ui::Event* event)
 
 		Action action;
 
+		// Expose _DEBUG script definition when launching through editor, ie not migrating.
+		Ref< PropertyGroup > pipelineSettings = new PropertyGroup();
+		if (event->getKeyState() == 0)
+		{
+			std::set< std::wstring > scriptPrepDefinitions;
+			scriptPrepDefinitions.insert(L"_DEBUG");
+			pipelineSettings->setProperty< PropertyStringSet >(L"ScriptPipeline.PreprocessorDefinitions", scriptPrepDefinitions);
+		}
+
 		// Add build output data action.
 		action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsBuilding);
 		action.action = new BuildTargetAction(
 			m_editor->getSourceDatabase(),
 			m_editor->getSettings(),
+			pipelineSettings,
 			targetInstance->getTarget(),
 			targetInstance->getTargetConfiguration(),
 			outputPath

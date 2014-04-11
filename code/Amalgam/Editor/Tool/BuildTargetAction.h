@@ -30,6 +30,7 @@ public:
 	BuildTargetAction(
 		db::Database* database,
 		const PropertyGroup* globalSettings,
+		const PropertyGroup* defaultPipelineSettings,
 		const Target* target,
 		const TargetConfiguration* targetConfiguration,
 		const std::wstring& outputPath
@@ -40,6 +41,7 @@ public:
 private:
 	Ref< db::Database > m_database;
 	Ref< const PropertyGroup > m_globalSettings;
+	Ref< const PropertyGroup > m_defaultPipelineSettings;
 	Ref< const Target > m_target;
 	Ref< const TargetConfiguration > m_targetConfiguration;
 	std::wstring m_outputPath;
