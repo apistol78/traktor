@@ -5,7 +5,6 @@
 #include <map>
 #include "Core/RefArray.h"
 #include "Core/Containers/CircularVector.h"
-#include "Core/Containers/StaticVector.h"
 #include "Core/Math/Transform.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Net/Replication/ReplicatorTypes.h"
@@ -330,7 +329,7 @@ private:
 		int32_t lastTimeLocal;
 		int32_t lastTimeRemote;
 		CircularVector< int32_t, MaxRoundTrips > roundTrips;
-		StaticVector< int32_t, Adjustments > timeOffsets;
+		CircularVector< int32_t, Adjustments > timeOffsets;
 		int32_t latencyMedian;
 		int32_t latencyMinimum;
 		int32_t latencyReversed;

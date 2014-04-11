@@ -325,10 +325,12 @@ Vector4 unpackUnit(const uint8_t u[3])
 
 void packUnit(const Vector4& u, uint8_t out[3])
 {
+	Vector4 un = u.normalized();
+
 	float x = 0.0f, y = 0.0f, z = 0.0f;
-	float dx = u.x() / 128.0f;
-	float dy = u.y() / 128.0f;
-	float dz = u.z() / 128.0f;
+	float dx = un.x() / 128.0f;
+	float dy = un.y() / 128.0f;
+	float dz = un.z() / 128.0f;
 
 	float md = std::numeric_limits< float >::max();
 	for (int32_t i = 0; i < 128; ++i)
@@ -351,7 +353,7 @@ void packUnit(const Vector4& u, uint8_t out[3])
 			iz / 127.0f - 1.0f
 		);
 
-		float D = (u * v.length() - v).length();
+		float D = (un * v.length() - v).length();
 		if (D < md)
 		{
 			out[0] = ix;
@@ -363,7 +365,7 @@ void packUnit(const Vector4& u, uint8_t out[3])
 
 #if defined(_DEBUG)
 	Vector4 check = unpackUnit(out);
-	Vector4 error = (check - u).absolute();
+	Vector4 error = (check - un).absolute();
 	Scalar E = horizontalAdd4(error);
 	T_ASSERT (E < 0.01f);
 #endif

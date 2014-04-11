@@ -9,6 +9,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
+#include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
@@ -43,12 +44,14 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.BuildTargetAction", BuildTargetAction, 
 BuildTargetAction::BuildTargetAction(
 	db::Database* database,
 	const PropertyGroup* globalSettings,
+	const PropertyGroup* defaultPipelineSettings,
 	const Target* target,
 	const TargetConfiguration* targetConfiguration,
 	const std::wstring& outputPath
 )
 :	m_database(database)
 ,	m_globalSettings(globalSettings)
+,	m_defaultPipelineSettings(defaultPipelineSettings)
 ,	m_target(target)
 ,	m_targetConfiguration(targetConfiguration)
 ,	m_outputPath(outputPath)
@@ -70,6 +73,8 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 
 	// Create target pipeline configuration.
 	Ref< PropertyGroup > pipelineConfiguration = new PropertyGroup();
+	if (m_defaultPipelineSettings)
+		pipelineConfiguration = DeepClone(m_defaultPipelineSettings).create< PropertyGroup >();
 
 	// Get features; sorted by priority.
 	const std::list< Guid >& featureIds = m_targetConfiguration->getFeatures();
