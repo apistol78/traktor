@@ -951,8 +951,11 @@ void Replicator::receiveMessages()
 			// messages can arrive out-of-order.
 			if (msg.time > peer.lastTimeRemote)
 			{
-				// Accumulate time offsets.
-				int32_t offset = msg.time + peer.latencyMedian - m_time;
+				// Accumulate time offsets. Offset calculation is bit of magic
+				// as there is no way of 100% accurately measure one-way latency in a network
+				// thus we assume one-way latency is somewhere between both round-trip times.
+				int32_t latency = (peer.latencyMedian + peer.latencyReversed) / 2;
+				int32_t offset = msg.time + latency - m_time;
 				peer.timeOffsets.push_back(offset < 30 ? offset / 4 : offset / 2);
 
 				if (peer.ghost->stateTemplate)

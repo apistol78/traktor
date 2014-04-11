@@ -372,8 +372,8 @@ private:
 	std::list< EventOut > m_eventsOut;
 	int32_t m_time0;
 	int32_t m_time;
-	uint32_t m_pingCount;
-	uint32_t m_timeUntilPing;
+	int32_t m_pingCount;
+	int32_t m_timeUntilPing;
 
 	void updatePeers(int32_t dT);
 
