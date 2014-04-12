@@ -72,7 +72,7 @@ private:
 	{
 		double time0;
 		double time;
-		bool resent;
+		int32_t resent;
 		uint32_t size;
 		Envelope envelope;
 	};

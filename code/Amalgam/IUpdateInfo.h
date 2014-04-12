@@ -87,6 +87,12 @@ public:
 	 * \return Interval fraction.
 	 */
 	virtual float getInterval() const = 0;
+
+	/*! \brief If system is detected as being too slow.
+	 *
+	 * \return True if system incapable of sustaining a stable frame rate.
+	 */
+	virtual bool isRunningSlow() const = 0;
 };
 
 	}

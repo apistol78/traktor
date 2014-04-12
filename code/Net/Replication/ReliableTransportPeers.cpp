@@ -10,7 +10,7 @@ namespace traktor
 		namespace
 		{
 
-const double c_resendTime = 1.0f;	//< Resend reliable message after N seconds.
+const double c_resendTime = 0.5f;	//< Resend reliable message after N seconds.
 const double c_discardTime = 30.0f;	//< Discard reliable message after N seconds.
 const uint32_t c_windowSize = 200;	//< Number of reliable messages kept in sent queue.
 
@@ -103,7 +103,6 @@ bool ReliableTransportPeers::update()
 			}
 			if ((time - j->time) >= c_resendTime)
 			{
-				T_RELIABLE_DEBUG(L"OK: No response from peer " << int32_t(i->first) << L" in " << c_resendTime << L" second(s); message " << int32_t(j->envelope.sequence) << L" resent");
 				m_peers->send(
 					i->first,
 					&j->envelope,
@@ -111,7 +110,7 @@ bool ReliableTransportPeers::update()
 					false
 				);
 				j->time = time;
-				j->resent = true;
+				j->resent++;
 			}
 			++j;
 		}
@@ -215,8 +214,8 @@ int32_t ReliableTransportPeers::receive(void* data, int32_t size, handle_t& outF
 			{
 				if (i->envelope.sequence == e.sequence)
 				{
-					if (i->resent)
-					{ T_RELIABLE_DEBUG(L"OK: Resent message " << int32_t(i->envelope.sequence) << L" to peer " << int32_t(outFromHandle) << L" finally ACK;ed"); }
+					if (i->resent > 0)
+					{ T_RELIABLE_DEBUG(L"OK: Resent message " << int32_t(i->envelope.sequence) << L" to peer " << int32_t(outFromHandle) << L" ACK;ed after " << (i->resent + 1) << L" attempts"); }
 
 					ct.sent.erase(i);
 					ct.faulty = false;
@@ -267,7 +266,7 @@ bool ReliableTransportPeers::send(handle_t handle, const void* data, int32_t siz
 		ControlEnvelope ce;
 		ce.time0 =
 		ce.time = m_timer.getElapsedTime();
-		ce.resent = false;
+		ce.resent = 0;
 		ce.size = 2 + size;
 		ce.envelope = e;
 		ct.sent.push_back(ce);
