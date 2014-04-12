@@ -97,6 +97,7 @@ private:
 	Thread* m_threadRender;
 	Timer m_timer;
 	int32_t m_maxSimulationUpdates;
+	int32_t m_deltaTimeError;
 	UpdateControl m_updateControl;
 	UpdateInfo m_updateInfo;
 	bool m_renderViewActive;

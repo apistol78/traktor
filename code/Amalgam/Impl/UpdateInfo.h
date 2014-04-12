@@ -22,6 +22,7 @@ public:
 	int32_t m_simulationFrequency;
 	float m_frameDeltaTime;
 	uint64_t m_frame;
+	bool m_runningSlow;
 
 	UpdateInfo()
 	:	m_totalTime(0.0f)
@@ -31,6 +32,7 @@ public:
 	,	m_simulationFrequency(0)
 	,	m_frameDeltaTime(0.0f)
 	,	m_frame(0)
+	,	m_runningSlow(false)
 	{
 	}
 
@@ -49,6 +51,8 @@ public:
 	virtual uint64_t getFrame() const { return m_frame; }
 
 	virtual float getInterval() const { return clamp((m_stateTime - m_simulationTime + m_simulationDeltaTime) / m_simulationDeltaTime, 0.0f, 1.0f); }
+
+	virtual bool isRunningSlow() const { return m_runningSlow; }
 };
 
 	}

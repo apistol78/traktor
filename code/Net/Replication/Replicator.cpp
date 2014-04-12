@@ -1092,21 +1092,14 @@ void Replicator::receiveMessages()
 
 void Replicator::updateTimeSynchronization()
 {
-	// Check if all peers have a complete set of time offsets.
-	for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
-	{
-		Peer& peer = i->second;
-		if (peer.state == PsEstablished && peer.errorCount == 0 && !peer.timeOffsets.full())
-			return;
-	}
-
-	// Get max median time offset.
 	std::vector< int32_t > timeOffsets(Adjustments);
 	int32_t timeOffset = 0;
+
+	// Get max median time offset.
 	for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
 	{
 		Peer& peer = i->second;
-		if (peer.state == PsEstablished && peer.errorCount == 0)
+		if (peer.state == PsEstablished && peer.errorCount == 0 && peer.timeOffsets.full())
 		{
 			for (uint32_t j = 0; j < Adjustments; ++j)
 				timeOffsets[j] = peer.timeOffsets[j];

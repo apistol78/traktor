@@ -55,7 +55,6 @@ const int32_t c_databasePollInterval = 5;
 const uint32_t c_simulationFrequency = 60;
 const float c_simulationDeltaTime = 1.0f / c_simulationFrequency;
 const float c_maxDeltaTime = 1.0f / 20.0f;
-const float c_minDeltaTime = 1.0f / 200.0f;
 const float c_deltaTimeFilterCoeff = 0.99f;
 
 		}
@@ -66,6 +65,7 @@ Application::Application()
 :	m_threadDatabase(0)
 ,	m_threadRender(0)
 ,	m_maxSimulationUpdates(1)
+,	m_deltaTimeError(0)
 ,	m_renderViewActive(true)
 ,	m_backgroundColor(0.0f, 0.0f, 0.0f, 0.0f)
 ,	m_updateDuration(0.0f)
@@ -569,10 +569,21 @@ bool Application::update()
 		if (m_onlineServer)
 			inputEnabled &= !m_onlineServer->getSessionManager()->requireUserAttention();
 
-		// Measure delta time; filter frame delta time to prevent unneccessary jitter.
+		// Measure delta time.
 		float deltaTime = float(m_timer.getDeltaTime());
-		deltaTime = min(deltaTime, c_maxDeltaTime);
-		deltaTime = max(deltaTime, c_minDeltaTime);
+		if (deltaTime > c_maxDeltaTime)
+		{
+			deltaTime = c_maxDeltaTime;
+			if (++m_deltaTimeError >= 20)
+				m_updateInfo.m_runningSlow = true;
+		}
+		else
+		{
+			m_deltaTimeError = 0;
+			m_updateInfo.m_runningSlow = false;
+		}
+
+		// Filter frame delta time to prevent unnecessary jitter.
 		m_updateInfo.m_frameDeltaTime = deltaTime * c_deltaTimeFilterCoeff + m_updateInfo.m_frameDeltaTime * (1.0f - c_deltaTimeFilterCoeff);
 
 		// Update audio.

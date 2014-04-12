@@ -203,6 +203,7 @@ void registerAmalgamClasses(script::IScriptManager* scriptManager)
 	classIUpdateInfo->addMethod("getSimulationFrequency", &amalgam::IUpdateInfo::getSimulationFrequency);
 	classIUpdateInfo->addMethod("getFrameDeltaTime", &amalgam::IUpdateInfo::getFrameDeltaTime);
 	classIUpdateInfo->addMethod("getInterval", &amalgam::IUpdateInfo::getInterval);
+	classIUpdateInfo->addMethod("isRunningSlow", &amalgam::IUpdateInfo::isRunningSlow);
 	scriptManager->registerClass(classIUpdateInfo);
 
 	Ref< script::AutoScriptClass< BoxedTransition > > classBoxedTransition = new script::AutoScriptClass< BoxedTransition >();
