@@ -12,7 +12,7 @@ namespace traktor
 		namespace
 		{
 
-const float c_searchExtents[3] = { 512.0f, 1024.0f, 512.0f };
+const float c_searchExtents[3] = { 32.0f, 32.0f, 32.0f };
 
 float random()
 {
@@ -90,17 +90,39 @@ Ref< MoveQuery > NavMesh::createMoveQuery(const Vector4& startPosition, const Ve
 		&outputQuery->m_pathCount,
 		sizeof_array(outputQuery->m_path)
 	);
-	if (dtStatusFailed(status))
+	if (dtStatusFailed(status) || outputQuery->m_pathCount <= 0)
 	{
-		log::error << L"NavQuery; findPath failed, status "; FormatHex(log::error, status, 8); log::error << Endl;
-		return 0;
+		// Failed to create navmesh path; most probably no valid route exists.
+		// Create a short-cut path to move navigation entity back on track.
+		outputQuery->m_steerPath.push_back(outputQuery->m_endPosition);
+		return outputQuery;
 	}
 
-	if (outputQuery->m_pathCount <= 0)
+	float steerPath[256 * 3 + 1];
+	int32_t steerPathCount = 0;
+
+	status = outputQuery->m_navQuery->findStraightPath(
+		startPosN,
+		endPosN,
+		outputQuery->m_path,
+		outputQuery->m_pathCount,
+		steerPath,
+		0,
+		0,
+		&steerPathCount,
+		256
+	);
+	if (dtStatusFailed(status) || steerPathCount <= 0)
 	{
-		log::error << L"NavQuery; findPath failed, no path references" << Endl;
-		return 0;
+		// Failed to create navmesh path; most probably no valid route exists.
+		// Create a short-cut path to move navigation entity back on track.
+		outputQuery->m_steerPath.push_back(outputQuery->m_endPosition);
+		return outputQuery;
 	}
+
+	outputQuery->m_steerPath.reserve(steerPathCount);
+	for (int32_t i = 0; i < steerPathCount; ++i)
+		outputQuery->m_steerPath.push_back(Vector4::loadUnaligned(&steerPath[i * 3]).xyz1());
 
 	return outputQuery;
 }
