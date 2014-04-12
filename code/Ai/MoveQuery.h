@@ -2,6 +2,7 @@
 #define traktor_ai_MoveQuery_H
 
 #include "Core/Object.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Vector4.h"
 
 // import/export mechanism.
@@ -34,19 +35,19 @@ public:
 private:
 	friend class NavMesh;
 
-	enum { MaxSteerPoints = 32 };
+	enum
+	{
+		MaxPathPolygons = 1024
+	};
 
 	Vector4 m_startPosition;
 	Vector4 m_endPosition;
 	dtQueryFilter* m_filter;
 	dtNavMeshQuery* m_navQuery;
-	uint32_t m_path[256];
+	uint32_t m_path[MaxPathPolygons];
 	int32_t m_pathCount;
-	float m_steerPath[MaxSteerPoints * 3 + 1];
-	uint8_t m_steerPathFlags[MaxSteerPoints];
-	uint32_t m_steerPathPolys[MaxSteerPoints];
-	int32_t m_steerPathCount;
-	int32_t m_steerPathIter;
+	AlignedVector< Vector4 > m_steerPath;
+	int32_t m_steerIndex;
 };
 
 	}
