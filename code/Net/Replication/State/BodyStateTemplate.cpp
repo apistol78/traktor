@@ -106,12 +106,12 @@ void BodyStateTemplate::pack(BitWriter& writer, const IValue* V) const
 	const Transform& T = v.getTransform();
 	float T_MATH_ALIGN16 e[4];
 
-	// 3 * (13+9)
+	// 3 * (13+11)
 	T.translation().storeAligned(e);
 	for (uint32_t i = 0; i < 3; ++i)
-		writer.writeSigned(13+9, GenericFixedPoint< 13, 9 >(e[i]).raw());
+		writer.writeSigned(13+11, GenericFixedPoint< 13, 11 >(e[i]).raw());
 
-	// 16 + (3+7)
+	// 16 + (4+11)
 	Vector4 R = T.rotation().toAxisAngle();
 	
 	float a = R.length();
@@ -119,7 +119,7 @@ void BodyStateTemplate::pack(BitWriter& writer, const IValue* V) const
 		R /= Scalar(a);
 
 	writer.writeUnsigned(16, PackedUnitVector(R).raw());
-	writer.writeSigned(4+7, GenericFixedPoint< 4, 7 >(a).raw());
+	writer.writeSigned(4+11, GenericFixedPoint< 4, 11 >(a).raw());
 
 	// 16 + (7+8)
 	{
@@ -155,13 +155,13 @@ Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 
 	for (uint32_t i = 0; i < 3; ++i)
 	{
-		f[i] = GenericFixedPoint< 13, 9 >(reader.readSigned(13+9));
+		f[i] = GenericFixedPoint< 13, 11 >(reader.readSigned(13+11));
 		T_FATAL_ASSERT(!isNanOrInfinite(f[i]));
 	}
 
 	u = reader.readUnsigned(16);
 	Vector4 R = PackedUnitVector(u).unpack();
-	float Ra = GenericFixedPoint< 4, 7 >(reader.readSigned(4+7));
+	float Ra = GenericFixedPoint< 4, 11 >(reader.readSigned(4+11));
 
 	T = Transform(
 		Vector4(f[0], f[1], f[2], 1.0f),

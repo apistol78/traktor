@@ -331,7 +331,6 @@ private:
 		CircularVector< int32_t, MaxRoundTrips > roundTrips;
 		CircularVector< int32_t, Adjustments > timeOffsets;
 		int32_t latencyMedian;
-		int32_t latencyMinimum;
 		int32_t latencyReversed;
 		int32_t pendingIAm;
 		int32_t pendingPing;
@@ -349,7 +348,6 @@ private:
 		,	lastTimeLocal(0)
 		,	lastTimeRemote(0)
 		,	latencyMedian(0)
-		,	latencyMinimum(0)
 		,	latencyReversed(0)
 		,	pendingIAm(0)
 		,	pendingPing(0)
@@ -374,6 +372,7 @@ private:
 	int32_t m_time;
 	int32_t m_pingCount;
 	int32_t m_timeUntilPing;
+	double m_lastT;
 
 	void updatePeers(int32_t dT);
 

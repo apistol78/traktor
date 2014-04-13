@@ -153,7 +153,7 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	scriptManager->registerClass(classDiagnosePeers);
 
 	Ref< script::AutoScriptClass< net::InetSimPeers > > classInetSimPeers = new script::AutoScriptClass< net::InetSimPeers >();
-	classInetSimPeers->addConstructor< net::IReplicatorPeers* >();
+	classInetSimPeers->addConstructor< net::IReplicatorPeers*, int32_t >();
 	classInetSimPeers->addMethod("setPeerConnectionState", &net::InetSimPeers::setPeerConnectionState);
 	scriptManager->registerClass(classInetSimPeers);
 
