@@ -13,9 +13,10 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.InetSimPeers", InetSimPeers, IReplicatorPeers)
 
-InetSimPeers::InetSimPeers(IReplicatorPeers* peers)
+InetSimPeers::InetSimPeers(IReplicatorPeers* peers, int32_t latency)
 :	m_peers(peers)
 ,	m_noisyTime(0.0)
+,	m_latency(double(latency) / 1000.0)
 {
 	m_timer.start();
 }
@@ -40,7 +41,7 @@ bool InetSimPeers::update()
 		QueueItem* s = m_sendQueue.front();
 		T_ASSERT (s);
 
-		if (s->time + 0.2 > m_noisyTime)
+		if (s->time + m_latency > m_noisyTime)
 			break;
 
 		m_peers->send(
@@ -67,15 +68,14 @@ bool InetSimPeers::update()
 		QueueItem* r = new QueueItem();
 		r->time = m_timer.getElapsedTime();
 		r->handle = handle;
-		r->size = size;
+		r->size = result;
 		r->reliable = true;
 
-		std::memcpy(r->data, data, size);
+		std::memcpy(r->data, data, result);
 
 		m_receiveQueue.push_back(r);
 	}
 
-	//m_noisyTime += m_timer.getDeltaTime() + (m_random.nextDouble() * 0.01 - 0.005);
 	m_noisyTime = m_timer.getElapsedTime();
 	return true;
 }
@@ -121,7 +121,7 @@ int32_t InetSimPeers::receive(void* data, int32_t size, handle_t& outFromHandle)
 		return 0;
 
 	QueueItem* r = m_receiveQueue.front();
-	if (r->time + 0.2 > m_noisyTime)
+	if (r->time + m_latency > m_noisyTime)
 		return 0;
 
 	size = std::min(size, r->size);

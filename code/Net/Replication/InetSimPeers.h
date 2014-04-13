@@ -25,7 +25,7 @@ class T_DLLCLASS InetSimPeers : public IReplicatorPeers
 	T_RTTI_CLASS;
 
 public:
-	InetSimPeers(IReplicatorPeers* peers);
+	InetSimPeers(IReplicatorPeers* peers, int32_t latency);
 
 	virtual ~InetSimPeers();
 
@@ -66,6 +66,7 @@ private:
 	Timer m_timer;
 	Random m_random;
 	double m_noisyTime;
+	double m_latency;
 	Ref< IReplicatorPeers > m_peers;
 	std::map< handle_t, uint32_t > m_state;
 	std::list< QueueItem* > m_sendQueue;

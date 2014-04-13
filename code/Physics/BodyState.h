@@ -51,22 +51,39 @@ struct BodyState
 		BodyState state;
 
 		state.m_transform = lerp(m_transform, stateTarget.m_transform, interpolate);
-		state.m_linearVelocity = lerp(m_linearVelocity, stateTarget.m_linearVelocity, interpolate);
 
-		Quaternion Qv0 = Quaternion::fromAxisAngle(m_angularVelocity);
-		Quaternion Qv1 = Qv0.nearest(Quaternion::fromAxisAngle(stateTarget.m_angularVelocity));
-		Quaternion Qdiff = Qv1 * Qv0.inverse();
+		Scalar lv0 = m_linearVelocity.length();
+		Scalar lv1 = stateTarget.m_linearVelocity.length();
+		Scalar lv = lerp(lv0, lv1, interpolate);
 
-		Vector4 Vdiff = Qdiff.toAxisAngle();
-		Scalar angleDiff = Vdiff.length();
-
-		if (angleDiff > FUZZY_EPSILON)
-		{
-			Quaternion QdiffLerp = Quaternion::fromAxisAngle(Vdiff / angleDiff, angleDiff * interpolate);
-			state.m_angularVelocity = (QdiffLerp * Qv0).normalized().toAxisAngle();
-		}
+		if (abs(lv) > FUZZY_EPSILON)
+			state.m_linearVelocity = lerp(m_linearVelocity, stateTarget.m_linearVelocity, interpolate).normalized() * lv;
 		else
-			state.m_angularVelocity = m_angularVelocity;
+			state.m_linearVelocity = Vector4::zero();
+
+		Scalar av0 = m_angularVelocity.length();
+		Scalar av1 = stateTarget.m_angularVelocity.length();
+		Scalar av = lerp(av0, av1, interpolate);
+
+		if (abs(av) > FUZZY_EPSILON)
+			state.m_angularVelocity = lerp(m_angularVelocity, stateTarget.m_angularVelocity, interpolate).normalized() * av;
+		else
+			state.m_angularVelocity = Vector4::zero();
+
+		//Quaternion Qv0 = Quaternion::fromAxisAngle(m_angularVelocity);
+		//Quaternion Qv1 = Qv0.nearest(Quaternion::fromAxisAngle(stateTarget.m_angularVelocity));
+		//Quaternion Qdiff = Qv1 * Qv0.inverse();
+
+		//Vector4 Vdiff = Qdiff.toAxisAngle();
+		//Scalar angleDiff = Vdiff.length();
+
+		//if (angleDiff > FUZZY_EPSILON)
+		//{
+		//	Quaternion QdiffLerp = Quaternion::fromAxisAngle(Vdiff / angleDiff, angleDiff * interpolate);
+		//	state.m_angularVelocity = (QdiffLerp * Qv0).normalized().toAxisAngle();
+		//}
+		//else
+		//	state.m_angularVelocity = m_angularVelocity;
 
 		return state;
 	}

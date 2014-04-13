@@ -60,6 +60,7 @@ Replicator::Replicator()
 ,	m_time(0)
 ,	m_pingCount(0)
 ,	m_timeUntilPing(0)
+,	m_lastT(0.0)
 {
 	m_id = uint32_t(g_timer.getElapsedTime());
 }
@@ -99,6 +100,7 @@ bool Replicator::create(IReplicatorPeers* replicatorPeers, const Configuration& 
 		peer.endSite = i->endSite;
 	}
 
+	m_lastT = g_timer.getElapsedTime();
 	return true;
 }
 
@@ -155,12 +157,15 @@ void Replicator::addListener(IListener* listener)
 	m_listeners.push_back(listener);
 }
 
-bool Replicator::update(float /*T*/, float dT)
+bool Replicator::update(float /*T*/, float /*dT*/)
 {
 	if (!m_replicatorPeers)
 		return false;
 
-	int32_t idT = int32_t(dT * 1000.0f);
+	double T = g_timer.getElapsedTime();
+	int32_t idT = int32_t((T - m_lastT) * 1000.0);
+
+	//int32_t idT = int32_t(dT * 1000.0f);
 
 	updatePeers(idT);
 
@@ -176,6 +181,8 @@ bool Replicator::update(float /*T*/, float dT)
 
 	m_time0 += idT;
 	m_time += idT;
+	
+	m_lastT = T;
 
 	return bool(m_replicatorPeers != 0);
 }
@@ -288,7 +295,7 @@ uint8_t Replicator::getPeerStatus(handle_t peerHandle) const
 int32_t Replicator::getPeerLatency(handle_t peerHandle) const
 {
 	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
-	return i != m_peers.end() ? i->second.latencyMinimum : 0;
+	return i != m_peers.end() ? i->second.latencyMedian : 0;
 }
 
 int32_t Replicator::getPeerReversedLatency(handle_t peerHandle) const
@@ -918,18 +925,13 @@ void Replicator::receiveMessages()
 			peer.roundTrips.push_back(roundTrip);
 
 			// Get lowest and median round-trips and calculate latencies.
-			int32_t minrt = roundTrip;
 			int32_t sorted[MaxRoundTrips];
 			for (uint32_t i = 0; i < peer.roundTrips.size(); ++i)
-			{
 				sorted[i] = peer.roundTrips[i];
-				minrt = min(minrt, peer.roundTrips[i]);
-			}
 
 			std::sort(&sorted[0], &sorted[peer.roundTrips.size()]);
 
 			peer.latencyMedian = sorted[peer.roundTrips.size() / 2] / 2;
-			peer.latencyMinimum = minrt / 2;
 			peer.latencyReversed = msg.pong.latency;
 
 			if (peer.pendingPing > 0)
@@ -1099,7 +1101,7 @@ void Replicator::updateTimeSynchronization()
 	for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
 	{
 		Peer& peer = i->second;
-		if (peer.state == PsEstablished && peer.errorCount == 0 && peer.timeOffsets.full())
+		if (peer.state == PsEstablished && peer.timeOffsets.full())
 		{
 			for (uint32_t j = 0; j < Adjustments; ++j)
 				timeOffsets[j] = peer.timeOffsets[j];
