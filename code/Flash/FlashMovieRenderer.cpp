@@ -1,6 +1,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/Split.h"
+#include "Core/Timer/Timer.h"
 #include "Flash/FlashDictionary.h"
 #include "Flash/FlashButton.h"
 #include "Flash/FlashButtonInstance.h"
@@ -25,6 +26,11 @@ namespace traktor
 	{
 		namespace
 		{
+
+const SwfCxTransform c_cxWhite = { { 0, 255 }, { 0, 255 }, { 0, 255 }, { 0, 255 } };
+const SwfCxTransform c_cxRed =   { { 0, 255 }, { 0, 0 }, { 0, 0 }, { 0, 255 } };
+
+Timer s_timer;
 
 SwfCxTransform concateCxTransform(const SwfCxTransform& cxt1, const SwfCxTransform& cxt2)
 {
@@ -251,20 +257,34 @@ void FlashMovieRenderer::renderCharacter(
 		if (!editInstance->isVisible())
 			return;
 
+		const Aabb2& textBounds = editInstance->getEdit()->getTextBounds();
 		Matrix33 editTransform = transform * editInstance->getTransform();
 
 		const TextLayout* layout = editInstance->getTextLayout();
 		T_ASSERT (layout);
 
+		m_displayRenderer->beginMask(true);
+		m_displayRenderer->renderQuad(editTransform, textBounds, c_cxWhite);
+		m_displayRenderer->endMask();
+
 		const AlignedVector< TextLayout::Line >& lines = layout->getLines();
 		const AlignedVector< TextLayout::Attribute >& attribs = layout->getAttributes();
 		
-		const SwfCxTransform white = { { 0, 255 }, { 0, 255 }, { 0, 255 }, { 0, 255 } };
 		bool haveFocus = bool(FlashCharacterInstance::getFocus() == editInstance);
+		bool showCaret = bool((int32_t(s_timer.getElapsedTime() * 2.0f) & 1) == 0);
+		
 		int32_t caret = editInstance->getCaret();
-		Vector2 caretSize(100.0f, editInstance->getBounds().getExtent().y * 2.0f);
-		const float caretOffset = 100.0f;
+		Aabb2 caretBounds(Vector2(0.0f, 0.0f), Vector2(100.0f, layout->getFontHeight()));
 		float caretEndPosition = 0.0f;
+		float textOffset = 0.0f;
+
+		if (haveFocus && lines.size() == 1 && layout->getAlignment() == TextLayout::AnLeft)
+		{
+			const Aabb2& clipBounds = layout->getBounds();
+			float clipWidth = clipBounds.mx.x - clipBounds.mn.x;
+			if (lines[0].width > clipWidth)
+				textOffset = -(lines[0].width - clipWidth);
+		}
 
 		for (AlignedVector< TextLayout::Line >::const_iterator i = lines.begin(); i != lines.end(); ++i)
 		{
@@ -278,45 +298,56 @@ void FlashMovieRenderer::renderCharacter(
 
 				for (uint32_t k = 0; k < chars.size(); ++k)
 				{
+					caretEndPosition = textOffset + i->x + chars[k].x;
+
 					if (haveFocus && caret-- == 0)
 					{
-						m_displayRenderer->renderCaret(
-							editTransform * translate(chars[k].x + caretOffset, caretSize.y / 2.0f),
-							caretSize,
-							white
+						if (showCaret)
+							m_displayRenderer->renderQuad(
+								editTransform * translate(caretEndPosition + 50.0f, 0.0f),
+								caretBounds,
+								c_cxWhite
+							);
+					}
+
+					if (chars[k].ch != 0)
+					{
+						uint16_t glyphIndex = attrib.font->lookupIndex(chars[k].ch);
+
+						const FlashShape* glyphShape = attrib.font->getShape(glyphIndex);
+						if (!glyphShape)
+							continue;
+
+						m_displayRenderer->renderGlyph(
+							*dictionary,
+							editTransform * translate(textOffset + i->x + chars[k].x, i->y) * scale(fontScale, fontScale),
+							attrib.font->getMaxDimension(),
+							*glyphShape,
+							attrib.color,
+							cxTransform2,
+							editInstance->getFilter(),
+							editInstance->getFilterColor()
 						);
 					}
 
-					uint16_t glyphIndex = attrib.font->lookupIndex(chars[k].ch);
-
-					const FlashShape* glyphShape = attrib.font->getShape(glyphIndex);
-					if (!glyphShape)
-						continue;
-
-					m_displayRenderer->renderGlyph(
-						*dictionary,
-						editTransform * translate(chars[k].x, i->y) * scale(fontScale, fontScale),
-						attrib.font->getMaxDimension(),
-						*glyphShape,
-						attrib.color,
-						cxTransform2,
-						editInstance->getFilter(),
-						editInstance->getFilterColor()
-					);
-
-					caretEndPosition = chars[k].x + glyphShape->getShapeBounds().getExtent().x * 2.0f * fontScale;
+					caretEndPosition = textOffset + i->x + chars[k].x + chars[k].w;
 				}
 			}
 		}
 
-		if (haveFocus && caret-- == 0)
+		if (haveFocus && caret >= 0)
 		{
-			m_displayRenderer->renderCaret(
-				editTransform * translate(caretEndPosition + caretOffset, caretSize.y / 2.0f),
-				caretSize,
-				white
-			);
+			if (showCaret)
+				m_displayRenderer->renderQuad(
+					editTransform * translate(caretEndPosition + 50.0f, 0.0f),
+					caretBounds,
+					c_cxWhite
+				);
 		}
+
+		m_displayRenderer->beginMask(false);
+		m_displayRenderer->renderQuad(editTransform, textBounds, c_cxWhite);
+		m_displayRenderer->endMask();
 
 		return;
 	}

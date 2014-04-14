@@ -164,21 +164,15 @@ void AccGlyph::add(
 		return;
 
 	Matrix44 m1(
-		transform.e11, transform.e12, std::floor(transform.e13), 0.0f,
-		transform.e21, transform.e22, std::floor(transform.e23), 0.0f,
-		transform.e31, transform.e32, std::floor(transform.e33), 0.0f,
+		transform.e11, transform.e12, transform.e13, 0.0f,
+		transform.e21, transform.e22, transform.e23, 0.0f,
+		transform.e31, transform.e32, transform.e33, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
 	);
 
-	Aabb2 qb;
-	qb.mn.x = std::ceil(bounds.mn.x);
-	qb.mn.y = std::ceil(bounds.mn.y);
-	qb.mx.x = std::floor(bounds.mx.x);
-	qb.mx.y = std::floor(bounds.mx.y);
-
 	Matrix44 m2(
-		qb.mx.x - qb.mn.x, 0.0f, qb.mn.x, 0.0f,
-		0.0f, qb.mx.y - qb.mn.y, qb.mn.y, 0.0f,
+		bounds.mx.x - bounds.mn.x, 0.0f, bounds.mn.x, 0.0f,
+		0.0f, bounds.mx.y - bounds.mn.y, bounds.mn.y, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
 	);
@@ -198,8 +192,8 @@ void AccGlyph::add(
 		vertex->texOffsetAndScale[0] = textureOffset.x();
 		vertex->texOffsetAndScale[1] = textureOffset.y();
 
-		vertex->texOffsetAndScale[2] = qb.mx.x - qb.mn.x;
-		vertex->texOffsetAndScale[3] = qb.mx.y - qb.mn.y;
+		vertex->texOffsetAndScale[2] = bounds.mx.x - bounds.mn.x;
+		vertex->texOffsetAndScale[3] = bounds.mx.y - bounds.mn.y;
 
 		vertex++;
 	}
