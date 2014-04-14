@@ -54,6 +54,8 @@ public:
 		const SwfCxTransform& cxform,
 		render::ITexture* texture,
 		const Vector4& textureOffset,
+		bool maskWrite,
+		bool maskIncrement,
 		uint8_t maskReference
 	);
 
@@ -62,6 +64,8 @@ private:
 	resource::Proxy< render::Shader > m_shaderTextured;
 	resource::Proxy< render::Shader > m_shaderSolidMask;
 	resource::Proxy< render::Shader > m_shaderTexturedMask;
+	resource::Proxy< render::Shader > m_shaderIncrementMask;
+	resource::Proxy< render::Shader > m_shaderDecrementMask;
 	Ref< render::VertexBuffer > m_vertexBuffer;
 };
 

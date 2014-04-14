@@ -46,6 +46,8 @@ public:
 		Align align,
 		uint16_t leftMargin,
 		uint16_t rightMargin,
+		int16_t indent,
+		int16_t leading,
 		bool readOnly,
 		bool wordWrap,
 		bool multiLine,
@@ -114,6 +116,18 @@ public:
 	 */
 	uint16_t getRightMargin() const;
 
+	/*! \brief Get indent.
+	 *
+	 * \return Indent.
+	 */
+	int16_t getIndent() const;
+
+	/*! \brief Get leading.
+	 *
+	 * \return Leading.
+	 */
+	int16_t getLeading() const;
+
 	/*! \brief Read only.
 	 *
 	 * \return True if read-only.
@@ -150,6 +164,8 @@ private:
 	Align m_align;
 	uint16_t m_leftMargin;
 	uint16_t m_rightMargin;
+	int16_t m_indent;
+	int16_t m_leading;
 	bool m_readOnly;
 	bool m_wordWrap;
 	bool m_multiLine;

@@ -34,6 +34,7 @@ public:
 	struct Character
 	{
 		float x;
+		float w;
 		wchar_t ch;
 	};
 
@@ -46,6 +47,7 @@ public:
 	struct Line
 	{
 		float width;
+		float x;
 		float y;
 		AlignedVector< Word > words;
 	};
@@ -55,6 +57,8 @@ public:
 	void begin();
 
 	void setBounds(const Aabb2& bounds);
+
+	void setLeading(float leading);
 
 	void setLetterSpacing(float letterSpacing);
 
@@ -76,7 +80,11 @@ public:
 
 	const AlignedVector< Line >& getLines() const { return m_lines; }
 
+	const Aabb2& getBounds() const { return m_bounds; }
+
 	float getFontHeight() const { return m_fontHeight; }
+
+	Align getAlignment() const { return m_alignment; }
 
 	float getWidth() const { return m_width / 20.0f; }
 
@@ -87,6 +95,7 @@ private:
 	AlignedVector< Line > m_lines;
 	int32_t m_currentAttrib;
 	Aabb2 m_bounds;
+	float m_leading;
 	float m_letterSpacing;
 	float m_fontHeight;
 	bool m_wordWrap;

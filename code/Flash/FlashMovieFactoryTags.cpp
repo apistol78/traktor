@@ -373,14 +373,15 @@ bool FlashTagDefineEditText::read(SwfReader* swf, ReadContext& context)
 
 	uint8_t align = 0;
 	uint16_t leftMargin = 0, rightMargin = 0;
+	int16_t indent = 0, leading = 0;
 
 	if (hasLayout)
 	{
 		align = bs.readUInt8();
 		leftMargin = bs.readUInt16();
 		rightMargin = bs.readUInt16();
-		/*int16_t indent = */bs.readInt16();
-		/*int16_t leading = */bs.readInt16();
+		indent = bs.readInt16();
+		leading = bs.readInt16();
 	}
 
 	std::wstring variableName = mbstows(swf->readString());
@@ -402,6 +403,8 @@ bool FlashTagDefineEditText::read(SwfReader* swf, ReadContext& context)
 		(FlashEdit::Align)align,
 		leftMargin,
 		rightMargin,
+		indent,
+		leading,
 		readOnly,
 		wordWrap,
 		multiLine,

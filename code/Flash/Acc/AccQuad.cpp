@@ -20,6 +20,8 @@ const resource::Id< render::Shader > c_idShaderSolid(Guid(L"{1EDAAA67-1E02-8A49-
 const resource::Id< render::Shader > c_idShaderTextured(Guid(L"{10426D17-CF0A-4849-A207-24F101A78459}"));
 const resource::Id< render::Shader > c_idShaderSolidMask(Guid(L"{2EDC5E1B-562D-9F46-9E3C-474729FB078E}"));
 const resource::Id< render::Shader > c_idShaderTexturedMask(Guid(L"{98A59F6A-1D90-144C-B688-4CEF382453F2}"));
+const resource::Id< render::Shader > c_idShaderIncrementMask(Guid(L"{16868DF6-A619-5541-83D2-94088A0AC552}"));
+const resource::Id< render::Shader > c_idShaderDecrementMask(Guid(L"{D6821007-47BB-D748-9E29-20829ED09C70}"));
 
 #pragma pack(1)
 struct Vertex
@@ -68,6 +70,10 @@ bool AccQuad::create(
 		return false;
 	if (!resourceManager->bind(c_idShaderTexturedMask, m_shaderTexturedMask))
 		return false;
+	if (!resourceManager->bind(c_idShaderIncrementMask, m_shaderIncrementMask))
+		return false;
+	if (!resourceManager->bind(c_idShaderDecrementMask, m_shaderDecrementMask))
+		return false;
 
 	std::vector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(Vertex, pos)));
@@ -106,6 +112,8 @@ void AccQuad::render(
 	const SwfCxTransform& cxform,
 	render::ITexture* texture,
 	const Vector4& textureOffset,
+	bool maskWrite,
+	bool maskIncrement,
 	uint8_t maskReference
 )
 {
@@ -126,15 +134,31 @@ void AccQuad::render(
 	Matrix44 m = m1 * m2;
 
 	Ref< render::Shader > shaderSolid, shaderTextured;
-	if (maskReference == 0)
+	if (!maskWrite)
 	{
-		shaderSolid = m_shaderSolid;
-		shaderTextured = m_shaderTextured;
+		if (maskReference == 0)
+		{
+			shaderSolid = m_shaderSolid;
+			shaderTextured = m_shaderTextured;
+		}
+		else
+		{
+			shaderSolid = m_shaderSolidMask;
+			shaderTextured = m_shaderTexturedMask;
+		}
 	}
 	else
 	{
-		shaderSolid = m_shaderSolidMask;
-		shaderTextured = m_shaderTexturedMask;
+		if (maskIncrement)
+		{
+			shaderSolid = m_shaderIncrementMask;
+			shaderTextured = m_shaderIncrementMask;
+		}
+		else
+		{
+			shaderSolid = m_shaderDecrementMask;
+			shaderTextured = m_shaderDecrementMask;
+		}
 	}
 
 	render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >("Flash AccQuad");

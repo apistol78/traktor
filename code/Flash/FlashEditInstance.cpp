@@ -96,7 +96,24 @@ void traverseHtmlDOM(const html::Element* element, const FlashFont* font, const 
 			layout->insertText(child->getValue());
 	}
 
+	if (element->getName() == L"p")
+		layout->newLine();
+
 	layout->setAttribute(font, textColor);
+}
+
+Aabb2 adjustForGutter(const Aabb2& aabb)
+{
+	return Aabb2(
+		Vector2(
+			aabb.mn.x + 2.0f * 20.0f,
+			aabb.mn.y + 2.0f * 20.0f
+		),
+		Vector2(
+			aabb.mx.x - 2.0f * 20.0f,
+			aabb.mx.y - 2.0f * 20.0f
+		)
+	);
 }
 
 		}
@@ -295,7 +312,8 @@ bool FlashEditInstance::internalParseText(const std::wstring& text)
 
 	m_layout->begin();
 
-	m_layout->setBounds(m_edit->getTextBounds());
+	m_layout->setBounds(adjustForGutter(m_edit->getTextBounds()));
+	m_layout->setLeading(m_edit->getLeading());
 	m_layout->setLetterSpacing(m_letterSpacing);
 	m_layout->setFontHeight(m_edit->getFontHeight());
 	m_layout->setWordWrap(m_edit->wordWrap());
@@ -338,7 +356,8 @@ bool FlashEditInstance::internalParseHtml(const std::wstring& html)
 
 	m_layout->begin();
 
-	m_layout->setBounds(m_edit->getTextBounds());
+	m_layout->setBounds(adjustForGutter(m_edit->getTextBounds()));
+	m_layout->setLeading(m_edit->getLeading());
 	m_layout->setLetterSpacing(m_letterSpacing);
 	m_layout->setFontHeight(m_edit->getFontHeight());
 	m_layout->setWordWrap(m_edit->wordWrap());

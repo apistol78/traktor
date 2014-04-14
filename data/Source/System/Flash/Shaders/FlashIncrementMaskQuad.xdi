@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph">
+	<nodes>
+		<item type="traktor.render.Uniform" version="1">
+			<comment/>
+			<position>
+				<first>291</first>
+				<second>388</second>
+			</position>
+			<parameterName>Flash_CxFormAdd</parameterName>
+			<type>PtVector</type>
+			<frequency>UfDraw</frequency>
+		</item>
+		<item type="traktor.render.External" version="1">
+			<comment/>
+			<position>
+				<first>305</first>
+				<second>251</second>
+			</position>
+			<fragmentGuid>{46AAC087-9D83-3047-93E2-36B77218D3C7}</fragmentGuid>
+			<inputPins/>
+			<outputPins>
+				<item>
+					<name>Output</name>
+				</item>
+				<item>
+					<name>Color</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.PixelOutput" version="5">
+			<comment/>
+			<position>
+				<first>524</first>
+				<second>352</second>
+			</position>
+			<technique>Default</technique>
+			<priority>
+				<setup>false</setup>
+				<opaque>false</opaque>
+				<postOpaque>false</postOpaque>
+				<alphaBlend>false</alphaBlend>
+				<postAlphaBlend>false</postAlphaBlend>
+				<overlay>false</overlay>
+			</priority>
+			<cullMode>CmNever</cullMode>
+			<blendEnable>false</blendEnable>
+			<blendOperation>BoAdd</blendOperation>
+			<blendSource>BfSourceAlpha</blendSource>
+			<blendDestination>BfOneMinusSourceAlpha</blendDestination>
+			<colorWriteMask>
+				<red>false</red>
+				<green>false</green>
+				<blue>false</blue>
+				<alpha>false</alpha>
+			</colorWriteMask>
+			<depthEnable>false</depthEnable>
+			<depthWriteEnable>false</depthWriteEnable>
+			<depthFunction>CfLessEqual</depthFunction>
+			<alphaTestEnable>false</alphaTestEnable>
+			<alphaTestFunction>CfLess</alphaTestFunction>
+			<alphaTestReference>128</alphaTestReference>
+			<alphaToCoverageEnable>false</alphaToCoverageEnable>
+			<wireframe>false</wireframe>
+			<stencilEnable>true</stencilEnable>
+			<stencilFail>SoKeep</stencilFail>
+			<stencilZFail>SoKeep</stencilZFail>
+			<stencilPass>SoIncrement</stencilPass>
+			<stencilFunction>CfAlways</stencilFunction>
+			<stencilReference>0</stencilReference>
+			<stencilMask>2147483648</stencilMask>
+			<registerCount>0</registerCount>
+		</item>
+		<item type="traktor.render.VertexOutput" version="1">
+			<comment/>
+			<position>
+				<first>513</first>
+				<second>243</second>
+			</position>
+			<technique>Default</technique>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+	</edges>
+</object>

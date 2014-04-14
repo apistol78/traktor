@@ -507,6 +507,8 @@ void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Ma
 			c_cxfZero,
 			0,
 			Vector4::zero(),
+			false,
+			false,
 			0
 		);
 
@@ -544,12 +546,8 @@ void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Ma
 	);
 }
 
-void AccDisplayRenderer::renderCaret(const Matrix33& transform, const Vector2& fontMaxDimension, const SwfCxTransform& cxform)
+void AccDisplayRenderer::renderQuad(const Matrix33& transform, const Aabb2& bounds, const SwfCxTransform& cxform)
 {
-	Aabb2 bounds;
-	bounds.mn = -fontMaxDimension / 2.0f;
-	bounds.mx = fontMaxDimension / 2.0f;
-
 	m_quad->render(
 		m_renderContext,
 		bounds,
@@ -560,6 +558,8 @@ void AccDisplayRenderer::renderCaret(const Matrix33& transform, const Vector2& f
 		cxform,
 		0,
 		Vector4::zero(),
+		m_maskWrite,
+		m_maskIncrement,
 		m_maskReference
 	);
 }

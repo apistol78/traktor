@@ -321,7 +321,7 @@ void EditorPlugin::eventTargetListPlay(ui::Event* event)
 
 		// Expose _DEBUG script definition when launching through editor, ie not migrating.
 		Ref< PropertyGroup > pipelineSettings = new PropertyGroup();
-		if (event->getKeyState() == 0)
+		if ((event->getKeyState() & ui::KsControl) == 0)
 		{
 			std::set< std::wstring > scriptPrepDefinitions;
 			scriptPrepDefinitions.insert(L"_DEBUG");

@@ -42,6 +42,8 @@ FlashEdit::FlashEdit(
 	Align align,
 	uint16_t leftMargin,
 	uint16_t rightMargin,
+	int16_t indent,
+	int16_t leading,
 	bool readOnly,
 	bool wordWrap,
 	bool multiLine,
@@ -57,6 +59,8 @@ FlashEdit::FlashEdit(
 ,	m_align(align)
 ,	m_leftMargin(leftMargin)
 ,	m_rightMargin(rightMargin)
+,	m_indent(indent)
+,	m_leading(leading)
 ,	m_readOnly(readOnly)
 ,	m_wordWrap(wordWrap)
 ,	m_multiLine(multiLine)
@@ -120,6 +124,16 @@ uint16_t FlashEdit::getRightMargin() const
 	return m_rightMargin;
 }
 
+int16_t FlashEdit::getIndent() const
+{
+	return m_indent;
+}
+
+int16_t FlashEdit::getLeading() const
+{
+	return m_leading;
+}
+
 bool FlashEdit::readOnly() const
 {
 	return m_readOnly;
@@ -159,9 +173,11 @@ void FlashEdit::serialize(ISerializer& s)
 	s >> MemberSwfColor(L"textColor", m_textColor);
 	s >> Member< uint16_t >(L"maxLength", m_maxLength);
 	s >> Member< std::wstring >(L"initialText", m_initialText);
-	s >> MemberEnum< Align >(L"m_align", m_align, kAlign);
+	s >> MemberEnum< Align >(L"align", m_align, kAlign);
 	s >> Member< uint16_t >(L"leftMargin", m_leftMargin);
 	s >> Member< uint16_t >(L"rightMargin", m_rightMargin);
+	s >> Member< int16_t >(L"indent", m_indent);
+	s >> Member< int16_t >(L"leading", m_leading);
 	s >> Member< bool >(L"readOnly", m_readOnly);
 	s >> Member< bool >(L"wordWrap", m_wordWrap);
 	s >> Member< bool >(L"multiLine", m_multiLine);
