@@ -54,7 +54,8 @@ namespace traktor
 const int32_t c_databasePollInterval = 5;
 const uint32_t c_simulationFrequency = 60;
 const float c_simulationDeltaTime = 1.0f / c_simulationFrequency;
-const float c_maxDeltaTime = 1.0f / 20.0f;
+const float c_maxDeltaTime = 1.0f / 15.0f;
+const int32_t c_maxDeltaTimeErrors = 50;
 const float c_deltaTimeFilterCoeff = 0.99f;
 
 		}
@@ -574,7 +575,7 @@ bool Application::update()
 		if (deltaTime > c_maxDeltaTime)
 		{
 			deltaTime = c_maxDeltaTime;
-			if (++m_deltaTimeError >= 20)
+			if (++m_deltaTimeError >= c_maxDeltaTimeErrors)
 				m_updateInfo.m_runningSlow = true;
 		}
 		else
