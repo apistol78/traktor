@@ -20,6 +20,7 @@
 #include "World/Forward/WorldRenderPassForward.h"
 #include "World/PostProcess/PostProcess.h"
 #include "World/PostProcess/PostProcessSettings.h"
+#include "World/PostProcess/PostProcessTargetPool.h"
 #include "World/SMProj/BoxShadowProjection.h"
 #include "World/SMProj/LiSPShadowProjection.h"
 #include "World/SMProj/TrapezoidShadowProjection.h"
@@ -99,6 +100,9 @@ bool WorldRendererForward::create(
 
 	int32_t width = renderView->getWidth();
 	int32_t height = renderView->getHeight();
+
+	// Create post process target pool to enable sharing of targets between multiple processes.
+	Ref< PostProcessTargetPool > postProcessTargetPool = new PostProcessTargetPool(renderSystem);
 
 	// Create "depth map" target.
 	if (m_settings.depthPassEnabled || m_shadowsQuality > QuDisabled)
@@ -202,6 +206,7 @@ bool WorldRendererForward::create(
 				m_shadowMaskProject = new PostProcess();
 				if (!m_shadowMaskProject->create(
 					shadowMaskProject,
+					postProcessTargetPool,
 					resourceManager,
 					renderSystem,
 					rtscd.width,
@@ -215,6 +220,7 @@ bool WorldRendererForward::create(
 				m_shadowMaskFilter = new PostProcess();
 				if (!m_shadowMaskFilter->create(
 					shadowMaskFilter,
+					postProcessTargetPool,
 					resourceManager,
 					renderSystem,
 					rtscd.width,
@@ -303,6 +309,7 @@ bool WorldRendererForward::create(
 			m_ambientOcclusion = new PostProcess();
 			if (!m_ambientOcclusion->create(
 				ambientOcclusion,
+				postProcessTargetPool,
 				resourceManager,
 				renderSystem,
 				width,
@@ -354,6 +361,7 @@ bool WorldRendererForward::create(
 			m_antiAlias = new PostProcess();
 			if (!m_antiAlias->create(
 				antiAlias,
+				postProcessTargetPool,
 				resourceManager,
 				renderSystem,
 				width,
@@ -372,6 +380,7 @@ bool WorldRendererForward::create(
 		m_visualPostProcess = new world::PostProcess();
 		if (!m_visualPostProcess->create(
 			desc.postProcessSettings,
+			postProcessTargetPool,
 			resourceManager,
 			renderSystem,
 			width,
@@ -395,6 +404,7 @@ bool WorldRendererForward::create(
 			m_gammaCorrectionPostProcess = new PostProcess();
 			if (!m_gammaCorrectionPostProcess->create(
 				gammaCorrection,
+				postProcessTargetPool,
 				resourceManager,
 				renderSystem,
 				width,

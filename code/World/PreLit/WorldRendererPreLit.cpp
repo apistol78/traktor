@@ -18,6 +18,7 @@
 #include "World/WorldRenderView.h"
 #include "World/PostProcess/PostProcess.h"
 #include "World/PostProcess/PostProcessSettings.h"
+#include "World/PostProcess/PostProcessTargetPool.h"
 #include "World/PreLit/LightRenderer.h"
 #include "World/PreLit/WorldRendererPreLit.h"
 #include "World/PreLit/WorldRenderPassPreLit.h"
@@ -130,6 +131,9 @@ bool WorldRendererPreLit::create(
 	int32_t frameHeight = renderView->getHeight();
 	int32_t width = frameWidth * superSample;
 	int32_t height = frameHeight * superSample;
+
+	// Create post process target pool to enable sharing of targets between multiple processes.
+	Ref< PostProcessTargetPool > postProcessTargetPool = new PostProcessTargetPool(renderSystem);
 
 	// Create "gbuffer" targets.
 	{
@@ -273,6 +277,7 @@ bool WorldRendererPreLit::create(
 				m_shadowMaskProject = new PostProcess();
 				if (!m_shadowMaskProject->create(
 					shadowMaskProject,
+					postProcessTargetPool,
 					resourceManager,
 					renderSystem,
 					desc.width,
@@ -286,6 +291,7 @@ bool WorldRendererPreLit::create(
 				m_shadowMaskFilter = new PostProcess();
 				if (!m_shadowMaskFilter->create(
 					shadowMaskFilter,
+					postProcessTargetPool,
 					resourceManager,
 					renderSystem,
 					desc.width,
@@ -349,6 +355,7 @@ bool WorldRendererPreLit::create(
 			m_colorTargetCopy = new world::PostProcess();
 			if (!m_colorTargetCopy->create(
 				colorTargetCopy,
+				postProcessTargetPool,
 				resourceManager,
 				renderSystem,
 				width,
@@ -400,6 +407,7 @@ bool WorldRendererPreLit::create(
 			m_ambientOcclusion = new PostProcess();
 			if (!m_ambientOcclusion->create(
 				ambientOcclusion,
+				postProcessTargetPool,
 				resourceManager,
 				renderSystem,
 				width,
@@ -452,6 +460,7 @@ bool WorldRendererPreLit::create(
 			m_antiAlias = new PostProcess();
 			if (!m_antiAlias->create(
 				antiAlias,
+				postProcessTargetPool,
 				resourceManager,
 				renderSystem,
 				frameWidth,
@@ -470,6 +479,7 @@ bool WorldRendererPreLit::create(
 		m_visualPostProcess = new world::PostProcess();
 		if (!m_visualPostProcess->create(
 			desc.postProcessSettings,
+			postProcessTargetPool,
 			resourceManager,
 			renderSystem,
 			width,
@@ -493,6 +503,7 @@ bool WorldRendererPreLit::create(
 			m_gammaCorrectionPostProcess = new PostProcess();
 			if (!m_gammaCorrectionPostProcess->create(
 				gammaCorrection,
+				postProcessTargetPool,
 				resourceManager,
 				renderSystem,
 				width,

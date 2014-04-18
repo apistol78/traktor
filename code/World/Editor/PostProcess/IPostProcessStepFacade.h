@@ -1,6 +1,7 @@
 #ifndef traktor_world_IPostProcessStepFacade_H
 #define traktor_world_IPostProcessStepFacade_H
 
+#include <list>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 
@@ -19,6 +20,8 @@ public:
 	virtual int32_t getImage(const PostProcessStep* step) const = 0;
 
 	virtual std::wstring getText(const PostProcessStep* step) const = 0;
+
+	virtual void getSources(const PostProcessStep* step, std::vector< std::wstring >& outSources) const = 0;
 
 	virtual bool canHaveChildren() const = 0;
 

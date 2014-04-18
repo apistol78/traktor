@@ -75,6 +75,8 @@ public:
 
 	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 
+	const std::wstring& getSource() const { return m_source; }
+
 private:
 	resource::Id< render::Shader > m_shader;
 	std::wstring m_source;

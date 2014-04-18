@@ -336,54 +336,64 @@ bool ProgramDx11::bind(
 		}
 
 		// Bind this program's resources.
-		for (AlignedVector< std::pair< UINT, uint32_t > >::const_iterator i = m_vertexState.resourceIndices.begin(); i != m_vertexState.resourceIndices.end(); ++i)
+		if (!m_vertexState.resourceIndices.empty())
 		{
-			ITexture* texture = m_parameterTextureArray[i->second];
-			if (!texture)
-				continue;
+			ID3D11ShaderResourceView* d3dVSTextureResourceViews[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+			for (AlignedVector< std::pair< UINT, uint32_t > >::const_iterator i = m_vertexState.resourceIndices.begin(); i != m_vertexState.resourceIndices.end(); ++i)
+			{
+				ITexture* texture = m_parameterTextureArray[i->second];
+				if (!texture)
+					continue;
 
-			Ref< ITexture > resolved = texture->resolve();
-			if (!resolved)
-				continue;
+				Ref< ITexture > resolved = texture->resolve();
+				if (!resolved)
+					continue;
 
-			ID3D11ShaderResourceView* d3dTextureResourceView;
-			if (is_a< SimpleTextureDx11 >(resolved))
-				d3dTextureResourceView = static_cast< SimpleTextureDx11* >(resolved.ptr())->getD3D11TextureResourceView();
-			else if (is_a< CubeTextureDx11 >(resolved))
-				d3dTextureResourceView = static_cast< CubeTextureDx11* >(resolved.ptr())->getD3D11TextureResourceView();
-			else if (is_a< RenderTargetDx11 >(resolved))
-				d3dTextureResourceView = static_cast< RenderTargetDx11* >(resolved.ptr())->getD3D11TextureResourceView();
-			else if (is_a< VolumeTextureDx11 >(resolved))
-				d3dTextureResourceView = static_cast< VolumeTextureDx11* >(resolved.ptr())->getD3D11TextureResourceView();
-			else
-				continue;
+				ID3D11ShaderResourceView* d3dTextureResourceView;
+				if (is_a< SimpleTextureDx11 >(resolved))
+					d3dTextureResourceView = static_cast< SimpleTextureDx11* >(resolved.ptr())->getD3D11TextureResourceView();
+				else if (is_a< CubeTextureDx11 >(resolved))
+					d3dTextureResourceView = static_cast< CubeTextureDx11* >(resolved.ptr())->getD3D11TextureResourceView();
+				else if (is_a< RenderTargetDx11 >(resolved))
+					d3dTextureResourceView = static_cast< RenderTargetDx11* >(resolved.ptr())->getD3D11TextureResourceView();
+				else if (is_a< VolumeTextureDx11 >(resolved))
+					d3dTextureResourceView = static_cast< VolumeTextureDx11* >(resolved.ptr())->getD3D11TextureResourceView();
+				else
+					continue;
 
-			d3dDeviceContext->VSSetShaderResources(i->first, 1, &d3dTextureResourceView);
+				d3dVSTextureResourceViews[i->first] = d3dTextureResourceView;
+			}
+			d3dDeviceContext->VSSetShaderResources(0, sizeof_array(d3dVSTextureResourceViews), d3dVSTextureResourceViews);
 		}
 
-		for (AlignedVector< std::pair< UINT, uint32_t > >::const_iterator i = m_pixelState.resourceIndices.begin(); i != m_pixelState.resourceIndices.end(); ++i)
+		if (!m_pixelState.resourceIndices.empty())
 		{
-			ITexture* texture = m_parameterTextureArray[i->second];
-			if (!texture)
-				continue;
+			ID3D11ShaderResourceView* d3dPSTextureResourceViews[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+			for (AlignedVector< std::pair< UINT, uint32_t > >::const_iterator i = m_pixelState.resourceIndices.begin(); i != m_pixelState.resourceIndices.end(); ++i)
+			{
+				ITexture* texture = m_parameterTextureArray[i->second];
+				if (!texture)
+					continue;
 
-			Ref< ITexture > resolved = texture->resolve();
-			if (!resolved)
-				continue;
+				Ref< ITexture > resolved = texture->resolve();
+				if (!resolved)
+					continue;
 
-			ID3D11ShaderResourceView* d3dTextureResourceView;
-			if (is_a< SimpleTextureDx11 >(resolved))
-				d3dTextureResourceView = static_cast< SimpleTextureDx11* >(resolved.ptr())->getD3D11TextureResourceView();
-			else if (is_a< CubeTextureDx11 >(resolved))
-				d3dTextureResourceView = static_cast< CubeTextureDx11* >(resolved.ptr())->getD3D11TextureResourceView();
-			else if (is_a< RenderTargetDx11 >(resolved))
-				d3dTextureResourceView = static_cast< RenderTargetDx11* >(resolved.ptr())->getD3D11TextureResourceView();
-			else if (is_a< VolumeTextureDx11 >(resolved))
-				d3dTextureResourceView = static_cast< VolumeTextureDx11* >(resolved.ptr())->getD3D11TextureResourceView();
-			else
-				continue;
+				ID3D11ShaderResourceView* d3dTextureResourceView;
+				if (is_a< SimpleTextureDx11 >(resolved))
+					d3dTextureResourceView = static_cast< SimpleTextureDx11* >(resolved.ptr())->getD3D11TextureResourceView();
+				else if (is_a< CubeTextureDx11 >(resolved))
+					d3dTextureResourceView = static_cast< CubeTextureDx11* >(resolved.ptr())->getD3D11TextureResourceView();
+				else if (is_a< RenderTargetDx11 >(resolved))
+					d3dTextureResourceView = static_cast< RenderTargetDx11* >(resolved.ptr())->getD3D11TextureResourceView();
+				else if (is_a< VolumeTextureDx11 >(resolved))
+					d3dTextureResourceView = static_cast< VolumeTextureDx11* >(resolved.ptr())->getD3D11TextureResourceView();
+				else
+					continue;
 
-			d3dDeviceContext->PSSetShaderResources(i->first, 1, &d3dTextureResourceView);
+				d3dPSTextureResourceViews[i->first] = d3dTextureResourceView;
+			}
+			d3dDeviceContext->PSSetShaderResources(0, sizeof_array(d3dPSTextureResourceViews), d3dPSTextureResourceViews);
 		}
 
 		m_parameterTextureArrayDirty = false;

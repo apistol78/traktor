@@ -1,5 +1,5 @@
-#ifndef traktor_world_PostProcessStepRepeatFacade_H
-#define traktor_world_PostProcessStepRepeatFacade_H
+#ifndef traktor_world_PostProcessStepLensDirtFacade_H
+#define traktor_world_PostProcessStepLensDirtFacade_H
 
 #include "World/Editor/PostProcess/IPostProcessStepFacade.h"
 
@@ -8,7 +8,7 @@ namespace traktor
 	namespace world
 	{
 
-class PostProcessStepRepeatFacade : public IPostProcessStepFacade
+class PostProcessStepLensDirtFacade : public IPostProcessStepFacade
 {
 	T_RTTI_CLASS;
 
@@ -31,4 +31,4 @@ public:
 	}
 }
 
-#endif	// traktor_world_PostProcessStepRepeatFacade_H
+#endif	// traktor_world_PostProcessStepLensDirtFacade_H

@@ -11,7 +11,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessDefineTarget", 3, PostProcessDefineTarget, PostProcessDefine)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessDefineTarget", 4, PostProcessDefineTarget, PostProcessDefine)
 
 PostProcessDefineTarget::PostProcessDefineTarget()
 :	m_width(0)
@@ -25,42 +25,37 @@ PostProcessDefineTarget::PostProcessDefineTarget()
 ,	m_preferTiled(false)
 ,	m_multiSample(0)
 ,	m_clearColor(0.0f, 0.0f, 0.0f, 0.0f)
+,	m_persistent(false)
 {
 }
 
 bool PostProcessDefineTarget::define(PostProcess* postProcess, render::IRenderSystem* renderSystem, uint32_t screenWidth, uint32_t screenHeight)
 {
-	render::RenderTargetSetCreateDesc desc;
+	render::RenderTargetSetCreateDesc rtscd;
 
-	desc.count = 1;
-	desc.width = m_width + (m_screenWidthDenom ? (screenWidth + m_screenWidthDenom - 1) / m_screenWidthDenom : 0);
-	desc.height = m_height + (m_screenHeightDenom ? (screenHeight + m_screenHeightDenom - 1) / m_screenHeightDenom : 0);
-	desc.multiSample = m_multiSample;
-	desc.createDepthStencil = m_depthStencil;
-	desc.usingPrimaryDepthStencil = false;
-	desc.ignoreStencil = true;
-	desc.preferTiled = m_preferTiled;
-	desc.targets[0].format = m_format;
+	rtscd.count = 1;
+	rtscd.width = m_width + (m_screenWidthDenom ? (screenWidth + m_screenWidthDenom - 1) / m_screenWidthDenom : 0);
+	rtscd.height = m_height + (m_screenHeightDenom ? (screenHeight + m_screenHeightDenom - 1) / m_screenHeightDenom : 0);
+	rtscd.multiSample = m_multiSample;
+	rtscd.createDepthStencil = m_depthStencil;
+	rtscd.usingPrimaryDepthStencil = false;
+	rtscd.ignoreStencil = true;
+	rtscd.preferTiled = m_preferTiled;
+	rtscd.targets[0].format = m_format;
 
 	if (m_maxWidth > 0)
-		desc.width = min< int32_t >(desc.width, m_maxWidth);
+		rtscd.width = min< int32_t >(rtscd.width, m_maxWidth);
 	if (m_maxHeight > 0)
-		desc.height = min< int32_t >(desc.height, m_maxHeight);
-
-	Ref< render::RenderTargetSet > renderTargetSet = renderSystem->createRenderTargetSet(desc);
-	if (!renderTargetSet)
-	{
-		log::error << L"Unable to create render target (" << desc.width << L"*" << desc.height << L" " << render::getTextureFormatName(m_format) << L")" << Endl;
-		return false;
-	}
+		rtscd.height = min< int32_t >(rtscd.height, m_maxHeight);
 
 	postProcess->defineTarget(
 		render::getParameterHandle(m_id),
-		renderTargetSet,
-		m_clearColor
+		rtscd,
+		m_clearColor,
+		m_persistent
 	);
 
-	T_DEBUG(L"Post process target \"" << m_id << L"\" (" << desc.width << L"*" << desc.height << L" " << render::getTextureFormatName(m_format) << L") created");
+	T_DEBUG(L"Post process target \"" << m_id << L"\" (" << rtscd.width << L"*" << rtscd.height << L" " << render::getTextureFormatName(m_format) << L") created");
 	return true;
 }
 
@@ -107,6 +102,9 @@ void PostProcessDefineTarget::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 2)
 		s >> Member< Color4f >(L"clearColor", m_clearColor);
+
+	if (s.getVersion() >= 4)
+		s >> Member< bool >(L"persistent", m_persistent);
 }
 
 	}

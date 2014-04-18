@@ -6,7 +6,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.world.PostProcessStepRepeatFacade", PostProcessStepRepeatFacade, IPostProcessStepFacade)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessStepRepeatFacade", 0, PostProcessStepRepeatFacade, IPostProcessStepFacade)
 
 int32_t PostProcessStepRepeatFacade::getImage(const PostProcessStep* step) const
 {
@@ -16,6 +16,10 @@ int32_t PostProcessStepRepeatFacade::getImage(const PostProcessStep* step) const
 std::wstring PostProcessStepRepeatFacade::getText(const PostProcessStep* step) const
 {
 	return L"Repeat";
+}
+
+void PostProcessStepRepeatFacade::getSources(const PostProcessStep* step, std::vector< std::wstring >& outSources) const
+{
 }
 
 bool PostProcessStepRepeatFacade::canHaveChildren() const

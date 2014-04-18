@@ -186,7 +186,7 @@ void FlashLayer::prepare()
 		int32_t height = renderView->getHeight();
 
 		m_postProcess = new world::PostProcess();
-		m_postProcess->create(m_postProcessSettings, resourceManager, renderSystem, width, height);
+		m_postProcess->create(m_postProcessSettings, 0, resourceManager, renderSystem, width, height);
 
 		render::RenderTargetSetCreateDesc desc;
 		desc.count = 1;
