@@ -9,6 +9,7 @@
 #include "World/PostProcess/PostProcessDefine.h"
 #include "World/PostProcess/PostProcessSettings.h"
 #include "World/PostProcess/PostProcessStep.h"
+#include "World/PostProcess/PostProcessTargetPool.h"
 
 namespace traktor
 {
@@ -37,6 +38,7 @@ PostProcess::PostProcess()
 
 bool PostProcess::create(
 	const PostProcessSettings* settings,
+	PostProcessTargetPool* targetPool,
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
 	uint32_t width,
@@ -70,7 +72,9 @@ bool PostProcess::create(
 		}
 	}
 
+	m_targetPool = (targetPool != 0) ? targetPool : new PostProcessTargetPool(renderSystem);
 	m_requireHighRange = settings->requireHighRange();
+
 	return true;
 }
 
@@ -81,18 +85,8 @@ void PostProcess::destroy()
 
 	m_instances.resize(0);
 
-	for (SmallMap< render::handle_t, Target >::iterator i = m_targets.begin(); i != m_targets.end(); ++i)
-	{
-		if (
-			i->second.target &&
-			i->first != s_handleOutput &&
-			i->first != s_handleInputColor &&
-			i->first != s_handleInputDepth &&
-			i->first != s_handleInputShadowMask
-		)
-			i->second.target->destroy();
-	}
 	m_targets.clear();
+	m_targetPool = 0;
 
 	if (m_screenRenderer)
 	{
@@ -111,28 +105,34 @@ bool PostProcess::render(
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-	m_targets[s_handleInputColor].target = colorBuffer;
-	m_targets[s_handleInputDepth].target = depthBuffer;
-	m_targets[s_handleInputShadowMask].target = shadowMask;
+	m_targets[s_handleInputColor].rts = colorBuffer;
+	m_targets[s_handleInputColor].persistent = true;
+
+	m_targets[s_handleInputDepth].rts = depthBuffer;
+	m_targets[s_handleInputDepth].persistent = true;
+
+	m_targets[s_handleInputShadowMask].rts = shadowMask;
+	m_targets[s_handleInputShadowMask].persistent = true;
+
 	m_currentTarget = 0;
 
 	T_RENDER_PUSH_MARKER(renderView, "PostProcess");
 
-	// Check if any target need to be cleared before post processing.
-	for (SmallMap< render::handle_t, Target >::iterator i = m_targets.begin(); i != m_targets.end(); ++i)
-	{
-		Target& target = i->second;
-		if (target.shouldClear)
-		{
-			if (renderView->begin(target.target, 0))
-			{
-				Color4f c(target.clearColor);
-				renderView->clear(render::CfColor, &c, 0.0f, 0);
-				renderView->end();
-				target.shouldClear = false;
-			}
-		}
-	}
+	//// Check if any target need to be cleared before post processing.
+	//for (SmallMap< render::handle_t, Target >::iterator i = m_targets.begin(); i != m_targets.end(); ++i)
+	//{
+	//	Target& target = i->second;
+	//	if (target.shouldClear)
+	//	{
+	//		if (renderView->begin(target.rts, 0))
+	//		{
+	//			Color4f c(target.clearColor);
+	//			renderView->clear(render::CfColor, &c, 0.0f, 0);
+	//			renderView->end();
+	//			target.shouldClear = false;
+	//		}
+	//	}
+	//}
 
 	// Execute each post processing step in sequence.
 	for (RefArray< PostProcessStep::Instance >::const_iterator i = m_instances.begin(); i != m_instances.end(); ++i)
@@ -145,23 +145,38 @@ bool PostProcess::render(
 		);
 	}
 
+	// Release all non-persistent targets.
+	for (SmallMap< render::handle_t, Target >::iterator i = m_targets.begin(); i != m_targets.end(); ++i)
+	{
+		Target& target = i->second;
+		if (target.rts && !target.persistent)
+		{
+			m_targetPool->releaseTarget(
+				target.rtscd,
+				target.rts
+			);
+			target.rts = 0;
+		}
+	}
+
 	T_RENDER_POP_MARKER(renderView);
 
 	T_ASSERT_M(m_currentTarget == 0, L"Invalid post-process steps");
 	return true;
 }
 
-void PostProcess::defineTarget(render::handle_t id, render::RenderTargetSet* target, const Color4f& clearColor)
+void PostProcess::defineTarget(render::handle_t id, const render::RenderTargetSetCreateDesc& rtscd, const Color4f& clearColor, bool persistent)
 {
 	T_ASSERT_M(id != s_handleInputColor, L"Cannot define source color buffer");
 	T_ASSERT_M(id != s_handleInputDepth, L"Cannot define source depth buffer");
 	T_ASSERT_M(id != s_handleInputShadowMask, L"Cannot define source shadow mask");
 
 	Target& t = m_targets[id];
-	t.target = target;
-	t.shouldClear = true;
-
-	clearColor.storeUnaligned(t.clearColor);
+	t.rtscd = rtscd;
+	t.rts = 0;
+	t.persistent = persistent;
+	//t.shouldClear = true;
+	//clearColor.storeUnaligned(t.clearColor);
 }
 
 void PostProcess::setTarget(render::IRenderView* renderView, render::handle_t id)
@@ -177,7 +192,13 @@ void PostProcess::setTarget(render::IRenderView* renderView, render::handle_t id
 	{
 		Target& t = m_targets[id];
 
-		m_currentTarget = t.target;
+		if (t.rts == 0)
+		{
+			t.rts = m_targetPool->acquireTarget(t.rtscd);
+			T_ASSERT (t.rts);
+		}
+
+		m_currentTarget = t.rts;
 		T_ASSERT (m_currentTarget);
 
 		renderView->begin(m_currentTarget, 0);
@@ -188,18 +209,42 @@ void PostProcess::setTarget(render::IRenderView* renderView, render::handle_t id
 
 render::RenderTargetSet* PostProcess::getTarget(render::handle_t id)
 {
-	return m_targets[id].target;
+	Target& t = m_targets[id];
+
+	if (t.rts == 0)
+	{
+		t.rts = m_targetPool->acquireTarget(t.rtscd);
+		T_ASSERT (t.rts);
+	}
+
+	return t.rts;
 }
 
 void PostProcess::getTargets(RefArray< render::RenderTargetSet >& outTargets) const
 {
 	for (SmallMap< render::handle_t, Target >::const_iterator i = m_targets.begin(); i != m_targets.end(); ++i)
-		outTargets.push_back(i->second.target);
+	{
+		if (i->second.rts)
+			outTargets.push_back(i->second.rts);
+	}
 }
 
 void PostProcess::swapTargets(render::handle_t id0, render::handle_t id1)
 {
 	std::swap(m_targets[id0], m_targets[id1]);
+}
+
+void PostProcess::discardTarget(render::handle_t id)
+{
+	Target& target = m_targets[id];
+	if (target.rts && !target.persistent)
+	{
+		m_targetPool->releaseTarget(
+			target.rtscd,
+			target.rts
+		);
+		target.rts = 0;
+	}
 }
 
 void PostProcess::setCombination(render::handle_t handle, bool value)

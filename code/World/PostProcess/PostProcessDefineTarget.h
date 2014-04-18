@@ -34,6 +34,8 @@ public:
 
 	const std::wstring& getId() const { return m_id; }
 
+	bool persistent() const { return m_persistent; }
+
 private:
 	std::wstring m_id;
 	uint32_t m_width;
@@ -47,6 +49,7 @@ private:
 	bool m_preferTiled;
 	int32_t m_multiSample;
 	Color4f m_clearColor;
+	bool m_persistent;
 };
 
 	}

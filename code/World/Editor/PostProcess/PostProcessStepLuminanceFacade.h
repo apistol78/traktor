@@ -17,6 +17,8 @@ public:
 
 	virtual std::wstring getText(const PostProcessStep* step) const;
 
+	virtual void getSources(const PostProcessStep* step, std::vector< std::wstring >& outSources) const;
+
 	virtual bool canHaveChildren() const;
 
 	virtual bool addChild(PostProcessStep* parentStep, PostProcessStep* childStep) const;

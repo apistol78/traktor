@@ -34,6 +34,8 @@ public:
 
 	const RefArray< PostProcessDefine >& getDefinitions() const;
 
+	void setSteps(const RefArray< PostProcessStep >& steps);
+
 	const RefArray< PostProcessStep >& getSteps() const;
 
 	virtual void serialize(ISerializer& s);

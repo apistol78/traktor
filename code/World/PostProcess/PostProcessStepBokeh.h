@@ -100,6 +100,8 @@ public:
 
 	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 
+	const std::vector< Source >& getSources() const { return m_sources; }
+
 private:
 	resource::Id< render::Shader > m_shader;
 	std::vector< Source > m_sources;

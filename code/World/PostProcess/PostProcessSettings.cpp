@@ -26,6 +26,11 @@ const RefArray< PostProcessDefine >& PostProcessSettings::getDefinitions() const
 	return m_definitions;
 }
 
+void PostProcessSettings::setSteps(const RefArray< PostProcessStep >& steps)
+{
+	m_steps = steps;
+}
+
 const RefArray< PostProcessStep >& PostProcessSettings::getSteps() const
 {
 	return m_steps;

@@ -44,6 +44,7 @@ class ScreenRenderer;
 	{
 
 class PostProcessSettings;
+class PostProcessTargetPool;
 
 /*! \brief Frame buffer post processing system.
  * \ingroup World
@@ -63,6 +64,7 @@ public:
 
 	bool create(
 		const PostProcessSettings* settings,
+		PostProcessTargetPool* targetPool,
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
 		uint32_t width,
@@ -79,7 +81,7 @@ public:
 		const PostProcessStep::Instance::RenderParams& params
 	);
 
-	void defineTarget(render::handle_t id, render::RenderTargetSet* target, const Color4f& clearColor);
+	void defineTarget(render::handle_t id, const render::RenderTargetSetCreateDesc& rtscd, const Color4f& clearColor, bool persistent);
 
 	void setTarget(render::IRenderView* renderView, render::handle_t id);
 
@@ -88,6 +90,8 @@ public:
 	void getTargets(RefArray< render::RenderTargetSet >& outTargets) const;
 
 	void swapTargets(render::handle_t id0, render::handle_t id1);
+
+	void discardTarget(render::handle_t id);
 
 	void setCombination(render::handle_t handle, bool value);
 
@@ -104,21 +108,26 @@ public:
 private:
 	struct Target
 	{
-		Ref< render::RenderTargetSet > target;
-		float clearColor[4];
-		bool shouldClear;
+		render::RenderTargetSetCreateDesc rtscd;
+		Ref< render::RenderTargetSet > rts;
+		bool persistent;
+
+		//float clearColor[4];
+		//bool shouldClear;
 
 		Target()
-		:	shouldClear(false)
+		//:	shouldClear(false)
+		:	persistent(false)
 		{
-			clearColor[0] =
-			clearColor[1] =
-			clearColor[2] =
-			clearColor[3] = 0.0f;
+		//	clearColor[0] =
+		//	clearColor[1] =
+		//	clearColor[2] =
+		//	clearColor[3] = 0.0f;
 		}
 	};
 
 	Ref< render::ScreenRenderer > m_screenRenderer;
+	Ref< PostProcessTargetPool > m_targetPool;
 	SmallMap< render::handle_t, Target > m_targets;
 	RefArray< PostProcessStep::Instance > m_instances;
 	SmallMap< render::handle_t, bool > m_booleanParameters;

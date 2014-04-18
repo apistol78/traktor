@@ -6,7 +6,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.world.PostProcessStepSwapTargetsFacade", PostProcessStepSwapTargetsFacade, IPostProcessStepFacade)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessStepSwapTargetsFacade", 0, PostProcessStepSwapTargetsFacade, IPostProcessStepFacade)
 
 int32_t PostProcessStepSwapTargetsFacade::getImage(const PostProcessStep* step) const
 {
@@ -17,6 +17,10 @@ std::wstring PostProcessStepSwapTargetsFacade::getText(const PostProcessStep* st
 {
 	const PostProcessStepSwapTargets* swapStep = checked_type_cast< const PostProcessStepSwapTargets* >(step);
 	return L"Swap targets \"" + swapStep->getDestination() + L"\" <-> \"" + swapStep->getSource() + L"\"";
+}
+
+void PostProcessStepSwapTargetsFacade::getSources(const PostProcessStep* step, std::vector< std::wstring >& outSources) const
+{
 }
 
 bool PostProcessStepSwapTargetsFacade::canHaveChildren() const
