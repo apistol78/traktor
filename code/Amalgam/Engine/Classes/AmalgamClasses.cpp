@@ -270,6 +270,8 @@ void registerAmalgamClasses(script::IScriptManager* scriptManager)
 	classWorldLayer->addMethod("getFieldOfView", &WorldLayer::getFieldOfView);
 	classWorldLayer->addMethod("setAlternateTime", &WorldLayer::setAlternateTime);
 	classWorldLayer->addMethod("getAlternateTime", &WorldLayer::getAlternateTime);
+	classWorldLayer->addMethod("setCamera", &WorldLayer::setCamera);
+	classWorldLayer->addMethod("getCamera", &WorldLayer::getCamera);
 	scriptManager->registerClass(classWorldLayer);
 
 	Ref< script::AutoScriptClass< StageLoader > > classStageLoader = new script::AutoScriptClass< StageLoader >();

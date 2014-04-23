@@ -133,6 +133,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_toolTweaks->add(new ui::MenuItem(L"Attach Script Debugger", true, 0));
 	m_toolTweaks->add(new ui::MenuItem(L"Attach Script Profiler", true, 0));
 	m_toolTweaks->add(new ui::MenuItem(L"Profile Rendering", true, 0));
+	m_toolTweaks->add(new ui::MenuItem(L"Disable All DLC", true, 0));
 	m_toolBar->addItem(m_toolTweaks);
 
 	// Create target configuration list control.
@@ -365,6 +366,8 @@ void EditorPlugin::eventTargetListPlay(ui::Event* event)
 				tweakSettings->setProperty< PropertyStringSet >(L"Amalgam.Modules", modules);
 				tweakSettings->setProperty< PropertyString >(L"Render.CaptureType", L"traktor.render.RenderSystemCapture");
 			}
+			if (m_toolTweaks->get(8)->isChecked())
+				tweakSettings->setProperty< PropertyBoolean >(L"Online.DownloadableContent", false);
 
 			// Add deploy and launch actions.
 			action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsDeploying);

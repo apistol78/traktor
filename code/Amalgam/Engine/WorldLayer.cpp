@@ -48,6 +48,7 @@ WorldLayer::WorldLayer(
 ,	m_scene(scene)
 ,	m_entities(entities)
 ,	m_dynamicEntities(new world::GroupEntity())
+,	m_camera(L"Camera")
 ,	m_alternateTime(0.0f)
 ,	m_deltaTime(0.0f)
 ,	m_controllerTime(-1.0f)
@@ -177,7 +178,7 @@ void WorldLayer::build(const amalgam::IUpdateInfo& info, uint32_t frame)
 		return;
 
 	// Get camera entity and extract view transform.
-	world::NullEntity* cameraEntity = m_scene->getEntitySchema()->getEntity< world::NullEntity >(L"Camera");
+	world::NullEntity* cameraEntity = m_scene->getEntitySchema()->getEntity< world::NullEntity >(m_camera);
 	if (cameraEntity)
 	{
 		Transform view = cameraEntity->getTransform(info.getInterval()) * m_cameraOffset;
@@ -424,6 +425,16 @@ void WorldLayer::setAlternateTime(float alternateTime)
 float WorldLayer::getAlternateTime() const
 {
 	return m_alternateTime;
+}
+
+void WorldLayer::setCamera(const std::wstring& camera)
+{
+	m_camera = camera;
+}
+
+const std::wstring& WorldLayer::getCamera() const
+{
+	return m_camera;
 }
 
 void WorldLayer::feedbackValues(spray::FeedbackType type, const float* values, int32_t count)

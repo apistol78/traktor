@@ -222,7 +222,7 @@ void TextLayout::insertText(const std::wstring& text)
 void TextLayout::newLine()
 {
 	float lineHeight = m_fontHeight + m_leading;
-
+	/*
 	if (!m_attribs.empty())
 	{
 		const Attribute& attrib = m_attribs[m_currentAttrib];
@@ -233,7 +233,7 @@ void TextLayout::newLine()
 				lineHeight /= 20.0f * 4.0f;
 		}
 	}
-
+	*/
 	m_cursorX = 0.0f;
 	m_cursorY += lineHeight;
 	m_height = std::max(m_height, m_cursorY + lineHeight);
