@@ -45,7 +45,12 @@ ServiceType waitUntilReady(const ServiceType& service)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.SessionManager", SessionManager, ISessionManager)
 
-bool SessionManager::create(ISessionManagerProvider* provider, const IGameConfiguration* configuration)
+SessionManager::SessionManager()
+:	m_downloadableContent(false)
+{
+}
+
+bool SessionManager::create(ISessionManagerProvider* provider, const IGameConfiguration* configuration, bool downloadableContent)
 {
 	if (!(m_provider = provider))
 		return false;
@@ -91,6 +96,7 @@ bool SessionManager::create(ISessionManagerProvider* provider, const IGameConfig
 	if (statisticsProvider)
 		m_statistics = new Statistics(statisticsProvider, m_taskQueues[0]);
 
+	m_downloadableContent = downloadableContent;
 	return true;
 }
 
@@ -134,12 +140,18 @@ bool SessionManager::requireUserAttention() const
 
 bool SessionManager::haveDLC(const std::wstring& id) const
 {
-	return m_provider ? m_provider->haveDLC(id) : false;
+	if (m_downloadableContent)
+		return m_provider ? m_provider->haveDLC(id) : false;
+	else
+		return false;
 }
 
 bool SessionManager::buyDLC(const std::wstring& id) const
 {
-	return m_provider ? m_provider->buyDLC(id) : false;
+	if (m_downloadableContent)
+		return m_provider ? m_provider->buyDLC(id) : false;
+	else
+		return false;
 }
 
 bool SessionManager::navigateUrl(const net::Url& url) const

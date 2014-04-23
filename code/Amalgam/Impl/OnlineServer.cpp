@@ -3,6 +3,7 @@
 #include "Amalgam/Impl/OnlineServer.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
@@ -42,8 +43,10 @@ bool OnlineServer::create(const PropertyGroup* settings, db::Database* db)
 		return false;
 	}
 
+	bool downloadableContent = settings->getProperty< PropertyBoolean >(L"Online.DownloadableContent", true);
+
 	Ref< online::SessionManager > sessionManager = new online::SessionManager();
-	if (!sessionManager->create(sessionManagerProvider, gameConfiguration))
+	if (!sessionManager->create(sessionManagerProvider, gameConfiguration, downloadableContent))
 	{
 		log::error << L"Online server failed; unable to create session manager" << Endl;
 		return false;

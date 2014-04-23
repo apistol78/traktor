@@ -28,7 +28,9 @@ class T_DLLCLASS SessionManager : public ISessionManager
 	T_RTTI_CLASS;
 
 public:
-	bool create(ISessionManagerProvider* provider, const IGameConfiguration* configuration);
+	SessionManager();
+
+	bool create(ISessionManagerProvider* provider, const IGameConfiguration* configuration, bool downloadableContent);
 
 	virtual void destroy();
 
@@ -78,6 +80,7 @@ private:
 	Ref< IStatistics > m_statistics;
 	Ref< IUser > m_user;
 	Ref< UserCache > m_userCache;
+	bool m_downloadableContent;
 };
 
 	}

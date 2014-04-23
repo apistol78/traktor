@@ -1,5 +1,6 @@
-#include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
+#include "Core/Io/FileOutputStream.h"
+#include "Core/Io/FileSystem.h"
 #include "Core/Io/StringReader.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Misc/Split.h"
@@ -126,6 +127,7 @@ bool DictionaryEditorPage::create(ui::Container* parent)
 	Ref< ui::custom::ToolBar > toolBar = new ui::custom::ToolBar();
 	toolBar->create(container);
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Import...", ui::Command(L"I18N.Editor.Import")));
+	toolBar->addItem(new ui::custom::ToolBarButton(L"Export...", ui::Command(L"I18N.Editor.Export")));
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Translate...", ui::Command(L"I18N.Editor.Translate")));
 	toolBar->addClickEventHandler(ui::createMethodHandler(this, &DictionaryEditorPage::eventToolClick));
 
@@ -229,6 +231,33 @@ void DictionaryEditorPage::eventToolClick(ui::Event* event)
 			m_gridDictionary->addRow(row);
 		}
 		m_gridDictionary->update();
+	}
+	else if (cmd == L"I18N.Editor.Export")
+	{
+		ui::FileDialog fileDialog;
+		if (!fileDialog.create(m_gridDictionary, L"Export dictionary...", L"All files;*.*", true))
+			return;
+
+		Path fileName;
+		if (fileDialog.showModal(fileName) != ui::DrOk)
+		{
+			fileDialog.destroy();
+			return;
+		}
+		fileDialog.destroy();
+
+		// Assume CSV format.
+		Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmWrite);
+		if (!file)
+			return;
+
+		FileOutputStream fos(file, new Utf8Encoding());
+
+		const std::map< std::wstring, std::wstring >& map = m_dictionary->get();
+		for (std::map< std::wstring, std::wstring >::const_iterator i = map.begin(); i != map.end(); ++i)
+			fos << i->first << L"," << i->second << Endl;
+
+		fos.close();
 	}
 	else if (cmd == L"I18N.Editor.Translate")
 	{

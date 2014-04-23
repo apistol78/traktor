@@ -24,7 +24,7 @@ class ActionValue;
 class T_DLLCLASS ActionValuePool
 {
 public:
-	enum { Capacity = 65535 };
+	enum { Capacity = 131070 };
 
 	class Scope
 	{
