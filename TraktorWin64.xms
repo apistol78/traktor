@@ -13498,6 +13498,14 @@
 							<fileName>../../../res/script/Editor.png</fileName>
 							<items/>
 						</item>
+						<item type="File">
+							<fileName>../../../res/editor/ScriptFunction.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/editor/ScriptFunctionReference.png</fileName>
+							<items/>
+						</item>
 					</items>
 				</item>
 			</items>
