@@ -12,6 +12,7 @@
 #include "I18N/Text.h"
 #include "Script/CallStack.h"
 #include "Script/IScriptProfiler.h"
+#include "Script/Editor/IScriptOutline.h"
 #include "Script/Editor/Preprocessor.h"
 #include "Script/Editor/Script.h"
 #include "Script/Editor/ScriptDebuggerView.h"
@@ -43,6 +44,8 @@
 // Resources
 #include "Resources/Editor.h"
 #include "Resources/PlusMinus.h"
+#include "Resources/ScriptFunction.h"
+#include "Resources/ScriptFunctionReference.h"
 
 namespace traktor
 {
@@ -55,6 +58,8 @@ ScriptEditor::ScriptEditor(editor::IEditor* editor)
 :	m_editor(editor)
 ,	m_compileCountDown(0)
 {
+	m_bitmapFunction = ui::Bitmap::load(c_ResourceScriptFunction, sizeof(c_ResourceScriptFunction), L"png");
+	m_bitmapFunctionReference = ui::Bitmap::load(c_ResourceScriptFunctionReference, sizeof(c_ResourceScriptFunctionReference), L"png");
 }
 
 bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializable* object)
@@ -80,9 +85,9 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	m_outlineGrid = new ui::custom::GridView();
 	if (!m_outlineGrid->create(tabOutline, ui::custom::GridView::WsColumnHeader | ui::WsClientBorder | ui::WsDoubleBuffer))
 		return false;
-	m_outlineGrid->addColumn(new ui::custom::GridColumn(L"", 20));
-	m_outlineGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_OUTLINE_NAME"), 170));
-	m_outlineGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_OUTLINE_LINE"), 50));
+	m_outlineGrid->addColumn(new ui::custom::GridColumn(L"", 30));
+	m_outlineGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_OUTLINE_NAME"), 165));
+	m_outlineGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_OUTLINE_LINE"), 45));
 	m_outlineGrid->addDoubleClickEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventOutlineDoubleClick));
 
 	Ref< ui::TabPage > tabDependencies = new ui::TabPage();
@@ -167,6 +172,14 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 			m_scriptManager = dynamic_type_cast< IScriptManager* >(scriptManagerType->createInstance());
 			T_ASSERT (m_scriptManager);
 		}
+
+		std::wstring scriptOutlineTypeName = L"traktor.script.ScriptOutlineLua";
+		const TypeInfo* scriptOutlineType = TypeInfo::find(scriptOutlineTypeName);
+		if (scriptOutlineType)
+		{
+			m_scriptOutline = dynamic_type_cast< IScriptOutline* >(scriptOutlineType->createInstance());
+			T_ASSERT( m_scriptOutline);
+		}
 	}
 
 	// Setup compile timer.
@@ -222,13 +235,71 @@ bool ScriptEditor::handleCommand(const ui::Command& command)
 		dialogFind->create(m_edit, L"Find", L"Enter text or word to search for", fields, sizeof_array(fields));
 		if (dialogFind->showModal() == ui::DrOk)
 		{
-			for (int32_t i = 0; i < m_edit->getLineCount(); ++i)
+			if (!(m_findNeedle = fields[0].value).empty())
 			{
-				std::wstring text = m_edit->getLine(i);
-				if (text.find(fields[0].value) != text.npos)
+				int32_t caretLine = m_edit->getLineFromOffset(m_edit->getCaretOffset());
+				int32_t line = caretLine;
+
+				while (line < m_edit->getLineCount())
 				{
-					m_edit->showLine(i);
+					std::wstring text = m_edit->getLine(line);
+					if (text.find(m_findNeedle) != text.npos)
+					{
+						m_edit->showLine(line);
+						m_edit->placeCaret(m_edit->getLineOffset(line));
+						break;
+					}
+					++line;
+				}
+				if (line >= m_edit->getLineCount())
+				{
+					line = 0;
+					while (line < caretLine)
+					{
+						std::wstring text = m_edit->getLine(line);
+						if (text.find(m_findNeedle) != text.npos)
+						{
+							m_edit->showLine(line);
+							m_edit->placeCaret(m_edit->getLineOffset(line));
+							break;
+						}
+						++line;
+					}
+				}
+			}
+		}
+	}
+	else if (command == L"Editor.FindNext")
+	{
+		if (!m_findNeedle.empty())
+		{
+			int32_t caretLine = m_edit->getLineFromOffset(m_edit->getCaretOffset());
+			int32_t line = caretLine + 1;
+
+			while (line < m_edit->getLineCount())
+			{
+				std::wstring text = m_edit->getLine(line);
+				if (text.find(m_findNeedle) != text.npos)
+				{
+					m_edit->showLine(line);
+					m_edit->placeCaret(m_edit->getLineOffset(line));
 					break;
+				}
+				++line;
+			}
+			if (line >= m_edit->getLineCount())
+			{
+				line = 0;
+				while (line < caretLine)
+				{
+					std::wstring text = m_edit->getLine(line);
+					if (text.find(m_findNeedle) != text.npos)
+					{
+						m_edit->showLine(line);
+						m_edit->placeCaret(m_edit->getLineOffset(line));
+						break;
+					}
+					++line;
 				}
 			}
 		}
@@ -357,6 +428,43 @@ void ScriptEditor::updateDependencyList()
 			m_dependencyList->add(scriptInstance->getPath());
 		else
 			m_dependencyList->add(i->format());
+	}
+}
+
+void ScriptEditor::buildOutlineGrid(ui::custom::GridView* grid, ui::custom::GridRow* parent, const IScriptOutline::Node* on)
+{
+	while (on)
+	{
+		if (const IScriptOutline::FunctionNode* fn = dynamic_type_cast< const IScriptOutline::FunctionNode* >(on))
+		{
+			Ref< ui::custom::GridRow > row = new ui::custom::GridRow(0);
+
+			row->add(new ui::custom::GridItem(m_bitmapFunction));
+			row->add(new ui::custom::GridItem(fn->getName()));
+			row->add(new ui::custom::GridItem(toString(fn->getLine() + 1)));
+
+			buildOutlineGrid(grid, row, fn->getBody());
+
+			if (parent)
+				parent->addChild(row);
+			else
+				grid->addRow(row);
+		}
+		else if (const IScriptOutline::FunctionReferenceNode* frn = dynamic_type_cast< const IScriptOutline::FunctionReferenceNode* >(on))
+		{
+			Ref< ui::custom::GridRow > row = new ui::custom::GridRow(0);
+
+			row->add(new ui::custom::GridItem(m_bitmapFunctionReference));
+			row->add(new ui::custom::GridItem(frn->getName()));
+			row->add(new ui::custom::GridItem(toString(frn->getLine() + 1)));
+
+			if (parent)
+				parent->addChild(row);
+			else
+				grid->addRow(row);
+		}
+
+		on = on->getNext();
 	}
 }
 
@@ -503,33 +611,12 @@ void ScriptEditor::eventTimer(ui::Event* event)
 			m_compileStatus->setText(L"");
 			m_edit->setErrorHighlight(-1);
 
-			// Get outline of script.
-			m_outline.clear();
-			m_edit->getOutline(m_outline);
-
-			m_outlineGrid->removeAllRows();
-			for (std::list< ui::custom::SyntaxOutline >::const_iterator i = m_outline.begin(); i != m_outline.end(); ++i)
+			if (m_scriptOutline)
 			{
-				Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
+				m_outlineGrid->removeAllRows();
 
-				switch (i->type)
-				{
-				default:
-				case ui::custom::SotUnknown:
-					row->add(new ui::custom::GridItem(L"?"));
-					break;
-				case ui::custom::SotVariable:
-					row->add(new ui::custom::GridItem(L"V"));
-					break;
-				case ui::custom::SotFunction:
-					row->add(new ui::custom::GridItem(L"F"));
-					break;
-				}
-
-				row->add(new ui::custom::GridItem(i->name));
-				row->add(new ui::custom::GridItem(toString(i->line + 1)));
-
-				m_outlineGrid->addRow(row);
+				Ref< IScriptOutline::Node > on = m_scriptOutline->parse(script);
+				buildOutlineGrid(m_outlineGrid, 0, on);
 			}
 		}
 	}

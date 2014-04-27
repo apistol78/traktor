@@ -654,6 +654,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Redo"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Delete"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Find"));
+	m_shortcutCommands.push_back(ui::Command(L"Editor.FindNext"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Replace"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Build"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Rebuild"));
@@ -701,10 +702,6 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	if (m_mergedSettings->getProperty< PropertyBoolean >(L"Editor.Maximized"))
 		maximize();
 
-	// Show form.
-	update();
-	show();
-
 	// Open recently used workspace.
 	if (m_mergedSettings->getProperty< PropertyBoolean >(L"Editor.AutoOpenRecentlyUsedWorkspace", false))
 	{
@@ -718,6 +715,10 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_threadAssetMonitor->start();
 
 	startTimer(250);
+
+	// Show form.
+	update();
+	show();
 
 	return true;
 }

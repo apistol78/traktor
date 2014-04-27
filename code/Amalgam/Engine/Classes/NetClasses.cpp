@@ -44,6 +44,10 @@ public:
 
 	float getFarDistance() const { return m_configuration.farDistance; }
 
+	void setFurthestDistance(float furthestDistance) { m_configuration.furthestDistance = furthestDistance; }
+
+	float getFurthestDistance() const { return m_configuration.furthestDistance; }
+
 	void setNearTimeUntilTx(int32_t nearTimeUntilTx) { m_configuration.nearTimeUntilTx = nearTimeUntilTx; }
 
 	int32_t getNearTimeUntilTx() const { return m_configuration.nearTimeUntilTx; }
@@ -178,6 +182,8 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	classReplicatorConfiguration->addMethod("getNearDistance", &ReplicatorConfiguration::getNearDistance);
 	classReplicatorConfiguration->addMethod("setFarDistance", &ReplicatorConfiguration::setFarDistance);
 	classReplicatorConfiguration->addMethod("getFarDistance", &ReplicatorConfiguration::getFarDistance);
+	classReplicatorConfiguration->addMethod("setFurthestDistance", &ReplicatorConfiguration::setFurthestDistance);
+	classReplicatorConfiguration->addMethod("getFurthestDistance", &ReplicatorConfiguration::getFurthestDistance);
 	classReplicatorConfiguration->addMethod("setNearTimeUntilTx", &ReplicatorConfiguration::setNearTimeUntilTx);
 	classReplicatorConfiguration->addMethod("getNearTimeUntilTx", &ReplicatorConfiguration::getNearTimeUntilTx);
 	classReplicatorConfiguration->addMethod("setFarTimeUntilTx", &ReplicatorConfiguration::setFarTimeUntilTx);

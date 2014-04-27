@@ -61,6 +61,7 @@ public:
 	{
 		float nearDistance;
 		float farDistance;
+		float furthestDistance;
 		int32_t nearTimeUntilTx;
 		int32_t farTimeUntilTx;
 		int32_t timeUntilIAm;
@@ -73,6 +74,7 @@ public:
 		Configuration()
 		:	nearDistance(8.0f)
 		,	farDistance(90.0f)
+		,	furthestDistance(120.0f)
 		,	nearTimeUntilTx(100)
 		,	farTimeUntilTx(300)
 		,	timeUntilIAm(500)
@@ -324,6 +326,7 @@ private:
 		Object* endSite;
 		Ghost* ghost;
 		bool direct;
+		bool criticalEnable;
 		uint8_t status;
 		int32_t timeUntilTx;
 		int32_t lastTimeLocal;
@@ -343,6 +346,7 @@ private:
 		,	endSite(0)
 		,	ghost(0)
 		,	direct(false)
+		,	criticalEnable(true)
 		,	status(0)
 		,	timeUntilTx(0)
 		,	lastTimeLocal(0)

@@ -1,3 +1,4 @@
+#include "Amalgam/IAudioServer.h"
 #include "Amalgam/IEnvironment.h"
 #include "Amalgam/IUpdateInfo.h"
 #include "Amalgam/Engine/WorldLayer.h"
@@ -9,6 +10,7 @@
 #include "Render/IRenderView.h"
 #include "Render/RenderTargetSet.h"
 #include "Scene/Scene.h"
+#include "Sound/Filters/SurroundEnvironment.h"
 #include "Spray/Feedback/FeedbackManager.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldRenderSettings.h"
@@ -183,6 +185,11 @@ void WorldLayer::build(const amalgam::IUpdateInfo& info, uint32_t frame)
 	{
 		Transform view = cameraEntity->getTransform(info.getInterval()) * m_cameraOffset;
 		m_worldRenderView.setView(view.inverse().toMatrix44());
+
+		// Also update sound listener transform based on camera.
+		sound::SurroundEnvironment* surroundEnvironment = m_environment->getAudio()->getSurroundEnvironment();
+		if (surroundEnvironment)
+			surroundEnvironment->setListenerTransform(view);
 	}
 
 	// Build frame through world renderer.

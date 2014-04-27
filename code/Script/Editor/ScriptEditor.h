@@ -5,6 +5,7 @@
 #include "Editor/IObjectEditor.h"
 #include "Script/IScriptManager.h"
 #include "Script/Editor/IScriptDebuggerSessions.h"
+#include "Script/Editor/IScriptOutline.h"
 #include "Ui/Custom/SyntaxRichEdit/SyntaxTypes.h"
 
 // import/export mechanism.
@@ -27,6 +28,7 @@ class IEditor;
 	namespace ui
 	{
 
+class Bitmap;
 class Event;
 class ListBox;
 class Tab;
@@ -34,6 +36,7 @@ class Tab;
 		namespace custom
 		{
 
+class GridRow;
 class GridView;
 class Splitter;
 class SyntaxRichEdit;
@@ -77,14 +80,17 @@ private:
 	Ref< Script > m_script;
 	Ref< IScriptDebuggerSessions > m_scriptDebuggerSessions;
 	Ref< IScriptManager > m_scriptManager;
+	Ref< IScriptOutline > m_scriptOutline;
 	Ref< Preprocessor > m_preprocessor;
+	Ref< ui::Bitmap > m_bitmapFunction;
+	Ref< ui::Bitmap > m_bitmapFunctionReference;
 	Ref< ui::custom::Splitter > m_splitter;
 	Ref< ui::custom::GridView > m_outlineGrid;
 	Ref< ui::ListBox > m_dependencyList;
 	Ref< ui::custom::SyntaxRichEdit > m_edit;
 	Ref< ui::custom::StatusBar > m_compileStatus;
 	Ref< ui::Tab > m_tabSessions;
-	std::list< ui::custom::SyntaxOutline > m_outline;
+	std::wstring m_findNeedle;
 	int32_t m_compileCountDown;
 
 
@@ -113,6 +119,8 @@ private:
 
 
 	void updateDependencyList();
+
+	void buildOutlineGrid(ui::custom::GridView* grid, ui::custom::GridRow* parent, const IScriptOutline::Node* on);
 
 	void eventOutlineDoubleClick(ui::Event* event);
 
