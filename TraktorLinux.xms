@@ -2366,8 +2366,8 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project type="Project" version="1">
 						<enable>true</enable>
 						<name>Extern.zlib-1.2.3</name>
@@ -5411,8 +5411,8 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project type="Project" version="1">
 						<enable>true</enable>
 						<name>Traktor.Core</name>
@@ -5755,8 +5755,8 @@
 						<dependencies/>
 					</project>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project type="Project" version="1">
 						<enable>true</enable>
 						<name>Traktor.World</name>
@@ -5892,12 +5892,12 @@
 							</item>
 						</items>
 						<dependencies>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project type="Project" version="1">
 									<enable>true</enable>
 									<name>Traktor.Render</name>
@@ -6024,12 +6024,12 @@
 										</item>
 									</items>
 									<dependencies>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project type="Project" version="1">
 												<enable>true</enable>
 												<name>Traktor.Resource</name>
@@ -6111,15 +6111,15 @@
 													</item>
 												</items>
 												<dependencies>
-													<item type="ProjectDependency" version="1">
-														<linkWithProduct>true</linkWithProduct>
+													<item type="ProjectDependency" version="2">
+														<link>LnkYes</link>
 														<project ref="/object/projects/item[15]/dependencies/item/project"/>
 													</item>
 												</dependencies>
 											</project>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project type="Project" version="1">
 												<enable>true</enable>
 												<name>Traktor.Compress</name>
@@ -6244,16 +6244,16 @@
 													</item>
 												</items>
 												<dependencies>
-													<item type="ProjectDependency" version="1">
-														<linkWithProduct>true</linkWithProduct>
+													<item type="ProjectDependency" version="2">
+														<link>LnkYes</link>
 														<project ref="/object/projects/item[15]/dependencies/item/project"/>
 													</item>
-													<item type="ProjectDependency" version="1">
-														<linkWithProduct>true</linkWithProduct>
+													<item type="ProjectDependency" version="2">
+														<link>LnkYes</link>
 														<project ref="/object/projects/item[8]/dependencies/item/project"/>
 													</item>
-													<item type="ProjectDependency" version="1">
-														<linkWithProduct>true</linkWithProduct>
+													<item type="ProjectDependency" version="2">
+														<link>LnkYes</link>
 														<project type="Project" version="1">
 															<enable>true</enable>
 															<name>Extern.liblzf-3.6</name>
@@ -6357,8 +6357,8 @@
 															<dependencies/>
 														</project>
 													</item>
-													<item type="ProjectDependency" version="1">
-														<linkWithProduct>true</linkWithProduct>
+													<item type="ProjectDependency" version="2">
+														<link>LnkYes</link>
 														<project type="Project" version="1">
 															<enable>true</enable>
 															<name>Extern.minilzo-2.05</name>
@@ -6461,12 +6461,12 @@
 									</dependencies>
 								</project>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project type="Project" version="1">
 									<enable>true</enable>
 									<name>Traktor.Database</name>
@@ -6566,12 +6566,12 @@
 										</item>
 									</items>
 									<dependencies>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project type="Project" version="1">
 												<enable>true</enable>
 												<name>Traktor.Xml</name>
@@ -6657,12 +6657,12 @@
 													</item>
 												</items>
 												<dependencies>
-													<item type="ProjectDependency" version="1">
-														<linkWithProduct>true</linkWithProduct>
+													<item type="ProjectDependency" version="2">
+														<link>LnkYes</link>
 														<project ref="/object/projects/item[15]/dependencies/item/project"/>
 													</item>
-													<item type="ProjectDependency" version="1">
-														<linkWithProduct>true</linkWithProduct>
+													<item type="ProjectDependency" version="2">
+														<link>LnkYes</link>
 														<project ref="/object/projects/item[1]"/>
 													</item>
 												</dependencies>
@@ -6674,8 +6674,8 @@
 						</dependencies>
 					</project>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project type="Project" version="1">
 						<enable>true</enable>
 						<name>Traktor.Mesh</name>
@@ -6838,35 +6838,35 @@
 							</item>
 						</items>
 						<dependencies>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
 							</item>
 						</dependencies>
 					</project>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project type="Project" version="1">
 						<enable>true</enable>
 						<name>Traktor.Physics</name>
@@ -6957,24 +6957,24 @@
 							</item>
 						</items>
 						<dependencies>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project type="Project" version="1">
 									<enable>true</enable>
 									<name>Traktor.Heightfield</name>
@@ -7056,12 +7056,12 @@
 										</item>
 									</items>
 									<dependencies>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 										</item>
 									</dependencies>
@@ -7070,8 +7070,8 @@
 						</dependencies>
 					</project>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
@@ -7242,20 +7242,20 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project type="Project" version="1">
 						<enable>true</enable>
 						<name>Traktor.Editor</name>
@@ -7346,12 +7346,12 @@
 							</item>
 						</items>
 						<dependencies>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project type="Project" version="1">
 									<enable>true</enable>
 									<name>Traktor.Ui</name>
@@ -7472,12 +7472,12 @@
 										</item>
 									</items>
 									<dependencies>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project type="Project" version="1">
 												<enable>true</enable>
 												<name>Traktor.Drawing</name>
@@ -7593,20 +7593,20 @@
 													</item>
 												</items>
 												<dependencies>
-													<item type="ProjectDependency" version="1">
-														<linkWithProduct>true</linkWithProduct>
+													<item type="ProjectDependency" version="2">
+														<link>LnkYes</link>
 														<project ref="/object/projects/item[15]/dependencies/item/project"/>
 													</item>
-													<item type="ProjectDependency" version="1">
-														<linkWithProduct>true</linkWithProduct>
+													<item type="ProjectDependency" version="2">
+														<link>LnkYes</link>
 														<project ref="/object/projects/item[8]"/>
 													</item>
-													<item type="ProjectDependency" version="1">
-														<linkWithProduct>true</linkWithProduct>
+													<item type="ProjectDependency" version="2">
+														<link>LnkYes</link>
 														<project ref="/object/projects/item[8]/dependencies/item/project"/>
 													</item>
-													<item type="ProjectDependency" version="1">
-														<linkWithProduct>true</linkWithProduct>
+													<item type="ProjectDependency" version="2">
+														<link>LnkYes</link>
 														<project ref="/object/projects/item[3]"/>
 													</item>
 												</dependencies>
@@ -7615,12 +7615,12 @@
 									</dependencies>
 								</project>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project type="Project" version="1">
 									<enable>true</enable>
 									<name>Traktor.Net</name>
@@ -7774,19 +7774,19 @@
 										</item>
 									</items>
 									<dependencies>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>false</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkNo</link>
 											<project ref="/object/projects/item[15]/dependencies/item[5]/project"/>
 										</item>
 									</dependencies>
 								</project>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project type="Project" version="1">
 									<enable>true</enable>
 									<name>Traktor.Sql</name>
@@ -7868,15 +7868,15 @@
 										</item>
 									</items>
 									<dependencies>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item/project"/>
 										</item>
 									</dependencies>
 								</project>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project type="Project" version="1">
 									<enable>true</enable>
 									<name>Traktor.Sql.Sqlite3</name>
@@ -7962,16 +7962,16 @@
 										</item>
 									</items>
 									<dependencies>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[4]/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project type="Project" version="1">
 												<enable>true</enable>
 												<name>Extern.sqlite-3.7.6.3</name>
@@ -8066,8 +8066,8 @@
 									</dependencies>
 								</project>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project type="Project" version="1">
 									<enable>true</enable>
 									<name>Traktor.Database.Remote</name>
@@ -8158,19 +8158,19 @@
 										</item>
 									</items>
 									<dependencies>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 										</item>
 									</dependencies>
 								</project>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project type="Project" version="1">
 									<enable>true</enable>
 									<name>Traktor.Database.Remote.Server</name>
@@ -8252,16 +8252,16 @@
 										</item>
 									</items>
 									<dependencies>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project type="Project" version="1">
 												<enable>true</enable>
 												<name>Traktor.Database.Compact</name>
@@ -8343,23 +8343,23 @@
 													</item>
 												</items>
 												<dependencies>
-													<item type="ProjectDependency" version="1">
-														<linkWithProduct>true</linkWithProduct>
+													<item type="ProjectDependency" version="2">
+														<link>LnkYes</link>
 														<project ref="/object/projects/item[15]/dependencies/item/project"/>
 													</item>
-													<item type="ProjectDependency" version="1">
-														<linkWithProduct>true</linkWithProduct>
+													<item type="ProjectDependency" version="2">
+														<link>LnkYes</link>
 														<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 													</item>
-													<item type="ProjectDependency" version="1">
-														<linkWithProduct>true</linkWithProduct>
+													<item type="ProjectDependency" version="2">
+														<link>LnkYes</link>
 														<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
 													</item>
 												</dependencies>
 											</project>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project type="Project" version="1">
 												<enable>true</enable>
 												<name>Traktor.Database.Local</name>
@@ -8441,27 +8441,27 @@
 													</item>
 												</items>
 												<dependencies>
-													<item type="ProjectDependency" version="1">
-														<linkWithProduct>true</linkWithProduct>
+													<item type="ProjectDependency" version="2">
+														<link>LnkYes</link>
 														<project ref="/object/projects/item[15]/dependencies/item/project"/>
 													</item>
-													<item type="ProjectDependency" version="1">
-														<linkWithProduct>true</linkWithProduct>
+													<item type="ProjectDependency" version="2">
+														<link>LnkYes</link>
 														<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 													</item>
-													<item type="ProjectDependency" version="1">
-														<linkWithProduct>true</linkWithProduct>
+													<item type="ProjectDependency" version="2">
+														<link>LnkYes</link>
 														<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 													</item>
 												</dependencies>
 											</project>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[6]/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 										</item>
 									</dependencies>
@@ -8470,16 +8470,16 @@
 						</dependencies>
 					</project>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project type="Project" version="1">
 						<enable>true</enable>
 						<name>Traktor.Scene.Editor</name>
@@ -8611,28 +8611,28 @@
 							</item>
 						</items>
 						<dependencies>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project type="Project" version="1">
 									<enable>true</enable>
 									<name>Traktor.Scene</name>
@@ -8714,31 +8714,31 @@
 										</item>
 									</items>
 									<dependencies>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 										</item>
 									</dependencies>
 								</project>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project type="Project" version="1">
 									<enable>true</enable>
 									<name>Traktor.Weather</name>
@@ -8838,27 +8838,27 @@
 										</item>
 									</items>
 									<dependencies>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
 										</item>
 									</dependencies>
 								</project>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project type="Project" version="1">
 									<enable>true</enable>
 									<name>Traktor.Ui.Custom</name>
@@ -9194,23 +9194,23 @@
 										</item>
 									</items>
 									<dependencies>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 										</item>
 									</dependencies>
 								</project>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project type="Project" version="1">
 									<enable>true</enable>
 									<name>Traktor.Terrain</name>
@@ -9292,39 +9292,39 @@
 										</item>
 									</items>
 									<dependencies>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item[5]/project/dependencies/item[4]/project"/>
 										</item>
 									</dependencies>
 								</project>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project type="Project" version="1">
 									<enable>true</enable>
 									<name>Traktor.I18N</name>
@@ -9406,38 +9406,38 @@
 										</item>
 									</items>
 									<dependencies>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item/project"/>
 										</item>
 									</dependencies>
 								</project>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item[5]/project"/>
 							</item>
 						</dependencies>
 					</project>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[10]"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[12]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[8]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project type="Project" version="1">
 						<enable>true</enable>
 						<name>Traktor.World.Editor</name>
@@ -9541,43 +9541,43 @@
 							</item>
 						</items>
 						<dependencies>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[12]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[8]/project"/>
 							</item>
 						</dependencies>
 					</project>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project type="Project" version="1">
 						<enable>true</enable>
 						<name>Traktor.Mesh.Editor</name>
@@ -9731,28 +9731,28 @@
 							</item>
 						</items>
 						<dependencies>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item[2]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project type="Project" version="1">
 									<enable>true</enable>
 									<name>Traktor.Model</name>
@@ -9875,27 +9875,27 @@
 										</item>
 									</items>
 									<dependencies>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[10]"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 										</item>
 									</dependencies>
 								</project>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project type="Project" version="1">
 									<enable>true</enable>
 									<name>Traktor.Render.Editor</name>
@@ -10030,78 +10030,78 @@
 										</item>
 									</items>
 									<dependencies>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[8]/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[16]/dependencies/item[14]/project/dependencies/item[5]/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[11]"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[12]/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
 										</item>
 									</dependencies>
 								</project>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[8]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[16]/dependencies/item[11]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[12]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[16]/dependencies/item[6]/project"/>
 							</item>
 						</dependencies>
 					</project>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[2]/project"/>
 				</item>
 			</dependencies>
@@ -10192,20 +10192,20 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[6]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 				</item>
 			</dependencies>
@@ -10290,32 +10290,32 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project/dependencies/item[2]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project/dependencies/item[3]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
 			</dependencies>
@@ -10464,48 +10464,48 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[8]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[12]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project/dependencies/item[2]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project type="Project" version="1">
 						<enable>true</enable>
 						<name>Traktor.Ui.Gtk</name>
@@ -10599,39 +10599,39 @@
 							</item>
 						</items>
 						<dependencies>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 							</item>
 						</dependencies>
 					</project>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[4]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[5]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
 				</item>
 			</dependencies>
@@ -10789,32 +10789,32 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project type="Project" version="1">
 						<enable>true</enable>
 						<name>Traktor.Html</name>
@@ -10896,15 +10896,15 @@
 							</item>
 						</items>
 						<dependencies>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item/project"/>
 							</item>
 						</dependencies>
 					</project>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project type="Project" version="1">
 						<enable>true</enable>
 						<name>Traktor.Sound</name>
@@ -11046,20 +11046,20 @@
 							</item>
 						</items>
 						<dependencies>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[4]"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project type="Project" version="1">
 									<enable>true</enable>
 									<name>Extern.mpg123-1.13.2</name>
@@ -11377,8 +11377,8 @@
 									<dependencies/>
 								</project>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project type="Project" version="1">
 									<enable>true</enable>
 									<name>Extern.stb_vorbis</name>
@@ -11453,8 +11453,8 @@
 						</dependencies>
 					</project>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 				</item>
 			</dependencies>
@@ -11553,40 +11553,40 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[28]"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[8]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[28]/dependencies/item[7]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project type="Project" version="1">
 						<enable>true</enable>
 						<name>Traktor.Sound.Editor</name>
@@ -11707,40 +11707,40 @@
 							</item>
 						</items>
 						<dependencies>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[28]/dependencies/item[7]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[12]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[6]"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[7]"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[8]/project"/>
 							</item>
 						</dependencies>
@@ -11829,8 +11829,8 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
 			</dependencies>
@@ -11918,28 +11918,28 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[12]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[8]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 				</item>
 			</dependencies>
@@ -12034,8 +12034,8 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
 			</dependencies>
@@ -12130,24 +12130,24 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[5]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[5]/project/dependencies/item[4]/project"/>
 				</item>
 			</dependencies>
@@ -12233,60 +12233,60 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[5]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[14]/project/dependencies/item[5]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[11]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[12]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[5]/project/dependencies/item[4]/project"/>
 				</item>
 			</dependencies>
@@ -12424,16 +12424,16 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project type="Project" version="1">
 						<enable>true</enable>
 						<name>Extern.glew-1.10.0</name>
@@ -12603,12 +12603,12 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
@@ -12707,32 +12707,40 @@
 							<fileName>../../../res/script/Editor.png</fileName>
 							<items/>
 						</item>
+						<item type="File">
+							<fileName>../../../res/editor/ScriptFunction.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/editor/ScriptFunctionReference.png</fileName>
+							<items/>
+						</item>
 					</items>
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[48]"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[8]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[12]/project"/>
 				</item>
 			</dependencies>
@@ -12822,16 +12830,16 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[48]"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[9]"/>
 				</item>
 			</dependencies>
@@ -12926,12 +12934,12 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[28]/dependencies/item[7]/project"/>
 				</item>
 			</dependencies>
@@ -13045,32 +13053,32 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[28]/dependencies/item[7]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[2]/project"/>
 				</item>
 			</dependencies>
@@ -13181,64 +13189,64 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[54]"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[8]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[12]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[11]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[14]/project/dependencies/item[5]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[28]/dependencies/item[7]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[29]/dependencies/item[8]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[2]/project"/>
 				</item>
 			</dependencies>
@@ -13334,48 +13342,48 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[9]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[12]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[11]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[5]/project/dependencies/item[4]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project type="Project" version="1">
 						<enable>true</enable>
 						<name>Traktor.Heightfield.Editor</name>
@@ -13457,44 +13465,44 @@
 							</item>
 						</items>
 						<dependencies>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[12]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[16]/dependencies/item[6]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[8]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[16]/dependencies/item[14]/project/dependencies/item[7]/project"/>
 							</item>
 						</dependencies>
@@ -13583,16 +13591,16 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[5]/project"/>
 				</item>
 			</dependencies>
@@ -13687,36 +13695,36 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[58]"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[8]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[5]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[12]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
 				</item>
 			</dependencies>
@@ -13863,20 +13871,20 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[13]"/>
 				</item>
 			</dependencies>
@@ -13983,32 +13991,32 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[2]"/>
 				</item>
 			</dependencies>
@@ -14104,24 +14112,24 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[7]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[11]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
@@ -14213,20 +14221,20 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[28]/dependencies/item[7]/project"/>
 				</item>
 			</dependencies>
@@ -14356,60 +14364,60 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project/dependencies/item[3]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[12]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[8]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[34]"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[48]"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[49]"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project"/>
 				</item>
 			</dependencies>
@@ -14549,88 +14557,88 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[28]"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[12]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[34]"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[2]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[5]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[5]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[48]"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[28]/dependencies/item[7]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[54]"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[9]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[7]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[5]/project/dependencies/item[4]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project type="Project" version="1">
 						<enable>true</enable>
 						<name>Traktor.Video</name>
@@ -14729,12 +14737,12 @@
 							</item>
 						</items>
 						<dependencies>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[6]"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project type="Project" version="1">
 									<enable>true</enable>
 									<name>Extern.libtheora-1.1.1</name>
@@ -14845,34 +14853,34 @@
 										</item>
 									</items>
 									<dependencies>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[6]"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
 											<project ref="/object/projects/item[7]"/>
 										</item>
 									</dependencies>
 								</project>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
 						</dependencies>
 					</project>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project type="Project" version="1">
 						<enable>true</enable>
 						<name>Traktor.Online</name>
@@ -14981,23 +14989,23 @@
 							</item>
 						</items>
 						<dependencies>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 							</item>
 						</dependencies>
 					</project>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[58]"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project type="Project" version="1">
 						<enable>true</enable>
 						<name>Traktor.Ai</name>
@@ -15083,12 +15091,12 @@
 							</item>
 						</items>
 						<dependencies>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project type="Project" version="1">
 									<enable>true</enable>
 									<name>Extern.detour</name>
@@ -15182,12 +15190,12 @@
 									<dependencies/>
 								</project>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
+							<item type="ProjectDependency" version="2">
+								<link>LnkYes</link>
 								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
 						</dependencies>
@@ -15292,20 +15300,20 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[78]"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[78]/dependencies/item[21]/project"/>
 				</item>
 			</dependencies>
@@ -15394,20 +15402,20 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[78]/dependencies/item[21]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[4]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[5]/project"/>
 				</item>
 			</dependencies>
@@ -15493,32 +15501,32 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[12]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[34]"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[8]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
@@ -15613,12 +15621,12 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[28]/dependencies/item[7]/project"/>
 				</item>
 			</dependencies>
@@ -15706,32 +15714,32 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[78]/dependencies/item[20]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[8]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
@@ -15815,32 +15823,32 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[6]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 				</item>
 			</dependencies>
@@ -15926,16 +15934,16 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
@@ -16139,20 +16147,20 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[78]/dependencies/item[21]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
@@ -16350,12 +16358,12 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[28]/dependencies/item[7]/project"/>
 				</item>
 			</dependencies>
@@ -16469,16 +16477,16 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[96]"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[48]"/>
 				</item>
 			</dependencies>
@@ -16666,72 +16674,72 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[99]"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[2]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[14]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[11]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[14]/project/dependencies/item[5]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[78]/dependencies/item[23]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[78]/dependencies/item[23]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[5]/project/dependencies/item[4]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[57]/dependencies/item[10]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[9]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[57]"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]"/>
 				</item>
 			</dependencies>
