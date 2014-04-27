@@ -231,7 +231,7 @@ void Replicator::setState(const State* state)
 		for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
 		{
 			Peer& peer = i->second;
-			if (peer.state == PsEstablished)
+			if (peer.state == PsEstablished && peer.criticalEnable)
 				peer.timeUntilTx = 0.0f;
 		}
 	}
@@ -686,6 +686,7 @@ void Replicator::sendState(int32_t dT)
 		Scalar distanceToPeer = ghostToPlayer.length();
 		float t = clamp((distanceToPeer - m_configuration.nearDistance) / (m_configuration.farDistance - m_configuration.nearDistance), 0.0f, 1.0f);
 		peer.timeUntilTx = (int32_t)lerp(m_configuration.nearTimeUntilTx, m_configuration.farTimeUntilTx + int32_t((g_random.nextFloat() - 0.5f) * (m_configuration.farTimeUntilTx - m_configuration.nearTimeUntilTx) * 0.5f), t);
+		peer.criticalEnable = bool(distanceToPeer < m_configuration.furthestDistance);
 	}
 }
 
