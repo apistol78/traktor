@@ -248,7 +248,7 @@ Lerp refraction amount on depth
 		<item type="traktor.render.Lerp">
 			<comment/>
 			<position>
-				<first>2173</first>
+				<first>2175</first>
 				<second>667</second>
 			</position>
 		</item>
@@ -638,7 +638,7 @@ Amount of reflection on view angle.
 			<comment/>
 			<position>
 				<first>1349</first>
-				<second>1610</second>
+				<second>1618</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
@@ -675,8 +675,8 @@ Amount of reflection on view angle.
 		<item type="traktor.render.Sub">
 			<comment/>
 			<position>
-				<first>826</first>
-				<second>1607</second>
+				<first>817</first>
+				<second>1608</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
@@ -690,8 +690,8 @@ Amount of reflection on view angle.
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>737</first>
-				<second>1651</second>
+				<first>702</first>
+				<second>1657</second>
 			</position>
 			<swizzle>z</swizzle>
 		</item>
@@ -701,7 +701,7 @@ Amount of reflection on view angle.
 				<first>829</first>
 				<second>1740</second>
 			</position>
-			<value>2</value>
+			<value>1</value>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
@@ -709,7 +709,7 @@ Amount of reflection on view angle.
 				<first>934</first>
 				<second>1780</second>
 			</position>
-			<value>0.01</value>
+			<value>0.1</value>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -926,6 +926,13 @@ Distance to fog plane
 					<second>1</second>
 				</item>
 			</values>
+		</item>
+		<item type="traktor.render.Abs">
+			<comment/>
+			<position>
+				<first>989</first>
+				<second>1569</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -1581,26 +1588,6 @@ Distance to fog plane
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[63]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[62]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[64]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[63]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[65]"/>
 				<name>Output</name>
 			</source>
@@ -1977,6 +1964,26 @@ Distance to fog plane
 			<destination>
 				<node ref="/object/nodes/item[53]"/>
 				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[64]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[86]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[86]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[62]"/>
+				<name>Input1</name>
 			</destination>
 		</item>
 	</edges>
