@@ -57,6 +57,8 @@ public:
 	virtual bool isEditable() const;
 
 	virtual bool edit();
+
+	virtual void sort(bool recursive);
 	
 	virtual Ref< TreeViewItem > getParent() const;
 

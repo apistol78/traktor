@@ -116,6 +116,10 @@ bool TreeViewItemCocoa::edit()
 	return false;
 }
 
+void TreeViewItemCocoa::sort(bool recursive)
+{
+}
+
 Ref< TreeViewItem > TreeViewItemCocoa::getParent() const
 {
 	return m_parent;

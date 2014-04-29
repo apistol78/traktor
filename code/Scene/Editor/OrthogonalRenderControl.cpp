@@ -361,17 +361,22 @@ void OrthogonalRenderControl::updateSettings()
 
 Matrix44 OrthogonalRenderControl::getProjectionTransform() const
 {
-	ui::Rect innerRect = m_renderWidget->getInnerRect();
-	float ratio = float(innerRect.getWidth()) / innerRect.getHeight();
+	if (m_worldRenderer)
+	{
+		ui::Rect innerRect = m_renderWidget->getInnerRect();
+		float ratio = float(innerRect.getWidth()) / innerRect.getHeight();
 
-	world::WorldViewOrtho worldView;
-	worldView.width = m_magnification;
-	worldView.height = m_magnification / ratio;
+		world::WorldViewOrtho worldView;
+		worldView.width = m_magnification;
+		worldView.height = m_magnification / ratio;
 
-	world::WorldRenderView worldRenderView;
-	m_worldRenderer->createRenderView(worldView, worldRenderView);
+		world::WorldRenderView worldRenderView;
+		m_worldRenderer->createRenderView(worldView, worldRenderView);
 
-	return worldRenderView.getProjection();
+		return worldRenderView.getProjection();
+	}
+	else
+		return Matrix44::identity();
 }
 
 Matrix44 OrthogonalRenderControl::getViewTransform() const
