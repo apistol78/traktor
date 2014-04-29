@@ -89,13 +89,14 @@ Ref< TreeViewItem > TreeViewWin32::createItem(TreeViewItem* parent, const std::w
 	tstring ttext = wstots(text);
 
 	TV_INSERTSTRUCT tvis;
-	memset(&tvis, 0, sizeof(tvis));
+	std::memset(&tvis, 0, sizeof(tvis));
 	tvis.hParent = parent ? checked_type_cast< TreeViewItemWin32* >(parent)->getHandle() : NULL;
 	tvis.hInsertAfter = TVI_LAST;
-	tvis.item.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
+	tvis.item.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_PARAM;
 	tvis.item.pszText = (LPTSTR)ttext.c_str();
 	tvis.item.iImage = image;
 	tvis.item.iSelectedImage = tvis.item.iImage;
+	tvis.item.lParam = (LPARAM)item.ptr();
 
 	HTREEITEM hItem = TreeView_InsertItem((HWND)m_hWnd, &tvis);
 	if (!hItem)

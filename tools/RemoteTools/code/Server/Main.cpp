@@ -211,7 +211,7 @@ uint8_t handleLaunchProcess(net::Socket* clientSocket)
 	traktor::log::info << L"\targuments \"" << arguments << L"\"" << Endl;
 
 	Path path(g_scratchPath + L"/" + user + L"/" + pathName);
-	Ref< IProcess > process = OS::getInstance().execute(path, arguments, g_scratchPath + L"/" + user, 0, false, false, false);
+	Ref< IProcess > process = OS::getInstance().execute(L"\"" + path.getPathName() + L"\" " + arguments, g_scratchPath + L"/" + user, 0, false, false, false);
 	if (!process)
 	{
 		traktor::log::error << L"Unable to launch process \"" << pathName << L"\"" << Endl;

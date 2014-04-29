@@ -2,15 +2,15 @@
 <object type="traktor.amalgam.Platform" version="1">
 	<iconIndex>1</iconIndex>
 	<deployToolWin32>
-		<executable>$(TRAKTOR_HOME)/bin/deploy/win32/deploy-win64.bat</executable>
+		<executable>$(TRAKTOR_HOME)/bin/win32/Run $(TRAKTOR_HOME)/bin/deploy/deploy-win64.run</executable>
 		<environment/>
 	</deployToolWin32>
 	<deployToolWin64>
-		<executable>$(TRAKTOR_HOME)/bin/deploy/win64/deploy-win64.bat</executable>
+		<executable>$(TRAKTOR_HOME)/bin/win64/Run $(TRAKTOR_HOME)/bin/deploy/deploy-win64.run</executable>
 		<environment/>
 	</deployToolWin64>
 	<deployToolOsX>
-		<executable>$(TRAKTOR_HOME)/bin/deploy/osx/deploy-win64.sh</executable>
+		<executable>$(TRAKTOR_HOME)/bin/osx/Run $(TRAKTOR_HOME)/bin/deploy/deploy-win64.run</executable>
 		<environment/>
 	</deployToolOsX>
 </object>

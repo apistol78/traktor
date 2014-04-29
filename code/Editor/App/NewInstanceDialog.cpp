@@ -144,7 +144,9 @@ bool NewInstanceDialog::create(ui::Widget* parent)
 		items->add(item);
 	}
 
+	groupRoot->sort(true);
 	groupRoot->expand();
+
 	m_categoryTree->update();
 
 	// Restore last state.

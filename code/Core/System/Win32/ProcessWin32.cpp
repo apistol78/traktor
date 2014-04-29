@@ -170,7 +170,7 @@ bool ProcessWin32::signal(SignalType signalType)
 
 int32_t ProcessWin32::exitCode() const
 {
-	DWORD code;
+	DWORD code = 0;
 
 	if (!GetExitCodeProcess(m_hProcess, &code))
 		return 0;

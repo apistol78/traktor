@@ -68,6 +68,8 @@ public:
 
 	virtual bool edit() = 0;
 
+	virtual void sort(bool recursive) = 0;
+
 	virtual Ref< TreeViewItem > getParent() const = 0;
 
 	virtual bool hasChildren() const = 0;

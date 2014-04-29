@@ -162,6 +162,22 @@ bool TreeViewItemWin32::edit()
 	return TreeView_EditLabel(m_hWndTree, m_hItem) != NULL;
 }
 
+void TreeViewItemWin32::sort(bool recursive)
+{
+	TVSORTCB tvs;
+	tvs.hParent = m_hItem;
+	tvs.lpfnCompare = (PFNTVCOMPARE)&TreeViewItemWin32::compare;
+	tvs.lParam = (LPARAM)this;
+	TreeView_SortChildrenCB(m_hWndTree, &tvs, FALSE);
+
+	if (recursive)
+	{
+		RefArray< TreeViewItem > children; getChildren(children);
+		for (RefArray< TreeViewItem >::iterator i = children.begin(); i != children.end(); ++i)
+			(*i)->sort(true);
+	}
+}
+
 Ref< TreeViewItem > TreeViewItemWin32::getParent() const
 {
 	HTREEITEM hParentItem = TreeView_GetParent(m_hWndTree, m_hItem);
@@ -211,6 +227,17 @@ void TreeViewItemWin32::updateImage()
 	tvi.iImage = isExpanded() ? m_expandedImage : m_image;
 	tvi.iSelectedImage = tvi.iImage;
 	TreeView_SetItem(m_hWndTree, &tvi);
+}
+
+int CALLBACK TreeViewItemWin32::compare(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
+{
+	TreeViewItemWin32* item1 = reinterpret_cast< TreeViewItemWin32* >(lParam1);
+	T_ASSERT (item1);
+
+	TreeViewItemWin32* item2 = reinterpret_cast< TreeViewItemWin32* >(lParam2);
+	T_ASSERT (item2);
+
+	return item1->getText() < item2->getText() ? -1 : 1;
 }
 
 	}

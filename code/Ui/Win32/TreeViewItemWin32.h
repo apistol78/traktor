@@ -61,6 +61,8 @@ public:
 
 	virtual bool edit();
 
+	virtual void sort(bool recursive);
+
 	virtual Ref< TreeViewItem > getParent() const;
 
 	virtual bool hasChildren() const;
@@ -82,6 +84,8 @@ private:
 	HWND m_hWndTree;
 	HTREEITEM m_hItem;
 	bool m_editable;
+
+	static int CALLBACK compare(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort);
 };
 
 	}
