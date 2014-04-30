@@ -7,6 +7,7 @@
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
+#include "Database/Traverse.h"
 #include "Editor/IEditor.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "I18N/Text.h"
@@ -112,8 +113,19 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 
 	m_dependencyList->addDoubleClickEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventDependencyListDoubleClick));
 
+	Ref< ui::TabPage > tabDependents = new ui::TabPage();
+	if (!tabDependents->create(tab, L"Dependents", new ui::TableLayout(L"100%", L"100%", 0, 0)))
+		return false;
+
+	m_dependentList = new ui::ListBox();
+	if (!m_dependentList->create(tabDependents))
+		return false;
+
+	m_dependentList->addDoubleClickEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventDependentListDoubleClick));
+
 	tab->addPage(tabOutline);
 	tab->addPage(tabDependencies);
+	tab->addPage(tabDependents);
 	tab->setActivePage(tabOutline);
 
 	Ref< ui::custom::Splitter > splitterWork = new ui::custom::Splitter();
@@ -199,6 +211,7 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 		m_scriptDebuggerSessions->addListener(this);
 
 	updateDependencyList();
+	updateDependentList();
 	return true;
 }
 
@@ -431,6 +444,27 @@ void ScriptEditor::updateDependencyList()
 	}
 }
 
+void ScriptEditor::updateDependentList()
+{
+	m_dependentList->removeAll();
+
+	RefArray< db::Instance > scriptInstances;
+	db::recursiveFindChildInstances(m_editor->getSourceDatabase()->getRootGroup(), db::FindInstanceByType(type_of< Script >()), scriptInstances);
+
+	for (RefArray< db::Instance >::const_iterator i = scriptInstances.begin(); i != scriptInstances.end(); ++i)
+	{
+		Ref< const Script > scriptObject = (*i)->getObject< const Script >();
+		if (scriptObject)
+		{
+			const std::vector< Guid >& scriptDependencies = scriptObject->getDependencies();
+			if (std::find(scriptDependencies.begin(), scriptDependencies.end(), m_instance->getGuid()) != scriptDependencies.end())
+			{
+				m_dependentList->add((*i)->getPath(), *i);
+			}
+		}
+	}
+}
+
 void ScriptEditor::buildOutlineGrid(ui::custom::GridView* grid, ui::custom::GridRow* parent, const IScriptOutline::Node* on)
 {
 	while (on)
@@ -539,6 +573,17 @@ void ScriptEditor::eventDependencyListDoubleClick(ui::Event* event)
 	{
 		const std::vector< Guid >& dependencies = m_script->getDependencies();
 		Ref< db::Instance > scriptInstance = m_editor->getSourceDatabase()->getInstance(dependencies[selectedIndex]);
+		if (scriptInstance)
+			m_editor->openEditor(scriptInstance);
+	}
+}
+
+void ScriptEditor::eventDependentListDoubleClick(ui::Event* event)
+{
+	int selectedIndex = m_dependentList->getSelected();
+	if (selectedIndex >= 0)
+	{
+		Ref< db::Instance > scriptInstance = m_dependentList->getData< db::Instance >(selectedIndex);
 		if (scriptInstance)
 			m_editor->openEditor(scriptInstance);
 	}

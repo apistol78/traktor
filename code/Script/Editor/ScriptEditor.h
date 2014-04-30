@@ -87,6 +87,7 @@ private:
 	Ref< ui::custom::Splitter > m_splitter;
 	Ref< ui::custom::GridView > m_outlineGrid;
 	Ref< ui::ListBox > m_dependencyList;
+	Ref< ui::ListBox > m_dependentList;
 	Ref< ui::custom::SyntaxRichEdit > m_edit;
 	Ref< ui::custom::StatusBar > m_compileStatus;
 	Ref< ui::Tab > m_tabSessions;
@@ -120,6 +121,8 @@ private:
 
 	void updateDependencyList();
 
+	void updateDependentList();
+
 	void buildOutlineGrid(ui::custom::GridView* grid, ui::custom::GridRow* parent, const IScriptOutline::Node* on);
 
 	void eventOutlineDoubleClick(ui::Event* event);
@@ -128,7 +131,7 @@ private:
 
 	void eventDependencyListDoubleClick(ui::Event* event);
 
-	void eventDebuggerToolClick(ui::Event* event);
+	void eventDependentListDoubleClick(ui::Event* event);
 
 	void eventToolBarEditClick(ui::Event* event);
 

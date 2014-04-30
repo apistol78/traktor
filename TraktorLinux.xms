@@ -12743,6 +12743,10 @@
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[16]/dependencies/item[6]/project/dependencies/item[12]/project"/>
 				</item>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+				</item>
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
