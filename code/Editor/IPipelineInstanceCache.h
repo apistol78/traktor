@@ -21,6 +21,8 @@ class IPipelineInstanceCache : public Object
 
 public:
 	virtual Ref< ISerializable > getObjectReadOnly(const Guid& instanceGuid) = 0;
+
+	virtual void flush(const Guid& instanceGuid) = 0;
 };
 
 	}

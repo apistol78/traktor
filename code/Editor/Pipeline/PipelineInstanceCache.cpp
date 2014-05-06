@@ -69,5 +69,12 @@ Ref< ISerializable > PipelineInstanceCache::getObjectReadOnly(const Guid& instan
 	return object;
 }
 
+void PipelineInstanceCache::flush(const Guid& instanceGuid)
+{
+	std::map< Guid, Ref< ISerializable > >::iterator i = m_readCache.find(instanceGuid);
+	if (i != m_readCache.end())
+		m_readCache.erase(i);
+}
+
 	}
 }

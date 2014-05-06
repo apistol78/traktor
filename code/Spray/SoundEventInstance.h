@@ -44,7 +44,7 @@ public:
 
 	virtual void build(world::IWorldRenderer* worldRenderer);
 
-	virtual void cancel();
+	virtual void cancel(CancelType when);
 
 private:
 	Ref< world::Entity > m_sender;

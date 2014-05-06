@@ -9,6 +9,7 @@
 #include "Core/Math/Color4ub.h"
 #include "Core/Math/Plane.h"
 #include "Core/Math/Quaternion.h"
+#include "Core/Math/Range.h"
 #include "Core/Math/Transform.h"
 #include "Core/Math/Vector2.h"
 #include "Script/Any.h"
@@ -487,6 +488,40 @@ private:
 	RefArray< Object > m_arr;
 };
 
+class T_DLLCLASS BoxedRange : public Boxed
+{
+	T_RTTI_CLASS;
+
+public:
+	BoxedRange();
+
+	template < typename ItemType >
+	BoxedRange(const Range< ItemType >& range)
+	{
+		m_min = CastAny< ItemType >::set(range.min);
+		m_max = CastAny< ItemType >::set(range.max);
+	}
+
+	const Any& min() const { return m_min; }
+
+	const Any& max() const { return m_max; }
+
+	virtual std::wstring toString() const;
+
+	template < typename ItemType >
+	Range< ItemType > unbox() const
+	{
+		return Range< ItemType >(
+			CastAny< ItemType >::get(m_min),
+			CastAny< ItemType >::get(m_max)
+		);
+	}
+
+private:
+	Any m_min;
+	Any m_max;
+};
+
 class T_DLLCLASS BoxedStdVector : public Boxed
 {
 	T_RTTI_CLASS;
@@ -740,6 +775,28 @@ struct CastAny < const Color4ub&, false >
 	}
 	static Color4ub get(const Any& value) {
 		return checked_type_cast< BoxedColor4ub*, false >(value.getObject())->unbox();
+	}
+};
+
+template < typename InnerType >
+struct CastAny< Range< InnerType >, false >
+{
+	static Any set(const Range< InnerType >& value) {
+		return Any::fromObject(new BoxedRange(value));
+	}
+	static Range< InnerType > get(const Any& value) {
+		return checked_type_cast< BoxedRange*, false >(value.getObject())->unbox();
+	}
+};
+
+template < typename InnerType >
+struct CastAny< const Range< InnerType >&, false >
+{
+	static Any set(const Range< InnerType >& value) {
+		return Any::fromObject(new BoxedRange(value));
+	}
+	static Range< InnerType > get(const Any& value) {
+		return checked_type_cast< BoxedRange*, false >(value.getObject())->unbox();
 	}
 };
 

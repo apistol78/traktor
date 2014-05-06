@@ -541,6 +541,19 @@ std::wstring BoxedRefArray::toString() const
 	return ss.str();
 }
 
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Range", BoxedRange, Boxed)
+
+BoxedRange::BoxedRange()
+{
+}
+
+std::wstring BoxedRange::toString() const
+{
+	StringOutputStream ss;
+	ss << m_min.getWideString() << L" - " << m_max.getWideString();
+	return ss.str();
+}
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.StdVector", BoxedStdVector, Boxed)
 
 BoxedStdVector::BoxedStdVector()
@@ -738,6 +751,12 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedColor4ub->addMethod("setBlue", &BoxedColor4ub::setBlue);
 	classBoxedColor4ub->addMethod("setAlpha", &BoxedColor4ub::setAlpha);
 	scriptManager->registerClass(classBoxedColor4ub);
+
+	Ref< AutoScriptClass< BoxedRange > > classBoxedRange = new AutoScriptClass< BoxedRange >();
+	classBoxedRange->addConstructor();
+	classBoxedRange->addMethod("min", &BoxedRange::min);
+	classBoxedRange->addMethod("max", &BoxedRange::max);
+	scriptManager->registerClass(classBoxedRange);
 
 	Ref< AutoScriptClass< BoxedRefArray > > classBoxedRefArray = new AutoScriptClass< BoxedRefArray >();
 	classBoxedRefArray->addConstructor();
