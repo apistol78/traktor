@@ -1,0 +1,54 @@
+
+
+function build(args)
+	stdout:printLn("Building asset(s)...")
+	local cmdline = "$(DEPLOY_PROJECT_ROOT)/bin/latest/win64/releaseshared/Traktor.Pipeline.App -standalone -p -s=Pipeline"
+	for i = 1, args:size() - 1 do
+		cmdline = cmdline .. " " .. args:get(i)
+	end
+	return run:execute(cmdline)
+end
+
+
+function deploy(args)
+	-- Deploy application configuration to target.
+	stdout:printLn("Deploying resources to target host...")
+	run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) Application.config", "(null)")
+	if run:exitCode() ~= 0 then return run:exitCode() end
+
+	-- Deploy binaries to target.
+	stdout:printLn("Deploying binaries to target host...")
+	run:pushd("$(DEPLOY_PROJECT_ROOT)/bin/latest/win64/releaseshared")
+	run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) *.dll *.exe *.txt", "(null)")
+	if run:exitCode() ~= 0 then return run:exitCode() end
+	run:popd()
+
+	return 0
+end
+
+
+function launch(args)
+	stdout:printLn("Launching Win64...")
+	return run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteLaunch $(DEPLOY_TARGET_HOST) $(DEPLOY_EXECUTABLE) \\-s Application.config", "(null)")
+end
+
+
+function migrate(args)
+	stdout:printLn("Migrating Win64...")
+	return run:execute("$(DEPLOY_PROJECT_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Database.Migrate.App -p -s=Migrate")
+end
+
+
+function main(args)
+	local action = args:get(0)
+	if action == "build" then
+		return build(args)
+	elseif action == "deploy" then
+		return deploy(args)
+	elseif action == "launch" then
+		return launch(args)
+	elseif action == "migrate" then
+		return migrate(args)
+	end
+	return 1
+end

@@ -785,7 +785,7 @@ struct CastAny< Range< InnerType >, false >
 		return Any::fromObject(new BoxedRange(value));
 	}
 	static Range< InnerType > get(const Any& value) {
-		return checked_type_cast< BoxedRange*, false >(value.getObject())->unbox();
+		return checked_type_cast< BoxedRange*, false >(value.getObject())->unbox< InnerType >();
 	}
 };
 
@@ -796,7 +796,7 @@ struct CastAny< const Range< InnerType >&, false >
 		return Any::fromObject(new BoxedRange(value));
 	}
 	static Range< InnerType > get(const Any& value) {
-		return checked_type_cast< BoxedRange*, false >(value.getObject())->unbox();
+		return checked_type_cast< BoxedRange*, false >(value.getObject())->unbox< InnerType >();
 	}
 };
 
