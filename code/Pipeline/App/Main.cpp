@@ -235,12 +235,16 @@ Ref< PropertyGroup > loadSettings(const std::wstring& settingsFile)
 	return settings;
 }
 
-
+struct ConnectionAndCache 
+{
+	Ref< db::Database > database;
+	Ref< editor::PipelineInstanceCache > cache;
+};
 
 Mutex g_pipelineMutex(Guid(L"{91B42B2E-652D-4251-BA5B-9683F30518DD}"));
 bool g_receivedBreakSignal = false;
 bool g_success = false;
-std::map< std::wstring, Ref< db::Database > > g_databaseConnections;
+std::map< std::wstring, ConnectionAndCache > g_databaseConnections;
 
 #if defined(_WIN32)
 
@@ -257,9 +261,9 @@ void threadBuild(editor::PipelineBuilder& pipelineBuilder, const editor::Pipelin
 	g_success = pipelineBuilder.build(dependencySet, rebuild);
 }
 
-Ref< db::Database > openDatabase(const std::wstring& connectionString, bool create)
+ConnectionAndCache openDatabase(const PropertyGroup* settings, const std::wstring& connectionString, bool create)
 {
-	std::map< std::wstring, Ref< db::Database > >::iterator i = g_databaseConnections.find(connectionString);
+	std::map< std::wstring, ConnectionAndCache >::iterator i = g_databaseConnections.find(connectionString);
 	if (i != g_databaseConnections.end())
 		return i->second;
 
@@ -267,11 +271,18 @@ Ref< db::Database > openDatabase(const std::wstring& connectionString, bool crea
 	if (!database->open(connectionString))
 	{
 		if (!create || !database->create(connectionString))
-			return 0;
+			return ConnectionAndCache();
 	}
 
-	g_databaseConnections[connectionString] = database;
-	return database;
+	g_databaseConnections[connectionString].database = database;
+
+	if (!create)
+	{
+		std::wstring cachePath = settings->getProperty< PropertyString >(L"Pipeline.CachePath");
+		g_databaseConnections[connectionString].cache = new editor::PipelineInstanceCache(database, cachePath);
+	}
+
+	return g_databaseConnections[connectionString];
 }
 
 void updateDatabases()
@@ -279,27 +290,33 @@ void updateDatabases()
 	Ref< const db::IEvent > event;
 	bool remote;
 
-	for (std::map< std::wstring, Ref< db::Database > >::iterator i = g_databaseConnections.begin(); i != g_databaseConnections.end(); ++i)
+	for (std::map< std::wstring, ConnectionAndCache >::iterator i = g_databaseConnections.begin(); i != g_databaseConnections.end(); ++i)
 	{
-		while (i->second->getEvent(event, remote))
+		while (i->second.database->getEvent(event, remote))
 		{
 			if (remote)
 			{
 				if (const db::EvtInstanceCreated* instanceCreated = dynamic_type_cast< const db::EvtInstanceCreated* >(event))
 				{
-					Ref< db::Instance > instance = i->second->getInstance(instanceCreated->getInstanceGuid());
+					Ref< db::Instance > instance = i->second.database->getInstance(instanceCreated->getInstanceGuid());
 					if (instance)
 						log::info << L"Database event; instance \"" << instance->getName() << L"\" created" << Endl;
 					else
 						log::info << L"Database event; instance \"" << instanceCreated->getInstanceGuid().format() << L"\" created" << Endl;
+
+					if (i->second.cache)
+						i->second.cache->flush(instanceCreated->getInstanceGuid());
 				}
 				else if (const db::EvtInstanceCommitted* instanceCommited = dynamic_type_cast< const db::EvtInstanceCommitted* >(event))
 				{
-					Ref< db::Instance > instance = i->second->getInstance(instanceCommited->getInstanceGuid());
+					Ref< db::Instance > instance = i->second.database->getInstance(instanceCommited->getInstanceGuid());
 					if (instance)
 						log::info << L"Database event; instance \"" << instance->getName() << L"\" committed" << Endl;
 					else
 						log::info << L"Database event; instance \"" << instanceCommited->getInstanceGuid().format() << L"\" committed" << Endl;
+
+					if (i->second.cache)
+						i->second.cache->flush(instanceCommited->getInstanceGuid());
 				}
 				else
 					log::info << L"Database event; " << type_name(event) << Endl;
@@ -507,15 +524,15 @@ bool perform(const PipelineParameters* params)
 	std::wstring sourceDatabaseCS = settings->getProperty< PropertyString >(L"Editor.SourceDatabase");
 	std::wstring outputDatabaseCS = settings->getProperty< PropertyString >(L"Editor.OutputDatabase");
 	
-	Ref< db::Database > sourceDatabase = openDatabase(sourceDatabaseCS, false);
-	if (!sourceDatabase)
+	ConnectionAndCache sourceDatabaseAndCache = openDatabase(settings, sourceDatabaseCS, false);
+	if (!sourceDatabaseAndCache.database)
 	{
 		traktor::log::error << L"Unable to open source database \"" << sourceDatabaseCS << L"\"" << Endl;
 		return false;
 	}
 
-	Ref< db::Database > outputDatabase = openDatabase(outputDatabaseCS, true);
-	if (!outputDatabase)
+	ConnectionAndCache outputDatabaseAndCache = openDatabase(settings, outputDatabaseCS, true);
+	if (!outputDatabaseAndCache.database)
 	{
 		traktor::log::error << L"Unable to open or create output database \"" << outputDatabaseCS << L"\"" << Endl;
 		return false;
@@ -530,11 +547,6 @@ bool perform(const PipelineParameters* params)
 		traktor::log::error << L"Unable to connect to pipeline database" << Endl;
 		return false;
 	}
-
-	Ref< editor::PipelineInstanceCache > pipelineInstanceCache = new editor::PipelineInstanceCache(
-		sourceDatabase,
-		cachePath
-	);
 
 	// Create cache if enabled.
 	Ref< editor::IPipelineCache > pipelineCache;
@@ -577,11 +589,11 @@ bool perform(const PipelineParameters* params)
 	{
 		pipelineDepends = new editor::PipelineDependsIncremental(
 			&pipelineFactory,
-			sourceDatabase,
-			outputDatabase,
+			sourceDatabaseAndCache.database,
+			outputDatabaseAndCache.database,
 			&pipelineDependencySet,
 			pipelineDb,
-			pipelineInstanceCache
+			sourceDatabaseAndCache.cache
 		);
 	}
 
@@ -602,7 +614,7 @@ bool perform(const PipelineParameters* params)
 	else
 	{
 		RefArray< db::Instance > assetInstances;
-		db::recursiveFindChildInstances(sourceDatabase->getRootGroup(), db::FindInstanceByType(type_of< editor::Assets >()), assetInstances);
+		db::recursiveFindChildInstances(sourceDatabaseAndCache.database->getRootGroup(), db::FindInstanceByType(type_of< editor::Assets >()), assetInstances);
 		for (RefArray< db::Instance >::iterator i = assetInstances.begin(); i != assetInstances.end(); ++i)
 		{
 			traktor::log::info << L"Traversing root \"" << (*i)->getGuid().format() << L"\"..." << Endl;
@@ -621,11 +633,11 @@ bool perform(const PipelineParameters* params)
 	// Build output.
 	editor::PipelineBuilder pipelineBuilder(
 		&pipelineFactory,
-		sourceDatabase,
-		outputDatabase,
+		sourceDatabaseAndCache.database,
+		outputDatabaseAndCache.database,
 		pipelineCache,
 		pipelineDb,
-		pipelineInstanceCache,
+		sourceDatabaseAndCache.cache,
 		statusListener.ptr(),
 		settings->getProperty< PropertyBoolean >(L"Pipeline.BuildThreads", true)
 	);

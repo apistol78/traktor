@@ -27,11 +27,17 @@ class T_DLLCLASS IEntityEventInstance : public Object
 	T_RTTI_CLASS;
 
 public:
+	enum CancelType
+	{
+		CtImmediate = 0,
+		CtEnd = 1
+	};
+
 	virtual bool update(const UpdateParams& update) = 0;
 
 	virtual void build(IWorldRenderer* worldRenderer) = 0;
 
-	virtual void cancel() = 0;
+	virtual void cancel(CancelType when) = 0;
 };
 
 	}

@@ -77,6 +77,10 @@ public:
 
 	virtual void update(const world::UpdateParams& update);
 
+	void setLoopEnable(bool loopEnable);
+
+	bool getLoopEnable() const;
+
 	bool isFinished() const;
 
 	const resource::Proxy< Effect >& getEffect() const { return m_effect; }

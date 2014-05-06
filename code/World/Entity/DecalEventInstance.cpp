@@ -39,7 +39,7 @@ void DecalEventInstance::build(IWorldRenderer* worldRenderer)
 	worldRenderer->build(m_entity);
 }
 
-void DecalEventInstance::cancel()
+void DecalEventInstance::cancel(CancelType when)
 {
 	safeDestroy(m_entity);
 }

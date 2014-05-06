@@ -30,7 +30,7 @@ public:
 
 	virtual void build(world::IWorldRenderer* worldRenderer);
 
-	virtual void cancel();
+	virtual void cancel(CancelType when);
 
 private:
 	const SpawnEffectEvent* m_spawnEffect;

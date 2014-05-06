@@ -137,6 +137,17 @@ void EffectEntity::update(const world::UpdateParams& update)
 	}
 }
 
+void EffectEntity::setLoopEnable(bool loopEnable)
+{
+	if (m_effectInstance)
+		m_effectInstance->setLoopEnable(loopEnable);
+}
+
+bool EffectEntity::getLoopEnable() const
+{
+	return m_effectInstance ? m_effectInstance->getLoopEnable() : false;
+}
+
 bool EffectEntity::isFinished() const
 {
 	if (!m_effect)

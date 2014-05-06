@@ -62,9 +62,15 @@ void SpawnEffectEventInstance::build(world::IWorldRenderer* worldRenderer)
 	worldRenderer->build(m_effectEntity);
 }
 
-void SpawnEffectEventInstance::cancel()
+void SpawnEffectEventInstance::cancel(CancelType when)
 {
-	safeDestroy(m_effectEntity);
+	if (when == IEntityEventInstance::CtImmediate)
+		safeDestroy(m_effectEntity);
+	else
+	{
+		if (m_effectEntity)
+			m_effectEntity->setLoopEnable(false);
+	}
 }
 
 	}

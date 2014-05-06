@@ -29,7 +29,7 @@ struct Vertex
 
 const resource::Id< render::Shader > c_idShaderGlyph(Guid(L"{A8BC2D03-EB52-B744-8D4B-29E39FF0B4F5}"));
 const resource::Id< render::Shader > c_idShaderGlyphMask(Guid(L"{C8FEF24B-D775-A14D-9FF3-E34A17495FB4}"));
-const uint32_t c_glyphCount = 800;
+const uint32_t c_glyphCount = 1000;
 
 const struct TemplateVertex
 {
@@ -142,26 +142,33 @@ void AccGlyph::destroy()
 		safeDestroy(m_vertexBuffers[i]);
 }
 
+void AccGlyph::beginFrame()
+{
+	m_vertex = (uint8_t*)m_vertexBuffers[m_currentVertexBuffer]->lock();
+	m_offset = 0;
+	m_count = 0;
+}
+
+void AccGlyph::endFrame()
+{
+	T_FATAL_ASSERT (m_count == 0);
+	m_vertexBuffers[m_currentVertexBuffer]->unlock();
+	m_currentVertexBuffer = (m_currentVertexBuffer + 1) % sizeof_array(m_vertexBuffers);
+}
+
 void AccGlyph::add(
 	const Aabb2& bounds,
 	const Matrix33& transform,
 	const Vector4& textureOffset
 )
 {
+	T_FATAL_ASSERT (m_vertex != 0);
+
 	if (m_count >= c_glyphCount)
 	{
 		log::warning << L"Too many glyphs cached; skipped" << Endl;
 		return;
 	}
-
-	if (!m_vertex)
-	{
-		m_vertex = (uint8_t*)m_vertexBuffers[m_currentVertexBuffer]->lock();
-		m_count = 0;
-	}
-
-	if (!m_vertex)
-		return;
 
 	Matrix44 m1(
 		transform.e11, transform.e12, transform.e13, 0.0f,
@@ -215,12 +222,8 @@ void AccGlyph::render(
 	const SwfColor& glyphFilterColor
 )
 {
-	if (!m_vertex || !m_count)
+	if (!m_count)
 		return;
-
-	render::VertexBuffer* vertexBuffer = m_vertexBuffers[m_currentVertexBuffer];
-
-	vertexBuffer->unlock();
 
 	render::Shader* shader = (maskReference == 0) ? m_shaderGlyph : m_shaderGlyphMask;
 	T_ASSERT (shader);
@@ -235,9 +238,9 @@ void AccGlyph::render(
 	render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >("Flash AccGlyph");
 	renderBlock->program = shader->getCurrentProgram();
 	renderBlock->indexBuffer = m_indexBuffer;
-	renderBlock->vertexBuffer = vertexBuffer;
+	renderBlock->vertexBuffer = m_vertexBuffers[m_currentVertexBuffer];
 	renderBlock->primitive = render::PtTriangles;
-	renderBlock->offset = 0;
+	renderBlock->offset = m_offset * 6;
 	renderBlock->count = m_count * 2;
 	renderBlock->minIndex = 0;
 	renderBlock->maxIndex = c_glyphCount * 4 - 1;
@@ -270,8 +273,7 @@ void AccGlyph::render(
 
 	renderContext->draw(render::RpOverlay, renderBlock);
 
-	m_currentVertexBuffer = (m_currentVertexBuffer + 1) % sizeof_array(m_vertexBuffers);
-	m_vertex = 0;
+	m_offset += m_count;
 	m_count = 0;
 }
 

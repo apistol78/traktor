@@ -72,7 +72,7 @@ void EnvelopeFeedbackEventInstance::build(world::IWorldRenderer* worldRenderer)
 {
 }
 
-void EnvelopeFeedbackEventInstance::cancel()
+void EnvelopeFeedbackEventInstance::cancel(CancelType when)
 {
 }
 

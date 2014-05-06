@@ -314,6 +314,8 @@ void AccDisplayRenderer::begin(
 			i->second.index = -1;
 	}
 
+	m_glyph->beginFrame();
+
 	m_maskWrite = false;
 	m_maskIncrement = false;
 	m_maskReference = 0;
@@ -616,6 +618,8 @@ void AccDisplayRenderer::renderCanvas(const FlashDictionary& dictionary, const M
 void AccDisplayRenderer::end()
 {
 	renderEnqueuedGlyphs();
+
+	m_glyph->endFrame();
 
 #if T_FLUSH_CACHE
 	// Don't flush cache if it doesn't contain that many shapes.

@@ -36,6 +36,8 @@ public:
 
 	virtual Ref< ISerializable > getObjectReadOnly(const Guid& instanceGuid);
 
+	virtual void flush(const Guid& instanceGuid);
+
 private:
 	Ref< db::Database > m_database;
 	std::wstring m_cacheDirectory;
