@@ -31,6 +31,8 @@ public:
 
 	virtual Ref< IBrush > clone() const;
 
+	virtual bool contained() const { return true; }
+
 private:
 	Ref< drawing::Image > m_splatImage;
 	int32_t m_radius;

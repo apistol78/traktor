@@ -2,25 +2,33 @@
 <object type="traktor.world.PostProcessSettings" version="1">
 	<requireHighRange>false</requireHighRange>
 	<definitions>
-		<item type="traktor.world.PostProcessDefineTarget" version="1">
+		<item type="traktor.world.PostProcessDefineTarget" version="3">
 			<id>Flip</id>
 			<width>0</width>
 			<height>0</height>
-			<screenDenom>1</screenDenom>
+			<screenWidthDenom>3</screenWidthDenom>
+			<screenHeightDenom>3</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
 			<format>TfR8G8B8A8</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
+			<clearColor>0, 0, 0, 0</clearColor>
 		</item>
-		<item type="traktor.world.PostProcessDefineTarget" version="1">
+		<item type="traktor.world.PostProcessDefineTarget" version="3">
 			<id>Flop</id>
 			<width>0</width>
 			<height>0</height>
-			<screenDenom>1</screenDenom>
+			<screenWidthDenom>3</screenWidthDenom>
+			<screenHeightDenom>3</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
 			<format>TfR8G8B8A8</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
+			<clearColor>0, 0, 0, 0</clearColor>
 		</item>
 	</definitions>
 	<steps>
@@ -40,7 +48,7 @@
 		<item type="traktor.world.PostProcessStepSetTarget">
 			<target>Flop</target>
 		</item>
-		<item type="traktor.world.PostProcessStepBlur" version="1">
+		<item type="traktor.world.PostProcessStepBlur" version="2">
 			<shader>{E119187C-8BF9-6544-934B-44CC29C65A26}</shader>
 			<sources>
 				<item>
@@ -51,11 +59,12 @@
 			</sources>
 			<direction>3, 0, 0, 0</direction>
 			<taps>15</taps>
+			<blurType>BtGaussian</blurType>
 		</item>
 		<item type="traktor.world.PostProcessStepSetTarget">
 			<target>Flip</target>
 		</item>
-		<item type="traktor.world.PostProcessStepBlur" version="1">
+		<item type="traktor.world.PostProcessStepBlur" version="2">
 			<shader>{E119187C-8BF9-6544-934B-44CC29C65A26}</shader>
 			<sources>
 				<item>
@@ -66,6 +75,7 @@
 			</sources>
 			<direction>0, 3, 0, 0</direction>
 			<taps>15</taps>
+			<blurType>BtGaussian</blurType>
 		</item>
 		<item type="traktor.world.PostProcessStepSetTarget">
 			<target>Output</target>

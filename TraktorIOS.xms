@@ -1436,11 +1436,199 @@
 			</configurations>
 			<items>
 				<item type="File">
-					<fileName>*.c</fileName>
+					<fileName>*.h</fileName>
 					<items/>
 				</item>
 				<item type="File">
-					<fileName>*.h</fileName>
+					<fileName>cdjpeg.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jcapimin.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jcapistd.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jccoefct.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jccolor.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jcdctmgr.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jchuff.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jcinit.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jcmainct.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jcmarker.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jcmaster.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jcomapi.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jcparam.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jcphuff.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jcprepct.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jcsample.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jctrans.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jdapimin.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jdapistd.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jdatadst.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jdatasrc.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jdcoefct.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jdcolor.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jddctmgr.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jdhuff.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jdinput.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jdmainct.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jdmarker.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jdmaster.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jdmerge.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jdphuff.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jdpostct.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jdsample.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jdtrans.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jerror.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jfdctflt.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jfdctfst.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jfdctint.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jidctflt.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jidctfst.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jidctint.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jidctred.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jmemansi.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jmemmgr.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jquant1.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jquant2.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>jutils.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>transupp.c</fileName>
 					<items/>
 				</item>
 			</items>

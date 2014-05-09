@@ -2089,12 +2089,28 @@
       <second>Edit terrain</second>
     </item>
     <item>
+      <first>TERRAIN_EDITOR_SYMMETRY_X</first>
+      <second>Symmetry horizontal</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_SYMMETRY_Z</first>
+      <second>Symmetry vertical</second>
+    </item>
+    <item>
       <first>TERRAIN_EDITOR_MATERIAL_BRUSH</first>
       <second>Material brush</second>
     </item>
     <item>
       <first>TERRAIN_EDITOR_MATERIAL</first>
       <second>Material</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_EMISSIVE_BRUSH</first>
+      <second>Emissive brush</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_NOISE_BRUSH</first>
+      <second>Noise brush</second>
     </item>
     <item>
       <first>TERRAIN_EDITOR_COLOR_BRUSH</first>
@@ -2107,6 +2123,10 @@
     <item>
       <first>TERRAIN_EDITOR_ELEVATE_BRUSH</first>
       <second>Elevate brush</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_ERODE_BRUSH</first>
+      <second>Erode brush</second>
     </item>
     <item>
       <first>TERRAIN_EDITOR_FLATTEN_BRUSH</first>

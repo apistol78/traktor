@@ -23,6 +23,8 @@ public:
 
 	virtual Ref< IBrush > clone() const;
 
+	virtual bool contained() const { return false; }
+
 private:
 	int32_t m_scale[2];
 	int32_t m_offset[2];

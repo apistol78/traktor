@@ -24,6 +24,7 @@
 #include "Terrain/Editor/CutBrush.h"
 #include "Terrain/Editor/ElevateBrush.h"
 #include "Terrain/Editor/EmissiveBrush.h"
+#include "Terrain/Editor/ErodeBrush.h"
 #include "Terrain/Editor/FlattenBrush.h"
 #include "Terrain/Editor/MaterialBrush.h"
 #include "Terrain/Editor/NoiseBrush.h"
@@ -467,7 +468,9 @@ void TerrainEditModifier::apply(
 	int32_t mnx = 0, mxx = size - 1;
 	int32_t mnz = 0, mxz = size - 1;
 
-	if (m_symmetry == 0)
+	// Calculate region which needs to be updated; only
+	// applies to "contained" brushes.
+	if (m_spatialBrush->contained())
 	{
 		float worldRadius = m_context->getGuideSize();
 		int32_t gridRadius = int32_t(size * worldRadius / m_heightfield->getWorldExtent().x());
@@ -737,6 +740,8 @@ void TerrainEditModifier::setBrush(const std::wstring& brush)
 		m_drawBrush = new MaterialBrush(m_splatImage);
 	else if (brush == L"Terrain.Editor.NoiseBrush")
 		m_drawBrush = new NoiseBrush(m_heightfield);
+	else if (brush == L"Terrain.Editor.ErodeBrush")
+		m_drawBrush = new ErodeBrush(m_heightfield);
 	else if (brush == L"Terrain.Editor.SmoothBrush")
 		m_drawBrush = new SmoothBrush(m_heightfield);
 
