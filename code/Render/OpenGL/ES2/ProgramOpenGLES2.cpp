@@ -94,8 +94,6 @@ void bindAttribute(GLuint programObject, DataUsage usage, int32_t index)
 	));
 }
 
-std::map< uint32_t, ProgramOpenGLES2* > s_programCache;
-
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramOpenGLES2", ProgramOpenGLES2, IProgram)
@@ -136,10 +134,6 @@ Ref< ProgramOpenGLES2 > ProgramOpenGLES2::create(ContextOpenGLES2* resourceConte
 	GLint status;
 	
 	uint32_t hash = resourceOpenGL->getHash();
-
-	std::map< uint32_t, ProgramOpenGLES2* >::iterator i = s_programCache.find(hash);
-	if (i != s_programCache.end())
-		return i->second;
 	
 	const std::string& vertexShader = resourceOpenGL->getVertexShader();
 	const std::string& fragmentShader = resourceOpenGL->getFragmentShader();
@@ -188,10 +182,7 @@ Ref< ProgramOpenGLES2 > ProgramOpenGLES2::create(ContextOpenGLES2* resourceConte
 		}
 	}
 
-	Ref< ProgramOpenGLES2 > program = new ProgramOpenGLES2(resourceContext, programObject, resource);
-	s_programCache.insert(std::make_pair(hash, program));
-	
-	return program;
+	return new ProgramOpenGLES2(resourceContext, programObject, resource);
 	
 #else
 	return 0;
@@ -204,15 +195,6 @@ void ProgramOpenGLES2::destroy()
 
 	if (ms_current == this)
 		ms_current = 0;
-
-	for (std::map< uint32_t, ProgramOpenGLES2* >::iterator i = s_programCache.begin(); i != s_programCache.end(); ++i)
-	{
-		if (i->second == this)
-		{
-			s_programCache.erase(i);
-			break;
-		}
-	}
 
 	if (m_program)
 	{

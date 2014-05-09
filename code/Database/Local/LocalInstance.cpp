@@ -145,12 +145,9 @@ bool LocalInstance::setGuid(const Guid& guid)
 bool LocalInstance::getLastModifyDate(DateTime& outModifyDate) const
 {
 	Ref< File > instanceObjectFile = FileSystem::getInstance().get(getInstanceObjectPath(m_instancePath));
-	Ref< File > instanceMetaFile = FileSystem::getInstance().get(getInstanceMetaPath(m_instancePath));
-	if (instanceObjectFile && instanceMetaFile)
+	if (instanceObjectFile)
 	{
-		DateTime objectTime = instanceObjectFile->getLastWriteTime();
-		DateTime metaTime = instanceMetaFile->getLastWriteTime();
-		outModifyDate = DateTime(max< uint64_t >(objectTime, metaTime));
+		outModifyDate = instanceObjectFile->getLastWriteTime();
 		return true;
 	}
 	else

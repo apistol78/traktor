@@ -31,6 +31,8 @@ public:
 
 	virtual Ref< IBrush > clone() const;
 
+	virtual bool contained() const { return true; }
+
 private:
 	resource::Proxy< hf::Heightfield > m_heightfield;
 	int32_t m_radius;

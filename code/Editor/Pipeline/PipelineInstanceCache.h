@@ -2,6 +2,7 @@
 #define traktor_editor_PipelineInstanceCache_H
 
 #include <map>
+#include "Core/Thread/Semaphore.h"
 #include "Editor/IPipelineInstanceCache.h"
 
 // import/export mechanism.
@@ -39,6 +40,7 @@ public:
 	virtual void flush(const Guid& instanceGuid);
 
 private:
+	Semaphore m_lock;
 	Ref< db::Database > m_database;
 	std::wstring m_cacheDirectory;
 	std::map< Guid, Ref< ISerializable > > m_readCache;

@@ -93,7 +93,7 @@ void Transaction::add(Action* action)
 
 Action* Transaction::get(const TypeInfo& actionType) const
 {
-	for (RefArray< Action >::const_iterator i = m_actions.begin(); i != m_actions.end(); )
+	for (RefArray< Action >::const_iterator i = m_actions.begin(); i != m_actions.end(); ++i)
 	{
 		if (is_type_a(actionType, type_of(*i)))
 			return *i;

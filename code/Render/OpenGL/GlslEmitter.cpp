@@ -629,11 +629,11 @@ bool emitIterate2d(GlslContext& cx, Iterate2d* node)
 		assign(f, out) << expandScalar(0.0f, out->getType()) << L";" << Endl;
 
 	// Write outer for-loop statement.
-	f << L"for (float " << X->getName() << L" = " << node->getFromX() << L"; " << X->getName() << L" <= " << node->getToX() << L"; ++" << X->getName() << L")" << Endl;
+	f << L"for (float " << X->getName() << L" = " << node->getFromX() << L".0; " << X->getName() << L" <= " << node->getToX() << L".0; ++" << X->getName() << L")" << Endl;
 	f << L"{" << Endl;
 	f << IncreaseIndent;
 
-	f << L"for (float " << Y->getName() << L" = " << node->getFromY() << L"; " << Y->getName() << L" <= " << node->getToY() << L"; ++" << Y->getName() << L")" << Endl;
+	f << L"for (float " << Y->getName() << L" = " << node->getFromY() << L".0; " << Y->getName() << L" <= " << node->getToY() << L".0; ++" << Y->getName() << L")" << Endl;
 	f << L"{" << Endl;
 	f << IncreaseIndent;
 

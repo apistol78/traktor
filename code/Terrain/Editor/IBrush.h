@@ -33,6 +33,9 @@ public:
 	virtual void end(int32_t x, int32_t y) = 0;
 
 	virtual Ref< IBrush > clone() const = 0;
+
+	/*! \brief Return true if brush applies all changes within brush radius. */
+	virtual bool contained() const = 0;
 };
 
 	}

@@ -89,7 +89,7 @@ Ref< Object > ActionObjectClass::construct(const InvokeParam& param, uint32_t ar
 
 uint32_t ActionObjectClass::getMethodCount() const
 {
-	return 3;
+	return 5;
 }
 
 std::string ActionObjectClass::getMethodName(uint32_t methodId) const
@@ -102,6 +102,10 @@ std::string ActionObjectClass::getMethodName(uint32_t methodId) const
 		return "getMemberByQName";
 	case 2:
 		return "setMember";
+	case 3:
+		return "getProperty";
+	case 4:
+		return "setProperty";
 	default:
 		return "";
 	}
@@ -132,6 +136,29 @@ script::Any ActionObjectClass::invoke(const InvokeParam& param, uint32_t methodI
 		{
 			flash::ActionValue memberValue = script::CastAny< flash::ActionValue >::get(argv[1]);
 			object->setMember(argv[0].getString(), memberValue);
+		}
+		break;
+
+	case 3:
+		{
+			Ref< flash::ActionFunction > propertyGetFn;
+			if (object->getPropertyGet(argv[0].getString(), propertyGetFn))
+			{
+				flash::ActionValue propertyValue = propertyGetFn->call(object);
+				return script::CastAny< flash::ActionValue >::set(propertyValue);
+			}
+		}
+		break;
+
+	case 4:
+		{
+			Ref< flash::ActionFunction > propertySetFn;
+			if (object->getPropertySet(argv[0].getString(), propertySetFn))
+			{
+				flash::ActionValueArray callArgv(object->getContext()->getPool(), 1);
+				callArgv[0] = script::CastAny< flash::ActionValue >::get(argv[1]);
+				propertySetFn->call(object, callArgv);
+			}
 		}
 		break;
 

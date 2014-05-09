@@ -38,17 +38,18 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::custom::ToolBar* toolBa
 {
 	m_parent = parent;
 
-	int32_t image = toolBar->addImage(ui::Bitmap::load(c_ResourceTerrain, sizeof(c_ResourceTerrain), L"png"), 13);
+	int32_t image = toolBar->addImage(ui::Bitmap::load(c_ResourceTerrain, sizeof(c_ResourceTerrain), L"png"), 15);
 
 	m_toolToggleEditTerrain = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_EDIT_TERRAIN"), image + 6, ui::Command(L"Terrain.Editor.EditTerrain"), ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleMaterial = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_MATERIAL_BRUSH"), image + 9, ui::Command(L"Terrain.Editor.MaterialBrush"), ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleColor = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_COLOR_BRUSH"), image + 8, ui::Command(L"Terrain.Editor.ColorBrush"), ui::custom::ToolBarButton::BsDefaultToggle);
-	m_toolToggleEmissive = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_EMISSIVE_BRUSH"), image + 8, ui::Command(L"Terrain.Editor.EmissiveBrush"), ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolToggleEmissive = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_EMISSIVE_BRUSH"), image + 14, ui::Command(L"Terrain.Editor.EmissiveBrush"), ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleElevate = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_ELEVATE_BRUSH"), image + 0, ui::Command(L"Terrain.Editor.ElevateBrush"), ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleFlatten = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_FLATTEN_BRUSH"), image + 1, ui::Command(L"Terrain.Editor.FlattenBrush"), ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleAverage = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_AVERAGE_BRUSH"), image + 3, ui::Command(L"Terrain.Editor.AverageBrush"), ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleSmooth = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SMOOTH_BRUSH"), image + 2, ui::Command(L"Terrain.Editor.SmoothBrush"), ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleNoise = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_NOISE_BRUSH"), image + 10, ui::Command(L"Terrain.Editor.NoiseBrush"), ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolToggleErode = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_ERODE_BRUSH"), image + 13, ui::Command(L"Terrain.Editor.ErodeBrush"), ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleCut = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_CUT_BRUSH"), image + 7, ui::Command(L"Terrain.Editor.CutBrush"), ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleFallOffSmooth = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SMOOTH_FALLOFF"), image + 4, ui::Command(L"Terrain.Editor.SmoothFallOff"), ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleFallOffSharp = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SHARP_FALLOFF"), image + 5, ui::Command(L"Terrain.Editor.SharpFallOff"), ui::custom::ToolBarButton::BsDefaultToggle);
@@ -96,6 +97,7 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::custom::ToolBar* toolBa
 	toolBar->addItem(m_toolToggleAverage);
 	toolBar->addItem(m_toolToggleSmooth);
 	toolBar->addItem(m_toolToggleNoise);
+	toolBar->addItem(m_toolToggleErode);
 	toolBar->addItem(m_toolToggleCut);
 	toolBar->addItem(new ui::custom::ToolBarSeparator());
 	toolBar->addItem(m_toolToggleFallOffSmooth);
@@ -143,6 +145,8 @@ bool TerrainEditorPlugin::handleCommand(const ui::Command& command)
 			toolSelected = m_toolToggleSmooth;
 		else if (command == L"Terrain.Editor.NoiseBrush")
 			toolSelected = m_toolToggleNoise;
+		else if (command == L"Terrain.Editor.ErodeBrush")
+			toolSelected = m_toolToggleErode;
 		else if (command == L"Terrain.Editor.CutBrush")
 			toolSelected = m_toolToggleCut;
 
@@ -156,6 +160,7 @@ bool TerrainEditorPlugin::handleCommand(const ui::Command& command)
 			m_toolToggleAverage->setToggled(m_toolToggleAverage == toolSelected);
 			m_toolToggleSmooth->setToggled(m_toolToggleSmooth == toolSelected);
 			m_toolToggleNoise->setToggled(m_toolToggleNoise == toolSelected);
+			m_toolToggleErode->setToggled(m_toolToggleErode == toolSelected);
 			m_toolToggleCut->setToggled(m_toolToggleCut == toolSelected);
 			updateModifierState();
 			return true;
@@ -223,6 +228,8 @@ void TerrainEditorPlugin::updateModifierState()
 		m_terrainEditModifier->setBrush(L"Terrain.Editor.SmoothBrush");
 	else if (m_toolToggleNoise->isToggled())
 		m_terrainEditModifier->setBrush(L"Terrain.Editor.NoiseBrush");
+	else if (m_toolToggleErode->isToggled())
+		m_terrainEditModifier->setBrush(L"Terrain.Editor.ErodeBrush");
 	else if (m_toolToggleCut->isToggled())
 		m_terrainEditModifier->setBrush(L"Terrain.Editor.CutBrush");
 
