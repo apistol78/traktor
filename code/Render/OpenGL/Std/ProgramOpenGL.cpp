@@ -136,6 +136,7 @@ Ref< ProgramOpenGL > ProgramOpenGL::create(ContextOpenGL* resourceContext, const
 	GLuint programObject = glCreateProgram();
 	T_ASSERT (programObject != 0);
 
+#if defined(GL_ARB_get_program_binary)
 	T_OGL_SAFE(glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &formats));
 	
 	binaryFormats.reset(new GLint[formats]);
@@ -162,6 +163,7 @@ Ref< ProgramOpenGL > ProgramOpenGL::create(ContextOpenGL* resourceContext, const
 				needToCompile = false;
 		}
 	}
+#endif
 
 	// Re-compile program if not cached or something has changed.
 	if (needToCompile)
@@ -191,8 +193,10 @@ Ref< ProgramOpenGL > ProgramOpenGL::create(ContextOpenGL* resourceContext, const
 		T_OGL_SAFE(glBindFragDataLocation(programObject, 2, "_gl_FragData_2"));
 		T_OGL_SAFE(glBindFragDataLocation(programObject, 3, "_gl_FragData_3"));
 
+#if defined(GL_ARB_get_program_binary)
 		if (formats > 0)
 			T_OGL_SAFE(glProgramParameteri(programObject, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE));
+#endif
 
 		T_OGL_SAFE(glLinkProgram(programObject));
 
@@ -209,6 +213,7 @@ Ref< ProgramOpenGL > ProgramOpenGL::create(ContextOpenGL* resourceContext, const
 		}
 	}
 
+#if defined(GL_ARB_get_program_binary)
 	if (needToCompile)
 	{
 		StringOutputStream ss;
@@ -228,6 +233,7 @@ Ref< ProgramOpenGL > ProgramOpenGL::create(ContextOpenGL* resourceContext, const
 			file->close();
 		}
 	}
+#endif
 
 	return new ProgramOpenGL(resourceContext, programObject, resource);
 }

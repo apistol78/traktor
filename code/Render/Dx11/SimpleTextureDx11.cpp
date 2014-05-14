@@ -70,14 +70,14 @@ bool SimpleTextureDx11::create(const SimpleTextureCreateDesc& desc)
 	}
 	if (FAILED(hr))
 	{
-		log::error << L"Unable to create texture, null texture" << Endl;
+		log::error << L"Unable to create 2d texture. HRESULT = " << int32_t(hr) << Endl;
 		return false;
 	}
 
 	hr = m_context->getD3DDevice()->CreateShaderResourceView(m_d3dTexture, NULL, &m_d3dTextureResourceView.getAssign());
 	if (FAILED(hr))
 	{
-		log::error << L"Unable to create texture, failed to create shader view" << Endl;
+		log::error << L"Unable to create 2d texture; Failed to create shader view. HRESULT = " << int32_t(hr) << Endl;
 		return false;
 	}
 
