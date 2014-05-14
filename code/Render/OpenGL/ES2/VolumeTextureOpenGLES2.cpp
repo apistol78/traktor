@@ -1,7 +1,8 @@
 #include <cstring>
+#include "Core/Log/Log.h"
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/IContext.h"
-#include "Render/OpenGL/ES2/CubeTextureOpenGLES2.h"
+#include "Render/OpenGL/ES2/VolumeTextureOpenGLES2.h"
 
 namespace traktor
 {
@@ -9,16 +10,6 @@ namespace traktor
 	{
 		namespace
 		{
-
-const GLenum c_cubeFaces[] =
-{
-	GL_TEXTURE_CUBE_MAP_POSITIVE_X,
-	GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
-	GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
-	GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
-	GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
-	GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
-};
 
 struct DeleteTextureCallback : public IContext::IDeleteCallback
 {
@@ -120,12 +111,14 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CubeTextureOpenGLES2", CubeTextureOpenGLES2, ICubeTexture)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VolumeTextureOpenGLES2", VolumeTextureOpenGLES2, IVolumeTexture)
 
-CubeTextureOpenGLES2::CubeTextureOpenGLES2(IContext* resourceContext)
+VolumeTextureOpenGLES2::VolumeTextureOpenGLES2(IContext* resourceContext)
 :	m_resourceContext(resourceContext)
 ,	m_textureName(0)
-,	m_side(0)
+,	m_width(0)
+,	m_height(0)
+,	m_depth(0)
 ,	m_pixelSize(0)
 ,	m_mipCount(0)
 ,	m_components(0)
@@ -134,60 +127,60 @@ CubeTextureOpenGLES2::CubeTextureOpenGLES2(IContext* resourceContext)
 {
 }
 
-CubeTextureOpenGLES2::~CubeTextureOpenGLES2()
+VolumeTextureOpenGLES2::~VolumeTextureOpenGLES2()
 {
 	destroy();
 }
 
-bool CubeTextureOpenGLES2::create(const CubeTextureCreateDesc& desc)
+bool VolumeTextureOpenGLES2::create(const VolumeTextureCreateDesc& desc)
 {
-	m_side = desc.side;
+	m_width = desc.width;
+	m_height = desc.height;
+	m_depth = desc.depth;
 
 	convertTextureFormat(desc.format, m_pixelSize, m_components, m_format, m_type);
 
 	T_OGL_SAFE(glGenTextures(1, &m_textureName));
 
-	m_data.reset(new uint8_t [m_side * m_side * m_pixelSize]);
-
 	if (desc.immutable)
 	{
 		T_OGL_SAFE(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
-		T_OGL_SAFE(glBindTexture(GL_TEXTURE_CUBE_MAP, m_textureName));
+		T_OGL_SAFE(glBindTexture(GL_TEXTURE_3D_OES, m_textureName));
 
-		for (int face = 0; face < 6; ++face)
+		if (desc.format >= TfPVRTC1 && desc.format <= TfPVRTC4)
 		{
-			for (int i = 0; i < desc.mipCount; ++i)
-			{
-				uint32_t side = getTextureMipSize(m_side, i);
-				if (desc.format >= TfPVRTC1 && desc.format <= TfPVRTC4)
-				{
-					uint32_t mipPitch = getTextureMipPitch(desc.format, side, side);
-					T_OGL_SAFE(glCompressedTexImage2D(
-						c_cubeFaces[face],
-						i,
-						m_components,
-						side,
-						side,
-						0,
-						mipPitch,
-						desc.initialData[face * desc.mipCount + i].data
-					));
-				}
-				else
-				{
-					T_OGL_SAFE(glTexImage2D(
-						c_cubeFaces[face],
-						i,
-						m_components,
-						side,
-						side,
-						0,
-						m_format,
-						m_type,
-						desc.initialData[face * desc.mipCount + i].data
-					));
-				}
-			}
+#if defined(__APPLE__)
+			uint32_t mipPitch = getTextureMipPitch(desc.format, m_width, m_height);
+			T_OGL_SAFE(glCompressedTexImage3DOES(
+				GL_TEXTURE_3D_OES,
+				0,
+				m_components,
+				m_width,
+				m_height,
+				m_depth,
+				0,
+				mipPitch,
+				desc.initialData[0].data
+			));
+#else
+			log::error << L"Compressed 3D textures not supported on non-iOS platforms" << Endl;
+			return false;
+#endif
+		}
+		else
+		{
+			T_OGL_SAFE(glTexImage3DOES(
+				GL_TEXTURE_3D_OES,
+				0,
+				m_components,
+				m_width,
+				m_height,
+				m_depth,
+				0,
+				m_format,
+				m_type,
+				desc.initialData[0].data
+			));
 		}
 	}
 
@@ -195,7 +188,7 @@ bool CubeTextureOpenGLES2::create(const CubeTextureCreateDesc& desc)
 	return true;
 }
 
-void CubeTextureOpenGLES2::destroy()
+void VolumeTextureOpenGLES2::destroy()
 {
 	if (m_textureName)
 	{
@@ -204,41 +197,39 @@ void CubeTextureOpenGLES2::destroy()
 	}
 }
 
-ITexture* CubeTextureOpenGLES2::resolve()
+ITexture* VolumeTextureOpenGLES2::resolve()
 {
 	return this;
 }
 
-int CubeTextureOpenGLES2::getWidth() const
+int VolumeTextureOpenGLES2::getWidth() const
 {
-	return m_side;
+	return m_width;
 }
 
-int CubeTextureOpenGLES2::getHeight() const
+int VolumeTextureOpenGLES2::getHeight() const
 {
-	return m_side;
+	return m_height;
 }
 
-int CubeTextureOpenGLES2::getDepth() const
+int VolumeTextureOpenGLES2::getDepth() const
 {
-	return 1;
+	return m_depth;
 }
 
-bool CubeTextureOpenGLES2::lock(int side, int level, Lock& lock)
+bool VolumeTextureOpenGLES2::lock(int side, int level, Lock& lock)
 {
-	lock.pitch = (m_side >> level) * m_pixelSize;
-	lock.bits = m_data.ptr();
-	return true;
+	return false;
 }
 
-void CubeTextureOpenGLES2::unlock(int side, int level)
+void VolumeTextureOpenGLES2::unlock(int side, int level)
 {
 }
 
-void CubeTextureOpenGLES2::bindSampler(GLuint unit, const SamplerStateOpenGL& samplerState, GLint locationTexture)
+void VolumeTextureOpenGLES2::bindSampler(GLuint unit, const SamplerStateOpenGL& samplerState, GLint locationTexture)
 {
 	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
-	T_OGL_SAFE(glBindTexture(GL_TEXTURE_CUBE_MAP, m_textureName));
+	T_OGL_SAFE(glBindTexture(GL_TEXTURE_3D_OES, m_textureName));
 
 	GLenum minFilter = GL_NEAREST;
 	if (m_mipCount > 1)
@@ -246,34 +237,34 @@ void CubeTextureOpenGLES2::bindSampler(GLuint unit, const SamplerStateOpenGL& sa
 
 	if (m_shadowState.minFilter != minFilter)
 	{
-		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, minFilter));
+		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_3D_OES, GL_TEXTURE_MIN_FILTER, minFilter));
 		m_shadowState.minFilter = minFilter;
 	}
 
 	if (m_shadowState.magFilter != samplerState.magFilter)
 	{
-		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, samplerState.magFilter));
+		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_3D_OES, GL_TEXTURE_MAG_FILTER, samplerState.magFilter));
 		m_shadowState.magFilter = samplerState.magFilter;
 	}
 
 	if (m_shadowState.wrapS != samplerState.wrapS)
 	{
-		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, samplerState.wrapS));
+		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_3D_OES, GL_TEXTURE_WRAP_S, samplerState.wrapS));
 		m_shadowState.wrapS = samplerState.wrapS;
 	}
 
 	if (m_shadowState.wrapT != samplerState.wrapT)
 	{
-		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, samplerState.wrapT));
+		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_3D_OES, GL_TEXTURE_WRAP_T, samplerState.wrapT));
 		m_shadowState.wrapT = samplerState.wrapT;
 	}
 
 	T_OGL_SAFE(glUniform1i(locationTexture, unit));
 }
 
-void CubeTextureOpenGLES2::bindSize(GLint locationSize)
+void VolumeTextureOpenGLES2::bindSize(GLint locationSize)
 {
-	T_OGL_SAFE(glUniform4f(locationSize, GLfloat(m_side), GLfloat(m_side), GLfloat(m_side), GLfloat(1.0f)));
+	T_OGL_SAFE(glUniform4f(locationSize, GLfloat(m_width), GLfloat(m_height), GLfloat(m_depth), GLfloat(1.0f)));
 }
 
 	}

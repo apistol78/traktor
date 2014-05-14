@@ -6,6 +6,7 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "World/EntityData.h"
+#include "World/EntityEventSetData.h"
 #include "World/IEntityEventData.h"
 #include "World/Editor/EntityPipeline.h"
 
@@ -61,6 +62,10 @@ bool EntityPipeline::buildDependencies(
 		else if (const IEntityEventData* entityEventData = dynamic_type_cast< const IEntityEventData* >(objectMember->get()))
 		{
 			pipelineDepends->addDependency(entityEventData);
+		}
+		else if (const EntityEventSetData* entityEventSetData = dynamic_type_cast< const EntityEventSetData* >(objectMember->get()))
+		{
+			pipelineDepends->addDependency(entityEventSetData);
 		}
 		else if (objectMember->get())
 		{

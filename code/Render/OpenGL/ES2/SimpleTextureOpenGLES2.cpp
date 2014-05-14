@@ -32,7 +32,7 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 {
 	switch (textureFormat)
 	{
-#if defined(__APPLE__) && defined(GL_RED_EXT)
+#if defined(GL_RED_EXT)
 	case TfR8:
 		outPixelSize = 1;
 		outComponents = GL_RED_EXT;
@@ -55,7 +55,7 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 		outType = GL_FLOAT;
 		break;
 		
-#if defined(__APPLE__) && defined(GL_RED_EXT)
+#if defined(GL_RED_EXT)
 	case TfR16F:
 		outPixelSize = 2;
 		outComponents = GL_RED_EXT;
@@ -64,7 +64,7 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 		break;
 #endif
 	
-#if defined(__APPLE__) && defined(GL_RED_EXT)
+#if defined(GL_RED_EXT)
 	case TfR32F:
 		outPixelSize = 4;
 		outComponents = GL_RED_EXT;

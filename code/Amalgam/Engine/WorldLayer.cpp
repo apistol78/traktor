@@ -55,6 +55,7 @@ WorldLayer::WorldLayer(
 ,	m_deltaTime(0.0f)
 ,	m_controllerTime(-1.0f)
 ,	m_fieldOfView(70.0f)
+,	m_feedbackScale(1.0f)
 ,	m_controllerEnable(true)
 {
 	// Get initial field of view.
@@ -434,6 +435,16 @@ float WorldLayer::getAlternateTime() const
 	return m_alternateTime;
 }
 
+void WorldLayer::setFeedbackScale(float feedbackScale)
+{
+	m_feedbackScale = feedbackScale;
+}
+
+float WorldLayer::getFeedbackScale() const
+{
+	return m_feedbackScale;
+}
+
 void WorldLayer::setCamera(const std::wstring& camera)
 {
 	m_camera = camera;
@@ -450,8 +461,8 @@ void WorldLayer::feedbackValues(spray::FeedbackType type, const float* values, i
 	{
 		T_ASSERT (count >= 4);
 		m_cameraOffset = Transform(
-			Vector4(values[0], values[1], values[2]),
-			Quaternion::fromEulerAngles(0.0f, 0.0f, values[3])
+			Vector4(values[0], values[1], values[2]) * Scalar(m_feedbackScale),
+			Quaternion::fromEulerAngles(0.0f, 0.0f, values[3] * m_feedbackScale)
 		);
 	}
 	else if (type == spray::FbtPostProcess)

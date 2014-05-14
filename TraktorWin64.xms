@@ -6,7 +6,7 @@
 	<projects>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.Expat</name>
+			<name>Extern.expat-2.1.0</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</sourcePath>
 			<configurations>
 				<item type="Configuration" version="1">
@@ -18496,6 +18496,1500 @@
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Extern.angle.translator</name>
+			<sourcePath>$(ANGLE_SDK)/src/compiler/translator</sourcePath>
+			<configurations>
+				<item type="Configuration" version="1">
+					<name>DebugShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(ANGLE_SDK)/src/compiler</item>
+						<item>$(ANGLE_SDK)/src</item>
+						<item>$(ANGLE_SDK)/include</item>
+					</includePaths>
+					<definitions>
+						<item>WIN32</item>
+						<item>_DEBUG</item>
+						<item>_LIB</item>
+						<item>_CRT_SECURE_NO_DEPRECATE</item>
+						<item>NOMINMAX</item>
+						<item>ANGLE_USE_NEW_PREPROCESSOR=1</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(ANGLE_SDK)/src/compiler</item>
+						<item>$(ANGLE_SDK)/src</item>
+						<item>$(ANGLE_SDK)/include</item>
+					</includePaths>
+					<definitions>
+						<item>WIN32</item>
+						<item>NDEBUG</item>
+						<item>_LIB</item>
+						<item>_CRT_SECURE_NO_DEPRECATE</item>
+						<item>NOMINMAX</item>
+						<item>_SECURE_SCL=0</item>
+						<item>ANGLE_USE_NEW_PREPROCESSOR=1</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(ANGLE_SDK)/src</item>
+						<item>$(ANGLE_SDK)/include</item>
+						<item>$(ANGLE_SDK)/src/compiler</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+						<item>_CRT_SECURE_NO_DEPRECATE</item>
+						<item>NOMINMAX</item>
+						<item>ANGLE_USE_NEW_PREPROCESSOR=1</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(ANGLE_SDK)/src</item>
+						<item>$(ANGLE_SDK)/include</item>
+						<item>$(ANGLE_SDK)/src/compiler</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+						<item>_CRT_SECURE_NO_DEPRECATE</item>
+						<item>NOMINMAX</item>
+						<item>_SECURE_SCL=0</item>
+						<item>ANGLE_USE_NEW_PREPROCESSOR=1</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>*.h*</fileName>
+					<items/>
+				</item>
+				<item type="Filter">
+					<name>depgraph</name>
+					<items>
+						<item type="File">
+							<fileName>depgraph/*.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>depgraph/*.h</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>timing</name>
+					<items>
+						<item type="File">
+							<fileName>timing/*.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>timing/*.h</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>third_party</name>
+					<items>
+						<item type="Filter">
+							<name>compiler</name>
+							<items>
+								<item type="File">
+									<fileName>../../third_party/compiler/*.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>../../third_party/compiler/*.h</fileName>
+									<items/>
+								</item>
+							</items>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies/>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Extern.angle.preprocessor</name>
+			<sourcePath>$(ANGLE_SDK)/src/compiler/preprocessor</sourcePath>
+			<configurations>
+				<item type="Configuration" version="1">
+					<name>DebugShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths/>
+					<definitions>
+						<item>WIN32</item>
+						<item>_DEBUG</item>
+						<item>_WINDOWS</item>
+						<item>_USRDLL</item>
+						<item>_CRT_SECURE_NO_DEPRECATE</item>
+						<item>NOMINMAX</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths/>
+					<definitions>
+						<item>WIN32</item>
+						<item>NDEBUG</item>
+						<item>_WINDOWS</item>
+						<item>_USRDLL</item>
+						<item>_CRT_SECURE_NO_DEPRECATE</item>
+						<item>NOMINMAX</item>
+						<item>_SECURE_SCL=0</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths/>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+						<item>_CRT_SECURE_NO_DEPRECATE</item>
+						<item>NOMINMAX</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths/>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+						<item>_CRT_SECURE_NO_DEPRECATE</item>
+						<item>NOMINMAX</item>
+						<item>_SECURE_SCL=0</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>*.h</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies/>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Extern.angle.libGLESv2</name>
+			<sourcePath>$(ANGLE_SDK)/src/libGLESv2</sourcePath>
+			<configurations>
+				<item type="Configuration" version="1">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(ANGLE_SDK)/src</item>
+						<item>$(ANGLE_SDK)/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
+						<item>$(ANGLE_SDK)/src/libGLESv2</item>
+					</includePaths>
+					<definitions>
+						<item>_DEBUG</item>
+						<item>_CRT_SECURE_NO_DEPRECATE</item>
+						<item>NOMINMAX</item>
+						<item>ANGLE_ENABLE_D3D9</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
+					<libraries>
+						<item>d3d9.lib</item>
+						<item>d3dx9.lib</item>
+						<item>d3dcompiler.lib</item>
+					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(ANGLE_SDK)/src</item>
+						<item>$(ANGLE_SDK)/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
+						<item>$(ANGLE_SDK)/src/libGLESv2</item>
+					</includePaths>
+					<definitions>
+						<item>ANGLE_DISABLE_TRACE</item>
+						<item>NDEBUG</item>
+						<item>_CRT_SECURE_NO_DEPRECATE</item>
+						<item>NOMINMAX</item>
+						<item>_SECURE_SCL=0</item>
+						<item>ANGLE_ENABLE_D3D9</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
+					<libraries>
+						<item>d3d9.lib</item>
+						<item>d3dx9.lib</item>
+						<item>d3dcompiler.lib</item>
+					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(ANGLE_SDK)/src</item>
+						<item>$(ANGLE_SDK)/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
+						<item>$(ANGLE_SDK)/src/libGLESv2</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+						<item>_CRT_SECURE_NO_DEPRECATE</item>
+						<item>NOMINMAX</item>
+						<item>ANGLE_ENABLE_D3D9</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
+					<libraries>
+						<item>d3d9.lib</item>
+						<item>d3dx9.lib</item>
+						<item>d3dcompiler.lib</item>
+					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(ANGLE_SDK)/src</item>
+						<item>$(ANGLE_SDK)/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
+						<item>$(ANGLE_SDK)/src/libGLESv2</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+						<item>_CRT_SECURE_NO_DEPRECATE</item>
+						<item>NOMINMAX</item>
+						<item>_SECURE_SCL=0</item>
+						<item>ANGLE_ENABLE_D3D9</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
+					<libraries>
+						<item>d3d9.lib</item>
+						<item>d3dx9.lib</item>
+						<item>d3dcompiler.lib</item>
+					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>libGLESv2.def</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>libGLESv2.rc</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>*.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>*.cpp</fileName>
+					<items/>
+				</item>
+				<item type="Filter">
+					<name>renderer</name>
+					<items>
+						<item type="File">
+							<fileName>renderer/*.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>renderer/*.cpp</fileName>
+							<items/>
+						</item>
+						<item type="Filter">
+							<name>d3d</name>
+							<items>
+								<item type="File">
+									<fileName>renderer/d3d/*.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>renderer/d3d/*.cpp</fileName>
+									<items/>
+								</item>
+							</items>
+						</item>
+						<item type="Filter">
+							<name>d3d9</name>
+							<items>
+								<item type="File">
+									<fileName>renderer/d3d9/*.*</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>renderer/d3d9/*.*</fileName>
+									<items/>
+								</item>
+							</items>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>common</name>
+					<items>
+						<item type="File">
+							<fileName>../common/*.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../common/*.h</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[116]"/>
+				</item>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[117]"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Extern.angle.libEGL</name>
+			<sourcePath>$(ANGLE_SDK)/src/libEGL</sourcePath>
+			<configurations>
+				<item type="Configuration" version="1">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(ANGLE_SDK)/src</item>
+						<item>$(ANGLE_SDK)/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
+					</includePaths>
+					<definitions>
+						<item>_DEBUG</item>
+						<item>_CRT_SECURE_NO_DEPRECATE</item>
+						<item>NOMINMAX</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
+					<libraries>
+						<item>d3d9.lib</item>
+						<item>dxguid.lib</item>
+						<item>dwmapi.lib</item>
+					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(ANGLE_SDK)/src</item>
+						<item>$(ANGLE_SDK)/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
+					</includePaths>
+					<definitions>
+						<item>ANGLE_DISABLE_TRACE</item>
+						<item>NDEBUG</item>
+						<item>_CRT_SECURE_NO_DEPRECATE</item>
+						<item>NOMINMAX</item>
+						<item>_SECURE_SCL=0</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
+					<libraries>
+						<item>d3d9.lib</item>
+						<item>dxguid.lib</item>
+						<item>dwmapi.lib</item>
+					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(ANGLE_SDK)/src</item>
+						<item>$(ANGLE_SDK)/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+						<item>_CRT_SECURE_NO_DEPRECATE</item>
+						<item>NOMINMAX</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
+					<libraries>
+						<item>d3d9.lib</item>
+						<item>dxguid.lib</item>
+						<item>dwmapi.lib</item>
+					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(ANGLE_SDK)/src</item>
+						<item>$(ANGLE_SDK)/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+						<item>_CRT_SECURE_NO_DEPRECATE</item>
+						<item>NOMINMAX</item>
+						<item>_SECURE_SCL=0</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
+					<libraries>
+						<item>d3d9.lib</item>
+						<item>dxguid.lib</item>
+						<item>dwmapi.lib</item>
+					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>libEGL.def</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>libEGL.rc</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>*.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>*.h</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[118]"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Extern.mesaglsl2</name>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master</sourcePath>
+			<configurations>
+				<item type="Configuration" version="1">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/include/c99</item>
+						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/src/mesa</item>
+					</includePaths>
+					<definitions>
+						<item>WIN32</item>
+						<item>_DEBUG</item>
+						<item>_LIB</item>
+						<item>NOMINMAX</item>
+						<item>_CRT_SECURE_NO_WARNINGS</item>
+						<item>_CRT_SECURE_NO_DEPRECATE</item>
+						<item>snprintf=_snprintf</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/include/c99</item>
+						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/src/mesa</item>
+					</includePaths>
+					<definitions>
+						<item>WIN32</item>
+						<item>NDEBUG</item>
+						<item>_LIB</item>
+						<item>NOMINMAX</item>
+						<item>_CRT_SECURE_NO_WARNINGS</item>
+						<item>_CRT_SECURE_NO_DEPRECATE</item>
+						<item>snprintf=_snprintf</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>DebugShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/include/c99</item>
+						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/src/mesa</item>
+					</includePaths>
+					<definitions>
+						<item>WIN32</item>
+						<item>_DEBUG</item>
+						<item>_LIB</item>
+						<item>NOMINMAX</item>
+						<item>_CRT_SECURE_NO_WARNINGS</item>
+						<item>_CRT_SECURE_NO_DEPRECATE</item>
+						<item>snprintf=_snprintf</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/include/c99</item>
+						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/src/mesa</item>
+					</includePaths>
+					<definitions>
+						<item>WIN32</item>
+						<item>NDEBUG</item>
+						<item>_LIB</item>
+						<item>NOMINMAX</item>
+						<item>_CRT_SECURE_NO_WARNINGS</item>
+						<item>_CRT_SECURE_NO_DEPRECATE</item>
+						<item>snprintf=_snprintf</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>src/glsl/msvc/msvccompat.h</fileName>
+					<items/>
+				</item>
+				<item type="Filter">
+					<name>src</name>
+					<items>
+						<item type="Filter">
+							<name>glsl</name>
+							<items>
+								<item type="File">
+									<fileName>src/glsl/ast.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ast_expr.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ast_function.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ast_to_hir.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ast_type.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/builtin_function.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/builtin_types.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/builtin_variables.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/builtin_variables.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/glsl_lexer.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/glsl_lexer.lpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/glsl_optimizer.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/glsl_optimizer.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/glsl_parser.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/glsl_parser.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/glsl_parser.ypp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/glsl_parser_extras.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/glsl_parser_extras.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/glsl_symbol_table.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/glsl_symbol_table.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/glsl_types.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/glsl_types.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/hir_field_selection.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ir.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ir.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ir_basic_block.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ir_basic_block.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ir_clone.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ir_constant_expression.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ir_expression_flattening.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ir_expression_flattening.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ir_function.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ir_function_can_inline.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ir_function_detect_recursion.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ir_function_inlining.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ir_hierarchical_visitor.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ir_hierarchical_visitor.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ir_hv_accept.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ir_import_prototypes.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ir_optimization.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ir_print_glsl_visitor.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ir_print_glsl_visitor.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ir_print_visitor.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ir_print_visitor.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ir_reader.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ir_reader.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ir_rvalue_visitor.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ir_rvalue_visitor.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ir_unused_structs.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ir_unused_structs.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ir_validate.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ir_variable_refcount.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ir_variable_refcount.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ir_visitor.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/link_functions.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/link_uniform_initializers.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/link_uniforms.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/linker.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/linker.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/list.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/loop_analysis.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/loop_analysis.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/loop_controls.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/loop_unroll.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/lower_clip_distance.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/lower_discard.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/lower_discard_flow.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/lower_if_to_cond_assign.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/lower_instructions.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/lower_jumps.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/lower_mat_op_to_vec.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/lower_noise.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/lower_variable_index_to_cond_assign.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/lower_vec_index_to_cond_assign.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/lower_vec_index_to_swizzle.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/lower_vector.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/opt_algebraic.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/opt_array_splitting.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/opt_constant_folding.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/opt_constant_propagation.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/opt_constant_variable.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/opt_copy_propagation.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/opt_copy_propagation_elements.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/opt_dead_code.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/opt_dead_code_local.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/opt_dead_functions.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/opt_function_inlining.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/opt_if_simplification.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/opt_noop_swizzle.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/opt_redundant_jumps.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/opt_structure_splitting.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/opt_swizzle_swizzle.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/opt_tree_grafting.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/program.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ralloc.c</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/ralloc.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/s_expression.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/s_expression.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/standalone_scaffolding.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/standalone_scaffolding.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/strtod.c</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>src/glsl/strtod.h</fileName>
+									<items/>
+								</item>
+								<item type="Filter">
+									<name>glcpp</name>
+									<items>
+										<item type="File">
+											<fileName>src/glsl/glcpp/glcpp-lex.c</fileName>
+											<items/>
+										</item>
+										<item type="File">
+											<fileName>src/glsl/glcpp/glcpp-lex.l</fileName>
+											<items/>
+										</item>
+										<item type="File">
+											<fileName>src/glsl/glcpp/glcpp-parse.c</fileName>
+											<items/>
+										</item>
+										<item type="File">
+											<fileName>src/glsl/glcpp/glcpp-parse.h</fileName>
+											<items/>
+										</item>
+										<item type="File">
+											<fileName>src/glsl/glcpp/glcpp-parse.y</fileName>
+											<items/>
+										</item>
+										<item type="File">
+											<fileName>src/glsl/glcpp/glcpp.c</fileName>
+											<items/>
+										</item>
+										<item type="File">
+											<fileName>src/glsl/glcpp/glcpp.h</fileName>
+											<items/>
+										</item>
+										<item type="File">
+											<fileName>src/glsl/glcpp/pp.c</fileName>
+											<items/>
+										</item>
+									</items>
+								</item>
+							</items>
+						</item>
+						<item type="Filter">
+							<name>mesa</name>
+							<items>
+								<item type="Filter">
+									<name>program</name>
+									<items>
+										<item type="File">
+											<fileName>src/glsl/../mesa/program/hash_table.c</fileName>
+											<items/>
+										</item>
+										<item type="File">
+											<fileName>src/glsl/../mesa/program/hash_table.h</fileName>
+											<items/>
+										</item>
+										<item type="File">
+											<fileName>src/glsl/../mesa/program/prog_instruction.h</fileName>
+											<items/>
+										</item>
+										<item type="File">
+											<fileName>src/glsl/../mesa/program/prog_parameter.h</fileName>
+											<items/>
+										</item>
+										<item type="File">
+											<fileName>src/glsl/../mesa/program/prog_statevars.h</fileName>
+											<items/>
+										</item>
+										<item type="File">
+											<fileName>src/glsl/../mesa/program/symbol_table.c</fileName>
+											<items/>
+										</item>
+										<item type="File">
+											<fileName>src/glsl/../mesa/program/symbol_table.h</fileName>
+											<items/>
+										</item>
+									</items>
+								</item>
+								<item type="Filter">
+									<name>main</name>
+									<items>
+										<item type="File">
+											<fileName>src/glsl/../mesa/main/compiler.h</fileName>
+											<items/>
+										</item>
+										<item type="File">
+											<fileName>src/glsl/../mesa/main/config.h</fileName>
+											<items/>
+										</item>
+										<item type="File">
+											<fileName>src/glsl/../mesa/main/context.h</fileName>
+											<items/>
+										</item>
+										<item type="File">
+											<fileName>src/glsl/../mesa/main/core.h</fileName>
+											<items/>
+										</item>
+										<item type="File">
+											<fileName>src/glsl/../mesa/main/dd.h</fileName>
+											<items/>
+										</item>
+										<item type="File">
+											<fileName>src/glsl/../mesa/main/glheader.h</fileName>
+											<items/>
+										</item>
+										<item type="File">
+											<fileName>src/glsl/../mesa/main/glminimal.h</fileName>
+											<items/>
+										</item>
+										<item type="File">
+											<fileName>src/glsl/../mesa/main/imports.h</fileName>
+											<items/>
+										</item>
+										<item type="File">
+											<fileName>src/glsl/../mesa/main/macros.h</fileName>
+											<items/>
+										</item>
+										<item type="File">
+											<fileName>src/glsl/../mesa/main/mtypes.h</fileName>
+											<items/>
+										</item>
+										<item type="File">
+											<fileName>src/glsl/../mesa/main/shaderobj.h</fileName>
+											<items/>
+										</item>
+										<item type="File">
+											<fileName>src/glsl/../mesa/main/simple_list.h</fileName>
+											<items/>
+										</item>
+									</items>
+								</item>
+							</items>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies/>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Render.OpenGL.ES2</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Render/OpenGL</sourcePath>
+			<configurations>
+				<item type="Configuration" version="1">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(ANGLE_SDK)/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/src/glsl</item>
+					</includePaths>
+					<definitions>
+						<item>T_RENDER_OPENGL_ES2_EXPORT</item>
+						<item>_DEBUG</item>
+						<item>T_OPENGL_ES2</item>
+						<item>GL_GLEXT_PROTOTYPES</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(ANGLE_SDK)/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/src/glsl</item>
+					</includePaths>
+					<definitions>
+						<item>T_RENDER_OPENGL_ES2_EXPORT</item>
+						<item>NDEBUG</item>
+						<item>T_OPENGL_ES2</item>
+						<item>GL_GLEXT_PROTOTYPES</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(ANGLE_SDK)/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/src/glsl</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+						<item>T_OPENGL_ES2</item>
+						<item>GL_GLEXT_PROTOTYPES</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(ANGLE_SDK)/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/src/glsl</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+						<item>T_OPENGL_ES2</item>
+						<item>GL_GLEXT_PROTOTYPES</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+			</configurations>
+			<items>
+				<item type="Filter">
+					<name>ES2</name>
+					<items>
+						<item type="File">
+							<fileName>ES2/*.*</fileName>
+							<items/>
+						</item>
+						<item type="Filter">
+							<name>Win32</name>
+							<items>
+								<item type="File">
+									<fileName>ES2/Win32/*.*</fileName>
+									<items/>
+								</item>
+							</items>
+						</item>
+					</items>
+				</item>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[119]"/>
+				</item>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[118]"/>
+				</item>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[120]"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Pipeline.Agent.App</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Pipeline/Agent/App</sourcePath>
+			<configurations>
+				<item type="Configuration" version="1">
+					<name>DebugShared</name>
+					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_PIPELINE_AGENT_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseShared</name>
+					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_PIPELINE_AGENT_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+				</item>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[6]/project"/>
+				</item>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[77]"/>
+				</item>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
+				</item>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 				</item>
 			</dependencies>
 		</item>

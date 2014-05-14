@@ -124,6 +124,15 @@ ActionValue::ActionValue(const ActionValue& v)
 		m_value = v.m_value;
 }
 
+#if defined(T_CXX11)
+ActionValue::ActionValue(ActionValue&& v)
+:	m_type(v.m_type)
+,	m_value(v.m_value)
+{
+	v.m_type = AvtUndefined;
+}
+#endif
+
 ActionValue::ActionValue(bool b)
 :	m_type(AvtBoolean)
 {
@@ -368,6 +377,27 @@ ActionValue& ActionValue::operator = (const ActionValue& v)
 
 	return *this;
 }
+
+#if defined(T_CXX11)
+ActionValue& ActionValue::operator = (ActionValue&& v)
+{
+	T_VALIDATE(*this);
+	T_VALIDATE(v);
+
+	if (m_type == AvtString)
+		refStringDec(m_value.s);
+	else if (m_type == AvtObject)
+		{ T_SAFE_RELEASE(m_value.o); }
+	else if (m_type == AvtObjectWeak)
+		{ T_SAFE_RELEASE_WEAK_REF(m_value.o); }
+
+	m_type = v.m_type;
+	m_value = v.m_value;
+
+	v.m_type = AvtUndefined;
+	return *this;
+}
+#endif
 
 ActionValue ActionValue::operator + (const ActionValue& r) const
 {

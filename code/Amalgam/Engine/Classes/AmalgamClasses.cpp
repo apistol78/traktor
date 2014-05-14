@@ -270,6 +270,8 @@ void registerAmalgamClasses(script::IScriptManager* scriptManager)
 	classWorldLayer->addMethod("getFieldOfView", &WorldLayer::getFieldOfView);
 	classWorldLayer->addMethod("setAlternateTime", &WorldLayer::setAlternateTime);
 	classWorldLayer->addMethod("getAlternateTime", &WorldLayer::getAlternateTime);
+	classWorldLayer->addMethod("setFeedbackScale", &WorldLayer::setFeedbackScale);
+	classWorldLayer->addMethod("getFeedbackScale", &WorldLayer::getFeedbackScale);
 	classWorldLayer->addMethod("setCamera", &WorldLayer::setCamera);
 	classWorldLayer->addMethod("getCamera", &WorldLayer::getCamera);
 	scriptManager->registerClass(classWorldLayer);

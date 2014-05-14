@@ -1,9 +1,13 @@
 #include <cstring>
+#include "Core/Io/FileSystem.h"
+#include "Core/Io/IStream.h"
+#include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Align.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Serialization/DeepHash.h"
+#include "Core/System/OS.h"
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/GlslType.h"
 #include "Render/OpenGL/GlslProgram.h"
@@ -121,51 +125,110 @@ Ref< ProgramOpenGL > ProgramOpenGL::create(ContextOpenGL* resourceContext, const
 {
 	const ProgramResourceOpenGL* resourceOpenGL = checked_type_cast< const ProgramResourceOpenGL* >(resource);
 	char errorBuf[32000];
+	AutoArrayPtr< GLint > binaryFormats;
+	AutoPtr< uint8_t > binary;
+	GLint formats = 0;
+	GLint binaryLength = 0;
 	GLsizei errorBufLen;
 	GLint status;
+	bool needToCompile = true;
 	
-	const std::string& vertexShader = resourceOpenGL->getVertexShader();
-	const std::string& fragmentShader = resourceOpenGL->getFragmentShader();
-
-	GLuint vertexObject = resourceContext->createShaderObject(vertexShader.c_str(), GL_VERTEX_SHADER);
-	if (!vertexObject)
-	{
-		log::error << L"Unable to create vertex object" << Endl;
-		return 0;
-	}
-		
-	GLuint fragmentObject = resourceContext->createShaderObject(fragmentShader.c_str(), GL_FRAGMENT_SHADER);
-	if (!fragmentObject)
-	{
-		log::error << L"Unable to create fragment object" << Endl;
-		return 0;
-	}
-
 	GLuint programObject = glCreateProgram();
 	T_ASSERT (programObject != 0);
 
-	T_OGL_SAFE(glAttachShader(programObject, vertexObject));
-	T_OGL_SAFE(glAttachShader(programObject, fragmentObject));
+	T_OGL_SAFE(glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &formats));
+	
+	binaryFormats.reset(new GLint[formats]);
+	T_OGL_SAFE(glGetIntegerv(GL_PROGRAM_BINARY_FORMATS, binaryFormats.ptr()));
 
-	T_OGL_SAFE(glBindFragDataLocation(programObject, 0, "_gl_FragData_0"));
-	T_OGL_SAFE(glBindFragDataLocation(programObject, 1, "_gl_FragData_1"));
-	T_OGL_SAFE(glBindFragDataLocation(programObject, 2, "_gl_FragData_2"));
-	T_OGL_SAFE(glBindFragDataLocation(programObject, 3, "_gl_FragData_3"));
-
-	T_OGL_SAFE(glLinkProgram(programObject));
-
-	T_OGL_SAFE(glGetProgramiv(programObject, GL_LINK_STATUS, &status));
-	if (status != GL_TRUE)
+	if (formats > 0)
 	{
-		T_OGL_SAFE(glGetProgramInfoLog(programObject, sizeof(errorBuf), &errorBufLen, errorBuf));
-		if (errorBufLen > 0)
+		StringOutputStream ss;
+		ss << OS::getInstance().getWritableFolderPath() << L"/Doctor Entertainment AB/ProgramCache/Program_" << resourceOpenGL->getHash() << L".cache";
+
+		// Read and upload cached program if available.
+		Ref< IStream > file = FileSystem::getInstance().open(ss.str(), File::FmRead);
+		if (file)
 		{
-			log::error << L"GLSL program link failed :" << Endl;
-			log::error << mbstows(errorBuf) << Endl;
-			return 0;
+			binaryLength = file->available();
+			binary.reset(new uint8_t [binaryLength]);
+			file->read(binary.ptr(), binaryLength);
+			file->close();
+
+			T_OGL_SAFE(glProgramBinary(programObject, binaryFormats[0], binary.c_ptr(), binaryLength));
+			T_OGL_SAFE(glGetProgramiv(programObject, GL_LINK_STATUS, &status));
+
+			if (status == GL_TRUE)
+				needToCompile = false;
 		}
 	}
-	
+
+	// Re-compile program if not cached or something has changed.
+	if (needToCompile)
+	{
+		const std::string& vertexShader = resourceOpenGL->getVertexShader();
+		const std::string& fragmentShader = resourceOpenGL->getFragmentShader();
+
+		GLuint vertexObject = resourceContext->createShaderObject(vertexShader.c_str(), GL_VERTEX_SHADER);
+		if (!vertexObject)
+		{
+			log::error << L"Unable to create vertex object" << Endl;
+			return 0;
+		}
+
+		GLuint fragmentObject = resourceContext->createShaderObject(fragmentShader.c_str(), GL_FRAGMENT_SHADER);
+		if (!fragmentObject)
+		{
+			log::error << L"Unable to create fragment object" << Endl;
+			return 0;
+		}
+
+		T_OGL_SAFE(glAttachShader(programObject, vertexObject));
+		T_OGL_SAFE(glAttachShader(programObject, fragmentObject));
+
+		T_OGL_SAFE(glBindFragDataLocation(programObject, 0, "_gl_FragData_0"));
+		T_OGL_SAFE(glBindFragDataLocation(programObject, 1, "_gl_FragData_1"));
+		T_OGL_SAFE(glBindFragDataLocation(programObject, 2, "_gl_FragData_2"));
+		T_OGL_SAFE(glBindFragDataLocation(programObject, 3, "_gl_FragData_3"));
+
+		if (formats > 0)
+			T_OGL_SAFE(glProgramParameteri(programObject, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE));
+
+		T_OGL_SAFE(glLinkProgram(programObject));
+
+		T_OGL_SAFE(glGetProgramiv(programObject, GL_LINK_STATUS, &status));
+		if (status != GL_TRUE)
+		{
+			T_OGL_SAFE(glGetProgramInfoLog(programObject, sizeof(errorBuf), &errorBufLen, errorBuf));
+			if (errorBufLen > 0)
+			{
+				log::error << L"GLSL program link failed :" << Endl;
+				log::error << mbstows(errorBuf) << Endl;
+				return 0;
+			}
+		}
+	}
+
+	if (needToCompile)
+	{
+		StringOutputStream ss;
+		ss << OS::getInstance().getWritableFolderPath() << L"/Doctor Entertainment AB/ProgramCache/Program_" << resourceOpenGL->getHash() << L".cache";
+
+		// Get and cache program binary.
+		T_OGL_SAFE(glGetProgramiv(programObject, GL_PROGRAM_BINARY_LENGTH, &binaryLength));
+
+		binary.reset(new uint8_t [binaryLength]);
+		T_OGL_SAFE(glGetProgramBinary(programObject, binaryLength, 0, (GLenum*)binaryFormats.ptr(), binary.ptr()));
+
+		FileSystem::getInstance().makeAllDirectories(Path(ss.str()).getPathOnly());
+		Ref< IStream > file = FileSystem::getInstance().open(ss.str(), File::FmWrite);
+		if (file)
+		{
+			file->write(binary.c_ptr(), binaryLength);
+			file->close();
+		}
+	}
+
 	return new ProgramOpenGL(resourceContext, programObject, resource);
 }
 

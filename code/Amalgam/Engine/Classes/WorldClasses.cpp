@@ -8,6 +8,7 @@
 #include "World/EntitySchema.h"
 #include "World/IEntityEvent.h"
 #include "World/IEntityEventData.h"
+#include "World/IEntityEventInstance.h"
 #include "World/IEntityEventManager.h"
 #include "World/IEntityFactory.h"
 #include "World/IEntityRenderer.h"
@@ -26,6 +27,16 @@ namespace traktor
 	{
 		namespace
 		{
+
+void world_IEntityEventInstance_cancelImmediate(world::IEntityEventInstance* this_)
+{
+	this_->cancel(world::IEntityEventInstance::CtImmediate);
+}
+
+void world_IEntityEventInstance_cancelEnd(world::IEntityEventInstance* this_)
+{
+	this_->cancel(world::IEntityEventInstance::CtEnd);
+}
 
 Ref< world::Entity > world_IEntityBuilder_create(world::IEntityBuilder* this_, const world::EntityData* entityData)
 {
@@ -74,6 +85,11 @@ void world_Entity_update(world::Entity* this_, float totalTime, float deltaTime)
 
 void registerWorldClasses(script::IScriptManager* scriptManager)
 {
+	Ref< script::AutoScriptClass< world::IEntityEventInstance > > classIEntityEventInstance = new script::AutoScriptClass< world::IEntityEventInstance >();
+	classIEntityEventInstance->addMethod("cancelImmediate", &world_IEntityEventInstance_cancelImmediate);
+	classIEntityEventInstance->addMethod("cancelEnd", &world_IEntityEventInstance_cancelEnd);
+	scriptManager->registerClass(classIEntityEventInstance);
+
 	Ref< script::AutoScriptClass< world::IEntityEventData > > classIEntityEventData = new script::AutoScriptClass< world::IEntityEventData >();
 	scriptManager->registerClass(classIEntityEventData);
 
