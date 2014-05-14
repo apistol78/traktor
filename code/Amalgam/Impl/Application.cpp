@@ -572,7 +572,7 @@ bool Application::update()
 
 		// Measure delta time.
 		float deltaTime = float(m_timer.getDeltaTime());
-		if (deltaTime > c_maxDeltaTime)
+		if (!m_updateControl.m_pause && deltaTime > c_maxDeltaTime)
 		{
 			deltaTime = c_maxDeltaTime;
 			if (++m_deltaTimeError >= c_maxDeltaTimeErrors)
@@ -701,7 +701,7 @@ bool Application::update()
 			{
 				Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
 				if (currentThread)
-					currentThread->sleep(10);
+					currentThread->sleep(50);
 			}
 		}
 
