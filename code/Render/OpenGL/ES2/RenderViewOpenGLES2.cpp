@@ -280,8 +280,7 @@ bool RenderViewOpenGLES2::begin(EyeType eye)
 
 bool RenderViewOpenGLES2::begin(RenderTargetSet* renderTargetSet)
 {
-	T_FATAL_ERROR;
-	return false;
+	return begin(renderTargetSet, 0);
 }
 
 bool RenderViewOpenGLES2::begin(RenderTargetSet* renderTargetSet, int renderTarget)

@@ -17,6 +17,7 @@ namespace traktor
 	{
 
 class EntityEventSet;
+class IEntityEventInstance;
 class IEntityEventManager;
 
 	}
@@ -59,7 +60,7 @@ public:
 
 	virtual void update(const world::UpdateParams& update);
 
-	void raiseEvent(const std::wstring& eventId);
+	world::IEntityEventInstance* raiseEvent(const std::wstring& eventId);
 
 	void setTag(const std::wstring& tag) { m_tag = tag; }
 

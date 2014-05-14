@@ -2,7 +2,7 @@
 
 function build(args)
 	stdout:printLn("Building asset(s)...")
-	local cmdline = "$(DEPLOY_PROJECT_ROOT)/bin/latest/win64/releaseshared/Traktor.Pipeline.App -standalone -p -s=Pipeline"
+	local cmdline = "$(DEPLOY_PROJECT_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App -p -s=Pipeline"
 	for i = 1, args:size() - 1 do
 		cmdline = cmdline .. " " .. args:get(i)
 	end
@@ -13,13 +13,13 @@ end
 function deploy(args)
 	-- Deploy application configuration to target.
 	stdout:printLn("Deploying resources to target host...")
-	run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) Application.config", "(null)")
+	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) Application.config", "(null)")
 	if run:exitCode() ~= 0 then return run:exitCode() end
 
 	-- Deploy binaries to target.
 	stdout:printLn("Deploying binaries to target host...")
 	run:pushd("$(DEPLOY_PROJECT_ROOT)/bin/latest/win64/releaseshared")
-	run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) *.dll *.exe *.txt", "(null)")
+	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) *.dll *.exe *.txt", "(null)")
 	if run:exitCode() ~= 0 then return run:exitCode() end
 	run:popd()
 

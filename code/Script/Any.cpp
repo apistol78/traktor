@@ -73,6 +73,15 @@ Any::Any(const Any& src)
 		m_data = src.m_data;
 }
 
+#if 0 // defined(T_CXX11)
+Any::Any(Any&& src)
+:	m_type(src.m_type)
+,	m_data(src.m_data)
+{
+	src.m_type = AtVoid;
+}
+#endif
+
 Any::~Any()
 {
 	T_EXCEPTION_GUARD_BEGIN
@@ -273,6 +282,23 @@ Any& Any::operator = (const Any& src)
 
 	return *this;
 }
+
+#if 0 // defined(T_CXX11)
+Any& Any::operator = (Any&& src)
+{
+	if (m_type == AtString)
+		refStringDec(m_data.m_string);
+	else if (m_type == AtObject)
+		T_SAFE_RELEASE(m_data.m_object);
+
+	m_type = src.m_type;
+	m_data = src.m_data;
+
+	src.m_type = AtVoid;
+	return *this;
+
+}
+#endif
 
 	}
 }

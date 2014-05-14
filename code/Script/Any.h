@@ -35,6 +35,10 @@ public:
 
 	Any(const Any& src);
 
+#if 0 // defined(T_CXX11)
+	Any(Any&& src);
+#endif
+
 	virtual ~Any();
 
 	static Any fromBoolean(bool value);
@@ -101,6 +105,10 @@ public:
 	// \}
 
 	Any& operator = (const Any& src);
+
+#if 0 // defined(T_CXX11)
+	Any& operator = (Any&& src);
+#endif
 
 private:
 	enum AnyType

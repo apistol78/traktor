@@ -48,6 +48,10 @@ public:
 
 	ActionValue(const ActionValue& v);
 
+#if defined(T_CXX11)
+	ActionValue(ActionValue&& v);
+#endif
+
 	explicit ActionValue(bool b);
 
 	explicit ActionValue(avm_number_t n);
@@ -137,6 +141,11 @@ public:
 
 	/*! \brief Copy value. */
 	ActionValue& operator = (const ActionValue& v);
+
+#if defined(T_CXX11)
+	/*! \brief Move value. */
+	ActionValue& operator = (ActionValue&& v);
+#endif
 
 	/*! \brief Add */
 	ActionValue operator + (const ActionValue& r) const;

@@ -527,7 +527,7 @@ bool emitIterate(GlslContext& cx, Iterate* node)
 		GlslVariable* condition = cx.emitInput(node, L"Condition");
 		if (condition)
 		{
-			fs << L"if (" << condition->cast(GtFloat) << L" == 0)" << Endl;
+			fs << L"if (" << condition->cast(GtFloat) << L" == 0.0)" << Endl;
 			fs << L"\tbreak;" << Endl;
 		}
 
@@ -607,7 +607,7 @@ bool emitIterate2d(GlslContext& cx, Iterate2d* node)
 	GlslVariable* condition = cx.emitInput(node, L"Condition");
 	if (condition)
 	{
-		fs << L"if (" << condition->cast(GtFloat) << L" == 0)" << Endl;
+		fs << L"if (" << condition->cast(GtFloat) << L" == 0.0)" << Endl;
 		fs << L"\tbreak;" << Endl;
 	}
 
@@ -648,7 +648,7 @@ bool emitIterate2d(GlslContext& cx, Iterate2d* node)
 	// Emit outer loop post condition.
 	if (condition)
 	{
-		fs << L"if (" << condition->cast(GtFloat) << L" == 0)" << Endl;
+		fs << L"if (" << condition->cast(GtFloat) << L" == 0.0)" << Endl;
 		fs << L"\tbreak;" << Endl;
 	}
 
@@ -1192,11 +1192,9 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 		target = GL_TEXTURE_2D;
 		break;
 
-#if !defined(T_OPENGL_ES2)
 	case GtTexture3D:
-		target = GL_TEXTURE_3D;
+		target = 0x806F; // GL_TEXTURE_3D;
 		break;
-#endif
 
 	case GtTextureCube:
 		target = GL_TEXTURE_CUBE_MAP;

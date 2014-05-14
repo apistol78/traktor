@@ -18,6 +18,7 @@
 #include "Core/Reflection/RfpMemberType.h"
 #include "Core/Reflection/RfmObject.h"
 #include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
@@ -46,7 +47,7 @@ namespace traktor
 		namespace
 		{
 
-const float c_oceanThreshold = 0.5f;
+const float c_oceanThreshold = 0.25f;
 
 class BuildContext : public rcContext
 {
@@ -177,6 +178,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.NavMeshPipeline", 12, NavMeshPipelin
 
 NavMeshPipeline::NavMeshPipeline()
 :	m_editor(false)
+,	m_terrainStepSize(16)
 {
 }
 
@@ -184,6 +186,7 @@ bool NavMeshPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
 	m_editor = settings->getProperty< PropertyBoolean >(L"Pipeline.TargetEditor", false);
+	m_terrainStepSize = settings->getProperty< PropertyInteger >(L"NavMeshPipeline.TerrainStepSize", 16);
 	return true;
 }
 
@@ -254,7 +257,9 @@ bool NavMeshPipeline::buildOutput(
 	log::info << L"Found " << int32_t(entityData.size()) << L" entity(s)" << Endl;
 
 	AlignedVector< NavMeshSourceModel > navModels;
+
 	float oceanHeight = -std::numeric_limits< float >::max();
+	bool oceanClip = false;
 
 	// Load all mesh models, translate and triangulate em.
 	{
@@ -402,17 +407,16 @@ bool NavMeshPipeline::buildOutput(
 
 				size = max(ix1 - ix0, iz1 - iz0);
 
-				const int32_t step = 64;
-				int32_t outputSize = size / step;
+				int32_t outputSize = size / m_terrainStepSize;
 
 				Ref< model::Model > navModel = new model::Model();
 
 				navModel->reservePositions(outputSize * outputSize);
 
 				model::Vertex vertex;
-				for (int32_t iz = iz0; iz < iz1; iz += step)
+				for (int32_t iz = iz0; iz < iz1; iz += m_terrainStepSize)
 				{
-					for (int32_t ix = ix0; ix < ix1; ix += step)
+					for (int32_t ix = ix0; ix < ix1; ix += m_terrainStepSize)
 					{
 						float wx, wz;
 						heightfield->gridToWorld(ix, iz, wx, wz);
@@ -436,15 +440,15 @@ bool NavMeshPipeline::buildOutput(
 					for (int32_t ix = 0; ix < outputSize - 1; ++ix)
 					{
 						float wx, wz;
-						heightfield->gridToWorld(ix0 + ix * step, iz0 + iz * step, wx, wz);
+						heightfield->gridToWorld(ix0 + ix * m_terrainStepSize, iz0 + iz * m_terrainStepSize, wx, wz);
 
 						if (!heightfield->getWorldCut(wx, wz))
 							continue;
-						if (!heightfield->getWorldCut(wx + step, wz))
+						if (!heightfield->getWorldCut(wx + m_terrainStepSize, wz))
 							continue;
-						if (!heightfield->getWorldCut(wx + step, wz + step))
+						if (!heightfield->getWorldCut(wx + m_terrainStepSize, wz + m_terrainStepSize))
 							continue;
-						if (!heightfield->getWorldCut(wx, wz + step))
+						if (!heightfield->getWorldCut(wx, wz + m_terrainStepSize))
 							continue;
 
 						int32_t indices[] =
@@ -474,6 +478,7 @@ bool NavMeshPipeline::buildOutput(
 			else if (const terrain::OceanEntityData* oceanEntityData = dynamic_type_cast< const terrain::OceanEntityData* >(*i))
 			{
 				oceanHeight = max< float >(oceanHeight, oceanEntityData->getTransform().translation().y());
+				oceanClip = true;
 			}
 		}
 	}
@@ -568,7 +573,7 @@ bool NavMeshPipeline::buildOutput(
 				const model::Polygon& triangle = i->model->getPolygon(j);
 				T_ASSERT (triangle.getVertexCount() == 3);
 
-				if (oceanHeight > -std::numeric_limits< float >::max())
+				if (oceanClip)
 				{
 					if (vertices[triangle.getVertex(0) * 3 + 1] < oceanHeight - c_oceanThreshold)
 						continue;

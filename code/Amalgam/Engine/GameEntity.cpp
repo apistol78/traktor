@@ -60,10 +60,12 @@ void GameEntity::update(const world::UpdateParams& update)
 		m_entity->update(update);
 }
 
-void GameEntity::raiseEvent(const std::wstring& eventId)
+world::IEntityEventInstance* GameEntity::raiseEvent(const std::wstring& eventId)
 {
 	if (m_eventManager)
-		m_eventManager->raise(m_eventSet, eventId, this);
+		return m_eventManager->raise(m_eventSet, eventId, this);
+	else
+		return 0;
 }
 
 	}

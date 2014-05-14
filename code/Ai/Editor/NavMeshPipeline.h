@@ -51,6 +51,7 @@ public:
 private:
 	std::wstring m_assetPath;
 	bool m_editor;
+	int32_t m_terrainStepSize;
 };
 
 	}

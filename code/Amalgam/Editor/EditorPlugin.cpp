@@ -85,6 +85,13 @@ private:
 	TargetState m_targetState;
 };
 
+Ref< ui::MenuItem > createTweakMenuItem(const std::wstring& text, bool initiallyChecked)
+{
+	Ref< ui::MenuItem > menuItem = new ui::MenuItem(text, true, 0);
+	menuItem->setChecked(initiallyChecked);
+	return menuItem;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.EditorPlugin", EditorPlugin, editor::IEditorPlugin)
@@ -125,15 +132,15 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 
 	m_toolTweaks = new ui::custom::ToolBarDropMenu(ui::Command(L"Amalgam.Tweaks"), 70, i18n::Text(L"AMALGAM_TWEAKS"), i18n::Text(L"AMALGAM_TWEAKS_TOOLTIP"));
-	m_toolTweaks->add(new ui::MenuItem(L"Mute Audio", true, 0));
-	m_toolTweaks->add(new ui::MenuItem(L"Audio \"Write Out\"", true, 0));
-	m_toolTweaks->add(new ui::MenuItem(L"Force VBlank Off", true, 0));
-	m_toolTweaks->add(new ui::MenuItem(L"Physics 2*dT", true, 0));
-	m_toolTweaks->add(new ui::MenuItem(L"Supersample *4", true, 0));
-	m_toolTweaks->add(new ui::MenuItem(L"Attach Script Debugger", true, 0));
-	m_toolTweaks->add(new ui::MenuItem(L"Attach Script Profiler", true, 0));
-	m_toolTweaks->add(new ui::MenuItem(L"Profile Rendering", true, 0));
-	m_toolTweaks->add(new ui::MenuItem(L"Disable All DLC", true, 0));
+	m_toolTweaks->add(createTweakMenuItem(L"Mute Audio", false));
+	m_toolTweaks->add(createTweakMenuItem(L"Audio \"Write Out\"", false));
+	m_toolTweaks->add(createTweakMenuItem(L"Force VBlank Off", false));
+	m_toolTweaks->add(createTweakMenuItem(L"Physics 2*dT", false));
+	m_toolTweaks->add(createTweakMenuItem(L"Supersample *4", false));
+	m_toolTweaks->add(createTweakMenuItem(L"Attach Script Debugger", true));
+	m_toolTweaks->add(createTweakMenuItem(L"Attach Script Profiler", false));
+	m_toolTweaks->add(createTweakMenuItem(L"Profile Rendering", false));
+	m_toolTweaks->add(createTweakMenuItem(L"Disable All DLC", false));
 	m_toolBar->addItem(m_toolTweaks);
 
 	// Create target configuration list control.

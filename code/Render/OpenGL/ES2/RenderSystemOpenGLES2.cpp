@@ -12,6 +12,7 @@
 #include "Render/OpenGL/ES2/ProgramOpenGLES2.h"
 #include "Render/OpenGL/ES2/IndexBufferOpenGLES2.h"
 #include "Render/OpenGL/ES2/VertexBufferOpenGLES2.h"
+#include "Render/OpenGL/ES2/VolumeTextureOpenGLES2.h"
 #include "Render/OpenGL/ES2/SimpleTextureOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderTargetSetOpenGLES2.h"
 #include "Render/OpenGL/ES2/ContextOpenGLES2.h"
@@ -207,7 +208,16 @@ Ref< ICubeTexture > RenderSystemOpenGLES2::createCubeTexture(const CubeTextureCr
 
 Ref< IVolumeTexture > RenderSystemOpenGLES2::createVolumeTexture(const VolumeTextureCreateDesc& desc)
 {
+#if !defined(T_OFFLINE_ONLY)
+	T_ANONYMOUS_VAR(IContext::Scope)(m_globalContext);
+	Ref< VolumeTextureOpenGLES2 > texture = new VolumeTextureOpenGLES2(m_globalContext);
+	if (texture->create(desc))
+		return texture;
+	else
+		return texture;
+#else
 	return 0;
+#endif
 }
 
 Ref< RenderTargetSet > RenderSystemOpenGLES2::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)

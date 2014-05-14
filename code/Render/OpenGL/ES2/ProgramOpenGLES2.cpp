@@ -8,11 +8,13 @@
 #include "Render/OpenGL/GlslType.h"
 #include "Render/OpenGL/GlslProgram.h"
 #include "Render/OpenGL/ProgramResourceOpenGL.h"
+#include "Render/OpenGL/ES2/CubeTextureOpenGLES2.h"
 #include "Render/OpenGL/ES2/ProgramOpenGLES2.h"
 #include "Render/OpenGL/ES2/SimpleTextureOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderTargetOpenGLES2.h"
 #include "Render/OpenGL/ES2/StateCache.h"
 #include "Render/OpenGL/ES2/ContextOpenGLES2.h"
+#include "Render/OpenGL/ES2/VolumeTextureOpenGLES2.h"
 
 namespace traktor
 {
@@ -352,6 +354,10 @@ bool ProgramOpenGLES2::activate(StateCache* stateCache, float targetSize[2], flo
 
 		if (SimpleTextureOpenGLES2* st = dynamic_type_cast< SimpleTextureOpenGLES2* >(resolved))
 			binding = static_cast< ITextureBinding* >(st);
+		else if (CubeTextureOpenGLES2* ct = dynamic_type_cast< CubeTextureOpenGLES2* >(resolved))
+			binding = static_cast< ITextureBinding* >(ct);
+		else if (VolumeTextureOpenGLES2* vt = dynamic_type_cast< VolumeTextureOpenGLES2* >(resolved))
+			binding = static_cast< ITextureBinding* >(vt);
 		else if (RenderTargetOpenGLES2* rt = dynamic_type_cast< RenderTargetOpenGLES2* >(resolved))
 			binding = static_cast< ITextureBinding* >(rt);
 			

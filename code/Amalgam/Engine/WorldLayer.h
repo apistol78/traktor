@@ -128,6 +128,10 @@ public:
 
 	float getAlternateTime() const;
 
+	void setFeedbackScale(float feedbackScale);
+
+	float getFeedbackScale() const;
+
 	void setCamera(const std::wstring& camera);
 
 	const std::wstring& getCamera() const;
@@ -149,6 +153,7 @@ private:
 	float m_deltaTime;
 	float m_controllerTime;
 	float m_fieldOfView;
+	float m_feedbackScale;
 	bool m_controllerEnable;
 
 	void createWorldRenderer();
