@@ -137,8 +137,11 @@ bool VolumeTextureOpenGLES2::create(const VolumeTextureCreateDesc& desc)
 	m_width = desc.width;
 	m_height = desc.height;
 	m_depth = desc.depth;
+	m_mipCount = desc.mipCount;
 
 	convertTextureFormat(desc.format, m_pixelSize, m_components, m_format, m_type);
+
+#if !defined(T_OFFLINE_ONLY)
 
 	T_OGL_SAFE(glGenTextures(1, &m_textureName));
 
@@ -184,7 +187,8 @@ bool VolumeTextureOpenGLES2::create(const VolumeTextureCreateDesc& desc)
 		}
 	}
 
-	m_mipCount = desc.mipCount;
+#endif
+
 	return true;
 }
 
@@ -228,6 +232,8 @@ void VolumeTextureOpenGLES2::unlock(int side, int level)
 
 void VolumeTextureOpenGLES2::bindSampler(GLuint unit, const SamplerStateOpenGL& samplerState, GLint locationTexture)
 {
+#if !defined(T_OFFLINE_ONLY)
+
 	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_3D_OES, m_textureName));
 
@@ -260,6 +266,8 @@ void VolumeTextureOpenGLES2::bindSampler(GLuint unit, const SamplerStateOpenGL& 
 	}
 
 	T_OGL_SAFE(glUniform1i(locationTexture, unit));
+
+#endif
 }
 
 void VolumeTextureOpenGLES2::bindSize(GLint locationSize)
