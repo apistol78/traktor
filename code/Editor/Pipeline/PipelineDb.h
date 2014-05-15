@@ -1,6 +1,7 @@
 #ifndef traktor_editor_PipelineDb_H
 #define traktor_editor_PipelineDb_H
 
+#include "Core/Io/StringOutputStream.h"
 #include "Core/Thread/ReaderWriterLock.h"
 #include "Editor/IPipelineDb.h"
 
@@ -51,6 +52,7 @@ public:
 
 private:
 	mutable ReaderWriterLock m_lock;
+	mutable StringOutputStream m_ss;
 	Ref< sql::IConnection > m_connection;
 	bool m_transaction;
 };
