@@ -1,5 +1,5 @@
-#include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/Adler32.h"
 #include "Core/Thread/Acquire.h"
 #include "Editor/Pipeline/PipelineDb.h"
 #include "Editor/Pipeline/PipelineDbReport.h"
@@ -13,7 +13,16 @@ namespace traktor
 		namespace
 		{
 
-const int32_t c_version = 4;
+const int32_t c_version = 5;
+
+int32_t hash(const std::wstring& s)
+{
+	Adler32 a;
+	a.begin();
+	a.feed(s.c_str(), s.length() * sizeof(wchar_t));
+	a.end();
+	return a.get();
+}
 
 		}
 
@@ -71,7 +80,8 @@ bool PipelineDb::open(const std::wstring& connectionString)
 
 		if (connection->executeUpdate(
 			L"create table PipelineFile ("
-			L"path varchar(1024) primary key,"
+			L"pathHash integer primary key,"
+			L"path varchar(1024),"
 			L"size integer,"
 			L"lastWriteTime integer,"
 			L"hash integer"
@@ -126,16 +136,16 @@ void PipelineDb::setDependency(const Guid& guid, const DependencyHash& hash)
 	}
 
 	Ref< sql::IResultSet > rs;
-	StringOutputStream ss;
 
-	ss <<
+	m_ss.reset();
+	m_ss <<
 		L"insert or replace into PipelineHash (guid, pipelineVersion, hash) "
 		L"values (" <<
 		L"'" << guid.format() << L"'," <<
 		hash.pipelineVersion << L"," <<
 		hash.hash <<
 		L")";
-	if (m_connection->executeUpdate(ss.str()) != 1)
+	if (m_connection->executeUpdate(m_ss.str()) != 1)
 		log::warning << L"Unable to update pipeline hash in database" << Endl;
 }
 
@@ -144,11 +154,11 @@ bool PipelineDb::getDependency(const Guid& guid, DependencyHash& outHash) const
 	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireReader)(m_lock);
 
 	Ref< sql::IResultSet > rs;
-	StringOutputStream ss;
 
 	// Get hash record.
-	ss << L"select * from PipelineHash where guid='" << guid.format() << L"'";
-	rs = m_connection->executeQuery(ss.str());
+	m_ss.reset();
+	m_ss << L"select * from PipelineHash where guid='" << guid.format() << L"'";
+	rs = m_connection->executeQuery(m_ss.str());
 	if (!rs || !rs->next())
 		return false;
 
@@ -168,18 +178,22 @@ void PipelineDb::setFile(const Path& path, const FileHash& file)
 		m_transaction = true;
 	}
 
-	Ref< sql::IResultSet > rs;
-	StringOutputStream ss;
+	std::wstring pn = toLower(path.normalized().getPathName());
+	uint32_t pnh = hash(pn);
 
-	ss <<
-		L"insert or replace into PipelineFile (path, size, lastWriteTime, hash) "
+	Ref< sql::IResultSet > rs;
+
+	m_ss.reset();
+	m_ss <<
+		L"insert or replace into PipelineFile (pathHash, path, size, lastWriteTime, hash) "
 		L"values (" <<
-		L"'" << toLower(path.normalized().getPathName()) << L"'," <<
+		pnh << L"," <<
+		L"'" << pn << L"'," <<
 		file.size << L"," <<
 		file.lastWriteTime.getSecondsSinceEpoch() << L"," <<
 		file.hash <<
 		L")";
-	if (m_connection->executeUpdate(ss.str()) != 1)
+	if (m_connection->executeUpdate(m_ss.str()) != 1)
 		log::error << L"Unable to update pipeline file hash in database" << Endl;
 }
 
@@ -187,12 +201,15 @@ bool PipelineDb::getFile(const Path& path, FileHash& outFile)
 {
 	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireReader)(m_lock);
 
+	std::wstring pn = toLower(path.normalized().getPathName());
+	uint32_t pnh = hash(pn);
+
 	Ref< sql::IResultSet > rs;
-	StringOutputStream ss;
 
 	// Get file record.
-	ss << L"select * from PipelineFile where path='" << toLower(path.normalized().getPathName()) << L"'";
-	rs = m_connection->executeQuery(ss.str());
+	m_ss.reset();
+	m_ss << L"select * from PipelineFile where pathHash=" << pnh << L" and path='" << pn << L"'";
+	rs = m_connection->executeQuery(m_ss.str());
 	if (!rs || !rs->next())
 		return false;
 
