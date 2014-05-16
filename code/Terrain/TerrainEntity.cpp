@@ -75,6 +75,7 @@ TerrainEntity::TerrainEntity(render::IRenderSystem* renderSystem)
 ,	m_handlePatchOrigin(render::getParameterHandle(L"PatchOrigin"))
 ,	m_handlePatchExtent(render::getParameterHandle(L"PatchExtent"))
 ,	m_handlePatchLodColor(render::getParameterHandle(L"PatchLodColor"))
+,	m_handleDetailDistance(render::getParameterHandle(L"DetailDistance"))
 {
 }
 
@@ -118,7 +119,8 @@ bool TerrainEntity::create(resource::IResourceManager* resourceManager, const Te
 void TerrainEntity::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass
+	world::IWorldRenderPass& worldRenderPass,
+	float detailDistance
 )
 {
 	if (
@@ -327,7 +329,8 @@ void TerrainEntity::render(
 			const Vector4& patchOrigin = i->patchOrigin;
 
 			// Calculate which surface lod to use based one distance to patch center.
-			float surfaceLodDistance = std::pow(clamp(i->distance / m_surfaceLodDistance + m_surfaceLodBias, 0.0f, 1.0f), m_surfaceLodExponent);
+			float distance = max(i->distance - detailDistance, 0.0f);
+			float surfaceLodDistance = std::pow(clamp(distance / m_surfaceLodDistance + m_surfaceLodBias, 0.0f, 1.0f), m_surfaceLodExponent);
 			float surfaceLodF = surfaceLodDistance * c_surfaceLodSteps;
 			int32_t surfaceLod = int32_t(surfaceLodF + 0.5f);
 
@@ -404,7 +407,7 @@ void TerrainEntity::render(
 		renderBlock->primitives = &m_primitives[patch.lastPatchLod];
 
 		renderBlock->programParams->beginParameters(worldContext.getRenderContext());
-		worldRenderPass.setProgramParameters(renderBlock->programParams, true);
+		worldRenderPass.setProgramParameters(renderBlock->programParams, render::RpOpaque);
 
 		renderBlock->programParams->setTextureParameter(m_handleHeightfield, m_terrain->getHeightMap());
 		renderBlock->programParams->setTextureParameter(m_handleSurface, m_surfaceCache->getVirtualTexture());
@@ -418,6 +421,7 @@ void TerrainEntity::render(
 		renderBlock->programParams->setVectorParameter(m_handlePatchExtent, patchExtent);
 		renderBlock->programParams->setVectorParameter(m_handleSurfaceOffset, patch.surfaceOffset);
 		renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, i->patchOrigin);
+		renderBlock->programParams->setFloatParameter(m_handleDetailDistance, detailDistance);
 
 		if (m_visualizeMode == TerrainEntityData::VmSurfaceLod)
 			renderBlock->programParams->setVectorParameter(m_handlePatchLodColor, c_lodColor[patch.lastSurfaceLod]);
@@ -447,7 +451,7 @@ void TerrainEntity::render(
 		renderBlock->primitives = &m_primitives[patch.lastPatchLod];
 
 		renderBlock->programParams->beginParameters(worldContext.getRenderContext());
-		worldRenderPass.setProgramParameters(renderBlock->programParams, true);
+		worldRenderPass.setProgramParameters(renderBlock->programParams, render::RpOpaque);
 
 		renderBlock->programParams->setTextureParameter(m_handleHeightfield, m_terrain->getHeightMap());
 		renderBlock->programParams->setTextureParameter(m_handleSurface, m_surfaceCache->getVirtualTexture());
@@ -461,6 +465,7 @@ void TerrainEntity::render(
 		renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, patchOrigin);
 		renderBlock->programParams->setVectorParameter(m_handleSurfaceOffset, patch.surfaceOffset);
 		renderBlock->programParams->setVectorParameter(m_handlePatchExtent, patchExtent);
+		renderBlock->programParams->setFloatParameter(m_handleDetailDistance, detailDistance);
 
 		if (m_visualizeMode == TerrainEntityData::VmSurfaceLod)
 			renderBlock->programParams->setVectorParameter(m_handlePatchLodColor, c_lodColor[patch.lastSurfaceLod]);

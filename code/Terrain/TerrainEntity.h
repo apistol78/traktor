@@ -92,7 +92,8 @@ public:
 	void render(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
-		world::IWorldRenderPass& worldRenderPass
+		world::IWorldRenderPass& worldRenderPass,
+		float detailDistance
 	);
 
 	const resource::Proxy< Terrain >& getTerrain() const { return m_terrain; }
@@ -145,6 +146,7 @@ private:
 	render::handle_t m_handlePatchOrigin;
 	render::handle_t m_handlePatchExtent;
 	render::handle_t m_handlePatchLodColor;
+	render::handle_t m_handleDetailDistance;
 
 	bool updatePatches();
 

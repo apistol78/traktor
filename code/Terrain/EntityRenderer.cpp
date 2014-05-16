@@ -13,9 +13,15 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.EntityRenderer", EntityRenderer, world::IEntityRenderer)
 
-EntityRenderer::EntityRenderer(bool oceanReflectionEnable)
-:	m_oceanReflectionEnable(oceanReflectionEnable)
+EntityRenderer::EntityRenderer(float terrainDetailDistance, bool oceanReflectionEnable)
+:	m_terrainDetailDistance(terrainDetailDistance)
+,	m_oceanReflectionEnable(oceanReflectionEnable)
 {
+}
+
+void EntityRenderer::setTerrainDetailDistance(float terrainDetailDistance)
+{
+	m_terrainDetailDistance = terrainDetailDistance;
 }
 
 void EntityRenderer::setOceanDynamicReflectionEnable(bool oceanReflectionEnable)
@@ -49,7 +55,7 @@ void EntityRenderer::render(
 )
 {
 	if (TerrainEntity* terrainEntity = dynamic_type_cast< TerrainEntity* >(entity))
-		terrainEntity->render(worldContext, worldRenderView, worldRenderPass);
+		terrainEntity->render(worldContext, worldRenderView, worldRenderPass, m_terrainDetailDistance);
 	else if (OceanEntity* oceanEntity = dynamic_type_cast< OceanEntity* >(entity))
 		oceanEntity->render(worldContext.getRenderContext(), worldRenderView, worldRenderPass, m_oceanReflectionEnable);
 	else if (RiverEntity* riverEntity = dynamic_type_cast< RiverEntity* >(entity))

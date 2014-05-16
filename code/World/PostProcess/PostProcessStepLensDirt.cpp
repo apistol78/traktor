@@ -78,11 +78,12 @@ Ref< PostProcessStep::Instance > PostProcessStepLensDirt::create(
 		float x = random.nextFloat() * 2.0f - 1.0f;
 		float y = random.nextFloat() * 2.0f - 1.0f;
 		float s = traktor::sqrtf(x * x + y * y) / 1.414214f;
+		float w = random.nextFloat() * (s * 0.8f) + 0.2f;
 		instance->m_instances[i] = Vector4(
 			x,
 			y,
 			random.nextFloat() * TWO_PI,
-			random.nextFloat() * (s * 0.8f) + 0.2f
+			w * w * 1.3f
 		);
 	}
 

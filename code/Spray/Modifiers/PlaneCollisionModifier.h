@@ -4,14 +4,6 @@
 #include "Core/Math/Plane.h"
 #include "Spray/Modifier.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_SPRAY_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace spray
@@ -20,7 +12,7 @@ namespace traktor
 /*! \brief Plane collision modifier.
  * \ingroup Spray
  */
-class T_DLLCLASS PlaneCollisionModifier : public Modifier
+class PlaneCollisionModifier : public Modifier
 {
 	T_RTTI_CLASS;
 

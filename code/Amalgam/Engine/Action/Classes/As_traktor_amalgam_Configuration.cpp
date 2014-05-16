@@ -194,11 +194,12 @@ void As_traktor_amalgam_Configuration::Configuration_set_antiAliasQuality(AsConf
 
 int32_t As_traktor_amalgam_Configuration::Configuration_get_terrainQuality(const AsConfiguration* self) const
 {
-	return 0;
+	return self->getTerrainQuality();
 }
 
 void As_traktor_amalgam_Configuration::Configuration_set_terrainQuality(AsConfiguration* self, int32_t terrainQuality) const
 {
+	self->setTerrainQuality((AsConfiguration::Quality)terrainQuality);
 }
 
 int32_t As_traktor_amalgam_Configuration::Configuration_get_particleQuality(const AsConfiguration* self) const

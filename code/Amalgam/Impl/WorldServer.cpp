@@ -62,6 +62,15 @@ const float c_sprayLodDistances[][2] =
 	{ 100.0f, 200.0f }
 };
 
+const float c_terrainDetailDistances[] =
+{
+	0.0f,
+	10.0f,
+	30.0f,
+	100.0f,
+	200.0f
+};
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.WorldServer", WorldServer, IWorldServer)
@@ -72,6 +81,7 @@ WorldServer::WorldServer()
 ,	m_ambientOcclusionQuality(world::QuMedium)
 ,	m_antiAliasQuality(world::QuMedium)
 ,	m_particleQuality(world::QuMedium)
+,	m_terrainQuality(world::QuMedium)
 ,	m_oceanQuality(world::QuMedium)
 ,	m_superSample(0)
 {
@@ -92,6 +102,7 @@ bool WorldServer::create(const PropertyGroup* settings, IRenderServer* renderSer
 	m_ambientOcclusionQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", world::QuMedium);
 	m_antiAliasQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.AntiAliasQuality", world::QuMedium);
 	m_particleQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.ParticleQuality", world::QuMedium);
+	m_terrainQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.TerrainQuality", world::QuMedium);
 	m_oceanQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.OceanQuality", world::QuMedium);
 	m_superSample = settings->getProperty< PropertyInteger >(L"World.SuperSample", 0);
 
@@ -105,8 +116,9 @@ bool WorldServer::create(const PropertyGroup* settings, IRenderServer* renderSer
 	float sprayLod2Distance = c_sprayLodDistances[m_particleQuality][1];
 	m_effectEntityRenderer = new spray::EffectEntityRenderer(m_renderServer->getRenderSystem(), sprayLod1Distance, sprayLod2Distance);
 
+	float terrainDetailDistance = c_terrainDetailDistances[m_terrainQuality];
 	bool oceanReflectionEnable = bool(m_oceanQuality >= world::QuHigh);
-	m_terrainEntityRenderer = new terrain::EntityRenderer(oceanReflectionEnable);
+	m_terrainEntityRenderer = new terrain::EntityRenderer(terrainDetailDistance, oceanReflectionEnable);
 
 	m_entityRenderers = new world::WorldEntityRenderers();
 	m_entityRenderers->add(new world::DecalEntityRenderer(m_renderServer->getRenderSystem()));
@@ -177,6 +189,7 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 	world::Quality ambientOcclusionQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", world::QuMedium);
 	world::Quality antiAliasQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.AntiAliasQuality", world::QuMedium);
 	world::Quality particleQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.ParticleQuality", world::QuMedium);
+	world::Quality terrainQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.TerrainQuality", world::QuMedium);
 	world::Quality oceanQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.OceanQuality", world::QuMedium);
 	int32_t superSample = settings->getProperty< PropertyInteger >(L"World.SuperSample", 0);
 
@@ -186,6 +199,7 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 		ambientOcclusionQuality == m_ambientOcclusionQuality &&
 		antiAliasQuality == m_antiAliasQuality &&
 		particleQuality == m_particleQuality &&
+		terrainQuality == m_terrainQuality &&
 		oceanQuality == m_oceanQuality &&
 		superSample == m_superSample
 	)
@@ -196,13 +210,16 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 	float sprayLod2Distance = c_sprayLodDistances[m_particleQuality][1];
 	m_effectEntityRenderer->setLodDistances(sprayLod1Distance, sprayLod2Distance);
 
+	float terrainDetailDistance = c_terrainDetailDistances[terrainQuality];
 	bool oceanReflectionEnable = bool(oceanQuality >= world::QuHigh);
+	m_terrainEntityRenderer->setTerrainDetailDistance(terrainDetailDistance);
 	m_terrainEntityRenderer->setOceanDynamicReflectionEnable(oceanReflectionEnable);
 
 	// Save ghost configuration state.
 	m_shadowQuality = shadowQuality;
 	m_ambientOcclusionQuality = ambientOcclusionQuality;
 	m_antiAliasQuality = antiAliasQuality;
+	m_terrainQuality = terrainQuality;
 	m_oceanQuality = oceanQuality;
 	m_superSample = superSample;
 

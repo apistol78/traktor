@@ -64,7 +64,7 @@
 			</position>
 			<swizzle>0x00</swizzle>
 		</item>
-		<item type="traktor.render.Sampler" version="2">
+		<item type="traktor.render.Sampler" version="3">
 			<comment/>
 			<position>
 				<first>-218</first>
@@ -77,6 +77,7 @@
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
 			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
@@ -401,7 +402,7 @@
 			<type>PtVector</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Sampler" version="2">
+		<item type="traktor.render.Sampler" version="3">
 			<comment>
 			<![CDATA[
 Generated texture from surface cache.
@@ -418,6 +419,7 @@ Generated texture from surface cache.
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
 			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
@@ -500,14 +502,6 @@ Generated texture from surface cache.
 				<second>125</second>
 			</position>
 			<swizzle>z</swizzle>
-		</item>
-		<item type="traktor.render.Scalar">
-			<comment/>
-			<position>
-				<first>564</first>
-				<second>164</second>
-			</position>
-			<value>30</value>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
@@ -598,6 +592,16 @@ Generated texture from surface cache.
 				<first>1669</first>
 				<second>-78</second>
 			</position>
+		</item>
+		<item type="traktor.render.Uniform" version="1">
+			<comment/>
+			<position>
+				<first>488</first>
+				<second>165</second>
+			</position>
+			<parameterName>DetailDistance</parameterName>
+			<type>PtScalar</type>
+			<frequency>UfOnce</frequency>
 		</item>
 	</nodes>
 	<edges>
@@ -1107,7 +1111,7 @@ Generated texture from surface cache.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[40]"/>
+				<node ref="/object/nodes/item[39]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
@@ -1117,37 +1121,27 @@ Generated texture from surface cache.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[39]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[44]"/>
-				<name>Output</name>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[17]"/>
 				<name>ViewNormal</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[45]"/>
+				<node ref="/object/nodes/item[44]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[44]"/>
+				<node ref="/object/nodes/item[43]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[46]"/>
+				<node ref="/object/nodes/item[45]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[45]"/>
+				<node ref="/object/nodes/item[44]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
@@ -1157,27 +1151,27 @@ Generated texture from surface cache.
 				<name>T_Normal</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[46]"/>
+				<node ref="/object/nodes/item[45]"/>
 				<name>Type</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[47]"/>
+				<node ref="/object/nodes/item[46]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[46]"/>
+				<node ref="/object/nodes/item[45]"/>
 				<name>Vector</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[48]"/>
+				<node ref="/object/nodes/item[47]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[47]"/>
+				<node ref="/object/nodes/item[46]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -1187,27 +1181,27 @@ Generated texture from surface cache.
 				<name>T_Normal</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[48]"/>
+				<node ref="/object/nodes/item[47]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[49]"/>
+				<node ref="/object/nodes/item[48]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[47]"/>
+				<node ref="/object/nodes/item[46]"/>
 				<name>Transform</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[50]"/>
+				<node ref="/object/nodes/item[49]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[49]"/>
+				<node ref="/object/nodes/item[48]"/>
 				<name>XAxis</name>
 			</destination>
 		</item>
@@ -1217,8 +1211,28 @@ Generated texture from surface cache.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[50]"/>
+				<node ref="/object/nodes/item[49]"/>
 				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[50]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[49]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[23]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[48]"/>
+				<name>YAxis</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -1227,37 +1241,17 @@ Generated texture from surface cache.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[50]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[23]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[49]"/>
-				<name>YAxis</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[52]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[49]"/>
+				<node ref="/object/nodes/item[48]"/>
 				<name>ZAxis</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[50]"/>
+				<node ref="/object/nodes/item[49]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[52]"/>
+				<node ref="/object/nodes/item[51]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
@@ -1267,7 +1261,7 @@ Generated texture from surface cache.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[52]"/>
+				<node ref="/object/nodes/item[51]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
@@ -1277,7 +1271,7 @@ Generated texture from surface cache.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[46]"/>
+				<node ref="/object/nodes/item[45]"/>
 				<name>Default</name>
 			</destination>
 		</item>
@@ -1287,7 +1281,7 @@ Generated texture from surface cache.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[45]"/>
+				<node ref="/object/nodes/item[44]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
@@ -1297,23 +1291,23 @@ Generated texture from surface cache.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[45]"/>
+				<node ref="/object/nodes/item[44]"/>
 				<name>Blend</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[53]"/>
+				<node ref="/object/nodes/item[52]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[44]"/>
+				<node ref="/object/nodes/item[43]"/>
 				<name>Transform</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[54]"/>
+				<node ref="/object/nodes/item[53]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1327,8 +1321,18 @@ Generated texture from surface cache.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[54]"/>
+				<node ref="/object/nodes/item[53]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[54]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[40]"/>
+				<name>Input2</name>
 			</destination>
 		</item>
 	</edges>

@@ -79,6 +79,10 @@ public:
 
 	void setParticleQuality(Quality particleQuality);
 
+	Quality getTerrainQuality() const;
+
+	void setTerrainQuality(Quality terrainQuality);
+
 	Quality getOceanQuality() const;
 
 	void setOceanQuality(Quality oceanQuality);
@@ -135,6 +139,7 @@ private:
 	Quality m_ambientOcclusionQuality;
 	Quality m_antiAliasQuality;
 	Quality m_particleQuality;
+	Quality m_terrainQuality;
 	Quality m_oceanQuality;
 	float m_mouseSensitivity;
 	bool m_rumbleEnable;
