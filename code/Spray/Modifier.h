@@ -9,14 +9,6 @@
 #include "Core/Object.h"
 #include "Spray/Point.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_SPRAY_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 
@@ -30,7 +22,7 @@ class SpursJobQueue;
 /*! \brief Emitter modifier.
  * \ingroup Spray
  */
-class T_DLLCLASS Modifier : public Object
+class Modifier : public Object
 {
 	T_RTTI_CLASS;
 

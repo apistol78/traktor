@@ -30,6 +30,7 @@ AsConfiguration::AsConfiguration()
 ,	m_ambientOcclusionQuality(QtMedium)
 ,	m_antiAliasQuality(QtMedium)
 ,	m_particleQuality(QtMedium)
+,	m_terrainQuality(QtMedium)
 ,	m_oceanQuality(QtMedium)
 ,	m_mouseSensitivity(0.5f)
 ,	m_rumbleEnable(true)
@@ -58,6 +59,7 @@ Ref< AsConfiguration > AsConfiguration::getCurrent(amalgam::IEnvironment* enviro
 	current->m_ambientOcclusionQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", QtMedium);
 	current->m_antiAliasQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.AntiAliasQuality", QtMedium);
 	current->m_particleQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.ParticleQuality", QtMedium);
+	current->m_terrainQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.TerrainQuality", QtMedium);
 	current->m_oceanQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.OceanQuality", QtMedium);
 	current->m_mouseSensitivity = settings->getProperty< PropertyFloat >(L"Input.MouseSensitivity", 0.5f);
 	current->m_rumbleEnable = settings->getProperty< PropertyBoolean >(L"Input.Rumble", true);
@@ -193,6 +195,16 @@ AsConfiguration::Quality AsConfiguration::getParticleQuality() const
 void AsConfiguration::setParticleQuality(Quality particleQuality)
 {
 	m_particleQuality = particleQuality;
+}
+
+AsConfiguration::Quality AsConfiguration::getTerrainQuality() const
+{
+	return m_terrainQuality;
+}
+
+void AsConfiguration::setTerrainQuality(Quality terrainQuality)
+{
+	m_terrainQuality = terrainQuality;
 }
 
 AsConfiguration::Quality AsConfiguration::getOceanQuality() const
@@ -335,6 +347,7 @@ bool AsConfiguration::apply(amalgam::IEnvironment* environment)
 	settings->setProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", m_ambientOcclusionQuality);
 	settings->setProperty< PropertyInteger >(L"World.AntiAliasQuality", m_antiAliasQuality);
 	settings->setProperty< PropertyInteger >(L"World.ParticleQuality", m_particleQuality);
+	settings->setProperty< PropertyInteger >(L"World.TerrainQuality", m_terrainQuality);
 	settings->setProperty< PropertyInteger >(L"World.OceanQuality", m_oceanQuality);
 	settings->setProperty< PropertyFloat >(L"Input.MouseSensitivity", m_mouseSensitivity);
 	settings->setProperty< PropertyBoolean >(L"Input.Rumble", m_rumbleEnable);

@@ -21,7 +21,9 @@ class T_DLLCLASS EntityRenderer : public world::IEntityRenderer
 	T_RTTI_CLASS;
 
 public:
-	EntityRenderer(bool oceanReflectionEnable);
+	EntityRenderer(float terrainDetailDistance, bool oceanReflectionEnable);
+
+	void setTerrainDetailDistance(float terrainDetailDistance);
 
 	void setOceanDynamicReflectionEnable(bool oceanReflectionEnable);
 
@@ -47,6 +49,7 @@ public:
 	);
 
 private:
+	float m_terrainDetailDistance;
 	bool m_oceanReflectionEnable;
 };
 

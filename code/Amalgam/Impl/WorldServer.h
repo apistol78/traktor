@@ -85,6 +85,7 @@ private:
 	world::Quality m_ambientOcclusionQuality;
 	world::Quality m_antiAliasQuality;
 	world::Quality m_particleQuality;
+	world::Quality m_terrainQuality;
 	world::Quality m_oceanQuality;
 	int32_t m_superSample;
 };
