@@ -163,7 +163,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_threadTargetActions->start();
 
 	container->addTimerEventHandler(ui::createMethodHandler(this, &EditorPlugin::eventTimer));
-	container->startTimer(100);
+	container->startTimer(30);
 
 	return true;
 }
@@ -512,7 +512,12 @@ void EditorPlugin::eventTimer(ui::Event* event)
 		m_targetManager &&
 		m_targetManager->update()
 	)
+	{
+		// Doing both seems odd but deferred request is to ensure
+		// widget layout also is updated properly.
 		m_targetList->requestUpdate();
+		m_targetList->update();
+	}
 }
 
 void EditorPlugin::threadHostEnumerator()

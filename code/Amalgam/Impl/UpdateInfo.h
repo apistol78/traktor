@@ -23,6 +23,7 @@ public:
 	float m_frameDeltaTime;
 	uint64_t m_frame;
 	bool m_runningSlow;
+	FrameProfiler* m_frameProfiler;
 
 	UpdateInfo()
 	:	m_totalTime(0.0f)
@@ -33,6 +34,7 @@ public:
 	,	m_frameDeltaTime(0.0f)
 	,	m_frame(0)
 	,	m_runningSlow(false)
+	,	m_frameProfiler(0)
 	{
 	}
 
@@ -53,6 +55,8 @@ public:
 	virtual float getInterval() const { return clamp((m_stateTime - m_simulationTime + m_simulationDeltaTime) / m_simulationDeltaTime, 0.0f, 1.0f); }
 
 	virtual bool isRunningSlow() const { return m_runningSlow; }
+
+	virtual FrameProfiler* getProfiler() const { return m_frameProfiler; }
 };
 
 	}

@@ -285,6 +285,9 @@ void AutoWidget::eventSize(Event* event)
 
 void AutoWidget::eventTimer(Event* event)
 {
+	if (!isVisible(false))
+		return;
+
 	if (m_deferredUpdate)
 	{
 		m_deferredUpdate = false;

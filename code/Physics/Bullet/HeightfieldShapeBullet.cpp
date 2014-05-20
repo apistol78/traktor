@@ -142,11 +142,13 @@ void HeightfieldShapeBullet::processAllTriangles(btTriangleCallback* callback, c
 				}
 			};
 
-			if (c[0] && c[3] && c[2])
-				callback->processTriangle(triangles[0], 0, 0);
-
-			if (c[2] && c[1] && c[0])
-				callback->processTriangle(triangles[1], 0, 1);
+			if (c[0] && c[2])
+			{
+				if (c[3])
+					callback->processTriangle(triangles[0], 0, 0);
+				if (c[1])
+					callback->processTriangle(triangles[1], 0, 1);
+			}
 		}
 	}
 }

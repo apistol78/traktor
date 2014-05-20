@@ -113,9 +113,9 @@ void TrailRenderer::render(
 		Vector4 vp1 = points[i];
 
 		Vector4 direction = (vp1 - vp0).xyz0();
-		Scalar ln = direction.length();
+		Scalar ln = direction.length2();
 
-		if (ln <= FUZZY_EPSILON)
+		if (ln <= FUZZY_EPSILON * FUZZY_EPSILON)
 			continue;
 
 		Vector4 up = cross(direction, (vp0 + vp1) * Scalar(0.5f) - cameraPosition).normalized() * www0;
@@ -134,7 +134,7 @@ void TrailRenderer::render(
 		vertex->uv[2] = 1.0f;
 		++vertex;
 
-		v += ln / (lengthTreshold * (c_stripeLength - 3));
+		v += squareRoot(ln) / (lengthTreshold * (c_stripeLength - 3));
 
 		m_batches.back().points++;
 	}
@@ -146,11 +146,11 @@ void TrailRenderer::render(
 
 		Vector4 direction = (vp1 - vp0).xyz0();
 		Vector4 up = Vector4::zero();
-		Scalar ln = direction.length();
+		Scalar ln = direction.length2();
 
-		if (ln > FUZZY_EPSILON)
+		if (ln > FUZZY_EPSILON * FUZZY_EPSILON)
 		{
-			direction /= ln;
+			direction *= reciprocalSquareRoot(ln);
 
 			Scalar k = clamp(Scalar(1.0f) + (Scalar(time - age) - vp0.w()) / (vp1.w() - vp0.w()), Scalar(0.0f), Scalar(1.0f));
 			Vector4 vp = lerp(vp0, vp1, k);

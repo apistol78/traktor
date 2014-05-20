@@ -12,7 +12,7 @@
 #include "World/WorldRenderView.h"
 
 #if !defined(__EMSCRIPTEN__)
-#	define T_USE_UPDATE_JOBS
+//#	define T_USE_UPDATE_JOBS
 #endif
 
 namespace traktor

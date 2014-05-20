@@ -1,3 +1,4 @@
+#include "Amalgam/FrameProfiler.h"
 #include "Amalgam/IAudioServer.h"
 #include "Amalgam/IEnvironment.h"
 #include "Amalgam/IUpdateInfo.h"
@@ -141,6 +142,8 @@ void WorldLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdate
 	if (!m_worldRenderer)
 		return;
 
+	info.getProfiler()->beginScope(FptWorldLayer);
+
 	// Update scene controller.
 	if (m_controllerEnable)
 	{
@@ -168,11 +171,17 @@ void WorldLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdate
 		// Update entity events.
 		world::IEntityEventManager* eventManager = m_environment->getWorld()->getEntityEventManager();
 		if (eventManager)
+		{
+			info.getProfiler()->beginScope(FptWorldLayerEvents);
 			eventManager->update(up);
+			info.getProfiler()->endScope();
+		}
 	}
 
 	// In case not explicitly set we update the alternative time also.
 	m_alternateTime += info.getSimulationDeltaTime();
+
+	info.getProfiler()->endScope();
 }
 
 void WorldLayer::build(const amalgam::IUpdateInfo& info, uint32_t frame)

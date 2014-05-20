@@ -1,3 +1,4 @@
+#include "Amalgam/FrameProfiler.h"
 #include "Amalgam/IEnvironment.h"
 #include "Amalgam/IUpdateInfo.h"
 #include "Amalgam/Engine/FlashCast.h"
@@ -210,6 +211,8 @@ void FlashLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdate
 	input::InputSystem* inputSystem = m_environment->getInput()->getInputSystem();
 	std::string command, args;
 
+	info.getProfiler()->beginScope(FptFlashLayer);
+
 	// Do NOT propagate input in case user is fabricating input.
 	if (!m_environment->getInput()->isFabricating())
 	{
@@ -332,6 +335,8 @@ void FlashLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdate
 		};
 		getStage()->invokeScript(command, sizeof_array(argv), argv);
 	}
+
+	info.getProfiler()->endScope();
 }
 
 void FlashLayer::build(const amalgam::IUpdateInfo& info, uint32_t frame)

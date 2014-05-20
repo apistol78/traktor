@@ -16,6 +16,8 @@ namespace traktor
 	namespace amalgam
 	{
 
+class FrameProfiler;
+
 /*! \brief Update information.
  * \ingroup Amalgam
  *
@@ -93,6 +95,10 @@ public:
 	 * \return True if system incapable of sustaining a stable frame rate.
 	 */
 	virtual bool isRunningSlow() const = 0;
+
+	/*! \brief Access the frame profiler.
+	 */
+	virtual FrameProfiler* getProfiler() const = 0;
 };
 
 	}

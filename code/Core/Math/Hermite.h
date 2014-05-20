@@ -67,9 +67,29 @@ public:
 		float Tlast = Accessor::time(m_keys, m_nkeys, m_keys[m_nkeys - 1]);
 		float Tcurr = TimeControl::t(T, Tfirst, Tlast, m_Tend > 0.0f ? m_Tend : Tlast);
 
+		// Binary search for key.
 		int index = 0;
-		while (index < int(m_nkeys - 1) && Tcurr >= Accessor::time(m_keys, m_nkeys, m_keys[index + 1]))
-			++index;
+		if (Tcurr < Tlast)
+		{
+			int index0 = 0;
+			int index1 = int(m_nkeys - 2);
+			while (index0 < index1)
+			{
+				index = (index0 + index1) / 2;
+
+				float Tkey0 = Accessor::time(m_keys, m_nkeys, m_keys[index]);
+				float Tkey1 = Accessor::time(m_keys, m_nkeys, m_keys[index + 1]);
+
+				if (Tcurr < Tkey0)
+					index1 = index - 1;
+				else if (Tcurr > Tkey1)
+					index0 = index + 1;
+				else
+					break;
+			}
+		}
+		else
+			index = m_nkeys - 1;
 
 		int index_n1 = TimeControl::index(index - 1, int(m_nkeys - 1));
 		int index_1 = TimeControl::index(index + 1, int(m_nkeys - 1));

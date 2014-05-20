@@ -24,6 +24,7 @@
 #include "Core/Memory/Alloc.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
+#include "Core/Misc/TString.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
@@ -434,17 +435,19 @@ bool Application::update()
 	Ref< IState > currentState;
 
 	// Update target manager connection.
-	if (m_targetManagerConnection)
+	if (m_targetManagerConnection && !m_targetManagerConnection->update())
 	{
-		if (!m_targetManagerConnection->update())
-		{
-			log::warning << L"Connection to target manager lost; terminating application..." << Endl;
-			return false;
-		}
+		log::warning << L"Connection to target manager lost; terminating application..." << Endl;
+		return false;
 	}
 
+	m_updateInfo.m_frameProfiler = &m_frameProfiler;
+	m_frameProfiler.beginFrame();
+
 	// Update render server.
+	m_frameProfiler.beginScope(FptRenderServerUpdate);
 	RenderServer::UpdateResult updateResult = m_renderServer->update(m_settings);
+	m_frameProfiler.endScope();
 	if (updateResult == RenderServer::UrTerminate)
 		return false;
 
@@ -482,7 +485,11 @@ bool Application::update()
 	{
 		online::ISessionManager* sessionManager = m_onlineServer->getSessionManager();
 		if (sessionManager)
+		{
+			m_frameProfiler.beginScope(FptSessionManagerUpdate);
 			sessionManager->update();
+			m_frameProfiler.endScope();
+		}
 	}
 
 	// Handle state transitions.
@@ -546,7 +553,11 @@ bool Application::update()
 	// Update scripting language runtime.
 	double gcTimeStart = m_timer.getElapsedTime();
 	if (m_scriptServer)
+	{
+		m_frameProfiler.beginScope(FptScriptGC);
 		m_scriptServer->cleanup(false);
+		m_frameProfiler.endScope();
+	}
 	double gcTimeEnd = m_timer.getElapsedTime();
 	gcDuration = gcTimeEnd - gcTimeStart;
 
@@ -589,11 +600,19 @@ bool Application::update()
 
 		// Update audio.
 		if (m_audioServer)
+		{
+			m_frameProfiler.beginScope(FptAudioServerUpdate);
 			m_audioServer->update(m_updateInfo.m_frameDeltaTime, m_renderViewActive);
+			m_frameProfiler.endScope();
+		}
 
 		// Update rumble.
 		if (m_inputServer)
+		{
+			m_frameProfiler.beginScope(FptRumbleUpdate);
 			m_inputServer->updateRumble(m_updateInfo.m_frameDeltaTime, m_updateControl.m_pause);
+			m_frameProfiler.endScope();
+		}
 
 		// Update active state; fixed time step if physics manager is available.
 		physics::PhysicsManager* physicsManager = m_physicsServer ? m_physicsServer->getPhysicsManager() : 0;
@@ -633,19 +652,27 @@ bool Application::update()
 				// Update input.
 				double inputTimeStart = m_timer.getElapsedTime();
 				if (m_inputServer)
+				{
+					m_frameProfiler.beginScope(FptInputServerUpdate);
 					m_inputServer->update(m_updateInfo.m_simulationDeltaTime, inputEnabled);
+					m_frameProfiler.endScope();
+				}
 				double inputTimeEnd = m_timer.getElapsedTime();
 				inputDuration += inputTimeEnd - inputTimeStart;
 
 				// Update current state for each simulation tick.
 				double updateTimeStart = m_timer.getElapsedTime();
+				m_frameProfiler.beginScope(FptStateUpdate);
 				IState::UpdateResult result = currentState->update(m_stateManager, m_updateControl, m_updateInfo);
+				m_frameProfiler.endScope();
 				double updateTimeEnd = m_timer.getElapsedTime();
 				updateDuration += updateTimeEnd - updateTimeStart;
 
 				// Update physics.
 				double physicsTimeStart = m_timer.getElapsedTime();
+				m_frameProfiler.beginScope(FptPhysicsServerUpdate);
 				m_physicsServer->update();
+				m_frameProfiler.endScope();
 				double physicsTimeEnd = m_timer.getElapsedTime();
 				physicsDuration += physicsTimeEnd - physicsTimeStart;
 
@@ -672,14 +699,20 @@ bool Application::update()
 		{
 			// Update input.
 			if (m_inputServer)
+			{
+				m_frameProfiler.beginScope(FptInputServerUpdate);
 				m_inputServer->update(m_updateInfo.m_frameDeltaTime, inputEnabled);
+				m_frameProfiler.endScope();
+			}
 
 			// No physics; update in same rate as rendering.
 			m_updateInfo.m_simulationDeltaTime = m_updateInfo.m_frameDeltaTime;
 			m_updateInfo.m_simulationFrequency = uint32_t(1.0f / m_updateInfo.m_frameDeltaTime);
 
 			double updateTimeStart = m_timer.getElapsedTime();
+			m_frameProfiler.beginScope(FptStateUpdate);
 			IState::UpdateResult updateResult = currentState->update(m_stateManager, m_updateControl, m_updateInfo);
+			m_frameProfiler.endScope();
 			double updateTimeEnd = m_timer.getElapsedTime();
 			updateDuration += updateTimeEnd - updateTimeStart;
 			updateCount++;
@@ -711,7 +744,9 @@ bool Application::update()
 
 		// Build frame.
 		double buildTimeStart = m_timer.getElapsedTime();
+		m_frameProfiler.beginScope(FptBuildFrame);
 		IState::BuildResult buildResult = currentState->build(m_frameBuild, m_updateInfo);
+		m_frameProfiler.endScope();
 		double buildTimeEnd = m_timer.getElapsedTime();
 
 		m_buildDuration = float(buildTimeEnd - buildTimeStart);
@@ -815,6 +850,7 @@ bool Application::update()
 		}
 
 		m_updateInfo.m_frame++;
+		m_frameProfiler.endFrame();
 
 #if T_MEASURE_PERFORMANCE
 		// Calculate frame rate.
@@ -868,6 +904,19 @@ bool Application::update()
 
 			if (m_audioServer)
 				performance.activeSoundChannels = m_audioServer->getActiveSoundChannels();
+
+			{
+				const AlignedVector< FrameProfiler::Marker >& markers = m_frameProfiler.getMarkers();
+				performance.frameMarkers.resize(markers.size());
+				for (uint32_t i = 0; i < markers.size(); ++i)
+				{
+					TargetPerformance::FrameMarker& fm = performance.frameMarkers[i];
+					fm.id = markers[i].id;
+					fm.level = markers[i].level;
+					fm.begin = float(markers[i].begin);
+					fm.end = float(markers[i].end);
+				}
+			}
 
 			m_targetManagerConnection->getTransport()->send(&performance);
 		}
