@@ -1,3 +1,4 @@
+#include "Amalgam/FrameProfiler.h"
 #include "Amalgam/IEnvironment.h"
 #include "Amalgam/IStateManager.h"
 #include "Amalgam/IUpdateControl.h"
@@ -165,12 +166,16 @@ bool Stage::update(amalgam::IStateManager* stateManager, amalgam::IUpdateControl
 
 		if (validateScriptContext())
 		{
+			info.getProfiler()->beginScope(FptScript);
+
 			script::Any argv[] =
 			{
 				script::Any::fromObject(&control),
 				script::Any::fromObject(const_cast< amalgam::IUpdateInfo* >(&info))
 			};
 			m_scriptContext->executeFunction("update", sizeof_array(argv), argv);
+
+			info.getProfiler()->endScope();
 		}
 
 		for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)

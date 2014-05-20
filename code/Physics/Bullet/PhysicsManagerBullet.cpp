@@ -373,6 +373,24 @@ struct ContactResultCallback : public btCollisionWorld::ContactResultCallback
 #endif
 };
 
+struct QuerySphereCallback : public btBroadphaseAabbCallback
+{
+	RefArray< BodyBullet > bodies;
+
+	virtual bool process(const btBroadphaseProxy* proxy)
+	{
+		btRigidBody* rigidBody = static_cast< btRigidBody* >(proxy->m_clientObject);
+		if (rigidBody)
+		{
+			BodyBullet* body = reinterpret_cast< BodyBullet* >(rigidBody->getUserPointer());
+			T_ASSERT (body);
+
+			bodies.push_back(body);
+		}
+		return true;
+	}
+};
+
 void deleteShape(btCollisionShape* shape)
 {
 	if (shape->getShapeType() == TRIANGLE_MESH_SHAPE_PROXYTYPE)
@@ -1220,7 +1238,17 @@ uint32_t PhysicsManagerBullet::querySphere(
 	++m_queryCount;
 
 	outBodies.resize(0);
-	for (RefArray< BodyBullet >::const_iterator i = m_bodies.begin(); i != m_bodies.end(); ++i)
+
+	btVector3 center = toBtVector3(at);
+	btVector3 radii = btVector3(radius, radius, radius);
+
+	btVector3 aabbMin = center - radii;
+	btVector3 aabbMax = center + radii;
+
+	QuerySphereCallback callback;
+	m_broadphase->aabbTest(aabbMin, aabbMax, callback);
+
+	for (RefArray< BodyBullet >::const_iterator i = callback.bodies.begin(); i != callback.bodies.end(); ++i)
 	{
 		if (((*i)->getCollisionGroup() & group) == 0)
 			continue;

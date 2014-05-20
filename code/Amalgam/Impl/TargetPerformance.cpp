@@ -1,5 +1,7 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberComposite.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Amalgam/Impl/TargetPerformance.h"
 
 using namespace traktor;
@@ -63,6 +65,15 @@ void TargetPerformance::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"manifoldCount", manifoldCount);
 	s >> Member< uint32_t >(L"queryCount", queryCount);
 	s >> Member< uint32_t >(L"activeSoundChannels", activeSoundChannels);
+	s >> MemberAlignedVector< FrameMarker, MemberComposite< FrameMarker > >(L"frameMarkers", frameMarkers);
+}
+
+void TargetPerformance::FrameMarker::serialize(ISerializer& s)
+{
+	s >> Member< uint8_t >(L"id", id);
+	s >> Member< uint8_t >(L"level", level);
+	s >> Member< float >(L"begin", begin);
+	s >> Member< float >(L"end", end);
 }
 
 	}

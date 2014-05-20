@@ -1,3 +1,4 @@
+#include "Amalgam/FrameProfiler.h"
 #include "Amalgam/IUpdateInfo.h"
 #include "Amalgam/Engine/AudioLayer.h"
 #include "Core/Math/Float.h"
@@ -107,6 +108,8 @@ void AudioLayer::prepare()
 
 void AudioLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
 {
+	info.getProfiler()->beginScope(FptAudioLayer);
+
 	if (
 		m_autoPlay &&
 		(!m_handle || !m_handle->isPlaying())
@@ -138,6 +141,8 @@ void AudioLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdate
 			}
 		}
 	}
+
+	info.getProfiler()->endScope();
 }
 
 void AudioLayer::build(const amalgam::IUpdateInfo& info, uint32_t frame)

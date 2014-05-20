@@ -27,7 +27,43 @@ Ref< ui::Bitmap > s_bitmapPlatforms;
 Ref< ui::Bitmap > s_bitmapTargetControl;
 
 const int32_t c_performanceLineHeight = 14;
-const int32_t c_performanceHeight = 5 * c_performanceLineHeight;
+const int32_t c_performanceHeight = 7 * c_performanceLineHeight;
+
+const Color4ub c_markerColors[] =
+{
+	Color4ub(255, 255, 120),
+	Color4ub(200, 200, 80),
+	Color4ub(255, 120, 255),
+	Color4ub(200, 80, 200),
+	Color4ub(120, 255, 255),
+	Color4ub(80, 200, 200),
+	Color4ub(255, 120, 120),
+	Color4ub(200, 80, 80),
+	Color4ub(120, 255, 120),
+	Color4ub(80, 200, 80),
+	Color4ub(120, 120, 255),
+	Color4ub(80, 80, 200)
+};
+
+const wchar_t* c_markerNames[] =
+{
+	L"End",
+	L"Render update",
+	L"Session",
+	L"Script GC",
+	L"Audio",
+	L"Rumble",
+	L"Input",
+	L"State",
+	L"Physics",
+	L"Build",
+	L"Audio Layer",
+	L"Flash Layer",
+	L"Video Layer",
+	L"World Layer",
+	L"Entity Events",
+	L"Script"
+};
 
 std::wstring formatPerformanceTime(float time)
 {
@@ -214,6 +250,7 @@ void TargetInstanceListItem::paint(ui::custom::AutoWidget* widget, ui::Canvas& c
 	ui::Font widgetFont = widget->getFont();
 	ui::Font performanceFont = widgetFont; performanceFont.setSize(8);
 	ui::Font performanceBoldFont = performanceFont; performanceBoldFont.setBold(true);
+	ui::Font markerFont = widgetFont; markerFont.setSize(7);
 
 	performanceRect = rect;
 	performanceRect.right -= 34;
@@ -297,6 +334,49 @@ void TargetInstanceListItem::paint(ui::custom::AutoWidget* widget, ui::Canvas& c
 
 		bottomRect.left += 100;
 		canvas.drawText(bottomRect, L"Res: " + toString(performance.residentResourcesCount) + L", " + toString(performance.exclusiveResourcesCount), ui::AnLeft, ui::AnCenter);
+
+		if (performance.frameMarkers.size() >= 1)
+		{
+			ui::Rect graphRect = performanceRect;
+			graphRect.left += 26;
+			graphRect.top = performanceRect.top + c_performanceLineHeight * 5;
+			graphRect.bottom = graphRect.top + c_performanceLineHeight + c_performanceLineHeight / 2;
+
+			int32_t w = graphRect.getWidth();
+
+			float endTime = performance.frameMarkers.back().end;
+
+			canvas.setBackground(Color4ub(255, 255, 255));
+			canvas.fillRect(graphRect);
+
+			canvas.setFont(markerFont);
+
+			for (uint32_t j = 0; j < performance.frameMarkers.size() - 1; ++j)
+			{
+				const TargetPerformance::FrameMarker& fm = performance.frameMarkers[j];
+
+				int32_t xb = graphRect.left + int32_t(fm.begin * w / endTime);
+				int32_t xe = graphRect.left + int32_t(fm.end * w / endTime);
+
+				if (xe <= xb)
+					continue;
+
+				int32_t o = fm.level * 2;
+
+				ui::Rect markerRect(
+					xb, graphRect.top + o,
+					xe, graphRect.bottom - o
+				);
+
+				canvas.setBackground(c_markerColors[j % sizeof_array(c_markerColors)]);
+				canvas.fillRect(markerRect);
+
+				canvas.setClipRect(markerRect);
+				canvas.drawText(markerRect, c_markerNames[fm.id], ui::AnLeft, ui::AnCenter);
+
+				canvas.setClipRect(performanceRect);
+			}
+		}
 
 		performanceRect = performanceRect.offset(0, c_performanceHeight);
 	}

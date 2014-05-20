@@ -1,3 +1,4 @@
+#include "Amalgam/FrameProfiler.h"
 #include "Amalgam/IEnvironment.h"
 #include "Amalgam/IUpdateInfo.h"
 #include "Amalgam/Engine/Stage.h"
@@ -59,11 +60,12 @@ void VideoLayer::prepare()
 
 void VideoLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
 {
-	if (!m_video->playing())
-		return;
+	info.getProfiler()->beginScope(FptVideoLayer);
 
-	if (!m_video->update(info.getSimulationDeltaTime()))
+	if (m_video->playing() && !m_video->update(info.getSimulationDeltaTime()))
 		getStage()->invokeScript("videoFinished", 0, 0);
+
+	info.getProfiler()->endScope();
 }
 
 void VideoLayer::build(const amalgam::IUpdateInfo& info, uint32_t frame)
