@@ -147,9 +147,19 @@ const Replicator::Configuration& Replicator::getConfiguration() const
 	return m_configuration;
 }
 
+void Replicator::removeAllEventTypes()
+{
+	m_eventTypes.resize(0);
+}
+
 void Replicator::addEventType(const TypeInfo& eventType)
 {
 	m_eventTypes.push_back(&eventType);
+}
+
+void Replicator::removeAllListeners()
+{
+	m_listeners.resize(0);
 }
 
 void Replicator::addListener(IListener* listener)

@@ -207,6 +207,34 @@ void DictionaryEditorPage::eventToolClick(ui::Event* event)
 		while (sr.readLine(line) >= 0)
 		{
 			std::vector< std::wstring > columns;
+
+			uint32_t i0 = 0;
+			bool quote = false;
+
+			for (uint32_t i = 0; i < line.length(); ++i)
+			{
+				if (line[i] == L',' && quote == false)
+				{
+					std::wstring tmp = trim(line.substr(i0, i - i0));
+					if (tmp.length() >= 2 && tmp[0] == L'\"' && tmp[tmp.length() - 1] == L'\"')
+						tmp = tmp.substr(1, tmp.length() - 2);
+					columns.push_back(tmp);
+					i0 = i + 1;
+				}
+				if (line[i] == L'\"')
+				{
+					quote = !quote;
+				}
+			}
+
+			if (!quote)
+			{
+				std::wstring tmp = trim(line.substr(i0));
+				if (tmp.length() >= 2 && tmp[0] == L'\"' && tmp[tmp.length() - 1] == L'\"')
+					tmp = tmp.substr(1, tmp.length() - 2);
+				columns.push_back(tmp);
+			}
+
 			Split< std::wstring >::any(line, L",", columns, true);
 			if (columns.size() >= 2 && !columns[0].empty())
 			{
