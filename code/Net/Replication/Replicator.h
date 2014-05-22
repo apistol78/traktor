@@ -109,7 +109,15 @@ public:
 
 	/*! \brief
 	 */
+	void removeAllEventTypes();
+
+	/*! \brief
+	 */
 	void addEventType(const TypeInfo& eventType);
+
+	/*! \brief
+	 */
+	void removeAllListeners();
 
 	/*! \brief
 	 */
