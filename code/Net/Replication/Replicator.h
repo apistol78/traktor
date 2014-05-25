@@ -124,6 +124,10 @@ public:
 	void addListener(IListener* listener);
 
 	/*! \brief
+	 */
+	void reset();
+
+	/*! \brief
 	 *
 	 * \param T Time since application started.
 	 * \param dT Delta time since last update.

@@ -167,6 +167,30 @@ void Replicator::addListener(IListener* listener)
 	m_listeners.push_back(listener);
 }
 
+void Replicator::reset()
+{
+	m_origin = Transform::identity();
+	
+	m_stateTemplate = 0;
+	m_state = 0;
+
+	for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
+	{
+		Peer& p = i->second;
+		p.endSite = 0;
+		p.ghost = 0;
+		p.timeUntilTx = 0;
+		p.pendingIAm = 0;
+		p.pendingPing = 0;
+		p.stateCount = 0;
+		p.errorCount = 0;
+		p.iframe = 0;
+	}
+
+	m_eventsIn.clear();
+	m_eventsOut.clear();
+}
+
 bool Replicator::update(float /*T*/, float /*dT*/)
 {
 	if (!m_replicatorPeers)
@@ -174,8 +198,6 @@ bool Replicator::update(float /*T*/, float /*dT*/)
 
 	double T = g_timer.getElapsedTime();
 	int32_t idT = int32_t((T - m_lastT) * 1000.0);
-
-	//int32_t idT = int32_t(dT * 1000.0f);
 
 	updatePeers(idT);
 
@@ -191,7 +213,6 @@ bool Replicator::update(float /*T*/, float /*dT*/)
 
 	m_time0 += idT;
 	m_time += idT;
-	
 	m_lastT = T;
 
 	return bool(m_replicatorPeers != 0);
