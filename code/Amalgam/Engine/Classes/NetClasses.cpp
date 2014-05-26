@@ -221,6 +221,7 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	classReplicator->addMethod("getHandle", &net::Replicator::getHandle);
 	classReplicator->addMethod("getName", &net::Replicator::getName);
 	classReplicator->addMethod("setStatus", &net::Replicator::setStatus);
+	classReplicator->addMethod("getStatus", &net::Replicator::getStatus);
 	classReplicator->addMethod("setOrigin", &net::Replicator::setOrigin);
 	classReplicator->addMethod("setStateTemplate", &net::Replicator::setStateTemplate);
 	classReplicator->addMethod("setState", &net::Replicator::setState);

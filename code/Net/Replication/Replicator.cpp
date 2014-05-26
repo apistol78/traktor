@@ -55,6 +55,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.net.Replicator.IListener", Replicator::IListene
 
 Replicator::Replicator()
 :	m_id(0)
+,	m_status(0)
 ,	m_origin(Transform::identity())
 ,	m_time0(0)
 ,	m_time(0)
@@ -177,6 +178,7 @@ void Replicator::reset()
 	for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
 	{
 		Peer& p = i->second;
+		p.state = PsInitial;
 		p.endSite = 0;
 		p.ghost = 0;
 		p.timeUntilTx = 0;
@@ -231,7 +233,16 @@ std::wstring Replicator::getName() const
 void Replicator::setStatus(uint8_t status)
 {
 	T_ASSERT (m_replicatorPeers);
-	m_replicatorPeers->setStatus(status);
+	if (status != m_status)
+	{
+		m_replicatorPeers->setStatus(status);
+		m_status = status;
+	}
+}
+
+uint8_t Replicator::getStatus() const
+{
+	return m_status;
 }
 
 void Replicator::setOrigin(const Transform& origin)
