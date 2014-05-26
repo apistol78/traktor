@@ -911,9 +911,8 @@ void AnimationEditorPage::eventRenderPaint(ui::Event* event)
 	data->picker->setViewTransform(view);
 
 	// Begin rendering primitives.
-	if (m_primitiveRenderer->begin(data->renderView))
+	if (m_primitiveRenderer->begin(data->renderView, projection))
 	{
-		m_primitiveRenderer->pushProjection(projection);
 		m_primitiveRenderer->pushView(view);
 
 		for (int x = -10; x <= 10; ++x)

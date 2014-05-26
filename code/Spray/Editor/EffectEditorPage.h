@@ -87,6 +87,7 @@ private:
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::ToolBarButton > m_toolToggleGuide;
 	Ref< ui::custom::ToolBarButton > m_toolToggleMove;
+	Ref< ui::custom::ToolBarButton > m_toolToggleGroundClip;
 	Ref< EffectPreviewControl > m_previewControl;
 	Ref< ui::custom::SequencerControl > m_sequencer;
 	Ref< ui::PopupMenu > m_popupMenu;
@@ -95,6 +96,7 @@ private:
 	bool m_velocityVisible;
 	bool m_guideVisible;
 	bool m_moveEmitter;
+	bool m_groundClip;
 
 	void updateEffectPreview();
 

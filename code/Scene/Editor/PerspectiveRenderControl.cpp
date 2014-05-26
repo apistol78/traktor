@@ -582,9 +582,8 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 		m_worldRenderer->endRender(0, render::EtCyclop, deltaTime);
 
 		// Render wire guides.
-		m_primitiveRenderer->begin(m_renderView);
+		m_primitiveRenderer->begin(m_renderView, projection);
 		m_primitiveRenderer->setClipDistance(m_worldRenderView.getViewFrustum().getNearZ());
-		m_primitiveRenderer->pushProjection(projection);
 		m_primitiveRenderer->pushView(view);
 
 		// Render XZ grid.
@@ -640,9 +639,10 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 		{
 			ui::Rect innerRect = m_renderWidget->getInnerRect();
 
-			m_primitiveRenderer->pushProjection(orthoLh(-1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 1.0f));
+			m_primitiveRenderer->setProjection(orthoLh(-1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 1.0f));
+
 			m_primitiveRenderer->pushView(Matrix44::identity());
-			m_primitiveRenderer->pushDepthState(false, false);
+			m_primitiveRenderer->pushDepthState(false, false, false);
 
 			m_primitiveRenderer->drawSolidQuad(
 				projectUnit(innerRect, m_selectionRectangle.getTopLeft()),
@@ -661,7 +661,6 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 
 			m_primitiveRenderer->popDepthState();
 			m_primitiveRenderer->popView();
-			m_primitiveRenderer->popProjection();
 		}
 
 		m_primitiveRenderer->end();

@@ -10,6 +10,7 @@
 #include "Render/IRenderView.h"
 #include "Render/ISimpleTexture.h"
 #include "Render/PrimitiveRenderer.h"
+#include "Render/RenderTargetSet.h"
 #include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
 #include "Sound/SoundSystem.h"
@@ -75,6 +76,7 @@ EffectPreviewControl::EffectPreviewControl(editor::IEditor* editor)
 ,	m_guideVisible(true)
 ,	m_velocityVisible(false)
 ,	m_moveEmitter(false)
+,	m_groundClip(false)
 {
 	// Allocate "global" parameter context; as it's reset for each render
 	// call this can be fairly small.
@@ -105,10 +107,15 @@ bool EffectPreviewControl::create(
 	if (!Widget::create(parent, style))
 		return false;
 
+	ui::Rect innerRect = getInnerRect();
+	int32_t width = innerRect.getWidth();
+	int32_t height = innerRect.getHeight();
+
 	m_resourceManager = resourceManager;
+	m_renderSystem = renderSystem;
 
 	render::RenderViewEmbeddedDesc desc;
-	desc.depthBits = 16;
+	desc.depthBits = 32;
 	desc.stencilBits = 0;
 	desc.multiSample = 4;
 	desc.waitVBlank = false;
@@ -117,6 +124,26 @@ bool EffectPreviewControl::create(
 	m_renderView = renderSystem->createRenderView(desc);
 	if (!m_renderView)
 		return false;
+
+	if (width > 0 && height > 0)
+	{
+		render::RenderTargetSetCreateDesc rtscd;
+		rtscd.count = 1;
+		rtscd.width = width;
+		rtscd.height = height;
+		rtscd.multiSample = desc.multiSample;
+		rtscd.createDepthStencil = false;
+		rtscd.usingPrimaryDepthStencil = true;
+		rtscd.preferTiled = false;
+		rtscd.ignoreStencil = true;
+		rtscd.generateMips = false;
+		rtscd.targets[0].format = render::TfR32F;
+		rtscd.targets[0].sRGB = false;
+
+		m_depthTexture = renderSystem->createRenderTargetSet(rtscd);
+		if (!m_depthTexture)
+			return false;
+	}
 
 	m_primitiveRenderer = new render::PrimitiveRenderer();
 	if (!m_primitiveRenderer->create(resourceManager, renderSystem))
@@ -163,11 +190,8 @@ void EffectPreviewControl::destroy()
 	safeDestroy(m_meshRenderer);
 	safeDestroy(m_pointRenderer);
 
-	if (m_renderView)
-	{
-		m_renderView->close();
-		m_renderView = 0;
-	}
+	safeDestroy(m_depthTexture);
+	safeClose(m_renderView);
 
 	safeDestroy(m_soundPlayer);
 	m_soundSystem = 0;
@@ -212,6 +236,11 @@ void EffectPreviewControl::showVelocity(bool velocityVisible)
 void EffectPreviewControl::setMoveEmitter(bool moveEmitter)
 {
 	m_moveEmitter = moveEmitter;
+}
+
+void EffectPreviewControl::setGroundClip(bool groundClip)
+{
+	m_groundClip = groundClip;
 }
 
 void EffectPreviewControl::randomizeSeed()
@@ -330,6 +359,23 @@ void EffectPreviewControl::eventSize(ui::Event* event)
 
 	m_renderView->reset(sz.cx, sz.cy);
 	m_renderView->setViewport(render::Viewport(0, 0, sz.cx, sz.cy, 0, 1));
+
+	safeDestroy(m_depthTexture);
+
+	render::RenderTargetSetCreateDesc rtscd;
+	rtscd.count = 1;
+	rtscd.width = sz.cx;
+	rtscd.height = sz.cy;
+	rtscd.multiSample = 4/*desc.multiSample*/;
+	rtscd.createDepthStencil = false;
+	rtscd.usingPrimaryDepthStencil = true;
+	rtscd.preferTiled = false;
+	rtscd.ignoreStencil = true;
+	rtscd.generateMips = false;
+	rtscd.targets[0].format = render::TfR32F;
+	rtscd.targets[0].sRGB = false;
+
+	m_depthTexture = m_renderSystem->createRenderTargetSet(rtscd);
 }
 
 void EffectPreviewControl::eventPaint(ui::Event* event)
@@ -367,13 +413,12 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 	Vector4 cameraPosition = viewInverse.translation().xyz1();
 	Plane cameraPlane(viewInverse.axisZ(), viewInverse.translation());
 
-	if (m_primitiveRenderer->begin(m_renderView))
+	if (m_primitiveRenderer->begin(m_renderView, Matrix44::identity()))
 	{
 		if (m_background)
 		{
-			m_primitiveRenderer->pushProjection(Matrix44::identity());
 			m_primitiveRenderer->pushView(Matrix44::identity());
-			m_primitiveRenderer->pushDepthState(false, false);
+			m_primitiveRenderer->pushDepthState(false, false, false);
 
 			m_primitiveRenderer->drawTextureQuad(
 				Vector4(-1.0f,  1.0f, 1.0f, 1.0f), Vector2(0.0f, 0.0f),
@@ -386,10 +431,9 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 
 			m_primitiveRenderer->popDepthState();
 			m_primitiveRenderer->popView();
-			m_primitiveRenderer->popProjection();
 		}
 
-		m_primitiveRenderer->pushProjection(projectionTransform);
+		m_primitiveRenderer->setProjection(projectionTransform);
 		m_primitiveRenderer->pushView(viewTransform);
 
 		for (int x = -10; x <= 10; ++x)
@@ -428,10 +472,50 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 			}
 		}
 
-		m_primitiveRenderer->popView();
-		m_primitiveRenderer->popProjection();
+		// Draw depth-only ground plane; primary depth and slight tint.
+		if (m_groundClip)
+		{
+			m_primitiveRenderer->pushDepthState(true, true, false);
+			m_primitiveRenderer->drawSolidQuad(
+				Vector4(-1000.0f, 0.0f, -1000.0f, 1.0f),
+				Vector4( 1000.0f, 0.0f, -1000.0f, 1.0f),
+				Vector4( 1000.0f, 0.0f,  1000.0f, 1.0f),
+				Vector4(-1000.0f, 0.0f,  1000.0f, 1.0f),
+				Color4ub(0, 0, 0, 10)
+			);
+			m_primitiveRenderer->popDepthState();
+		}
 
+		m_primitiveRenderer->popView();
 		m_primitiveRenderer->end();
+	}
+
+	// Draw depth-only ground plane.
+	if (m_depthTexture && m_renderView->begin(m_depthTexture, 0))
+	{
+		const float farZ = 10000.0f;
+		const Color4f clearColor(farZ, farZ, farZ, farZ);
+		m_renderView->clear(render::CfColor, &clearColor, 1.0f, 0);
+
+		if (m_groundClip && m_primitiveRenderer->begin(m_renderView, projectionTransform))
+		{
+			m_primitiveRenderer->pushView(viewTransform);
+
+			m_primitiveRenderer->pushDepthState(true, true, true);
+			m_primitiveRenderer->drawSolidQuad(
+				Vector4(-1000.0f, 0.0f, -1000.0f, 1.0f),
+				Vector4( 1000.0f, 0.0f, -1000.0f, 1.0f),
+				Vector4( 1000.0f, 0.0f,  1000.0f, 1.0f),
+				Vector4(-1000.0f, 0.0f,  1000.0f, 1.0f),
+				Color4ub(0, 0, 0, 0)
+			);
+			m_primitiveRenderer->popDepthState();
+
+			m_primitiveRenderer->popView();
+			m_primitiveRenderer->end();
+		}
+
+		m_renderView->end();
 	}
 
 	if (m_effectInstance)
@@ -491,7 +575,7 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 			render::getParameterHandle(L"World_ForwardColor"),
 			worldRenderView,
 			m_background,
-			0
+			m_depthTexture->getColorTexture(0)
 		);
 
 		m_pointRenderer->flush(m_renderContext, defaultPass);

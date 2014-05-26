@@ -514,9 +514,8 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 		m_worldRenderer->endRender(0, render::EtCyclop, deltaTime);
 
 		// Draw wire guides.
-		m_primitiveRenderer->begin(m_renderView);
+		m_primitiveRenderer->begin(m_renderView, worldRenderView.getProjection());
 		m_primitiveRenderer->setClipDistance(worldRenderView.getViewFrustum().getNearZ());
-		m_primitiveRenderer->pushProjection(worldRenderView.getProjection());
 
 		// Render grid.
 		if (m_gridEnable)
@@ -555,7 +554,7 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 			lx -= sign(lx) * std::fmod(abs(lx), step);
 			ty -= sign(ty) * std::fmod(abs(ty), step);
 
-			m_primitiveRenderer->pushDepthState(false, false);
+			m_primitiveRenderer->pushDepthState(false, false, false);
 
 			for (float x = lx; x <= rx; x += step)
 			{
@@ -595,7 +594,7 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 
 			m_primitiveRenderer->pushView(view);
 			m_primitiveRenderer->pushWorld(camera->getWorld());
-			m_primitiveRenderer->pushDepthState(false, false);
+			m_primitiveRenderer->pushDepthState(false, false, false);
 
 			m_primitiveRenderer->drawWireAabb(
 				Vector4::origo(),
@@ -651,9 +650,10 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 		{
 			ui::Rect innerRect = m_renderWidget->getInnerRect();
 
-			m_primitiveRenderer->pushProjection(orthoLh(-1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 1.0f));
+			m_primitiveRenderer->setProjection(orthoLh(-1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 1.0f));
+			
 			m_primitiveRenderer->pushView(Matrix44::identity());
-			m_primitiveRenderer->pushDepthState(false, false);
+			m_primitiveRenderer->pushDepthState(false, false, false);
 
 			m_primitiveRenderer->drawSolidQuad(
 				projectUnit(innerRect, m_selectionRectangle.getTopLeft()),
@@ -672,7 +672,6 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 
 			m_primitiveRenderer->popDepthState();
 			m_primitiveRenderer->popView();
-			m_primitiveRenderer->popProjection();
 		}
 
 		m_primitiveRenderer->end();

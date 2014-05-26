@@ -406,9 +406,8 @@ void ModelToolDialog::eventRenderPaint(ui::Event* event)
 		2000.0f
 	);
 
-	if (m_primitiveRenderer->begin(m_renderView))
+	if (m_primitiveRenderer->begin(m_renderView, projectionTransform))
 	{
-		m_primitiveRenderer->pushProjection(projectionTransform);
 		m_primitiveRenderer->pushView(viewTransform);
 
 		for (int x = -10; x <= 10; ++x)
@@ -441,7 +440,7 @@ void ModelToolDialog::eventRenderPaint(ui::Event* event)
 				const std::vector< Polygon >& polygons = m_modelTris->getPolygons();
 				const AlignedVector< Vector4 >& positions = m_modelTris->getPositions();
 
-				m_primitiveRenderer->pushDepthState(true, true);
+				m_primitiveRenderer->pushDepthState(true, true, false);
 				for (std::vector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
 				{
 					const std::vector< uint32_t >& indices = i->getVertices();
@@ -500,7 +499,7 @@ void ModelToolDialog::eventRenderPaint(ui::Event* event)
 			// Render wire-frame.
 			if (m_toolWire->isToggled())
 			{
-				m_primitiveRenderer->pushDepthState(true, false);
+				m_primitiveRenderer->pushDepthState(true, false, false);
 				for (std::vector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
 				{
 					const std::vector< uint32_t >& indices = i->getVertices();
@@ -521,7 +520,7 @@ void ModelToolDialog::eventRenderPaint(ui::Event* event)
 
 			if (m_toolNormals->isToggled())
 			{
-				m_primitiveRenderer->pushDepthState(true, false);
+				m_primitiveRenderer->pushDepthState(true, false, false);
 				for (std::vector< Vertex >::const_iterator i = vertices.begin(); i != vertices.end(); ++i)
 				{
 					if (i->getNormal() != c_InvalidIndex)
@@ -537,7 +536,7 @@ void ModelToolDialog::eventRenderPaint(ui::Event* event)
 
 			if (m_toolVertices->isToggled())
 			{
-				m_primitiveRenderer->pushDepthState(true, false);
+				m_primitiveRenderer->pushDepthState(true, false, false);
 				for (AlignedVector< Vector4 >::const_iterator i = positions.begin(); i != positions.end(); ++i)
 				{
 					m_primitiveRenderer->drawSolidPoint(*i, 3.0f, Color4ub(255, 255, 0, 200));
