@@ -147,6 +147,10 @@ public:
 	 */
 	void setStatus(uint8_t status);
 
+	/*! \brief Get our status.
+	 */
+	uint8_t getStatus() const;
+
 	/*! \brief Set our origin.
 	 *
 	 * Origin is used to determine which frequency
@@ -378,6 +382,7 @@ private:
 	std::vector< const TypeInfo* > m_eventTypes;
 	Ref< IReplicatorPeers > m_replicatorPeers;
 	RefArray< IListener > m_listeners;
+	uint8_t m_status;
 	Transform m_origin;
 	Ref< const StateTemplate > m_stateTemplate;
 	Ref< const State > m_state;
