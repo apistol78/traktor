@@ -89,6 +89,8 @@ void WorldLayer::destroy()
 		feedbackManager->removeListener(spray::FbtCamera, this);
 	}
 
+	m_environment = 0;
+
 	if (m_scene)
 	{
 		m_scene->destroy();
@@ -96,10 +98,9 @@ void WorldLayer::destroy()
 	}
 
 	m_entities.clear();
-
+	safeDestroy(m_worldRenderer);
 	safeDestroy(m_renderGroup);
 	safeDestroy(m_dynamicEntities);
-	safeDestroy(m_worldRenderer);
 }
 
 void WorldLayer::transition(Layer* fromLayer)

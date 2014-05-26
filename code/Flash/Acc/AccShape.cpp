@@ -378,47 +378,55 @@ void AccShape::render(
 
 		if (shaderSolid[i] && (m_batchFlags & BfHaveSolid) != 0)
 		{
-			render::NullRenderBlock* renderBlockSolid = renderContext->alloc< render::NullRenderBlock >("Flash AccShape; set solid parameters");
-			renderBlockSolid->program = shaderSolid[i]->getCurrentProgram();
-			renderBlockSolid->programParams = renderContext->alloc< render::ProgramParameters >();
-			renderBlockSolid->programParams->beginParameters(renderContext);
-			renderBlockSolid->programParams->setMatrixParameter(m_shapeResources->m_handleTransform, m);
-			renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleFrameSize, frameSize);
-			renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleViewSize, viewSize);
-			renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleViewOffset, viewOffset);
-			renderBlockSolid->programParams->setFloatParameter(m_shapeResources->m_handleScreenOffsetScale, screenOffsetScale);
-			renderBlockSolid->programParams->setFloatParameter(m_shapeResources->m_handleCurveSign, c_curveSign[i]);
-			renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
-			renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
-			renderBlockSolid->programParams->setStencilReference(maskReference);
-			renderBlockSolid->programParams->endParameters(renderContext);
-			renderContext->draw(render::RpOverlay, renderBlockSolid);
+			render::IProgram* program = shaderSolid[i]->getCurrentProgram();
+			if (program)
+			{
+				render::NullRenderBlock* renderBlockSolid = renderContext->alloc< render::NullRenderBlock >("Flash AccShape; set solid parameters");
+				renderBlockSolid->program = program;
+				renderBlockSolid->programParams = renderContext->alloc< render::ProgramParameters >();
+				renderBlockSolid->programParams->beginParameters(renderContext);
+				renderBlockSolid->programParams->setMatrixParameter(m_shapeResources->m_handleTransform, m);
+				renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleFrameSize, frameSize);
+				renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleViewSize, viewSize);
+				renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleViewOffset, viewOffset);
+				renderBlockSolid->programParams->setFloatParameter(m_shapeResources->m_handleScreenOffsetScale, screenOffsetScale);
+				renderBlockSolid->programParams->setFloatParameter(m_shapeResources->m_handleCurveSign, c_curveSign[i]);
+				renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
+				renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
+				renderBlockSolid->programParams->setStencilReference(maskReference);
+				renderBlockSolid->programParams->endParameters(renderContext);
+				renderContext->draw(render::RpOverlay, renderBlockSolid);
+			}
 		}
 
 		if (shaderTextured[i] && (m_batchFlags & BfHaveTextured) != 0)
 		{
-			render::NullRenderBlock* renderBlockTextured = renderContext->alloc< render::NullRenderBlock >("Flash AccShape; set textured parameters");
-			renderBlockTextured->program = shaderTextured[i]->getCurrentProgram();
-			renderBlockTextured->programParams = renderContext->alloc< render::ProgramParameters >();
-			renderBlockTextured->programParams->beginParameters(renderContext);
-			renderBlockTextured->programParams->setMatrixParameter(m_shapeResources->m_handleTransform, m);
-			renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleFrameSize, frameSize);
-			renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleViewSize, viewSize);
-			renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleViewOffset, viewOffset);
-			renderBlockTextured->programParams->setFloatParameter(m_shapeResources->m_handleScreenOffsetScale, screenOffsetScale);
-			renderBlockTextured->programParams->setFloatParameter(m_shapeResources->m_handleCurveSign, c_curveSign[i]);
-			renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
-			renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
-			renderBlockTextured->programParams->setStencilReference(maskReference);
-			renderBlockTextured->programParams->endParameters(renderContext);
-			renderContext->draw(render::RpOverlay, renderBlockTextured);
+			render::IProgram* program = shaderTextured[i]->getCurrentProgram();
+			if (program)
+			{
+				render::NullRenderBlock* renderBlockTextured = renderContext->alloc< render::NullRenderBlock >("Flash AccShape; set textured parameters");
+				renderBlockTextured->program = program;
+				renderBlockTextured->programParams = renderContext->alloc< render::ProgramParameters >();
+				renderBlockTextured->programParams->beginParameters(renderContext);
+				renderBlockTextured->programParams->setMatrixParameter(m_shapeResources->m_handleTransform, m);
+				renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleFrameSize, frameSize);
+				renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleViewSize, viewSize);
+				renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleViewOffset, viewOffset);
+				renderBlockTextured->programParams->setFloatParameter(m_shapeResources->m_handleScreenOffsetScale, screenOffsetScale);
+				renderBlockTextured->programParams->setFloatParameter(m_shapeResources->m_handleCurveSign, c_curveSign[i]);
+				renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
+				renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
+				renderBlockTextured->programParams->setStencilReference(maskReference);
+				renderBlockTextured->programParams->endParameters(renderContext);
+				renderContext->draw(render::RpOverlay, renderBlockTextured);
+			}
 		}
 
 		for (AlignedVector< RenderBatch >::iterator j = m_renderBatches[i].begin(); j != m_renderBatches[i].end(); ++j)
 		{
 			if (!j->texture)
 			{
-				if (shaderSolid[i])
+				if (shaderSolid[i] && shaderSolid[i]->getCurrentProgram())
 				{
 					render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >("Flash AccShape; draw solid batch");
 					renderBlock->program = shaderSolid[i]->getCurrentProgram();
@@ -431,7 +439,7 @@ void AccShape::render(
 			}
 			else
 			{
-				if (shaderTextured[i])
+				if (shaderTextured[i] && shaderTextured[i]->getCurrentProgram())
 				{
 					Matrix44 textureMatrix(
 						j->textureMatrix.e11, j->textureMatrix.e12, j->textureMatrix.e13, 0.0f,

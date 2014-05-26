@@ -59,8 +59,20 @@ Stage::~Stage()
 
 void Stage::destroy()
 {
+	m_environment = 0;
+
 	if (m_scriptContext)
 	{
+		if (m_initialized && m_scriptContext->haveFunction("finalize"))
+		{
+			// Call script fini.
+			script::Any argv[] =
+			{
+				script::Any::fromObject(const_cast< Object* >(m_params.c_ptr()))
+			};
+			m_scriptContext->executeMethod(this, "finalize", sizeof_array(argv), argv);
+		}
+
 		m_scriptContext->setGlobal("stage", script::Any());
 		m_scriptContext->setGlobal("environment", script::Any());
 
@@ -74,9 +86,13 @@ void Stage::destroy()
 		m_scriptContext.clear();
 	}
 
-	m_layers.clear();
-
 	safeDestroy(m_screenRenderer);
+
+	m_shaderFade.clear();
+	m_layers.clear();
+	m_params = 0;
+	m_pendingStage = 0;
+	m_transitionStage = 0;
 }
 
 void Stage::addLayer(Layer* layer)
@@ -270,11 +286,14 @@ bool Stage::validateScriptContext()
 		}
 
 		// Call script init; do this everytime we re-validate script.
-		script::Any argv[] =
+		if (m_scriptContext->haveFunction("initialize"))
 		{
-			script::Any::fromObject(const_cast< Object* >(m_params.c_ptr()))
-		};
-		m_scriptContext->executeMethod(this, "initialize", sizeof_array(argv), argv);
+			script::Any argv[] =
+			{
+				script::Any::fromObject(const_cast< Object* >(m_params.c_ptr()))
+			};
+			m_scriptContext->executeMethod(this, "initialize", sizeof_array(argv), argv);
+		}
 		m_initialized = true;
 	}
 
