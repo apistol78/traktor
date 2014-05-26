@@ -435,9 +435,8 @@ void SkeletonEditorPage::eventPaint(ui::Event* event)
 		2000.0f
 	);
 
-	if (m_primitiveRenderer->begin(m_renderView))
+	if (m_primitiveRenderer->begin(m_renderView, projectionTransform))
 	{
-		m_primitiveRenderer->pushProjection(projectionTransform);
 		m_primitiveRenderer->pushView(viewTransform);
 
 		for (int x = -10; x <= 10; ++x)

@@ -692,7 +692,7 @@ void TerrainEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer) con
 	float radius = m_context->getGuideSize();
 
 	primitiveRenderer->drawSolidPoint(m_center, 8, Color4ub(255, 0, 0, 255));
-	primitiveRenderer->pushDepthState(false, false);
+	primitiveRenderer->pushDepthState(false, false, false);
 
 	float a0 = 0.0f;
 	float x0 = m_center.x() + cosf(a0) * radius;

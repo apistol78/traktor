@@ -383,9 +383,8 @@ void AnimationPreviewControl::eventPaint(ui::Event* event)
 
 	m_worldRenderer->endRender(0, render::EtCyclop, deltaTime);
 
-	if (m_primitiveRenderer->begin(m_renderView))
+	if (m_primitiveRenderer->begin(m_renderView, projectionTransform))
 	{
-		m_primitiveRenderer->pushProjection(projectionTransform);
 		m_primitiveRenderer->pushView(viewTransform);
 
 		for (int x = -10; x <= 10; ++x)
@@ -406,7 +405,7 @@ void AnimationPreviewControl::eventPaint(ui::Event* event)
 
 		if (m_entity && m_entity->getSkeleton())
 		{
-			m_primitiveRenderer->pushDepthState(false, false);
+			m_primitiveRenderer->pushDepthState(false, false, false);
 
 			const resource::Proxy< Skeleton >& skeleton = m_entity->getSkeleton();
 

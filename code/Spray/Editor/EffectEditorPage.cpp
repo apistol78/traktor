@@ -95,6 +95,7 @@ EffectEditorPage::EffectEditorPage(editor::IEditor* editor, editor::IEditorPageS
 ,	m_velocityVisible(false)
 ,	m_guideVisible(true)
 ,	m_moveEmitter(false)
+,	m_groundClip(false)
 {
 }
 
@@ -127,6 +128,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 
 	m_toolToggleGuide = new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_TOGGLE_GUIDE"), 7, ui::Command(L"Effect.Editor.ToggleGuide"), ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleMove = new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_TOGGLE_MOVE"), 8, ui::Command(L"Effect.Editor.ToggleMove"), ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolToggleGroundClip = new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_TOGGLE_GROUND_CLIP"), 8, ui::Command(L"Effect.Editor.ToggleGroundClip"), ui::custom::ToolBarButton::BsDefaultToggle);
 
 	Ref< const PropertyGroup > settings = m_editor->getSettings();
 	T_ASSERT (settings);
@@ -136,6 +138,9 @@ bool EffectEditorPage::create(ui::Container* parent)
 
 	m_moveEmitter = settings->getProperty< PropertyBoolean >(L"EffectEditor.ToggleMove", m_moveEmitter);
 	m_toolToggleMove->setToggled(m_moveEmitter);
+
+	m_groundClip = settings->getProperty< PropertyBoolean >(L"EffectEditor.ToggleGroundClip", m_groundClip);
+	m_toolToggleGroundClip->setToggled(m_groundClip);
 
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(container);
@@ -147,6 +152,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBar->addItem(m_toolToggleGuide);
 	m_toolBar->addItem(m_toolToggleMove);
+	m_toolBar->addItem(m_toolToggleGroundClip);
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_RANDOMIZE_SEED"), 6, ui::Command(L"Effect.Editor.RandomizeSeed")));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_BROWSE_BACKGROUND"), 0, ui::Command(L"Effect.Editor.BrowseBackground")));
@@ -160,6 +166,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_previewControl->create(splitter, ui::WsClientBorder, m_resourceManager, renderSystem, m_soundSystem);
 	m_previewControl->showGuide(m_guideVisible);
 	m_previewControl->setMoveEmitter(m_moveEmitter);
+	m_previewControl->setGroundClip(m_groundClip);
 
 	m_sequencer = new ui::custom::SequencerControl();
 	m_sequencer->create(splitter, ui::WsDoubleBuffer | ui::WsClientBorder);
@@ -189,6 +196,7 @@ void EffectEditorPage::destroy()
 
 	settings->setProperty< PropertyBoolean >(L"EffectEditor.ToggleGuide", m_guideVisible);
 	settings->setProperty< PropertyBoolean >(L"EffectEditor.ToggleMove", m_moveEmitter);
+	settings->setProperty< PropertyBoolean >(L"EffectEditor.ToggleGroundClip", m_groundClip);
 
 	m_editor->commitGlobalSettings();
 	m_soundSystem = 0;
@@ -247,6 +255,12 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 		m_previewControl->setMoveEmitter(m_moveEmitter);
 		m_previewControl->syncEffect();
 		m_toolToggleMove->setToggled(m_moveEmitter);
+	}
+	else if (command == L"Effect.Editor.ToggleGroundClip")
+	{
+		m_groundClip = !m_groundClip;
+		m_previewControl->setGroundClip(m_groundClip);
+		m_toolToggleGroundClip->setToggled(m_groundClip);
 	}
 	else if (command == L"Effect.Editor.ToggleVelocity")
 	{

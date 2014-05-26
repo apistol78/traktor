@@ -93,6 +93,8 @@ public:
 
 	void setMoveEmitter(bool moveEmitter);
 
+	void setGroundClip(bool groundClip);
+
 	void randomizeSeed();
 
 	void syncEffect();
@@ -103,7 +105,9 @@ private:
 	editor::IEditor* m_editor;
 	Ref< ui::EventHandler > m_idleHandler;
 	Ref< resource::IResourceManager > m_resourceManager;
+	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< render::IRenderView > m_renderView;
+	Ref< render::RenderTargetSet > m_depthTexture;
 	Ref< render::RenderContext > m_globalContext;
 	resource::Proxy< render::ISimpleTexture > m_background;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
@@ -130,6 +134,7 @@ private:
 	bool m_guideVisible;
 	bool m_velocityVisible;
 	bool m_moveEmitter;
+	bool m_groundClip;
 
 	void eventButtonDown(ui::Event* event);
 

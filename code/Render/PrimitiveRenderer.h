@@ -68,10 +68,6 @@ public:
 
 	void destroy();
 
-	void pushProjection(const Matrix44& projection);
-
-	void popProjection();
-
 	void pushView(const Matrix44& view);
 
 	void popView();
@@ -80,9 +76,11 @@ public:
 
 	void popWorld();
 
-	void pushDepthState(bool depthTest, bool depthWrite);
+	void pushDepthState(bool depthTest, bool depthWrite, bool depthOutput);
 
 	void popDepthState();
+
+	void setProjection(const Matrix44& projection);
 
 	void setClipDistance(float nearZ);
 
@@ -275,20 +273,51 @@ public:
 		const Color4ub& colorHint
 	);
 
-	bool begin(IRenderView* renderView);
+	bool begin(IRenderView* renderView, const Matrix44& projection);
 
 	void end();
 
-	const Matrix44& getProjection() const { return m_projection.back(); }
+	const Matrix44& getProjection() const { return m_projection; }
 
 	const Matrix44& getView() const { return m_view.back(); }
 
 	const Matrix44& getWorld() const { return m_world.back(); }
 
 private:
+	struct DepthState
+	{
+		bool depthTest;
+		bool depthWrite;
+		bool depthOutput;
+
+		DepthState()
+		:	depthTest(false)
+		,	depthWrite(false)
+		,	depthOutput(false)
+		{
+		}
+
+		DepthState(bool _depthTest, bool _depthWrite, bool _depthOutput)
+		:	depthTest(_depthTest)
+		,	depthWrite(_depthWrite)
+		,	depthOutput(_depthOutput)
+		{
+		}
+
+		bool operator == (const DepthState& rh) const
+		{
+			return depthTest == rh.depthTest && depthWrite == rh.depthWrite && depthOutput == rh.depthOutput;
+		}
+
+		bool operator != (const DepthState& rh) const
+		{
+			return !(*this == rh);
+		}
+	};
+
 	struct Batch
 	{
-		std::pair< bool, bool > depthState;
+		DepthState depthState;
 		Ref< ITexture > texture;
 		Primitives primitives;
 	};
@@ -300,12 +329,11 @@ private:
 	struct Vertex* m_vertexStart;
 	struct Vertex* m_vertex;
 	AlignedVector< Batch > m_batches;
-	AlignedVector< Matrix44 > m_projection;
+	Matrix44 m_projection;
 	AlignedVector< Matrix44 > m_view;
 	AlignedVector< Matrix44 > m_world;
-	AlignedVector< std::pair< bool, bool > > m_depthState;
+	AlignedVector< DepthState > m_depthState;
 	Matrix44 m_worldView;
-	Matrix44 m_worldViewProj;
 	float m_viewNearZ;
 	float m_viewWidth;
 	float m_viewHeight;
