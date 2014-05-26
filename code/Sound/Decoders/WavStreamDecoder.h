@@ -53,7 +53,7 @@ public:
 private:
 	Ref< IStream > m_stream;
 	WaveFormat m_format;
-	float T_ALIGN16 m_samplesBuffer[16384];
+	float T_ALIGN16 m_samplesBuffers[2][16384];
 
 	bool readHeader();
 };

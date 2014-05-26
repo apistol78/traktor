@@ -142,11 +142,16 @@ void FlashLayer::destroy()
 	if (feedbackManager)
 		feedbackManager->removeListener(spray::FbtUI, this);
 
+	m_environment = 0;
 	m_movie.clear();
+	m_externalMovies.clear();
+	m_postProcessSettings.clear();
 
 	safeDestroy(m_moviePlayer);
 	safeDestroy(m_displayRenderer);
 	safeDestroy(m_soundRenderer);
+	safeDestroy(m_postTargetSet);
+	safeDestroy(m_postProcess);
 }
 
 void FlashLayer::transition(Layer* fromLayer)

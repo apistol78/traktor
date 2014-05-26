@@ -46,52 +46,58 @@ double WavStreamDecoder::getDuration() const
 
 bool WavStreamDecoder::getBlock(SoundBlock& outSoundBlock)
 {
-	uint8_t block[32768];
+	uint8_t block[32768 * 2];
 
-	uint32_t requestBlockSize = outSoundBlock.samplesCount * m_format.bitsPerSample / 8;
+	uint32_t requestBlockSize = outSoundBlock.samplesCount * (m_format.channels * m_format.bitsPerSample / 8);
 	T_ASSERT (requestBlockSize <= sizeof(block));
 
 	uint32_t readBlockSize = m_stream->read(block, requestBlockSize);
 	if (!readBlockSize)
 		return false;
 
-	uint32_t readSamples = (readBlockSize * 8) / m_format.bitsPerSample;
+	uint32_t readSamples = readBlockSize / (m_format.channels * m_format.bitsPerSample / 8);
 
-	switch (m_format.bitsPerSample)
+	for (uint32_t channel = 0; channel < m_format.channels; ++channel)
 	{
-	case 8:
-		{
-			uint8_t* blockPtr = block;
-			for (uint32_t i = 0; i < readSamples; ++i)
-			{
-				m_samplesBuffer[i] = (*blockPtr / 255.0f) * 2.0f - 1.0f;
-				blockPtr++;
-			}
-		}
-		break;
+		float* samplesBuffer = m_samplesBuffers[channel];
 
-	case 16:
+		switch (m_format.bitsPerSample)
 		{
-			uint16_t* blockPtr = reinterpret_cast< uint16_t* >(block);
-			for (uint32_t i = 0; i < readSamples; ++i)
+		case 8:
 			{
-#if defined(T_BIG_ENDIAN)
-				swap8in32(*blockPtr);
-#endif
-				m_samplesBuffer[i] = *reinterpret_cast< int16_t* >(blockPtr) / 32767.0f;
-				blockPtr++;
+				uint8_t* blockPtr = &block[channel];
+				for (uint32_t i = 0; i < readSamples; ++i)
+				{
+					samplesBuffer[i] = (*blockPtr / 255.0f) * 2.0f - 1.0f;
+					blockPtr += m_format.channels;
+				}
 			}
+			break;
+
+		case 16:
+			{
+				uint16_t* blockPtr = reinterpret_cast< uint16_t* >(block) + channel;
+				for (uint32_t i = 0; i < readSamples; ++i)
+				{
+#if defined(T_BIG_ENDIAN)
+					swap8in32(*blockPtr);
+#endif
+					samplesBuffer[i] = *reinterpret_cast< int16_t* >(blockPtr) / 32767.0f;
+					blockPtr += m_format.channels;
+				}
+			}
+			break;
 		}
-		break;
+
+		for (uint32_t i = readSamples; i < outSoundBlock.samplesCount; ++i)
+			samplesBuffer[i] = 0.0f;
+
+		outSoundBlock.samples[channel] = samplesBuffer;
 	}
 
-	outSoundBlock.samples[SbcLeft] = m_samplesBuffer;
 	outSoundBlock.samplesCount = alignUp(readSamples, 4);
 	outSoundBlock.sampleRate = m_format.sampleRate;
 	outSoundBlock.maxChannel = m_format.channels;
-
-	for (uint32_t i = readSamples; i < outSoundBlock.samplesCount; ++i)
-		m_samplesBuffer[i] = 0.0f;
 
 	return true;
 }

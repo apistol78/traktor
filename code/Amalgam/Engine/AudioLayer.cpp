@@ -36,6 +36,10 @@ AudioLayer::~AudioLayer()
 
 void AudioLayer::destroy()
 {
+	m_environment = 0;
+	m_sound.clear();
+	m_tweens.clear();
+
 	if (m_handle)
 	{
 		m_handle->fadeOff();

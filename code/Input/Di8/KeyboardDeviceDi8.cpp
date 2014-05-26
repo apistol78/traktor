@@ -216,12 +216,6 @@ void KeyboardDeviceDi8::setExclusive(bool exclusive)
 	// Ensure device is un-aquired, cannot change cooperative level if acquired.
 	m_device->Unacquire();
 	m_connected = false;
-
-	// Change cooperative level; do not use exclusive mode as it prevents toggle fullscreen etc.
-	// But at least we can prevent win key from breaking out of game.
-	HRESULT hr = m_device->SetCooperativeLevel(m_hWnd, exclusive ? (DISCL_FOREGROUND | DISCL_NOWINKEY) : DISCL_FOREGROUND);
-	if (FAILED(hr))
-		log::warning << L"Unable to set cooperative level on keyboard device" << Endl;
 }
 
 LRESULT WINAPI KeyboardDeviceDi8::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
