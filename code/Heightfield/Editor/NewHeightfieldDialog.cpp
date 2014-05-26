@@ -1,3 +1,4 @@
+#include "Core/Math/Const.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
