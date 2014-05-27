@@ -156,6 +156,21 @@ void FlashLayer::destroy()
 
 void FlashLayer::transition(Layer* fromLayer)
 {
+	FlashLayer* fromFlashLayer = checked_type_cast< FlashLayer*, false >(fromLayer);
+
+	// Ensure matching settings.
+	if (m_clearBackground != fromFlashLayer->m_clearBackground)
+		return;
+
+	// Keep display and sound renderer.
+	m_displayRenderer = fromFlashLayer->m_displayRenderer;
+	m_soundRenderer = fromFlashLayer->m_soundRenderer;
+	fromFlashLayer->m_displayRenderer = 0;
+	fromFlashLayer->m_soundRenderer = 0;
+
+	// Ensure display renderer's caches are fresh.
+	if (m_displayRenderer)
+		m_displayRenderer->flushCaches();
 }
 
 void FlashLayer::prepare()
