@@ -19,6 +19,7 @@ struct EnvelopeGrainCursor : public RefCountImpl< ISoundBufferCursor >
 {
 	handle_t m_id;
 	float m_parameter;
+	float m_lastP;
 	RefArray< ISoundBufferCursor > m_cursors;
 	float* m_outputSamples[SbcMaxChannelCount];
 
@@ -53,9 +54,10 @@ struct EnvelopeGrainCursor : public RefCountImpl< ISoundBufferCursor >
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.EnvelopeGrain", EnvelopeGrain, IGrain)
 
-EnvelopeGrain::EnvelopeGrain(handle_t id, const std::vector< Grain >& grains, const float levels[3], float mid)
+EnvelopeGrain::EnvelopeGrain(handle_t id, const std::vector< Grain >& grains, const float levels[3], float mid, float response)
 :	m_id(id)
 ,	m_grains(grains)
+,	m_response(response)
 {
 	m_envelope.addKey(0.0f, levels[0]);
 	m_envelope.addKey( mid, levels[1]);
@@ -70,6 +72,7 @@ Ref< ISoundBufferCursor > EnvelopeGrain::createCursor() const
 	Ref< EnvelopeGrainCursor > cursor = new EnvelopeGrainCursor();
 	cursor->m_id = m_id;
 	cursor->m_parameter = 0.0f;
+	cursor->m_lastP = 0.0f;
 
 	cursor->m_cursors.resize(m_grains.size());
 	for (uint32_t i = 0; i < m_grains.size(); ++i)
@@ -108,7 +111,13 @@ bool EnvelopeGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixe
 	EnvelopeGrainCursor* envelopeCursor = static_cast< EnvelopeGrainCursor* >(cursor);
 	T_ASSERT (envelopeCursor);
 
-	float p = clamp(m_envelope(envelopeCursor->m_parameter), 0.0f, 1.0f);
+	float p0 = clamp(m_envelope(envelopeCursor->m_parameter), 0.0f, 1.0f);
+
+	// Filter parameter to reduce intense changes causing clipping noises.
+	float k = clamp(m_response * float(outBlock.samplesCount) / 44050.0f, 0.0f, 1.0f);
+	float p = envelopeCursor->m_lastP * (1.0f - k) + p0 * k;
+	envelopeCursor->m_lastP = p;
+
 	bool result = false;
 
 	for (uint32_t i = 0; i < m_grains.size(); ++i)
@@ -152,29 +161,37 @@ bool EnvelopeGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixe
 			outBlock.samplesCount = max(outBlock.samplesCount, soundBlock.samplesCount);
 			outBlock.maxChannel = max(outBlock.maxChannel, soundBlock.maxChannel);
 
-			for (uint32_t j = 0; j < soundBlock.maxChannel; ++j)
+			if (v > 1.0f - FUZZY_EPSILON)
 			{
-				if (!soundBlock.samples[j])
-					continue;
+				for (uint32_t j = 0; j < soundBlock.maxChannel; ++j)
+					outBlock.samples[j] = soundBlock.samples[j];
+			}
+			else if (v > FUZZY_EPSILON)
+			{
+				for (uint32_t j = 0; j < soundBlock.maxChannel; ++j)
+				{
+					if (!soundBlock.samples[j])
+						continue;
 
-				if (!outBlock.samples[j])
-				{
-					outBlock.samples[j] = envelopeCursor->m_outputSamples[j];
-					mixer->mulConst(
-						outBlock.samples[j],
-						soundBlock.samples[j],
-						soundBlock.samplesCount,
-						v
-					);
-				}
-				else
-				{
-					mixer->addMulConst(
-						outBlock.samples[j],
-						soundBlock.samples[j],
-						soundBlock.samplesCount,
-						v
-					);
+					if (!outBlock.samples[j])
+					{
+						outBlock.samples[j] = envelopeCursor->m_outputSamples[j];
+						mixer->mulConst(
+							outBlock.samples[j],
+							soundBlock.samples[j],
+							soundBlock.samplesCount,
+							v
+						);
+					}
+					else
+					{
+						mixer->addMulConst(
+							outBlock.samples[j],
+							soundBlock.samples[j],
+							soundBlock.samplesCount,
+							v
+						);
+					}
 				}
 			}
 

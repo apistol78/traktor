@@ -52,6 +52,8 @@ public:
 
 	void setMid(float mid);
 
+	void setResponse(float response);
+
 	virtual Ref< IGrain > createInstance(resource::IResourceManager* resourceManager) const;
 
 	virtual void serialize(ISerializer& s);
@@ -64,11 +66,14 @@ public:
 
 	float getMid() const { return m_mid; }
 
+	float getResponse() const { return m_response; }
+
 private:
 	std::wstring m_id;
 	std::vector< GrainData > m_grains;
 	float m_levels[3];
 	float m_mid;
+	float m_response;
 };
 
 	}

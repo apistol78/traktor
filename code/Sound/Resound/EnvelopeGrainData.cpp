@@ -11,10 +11,11 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.EnvelopeGrainData", 2, EnvelopeGrainData, IGrainData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.EnvelopeGrainData", 3, EnvelopeGrainData, IGrainData)
 
 EnvelopeGrainData::EnvelopeGrainData()
 :	m_mid(0.5f)
+,	m_response(1.0f)
 {
 	m_levels[0] = 0.0f;
 	m_levels[1] = 0.5f;
@@ -49,6 +50,11 @@ void EnvelopeGrainData::setMid(float mid)
 	m_mid = mid;
 }
 
+void EnvelopeGrainData::setResponse(float response)
+{
+	m_response = response;
+}
+
 Ref< IGrain > EnvelopeGrainData::createInstance(resource::IResourceManager* resourceManager) const
 {
 	std::vector< EnvelopeGrain::Grain > grains;
@@ -70,7 +76,8 @@ Ref< IGrain > EnvelopeGrainData::createInstance(resource::IResourceManager* reso
 		getParameterHandle(m_id),
 		grains,
 		m_levels,
-		m_mid
+		m_mid,
+		m_response
 	);
 }
 
@@ -86,6 +93,9 @@ void EnvelopeGrainData::serialize(ISerializer& s)
 		s >> MemberStaticArray< float, sizeof_array(m_levels) >(L"levels", m_levels);
 		s >> Member< float >(L"mid", m_mid);
 	}
+
+	if (s.getVersion() >= 3)
+		s >> Member< float >(L"response", m_response);
 }
 
 void EnvelopeGrainData::GrainData::serialize(ISerializer& s)
