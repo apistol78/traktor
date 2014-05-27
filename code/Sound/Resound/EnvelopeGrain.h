@@ -35,7 +35,7 @@ public:
 		float easeOut;
 	};
 
-	EnvelopeGrain(handle_t id, const std::vector< Grain >& grains, const float levels[3], float mid);
+	EnvelopeGrain(handle_t id, const std::vector< Grain >& grains, const float levels[3], float mid, float response);
 
 	virtual Ref< ISoundBufferCursor > createCursor() const;
 
@@ -48,6 +48,7 @@ public:
 private:
 	handle_t m_id;
 	std::vector< Grain > m_grains;
+	float m_response;
 	Envelope< float, HermiteEvaluator< float > > m_envelope;
 };
 
