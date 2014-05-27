@@ -275,6 +275,22 @@ void AccDisplayRenderer::render(render::IRenderView* renderView, uint32_t frame,
 	m_globalContext->flush();
 }
 
+void AccDisplayRenderer::flushCaches()
+{
+	m_textureCache->clear();
+
+	for (SmallMap< int32_t, ShapeCache >::iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
+		safeDestroy(i->second.shape);
+
+	for (SmallMap< int32_t, GlyphCache >::iterator i = m_glyphCache.begin(); i != m_glyphCache.end(); ++i)
+		safeDestroy(i->second.shape);
+
+	m_shapeCache.clear();
+	m_glyphCache.clear();
+
+	m_nextIndex = 0;
+}
+
 void AccDisplayRenderer::begin(
 	const FlashDictionary& dictionary,
 	const SwfColor& backgroundColor,
