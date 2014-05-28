@@ -269,8 +269,11 @@ void FlashMovieRenderer::renderCharacter(
 
 		const AlignedVector< TextLayout::Line >& lines = layout->getLines();
 		const AlignedVector< TextLayout::Attribute >& attribs = layout->getAttributes();
+
+		ActionContext* context = editInstance->getContext();
+		T_ASSERT (context);
 		
-		bool haveFocus = bool(FlashCharacterInstance::getFocus() == editInstance);
+		bool haveFocus = bool(context->getFocus() == editInstance);
 		bool showCaret = bool((int32_t(s_timer.getElapsedTime() * 2.0f) & 1) == 0);
 		
 		int32_t caret = editInstance->getCaret();

@@ -164,8 +164,8 @@ void FlashMoviePlayer::renderFrame()
 	m_movieRenderer->renderFrame(
 		m_movieInstance,
 		m_movie->getFrameBounds(),
-		m_stage->getViewWidth(),
-		m_stage->getViewHeight(),
+		float(m_stage->getViewWidth()),
+		float(m_stage->getViewHeight()),
 		m_stage->getViewOffset()
 	);
 }
@@ -317,48 +317,48 @@ void FlashMoviePlayer::postKeyUp(int32_t keyCode)
 
 void FlashMoviePlayer::postMouseDown(int32_t x, int32_t y, int32_t button)
 {
-	Vector2 xy = m_stage->toStage(Vector2(x, y));
+	Vector2 xy = m_stage->toStage(Vector2(float(x), float(y)));
 
 	Event evt;
 	evt.eventType = EvtMouseDown;
-	evt.mouse.x = xy.x;
-	evt.mouse.y = xy.y;
+	evt.mouse.x = int32_t(xy.x);
+	evt.mouse.y = int32_t(xy.y);
 	evt.mouse.button = button;
 	m_events.push_back(evt);
 }
 
 void FlashMoviePlayer::postMouseUp(int32_t x, int32_t y, int32_t button)
 {
-	Vector2 xy = m_stage->toStage(Vector2(x, y));
+	Vector2 xy = m_stage->toStage(Vector2(float(x), float(y)));
 
 	Event evt;
 	evt.eventType = EvtMouseUp;
-	evt.mouse.x = xy.x;
-	evt.mouse.y = xy.y;
+	evt.mouse.x = int32_t(xy.x);
+	evt.mouse.y = int32_t(xy.y);
 	evt.mouse.button = button;
 	m_events.push_back(evt);
 }
 
 void FlashMoviePlayer::postMouseMove(int32_t x, int32_t y, int32_t button)
 {
-	Vector2 xy = m_stage->toStage(Vector2(x, y));
+	Vector2 xy = m_stage->toStage(Vector2(float(x), float(y)));
 
 	Event evt;
 	evt.eventType = EvtMouseMove;
-	evt.mouse.x = xy.x;
-	evt.mouse.y = xy.y;
+	evt.mouse.x = int32_t(xy.x);
+	evt.mouse.y = int32_t(xy.y);
 	evt.mouse.button = button;
 	m_events.push_back(evt);
 }
 
 void FlashMoviePlayer::postMouseWheel(int32_t x, int32_t y, int32_t delta)
 {
-	Vector2 xy = m_stage->toStage(Vector2(x, y));
+	Vector2 xy = m_stage->toStage(Vector2(float(x), float(y)));
 
 	Event evt;
 	evt.eventType = EvtMouseWheel;
-	evt.mouse.x = xy.x;
-	evt.mouse.y = xy.y;
+	evt.mouse.x = int32_t(xy.x);
+	evt.mouse.y = int32_t(xy.y);
 	evt.mouse.delta = delta;
 	m_events.push_back(evt);
 }

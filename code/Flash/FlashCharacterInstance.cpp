@@ -11,8 +11,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashCharacterInstance", FlashCharacterInstance, ActionObjectRelay)
 
-FlashCharacterInstance* FlashCharacterInstance::ms_focusInstance = 0;
-
 int32_t FlashCharacterInstance::ms_instanceCount = 0;
 
 FlashCharacterInstance::FlashCharacterInstance(ActionContext* context, const char* const prototype, FlashCharacterInstance* parent)
@@ -50,8 +48,11 @@ int32_t FlashCharacterInstance::getInstanceCount()
 
 void FlashCharacterInstance::destroy()
 {
-	if (ms_focusInstance == this)
-		ms_focusInstance = 0;
+	if (m_context)
+	{
+		if (m_context->getFocus() == this)
+			m_context->setFocus(0);
+	}
 
 	m_context = 0;
 	m_parent = 0;
@@ -151,22 +152,6 @@ void FlashCharacterInstance::setEnabled(bool enabled)
 bool FlashCharacterInstance::isEnabled() const
 {
 	return m_enabled;
-}
-
-void FlashCharacterInstance::setFocus(FlashCharacterInstance* focusInstance)
-{
-	if (ms_focusInstance)
-		ms_focusInstance->eventKillFocus();
-
-	ms_focusInstance = focusInstance;
-
-	if (ms_focusInstance)
-		ms_focusInstance->eventSetFocus();
-}
-
-FlashCharacterInstance* FlashCharacterInstance::getFocus()
-{
-	return ms_focusInstance;
 }
 
 void FlashCharacterInstance::setEvents(const SmallMap< uint32_t, Ref< const IActionVMImage > >& eventScripts)
@@ -368,12 +353,8 @@ void FlashCharacterInstance::trace(const IVisitor& visitor) const
 
 void FlashCharacterInstance::dereference()
 {
-	if (ms_focusInstance == this)
-		ms_focusInstance = 0;
-
 	m_context = 0;
 	m_parent = 0;
-
 	ActionObjectRelay::dereference();
 }
 
