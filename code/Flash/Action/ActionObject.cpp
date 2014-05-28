@@ -74,7 +74,7 @@ ActionObject* ActionObject::get__proto__()
 		}
 
 		// No prototype defined; assume plain object.
-		if (!m__proto__)
+		if (!m__proto__ && m_context)
 		{
 			m__proto__ = m_context->lookupClass("Object");
 			if (m__proto__)
