@@ -94,6 +94,20 @@ bool FlashMoviePlayer::create(FlashMovie* movie, int32_t width, int32_t height)
 
 void FlashMoviePlayer::destroy()
 {
+	if (m_movieInstance)
+	{
+		// Ensure no character have focus; need to do this
+		// as the focus character will trigger "exit focus" event
+		// thus need to have access to context etc.
+		ActionContext* context = m_movieInstance->getContext();
+		T_ASSERT (context);
+		context->setFocus(0);
+
+		// Then destroy root movie instance.
+		m_movieInstance->destroy();
+		m_movieInstance = 0;
+	}
+
 	m_displayRenderer = 0;
 	m_soundRenderer = 0;
 	m_movieRenderer = 0;
@@ -104,13 +118,7 @@ void FlashMoviePlayer::destroy()
 	m_key = 0;
 	m_mouse = 0;
 	m_movie = 0;
-	
-	if (m_movieInstance)
-	{
-		m_movieInstance->destroy();
-		m_movieInstance = 0;
-	}
-	
+
 	m_events.clear();
 	m_fsCommands.clear();
 	m_interval.clear();
