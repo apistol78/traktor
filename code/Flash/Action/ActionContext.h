@@ -19,6 +19,7 @@ namespace traktor
 	namespace flash
 	{
 
+class FlashCharacterInstance;
 class FlashDictionary;
 class FlashMovie;
 class FlashSpriteInstance;
@@ -78,6 +79,8 @@ public:
 
 	void setMovieClip(FlashSpriteInstance* movieClip);
 
+	void setFocus(FlashCharacterInstance* focus);
+
 	void addFrameListener(ActionObject* frameListener);
 
 	void removeFrameListener(ActionObject* frameListener);
@@ -102,6 +105,8 @@ public:
 
 	FlashSpriteInstance* getMovieClip() const { return m_movieClip; }
 
+	FlashCharacterInstance* getFocus() const { return m_focus; }
+
 	ActionValuePool& getPool() { return m_pool; }
 
 protected:
@@ -122,6 +127,7 @@ private:
 	Ref< FlashDictionary > m_dictionary;
 	Ref< ActionObject > m_global;
 	Ref< FlashSpriteInstance > m_movieClip;
+	Ref< FlashCharacterInstance > m_focus;
 	ActionStrings m_strings;
 	ActionValuePool m_pool;
 	std::vector< FrameListener > m_frameListeners;

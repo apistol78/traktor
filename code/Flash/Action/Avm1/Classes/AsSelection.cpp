@@ -44,7 +44,7 @@ void AsSelection::Selection_getEndIndex(CallArgs& ca)
 
 void AsSelection::Selection_getFocus(CallArgs& ca)
 {
-	FlashCharacterInstance* focusInstance = FlashCharacterInstance::getFocus();
+	FlashCharacterInstance* focusInstance = ca.context->getFocus();
 	if (focusInstance)
 		ca.ret = ActionValue(focusInstance->getAsObject(ca.context));
 }
@@ -54,10 +54,10 @@ void AsSelection::Selection_setFocus(CallArgs& ca)
 	if (ca.args[0].getObject())
 	{
 		FlashCharacterInstance* focusInstance = ca.args[0].getObject()->getRelay< FlashCharacterInstance >();
-		FlashCharacterInstance::setFocus(focusInstance);
+		ca.context->setFocus(focusInstance);
 	}
 	else
-		FlashCharacterInstance::setFocus(0);
+		ca.context->setFocus(0);
 }
 
 void AsSelection::Selection_setSelection(CallArgs& ca)

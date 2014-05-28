@@ -214,8 +214,12 @@ void FlashSpriteInstance::removeMovieClip()
 	if (!getParent())
 		return;
 
-	if (FlashCharacterInstance::getFocus() == this)
-		FlashCharacterInstance::setFocus(0);
+	ActionContext* context = getContext();
+	if (context)
+	{
+		if (context->getFocus() == this)
+			context->setFocus(0);
+	}
 
 	Ref< FlashSpriteInstance > parentClipInstance = checked_type_cast< FlashSpriteInstance*, false >(getParent());
 
@@ -494,7 +498,7 @@ void FlashSpriteInstance::eventKeyDown(int32_t keyCode)
 		(*i)->eventKeyDown(keyCode);
 
 	// Issue script assigned event.
-	if (FlashCharacterInstance::getFocus() == this)
+	if (context->getFocus() == this)
 		executeScriptEvent(ActionContext::IdOnKeyDown, ActionValue());
 
 	FlashCharacterInstance::eventKeyDown(keyCode);
@@ -514,7 +518,7 @@ void FlashSpriteInstance::eventKeyUp(int32_t keyCode)
 		(*i)->eventKeyUp(keyCode);
 
 	// Issue script assigned event.
-	if (FlashCharacterInstance::getFocus() == this)
+	if (context->getFocus() == this)
 		executeScriptEvent(ActionContext::IdOnKeyUp, ActionValue());
 
 	FlashCharacterInstance::eventKeyUp(keyCode);
@@ -567,7 +571,7 @@ void FlashSpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 	context->setMovieClip(this);
 
 	// Transform coordinates into local.
-	Vector2 xy = getFullTransform().inverse() * Vector2(x, y);
+	Vector2 xy = getFullTransform().inverse() * Vector2(float(x), float(y));
 	m_mouseX = int32_t(xy.x / 20.0f);
 	m_mouseY = int32_t(xy.y / 20.0f);
 
@@ -601,7 +605,7 @@ void FlashSpriteInstance::eventMouseMove0(int32_t x, int32_t y, int32_t button)
 	context->setMovieClip(this);
 
 	// Transform coordinates into local.
-	Vector2 xy = getFullTransform().inverse() * Vector2(x, y);
+	Vector2 xy = getFullTransform().inverse() * Vector2(float(x), float(y));
 	m_mouseX = int32_t(xy.x / 20.0f);
 	m_mouseY = int32_t(xy.y / 20.0f);
 
@@ -637,7 +641,7 @@ void FlashSpriteInstance::eventMouseMove1(int32_t x, int32_t y, int32_t button)
 	context->setMovieClip(this);
 
 	// Transform coordinates into local.
-	Vector2 xy = getFullTransform().inverse() * Vector2(x, y);
+	Vector2 xy = getFullTransform().inverse() * Vector2(float(x), float(y));
 	m_mouseX = int32_t(xy.x / 20.0f);
 	m_mouseY = int32_t(xy.y / 20.0f);
 

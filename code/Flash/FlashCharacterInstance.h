@@ -132,18 +132,6 @@ public:
 	 */
 	bool isEnabled() const;
 
-	/*! \brief Set focus.
-	 *
-	 * \param focusInstance New focus instance.
-	 */
-	static void setFocus(FlashCharacterInstance* focusInstance);
-
-	/*! \brief Get focus character.
-	 *
-	 * \return Character with focus.
-	 */
-	static FlashCharacterInstance* getFocus();
-
 	/*! \brief Set event scripts.
 	 *
 	 * \param eventScripts Event scripts.
@@ -214,7 +202,6 @@ protected:
 	virtual void dereference();
 
 private:
-	static FlashCharacterInstance* ms_focusInstance;
 	static int32_t ms_instanceCount;
 	Ref< ActionContext > m_context;
 	FlashCharacterInstance* m_parent;

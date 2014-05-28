@@ -62,6 +62,17 @@ void ActionContext::setMovieClip(FlashSpriteInstance* movieClip)
 	m_movieClip = movieClip;
 }
 
+void ActionContext::setFocus(FlashCharacterInstance* focus)
+{
+	if (m_focus)
+		m_focus->eventKillFocus();
+
+	m_focus = focus;
+
+	if (m_focus)
+		m_focus->eventSetFocus();
+}
+
 void ActionContext::addFrameListener(ActionObject* frameListener)
 {
 	ActionValue memberValue;
@@ -141,6 +152,7 @@ void ActionContext::trace(const IVisitor& visitor) const
 
 	visitor(m_global);
 	visitor(m_movieClip);
+	visitor(m_focus);
 
 	for (std::vector< FrameListener >::const_iterator i = m_frameListeners.begin(); i != m_frameListeners.end(); ++i)
 	{
@@ -153,6 +165,7 @@ void ActionContext::dereference()
 {
 	m_global = 0;
 	m_movieClip = 0;
+	m_focus = 0;
 	m_frameListeners.clear();
 }
 
