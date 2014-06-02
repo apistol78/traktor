@@ -1,5 +1,4 @@
 #include "Core/Io/IEncoding.h"
-#include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/TString.h"
 
 namespace traktor
@@ -7,22 +6,24 @@ namespace traktor
 
 std::wstring mbstows(const IEncoding& encoding, const std::string& s)
 {
-	StringOutputStream ss;
+	std::vector< wchar_t > es;
 	wchar_t ec;
 	int32_t r;
 
-	const char* cs = s.c_str();
+	es.reserve(s.length());
+
+	const uint8_t* cs = reinterpret_cast< const uint8_t* >(s.c_str());
 	for (uint32_t i = 0; i < s.length(); )
 	{
 		uint32_t nb = std::min< uint32_t >(IEncoding::MaxEncodingSize, uint32_t(s.length() - i));
-		if ((r = encoding.translate((const uint8_t*)&cs[i], nb, ec)) < 0)
+		if ((r = encoding.translate(&cs[i], nb, ec)) < 0)
 			break;
 
-		ss << ec;
+		es.push_back(ec);
 		i += r;
 	}
 
-	return ss.str();
+	return std::wstring(es.begin(), es.end());
 }
 
 std::string wstombs(const IEncoding& encoding, const std::wstring& s)

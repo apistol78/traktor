@@ -4,6 +4,12 @@ namespace traktor
 {
 	namespace flash
 	{
+		namespace
+		{
+
+static const std::string c_empty("");
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionStrings", ActionStrings, Object)
 
@@ -24,14 +30,14 @@ uint32_t ActionStrings::operator [] (const std::string& str)
 	return id;
 }
 
-std::string ActionStrings::operator [] (uint32_t id) const
+const std::string& ActionStrings::operator [] (uint32_t id) const
 {
 	for (std::map< std::string, uint32_t >::const_iterator i = m_strings.begin(); i != m_strings.end(); ++i)
 	{
 		if (id == i->second)
 			return i->first;
 	}
-	return "";
+	return c_empty;
 }
 
 	}

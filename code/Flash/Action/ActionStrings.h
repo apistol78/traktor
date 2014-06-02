@@ -18,7 +18,7 @@ public:
 
 	uint32_t operator [] (const std::string& str);
 
-	std::string operator [] (uint32_t id) const;
+	const std::string& operator [] (uint32_t id) const;
 
 private:
 	std::map< std::string, uint32_t > m_strings;
