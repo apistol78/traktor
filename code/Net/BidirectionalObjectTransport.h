@@ -5,6 +5,7 @@
 #include "Core/RefArray.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Serialization/ISerializable.h"
+#include "Core/Thread/Semaphore.h"
 #include "Core/Thread/ThreadLocal.h"
 
 // import/export mechanism.
@@ -72,6 +73,7 @@ private:
 	RefArray< ISerializable > m_inQueue;
 	std::vector< uint8_t* > m_buffers;
 	ThreadLocal m_threadBuffer;
+	Semaphore m_lock;
 };
 
 	}

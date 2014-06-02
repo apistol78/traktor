@@ -256,6 +256,8 @@ void AccDisplayRenderer::build(render::RenderContext* renderContext, uint32_t fr
 
 void AccDisplayRenderer::render(render::IRenderView* renderView, uint32_t frame, render::EyeType eye, const Vector2& offset, float scale)
 {
+	T_RENDER_PUSH_MARKER(renderView, "Flash: Render");
+
 	render::ProgramParameters programParams;
 	programParams.beginParameters(m_globalContext);
 
@@ -273,6 +275,8 @@ void AccDisplayRenderer::render(render::IRenderView* renderView, uint32_t frame,
 	m_renderContexts[frame]->render(renderView, render::RpOverlay, &programParams);
 
 	m_globalContext->flush();
+
+	T_RENDER_POP_MARKER(renderView);
 }
 
 void AccDisplayRenderer::flushCaches()

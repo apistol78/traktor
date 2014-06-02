@@ -2,6 +2,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/CompactSerializer.h"
+#include "Core/Thread/Acquire.h"
 #include "Net/BidirectionalObjectTransport.h"
 #include "Net/TcpSocket.h"
 
@@ -79,14 +80,17 @@ bool BidirectionalObjectTransport::send(const ISerializable* object)
 	int32_t sendCount = 4 + objectSize;
 	int32_t result = 0;
 
-	while (sendCount > 0)
 	{
-		result = m_socket->send(sendPtr, sendCount);
-		if (result <= 0 || result > sendCount)
-			break;
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		while (sendCount > 0)
+		{
+			result = m_socket->send(sendPtr, sendCount);
+			if (result <= 0 || result > sendCount)
+				break;
 
-		sendPtr += result;
-		sendCount -= result;
+			sendPtr += result;
+			sendCount -= result;
+		}
 	}
 
 	if (result <= 0)
@@ -110,6 +114,8 @@ bool BidirectionalObjectTransport::wait(int32_t timeout)
 
 BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const TypeInfo& objectType, int32_t timeout, Ref< ISerializable >& outObject)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	if (!m_socket)
 		return RtDisconnected;
 
