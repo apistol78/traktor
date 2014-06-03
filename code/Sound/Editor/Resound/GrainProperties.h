@@ -16,6 +16,7 @@ class IEditor;
 	namespace ui
 	{
 
+class Command;
 class Event;
 class HierarchicalState;
 
@@ -42,6 +43,8 @@ public:
 	void set(IGrainData* grain);
 
 	void reset();
+
+	bool handleCommand(const ui::Command& command);
 
 private:
 	editor::IEditor* m_editor;
