@@ -67,6 +67,24 @@ void GrainProperties::reset()
 	set(m_grain);
 }
 
+bool GrainProperties::handleCommand(const ui::Command& command)
+{
+	if (command == L"Editor.Copy")
+		return m_grainPropertyList->copy();
+	else if (command == L"Editor.Paste")
+	{
+		if (m_grainPropertyList->paste())
+		{
+			m_grainPropertyList->apply();
+			return true;
+		}
+		else
+			return false;
+	}
+	else
+		return false;
+}
+
 bool GrainProperties::resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const
 {
 	Ref< db::Instance > instance = m_editor->getSourceDatabase()->getInstance(guid);

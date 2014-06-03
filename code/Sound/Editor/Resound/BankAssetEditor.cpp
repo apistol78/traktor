@@ -308,7 +308,7 @@ bool BankAssetEditor::handleCommand(const ui::Command& command)
 			m_toolBar->update();
 		}
 	}
-	else
+	else if (!m_grainProperties->handleCommand(command))
 		return false;
 
 	return true;
