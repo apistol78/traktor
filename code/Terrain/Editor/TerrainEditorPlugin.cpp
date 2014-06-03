@@ -1,6 +1,16 @@
 #include "Core/Misc/String.h"
 #include "I18N/Text.h"
 #include "Scene/Editor/SceneEditorContext.h"
+#include "Terrain/Editor/AverageBrush.h"
+#include "Terrain/Editor/ColorBrush.h"
+#include "Terrain/Editor/CutBrush.h"
+#include "Terrain/Editor/ElevateBrush.h"
+#include "Terrain/Editor/EmissiveBrush.h"
+#include "Terrain/Editor/ErodeBrush.h"
+#include "Terrain/Editor/FlattenBrush.h"
+#include "Terrain/Editor/MaterialBrush.h"
+#include "Terrain/Editor/NoiseBrush.h"
+#include "Terrain/Editor/SmoothBrush.h"
 #include "Terrain/Editor/TerrainEditorPlugin.h"
 #include "Terrain/Editor/TerrainEditModifier.h"
 #include "Ui/Bitmap.h"
@@ -16,6 +26,7 @@
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarDropDown.h"
 #include "Ui/Custom/ToolBar/ToolBarEmbed.h"
+#include "Ui/Custom/ToolBar/ToolBarItemGroup.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 
 // Resources
@@ -87,28 +98,35 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::custom::ToolBar* toolBa
 	m_toolToggleElevate->setToggled(true);
 	m_toolToggleFallOffSmooth->setToggled(true);
 
+	// Create a tool group containing all toolbar items which should
+	// have enable/disable automatically when terrain edit modifier is active.
+	m_toolGroup = new ui::custom::ToolBarItemGroup();
+
 	toolBar->addItem(new ui::custom::ToolBarSeparator());
 	toolBar->addItem(m_toolToggleEditTerrain);
-	toolBar->addItem(m_toolToggleMaterial);
-	toolBar->addItem(m_toolToggleColor);
-	toolBar->addItem(m_toolToggleEmissive);
-	toolBar->addItem(m_toolToggleElevate);
-	toolBar->addItem(m_toolToggleFlatten);
-	toolBar->addItem(m_toolToggleAverage);
-	toolBar->addItem(m_toolToggleSmooth);
-	toolBar->addItem(m_toolToggleNoise);
-	toolBar->addItem(m_toolToggleErode);
-	toolBar->addItem(m_toolToggleCut);
+	toolBar->addItem(m_toolGroup->addItem(m_toolToggleMaterial));
+	toolBar->addItem(m_toolGroup->addItem(m_toolToggleColor));
+	toolBar->addItem(m_toolGroup->addItem(m_toolToggleEmissive));
+	toolBar->addItem(m_toolGroup->addItem(m_toolToggleElevate));
+	toolBar->addItem(m_toolGroup->addItem(m_toolToggleFlatten));
+	toolBar->addItem(m_toolGroup->addItem(m_toolToggleAverage));
+	toolBar->addItem(m_toolGroup->addItem(m_toolToggleSmooth));
+	toolBar->addItem(m_toolGroup->addItem(m_toolToggleNoise));
+	toolBar->addItem(m_toolGroup->addItem(m_toolToggleErode));
+	toolBar->addItem(m_toolGroup->addItem(m_toolToggleCut));
 	toolBar->addItem(new ui::custom::ToolBarSeparator());
-	toolBar->addItem(m_toolToggleFallOffSmooth);
-	toolBar->addItem(m_toolToggleFallOffSharp);
+	toolBar->addItem(m_toolGroup->addItem(m_toolToggleFallOffSmooth));
+	toolBar->addItem(m_toolGroup->addItem(m_toolToggleFallOffSharp));
 	toolBar->addItem(new ui::custom::ToolBarSeparator());
-	toolBar->addItem(m_toolToggleSymmetryX);
-	toolBar->addItem(m_toolToggleSymmetryZ);
+	toolBar->addItem(m_toolGroup->addItem(m_toolToggleSymmetryX));
+	toolBar->addItem(m_toolGroup->addItem(m_toolToggleSymmetryZ));
 	toolBar->addItem(new ui::custom::ToolBarSeparator());
-	toolBar->addItem(m_toolStrength);
-	toolBar->addItem(m_toolColor);
-	toolBar->addItem(m_toolMaterial);
+	toolBar->addItem(m_toolGroup->addItem(m_toolStrength));
+	toolBar->addItem(m_toolGroup->addItem(m_toolColor));
+	toolBar->addItem(m_toolGroup->addItem(m_toolMaterial));
+
+	// Group is initially disabled as terrain edit modifier hasn't yet been selected.
+	m_toolGroup->setEnable(false);
 
 	updateModifierState();
 
@@ -213,25 +231,25 @@ bool TerrainEditorPlugin::handleCommand(const ui::Command& command)
 void TerrainEditorPlugin::updateModifierState()
 {
 	if (m_toolToggleMaterial->isToggled())
-		m_terrainEditModifier->setBrush(L"Terrain.Editor.MaterialBrush");
+		m_terrainEditModifier->setBrush(type_of< MaterialBrush >());
 	else if (m_toolToggleColor->isToggled())
-		m_terrainEditModifier->setBrush(L"Terrain.Editor.ColorBrush");
+		m_terrainEditModifier->setBrush(type_of< ColorBrush >());
 	else if (m_toolToggleEmissive->isToggled())
-		m_terrainEditModifier->setBrush(L"Terrain.Editor.EmissiveBrush");
+		m_terrainEditModifier->setBrush(type_of< EmissiveBrush >());
 	else if (m_toolToggleElevate->isToggled())
-		m_terrainEditModifier->setBrush(L"Terrain.Editor.ElevateBrush");
+		m_terrainEditModifier->setBrush(type_of< ElevateBrush >());
 	else if (m_toolToggleFlatten->isToggled())
-		m_terrainEditModifier->setBrush(L"Terrain.Editor.FlattenBrush");
+		m_terrainEditModifier->setBrush(type_of< FlattenBrush >());
 	else if (m_toolToggleAverage->isToggled())
-		m_terrainEditModifier->setBrush(L"Terrain.Editor.AverageBrush");
+		m_terrainEditModifier->setBrush(type_of< AverageBrush >());
 	else if (m_toolToggleSmooth->isToggled())
-		m_terrainEditModifier->setBrush(L"Terrain.Editor.SmoothBrush");
+		m_terrainEditModifier->setBrush(type_of< SmoothBrush >());
 	else if (m_toolToggleNoise->isToggled())
-		m_terrainEditModifier->setBrush(L"Terrain.Editor.NoiseBrush");
+		m_terrainEditModifier->setBrush(type_of< NoiseBrush >());
 	else if (m_toolToggleErode->isToggled())
-		m_terrainEditModifier->setBrush(L"Terrain.Editor.ErodeBrush");
+		m_terrainEditModifier->setBrush(type_of< ErodeBrush >());
 	else if (m_toolToggleCut->isToggled())
-		m_terrainEditModifier->setBrush(L"Terrain.Editor.CutBrush");
+		m_terrainEditModifier->setBrush(type_of< CutBrush >());
 
 	if (m_toolToggleFallOffSmooth->isToggled())
 		m_terrainEditModifier->setFallOff(L"Terrain.Editor.SmoothFallOff");
@@ -284,6 +302,7 @@ void TerrainEditorPlugin::eventColorClick(ui::Event* event)
 void TerrainEditorPlugin::eventModifierChanged(ui::Event* event)
 {
 	m_toolToggleEditTerrain->setToggled(m_context->getModifier() == m_terrainEditModifier);
+	m_toolGroup->setEnable(m_context->getModifier() == m_terrainEditModifier);
 }
 
 	}

@@ -51,6 +51,18 @@ AnimatedMeshEntity::AnimatedMeshEntity(
 			m_skeleton,
 			m_jointTransforms
 		);
+
+		m_poseTransforms.reserve(m_jointTransforms.size());
+
+		size_t skinJointCount = m_mesh->getJointCount();
+		m_skinTransforms[0].resize(skinJointCount * 2, Vector4::origo());
+		m_skinTransforms[1].resize(skinJointCount * 2, Vector4::origo());
+		m_skinTransforms[2].resize(skinJointCount * 2, Vector4::origo());
+
+		updatePoseController(m_index, 0.0f);
+
+		m_index = 1 - m_index;
+		m_updateController = false;
 	}
 }
 

@@ -25,6 +25,8 @@ namespace traktor
 		namespace
 		{
 
+const float c_maxAspectRatio = 8.0f;
+
 int32_t sanitizeMultiSample(int32_t multiSample)
 {
 	switch (multiSample)
@@ -518,10 +520,7 @@ float RenderServerDefault::getScreenAspectRatio() const
 float RenderServerDefault::getViewAspectRatio() const
 {
 	float aspectRatio = float(m_renderView->getWidth()) / m_renderView->getHeight();
-	if (aspectRatio < 3.0f)
-		return aspectRatio;
-	else
-		return 3.0f;
+	return min(aspectRatio, c_maxAspectRatio);
 }
 
 float RenderServerDefault::getAspectRatio() const
