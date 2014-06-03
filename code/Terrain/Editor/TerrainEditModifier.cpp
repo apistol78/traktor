@@ -1,3 +1,5 @@
+#pragma optimize( "", off )
+
 #include <cstring>
 #include "Core/RefArray.h"
 #include "Core/Io/IStream.h"
@@ -176,9 +178,6 @@ void TerrainEditModifier::selectionChanged()
 	m_heightfield.clear();
 	m_splatImage = 0;
 	m_colorImage = 0;
-	m_drawBrush = 0;
-	m_spatialBrush = 0;
-	m_brushMode = 0;
 
 	// Get terrain entity from selection.
 	RefArray< scene::EntityAdapter > entityAdapters;
@@ -368,10 +367,18 @@ void TerrainEditModifier::selectionChanged()
 		m_entity->m_terrain->m_cutMap = resource::Proxy< render::ISimpleTexture >(m_cutMap);
 	}
 
-	// Create default brush.
-	m_drawBrush = new ElevateBrush(m_heightfield);
+	// Create default brush; try set same brush type as before.
+	if (m_drawBrush)
+		setBrush(type_of(m_drawBrush));
+	
+	if (!m_drawBrush)
+		m_drawBrush = new ElevateBrush(m_heightfield);
+
+	T_ASSERT(m_drawBrush);
 	m_spatialBrush = m_drawBrush;
-	m_fallOff = new SmoothFallOff();
+
+	if (!m_fallOff)
+		m_fallOff = new SmoothFallOff();
 }
 
 bool TerrainEditModifier::cursorMoved(
@@ -722,27 +729,27 @@ void TerrainEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer) con
 	primitiveRenderer->popDepthState();
 }
 
-void TerrainEditModifier::setBrush(const std::wstring& brush)
+void TerrainEditModifier::setBrush(const TypeInfo& brushType)
 {
-	if (brush == L"Terrain.Editor.AverageBrush")
+	if (is_type_a< AverageBrush >(brushType))
 		m_drawBrush = new AverageBrush(m_heightfield);
-	else if (brush == L"Terrain.Editor.ColorBrush")
+	else if (is_type_a< ColorBrush >(brushType))
 		m_drawBrush = new ColorBrush(m_colorImage);
-	else if (brush == L"Terrain.Editor.EmissiveBrush")
+	else if (is_type_a< EmissiveBrush >(brushType))
 		m_drawBrush = new EmissiveBrush(m_colorImage);
-	else if (brush == L"Terrain.Editor.CutBrush")
+	else if (is_type_a< CutBrush >(brushType))
 		m_drawBrush = new CutBrush(m_heightfield);
-	else if (brush == L"Terrain.Editor.ElevateBrush")
+	else if (is_type_a< ElevateBrush >(brushType))
 		m_drawBrush = new ElevateBrush(m_heightfield);
-	else if (brush == L"Terrain.Editor.FlattenBrush")
+	else if (is_type_a< FlattenBrush >(brushType))
 		m_drawBrush = new FlattenBrush(m_heightfield);
-	else if (brush == L"Terrain.Editor.MaterialBrush")
+	else if (is_type_a< MaterialBrush >(brushType))
 		m_drawBrush = new MaterialBrush(m_splatImage);
-	else if (brush == L"Terrain.Editor.NoiseBrush")
+	else if (is_type_a< NoiseBrush >(brushType))
 		m_drawBrush = new NoiseBrush(m_heightfield);
-	else if (brush == L"Terrain.Editor.ErodeBrush")
+	else if (is_type_a< ErodeBrush >(brushType))
 		m_drawBrush = new ErodeBrush(m_heightfield);
-	else if (brush == L"Terrain.Editor.SmoothBrush")
+	else if (is_type_a< SmoothBrush >(brushType))
 		m_drawBrush = new SmoothBrush(m_heightfield);
 
 	m_spatialBrush = m_drawBrush;

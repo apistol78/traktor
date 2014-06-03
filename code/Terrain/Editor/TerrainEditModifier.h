@@ -89,7 +89,7 @@ public:
 
 	virtual void draw(render::PrimitiveRenderer* primitiveRenderer) const;
 
-	void setBrush(const std::wstring& brush);
+	void setBrush(const TypeInfo& brushType);
 
 	void setFallOff(const std::wstring& fallOff);
 

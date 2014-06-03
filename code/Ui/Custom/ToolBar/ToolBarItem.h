@@ -8,9 +8,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_CUSTOM_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -37,6 +37,13 @@ class T_DLLCLASS ToolBarItem
 {
 	T_RTTI_CLASS;
 
+public:
+	ToolBarItem();
+
+	void setEnable(bool enable);
+
+	bool isEnable() const;
+
 protected:
 	friend class ToolBar;
 
@@ -57,6 +64,9 @@ protected:
 	virtual void buttonDown(ToolBar* toolBar, MouseEvent* mouseEvent) = 0;
 
 	virtual void buttonUp(ToolBar* toolBar, MouseEvent* mouseEvent) = 0;
+
+private:
+	bool m_enable;
 };
 
 		}

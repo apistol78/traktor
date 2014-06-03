@@ -211,7 +211,7 @@ void ToolBar::eventButtonDown(Event* event)
 
 	MouseEvent* mouseEvent = checked_type_cast< MouseEvent* >(event);
 	ToolBarItem* item = getItem(mouseEvent->getPosition());
-	if (item)
+	if (item && item->isEnable())
 	{
 		item->buttonDown(this, mouseEvent);
 		update();
@@ -225,7 +225,7 @@ void ToolBar::eventButtonUp(Event* event)
 
 	MouseEvent* mouseEvent = checked_type_cast< MouseEvent* >(event);
 	ToolBarItem* item = getItem(mouseEvent->getPosition());
-	if (item)
+	if (item && item->isEnable())
 	{
 		item->buttonUp(this, mouseEvent);
 		update();
@@ -265,7 +265,7 @@ void ToolBar::eventPaint(Event* event)
 			this,
 			canvas,
 			at,
-			isEnable() ? m_imageEnabled : m_imageDisabled,
+			(isEnable() && (*i)->isEnable()) ? m_imageEnabled : m_imageDisabled,
 			m_imageWidth,
 			m_imageHeight
 		);

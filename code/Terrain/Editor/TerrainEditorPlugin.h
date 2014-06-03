@@ -19,6 +19,7 @@ class ColorControl;
 class ToolBarButton;
 class ToolBarDropDown;
 class ToolBarEmbed;
+class ToolBarItemGroup;
 
 		}
 	}
@@ -64,6 +65,7 @@ private:
 	Ref< ui::custom::ColorControl > m_colorControl;
 	Ref< ui::custom::ToolBarEmbed > m_toolColor;
 	Ref< ui::custom::ToolBarDropDown > m_toolMaterial;
+	Ref< ui::custom::ToolBarItemGroup > m_toolGroup;
 
 	void updateModifierState();
 
