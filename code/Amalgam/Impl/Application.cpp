@@ -627,13 +627,15 @@ bool Application::update()
 		physics::PhysicsManager* physicsManager = m_physicsServer ? m_physicsServer->getPhysicsManager() : 0;
 		if (physicsManager && !m_updateControl.m_pause)
 		{
-			m_updateInfo.m_simulationDeltaTime = c_simulationDeltaTime;
-			m_updateInfo.m_simulationFrequency = c_simulationFrequency;
+			float dT = c_simulationDeltaTime * m_updateControl.m_timeScale;
+
+			m_updateInfo.m_simulationDeltaTime = dT;
+			m_updateInfo.m_simulationFrequency = uint32_t(1.0f / dT);
 
 			// Calculate number of required updates in order to
 			// keep game in sync with render time.
 			float simulationEndTime = m_updateInfo.m_stateTime;
-			updateCount = std::min(int32_t((simulationEndTime - m_updateInfo.m_simulationTime) / c_simulationDeltaTime), m_maxSimulationUpdates);
+			updateCount = std::min(int32_t((simulationEndTime - m_updateInfo.m_simulationTime) / dT), m_maxSimulationUpdates);
 
 			// Execute fixed update(s).
 			bool renderCollision = false;
@@ -686,7 +688,7 @@ bool Application::update()
 				physicsDuration += physicsTimeEnd - physicsTimeStart;
 
 				m_updateDuration = float(physicsTimeEnd - physicsTimeStart + inputTimeEnd - inputTimeStart + updateTimeEnd - updateTimeStart);
-				m_updateInfo.m_simulationTime += c_simulationDeltaTime / m_updateControl.m_timeScale;
+				m_updateInfo.m_simulationTime += dT;
 
 				if (result == IState::UrExit || result == IState::UrFailed)
 				{
@@ -701,8 +703,8 @@ bool Application::update()
 					break;
 			}
 
-			m_updateInfo.m_totalTime += m_updateInfo.m_frameDeltaTime;
-			m_updateInfo.m_stateTime += m_updateInfo.m_frameDeltaTime;
+			m_updateInfo.m_totalTime += m_updateInfo.m_frameDeltaTime * m_updateControl.m_timeScale;
+			m_updateInfo.m_stateTime += m_updateInfo.m_frameDeltaTime * m_updateControl.m_timeScale;
 		}
 		else
 		{
@@ -715,7 +717,7 @@ bool Application::update()
 			}
 
 			// No physics; update in same rate as rendering.
-			m_updateInfo.m_simulationDeltaTime = m_updateInfo.m_frameDeltaTime;
+			m_updateInfo.m_simulationDeltaTime = m_updateInfo.m_frameDeltaTime * m_updateControl.m_timeScale;
 			m_updateInfo.m_simulationFrequency = uint32_t(1.0f / m_updateInfo.m_frameDeltaTime);
 
 			double updateTimeStart = m_timer.getElapsedTime();
@@ -726,9 +728,9 @@ bool Application::update()
 			updateDuration += updateTimeEnd - updateTimeStart;
 			updateCount++;
 
-			m_updateInfo.m_simulationTime += m_updateInfo.m_frameDeltaTime / m_updateControl.m_timeScale;
-			m_updateInfo.m_totalTime += m_updateInfo.m_frameDeltaTime;
-			m_updateInfo.m_stateTime += m_updateInfo.m_frameDeltaTime;
+			m_updateInfo.m_simulationTime += m_updateInfo.m_simulationDeltaTime;
+			m_updateInfo.m_totalTime += m_updateInfo.m_simulationDeltaTime;
+			m_updateInfo.m_stateTime += m_updateInfo.m_simulationDeltaTime;
 
 			if (updateResult == IState::UrExit || updateResult == IState::UrFailed)
 			{

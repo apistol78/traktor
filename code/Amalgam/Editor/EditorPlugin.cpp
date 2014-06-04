@@ -359,7 +359,7 @@ void EditorPlugin::eventTargetListPlay(ui::Event* event)
 			if (m_toolTweaks->get(2)->isChecked())
 				tweakSettings->setProperty< PropertyBoolean >(L"Render.WaitVBlank", false);
 			if (m_toolTweaks->get(3)->isChecked())
-				tweakSettings->setProperty< PropertyFloat >(L"Physics.TimeScale", 2.0f);
+				tweakSettings->setProperty< PropertyFloat >(L"Physics.TimeScale", 0.25f);
 			if (m_toolTweaks->get(4)->isChecked())
 				tweakSettings->setProperty< PropertyInteger >(L"World.SuperSample", 2);
 			if (m_toolTweaks->get(5)->isChecked())
