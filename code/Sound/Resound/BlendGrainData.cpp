@@ -3,6 +3,7 @@
 #include "Core/Serialization/MemberStaticArray.h"
 #include "Sound/Resound/BlendGrain.h"
 #include "Sound/Resound/BlendGrainData.h"
+#include "Sound/Resound/IGrainFactory.h"
 
 namespace traktor
 {
@@ -11,15 +12,15 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.BlendGrainData", 1, BlendGrainData, IGrainData)
 
-Ref< IGrain > BlendGrainData::createInstance(resource::IResourceManager* resourceManager) const
+Ref< IGrain > BlendGrainData::createInstance(IGrainFactory* grainFactory) const
 {
 	Ref< IGrain > grains[2];
 
-	grains[0] = m_grains[0]->createInstance(resourceManager);
+	grains[0] = grainFactory->createInstance(m_grains[0]);
 	if (!grains[0])
 		return 0;
 
-	grains[1] = m_grains[1]->createInstance(resourceManager);
+	grains[1] = grainFactory->createInstance(m_grains[1]);
 	if (!grains[1])
 		return 0;
 

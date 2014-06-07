@@ -31,6 +31,8 @@ public:
 
 	const IGrain* getCurrentGrain(const ISoundBufferCursor* cursor) const;
 
+	void getActiveGrains(const ISoundBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const;
+
 	virtual Ref< ISoundBufferCursor > createCursor() const;
 
 	virtual bool getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const;

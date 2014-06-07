@@ -24,6 +24,8 @@ public:
 
 	BankControlGrain* getSelected() const;
 
+	const RefArray< BankControlGrain >& getGrains() const;
+
 protected:
 	virtual void layoutCells(const ui::Rect& rc);
 

@@ -15,7 +15,7 @@ MuteGrainData::MuteGrainData()
 {
 }
 
-Ref< IGrain > MuteGrainData::createInstance(resource::IResourceManager* resourceManager) const
+Ref< IGrain > MuteGrainData::createInstance(IGrainFactory* grainFactory) const
 {
 	return new MuteGrain(m_duration);
 }

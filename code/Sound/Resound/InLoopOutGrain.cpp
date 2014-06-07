@@ -91,6 +91,11 @@ const IGrain* InLoopOutGrain::getCurrentGrain(const ISoundBufferCursor* cursor) 
 	return this;
 }
 
+void InLoopOutGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const
+{
+	outActiveGrains.push_back(this);
+}
+
 bool InLoopOutGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const
 {
 	InLoopOutGrainCursor* iloCursor = static_cast< InLoopOutGrainCursor* >(cursor);

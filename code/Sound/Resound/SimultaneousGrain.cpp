@@ -85,6 +85,16 @@ const IGrain* SimultaneousGrain::getCurrentGrain(const ISoundBufferCursor* curso
 	return this;
 }
 
+void SimultaneousGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const
+{
+	const SimultaneousGrainCursor* simultaneousCursor = static_cast< const SimultaneousGrainCursor* >(cursor);
+
+	outActiveGrains.push_back(this);
+
+	for (uint32_t i = 0; i < m_grains.size(); ++i)
+		m_grains[i]->getActiveGrains(simultaneousCursor->m_grainCursors[i], outActiveGrains);
+}
+
 bool SimultaneousGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const
 {
 	SimultaneousGrainCursor* simultaneousCursor = static_cast< SimultaneousGrainCursor* >(cursor);

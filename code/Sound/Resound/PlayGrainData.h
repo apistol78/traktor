@@ -29,7 +29,7 @@ class T_DLLCLASS PlayGrainData : public IGrainData
 public:
 	PlayGrainData();
 
-	virtual Ref< IGrain > createInstance(resource::IResourceManager* resourceManager) const;
+	virtual Ref< IGrain > createInstance(IGrainFactory* grainFactory) const;
 
 	virtual void serialize(ISerializer& s);
 

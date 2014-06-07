@@ -89,13 +89,27 @@ Ref< ISoundBufferCursor > BlendGrain::createCursor() const
 void BlendGrain::updateCursor(ISoundBufferCursor* cursor) const
 {
 	BlendGrainCursor* blendCursor = static_cast< BlendGrainCursor* >(cursor);
-	m_grains[0]->updateCursor(blendCursor->m_cursors[0]);
-	m_grains[1]->updateCursor(blendCursor->m_cursors[1]);
+	if (m_grains[0])
+		m_grains[0]->updateCursor(blendCursor->m_cursors[0]);
+	if (m_grains[1])
+		m_grains[1]->updateCursor(blendCursor->m_cursors[1]);
 }
 
 const IGrain* BlendGrain::getCurrentGrain(const ISoundBufferCursor* cursor) const
 {
 	return this;
+}
+
+void BlendGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const
+{
+	const BlendGrainCursor* blendCursor = static_cast< const BlendGrainCursor* >(cursor);
+
+	outActiveGrains.push_back(this);
+
+	if (m_grains[0] && blendCursor->m_parameter < 1.0f - FUZZY_EPSILON)
+		m_grains[0]->getActiveGrains(blendCursor->m_cursors[0], outActiveGrains);
+	if (m_grains[1] && blendCursor->m_parameter > FUZZY_EPSILON)
+		m_grains[1]->getActiveGrains(blendCursor->m_cursors[1], outActiveGrains);
 }
 
 bool BlendGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const

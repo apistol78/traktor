@@ -12,6 +12,7 @@
 #include "Sound/Resound/BankBuffer.h"
 #include "Sound/Resound/BlendGrainData.h"
 #include "Sound/Resound/EnvelopeGrainData.h"
+#include "Sound/Resound/GrainFactory.h"
 #include "Sound/Resound/InLoopOutGrainData.h"
 #include "Sound/Resound/MuteGrainData.h"
 #include "Sound/Resound/PlayGrainData.h"
@@ -74,6 +75,35 @@ private:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.BankAssetEditor.HandleWrapper", HandleWrapper, Object)
 
+class EditorGrainFactory : public GrainFactory
+{
+	T_RTTI_CLASS;
+
+public:
+	EditorGrainFactory(resource::IResourceManager* resourceManager, std::map< const IGrainData*, const IGrain* >& instances)
+	:	GrainFactory(resourceManager)
+	,	m_instances(instances)
+	{
+		m_instances.clear();
+	}
+
+	virtual Ref< IGrain > createInstance(const IGrainData* grainData)
+	{
+		if (!grainData)
+			return 0;
+
+		Ref< IGrain > grain = GrainFactory::createInstance(grainData);
+		m_instances.insert(std::make_pair(grainData, grain.ptr()));
+
+		return grain;
+	}
+
+private:
+	std::map< const IGrainData*, const IGrain* >& m_instances;
+};
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.BankAssetEditor.EditorGrainFactory", EditorGrainFactory, GrainFactory)
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.BankAssetEditor", BankAssetEditor, editor::IObjectEditor)
@@ -94,7 +124,7 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 		return false;
 
 	parent->addTimerEventHandler(ui::createMethodHandler(this, &BankAssetEditor::eventTimer));
-	parent->startTimer(100);
+	parent->startTimer(30);
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
 	splitter->create(parent, true, 180);
@@ -273,15 +303,22 @@ bool BankAssetEditor::handleCommand(const ui::Command& command)
 			}
 
 			// Create grains from data.
+			EditorGrainFactory grainFactory(m_resourceManager, m_grainInstances);
 			for (uint32_t i = 0; i < grainData.size(); ++i)
 			{
-				Ref< IGrain > grain = grainData[i]->createInstance(m_resourceManager);
+				Ref< IGrain > grain = grainFactory.createInstance(grainData[i]);
 				if (grain)
 					grains.push_back(grain);
-				else
-					log::warning << L"Unable to create grain " << i << L" of type " << type_name(grainData[i]) << Endl;
 			}
 
+			// Log all grains which failed to produce an instance.
+			for (std::map< const IGrainData*, const IGrain* >::const_iterator i = m_grainInstances.begin(); i != m_grainInstances.end(); ++i)
+			{
+				if (!i->second)
+					log::warning << L"Unable to create instance of " << type_name(i->first) << Endl;
+			}
+
+			// Create playback buffer.
 			if (!grains.empty())
 			{
 				m_bankBuffer = new BankBuffer(grains);
@@ -304,6 +341,12 @@ bool BankAssetEditor::handleCommand(const ui::Command& command)
 		else if (m_soundChannel && m_soundChannel->isPlaying())
 		{
 			m_soundChannel->stop();
+
+			const RefArray< BankControlGrain >& grainCells = m_bankControl->getGrains();
+			for (RefArray< BankControlGrain >::const_iterator i = grainCells.begin(); i != grainCells.end(); ++i)
+				(*i)->setActive(false);
+			m_bankControl->update();
+
 			m_toolBarItemPlay->setToggled(false);
 			m_toolBar->update();
 		}
@@ -521,6 +564,39 @@ void BankAssetEditor::eventTimer(ui::Event* event)
 					(*i)->getValue() / 100.0f
 				);
 			}
+		}
+	}
+
+	if (m_bankBuffer && m_soundChannel->isPlaying())
+	{
+		ISoundBufferCursor* cursor = m_soundChannel->getCursor();
+		if (cursor)
+		{
+			RefArray< const IGrain > activeGrains;
+			m_bankBuffer->getActiveGrains(cursor, activeGrains);
+
+			const RefArray< BankControlGrain >& grainCells = m_bankControl->getGrains();
+			for (RefArray< BankControlGrain >::const_iterator i = grainCells.begin(); i != grainCells.end(); ++i)
+			{
+				const IGrainData* grainData = (*i)->getGrain();
+				const IGrain* grain = m_grainInstances[grainData];
+
+				bool isActive = false;
+				if (grain)
+				{
+					for (RefArray< const IGrain >::const_iterator j = activeGrains.begin(); j != activeGrains.end(); ++j)
+					{
+						if (*j == grain)
+						{
+							isActive = true;
+							break;
+						}
+					}
+				}
+				(*i)->setActive(isActive);
+			}
+
+			m_bankControl->update();
 		}
 	}
 }

@@ -3,6 +3,7 @@
 #include "Core/Serialization/MemberRef.h"
 #include "Sound/Resound/RepeatGrain.h"
 #include "Sound/Resound/RepeatGrainData.h"
+#include "Sound/Resound/IGrainFactory.h"
 
 namespace traktor
 {
@@ -16,9 +17,9 @@ RepeatGrainData::RepeatGrainData()
 {
 }
 
-Ref< IGrain > RepeatGrainData::createInstance(resource::IResourceManager* resourceManager) const
+Ref< IGrain > RepeatGrainData::createInstance(IGrainFactory* grainFactory) const
 {
-	Ref< IGrain > grain = m_grain->createInstance(resourceManager);
+	Ref< IGrain > grain = grainFactory->createInstance(m_grain);
 	if (!grain)
 		return 0;
 

@@ -3,6 +3,7 @@
 #include "Core/Serialization/MemberRef.h"
 #include "Sound/Resound/InLoopOutGrain.h"
 #include "Sound/Resound/InLoopOutGrainData.h"
+#include "Sound/Resound/IGrainFactory.h"
 
 namespace traktor
 {
@@ -16,14 +17,14 @@ InLoopOutGrainData::InLoopOutGrainData()
 {
 }
 
-Ref< IGrain > InLoopOutGrainData::createInstance(resource::IResourceManager* resourceManager) const
+Ref< IGrain > InLoopOutGrainData::createInstance(IGrainFactory* grainFactory) const
 {
 	Ref< IGrain > inGrain, inLoopGrain, outGrain, outLoopGrain;
 
-	inGrain = m_inGrain ? m_inGrain->createInstance(resourceManager) : 0;
-	inLoopGrain = m_inLoopGrain ? m_inLoopGrain->createInstance(resourceManager) : 0;
-	outGrain = m_outGrain ? m_outGrain->createInstance(resourceManager) : 0;
-	outLoopGrain = m_outLoopGrain ? m_outLoopGrain->createInstance(resourceManager) : 0;
+	inGrain = grainFactory->createInstance(m_inGrain);
+	inLoopGrain = grainFactory->createInstance(m_inLoopGrain);
+	outGrain = grainFactory->createInstance(m_outGrain);
+	outLoopGrain = grainFactory->createInstance(m_outLoopGrain);
 
 	return new InLoopOutGrain(
 		getParameterHandle(m_id),

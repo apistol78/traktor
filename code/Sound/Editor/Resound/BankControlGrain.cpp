@@ -19,6 +19,7 @@ BankControlGrain::BankControlGrain(BankControlGrain* parent, IGrainData* grain, 
 ,	m_grain(grain)
 ,	m_text(text)
 ,	m_image(image)
+,	m_active(false)
 {
 	m_bitmapGrain = ui::Bitmap::load(c_ResourceGrain, sizeof(c_ResourceGrain), L"png");
 }
@@ -43,6 +44,11 @@ std::wstring BankControlGrain::getText() const
 	return m_text;
 }
 
+void BankControlGrain::setActive(bool active)
+{
+	m_active = active;
+}
+
 void BankControlGrain::mouseDown(ui::custom::AutoWidget* widget, const ui::Point& position)
 {
 	ui::CommandEvent commandEvent(widget, this);
@@ -53,9 +59,15 @@ void BankControlGrain::paint(ui::custom::AutoWidget* widget, ui::Canvas& canvas,
 {
 	bool focus = bool(widget->getFocusCell() == this);
 
+	int32_t y = 0;
+	if (focus)
+		y += 32;
+	if (m_active)
+		y += 64;
+
 	canvas.drawBitmap(
 		rect.getTopLeft(),
-		ui::Point(0, focus ? 32 : 0),
+		ui::Point(0, y),
 		ui::Size(128, 32),
 		m_bitmapGrain,
 		ui::BmAlpha
@@ -65,7 +77,7 @@ void BankControlGrain::paint(ui::custom::AutoWidget* widget, ui::Canvas& canvas,
 		rect.getTopLeft(),
 		ui::Point(
 			(m_image % 4) * 32,
-			64 + (m_image / 4) * 32
+			128 + (m_image / 4) * 32
 		),
 		ui::Size(32, 32),
 		m_bitmapGrain,

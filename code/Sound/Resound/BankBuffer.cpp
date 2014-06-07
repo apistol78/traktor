@@ -60,6 +60,14 @@ const IGrain* BankBuffer::getCurrentGrain(const ISoundBufferCursor* cursor) cons
 	return currentGrain->getCurrentGrain(bankCursor->m_grainCursor);
 }
 
+void BankBuffer::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	const BankBufferCursor* bankCursor = static_cast< const BankBufferCursor* >(cursor);
+	const IGrain* currentGrain = m_grains[bankCursor->m_grainIndex];
+	currentGrain->getActiveGrains(bankCursor->m_grainCursor, outActiveGrains);
+}
+
 Ref< ISoundBufferCursor > BankBuffer::createCursor() const
 {
 	if (m_grains.empty())

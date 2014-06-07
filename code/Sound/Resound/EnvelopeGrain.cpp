@@ -106,6 +106,49 @@ const IGrain* EnvelopeGrain::getCurrentGrain(const ISoundBufferCursor* cursor) c
 	return this;
 }
 
+void EnvelopeGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const
+{
+	const EnvelopeGrainCursor* envelopeCursor = static_cast< const EnvelopeGrainCursor* >(cursor);
+	T_ASSERT (envelopeCursor);
+
+	outActiveGrains.push_back(this);
+
+	float p = envelopeCursor->m_lastP;
+	for (uint32_t i = 0; i < m_grains.size(); ++i)
+	{
+		float I = m_grains[i].in;
+		float O = m_grains[i].out;
+		float Ie = m_grains[i].easeIn;
+		float Oe = m_grains[i].easeOut;
+
+		if (p < I - Ie)
+			continue;
+		if (p > O + Oe)
+			continue;
+
+		float v = 0.0f;
+
+		if (p < I)
+		{
+			float f = (p - I + Ie) / Ie;
+			v = std::sin(f * PI / 2.0f);
+		}
+		else if (p > O)
+		{
+			float f = 1.0f - (p - O) / Oe;
+			v = std::sin(f * PI / 2.0f);
+		}
+		else
+			v = 1.0f;
+
+		if (v < FUZZY_EPSILON)
+			continue;
+
+		if (m_grains[i].grain)
+			m_grains[i].grain->getActiveGrains(envelopeCursor->m_cursors[i], outActiveGrains);
+	}
+}
+
 bool EnvelopeGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const
 {
 	EnvelopeGrainCursor* envelopeCursor = static_cast< EnvelopeGrainCursor* >(cursor);

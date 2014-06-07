@@ -1,6 +1,7 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRef.h"
+#include "Sound/Resound/IGrainFactory.h"
 #include "Sound/Resound/TriggerGrain.h"
 #include "Sound/Resound/TriggerGrainData.h"
 
@@ -17,9 +18,9 @@ TriggerGrainData::TriggerGrainData()
 {
 }
 
-Ref< IGrain > TriggerGrainData::createInstance(resource::IResourceManager* resourceManager) const
+Ref< IGrain > TriggerGrainData::createInstance(IGrainFactory* grainFactory) const
 {
-	Ref< IGrain > grain = m_grain->createInstance(resourceManager);
+	Ref< IGrain > grain = grainFactory->createInstance(m_grain);
 	if (!grain)
 		return 0;
 
