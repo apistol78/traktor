@@ -90,6 +90,16 @@ const IGrain* RandomGrain::getCurrentGrain(const ISoundBufferCursor* cursor) con
 	return randomCursor->m_grain->getCurrentGrain(randomCursor->m_grainCursor);
 }
 
+void RandomGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const
+{
+	const RandomGrainCursor* randomCursor = static_cast< const RandomGrainCursor* >(cursor);
+	T_ASSERT (randomCursor);
+
+	outActiveGrains.push_back(this);
+
+	randomCursor->m_grain->getActiveGrains(randomCursor->m_grainCursor, outActiveGrains);
+}
+
 bool RandomGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const
 {
 	RandomGrainCursor* randomCursor = static_cast< RandomGrainCursor* >(cursor);

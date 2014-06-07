@@ -276,6 +276,55 @@ private:
 
 #elif OGG_VORBIS_DECODER == OGG_VORBIS_DECODER_STB
 
+const wchar_t* const getErrorDescription(int32_t error)
+{
+	switch (error)
+	{
+	case VORBIS__no_error:
+		return L"No error";
+	case VORBIS_need_more_data:
+		return L"Need more data";
+	case VORBIS_invalid_api_mixing:
+		return L"Invalid API mixing";
+	case VORBIS_outofmem:
+		return L"Out of memory";
+	case VORBIS_feature_not_supported:
+		return L"Feature not supported";
+	case VORBIS_too_many_channels:
+		return L"Too many channels";
+	case VORBIS_file_open_failure:
+		return L"File open failure";
+	case VORBIS_seek_without_length:
+		return L"Seek without length";
+	case VORBIS_unexpected_eof:
+		return L"Unexpected EOF";
+	case VORBIS_seek_invalid:
+		return L"Seek invalid";
+	case VORBIS_invalid_setup:
+		return L"Invalid setup";
+	case VORBIS_invalid_stream:
+		return L"Invalid stream";
+	case VORBIS_missing_capture_pattern:
+		return L"Missing capture pattern";
+	case VORBIS_invalid_stream_structure_version:
+		return L"Invalid stream structure version";
+	case VORBIS_continued_packet_flag_invalid:
+		return L"Continued packet flag invalid";
+	case VORBIS_incorrect_stream_serial_number:
+		return L"Incorrect stream serial number";
+	case VORBIS_invalid_first_page:
+		return L"Invalid first page";
+	case VORBIS_bad_packet_type:
+		return L"Bad packet type";
+	case VORBIS_cant_find_last_page:
+		return L"Can't find last page";
+	case VORBIS_seek_failed:
+		return L"Seek failed";
+	default:
+		return L"Unknown";
+	}
+}
+
 class OggStreamDecoderImpl : public Object
 {
 public:
@@ -301,14 +350,20 @@ public:
 		for (;;)
 		{
 			if (!read())
+			{
+				log::error << L"Unrecoverable OGG decoder error (Read data failed)" << Endl;
 				return false;
+			}
 
 			int32_t used = 0, error = 0;
 			m_vorbis = stb_vorbis_open_pushdata(m_data.ptr(), m_buffered, &used, &error, 0);
 			if (m_vorbis)
 				break;
 			if (error != VORBIS_need_more_data)
+			{
+				log::error << L"Unrecoverable OGG decoder error (" << getErrorDescription(error) << L")" << Endl;
 				return false;
+			}
 
 			if (used > 0)
 				consume(used);

@@ -4,6 +4,7 @@
 #include "Resource/IResourceManager.h"
 #include "Sound/Resound/BankBuffer.h"
 #include "Sound/Resound/BankResource.h"
+#include "Sound/Resound/GrainFactory.h"
 #include "Sound/Resound/IGrain.h"
 #include "Sound/Resound/IGrainData.h"
 #include "Sound/Sound.h"
@@ -35,12 +36,13 @@ BankResource::BankResource(const RefArray< IGrainData >& grains, const std::wstr
 
 Ref< Sound > BankResource::createSound(resource::IResourceManager* resourceManager, db::Instance* resourceInstance) const
 {
+	GrainFactory grainFactory(resourceManager);
 	RefArray< IGrain > grains;
 
 	grains.resize(m_grains.size());
 	for (uint32_t i = 0; i < m_grains.size(); ++i)
 	{
-		grains[i] = m_grains[i]->createInstance(resourceManager);
+		grains[i] = grainFactory.createInstance(m_grains[i]);
 		if (!grains[i])
 			return 0;
 	}

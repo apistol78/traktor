@@ -35,6 +35,11 @@ BankControlGrain* BankControl::getSelected() const
 	return checked_type_cast< BankControlGrain* >(getFocusCell());
 }
 
+const RefArray< BankControlGrain >& BankControl::getGrains() const
+{
+	return m_cells;
+}
+
 void BankControl::layoutCells(const ui::Rect& rc)
 {
 	ui::Rect rowRect = rc;

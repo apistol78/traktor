@@ -22,7 +22,7 @@ class T_DLLCLASS SequenceGrainData : public IGrainData
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< IGrain > createInstance(resource::IResourceManager* resourceManager) const;
+	virtual Ref< IGrain > createInstance(IGrainFactory* grainFactory) const;
 
 	virtual void serialize(ISerializer& s);
 

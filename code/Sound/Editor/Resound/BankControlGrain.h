@@ -27,6 +27,8 @@ public:
 
 	std::wstring getText() const;
 
+	void setActive(bool active);
+
 	virtual void mouseDown(ui::custom::AutoWidget* widget, const ui::Point& position);
 
 	virtual void paint(ui::custom::AutoWidget* widget, ui::Canvas& canvas, const ui::Rect& rect);
@@ -37,6 +39,7 @@ private:
 	Ref< IGrainData > m_grain;
 	std::wstring m_text;
 	int32_t m_image;
+	bool m_active;
 };
 
 	}

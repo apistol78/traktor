@@ -2,6 +2,7 @@
 #define traktor_sound_IGrain_H
 
 #include "Core/Object.h"
+#include "Core/RefArray.h"
 #include "Sound/Types.h"
 
 // import/export mechanism.
@@ -33,6 +34,8 @@ public:
 	virtual void updateCursor(ISoundBufferCursor* cursor) const = 0;
 
 	virtual const IGrain* getCurrentGrain(const ISoundBufferCursor* cursor) const = 0;
+
+	virtual void getActiveGrains(const ISoundBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const = 0;
 
 	virtual bool getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const = 0;
 };

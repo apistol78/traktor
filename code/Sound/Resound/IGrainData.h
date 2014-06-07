@@ -13,24 +13,18 @@
 
 namespace traktor
 {
-	namespace resource
-	{
-
-class IResourceManager;
-
-	}
-
 	namespace sound
 	{
 
 class IGrain;
+class IGrainFactory;
 
 class T_DLLCLASS IGrainData : public ISerializable
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< IGrain > createInstance(resource::IResourceManager* resourceManager) const = 0;
+	virtual Ref< IGrain > createInstance(IGrainFactory* grainFactory) const = 0;
 };
 
 	}

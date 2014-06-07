@@ -6,6 +6,7 @@
 #include "Resource/Proxy.h"
 #include "Sound/IFilter.h"
 #include "Sound/Sound.h"
+#include "Sound/Resound/IGrainFactory.h"
 #include "Sound/Resound/PlayGrain.h"
 #include "Sound/Resound/PlayGrainData.h"
 
@@ -23,10 +24,10 @@ PlayGrainData::PlayGrainData()
 {
 }
 
-Ref< IGrain > PlayGrainData::createInstance(resource::IResourceManager* resourceManager) const
+Ref< IGrain > PlayGrainData::createInstance(IGrainFactory* grainFactory) const
 {
 	resource::Proxy< Sound > sound;
-	if (!resourceManager->bind(m_sound, sound))
+	if (!grainFactory->getResourceManager()->bind(m_sound, sound))
 		return 0;
 
 	return new PlayGrain(

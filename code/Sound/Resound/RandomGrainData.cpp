@@ -1,6 +1,7 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRefArray.h"
+#include "Sound/Resound/IGrainFactory.h"
 #include "Sound/Resound/RandomGrain.h"
 #include "Sound/Resound/RandomGrainData.h"
 
@@ -16,14 +17,14 @@ RandomGrainData::RandomGrainData()
 {
 }
 
-Ref< IGrain > RandomGrainData::createInstance(resource::IResourceManager* resourceManager) const
+Ref< IGrain > RandomGrainData::createInstance(IGrainFactory* grainFactory) const
 {
 	RefArray< IGrain > grains;
 
 	grains.resize(m_grains.size());
 	for (uint32_t i = 0; i < m_grains.size(); ++i)
 	{
-		grains[i] = m_grains[i]->createInstance(resourceManager);
+		grains[i] = grainFactory->createInstance(m_grains[i]);
 		if (!grains[i])
 			return 0;
 	}

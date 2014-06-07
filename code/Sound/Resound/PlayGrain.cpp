@@ -96,6 +96,11 @@ const IGrain* PlayGrain::getCurrentGrain(const ISoundBufferCursor* cursor) const
 	return this;
 }
 
+void PlayGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const
+{
+	outActiveGrains.push_back(this);
+}
+
 bool PlayGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const
 {
 	PlayGrainCursor* playCursor = static_cast< PlayGrainCursor* >(cursor);

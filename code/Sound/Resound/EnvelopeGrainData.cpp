@@ -5,6 +5,7 @@
 #include "Core/Serialization/MemberStl.h"
 #include "Sound/Resound/EnvelopeGrain.h"
 #include "Sound/Resound/EnvelopeGrainData.h"
+#include "Sound/Resound/IGrainFactory.h"
 
 namespace traktor
 {
@@ -55,14 +56,14 @@ void EnvelopeGrainData::setResponse(float response)
 	m_response = response;
 }
 
-Ref< IGrain > EnvelopeGrainData::createInstance(resource::IResourceManager* resourceManager) const
+Ref< IGrain > EnvelopeGrainData::createInstance(IGrainFactory* grainFactory) const
 {
 	std::vector< EnvelopeGrain::Grain > grains;
 
 	grains.resize(m_grains.size());
 	for (uint32_t i = 0; i < m_grains.size(); ++i)
 	{
-		grains[i].grain = m_grains[i].grain->createInstance(resourceManager);
+		grains[i].grain = grainFactory->createInstance(m_grains[i].grain);
 		if (!grains[i].grain)
 			return 0;
 

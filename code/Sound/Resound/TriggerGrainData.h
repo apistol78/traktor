@@ -24,7 +24,7 @@ class T_DLLCLASS TriggerGrainData : public IGrainData
 public:
 	TriggerGrainData();
 
-	virtual Ref< IGrain > createInstance(resource::IResourceManager* resourceManager) const;
+	virtual Ref< IGrain > createInstance(IGrainFactory* grainFactory) const;
 
 	virtual void serialize(ISerializer& s);
 

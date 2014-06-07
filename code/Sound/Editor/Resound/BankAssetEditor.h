@@ -47,6 +47,7 @@ class BankAsset;
 class BankBuffer;
 class BankControl;
 class BankControlGrain;
+class IGrain;
 class IGrainData;
 class IGrainFacade;
 class GrainProperties;
@@ -90,6 +91,7 @@ private:
 	Ref< SoundSystem > m_soundSystem;
 	Ref< SoundChannel > m_soundChannel;
 	Ref< BankBuffer > m_bankBuffer;
+	std::map< const IGrainData*, const IGrain* > m_grainInstances;
 
 	void updateBankControl(BankControlGrain* parent, const RefArray< IGrainData >& grains);
 
