@@ -58,7 +58,7 @@ bool resolveScript(editor::IPipelineBuilder* pipelineBuilder, const Guid& script
 
 	ResolvedScript rs;
 	rs.id = scriptGuid;
-	rs.name = scriptInstance->getName();
+	rs.name = scriptInstance->getPath();
 	rs.script = script;
 	outScripts.push_back(rs);
 
@@ -80,7 +80,7 @@ struct ErrorCallback : public IErrorCallback
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptPipeline", 19, ScriptPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptPipeline", 20, ScriptPipeline, editor::DefaultPipeline)
 
 ScriptPipeline::~ScriptPipeline()
 {
