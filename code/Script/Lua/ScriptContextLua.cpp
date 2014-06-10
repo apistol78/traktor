@@ -211,7 +211,39 @@ int32_t ScriptContextLua::runtimeError(lua_State* luaState)
 	T_ASSERT (this_);
 	T_ASSERT (this_->m_scriptManager);
 	log::error << L"LUA RUNTIME ERROR; Debugger halted if attached." << Endl;
-	dumpStack(luaState, log::error);
+
+	std::wstring error = mbstows(lua_tostring(luaState, -1));
+	
+	const SourceMapping* errorMap = 0;
+	std::wstring errorMessage;
+	int32_t errorLine;
+
+	if (error.size() >= 43 && error[0] == L'{' && error[42] == L':')
+	{
+		size_t pos = error.find(L':', 43);
+		if (pos != error.npos)
+		{
+			errorMessage = error.substr(pos + 1);
+			errorLine = parseString< int32_t >(error.substr(43, pos - 43));
+
+			const source_map_t& map = this_->m_map;
+			for (source_map_t::const_reverse_iterator i = map.rbegin(); i != map.rend(); ++i)
+			{
+				if (errorLine >= i->line)
+				{
+					errorMap = &(*i);
+					errorLine = errorLine - i->line;
+					break;
+				}
+			}
+		}
+	}
+
+	if (errorMap)
+		log::error << errorMap->name << L":" << errorLine << L":" << errorMessage << Endl;
+	else
+		log::error << error << Endl;
+
 	this_->m_scriptManager->breakDebugger(luaState);
 	return 0;
 }
