@@ -36,12 +36,12 @@ public:
 
 	bool commit(Context* context);
 
-	Action* get(const TypeInfo& actionType) const;
+	uint32_t get(const TypeInfo& actionType, RefArray< Action >& outActions) const;
 
 	template < typename ActionType >
-	ActionType* get() const
+	uint32_t get(RefArray< ActionType >& outActions) const
 	{
-		return checked_type_cast< ActionType*, true >(get(type_of< ActionType >()));
+		return get(type_of< ActionType >(), (RefArray< Action >&)outActions);
 	}
 
 private:

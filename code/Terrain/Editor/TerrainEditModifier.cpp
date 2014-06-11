@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include <cstring>
 #include "Core/RefArray.h"
 #include "Core/Io/IStream.h"
@@ -388,7 +386,7 @@ bool TerrainEditModifier::cursorMoved(
 	const Vector4& worldRayDirection
 )
 {
-	if (!m_entity)
+	if (!m_entity || !m_heightfield)
 		return false;
 
 	Scalar distance;
