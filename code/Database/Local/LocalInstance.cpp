@@ -172,10 +172,10 @@ Ref< IStream > LocalInstance::readObject(const TypeInfo*& outSerializerType) con
 
 	if (m_transaction)
 	{
-		Ref< ActionWriteObject > action = m_transaction->get< ActionWriteObject >();
-		if (action)
+		RefArray< ActionWriteObject > actions;
+		if (m_transaction->get< ActionWriteObject >(actions) > 0)
 		{
-			const std::vector< uint8_t >& buffer = action->getBuffer();
+			const std::vector< uint8_t >& buffer = actions[0]->getBuffer();
 			if (!buffer.empty())
 				objectStream = new MemoryStream(&buffer[0], buffer.size());
 		}
@@ -263,6 +263,23 @@ bool LocalInstance::removeAllData()
 
 Ref< IStream > LocalInstance::readData(const std::wstring& dataName) const
 {
+	if (m_transaction)
+	{
+		RefArray< ActionWriteData > actions;
+		if (m_transaction->get< ActionWriteData >(actions) > 0)
+		{
+			for (RefArray< ActionWriteData >::const_iterator i = actions.begin(); i != actions.end(); ++i)
+			{
+				if ((*i)->getName() == dataName)
+				{
+					const std::vector< uint8_t >& buffer = (*i)->getBuffer();
+					if (!buffer.empty())
+						return new MemoryStream(&buffer[0], buffer.size());
+				}
+			}
+		}
+	}
+
 	Path instanceDataPath = getInstanceDataPath(m_instancePath, dataName);
 	return FileSystem::getInstance().open(instanceDataPath, File::FmRead);
 }
