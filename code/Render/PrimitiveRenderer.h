@@ -277,7 +277,7 @@ public:
 
 	void end();
 
-	const Matrix44& getProjection() const { return m_projection; }
+	const Matrix44& getProjection() const { return m_projection.back(); }
 
 	const Matrix44& getView() const { return m_view.back(); }
 
@@ -317,6 +317,7 @@ private:
 
 	struct Batch
 	{
+		uint32_t projection;
 		DepthState depthState;
 		Ref< ITexture > texture;
 		Primitives primitives;
@@ -329,7 +330,7 @@ private:
 	struct Vertex* m_vertexStart;
 	struct Vertex* m_vertex;
 	AlignedVector< Batch > m_batches;
-	Matrix44 m_projection;
+	AlignedVector< Matrix44 > m_projection;
 	AlignedVector< Matrix44 > m_view;
 	AlignedVector< Matrix44 > m_world;
 	AlignedVector< DepthState > m_depthState;

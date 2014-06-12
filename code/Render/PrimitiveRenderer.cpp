@@ -1,4 +1,5 @@
 #include "Core/Math/Const.h"
+#include "Core/Math/Half.h"
 #include "Core/Math/Plane.h"
 #include "Core/Misc/Endian.h"
 #include "Render/IRenderSystem.h"
@@ -34,7 +35,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.PrimitiveRenderer", PrimitiveRenderer, O
 struct Vertex
 {
 	float pos[4];
-	float texCoord[2];
+	half_t texCoord[2];
 	uint32_t rgb;
 	
 	T_FORCE_INLINE void set(const Vector4& pos_, const Color4ub& rgb_)
@@ -46,8 +47,8 @@ struct Vertex
 	T_FORCE_INLINE void set(const Vector4& pos_, const Vector2& texCoord_, const Color4ub& rgb_)
 	{
 		pos_.storeUnaligned(pos);
-		texCoord[0] = texCoord_.x;
-		texCoord[1] = texCoord_.y;
+		texCoord[0] = floatToHalf(texCoord_.x);
+		texCoord[1] = floatToHalf(texCoord_.y);
 		rgb = rgb_.getABGR();
 	}
 };
@@ -98,7 +99,7 @@ bool PrimitiveRenderer::create(
 	));
 	vertexElements.push_back(VertexElement(
 		DuCustom,
-		DtFloat2,
+		DtHalf2,
 		offsetof(Vertex, texCoord),
 		0
 	));
@@ -123,7 +124,7 @@ bool PrimitiveRenderer::create(
 	m_vertexStart =
 	m_vertex = 0;
 
-	m_projection = Matrix44::identity();
+	m_projection.push_back(Matrix44::identity());
 	m_view.push_back(Matrix44::identity());
 	m_world.push_back(Matrix44::identity());
 	m_depthState.push_back(DepthState(true, false, false));
@@ -190,8 +191,7 @@ void PrimitiveRenderer::popDepthState()
 
 void PrimitiveRenderer::setProjection(const Matrix44& projection)
 {
-	flush();
-	m_projection = projection;
+	m_projection.push_back(projection);
 }
 
 void PrimitiveRenderer::setClipDistance(float nearZ)
@@ -211,14 +211,18 @@ void PrimitiveRenderer::drawLine(
 	Vector4 v1 = m_worldView * start.xyz1();
 	Vector4 v2 = m_worldView * end.xyz1();
 
+	uint32_t projection = m_projection.size() - 1;
+
 	if (
 		m_batches.empty() ||
+		m_batches.back().projection != projection ||
 		m_batches.back().depthState != m_depthState.back() ||
 		m_batches.back().texture != 0 ||
 		m_batches.back().primitives.type != PtLines
 	)
 	{
 		Batch batch;
+		batch.projection = projection;
 		batch.depthState = m_depthState.back();
 		batch.primitives = Primitives(PtLines, int(m_vertex - m_vertexStart), 0);
 		m_batches.push_back(batch);
@@ -273,8 +277,8 @@ void PrimitiveRenderer::drawLine(
 		}
 	}
 
-	Vector4 cs1 = m_projection * vs1;
-	Vector4 cs2 = m_projection * vs2;
+	Vector4 cs1 = m_projection.back() * vs1;
+	Vector4 cs2 = m_projection.back() * vs2;
 
 	Scalar cw1 = cs1.w(), cw2 = cs2.w();
 	if (cw1 <= Scalar(FUZZY_EPSILON) || cw2 <= Scalar(FUZZY_EPSILON))
@@ -302,14 +306,18 @@ void PrimitiveRenderer::drawLine(
 	Scalar dx2 = dx * cs2.w();
 	Scalar dy2 = dy * cs2.w();
 
+	uint32_t projection = m_projection.size() - 1;
+
 	if (
 		m_batches.empty() ||
+		m_batches.back().projection != projection ||
 		m_batches.back().depthState != m_depthState.back() ||
 		m_batches.back().texture != 0 ||
 		m_batches.back().primitives.type != PtTriangles
 	)
 	{
 		Batch batch;
+		batch.projection = projection;
 		batch.depthState = m_depthState.back();
 		batch.primitives = Primitives(PtTriangles, int(m_vertex - m_vertexStart), 0);
 		m_batches.push_back(batch);
@@ -615,19 +623,23 @@ void PrimitiveRenderer::drawSolidPoint(
 		flush();
 
 	Vector4 cv = m_worldView * center.xyz1();
-	Vector4 cc = m_projection * cv;
+	Vector4 cc = m_projection.back() * cv;
 
 	Scalar dx = cc.w() * Scalar(size / m_viewWidth);
 	Scalar dy = cc.w() * Scalar(size / m_viewHeight);
 
+	uint32_t projection = m_projection.size() - 1;
+
 	if (
 		m_batches.empty() ||
+		m_batches.back().projection != projection ||
 		m_batches.back().depthState != m_depthState.back() ||
 		m_batches.back().texture != 0 ||
 		m_batches.back().primitives.type != PtTriangles
 	)
 	{
 		Batch batch;
+		batch.projection = projection;
 		batch.depthState = m_depthState.back();
 		batch.primitives = Primitives(PtTriangles, int(m_vertex - m_vertexStart), 0);
 		m_batches.push_back(batch);
@@ -732,14 +744,18 @@ void PrimitiveRenderer::drawSolidTriangle(
 	Vector4 v2 = m_worldView * vert2.xyz1();
 	Vector4 v3 = m_worldView * vert3.xyz1();
 
+	uint32_t projection = m_projection.size() - 1;
+
 	if (
 		m_batches.empty() ||
+		m_batches.back().projection != projection ||
 		m_batches.back().depthState != m_depthState.back() ||
 		m_batches.back().texture != 0 ||
 		m_batches.back().primitives.type != PtTriangles
 	)
 	{
 		Batch batch;
+		batch.projection = projection;
 		batch.depthState = m_depthState.back();
 		batch.primitives = Primitives(PtTriangles, int(m_vertex - m_vertexStart), 0);
 		m_batches.push_back(batch);
@@ -806,14 +822,18 @@ void PrimitiveRenderer::drawTextureTriangle(
 	Vector4 v2 = m_worldView * vert2.xyz1();
 	Vector4 v3 = m_worldView * vert3.xyz1();
 
+	uint32_t projection = m_projection.size() - 1;
+
 	if (
 		m_batches.empty() ||
+		m_batches.back().projection != projection ||
 		m_batches.back().depthState != m_depthState.back() ||
 		m_batches.back().texture != texture ||
 		m_batches.back().primitives.type != PtTriangles
 	)
 	{
 		Batch batch;
+		batch.projection = projection;
 		batch.depthState = m_depthState.back();
 		batch.texture = texture;
 		batch.primitives = Primitives(PtTriangles, int(m_vertex - m_vertexStart), 0);
@@ -1011,7 +1031,9 @@ bool PrimitiveRenderer::begin(IRenderView* renderView, const Matrix44& projectio
 	if (!m_vertex)
 		return false;
 
-	m_projection = projection;
+	m_projection.resize(0);
+	m_projection.push_back(projection);
+
 	m_view.push_back(Matrix44::identity());
 	m_world.push_back(Matrix44::identity());
 	m_depthState.push_back(DepthState(true, false, false));
@@ -1030,14 +1052,14 @@ void PrimitiveRenderer::end()
 
 	m_vertexBuffers[m_currentBuffer]->unlock();
 
-	m_shader->setMatrixParameter(s_handleProjection, m_projection);
-
 	for (AlignedVector< Batch >::iterator i = m_batches.begin(); i != m_batches.end(); ++i)
 	{
 		m_shader->setCombination(s_handleDepthTest, i->depthState.depthTest);
 		m_shader->setCombination(s_handleDepthWrite, i->depthState.depthWrite);
 		m_shader->setCombination(s_handleDepth, i->depthState.depthOutput);
 		m_shader->setCombination(s_handleTexture, i->texture != 0);
+
+		m_shader->setMatrixParameter(s_handleProjection, m_projection[i->projection]);
 
 		if (i->texture)
 			m_shader->setTextureParameter(s_handleTexture, i->texture);
@@ -1067,14 +1089,14 @@ void PrimitiveRenderer::flush()
 
 	m_vertexBuffers[m_currentBuffer]->unlock();
 
-	m_shader->setMatrixParameter(s_handleProjection, m_projection);
-
 	for (AlignedVector< Batch >::iterator i = m_batches.begin(); i != m_batches.end(); ++i)
 	{
 		m_shader->setCombination(s_handleDepthTest, i->depthState.depthTest);
 		m_shader->setCombination(s_handleDepthWrite, i->depthState.depthWrite);
 		m_shader->setCombination(s_handleDepth, i->depthState.depthOutput);
 		m_shader->setCombination(s_handleTexture, i->texture != 0);
+
+		m_shader->setMatrixParameter(s_handleProjection, m_projection[i->projection]);
 
 		if (i->texture)
 			m_shader->setTextureParameter(s_handleTexture, i->texture);
