@@ -47,6 +47,8 @@
 #include "Ui/Events/IdleEvent.h"
 #include "World/WorldRenderView.h"
 #include "World/Forward/WorldRenderPassForward.h"
+#include "World/PostProcess/PostProcess.h"
+#include "World/PostProcess/PostProcessSettings.h"
 
 namespace traktor
 {
@@ -117,7 +119,7 @@ bool EffectPreviewControl::create(
 	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 32;
 	desc.stencilBits = 0;
-	desc.multiSample = 4;
+	desc.multiSample = 0;
 	desc.waitVBlank = false;
 	desc.nativeWindowHandle = getIWidget()->getSystemHandle();
 
@@ -223,6 +225,12 @@ void EffectPreviewControl::setBackground(const resource::Id< render::ISimpleText
 	m_resourceManager->bind(background, m_background);
 }
 
+void EffectPreviewControl::setPostProcess(const resource::Id< world::PostProcessSettings >& postProcess)
+{
+	m_resourceManager->bind(postProcess, m_postProcessSettings);
+	updateRenderer();
+}
+
 void EffectPreviewControl::showGuide(bool guideVisible)
 {
 	m_guideVisible = guideVisible;
@@ -299,6 +307,57 @@ void EffectPreviewControl::updateSettings()
 	m_colorGrid = colors->getProperty< PropertyColor >(L"Grid");
 }
 
+void EffectPreviewControl::updateRenderer()
+{
+	safeDestroy(m_depthTexture);
+	safeDestroy(m_postTargetSet);
+	safeDestroy(m_postProcess);
+
+	if (!m_renderView)
+		return;
+
+	ui::Size sz = getInnerRect().getSize();
+
+	m_renderView->reset(sz.cx, sz.cy);
+	m_renderView->setViewport(render::Viewport(0, 0, sz.cx, sz.cy, 0, 1));
+
+	render::RenderTargetSetCreateDesc rtscd;
+	rtscd.count = 1;
+	rtscd.width = sz.cx;
+	rtscd.height = sz.cy;
+	rtscd.multiSample = 0/*desc.multiSample*/;
+	rtscd.createDepthStencil = false;
+	rtscd.usingPrimaryDepthStencil = true;
+	rtscd.preferTiled = false;
+	rtscd.ignoreStencil = true;
+	rtscd.generateMips = false;
+	rtscd.targets[0].format = render::TfR32F;
+	rtscd.targets[0].sRGB = false;
+
+	m_depthTexture = m_renderSystem->createRenderTargetSet(rtscd);
+
+	// Re-create post processing.
+	if (m_postProcessSettings)
+	{
+		m_postProcess = new world::PostProcess();
+		m_postProcess->create(m_postProcessSettings, 0, m_resourceManager, m_renderSystem, sz.cx, sz.cy);
+
+		render::RenderTargetSetCreateDesc desc;
+		desc.count = 1;
+		desc.width = sz.cx;
+		desc.height = sz.cy;
+		desc.multiSample = 0;
+		desc.createDepthStencil = false;
+		desc.usingPrimaryDepthStencil = true;
+		desc.preferTiled = false;
+		desc.ignoreStencil = false;
+		desc.generateMips = false;
+		desc.targets[0].format = render::TfR11G11B10F;
+		desc.targets[0].sRGB = false;
+		m_postTargetSet = m_renderSystem->createRenderTargetSet(desc);
+	}
+}
+
 void EffectPreviewControl::eventButtonDown(ui::Event* event)
 {
 	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
@@ -351,35 +410,14 @@ void EffectPreviewControl::eventMouseMove(ui::Event* event)
 
 void EffectPreviewControl::eventSize(ui::Event* event)
 {
-	if (!m_renderView)
-		return;
-
-	ui::SizeEvent* s = static_cast< ui::SizeEvent* >(event);
-	ui::Size sz = s->getSize();
-
-	m_renderView->reset(sz.cx, sz.cy);
-	m_renderView->setViewport(render::Viewport(0, 0, sz.cx, sz.cy, 0, 1));
-
-	safeDestroy(m_depthTexture);
-
-	render::RenderTargetSetCreateDesc rtscd;
-	rtscd.count = 1;
-	rtscd.width = sz.cx;
-	rtscd.height = sz.cy;
-	rtscd.multiSample = 4/*desc.multiSample*/;
-	rtscd.createDepthStencil = false;
-	rtscd.usingPrimaryDepthStencil = true;
-	rtscd.preferTiled = false;
-	rtscd.ignoreStencil = true;
-	rtscd.generateMips = false;
-	rtscd.targets[0].format = render::TfR32F;
-	rtscd.targets[0].sRGB = false;
-
-	m_depthTexture = m_renderSystem->createRenderTargetSet(rtscd);
+	updateRenderer();
 }
 
 void EffectPreviewControl::eventPaint(ui::Event* event)
 {
+	float time = float(m_timer.getElapsedTime());
+	float deltaTime = float(m_timer.getDeltaTime() * 0.9f + m_lastDeltaTime * 0.1f);
+
 	if (!m_renderView)
 		return;
 
@@ -413,82 +451,42 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 	Vector4 cameraPosition = viewInverse.translation().xyz1();
 	Plane cameraPlane(viewInverse.axisZ(), viewInverse.translation());
 
-	if (m_primitiveRenderer->begin(m_renderView, Matrix44::identity()))
+	if (!m_primitiveRenderer->begin(m_renderView, Matrix44::identity()))
+		return;
+
+	if (m_background)
 	{
-		if (m_background)
-		{
-			m_primitiveRenderer->pushView(Matrix44::identity());
-			m_primitiveRenderer->pushDepthState(false, false, false);
+		m_primitiveRenderer->pushView(Matrix44::identity());
+		m_primitiveRenderer->pushDepthState(false, false, false);
 
-			m_primitiveRenderer->drawTextureQuad(
-				Vector4(-1.0f,  1.0f, 1.0f, 1.0f), Vector2(0.0f, 0.0f),
-				Vector4( 1.0f,  1.0f, 1.0f, 1.0f), Vector2(1.0f, 0.0f),
-				Vector4( 1.0f, -1.0f, 1.0f, 1.0f), Vector2(1.0f, 1.0f),
-				Vector4(-1.0f, -1.0f, 1.0f, 1.0f), Vector2(0.0f, 1.0f),
-				Color4ub(255, 255, 255, 255),
-				m_background
-			);
+		m_primitiveRenderer->drawTextureQuad(
+			Vector4(-1.0f,  1.0f, 1.0f, 1.0f), Vector2(0.0f, 0.0f),
+			Vector4( 1.0f,  1.0f, 1.0f, 1.0f), Vector2(1.0f, 0.0f),
+			Vector4( 1.0f, -1.0f, 1.0f, 1.0f), Vector2(1.0f, 1.0f),
+			Vector4(-1.0f, -1.0f, 1.0f, 1.0f), Vector2(0.0f, 1.0f),
+			Color4ub(255, 255, 255, 255),
+			m_background
+		);
 
-			m_primitiveRenderer->popDepthState();
-			m_primitiveRenderer->popView();
-		}
-
-		m_primitiveRenderer->setProjection(projectionTransform);
-		m_primitiveRenderer->pushView(viewTransform);
-
-		for (int x = -10; x <= 10; ++x)
-		{
-			m_primitiveRenderer->drawLine(
-				Vector4(float(x), 0.0f, -10.0f, 1.0f),
-				Vector4(float(x), 0.0f, 10.0f, 1.0f),
-				(x == 0) ? 2.0f : 0.0f,
-				m_colorGrid
-			);
-			m_primitiveRenderer->drawLine(
-				Vector4(-10.0f, 0.0f, float(x), 1.0f),
-				Vector4(10.0f, 0.0f, float(x), 1.0f),
-				(x == 0) ? 2.0f : 0.0f,
-				m_colorGrid
-			);
-		}
-
-		// Draw emitter sources.
-		if (m_effect && m_guideVisible)
-		{
-			const RefArray< EffectLayer >& layers = m_effect->getLayers();
-			for (RefArray< EffectLayer >::const_iterator i = layers.begin(); i != layers.end(); ++i)
-			{
-				Ref< const Emitter > emitter = (*i)->getEmitter();
-				if (!emitter)
-					continue;
-
-				Ref< const Source > source = emitter->getSource();
-				if (!source)
-					continue;
-
-				std::map< const TypeInfo*, Ref< SourceRenderer > >::const_iterator j = m_sourceRenderers.find(&type_of(source));
-				if (j != m_sourceRenderers.end())
-					j->second->render(m_primitiveRenderer, source);
-			}
-		}
-
-		// Draw depth-only ground plane; primary depth and slight tint.
-		if (m_groundClip)
-		{
-			m_primitiveRenderer->pushDepthState(true, true, false);
-			m_primitiveRenderer->drawSolidQuad(
-				Vector4(-1000.0f, 0.0f, -1000.0f, 1.0f),
-				Vector4( 1000.0f, 0.0f, -1000.0f, 1.0f),
-				Vector4( 1000.0f, 0.0f,  1000.0f, 1.0f),
-				Vector4(-1000.0f, 0.0f,  1000.0f, 1.0f),
-				Color4ub(0, 0, 0, 10)
-			);
-			m_primitiveRenderer->popDepthState();
-		}
-
+		m_primitiveRenderer->popDepthState();
 		m_primitiveRenderer->popView();
-		m_primitiveRenderer->end();
 	}
+
+	// Draw depth-only ground plane; primary depth and slight tint.
+	if (m_groundClip)
+	{
+		m_primitiveRenderer->pushDepthState(true, true, false);
+		m_primitiveRenderer->drawSolidQuad(
+			Vector4(-1000.0f, 0.0f, -1000.0f, 1.0f),
+			Vector4( 1000.0f, 0.0f, -1000.0f, 1.0f),
+			Vector4( 1000.0f, 0.0f,  1000.0f, 1.0f),
+			Vector4(-1000.0f, 0.0f,  1000.0f, 1.0f),
+			Color4ub(0, 0, 0, 10)
+		);
+		m_primitiveRenderer->popDepthState();
+	}
+
+	m_primitiveRenderer->end();
 
 	// Draw depth-only ground plane.
 	if (m_depthTexture && m_renderView->begin(m_depthTexture, 0))
@@ -518,11 +516,14 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 		m_renderView->end();
 	}
 
+	if (m_postProcess)
+	{
+		if (m_renderView->begin(m_postTargetSet, 0))
+			m_renderView->clear(render::CfColor, &clearColor, 1.0f, 0);
+	}
+
 	if (m_effectInstance)
 	{
-		float time = float(m_timer.getElapsedTime());
-		float deltaTime = float(m_timer.getDeltaTime() * 0.9f + m_lastDeltaTime * 0.1f);
-
 		m_context.deltaTime = deltaTime * m_timeScale;
 		m_context.soundPlayer = m_soundPlayer;
 
@@ -596,6 +597,74 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 
 		m_lastDeltaTime = deltaTime;
 	}
+
+	if (m_postProcess)
+	{
+		m_renderView->end();
+
+		world::PostProcessStep::Instance::RenderParams params;
+		params.view = viewTransform;
+		params.viewToLight = Matrix44::identity();
+		params.projection = projectionTransform;
+		params.godRayDirection = Vector4(0.0f, 0.0f, -1.0f);
+		params.sliceCount = 0;
+		params.sliceIndex = 0;
+		params.sliceNearZ = 0.0f;
+		params.sliceFarZ = 0.0f;
+		params.shadowFarZ = 0.0f;
+		params.shadowMapBias = 0.0f;
+		params.deltaTime = deltaTime;
+		m_postProcess->render(
+			m_renderView,
+			m_postTargetSet,
+			0,
+			0,
+			params
+		);
+	}
+
+	if (!m_primitiveRenderer->begin(m_renderView, projectionTransform))
+		return;
+
+	m_primitiveRenderer->pushView(viewTransform);
+
+	for (int x = -10; x <= 10; ++x)
+	{
+		m_primitiveRenderer->drawLine(
+			Vector4(float(x), 0.0f, -10.0f, 1.0f),
+			Vector4(float(x), 0.0f, 10.0f, 1.0f),
+			(x == 0) ? 2.0f : 0.0f,
+			m_colorGrid
+		);
+		m_primitiveRenderer->drawLine(
+			Vector4(-10.0f, 0.0f, float(x), 1.0f),
+			Vector4(10.0f, 0.0f, float(x), 1.0f),
+			(x == 0) ? 2.0f : 0.0f,
+			m_colorGrid
+		);
+	}
+
+	// Draw emitter sources.
+	if (m_effect && m_guideVisible)
+	{
+		const RefArray< EffectLayer >& layers = m_effect->getLayers();
+		for (RefArray< EffectLayer >::const_iterator i = layers.begin(); i != layers.end(); ++i)
+		{
+			Ref< const Emitter > emitter = (*i)->getEmitter();
+			if (!emitter)
+				continue;
+
+			Ref< const Source > source = emitter->getSource();
+			if (!source)
+				continue;
+
+			std::map< const TypeInfo*, Ref< SourceRenderer > >::const_iterator j = m_sourceRenderers.find(&type_of(source));
+			if (j != m_sourceRenderers.end())
+				j->second->render(m_primitiveRenderer, source);
+		}
+	}
+
+	m_primitiveRenderer->end();
 
 	m_renderView->end();
 	m_renderView->present();

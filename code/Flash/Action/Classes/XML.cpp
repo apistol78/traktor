@@ -49,7 +49,7 @@ bool XML::load(const std::wstring& url_)
 	if (m_thread)
 		return false;
 
-	m_thread = ThreadPool::getInstance().spawn(makeFunctor< XML, std::wstring >(this, &XML::threadLoad, url_));
+	ThreadPool::getInstance().spawn(makeFunctor< XML, std::wstring >(this, &XML::threadLoad, url_), m_thread);
 	if (!m_thread)
 		return false;
 

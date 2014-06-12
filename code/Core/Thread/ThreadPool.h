@@ -28,7 +28,7 @@ class T_DLLCLASS ThreadPool : public ISingleton
 public:
 	static ThreadPool& getInstance();
 
-	Thread* spawn(Functor* functor);
+	bool spawn(Functor* functor, Thread*& outThread);
 
 	bool join(Thread* thread);
 

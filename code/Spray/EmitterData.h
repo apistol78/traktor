@@ -85,6 +85,7 @@ private:
 	float m_cullNearDistance;
 	float m_cullMeshDistance;
 	float m_fadeNearRange;
+	float m_viewOffset;
 	float m_warmUp;
 	bool m_sort;
 	bool m_worldSpace;

@@ -129,8 +129,9 @@ bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, co
 	}
 
 	// Spawn preview generator thread.
-	m_threadGeneratePreview = ThreadPool::getInstance().spawn(
-		makeFunctor(this, &BrowseInstanceDialog::threadGeneratePreview)
+	ThreadPool::getInstance().spawn(
+		makeFunctor(this, &BrowseInstanceDialog::threadGeneratePreview),
+		m_threadGeneratePreview
 	);
 
 	// Traverse database and filter out items.
@@ -276,7 +277,7 @@ void BrowseInstanceDialog::taskGeneratePreview(ui::custom::PreviewItem* item)
 void BrowseInstanceDialog::threadGeneratePreview()
 {
 	Ref< Functor > task;
-	while (!m_threadGeneratePreview->stopped())
+	while (m_threadGeneratePreview && !m_threadGeneratePreview->stopped())
 	{
 		if (!m_previewTasks.get(task))
 		{

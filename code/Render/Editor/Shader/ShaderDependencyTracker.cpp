@@ -79,7 +79,7 @@ void ShaderDependencyTracker::scan(db::Database* database)
 	}
 
 	m_scanThreadActive = true;
-	m_scanThread = ThreadPool::getInstance().spawn(makeStaticFunctor< Ref< ShaderDependencyTracker >, db::Database*, bool& >(&scanDependencies, this, database, m_scanThreadActive));
+	ThreadPool::getInstance().spawn(makeStaticFunctor< Ref< ShaderDependencyTracker >, db::Database*, bool& >(&scanDependencies, this, database, m_scanThreadActive), m_scanThread);
 }
 
 void ShaderDependencyTracker::scan(db::Database* database, const Guid& shader)
@@ -91,7 +91,7 @@ void ShaderDependencyTracker::scan(db::Database* database, const Guid& shader)
 	}
 
 	m_scanThreadActive = true;
-	m_scanThread = ThreadPool::getInstance().spawn(makeStaticFunctor< Ref< ShaderDependencyTracker >, db::Database*, Guid, bool& >(&scanDependencies, this, database, shader, m_scanThreadActive));
+	ThreadPool::getInstance().spawn(makeStaticFunctor< Ref< ShaderDependencyTracker >, db::Database*, Guid, bool& >(&scanDependencies, this, database, shader, m_scanThreadActive), m_scanThread);
 }
 
 void ShaderDependencyTracker::addListener(IListener* listener)

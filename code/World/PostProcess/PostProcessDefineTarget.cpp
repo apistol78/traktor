@@ -29,7 +29,7 @@ PostProcessDefineTarget::PostProcessDefineTarget()
 {
 }
 
-bool PostProcessDefineTarget::define(PostProcess* postProcess, render::IRenderSystem* renderSystem, uint32_t screenWidth, uint32_t screenHeight)
+bool PostProcessDefineTarget::define(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, uint32_t screenWidth, uint32_t screenHeight)
 {
 	render::RenderTargetSetCreateDesc rtscd;
 

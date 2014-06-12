@@ -52,7 +52,7 @@ bool PostProcess::create(
 	const RefArray< PostProcessDefine >& definitions = settings->getDefinitions();
 	for (RefArray< PostProcessDefine >::const_iterator i = definitions.begin(); i != definitions.end(); ++i)
 	{
-		if (!(*i)->define(this, renderSystem, width, height))
+		if (!(*i)->define(this, resourceManager, renderSystem, width, height))
 		{
 			log::error << L"Unable to create post processing definition " << uint32_t(std::distance(definitions.begin(), i)) << Endl;
 			return false;
@@ -118,21 +118,21 @@ bool PostProcess::render(
 
 	T_RENDER_PUSH_MARKER(renderView, "PostProcess");
 
-	//// Check if any target need to be cleared before post processing.
-	//for (SmallMap< render::handle_t, Target >::iterator i = m_targets.begin(); i != m_targets.end(); ++i)
-	//{
-	//	Target& target = i->second;
-	//	if (target.shouldClear)
-	//	{
-	//		if (renderView->begin(target.rts, 0))
-	//		{
-	//			Color4f c(target.clearColor);
-	//			renderView->clear(render::CfColor, &c, 0.0f, 0);
-	//			renderView->end();
-	//			target.shouldClear = false;
-	//		}
-	//	}
-	//}
+	// Check if any target need to be cleared before post processing.
+	for (SmallMap< render::handle_t, Target >::iterator i = m_targets.begin(); i != m_targets.end(); ++i)
+	{
+		Target& target = i->second;
+		if (target.rts && target.shouldClear)
+		{
+			if (renderView->begin(target.rts, 0))
+			{
+				Color4f c(target.clearColor);
+				renderView->clear(render::CfColor, &c, 0.0f, 0);
+				renderView->end();
+				target.shouldClear = false;
+			}
+		}
+	}
 
 	// Execute each post processing step in sequence.
 	for (RefArray< PostProcessStep::Instance >::const_iterator i = m_instances.begin(); i != m_instances.end(); ++i)
@@ -174,9 +174,9 @@ void PostProcess::defineTarget(render::handle_t id, const render::RenderTargetSe
 	Target& t = m_targets[id];
 	t.rtscd = rtscd;
 	t.rts = 0;
+	t.shouldClear = persistent;
 	t.persistent = persistent;
-	//t.shouldClear = true;
-	//clearColor.storeUnaligned(t.clearColor);
+	clearColor.storeUnaligned(t.clearColor);
 }
 
 void PostProcess::setTarget(render::IRenderView* renderView, render::handle_t id)
@@ -265,7 +265,7 @@ void PostProcess::setVectorParameter(render::handle_t handle, const Vector4& val
 	m_vectorParameters[handle] = value;
 }
 
-void PostProcess::setTextureParameter(render::handle_t handle, render::ITexture* value)
+void PostProcess::setTextureParameter(render::handle_t handle, const resource::Proxy< render::ITexture >& value)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_textureParameters[handle] = value;
@@ -279,7 +279,7 @@ void PostProcess::prepareShader(render::Shader* shader) const
 		shader->setFloatParameter(i->first, i->second);
 	for (SmallMap< render::handle_t, Vector4 >::const_iterator i = m_vectorParameters.begin(); i != m_vectorParameters.end(); ++i)
 		shader->setVectorParameter(i->first, i->second);
-	for (SmallMap< render::handle_t, Ref< render::ITexture > >::const_iterator i = m_textureParameters.begin(); i != m_textureParameters.end(); ++i)
+	for (SmallMap< render::handle_t, resource::Proxy< render::ITexture > >::const_iterator i = m_textureParameters.begin(); i != m_textureParameters.end(); ++i)
 		shader->setTextureParameter(i->first, i->second);
 }
 

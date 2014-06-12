@@ -39,8 +39,9 @@ bool ConnectionManager::create(uint16_t listenPort)
 
 	m_listenPort = listenPort;
 
-	m_serverThread = ThreadPool::getInstance().spawn(
-		makeFunctor(this, &ConnectionManager::threadServer)
+	ThreadPool::getInstance().spawn(
+		makeFunctor(this, &ConnectionManager::threadServer),
+		m_serverThread
 	);
 	if (!m_serverThread)
 		return false;

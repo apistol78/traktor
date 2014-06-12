@@ -65,7 +65,8 @@ public:
 		const PointVector& points,
 		float middleAge,
 		float cullNearDistance,
-		float fadeNearRange
+		float fadeNearRange,
+		float cameraOffset
 	);
 
 	void flush(
