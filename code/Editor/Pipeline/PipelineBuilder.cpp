@@ -275,7 +275,7 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 		std::vector< Thread* > threads(cpuCores, (Thread*)0);
 		for (int32_t i = 0; i < cpuCores; ++i)
 		{
-			threads[i] = ThreadPool::getInstance().spawn(
+			ThreadPool::getInstance().spawn(
 				makeFunctor
 				<
 					PipelineBuilder,
@@ -289,7 +289,8 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 					dependencySet,
 					ThreadManager::getInstance().getCurrentThread(),
 					i
-				)
+				),
+				threads[i]
 			);
 		}
 

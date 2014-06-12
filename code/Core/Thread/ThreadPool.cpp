@@ -46,7 +46,7 @@ ThreadPool& ThreadPool::getInstance()
 	return *s_instance;
 }
 
-Thread* ThreadPool::spawn(Functor* functor)
+bool ThreadPool::spawn(Functor* functor, Thread*& outThread)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
@@ -59,17 +59,19 @@ Thread* ThreadPool::spawn(Functor* functor)
 			T_ASSERT (!worker.threadWorker->finished());
 			T_ASSERT (!worker.functorWork);
 
+			outThread = worker.threadWorker;
+
 			worker.busy = 2;
 			worker.functorWork = functor;
 			worker.eventFinishedWork.reset();
 			worker.eventAttachWork.broadcast();
 
-			return worker.threadWorker;
+			return true;
 		}
 	}
 
 	if (m_workerThreads.size() >= m_workerThreads.capacity())
-		return 0;
+		return false;
 
 	Worker& worker = m_workerThreads.push_back();
 	worker.busy = 2;
@@ -85,13 +87,19 @@ Thread* ThreadPool::spawn(Functor* functor)
 		),
 		L"Thread pool worker"
 	);
-	if (!worker.threadWorker || !worker.threadWorker->start())
+	if (!worker.threadWorker)
+		return false;
+
+	outThread = worker.threadWorker;
+
+	if (!worker.threadWorker->start())
 	{
 		m_workerThreads.pop_back();
-		return 0;
+		outThread = 0;
+		return false;
 	}
 
-	return worker.threadWorker;
+	return true;
 }
 
 bool ThreadPool::join(Thread* thread)

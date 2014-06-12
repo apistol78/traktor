@@ -21,6 +21,7 @@ Emitter::Emitter(
 	float cullNearDistance,
 	float cullMeshDistance,
 	float fadeNearRange,
+	float viewOffset,
 	float warmUp,
 	bool sort,
 	bool worldSpace,
@@ -35,6 +36,7 @@ Emitter::Emitter(
 ,	m_cullNearDistance(cullNearDistance)
 ,	m_cullMeshDistance(cullMeshDistance)
 ,	m_fadeNearRange(fadeNearRange)
+,	m_viewOffset(viewOffset)
 ,	m_warmUp(warmUp)
 ,	m_sort(sort)
 ,	m_worldSpace(worldSpace)

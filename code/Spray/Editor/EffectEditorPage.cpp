@@ -48,6 +48,8 @@
 #include "Ui/Custom/Sequencer/Range.h"
 #include "Ui/Custom/Sequencer/Tick.h"
 #include "Ui/Custom/Splitter.h"
+#include "World/PostProcess/PostProcessFactory.h"
+#include "World/PostProcess/PostProcessSettings.h"
 
 // Resources
 #include "Resources/Playback.h"
@@ -115,6 +117,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_resourceManager->addFactory(new render::TextureFactory(database, renderSystem, 0));
 	m_resourceManager->addFactory(new render::ShaderFactory(database, renderSystem));
 	m_resourceManager->addFactory(new sound::SoundFactory(database));
+	m_resourceManager->addFactory(new world::PostProcessFactory(database));
 	m_resourceManager->addFactory(new EffectFactory(database, 0));
 
 	m_effectData = m_document->getObject< EffectData >(0);
@@ -156,6 +159,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_RANDOMIZE_SEED"), 6, ui::Command(L"Effect.Editor.RandomizeSeed")));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_BROWSE_BACKGROUND"), 0, ui::Command(L"Effect.Editor.BrowseBackground")));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_BROWSE_POSTPROCESS"), 0, ui::Command(L"Effect.Editor.BrowsePostProcess")));
 
 	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventToolClick));
 
@@ -279,6 +283,15 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 		{
 			m_editor->buildAsset(textureInstance->getGuid(), false);
 			m_previewControl->setBackground(resource::Id< render::ISimpleTexture >(textureInstance->getGuid()));
+		}
+	}
+	else if (command == L"Effect.Editor.BrowsePostProcess")
+	{
+		Ref< db::Instance > postProcessInstance = m_editor->browseInstance(type_of< world::PostProcessSettings >());
+		if (postProcessInstance)
+		{
+			m_editor->buildAsset(postProcessInstance->getGuid(), false);
+			m_previewControl->setPostProcess(resource::Id< world::PostProcessSettings >(postProcessInstance->getGuid()));
 		}
 	}
 	else if (command == L"Effect.Editor.ReplaceEmitterSource")

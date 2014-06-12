@@ -9,6 +9,7 @@
 #include "Core/Math/Matrix44.h"
 #include "Core/Thread/Semaphore.h"
 #include "Render/Types.h"
+#include "Resource/Proxy.h"
 #include "World/PostProcess/PostProcessStep.h"
 
 // import/export mechanism.
@@ -99,7 +100,7 @@ public:
 
 	void setVectorParameter(render::handle_t handle, const Vector4& value);
 
-	void setTextureParameter(render::handle_t handle, render::ITexture* value);
+	void setTextureParameter(render::handle_t handle, const resource::Proxy< render::ITexture >& value);
 
 	void prepareShader(render::Shader* shader) const;
 
@@ -110,19 +111,18 @@ private:
 	{
 		render::RenderTargetSetCreateDesc rtscd;
 		Ref< render::RenderTargetSet > rts;
+		float clearColor[4];
+		bool shouldClear;
 		bool persistent;
 
-		//float clearColor[4];
-		//bool shouldClear;
-
 		Target()
-		//:	shouldClear(false)
-		:	persistent(false)
+		:	shouldClear(false)
+		,	persistent(false)
 		{
-		//	clearColor[0] =
-		//	clearColor[1] =
-		//	clearColor[2] =
-		//	clearColor[3] = 0.0f;
+			clearColor[0] =
+			clearColor[1] =
+			clearColor[2] =
+			clearColor[3] = 0.0f;
 		}
 	};
 
@@ -133,7 +133,7 @@ private:
 	SmallMap< render::handle_t, bool > m_booleanParameters;
 	SmallMap< render::handle_t, float > m_scalarParameters;
 	SmallMap< render::handle_t, Vector4 > m_vectorParameters;
-	SmallMap< render::handle_t, Ref< render::ITexture > > m_textureParameters;
+	SmallMap< render::handle_t, resource::Proxy< render::ITexture > > m_textureParameters;
 	Ref< render::RenderTargetSet > m_currentTarget;
 	bool m_requireHighRange;
 	Semaphore m_lock;

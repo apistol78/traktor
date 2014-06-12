@@ -103,8 +103,10 @@ void StreamServer::threadServer()
 
 			clientSocket->setNoDelay(true);
 
-			Thread* clientThread = ThreadPool::getInstance().spawn(
-				makeFunctor< StreamServer, Ref< TcpSocket > >(this, &StreamServer::threadClient, clientSocket)
+			Thread* clientThread = 0;
+			ThreadPool::getInstance().spawn(
+				makeFunctor< StreamServer, Ref< TcpSocket > >(this, &StreamServer::threadClient, clientSocket),
+				clientThread
 			);
 			if (!clientThread)
 			{

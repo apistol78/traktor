@@ -52,6 +52,14 @@ class SoundSystem;
 
 	}
 
+	namespace world
+	{
+
+class PostProcess;
+class PostProcessSettings;
+
+	}
+
 	namespace spray
 	{
 
@@ -87,6 +95,8 @@ public:
 
 	void setBackground(const resource::Id< render::ISimpleTexture >& background);
 
+	void setPostProcess(const resource::Id< world::PostProcessSettings >& postProcess);
+
 	void showGuide(bool guideVisible);
 
 	void showVelocity(bool velocityVisible);
@@ -108,8 +118,11 @@ private:
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::RenderTargetSet > m_depthTexture;
+	Ref< render::RenderTargetSet > m_postTargetSet;
 	Ref< render::RenderContext > m_globalContext;
 	resource::Proxy< render::ISimpleTexture > m_background;
+	resource::Proxy< world::PostProcessSettings > m_postProcessSettings;
+	Ref< world::PostProcess > m_postProcess;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< render::RenderContext > m_renderContext;
 	Ref< sound::SoundSystem > m_soundSystem;
@@ -135,6 +148,8 @@ private:
 	bool m_velocityVisible;
 	bool m_moveEmitter;
 	bool m_groundClip;
+
+	void updateRenderer();
 
 	void eventButtonDown(ui::Event* event);
 

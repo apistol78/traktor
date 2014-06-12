@@ -123,7 +123,8 @@ void PointRenderer::render(
 	const PointVector& points,
 	float middleAge,
 	float cullNearDistance,
-	float fadeNearRange
+	float fadeNearRange,
+	float cameraOffset
 )
 {
 	int32_t size = int32_t(points.size());
@@ -184,6 +185,8 @@ void PointRenderer::render(
 		{ -1.0f,  1.0f }
 	};
 
+	Vector4 cameraOffsetV = cameraPlane.normal() * Scalar(cameraOffset);
+
 	for (int32_t i = 0; i < size; ++i)
 	{
 		const Point& point = points[i];
@@ -206,10 +209,13 @@ void PointRenderer::render(
 		if (alpha < FUZZY_EPSILON)
 			continue;
 
+		Vector4 position = point.position + cameraOffsetV;
+
 		for (int j = 0; j < 4; ++j)
 		{
 			// \note We're assuming locked vertex buffer is 16-aligned.
-			point.position.storeAligned(m_vertex->positionAndOrientation);
+			position.storeAligned(m_vertex->positionAndOrientation);
+
 			point.velocity.storeAligned(m_vertex->velocityAndRandom);
 			point.color.storeAligned(m_vertex->colorAndAge);
 

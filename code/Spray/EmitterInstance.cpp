@@ -277,7 +277,8 @@ void EmitterInstance::render(
 			m_renderPoints,
 			m_emitter->getMiddleAge(),
 			m_emitter->getCullNearDistance(),
-			m_emitter->getFadeNearRange()
+			m_emitter->getFadeNearRange(),
+			m_emitter->getViewOffset()
 		);
 	}
 
@@ -310,7 +311,10 @@ void EmitterInstance::render(
 				pointRenderer,
 				meshRenderer,
 				trailRenderer,
-				Transform(point.position),
+				Transform(
+					point.position,
+					Quaternion(Vector4(0.0f, 1.0f, 0.0f), point.velocity)
+				),
 				cameraPosition,
 				cameraPlane
 			);
@@ -412,7 +416,10 @@ void EmitterInstance::updateTask(float deltaTime)
 
 			m_effectInstances[i]->update(
 				childContext,
-				Transform(point.position),
+				Transform(
+					point.position,
+					Quaternion(Vector4(0.0f, 1.0f, 0.0f), point.velocity)
+				),
 				true
 			);
 		}

@@ -55,6 +55,7 @@ public:
 		float cullNearDistance,
 		float cullMeshDistance,
 		float fadeNearRange,
+		float viewOffset,
 		float warmUp,
 		bool sort,
 		bool worldSpace,
@@ -81,6 +82,8 @@ public:
 
 	float getFadeNearRange() const { return m_fadeNearRange; }
 
+	float getViewOffset() const { return m_viewOffset; }
+
 	float getWarmUp() const { return m_warmUp; }
 
 	bool getSort() const { return m_sort; }
@@ -99,6 +102,7 @@ private:
 	float m_cullNearDistance;
 	float m_cullMeshDistance;
 	float m_fadeNearRange;
+	float m_viewOffset;
 	float m_warmUp;
 	bool m_sort;
 	bool m_worldSpace;

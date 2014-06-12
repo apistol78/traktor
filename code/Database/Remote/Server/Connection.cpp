@@ -39,7 +39,7 @@ Connection::Connection(
 	m_messageListeners.push_back(new GroupMessageListener(this));
 	m_messageListeners.push_back(new InstanceMessageListener(this));
 
-	m_thread = ThreadPool::getInstance().spawn(makeFunctor(this, &Connection::messageThread));
+	ThreadPool::getInstance().spawn(makeFunctor(this, &Connection::messageThread), m_thread);
 	T_ASSERT (m_thread);
 }
 

@@ -7,6 +7,7 @@
 #include "World/Editor/PostProcessPipeline.h"
 #include "World/Editor/PostProcess/IPostProcessStepFacade.h"
 #include "World/PostProcess/PostProcessDefineTarget.h"
+#include "World/PostProcess/PostProcessDefineTexture.h"
 #include "World/PostProcess/PostProcessSettings.h"
 #include "World/PostProcess/PostProcessStepBlur.h"
 #include "World/PostProcess/PostProcessStepBokeh.h"
@@ -86,7 +87,16 @@ bool PostProcessPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	Ref< const PostProcessSettings > postProcessSettings = checked_type_cast< const PostProcessSettings* >(sourceAsset);
+	const PostProcessSettings* postProcessSettings = checked_type_cast< const PostProcessSettings* >(sourceAsset);
+	T_FATAL_ASSERT (postProcessSettings);
+
+	const RefArray< PostProcessDefine >& definitions = postProcessSettings->getDefinitions();
+	for (RefArray< PostProcessDefine >::const_iterator i = definitions.begin(); i != definitions.end(); ++i)
+	{
+		if (const PostProcessDefineTexture* defineTexture = dynamic_type_cast< const PostProcessDefineTexture* >(*i))
+			pipelineDepends->addDependency(defineTexture->getTexture(), editor::PdfBuild | editor::PdfResource);
+	}
+	
 	RefArray< PostProcessStep > ss;
 
 	const RefArray< PostProcessStep >& steps = postProcessSettings->getSteps();
@@ -147,7 +157,7 @@ bool PostProcessPipeline::buildOutput(
 
 	std::set< std::wstring > targets;
 
-	// Get all user defined, non-persisten, targets.
+	// Get all user defined, non-persistent, targets.
 	const RefArray< PostProcessDefine >& definitions = pp->getDefinitions();
 	for (RefArray< PostProcessDefine >::const_iterator i = definitions.begin(); i != definitions.end(); ++i)
 	{
