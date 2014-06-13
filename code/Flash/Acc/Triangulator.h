@@ -30,6 +30,7 @@ public:
 
 private:
 	AlignedVector< Segment > m_segments;
+	AlignedVector< Segment > m_slabs;
 };
 
 	}

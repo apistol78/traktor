@@ -144,8 +144,7 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, Aligned
 	pys.erase(pys.begin());
 	for (std::set< float >::iterator i = pys.begin(); i != pys.end(); ++i)
 	{
-		static AlignedVector< Segment > slabs;
-		slabs.resize(0);
+		m_slabs.resize(0);
 
 		for (AlignedVector< Segment >::iterator j = m_segments.begin(); j != m_segments.end(); )
 		{
@@ -171,7 +170,7 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, Aligned
 				s.fillStyle0 = j->fillStyle0;
 				s.fillStyle1 = j->fillStyle1;
 				s.lineStyle = j->lineStyle;
-				slabs.push_back(s);
+				m_slabs.push_back(s);
 
 				j->v[0] = s.v[1];
 			}
@@ -196,7 +195,7 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, Aligned
 					s.fillStyle0 = j->fillStyle0;
 					s.fillStyle1 = j->fillStyle1;
 					s.lineStyle = j->lineStyle;
-					slabs.push_back(s);
+					m_slabs.push_back(s);
 
 					j->v[0] = b1.cp0;
 					j->c = b1.cp1;
@@ -210,29 +209,29 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, Aligned
 					s.fillStyle0 = j->fillStyle0;
 					s.fillStyle1 = j->fillStyle1;
 					s.lineStyle = j->lineStyle;
-					slabs.push_back(s);
+					m_slabs.push_back(s);
 
 					j->v[0] = j->v[1];
 				}
 
 			}
 
-			if (abs< float >(j->v[1].y - j->v[0].y) <= 1e-4f)
+			if (abs< float >(j->v[1].y - j->v[0].y) <= 1.0f)
 				j = m_segments.erase(j);
 			else
 				j++;
 		}
 
-		if (slabs.empty())
+		if (m_slabs.empty())
 			continue;
 
-		std::sort(slabs.begin(), slabs.end(), compareSegmentsX);
+		std::sort(m_slabs.begin(), m_slabs.end(), compareSegmentsX);
 
 		uint16_t fillStyle = 0;
-		for (size_t i = 0; i < slabs.size() - 1; ++i)
+		for (size_t i = 0; i < m_slabs.size() - 1; ++i)
 		{
-			const Segment& sl = slabs[i];
-			const Segment& sr = slabs[i + 1];
+			const Segment& sl = m_slabs[i];
+			const Segment& sr = m_slabs[i + 1];
 
 			if (i == 0)
 				fillStyle = sl.fillStyle0 ? sl.fillStyle0 : sl.fillStyle1;
