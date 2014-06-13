@@ -609,6 +609,14 @@
       <second>Edit import batch</second>
     </item>
     <item>
+      <first>EFFECT_EDITOR_BROWSE_BACKGROUND</first>
+      <second>Browse background...</second>
+    </item>
+    <item>
+      <first>EFFECT_EDITOR_BROWSE_POSTPROCESS</first>
+      <second>Browse postprocess...</second>
+    </item>
+    <item>
       <first>EFFECT_EDITOR_REPLACE_EMITTER_SOURCE</first>
       <second>Replace emitter source...</second>
     </item>
@@ -621,6 +629,10 @@
       <second>Move emitter</second>
     </item>
     <item>
+      <first>EFFECT_EDITOR_TOGGLE_GROUND_CLIP</first>
+      <second>Ground clip</second>
+    </item>
+    <item>
       <first>EFFECT_EDITOR_PLAY</first>
       <second>Play</second>
     </item>
@@ -631,6 +643,10 @@
     <item>
       <first>EFFECT_EDITOR_REWIND</first>
       <second>Rewind</second>
+    </item>
+    <item>
+      <first>EFFECT_EDITOR_STOP</first>
+      <second>Stop</second>
     </item>
     <item>
       <first>EFFECT_EDITOR_STOP</first>
