@@ -80,16 +80,6 @@ bool InetSimPeers::update()
 	return true;
 }
 
-void InetSimPeers::setStatus(uint8_t status)
-{
-	m_peers->setStatus(status);
-}
-
-void InetSimPeers::setConnectionState(uint64_t connectionState)
-{
-	m_peers->setConnectionState(connectionState);
-}
-
 handle_t InetSimPeers::getHandle() const
 {
 	return m_peers->getHandle();

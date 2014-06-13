@@ -5,7 +5,6 @@
 #include "Net/Replication/DiagnosePeers.h"
 #include "Net/Replication/InetSimPeers.h"
 #include "Net/Replication/RecordPeers.h"
-#include "Net/Replication/RelayPeers.h"
 #include "Net/Replication/ReliableTransportPeers.h"
 #include "Net/Replication/Replicator.h"
 #include "Net/Replication/State/State.h"
@@ -165,10 +164,6 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	classRecordPeers->addConstructor< net::IReplicatorPeers*, IStream* >();
 	scriptManager->registerClass(classRecordPeers);
 
-	Ref< script::AutoScriptClass< net::RelayPeers > > classRelayPeers = new script::AutoScriptClass< net::RelayPeers >();
-	classRelayPeers->addConstructor< net::IReplicatorPeers* >();
-	scriptManager->registerClass(classRelayPeers);
-
 	Ref< script::AutoScriptClass< net::ReliableTransportPeers > > classReliableTransportPeers = new script::AutoScriptClass< net::ReliableTransportPeers >();
 	classReliableTransportPeers->addConstructor< net::IReplicatorPeers*, bool >();
 	scriptManager->registerClass(classReliableTransportPeers);
@@ -227,6 +222,8 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	classReplicator->addMethod("setState", &net::Replicator::setState);
 	classReplicator->addMethod("sendEvent", &net::Replicator::sendEvent);
 	classReplicator->addMethod("broadcastEvent", &net::Replicator::broadcastEvent);
+	classReplicator->addMethod("setAcceptPrimaryRequests", &net::Replicator::setAcceptPrimaryRequests);
+	classReplicator->addMethod("requestPrimary", &net::Replicator::requestPrimary);
 	classReplicator->addMethod("isPrimary", &net::Replicator::isPrimary);
 	classReplicator->addMethod("getPeerCount", &net::Replicator::getPeerCount);
 	classReplicator->addMethod("getPeerHandle", &net::Replicator::getPeerHandle);

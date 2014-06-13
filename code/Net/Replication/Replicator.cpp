@@ -62,6 +62,7 @@ Replicator::Replicator()
 ,	m_pingCount(0)
 ,	m_timeUntilPing(0)
 ,	m_lastT(0.0)
+,	m_acceptPrimaryRequest(true)
 {
 	m_id = uint32_t(g_timer.getElapsedTime());
 }
@@ -182,8 +183,6 @@ void Replicator::reset()
 		p.endSite = 0;
 		p.ghost = 0;
 		p.timeUntilTx = 0;
-		p.pendingIAm = 0;
-		p.pendingPing = 0;
 		p.stateCount = 0;
 		p.errorCount = 0;
 		p.iframe = 0;
@@ -235,8 +234,16 @@ void Replicator::setStatus(uint8_t status)
 	T_ASSERT (m_replicatorPeers);
 	if (status != m_status)
 	{
-		m_replicatorPeers->setStatus(status);
 		m_status = status;
+
+		// Send immediate pings to all established peers as status is a payload of ping.
+		for (std::map< handle_t, Peer >::const_iterator i = m_peers.begin(); i != m_peers.end(); ++i)
+			sendPing(i->first);
+
+		if (m_peers.size() > 0)
+			m_timeUntilPing = m_configuration.timeUntilPing / m_peers.size();
+		else
+			m_timeUntilPing = m_configuration.timeUntilPing;
 	}
 }
 
@@ -297,6 +304,21 @@ void Replicator::broadcastEvent(const ISerializable* eventObject)
 	e.handle = c_broadcastHandle;
 	e.object = eventObject;
 	m_eventsOut.push_back(e);
+}
+
+void Replicator::setAcceptPrimaryRequests(bool acceptPrimaryRequest)
+{
+	m_acceptPrimaryRequest = acceptPrimaryRequest;
+}
+
+void Replicator::requestPrimary()
+{
+	if (!isPrimary())
+	{
+		handle_t handle = getPrimaryPeerHandle();
+		if (handle != 0)
+			sendRequestPrimary(handle);
+	}
 }
 
 bool Replicator::isPrimary() const
@@ -570,7 +592,6 @@ void Replicator::updatePeers(int32_t dT)
 
 			peer.state = PsDisconnected;
 			peer.iframe = 0;
-			peer.pendingPing = 0;
 			peer.errorCount = 0;
 
 			++i;
@@ -592,14 +613,11 @@ void Replicator::updatePeers(int32_t dT)
 
 			if ((peer.timeUntilTx -= dT) <= 0)
 			{
-				T_REPLICATOR_DEBUG(L"OK: Unestablished peer found; sending \"I am\" to peer \"" << peer.name << L"\" (" << peer.pendingIAm << L")");
+				T_REPLICATOR_DEBUG(L"OK: Unestablished peer found; sending \"I am\" to peer \"" << peer.name << L"\"");
 
-				if (sendIAm(i->handle, 0, m_id))
-					peer.pendingIAm++;
-				else
+				if (!sendIAm(i->handle, 0, m_id))
 				{
 					T_REPLICATOR_DEBUG(L"ERROR: Unable to send \"I am\" to peer \"" << peer.name << L"\"");
-					peer.pendingIAm = 0;
 				}
 
 				peer.timeUntilTx = int32_t(m_configuration.timeUntilIAm * (1.0f + g_random.nextFloat()));
@@ -625,13 +643,11 @@ void Replicator::updatePeers(int32_t dT)
 
 				peer.state = PsDisconnected;
 				peer.iframe = 0;
-				peer.pendingPing = 0;
 				peer.errorCount = 0;
 			}
 		}
 
 		// Save info about peer.
-		peer.status = i->status;
 		peer.direct = i->direct;
 	}
 }
@@ -834,10 +850,7 @@ void Replicator::sendPings(int32_t dT)
 
 		Peer& peer = i->second;
 		if (peer.state == PsEstablished)
-		{
 			sendPing(i->first);
-			++peer.pendingPing;
-		}
 
 		m_timeUntilPing = m_configuration.timeUntilPing / m_peers.size();
 	}
@@ -906,7 +919,6 @@ void Replicator::receiveMessages()
 
 					// Send ping to peer.
 					sendPing(handle);
-					++peer.pendingPing;
 
 					// Issue connect event to listeners.
 					EventIn evt;
@@ -920,8 +932,6 @@ void Replicator::receiveMessages()
 
 				peer.lastTimeRemote = std::max< int32_t >(msg.time, peer.lastTimeRemote + 1);
 				peer.lastTimeLocal = m_time;
-
-				--peer.pendingIAm;
 			}
 		}
 		else if (msg.type == MtBye)
@@ -953,7 +963,9 @@ void Replicator::receiveMessages()
 		}
 		else if (msg.type == MtPing)
 		{
-			// I've got pinged; reply with a pong.
+			// I've got pinged; save status and reply with a pong.
+			Peer& peer = m_peers[handle];
+			peer.status = msg.ping.status;
 			sendPong(handle, msg.time);
 		}
 		else if (msg.type == MtPong)
@@ -976,9 +988,22 @@ void Replicator::receiveMessages()
 
 			peer.latencyMedian = sorted[peer.roundTrips.size() / 2] / 2;
 			peer.latencyReversed = msg.pong.latency;
+		}
+		else if (msg.type == MtRequestPrimary)
+		{
+			Peer& peer = m_peers[handle];
 
-			if (peer.pendingPing > 0)
-				--peer.pendingPing;
+			// I've received a request of primary token; accept if
+			// we are primary to begin with and also if we do allow the transfer.
+			if (m_acceptPrimaryRequest)
+			{
+				setPeerPrimary(handle);
+				T_REPLICATOR_DEBUG(L"OK: Primary token transfer request from peer " << peer.name << L" accepted");
+			}
+			else
+			{
+				T_REPLICATOR_DEBUG(L"OK: Primary token transfer request from peer " << peer.name << L" rejected");
+			}
 		}
 		else if (msg.type == MtFullState || msg.type == MtDeltaState)	// Data message.
 		{
@@ -1191,7 +1216,7 @@ bool Replicator::sendBye(handle_t peerHandle)
 	Message msg;
 
 	msg.type = MtBye;
-	msg.time = m_time;
+	msg.time = m_time0;
 
 	uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t);
 	return send(peerHandle, &msg, msgSize, true);
@@ -1203,8 +1228,9 @@ bool Replicator::sendPing(handle_t peerHandle)
 
 	msg.type = MtPing;
 	msg.time = m_time0;
+	msg.ping.status = m_status;
 
-	uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t);
+	uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t) + sizeof(uint8_t);
 	return send(peerHandle, &msg, msgSize, false);
 }
 
@@ -1220,6 +1246,17 @@ bool Replicator::sendPong(handle_t peerHandle, int32_t time0)
 
 	uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t);
 	return send(peerHandle, &msg, msgSize, false);
+}
+
+bool Replicator::sendRequestPrimary(handle_t peerHandle)
+{
+	Message msg;
+
+	msg.type = MtRequestPrimary;
+	msg.time = m_time0;
+
+	uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t);
+	return send(peerHandle, &msg, msgSize, true);
 }
 
 void Replicator::adjustTime(int32_t offset)

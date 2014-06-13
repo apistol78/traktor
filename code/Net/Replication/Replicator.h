@@ -179,6 +179,14 @@ public:
 	 */
 	void broadcastEvent(const ISerializable* eventObject);
 
+	/*! \brief Set acceptance of primary transfer requests.
+	 */
+	void setAcceptPrimaryRequests(bool acceptPrimaryRequest);
+
+	/*! \brief Request becoming primary peer.
+	 */
+	void requestPrimary();
+
 	/*! \brief
 	 */
 	bool isPrimary() const;
@@ -351,8 +359,6 @@ private:
 		CircularVector< int32_t, Adjustments > timeOffsets;
 		int32_t latencyMedian;
 		int32_t latencyReversed;
-		int32_t pendingIAm;
-		int32_t pendingPing;
 		int32_t stateCount;
 		int32_t errorCount;
 		Ref< const State > iframe;
@@ -369,8 +375,6 @@ private:
 		,	lastTimeRemote(0)
 		,	latencyMedian(0)
 		,	latencyReversed(0)
-		,	pendingIAm(0)
-		,	pendingPing(0)
 		,	stateCount(0)
 		,	errorCount(0)
 		{
@@ -394,6 +398,7 @@ private:
 	int32_t m_pingCount;
 	int32_t m_timeUntilPing;
 	double m_lastT;
+	bool m_acceptPrimaryRequest;
 
 	void updatePeers(int32_t dT);
 
@@ -416,6 +421,8 @@ private:
 	bool sendPing(handle_t peerHandle);
 
 	bool sendPong(handle_t peerHandle, int32_t time0);
+
+	bool sendRequestPrimary(handle_t peerHandle);
 
 	void adjustTime(int32_t offset);
 

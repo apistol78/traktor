@@ -16,9 +16,7 @@ struct PeerInfoPredicate
 		return
 			lh.handle == rh.handle &&
 			lh.name == rh.name &&
-			lh.status == rh.status &&
-			lh.direct == rh.direct &&
-			lh.connectionState == rh.connectionState;
+			lh.direct == rh.direct;
 	}
 };
 
@@ -87,25 +85,13 @@ bool RecordPeers::update()
 		{
 			w << info[i].handle;
 			w << info[i].name;
-			w << info[i].status;
 			w << info[i].direct;
-			w << info[i].connectionState;
 		}
 
 		m_info = info;
 	}
 
 	return result;
-}
-
-void RecordPeers::setStatus(uint8_t status)
-{
-	m_peers->setStatus(status);
-}
-
-void RecordPeers::setConnectionState(uint64_t connectionState)
-{
-	m_peers->setConnectionState(connectionState);
 }
 
 handle_t RecordPeers::getHandle() const
