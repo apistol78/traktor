@@ -67,16 +67,6 @@ bool BandwidthLimitPeers::update()
 	return true;
 }
 
-void BandwidthLimitPeers::setStatus(uint8_t status)
-{
-	m_peers->setStatus(status);
-}
-
-void BandwidthLimitPeers::setConnectionState(uint64_t connectionState)
-{
-	m_peers->setConnectionState(connectionState);
-}
-
 handle_t BandwidthLimitPeers::getHandle() const
 {
 	return m_peers->getHandle();

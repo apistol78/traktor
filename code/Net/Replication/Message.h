@@ -15,6 +15,7 @@ enum MessageType
 	MtBye = 0xf2,
 	MtPing = 0xf3,
 	MtPong = 0xf4,
+	MtRequestPrimary = 0xf5,
 	MtFullState	= 0x11,
 	MtDeltaState = 0x12,
 	MtEvent0 = 0x20,	//!< Never transmitted
@@ -43,6 +44,11 @@ struct Message
 			uint8_t sequence;
 			uint32_t id;
 		} iam;
+
+		struct
+		{
+			uint8_t status;
+		} ping;
 
 		struct 
 		{

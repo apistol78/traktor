@@ -119,16 +119,6 @@ bool ReliableTransportPeers::update()
 	return true;
 }
 
-void ReliableTransportPeers::setStatus(uint8_t status)
-{
-	m_peers->setStatus(status);
-}
-
-void ReliableTransportPeers::setConnectionState(uint64_t connectionState)
-{
-	m_peers->setConnectionState(connectionState);
-}
-
 handle_t ReliableTransportPeers::getHandle() const
 {
 	return m_peers->getHandle();

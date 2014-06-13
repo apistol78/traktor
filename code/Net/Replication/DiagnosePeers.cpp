@@ -56,16 +56,6 @@ bool DiagnosePeers::update()
 	return result;
 }
 
-void DiagnosePeers::setStatus(uint8_t status)
-{
-	m_peers->setStatus(status);
-}
-
-void DiagnosePeers::setConnectionState(uint64_t connectionState)
-{
-	m_peers->setConnectionState(connectionState);
-}
-
 handle_t DiagnosePeers::getHandle() const
 {
 	return m_peers->getHandle();

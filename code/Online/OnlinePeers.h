@@ -32,10 +32,6 @@ public:
 
 	virtual bool update();
 
-	virtual void setStatus(uint8_t status);
-
-	virtual void setConnectionState(uint64_t connectionState);
-
 	virtual net::handle_t getHandle() const;
 
 	virtual std::wstring getName() const;

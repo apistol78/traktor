@@ -27,12 +27,7 @@ OnlinePeers::OnlinePeers(ISessionManager* sessionManager, ILobby* lobby)
 
 void OnlinePeers::destroy()
 {
-	if (m_lobby)
-	{
-		m_lobby->setParticipantMetaValue(L"__STATUS__", L"0");
-		m_lobby->setParticipantMetaValue(L"__CONNECTION_STATE__", L"0");
-		m_lobby = 0;
-	}
+	m_lobby = 0;
 }
 
 bool OnlinePeers::update()
@@ -190,16 +185,6 @@ bool OnlinePeers::update()
 	return true;
 }
 
-void OnlinePeers::setStatus(uint8_t status)
-{
-	m_lobby->setParticipantMetaValue(L"__STATUS__", toString< int32_t >(status));
-}
-
-void OnlinePeers::setConnectionState(uint64_t connectionState)
-{
-	m_lobby->setParticipantMetaValue(L"__CONNECTION_STATE__", toString< uint64_t >(connectionState));
-}
-
 net::handle_t OnlinePeers::getHandle() const
 {
 	return m_handle;
@@ -242,11 +227,6 @@ uint32_t OnlinePeers::getPeers(std::vector< PeerInfo >& outPeers) const
 		info.endSite = i->second;
 
 		i->second->getName(info.name);
-
-		if (m_lobby->getParticipantMetaValue(i->second, L"__STATUS__", tmp))
-			info.status = parseString< int32_t >(tmp);
-		if (m_lobby->getParticipantMetaValue(i->second, L"__CONNECTION_STATE__", tmp))
-			info.connectionState = parseString< uint64_t >(tmp);
 
 		outPeers.push_back(info);
 	}
