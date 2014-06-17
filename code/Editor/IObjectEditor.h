@@ -2,6 +2,7 @@
 #define traktor_editor_IObjectEditor_H
 
 #include "Core/Object.h"
+#include "Core/Guid.h"
 #include "Ui/Size.h"
 
 // import/export mechanism.
@@ -28,6 +29,7 @@ class Widget;
 	namespace db
 	{
 
+class Database;
 class Instance;
 
 	}
@@ -84,6 +86,15 @@ public:
 	 *         editor pages.
 	 */
 	virtual bool handleCommand(const ui::Command& command) = 0;
+
+	/*! \brief Database event.
+	 *
+	 * Called when editor encountered a database event.
+	 * Some editors might need to reload dependent instances.
+	 *
+	 * \param eventId Guid of database instance which caused the event.
+	 */
+	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId) = 0;
 
 	/*! \brief Get preferred size of object editor dialog.
 	 *

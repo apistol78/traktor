@@ -197,6 +197,10 @@ bool TargetEditor::handleCommand(const ui::Command& command)
 	return false;
 }
 
+void TargetEditor::handleDatabaseEvent(db::Database* database, const Guid& eventId)
+{
+}
+
 ui::Size TargetEditor::getPreferredSize() const
 {
 	return ui::Size(1000, 600);

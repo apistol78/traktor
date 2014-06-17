@@ -122,6 +122,11 @@ bool ObjectEditorDialog::handleCommand(const ui::Command& command)
 	return m_objectEditor->handleCommand(command);
 }
 
+void ObjectEditorDialog::handleDatabaseEvent(db::Database* database, const Guid& eventId)
+{
+	m_objectEditor->handleDatabaseEvent(database, eventId);
+}
+
 void ObjectEditorDialog::eventClick(ui::Event* event)
 {
 	const ui::Command& command = checked_type_cast< ui::CommandEvent* >(event)->getCommand();

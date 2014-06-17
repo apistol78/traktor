@@ -348,6 +348,10 @@ bool ScriptEditor::handleCommand(const ui::Command& command)
 	return true;
 }
 
+void ScriptEditor::handleDatabaseEvent(db::Database* database, const Guid& eventId)
+{
+}
+
 ui::Size ScriptEditor::getPreferredSize() const
 {
 	return ui::Size(1000, 800);

@@ -239,6 +239,10 @@ bool MeshAssetEditor::handleCommand(const ui::Command& command)
 	return false;
 }
 
+void MeshAssetEditor::handleDatabaseEvent(db::Database* database, const Guid& eventId)
+{
+}
+
 ui::Size MeshAssetEditor::getPreferredSize() const
 {
 	return ui::Size(800, 600);

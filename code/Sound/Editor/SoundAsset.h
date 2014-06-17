@@ -26,6 +26,12 @@ public:
 
 	virtual void serialize(ISerializer& s);
 
+	float getPresence() const { return m_presence; }
+
+	float getPresenceRate() const { return m_presenceRate; }
+
+	float getVolume() const { return m_volume; }
+
 private:
 	friend class SoundPipeline;
 

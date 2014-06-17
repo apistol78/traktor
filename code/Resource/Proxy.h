@@ -83,7 +83,7 @@ public:
 	}
 
 	/*! \brief Consume change; changed method will return false until next change. */
-	void consume()
+	void consume() const
 	{
 		m_tag = intptr_t(getResource());
 	}
@@ -125,7 +125,7 @@ public:
 
 private:
 	Ref< IResourceHandle > m_handle;
-	intptr_t m_tag;
+	mutable intptr_t m_tag;
 };
 
 /*! \brief Dynamic cast object.

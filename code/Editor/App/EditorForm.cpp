@@ -2679,6 +2679,16 @@ void EditorForm::eventTimer(ui::Event* /*event*/)
 			}
 		}
 
+		// Propagate database event to object editor dialogs.
+		for (ui::Widget* child = this->getFirstChild(); child; child = child->getNextSibling())
+		{
+			if (ObjectEditorDialog* objectEditor = dynamic_type_cast< ObjectEditorDialog* >(child))
+			{
+				for (std::vector< std::pair< db::Database*, Guid > >::iterator j = m_eventIds.begin(); j != m_eventIds.end(); ++j)
+					objectEditor->handleDatabaseEvent(j->first, j->second);
+			}
+		}
+
 		// Propagate database event to editor plugins.
 		for (RefArray< EditorPluginSite >::iterator i = m_editorPluginSites.begin(); i != m_editorPluginSites.end(); ++i)
 		{

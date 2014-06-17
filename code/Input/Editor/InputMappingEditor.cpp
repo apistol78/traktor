@@ -78,6 +78,10 @@ bool InputMappingEditor::handleCommand(const ui::Command& command)
 	return false;
 }
 
+void InputMappingEditor::handleDatabaseEvent(db::Database* database, const Guid& eventId)
+{
+}
+
 ui::Size InputMappingEditor::getPreferredSize() const
 {
 	return ui::Size(500, 400);

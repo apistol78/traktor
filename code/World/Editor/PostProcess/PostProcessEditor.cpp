@@ -121,6 +121,10 @@ bool PostProcessEditor::handleCommand(const ui::Command& command)
 	return false;
 }
 
+void PostProcessEditor::handleDatabaseEvent(db::Database* database, const Guid& eventId)
+{
+}
+
 void PostProcessEditor::updateStepView(PostProcessStepItem* parent, const RefArray< PostProcessStep >& steps)
 {
 	for (RefArray< PostProcessStep >::const_iterator i = steps.begin(); i != steps.end(); ++i)
