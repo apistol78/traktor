@@ -135,7 +135,7 @@ bool WorldServer::create(const PropertyGroup* settings, IRenderServer* renderSer
 	m_entityRenderers->add(new weather::WeatherEntityRenderer());
 	m_entityRenderers->add(m_terrainEntityRenderer);
 
-	int32_t maxEventInstances = settings->getProperty< PropertyInteger >(L"World.MaxEventInstances", 128);
+	int32_t maxEventInstances = settings->getProperty< PropertyInteger >(L"World.MaxEventInstances", 512);
 	m_eventManager = new world::EntityEventManager(maxEventInstances);
 
 	return true;

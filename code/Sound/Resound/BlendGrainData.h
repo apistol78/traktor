@@ -22,16 +22,21 @@ class T_DLLCLASS BlendGrainData : public IGrainData
 	T_RTTI_CLASS;
 
 public:
+	BlendGrainData();
+
 	virtual Ref< IGrain > createInstance(IGrainFactory* grainFactory) const;
 
 	virtual void serialize(ISerializer& s);
 
 	const std::wstring& getId() const { return m_id; }
 
+	const float getResponse() const { return m_response; }
+
 	const Ref< IGrainData >* getGrains() const { return m_grains; }
 
 private:
 	std::wstring m_id;
+	float m_response;
 	Ref< IGrainData > m_grains[2];
 };
 
