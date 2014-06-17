@@ -31,7 +31,7 @@ struct Message
 	enum
 	{
 		HeaderSize = sizeof(uint8_t) + sizeof(uint32_t),
-		MessageSize = 510,
+		MessageSize = 1000,
 		DataSize = MessageSize - HeaderSize - 2 * sizeof(uint8_t)
 	};
 
