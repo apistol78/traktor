@@ -1280,7 +1280,7 @@ Round::Round()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Sampler", 3, Sampler, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Sampler_i[] = { { L"Texture", false }, { L"TexCoord", false }, 0 };
+const ImmutableNode::InputPinDesc c_Sampler_i[] = { { L"Texture", false }, { L"TexCoord", false }, { L"Mip", true }, 0 };
 const ImmutableNode::OutputPinDesc c_Sampler_o[] = { L"Output", 0 };
 
 Sampler::Sampler(

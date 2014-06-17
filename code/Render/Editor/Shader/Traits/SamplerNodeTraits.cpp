@@ -51,6 +51,8 @@ PinType SamplerNodeTraits::getInputPinType(
 {
 	if (inputPin->getName() == L"Texture")
 		return inputPinTypes[0]; //PntTexture;
+	else if (inputPin->getName() == L"Mip")
+		return PntScalar1;
 	else
 	{
 		switch (inputPinTypes[0])
@@ -67,27 +69,6 @@ PinType SamplerNodeTraits::getInputPinType(
 		default:
 			return PntVoid;
 		}
-
-		//ParameterType textureType = PtTexture2D;
-		//const OutputPin* sourceOutputPin = shaderGraph->findSourcePin(inputPin);
-		//if (sourceOutputPin)
-		//{
-		//	if (const Texture* sourceTexture = dynamic_type_cast< const Texture* >(sourceOutputPin->getNode()))
-		//		textureType = sourceTexture->getParameterType();
-		//	else if (const Uniform* sourceUniform = dynamic_type_cast< const Uniform* >(sourceOutputPin->getNode()))
-		//		textureType = sourceUniform->getParameterType();
-		//}
-		//switch (textureType)
-		//{
-		//case PtTexture2D:
-		//	return PntScalar2;
-		//case PtTexture3D:
-		//	return PntScalar3;
-		//case PtTextureCube:
-		//	return PntScalar3;
-		//default:
-		//	return PntVoid;
-		//}
 	}
 }
 

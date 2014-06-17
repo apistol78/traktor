@@ -1170,6 +1170,8 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 	if (!texCoord)
 		return false;
 
+	HlslVariable* mip = cx.emitInput(node, L"Mip");
+
 	// Define sampler class.
 	const D3D11_TEXTURE_ADDRESS_MODE c_d3dAddress[] =
 	{
@@ -1252,7 +1254,7 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 
 	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat4);
 
-	if (cx.inPixel() && !node->getIgnoreMips())
+	if (!mip && cx.inPixel() && !node->getIgnoreMips())
 	{
 		switch (texture->getType())
 		{
@@ -1270,11 +1272,11 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 		switch (texture->getType())
 		{
 		case HtTexture2D:
-			assign(cx, f, out) << textureName << L".SampleLevel(" << samplerName << L", " << texCoord->cast(HtFloat2) << L", 0.0f);" << Endl;
+			assign(cx, f, out) << textureName << L".SampleLevel(" << samplerName << L", " << texCoord->cast(HtFloat2) << L", " << (mip ? mip->cast(HtFloat) : L"0.0f") << L");" << Endl;
 			break;
 		case HtTexture3D:
 		case HtTextureCube:
-			assign(cx, f, out) << textureName << L".SampleLevel(" << samplerName << L", " << texCoord->cast(HtFloat3) << L", 0.0f);" << Endl;
+			assign(cx, f, out) << textureName << L".SampleLevel(" << samplerName << L", " << texCoord->cast(HtFloat3) << L", " << (mip ? mip->cast(HtFloat) : L"0.0f") << L");" << Endl;
 			break;
 		}
 	}
