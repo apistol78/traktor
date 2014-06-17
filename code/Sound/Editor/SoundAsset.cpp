@@ -40,7 +40,7 @@ void SoundAsset::serialize(ISerializer& s)
 		s >> Member< float >(L"presenceRate", m_presenceRate, AttributeRange(0.0f));
 
 	if (s.getVersion() >= 5)
-		s >> Member< float >(L"volume", m_volume, AttributeRange(0.0f, 1.0f));
+		s >> Member< float >(L"volume", m_volume, AttributeRange(0.0f, 10.0f));
 }
 
 	}

@@ -42,6 +42,8 @@ public:
 
 	bool handleCommand(const ui::Command& command);
 
+	void handleDatabaseEvent(db::Database* database, const Guid& eventId);
+
 private:
 	Ref< PropertyGroup > m_settings;
 	Ref< const IObjectEditorFactory > m_objectEditorFactory;

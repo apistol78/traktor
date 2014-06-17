@@ -168,14 +168,12 @@ bool SoundPipeline::buildOutput(
 		category = pipelineBuilder->getObjectReadOnly< SoundCategory >(category->getParent());
 	}
 
-	if (categorized)
-	{
-		log::info << L"Category volume " << int32_t(volume * 100.0f) << L" %" << Endl;
-		log::info << L"Category presence " << presence << L", rate " << int32_t(presenceRate * 100.0f) << L" d%" << Endl;
-		log::info << L"Category range " << range << Endl;
-	}
-	else
+	if (!categorized)
 		log::warning << L"Uncategorized sound \"" << sourceInstance->getName() << L"\"" << Endl;
+
+	log::info << L"Final volume " << int32_t(volume * 100.0f) << L" %" << Endl;
+	log::info << L"      presence " << presence << L", rate " << int32_t(presenceRate * 100.0f) << L" d%" << Endl;
+	log::info << L"      range " << range << Endl;
 
 	if (soundAsset->m_stream)
 	{

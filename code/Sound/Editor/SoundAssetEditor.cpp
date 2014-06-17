@@ -104,6 +104,10 @@ bool SoundAssetEditor::handleCommand(const ui::Command& command)
 	return false;
 }
 
+void SoundAssetEditor::handleDatabaseEvent(db::Database* database, const Guid& eventId)
+{
+}
+
 ui::Size SoundAssetEditor::getPreferredSize() const
 {
 	return ui::Size(500, 400);
@@ -155,7 +159,7 @@ void SoundAssetEditor::eventToolBarClick(ui::Event* event)
 		return;
 	}
 
-	m_soundChannel->play(buffer, 0, 1.0f, 0.0f, 1.0f);
+	m_soundChannel->play(buffer, 0, m_asset->getVolume(), m_asset->getPresence(), m_asset->getPresenceRate());
 }
 
 void SoundAssetEditor::eventPropertyCommand(ui::Event* event)
