@@ -30,7 +30,14 @@ void Socket::close()
 {
 	if (m_socket != INVALID_SOCKET)
 	{
+#if defined(_WIN32)
+		int8_t dummy;
+		::shutdown(m_socket, SD_SEND);
+		while (::recv(m_socket, &dummy, 1, 0) == 1)
+			;
+#else
 		::send(m_socket, 0, 0, 0);
+#endif
 		CLOSE_SOCKET(m_socket);
 		m_socket = INVALID_SOCKET;
 	}

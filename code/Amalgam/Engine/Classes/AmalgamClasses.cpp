@@ -141,6 +141,7 @@ void registerAmalgamClasses(script::IScriptManager* scriptManager)
 
 	Ref< script::AutoScriptClass< amalgam::IAudioServer > > classAudioServer = new script::AutoScriptClass< amalgam::IAudioServer >();
 	classAudioServer->addMethod("getSoundSystem", &amalgam::IAudioServer::getSoundSystem);
+	classAudioServer->addMethod("getSoundPlayer", &amalgam::IAudioServer::getSoundPlayer);
 	classAudioServer->addMethod("getSurroundEnvironment", &amalgam::IAudioServer::getSurroundEnvironment);
 	scriptManager->registerClass(classAudioServer);
 

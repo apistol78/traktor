@@ -58,6 +58,8 @@ class T_DLLCLASS EffectEntity : public world::Entity
 public:
 	EffectEntity(const Transform& transform, const resource::Proxy< Effect >& effect, world::IEntityEventManager* eventManager, sound::ISoundPlayer* soundPlayer);
 
+	virtual void destroy();
+
 	void render(
 		render::handle_t technique,
 		const Vector4& cameraPosition,

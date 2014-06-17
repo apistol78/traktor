@@ -22,26 +22,29 @@ struct TriggerGrainCursor : public RefCountImpl< ISoundBufferCursor >
 
 	virtual void setParameter(handle_t id, float parameter)
 	{
-		if (id != m_id)
-			return;
-
-		float dT = float(m_timer.getDeltaTime());
-		if (m_parameter >= 0.0f)
+		if (id == m_id)
 		{
-			float rate = (parameter - m_parameter) / dT;
+			float dT = float(m_timer.getDeltaTime());
+			if (m_parameter >= 0.0f)
+			{
+				float rate = (parameter - m_parameter) / dT;
 
-			if (m_rate > FUZZY_EPSILON && rate > m_rate)
-				m_active = true;
-			else if (m_rate < -FUZZY_EPSILON && rate < m_rate)
-				m_active = true;
+				if (m_rate > FUZZY_EPSILON && rate > m_rate)
+					m_active = true;
+				else if (m_rate < -FUZZY_EPSILON && rate < m_rate)
+					m_active = true;
 
-			if (m_position > FUZZY_EPSILON && m_parameter < m_position && parameter >= m_position)
-				m_active = true;
-			else if (m_position < FUZZY_EPSILON && m_parameter > -m_position && parameter <= -m_position)
-				m_active = true;
+				if (m_position > FUZZY_EPSILON && m_parameter < m_position && parameter >= m_position)
+					m_active = true;
+				else if (m_position < FUZZY_EPSILON && m_parameter > -m_position && parameter <= -m_position)
+					m_active = true;
+			}
+
+			m_parameter = parameter;
 		}
 
-		m_parameter = parameter;
+		if (m_cursor)
+			m_cursor->setParameter(id, parameter);
 	}
 
 	virtual void disableRepeat()
@@ -114,7 +117,7 @@ void TriggerGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< c
 
 	outActiveGrains.push_back(this);
 
-	if (triggerCursor->m_cursor)
+	if (triggerCursor && triggerCursor->m_cursor)
 		m_grain->getActiveGrains(triggerCursor->m_cursor, outActiveGrains);
 }
 

@@ -38,7 +38,7 @@ public:
 	virtual ~Socket();
 
 	/*! \brief Gracefully close socket. */
-	void close();
+	virtual void close();
 	
 	/*! \brief Query state of socket.
 	 *

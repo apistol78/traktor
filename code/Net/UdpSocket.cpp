@@ -14,6 +14,15 @@ UdpSocket::UdpSocket()
 {
 }
 
+void UdpSocket::close()
+{
+	if (m_socket != INVALID_SOCKET)
+	{
+		CLOSE_SOCKET(m_socket);
+		m_socket = INVALID_SOCKET;
+	}
+}
+
 bool UdpSocket::bind(const SocketAddressIPv4& socketAddress)
 {
 	struct sockaddr_in local = socketAddress.getSockAddr();

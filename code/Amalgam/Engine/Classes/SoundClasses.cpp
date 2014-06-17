@@ -16,6 +16,8 @@
 #include "Sound/Filters/RingModulationFilter.h"
 #include "Sound/Filters/SurroundEnvironment.h"
 #include "Sound/Filters/SurroundFilter.h"
+#include "Sound/Player/ISoundHandle.h"
+#include "Sound/Player/ISoundPlayer.h"
 
 namespace traktor
 {
@@ -106,6 +108,23 @@ void registerSoundClasses(script::IScriptManager* scriptManager)
 	classSurroundFilter->addConstructor< sound::SurroundEnvironment*, const Vector4& >();
 	classSurroundFilter->addMethod("setSpeakerPosition", &sound::SurroundFilter::setSpeakerPosition);
 	scriptManager->registerClass(classSurroundFilter);
+
+	Ref< script::AutoScriptClass< sound::ISoundHandle > > classISoundHandle = new script::AutoScriptClass< sound::ISoundHandle >();
+	classISoundHandle->addMethod("stop", &sound::ISoundHandle::stop);
+	classISoundHandle->addMethod("fadeOff", &sound::ISoundHandle::fadeOff);
+	classISoundHandle->addMethod("isPlaying", &sound::ISoundHandle::isPlaying);
+	classISoundHandle->addMethod("setVolume", &sound::ISoundHandle::setVolume);
+	classISoundHandle->addMethod("setPitch", &sound::ISoundHandle::setPitch);
+	classISoundHandle->addMethod("setPosition", &sound::ISoundHandle::setPosition);
+	classISoundHandle->addMethod("setParameter", &sound::ISoundHandle::setParameter);
+	scriptManager->registerClass(classISoundHandle);
+
+	Ref< script::AutoScriptClass< sound::ISoundPlayer > > classISoundPlayer = new script::AutoScriptClass< sound::ISoundPlayer >();
+	classISoundPlayer->addMethod("play", &sound::ISoundPlayer::play);
+	classISoundPlayer->addMethod("play3d", &sound::ISoundPlayer::play3d);
+	classISoundPlayer->addMethod("setListenerTransform", &sound::ISoundPlayer::setListenerTransform);
+	classISoundPlayer->addMethod("getListenerTransform", &sound::ISoundPlayer::getListenerTransform);
+	scriptManager->registerClass(classISoundPlayer);
 }
 
 	}

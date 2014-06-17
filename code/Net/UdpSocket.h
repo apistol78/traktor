@@ -29,6 +29,8 @@ class T_DLLCLASS UdpSocket : public Socket
 public:
 	UdpSocket();
 
+	virtual void close();
+
 	/*! \brief Bind to local address. */
 	bool bind(const SocketAddressIPv4& socketAddress);
 
