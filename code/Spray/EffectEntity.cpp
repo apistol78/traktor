@@ -57,6 +57,18 @@ void EffectEntity::render(
 		);
 }
 
+void EffectEntity::destroy()
+{
+	if (m_effectInstance)
+	{
+		m_effectInstance->setLoopEnable(false);
+		m_effectInstance = 0;
+	}
+
+	m_effect.clear();
+	m_techniques.clear();
+}
+
 void EffectEntity::setTransform(const Transform& transform)
 {
 	m_transform = transform;
