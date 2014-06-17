@@ -24,7 +24,7 @@ class T_DLLCLASS BlendGrain : public IGrain
 	T_RTTI_CLASS;
 
 public:
-	BlendGrain(handle_t id, IGrain* grain1, IGrain* grain2);
+	BlendGrain(handle_t id, float response, IGrain* grain1, IGrain* grain2);
 
 	virtual Ref< ISoundBufferCursor > createCursor() const;
 
@@ -38,6 +38,7 @@ public:
 
 private:
 	handle_t m_id;
+	float m_response;
 	Ref< IGrain > m_grains[2];
 };
 

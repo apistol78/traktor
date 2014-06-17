@@ -19,12 +19,14 @@ struct BlendGrainCursor : public RefCountImpl< ISoundBufferCursor >
 {
 	handle_t m_id;
 	float m_parameter;
+	float m_lastP;
 	Ref< ISoundBufferCursor > m_cursors[2];
 	float* m_outputSamples[SbcMaxChannelCount];
 
 	BlendGrainCursor()
 	:	m_id(0)
 	,	m_parameter(0.0f)
+	,	m_lastP(0.0f)
 	{
 	}
 
@@ -59,8 +61,9 @@ struct BlendGrainCursor : public RefCountImpl< ISoundBufferCursor >
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.BlendGrain", BlendGrain, IGrain)
 
-BlendGrain::BlendGrain(handle_t id, IGrain* grain1, IGrain* grain2)
+BlendGrain::BlendGrain(handle_t id, float response, IGrain* grain1, IGrain* grain2)
 :	m_id(id)
+,	m_response(response)
 {
 	m_grains[0] = grain1;
 	m_grains[1] = grain2;
@@ -116,6 +119,13 @@ bool BlendGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, 
 {
 	BlendGrainCursor* blendCursor = static_cast< BlendGrainCursor* >(cursor);
 
+	float p0 = clamp(blendCursor->m_parameter, 0.0f, 1.0f);
+
+	// Filter parameter to reduce intense changes causing clipping noises.
+	float k = clamp(m_response * float(outBlock.samplesCount) / 44050.0f, 0.0f, 1.0f);
+	float p = blendCursor->m_lastP * (1.0f - k) + p0 * k;
+	blendCursor->m_lastP = p;
+
 	SoundBlock soundBlock1 = { { 0, 0, 0, 0, 0, 0, 0, 0 }, outBlock.samplesCount, 0, 0 };
 	SoundBlock soundBlock2 = { { 0, 0, 0, 0, 0, 0, 0, 0 }, outBlock.samplesCount, 0, 0 };
 
@@ -141,13 +151,13 @@ bool BlendGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, 
 				outBlock.samples[i],
 				soundBlock1.samples[i],
 				soundBlock1.samplesCount,
-				1.0f - blendCursor->m_parameter
+				1.0f - p
 			);
 			mixer->addMulConst(
 				outBlock.samples[i],
 				soundBlock2.samples[i],
 				soundBlock2.samplesCount,
-				blendCursor->m_parameter
+				p
 			);
 		}
 		else if (soundBlock1.samples[i])
@@ -157,7 +167,7 @@ bool BlendGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, 
 				outBlock.samples[i],
 				soundBlock1.samples[i],
 				soundBlock1.samplesCount,
-				blendCursor->m_parameter
+				1.0f - p
 			);
 		}
 		else if (soundBlock2.samples[i])
@@ -167,7 +177,7 @@ bool BlendGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, 
 				outBlock.samples[i],
 				soundBlock2.samples[i],
 				soundBlock2.samplesCount,
-				1.0f - blendCursor->m_parameter
+				p
 			);
 		}
 		else

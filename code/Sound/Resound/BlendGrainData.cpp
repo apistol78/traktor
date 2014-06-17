@@ -10,7 +10,12 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.BlendGrainData", 1, BlendGrainData, IGrainData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.BlendGrainData", 2, BlendGrainData, IGrainData)
+
+BlendGrainData::BlendGrainData()
+:	m_response(1.0f)
+{
+}
 
 Ref< IGrain > BlendGrainData::createInstance(IGrainFactory* grainFactory) const
 {
@@ -26,6 +31,7 @@ Ref< IGrain > BlendGrainData::createInstance(IGrainFactory* grainFactory) const
 
 	return new BlendGrain(
 		getParameterHandle(m_id),
+		m_response,
 		grains[0],
 		grains[1]
 	);
@@ -35,6 +41,9 @@ void BlendGrainData::serialize(ISerializer& s)
 {
 	if (s.getVersion() >= 1)
 		s >> Member< std::wstring >(L"id", m_id);
+
+	if (s.getVersion() >= 2)
+		s >> Member< float >(L"response", m_response);
 
 	s >> MemberStaticArray< Ref< IGrainData >, 2, MemberRef< IGrainData > >(L"grains", m_grains);
 }

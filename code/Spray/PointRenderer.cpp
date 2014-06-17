@@ -52,8 +52,16 @@ const uint32_t c_pointCount = 1000;
 #elif defined(_PS3)
 const uint32_t c_pointCount = 3000;
 #else
-const uint32_t c_pointCount = 7000;
+const uint32_t c_pointCount = 8000;
 #endif
+
+const static float c_extents[4][2] =
+{
+	{ -1.0f, -1.0f },
+	{  1.0f, -1.0f },
+	{  1.0f,  1.0f },
+	{ -1.0f,  1.0f }
+};
 
 		}
 
@@ -176,14 +184,6 @@ void PointRenderer::render(
 	m_pointOffset += size;
 
 #else
-
-	const static float c_extents[4][2] =
-	{
-		{ -1.0f, -1.0f },
-		{  1.0f, -1.0f },
-		{  1.0f,  1.0f },
-		{ -1.0f,  1.0f }
-	};
 
 	Vector4 cameraOffsetV = cameraPlane.normal() * Scalar(cameraOffset);
 
