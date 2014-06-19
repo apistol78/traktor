@@ -15,7 +15,7 @@ State::State()
 {
 }
 
-State::State(const RefArray< const IValue > values)
+State::State(const RefArray< const IValue >& values)
 :	m_values(values)
 ,	m_index(0)
 {
