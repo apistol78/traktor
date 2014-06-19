@@ -8,6 +8,7 @@
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Render/IRenderView.h"
 #include "Render/RenderTargetSet.h"
 #include "Scene/Scene.h"
@@ -492,10 +493,13 @@ void WorldLayer::createWorldRenderer()
 	int32_t width = renderView->getWidth();
 	int32_t height = renderView->getHeight();
 
+	// Get post process quality from settings.
+	int32_t postProcessQuality = m_environment->getSettings()->getProperty< PropertyInteger >(L"World.PostProcessQuality", world::QuHigh);
+
 	// Create world renderer.
 	m_worldRenderer = m_environment->getWorld()->createWorldRenderer(
 		m_scene->getWorldRenderSettings(),
-		m_scene->getPostProcessSettings()
+		m_scene->getPostProcessSettings((world::Quality)postProcessQuality)
 	);
 	if (!m_worldRenderer)
 	{

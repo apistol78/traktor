@@ -84,6 +84,10 @@ private:
 
 	void Configuration_set_oceanQuality(AsConfiguration* self, int32_t oceanQuality) const;
 
+	int32_t Configuration_get_postProcessQuality(const AsConfiguration* self) const;
+
+	void Configuration_set_postProcessQuality(AsConfiguration* self, int32_t postProcessQuality) const;
+
 	float Configuration_get_mouseSensitivity(const AsConfiguration* self) const;
 
 	void Configuration_set_mouseSensitivity(AsConfiguration* self, float mouseSensitivity) const;

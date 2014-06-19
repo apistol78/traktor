@@ -233,7 +233,7 @@ void PerspectiveRenderControl::updateWorldRenderer()
 	wcd.frameCount = 1;
 
 	if (m_postProcessEnable)
-		wcd.postProcessSettings = sceneInstance->getPostProcessSettings();
+		wcd.postProcessSettings = sceneInstance->getPostProcessSettings(world::QuHigh);
 
 	if (worldRenderer->create(
 		m_context->getResourceManager(),

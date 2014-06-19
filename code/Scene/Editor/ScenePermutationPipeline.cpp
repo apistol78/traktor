@@ -13,7 +13,7 @@ namespace traktor
 	namespace scene
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePermutationPipeline", 3, ScenePermutationPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePermutationPipeline", 4, ScenePermutationPipeline, editor::IPipeline)
 
 bool ScenePermutationPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -50,8 +50,11 @@ bool ScenePermutationPipeline::buildDependencies(
 
 	pipelineDepends->addDependency(scenePermutationAsset->m_scene, editor::PdfUse);
 
-	if (scenePermutationAsset->m_overridePostProcessSettings)
-		pipelineDepends->addDependency(scenePermutationAsset->m_overridePostProcessSettings, editor::PdfBuild | editor::PdfResource);
+	for (int32_t i = 0; i < world::QuLast; ++i)
+	{
+		if (scenePermutationAsset->m_overridePostProcessSettings[i])
+			pipelineDepends->addDependency(scenePermutationAsset->m_overridePostProcessSettings[i], editor::PdfBuild | editor::PdfResource);
+	}
 
 	if (scenePermutationAsset->m_overrideWorldRenderSettings)
 		pipelineDepends->addDependency(scenePermutationAsset->m_overrideWorldRenderSettings->reflectionMap, editor::PdfBuild | editor::PdfResource);
@@ -108,8 +111,11 @@ Ref< ISerializable > ScenePermutationPipeline::buildOutput(
 	if (scenePermutationAsset->m_overrideWorldRenderSettings)
 		scenePermutation->setWorldRenderSettings(scenePermutationAsset->m_overrideWorldRenderSettings);
 
-	if (scenePermutationAsset->m_overridePostProcessSettings)
-		scenePermutation->setPostProcessSettings(scenePermutationAsset->m_overridePostProcessSettings);
+	for (int32_t i = 0; i < world::QuLast; ++i)
+	{
+		if (scenePermutationAsset->m_overridePostProcessSettings[i])
+			scenePermutation->setPostProcessSettings((world::Quality)i, scenePermutationAsset->m_overridePostProcessSettings[i]);
+	}
 
 	SmallMap< std::wstring, resource::Id< render::ITexture > > params = templateScene->getPostProcessParams();
 

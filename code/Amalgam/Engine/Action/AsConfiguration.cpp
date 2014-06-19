@@ -32,6 +32,7 @@ AsConfiguration::AsConfiguration()
 ,	m_particleQuality(QtMedium)
 ,	m_terrainQuality(QtMedium)
 ,	m_oceanQuality(QtMedium)
+,	m_postProcessQuality(QtHigh)
 ,	m_mouseSensitivity(0.5f)
 ,	m_rumbleEnable(true)
 ,	m_masterVolume(1.0f)
@@ -61,6 +62,7 @@ Ref< AsConfiguration > AsConfiguration::getCurrent(amalgam::IEnvironment* enviro
 	current->m_particleQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.ParticleQuality", QtMedium);
 	current->m_terrainQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.TerrainQuality", QtMedium);
 	current->m_oceanQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.OceanQuality", QtMedium);
+	current->m_postProcessQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.PostProcessQuality", QtHigh);
 	current->m_mouseSensitivity = settings->getProperty< PropertyFloat >(L"Input.MouseSensitivity", 0.5f);
 	current->m_rumbleEnable = settings->getProperty< PropertyBoolean >(L"Input.Rumble", true);
 	current->m_soundDriver = settings->getProperty< PropertyString >(L"Audio.Type");
@@ -217,6 +219,16 @@ void AsConfiguration::setOceanQuality(Quality oceanQuality)
 	m_oceanQuality = oceanQuality;
 }
 
+AsConfiguration::Quality AsConfiguration::getPostProcessQuality() const
+{
+	return m_postProcessQuality;
+}
+
+void AsConfiguration::setPostProcessQuality(Quality postProcessQuality)
+{
+	m_postProcessQuality = postProcessQuality;
+}
+
 float AsConfiguration::getMouseSensitivity() const
 {
 	return m_mouseSensitivity;
@@ -349,6 +361,7 @@ bool AsConfiguration::apply(amalgam::IEnvironment* environment)
 	settings->setProperty< PropertyInteger >(L"World.ParticleQuality", m_particleQuality);
 	settings->setProperty< PropertyInteger >(L"World.TerrainQuality", m_terrainQuality);
 	settings->setProperty< PropertyInteger >(L"World.OceanQuality", m_oceanQuality);
+	settings->setProperty< PropertyInteger >(L"World.PostProcessQuality", m_postProcessQuality);
 	settings->setProperty< PropertyFloat >(L"Input.MouseSensitivity", m_mouseSensitivity);
 	settings->setProperty< PropertyBoolean >(L"Input.Rumble", m_rumbleEnable);
 	settings->setProperty< PropertyString >(L"Audio.Type", m_soundDriver);

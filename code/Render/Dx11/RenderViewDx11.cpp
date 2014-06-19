@@ -622,9 +622,6 @@ void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 {
 	T_ASSERT (!m_renderStateStack.empty());
 
-	if (m_currentProgram)
-		m_currentProgram->unbind(m_context->getD3DDevice(), m_context->getD3DDeviceContext());
-
 	bindTargets();
 
 	const RenderState& rs = m_renderStateStack.back();
@@ -690,9 +687,6 @@ void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 {
 	T_ASSERT (!m_renderStateStack.empty());
 	T_ASSERT (instanceCount > 0);
-
-	if (m_currentProgram)
-		m_currentProgram->unbind(m_context->getD3DDevice(), m_context->getD3DDeviceContext());
 
 	bindTargets();
 

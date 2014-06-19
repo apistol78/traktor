@@ -347,8 +347,9 @@ void SceneEditorContext::buildEntities()
 		T[3] = timer.getElapsedTime();
 
 		// Bind post process settings.
-		resource::Proxy< world::PostProcessSettings > postProcessSettings;
-		m_resourceManager->bind(m_sceneAsset->getPostProcessSettings(), postProcessSettings);
+		resource::Proxy< world::PostProcessSettings > postProcessSettings[world::QuLast];
+		for (int32_t i = 0; i < world::QuLast; ++i)
+			m_resourceManager->bind(m_sceneAsset->getPostProcessSettings((world::Quality)i), postProcessSettings[i]);
 
 		// Bind post process parameters.
 		SmallMap< render::handle_t, resource::Proxy< render::ITexture > > postProcessParams;
@@ -427,11 +428,7 @@ void SceneEditorContext::buildController()
 	// Create our scene.
 	m_scene = new Scene(
 		controller,
-		m_scene->getEntitySchema(),
-		m_scene->getRootEntity(),
-		m_scene->getWorldRenderSettings(),
-		m_scene->getPostProcessSettings(),
-		m_scene->getPostProcessParams()
+		m_scene
 	);
 }
 

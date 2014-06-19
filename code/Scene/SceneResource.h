@@ -67,9 +67,9 @@ public:
 
 	Ref< world::WorldRenderSettings > getWorldRenderSettings() const;
 
-	void setPostProcessSettings(const resource::Id< world::PostProcessSettings >& postProcess);
+	void setPostProcessSettings(world::Quality quality, const resource::Id< world::PostProcessSettings >& postProcess);
 
-	const resource::Id< world::PostProcessSettings >& getPostProcessSettings() const;
+	const resource::Id< world::PostProcessSettings >& getPostProcessSettings(world::Quality quality) const;
 
 	void setPostProcessParams(const SmallMap< std::wstring, resource::Id< render::ITexture > >& postProcessParams);
 
@@ -87,7 +87,7 @@ public:
 
 private:
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
-	resource::Id< world::PostProcessSettings > m_postProcessSettings;
+	resource::Id< world::PostProcessSettings > m_postProcessSettings[world::QuLast];
 	SmallMap< std::wstring, resource::Id< render::ITexture > > m_postProcessParams;
 	Ref< world::EntityData > m_entityData;
 	Ref< ISceneControllerData > m_controllerData;

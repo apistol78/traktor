@@ -55,8 +55,6 @@ bool storeIfNotEqual(const Vector4* source, int length, float* dest)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramDx11", ProgramDx11, IProgram)
 
-ProgramDx11* ProgramDx11::ms_activeProgram = 0;
-
 ProgramDx11::ProgramDx11(ContextDx11* context)
 :	m_context(context)
 ,	m_stencilReference(0)
@@ -132,9 +130,6 @@ bool ProgramDx11::create(
 
 void ProgramDx11::destroy()
 {
-	if (ms_activeProgram == this)
-		ms_activeProgram = 0;
-
 	if (!m_context)
 		return;
 
@@ -321,19 +316,19 @@ bool ProgramDx11::bind(
 		);
 
 	// Bind resource views.
-	if (m_parameterTextureArrayDirty || ms_activeProgram != this)
+	if (m_parameterTextureArrayDirty || stateCache.getActiveProgram() != this)
 	{
-		// Unbind previous program's resources.
-		if (ms_activeProgram && ms_activeProgram != this)
-		{
-			ID3D11ShaderResourceView* res = 0;
+		//// Unbind previous program's resources.
+		//if (stateCache.getActiveProgram() && stateCache.getActiveProgram() != this)
+		//{
+		//	ID3D11ShaderResourceView* res = 0;
 
-			for (AlignedVector< std::pair< UINT, uint32_t > >::const_iterator i = ms_activeProgram->m_vertexState.resourceIndices.begin(); i != ms_activeProgram->m_vertexState.resourceIndices.end(); ++i)
-				d3dDeviceContext->VSSetShaderResources(i->first, 1, &res);
+		//	for (AlignedVector< std::pair< UINT, uint32_t > >::const_iterator i = ms_activeProgram->m_vertexState.resourceIndices.begin(); i != ms_activeProgram->m_vertexState.resourceIndices.end(); ++i)
+		//		d3dDeviceContext->VSSetShaderResources(i->first, 1, &res);
 
-			for (AlignedVector< std::pair< UINT, uint32_t > >::const_iterator i = ms_activeProgram->m_pixelState.resourceIndices.begin(); i != ms_activeProgram->m_pixelState.resourceIndices.end(); ++i)
-				d3dDeviceContext->PSSetShaderResources(i->first, 1, &res);
-		}
+		//	for (AlignedVector< std::pair< UINT, uint32_t > >::const_iterator i = ms_activeProgram->m_pixelState.resourceIndices.begin(); i != ms_activeProgram->m_pixelState.resourceIndices.end(); ++i)
+		//		d3dDeviceContext->PSSetShaderResources(i->first, 1, &res);
+		//}
 
 		// Bind this program's resources.
 		if (!m_vertexState.resourceIndices.empty())
@@ -399,25 +394,16 @@ bool ProgramDx11::bind(
 		m_parameterTextureArrayDirty = false;
 	}
 
-	// Bind shaders.
 	stateCache.setVertexShader(m_d3dVertexShader);
 	stateCache.setPixelShader(m_d3dPixelShader);
 	stateCache.setInputLayout(m_d3dVertexShaderHash, m_d3dVertexShaderBlob, d3dInputElementsHash, d3dInputElements);
+	stateCache.setActiveProgram(this);
 
 #if defined(_DEBUG)
 	++m_bindCount;
 #endif
 
-	ms_activeProgram = this;
 	return true;
-}
-
-void ProgramDx11::unbind(
-	ID3D11Device* d3dDevice,
-	ID3D11DeviceContext* d3dDeviceContext
-)
-{
-	ms_activeProgram = 0;
 }
 
 bool ProgramDx11::createState(
@@ -579,8 +565,8 @@ bool ProgramDx11::updateStateConstants(ID3D11DeviceContext* d3dDeviceContext, St
 	{
 		if (!state.cbuffer[i].d3dBuffer)
 			break;
-		if (!state.cbuffer[i].dirty)
-			continue;
+		//if (!state.cbuffer[i].dirty && state.cbuffer[i].d3dMappedContext == d3dDeviceContext)
+		//	continue;
 
 		hr = d3dDeviceContext->Map(state.cbuffer[i].d3dBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dm);
 		if (FAILED(hr))
@@ -597,6 +583,7 @@ bool ProgramDx11::updateStateConstants(ID3D11DeviceContext* d3dDeviceContext, St
 		}
 
 		d3dDeviceContext->Unmap(state.cbuffer[i].d3dBuffer, 0);
+		state.cbuffer[i].d3dMappedContext = d3dDeviceContext;
 	}
 
 	return true;

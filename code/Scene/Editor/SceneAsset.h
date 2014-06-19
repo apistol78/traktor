@@ -5,6 +5,7 @@
 #include "Core/Containers/SmallMap.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Resource/Id.h"
+#include "World/WorldTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -48,9 +49,9 @@ public:
 
 	Ref< world::WorldRenderSettings > getWorldRenderSettings() const;
 
-	void setPostProcessSettings(const resource::Id< world::PostProcessSettings >& postProcess);
+	void setPostProcessSettings(world::Quality quality, const resource::Id< world::PostProcessSettings >& postProcess);
 
-	const resource::Id< world::PostProcessSettings >& getPostProcessSettings() const;
+	const resource::Id< world::PostProcessSettings >& getPostProcessSettings(world::Quality quality) const;
 
 	void setPostProcessParams(const SmallMap< std::wstring, resource::Id< render::ITexture > >& postProcessParams);
 
@@ -68,7 +69,7 @@ public:
 
 private:
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
-	resource::Id< world::PostProcessSettings > m_postProcessSettings;
+	resource::Id< world::PostProcessSettings > m_postProcessSettings[world::QuLast];
 	SmallMap< std::wstring, resource::Id< render::ITexture > > m_postProcessParams;
 	RefArray< world::LayerEntityData > m_layers;
 	Ref< ISceneControllerData > m_controllerData;
