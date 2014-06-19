@@ -60,11 +60,6 @@ public:
 		const int32_t targetSize[2]
 	);
 
-	void unbind(
-		ID3D11Device* d3dDevice,
-		ID3D11DeviceContext* d3dDeviceContext
-	);
-
 private:
 	struct ParameterOffset
 	{
@@ -94,10 +89,12 @@ private:
 #endif
 		ComRef< ID3D11Buffer > d3dBuffer;
 		AlignedVector< ParameterOffset > parameterOffsets;
+		ID3D11DeviceContext* d3dMappedContext;
 		bool dirty;
 
 		CBuffer()
-		:	dirty(true)
+		:	d3dMappedContext(0)
+		,	dirty(true)
 		{
 		}
 	};
@@ -125,7 +122,6 @@ private:
 		AlignedVector< std::pair< UINT, uint32_t > > resourceIndices;
 	};
 
-	static ProgramDx11* ms_activeProgram;
 	Ref< ContextDx11 > m_context;
 	ComRef< ID3D11RasterizerState > m_d3dRasterizerState;
 	ComRef< ID3D11DepthStencilState > m_d3dDepthStencilState;

@@ -40,7 +40,7 @@ private:
 	Guid m_scene;
 	std::list< std::wstring > m_includeLayers;
 	Ref< world::WorldRenderSettings > m_overrideWorldRenderSettings;
-	resource::Id< world::PostProcessSettings > m_overridePostProcessSettings;
+	resource::Id< world::PostProcessSettings > m_overridePostProcessSettings[world::QuLast];
 	SmallMap< std::wstring, resource::Id< render::ITexture > > m_overridePostProcessParams;
 };
 

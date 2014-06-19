@@ -17,16 +17,28 @@ Scene::Scene(
 	world::IEntitySchema* entitySchema,
 	world::Entity* rootEntity,
 	world::WorldRenderSettings* worldRenderSettings,
-	const resource::Proxy< world::PostProcessSettings >& postProcessSettings,
+	const resource::Proxy< world::PostProcessSettings > postProcessSettings[world::QuLast],
 	const SmallMap< render::handle_t, resource::Proxy< render::ITexture > >& postProcessParams
 )
 :	m_entitySchema(entitySchema)
 ,	m_rootEntity(rootEntity)
 ,	m_controller(controller)
 ,	m_worldRenderSettings(worldRenderSettings)
-,	m_postProcessSettings(postProcessSettings)
 ,	m_postProcessParams(postProcessParams)
 {
+	for (int32_t i = 0; i < world::QuLast; ++i)
+		m_postProcessSettings[i] = postProcessSettings[i];
+}
+
+Scene::Scene(ISceneController* controller, Scene* scene)
+:	m_entitySchema(scene->m_entitySchema)
+,	m_rootEntity(scene->m_rootEntity)
+,	m_controller(controller)
+,	m_worldRenderSettings(scene->m_worldRenderSettings)
+,	m_postProcessParams(scene->m_postProcessParams)
+{
+	for (int32_t i = 0; i < world::QuLast; ++i)
+		m_postProcessSettings[i] = scene->m_postProcessSettings[i];
 }
 
 Scene::~Scene()
@@ -35,7 +47,10 @@ Scene::~Scene()
 	m_entitySchema = 0;
 	m_controller = 0;
 	m_worldRenderSettings = 0;
-	m_postProcessSettings.clear();
+	
+	for (int32_t i = 0; i < world::QuLast; ++i)
+		m_postProcessSettings[i].clear();
+
 	m_postProcessParams.clear();
 }
 
@@ -45,7 +60,10 @@ void Scene::destroy()
 	m_entitySchema = 0;
 	m_controller = 0;
 	m_worldRenderSettings = 0;
-	m_postProcessSettings.clear();
+
+	for (int32_t i = 0; i < world::QuLast; ++i)
+		m_postProcessSettings[i].clear();
+
 	m_postProcessParams.clear();
 }
 
@@ -78,9 +96,9 @@ world::WorldRenderSettings* Scene::getWorldRenderSettings() const
 	return m_worldRenderSettings;
 }
 
-const resource::Proxy< world::PostProcessSettings >& Scene::getPostProcessSettings() const
+const resource::Proxy< world::PostProcessSettings >& Scene::getPostProcessSettings(world::Quality quality) const
 {
-	return m_postProcessSettings;
+	return m_postProcessSettings[int32_t(quality)];
 }
 
 const SmallMap< render::handle_t, resource::Proxy< render::ITexture > >& Scene::getPostProcessParams() const

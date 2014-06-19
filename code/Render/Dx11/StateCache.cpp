@@ -16,6 +16,7 @@ StateCache::StateCache(ID3D11DeviceContext* d3dDeviceContext)
 ,	m_d3dTopology(D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED)
 ,	m_d3dSignatureHash(0)
 ,	m_stencilReference(0)
+,	m_activeProgram(0)
 {
 }
 
@@ -31,6 +32,7 @@ void StateCache::reset()
 	m_d3dTopology = D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED;
 	m_d3dSignatureHash = 0;
 	m_stencilReference = 0;
+	m_activeProgram = 0;
 }
 
 void StateCache::setRasterizerState(ID3D11RasterizerState* d3dRasterizerState)
@@ -143,6 +145,16 @@ void StateCache::setInputLayout(uint32_t d3dVertexShaderHash, ID3DBlob* d3dVerte
 		m_d3dSignatureHash = d3dSignatureHash;
 		m_d3dDeviceContext->IASetInputLayout(d3dInputLayout);
 	}
+}
+
+void StateCache::setActiveProgram(ProgramDx11* program)
+{
+	m_activeProgram = program;
+}
+
+ProgramDx11* StateCache::getActiveProgram() const
+{
+	return m_activeProgram;
 }
 
 	}

@@ -5,6 +5,7 @@
 #include "Core/Containers/SmallMap.h"
 #include "Render/Types.h"
 #include "Resource/Proxy.h"
+#include "World/WorldTypes.h"
 #include "World/PostProcess/PostProcessSettings.h"
 
 // import/export mechanism.
@@ -57,9 +58,11 @@ public:
 		world::IEntitySchema* entitySchema,
 		world::Entity* rootEntity,
 		world::WorldRenderSettings* worldRenderSettings,
-		const resource::Proxy< world::PostProcessSettings >& postProcessSettings,
+		const resource::Proxy< world::PostProcessSettings > postProcessSettings[world::QuLast],
 		const SmallMap< render::handle_t, resource::Proxy< render::ITexture > >& postProcessParams
 	);
+
+	explicit Scene(ISceneController* controller, Scene* scene);
 
 	virtual ~Scene();
 
@@ -75,7 +78,7 @@ public:
 
 	world::WorldRenderSettings* getWorldRenderSettings() const;
 
-	const resource::Proxy< world::PostProcessSettings >& getPostProcessSettings() const;
+	const resource::Proxy< world::PostProcessSettings >& getPostProcessSettings(world::Quality quality) const;
 
 	const SmallMap< render::handle_t, resource::Proxy< render::ITexture > >& getPostProcessParams() const;
 
@@ -84,7 +87,7 @@ private:
 	Ref< world::Entity > m_rootEntity;
 	Ref< ISceneController > m_controller;
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
-	resource::Proxy< world::PostProcessSettings > m_postProcessSettings;
+	resource::Proxy< world::PostProcessSettings > m_postProcessSettings[world::QuLast];
 	SmallMap< render::handle_t, resource::Proxy< render::ITexture > > m_postProcessParams;
 };
 

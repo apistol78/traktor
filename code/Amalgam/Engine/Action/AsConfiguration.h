@@ -87,6 +87,10 @@ public:
 
 	void setOceanQuality(Quality oceanQuality);
 
+	Quality getPostProcessQuality() const;
+
+	void setPostProcessQuality(Quality postProcessQuality);
+
 	float getMouseSensitivity() const;
 
 	void setMouseSensitivity(float mouseSensitivity);
@@ -141,6 +145,7 @@ private:
 	Quality m_particleQuality;
 	Quality m_terrainQuality;
 	Quality m_oceanQuality;
+	Quality m_postProcessQuality;
 	float m_mouseSensitivity;
 	bool m_rumbleEnable;
 	std::wstring m_soundDriver;

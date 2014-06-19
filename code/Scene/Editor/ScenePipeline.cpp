@@ -18,7 +18,7 @@ namespace traktor
 	namespace scene
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", 10, ScenePipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", 11, ScenePipeline, editor::IPipeline)
 
 ScenePipeline::ScenePipeline()
 :	m_targetEditor(false)
@@ -61,7 +61,9 @@ bool ScenePipeline::buildDependencies(
 ) const
 {
 	Ref< const SceneAsset > sceneAsset = checked_type_cast< const SceneAsset* >(sourceAsset);
-	pipelineDepends->addDependency(sceneAsset->getPostProcessSettings(), editor::PdfBuild | editor::PdfResource);
+
+	for (int32_t quality = 0; quality < world::QuLast; ++quality)
+		pipelineDepends->addDependency(sceneAsset->getPostProcessSettings((world::Quality)quality), editor::PdfBuild | editor::PdfResource);
 
 	const SmallMap< std::wstring, resource::Id< render::ITexture > >& params = sceneAsset->getPostProcessParams();
 	for (SmallMap< std::wstring, resource::Id< render::ITexture > >::const_iterator i = params.begin(); i != params.end(); ++i)
@@ -123,7 +125,10 @@ bool ScenePipeline::buildOutput(
 
 	Ref< SceneResource > sceneResource = new SceneResource();
 	sceneResource->setWorldRenderSettings(sceneAsset->getWorldRenderSettings());
-	sceneResource->setPostProcessSettings(sceneAsset->getPostProcessSettings());
+
+	for (int32_t i = 0; i < world::QuLast; ++i)
+		sceneResource->setPostProcessSettings((world::Quality)i, sceneAsset->getPostProcessSettings((world::Quality)i));
+
 	sceneResource->setPostProcessParams(sceneAsset->getPostProcessParams());
 	sceneResource->setEntityData(groupEntityData);
 	sceneResource->setControllerData(controllerData);
@@ -138,9 +143,10 @@ bool ScenePipeline::buildOutput(
 		sceneResource->getWorldRenderSettings()->depthPassEnabled = false;
 		log::info << L"Depth pass suppressed" << Endl;
 	}
-	if (m_suppressPostProcess && !sceneResource->getPostProcessSettings().isNull())
+	if (m_suppressPostProcess)
 	{
-		sceneResource->setPostProcessSettings(resource::Id< world::PostProcessSettings >());
+		for (int32_t i = 0; i < world::QuLast; ++i)
+			sceneResource->setPostProcessSettings((world::Quality)i, resource::Id< world::PostProcessSettings >());
 		log::info << L"Post processing suppressed" << Endl;
 	}
 

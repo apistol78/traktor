@@ -810,10 +810,10 @@ void SceneEditorPage::updateScene()
 		// Check if any scene settings has changed.
 		bool needUpdate = false;
 
-		if (m_currentGuid != sceneAsset->getPostProcessSettings())
+		if (m_currentGuid != sceneAsset->getPostProcessSettings(world::QuHigh))
 		{
 			needUpdate = true;
-			m_currentGuid = sceneAsset->getPostProcessSettings();
+			m_currentGuid = sceneAsset->getPostProcessSettings(world::QuHigh);
 		}
 
 		DeepHash hash(sceneAsset->getWorldRenderSettings());

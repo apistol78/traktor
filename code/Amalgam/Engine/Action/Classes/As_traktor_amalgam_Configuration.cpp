@@ -43,6 +43,7 @@ As_traktor_amalgam_Configuration::As_traktor_amalgam_Configuration(flash::Action
 	prototype->addProperty("terrainQuality", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_terrainQuality), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_terrainQuality));
 	prototype->addProperty("particleQuality", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_particleQuality), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_particleQuality));
 	prototype->addProperty("oceanQuality", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_oceanQuality), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_oceanQuality));
+	prototype->addProperty("postProcessQuality", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_postProcessQuality), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_postProcessQuality));
 
 	// Input
 	prototype->addProperty("mouseSensitivity", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_mouseSensitivity), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_mouseSensitivity));
@@ -220,6 +221,16 @@ int32_t As_traktor_amalgam_Configuration::Configuration_get_oceanQuality(const A
 void As_traktor_amalgam_Configuration::Configuration_set_oceanQuality(AsConfiguration* self, int32_t oceanQuality) const
 {
 	self->setOceanQuality((AsConfiguration::Quality)oceanQuality);
+}
+
+int32_t As_traktor_amalgam_Configuration::Configuration_get_postProcessQuality(const AsConfiguration* self) const
+{
+	return self->getPostProcessQuality();
+}
+
+void As_traktor_amalgam_Configuration::Configuration_set_postProcessQuality(AsConfiguration* self, int32_t postProcessQuality) const
+{
+	self->setPostProcessQuality((AsConfiguration::Quality)postProcessQuality);
 }
 
 float As_traktor_amalgam_Configuration::Configuration_get_mouseSensitivity(const AsConfiguration* self) const
