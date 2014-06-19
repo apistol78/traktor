@@ -293,6 +293,18 @@ public:
 		}
 	}
 
+#if defined(T_CXX11)
+	RefArray(RefArray&& ref)
+	:	m_items(ref.m_items)
+	,	m_size(ref.m_size)
+	,	m_capacity(ref.m_capacity)
+	{
+		ref.m_items = 0;
+		ref.m_size = 0;
+		ref.m_capacity = 0;
+	}
+#endif
+
 	virtual ~RefArray()
 	{
 		clear();
@@ -617,6 +629,26 @@ public:
 
 		return *this;
 	}
+
+#if defined(T_CXX11)
+	RefArray& operator = (RefArray&& ref)
+	{
+		for (size_type i = 0; i < m_size; ++i)
+			T_SAFE_RELEASE(m_items[i]);
+
+		delete[] m_items;
+
+		m_items = ref.m_items;
+		m_size = ref.m_size;
+		m_capacity = ref.m_capacity;
+
+		ref.m_items = 0;
+		ref.m_size = 0;
+		ref.m_capacity = 0;
+
+		return *this;
+	}
+#endif
 
 private:
 	value_type* m_items;
