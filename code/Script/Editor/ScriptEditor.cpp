@@ -331,6 +331,31 @@ bool ScriptEditor::handleCommand(const ui::Command& command)
 		{
 		}
 	}
+	else if (command == L"Editor.ReplaceAll")
+	{
+		ui::custom::InputDialog::Field fields[] =
+		{
+			{ L"Search", L"", 0, 0 },
+			{ L"Replace with", L"", 0, 0 },
+		};
+
+		Ref< ui::custom::InputDialog > dialogReplace = new ui::custom::InputDialog();
+		dialogReplace->create(m_edit, L"Replace All", L"Enter text or word to replace", fields, sizeof_array(fields));
+		if (dialogReplace->showModal() == ui::DrOk)
+		{
+			if (
+				!(m_findNeedle = fields[0].value).empty() &&
+				!(m_replaceValue = fields[1].value).empty()
+			)
+			{
+				for (int32_t line = 0; line < m_edit->getLineCount(); ++line)
+				{
+					std::wstring text = m_edit->getLine(line);
+					m_edit->setLine(line, replaceAll(text, m_findNeedle, m_replaceValue));
+				}
+			}
+		}
+	}
 	else
 	{
 		ui::TabPage* tabPageSession = m_tabSessions->getActivePage();

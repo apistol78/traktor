@@ -24,6 +24,13 @@ class IEnvironment;
 
 	}
 
+	namespace render
+	{
+
+class Shader;
+
+	}
+
 	namespace script
 	{
 
@@ -53,6 +60,7 @@ private:
 
 	RefArray< LayerData > m_layers;
 	resource::Id< script::IScriptContext > m_script;
+	resource::Id< render::Shader > m_shaderFade;
 	std::map< std::wstring, Guid > m_transitions;
 	Guid m_resourceBundle;
 };

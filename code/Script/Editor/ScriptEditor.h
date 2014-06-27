@@ -94,6 +94,7 @@ private:
 	Ref< ui::custom::StatusBar > m_compileStatus;
 	Ref< ui::Tab > m_tabSessions;
 	std::wstring m_findNeedle;
+	std::wstring m_replaceValue;
 	int32_t m_compileCountDown;
 
 

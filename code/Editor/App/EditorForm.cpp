@@ -656,6 +656,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Find"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.FindNext"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Replace"));
+	m_shortcutCommands.push_back(ui::Command(L"Editor.ReplaceAll"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Build"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Rebuild"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.CancelBuild"));

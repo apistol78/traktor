@@ -20,23 +20,19 @@ namespace traktor
 {
 	namespace amalgam
 	{
-		namespace
-		{
-
-const resource::Id< render::Shader > c_shaderFade(Guid(L"{DC104971-11AE-5743-9AB1-53B830F74391}"));
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.Stage", Stage, Object)
 
 Stage::Stage(
 	amalgam::IEnvironment* environment,
 	const resource::Proxy< script::IScriptContext >& scriptContext,
+	const resource::Proxy< render::Shader >& shaderFade,
 	const std::map< std::wstring, Guid >& transitions,
 	const Object* params
 )
 :	m_environment(environment)
 ,	m_scriptContext(scriptContext)
+,	m_shaderFade(shaderFade)
 ,	m_transitions(transitions)
 ,	m_params(params)
 ,	m_initialized(false)
@@ -45,11 +41,6 @@ Stage::Stage(
 {
 	m_screenRenderer = new render::ScreenRenderer();
 	m_screenRenderer->create(m_environment->getRender()->getRenderSystem());
-
-	m_environment->getResource()->getResourceManager()->bind(
-		c_shaderFade,
-		m_shaderFade
-	);
 }
 
 Stage::~Stage()
@@ -225,9 +216,9 @@ void Stage::render(render::EyeType eye, uint32_t frame)
 	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 		(*i)->render(eye, frame);
 
-	if (m_fade > FUZZY_EPSILON)
+	if (m_shaderFade && m_fade > FUZZY_EPSILON)
 	{
-		m_shaderFade->setVectorParameter(L"Color", Vector4(0.0f, 0.0f, 0.0f, m_fade));
+		m_shaderFade->setFloatParameter(L"Fade", m_fade);
 		m_screenRenderer->draw(
 			m_environment->getRender()->getRenderView(),
 			m_shaderFade

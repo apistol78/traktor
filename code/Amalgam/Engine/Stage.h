@@ -57,6 +57,7 @@ public:
 	Stage(
 		amalgam::IEnvironment* environment,
 		const resource::Proxy< script::IScriptContext >& scriptContext,
+		const resource::Proxy< render::Shader >& shaderFade,
 		const std::map< std::wstring, Guid >& transitions,
 		const Object* params
 	);
