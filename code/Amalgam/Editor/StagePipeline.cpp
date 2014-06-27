@@ -31,6 +31,7 @@ bool StagePipeline::buildDependencies(
 	const StageData* stageData = checked_type_cast< const StageData*, false >(sourceAsset);
 
 	pipelineDepends->addDependency(stageData->m_script, editor::PdfBuild);
+	pipelineDepends->addDependency(stageData->m_shaderFade, editor::PdfBuild | editor::PdfResource);
 
 	for (std::map< std::wstring, Guid >::const_iterator i = stageData->m_transitions.begin(); i != stageData->m_transitions.end(); ++i)
 		pipelineDepends->addDependency(i->second, editor::PdfBuild);
