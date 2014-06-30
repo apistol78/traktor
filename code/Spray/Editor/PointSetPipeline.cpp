@@ -139,7 +139,7 @@ bool PointSetPipeline::buildOutput(
 		}
 	}
 
-	log::info << L"PointSet created, " << pointSet->get().size() << L" point(s)" << Endl;
+	log::info << L"PointSet created, " << uint32_t(pointSet->get().size()) << L" point(s)" << Endl;
 
 	Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 		outputPath,
