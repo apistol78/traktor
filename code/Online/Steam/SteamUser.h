@@ -33,7 +33,7 @@ public:
 
 	virtual bool isP2PRelayed(uint64_t userHandle) const;
 
-	virtual bool sendP2PData(uint64_t userHandle, const void* data, size_t size);
+	virtual bool sendP2PData(uint64_t userHandle, const void* data, size_t size, bool reliable);
 
 private:
 	STEAM_CALLBACK(SteamUser, OnP2PSessionConnectFail, P2PSessionConnectFail_t, m_callbackSessionConnectFail);

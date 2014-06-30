@@ -57,7 +57,7 @@ void OscillateFeedbackEventInstance::build(world::IWorldRenderer* worldRenderer)
 {
 }
 
-void OscillateFeedbackEventInstance::cancel(CancelType when)
+void OscillateFeedbackEventInstance::cancel(world::CancelType when)
 {
 }
 

@@ -60,7 +60,7 @@ void SoundEventInstance::build(world::IWorldRenderer* worldRenderer)
 {
 }
 
-void SoundEventInstance::cancel(CancelType when)
+void SoundEventInstance::cancel(world::CancelType when)
 {
 	if (m_handle)
 	{

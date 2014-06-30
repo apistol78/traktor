@@ -441,7 +441,7 @@ void Replicator::setGhostObject(handle_t peerHandle, Object* ghostObject)
 	if (i != m_peers.end() && i->second.ghost)
 		i->second.ghost->object = ghostObject;
 	else
-		T_REPLICATOR_DEBUG(L"ERROR: Trying to set ghost object of unknown peer handle " << peerHandle);
+		T_REPLICATOR_DEBUG(L"ERROR: Trying to set ghost object of unknown peer handle " << int32_t(peerHandle));
 }
 
 Object* Replicator::getGhostObject(handle_t peerHandle) const
@@ -451,7 +451,7 @@ Object* Replicator::getGhostObject(handle_t peerHandle) const
 		return i->second.ghost->object;
 	else
 	{
-		T_REPLICATOR_DEBUG(L"ERROR: Trying to get ghost object of unknown peer handle " << peerHandle);
+		T_REPLICATOR_DEBUG(L"ERROR: Trying to get ghost object of unknown peer handle " << int32_t(peerHandle));
 		return 0;
 	}
 }
@@ -462,7 +462,7 @@ void Replicator::setGhostOrigin(handle_t peerHandle, const Transform& origin)
 	if (i != m_peers.end() && i->second.ghost)
 		i->second.ghost->origin = origin;
 	else
-		T_REPLICATOR_DEBUG(L"ERROR: Trying to set ghost origin of unknown peer handle " << peerHandle);
+		T_REPLICATOR_DEBUG(L"ERROR: Trying to set ghost origin of unknown peer handle " << int32_t(peerHandle));
 }
 
 void Replicator::setGhostStateTemplate(handle_t peerHandle, const StateTemplate* stateTemplate)
@@ -479,7 +479,7 @@ void Replicator::setGhostStateTemplate(handle_t peerHandle, const StateTemplate*
 		i->second.ghost->T0 = 0;
 	}
 	else
-		T_REPLICATOR_DEBUG(L"ERROR: Trying to get ghost state of unknown peer handle " << peerHandle);
+		T_REPLICATOR_DEBUG(L"ERROR: Trying to get ghost state of unknown peer handle " << int32_t(peerHandle));
 }
 
 const StateTemplate* Replicator::getGhostStateTemplate(handle_t peerHandle) const
@@ -498,7 +498,7 @@ float Replicator::getGhostStateTime(handle_t peerHandle) const
 		return i->second.ghost->T0 / 1000.0f;
 	else
 	{
-		T_REPLICATOR_DEBUG(L"ERROR: Trying to get ghost state of unknown peer handle " << peerHandle);
+		T_REPLICATOR_DEBUG(L"ERROR: Trying to get ghost state of unknown peer handle " << int32_t(peerHandle));
 		return 0.0f;
 	}
 }
@@ -533,7 +533,7 @@ Ref< const State > Replicator::getGhostState(handle_t peerHandle, float timeOffs
 	}
 	else
 	{
-		T_REPLICATOR_DEBUG(L"ERROR: Trying to get ghost state of unknown peer handle " << peerHandle);
+		T_REPLICATOR_DEBUG(L"ERROR: Trying to get ghost state of unknown peer handle " << int32_t(peerHandle));
 		return 0;
 	}
 }

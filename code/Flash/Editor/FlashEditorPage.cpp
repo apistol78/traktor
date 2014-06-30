@@ -8,9 +8,11 @@
 #include "Database/Instance.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
+#include "Flash/FlashFrame.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashMovieFactory.h"
 #include "Flash/FlashMoviePlayer.h"
+#include "Flash/FlashSprite.h"
 #include "Flash/FlashSpriteInstance.h"
 #include "Flash/SwfReader.h"
 #include "Flash/Action/ActionContext.h"
@@ -310,6 +312,25 @@ void FlashEditorPage::updateTreeCharacter(ui::TreeViewItem* parentItem, FlashCha
 
 	if (FlashSpriteInstance* spriteInstance = dynamic_type_cast< FlashSpriteInstance* >(characterInstance))
 	{
+		const FlashSprite* sprite = spriteInstance->getSprite();
+		if (sprite)
+		{
+			uint32_t frameCount = sprite->getFrameCount();
+			m_treeMovie->createItem(characterItem, toString(frameCount) + L" frame(s)");
+
+			Ref< ui::TreeViewItem > labelsItem = m_treeMovie->createItem(characterItem, L"Label(s)", 0, 0);
+			for (uint32_t i = 0; i < frameCount; ++i)
+			{
+				const FlashFrame* frame = sprite->getFrame(i);
+				if (frame)
+				{
+					const std::string& label = frame->getLabel();
+					if (!label.empty())
+						m_treeMovie->createItem(labelsItem, toString(i) + L". \"" + mbstows(label) + L"\"");
+				}
+			}
+		}
+
 		Ref< ui::TreeViewItem > layersItem = m_treeMovie->createItem(characterItem, L"Layer(s)", 0, 0);
 
 		const FlashDisplayList::layer_map_t& layers = spriteInstance->getDisplayList().getLayers();

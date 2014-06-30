@@ -37,7 +37,7 @@ bool StateNodeController::evaluate(
 
 	if (!m_initialized)
 	{
-		if (!m_node->prepareContext(m_context))
+		if (!m_node || !m_node->prepareContext(m_context))
 			return false;
 		m_initialized = true;
 	}

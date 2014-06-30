@@ -84,13 +84,13 @@ bool SteamUser::isP2PRelayed(uint64_t userHandle) const
 	return ss.m_bUsingRelay != 0;
 }
 
-bool SteamUser::sendP2PData(uint64_t userHandle, const void* data, size_t size)
+bool SteamUser::sendP2PData(uint64_t userHandle, const void* data, size_t size, bool reliable)
 {
 	bool result = false;
 	T_EXCEPTION_GUARD_BEGIN
 	
 	if (data && size > 0)
-		result = SteamNetworking()->SendP2PPacket(uint64(userHandle), data, uint32(size), k_EP2PSendUnreliableNoDelay);
+		result = SteamNetworking()->SendP2PPacket(uint64(userHandle), data, uint32(size), reliable ? k_EP2PSendReliable : k_EP2PSendUnreliable);
 	else
 		result = true;
 

@@ -22,7 +22,7 @@ public:
 
 	virtual void build(world::IWorldRenderer* worldRenderer);
 
-	virtual void cancel(CancelType when);
+	virtual void cancel(world::CancelType when);
 
 private:
 	const OscillateFeedbackEventData* m_data;

@@ -37,6 +37,8 @@ public:
 
 	virtual void build(IWorldRenderer* worldRenderer);
 
+	virtual void cancelAll(CancelType when);
+
 private:
 	uint32_t m_maxEventInstances;
 	RefArray< IEntityEventInstance > m_eventInstances;
