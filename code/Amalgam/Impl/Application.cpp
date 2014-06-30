@@ -44,6 +44,7 @@
 #include "Render/IRenderView.h"
 #include "Resource/IResourceManager.h"
 #include "Script/IScriptManager.h"
+#include "World/IEntityEventManager.h"
 
 namespace traktor
 {
@@ -518,6 +519,10 @@ bool Application::update()
 			log::info << L"Performing full garbage collect cycle..." << Endl;
 			if (m_scriptServer)
 				m_scriptServer->cleanup(true);
+
+			// Cancel all running events.
+			if (m_worldServer)
+				m_worldServer->getEntityEventManager()->cancelAll(world::CtImmediate);
 
 			// Cleanup resources used by former state.
 			log::info << L"Cleaning resident resources..." << Endl;

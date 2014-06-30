@@ -3,6 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/Math/Transform.h"
+#include "World/WorldTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -39,6 +40,8 @@ public:
 	virtual void update(const UpdateParams& update) = 0;
 
 	virtual void build(IWorldRenderer* worldRenderer) = 0;
+
+	virtual void cancelAll(CancelType when) = 0;
 };
 
 	}

@@ -33,7 +33,7 @@ public:
 
 	virtual bool isP2PRelayed() const;
 
-	virtual bool sendP2PData(const void* data, size_t size);
+	virtual bool sendP2PData(const void* data, size_t size, bool reliable);
 
 private:
 	friend class Lobby;

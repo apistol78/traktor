@@ -57,5 +57,16 @@ void EntityEventManager::build(IWorldRenderer* worldRenderer)
 		(*i)->build(worldRenderer);
 }
 
+void EntityEventManager::cancelAll(CancelType when)
+{
+	// Issue cancel on all instances.
+	for (RefArray< IEntityEventInstance >::iterator i = m_eventInstances.begin(); i != m_eventInstances.end(); ++i)
+		(*i)->cancel(when);
+
+	// Remove all instances directly instead of waiting for next update.
+	if (when == CtImmediate)
+		m_eventInstances.clear();
+}
+
 	}
 }

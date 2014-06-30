@@ -257,13 +257,12 @@ int32_t OnlinePeers::receive(void* data, int32_t size, net::handle_t& outFromHan
 bool OnlinePeers::send(net::handle_t handle, const void* data, int32_t size, bool reliable)
 {
 	T_ASSERT (size < 1200);
-	T_ASSERT (!reliable);
 
 	SmallMap< net::handle_t, Ref< IUser > >::const_iterator i = m_userMap.find(handle);
 	if (i == m_userMap.end() || i->second == 0)
 		return false;
 
-	return i->second->sendP2PData(data, size);
+	return i->second->sendP2PData(data, size, reliable);
 }
 
 uint8_t OnlinePeers::getFreeHandle()

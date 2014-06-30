@@ -49,7 +49,7 @@ bool LocalUser::isP2PRelayed(uint64_t userHandle) const
 	return false;
 }
 
-bool LocalUser::sendP2PData(uint64_t userHandle, const void* data, size_t size)
+bool LocalUser::sendP2PData(uint64_t userHandle, const void* data, size_t size, bool reliable)
 {
 	return false;
 }

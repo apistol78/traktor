@@ -41,7 +41,7 @@ EffectLayerInstance::~EffectLayerInstance()
 {
 	if (m_triggerInstance)
 	{
-		m_triggerInstance->cancel(world::IEntityEventInstance::CtImmediate);
+		m_triggerInstance->cancel(world::CtImmediate);
 		m_triggerInstance = 0;
 	}
 }
@@ -84,7 +84,7 @@ void EffectLayerInstance::update(Context& context, const Transform& transform, f
 	if (enable != m_enable && context.eventManager)
 	{
 		if (m_triggerInstance)
-			m_triggerInstance->cancel(world::IEntityEventInstance::CtImmediate);
+			m_triggerInstance->cancel(world::CtImmediate);
 
 		m_triggerInstance = context.eventManager->raise(
 			enable ? m_layer->getTriggerEnable() : m_layer->getTriggerDisable(),

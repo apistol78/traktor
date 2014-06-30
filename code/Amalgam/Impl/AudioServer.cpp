@@ -57,8 +57,13 @@ bool AudioServer::create(const PropertyGroup* settings)
 	sscd.driverDesc.sampleRate = settings->getProperty< PropertyInteger >(L"Audio.SampleRate", 44100);
 	sscd.driverDesc.bitsPerSample = settings->getProperty< PropertyInteger >(L"Audio.BitsPerSample", 16);
 	sscd.driverDesc.hwChannels = settings->getProperty< PropertyInteger >(L"Audio.HwChannels", 2);
+#	if !defined(__IOS__)
 	sscd.driverDesc.frameSamples = 512;
 	sscd.driverDesc.mixerFrames = 3;
+#	else
+	sscd.driverDesc.frameSamples = 1024;
+	sscd.driverDesc.mixerFrames = 3;
+#	endif
 #else
 	sscd.channels = 16;
 	sscd.driverDesc.sampleRate = 48000;

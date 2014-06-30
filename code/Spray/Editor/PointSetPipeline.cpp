@@ -73,7 +73,7 @@ bool PointSetPipeline::buildOutput(
 	Ref< model::Model > model = model::ModelFormat::readAny(
 		file,
 		pointSetAsset->getFileName().getExtension(),
-		model::ModelFormat::IfMeshPositions | model::ModelFormat::IfMeshVertices
+		model::ModelFormat::IfMeshPositions | model::ModelFormat::IfMeshVertices | model::ModelFormat::IfMeshPolygons
 	);
 	if (!model)
 	{
@@ -138,6 +138,8 @@ bool PointSetPipeline::buildOutput(
 			pointSet->add(point);
 		}
 	}
+
+	log::info << L"PointSet created, " << pointSet->get().size() << L" point(s)" << Endl;
 
 	Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 		outputPath,

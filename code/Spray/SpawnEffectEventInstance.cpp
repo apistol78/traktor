@@ -62,9 +62,9 @@ void SpawnEffectEventInstance::build(world::IWorldRenderer* worldRenderer)
 	worldRenderer->build(m_effectEntity);
 }
 
-void SpawnEffectEventInstance::cancel(CancelType when)
+void SpawnEffectEventInstance::cancel(world::CancelType when)
 {
-	if (when == IEntityEventInstance::CtImmediate)
+	if (when == world::CtImmediate)
 		safeDestroy(m_effectEntity);
 	else
 	{

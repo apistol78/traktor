@@ -15,6 +15,12 @@ enum
 	MaxLightShadowCount = 2
 };
 
+enum CancelType
+{
+	CtImmediate = 0,
+	CtEnd = 1
+};
+
 enum Quality
 {
 	QuDisabled = 0,
