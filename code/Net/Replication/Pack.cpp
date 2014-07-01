@@ -1,3 +1,4 @@
+#include "Core/Math/Const.h"
 #include "Net/Replication/Pack.h"
 
 namespace traktor
@@ -70,13 +71,14 @@ PackedUnitVector::PackedUnitVector(uint16_t v)
 
 void PackedUnitVector::pack(const Vector4& v)
 {
-	float T_MATH_ALIGN16 e[4];
-	v.storeAligned(e);
- 
-	// input vector does not have to be unit length.
-	// assert( tmp.length() <= 1.001f );      
 	m_v = 0;
  
+	if (v.length2() < FUZZY_EPSILON * FUZZY_EPSILON)
+		return;
+
+	float T_MATH_ALIGN16 e[4];
+	v.storeAligned(e);
+
 	if ( e[0] < 0 ) { m_v |= XSIGN_MASK; e[0] = -e[0]; }
 	if ( e[1] < 0 ) { m_v |= YSIGN_MASK; e[1] = -e[1]; }
 	if ( e[2] < 0 ) { m_v |= ZSIGN_MASK; e[2] = -e[2]; }

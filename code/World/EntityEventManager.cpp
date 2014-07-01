@@ -1,3 +1,4 @@
+#include "Core/Thread/Acquire.h"
 #include "World/EntityEventManager.h"
 #include "World/EntityEventSet.h"
 #include "World/IEntityEvent.h"
@@ -18,6 +19,8 @@ EntityEventManager::EntityEventManager(uint32_t maxEventInstances)
 
 IEntityEventInstance* EntityEventManager::raise(const IEntityEvent* event, Entity* sender, const Transform& Toffset)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	if (!event || m_eventInstances.size() >= m_maxEventInstances)
 		return 0;
 
@@ -30,6 +33,8 @@ IEntityEventInstance* EntityEventManager::raise(const IEntityEvent* event, Entit
 
 IEntityEventInstance* EntityEventManager::raise(const EntityEventSet* eventSet, const std::wstring& eventId, Entity* sender, const Transform& Toffset)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	if (!eventSet || eventId.empty())
 		return 0;
 
@@ -42,6 +47,7 @@ IEntityEventInstance* EntityEventManager::raise(const EntityEventSet* eventSet, 
 
 void EntityEventManager::update(const UpdateParams& update)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	for (RefArray< IEntityEventInstance >::iterator i = m_eventInstances.begin(); i != m_eventInstances.end(); )
 	{
 		if ((*i)->update(update))
@@ -53,19 +59,22 @@ void EntityEventManager::update(const UpdateParams& update)
 
 void EntityEventManager::build(IWorldRenderer* worldRenderer)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	for (RefArray< IEntityEventInstance >::iterator i = m_eventInstances.begin(); i != m_eventInstances.end(); ++i)
 		(*i)->build(worldRenderer);
 }
 
 void EntityEventManager::cancelAll(CancelType when)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	// Issue cancel on all instances.
 	for (RefArray< IEntityEventInstance >::iterator i = m_eventInstances.begin(); i != m_eventInstances.end(); ++i)
 		(*i)->cancel(when);
 
 	// Remove all instances directly instead of waiting for next update.
 	if (when == CtImmediate)
-		m_eventInstances.clear();
+		m_eventInstances.resize(0);
 }
 
 	}
