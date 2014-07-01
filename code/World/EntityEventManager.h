@@ -2,6 +2,7 @@
 #define traktor_world_EntityEventManager_H
 
 #include "Core/RefArray.h"
+#include "Core/Thread/Semaphore.h"
 #include "World/IEntityEventManager.h"
 
 // import/export mechanism.
@@ -42,6 +43,7 @@ public:
 private:
 	uint32_t m_maxEventInstances;
 	RefArray< IEntityEventInstance > m_eventInstances;
+	Semaphore m_lock;
 };
 
 	}
