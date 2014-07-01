@@ -1,5 +1,6 @@
 #include <functional>
 #include "Core/Math/Const.h"
+#include "Core/Math/Winding3.h"
 #include "Model/Model.h"
 #include "Model/ModelAdjacency.h"
 #include "Model/Operations/CleanDuplicates.h"
@@ -35,37 +36,23 @@ MergeCoplanarAdjacents::MergeCoplanarAdjacents(bool allowConvexOnly)
 bool MergeCoplanarAdjacents::apply(Model& model) const
 {
 	std::vector< Polygon >& polygons = model.getPolygons();
+	Winding3 w;
+	Plane p;
 
 	// Calculate polygon normals.
-	AlignedVector< Vector4 > normals(polygons.size(), Vector4::zero());
+	AlignedVector< Vector4 > normals(polygons.size(), Vector4(0.0f, 0.0f, 1.0f));
 	for (uint32_t i = 0; i < uint32_t(polygons.size()); ++i)
 	{
 		const Polygon& polygon = polygons[i];
 		if (polygon.getVertexCount() < 3)
 			continue;
 
-		const uint32_t baseIndex = 0;
+		w.points.resize(0);
+		for (uint32_t j = 0; j < polygon.getVertexCount(); ++j)
+			w.points.push_back(model.getVertexPosition(polygon.getVertex(j)));
 
-		const std::vector< uint32_t >& vertices = polygon.getVertices();
-		const Vertex* v[] =
-		{
-			&model.getVertex(vertices[baseIndex]),
-			&model.getVertex(vertices[(baseIndex + 1) % vertices.size()]),
-			&model.getVertex(vertices[(baseIndex + 2) % vertices.size()])
-		};
-
-		Vector4 p[] =
-		{
-			model.getPosition(v[0]->getPosition()),
-			model.getPosition(v[1]->getPosition()),
-			model.getPosition(v[2]->getPosition())
-		};
-
-		Vector4 ep[] = { p[2] - p[0], p[1] - p[0] };
-		T_ASSERT (ep[0].length() > FUZZY_EPSILON);
-		T_ASSERT (ep[1].length() > FUZZY_EPSILON);
-
-		normals[i] = cross(ep[0], ep[1]).normalized();
+		if (w.getPlane(p))
+			normals[i] = p.normal();
 	}
 
 	// Build model adjacency information.
@@ -94,7 +81,7 @@ bool MergeCoplanarAdjacents::apply(Model& model) const
 				if (sharedPolygon == i)
 					continue;
 
-				float phi = acos(dot3(normals[i], normals[sharedPolygon]));
+				float phi = acos(abs(dot3(normals[i], normals[sharedPolygon])));
 				if (phi <= c_planarAngleThreshold)
 				{
 					Polygon& rightPolygon = polygons[sharedPolygon];
