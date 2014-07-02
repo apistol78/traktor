@@ -118,6 +118,14 @@ private:
 
 	static int classEqualMethod(lua_State* luaState);
 
+	static int classAddMethod(lua_State* luaState);
+	
+	static int classSubtractMethod(lua_State* luaState);
+	
+	static int classMultiplyMethod(lua_State* luaState);
+
+	static int classDivideMethod(lua_State* luaState);
+
 	static void* luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize);
 
 	static int luaPanic(lua_State* luaState);

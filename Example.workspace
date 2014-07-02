@@ -24,7 +24,7 @@
 		<item>
 			<first>Editor.SourceDatabase</first>
 			<second type="traktor.PropertyString">
-				<value>provider=traktor.db.LocalDatabase;groupPath=data/Source;binary=false;fileStore=traktor.db.PerforceFileStore</value>
+				<value>provider=traktor.db.LocalDatabase;groupPath=data/Source;binary=false</value>
 			</second>
 		</item>
 		<item>

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.mesh.MeshAsset" version="3">
-	<fileName>User/Gimlet/Objects/Tree-01.lwo</fileName>
-	<meshType>MtInstance</meshType>
-	<materialShaders/>
-	<bakeOcclusion>false</bakeOcclusion>
-	<cullDistantFaces>false</cullDistantFaces>
-</object>

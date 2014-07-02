@@ -27,11 +27,11 @@ class ContextOpenGL : public IContext
 
 public:
 #if defined(_WIN32)
-	ContextOpenGL(HWND hWnd, HDC hDC, HGLRC hRC);
+	ContextOpenGL(ContextOpenGL* resourceContext, HWND hWnd, HDC hDC, HGLRC hRC);
 #elif defined(__APPLE__)
-	ContextOpenGL(void* context);
+	ContextOpenGL(ContextOpenGL* resourceContext, void* context);
 #elif defined(__LINUX__)
-	ContextOpenGL(Window* window, GLXContext context);
+	ContextOpenGL(ContextOpenGL* resourceContext, Window* window, GLXContext context);
 #endif
 
 	virtual ~ContextOpenGL();
@@ -75,6 +75,7 @@ public:
 #endif
 
 private:
+	ContextOpenGL* m_resourceContext;
 #if defined(_WIN32)
 	HWND m_hWnd;
 	HDC m_hDC;

@@ -69,17 +69,8 @@ public:
 	/*! \brief Invoke unknown method. */
 	virtual Any invokeUnknown(const InvokeParam& param, const std::string& methodName, uint32_t argc, const Any* argv) const = 0;
 
-	/*! \brief Get exported properties count. */
-	virtual uint32_t getPropertyCount() const = 0;
-
-	/*! \brief Get name of exported property. */
-	virtual std::string getPropertyName(uint32_t propertyId) const = 0;
-
-	/*! \brief Get property value. */
-	virtual Any getPropertyValue(const InvokeParam& param, uint32_t propertyId) const = 0;
-
-	/*! \brief Set property value. */
-	virtual void setPropertyValue(const InvokeParam& param, uint32_t propertyId, const Any& value) const = 0;
+	/*! \brief Invoke math operator. */
+	virtual Any invokeOperator(const InvokeParam& param, uint8_t operation, const Any& arg) const = 0;
 };
 
 	}

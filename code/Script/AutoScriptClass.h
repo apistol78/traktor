@@ -34,13 +34,11 @@ struct T_NOVTABLE IStaticMethod
 	virtual Any invoke(uint32_t argc, const Any* argv) const = 0;
 };
 
-struct T_NOVTABLE IProperty
+struct T_NOVTABLE IOperator
 {
-	virtual ~IProperty() {}
+	virtual ~IOperator() {}
 
-	virtual Any get(const Object* object) const = 0;
-
-	virtual void set(Object* object, const Any& value) const = 0;
+	virtual bool tryPerform(Object* object, const Any& arg, Any& result) const = 0;
 };
 
 /*! \name Constructors */
@@ -2098,32 +2096,37 @@ class StaticMethod_Variadic < ClassType, void > : public IStaticMethod
 
 /*! \} */
 
-/*! \name Property accessor */
+/*! \name Operator */
 /*! \{ */
 
 template <
 	typename ClassType,
-	typename MemberType
+	typename ReturnType,
+	typename Argument1Type
 >
-struct Property : public IProperty
+struct Operator : public IOperator
 {
-	typedef MemberType ClassType::*member_t;
+	typedef typename MethodSignature_1< ClassType, ReturnType, Argument1Type, true >::method_t method_t;
 
-	member_t m_member;
+	method_t m_method;
 
-	Property(member_t member)
-	:	m_member(member)
+	Operator(method_t method)
+	:	m_method(method)
 	{
 	}
 
-	virtual Any get(const Object* object) const
+	virtual bool tryPerform(Object* object, const Any& arg, Any& result) const
 	{
-		return CastAny< MemberType >::set(checked_type_cast< const ClassType*, false >(object)->*m_member);
-	}
-
-	virtual void set(Object* object, const Any& value) const
-	{
-		checked_type_cast< ClassType*, false >(object)->*m_member = CastAny< MemberType >::get(value);
+		if (CastAny< Argument1Type >::accept(arg))
+		{
+			ClassType* target = checked_type_cast< ClassType*, false >(object);
+			result = CastAny< ReturnType >::set((target->*m_method)(
+				CastAny< Argument1Type >::get(arg)
+			));
+			return true;
+		}
+		else
+			return false;
 	}
 };
 
@@ -2168,8 +2171,11 @@ public:
 				delete *j;
 		}
 
-		for (std::vector< std::pair< std::string, IProperty* > >::iterator i = m_properties.begin(); i != m_properties.end(); ++i)
-			delete i->second;
+		for (int i = 0; i < sizeof_array(m_operators); ++i)
+		{
+			for (std::vector< IOperator* >::iterator j = m_operators[i].begin(); j != m_operators[i].end(); ++j)
+				delete *j;
+		}
 
 		T_EXCEPTION_GUARD_END
 	}
@@ -2728,14 +2734,30 @@ public:
 	/*! \} */
 
 	template <
-		typename MemberType
+		typename ReturnType,
+		typename Argument1Type
 	>
-	void addProperty(const std::string& memberName, MemberType ClassType::*member)
+	void addOperator(char operation, ReturnType (ClassType::*method)(Argument1Type) const)
 	{
-		m_properties.push_back(std::make_pair(
-			memberName,
-			new Property< ClassType, MemberType >(member)
-		));
+		IOperator* handler = new Operator< ClassType, ReturnType, Argument1Type >(method);
+		switch (operation)
+		{
+		case '+':
+			m_operators[0].push_back(handler);
+			break;
+		case '-':
+			m_operators[1].push_back(handler);
+			break;
+		case '*':
+			m_operators[2].push_back(handler);
+			break;
+		case '/':
+			m_operators[3].push_back(handler);
+			break;
+		default:
+			T_FATAL_ERROR;
+			break;
+		}
 	}
 
 	virtual const TypeInfo& getExportType() const
@@ -2813,24 +2835,20 @@ public:
 			return Any();
 	}
 
-	virtual uint32_t getPropertyCount() const
+	virtual Any invokeOperator(const InvokeParam& param, uint8_t operation, const Any& arg) const
 	{
-		return uint32_t(m_properties.size());
-	}
+		Any result;
 
-	virtual std::string getPropertyName(uint32_t propertyId) const
-	{
-		return m_properties[propertyId].first;
-	}
+		// Try evaluate operation through handlers; first handler which return true
+		// indicating successful evaluation aborts loop.
+		const std::vector< IOperator* >& handlers = m_operators[operation];
+		for (std::vector< IOperator* >::const_iterator i = handlers.begin(); i != handlers.end(); ++i)
+		{
+			if ((*i)->tryPerform(param.object, arg, result))
+				break;
+		}
 
-	virtual Any getPropertyValue(const InvokeParam& param, uint32_t propertyId) const
-	{
-		return m_properties[propertyId].second->get(param.object);
-	}
-
-	virtual void setPropertyValue(const InvokeParam& param, uint32_t propertyId, const Any& value) const
-	{
-		m_properties[propertyId].second->set(param.object, value);
+		return result;
 	}
 
 private:
@@ -2851,7 +2869,7 @@ private:
 	std::vector< IConstructor* > m_constructors;
 	std::vector< MethodInfo > m_methods;
 	std::vector< StaticMethodInfo > m_staticMethods;
-	std::vector< std::pair< std::string, IProperty* > > m_properties;
+	std::vector< IOperator* > m_operators[4];
 	unknown_method_t m_unknown;
 
 	void addConstructor(size_t argc, IConstructor* constructor)

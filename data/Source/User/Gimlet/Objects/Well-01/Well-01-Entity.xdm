@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.db.LocalInstanceMeta">
-	<guid>{5193B0F1-6763-C344-BEBE-78A670985B1B}</guid>
-	<primaryType>traktor.physics.RigidEntityData</primaryType>
-	<blobs/>
-</object>

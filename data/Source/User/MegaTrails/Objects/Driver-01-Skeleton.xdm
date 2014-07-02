@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.db.LocalInstanceMeta">
-	<guid>{C63A3C10-12E7-D443-A84F-46930515C1E8}</guid>
-	<primaryType>traktor.animation.Skeleton</primaryType>
-	<blobs/>
-</object>

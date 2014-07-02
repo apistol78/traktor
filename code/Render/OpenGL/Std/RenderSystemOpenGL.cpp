@@ -115,7 +115,7 @@ bool RenderSystemOpenGL::create(const RenderSystemDesc& desc)
 	HGLRC hSharedRC = wglCreateContextAttribsARB(hSharedDC, NULL, attribs);
 	T_ASSERT (hSharedRC);
 
-	m_resourceContext = new ContextOpenGL(*m_windowShared, hSharedDC, hSharedRC);
+	m_resourceContext = new ContextOpenGL(0, *m_windowShared, hSharedDC, hSharedRC);
 	m_resourceContext->enter();
 
 #elif defined(__APPLE__)
@@ -127,7 +127,7 @@ bool RenderSystemOpenGL::create(const RenderSystemDesc& desc)
 		return false;
 	}
 
-	m_resourceContext = new ContextOpenGL(resourceContext);
+	m_resourceContext = new ContextOpenGL(0, resourceContext);
 	m_resourceContext->enter();
 
 #elif defined(__LINUX__)
@@ -219,7 +219,7 @@ bool RenderSystemOpenGL::create(const RenderSystemDesc& desc)
 		return false;
 	}
 
-	m_resourceContext = new ContextOpenGL(m_windowShared, context);
+	m_resourceContext = new ContextOpenGL(0, m_windowShared, context);
 	m_resourceContext->enter();
 
 #endif
@@ -534,7 +534,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 		return 0;
 	}
 
-	Ref< ContextOpenGL > context = new ContextOpenGL(*m_window, hDC, hRC);
+	Ref< ContextOpenGL > context = new ContextOpenGL(m_resourceContext, *m_window, hDC, hRC);
 	context->enter();
 
 	if (glewInit() != GLEW_OK)
@@ -578,7 +578,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 		return 0;
 	}
 
-	Ref< ContextOpenGL > context = new ContextOpenGL(glcontext);
+	Ref< ContextOpenGL > context = new ContextOpenGL(m_resourceContext, glcontext);
 
 	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, m_windowHandle, context, m_resourceContext);
 	if (renderView->createPrimaryTarget())
@@ -620,7 +620,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 	if (!glcontext)
 		return 0;
 
-	Ref< ContextOpenGL > context = new ContextOpenGL(m_window, glcontext);
+	Ref< ContextOpenGL > context = new ContextOpenGL(m_resourceContext, m_window, glcontext);
 	context->enter();
 
 	if (glewInit() != GLEW_OK)
@@ -692,7 +692,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 		return 0;
 	}
 
-	Ref< ContextOpenGL > context = new ContextOpenGL((HWND)desc.nativeWindowHandle, hDC, hRC);
+	Ref< ContextOpenGL > context = new ContextOpenGL(m_resourceContext, (HWND)desc.nativeWindowHandle, hDC, hRC);
 	context->enter();
 
 	if (glewInit() != GLEW_OK)
@@ -719,7 +719,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 	if (!glcontext)
 		return 0;
 
-	Ref< ContextOpenGL > context = new ContextOpenGL(glcontext);
+	Ref< ContextOpenGL > context = new ContextOpenGL(m_resourceContext, glcontext);
 
 	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, 0, context, m_resourceContext);
 	if (renderView->createPrimaryTarget())

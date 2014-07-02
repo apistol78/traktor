@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.spray.EffectEntityData">
-	<name>Smoke</name>
-	<transform>
-		<translation>0, 0, 0, 0</translation>
-		<rotation>0, 0, 0, 1</rotation>
-	</transform>
-	<effect>{D426027F-F53F-FC40-ABEA-30C1AF46C875}</effect>
-</object>

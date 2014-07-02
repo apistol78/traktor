@@ -56,13 +56,7 @@ public:
 
 	virtual script::Any invokeUnknown(const InvokeParam& param, const std::string& methodName, uint32_t argc, const script::Any* argv) const;
 
-	virtual uint32_t getPropertyCount() const;
-
-	virtual std::string getPropertyName(uint32_t propertyId) const;
-
-	virtual script::Any getPropertyValue(const InvokeParam& param, uint32_t propertyId) const;
-
-	virtual void setPropertyValue(const InvokeParam& param, uint32_t propertyId, const script::Any& value) const;
+	virtual script::Any invokeOperator(const InvokeParam& param, uint8_t operation, const script::Any& arg) const;
 };
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ActionObjectClass", ActionObjectClass, script::IScriptClass)
@@ -208,23 +202,9 @@ script::Any ActionObjectClass::invokeUnknown(const InvokeParam& param, const std
 	return script::Any();
 }
 
-uint32_t ActionObjectClass::getPropertyCount() const
-{
-	return 0;
-}
-
-std::string ActionObjectClass::getPropertyName(uint32_t propertyId) const
-{
-	return "";
-}
-
-script::Any ActionObjectClass::getPropertyValue(const InvokeParam& param, uint32_t propertyId) const
+script::Any ActionObjectClass::invokeOperator(const InvokeParam& param, uint8_t operation, const script::Any& arg) const
 {
 	return script::Any();
-}
-
-void ActionObjectClass::setPropertyValue(const InvokeParam& param, uint32_t propertyId, const script::Any& value) const
-{
 }
 
 void registerFlashClasses(script::IScriptManager* scriptManager)

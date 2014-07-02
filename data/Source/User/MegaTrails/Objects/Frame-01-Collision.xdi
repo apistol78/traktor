@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.physics.MeshAsset" version="1">
-	<fileName>User/MegaTrails/Objects/Frame-01-Collision.lwo</fileName>
-	<calculateConvexHull>true</calculateConvexHull>
-</object>

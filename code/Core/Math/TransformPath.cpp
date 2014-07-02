@@ -59,6 +59,7 @@ public:
 		}
 		else
 		{
+			index_1 = nkeys - 1;
 			T1 = m_keys[nkeys - 1].T;
 			outV1 = m_keys[nkeys - 1].value;
 		}

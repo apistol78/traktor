@@ -561,6 +561,9 @@ private:
 template < >
 struct CastAny< uint64_t, false >
 {
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedUInt64 >(value.getObjectUnsafe());
+	}
 	static Any set(const uint64_t& value) {
 		return Any::fromObject(new BoxedUInt64(value));
 	}	
@@ -572,6 +575,9 @@ struct CastAny< uint64_t, false >
 template < >
 struct CastAny< const uint64_t&, false >
 {
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedUInt64 >(value.getObjectUnsafe());
+	}
 	static Any set(const uint64_t& value) {
 		return Any::fromObject(new BoxedUInt64(value));
 	}	
@@ -583,6 +589,9 @@ struct CastAny< const uint64_t&, false >
 template < >
 struct CastAny < Guid, false >
 {
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedGuid >(value.getObjectUnsafe());
+	}
 	static Any set(const Guid& value) {
 		return Any::fromObject(new BoxedGuid(value));
 	}	
@@ -594,6 +603,9 @@ struct CastAny < Guid, false >
 template < >
 struct CastAny < const Guid&, false >
 {
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedGuid >(value.getObjectUnsafe());
+	}
 	static Any set(const Guid& value) {
 		return Any::fromObject(new BoxedGuid(value));
 	}	
@@ -605,6 +617,9 @@ struct CastAny < const Guid&, false >
 template < >
 struct CastAny < Vector2, false >
 {
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedVector2 >(value.getObjectUnsafe());
+	}
 	static Any set(const Vector2& value) {
 		return Any::fromObject(new BoxedVector2(value));
 	}	
@@ -616,6 +631,9 @@ struct CastAny < Vector2, false >
 template < >
 struct CastAny < const Vector2&, false >
 {
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedVector2 >(value.getObjectUnsafe());
+	}
 	static Any set(const Vector2& value) {
 		return Any::fromObject(new BoxedVector2(value));
 	}	
@@ -627,6 +645,9 @@ struct CastAny < const Vector2&, false >
 template < >
 struct CastAny < Vector4, false >
 {
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedVector4 >(value.getObjectUnsafe());
+	}
     static Any set(const Vector4& value) {
         return Any::fromObject(new BoxedVector4(value));
     }	
@@ -638,6 +659,9 @@ struct CastAny < Vector4, false >
 template < >
 struct CastAny < const Vector4&, false >
 {
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedVector4 >(value.getObjectUnsafe());
+	}
     static Any set(const Vector4& value) {
         return Any::fromObject(new BoxedVector4(value));
     }	
@@ -649,6 +673,9 @@ struct CastAny < const Vector4&, false >
 template < >
 struct CastAny < Quaternion, false >
 {
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedQuaternion >(value.getObjectUnsafe());
+	}
     static Any set(const Quaternion& value) {
         return Any::fromObject(new BoxedQuaternion(value));
     }
@@ -660,6 +687,9 @@ struct CastAny < Quaternion, false >
 template < >
 struct CastAny < const Quaternion&, false >
 {
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedQuaternion >(value.getObjectUnsafe());
+	}
     static Any set(const Quaternion& value) {
         return Any::fromObject(new BoxedQuaternion(value));
     }
@@ -671,6 +701,9 @@ struct CastAny < const Quaternion&, false >
 template < >
 struct CastAny < Plane, false >
 {
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedPlane >(value.getObjectUnsafe());
+	}
 	static Any set(const Plane& value) {
 		return Any::fromObject(new BoxedPlane(value));
 	}
@@ -682,6 +715,9 @@ struct CastAny < Plane, false >
 template < >
 struct CastAny < const Plane&, false >
 {
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedPlane >(value.getObjectUnsafe());
+	}
 	static Any set(const Plane& value) {
 		return Any::fromObject(new BoxedPlane(value));
 	}
@@ -693,6 +729,9 @@ struct CastAny < const Plane&, false >
 template < >
 struct CastAny < Transform, false >
 {
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedTransform >(value.getObjectUnsafe());
+	}
     static Any set(const Transform& value) {
         return Any::fromObject(new BoxedTransform(value));
     }
@@ -704,6 +743,9 @@ struct CastAny < Transform, false >
 template < >
 struct CastAny < const Transform&, false >
 {
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedTransform >(value.getObjectUnsafe());
+	}
     static Any set(const Transform& value) {
         return Any::fromObject(new BoxedTransform(value));
     }
@@ -715,6 +757,9 @@ struct CastAny < const Transform&, false >
 template < >
 struct CastAny < Aabb3, false >
 {
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedAabb3 >(value.getObjectUnsafe());
+	}
 	static Any set(const Aabb3& value) {
 		return Any::fromObject(new BoxedAabb3(value));
 	}	
@@ -726,6 +771,9 @@ struct CastAny < Aabb3, false >
 template < >
 struct CastAny < const Aabb3&, false >
 {
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedAabb3 >(value.getObjectUnsafe());
+	}
 	static Any set(const Aabb3& value) {
 		return Any::fromObject(new BoxedAabb3(value));
 	}	
@@ -737,6 +785,9 @@ struct CastAny < const Aabb3&, false >
 template < >
 struct CastAny < Color4f, false >
 {
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedColor4f >(value.getObjectUnsafe());
+	}
 	static Any set(const Color4f& value) {
 		return Any::fromObject(new BoxedColor4f(value));
 	}
@@ -748,6 +799,9 @@ struct CastAny < Color4f, false >
 template < >
 struct CastAny < const Color4f&, false >
 {
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedColor4f >(value.getObjectUnsafe());
+	}
 	static Any set(const Color4f& value) {
 		return Any::fromObject(new BoxedColor4f(value));
 	}
@@ -759,6 +813,9 @@ struct CastAny < const Color4f&, false >
 template < >
 struct CastAny < Color4ub, false >
 {
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedColor4ub >(value.getObjectUnsafe());
+	}
 	static Any set(const Color4ub& value) {
 		return Any::fromObject(new BoxedColor4ub(value));
 	}
@@ -770,6 +827,9 @@ struct CastAny < Color4ub, false >
 template < >
 struct CastAny < const Color4ub&, false >
 {
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedColor4ub >(value.getObjectUnsafe());
+	}
 	static Any set(const Color4ub& value) {
 		return Any::fromObject(new BoxedColor4ub(value));
 	}
@@ -781,6 +841,9 @@ struct CastAny < const Color4ub&, false >
 template < typename InnerType >
 struct CastAny< Range< InnerType >, false >
 {
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedRange >(value.getObjectUnsafe());
+	}
 	static Any set(const Range< InnerType >& value) {
 		return Any::fromObject(new BoxedRange(value));
 	}
@@ -792,6 +855,9 @@ struct CastAny< Range< InnerType >, false >
 template < typename InnerType >
 struct CastAny< const Range< InnerType >&, false >
 {
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedRange >(value.getObjectUnsafe());
+	}
 	static Any set(const Range< InnerType >& value) {
 		return Any::fromObject(new BoxedRange(value));
 	}
@@ -803,6 +869,9 @@ struct CastAny< const Range< InnerType >&, false >
 template < typename InnerType >
 struct CastAny < RefArray< InnerType >, false >
 {
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedRefArray >(value.getObjectUnsafe());
+	}
     static Any set(const RefArray< InnerType >& value) {
         return Any::fromObject(new BoxedRefArray(value));
     }
@@ -814,6 +883,9 @@ struct CastAny < RefArray< InnerType >, false >
 template < typename InnerType >
 struct CastAny < const RefArray< InnerType >&, false >
 {
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedRefArray >(value.getObjectUnsafe());
+	}
     static Any set(const RefArray< InnerType >& value) {
         return Any::fromObject(new BoxedRefArray(value));
     }
@@ -825,6 +897,9 @@ struct CastAny < const RefArray< InnerType >&, false >
 template < typename InnerType >
 struct CastAny < std::vector< InnerType >, false >
 {
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedStdVector >(value.getObjectUnsafe());
+	}
     static Any set(const std::vector< InnerType >& value) {
         return Any::fromObject(new BoxedStdVector(value));
     }
@@ -836,6 +911,9 @@ struct CastAny < std::vector< InnerType >, false >
 template < typename InnerType >
 struct CastAny < const std::vector< InnerType >&, false >
 {
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedStdVector >(value.getObjectUnsafe());
+	}
     static Any set(const std::vector< InnerType >& value) {
         return Any::fromObject(new BoxedStdVector(value));
     }

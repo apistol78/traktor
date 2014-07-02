@@ -24,6 +24,9 @@ struct CastAny
 template < >
 struct CastAny < Any, false >
 {
+	static bool accept(const Any& value) {
+		return true;
+	}
 	static Any set(const Any& value) {
 		return value;
 	}
@@ -35,6 +38,9 @@ struct CastAny < Any, false >
 template < >
 struct CastAny < const Any&, false >
 {
+	static bool accept(const Any& value) {
+		return true;
+	}
 	static Any set(const Any& value) {
 		return value;
 	}
@@ -46,6 +52,9 @@ struct CastAny < const Any&, false >
 template < >
 struct CastAny < bool, false >
 {
+	static bool accept(const Any& value) {
+		return value.isBoolean();
+	}
 	static Any set(bool value) {
 		return Any::fromBoolean(value);
 	}
@@ -57,6 +66,9 @@ struct CastAny < bool, false >
 template < >
 struct CastAny < int8_t, false >
 {
+	static bool accept(const Any& value) {
+		return value.isInteger();
+	}
 	static Any set(int8_t value) {
 		return Any::fromInteger(value);
 	}
@@ -68,6 +80,9 @@ struct CastAny < int8_t, false >
 template < >
 struct CastAny < uint8_t, false >
 {
+	static bool accept(const Any& value) {
+		return value.isInteger();
+	}
 	static Any set(uint8_t value) {
 		return Any::fromInteger(uint8_t(value));
 	}
@@ -79,6 +94,9 @@ struct CastAny < uint8_t, false >
 template < >
 struct CastAny < int16_t, false >
 {
+	static bool accept(const Any& value) {
+		return value.isInteger();
+	}
 	static Any set(int16_t value) {
 		return Any::fromInteger(value);
 	}
@@ -90,6 +108,9 @@ struct CastAny < int16_t, false >
 template < >
 struct CastAny < uint16_t, false >
 {
+	static bool accept(const Any& value) {
+		return value.isInteger();
+	}
 	static Any set(uint16_t value) {
 		return Any::fromInteger(uint16_t(value));
 	}
@@ -101,6 +122,9 @@ struct CastAny < uint16_t, false >
 template < >
 struct CastAny < int32_t, false >
 {
+	static bool accept(const Any& value) {
+		return value.isInteger();
+	}
 	static Any set(int32_t value) {
 		return Any::fromInteger(value);
 	}
@@ -112,6 +136,9 @@ struct CastAny < int32_t, false >
 template < >
 struct CastAny < uint32_t, false >
 {
+	static bool accept(const Any& value) {
+		return value.isInteger();
+	}
 	static Any set(uint32_t value) {
 		return Any::fromInteger(int32_t(value));
 	}
@@ -123,6 +150,9 @@ struct CastAny < uint32_t, false >
 template < >
 struct CastAny < float, false >
 {
+	static bool accept(const Any& value) {
+		return value.isFloat();
+	}
 	static Any set(float value) {
 		return Any::fromFloat(value);
 	}
@@ -134,6 +164,9 @@ struct CastAny < float, false >
 template < >
 struct CastAny < Scalar, false >
 {
+	static bool accept(const Any& value) {
+		return value.isFloat();
+	}
 	static Any set(const Scalar& value) {
 		return Any::fromFloat(float(value));
 	}
@@ -145,6 +178,9 @@ struct CastAny < Scalar, false >
 template < >
 struct CastAny < const Scalar&, false >
 {
+	static bool accept(const Any& value) {
+		return value.isFloat();
+	}
 	static Any set(const Scalar& value) {
 		return Any::fromFloat(float(value));
 	}
@@ -156,6 +192,9 @@ struct CastAny < const Scalar&, false >
 template < >
 struct CastAny < std::string, false >
 {
+	static bool accept(const Any& value) {
+		return value.isString();
+	}
 	static Any set(const std::string& value) {
 		return Any::fromString(value);
 	}
@@ -167,6 +206,9 @@ struct CastAny < std::string, false >
 template < >
 struct CastAny < const std::string&, false >
 {
+	static bool accept(const Any& value) {
+		return value.isString();
+	}
 	static Any set(const std::string& value) {
 		return Any::fromString(value);
 	}
@@ -178,6 +220,9 @@ struct CastAny < const std::string&, false >
 template < >
 struct CastAny < const char, true >
 {
+	static bool accept(const Any& value) {
+		return value.isString();
+	}
 	static Any set(const char* value) {
 		return Any::fromString(value);
 	}
@@ -189,6 +234,9 @@ struct CastAny < const char, true >
 template < >
 struct CastAny < std::wstring, false >
 {
+	static bool accept(const Any& value) {
+		return value.isString();
+	}
 	static Any set(const std::wstring& value) {
 		return Any::fromString(value);
 	}
@@ -200,6 +248,9 @@ struct CastAny < std::wstring, false >
 template < >
 struct CastAny < const std::wstring&, false >
 {
+	static bool accept(const Any& value) {
+		return value.isString();
+	}
 	static Any set(const std::wstring& value) {
 		return Any::fromString(value);
 	}
@@ -211,6 +262,9 @@ struct CastAny < const std::wstring&, false >
 template < >
 struct CastAny < const wchar_t, true >
 {
+	static bool accept(const Any& value) {
+		return value.isString();
+	}
 	static Any set(const wchar_t* value) {
 		return Any::fromString(value);
 	}
@@ -222,6 +276,9 @@ struct CastAny < const wchar_t, true >
 template < typename Type >
 struct CastAny < Ref< Type >, false >
 {
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< Type >(value.getObjectUnsafe());
+	}
 	static Any set(const Ref< Type >& value) {
 		return Any::fromObject(const_cast< typename IsConst< Type >::type_t* >(value.ptr()));
 	}
@@ -233,6 +290,9 @@ struct CastAny < Ref< Type >, false >
 template < typename Type >
 struct CastAny < const Ref< Type >&, false >
 {
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< Type >(value.getObjectUnsafe());
+	}
 	static Any set(const Ref< Type >& value) {
 		return Any::fromObject(const_cast< typename IsConst< Type >::type_t* >(value.ptr()));
 	}
@@ -245,6 +305,10 @@ template < typename Type >
 struct CastAny < Type, false >
 {
 	typedef typename IsConst< typename IsReference< Type >::base_t >::type_t type_t;
+
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< Type >(value.getObjectUnsafe());
+	}
 
 	static Any set(const type_t& value) {
 		return Any::fromObject(new type_t(value));
@@ -260,6 +324,10 @@ struct CastAny < Type, true >
 {
 	typedef typename IsConst< Type >::type_t no_const_type_t;
 
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< Type >(value.getObjectUnsafe());
+	}
+
 	static Any set(Type value) {
 		return Any::fromObject((Object*)(value));
 	}
@@ -272,6 +340,9 @@ struct CastAny < Type, true >
 template < >
 struct CastAny < const TypeInfo&, false >
 {
+	static bool accept(const Any& value) {
+		return value.isTypeInfo();
+	}
 	static Any set(const TypeInfo& value) {
 		return Any::fromTypeInfo(&value);
 	}
@@ -283,6 +354,9 @@ struct CastAny < const TypeInfo&, false >
 template < >
 struct CastAny < const TypeInfo, true >
 {
+	static bool accept(const Any& value) {
+		return value.isTypeInfo();
+	}
 	static Any set(const TypeInfo* value) {
 		return Any::fromTypeInfo(value);
 	}
