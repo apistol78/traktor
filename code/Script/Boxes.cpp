@@ -622,6 +622,14 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedVector2->addMethod< Vector2, float >("subf", &BoxedVector2::sub);
 	classBoxedVector2->addMethod< Vector2, float >("mulf", &BoxedVector2::mul);
 	classBoxedVector2->addMethod< Vector2, float >("divf", &BoxedVector2::div);
+	classBoxedVector2->addOperator< Vector2, const Vector2& >('+', &BoxedVector2::add);
+	classBoxedVector2->addOperator< Vector2, float >('+', &BoxedVector2::add);
+	classBoxedVector2->addOperator< Vector2, const Vector2& >('-', &BoxedVector2::sub);
+	classBoxedVector2->addOperator< Vector2, float >('-', &BoxedVector2::sub);
+	classBoxedVector2->addOperator< Vector2, const Vector2& >('*', &BoxedVector2::mul);
+	classBoxedVector2->addOperator< Vector2, float >('*', &BoxedVector2::mul);
+	classBoxedVector2->addOperator< Vector2, const Vector2& >('/', &BoxedVector2::div);
+	classBoxedVector2->addOperator< Vector2, float >('/', &BoxedVector2::div);
 	scriptManager->registerClass(classBoxedVector2);
 
 	Ref< AutoScriptClass< BoxedVector4 > > classBoxedVector4 = new AutoScriptClass< BoxedVector4 >();
@@ -651,6 +659,14 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedVector4->addStaticMethod("zero", &BoxedVector4::zero);
 	classBoxedVector4->addStaticMethod("origo", &BoxedVector4::origo);
 	classBoxedVector4->addStaticMethod("lerp", &BoxedVector4::lerp);
+	classBoxedVector4->addOperator< Vector4, const Vector4& >('+', &BoxedVector4::add);
+	classBoxedVector4->addOperator< Vector4, float >('+', &BoxedVector4::add);
+	classBoxedVector4->addOperator< Vector4, const Vector4& >('-', &BoxedVector4::sub);
+	classBoxedVector4->addOperator< Vector4, float >('-', &BoxedVector4::sub);
+	classBoxedVector4->addOperator< Vector4, const Vector4& >('*', &BoxedVector4::mul);
+	classBoxedVector4->addOperator< Vector4, float >('*', &BoxedVector4::mul);
+	classBoxedVector4->addOperator< Vector4, const Vector4& >('/', &BoxedVector4::div);
+	classBoxedVector4->addOperator< Vector4, float >('/', &BoxedVector4::div);
 	scriptManager->registerClass(classBoxedVector4);
 
 	Ref< AutoScriptClass< BoxedQuaternion > > classBoxedQuaternion = new AutoScriptClass< BoxedQuaternion >();

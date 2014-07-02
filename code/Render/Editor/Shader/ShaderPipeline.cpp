@@ -570,11 +570,14 @@ bool ShaderPipeline::buildOutput(
 			task->optimize = m_optimize;
 			task->validate = m_validate;
 			task->result = false;
-
-			Ref< Job > job = JobManager::getInstance().add(makeFunctor(task.ptr(), &BuildCombinationTask::execute));
-
 			tasks.push_back(task);
+
+#if !defined(__APPLE__)
+			Ref< Job > job = JobManager::getInstance().add(makeFunctor(task.ptr(), &BuildCombinationTask::execute));
 			jobs.push_back(job);
+#else
+			task->execute();
+#endif
 		}
 
 		log::info << DecreaseIndent;
@@ -585,11 +588,13 @@ bool ShaderPipeline::buildOutput(
 	render::IProgramCompiler::Stats stats;
 	uint32_t failed = 0;
 
-	for (size_t i = 0; i < jobs.size(); ++i)
+	for (size_t i = 0; i < tasks.size(); ++i)
 	{
-		jobs[i]->wait();
-		jobs[i] = 0;
-
+		if (!jobs.empty())
+		{
+			jobs[i]->wait();
+			jobs[i] = 0;
+		}
 		if (tasks[i]->result)
 		{
 			ShaderResource::Technique* technique = tasks[i]->shaderResourceTechnique;

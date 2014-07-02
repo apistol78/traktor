@@ -3,4 +3,4 @@
 # Source environment configuration.
 . "`dirname \"$BASH_SOURCE\"`/config.sh"
 
-open $TRAKTOR_HOME/bin/latest/osx/releaseshared/Editor.app
+open $TRAKTOR_HOME/bin/latest/osx/releaseshared/TraktorEditor.app

@@ -163,6 +163,26 @@ void ScriptManagerLua::registerClass(IScriptClass* scriptClass)
 	lua_pushcclosure(m_luaState, classEqualMethod, 2);
 	lua_setfield(m_luaState, -2, "__eq");
 
+	lua_pushlightuserdata(m_luaState, (void*)this);
+	lua_pushlightuserdata(m_luaState, (void*)scriptClass);
+	lua_pushcclosure(m_luaState, classAddMethod, 2);
+	lua_setfield(m_luaState, -2, "__add");
+
+	lua_pushlightuserdata(m_luaState, (void*)this);
+	lua_pushlightuserdata(m_luaState, (void*)scriptClass);
+	lua_pushcclosure(m_luaState, classSubtractMethod, 2);
+	lua_setfield(m_luaState, -2, "__sub");
+
+	lua_pushlightuserdata(m_luaState, (void*)this);
+	lua_pushlightuserdata(m_luaState, (void*)scriptClass);
+	lua_pushcclosure(m_luaState, classMultiplyMethod, 2);
+	lua_setfield(m_luaState, -2, "__mul");
+
+	lua_pushlightuserdata(m_luaState, (void*)this);
+	lua_pushlightuserdata(m_luaState, (void*)scriptClass);
+	lua_pushcclosure(m_luaState, classDivideMethod, 2);
+	lua_setfield(m_luaState, -2, "__div");
+
 	lua_pushlightuserdata(m_luaState, (void*)scriptClass);			// +1	-> 2
 	lua_rawseti(m_luaState, -2, c_tableKey_class);					// -1	-> 1
 
@@ -915,6 +935,176 @@ int ScriptManagerLua::classEqualMethod(lua_State* luaState)
 	}
 
 	return 0;
+}
+
+int ScriptManagerLua::classAddMethod(lua_State* luaState)
+{
+	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
+	T_ASSERT (manager);
+
+	const IScriptClass* scriptClass = reinterpret_cast< IScriptClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
+	T_ASSERT (scriptClass);
+
+	int32_t top = lua_gettop(luaState);
+	if (top < 1)
+		return 0;
+
+	Object** objectPtr = 0;
+	Any arg;
+
+	if (lua_isuserdata(luaState, 1))
+	{
+		objectPtr = reinterpret_cast< Object** >(lua_touserdata(luaState, 1));
+		arg = manager->toAny(2);
+	}
+	else if (lua_isuserdata(luaState, 2))
+	{
+		objectPtr = reinterpret_cast< Object** >(lua_touserdata(luaState, 2));
+		arg = manager->toAny(1);
+	}
+
+	if (!objectPtr)
+	{
+		log::error << L"Unable to call method; not an object" << Endl;
+		return 0;
+	}
+
+	Object* object = *objectPtr;
+	if (!object)
+	{
+		log::error << L"Unable to call method; null object" << Endl;
+		return 0;
+	}
+
+	IScriptClass::InvokeParam param;
+	param.object = object;
+
+	Any returnValue = scriptClass->invokeOperator(param, 0, arg);
+
+	manager->pushAny(returnValue);
+	return 1;
+}
+
+int ScriptManagerLua::classSubtractMethod(lua_State* luaState)
+{
+	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
+	T_ASSERT (manager);
+
+	const IScriptClass* scriptClass = reinterpret_cast< IScriptClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
+	T_ASSERT (scriptClass);
+
+	int32_t top = lua_gettop(luaState);
+	if (top < 1)
+		return 0;
+
+	Object** objectPtr = reinterpret_cast< Object** >(lua_touserdata(luaState, 1));
+	if (!objectPtr)
+	{
+		log::error << L"Unable to call method; not an object" << Endl;
+		return 0;
+	}
+
+	Object* object = *objectPtr;
+	if (!object)
+	{
+		log::error << L"Unable to call method; null object" << Endl;
+		return 0;
+	}
+
+	Any arg = manager->toAny(2);
+
+	IScriptClass::InvokeParam param;
+	param.object = object;
+
+	Any returnValue = scriptClass->invokeOperator(param, 1, arg);
+
+	manager->pushAny(returnValue);
+	return 1;
+}
+
+int ScriptManagerLua::classMultiplyMethod(lua_State* luaState)
+{
+	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
+	T_ASSERT (manager);
+
+	const IScriptClass* scriptClass = reinterpret_cast< IScriptClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
+	T_ASSERT (scriptClass);
+
+	int32_t top = lua_gettop(luaState);
+	if (top < 1)
+		return 0;
+
+	Object** objectPtr = 0;
+	Any arg;
+
+	if (lua_isuserdata(luaState, 1))
+	{
+		objectPtr = reinterpret_cast< Object** >(lua_touserdata(luaState, 1));
+		arg = manager->toAny(2);
+	}
+	else if (lua_isuserdata(luaState, 2))
+	{
+		objectPtr = reinterpret_cast< Object** >(lua_touserdata(luaState, 2));
+		arg = manager->toAny(1);
+	}
+
+	if (!objectPtr)
+	{
+		log::error << L"Unable to call method; not an object" << Endl;
+		return 0;
+	}
+
+	Object* object = *objectPtr;
+	if (!object)
+	{
+		log::error << L"Unable to call method; null object" << Endl;
+		return 0;
+	}
+
+	IScriptClass::InvokeParam param;
+	param.object = object;
+
+	Any returnValue = scriptClass->invokeOperator(param, 2, arg);
+
+	manager->pushAny(returnValue);
+	return 1;
+}
+
+int ScriptManagerLua::classDivideMethod(lua_State* luaState)
+{
+	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
+	T_ASSERT (manager);
+
+	const IScriptClass* scriptClass = reinterpret_cast< IScriptClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
+	T_ASSERT (scriptClass);
+
+	int32_t top = lua_gettop(luaState);
+	if (top < 1)
+		return 0;
+
+	Object** objectPtr = reinterpret_cast< Object** >(lua_touserdata(luaState, 1));
+	if (!objectPtr)
+	{
+		log::error << L"Unable to call method; not an object" << Endl;
+		return 0;
+	}
+
+	Object* object = *objectPtr;
+	if (!object)
+	{
+		log::error << L"Unable to call method; null object" << Endl;
+		return 0;
+	}
+
+	Any arg = manager->toAny(2);
+
+	IScriptClass::InvokeParam param;
+	param.object = object;
+
+	Any returnValue = scriptClass->invokeOperator(param, 3, arg);
+
+	manager->pushAny(returnValue);
+	return 1;
 }
 
 void* ScriptManagerLua::luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize)

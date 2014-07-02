@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.physics.MeshAsset" version="1">
-	<fileName>LifeZero\Objects\Room-02.lwo</fileName>
-	<calculateConvexHull>false</calculateConvexHull>
-</object>

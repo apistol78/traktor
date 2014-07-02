@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.mesh.MeshEntityData">
-	<name>Cannon mesh</name>
-	<transform>
-		<translation>0, 0, 0, 0</translation>
-		<rotation>0, 0, 0, 1</rotation>
-	</transform>
-	<mesh>{C51D76C5-A68A-2546-A2A0-E7E7A63495C1}</mesh>
-</object>

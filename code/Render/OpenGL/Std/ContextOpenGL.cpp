@@ -63,8 +63,9 @@ ThreadLocal ContextOpenGL::ms_contextStack;
 
 #if defined(_WIN32)
 
-ContextOpenGL::ContextOpenGL(HWND hWnd, HDC hDC, HGLRC hRC)
-:	m_hWnd(hWnd)
+ContextOpenGL::ContextOpenGL(ContextOpenGL* resourceContext, HWND hWnd, HDC hDC, HGLRC hRC)
+:	m_resourceContext(resourceContext)
+,	m_hWnd(hWnd)
 ,	m_hDC(hDC)
 ,	m_hRC(hRC)
 ,	m_width(0)
@@ -74,8 +75,9 @@ ContextOpenGL::ContextOpenGL(HWND hWnd, HDC hDC, HGLRC hRC)
 
 #elif defined(__APPLE__)
 
-ContextOpenGL::ContextOpenGL(void* context)
-:	m_context(context)
+ContextOpenGL::ContextOpenGL(ContextOpenGL* resourceContext, void* context)
+:	m_resourceContext(resourceContext)
+,	m_context(context)
 ,	m_width(0)
 ,	m_height(0)
 ,	m_permitDepth(true)
@@ -83,8 +85,9 @@ ContextOpenGL::ContextOpenGL(void* context)
 
 #elif defined(__LINUX__)
 
-ContextOpenGL::ContextOpenGL(Window* window, GLXContext context)
-:	m_window(window)
+ContextOpenGL::ContextOpenGL(ContextOpenGL* resourceContext, Window* window, GLXContext context)
+:	m_resourceContext(resourceContext)
+,	m_window(window)
 ,	m_context(context)
 ,	m_width(0)
 ,	m_height(0)
@@ -331,6 +334,8 @@ GLuint ContextOpenGL::createShaderObject(const char* shader, GLenum shaderType)
 
 uint32_t ContextOpenGL::createRenderStateObject(const RenderStateOpenGL& renderState)
 {
+	T_FATAL_ASSERT (!m_resourceContext);
+
 	Adler32 adler;
 	adler.feed(renderState.cullFaceEnable);
 	adler.feed(renderState.cullFace);
@@ -380,6 +385,8 @@ uint32_t ContextOpenGL::createRenderStateObject(const RenderStateOpenGL& renderS
 
 uint32_t ContextOpenGL::createSamplerStateObject(const SamplerStateOpenGL& samplerState)
 {
+	T_FATAL_ASSERT (!m_resourceContext);
+
 	Adler32 adler;
 	adler.feed(samplerState.minFilter);
 	adler.feed(samplerState.magFilter);
@@ -404,9 +411,11 @@ void ContextOpenGL::bindRenderStateObject(uint32_t renderStateObject)
 	if (renderStateObject == m_currentRenderStateList)
 		return;
 
+	const std::vector< RenderStateOpenGL >& renderStateList = m_resourceContext->m_renderStateList;	
+
 	T_ASSERT (renderStateObject > 0);
-	T_ASSERT (renderStateObject <= m_renderStateList.size());
-	const RenderStateOpenGL& rs = m_renderStateList[renderStateObject - 1];
+	T_ASSERT (renderStateObject <= renderStateList.size());
+	const RenderStateOpenGL& rs = renderStateList[renderStateObject - 1];
 
 	if (rs.cullFaceEnable)
 		{ T_OGL_SAFE(glEnable(GL_CULL_FACE)); }
@@ -451,9 +460,11 @@ void ContextOpenGL::bindRenderStateObject(uint32_t renderStateObject)
 
 void ContextOpenGL::bindSamplerStateObject(GLenum textureTarget, uint32_t samplerStateObject, bool haveMips, GLfloat maxAnisotropy)
 {
+	const std::vector< SamplerStateOpenGL >& samplerStateList = m_resourceContext->m_samplerStateList;	
+
 	T_ASSERT (samplerStateObject > 0);
-	T_ASSERT (samplerStateObject <= m_samplerStateList.size());
-	const SamplerStateOpenGL& ss = m_samplerStateList[samplerStateObject - 1];
+	T_ASSERT (samplerStateObject <= samplerStateList.size());
+	const SamplerStateOpenGL& ss = samplerStateList[samplerStateObject - 1];
 
 	T_OGL_SAFE(glTexParameteri(textureTarget, GL_TEXTURE_WRAP_S, ss.wrapS));
 	T_OGL_SAFE(glTexParameteri(textureTarget, GL_TEXTURE_WRAP_T, ss.wrapT));

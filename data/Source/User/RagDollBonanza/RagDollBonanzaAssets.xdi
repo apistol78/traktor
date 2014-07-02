@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.editor.Assets">
-	<dependencies>
-		<item>{4E2D9A67-37C7-074F-A04E-F1663834E365}</item>
-		<item>{666412C3-5A4E-1B47-87D3-BC0165D2DC26}</item>
-	</dependencies>
-</object>

@@ -432,7 +432,10 @@ bool emitInterpolator(GlslContext& cx, Interpolator* node)
 		// We're already in vertex state; skip interpolation.
 		GlslVariable* in = cx.emitInput(node, L"Input");
 		if (!in)
+		{
+			log::error << L"Unable to emit interpolator input (1)" << Endl;
 			return false;
+		}
 
 		GlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
 
@@ -446,13 +449,19 @@ bool emitInterpolator(GlslContext& cx, Interpolator* node)
 
 	GlslVariable* in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		log::error << L"Unable to emit interpolator input (2)" << Endl;
 		return false;
+	}
 
 	cx.enterFragment();
 	
 	int32_t interpolatorWidth = glsl_type_width(in->getType());
 	if (!interpolatorWidth)
+	{
+		log::error << L"Unable to determine width of type " << int32_t(in->getType()) << Endl;
 		return false;
+	}
 
 	int32_t interpolatorId;
 	int32_t interpolatorOffset;

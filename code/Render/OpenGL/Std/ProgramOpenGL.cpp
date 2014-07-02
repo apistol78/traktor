@@ -330,7 +330,7 @@ bool ProgramOpenGL::activate(ContextOpenGL* renderContext, float targetSize[2])
 
 	// Setup our render state.
 	if (m_renderStateList == 0)
-		m_renderStateList = renderContext->createRenderStateObject(m_renderState);
+		m_renderStateList = m_resourceContext->createRenderStateObject(m_renderState);
 
 	renderContext->bindRenderStateObject(m_renderStateList);
 	if (m_renderState.stencilTestEnable)
@@ -402,7 +402,7 @@ bool ProgramOpenGL::activate(ContextOpenGL* renderContext, float targetSize[2])
 			T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + sampler.stage));
 
 			if (sampler.object == 0)
-				sampler.object = renderContext->createSamplerStateObject(m_renderState.samplerStates[sampler.stage]);
+				sampler.object = m_resourceContext->createSamplerStateObject(m_renderState.samplerStates[sampler.stage]);
 
 			ITextureBinding* tb = getTextureBinding(resolved);
 			T_FATAL_ASSERT (tb);
