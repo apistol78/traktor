@@ -256,8 +256,8 @@ void AsMovieClip::MovieClip_attachBitmap_4(FlashSpriteInstance* self, const Bitm
 	Ref< FlashShape > shape = new FlashShape();
 	shape->create(
 		bitmapId,
-		bmp->getWidth() * 20.0f,
-		bmp->getHeight() * 20.0f
+		bmp->getWidth() * 20,
+		bmp->getHeight() * 20
 	);
 
 	// Define shape character.

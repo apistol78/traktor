@@ -23,9 +23,9 @@ public:
 
 	int32_t execute(const std::wstring& command, const std::wstring& saveOutputAs = L"");
 
-	const std::wstring& Run::stdOut() const;
+	const std::wstring& stdOut() const;
 
-	const std::wstring& Run::stdErr() const;
+	const std::wstring& stdErr() const;
 
 	int32_t exitCode() const;
 

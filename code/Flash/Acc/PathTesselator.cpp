@@ -13,15 +13,16 @@ namespace traktor
 		namespace
 		{
 
-Vector2 evalQuadratic(
+Vector2i evalQuadratic(
 	float t,
-	const Vector2& cp0,
-	const Vector2& cp1,
-	const Vector2& cp2
+	const Vector2i& cp0,
+	const Vector2i& cp1,
+	const Vector2i& cp2
 )
 {
 	float it = 1.0f - t;
-	return (it * it) * cp0 + (2.0f * it * t) * cp1 + (t * t) * cp2;
+	Vector2 p = (it * it) * cp0.toVector2() + (2.0f * it * t) * cp1.toVector2() + (t * t) * cp2.toVector2();
+	return Vector2i::fromVector2(p);
 }
 
 		}
@@ -36,7 +37,7 @@ void PathTesselator::tesselate(const Path& path, AlignedVector< Segment >& outSe
 
 	outSegments.reserve(subPaths.size() * 10);
 
-	// Tesselate segments into linear segments.
+	// Tessellate segments into linear segments.
 	for (std::list< SubPath >::const_iterator i = subPaths.begin(); i != subPaths.end(); ++i)
 	{
 		for (std::vector< SubPathSegment >::const_iterator j = i->segments.begin(); j != i->segments.end(); ++j)
@@ -75,43 +76,42 @@ void PathTesselator::tesselateQuadraticSegment(const Path& path, const SubPath& 
 {
 	T_ASSERT (segment.pointsCount == 3);
 
-	const Vector2& cp0 = path.getPoints().at(segment.pointsOffset);
-	const Vector2& cp1 = path.getPoints().at(segment.pointsOffset + 1);
-	const Vector2& cp2 = path.getPoints().at(segment.pointsOffset + 2);
+	const Vector2i& cp0 = path.getPoints().at(segment.pointsOffset);
+	const Vector2i& cp1 = path.getPoints().at(segment.pointsOffset + 1);
+	const Vector2i& cp2 = path.getPoints().at(segment.pointsOffset + 2);
 
-	Vector2 mn(std::numeric_limits< float >::max(), std::numeric_limits< float >::max());
-	Vector2 mx(-std::numeric_limits< float >::max(), -std::numeric_limits< float >::max());
-	for (int32_t i = 0; i < segment.pointsCount; ++i)
+	Vector2i mn(std::numeric_limits< int32_t >::max(), std::numeric_limits< int32_t >::max());
+	Vector2i mx(-std::numeric_limits< int32_t >::max(), -std::numeric_limits< int32_t >::max());
+	for (uint32_t i = 0; i < segment.pointsCount; ++i)
 	{
-		const Vector2& cp = path.getPoints().at(segment.pointsOffset + i);
+		const Vector2i& cp = path.getPoints().at(segment.pointsOffset + i);
 		mn.x = min(mn.x, cp.x);
 		mn.y = min(mn.y, cp.y);
 		mx.x = max(mx.x, cp.x);
 		mx.y = max(mx.y, cp.y);
 	}
 
-	Vector2 ps = cp0;
-	Vector2 pm = evalQuadratic(0.5f, cp0, cp1, cp2);
-
 	// Shape normalized coordinates.
-	Vector2 extent = mx - mn;
+	Vector2 pm = evalQuadratic(0.5f, cp0, cp1, cp2).toVector2();
+	Vector2 extent = (mx - mn).toVector2();
 	Vector2 nm1 = pm / extent;
-	Vector2 nm2 = ((cp1 + cp0) * 0.5f) / extent;
+	Vector2 nm2 = ((cp1 + cp0).toVector2() * 0.5f) / extent;
 
 	// Calculate number of steps.
 	float distance = (nm1 - nm2).length();
 
 	const float c_maxDistance = 0.7f;
-	const float c_maxSteps = 12.0f;
+	const float c_maxSteps = 8.0f;
 
 	int steps = int(min(distance, c_maxDistance) * c_maxSteps / c_maxDistance);
 	if (steps <= 0)
 		steps = 1;
 
+	Vector2i ps = cp0;
 	for (int i = 0; i < steps; ++i)
 	{
 		float t = float(i + 1) / steps;
-		Vector2 pe = evalQuadratic(t, cp0, cp1, cp2);
+		Vector2i pe = evalQuadratic(t, cp0, cp1, cp2);
 
 		Segment s;
 		s.v[0] = ps;

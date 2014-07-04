@@ -179,11 +179,14 @@ std::wstring getExceptionString(DWORD exceptionCode)
 }
 
 void* g_exceptionAddress = 0;
+DWORD g_exceptionCode = 0;
+
 LONG WINAPI exceptionVectoredHandler(struct _EXCEPTION_POINTERS* ep)
 {
 	g_exceptionAddress = (void*)ep->ExceptionRecord->ExceptionAddress;
+	g_exceptionCode = ep->ExceptionRecord->ExceptionCode;
+
 	bool ouputCallStack = true;
-	
 	switch (ep->ExceptionRecord->ExceptionCode)
 	{
 	case EXCEPTION_ACCESS_VIOLATION:		
@@ -430,10 +433,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 		{
 			TCHAR fileName[MAX_PATH];
 			GetModuleFileName(hCrashModule, fileName, sizeof_array(fileName));
-			log::error << L"Unhandled exception occurred at 0x" << g_exceptionAddress << L" in module " << (void*)hCrashModule << L" " << fileName << Endl;
+			log::error << L"Unhandled exception ( " << getExceptionString(g_exceptionCode) << L") occurred at 0x" << g_exceptionAddress << L" in module " << (void*)hCrashModule << L" " << fileName << Endl;
 		}
 		else
-			log::error << L"Unhandled exception occurred at 0x" << g_exceptionAddress << Endl;
+			log::error << L"Unhandled exception ( " << getExceptionString(g_exceptionCode) << L") occurred at 0x" << g_exceptionAddress << Endl;
 
 		safeDestroy(application);
 		showErrorDialog(logTail->m_tail);

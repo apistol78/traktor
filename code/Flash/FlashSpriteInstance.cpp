@@ -534,7 +534,7 @@ void FlashSpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 	context->setMovieClip(this);
 
 	// Transform coordinates into local.
-	Vector2 xy = getFullTransform().inverse() * Vector2(x, y);
+	Vector2 xy = getFullTransform().inverse() * Vector2(float(x), float(y));
 	m_mouseX = int32_t(xy.x / 20.0f);
 	m_mouseY = int32_t(xy.y / 20.0f);
 
