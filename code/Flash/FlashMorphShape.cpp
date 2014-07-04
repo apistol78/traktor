@@ -54,23 +54,23 @@ bool FlashMorphShape::create(const Aabb2& shapeBounds, const SwfShape* startShap
 		{
 			const SwfStraightEdgeRecord& s = shapeRecord->edge.straightEdge;
 			if (s.generalLineFlag)
-				path.lineTo(float(s.deltaX), float(s.deltaY), Path::CmRelative);
+				path.lineTo(s.deltaX, s.deltaY, Path::CmRelative);
 			else
 			{
 				if (!s.vertLineFlag)
-					path.lineTo(float(s.deltaX), 0.0f, Path::CmRelative);
+					path.lineTo(s.deltaX, 0, Path::CmRelative);
 				else
-					path.lineTo(0.0f, float(s.deltaY), Path::CmRelative);
+					path.lineTo(0, s.deltaY, Path::CmRelative);
 			}
 		}
 		else if (shapeRecord->edgeFlag && !shapeRecord->edge.straightFlag)
 		{
 			const SwfCurvedEdgeRecord& c = shapeRecord->edge.curvedEdge;
 			path.quadraticTo(
-				float(c.controlDeltaX),
-				float(c.controlDeltaY),
-				float(c.controlDeltaX + c.anchorDeltaX),
-				float(c.controlDeltaY + c.anchorDeltaY),
+				c.controlDeltaX,
+				c.controlDeltaY,
+				c.controlDeltaX + c.anchorDeltaX,
+				c.controlDeltaY + c.anchorDeltaY,
 				Path::CmRelative
 			);
 		}
@@ -87,8 +87,8 @@ bool FlashMorphShape::create(const Aabb2& shapeBounds, const SwfShape* startShap
 			if (s.stateMoveTo)
 			{
 				path.moveTo(
-					float(s.moveDeltaX),
-					float(s.moveDeltaY),
+					s.moveDeltaX,
+					s.moveDeltaY,
 					Path::CmAbsolute
 				);
 			}

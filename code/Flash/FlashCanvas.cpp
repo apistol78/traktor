@@ -76,7 +76,7 @@ void FlashCanvas::moveTo(avm_number_t x, avm_number_t y)
 		return;
 
 	Path& p = m_paths.back();
-	p.moveTo(x, y, Path::CmAbsolute);
+	p.moveTo(int32_t(x), int32_t(y), Path::CmAbsolute);
 
 	expandBounds(m_bounds, x, y);
 }
@@ -87,7 +87,7 @@ void FlashCanvas::lineTo(avm_number_t x, avm_number_t y)
 		return;
 
 	Path& p = m_paths.back();
-	p.lineTo(x, y, Path::CmAbsolute);
+	p.lineTo(int32_t(x), int32_t(y), Path::CmAbsolute);
 
 	expandBounds(m_bounds, x, y);
 }
@@ -98,7 +98,7 @@ void FlashCanvas::curveTo(avm_number_t controlX, avm_number_t controlY, avm_numb
 		return;
 
 	Path& p = m_paths.back();
-	p.quadraticTo(controlX, controlY, anchorX, anchorY, Path::CmAbsolute);
+	p.quadraticTo(int32_t(controlX), int32_t(controlY), int32_t(anchorX), int32_t(anchorY), Path::CmAbsolute);
 
 	expandBounds(m_bounds, controlX, controlY);
 	expandBounds(m_bounds, anchorX, anchorY);
