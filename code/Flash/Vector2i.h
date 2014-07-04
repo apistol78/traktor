@@ -36,7 +36,7 @@ public:
 
 	static Vector2i fromVector2(const Vector2& v)
 	{
-		return Vector2i(int32_t(std::floorf(v.x)), int32_t(std::floorf(v.y)));
+		return Vector2i(int32_t(std::floor(v.x)), int32_t(std::floor(v.y)));
 	}
 
 	bool operator == (const Vector2i& r) const

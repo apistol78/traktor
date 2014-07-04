@@ -197,7 +197,7 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, Aligned
 					Bezier2nd b(cp0.toVector2(), cp1.toVector2(), cp2.toVector2());
 
 					float t0, t1;
-					b.intersectX(*i, t0, t1);
+					b.intersectX(float(*i), t0, t1);
 
 					T_ASSERT (t0 > -FUZZY_EPSILON && t0 < 1.0f + FUZZY_EPSILON);
 
