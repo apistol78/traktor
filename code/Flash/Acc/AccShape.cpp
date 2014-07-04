@@ -91,9 +91,9 @@ bool AccShape::createTesselation(const std::list< Path >& paths)
 
 				case SpgtQuadratic:
 					{
-						const Vector2& cp0 = i->getPoints().at(k->pointsOffset);
-						const Vector2& cp1 = i->getPoints().at(k->pointsOffset + 1);
-						const Vector2& cp2 = i->getPoints().at(k->pointsOffset + 2);
+						const Vector2i& cp0 = i->getPoints().at(k->pointsOffset);
+						const Vector2i& cp1 = i->getPoints().at(k->pointsOffset + 1);
+						const Vector2i& cp2 = i->getPoints().at(k->pointsOffset + 2);
 
 						Segment s;
 						s.v[0] = cp0;
@@ -127,10 +127,11 @@ bool AccShape::createTesselation(const std::list< Path >& paths)
 		{
 			for (int k = 0; k < 3; ++k)
 			{
-				m_bounds.mn.x = min(m_bounds.mn.x, j->v[k].x);
-				m_bounds.mn.y = min(m_bounds.mn.y, j->v[k].y);
-				m_bounds.mx.x = max(m_bounds.mx.x, j->v[k].x);
-				m_bounds.mx.y = max(m_bounds.mx.y, j->v[k].y);
+				Vector2 pt = j->v[k].toVector2();
+				m_bounds.mn.x = min< float >(m_bounds.mn.x, pt.x);
+				m_bounds.mn.y = min< float >(m_bounds.mn.y, pt.y);
+				m_bounds.mx.x = max< float >(m_bounds.mx.x, pt.x);
+				m_bounds.mx.y = max< float >(m_bounds.mx.y, pt.y);
 			}
 		}
 	}
@@ -262,8 +263,8 @@ bool AccShape::updateRenderable(
 
 				for (int k = 0; k < 3; ++k)
 				{
-					vertex->pos[0] = j->v[k].x;
-					vertex->pos[1] = j->v[k].y;
+					vertex->pos[0] = float(j->v[k].x);
+					vertex->pos[1] = float(j->v[k].y);
 					vertex->uv[0] = c_controlPoints[k][0];
 					vertex->uv[1] = c_controlPoints[k][1];
 					vertex->color[0] = color.r;

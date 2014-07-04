@@ -565,8 +565,9 @@ bool ProgramDx11::updateStateConstants(ID3D11DeviceContext* d3dDeviceContext, St
 	{
 		if (!state.cbuffer[i].d3dBuffer)
 			break;
-		//if (!state.cbuffer[i].dirty && state.cbuffer[i].d3dMappedContext == d3dDeviceContext)
-		//	continue;
+
+		if (!state.cbuffer[i].dirty && state.cbuffer[i].d3dMappedContext == d3dDeviceContext)
+			continue;
 
 		hr = d3dDeviceContext->Map(state.cbuffer[i].d3dBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dm);
 		if (FAILED(hr))

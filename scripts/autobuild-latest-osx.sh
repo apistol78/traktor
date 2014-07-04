@@ -11,8 +11,9 @@ pushd $TRAKTOR_HOME
 /bin/sh build-projects-make-osx.sh
 
 pushd build/osx
-make -j 8 ReleaseShared 2>$BUILD_LOG_DIR/build-osx-release-stderr.log
-make -j 8 DebugShared 2>>$BUILD_LOG_DIR/build-osx-debug-stderr.log
+make -j 8 ReleaseShared 2>$BUILD_LOG_DIR/build-osx-releaseshared-stderr.log
+make -j 8 DebugShared 2>>$BUILD_LOG_DIR/build-osx-debugshared-stderr.log
+make -j 8 ReleaseStatic 2>$BUILD_LOG_DIR/build-osx-releasestatic-stderr.log
 popd
 
 popd

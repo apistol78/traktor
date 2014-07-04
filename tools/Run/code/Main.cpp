@@ -420,7 +420,7 @@ Ref< script::IScriptManager > createScriptManager()
 	// DeepClone
 	Ref< script::AutoScriptClass< DeepClone > > classDeepClone = new script::AutoScriptClass< DeepClone >();
 	classDeepClone->addConstructor< const ISerializable* >();
-	classDeepClone->addMethod("create", &DeepClone::create);
+	classDeepClone->addMethod< Ref< ISerializable > >("create", &DeepClone::create);
 	scriptManager->registerClass(classDeepClone);
 
 	// DeepHash

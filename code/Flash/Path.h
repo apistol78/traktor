@@ -5,6 +5,7 @@
 #include <list>
 #include "Core/Config.h"
 #include "Core/Math/Aabb2.h"
+#include "Flash/Vector2i.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -94,7 +95,7 @@ public:
 	 * \param y Cursor y position.
 	 * \param mode Coordinate mode.
 	 */
-	void moveTo(float x, float y, CoordinateMode mode);
+	void moveTo(int32_t x, int32_t y, CoordinateMode mode);
 
 	/*! \brief Line from cursor to position.
 	 *
@@ -102,7 +103,7 @@ public:
 	 * \param y End y position.
 	 * \param mode Coordinate mode.
 	 */
-	void lineTo(float x, float y, CoordinateMode mode);
+	void lineTo(int32_t x, int32_t y, CoordinateMode mode);
 
 	/*! \brief Quadratic spline from cursor to position.
 	 *
@@ -112,7 +113,7 @@ public:
 	 * \param y End y position.
 	 * \param mode Coordinate mode.
 	 */
-	void quadraticTo(float x1, float y1, float x, float y, CoordinateMode mode);
+	void quadraticTo(int32_t x1, int32_t y1, int32_t x, int32_t y, CoordinateMode mode);
 
 	/*! \brief End path.
 	 *
@@ -130,13 +131,13 @@ public:
 	 *
 	 * \return Cursor position.
 	 */
-	const Vector2& getCursor() const { return m_cursor; }
+	const Vector2i& getCursor() const { return m_cursor; }
 
 	/*! \brief Get points.
 	 *
 	 * \return List of points.
 	 */
-	const std::vector< Vector2 >& getPoints() const { return m_points; }
+	const std::vector< Vector2i >& getPoints() const { return m_points; }
 
 	/*! \brief Get sub paths.
 	 *
@@ -149,8 +150,8 @@ public:
 	void serialize(ISerializer& s);
 
 private:
-	Vector2 m_cursor;
-	std::vector< Vector2 > m_points;
+	Vector2i m_cursor;
+	std::vector< Vector2i > m_points;
 	std::list< SubPath > m_subPaths;
 	SubPath m_current;
 
@@ -161,7 +162,7 @@ private:
 	 * \param x X coordinate.
 	 * \param y Y coordinate.
 	 */
-	void transform(CoordinateMode from, CoordinateMode to, float& x, float& y) const;
+	void transform(CoordinateMode from, CoordinateMode to, int32_t& x, int32_t& y) const;
 };
 
 	}

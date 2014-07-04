@@ -36,7 +36,7 @@ public:
 
 	bool create(const SwfShape* shape);
 
-	bool create(uint16_t fillBitmap, float width, float height);
+	bool create(uint16_t fillBitmap, int32_t width, int32_t height);
 
 	virtual Ref< FlashCharacterInstance > createInstance(
 		ActionContext* context,

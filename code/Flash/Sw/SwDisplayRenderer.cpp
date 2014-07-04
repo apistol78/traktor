@@ -150,7 +150,7 @@ void SwDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& tra
 	const std::list< Path >& paths = shape.getPaths();
 	for (std::list< Path >::const_iterator i = paths.begin(); i != paths.end(); ++i)
 	{
-		const std::vector< Vector2 >& points = i->getPoints();
+		const std::vector< Vector2i >& points = i->getPoints();
 
 		// Create spans for each path.
 		const std::list< SubPath >& subPaths = i->getSubPaths();
@@ -168,8 +168,8 @@ void SwDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& tra
 				{
 					Edge edge;
 					edge.type = SpgtLinear;
-					edge.points.push_back(rasterTransform * points[k->pointsOffset]);
-					edge.points.push_back(rasterTransform * points[k->pointsOffset + 1]);
+					edge.points.push_back(rasterTransform * points[k->pointsOffset].toVector2());
+					edge.points.push_back(rasterTransform * points[k->pointsOffset + 1].toVector2());
 					//if (!culled(&edge.points[0], 2, frameWidth, frameHeight))
 						edges.push_back(edge);
 				}
@@ -177,9 +177,9 @@ void SwDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& tra
 				{
 					Vector2 cp[] =
 					{
-						rasterTransform * points[k->pointsOffset],
-						rasterTransform * points[k->pointsOffset + 1],
-						rasterTransform * points[k->pointsOffset + 2]
+						rasterTransform * points[k->pointsOffset].toVector2(),
+						rasterTransform * points[k->pointsOffset + 1].toVector2(),
+						rasterTransform * points[k->pointsOffset + 2].toVector2()
 					};
 
 					//if (!culled(cp, 3, frameWidth, frameHeight))
@@ -358,7 +358,7 @@ void SwDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tra
 	const std::list< Path >& paths = glyphShape.getPaths();
 	for (std::list< Path >::const_iterator i = paths.begin(); i != paths.end(); ++i)
 	{
-		const std::vector< Vector2 >& points = i->getPoints();
+		const std::vector< Vector2i >& points = i->getPoints();
 
 		// Create spans for each path.
 		const std::list< SubPath >& subPaths = i->getSubPaths();
@@ -376,17 +376,17 @@ void SwDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tra
 				{
 					Edge edge;
 					edge.type = SpgtLinear;
-					edge.points.push_back(rasterTransform * points[k->pointsOffset]);
-					edge.points.push_back(rasterTransform * points[k->pointsOffset + 1]);
+					edge.points.push_back(rasterTransform * points[k->pointsOffset].toVector2());
+					edge.points.push_back(rasterTransform * points[k->pointsOffset + 1].toVector2());
 					edges.push_back(edge);
 				}
 				else
 				{
 					Vector2 cp[] =
 					{
-						rasterTransform * points[k->pointsOffset],
-						rasterTransform * points[k->pointsOffset + 1],
-						rasterTransform * points[k->pointsOffset + 2]
+						rasterTransform * points[k->pointsOffset].toVector2(),
+						rasterTransform * points[k->pointsOffset + 1].toVector2(),
+						rasterTransform * points[k->pointsOffset + 2].toVector2()
 					};
 
 					{

@@ -10,6 +10,29 @@ namespace traktor
 {
 	namespace flash
 	{
+		namespace
+		{
+
+class MemberVector2i : public MemberComplex
+{
+public:
+	MemberVector2i(const wchar_t* const name, Vector2i& ref)
+	:	MemberComplex(name, true)
+	,	m_ref(ref)
+	{
+	}
+
+	virtual void serialize(ISerializer& s) const
+	{
+		s >> Member< int32_t >(L"x", m_ref.x);
+		s >> Member< int32_t >(L"y", m_ref.y);
+	}
+
+private:
+	Vector2i& m_ref;
+};
+
+		}
 
 void SubPathSegment::serialize(ISerializer& s)
 {
@@ -27,7 +50,7 @@ void SubPath::serialize(ISerializer& s)
 }
 
 Path::Path()
-:	m_cursor(0.0f, 0.0f)
+:	m_cursor(0, 0)
 {
 	m_points.reserve(256);
 }
@@ -39,43 +62,51 @@ void Path::reset()
 	m_current.segments.resize(0);
 }
 
-void Path::moveTo(float x, float y, CoordinateMode mode)
+void Path::moveTo(int32_t x, int32_t y, CoordinateMode mode)
 {
 	T_ASSERT (m_current.segments.empty());
 	transform(mode, CmAbsolute, x, y);
-	m_cursor = Vector2(x, y);
+	m_cursor = Vector2i(x, y);
 }
 
-void Path::lineTo(float x, float y, CoordinateMode mode)
+void Path::lineTo(int32_t x, int32_t y, CoordinateMode mode)
 {
 	transform(mode, CmAbsolute, x, y);
 
-	uint32_t offset = uint32_t(m_points.size());
-	m_points.push_back(m_cursor);
-	m_points.push_back(Vector2(x, y));
+	Vector2i p(x, y);
+	if (p != m_cursor)
+	{
+		uint32_t offset = uint32_t(m_points.size());
+		m_points.push_back(m_cursor);
+		m_points.push_back(p);
 
-	m_current.segments.push_back(SubPathSegment(SpgtLinear));
-	m_current.segments.back().pointsOffset = offset;
-	m_current.segments.back().pointsCount = 2;
+		m_current.segments.push_back(SubPathSegment(SpgtLinear));
+		m_current.segments.back().pointsOffset = offset;
+		m_current.segments.back().pointsCount = 2;
 
-	m_cursor = Vector2(x, y);
+		m_cursor = p;
+	}
 }
 
-void Path::quadraticTo(float x1, float y1, float x, float y, CoordinateMode mode)
+void Path::quadraticTo(int32_t x1, int32_t y1, int32_t x, int32_t y, CoordinateMode mode)
 {
 	transform(mode, CmAbsolute, x1, y1);
 	transform(mode, CmAbsolute, x, y);
 
-	uint32_t offset = uint32_t(m_points.size());
-	m_points.push_back(m_cursor);
-	m_points.push_back(Vector2(x1, y1));
-	m_points.push_back(Vector2(x, y));
+	Vector2i p(x, y);
+	if (p != m_cursor)
+	{
+		uint32_t offset = uint32_t(m_points.size());
+		m_points.push_back(m_cursor);
+		m_points.push_back(Vector2i(x1, y1));
+		m_points.push_back(p);
 
-	m_current.segments.push_back(SubPathSegment(SpgtQuadratic));
-	m_current.segments.back().pointsOffset = offset;
-	m_current.segments.back().pointsCount = 3;
+		m_current.segments.push_back(SubPathSegment(SpgtQuadratic));
+		m_current.segments.back().pointsOffset = offset;
+		m_current.segments.back().pointsCount = 3;
 
-	m_cursor = Vector2(x, y);
+		m_cursor = p;
+	}
 }
 
 void Path::end(uint16_t fillStyle0, uint16_t fillStyle1, uint16_t lineStyle)
@@ -94,20 +125,20 @@ void Path::end(uint16_t fillStyle0, uint16_t fillStyle1, uint16_t lineStyle)
 Aabb2 Path::getBounds() const
 {
 	Aabb2 bounds;
-	for (std::vector< Vector2 >::const_iterator i = m_points.begin(); i != m_points.end(); ++i)
-		bounds.contain(*i);
+	for (std::vector< Vector2i >::const_iterator i = m_points.begin(); i != m_points.end(); ++i)
+		bounds.contain(i->toVector2());
 	return bounds;
 }
 
 void Path::serialize(ISerializer& s)
 {
-	s >> Member< Vector2 >(L"cursor", m_cursor);
-	s >> MemberStlVector< Vector2 >(L"points", m_points);
+	s >> MemberVector2i(L"cursor", m_cursor);
+	s >> MemberStlVector< Vector2i, MemberVector2i >(L"points", m_points);
 	s >> MemberStlList< SubPath, MemberComposite< SubPath > >(L"subPaths", m_subPaths);
 	s >> MemberComposite< SubPath >(L"current", m_current);
 }
 
-void Path::transform(CoordinateMode from, CoordinateMode to, float& x, float& y) const
+void Path::transform(CoordinateMode from, CoordinateMode to, int32_t& x, int32_t& y) const
 {
 	if (from == to)
 		return;
