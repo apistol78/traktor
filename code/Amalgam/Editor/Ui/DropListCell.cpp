@@ -7,7 +7,6 @@
 #include "Ui/MenuItem.h"
 #include "Ui/PopupMenu.h"
 #include "Ui/Custom/Auto/AutoWidget.h"
-#include "Ui/Events/CommandEvent.h"
 
 namespace traktor
 {
@@ -20,7 +19,7 @@ DropListCell::DropListCell(HostEnumerator* hostEnumerator, TargetInstance* insta
 {
 }
 
-void DropListCell::mouseDown(ui::custom::AutoWidget* widget, const ui::Point& position)
+void DropListCell::mouseDown(const ui::Point& position)
 {
 	ui::PopupMenu menu;
 	if (menu.create())
@@ -38,7 +37,7 @@ void DropListCell::mouseDown(ui::custom::AutoWidget* widget, const ui::Point& po
 			}
 		}
 
-		Ref< ui::MenuItem > selectedItem = menu.show(widget, m_menuPosition);
+		Ref< ui::MenuItem > selectedItem = menu.show(getWidget(), m_menuPosition);
 		if (selectedItem)
 			m_instance->setDeployHostId(selectedItem->getCommand().getId());
 
@@ -46,7 +45,7 @@ void DropListCell::mouseDown(ui::custom::AutoWidget* widget, const ui::Point& po
 	}
 }
 
-void DropListCell::paint(ui::custom::AutoWidget* widget, ui::Canvas& canvas, const ui::Rect& rect)
+void DropListCell::paint(ui::Canvas& canvas, const ui::Rect& rect)
 {
 	ui::Size size = rect.getSize();
 

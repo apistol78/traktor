@@ -1,7 +1,6 @@
 #include "I18N/Format.h"
 #include "Sound/Editor/Resound/BankControlGrain.h"
 #include "Ui/Canvas.h"
-#include "Ui/Events/CommandEvent.h"
 #include "Ui/Custom/Auto/AutoWidget.h"
 
 // Resources
@@ -49,15 +48,15 @@ void BankControlGrain::setActive(bool active)
 	m_active = active;
 }
 
-void BankControlGrain::mouseDown(ui::custom::AutoWidget* widget, const ui::Point& position)
+void BankControlGrain::mouseDown(const ui::Point& position)
 {
-	ui::CommandEvent commandEvent(widget, this);
-	widget->raiseEvent(ui::EiSelectionChange, &commandEvent);
+	ui::SelectionChangeEvent selectionChange(getWidget(), this);
+	getWidget()->raiseEvent(&selectionChange);
 }
 
-void BankControlGrain::paint(ui::custom::AutoWidget* widget, ui::Canvas& canvas, const ui::Rect& rect)
+void BankControlGrain::paint(ui::Canvas& canvas, const ui::Rect& rect)
 {
-	bool focus = bool(widget->getFocusCell() == this);
+	bool focus = bool(getWidget()->getFocusCell() == this);
 
 	int32_t y = 0;
 	if (focus)

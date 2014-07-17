@@ -4,8 +4,6 @@
 #include "Editor/App/ShortcutsSettingsPage.h"
 #include "I18N/Text.h"
 #include "Ui/Application.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Event.h"
 #include "Ui/Command.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Container.h"
@@ -32,11 +30,11 @@ bool ShortcutsSettingsPage::create(ui::Container* parent, PropertyGroup* setting
 	m_gridShortcuts->create(container, ui::custom::GridView::WsColumnHeader | ui::WsClientBorder | ui::WsDoubleBuffer);
 	m_gridShortcuts->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SETTINGS_COMMAND"), 200));
 	m_gridShortcuts->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SETTINGS_SHORTCUT"), 200));
-	m_gridShortcuts->addSelectEventHandler(ui::createMethodHandler(this, &ShortcutsSettingsPage::eventShortcutSelect));
+	m_gridShortcuts->addEventHandler< ui::SelectionChangeEvent >(this, &ShortcutsSettingsPage::eventShortcutSelect);
 
 	m_editShortcut = new ui::custom::ShortcutEdit();
 	m_editShortcut->create(container, 0, ui::VkNull, ui::WsClientBorder);
-	m_editShortcut->addChangeEventHandler(ui::createMethodHandler(this, &ShortcutsSettingsPage::eventShortcutModified));
+	m_editShortcut->addEventHandler< ui::ContentChangeEvent >(this, &ShortcutsSettingsPage::eventShortcutModified);
 
 	Ref< const PropertyGroup > shortcutGroup = checked_type_cast< const PropertyGroup* >(settings->getProperty(L"Editor.Shortcuts"));
 	if (shortcutGroup)
@@ -131,7 +129,7 @@ void ShortcutsSettingsPage::updateShortcutGrid()
 	m_gridShortcuts->update();
 }
 
-void ShortcutsSettingsPage::eventShortcutSelect(ui::Event* event)
+void ShortcutsSettingsPage::eventShortcutSelect(ui::SelectionChangeEvent* event)
 {
 	RefArray< ui::custom::GridRow > selectedRows;
 	m_gridShortcuts->getRows(selectedRows, ui::custom::GridView::GfSelectedOnly);
@@ -160,7 +158,7 @@ void ShortcutsSettingsPage::eventShortcutSelect(ui::Event* event)
 	m_editShortcut->update();
 }
 
-void ShortcutsSettingsPage::eventShortcutModified(ui::Event* event)
+void ShortcutsSettingsPage::eventShortcutModified(ui::ContentChangeEvent* event)
 {
 	Ref< ui::custom::GridRow > gridRow = m_editShortcut->getData< ui::custom::GridRow >(L"GRIDROW");
 	if (gridRow)

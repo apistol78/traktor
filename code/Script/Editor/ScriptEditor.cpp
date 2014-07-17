@@ -16,6 +16,7 @@
 #include "Script/Editor/IScriptOutline.h"
 #include "Script/Editor/Preprocessor.h"
 #include "Script/Editor/Script.h"
+#include "Script/Editor/ScriptBreakpointEvent.h"
 #include "Script/Editor/ScriptDebuggerView.h"
 #include "Script/Editor/ScriptEditor.h"
 #include "Script/Editor/ScriptProfilerView.h"
@@ -23,11 +24,9 @@
 #include "Ui/Container.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/ListBox.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/Tab.h"
 #include "Ui/TableLayout.h"
 #include "Ui/TabPage.h"
-#include "Ui/Events/CommandEvent.h"
 #include "Ui/Custom/InputDialog.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/GridView/GridColumn.h"
@@ -37,6 +36,7 @@
 #include "Ui/Custom/Panel.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
+#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 #include "Ui/Custom/SyntaxRichEdit/SyntaxRichEdit.h"
 #include "Ui/Custom/SyntaxRichEdit/SyntaxLanguageLua.h"
@@ -89,7 +89,7 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	m_outlineGrid->addColumn(new ui::custom::GridColumn(L"", 30));
 	m_outlineGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_OUTLINE_NAME"), 165));
 	m_outlineGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_OUTLINE_LINE"), 45));
-	m_outlineGrid->addDoubleClickEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventOutlineDoubleClick));
+	m_outlineGrid->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptEditor::eventOutlineDoubleClick);
 
 	Ref< ui::TabPage > tabDependencies = new ui::TabPage();
 	if (!tabDependencies->create(tab, L"Dependencies", new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
@@ -105,13 +105,13 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	dependencyTools->addItem(new ui::custom::ToolBarSeparator());
 	dependencyTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_MOVE_DEPENDENCY_UP"), 2, ui::Command(L"Script.Editor.MoveDependencyUp")));
 	dependencyTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_MOVE_DEPENDENCY_DOWN"), 3, ui::Command(L"Script.Editor.MoveDependencyDown")));
-	dependencyTools->addClickEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventDependencyToolClick));
+	dependencyTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ScriptEditor::eventDependencyToolClick);
 
 	m_dependencyList = new ui::ListBox();
 	if (!m_dependencyList->create(tabDependencies))
 		return false;
 
-	m_dependencyList->addDoubleClickEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventDependencyListDoubleClick));
+	m_dependencyList->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptEditor::eventDependencyListDoubleClick);
 
 	Ref< ui::TabPage > tabDependents = new ui::TabPage();
 	if (!tabDependents->create(tab, L"Dependents", new ui::TableLayout(L"100%", L"100%", 0, 0)))
@@ -121,7 +121,7 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	if (!m_dependentList->create(tabDependents))
 		return false;
 
-	m_dependentList->addDoubleClickEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventDependentListDoubleClick));
+	m_dependentList->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptEditor::eventDependentListDoubleClick);
 
 	tab->addPage(tabOutline);
 	tab->addPage(tabDependencies);
@@ -138,7 +138,7 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	Ref< ui::custom::ToolBar > toolBarEdit = new ui::custom::ToolBar();
 	toolBarEdit->create(containerEdit);
 	toolBarEdit->addItem(new ui::custom::ToolBarButton(L"Toggle comments", ui::Command(L"Script.Editor.ToggleComments")));
-	toolBarEdit->addClickEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventToolBarEditClick));
+	toolBarEdit->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ScriptEditor::eventToolBarEditClick);
 
 	m_edit = new ui::custom::SyntaxRichEdit();
 	if (!m_edit->create(containerEdit, m_script->getText()))
@@ -153,8 +153,8 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 #else
 	m_edit->setFont(ui::Font(L"Consolas", 14));
 #endif
-	m_edit->addChangeEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventScriptChange));
-	m_edit->addDoubleClickEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventScriptDoubleClick));
+	m_edit->addEventHandler< ui::ContentChangeEvent >(this, &ScriptEditor::eventScriptChange);
+	m_edit->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptEditor::eventScriptDoubleClick);
 
 	m_compileStatus = new ui::custom::StatusBar();
 	if (!m_compileStatus->create(containerEdit, ui::WsClientBorder))
@@ -197,7 +197,7 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	// Setup compile timer.
 	if (m_scriptManager)
 	{
-		parent->addTimerEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventTimer));
+		parent->addEventHandler< ui::TimerEvent >(this, &ScriptEditor::eventTimer);
 		parent->startTimer(100);
 		m_compileCountDown = 1;
 	}
@@ -408,7 +408,7 @@ void ScriptEditor::notifyBeginSession(IScriptDebugger* scriptDebugger, IScriptPr
 
 	Ref< ScriptDebuggerView > debuggerView = new ScriptDebuggerView(scriptDebugger);
 	debuggerView->create(splitter);
-	debuggerView->addBreakPointEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventBreakPoint));
+	debuggerView->addEventHandler< ScriptBreakpointEvent >(this, &ScriptEditor::eventBreakPoint);
 
 	Ref< ScriptProfilerView > profilerView = new ScriptProfilerView(scriptProfiler);
 	profilerView->create(splitter);
@@ -531,7 +531,7 @@ void ScriptEditor::buildOutlineGrid(ui::custom::GridView* grid, ui::custom::Grid
 	}
 }
 
-void ScriptEditor::eventOutlineDoubleClick(ui::Event* event)
+void ScriptEditor::eventOutlineDoubleClick(ui::MouseDoubleClickEvent* event)
 {
 	const ui::custom::GridRow* selectedRow = m_outlineGrid->getSelectedRow();
 	if (!selectedRow)
@@ -546,11 +546,9 @@ void ScriptEditor::eventOutlineDoubleClick(ui::Event* event)
 	}
 }
 
-void ScriptEditor::eventDependencyToolClick(ui::Event* event)
+void ScriptEditor::eventDependencyToolClick(ui::custom::ToolBarButtonClickEvent* event)
 {
-	const ui::CommandEvent* cmdEvent = checked_type_cast< const ui::CommandEvent* >(event);
-	const ui::Command& cmd = cmdEvent->getCommand();
-
+	const ui::Command& cmd = event->getCommand();
 	if (cmd == L"Script.Editor.AddDependency")
 	{
 		editor::TypeBrowseFilter filter(type_of< Script >());
@@ -595,7 +593,7 @@ void ScriptEditor::eventDependencyToolClick(ui::Event* event)
 	}
 }
 
-void ScriptEditor::eventDependencyListDoubleClick(ui::Event* event)
+void ScriptEditor::eventDependencyListDoubleClick(ui::MouseDoubleClickEvent* event)
 {
 	int selectedIndex = m_dependencyList->getSelected();
 	if (selectedIndex >= 0)
@@ -607,7 +605,7 @@ void ScriptEditor::eventDependencyListDoubleClick(ui::Event* event)
 	}
 }
 
-void ScriptEditor::eventDependentListDoubleClick(ui::Event* event)
+void ScriptEditor::eventDependentListDoubleClick(ui::MouseDoubleClickEvent* event)
 {
 	int selectedIndex = m_dependentList->getSelected();
 	if (selectedIndex >= 0)
@@ -618,9 +616,9 @@ void ScriptEditor::eventDependentListDoubleClick(ui::Event* event)
 	}
 }
 
-void ScriptEditor::eventToolBarEditClick(ui::Event* event)
+void ScriptEditor::eventToolBarEditClick(ui::custom::ToolBarButtonClickEvent* event)
 {
-	const ui::Command& command = checked_type_cast< const ui::CommandEvent* >(event)->getCommand();
+	const ui::Command& command = event->getCommand();
 	if (command == L"Script.Editor.ToggleComments")
 	{
 		int32_t startOffset = m_edit->getSelectionStartOffset();
@@ -649,13 +647,13 @@ void ScriptEditor::eventToolBarEditClick(ui::Event* event)
 	}
 }
 
-void ScriptEditor::eventScriptChange(ui::Event* event)
+void ScriptEditor::eventScriptChange(ui::ContentChangeEvent* event)
 {
 	m_compileCountDown = 10;
 	m_compileStatus->setText(L"");
 }
 
-void ScriptEditor::eventScriptDoubleClick(ui::Event* event)
+void ScriptEditor::eventScriptDoubleClick(ui::MouseDoubleClickEvent* event)
 {
 	int32_t offset = m_edit->getCaretOffset();
 	int32_t line = m_edit->getLineFromOffset(offset);
@@ -669,7 +667,7 @@ void ScriptEditor::eventScriptDoubleClick(ui::Event* event)
 		m_scriptDebuggerSessions->removeBreakpoint(m_instance->getGuid(), line);
 }
 
-void ScriptEditor::eventTimer(ui::Event* event)
+void ScriptEditor::eventTimer(ui::TimerEvent* event)
 {
 	T_ASSERT (m_scriptManager);
 
@@ -696,9 +694,9 @@ void ScriptEditor::eventTimer(ui::Event* event)
 	}
 }
 
-void ScriptEditor::eventBreakPoint(ui::Event* event)
+void ScriptEditor::eventBreakPoint(ScriptBreakpointEvent* event)
 {
-	const CallStack* callStack = checked_type_cast< const CallStack* >(event->getItem());
+	const CallStack* callStack = event->getCallStack();
 	const CallStack::Frame& currentFrame = callStack->getCurrentFrame();
 
 	if (currentFrame.scriptId == m_instance->getGuid())

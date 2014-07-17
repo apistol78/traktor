@@ -17,7 +17,6 @@ namespace traktor
 	{
 
 class Container;
-class Event;
 class Widget;
 
 	}
@@ -112,19 +111,19 @@ private:
 
 	Matrix44 getViewTransform() const;
 
-	void eventButtonDown(ui::Event* event);
+	void eventButtonDown(ui::MouseButtonDownEvent* event);
 
-	void eventButtonUp(ui::Event* event);
+	void eventButtonUp(ui::MouseButtonUpEvent* event);
 
-	void eventDoubleClick(ui::Event* event);
+	void eventDoubleClick(ui::MouseDoubleClickEvent* event);
 
-	void eventMouseMove(ui::Event* event);
+	void eventMouseMove(ui::MouseMoveEvent* event);
 
-	void eventMouseWheel(ui::Event* event);
+	void eventMouseWheel(ui::MouseWheelEvent* event);
 
-	void eventSize(ui::Event* event);
+	void eventSize(ui::SizeEvent* event);
 
-	void eventPaint(ui::Event* event);
+	void eventPaint(ui::PaintEvent* event);
 };
 
 	}

@@ -2,7 +2,6 @@
 #include "Ui/Container.h"
 #include "Ui/CheckBox.h"
 #include "Ui/Edit.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/NumericEditValidator.h"
 #include "Ui/TableLayout.h"
 #include "I18N/Text.h"
@@ -44,7 +43,7 @@ bool PipelineSettingsPage::create(ui::Container* parent, PropertyGroup* settings
 	m_checkUseMemCached = new ui::CheckBox();
 	m_checkUseMemCached->create(container, i18n::Text(L"EDITOR_SETTINGS_PIPELINE_ENABLE_MEMCACHED"));
 	m_checkUseMemCached->setChecked(memCachedEnable);
-	m_checkUseMemCached->addClickEventHandler(ui::createMethodHandler(this, &PipelineSettingsPage::eventUseCacheClick));
+	m_checkUseMemCached->addEventHandler< ui::ButtonClickEvent >(this, &PipelineSettingsPage::eventUseCacheClick);
 
 	m_editMemCachedHost = new ui::Edit();
 	m_editMemCachedHost->create(container, settings->getProperty< PropertyString >(L"Pipeline.MemCached.Host"));
@@ -70,7 +69,7 @@ bool PipelineSettingsPage::create(ui::Container* parent, PropertyGroup* settings
 	m_checkUseFileCache = new ui::CheckBox();
 	m_checkUseFileCache->create(container, i18n::Text(L"EDITOR_SETTINGS_PIPELINE_ENABLE_FILE_CACHE"));
 	m_checkUseFileCache->setChecked(fileCacheEnable);
-	m_checkUseFileCache->addClickEventHandler(ui::createMethodHandler(this, &PipelineSettingsPage::eventUseCacheClick));
+	m_checkUseFileCache->addEventHandler< ui::ButtonClickEvent >(this, &PipelineSettingsPage::eventUseCacheClick);
 
 	m_editFileCachePath = new ui::Edit();
 	m_editFileCachePath->create(container, toString(settings->getProperty< PropertyString >(L"Pipeline.FileCache.Path")), ui::WsClientBorder);
@@ -113,7 +112,7 @@ bool PipelineSettingsPage::apply(PropertyGroup* settings)
 	return true;
 }
 
-void PipelineSettingsPage::eventUseCacheClick(ui::Event* event)
+void PipelineSettingsPage::eventUseCacheClick(ui::ButtonClickEvent* event)
 {
 	bool memCachedEnable = m_checkUseMemCached->isChecked();
 	m_editMemCachedHost->setEnable(memCachedEnable);

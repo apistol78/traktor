@@ -7,8 +7,8 @@ namespace traktor
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.PaintEvent", PaintEvent, Event)
 
-PaintEvent::PaintEvent(EventSubject* sender, Object* item, Canvas& canvas, const Rect& rc)
-:	Event(sender, item)
+PaintEvent::PaintEvent(EventSubject* sender, Canvas& canvas, const Rect& rc)
+:	Event(sender)
 ,	m_canvas(canvas)
 ,	m_rc(rc)
 {

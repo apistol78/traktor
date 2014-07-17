@@ -7,8 +7,8 @@ namespace traktor
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.SizeEvent", SizeEvent, Event)
 
-SizeEvent::SizeEvent(EventSubject* sender, Object* item, const Size& size)
-:	Event(sender, item)
+SizeEvent::SizeEvent(EventSubject* sender, const Size& size)
+:	Event(sender)
 ,	m_size(size)
 {
 }
@@ -18,12 +18,12 @@ const Size& SizeEvent::getSize() const
 	return m_size;
 }
 
-int SizeEvent::getWidth() const
+int32_t SizeEvent::getWidth() const
 {
 	return m_size.cx;
 }
 
-int SizeEvent::getHeight() const
+int32_t SizeEvent::getHeight() const
 {
 	return m_size.cy;
 }

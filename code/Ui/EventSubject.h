@@ -20,8 +20,8 @@ namespace traktor
 	namespace ui
 	{
 
-class EventHandler;
 class Event;
+class EventHandler;
 
 /*! \brief Event subject.
  * \ingroup UI
@@ -31,21 +31,75 @@ class T_DLLCLASS EventSubject : public Object
 	T_RTTI_CLASS;
 
 public:
-	void addEventHandler(int32_t eventId, EventHandler* eventHandler);
+	struct IEventHandler : public IRefCount
+	{
+		virtual void notify(Event* event) = 0;
+	};
 
-	void removeEventHandler(int32_t eventId, EventHandler* eventHandler);
+	template < typename ClassType, typename EventType >
+	class MethodEventHandler : public RefCountImpl< IEventHandler >
+	{
+	public:
+		typedef void (ClassType::*method_t)(EventType*);
 
+		MethodEventHandler(ClassType* target, method_t method)
+		:	m_target(target)
+		,	m_method(method)
+		{
+		}
+
+		virtual void notify(Event* event)
+		{
+			(m_target->*m_method)(
+				checked_type_cast< EventType*, false >(event)
+			);
+		}
+
+	private:
+		Ref< ClassType > m_target;
+		method_t m_method;
+	};
+
+	void raiseEvent(Event* event);
+
+	template < typename EventType >
+	void addEventHandler(IEventHandler* eventHandler)
+	{
+		addEventHandler(type_of< EventType >(), eventHandler);
+	}
+
+	template < typename EventType, typename ClassType >
+	IEventHandler* addEventHandler(ClassType* target, typename MethodEventHandler< ClassType, EventType >::method_t method)
+	{
+		Ref< IEventHandler > eventHandler = new MethodEventHandler< ClassType, EventType >(target, method);
+		addEventHandler(type_of< EventType >(), eventHandler);
+		return eventHandler;
+	}
+
+	template < typename EventType >
+	void removeEventHandler(IEventHandler* eventHandler)
+	{
+		removeEventHandler(type_of< EventType >(), eventHandler);
+	}
+
+	template < typename EventType >
+	bool hasEventHandler()
+	{
+		return hasEventHandler(type_of< EventType >());
+	}
+
+protected:
 	void removeAllEventHandlers();
 
-	void removeAllEventHandlers(int32_t eventId);
-
-	bool hasEventHandler(int32_t eventId);
-	
-	void raiseEvent(int32_t eventId, Event* event);
-
 private:
-	typedef RefArray< EventHandler > EventHandlers;
-	std::map< int32_t, std::vector< EventHandlers > > m_eventHandlers;
+	typedef RefArray< IEventHandler > EventHandlers;
+	std::map< const TypeInfo*, std::vector< EventHandlers > > m_eventHandlers;
+
+	void addEventHandler(const TypeInfo& eventType, IEventHandler* eventHandler);
+
+	void removeEventHandler(const TypeInfo& eventType, IEventHandler* eventHandler);
+
+	bool hasEventHandler(const TypeInfo& eventType);
 };
 
 	}

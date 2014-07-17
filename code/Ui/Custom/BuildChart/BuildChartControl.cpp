@@ -2,9 +2,6 @@
 #include "Core/Thread/Acquire.h"
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/MouseEvent.h"
-#include "Ui/Events/PaintEvent.h"
 #include "Ui/Custom/BuildChart/BuildChartControl.h"
 
 namespace traktor
@@ -30,12 +27,12 @@ bool BuildChartControl::create(Widget* parent, int style)
 	if (!Widget::create(parent, style))
 		return false;
 
-	addButtonDownEventHandler(createMethodHandler(this, &BuildChartControl::eventButtonDown));
-	addButtonUpEventHandler(createMethodHandler(this, &BuildChartControl::eventButtonUp));
-	addMouseMoveEventHandler(createMethodHandler(this, &BuildChartControl::eventMouseMove));
-	addMouseWheelEventHandler(createMethodHandler(this, &BuildChartControl::eventMouseWheel));
-	addPaintEventHandler(createMethodHandler(this, &BuildChartControl::eventPaint));
-	addTimerEventHandler(createMethodHandler(this, &BuildChartControl::eventTimer));
+	addEventHandler< MouseButtonDownEvent >(this, &BuildChartControl::eventButtonDown);
+	addEventHandler< MouseButtonUpEvent >(this, &BuildChartControl::eventButtonUp);
+	addEventHandler< MouseMoveEvent >(this, &BuildChartControl::eventMouseMove);
+	addEventHandler< MouseWheelEvent >(this, &BuildChartControl::eventMouseWheel);
+	addEventHandler< PaintEvent >(this, &BuildChartControl::eventPaint);
+	addEventHandler< TimerEvent >(this, &BuildChartControl::eventTimer);
 
 	startTimer(100);
 	return true;
@@ -75,10 +72,9 @@ void BuildChartControl::endTask(int32_t lane, const Color4ub& color)
 	m_lanes[lane].back().color = color;
 }
 
-void BuildChartControl::eventPaint(Event* event)
+void BuildChartControl::eventPaint(PaintEvent* event)
 {
-	PaintEvent* p = static_cast< PaintEvent* >(event);
-	Canvas& canvas = p->getCanvas();
+	Canvas& canvas = event->getCanvas();
 
 	if (m_running)
 		m_time = m_timer.getElapsedTime();
@@ -163,7 +159,7 @@ void BuildChartControl::eventPaint(Event* event)
 	event->consume();
 }
 
-void BuildChartControl::eventTimer(Event* event)
+void BuildChartControl::eventTimer(TimerEvent* event)
 {
 	if (m_running && !hasCapture())
 	{
@@ -179,43 +175,39 @@ void BuildChartControl::eventTimer(Event* event)
 	update();
 }
 
-void BuildChartControl::eventButtonDown(Event* event)
+void BuildChartControl::eventButtonDown(MouseButtonDownEvent* event)
 {
-	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
-	if (mouseEvent->getButton() == ui::MouseEvent::BtLeft)
+	if (event->getButton() == MbtLeft)
 	{
-		m_lastMouse = mouseEvent->getPosition().x;
+		m_lastMouse = event->getPosition().x;
 		setCapture();
 	}
 }
 
-void BuildChartControl::eventButtonUp(Event* event)
+void BuildChartControl::eventButtonUp(MouseButtonUpEvent* event)
 {
 	releaseCapture();
 }
 
-void BuildChartControl::eventMouseMove(Event* event)
+void BuildChartControl::eventMouseMove(MouseMoveEvent* event)
 {
-	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
 	if (hasCapture())
 	{
-		int32_t delta = mouseEvent->getPosition().x - m_lastMouse;
+		int32_t delta = event->getPosition().x - m_lastMouse;
 		m_offset -= delta / m_scale;
-		m_lastMouse = mouseEvent->getPosition().x;
+		m_lastMouse = event->getPosition().x;
 		update();
 	}
 }
 
-void BuildChartControl::eventMouseWheel(Event* event)
+void BuildChartControl::eventMouseWheel(MouseWheelEvent* event)
 {
-	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
+	double pivot = event->getPosition().x / m_scale + m_offset;
 
-	double pivot = mouseEvent->getPosition().x / m_scale + m_offset;
-
-	m_scale += mouseEvent->getWheelRotation() * 4.0;
+	m_scale += event->getRotation() * 4.0;
 	m_scale = clamp(m_scale, 1.0, 1000.0);
 
-	m_offset = pivot - mouseEvent->getPosition().x / m_scale;
+	m_offset = pivot - event->getPosition().x / m_scale;
 
 	update();
 }

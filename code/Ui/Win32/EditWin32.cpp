@@ -1,3 +1,4 @@
+#include "Ui/Events/ContentChangeEvent.h"
 #include "Ui/Win32/EditWin32.h"
 
 namespace traktor
@@ -71,8 +72,8 @@ LRESULT EditWin32::eventCommand(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 	if (HIWORD(wParam) != EN_CHANGE)
 		return 0;
 
-	CommandEvent cmdEvent(m_owner, 0);
-	m_owner->raiseEvent(EiContentChange, &cmdEvent);
+	ContentChangeEvent contentChangeEvent(m_owner);
+	m_owner->raiseEvent(&contentChangeEvent);
 
 	return 0;
 }

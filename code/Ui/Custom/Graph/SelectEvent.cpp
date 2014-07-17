@@ -7,10 +7,10 @@ namespace traktor
 		namespace custom
 		{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.SelectEvent", SelectEvent, Event)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.SelectEvent", SelectEvent, SelectionChangeEvent)
 
 SelectEvent::SelectEvent(EventSubject* sender, const RefArray< Node >& nodes, const RefArray< Edge >& edges)
-:	Event(sender, 0)
+:	SelectionChangeEvent(sender)
 ,	m_nodes(nodes)
 ,	m_edges(edges)
 {

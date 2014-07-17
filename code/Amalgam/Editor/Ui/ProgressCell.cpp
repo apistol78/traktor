@@ -67,7 +67,7 @@ void ProgressCell::setProgress(int32_t progress)
 		m_progress = 100;
 }
 
-void ProgressCell::paint(ui::custom::AutoWidget* widget, ui::Canvas& canvas, const ui::Rect& rect)
+void ProgressCell::paint(ui::Canvas& canvas, const ui::Rect& rect)
 {
 	if (m_progress >= 0)
 	{

@@ -22,6 +22,7 @@ class ListBox;
 		{
 
 class AutoPropertyList;
+class ToolBarButtonClickEvent;
 
 		}
 	}
@@ -53,9 +54,9 @@ private:
 
 	void removeTexture();
 
-	void eventTextureListToolClick(ui::Event* event);
+	void eventTextureListToolClick(ui::custom::ToolBarButtonClickEvent* event);
 
-	void eventTextureListSelect(ui::Event* event);
+	void eventTextureListSelect(ui::SelectionChangeEvent* event);
 };
 
 	}

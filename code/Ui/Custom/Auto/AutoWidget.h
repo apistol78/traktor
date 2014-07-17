@@ -72,21 +72,21 @@ private:
 
 	void updateLayout();
 
-	void eventButtonDown(Event* event);
+	void eventButtonDown(MouseButtonDownEvent* event);
 
-	void eventButtonUp(Event* event);
+	void eventButtonUp(MouseButtonUpEvent* event);
 
-	void eventMouseMove(Event* event);
+	void eventMouseMove(MouseMoveEvent* event);
 
-	void eventMouseWheel(Event* event);
+	void eventMouseWheel(MouseWheelEvent* event);
 
-	void eventPaint(Event* event);
+	void eventPaint(PaintEvent* event);
 
-	void eventSize(Event* event);
+	void eventSize(SizeEvent* event);
 
-	void eventTimer(Event* event);
+	void eventTimer(TimerEvent* event);
 
-	void eventScroll(Event* event);
+	void eventScroll(ScrollEvent* event);
 };
 
 		}

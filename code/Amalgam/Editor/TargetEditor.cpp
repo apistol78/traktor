@@ -18,14 +18,13 @@
 #include "Ui/FileDialog.h"
 #include "Ui/FlowLayout.h"
 #include "Ui/ListBox.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/EditList.h"
+#include "Ui/Custom/EditListEditEvent.h"
 #include "Ui/Custom/InputDialog.h"
 #include "Ui/Custom/Panel.h"
 #include "Ui/Custom/Splitter.h"
-#include "Ui/Events/EditEvent.h"
 
 namespace traktor
 {
@@ -55,23 +54,23 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 
 	m_listBoxTargetConfigurations = new ui::custom::EditList();
 	m_listBoxTargetConfigurations->create(containerTargetConfigurations, ui::ListBox::WsDefault);
-	m_listBoxTargetConfigurations->addEditEventHandler(ui::createMethodHandler(this, &TargetEditor::eventListBoxTargetConfigurationsEdit));
-	m_listBoxTargetConfigurations->addSelectEventHandler(ui::createMethodHandler(this, &TargetEditor::eventListBoxTargetConfigurationsSelect));
+	m_listBoxTargetConfigurations->addEventHandler< ui::custom::EditListEditEvent >(this, &TargetEditor::eventListBoxTargetConfigurationsEdit);
+	m_listBoxTargetConfigurations->addEventHandler< ui::SelectionChangeEvent >(this, &TargetEditor::eventListBoxTargetConfigurationsSelect);
 
 	Ref< ui::Container > containerManageTargetConfigurations = new ui::Container();
 	containerManageTargetConfigurations->create(containerTargetConfigurations, ui::WsNone, new ui::FlowLayout(0, 0, 4, 4));
 
 	Ref< ui::Button > buttonNewTargetConfiguration = new ui::Button();
 	buttonNewTargetConfiguration->create(containerManageTargetConfigurations, L"New...");
-	buttonNewTargetConfiguration->addClickEventHandler(ui::createMethodHandler(this, &TargetEditor::eventButtonNewTargetConfigurationClick));
+	buttonNewTargetConfiguration->addEventHandler< ui::ButtonClickEvent >(this, &TargetEditor::eventButtonNewTargetConfigurationClick);
 
 	Ref< ui::Button > buttonCloneTargetConfiguration = new ui::Button();
 	buttonCloneTargetConfiguration->create(containerManageTargetConfigurations, L"Clone");
-	buttonCloneTargetConfiguration->addClickEventHandler(ui::createMethodHandler(this, &TargetEditor::eventButtonCloneTargetConfigurationClick));
+	buttonCloneTargetConfiguration->addEventHandler< ui::ButtonClickEvent >(this, &TargetEditor::eventButtonCloneTargetConfigurationClick);
 
 	Ref< ui::Button > buttonRemoveTargetConfiguration = new ui::Button();
 	buttonRemoveTargetConfiguration->create(containerManageTargetConfigurations, L"Delete");
-	buttonRemoveTargetConfiguration->addClickEventHandler(ui::createMethodHandler(this, &TargetEditor::eventButtonRemoveTargetConfigurationClick));
+	buttonRemoveTargetConfiguration->addEventHandler< ui::ButtonClickEvent >(this, &TargetEditor::eventButtonRemoveTargetConfigurationClick);
 
 	Ref< ui::Container > containerEditTargetConfiguration = new ui::Container();
 	containerEditTargetConfiguration->create(splitterInner, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 4));
@@ -84,7 +83,7 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 
 	m_dropDownPlatform = new ui::DropDown();
 	m_dropDownPlatform->create(panelGeneral);
-	m_dropDownPlatform->addSelectEventHandler(ui::createMethodHandler(this, &TargetEditor::eventDropDownPlatformSelect));
+	m_dropDownPlatform->addEventHandler< ui::SelectionChangeEvent >(this, &TargetEditor::eventDropDownPlatformSelect);
 
 	Ref< ui::Static > staticBuildRoot = new ui::Static();
 	staticBuildRoot->create(panelGeneral, L"Build root");
@@ -121,11 +120,11 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 
 	Ref< ui::Button > buttonAddFeature = new ui::Button();
 	buttonAddFeature->create(containerManageFeatures, L">");
-	buttonAddFeature->addClickEventHandler(ui::createMethodHandler(this, &TargetEditor::eventButtonAddFeatureClick));
+	buttonAddFeature->addEventHandler< ui::ButtonClickEvent >(this, &TargetEditor::eventButtonAddFeatureClick);
 
 	Ref< ui::Button > buttonRemoveFeature = new ui::Button();
 	buttonRemoveFeature->create(containerManageFeatures, L"<");
-	buttonRemoveFeature->addClickEventHandler(ui::createMethodHandler(this, &TargetEditor::eventButtonRemoveFeatureClick));
+	buttonRemoveFeature->addEventHandler< ui::ButtonClickEvent >(this, &TargetEditor::eventButtonRemoveFeatureClick);
 
 	Ref< ui::Container > containerUsedFeatures = new ui::Container();
 	containerUsedFeatures->create(panelFeatures, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 4));
@@ -287,19 +286,17 @@ void TargetEditor::selectPlatform(const Guid& platformGuid) const
 	m_dropDownPlatform->select(-1);
 }
 
-void TargetEditor::eventListBoxTargetConfigurationsEdit(ui::Event* event)
+void TargetEditor::eventListBoxTargetConfigurationsEdit(ui::custom::EditListEditEvent* event)
 {
-	ui::EditEvent* editEvent = checked_type_cast< ui::EditEvent*, false >(event);
-
 	TargetConfiguration* targetConfiguration = m_listBoxTargetConfigurations->getSelectedData< TargetConfiguration >();
 	if (targetConfiguration)
 	{
-		targetConfiguration->setName(editEvent->getText());
-		editEvent->consume();
+		targetConfiguration->setName(event->getText());
+		event->consume();
 	}
 }
 
-void TargetEditor::eventListBoxTargetConfigurationsSelect(ui::Event* event)
+void TargetEditor::eventListBoxTargetConfigurationsSelect(ui::SelectionChangeEvent* event)
 {
 	updateAvailableFeatures();
 	updateUsedFeatures();
@@ -317,7 +314,7 @@ void TargetEditor::eventListBoxTargetConfigurationsSelect(ui::Event* event)
 	}
 }
 
-void TargetEditor::eventButtonNewTargetConfigurationClick(ui::Event* event)
+void TargetEditor::eventButtonNewTargetConfigurationClick(ui::ButtonClickEvent* event)
 {
 	ui::custom::InputDialog::Field fields[] =
 	{
@@ -341,7 +338,7 @@ void TargetEditor::eventButtonNewTargetConfigurationClick(ui::Event* event)
 	}
 }
 
-void TargetEditor::eventButtonCloneTargetConfigurationClick(ui::Event* event)
+void TargetEditor::eventButtonCloneTargetConfigurationClick(ui::ButtonClickEvent* event)
 {
 	Ref< TargetConfiguration > targetConfiguration = m_listBoxTargetConfigurations->getSelectedData< TargetConfiguration >();
 	if (!targetConfiguration)
@@ -371,7 +368,7 @@ void TargetEditor::eventButtonCloneTargetConfigurationClick(ui::Event* event)
 	}
 }
 
-void TargetEditor::eventButtonRemoveTargetConfigurationClick(ui::Event* event)
+void TargetEditor::eventButtonRemoveTargetConfigurationClick(ui::ButtonClickEvent* event)
 {
 	TargetConfiguration* targetConfiguration = m_listBoxTargetConfigurations->getSelectedData< TargetConfiguration >();
 	if (!targetConfiguration)
@@ -386,7 +383,7 @@ void TargetEditor::eventButtonRemoveTargetConfigurationClick(ui::Event* event)
 	m_listBoxTargetConfigurations->select(-1);
 }
 
-void TargetEditor::eventDropDownPlatformSelect(ui::Event* event)
+void TargetEditor::eventDropDownPlatformSelect(ui::SelectionChangeEvent* event)
 {
 	TargetConfiguration* targetConfiguration = m_listBoxTargetConfigurations->getSelectedData< TargetConfiguration >();
 	if (!targetConfiguration)
@@ -398,7 +395,7 @@ void TargetEditor::eventDropDownPlatformSelect(ui::Event* event)
 	targetConfiguration->setPlatform(platformInstance->getGuid());
 }
 
-void TargetEditor::eventButtonAddFeatureClick(ui::Event* event)
+void TargetEditor::eventButtonAddFeatureClick(ui::ButtonClickEvent* event)
 {
 	TargetConfiguration* targetConfiguration = m_listBoxTargetConfigurations->getSelectedData< TargetConfiguration >();
 	if (!targetConfiguration)
@@ -418,7 +415,7 @@ void TargetEditor::eventButtonAddFeatureClick(ui::Event* event)
 	updateUsedFeatures();
 }
 
-void TargetEditor::eventButtonRemoveFeatureClick(ui::Event* event)
+void TargetEditor::eventButtonRemoveFeatureClick(ui::ButtonClickEvent* event)
 {
 	TargetConfiguration* targetConfiguration = m_listBoxTargetConfigurations->getSelectedData< TargetConfiguration >();
 	if (!targetConfiguration)

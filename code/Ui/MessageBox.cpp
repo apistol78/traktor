@@ -1,18 +1,18 @@
+#include "Core/Log/Log.h"
+#include "Ui/Application.h"
 #include "Ui/MessageBox.h"
 #include "Ui/Widget.h"
-#include "Ui/Application.h"
 #include "Ui/Itf/IMessageBox.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
 	namespace ui
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.MessageBox", MessageBox, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.MessageBox", MessageBox, EventSubject)
 
-MessageBox::MessageBox() :
-	m_messageBox(0)
+MessageBox::MessageBox()
+:	m_messageBox(0)
 {
 }
 

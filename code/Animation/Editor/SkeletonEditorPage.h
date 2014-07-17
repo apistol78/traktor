@@ -4,6 +4,7 @@
 #include "Core/Math/Color4ub.h"
 #include "Editor/IEditorPage.h"
 #include "Ui/Point.h"
+#include "Ui/Events/AllEvents.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -39,7 +40,6 @@ class Container;
 class PopupMenu;
 class TreeView;
 class TreeViewItem;
-class Event;
 
 		namespace custom
 		{
@@ -119,21 +119,21 @@ private:
 
 	void createSkeletonTreeNodes(ui::TreeViewItem* parentItem, int parentNodeIndex);
 
-	void eventMouseDown(ui::Event* event);
+	void eventMouseDown(ui::MouseButtonDownEvent* event);
 
-	void eventMouseUp(ui::Event* event);
+	void eventMouseUp(ui::MouseButtonUpEvent* event);
 
-	void eventMouseMove(ui::Event* event);
+	void eventMouseMove(ui::MouseMoveEvent* event);
 
-	void eventSize(ui::Event* event);
+	void eventSize(ui::SizeEvent* event);
 
-	void eventPaint(ui::Event* event);
+	void eventPaint(ui::PaintEvent* event);
 
-	void eventTreeButtonDown(ui::Event* event);
+	void eventTreeButtonDown(ui::MouseButtonDownEvent* event);
 
-	void eventTreeSelect(ui::Event* event);
+	void eventTreeSelect(ui::SelectionChangeEvent* event);
 
-	void eventTreeEdited(ui::Event* event);
+	void eventTreeEdited(ui::TreeViewContentChangeEvent* event);
 };
 
 	}

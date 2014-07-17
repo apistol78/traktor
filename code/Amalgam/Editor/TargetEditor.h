@@ -5,6 +5,7 @@
 #include "Core/Guid.h"
 #include "Core/RefArray.h"
 #include "Editor/IObjectEditor.h"
+#include "Ui/Events/AllEvents.h"
 
 namespace traktor
 {
@@ -28,13 +29,13 @@ class IEditor;
 class Container;
 class DropDown;
 class Edit;
-class Event;
 class ListBox;
 
 		namespace custom
 		{
 
 class EditList;
+class EditListEditEvent;
 
 		}
 	}
@@ -95,21 +96,21 @@ private:
 
 	void selectPlatform(const Guid& platformGuid) const;
 
-	void eventListBoxTargetConfigurationsEdit(ui::Event* event);
+	void eventListBoxTargetConfigurationsEdit(ui::custom::EditListEditEvent* event);
 
-	void eventListBoxTargetConfigurationsSelect(ui::Event* event);
+	void eventListBoxTargetConfigurationsSelect(ui::SelectionChangeEvent* event);
 
-	void eventButtonNewTargetConfigurationClick(ui::Event* event);
+	void eventButtonNewTargetConfigurationClick(ui::ButtonClickEvent* event);
 
-	void eventButtonCloneTargetConfigurationClick(ui::Event* event);
+	void eventButtonCloneTargetConfigurationClick(ui::ButtonClickEvent* event);
 
-	void eventButtonRemoveTargetConfigurationClick(ui::Event* event);
+	void eventButtonRemoveTargetConfigurationClick(ui::ButtonClickEvent* event);
 
-	void eventDropDownPlatformSelect(ui::Event* event);
+	void eventDropDownPlatformSelect(ui::SelectionChangeEvent* event);
 
-	void eventButtonAddFeatureClick(ui::Event* event);
+	void eventButtonAddFeatureClick(ui::ButtonClickEvent* event);
 
-	void eventButtonRemoveFeatureClick(ui::Event* event);
+	void eventButtonRemoveFeatureClick(ui::ButtonClickEvent* event);
 };
 
 	}

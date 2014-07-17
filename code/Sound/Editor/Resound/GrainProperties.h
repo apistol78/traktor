@@ -17,9 +17,15 @@ class IEditor;
 	{
 
 class Command;
-class Event;
 class HierarchicalState;
 
+		namespace custom
+		{
+
+class PropertyCommandEvent;
+class PropertyContentChangeEvent;
+
+		}
 	}
 
 	namespace sound
@@ -54,9 +60,9 @@ private:
 
 	virtual bool resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const;
 
-	void eventPropertyCommand(ui::Event* event);
+	void eventPropertyCommand(ui::custom::PropertyCommandEvent* event);
 
-	void eventPropertyChange(ui::Event* event);
+	void eventPropertyChange(ui::custom::PropertyContentChangeEvent* event);
 };
 
 	}

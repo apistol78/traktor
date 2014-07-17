@@ -4,6 +4,7 @@
 #include <map>
 #include "Core/RefArray.h"
 #include "Editor/IObjectEditor.h"
+#include "Ui/Events/AllEvents.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,13 +20,6 @@ namespace traktor
 	{
 
 class IEditor;
-
-	}
-
-	namespace ui
-	{
-
-class Event;
 
 	}
 
@@ -74,9 +68,9 @@ private:
 
 	void updateViews();
 
-	void eventStepSelect(ui::Event* event);
+	void eventStepSelect(ui::SelectionChangeEvent* event);
 
-	void eventStepPropertiesChange(ui::Event* event);
+	void eventStepPropertiesChange(ui::ContentChangeEvent* event);
 };
 
 	}

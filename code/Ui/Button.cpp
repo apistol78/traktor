@@ -45,10 +45,5 @@ bool Button::getState() const
 	return static_cast< IButton* >(m_widget)->getState();
 }
 
-void Button::addClickEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiClick, eventHandler);
-}
-
 	}
 }

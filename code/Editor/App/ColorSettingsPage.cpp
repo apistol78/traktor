@@ -3,12 +3,11 @@
 #include "Editor/App/ColorSettingsPage.h"
 #include "I18N/Text.h"
 #include "Ui/Container.h"
-#include "Ui/Event.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/ColorPicker/ColorDialog.h"
-#include "Ui/Custom/PropertyList/PropertyList.h"
 #include "Ui/Custom/PropertyList/ColorPropertyItem.h"
+#include "Ui/Custom/PropertyList/PropertyCommandEvent.h"
+#include "Ui/Custom/PropertyList/PropertyList.h"
 
 namespace traktor
 {
@@ -50,7 +49,7 @@ bool ColorSettingsPage::create(ui::Container* parent, PropertyGroup* settings, c
 	if (!m_colorList->create(container, ui::WsClientBorder | ui::WsDoubleBuffer))
 		return false;
 
-	m_colorList->addCommandEventHandler(ui::createMethodHandler(this, &ColorSettingsPage::eventPropertyCommand));
+	m_colorList->addEventHandler< ui::custom::PropertyCommandEvent >(this, &ColorSettingsPage::eventPropertyCommand);
 	m_colorList->setSeparator(200);
 
 	Ref< PropertyGroup > colorGroup = settings->getProperty< PropertyGroup >(L"Editor.Colors");
@@ -99,7 +98,7 @@ bool ColorSettingsPage::apply(PropertyGroup* settings)
 	return true;
 }
 
-void ColorSettingsPage::eventPropertyCommand(ui::Event* event)
+void ColorSettingsPage::eventPropertyCommand(ui::custom::PropertyCommandEvent* event)
 {
 	Ref< ui::custom::ColorPropertyItem > colorItem = dynamic_type_cast< ui::custom::ColorPropertyItem* >(event->getItem());
 	if (colorItem)

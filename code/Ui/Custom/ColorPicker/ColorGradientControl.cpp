@@ -1,10 +1,7 @@
+#include "Ui/Bitmap.h"
+#include "Ui/Custom/ColorPicker/ColorEvent.h"
 #include "Ui/Custom/ColorPicker/ColorGradientControl.h"
 #include "Ui/Custom/ColorPicker/ColorUtilities.h"
-#include "Ui/Custom/ColorPicker/ColorEvent.h"
-#include "Ui/Bitmap.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/MouseEvent.h"
-#include "Ui/Events/PaintEvent.h"
 
 namespace traktor
 {
@@ -20,10 +17,10 @@ bool ColorGradientControl::create(Widget* parent, int style, const Color4ub& col
 	if (!Widget::create(parent, style))
 		return false;
 
-	addButtonDownEventHandler(createMethodHandler(this, &ColorGradientControl::eventButtonDown));
-	addButtonUpEventHandler(createMethodHandler(this, &ColorGradientControl::eventButtonUp));
-	addMouseMoveEventHandler(createMethodHandler(this, &ColorGradientControl::eventMouseMove));
-	addPaintEventHandler(createMethodHandler(this, &ColorGradientControl::eventPaint));
+	addEventHandler< MouseButtonDownEvent >(this, &ColorGradientControl::eventButtonDown);
+	addEventHandler< MouseButtonUpEvent >(this, &ColorGradientControl::eventButtonUp);
+	addEventHandler< MouseMoveEvent >(this, &ColorGradientControl::eventMouseMove);
+	addEventHandler< PaintEvent >(this, &ColorGradientControl::eventPaint);
 
 	m_gradientBitmap = new Bitmap(256, 256);
 
@@ -59,11 +56,6 @@ Color4ub ColorGradientControl::getColor() const
 	return m_gradientBitmap->getPixel(m_cursor.x, m_cursor.y);
 }
 
-void ColorGradientControl::addColorSelectEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiColorSelect, eventHandler);
-}
-
 void ColorGradientControl::updateGradientImage()
 {
 	Color4ub color;
@@ -84,29 +76,29 @@ void ColorGradientControl::updateGradientImage()
 	}
 }
 
-void ColorGradientControl::eventButtonDown(Event* event)
+void ColorGradientControl::eventButtonDown(MouseButtonDownEvent* event)
 {
-	m_cursor = checked_type_cast< MouseEvent* >(event)->getPosition();
+	m_cursor = event->getPosition();
 	
-	ColorEvent colorEvent(this, 0, getColor());
-	raiseEvent(EiColorSelect, &colorEvent);
+	ColorEvent colorEvent(this, getColor());
+	raiseEvent(&colorEvent);
 
 	update();
 
 	setCapture();
 }
 
-void ColorGradientControl::eventButtonUp(Event* event)
+void ColorGradientControl::eventButtonUp(MouseButtonUpEvent* event)
 {
 	releaseCapture();
 }
 
-void ColorGradientControl::eventMouseMove(Event* event)
+void ColorGradientControl::eventMouseMove(MouseMoveEvent* event)
 {
 	if (!hasCapture())
 		return;
 
-	m_cursor = checked_type_cast< MouseEvent* >(event)->getPosition();
+	m_cursor = event->getPosition();
 	
 	if (m_cursor.x < 0)
 		m_cursor.x = 0;
@@ -117,16 +109,15 @@ void ColorGradientControl::eventMouseMove(Event* event)
 	if (m_cursor.y > 255)
 		m_cursor.y = 255;
 
-	ColorEvent colorEvent(this, 0, getColor());
-	raiseEvent(EiColorSelect, &colorEvent);
+	ColorEvent colorEvent(this, getColor());
+	raiseEvent(&colorEvent);
 
 	update();
 }
 
-void ColorGradientControl::eventPaint(Event* event)
+void ColorGradientControl::eventPaint(PaintEvent* event)
 {
-	PaintEvent* paintEvent = checked_type_cast< PaintEvent* >(event);
-	Canvas& canvas = paintEvent->getCanvas();
+	Canvas& canvas = event->getCanvas();
 
 	canvas.drawBitmap(
 		Point(0, 0),
@@ -145,7 +136,7 @@ void ColorGradientControl::eventPaint(Event* event)
 
 	canvas.drawCircle(m_cursor, 5);
 
-	paintEvent->consume();
+	event->consume();
 }
 
 		}

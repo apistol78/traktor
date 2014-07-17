@@ -57,7 +57,7 @@ bool PreviewItem::isSelected() const
 	return m_selected;
 }
 
-void PreviewItem::paint(AutoWidget* widget, Canvas& canvas, const Rect& rect)
+void PreviewItem::paint(Canvas& canvas, const Rect& rect)
 {
 	Size frameSize(74, 74); // = m_bitmapFrame->getSize();
 	Point framePosition(rect.left + (rect.getWidth() - frameSize.cx) / 2, rect.top);

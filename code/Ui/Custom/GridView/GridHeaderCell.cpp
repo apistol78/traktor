@@ -18,7 +18,7 @@ void GridHeaderCell::setColumns(const RefArray< GridColumn >& columns)
 	m_columns = columns;
 }
 
-void GridHeaderCell::mouseDown(AutoWidget* widget, const Point& position)
+void GridHeaderCell::mouseDown(const Point& position)
 {
 	if (m_columns.size() < 2)
 		return;
@@ -39,12 +39,12 @@ void GridHeaderCell::mouseDown(AutoWidget* widget, const Point& position)
 	}
 }
 
-void GridHeaderCell::mouseUp(AutoWidget* widget, const Point& position)
+void GridHeaderCell::mouseUp(const Point& position)
 {
 	m_resizeColumn = 0;
 }
 
-void GridHeaderCell::mouseMove(AutoWidget* widget, const Point& position)
+void GridHeaderCell::mouseMove(const Point& position)
 {
 	if (!m_resizeColumn)
 		return;
@@ -54,10 +54,10 @@ void GridHeaderCell::mouseMove(AutoWidget* widget, const Point& position)
 		width = 16;
 
 	m_resizeColumn->setWidth(width);
-	widget->requestUpdate();
+	getWidget()->requestUpdate();
 }
 
-void GridHeaderCell::paint(AutoWidget* widget, Canvas& canvas, const Rect& rect)
+void GridHeaderCell::paint(Canvas& canvas, const Rect& rect)
 {
 	canvas.setForeground(Color4ub(255, 255, 255));
 	canvas.setBackground(getSystemColor(ScButtonFace));
@@ -72,7 +72,7 @@ void GridHeaderCell::paint(AutoWidget* widget, Canvas& canvas, const Rect& rect)
 		if (m_columns.size() == 1)
 			width = rect.getWidth();
 
-		canvas.setForeground(widget->isEnable() ? getSystemColor(ScWindowText) : getSystemColor(ScDisabledText));
+		canvas.setForeground(getWidget()->isEnable() ? getSystemColor(ScWindowText) : getSystemColor(ScDisabledText));
 		canvas.drawText(Rect(left + 2, rect.top, left + width - 2, rect.bottom), column->getTitle(), AnLeft, AnCenter);
 
 		if (i > 0)

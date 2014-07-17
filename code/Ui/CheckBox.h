@@ -29,8 +29,6 @@ public:
 	void setChecked(bool checked);
 	
 	bool isChecked() const;
-
-	void addClickEventHandler(EventHandler* eventHandler);
 };
 
 	}

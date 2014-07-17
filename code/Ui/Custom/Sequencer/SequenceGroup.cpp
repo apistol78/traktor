@@ -1,8 +1,8 @@
+#include "Drawing/Image.h"
+#include "Ui/Bitmap.h"
+#include "Ui/Custom/Sequencer/GroupVisibleEvent.h"
 #include "Ui/Custom/Sequencer/SequenceGroup.h"
 #include "Ui/Custom/Sequencer/SequencerControl.h"
-#include "Ui/Bitmap.h"
-#include "Ui/Events/ShowEvent.h"
-#include "Drawing/Image.h"
 
 // Resources
 #include "Resources/Expand.h"
@@ -107,8 +107,8 @@ void SequenceGroup::mouseDown(SequencerControl* sequencer, const Point& at, cons
 		if (at.y >= top && at.y <= top + int(imageVisible->getSize().cy))
 			m_visible = !m_visible;
 
-		ShowEvent showEvent(sequencer, this, m_visible);
-		sequencer->raiseEvent(SequencerControl::EiGroupVisible, &showEvent);
+		GroupVisibleEvent groupVisibleEvent(sequencer, this, m_visible);
+		sequencer->raiseEvent(&groupVisibleEvent);
 	}
 }
 

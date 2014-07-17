@@ -33,18 +33,6 @@ public:
 
 	void center();
 
-	void addCloseEventHandler(EventHandler* eventHandler);
-
-	void addNcButtonDownEventHandler(EventHandler* eventHandler);
-
-	void addNcButtonUpEventHandler(EventHandler* eventHandler);
-
-	void addNcDoubleClickEventHandler(EventHandler* eventHandler);
-
-	void addNcMouseMoveEventHandler(EventHandler* eventHandler);
-
-	void addNcMouseWheelEventHandler(EventHandler* eventHandler);
-
 	virtual bool acceptLayout() const;
 };
 

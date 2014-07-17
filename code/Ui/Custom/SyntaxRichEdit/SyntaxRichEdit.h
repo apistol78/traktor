@@ -59,7 +59,7 @@ private:
 	int32_t m_attributePreprocessor;
 	int32_t m_attributeError;
 
-	void eventChange(Event* event);
+	void eventChange(ContentChangeEvent* event);
 };
 
 		}

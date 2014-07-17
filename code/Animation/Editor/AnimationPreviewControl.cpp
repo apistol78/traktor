@@ -20,10 +20,6 @@
 #include "Render/Resource/TextureFactory.h"
 #include "Resource/ResourceManager.h"
 #include "Ui/Application.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/IdleEvent.h"
-#include "Ui/Events/MouseEvent.h"
-#include "Ui/Events/SizeEvent.h"
 #include "Ui/Itf/IWidget.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
@@ -88,29 +84,24 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 	if (!m_primitiveRenderer->create(m_resourceManager, m_renderSystem))
 		return false;
 
-	addButtonDownEventHandler(ui::createMethodHandler(this, &AnimationPreviewControl::eventButtonDown));
-	addButtonUpEventHandler(ui::createMethodHandler(this, &AnimationPreviewControl::eventButtonUp));
-	addMouseMoveEventHandler(ui::createMethodHandler(this, &AnimationPreviewControl::eventMouseMove));
-	addSizeEventHandler(ui::createMethodHandler(this, &AnimationPreviewControl::eventSize));
-	addPaintEventHandler(ui::createMethodHandler(this, &AnimationPreviewControl::eventPaint));
+	addEventHandler< ui::MouseButtonDownEvent >(this, &AnimationPreviewControl::eventButtonDown);
+	addEventHandler< ui::MouseButtonUpEvent >(this, &AnimationPreviewControl::eventButtonUp);
+	addEventHandler< ui::MouseMoveEvent >(this, &AnimationPreviewControl::eventMouseMove);
+	addEventHandler< ui::SizeEvent >(this, &AnimationPreviewControl::eventSize);
+	addEventHandler< ui::PaintEvent >(this, &AnimationPreviewControl::eventPaint);
 
 	updateSettings();
 	updateWorldRenderer();
 
-	m_idleHandler = ui::createMethodHandler(this, &AnimationPreviewControl::eventIdle);
-	ui::Application::getInstance()->addEventHandler(ui::EiIdle, m_idleHandler);
-	m_timer.start();
+	m_idleEventHandler = ui::Application::getInstance()->addEventHandler< ui::IdleEvent >(this, &AnimationPreviewControl::eventIdle);
 
+	m_timer.start();
 	return true;
 }
 
 void AnimationPreviewControl::destroy()
 {
-	if (m_idleHandler)
-	{
-		ui::Application::getInstance()->removeEventHandler(ui::EiIdle, m_idleHandler);
-		m_idleHandler = 0;
-	}
+	ui::Application::getInstance()->removeEventHandler< ui::IdleEvent >(m_idleEventHandler);
 
 	safeDestroy(m_primitiveRenderer);
 	safeDestroy(m_resourceManager);
@@ -239,63 +230,59 @@ void AnimationPreviewControl::updateWorldRenderView()
 		m_worldRenderer->createRenderView(worldView, m_worldRenderView);
 }
 
-void AnimationPreviewControl::eventButtonDown(ui::Event* event)
+void AnimationPreviewControl::eventButtonDown(ui::MouseButtonDownEvent* event)
 {
-	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
-	m_lastMousePosition = mouseEvent->getPosition();
+	m_lastMousePosition = event->getPosition();
 	setCapture();
 }
 
-void AnimationPreviewControl::eventButtonUp(ui::Event* event)
+void AnimationPreviewControl::eventButtonUp(ui::MouseButtonUpEvent* event)
 {
 	releaseCapture();
 }
 
-void AnimationPreviewControl::eventMouseMove(ui::Event* event)
+void AnimationPreviewControl::eventMouseMove(ui::MouseMoveEvent* event)
 {
 	if (!hasCapture())
 		return;
 
-	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
-
-	if ((mouseEvent->getKeyState() & ui::KsMenu) != 0)
+	if ((event->getKeyState() & ui::KsMenu) != 0)
 	{
-		if (mouseEvent->getButton() == ui::MouseEvent::BtRight)
+		if (event->getButton() == ui::MbtRight)
 		{
-			if ((mouseEvent->getKeyState() & ui::KsControl) == 0)
+			if ((event->getKeyState() & ui::KsControl) == 0)
 			{
 				// Move X/Z direction.
-				float dx = -float(m_lastMousePosition.x - mouseEvent->getPosition().x) * c_deltaMoveScale;
-				float dz = -float(m_lastMousePosition.y - mouseEvent->getPosition().y) * c_deltaMoveScale;
+				float dx = -float(m_lastMousePosition.x - event->getPosition().x) * c_deltaMoveScale;
+				float dz = -float(m_lastMousePosition.y - event->getPosition().y) * c_deltaMoveScale;
 				m_position += Vector4(dx, 0.0f, dz, 0.0f);
 			}
 			else
 			{
 				// Move X/Y direction.
-				float dx = -float(m_lastMousePosition.x - mouseEvent->getPosition().x) * c_deltaMoveScale;
-				float dy =  float(m_lastMousePosition.y - mouseEvent->getPosition().y) * c_deltaMoveScale;
+				float dx = -float(m_lastMousePosition.x - event->getPosition().x) * c_deltaMoveScale;
+				float dy =  float(m_lastMousePosition.y - event->getPosition().y) * c_deltaMoveScale;
 				m_position += Vector4(dx, dy, 0.0f, 0.0f);
 			}
 		}
-		else if (mouseEvent->getButton() == ui::MouseEvent::BtLeft)
+		else if (event->getButton() == ui::MbtLeft)
 		{
-			m_angleHead += float(m_lastMousePosition.x - mouseEvent->getPosition().x) * c_deltaScaleHead;
-			m_anglePitch += float(m_lastMousePosition.y - mouseEvent->getPosition().y) * c_deltaScalePitch;
+			m_angleHead += float(m_lastMousePosition.x - event->getPosition().x) * c_deltaScaleHead;
+			m_anglePitch += float(m_lastMousePosition.y - event->getPosition().y) * c_deltaScalePitch;
 		}
 	}
 
-	m_lastMousePosition = mouseEvent->getPosition();
+	m_lastMousePosition = event->getPosition();
 
 	update();
 }
 
-void AnimationPreviewControl::eventSize(ui::Event* event)
+void AnimationPreviewControl::eventSize(ui::SizeEvent* event)
 {
 	if (!m_renderView)
 		return;
 
-	ui::SizeEvent* s = static_cast< ui::SizeEvent* >(event);
-	ui::Size sz = s->getSize();
+	ui::Size sz = event->getSize();
 
 	m_renderView->reset(sz.cx, sz.cy);
 	m_renderView->setViewport(render::Viewport(0, 0, sz.cx, sz.cy, 0, 1));
@@ -303,7 +290,7 @@ void AnimationPreviewControl::eventSize(ui::Event* event)
 	updateWorldRenderer();
 }
 
-void AnimationPreviewControl::eventPaint(ui::Event* event)
+void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 {
 	float deltaTime = float(m_timer.getDeltaTime());
 	float scaledTime = float(m_timer.getElapsedTime());
@@ -470,13 +457,12 @@ void AnimationPreviewControl::eventPaint(ui::Event* event)
 	event->consume();
 }
 
-void AnimationPreviewControl::eventIdle(ui::Event* event)
+void AnimationPreviewControl::eventIdle(ui::IdleEvent* event)
 {
-	ui::IdleEvent* idleEvent = checked_type_cast< ui::IdleEvent* >(event);
 	if (isVisible(true))
 	{
 		update();
-		idleEvent->requestMore();
+		event->requestMore();
 	}
 }
 

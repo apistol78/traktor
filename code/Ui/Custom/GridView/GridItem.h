@@ -59,9 +59,9 @@ private:
 
 	virtual int32_t getHeight() const;
 
-	virtual AutoWidgetCell* hitTest(AutoWidget* widget, const Point& position);
+	virtual AutoWidgetCell* hitTest(const Point& position);
 
-	virtual void paint(AutoWidget* widget, Canvas& canvas, const Rect& rect);
+	virtual void paint(Canvas& canvas, const Rect& rect);
 };
 
 		}

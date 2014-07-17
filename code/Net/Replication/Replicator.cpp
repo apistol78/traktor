@@ -26,6 +26,7 @@ namespace traktor
 
 const handle_t c_broadcastHandle = 0UL;
 const int32_t c_initialTimeOffset = 50;
+const int32_t c_maxPongTime = 5000;			// 5 second(s) since last pong reply indicate failure.
 
 Timer g_timer;
 Random g_random;
@@ -606,7 +607,7 @@ void Replicator::updatePeers(int32_t dT)
 		Peer& peer = m_peers[i->handle];
 
 		// Issue "I am" to unestablished peers.
-		if (peer.state == PsInitial)
+		if (peer.state == PsInitial || peer.state == PsDisconnected)
 		{
 			peer.name = i->name;
 			peer.endSite = i->endSite;
@@ -627,7 +628,7 @@ void Replicator::updatePeers(int32_t dT)
 		// Check if peer doesn't respond, timeout;ed or unable to communicate.
 		else if (peer.state == PsEstablished)
 		{
-			if (peer.errorCount >= m_configuration.maxErrorCount)
+			if (peer.errorCount >= m_configuration.maxErrorCount || (peer.lastPongTime > 0 && m_time0 - peer.lastPongTime > c_maxPongTime))
 			{
 				T_REPLICATOR_DEBUG(L"WARNING: Peer \"" << peer.name << L"\" failing, unable to communicate with peer");
 
@@ -988,6 +989,7 @@ void Replicator::receiveMessages()
 
 			peer.latencyMedian = sorted[peer.roundTrips.size() / 2] / 2;
 			peer.latencyReversed = msg.pong.latency;
+			peer.lastPongTime = m_time0;
 		}
 		else if (msg.type == MtRequestPrimary)
 		{

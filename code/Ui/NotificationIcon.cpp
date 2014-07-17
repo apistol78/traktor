@@ -1,9 +1,9 @@
-#include "Ui/NotificationIcon.h"
-#include "Ui/Application.h"
-#include "Ui/Widget.h"
-#include "Ui/Bitmap.h"
-#include "Ui/Itf/INotificationIcon.h"
 #include "Core/Log/Log.h"
+#include "Ui/Application.h"
+#include "Ui/Bitmap.h"
+#include "Ui/NotificationIcon.h"
+#include "Ui/Widget.h"
+#include "Ui/Itf/INotificationIcon.h"
 
 namespace traktor
 {
@@ -52,21 +52,6 @@ void NotificationIcon::destroy()
 void NotificationIcon::setImage(Bitmap* image)
 {
 	m_ni->setImage(image->getIBitmap());
-}
-
-void NotificationIcon::addButtonDownEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiButtonDown, eventHandler);
-}
-
-void NotificationIcon::addButtonUpEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiButtonUp, eventHandler);
-}
-
-void NotificationIcon::addDoubleClickEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiDoubleClick, eventHandler);
 }
 
 	}

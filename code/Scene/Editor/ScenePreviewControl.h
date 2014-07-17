@@ -17,14 +17,12 @@ namespace traktor
 {
 	namespace ui
 	{
-
-class Command;
-
 		namespace custom
 		{
 
 class ToolBar;
 class ToolBarButton;
+class ToolBarButtonClickEvent;
 class ToolBarDropDown;
 
 		}
@@ -33,6 +31,7 @@ class ToolBarDropDown;
 	namespace scene
 	{
 
+class ModifierChangedEvent;
 class SceneEditorContext;
 class ISceneRenderControl;
 class IModifier;
@@ -64,6 +63,7 @@ private:
 		StQuadruple = 4
 	};
 
+	Ref< ui::EventSubject::IEventHandler > m_idleEventHandler;
 	Ref< ui::custom::ToolBar > m_toolBarActions;
 	Ref< ui::custom::ToolBarButton > m_toolTogglePick;
 	Ref< ui::custom::ToolBarButton > m_toolToggleTranslate;
@@ -73,7 +73,6 @@ private:
 	int32_t m_splitCount;
 	Ref< ui::Widget > m_splitterRenderControls;
 	RefArray< ISceneRenderControl > m_renderControls;
-	Ref< ui::EventHandler > m_idleHandler;
 	Ref< IModifier > m_modifierTranslate;
 	Ref< IModifier > m_modifierRotate;
 	Ref< SceneEditorContext > m_context;
@@ -85,11 +84,11 @@ private:
 
 	void updateEditState();
 
-	void eventToolBarActionClicked(ui::Event* event);
+	void eventToolBarActionClicked(ui::custom::ToolBarButtonClickEvent* event);
 
-	void eventModifierChanged(ui::Event* event);
+	void eventModifierChanged(ModifierChangedEvent* event);
 
-	void eventIdle(ui::Event* event);
+	void eventIdle(ui::IdleEvent* event);
 };
 
 	}

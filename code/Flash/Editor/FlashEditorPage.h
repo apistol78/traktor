@@ -27,8 +27,8 @@ class IEditorPageSite;
 	namespace ui
 	{
 
-class Event;
 class Container;
+class SelectionChangeEvent;
 class TreeView;
 class TreeViewItem;
 
@@ -36,6 +36,7 @@ class TreeViewItem;
 		{
 
 class ToolBar;
+class ToolBarButtonClickEvent;
 
 		}
 	}
@@ -109,9 +110,9 @@ private:
 
 	void updateTreeMovie();
 
-	void eventToolClick(ui::Event* event);
+	void eventToolClick(ui::custom::ToolBarButtonClickEvent* event);
 
-	void eventTreeMovieSelect(ui::Event* event);
+	void eventTreeMovieSelect(ui::SelectionChangeEvent* event);
 };
 
 	}

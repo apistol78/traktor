@@ -1,15 +1,15 @@
 #ifndef traktor_ui_custom_ToolBarButton_H
 #define traktor_ui_custom_ToolBarButton_H
 
-#include "Ui/Custom/ToolBar/ToolBarItem.h"
 #include "Ui/Command.h"
+#include "Ui/Custom/ToolBar/ToolBarItem.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_CUSTOM_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -61,13 +61,13 @@ protected:
 
 	virtual void paint(ToolBar* toolBar, Canvas& canvas, const Point& at, Bitmap* images, int imageWidth, int imageHeight);
 
-	virtual bool mouseEnter(ToolBar* toolBar, MouseEvent* mouseEvent);
+	virtual bool mouseEnter(ToolBar* toolBar, MouseMoveEvent* mouseEvent);
 
-	virtual void mouseLeave(ToolBar* toolBar, MouseEvent* mouseEvent);
+	virtual void mouseLeave(ToolBar* toolBar, MouseMoveEvent* mouseEvent);
 
-	virtual void buttonDown(ToolBar* toolBar, MouseEvent* mouseEvent);
+	virtual void buttonDown(ToolBar* toolBar, MouseButtonDownEvent* mouseEvent);
 
-	virtual void buttonUp(ToolBar* toolBar, MouseEvent* mouseEvent);
+	virtual void buttonUp(ToolBar* toolBar, MouseButtonUpEvent* mouseEvent);
 
 private:
 	enum ButtonStates

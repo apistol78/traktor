@@ -49,8 +49,6 @@ public:
 	bool redo();
 	
 	bool undo();
-
-	void addChangeEventHandler(EventHandler* eventHandler);
 };
 
 	}

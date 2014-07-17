@@ -1,8 +1,8 @@
-#include "Ui/FileDialog.h"
+#include "Core/Log/Log.h"
 #include "Ui/Application.h"
+#include "Ui/FileDialog.h"
 #include "Ui/Widget.h"
 #include "Ui/Itf/IFileDialog.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {

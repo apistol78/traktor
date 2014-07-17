@@ -1,8 +1,6 @@
-#include "Ui/Custom/ProfileControl.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/PaintEvent.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Timer/Timer.h"
+#include "Ui/Custom/ProfileControl.h"
 
 namespace traktor
 {
@@ -47,8 +45,8 @@ bool ProfileControl::create(Widget* parent, int channels, int time, int minSampl
 
 	m_callBack = callBack;
 
-	addPaintEventHandler(createMethodHandler(this, &ProfileControl::eventPaint));
-	addTimerEventHandler(createMethodHandler(this, &ProfileControl::eventTimer));
+	addEventHandler< PaintEvent >(this, &ProfileControl::eventPaint);
+	addEventHandler< TimerEvent >(this, &ProfileControl::eventTimer);
 
 	m_timer = new Timer();
 	m_timer->start();
@@ -62,10 +60,9 @@ Size ProfileControl::getPreferedSize() const
 	return Size(256, 256);
 }
 
-void ProfileControl::eventPaint(Event* event)
+void ProfileControl::eventPaint(PaintEvent* event)
 {
-	PaintEvent* p = static_cast< PaintEvent* >(event);
-	Canvas& canvas = p->getCanvas();
+	Canvas& canvas = event->getCanvas();
 	Rect rc = getInnerRect();
 
 	canvas.setBackground(Color4ub(80, 80, 80));
@@ -112,7 +109,7 @@ void ProfileControl::eventPaint(Event* event)
 	event->consume();
 }
 
-void ProfileControl::eventTimer(Event* event)
+void ProfileControl::eventTimer(TimerEvent* event)
 {
 	double T = m_timer->getElapsedTime();
 

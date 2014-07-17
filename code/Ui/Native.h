@@ -40,7 +40,7 @@ public:
 private:
 	Ref< Layout > m_layout;
 
-	void eventSize(Event* event);
+	void eventSize(SizeEvent* event);
 };
 
 	}

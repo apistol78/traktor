@@ -36,12 +36,6 @@ public:
 		WsDefault = WsClientBorder | WsAutoEdit | WsTreeButtons | WsTreeLines
 	};
 
-	enum EventId
-	{
-		EiDrag = EiUser,
-		EiEdit = EiUser + 1
-	};
-
 	bool create(Widget* parent, int style = WsDefault);
 
 	int addImage(Bitmap* image, int imageCount);
@@ -59,16 +53,6 @@ public:
 	Ref< HierarchicalState > captureState() const;
 
 	void applyState(const HierarchicalState* state);
-	
-	void addSelectEventHandler(EventHandler* eventHandler);
-
-	void addActivateEventHandler(EventHandler* eventHandler);
-
-	void addEditEventHandler(EventHandler* eventHandler);
-
-	void addEditedEventHandler(EventHandler* eventHandler);
-
-	void addDragEventHandler(EventHandler* eventHandler);
 };
 
 	}

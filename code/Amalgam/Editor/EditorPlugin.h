@@ -24,10 +24,14 @@ class DiscoveryManager;
 
 	namespace ui
 	{
+
+class TimerEvent;
+
 		namespace custom
 		{
 
 class ToolBar;
+class ToolBarButtonClickEvent;
 class ToolBarDropDown;
 class ToolBarDropMenu;
 
@@ -39,9 +43,12 @@ class ToolBarDropMenu;
 
 class HostEnumerator;
 class Target;
+class TargetCaptureEvent;
 class TargetListControl;
 class TargetInstance;
 class TargetManager;
+class TargetPlayEvent;
+class TargetStopEvent;
 class TargetScriptDebuggerSessions;
 
 class EditorPlugin : public editor::IEditorPlugin
@@ -122,15 +129,15 @@ private:
 	Thread* m_threadHostEnumerator;
 	Thread* m_threadTargetActions;
 
-	void eventToolBarClick(ui::Event* event);
+	void eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event);
 
-	void eventTargetListPlay(ui::Event* event);
+	void eventTargetListPlay(TargetPlayEvent* event);
 
-	void eventTargetListStop(ui::Event* event);
+	void eventTargetListStop(TargetStopEvent* event);
 
-	void eventTargetListCapture(ui::Event* event);
+	void eventTargetListCapture(TargetCaptureEvent* event);
 
-	void eventTimer(ui::Event* event);
+	void eventTimer(ui::TimerEvent* event);
 
 	void threadHostEnumerator();
 

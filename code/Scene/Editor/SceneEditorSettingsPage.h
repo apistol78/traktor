@@ -17,7 +17,7 @@ namespace traktor
 	{
 
 class CheckBox;
-class Event;
+class ContentChangeEvent;
 class Slider;
 class Static;
 
@@ -51,7 +51,7 @@ private:
 
 	void updateValues();
 
-	void eventValueChange(ui::Event* event);
+	void eventValueChange(ui::ContentChangeEvent* event);
 };
 
 	}

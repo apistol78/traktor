@@ -17,7 +17,6 @@ namespace traktor
 	namespace ui
 	{
 
-class Event;
 class Canvas;
 
 /*! \brief Docking pane.
@@ -37,8 +36,6 @@ public:
 	};
 
 	DockPane(Widget* owner, DockPane* parent);
-
-	virtual ~DockPane();
 
 	void split(bool vertical, int split, Ref< DockPane >& outLeftPane, Ref< DockPane >& outRightPane);
 
@@ -75,7 +72,7 @@ public:
 private:
 	friend class Dock;
 
-	Ref< EventHandler > m_focusEventHandler;
+	Ref< EventSubject::IEventHandler > m_focusEventHandler;
 	Widget* m_owner;
 	DockPane* m_parent;
 	Ref< Widget > m_widget;
@@ -90,7 +87,7 @@ private:
 
 	void draw(Canvas& canvas);
 
-	void eventFocus(Event* event);
+	void eventFocus(FocusEvent* event);
 };
 
 	}

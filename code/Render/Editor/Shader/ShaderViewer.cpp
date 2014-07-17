@@ -15,11 +15,11 @@
 #include "Render/Resource/FragmentLinker.h"
 #include "Render/Shader/Nodes.h"
 #include "Render/Shader/ShaderGraph.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/SyntaxRichEdit/SyntaxLanguageHlsl.h"
 #include "Ui/Custom/SyntaxRichEdit/SyntaxRichEdit.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
+#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/Custom/ToolBar/ToolBarDropDown.h"
 
 namespace traktor
@@ -87,7 +87,7 @@ bool ShaderViewer::create(ui::Widget* parent)
 
 	m_compilerTool->select(0);
 	m_shaderTools->addItem(m_compilerTool);
-	m_shaderTools->addClickEventHandler(ui::createMethodHandler(this, &ShaderViewer::eventShaderToolsClick));
+	m_shaderTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ShaderViewer::eventShaderToolsClick);
 
 	// Create read-only syntax rich editor.
 	m_shaderEdit = new ui::custom::SyntaxRichEdit();
@@ -279,7 +279,7 @@ void ShaderViewer::threadUpdateViews()
 	m_shaderEdit->update();
 }
 
-void ShaderViewer::eventShaderToolsClick(ui::Event* event)
+void ShaderViewer::eventShaderToolsClick(ui::custom::ToolBarButtonClickEvent* event)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_reflectLock);
 	m_reflectShaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();

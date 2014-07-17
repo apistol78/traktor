@@ -27,11 +27,6 @@
 #include "Ui/TreeView.h"
 #include "Ui/HierarchicalState.h"
 #include "Ui/TreeViewItem.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/MouseEvent.h"
-#include "Ui/Events/SizeEvent.h"
-#include "Ui/Events/PaintEvent.h"
-#include "Ui/Events/CommandEvent.h"
 #include "Ui/Itf/IWidget.h"
 
 // Resources
@@ -84,11 +79,11 @@ bool SkeletonEditorPage::create(ui::Container* parent)
 
 	m_renderWidget = new ui::Widget();
 	m_renderWidget->create(parent, ui::WsNone);
-	m_renderWidget->addButtonDownEventHandler(ui::createMethodHandler(this, &SkeletonEditorPage::eventMouseDown));
-	m_renderWidget->addButtonUpEventHandler(ui::createMethodHandler(this, &SkeletonEditorPage::eventMouseUp));
-	m_renderWidget->addMouseMoveEventHandler(ui::createMethodHandler(this, &SkeletonEditorPage::eventMouseMove));
-	m_renderWidget->addSizeEventHandler(ui::createMethodHandler(this, &SkeletonEditorPage::eventSize));
-	m_renderWidget->addPaintEventHandler(ui::createMethodHandler(this, &SkeletonEditorPage::eventPaint));
+	m_renderWidget->addEventHandler< ui::MouseButtonDownEvent >(this, &SkeletonEditorPage::eventMouseDown);
+	m_renderWidget->addEventHandler< ui::MouseButtonUpEvent >(this, &SkeletonEditorPage::eventMouseUp);
+	m_renderWidget->addEventHandler< ui::MouseMoveEvent >(this, &SkeletonEditorPage::eventMouseMove);
+	m_renderWidget->addEventHandler< ui::SizeEvent >(this, &SkeletonEditorPage::eventSize);
+	m_renderWidget->addEventHandler< ui::PaintEvent >(this, &SkeletonEditorPage::eventPaint);
 
 	m_boneMenu = new ui::PopupMenu();
 	m_boneMenu->create();
@@ -103,9 +98,9 @@ bool SkeletonEditorPage::create(ui::Container* parent)
 	m_treeSkeleton = new ui::TreeView();
 	m_treeSkeleton->create(m_skeletonPanel, ui::TreeView::WsDefault & ~ui::WsClientBorder);
 	m_treeSkeleton->addImage(ui::Bitmap::load(c_ResourceBones, sizeof(c_ResourceBones), L"png"), 2);
-	m_treeSkeleton->addButtonDownEventHandler(ui::createMethodHandler(this, &SkeletonEditorPage::eventTreeButtonDown));
-	m_treeSkeleton->addSelectEventHandler(ui::createMethodHandler(this, &SkeletonEditorPage::eventTreeSelect));
-	m_treeSkeleton->addEditedEventHandler(ui::createMethodHandler(this, &SkeletonEditorPage::eventTreeEdited));
+	m_treeSkeleton->addEventHandler< ui::MouseButtonDownEvent >(this, &SkeletonEditorPage::eventTreeButtonDown);
+	m_treeSkeleton->addEventHandler< ui::SelectionChangeEvent >(this, &SkeletonEditorPage::eventTreeSelect);
+	m_treeSkeleton->addEventHandler< ui::TreeViewContentChangeEvent >(this, &SkeletonEditorPage::eventTreeEdited);
 
 	m_site->createAdditionalPanel(m_skeletonPanel, 250, false);
 
@@ -311,39 +306,37 @@ void SkeletonEditorPage::createSkeletonTreeNodes(ui::TreeViewItem* parentItem, i
 	}
 }
 
-void SkeletonEditorPage::eventMouseDown(ui::Event* event)
+void SkeletonEditorPage::eventMouseDown(ui::MouseButtonDownEvent* event)
 {
 	if (!m_skeleton)
 		return;
 
 	m_document->push();
 
-	m_lastMousePosition = checked_type_cast< ui::MouseEvent* >(event)->getPosition();
+	m_lastMousePosition = event->getPosition();
 	m_renderWidget->setCapture();
 	m_renderWidget->setFocus();
 }
 
-void SkeletonEditorPage::eventMouseUp(ui::Event* event)
+void SkeletonEditorPage::eventMouseUp(ui::MouseButtonUpEvent* event)
 {
 	if (m_renderWidget->hasCapture())
 		m_renderWidget->releaseCapture();
 }
 
-void SkeletonEditorPage::eventMouseMove(ui::Event* event)
+void SkeletonEditorPage::eventMouseMove(ui::MouseMoveEvent* event)
 {
-	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
-
 	if (!m_skeleton || !m_renderWidget->hasCapture())
 		return;
 
-	ui::Point mousePosition = mouseEvent->getPosition();
+	ui::Point mousePosition = event->getPosition();
 
 	Vector2 mouseDelta(
 		float(m_lastMousePosition.x - mousePosition.x),
 		float(m_lastMousePosition.y - mousePosition.y)
 	);
 
-	if ((mouseEvent->getKeyState() & ui::KsControl) == 0)
+	if ((event->getKeyState() & ui::KsControl) == 0)
 	{
 		if (m_selectedJoint >= 0)
 		{
@@ -352,12 +345,12 @@ void SkeletonEditorPage::eventMouseMove(ui::Event* event)
 
 			mouseDelta /= 200.0f;
 
-			if (mouseEvent->getButton() == ui::MouseEvent::BtLeft)
+			if (event->getButton() == ui::MbtLeft)
 			{
 				Transform T = joint->getTransform();
 				Quaternion orientation = T.rotation();
 
-				if ((mouseEvent->getKeyState() & ui::KsMenu) == 0)
+				if ((event->getKeyState() & ui::KsMenu) == 0)
 				{
 					orientation *= Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f, 0.0f), mouseDelta.x);
 					orientation *= Quaternion::fromAxisAngle(Vector4(1.0f, 0.0f, 0.0f, 0.0f), mouseDelta.y);
@@ -367,7 +360,7 @@ void SkeletonEditorPage::eventMouseMove(ui::Event* event)
 
 				joint->setTransform(Transform(T.translation(), orientation));
 			}
-			else if (mouseEvent->getButton() == ui::MouseEvent::BtRight)
+			else if (event->getButton() == ui::MbtRight)
 			{
 				// \fixme Translate
 			}
@@ -376,7 +369,7 @@ void SkeletonEditorPage::eventMouseMove(ui::Event* event)
 	else
 	{
 		m_cameraHead += mouseDelta.x / 100.0f;
-		if (mouseEvent->getButton() == ui::MouseEvent::BtLeft)
+		if (event->getButton() == ui::MbtLeft)
 			m_cameraZ -= mouseDelta.y * m_cameraMoveScaleZ;
 		else
 			m_cameraY += mouseDelta.y * m_cameraMoveScaleY;
@@ -387,21 +380,19 @@ void SkeletonEditorPage::eventMouseMove(ui::Event* event)
 	m_renderWidget->update();
 }
 
-void SkeletonEditorPage::eventSize(ui::Event* event)
+void SkeletonEditorPage::eventSize(ui::SizeEvent* event)
 {
 	if (!m_renderView)
 		return;
 
-	ui::SizeEvent* s = static_cast< ui::SizeEvent* >(event);
-	ui::Size sz = s->getSize();
+	ui::Size sz = event->getSize();
 
 	m_renderView->reset(sz.cx, sz.cy);
 	m_renderView->setViewport(render::Viewport(0, 0, sz.cx, sz.cy, 0, 1));
 }
 
-void SkeletonEditorPage::eventPaint(ui::Event* event)
+void SkeletonEditorPage::eventPaint(ui::PaintEvent* event)
 {
-	ui::PaintEvent* paintEvent = checked_type_cast< ui::PaintEvent* >(event);
 	ui::Rect rc = m_renderWidget->getInnerRect();
 
 	T_ASSERT (m_renderView);
@@ -545,27 +536,27 @@ void SkeletonEditorPage::eventPaint(ui::Event* event)
 	m_renderView->end();
 	m_renderView->present();
 
-	paintEvent->consume();
+	event->consume();
 }
 
-void SkeletonEditorPage::eventTreeButtonDown(ui::Event* event)
+void SkeletonEditorPage::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 {
-	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
-	if (mouseEvent->getButton() != ui::MouseEvent::BtRight)
+	if (event->getButton() != ui::MbtRight)
 		return;
 
-	Ref< ui::MenuItem > menuItem = m_boneMenu->show(m_treeSkeleton, mouseEvent->getPosition());
+	Ref< ui::MenuItem > menuItem = m_boneMenu->show(m_treeSkeleton, event->getPosition());
 	if (menuItem)
 	{
 		if (handleCommand(menuItem->getCommand()))
-			mouseEvent->consume();
+			event->consume();
 	}
 }
 
-void SkeletonEditorPage::eventTreeSelect(ui::Event* event)
+void SkeletonEditorPage::eventTreeSelect(ui::SelectionChangeEvent* event)
 {
-	ui::CommandEvent* cmdEvent = checked_type_cast< ui::CommandEvent* >(event);
-	ui::TreeViewItem* selectedItem = checked_type_cast< ui::TreeViewItem* >(cmdEvent->getItem());
+	ui::TreeViewItem* selectedItem = m_treeSkeleton->getSelectedItem();
+	if (!selectedItem)
+		return;
 
 	Ref< Joint > joint = selectedItem->getData< Joint >(L"JOINT");
 	m_selectedJoint = findIndexOfJoint(m_skeleton, joint);
@@ -578,10 +569,9 @@ void SkeletonEditorPage::eventTreeSelect(ui::Event* event)
 	m_renderWidget->update();
 }
 
-void SkeletonEditorPage::eventTreeEdited(ui::Event* event)
+void SkeletonEditorPage::eventTreeEdited(ui::TreeViewContentChangeEvent* event)
 {
-	ui::CommandEvent* cmdEvent = checked_type_cast< ui::CommandEvent* >(event);
-	ui::TreeViewItem* selectedItem = checked_type_cast< ui::TreeViewItem* >(cmdEvent->getItem());
+	ui::TreeViewItem* selectedItem = event->getItem();
 
 	Ref< Joint > joint = selectedItem->getData< Joint >(L"JOINT");
 	std::wstring name = selectedItem->getText();

@@ -9,12 +9,8 @@
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Clipboard.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/ScrollBar.h"
 #include "Ui/Custom/LogList/LogList.h"
-#include "Ui/Events/PaintEvent.h"
-#include "Ui/Events/SizeEvent.h"
-#include "Ui/Events/MouseEvent.h"
 
 // Resources
 #include "Resources/Log.h"
@@ -41,16 +37,16 @@ bool LogList::create(Widget* parent, int style, const ISymbolLookup* lookup)
 	if (!Widget::create(parent, style | WsDoubleBuffer))
 		return false;
 
-	addPaintEventHandler(createMethodHandler(this, &LogList::eventPaint));
-	addSizeEventHandler(createMethodHandler(this, &LogList::eventSize));
-	addMouseWheelEventHandler(createMethodHandler(this, &LogList::eventMouseWheel));
-	addTimerEventHandler(createMethodHandler(this, &LogList::eventTimer));
+	addEventHandler< PaintEvent >(this, &LogList::eventPaint);
+	addEventHandler< SizeEvent >(this, &LogList::eventSize);
+	addEventHandler< MouseWheelEvent >(this, &LogList::eventMouseWheel);
+	addEventHandler< TimerEvent >(this, &LogList::eventTimer);
 
 	m_scrollBar = new ScrollBar();
 	if (!m_scrollBar->create(this, ScrollBar::WsVertical))
 		return false;
 
-	m_scrollBar->addScrollEventHandler(createMethodHandler(this, &LogList::eventScroll));
+	m_scrollBar->addEventHandler< ScrollEvent >(this, &LogList::eventScroll);
 
 	m_icons = Bitmap::load(c_ResourceLog, sizeof(c_ResourceLog), L"png");
 
@@ -165,10 +161,9 @@ void LogList::updateScrollBar()
 	m_scrollBar->update();
 }
 
-void LogList::eventPaint(Event* event)
+void LogList::eventPaint(PaintEvent* event)
 {
-	PaintEvent* paintEvent = checked_type_cast< PaintEvent* >(event);
-	Canvas& canvas = paintEvent->getCanvas();
+	Canvas& canvas = event->getCanvas();
 
 	const Color4ub c_levelColors[] = { Color4ub(255, 255, 255), Color4ub(255, 255, 200), Color4ub(255, 200, 200) };
 	const Color4ub c_threadColors[] = { Color4ub(255, 255, 255), Color4ub(255, 255, 230), Color4ub(240, 240, 255), Color4ub(230, 255, 255) };
@@ -260,10 +255,10 @@ void LogList::eventPaint(Event* event)
 		rc = rc.offset(0, m_itemHeight);
 	}
 
-	paintEvent->consume();
+	event->consume();
 }
 
-void LogList::eventSize(Event* event)
+void LogList::eventSize(SizeEvent* event)
 {
 	int width = m_scrollBar->getPreferedSize().cx;
 
@@ -275,23 +270,20 @@ void LogList::eventSize(Event* event)
 	updateScrollBar();
 }
 
-void LogList::eventMouseWheel(Event* event)
+void LogList::eventMouseWheel(MouseWheelEvent* event)
 {
-	MouseEvent* mouseEvent = checked_type_cast< MouseEvent* >(event);
-	
 	int position = m_scrollBar->getPosition();
-	position -= mouseEvent->getWheelRotation() * 4;
+	position -= event->getRotation() * 4;
 	m_scrollBar->setPosition(position);
-
 	update();
 }
 
-void LogList::eventScroll(Event* event)
+void LogList::eventScroll(ScrollEvent* event)
 {
 	update();
 }
 
-void LogList::eventTimer(Event* event)
+void LogList::eventTimer(TimerEvent* event)
 {
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_pendingLock);

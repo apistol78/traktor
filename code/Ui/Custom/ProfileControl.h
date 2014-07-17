@@ -19,9 +19,6 @@ class Timer;
 
 	namespace ui
 	{
-
-class Event;
-
 		namespace custom
 		{
 
@@ -61,9 +58,9 @@ private:
 	Ref< Timer > m_timer;
 	std::vector< Channel > m_channels;
 
-	void eventPaint(Event* event);
+	void eventPaint(PaintEvent* event);
 
-	void eventTimer(Event* event);
+	void eventTimer(TimerEvent* event);
 };
 
 		}

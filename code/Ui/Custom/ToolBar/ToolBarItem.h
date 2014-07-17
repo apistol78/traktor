@@ -21,7 +21,9 @@ namespace traktor
 class Canvas;
 class Point;
 class Bitmap;
-class MouseEvent;
+class MouseButtonDownEvent;
+class MouseButtonUpEvent;
+class MouseMoveEvent;
 
 		namespace custom
 		{
@@ -57,13 +59,13 @@ protected:
 	 *
 	 * \return True if tracking of item desired; false will not cause mouse to be captured.
 	 */
-	virtual bool mouseEnter(ToolBar* toolBar, MouseEvent* mouseEvent) = 0;
+	virtual bool mouseEnter(ToolBar* toolBar, MouseMoveEvent* mouseEvent) = 0;
 
-	virtual void mouseLeave(ToolBar* toolBar, MouseEvent* mouseEvent) = 0;
+	virtual void mouseLeave(ToolBar* toolBar, MouseMoveEvent* mouseEvent) = 0;
 
-	virtual void buttonDown(ToolBar* toolBar, MouseEvent* mouseEvent) = 0;
+	virtual void buttonDown(ToolBar* toolBar, MouseButtonDownEvent* mouseEvent) = 0;
 
-	virtual void buttonUp(ToolBar* toolBar, MouseEvent* mouseEvent) = 0;
+	virtual void buttonUp(ToolBar* toolBar, MouseButtonUpEvent* mouseEvent) = 0;
 
 private:
 	bool m_enable;

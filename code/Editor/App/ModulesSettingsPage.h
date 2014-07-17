@@ -8,7 +8,7 @@ namespace traktor
 	namespace ui
 	{
 
-class Event;
+class ButtonClickEvent;
 class ListBox;
 
 	}
@@ -33,9 +33,9 @@ public:
 private:
 	Ref< ui::ListBox > m_listModules;
 
-	void eventButtonAddModuleClick(ui::Event* event);
+	void eventButtonAddModuleClick(ui::ButtonClickEvent* event);
 
-	void eventButtonRemoveModuleClick(ui::Event* event);
+	void eventButtonRemoveModuleClick(ui::ButtonClickEvent* event);
 };
 
 	}

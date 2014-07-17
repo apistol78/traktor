@@ -28,11 +28,14 @@ class T_DLLCLASS TreeViewEditEvent : public Event
 public:
 	TreeViewEditEvent(EventSubject* sender, TreeViewItem* item);
 
+	TreeViewItem* getItem() const;
+
 	void cancel();
 	
 	bool cancelled() const;	
 
 private:
+	Ref< TreeViewItem > m_item;
 	bool m_cancelled;
 };
 	

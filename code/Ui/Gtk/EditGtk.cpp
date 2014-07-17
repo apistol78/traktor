@@ -1,6 +1,5 @@
 #include "Core/Misc/TString.h"
 #include "Ui/Gtk/EditGtk.h"
-#include "Ui/Events/CommandEvent.h"
 
 namespace traktor
 {

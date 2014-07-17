@@ -8,9 +8,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_CUSTOM_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -23,8 +23,9 @@ class Bitmap;
 		namespace custom
 		{
 
-class ToolTip;
 class ToolBarItem;
+class ToolTip;
+class ToolTipEvent;
 
 /*! \brief Tool bar control.
  * \ingroup UIC
@@ -53,8 +54,6 @@ public:
 
 	Ref< ToolBarItem > getItem(const Point& at);
 
-	void addClickEventHandler(EventHandler* eventHandler);
-
 	virtual Size getPreferedSize() const;
 
 private:
@@ -68,15 +67,15 @@ private:
 	RefArray< ToolBarItem > m_items;
 	Ref< ToolBarItem > m_trackItem;
 
-	void eventMouseMove(Event* event);
+	void eventMouseMove(MouseMoveEvent* event);
 
-	void eventButtonDown(Event* event);
+	void eventButtonDown(MouseButtonDownEvent* event);
 
-	void eventButtonUp(Event* event);
+	void eventButtonUp(MouseButtonUpEvent* event);
 
-	void eventPaint(Event* event);
+	void eventPaint(PaintEvent* event);
 
-	void eventShowTip(Event* event);
+	void eventShowTip(ToolTipEvent* event);
 };
 
 		}

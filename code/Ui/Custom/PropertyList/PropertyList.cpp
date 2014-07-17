@@ -3,13 +3,9 @@
 #include "Ui/Application.h"
 #include "Ui/HierarchicalState.h"
 #include "Ui/ScrollBar.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/CommandEvent.h"
-#include "Ui/Events/MouseEvent.h"
-#include "Ui/Events/SizeEvent.h"
-#include "Ui/Events/PaintEvent.h"
-#include "Ui/Custom/PropertyList/PropertyList.h"
 #include "Ui/Custom/PropertyList/PropertyItem.h"
+#include "Ui/Custom/PropertyList/PropertyList.h"
+#include "Ui/Custom/PropertyList/PropertySelectionChangeEvent.h"
 
 namespace traktor
 {
@@ -97,16 +93,16 @@ bool PropertyList::create(Widget* parent, int style, IPropertyGuidResolver* guid
 	if (!m_scrollBar->create(this, ScrollBar::WsVertical))
 		return false;
 
-	m_scrollBar->addScrollEventHandler(createMethodHandler(this, &PropertyList::eventScroll));
+	m_scrollBar->addEventHandler< ScrollEvent >(this, &PropertyList::eventScroll);
 	m_scrollBar->setVisible(false);
 
-	addButtonDownEventHandler(createMethodHandler(this, &PropertyList::eventButtonDown));
-	addButtonUpEventHandler(createMethodHandler(this, &PropertyList::eventButtonUp));
-	addDoubleClickEventHandler(createMethodHandler(this, &PropertyList::eventDoubleClick));
-	addMouseMoveEventHandler(createMethodHandler(this, &PropertyList::eventMouseMove));
-	addMouseWheelEventHandler(createMethodHandler(this, &PropertyList::eventMouseWheel));
-	addSizeEventHandler(createMethodHandler(this, &PropertyList::eventSize));
-	addPaintEventHandler(createMethodHandler(this, &PropertyList::eventPaint));
+	addEventHandler< MouseButtonDownEvent >(this, &PropertyList::eventButtonDown);
+	addEventHandler< MouseButtonUpEvent >(this, &PropertyList::eventButtonUp);
+	addEventHandler< MouseDoubleClickEvent >(this, &PropertyList::eventDoubleClick);
+	addEventHandler< MouseMoveEvent >(this, &PropertyList::eventMouseMove);
+	addEventHandler< MouseWheelEvent >(this, &PropertyList::eventMouseWheel);
+	addEventHandler< SizeEvent >(this, &PropertyList::eventSize);
+	addEventHandler< PaintEvent >(this, &PropertyList::eventPaint);
 
 	m_columnHeader = bool((style & WsColumnHeader) == WsColumnHeader);
 	m_guidResolver = guidResolver;
@@ -304,21 +300,6 @@ bool PropertyList::paste()
 		return false;
 }
 
-void PropertyList::addSelectEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiSelectionChange, eventHandler);
-}
-
-void PropertyList::addCommandEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiCommand, eventHandler);
-}
-
-void PropertyList::addChangeEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiContentChange, eventHandler);
-}
-
 void PropertyList::update(const Rect* rc, bool immediate)
 {
 	updateScrollBar();
@@ -390,17 +371,16 @@ void PropertyList::placeItems()
 	setChildRects(childRects);
 }
 
-void PropertyList::eventScroll(Event* event)
+void PropertyList::eventScroll(ScrollEvent* event)
 {
 	placeItems();
 	update();
 	event->consume();
 }
 
-void PropertyList::eventButtonDown(Event* event)
+void PropertyList::eventButtonDown(MouseButtonDownEvent* event)
 {
-	MouseEvent* mouseEvent = checked_type_cast< MouseEvent* >(event);
-	Point p = mouseEvent->getPosition();
+	Point p = event->getPosition();
 
 	setFocus();
 
@@ -416,7 +396,7 @@ void PropertyList::eventButtonDown(Event* event)
 	{
 		int32_t scrollBarOffset = m_scrollBar->getPosition() * c_propertyItemHeight;
 
-		int32_t y = mouseEvent->getPosition().y;
+		int32_t y = event->getPosition().y;
 		if (m_columnHeader)
 		{
 			if ((y -= c_columnsHeight) < 0)
@@ -434,7 +414,7 @@ void PropertyList::eventButtonDown(Event* event)
 				if (p.x >= m_separator + 2)
 				{
 					m_mousePropertyItem = *i;
-					m_mousePropertyItem->mouseButtonDown(mouseEvent);
+					m_mousePropertyItem->mouseButtonDown(event);
 				}
 				else if (p.x >= (*i)->getDepth() * 8 && p.x <= (*i)->getDepth() * 8 + 12)
 				{
@@ -450,15 +430,17 @@ void PropertyList::eventButtonDown(Event* event)
 				if (!(*i)->isSelected())
 				{
 					(*i)->setSelected(true);
-					CommandEvent cmdEvent(this, *i, Command(id));
-					raiseEvent(EiSelectionChange, &cmdEvent);
+
+					PropertySelectionChangeEvent selectionChangeEvent(this, *i, id);
+					raiseEvent(&selectionChangeEvent);
 				}
 			}
 			else if ((*i)->isSelected())
 			{
 				(*i)->setSelected(false);
-				CommandEvent cmdEvent(this, *i, Command(id));
-				raiseEvent(EiSelectionChange, &cmdEvent);
+				
+				PropertySelectionChangeEvent selectionChangeEvent(this, *i, id);
+				raiseEvent(&selectionChangeEvent);
 			}
 		}
 
@@ -472,15 +454,13 @@ void PropertyList::eventButtonDown(Event* event)
 	update();
 }
 
-void PropertyList::eventButtonUp(Event* event)
+void PropertyList::eventButtonUp(MouseButtonUpEvent* event)
 {
-	MouseEvent* mouseEvent = checked_type_cast< MouseEvent* >(event);
-
 	m_mode = MdNone;
 
 	if (m_mousePropertyItem)
 	{
-		m_mousePropertyItem->mouseButtonUp(mouseEvent);
+		m_mousePropertyItem->mouseButtonUp(event);
 		m_mousePropertyItem = 0;
 		event->consume();
 	}
@@ -489,10 +469,9 @@ void PropertyList::eventButtonUp(Event* event)
 		releaseCapture();
 }
 
-void PropertyList::eventDoubleClick(Event* event)
+void PropertyList::eventDoubleClick(MouseDoubleClickEvent* event)
 {
-	MouseEvent* mouseEvent = checked_type_cast< MouseEvent* >(event);
-	const Point& position = mouseEvent->getPosition();
+	const Point& position = event->getPosition();
 
 	Ref< PropertyItem > propertyItem = getPropertyItemFromPosition(position);
 	if (propertyItem)
@@ -511,10 +490,9 @@ void PropertyList::eventDoubleClick(Event* event)
 	update();
 }
 
-void PropertyList::eventMouseMove(Event* event)
+void PropertyList::eventMouseMove(MouseMoveEvent* event)
 {
-	MouseEvent* mouseEvent = checked_type_cast< MouseEvent* >(event);
-	Point p = mouseEvent->getPosition();
+	Point p = event->getPosition();
 
 	if (m_mode == MdMoveSeparator)
 	{
@@ -536,24 +514,22 @@ void PropertyList::eventMouseMove(Event* event)
 		}
 		else if (m_mousePropertyItem)
 		{
-			m_mousePropertyItem->mouseMove(mouseEvent);
+			m_mousePropertyItem->mouseMove(event);
 		}
 	}
 }
 
-void PropertyList::eventMouseWheel(Event* event)
+void PropertyList::eventMouseWheel(MouseWheelEvent* event)
 {
-	MouseEvent* mouseEvent = checked_type_cast< MouseEvent* >(event);
-
 	int32_t position = m_scrollBar->getPosition();
-	position -= mouseEvent->getWheelRotation() * c_wheelRotationFactor;
+	position -= event->getRotation() * c_wheelRotationFactor;
 	m_scrollBar->setPosition(position);
 
 	placeItems();
 	update();
 }
 
-void PropertyList::eventSize(Event* event)
+void PropertyList::eventSize(SizeEvent* event)
 {
 	Rect rc = getInnerRect();
 
@@ -573,11 +549,9 @@ void PropertyList::eventSize(Event* event)
 	event->consume();
 }
 
-void PropertyList::eventPaint(Event* event)
+void PropertyList::eventPaint(PaintEvent* event)
 {
-	PaintEvent* paintEvent = checked_type_cast< PaintEvent* >(event);
-	
-	Canvas& canvas = paintEvent->getCanvas();
+	Canvas& canvas = event->getCanvas();
 	Rect rcInner = getInnerRect();
 
 	int32_t scrollBarOffset = m_scrollBar->getPosition() * c_propertyItemHeight;
@@ -674,7 +648,7 @@ void PropertyList::eventPaint(Event* event)
 		++i;
 	}
 
-	paintEvent->consume();
+	event->consume();
 }
 
 		}

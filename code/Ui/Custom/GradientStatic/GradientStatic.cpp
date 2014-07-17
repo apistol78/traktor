@@ -1,6 +1,4 @@
 #include "Ui/Custom/GradientStatic/GradientStatic.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/PaintEvent.h"
 
 namespace traktor
 {
@@ -22,7 +20,7 @@ bool GradientStatic::create(Widget* parent, const Color4ub& colorLeft, const Col
 
 	setText(text);
 
-	addPaintEventHandler(createMethodHandler(this, &GradientStatic::eventPaint));
+	addEventHandler< PaintEvent >(this, &GradientStatic::eventPaint);
 
 	return true;
 }
@@ -47,10 +45,9 @@ void GradientStatic::setColorText(const Color4ub& colorText)
 	m_colorText = colorText;
 }
 
-void GradientStatic::eventPaint(Event* event)
+void GradientStatic::eventPaint(PaintEvent* event)
 {
-	PaintEvent* paintEvent = checked_type_cast< PaintEvent* >(event);
-	Canvas& canvas = paintEvent->getCanvas();
+	Canvas& canvas = event->getCanvas();
 
 	Rect innerRect = getInnerRect();
 
@@ -61,7 +58,7 @@ void GradientStatic::eventPaint(Event* event)
 	canvas.setForeground(m_colorText);
 	canvas.drawText(innerRect.inflate(-4, -4), getText(), AnLeft, AnTop);
 
-	paintEvent->consume();
+	event->consume();
 }
 
 		}

@@ -8,7 +8,6 @@ namespace traktor
 	namespace ui
 	{
 
-class Event;
 class Container;
 class Widget;
 
@@ -17,6 +16,7 @@ class Widget;
 
 class ToolBar;
 class ToolBarButton;
+class ToolBarButtonClickEvent;
 class ToolBarDropDown;
 
 		}
@@ -78,7 +78,7 @@ private:
 
 	void createRenderControl(int32_t type);
 
-	void eventToolClick(ui::Event* event);
+	void eventToolClick(ui::custom::ToolBarButtonClickEvent* event);
 };
 
 	}

@@ -3,12 +3,11 @@
 #include "Editor/IEditor.h"
 #include "Editor/App/WebBrowserPage.h"
 #include "Ui/Bitmap.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/TableLayout.h"
 #include "Ui/WebBrowser.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
-#include "Ui/Events/CommandEvent.h"
+#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 
 // Resources
 #include "Resources/Navigate.h"
@@ -39,7 +38,7 @@ bool WebBrowserPage::create(ui::Widget* parent)
 	toolbar->addItem(new ui::custom::ToolBarButton(L"Back", 1, ui::Command(L"Editor.WebBrowser.Back")));
 	toolbar->addItem(new ui::custom::ToolBarButton(L"Forward", 2, ui::Command(L"Editor.WebBrowser.Forward")));
 	toolbar->addItem(new ui::custom::ToolBarButton(L"Reload", 3, ui::Command(L"Editor.WebBrowser.Reload")));
-	toolbar->addClickEventHandler(ui::createMethodHandler(this, &WebBrowserPage::eventToolClick));
+	toolbar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &WebBrowserPage::eventToolClick);
 
 	m_browser = new ui::WebBrowser();
 	m_browser->create(this, url);
@@ -47,19 +46,18 @@ bool WebBrowserPage::create(ui::Widget* parent)
 	return true;
 }
 
-void WebBrowserPage::eventToolClick(ui::Event* event)
+void WebBrowserPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* event)
 {
-	ui::CommandEvent* cmdEvent = checked_type_cast< ui::CommandEvent* >(event);
-	if (cmdEvent->getCommand() == L"Editor.WebBrowser.Home")
+	if (event->getCommand() == L"Editor.WebBrowser.Home")
 	{
 		std::wstring url = m_editor->getSettings()->getProperty< PropertyString >(L"Editor.HomeUrl", L"about:blank");
 		m_browser->navigate(url);
 	}
-	else if (cmdEvent->getCommand() == L"Editor.WebBrowser.Back")
+	else if (event->getCommand() == L"Editor.WebBrowser.Back")
 		m_browser->back();
-	else if (cmdEvent->getCommand() == L"Editor.WebBrowser.Forward")
+	else if (event->getCommand() == L"Editor.WebBrowser.Forward")
 		m_browser->forward();
-	else if (cmdEvent->getCommand() == L"Editor.WebBrowser.Reload")
+	else if (event->getCommand() == L"Editor.WebBrowser.Reload")
 		m_browser->reload(false);
 }
 

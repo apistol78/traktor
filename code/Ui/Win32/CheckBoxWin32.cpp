@@ -1,3 +1,5 @@
+#include "Ui/Events/ButtonClickEvent.h"
+#include "Ui/Events/ButtonClickEvent.h"
 #include "Ui/Win32/CheckBoxWin32.h"
 
 namespace traktor
@@ -5,8 +7,8 @@ namespace traktor
 	namespace ui
 	{
 
-CheckBoxWin32::CheckBoxWin32(EventSubject* owner) :
-	WidgetWin32Impl< ICheckBox >(owner)
+CheckBoxWin32::CheckBoxWin32(EventSubject* owner)
+:	WidgetWin32Impl< ICheckBox >(owner)
 {
 }
 
@@ -54,8 +56,8 @@ Size CheckBoxWin32::getPreferedSize() const
 
 LRESULT CheckBoxWin32::eventCommand(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip)
 {
-	CommandEvent cmdEvent(m_owner, 0);
-	m_owner->raiseEvent(EiClick, &cmdEvent);
+	ButtonClickEvent clickEvent(m_owner);
+	m_owner->raiseEvent(&clickEvent);
 	skip = false;
 	return 0;
 }

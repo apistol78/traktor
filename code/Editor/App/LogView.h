@@ -19,6 +19,7 @@ class PopupMenu;
 
 class ToolBar;
 class ToolBarButton;
+class ToolBarButtonClickEvent;
 
 		}
 	}
@@ -53,9 +54,9 @@ private:
 	Ref< ui::PopupMenu > m_popup;
 	Ref< ILogTarget > m_logTarget;
 
-	void eventToolClick(ui::Event* event);
+	void eventToolClick(ui::custom::ToolBarButtonClickEvent* event);
 
-	void eventButtonDown(ui::Event* event);
+	void eventButtonDown(ui::MouseButtonDownEvent* event);
 
 	virtual bool lookupLogSymbol(const Guid& symbolId, std::wstring& outSymbol) const;
 };

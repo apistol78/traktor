@@ -1,8 +1,6 @@
 #include <algorithm>
 #include "Core/Math/MathUtils.h"
 #include "Ui/Custom/QuadSplitter.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/MouseEvent.h"
 
 namespace traktor
 {
@@ -46,10 +44,10 @@ bool QuadSplitter::create(Widget* parent, const Point& position, bool relative, 
 		m_position.y *= c_relativeScale / 100;
 	}
 
-	addMouseMoveEventHandler(createMethodHandler(this, &QuadSplitter::eventMouseMove));
-	addButtonDownEventHandler(createMethodHandler(this, &QuadSplitter::eventButtonDown));
-	addButtonUpEventHandler(createMethodHandler(this, &QuadSplitter::eventButtonUp));
-	addSizeEventHandler(createMethodHandler(this, &QuadSplitter::eventSize));
+	addEventHandler< MouseMoveEvent >(this, &QuadSplitter::eventMouseMove);
+	addEventHandler< MouseButtonDownEvent >(this, &QuadSplitter::eventButtonDown);
+	addEventHandler< MouseButtonUpEvent >(this, &QuadSplitter::eventButtonUp);
+	addEventHandler< SizeEvent >(this, &QuadSplitter::eventSize);
 
 	return true;
 }
@@ -248,9 +246,9 @@ Point QuadSplitter::getAbsolutePosition() const
 	return position;
 }
 
-void QuadSplitter::eventMouseMove(Event* event)
+void QuadSplitter::eventMouseMove(MouseMoveEvent* event)
 {
-	Point mousePosition = static_cast< MouseEvent* >(event)->getPosition();
+	Point mousePosition = event->getPosition();
 	Point splitterPosition = getAbsolutePosition();
 
 	if (m_drag)
@@ -306,9 +304,9 @@ void QuadSplitter::eventMouseMove(Event* event)
 	}
 }
 
-void QuadSplitter::eventButtonDown(Event* event)
+void QuadSplitter::eventButtonDown(MouseButtonDownEvent* event)
 {
-	Point mousePosition = static_cast< MouseEvent* >(event)->getPosition();
+	Point mousePosition = event->getPosition();
 	Point splitterPosition = getAbsolutePosition();
 
 	bool rangeX = traktor::abs(mousePosition.x - splitterPosition.x) <= c_splitterSize / 2;
@@ -328,7 +326,7 @@ void QuadSplitter::eventButtonDown(Event* event)
 	}
 }
 
-void QuadSplitter::eventButtonUp(Event* event)
+void QuadSplitter::eventButtonUp(MouseButtonUpEvent* event)
 {
 	if (m_drag)
 	{
@@ -338,7 +336,7 @@ void QuadSplitter::eventButtonUp(Event* event)
 	}
 }
 
-void QuadSplitter::eventSize(Event* event)
+void QuadSplitter::eventSize(SizeEvent* event)
 {
 	update();
 }

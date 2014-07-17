@@ -1,5 +1,5 @@
+#include "Ui/Events/ContentChangeEvent.h"
 #include "Ui/Win32/RichEditWin32.h"
-#include "Ui/Events/CommandEvent.h"
 
 namespace traktor
 {
@@ -192,8 +192,8 @@ LRESULT RichEditWin32::onCommand(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 {
 	if ((HWND)lParam == m_hWnd && HIWORD(wParam) == EN_CHANGE)
 	{
-		CommandEvent cmdEvent(m_owner, 0);
-		m_owner->raiseEvent(EiContentChange, &cmdEvent);
+		ContentChangeEvent contentChangeEvent(m_owner);
+		m_owner->raiseEvent(&contentChangeEvent);
 	}
 	return TRUE;
 }

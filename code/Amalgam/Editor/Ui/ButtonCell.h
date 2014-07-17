@@ -12,32 +12,29 @@ namespace traktor
 
 class ButtonCell : public ui::custom::AutoWidgetCell
 {
+	T_RTTI_CLASS;
+
 public:
 	ButtonCell(
 		ui::Bitmap* bitmap,
 		int32_t index,
-		bool enable,
-		int32_t eventId,
-		Object* eventItem,
-		const ui::Command& eventCommand
+		const ui::Command& command
 	);
 
 	void setEnable(bool enable);
 
-	virtual void mouseDown(ui::custom::AutoWidget* widget, const ui::Point& position);
+	virtual void mouseDown(const ui::Point& position);
 
-	virtual void mouseUp(ui::custom::AutoWidget* widget, const ui::Point& position);
+	virtual void mouseUp(const ui::Point& position);
 
-	virtual void paint(ui::custom::AutoWidget* widget, ui::Canvas& canvas, const ui::Rect& rect);
+	virtual void paint(ui::Canvas& canvas, const ui::Rect& rect);
 
 private:
 	Ref< ui::Bitmap > m_bitmap;
 	int32_t m_index;
+	ui::Command m_command;
 	bool m_enable;
 	bool m_down;
-	int32_t m_eventId;
-	Ref< Object > m_eventItem;
-	ui::Command m_eventCommand;
 };
 
 	}

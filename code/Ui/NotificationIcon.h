@@ -2,7 +2,6 @@
 #define traktor_ui_NotificationIcon_H
 
 #include "Ui/Associative.h"
-#include "Ui/EventHandler.h"
 #include "Ui/EventSubject.h"
 
 // import/export mechanism.
@@ -41,27 +40,6 @@ public:
 	void destroy();
 
 	void setImage(Bitmap* image);
-
-	/*! \brief Mouse button down event.
-	*
-	* Issued when mouse button has been pressed inside the widget.
-	* Invoked with a MouseEvent.
-	*/
-	void addButtonDownEventHandler(EventHandler* eventHandler);
-
-	/*! \brief Mouse button up event.
-	*
-	* Issued when mouse button has been released inside the widget.
-	* Invoked with a MouseEvent.
-	*/
-	void addButtonUpEventHandler(EventHandler* eventHandler);
-
-	/*! \brief Mouse button double click event.
-	*
-	* Issued when mouse button has been double clicked inside the widget.
-	* Invoked with a MouseEvent.
-	*/
-	void addDoubleClickEventHandler(EventHandler* eventHandler);
 
 private:
 	INotificationIcon* m_ni;

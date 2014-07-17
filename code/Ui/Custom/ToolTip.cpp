@@ -1,10 +1,8 @@
+#include "Core/Log/Log.h"
+#include "Ui/Application.h"
 #include "Ui/Custom/ToolTip.h"
 #include "Ui/Custom/ToolTipEvent.h"
-#include "Ui/Application.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/PaintEvent.h"
 #include "Ui/Itf/IEventLoop.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -33,8 +31,8 @@ bool ToolTip::create(Widget* parent)
 	if (!ToolForm::create(parent, L"", 0, 0, WsTop))
 		return false;
 
-	addTimerEventHandler(createMethodHandler(this, &ToolTip::eventTimer));
-	addPaintEventHandler(createMethodHandler(this, &ToolTip::eventPaint));
+	addEventHandler< TimerEvent >(this, &ToolTip::eventTimer);
+	addEventHandler< PaintEvent >(this, &ToolTip::eventPaint);
 
 	setFont(parent->getFont());
 	startTimer(100);
@@ -60,12 +58,7 @@ void ToolTip::show(const Point& at, const std::wstring& text)
 	setVisible(true);
 }
 
-void ToolTip::addShowEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiShowTip, eventHandler);
-}
-
-void ToolTip::eventTimer(Event* event)
+void ToolTip::eventTimer(TimerEvent* event)
 {
 	Ref< Widget > parent = getParent();
 
@@ -99,7 +92,7 @@ void ToolTip::eventTimer(Event* event)
 		{
 			// Issue tooltip event; event target should show the actual tooltip.
 			ToolTipEvent tipEvent(this, mousePosition);
-			raiseEvent(EiShowTip, &tipEvent);
+			raiseEvent(&tipEvent);
 
 			m_tracking = false;
 		}
@@ -111,10 +104,9 @@ void ToolTip::eventTimer(Event* event)
 	}
 }
 
-void ToolTip::eventPaint(Event* event)
+void ToolTip::eventPaint(PaintEvent* event)
 {
-	PaintEvent* paintEvent = checked_type_cast< PaintEvent* >(event);
-	Canvas& canvas = paintEvent->getCanvas();
+	Canvas& canvas = event->getCanvas();
 
 	Rect innerRect = getInnerRect();
 	
@@ -127,7 +119,7 @@ void ToolTip::eventPaint(Event* event)
 	innerRect = innerRect.inflate(-c_margin, 0);
 	canvas.drawText(innerRect, getText(), AnLeft, AnCenter);
 
-	paintEvent->consume();
+	event->consume();
 }
 
 		}

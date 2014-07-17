@@ -3,10 +3,10 @@
 #include "Ui/Clipboard.h"
 #include "Ui/Command.h"
 #include "Ui/Edit.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/Custom/MiniButton.h"
 #include "Ui/Custom/PropertyList/TextPropertyItem.h"
 #include "Ui/Custom/PropertyList/PropertyList.h"
+#include "Ui/Events/ButtonClickEvent.h"
 #include "Ui/Events/FocusEvent.h"
 
 // Resources
@@ -50,14 +50,14 @@ void TextPropertyItem::createInPlaceControls(Widget* parent)
 			WsNone
 		);
 		m_editor->setVisible(false);
-		m_editor->addFocusEventHandler(createMethodHandler(this, &TextPropertyItem::eventEditFocus));
+		m_editor->addEventHandler< FocusEvent >(this, &TextPropertyItem::eventEditFocus);
 	}
 	else
 	{
 		T_ASSERT (!m_buttonEdit);
 		m_buttonEdit = new MiniButton();
 		m_buttonEdit->create(parent, ui::Bitmap::load(c_ResourceSmallPen, sizeof(c_ResourceSmallPen), L"png"));
-		m_buttonEdit->addClickEventHandler(createMethodHandler(this, &TextPropertyItem::eventClick));
+		m_buttonEdit->addEventHandler< ButtonClickEvent >(this, &TextPropertyItem::eventClick);
 	}
 }
 
@@ -103,7 +103,7 @@ void TextPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Widget
 	}
 }
 
-void TextPropertyItem::mouseButtonDown(MouseEvent* event)
+void TextPropertyItem::mouseButtonDown(MouseButtonDownEvent* event)
 {
 	if (m_editor)
 	{
@@ -148,10 +148,9 @@ bool TextPropertyItem::paste()
 		return false;
 }
 
-void TextPropertyItem::eventEditFocus(Event* event)
+void TextPropertyItem::eventEditFocus(FocusEvent* event)
 {
-	FocusEvent* f = static_cast< FocusEvent* >(event);
-	if (f->lostFocus())
+	if (event->lostFocus())
 	{
 		m_value = m_editor->getText();
 		m_editor->setVisible(false);
@@ -159,7 +158,7 @@ void TextPropertyItem::eventEditFocus(Event* event)
 	}
 }
 
-void TextPropertyItem::eventClick(Event* event)
+void TextPropertyItem::eventClick(ButtonClickEvent* event)
 {
 	notifyCommand(Command(L"Property.Edit"));
 }

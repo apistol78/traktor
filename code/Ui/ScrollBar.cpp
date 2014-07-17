@@ -1,7 +1,7 @@
-#include "Ui/ScrollBar.h"
-#include "Ui/Application.h"
-#include "Ui/Itf/IScrollBar.h"
 #include "Core/Log/Log.h"
+#include "Ui/Application.h"
+#include "Ui/ScrollBar.h"
+#include "Ui/Itf/IScrollBar.h"
 
 namespace traktor
 {
@@ -67,11 +67,6 @@ int ScrollBar::getPosition() const
 {
 	T_ASSERT (m_widget);
 	return static_cast< IScrollBar* >(m_widget)->getPosition();
-}
-
-void ScrollBar::addScrollEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiScroll, eventHandler);
 }
 
 	}

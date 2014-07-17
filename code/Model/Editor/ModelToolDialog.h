@@ -32,6 +32,7 @@ class ListBox;
 		{
 
 class ToolBarButton;
+class ToolBarButtonClickEvent;
 
 		}
 	}
@@ -41,6 +42,7 @@ class ToolBarButton;
 
 class IModelOperation;
 class Model;
+class ModelAdjacency;
 
 class ModelToolDialog : public ui::Dialog
 {
@@ -67,10 +69,12 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolNormals;
 	Ref< ui::custom::ToolBarButton > m_toolVertices;
 	Ref< ui::custom::ToolBarButton > m_toolCull;
+	Ref< ui::custom::ToolBarButton > m_toolNonSharedEdges;
 	Ref< ui::ListBox > m_modelList;
 	Ref< ui::Widget > m_renderWidget;
 	Ref< Model > m_model;
 	Ref< Model > m_modelTris;
+	Ref< ModelAdjacency > m_modelAdjacency;
 	std::wstring m_modelName;
 	float m_cameraHead;
 	float m_cameraPitch;
@@ -86,19 +90,21 @@ private:
 
 	bool applyOperation(const IModelOperation* operation);
 
-	void eventToolBarClick(ui::Event* event);
+	void eventDialogClose(ui::CloseEvent* event);
 
-	void eventModelListSelect(ui::Event* event);
+	void eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event);
 
-	void eventMouseDown(ui::Event* event);
+	void eventModelListSelect(ui::SelectionChangeEvent* event);
 
-	void eventMouseUp(ui::Event* event);
+	void eventMouseDown(ui::MouseButtonDownEvent* event);
 
-	void eventMouseMove(ui::Event* event);
+	void eventMouseUp(ui::MouseButtonUpEvent* event);
 
-	void eventRenderSize(ui::Event* event);
+	void eventMouseMove(ui::MouseMoveEvent* event);
 
-	void eventRenderPaint(ui::Event* event);
+	void eventRenderSize(ui::SizeEvent* event);
+
+	void eventRenderPaint(ui::PaintEvent* event);
 };
 
 	}

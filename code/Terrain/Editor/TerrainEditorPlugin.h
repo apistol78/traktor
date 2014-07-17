@@ -2,13 +2,20 @@
 #define traktor_terrain_TerrainEditorPlugin_H
 
 #include "Scene/Editor/ISceneEditorPlugin.h"
+#include "Ui/Events/AllEvents.h"
 
 namespace traktor
 {
+	namespace scene
+	{
+
+class ModifierChangedEvent;
+
+	}
+
 	namespace ui
 	{
 
-class Event;
 class Slider;
 class Static;
 
@@ -69,11 +76,11 @@ private:
 
 	void updateModifierState();
 
-	void eventSliderStrengthChange(ui::Event* event);
+	void eventSliderStrengthChange(ui::ContentChangeEvent* event);
 
-	void eventColorClick(ui::Event* event);
+	void eventColorClick(ui::MouseButtonUpEvent* event);
 
-	void eventModifierChanged(ui::Event* event);
+	void eventModifierChanged(scene::ModifierChangedEvent* event);
 };
 
 	}

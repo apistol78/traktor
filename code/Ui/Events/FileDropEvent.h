@@ -1,15 +1,15 @@
 #ifndef traktor_ui_FileDropEvent_H
 #define traktor_ui_FileDropEvent_H
 
-#include "Ui/Event.h"
 #include "Core/Io/Path.h"
+#include "Ui/Event.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -25,7 +25,7 @@ class T_DLLCLASS FileDropEvent : public Event
 	T_RTTI_CLASS;
 	
 public:
-	FileDropEvent(EventSubject* sender, Object* item, const std::vector< Path >& files);
+	FileDropEvent(EventSubject* sender, const std::vector< Path >& files);
 
 	const std::vector< Path >& getFiles() const;
 	

@@ -1,5 +1,5 @@
-#include "Ui/Win32/SliderWin32.h"
 #include "Ui/Slider.h"
+#include "Ui/Win32/SliderWin32.h"
 
 namespace traktor
 {
@@ -63,8 +63,8 @@ Size SliderWin32::getPreferedSize() const
 
 LRESULT SliderWin32::eventScroll(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip)
 {
-	CommandEvent cmdEvent(m_owner, 0, Command(getValue()));
-	m_owner->raiseEvent(EiContentChange, &cmdEvent);
+	ContentChangeEvent contentChangeEvent(m_owner);
+	m_owner->raiseEvent(&contentChangeEvent);
 	return TRUE;
 }
 

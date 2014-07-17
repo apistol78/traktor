@@ -2,7 +2,6 @@
 #include "Ui/Container.h"
 #include "Ui/Event.h"
 #include "Ui/FloodLayout.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/Custom/Splitter.h"
 #include "World/PostProcess/PostProcessDefineTarget.h"
 #include "World/PostProcess/PostProcessSettings.h"
@@ -68,8 +67,8 @@ bool PostProcessEditor::create(ui::Widget* parent, db::Instance* instance, ISeri
 
 	m_postProcessView = new PostProcessView();
 	m_postProcessView->create(splitterView);
-	m_postProcessView->addEventHandler(ui::EiSelectionChange, ui::createMethodHandler(this, &PostProcessEditor::eventStepSelect));
-	//m_postProcessView->addButtonUpEventHandler(ui::createMethodHandler(this, &PostProcessEditor::eventGrainButtonUp));
+	m_postProcessView->addEventHandler< ui::SelectionChangeEvent >(this, &PostProcessEditor::eventStepSelect);
+	//m_postProcessView->addEventHandler< ui::MouseButtonUpEvent >(this, &PostProcessEditor::eventGrainButtonUp));
 
 	m_postProcessDefineView = new PostProcessDefineView();
 	m_postProcessDefineView->create(splitterView);
@@ -79,7 +78,7 @@ bool PostProcessEditor::create(ui::Widget* parent, db::Instance* instance, ISeri
 
 	m_postProcessProperties = new PostProcessStepProperties(m_editor);
 	m_postProcessProperties->create(container);
-	m_postProcessProperties->addEventHandler(ui::EiUser + 1, ui::createMethodHandler(this, &PostProcessEditor::eventStepPropertiesChange));
+	m_postProcessProperties->addEventHandler< ui::ContentChangeEvent >(this, &PostProcessEditor::eventStepPropertiesChange);
 
 	// Create define facades.
 	m_postProcessDefineFacades[&type_of < PostProcessDefineTarget >()] = new PostProcessDefineTargetFacade();
@@ -180,7 +179,7 @@ void PostProcessEditor::updateViews()
 	m_postProcessDefineView->update();
 }
 
-void PostProcessEditor::eventStepSelect(ui::Event* event)
+void PostProcessEditor::eventStepSelect(ui::SelectionChangeEvent* event)
 {
 	PostProcessStepItem* item = checked_type_cast< PostProcessStepItem* >(event->getItem());
 	if (item)
@@ -189,7 +188,7 @@ void PostProcessEditor::eventStepSelect(ui::Event* event)
 		m_postProcessProperties->set(0);
 }
 
-void PostProcessEditor::eventStepPropertiesChange(ui::Event* event)
+void PostProcessEditor::eventStepPropertiesChange(ui::ContentChangeEvent* event)
 {
 	updateViews();
 }

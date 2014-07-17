@@ -1,7 +1,7 @@
-#include "Ui/Panel.h"
-#include "Ui/Application.h"
-#include "Ui/Itf/IPanel.h"
 #include "Core/Log/Log.h"
+#include "Ui/Application.h"
+#include "Ui/Panel.h"
+#include "Ui/Itf/IPanel.h"
 
 namespace traktor
 {

@@ -1,8 +1,8 @@
-#include "Ui/Custom/ToolBar/ToolBarButton.h"
-#include "Ui/Custom/ToolBar/ToolBar.h"
-#include "Ui/Canvas.h"
-#include "Ui/Events/CommandEvent.h"
 #include "Core/Math/MathUtils.h"
+#include "Ui/Canvas.h"
+#include "Ui/Custom/ToolBar/ToolBar.h"
+#include "Ui/Custom/ToolBar/ToolBarButton.h"
+#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 
 namespace traktor
 {
@@ -147,23 +147,23 @@ void ToolBarButton::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, Bit
 	}
 }
 
-bool ToolBarButton::mouseEnter(ToolBar* toolBar, MouseEvent* mouseEvent)
+bool ToolBarButton::mouseEnter(ToolBar* toolBar, MouseMoveEvent* mouseEvent)
 {
 	m_state |= BstHover;
 	return true;
 }
 
-void ToolBarButton::mouseLeave(ToolBar* toolBar, MouseEvent* mouseEvent)
+void ToolBarButton::mouseLeave(ToolBar* toolBar, MouseMoveEvent* mouseEvent)
 {
 	m_state &= ~BstHover;
 }
 
-void ToolBarButton::buttonDown(ToolBar* toolBar, MouseEvent* mouseEvent)
+void ToolBarButton::buttonDown(ToolBar* toolBar, MouseButtonDownEvent* mouseEvent)
 {
 	m_state |= BstPushed;
 }
 
-void ToolBarButton::buttonUp(ToolBar* toolBar, MouseEvent* mouseEvent)
+void ToolBarButton::buttonUp(ToolBar* toolBar, MouseButtonUpEvent* mouseEvent)
 {
 	m_state &= ~BstPushed;
 	if (m_style & BsToggle)
@@ -174,8 +174,8 @@ void ToolBarButton::buttonUp(ToolBar* toolBar, MouseEvent* mouseEvent)
 			m_state |= BstToggled;
 	}
 
-	CommandEvent cmdEvent(toolBar, this, m_command);
-	toolBar->raiseEvent(EiClick, &cmdEvent);
+	ToolBarButtonClickEvent clickEvent(toolBar, this, m_command);
+	toolBar->raiseEvent(&clickEvent);
 }
 
 		}

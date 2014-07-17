@@ -205,6 +205,9 @@ bool SteamSessionManager::update()
 		m_updateGameCountTicks = 120;
 	}
 
+	if (m_matchMaking)
+		m_matchMaking->update();
+
 	// Pump systems a couple of times; this is an experiment
 	// so see if it improves P2P networking.
 	for (int32_t i = 0; i < 8; ++i)

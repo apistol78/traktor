@@ -129,30 +129,5 @@ void TreeView::applyState(const HierarchicalState* state)
 	setVisible(visible);
 }
 
-void TreeView::addSelectEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiSelectionChange, eventHandler);
-}
-
-void TreeView::addActivateEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiActivate, eventHandler);
-}
-
-void TreeView::addEditEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiEdit, eventHandler);
-}
-
-void TreeView::addEditedEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiContentChange, eventHandler);
-}
-
-void TreeView::addDragEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiDrag, eventHandler);
-}
-
 	}
 }

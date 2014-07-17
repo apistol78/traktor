@@ -6,18 +6,15 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_CUSTOM_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
 {
 	namespace ui
 	{
-
-class Event;
-
 		namespace custom
 		{
 
@@ -36,7 +33,7 @@ public:
 	const Color4ub& getValue() const;
 
 protected:
-	virtual void mouseButtonUp(MouseEvent* event);
+	virtual void mouseButtonUp(MouseButtonUpEvent* event);
 
 	virtual void paintValue(Canvas& canvas, const Rect& rc);
 

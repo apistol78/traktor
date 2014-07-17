@@ -1,7 +1,6 @@
 #ifndef traktor_ui_MessageBox_H
 #define traktor_ui_MessageBox_H
 
-#include "Core/Object.h"
 #include "Ui/EventSubject.h"
 
 // import/export mechanism.

@@ -3,7 +3,6 @@
 #include "I18N/Text.h"
 #include "Script/Editor/ScriptProfilerView.h"
 #include "Ui/Bitmap.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/GridView/GridColumn.h"
 #include "Ui/Custom/GridView/GridItem.h"
@@ -11,7 +10,7 @@
 #include "Ui/Custom/GridView/GridView.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
-#include "Ui/Events/CommandEvent.h"
+#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 
 // Resources
 #include "Resources/Debug.h"
@@ -45,7 +44,7 @@ bool ScriptProfilerView::create(ui::Widget* parent)
 
 	m_profilerTools->addImage(ui::Bitmap::load(c_ResourceDebug, sizeof(c_ResourceDebug), L"png"), 4);
 	m_profilerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_CLEAR_PROFILE"), 1, ui::Command(L"Script.Editor.ClearProfile")));
-	m_profilerTools->addClickEventHandler(ui::createMethodHandler(this, &ScriptProfilerView::eventProfilerToolClick));
+	m_profilerTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ScriptProfilerView::eventProfilerToolClick);
 
 	m_profileGrid = new ui::custom::GridView();
 	m_profileGrid->create(this, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader);
@@ -115,10 +114,9 @@ void ScriptProfilerView::updateProfileGrid()
 	m_profileGrid->update();
 }
 
-void ScriptProfilerView::eventProfilerToolClick(ui::Event* event)
+void ScriptProfilerView::eventProfilerToolClick(ui::custom::ToolBarButtonClickEvent* event)
 {
-	const ui::CommandEvent* cmdEvent = checked_type_cast< const ui::CommandEvent* >(event);
-	handleCommand(cmdEvent->getCommand());
+	handleCommand(event->getCommand());
 }
 
 void ScriptProfilerView::callMeasured(const std::wstring& function, double timeStamp, double inclusiveDuration, double exclusiveDuration)

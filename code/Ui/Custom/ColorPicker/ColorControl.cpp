@@ -1,7 +1,5 @@
-#include "Ui/Custom/ColorPicker/ColorControl.h"
 #include "Ui/Bitmap.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/PaintEvent.h"
+#include "Ui/Custom/ColorPicker/ColorControl.h"
 
 namespace traktor
 {
@@ -24,7 +22,7 @@ bool ColorControl::create(Widget* parent, int style)
 	if (!Widget::create(parent, style))
 		return false;
 
-	addPaintEventHandler(createMethodHandler(this, &ColorControl::eventPaint));
+	addEventHandler< PaintEvent >(this, &ColorControl::eventPaint);
 
 	m_preview = new ui::Bitmap(c_width, c_height);
 	setColor(Color4ub(0, 0, 0));
@@ -57,10 +55,9 @@ Size ColorControl::getPreferedSize() const
 	return Size(c_width, c_height);
 }
 
-void ColorControl::eventPaint(Event* event)
+void ColorControl::eventPaint(PaintEvent* event)
 {
-	PaintEvent* paintEvent = checked_type_cast< PaintEvent* >(event);
-	Canvas& canvas = paintEvent->getCanvas();
+	Canvas& canvas = event->getCanvas();
 
 	canvas.drawBitmap(
 		Point(0, 0),
@@ -69,7 +66,7 @@ void ColorControl::eventPaint(Event* event)
 		m_preview
 	);
 
-	paintEvent->consume();
+	event->consume();
 }
 
 		}

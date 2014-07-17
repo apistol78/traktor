@@ -25,12 +25,13 @@ class IEditorPageSite;
 	namespace ui
 	{
 
-class Event;
+class MouseDoubleClickEvent;
 
 		namespace custom
 		{
 
 class GridView;
+class ToolBarButtonClickEvent;
 
 		}
 	}
@@ -68,9 +69,9 @@ private:
 	Ref< ui::custom::GridView > m_gridDictionary;
 	Ref< Dictionary > m_dictionary;
 
-	void eventToolClick(ui::Event* event);
+	void eventToolClick(ui::custom::ToolBarButtonClickEvent* event);
 
-	void eventGridDoubleClick(ui::Event* event);
+	void eventGridDoubleClick(ui::MouseDoubleClickEvent* event);
 };
 
 	}

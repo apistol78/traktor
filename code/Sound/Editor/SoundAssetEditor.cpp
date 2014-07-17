@@ -20,15 +20,15 @@
 #include "Sound/Editor/SoundAssetEditor.h"
 #include "Ui/Container.h"
 #include "Ui/FileDialog.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/PropertyList/ArrayPropertyItem.h"
 #include "Ui/Custom/PropertyList/BrowsePropertyItem.h"
 #include "Ui/Custom/PropertyList/FilePropertyItem.h"
 #include "Ui/Custom/PropertyList/ObjectPropertyItem.h"
+#include "Ui/Custom/PropertyList/PropertyCommandEvent.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
-#include "Ui/Events/CommandEvent.h"
+#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 
 namespace traktor
 {
@@ -53,11 +53,11 @@ bool SoundAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISeria
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(container);
 	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Play", ui::Command(L"Sound.Play")));
-	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &SoundAssetEditor::eventToolBarClick));
+	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &SoundAssetEditor::eventToolBarClick);
 
 	m_propertyList = new ui::custom::AutoPropertyList();
 	m_propertyList->create(container, ui::WsClientBorder | ui::WsDoubleBuffer | ui::custom::AutoPropertyList::WsColumnHeader, this);
-	m_propertyList->addCommandEventHandler(ui::createMethodHandler(this, &SoundAssetEditor::eventPropertyCommand));
+	m_propertyList->addEventHandler< ui::custom::PropertyCommandEvent >(this, &SoundAssetEditor::eventPropertyCommand);
 	m_propertyList->setSeparator(200);
 	m_propertyList->setColumnName(0, i18n::Text(L"PROPERTY_COLUMN_NAME"));
 	m_propertyList->setColumnName(1, i18n::Text(L"PROPERTY_COLUMN_VALUE"));
@@ -113,7 +113,7 @@ ui::Size SoundAssetEditor::getPreferredSize() const
 	return ui::Size(500, 400);
 }
 
-void SoundAssetEditor::eventToolBarClick(ui::Event* event)
+void SoundAssetEditor::eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event)
 {
 	if (!m_soundSystem)
 	{
@@ -162,10 +162,9 @@ void SoundAssetEditor::eventToolBarClick(ui::Event* event)
 	m_soundChannel->play(buffer, 0, m_asset->getVolume(), m_asset->getPresence(), m_asset->getPresenceRate());
 }
 
-void SoundAssetEditor::eventPropertyCommand(ui::Event* event)
+void SoundAssetEditor::eventPropertyCommand(ui::custom::PropertyCommandEvent* event)
 {
-	const ui::CommandEvent* cmdEvent = checked_type_cast< const ui::CommandEvent* >(event);
-	const ui::Command& cmd = cmdEvent->getCommand();
+	const ui::Command& cmd = event->getCommand();
 
 	Ref< ui::custom::FilePropertyItem > fileItem = dynamic_type_cast< ui::custom::FilePropertyItem* >(event->getItem());
 	if (fileItem)

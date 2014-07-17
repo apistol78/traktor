@@ -1,6 +1,6 @@
 #include "Ui/Cocoa/ButtonCocoa.h"
 #include "Ui/Cocoa/UtilitiesCocoa.h"
-#include "Ui/Events/CommandEvent.h"
+#include "Ui/Events/ButtonClickEvent.h"
 #include "Ui/EventSubject.h"
 
 namespace traktor
@@ -43,8 +43,8 @@ bool ButtonCocoa::getState() const
 
 void ButtonCocoa::targetProxy_Action(void* controlId)
 {
-	CommandEvent commandEvent(m_owner, 0);
-	m_owner->raiseEvent(EiClick, &commandEvent);
+	ButtonClickEvent clickEvent(m_owner);
+	m_owner->raiseEvent(&clickEvent);
 }
 
 void ButtonCocoa::targetProxy_doubleAction(void* controlId)

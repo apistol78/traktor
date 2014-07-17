@@ -5,10 +5,10 @@
 #include "Ui/Associative.h"
 #include "Ui/Canvas.h"
 #include "Ui/Enums.h"
-#include "Ui/EventHandler.h"
 #include "Ui/EventSubject.h"
 #include "Ui/Font.h"
 #include "Ui/Rect.h"
+#include "Ui/Events/AllEvents.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -165,118 +165,6 @@ public:
 	Ref< Widget > getFirstChild() const;
 	
 	Ref< Widget > getLastChild() const;
-
-	/*! \brief Link/unlink child event.
-	 *
-	 * Invoked with a ChildEvent when
-	 * a child is either linked or unlinked.
-	 */
-	void addChildEventHandler(EventHandler* eventHandler);
-
-	/*! \brief Key event.
-	 *
-	 * Invoked with a KeyEvent.
-	 */
-	void addKeyEventHandler(EventHandler* eventHandler);
-
-	/*! \brief Key down event.
-	 *
-	 * Invoked with a KeyEvent.
-	 */
-	void addKeyDownEventHandler(EventHandler* eventHandler);
-
-	/*! \brief Key up event.
-	 *
-	 * Invoked with a KeyEvent.
-	 */
-	void addKeyUpEventHandler(EventHandler* eventHandler);
-
-	/*! \brief Move event.
-	 *
-	 * Issued after the widget has been moved.
-	 * Invoked with a MoveEvent.
-	 */
-	void addMoveEventHandler(EventHandler* eventHandler);
-	
-	/*! \brief Size event.
-	 *
-	 * Issued after the widget has been resized.
-	 * Invoked with a SizeEvent.
-	 */
-	void addSizeEventHandler(EventHandler* eventHandler);
-
-	/*! \brief Show event.
-	 *
-	 * Issued when the widget has either been made visible or hidden.
-	 * Invoked with a ShowEvent.
-	 */
-	void addShowEventHandler(EventHandler* eventHandler);
-	
-	/*! \brief Mouse button down event.
-	 *
-	 * Issued when mouse button has been pressed inside the widget.
-	 * Invoked with a MouseEvent.
-	 */
-	void addButtonDownEventHandler(EventHandler* eventHandler);
-	
-	/*! \brief Mouse button up event.
-	 *
-	 * Issued when mouse button has been released inside the widget.
-	 * Invoked with a MouseEvent.
-	 */
-	void addButtonUpEventHandler(EventHandler* eventHandler);
-
-	/*! \brief Mouse button double click event.
-	 *
-	 * Issued when mouse button has been double clicked inside the widget.
-	 * Invoked with a MouseEvent.
-	 */
-	void addDoubleClickEventHandler(EventHandler* eventHandler);
-	
-	/*! \brief Mouse move event.
-	 *
-	 * Issued when mouse cursor has been moved inside the widget.
-	 * Invoked with a MouseEvent.
-	 */
-	void addMouseMoveEventHandler(EventHandler* eventHandler);
-
-	/*! \brief Mouse wheel event.
-	 *
-	 * Issued when mouse wheel has been turned inside the widget.
-	 * Invoked with a MouseEvent.
-	 */
-	void addMouseWheelEventHandler(EventHandler* eventHandler);
-
-	/*! \brief Input focus event.
-	 *
-	 * Issued when the widget has either gained to lost input focus.
-	 * Invoked with a FocusEvent.
-	 */
-	void addFocusEventHandler(EventHandler* eventHandler);
-	
-	/*! \brief Paint event.
-	 *
-	 * Issued when the widget needs repainting it's client area.
-	 * Invoked with a PaintEvent.
-	 */
-	void addPaintEventHandler(EventHandler* eventHandler);
-	
-	/*! \brief Timer event.
-	 *
-	 * Issued periodically from a user defined timer.
-	 * Invoked with a CommandEvent.
-	 */
-	void addTimerEventHandler(EventHandler* eventHandler);
-
-	/*! \brief File drop event.
-	 *
-	 * Issued when user "drops" a file into this widget.
-	 * Invoked with a FileDropEvent.
-	 *
-	 * \note
-	 * Widget must be created with WsAcceptFileDrop style.
-	 */
-	void addFileDropEventHandler(EventHandler* eventHandler);
 
 	/*! \brief Get internal widget.
 	 *

@@ -22,6 +22,7 @@ class ListBox;
 		{
 
 class AutoPropertyList;
+class ToolBarButtonClickEvent;
 
 		}
 	}
@@ -53,9 +54,9 @@ private:
 
 	void removeSound();
 
-	void eventSoundListToolClick(ui::Event* event);
+	void eventSoundListToolClick(ui::custom::ToolBarButtonClickEvent* event);
 
-	void eventSoundListSelect(ui::Event* event);
+	void eventSoundListSelect(ui::SelectionChangeEvent* event);
 };
 
 	}

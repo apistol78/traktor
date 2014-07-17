@@ -1,3 +1,4 @@
+#include "Ui/Events/SelectionChangeEvent.h"
 #include "Ui/Win32/ComboBoxWin32.h"
 
 namespace traktor
@@ -5,8 +6,8 @@ namespace traktor
 	namespace ui
 	{
 
-ComboBoxWin32::ComboBoxWin32(EventSubject* owner) :
-	WidgetWin32Impl< IComboBox >(owner)
+ComboBoxWin32::ComboBoxWin32(EventSubject* owner)
+:	WidgetWin32Impl< IComboBox >(owner)
 {
 }
 
@@ -89,8 +90,8 @@ LRESULT ComboBoxWin32::eventCommand(HWND hWnd, UINT message, WPARAM wParam, LPAR
 {
 	if (HIWORD(wParam) == CBN_SELCHANGE)
 	{
-		CommandEvent cmdEvent(m_owner, 0, Command(getSelected()));
-		m_owner->raiseEvent(EiSelectionChange, &cmdEvent);
+		SelectionChangeEvent selectionChangeEvent(m_owner);
+		m_owner->raiseEvent(&selectionChangeEvent);
 		pass = false;
 	}
 	return 0;

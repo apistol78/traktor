@@ -1,8 +1,7 @@
-#include "Ui/Widget.h"
-#include "Ui/Application.h"
-#include "Ui/Events/ChildEvent.h"
-#include "Ui/Itf/IUserWidget.h"
 #include "Core/Log/Log.h"
+#include "Ui/Application.h"
+#include "Ui/Widget.h"
+#include "Ui/Itf/IUserWidget.h"
 
 namespace traktor
 {
@@ -342,7 +341,7 @@ void Widget::link(Widget* parent)
 
 		// Invoke event on parent.
 		ChildEvent childEvent(m_parent, this, true);
-		m_parent->raiseEvent(EiChild, &childEvent);
+		m_parent->raiseEvent(&childEvent);
 	}
 }
 
@@ -365,7 +364,7 @@ void Widget::unlink()
 	if (m_parent)
 	{
 		ChildEvent childEvent(m_parent, this, false);
-		m_parent->raiseEvent(EiChild, &childEvent);
+		m_parent->raiseEvent(&childEvent);
 	}
 
 	m_parent = 0;
@@ -408,86 +407,6 @@ Ref< Widget > Widget::getFirstChild() const
 Ref< Widget > Widget::getLastChild() const
 {
 	return m_lastChild;
-}
-
-void Widget::addChildEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiChild, eventHandler);
-}
-
-void Widget::addKeyEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiKey, eventHandler);
-}
-
-void Widget::addKeyDownEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiKeyDown, eventHandler);
-}
-
-void Widget::addKeyUpEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiKeyUp, eventHandler);
-}
-
-void Widget::addMoveEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiMove, eventHandler);
-}
-
-void Widget::addSizeEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiSize, eventHandler);
-}
-
-void Widget::addShowEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiShow, eventHandler);
-}
-
-void Widget::addButtonDownEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiButtonDown, eventHandler);
-}
-
-void Widget::addButtonUpEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiButtonUp, eventHandler);
-}
-
-void Widget::addDoubleClickEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiDoubleClick, eventHandler);
-}
-
-void Widget::addMouseMoveEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiMouseMove, eventHandler);
-}
-
-void Widget::addMouseWheelEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiMouseWheel, eventHandler);
-}
-
-void Widget::addFocusEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiFocus, eventHandler);
-}
-
-void Widget::addPaintEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiPaint, eventHandler);
-}
-
-void Widget::addTimerEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiTimer, eventHandler);
-}
-
-void Widget::addFileDropEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiFileDrop, eventHandler);
 }
 
 IWidget* Widget::getIWidget() const

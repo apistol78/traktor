@@ -51,8 +51,6 @@ public:
 
 	Ref< Object > getSelectedData() const;
 
-	void addSelectEventHandler(EventHandler* eventHandler);
-
 	template < typename T >
 	Ref< T > getData(int index) const
 	{

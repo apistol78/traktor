@@ -63,17 +63,17 @@ private:
 	double m_scale;
 	int32_t m_lastMouse;
 
-	void eventButtonDown(Event* event);
+	void eventButtonDown(MouseButtonDownEvent* event);
 
-	void eventButtonUp(Event* event);
+	void eventButtonUp(MouseButtonUpEvent* event);
 
-	void eventMouseMove(Event* event);
+	void eventMouseMove(MouseMoveEvent* event);
 
-	void eventMouseWheel(Event* event);
+	void eventMouseWheel(MouseWheelEvent* event);
 
-	void eventPaint(Event* event);
+	void eventPaint(PaintEvent* event);
 
-	void eventTimer(Event* event);
+	void eventTimer(TimerEvent* event);
 };
 
 		}

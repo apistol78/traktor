@@ -18,7 +18,6 @@ namespace traktor
 	{
 
 class Edit;
-class Event;
 
 		namespace custom
 		{
@@ -44,7 +43,7 @@ protected:
 
 	virtual void resizeInPlaceControls(const Rect& rc, std::vector< WidgetRect >& outChildRects);
 
-	virtual void mouseButtonDown(MouseEvent* event);
+	virtual void mouseButtonDown(MouseButtonDownEvent* event);
 
 	virtual void paintValue(Canvas& canvas, const Rect& rc);
 
@@ -52,7 +51,7 @@ private:
 	Ref< Edit > m_editors[3];
 	Vector4 m_value;
 
-	void eventEditFocus(Event* event);
+	void eventEditFocus(FocusEvent* event);
 };
 
 		}

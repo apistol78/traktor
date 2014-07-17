@@ -1,6 +1,5 @@
 #include "Core/Thread/IWaitable.h"
 #include "Ui/Button.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/BackgroundWorkerDialog.h"
@@ -24,7 +23,7 @@ bool BackgroundWorkerDialog::create(ui::Widget* parent, const std::wstring& titl
 	if (!ui::Dialog::create(parent, title, 300, 150, style, new ui::TableLayout(L"300", L"*,*,*", 4, 4)))
 		return false;
 
-	addTimerEventHandler(createMethodHandler(this, &BackgroundWorkerDialog::eventTimer));
+	addEventHandler< TimerEvent >(this, &BackgroundWorkerDialog::eventTimer);
 
 	m_labelMessage = new Static();
 	m_labelMessage->create(this, message);
@@ -39,7 +38,7 @@ bool BackgroundWorkerDialog::create(ui::Widget* parent, const std::wstring& titl
 	{
 		m_buttonAbort = new Button();
 		m_buttonAbort->create(this, L"Abort");
-		m_buttonAbort->addClickEventHandler(createMethodHandler(this, &BackgroundWorkerDialog::eventAbortClick));
+		m_buttonAbort->addEventHandler< ButtonClickEvent >(this, &BackgroundWorkerDialog::eventAbortClick);
 	}
 
 	fit();
@@ -72,7 +71,7 @@ bool BackgroundWorkerDialog::execute(const std::vector< IWaitable* >& waitables,
 	return true;
 }
 
-void BackgroundWorkerDialog::eventAbortClick(Event* event)
+void BackgroundWorkerDialog::eventAbortClick(ButtonClickEvent* event)
 {
 	m_buttonAbort->setEnable(false);
 	
@@ -80,7 +79,7 @@ void BackgroundWorkerDialog::eventAbortClick(Event* event)
 	endModal(DrCancel);
 }
 
-void BackgroundWorkerDialog::eventTimer(Event* event)
+void BackgroundWorkerDialog::eventTimer(TimerEvent* event)
 {
 	// Check if we're are finished.
 	bool finished = true;

@@ -8,7 +8,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.IdleEvent", IdleEvent, Event)
 
 IdleEvent::IdleEvent(EventSubject* sender)
-:	Event(sender, 0)
+:	Event(sender)
 ,	m_requestMore(false)
 {
 }

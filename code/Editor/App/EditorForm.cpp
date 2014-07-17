@@ -88,13 +88,10 @@
 #include "Ui/MenuItem.h"
 #include "Ui/Tab.h"
 #include "Ui/TabPage.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/CommandEvent.h"
-#include "Ui/Events/MouseEvent.h"
-#include "Ui/Events/CloseEvent.h"
 #include "Ui/Custom/StatusBar/StatusBar.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
+#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 #include "Ui/Custom/ProgressBar.h"
 #include "Ui/Custom/InputDialog.h"
@@ -393,18 +390,18 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	setIcon(ui::Bitmap::load(c_ResourceTraktorSmall, sizeof(c_ResourceTraktorSmall), L"png"));
 
-	addCloseEventHandler(ui::createMethodHandler(this, &EditorForm::eventClose));
-	addTimerEventHandler(ui::createMethodHandler(this, &EditorForm::eventTimer));
+	addEventHandler< ui::CloseEvent >(this, &EditorForm::eventClose);
+	addEventHandler< ui::TimerEvent >(this, &EditorForm::eventTimer);
 
 	// Create shortcut table.
 	m_shortcutTable = new ui::ShortcutTable();
 	m_shortcutTable->create();
-	m_shortcutTable->addShortcutEventHandler(ui::createMethodHandler(this, &EditorForm::eventShortcut));
+	m_shortcutTable->addEventHandler< ui::ShortcutEvent >(this, &EditorForm::eventShortcut);
 
 	// Create menu bar.
 	m_menuBar = new ui::MenuBar();
 	m_menuBar->create(this);
-	m_menuBar->addClickEventHandler(ui::createMethodHandler(this, &EditorForm::eventMenuClick));
+	m_menuBar->addEventHandler< ui::MenuClickEvent >(this, &EditorForm::eventMenuClick);
 
 	m_menuItemRecent = new ui::MenuItem(i18n::Text(L"MENU_FILE_OPEN_RECENT_WORKSPACE"));
 
@@ -461,7 +458,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_BUILD"), 8, ui::Command(L"Editor.Build")));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_CANCEL_BUILD"), 10, ui::Command(L"Editor.CancelBuild")));
-	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &EditorForm::eventToolClicked));
+	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &EditorForm::eventToolClicked);
 
 	updateTitle();
 	updateMRU();
@@ -528,9 +525,9 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_tab = new ui::Tab();
 	m_tab->create(m_dock);
 	m_tab->addImage(ui::Bitmap::load(c_ResourceTypes, sizeof(c_ResourceTypes), L"png"), 23);
-	m_tab->addButtonDownEventHandler(ui::createMethodHandler(this, &EditorForm::eventTabButtonDown));
-	m_tab->addSelChangeEventHandler(ui::createMethodHandler(this, &EditorForm::eventTabSelChange));
-	m_tab->addCloseEventHandler(ui::createMethodHandler(this, &EditorForm::eventTabClose));
+	m_tab->addEventHandler< ui::MouseButtonDownEvent >(this, &EditorForm::eventTabButtonDown);
+	m_tab->addEventHandler< ui::TabSelectionChangeEvent >(this, &EditorForm::eventTabSelChange);
+	m_tab->addEventHandler< ui::TabCloseEvent >(this, &EditorForm::eventTabClose);
 
 	paneCenter->dock(m_tab, false);
 
@@ -2454,53 +2451,50 @@ bool EditorForm::handleCommand(const ui::Command& command)
 	return result;
 }
 
-void EditorForm::eventShortcut(ui::Event* event)
+void EditorForm::eventShortcut(ui::ShortcutEvent* event)
 {
-	const ui::Command& command = checked_type_cast< const ui::CommandEvent* >(event)->getCommand();
+	const ui::Command& command = event->getCommand();
 	if (handleCommand(command))
 		event->consume();
 }
 
-void EditorForm::eventMenuClick(ui::Event* event)
+void EditorForm::eventMenuClick(ui::MenuClickEvent* event)
 {
-	const ui::Command& command = checked_type_cast< const ui::MenuItem* >(event->getItem())->getCommand();
+	const ui::Command& command = event->getItem()->getCommand();
 	if (handleCommand(command))
 		event->consume();
 }
 
-void EditorForm::eventToolClicked(ui::Event* event)
+void EditorForm::eventToolClicked(ui::custom::ToolBarButtonClickEvent* event)
 {
-	const ui::Command& command = checked_type_cast< const ui::CommandEvent* >(event)->getCommand();
+	const ui::Command& command = event->getCommand();
 	if (handleCommand(command))
 		event->consume();
 }
 
-void EditorForm::eventTabButtonDown(ui::Event* event)
+void EditorForm::eventTabButtonDown(ui::MouseButtonDownEvent* event)
 {
-	Ref< ui::MouseEvent > mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
-	if (mouseEvent->getButton() == ui::MouseEvent::BtRight)
+	if (event->getButton() == ui::MbtRight)
 	{
-		if (m_tab->getPageAt(mouseEvent->getPosition()) != 0)
+		if (m_tab->getPageAt(event->getPosition()) != 0)
 		{
-			Ref< ui::MenuItem > selectedItem = m_menuTab->show(m_tab, mouseEvent->getPosition());
+			Ref< ui::MenuItem > selectedItem = m_menuTab->show(m_tab, event->getPosition());
 			if (selectedItem)
 				handleCommand(selectedItem->getCommand());
 		}
 	}
 }
 
-void EditorForm::eventTabSelChange(ui::Event* event)
+void EditorForm::eventTabSelChange(ui::TabSelectionChangeEvent* event)
 {
-	Ref< ui::CommandEvent > commandEvent = checked_type_cast< ui::CommandEvent* >(event);
-	Ref< ui::TabPage > tabPage = checked_type_cast< ui::TabPage* >(commandEvent->getItem());
+	Ref< ui::TabPage > tabPage = event->getTabPage();
 	Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
 	setActiveEditorPage(editorPage);
 }
 
-void EditorForm::eventTabClose(ui::Event* event)
+void EditorForm::eventTabClose(ui::TabCloseEvent* event)
 {
-	Ref< ui::CloseEvent > closeEvent = checked_type_cast< ui::CloseEvent* >(event);
-	Ref< ui::TabPage > tabPage = checked_type_cast< ui::TabPage* >(closeEvent->getItem());
+	Ref< ui::TabPage > tabPage = event->getTabPage();
 
 	// Ask user when trying to close an editor which contains unsaved data.
 	if (currentModified())
@@ -2513,8 +2507,8 @@ void EditorForm::eventTabClose(ui::Event* event)
 		);
 		if (result == ui::DrNo)
 		{
-			closeEvent->consume();
-			closeEvent->cancel();
+			event->consume();
+			event->cancel();
 			return;
 		}
 	}
@@ -2555,10 +2549,8 @@ void EditorForm::eventTabClose(ui::Event* event)
 	m_tab->update();
 }
 
-void EditorForm::eventClose(ui::Event* event)
+void EditorForm::eventClose(ui::CloseEvent* event)
 {
-	ui::CloseEvent* closeEvent = checked_type_cast< ui::CloseEvent* >(event);
-
 	if (anyModified())
 	{
 		int result = ui::MessageBox::show(
@@ -2569,8 +2561,8 @@ void EditorForm::eventClose(ui::Event* event)
 		);
 		if (result == ui::DrNo)
 		{
-			closeEvent->consume();
-			closeEvent->cancel();
+			event->consume();
+			event->cancel();
 			return;
 		}
 	}
@@ -2619,7 +2611,7 @@ void EditorForm::eventClose(ui::Event* event)
 	ui::Application::getInstance()->exit(0);
 }
 
-void EditorForm::eventTimer(ui::Event* /*event*/)
+void EditorForm::eventTimer(ui::TimerEvent* /*event*/)
 {
 	Ref< const db::IEvent > event;
 	bool remote;

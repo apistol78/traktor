@@ -7,7 +7,6 @@
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
 #include "Ui/Widget.h"
-#include "Ui/Events/MouseEvent.h"
 
 namespace traktor
 {
@@ -18,11 +17,11 @@ namespace traktor
 
 int32_t translateMouseButton(int32_t uimb)
 {
-	if (uimb == ui::MouseEvent::BtLeft)
+	if (uimb == ui::MbtLeft)
 		return 1;
-	else if (uimb == ui::MouseEvent::BtRight)
+	else if (uimb == ui::MbtRight)
 		return 2;
-	else if (uimb == (ui::MouseEvent::BtLeft | ui::MouseEvent::BtRight) || uimb == ui::MouseEvent::BtMiddle)
+	else if (uimb == (ui::MbtLeft | ui::MbtRight) || uimb == ui::MbtMiddle)
 		return 3;
 	else
 		return 0;
@@ -41,13 +40,11 @@ RenderControlModel::RenderControlModel()
 {
 }
 
-void RenderControlModel::eventButtonDown(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::Event* event, SceneEditorContext* context, const TransformChain& transformChain)
+void RenderControlModel::eventButtonDown(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::MouseButtonDownEvent* event, SceneEditorContext* context, const TransformChain& transformChain)
 {
-	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent*, false >(event);
-
 	m_mousePosition0 =
-	m_mousePosition = mouseEvent->getPosition();
-	m_mouseButton = translateMouseButton(mouseEvent->getButton());
+	m_mousePosition = event->getPosition();
+	m_mouseButton = translateMouseButton(event->getButton());
 
 	m_modify = MtNothing;
 	m_modifyAlternative = false;
@@ -59,11 +56,11 @@ void RenderControlModel::eventButtonDown(ISceneRenderControl* renderControl, ui:
 	ui::Rect innerRect = renderWidget->getInnerRect();
 	Vector2 screenPosition(2.0f * float(m_mousePosition.x) / innerRect.getWidth() - 1.0f, 1.0f - 2.0f * float(m_mousePosition.y) / innerRect.getHeight());
 
-	if ((mouseEvent->getKeyState() & ui::KsMenu) != 0)
+	if ((event->getKeyState() & ui::KsMenu) != 0)
 		m_modify = MtCamera;
-	if ((mouseEvent->getKeyState() & ui::KsControl) != 0)
+	if ((event->getKeyState() & ui::KsControl) != 0)
 		m_modifyAlternative = true;
-	if ((mouseEvent->getKeyState() & (ui::KsControl | ui::KsShift)) == (ui::KsControl | ui::KsShift))
+	if ((event->getKeyState() & (ui::KsControl | ui::KsShift)) == (ui::KsControl | ui::KsShift))
 		m_modifyClone = true;
 
 	if (m_modify != MtCamera)
@@ -119,7 +116,7 @@ void RenderControlModel::eventButtonDown(ISceneRenderControl* renderControl, ui:
 	renderWidget->update();
 }
 
-void RenderControlModel::eventButtonUp(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::Event* event, SceneEditorContext* context, const TransformChain& transformChain)
+void RenderControlModel::eventButtonUp(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::MouseButtonUpEvent* event, SceneEditorContext* context, const TransformChain& transformChain)
 {
 	if (m_modify == MtModifier && m_modifyBegun)
 	{
@@ -155,7 +152,7 @@ void RenderControlModel::eventButtonUp(ISceneRenderControl* renderControl, ui::W
 						context->selectEntity(*i, false);
 				}
 
-				context->raiseSelect(this);
+				context->raiseSelect();
 			}
 		}
 		else
@@ -178,7 +175,7 @@ void RenderControlModel::eventButtonUp(ISceneRenderControl* renderControl, ui::W
 					else
 						context->selectEntity(entityAdapter, !entityAdapter->isSelected());
 
-					context->raiseSelect(this);
+					context->raiseSelect();
 				}
 			}
 		}
@@ -201,14 +198,13 @@ void RenderControlModel::eventButtonUp(ISceneRenderControl* renderControl, ui::W
 	renderWidget->update();
 }
 
-void RenderControlModel::eventDoubleClick(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::Event* event, SceneEditorContext* context, const TransformChain& transformChain)
+void RenderControlModel::eventDoubleClick(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::MouseDoubleClickEvent* event, SceneEditorContext* context, const TransformChain& transformChain)
 {
-	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent*, false >(event);
-	ui::Point mousePosition = mouseEvent->getPosition();
+	ui::Point mousePosition = event->getPosition();
 
-	if (mouseEvent->getButton() != ui::MouseEvent::BtLeft)
+	if (event->getButton() != ui::MbtLeft)
 		return;
-	if ((mouseEvent->getKeyState() & (ui::KsShift | ui::KsControl)) != 0)
+	if ((event->getKeyState() & (ui::KsShift | ui::KsControl)) != 0)
 		return;
 	
 	Vector4 worldRayOrigin, worldRayDirection;
@@ -229,10 +225,9 @@ void RenderControlModel::eventDoubleClick(ISceneRenderControl* renderControl, ui
 	renderWidget->update();
 }
 
-void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::Event* event, SceneEditorContext* context, const TransformChain& transformChain)
+void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::MouseMoveEvent* event, SceneEditorContext* context, const TransformChain& transformChain)
 {
-	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent*, false >(event);
-	ui::Point mousePosition = mouseEvent->getPosition();
+	ui::Point mousePosition = event->getPosition();
 
 	Vector4 mouseDelta(
 		float(m_mousePosition.x - mousePosition.x),

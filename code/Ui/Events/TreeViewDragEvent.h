@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -35,6 +35,8 @@ public:
 
 	TreeViewDragEvent(EventSubject* sender, TreeViewItem* dragItem, DragMoment moment, const Point& position = Point(0, 0));
 
+	TreeViewItem* getItem() const;
+
 	DragMoment getMoment() const;
 
 	const Point& getPosition() const;
@@ -44,6 +46,7 @@ public:
 	bool cancelled() const;
 
 private:
+	Ref< TreeViewItem > m_dragItem;
 	DragMoment m_moment;
 	Point m_position;
 	bool m_cancelled;

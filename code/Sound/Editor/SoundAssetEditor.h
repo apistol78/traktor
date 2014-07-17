@@ -25,7 +25,9 @@ class IEditor;
 		namespace custom
 		{
 
+class PropertyCommandEvent;
 class ToolBar;
+class ToolBarButtonClickEvent;
 
 		}
 	}
@@ -67,9 +69,9 @@ private:
 	Ref< SoundSystem > m_soundSystem;
 	Ref< SoundChannel > m_soundChannel;
 
-	void eventToolBarClick(ui::Event* event);
+	void eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event);
 
-	void eventPropertyCommand(ui::Event* event);
+	void eventPropertyCommand(ui::custom::PropertyCommandEvent* event);
 
 	virtual bool resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const;
 };

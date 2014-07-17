@@ -6,11 +6,9 @@
 #include "I18N/Text.h"
 #include "Ui/Edit.h"
 #include "Ui/FloodLayout.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/NumericEditValidator.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Events/CommandEvent.h"
 
 namespace traktor
 {

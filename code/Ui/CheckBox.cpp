@@ -43,10 +43,5 @@ bool CheckBox::isChecked() const
 	return static_cast< ICheckBox* >(m_widget)->isChecked();
 }
 
-void CheckBox::addClickEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiClick, eventHandler);
-}
-
 	}
 }

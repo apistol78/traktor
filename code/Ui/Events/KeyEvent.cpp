@@ -9,12 +9,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.KeyEvent", KeyEvent, Event)
 
 KeyEvent::KeyEvent(
 	EventSubject* sender,
-	Object* item,
 	VirtualKey virtualKey,
 	uint32_t systemKey,
 	wchar_t character
 )
-:	Event(sender, item)
+:	Event(sender)
 ,	m_virtualKey(virtualKey)
 ,	m_systemKey(systemKey)
 ,	m_character(character)

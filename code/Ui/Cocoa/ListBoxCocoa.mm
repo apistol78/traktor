@@ -1,7 +1,7 @@
+#include "Ui/EventSubject.h"
 #include "Ui/Cocoa/ListBoxCocoa.h"
 #include "Ui/Cocoa/UtilitiesCocoa.h"
-#include "Ui/Events/MouseEvent.h"
-#include "Ui/EventSubject.h"
+#include "Ui/Events/MouseDoubleClickEvent.h"
 
 namespace traktor
 {
@@ -126,13 +126,12 @@ void ListBoxCocoa::targetProxy_doubleAction(void* controlId)
 	NSPoint mousePosition = [window mouseLocationOutsideOfEventStream];
 	mousePosition = [m_control convertPointFromBase: mousePosition];
 
-	MouseEvent mouseEvent(
+	MouseDoubleClickEvent mouseEvent(
 		m_owner,
-		0,
-		MouseEvent::BtLeft,
+		MbtLeft,
 		fromNSPoint(mousePosition)
 	);
-	m_owner->raiseEvent(EiDoubleClick, &mouseEvent);
+	m_owner->raiseEvent(&mouseEvent);
 }
 
 	}

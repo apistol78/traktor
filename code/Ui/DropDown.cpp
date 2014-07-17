@@ -1,7 +1,7 @@
-#include "Ui/DropDown.h"
-#include "Ui/Application.h"
-#include "Ui/Itf/IDropDown.h"
 #include "Core/Log/Log.h"
+#include "Ui/Application.h"
+#include "Ui/DropDown.h"
+#include "Ui/Itf/IDropDown.h"
 
 namespace traktor
 {
@@ -116,11 +116,6 @@ Ref< Object > DropDown::getSelectedData() const
 	T_ASSERT (m_widget);
 	int index = getSelected();
 	return index >= 0 ? getData(index) : 0;
-}
-
-void DropDown::addSelectEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiSelectionChange, eventHandler);
 }
 
 	}

@@ -128,39 +128,12 @@ enum KeyStates
 	KsAll		= (KsControl | KsMenu | KsShift | KsCommand)
 };
 
-enum EventId
+enum MouseButtons
 {
-	EiChild,
-	EiKey,
-	EiKeyDown,
-	EiKeyUp,
-	EiMove,
-	EiSize,
-	EiShow,
-	EiButtonDown,
-	EiButtonUp,
-	EiClick,
-	EiDoubleClick,
-	EiMouseMove,
-	EiMouseWheel,
-	EiFocus,
-	EiPaint,
-	EiTimer,
-	EiSelectionChange,
-	EiClose,
-	EiActivate,
-	EiScroll,
-	EiContentChange,
-	EiCommand,
-	EiColumnClick,
-	EiNcButtonDown,
-	EiNcButtonUp,
-	EiNcDoubleClick,
-	EiNcMouseMove,
-	EiNcMouseWheel,
-	EiFileDrop,
-	EiIdle,
-	EiUser
+	MbtNone		= 0,
+	MbtLeft		= 1,
+	MbtMiddle	= 2,
+	MbtRight	= 4
 };
 
 /*! \brief Virtual key codes.

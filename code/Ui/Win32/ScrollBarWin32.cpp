@@ -1,7 +1,6 @@
-#include "Ui/Win32/ScrollBarWin32.h"
-#include "Ui/ScrollBar.h"
-#include "Ui/Events/ScrollEvent.h"
 #include "Core/Log/Log.h"
+#include "Ui/ScrollBar.h"
+#include "Ui/Win32/ScrollBarWin32.h"
 
 namespace traktor
 {
@@ -157,8 +156,8 @@ LRESULT ScrollBarWin32::eventScroll(HWND hWnd, UINT message, WPARAM wParam, LPAR
 
 	SetScrollPos(m_hWnd, SB_CTL, si.nPos, TRUE);
 
-	ScrollEvent scrollEvent(m_owner, 0, si.nPos);
-	m_owner->raiseEvent(EiScroll, &scrollEvent);
+	ScrollEvent scrollEvent(m_owner, si.nPos);
+	m_owner->raiseEvent(&scrollEvent);
 
 	pass = false;
 	return 0;

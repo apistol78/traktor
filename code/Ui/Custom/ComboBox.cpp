@@ -3,8 +3,6 @@
 #include "Ui/Edit.h"
 #include "Ui/ListBox.h"
 #include "Ui/Command.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/SizeEvent.h"
 
 namespace traktor
 {
@@ -30,7 +28,7 @@ bool ComboBox::create(Widget* parent, const std::wstring& text, int style)
 	m_listBox->create(this);
 	//m_listBox->setVisible(false);
 
-	addSizeEventHandler(createMethodHandler(this, &ComboBox::eventSize));
+	addEventHandler< SizeEvent >(this, &ComboBox::eventSize);
 
 	return true;
 }
@@ -74,11 +72,9 @@ std::wstring ComboBox::getSelectedItem() const
 	return std::wstring();
 }
 
-void ComboBox::eventSize(Event* event)
+void ComboBox::eventSize(SizeEvent* event)
 {
-	SizeEvent* s = static_cast< SizeEvent* >(event);
-	Size sz = s->getSize();
-
+	Size sz = event->getSize();
 	m_edit->setRect(Rect(Point(0, 0), Size(sz.cx - 16, 16)));
 	m_buttonArrow->setRect(Rect(Point(sz.cx - 16, 0), Size(16, 16)));
 	m_listBox->setRect(Rect(Point(0, 16), Size(sz.cx, sz.cy - 16)));

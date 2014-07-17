@@ -49,6 +49,8 @@ class T_DLLCLASS StageData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	StageData();
+
 	virtual Ref< Stage > createInstance(amalgam::IEnvironment* environment, const Object* params) const;
 
 	virtual void serialize(ISerializer& s);
@@ -61,6 +63,7 @@ private:
 	RefArray< LayerData > m_layers;
 	resource::Id< script::IScriptContext > m_script;
 	resource::Id< render::Shader > m_shaderFade;
+	float m_fadeRate;
 	std::map< std::wstring, Guid > m_transitions;
 	Guid m_resourceBundle;
 };

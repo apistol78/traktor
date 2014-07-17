@@ -1,12 +1,7 @@
 #include <algorithm>
 #include "Ui/Custom/Tab/Tab.h"
 #include "Ui/Custom/Tab/TabPage.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/MouseEvent.h"
-#include "Ui/Events/SizeEvent.h"
-#include "Ui/Events/PaintEvent.h"
-#include "Ui/Events/CommandEvent.h"
-#include "Ui/Events/CloseEvent.h"
+#include "Ui/Custom/Tab/TabSelectionChangeEvent.h"
 
 namespace traktor
 {
@@ -30,9 +25,9 @@ bool Tab::create(Widget* parent)
 	if (!Widget::create(parent, ui::WsDoubleBuffer))
 		return false;
 
-	addButtonDownEventHandler(createMethodHandler(this, &Tab::eventButtonDown));
-	addSizeEventHandler(createMethodHandler(this, &Tab::eventSize));
-	addPaintEventHandler(createMethodHandler(this, &Tab::eventPaint));
+	addEventHandler< MouseButtonDownEvent >(this, &Tab::eventButtonDown);
+	addEventHandler< SizeEvent >(this, &Tab::eventSize);
+	addEventHandler< PaintEvent >(this, &Tab::eventPaint);
 	
 	m_fontBold = getFont();
 	m_fontBold.setBold(true);
@@ -115,20 +110,9 @@ Ref< TabPage > Tab::getActivePage()
 	return m_selectedPage;
 }
 
-void Tab::addSelChangeEventHandler(EventHandler* eventHandler)
+void Tab::eventButtonDown(MouseButtonDownEvent* event)
 {
-	addEventHandler(EiSelectionChange, eventHandler);
-}
-
-void Tab::addCloseEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiClose, eventHandler);
-}
-
-void Tab::eventButtonDown(Event* event)
-{
-	MouseEvent* mouseEvent = static_cast< MouseEvent* >(event);
-	Point pnt = mouseEvent->getPosition();
+	Point pnt = event->getPosition();
 	
 	Rect rcTab = Widget::getInnerRect().inflate(-c_borderSize, -c_borderSize);
 
@@ -155,15 +139,15 @@ void Tab::eventButtonDown(Event* event)
 		m_selectedPage = selectPage;
 		m_selectedPage->setVisible(true);
 		
-		CommandEvent cmdEvent(this, m_selectedPage);
-		raiseEvent(EiSelectionChange, &cmdEvent);
+		TabSelectionChangeEvent selectionChangeEvent(this, m_selectedPage);
+		raiseEvent(&selectionChangeEvent);
 	}
 
 	event->consume();
 	update();
 }
 
-void Tab::eventSize(Event* event)
+void Tab::eventSize(SizeEvent* event)
 {
 	m_innerRect = Widget::getInnerRect().inflate(-c_borderSize, -c_borderSize);
 	
@@ -178,11 +162,9 @@ void Tab::eventSize(Event* event)
 	event->consume();
 }
 
-void Tab::eventPaint(Event* event)
+void Tab::eventPaint(PaintEvent* event)
 {
-	PaintEvent* paintEvent = checked_type_cast< PaintEvent* >(event);
-	
-	Canvas& canvas = paintEvent->getCanvas();
+	Canvas& canvas = event->getCanvas();
 	Rect rcInner = Widget::getInnerRect();
 
 	canvas.setBackground(Color4ub(196, 194, 195));
@@ -300,7 +282,7 @@ void Tab::eventPaint(Event* event)
 		)
 	);
 	
-	paintEvent->consume();
+	event->consume();
 }
 
 void Tab::drawClose(Canvas& canvas, int x, int y)

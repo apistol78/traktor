@@ -4,6 +4,7 @@
 #include "Core/Timer/Timer.h"
 #include "Editor/IEditorPage.h"
 #include "Resource/Proxy.h"
+#include "Ui/EventSubject.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -43,8 +44,9 @@ class IResourceManager;
 	namespace ui
 	{
 
-class Event;
-class EventHandler;
+class IdleEvent;
+class PaintEvent;
+class SizeEvent;
 class Widget;
 
 	}
@@ -83,8 +85,8 @@ private:
 	editor::IEditor* m_editor;
 	editor::IEditorPageSite* m_site;
 	editor::IDocument* m_document;
+	Ref< ui::EventSubject::IEventHandler > m_idleEventHandler;
 	Ref< ui::Widget > m_renderWidget;
-	Ref< ui::EventHandler > m_idleHandler;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::ScreenRenderer > m_screenRenderer;
@@ -92,11 +94,11 @@ private:
 	Ref< Video > m_video;
 	Timer m_timer;
 
-	void eventSize(ui::Event* event);
+	void eventSize(ui::SizeEvent* event);
 
-	void eventPaint(ui::Event* event);
+	void eventPaint(ui::PaintEvent* event);
 
-	void eventIdle(ui::Event* event);
+	void eventIdle(ui::IdleEvent* event);
 };
 
 	}

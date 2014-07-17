@@ -95,8 +95,8 @@ Size ScrollBarCocoa::getPreferedSize() const
 
 void ScrollBarCocoa::callbackAction(void* controldId)
 {
-	ScrollEvent scrollEvent(m_owner, 0, getPosition());
-	m_owner->raiseEvent(EiScroll, &scrollEvent);
+	ScrollEvent scrollEvent(m_owner, getPosition());
+	m_owner->raiseEvent(&scrollEvent);
 }
 	
 	}

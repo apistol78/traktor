@@ -13,12 +13,11 @@
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
 #include "Ui/MenuItem.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/PopupMenu.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Events/CommandEvent.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
+#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/Custom/ToolBar/ToolBarDropDown.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 
@@ -159,7 +158,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolBar->addItem(m_toolShadows);
 	m_toolBar->addItem(m_toolAO);
 	m_toolBar->addItem(m_toolAA);
-	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &DefaultRenderControl::eventToolClick));
+	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &DefaultRenderControl::eventToolClick);
 
 	createRenderControl(viewType);
 
@@ -361,37 +360,36 @@ void DefaultRenderControl::createRenderControl(int32_t type)
 	m_context->getEditor()->commitGlobalSettings();
 }
 
-void DefaultRenderControl::eventToolClick(ui::Event* event)
+void DefaultRenderControl::eventToolClick(ui::custom::ToolBarButtonClickEvent* event)
 {
-	ui::CommandEvent* cmdEvent = checked_type_cast< ui::CommandEvent*, false >(event);
-	if (cmdEvent->getCommand() == L"Scene.Editor.View")
+	if (event->getCommand() == L"Scene.Editor.View")
 	{
 		int32_t selected = m_toolView->getSelected();
 		T_ASSERT (selected >= 0);
 		createRenderControl(selected);
 	}
-	else if (cmdEvent->getCommand() == L"Scene.Editor.ToggleGrid")
+	else if (event->getCommand() == L"Scene.Editor.ToggleGrid")
 	{
 		if (m_toolToggleGrid->isToggled())
 			m_renderControl->handleCommand(ui::Command(L"Scene.Editor.EnableGrid"));
 		else
 			m_renderControl->handleCommand(ui::Command(L"Scene.Editor.DisableGrid"));
 	}
-	else if (cmdEvent->getCommand() == L"Scene.Editor.ToggleGuide")
+	else if (event->getCommand() == L"Scene.Editor.ToggleGuide")
 	{
 		if (m_toolToggleGuide->isToggled())
 			m_renderControl->handleCommand(ui::Command(L"Scene.Editor.EnableGuide"));
 		else
 			m_renderControl->handleCommand(ui::Command(L"Scene.Editor.DisableGuide"));
 	}
-	else if (cmdEvent->getCommand() == L"Scene.Editor.TogglePostProcess")
+	else if (event->getCommand() == L"Scene.Editor.TogglePostProcess")
 	{
 		if (m_toolTogglePostProcess->isToggled())
 			m_renderControl->handleCommand(ui::Command(L"Scene.Editor.EnablePostProcess"));
 		else
 			m_renderControl->handleCommand(ui::Command(L"Scene.Editor.DisablePostProcess"));
 	}
-	else if (cmdEvent->getCommand() == L"Scene.Editor.ToggleFollowEntity")
+	else if (event->getCommand() == L"Scene.Editor.ToggleFollowEntity")
 	{
 		Ref< Camera > camera = m_context->getCamera(m_cameraId);
 		if (m_toolToggleFollowEntity->isToggled())
@@ -403,7 +401,7 @@ void DefaultRenderControl::eventToolClick(ui::Event* event)
 		else
 			camera->setFollowEntity(0);
 	}
-	else if (cmdEvent->getCommand() == L"Scene.Editor.ToggleLookAtEntity")
+	else if (event->getCommand() == L"Scene.Editor.ToggleLookAtEntity")
 	{
 		Ref< Camera > camera = m_context->getCamera(m_cameraId);
 		if (m_toolToggleFollowEntity->isToggled())
@@ -415,7 +413,7 @@ void DefaultRenderControl::eventToolClick(ui::Event* event)
 		else
 			camera->setLookAtEntity(0);
 	}
-	else if (cmdEvent->getCommand() == L"Scene.Editor.Aspect")
+	else if (event->getCommand() == L"Scene.Editor.Aspect")
 	{
 		const float c_aspects[] =
 		{
@@ -431,9 +429,9 @@ void DefaultRenderControl::eventToolClick(ui::Event* event)
 		m_renderControl->setAspect(c_aspects[m_toolAspect->getSelected()]);
 	}
 	else if (
-		cmdEvent->getCommand() == L"Scene.Editor.ShadowQuality" ||
-		cmdEvent->getCommand() == L"Scene.Editor.AmbientOcclusionQuality" ||
-		cmdEvent->getCommand() == L"Scene.Editor.AntiAliasQuality"
+		event->getCommand() == L"Scene.Editor.ShadowQuality" ||
+		event->getCommand() == L"Scene.Editor.AmbientOcclusionQuality" ||
+		event->getCommand() == L"Scene.Editor.AntiAliasQuality"
 	)
 	{
 		m_renderControl->setQuality(

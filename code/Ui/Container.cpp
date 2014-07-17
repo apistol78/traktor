@@ -1,9 +1,8 @@
+#include "Core/Log/Log.h"
 #include "Ui/Container.h"
 #include "Ui/Application.h"
-#include "Ui/Itf/IContainer.h"
 #include "Ui/Layout.h"
-#include "Ui/MethodHandler.h"
-#include "Core/Log/Log.h"
+#include "Ui/Itf/IContainer.h"
 
 namespace traktor
 {
@@ -34,7 +33,7 @@ bool Container::create(Widget* parent, int style, Layout* layout)
 		m_widget = container;
 	}
 
-	addSizeEventHandler(createMethodHandler(this, &Container::eventSize));
+	addEventHandler< SizeEvent >(this, &Container::eventSize);
 	
 	return Widget::create(parent);
 }
@@ -112,7 +111,7 @@ void Container::setLayout(Layout* layout)
 	m_layout = layout;
 }
 
-void Container::eventSize(Event* event)
+void Container::eventSize(SizeEvent* event)
 {
 	update(0, false);
 }

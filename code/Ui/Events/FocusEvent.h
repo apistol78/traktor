@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -24,7 +24,7 @@ class T_DLLCLASS FocusEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	FocusEvent(EventSubject* sender, Object* item, bool gotFocus);
+	FocusEvent(EventSubject* sender, bool gotFocus);
 
 	bool gotFocus() const;
 

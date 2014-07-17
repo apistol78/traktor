@@ -5,11 +5,11 @@
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/CommandEvent.h"
 #include "Ui/Custom/PropertyList/ArrayPropertyItem.h"
 #include "Ui/Custom/PropertyList/BrowsePropertyItem.h"
 #include "Ui/Custom/PropertyList/ObjectPropertyItem.h"
+#include "Ui/Custom/PropertyList/PropertyCommandEvent.h"
+#include "Ui/Custom/PropertyList/PropertyContentChangeEvent.h"
 #include "World/PostProcess/PostProcessStep.h"
 #include "World/Editor/PostProcess/PostProcessStepProperties.h"
 
@@ -29,8 +29,8 @@ bool PostProcessStepProperties::create(ui::Widget* parent)
 {
 	m_propertyList = new ui::custom::AutoPropertyList();
 	m_propertyList->create(parent, ui::WsDoubleBuffer | ui::custom::AutoPropertyList::WsColumnHeader, this);
-	m_propertyList->addCommandEventHandler(ui::createMethodHandler(this, &PostProcessStepProperties::eventPropertyCommand));
-	m_propertyList->addChangeEventHandler(ui::createMethodHandler(this, &PostProcessStepProperties::eventPropertyChange));
+	m_propertyList->addEventHandler< ui::custom::PropertyCommandEvent >(this, &PostProcessStepProperties::eventPropertyCommand);
+	m_propertyList->addEventHandler< ui::custom::PropertyContentChangeEvent >(this, &PostProcessStepProperties::eventPropertyChange);
 	m_propertyList->setSeparator(200);
 	m_propertyList->setColumnName(0, i18n::Text(L"PROPERTY_COLUMN_NAME"));
 	m_propertyList->setColumnName(1, i18n::Text(L"PROPERTY_COLUMN_VALUE"));
@@ -57,10 +57,9 @@ bool PostProcessStepProperties::resolvePropertyGuid(const Guid& guid, std::wstri
 	return true;
 }
 
-void PostProcessStepProperties::eventPropertyCommand(ui::Event* event)
+void PostProcessStepProperties::eventPropertyCommand(ui::custom::PropertyCommandEvent* event)
 {
-	const ui::CommandEvent* cmdEvent = checked_type_cast< const ui::CommandEvent* >(event);
-	const ui::Command& cmd = cmdEvent->getCommand();
+	const ui::Command& cmd = event->getCommand();
 
 	Ref< ui::custom::BrowsePropertyItem > browseItem = dynamic_type_cast< ui::custom::BrowsePropertyItem* >(event->getItem());
 	if (browseItem)
@@ -84,14 +83,18 @@ void PostProcessStepProperties::eventPropertyCommand(ui::Event* event)
 				{
 					browseItem->setValue(instance->getGuid());
 					m_propertyList->apply();
-					raiseEvent(ui::EiUser + 1, 0);
+
+					ui::ContentChangeEvent contentChangeEvent(this);
+					raiseEvent(&contentChangeEvent);
 				}
 			}
 			else
 			{
 				browseItem->setValue(Guid());
 				m_propertyList->apply();
-				raiseEvent(ui::EiUser + 1, 0);
+
+				ui::ContentChangeEvent contentChangeEvent(this);
+				raiseEvent(&contentChangeEvent);
 			}
 		}
 		else if (cmd == L"Property.Edit")
@@ -128,7 +131,8 @@ void PostProcessStepProperties::eventPropertyCommand(ui::Event* event)
 					m_propertyList->refresh(objectItem, object);
 					m_propertyList->apply();
 
-					raiseEvent(ui::EiUser + 1, 0);
+					ui::ContentChangeEvent contentChangeEvent(this);
+					raiseEvent(&contentChangeEvent);
 				}
 			}
 		}
@@ -142,7 +146,8 @@ void PostProcessStepProperties::eventPropertyCommand(ui::Event* event)
 			m_propertyList->refresh(objectItem, 0);
 			m_propertyList->apply();
 
-			raiseEvent(ui::EiUser + 1, 0);
+			ui::ContentChangeEvent contentChangeEvent(this);
+			raiseEvent(&contentChangeEvent);
 		}
 	}
 
@@ -160,7 +165,9 @@ void PostProcessStepProperties::eventPropertyCommand(ui::Event* event)
 					m_propertyList->addObject(arrayItem, object);
 					m_propertyList->apply();
 					m_propertyList->refresh();
-					raiseEvent(ui::EiUser + 1, 0);
+
+					ui::ContentChangeEvent contentChangeEvent(this);
+					raiseEvent(&contentChangeEvent);
 				}
 			}
 		}
@@ -168,17 +175,21 @@ void PostProcessStepProperties::eventPropertyCommand(ui::Event* event)
 		{
 			m_propertyList->apply();
 			m_propertyList->refresh();
-			raiseEvent(ui::EiUser + 1, 0);
+
+			ui::ContentChangeEvent contentChangeEvent(this);
+			raiseEvent(&contentChangeEvent);
 		}
 	}
 
 	m_propertyList->update();
 }
 
-void PostProcessStepProperties::eventPropertyChange(ui::Event* event)
+void PostProcessStepProperties::eventPropertyChange(ui::custom::PropertyContentChangeEvent* event)
 {
-	raiseEvent(ui::EiUser + 1, 0);
 	m_propertyList->apply();
+
+	ui::ContentChangeEvent contentChangeEvent(this);
+	raiseEvent(&contentChangeEvent);
 }
 
 	}

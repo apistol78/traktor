@@ -35,8 +35,6 @@ public:
 	void setState(bool state);
 
 	bool getState() const;
-	
-	void addClickEventHandler(EventHandler* eventHandler);
 };
 
 	}

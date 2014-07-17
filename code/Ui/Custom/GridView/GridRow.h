@@ -77,9 +77,9 @@ public:
 
 	virtual void placeCells(AutoWidget* widget, const Rect& rect);
 
-	virtual void mouseDown(AutoWidget* widget, const Point& position);
+	virtual void mouseDown(const Point& position);
 
-	virtual void paint(AutoWidget* widget, Canvas& canvas, const Rect& rect);
+	virtual void paint(Canvas& canvas, const Rect& rect);
 
 	virtual int32_t getHeight() const;
 

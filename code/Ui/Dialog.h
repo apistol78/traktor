@@ -23,6 +23,8 @@ class Image;
 	namespace ui
 	{
 
+class ChildEvent;
+
 /*! \brief Dialog
  * \ingroup UI
  */
@@ -50,15 +52,13 @@ public:
 	virtual void endModal(int result);
 
 	bool isModal() const;
-	
-	void addCloseEventHandler(EventHandler* eventHandler);
 
 	virtual bool acceptLayout() const;
 
 private:
 	bool m_modal;
 
-	void eventChild(Event* event);
+	void eventChild(ChildEvent* event);
 };
 
 	}

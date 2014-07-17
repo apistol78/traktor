@@ -94,11 +94,6 @@ bool RichEdit::undo()
 	return static_cast< IRichEdit* >(m_widget)->undo();
 }
 
-void RichEdit::addChangeEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiContentChange, eventHandler);
-}
-
 	}
 }
 

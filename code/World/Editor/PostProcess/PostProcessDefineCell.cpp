@@ -1,5 +1,4 @@
 #include "Ui/Canvas.h"
-#include "Ui/Events/CommandEvent.h"
 #include "Ui/Custom/Auto/AutoWidget.h"
 #include "World/Editor/PostProcess//PostProcessDefineCell.h"
 #include "World/Editor/PostProcess//PostProcessDefineItem.h"
@@ -25,15 +24,15 @@ PostProcessDefineItem* PostProcessDefineCell::getItem() const
 	return m_item;
 }
 
-void PostProcessDefineCell::mouseDown(ui::custom::AutoWidget* widget, const ui::Point& position)
+void PostProcessDefineCell::mouseDown(const ui::Point& position)
 {
-	ui::CommandEvent commandEvent(widget, m_item);
-	widget->raiseEvent(ui::EiSelectionChange, &commandEvent);
+	ui::SelectionChangeEvent selectionChange(this);
+	getWidget()->raiseEvent(&selectionChange);
 }
 
-void PostProcessDefineCell::paint(ui::custom::AutoWidget* widget, ui::Canvas& canvas, const ui::Rect& rect)
+void PostProcessDefineCell::paint(ui::Canvas& canvas, const ui::Rect& rect)
 {
-	bool focus = bool(widget->getFocusCell() == this);
+	bool focus = bool(getWidget()->getFocusCell() == this);
 	canvas.drawBitmap(
 		rect.getTopLeft() + ui::Size(8, 0),
 		ui::Point(0, focus ? 48 : 0),

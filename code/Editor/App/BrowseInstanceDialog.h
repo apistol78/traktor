@@ -23,6 +23,7 @@ class TreeViewItem;
 
 class PreviewItem;
 class PreviewList;
+class PreviewSelectionChangeEvent;
 
 		}
 	}
@@ -70,11 +71,11 @@ private:
 
 	void buildGroupItems(ui::TreeView* treeView, ui::TreeViewItem* parent, db::Group* group, const IBrowseFilter* filter);
 
-	void eventTreeItemSelected(ui::Event* event);
+	void eventTreeItemSelected(ui::SelectionChangeEvent* event);
 
-	void eventListItemSelected(ui::Event* event);
+	void eventListItemSelected(ui::custom::PreviewSelectionChangeEvent* event);
 
-	void eventListDoubleClick(ui::Event* event);
+	void eventListDoubleClick(ui::MouseDoubleClickEvent* event);
 
 	void taskGeneratePreview(ui::custom::PreviewItem* item);
 

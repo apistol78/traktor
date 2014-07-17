@@ -5,6 +5,7 @@
 #include "Ui/Custom/Auto/AutoWidget.h"
 #include "Ui/Custom/GridView/GridColumn.h"
 #include "Ui/Custom/GridView/GridRow.h"
+#include "Ui/Custom/GridView/GridRowStateChangeEvent.h"
 #include "Ui/Custom/GridView/GridView.h"
 
 // Resources
@@ -133,9 +134,11 @@ void GridRow::placeCells(AutoWidget* widget, const Rect& rect)
 
 		rcCell.left = rcCell.right;
 	}
+
+	AutoWidgetCell::placeCells(widget, rect);
 }
 
-void GridRow::mouseDown(AutoWidget* widget, const Point& position)
+void GridRow::mouseDown(const Point& position)
 {
 	// Handle expand/collapse.
 	if (!m_children.empty())
@@ -149,16 +152,16 @@ void GridRow::mouseDown(AutoWidget* widget, const Point& position)
 			else
 				m_state |= RsExpanded;
 
-			ui::Event expandEvent(widget, this);
-			widget->raiseEvent(GridView::EiExpand, &expandEvent);
-			widget->requestUpdate();
+			GridRowStateChangeEvent expandEvent(getWidget(), this);
+			getWidget()->raiseEvent(&expandEvent);
+			getWidget()->requestUpdate();
 		}
 	}
 }
 
-void GridRow::paint(AutoWidget* widget, Canvas& canvas, const Rect& rect)
+void GridRow::paint(Canvas& canvas, const Rect& rect)
 {
-	GridView* gridView = checked_type_cast< GridView*, false >(widget);
+	GridView* gridView = checked_type_cast< GridView*, false >(getWidget());
 	const RefArray< GridColumn >& columns = gridView->getColumns();
 
 	// Paint custom background.

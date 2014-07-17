@@ -40,18 +40,16 @@
 #include "Ui/Container.h"
 #include "Ui/PopupMenu.h"
 #include "Ui/MenuItem.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/Slider.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Events/CommandEvent.h"
-#include "Ui/Events/MouseEvent.h"
 #include "Ui/Custom/Panel.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/Envelope/DefaultEnvelopeEvaluator.h"
 #include "Ui/Custom/Envelope/EnvelopeControl.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
+#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 
 namespace traktor
 {
@@ -123,7 +121,7 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	if (!m_asset)
 		return false;
 
-	parent->addTimerEventHandler(ui::createMethodHandler(this, &BankAssetEditor::eventTimer));
+	parent->addEventHandler< ui::TimerEvent >(this, &BankAssetEditor::eventTimer);
 	parent->startTimer(30);
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
@@ -145,12 +143,12 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	m_toolBar->create(containerBank);
 	m_toolBar->addItem(m_toolBarItemPlay);
 	m_toolBar->addItem(m_toolBarItemRepeat);
-	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &BankAssetEditor::eventToolBarClick));
+	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &BankAssetEditor::eventToolBarClick);
 
 	m_bankControl = new BankControl();
 	m_bankControl->create(containerBank);
-	m_bankControl->addEventHandler(ui::EiSelectionChange, ui::createMethodHandler(this, &BankAssetEditor::eventGrainSelect));
-	m_bankControl->addButtonUpEventHandler(ui::createMethodHandler(this, &BankAssetEditor::eventGrainButtonUp));
+	m_bankControl->addEventHandler< ui::SelectionChangeEvent >(this, &BankAssetEditor::eventGrainSelect);
+	m_bankControl->addEventHandler< ui::MouseButtonUpEvent >(this, &BankAssetEditor::eventGrainButtonUp);
 
 	m_containerParameters = new ui::custom::Panel();
 	m_containerParameters->create(splitterLeftH, L"Parameters", new ui::TableLayout(L"*,100%", L"*", 4, 0));
@@ -160,7 +158,7 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 
 	m_grainProperties = new GrainProperties(m_editor);
 	m_grainProperties->create(m_containerGrainProperties);
-	m_grainProperties->addEventHandler(ui::EiUser + 1, ui::createMethodHandler(this, &BankAssetEditor::eventGrainPropertiesChange));
+	m_grainProperties->addEventHandler< ui::ContentChangeEvent >(this, &BankAssetEditor::eventGrainPropertiesChange);
 
 	m_containerGrainView = new ui::custom::Panel();
 	m_containerGrainView->create(splitterRightH, L"View", new ui::TableLayout(L"100%", L"100%", 0, 0));
@@ -445,7 +443,7 @@ void BankAssetEditor::updateProperties()
 		Ref< ui::Slider > sliderParameter = new ui::Slider();
 		sliderParameter->create(m_containerParameters);
 		sliderParameter->setRange(0, 100);
-		sliderParameter->addChangeEventHandler(ui::createMethodHandler(this, &BankAssetEditor::eventParameterChange));
+		sliderParameter->addEventHandler< ui::ContentChangeEvent >(this, &BankAssetEditor::eventParameterChange);
 		sliderParameter->setData(L"ID", new HandleWrapper(
 			getParameterHandle(*i)
 		));
@@ -456,7 +454,7 @@ void BankAssetEditor::updateProperties()
 	m_containerParameters->update();
 }
 
-void BankAssetEditor::eventParameterChange(ui::Event* event)
+void BankAssetEditor::eventParameterChange(ui::ContentChangeEvent* event)
 {
 	const ui::Slider* slider = checked_type_cast< const ui::Slider*, false >(event->getSender());
 	const HandleWrapper* id = slider->getData< HandleWrapper >(L"ID");
@@ -466,13 +464,12 @@ void BankAssetEditor::eventParameterChange(ui::Event* event)
 		m_soundChannel->setParameter(id->get(), slider->getValue() / 100.0f);
 }
 
-void BankAssetEditor::eventToolBarClick(ui::Event* event)
+void BankAssetEditor::eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event)
 {
-	ui::CommandEvent* commandEvent = checked_type_cast< ui::CommandEvent*, false >(event);
-	handleCommand(commandEvent->getCommand());
+	handleCommand(event->getCommand());
 }
 
-void BankAssetEditor::eventGrainSelect(ui::Event* event)
+void BankAssetEditor::eventGrainSelect(ui::SelectionChangeEvent* event)
 {
 	BankControlGrain* item = checked_type_cast< BankControlGrain* >(event->getItem());
 	if (item)
@@ -485,7 +482,7 @@ void BankAssetEditor::eventGrainSelect(ui::Event* event)
 			m_currentGrainView = grainFacade->createView(item->getGrain(), m_containerGrainView);
 
 		if (m_currentGrainView)
-			m_currentGrainView->addEventHandler(ui::EiContentChange, ui::createMethodHandler(this, &BankAssetEditor::eventGrainViewChange));
+			m_currentGrainView->addEventHandler< ui::ContentChangeEvent >(this, &BankAssetEditor::eventGrainViewChange);
 	}
 	else
 	{
@@ -495,19 +492,18 @@ void BankAssetEditor::eventGrainSelect(ui::Event* event)
 	m_containerGrainView->update();
 }
 
-void BankAssetEditor::eventGrainButtonUp(ui::Event* event)
+void BankAssetEditor::eventGrainButtonUp(ui::MouseButtonUpEvent* event)
 {
-	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent*, false >(event);
-	if (mouseEvent->getButton() == ui::MouseEvent::BtRight)
+	if (event->getButton() == ui::MbtRight)
 	{
-		Ref< ui::MenuItem > selectedItem = m_menuGrains->show(m_bankControl, mouseEvent->getPosition());
+		Ref< ui::MenuItem > selectedItem = m_menuGrains->show(m_bankControl, event->getPosition());
 		if (selectedItem)
 			handleCommand(selectedItem->getCommand());
-		mouseEvent->consume();
+		event->consume();
 	}
 }
 
-void BankAssetEditor::eventGrainPropertiesChange(ui::Event* event)
+void BankAssetEditor::eventGrainPropertiesChange(ui::ContentChangeEvent* event)
 {
 	// Stop playing if properties has changed, need to reflect changes
 	// without interference otherwise filter instances will be incorrect.
@@ -525,7 +521,7 @@ void BankAssetEditor::eventGrainPropertiesChange(ui::Event* event)
 	updateProperties();
 }
 
-void BankAssetEditor::eventGrainViewChange(ui::Event* event)
+void BankAssetEditor::eventGrainViewChange(ui::ContentChangeEvent* event)
 {
 	// Stop playing if properties has changed, need to reflect changes
 	// without interference otherwise filter instances will be incorrect.
@@ -540,7 +536,7 @@ void BankAssetEditor::eventGrainViewChange(ui::Event* event)
 	// m_grainProperties->reset();
 }
 
-void BankAssetEditor::eventTimer(ui::Event* event)
+void BankAssetEditor::eventTimer(ui::TimerEvent* event)
 {
 	if (!m_soundChannel)
 		return;

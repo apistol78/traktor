@@ -22,24 +22,19 @@
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/EntityRendererAdapter.h"
 #include "Scene/Editor/EntityRendererCache.h"
-#include "Scene/Editor/FrameEvent.h"
 #include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/ISceneControllerEditor.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/IEntityEditor.h"
 #include "Scene/Editor/PerspectiveRenderControl.h"
 #include "Scene/Editor/SceneEditorContext.h"
-#include "Scene/Editor/SelectEvent.h"
 #include "Scene/Editor/TransformChain.h"
+#include "Scene/Editor/Events/FrameEvent.h"
 #include "Ui/Command.h"
 #include "Ui/Container.h"
 #include "Ui/FloodLayout.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/Widget.h"
 #include "Ui/Custom/AspectLayout.h"
-#include "Ui/Events/SizeEvent.h"
-#include "Ui/Events/MouseEvent.h"
-#include "Ui/Events/KeyEvent.h"
 #include "Ui/Itf/IWidget.h"
 #include "World/Entity.h"
 #include "World/IEntityEventManager.h"
@@ -133,13 +128,13 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	))
 		return false;
 
-	m_renderWidget->addButtonDownEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventButtonDown));
-	m_renderWidget->addButtonUpEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventButtonUp));
-	m_renderWidget->addDoubleClickEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventDoubleClick));
-	m_renderWidget->addMouseMoveEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventMouseMove));
-	m_renderWidget->addMouseWheelEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventMouseWheel));
-	m_renderWidget->addSizeEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventSize));
-	m_renderWidget->addPaintEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventPaint));
+	m_renderWidget->addEventHandler< ui::MouseButtonDownEvent >(this, &PerspectiveRenderControl::eventButtonDown);
+	m_renderWidget->addEventHandler< ui::MouseButtonUpEvent >(this, &PerspectiveRenderControl::eventButtonUp);
+	m_renderWidget->addEventHandler< ui::MouseDoubleClickEvent >(this, &PerspectiveRenderControl::eventDoubleClick);
+	m_renderWidget->addEventHandler< ui::MouseMoveEvent >(this, &PerspectiveRenderControl::eventMouseMove);
+	m_renderWidget->addEventHandler< ui::MouseWheelEvent >(this, &PerspectiveRenderControl::eventMouseWheel);
+	m_renderWidget->addEventHandler< ui::SizeEvent >(this, &PerspectiveRenderControl::eventSize);
+	m_renderWidget->addEventHandler< ui::PaintEvent >(this, &PerspectiveRenderControl::eventPaint);
 
 	updateSettings();
 	updateWorldRenderer();
@@ -456,7 +451,7 @@ Matrix44 PerspectiveRenderControl::getViewTransform() const
 	return m_camera->getView();
 }
 
-void PerspectiveRenderControl::eventButtonDown(ui::Event* event)
+void PerspectiveRenderControl::eventButtonDown(ui::MouseButtonDownEvent* event)
 {
 	TransformChain transformChain;
 	transformChain.pushProjection(getProjectionTransform());
@@ -464,7 +459,7 @@ void PerspectiveRenderControl::eventButtonDown(ui::Event* event)
 	m_model.eventButtonDown(this, m_renderWidget, event, m_context, transformChain);
 }
 
-void PerspectiveRenderControl::eventButtonUp(ui::Event* event)
+void PerspectiveRenderControl::eventButtonUp(ui::MouseButtonUpEvent* event)
 {
 	TransformChain transformChain;
 	transformChain.pushProjection(getProjectionTransform());
@@ -472,7 +467,7 @@ void PerspectiveRenderControl::eventButtonUp(ui::Event* event)
 	m_model.eventButtonUp(this, m_renderWidget, event, m_context, transformChain);
 }
 
-void PerspectiveRenderControl::eventDoubleClick(ui::Event* event)
+void PerspectiveRenderControl::eventDoubleClick(ui::MouseDoubleClickEvent* event)
 {
 	TransformChain transformChain;
 	transformChain.pushProjection(getProjectionTransform());
@@ -480,7 +475,7 @@ void PerspectiveRenderControl::eventDoubleClick(ui::Event* event)
 	m_model.eventDoubleClick(this, m_renderWidget, event, m_context, transformChain);
 }
 
-void PerspectiveRenderControl::eventMouseMove(ui::Event* event)
+void PerspectiveRenderControl::eventMouseMove(ui::MouseMoveEvent* event)
 {
 	TransformChain transformChain;
 	transformChain.pushProjection(getProjectionTransform());
@@ -488,9 +483,9 @@ void PerspectiveRenderControl::eventMouseMove(ui::Event* event)
 	m_model.eventMouseMove(this, m_renderWidget, event, m_context, transformChain);
 }
 
-void PerspectiveRenderControl::eventMouseWheel(ui::Event* event)
+void PerspectiveRenderControl::eventMouseWheel(ui::MouseWheelEvent* event)
 {
-	int32_t rotation = static_cast< ui::MouseEvent* >(event)->getWheelRotation();
+	int32_t rotation = event->getRotation();
 
 	if (m_context->getEditor()->getSettings()->getProperty(L"SceneEditor.InvertMouseWheel"))
 		rotation = -rotation;
@@ -499,13 +494,12 @@ void PerspectiveRenderControl::eventMouseWheel(ui::Event* event)
 	m_context->raiseCameraMoved();
 }
 
-void PerspectiveRenderControl::eventSize(ui::Event* event)
+void PerspectiveRenderControl::eventSize(ui::SizeEvent* event)
 {
 	if (!m_renderView || !m_renderWidget->isVisible(true))
 		return;
 
-	ui::SizeEvent* s = static_cast< ui::SizeEvent* >(event);
-	ui::Size sz = s->getSize();
+	ui::Size sz = event->getSize();
 
 	// Don't update world renderer if, in fact, size hasn't changed.
 	if (sz.cx == m_dirtySize.cx && sz.cy == m_dirtySize.cy)
@@ -519,7 +513,7 @@ void PerspectiveRenderControl::eventSize(ui::Event* event)
 	m_dirtySize = sz;
 }
 
-void PerspectiveRenderControl::eventPaint(ui::Event* event)
+void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 {
 	float colorClear[4];
 	float deltaTime = float(m_timer.getDeltaTime());

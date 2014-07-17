@@ -49,9 +49,9 @@ private:
 	const TypeInfo* m_type;
 	std::wstring m_instanceName;
 
-	void eventDialogClick(ui::Event* event);
+	void eventDialogClick(ui::ButtonClickEvent* event);
 
-	void eventTreeItemSelected(ui::Event* event);
+	void eventTreeItemSelected(ui::SelectionChangeEvent* event);
 };
 
 	}

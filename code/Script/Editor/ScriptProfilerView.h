@@ -17,6 +17,7 @@ class Command;
 class GridRow;
 class GridView;
 class ToolBar;
+class ToolBarButtonClickEvent;
 
 		}
 	}
@@ -64,7 +65,7 @@ private:
 
 	void updateProfileGrid();
 
-	void eventProfilerToolClick(ui::Event* event);
+	void eventProfilerToolClick(ui::custom::ToolBarButtonClickEvent* event);
 
 	/*! \name IScriptProfiler::IListener */
 	/*! \{ */

@@ -4,12 +4,9 @@
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Edit.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/NumericEditValidator.h"
 #include "Ui/Custom/PropertyList/NumericPropertyItem.h"
 #include "Ui/Custom/PropertyList/PropertyList.h"
-#include "Ui/Events/FocusEvent.h"
-#include "Ui/Events/MouseEvent.h"
 
 namespace traktor
 {
@@ -93,7 +90,7 @@ void NumericPropertyItem::createInPlaceControls(Widget* parent)
 		)
 	);
 	m_editor->setVisible(false);
-	m_editor->addFocusEventHandler(createMethodHandler(this, &NumericPropertyItem::eventEditFocus));
+	m_editor->addEventHandler< FocusEvent >(this, &NumericPropertyItem::eventEditFocus);
 }
 
 void NumericPropertyItem::destroyInPlaceControls()
@@ -114,7 +111,7 @@ void NumericPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Wid
 	}
 }
 
-void NumericPropertyItem::mouseButtonDown(MouseEvent* event)
+void NumericPropertyItem::mouseButtonDown(MouseButtonDownEvent* event)
 {
 	if (event->getPosition().x <= m_editor->getRect().right)
 	{
@@ -138,7 +135,7 @@ void NumericPropertyItem::mouseButtonDown(MouseEvent* event)
 	}
 }
 
-void NumericPropertyItem::mouseButtonUp(MouseEvent* event)
+void NumericPropertyItem::mouseButtonUp(MouseButtonUpEvent* event)
 {
 	if (m_mouseAdjust)
 	{
@@ -147,7 +144,7 @@ void NumericPropertyItem::mouseButtonUp(MouseEvent* event)
 	}
 }
 
-void NumericPropertyItem::mouseMove(MouseEvent* event)
+void NumericPropertyItem::mouseMove(MouseMoveEvent* event)
 {
 	if (m_mouseAdjust)
 	{
@@ -220,10 +217,9 @@ bool NumericPropertyItem::paste()
 		return false;
 }
 
-void NumericPropertyItem::eventEditFocus(Event* event)
+void NumericPropertyItem::eventEditFocus(FocusEvent* event)
 {
-	FocusEvent* f = static_cast< FocusEvent* >(event);
-	if (f->lostFocus())
+	if (event->lostFocus())
 	{
 		std::wstringstream ss(m_editor->getText());
 

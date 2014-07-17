@@ -1,13 +1,12 @@
 #import <Cocoa/Cocoa.h>
 
+#include "Core/Log/Log.h"
+#include "Ui/Enums.h"
+#include "Ui/EventSubject.h"
 #include "Ui/Cocoa/EventLoopCocoa.h"
 #include "Ui/Cocoa/NSDebugAutoreleasePool.h"
 #include "Ui/Cocoa/UtilitiesCocoa.h"
-#include "Ui/Events/IdleEvent.h"
-#include "Ui/Events/KeyEvent.h"
-#include "Ui/EventSubject.h"
-#include "Ui/Enums.h"
-#include "Core/Log/Log.h"
+#include "Ui/Events/AllEvents.h"
 
 namespace traktor
 {
@@ -63,7 +62,7 @@ bool EventLoopCocoa::process(EventSubject* owner)
 			{
 				// No event queued; kick off idle.
 				IdleEvent idleEvent(owner);
-				owner->raiseEvent(EiIdle, &idleEvent);
+				owner->raiseEvent(&idleEvent);
 				if (!idleEvent.requestedMore())
 					m_idleMode = false;
 			}
@@ -122,7 +121,7 @@ int EventLoopCocoa::execute(EventSubject* owner)
 			{
 				// No event queued; kick off idle.
 				IdleEvent idleEvent(owner);
-				owner->raiseEvent(EiIdle, &idleEvent);
+				owner->raiseEvent(&idleEvent);
 				if (!idleEvent.requestedMore())
 					m_idleMode = false;
 			}
@@ -191,19 +190,28 @@ bool EventLoopCocoa::handleGlobalEvents(EventSubject* owner, void* event)
 		VirtualKey virtualKey = translateKeyCode(systemKey);
 		std::wstring chs = fromNSString([evt characters]);
 		
-		KeyEvent keyEvent(
-			owner,
-			0,
-			virtualKey,
-			systemKey,
-			chs.empty() ? 0 : chs[0]
-		);
-		owner->raiseEvent(
-			eventType == NSKeyDown ? EiKeyDown : EiKeyUp,
-			&keyEvent
-		);
-		
-		return keyEvent.consumed();
+		if (eventType == NSKeyDown)
+		{
+			KeyDownEvent keyEvent(
+				owner,
+				virtualKey,
+				systemKey,
+				chs.empty() ? 0 : chs[0]
+			);
+			owner->raiseEvent(&keyEvent);
+			return keyEvent.consumed();
+		}
+		else	// Up
+		{
+			KeyUpEvent keyEvent(
+				owner,
+				virtualKey,
+				systemKey,
+				chs.empty() ? 0 : chs[0]
+			);
+			owner->raiseEvent(&keyEvent);
+			return keyEvent.consumed();
+		}
 	}
 
 	return false;

@@ -1,13 +1,12 @@
+#include "Core/Log/Log.h"
+#include "Drawing/Image.h"
+#include "Drawing/Filters/MirrorFilter.h"
+#include "Ui/EventSubject.h"
+#include "Ui/TreeView.h"
+#include "Ui/Events/AllEvents.h"
 #include "Ui/Cocoa/TreeViewCocoa.h"
 #include "Ui/Cocoa/TreeViewItemCocoa.h"
 #include "Ui/Cocoa/BitmapCocoa.h"
-#include "Ui/Events/CommandEvent.h"
-#include "Ui/Events/MouseEvent.h"
-#include "Ui/EventSubject.h"
-#include "Ui/TreeView.h"
-#include "Drawing/Image.h"
-#include "Drawing/Filters/MirrorFilter.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -201,8 +200,8 @@ void TreeViewCocoa::treeSetValue(void* item, const std::wstring& value)
 	
 	realItem->setText(value);
 	
-	CommandEvent commandEvent(m_owner, realItem);
-	m_owner->raiseEvent(EiContentChange, &commandEvent);
+	TreeViewContentChangeEvent contentChangeEvent(m_owner, realItem);
+	m_owner->raiseEvent(&contentChangeEvent);
 }
 
 void TreeViewCocoa::targetProxy_Action(void* controlId)
@@ -219,14 +218,14 @@ void TreeViewCocoa::targetProxy_doubleAction(void* controlId)
 	Ref< TreeViewItemCocoa > realItem = getRealItem(item);
 	T_ASSERT (realItem);
 	
-	CommandEvent commandEvent(m_owner, realItem);
-	m_owner->raiseEvent(EiActivate, &commandEvent);
+	TreeViewItemActivateEvent activateEvent(m_owner, realItem);
+	m_owner->raiseEvent(&activateEvent);
 }
 
 void TreeViewCocoa::event_selectionDidChange()
 {	
-	CommandEvent commandEvent(m_owner, getSelectedItem());
-	m_owner->raiseEvent(EiSelectionChange, &commandEvent);
+	SelectionChangeEvent selectionChangeEvent(m_owner, getSelectedItem());
+	m_owner->raiseEvent(&selectionChangeEvent);
 }
 
 void TreeViewCocoa::event_rightMouseDown(NSEvent* event)
@@ -234,13 +233,12 @@ void TreeViewCocoa::event_rightMouseDown(NSEvent* event)
 	NSPoint mousePosition = [event locationInWindow];
 	mousePosition = [m_control convertPointFromBase: mousePosition];
 
-	MouseEvent mouseEvent(
+	MouseButtonDownEvent mouseEvent(
 		m_owner,
-		0,
-		MouseEvent::BtRight,
+		MbtRight,
 		fromNSPoint(mousePosition)
 	);
-	m_owner->raiseEvent(EiButtonDown, &mouseEvent);
+	m_owner->raiseEvent(&mouseEvent);
 }
 
 void TreeViewCocoa::event_willDisplayCell(NSCell* cell, NSTableColumn* tableColumn, void* item)

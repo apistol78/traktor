@@ -1,6 +1,7 @@
 #include "Core/Misc/String.h"
 #include "I18N/Text.h"
 #include "Scene/Editor/SceneEditorContext.h"
+#include "Scene/Editor/Events/ModifierChangedEvent.h"
 #include "Terrain/Editor/AverageBrush.h"
 #include "Terrain/Editor/ColorBrush.h"
 #include "Terrain/Editor/CutBrush.h"
@@ -16,7 +17,6 @@
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
 #include "Ui/MenuItem.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/Slider.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
@@ -74,7 +74,7 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::custom::ToolBar* toolBa
 	m_sliderStrength->create(containerStrength);
 	m_sliderStrength->setRange(1, 10);
 	m_sliderStrength->setValue(5);
-	m_sliderStrength->addChangeEventHandler(ui::createMethodHandler(this, &TerrainEditorPlugin::eventSliderStrengthChange));
+	m_sliderStrength->addEventHandler< ui::ContentChangeEvent >(this, &TerrainEditorPlugin::eventSliderStrengthChange);
 
 	m_staticStrength = new ui::Static();
 	m_staticStrength->create(containerStrength, L"50%");
@@ -84,7 +84,7 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::custom::ToolBar* toolBa
 	m_colorControl = new ui::custom::ColorControl();
 	m_colorControl->create(toolBar, ui::WsBorder);
 	m_colorControl->setColor(Color4ub(255, 255, 255, 255));
-	m_colorControl->addButtonUpEventHandler(ui::createMethodHandler(this, &TerrainEditorPlugin::eventColorClick));
+	m_colorControl->addEventHandler< ui::MouseButtonUpEvent >(this, &TerrainEditorPlugin::eventColorClick);
 
 	m_toolColor = new ui::custom::ToolBarEmbed(m_colorControl, 32);
 
@@ -130,7 +130,7 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::custom::ToolBar* toolBa
 
 	updateModifierState();
 
-	m_context->addModifierChangedEventHandler(ui::createMethodHandler(this, &TerrainEditorPlugin::eventModifierChanged));
+	m_context->addEventHandler< scene::ModifierChangedEvent >(this, &TerrainEditorPlugin::eventModifierChanged);
 	return true;
 }
 
@@ -270,13 +270,13 @@ void TerrainEditorPlugin::updateModifierState()
 	m_terrainEditModifier->setStrength(m_sliderStrength->getValue() / 10.0f);
 }
 
-void TerrainEditorPlugin::eventSliderStrengthChange(ui::Event* event)
+void TerrainEditorPlugin::eventSliderStrengthChange(ui::ContentChangeEvent* event)
 {
 	m_terrainEditModifier->setStrength(m_sliderStrength->getValue() / 10.0f);
 	m_staticStrength->setText(toString(int32_t(m_sliderStrength->getValue() * 10)) + L"%");
 }
 
-void TerrainEditorPlugin::eventColorClick(ui::Event* event)
+void TerrainEditorPlugin::eventColorClick(ui::MouseButtonUpEvent* event)
 {
 	ui::custom::ColorDialog colorDialog;
 	colorDialog.create(
@@ -299,7 +299,7 @@ void TerrainEditorPlugin::eventColorClick(ui::Event* event)
 	colorDialog.destroy();
 }
 
-void TerrainEditorPlugin::eventModifierChanged(ui::Event* event)
+void TerrainEditorPlugin::eventModifierChanged(scene::ModifierChangedEvent* event)
 {
 	m_toolToggleEditTerrain->setToggled(m_context->getModifier() == m_terrainEditModifier);
 	m_toolGroup->setEnable(m_context->getModifier() == m_terrainEditModifier);

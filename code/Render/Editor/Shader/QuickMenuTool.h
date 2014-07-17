@@ -31,11 +31,11 @@ private:
 
 	void updateSuggestions(const std::wstring& filter);
 
-	void eventFilterChange(ui::Event* event);
+	void eventFilterChange(ui::ContentChangeEvent* event);
 
-	void eventFilterKey(ui::Event* event);
+	void eventFilterKey(ui::KeyDownEvent* event);
 
-	void eventSuggestionSelect(ui::Event* event);
+	void eventSuggestionSelect(ui::SelectionChangeEvent* event);
 };
 
 	}

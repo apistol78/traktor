@@ -23,15 +23,12 @@
 #include "Ui/MenuItem.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Bitmap.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/MouseEvent.h"
-#include "Ui/Events/SizeEvent.h"
-#include "Ui/Events/PaintEvent.h"
-#include "Ui/Events/CommandEvent.h"
 #include "Ui/Custom/QuadSplitter.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
+#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
+#include "Ui/Custom/Sequencer/CursorMoveEvent.h"
 #include "Ui/Custom/Sequencer/SequencerControl.h"
 #include "Ui/Custom/Sequencer/Sequence.h"
 #include "Ui/Custom/Sequencer/Tick.h"
@@ -176,12 +173,12 @@ bool AnimationEditorPage::create(ui::Container* parent)
 	{
 		m_renderWidgets[i] = new ui::Widget();
 		m_renderWidgets[i]->create(splitter, ui::WsClientBorder);
-		m_renderWidgets[i]->addButtonDownEventHandler(ui::createMethodHandler(this, &AnimationEditorPage::eventRenderButtonDown));
-		m_renderWidgets[i]->addButtonUpEventHandler(ui::createMethodHandler(this, &AnimationEditorPage::eventRenderButtonUp));
-		m_renderWidgets[i]->addMouseMoveEventHandler(ui::createMethodHandler(this, &AnimationEditorPage::eventRenderMouseMove));
-		m_renderWidgets[i]->addMouseWheelEventHandler(ui::createMethodHandler(this, &AnimationEditorPage::eventRenderMouseWheel));
-		m_renderWidgets[i]->addSizeEventHandler(ui::createMethodHandler(this, &AnimationEditorPage::eventRenderSize));
-		m_renderWidgets[i]->addPaintEventHandler(ui::createMethodHandler(this, &AnimationEditorPage::eventRenderPaint));
+		m_renderWidgets[i]->addEventHandler< ui::MouseButtonDownEvent >(this, &AnimationEditorPage::eventRenderButtonDown);
+		m_renderWidgets[i]->addEventHandler< ui::MouseButtonUpEvent >(this, &AnimationEditorPage::eventRenderButtonUp);
+		m_renderWidgets[i]->addEventHandler< ui::MouseMoveEvent >(this, &AnimationEditorPage::eventRenderMouseMove);
+		m_renderWidgets[i]->addEventHandler< ui::MouseWheelEvent >(this, &AnimationEditorPage::eventRenderMouseWheel);
+		m_renderWidgets[i]->addEventHandler< ui::SizeEvent >(this, &AnimationEditorPage::eventRenderSize);
+		m_renderWidgets[i]->addEventHandler< ui::PaintEvent >(this, &AnimationEditorPage::eventRenderPaint);
 		
 		Ref< RenderWidgetData > data = new RenderWidgetData();
 		m_renderWidgets[i]->setData(L"DATA", data);
@@ -207,14 +204,14 @@ bool AnimationEditorPage::create(ui::Container* parent)
 	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_TOGGLE_TRAIL"), 7, ui::Command(L"Animation.Editor.ToggleTrail"), m_showGhostTrail ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle));
 	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_TOGGLE_TWIST_LOCK"), 8, ui::Command(L"Animation.Editor.ToggleTwistLock"), m_twistLock ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle));
 	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_TOGGLE_IK"), 10, ui::Command(L"Animation.Editor.ToggleIK"), m_ikEnabled ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle));
-	m_toolBarPlay->addClickEventHandler(ui::createMethodHandler(this, &AnimationEditorPage::eventToolClick));
+	m_toolBarPlay->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &AnimationEditorPage::eventToolClick);
 
 	m_sequencer = new ui::custom::SequencerControl();
 	m_sequencer->create(m_sequencerPanel);
 	m_sequencer->setLength(c_animationLength);
-	m_sequencer->addButtonDownEventHandler(ui::createMethodHandler(this, &AnimationEditorPage::eventSequencerButtonDown));
-	m_sequencer->addCursorMoveEventHandler(ui::createMethodHandler(this, &AnimationEditorPage::eventSequencerCursorMove));
-	m_sequencer->addTimerEventHandler(ui::createMethodHandler(this, &AnimationEditorPage::eventSequencerTimer));
+	m_sequencer->addEventHandler< ui::MouseButtonDownEvent >(this, &AnimationEditorPage::eventSequencerButtonDown);
+	m_sequencer->addEventHandler< ui::custom::CursorMoveEvent >(this, &AnimationEditorPage::eventSequencerCursorMove);
+	m_sequencer->addEventHandler< ui::TimerEvent >(this, &AnimationEditorPage::eventSequencerTimer);
 	m_sequencer->startTimer(30);
 
 	m_site->createAdditionalPanel(m_sequencerPanel, 100, true);
@@ -672,7 +669,7 @@ void AnimationEditorPage::updateSettings()
 	updateRenderWidgets();
 }
 
-void AnimationEditorPage::eventRenderButtonDown(ui::Event* event)
+void AnimationEditorPage::eventRenderButtonDown(ui::MouseButtonDownEvent* event)
 {
 	Ref< ui::Widget > renderWidget = checked_type_cast< ui::Widget* >(event->getSender());
 
@@ -686,7 +683,7 @@ void AnimationEditorPage::eventRenderButtonDown(ui::Event* event)
 	if (m_editMode)
 		m_document->push();
 
-	m_lastMousePosition = checked_type_cast< ui::MouseEvent* >(event)->getPosition();
+	m_lastMousePosition = event->getPosition();
 
 	// Trace volume
 	// @fixme Only orthogonal views work with picking.
@@ -717,7 +714,7 @@ void AnimationEditorPage::eventRenderButtonDown(ui::Event* event)
 	renderWidget->setFocus();
 }
 
-void AnimationEditorPage::eventRenderButtonUp(ui::Event* event)
+void AnimationEditorPage::eventRenderButtonUp(ui::MouseButtonUpEvent* event)
 {
 	Ref< ui::Widget > renderWidget = checked_type_cast< ui::Widget* >(event->getSender());
 
@@ -727,19 +724,17 @@ void AnimationEditorPage::eventRenderButtonUp(ui::Event* event)
 	m_haveRelativeTwist = false;
 }
 
-void AnimationEditorPage::eventRenderMouseMove(ui::Event* event)
+void AnimationEditorPage::eventRenderMouseMove(ui::MouseMoveEvent* event)
 {
 	Ref< ui::Widget > renderWidget = checked_type_cast< ui::Widget* >(event->getSender());
 
 	Ref< RenderWidgetData > data = renderWidget->getData< RenderWidgetData >(L"DATA");
 	T_ASSERT (data);
 
-	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
-
 	if (!m_skeleton || !renderWidget->hasCapture())
 		return;
 
-	ui::Point mousePosition = mouseEvent->getPosition();
+	ui::Point mousePosition = event->getPosition();
 
 	Vector2 mouseDelta(
 		float(m_lastMousePosition.x - mousePosition.x),
@@ -757,7 +752,7 @@ void AnimationEditorPage::eventRenderMouseMove(ui::Event* event)
 
 	//		if ((mouseEvent->getKeyState() & ui::KsMenu) != ui::KsMenu)
 	//		{
-	//			if (mouseEvent->getButton() == ui::MouseEvent::BtLeft)
+	//			if (mouseEvent->getButton() == ui::MbtLeft)
 	//			{
 	//				Vector4 orientation = pose.getBoneOrientation(m_selectedBone);
 	//				orientation += Vector4(mouseDelta.x, mouseDelta.y, 0.0f, 0.0f);
@@ -784,7 +779,7 @@ void AnimationEditorPage::eventRenderMouseMove(ui::Event* event)
 	//		else
 	//		{
 	//			Vector4 delta;
-	//			if (mouseEvent->getButton() == ui::MouseEvent::BtLeft)
+	//			if (mouseEvent->getButton() == ui::MbtLeft)
 	//				delta = Vector4(mouseDelta.x, mouseDelta.y, 0.0f, 0.0f);
 	//			else
 	//				delta = Vector4(0.0f, 0.0f, mouseDelta.y, 0.0f);
@@ -799,7 +794,7 @@ void AnimationEditorPage::eventRenderMouseMove(ui::Event* event)
 	//}
 	//else
 	{
-		if (mouseEvent->getButton() == ui::MouseEvent::BtLeft)
+		if (event->getButton() == ui::MbtLeft)
 		{
 			data->cameraAngleX -= mouseDelta.x / 2.0f;
 			data->cameraAngleY += mouseDelta.y / 2.0f;
@@ -820,45 +815,41 @@ void AnimationEditorPage::eventRenderMouseMove(ui::Event* event)
 	m_lastMousePosition = mousePosition;
 }
 
-void AnimationEditorPage::eventRenderMouseWheel(ui::Event* event)
+void AnimationEditorPage::eventRenderMouseWheel(ui::MouseWheelEvent* event)
 {
 	Ref< ui::Widget > renderWidget = checked_type_cast< ui::Widget* >(event->getSender());
 
 	Ref< RenderWidgetData > data = renderWidget->getData< RenderWidgetData >(L"DATA");
 	T_ASSERT (data);
 
-	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
-
 	if (data->orthogonal)
 	{
-		data->size += mouseEvent->getWheelRotation() * c_wheelRotationDelta;
+		data->size += event->getRotation() * c_wheelRotationDelta;
 		data->size = std::max(data->size, c_orthoSizeMin);
 		renderWidget->update();
 	}
 }
 
-void AnimationEditorPage::eventRenderSize(ui::Event* event)
+void AnimationEditorPage::eventRenderSize(ui::SizeEvent* event)
 {
 	Ref< ui::Widget > renderWidget = checked_type_cast< ui::Widget* >(event->getSender());
 
 	Ref< RenderWidgetData > data = renderWidget->getData< RenderWidgetData >(L"DATA");
 	T_ASSERT (data);
 
-	ui::SizeEvent* s = static_cast< ui::SizeEvent* >(event);
-	ui::Size sz = s->getSize();
+	ui::Size sz = event->getSize();
 
 	data->renderView->reset(sz.cx, sz.cy);
 	data->renderView->setViewport(render::Viewport(0, 0, sz.cx, sz.cy, 0, 1));
 }
 
-void AnimationEditorPage::eventRenderPaint(ui::Event* event)
+void AnimationEditorPage::eventRenderPaint(ui::PaintEvent* event)
 {
 	Ref< ui::Widget > renderWidget = checked_type_cast< ui::Widget* >(event->getSender());
 
 	Ref< RenderWidgetData > data = renderWidget->getData< RenderWidgetData >(L"DATA");
 	T_ASSERT (data);
 
-	ui::PaintEvent* paintEvent = checked_type_cast< ui::PaintEvent* >(event);
 	ui::Rect rc = renderWidget->getInnerRect();
 
 	T_ASSERT (m_primitiveRenderer);
@@ -1002,28 +993,27 @@ void AnimationEditorPage::eventRenderPaint(ui::Event* event)
 	data->renderView->end();
 	data->renderView->present();
 
-	paintEvent->consume();
+	event->consume();
 }
 
-void AnimationEditorPage::eventSequencerButtonDown(ui::Event* event)
+void AnimationEditorPage::eventSequencerButtonDown(ui::MouseButtonDownEvent* event)
 {
-	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
-	if (mouseEvent->getButton() != ui::MouseEvent::BtRight)
+	if (event->getButton() != ui::MbtRight)
 		return;
 
-	Ref< ui::MenuItem > selectedItem = m_menuPopup->show(m_sequencer, mouseEvent->getPosition());
+	Ref< ui::MenuItem > selectedItem = m_menuPopup->show(m_sequencer, event->getPosition());
 	if (selectedItem)
 		handleCommand(selectedItem->getCommand());
 
-	mouseEvent->consume();
+	event->consume();
 }
 
-void AnimationEditorPage::eventSequencerCursorMove(ui::Event* event)
+void AnimationEditorPage::eventSequencerCursorMove(ui::custom::CursorMoveEvent* event)
 {
 	updateRenderWidgets();
 }
 
-void AnimationEditorPage::eventSequencerTimer(ui::Event* event)
+void AnimationEditorPage::eventSequencerTimer(ui::TimerEvent* event)
 {
 	if (!m_previewAnimation || !m_animation)
 		return;
@@ -1040,9 +1030,9 @@ void AnimationEditorPage::eventSequencerTimer(ui::Event* event)
 	updateRenderWidgets();
 }
 
-void AnimationEditorPage::eventToolClick(ui::Event* event)
+void AnimationEditorPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* event)
 {
-	const ui::Command& command = checked_type_cast< ui::CommandEvent* >(event)->getCommand();
+	const ui::Command& command = event->getCommand();
 	handleCommand(command);
 }
 

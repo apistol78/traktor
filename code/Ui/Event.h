@@ -33,11 +33,9 @@ class T_DLLCLASS Event : public Object
 	T_RTTI_CLASS;
 	
 public:
-	Event(EventSubject* sender, Object* item);
+	Event(EventSubject* sender);
 
 	EventSubject* getSender() const;
-
-	Object* getItem() const;
 
 	int getKeyState() const;
 
@@ -47,7 +45,6 @@ public:
 	
 private:
 	Ref< EventSubject > m_sender;
-	Ref< Object > m_item;
 	int m_keyState;
 	bool m_consumed;
 };

@@ -31,9 +31,9 @@ public:
 private:
 	Ref< ui::custom::LogList > m_listLog;
 
-	void eventButtonCopyQuit(ui::Event* event);
+	void eventButtonCopyQuit(ui::ButtonClickEvent* event);
 
-	void eventButtonClickQuit(ui::Event* event);
+	void eventButtonClickQuit(ui::ButtonClickEvent* event);
 };
 
 	}

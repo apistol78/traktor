@@ -43,8 +43,6 @@ public:
 	void setPosition(int position);
 
 	int getPosition() const;
-
-	void addScrollEventHandler(EventHandler* eventHandler);
 };
 
 	}

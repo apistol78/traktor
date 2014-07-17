@@ -1,5 +1,5 @@
-#include "Ui/Win32/ListBoxWin32.h"
 #include "Ui/ListBox.h"
+#include "Ui/Win32/ListBoxWin32.h"
 
 namespace traktor
 {
@@ -124,9 +124,9 @@ LRESULT ListBoxWin32::eventCommand(HWND hWnd, UINT message, WPARAM wParam, LPARA
 		if (selected == LB_ERR)
 			selected = -1;
 
-		CommandEvent cmdEvent(m_owner, 0, Command(selected));
-		m_owner->raiseEvent(EiSelectionChange, &cmdEvent);
-		if (cmdEvent.consumed())
+		SelectionChangeEvent selectionChangeEvent(m_owner);
+		m_owner->raiseEvent(&selectionChangeEvent);
+		if (selectionChangeEvent.consumed())
 			skip = false;
 	}
 	return TRUE;

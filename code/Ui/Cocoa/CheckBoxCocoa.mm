@@ -1,6 +1,6 @@
 #include "Ui/Cocoa/CheckBoxCocoa.h"
 #include "Ui/Cocoa/UtilitiesCocoa.h"
-#include "Ui/Events/CommandEvent.h"
+#include "Ui/Events/ButtonClickEvent.h"
 #include "Ui/EventSubject.h"
 
 namespace traktor
@@ -45,8 +45,8 @@ bool CheckBoxCocoa::isChecked() const
 
 void CheckBoxCocoa::targetProxy_Action(void* controlId)
 {
-	CommandEvent commandEvent(m_owner, 0);
-	m_owner->raiseEvent(EiClick, &commandEvent);
+	ButtonClickEvent clickEvent(m_owner);
+	m_owner->raiseEvent(&clickEvent);
 }
 
 void CheckBoxCocoa::targetProxy_doubleAction(void* controlId)

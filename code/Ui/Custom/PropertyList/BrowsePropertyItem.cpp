@@ -2,7 +2,6 @@
 #include "Ui/Bitmap.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Command.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/Custom/MiniButton.h"
 #include "Ui/Custom/PropertyList/BrowsePropertyItem.h"
 #include "Ui/Custom/PropertyList/PropertyList.h"
@@ -61,7 +60,7 @@ void BrowsePropertyItem::createInPlaceControls(Widget* parent)
 	T_ASSERT (!m_buttonEdit);
 	m_buttonEdit = new MiniButton();
 	m_buttonEdit->create(parent, Bitmap::load(c_ResourceSmallPen, sizeof(c_ResourceSmallPen), L"png"));
-	m_buttonEdit->addClickEventHandler(createMethodHandler(this, &BrowsePropertyItem::eventEditClick));
+	m_buttonEdit->addEventHandler< ButtonClickEvent >(this, &BrowsePropertyItem::eventEditClick);
 	m_buttonEdit->setEnable(!m_value.isNull());
 	
 	T_ASSERT (!m_buttonBrowse);
@@ -71,7 +70,7 @@ void BrowsePropertyItem::createInPlaceControls(Widget* parent)
 			ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"png") :
 			ui::Bitmap::load(c_ResourceSmallCross, sizeof(c_ResourceSmallCross), L"png")
 	);
-	m_buttonBrowse->addClickEventHandler(createMethodHandler(this, &BrowsePropertyItem::eventBrowseClick));
+	m_buttonBrowse->addEventHandler< ButtonClickEvent >(this, &BrowsePropertyItem::eventBrowseClick);
 }
 
 void BrowsePropertyItem::destroyInPlaceControls()
@@ -168,12 +167,12 @@ bool BrowsePropertyItem::paste()
 		return false;
 }
 
-void BrowsePropertyItem::eventEditClick(Event* event)
+void BrowsePropertyItem::eventEditClick(ButtonClickEvent* event)
 {
 	notifyCommand(Command(1, L"Property.Edit"));
 }
 
-void BrowsePropertyItem::eventBrowseClick(Event* event)
+void BrowsePropertyItem::eventBrowseClick(ButtonClickEvent* event)
 {
 	notifyCommand(Command(2, L"Property.Browse"));
 }

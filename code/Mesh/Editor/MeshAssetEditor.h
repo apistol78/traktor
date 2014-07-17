@@ -2,6 +2,7 @@
 #define traktor_mesh_MeshAssetEditor_H
 
 #include "Editor/IObjectEditor.h"
+#include "Ui/Events/AllEvents.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -27,9 +28,14 @@ class Container;
 class CheckBox;
 class DropDown;
 class Edit;
-class Event;
 class ListView;
 
+		namespace custom
+		{
+
+class ToolBarButtonClickEvent;
+
+		}
 	}
 
 	namespace model
@@ -99,15 +105,15 @@ private:
 
 	void removeMaterialTexture();
 
-	void eventBrowseClick(ui::Event* event);
+	void eventBrowseClick(ui::ButtonClickEvent* event);
 
-	void eventMaterialShaderToolClick(ui::Event* event);
+	void eventMaterialShaderToolClick(ui::custom::ToolBarButtonClickEvent* event);
 
-	void eventMaterialShaderListDoubleClick(ui::Event* event);
+	void eventMaterialShaderListDoubleClick(ui::MouseDoubleClickEvent* event);
 
-	void eventMaterialTextureToolClick(ui::Event* event);
+	void eventMaterialTextureToolClick(ui::custom::ToolBarButtonClickEvent* event);
 
-	void eventMaterialTextureListDoubleClick(ui::Event* event);
+	void eventMaterialTextureListDoubleClick(ui::MouseDoubleClickEvent* event);
 };
 
 	}

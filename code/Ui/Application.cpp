@@ -1,6 +1,6 @@
+#include "Core/Misc/String.h"
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
-#include "Core/Misc/String.h"
 
 namespace traktor
 {

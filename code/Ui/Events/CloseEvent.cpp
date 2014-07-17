@@ -7,8 +7,8 @@ namespace traktor
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.CloseEvent", CloseEvent, Event)
 
-CloseEvent::CloseEvent(EventSubject* sender, Object* item)
-:	Event(sender, item)
+CloseEvent::CloseEvent(EventSubject* sender)
+:	Event(sender)
 ,	m_cancelled(false)
 {
 }

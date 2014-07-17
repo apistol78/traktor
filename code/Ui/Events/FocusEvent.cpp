@@ -7,8 +7,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.FocusEvent", FocusEvent, Event)
 
-FocusEvent::FocusEvent(EventSubject* sender, Object* item, bool gotFocus)
-:	Event(sender, item)
+FocusEvent::FocusEvent(EventSubject* sender, bool gotFocus)
+:	Event(sender)
 ,	m_gotFocus(gotFocus)
 {
 }

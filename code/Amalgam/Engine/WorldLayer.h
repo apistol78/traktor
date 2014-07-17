@@ -112,6 +112,8 @@ public:
 
 	world::PostProcess* getPostProcess() const;
 
+	const Frustum& getViewFrustum() const;
+
 	bool worldToView(const Vector4& worldPosition, Vector4& outViewPosition) const;
 
 	bool viewToWorld(const Vector4& viewPosition, Vector4& outWorldPosition) const;

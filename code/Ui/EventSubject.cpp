@@ -1,6 +1,5 @@
 #include <algorithm>
 #include "Ui/Event.h"
-#include "Ui/EventHandler.h"
 #include "Ui/EventSubject.h"
 
 namespace traktor
@@ -10,9 +9,44 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.EventSubject", EventSubject, Object)
 
-void EventSubject::addEventHandler(int32_t eventId, EventHandler* eventHandler)
+void EventSubject::raiseEvent(Event* event)
 {
-	std::vector< EventHandlers >& eventHandlers = m_eventHandlers[eventId];
+	T_ANONYMOUS_VAR(Ref< EventSubject >)(this);
+
+	const TypeInfo& eventType = type_of(event);
+	for (std::map< const TypeInfo*, std::vector< EventHandlers > >::iterator i = m_eventHandlers.begin(); i != m_eventHandlers.end(); ++i)
+	{
+		if (!is_type_of(*i->first, eventType))
+			continue;
+	
+		// Invoke event handlers reversed as the most prioritized are at the end and they should
+		// be able to "consume" the event so it wont reach other, less prioritized, handlers.
+		std::vector< EventHandlers > eventHandlers = i->second;
+		for (std::vector< EventHandlers >::reverse_iterator i = eventHandlers.rbegin(); i != eventHandlers.rend(); ++i)
+		{
+			for (EventHandlers::iterator j = i->begin(); j != i->end(); )
+			{
+				Ref< IEventHandler > eventHandler = *j++;
+				if (!eventHandler)
+					continue;
+			
+				eventHandler->notify(event);
+				if (event && event->consumed())
+					break;
+			}
+		}
+	}
+}
+
+void EventSubject::removeAllEventHandlers()
+{
+	for (std::map< const TypeInfo*, std::vector< EventHandlers > >::iterator i = m_eventHandlers.begin(); i != m_eventHandlers.end(); ++i)
+		i->second.clear();
+}
+
+void EventSubject::addEventHandler(const TypeInfo& eventType, IEventHandler* eventHandler)
+{
+	std::vector< EventHandlers >& eventHandlers = m_eventHandlers[&eventType];
 	int32_t depth = 0;
 	
 	// Use class hierarchy depth as handler priority.
@@ -28,59 +62,19 @@ void EventSubject::addEventHandler(int32_t eventId, EventHandler* eventHandler)
 		eventHandlers.resize(depth + 1);
 	
 	// Insert event handler into vector.
-	T_ASSERT (std::find(eventHandlers[depth].begin(), eventHandlers[depth].end(), eventHandler) == eventHandlers[depth].end());
 	eventHandlers[depth].push_back(eventHandler);
 }
 
-void EventSubject::removeEventHandler(int32_t eventId, EventHandler* eventHandler)
+void EventSubject::removeEventHandler(const TypeInfo& eventType, IEventHandler* eventHandler)
 {
-	std::vector< EventHandlers >& eventHandlers = m_eventHandlers[eventId];
+	std::vector< EventHandlers >& eventHandlers = m_eventHandlers[&eventType];
 	for (std::vector< EventHandlers >::iterator i = eventHandlers.begin(); i != eventHandlers.end(); ++i)
-	{
-		EventHandlers::iterator j = std::find(i->begin(), i->end(), eventHandler);
-		if (j != i->end())
-			i->erase(j);
-	}
+		i->remove(eventHandler);
 }
 
-void EventSubject::removeAllEventHandlers()
+bool EventSubject::hasEventHandler(const TypeInfo& eventType)
 {
-	m_eventHandlers.clear();
-}
-
-void EventSubject::removeAllEventHandlers(int32_t eventId)
-{
-	std::vector< EventHandlers >& eventHandlers = m_eventHandlers[eventId];
-	eventHandlers.resize(0);
-}
-
-bool EventSubject::hasEventHandler(int32_t eventId)
-{
-	return !m_eventHandlers[eventId].empty();
-}
-
-void EventSubject::raiseEvent(int32_t eventId, Event* event)
-{
-	T_ANONYMOUS_VAR(Ref< EventSubject >)(this);
-
-	if (m_eventHandlers.find(eventId) == m_eventHandlers.end())
-		return;
-	
-	// Invoke event handlers reversed as the most prioritized are at the end and they should be able to "consume" the event so it wont reach other, less prioritized, handlers.
-	std::vector< EventHandlers > eventHandlers = m_eventHandlers[eventId];
-	for (std::vector< EventHandlers >::reverse_iterator i = eventHandlers.rbegin(); i != eventHandlers.rend(); ++i)
-	{
-		for (EventHandlers::iterator j = i->begin(); j != i->end(); )
-		{
-			Ref< EventHandler > eventHandler = *j++;
-			if (!eventHandler)
-				continue;
-			
-			eventHandler->notify(event);
-			if (event && event->consumed())
-				break;
-		}
-	}
+	return !m_eventHandlers[&eventType].empty();
 }
 
 	}

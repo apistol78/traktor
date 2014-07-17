@@ -1,12 +1,11 @@
-#include "Ui/Win32/MenuBarWin32.h"
-#include "Ui/Win32/FormWin32.h"
-#include "Ui/Win32/BitmapWin32.h"
-#include "Ui/Itf/IForm.h"
-#include "Ui/MenuItem.h"
-#include "Ui/Bitmap.h"
-#include "Ui/Widget.h"
-#include "Ui/Events/CommandEvent.h"
 #include "Core/Misc/TString.h"
+#include "Ui/Bitmap.h"
+#include "Ui/MenuItem.h"
+#include "Ui/Widget.h"
+#include "Ui/Itf/IForm.h"
+#include "Ui/Win32/BitmapWin32.h"
+#include "Ui/Win32/FormWin32.h"
+#include "Ui/Win32/MenuBarWin32.h"
 
 namespace traktor
 {
@@ -247,9 +246,10 @@ LRESULT MenuBarWin32::eventMenuCommand(HWND hWnd, UINT message, WPARAM wParam, L
 	MenuItem* item = reinterpret_cast< MenuItem* >(mii.dwItemData);
 	T_ASSERT (item);
 
-	CommandEvent cmdEvent(m_owner, item, item->getCommand());
-	m_owner->raiseEvent(EiClick, &cmdEvent);
-	pass = !cmdEvent.consumed();
+	MenuClickEvent menuClickEvent(m_owner, item, item->getCommand());
+	m_owner->raiseEvent(&menuClickEvent);
+
+	pass = !menuClickEvent.consumed();
 
 #endif
 	return 0;

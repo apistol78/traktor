@@ -1,11 +1,9 @@
 #include "Ui/Canvas.h"
+#include "Ui/EventSubject.h"
 #include "Ui/Cocoa/UserWidgetCocoa.h"
 #include "Ui/Cocoa/CanvasCocoa.h"
 #include "Ui/Cocoa/UtilitiesCocoa.h"
-#include "Ui/Events/KeyEvent.h"
-#include "Ui/Events/MouseEvent.h"
-#include "Ui/Events/PaintEvent.h"
-#include "Ui/EventSubject.h"
+#include "Ui/Events/AllEvents.h"
 
 namespace traktor
 {
@@ -48,7 +46,7 @@ bool UserWidgetCocoa::create(IWidget* parent, int style)
 
 bool UserWidgetCocoa::event_drawRect(const NSRect& rect)
 {
-	if (!m_owner->hasEventHandler(EiPaint))
+	if (!m_owner->hasEventHandler< PaintEvent >())
 		return false;
 
 	Rect rc = fromNSRect(rect);
@@ -59,8 +57,8 @@ bool UserWidgetCocoa::event_drawRect(const NSRect& rect)
 
 	CanvasCocoa canvasImpl(m_control, font);
 	Canvas canvas(&canvasImpl);
-	PaintEvent paintEvent(m_owner, (Object*)0, canvas, rc);
-	m_owner->raiseEvent(EiPaint, &paintEvent);
+	PaintEvent paintEvent(m_owner, canvas, rc);
+	m_owner->raiseEvent(&paintEvent);
 
 	return paintEvent.consumed();
 }
@@ -73,85 +71,93 @@ bool UserWidgetCocoa::event_viewDidEndLiveResize()
 
 bool UserWidgetCocoa::event_mouseDown(NSEvent* theEvent, int button)
 {
-	if (!m_owner->hasEventHandler(EiButtonDown))
-		return false;
-
 	NSPoint mousePosition = [theEvent locationInWindow];
 	mousePosition = [m_control convertPointFromBase: mousePosition];
 
 	if (button == 1)
-		button = MouseEvent::BtLeft;
+		button = MbtLeft;
 	else if (button == 2)
-		button = MouseEvent::BtRight;
+		button = MbtRight;
 
-	MouseEvent mouseEvent(
-		m_owner,
-		0,
-		button,
-		fromNSPoint(mousePosition)
-	);
-	
 	if ([theEvent clickCount] <= 1)
-		m_owner->raiseEvent(EiButtonDown, &mouseEvent);
+	{
+		if (!m_owner->hasEventHandler< MouseButtonDownEvent >())
+			return false;
+
+		MouseButtonDownEvent mouseEvent(
+			m_owner,
+			button,
+			fromNSPoint(mousePosition)
+		);
+		m_owner->raiseEvent(&mouseEvent);
+	}
 	else
-		m_owner->raiseEvent(EiDoubleClick, &mouseEvent);
+	{
+		if (!m_owner->hasEventHandler< MouseDoubleClickEvent >())
+			return false;
+
+		MouseDoubleClickEvent mouseEvent(
+			m_owner,
+			button,
+			fromNSPoint(mousePosition)
+		);
+		m_owner->raiseEvent(&mouseEvent);
+	}
 	
 	return true;
 }
 
 bool UserWidgetCocoa::event_mouseUp(NSEvent* theEvent, int button)
 {
-	if (!m_owner->hasEventHandler(EiButtonUp))
+	if (!m_owner->hasEventHandler< MouseButtonUpEvent >())
 		return false;
 
 	NSPoint mousePosition = [theEvent locationInWindow];
 	mousePosition = [m_control convertPointFromBase: mousePosition];
 	
 	if (button == 1)
-		button = MouseEvent::BtLeft;
+		button = MbtLeft;
 	else if (button == 2)
-		button = MouseEvent::BtRight;
+		button = MbtRight;
 	
-	MouseEvent mouseEvent(
+	MouseButtonUpEvent mouseEvent(
 		m_owner,
-		0,
 		button,
 		fromNSPoint(mousePosition)
 	);
 	
 	if ([theEvent clickCount] <= 1)
-		m_owner->raiseEvent(EiButtonUp, &mouseEvent);
+		m_owner->raiseEvent(&mouseEvent);
 	
 	return true;
 }
 	
 bool UserWidgetCocoa::event_mouseMoved(NSEvent* theEvent, int button)
 {
-	if (!m_owner->hasEventHandler(EiMouseMove))
+	if (!m_owner->hasEventHandler< MouseMoveEvent >())
 		return false;
 
 	NSPoint mousePosition = [theEvent locationInWindow];
 	mousePosition = [m_control convertPointFromBase: mousePosition];
 
 	if (button == 1)
-		button = MouseEvent::BtLeft;
+		button = MbtLeft;
 	else if (button == 2)
-		button = MouseEvent::BtRight;
+		button = MbtRight;
 
-	MouseEvent mouseEvent(
+	MouseMoveEvent mouseEvent(
 		m_owner,
-		0,
 		button,
 		fromNSPoint(mousePosition)
 	);
-	m_owner->raiseEvent(EiMouseMove, &mouseEvent);
+	m_owner->raiseEvent(&mouseEvent);
 	
 	return true;
 }
 
 bool UserWidgetCocoa::event_keyDown(NSEvent* theEvent)
 {
-	if (!m_owner->hasEventHandler(EiKeyDown))
+	if (!m_owner->hasEventHandler< KeyDownEvent >())
 		return false;
 	
 	NSString* chs = [theEvent characters];
@@ -159,21 +165,20 @@ bool UserWidgetCocoa::event_keyDown(NSEvent* theEvent)
 	uint32_t keyCode = [theEvent keyCode];
 	wchar_t keyChar = [chs length] > 0 ? (wchar_t)[chs characterAtIndex: 0] : 0;
 	
-	KeyEvent keyEvent(
+	KeyDownEvent keyEvent(
 		m_owner,
-		0,
 		VkNull,
 		keyCode,
 		keyChar
 	);
-	m_owner->raiseEvent(EiKeyDown, &keyEvent);
+	m_owner->raiseEvent(&keyEvent);
 
 	return true;
 }
 
 bool UserWidgetCocoa::event_keyUp(NSEvent* theEvent)
 {
-	if (!m_owner->hasEventHandler(EiKeyUp))
+	if (!m_owner->hasEventHandler< KeyUpEvent >())
 		return false;
 
 	NSString* chs = [theEvent characters];
@@ -181,21 +186,20 @@ bool UserWidgetCocoa::event_keyUp(NSEvent* theEvent)
 	uint32_t keyCode = [theEvent keyCode];
 	wchar_t keyChar = [chs length] > 0 ? (wchar_t)[chs characterAtIndex: 0] : 0;
 	
-	KeyEvent keyEvent(
+	KeyUpEvent keyEvent(
 		m_owner,
-		0,
 		VkNull,
 		keyCode,
 		keyChar
 	);
-	m_owner->raiseEvent(EiKeyUp, &keyEvent);
+	m_owner->raiseEvent(&keyEvent);
 
 	return true;
 }
 
 bool UserWidgetCocoa::event_performKeyEquivalent(NSEvent* theEvent)
 {
-	if (!m_owner->hasEventHandler(EiKey))
+	if (!m_owner->hasEventHandler< KeyEvent >())
 		return false;
 
 	NSString* chs = [theEvent characters];
@@ -205,12 +209,11 @@ bool UserWidgetCocoa::event_performKeyEquivalent(NSEvent* theEvent)
 	
 	KeyEvent keyEvent(
 		m_owner,
-		0,
 		VkNull,
 		keyCode,
 		keyChar
 	);
-	m_owner->raiseEvent(EiKey, &keyEvent);
+	m_owner->raiseEvent(&keyEvent);
 
 	return true;
 }

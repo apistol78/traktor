@@ -111,6 +111,31 @@ Vector2 BoxedVector2::div(float v) const
 	return m_value / v;
 }
 
+float BoxedVector2::dot(const Vector2& v) const
+{
+	return traktor::dot(m_value, v);
+}
+
+float BoxedVector2::length() const
+{
+	return m_value.length();
+}
+
+Vector2 BoxedVector2::normalized() const
+{
+	return m_value.normalized();
+}
+
+Vector2 BoxedVector2::neg() const
+{
+	return -m_value;
+}
+
+Vector2 BoxedVector2::perpendicular() const
+{
+	return m_value.perpendicular();
+}
+
 std::wstring BoxedVector2::toString() const
 {
 	StringOutputStream ss;
@@ -426,9 +451,95 @@ BoxedAabb3::BoxedAabb3(const Vector4& min, const Vector4& max)
 {
 }
 
+Any BoxedAabb3::intersectRay(const Vector4& origin, const Vector4& direction) const
+{
+	Scalar distanceEnter, distanceExit;
+	if (m_value.intersectRay(origin, direction, distanceEnter, distanceExit))
+		return Any::fromFloat(distanceEnter);
+	else
+		return Any();
+}
+
 std::wstring BoxedAabb3::toString() const
 {
 	return L"(aabb3)";
+}
+
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Frustum", BoxedFrustum, Boxed)
+
+BoxedFrustum::BoxedFrustum()
+{
+}
+
+BoxedFrustum::BoxedFrustum(const Frustum& value)
+:	m_value(value)
+{
+}
+
+void BoxedFrustum::buildPerspective(float vfov, float aspect, float zn, float zf)
+{
+	m_value.buildPerspective(vfov, aspect, zn, zf);
+}
+
+void BoxedFrustum::buildOrtho(float width, float height, float zn, float zf)
+{
+	m_value.buildOrtho(width, height, zn, zf);
+}
+
+void BoxedFrustum::setNearZ(float zn)
+{
+	m_value.setNearZ(Scalar(zn));
+}
+
+float BoxedFrustum::getNearZ() const
+{
+	return m_value.getNearZ();
+}
+
+void BoxedFrustum::setFarZ(float zf)
+{
+	m_value.setFarZ(Scalar(zf));
+}
+
+float BoxedFrustum::getFarZ() const
+{
+	return m_value.getFarZ();
+}
+
+bool BoxedFrustum::insidePoint(const Vector4& point) const
+{
+	return m_value.inside(point) != Frustum::IrOutside;
+}
+
+int32_t BoxedFrustum::insideSphere(const Vector4& center, float radius) const
+{
+	return m_value.inside(center, Scalar(radius));
+}
+
+int32_t BoxedFrustum::insideAabb(const Aabb3& aabb) const
+{
+	return m_value.inside(aabb);
+}
+
+const Plane& BoxedFrustum::getPlane(int32_t index) const
+{
+	return m_value.planes[index];
+}
+
+const Vector4& BoxedFrustum::getCorner(int32_t index) const
+{
+	return m_value.corners[index];
+}
+
+const Vector4& BoxedFrustum::getCenter() const
+{
+	return m_value.center;
+}
+
+std::wstring BoxedFrustum::toString() const
+{
+	return L"(frustum)";
 }
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Color4f", BoxedColor4f, Boxed)
@@ -622,6 +733,12 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedVector2->addMethod< Vector2, float >("subf", &BoxedVector2::sub);
 	classBoxedVector2->addMethod< Vector2, float >("mulf", &BoxedVector2::mul);
 	classBoxedVector2->addMethod< Vector2, float >("divf", &BoxedVector2::div);
+	classBoxedVector2->addMethod("dot", &BoxedVector2::dot);
+	classBoxedVector2->addMethod("length", &BoxedVector2::length);
+	classBoxedVector2->addMethod("normalized", &BoxedVector2::normalized);
+	classBoxedVector2->addMethod("neg", &BoxedVector2::neg);
+	classBoxedVector2->addMethod("perpendicular", &BoxedVector2::perpendicular);
+	classBoxedVector2->addStaticMethod("zero", &BoxedVector2::zero);
 	classBoxedVector2->addOperator< Vector2, const Vector2& >('+', &BoxedVector2::add);
 	classBoxedVector2->addOperator< Vector2, float >('+', &BoxedVector2::add);
 	classBoxedVector2->addOperator< Vector2, const Vector2& >('-', &BoxedVector2::sub);
@@ -722,6 +839,7 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedTransform->addMethod("transform", &BoxedTransform::transform);
 	classBoxedTransform->addStaticMethod("identity", &BoxedTransform::identity);
 	classBoxedTransform->addStaticMethod("lerp", &BoxedTransform::lerp);
+	classBoxedTransform->addOperator< Vector4, const Vector4& >('*', &BoxedTransform::transform);
 	scriptManager->registerClass(classBoxedTransform);
 
 	Ref< AutoScriptClass< BoxedAabb3 > > classBoxedAabb3 = new AutoScriptClass< BoxedAabb3 >();
@@ -735,7 +853,24 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedAabb3->addMethod("getExtent", &BoxedAabb3::getExtent);
 	classBoxedAabb3->addMethod("empty", &BoxedAabb3::empty);
 	classBoxedAabb3->addMethod("overlap", &BoxedAabb3::overlap);
+	classBoxedAabb3->addMethod("intersectRay", &BoxedAabb3::intersectRay);
 	scriptManager->registerClass(classBoxedAabb3);
+
+	Ref< AutoScriptClass< BoxedFrustum > > classBoxedFrustum = new AutoScriptClass< BoxedFrustum >();
+	classBoxedFrustum->addConstructor();
+	classBoxedFrustum->addMethod("buildPerspective", &BoxedFrustum::buildPerspective);
+	classBoxedFrustum->addMethod("buildOrtho", &BoxedFrustum::buildOrtho);
+	classBoxedFrustum->addMethod("setNearZ", &BoxedFrustum::setNearZ);
+	classBoxedFrustum->addMethod("getNearZ", &BoxedFrustum::getNearZ);
+	classBoxedFrustum->addMethod("setFarZ", &BoxedFrustum::setFarZ);
+	classBoxedFrustum->addMethod("getFarZ", &BoxedFrustum::getFarZ);
+	classBoxedFrustum->addMethod("insidePoint", &BoxedFrustum::insidePoint);
+	classBoxedFrustum->addMethod("insideSphere", &BoxedFrustum::insideSphere);
+	classBoxedFrustum->addMethod("insideAabb", &BoxedFrustum::insideAabb);
+	classBoxedFrustum->addMethod("getPlane", &BoxedFrustum::getPlane);
+	classBoxedFrustum->addMethod("getCorner", &BoxedFrustum::getCorner);
+	classBoxedFrustum->addMethod("getCenter", &BoxedFrustum::getCenter);
+	scriptManager->registerClass(classBoxedFrustum);
 
 	Ref< AutoScriptClass< BoxedColor4f > > classBoxedColor4f = new AutoScriptClass< BoxedColor4f >();
 	classBoxedColor4f->addConstructor();

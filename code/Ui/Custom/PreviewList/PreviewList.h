@@ -3,6 +3,7 @@
 
 #include "Core/Ref.h"
 #include "Ui/Custom/Auto/AutoWidget.h"
+#include "Ui/Custom/PreviewList/PreviewSelectionChangeEvent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -34,14 +35,12 @@ public:
 	
 	PreviewItem* getSelectedItem() const;
 
-	void addSelectEventHandler(EventHandler* eventHandler);
-
 private:
 	Ref< PreviewItems > m_items;
 
 	virtual void layoutCells(const Rect& rc);
 
-	void eventButtonDown(Event* event);
+	void eventButtonDown(MouseButtonDownEvent* event);
 };
 
 		}

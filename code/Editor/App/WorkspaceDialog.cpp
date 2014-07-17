@@ -4,10 +4,8 @@
 #include "I18N/Text.h"
 #include "Ui/Edit.h"
 #include "Ui/FloodLayout.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Events/CommandEvent.h"
 
 namespace traktor
 {
@@ -21,7 +19,7 @@ bool WorkspaceDialog::create(ui::Widget* parent, PropertyGroup* settings)
 	if (!ui::ConfigDialog::create(parent, i18n::Text(L"EDITOR_WORKSPACE_TITLE"), 500, 200, ui::ConfigDialog::WsDefaultResizable, new ui::FloodLayout()))
 		return false;
 
-	addClickEventHandler(ui::createMethodHandler(this, &WorkspaceDialog::eventDialogClick));
+	addEventHandler< ui::ButtonClickEvent >(this, &WorkspaceDialog::eventDialogClick);
 
 	Ref< ui::Container > containerInner = new ui::Container();
 	if (!containerInner->create(this, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 8, 4)))
@@ -55,9 +53,9 @@ bool WorkspaceDialog::create(ui::Widget* parent, PropertyGroup* settings)
 	return true;
 }
 
-void WorkspaceDialog::eventDialogClick(ui::Event* event)
+void WorkspaceDialog::eventDialogClick(ui::ButtonClickEvent* event)
 {
-	if (checked_type_cast< ui::CommandEvent* >(event)->getCommand() == ui::DrOk)
+	if (event->getCommand() == ui::DrOk)
 	{
 		m_settings->setProperty< PropertyString >(L"Editor.HomeUrl", m_editHomeUrl->getText());
 		m_settings->setProperty< PropertyString >(L"Editor.SourceDatabase", m_editSourceDatabase->getText());

@@ -1,9 +1,8 @@
-#include "Ui/Native.h"
-#include "Ui/Application.h"
-#include "Ui/Itf/INative.h"
-#include "Ui/Layout.h"
-#include "Ui/MethodHandler.h"
 #include "Core/Log/Log.h"
+#include "Ui/Application.h"
+#include "Ui/Layout.h"
+#include "Ui/Native.h"
+#include "Ui/Itf/INative.h"
 
 namespace traktor
 {
@@ -31,7 +30,7 @@ bool Native::create(void* nativeHandle, Layout* layout)
 
 	m_widget = native;
 
-	addSizeEventHandler(createMethodHandler(this, &Native::eventSize));
+	addEventHandler< SizeEvent >(this, &Native::eventSize);
 
 	return Widget::create(0);
 }
@@ -44,7 +43,7 @@ void Native::update(const Rect* rc, bool immediate)
 	Widget::update(rc, immediate);
 }
 
-void Native::eventSize(Event* event)
+void Native::eventSize(SizeEvent* event)
 {
 	update(0, false);
 }

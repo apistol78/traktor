@@ -10,11 +10,10 @@
 #include "Ui/FloodLayout.h"
 #include "Ui/TableLayout.h"
 #include "Ui/ListBox.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/CommandEvent.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
+#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/Custom/PropertyList/AutoPropertyList.h"
 
 // Resources
@@ -57,11 +56,11 @@ bool TextureBatchDialog::create(ui::Widget* parent)
 	textureListTools->addImage(ui::Bitmap::load(c_ResourcePlusMinus, sizeof(c_ResourcePlusMinus), L"png"), 4);
 	textureListTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TEXTURE_BATCH_ADD"), 0, ui::Command(L"TextureBatch.Add")));
 	textureListTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TEXTURE_BATCH_REMOVE"), 1, ui::Command(L"TextureBatch.Remove")));
-	textureListTools->addClickEventHandler(ui::createMethodHandler(this, &TextureBatchDialog::eventTextureListToolClick));
+	textureListTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &TextureBatchDialog::eventTextureListToolClick);
 
 	m_textureList = new ui::ListBox();
 	m_textureList->create(textureListContainer, L"", ui::WsClientBorder | ui::ListBox::WsExtended);
-	m_textureList->addSelectEventHandler(ui::createMethodHandler(this, &TextureBatchDialog::eventTextureListSelect));
+	m_textureList->addEventHandler< ui::SelectionChangeEvent >(this, &TextureBatchDialog::eventTextureListSelect);
 
 	m_texturePropertyList = new ui::custom::AutoPropertyList();
 	m_texturePropertyList->create(splitter, ui::WsClientBorder | ui::WsDoubleBuffer | ui::custom::AutoPropertyList::WsColumnHeader);
@@ -135,18 +134,16 @@ void TextureBatchDialog::removeTexture()
 		m_textureList->remove(index);
 }
 
-void TextureBatchDialog::eventTextureListToolClick(ui::Event* event)
+void TextureBatchDialog::eventTextureListToolClick(ui::custom::ToolBarButtonClickEvent* event)
 {
-	const ui::CommandEvent* cmdEvent = checked_type_cast< const ui::CommandEvent* >(event);
-	const ui::Command& cmd = cmdEvent->getCommand();
-
+	const ui::Command& cmd = event->getCommand();
 	if (cmd == L"TextureBatch.Add")
 		addTexture();
 	else if (cmd == L"TextureBatch.Remove")
 		removeTexture();
 }
 
-void TextureBatchDialog::eventTextureListSelect(ui::Event* event)
+void TextureBatchDialog::eventTextureListSelect(ui::SelectionChangeEvent* event)
 {
 	Ref< TextureAsset > asset = checked_type_cast< TextureAsset* >(m_textureList->getSelectedData());
 	m_texturePropertyList->apply();
