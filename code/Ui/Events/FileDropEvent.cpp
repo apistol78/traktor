@@ -7,8 +7,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.FileDropEvent", FileDropEvent, Event)
 
-FileDropEvent::FileDropEvent(EventSubject* sender, Object* item, const std::vector< Path >& files)
-:	Event(sender, item)
+FileDropEvent::FileDropEvent(EventSubject* sender, const std::vector< Path >& files)
+:	Event(sender)
 ,	m_files(files)
 {
 }

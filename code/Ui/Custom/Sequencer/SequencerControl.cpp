@@ -5,16 +5,11 @@
 #include "Core/Math/MathUtils.h"
 #include "Ui/Application.h"
 #include "Ui/ScrollBar.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/SizeEvent.h"
-#include "Ui/Events/MouseEvent.h"
-#include "Ui/Events/PaintEvent.h"
-#include "Ui/Events/CommandEvent.h"
-#include "Ui/Events/FocusEvent.h"
-#include "Ui/Custom/Sequencer/MovedEvent.h"
+#include "Ui/Custom/Sequencer/CursorMoveEvent.h"
 #include "Ui/Custom/Sequencer/SequencerControl.h"
-#include "Ui/Custom/Sequencer/SequenceItem.h"
 #include "Ui/Custom/Sequencer/SequenceGroup.h"
+#include "Ui/Custom/Sequencer/SequenceItem.h"
+#include "Ui/Custom/Sequencer/SequenceMovedEvent.h"
 
 namespace traktor
 {
@@ -51,20 +46,20 @@ bool SequencerControl::create(Widget* parent, int style)
 	if (!m_scrollBarV->create(this, ScrollBar::WsVertical))
 		return false;
 
-	m_scrollBarV->addScrollEventHandler(createMethodHandler(this, &SequencerControl::eventScroll));
+	m_scrollBarV->addEventHandler< ScrollEvent >(this, &SequencerControl::eventScroll);
 
 	m_scrollBarH = new ScrollBar();
 	if (!m_scrollBarH->create(this, ScrollBar::WsHorizontal))
 		return false;
 
-	m_scrollBarH->addScrollEventHandler(createMethodHandler(this, &SequencerControl::eventScroll));
+	m_scrollBarH->addEventHandler< ScrollEvent >(this, &SequencerControl::eventScroll);
 
-	addSizeEventHandler(createMethodHandler(this, &SequencerControl::eventSize));
-	addButtonDownEventHandler(createMethodHandler(this, &SequencerControl::eventButtonDown));
-	addButtonUpEventHandler(createMethodHandler(this, &SequencerControl::eventButtonUp));
-	addMouseMoveEventHandler(createMethodHandler(this, &SequencerControl::eventMouseMove));
-	addMouseWheelEventHandler(createMethodHandler(this, &SequencerControl::eventMouseWheel));
-	addPaintEventHandler(createMethodHandler(this, &SequencerControl::eventPaint));
+	addEventHandler< SizeEvent >(this, &SequencerControl::eventSize);
+	addEventHandler< MouseButtonDownEvent >(this, &SequencerControl::eventButtonDown);
+	addEventHandler< MouseButtonUpEvent >(this, &SequencerControl::eventButtonUp);
+	addEventHandler< MouseMoveEvent >(this, &SequencerControl::eventMouseMove);
+	addEventHandler< MouseWheelEvent >(this, &SequencerControl::eventMouseWheel);
+	addEventHandler< PaintEvent >(this, &SequencerControl::eventPaint);
 
 	return true;
 }
@@ -189,39 +184,9 @@ int SequencerControl::getSequenceItems(RefArray< SequenceItem >& sequenceItems, 
 	return int(sequenceItems.size());
 }
 
-void SequencerControl::addSelectEventHandler(EventHandler* eventHandler)
+void SequencerControl::eventSize(SizeEvent* event)
 {
-	addEventHandler(EiSelectionChange, eventHandler);
-}
-
-void SequencerControl::addCursorMoveEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiCursorMove, eventHandler);
-}
-
-void SequencerControl::addKeyMoveEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiKeyMove, eventHandler);
-}
-
-void SequencerControl::addGroupVisibleEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiGroupVisible, eventHandler);
-}
-
-void SequencerControl::addMovedSequenceItemEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiMovedSequenceItem, eventHandler);
-}
-
-void SequencerControl::addClickEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiClick, eventHandler);
-}
-
-void SequencerControl::eventSize(Event* e)
-{
-	e->consume();
+	event->consume();
 
 	Rect rc = getInnerRect();
 
@@ -272,10 +237,9 @@ void SequencerControl::updateScrollBars()
 	m_scrollBarH->setPage(100);
 }
 
-void SequencerControl::eventButtonDown(Event* e)
+void SequencerControl::eventButtonDown(MouseButtonDownEvent* event)
 {
-	MouseEvent* m = static_cast< MouseEvent* >(e);
-	if (m->getButton() != MouseEvent::BtLeft)
+	if (event->getButton() != MbtLeft)
 		return;
 
 	bool selectionModified = false;
@@ -288,13 +252,13 @@ void SequencerControl::eventButtonDown(Event* e)
 	getSequenceItems(sequenceItems, GfDescendants | GfExpandedOnly);
 
 	// If not shift is down we de-select all items.
-	if (!(e->getKeyState() & KsShift))
+	if (!(event->getKeyState() & KsShift))
 	{
 		for (RefArray< SequenceItem >::iterator i = sequenceItems.begin(); i != sequenceItems.end(); ++i)
 			selectionModified |= (*i)->setSelected(false);
 	}
 
-	Point position = m->getPosition();
+	Point position = event->getPosition();
 	Rect rc = getInnerRect();
 
 	int sequenceId = (position.y + m_scrollBarV->getPosition()) / c_sequenceHeight;
@@ -313,11 +277,11 @@ void SequencerControl::eventButtonDown(Event* e)
 		m_mouseTrackItem.item->mouseDown(
 			this,
 			Point(
-				m->getPosition().x - m_mouseTrackItem.rc.left,
-				m->getPosition().y - m_mouseTrackItem.rc.top
+				event->getPosition().x - m_mouseTrackItem.rc.left,
+				event->getPosition().y - m_mouseTrackItem.rc.top
 			),
 			m_mouseTrackItem.rc,
-			m->getButton(),
+			event->getButton(),
 			m_separator,
 			m_scrollBarH->getPosition()
 		);
@@ -326,8 +290,8 @@ void SequencerControl::eventButtonDown(Event* e)
 	// Issue selection change event.
 	if (selectionModified)
 	{
-		CommandEvent cmdEvent(this, 0);
-		raiseEvent(EiSelectionChange, &cmdEvent);
+		SelectionChangeEvent selectionChangeEvent(this);
+		raiseEvent(&selectionChangeEvent);
 	}
 
 	m_startPosition = position;
@@ -340,8 +304,8 @@ void SequencerControl::eventButtonDown(Event* e)
 		m_cursor = std::max< int >(m_cursor, 0);
 		m_cursor = std::min< int >(m_cursor, m_length);
 
-		CommandEvent cmdEvent(this, 0, Command(m_cursor));
-		raiseEvent(EiCursorMove, &cmdEvent);
+		CursorMoveEvent cursorMoveEvent(this, m_cursor);
+		raiseEvent(&cursorMoveEvent);
 	}
 	else if (m_mouseTrackItem.item)
 	{
@@ -354,12 +318,11 @@ void SequencerControl::eventButtonDown(Event* e)
 	setCapture();
 	update();
 
-	e->consume();
+	event->consume();
 }
 
-void SequencerControl::eventButtonUp(Event* e)
+void SequencerControl::eventButtonUp(MouseButtonUpEvent* event)
 {
-	MouseEvent* m = static_cast< MouseEvent* >(e);
 	if (!hasCapture())
 		return;
 
@@ -372,7 +335,7 @@ void SequencerControl::eventButtonUp(Event* e)
 		RefArray< SequenceItem > sequenceItems;
 		getSequenceItems(sequenceItems, GfDescendants | GfExpandedOnly);
 
-		if (m_dropIndex < m_sequenceItems.size())
+		if (m_dropIndex < int32_t(m_sequenceItems.size()))
 		{
 			SequenceItem* beforeItem = sequenceItems[m_dropIndex];
 			if (beforeItem->getParentItem())
@@ -383,8 +346,8 @@ void SequencerControl::eventButtonUp(Event* e)
 		else
 			addSequenceItem(m_mouseTrackItem.item);
 
-		MovedEvent movedEvent(this, m_mouseTrackItem.item, m_dropIndex);
-		raiseEvent(EiMovedSequenceItem, &movedEvent);
+		SequenceMovedEvent sequenceMovedEvent(this, m_mouseTrackItem.item, m_dropIndex);
+		raiseEvent(&sequenceMovedEvent);
 	}
 
 	// Issue local mouse up event on tracked sequence item.
@@ -393,11 +356,11 @@ void SequencerControl::eventButtonUp(Event* e)
 		m_mouseTrackItem.item->mouseUp(
 			this,
 			Point(
-				m->getPosition().x - m_mouseTrackItem.rc.left,
-				m->getPosition().y - m_mouseTrackItem.rc.top
+				event->getPosition().x - m_mouseTrackItem.rc.left,
+				event->getPosition().y - m_mouseTrackItem.rc.top
 			),
 			m_mouseTrackItem.rc,
-			m->getButton(),
+			event->getButton(),
 			m_separator,
 			m_scrollBarH->getPosition()
 		);
@@ -410,18 +373,17 @@ void SequencerControl::eventButtonUp(Event* e)
 	releaseCapture();
 	update();
 
-	e->consume();
+	event->consume();
 }
 
-void SequencerControl::eventMouseMove(Event* e)
+void SequencerControl::eventMouseMove(MouseMoveEvent* event)
 {
-	MouseEvent* m = static_cast< MouseEvent* >(e);
 	if (!hasCapture())
 		return;
 
-	e->consume();
+	event->consume();
 
-	Point position = m->getPosition();
+	Point position = event->getPosition();
 
 	// Check if begin moving.
 	if (m_moveTrack == 1)
@@ -460,7 +422,7 @@ void SequencerControl::eventMouseMove(Event* e)
 		int scrollOffsetX = m_scrollBarH->getPosition();
 
 		int cursor;
-		cursor = (m->getPosition().x - m_separator + scrollOffsetX) * m_timeScale;
+		cursor = (event->getPosition().x - m_separator + scrollOffsetX) * m_timeScale;
 		cursor = std::max< int >(cursor, 0);
 		cursor = std::min< int >(cursor, m_length);
 
@@ -470,8 +432,8 @@ void SequencerControl::eventMouseMove(Event* e)
 		m_cursor = cursor;
 		update();
 
-		CommandEvent cmdEvent(this, 0, Command(m_cursor));
-		raiseEvent(EiCursorMove, &cmdEvent);
+		CursorMoveEvent cursorMoveEvent(this, m_cursor);
+		raiseEvent(&cursorMoveEvent);
 
 		// Notify track item mouse move.
 		if (m_mouseTrackItem.item)
@@ -479,11 +441,11 @@ void SequencerControl::eventMouseMove(Event* e)
 			m_mouseTrackItem.item->mouseMove(
 				this,
 				Point(
-					m->getPosition().x - m_mouseTrackItem.rc.left,
-					m->getPosition().y - m_mouseTrackItem.rc.top
+					event->getPosition().x - m_mouseTrackItem.rc.left,
+					event->getPosition().y - m_mouseTrackItem.rc.top
 				),
 				m_mouseTrackItem.rc,
-				m->getButton(),
+				event->getButton(),
 				m_separator,
 				m_scrollBarH->getPosition()
 			);
@@ -491,10 +453,9 @@ void SequencerControl::eventMouseMove(Event* e)
 	}
 }
 
-void SequencerControl::eventMouseWheel(Event* e)
+void SequencerControl::eventMouseWheel(MouseWheelEvent* event)
 {
-	MouseEvent* mouseEvent = checked_type_cast< MouseEvent*, false >(e);
-	int32_t wheel = mouseEvent->getWheelRotation();
+	int32_t wheel = event->getRotation();
 
 	m_timeScale = clamp(m_timeScale + wheel, 1, 32);
 
@@ -502,10 +463,9 @@ void SequencerControl::eventMouseWheel(Event* e)
 	update();
 }
 
-void SequencerControl::eventPaint(Event* e)
+void SequencerControl::eventPaint(PaintEvent* event)
 {
-	PaintEvent* p = static_cast< PaintEvent* >(e);
-	Canvas& canvas = p->getCanvas();
+	Canvas& canvas = event->getCanvas();
 
 	// Get all items, including descendants.
 	RefArray< SequenceItem > sequenceItems;
@@ -607,13 +567,13 @@ void SequencerControl::eventPaint(Event* e)
 		ss.str()
 	);
 
-	e->consume();
+	event->consume();
 }
 
-void SequencerControl::eventScroll(Event* e)
+void SequencerControl::eventScroll(ScrollEvent* event)
 {
 	update();
-	e->consume();
+	event->consume();
 }
 
 		}

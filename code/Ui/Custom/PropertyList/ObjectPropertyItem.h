@@ -15,9 +15,6 @@ namespace traktor
 {
 	namespace ui
 	{
-
-class Event;
-
 		namespace custom
 		{
 
@@ -59,7 +56,7 @@ private:
 	const TypeInfo* m_objectType;
 	Ref< Object > m_object;
 
-	void eventClick(Event* event);
+	void eventClick(ButtonClickEvent* event);
 };
 
 		}

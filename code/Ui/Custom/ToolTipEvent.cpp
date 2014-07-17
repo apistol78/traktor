@@ -10,7 +10,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.ToolTipEvent", ToolTipEvent, Event)
 
 ToolTipEvent::ToolTipEvent(EventSubject* sender, const Point& position)
-:	Event(sender, 0)
+:	Event(sender)
 ,	m_position(position)
 {
 }

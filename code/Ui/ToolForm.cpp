@@ -1,7 +1,7 @@
-#include "Ui/ToolForm.h"
-#include "Ui/Application.h"
-#include "Ui/Itf/IToolForm.h"
 #include "Core/Log/Log.h"
+#include "Ui/Application.h"
+#include "Ui/ToolForm.h"
+#include "Ui/Itf/IToolForm.h"
 
 namespace traktor
 {
@@ -35,36 +35,6 @@ bool ToolForm::create(Widget* parent, const std::wstring& text, int width, int h
 void ToolForm::center()
 {
 	static_cast< IToolForm* >(m_widget)->center();
-}
-
-void ToolForm::addCloseEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiClose, eventHandler);
-}
-
-void ToolForm::addNcButtonDownEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiNcButtonDown, eventHandler);
-}
-
-void ToolForm::addNcButtonUpEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiNcButtonUp, eventHandler);
-}
-
-void ToolForm::addNcDoubleClickEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiNcDoubleClick, eventHandler);
-}
-
-void ToolForm::addNcMouseMoveEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiNcMouseMove, eventHandler);
-}
-
-void ToolForm::addNcMouseWheelEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiNcMouseWheel, eventHandler);
 }
 
 bool ToolForm::acceptLayout() const

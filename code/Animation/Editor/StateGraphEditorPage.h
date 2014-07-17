@@ -28,16 +28,21 @@ class IEditorPageSite;
 	{
 
 class Container;
-class Event;
-class PopupMenu;
+class MouseButtonDownEvent;
 class Point;
+class PopupMenu;
+class SelectionChangeEvent;
 
 		namespace custom
 		{
 
-class ToolBar;
 class GraphControl;
+class EdgeConnectEvent;
+class EdgeDisconnectEvent;
 class Node;
+class NodeMovedEvent;
+class ToolBar;
+class ToolBarButtonClickEvent;
 
 		}
 	}
@@ -93,21 +98,19 @@ private:
 
 	void updateGraph();
 
-	void eventToolBarGraphClick(ui::Event* event);
+	void eventToolBarGraphClick(ui::custom::ToolBarButtonClickEvent* event);
 
-	void eventToolBarPreviewClick(ui::Event* event);
+	void eventToolBarPreviewClick(ui::custom::ToolBarButtonClickEvent* event);
 
-	void eventPropertyChange(ui::Event* event);
+	void eventButtonDown(ui::MouseButtonDownEvent* event);
 
-	void eventButtonDown(ui::Event* event);
+	void eventSelect(ui::SelectionChangeEvent* event);
 
-	void eventSelect(ui::Event* event);
+	void eventNodeMoved(ui::custom::NodeMovedEvent* event);
 
-	void eventNodeMoved(ui::Event* event);
+	void eventEdgeConnect(ui::custom::EdgeConnectEvent* event);
 
-	void eventEdgeConnect(ui::Event* event);
-
-	void eventEdgeDisconnect(ui::Event* event);
+	void eventEdgeDisconnect(ui::custom::EdgeDisconnectEvent* event);
 };
 
 	}

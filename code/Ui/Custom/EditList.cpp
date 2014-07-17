@@ -1,9 +1,6 @@
 #include "Core/Log/Log.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/Custom/EditList.h"
-#include "Ui/Events/EditEvent.h"
-#include "Ui/Events/FocusEvent.h"
-#include "Ui/Events/MouseEvent.h"
+#include "Ui/Custom/EditListEditEvent.h"
 
 namespace traktor
 {
@@ -26,36 +23,21 @@ bool EditList::create(Widget* parent, int style)
 	if (!ListBox::create(parent, L"", style))
 		return false;
 
-	addDoubleClickEventHandler(
-		new MethodHandler< EditList >(
-			this,
-			&EditList::eventDoubleClick
-		)
-	);
+	addEventHandler< MouseDoubleClickEvent >(this, &EditList::eventDoubleClick);
 
 	m_editItem = new Edit();
 	m_editItem->create(this, L"", WsBorder);
 	m_editItem->hide();
-	m_editItem->addFocusEventHandler(
-		new MethodHandler< EditList >(
-			this,
-			&EditList::eventEditFocus
-		)
-	);
+	m_editItem->addEventHandler< FocusEvent >(this, &EditList::eventEditFocus);
 
 	m_editId = -1;
 
 	return true;
 }
 
-void EditList::addEditEventHandler(EventHandler* eventHandler)
+void EditList::eventDoubleClick(MouseDoubleClickEvent* event)
 {
-	addEventHandler(EiContentChange, eventHandler);
-}
-
-void EditList::eventDoubleClick(Event* event)
-{
-	Point pt = static_cast< MouseEvent* >(event)->getPosition();
+	Point pt = event->getPosition();
 
 	if (m_editId != -1 || m_editItem->isVisible(false))
 		return;
@@ -93,9 +75,9 @@ void EditList::eventDoubleClick(Event* event)
 	event->consume();
 }
 
-void EditList::eventEditFocus(Event* event)
+void EditList::eventEditFocus(FocusEvent* event)
 {
-	if (m_editItem->isVisible(false) && static_cast< FocusEvent* >(event)->lostFocus())
+	if (m_editItem->isVisible(false) && event->lostFocus())
 	{
 		setFocus();
 		m_editItem->hide();
@@ -104,8 +86,8 @@ void EditList::eventEditFocus(Event* event)
 		{
 			if (m_editItem->getText().length() > 0)
 			{
-				EditEvent editEvent(this, m_editItem, m_editId, m_editItem->getText());
-				raiseEvent(EiContentChange, &editEvent);
+				EditListEditEvent editEvent(this, m_editItem, m_editId, m_editItem->getText());
+				raiseEvent(&editEvent);
 				if (editEvent.consumed())
 					setItem(m_editId, m_editItem->getText());
 			}
@@ -113,8 +95,8 @@ void EditList::eventEditFocus(Event* event)
 			{
 				if (m_autoRemove)
 				{
-					EditEvent editEvent(this, m_editItem, m_editId, L"");
-					raiseEvent(EiContentChange, &editEvent);
+					EditListEditEvent editEvent(this, m_editItem, m_editId, L"");
+					raiseEvent(&editEvent);
 					if (editEvent.consumed())
 						remove(m_editId);
 				}
@@ -125,8 +107,8 @@ void EditList::eventEditFocus(Event* event)
 			T_ASSERT (m_autoAdd);
 			if (m_editItem->getText().length() > 0)
 			{
-				EditEvent editEvent(this, m_editItem, -1, m_editItem->getText());
-				raiseEvent(EiContentChange, &editEvent);
+				EditListEditEvent editEvent(this, m_editItem, -1, m_editItem->getText());
+				raiseEvent(&editEvent);
 				if (editEvent.consumed())
 					add(m_editItem->getText());
 			}

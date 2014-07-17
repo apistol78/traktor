@@ -28,9 +28,12 @@ class T_DLLCLASS ChildEvent : public Event
 public:
 	ChildEvent(EventSubject* sender, Widget* child, bool link);
 
+	Widget* getChild() const;
+
 	bool link() const;	
 
 private:
+	Ref< Widget > m_child;
 	bool m_link;
 };
 	

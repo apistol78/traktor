@@ -11,7 +11,6 @@
 #include "I18N/Editor/Translator.h"
 #include "Ui/Container.h"
 #include "Ui/FileDialog.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/InputDialog.h"
 #include "Ui/Custom/GridView/GridColumn.h"
@@ -20,7 +19,7 @@
 #include "Ui/Custom/GridView/GridView.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
-#include "Ui/Events/CommandEvent.h"
+#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 
 namespace traktor
 {
@@ -129,13 +128,13 @@ bool DictionaryEditorPage::create(ui::Container* parent)
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Import...", ui::Command(L"I18N.Editor.Import")));
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Export...", ui::Command(L"I18N.Editor.Export")));
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Translate...", ui::Command(L"I18N.Editor.Translate")));
-	toolBar->addClickEventHandler(ui::createMethodHandler(this, &DictionaryEditorPage::eventToolClick));
+	toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &DictionaryEditorPage::eventToolClick);
 
 	m_gridDictionary = new ui::custom::GridView();
 	m_gridDictionary->create(container, ui::custom::GridView::WsColumnHeader | ui::WsDoubleBuffer);
 	m_gridDictionary->addColumn(new ui::custom::GridColumn(L"Id", 300));
 	m_gridDictionary->addColumn(new ui::custom::GridColumn(L"Text", 800));
-	m_gridDictionary->addDoubleClickEventHandler(ui::createMethodHandler(this, &DictionaryEditorPage::eventGridDoubleClick));
+	m_gridDictionary->addEventHandler< ui::MouseDoubleClickEvent >(this, &DictionaryEditorPage::eventGridDoubleClick);
 
 	const std::map< std::wstring, std::wstring >& map = m_dictionary->get();
 	for (std::map< std::wstring, std::wstring >::const_iterator i = map.begin(); i != map.end(); ++i)
@@ -177,10 +176,9 @@ void DictionaryEditorPage::handleDatabaseEvent(db::Database* database, const Gui
 {
 }
 
-void DictionaryEditorPage::eventToolClick(ui::Event* event)
+void DictionaryEditorPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* event)
 {
-	const ui::CommandEvent* cmdEvent = checked_type_cast< const ui::CommandEvent*, false >(event);
-	const ui::Command& cmd = cmdEvent->getCommand();
+	const ui::Command& cmd = event->getCommand();
 
 	if (cmd == L"I18N.Editor.Import")
 	{
@@ -343,7 +341,7 @@ void DictionaryEditorPage::eventToolClick(ui::Event* event)
 	}
 }
 
-void DictionaryEditorPage::eventGridDoubleClick(ui::Event* event)
+void DictionaryEditorPage::eventGridDoubleClick(ui::MouseDoubleClickEvent* event)
 {
 	RefArray< ui::custom::GridRow > selectedRows;
 	m_gridDictionary->getRows(selectedRows, ui::custom::GridView::GfSelectedOnly);

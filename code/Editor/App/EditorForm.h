@@ -34,12 +34,12 @@ class MenuBar;
 class PopupMenu;
 class MenuItem;
 class Tab;
-class Event;
 
 		namespace custom
 		{
 
 class ToolBar;
+class ToolBarButtonClickEvent;
 class StatusBar;
 class ProgressBar;
 
@@ -264,21 +264,21 @@ private:
 	/*! \name Event handlers. */
 	//@{
 
-	void eventShortcut(ui::Event* event);
+	void eventShortcut(ui::ShortcutEvent* event);
 
-	void eventMenuClick(ui::Event* event);
+	void eventMenuClick(ui::MenuClickEvent* event);
 
-	void eventToolClicked(ui::Event* event);
+	void eventToolClicked(ui::custom::ToolBarButtonClickEvent* event);
 
-	void eventTabButtonDown(ui::Event* event);
+	void eventTabButtonDown(ui::MouseButtonDownEvent* event);
 
-	void eventTabSelChange(ui::Event* event);
+	void eventTabSelChange(ui::TabSelectionChangeEvent* event);
 
-	void eventTabClose(ui::Event* event);
+	void eventTabClose(ui::TabCloseEvent* event);
 
-	void eventClose(ui::Event* event);
+	void eventClose(ui::CloseEvent* event);
 
-	void eventTimer(ui::Event* event);
+	void eventTimer(ui::TimerEvent* event);
 
 	//@}
 

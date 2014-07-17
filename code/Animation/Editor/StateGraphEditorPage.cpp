@@ -19,17 +19,18 @@
 #include "Ui/PopupMenu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/TableLayout.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/CommandEvent.h"
-#include "Ui/Events/MouseEvent.h"
 #include "Ui/Custom/AspectLayout.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
+#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 #include "Ui/Custom/Graph/GraphControl.h"
 #include "Ui/Custom/Graph/Node.h"
+#include "Ui/Custom/Graph/NodeMovedEvent.h"
 #include "Ui/Custom/Graph/Edge.h"
+#include "Ui/Custom/Graph/EdgeConnectEvent.h"
+#include "Ui/Custom/Graph/EdgeDisconnectEvent.h"
 #include "Ui/Custom/Graph/Pin.h"
 #include "Ui/Custom/Graph/DefaultNodeShape.h"
 
@@ -71,16 +72,16 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 	m_toolBarGraph->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBarGraph->addItem(new ui::custom::ToolBarButton(i18n::Text(L"STATEGRAPH_EVEN_VERTICALLY"), 4, ui::Command(L"StateGraph.Editor.EvenSpaceVertically")));
 	m_toolBarGraph->addItem(new ui::custom::ToolBarButton(i18n::Text(L"STATEGRAPH_EVEN_HORIZONTALLY"), 5, ui::Command(L"StateGraph.Editor.EventSpaceHorizontally")));
-	m_toolBarGraph->addClickEventHandler(ui::createMethodHandler(this, &StateGraphEditorPage::eventToolBarGraphClick));
+	m_toolBarGraph->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &StateGraphEditorPage::eventToolBarGraphClick);
 
 	// Create state graph editor control.
 	m_editorGraph = new ui::custom::GraphControl();
 	m_editorGraph->create(container, ui::custom::GraphControl::WsEdgeSelectable | ui::WsDoubleBuffer | ui::WsAccelerated);
-	m_editorGraph->addButtonDownEventHandler(ui::createMethodHandler(this, &StateGraphEditorPage::eventButtonDown));
-	m_editorGraph->addSelectEventHandler(ui::createMethodHandler(this, &StateGraphEditorPage::eventSelect));
-	m_editorGraph->addNodeMovedEventHandler(ui::createMethodHandler(this, &StateGraphEditorPage::eventNodeMoved));
-	m_editorGraph->addEdgeConnectEventHandler(ui::createMethodHandler(this, &StateGraphEditorPage::eventEdgeConnect));
-	m_editorGraph->addEdgeDisconnectEventHandler(ui::createMethodHandler(this, &StateGraphEditorPage::eventEdgeDisconnect));
+	m_editorGraph->addEventHandler< ui::MouseButtonDownEvent >(this, &StateGraphEditorPage::eventButtonDown);
+	m_editorGraph->addEventHandler< ui::SelectionChangeEvent >(this, &StateGraphEditorPage::eventSelect);
+	m_editorGraph->addEventHandler< ui::custom::NodeMovedEvent >(this, &StateGraphEditorPage::eventNodeMoved);
+	m_editorGraph->addEventHandler< ui::custom::EdgeConnectEvent >(this, &StateGraphEditorPage::eventEdgeConnect);
+	m_editorGraph->addEventHandler< ui::custom::EdgeDisconnectEvent >(this, &StateGraphEditorPage::eventEdgeDisconnect);
 
 	// Build popup menu.
 	m_menuPopup = new ui::PopupMenu();
@@ -99,7 +100,7 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 	m_toolBarPreview->create(m_containerPreview);
 	m_toolBarPreview->addItem(new ui::custom::ToolBarButton(L"Mesh...", ui::Command(L"StateGraph.Editor.BrowseMesh")));
 	m_toolBarPreview->addItem(new ui::custom::ToolBarButton(L"Skeleton...", ui::Command(L"StateGraph.Editor.BrowseSkeleton")));
-	m_toolBarPreview->addClickEventHandler(ui::createMethodHandler(this, &StateGraphEditorPage::eventToolBarPreviewClick));
+	m_toolBarPreview->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &StateGraphEditorPage::eventToolBarPreviewClick);
 
 	m_previewControl = new AnimationPreviewControl(m_editor);
 	m_previewControl->create(m_containerPreview);
@@ -548,25 +549,24 @@ void StateGraphEditorPage::updateGraph()
 	m_editorGraph->update();
 }
 
-void StateGraphEditorPage::eventToolBarGraphClick(ui::Event* event)
+void StateGraphEditorPage::eventToolBarGraphClick(ui::custom::ToolBarButtonClickEvent* event)
 {
-	const ui::Command& command = checked_type_cast< ui::CommandEvent* >(event)->getCommand();
+	const ui::Command& command = event->getCommand();
 	handleCommand(command);
 }
 
-void StateGraphEditorPage::eventToolBarPreviewClick(ui::Event* event)
+void StateGraphEditorPage::eventToolBarPreviewClick(ui::custom::ToolBarButtonClickEvent* event)
 {
-	const ui::Command& command = checked_type_cast< ui::CommandEvent* >(event)->getCommand();
+	const ui::Command& command = event->getCommand();
 	handleCommand(command);
 }
 
-void StateGraphEditorPage::eventButtonDown(ui::Event* event)
+void StateGraphEditorPage::eventButtonDown(ui::MouseButtonDownEvent* event)
 {
-	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
-	if (mouseEvent->getButton() != ui::MouseEvent::BtRight)
+	if (event->getButton() != ui::MbtRight)
 		return;
 
-	Ref< ui::MenuItem > selected = m_menuPopup->show(m_editorGraph, mouseEvent->getPosition());
+	Ref< ui::MenuItem > selected = m_menuPopup->show(m_editorGraph, event->getPosition());
 	if (!selected)
 		return;
 
@@ -574,13 +574,13 @@ void StateGraphEditorPage::eventButtonDown(ui::Event* event)
 
 	if (command == L"StateGraph.Editor.Create")
 	{
-		createState(mouseEvent->getPosition() - m_editorGraph->getOffset());
+		createState(event->getPosition() - m_editorGraph->getOffset());
 	}
 	else
 		handleCommand(command);
 }
 
-void StateGraphEditorPage::eventSelect(ui::Event* event)
+void StateGraphEditorPage::eventSelect(ui::SelectionChangeEvent* event)
 {
 	RefArray< ui::custom::Node > nodes;
 	RefArray< ui::custom::Edge > edges;
@@ -608,9 +608,9 @@ void StateGraphEditorPage::eventSelect(ui::Event* event)
 	}
 }
 
-void StateGraphEditorPage::eventNodeMoved(ui::Event* event)
+void StateGraphEditorPage::eventNodeMoved(ui::custom::NodeMovedEvent* event)
 {
-	Ref< ui::custom::Node > node = checked_type_cast< ui::custom::Node* >(event->getItem());
+	Ref< ui::custom::Node > node = event->getNode();
 	T_ASSERT (node);
 
 	// Get state from editor node.
@@ -631,9 +631,9 @@ void StateGraphEditorPage::eventNodeMoved(ui::Event* event)
 		m_site->setPropertyObject(state);
 }
 
-void StateGraphEditorPage::eventEdgeConnect(ui::Event* event)
+void StateGraphEditorPage::eventEdgeConnect(ui::custom::EdgeConnectEvent* event)
 {
-	Ref< ui::custom::Edge > edge = checked_type_cast< ui::custom::Edge* >(event->getItem());
+	Ref< ui::custom::Edge > edge = event->getEdge();
 
 	Ref< ui::custom::Pin > leavePin = edge->getSourcePin();
 	T_ASSERT (leavePin);
@@ -656,9 +656,9 @@ void StateGraphEditorPage::eventEdgeConnect(ui::Event* event)
 	updateGraph();
 }
 
-void StateGraphEditorPage::eventEdgeDisconnect(ui::Event* event)
+void StateGraphEditorPage::eventEdgeDisconnect(ui::custom::EdgeDisconnectEvent* event)
 {
-	Ref< ui::custom::Edge > edge = checked_type_cast< ui::custom::Edge* >(event->getItem());
+	Ref< ui::custom::Edge > edge = event->getEdge();
 
 	Ref< Transition > transition = checked_type_cast< Transition* >(edge->getData(L"TRANSITION"));
 	m_stateGraph->removeTransition(transition);

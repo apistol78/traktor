@@ -2,8 +2,6 @@
 #include "Core/Math/MathUtils.h"
 #include "Ui/Application.h"
 #include "Ui/DockPane.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/FocusEvent.h"
 
 namespace traktor
 {
@@ -24,18 +22,20 @@ void drawClose(Canvas& canvas, int x, int y)
 	canvas.drawLine(Point(x + 7, y), Point(x + 1, y + 6));
 }
 
-void registerEventHandler(Widget* widget, int eventId, EventHandler* eventHandler)
+template < typename EventType >
+void addEventHandlers(Widget* widget, ui::EventSubject::IEventHandler* eventHandler)
 {
-	widget->addEventHandler(eventId, eventHandler);
+	widget->addEventHandler< EventType >(eventHandler);
 	for (Ref< Widget > child = widget->getFirstChild(); child; child = child->getNextSibling())
-		registerEventHandler(child, eventId, eventHandler);
+		addEventHandlers< EventType >(child, eventHandler);
 }
 
-void unregisterEventHandler(Widget* widget, int eventId, EventHandler* eventHandler)
+template < typename EventType >
+void removeEventHandlers(Widget* widget, ui::EventSubject::IEventHandler* eventHandler)
 {
-	widget->removeEventHandler(eventId, eventHandler);
+	widget->removeEventHandler< EventType >(eventHandler);
 	for (Ref< Widget > child = widget->getFirstChild(); child; child = child->getNextSibling())
-		unregisterEventHandler(child, eventId, eventHandler);
+		removeEventHandlers< EventType >(child, eventHandler);
 }
 
 int calculateRealSplit(const Rect& rc, int split, bool vertical)
@@ -62,13 +62,7 @@ DockPane::DockPane(Widget* owner, DockPane* parent)
 ,	m_split(0)
 ,	m_focus(false)
 {
-	m_focusEventHandler = createMethodHandler(this, &DockPane::eventFocus);
-}
-
-DockPane::~DockPane()
-{
-	if (m_widget)
-		unregisterEventHandler(m_widget, EiFocus, m_focusEventHandler);
+	m_focusEventHandler = new EventSubject::MethodEventHandler< DockPane, FocusEvent >(this, &DockPane::eventFocus);
 }
 
 void DockPane::split(bool vertical, int split, Ref< DockPane >& outLeftPane, Ref< DockPane >& outRightPane)
@@ -77,7 +71,7 @@ void DockPane::split(bool vertical, int split, Ref< DockPane >& outLeftPane, Ref
 	outRightPane = new DockPane(m_owner, this);
 
 	if (m_widget)
-		unregisterEventHandler(m_widget, EiFocus, m_focusEventHandler);
+		removeEventHandlers< FocusEvent >(m_widget, m_focusEventHandler);
 
 	m_widget = 0;
 	m_split = split;
@@ -92,7 +86,7 @@ void DockPane::dock(Widget* widget, bool detachable)
 	T_ASSERT (widget);
 
 	if (m_widget)
-		unregisterEventHandler(m_widget, EiFocus, m_focusEventHandler);
+		removeEventHandlers< FocusEvent >(m_widget, m_focusEventHandler);
 
 	m_widget = widget;
 	m_detachable = detachable;
@@ -100,7 +94,7 @@ void DockPane::dock(Widget* widget, bool detachable)
 	m_child[0] =
 	m_child[1] = 0;
 
-	registerEventHandler(m_widget, EiFocus, m_focusEventHandler);
+	addEventHandlers< FocusEvent >(m_widget, m_focusEventHandler);
 }
 
 void DockPane::dock(Widget* widget, bool detachable, Direction direction, int split)
@@ -202,7 +196,7 @@ void DockPane::undock(Widget* widget)
 	if (m_widget == widget)
 	{
 		if (m_widget)
-			unregisterEventHandler(m_widget, EiFocus, m_focusEventHandler);
+			removeEventHandlers< FocusEvent >(m_widget, m_focusEventHandler);
 
 		m_widget = 0;
 		m_child[0] = 0;
@@ -268,7 +262,7 @@ void DockPane::detach()
 	T_ASSERT (m_detachable);
 
 	if (m_widget)
-		unregisterEventHandler(m_widget, EiFocus, m_focusEventHandler);
+		removeEventHandlers< FocusEvent >(m_widget, m_focusEventHandler);
 
 	if (m_parent)
 	{
@@ -543,9 +537,9 @@ void DockPane::dump()
 	log::info << DecreaseIndent;
 }
 
-void DockPane::eventFocus(Event* event)
+void DockPane::eventFocus(FocusEvent* event)
 {
-	bool focus = checked_type_cast< FocusEvent* >(event)->gotFocus();
+	bool focus = event->gotFocus();
 	if (focus != m_focus)
 	{
 		m_focus = focus;

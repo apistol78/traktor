@@ -7,6 +7,7 @@
 #include "Script/Editor/IScriptDebuggerSessions.h"
 #include "Script/Editor/IScriptOutline.h"
 #include "Ui/Custom/SyntaxRichEdit/SyntaxTypes.h"
+#include "Ui/Events/AllEvents.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -29,7 +30,6 @@ class IEditor;
 	{
 
 class Bitmap;
-class Event;
 class ListBox;
 class Tab;
 
@@ -42,6 +42,7 @@ class Splitter;
 class SyntaxRichEdit;
 class StatusBar;
 class ToolBar;
+class ToolBarButtonClickEvent;
 
 		}
 	}
@@ -53,6 +54,7 @@ class IScriptContext;
 class IScriptManager;
 class Preprocessor;
 class Script;
+class ScriptBreakpointEvent;
 
 class T_DLLCLASS ScriptEditor
 :	public editor::IObjectEditor
@@ -128,23 +130,23 @@ private:
 
 	void buildOutlineGrid(ui::custom::GridView* grid, ui::custom::GridRow* parent, const IScriptOutline::Node* on);
 
-	void eventOutlineDoubleClick(ui::Event* event);
+	void eventOutlineDoubleClick(ui::MouseDoubleClickEvent* event);
 
-	void eventDependencyToolClick(ui::Event* event);
+	void eventDependencyToolClick(ui::custom::ToolBarButtonClickEvent* event);
 
-	void eventDependencyListDoubleClick(ui::Event* event);
+	void eventDependencyListDoubleClick(ui::MouseDoubleClickEvent* event);
 
-	void eventDependentListDoubleClick(ui::Event* event);
+	void eventDependentListDoubleClick(ui::MouseDoubleClickEvent* event);
 
-	void eventToolBarEditClick(ui::Event* event);
+	void eventToolBarEditClick(ui::custom::ToolBarButtonClickEvent* event);
 
-	void eventScriptChange(ui::Event* event);
+	void eventScriptChange(ui::ContentChangeEvent* event);
 
-	void eventScriptDoubleClick(ui::Event* event);
+	void eventScriptDoubleClick(ui::MouseDoubleClickEvent* event);
 
-	void eventTimer(ui::Event* event);
+	void eventTimer(ui::TimerEvent* event);
 
-	void eventBreakPoint(ui::Event* event);
+	void eventBreakPoint(ScriptBreakpointEvent* event);
 };
 
 	}

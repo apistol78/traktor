@@ -3,10 +3,7 @@
 #include "Core/Math/Const.h"
 #include "Core/Misc/String.h"
 #include "Ui/Edit.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/NumericEditValidator.h"
-#include "Ui/Events/FocusEvent.h"
-#include "Ui/Events/MouseEvent.h"
 #include "Ui/Custom/PropertyList/PropertyList.h"
 #include "Ui/Custom/PropertyList/AnglesPropertyItem.h"
 
@@ -59,7 +56,7 @@ void AnglesPropertyItem::createInPlaceControls(Widget* parent)
 			)
 		);
 		m_editors[i]->setVisible(false);
-		m_editors[i]->addFocusEventHandler(createMethodHandler(this, &AnglesPropertyItem::eventEditFocus));
+		m_editors[i]->addEventHandler< FocusEvent >(this, &AnglesPropertyItem::eventEditFocus);
 	}
 }
 
@@ -93,7 +90,7 @@ void AnglesPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Widg
 	}
 }
 
-void AnglesPropertyItem::mouseButtonDown(MouseEvent* event)
+void AnglesPropertyItem::mouseButtonDown(MouseButtonDownEvent* event)
 {
 	float hpb[4];
 	m_value.storeUnaligned(hpb);
@@ -135,10 +132,9 @@ void AnglesPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 	}
 }
 
-void AnglesPropertyItem::eventEditFocus(Event* event)
+void AnglesPropertyItem::eventEditFocus(FocusEvent* event)
 {
-	FocusEvent* f = static_cast< FocusEvent* >(event);
-	if (f->lostFocus())
+	if (event->lostFocus())
 	{
 		float hpb[4];
 		m_value.storeUnaligned(hpb);

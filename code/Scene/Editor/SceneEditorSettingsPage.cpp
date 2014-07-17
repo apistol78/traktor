@@ -9,7 +9,6 @@
 #include "Ui/Container.h"
 #include "Ui/Slider.h"
 #include "Ui/Static.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/TableLayout.h"
 #include "World/IWorldRenderer.h"
 
@@ -43,7 +42,7 @@ bool SceneEditorSettingsPage::create(ui::Container* parent, PropertyGroup* setti
 	m_sliderFov->create(containerSliders);
 	m_sliderFov->setRange(10, 180);
 	m_sliderFov->setValue(int32_t(settings->getProperty< PropertyFloat >(L"SceneEditor.FieldOfView", c_defaultFieldOfView)));
-	m_sliderFov->addChangeEventHandler(ui::createMethodHandler(this, &SceneEditorSettingsPage::eventValueChange));
+	m_sliderFov->addEventHandler< ui::ContentChangeEvent >(this, &SceneEditorSettingsPage::eventValueChange);
 
 	m_staticFovValue = new ui::Static();
 	m_staticFovValue->create(containerSliders, L"");
@@ -55,7 +54,7 @@ bool SceneEditorSettingsPage::create(ui::Container* parent, PropertyGroup* setti
 	m_sliderMouseWheelRate->create(containerSliders);
 	m_sliderMouseWheelRate->setRange(1, 100);
 	m_sliderMouseWheelRate->setValue(int32_t(settings->getProperty< PropertyFloat >(L"SceneEditor.MouseWheelRate", c_defaultMouseWheelRate)));
-	m_sliderMouseWheelRate->addChangeEventHandler(ui::createMethodHandler(this, &SceneEditorSettingsPage::eventValueChange));
+	m_sliderMouseWheelRate->addEventHandler< ui::ContentChangeEvent >(this, &SceneEditorSettingsPage::eventValueChange);
 
 	m_staticMouseWheelRateValue = new ui::Static();
 	m_staticMouseWheelRateValue->create(containerSliders, L"");
@@ -101,7 +100,7 @@ void SceneEditorSettingsPage::updateValues()
 	m_staticMouseWheelRateValue->setText(toString(mouseWheelRate));
 }
 
-void SceneEditorSettingsPage::eventValueChange(ui::Event* event)
+void SceneEditorSettingsPage::eventValueChange(ui::ContentChangeEvent* event)
 {
 	updateValues();
 }

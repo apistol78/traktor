@@ -3,7 +3,6 @@
 #include "Core/Serialization/ISerializable.h"
 #include "Editor/App/ModulesSettingsPage.h"
 #include "I18N/Text.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Container.h"
 #include "Ui/Button.h"
@@ -31,11 +30,11 @@ bool ModulesSettingsPage::create(ui::Container* parent, PropertyGroup* settings,
 
 	Ref< ui::Button > buttonAddModule = new ui::Button();
 	buttonAddModule->create(containerModulesTools, i18n::Text(L"EDITOR_SETTINGS_ADD_MODULE"));
-	buttonAddModule->addClickEventHandler(ui::createMethodHandler(this, &ModulesSettingsPage::eventButtonAddModuleClick));
+	buttonAddModule->addEventHandler< ui::ButtonClickEvent >(this, &ModulesSettingsPage::eventButtonAddModuleClick);
 
 	Ref< ui::Button > buttonRemoveModule = new ui::Button();
 	buttonRemoveModule->create(containerModulesTools, i18n::Text(L"EDITOR_SETTINGS_REMOVE_MODULE"));
-	buttonRemoveModule->addClickEventHandler(ui::createMethodHandler(this, &ModulesSettingsPage::eventButtonRemoveModuleClick));
+	buttonRemoveModule->addEventHandler< ui::ButtonClickEvent >(this, &ModulesSettingsPage::eventButtonRemoveModuleClick);
 
 	const std::set< std::wstring >& modules = settings->getProperty< PropertyStringSet >(L"Editor.Modules");
 	for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
@@ -58,7 +57,7 @@ bool ModulesSettingsPage::apply(PropertyGroup* settings)
 	return true;
 }
 
-void ModulesSettingsPage::eventButtonAddModuleClick(ui::Event* event)
+void ModulesSettingsPage::eventButtonAddModuleClick(ui::ButtonClickEvent* event)
 {
 	ui::custom::InputDialog::Field fields[] =
 	{
@@ -78,7 +77,7 @@ void ModulesSettingsPage::eventButtonAddModuleClick(ui::Event* event)
 	inputDialog.destroy();
 }
 
-void ModulesSettingsPage::eventButtonRemoveModuleClick(ui::Event* event)
+void ModulesSettingsPage::eventButtonRemoveModuleClick(ui::ButtonClickEvent* event)
 {
 	int selectedItem = m_listModules->getSelected();
 	if (selectedItem >= 0)

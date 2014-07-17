@@ -5,6 +5,16 @@
 
 namespace traktor
 {
+	namespace ui
+	{
+		namespace custom
+		{
+
+class EnvelopeContentChangeEvent;
+
+		}
+	}
+
 	namespace sound
 	{
 
@@ -28,6 +38,9 @@ public:
 	virtual bool removeChild(IGrainData* parentGrain, IGrainData* childGrain);
 
 	virtual bool getChildren(IGrainData* grain, RefArray< IGrainData >& outChildren);
+
+private:
+	void eventEnvelopeChange(ui::custom::EnvelopeContentChangeEvent* event);
 };
 
 	}

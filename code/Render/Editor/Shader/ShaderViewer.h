@@ -23,6 +23,7 @@ class IEditor;
 
 class SyntaxRichEdit;
 class ToolBar;
+class ToolBarButtonClickEvent;
 class ToolBarDropDown;
 
 		}
@@ -60,7 +61,7 @@ private:
 
 	void threadUpdateViews();
 
-	void eventShaderToolsClick(ui::Event* event);
+	void eventShaderToolsClick(ui::custom::ToolBarButtonClickEvent* event);
 };
 
 	}

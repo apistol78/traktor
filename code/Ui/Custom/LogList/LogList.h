@@ -88,15 +88,15 @@ private:
 
 	void updateScrollBar();
 
-	void eventPaint(Event* event);
+	void eventPaint(PaintEvent* event);
 
-	void eventSize(Event* event);
+	void eventSize(SizeEvent* event);
 
-	void eventMouseWheel(Event* event);
+	void eventMouseWheel(MouseWheelEvent* event);
 
-	void eventScroll(Event* event);
+	void eventScroll(ScrollEvent* event);
 
-	void eventTimer(Event* event);
+	void eventTimer(TimerEvent* event);
 };
 
 		}

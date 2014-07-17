@@ -21,7 +21,14 @@
 #include "Scene/Editor/LayerEntityEditor.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/SceneEditorContext.h"
-#include "Ui/Event.h"
+#include "Scene/Editor/Events/CameraMovedEvent.h"
+#include "Scene/Editor/Events/FrameEvent.h"
+#include "Scene/Editor/Events/ModifierChangedEvent.h"
+#include "Scene/Editor/Events/PostBuildEvent.h"
+#include "Scene/Editor/Events/PostFrameEvent.h"
+#include "Scene/Editor/Events/PostModifyEvent.h"
+#include "Scene/Editor/Events/PreModifyEvent.h"
+#include "Ui/Events/SelectionChangeEvent.h"
 #include "World/EntityBuilder.h"
 #include "World/EntityBuilderWithSchema.h"
 #include "World/EntitySchema.h"
@@ -610,7 +617,7 @@ void SceneEditorContext::cloneSelected()
 	}
 
 	buildEntities();
-	raiseSelect(this);
+	raiseSelect();
 }
 
 void SceneEditorContext::clearDebugTextures()
@@ -640,78 +647,49 @@ ISceneEditorPlugin* SceneEditorContext::getEditorPluginOf(const TypeInfo& plugin
 
 void SceneEditorContext::raisePreModify()
 {
-	raiseEvent(EiPreModify, 0);
+	PreModifyEvent preModifyEvent(this);
+	raiseEvent(&preModifyEvent);
 }
 
 void SceneEditorContext::raisePostModify()
 {
-	raiseEvent(EiPostModify, 0);
+	PostModifyEvent postModifyEvent(this);
+	raiseEvent(&postModifyEvent);
 }
 
 void SceneEditorContext::raisePostFrame(ui::Event* event)
 {
-	raiseEvent(EiPostFrame, event);
+	PostFrameEvent postFrameEvent(this);
+	raiseEvent(&postFrameEvent);
 }
 
 void SceneEditorContext::raisePostBuild()
 {
-	raiseEvent(EiPostBuild, 0);
+	PostBuildEvent postBuildEvent(this);
+	raiseEvent(&postBuildEvent);
 }
 
-void SceneEditorContext::raiseSelect(Object* item)
+void SceneEditorContext::raiseSelect()
 {
 	// Notify modifier about selection change.
 	if (m_modifier)
 		m_modifier->selectionChanged();
 
 	// Notify selection change event listeners.
-	ui::Event event(this, item);
-	raiseEvent(EiSelect, &event);
+	ui::SelectionChangeEvent selectionChangeEvent(this);
+	raiseEvent(&selectionChangeEvent);
 }
 
 void SceneEditorContext::raiseCameraMoved()
 {
-	raiseEvent(EiCameraMoved, 0);
+	CameraMovedEvent cameraMovedEvent(this);
+	raiseEvent(&cameraMovedEvent);
 }
 
 void SceneEditorContext::raiseModifierChanged()
 {
-	raiseEvent(EiModifierChanged, 0);
-}
-
-void SceneEditorContext::addPreModifyEventHandler(ui::EventHandler* eventHandler)
-{
-	addEventHandler(EiPreModify, eventHandler);
-}
-
-void SceneEditorContext::addPostModifyEventHandler(ui::EventHandler* eventHandler)
-{
-	addEventHandler(EiPostModify, eventHandler);
-}
-
-void SceneEditorContext::addPostFrameEventHandler(ui::EventHandler* eventHandler)
-{
-	addEventHandler(EiPostFrame, eventHandler);
-}
-
-void SceneEditorContext::addPostBuildEventHandler(ui::EventHandler* eventHandler)
-{
-	addEventHandler(EiPostBuild, eventHandler);
-}
-
-void SceneEditorContext::addSelectEventHandler(ui::EventHandler* eventHandler)
-{
-	addEventHandler(EiSelect, eventHandler);
-}
-
-void SceneEditorContext::addCameraMovedEventHandler(ui::EventHandler* eventHandler)
-{
-	addEventHandler(EiCameraMoved, eventHandler);
-}
-
-void SceneEditorContext::addModifierChangedEventHandler(ui::EventHandler* eventHandler)
-{
-	addEventHandler(EiModifierChanged, eventHandler);
+	ModifierChangedEvent modifierChangedEvent(this);
+	raiseEvent(&modifierChangedEvent);
 }
 
 	}

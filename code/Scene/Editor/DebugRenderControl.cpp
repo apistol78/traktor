@@ -4,10 +4,7 @@
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/PrimitiveRenderer.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/Widget.h"
-#include "Ui/Events/MouseEvent.h"
-#include "Ui/Events/SizeEvent.h"
 #include "Ui/Itf/IWidget.h"
 
 namespace traktor
@@ -53,13 +50,13 @@ bool DebugRenderControl::create(ui::Widget* parent, SceneEditorContext* context)
 	))
 		return false;
 
-	m_renderWidget->addButtonDownEventHandler(ui::createMethodHandler(this, &DebugRenderControl::eventButtonDown));
-	m_renderWidget->addButtonUpEventHandler(ui::createMethodHandler(this, &DebugRenderControl::eventButtonUp));
-	m_renderWidget->addDoubleClickEventHandler(ui::createMethodHandler(this, &DebugRenderControl::eventDoubleClick));
-	m_renderWidget->addMouseMoveEventHandler(ui::createMethodHandler(this, &DebugRenderControl::eventMouseMove));
-	m_renderWidget->addMouseWheelEventHandler(ui::createMethodHandler(this, &DebugRenderControl::eventMouseWheel));
-	m_renderWidget->addSizeEventHandler(ui::createMethodHandler(this, &DebugRenderControl::eventSize));
-	m_renderWidget->addPaintEventHandler(ui::createMethodHandler(this, &DebugRenderControl::eventPaint));
+	m_renderWidget->addEventHandler< ui::MouseButtonDownEvent >(this, &DebugRenderControl::eventButtonDown);
+	m_renderWidget->addEventHandler< ui::MouseButtonUpEvent >(this, &DebugRenderControl::eventButtonUp);
+	m_renderWidget->addEventHandler< ui::MouseDoubleClickEvent >(this, &DebugRenderControl::eventDoubleClick);
+	m_renderWidget->addEventHandler< ui::MouseMoveEvent >(this, &DebugRenderControl::eventMouseMove);
+	m_renderWidget->addEventHandler< ui::MouseWheelEvent >(this, &DebugRenderControl::eventMouseWheel);
+	m_renderWidget->addEventHandler< ui::SizeEvent >(this, &DebugRenderControl::eventSize);
+	m_renderWidget->addEventHandler< ui::PaintEvent >(this, &DebugRenderControl::eventPaint);
 
 	return true;
 }
@@ -130,45 +127,41 @@ void DebugRenderControl::showSelectionRectangle(const ui::Rect& rect)
 {
 }
 
-void DebugRenderControl::eventButtonDown(ui::Event* event)
+void DebugRenderControl::eventButtonDown(ui::MouseButtonDownEvent* event)
 {
-	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
 	m_renderWidget->setCapture();
-	m_moveMouseOrigin = mouseEvent->getPosition();
+	m_moveMouseOrigin = event->getPosition();
 	m_moveRenderOffset = m_renderOffset;
 }
 
-void DebugRenderControl::eventButtonUp(ui::Event* event)
+void DebugRenderControl::eventButtonUp(ui::MouseButtonUpEvent* event)
 {
 	m_renderWidget->releaseCapture();
 }
 
-void DebugRenderControl::eventDoubleClick(ui::Event* event)
+void DebugRenderControl::eventDoubleClick(ui::MouseDoubleClickEvent* event)
 {
 	m_renderOffset = Vector2(0.0f, 0.0f);
 	m_renderScale = 4.0f;
 	m_moveMouseOrigin = ui::Point(0, 0);
 	m_moveRenderOffset = Vector2(0.0f, 0.0f);
-
 	m_renderWidget->update();
 }
 
-void DebugRenderControl::eventMouseMove(ui::Event* event)
+void DebugRenderControl::eventMouseMove(ui::MouseMoveEvent* event)
 {
-	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
-
 	if (!m_renderWidget->hasCapture())
 		return;
 
-	ui::Size moveDelta = mouseEvent->getPosition() - m_moveMouseOrigin;
+	ui::Size moveDelta = event->getPosition() - m_moveMouseOrigin;
 	m_renderOffset = m_moveRenderOffset + Vector2(moveDelta.cx / 100.0f, -moveDelta.cy / 100.0f);
 
 	m_renderWidget->update();
 }
 
-void DebugRenderControl::eventMouseWheel(ui::Event* event)
+void DebugRenderControl::eventMouseWheel(ui::MouseWheelEvent* event)
 {
-	int32_t rotation = static_cast< ui::MouseEvent* >(event)->getWheelRotation();
+	int32_t rotation = event->getRotation();
 
 	m_renderScale += rotation * 1.0f;
 	m_renderScale = clamp(m_renderScale, 0.1f, 100.0f);
@@ -176,14 +169,12 @@ void DebugRenderControl::eventMouseWheel(ui::Event* event)
 	m_renderWidget->update();
 }
 
-void DebugRenderControl::eventSize(ui::Event* event)
+void DebugRenderControl::eventSize(ui::SizeEvent* event)
 {
 	if (!m_renderView || !m_renderWidget->isVisible(true))
 		return;
 
-	ui::SizeEvent* s = static_cast< ui::SizeEvent* >(event);
-	ui::Size sz = s->getSize();
-
+	ui::Size sz = event->getSize();
 	if (sz.cx == m_dirtySize.cx && sz.cy == m_dirtySize.cy)
 		return;
 
@@ -193,7 +184,7 @@ void DebugRenderControl::eventSize(ui::Event* event)
 	m_dirtySize = sz;
 }
 
-void DebugRenderControl::eventPaint(ui::Event* event)
+void DebugRenderControl::eventPaint(ui::PaintEvent* event)
 {
 	if (!m_renderView || !m_primitiveRenderer)
 		return;

@@ -1,8 +1,6 @@
 #include <sstream>
 #include "Core/Math/MathUtils.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/MouseEvent.h"
-#include "Ui/Events/PaintEvent.h"
+#include "Ui/Custom/Envelope/EnvelopeContentChangeEvent.h"
 #include "Ui/Custom/Envelope/EnvelopeControl.h"
 #include "Ui/Custom/Envelope/EnvelopeEvaluator.h"
 #include "Ui/Custom/Envelope/EnvelopeKey.h"
@@ -30,10 +28,10 @@ bool EnvelopeControl::create(Widget* parent, EnvelopeEvaluator* evaluator, float
 	if (!Widget::create(parent, style))
 		return false;
 
-	addButtonDownEventHandler(createMethodHandler(this, &EnvelopeControl::eventButtonDown));
-	addButtonUpEventHandler(createMethodHandler(this, &EnvelopeControl::eventButtonUp));
-	addMouseMoveEventHandler(createMethodHandler(this, &EnvelopeControl::eventMouseMove));
-	addPaintEventHandler(createMethodHandler(this, &EnvelopeControl::eventPaint));
+	addEventHandler< MouseButtonDownEvent >(this, &EnvelopeControl::eventButtonDown);
+	addEventHandler< MouseButtonUpEvent >(this, &EnvelopeControl::eventButtonUp);
+	addEventHandler< MouseMoveEvent >(this, &EnvelopeControl::eventMouseMove);
+	addEventHandler< PaintEvent >(this, &EnvelopeControl::eventPaint);
 
 	m_evaluator = evaluator;
 	m_minValue = minValue;
@@ -66,19 +64,13 @@ void EnvelopeControl::addRange(const Color4ub& color, float limit0, float limit1
 	m_ranges.push_back(r);
 }
 
-void EnvelopeControl::addChangeEventHandler(EventHandler* eventHandler)
+void EnvelopeControl::eventButtonDown(MouseButtonDownEvent* event)
 {
-	addEventHandler(EiContentChange, eventHandler);
-}
-
-void EnvelopeControl::eventButtonDown(Event* e)
-{
-	MouseEvent* m = static_cast< MouseEvent* >(e);
-	Point pt = m->getPosition();
+	Point pt = event->getPosition();
 
 	m_selectedKey = 0;
 
-	if (m->getButton() == MouseEvent::BtLeft)
+	if (event->getButton() == MbtLeft)
 	{
 		for (RefArray< EnvelopeKey >::iterator i = m_keys.begin(); i != m_keys.end(); ++i)
 		{
@@ -92,7 +84,7 @@ void EnvelopeControl::eventButtonDown(Event* e)
 			}
 		}
 	}
-	else if (m->getButton() == MouseEvent::BtRight)
+	else if (event->getButton() == MbtRight)
 	{
 		m_selectedKey = new EnvelopeKey(
 			float(pt.x - m_rcEnv.left) / m_rcEnv.getWidth(),
@@ -101,8 +93,8 @@ void EnvelopeControl::eventButtonDown(Event* e)
 
 		insertKey(m_selectedKey);
 
-		Event changeEvent(this, m_selectedKey);
-		raiseEvent(EiContentChange, &changeEvent);
+		//Event changeEvent(this, m_selectedKey);
+		//raiseEvent(&changeEvent);
 
 		update();
 	}
@@ -111,7 +103,7 @@ void EnvelopeControl::eventButtonDown(Event* e)
 		setCapture();
 }
 
-void EnvelopeControl::eventButtonUp(Event* e)
+void EnvelopeControl::eventButtonUp(MouseButtonUpEvent* event)
 {
 	if (m_selectedKey)
 	{
@@ -120,13 +112,12 @@ void EnvelopeControl::eventButtonUp(Event* e)
 	}
 }
 
-void EnvelopeControl::eventMouseMove(Event* e)
+void EnvelopeControl::eventMouseMove(MouseMoveEvent* event)
 {
 	if (!m_selectedKey)
 		return;
 
-	MouseEvent* m = static_cast< MouseEvent* >(e);
-	Point pt = m->getPosition();
+	Point pt = event->getPosition();
 
 	float T = float(pt.x - m_rcEnv.left) / m_rcEnv.getWidth();
 	float value = float(pt.y - m_rcEnv.top) * (m_minValue - m_maxValue) / m_rcEnv.getHeight() + m_maxValue;
@@ -145,17 +136,16 @@ void EnvelopeControl::eventMouseMove(Event* e)
 		if (!m_selectedKey->isFixedValue())
 			m_selectedKey->setValue(value);
 
-		Event changeEvent(this, m_selectedKey);
-		raiseEvent(EiContentChange, &changeEvent);
+		EnvelopeContentChangeEvent changeEvent(this, m_selectedKey);
+		raiseEvent(&changeEvent);
 	}
 
 	update();
 }
 
-void EnvelopeControl::eventPaint(Event* e)
+void EnvelopeControl::eventPaint(PaintEvent* event)
 {
-	PaintEvent* p = static_cast< PaintEvent* >(e);
-	Canvas& canvas = p->getCanvas();
+	Canvas& canvas = event->getCanvas();
 
 	Rect rcInner = getInnerRect();
 
@@ -274,7 +264,7 @@ void EnvelopeControl::eventPaint(Event* e)
 		}
 	}
 
-	p->consume();
+	event->consume();
 }
 
 		}

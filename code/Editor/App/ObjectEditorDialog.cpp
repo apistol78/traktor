@@ -10,8 +10,6 @@
 #include "I18N/Text.h"
 #include "Ui/MessageBox.h"
 #include "Ui/FloodLayout.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/CommandEvent.h"
 
 namespace traktor
 {
@@ -57,9 +55,9 @@ bool ObjectEditorDialog::create(IEditor* editor, ui::Widget* parent, db::Instanc
 	))
 		return false;
 
-	addClickEventHandler(ui::createMethodHandler(this, &ObjectEditorDialog::eventClick));
-	addCloseEventHandler(ui::createMethodHandler(this, &ObjectEditorDialog::eventClose));
-	addTimerEventHandler(ui::createMethodHandler(this, &ObjectEditorDialog::eventTimer));
+	addEventHandler< ui::ButtonClickEvent >(this, &ObjectEditorDialog::eventClick);
+	addEventHandler< ui::CloseEvent >(this, &ObjectEditorDialog::eventClose);
+	addEventHandler< ui::TimerEvent >(this, &ObjectEditorDialog::eventTimer);
 
 	m_instance = instance;
 	m_objectHash = DeepHash(object).get();
@@ -127,9 +125,9 @@ void ObjectEditorDialog::handleDatabaseEvent(db::Database* database, const Guid&
 	m_objectEditor->handleDatabaseEvent(database, eventId);
 }
 
-void ObjectEditorDialog::eventClick(ui::Event* event)
+void ObjectEditorDialog::eventClick(ui::ButtonClickEvent* event)
 {
-	const ui::Command& command = checked_type_cast< ui::CommandEvent* >(event)->getCommand();
+	const ui::Command& command = event->getCommand();
 	switch (command.getId())
 	{
 	case ui::DrApply:
@@ -147,13 +145,13 @@ void ObjectEditorDialog::eventClick(ui::Event* event)
 	}
 }
 
-void ObjectEditorDialog::eventClose(ui::Event* event)
+void ObjectEditorDialog::eventClose(ui::CloseEvent* event)
 {
 	cancel();
 	event->consume();
 }
 
-void ObjectEditorDialog::eventTimer(ui::Event* event)
+void ObjectEditorDialog::eventTimer(ui::TimerEvent* event)
 {
 	// Apply changes to current object.
 	m_objectEditor->apply();

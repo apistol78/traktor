@@ -24,11 +24,7 @@
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
 #include "Ui/Command.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/Widget.h"
-#include "Ui/Events/SizeEvent.h"
-#include "Ui/Events/MouseEvent.h"
-#include "Ui/Events/KeyEvent.h"
 #include "Ui/Itf/IWidget.h"
 #include "World/IEntityEventManager.h"
 #include "World/WorldEntityRenderers.h"
@@ -49,13 +45,13 @@ const float c_minMagnification = 0.01f;
 
 int32_t translateMouseButton(int32_t uimb)
 {
-	if (uimb == ui::MouseEvent::BtLeft)
+	if (uimb == ui::MbtLeft)
 		return 0;
-	else if (uimb == ui::MouseEvent::BtRight)
+	else if (uimb == ui::MbtRight)
 		return 1;
-	else if (uimb == ui::MouseEvent::BtMiddle)
+	else if (uimb == ui::MbtMiddle)
 		return 2;
-	else if (uimb == (ui::MouseEvent::BtLeft | ui::MouseEvent::BtRight))
+	else if (uimb == (ui::MbtLeft | ui::MbtRight))
 		return 2;
 	else
 		return 0;
@@ -119,13 +115,13 @@ bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 	))
 		return false;
 
-	m_renderWidget->addButtonDownEventHandler(ui::createMethodHandler(this, &OrthogonalRenderControl::eventButtonDown));
-	m_renderWidget->addButtonUpEventHandler(ui::createMethodHandler(this, &OrthogonalRenderControl::eventButtonUp));
-	m_renderWidget->addDoubleClickEventHandler(ui::createMethodHandler(this, &OrthogonalRenderControl::eventDoubleClick));
-	m_renderWidget->addMouseMoveEventHandler(ui::createMethodHandler(this, &OrthogonalRenderControl::eventMouseMove));
-	m_renderWidget->addMouseWheelEventHandler(ui::createMethodHandler(this, &OrthogonalRenderControl::eventMouseWheel));
-	m_renderWidget->addSizeEventHandler(ui::createMethodHandler(this, &OrthogonalRenderControl::eventSize));
-	m_renderWidget->addPaintEventHandler(ui::createMethodHandler(this, &OrthogonalRenderControl::eventPaint));
+	m_renderWidget->addEventHandler< ui::MouseButtonDownEvent >(this, &OrthogonalRenderControl::eventButtonDown);
+	m_renderWidget->addEventHandler< ui::MouseButtonUpEvent >(this, &OrthogonalRenderControl::eventButtonUp);
+	m_renderWidget->addEventHandler< ui::MouseDoubleClickEvent >(this, &OrthogonalRenderControl::eventDoubleClick);
+	m_renderWidget->addEventHandler< ui::MouseMoveEvent >(this, &OrthogonalRenderControl::eventMouseMove);
+	m_renderWidget->addEventHandler< ui::MouseWheelEvent >(this, &OrthogonalRenderControl::eventMouseWheel);
+	m_renderWidget->addEventHandler< ui::SizeEvent >(this, &OrthogonalRenderControl::eventSize);
+	m_renderWidget->addEventHandler< ui::PaintEvent >(this, &OrthogonalRenderControl::eventPaint);
 
 	updateSettings();
 	updateWorldRenderer();
@@ -384,7 +380,7 @@ Matrix44 OrthogonalRenderControl::getViewTransform() const
 	return m_camera->getView();
 }
 
-void OrthogonalRenderControl::eventButtonDown(ui::Event* event)
+void OrthogonalRenderControl::eventButtonDown(ui::MouseButtonDownEvent* event)
 {
 	TransformChain transformChain;
 	transformChain.pushProjection(getProjectionTransform());
@@ -392,7 +388,7 @@ void OrthogonalRenderControl::eventButtonDown(ui::Event* event)
 	m_model.eventButtonDown(this, m_renderWidget, event, m_context, transformChain);
 }
 
-void OrthogonalRenderControl::eventButtonUp(ui::Event* event)
+void OrthogonalRenderControl::eventButtonUp(ui::MouseButtonUpEvent* event)
 {
 	TransformChain transformChain;
 	transformChain.pushProjection(getProjectionTransform());
@@ -400,7 +396,7 @@ void OrthogonalRenderControl::eventButtonUp(ui::Event* event)
 	m_model.eventButtonUp(this, m_renderWidget, event, m_context, transformChain);
 }
 
-void OrthogonalRenderControl::eventDoubleClick(ui::Event* event)
+void OrthogonalRenderControl::eventDoubleClick(ui::MouseDoubleClickEvent* event)
 {
 	TransformChain transformChain;
 	transformChain.pushProjection(getProjectionTransform());
@@ -408,7 +404,7 @@ void OrthogonalRenderControl::eventDoubleClick(ui::Event* event)
 	m_model.eventDoubleClick(this, m_renderWidget, event, m_context, transformChain);
 }
 
-void OrthogonalRenderControl::eventMouseMove(ui::Event* event)
+void OrthogonalRenderControl::eventMouseMove(ui::MouseMoveEvent* event)
 {
 	TransformChain transformChain;
 	transformChain.pushProjection(getProjectionTransform());
@@ -416,9 +412,9 @@ void OrthogonalRenderControl::eventMouseMove(ui::Event* event)
 	m_model.eventMouseMove(this, m_renderWidget, event, m_context, transformChain);
 }
 
-void OrthogonalRenderControl::eventMouseWheel(ui::Event* event)
+void OrthogonalRenderControl::eventMouseWheel(ui::MouseWheelEvent* event)
 {
-	int rotation = static_cast< ui::MouseEvent* >(event)->getWheelRotation();
+	int rotation = event->getRotation();
 	
 	float delta = m_magnification / 10.0f;
 
@@ -433,13 +429,12 @@ void OrthogonalRenderControl::eventMouseWheel(ui::Event* event)
 	m_context->raiseCameraMoved();
 }
 
-void OrthogonalRenderControl::eventSize(ui::Event* event)
+void OrthogonalRenderControl::eventSize(ui::SizeEvent* event)
 {
 	if (!m_renderView || !m_renderWidget->isVisible(true))
 		return;
 
-	ui::SizeEvent* s = static_cast< ui::SizeEvent* >(event);
-	ui::Size sz = s->getSize();
+	ui::Size sz = event->getSize();
 
 	// Don't update world renderer if, in fact, size hasn't changed.
 	if (sz.cx == m_dirtySize.cx && sz.cy == m_dirtySize.cy)
@@ -453,7 +448,7 @@ void OrthogonalRenderControl::eventSize(ui::Event* event)
 	m_dirtySize = sz;
 }
 
-void OrthogonalRenderControl::eventPaint(ui::Event* event)
+void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 {
 	float deltaTime = float(m_timer.getDeltaTime());
 	float scaledTime = m_context->getTime();

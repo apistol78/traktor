@@ -10,7 +10,6 @@
 #include "Ui/Button.h"
 #include "Ui/Container.h"
 #include "Ui/FileDialog.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/PropertyList/AutoPropertyList.h"
 #include "Xml/XmlDeserializer.h"
@@ -53,11 +52,11 @@ bool InputMappingEditor::create(ui::Widget* parent, db::Instance* instance, ISer
 
 	Ref< ui::Button > buttonImportInput = new ui::Button();
 	buttonImportInput->create(containerImportExportInput, L"Import...");
-	buttonImportInput->addClickEventHandler(ui::createMethodHandler(this, &InputMappingEditor::eventButtonImportInput));
+	buttonImportInput->addEventHandler< ui::ButtonClickEvent >(this, &InputMappingEditor::eventButtonImportInput);
 
 	Ref< ui::Button > buttonExportInput = new ui::Button();
 	buttonExportInput->create(containerImportExportInput, L"Export...");
-	buttonExportInput->addClickEventHandler(ui::createMethodHandler(this, &InputMappingEditor::eventButtonExportInput));
+	buttonExportInput->addEventHandler< ui::ButtonClickEvent >(this, &InputMappingEditor::eventButtonExportInput);
 
 	m_propertyListInput->bind(m_mapping);
 
@@ -87,7 +86,7 @@ ui::Size InputMappingEditor::getPreferredSize() const
 	return ui::Size(500, 400);
 }
 
-void InputMappingEditor::eventButtonImportInput(ui::Event* event)
+void InputMappingEditor::eventButtonImportInput(ui::ButtonClickEvent* event)
 {
 	ui::FileDialog fileDialog;
 	if (!fileDialog.create(m_containerOuter, L"Import input", L"All files (*.*);*.*"))
@@ -124,7 +123,7 @@ void InputMappingEditor::eventButtonImportInput(ui::Event* event)
 	fileDialog.destroy();
 }
 
-void InputMappingEditor::eventButtonExportInput(ui::Event* event)
+void InputMappingEditor::eventButtonExportInput(ui::ButtonClickEvent* event)
 {
 	ui::FileDialog fileDialog;
 	if (!fileDialog.create(m_containerOuter, L"Export input", L"All files (*.*);*.*", true))

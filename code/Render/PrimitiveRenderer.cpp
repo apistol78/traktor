@@ -1,6 +1,6 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/Half.h"
-#include "Core/Math/Plane.h"
+#include "Core/Math/Winding3.h"
 #include "Core/Misc/Endian.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
@@ -366,21 +366,44 @@ void PrimitiveRenderer::drawArrowHead(
 
 	float radius = d.length() * (1.0f - sharpness);
 
-	for (int32_t i = 0; i < 8; ++i)
+	Scalar diffuse = dot3(-dn, Vector4(0.0f, 1.0f, 0.0f)) * Scalar(0.25f) + Scalar(0.75f);
+	uint8_t mcap = uint8_t(diffuse * 255);
+
+	Winding3 w;
+	w.points.resize(3);
+
+	for (int32_t i = 0; i < 16; ++i)
 	{
-		float a0 = (i / 8.0f) * TWO_PI;
-		float a1 = a0 + (1.0f / 8.0f) * TWO_PI;
+		float a0 = (i / 16.0f) * TWO_PI;
+		float a1 = a0 + (1.0f / 16.0f) * TWO_PI;
 
 		float u0 = cosf(a0);
 		float v0 = sinf(a0);
 		float u1 = cosf(a1);
 		float v1 = sinf(a1);
 
+		w.points[0] = start + u * Scalar(u0 * radius) + v * Scalar(v0 * radius);
+		w.points[1] = start + u * Scalar(u1 * radius) + v * Scalar(v1 * radius);
+		w.points[2] = end;
+
+		Plane plane;
+		w.getPlane(plane);
+
+		Scalar diffuse = dot3(plane.normal(), Vector4(0.0f, 1.0f, 0.0f)) * Scalar(0.25f) + Scalar(0.75f);
+		uint8_t m = uint8_t(diffuse * 255);
+
 		drawSolidTriangle(
-			start + u * Scalar(u0 * radius) + v * Scalar(v0 * radius),
-			start + u * Scalar(u1 * radius) + v * Scalar(v1 * radius),
-			end,
-			color
+			w.points[0],
+			w.points[1],
+			w.points[2],
+			color * Color4ub(m, m, m, 255)
+		);
+
+		drawSolidTriangle(
+			w.points[0],
+			w.points[1],
+			start,
+			color * Color4ub(mcap, mcap, mcap, 255)
 		);
 	}
 }

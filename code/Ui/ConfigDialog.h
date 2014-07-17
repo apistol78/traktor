@@ -17,6 +17,7 @@ namespace traktor
 	{
 
 class Button;
+class ButtonClickEvent;
 
 /*! \brief Configuration dialog.
  * \ingroup UI
@@ -39,14 +40,12 @@ public:
 	
 	virtual Rect getInnerRect() const;
 	
-	void addClickEventHandler(EventHandler* eventHandler);
-	
 private:
 	Ref< Button > m_ok;
 	Ref< Button > m_cancel;
 	Ref< Button > m_apply;
 	
-	void eventClick(Event* event);
+	void eventButtonClick(ButtonClickEvent* event);
 };
 
 	}

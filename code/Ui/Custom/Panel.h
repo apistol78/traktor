@@ -15,9 +15,6 @@ namespace traktor
 {
 	namespace ui
 	{
-
-class Event;
-
 		namespace custom
 		{
 
@@ -29,8 +26,6 @@ class T_DLLCLASS Panel : public Container
 	T_RTTI_CLASS;
 
 public:
-	Panel();
-
 	bool create(Widget* parent, const std::wstring& text, Layout* layout);
 
 	virtual void destroy();
@@ -42,11 +37,11 @@ public:
 	virtual Rect getInnerRect() const;
 
 private:
-	Ref< EventHandler > m_focusHandler;
+	Ref< ui::EventSubject::IEventHandler > m_focusEventHandler;
 
-	void eventPaint(Event* event);
+	void eventPaint(PaintEvent* event);
 
-	void eventFocus(Event* event);
+	void eventFocus(FocusEvent* event);
 };
 
 		}

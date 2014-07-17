@@ -31,7 +31,10 @@
 #include <Script/Lua/ScriptManagerLua.h>
 #include <Sql/IResultSet.h>
 #include <Sql/Sqlite3/ConnectionSqlite3.h>
-
+#include <Xml/Attribute.h>
+#include <Xml/Document.h>
+#include <Xml/Element.h>
+#include <Xml/Text.h>
 #include "Environment.h"
 #include "ProduceOutput.h"
 #include "Run.h"
@@ -171,6 +174,30 @@ Ref< drawing::Image > drawing_Image_loadFromStream(traktor::IStream* stream, con
 bool drawing_Image_save(drawing::Image* image, const std::wstring& filePath)
 {
 	return image->save(filePath);
+}
+
+RefArray< xml::Element > xml_Element_get(xml::Element* element, const std::wstring& path)
+{
+	RefArray< xml::Element > elements;
+	element->get(path, elements);
+	return elements;
+}
+
+Ref< xml::Attribute > xml_Element_getAttribute_1(xml::Element* element, const std::wstring& name)
+{
+	return element->getAttribute(name);
+}
+
+Ref< xml::Attribute > xml_Element_getAttribute_2(xml::Element* element, const std::wstring& name, const std::wstring& defaultValue)
+{
+	return element->getAttribute(name, defaultValue);
+}
+
+RefArray< xml::Element > xml_Document_get(xml::Document* document, const std::wstring& path)
+{
+	RefArray< xml::Element > elements;
+	document->get(path, elements);
+	return elements;
 }
 
 Ref< script::IScriptManager > createScriptManager()
@@ -456,7 +483,70 @@ Ref< script::IScriptManager > createScriptManager()
 	classImage->addMethod("getHeight", &drawing::Image::getHeight);
 	scriptManager->registerClass(classImage);
 
-	// XmlDocument
+	// Xml
+	Ref< script::AutoScriptClass< xml::Attribute > > classAttribute = new script::AutoScriptClass< xml::Attribute >();
+	classAttribute->addConstructor< const std::wstring&, const std::wstring& >();
+	classAttribute->addMethod("getName", &xml::Attribute::getName);
+	classAttribute->addMethod("setName", &xml::Attribute::setName);
+	classAttribute->addMethod("getValue", &xml::Attribute::getValue);
+	classAttribute->addMethod("setValue", &xml::Attribute::setValue);
+	classAttribute->addMethod("getPrevious", &xml::Attribute::getPrevious);
+	classAttribute->addMethod("getNext", &xml::Attribute::getNext);
+	scriptManager->registerClass(classAttribute);
+
+	Ref< script::AutoScriptClass< xml::Node > > classNode = new script::AutoScriptClass< xml::Node >();
+	classNode->addMethod("getName", &xml::Node::getName);
+	classNode->addMethod("setName", &xml::Node::setName);
+	classNode->addMethod("getValue", &xml::Node::getValue);
+	classNode->addMethod("setValue", &xml::Node::setValue);
+	classNode->addMethod("unlink", &xml::Node::unlink);
+	classNode->addMethod("addChild", &xml::Node::addChild);
+	classNode->addMethod("removeChild", &xml::Node::removeChild);
+	classNode->addMethod("removeAllChildren", &xml::Node::removeAllChildren);
+	classNode->addMethod("insertBefore", &xml::Node::insertBefore);
+	classNode->addMethod("insertAfter", &xml::Node::insertAfter);
+	classNode->addMethod("getParent", &xml::Node::getParent);
+	classNode->addMethod("getPreviousSibling", &xml::Node::getPreviousSibling);
+	classNode->addMethod("getNextSibling", &xml::Node::getNextSibling);
+	classNode->addMethod("getFirstChild", &xml::Node::getFirstChild);
+	classNode->addMethod("getLastChild", &xml::Node::getLastChild);
+	scriptManager->registerClass(classNode);
+
+	Ref< script::AutoScriptClass< xml::Text > > classText = new script::AutoScriptClass< xml::Text >();
+	classText->addConstructor< const std::wstring& >();
+	classText->addMethod("getValue", &xml::Text::getValue);
+	classText->addMethod("setValue", &xml::Text::setValue);
+	classText->addMethod("clone", &xml::Text::clone);
+	scriptManager->registerClass(classText);
+
+	Ref< script::AutoScriptClass< xml::Element > > classElement = new script::AutoScriptClass< xml::Element >();
+	classElement->addConstructor< const std::wstring& >();
+	classElement->addMethod("get", &xml_Element_get);
+	classElement->addMethod("getSingle", &xml::Element::getSingle);
+	classElement->addMethod("getPath", &xml::Element::getPath);
+	classElement->addMethod("match", &xml::Element::match);
+	classElement->addMethod("hasAttribute", &xml::Element::hasAttribute);
+	classElement->addMethod("setAttribute", &xml::Element::setAttribute);
+	classElement->addMethod("getFirstAttribute", &xml::Element::getFirstAttribute);
+	classElement->addMethod("getLastAttribute", &xml::Element::getLastAttribute);
+	classElement->addMethod("getAttribute", &xml_Element_getAttribute_1);
+	classElement->addMethod("getAttribute", &xml_Element_getAttribute_2);
+	classElement->addMethod("getChildElementByName", &xml::Element::getChildElementByName);
+	classElement->addMethod("clone", &xml::Element::clone);
+	scriptManager->registerClass(classElement);
+
+	Ref< script::AutoScriptClass< xml::Document > > classDocument = new script::AutoScriptClass< xml::Document >();
+	classDocument->addConstructor();
+	classDocument->addMethod("loadFromFile", &xml::Document::loadFromFile);
+	classDocument->addMethod("loadFromStream", &xml::Document::loadFromStream);
+	classDocument->addMethod("loadFromText", &xml::Document::loadFromText);
+	classDocument->addMethod("saveAsFile", &xml::Document::saveAsFile);
+	classDocument->addMethod("saveIntoStream", &xml::Document::saveIntoStream);
+	classDocument->addMethod("get", &xml_Document_get);
+	classDocument->addMethod("setDocumentElement", &xml::Document::setDocumentElement);
+	classDocument->addMethod("getDocumentElement", &xml::Document::getDocumentElement);
+	classDocument->addMethod("clone", &xml::Document::clone);
+	scriptManager->registerClass(classDocument);
 
 	// HtmlDocument
 
@@ -682,6 +772,11 @@ int32_t executeTemplate(script::IScriptManager* scriptManager, const std::wstrin
 		return 1;
 	}
 
+	// Transform arguments into script array.
+	std::vector< std::wstring > args;
+	for (int32_t i = 1; i < cmdLine.getCount(); ++i)
+		args.push_back(cmdLine.getString(i));
+
 	Ref< Environment > environment = new Environment(OS::getInstance().getEnvironment());
 	environment->set(L"RUN_SCRIPT", fileName.getPathName());
 	globalContext->setGlobal("environment", script::Any::fromObject(environment));
@@ -694,6 +789,7 @@ int32_t executeTemplate(script::IScriptManager* scriptManager, const std::wstrin
 	globalContext->setGlobal("stdout", script::Any::fromObject(new StdOutput(stdout)));
 	globalContext->setGlobal("stderr", script::Any::fromObject(new StdOutput(stderr)));
 	globalContext->setGlobal("output", script::Any::fromObject(o));
+	globalContext->setGlobal("args", script::CastAny< std::vector< std::wstring > >::set(args));
 
 	Ref< script::IScriptContext > scriptContext = scriptManager->createContext(scriptResource, globalContext);
 	if (!scriptContext)
@@ -713,6 +809,8 @@ int main(int argc, const char** argv)
 
 	if (cmdLine.getCount() < 1)
 	{
+		log::info << L"Run 1.0.0" << Endl;
+		log::info << Endl;
 		log::info << L"Usage: Run (option(s)) [<file>.run|<file>.template] (args ...)" << Endl;
 		log::info << Endl;
 		log::info << L"  For .run files:" << Endl;

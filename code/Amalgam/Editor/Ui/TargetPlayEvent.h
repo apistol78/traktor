@@ -1,0 +1,29 @@
+#ifndef traktor_amalgam_TargetPlayEvent_H
+#define traktor_amalgam_TargetPlayEvent_H
+
+#include "Ui/Event.h"
+
+namespace traktor
+{
+	namespace amalgam
+	{
+
+class TargetInstance;
+
+class TargetPlayEvent : public ui::Event
+{
+	T_RTTI_CLASS;
+
+public:
+	TargetPlayEvent(ui::EventSubject* sender, TargetInstance* instance);
+
+	TargetInstance* getInstance() const;
+
+private:
+	Ref< TargetInstance > m_instance;
+};
+
+	}
+}
+
+#endif	// traktor_amalgam_TargetPlayEvent_H

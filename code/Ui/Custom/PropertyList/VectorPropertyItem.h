@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_CUSTOM_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -17,7 +17,6 @@ namespace traktor
 	{
 
 class Edit;
-class Event;
 
 		namespace custom
 		{
@@ -47,7 +46,7 @@ protected:
 
 	virtual void resizeInPlaceControls(const Rect& rc, std::vector< WidgetRect >& outChildRects);
 
-	virtual void mouseButtonDown(MouseEvent* event);
+	virtual void mouseButtonDown(MouseButtonDownEvent* event);
 
 	virtual void paintValue(Canvas& canvas, const Rect& rc);
 
@@ -56,7 +55,7 @@ private:
 	vector_t m_value;
 	int m_dimension;
 
-	void eventEditFocus(Event* event);
+	void eventEditFocus(FocusEvent* event);
 };
 
 		}

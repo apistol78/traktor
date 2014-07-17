@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_CUSTOM_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -21,9 +21,10 @@ class Edit;
 		namespace custom
 		{
 
+class ColorControl;
+class ColorEvent;
 class ColorGradientControl;
 class ColorSliderControl;
-class ColorControl;
 
 struct ColorGradient;
 struct AlphaGradient;
@@ -57,13 +58,13 @@ private:
 
 	void updateControls();
 
-	void eventGradientColorSelect(Event* event);
+	void eventGradientColorSelect(ColorEvent* event);
 
-	void eventSliderColorSelect(Event* event);
+	void eventSliderColorSelect(ColorEvent* event);
 
-	void eventSliderAlphaSelect(Event* event);
+	void eventSliderAlphaSelect(ColorEvent* event);
 
-	void eventEditFocus(Event* event);
+	void eventEditFocus(FocusEvent* event);
 };
 
 		}

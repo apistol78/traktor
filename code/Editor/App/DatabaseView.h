@@ -20,6 +20,7 @@ class PopupMenu;
 
 class ToolBar;
 class ToolBarButton;
+class ToolBarButtonClickEvent;
 
 		}
 	}
@@ -98,19 +99,19 @@ private:
 
 	void filterDependencies(db::Instance* instance);
 
-	void eventToolSelectionClicked(ui::Event* event);
+	void eventToolSelectionClicked(ui::custom::ToolBarButtonClickEvent* event);
 
-	void eventFilterKey(ui::Event* event);
+	void eventFilterKey(ui::KeyUpEvent* event);
 
-	void eventTimer(ui::Event* event);
+	void eventTimer(ui::TimerEvent* event);
 
-	void eventInstanceActivate(ui::Event* event);
+	void eventInstanceActivate(ui::TreeViewItemActivateEvent* event);
 
-	void eventInstanceButtonDown(ui::Event* event);
+	void eventInstanceButtonDown(ui::MouseButtonDownEvent* event);
 
-	void eventInstanceRenamed(ui::Event* event);
+	void eventInstanceRenamed(ui::TreeViewContentChangeEvent* event);
 
-	void eventInstanceDrag(ui::Event* event);
+	void eventInstanceDrag(ui::TreeViewDragEvent* event);
 };
 
 	}

@@ -51,13 +51,13 @@ protected:
 
 	virtual void paint(ToolBar* toolBar, Canvas& canvas, const Point& at, Bitmap* images, int imageWidth, int imageHeight);
 
-	virtual bool mouseEnter(ToolBar* toolBar, MouseEvent* mouseEvent);
+	virtual bool mouseEnter(ToolBar* toolBar, MouseMoveEvent* mouseEvent);
 
-	virtual void mouseLeave(ToolBar* toolBar, MouseEvent* mouseEvent);
+	virtual void mouseLeave(ToolBar* toolBar, MouseMoveEvent* mouseEvent);
 
-	virtual void buttonDown(ToolBar* toolBar, MouseEvent* mouseEvent);
+	virtual void buttonDown(ToolBar* toolBar, MouseButtonDownEvent* mouseEvent);
 
-	virtual void buttonUp(ToolBar* toolBar, MouseEvent* mouseEvent);
+	virtual void buttonUp(ToolBar* toolBar, MouseButtonUpEvent* mouseEvent);
 
 private:
 	Command m_command;

@@ -1,9 +1,9 @@
+#include "Core/Log/Log.h"
+#include "Ui/Application.h"
 #include "Ui/PopupMenu.h"
 #include "Ui/Widget.h"
-#include "Ui/Application.h"
 #include "Ui/Itf/IPopupMenu.h"
 #include "Ui/Itf/IWidget.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {

@@ -1,5 +1,5 @@
-#include "Ui/Win32/ButtonWin32.h"
 #include "Ui/Button.h"
+#include "Ui/Win32/ButtonWin32.h"
 
 namespace traktor
 {
@@ -90,8 +90,8 @@ Size ButtonWin32::getPreferedSize() const
 
 LRESULT ButtonWin32::eventCommand(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip)
 {
-	CommandEvent cmdEvent(m_owner, 0);
-	m_owner->raiseEvent(EiClick, &cmdEvent);
+	ButtonClickEvent clickEvent(m_owner);
+	m_owner->raiseEvent(&clickEvent);
 	return TRUE;
 }
 

@@ -7,12 +7,10 @@ namespace traktor
 {
 	namespace ui
 	{
-
-class Event;
-
 		namespace custom
 		{
 
+class PropertyCommandEvent;
 class PropertyList;
 
 		}
@@ -38,7 +36,7 @@ public:
 private:
 	Ref< ui::custom::PropertyList > m_colorList;
 
-	void eventPropertyCommand(ui::Event* event);
+	void eventPropertyCommand(ui::custom::PropertyCommandEvent* event);
 };
 
 	}

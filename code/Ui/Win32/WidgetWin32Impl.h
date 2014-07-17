@@ -6,15 +6,7 @@
 #include "Core/Misc/AutoPtr.h"
 #include "Ui/Canvas.h"
 #include "Ui/EventSubject.h"
-#include "Ui/Events/ShowEvent.h"
-#include "Ui/Events/KeyEvent.h"
-#include "Ui/Events/MoveEvent.h"
-#include "Ui/Events/SizeEvent.h"
-#include "Ui/Events/MouseEvent.h"
-#include "Ui/Events/FocusEvent.h"
-#include "Ui/Events/CommandEvent.h"
-#include "Ui/Events/PaintEvent.h"
-#include "Ui/Events/FileDropEvent.h"
+#include "Ui/Events/AllEvents.h"
 #include "Ui/Itf/IWidget.h"
 #include "Ui/Win32/Window.h"
 #include "Ui/Win32/CanvasGdiWin32.h"
@@ -100,8 +92,8 @@ public:
 		{
 			ShowWindow(m_hWnd, visible ? SW_SHOWNA : SW_HIDE);
 
-			ShowEvent showEvent(m_owner, 0, visible);
-			m_owner->raiseEvent(EiShow, &showEvent);
+			ShowEvent showEvent(m_owner, visible);
+			m_owner->raiseEvent(&showEvent);
 		}
 	}
 
@@ -543,8 +535,8 @@ protected:
 
 	LRESULT eventChar(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		KeyEvent k(m_owner, 0, translateKeyCode(int(wParam)), int(wParam), wchar_t(wParam));
-		m_owner->raiseEvent(EiKey, &k);
+		KeyEvent k(m_owner, translateKeyCode(int(wParam)), int(wParam), wchar_t(wParam));
+		m_owner->raiseEvent(&k);
 		if (!k.consumed())
 			outPass = true;
 		return TRUE;
@@ -552,8 +544,8 @@ protected:
 
 	LRESULT eventKeyDown(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		KeyEvent k(m_owner, 0, translateKeyCode(int(wParam)), int(wParam), 0);
-		m_owner->raiseEvent(EiKeyDown, &k);
+		KeyDownEvent k(m_owner, translateKeyCode(int(wParam)), int(wParam), 0);
+		m_owner->raiseEvent(&k);
 		if (!k.consumed())
 			outPass = true;
 		return TRUE;
@@ -561,8 +553,8 @@ protected:
 
 	LRESULT eventKeyUp(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		KeyEvent k(m_owner, 0, translateKeyCode(int(wParam)), int(wParam), 0);
-		m_owner->raiseEvent(EiKeyUp, &k);
+		KeyUpEvent k(m_owner, translateKeyCode(int(wParam)), int(wParam), 0);
+		m_owner->raiseEvent(&k);
 		if (!k.consumed())
 			outPass = true;
 		return TRUE;
@@ -570,8 +562,8 @@ protected:
 
 	LRESULT eventMove(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		MoveEvent m(m_owner, 0, Point(LOWORD(lParam), HIWORD(lParam)));
-		m_owner->raiseEvent(EiMove, &m);
+		MoveEvent m(m_owner, Point(LOWORD(lParam), HIWORD(lParam)));
+		m_owner->raiseEvent(&m);
 		if (!m.consumed())
 			outPass = true;
 		return TRUE;
@@ -579,8 +571,8 @@ protected:
 
 	LRESULT eventSize(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		SizeEvent s(m_owner, 0, Size(LOWORD(lParam), HIWORD(lParam)));
-		m_owner->raiseEvent(EiSize, &s);
+		SizeEvent s(m_owner, Size(LOWORD(lParam), HIWORD(lParam)));
+		m_owner->raiseEvent(&s);
 		if (!s.consumed())
 			outPass = true;
 		return TRUE;
@@ -606,27 +598,26 @@ protected:
 		}
 #endif
 
-		MouseEvent::Button button = MouseEvent::BtNone;
+		int32_t button = MbtNone;
 		switch (message)
 		{
 		case WM_LBUTTONDOWN:
-			button = MouseEvent::BtLeft;
+			button = MbtLeft;
 			break;
 		case WM_MBUTTONDOWN:
-			button = MouseEvent::BtMiddle;
+			button = MbtMiddle;
 			break;
 		case WM_RBUTTONDOWN:
-			button = MouseEvent::BtRight;
+			button = MbtRight;
 			break;
 		}
 
-		MouseEvent m(
+		MouseButtonDownEvent m(
 			m_owner,
-			0,
 			button,
 			Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam))
 		);
-		m_owner->raiseEvent(EiButtonDown, &m);
+		m_owner->raiseEvent(&m);
 
 		if (!m.consumed())
 			outPass = true;
@@ -636,27 +627,26 @@ protected:
 
 	LRESULT eventButtonUp(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		MouseEvent::Button button = MouseEvent::BtNone;
+		int32_t button = MbtNone;
 		switch (message)
 		{
 		case WM_LBUTTONUP:
-			button = MouseEvent::BtLeft;
+			button = MbtLeft;
 			break;
 		case WM_MBUTTONUP:
-			button = MouseEvent::BtMiddle;
+			button = MbtMiddle;
 			break;
 		case WM_RBUTTONUP:
-			button = MouseEvent::BtRight;
+			button = MbtRight;
 			break;
 		}
 
-		MouseEvent m(
+		MouseButtonUpEvent m(
 			m_owner,
-			0,
 			button,
 			Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam))
 		);
-		m_owner->raiseEvent(EiButtonUp, &m);
+		m_owner->raiseEvent(&m);
 
 		if (!m.consumed())
 			outPass = true;
@@ -665,27 +655,26 @@ protected:
 
 	LRESULT eventButtonDblClk(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		MouseEvent::Button button = MouseEvent::BtNone;
+		int32_t button = MbtNone;
 		switch (message)
 		{
 		case WM_LBUTTONDBLCLK:
-			button = MouseEvent::BtLeft;
+			button = MbtLeft;
 			break;
 		case WM_MBUTTONDBLCLK:
-			button = MouseEvent::BtMiddle;
+			button = MbtMiddle;
 			break;
 		case WM_RBUTTONDBLCLK:
-			button = MouseEvent::BtRight;
+			button = MbtRight;
 			break;
 		}
 
-		MouseEvent m(
+		MouseDoubleClickEvent m(
 			m_owner,
-			0,
 			button,
 			Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam))
 		);
-		m_owner->raiseEvent(EiDoubleClick, &m);
+		m_owner->raiseEvent(&m);
 
 		if (!m.consumed())
 			outPass = true;
@@ -694,21 +683,20 @@ protected:
 
 	LRESULT eventMouseMove(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		int button = MouseEvent::BtNone;
+		int32_t button = MbtNone;
 		if (wParam & MK_LBUTTON)
-			button |= MouseEvent::BtLeft;
+			button |= MbtLeft;
 		if (wParam & MK_MBUTTON)
-			button |= MouseEvent::BtMiddle;
+			button |= MbtMiddle;
 		if (wParam & MK_RBUTTON)
-			button |= MouseEvent::BtRight;
+			button |= MbtRight;
 
-		MouseEvent m(
+		MouseMoveEvent m(
 			m_owner,
-			0,
 			button,
 			Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam))
 		);
-		m_owner->raiseEvent(EiMouseMove, &m);
+		m_owner->raiseEvent(&m);
 
 		if (!m.consumed())
 			outPass = true;
@@ -717,22 +705,12 @@ protected:
 
 	LRESULT eventMouseWheel(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		int button = MouseEvent::BtNone;
-		if (LOWORD(wParam) & MK_LBUTTON)
-			button |= MouseEvent::BtLeft;
-		if (LOWORD(wParam) & MK_MBUTTON)
-			button |= MouseEvent::BtMiddle;
-		if (LOWORD(wParam) & MK_RBUTTON)
-			button |= MouseEvent::BtRight;
-
-		MouseEvent m(
+		MouseWheelEvent m(
 			m_owner,
-			0,
-			button,
-			Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)),
-			GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA
+			GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA,
+			Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam))
 		);
-		m_owner->raiseEvent(EiMouseWheel, &m);
+		m_owner->raiseEvent(&m);
 
 		if (!m.consumed())
 			outPass = true;
@@ -741,8 +719,8 @@ protected:
 
 	LRESULT eventFocus(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		FocusEvent focusEvent(m_owner, 0, bool(message == WM_SETFOCUS));
-		m_owner->raiseEvent(EiFocus, &focusEvent);
+		FocusEvent focusEvent(m_owner, bool(message == WM_SETFOCUS));
+		m_owner->raiseEvent(&focusEvent);
 
 		outPass = true;
 		return TRUE;
@@ -750,18 +728,17 @@ protected:
 
 	LRESULT eventPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		if (m_owner->hasEventHandler(EiPaint) && m_canvasImpl)
+		if (m_owner->hasEventHandler< PaintEvent >() && m_canvasImpl)
 		{
 			if (m_canvasImpl->beginPaint(m_hWnd, m_doubleBuffer, NULL))
 			{
 				Canvas canvas(m_canvasImpl);
 				PaintEvent p(
 					m_owner,
-					0,
 					canvas,
 					Rect()
 				);
-				m_owner->raiseEvent(EiPaint, &p);
+				m_owner->raiseEvent(&p);
 				m_canvasImpl->endPaint(m_hWnd);
 				outPass = !p.consumed();
 			}
@@ -774,7 +751,7 @@ protected:
 
 	LRESULT eventEraseBkGnd(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		if (m_owner->hasEventHandler(EiPaint))
+		if (m_owner->hasEventHandler< PaintEvent >())
 		{
 			// Have paint event handler; return zero to indicate we didn't erase the background.
 			outPass = false;
@@ -795,8 +772,8 @@ protected:
 		for (std::map< uint32_t, uint32_t >::iterator i = m_timers.begin(); i != m_timers.end(); ++i)
 			KillTimer(m_hWnd, i->first + 1000);
 
-		CommandEvent c(m_owner, 0);
-		m_owner->raiseEvent(EiTimer, &c);
+		TimerEvent c(m_owner, uint32_t(wParam));
+		m_owner->raiseEvent(&c);
 		if (!c.consumed())
 			outPass = true;
 
@@ -827,8 +804,8 @@ protected:
 			files.push_back(tstows(fileName));
 		}
 
-		FileDropEvent e(m_owner, 0, files);
-		m_owner->raiseEvent(EiFileDrop, &e);
+		FileDropEvent e(m_owner, files);
+		m_owner->raiseEvent(&e);
 		if (!e.consumed())
 		{
 			outPass = true;

@@ -2,8 +2,6 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Command.h"
-#include "Ui/Event.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/Custom/MiniButton.h"
 #include "Ui/Custom/PropertyList/ArrayPropertyItem.h"
 #include "Ui/Custom/PropertyList/NullPropertyItem.h"
@@ -50,7 +48,7 @@ void ArrayPropertyItem::createInPlaceControls(Widget* parent)
 				ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"png") : 
 				ui::Bitmap::load(c_ResourceSmallPlus, sizeof(c_ResourceSmallPlus), L"png")
 		);
-		m_buttonEdit->addClickEventHandler(createMethodHandler(this, &ArrayPropertyItem::eventClick));
+		m_buttonEdit->addEventHandler< ButtonClickEvent >(this, &ArrayPropertyItem::eventClick);
 	}
 }
 
@@ -84,7 +82,7 @@ void ArrayPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 	canvas.drawText(rc.inflate(-2, -2), ss.str(), AnLeft, AnCenter);
 }
 
-void ArrayPropertyItem::eventClick(Event* event)
+void ArrayPropertyItem::eventClick(ButtonClickEvent* event)
 {
 	if (m_elementType)
 		notifyCommand(Command(L"Property.Edit"));

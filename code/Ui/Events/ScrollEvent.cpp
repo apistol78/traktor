@@ -7,13 +7,13 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ScrollEvent", ScrollEvent, Event)
 
-ScrollEvent::ScrollEvent(EventSubject* sender, Object* item, int position)
-:	Event(sender, item)
+ScrollEvent::ScrollEvent(EventSubject* sender, int32_t position)
+:	Event(sender)
 ,	m_position(position)
 {
 }
 
-int ScrollEvent::getPosition() const
+int32_t ScrollEvent::getPosition() const
 {
 	return m_position;
 }

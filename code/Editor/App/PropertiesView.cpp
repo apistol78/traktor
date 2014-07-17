@@ -12,14 +12,14 @@
 #include "I18N/I18N.h"
 #include "I18N/Text.h"
 #include "Ui/FileDialog.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Events/CommandEvent.h"
 #include "Ui/Custom/ColorPicker/ColorDialog.h"
 #include "Ui/Custom/GradientStatic/GradientStatic.h"
 #include "Ui/Custom/PropertyList/FilePropertyItem.h"
 #include "Ui/Custom/PropertyList/BrowsePropertyItem.h"
 #include "Ui/Custom/PropertyList/ObjectPropertyItem.h"
+#include "Ui/Custom/PropertyList/PropertyCommandEvent.h"
+#include "Ui/Custom/PropertyList/PropertyContentChangeEvent.h"
 #include "Ui/Custom/PropertyList/ArrayPropertyItem.h"
 #include "Ui/Custom/PropertyList/TextPropertyItem.h"
 #include "Ui/Custom/PropertyList/ColorPropertyItem.h"
@@ -43,9 +43,9 @@ bool PropertiesView::create(ui::Widget* parent)
 
 	m_propertyList = new ui::custom::AutoPropertyList();
 	m_propertyList->create(this, ui::WsDoubleBuffer | ui::WsTabStop, this);
-	m_propertyList->addCommandEventHandler(ui::createMethodHandler(this, &PropertiesView::eventPropertyCommand));
-	m_propertyList->addChangeEventHandler(ui::createMethodHandler(this, &PropertiesView::eventPropertyChange));
-	m_propertyList->addSelectEventHandler(ui::createMethodHandler(this, &PropertiesView::eventPropertySelect));
+	m_propertyList->addEventHandler< ui::custom::PropertyCommandEvent >(this, &PropertiesView::eventPropertyCommand);
+	m_propertyList->addEventHandler< ui::custom::PropertyContentChangeEvent >(this, &PropertiesView::eventPropertyChange);
+	m_propertyList->addEventHandler< ui::SelectionChangeEvent >(this, &PropertiesView::eventPropertySelect);
 
 	m_staticHelp = new ui::custom::GradientStatic();
 	m_staticHelp->create(this, Color4ub(220, 220, 220), Color4ub(255, 255, 255), Color4ub(0, 0, 0), L"", ui::WsDoubleBuffer);
@@ -185,10 +185,9 @@ void PropertiesView::updateHelp()
 	m_staticHelp->update();
 }
 
-void PropertiesView::eventPropertyCommand(ui::Event* event)
+void PropertiesView::eventPropertyCommand(ui::custom::PropertyCommandEvent* event)
 {
-	const ui::CommandEvent* cmdEvent = checked_type_cast< const ui::CommandEvent* >(event);
-	const ui::Command& cmd = cmdEvent->getCommand();
+	const ui::Command& cmd = event->getCommand();
 
 	Ref< ui::custom::FilePropertyItem > fileItem = dynamic_type_cast< ui::custom::FilePropertyItem* >(event->getItem());
 	if (fileItem)
@@ -351,7 +350,7 @@ void PropertiesView::eventPropertyCommand(ui::Event* event)
 	m_propertyList->update();
 }
 
-void PropertiesView::eventPropertyChange(ui::Event* event)
+void PropertiesView::eventPropertyChange(ui::custom::PropertyContentChangeEvent* event)
 {
 	IEditorPage* activeEditorPage = m_editor->getActiveEditorPage();
 	if (activeEditorPage)
@@ -363,7 +362,7 @@ void PropertiesView::eventPropertyChange(ui::Event* event)
 		activeEditorPage->handleCommand(ui::Command(L"Editor.PropertiesChanged"));
 }
 
-void PropertiesView::eventPropertySelect(ui::Event* event)
+void PropertiesView::eventPropertySelect(ui::SelectionChangeEvent* event)
 {
 	updateHelp();
 }

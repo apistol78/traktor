@@ -9,9 +9,15 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.TreeViewEditEvent", TreeViewEditEvent, Event)
 
 TreeViewEditEvent::TreeViewEditEvent(EventSubject* sender, TreeViewItem* item)
-:	Event(sender, item)
+:	Event(sender)
+,	m_item(item)
 ,	m_cancelled(false)
 {
+}
+
+TreeViewItem* TreeViewEditEvent::getItem() const
+{
+	return m_item;
 }
 
 void TreeViewEditEvent::cancel()

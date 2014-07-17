@@ -2,14 +2,12 @@
 #define traktor_editor_ShortcutsSettingsPage_H
 
 #include "Editor/ISettingsPage.h"
+#include "Ui/Events/AllEvents.h"
 
 namespace traktor
 {
 	namespace ui
 	{
-
-class Event;
-
 		namespace custom
 		{
 
@@ -42,9 +40,9 @@ private:
 
 	void updateShortcutGrid();
 
-	void eventShortcutSelect(ui::Event* event);
+	void eventShortcutSelect(ui::SelectionChangeEvent* event);
 
-	void eventShortcutModified(ui::Event* event);
+	void eventShortcutModified(ui::ContentChangeEvent* event);
 };
 
 	}

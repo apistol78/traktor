@@ -11,7 +11,6 @@ class PropertyGroup;
 	namespace ui
 	{
 
-class Command;
 class Edit;
 
 	}
@@ -33,7 +32,7 @@ private:
 	Ref< ui::Edit > m_editOutputDatabase;
 	Ref< ui::Edit > m_editAssetPath;
 
-	void eventDialogClick(ui::Event* event);
+	void eventDialogClick(ui::ButtonClickEvent* event);
 };
 
 	}

@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -25,9 +25,9 @@ class T_DLLCLASS CommandEvent : public Event
 	T_RTTI_CLASS;
 	
 public:
-	CommandEvent(EventSubject* sender, Object* item, const Command& command);
+	CommandEvent(EventSubject* sender, const Command& command);
 
-	CommandEvent(EventSubject* sender, Object* item);
+	CommandEvent(EventSubject* sender);
 	
 	const Command& getCommand() const;
 	

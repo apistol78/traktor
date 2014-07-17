@@ -2,8 +2,8 @@
 #include "Sound/Resound/EnvelopeGrainData.h"
 #include "Sound/Editor/Resound/EnvelopeGrainFacade.h"
 #include "Ui/Event.h"
-#include "Ui/FunctionHandler.h"
 #include "Ui/Custom/Envelope/DefaultEnvelopeEvaluator.h"
+#include "Ui/Custom/Envelope/EnvelopeContentChangeEvent.h"
 #include "Ui/Custom/Envelope/EnvelopeControl.h"
 
 namespace traktor
@@ -22,26 +22,6 @@ const Color4ub c_rangeColors[] =
 	Color4ub(255, 200, 255, 100),
 	Color4ub(200, 255, 255, 100)
 };
-
-void envelopeChange(ui::Event* event)
-{
-	ui::custom::EnvelopeControl* envelopeControl = checked_type_cast< ui::custom::EnvelopeControl* >(event->getSender());
-	
-	EnvelopeGrainData* envelopeGrain = envelopeControl->getData< EnvelopeGrainData >(L"GRAIN");
-	T_ASSERT (envelopeGrain);
-
-	const RefArray< ui::custom::EnvelopeKey >& keys = envelopeControl->getKeys();
-	T_ASSERT (keys.size() == 3);
-
-	float levels[] =
-	{
-		keys[0]->getValue(),
-		keys[1]->getValue(),
-		keys[2]->getValue()
-	};
-	envelopeGrain->setLevels(levels);
-	envelopeGrain->setMid(keys[1]->getT());
-}
 
 		}
 
@@ -73,7 +53,7 @@ ui::Widget* EnvelopeGrainFacade::createView(IGrainData* grain, ui::Widget* paren
 	}
 
 	envelopeControl->setData(L"GRAIN", grain);
-	envelopeControl->addChangeEventHandler(ui::createFunctionHandler(&envelopeChange));
+	//envelopeControl->addEventHandler< ui::custom::EnvelopeContentChangeEvent >(this, &EnvelopeGrainFacade::eventEnvelopeChange);
 
 	return envelopeControl;
 }
@@ -119,6 +99,26 @@ bool EnvelopeGrainFacade::getChildren(IGrainData* grain, RefArray< IGrainData >&
 	for (std::vector< EnvelopeGrainData::GrainData >::const_iterator i = grains.begin(); i != grains.end(); ++i)
 		outChildren.push_back(i->grain);
 	return true;
+}
+
+void EnvelopeGrainFacade::eventEnvelopeChange(ui::custom::EnvelopeContentChangeEvent* event)
+{
+	ui::custom::EnvelopeControl* envelopeControl = checked_type_cast< ui::custom::EnvelopeControl* >(event->getSender());
+
+	EnvelopeGrainData* envelopeGrain = envelopeControl->getData< EnvelopeGrainData >(L"GRAIN");
+	T_ASSERT (envelopeGrain);
+
+	const RefArray< ui::custom::EnvelopeKey >& keys = envelopeControl->getKeys();
+	T_ASSERT (keys.size() == 3);
+
+	float levels[] =
+	{
+		keys[0]->getValue(),
+		keys[1]->getValue(),
+		keys[2]->getValue()
+	};
+	envelopeGrain->setLevels(levels);
+	envelopeGrain->setMid(keys[1]->getT());
 }
 
 	}

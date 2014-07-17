@@ -4,6 +4,7 @@
 #include <map>
 #include "Core/RefArray.h"
 #include "Editor/IObjectEditor.h"
+#include "Ui/Events/AllEvents.h"
 
 namespace traktor
 {
@@ -26,7 +27,6 @@ class IResourceManager;
 
 class Command;
 class Container;
-class Event;
 class PopupMenu;
 class Slider;
 
@@ -36,6 +36,7 @@ class Slider;
 class Panel;
 class ToolBar;
 class ToolBarButton;
+class ToolBarButtonClickEvent;
 
 		}
 	}
@@ -101,19 +102,19 @@ private:
 
 	void updateProperties();
 
-	void eventParameterChange(ui::Event* event);
+	void eventParameterChange(ui::ContentChangeEvent* event);
 
-	void eventToolBarClick(ui::Event* event);
+	void eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event);
 
-	void eventGrainSelect(ui::Event* event);
+	void eventGrainSelect(ui::SelectionChangeEvent* event);
 
-	void eventGrainButtonUp(ui::Event* event);
+	void eventGrainButtonUp(ui::MouseButtonUpEvent* event);
 
-	void eventGrainPropertiesChange(ui::Event* event);
+	void eventGrainPropertiesChange(ui::ContentChangeEvent* event);
 
-	void eventGrainViewChange(ui::Event* event);
+	void eventGrainViewChange(ui::ContentChangeEvent* event);
 
-	void eventTimer(ui::Event* event);
+	void eventTimer(ui::TimerEvent* event);
 };
 
 	}

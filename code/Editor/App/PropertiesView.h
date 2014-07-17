@@ -20,6 +20,8 @@ class HierarchicalState;
 		{
 
 class GradientStatic;
+class PropertyCommandEvent;
+class PropertyContentChangeEvent;
 
 		}
 	}
@@ -59,11 +61,11 @@ private:
 
 	void updateHelp();
 
-	void eventPropertyCommand(ui::Event* event);
+	void eventPropertyCommand(ui::custom::PropertyCommandEvent* event);
 
-	void eventPropertyChange(ui::Event* event);
+	void eventPropertyChange(ui::custom::PropertyContentChangeEvent* event);
 
-	void eventPropertySelect(ui::Event* event);
+	void eventPropertySelect(ui::SelectionChangeEvent* event);
 };
 
 	}

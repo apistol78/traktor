@@ -9,7 +9,7 @@ namespace traktor
 	namespace ui
 	{
 
-class Event;
+class ButtonClickEvent;
 
 		namespace custom
 		{
@@ -37,7 +37,7 @@ private:
 	Ref< Script > m_script;
 	RefArray< ui::custom::SyntaxRichEdit > m_edit;
 
-	void eventClick(ui::Event* event);
+	void eventClick(ui::ButtonClickEvent* event);
 };
 
 	}

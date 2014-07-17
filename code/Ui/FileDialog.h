@@ -2,8 +2,8 @@
 #define traktor_ui_FileDialog_H
 
 #include <vector>
-#include "Ui/EventSubject.h"
 #include "Core/Io/Path.h"
+#include "Ui/EventSubject.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

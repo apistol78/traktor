@@ -4,6 +4,7 @@
 #include <map>
 #include "Core/RefArray.h"
 #include "Editor/IEditorPage.h"
+#include "Ui/Events/AllEvents.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -28,16 +29,21 @@ class IEditorPageSite;
 	{
 
 class Container;
-class Event;
 class Point;
 class PopupMenu;
 
 		namespace custom
 		{
 
+class EdgeConnectEvent;
+class EdgeDisconnectEvent;
 class GraphControl;
 class Node;
+class NodeActivateEvent;
+class NodeMovedEvent;
+class SelectEvent;
 class ToolBar;
+class ToolBarButtonClickEvent;
 class ToolBarDropDown;
 
 		}
@@ -103,21 +109,19 @@ private:
 
 	void updateExternalNode(External* external);
 
-	void eventToolClick(ui::Event* event);
+	void eventToolClick(ui::custom::ToolBarButtonClickEvent* event);
 
-	void eventPropertyChange(ui::Event* event);
+	void eventButtonDown(ui::MouseButtonDownEvent* event);
 
-	void eventButtonDown(ui::Event* event);
+	void eventSelect(ui::custom::SelectEvent* event);
 
-	void eventSelect(ui::Event* event);
+	void eventNodeMoved(ui::custom::NodeMovedEvent* event);
 
-	void eventNodeMoved(ui::Event* event);
+	void eventNodeDoubleClick(ui::custom::NodeActivateEvent* event);
 
-	void eventNodeDoubleClick(ui::Event* event);
+	void eventEdgeConnect(ui::custom::EdgeConnectEvent* event);
 
-	void eventEdgeConnect(ui::Event* event);
-
-	void eventEdgeDisconnect(ui::Event* event);
+	void eventEdgeDisconnect(ui::custom::EdgeDisconnectEvent* event);
 };
 
 	}

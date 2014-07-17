@@ -1,6 +1,6 @@
 #include "Core/Misc/TString.h"
 #include "Ui/Gtk/CheckBoxGtk.h"
-#include "Ui/Events/CommandEvent.h"
+#include "Ui/Events/ButtonClickEvent.h"
 
 namespace traktor
 {
@@ -44,8 +44,8 @@ bool CheckBoxGtk::isChecked() const
 
 void CheckBoxGtk::onClicked()
 {
-	CommandEvent commandEvent(m_owner, 0);
-	m_owner->raiseEvent(EiClick, &commandEvent);
+	ButtonClickEvent clickEvent(m_owner);
+	m_owner->raiseEvent(&clickEvent);
 }
 
 	}

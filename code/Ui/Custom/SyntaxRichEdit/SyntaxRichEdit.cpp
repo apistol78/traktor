@@ -1,6 +1,5 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/Custom/SyntaxRichEdit/SyntaxLanguage.h"
 #include "Ui/Custom/SyntaxRichEdit/SyntaxRichEdit.h"
 
@@ -43,7 +42,7 @@ bool SyntaxRichEdit::create(Widget* parent, const std::wstring& text, int32_t st
 	m_attributePreprocessor = addAttribute(Color4ub(0, 140, 255), Color4ub(255, 255, 255), false, false, false);	// Preprocessor
 	m_attributeError = addAttribute(Color4ub(255, 255, 255), Color4ub(255, 0, 0), false, false, false);				// Error
 
-	addChangeEventHandler(createMethodHandler(this, &SyntaxRichEdit::eventChange));
+	addEventHandler< ContentChangeEvent >(this, &SyntaxRichEdit::eventChange);
 	return true;
 }
 
@@ -223,7 +222,7 @@ void SyntaxRichEdit::setText(const std::wstring& text)
 	updateLanguage(0, getLineCount());
 }
 
-void SyntaxRichEdit::eventChange(Event* event)
+void SyntaxRichEdit::eventChange(ContentChangeEvent* event)
 {
 	int32_t caretOffset = getCaretOffset();
 	int32_t caretLine = getLineFromOffset(caretOffset);

@@ -359,6 +359,7 @@ private:
 		CircularVector< int32_t, Adjustments > timeOffsets;
 		int32_t latencyMedian;
 		int32_t latencyReversed;
+		int32_t lastPongTime;
 		int32_t stateCount;
 		int32_t errorCount;
 		Ref< const State > iframe;
@@ -375,6 +376,7 @@ private:
 		,	lastTimeRemote(0)
 		,	latencyMedian(0)
 		,	latencyReversed(0)
+		,	lastPongTime(0)
 		,	stateCount(0)
 		,	errorCount(0)
 		{

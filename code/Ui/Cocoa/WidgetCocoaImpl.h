@@ -4,14 +4,12 @@
 #import <Cocoa/Cocoa.h>
 
 #include <map>
+#include "Ui/EventSubject.h"
 #include "Ui/Cocoa/UtilitiesCocoa.h"
 #include "Ui/Cocoa/NSTargetProxy.h"
 #include "Ui/Cocoa/NSNotificationProxy.h"
 #include "Ui/Itf/IWidget.h"
-#include "Ui/Events/CommandEvent.h"
-#include "Ui/Events/SizeEvent.h"
-#include "Ui/Events/FocusEvent.h"
-#include "Ui/EventSubject.h"
+#include "Ui/Events/AllEvents.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -392,8 +390,8 @@ protected:
 	void raiseSizeEvent()
 	{
 		Size sz = getRect().getSize();
-		SizeEvent s(m_owner, 0, sz);
-		m_owner->raiseEvent(EiSize, &s);
+		SizeEvent s(m_owner, sz);
+		m_owner->raiseEvent(&s);
 	}
 	
 	void notificationProxy_recv(NSNotification* notification)
@@ -401,16 +399,16 @@ protected:
 		bool haveFocus = hasFocus();
 		if (m_haveFocus != haveFocus)
 		{
-			FocusEvent focusEvent(m_owner, 0, haveFocus);
-			m_owner->raiseEvent(EiFocus, &focusEvent);
+			FocusEvent focusEvent(m_owner, haveFocus);
+			m_owner->raiseEvent(&focusEvent);
 			m_haveFocus = haveFocus;
 		}
 	}
 
 	void callbackTimer(void* controlId)
 	{
-		CommandEvent commandEvent(m_owner, 0);
-		m_owner->raiseEvent(EiTimer, &commandEvent);
+		TimerEvent timerEvent(m_owner, 0);
+		m_owner->raiseEvent(&timerEvent);
 	}
 };
 	

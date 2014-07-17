@@ -2,6 +2,7 @@
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Model/Model.h"
+#include "Model/ModelAdjacency.h"
 #include "Model/ModelFormat.h"
 #include "Model/Editor/ModelToolDialog.h"
 #include "Model/Operations/Boolean.h"
@@ -19,16 +20,12 @@
 #include "Resource/IResourceManager.h"
 #include "Ui/FileDialog.h"
 #include "Ui/ListBox.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
+#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
-#include "Ui/Events/CommandEvent.h"
-#include "Ui/Events/MouseEvent.h"
-#include "Ui/Events/PaintEvent.h"
-#include "Ui/Events/SizeEvent.h"
 #include "Ui/Itf/IWidget.h"
 
 namespace traktor
@@ -63,6 +60,8 @@ bool ModelToolDialog::create(ui::Widget* parent)
 	if (!ui::Dialog::create(parent, L"Model Tool", 800, 600, ui::Dialog::WsDefaultResizable, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
 
+	addEventHandler< ui::CloseEvent >(this, &ModelToolDialog::eventDialogClose);
+
 	Ref< ui::custom::ToolBar > toolBar = new ui::custom::ToolBar();
 	toolBar->create(this);
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Load...", ui::Command(L"ModelTool.Load"), ui::custom::ToolBarButton::BsText));
@@ -95,22 +94,25 @@ bool ModelToolDialog::create(ui::Widget* parent)
 	m_toolCull = new ui::custom::ToolBarButton(L"Cull Backfaces", ui::Command(L"ModelTool.ToggleCullBackfaces"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggled);
 	toolBar->addItem(m_toolCull);
 
-	toolBar->addClickEventHandler(ui::createMethodHandler(this, &ModelToolDialog::eventToolBarClick));
+	m_toolNonSharedEdges = new ui::custom::ToolBarButton(L"Non-shared Edges", ui::Command(L"ModelTool.ToggleNonSharedEdges"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggle);
+	toolBar->addItem(m_toolNonSharedEdges);
+
+	toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ModelToolDialog::eventToolBarClick);
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
 	splitter->create(this, true, 200, false);
 
 	m_modelList = new ui::ListBox();
 	m_modelList->create(splitter, L"", ui::ListBox::WsMultiple | ui::WsClientBorder);
-	m_modelList->addSelectEventHandler(ui::createMethodHandler(this, &ModelToolDialog::eventModelListSelect));
+	m_modelList->addEventHandler< ui::SelectionChangeEvent >(this, &ModelToolDialog::eventModelListSelect);
 
 	m_renderWidget = new ui::Widget();
 	m_renderWidget->create(splitter, ui::WsClientBorder);
-	m_renderWidget->addButtonDownEventHandler(ui::createMethodHandler(this, &ModelToolDialog::eventMouseDown));
-	m_renderWidget->addButtonUpEventHandler(ui::createMethodHandler(this, &ModelToolDialog::eventMouseUp));
-	m_renderWidget->addMouseMoveEventHandler(ui::createMethodHandler(this, &ModelToolDialog::eventMouseMove));
-	m_renderWidget->addSizeEventHandler(ui::createMethodHandler(this, &ModelToolDialog::eventRenderSize));
-	m_renderWidget->addPaintEventHandler(ui::createMethodHandler(this, &ModelToolDialog::eventRenderPaint));
+	m_renderWidget->addEventHandler< ui::MouseButtonDownEvent >(this, &ModelToolDialog::eventMouseDown);
+	m_renderWidget->addEventHandler< ui::MouseButtonUpEvent >(this, &ModelToolDialog::eventMouseUp);
+	m_renderWidget->addEventHandler< ui::MouseMoveEvent >(this, &ModelToolDialog::eventMouseMove);
+	m_renderWidget->addEventHandler< ui::SizeEvent >(this, &ModelToolDialog::eventRenderSize);
+	m_renderWidget->addEventHandler< ui::PaintEvent >(this, &ModelToolDialog::eventRenderPaint);
 
 	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 16;
@@ -227,10 +229,14 @@ bool ModelToolDialog::applyOperation(const IModelOperation* operation)
 		return false;
 }
 
-void ModelToolDialog::eventToolBarClick(ui::Event* event)
+void ModelToolDialog::eventDialogClose(ui::CloseEvent* event)
 {
-	ui::CommandEvent* cmdEvent = checked_type_cast< ui::CommandEvent*, false >(event);
-	const ui::Command& cmd = cmdEvent->getCommand();
+	destroy();
+}
+
+void ModelToolDialog::eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event)
+{
+	const ui::Command& cmd = event->getCommand();
 
 	if (cmd == L"ModelTool.Load")
 		loadModel();
@@ -296,13 +302,15 @@ void ModelToolDialog::eventToolBarClick(ui::Event* event)
 	m_renderWidget->update();
 }
 
-void ModelToolDialog::eventModelListSelect(ui::Event* event)
+void ModelToolDialog::eventModelListSelect(ui::SelectionChangeEvent* event)
 {
 	m_model = m_modelList->getSelectedData< model::Model >();
 	if (m_model)
 	{
 		m_modelTris = new Model(*m_model);
 		Triangulate().apply(*m_modelTris);
+
+		m_modelAdjacency = new ModelAdjacency(m_model, ModelAdjacency::MdByVertex);
 
 		Aabb3 boundingBox = m_model->getBoundingBox();
 		Vector4 extent = boundingBox.getExtent();
@@ -324,34 +332,32 @@ void ModelToolDialog::eventModelListSelect(ui::Event* event)
 	m_renderWidget->update();
 }
 
-void ModelToolDialog::eventMouseDown(ui::Event* event)
+void ModelToolDialog::eventMouseDown(ui::MouseButtonDownEvent* event)
 {
-	m_lastMousePosition = checked_type_cast< ui::MouseEvent*, false >(event)->getPosition();
+	m_lastMousePosition = event->getPosition();
 	m_renderWidget->setCapture();
 	m_renderWidget->setFocus();
 }
 
-void ModelToolDialog::eventMouseUp(ui::Event* event)
+void ModelToolDialog::eventMouseUp(ui::MouseButtonUpEvent* event)
 {
 	if (m_renderWidget->hasCapture())
 		m_renderWidget->releaseCapture();
 }
 
-void ModelToolDialog::eventMouseMove(ui::Event* event)
+void ModelToolDialog::eventMouseMove(ui::MouseMoveEvent* event)
 {
-	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent*, false >(event);
-
 	if (!m_renderWidget->hasCapture())
 		return;
 
-	ui::Point mousePosition = mouseEvent->getPosition();
+	ui::Point mousePosition = event->getPosition();
 
 	Vector2 mouseDelta(
 		float(m_lastMousePosition.x - mousePosition.x),
 		float(m_lastMousePosition.y - mousePosition.y)
 	);
 
-	if (mouseEvent->getButton() != ui::MouseEvent::BtRight)
+	if (event->getButton() != ui::MbtRight)
 	{
 		m_cameraHead += mouseDelta.x / 100.0f;
 		m_cameraPitch += mouseDelta.y / 100.0f;
@@ -364,21 +370,18 @@ void ModelToolDialog::eventMouseMove(ui::Event* event)
 	m_renderWidget->update();
 }
 
-void ModelToolDialog::eventRenderSize(ui::Event* event)
+void ModelToolDialog::eventRenderSize(ui::SizeEvent* event)
 {
 	if (!m_renderView)
 		return;
 
-	ui::SizeEvent* s = checked_type_cast< ui::SizeEvent*, false >(event);
-	ui::Size sz = s->getSize();
-
+	ui::Size sz = event->getSize();
 	m_renderView->reset(sz.cx, sz.cy);
 	m_renderView->setViewport(render::Viewport(0, 0, sz.cx, sz.cy, 0, 1));
 }
 
-void ModelToolDialog::eventRenderPaint(ui::Event* event)
+void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 {
-	ui::PaintEvent* paintEvent = checked_type_cast< ui::PaintEvent* >(event);
 	ui::Rect rc = m_renderWidget->getInnerRect();
 
 	T_ASSERT (m_renderView);
@@ -518,6 +521,33 @@ void ModelToolDialog::eventRenderPaint(ui::Event* event)
 				m_primitiveRenderer->popDepthState();
 			}
 
+			// Render non-shared edges.
+			if (m_toolNonSharedEdges->isToggled())
+			{
+				m_primitiveRenderer->pushDepthState(true, false, false);
+				for (uint32_t i = 0; i < polygons.size(); ++i)
+				{
+					const Polygon& polygon = polygons[i];
+					const std::vector< uint32_t >& indices = polygon.getVertices();
+
+					for (uint32_t j = 0; j < indices.size(); ++j)
+					{
+						uint32_t share = m_modelAdjacency->getSharedEdgeCount(i, j);
+						if (share == 0)
+						{
+							const Vertex& vx0 = vertices[indices[j]];
+							const Vertex& vx1 = vertices[indices[(j + 1) % indices.size()]];
+
+							const Vector4& p0 = positions[vx0.getPosition()];
+							const Vector4& p1 = positions[vx1.getPosition()];
+
+							m_primitiveRenderer->drawLine(p0, p1, Color4ub(255, 40, 40, 200));
+						}
+					}
+				}
+				m_primitiveRenderer->popDepthState();
+			}
+
 			if (m_toolNormals->isToggled())
 			{
 				m_primitiveRenderer->pushDepthState(true, false, false);
@@ -551,7 +581,7 @@ void ModelToolDialog::eventRenderPaint(ui::Event* event)
 	m_renderView->end();
 	m_renderView->present();
 
-	paintEvent->consume();
+	event->consume();
 }
 
 	}

@@ -26,20 +26,20 @@ void ToolBarSeparator::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, 
 	canvas.drawLine(at, at + Size(0, imageHeight));
 }
 
-bool ToolBarSeparator::mouseEnter(ToolBar* toolBar, MouseEvent* mouseEvent)
+bool ToolBarSeparator::mouseEnter(ToolBar* toolBar, MouseMoveEvent* mouseEvent)
 {
 	return false;
 }
 
-void ToolBarSeparator::mouseLeave(ToolBar* toolBar, MouseEvent* mouseEvent)
+void ToolBarSeparator::mouseLeave(ToolBar* toolBar, MouseMoveEvent* mouseEvent)
 {
 }
 
-void ToolBarSeparator::buttonDown(ToolBar* toolBar, MouseEvent* mouseEvent)
+void ToolBarSeparator::buttonDown(ToolBar* toolBar, MouseButtonDownEvent* mouseEvent)
 {
 }
 
-void ToolBarSeparator::buttonUp(ToolBar* toolBar, MouseEvent* mouseEvent)
+void ToolBarSeparator::buttonUp(ToolBar* toolBar, MouseButtonUpEvent* mouseEvent)
 {
 }
 

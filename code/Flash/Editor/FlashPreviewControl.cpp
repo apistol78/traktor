@@ -14,11 +14,6 @@
 #include "Sound/Player/SoundPlayer.h"
 #include "Ui/Itf/IWidget.h"
 #include "Ui/Application.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/IdleEvent.h"
-#include "Ui/Events/SizeEvent.h"
-#include "Ui/Events/KeyEvent.h"
-#include "Ui/Events/MouseEvent.h"
 #if T_USE_ACCELERATED_RENDERER
 #	include "Render/IRenderSystem.h"
 #	include "Render/IRenderView.h"
@@ -154,19 +149,17 @@ bool FlashPreviewControl::create(
 	else
 		log::warning << L"Unable to create sound system; Flash sound disabled" << Endl;
 
-	addSizeEventHandler(ui::createMethodHandler(this, &FlashPreviewControl::eventSize));
-	addPaintEventHandler(ui::createMethodHandler(this, &FlashPreviewControl::eventPaint));
-	addKeyEventHandler(ui::createMethodHandler(this, &FlashPreviewControl::eventKey));
-	addKeyDownEventHandler(ui::createMethodHandler(this, &FlashPreviewControl::eventKeyDown));
-	addKeyUpEventHandler(ui::createMethodHandler(this, &FlashPreviewControl::eventKeyUp));
-	addButtonDownEventHandler(ui::createMethodHandler(this, &FlashPreviewControl::eventButtonDown));
-	addButtonUpEventHandler(ui::createMethodHandler(this, &FlashPreviewControl::eventButtonUp));
-	addMouseMoveEventHandler(ui::createMethodHandler(this, &FlashPreviewControl::eventMouseMove));
-	addMouseWheelEventHandler(ui::createMethodHandler(this, &FlashPreviewControl::eventMouseWheel));
+	addEventHandler< ui::SizeEvent >(this, &FlashPreviewControl::eventSize);
+	addEventHandler< ui::PaintEvent >(this, &FlashPreviewControl::eventPaint);
+	addEventHandler< ui::KeyEvent >(this, &FlashPreviewControl::eventKey);
+	addEventHandler< ui::KeyDownEvent >(this, &FlashPreviewControl::eventKeyDown);
+	addEventHandler< ui::KeyUpEvent >(this, &FlashPreviewControl::eventKeyUp);
+	addEventHandler< ui::MouseButtonDownEvent >(this, &FlashPreviewControl::eventButtonDown);
+	addEventHandler< ui::MouseButtonUpEvent >(this, &FlashPreviewControl::eventButtonUp);
+	addEventHandler< ui::MouseMoveEvent >(this, &FlashPreviewControl::eventMouseMove);
+	addEventHandler< ui::MouseWheelEvent >(this, &FlashPreviewControl::eventMouseWheel);
 
-	// Register our event handler in case of message idle.
-	m_idleHandler = ui::createMethodHandler(this, &FlashPreviewControl::eventIdle);
-	ui::Application::getInstance()->addEventHandler(ui::EiIdle, m_idleHandler);
+	m_idleEventHandler = ui::Application::getInstance()->addEventHandler< ui::IdleEvent >(this, &FlashPreviewControl::eventIdle);
 
 	m_database = database;
 	m_timer.start();
@@ -175,11 +168,7 @@ bool FlashPreviewControl::create(
 
 void FlashPreviewControl::destroy()
 {
-	if (m_idleHandler)
-	{
-		ui::Application::getInstance()->removeEventHandler(ui::EiIdle, m_idleHandler);
-		m_idleHandler = 0;
-	}
+	ui::Application::getInstance()->removeEventHandler< ui::IdleEvent >(m_idleEventHandler);
 
 	safeDestroy(m_moviePlayer);
 	safeDestroy(m_soundRenderer);
@@ -276,10 +265,9 @@ ui::Point FlashPreviewControl::getTwips(const ui::Point& pt) const
 	return ui::Point(int(x), int(y));
 }
 
-void FlashPreviewControl::eventSize(ui::Event* event)
+void FlashPreviewControl::eventSize(ui::SizeEvent* event)
 {
-	ui::SizeEvent* s = static_cast< ui::SizeEvent* >(event);
-	ui::Size sz = s->getSize();
+	ui::Size sz = event->getSize();
 
 #if T_USE_ACCELERATED_RENDERER
 	if (m_renderView)
@@ -301,7 +289,7 @@ void FlashPreviewControl::eventSize(ui::Event* event)
 		m_moviePlayer->postViewResize(sz.cx, sz.cy);
 }
 
-void FlashPreviewControl::eventPaint(ui::Event* event)
+void FlashPreviewControl::eventPaint(ui::PaintEvent* event)
 {
 #if T_USE_ACCELERATED_RENDERER
 	if (!m_renderView)
@@ -352,12 +340,11 @@ void FlashPreviewControl::eventPaint(ui::Event* event)
 	event->consume();
 }
 
-void FlashPreviewControl::eventIdle(ui::Event* event)
+void FlashPreviewControl::eventIdle(ui::IdleEvent* event)
 {
 	if (!m_moviePlayer)
 		return;
 
-	ui::IdleEvent* idleEvent = checked_type_cast< ui::IdleEvent* >(event);
 	if (isVisible(true))
 	{
 		float deltaTime = float(m_timer.getDeltaTime());
@@ -374,79 +361,72 @@ void FlashPreviewControl::eventIdle(ui::Event* event)
 			}
 		}
 
-		idleEvent->requestMore();
+		event->requestMore();
 	}
 }
 
-void FlashPreviewControl::eventKey(ui::Event* event)
+void FlashPreviewControl::eventKey(ui::KeyEvent* event)
 {
-	ui::KeyEvent* keyEvent = checked_type_cast< ui::KeyEvent* >(event);
-	if (keyEvent->getCharacter() != '\r' && m_moviePlayer)
-		m_moviePlayer->postKey(keyEvent->getCharacter());
+	if (event->getCharacter() != '\r' && m_moviePlayer)
+		m_moviePlayer->postKey(event->getCharacter());
 }
 
-void FlashPreviewControl::eventKeyDown(ui::Event* event)
+void FlashPreviewControl::eventKeyDown(ui::KeyDownEvent* event)
 {
-	ui::KeyEvent* keyEvent = checked_type_cast< ui::KeyEvent* >(event);
 	if (m_moviePlayer)
 	{
-		int32_t ak = translateVirtualKey(keyEvent->getVirtualKey());
+		int32_t ak = translateVirtualKey(event->getVirtualKey());
 		if (ak > 0)
 			m_moviePlayer->postKeyDown(ak);
 	}
 }
 
-void FlashPreviewControl::eventKeyUp(ui::Event* event)
+void FlashPreviewControl::eventKeyUp(ui::KeyUpEvent* event)
 {
-	ui::KeyEvent* keyEvent = checked_type_cast< ui::KeyEvent* >(event);
 	if (m_moviePlayer)
 	{
-		int32_t ak = translateVirtualKey(keyEvent->getVirtualKey());
+		int32_t ak = translateVirtualKey(event->getVirtualKey());
 		if (ak > 0)
 			m_moviePlayer->postKeyUp(ak);
 	}
 }
 
-void FlashPreviewControl::eventButtonDown(ui::Event* event)
+void FlashPreviewControl::eventButtonDown(ui::MouseButtonDownEvent* event)
 {
-	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
 	if (m_moviePlayer)
 	{
-		ui::Point mousePosition = mouseEvent->getPosition();
-		m_moviePlayer->postMouseDown(mousePosition.x, mousePosition.y, mouseEvent->getButton());
+		ui::Point mousePosition = event->getPosition();
+		m_moviePlayer->postMouseDown(mousePosition.x, mousePosition.y, event->getButton());
 	}
 	setCapture();
 	setFocus();
 }
 
-void FlashPreviewControl::eventButtonUp(ui::Event* event)
+void FlashPreviewControl::eventButtonUp(ui::MouseButtonUpEvent* event)
 {
-	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
 	if (m_moviePlayer)
 	{
-		ui::Point mousePosition = mouseEvent->getPosition();
-		m_moviePlayer->postMouseUp(mousePosition.x, mousePosition.y, mouseEvent->getButton());
+		ui::Point mousePosition = event->getPosition();
+		m_moviePlayer->postMouseUp(mousePosition.x, mousePosition.y, event->getButton());
 	}
 	releaseCapture();
 }
 
-void FlashPreviewControl::eventMouseMove(ui::Event* event)
+void FlashPreviewControl::eventMouseMove(ui::MouseMoveEvent* event)
 {
-	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
 	if (m_moviePlayer)
 	{
-		ui::Point mousePosition = mouseEvent->getPosition();
-		m_moviePlayer->postMouseMove(mousePosition.x, mousePosition.y, mouseEvent->getButton());
+		ui::Point mousePosition = event->getPosition();
+		m_moviePlayer->postMouseMove(mousePosition.x, mousePosition.y, event->getButton());
 	}
 }
 
-void FlashPreviewControl::eventMouseWheel(ui::Event* event)
+void FlashPreviewControl::eventMouseWheel(ui::MouseWheelEvent* event)
 {
-	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
 	if (m_moviePlayer)
 	{
-		ui::Point mousePosition = mouseEvent->getPosition();
-		m_moviePlayer->postMouseWheel(mousePosition.x, mousePosition.y, mouseEvent->getWheelRotation());
+		ui::Point mousePosition = event->getPosition();
+		m_moviePlayer->postMouseWheel(mousePosition.x, mousePosition.y, event->getRotation());
 	}
 }
 

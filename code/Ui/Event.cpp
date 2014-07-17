@@ -9,9 +9,8 @@ namespace traktor
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Event", Event, Object)
 
-Event::Event(EventSubject* sender, Object* item)
+Event::Event(EventSubject* sender)
 :	m_sender(sender)
-,	m_item(item)
 ,	m_keyState(WsNone)
 ,	m_consumed(false)
 {
@@ -21,11 +20,6 @@ Event::Event(EventSubject* sender, Object* item)
 EventSubject* Event::getSender() const
 {
 	return m_sender;
-}
-
-Object* Event::getItem() const
-{
-	return m_item;
 }
 
 int Event::getKeyState() const

@@ -66,12 +66,6 @@ public:
 	Ref< ListViewItem > getSelectedItem() const;
 
 	int getSelectedItems(std::vector< int >& items) const;
-	
-	void addSelectEventHandler(EventHandler* eventHandler);
-	
-	void addActivateEventHandler(EventHandler* eventHandler);
-	
-	void addColumnClickEventHandler(EventHandler* eventHandler);
 };
 
 	}

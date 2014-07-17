@@ -1,7 +1,8 @@
 #include "Core/Math/MathUtils.h"
 #include "Drawing/Image.h"
 #include "Ui/Bitmap.h"
-#include "Ui/Events/CommandEvent.h"
+#include "Ui/Custom/PropertyList/PropertyCommandEvent.h"
+#include "Ui/Custom/PropertyList/PropertyContentChangeEvent.h"
 #include "Ui/Custom/PropertyList/PropertyItem.h"
 #include "Ui/Custom/PropertyList/PropertyList.h"
 
@@ -129,8 +130,8 @@ void PropertyItem::notifyCommand(const Command& command)
 {
 	if (m_propertyList)
 	{
-		CommandEvent cmdEvent(m_propertyList, this, command);
-		m_propertyList->raiseEvent(EiCommand, &cmdEvent);
+		PropertyCommandEvent cmdEvent(m_propertyList, this, command);
+		m_propertyList->raiseEvent(&cmdEvent);
 	}
 }
 
@@ -138,8 +139,8 @@ void PropertyItem::notifyChange()
 {
 	if (m_propertyList)
 	{
-		CommandEvent cmdEvent(m_propertyList, this);
-		m_propertyList->raiseEvent(EiContentChange, &cmdEvent);
+		PropertyContentChangeEvent contentChangeEvent(m_propertyList, this);
+		m_propertyList->raiseEvent(&contentChangeEvent);
 	}
 }
 
@@ -173,19 +174,19 @@ void PropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< WidgetRect
 {
 }
 
-void PropertyItem::mouseButtonDown(MouseEvent* event)
+void PropertyItem::mouseButtonDown(MouseButtonDownEvent* event)
 {
 }
 
-void PropertyItem::mouseButtonUp(MouseEvent* event)
+void PropertyItem::mouseButtonUp(MouseButtonUpEvent* event)
 {
 }
 
-void PropertyItem::doubleClick(MouseEvent* event)
+void PropertyItem::doubleClick(MouseDoubleClickEvent* event)
 {
 }
 
-void PropertyItem::mouseMove(MouseEvent* event)
+void PropertyItem::mouseMove(MouseMoveEvent* event)
 {
 }
 

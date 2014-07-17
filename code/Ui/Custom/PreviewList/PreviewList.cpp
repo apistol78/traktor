@@ -1,10 +1,8 @@
 #include "Ui/Application.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/CommandEvent.h"
-#include "Ui/Events/MouseEvent.h"
 #include "Ui/Custom/PreviewList/PreviewItem.h"
 #include "Ui/Custom/PreviewList/PreviewItems.h"
 #include "Ui/Custom/PreviewList/PreviewList.h"
+#include "Ui/Custom/PreviewList/PreviewSelectionChangeEvent.h"
 
 namespace traktor
 {
@@ -31,7 +29,7 @@ bool PreviewList::create(Widget* parent, uint32_t style)
 
 	setBackgroundColor(Color4ub(80, 80, 80));
 
-	addButtonDownEventHandler(createMethodHandler(this, &PreviewList::eventButtonDown));
+	addEventHandler< MouseButtonDownEvent >(this, &PreviewList::eventButtonDown);
 	return true;
 }
 
@@ -62,11 +60,6 @@ PreviewItem* PreviewList::getSelectedItem() const
 	}
 	
 	return 0;
-}
-
-void PreviewList::addSelectEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiSelectionChange, eventHandler);
 }
 
 void PreviewList::layoutCells(const Rect& rc)
@@ -118,13 +111,12 @@ void PreviewList::layoutCells(const Rect& rc)
 	}
 }
 
-void PreviewList::eventButtonDown(Event* event)
+void PreviewList::eventButtonDown(MouseButtonDownEvent* event)
 {
-	MouseEvent* mouseEvent = checked_type_cast< MouseEvent*, false >(event);
-	if (mouseEvent->getButton() != MouseEvent::BtLeft)
+	if (event->getButton() != MbtLeft)
 		return;
 
-	const Point& position = mouseEvent->getPosition();
+	const Point& position = event->getPosition();
 	if (m_items)
 	{
 		for (int32_t i = 0; i < m_items->count(); ++i)
@@ -135,13 +127,13 @@ void PreviewList::eventButtonDown(Event* event)
 		{
 			item->setSelected(true);
 
-			CommandEvent cmdEvent(this, item);
-			raiseEvent(EiSelectionChange, &cmdEvent);
+			PreviewSelectionChangeEvent selectionChangeEvent(this, item);
+			raiseEvent(&selectionChangeEvent);
 		}
 		else
 		{
-			CommandEvent cmdEvent(this, 0);
-			raiseEvent(EiSelectionChange, &cmdEvent);
+			PreviewSelectionChangeEvent selectionChangeEvent(this, 0);
+			raiseEvent(&selectionChangeEvent);
 		}
 	}
 

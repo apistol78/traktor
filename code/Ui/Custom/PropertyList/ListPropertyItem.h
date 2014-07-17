@@ -19,7 +19,6 @@ namespace traktor
 
 class ToolForm;
 class ListBox;
-class Event;
 
 		namespace custom
 		{
@@ -71,11 +70,11 @@ private:
 	Ref< ListBox > m_listBox;
 	Rect m_listRect;
 
-	void eventDropClick(Event* event);
+	void eventDropClick(ButtonClickEvent* event);
 
-	void eventSelect(Event* event);
+	void eventSelect(SelectionChangeEvent* event);
 
-	void eventFocus(Event* event);
+	void eventFocus(FocusEvent* event);
 };
 
 		}

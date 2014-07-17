@@ -49,7 +49,7 @@ private:
 	Ref< Bitmap > m_image;
 	bool m_transparent;
 	
-	void eventPaint(Event* event);
+	void eventPaint(PaintEvent* event);
 };
 
 	}

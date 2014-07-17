@@ -81,14 +81,14 @@ int32_t GridItem::getHeight() const
 	return height;
 }
 
-AutoWidgetCell* GridItem::hitTest(AutoWidget* widget, const Point& position)
+AutoWidgetCell* GridItem::hitTest(const Point& position)
 {
 	// Not allowed to pick items; entire row must be picked as selection
 	// is handled by the GridView class.
 	return 0;
 }
 
-void GridItem::paint(AutoWidget* widget, Canvas& canvas, const Rect& rect)
+void GridItem::paint(Canvas& canvas, const Rect& rect)
 {
 	Rect rcText(rect.left + 2, rect.top, rect.right, rect.bottom);
 
@@ -119,11 +119,11 @@ void GridItem::paint(AutoWidget* widget, Canvas& canvas, const Rect& rect)
 		if (m_font)
 			canvas.setFont(*m_font);
 
-		canvas.setForeground(widget->isEnable() ? getSystemColor(ScWindowText) : getSystemColor(ScDisabledText));
+		canvas.setForeground(getWidget()->isEnable() ? getSystemColor(ScWindowText) : getSystemColor(ScDisabledText));
 		canvas.drawText(rcText, m_text, AnLeft, AnCenter);
 
 		if (m_font)
-			canvas.setFont(widget->getFont());
+			canvas.setFont(getWidget()->getFont());
 	}
 }
 

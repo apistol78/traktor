@@ -41,10 +41,6 @@
 #include "Ui/Application.h"
 #include "Ui/PopupMenu.h"
 #include "Ui/MenuItem.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/MouseEvent.h"
-#include "Ui/Events/SizeEvent.h"
-#include "Ui/Events/IdleEvent.h"
 #include "World/WorldRenderView.h"
 #include "World/Forward/WorldRenderPassForward.h"
 #include "World/PostProcess/PostProcess.h"
@@ -163,29 +159,23 @@ bool EffectPreviewControl::create(
 	m_meshRenderer = new MeshRenderer();
 	m_trailRenderer = new TrailRenderer(renderSystem);
 
-	addButtonDownEventHandler(ui::createMethodHandler(this, &EffectPreviewControl::eventButtonDown));
-	addButtonUpEventHandler(ui::createMethodHandler(this, &EffectPreviewControl::eventButtonUp));
-	addMouseMoveEventHandler(ui::createMethodHandler(this, &EffectPreviewControl::eventMouseMove));
-	addSizeEventHandler(ui::createMethodHandler(this, &EffectPreviewControl::eventSize));
-	addPaintEventHandler(ui::createMethodHandler(this, &EffectPreviewControl::eventPaint));
+	addEventHandler< ui::MouseButtonDownEvent >(this, &EffectPreviewControl::eventButtonDown);
+	addEventHandler< ui::MouseButtonUpEvent >(this, &EffectPreviewControl::eventButtonUp);
+	addEventHandler< ui::MouseMoveEvent >(this, &EffectPreviewControl::eventMouseMove);
+	addEventHandler< ui::SizeEvent >(this, &EffectPreviewControl::eventSize);
+	addEventHandler< ui::PaintEvent >(this, &EffectPreviewControl::eventPaint);
 
 	updateSettings();
 	m_timer.start();
 
-	// Register our event handler in case of message idle.
-	m_idleHandler = ui::createMethodHandler(this, &EffectPreviewControl::eventIdle);
-	ui::Application::getInstance()->addEventHandler(ui::EiIdle, m_idleHandler);
+	m_idleEventHandler = ui::Application::getInstance()->addEventHandler< ui::IdleEvent >(this, &EffectPreviewControl::eventIdle);
 
 	return true;
 }
 
 void EffectPreviewControl::destroy()
 {
-	if (m_idleHandler)
-	{
-		ui::Application::getInstance()->removeEventHandler(ui::EiIdle, m_idleHandler);
-		m_idleHandler = 0;
-	}
+	ui::Application::getInstance()->removeEventHandler< ui::IdleEvent >(m_idleEventHandler);
 
 	safeDestroy(m_primitiveRenderer);
 	safeDestroy(m_trailRenderer);
@@ -358,62 +348,59 @@ void EffectPreviewControl::updateRenderer()
 	}
 }
 
-void EffectPreviewControl::eventButtonDown(ui::Event* event)
+void EffectPreviewControl::eventButtonDown(ui::MouseButtonDownEvent* event)
 {
-	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
-	m_lastMousePosition = mouseEvent->getPosition();
+	m_lastMousePosition = event->getPosition();
 	setCapture();
 }
 
-void EffectPreviewControl::eventButtonUp(ui::Event* event)
+void EffectPreviewControl::eventButtonUp(ui::MouseButtonUpEvent* event)
 {
 	releaseCapture();
 }
 
-void EffectPreviewControl::eventMouseMove(ui::Event* event)
+void EffectPreviewControl::eventMouseMove(ui::MouseMoveEvent* event)
 {
 	if (!hasCapture())
 		return;
 
-	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
-
-	if ((mouseEvent->getKeyState() & ui::KsMenu) != 0)
+	if ((event->getKeyState() & ui::KsMenu) != 0)
 	{
-		if (mouseEvent->getButton() == ui::MouseEvent::BtRight)
+		if (event->getButton() == ui::MbtRight)
 		{
-			if ((mouseEvent->getKeyState() & ui::KsControl) == 0)
+			if ((event->getKeyState() & ui::KsControl) == 0)
 			{
 				// Move X/Z direction.
-				float dx = -float(m_lastMousePosition.x - mouseEvent->getPosition().x) * c_deltaMoveScale;
-				float dz = -float(m_lastMousePosition.y - mouseEvent->getPosition().y) * c_deltaMoveScale;
+				float dx = -float(m_lastMousePosition.x - event->getPosition().x) * c_deltaMoveScale;
+				float dz = -float(m_lastMousePosition.y - event->getPosition().y) * c_deltaMoveScale;
 				m_effectPosition += Vector4(dx, 0.0f, dz, 0.0f);
 			}
 			else
 			{
 				// Move X/Y direction.
-				float dx = -float(m_lastMousePosition.x - mouseEvent->getPosition().x) * c_deltaMoveScale;
-				float dy =  float(m_lastMousePosition.y - mouseEvent->getPosition().y) * c_deltaMoveScale;
+				float dx = -float(m_lastMousePosition.x - event->getPosition().x) * c_deltaMoveScale;
+				float dy =  float(m_lastMousePosition.y - event->getPosition().y) * c_deltaMoveScale;
 				m_effectPosition += Vector4(dx, dy, 0.0f, 0.0f);
 			}
 		}
-		else if (mouseEvent->getButton() == ui::MouseEvent::BtLeft)
+		else if (event->getButton() == ui::MbtLeft)
 		{
-			m_angleHead += float(m_lastMousePosition.x - mouseEvent->getPosition().x) * c_deltaScaleHead;
-			m_anglePitch += float(m_lastMousePosition.y - mouseEvent->getPosition().y) * c_deltaScalePitch;
+			m_angleHead += float(m_lastMousePosition.x - event->getPosition().x) * c_deltaScaleHead;
+			m_anglePitch += float(m_lastMousePosition.y - event->getPosition().y) * c_deltaScalePitch;
 		}
 	}
 
-	m_lastMousePosition = mouseEvent->getPosition();
+	m_lastMousePosition = event->getPosition();
 
 	update();
 }
 
-void EffectPreviewControl::eventSize(ui::Event* event)
+void EffectPreviewControl::eventSize(ui::SizeEvent* event)
 {
 	updateRenderer();
 }
 
-void EffectPreviewControl::eventPaint(ui::Event* event)
+void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 {
 	float time = float(m_timer.getElapsedTime());
 	float deltaTime = float(m_timer.getDeltaTime() * 0.9f + m_lastDeltaTime * 0.1f);
@@ -672,13 +659,12 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 	event->consume();
 }
 
-void EffectPreviewControl::eventIdle(ui::Event* event)
+void EffectPreviewControl::eventIdle(ui::IdleEvent* event)
 {
-	ui::IdleEvent* idleEvent = checked_type_cast< ui::IdleEvent* >(event);
 	if (isVisible(true))
 	{
 		update();
-		idleEvent->requestMore();
+		event->requestMore();
 	}
 }
 

@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -25,13 +25,13 @@ class T_DLLCLASS SizeEvent : public Event
 	T_RTTI_CLASS;
 	
 public:
-	SizeEvent(EventSubject* sender, Object* item, const Size& size);
+	SizeEvent(EventSubject* sender, const Size& size);
 	
 	const Size& getSize() const;
 	
-	int getWidth() const;
+	int32_t getWidth() const;
 	
-	int getHeight() const;
+	int32_t getHeight() const;
 	
 private:
 	Size m_size;

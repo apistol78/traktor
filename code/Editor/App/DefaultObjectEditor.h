@@ -6,6 +6,16 @@
 
 namespace traktor
 {
+	namespace ui
+	{
+		namespace custom
+		{
+
+class PropertyCommandEvent;
+
+		}
+	}
+
 	namespace editor
 	{
 
@@ -40,7 +50,7 @@ private:
 
 	virtual bool resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const;
 
-	void eventPropertyCommand(ui::Event* event);
+	void eventPropertyCommand(ui::custom::PropertyCommandEvent* event);
 };
 
 	}

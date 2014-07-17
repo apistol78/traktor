@@ -2,14 +2,14 @@
 #define traktor_ui_custom_SelectEvent_H
 
 #include "Core/RefArray.h"
-#include "Ui/Event.h"
+#include "Ui/Events/SelectionChangeEvent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_CUSTOM_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -25,7 +25,7 @@ class Edge;
 /*! \brief Node or edge selection event.
  * \ingroup UIC
  */
-class T_DLLCLASS SelectEvent : public Event
+class T_DLLCLASS SelectEvent : public SelectionChangeEvent
 {
 	T_RTTI_CLASS;
 

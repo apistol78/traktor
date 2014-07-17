@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_CUSTOM_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -47,10 +47,6 @@ public:
 	void setActivePage(TabPage* page);
 
 	Ref< TabPage > getActivePage();
-	
-	void addSelChangeEventHandler(EventHandler* eventHandler);
-
-	void addCloseEventHandler(EventHandler* eventHandler);
 
 private:
 	struct TabPagePair
@@ -71,11 +67,11 @@ private:
 
 	void drawClose(Canvas& canvas, int x, int y);
 
-	void eventButtonDown(Event* event);
+	void eventButtonDown(MouseButtonDownEvent* event);
 
-	void eventSize(Event* event);
+	void eventSize(SizeEvent* event);
 
-	void eventPaint(Event* event);
+	void eventPaint(PaintEvent* event);
 };
 
 		}

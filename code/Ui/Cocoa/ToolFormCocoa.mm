@@ -4,10 +4,7 @@
 #include "Ui/Cocoa/ToolFormCocoa.h"
 #include "Ui/Cocoa/NSTargetProxy.h"
 #include "Ui/Cocoa/UtilitiesCocoa.h"
-#include "Ui/Events/CloseEvent.h"
-#include "Ui/Events/CommandEvent.h"
-#include "Ui/Events/MoveEvent.h"
-#include "Ui/Events/SizeEvent.h"
+#include "Ui/Events/AllEvents.h"
 
 namespace traktor
 {
@@ -294,27 +291,27 @@ void* ToolFormCocoa::getSystemHandle()
 void ToolFormCocoa::event_windowDidMove()
 {
 	Point pt = getRect().getTopLeft();
-	MoveEvent m(m_owner, 0, pt);
-	m_owner->raiseEvent(EiMove, &m);
+	MoveEvent m(m_owner, pt);
+	m_owner->raiseEvent(&m);
 }
 
 void ToolFormCocoa::event_windowDidResize()
 {
 	Size sz = getRect().getSize();
-	SizeEvent s(m_owner, 0, sz);
-	m_owner->raiseEvent(EiSize, &s);
+	SizeEvent s(m_owner, sz);
+	m_owner->raiseEvent(&s);
 }
 
 void ToolFormCocoa::callbackTimer(void* controlId)
 {
-	CommandEvent commandEvent(m_owner, 0);
-	m_owner->raiseEvent(EiTimer, &commandEvent);
+	TimerEvent timerEvent(m_owner, 0);
+	m_owner->raiseEvent(&timerEvent);
 }
 
 bool ToolFormCocoa::event_windowShouldClose()
 {
-	CloseEvent closeEvent(m_owner, 0);
-	m_owner->raiseEvent(EiClose, &closeEvent);
+	CloseEvent closeEvent(m_owner);
+	m_owner->raiseEvent(&closeEvent);
 	return !closeEvent.consumed() || !closeEvent.cancelled();
 }
 

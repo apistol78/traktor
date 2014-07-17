@@ -1,13 +1,12 @@
 #include <cstring>
 #include <limits>
-#include "Ui/Custom/PropertyList/VectorPropertyItem.h"
-#include "Ui/Custom/PropertyList/PropertyList.h"
+#include "Core/Misc/String.h"
 #include "Ui/Edit.h"
 #include "Ui/NumericEditValidator.h"
-#include "Ui/MethodHandler.h"
+#include "Ui/Custom/PropertyList/VectorPropertyItem.h"
+#include "Ui/Custom/PropertyList/PropertyList.h"
 #include "Ui/Events/FocusEvent.h"
-#include "Ui/Events/MouseEvent.h"
-#include "Core/Misc/String.h"
+#include "Ui/Events/MouseButtonDownEvent.h"
 
 namespace traktor
 {
@@ -61,7 +60,7 @@ void VectorPropertyItem::createInPlaceControls(Widget* parent)
 			)
 		);
 		m_editors[i]->setVisible(false);
-		m_editors[i]->addFocusEventHandler(createMethodHandler(this, &VectorPropertyItem::eventEditFocus));
+		m_editors[i]->addEventHandler< FocusEvent >(this, &VectorPropertyItem::eventEditFocus);
 	}
 }
 
@@ -95,7 +94,7 @@ void VectorPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Widg
 	}
 }
 
-void VectorPropertyItem::mouseButtonDown(MouseEvent* event)
+void VectorPropertyItem::mouseButtonDown(MouseButtonDownEvent* event)
 {
 	for (int i = 0; i < m_dimension; ++i)
 	{
@@ -131,10 +130,9 @@ void VectorPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 	}
 }
 
-void VectorPropertyItem::eventEditFocus(Event* event)
+void VectorPropertyItem::eventEditFocus(FocusEvent* event)
 {
-	FocusEvent* f = static_cast< FocusEvent* >(event);
-	if (f->lostFocus())
+	if (event->lostFocus())
 	{
 		for (int i = 0; i < m_dimension; ++i)
 		{

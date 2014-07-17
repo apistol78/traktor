@@ -1,9 +1,9 @@
-#include "Ui/MenuBar.h"
-#include "Ui/Form.h"
-#include "Ui/Application.h"
-#include "Ui/Itf/IMenuBar.h"
-#include "Ui/Itf/IForm.h"
 #include "Core/Log/Log.h"
+#include "Ui/Application.h"
+#include "Ui/Form.h"
+#include "Ui/MenuBar.h"
+#include "Ui/Itf/IForm.h"
+#include "Ui/Itf/IMenuBar.h"
 
 namespace traktor
 {
@@ -64,11 +64,6 @@ void MenuBar::destroy()
 void MenuBar::add(MenuItem* item)
 {
 	m_menuBar->add(item);
-}
-
-void MenuBar::addClickEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiClick, eventHandler);
 }
 
 	}

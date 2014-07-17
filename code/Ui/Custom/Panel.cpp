@@ -1,7 +1,5 @@
 #include "Ui/Application.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/Custom/Panel.h"
-#include "Ui/Events/PaintEvent.h"
 
 namespace traktor
 {
@@ -12,11 +10,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.Panel", Panel, Container)
 
-Panel::Panel()
-:	m_focusHandler(0)
-{
-}
-
 bool Panel::create(Widget* parent, const std::wstring& text, Layout* layout)
 {
 	if (!Container::create(parent, WsNone, layout))
@@ -24,21 +17,16 @@ bool Panel::create(Widget* parent, const std::wstring& text, Layout* layout)
 
 	setText(text);
 
-	addPaintEventHandler(createMethodHandler(this, &Panel::eventPaint));
+	addEventHandler< PaintEvent >(this, &Panel::eventPaint);
 
-	m_focusHandler = createMethodHandler(this, &Panel::eventFocus);
-	Application::getInstance()->addEventHandler(EiFocus, m_focusHandler);
+	m_focusEventHandler = Application::getInstance()->addEventHandler< FocusEvent >(this, &Panel::eventFocus);
 
 	return true;
 }
 
 void Panel::destroy()
 {
-	if (m_focusHandler)
-	{
-		Application::getInstance()->removeEventHandler(EiFocus, m_focusHandler);
-		m_focusHandler = 0;
-	}
+	Application::getInstance()->removeEventHandler< FocusEvent >(m_focusEventHandler);
 	Widget::destroy();
 }
 
@@ -71,10 +59,9 @@ Rect Panel::getInnerRect() const
 	return rc;
 }
 
-void Panel::eventPaint(Event* event)
+void Panel::eventPaint(PaintEvent* event)
 {
-	PaintEvent* p = static_cast< PaintEvent* >(event);
-	Canvas& canvas = p->getCanvas();
+	Canvas& canvas = event->getCanvas();
 
 	Rect rcInner = Widget::getInnerRect();
 	canvas.fillRect(rcInner);
@@ -111,7 +98,7 @@ void Panel::eventPaint(Event* event)
 	event->consume();
 }
 
-void Panel::eventFocus(Event* event)
+void Panel::eventFocus(FocusEvent* event)
 {
 	update();
 }

@@ -49,23 +49,23 @@ private:
 	Ref< Image > m_hintTop;
 	Ref< Image > m_hintBottom;
 
-	void eventSize(Event* event);
+	void eventSize(SizeEvent* event);
 
-	void eventButtonDown(Event* event);
+	void eventButtonDown(MouseButtonDownEvent* event);
 
-	void eventButtonUp(Event* event);
+	void eventButtonUp(MouseButtonUpEvent* event);
 
-	void eventMouseMove(Event* event);
+	void eventMouseMove(MouseMoveEvent* event);
 
-	void eventDoubleClick(Event* event);
+	void eventDoubleClick(MouseDoubleClickEvent* event);
 
-	void eventPaint(Event* event);
+	void eventPaint(PaintEvent* event);
 
-	void eventFormMove(Event* event);
+	void eventFormMove(MoveEvent* event);
 
-	void eventFormNcButtonUp(Event* event);
+	void eventFormNcButtonUp(NcMouseButtonUpEvent* event);
 
-	void eventHintButtonUp(Event* event);
+	void eventHintButtonUp(MouseButtonUpEvent* event);
 };
 
 	}

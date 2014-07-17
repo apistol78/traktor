@@ -1,8 +1,8 @@
 #ifndef traktor_ui_custom_AutoWidgetCell_H
 #define traktor_ui_custom_AutoWidgetCell_H
 
-#include "Core/Object.h"
 #include "Ui/Associative.h"
+#include "Ui/EventSubject.h"
 #include "Ui/Rect.h"
 
 // import/export mechanism.
@@ -29,27 +29,35 @@ class AutoWidget;
  * \ingroup UIC
  */
 class T_DLLCLASS AutoWidgetCell
-:	public Object
+:	public ui::EventSubject
 ,	public Associative
 {
 	T_RTTI_CLASS;
 
 public:
+	AutoWidgetCell();
+
 	virtual void placeCells(AutoWidget* widget, const Rect& rect);
 
-	virtual AutoWidgetCell* hitTest(AutoWidget* widget, const Point& position);
+	virtual AutoWidgetCell* hitTest(const Point& position);
 
-	virtual bool beginCapture(AutoWidget* widget);
+	virtual bool beginCapture();
 
-	virtual void endCapture(AutoWidget* widget);
+	virtual void endCapture();
 
-	virtual void mouseDown(AutoWidget* widget, const Point& position);
+	virtual void mouseDown(const Point& position);
 
-	virtual void mouseUp(AutoWidget* widget, const Point& position);
+	virtual void mouseUp(const Point& position);
 
-	virtual void mouseMove(AutoWidget* widget, const Point& position);
+	virtual void mouseMove(const Point& position);
 
-	virtual void paint(AutoWidget* widget, Canvas& canvas, const Rect& rect);
+	virtual void paint(Canvas& canvas, const Rect& rect);
+
+protected:
+	AutoWidget* getWidget();
+
+private:
+	AutoWidget* m_widget;
 };
 
 		}

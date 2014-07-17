@@ -1,5 +1,5 @@
-#include "Ui/Events/TreeViewDragEvent.h"
 #include "Ui/TreeViewItem.h"
+#include "Ui/Events/TreeViewDragEvent.h"
 
 namespace traktor
 {
@@ -9,11 +9,17 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.TreeViewDragEvent", TreeViewDragEvent, Event)
 
 TreeViewDragEvent::TreeViewDragEvent(EventSubject* sender, TreeViewItem* dragItem, DragMoment moment, const Point& position)
-:	Event(sender, dragItem)
+:	Event(sender)
+,	m_dragItem(dragItem)
 ,	m_moment(moment)
 ,	m_position(position)
 ,	m_cancelled(false)
 {
+}
+
+TreeViewItem* TreeViewDragEvent::getItem() const
+{
+	return m_dragItem;
 }
 
 TreeViewDragEvent::DragMoment TreeViewDragEvent::getMoment() const

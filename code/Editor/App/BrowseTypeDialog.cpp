@@ -6,7 +6,6 @@
 #include "I18N/Text.h"
 #include "Ui/Bitmap.h"
 #include "Ui/HierarchicalState.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
 #include "Ui/TreeView.h"
@@ -15,7 +14,6 @@
 #include "Ui/Custom/PreviewList/PreviewItem.h"
 #include "Ui/Custom/PreviewList/PreviewItems.h"
 #include "Ui/Custom/PreviewList/PreviewList.h"
-#include "Ui/Events/CommandEvent.h"
 
 // Resources
 #include "Resources/Files.h"
@@ -71,7 +69,7 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfo* base, bool onl
 	))
 		return false;
 
-	addClickEventHandler(ui::createMethodHandler(this, &BrowseTypeDialog::eventDialogClick));
+	addEventHandler< ui::ButtonClickEvent >(this, &BrowseTypeDialog::eventDialogClick);
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
 	if (!splitter->create(this, true, 200))
@@ -89,7 +87,7 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfo* base, bool onl
 	if (!m_categoryTree->create(left))
 		return false;
 	m_categoryTree->addImage(ui::Bitmap::load(c_ResourceFiles, sizeof(c_ResourceFiles), L"png"), 4);
-	m_categoryTree->addSelectEventHandler(ui::createMethodHandler(this, &BrowseTypeDialog::eventTreeItemSelected));
+	m_categoryTree->addEventHandler< ui::SelectionChangeEvent >(this, &BrowseTypeDialog::eventTreeItemSelected);
 
 	Ref< ui::Container > right = new ui::Container();
 	if (!right->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"22,100%", 0, 0)))
@@ -102,7 +100,7 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfo* base, bool onl
 	m_typeList = new ui::custom::PreviewList();
 	if (!m_typeList->create(right, ui::WsClientBorder | ui::WsDoubleBuffer | ui::WsTabStop))
 		return false;
-	m_typeList->addDoubleClickEventHandler(ui::createMethodHandler(this, &BrowseTypeDialog::eventListDoubleClick));
+	m_typeList->addEventHandler< ui::MouseDoubleClickEvent >(this, &BrowseTypeDialog::eventListDoubleClick);
 
 	Ref< ui::TreeViewItem > groupRoot = m_categoryTree->createItem(0, i18n::Text(L"BROWSE_TYPE_GLOBAL"), 2, 3);
 	for (TypeInfoSet::iterator i = types.begin(); i != types.end(); ++i)
@@ -174,7 +172,7 @@ const TypeInfo* BrowseTypeDialog::getSelectedType() const
 	return m_type;
 }
 
-void BrowseTypeDialog::eventDialogClick(ui::Event* event)
+void BrowseTypeDialog::eventDialogClick(ui::ButtonClickEvent* event)
 {
 	Ref< ui::custom::PreviewItem > item = m_typeList->getSelectedItem();
 	if (!item)
@@ -187,11 +185,9 @@ void BrowseTypeDialog::eventDialogClick(ui::Event* event)
 		m_type = 0;
 }
 
-void BrowseTypeDialog::eventTreeItemSelected(ui::Event* event)
+void BrowseTypeDialog::eventTreeItemSelected(ui::SelectionChangeEvent* event)
 {
-	Ref< ui::TreeViewItem > item = dynamic_type_cast< ui::TreeViewItem* >(
-		static_cast< ui::CommandEvent* >(event)->getItem()
-	);
+	Ref< ui::TreeViewItem > item = m_categoryTree->getSelectedItem();
 	if (item)
 	{
 		Ref< ui::custom::PreviewItems > items = item->getData< ui::custom::PreviewItems >(L"ITEMS");
@@ -201,7 +197,7 @@ void BrowseTypeDialog::eventTreeItemSelected(ui::Event* event)
 		m_typeList->setItems(0);
 }
 
-void BrowseTypeDialog::eventListDoubleClick(ui::Event* event)
+void BrowseTypeDialog::eventListDoubleClick(ui::MouseDoubleClickEvent* event)
 {
 	Ref< ui::custom::PreviewItem > item = m_typeList->getSelectedItem();
 	if (!item)

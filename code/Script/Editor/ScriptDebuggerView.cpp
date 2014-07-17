@@ -3,9 +3,9 @@
 #include "Script/CallStack.h"
 #include "Script/LocalComposite.h"
 #include "Script/LocalSimple.h"
+#include "Script/Editor/ScriptBreakpointEvent.h"
 #include "Script/Editor/ScriptDebuggerView.h"
 #include "Ui/Bitmap.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/Tab.h"
 #include "Ui/TableLayout.h"
 #include "Ui/TabPage.h"
@@ -15,7 +15,7 @@
 #include "Ui/Custom/GridView/GridView.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
-#include "Ui/Events/CommandEvent.h"
+#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 
 // Resources
 #include "Resources/Debug.h"
@@ -24,12 +24,6 @@ namespace traktor
 {
 	namespace script
 	{
-		namespace
-		{
-
-enum { EiBreakPoint = ui::EiUser + 1 };
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptDebuggerView", ScriptDebuggerView, ui::Container)
 
@@ -57,7 +51,7 @@ bool ScriptDebuggerView::create(ui::Widget* parent)
 	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_BREAK"), 0, ui::Command(L"Script.Editor.Break")));
 	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_STEP_INTO"), 2, ui::Command(L"Script.Editor.StepInto")));
 	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_STEP_OVER"), 3, ui::Command(L"Script.Editor.StepOver")));
-	m_debuggerTools->addClickEventHandler(ui::createMethodHandler(this, &ScriptDebuggerView::eventDebuggerToolClick));
+	m_debuggerTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ScriptDebuggerView::eventDebuggerToolClick);
 
 	Ref< ui::Tab > tabDebugger = new ui::Tab();
 	tabDebugger->create(this, ui::WsNone);
@@ -126,11 +120,6 @@ bool ScriptDebuggerView::handleCommand(const ui::Command& command)
 	return true;
 }
 
-void ScriptDebuggerView::addBreakPointEventHandler(ui::EventHandler* eventHandler)
-{
-	addEventHandler(EiBreakPoint, eventHandler);
-}
-
 Ref< ui::custom::GridRow > ScriptDebuggerView::createVariableRow(const script::Local* local)
 {
 	Ref< ui::custom::GridRow > row = new ui::custom::GridRow(0);
@@ -178,14 +167,13 @@ void ScriptDebuggerView::breakpointReached(IScriptDebugger* scriptDebugger, cons
 			m_localsGrid->addRow(row);
 	}
 
-	ui::Event eventBreakPoint(this, const_cast< CallStack* >(&callStack));
-	raiseEvent(EiBreakPoint, &eventBreakPoint);
+	ScriptBreakpointEvent eventBreakPoint(this, &callStack);
+	raiseEvent(&eventBreakPoint);
 }
 
-void ScriptDebuggerView::eventDebuggerToolClick(ui::Event* event)
+void ScriptDebuggerView::eventDebuggerToolClick(ui::custom::ToolBarButtonClickEvent* event)
 {
-	const ui::CommandEvent* cmdEvent = checked_type_cast< const ui::CommandEvent* >(event);
-	handleCommand(cmdEvent->getCommand());
+	handleCommand(event->getCommand());
 }
 
 	}

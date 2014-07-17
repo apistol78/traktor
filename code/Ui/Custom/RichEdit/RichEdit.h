@@ -85,8 +85,6 @@ public:
 
 	bool paste();
 
-	void addChangeEventHandler(EventHandler* eventHandler);
-
 private:
 	struct Attribute
 	{
@@ -148,19 +146,19 @@ private:
 
 	Rect getEditRect() const;
 
-	void eventKeyDown(Event* event);
+	void eventKeyDown(KeyDownEvent* event);
 
-	void eventKey(Event* event);
+	void eventKey(KeyEvent* event);
 
-	void eventButtonDown(Event* event);
+	void eventButtonDown(MouseButtonDownEvent* event);
 
-	void eventMouseWheel(Event* event);
+	void eventMouseWheel(MouseWheelEvent* event);
 
-	void eventPaint(Event* event);
+	void eventPaint(PaintEvent* event);
 
-	void eventSize(Event* event);
+	void eventSize(SizeEvent* event);
 
-	void eventScroll(Event* event);
+	void eventScroll(ScrollEvent* event);
 
 #if defined(_DEBUG)
 	void checkConsistency();

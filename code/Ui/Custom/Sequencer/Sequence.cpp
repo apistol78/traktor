@@ -1,9 +1,10 @@
 #include <algorithm>
 #include "Ui/Canvas.h"
-#include "Ui/Events/CommandEvent.h"
 #include "Ui/Custom/Sequencer/Sequence.h"
+#include "Ui/Custom/Sequencer/SequenceButtonClickEvent.h"
 #include "Ui/Custom/Sequencer/SequencerControl.h"
 #include "Ui/Custom/Sequencer/Key.h"
+#include "Ui/Custom/Sequencer/KeyMoveEvent.h"
 
 namespace traktor
 {
@@ -96,8 +97,8 @@ void Sequence::mouseDown(SequencerControl* sequencer, const Point& at, const Rec
 				m_buttons[i].state = !m_buttons[i].state;
 
 				// Notify button listeners.
-				CommandEvent cmdEvent(sequencer, this, m_buttons[i].command);
-				sequencer->raiseEvent(ui::EiClick, &cmdEvent);
+				SequenceButtonClickEvent clickEvent(sequencer, this, m_buttons[i].command);
+				sequencer->raiseEvent(&clickEvent);
 
 				break;
 			}
@@ -151,8 +152,8 @@ void Sequence::mouseMove(SequencerControl* sequencer, const Point& at, const Rec
 		{
 			m_trackKey->move(offset);
 
-			CommandEvent cmdEvent(sequencer, m_trackKey, Command(offset));
-			sequencer->raiseEvent(SequencerControl::EiKeyMove, &cmdEvent);
+			KeyMoveEvent keyMoveEvent(sequencer, m_trackKey, offset);
+			sequencer->raiseEvent(&keyMoveEvent);
 		}
 		m_previousPosition = at.x;
 	}

@@ -6,7 +6,10 @@
 #include "Amalgam/Editor/Ui/ButtonCell.h"
 #include "Amalgam/Editor/Ui/DropListCell.h"
 #include "Amalgam/Editor/Ui/ProgressCell.h"
+#include "Amalgam/Editor/Ui/TargetCaptureEvent.h"
 #include "Amalgam/Editor/Ui/TargetInstanceListItem.h"
+#include "Amalgam/Editor/Ui/TargetPlayEvent.h"
+#include "Amalgam/Editor/Ui/TargetStopEvent.h"
 #include "Core/Misc/String.h"
 #include "I18N/Text.h"
 #include "Ui/Application.h"
@@ -92,7 +95,9 @@ TargetInstanceListItem::TargetInstanceListItem(HostEnumerator* hostEnumerator, T
 
 	m_progressCell = new ProgressCell();
 	m_hostsCell = new DropListCell(hostEnumerator, instance);
-	m_playCell = new ButtonCell(s_bitmapTargetControl, 0, true, ui::EiUser + 1, instance, ui::Command(L"Amalgam.Play"));
+
+	m_playCell = new ButtonCell(s_bitmapTargetControl, 0, ui::Command());
+	m_playCell->addEventHandler< ui::ButtonClickEvent >(this, &TargetInstanceListItem::eventPlayButtonClick);
 }
 
 ui::Size TargetInstanceListItem::getSize() const
@@ -153,10 +158,16 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 	for (uint32_t i = 0; i < connections.size(); ++i)
 	{
 		if (!m_stopCells[i])
-			m_stopCells[i] = new ButtonCell(s_bitmapTargetControl, 2, true, ui::EiUser + 2, m_instance, ui::Command(i, L"Amalgam.Stop"));
+		{
+			m_stopCells[i] = new ButtonCell(s_bitmapTargetControl, 2, ui::Command(i));
+			m_stopCells[i]->addEventHandler< ui::ButtonClickEvent >(this, &TargetInstanceListItem::eventStopButtonClick);
+		}
 
 		if (!m_captureCells[i])
-			m_captureCells[i] = new ButtonCell(s_bitmapTargetControl, 3, true, ui::EiUser + 3, m_instance, ui::Command(i, L"Amalgam.Capture"));
+		{
+			m_captureCells[i] = new ButtonCell(s_bitmapTargetControl, 3, ui::Command(i));
+			m_captureCells[i]->addEventHandler< ui::ButtonClickEvent >(this, &TargetInstanceListItem::eventCaptureButtonClick);
+		}
 
 		widget->placeCell(
 			m_stopCells[i],
@@ -180,9 +191,11 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 
 		controlRect = controlRect.offset(0, controlRect.getHeight());
 	}
+
+	AutoWidgetCell::placeCells(widget, rect);
 }
 
-void TargetInstanceListItem::paint(ui::custom::AutoWidget* widget, ui::Canvas& canvas, const ui::Rect& rect)
+void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 {
 	const Platform* platform = m_instance->getPlatform();
 	const TargetConfiguration* targetConfiguration = m_instance->getTargetConfiguration();
@@ -247,7 +260,7 @@ void TargetInstanceListItem::paint(ui::custom::AutoWidget* widget, ui::Canvas& c
 	canvas.setForeground(ui::getSystemColor(ui::ScWindowText));
 	canvas.drawText(textRect, targetConfiguration->getName(), ui::AnLeft, ui::AnCenter);
 
-	ui::Font widgetFont = widget->getFont();
+	ui::Font widgetFont = getWidget()->getFont();
 	ui::Font performanceFont = widgetFont; performanceFont.setSize(8);
 	ui::Font performanceBoldFont = performanceFont; performanceBoldFont.setBold(true);
 	ui::Font markerFont = widgetFont; markerFont.setSize(7);
@@ -385,6 +398,24 @@ void TargetInstanceListItem::paint(ui::custom::AutoWidget* widget, ui::Canvas& c
 	canvas.setFont(widgetFont);
 
 	m_playCell->setEnable(m_instance->getState() == TsIdle);
+}
+
+void TargetInstanceListItem::eventPlayButtonClick(ui::ButtonClickEvent* event)
+{
+	TargetPlayEvent playEvent(this, m_instance);
+	getWidget()->raiseEvent(&playEvent);
+}
+
+void TargetInstanceListItem::eventStopButtonClick(ui::ButtonClickEvent* event)
+{
+	TargetStopEvent stopEvent(this, m_instance, event->getCommand().getId());
+	getWidget()->raiseEvent(&stopEvent);
+}
+
+void TargetInstanceListItem::eventCaptureButtonClick(ui::ButtonClickEvent* event)
+{
+	TargetCaptureEvent captureEvent(this, m_instance, event->getCommand().getId());
+	getWidget()->raiseEvent(&captureEvent);
 }
 
 	}

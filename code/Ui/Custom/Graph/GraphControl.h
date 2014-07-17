@@ -1,16 +1,10 @@
 #ifndef traktor_ui_custom_GraphControl_H
 #define traktor_ui_custom_GraphControl_H
 
-#define T_GRAPH_USE_XTRME 0
-
 #include <list>
 #include "Core/RefArray.h"
-#if T_GRAPH_USE_XTRME
-#	include "Ui/Xtrme/WidgetXtrme.h"
-#else
-#	include "Ui/Widget.h"
-#endif
 #include "Ui/Point.h"
+#include "Ui/Widget.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -38,12 +32,7 @@ class Pin;
 /*! \brief Graph control.
  * \ingroup UIC
  */
-class T_DLLCLASS GraphControl
-#if T_GRAPH_USE_XTRME
-:	public xtrme::WidgetXtrme
-#else
-:	public Widget
-#endif
+class T_DLLCLASS GraphControl : public Widget
 {
 	T_RTTI_CLASS;
 
@@ -51,14 +40,6 @@ public:
 	enum Styles
 	{
 		WsEdgeSelectable = WsUser
-	};
-
-	enum Events
-	{
-		EiNodeDoubleClick	= EiUser + 1,
-		EiNodeMoved			= EiUser + 2,
-		EiEdgeConnect		= EiUser + 3,
-		EiEdgeDisconnect	= EiUser + 4
 	};
 
 	enum Alignment
@@ -148,17 +129,7 @@ public:
 
 	void evenSpace(EvenSpace space);
 
-	void addSelectEventHandler(EventHandler* eventHandler);
-
-	void addNodeDoubleClickEventHandler(EventHandler* eventHandler);
-
-	void addNodeMovedEventHandler(EventHandler* eventHandler);
-
-	void addEdgeConnectEventHandler(EventHandler* eventHandler);
-
-	void addEdgeDisconnectEventHandler(EventHandler* eventHandler);
-
-	inline const Size& getOffset() const { return m_offset; }
+	const Size& getOffset() const { return m_offset; }
 
 private:
 	Ref< PaintSettings > m_paintSettings;
@@ -184,15 +155,15 @@ private:
 
 	bool endSelectModification();
 
-	void eventMouseDown(Event* e);
+	void eventMouseDown(MouseButtonDownEvent* event);
 
-	void eventMouseUp(Event* e);
+	void eventMouseUp(MouseButtonUpEvent* event);
 
-	void eventMouseMove(Event* e);
+	void eventMouseMove(MouseMoveEvent* event);
 
-	void eventDoubleClick(Event* e);
+	void eventDoubleClick(MouseDoubleClickEvent* event);
 
-	void eventPaint(Event* e);
+	void eventPaint(PaintEvent* event);
 };
 
 		}

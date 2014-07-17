@@ -2,6 +2,7 @@
 #define traktor_spray_EffectEditorPage_H
 
 #include "Editor/IEditorPage.h"
+#include "Ui/Events/AllEvents.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -25,15 +26,19 @@ class IDocument;
 	namespace ui
 	{
 
-class Event;
 class PopupMenu;
 
 		namespace custom
 		{
 
+class CursorMoveEvent;
+class KeyMoveEvent;
+class SequenceButtonClickEvent;
+class SequenceMovedEvent;
+class SequencerControl;
 class ToolBar;
 class ToolBarButton;
-class SequencerControl;
+class ToolBarButtonClickEvent;
 
 		}
 	}
@@ -102,19 +107,19 @@ private:
 
 	void updateSequencer();
 
-	void eventToolClick(ui::Event* event);
+	void eventToolClick(ui::custom::ToolBarButtonClickEvent* event);
 
-	void eventSequencerLayerSelect(ui::Event* event);
+	void eventSequencerLayerSelect(ui::SelectionChangeEvent* event);
 
-	void eventSequencerTimeCursorMove(ui::Event* event);
+	void eventSequencerTimeCursorMove(ui::custom::CursorMoveEvent* event);
 
-	void eventSequencerLayerRearranged(ui::Event* event);
+	void eventSequencerLayerRearranged(ui::custom::SequenceMovedEvent* event);
 
-	void eventSequencerKeyMove(ui::Event* event);
+	void eventSequencerKeyMove(ui::custom::KeyMoveEvent* event);
 
-	void eventSequencerLayerClick(ui::Event* event);
+	void eventSequencerLayerClick(ui::custom::SequenceButtonClickEvent* event);
 
-	void eventSequencerButtonDown(ui::Event* event);
+	void eventSequencerButtonDown(ui::MouseButtonDownEvent* event);
 };
 
 	}

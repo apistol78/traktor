@@ -37,8 +37,6 @@ public:
 	void destroy();
 
 	void add(MenuItem* item);
-
-	void addClickEventHandler(EventHandler* eventHandler);
 	
 private:
 	IMenuBar* m_menuBar;

@@ -2,6 +2,7 @@
 #define traktor_scene_SceneEditorPage_H
 
 #include "Editor/IEditorPage.h"
+#include "Ui/Events/AllEvents.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -29,7 +30,6 @@ class IEditorPageSite;
 
 class Bitmap;
 class Container;
-class Event;
 class Font;
 class PopupMenu;
 class Tab;
@@ -40,8 +40,11 @@ class Tab;
 class StatusBar;
 class ToolBar;
 class ToolBarButton;
+class ToolBarButtonClickEvent;
+class GridColumnClickEvent;
 class GridView;
 class GridRow;
+class GridRowStateChangeEvent;
 
 		}
 	}
@@ -56,11 +59,15 @@ class EntityData;
 	namespace scene
 	{
 
+class CameraMovedEvent;
+class EntityAdapter;
+class EntityDependencyInvestigator;
+class PreModifyEvent;
+class PostBuildEvent;
+class PostModifyEvent;
+class SceneAsset;
 class SceneEditorContext;
 class ScenePreviewControl;
-class EntityDependencyInvestigator;
-class EntityAdapter;
-class SceneAsset;
 
 class T_DLLCLASS SceneEditorPage : public editor::IEditorPage
 {
@@ -131,27 +138,27 @@ private:
 
 	bool moveToEntity();
 
-	void eventEntityToolClick(ui::Event* event);
+	void eventEntityToolClick(ui::custom::ToolBarButtonClickEvent* event);
 
-	void eventGuideClick(ui::Event* event);
+	void eventGuideClick(ui::custom::GridColumnClickEvent* event);
 
-	void eventInstanceSelect(ui::Event* event);
+	void eventInstanceSelect(ui::SelectionChangeEvent* event);
 
-	void eventInstanceExpand(ui::Event* event);
+	void eventInstanceExpand(ui::custom::GridRowStateChangeEvent* event);
 
-	void eventInstanceButtonDown(ui::Event* event);
+	void eventInstanceButtonDown(ui::MouseButtonDownEvent* event);
 
-	void eventInstanceClick(ui::Event* event);
+	void eventInstanceClick(ui::custom::GridColumnClickEvent* event);
 
-	void eventContextPostBuild(ui::Event* event);
+	void eventContextPostBuild(PostBuildEvent* event);
 
-	void eventContextSelect(ui::Event* event);
+	void eventContextSelect(ui::SelectionChangeEvent* event);
 
-	void eventContextPreModify(ui::Event* event);
+	void eventContextPreModify(PreModifyEvent* event);
 
-	void eventContextPostModify(ui::Event* event);
+	void eventContextPostModify(PostModifyEvent* event);
 
-	void eventContextCameraMoved(ui::Event* event);
+	void eventContextCameraMoved(CameraMovedEvent* event);
 };
 
 	}

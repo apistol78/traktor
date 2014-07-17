@@ -10,13 +10,6 @@ namespace traktor
 
 class PropertyGroup;
 
-	namespace ui
-	{
-
-class Command;
-
-	}
-
 	namespace editor
 	{
 
@@ -35,7 +28,7 @@ private:
 	Ref< PropertyGroup > m_settings;
 	RefArray< ISettingsPage > m_settingPages;
 
-	void eventDialogClick(ui::Event* event);
+	void eventDialogClick(ui::ButtonClickEvent* event);
 };
 
 	}

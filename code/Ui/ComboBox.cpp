@@ -82,10 +82,5 @@ std::wstring ComboBox::getSelectedItem() const
 	return (index >= 0) ? get(index) : std::wstring();
 }
 
-void ComboBox::addSelectEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiSelectionChange, eventHandler);
-}
-
 	}
 }

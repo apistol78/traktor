@@ -21,9 +21,9 @@ public:
 
 	PostProcessStepItem* getItem() const;
 
-	virtual void mouseDown(ui::custom::AutoWidget* widget, const ui::Point& position);
+	virtual void mouseDown(const ui::Point& position);
 
-	virtual void paint(ui::custom::AutoWidget* widget, ui::Canvas& canvas, const ui::Rect& rect);
+	virtual void paint(ui::Canvas& canvas, const ui::Rect& rect);
 
 private:
 	Ref< PostProcessStepItem > m_item;

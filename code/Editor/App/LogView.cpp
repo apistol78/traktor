@@ -9,11 +9,9 @@
 #include "Ui/PopupMenu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/TableLayout.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/MouseEvent.h"
-#include "Ui/Events/CommandEvent.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
+#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 
 // Resources
@@ -88,12 +86,11 @@ bool LogView::create(ui::Widget* parent)
 	m_toolFilter->addItem(m_toolToggleError);
 	m_toolFilter->addItem(new ui::custom::ToolBarSeparator());
 	m_toolFilter->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_COPY"), 7, ui::Command(L"Editor.Log.Copy")));
-
-	m_toolFilter->addClickEventHandler(ui::createMethodHandler(this, &LogView::eventToolClick));
+	m_toolFilter->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &LogView::eventToolClick);
 
 	m_log = new ui::custom::LogList();
 	m_log->create(this, ui::WsNone, this);
-	m_log->addButtonDownEventHandler(ui::createMethodHandler(this, &LogView::eventButtonDown));
+	m_log->addEventHandler< ui::MouseButtonDownEvent >(this, &LogView::eventButtonDown);
 
 	m_popup = new ui::PopupMenu();
 	m_popup->create();
@@ -112,11 +109,9 @@ void LogView::destroy()
 	ui::Container::destroy();
 }
 
-void LogView::eventToolClick(ui::Event* event)
+void LogView::eventToolClick(ui::custom::ToolBarButtonClickEvent* event)
 {
-	const ui::CommandEvent* cmdEvent = checked_type_cast< const ui::CommandEvent* >(event);
-	const ui::Command& cmd = cmdEvent->getCommand();
-
+	const ui::Command& cmd = event->getCommand();
 	if (cmd == L"Editor.Log.ToggleLevel")
 	{
 		m_log->setFilter(
@@ -129,14 +124,12 @@ void LogView::eventToolClick(ui::Event* event)
 		m_log->copyLog();
 }
 
-void LogView::eventButtonDown(ui::Event* event)
+void LogView::eventButtonDown(ui::MouseButtonDownEvent* event)
 {
-	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
-
-	if (mouseEvent->getButton() != ui::MouseEvent::BtRight)
+	if (event->getButton() != ui::MbtRight)
 		return;
 
-	Ref< ui::MenuItem > selected = m_popup->show(m_log, mouseEvent->getPosition());
+	Ref< ui::MenuItem > selected = m_popup->show(m_log, event->getPosition());
 	if (!selected)
 		return;
 

@@ -31,8 +31,6 @@ public:
 	void setValue(int value);
 
 	int getValue() const;
-
-	void addChangeEventHandler(EventHandler* eventHandler);
 };
 
 	}

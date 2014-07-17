@@ -1,7 +1,5 @@
 #include "Core/Log/Log.h"
 #include "Ui/TreeView.h"
-#include "Ui/Events/TreeViewDragEvent.h"
-#include "Ui/Events/TreeViewEditEvent.h"
 #include "Ui/Win32/BitmapWin32.h"
 #include "Ui/Win32/TreeViewItemWin32.h"
 #include "Ui/Win32/TreeViewWin32.h"
@@ -175,7 +173,7 @@ LRESULT TreeViewWin32::eventButtonUp(HWND hWnd, UINT message, WPARAM wParam, LPA
 	// from which tree-view the event originated.
 	Point position = clientToScreen(Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
 	TreeViewDragEvent dragEvent(m_owner, m_dragItem, TreeViewDragEvent::DmDrop, position);
-	m_owner->raiseEvent(TreeView::EiDrag, &dragEvent);
+	m_owner->raiseEvent(&dragEvent);
 
 	m_dragItem = 0;
 	releaseCapture();
@@ -196,8 +194,8 @@ LRESULT TreeViewWin32::eventNotify(HWND hWnd, UINT message, WPARAM wParam, LPARA
 			LPNMTREEVIEW nmtv = reinterpret_cast< LPNMTREEVIEW >(nmhdr);
 			if (nmtv->action == TVC_BYKEYBOARD || nmtv->action == TVC_BYMOUSE)
 			{
-				CommandEvent cmdEvent(m_owner, getSelectedItem());
-				m_owner->raiseEvent(EiSelectionChange, &cmdEvent);
+				SelectionChangeEvent selectionChangeEvent(m_owner);
+				m_owner->raiseEvent(&selectionChangeEvent);
 			}
 		}
 		break;
@@ -225,7 +223,7 @@ LRESULT TreeViewWin32::eventNotify(HWND hWnd, UINT message, WPARAM wParam, LPARA
 					return TRUE;
 
 				TreeViewEditEvent editEvent(m_owner, item);
-				m_owner->raiseEvent(TreeView::EiEdit, &editEvent);
+				m_owner->raiseEvent(&editEvent);
 
 				if (editEvent.consumed() && editEvent.cancelled())
 					return TRUE;
@@ -257,10 +255,10 @@ LRESULT TreeViewWin32::eventNotify(HWND hWnd, UINT message, WPARAM wParam, LPARA
 
 				item->setText(newText);
 
-				CommandEvent cmdEvent(m_owner, item);
-				m_owner->raiseEvent(EiContentChange, &cmdEvent);
+				TreeViewContentChangeEvent contentChangeEvent(m_owner, item);
+				m_owner->raiseEvent(&contentChangeEvent);
 
-				if (!cmdEvent.consumed())
+				if (!contentChangeEvent.consumed())
 				{
 					// Rename event not consumed; revert item text.
 					item->setText(originalText);
@@ -284,7 +282,7 @@ LRESULT TreeViewWin32::eventNotify(HWND hWnd, UINT message, WPARAM wParam, LPARA
 			{
 				// Notify listener we're about to begin drag item.
 				TreeViewDragEvent dragEvent(m_owner, item, TreeViewDragEvent::DmDrag);
-				m_owner->raiseEvent(TreeView::EiDrag, &dragEvent);
+				m_owner->raiseEvent(&dragEvent);
 				if (!(dragEvent.consumed() && dragEvent.cancelled()))
 				{
 					m_dragItem = item;
@@ -302,8 +300,8 @@ LRESULT TreeViewWin32::eventNotify(HWND hWnd, UINT message, WPARAM wParam, LPARA
 			ScreenToClient(m_hWnd, &tvhti.pt);
 			if (m_hWnd.sendMessage(TVM_HITTEST, 0, (LPARAM)&tvhti) && tvhti.flags & TVHT_ONITEM)
 			{
-				CommandEvent cmdEvent(m_owner, getSelectedItem());
-				m_owner->raiseEvent(EiActivate, &cmdEvent);
+				TreeViewItemActivateEvent activateEvent(m_owner, getSelectedItem());
+				m_owner->raiseEvent(&activateEvent);
 			}
 		}
 		break;

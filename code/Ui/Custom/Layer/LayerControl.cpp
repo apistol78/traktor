@@ -1,14 +1,11 @@
 #include <algorithm>
 #include <stack>
-#include "Ui/Custom/Layer/LayerControl.h"
-#include "Ui/Custom/Layer/LayerItem.h"
+#include "Drawing/Image.h"
 #include "Ui/Bitmap.h"
 #include "Ui/ScrollBar.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/CommandEvent.h"
-#include "Ui/Events/MouseEvent.h"
-#include "Ui/Events/PaintEvent.h"
-#include "Drawing/Image.h"
+#include "Ui/Custom/Layer/LayerContentChangeEvent.h"
+#include "Ui/Custom/Layer/LayerControl.h"
+#include "Ui/Custom/Layer/LayerItem.h"
 
 // Resources
 #include "Resources/LayerVisible.h"
@@ -39,14 +36,14 @@ bool LayerControl::create(Widget* parent, int style)
 	if (!m_scrollBar->create(this, ScrollBar::WsVertical))
 		return false;
 
-	m_scrollBar->addScrollEventHandler(createMethodHandler(this, &LayerControl::eventScroll));
+	m_scrollBar->addEventHandler< ScrollEvent >(this, &LayerControl::eventScroll);
 
 	m_imageVisible = Bitmap::load(c_ResourceLayerVisible, sizeof(c_ResourceLayerVisible), L"png");
 	m_imageHidden = Bitmap::load(c_ResourceLayerHidden, sizeof(c_ResourceLayerHidden), L"png");
 
-	addSizeEventHandler(createMethodHandler(this, &LayerControl::eventSize));
-	addButtonDownEventHandler(createMethodHandler(this, &LayerControl::eventButtonDown));
-	addPaintEventHandler(createMethodHandler(this, &LayerControl::eventPaint));
+	addEventHandler< SizeEvent >(this, &LayerControl::eventSize);
+	addEventHandler< MouseButtonDownEvent >(this, &LayerControl::eventButtonDown);
+	addEventHandler< PaintEvent >(this, &LayerControl::eventPaint);
 
 	return true;
 }
@@ -147,16 +144,6 @@ Ref< LayerItem > LayerControl::getLayerItem(int index, bool includeChildren)
 	return 0;
 }
 
-void LayerControl::addSelectEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiSelectionChange, eventHandler);
-}
-
-void LayerControl::addChangeEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiContentChange, eventHandler);
-}
-
 Size LayerControl::getPreferedSize() const
 {
 	return Size(256, 256);
@@ -236,13 +223,13 @@ void LayerControl::paintItem(Canvas& canvas, Rect& rcItem, LayerItem* item, int 
 		paintItem(canvas, rcItem, *i, childLevel + 1);
 }
 
-void LayerControl::eventScroll(Event* event)
+void LayerControl::eventScroll(ScrollEvent* event)
 {
 	update();
 	event->consume();
 }
 
-void LayerControl::eventSize(Event* event)
+void LayerControl::eventSize(SizeEvent* event)
 {
 	event->consume();
 
@@ -260,10 +247,9 @@ void LayerControl::eventSize(Event* event)
 	updateScrollBar();
 }
 
-void LayerControl::eventButtonDown(Event* event)
+void LayerControl::eventButtonDown(MouseButtonDownEvent* event)
 {
-	MouseEvent* m = static_cast< MouseEvent* >(event);
-	Point pt = m->getPosition();
+	Point pt = event->getPosition();
 
 	int scrollOffset = m_scrollBar->getPosition();
 	int id = (pt.y + scrollOffset) / c_layerItemHeight;
@@ -277,8 +263,8 @@ void LayerControl::eventButtonDown(Event* event)
 			layerItem->setSelected(true);
 			layerItem->setEnable(!layerItem->isEnabled());
 			
-			CommandEvent cmdEvent(this, layerItem);
-			raiseEvent(EiContentChange, &cmdEvent);
+			LayerContentChangeEvent changeEvent(this, layerItem);
+			raiseEvent(&changeEvent);
 		}
 		else
 			layerItem->setSelected(!layerItem->isSelected());
@@ -301,15 +287,15 @@ void LayerControl::eventButtonDown(Event* event)
 	setFocus();
 	update();
 
-	raiseEvent(EiSelectionChange, 0);
+	SelectionChangeEvent selectionChangeEvent(this);
+	raiseEvent(&selectionChangeEvent);
 
 	event->consume();
 }
 
-void LayerControl::eventPaint(Event* event)
+void LayerControl::eventPaint(PaintEvent* event)
 {
-	PaintEvent* p = static_cast< PaintEvent* >(event);
-	Canvas& canvas = p->getCanvas();
+	Canvas& canvas = event->getCanvas();
 
 	int scrollWidth = m_scrollBar->getPreferedSize().cx;
 	int scrollOffset = m_scrollBar->getPosition();
@@ -323,7 +309,7 @@ void LayerControl::eventPaint(Event* event)
 	for (RefArray< LayerItem >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 		paintItem(canvas, rcItem, *i, 0);
 
-	p->consume();
+	event->consume();
 }
 
 		}

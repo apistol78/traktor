@@ -10,11 +10,10 @@
 #include "Ui/FloodLayout.h"
 #include "Ui/TableLayout.h"
 #include "Ui/ListBox.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/CommandEvent.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
+#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/Custom/PropertyList/AutoPropertyList.h"
 
 // Resources
@@ -57,11 +56,11 @@ bool SoundBatchDialog::create(ui::Widget* parent)
 	soundListTools->addImage(ui::Bitmap::load(c_ResourcePlusMinus, sizeof(c_ResourcePlusMinus), L"png"), 4);
 	soundListTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SOUND_BATCH_ADD"), 0, ui::Command(L"SoundBatch.Add")));
 	soundListTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SOUND_BATCH_REMOVE"), 1, ui::Command(L"SoundBatch.Remove")));
-	soundListTools->addClickEventHandler(ui::createMethodHandler(this, &SoundBatchDialog::eventSoundListToolClick));
+	soundListTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &SoundBatchDialog::eventSoundListToolClick);
 
 	m_soundList = new ui::ListBox();
 	m_soundList->create(soundListContainer, L"", ui::WsClientBorder | ui::ListBox::WsExtended);
-	m_soundList->addSelectEventHandler(ui::createMethodHandler(this, &SoundBatchDialog::eventSoundListSelect));
+	m_soundList->addEventHandler< ui::SelectionChangeEvent >(this, &SoundBatchDialog::eventSoundListSelect);
 
 	m_soundPropertyList = new ui::custom::AutoPropertyList();
 	m_soundPropertyList->create(splitter, ui::WsClientBorder | ui::WsDoubleBuffer | ui::custom::AutoPropertyList::WsColumnHeader);
@@ -135,18 +134,16 @@ void SoundBatchDialog::removeSound()
 		m_soundList->remove(index);
 }
 
-void SoundBatchDialog::eventSoundListToolClick(ui::Event* event)
+void SoundBatchDialog::eventSoundListToolClick(ui::custom::ToolBarButtonClickEvent* event)
 {
-	const ui::CommandEvent* cmdEvent = checked_type_cast< const ui::CommandEvent* >(event);
-	const ui::Command& cmd = cmdEvent->getCommand();
-
+	const ui::Command& cmd = event->getCommand();
 	if (cmd == L"SoundBatch.Add")
 		addSound();
 	else if (cmd == L"SoundBatch.Remove")
 		removeSound();
 }
 
-void SoundBatchDialog::eventSoundListSelect(ui::Event* event)
+void SoundBatchDialog::eventSoundListSelect(ui::SelectionChangeEvent* event)
 {
 	Ref< SoundAsset > asset = checked_type_cast< SoundAsset* >(m_soundList->getSelectedData());
 	m_soundPropertyList->apply();

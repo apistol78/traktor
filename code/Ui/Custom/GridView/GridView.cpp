@@ -1,11 +1,9 @@
 #include <stack>
 #include "Core/Misc/String.h"
 #include "Ui/Application.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/CommandEvent.h"
-#include "Ui/Events/MouseEvent.h"
 #include "Ui/Custom/GridView/GridCell.h"
 #include "Ui/Custom/GridView/GridColumn.h"
+#include "Ui/Custom/GridView/GridColumnClickEvent.h"
 #include "Ui/Custom/GridView/GridHeaderCell.h"
 #include "Ui/Custom/GridView/GridRow.h"
 #include "Ui/Custom/GridView/GridView.h"
@@ -98,8 +96,8 @@ bool GridView::create(Widget* parent, uint32_t style)
 
 	setBackgroundColor(getSystemColor(ScWindowBackground));
 
-	addButtonDownEventHandler(ui::createMethodHandler(this, &GridView::eventButtonDown));
-	addButtonUpEventHandler(ui::createMethodHandler(this, &GridView::eventButtonUp));
+	addEventHandler< MouseButtonDownEvent >(this, &GridView::eventButtonDown);
+	addEventHandler< MouseButtonUpEvent >(this, &GridView::eventButtonUp);
 
 	m_headerCell = new GridHeaderCell();
 	return true;
@@ -201,21 +199,6 @@ GridRow* GridView::getSelectedRow() const
 		return 0;
 }
 
-void GridView::addSelectEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiSelectionChange, eventHandler);
-}
-
-void GridView::addClickEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiClick, eventHandler);
-}
-
-void GridView::addExpandEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiExpand, eventHandler);
-}
-
 void GridView::layoutCells(const Rect& rc)
 {
 	Rect rcLayout = rc;
@@ -261,14 +244,13 @@ void GridView::layoutCells(const Rect& rc)
 	}
 }
 
-void GridView::eventButtonDown(Event* event)
+void GridView::eventButtonDown(MouseButtonDownEvent* event)
 {
-	MouseEvent* mouseEvent = checked_type_cast< MouseEvent*, false >(event);
-	const Point& position = mouseEvent->getPosition();
-	int32_t state = mouseEvent->getKeyState();
+	const Point& position = event->getPosition();
+	int32_t state = event->getKeyState();
 
 	// Only allow selection with left mouse button.
-	if (mouseEvent->getButton() != MouseEvent::BtLeft)
+	if (event->getButton() != MbtLeft)
 		return;
 
 	AutoWidgetCell* cell = hitTest(position);
@@ -334,17 +316,17 @@ void GridView::eventButtonDown(Event* event)
 		m_clickColumn = -1;
 	}
 
-	raiseEvent(EiSelectionChange, 0);
+	SelectionChangeEvent selectionChange(this);
+	raiseEvent(&selectionChange);
 	requestUpdate();
 }
 
-void GridView::eventButtonUp(Event* event)
+void GridView::eventButtonUp(MouseButtonUpEvent* event)
 {
-	MouseEvent* mouseEvent = checked_type_cast< MouseEvent*, false >(event);
-	const Point& position = mouseEvent->getPosition();
+	const Point& position = event->getPosition();
 
 	// Only allow click with left mouse button.
-	if (mouseEvent->getButton() != MouseEvent::BtLeft)
+	if (event->getButton() != MbtLeft)
 		return;
 
 	AutoWidgetCell* cell = hitTest(position);
@@ -353,8 +335,8 @@ void GridView::eventButtonUp(Event* event)
 		// If still same column index then user clicked on column.
 		if (m_clickColumn != -1 && m_clickColumn == getColumnIndex(position.x))
 		{
-			CommandEvent cmdEvent(this, m_clickRow, Command(m_clickColumn));
-			raiseEvent(EiClick, &cmdEvent);
+			GridColumnClickEvent columnClickEvent(this, m_clickRow, m_clickColumn);
+			raiseEvent(&columnClickEvent);
 		}
 	}
 }

@@ -3,7 +3,6 @@
 #include "Ui/Button.h"
 #include "Ui/Container.h"
 #include "Ui/Image.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/LogList/LogList.h"
@@ -53,11 +52,11 @@ bool ErrorDialog::create()
 
 	Ref< ui::Button > buttonCopy = new ui::Button();
 	buttonCopy->create(containerButtons, L"Copy to clipboard");
-	buttonCopy->addClickEventHandler(ui::createMethodHandler(this, &ErrorDialog::eventButtonCopyQuit));
+	buttonCopy->addEventHandler< ui::ButtonClickEvent >(this, &ErrorDialog::eventButtonCopyQuit);
 
 	Ref< ui::Button > buttonQuit = new ui::Button();
 	buttonQuit->create(containerButtons, L"Quit");
-	buttonQuit->addClickEventHandler(ui::createMethodHandler(this, &ErrorDialog::eventButtonClickQuit));
+	buttonQuit->addEventHandler< ui::ButtonClickEvent >(this, &ErrorDialog::eventButtonClickQuit);
 
 	return true;
 }
@@ -67,12 +66,12 @@ void ErrorDialog::addErrorString(const std::wstring& errorString)
 	m_listLog->add(ui::custom::LogList::LvInfo, errorString);
 }
 
-void ErrorDialog::eventButtonCopyQuit(ui::Event* event)
+void ErrorDialog::eventButtonCopyQuit(ui::ButtonClickEvent* event)
 {
 	m_listLog->copyLog();
 }
 
-void ErrorDialog::eventButtonClickQuit(ui::Event* event)
+void ErrorDialog::eventButtonClickQuit(ui::ButtonClickEvent* event)
 {
 	endModal(0);
 }

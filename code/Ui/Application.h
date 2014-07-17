@@ -3,6 +3,11 @@
 
 #include "Ui/Enums.h"
 #include "Ui/EventSubject.h"
+#include "Ui/Events/FocusEvent.h"
+#include "Ui/Events/IdleEvent.h"
+#include "Ui/Events/KeyDownEvent.h"
+#include "Ui/Events/KeyEvent.h"
+#include "Ui/Events/KeyUpEvent.h"
 #include "Ui/Itf/IEventLoop.h"
 #include "Ui/Itf/IWidgetFactory.h"
 

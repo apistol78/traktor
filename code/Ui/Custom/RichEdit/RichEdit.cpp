@@ -5,11 +5,7 @@
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Clipboard.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/ScrollBar.h"
-#include "Ui/Events/KeyEvent.h"
-#include "Ui/Events/MouseEvent.h"
-#include "Ui/Events/PaintEvent.h"
 #include "Ui/Custom/RichEdit/RichEdit.h"
 
 namespace traktor
@@ -49,12 +45,12 @@ bool RichEdit::create(Widget* parent, const std::wstring& text, int32_t style)
 	if (!Widget::create(parent, style))
 		return false;
 
-	addKeyDownEventHandler(createMethodHandler(this, &RichEdit::eventKeyDown));
-	addKeyEventHandler(createMethodHandler(this, &RichEdit::eventKey));
-	addButtonDownEventHandler(createMethodHandler(this, &RichEdit::eventButtonDown));
-	addMouseWheelEventHandler(createMethodHandler(this, &RichEdit::eventMouseWheel));
-	addPaintEventHandler(createMethodHandler(this, &RichEdit::eventPaint));
-	addSizeEventHandler(createMethodHandler(this, &RichEdit::eventSize));
+	addEventHandler< KeyDownEvent >(this, &RichEdit::eventKeyDown);
+	addEventHandler< KeyEvent >(this, &RichEdit::eventKey);
+	addEventHandler< MouseButtonDownEvent >(this, &RichEdit::eventButtonDown);
+	addEventHandler< MouseWheelEvent >(this, &RichEdit::eventMouseWheel);
+	addEventHandler< PaintEvent >(this, &RichEdit::eventPaint);
+	addEventHandler< SizeEvent >(this, &RichEdit::eventSize);
 
 	// Create scrollbars.
 	m_scrollBarV = new ScrollBar();
@@ -64,8 +60,8 @@ bool RichEdit::create(Widget* parent, const std::wstring& text, int32_t style)
 	if (!m_scrollBarH->create(this, ScrollBar::WsHorizontal))
 		return false;
 
-	m_scrollBarV->addScrollEventHandler(createMethodHandler(this, &RichEdit::eventScroll));
-	m_scrollBarH->addScrollEventHandler(createMethodHandler(this, &RichEdit::eventScroll));
+	m_scrollBarV->addEventHandler< ScrollEvent >(this, &RichEdit::eventScroll);
+	m_scrollBarH->addEventHandler< ScrollEvent >(this, &RichEdit::eventScroll);
 
 	Attribute attrib;
 	attrib.textColor = Color4ub(0, 0, 0);
@@ -396,11 +392,6 @@ bool RichEdit::paste()
 	return true;
 }
 
-void RichEdit::addChangeEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiContentChange, eventHandler);
-}
-
 void RichEdit::updateScrollBars()
 {
 	Font font = getFont();
@@ -479,7 +470,8 @@ void RichEdit::deleteCharacters()
 
 	CHECK;
 
-	raiseEvent(EiContentChange, 0);
+	ContentChangeEvent contentChangeEvent(this);
+	raiseEvent(&contentChangeEvent);
 }
 
 void RichEdit::insertCharacter(wchar_t ch)
@@ -508,7 +500,9 @@ void RichEdit::insertCharacter(wchar_t ch)
 		}
 
 		++m_caret;
-		raiseEvent(EiContentChange, 0);
+
+		ContentChangeEvent contentChangeEvent(this);
+		raiseEvent(&contentChangeEvent);
 	}
 	else if (ch == '\t' || ch >= 32)
 	{
@@ -527,7 +521,9 @@ void RichEdit::insertCharacter(wchar_t ch)
 		}
 
 		++m_caret;
-		raiseEvent(EiContentChange, 0);
+
+		ContentChangeEvent contentChangeEvent(this);
+		raiseEvent(&contentChangeEvent);
 	}
 }
 
@@ -596,14 +592,12 @@ Rect RichEdit::getEditRect() const
 	return rc;
 }
 
-void RichEdit::eventKeyDown(Event* event)
+void RichEdit::eventKeyDown(KeyDownEvent* event)
 {
-	KeyEvent* keyEvent = checked_type_cast< KeyEvent*, false >(event);
-
 	int32_t caret = m_caret;
 	bool caretMovement = false;
 
-	switch (keyEvent->getVirtualKey())
+	switch (event->getVirtualKey())
 	{
 	case VkUp:
 		// Move caret up.
@@ -651,7 +645,7 @@ void RichEdit::eventKeyDown(Event* event)
 
 	case VkHome:
 		{
-			if ((keyEvent->getKeyState() & KsControl) == 0)
+			if ((event->getKeyState() & KsControl) == 0)
 			{
 				for (std::vector< Line >::iterator i = m_lines.begin(); i != m_lines.end(); ++i)
 				{
@@ -671,7 +665,7 @@ void RichEdit::eventKeyDown(Event* event)
 
 	case VkEnd:
 		{
-			if ((keyEvent->getKeyState() & KsControl) == 0)
+			if ((event->getKeyState() & KsControl) == 0)
 			{
 				for (std::vector< Line >::iterator i = m_lines.begin(); i != m_lines.end(); ++i)
 				{
@@ -760,7 +754,7 @@ void RichEdit::eventKeyDown(Event* event)
 		break;
 	}
 
-	if ((keyEvent->getKeyState() & KsShift) != 0)
+	if ((event->getKeyState() & KsShift) != 0)
 	{
 		if (caretMovement)
 		{
@@ -794,7 +788,7 @@ void RichEdit::eventKeyDown(Event* event)
 			m_selectionStop = -1;
 		}
 	}
-	else if (keyEvent->getKeyState() == KsNone)
+	else if (event->getKeyState() == KsNone)
 	{
 		m_selectionStart =
 		m_selectionStop = -1;
@@ -805,11 +799,9 @@ void RichEdit::eventKeyDown(Event* event)
 	update();
 }
 
-void RichEdit::eventKey(Event* event)
+void RichEdit::eventKey(KeyEvent* event)
 {
-	KeyEvent* keyEvent = checked_type_cast< KeyEvent*, false >(event);
-
-	wchar_t ch = keyEvent->getCharacter();
+	wchar_t ch = event->getCharacter();
 	if (ch == 3)
 		copy();
 	else if (ch == 22)
@@ -833,10 +825,9 @@ void RichEdit::eventKey(Event* event)
 	update();
 }
 
-void RichEdit::eventButtonDown(Event* event)
+void RichEdit::eventButtonDown(MouseButtonDownEvent* event)
 {
-	MouseEvent* mouseEvent = checked_type_cast< MouseEvent*, false >(event);
-	Point mousePosition = mouseEvent->getPosition();
+	Point mousePosition = event->getPosition();
 
 	Font font = getFont();
 	Rect rc = getEditRect();
@@ -878,23 +869,21 @@ void RichEdit::eventButtonDown(Event* event)
 	update();
 }
 
-void RichEdit::eventMouseWheel(Event* event)
+void RichEdit::eventMouseWheel(MouseWheelEvent* event)
 {
-	MouseEvent* mouseEvent = checked_type_cast< MouseEvent*, false >(event);
 	if (m_scrollBarV->isVisible(false))
 	{
 		int32_t position = m_scrollBarV->getPosition();
-		position -= mouseEvent->getWheelRotation() * 4;
+		position -= event->getRotation() * 4;
 		m_scrollBarV->setPosition(position);
 		m_scrollBarV->update();
 		update();
 	}
 }
 
-void RichEdit::eventPaint(Event* event)
+void RichEdit::eventPaint(PaintEvent* event)
 {
-	PaintEvent* paintEvent = checked_type_cast< PaintEvent*, false >(event);
-	Canvas& canvas = paintEvent->getCanvas();
+	Canvas& canvas = event->getCanvas();
 
 	Font font = getFont();
 	Rect rc = getInnerRect();
@@ -1029,7 +1018,7 @@ void RichEdit::eventPaint(Event* event)
 	event->consume();
 }
 
-void RichEdit::eventSize(Event* event)
+void RichEdit::eventSize(SizeEvent* event)
 {
 	int32_t width = m_scrollBarV->getPreferedSize().cx;
 	int32_t height = m_scrollBarH->getPreferedSize().cy;
@@ -1045,7 +1034,7 @@ void RichEdit::eventSize(Event* event)
 	updateScrollBars();
 }
 
-void RichEdit::eventScroll(Event* event)
+void RichEdit::eventScroll(ScrollEvent* event)
 {
 	update();
 }

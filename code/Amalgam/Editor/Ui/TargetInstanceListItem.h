@@ -7,6 +7,13 @@
 
 namespace traktor
 {
+	namespace ui
+	{
+
+class ButtonClickEvent;
+
+	}
+
 	namespace amalgam
 	{
 
@@ -24,7 +31,7 @@ public:
 
 	virtual void placeCells(ui::custom::AutoWidget* widget, const ui::Rect& rect);
 
-	virtual void paint(ui::custom::AutoWidget* widget, ui::Canvas& canvas, const ui::Rect& rect);
+	virtual void paint(ui::Canvas& canvas, const ui::Rect& rect);
 
 private:
 	Ref< ProgressCell > m_progressCell;
@@ -34,6 +41,12 @@ private:
 	RefArray< ButtonCell > m_captureCells;
 	Ref< TargetInstance > m_instance;
 	TargetState m_lastInstanceState;
+
+	void eventPlayButtonClick(ui::ButtonClickEvent* event);
+
+	void eventStopButtonClick(ui::ButtonClickEvent* event);
+
+	void eventCaptureButtonClick(ui::ButtonClickEvent* event);
 };
 
 	}

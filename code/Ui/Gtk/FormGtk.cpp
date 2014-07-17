@@ -78,8 +78,8 @@ void FormGtk::on_size_allocate(Gtk::Allocation& allocation)
 {
 	log::info << L"FormGtk::on_size_allocate : " << allocation.get_width() << L" x " << allocation.get_height() << Endl;
 
-	SizeEvent s(m_owner, 0, Size(allocation.get_width(), allocation.get_height()));
-	m_owner->raiseEvent(EiSize, &s);
+	SizeEvent s(m_owner, Size(allocation.get_width(), allocation.get_height()));
+	m_owner->raiseEvent(&s);
 }
 
 	}

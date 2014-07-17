@@ -1,12 +1,10 @@
-#include "Ui/Custom/PropertyList/FilePropertyItem.h"
-#include "Ui/Custom/PropertyList/PropertyList.h"
-#include "Ui/Custom/MiniButton.h"
-#include "Ui/Edit.h"
+#include "Core/Io/StringOutputStream.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Command.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/FocusEvent.h"
-#include "Core/Io/StringOutputStream.h"
+#include "Ui/Edit.h"
+#include "Ui/Custom/MiniButton.h"
+#include "Ui/Custom/PropertyList/FilePropertyItem.h"
+#include "Ui/Custom/PropertyList/PropertyList.h"
 
 // Resources
 #include "Resources/SmallDots.h"
@@ -46,12 +44,12 @@ void FilePropertyItem::createInPlaceControls(Widget* parent)
 		WsNone
 	);
 	m_editor->setVisible(false);
-	m_editor->addFocusEventHandler(createMethodHandler(this, &FilePropertyItem::eventEditFocus));
+	m_editor->addEventHandler< FocusEvent >(this, &FilePropertyItem::eventEditFocus);
 
 	T_ASSERT (!m_buttonEdit);
 	m_buttonEdit = new MiniButton();
 	m_buttonEdit->create(parent, ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"png"));
-	m_buttonEdit->addClickEventHandler(createMethodHandler(this, &FilePropertyItem::eventClick));
+	m_buttonEdit->addEventHandler< ButtonClickEvent >(this, &FilePropertyItem::eventClick);
 }
 
 void FilePropertyItem::destroyInPlaceControls()
@@ -105,10 +103,9 @@ void FilePropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 	canvas.drawText(rc.inflate(-2, -2), m_path.getOriginal(), AnLeft, AnCenter);
 }
 
-void FilePropertyItem::eventEditFocus(Event* event)
+void FilePropertyItem::eventEditFocus(FocusEvent* event)
 {
-	FocusEvent* f = static_cast< FocusEvent* >(event);
-	if (f->lostFocus())
+	if (event->lostFocus())
 	{
 		m_path = m_editor->getText();
 		m_editor->setVisible(false);
@@ -116,7 +113,7 @@ void FilePropertyItem::eventEditFocus(Event* event)
 	}
 }
 
-void FilePropertyItem::eventClick(Event* event)
+void FilePropertyItem::eventClick(ButtonClickEvent* event)
 {
 	notifyCommand(Command(L"Property.Edit"));
 }

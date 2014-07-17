@@ -5,16 +5,26 @@
 
 namespace traktor
 {
+	namespace scene
+	{
+
+class PostFrameEvent;
+
+	}
+
 	namespace ui
 	{
 
-class Event;
 class ListBox;
+class SelectionChangeEvent;
 
 		namespace custom
 		{
 
+class CursorMoveEvent;
+class KeyMoveEvent;
 class ToolBar;
+class ToolBarButtonClickEvent;
 class SequencerControl;
 
 		}
@@ -64,15 +74,15 @@ private:
 
 	void gotoNextKey();
 
-	void eventActSelected(ui::Event* event);
+	void eventActSelected(ui::SelectionChangeEvent* event);
 
-	void eventToolBarClick(ui::Event* event);
+	void eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event);
 
-	void eventSequencerCursorMove(ui::Event* event);
+	void eventSequencerCursorMove(ui::custom::CursorMoveEvent* event);
 
-	void eventSequencerKeyMove(ui::Event* event);
+	void eventSequencerKeyMove(ui::custom::KeyMoveEvent* event);
 
-	void eventContextPostFrame(ui::Event* event);
+	void eventContextPostFrame(scene::PostFrameEvent* event);
 };
 
 	}

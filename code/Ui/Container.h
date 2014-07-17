@@ -17,7 +17,8 @@ namespace traktor
 	{
 	
 class Layout;
-	
+class SizeEvent;
+
 /*! \brief Layout container.
  * \ingroup UI
  */
@@ -45,7 +46,7 @@ public:
 private:
 	Ref< Layout > m_layout;
 	
-	void eventSize(Event* event);
+	void eventSize(SizeEvent* event);
 };
 	
 	}

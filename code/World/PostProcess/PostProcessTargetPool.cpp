@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Misc/Adler32.h"
 #include "Render/IRenderSystem.h"
 #include "World/PostProcess/PostProcessTargetPool.h"

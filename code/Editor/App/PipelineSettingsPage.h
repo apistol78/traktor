@@ -8,9 +8,9 @@ namespace traktor
 	namespace ui
 	{
 
+class ButtonClickEvent;
 class CheckBox;
 class Edit;
-class Event;
 
 	}
 
@@ -44,7 +44,7 @@ private:
 	Ref< ui::CheckBox > m_checkFileCacheRead;
 	Ref< ui::CheckBox > m_checkFileCacheWrite;
 	
-	void eventUseCacheClick(ui::Event* event);
+	void eventUseCacheClick(ui::ButtonClickEvent* event);
 };
 
 	}

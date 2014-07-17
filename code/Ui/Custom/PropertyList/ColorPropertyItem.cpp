@@ -1,8 +1,7 @@
 #include <sstream>
+#include "Ui/Command.h"
 #include "Ui/Custom/PropertyList/ColorPropertyItem.h"
 #include "Ui/Custom/PropertyList/PropertyList.h"
-#include "Ui/Command.h"
-#include "Ui/Events/MouseEvent.h"
 
 namespace traktor
 {
@@ -30,7 +29,7 @@ const Color4ub& ColorPropertyItem::getValue() const
 	return m_value;
 }
 
-void ColorPropertyItem::mouseButtonUp(MouseEvent* event)
+void ColorPropertyItem::mouseButtonUp(MouseButtonUpEvent* event)
 {
 	if (m_rcColor.inside(event->getPosition()))
 		notifyCommand(Command(L"Property.Edit"));

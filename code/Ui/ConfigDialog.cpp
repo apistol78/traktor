@@ -1,7 +1,5 @@
 #include "Ui/ConfigDialog.h"
 #include "Ui/Button.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/CommandEvent.h"
 
 namespace traktor
 {
@@ -17,19 +15,19 @@ bool ConfigDialog::create(Widget* parent, const std::wstring& text, int width, i
 	
 	m_ok = new Button();
 	m_ok->create(this, L"Ok", Button::WsDefaultButton);
-	m_ok->addClickEventHandler(createMethodHandler(this, &ConfigDialog::eventClick));
+	m_ok->addEventHandler< ButtonClickEvent >(this, &ConfigDialog::eventButtonClick);
 	m_ok->unlink();
 	
 	m_cancel = new Button();
 	m_cancel->create(this, L"Cancel");
-	m_cancel->addClickEventHandler(createMethodHandler(this, &ConfigDialog::eventClick));
+	m_cancel->addEventHandler< ButtonClickEvent >(this, &ConfigDialog::eventButtonClick);
 	m_cancel->unlink();
 
 	if (style & WsApplyButton)
 	{
 		m_apply = new Button();
 		m_apply->create(this, L"Apply");
-		m_apply->addClickEventHandler(createMethodHandler(this, &ConfigDialog::eventClick));
+		m_apply->addEventHandler< ButtonClickEvent >(this, &ConfigDialog::eventButtonClick);
 		m_apply->unlink();
 	}
 
@@ -93,29 +91,24 @@ Rect ConfigDialog::getInnerRect() const
 	return rc;
 }
 
-void ConfigDialog::addClickEventHandler(EventHandler* eventHandler)
+void ConfigDialog::eventButtonClick(ButtonClickEvent* event)
 {
-	addEventHandler(EiClick, eventHandler);
-}
-
-void ConfigDialog::eventClick(Event* event)
-{
-	if (hasEventHandler(EiClick))
+	if (hasEventHandler< ButtonClickEvent >())
 	{
 		if (event->getSender() == m_ok)
 		{
-			ui::CommandEvent cmdEvent(this, event->getItem(), ui::Command(DrOk));
-			raiseEvent(EiClick, &cmdEvent);
+			ui::ButtonClickEvent clickEvent(this, ui::Command(DrOk));
+			raiseEvent(&clickEvent);
 		}
 		else if (event->getSender() == m_cancel)
 		{
-			ui::CommandEvent cmdEvent(this, event->getItem(), ui::Command(DrCancel));
-			raiseEvent(EiClick, &cmdEvent);
+			ui::ButtonClickEvent clickEvent(this, ui::Command(DrCancel));
+			raiseEvent(&clickEvent);
 		}
 		else if (event->getSender() == m_apply)
 		{
-			ui::CommandEvent cmdEvent(this, event->getItem(), ui::Command(DrApply));
-			raiseEvent(EiClick, &cmdEvent);
+			ui::ButtonClickEvent clickEvent(this, ui::Command(DrApply));
+			raiseEvent(&clickEvent);
 		}
 	}
 

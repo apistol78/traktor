@@ -1,6 +1,6 @@
+#include "Ui/Bitmap.h"
 #include "Ui/Custom/PropertyList/CheckPropertyItem.h"
 #include "Ui/Custom/PropertyList/PropertyList.h"
-#include "Ui/Bitmap.h"
 
 // Resources
 #include "Resources/Unchecked.h"
@@ -42,7 +42,7 @@ bool CheckPropertyItem::isChecked() const
 	return m_checked;
 }
 
-void CheckPropertyItem::mouseButtonDown(MouseEvent* event)
+void CheckPropertyItem::mouseButtonDown(MouseButtonDownEvent* event)
 {
 	m_checked = !m_checked;
 	notifyChange();

@@ -5,7 +5,6 @@
 #include "Ui/Bitmap.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Command.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/Custom/MiniButton.h"
 #include "Ui/Custom/PropertyList/ObjectPropertyItem.h"
 #include "Ui/Custom/PropertyList/PropertyList.h"
@@ -65,7 +64,7 @@ void ObjectPropertyItem::createInPlaceControls(Widget* parent)
 	T_ASSERT (!m_buttonEdit);
 	m_buttonEdit = new MiniButton();
 	m_buttonEdit->create(parent, L"");
-	m_buttonEdit->addClickEventHandler(createMethodHandler(this, &ObjectPropertyItem::eventClick));
+	m_buttonEdit->addEventHandler< ButtonClickEvent >(this, &ObjectPropertyItem::eventClick);
 
 	if (m_object)
 		m_buttonEdit->setImage(ui::Bitmap::load(c_ResourceSmallCross, sizeof(c_ResourceSmallCross), L"png"));
@@ -134,7 +133,7 @@ bool ObjectPropertyItem::paste()
 	return false;
 }
 
-void ObjectPropertyItem::eventClick(Event* event)
+void ObjectPropertyItem::eventClick(ButtonClickEvent* event)
 {
 	notifyCommand(Command(L"Property.Edit"));
 }

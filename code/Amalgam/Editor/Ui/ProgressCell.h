@@ -18,7 +18,7 @@ public:
 
 	void setProgress(int32_t progress);
 
-	virtual void paint(ui::custom::AutoWidget* widget, ui::Canvas& canvas, const ui::Rect& rect);
+	virtual void paint(ui::Canvas& canvas, const ui::Rect& rect);
 
 private:
 	Ref< ui::Bitmap > m_imageProgressBar;

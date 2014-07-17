@@ -4,7 +4,6 @@
 #include "I18N/Text.h"
 #include "Render/Editor/Shader/ShaderDependencyPane.h"
 #include "Ui/ListBox.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/TableLayout.h"
 
 namespace traktor
@@ -36,7 +35,7 @@ bool ShaderDependencyPane::create(ui::Widget* parent)
 
 	m_refereeList = new ui::ListBox();
 	m_refereeList->create(this, L"", ui::ListBox::WsSingle);
-	m_refereeList->addDoubleClickEventHandler(ui::createMethodHandler(this, &ShaderDependencyPane::eventRefereeListDoubleClick));
+	m_refereeList->addEventHandler< ui::MouseDoubleClickEvent >(this, &ShaderDependencyPane::eventRefereeListDoubleClick);
 
 	m_dependencyTracker->addListener(this);
 	return true;
@@ -69,7 +68,7 @@ void ShaderDependencyPane::dependencyRemoved(const Guid& fromShader, const Guid&
 	}
 }
 
-void ShaderDependencyPane::eventRefereeListDoubleClick(ui::Event* event)
+void ShaderDependencyPane::eventRefereeListDoubleClick(ui::MouseDoubleClickEvent* event)
 {
 	Ref< db::Instance > instance = m_refereeList->getSelectedData< db::Instance >();
 	if (instance)

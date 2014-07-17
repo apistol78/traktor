@@ -1,12 +1,12 @@
 #import "Ui/Cocoa/ObjCRef.h"
 
-#include "Ui/Cocoa/MenuBarCocoa.h"
-#include "Ui/Cocoa/UtilitiesCocoa.h"
+#include "Core/Log/Log.h"
 #include "Ui/MenuItem.h"
 #include "Ui/EventSubject.h"
+#include "Ui/Cocoa/MenuBarCocoa.h"
+#include "Ui/Cocoa/UtilitiesCocoa.h"
 #include "Ui/Itf/IForm.h"
-#include "Ui/Events/CommandEvent.h"
-#include "Core/Log/Log.h"
+#include "Ui/Events/MenuClickEvent.h"
 
 namespace traktor
 {
@@ -111,8 +111,8 @@ void MenuBarCocoa::targetProxy_Action(void* controlId)
 		MenuItem* realMenuItem = dynamic_type_cast< MenuItem* >([repsObj get]);
 		if (realMenuItem)
 		{
-			CommandEvent cmdEvent(m_owner, realMenuItem, realMenuItem->getCommand());
-			m_owner->raiseEvent(EiClick, &cmdEvent);
+			MenuClickEvent clickEvent(m_owner, realMenuItem, realMenuItem->getCommand());
+			m_owner->raiseEvent(&clickEvent);
 		}
 	}
 }

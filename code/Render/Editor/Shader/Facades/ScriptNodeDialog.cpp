@@ -5,13 +5,11 @@
 #include "Render/Editor/Shader/Facades/ScriptNodeDialog.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/ListBox.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/Tab.h"
 #include "Ui/TabPage.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/SyntaxRichEdit/SyntaxLanguageHlsl.h"
 #include "Ui/Custom/SyntaxRichEdit/SyntaxRichEdit.h"
-#include "Ui/Events/CommandEvent.h"
 
 namespace traktor
 {
@@ -45,7 +43,7 @@ bool ScriptNodeDialog::create(ui::Widget* parent)
 	if (!ui::ConfigDialog::create(parent, i18n::Text(L"SHADERGRAPH_SCRIPT_EDIT"), 800, 500, ui::ConfigDialog::WsDefaultResizable | ui::ConfigDialog::WsApplyButton, new ui::FloodLayout()))
 		return false;
 
-	addClickEventHandler(ui::createMethodHandler(this, &ScriptNodeDialog::eventClick));
+	addEventHandler< ui::ButtonClickEvent >(this, &ScriptNodeDialog::eventClick);
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
 	splitter->create(this, true, 150);
@@ -92,9 +90,9 @@ bool ScriptNodeDialog::create(ui::Widget* parent)
 	return true;
 }
 
-void ScriptNodeDialog::eventClick(ui::Event* event)
+void ScriptNodeDialog::eventClick(ui::ButtonClickEvent* event)
 {
-	const ui::Command& command = checked_type_cast< ui::CommandEvent* >(event)->getCommand();
+	const ui::Command& command = event->getCommand();
 	if (command.getId() == ui::DrOk || command.getId() == ui::DrApply)
 	{
 		for (uint32_t i = 0; i < sizeof_array(c_platforms); ++i)

@@ -32,14 +32,6 @@ class T_DLLCLASS SequencerControl : public Widget
 	T_RTTI_CLASS;
 
 public:
-	enum Events
-	{
-		EiCursorMove = EiUser,
-		EiKeyMove = EiUser + 1,
-		EiGroupVisible = EiUser + 2,
-		EiMovedSequenceItem = EiUser + 3
-	};
-
 	enum GetSequenceFlags
 	{
 		GfDefault = 0,
@@ -78,18 +70,6 @@ public:
 
 	int getSequenceItems(RefArray< SequenceItem >& sequenceItems, int flags);
 
-	void addSelectEventHandler(EventHandler* eventHandler);
-
-	void addCursorMoveEventHandler(EventHandler* eventHandler);
-
-	void addKeyMoveEventHandler(EventHandler* eventHandler);
-
-	void addGroupVisibleEventHandler(EventHandler* eventHandler);
-
-	void addMovedSequenceItemEventHandler(EventHandler* eventHandler);
-
-	void addClickEventHandler(EventHandler* eventHandler);
-
 private:
 	struct MouseTrackItem
 	{
@@ -111,19 +91,19 @@ private:
 	
 	void updateScrollBars();
 
-	void eventSize(Event* e);
+	void eventSize(SizeEvent* event);
 
-	void eventButtonDown(Event* e);
+	void eventButtonDown(MouseButtonDownEvent* event);
 
-	void eventButtonUp(Event* e);
+	void eventButtonUp(MouseButtonUpEvent* event);
 
-	void eventMouseMove(Event* e);
+	void eventMouseMove(MouseMoveEvent* event);
 
-	void eventMouseWheel(Event* e);
+	void eventMouseWheel(MouseWheelEvent* event);
 
-	void eventPaint(Event* e);
+	void eventPaint(PaintEvent* event);
 
-	void eventScroll(Event* e);
+	void eventScroll(ScrollEvent* event);
 };
 
 		}

@@ -24,7 +24,7 @@ class IEditor;
 	{
 
 class Container;
-class Event;
+class ButtonClickEvent;
 
 		namespace custom
 		{
@@ -65,9 +65,9 @@ private:
 	Ref< ui::Container > m_containerOuter;
 	Ref< ui::custom::AutoPropertyList > m_propertyListInput;
 
-	void eventButtonImportInput(ui::Event* event);
+	void eventButtonImportInput(ui::ButtonClickEvent* event);
 
-	void eventButtonExportInput(ui::Event* event);
+	void eventButtonExportInput(ui::ButtonClickEvent* event);
 };
 
 	}

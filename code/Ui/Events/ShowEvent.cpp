@@ -7,8 +7,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ShowEvent", ShowEvent, Event)
 
-ShowEvent::ShowEvent(EventSubject* sender, Object* item, bool visible)
-:	Event(sender, item)
+ShowEvent::ShowEvent(EventSubject* sender, bool visible)
+:	Event(sender)
 ,	m_visible(visible)
 {
 }

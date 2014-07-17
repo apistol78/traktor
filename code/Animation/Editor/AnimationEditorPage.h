@@ -5,6 +5,7 @@
 #include "Core/Math/Vector4.h"
 #include "Editor/IEditorPage.h"
 #include "Ui/Point.h"
+#include "Ui/Events/AllEvents.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -39,12 +40,13 @@ class Widget;
 class TreeView;
 class TreeViewItem;
 class PopupMenu;
-class Event;
 
 		namespace custom
 		{
 
+class CursorMoveEvent;
 class ToolBar;
+class ToolBarButtonClickEvent;
 class SequencerControl;
 
 		}
@@ -135,25 +137,25 @@ private:
 
 	void updateSettings();
 
-	void eventRenderButtonDown(ui::Event* event);
+	void eventRenderButtonDown(ui::MouseButtonDownEvent* event);
 
-	void eventRenderButtonUp(ui::Event* event);
+	void eventRenderButtonUp(ui::MouseButtonUpEvent* event);
 
-	void eventRenderMouseMove(ui::Event* event);
+	void eventRenderMouseMove(ui::MouseMoveEvent* event);
 
-	void eventRenderMouseWheel(ui::Event* event);
+	void eventRenderMouseWheel(ui::MouseWheelEvent* event);
 
-	void eventRenderSize(ui::Event* event);
+	void eventRenderSize(ui::SizeEvent* event);
 
-	void eventRenderPaint(ui::Event* event);
+	void eventRenderPaint(ui::PaintEvent* event);
 
-	void eventSequencerButtonDown(ui::Event* event);
+	void eventSequencerButtonDown(ui::MouseButtonDownEvent* event);
 
-	void eventSequencerCursorMove(ui::Event* event);
+	void eventSequencerCursorMove(ui::custom::CursorMoveEvent* event);
 
-	void eventSequencerTimer(ui::Event* event);
+	void eventSequencerTimer(ui::TimerEvent* event);
 
-	void eventToolClick(ui::Event* event);
+	void eventToolClick(ui::custom::ToolBarButtonClickEvent* event);
 };
 
 	}

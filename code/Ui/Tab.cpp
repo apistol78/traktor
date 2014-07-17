@@ -1,16 +1,9 @@
 #include <algorithm>
+#include "Ui/Application.h"
+#include "Ui/Bitmap.h"
 #include "Ui/Tab.h"
 #include "Ui/TabPage.h"
-#include "Ui/Application.h"
 #include "Ui/Font.h"
-#include "Ui/Bitmap.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/MouseEvent.h"
-#include "Ui/Events/SizeEvent.h"
-#include "Ui/Events/PaintEvent.h"
-#include "Ui/Events/CommandEvent.h"
-#include "Ui/Events/CloseEvent.h"
-#include "Core/Misc/String.h"
 
 namespace traktor
 {
@@ -41,10 +34,10 @@ bool Tab::create(Widget* parent, int32_t style)
 	if (!Widget::create(parent, style & ~WsBorder))
 		return false;
 
-	addMouseMoveEventHandler(createMethodHandler(this, &Tab::eventMouseMove));
-	addButtonDownEventHandler(createMethodHandler(this, &Tab::eventButtonDown));
-	addSizeEventHandler(createMethodHandler(this, &Tab::eventSize));
-	addPaintEventHandler(createMethodHandler(this, &Tab::eventPaint));
+	addEventHandler< MouseMoveEvent >(this, &Tab::eventMouseMove);
+	addEventHandler< MouseButtonDownEvent >(this, &Tab::eventButtonDown);
+	addEventHandler< SizeEvent >(this, &Tab::eventSize);
+	addEventHandler< PaintEvent >(this, &Tab::eventPaint);
 	
 	m_fontBold = getFont();
 	m_fontBold.setBold(true);
@@ -275,16 +268,6 @@ Ref< TabPage > Tab::cycleActivePage(bool forward)
 	return m_selectedPage;
 }
 
-void Tab::addSelChangeEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiSelectionChange, eventHandler);
-}
-
-void Tab::addCloseEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiClose, eventHandler);
-}
-
 Size Tab::getMinimumSize() const
 {
 	return Size(256, 256);
@@ -295,10 +278,9 @@ Size Tab::getPreferedSize() const
 	return Size(256, 256);
 }
 
-void Tab::eventMouseMove(Event* event)
+void Tab::eventMouseMove(MouseMoveEvent* event)
 {
-	MouseEvent* mouseEvent = static_cast< MouseEvent* >(event);
-	Point pnt = mouseEvent->getPosition();
+	Point pnt = event->getPosition();
 	Rect inner = Widget::getInnerRect();
 
 	int32_t y0, y1;
@@ -336,10 +318,9 @@ void Tab::eventMouseMove(Event* event)
 	}
 }
 
-void Tab::eventButtonDown(Event* event)
+void Tab::eventButtonDown(MouseButtonDownEvent* event)
 {
-	MouseEvent* mouseEvent = static_cast< MouseEvent* >(event);
-	Point pnt = mouseEvent->getPosition();
+	Point pnt = event->getPosition();
 	Rect inner = Widget::getInnerRect();
 	
 	int32_t y0, y1;
@@ -358,8 +339,8 @@ void Tab::eventButtonDown(Event* event)
 	{
 		if (m_closeButton && m_selectedPage && pnt.x > inner.right - 16)
 		{
-			CloseEvent closeEvent(this, m_selectedPage);
-			raiseEvent(EiClose, &closeEvent);
+			TabCloseEvent closeEvent(this, m_selectedPage);
+			raiseEvent(&closeEvent);
 		}
 		else
 		{
@@ -387,8 +368,8 @@ void Tab::eventButtonDown(Event* event)
 					m_selectedPage->setVisible(false);
 				}
 
-				CommandEvent cmdEvent(this, selectPage);
-				raiseEvent(EiSelectionChange, &cmdEvent);
+				TabSelectionChangeEvent selectionChangeEvent(this, selectPage);
+				raiseEvent(&selectionChangeEvent);
 
 				if ((m_selectedPage = selectPage) != 0)
 				{
@@ -417,7 +398,7 @@ void Tab::eventButtonDown(Event* event)
 	}
 }
 
-void Tab::eventSize(Event* event)
+void Tab::eventSize(SizeEvent* event)
 {
 	m_innerRect = Widget::getInnerRect();
 	if (!m_bottom)
@@ -436,11 +417,10 @@ void Tab::eventSize(Event* event)
 	event->consume();
 }
 
-void Tab::eventPaint(Event* event)
+void Tab::eventPaint(PaintEvent* event)
 {
-	PaintEvent* paintEvent = static_cast< PaintEvent* >(event);
-	Canvas& canvas = paintEvent->getCanvas();
-	Rect rcPaint = paintEvent->getUpdateRect();
+	Canvas& canvas = event->getCanvas();
+	Rect rcPaint = event->getUpdateRect();
 	Rect rcInner = Widget::getInnerRect();
 	
 	int32_t y0, y1;
@@ -589,7 +569,7 @@ void Tab::eventPaint(Event* event)
 		canvas.drawRect(rcInner);
 	}
 
-	paintEvent->consume();
+	event->consume();
 }
 
 Tab::PageState* Tab::findPageState(const TabPage* page)

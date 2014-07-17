@@ -37,9 +37,9 @@ private:
 	Ref< ui::TreeView > m_dependencyTree;
 	Ref< EntityAdapter > m_currentEntityAdapter;
 
-	void eventDependencyActivate(ui::Event* event);
+	void eventDependencyActivate(ui::TreeViewItemActivateEvent* event);
 
-	void eventContextSelect(ui::Event* event);
+	void eventContextSelect(ui::SelectionChangeEvent* event);
 };
 
 	}

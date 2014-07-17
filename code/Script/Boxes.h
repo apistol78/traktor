@@ -7,7 +7,7 @@
 #include "Core/Math/Aabb3.h"
 #include "Core/Math/Color4f.h"
 #include "Core/Math/Color4ub.h"
-#include "Core/Math/Plane.h"
+#include "Core/Math/Frustum.h"
 #include "Core/Math/Quaternion.h"
 #include "Core/Math/Range.h"
 #include "Core/Math/Transform.h"
@@ -118,6 +118,18 @@ public:
 	Vector2 mul(float v) const;
 
 	Vector2 div(float v) const;
+
+	float dot(const Vector2& v) const;
+
+	float length() const;
+
+	Vector2 normalized() const;
+
+	Vector2 neg() const;
+
+	Vector2 perpendicular() const;
+
+	static Vector2 zero() { return Vector2::zero(); }
 
 	const Vector2& unbox() const { return m_value; }
 
@@ -356,12 +368,55 @@ public:
 
 	bool overlap(const Aabb3& aabb) const { return m_value.overlap(aabb); }
 
+	Any intersectRay(const Vector4& origin, const Vector4& direction) const;
+
 	const Aabb3& unbox() const { return m_value; }
 
 	virtual std::wstring toString() const;
 
 private:
 	Aabb3 m_value;
+};
+
+class T_DLLCLASS BoxedFrustum : public Boxed
+{
+	T_RTTI_CLASS;
+
+public:
+	BoxedFrustum();
+
+	explicit BoxedFrustum(const Frustum& value);
+
+	void buildPerspective(float vfov, float aspect, float zn, float zf);
+
+	void buildOrtho(float width, float height, float zn, float zf);
+
+	void setNearZ(float zn);
+
+	float getNearZ() const;
+
+	void setFarZ(float zf);
+
+	float getFarZ() const;
+
+	bool insidePoint(const Vector4& point) const;
+
+	int32_t insideSphere(const Vector4& center, float radius) const;
+
+	int32_t insideAabb(const Aabb3& aabb) const;
+
+	const Plane& getPlane(int32_t index) const;
+
+	const Vector4& getCorner(int32_t index) const;
+
+	const Vector4& getCenter() const;
+
+	const Frustum& unbox() const { return m_value; }
+
+	virtual std::wstring toString() const;
+
+private:
+	Frustum m_value;
 };
 
 class T_DLLCLASS BoxedColor4f : public Boxed
@@ -779,6 +834,34 @@ struct CastAny < const Aabb3&, false >
 	}	
 	static Aabb3 get(const Any& value) {
 		return checked_type_cast< BoxedAabb3*, false >(value.getObject())->unbox();
+	}
+};
+
+template < >
+struct CastAny < Frustum, false >
+{
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedFrustum >(value.getObjectUnsafe());
+	}
+	static Any set(const Frustum& value) {
+		return Any::fromObject(new BoxedFrustum(value));
+	}	
+	static Frustum get(const Any& value) {
+		return checked_type_cast< BoxedFrustum*, false >(value.getObject())->unbox();
+	}
+};
+
+template < >
+struct CastAny < const Frustum&, false >
+{
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedFrustum >(value.getObjectUnsafe());
+	}
+	static Any set(const Frustum& value) {
+		return Any::fromObject(new BoxedFrustum(value));
+	}	
+	static Frustum get(const Any& value) {
+		return checked_type_cast< BoxedFrustum*, false >(value.getObject())->unbox();
 	}
 };
 

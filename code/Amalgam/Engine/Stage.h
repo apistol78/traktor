@@ -58,6 +58,7 @@ public:
 		amalgam::IEnvironment* environment,
 		const resource::Proxy< script::IScriptContext >& scriptContext,
 		const resource::Proxy< render::Shader >& shaderFade,
+		float fadeRate,
 		const std::map< std::wstring, Guid >& transitions,
 		const Object* params
 	);
@@ -107,6 +108,7 @@ private:
 	resource::Proxy< script::IScriptContext > m_scriptContext;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	resource::Proxy< render::Shader > m_shaderFade;
+	float m_fadeRate;
 	RefArray< Layer > m_layers;
 	std::map< std::wstring, Guid > m_transitions;
 	Ref< const Object > m_params;

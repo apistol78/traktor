@@ -1,5 +1,7 @@
+#include "Ui/Events/NcMouseButtonDownEvent.h"
+#include "Ui/Events/NcMouseButtonUpEvent.h"
+#include "Ui/Events/NcMouseMoveEvent.h"
 #include "Ui/Win32/ToolFormWin32.h"
-#include "Ui/Events/CloseEvent.h"
 
 namespace traktor
 {
@@ -76,24 +78,23 @@ void ToolFormWin32::center()
 
 LRESULT ToolFormWin32::eventNcButtonDown(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass)
 {
-	MouseEvent::Button button = MouseEvent::BtNone;
+	int32_t button = MbtNone;
 	switch (message)
 	{
 	case WM_NCLBUTTONDOWN:
-		button = MouseEvent::BtLeft;
+		button = MbtLeft;
 		break;
 	case WM_NCRBUTTONDOWN:
-		button = MouseEvent::BtRight;
+		button = MbtRight;
 		break;
 	}
 
-	MouseEvent m(
+	NcMouseButtonDownEvent m(
 		m_owner,
-		0,
 		button,
 		Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam))
 	);
-	m_owner->raiseEvent(EiNcButtonDown, &m);
+	m_owner->raiseEvent(&m);
 
 	if (!m.consumed())
 		pass = true;
@@ -103,24 +104,23 @@ LRESULT ToolFormWin32::eventNcButtonDown(HWND hWnd, UINT message, WPARAM wParam,
 
 LRESULT ToolFormWin32::eventNcButtonUp(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass)
 {
-	MouseEvent::Button button = MouseEvent::BtNone;
+	int32_t button = MbtNone;
 	switch (message)
 	{
 	case WM_NCLBUTTONDOWN:
-		button = MouseEvent::BtLeft;
+		button = MbtLeft;
 		break;
 	case WM_NCRBUTTONDOWN:
-		button = MouseEvent::BtRight;
+		button = MbtRight;
 		break;
 	}
 
-	MouseEvent m(
+	NcMouseButtonUpEvent m(
 		m_owner,
-		0,
 		button,
 		Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam))
 	);
-	m_owner->raiseEvent(EiNcButtonUp, &m);
+	m_owner->raiseEvent(&m);
 
 	if (!m.consumed())
 		pass = true;
@@ -130,21 +130,20 @@ LRESULT ToolFormWin32::eventNcButtonUp(HWND hWnd, UINT message, WPARAM wParam, L
 
 LRESULT ToolFormWin32::eventNcMouseMove(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass)
 {
-	int button = MouseEvent::BtNone;
+	int32_t button = MbtNone;
 	if (wParam & MK_LBUTTON)
-		button |= MouseEvent::BtLeft;
+		button |= MbtLeft;
 	if (wParam & MK_MBUTTON)
-		button |= MouseEvent::BtMiddle;
+		button |= MbtMiddle;
 	if (wParam & MK_RBUTTON)
-		button |= MouseEvent::BtRight;
+		button |= MbtRight;
 
-	MouseEvent m(
+	NcMouseMoveEvent m(
 		m_owner,
-		0,
 		button,
 		Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam))
 	);
-	m_owner->raiseEvent(EiNcMouseMove, &m);
+	m_owner->raiseEvent(&m);
 
 	if (!m.consumed())
 		pass = true;

@@ -13,10 +13,7 @@
 #include "Resource/ResourceManager.h"
 #include "Ui/Application.h"
 #include "Ui/Container.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/Widget.h"
-#include "Ui/Events/IdleEvent.h"
-#include "Ui/Events/SizeEvent.h"
 #include "Ui/Itf/IWidget.h"
 #include "Video/Video.h"
 #include "Video/Decoders/VideoDecoderTheora.h"
@@ -70,8 +67,8 @@ bool VideoEditorPage::create(ui::Container* parent)
 	if (!m_renderWidget->create(parent, ui::WsClientBorder))
 		return false;
 
-	m_renderWidget->addSizeEventHandler(ui::createMethodHandler(this, &VideoEditorPage::eventSize));
-	m_renderWidget->addPaintEventHandler(ui::createMethodHandler(this, &VideoEditorPage::eventPaint));
+	m_renderWidget->addEventHandler< ui::SizeEvent >(this, &VideoEditorPage::eventSize);
+	m_renderWidget->addEventHandler< ui::PaintEvent >(this, &VideoEditorPage::eventPaint);
 
 	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 16;
@@ -104,19 +101,14 @@ bool VideoEditorPage::create(ui::Container* parent)
 	m_video = video;
 	m_timer.start();
 
-	m_idleHandler = ui::createMethodHandler(this, &VideoEditorPage::eventIdle);
-	ui::Application::getInstance()->addEventHandler(ui::EiIdle, m_idleHandler);
+	m_idleEventHandler = ui::Application::getInstance()->addEventHandler< ui::IdleEvent >(this, &VideoEditorPage::eventIdle);
 
 	return true;
 }
 
 void VideoEditorPage::destroy()
 {
-	if (m_idleHandler)
-	{
-		ui::Application::getInstance()->removeEventHandler(ui::EiIdle, m_idleHandler);
-		m_idleHandler = 0;
-	}
+	ui::Application::getInstance()->removeEventHandler< ui::IdleEvent >(m_idleEventHandler);
 
 	safeDestroy(m_screenRenderer);
 
@@ -151,19 +143,18 @@ void VideoEditorPage::handleDatabaseEvent(db::Database* database, const Guid& ev
 {
 }
 
-void VideoEditorPage::eventSize(ui::Event* event)
+void VideoEditorPage::eventSize(ui::SizeEvent* event)
 {
 	if (!m_renderView)
 		return;
 
-	ui::SizeEvent* s = checked_type_cast< ui::SizeEvent*, false >(event);
-	ui::Size sz = s->getSize();
+	ui::Size sz = event->getSize();
 
 	m_renderView->reset(sz.cx, sz.cy);
 	m_renderView->setViewport(render::Viewport(0, 0, sz.cx, sz.cy, 0, 1));
 }
 
-void VideoEditorPage::eventPaint(ui::Event* event)
+void VideoEditorPage::eventPaint(ui::PaintEvent* event)
 {
 	if (!m_renderView)
 		return;
@@ -195,18 +186,17 @@ void VideoEditorPage::eventPaint(ui::Event* event)
 	event->consume();
 }
 
-void VideoEditorPage::eventIdle(ui::Event* event)
+void VideoEditorPage::eventIdle(ui::IdleEvent* event)
 {
 	if (!m_video)
 		return;
 
-	ui::IdleEvent* idleEvent = checked_type_cast< ui::IdleEvent* >(event);
 	if (m_renderWidget->isVisible(true))
 	{
 		float deltaTime = float(m_timer.getDeltaTime());
 		m_video->update(deltaTime);
 		m_renderWidget->update();
-		idleEvent->requestMore();
+		event->requestMore();
 	}
 }
 

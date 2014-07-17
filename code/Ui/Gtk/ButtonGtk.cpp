@@ -1,6 +1,6 @@
 #include "Core/Misc/TString.h"
 #include "Ui/Gtk/ButtonGtk.h"
-#include "Ui/Events/CommandEvent.h"
+#include "Ui/Events/ButtonClickEvent.h"
 
 namespace traktor
 {
@@ -42,8 +42,8 @@ bool ButtonGtk::getState() const
 
 void ButtonGtk::on_button_clicked()
 {
-	CommandEvent commandEvent(m_owner, 0);
-	m_owner->raiseEvent(EiClick, &commandEvent);
+	ButtonClickEvent clickEvent(m_owner);
+	m_owner->raiseEvent(&clickEvent);
 }
 
 	}

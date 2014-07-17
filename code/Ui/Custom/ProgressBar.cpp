@@ -1,7 +1,5 @@
-#include "Ui/Custom/ProgressBar.h"
 #include "Ui/Bitmap.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/PaintEvent.h"
+#include "Ui/Custom/ProgressBar.h"
 
 // Resources
 #include "Resources/ProgressBar.h"
@@ -33,7 +31,7 @@ bool ProgressBar::create(Widget* parent, int style, int minProgress, int maxProg
 	m_maxProgress = maxProgress;
 	m_progress = minProgress;
 
-	addPaintEventHandler(createMethodHandler(this, &ProgressBar::eventPaint));
+	addEventHandler< PaintEvent >(this, &ProgressBar::eventPaint);
 
 	return true;
 }
@@ -111,10 +109,9 @@ namespace
 
 }
 
-void ProgressBar::eventPaint(Event* event)
+void ProgressBar::eventPaint(PaintEvent* event)
 {
-	PaintEvent* p = static_cast< PaintEvent* >(event);
-	Canvas& canvas = p->getCanvas();
+	Canvas& canvas = event->getCanvas();
 
 	Rect rc = getInnerRect();
 
@@ -147,7 +144,7 @@ void ProgressBar::eventPaint(Event* event)
 			m_loop = 0;
 	}
 
-	p->consume();
+	event->consume();
 }
 
 		}

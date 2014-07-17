@@ -1,5 +1,4 @@
 #include "Ui/Dialog.h"
-#include "Ui/Events/CloseEvent.h"
 #include "Ui/Win32/DialogWin32.h"
 
 namespace traktor
@@ -240,8 +239,8 @@ LRESULT DialogWin32::eventClose(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 {
 	skip = false;
 
-	CloseEvent closeEvent(m_owner, 0);
-	m_owner->raiseEvent(EiClose, &closeEvent);
+	CloseEvent closeEvent(m_owner);
+	m_owner->raiseEvent(&closeEvent);
 
 	// Note: It's possible we've been destroyed atm thus it's not
 	// really safe to assume "this" is valid.

@@ -1,7 +1,5 @@
 #include "Ui/Custom/Tab/TabPage.h"
 #include "Ui/Custom/Tab/Tab.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/PaintEvent.h"
 
 namespace traktor
 {
@@ -17,7 +15,7 @@ bool TabPage::create(Tab* tab, const std::wstring& text, Layout* layout)
 	if (!Container::create(tab, WsNone, layout))
 		return false;
 
-	addPaintEventHandler(createMethodHandler(this, &TabPage::eventPaint));
+	addEventHandler< PaintEvent >(this, &TabPage::eventPaint);
 
 	m_tab = tab;
 
@@ -41,11 +39,9 @@ Ref< Tab > TabPage::getTab()
 	return m_tab;
 }
 
-void TabPage::eventPaint(Event* event)
+void TabPage::eventPaint(PaintEvent* event)
 {
-	PaintEvent* paintEvent = checked_type_cast< PaintEvent* >(event);
-	
-	Canvas& canvas = paintEvent->getCanvas();
+	Canvas& canvas = event->getCanvas();
 	Rect rcInner = Widget::getInnerRect();
 
 	canvas.setBackground(Color4ub(224, 224, 224));

@@ -44,11 +44,11 @@ private:
 	Ref< ui::custom::PreviewList > m_typeList;
 	const TypeInfo* m_type;
 
-	void eventDialogClick(ui::Event* event);
+	void eventDialogClick(ui::ButtonClickEvent* event);
 
-	void eventTreeItemSelected(ui::Event* event);
+	void eventTreeItemSelected(ui::SelectionChangeEvent* event);
 
-	void eventListDoubleClick(ui::Event* event);
+	void eventListDoubleClick(ui::MouseDoubleClickEvent* event);
 };
 
 	}

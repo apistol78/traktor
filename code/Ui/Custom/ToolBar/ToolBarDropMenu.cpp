@@ -1,10 +1,10 @@
-#include "Ui/Custom/ToolBar/ToolBarDropMenu.h"
-#include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
 #include "Ui/MenuItem.h"
 #include "Ui/PopupMenu.h"
-#include "Ui/Events/CommandEvent.h"
+#include "Ui/Custom/ToolBar/ToolBar.h"
+#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
+#include "Ui/Custom/ToolBar/ToolBarDropMenu.h"
 
 namespace traktor
 {
@@ -123,18 +123,18 @@ void ToolBarDropMenu::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, B
 	m_menuPosition = Point(at.x, at.y + size.cy);
 }
 
-bool ToolBarDropMenu::mouseEnter(ToolBar* toolBar, MouseEvent* mouseEvent)
+bool ToolBarDropMenu::mouseEnter(ToolBar* toolBar, MouseMoveEvent* mouseEvent)
 {
 	m_hover = true;
 	return true;
 }
 
-void ToolBarDropMenu::mouseLeave(ToolBar* toolBar, MouseEvent* mouseEvent)
+void ToolBarDropMenu::mouseLeave(ToolBar* toolBar, MouseMoveEvent* mouseEvent)
 {
 	m_hover = false;
 }
 
-void ToolBarDropMenu::buttonDown(ToolBar* toolBar, MouseEvent* mouseEvent)
+void ToolBarDropMenu::buttonDown(ToolBar* toolBar, MouseButtonDownEvent* mouseEvent)
 {
 	if (m_items.empty())
 		return;
@@ -148,8 +148,8 @@ void ToolBarDropMenu::buttonDown(ToolBar* toolBar, MouseEvent* mouseEvent)
 		Ref< MenuItem > item = menu.show(toolBar, m_menuPosition);
 		if (item)
 		{
-			CommandEvent cmdEvent(toolBar, item, item->getCommand());
-			toolBar->raiseEvent(EiClick, &cmdEvent);
+			ToolBarButtonClickEvent clickEvent(toolBar, this, item->getCommand());
+			toolBar->raiseEvent(&clickEvent);
 		}
 
 		menu.destroy();
@@ -157,7 +157,7 @@ void ToolBarDropMenu::buttonDown(ToolBar* toolBar, MouseEvent* mouseEvent)
 	}
 }
 
-void ToolBarDropMenu::buttonUp(ToolBar* toolBar, MouseEvent* mouseEvent)
+void ToolBarDropMenu::buttonUp(ToolBar* toolBar, MouseButtonUpEvent* mouseEvent)
 {
 }
 

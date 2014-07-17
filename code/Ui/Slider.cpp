@@ -1,7 +1,7 @@
-#include "Ui/Slider.h"
-#include "Ui/Application.h"
-#include "Ui/Itf/ISlider.h"
 #include "Core/Log/Log.h"
+#include "Ui/Application.h"
+#include "Ui/Slider.h"
+#include "Ui/Itf/ISlider.h"
 
 namespace traktor
 {
@@ -49,11 +49,6 @@ int Slider::getValue() const
 {
 	T_ASSERT (m_widget);
 	return static_cast< ISlider* >(m_widget)->getValue();
-}
-
-void Slider::addChangeEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiContentChange, eventHandler);
 }
 
 	}

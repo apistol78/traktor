@@ -44,7 +44,7 @@ private:
 	Color4ub m_colorRight;
 	Color4ub m_colorText;
 
-	void eventPaint(Event* event);
+	void eventPaint(PaintEvent* event);
 };
 
 		}

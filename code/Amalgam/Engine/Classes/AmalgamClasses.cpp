@@ -263,6 +263,7 @@ void registerAmalgamClasses(script::IScriptManager* scriptManager)
 	classWorldLayer->addMethod("setControllerEnable", &WorldLayer::setControllerEnable);
 	classWorldLayer->addMethod("resetController", &WorldLayer::resetController);
 	classWorldLayer->addMethod("getPostProcess", &WorldLayer::getPostProcess);
+	classWorldLayer->addMethod("getViewFrustum", &WorldLayer::getViewFrustum);
 	classWorldLayer->addMethod("worldToView", &WorldLayer_worldToView);
 	classWorldLayer->addMethod("viewToWorld", &WorldLayer_viewToWorld);
 	classWorldLayer->addMethod("worldToScreen", &WorldLayer_worldToScreen);

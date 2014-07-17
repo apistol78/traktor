@@ -3,6 +3,7 @@
 #include "Amalgam/Engine/Stage.h"
 #include "Amalgam/Engine/StageData.h"
 #include "Core/Log/Log.h"
+#include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
@@ -21,7 +22,12 @@ namespace traktor
 	namespace amalgam
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.amalgam.StageData", 4, StageData, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.amalgam.StageData", 5, StageData, ISerializable)
+
+StageData::StageData()
+:	m_fadeRate(1.5f)
+{
+}
 
 Ref< Stage > StageData::createInstance(amalgam::IEnvironment* environment, const Object* params) const
 {
@@ -52,7 +58,7 @@ Ref< Stage > StageData::createInstance(amalgam::IEnvironment* environment, const
 		return 0;
 
 	// Create layers.
-	Ref< Stage > stage = new Stage(environment, script, shaderFade, m_transitions, params);
+	Ref< Stage > stage = new Stage(environment, script, shaderFade, m_fadeRate, m_transitions, params);
 	for (RefArray< LayerData >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 	{
 		Ref< Layer > layer = (*i)->createInstance(stage, environment);
@@ -77,6 +83,9 @@ void StageData::serialize(ISerializer& s)
 		const resource::Id< render::Shader > c_shaderFade(Guid(L"{DC104971-11AE-5743-9AB1-53B830F74391}"));
 		m_shaderFade = c_shaderFade;
 	}
+
+	if (s.getVersion() >= 5)
+		s >> Member< float >(L"fadeRate", m_fadeRate, AttributeRange(0.1f));
 
 	s >> MemberStlMap< std::wstring, Guid >(L"transitions", m_transitions);
 

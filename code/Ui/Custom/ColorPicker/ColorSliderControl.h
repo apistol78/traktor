@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_CUSTOM_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -31,30 +31,23 @@ public:
 		virtual Color4ub get(int at) const = 0;
 	};
 
-	enum Events
-	{
-		EiColorSelect = EiUser + 1
-	};
-
 	bool create(Widget* parent, int style, IGradient* gradient);
 
 	virtual Size getPreferedSize() const;
 
 	void updateGradient();
 
-	void addColorSelectEventHandler(EventHandler* eventHandler);
-
 private:
 	Ref< IGradient > m_gradient;
 	Ref< Bitmap > m_gradientBitmap;
 
-	void eventButtonDown(Event* event);
+	void eventButtonDown(MouseButtonDownEvent* event);
 
-	void eventButtonUp(Event* event);
+	void eventButtonUp(MouseButtonUpEvent* event);
 
-	void eventMouseMove(Event* event);
+	void eventMouseMove(MouseMoveEvent* event);
 
-	void eventPaint(Event* event);
+	void eventPaint(PaintEvent* event);
 };
 
 		}

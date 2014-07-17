@@ -52,6 +52,8 @@ public:
 
 	virtual bool getOwner(uint64_t lobbyHandle, uint64_t& outUserHandle) const;
 
+	void update();
+
 private:
 	SteamSessionManager* m_sessionManager;
 	std::vector< uint64_t >* m_outLobbies;

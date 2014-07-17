@@ -38,8 +38,6 @@ public:
 
 	void addRange(const Color4ub& color, float limit0, float limit1, float limit2, float limit3);
 
-	void addChangeEventHandler(EventHandler* eventHandler);
-
 private:
 	struct Range
 	{
@@ -55,13 +53,13 @@ private:
 	Rect m_rcEnv;
 	Ref< EnvelopeKey > m_selectedKey;
 
-	void eventButtonDown(Event* e);
+	void eventButtonDown(MouseButtonDownEvent* event);
 
-	void eventButtonUp(Event* e);
+	void eventButtonUp(MouseButtonUpEvent* event);
 
-	void eventMouseMove(Event* e);
+	void eventMouseMove(MouseMoveEvent* event);
 
-	void eventPaint(Event* e);
+	void eventPaint(PaintEvent* event);
 };
 
 		}

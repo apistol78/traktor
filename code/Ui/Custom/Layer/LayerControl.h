@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_CUSTOM_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -54,10 +54,6 @@ public:
 
 	Ref< LayerItem > getLayerItem(int index, bool includeChildren = true);
 
-	void addSelectEventHandler(EventHandler* eventHandler);
-
-	void addChangeEventHandler(EventHandler* eventHandler);
-
 	virtual Size getPreferedSize() const;
 
 private:
@@ -70,13 +66,13 @@ private:
 
 	void paintItem(Canvas& canvas, Rect& rcItem, LayerItem* item, int childLevel);
 
-	void eventScroll(Event* event);
+	void eventScroll(ScrollEvent* event);
 
-	void eventSize(Event* event);
+	void eventSize(SizeEvent* event);
 
-	void eventButtonDown(Event* event);
+	void eventButtonDown(MouseButtonDownEvent* event);
 
-	void eventPaint(Event* event);
+	void eventPaint(PaintEvent* event);
 };
 
 		}

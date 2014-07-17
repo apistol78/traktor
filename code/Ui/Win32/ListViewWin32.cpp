@@ -1,8 +1,8 @@
-#include "Ui/Win32/ListViewWin32.h"
-#include "Ui/Win32/BitmapWin32.h"
 #include "Ui/ListView.h"
 #include "Ui/ListViewItem.h"
 #include "Ui/ListViewItems.h"
+#include "Ui/Win32/ListViewWin32.h"
+#include "Ui/Win32/BitmapWin32.h"
 
 namespace traktor
 {
@@ -256,18 +256,21 @@ LRESULT ListViewWin32::eventReflectedNotify(HWND hWnd, UINT message, WPARAM wPar
 
 #if !defined(WINCE)
 
-	if (nmhdr->code == LVN_ITEMCHANGED || nmhdr->code == LVN_ITEMACTIVATE)
+	if (nmhdr->code == LVN_ITEMCHANGED)
+	{
+		SelectionChangeEvent selectionChangeEvent(m_owner);
+		m_owner->raiseEvent(&selectionChangeEvent);
+		pass = false;
+	}
+	else if (nmhdr->code == LVN_ITEMACTIVATE)
 	{
 		LPNMITEMACTIVATE nmia = reinterpret_cast< LPNMITEMACTIVATE >(nmhdr);
 
 		Ref< ListViewItem > item = m_items->get(nmia->iItem);
+		T_ASSERT (item != 0);
 
-		CommandEvent cmdEvent(m_owner, item, Command(nmia->iItem));
-		m_owner->raiseEvent(
-			(nmhdr->code == LVN_ITEMCHANGED) ? EiSelectionChange : EiActivate,
-			&cmdEvent
-		);
-
+		ListViewItemActivateEvent activateEvent(m_owner, item);
+		m_owner->raiseEvent(&activateEvent);
 		pass = false;
 	}
 

@@ -1,9 +1,9 @@
-#include "Ui/Form.h"
-#include "Ui/Bitmap.h"
-#include "Ui/Application.h"
-#include "Ui/Itf/IForm.h"
-#include "Ui/MenuBar.h"
 #include "Core/Log/Log.h"
+#include "Ui/Application.h"
+#include "Ui/Bitmap.h"
+#include "Ui/Form.h"
+#include "Ui/MenuBar.h"
+#include "Ui/Itf/IForm.h"
 
 namespace traktor
 {
@@ -65,11 +65,6 @@ bool Form::isMaximized() const
 bool Form::isMinimized() const
 {
 	return static_cast< IForm* >(m_widget)->isMinimized();
-}
-
-void Form::addCloseEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiClose, eventHandler);
 }
 
 bool Form::acceptLayout() const

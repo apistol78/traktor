@@ -1,7 +1,7 @@
+#include "Ui/ListViewItem.h"
+#include "Ui/ListViewItems.h"
 #include "Ui/Cocoa/ListViewCocoa.h"
 #include "Ui/Cocoa/UtilitiesCocoa.h"
-#include "Ui/ListViewItems.h"
-#include "Ui/ListViewItem.h"
 
 namespace traktor
 {

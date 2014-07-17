@@ -61,8 +61,8 @@ void DialogGtk::on_remove(Gtk::Widget* widget)
 
 void DialogGtk::on_size_allocate(Gtk::Allocation& allocation)
 {
-	SizeEvent s(m_owner, 0, Size(allocation.get_width(), allocation.get_height()));
-	m_owner->raiseEvent(EiSize, &s);
+	SizeEvent s(m_owner, Size(allocation.get_width(), allocation.get_height()));
+	m_owner->raiseEvent(&s);
 }
 
 	}

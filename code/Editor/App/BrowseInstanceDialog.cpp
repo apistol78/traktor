@@ -18,13 +18,11 @@
 #include "Ui/TableLayout.h"
 #include "Ui/TreeView.h"
 #include "Ui/TreeViewItem.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/MiniButton.h"
 #include "Ui/Custom/PreviewList/PreviewItem.h"
 #include "Ui/Custom/PreviewList/PreviewItems.h"
 #include "Ui/Custom/PreviewList/PreviewList.h"
-#include "Ui/Events/CommandEvent.h"
 
 // Resources
 #include "Resources/Files.h"
@@ -103,7 +101,7 @@ bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, co
 	if (!m_treeDatabase->create(left, ui::WsClientBorder | ui::WsTabStop | ui::TreeView::WsTreeButtons | ui::TreeView::WsTreeLines))
 		return false;
 	m_treeDatabase->addImage(ui::Bitmap::load(c_ResourceFiles, sizeof(c_ResourceFiles), L"png"), 4);
-	m_treeDatabase->addSelectEventHandler(ui::createMethodHandler(this, &BrowseInstanceDialog::eventTreeItemSelected));
+	m_treeDatabase->addEventHandler< ui::SelectionChangeEvent >(this, &BrowseInstanceDialog::eventTreeItemSelected);
 
 	Ref< ui::Container > right = new ui::Container();
 	if (!right->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"22,100%", 0, 0)))
@@ -116,8 +114,8 @@ bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, co
 	m_listInstances = new ui::custom::PreviewList();
 	if (!m_listInstances->create(right, ui::WsClientBorder | ui::WsDoubleBuffer | ui::WsTabStop))
 		return false;
-	m_listInstances->addSelectEventHandler(ui::createMethodHandler(this, &BrowseInstanceDialog::eventListItemSelected));
-	m_listInstances->addDoubleClickEventHandler(ui::createMethodHandler(this, &BrowseInstanceDialog::eventListDoubleClick));
+	m_listInstances->addEventHandler< ui::custom::PreviewSelectionChangeEvent >(this, &BrowseInstanceDialog::eventListItemSelected);
+	m_listInstances->addEventHandler< ui::MouseDoubleClickEvent >(this, &BrowseInstanceDialog::eventListDoubleClick);
 
 	// Create browse preview generators.
 	TypeInfoSet browsePreviewImplTypes;
@@ -203,11 +201,9 @@ void BrowseInstanceDialog::buildGroupItems(ui::TreeView* treeView, ui::TreeViewI
 	groupItem->setData(L"INSTANCE_ITEMS", instanceItems);
 }
 
-void BrowseInstanceDialog::eventTreeItemSelected(ui::Event* event)
+void BrowseInstanceDialog::eventTreeItemSelected(ui::SelectionChangeEvent* event)
 {
-	Ref< ui::TreeViewItem > item = dynamic_type_cast< ui::TreeViewItem* >(
-		static_cast< ui::CommandEvent* >(event)->getItem()
-	);
+	Ref< ui::TreeViewItem > item = m_treeDatabase->getSelectedItem();
 
 	// Stop all pending preview tasks.
 	m_previewTasks.clear();
@@ -235,19 +231,16 @@ void BrowseInstanceDialog::eventTreeItemSelected(ui::Event* event)
 		m_listInstances->setItems(0);
 }
 
-void BrowseInstanceDialog::eventListItemSelected(ui::Event* event)
+void BrowseInstanceDialog::eventListItemSelected(ui::custom::PreviewSelectionChangeEvent* event)
 {
-	Ref< ui::custom::PreviewItem > item = dynamic_type_cast< ui::custom::PreviewItem* >(
-		static_cast< ui::CommandEvent* >(event)->getItem()
-	);
-
+	Ref< ui::custom::PreviewItem > item = event->getItem();
 	if (item)
 		m_instance = item->getData< db::Instance >(L"INSTANCE");
 	else
 		m_instance = 0;
 }
 
-void BrowseInstanceDialog::eventListDoubleClick(ui::Event* event)
+void BrowseInstanceDialog::eventListDoubleClick(ui::MouseDoubleClickEvent* event)
 {
 	if (m_instance)
 		endModal(ui::DrOk);

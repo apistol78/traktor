@@ -22,12 +22,6 @@ public:
 
 	void removeAll();
 
-	void addPlayEventHandler(ui::EventHandler* eventHandler);
-
-	void addStopEventHandler(ui::EventHandler* eventHandler);
-
-	void addCaptureEventHandler(ui::EventHandler* eventHandler);
-
 private:
 	RefArray< TargetInstanceListItem > m_items;
 

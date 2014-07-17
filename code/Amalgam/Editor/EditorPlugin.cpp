@@ -12,8 +12,11 @@
 #include "Amalgam/Editor/Tool/DeployTargetAction.h"
 #include "Amalgam/Editor/Tool/LaunchTargetAction.h"
 #include "Amalgam/Editor/Tool/MigrateTargetAction.h"
-#include "Amalgam/Editor/Ui/TargetListControl.h"
+#include "Amalgam/Editor/Ui/TargetCaptureEvent.h"
 #include "Amalgam/Editor/Ui/TargetInstanceListItem.h"
+#include "Amalgam/Editor/Ui/TargetListControl.h"
+#include "Amalgam/Editor/Ui/TargetPlayEvent.h"
+#include "Amalgam/Editor/Ui/TargetStopEvent.h"
 #include "Amalgam/Impl/CaptureScreenShot.h"
 #include "Amalgam/Impl/CapturedScreenShot.h"
 #include "Core/Io/FileSystem.h"
@@ -44,14 +47,13 @@
 #include "Ui/Command.h"
 #include "Ui/Container.h"
 #include "Ui/MenuItem.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
+#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/Custom/ToolBar/ToolBarDropDown.h"
 #include "Ui/Custom/ToolBar/ToolBarDropMenu.h"
 #include "Ui/Custom/ToolBar/ToolBarEmbed.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
-#include "Ui/Events/CommandEvent.h"
 
 namespace traktor
 {
@@ -124,7 +126,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	// Create toolbar; add all targets as drop down items.
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(container);
-	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &EditorPlugin::eventToolBarClick));
+	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &EditorPlugin::eventToolBarClick);
 
 	m_toolTargets = new ui::custom::ToolBarDropDown(ui::Command(L"Amalgam.Targets"), 120, i18n::Text(L"AMALGAM_TARGETS"));
 	m_toolBar->addItem(m_toolTargets);
@@ -146,9 +148,9 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	// Create target configuration list control.
 	m_targetList = new TargetListControl();
 	m_targetList->create(container);
-	m_targetList->addPlayEventHandler(ui::createMethodHandler(this, &EditorPlugin::eventTargetListPlay));
-	m_targetList->addStopEventHandler(ui::createMethodHandler(this, &EditorPlugin::eventTargetListStop));
-	m_targetList->addCaptureEventHandler(ui::createMethodHandler(this, &EditorPlugin::eventTargetListCapture));
+	m_targetList->addEventHandler< TargetPlayEvent >(this, &EditorPlugin::eventTargetListPlay);
+	m_targetList->addEventHandler< TargetStopEvent >(this, &EditorPlugin::eventTargetListStop);
+	m_targetList->addEventHandler< TargetCaptureEvent >(this, &EditorPlugin::eventTargetListCapture);
 
 	m_site->createAdditionalPanel(container, 200, false);
 
@@ -162,7 +164,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_threadTargetActions = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadTargetActions), L"Targets");
 	m_threadTargetActions->start();
 
-	container->addTimerEventHandler(ui::createMethodHandler(this, &EditorPlugin::eventTimer));
+	container->addEventHandler< ui::TimerEvent >(this, &EditorPlugin::eventTimer);
 	container->startTimer(30);
 
 	return true;
@@ -301,10 +303,9 @@ void EditorPlugin::handleWorkspaceClosed()
 	m_connectionManager = 0;
 }
 
-void EditorPlugin::eventTargetListPlay(ui::Event* event)
+void EditorPlugin::eventTargetListPlay(TargetPlayEvent* event)
 {
-	ui::CommandEvent* cmdEvent = checked_type_cast< ui::CommandEvent*, false >(event);
-	TargetInstance* targetInstance = checked_type_cast< TargetInstance*, false >(cmdEvent->getItem());
+	TargetInstance* targetInstance = event->getInstance();
 
 	// Get selected target host.
 	std::wstring deployHost = L"";
@@ -427,12 +428,10 @@ void EditorPlugin::eventTargetListPlay(ui::Event* event)
 	m_targetList->requestUpdate();
 }
 
-void EditorPlugin::eventTargetListStop(ui::Event* event)
+void EditorPlugin::eventTargetListStop(TargetStopEvent* event)
 {
-	ui::CommandEvent* cmdEvent = checked_type_cast< ui::CommandEvent*, false >(event);
-
-	TargetInstance* targetInstance = checked_type_cast< TargetInstance*, false >(cmdEvent->getItem());
-	int32_t connectionId = cmdEvent->getCommand().getId();
+	TargetInstance* targetInstance = event->getInstance();
+	int32_t connectionId = event->getConnectionIndex();
 
 	RefArray< TargetConnection > connections = targetInstance->getConnections();
 	if (connectionId >= 0 && connectionId < int32_t(connections.size()))
@@ -447,12 +446,10 @@ void EditorPlugin::eventTargetListStop(ui::Event* event)
 	m_targetList->requestUpdate();
 }
 
-void EditorPlugin::eventTargetListCapture(ui::Event* event)
+void EditorPlugin::eventTargetListCapture(TargetCaptureEvent* event)
 {
-	ui::CommandEvent* cmdEvent = checked_type_cast< ui::CommandEvent*, false >(event);
-
-	TargetInstance* targetInstance = checked_type_cast< TargetInstance*, false >(cmdEvent->getItem());
-	int32_t connectionId = cmdEvent->getCommand().getId();
+	TargetInstance* targetInstance = event->getInstance();
+	int32_t connectionId = event->getConnectionIndex();
 
 	RefArray< TargetConnection > connections = targetInstance->getConnections();
 	if (connectionId >= 0 && connectionId < int32_t(connections.size()))
@@ -486,7 +483,7 @@ void EditorPlugin::eventTargetListCapture(ui::Event* event)
 	}
 }
 
-void EditorPlugin::eventToolBarClick(ui::Event* event)
+void EditorPlugin::eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event)
 {
 	int32_t selectedTargetIndex = m_toolTargets->getSelected();
 	if (selectedTargetIndex < 0 || selectedTargetIndex >= int32_t(m_targetInstances.size()))
@@ -506,7 +503,7 @@ void EditorPlugin::eventToolBarClick(ui::Event* event)
 	m_targetList->requestUpdate();
 }
 
-void EditorPlugin::eventTimer(ui::Event* event)
+void EditorPlugin::eventTimer(ui::TimerEvent* event)
 {
 	if (
 		m_targetManager &&

@@ -19,21 +19,19 @@
 #include "Scene/Editor/DefaultRenderControl.h"
 #include "Scene/Editor/Modifiers/TranslateModifier.h"
 #include "Scene/Editor/Modifiers/RotateModifier.h"
-#include "Scene/Editor/FrameEvent.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/IEntityEditor.h"
+#include "Scene/Editor/Events/FrameEvent.h"
+#include "Scene/Editor/Events/ModifierChangedEvent.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Command.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/NumericEditValidator.h"
 #include "Ui/Slider.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Events/CommandEvent.h"
-#include "Ui/Events/MouseEvent.h"
-#include "Ui/Events/IdleEvent.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
+#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/Custom/ToolBar/ToolBarDropDown.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 #include "Ui/Custom/StatusBar/StatusBar.h"
@@ -99,7 +97,6 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolBarActions->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBarActions->addItem(m_toolToggleSnap);
 	m_toolBarActions->addItem(m_toolSnapSpacing);
-	m_toolBarActions->addClickEventHandler(ui::createMethodHandler(this, &ScenePreviewControl::eventToolBarActionClicked));
 	m_toolBarActions->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBarActions->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_REWIND"), 17, ui::Command(L"Scene.Editor.Rewind")));
 	m_toolBarActions->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_PLAY"), 18, ui::Command(L"Scene.Editor.Play")));
@@ -108,6 +105,7 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolBarActions->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_SINGLE_VIEW"), 13, ui::Command(L"Scene.Editor.SingleView")));
 	m_toolBarActions->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_DOUBLE_VIEW"), 14, ui::Command(L"Scene.Editor.DoubleView")));
 	m_toolBarActions->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_QUADRUPLE_VIEW"), 15, ui::Command(L"Scene.Editor.QuadrupleView")));
+	m_toolBarActions->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ScenePreviewControl::eventToolBarActionClicked);
 
 	// Let plugins create additional toolbar items.
 	const RefArray< ISceneEditorPlugin >& editorPlugins = context->getEditorPlugins();
@@ -115,7 +113,7 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 		(*i)->create(this, m_toolBarActions);
 
 	m_context = context;
-	m_context->addModifierChangedEventHandler(ui::createMethodHandler(this, &ScenePreviewControl::eventModifierChanged));
+	m_context->addEventHandler< ModifierChangedEvent >(this, &ScenePreviewControl::eventModifierChanged);
 
 	// Create modifiers.
 	m_modifierTranslate = new TranslateModifier(m_context);
@@ -127,9 +125,7 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	updateRenderControls();
 	updateEditState();
 
-	// Register our event handler in case of message idle.
-	m_idleHandler = ui::createMethodHandler(this, &ScenePreviewControl::eventIdle);
-	ui::Application::getInstance()->addEventHandler(ui::EiIdle, m_idleHandler);
+	m_idleEventHandler = ui::Application::getInstance()->addEventHandler< ui::IdleEvent >(this, &ScenePreviewControl::eventIdle);
 
 	m_timer.start();
 	return true;
@@ -137,12 +133,7 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 
 void ScenePreviewControl::destroy()
 {
-	// Remove our idle handler first.
-	if (m_idleHandler)
-	{
-		ui::Application::getInstance()->removeEventHandler(ui::EiIdle, m_idleHandler);
-		m_idleHandler = 0;
-	}
+	ui::Application::getInstance()->removeEventHandler< ui::IdleEvent >(m_idleEventHandler);
 
 	// Save editor configuration.
 	Ref< PropertyGroup > settings = m_context->getEditor()->checkoutGlobalSettings();
@@ -427,22 +418,21 @@ void ScenePreviewControl::updateEditState()
 	m_toolBarActions->update();
 }
 
-void ScenePreviewControl::eventToolBarActionClicked(ui::Event* event)
+void ScenePreviewControl::eventToolBarActionClicked(ui::custom::ToolBarButtonClickEvent* event)
 {
-	const ui::Command& command = checked_type_cast< ui::CommandEvent* >(event)->getCommand();
+	const ui::Command& command = event->getCommand();
 	handleCommand(command);
 }
 
-void ScenePreviewControl::eventModifierChanged(ui::Event* event)
+void ScenePreviewControl::eventModifierChanged(ModifierChangedEvent* event)
 {
 	m_toolToggleTranslate->setToggled(m_context->getModifier() == m_modifierTranslate);
 	m_toolToggleRotate->setToggled(m_context->getModifier() == m_modifierRotate);
 	m_toolBarActions->update();
 }
 
-void ScenePreviewControl::eventIdle(ui::Event* event)
+void ScenePreviewControl::eventIdle(ui::IdleEvent* event)
 {
-	ui::IdleEvent* idleEvent = checked_type_cast< ui::IdleEvent* >(event);
 	if (isVisible(true))
 	{
 		Ref< Scene > scene = m_context->getScene();
@@ -505,7 +495,7 @@ void ScenePreviewControl::eventIdle(ui::Event* event)
 		// Update context time.
 		m_context->setTime(scaledTime + scaledDeltaTime);
 
-		idleEvent->requestMore();
+		event->requestMore();
 	}
 }
 

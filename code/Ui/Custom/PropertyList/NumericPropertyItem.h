@@ -1,15 +1,15 @@
 #ifndef traktor_ui_custom_NumericPropertyItem_H
 #define traktor_ui_custom_NumericPropertyItem_H
 
-#include "Ui/Custom/PropertyList/PropertyItem.h"
 #include "Ui/Point.h"
+#include "Ui/Custom/PropertyList/PropertyItem.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_CUSTOM_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -18,7 +18,6 @@ namespace traktor
 	{
 
 class Edit;
-class Event;
 
 		namespace custom
 		{
@@ -54,11 +53,11 @@ protected:
 
 	virtual void resizeInPlaceControls(const Rect& rc, std::vector< WidgetRect >& outChildRects);
 
-	virtual void mouseButtonDown(MouseEvent* event);
+	virtual void mouseButtonDown(MouseButtonDownEvent* event);
 
-	virtual void mouseButtonUp(MouseEvent* event);
+	virtual void mouseButtonUp(MouseButtonUpEvent* event);
 
-	virtual void mouseMove(MouseEvent* event);
+	virtual void mouseMove(MouseMoveEvent* event);
 
 	virtual void paintValue(Canvas& canvas, const Rect& rc);
 
@@ -76,7 +75,7 @@ private:
 	bool m_mouseAdjust;
 	Point m_mouseLastPosition;
 
-	void eventEditFocus(Event* event);
+	void eventEditFocus(FocusEvent* event);
 };
 
 		}

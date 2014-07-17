@@ -1,8 +1,10 @@
-#include "Ui/Win32/NotificationIconWin32.h"
-#include "Ui/Win32/BitmapWin32.h"
-#include "Ui/EventSubject.h"
-#include "Ui/Events/MouseEvent.h"
 #include "Core/Misc/TString.h"
+#include "Ui/EventSubject.h"
+#include "Ui/Events/MouseButtonDownEvent.h"
+#include "Ui/Events/MouseButtonUpEvent.h"
+#include "Ui/Events/MouseDoubleClickEvent.h"
+#include "Ui/Win32/BitmapWin32.h"
+#include "Ui/Win32/NotificationIconWin32.h"
 
 namespace traktor
 {
@@ -76,13 +78,12 @@ LRESULT NotificationIconWin32::eventNotification(HWND hWnd, UINT message, WPARAM
 	{
 	case WM_LBUTTONDBLCLK:
 		{
-			MouseEvent m(
+			MouseDoubleClickEvent m(
 				m_owner,
-				0,
-				MouseEvent::BtLeft,
+				MbtLeft,
 				Point(pnt.x, pnt.y)
 			);
-			m_owner->raiseEvent(EiDoubleClick, &m);
+			m_owner->raiseEvent(&m);
 			if (!m.consumed())
 				pass = true;
 		}
@@ -90,13 +91,12 @@ LRESULT NotificationIconWin32::eventNotification(HWND hWnd, UINT message, WPARAM
 
 	case WM_RBUTTONDBLCLK:
 		{
-			MouseEvent m(
+			MouseDoubleClickEvent m(
 				m_owner,
-				0,
-				MouseEvent::BtRight,
+				MbtRight,
 				Point(pnt.x, pnt.y)
 			);
-			m_owner->raiseEvent(EiDoubleClick, &m);
+			m_owner->raiseEvent(&m);
 			if (!m.consumed())
 				pass = true;
 		}
@@ -104,13 +104,12 @@ LRESULT NotificationIconWin32::eventNotification(HWND hWnd, UINT message, WPARAM
 
 	case WM_LBUTTONDOWN:
 		{
-			MouseEvent m(
+			MouseButtonDownEvent m(
 				m_owner,
-				0,
-				MouseEvent::BtLeft,
+				MbtLeft,
 				Point(pnt.x, pnt.y)
 			);
-			m_owner->raiseEvent(EiButtonDown, &m);
+			m_owner->raiseEvent(&m);
 			if (!m.consumed())
 				pass = true;
 		}
@@ -118,13 +117,12 @@ LRESULT NotificationIconWin32::eventNotification(HWND hWnd, UINT message, WPARAM
 
 	case WM_RBUTTONDOWN:
 		{
-			MouseEvent m(
+			MouseButtonDownEvent m(
 				m_owner,
-				0,
-				MouseEvent::BtRight,
+				MbtRight,
 				Point(pnt.x, pnt.y)
 			);
-			m_owner->raiseEvent(EiButtonDown, &m);
+			m_owner->raiseEvent(&m);
 			if (!m.consumed())
 				pass = true;
 		}
@@ -132,13 +130,12 @@ LRESULT NotificationIconWin32::eventNotification(HWND hWnd, UINT message, WPARAM
 
 	case WM_LBUTTONUP:
 		{
-			MouseEvent m(
+			MouseButtonUpEvent m(
 				m_owner,
-				0,
-				MouseEvent::BtLeft,
+				MbtLeft,
 				Point(pnt.x, pnt.y)
 			);
-			m_owner->raiseEvent(EiButtonUp, &m);
+			m_owner->raiseEvent(&m);
 			if (!m.consumed())
 				pass = true;
 		}
@@ -146,13 +143,12 @@ LRESULT NotificationIconWin32::eventNotification(HWND hWnd, UINT message, WPARAM
 
 	case WM_RBUTTONUP:
 		{
-			MouseEvent m(
+			MouseButtonUpEvent m(
 				m_owner,
-				0,
-				MouseEvent::BtRight,
+				MbtRight,
 				Point(pnt.x, pnt.y)
 			);
-			m_owner->raiseEvent(EiButtonUp, &m);
+			m_owner->raiseEvent(&m);
 			if (!m.consumed())
 				pass = true;
 		}

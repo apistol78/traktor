@@ -1,9 +1,6 @@
-#include "Ui/Custom/MiniButton.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/CommandEvent.h"
-#include "Ui/Events/PaintEvent.h"
+#include "Ui/Custom/MiniButton.h"
 
 namespace traktor
 {
@@ -23,9 +20,9 @@ bool MiniButton::create(Widget* parent, const std::wstring& text)
 	
 	setText(text);
 	
-	addButtonDownEventHandler(createMethodHandler(this, &MiniButton::eventButtonDown));
-	addButtonUpEventHandler(createMethodHandler(this, &MiniButton::eventButtonUp));
-	addPaintEventHandler(createMethodHandler(this, &MiniButton::eventPaint));
+	addEventHandler< MouseButtonDownEvent >(this, &MiniButton::eventButtonDown);
+	addEventHandler< MouseButtonUpEvent >(this, &MiniButton::eventButtonUp);
+	addEventHandler< PaintEvent >(this, &MiniButton::eventPaint);
 	
 	return true;
 }
@@ -38,9 +35,9 @@ bool MiniButton::create(Widget* parent, Bitmap* image)
 	m_state = StReleased;
 	m_image  = image;
 	
-	addButtonDownEventHandler(createMethodHandler(this, &MiniButton::eventButtonDown));
-	addButtonUpEventHandler(createMethodHandler(this, &MiniButton::eventButtonUp));
-	addPaintEventHandler(createMethodHandler(this, &MiniButton::eventPaint));
+	addEventHandler< MouseButtonDownEvent >(this, &MiniButton::eventButtonDown);
+	addEventHandler< MouseButtonUpEvent >(this, &MiniButton::eventButtonUp);
+	addEventHandler< PaintEvent >(this, &MiniButton::eventPaint);
 	
 	return true;
 }
@@ -58,12 +55,7 @@ Size MiniButton::getPreferedSize() const
 		return Size(16, 16);
 }
 
-void MiniButton::addClickEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiClick, eventHandler);
-}
-
-void MiniButton::eventButtonDown(Event* event)
+void MiniButton::eventButtonDown(MouseButtonDownEvent* event)
 {
 	m_state = StPushed;
 	update();
@@ -72,7 +64,7 @@ void MiniButton::eventButtonDown(Event* event)
 	event->consume();
 }
 
-void MiniButton::eventButtonUp(Event* event)
+void MiniButton::eventButtonUp(MouseButtonUpEvent* event)
 {
 	releaseCapture();
 
@@ -81,17 +73,16 @@ void MiniButton::eventButtonUp(Event* event)
 		m_state = StReleased;
 		update();
 	
-		CommandEvent cmdEvent(this, this);
-		raiseEvent(EiClick, &cmdEvent);
+		ButtonClickEvent clickEvent(this);
+		raiseEvent(&clickEvent);
 	}
 	
 	event->consume();
 }
 
-void MiniButton::eventPaint(Event* event)
+void MiniButton::eventPaint(PaintEvent* event)
 {
-	PaintEvent* paintEvent = checked_type_cast< PaintEvent* >(event);
-	Canvas& canvas = paintEvent->getCanvas();
+	Canvas& canvas = event->getCanvas();
 	
 	Rect rcInner = getInnerRect();
 	

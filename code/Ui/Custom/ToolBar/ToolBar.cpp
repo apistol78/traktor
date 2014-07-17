@@ -1,16 +1,12 @@
+#include "Drawing/Image.h"
+#include "Drawing/Filters/BrightnessContrastFilter.h"
+#include "Drawing/Filters/GrayscaleFilter.h"
+#include "Ui/Application.h"
+#include "Ui/Bitmap.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarItem.h"
 #include "Ui/Custom/ToolTip.h"
 #include "Ui/Custom/ToolTipEvent.h"
-#include "Ui/Application.h"
-#include "Ui/Bitmap.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/MouseEvent.h"
-#include "Ui/Events/PaintEvent.h"
-#include "Ui/Events/CommandEvent.h"
-#include "Drawing/Filters/GrayscaleFilter.h"
-#include "Drawing/Filters/BrightnessContrastFilter.h"
-#include "Drawing/Image.h"
 
 namespace traktor
 {
@@ -42,14 +38,14 @@ bool ToolBar::create(Widget* parent, int style)
 	if (!Widget::create(parent, WsDoubleBuffer))
 		return false;
 
-	addMouseMoveEventHandler(createMethodHandler(this, &ToolBar::eventMouseMove));
-	addButtonDownEventHandler(createMethodHandler(this, &ToolBar::eventButtonDown));
-	addButtonUpEventHandler(createMethodHandler(this, &ToolBar::eventButtonUp));
-	addPaintEventHandler(createMethodHandler(this, &ToolBar::eventPaint));
+	addEventHandler< MouseMoveEvent >(this, &ToolBar::eventMouseMove);
+	addEventHandler< MouseButtonDownEvent >(this, &ToolBar::eventButtonDown);
+	addEventHandler< MouseButtonUpEvent >(this, &ToolBar::eventButtonUp);
+	addEventHandler< PaintEvent >(this, &ToolBar::eventPaint);
 
 	m_toolTip = new ToolTip();
 	m_toolTip->create(this);
-	m_toolTip->addShowEventHandler(createMethodHandler(this, &ToolBar::eventShowTip));
+	m_toolTip->addEventHandler< ToolTipEvent >(this, &ToolBar::eventShowTip);
 
 	m_style = style;
 	return true;
@@ -142,11 +138,6 @@ Ref< ToolBarItem > ToolBar::getItem(const Point& at)
 	return 0;
 }
 
-void ToolBar::addClickEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiClick, eventHandler);
-}
-
 Size ToolBar::getPreferedSize() const
 {
 	int width = getParent()->getInnerRect().getWidth();
@@ -161,24 +152,23 @@ Size ToolBar::getPreferedSize() const
 	return Size(width, height + c_marginHeight * 2 + 1);
 }
 
-void ToolBar::eventMouseMove(Event* event)
+void ToolBar::eventMouseMove(MouseMoveEvent* event)
 {
 	if (!isEnable())
 		return;
 
-	MouseEvent* mouseEvent = checked_type_cast< MouseEvent* >(event);
-	ToolBarItem* item = getItem(mouseEvent->getPosition());
+	ToolBarItem* item = getItem(event->getPosition());
 	if (item != m_trackItem)
 	{
 		if (m_trackItem)
 		{
-			m_trackItem->mouseLeave(this, mouseEvent);
+			m_trackItem->mouseLeave(this, event);
 			m_trackItem = 0;
 		}
 
 		m_trackItem = item;
 
-		if (item && item->mouseEnter(this, mouseEvent))
+		if (item && item->mouseEnter(this, event))
 		{
 			setCapture();
 
@@ -187,7 +177,7 @@ void ToolBar::eventMouseMove(Event* event)
 			{
 				std::wstring toolTip;
 				if (item->getToolTip(toolTip))
-					m_toolTip->show(mouseEvent->getPosition(), toolTip);
+					m_toolTip->show(event->getPosition(), toolTip);
 				else
 					m_toolTip->hide();
 			}
@@ -204,38 +194,35 @@ void ToolBar::eventMouseMove(Event* event)
 	}
 }
 
-void ToolBar::eventButtonDown(Event* event)
+void ToolBar::eventButtonDown(MouseButtonDownEvent* event)
 {
 	if (!isEnable())
 		return;
 
-	MouseEvent* mouseEvent = checked_type_cast< MouseEvent* >(event);
-	ToolBarItem* item = getItem(mouseEvent->getPosition());
+	ToolBarItem* item = getItem(event->getPosition());
 	if (item && item->isEnable())
 	{
-		item->buttonDown(this, mouseEvent);
+		item->buttonDown(this, event);
 		update();
 	}
 }
 
-void ToolBar::eventButtonUp(Event* event)
+void ToolBar::eventButtonUp(MouseButtonUpEvent* event)
 {
 	if (!isEnable())
 		return;
 
-	MouseEvent* mouseEvent = checked_type_cast< MouseEvent* >(event);
-	ToolBarItem* item = getItem(mouseEvent->getPosition());
+	ToolBarItem* item = getItem(event->getPosition());
 	if (item && item->isEnable())
 	{
-		item->buttonUp(this, mouseEvent);
+		item->buttonUp(this, event);
 		update();
 	}
 }
 
-void ToolBar::eventPaint(Event* event)
+void ToolBar::eventPaint(PaintEvent* event)
 {
-	PaintEvent* paintEvent = checked_type_cast< PaintEvent* >(event);
-	Canvas& canvas = paintEvent->getCanvas();
+	Canvas& canvas = event->getCanvas();
 	Rect rc = getInnerRect();
 
 	Color4ub c1 = getSystemColor(ScMenuBackground);
@@ -273,19 +260,18 @@ void ToolBar::eventPaint(Event* event)
 		x += size.cx + c_itemPad;
 	}
 
-	paintEvent->consume();
+	event->consume();
 }
 
-void ToolBar::eventShowTip(Event* event)
+void ToolBar::eventShowTip(ToolTipEvent* event)
 {
-	ToolTipEvent* tipEvent = checked_type_cast< ToolTipEvent* >(event);
-	Ref< ToolBarItem > item = getItem(tipEvent->getPosition());
+	Ref< ToolBarItem > item = getItem(event->getPosition());
 	if (item)
 	{
 		std::wstring toolTip;
 		if (item->getToolTip(toolTip))
 			m_toolTip->show(
-				tipEvent->getPosition(),
+				event->getPosition(),
 				toolTip
 			);
 	}

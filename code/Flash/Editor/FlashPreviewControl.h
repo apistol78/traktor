@@ -100,7 +100,7 @@ public:
 	FlashMoviePlayer* getMoviePlayer() const { return m_moviePlayer; }
 
 private:
-	Ref< ui::EventHandler > m_idleHandler;
+	Ref< ui::EventSubject::IEventHandler > m_idleEventHandler;
 	Ref< db::Database > m_database;
 #if T_USE_ACCELERATED_RENDERER
 	Ref< render::IRenderView > m_renderView;
@@ -117,25 +117,25 @@ private:
 
 	ui::Point getTwips(const ui::Point& pt) const;
 
-	void eventSize(ui::Event* event);
+	void eventSize(ui::SizeEvent* event);
 
-	void eventPaint(ui::Event* event);
+	void eventPaint(ui::PaintEvent* event);
 
-	void eventIdle(ui::Event* event);
+	void eventIdle(ui::IdleEvent* event);
 
-	void eventKey(ui::Event* event);
+	void eventKey(ui::KeyEvent* event);
 
-	void eventKeyDown(ui::Event* event);
+	void eventKeyDown(ui::KeyDownEvent* event);
 
-	void eventKeyUp(ui::Event* event);
+	void eventKeyUp(ui::KeyUpEvent* event);
 
-	void eventButtonDown(ui::Event* event);
+	void eventButtonDown(ui::MouseButtonDownEvent* event);
 
-	void eventButtonUp(ui::Event* event);
+	void eventButtonUp(ui::MouseButtonUpEvent* event);
 
-	void eventMouseMove(ui::Event* event);
+	void eventMouseMove(ui::MouseMoveEvent* event);
 
-	void eventMouseWheel(ui::Event* event);
+	void eventMouseWheel(ui::MouseWheelEvent* event);
 };
 
 	}

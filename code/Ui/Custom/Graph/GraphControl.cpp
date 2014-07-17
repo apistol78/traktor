@@ -4,13 +4,14 @@
 #include "Drawing/Image.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/MouseEvent.h"
-#include "Ui/Events/PaintEvent.h"
 #include "Ui/Custom/Graph/GraphControl.h"
 #include "Ui/Custom/Graph/PaintSettings.h"
 #include "Ui/Custom/Graph/Node.h"
+#include "Ui/Custom/Graph/NodeActivateEvent.h"
+#include "Ui/Custom/Graph/NodeMovedEvent.h"
 #include "Ui/Custom/Graph/Edge.h"
+#include "Ui/Custom/Graph/EdgeConnectEvent.h"
+#include "Ui/Custom/Graph/EdgeDisconnectEvent.h"
 #include "Ui/Custom/Graph/Pin.h"
 #include "Ui/Custom/Graph/SelectEvent.h"
 
@@ -53,11 +54,7 @@ enum Modes
 	MdDrawSelectionRectangle
 };
 
-#if T_GRAPH_USE_XTRME
-T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.GraphControl", GraphControl, xtrme::WidgetXtrme)
-#else
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.GraphControl", GraphControl, Widget)
-#endif
 
 GraphControl::GraphControl()
 :	m_mode(MdNothing)
@@ -69,26 +66,17 @@ GraphControl::GraphControl()
 
 bool GraphControl::create(Widget* parent, int style)
 {
-#if T_GRAPH_USE_XTRME
-	if (!WidgetXtrme::create(parent, style))
-		return false;
-#else
 	if (!Widget::create(parent, style))
 		return false;
-#endif
 
 	m_paintSettings = new PaintSettings(getFont());
 	m_imageBackground = Bitmap::load(c_ResourceBackground, sizeof(c_ResourceBackground), L"png");
 
-	addButtonDownEventHandler(createMethodHandler(this, &GraphControl::eventMouseDown));
-	addButtonUpEventHandler(createMethodHandler(this, &GraphControl::eventMouseUp));
-	addMouseMoveEventHandler(createMethodHandler(this, &GraphControl::eventMouseMove));
-	addDoubleClickEventHandler(createMethodHandler(this, &GraphControl::eventDoubleClick));
-#if T_GRAPH_USE_XTRME
-	addPaintXtrmeEventHandler(createMethodHandler(this, &GraphControl::eventPaint));
-#else
-	addPaintEventHandler(createMethodHandler(this, &GraphControl::eventPaint));
-#endif
+	addEventHandler< MouseButtonDownEvent >(this, &GraphControl::eventMouseDown);
+	addEventHandler< MouseButtonUpEvent >(this, &GraphControl::eventMouseUp);
+	addEventHandler< MouseMoveEvent >(this, &GraphControl::eventMouseMove);
+	addEventHandler< MouseDoubleClickEvent >(this, &GraphControl::eventDoubleClick);
+	addEventHandler< PaintEvent >(this, &GraphControl::eventPaint);
 
 	m_offset.cx =
 	m_offset.cy = 0;
@@ -108,12 +96,7 @@ void GraphControl::destroy()
 {
 	m_nodes.clear();
 	m_edges.clear();
-
-#if T_GRAPH_USE_XTRME
-	WidgetXtrme::destroy();
-#else
 	Widget::destroy();
-#endif
 }
 
 void GraphControl::addNode(Node* node)
@@ -338,8 +321,8 @@ void GraphControl::alignNodes(Alignment align)
 		{
 			(*i)->setPosition(pt);
 
-			Event event(this, *i);
-			raiseEvent(GraphControl::EiNodeMoved, &event);
+			NodeMovedEvent event(this, *i);
+			raiseEvent(&event);
 		}
 	}
 }
@@ -401,38 +384,13 @@ void GraphControl::evenSpace(EvenSpace space)
 		{
 			(*i)->setPosition(pt);
 
-			Event event(this, *i);
-			raiseEvent(GraphControl::EiNodeMoved, &event);
+			NodeMovedEvent event(this, *i);
+			raiseEvent(&event);
 		}
 
 		x += rc.getWidth() + spaceHoriz;
 		y += rc.getHeight() + spaceVert;
 	}
-}
-
-void GraphControl::addSelectEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiSelectionChange, eventHandler);
-}
-
-void GraphControl::addNodeDoubleClickEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiNodeDoubleClick, eventHandler);
-}
-
-void GraphControl::addNodeMovedEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiNodeMoved, eventHandler);
-}
-
-void GraphControl::addEdgeConnectEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiEdgeConnect, eventHandler);
-}
-
-void GraphControl::addEdgeDisconnectEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiEdgeDisconnect, eventHandler);
 }
 
 void GraphControl::beginSelectModification()
@@ -469,15 +427,13 @@ bool GraphControl::endSelectModification()
 		return false;
 
 	SelectEvent selectEvent(this, nodeSelectChanged, edgeSelectChanged);
-	raiseEvent(EiSelectionChange, &selectEvent);
+	raiseEvent(&selectEvent);
 	
 	return true;
 }
 
-void GraphControl::eventMouseDown(Event* e)
+void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 {
-	MouseEvent* m = static_cast< MouseEvent* >(e);
-
 	setFocus();
 
 	m_moveAll = false;
@@ -488,7 +444,7 @@ void GraphControl::eventMouseDown(Event* e)
 
 	// Save origin of drag and where the cursor is currently at.
 	m_cursor =
-	m_moveOrigin = m->getPosition();
+	m_moveOrigin = event->getPosition();
 
 	// Save positions of all nodes so we can issue node moved events later..
 	m_nodePositions.resize(m_nodes.size());
@@ -496,11 +452,11 @@ void GraphControl::eventMouseDown(Event* e)
 		m_nodePositions[i] = m_nodes[i]->getPosition();
 
 	// If user holds down ALT we should move entire graph.
-	if ((e->getKeyState() & KsMenu) != 0)
+	if ((event->getKeyState() & KsMenu) != 0)
 	{
 		m_moveAll = true;
 		setCapture();
-		e->consume();
+		event->consume();
 		return;
 	}
 
@@ -517,7 +473,7 @@ void GraphControl::eventMouseDown(Event* e)
 		// Update selection.
 		if (!m_selectedNode->isSelected())
 		{
-			if (!(e->getKeyState() & KsShift))
+			if (!(event->getKeyState() & KsShift))
 			{
 				// Deselect all other nodes.
 				for (RefArray< Node >::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
@@ -547,7 +503,7 @@ void GraphControl::eventMouseDown(Event* e)
 		endSelectModification();
 
 		// Check if an output pin was selected.
-		if (m->getButton() == MouseEvent::BtLeft)
+		if (event->getButton() == MbtLeft)
 		{
 			Ref< Pin > pin = m_selectedNode->getPinAt(m_cursor - m_offset);
 			if (pin)
@@ -568,8 +524,9 @@ void GraphControl::eventMouseDown(Event* e)
 							m_selectedPin = edge->getSourcePin();
 							m_edges.erase(i);
 
-							Event event(this, edge);
-							raiseEvent(EiEdgeDisconnect, &event);
+							EdgeDisconnectEvent edgeDisconnectEvent(this, edge);
+							raiseEvent(&edgeDisconnectEvent);
+
 							break;
 						}
 					}
@@ -581,18 +538,18 @@ void GraphControl::eventMouseDown(Event* e)
 							pin
 						);
 
-						Event event(this, edge);
-						raiseEvent(EiEdgeConnect, &event);
+						EdgeConnectEvent edgeConnectEvent(this, edge);
+						raiseEvent(&edgeConnectEvent);
 
 						// Keep connecting edges if shift is being held.
-						if ((e->getKeyState() & KsShift) == 0)
+						if ((event->getKeyState() & KsShift) == 0)
 						{
 							m_mode = MdNothing;
 							m_selectedPin = 0;
 							releaseCapture();
 						}
 
-						e->consume();
+						event->consume();
 						return;
 					}
 				}
@@ -604,7 +561,7 @@ void GraphControl::eventMouseDown(Event* e)
 					m_mode = MdDrawEdge;
 
 					setCapture();
-					e->consume();
+					event->consume();
 					return;
 				}
 			}
@@ -612,7 +569,7 @@ void GraphControl::eventMouseDown(Event* e)
 			// No pin selected, move the selected node(s).
 			m_moveSelected = true;
 			setCapture();
-			e->consume();
+			event->consume();
 		}
 	}
 	else if (!m_selectedNode && m_selectedEdge)
@@ -623,7 +580,7 @@ void GraphControl::eventMouseDown(Event* e)
 		// Update selection.
 		if (!m_selectedEdge->isSelected())
 		{
-			if (!(e->getKeyState() & KsShift))
+			if (!(event->getKeyState() & KsShift))
 			{
 				// Deselect all other edges.
 				for (RefArray< Edge >::iterator i = m_edges.begin(); i != m_edges.end(); ++i)
@@ -643,15 +600,15 @@ void GraphControl::eventMouseDown(Event* e)
 			update();
 
 		m_mode = MdNothing;
-		e->consume();
+		event->consume();
 	}
 	else
 	{
 		// Selection or move must be made by left mouse button.
-		if (m->getButton() != MouseEvent::BtLeft)
+		if (event->getButton() != MbtLeft)
 			return;
 
-		if (!(e->getKeyState() & KsShift))
+		if (!(event->getKeyState() & KsShift))
 		{
 			beginSelectModification();
 
@@ -666,15 +623,13 @@ void GraphControl::eventMouseDown(Event* e)
 		m_mode = MdDrawSelectionRectangle;
 
 		setCapture();
-		e->consume();
+		event->consume();
 	}
 }
 
-void GraphControl::eventMouseUp(Event* e)
+void GraphControl::eventMouseUp(MouseButtonUpEvent* event)
 {
-	MouseEvent* m = static_cast< MouseEvent* >(e);
-	
-	m_cursor = m->getPosition();
+	m_cursor = event->getPosition();
 
 	if (m_moveAll || m_moveSelected)
 	{
@@ -683,8 +638,8 @@ void GraphControl::eventMouseUp(Event* e)
 		{
 			if (m_nodes[i]->getPosition() != m_nodePositions[i])
 			{
-				Event event(this, m_nodes[i]);
-				raiseEvent(GraphControl::EiNodeMoved, &event);
+				NodeMovedEvent event(this, m_nodes[i]);
+				raiseEvent(&event);
 			}
 		}
 		releaseCapture();
@@ -707,8 +662,8 @@ void GraphControl::eventMouseUp(Event* e)
 							targetPin
 						);
 
-						Event event(this, edge);
-						raiseEvent(EiEdgeConnect, &event);
+						EdgeConnectEvent event(this, edge);
+						raiseEvent(&event);
 					}
 					else if (targetPin == m_selectedPin)
 					{
@@ -767,25 +722,23 @@ void GraphControl::eventMouseUp(Event* e)
 
 	update();
 
-	e->consume();
+	event->consume();
 }
 
-void GraphControl::eventMouseMove(Event* e)
+void GraphControl::eventMouseMove(MouseMoveEvent* event)
 {
-	MouseEvent* m = static_cast< MouseEvent* >(e);
-
 	if (m_moveAll)
 	{
-		Size delta = m->getPosition() - m_moveOrigin;
+		Size delta = event->getPosition() - m_moveOrigin;
 		m_offset += delta;
 		m_cursor += delta;
 		m_edgeOrigin += delta;
-		m_moveOrigin = m->getPosition();
+		m_moveOrigin = event->getPosition();
 		update();
 	}
 	else if (m_moveSelected)
 	{
-		Size offset = m->getPosition() - m_moveOrigin;
+		Size offset = event->getPosition() - m_moveOrigin;
 		for (RefArray< Node >::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
 		{
 			if (!(*i)->isSelected())
@@ -795,7 +748,7 @@ void GraphControl::eventMouseMove(Event* e)
 			(*i)->setPosition(position + offset);
 		}
 
-		m_moveOrigin = m->getPosition();
+		m_moveOrigin = event->getPosition();
 		update();
 	}
 	else if (m_mode == MdConnectEdge || m_mode == MdDrawEdge || m_mode == MdDrawSelectionRectangle)
@@ -805,32 +758,29 @@ void GraphControl::eventMouseMove(Event* e)
 			m_cursor
 		);
 
-		m_cursor = m->getPosition();
+		m_cursor = event->getPosition();
 		updateRect = updateRect.getUnified().contain(m_cursor).inflate(4, 4);
 
 		update(&updateRect);
 	}
 
-	e->consume();
+	event->consume();
 }
 
-void GraphControl::eventDoubleClick(Event* e)
+void GraphControl::eventDoubleClick(MouseDoubleClickEvent* event)
 {
-	MouseEvent* m = static_cast< MouseEvent* >(e);
-
-	if (m->getButton() != MouseEvent::BtLeft || !m_selectedNode)
+	if (event->getButton() != MbtLeft || !m_selectedNode)
 		return;
 
-	MouseEvent mouseEvent(this, m_selectedNode, m->getButton(), m->getPosition());
-	raiseEvent(EiNodeDoubleClick, &mouseEvent);
+	NodeActivateEvent activateEvent(this, m_selectedNode);
+	raiseEvent(&activateEvent);
 
-	e->consume();
+	event->consume();
 }
 
-void GraphControl::eventPaint(Event* e)
+void GraphControl::eventPaint(PaintEvent* event)
 {
-	PaintEvent* p = static_cast< PaintEvent* >(e);
-	Canvas& canvas = p->getCanvas();
+	Canvas& canvas = event->getCanvas();
 	Rect rc = getInnerRect();
 
 	// Select font from settings.
@@ -944,7 +894,7 @@ void GraphControl::eventPaint(Event* e)
 		canvas.drawRect(Rect(m_moveOrigin, m_cursor));
 	}
 
-	e->consume();
+	event->consume();
 }
 
 		}

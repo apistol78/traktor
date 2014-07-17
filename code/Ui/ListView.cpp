@@ -1,9 +1,9 @@
+#include "Core/Log/Log.h"
+#include "Ui/Application.h"
+#include "Ui/Bitmap.h"
 #include "Ui/ListView.h"
 #include "Ui/ListViewItem.h"
-#include "Ui/Bitmap.h"
-#include "Ui/Application.h"
 #include "Ui/Itf/IListView.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -120,21 +120,6 @@ int ListView::getSelectedItems(std::vector< int >& items) const
 {
 	T_ASSERT (m_widget);
 	return static_cast< IListView* >(m_widget)->getSelectedItems(items);
-}
-
-void ListView::addSelectEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiSelectionChange, eventHandler);
-}
-
-void ListView::addActivateEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiActivate, eventHandler);
-}
-
-void ListView::addColumnClickEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiColumnClick, eventHandler);
 }
 
 	}

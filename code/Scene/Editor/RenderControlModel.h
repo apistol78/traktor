@@ -3,13 +3,13 @@
 
 #include "Core/Object.h"
 #include "Ui/Point.h"
+#include "Ui/Events/AllEvents.h"
 
 namespace traktor
 {
 	namespace ui
 	{
 
-class Event;
 class Widget;
 
 	}
@@ -29,13 +29,13 @@ class RenderControlModel : public Object
 public:
 	RenderControlModel();
 
-	void eventButtonDown(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::Event* event, SceneEditorContext* context, const TransformChain& transformChain);
+	void eventButtonDown(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::MouseButtonDownEvent* event, SceneEditorContext* context, const TransformChain& transformChain);
 
-	void eventButtonUp(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::Event* event, SceneEditorContext* context, const TransformChain& transformChain);
+	void eventButtonUp(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::MouseButtonUpEvent* event, SceneEditorContext* context, const TransformChain& transformChain);
 
-	void eventDoubleClick(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::Event* event, SceneEditorContext* context, const TransformChain& transformChain);
+	void eventDoubleClick(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::MouseDoubleClickEvent* event, SceneEditorContext* context, const TransformChain& transformChain);
 
-	void eventMouseMove(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::Event* event, SceneEditorContext* context, const TransformChain& transformChain);
+	void eventMouseMove(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::MouseMoveEvent* event, SceneEditorContext* context, const TransformChain& transformChain);
 
 private:
 	enum ModifyType

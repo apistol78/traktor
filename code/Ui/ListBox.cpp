@@ -1,7 +1,7 @@
-#include "Ui/ListBox.h"
-#include "Ui/Application.h"
-#include "Ui/Itf/IListBox.h"
 #include "Core/Log/Log.h"
+#include "Ui/Application.h"
+#include "Ui/ListBox.h"
+#include "Ui/Itf/IListBox.h"
 
 namespace traktor
 {
@@ -158,11 +158,6 @@ Rect ListBox::getItemRect(int index) const
 {
 	T_ASSERT (m_widget);
 	return static_cast< IListBox* >(m_widget)->getItemRect(index);
-}
-
-void ListBox::addSelectEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiSelectionChange, eventHandler);
 }
 
 	}

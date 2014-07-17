@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_CUSTOM_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -62,9 +62,9 @@ private:
 	Ref< ProgressBar > m_progressBar;
 	Ref< Button > m_buttonAbort;
 
-	void eventAbortClick(Event* event);
+	void eventAbortClick(ButtonClickEvent* event);
 
-	void eventTimer(Event* event);
+	void eventTimer(TimerEvent* event);
 };
 
 		}

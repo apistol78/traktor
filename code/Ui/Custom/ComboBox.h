@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_CUSTOM_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -20,7 +20,6 @@ namespace traktor
 class Button;
 class Edit;
 class ListBox;
-class Event;
 
 		namespace custom
 		{
@@ -56,7 +55,7 @@ private:
 	Ref< Edit > m_edit;
 	Ref< ListBox > m_listBox;
 
-	void eventSize(Event* event);
+	void eventSize(SizeEvent* event);
 };
 
 		}

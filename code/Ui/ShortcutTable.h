@@ -18,6 +18,8 @@ namespace traktor
 	namespace ui
 	{
 
+class KeyDownEvent;
+
 /*! \brief Shortcut table.
  * \ingroup UI
  */
@@ -26,8 +28,6 @@ class T_DLLCLASS ShortcutTable : public EventSubject
 	T_RTTI_CLASS;
 
 public:
-	enum { EiShortcut = EiUser + 1 };
-
 	bool create();
 
 	void destroy();
@@ -38,13 +38,11 @@ public:
 
 	void removeAllCommands();
 
-	void addShortcutEventHandler(EventHandler* eventHandler);
-
 private:
-	Ref< EventHandler > m_eventHandler;
+	Ref< EventSubject::IEventHandler > m_keyDownEventHandler;
 	std::map< uint32_t, std::list< Command > > m_commands;
 
-	void eventKeyDown(Event* event);
+	void eventKeyDown(KeyDownEvent* event);
 };
 
 	}

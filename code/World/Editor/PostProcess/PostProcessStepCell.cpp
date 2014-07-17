@@ -25,15 +25,15 @@ PostProcessStepItem* PostProcessStepCell::getItem() const
 	return m_item;
 }
 
-void PostProcessStepCell::mouseDown(ui::custom::AutoWidget* widget, const ui::Point& position)
+void PostProcessStepCell::mouseDown(const ui::Point& position)
 {
-	ui::CommandEvent commandEvent(widget, m_item);
-	widget->raiseEvent(ui::EiSelectionChange, &commandEvent);
+	ui::SelectionChangeEvent selectionChange(getWidget(), m_item);
+	getWidget()->raiseEvent(&selectionChange);
 }
 
-void PostProcessStepCell::paint(ui::custom::AutoWidget* widget, ui::Canvas& canvas, const ui::Rect& rect)
+void PostProcessStepCell::paint(ui::Canvas& canvas, const ui::Rect& rect)
 {
-	bool focus = bool(widget->getFocusCell() == this);
+	bool focus = bool(getWidget()->getFocusCell() == this);
 
 	canvas.drawBitmap(
 		rect.getTopLeft(),

@@ -1,8 +1,8 @@
-#include "Ui/Cocoa/FileDialogCocoa.h"
-#include "Ui/Cocoa/UtilitiesCocoa.h"
-#include "Ui/Enums.h"
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
+#include "Ui/Enums.h"
+#include "Ui/Cocoa/FileDialogCocoa.h"
+#include "Ui/Cocoa/UtilitiesCocoa.h"
 
 namespace traktor
 {

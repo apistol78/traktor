@@ -4,8 +4,6 @@
 #include "Ui/FloodLayout.h"
 #include "Ui/Tab.h"
 #include "Ui/TabPage.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/CommandEvent.h"
 
 namespace traktor
 {
@@ -21,7 +19,7 @@ bool SettingsDialog::create(ui::Widget* parent, PropertyGroup* settings, const s
 	if (!ui::ConfigDialog::create(parent, i18n::Text(L"EDITOR_SETTINGS_TITLE"), 700, 600, ui::ConfigDialog::WsDefaultResizable, new ui::FloodLayout()))
 		return false;
 
-	addClickEventHandler(ui::createMethodHandler(this, &SettingsDialog::eventDialogClick));
+	addEventHandler< ui::ButtonClickEvent >(this, &SettingsDialog::eventDialogClick);
 
 	// Create page container.
 	Ref< ui::Tab > tab = new ui::Tab();
@@ -66,9 +64,9 @@ void SettingsDialog::destroy()
 	ui::ConfigDialog::destroy();
 }
 
-void SettingsDialog::eventDialogClick(ui::Event* event)
+void SettingsDialog::eventDialogClick(ui::ButtonClickEvent* event)
 {
-	if (checked_type_cast< ui::CommandEvent* >(event)->getCommand() == ui::DrOk)
+	if (event->getCommand() == ui::DrOk)
 	{
 		for (RefArray< ISettingsPage >::iterator i = m_settingPages.begin(); i != m_settingPages.end(); ++i)
 			(*i)->apply(m_settings);

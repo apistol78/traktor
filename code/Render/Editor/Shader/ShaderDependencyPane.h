@@ -48,7 +48,7 @@ private:
 
 	virtual void dependencyRemoved(const Guid& fromShader, const Guid& toShader);
 
-	void eventRefereeListDoubleClick(ui::Event* event);
+	void eventRefereeListDoubleClick(ui::MouseDoubleClickEvent* event);
 };
 
 	}

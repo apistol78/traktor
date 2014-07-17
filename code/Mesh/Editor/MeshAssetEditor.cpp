@@ -14,7 +14,6 @@
 #include "Model/ModelFormat.h"
 #include "Render/ITexture.h"
 #include "Render/Shader/ShaderGraph.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/TableLayout.h"
 #include "Ui/CheckBox.h"
 #include "Ui/Container.h"
@@ -25,12 +24,11 @@
 #include "Ui/Edit.h"
 #include "Ui/FileDialog.h"
 #include "Ui/Static.h"
-#include "Ui/Events/CommandEvent.h"
-#include "Ui/Events/MouseEvent.h"
 #include "Ui/Custom/InputDialog.h"
 #include "Ui/Custom/MiniButton.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
+#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 
 namespace traktor
 {
@@ -98,7 +96,7 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	if (!browseButton->create(containerFileName, L"..."))
 		return false;
 
-	browseButton->addClickEventHandler(ui::createMethodHandler(this, &MeshAssetEditor::eventBrowseClick));
+	browseButton->addEventHandler< ui::ButtonClickEvent >(this, &MeshAssetEditor::eventBrowseClick);
 
 	Ref< ui::Static > staticMeshType = new ui::Static();
 	if (!staticMeshType->create(containerFile, i18n::Text(L"MESHASSET_EDITOR_MESH_TYPE")))
@@ -142,7 +140,7 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	materialShaderTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"MESHASSET_EDITOR_CREATE_SHADER"), ui::Command(L"MeshAssetEditor.CreateShader")));
 	materialShaderTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"MESHASSET_EDITOR_BROWSE_SHADER"), ui::Command(L"MeshAssetEditor.BrowseShader")));
 	materialShaderTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"MESHASSET_EDITOR_REMOVE_SHADER"), ui::Command(L"MeshAssetEditor.RemoveShader")));
-	materialShaderTools->addClickEventHandler(ui::createMethodHandler(this, &MeshAssetEditor::eventMaterialShaderToolClick));
+	materialShaderTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &MeshAssetEditor::eventMaterialShaderToolClick);
 
 	m_materialShaderList = new ui::ListView();
 	if (!m_materialShaderList->create(m_containerMaterials, ui::ListView::WsReport))
@@ -151,7 +149,7 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	m_materialShaderList->addColumn(i18n::Text(L"MESHASSET_EDITOR_MATERIAL"), 180);
 	m_materialShaderList->addColumn(i18n::Text(L"MESHASSET_EDITOR_TEMPLATE"), 180);
 	m_materialShaderList->addColumn(i18n::Text(L"MESHASSET_EDITOR_SHADER"), 300);
-	m_materialShaderList->addDoubleClickEventHandler(ui::createMethodHandler(this, &MeshAssetEditor::eventMaterialShaderListDoubleClick));
+	m_materialShaderList->addEventHandler< ui::MouseDoubleClickEvent >(this, &MeshAssetEditor::eventMaterialShaderListDoubleClick);
 
 	// Material textures.
 	Ref< ui::custom::ToolBar > materialTextureTools = new ui::custom::ToolBar();
@@ -161,7 +159,7 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	materialTextureTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"MESHASSET_EDITOR_CREATE_TEXTURE"), ui::Command(L"MeshAssetEditor.CreateTexture")));
 	materialTextureTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"MESHASSET_EDITOR_BROWSE_TEXTURE"), ui::Command(L"MeshAssetEditor.BrowseTexture")));
 	materialTextureTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"MESHASSET_EDITOR_REMOVE_TEXTURE"), ui::Command(L"MeshAssetEditor.RemoveTexture")));
-	materialTextureTools->addClickEventHandler(ui::createMethodHandler(this, &MeshAssetEditor::eventMaterialTextureToolClick));
+	materialTextureTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &MeshAssetEditor::eventMaterialTextureToolClick);
 
 	m_materialTextureList = new ui::ListView();
 	if (!m_materialTextureList->create(m_containerMaterials, ui::ListView::WsReport))
@@ -169,7 +167,7 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 
 	m_materialTextureList->addColumn(i18n::Text(L"MESHASSET_EDITOR_TEXTURE_NAME"), 180);
 	m_materialTextureList->addColumn(i18n::Text(L"MESHASSET_EDITOR_TEXTURE_ASSET"), 300);
-	m_materialTextureList->addDoubleClickEventHandler(ui::createMethodHandler(this, &MeshAssetEditor::eventMaterialTextureListDoubleClick));
+	m_materialTextureList->addEventHandler< ui::MouseDoubleClickEvent >(this, &MeshAssetEditor::eventMaterialTextureListDoubleClick);
 
 	updateModel();
 	updateFile();
@@ -539,7 +537,7 @@ void MeshAssetEditor::removeMaterialTexture()
 	m_materialTextureList->setItems(m_materialTextureList->getItems());
 }
 
-void MeshAssetEditor::eventBrowseClick(ui::Event* event)
+void MeshAssetEditor::eventBrowseClick(ui::ButtonClickEvent* event)
 {
 	ui::FileDialog fileDialog;
 	if (!fileDialog.create(m_editFileName, i18n::Text(L"EDITOR_BROWSE_FILE"), L"All files (*.*);*.*"))
@@ -559,11 +557,9 @@ void MeshAssetEditor::eventBrowseClick(ui::Event* event)
 	fileDialog.destroy();
 }
 
-void MeshAssetEditor::eventMaterialShaderToolClick(ui::Event* event)
+void MeshAssetEditor::eventMaterialShaderToolClick(ui::custom::ToolBarButtonClickEvent* event)
 {
-	const ui::CommandEvent* commandEvent = checked_type_cast< const ui::CommandEvent* >(event);
-	const ui::Command& command = commandEvent->getCommand();
-
+	const ui::Command& command = event->getCommand();
 	if (command == L"MeshAssetEditor.CreateShader")
 		createMaterialShader();
 	else if (command == L"MeshAssetEditor.BrowseShader")
@@ -572,9 +568,9 @@ void MeshAssetEditor::eventMaterialShaderToolClick(ui::Event* event)
 		removeMaterialShader();
 }
 
-void MeshAssetEditor::eventMaterialShaderListDoubleClick(ui::Event* event)
+void MeshAssetEditor::eventMaterialShaderListDoubleClick(ui::MouseDoubleClickEvent* event)
 {
-	ui::Point mousePosition = checked_type_cast< const ui::MouseEvent* >(event)->getPosition();
+	ui::Point mousePosition = event->getPosition();
 
 	Ref< ui::ListViewItem > selectedItem = m_materialShaderList->getSelectedItem();
 	if (!selectedItem)
@@ -603,11 +599,9 @@ void MeshAssetEditor::eventMaterialShaderListDoubleClick(ui::Event* event)
 	}
 }
 
-void MeshAssetEditor::eventMaterialTextureToolClick(ui::Event* event)
+void MeshAssetEditor::eventMaterialTextureToolClick(ui::custom::ToolBarButtonClickEvent* event)
 {
-	const ui::CommandEvent* commandEvent = checked_type_cast< const ui::CommandEvent* >(event);
-	const ui::Command& command = commandEvent->getCommand();
-
+	const ui::Command& command = event->getCommand();
 	if (command == L"MeshAssetEditor.CreateTexture")
 		createMaterialTexture();
 	else if (command == L"MeshAssetEditor.BrowseTexture")
@@ -616,7 +610,7 @@ void MeshAssetEditor::eventMaterialTextureToolClick(ui::Event* event)
 		removeMaterialTexture();
 }
 
-void MeshAssetEditor::eventMaterialTextureListDoubleClick(ui::Event* event)
+void MeshAssetEditor::eventMaterialTextureListDoubleClick(ui::MouseDoubleClickEvent* event)
 {
 	Ref< ui::ListViewItem > selectedItem = m_materialShaderList->getSelectedItem();
 	if (!selectedItem)

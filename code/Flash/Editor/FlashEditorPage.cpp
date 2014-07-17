@@ -27,16 +27,15 @@
 #include "Sound/SoundSystem.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/TableLayout.h"
 #include "Ui/TreeView.h"
 #include "Ui/TreeViewItem.h"
-#include "Ui/Events/CommandEvent.h"
 #include "Ui/Custom/AspectLayout.h"
 #include "Ui/Custom/CenterLayout.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
+#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 
 // Resources
@@ -114,7 +113,7 @@ bool FlashEditorPage::create(ui::Container* parent)
 	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Play", 1, ui::Command(L"Flash.Editor.Play")));
 	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Stop", 2, ui::Command(L"Flash.Editor.Stop")));
 	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Forward", 3, ui::Command(L"Flash.Editor.Forward")));
-	m_toolBarPlay->addClickEventHandler(ui::createMethodHandler(this, &FlashEditorPage::eventToolClick));
+	m_toolBarPlay->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &FlashEditorPage::eventToolClick);
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
 	splitter->create(container, true, 300);
@@ -124,7 +123,7 @@ bool FlashEditorPage::create(ui::Container* parent)
 
 	m_treeMovie = new ui::TreeView();
 	m_treeMovie->create(splitterV, ui::TreeView::WsDefault & ~ui::WsClientBorder);
-	m_treeMovie->addSelectEventHandler(ui::createMethodHandler(this, &FlashEditorPage::eventTreeMovieSelect));
+	m_treeMovie->addEventHandler< ui::SelectionChangeEvent >(this, &FlashEditorPage::eventTreeMovieSelect);
 
 	m_profileMovie = new ui::custom::ProfileControl();
 	m_profileMovie->create(splitterV, 2, 10, 0, 10000, ui::WsClientBorder | ui::WsDoubleBuffer, this);
@@ -391,16 +390,15 @@ void FlashEditorPage::updateTreeMovie()
 	}
 }
 
-void FlashEditorPage::eventToolClick(ui::Event* event)
+void FlashEditorPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* event)
 {
-	const ui::Command& command = checked_type_cast< ui::CommandEvent* >(event)->getCommand();
+	const ui::Command& command = event->getCommand();
 	handleCommand(command);
 }
 
-void FlashEditorPage::eventTreeMovieSelect(ui::Event* event)
+void FlashEditorPage::eventTreeMovieSelect(ui::SelectionChangeEvent* event)
 {
-	ui::CommandEvent* cmdEvent = checked_type_cast< ui::CommandEvent*, false >(event);
-	ui::TreeViewItem* selectedItem = checked_type_cast< ui::TreeViewItem*, true >(cmdEvent->getItem());
+	ui::TreeViewItem* selectedItem = m_treeMovie->getSelectedItem();
 
 	if (m_selectedCharacterInstance)
 	{

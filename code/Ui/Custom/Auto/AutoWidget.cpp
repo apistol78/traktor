@@ -1,9 +1,6 @@
 #include <limits>
 #include "Ui/Application.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/ScrollBar.h"
-#include "Ui/Events/MouseEvent.h"
-#include "Ui/Events/PaintEvent.h"
 #include "Ui/Custom/Auto/AutoWidget.h"
 #include "Ui/Custom/Auto/AutoWidgetCell.h"
 
@@ -27,13 +24,13 @@ bool AutoWidget::create(ui::Widget* parent, int32_t style)
 	if (!ui::Widget::create(parent, style))
 		return false;
 
-	addButtonDownEventHandler(createMethodHandler(this, &AutoWidget::eventButtonDown));
-	addButtonUpEventHandler(createMethodHandler(this, &AutoWidget::eventButtonUp));
-	addMouseMoveEventHandler(createMethodHandler(this, &AutoWidget::eventMouseMove));
-	addMouseWheelEventHandler(createMethodHandler(this, &AutoWidget::eventMouseWheel));
-	addPaintEventHandler(createMethodHandler(this, &AutoWidget::eventPaint));
-	addSizeEventHandler(createMethodHandler(this, &AutoWidget::eventSize));
-	addTimerEventHandler(createMethodHandler(this, &AutoWidget::eventTimer));
+	addEventHandler< MouseButtonDownEvent >(this, &AutoWidget::eventButtonDown);
+	addEventHandler< MouseButtonUpEvent >(this, &AutoWidget::eventButtonUp);
+	addEventHandler< MouseMoveEvent >(this, &AutoWidget::eventMouseMove);
+	addEventHandler< MouseWheelEvent >(this, &AutoWidget::eventMouseWheel);
+	addEventHandler< PaintEvent >(this, &AutoWidget::eventPaint);
+	addEventHandler< SizeEvent >(this, &AutoWidget::eventSize);
+	addEventHandler< TimerEvent >(this, &AutoWidget::eventTimer);
 
 	m_scrollBarH = new ScrollBar();
 	if (!m_scrollBarH->create(this, ScrollBar::WsHorizontal))
@@ -43,8 +40,8 @@ bool AutoWidget::create(ui::Widget* parent, int32_t style)
 	if (!m_scrollBarV->create(this, ScrollBar::WsVertical))
 		return false;
 
-	m_scrollBarH->addScrollEventHandler(createMethodHandler(this, &AutoWidget::eventScroll));
-	m_scrollBarV->addScrollEventHandler(createMethodHandler(this, &AutoWidget::eventScroll));
+	m_scrollBarH->addEventHandler< ScrollEvent >(this, &AutoWidget::eventScroll);
+	m_scrollBarV->addEventHandler< ScrollEvent >(this, &AutoWidget::eventScroll);
 
 	m_backgroundColor = getSystemColor(ScButtonFace);
 
@@ -77,7 +74,7 @@ AutoWidgetCell* AutoWidget::hitTest(const Point& position)
 		if (!i->rc.inside(clientPosition))
 			continue;
 
-		if ((hit = i->cell->hitTest(this, clientPosition)) != 0)
+		if ((hit = i->cell->hitTest(clientPosition)) != 0)
 			break;
 	}
 
@@ -172,21 +169,20 @@ void AutoWidget::updateLayout()
 		m_scrollOffset.cy = 0;
 }
 
-void AutoWidget::eventButtonDown(Event* event)
+void AutoWidget::eventButtonDown(MouseButtonDownEvent* event)
 {
-	MouseEvent* mouseEvent = checked_type_cast< MouseEvent*, false >(event);
-	if (mouseEvent->getButton() != MouseEvent::BtLeft)
+	if (event->getButton() != MbtLeft)
 		return;
 
-	Ref< AutoWidgetCell > hitItem = hitTest(mouseEvent->getPosition());
+	Ref< AutoWidgetCell > hitItem = hitTest(event->getPosition());
 	if (hitItem)
 	{
 		m_focusCell = hitItem;
-		if (hitItem->beginCapture(this))
+		if (hitItem->beginCapture())
 		{
-			Point clientPosition = mouseEvent->getPosition() - m_scrollOffset;
+			Point clientPosition = event->getPosition() - m_scrollOffset;
 			m_captureCell = hitItem;
-			m_captureCell->mouseDown(this, clientPosition);
+			m_captureCell->mouseDown(clientPosition);
 			setCapture();
 		}
 	}
@@ -196,49 +192,43 @@ void AutoWidget::eventButtonDown(Event* event)
 	update();
 }
 
-void AutoWidget::eventButtonUp(Event* event)
+void AutoWidget::eventButtonUp(MouseButtonUpEvent* event)
 {
-	MouseEvent* mouseEvent = checked_type_cast< MouseEvent*, false >(event);
-	if (mouseEvent->getButton() != MouseEvent::BtLeft)
+	if (event->getButton() != MbtLeft)
 		return;
 
 	if (m_captureCell)
 	{
-		Point clientPosition = mouseEvent->getPosition() - m_scrollOffset;
-		m_captureCell->mouseUp(this, clientPosition);
-		m_captureCell->endCapture(this);
+		Point clientPosition = event->getPosition() - m_scrollOffset;
+		m_captureCell->mouseUp(clientPosition);
+		m_captureCell->endCapture();
 		releaseCapture();
 		update();
 	}
 }
 
-void AutoWidget::eventMouseMove(Event* event)
+void AutoWidget::eventMouseMove(MouseMoveEvent* event)
 {
-	MouseEvent* mouseEvent = checked_type_cast< MouseEvent*, false >(event);
 	if (m_captureCell)
 	{
-		Point clientPosition = mouseEvent->getPosition() - m_scrollOffset;
-		m_captureCell->mouseMove(this, clientPosition);
+		Point clientPosition = event->getPosition() - m_scrollOffset;
+		m_captureCell->mouseMove(clientPosition);
 		update();
 	}
 }
 
-void AutoWidget::eventMouseWheel(Event* event)
+void AutoWidget::eventMouseWheel(MouseWheelEvent* event)
 {
-	MouseEvent* mouseEvent = checked_type_cast< MouseEvent* >(event);
-
 	int32_t position = m_scrollBarV->getPosition();
-	position -= mouseEvent->getWheelRotation() * 4;
+	position -= event->getRotation() * 4;
 	m_scrollBarV->setPosition(position);
-
 	m_scrollOffset.cy = -m_scrollBarV->getPosition() * 16;
 	update();
 }
 
-void AutoWidget::eventPaint(Event* event)
+void AutoWidget::eventPaint(PaintEvent* event)
 {
-	PaintEvent* paintEvent = checked_type_cast< PaintEvent*, false >(event);
-	Canvas& canvas = paintEvent->getCanvas();
+	Canvas& canvas = event->getCanvas();
 
 	Rect innerRect = getInnerRect();
 	canvas.setBackground(m_backgroundColor);
@@ -248,13 +238,13 @@ void AutoWidget::eventPaint(Event* event)
 	{
 		Rect rc = i->rc.offset(m_scrollOffset);
 		if (rc.intersect(innerRect))
-			i->cell->paint(this, canvas, rc);
+			i->cell->paint(canvas, rc);
 	}
 
 	event->consume();
 }
 
-void AutoWidget::eventSize(Event* event)
+void AutoWidget::eventSize(SizeEvent* event)
 {
 	updateLayout();
 
@@ -283,7 +273,7 @@ void AutoWidget::eventSize(Event* event)
 	update();
 }
 
-void AutoWidget::eventTimer(Event* event)
+void AutoWidget::eventTimer(TimerEvent* event)
 {
 	if (!isVisible(false))
 		return;
@@ -296,7 +286,7 @@ void AutoWidget::eventTimer(Event* event)
 	}
 }
 
-void AutoWidget::eventScroll(Event* event)
+void AutoWidget::eventScroll(ScrollEvent* event)
 {
 	m_scrollOffset.cx = -m_scrollBarH->getPosition() * 16;
 	m_scrollOffset.cy = -m_scrollBarV->getPosition() * 16;

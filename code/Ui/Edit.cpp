@@ -1,11 +1,9 @@
 #include <cwctype>
-#include "Ui/Edit.h"
-#include "Ui/Application.h"
-#include "Ui/Itf/IEdit.h"
-#include "Ui/EditValidator.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/KeyEvent.h"
 #include "Core/Log/Log.h"
+#include "Ui/Application.h"
+#include "Ui/Edit.h"
+#include "Ui/EditValidator.h"
+#include "Ui/Itf/IEdit.h"
 
 namespace traktor
 {
@@ -40,7 +38,7 @@ bool Edit::create(Widget* parent, const std::wstring& text, int style, EditValid
 
 	m_widget = edit;
 
-	addKeyEventHandler(createMethodHandler(this, &Edit::eventKey));
+	addEventHandler< KeyEvent >(this, &Edit::eventKey);
 
 	return Widget::create(parent);
 }
@@ -73,16 +71,9 @@ void Edit::selectAll()
 	static_cast< IEdit* >(m_widget)->selectAll();
 }
 
-void Edit::addChangeEventHandler(EventHandler* eventHandler)
+void Edit::eventKey(KeyEvent* event)
 {
-	addEventHandler(EiContentChange, eventHandler);
-}
-
-void Edit::eventKey(Event* event)
-{
-	KeyEvent* keyEvent = checked_type_cast< KeyEvent* >(event);
-
-	wchar_t ch = keyEvent->getCharacter();
+	wchar_t ch = event->getCharacter();
 	if (!m_validator || (!std::iswgraph(ch) && ch != 8))
 		return;
 
@@ -97,7 +88,7 @@ void Edit::eventKey(Event* event)
 		text = text.substr(0, from - 1) + text.substr(to);
 
 	if (m_validator->validate(text) == EditValidator::VrInvalid)
-		keyEvent->consume();
+		event->consume();
 }
 
 	}

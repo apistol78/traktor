@@ -53,11 +53,11 @@ private:
 	uint32_t m_objectHash;
 	bool m_modified;
 
-	void eventClick(ui::Event* event);
+	void eventClick(ui::ButtonClickEvent* event);
 
-	void eventClose(ui::Event* event);
+	void eventClose(ui::CloseEvent* event);
 
-	void eventTimer(ui::Event* event);
+	void eventTimer(ui::TimerEvent* event);
 };
 
 	}

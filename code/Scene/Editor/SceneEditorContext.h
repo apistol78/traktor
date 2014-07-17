@@ -281,17 +281,6 @@ public:
 	/*! \name Events. */
 	//@{
 
-	enum Events
-	{
-		EiPreModify = ui::EiUser + 1,
-		EiPostModify = ui::EiUser + 2,
-		EiPostFrame = ui::EiUser + 3,
-		EiPostBuild = ui::EiUser + 4,
-		EiSelect = ui::EiUser + 5,
-		EiCameraMoved = ui::EiUser + 6,
-		EiModifierChanged = ui::EiUser + 7
-	};
-
 	void raisePreModify();
 
 	void raisePostModify();
@@ -300,25 +289,11 @@ public:
 
 	void raisePostBuild();
 
-	void raiseSelect(Object* item);
+	void raiseSelect();
 
 	void raiseCameraMoved();
 
 	void raiseModifierChanged();
-
-	void addPreModifyEventHandler(ui::EventHandler* eventHandler);
-
-	void addPostModifyEventHandler(ui::EventHandler* eventHandler);
-
-	void addPostFrameEventHandler(ui::EventHandler* eventHandler);
-
-	void addPostBuildEventHandler(ui::EventHandler* eventHandler);
-
-	void addSelectEventHandler(ui::EventHandler* eventHandler);
-
-	void addCameraMovedEventHandler(ui::EventHandler* eventHandler);
-
-	void addModifierChangedEventHandler(ui::EventHandler* eventHandler);
 
 	//@}
 

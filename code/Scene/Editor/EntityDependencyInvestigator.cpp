@@ -13,11 +13,9 @@
 #include "Scene/Editor/EntityDependencyInvestigator.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Bitmap.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/TableLayout.h"
 #include "Ui/TreeView.h"
 #include "Ui/TreeViewItem.h"
-#include "Ui/Events/CommandEvent.h"
 #include "World/EntityData.h"
 
 // Resources
@@ -55,9 +53,9 @@ bool EntityDependencyInvestigator::create(ui::Widget* parent)
 	m_dependencyTree->create(this, ui::TreeView::WsDefault & ~ui::WsClientBorder);
 	m_dependencyTree->addImage(ui::Bitmap::load(c_ResourceTypes, sizeof(c_ResourceTypes), L"png"), 30);
 	m_dependencyTree->addImage(ui::Bitmap::load(c_ResourceEntityTypes, sizeof(c_ResourceEntityTypes), L"png"), 4);
-	m_dependencyTree->addActivateEventHandler(ui::createMethodHandler(this, &EntityDependencyInvestigator::eventDependencyActivate));
+	m_dependencyTree->addEventHandler< ui::TreeViewItemActivateEvent >(this, &EntityDependencyInvestigator::eventDependencyActivate);
 
-	m_context->addSelectEventHandler(ui::createMethodHandler(this, &EntityDependencyInvestigator::eventContextSelect));
+	m_context->addEventHandler< ui::SelectionChangeEvent >(this, &EntityDependencyInvestigator::eventContextSelect);
 	return true;
 }
 
@@ -113,11 +111,9 @@ void EntityDependencyInvestigator::setEntityAdapter(EntityAdapter* entityAdapter
 	}
 }
 
-void EntityDependencyInvestigator::eventDependencyActivate(ui::Event* event)
+void EntityDependencyInvestigator::eventDependencyActivate(ui::TreeViewItemActivateEvent* event)
 {
-	Ref< ui::TreeViewItem > item = checked_type_cast< ui::TreeViewItem* >(
-		checked_type_cast< ui::CommandEvent* >(event)->getItem()
-	);
+	Ref< ui::TreeViewItem > item = event->getItem();
 
 	Ref< editor::PipelineDependency > dependency = item->getData< editor::PipelineDependency >(L"DEPENDENCY");
 	if (dependency)
@@ -135,7 +131,7 @@ void EntityDependencyInvestigator::eventDependencyActivate(ui::Event* event)
 	}
 }
 
-void EntityDependencyInvestigator::eventContextSelect(ui::Event* event)
+void EntityDependencyInvestigator::eventContextSelect(ui::SelectionChangeEvent* event)
 {
 	RefArray< EntityAdapter > selectedEntityAdapters;
 	if (m_context->getEntities(selectedEntityAdapters, SceneEditorContext::GfDescendants | SceneEditorContext::GfSelectedOnly) == 1)

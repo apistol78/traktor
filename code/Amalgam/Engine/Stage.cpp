@@ -27,12 +27,14 @@ Stage::Stage(
 	amalgam::IEnvironment* environment,
 	const resource::Proxy< script::IScriptContext >& scriptContext,
 	const resource::Proxy< render::Shader >& shaderFade,
+	float fadeRate,
 	const std::map< std::wstring, Guid >& transitions,
 	const Object* params
 )
 :	m_environment(environment)
 ,	m_scriptContext(scriptContext)
 ,	m_shaderFade(shaderFade)
+,	m_fadeRate(fadeRate)
 ,	m_transitions(transitions)
 ,	m_params(params)
 ,	m_initialized(false)
@@ -188,11 +190,11 @@ bool Stage::update(amalgam::IStateManager* stateManager, amalgam::IUpdateControl
 		for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 			(*i)->update(control, info);
 
-		m_fade = max(0.0f, m_fade - info.getSimulationDeltaTime());
+		m_fade = max(0.0f, m_fade - info.getSimulationDeltaTime() * m_fadeRate);
 	}
 	else
 	{
-		m_fade += info.getSimulationDeltaTime() * 1.5f;
+		m_fade += info.getSimulationDeltaTime() * m_fadeRate;
 		if (m_fade > 1.0f)
 		{
 			stateManager->enter(new StageState(m_environment, m_pendingStage));

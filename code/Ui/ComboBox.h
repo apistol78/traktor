@@ -41,8 +41,6 @@ public:
 	int getSelected() const;
 
 	std::wstring getSelectedItem() const;
-
-	void addSelectEventHandler(EventHandler* eventHandler);
 };
 
 	}

@@ -1,8 +1,6 @@
 #include "Ui/Custom/StatusBar/StatusBar.h"
 #include "Ui/Application.h"
 #include "Ui/Form.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/PaintEvent.h"
 
 namespace traktor
 {
@@ -28,8 +26,8 @@ bool StatusBar::create(Widget* parent, int style)
 	if (!Widget::create(parent, style))
 		return false;
 
-	addSizeEventHandler(createMethodHandler(this, &StatusBar::eventSize));
-	addPaintEventHandler(createMethodHandler(this, &StatusBar::eventPaint));
+	addEventHandler< SizeEvent >(this, &StatusBar::eventSize);
+	addEventHandler< PaintEvent >(this, &StatusBar::eventPaint);
 
 	return true;
 }
@@ -51,7 +49,7 @@ Size StatusBar::getPreferedSize() const
 	return preferedSize;
 }
 
-void StatusBar::eventSize(Event* event)
+void StatusBar::eventSize(SizeEvent* event)
 {
 	Ref< Widget > child = getFirstChild();
 	if (child)
@@ -68,10 +66,9 @@ void StatusBar::eventSize(Event* event)
 	}
 }
 
-void StatusBar::eventPaint(Event* event)
+void StatusBar::eventPaint(PaintEvent* event)
 {
-	PaintEvent* paintEvent = checked_type_cast< PaintEvent* >(event);
-	Canvas& canvas = paintEvent->getCanvas();
+	Canvas& canvas = event->getCanvas();
 
 	Rect rc = getInnerRect();
 

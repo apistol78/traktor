@@ -1,9 +1,8 @@
-#include "Ui/Dialog.h"
-#include "Ui/Itf/IDialog.h"
-#include "Ui/Application.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Layout.h"
 #include "Core/Log/Log.h"
+#include "Ui/Application.h"
+#include "Ui/Dialog.h"
+#include "Ui/Layout.h"
+#include "Ui/Itf/IDialog.h"
 
 namespace traktor
 {
@@ -37,7 +36,7 @@ bool Dialog::create(Widget* parent, const std::wstring& text, int width, int hei
 	if (!Container::create(parent, WsNone, layout))
 		return false;
 
-	addChildEventHandler(createMethodHandler(this, &Dialog::eventChild));
+	addEventHandler< ChildEvent >(this, &Dialog::eventChild);
 	return true;
 }
 
@@ -72,17 +71,12 @@ bool Dialog::isModal() const
 	return m_modal;
 }
 
-void Dialog::addCloseEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiClose, eventHandler);
-}
-
 bool Dialog::acceptLayout() const
 {
 	return false;
 }
 
-void Dialog::eventChild(Event* event)
+void Dialog::eventChild(ChildEvent* event)
 {
 	if (!getLayout())
 		return;

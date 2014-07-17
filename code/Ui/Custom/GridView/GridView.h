@@ -31,8 +31,6 @@ class T_DLLCLASS GridView : public AutoWidget
 	T_RTTI_CLASS;
 
 public:
-	enum { EiExpand = EiUser + 1 };
-
 	enum StyleFlags
 	{
 		WsColumnHeader = WsUser
@@ -74,12 +72,6 @@ public:
 
 	GridRow* getSelectedRow() const;
 
-	void addSelectEventHandler(EventHandler* eventHandler);
-
-	void addClickEventHandler(EventHandler* eventHandler);
-
-	void addExpandEventHandler(EventHandler* eventHandler);
-
 private:
 	Ref< GridHeaderCell > m_headerCell;
 	RefArray< GridColumn > m_columns;
@@ -92,9 +84,9 @@ private:
 
 	virtual void layoutCells(const Rect& rc);
 
-	void eventButtonDown(Event* event);
+	void eventButtonDown(MouseButtonDownEvent* event);
 
-	void eventButtonUp(Event* event);
+	void eventButtonUp(MouseButtonUpEvent* event);
 };
 
 		}

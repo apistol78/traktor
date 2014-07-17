@@ -34,17 +34,15 @@ public:
 
 	bool create(Widget* parent, int style = ListBox::WsDefault);
 
-	void addEditEventHandler(EventHandler* eventHandler);
-
 private:
 	Ref< Edit > m_editItem;
 	int32_t m_editId;
 	bool m_autoAdd;
 	bool m_autoRemove;
 
-	void eventDoubleClick(Event* event);
+	void eventDoubleClick(MouseDoubleClickEvent* event);
 
-	void eventEditFocus(Event* event);
+	void eventEditFocus(FocusEvent* event);
 };
 
 		}

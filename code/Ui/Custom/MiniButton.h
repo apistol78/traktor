@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_CUSTOM_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -33,8 +33,6 @@ public:
 	void setImage(Bitmap* image);
 
 	virtual Size getPreferedSize() const;
-	
-	void addClickEventHandler(EventHandler* eventHandler);
 
 private:
 	enum State
@@ -46,11 +44,11 @@ private:
 	State m_state;
 	Ref< Bitmap > m_image;
 	
-	void eventButtonDown(Event* event);
+	void eventButtonDown(MouseButtonDownEvent* event);
 	
-	void eventButtonUp(Event* event);
+	void eventButtonUp(MouseButtonUpEvent* event);
 	
-	void eventPaint(Event* event);
+	void eventPaint(PaintEvent* event);
 };
 
 		}

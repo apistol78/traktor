@@ -17,6 +17,7 @@ class Command;
 class GridRow;
 class GridView;
 class ToolBar;
+class ToolBarButtonClickEvent;
 
 		}
 	}
@@ -43,8 +44,6 @@ public:
 
 	bool handleCommand(const ui::Command& command);
 
-	void addBreakPointEventHandler(ui::EventHandler* eventHandler);
-
 private:
 	Ref< IScriptDebugger > m_scriptDebugger;
 	Ref< ui::custom::ToolBar > m_debuggerTools;
@@ -60,7 +59,7 @@ private:
 
 	/*! \} */
 
-	void eventDebuggerToolClick(ui::Event* event);
+	void eventDebuggerToolClick(ui::custom::ToolBarButtonClickEvent* event);
 };
 
 	}

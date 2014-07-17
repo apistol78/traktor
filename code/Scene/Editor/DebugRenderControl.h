@@ -5,6 +5,7 @@
 #include "Scene/Editor/ISceneRenderControl.h"
 #include "Ui/Point.h"
 #include "Ui/Size.h"
+#include "Ui/Events/AllEvents.h"
 
 namespace traktor
 {
@@ -12,7 +13,6 @@ namespace traktor
 	{
 
 class Widget;
-class Event;
 
 	}
 
@@ -72,19 +72,19 @@ private:
 	ui::Point m_moveMouseOrigin;
 	Vector2 m_moveRenderOffset;
 
-	void eventButtonDown(ui::Event* event);
+	void eventButtonDown(ui::MouseButtonDownEvent* event);
 
-	void eventButtonUp(ui::Event* event);
+	void eventButtonUp(ui::MouseButtonUpEvent* event);
 
-	void eventDoubleClick(ui::Event* event);
+	void eventDoubleClick(ui::MouseDoubleClickEvent* event);
 
-	void eventMouseMove(ui::Event* event);
+	void eventMouseMove(ui::MouseMoveEvent* event);
 
-	void eventMouseWheel(ui::Event* event);
+	void eventMouseWheel(ui::MouseWheelEvent* event);
 
-	void eventSize(ui::Event* event);
+	void eventSize(ui::SizeEvent* event);
 
-	void eventPaint(ui::Event* event);
+	void eventPaint(ui::PaintEvent* event);
 };
 
 	}

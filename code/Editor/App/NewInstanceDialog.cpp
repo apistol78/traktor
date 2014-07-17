@@ -8,7 +8,6 @@
 #include "Ui/Bitmap.h"
 #include "Ui/Edit.h"
 #include "Ui/HierarchicalState.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
 #include "Ui/TreeView.h"
@@ -17,7 +16,6 @@
 #include "Ui/Custom/PreviewList/PreviewItem.h"
 #include "Ui/Custom/PreviewList/PreviewItems.h"
 #include "Ui/Custom/PreviewList/PreviewList.h"
-#include "Ui/Events/CommandEvent.h"
 
 // Resources
 #include "Resources/Files.h"
@@ -69,7 +67,7 @@ bool NewInstanceDialog::create(ui::Widget* parent)
 	))
 		return false;
 
-	addClickEventHandler(ui::createMethodHandler(this, &NewInstanceDialog::eventDialogClick));
+	addEventHandler< ui::ButtonClickEvent >(this, &NewInstanceDialog::eventDialogClick);
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
 	splitter->create(this, true, 200);
@@ -83,7 +81,7 @@ bool NewInstanceDialog::create(ui::Widget* parent)
 	m_categoryTree = new ui::TreeView();
 	m_categoryTree->create(left);
 	m_categoryTree->addImage(ui::Bitmap::load(c_ResourceFiles, sizeof(c_ResourceFiles), L"png"), 4);
-	m_categoryTree->addSelectEventHandler(ui::createMethodHandler(this, &NewInstanceDialog::eventTreeItemSelected));
+	m_categoryTree->addEventHandler< ui::SelectionChangeEvent >(this, &NewInstanceDialog::eventTreeItemSelected);
 
 	Ref< ui::Container > right = new ui::Container();
 	right->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"22,100%", 0, 0));
@@ -178,7 +176,7 @@ const std::wstring& NewInstanceDialog::getInstanceName() const
 	return m_instanceName;
 }
 
-void NewInstanceDialog::eventDialogClick(ui::Event* event)
+void NewInstanceDialog::eventDialogClick(ui::ButtonClickEvent* event)
 {
 	Ref< ui::custom::PreviewItem > item = m_typeList->getSelectedItem();
 	if (!item)
@@ -193,11 +191,9 @@ void NewInstanceDialog::eventDialogClick(ui::Event* event)
 	m_instanceName = m_editInstanceName->getText();
 }
 
-void NewInstanceDialog::eventTreeItemSelected(ui::Event* event)
+void NewInstanceDialog::eventTreeItemSelected(ui::SelectionChangeEvent* event)
 {
-	Ref< ui::TreeViewItem > item = dynamic_type_cast< ui::TreeViewItem* >(
-		static_cast< ui::CommandEvent* >(event)->getItem()
-	);
+	Ref< ui::TreeViewItem > item = m_categoryTree->getSelectedItem();
 	if (item)
 	{
 		Ref< ui::custom::PreviewItems > items = item->getData< ui::custom::PreviewItems >(L"ITEMS");

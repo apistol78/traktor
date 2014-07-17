@@ -1,7 +1,5 @@
 #include <algorithm>
 #include "Ui/Custom/Splitter.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/MouseEvent.h"
 
 namespace traktor
 {
@@ -26,10 +24,10 @@ bool Splitter::create(Widget* parent, bool vertical, int position, bool relative
 	m_border = border;
 	m_drag = false;
 
-	addMouseMoveEventHandler(createMethodHandler(this, &Splitter::eventMouseMove));
-	addButtonDownEventHandler(createMethodHandler(this, &Splitter::eventButtonDown));
-	addButtonUpEventHandler(createMethodHandler(this, &Splitter::eventButtonUp));
-	addSizeEventHandler(createMethodHandler(this, &Splitter::eventSize));
+	addEventHandler< MouseMoveEvent >(this, &Splitter::eventMouseMove);
+	addEventHandler< MouseButtonDownEvent >(this, &Splitter::eventButtonDown);
+	addEventHandler< MouseButtonUpEvent >(this, &Splitter::eventButtonUp);
+	addEventHandler< SizeEvent >(this, &Splitter::eventSize);
 
 	return true;
 }
@@ -246,9 +244,9 @@ void Splitter::setAbsolutePosition(int position)
 		m_position = (m_position * 100) / (m_vertical ? getInnerRect().getWidth() : getInnerRect().getHeight());
 }
 
-void Splitter::eventMouseMove(Event* event)
+void Splitter::eventMouseMove(MouseMoveEvent* event)
 {
-	Point mousePosition = static_cast< MouseEvent* >(event)->getPosition();
+	Point mousePosition = event->getPosition();
 	int32_t pos = m_vertical ? mousePosition.x : mousePosition.y;
 	int32_t position = getAbsolutePosition();
 
@@ -275,9 +273,9 @@ void Splitter::eventMouseMove(Event* event)
 	}
 }
 
-void Splitter::eventButtonDown(Event* event)
+void Splitter::eventButtonDown(MouseButtonDownEvent* event)
 {
-	Point mousePosition = static_cast< MouseEvent* >(event)->getPosition();
+	Point mousePosition = event->getPosition();
 	int32_t pos = m_vertical ? mousePosition.x : mousePosition.y;
 	int32_t position = getAbsolutePosition();
 
@@ -292,7 +290,7 @@ void Splitter::eventButtonDown(Event* event)
 	}
 }
 
-void Splitter::eventButtonUp(Event* event)
+void Splitter::eventButtonUp(MouseButtonUpEvent* event)
 {
 	if (m_drag)
 	{
@@ -302,7 +300,7 @@ void Splitter::eventButtonUp(Event* event)
 	}
 }
 
-void Splitter::eventSize(Event* event)
+void Splitter::eventSize(SizeEvent* event)
 {
 	update();
 }

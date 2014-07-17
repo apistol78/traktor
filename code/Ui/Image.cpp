@@ -1,7 +1,5 @@
 #include "Ui/Image.h"
 #include "Ui/Bitmap.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/PaintEvent.h"
 
 namespace traktor
 {
@@ -18,7 +16,7 @@ bool Image::create(Widget* parent, Bitmap* image, int style)
 	m_image = image;
 	m_transparent = bool((style & WsTransparent) == WsTransparent);
 
-	addPaintEventHandler(createMethodHandler(this, &Image::eventPaint));
+	addEventHandler< PaintEvent >(this, &Image::eventPaint);
 
 	return true;
 }
@@ -59,11 +57,11 @@ bool Image::isTransparent() const
 	return m_transparent;
 }
 
-void Image::eventPaint(Event* event)
+void Image::eventPaint(PaintEvent* event)
 {
 	if (m_image)
 	{
-		Canvas& canvas = static_cast< PaintEvent* >(event)->getCanvas();
+		Canvas& canvas = event->getCanvas();
 
 		if (m_transparent)
 		{

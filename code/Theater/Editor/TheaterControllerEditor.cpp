@@ -6,6 +6,7 @@
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/SceneEditorContext.h"
+#include "Scene/Editor/Events/PostFrameEvent.h"
 #include "Theater/ActData.h"
 #include "Theater/TheaterController.h"
 #include "Theater/TheaterControllerData.h"
@@ -15,15 +16,15 @@
 #include "Ui/Command.h"
 #include "Ui/Container.h"
 #include "Ui/ListBox.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Events/CommandEvent.h"
-#include "Ui/Events/EditEvent.h"
 #include "Ui/Custom/EditList.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
+#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
+#include "Ui/Custom/Sequencer/CursorMoveEvent.h"
+#include "Ui/Custom/Sequencer/KeyMoveEvent.h"
 #include "Ui/Custom/Sequencer/SequencerControl.h"
 #include "Ui/Custom/Sequencer/Sequence.h"
 #include "Ui/Custom/Sequencer/Tick.h"
@@ -83,7 +84,7 @@ bool TheaterControllerEditor::create(scene::SceneEditorContext* context, ui::Con
 
 	m_listActs = new ui::ListBox();
 	m_listActs->create(containerActs, L"", ui::ListBox::WsSingle);
-	m_listActs->addSelectEventHandler(ui::createMethodHandler(this, &TheaterControllerEditor::eventActSelected));
+	m_listActs->addEventHandler< ui::SelectionChangeEvent >(this, &TheaterControllerEditor::eventActSelected);
 
 	Ref< ui::Container > containerSequencer = new ui::Container();
 	if (!containerSequencer->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
@@ -99,17 +100,17 @@ bool TheaterControllerEditor::create(scene::SceneEditorContext* context, ui::Con
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"THEATER_EDITOR_GOTO_PREVIOUS_KEY"), 2, ui::Command(L"Theater.GotoPreviousKey")));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"THEATER_EDITOR_GOTO_NEXT_KEY"), 3, ui::Command(L"Theater.GotoNextKey")));
-	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &TheaterControllerEditor::eventToolBarClick));
+	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &TheaterControllerEditor::eventToolBarClick);
 
 	m_trackSequencer = new ui::custom::SequencerControl();
 	if (!m_trackSequencer->create(containerSequencer))
 		return false;
 
-	m_trackSequencer->addCursorMoveEventHandler(ui::createMethodHandler(this, &TheaterControllerEditor::eventSequencerCursorMove));
-	m_trackSequencer->addKeyMoveEventHandler(ui::createMethodHandler(this, &TheaterControllerEditor::eventSequencerKeyMove));
+	m_trackSequencer->addEventHandler< ui::custom::CursorMoveEvent >(this, &TheaterControllerEditor::eventSequencerCursorMove);
+	m_trackSequencer->addEventHandler< ui::custom::KeyMoveEvent >(this, &TheaterControllerEditor::eventSequencerKeyMove);
 
 	m_context = context;
-	m_context->addPostFrameEventHandler(ui::createMethodHandler(this, &TheaterControllerEditor::eventContextPostFrame));
+	m_context->addEventHandler< scene::PostFrameEvent >(this, &TheaterControllerEditor::eventContextPostFrame);
 
 	updateView();
 	return true;
@@ -569,18 +570,18 @@ void TheaterControllerEditor::gotoNextKey()
 	m_context->setPlaying(false);
 }
 
-void TheaterControllerEditor::eventActSelected(ui::Event* event)
+void TheaterControllerEditor::eventActSelected(ui::SelectionChangeEvent* event)
 {
 	updateView();
 }
 
-void TheaterControllerEditor::eventToolBarClick(ui::Event* event)
+void TheaterControllerEditor::eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event)
 {
-	const ui::Command& command = checked_type_cast< ui::CommandEvent* >(event)->getCommand();
+	const ui::Command& command = event->getCommand();
 	handleCommand(command);
 }
 
-void TheaterControllerEditor::eventSequencerCursorMove(ui::Event* event)
+void TheaterControllerEditor::eventSequencerCursorMove(ui::custom::CursorMoveEvent* event)
 {
 	int32_t cursorTick = m_trackSequencer->getCursor();
 	float cursorTime = float(cursorTick / 1000.0f);
@@ -589,12 +590,9 @@ void TheaterControllerEditor::eventSequencerCursorMove(ui::Event* event)
 	m_context->setPlaying(false);
 }
 
-void TheaterControllerEditor::eventSequencerKeyMove(ui::Event* event)
+void TheaterControllerEditor::eventSequencerKeyMove(ui::custom::KeyMoveEvent* event)
 {
-	const ui::CommandEvent* commandEvent = checked_type_cast< const ui::CommandEvent* >(event);
-	const ui::Command& command = commandEvent->getCommand();
-
-	ui::custom::Tick* tick = dynamic_type_cast< ui::custom::Tick* >(commandEvent->getItem());
+	ui::custom::Tick* tick = dynamic_type_cast< ui::custom::Tick* >(event->getKey());
 	if (tick)
 	{
 		TransformPathKeyWrapper* keyWrapper = static_cast< TransformPathKeyWrapper* >(tick->getData(L"KEY").ptr());
@@ -606,7 +604,7 @@ void TheaterControllerEditor::eventSequencerKeyMove(ui::Event* event)
 	}
 }
 
-void TheaterControllerEditor::eventContextPostFrame(ui::Event* event)
+void TheaterControllerEditor::eventContextPostFrame(scene::PostFrameEvent* event)
 {
 	if (m_context->isPlaying())
 	{

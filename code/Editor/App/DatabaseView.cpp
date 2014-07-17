@@ -30,17 +30,14 @@
 #include "Ui/FloodLayout.h"
 #include "Ui/MenuItem.h"
 #include "Ui/MessageBox.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/PopupMenu.h"
 #include "Ui/TableLayout.h"
 #include "Ui/TreeView.h"
 #include "Ui/TreeViewItem.h"
 #include "Ui/HierarchicalState.h"
-#include "Ui/Events/CommandEvent.h"
-#include "Ui/Events/MouseEvent.h"
-#include "Ui/Events/TreeViewDragEvent.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
+#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/Custom/ToolBar/ToolBarEmbed.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 
@@ -230,19 +227,19 @@ bool DatabaseView::create(ui::Widget* parent)
 
 	m_editFilter = new ui::Edit();
 	m_editFilter->create(m_toolSelection, L"", ui::WsNone);
-	m_editFilter->addKeyUpEventHandler(ui::createMethodHandler(this, &DatabaseView::eventFilterKey));
+	m_editFilter->addEventHandler< ui::KeyUpEvent >(this, &DatabaseView::eventFilterKey);
 	m_toolSelection->addItem(new ui::custom::ToolBarEmbed(m_editFilter, 100));
 
-	m_toolSelection->addClickEventHandler(ui::createMethodHandler(this, &DatabaseView::eventToolSelectionClicked));
+	m_toolSelection->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &DatabaseView::eventToolSelectionClicked);
 
 	m_treeDatabase = new ui::TreeView();
 	if (!m_treeDatabase->create(this, (ui::TreeView::WsDefault | ui::TreeView::WsDrag) & ~ui::WsClientBorder))
 		return false;
 	m_treeDatabase->addImage(ui::Bitmap::load(c_ResourceTypes, sizeof(c_ResourceTypes), L"png"), 23);
-	m_treeDatabase->addActivateEventHandler(ui::createMethodHandler(this, &DatabaseView::eventInstanceActivate));
-	m_treeDatabase->addButtonDownEventHandler(ui::createMethodHandler(this, &DatabaseView::eventInstanceButtonDown));
-	m_treeDatabase->addEditedEventHandler(ui::createMethodHandler(this, &DatabaseView::eventInstanceRenamed));
-	m_treeDatabase->addDragEventHandler(ui::createMethodHandler(this, &DatabaseView::eventInstanceDrag));
+	m_treeDatabase->addEventHandler< ui::TreeViewItemActivateEvent >(this, &DatabaseView::eventInstanceActivate);
+	m_treeDatabase->addEventHandler< ui::MouseButtonDownEvent >(this, &DatabaseView::eventInstanceButtonDown);
+	m_treeDatabase->addEventHandler< ui::TreeViewContentChangeEvent >(this, &DatabaseView::eventInstanceRenamed);
+	m_treeDatabase->addEventHandler< ui::TreeViewDragEvent >(this, &DatabaseView::eventInstanceDrag);
 	m_treeDatabase->setEnable(false);
 		
 	m_menuGroup[0] = new ui::PopupMenu();
@@ -344,7 +341,7 @@ bool DatabaseView::create(ui::Widget* parent)
 		m_menuInstanceAsset->add(menuInstanceWizards);
 	}
 
-	addTimerEventHandler(createMethodHandler(this, &DatabaseView::eventTimer));
+	addEventHandler< ui::TimerEvent >(this, &DatabaseView::eventTimer);
 
 	setEnable(false);
 	return true;
@@ -892,11 +889,10 @@ void DatabaseView::filterDependencies(db::Instance* instance)
 	updateView();
 }
 
-void DatabaseView::eventToolSelectionClicked(ui::Event* event)
+void DatabaseView::eventToolSelectionClicked(ui::custom::ToolBarButtonClickEvent* event)
 {
-	const ui::CommandEvent* commandEvent = checked_type_cast< const ui::CommandEvent* >(event);
-
-	if (commandEvent->getCommand() == L"Database.Filter")
+	const ui::Command& cmd = event->getCommand();
+	if (cmd == L"Database.Filter")
 	{
 		if (m_toolFilterType->isToggled())
 		{
@@ -915,7 +911,7 @@ void DatabaseView::eventToolSelectionClicked(ui::Event* event)
 		if (!m_toolFilterType->isToggled())
 			m_filter = new DefaultFilter();
 	}
-	else if (commandEvent->getCommand() == L"Database.FilterAssets")
+	else if (cmd == L"Database.FilterAssets")
 	{
 		if (m_toolFilterAssets->isToggled())
 		{
@@ -956,14 +952,14 @@ void DatabaseView::eventToolSelectionClicked(ui::Event* event)
 	updateView();
 }
 
-void DatabaseView::eventFilterKey(ui::Event* event)
+void DatabaseView::eventFilterKey(ui::KeyUpEvent* event)
 {
 	m_filterText = m_editFilter->getText();
 	stopTimer();
 	startTimer(500);
 }
 
-void DatabaseView::eventTimer(ui::Event* event)
+void DatabaseView::eventTimer(ui::TimerEvent* event)
 {
 	stopTimer();
 
@@ -978,11 +974,9 @@ void DatabaseView::eventTimer(ui::Event* event)
 	updateView();
 }
 
-void DatabaseView::eventInstanceActivate(ui::Event* event)
+void DatabaseView::eventInstanceActivate(ui::TreeViewItemActivateEvent* event)
 {
-	Ref< ui::TreeViewItem > item = checked_type_cast< ui::TreeViewItem* >(
-		checked_type_cast< ui::CommandEvent* >(event)->getItem()
-	);
+	Ref< ui::TreeViewItem > item = event->getItem();
 
 	Ref< db::Instance > instance = item->getData< db::Instance >(L"INSTANCE");
 	if (!instance)
@@ -991,11 +985,9 @@ void DatabaseView::eventInstanceActivate(ui::Event* event)
 	m_editor->openEditor(instance);
 }
 
-void DatabaseView::eventInstanceButtonDown(ui::Event* event)
+void DatabaseView::eventInstanceButtonDown(ui::MouseButtonDownEvent* event)
 {
-	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
-
-	if (mouseEvent->getButton() != ui::MouseEvent::BtRight)
+	if (event->getButton() != ui::MbtRight)
 		return;
 
 	Ref< ui::TreeViewItem > treeItem = m_treeDatabase->getSelectedItem();
@@ -1014,14 +1006,14 @@ void DatabaseView::eventInstanceButtonDown(ui::Event* event)
 		else
 			menuInstance = m_menuInstance;
 
-		Ref< ui::MenuItem > selected = menuInstance->show(m_treeDatabase, mouseEvent->getPosition());
+		Ref< ui::MenuItem > selected = menuInstance->show(m_treeDatabase, event->getPosition());
 		if (selected)
 			handleCommand(selected->getCommand());
 	}
 	else if (group)
 	{
 		bool showFavorites = m_toolFavoritesShow->isToggled();
-		Ref< ui::MenuItem > selected = m_menuGroup[showFavorites ? 1 : 0]->show(m_treeDatabase, mouseEvent->getPosition());
+		Ref< ui::MenuItem > selected = m_menuGroup[showFavorites ? 1 : 0]->show(m_treeDatabase, event->getPosition());
 		if (selected)
 			handleCommand(selected->getCommand());
 	}
@@ -1029,11 +1021,9 @@ void DatabaseView::eventInstanceButtonDown(ui::Event* event)
 	event->consume();
 }
 
-void DatabaseView::eventInstanceRenamed(ui::Event* event)
+void DatabaseView::eventInstanceRenamed(ui::TreeViewContentChangeEvent* event)
 {
-	Ref< ui::TreeViewItem > treeItem = checked_type_cast< ui::TreeViewItem* >(
-		checked_type_cast< ui::CommandEvent* >(event)->getItem()
-	);
+	Ref< ui::TreeViewItem > treeItem = event->getItem();
 	if (!treeItem)
 		return;
 
@@ -1057,18 +1047,17 @@ void DatabaseView::eventInstanceRenamed(ui::Event* event)
 		event->consume();
 }
 
-void DatabaseView::eventInstanceDrag(ui::Event* event)
+void DatabaseView::eventInstanceDrag(ui::TreeViewDragEvent* event)
 {
-	ui::TreeViewDragEvent* dragEvent = checked_type_cast< ui::TreeViewDragEvent* >(event);
-	ui::TreeViewItem* dragItem = checked_type_cast< ui::TreeViewItem* >(dragEvent->getItem());
+	ui::TreeViewItem* dragItem = event->getItem();
 
-	if (dragEvent->getMoment() == ui::TreeViewDragEvent::DmDrag)
+	if (event->getMoment() == ui::TreeViewDragEvent::DmDrag)
 	{
 		// Only instance nodes are allowed to be dragged.
 		if (!dragItem->getData< db::Instance >(L"INSTANCE"))
-			dragEvent->cancel();
+			event->cancel();
 	}
-	else if (dragEvent->getMoment() == ui::TreeViewDragEvent::DmDrop)
+	else if (event->getMoment() == ui::TreeViewDragEvent::DmDrop)
 	{
 		// @fixme Ensure drop target are active editor.
 
@@ -1077,10 +1066,10 @@ void DatabaseView::eventInstanceDrag(ui::Event* event)
 
 		Ref< IEditorPage > editorPage = m_editor->getActiveEditorPage();
 		if (editorPage)
-			editorPage->dropInstance(instance, dragEvent->getPosition());
+			editorPage->dropInstance(instance, event->getPosition());
 	}
 
-	dragEvent->consume();
+	event->consume();
 }
 
 	}

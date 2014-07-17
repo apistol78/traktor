@@ -2,11 +2,9 @@
 #include "Core/Math/MathUtils.h"
 #include "Core/Misc/String.h"
 #include "Ui/Edit.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/NumericEditValidator.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Events/FocusEvent.h"
 #include "Ui/Custom/ColorPicker/ColorDialog.h"
 #include "Ui/Custom/ColorPicker/ColorGradientControl.h"
 #include "Ui/Custom/ColorPicker/ColorSliderControl.h"
@@ -71,13 +69,13 @@ bool ColorDialog::create(Widget* parent, const std::wstring& text, int style, co
 
 	m_gradientControl = new ColorGradientControl();
 	m_gradientControl->create(this, WsClientBorder | WsTabStop, initialColor);
-	m_gradientControl->addColorSelectEventHandler(createMethodHandler(this, &ColorDialog::eventGradientColorSelect));
+	m_gradientControl->addEventHandler< ColorEvent >(this, &ColorDialog::eventGradientColorSelect);
 
 	m_colorGradient = new ColorGradient();
 
 	m_sliderColorControl = new ColorSliderControl();
 	m_sliderColorControl->create(this, WsClientBorder | WsTabStop, m_colorGradient);
-	m_sliderColorControl->addColorSelectEventHandler(createMethodHandler(this, &ColorDialog::eventSliderColorSelect));
+	m_sliderColorControl->addEventHandler< ColorEvent >(this, &ColorDialog::eventSliderColorSelect);
 
 	if (style & WsAlpha)
 	{
@@ -86,7 +84,7 @@ bool ColorDialog::create(Widget* parent, const std::wstring& text, int style, co
 
 		m_sliderAlphaControl = new ColorSliderControl();
 		m_sliderAlphaControl->create(this, WsClientBorder | WsTabStop, m_alphaGradient);
-		m_sliderAlphaControl->addColorSelectEventHandler(createMethodHandler(this, &ColorDialog::eventSliderAlphaSelect));
+		m_sliderAlphaControl->addEventHandler< ColorEvent >(this, &ColorDialog::eventSliderAlphaSelect);
 	}
 
 	Ref< Container > container = new Container();
@@ -97,21 +95,21 @@ bool ColorDialog::create(Widget* parent, const std::wstring& text, int style, co
 
 	m_editColor[0] = new Edit();
 	m_editColor[0]->create(container, toString< int32_t >(initialColor.r), WsClientBorder | WsTabStop, new NumericEditValidator(false, 0, 255, 0));
-	m_editColor[0]->addFocusEventHandler(createMethodHandler(this, &ColorDialog::eventEditFocus));
+	m_editColor[0]->addEventHandler< FocusEvent >(this, &ColorDialog::eventEditFocus);
 
 	Ref< Static > labelG = new Static();
 	labelG->create(container, L"G:");
 
 	m_editColor[1] = new Edit();
 	m_editColor[1]->create(container, toString< int32_t >(initialColor.g), WsClientBorder | WsTabStop, new NumericEditValidator(false, 0, 255, 0));
-	m_editColor[1]->addFocusEventHandler(createMethodHandler(this, &ColorDialog::eventEditFocus));
+	m_editColor[1]->addEventHandler< FocusEvent >(this, &ColorDialog::eventEditFocus);
 
 	Ref< Static > labelB = new Static();
 	labelB->create(container, L"B:");
 
 	m_editColor[2] = new Edit();
 	m_editColor[2]->create(container, toString< int32_t >(initialColor.b), WsClientBorder | WsTabStop, new NumericEditValidator(false, 0, 255, 0));
-	m_editColor[2]->addFocusEventHandler(createMethodHandler(this, &ColorDialog::eventEditFocus));
+	m_editColor[2]->addEventHandler< FocusEvent >(this, &ColorDialog::eventEditFocus);
 
 	if (style & WsAlpha)
 	{
@@ -120,7 +118,7 @@ bool ColorDialog::create(Widget* parent, const std::wstring& text, int style, co
 
 		m_editColor[3] = new Edit();
 		m_editColor[3]->create(container, toString< int32_t >(initialColor.a), WsClientBorder | WsTabStop, new NumericEditValidator(false, 0, 255, 0));
-		m_editColor[3]->addFocusEventHandler(createMethodHandler(this, &ColorDialog::eventEditFocus));
+		m_editColor[3]->addEventHandler< FocusEvent >(this, &ColorDialog::eventEditFocus);
 	}
 
 	m_colorControl = new ColorControl();
@@ -161,9 +159,9 @@ void ColorDialog::updateControls()
 	m_gradientControl->update();
 }
 
-void ColorDialog::eventGradientColorSelect(Event* event)
+void ColorDialog::eventGradientColorSelect(ColorEvent* event)
 {
-	Color4ub color = checked_type_cast< ColorEvent* >(event)->getColor();
+	Color4ub color = event->getColor();
 	
 	m_color.r = color.r;
 	m_color.g = color.g;
@@ -187,9 +185,9 @@ void ColorDialog::eventGradientColorSelect(Event* event)
 	m_colorControl->update();
 }
 
-void ColorDialog::eventSliderColorSelect(Event* event)
+void ColorDialog::eventSliderColorSelect(ColorEvent* event)
 {
-	Color4ub color = checked_type_cast< ColorEvent* >(event)->getColor();
+	Color4ub color = event->getColor();
 
 	m_gradientControl->setColor(color, false);
 	m_gradientControl->update();
@@ -220,9 +218,9 @@ void ColorDialog::eventSliderColorSelect(Event* event)
 	m_colorControl->update();
 }
 
-void ColorDialog::eventSliderAlphaSelect(Event* event)
+void ColorDialog::eventSliderAlphaSelect(ColorEvent* event)
 {
-	Color4ub alpha = checked_type_cast< ColorEvent* >(event)->getColor();
+	Color4ub alpha = event->getColor();
 
 	m_color.a = alpha.a;
 
@@ -240,10 +238,9 @@ void ColorDialog::eventSliderAlphaSelect(Event* event)
 	m_colorControl->update();
 }
 
-void ColorDialog::eventEditFocus(Event* event)
+void ColorDialog::eventEditFocus(FocusEvent* event)
 {
-	const FocusEvent* focusEvent = checked_type_cast< const FocusEvent* >(event);
-	if (!focusEvent->lostFocus())
+	if (!event->lostFocus())
 		return;
 
 	int32_t r = parseString< int32_t >(m_editColor[0]->getText());

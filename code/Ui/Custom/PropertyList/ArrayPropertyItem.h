@@ -15,9 +15,6 @@ namespace traktor
 {
 	namespace ui
 	{
-	
-class Event;
-	
 		namespace custom
 		{
 
@@ -51,7 +48,7 @@ private:
 	bool m_readOnly;
 	Ref< MiniButton > m_buttonEdit;
 
-	void eventClick(Event* event);
+	void eventClick(ButtonClickEvent* event);
 };
 
 		}

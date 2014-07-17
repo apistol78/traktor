@@ -378,6 +378,11 @@ void WorldLayer::resetController()
 	m_controllerTime = -1.0f;
 }
 
+const Frustum& WorldLayer::getViewFrustum() const
+{
+	return m_worldRenderView.getViewFrustum();
+}
+
 bool WorldLayer::worldToView(const Vector4& worldPosition, Vector4& outViewPosition) const
 {
 	outViewPosition = m_worldRenderView.getView() * worldPosition;

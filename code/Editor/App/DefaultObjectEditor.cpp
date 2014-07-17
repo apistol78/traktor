@@ -8,14 +8,13 @@
 #include "I18N/Text.h"
 #include "Ui/Event.h"
 #include "Ui/FileDialog.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/Custom/ColorPicker/ColorDialog.h"
 #include "Ui/Custom/PropertyList/ArrayPropertyItem.h"
 #include "Ui/Custom/PropertyList/BrowsePropertyItem.h"
 #include "Ui/Custom/PropertyList/ColorPropertyItem.h"
 #include "Ui/Custom/PropertyList/FilePropertyItem.h"
 #include "Ui/Custom/PropertyList/ObjectPropertyItem.h"
-#include "Ui/Events/CommandEvent.h"
+#include "Ui/Custom/PropertyList/PropertyCommandEvent.h"
 
 namespace traktor
 {
@@ -36,7 +35,7 @@ bool DefaultObjectEditor::create(ui::Widget* parent, db::Instance* instance, ISe
 
 	m_propertyList = new ui::custom::AutoPropertyList();
 	m_propertyList->create(parent, ui::WsClientBorder | ui::WsDoubleBuffer | ui::WsTabStop | ui::custom::AutoPropertyList::WsColumnHeader, this);
-	m_propertyList->addCommandEventHandler(ui::createMethodHandler(this, &DefaultObjectEditor::eventPropertyCommand));
+	m_propertyList->addEventHandler< ui::custom::PropertyCommandEvent >(this, &DefaultObjectEditor::eventPropertyCommand);
 	m_propertyList->setSeparator(200);
 	m_propertyList->setColumnName(0, i18n::Text(L"PROPERTY_COLUMN_NAME"));
 	m_propertyList->setColumnName(1, i18n::Text(L"PROPERTY_COLUMN_VALUE"));
@@ -95,10 +94,9 @@ bool DefaultObjectEditor::resolvePropertyGuid(const Guid& guid, std::wstring& re
 	return true;
 }
 
-void DefaultObjectEditor::eventPropertyCommand(ui::Event* event)
+void DefaultObjectEditor::eventPropertyCommand(ui::custom::PropertyCommandEvent* event)
 {
-	const ui::CommandEvent* cmdEvent = checked_type_cast< const ui::CommandEvent* >(event);
-	const ui::Command& cmd = cmdEvent->getCommand();
+	const ui::Command& cmd = event->getCommand();
 
 	Ref< ui::custom::FilePropertyItem > fileItem = dynamic_type_cast< ui::custom::FilePropertyItem* >(event->getItem());
 	if (fileItem)

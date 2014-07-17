@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_CUSTOM_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -40,17 +40,15 @@ public:
 
 	VirtualKey getVirtualKey() const;
 
-	void addChangeEventHandler(EventHandler* eventHandler);
-
 private:
 	int32_t m_keyState;
 	VirtualKey m_virtualKey;
 
-	void eventKeyDown(Event* event);
+	void eventKeyDown(KeyDownEvent* event);
 
-	void eventPaint(Event* event);
+	void eventPaint(PaintEvent* event);
 
-	void eventFocus(Event* event);
+	void eventFocus(FocusEvent* event);
 };
 
 		}

@@ -4,10 +4,7 @@
 #include "Render/Editor/Shader/QuickMenuTool.h"
 #include "Ui/Edit.h"
 #include "Ui/ListBox.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Events/FocusEvent.h"
-#include "Ui/Events/KeyEvent.h"
 
 namespace traktor
 {
@@ -38,12 +35,12 @@ bool QuickMenuTool::create(ui::Widget* parent)
 
 	m_editFilter = new ui::Edit();
 	m_editFilter->create(this, L"");
-	m_editFilter->addChangeEventHandler(ui::createMethodHandler(this, &QuickMenuTool::eventFilterChange));
-	m_editFilter->addKeyDownEventHandler(ui::createMethodHandler(this, &QuickMenuTool::eventFilterKey));
+	m_editFilter->addEventHandler< ui::ContentChangeEvent >(this, &QuickMenuTool::eventFilterChange);
+	m_editFilter->addEventHandler< ui::KeyDownEvent >(this, &QuickMenuTool::eventFilterKey);
 
 	m_listBoxSuggestions = new ui::ListBox();
 	m_listBoxSuggestions->create(this, L"");
-	m_listBoxSuggestions->addSelectEventHandler(ui::createMethodHandler(this, &QuickMenuTool::eventSuggestionSelect));
+	m_listBoxSuggestions->addEventHandler< ui::SelectionChangeEvent >(this, &QuickMenuTool::eventSuggestionSelect);
 
 	update();
 	return true;
@@ -86,7 +83,7 @@ void QuickMenuTool::updateSuggestions(const std::wstring& filter)
 		m_listBoxSuggestions->select(-1);
 }
 
-void QuickMenuTool::eventFilterChange(ui::Event* event)
+void QuickMenuTool::eventFilterChange(ui::ContentChangeEvent* event)
 {
 	// Check isModel in to make sure we haven't called endModal in key down event handler already.
 	if (isModal())
@@ -96,20 +93,19 @@ void QuickMenuTool::eventFilterChange(ui::Event* event)
 	}
 }
 
-void QuickMenuTool::eventFilterKey(ui::Event* event)
+void QuickMenuTool::eventFilterKey(ui::KeyDownEvent* event)
 {
-	ui::KeyEvent* keyEvent = checked_type_cast< ui::KeyEvent*, false >(event);
-	if (keyEvent->getVirtualKey() == ui::VkReturn || keyEvent->getVirtualKey() == ui::VkSpace)
+	if (event->getVirtualKey() == ui::VkReturn || event->getVirtualKey() == ui::VkSpace)
 	{
 		endModal(ui::DrOk);
 		event->consume();
 	}
-	else if (keyEvent->getVirtualKey() == ui::VkEscape)
+	else if (event->getVirtualKey() == ui::VkEscape)
 	{
 		endModal(ui::DrCancel);
 		event->consume();
 	}
-	else if (keyEvent->getVirtualKey() == ui::VkUp)
+	else if (event->getVirtualKey() == ui::VkUp)
 	{
 		int32_t index = m_listBoxSuggestions->getSelected();
 		if (index > 0)
@@ -119,7 +115,7 @@ void QuickMenuTool::eventFilterKey(ui::Event* event)
 		m_listBoxSuggestions->select(index);
 		event->consume();
 	}
-	else if (keyEvent->getVirtualKey() == ui::VkDown)
+	else if (event->getVirtualKey() == ui::VkDown)
 	{
 		int32_t index = m_listBoxSuggestions->getSelected();
 		if (index < m_listBoxSuggestions->count() - 1)
@@ -129,7 +125,7 @@ void QuickMenuTool::eventFilterKey(ui::Event* event)
 	}
 }
 
-void QuickMenuTool::eventSuggestionSelect(ui::Event* event)
+void QuickMenuTool::eventSuggestionSelect(ui::SelectionChangeEvent* event)
 {
 	if (m_listBoxSuggestions->getSelectedData() != 0)
 		endModal(ui::DrOk);

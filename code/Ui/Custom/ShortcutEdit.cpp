@@ -1,8 +1,5 @@
-#include "Ui/Custom/ShortcutEdit.h"
 #include "Ui/Application.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/KeyEvent.h"
-#include "Ui/Events/PaintEvent.h"
+#include "Ui/Custom/ShortcutEdit.h"
 
 namespace traktor
 {
@@ -34,9 +31,9 @@ bool ShortcutEdit::create(Widget* parent, int32_t keyState, VirtualKey virtualKe
 	m_keyState = keyState;
 	m_virtualKey = virtualKey;
 
-	addKeyDownEventHandler(createMethodHandler(this, &ShortcutEdit::eventKeyDown));
-	addPaintEventHandler(createMethodHandler(this, &ShortcutEdit::eventPaint));
-	addFocusEventHandler(createMethodHandler(this, &ShortcutEdit::eventFocus));
+	addEventHandler< KeyDownEvent >(this, &ShortcutEdit::eventKeyDown);
+	addEventHandler< PaintEvent >(this, &ShortcutEdit::eventPaint);
+	addEventHandler< FocusEvent >(this, &ShortcutEdit::eventFocus);
 
 	return true;
 }
@@ -88,17 +85,11 @@ VirtualKey ShortcutEdit::getVirtualKey() const
 	return m_virtualKey;
 }
 
-void ShortcutEdit::addChangeEventHandler(EventHandler* eventHandler)
+void ShortcutEdit::eventKeyDown(KeyDownEvent* event)
 {
-	addEventHandler(EiContentChange, eventHandler);
-}
-
-void ShortcutEdit::eventKeyDown(Event* event)
-{
-	KeyEvent* keyEvent = checked_type_cast< KeyEvent* >(event);
-	VirtualKey virtualKey = keyEvent->getVirtualKey();
+	VirtualKey virtualKey = event->getVirtualKey();
 	
-	m_keyState = keyEvent->getKeyState();
+	m_keyState = event->getKeyState();
 	if (m_keyState & ui::KsControl)
 	{
 		m_keyState &= ~ui::KsControl;
@@ -109,16 +100,15 @@ void ShortcutEdit::eventKeyDown(Event* event)
 
 	update();
 
-	Event changeEvent(this, 0);
-	raiseEvent(EiContentChange, &changeEvent);
+	ContentChangeEvent changeEvent(this);
+	raiseEvent(&changeEvent);
 
-	keyEvent->consume();
+	event->consume();
 }
 
-void ShortcutEdit::eventPaint(Event* event)
+void ShortcutEdit::eventPaint(PaintEvent* event)
 {
-	PaintEvent* paintEvent = checked_type_cast< PaintEvent* >(event);
-	Canvas& canvas = paintEvent->getCanvas();
+	Canvas& canvas = event->getCanvas();
 
 	Rect rc = getInnerRect();
 
@@ -135,7 +125,7 @@ void ShortcutEdit::eventPaint(Event* event)
 	event->consume();
 }
 
-void ShortcutEdit::eventFocus(Event* event)
+void ShortcutEdit::eventFocus(FocusEvent* event)
 {
 	update();
 }

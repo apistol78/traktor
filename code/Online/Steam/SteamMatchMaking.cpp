@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/TString.h"
 #include "Core/System/OS.h"
@@ -13,6 +14,8 @@ namespace traktor
 	{
 		namespace
 		{
+
+const uint32_t c_maxLobbyAge = 30;	// Seconds; if a lobby owner has been stuck for more than N seconds the lobby will not be accepted.
 
 template < typename CallType >
 bool performCall(SteamSessionManager* sessionManager, CallType& call)
@@ -305,7 +308,7 @@ bool SteamMatchMaking::getFriendsCount(uint64_t lobbyHandle, uint32_t& outCount)
 		CSteamID steamIDFriend = SteamFriends()->GetFriendByIndex(i, k_EFriendFlagImmediate);
 		if (SteamFriends()->GetFriendGamePlayed(steamIDFriend, &friendGameInfo) && friendGameInfo.m_steamIDLobby.IsValid())
 		{
-			if (friendGameInfo.m_steamIDLobby == lobbyHandle)
+			if (friendGameInfo.m_steamIDLobby.ConvertToUint64() == lobbyHandle)
 				++outCount;
 		}
 	}
@@ -356,16 +359,47 @@ bool SteamMatchMaking::getOwner(uint64_t lobbyHandle, uint64_t& outUserHandle) c
 	return true;
 }
 
+void SteamMatchMaking::update()
+{
+	if (m_joinedLobby == 0)
+		return;
+
+	// In case I'm the lobby owner then update lobby timestamp.
+	if (SteamMatchmaking()->GetLobbyOwner(m_joinedLobby) == ::SteamUser()->GetSteamID())
+	{
+		uint32_t timeStamp = SteamUtils()->GetServerRealTime();
+		SteamMatchmaking()->SetLobbyData(
+			m_joinedLobby,
+			"__PRIVATE_TIME_STAMP__",
+			wstombs(toString(timeStamp)).c_str()
+		);
+	}
+}
+
 void SteamMatchMaking::OnLobbyMatch(LobbyMatchList_t* pCallback, bool bIOFailure)
 {
 	T_ASSERT (m_outLobbies != 0);
+
+	uint32_t timeStamp = SteamUtils()->GetServerRealTime();
+
 	for (uint32_t i = 0; i < pCallback->m_nLobbiesMatching; ++i)
 	{
 		CSteamID lobbyId = SteamMatchmaking()->GetLobbyByIndex(i);
 		if (!lobbyId.IsValid())
 			continue;
 
-		m_outLobbies->push_back(lobbyId.ConvertToUint64());
+		const char* value = SteamMatchmaking()->GetLobbyData(lobbyId, "__PRIVATE_TIME_STAMP__");
+		if (!value)
+		{
+			log::warning << L"Lobby ignored; no timestamp" << Endl;
+			continue;
+		}
+
+		uint32_t lobbyTimeStamp = parseString< uint32_t >(value);
+		if (lobbyTimeStamp > timeStamp || timeStamp - lobbyTimeStamp < c_maxLobbyAge)
+			m_outLobbies->push_back(lobbyId.ConvertToUint64());
+		else
+			log::warning << L"Lobby ignored; too old timestamp" << Endl;
 	}
 }
 

@@ -102,13 +102,13 @@ private:
 
 	void drawClose(Canvas& canvas, int32_t x, int32_t y);
 
-	void eventMouseMove(Event* event);
+	void eventMouseMove(MouseMoveEvent* event);
 
-	void eventButtonDown(Event* event);
+	void eventButtonDown(MouseButtonDownEvent* event);
 
-	void eventSize(Event* event);
+	void eventSize(SizeEvent* event);
 
-	void eventPaint(Event* event);
+	void eventPaint(PaintEvent* event);
 
 #if defined(_DEBUG)
 	void checkPageStates();

@@ -2,9 +2,7 @@
 #include "Ui/Canvas.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/ListBox.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/ToolForm.h"
-#include "Ui/Events/FocusEvent.h"
 #include "Ui/Custom/MiniButton.h"
 #include "Ui/Custom/PropertyList/ListPropertyItem.h"
 #include "Ui/Custom/PropertyList/PropertyList.h"
@@ -99,7 +97,7 @@ void ListPropertyItem::createInPlaceControls(Widget* parent)
 	T_ASSERT (!m_buttonDrop);
 	m_buttonDrop = new MiniButton();
 	m_buttonDrop->create(parent, ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"png"));
-	m_buttonDrop->addClickEventHandler(createMethodHandler(this, &ListPropertyItem::eventDropClick));
+	m_buttonDrop->addEventHandler< ButtonClickEvent >(this, &ListPropertyItem::eventDropClick);
 
 	T_ASSERT (!m_listForm);
 	m_listForm = new ToolForm();
@@ -109,8 +107,8 @@ void ListPropertyItem::createInPlaceControls(Widget* parent)
 	T_ASSERT (!m_listBox);
 	m_listBox = new ListBox();
 	m_listBox->create(m_listForm);
-	m_listBox->addSelectEventHandler(createMethodHandler(this, &ListPropertyItem::eventSelect));
-	m_listBox->addFocusEventHandler(createMethodHandler(this, &ListPropertyItem::eventFocus));
+	m_listBox->addEventHandler< SelectionChangeEvent >(this, &ListPropertyItem::eventSelect);
+	m_listBox->addEventHandler< FocusEvent >(this, &ListPropertyItem::eventFocus);
 
 	for (std::vector< std::wstring >::const_iterator i = m_items.begin(); i != m_items.end(); ++i)
 		m_listBox->add(*i);
@@ -167,7 +165,7 @@ void ListPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 	canvas.drawText(rc.inflate(-2, -2), value, AnLeft, AnCenter);
 }
 
-void ListPropertyItem::eventDropClick(Event* event)
+void ListPropertyItem::eventDropClick(ButtonClickEvent* event)
 {
 	if (!m_listForm->isVisible(false))
 	{
@@ -185,16 +183,16 @@ void ListPropertyItem::eventDropClick(Event* event)
 	}
 }
 
-void ListPropertyItem::eventSelect(Event* event)
+void ListPropertyItem::eventSelect(SelectionChangeEvent* event)
 {
 	m_listForm->setVisible(false);
 	notifyChange();
 	notifyUpdate();
 }
 
-void ListPropertyItem::eventFocus(Event* event)
+void ListPropertyItem::eventFocus(FocusEvent* event)
 {
-	if (static_cast< FocusEvent* >(event)->lostFocus())
+	if (event->lostFocus())
 	{
 		m_selected = m_listBox->getSelected();
 		m_listForm->setVisible(false);

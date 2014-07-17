@@ -1,8 +1,8 @@
+#include "Core/Log/Log.h"
+#include "Ui/Events/CloseEvent.h"
+#include "Ui/Win32/BitmapWin32.h"
 #include "Ui/Win32/FormWin32.h"
 #include "Ui/Win32/MenuBarWin32.h"
-#include "Ui/Win32/BitmapWin32.h"
-#include "Ui/Events/CloseEvent.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -232,8 +232,8 @@ LRESULT FormWin32::eventMenuCommand(HWND hWnd, UINT message, WPARAM wParam, LPAR
 
 LRESULT FormWin32::eventClose(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass)
 {
-	CloseEvent closeEvent(m_owner, 0);
-	m_owner->raiseEvent(EiClose, &closeEvent);
+	CloseEvent closeEvent(m_owner);
+	m_owner->raiseEvent(&closeEvent);
 	if (closeEvent.consumed() && closeEvent.cancelled())
 		return TRUE;
 

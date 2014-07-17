@@ -89,12 +89,6 @@ public:
 
 	virtual bool paste();
 
-	void addSelectEventHandler(EventHandler* eventHandler);
-
-	void addCommandEventHandler(EventHandler* eventHandler);
-	
-	void addChangeEventHandler(EventHandler* eventHandler);
-
 	virtual void update(const Rect* rc = 0, bool immediate = false);
 
 	virtual Size getMinimumSize() const;
@@ -117,21 +111,21 @@ private:
 
 	void placeItems();
 
-	void eventScroll(Event* event);
+	void eventScroll(ScrollEvent* event);
 
-	void eventButtonDown(Event* event);
+	void eventButtonDown(MouseButtonDownEvent* event);
 
-	void eventButtonUp(Event* event);
+	void eventButtonUp(MouseButtonUpEvent* event);
 
-	void eventDoubleClick(Event* event);
+	void eventDoubleClick(MouseDoubleClickEvent* event);
 
-	void eventMouseMove(Event* event);
+	void eventMouseMove(MouseMoveEvent* event);
 
-	void eventMouseWheel(Event* event);
+	void eventMouseWheel(MouseWheelEvent* event);
 
-	void eventSize(Event* event);
+	void eventSize(SizeEvent* event);
 
-	void eventPaint(Event* event);
+	void eventPaint(PaintEvent* event);
 };
 
 		}
