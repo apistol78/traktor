@@ -15,7 +15,7 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_maxLobbyAge = 30;	// Seconds; if a lobby owner has been stuck for more than N seconds the lobby will not be accepted.
+const uint32_t c_maxLobbyAge = 100;	// Seconds; if a lobby owner has been stuck for more than N seconds the lobby will not be accepted.
 
 template < typename CallType >
 bool performCall(SteamSessionManager* sessionManager, CallType& call)
@@ -396,10 +396,15 @@ void SteamMatchMaking::OnLobbyMatch(LobbyMatchList_t* pCallback, bool bIOFailure
 		}
 
 		uint32_t lobbyTimeStamp = parseString< uint32_t >(value);
-		if (lobbyTimeStamp > timeStamp || timeStamp - lobbyTimeStamp < c_maxLobbyAge)
+		if ( lobbyTimeStamp == 0 || lobbyTimeStamp > timeStamp || timeStamp - lobbyTimeStamp < c_maxLobbyAge)
 			m_outLobbies->push_back(lobbyId.ConvertToUint64());
 		else
+		{
 			log::warning << L"Lobby ignored; too old timestamp" << Endl;
+//			log::warning << L"  timeStamp: " << timeStamp << Endl;
+//			log::warning << L"  lobbyTimeStamp: " << lobbyTimeStamp << Endl;
+//			log::warning << L"  c_maxLobbyAge: " << c_maxLobbyAge << Endl;
+		}
 	}
 }
 
