@@ -64,7 +64,7 @@ void TaskQueue::threadQueue()
 {
 	while (!m_thread->stopped())
 	{
-		if (!m_queuedSignal.wait(100))
+		if (!m_queuedSignal.wait(1000 / 60))
 		{
 			if (m_idleTask)
 				m_idleTask->execute(this);

@@ -208,11 +208,7 @@ bool SteamSessionManager::update()
 	if (m_matchMaking)
 		m_matchMaking->update();
 
-	// Pump systems a couple of times; this is an experiment
-	// so see if it improves P2P networking.
-	for (int32_t i = 0; i < 8; ++i)
-		SteamAPI_RunCallbacks();
-
+	SteamAPI_RunCallbacks();
 	return true;
 }
 
