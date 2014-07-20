@@ -2,6 +2,7 @@
 #include <limits>
 #include <alsa/asoundlib.h>
 #include "Core/Log/Log.h"
+#include "Core/Math/MathUtils.h"
 #include "Core/Misc/TString.h"
 #include "Sound/Alsa/SoundDriverAlsa.h"
 

@@ -327,6 +327,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 		new ui::WidgetFactoryWin32()
 	);
 
+	// Adjust timer resolution; Windows default at 15 ms which is a frame.
+	MMRESULT result = timeBeginPeriod(1);
+	if (result != TIMERR_NOERROR)
+		log::warning << L"Unable to change timer resolution; using Windows default" << Endl;
+
 	Ref< amalgam::Application > application;
 
 #if !defined(_DEBUG)
@@ -442,6 +447,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 		showErrorDialog(logTail->m_tail);
 	}
 #endif
+
+	timeEndPeriod(1);
 
 	ui::Application::getInstance()->finalize();
 
