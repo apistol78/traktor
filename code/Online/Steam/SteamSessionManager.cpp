@@ -1,3 +1,6 @@
+#if defined(_WIN32)
+#	include <windows.h>
+#endif
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
@@ -98,8 +101,13 @@ bool SteamSessionManager::create(const IGameConfiguration* configuration)
 		return false;
 
 #if !defined(__APPLE__)
+#	if defined(_WIN32)
+	bool debuggerPresent = bool(IsDebuggerPresent() != FALSE);
+#	else
+	bool debuggerPresent = false;
+#endif
 	// Check if application needs to be restarted.
-	if (!gc->m_drmEnabled)
+	if (!debuggerPresent && !gc->m_drmEnabled)
 	{
 		if (SteamAPI_RestartAppIfNecessary(gc->m_appId))
 			return false;

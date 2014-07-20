@@ -191,7 +191,7 @@ void SoundDriverAlsa::submit(const SoundBlock& soundBlock)
 		for (uint32_t i = 0; i < m_desc.hwChannels; ++i)
 		{
 			if (soundBlock.samples[i])
-				*bufferAt++ = int16_t(soundBlock.samples[i][j] * std::numeric_limits< int16_t >::max());
+				*bufferAt++ = int16_t(clamp(soundBlock.samples[i][j], -1.0f, 1.0f) * std::numeric_limits< int16_t >::max());
 			else
 				*bufferAt++ = 0;
 		}
