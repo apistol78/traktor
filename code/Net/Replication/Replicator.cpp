@@ -26,7 +26,7 @@ namespace traktor
 
 const handle_t c_broadcastHandle = 0UL;
 const int32_t c_initialTimeOffset = 50;
-const int32_t c_maxPongTime = 5000;			// 5 second(s) since last pong reply indicate failure.
+const int32_t c_maxPongTime = 10000;			// N millisecond(s) since last pong reply indicate failure.
 
 Timer g_timer;
 Random g_random;
@@ -628,6 +628,11 @@ void Replicator::updatePeers(int32_t dT)
 		// Check if peer doesn't respond, timeout;ed or unable to communicate.
 		else if (peer.state == PsEstablished)
 		{
+			if (peer.lastPongTime > 0 && m_time0 - peer.lastPongTime > c_maxPongTime)
+			{
+				T_REPLICATOR_DEBUG(L"WARNING: Peer \"" << peer.name << L"\" last pong reply was " << (m_time0 - peer.lastPongTime) / 1000 << L" second(s) ago");
+			}
+
 			if (peer.errorCount >= m_configuration.maxErrorCount || (peer.lastPongTime > 0 && m_time0 - peer.lastPongTime > c_maxPongTime))
 			{
 				T_REPLICATOR_DEBUG(L"WARNING: Peer \"" << peer.name << L"\" failing, unable to communicate with peer");
