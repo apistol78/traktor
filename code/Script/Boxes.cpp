@@ -806,6 +806,8 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedQuaternion->addStaticMethod("fromEulerAngles", &BoxedQuaternion::fromEulerAngles);
 	classBoxedQuaternion->addStaticMethod("fromAxisAngle", &BoxedQuaternion::fromAxisAngle);
 	classBoxedQuaternion->addStaticMethod("lerp", &BoxedQuaternion::lerp);
+	classBoxedQuaternion->addOperator< Vector4, const Vector4& >('*', &BoxedQuaternion::transform);
+	classBoxedQuaternion->addOperator< Quaternion, const Quaternion& >('*', &BoxedQuaternion::concat);
 	scriptManager->registerClass(classBoxedQuaternion);
 
 	Ref< AutoScriptClass< BoxedPlane > > classBoxedPlane = new AutoScriptClass< BoxedPlane >();
@@ -840,6 +842,7 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedTransform->addStaticMethod("identity", &BoxedTransform::identity);
 	classBoxedTransform->addStaticMethod("lerp", &BoxedTransform::lerp);
 	classBoxedTransform->addOperator< Vector4, const Vector4& >('*', &BoxedTransform::transform);
+	classBoxedTransform->addOperator< Transform, const Transform& >('*', &BoxedTransform::concat);
 	scriptManager->registerClass(classBoxedTransform);
 
 	Ref< AutoScriptClass< BoxedAabb3 > > classBoxedAabb3 = new AutoScriptClass< BoxedAabb3 >();
