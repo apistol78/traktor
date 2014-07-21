@@ -628,12 +628,7 @@ void Replicator::updatePeers(int32_t dT)
 		// Check if peer doesn't respond, timeout;ed or unable to communicate.
 		else if (peer.state == PsEstablished)
 		{
-			if (peer.lastPongTime > 0 && m_time0 - peer.lastPongTime > c_maxPongTime)
-			{
-				T_REPLICATOR_DEBUG(L"WARNING: Peer \"" << peer.name << L"\" last pong reply was " << (m_time0 - peer.lastPongTime) / 1000 << L" second(s) ago");
-			}
-
-			if (peer.errorCount >= m_configuration.maxErrorCount || (peer.lastPongTime > 0 && m_time0 - peer.lastPongTime > c_maxPongTime))
+			if (peer.errorCount >= m_configuration.maxErrorCount)
 			{
 				T_REPLICATOR_DEBUG(L"WARNING: Peer \"" << peer.name << L"\" failing, unable to communicate with peer");
 
