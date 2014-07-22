@@ -43,6 +43,8 @@ public:
 	bool m_generateSphereMap;
 	bool m_preserveAlphaCoverage;
 	float m_alphaCoverageReference;
+	int32_t m_sharpenRadius;
+	float m_sharpenStrength;
 	bool m_systemTexture;
 
 	TextureOutput();

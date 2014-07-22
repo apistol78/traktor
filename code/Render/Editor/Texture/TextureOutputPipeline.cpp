@@ -25,6 +25,7 @@
 #include "Drawing/Filters/NormalMapFilter.h"
 #include "Drawing/Filters/PremultiplyAlphaFilter.h"
 #include "Drawing/Filters/ScaleFilter.h"
+#include "Drawing/Filters/SharpenFilter.h"
 #include "Drawing/Filters/SwizzleFilter.h"
 #include "Drawing/Filters/TransformFilter.h"
 #include "Editor/IPipelineBuilder.h"
@@ -127,7 +128,7 @@ struct ScaleTextureTask : public Object
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 29, TextureOutputPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 30, TextureOutputPipeline, editor::IPipeline)
 
 TextureOutputPipeline::TextureOutputPipeline()
 :	m_generateMipsThread(false)
@@ -605,6 +606,15 @@ bool TextureOutputPipeline::buildOutput(
 						drawing::ScaleFilter::MgLinear,
 						textureOutput->m_keepZeroAlpha
 					));
+
+					// Append sharpen filter.
+					if (!isNormalMap && textureOutput->m_sharpenRadius > 0)
+					{
+						taskFilters->add(new drawing::SharpenFilter(
+							textureOutput->m_sharpenRadius,
+							textureOutput->m_sharpenStrength * (float(i) / (mipCount - 1))
+						));
+					}
 
 					// Ensure each pixel is renormalized after scaling.
 					if (isNormalMap)

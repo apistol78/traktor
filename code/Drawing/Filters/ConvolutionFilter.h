@@ -25,9 +25,11 @@ class T_DLLCLASS ConvolutionFilter : public IImageFilter
 	T_RTTI_CLASS;
 
 public:
-	ConvolutionFilter(const Matrix33& matrix);
+	ConvolutionFilter(const float* matrix, int32_t size);
 
-	static Ref< ConvolutionFilter > createGaussianBlur();
+	static Ref< ConvolutionFilter > createGaussianBlur3();
+
+	static Ref< ConvolutionFilter > createGaussianBlur5();
 
 	static Ref< ConvolutionFilter > createEmboss();
 
@@ -35,7 +37,8 @@ protected:
 	virtual void apply(Image* image) const;
 
 private:
-	Matrix33 m_matrix;
+	std::vector< float > m_matrix;
+	int32_t m_size;
 };
 	
 	}
