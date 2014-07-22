@@ -414,7 +414,7 @@ bool OcclusionTexturePipeline::buildOutput(
 
 	log::info << L"Blurring occlusion mask..." << Endl;
 
-	Ref< drawing::ConvolutionFilter > blurFilter = drawing::ConvolutionFilter::createGaussianBlur();
+	Ref< drawing::ConvolutionFilter > blurFilter = drawing::ConvolutionFilter::createGaussianBlur3();
 	image->apply(blurFilter);
 
 	drawing::MirrorFilter mirrorFilter(false, true);

@@ -193,6 +193,7 @@ bool HeightfieldTexturePipeline::buildOutput(
 		output->m_generateSphereMap = false;
 		output->m_preserveAlphaCoverage = false;
 		output->m_alphaCoverageReference = 0.0f;
+		output->m_sharpenRadius = 0;
 
 		return pipelineBuilder->buildOutput(
 			output,
@@ -237,6 +238,7 @@ bool HeightfieldTexturePipeline::buildOutput(
 		output->m_generateSphereMap = false;
 		output->m_preserveAlphaCoverage = false;
 		output->m_alphaCoverageReference = 0.0f;
+		output->m_sharpenRadius = 0;
 
 		return pipelineBuilder->buildOutput(
 			output,
@@ -277,6 +279,7 @@ bool HeightfieldTexturePipeline::buildOutput(
 		output->m_generateSphereMap = false;
 		output->m_preserveAlphaCoverage = false;
 		output->m_alphaCoverageReference = 0.0f;
+		output->m_sharpenRadius = 0;
 
 		return pipelineBuilder->buildOutput(
 			output,
@@ -368,6 +371,7 @@ bool HeightfieldTexturePipeline::buildOutput(
 		output->m_generateSphereMap = false;
 		output->m_preserveAlphaCoverage = false;
 		output->m_alphaCoverageReference = 0.0f;
+		output->m_sharpenRadius = 0;
 
 		return pipelineBuilder->buildOutput(
 			output,
