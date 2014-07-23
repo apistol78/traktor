@@ -71,8 +71,10 @@ void ConvolutionFilter::apply(Image* image) const
 				for (int32_t c = -hs; c <= hs; ++c)
 				{
 					if (image->getPixel(x + c, y + r, in))
+					{
 						acc += in * Scalar(*kernel);
-					norm += *kernel;
+						norm += *kernel;
+					}
 					++kernel;
 				}
 			}
