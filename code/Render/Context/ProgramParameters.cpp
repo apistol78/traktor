@@ -13,25 +13,26 @@ namespace traktor
 template < typename Type >
 inline void align(uint8_t*& ptr)
 {
-	ptr = (uint8_t*)((size_t(ptr) + (alignOf< Type >() - 1)) & ~(alignOf< Type >() - 1));
+	size_t alignment = alignOf< Type >();
+	ptr = (uint8_t*)((size_t(ptr) + (alignment - 1)) & ~(alignment - 1));
 }
 
 template < typename Type >
-inline void write(uint8_t*& writePtr, const Type& value)
+inline void write(uint8_t*& writePtr, Type value)
 {
 	*reinterpret_cast< Type* >(writePtr) = value;
 	writePtr += sizeof(Type);
 }
 
 template < >
-inline void write< Vector4 >(uint8_t*& writePtr, const Vector4& value)
+inline void write< const Vector4& >(uint8_t*& writePtr, const Vector4& value)
 {
 	value.storeAligned(reinterpret_cast< float* >(writePtr));
 	writePtr += sizeof(Vector4);
 }
 
 template < >
-inline void write< Matrix44 >(uint8_t*& writePtr, const Matrix44& value)
+inline void write< const Matrix44& >(uint8_t*& writePtr, const Matrix44& value)
 {
 	value.storeAligned(reinterpret_cast< float* >(writePtr));
 	writePtr += sizeof(Matrix44);

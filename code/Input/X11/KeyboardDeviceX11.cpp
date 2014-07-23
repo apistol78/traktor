@@ -183,6 +183,7 @@ void KeyboardDeviceX11::consumeEvent(XEvent& evt)
 		{
             KeySym ksym;
             unsigned int mods_rtrn;
+			char buf[64];
 
             XkbTranslateKeyCode(
 				m_kbdesc,
@@ -190,6 +191,31 @@ void KeyboardDeviceX11::consumeEvent(XEvent& evt)
 				0,
 				&mods_rtrn,
 				&ksym
+			);
+
+			XKeyPressedEvent key_data;
+			key_data.type         = KeyPress;
+			key_data.root         = event->root;
+			key_data.window       = event->event;
+			key_data.subwindow    = event->child;
+			key_data.time         = event->time;
+			key_data.x            = event->event_x;
+			key_data.y            = event->event_y;
+			key_data.x_root       = event->root_x;
+			key_data.y_root       = event->root_y;
+			key_data.same_screen  = True;
+			key_data.send_event   = False;
+			key_data.serial       = event->serial;
+			key_data.display      = m_display;
+			key_data.keycode      = event->detail;
+			key_data.state        = event->mods.effective;
+
+			int nbuf = XLookupString(
+				&key_data,
+				buf,
+				sizeof(buf),
+				0,
+				0
 			);
 
 			if ((event->flags & XIKeyRepeat) == 0)
@@ -211,16 +237,12 @@ void KeyboardDeviceX11::consumeEvent(XEvent& evt)
 				}
 			}
 
-			char* chrs = XKeysymToString(ksym);
-			if (chrs)
+			for (int i = 0; i < nbuf; ++i)
 			{
-				for (char* i = chrs; *i; ++i)
-				{
-					KeyEvent ke;
-					ke.type = KtCharacter;
-					ke.character = (wchar_t)*i;
-					m_keyEvents.push_back(ke);
-				}
+				KeyEvent ke;
+				ke.type = KtCharacter;
+				ke.character = wchar_t(buf[i]);
+				m_keyEvents.push_back(ke);
 			}
 		}
 		break;
