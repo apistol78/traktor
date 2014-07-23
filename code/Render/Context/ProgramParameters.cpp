@@ -18,7 +18,7 @@ inline void align(uint8_t*& ptr)
 }
 
 template < typename Type >
-inline void write(uint8_t*& writePtr, Type value)
+inline void write(uint8_t*& writePtr, const Type& value)
 {
 	*reinterpret_cast< Type* >(writePtr) = value;
 	writePtr += sizeof(Type);
