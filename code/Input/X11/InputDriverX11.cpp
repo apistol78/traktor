@@ -93,6 +93,16 @@ InputDriverX11::UpdateResult InputDriverX11::update()
 			}
 		}
 	}
+
+	// Check so our window still has input focus; release exlusive if not in focus.
+	::Window focusWindow;
+	int focusState;
+
+	XGetInputFocus(m_display, &focusWindow, &focusState);
+
+	for (RefArray< InputDeviceX11 >::iterator i = m_devices.begin(); i != m_devices.end(); ++i)
+		(*i)->setFocus(focusWindow == m_window);
+
 	return UrOk;
 }
 

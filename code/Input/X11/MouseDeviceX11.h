@@ -54,12 +54,15 @@ public:
 
 	virtual void consumeEvent(XEvent& evt);
 
+	virtual void setFocus(bool focus);
+
 private:
 	Display* m_display;
 	Window m_window;
 	int m_deviceId;
 	bool m_connected;
 	bool m_exclusive;
+	bool m_focus;
 	int32_t m_raw[3];
 	float m_axis[3];
 	int32_t m_position[2];

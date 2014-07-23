@@ -59,12 +59,16 @@ public:
 
 	virtual void consumeEvent(XEvent& evt);
 
+	virtual void setFocus(bool focus);
+
 private:
 	Display* m_display;
 	Window m_window;
 	int m_deviceId;
 	XkbDescPtr m_kbdesc;
 	bool m_connected;
+	bool m_exclusive;
+	bool m_focus;
 	CircularVector< KeyEvent, 16 > m_keyEvents;
 	uint8_t m_keyStates[256];
 };

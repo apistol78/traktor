@@ -59,6 +59,8 @@ private:
 	int32_t m_height;
 	bool m_fullScreen;
 	bool m_active;
+	bool m_cursorShow;
+	bool m_cursorShown;
 	XRRScreenConfiguration* m_originalConfig;
 	int32_t m_originalSizeIndex;
 	int32_t m_originalRate;
