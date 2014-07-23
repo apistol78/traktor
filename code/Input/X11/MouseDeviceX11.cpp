@@ -202,7 +202,7 @@ void MouseDeviceX11::readState()
 	m_height = attr.height;
 
 	// Update virtual position of pointer.
-	if (m_exclusive)
+	if (m_exclusive && m_focus)
 	{
 		m_position[0] = clamp(m_position[0] + m_raw[0], 0, m_width - 1);
 		m_position[1] = clamp(m_position[1] + m_raw[1], 0, m_height - 1);
@@ -215,7 +215,7 @@ void MouseDeviceX11::readState()
 		m_raw[i] = 0;
 	}
 
-	if (m_exclusive)
+	if (m_exclusive && m_focus)
 	{
 		// Warp pointer to center of window.
 		m_warped[0] = m_width / 2;
@@ -246,7 +246,7 @@ void MouseDeviceX11::setRumble(const InputRumble& /*rumble*/)
 
 void MouseDeviceX11::setExclusive(bool exclusive)
 {
-	if (exclusive)
+	if (exclusive && m_focus)
 	{
 		uint8_t mask[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 		XIEventMask evmask;
@@ -273,15 +273,14 @@ void MouseDeviceX11::setExclusive(bool exclusive)
 		);
 #endif
 
-		m_exclusive = true;
 	}
 	else
 	{
 #if !defined(_DEBUG)
 		XIUngrabDevice(m_display, m_deviceId, CurrentTime);
 #endif
-		m_exclusive = false;
 	}
+	m_exclusive = exclusive;
 }
 
 void MouseDeviceX11::consumeEvent(XEvent& evt)
@@ -298,7 +297,7 @@ void MouseDeviceX11::consumeEvent(XEvent& evt)
 			// Need to check if event's position differ from warped position.
 			if (event->event_x != m_warped[0] || event->event_y != m_warped[1])
 			{
-				if (!m_exclusive)
+				if (!m_exclusive || !m_focus)
 				{
 					int32_t dx = event->event_x - m_position[0];
 					int32_t dy = event->event_y - m_position[1];
@@ -322,7 +321,7 @@ void MouseDeviceX11::consumeEvent(XEvent& evt)
 			}
 
 			// In exclusive mode the position is accumulated in readState.
-			if (!m_exclusive)
+			if (!m_exclusive || !m_focus)
 			{
 				m_position[0] = event->event_x;
 				m_position[1] = event->event_y;
@@ -350,6 +349,13 @@ void MouseDeviceX11::consumeEvent(XEvent& evt)
 	default:
 		break;
 	}
+}
+
+void MouseDeviceX11::setFocus(bool focus)
+{
+	m_focus = focus;
+	m_connected = focus;
+	setExclusive(m_exclusive);
 }
 
 	}

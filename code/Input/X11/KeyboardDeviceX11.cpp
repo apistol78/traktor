@@ -17,6 +17,8 @@ KeyboardDeviceX11::KeyboardDeviceX11(Display* display, Window window, int device
 ,	m_deviceId(deviceId)
 ,	m_kbdesc(0)
 ,	m_connected(true)
+,	m_exclusive(false)
+,	m_focus(true)
 {
 	uint8_t mask[2] = { 0, 0 };
 	XIEventMask evmask;
@@ -137,7 +139,7 @@ void KeyboardDeviceX11::setRumble(const InputRumble& /*rumble*/)
 
 void KeyboardDeviceX11::setExclusive(bool exclusive)
 {
-	if (exclusive)
+	if (exclusive && m_focus)
 	{
 		uint8_t mask[2] = { 0, 0 };
 		XIEventMask evmask;
@@ -169,6 +171,7 @@ void KeyboardDeviceX11::setExclusive(bool exclusive)
 		XIUngrabDevice(m_display, m_deviceId, CurrentTime);
 #endif
 	}
+	m_exclusive = exclusive;
 }
 
 void KeyboardDeviceX11::consumeEvent(XEvent& evt)
@@ -282,6 +285,13 @@ void KeyboardDeviceX11::consumeEvent(XEvent& evt)
 		log::info << L"Unknown event in device " << m_deviceId << Endl;
 		break;
 	}
+}
+
+void KeyboardDeviceX11::setFocus(bool focus)
+{
+	m_focus = focus;
+	m_connected = focus;
+	setExclusive(m_exclusive);
 }
 
 	}

@@ -37,7 +37,7 @@ void setProperty(::Display* display, int32_t screen, ::Window window, const char
 		SubstructureNotifyMask,
 		&evt
 	);
-}			
+}
 
 void setProperty(::Display* display, int32_t screen, ::Window window, const char* propertyName1, const char* propertyName2, int32_t value)
 {
@@ -83,6 +83,8 @@ Window::Window(::Display* display)
 ,	m_height(0)
 ,	m_fullScreen(false)
 ,	m_active(true)
+,	m_cursorShow(true)
+,	m_cursorShown(true)
 ,	m_originalConfig(0)
 ,	m_originalSizeIndex(-1)
 ,	m_originalRate(0)
@@ -294,33 +296,19 @@ void Window::setWindowedStyle(int32_t width, int32_t height)
 		m_fullScreen = false;
 	}
 
-	// Setup close response from WM.	
+	// Setup close response from WM.
 	Atom wmDeleteWindow = XInternAtom(m_display, "WM_DELETE_WINDOW", False);
 	XSetWMProtocols(m_display, m_window, &wmDeleteWindow, 1);
 }
 
 void Window::showCursor()
 {
-#if !defined(_DEBUG)
-	Cursor cursor;
-	cursor = XCreateFontCursor(m_display, XC_left_ptr);
-	XDefineCursor(m_display, m_window, cursor);
-	XFreeCursor(m_display, cursor);
-	XFlush(m_display);
-#endif
+	m_cursorShow = true;
 }
 
 void Window::hideCursor()
 {
-#if !defined(_DEBUG)
-	static const char c_invisibleCursor[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-	XColor black; std::memset(&black, 0, sizeof(black));
-	Pixmap bitmapInvisibleCursor = XCreateBitmapFromData(m_display, m_window, c_invisibleCursor, 8, 8);
-	Cursor invisibleCursor = XCreatePixmapCursor(m_display, bitmapInvisibleCursor, bitmapInvisibleCursor, &black, &black, 0, 0);
-	XDefineCursor(m_display, m_window, invisibleCursor);
-	XFreeCursor(m_display, invisibleCursor);
-	XFlush(m_display);
-#endif
+	m_cursorShow = false;
 }
 
 void Window::show()
@@ -349,7 +337,7 @@ bool Window::update(RenderEvent& outEvent)
 			log::info << L"Window closed from WM" << Endl;
 			outEvent.type = ReClose;
 			return true;
-		}	
+		}
 	}
 
 	// Then check for other events we're interested in.
@@ -375,6 +363,39 @@ bool Window::update(RenderEvent& outEvent)
 			m_active = true;
 		else if (evt.type == FocusOut)
 			m_active = false;
+	}
+
+	// Handle mouse cursor show/hide; need to show cursor if window is not active.
+	if (m_active && m_cursorShow != m_cursorShown)
+	{
+		if (m_cursorShow)
+		{
+			Cursor cursor;
+			cursor = XCreateFontCursor(m_display, XC_left_ptr);
+			XDefineCursor(m_display, m_window, cursor);
+			XFreeCursor(m_display, cursor);
+			XFlush(m_display);
+		}
+		else
+		{
+			static const char c_invisibleCursor[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+			XColor black; std::memset(&black, 0, sizeof(black));
+			Pixmap bitmapInvisibleCursor = XCreateBitmapFromData(m_display, m_window, c_invisibleCursor, 8, 8);
+			Cursor invisibleCursor = XCreatePixmapCursor(m_display, bitmapInvisibleCursor, bitmapInvisibleCursor, &black, &black, 0, 0);
+			XDefineCursor(m_display, m_window, invisibleCursor);
+			XFreeCursor(m_display, invisibleCursor);
+			XFlush(m_display);
+		}
+		m_cursorShown = m_cursorShow;
+	}
+	else if (!m_active && !m_cursorShown)
+	{
+		Cursor cursor;
+		cursor = XCreateFontCursor(m_display, XC_left_ptr);
+		XDefineCursor(m_display, m_window, cursor);
+		XFreeCursor(m_display, cursor);
+		XFlush(m_display);
+		m_cursorShown = true;
 	}
 
 	return false;
