@@ -238,6 +238,9 @@ end
 						end
 					end
 --?>
+
+					<!-- Misc -->
+					<Add option="-Wl,-rpath=\\$$$ORIGIN" />
 				</Linker><?--
 				end
 --?>
@@ -256,16 +259,18 @@ end
 				local files = item:getSystemFiles(project:getSourcePath())
 				for i = 0, files:size() - 1 do
 
-					local filePath = files:get(i) -- fileSystem:getAbsolutePath(files:get(i))
-					local filePathRel = fileSystem:getRelativePath(filePath, projectPath)
-					if filePathRel ~= nil then
-						local ext = filePathRel:getExtension()
-						if ext == "png" or ext == "xdi" then
+					local filePath = Path(files:get(i):getPathNameNoVolume()) -- fileSystem:getAbsolutePath(files:get(i))
+
+					local ext = filePath:getExtension()
+					if ext == "png" or ext == "xdi" then
+
+						local filePathRel = fileSystem:getRelativePath(filePath, projectPath)
+						if filePathRel ~= nil then
 --?>
 			<Add before="BinaryInclude <?-- output:print(filePathRel:getPathName() .. " ./Resources/" .. filePathRel:getFileNameNoExtension() .. ".h c_Resource" .. filePathRel:getFileNameNoExtension()) --?>" /><?--
+						else
+							print("Unable to determine relative path; " .. filePath:getPathName() .. " vs " .. projectPath:getPathName())
 						end
-					else
-						print("Unable to determine relative path; " .. filePath:getPathName() .. " vs " .. projectPath:getPathName())
 					end
 				end
 			end
@@ -281,16 +286,18 @@ end
 				local files = item:getSystemFiles(project:getSourcePath())
 				for i = 0, files:size() - 1 do
 
-					local filePath = files:get(i) -- fileSystem:getAbsolutePath(files:get(i))
-					local filePathRel = fileSystem:getRelativePath(filePath, projectPath)
-					if filePathRel ~= nil then
-						local ext = filePathRel:getExtension()
-						if ext == "c" or ext == "cc" or ext == "cpp" or ext == "h" or ext == "hh" or ext == "hpp" or ext == "inl" or ext == "o" then
+					local filePath = Path(files:get(i):getPathNameNoVolume()) -- fileSystem:getAbsolutePath(files:get(i))
+
+					local ext = filePath:getExtension()
+					if ext == "c" or ext == "cc" or ext == "cpp" or ext == "h" or ext == "hh" or ext == "hpp" or ext == "inl" or ext == "o" then
+
+						local filePathRel = fileSystem:getRelativePath(filePath, projectPath)
+						if filePathRel ~= nil then
 --?>
 		<Unit filename="<?-- output:print(filePathRel:getPathName()) --?>" /><?--
+						else
+							print("Unable to determine relative path; " .. filePath:getPathName() .. " vs " .. projectPath:getPathName())
 						end
-					else
-						print("Unable to determine relative path; " .. filePath:getPathName() .. " vs " .. projectPath:getPathName())
 					end
 				end
 			end

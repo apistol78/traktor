@@ -103,6 +103,7 @@ RenderViewOpenGL::RenderViewOpenGL(
 ,	m_resourceContext(resourceContext)
 ,	m_cursorVisible(true)
 ,	m_waitVBlank(false)
+,	m_targetsDirty(false)
 {
 	m_primaryTargetDesc.multiSample = desc.multiSample;
 	m_primaryTargetDesc.createDepthStencil = bool(desc.depthBits > 0 || desc.stencilBits > 0);
@@ -434,7 +435,7 @@ bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet)
 	ts.renderTargetSet = checked_type_cast< RenderTargetSetOpenGL* >(renderTargetSet);
 	ts.renderTarget = -1;
 	ts.clearMask = 0;
-	
+
 	m_targetStack.push_back(ts);
 	m_targetsDirty = true;
 
@@ -456,7 +457,7 @@ bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 	ts.renderTargetSet = checked_type_cast< RenderTargetSetOpenGL* >(renderTargetSet);
 	ts.renderTarget = renderTarget;
 	ts.clearMask = 0;
-	
+
 	m_targetStack.push_back(ts);
 	m_targetsDirty = true;
 

@@ -177,7 +177,7 @@ bool SteamMatchMaking::createLobby(uint32_t maxUsers, LobbyAccess access, uint64
 
 		uint32_t timeStamp = SteamUtils()->GetServerRealTime();
 		SteamMatchmaking()->SetLobbyData(
-			m_joinedLobby,
+			uint64(m_joinedLobby),
 			"__PRIVATE_TIME_STAMP__",
 			wstombs(toString(timeStamp)).c_str()
 		);
@@ -311,7 +311,7 @@ bool SteamMatchMaking::getFriendsCount(uint64_t lobbyHandle, uint32_t& outCount)
 	outCount = 0;
 
 	int32_t friendsCount = SteamFriends()->GetFriendCount(k_EFriendFlagImmediate);
-	for (int32_t i = 0; i < friendsCount; ++i) 
+	for (int32_t i = 0; i < friendsCount; ++i)
 	{
 		FriendGameInfo_t friendGameInfo;
 		CSteamID steamIDFriend = SteamFriends()->GetFriendByIndex(i, k_EFriendFlagImmediate);
@@ -374,11 +374,11 @@ void SteamMatchMaking::update()
 		return;
 
 	// In case I'm the lobby owner then update lobby timestamp.
-	if (SteamMatchmaking()->GetLobbyOwner(m_joinedLobby) == ::SteamUser()->GetSteamID())
+	if (SteamMatchmaking()->GetLobbyOwner(uint64(m_joinedLobby)) == ::SteamUser()->GetSteamID())
 	{
 		uint32_t timeStamp = SteamUtils()->GetServerRealTime();
 		SteamMatchmaking()->SetLobbyData(
-			m_joinedLobby,
+			uint64(m_joinedLobby),
 			"__PRIVATE_TIME_STAMP__",
 			wstombs(toString(timeStamp)).c_str()
 		);
