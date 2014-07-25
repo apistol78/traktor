@@ -55,8 +55,21 @@ public:
 	void update();
 
 private:
+	struct FindLobby
+	{
+		CSteamID lobbyId;
+		bool uptodate;
+		bool succeeded;
+
+		FindLobby()
+		:	uptodate(false)
+		,	succeeded(false)
+		{
+		}
+	};
+
 	SteamSessionManager* m_sessionManager;
-	std::vector< uint64_t >* m_outLobbies;
+	std::vector< FindLobby > m_outLobbies;
 	uint64_t* m_outLobby;
 	uint64_t m_acceptedInvite;
 	uint64_t m_joinedLobby;
@@ -72,6 +85,8 @@ private:
 	void OnLobbyEnter(LobbyEnter_t* pCallback, bool bIOFailure);
 
 	STEAM_CALLBACK(SteamMatchMaking, OnGameLobbyJoinRequested, GameLobbyJoinRequested_t, m_callbackGameLobbyJoinRequested);
+
+	STEAM_CALLBACK(SteamMatchMaking, OnLobbyDataUpdate, LobbyDataUpdate_t, m_callbackLobbyDataUpdate);
 };
 
 	}
