@@ -173,7 +173,7 @@ void Replicator::addListener(IListener* listener)
 void Replicator::reset()
 {
 	m_origin = Transform::identity();
-	
+
 	m_stateTemplate = 0;
 	m_state = 0;
 
@@ -238,8 +238,14 @@ void Replicator::setStatus(uint8_t status)
 		m_status = status;
 
 		// Send immediate pings to all established peers as status is a payload of ping.
-		for (std::map< handle_t, Peer >::const_iterator i = m_peers.begin(); i != m_peers.end(); ++i)
-			sendPing(i->first);
+		for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
+		{
+			if (!sendPing(i->first))
+			{
+				log::error << L"ERROR: Unable to send ping to peer " << i->second.name << Endl;
+				i->second.errorCount++;
+			}
+		}
 
 		if (m_peers.size() > 0)
 			m_timeUntilPing = m_configuration.timeUntilPing / m_peers.size();
@@ -272,7 +278,7 @@ void Replicator::setStateTemplate(const StateTemplate* stateTemplate)
 void Replicator::setState(const State* state)
 {
 	T_FATAL_ASSERT (m_stateTemplate);
-	
+
 	// Clear count-down timer if state is critical which
 	// will cause the state to be replicated at next update
 	// to all peers.
@@ -607,7 +613,7 @@ void Replicator::updatePeers(int32_t dT)
 		Peer& peer = m_peers[i->handle];
 
 		// Issue "I am" to unestablished peers.
-		if (peer.state == PsInitial || peer.state == PsDisconnected)
+		if (peer.state == PsInitial)
 		{
 			peer.name = i->name;
 			peer.endSite = i->endSite;
@@ -618,7 +624,8 @@ void Replicator::updatePeers(int32_t dT)
 
 				if (!sendIAm(i->handle, 0, m_id))
 				{
-					T_REPLICATOR_DEBUG(L"ERROR: Unable to send \"I am\" to peer \"" << peer.name << L"\"");
+					log::error << L"ERROR: Unable to send \"I am\" to peer \"" << peer.name << L"\"" << Endl;
+					peer.errorCount++;
 				}
 
 				peer.timeUntilTx = int32_t(m_configuration.timeUntilIAm * (1.0f + g_random.nextFloat()));
@@ -733,8 +740,7 @@ void Replicator::sendState(int32_t dT)
 		}
 		else
 		{
-			if (!peer.errorCount)
-				log::error << L"ERROR: Unable to send state to peer " << peer.name << Endl;
+			log::error << L"ERROR: Unable to send state to peer " << peer.name << Endl;
 			peer.timeUntilTx = m_configuration.farTimeUntilTx;
 			peer.errorCount++;
 			peer.stateCount = 0;
@@ -820,9 +826,8 @@ void Replicator::sendEvents()
 			}
 			else
 			{
-				if (!i->second.errorCount)
-					log::error << L"ERROR: Unable to send event(s) to peer " << peer.name << Endl;
-				
+				log::error << L"ERROR: Unable to send event(s) to peer " << peer.name << Endl;
+
 				for (; j < jj; ++j)
 					eventsOut.push_back(peerEventsOut[j]);
 
@@ -851,7 +856,13 @@ void Replicator::sendPings(int32_t dT)
 
 		Peer& peer = i->second;
 		if (peer.state == PsEstablished)
-			sendPing(i->first);
+		{
+			if (!sendPing(i->first))
+			{
+				log::error << L"ERROR: Unable to send ping to peer " << peer.name << Endl;
+				peer.errorCount++;
+			}
+		}
 
 		m_timeUntilPing = m_configuration.timeUntilPing / m_peers.size();
 	}
@@ -875,6 +886,8 @@ void Replicator::receiveMessages()
 		// Always handle handshake messages.
 		if (msg.type == MtIAm)
 		{
+			Peer& peer = m_peers[handle];
+
 			// Assume peer time is correct if exceeding my time.
 			int32_t offset = msg.time + c_initialTimeOffset - m_time;
 			if (offset > 0)
@@ -882,12 +895,12 @@ void Replicator::receiveMessages()
 
 			if (msg.iam.sequence == 0)
 			{
-				sendIAm(handle, 1, msg.iam.id);
+				T_REPLICATOR_DEBUG(L"OK: Got initial \"I am\" from peer \"" << peer.name << L"\"");
+				if (sendIAm(handle, 1, msg.iam.id))
+					log::error << L"ERROR: Unable to send \"I am\" response to peer \"" << peer.name << L"\"" << Endl;
 			}
 			else if (msg.iam.sequence == 1 || msg.iam.sequence == 2)
 			{
-				Peer& peer = m_peers[handle];
-
 				// "I am" with sequence 1 can only be received if I was the handshake initiator.
 				// "I am" with sequence 2 can only be received if I was NOT the handshake initiator.
 
@@ -895,7 +908,8 @@ void Replicator::receiveMessages()
 				{
 					if (msg.iam.id != m_id)
 					{
-						T_REPLICATOR_DEBUG(L"ERROR: \"I am\" message with incorrect id from peer \"" << peer.name << L"\"; ignoring");
+						log::error << L"ERROR: \"I am\" message with incorrect id (received " << msg.iam.id << L", should be " << m_id << L") from peer \"" << peer.name << L"\"; ignoring" << Endl;
+						peer.errorCount++;
 						continue;
 					}
 					sendIAm(handle, 2, msg.iam.id);
@@ -919,7 +933,11 @@ void Replicator::receiveMessages()
 					peer.timeUntilTx = 0;
 
 					// Send ping to peer.
-					sendPing(handle);
+					if (!sendPing(handle))
+					{
+						log::error << L"ERROR: Unable to send ping to peer " << peer.name << Endl;
+						peer.errorCount++;
+					}
 
 					// Issue connect event to listeners.
 					EventIn evt;
@@ -928,7 +946,7 @@ void Replicator::receiveMessages()
 					evt.object = 0;
 					m_eventsIn.push_back(evt);
 
-					T_REPLICATOR_DEBUG(L"OK: Peer \"" << peer.name << L"\" connection established");
+					T_REPLICATOR_DEBUG(L"OK: Peer \"" << peer.name << L"\" connection established (" << int32_t(msg.iam.sequence) << L")");
 				}
 
 				peer.lastTimeRemote = std::max< int32_t >(msg.time, peer.lastTimeRemote + 1);
@@ -967,7 +985,11 @@ void Replicator::receiveMessages()
 			// I've got pinged; save status and reply with a pong.
 			Peer& peer = m_peers[handle];
 			peer.status = msg.ping.status;
-			sendPong(handle, msg.time);
+			if (!sendPong(handle, msg.time))
+			{
+				log::error << L"ERROR: Unable to send pong to peer " << peer.name << Endl;
+				peer.errorCount++;
+			}
 		}
 		else if (msg.type == MtPong)
 		{
