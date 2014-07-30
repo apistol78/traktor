@@ -13,6 +13,8 @@ class ProcessOsX : public IProcess
 	T_RTTI_CLASS;
 	
 public:
+	virtual ~ProcessOsX();
+
 	virtual Ref< IStream > getPipeStream(StdPipe pipe);
 	
 	virtual bool signal(SignalType signalType);
@@ -25,9 +27,12 @@ private:
 	friend class OS;
 	
 	pid_t m_pid;
+	posix_spawn_file_actions_t* m_fileActions;
+	int m_childStdOut;
+	int m_childStdErr;
 	int32_t m_exitCode;
-	
-	ProcessOsX(pid_t pid);
+
+	ProcessOsX(pid_t pid, posix_spawn_file_actions_t* fileActions, int childStdOut, int childStdErr);
 };
 
 }

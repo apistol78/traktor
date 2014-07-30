@@ -739,6 +739,7 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedVector2->addMethod("neg", &BoxedVector2::neg);
 	classBoxedVector2->addMethod("perpendicular", &BoxedVector2::perpendicular);
 	classBoxedVector2->addStaticMethod("zero", &BoxedVector2::zero);
+	classBoxedVector2->addStaticMethod("lerp", &BoxedVector2::lerp);
 	classBoxedVector2->addOperator< Vector2, const Vector2& >('+', &BoxedVector2::add);
 	classBoxedVector2->addOperator< Vector2, float >('+', &BoxedVector2::add);
 	classBoxedVector2->addOperator< Vector2, const Vector2& >('-', &BoxedVector2::sub);

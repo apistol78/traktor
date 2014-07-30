@@ -78,7 +78,23 @@ void DeviceControlManager::update()
 		if (deviceControl->m_device)
 		{
 			if (deviceControl->m_device->isConnected())
+			{
+				// Keep updating range as it might change due to screen resize etc.
+				float rangeMin, rangeMax;
+				if (deviceControl->m_device->getControlRange(deviceControl->m_control, rangeMin, rangeMax))
+				{
+					deviceControl->m_rangeMin = rangeMin;
+					deviceControl->m_rangeMax = rangeMax;
+				}
+				else
+				{
+					deviceControl->m_rangeMin = 0.0f;
+					deviceControl->m_rangeMax = 0.0f;						
+				}
+
+				// Read value of control from device.
 				deviceControl->m_currentValue = deviceControl->m_device->getControlValue(deviceControl->m_control);
+			}
 			else
 				deviceControl->m_currentValue = 0.0f;
 		}

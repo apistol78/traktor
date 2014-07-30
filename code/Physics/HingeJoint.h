@@ -32,6 +32,8 @@ public:
 	virtual float getAngle() const = 0;
 
 	virtual float getAngleVelocity() const = 0;
+
+	virtual void setMotor(float targetVelocity, float maxImpulse) = 0;
 };
 
 	}

@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
 #include "Input/IInputDevice.h"
@@ -94,6 +95,14 @@ float GenericInputSource::read(float T, float dT)
 
 			if (abs< float >(currentValue - previousValue) > FUZZY_EPSILON)
 			{
+				// Normalize input value if desired.
+				if (m_data->normalize())
+				{
+					float rangeMin = (*i)->getRangeMin();
+					float rangeMax = (*i)->getRangeMax();
+					if (abs(rangeMax - rangeMin) > FUZZY_EPSILON)
+						currentValue = (currentValue - rangeMin) / (rangeMax - rangeMin);
+				}
 				m_lastValue = currentValue;
 				break;
 			}

@@ -141,7 +141,7 @@ bool VolumeTextureOpenGLES2::create(const VolumeTextureCreateDesc& desc)
 
 	convertTextureFormat(desc.format, m_pixelSize, m_components, m_format, m_type);
 
-#if !defined(T_OFFLINE_ONLY)
+#if !defined(T_OFFLINE_ONLY) && !defined(__IOS__)
 
 	T_OGL_SAFE(glGenTextures(1, &m_textureName));
 
@@ -232,7 +232,7 @@ void VolumeTextureOpenGLES2::unlock(int side, int level)
 
 void VolumeTextureOpenGLES2::bindSampler(GLuint unit, const SamplerStateOpenGL& samplerState, GLint locationTexture)
 {
-#if !defined(T_OFFLINE_ONLY)
+#if !defined(T_OFFLINE_ONLY) && !defined(__IOS__)
 
 	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_3D_OES, m_textureName));

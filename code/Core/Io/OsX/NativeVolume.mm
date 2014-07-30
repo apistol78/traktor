@@ -207,7 +207,6 @@ void NativeVolume::mountVolumes(FileSystem& fileSystem)
 		[directoryPath getCString: buffer maxLength: sizeof_array(buffer) encoding: NSUTF8StringEncoding];
 	
 		std::wstring workingDirectory = std::wstring(L"C:") + mbstows(buffer);
-		log::info << L"Initial working directory \"" << workingDirectory << L"\"" << Endl;
 
 		Ref< IVolume > volume = new NativeVolume(workingDirectory);
 		fileSystem.mount(L"C", volume);

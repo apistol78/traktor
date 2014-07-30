@@ -33,5 +33,9 @@ float HingeJointHavok::getAngleVelocity() const
 	return 0.0f;
 }
 
+void HingeJointHavok::setMotor(float targetVelocity, float maxImpulse)
+{
+}
+
 	}
 }

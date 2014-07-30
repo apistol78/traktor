@@ -95,7 +95,7 @@ bool Aabb3::intersectRay(const Vector4& p, const Vector4& d, Scalar& outDistance
 
 bool Aabb3::intersectRay(const Vector4& p, const Vector4& d, Scalar& outDistanceEnter, Scalar& outDistanceExit) const
 {
-	Vector4 id = Scalar(1.0f) / d;
+	Vector4 id = Scalar(1.0f) / d.xyz1();
 	int32_t sign[] =
 	{
 		id.x() < 0.0f,

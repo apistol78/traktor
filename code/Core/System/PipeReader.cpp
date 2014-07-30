@@ -54,6 +54,16 @@ bool PipeReader::readLine(std::wstring& outLine, int32_t timeout)
 		if (res <= 0)
 			return false;
 
+#if defined(__APPLE__)
+		if (ch == 10)
+		{
+			outLine = mbstows(std::string(m_acc.begin(), m_acc.end()));
+			m_acc.resize(0);
+			break;			
+		}
+		else
+			m_acc.push_back(ch);
+#else
 		if (ch == 13)
 		{
 			outLine = mbstows(std::string(m_acc.begin(), m_acc.end()));
@@ -62,6 +72,7 @@ bool PipeReader::readLine(std::wstring& outLine, int32_t timeout)
 		}
 		else if (ch != 10)
 			m_acc.push_back(ch);
+#endif
 
 		pch = ch;
 	}
