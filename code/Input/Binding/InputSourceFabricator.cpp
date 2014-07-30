@@ -95,7 +95,8 @@ Ref< IInputSourceData > InputSourceFabricator::update()
 							std::distance(m_deviceStates.begin(), i),
 							controlType,
 							m_analogue,
-							inverted
+							inverted,
+							false		//<! \fixme
 						);
 
 						break;
@@ -128,7 +129,8 @@ Ref< IInputSourceData > InputSourceFabricator::update()
 								std::distance(m_deviceStates.begin(), i),
 								controlType,
 								m_analogue,
-								false
+								false,
+								false		//<! \fixme
 							));
 						}
 						else

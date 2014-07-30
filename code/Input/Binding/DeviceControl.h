@@ -29,6 +29,10 @@ public:
 	int32_t getIndex() const;
 
 	IInputDevice* getDevice() const;
+
+	float getRangeMin() const;
+
+	float getRangeMax() const;
 	
 	float getPreviousValue() const;
 
@@ -45,6 +49,8 @@ private:
 	int32_t m_index;
 	Ref< IInputDevice > m_device;
 	int32_t m_control;
+	float m_rangeMin;
+	float m_rangeMax;
 	float m_previousValue;
 	float m_currentValue;
 };

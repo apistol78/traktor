@@ -131,6 +131,8 @@ public:
 
 	static Vector2 zero() { return Vector2::zero(); }
 
+	static Vector2 lerp(const Vector2& a, const Vector2& b, float c) { return traktor::lerp(a, b, c); }
+
 	const Vector2& unbox() const { return m_value; }
 
 	virtual std::wstring toString() const;

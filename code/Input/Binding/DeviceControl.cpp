@@ -39,6 +39,16 @@ IInputDevice* DeviceControl::getDevice() const
 	return m_device;
 }
 
+float DeviceControl::getRangeMin() const
+{
+	return m_rangeMin;
+}
+
+float DeviceControl::getRangeMax() const
+{
+	return m_rangeMax;
+}
+
 float DeviceControl::getPreviousValue() const
 {
 	return m_previousValue;
@@ -55,6 +65,8 @@ DeviceControl::DeviceControl()
 ,	m_analogue(false)
 ,	m_index(0)
 ,	m_control(0)
+,	m_rangeMin(0.0f)
+,	m_rangeMax(0.0f)
 ,	m_previousValue(0.0f)
 ,	m_currentValue(0.0f)
 {

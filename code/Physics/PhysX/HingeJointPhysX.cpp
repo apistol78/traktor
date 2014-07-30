@@ -32,5 +32,9 @@ float HingeJointPhysX::getAngleVelocity() const
 	return 0.0f;
 }
 
+void HingeJointPhysX::setMotor(float targetVelocity, float maxImpulse)
+{
+}
+
 	}
 }

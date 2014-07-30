@@ -9,7 +9,7 @@ end
 
 function build(args)
 	stdout:printLn("Building asset(s)...")
-	local cmdline = "$(DEPLOY_PROJECT_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App -p -s=Pipeline"
+	local cmdline = "$(DEPLOY_PROJECT_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App -standalone -p -s=Pipeline"
 	for i = 1, args:size() - 1 do
 		cmdline = cmdline .. " " .. args:get(i)
 	end
@@ -65,17 +65,26 @@ function deploy(args)
 		return 1
 	end
 
-	stdout:printLn("Deploying resources to target host...")
-	run:pushd("$(TRAKTOR_HOME)/bin/osx")
-	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) kick-open.sh", "(null)")
-	run:popd()
-	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) *.plist *.png *.cpp Application.config", "(null)")
-	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) \"$(DEPLOY_PROJECT_NAME).xcodeproj/project.pbxproj\"", "(null)")
+	stdout:printLn("Generating Xcode scheme...")
+	run:mkdir("$(DEPLOY_PROJECT_NAME).xcodeproj/xcshareddata/xcschemes")
+	if run:run("$(DEPLOY_PROJECT_ROOT)/res/deploy/ios/scheme.xcscheme.template", "$(DEPLOY_PROJECT_NAME).xcodeproj/xcshareddata/xcschemes/$(DEPLOY_PROJECT_NAME).xcscheme") ~= 0 then
+		stderr:printLn("Failed to generate Xcode scheme")
+		return 1
+	end
 
-	stdout:printLn("Deploying binaries to target host...")
-	run:pushd("$(DEPLOY_PROJECT_ROOT)/bin/latest/ios/releasestatic")
-	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) *.a", "(null)")
-	run:popd()
+	if environment:get("DEPLOY_TARGET_HOST") ~= "localhost" then
+		stdout:printLn("Deploying resources to target host...")
+		run:pushd("$(TRAKTOR_HOME)/bin/osx")
+		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) kick-open.sh", "(null)")
+		run:popd()
+		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) *.plist *.png *.cpp Application.config", "(null)")
+		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) \"$(DEPLOY_PROJECT_NAME).xcodeproj/project.pbxproj\"", "(null)")
+
+		stdout:printLn("Deploying binaries to target host...")
+		run:pushd("$(DEPLOY_PROJECT_ROOT)/bin/latest/ios/releasestatic")
+		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) *.a", "(null)")
+		run:popd()
+	end
 
 	stdout:printLn("Deploy finished")
 	return 0
@@ -84,7 +93,9 @@ end
 
 function launch(args)
 	stdout:printLn("Launching iOS...")
-	return run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteLaunch $(DEPLOY_TARGET_HOST) kick-open.sh \"$(DEPLOY_PROJECT_NAME)\"", "(null)")
+	if environment:get("DEPLOY_TARGET_HOST") ~= "localhost" then
+		return run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteLaunch $(DEPLOY_TARGET_HOST) kick-open.sh \"$(DEPLOY_PROJECT_NAME)\"", "(null)")
+	end
 end
 
 
@@ -142,19 +153,28 @@ function migrate(args)
 		return 1
 	end
 
-	stdout:printLn("Deploying resources to target host...")
-	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) *.plist *.png *.cpp Content.compact Application.config", "(null)")
-	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) \"$(DEPLOY_PROJECT_NAME).xcodeproj/project.pbxproj\"", "(null)")
-
-	stdout:printLn("Deploying binaries to target host...")
-	run:pushd("$(DEPLOY_PROJECT_ROOT)/bin/latest/ios/releasestatic")
-	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) *.a", "(null)")
-	run:popd()
-
-	stdout:printLn("Launching Xcode on target host...")
-	if run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteLaunch $(DEPLOY_TARGET_HOST) kick-open.sh \"$(DEPLOY_PROJECT_NAME)\"", "(null)") ~= 0 then
-		stderr:printLn("Failed to launch Xcode")
+	stdout:printLn("Generating Xcode scheme...")
+	run:mkdir("$(DEPLOY_PROJECT_NAME).xcodeproj/xcshareddata/xcschemes")
+	if run:run("$(DEPLOY_PROJECT_ROOT)/res/deploy/ios/scheme.xcscheme.template", "$(DEPLOY_PROJECT_NAME).xcodeproj/xcshareddata/xcschemes/$(DEPLOY_PROJECT_NAME).xcscheme") ~= 0 then
+		stderr:printLn("Failed to generate Xcode scheme")
 		return 1
+	end
+
+	if environment:get("DEPLOY_TARGET_HOST") ~= "localhost" then
+		stdout:printLn("Deploying resources to target host...")
+		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) *.plist *.png *.cpp Content.compact Application.config", "(null)")
+		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) \"$(DEPLOY_PROJECT_NAME).xcodeproj/project.pbxproj\"", "(null)")
+
+		stdout:printLn("Deploying binaries to target host...")
+		run:pushd("$(DEPLOY_PROJECT_ROOT)/bin/latest/ios/releasestatic")
+		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) *.a", "(null)")
+		run:popd()
+
+		stdout:printLn("Launching Xcode on target host...")
+		if run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteLaunch $(DEPLOY_TARGET_HOST) kick-open.sh \"$(DEPLOY_PROJECT_NAME)\"", "(null)") ~= 0 then
+			stderr:printLn("Failed to launch Xcode")
+			return 1
+		end
 	end
 
 	stdout:printLn("Migrate finished")

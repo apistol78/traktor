@@ -33,5 +33,13 @@ float HingeJointBullet::getAngleVelocity() const
 	return 0.0f;
 }
 
+void HingeJointBullet::setMotor(float targetVelocity, float maxImpulse)
+{
+	if (maxImpulse > FUZZY_EPSILON)
+		m_constraint->enableAngularMotor(true, targetVelocity, maxImpulse);
+	else
+		m_constraint->enableMotor(false);
+}
+
 	}
 }
