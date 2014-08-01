@@ -920,7 +920,7 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 			if (maxAngle - minAngle >= FUZZY_EPSILON)
 				hingeConstraint->setLimit(minAngle, maxAngle, 1.0f);
 			else
-				hingeConstraint->setLimit(-0.001f, 0.001f, 1.0f);
+				hingeConstraint->setLimit(-FUZZY_EPSILON, FUZZY_EPSILON, 1.0f);
 		}
 
 		hingeConstraint->setAngularOnly(hingeDesc->getAngularOnly());
