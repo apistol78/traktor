@@ -19,7 +19,7 @@ struct CastSample
 {
 	SampleType cast(float sample) const
 	{
-		return static_cast< SampleType >(sample * std::numeric_limits< SampleType >::max());
+		return static_cast< SampleType >(clamp(sample, -1.0f, 1.0f) * std::numeric_limits< SampleType >::max());
 	}
 };
 
