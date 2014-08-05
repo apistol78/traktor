@@ -59,13 +59,11 @@ bool SessionManager::create(ISessionManagerProvider* provider, const IGameConfig
 		return false;
 
 	m_taskQueues[0] = new TaskQueue();
-	if (!m_taskQueues[0]->create(new TaskUpdateSessionManager(
-		m_provider
-	)))
+	if (!m_taskQueues[0]->create())
 		return false;
 
 	m_taskQueues[1] = new TaskQueue();
-	if (!m_taskQueues[1]->create(0))
+	if (!m_taskQueues[1]->create())
 		return false;
 
 	IAchievementsProvider* achievementsProvider = m_provider->getAchievements();
@@ -97,6 +95,8 @@ bool SessionManager::create(ISessionManagerProvider* provider, const IGameConfig
 		m_statistics = new Statistics(statisticsProvider, m_taskQueues[0]);
 
 	m_downloadableContent = downloadableContent;
+	m_updateTask = new TaskUpdateSessionManager(m_provider);
+
 	return true;
 }
 
@@ -119,6 +119,15 @@ bool SessionManager::update()
 {
 	if (!m_provider)
 		return false;
+
+	// Enqueue a new update of back-end if previous update has been finished;
+	// as back-end updates might be really expensive we cannot afford to block
+	// this update, thus need to run on multiple frames.
+	if (m_updateTask->completed())
+	{
+		m_updateTask->reset();
+		m_taskQueues[0]->add(m_updateTask);
+	}
 
 	return true;
 }

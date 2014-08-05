@@ -11,10 +11,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.TaskQueue", TaskQueue, Object)
 
-bool TaskQueue::create(ITask* idleTask)
+bool TaskQueue::create()
 {
-	m_idleTask = idleTask;
-
 	m_thread = ThreadManager::getInstance().create(makeFunctor(this, &TaskQueue::threadQueue), L"Online task queue");
 	if (!m_thread || !m_thread->start())
 		return false;
@@ -32,8 +30,6 @@ void TaskQueue::destroy()
 		ThreadManager::getInstance().destroy(m_thread);
 		m_thread = 0;
 	}
-
-	m_idleTask = 0;
 }
 
 bool TaskQueue::add(ITask* task)
@@ -64,12 +60,8 @@ void TaskQueue::threadQueue()
 {
 	while (!m_thread->stopped())
 	{
-		if (!m_queuedSignal.wait(1000 / 60))
-		{
-			if (m_idleTask)
-				m_idleTask->execute(this);
+		if (!m_queuedSignal.wait(100))
 			continue;
-		}
 
 		if (!m_queueLock.wait(100))
 			continue;

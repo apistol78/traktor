@@ -1,6 +1,7 @@
 #include "Core/Log/Log.h"
 #include "Input/iOS/InputDriveriOS.h"
 #include "Input/iOS/InputDeviceTouch.h"
+#include "Input/iOS/InputDeviceTouchGamepad.h"
 #include "Input/iOS/InputDeviceTouchMouse.h"
 
 namespace traktor
@@ -30,7 +31,8 @@ public:
 	virtual void touchesCancelled(NSSet* touches, UIEvent* event);
 
 private:
-	Ref< InputDeviceTouch > m_deviceJoystick;
+	Ref< InputDeviceTouch > m_deviceTouch;
+	Ref< InputDeviceTouchGamepad > m_deviceGamepad;
 	Ref< InputDeviceTouchMouse > m_deviceMouse;
 };
 
@@ -39,8 +41,12 @@ bool InputDriveriOSImpl::create(void* nativeWindowHandle)
 	UIView* view = (UIView*)nativeWindowHandle;
 	CGRect frame = [view frame];
 
-	m_deviceJoystick = new InputDeviceTouch();
-	if (!m_deviceJoystick->create(nativeWindowHandle))
+	m_deviceTouch = new InputDeviceTouch();
+	if (!m_deviceTouch->create(nativeWindowHandle))
+		return false;
+
+	m_deviceGamepad = new InputDeviceTouchGamepad();
+	if (!m_deviceGamepad->create(nativeWindowHandle))
 		return false;
 		
 	m_deviceMouse = new InputDeviceTouchMouse();
@@ -56,14 +62,16 @@ bool InputDriveriOSImpl::create(void* nativeWindowHandle)
 
 int InputDriveriOSImpl::getDeviceCount()
 {
-	return 2;
+	return 3;
 }
 
 Ref< IInputDevice > InputDriveriOSImpl::getDevice(int index)
 {
 	if (index == 0)
-		return m_deviceJoystick;
+		return m_deviceTouch;
 	else if (index == 1)
+		return m_deviceGamepad;
+	else if (index == 2)
 		return m_deviceMouse;
 	else
 		return 0;
@@ -71,25 +79,29 @@ Ref< IInputDevice > InputDriveriOSImpl::getDevice(int index)
 
 void InputDriveriOSImpl::touchesBegan(NSSet* touches, UIEvent* event)
 {
-	m_deviceJoystick->touchesBegan(touches, event);
+	m_deviceTouch->touchesBegan(touches, event);
+	m_deviceGamepad->touchesBegan(touches, event);
 	m_deviceMouse->touchesBegan(touches, event);
 }
 
 void InputDriveriOSImpl::touchesMoved(NSSet* touches, UIEvent* event)
 {
-	m_deviceJoystick->touchesMoved(touches, event);
+	m_deviceTouch->touchesMoved(touches, event);
+	m_deviceGamepad->touchesMoved(touches, event);
 	m_deviceMouse->touchesMoved(touches, event);
 }
 
 void InputDriveriOSImpl::touchesEnded(NSSet* touches, UIEvent* event)
 {
-	m_deviceJoystick->touchesEnded(touches, event);
+	m_deviceTouch->touchesEnded(touches, event);
+	m_deviceGamepad->touchesEnded(touches, event);
 	m_deviceMouse->touchesEnded(touches, event);
 }
 
 void InputDriveriOSImpl::touchesCancelled(NSSet* touches, UIEvent* event)
 {
-	m_deviceJoystick->touchesCancelled(touches, event);
+	m_deviceTouch->touchesCancelled(touches, event);
+	m_deviceGamepad->touchesCancelled(touches, event);
 	m_deviceMouse->touchesCancelled(touches, event);
 }
 

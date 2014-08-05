@@ -10,6 +10,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.online.TaskUpdateSessionManager", TaskUpdateSes
 
 TaskUpdateSessionManager::TaskUpdateSessionManager(ISessionManagerProvider* provider)
 :	m_provider(provider)
+,	m_completed(false)
 {
 }
 
@@ -17,6 +18,7 @@ void TaskUpdateSessionManager::execute(TaskQueue* taskQueue)
 {
 	T_ASSERT (m_provider);
 	m_provider->update();
+	m_completed = true;
 }
 
 	}

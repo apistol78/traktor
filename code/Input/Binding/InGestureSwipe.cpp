@@ -16,7 +16,7 @@ namespace traktor
 		{
 
 const float c_sampleThreshold = 2.0f;
-const float c_deviateThreshold = 10.0f;
+const float c_deviateThreshold = 20.0f;
 
 struct InGestureSwipeInstance : public RefCountImpl< IInputNode::Instance >
 {

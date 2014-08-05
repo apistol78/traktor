@@ -213,9 +213,6 @@ bool SteamSessionManager::update()
 		m_updateGameCountTicks = 120;
 	}
 
-	if (m_matchMaking)
-		m_matchMaking->update();
-
 	SteamAPI_RunCallbacks();
 	return true;
 }

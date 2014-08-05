@@ -19,8 +19,13 @@ public:
 
 	virtual void execute(TaskQueue* taskQueue);
 
+	bool completed() const { return m_completed; }
+
+	void reset() { m_completed = false; }
+
 private:
 	Ref< ISessionManagerProvider > m_provider;
+	bool m_completed;
 };
 
 	}
