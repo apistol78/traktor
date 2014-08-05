@@ -223,7 +223,7 @@
 				<first>275</first>
 				<second>762</second>
 			</position>
-			<value>5</value>
+			<value>7</value>
 		</item>
 		<item type="traktor.render.Div">
 			<comment/>
@@ -559,16 +559,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[25]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[13]"/>
 				<name>Output</name>
 			</source>
@@ -625,6 +615,16 @@
 			<destination>
 				<node ref="/object/nodes/item[25]"/>
 				<name>OpenGL ES2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[25]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>

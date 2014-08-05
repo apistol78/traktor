@@ -22,7 +22,7 @@ class TaskQueue : public Object
 	T_RTTI_CLASS;
 
 public:
-	bool create(ITask* idleTask);
+	bool create();
 
 	void destroy();
 
@@ -32,7 +32,6 @@ private:
 	Thread* m_thread;
 	Semaphore m_queueLock;
 	Signal m_queuedSignal;
-	Ref< ITask > m_idleTask;
 	RefArray< ITask > m_queue;
 
 	void flush();

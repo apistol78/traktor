@@ -11,6 +11,7 @@ const MemberEnum< InputCategory >::Key g_InputCategory_Keys[] =
 	{ L"CtMouse", CtMouse },
 	{ L"CtJoystick", CtJoystick },
 	{ L"CtWheel", CtWheel },
+	{ L"CtTouch", CtTouch },
 	0
 };
 
@@ -52,10 +53,10 @@ const MemberEnum< InputDefaultControlType >::Key g_InputDefaultControlType_Keys[
 	{ L"DtPositionX", DtPositionX },
 	{ L"DtPositionY", DtPositionY },
 	{ L"DtPositionZ", DtPositionZ },
-	{ L"DtReserved6", DtReserved6 },
-	{ L"DtReserved7", DtReserved7 },
-	{ L"DtReserved8", DtReserved8 },
-	{ L"DtReserved9", DtReserved9 },
+	{ L"DtPositionX2", DtPositionX2 },
+	{ L"DtPositionY2", DtPositionY2 },
+	{ L"DtPositionX3", DtPositionX3 },
+	{ L"DtPositionY3", DtPositionY3 },
 	{ L"DtKeyEscape", DtKeyEscape },
 	{ L"DtKey1", DtKey1 },
 	{ L"DtKey2", DtKey2 },

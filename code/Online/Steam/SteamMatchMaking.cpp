@@ -1,4 +1,3 @@
-#include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/TString.h"
 #include "Core/System/OS.h"
@@ -14,8 +13,6 @@ namespace traktor
 	{
 		namespace
 		{
-
-const uint32_t c_maxLobbyAge = 60*60;	// Seconds; if a lobby owner has been stuck for more than N seconds the lobby will not be accepted.
 
 template < typename CallType >
 bool performCall(SteamSessionManager* sessionManager, CallType& call)
@@ -70,7 +67,6 @@ SteamMatchMaking::SteamMatchMaking(SteamSessionManager* sessionManager)
 ,	m_joinedLobby(0)
 ,	m_joinResult(false)
 ,	m_callbackGameLobbyJoinRequested(this, &SteamMatchMaking::OnGameLobbyJoinRequested)
-,	m_callbackLobbyDataUpdate(this, &SteamMatchMaking::OnLobbyDataUpdate)
 {
 	std::vector< std::wstring > argv;
 	Split< std::wstring >::any(OS::getInstance().getCommandLine(), L" \t", argv);
@@ -90,6 +86,8 @@ SteamMatchMaking::SteamMatchMaking(SteamSessionManager* sessionManager)
 bool SteamMatchMaking::findMatchingLobbies(const LobbyFilter* filter, std::vector< uint64_t >& outLobbyHandles)
 {
 	leaveLobby(m_joinedLobby);
+
+	m_outLobbies = &outLobbyHandles;
 
 	const std::vector< LobbyFilter::StringComparison >& stringComparisons = filter->getStringComparisons();
 	for (std::vector< LobbyFilter::StringComparison >::const_iterator i = stringComparisons.begin(); i != stringComparisons.end(); ++i)
@@ -139,57 +137,12 @@ bool SteamMatchMaking::findMatchingLobbies(const LobbyFilter* filter, std::vecto
 	m_callbackLobbyMatch.Set(hSteamAPICall, this, &SteamMatchMaking::OnLobbyMatch);
 
 	bool result = performCall(m_sessionManager, m_callbackLobbyMatch);
-	if (!result)
-	{
-		m_outLobbies.clear();
-		return false;
-	}
 
-	uint32_t timeStamp = SteamUtils()->GetServerRealTime();
+	if (!m_outLobbies)
+		result = false;
 
-	// Wait for all lobby meta data to be received; max ten seconds.
-	for (int32_t i = 0; i < 10000; i += 100)
-	{
-		if (!m_sessionManager->update())
-			return false;
-
-		bool uptodate = true;
-		for (std::vector< FindLobby >::const_iterator i = m_outLobbies.begin(); i != m_outLobbies.end(); ++i)
-		{
-			if (!i->uptodate)
-			{
-				uptodate = false;
-				break;
-			}
-		}
-		if (uptodate)
-		{
-			log::debug << L"All found lobbies meta data up-to-date" << Endl;
-			break;
-		}
-
-		ThreadManager::getInstance().getCurrentThread()->sleep(100);
-	}
-
-	// Check time stamp; only keep lobbies which isn't "stale".
-	for (std::vector< FindLobby >::const_iterator i = m_outLobbies.begin(); i != m_outLobbies.end(); ++i)
-	{
-		if (i->succeeded)
-		{
-			const char* value = SteamMatchmaking()->GetLobbyData(i->lobbyId, "__PRIVATE_TIME_STAMP__");
-			uint32_t lobbyTimeStamp = value ? parseString< uint32_t >(value) : 0;
-
-			if (lobbyTimeStamp == 0 || lobbyTimeStamp > timeStamp || timeStamp - lobbyTimeStamp < c_maxLobbyAge)
-				outLobbyHandles.push_back(i->lobbyId.ConvertToUint64());
-			else
-				log::warning << L"Lobby ignored; too old timestamp (" << (timeStamp - lobbyTimeStamp) << L" seconds, max " << c_maxLobbyAge << L")" << Endl;
-		}
-		else
-			log::warning << L"Lobby ignored; unable to refresh meta data" << Endl;
-	}
-
-	m_outLobbies.clear();
-	return true;
+	m_outLobbies = 0;
+	return result;
 }
 
 bool SteamMatchMaking::createLobby(uint32_t maxUsers, LobbyAccess access, uint64_t& outLobbyHandle)
@@ -216,16 +169,7 @@ bool SteamMatchMaking::createLobby(uint32_t maxUsers, LobbyAccess access, uint64
 	m_outLobby = 0;
 
 	if (result)
-	{
 		m_joinedLobby = outLobbyHandle;
-
-		uint32_t timeStamp = SteamUtils()->GetServerRealTime();
-		SteamMatchmaking()->SetLobbyData(
-			uint64(m_joinedLobby),
-			"__PRIVATE_TIME_STAMP__",
-			wstombs(toString(timeStamp)).c_str()
-		);
-	}
 
 	return result;
 }
@@ -355,7 +299,7 @@ bool SteamMatchMaking::getFriendsCount(uint64_t lobbyHandle, uint32_t& outCount)
 	outCount = 0;
 
 	int32_t friendsCount = SteamFriends()->GetFriendCount(k_EFriendFlagImmediate);
-	for (int32_t i = 0; i < friendsCount; ++i)
+	for (int32_t i = 0; i < friendsCount; ++i) 
 	{
 		FriendGameInfo_t friendGameInfo;
 		CSteamID steamIDFriend = SteamFriends()->GetFriendByIndex(i, k_EFriendFlagImmediate);
@@ -412,38 +356,16 @@ bool SteamMatchMaking::getOwner(uint64_t lobbyHandle, uint64_t& outUserHandle) c
 	return true;
 }
 
-void SteamMatchMaking::update()
-{
-	if (m_joinedLobby == 0)
-		return;
-
-	// In case I'm the lobby owner then update lobby timestamp.
-	if (SteamMatchmaking()->GetLobbyOwner(uint64(m_joinedLobby)) == ::SteamUser()->GetSteamID())
-	{
-		uint32_t timeStamp = SteamUtils()->GetServerRealTime();
-		SteamMatchmaking()->SetLobbyData(
-			uint64(m_joinedLobby),
-			"__PRIVATE_TIME_STAMP__",
-			wstombs(toString(timeStamp)).c_str()
-		);
-	}
-}
-
 void SteamMatchMaking::OnLobbyMatch(LobbyMatchList_t* pCallback, bool bIOFailure)
 {
+	T_ASSERT (m_outLobbies != 0);
 	for (uint32_t i = 0; i < pCallback->m_nLobbiesMatching; ++i)
 	{
 		CSteamID lobbyId = SteamMatchmaking()->GetLobbyByIndex(i);
 		if (!lobbyId.IsValid())
 			continue;
 
-		if (!SteamMatchmaking()->RequestLobbyData(lobbyId))
-			continue;
-
-		FindLobby fl;
-		fl.lobbyId = lobbyId;
-		fl.uptodate = false;
-		m_outLobbies.push_back(fl);
+		m_outLobbies->push_back(lobbyId.ConvertToUint64());
 	}
 }
 
@@ -464,19 +386,6 @@ void SteamMatchMaking::OnLobbyEnter(LobbyEnter_t* pCallback, bool bIOFailure)
 void SteamMatchMaking::OnGameLobbyJoinRequested(GameLobbyJoinRequested_t* pCallback)
 {
 	m_acceptedInvite = pCallback->m_steamIDLobby.ConvertToUint64();
-}
-
-void SteamMatchMaking::OnLobbyDataUpdate(LobbyDataUpdate_t* pCallback)
-{
-    for (std::vector< FindLobby >::iterator i = m_outLobbies.begin(); i != m_outLobbies.end(); ++i)
-    {
-		if (i->lobbyId == pCallback->m_ulSteamIDLobby)
-		{
-			i->uptodate = true;
-			i->succeeded = bool(pCallback->m_bSuccess != 0);
-			break;
-		}
-    }
 }
 
 	}

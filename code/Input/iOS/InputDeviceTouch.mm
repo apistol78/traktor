@@ -8,12 +8,38 @@ namespace traktor
 {
 	namespace input
 	{
+		namespace
+		{
+
+const struct TouchControlMap
+{
+	const wchar_t* name;
+	InputDefaultControlType controlType;
+	bool analogue;
+}
+c_touchControlMap[] =
+{
+	{ L"Finger 1", DtButton1, false },
+	{ L"Finger 2", DtButton2, false },
+	{ L"Finger 3", DtButton3, false },
+	{ L"Touch X axis 1", DtPositionX, true },
+	{ L"Touch Y axis 1", DtPositionY, true },
+	{ L"Touch X axis 2", DtPositionX2, true },
+	{ L"Touch Y axis 2", DtPositionY2, true },
+	{ L"Touch X axis 3", DtPositionX3, true },
+	{ L"Touch Y axis 3", DtPositionY3, true }
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDeviceTouch", InputDeviceTouch, IInputDevice)
 
 InputDeviceTouch::InputDeviceTouch()
 :	m_landscape(false)
+,	m_width(0.0f)
+,	m_height(0.0f)
 {
+	resetState();
 }
 
 bool InputDeviceTouch::create(void* nativeWindowHandle)
@@ -21,31 +47,12 @@ bool InputDeviceTouch::create(void* nativeWindowHandle)
 	UIView* view = (UIView*)nativeWindowHandle;
 	CGRect frame = [view frame];
 
-	float cx = frame.origin.x + frame.size.width / 2.0f;
-	float cy = frame.origin.y + frame.size.height / 2.0f;
-	
-	m_pivots[0] = CGPointMake(cx, cy - 30.0f);
-	m_pivots[1] = CGPointMake(cx, cy);
-	m_pivots[2] = CGPointMake(cx, cy + 30.0f);
-	
+	m_width = frame.size.width;
+	m_height = frame.size.height;
+
 	UIDeviceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
 	m_landscape = UIInterfaceOrientationIsLandscape(orientation);
 
-	if (!m_landscape)
-	{
-		m_controls[0] = &m_leftButton;
-		m_controls[1] = &m_rightButton;
-		m_controls[2] = &m_rightPad;
-		m_controls[3] = &m_leftPad;
-	}
-	else
-	{
-		m_controls[0] = &m_rightButton;
-		m_controls[1] = &m_rightPad;
-		m_controls[2] = &m_leftPad;
-		m_controls[3] = &m_leftButton;
-	}
-	
 	return true;
 }
 
@@ -56,7 +63,7 @@ std::wstring InputDeviceTouch::getName() const
 
 InputCategory InputDeviceTouch::getCategory() const
 {
-	return CtJoystick;
+	return CtTouch;
 }
 
 bool InputDeviceTouch::isConnected() const
@@ -66,102 +73,80 @@ bool InputDeviceTouch::isConnected() const
 
 int32_t InputDeviceTouch::getControlCount()
 {
-	return 0;
+	return sizeof_array(c_touchControlMap);
 }
 
 std::wstring InputDeviceTouch::getControlName(int32_t control)
 {
-	return L"";
+	return c_touchControlMap[control].name;
 }
 
 bool InputDeviceTouch::isControlAnalogue(int32_t control) const
 {
-	return true;
+	return c_touchControlMap[control].analogue;
 }
 
 bool InputDeviceTouch::isControlStable(int32_t control) const
 {
-	return true;
+	return false;
 }
 
 float InputDeviceTouch::getControlValue(int32_t control)
 {
-	if (control == -1)
-		return m_leftPad.axisX;
-	else if (control == -2)
-		return m_leftPad.axisY;
-	else if (control == -3)
-		return m_rightPad.axisX;
-	else if (control == -4)
-		return m_rightPad.axisY;
-	else if (control == -5)
-		return m_leftButton.value;
-	else if (control == -6)
-		return m_rightButton.value;
-	else if (control == -7)
-		return m_leftPad.axisY > 0.5f ? 1.0f : 0.0f;
-	else if (control == -8)
-		return m_leftPad.axisY < -0.5f ? 1.0f : 0.0f;
+	const TouchControlMap& mc = c_touchControlMap[control];
+	if (mc.controlType == DtPositionX)
+		return m_positionX[0];
+	else if (mc.controlType == DtPositionY)
+		return m_positionY[0];
+	else if (mc.controlType == DtPositionX2)
+		return m_positionX[1];
+	else if (mc.controlType == DtPositionY2)
+		return m_positionY[1];
+	else if (mc.controlType == DtPositionX3)
+		return m_positionX[2];
+	else if (mc.controlType == DtPositionY3)
+		return m_positionY[2];
+	else if (mc.controlType == DtButton1)
+		return (m_fingers == 1) ? 1.0f : 0.0f;
+	else if (mc.controlType == DtButton2)
+		return (m_fingers == 2) ? 1.0f : 0.0f;
+	else if (mc.controlType == DtButton3)
+		return (m_fingers == 3) ? 1.0f : 0.0f;
 	else
 		return 0.0f;
 }
 
 bool InputDeviceTouch::getControlRange(int32_t control, float& outMin, float& outMax) const
 {
-	return false;
+	const TouchControlMap& tc = c_touchControlMap[control];
+	if (tc.controlType == DtPositionX || tc.controlType == DtPositionX2 || tc.controlType == DtPositionX3)
+	{
+		outMin = 0.0f;
+		outMax = m_width;
+		return true;
+	}
+	else if (tc.controlType == DtPositionY || tc.controlType == DtPositionY2 || tc.controlType == DtPositionY3)
+	{
+		outMin = 0.0f;
+		outMax = m_height;
+		return true;
+	}
+	else
+		return false;
 }
 
 bool InputDeviceTouch::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
 {
-	control = 0;
-
-	switch (controlType)
+	for (int32_t i = 0; i < sizeof_array(c_touchControlMap); ++i)
 	{
-	case DtThumbLeftX:
-		if (analogue)
-			control = -1;
-		break;
-		
-	case DtThumbLeftY:
-		if (analogue)
-			control = -2;
-		break;
-		
-	case DtThumbRightX:
-		if (analogue)
-			control = -3;
-		break;
-		
-	case DtThumbRightY:
-		if (analogue)
-			control = -4;
-		break;
-		
-	case DtButton1:
-		if (!analogue)
-			control = -5;
-		break;
-		
-	case DtButton2:
-		if (!analogue)
-			control = -6;
-		break;
-	
-	case DtUp:
-		if (!analogue)
-			control = -7;
-		break;
-		
-	case DtDown:
-		if (!analogue)
-			control = -8;
-		break;
-	
-	default:
-		return false;
+		const TouchControlMap& tc = c_touchControlMap[i];
+		if (tc.controlType == controlType && tc.analogue == analogue)
+		{
+			control = i;
+			return true;
+		}
 	}
-	
-	return control != 0;
+	return false;
 }
 
 bool InputDeviceTouch::getKeyEvent(KeyEvent& outEvent)
@@ -171,10 +156,19 @@ bool InputDeviceTouch::getKeyEvent(KeyEvent& outEvent)
 
 void InputDeviceTouch::resetState()
 {
+	for (int32_t i = 0; i < 3; ++i)
+	{
+		m_positionX[i] = 0.0f;
+		m_positionY[i] = 0.0f;
+	}
+	m_fingers = 0;
+	m_touch.clear();
 }
 
 void InputDeviceTouch::readState()
 {
+	UIDeviceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
+	m_landscape = UIInterfaceOrientationIsLandscape(orientation);
 }
 
 bool InputDeviceTouch::supportRumble() const
@@ -192,112 +186,94 @@ void InputDeviceTouch::setExclusive(bool exclusive)
 
 void InputDeviceTouch::touchesBegan(NSSet* touches, UIEvent* event)
 {
-	for (UITouch* touch in touches)
+	m_fingers = 0;
+
+	for (UITouch* touch in [event allTouches])
 	{
 		CGPoint location = [touch locationInView: nil];
-		IControl* control = 0;
 
-		if (location.y < m_pivots[0].y)
+		m_touch[touch] = m_fingers;
+
+		if (!m_landscape)
 		{
-			if (location.x < m_pivots[0].x)
-				control = m_controls[0];
-			else
-				control = m_controls[1];
+			m_positionX[m_fingers] = location.x;
+			m_positionY[m_fingers] = location.y;
 		}
 		else
 		{
-			if (location.x < m_pivots[0].x)
-				control = m_controls[3];
-			else
-				control = m_controls[2];
+			m_positionX[m_fingers] = m_height - location.y;
+			m_positionY[m_fingers] = location.x;
 		}
 		
-		if (control)
-		{
-			control->begin(touch);
-			m_track[touch] = control;
-		}
+		if (++m_fingers >= 3)
+			break;
 	}
 }
 
 void InputDeviceTouch::touchesMoved(NSSet* touches, UIEvent* event)
 {
-	for (UITouch* touch in touches)
+	for (UITouch* touch in [event allTouches])
 	{
-		IControl* control = m_track[touch];
-		if (control)
-			control->move(this, touch);
+		CGPoint location = [touch locationInView: nil];
+
+		int32_t index = -1;
+
+		std::map< const UITouch*, int32_t >::const_iterator i = m_touch.find(touch);
+		if (i == m_touch.end())
+		{
+			if (m_fingers >= 3)
+				continue;
+
+			index = m_fingers;
+			m_touch[touch] = m_fingers++;
+		}
+		else
+			index = i->second;
+
+		T_ASSERT (index >= 0 && index < m_fingers);
+
+		if (!m_landscape)
+		{
+			m_positionX[index] = location.x;
+			m_positionY[index] = location.y;
+		}
+		else
+		{
+			m_positionX[index] = m_height - location.y;
+			m_positionY[index] = location.x;
+		}
 	}
 }
 
 void InputDeviceTouch::touchesEnded(NSSet* touches, UIEvent* event)
 {
-	for (UITouch* touch in touches)
+	for (UITouch* touch in [event allTouches])
 	{
-		IControl* control = m_track[touch];
-		if (control)
-			control->end(touch);
+		CGPoint location = [touch locationInView: nil];
+
+		std::map< const UITouch*, int32_t >::const_iterator i = m_touch.find(touch);
+		if (i == m_touch.end())
+			continue;
+
+		int32_t index = i->second;
+
+		if (!m_landscape)
+		{
+			m_positionX[index] = location.x;
+			m_positionY[index] = location.y;
+		}
+		else
+		{
+			m_positionX[index] = m_height - location.y;
+			m_positionY[index] = location.x;
+		}
 	}
+	
+	m_touch.clear();
+	m_fingers = 0;
 }
 
 void InputDeviceTouch::touchesCancelled(NSSet* touches, UIEvent* event)
-{
-	for (UITouch* touch in touches)
-	{
-		IControl* control = m_track[touch];
-		if (control)
-			control->end(touch);
-	}
-}
-
-void InputDeviceTouch::Pad::begin(UITouch* touch)
-{
-	origin = [touch locationInView: nil];
-}
-		
-void InputDeviceTouch::Pad::end(UITouch* touch)
-{
-	axisX =
-	axisY = 0.0f;
-}
-		
-void InputDeviceTouch::Pad::move(InputDeviceTouch* device, UITouch* touch)
-{
-	CGPoint location = [touch locationInView: nil];
-	
-	float offsetX = location.x - origin.x;
-	float offsetY = location.y - origin.y;
-	
-	if (device->m_landscape)
-		std::swap(offsetX, offsetY);
-		
-	const float c_deadZone = 8.0f;
-	
-	if (abs(offsetX) > c_deadZone)
-		offsetX = sign(offsetX) * (abs(offsetX) - c_deadZone);
-	else
-		offsetX = 0.0f;
-
-	if (abs(offsetY) > c_deadZone)
-		offsetY = sign(offsetY) * (abs(offsetY) - c_deadZone);
-	else
-		offsetY = 0.0f;
-		
-	axisX = -clamp(offsetX / 30.0f, -1.0f, 1.0f);
-	axisY = -clamp(offsetY / 30.0f, -1.0f, 1.0f);
-}
-
-void InputDeviceTouch::Button::begin(UITouch* touch)
-{
-	value = 1.0f;
-}
-		
-void InputDeviceTouch::Button::end(UITouch* touch)
-{
-	value = 0.0f;
-}
-		
-void InputDeviceTouch::Button::move(InputDeviceTouch* device, UITouch* touch)
 {
 }
 

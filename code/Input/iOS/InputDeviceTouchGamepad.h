@@ -1,5 +1,5 @@
-#ifndef traktor_input_InputDeviceTouch_H
-#define traktor_input_InputDeviceTouch_H
+#ifndef traktor_input_InputDeviceTouchGamepad_H
+#define traktor_input_InputDeviceTouchGamepad_H
 
 #import "Input/iOS/UITouchView.h"
 
@@ -11,14 +11,14 @@ namespace traktor
 	namespace input
 	{
 	
-class InputDeviceTouch
+class InputDeviceTouchGamepad
 :	public IInputDevice
 ,	public ITouchViewCallback
 {
 	T_RTTI_CLASS;
 	
 public:
-	InputDeviceTouch();
+	InputDeviceTouchGamepad();
 	
 	bool create(void* nativeWindowHandle);
 
@@ -65,16 +65,61 @@ public:
 	virtual void touchesCancelled(NSSet* touches, UIEvent* event);
 
 private:
+	struct IControl
+	{
+		virtual void begin(UITouch* touch) = 0;
+		
+		virtual void end(UITouch* touch) = 0;
+		
+		virtual void move(InputDeviceTouchGamepad* device, UITouch* touch) = 0;
+	};
+	
+	struct Pad : public IControl
+	{
+		float axisX;
+		float axisY;
+		CGPoint origin;
+				
+		Pad()
+		:	axisX(0.0f)
+		,	axisY(0.0f)
+		{
+		}
+
+		virtual void begin(UITouch* touch);
+		
+		virtual void end(UITouch* touch);
+		
+		virtual void move(InputDeviceTouchGamepad* device, UITouch* touch);
+	};
+	
+	struct Button : public IControl
+	{
+		float value;
+		
+		Button()
+		:	value(0.0f)
+		{
+		}
+
+		virtual void begin(UITouch* touch);
+		
+		virtual void end(UITouch* touch);
+		
+		virtual void move(InputDeviceTouchGamepad* device, UITouch* touch);
+	};
+	
 	bool m_landscape;
-	float m_width;
-	float m_height;
-	float m_positionX[3];
-	float m_positionY[3];
-	int32_t m_fingers;
-	std::map< const UITouch*, int32_t > m_touch;
+	CGPoint m_pivots[3];
+	Pad m_leftPad;
+	Pad m_rightPad;
+	Button m_leftButton;
+	Button m_rightButton;
+	IControl* m_controls[4];
+	std::map< UITouch*, IControl* > m_track;
 };
 	
 	}
 }
 
-#endif	// traktor_input_InputDeviceTouch_H
+#endif	// traktor_input_InputDeviceTouchGamepad_H

@@ -49,16 +49,16 @@ enum InputDefaultControlType
 	DtAxisY				= 31,
 	DtAxisZ				= 32,
 
-	// Absolute axises, ex mouse position.
+	// Absolute axises, ex mouse position, first touch.
 	DtPositionX			= 33,
 	DtPositionY			= 34,
 	DtPositionZ			= 35,
 
-	// Unused
-	DtReserved6			= 36,
-	DtReserved7			= 37,
-	DtReserved8			= 38,
-	DtReserved9			= 39,
+	// Absolute axises, ex second and third touch.
+	DtPositionX2		= 36,
+	DtPositionY2		= 37,
+	DtPositionX3		= 38,
+	DtPositionY3		= 39,
 
 	// Keyboard
 	DtKeyEscape			= 40,
@@ -220,7 +220,8 @@ enum InputCategory
 	CtMouse		= 2,
 	CtJoystick	= 4,
 	CtWheel		= 8,
-	CtUnknown	= 16
+	CtTouch		= 16,
+	CtUnknown	= 32
 };
 
 /*! \brief Input rumble specification.

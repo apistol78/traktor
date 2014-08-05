@@ -21,6 +21,7 @@ class IGameConfiguration;
 class ISessionManagerProvider;
 class IUser;
 class TaskQueue;
+class TaskUpdateSessionManager;
 class UserCache;
 
 class T_DLLCLASS SessionManager : public ISessionManager
@@ -80,6 +81,7 @@ private:
 	Ref< IStatistics > m_statistics;
 	Ref< IUser > m_user;
 	Ref< UserCache > m_userCache;
+	Ref< TaskUpdateSessionManager > m_updateTask;
 	bool m_downloadableContent;
 };
 
