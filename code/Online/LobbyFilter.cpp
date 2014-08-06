@@ -8,7 +8,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.LobbyFilter", LobbyFilter, Object)
 
 LobbyFilter::LobbyFilter()
-:	m_distance(DtUnspecified)
+:	m_distance(DtInfinity)
 ,	m_slots(0)
 ,	m_count(-1)
 {

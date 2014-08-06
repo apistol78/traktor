@@ -89,60 +89,63 @@ bool SteamMatchMaking::findMatchingLobbies(const LobbyFilter* filter, std::vecto
 
 	m_outLobbies = &outLobbyHandles;
 
-	const std::vector< LobbyFilter::StringComparison >& stringComparisons = filter->getStringComparisons();
-	for (std::vector< LobbyFilter::StringComparison >::const_iterator i = stringComparisons.begin(); i != stringComparisons.end(); ++i)
+	for (int32_t distance = LobbyFilter::DtUnspecified; distance <= filter->getDistance(); ++distance)
 	{
-		SteamMatchmaking()->AddRequestLobbyListStringFilter(
-			wstombs(i->key).c_str(),
-			wstombs(i->value).c_str(),
-			translateComparison(i->comparison)
-		);
+		const std::vector< LobbyFilter::StringComparison >& stringComparisons = filter->getStringComparisons();
+		for (std::vector< LobbyFilter::StringComparison >::const_iterator i = stringComparisons.begin(); i != stringComparisons.end(); ++i)
+		{
+			SteamMatchmaking()->AddRequestLobbyListStringFilter(
+				wstombs(i->key).c_str(),
+				wstombs(i->value).c_str(),
+				translateComparison(i->comparison)
+			);
+		}
+
+		const std::vector< LobbyFilter::NumberComparison >& numberComparisons = filter->getNumberComparisons();
+		for (std::vector< LobbyFilter::NumberComparison >::const_iterator i = numberComparisons.begin(); i != numberComparisons.end(); ++i)
+		{
+			SteamMatchmaking()->AddRequestLobbyListNumericalFilter(
+				wstombs(i->key).c_str(),
+				i->value,
+				translateComparison(i->comparison)
+			);
+		}
+
+		switch (distance)
+		{
+		case LobbyFilter::DtLocal:
+			SteamMatchmaking()->AddRequestLobbyListDistanceFilter(k_ELobbyDistanceFilterClose);
+			break;
+		case LobbyFilter::DtNear:
+			SteamMatchmaking()->AddRequestLobbyListDistanceFilter(k_ELobbyDistanceFilterDefault);
+			break;
+		case LobbyFilter::DtFar:
+			SteamMatchmaking()->AddRequestLobbyListDistanceFilter(k_ELobbyDistanceFilterFar);
+			break;
+		case LobbyFilter::DtInfinity:
+			SteamMatchmaking()->AddRequestLobbyListDistanceFilter(k_ELobbyDistanceFilterWorldwide);
+			break;
+		default:
+			break;
+		}
+
+		if (filter->getSlots() > 0)
+			SteamMatchmaking()->AddRequestLobbyListFilterSlotsAvailable(filter->getSlots());
+
+		if (filter->getCount() > 0)
+			SteamMatchmaking()->AddRequestLobbyListResultCountFilter(filter->getCount());
+
+		SteamAPICall_t hSteamAPICall = SteamMatchmaking()->RequestLobbyList();
+		m_callbackLobbyMatch.Set(hSteamAPICall, this, &SteamMatchMaking::OnLobbyMatch);
+
+		bool result = performCall(m_sessionManager, m_callbackLobbyMatch);
+
+		if (!result || !m_outLobbies)
+			return false;
 	}
-
-	const std::vector< LobbyFilter::NumberComparison >& numberComparisons = filter->getNumberComparisons();
-	for (std::vector< LobbyFilter::NumberComparison >::const_iterator i = numberComparisons.begin(); i != numberComparisons.end(); ++i)
-	{
-		SteamMatchmaking()->AddRequestLobbyListNumericalFilter(
-			wstombs(i->key).c_str(),
-			i->value,
-			translateComparison(i->comparison)
-		);
-	}
-
-	switch (filter->getDistance())
-	{
-	case LobbyFilter::DtLocal:
-		SteamMatchmaking()->AddRequestLobbyListDistanceFilter(k_ELobbyDistanceFilterClose);
-		break;
-	case LobbyFilter::DtNear:
-		SteamMatchmaking()->AddRequestLobbyListDistanceFilter(k_ELobbyDistanceFilterDefault);
-		break;
-	case LobbyFilter::DtFar:
-		SteamMatchmaking()->AddRequestLobbyListDistanceFilter(k_ELobbyDistanceFilterFar);
-		break;
-	case LobbyFilter::DtInfinity:
-		SteamMatchmaking()->AddRequestLobbyListDistanceFilter(k_ELobbyDistanceFilterWorldwide);
-		break;
-	default:
-		break;
-	}
-
-	if (filter->getSlots() > 0)
-		SteamMatchmaking()->AddRequestLobbyListFilterSlotsAvailable(filter->getSlots());
-
-	if (filter->getCount() > 0)
-		SteamMatchmaking()->AddRequestLobbyListResultCountFilter(filter->getCount());
-
-	SteamAPICall_t hSteamAPICall = SteamMatchmaking()->RequestLobbyList();
-	m_callbackLobbyMatch.Set(hSteamAPICall, this, &SteamMatchMaking::OnLobbyMatch);
-
-	bool result = performCall(m_sessionManager, m_callbackLobbyMatch);
-
-	if (!m_outLobbies)
-		result = false;
 
 	m_outLobbies = 0;
-	return result;
+	return true;
 }
 
 bool SteamMatchMaking::createLobby(uint32_t maxUsers, LobbyAccess access, uint64_t& outLobbyHandle)
@@ -365,7 +368,9 @@ void SteamMatchMaking::OnLobbyMatch(LobbyMatchList_t* pCallback, bool bIOFailure
 		if (!lobbyId.IsValid())
 			continue;
 
-		m_outLobbies->push_back(lobbyId.ConvertToUint64());
+		uint64_t id = lobbyId.ConvertToUint64();
+		if (std::find(m_outLobbies->begin(), m_outLobbies->end(), id) == m_outLobbies->end())
+			m_outLobbies->push_back(id);
 	}
 }
 
