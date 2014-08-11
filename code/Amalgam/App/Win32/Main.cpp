@@ -149,6 +149,83 @@ bool checkPreconditions()
 	return true;
 }
 
+void logSystemInfo()
+{
+	// Log CPU info
+	char CPUString[0x20];
+	int cpuInfo[4] = {-1};
+
+	__cpuid(cpuInfo, 0);
+	int nIds = cpuInfo[0];
+	memset(CPUString, 0, sizeof(CPUString));
+	*((int*)CPUString) = cpuInfo[1];
+	*((int*)(CPUString+4)) = cpuInfo[3];
+	*((int*)(CPUString+8)) = cpuInfo[2];
+	log::info << L"CPU" << Endl;
+	log::info << L"\tString \"" << trim(mbstows(CPUString)) << L"\""  << Endl;
+
+	if  (nIds >= 1) 
+	{
+		__cpuid(cpuInfo, 1);
+		log::info << L"\tFamily " << ((cpuInfo[0] >> 8)  & 0xf) << Endl;
+		log::info << L"\tModel " << ((cpuInfo[0] >> 4) & 0xf) << Endl;
+		log::info << L"\tStepping " << (cpuInfo[0] & 0xf) << Endl;
+	}
+	if  (nIds >= 4) 
+	{
+		// Get number of cores
+		__cpuidex(cpuInfo, 0x4, 0);
+		log::info << L"\tCores " << ((cpuInfo[0] >> 26) + 1) << Endl;
+	}
+
+	// Calling __cpuid with 0x80000000 as the function_id argument
+	// gets the number of valid extended IDs.
+	__cpuid(cpuInfo, 0x80000000);
+	int nExIds = cpuInfo[0];
+
+	char CPUBrandString[0x40];
+	memset(CPUBrandString, 0, sizeof(CPUBrandString));
+	for (int i=0x80000000; i<=nExIds; ++i)
+	{
+		__cpuid(cpuInfo, i);
+		if  (i == 0x80000002)
+			memcpy(CPUBrandString, cpuInfo, sizeof(cpuInfo));
+		else if  (i == 0x80000003)
+			memcpy(CPUBrandString + 16, cpuInfo, sizeof(cpuInfo));
+		else if  (i == 0x80000004)
+			memcpy(CPUBrandString + 32, cpuInfo, sizeof(cpuInfo));
+	}
+	if  (nExIds >= 0x80000004)
+		log::info << L"\tBrand String \"" << trim(mbstows(CPUBrandString)) << L"\"" << Endl;
+
+	// Log memory info
+	MEMORYSTATUSEX memInfo;
+	memInfo.dwLength = sizeof(MEMORYSTATUSEX);
+	GlobalMemoryStatusEx(&memInfo);
+	log::info << L"System Memory" << Endl;
+	log::info << L"\tTotal physical " << memInfo.ullTotalPhys / 1024 / 1024 << L" MiB" << Endl;
+	log::info << L"\tAvailable physical " << memInfo.ullAvailPhys  / 1024 / 1024  << L" MiB" << Endl;
+	log::info << L"\tTotal virtual " << memInfo.ullTotalVirtual  / 1024 / 1024  << L" MiB" << Endl;
+	log::info << L"\tAvailable virtual " << memInfo.ullAvailVirtual  / 1024 / 1024  << L" MiB" << Endl;
+
+	// Log OS Version
+	OSVERSIONINFOEX osvi;
+	ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
+	osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+	GetVersionEx((OSVERSIONINFO *) &osvi);
+	log::info << L"Operating System" << Endl;
+	log::info << L"\tVersion " << uint32_t(osvi.dwMajorVersion) << L"." << uint32_t(osvi.dwMinorVersion) << L"." << uint32_t(osvi.dwBuildNumber) << Endl;
+	if (osvi.szCSDVersion)
+		log::info << L"\t" << osvi.szCSDVersion << Endl;
+	else 
+		log::info << L"\tNo service pack" << Endl;
+
+	if (osvi.wProductType == VER_NT_WORKSTATION )
+		log::info << L"\tWorkstation" << Endl;
+	else
+		log::info << L"\tServer" << Endl;
+}
+
 std::wstring getExceptionString(DWORD exceptionCode)
 {
 	switch (exceptionCode)
@@ -311,6 +388,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 			log::error << L"Unable to create log file; logging only to std pipes" << Endl;
 	}
 #endif
+
+	logSystemInfo();
 
 	Ref< LogTailTarget > logTail = new LogTailTarget();
 	log::info   .setGlobalTarget(new LogDualTarget(logTail, log::info   .getGlobalTarget()));
