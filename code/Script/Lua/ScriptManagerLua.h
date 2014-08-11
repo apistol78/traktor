@@ -59,6 +59,7 @@ private:
 	friend class ScriptContextLua;
 	friend class ScriptDebuggerLua;
 	friend class ScriptDelegateLua;
+	friend class ScriptProfilerLua;
 
 	struct RegisteredClass
 	{
@@ -83,6 +84,8 @@ private:
 	float m_collectTargetSteps;
 	size_t m_totalMemoryUse;
 	size_t m_lastMemoryUse;
+	uint32_t m_classIdBoxedVector4;
+	uint32_t m_classIdBoxedTransform;
 
 	void destroyContext(ScriptContextLua* context);
 
@@ -90,7 +93,7 @@ private:
 
 	void unlock();
 
-	void pushObject(Object* object);
+	void pushObject(ITypedObject* object);
 
 	void pushAny(const Any& any);
 

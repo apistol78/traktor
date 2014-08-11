@@ -7,7 +7,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.BallJointPhysX", BallJointPhysX, BallJoint)
 
-BallJointPhysX::BallJointPhysX(DestroyCallbackPhysX* callback, physx::PxJoint* joint, Body* body1, Body* body2)
+BallJointPhysX::BallJointPhysX(IWorldCallback* callback, physx::PxJoint* joint, Body* body1, Body* body2)
 :	JointPhysX< BallJoint >(callback, joint, body1, body2)
 {
 }

@@ -20,8 +20,12 @@ class Joint;
 /*!
  * \ingroup PhysX
  */
-struct DestroyCallbackPhysX
+struct IWorldCallback
 {
+	virtual void insertActor(physx::PxRigidActor* actor) = 0;
+
+	virtual void removeActor(physx::PxRigidActor* actor) = 0;
+
 	virtual void destroyBody(Body* owner, physx::PxRigidActor* actor) = 0;
 
 	virtual void destroyJoint(Joint* owner, physx::PxJoint* joint) = 0;

@@ -40,7 +40,7 @@ public:
 
 	virtual bool haveUnknown() const;
 
-	virtual Ref< Object > construct(const InvokeParam& param, uint32_t argc, const script::Any* argv) const;
+	virtual Ref< ITypedObject > construct(const InvokeParam& param, uint32_t argc, const script::Any* argv) const;
 
 	virtual uint32_t getMethodCount() const;
 
@@ -76,7 +76,7 @@ bool ActionObjectClass::haveUnknown() const
 	return true;
 }
 
-Ref< Object > ActionObjectClass::construct(const InvokeParam& param, uint32_t argc, const script::Any* argv) const
+Ref< ITypedObject > ActionObjectClass::construct(const InvokeParam& param, uint32_t argc, const script::Any* argv) const
 {
 	return 0;
 }

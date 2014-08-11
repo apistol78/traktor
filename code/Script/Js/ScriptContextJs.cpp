@@ -324,7 +324,7 @@ v8::Handle< v8::Value > ScriptContextJs::invokeConstructor(const v8::Arguments& 
 		IScriptClass::InvokeParam param;
 		param.object = 0;
 
-		Ref< Object > object = constructorData->scriptClass->construct(param, arguments.Length(), argv);
+		Ref< ITypedObject > object = constructorData->scriptClass->construct(param, arguments.Length(), argv);
 		if (!object)
 			return v8::Undefined();
 
@@ -383,7 +383,7 @@ v8::Handle< v8::String > ScriptContextJs::createString(const std::wstring& s) co
 	return v8::String::New((const uint16_t*)s.c_str());
 }
 
-v8::Handle< v8::Value > ScriptContextJs::createObject(Object* object, bool weakReference) const
+v8::Handle< v8::Value > ScriptContextJs::createObject(ITypedObject* object, bool weakReference) const
 {
 	v8::HandleScope handleScope;
 

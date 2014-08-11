@@ -6,19 +6,19 @@ namespace traktor
 	namespace physics
 	{
 
-MemoryOutputStream::MemoryOutputStream()
+PxMemoryOutputStream::PxMemoryOutputStream()
 :	m_data(NULL)
 ,	m_size(0)
 ,	m_capacity(0)
 {
 }
 
-MemoryOutputStream::~MemoryOutputStream()
+PxMemoryOutputStream::~PxMemoryOutputStream()
 {
 	delete[] m_data;
 }
 
-physx::PxU32 MemoryOutputStream::write(const void* src, physx::PxU32 size)
+physx::PxU32 PxMemoryOutputStream::write(const void* src, physx::PxU32 size)
 {
 	physx::PxU32 expectedSize = m_size + size;
 	if(expectedSize > m_capacity)
@@ -37,14 +37,14 @@ physx::PxU32 MemoryOutputStream::write(const void* src, physx::PxU32 size)
 	return size;
 }
 
-MemoryInputData::MemoryInputData(physx::PxU8* data, physx::PxU32 length)
+PxMemoryInputData::PxMemoryInputData(physx::PxU8* data, physx::PxU32 length)
 :	m_size(length)
 ,	m_data(data)
 ,	m_pos(0)
 {
 }
 
-physx::PxU32 MemoryInputData::read(void* dest, physx::PxU32 count)
+physx::PxU32 PxMemoryInputData::read(void* dest, physx::PxU32 count)
 {
 	physx::PxU32 length = min< physx::PxU32 >(count, m_size - m_pos);
 	std::memcpy(dest, m_data + m_pos, length);
@@ -52,17 +52,17 @@ physx::PxU32 MemoryInputData::read(void* dest, physx::PxU32 count)
 	return length;
 }
 
-physx::PxU32 MemoryInputData::getLength() const
+physx::PxU32 PxMemoryInputData::getLength() const
 {
 	return m_size;
 }
 
-void MemoryInputData::seek(physx::PxU32 offset)
+void PxMemoryInputData::seek(physx::PxU32 offset)
 {
 	m_pos = min< physx::PxU32 >(m_size, offset);
 }
 
-physx::PxU32 MemoryInputData::tell() const
+physx::PxU32 PxMemoryInputData::tell() const
 {
 	return m_pos;
 }

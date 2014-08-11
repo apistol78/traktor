@@ -8,12 +8,12 @@ namespace traktor
 	namespace physics
 	{
 
-class MemoryOutputStream : public physx::PxOutputStream
+class PxMemoryOutputStream : public physx::PxOutputStream
 {
 public:
-	MemoryOutputStream();
+	PxMemoryOutputStream();
 
-	virtual ~MemoryOutputStream();
+	virtual ~PxMemoryOutputStream();
 
 	physx::PxU32 write(const void* src, physx::PxU32 count);
 
@@ -27,10 +27,10 @@ private:
 	physx::PxU32 m_capacity;
 };
 
-class MemoryInputData : public physx::PxInputData
+class PxMemoryInputData : public physx::PxInputData
 {
 public:
-	MemoryInputData(physx::PxU8* data, physx::PxU32 length);
+	PxMemoryInputData(physx::PxU8* data, physx::PxU32 length);
 
 	physx::PxU32 read(void* dest, physx::PxU32 count);
 

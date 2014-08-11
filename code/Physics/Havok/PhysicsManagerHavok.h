@@ -45,7 +45,7 @@ public:
 
 	virtual Vector4 getGravity() const;
 
-	virtual Ref< Body > createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc);
+	virtual Ref< Body > createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc, const wchar_t* const tag);
 
 	virtual Ref< Joint > createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2);
 
@@ -124,6 +124,12 @@ public:
 	virtual void queryOverlap(
 		const Body* body,
 		RefArray< Body >& outResult
+	) const;
+
+	virtual void queryTriangles(
+		const Vector4& center,
+		float radius,
+		AlignedVector< TriangleResult >& outTriangles
 	) const;
 
 	virtual void getStatistics(PhysicsStatistics& outStatistics) const;

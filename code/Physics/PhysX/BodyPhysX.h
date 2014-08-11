@@ -17,7 +17,7 @@ namespace traktor
 	namespace physics
 	{
 
-struct DestroyCallbackPhysX;
+struct IWorldCallback;
 
 /*!
  * \ingroup PhysX
@@ -28,10 +28,14 @@ class T_DLLCLASS BodyPhysX : public Body
 
 public:
 	BodyPhysX(
-		DestroyCallbackPhysX* callback,
+		IWorldCallback* callback,
 		physx::PxScene* scene,
 		physx::PxRigidActor* actor,
-		const Vector4& centerOfGravity
+		const Vector4& centerOfGravity,
+		uint32_t collisionGroup,
+		uint32_t collisionMask,
+		int32_t material,
+		const wchar_t* const tag
 	);
 
 	virtual void destroy();
@@ -92,11 +96,23 @@ public:
 
 	physx::PxRigidActor* getPxRigidActor() const { return m_actor; }
 
+	uint32_t getCollisionGroup() const { return m_collisionGroup; }
+
+	uint32_t getCollisionMask() const { return m_collisionMask; }
+
+	int32_t getMaterial() const { return m_material; }
+
+	const std::string& getTag() const { return m_tag; }
+
 private:
-	DestroyCallbackPhysX* m_callback;
+	IWorldCallback* m_callback;
 	physx::PxScene* m_scene;
 	physx::PxRigidActor* m_actor;
 	Vector4 m_centerOfGravity;
+	uint32_t m_collisionGroup;
+	uint32_t m_collisionMask;
+	int32_t m_material;
+	std::string m_tag;
 	bool m_enabled;
 };
 

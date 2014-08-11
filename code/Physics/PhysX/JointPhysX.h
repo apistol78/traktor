@@ -22,7 +22,7 @@ template < typename Outer >
 class JointPhysX : public Outer
 {
 public:
-	JointPhysX(DestroyCallbackPhysX* callback, physx::PxJoint* joint, Body* body1, Body* body2)
+	JointPhysX(IWorldCallback* callback, physx::PxJoint* joint, Body* body1, Body* body2)
 	:	m_callback(callback)
 	,	m_joint(joint)
 	,	m_body1(body1)
@@ -61,7 +61,7 @@ public:
 	}
 
 protected:
-	DestroyCallbackPhysX* m_callback;
+	IWorldCallback* m_callback;
 	physx::PxJoint* m_joint;
 	Ref< Body > m_body1;
 	Ref< Body > m_body2;

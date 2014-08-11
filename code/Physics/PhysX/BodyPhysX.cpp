@@ -1,5 +1,6 @@
 #include <PxPhysicsAPI.h>
 #include "Core/Math/Float.h"
+#include "Core/Misc/TString.h"
 #include "Physics/PhysX/BodyPhysX.h"
 #include "Physics/PhysX/Conversion.h"
 
@@ -24,17 +25,30 @@ inline Vector4 convert(const BodyPhysX* body, const Vector4& v, bool localSpace)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.BodyPhysX", BodyPhysX, Body)
 
 BodyPhysX::BodyPhysX(
-	DestroyCallbackPhysX* callback,
+	IWorldCallback* callback,
 	physx::PxScene* scene,
 	physx::PxRigidActor* actor,
-	const Vector4& centerOfGravity
+	const Vector4& centerOfGravity,
+	uint32_t collisionGroup,
+	uint32_t collisionMask,
+	int32_t material,
+	const wchar_t* const tag
 )
 :	m_callback(callback)
 ,	m_scene(scene)
 ,	m_actor(actor)
 ,	m_centerOfGravity(centerOfGravity)
+,	m_collisionGroup(collisionGroup)
+,	m_collisionMask(collisionMask)
+,	m_material(material)
 ,	m_enabled(false)
 {
+	if (tag)
+		m_tag = wstombs(tag);
+	else
+		m_tag = "";
+
+	actor->setName(m_tag.c_str());
 }
 
 void BodyPhysX::destroy()
@@ -70,22 +84,37 @@ bool BodyPhysX::isStatic() const
 
 bool BodyPhysX::isKinematic() const
 {
-	return m_actor->is< physx::PxRigidStatic >() != 0;
+	physx::PxRigidDynamic* bodyDynamic = m_actor->is< physx::PxRigidDynamic >();
+	if (bodyDynamic)
+		return bodyDynamic->getRigidDynamicFlags().isSet(physx::PxRigidDynamicFlag::eKINEMATIC);
+	else
+		return false;
 }
 
 void BodyPhysX::setActive(bool active)
 {
-	physx::PxRigidDynamic* bodyDynamic = m_actor->is< physx::PxRigidDynamic >();
-	if (!active)
-		bodyDynamic->putToSleep();
-	else
-		bodyDynamic->wakeUp();
+	if (m_enabled)
+	{
+		physx::PxRigidDynamic* bodyDynamic = m_actor->is< physx::PxRigidDynamic >();
+		if (bodyDynamic)
+		{
+			if (!active)
+				bodyDynamic->putToSleep();
+			else
+				bodyDynamic->wakeUp();
+		}
+	}
 }
 
 bool BodyPhysX::isActive() const
 {
-	physx::PxRigidDynamic* bodyDynamic = m_actor->is< physx::PxRigidDynamic >();
-	return !bodyDynamic->isSleeping();
+	if (m_enabled)
+	{
+		physx::PxRigidDynamic* bodyDynamic = m_actor->is< physx::PxRigidDynamic >();
+		return bodyDynamic ? !bodyDynamic->isSleeping() : true;
+	}
+	else
+		return false;
 }
 
 void BodyPhysX::setEnable(bool enable)
@@ -93,9 +122,9 @@ void BodyPhysX::setEnable(bool enable)
 	if (enable != m_enabled)
 	{
 		if (enable)
-			m_scene->addActor(*m_actor);
+			m_callback->insertActor(m_actor);
 		else
-			m_scene->removeActor(*m_actor);
+			m_callback->removeActor(m_actor);
 
 		m_enabled = enable;
 	}
@@ -115,62 +144,94 @@ void BodyPhysX::reset()
 void BodyPhysX::setMass(float mass, const Vector4& inertiaTensor)
 {
 	physx::PxRigidBody* rigidBody = m_actor->is< physx::PxRigidBody >();
-	rigidBody->setMass(mass);
-	rigidBody->setMassSpaceInertiaTensor(toPxVec3(inertiaTensor));
+	if (rigidBody)
+	{
+		rigidBody->setMass(mass);
+		rigidBody->setMassSpaceInertiaTensor(toPxVec3(inertiaTensor));
+	}
 }
 
 float BodyPhysX::getInverseMass() const
 {
 	physx::PxRigidBody* rigidBody = m_actor->is< physx::PxRigidBody >();
-	return 1.0f / rigidBody->getMass();
+	return rigidBody ? 1.0f / rigidBody->getMass() : 0.0f;
 }
 
 Matrix33 BodyPhysX::getInertiaTensorInverseWorld() const
 {
 	physx::PxRigidBody* rigidBody = m_actor->is< physx::PxRigidBody >();
-	physx::PxVec3 inertiaTensor = rigidBody->getMassSpaceInertiaTensor();
-	return Matrix33(
-		inertiaTensor.x, 0.0f, 0.0f,
-		0.0f, inertiaTensor.y, 0.0f,
-		0.0f, 0.0f, inertiaTensor.z
-	).inverse();
+	if (rigidBody)
+	{
+		physx::PxVec3 inertiaTensor = rigidBody->getMassSpaceInertiaTensor();
+		return Matrix33(
+			inertiaTensor.x, 0.0f, 0.0f,
+			0.0f, inertiaTensor.y, 0.0f,
+			0.0f, 0.0f, inertiaTensor.z
+		).inverse();
+	}
+	else
+		return Matrix33::identity();
 }
 
 void BodyPhysX::addForceAt(const Vector4& at, const Vector4& force, bool localSpace)
 {
-	Vector4 at0 = (localSpace ? (at + m_centerOfGravity) : at).xyz1();
-	Vector4 at_ = convert(this, at0.xyz1(), localSpace);
-	Vector4 force_ = convert(this, force.xyz0(), localSpace);
-	physx::PxRigidBodyExt::addForceAtPos(
-		*m_actor->is< physx::PxRigidBody >(),
-		toPxVec3(force_),
-		toPxVec3(at_)
-	);
+	if (!m_enabled)
+		return;
+
+	physx::PxRigidBody* rigidBody = m_actor->is< physx::PxRigidBody >();
+	if (rigidBody)
+	{
+		Vector4 at0 = (localSpace ? (at + m_centerOfGravity) : at).xyz1();
+		Vector4 at_ = convert(this, at0.xyz1(), localSpace);
+		Vector4 force_ = convert(this, force.xyz0(), localSpace);
+		physx::PxRigidBodyExt::addForceAtPos(
+			*rigidBody,
+			toPxVec3(force_),
+			toPxVec3(at_)
+		);
+	}
 }
 
 void BodyPhysX::addTorque(const Vector4& torque, bool localSpace)
 {
+	if (!m_enabled)
+		return;
+
 	physx::PxRigidDynamic* bodyDynamic = m_actor->is< physx::PxRigidDynamic >();
-	Vector4 torque_ = convert(this, torque.xyz0(), localSpace);
-	bodyDynamic->addTorque(
-		toPxVec3(torque_)
-	);
+	if (bodyDynamic)
+	{
+		Vector4 torque_ = convert(this, torque.xyz0(), localSpace);
+		bodyDynamic->addTorque(toPxVec3(torque_));
+	}
 }
 
 void BodyPhysX::addLinearImpulse(const Vector4& linearImpulse, bool localSpace)
 {
+	if (!m_enabled)
+		return;
+
 	physx::PxRigidBody* rigidBody = m_actor->is< physx::PxRigidBody >();
-	Vector4 linearImpulse_ = convert(this, linearImpulse.xyz0(), localSpace);
-	Vector4 momentum = fromPxVec3(rigidBody->getLinearVelocity(), 0.0f);
-	rigidBody->setLinearVelocity(toPxVec3(momentum + linearImpulse_));
+	if (rigidBody)
+	{
+		Vector4 linearImpulse_ = convert(this, linearImpulse.xyz0(), localSpace);
+		rigidBody->addForce(toPxVec3(linearImpulse_), physx::PxForceMode::eIMPULSE);
+	}
 }
 
 void BodyPhysX::addAngularImpulse(const Vector4& angularImpulse, bool localSpace)
 {
-	physx::PxRigidBody* rigidBody = m_actor->is< physx::PxRigidBody >();
-	Vector4 angularImpulse_ = convert(this, angularImpulse.xyz0(), localSpace);
-	Vector4 momentum = fromPxVec3(rigidBody->getAngularVelocity(), 0.0f);
-	rigidBody->setAngularVelocity(toPxVec3(momentum + angularImpulse_));
+	if (!m_enabled)
+		return;
+
+	physx::PxRigidDynamic* bodyDynamic = m_actor->is< physx::PxRigidDynamic >();
+	if (bodyDynamic)
+	{
+		Vector4 angularImpulse_ = convert(this, angularImpulse.xyz0(), localSpace);
+		bodyDynamic->addTorque(
+			toPxVec3(angularImpulse_),
+			physx::PxForceMode::eIMPULSE
+		);
+	}
 }
 
 void BodyPhysX::addImpulse(const Vector4& at, const Vector4& impulse, bool localSpace)
@@ -193,33 +254,46 @@ void BodyPhysX::addImpulse(const Vector4& at, const Vector4& impulse, bool local
 void BodyPhysX::setLinearVelocity(const Vector4& linearVelocity)
 {
 	physx::PxRigidBody* rigidBody = m_actor->is< physx::PxRigidBody >();
-	rigidBody->setLinearVelocity(toPxVec3(linearVelocity));
+	if (rigidBody)
+		rigidBody->setLinearVelocity(toPxVec3(linearVelocity));
 }
 
 Vector4 BodyPhysX::getLinearVelocity() const
 {
 	physx::PxRigidBody* rigidBody = m_actor->is< physx::PxRigidBody >();
-	return fromPxVec3(rigidBody->getLinearVelocity(), 0.0f);
+	if (rigidBody)
+		return fromPxVec3(rigidBody->getLinearVelocity(), 0.0f);
+	else
+		return Vector4::zero();
 }
 
 void BodyPhysX::setAngularVelocity(const Vector4& angularVelocity)
 {
 	physx::PxRigidBody* rigidBody = m_actor->is< physx::PxRigidBody >();
-	rigidBody->setAngularVelocity(toPxVec3(angularVelocity));
+	if (rigidBody)
+		rigidBody->setAngularVelocity(toPxVec3(angularVelocity));
 }
 
 Vector4 BodyPhysX::getAngularVelocity() const
 {
 	physx::PxRigidBody* rigidBody = m_actor->is< physx::PxRigidBody >();
-	return fromPxVec3(rigidBody->getAngularVelocity(), 0.0f);
+	if (rigidBody)
+		return fromPxVec3(rigidBody->getAngularVelocity(), 0.0f);
+	else
+		return Vector4::zero();
 }
 
 Vector4 BodyPhysX::getVelocityAt(const Vector4& at, bool localSpace) const
 {
 	physx::PxRigidBody* rigidBody = m_actor->is< physx::PxRigidBody >();
-	Vector4 at_ = convert(this, at, localSpace);
-	physx::PxVec3 velocity = physx::PxRigidBodyExt::getVelocityAtPos(*rigidBody, toPxVec3(at_));
-	return fromPxVec3(velocity, 0.0f);
+	if (rigidBody)
+	{
+		Vector4 at_ = convert(this, at, localSpace);
+		physx::PxVec3 velocity = physx::PxRigidBodyExt::getVelocityAtPos(*rigidBody, toPxVec3(at_));
+		return fromPxVec3(velocity, 0.0f);
+	}
+	else
+		return Vector4::zero();
 }
 
 bool BodyPhysX::solveStateConstraint(const BodyState& state)

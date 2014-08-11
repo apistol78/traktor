@@ -31,9 +31,10 @@ struct InGesturePinchInstance : public RefCountImpl< IInputNode::Instance >
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InGesturePinch", 0, InGesturePinch, IInputNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InGesturePinch", 1, InGesturePinch, IInputNode)
 
 InGesturePinch::InGesturePinch()
+:	m_direction(PdAny)
 {
 }
 
@@ -91,6 +92,25 @@ float InGesturePinch::evaluate(
 				Vector2 dir2 = (points2.back() - points2.front()).normalized();
 
 				bool result = bool(dot(dir1, dir2) < 0.0f);
+
+				// If a direction is specified then we must check both directions major axis is correct.
+				if (result && m_direction != PdAny)
+				{
+					Vector2 adir1(abs(dir1.x), abs(dir1.y));
+					Vector2 adir2(abs(dir2.x), abs(dir2.y));
+
+					switch (m_direction)
+					{
+					case PdX:
+						result = bool(adir1.x > adir1.y) && bool(adir2.x > adir2.y);
+						break;
+
+					case PdY:
+						result = bool(adir1.y > adir1.x) && bool(adir2.y > adir2.x);
+						break;
+					}
+				}
+
 				if (result)
 				{
 					// Calculate point set average mid point.
@@ -174,11 +194,22 @@ float InGesturePinch::evaluate(
 
 void InGesturePinch::serialize(ISerializer& s)
 {
+	const MemberEnum< PinchDirection >::Key c_PinchDirection_Keys[] =
+	{
+		{ L"PdAny", PdAny },
+		{ L"PdX", PdX },
+		{ L"PdY", PdY },
+		0
+	};
+
 	s >> MemberRef< IInputNode >(L"sourceActive", m_sourceActive);
 	s >> MemberRef< IInputNode >(L"sourceX1", m_sourceX1);
 	s >> MemberRef< IInputNode >(L"sourceY1", m_sourceY1);
 	s >> MemberRef< IInputNode >(L"sourceX2", m_sourceX2);
 	s >> MemberRef< IInputNode >(L"sourceY2", m_sourceY2);
+
+	if (s.getVersion() >= 1)
+		s >> MemberEnum< PinchDirection >(L"direction", m_direction, c_PinchDirection_Keys);
 }
 	
 	}

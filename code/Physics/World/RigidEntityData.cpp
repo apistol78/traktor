@@ -23,7 +23,7 @@ Ref< RigidEntity > RigidEntityData::createEntity(
 	PhysicsManager* physicsManager
 ) const
 {
-	Ref< Body > body = physicsManager->createBody(resourceManager, m_bodyDesc);
+	Ref< Body > body = physicsManager->createBody(resourceManager, m_bodyDesc, getName().c_str());
 	if (!body)
 		return 0;
 

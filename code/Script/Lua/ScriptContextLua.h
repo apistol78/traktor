@@ -39,6 +39,7 @@ public:
 private:
 	friend class ScriptDebuggerLua;
 	friend class ScriptManagerLua;
+	friend class ScriptProfilerLua;
 
 	ScriptManagerLua* m_scriptManager;
 	lua_State* m_luaState;

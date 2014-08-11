@@ -28,12 +28,20 @@ namespace traktor
 	namespace script
 	{
 
-class T_DLLCLASS Boxed : public Object
+class T_DLLCLASS Boxed : public RefCountImpl< ITypedObject >
 {
 	T_RTTI_CLASS;
 
 public:
 	virtual std::wstring toString() const = 0;
+
+	void* operator new (size_t size);
+
+	void* operator new (size_t size, void* memory);
+
+	void operator delete (void* ptr);
+
+	void operator delete (void* ptr, void* memory);
 };
 
 class T_DLLCLASS BoxedUInt64 : public Boxed

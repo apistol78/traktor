@@ -329,7 +329,7 @@ struct CastAny < Type, true >
 	}
 
 	static Any set(Type value) {
-		return Any::fromObject((Object*)(value));
+		return Any::fromObject((ITypedObject*)(value));
 	}
 
 	static Type get(const Any& value) {

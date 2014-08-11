@@ -226,7 +226,7 @@ Vector4 PhysicsManagerHavok::getGravity() const
 	return fromHkVector4(m_world->getGravity());
 }
 
-Ref< Body > PhysicsManagerHavok::createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc)
+Ref< Body > PhysicsManagerHavok::createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc, const wchar_t* const tag)
 {
 	if (!desc)
 		return 0;
@@ -848,6 +848,14 @@ void PhysicsManagerHavok::querySweep(
 void PhysicsManagerHavok::queryOverlap(
 	const Body* body,
 	RefArray< Body >& outResult
+) const
+{
+}
+
+void PhysicsManagerHavok::queryTriangles(
+	const Vector4& center,
+	float radius,
+	AlignedVector< TriangleResult >& outTriangles
 ) const
 {
 }

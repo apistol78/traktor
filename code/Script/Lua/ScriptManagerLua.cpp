@@ -69,6 +69,8 @@ ScriptManagerLua::ScriptManagerLua()
 ,	m_collectTargetSteps(0.0f)
 ,	m_totalMemoryUse(0)
 ,	m_lastMemoryUse(0)
+,	m_classIdBoxedVector4(0)
+,	m_classIdBoxedTransform(0)
 {
 #if !defined(__LP64__) && !defined(_LP64)
 	m_luaState = lua_newstate(&luaAlloc, this);
@@ -276,6 +278,12 @@ void ScriptManagerLua::registerClass(IScriptClass* scriptClass)
 		}
 		m_classRegistryLookup[*i] = classRegistryIndex;
 	}
+
+	// Remember commonly used classes.
+	if (is_type_a< BoxedVector4 >(exportType))
+		m_classIdBoxedVector4 = classRegistryIndex;
+	else if (is_type_a< BoxedTransform >(exportType))
+		m_classIdBoxedTransform = classRegistryIndex;
 }
 
 Ref< IScriptResource > ScriptManagerLua::compile(const std::wstring& fileName, const std::wstring& script, const source_map_t* map, IErrorCallback* errorCallback) const
@@ -529,7 +537,7 @@ void ScriptManagerLua::unlock()
 	m_lock.release();
 }
 
-void ScriptManagerLua::pushObject(Object* object)
+void ScriptManagerLua::pushObject(ITypedObject* object)
 {
 	CHECK_LUA_STACK(m_luaState, 1);
 
@@ -566,19 +574,34 @@ void ScriptManagerLua::pushObject(Object* object)
 	lua_pop(m_luaState, 1);
 
 	const TypeInfo* objectType = &type_of(object);
+	uint32_t classId = 0;
 
-	// Find registered script class entry.
-	SmallMap< const TypeInfo*, uint32_t >::const_iterator i = m_classRegistryLookup.find(objectType);
-	if (i == m_classRegistryLookup.end())
+	// Check commonly used boxes.
+	if (objectType == &type_of< BoxedVector4 >())
 	{
-		lua_pop(m_luaState, 1);
-		lua_pushnil(m_luaState);
-		return;
+		classId = m_classIdBoxedVector4;
+	}
+	else if (objectType == &type_of< BoxedTransform >())
+	{
+		classId = m_classIdBoxedTransform;
+	}
+	else
+	{
+		// Find registered script class entry.
+		SmallMap< const TypeInfo*, uint32_t >::const_iterator i = m_classRegistryLookup.find(objectType);
+		if (i != m_classRegistryLookup.end())
+			classId = i->second;
+		else
+		{
+			lua_pop(m_luaState, 1);
+			lua_pushnil(m_luaState);
+			return;
+		}
 	}
 
-	const RegisteredClass& rc = m_classRegistry[i->second];
+	const RegisteredClass& rc = m_classRegistry[classId];
 
-	Object** objectRef = reinterpret_cast< Object** >(lua_newuserdata(m_luaState, sizeof(Object*)));
+	ITypedObject** objectRef = reinterpret_cast< ITypedObject** >(lua_newuserdata(m_luaState, sizeof(ITypedObject*)));
 	*objectRef = object;
 	T_SAFE_ADDREF(*objectRef);
 

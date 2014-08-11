@@ -16,7 +16,7 @@
 namespace traktor
 {
 
-class Object;
+class ITypedObject;
 
 	namespace script
 	{
@@ -55,7 +55,7 @@ public:
 
 	static Any fromString(const std::wstring& value);
 
-	static Any fromObject(Object* value);
+	static Any fromObject(ITypedObject* value);
 
 	static Any fromTypeInfo(const TypeInfo* value);
 
@@ -69,7 +69,7 @@ public:
 
 	std::wstring getWideString() const;
 
-	Object* getObject() const { return m_type == AtObject ? m_data.m_object : 0; }
+	ITypedObject* getObject() const { return m_type == AtObject ? m_data.m_object : 0; }
 
 	const TypeInfo* getTypeInfo() const { return m_type == AtTypeInfo ? m_data.m_typeInfo : 0; }
 
@@ -98,7 +98,7 @@ public:
 
 	std::string getStringUnsafe() const { T_ASSERT (m_type == AtString); return m_data.m_string; }
 
-	Object* getObjectUnsafe() const { T_ASSERT (m_type == AtObject); return m_data.m_object; }
+	ITypedObject* getObjectUnsafe() const { T_ASSERT (m_type == AtObject); return m_data.m_object; }
 
 	const TypeInfo* getTypeInfoUnsafe() const { T_ASSERT (m_type == AtTypeInfo); return m_data.m_typeInfo; }
 
@@ -128,7 +128,7 @@ private:
 		int32_t m_integer;
 		float m_float;
 		char* m_string;
-		Object* m_object;
+		ITypedObject* m_object;
 		const TypeInfo* m_typeInfo;
 	};
 
