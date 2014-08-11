@@ -82,7 +82,7 @@ Ref< Local > describeLocal(const std::wstring& name, lua_State* L, int32_t index
 
 		if (lua_isuserdata(L, index))
 		{
-			Object* object = *reinterpret_cast< Object** >(lua_touserdata(L, index));
+			ITypedObject* object = *reinterpret_cast< ITypedObject** >(lua_touserdata(L, index));
 			if (object)
 			{
 				if (const Boxed* box = dynamic_type_cast< const Boxed* >(object))

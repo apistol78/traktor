@@ -33,7 +33,7 @@ class T_DLLCLASS IScriptClass : public Object
 public:
 	struct InvokeParam
 	{
-		Object* object; //< Current object.
+		ITypedObject* object; //< Current object.
 	};
 
 	/*! \brief Get exported native type. */
@@ -46,7 +46,7 @@ public:
 	virtual bool haveUnknown() const = 0;
 
 	/*! \brief Construct new object. */
-	virtual Ref< Object > construct(const InvokeParam& param, uint32_t argc, const Any* argv) const = 0;
+	virtual Ref< ITypedObject > construct(const InvokeParam& param, uint32_t argc, const Any* argv) const = 0;
 
 	/*! \brief Get exported method count. */
 	virtual uint32_t getMethodCount() const = 0;

@@ -1,4 +1,6 @@
 #include "Core/Io/StringOutputStream.h"
+#include "Core/Memory/IAllocator.h"
+#include "Core/Memory/MemoryConfig.h"
 #include "Core/Misc/String.h"
 #include "Script/AutoScriptClass.h"
 #include "Script/CastAny.h"
@@ -11,6 +13,29 @@ namespace traktor
 	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.Boxed", Boxed, Object)
+
+void* Boxed::operator new (size_t size)
+{
+	IAllocator* allocator = getAllocator();
+	return allocator->alloc(size, 16, "Boxed");
+}
+
+void* Boxed::operator new (size_t size, void* memory)
+{
+	T_FATAL_ERROR;
+	return 0;
+}
+
+void Boxed::operator delete (void* ptr)
+{
+	IAllocator* allocator = getAllocator();
+	allocator->free(ptr);
+}
+
+void Boxed::operator delete (void* ptr, void* memory)
+{
+	T_FATAL_ERROR;
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.UInt64", BoxedUInt64, Boxed)
 

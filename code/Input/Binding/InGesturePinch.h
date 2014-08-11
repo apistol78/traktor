@@ -24,6 +24,13 @@ class T_DLLCLASS InGesturePinch : public IInputNode
 	T_RTTI_CLASS;
 	
 public:
+	enum PinchDirection
+	{
+		PdAny,
+		PdX,
+		PdY
+	};
+
 	InGesturePinch();
 
 	InGesturePinch(
@@ -51,6 +58,7 @@ private:
 	Ref< IInputNode > m_sourceY1;
 	Ref< IInputNode > m_sourceX2;
 	Ref< IInputNode > m_sourceY2;
+	PinchDirection m_direction;
 };
 
 	}

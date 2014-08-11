@@ -150,7 +150,7 @@ Any Any::fromString(const std::wstring& value)
 	return any;
 }
 
-Any Any::fromObject(Object* value)
+Any Any::fromObject(ITypedObject* value)
 {
 	T_SAFE_ANONYMOUS_ADDREF(value);
 	Any any;

@@ -12621,7 +12621,6 @@
 						<item>PhysX3CommonDEBUG_x86.lib</item>
 						<item>PhysX3CookingDEBUG_x86.lib</item>
 						<item>PhysXVisualDebuggerSDKDEBUG.lib</item>
-						<item>RepX3DEBUG.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -12675,7 +12674,6 @@
 						<item>PhysX3CommonDEBUG_x86.lib</item>
 						<item>PhysX3CookingDEBUG_x86.lib</item>
 						<item>PhysXVisualDebuggerSDKDEBUG.lib</item>
-						<item>RepX3DEBUG.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>

@@ -391,6 +391,29 @@ struct QuerySphereCallback : public btBroadphaseAabbCallback
 	}
 };
 
+class QueryTrianglesCallback : public btTriangleCallback
+{
+public:
+	QueryTrianglesCallback(const btTransform& colT, AlignedVector< TriangleResult >& outTriangles)
+	:	m_colT(colT)
+	,	m_outTriangles(outTriangles)
+	{
+	}
+
+	virtual void processTriangle(btVector3* triangle, int partId, int triangleIndex)
+	{
+		TriangleResult tr;
+		tr.v[0] = fromBtVector3(m_colT * triangle[0], 1.0f);
+		tr.v[1] = fromBtVector3(m_colT * triangle[1], 1.0f);
+		tr.v[2] = fromBtVector3(m_colT * triangle[2], 1.0f);
+		m_outTriangles.push_back(tr);
+	}
+
+private:
+	const btTransform& m_colT;
+	AlignedVector< TriangleResult >& m_outTriangles;
+};
+
 void deleteShape(btCollisionShape* shape)
 {
 	if (shape->getShapeType() == TRIANGLE_MESH_SHAPE_PROXYTYPE)
@@ -538,7 +561,7 @@ Vector4 PhysicsManagerBullet::getGravity() const
 	return fromBtVector3(m_dynamicsWorld->getGravity(), 0.0f);
 }
 
-Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc)
+Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc, const wchar_t* const tag)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
@@ -1433,6 +1456,56 @@ void PhysicsManagerBullet::queryOverlap(
 	//m_dynamicsWorld->contactTest(rigidBody, callback);
 }
 
+void PhysicsManagerBullet::queryTriangles(const Vector4& center, float radius, AlignedVector< TriangleResult >& outTriangles) const
+{
+	const btCollisionObjectArray& collisionObjects = m_dynamicsWorld->getCollisionObjectArray();
+	for (int i = 0; i < collisionObjects.size(); ++i)
+	{
+		btCollisionObject* col = collisionObjects[i];
+		T_ASSERT (col);
+
+		btCollisionShape* shape = col->getCollisionShape();
+		if (!shape)
+			continue;
+
+		const btTransform& colT = col->getWorldTransform();
+		btTransform colTinv = colT.inverse();
+
+		QueryTrianglesCallback trianglesCallback(colT, outTriangles);
+
+		if (shape->isCompound())
+		{
+			btCompoundShape* compound = static_cast< btCompoundShape* >(shape);
+			
+			int numChilds = compound->getNumChildShapes();
+			for (int j = 0; j < numChilds; ++j)
+			{
+				btCollisionShape* childShape = compound->getChildShape(j);
+				T_ASSERT (childShape);
+
+				if (childShape->isConcave())
+				{
+					btVector3 localCenter = colTinv * toBtVector3(center);
+					btVector3 aabbMin = localCenter - btVector3(radius, radius, radius);
+					btVector3 aabbMax = localCenter + btVector3(radius, radius, radius);
+
+					btConcaveShape* concave = static_cast< btConcaveShape* >(childShape);
+					concave->processAllTriangles(&trianglesCallback, aabbMin, aabbMax);
+				}
+			}
+		}
+		else if (shape->isConcave())
+		{
+			btVector3 localCenter = colTinv * toBtVector3(center);
+			btVector3 aabbMin = localCenter - btVector3(radius, radius, radius);
+			btVector3 aabbMax = localCenter + btVector3(radius, radius, radius);
+
+			btConcaveShape* concave = static_cast< btConcaveShape* >(shape);
+			concave->processAllTriangles(&trianglesCallback, aabbMin, aabbMax);
+		}
+	}
+}
+
 void PhysicsManagerBullet::getStatistics(PhysicsStatistics& outStatistics) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
@@ -1527,7 +1600,7 @@ void PhysicsManagerBullet::nearCallback(btBroadphasePair& collisionPair, btColli
 		uint32_t group2 = body2->getCollisionGroup();
 		uint32_t mask2 = body2->getCollisionMask();
 
-		if ((group1 & mask2) == 0 && (group2 & mask1) == 0)
+		if ((group1 & mask2) == 0 || (group2 & mask1) == 0)
 			return;
 	}
 

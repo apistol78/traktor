@@ -38,6 +38,7 @@ private:
 	};
 
 	static ScriptProfilerLua* ms_instance;
+	ScriptManagerLua* m_scriptManager;
 	lua_State* m_luaState;
 	std::vector< ProfileStack > m_stack;
 	std::set< IListener* > m_listeners;

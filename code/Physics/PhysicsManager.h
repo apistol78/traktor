@@ -46,6 +46,23 @@ struct QueryResult
 	float distance;
 	float fraction;
 	int32_t material;
+
+	QueryResult()
+	:	position(Vector4::zero())
+	,	normal(Vector4::zero())
+	,	distance(0.0f)
+	,	fraction(0.0f)
+	,	material(0)
+	{
+	}
+};
+
+/*! \brief Triangle result-
+ * \ingroup Physics
+ */
+struct TriangleResult
+{
+	Vector4 v[3];
 };
 
 /*! \brief Collision pair.
@@ -150,9 +167,10 @@ public:
 	 *
 	 * \param resourceManager Resource manager.
 	 * \param desc Rigid body description.
+	 * \param tag Optional name tag of body; only for debugging.
 	 * \return Rigid body instance.
 	 */
-	virtual Ref< Body > createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc) = 0;
+	virtual Ref< Body > createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc, const wchar_t* const tag = 0) = 0;
 
 	/*! \brief Create joint between bodies.
 	 *
@@ -351,6 +369,18 @@ public:
 	virtual void queryOverlap(
 		const Body* body,
 		RefArray< Body >& outResult
+	) const = 0;
+
+	/*! \brief Get triangles inside sphere.
+	 *
+	 * \param center Query sphere center.
+	 * \param radius Query sphere radius.
+	 * \param outTriangles Found triangles.
+	 */
+	virtual void queryTriangles(
+		const Vector4& center,
+		float radius,
+		AlignedVector< TriangleResult >& outTriangles
 	) const = 0;
 
 	/*! \brief Get runtime statistics.

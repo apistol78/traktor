@@ -71,7 +71,7 @@ private:
 
 	v8::Handle< v8::String > createString(const std::wstring& s) const;
 
-	v8::Handle< v8::Value > createObject(Object* object, bool weakReference) const;
+	v8::Handle< v8::Value > createObject(ITypedObject* object, bool weakReference) const;
 
 	v8::Handle< v8::Value > toValue(const Any& value) const;
 

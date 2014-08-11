@@ -1,6 +1,7 @@
 #ifndef traktor_physics_PhysicsManagerPhysX_H
 #define traktor_physics_PhysicsManagerPhysX_H
 
+#include "Core/Thread/Semaphore.h"
 #include "Physics/PhysicsManager.h"
 #include "Physics/PhysX/Types.h"
 
@@ -32,7 +33,7 @@ class BodyPhysX;
  */
 class T_DLLCLASS PhysicsManagerPhysX
 :	public PhysicsManager
-,	public DestroyCallbackPhysX
+,	public IWorldCallback
 {
 	T_RTTI_CLASS;
 
@@ -49,7 +50,7 @@ public:
 
 	virtual Vector4 getGravity() const;
 
-	virtual Ref< Body > createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc);
+	virtual Ref< Body > createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc, const wchar_t* const tag);
 
 	virtual Ref< Joint > createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2);
 
@@ -130,14 +131,26 @@ public:
 		RefArray< Body >& outResult
 	) const;
 
+	virtual void queryTriangles(
+		const Vector4& center,
+		float radius,
+		AlignedVector< TriangleResult >& outTriangles
+	) const;
+
 	virtual void getStatistics(PhysicsStatistics& outStatistics) const;
 
 private:
+	mutable Semaphore m_lock;
 	float m_simulationDeltaTime;
+	float m_timeScale;
 	physx::PxPhysics* m_sdk;
 	physx::PxCooking* m_cooking;
 	physx::PxScene* m_scene;
 	RefArray< BodyPhysX > m_bodies;
+
+	virtual void insertActor(physx::PxRigidActor* actor);
+
+	virtual void removeActor(physx::PxRigidActor* actor);
 
 	virtual void destroyBody(Body* owner, physx::PxRigidActor* actor);
 
