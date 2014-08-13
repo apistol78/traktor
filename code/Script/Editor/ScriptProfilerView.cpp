@@ -78,13 +78,9 @@ bool ScriptProfilerView::handleCommand(const ui::Command& command)
 
 void ScriptProfilerView::updateProfileGrid()
 {
-	double totalInclusiveDuration = 0.0;
-	double totalExclusiveDuration = 0.0;
+	double totalDuration = 0.0;
 	for (std::map< std::wstring, ProfileEntry >::const_iterator i = m_profile.begin(); i != m_profile.end(); ++i)
-	{
-		totalInclusiveDuration += i->second.inclusiveDuration;
-		totalExclusiveDuration += i->second.exclusiveDuration;
-	}
+		totalDuration += i->second.exclusiveDuration;
 
 	for (std::map< std::wstring, ProfileEntry >::iterator i = m_profile.begin(); i != m_profile.end(); ++i)
 	{
@@ -95,8 +91,8 @@ void ScriptProfilerView::updateProfileGrid()
 			pe.row->add(new ui::custom::GridItem(i->first));
 			pe.row->add(new ui::custom::GridItem(toString(pe.inclusiveDuration * 1000.0, 2)));
 			pe.row->add(new ui::custom::GridItem(toString(pe.exclusiveDuration * 1000.0, 2)));
-			pe.row->add(new ui::custom::GridItem(toString(pe.inclusiveDuration * 100.0 / totalInclusiveDuration, 2)));
-			pe.row->add(new ui::custom::GridItem(toString(pe.exclusiveDuration * 100.0 / totalExclusiveDuration, 2)));
+			pe.row->add(new ui::custom::GridItem(toString(pe.inclusiveDuration * 100.0 / totalDuration, 2)));
+			pe.row->add(new ui::custom::GridItem(toString(pe.exclusiveDuration * 100.0 / totalDuration, 2)));
 			pe.row->add(new ui::custom::GridItem(toString(pe.count)));
 			m_profileGrid->addRow(pe.row);
 		}
@@ -104,8 +100,8 @@ void ScriptProfilerView::updateProfileGrid()
 		{
 			checked_type_cast< ui::custom::GridItem*, false >(pe.row->get().at(1))->setText(toString(pe.inclusiveDuration * 1000.0, 2));
 			checked_type_cast< ui::custom::GridItem*, false >(pe.row->get().at(2))->setText(toString(pe.exclusiveDuration * 1000.0, 2));
-			checked_type_cast< ui::custom::GridItem*, false >(pe.row->get().at(3))->setText(toString(pe.inclusiveDuration * 100.0 / totalInclusiveDuration, 2));
-			checked_type_cast< ui::custom::GridItem*, false >(pe.row->get().at(4))->setText(toString(pe.exclusiveDuration * 100.0 / totalExclusiveDuration, 2));
+			checked_type_cast< ui::custom::GridItem*, false >(pe.row->get().at(3))->setText(toString(pe.inclusiveDuration * 100.0 / totalDuration, 2));
+			checked_type_cast< ui::custom::GridItem*, false >(pe.row->get().at(4))->setText(toString(pe.exclusiveDuration * 100.0 / totalDuration, 2));
 			checked_type_cast< ui::custom::GridItem*, false >(pe.row->get().at(5))->setText(toString(pe.count));
 		}
 	}

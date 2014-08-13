@@ -28,23 +28,15 @@ namespace traktor
 	namespace script
 	{
 
-class T_DLLCLASS Boxed : public RefCountImpl< ITypedObject >
+class T_DLLCLASS Boxed : public ITypedObject
 {
 	T_RTTI_CLASS;
 
 public:
 	virtual std::wstring toString() const = 0;
-
-	void* operator new (size_t size);
-
-	void* operator new (size_t size, void* memory);
-
-	void operator delete (void* ptr);
-
-	void operator delete (void* ptr, void* memory);
 };
 
-class T_DLLCLASS BoxedUInt64 : public Boxed
+class T_DLLCLASS BoxedUInt64 : public RefCountImpl< Boxed >
 {
 	T_RTTI_CLASS;
 
@@ -59,11 +51,15 @@ public:
 
 	virtual std::wstring toString() const;
 
+	void* operator new (size_t size);
+
+	void operator delete (void* ptr);
+
 private:
 	uint64_t m_value;
 };
 
-class T_DLLCLASS BoxedGuid : public Boxed
+class T_DLLCLASS BoxedGuid : public RefCountImpl< Boxed >
 {
 	T_RTTI_CLASS;
 
@@ -90,11 +86,15 @@ public:
 
 	virtual std::wstring toString() const;
 
+	void* operator new (size_t size);
+
+	void operator delete (void* ptr);
+
 private:
 	Guid m_value;
 };
 
-class T_DLLCLASS BoxedVector2 : public Boxed
+class T_DLLCLASS BoxedVector2 : public RefCountImpl< Boxed >
 {
 	T_RTTI_CLASS;
 
@@ -111,31 +111,31 @@ public:
 
 	float y() const { return m_value.y; }
 
-	Vector2 add(const Vector2& v) const;
+	Vector2 add(const Vector2& v) const { return m_value + v; }
 
-	Vector2 sub(const Vector2& v) const;
+	Vector2 sub(const Vector2& v) const { return m_value - v; }
 
-	Vector2 mul(const Vector2& v) const;
+	Vector2 mul(const Vector2& v) const { return m_value * v; }
 
-	Vector2 div(const Vector2& v) const;
+	Vector2 div(const Vector2& v) const { return m_value / v; }
 
-	Vector2 add(float v) const;
+	Vector2 add(float v) const { return m_value + v; }
 
-	Vector2 sub(float v) const;
+	Vector2 sub(float v) const { return m_value - v; }
 
-	Vector2 mul(float v) const;
+	Vector2 mul(float v) const { return m_value * v; }
 
-	Vector2 div(float v) const;
+	Vector2 div(float v) const { return m_value / v; }
 
-	float dot(const Vector2& v) const;
+	float dot(const Vector2& v) const { return traktor::dot(m_value, v); }
 
-	float length() const;
+	float length() const { return m_value.length(); }
 
-	Vector2 normalized() const;
+	Vector2 normalized() const { return m_value.normalized(); }
 
-	Vector2 neg() const;
+	Vector2 neg() const { return -m_value; }
 
-	Vector2 perpendicular() const;
+	Vector2 perpendicular() const { return m_value.perpendicular(); }
 
 	static Vector2 zero() { return Vector2::zero(); }
 
@@ -145,11 +145,15 @@ public:
 
 	virtual std::wstring toString() const;
 
+	void* operator new (size_t size);
+
+	void operator delete (void* ptr);
+
 private:
 	Vector2 m_value;
 };
 
-class T_DLLCLASS BoxedVector4 : public Boxed
+class T_DLLCLASS BoxedVector4 : public RefCountImpl< Boxed >
 {
 	T_RTTI_CLASS;
 	
@@ -162,7 +166,7 @@ public:
 	
 	explicit BoxedVector4(float x, float y, float z, float w);
 
-	void set(float x, float y, float z, float w);
+	void set(float x, float y, float z, float w) { m_value.set(x, y, z, w); }
 	
 	float x() const { return m_value.x(); }
 	
@@ -176,31 +180,31 @@ public:
 
 	Vector4 xyz1() const { return m_value.xyz1(); }
 
-	Vector4 add(const Vector4& v) const;
+	Vector4 add(const Vector4& v) const { return m_value + v; }
 
-	Vector4 sub(const Vector4& v) const;
+	Vector4 sub(const Vector4& v) const { return m_value - v; }
 
-	Vector4 mul(const Vector4& v) const;
+	Vector4 mul(const Vector4& v) const { return m_value * v; }
 
-	Vector4 div(const Vector4& v) const;
+	Vector4 div(const Vector4& v) const { return m_value / v; }
 
-	Vector4 add(float v) const;
+	Vector4 add(float v) const { return m_value + Scalar(v); }
 
-	Vector4 sub(float v) const;
+	Vector4 sub(float v) const { return m_value - Scalar(v); }
 
-	Vector4 mul(float v) const;
+	Vector4 mul(float v) const { return m_value * Scalar(v); }
 
-	Vector4 div(float v) const;
+	Vector4 div(float v) const { return m_value / Scalar(v); }
 
-	float dot(const Vector4& v) const;
+	float dot(const Vector4& v) const { return traktor::dot3(m_value, v); }
 
-	Vector4 cross(const Vector4& v) const;
+	Vector4 cross(const Vector4& v) const { return traktor::cross(m_value, v); }
 
-	float length() const;
+	float length() const { return m_value.length(); }
 
-	Vector4 normalized() const;
+	Vector4 normalized() const { return m_value.normalized(); }
 
-	Vector4 neg() const;
+	Vector4 neg() const { return -m_value; }
 
 	static Vector4 zero() { return Vector4::zero(); }
 
@@ -212,11 +216,15 @@ public:
 
 	virtual std::wstring toString() const;
 	
+	void* operator new (size_t size);
+
+	void operator delete (void* ptr);
+
 private:
 	Vector4 m_value;
 };
 
-class T_DLLCLASS BoxedQuaternion : public Boxed
+class T_DLLCLASS BoxedQuaternion : public RefCountImpl< Boxed >
 {
 	T_RTTI_CLASS;
 	
@@ -265,11 +273,15 @@ public:
 
 	virtual std::wstring toString() const;
 
+	void* operator new (size_t size);
+
+	void operator delete (void* ptr);
+
 private:
 	Quaternion m_value;
 };
 
-class T_DLLCLASS BoxedPlane : public Boxed
+class T_DLLCLASS BoxedPlane : public RefCountImpl< Boxed >
 {
 	T_RTTI_CLASS;
 
@@ -302,11 +314,15 @@ public:
 
 	virtual std::wstring toString() const;
 
+	void* operator new (size_t size);
+
+	void operator delete (void* ptr);
+
 private:
 	Plane m_value;
 };
 
-class T_DLLCLASS BoxedTransform : public Boxed
+class T_DLLCLASS BoxedTransform : public RefCountImpl< Boxed >
 {
 	T_RTTI_CLASS;
 	
@@ -347,11 +363,15 @@ public:
 
 	virtual std::wstring toString() const;
 
+	void* operator new (size_t size);
+
+	void operator delete (void* ptr);
+
 private:
 	Transform m_value;
 };
 
-class T_DLLCLASS BoxedAabb3 : public Boxed
+class T_DLLCLASS BoxedAabb3 : public RefCountImpl< Boxed >
 {
 	T_RTTI_CLASS;
 
@@ -384,11 +404,15 @@ public:
 
 	virtual std::wstring toString() const;
 
+	void* operator new (size_t size);
+
+	void operator delete (void* ptr);
+
 private:
 	Aabb3 m_value;
 };
 
-class T_DLLCLASS BoxedFrustum : public Boxed
+class T_DLLCLASS BoxedFrustum : public RefCountImpl< Boxed >
 {
 	T_RTTI_CLASS;
 
@@ -425,11 +449,15 @@ public:
 
 	virtual std::wstring toString() const;
 
+	void* operator new (size_t size);
+
+	void operator delete (void* ptr);
+
 private:
 	Frustum m_value;
 };
 
-class T_DLLCLASS BoxedColor4f : public Boxed
+class T_DLLCLASS BoxedColor4f : public RefCountImpl< Boxed >
 {
 	T_RTTI_CLASS;
 
@@ -466,11 +494,15 @@ public:
 
 	virtual std::wstring toString() const;
 
+	void* operator new (size_t size);
+
+	void operator delete (void* ptr);
+
 private:
 	Color4f m_value;
 };
 
-class T_DLLCLASS BoxedColor4ub : public Boxed
+class T_DLLCLASS BoxedColor4ub : public RefCountImpl< Boxed >
 {
 	T_RTTI_CLASS;
 
@@ -505,11 +537,15 @@ public:
 
 	virtual std::wstring toString() const;
 
+	void* operator new (size_t size);
+
+	void operator delete (void* ptr);
+
 private:
 	Color4ub m_value;
 };
 
-class T_DLLCLASS BoxedRefArray : public Boxed
+class T_DLLCLASS BoxedRefArray : public RefCountImpl< Boxed >
 {
 	T_RTTI_CLASS;
 
@@ -549,11 +585,15 @@ public:
 		return arr;
 	}
 
+	void* operator new (size_t size);
+
+	void operator delete (void* ptr);
+
 private:
 	RefArray< Object > m_arr;
 };
 
-class T_DLLCLASS BoxedRange : public Boxed
+class T_DLLCLASS BoxedRange : public RefCountImpl< Boxed >
 {
 	T_RTTI_CLASS;
 
@@ -582,12 +622,16 @@ public:
 		);
 	}
 
+	void* operator new (size_t size);
+
+	void operator delete (void* ptr);
+
 private:
 	Any m_min;
 	Any m_max;
 };
 
-class T_DLLCLASS BoxedStdVector : public Boxed
+class T_DLLCLASS BoxedStdVector : public RefCountImpl< Boxed >
 {
 	T_RTTI_CLASS;
 
@@ -618,6 +662,10 @@ public:
 			arr[i] = CastAny< ItemType >::get(m_arr[i]);
 		return arr;
 	}
+
+	void* operator new (size_t size);
+
+	void operator delete (void* ptr);
 
 private:
 	std::vector< Any > m_arr;

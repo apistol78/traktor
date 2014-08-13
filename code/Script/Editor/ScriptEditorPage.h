@@ -1,8 +1,8 @@
-#ifndef traktor_script_ScriptEditor_H
-#define traktor_script_ScriptEditor_H
+#ifndef traktor_script_ScriptEditorPage_H
+#define traktor_script_ScriptEditorPage_H
 
 #include <list>
-#include "Editor/IObjectEditor.h"
+#include "Editor/IEditorPage.h"
 #include "Script/IScriptManager.h"
 #include "Script/Editor/IScriptDebuggerSessions.h"
 #include "Script/Editor/IScriptOutline.h"
@@ -22,7 +22,9 @@ namespace traktor
 	namespace editor
 	{
 
+class IDocument;
 class IEditor;
+class IEditorPageSite;
 
 	}
 
@@ -56,31 +58,35 @@ class Preprocessor;
 class Script;
 class ScriptBreakpointEvent;
 
-class T_DLLCLASS ScriptEditor
-:	public editor::IObjectEditor
+class T_DLLCLASS ScriptEditorPage
+:	public editor::IEditorPage
 ,	public IErrorCallback
 ,	public IScriptDebuggerSessions::IListener
 {
 	T_RTTI_CLASS;
 
 public:
-	ScriptEditor(editor::IEditor* editor);
+	ScriptEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
 
-	virtual bool create(ui::Widget* parent, db::Instance* instance, ISerializable* object);
+	virtual bool create(ui::Container* parent);
 
 	virtual void destroy();
 
-	virtual void apply();
+	virtual void activate();
+
+	virtual void deactivate();
+
+	virtual bool dropInstance(db::Instance* instance, const ui::Point& position);
 
 	virtual bool handleCommand(const ui::Command& command);
 
 	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId);
 
-	virtual ui::Size getPreferredSize() const;
-
 private:
 	editor::IEditor* m_editor;
-	Ref< db::Instance > m_instance;
+	editor::IEditorPageSite* m_site;
+	editor::IDocument* m_document;
+
 	Ref< Script > m_script;
 	Ref< IScriptDebuggerSessions > m_scriptDebuggerSessions;
 	Ref< IScriptManager > m_scriptManager;
@@ -88,7 +94,8 @@ private:
 	Ref< Preprocessor > m_preprocessor;
 	Ref< ui::Bitmap > m_bitmapFunction;
 	Ref< ui::Bitmap > m_bitmapFunctionReference;
-	Ref< ui::custom::Splitter > m_splitter;
+	Ref< ui::Container > m_containerExplorer;
+	Ref< ui::Container > m_containerDebugger;
 	Ref< ui::custom::GridView > m_outlineGrid;
 	Ref< ui::ListBox > m_dependencyList;
 	Ref< ui::ListBox > m_dependentList;
@@ -152,4 +159,4 @@ private:
 	}
 }
 
-#endif	// traktor_script_ScriptEditor_H
+#endif	// traktor_script_ScriptEditorPage_H

@@ -236,24 +236,16 @@ bool WorldRendererPreLit::create(
 		desc.preferTiled = true;
 		m_shadowMaskProjectTargetSet = renderSystem->createRenderTargetSet(desc);
 
-		// Create filtered shadow mask targets.
-		m_shadowMaskFilterTargetSet.resize(MaxLightCount);
-		for (int i = 0; i < MaxLightCount; ++i)
-		{
-			desc.count = 1;
-			desc.multiSample = 0;
-			desc.createDepthStencil = false;
-			desc.usingPrimaryDepthStencil = false;
-			desc.targets[0].format = render::TfR8;
-			desc.preferTiled = true;
-			m_shadowMaskFilterTargetSet[i] = renderSystem->createRenderTargetSet(desc);
-			if (!m_shadowMaskFilterTargetSet[i])
-			{
-				safeDestroy(m_shadowMaskProjectTargetSet);
-				m_shadowMaskFilterTargetSet.clear();
-				break;
-			}
-		}
+		// Create filtered shadow mask target.
+		desc.count = 1;
+		desc.multiSample = 0;
+		desc.createDepthStencil = false;
+		desc.usingPrimaryDepthStencil = false;
+		desc.targets[0].format = render::TfR8;
+		desc.preferTiled = true;
+		m_shadowMaskFilterTargetSet = renderSystem->createRenderTargetSet(desc);
+		if (!m_shadowMaskFilterTargetSet)
+			safeDestroy(m_shadowMaskProjectTargetSet);
 
 		if (
 			m_shadowTargetSet &&
@@ -339,7 +331,6 @@ bool WorldRendererPreLit::create(
 		{
 			safeDestroy(m_shadowTargetSet);
 			safeDestroy(m_shadowMaskProjectTargetSet);
-			m_shadowMaskFilterTargetSet.clear();
 		}
 	}
 
@@ -652,13 +643,7 @@ void WorldRendererPreLit::destroy()
 	m_globalContext = 0;
 
 	safeDestroy(m_lightMapTargetSet);
-
-	for (RefArray< render::RenderTargetSet >::iterator i = m_shadowMaskFilterTargetSet.begin(); i != m_shadowMaskFilterTargetSet.end(); ++i)
-	{
-		if (*i)
-			(*i)->destroy();
-	}
-	m_shadowMaskFilterTargetSet.clear();
+	safeDestroy(m_shadowMaskFilterTargetSet);
 
 	safeDestroy(m_shadowMaskProjectTargetSet);
 	safeDestroy(m_shadowTargetSet);
@@ -912,7 +897,7 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 				}
 
 				T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow mask filter");
-				if (m_renderView->begin(m_shadowMaskFilterTargetSet[i], 0))
+				if (m_renderView->begin(m_shadowMaskFilterTargetSet, 0))
 				{
 					const Color4f maskClear(1.0f, 1.0f, 1.0f, 1.0f);
 					m_renderView->clear(render::CfColor, &maskClear, 0.0f, 0);
@@ -955,8 +940,8 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 							f.lights[i],
 							m_gbufferTargetSet->getColorTexture(0),
 							m_gbufferTargetSet->getColorTexture(1),
-							f.haveShadows[i] ? m_shadowMaskFilterTargetSet[i]->getWidth() : 0,
-							f.haveShadows[i] ? m_shadowMaskFilterTargetSet[i]->getColorTexture(0) : 0
+							m_shadowMaskFilterTargetSet->getWidth(),
+							m_shadowMaskFilterTargetSet->getColorTexture(0)
 						);
 						m_renderView->end();
 					}
@@ -990,8 +975,8 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 						f.lights[i],
 						m_gbufferTargetSet->getColorTexture(0),
 						m_gbufferTargetSet->getColorTexture(1),
-						f.haveShadows[i] ? m_shadowMaskFilterTargetSet[i]->getWidth() : 0,
-						f.haveShadows[i] ? m_shadowMaskFilterTargetSet[i]->getColorTexture(0) : 0
+						0,
+						0
 					);
 					T_RENDER_POP_MARKER(m_renderView);
 				}
@@ -1245,7 +1230,7 @@ render::RenderTargetSet* WorldRendererPreLit::getDepthTargetSet()
 
 render::RenderTargetSet* WorldRendererPreLit::getShadowMaskTargetSet()
 {
-	return !m_shadowMaskFilterTargetSet.empty() ? m_shadowMaskFilterTargetSet[0].ptr() : 0;
+	return m_shadowMaskFilterTargetSet;
 }
 
 void WorldRendererPreLit::getTargets(RefArray< render::ITexture >& outTargets) const
@@ -1254,7 +1239,7 @@ void WorldRendererPreLit::getTargets(RefArray< render::ITexture >& outTargets) c
 	outTargets[0] = m_gbufferTargetSet ? m_gbufferTargetSet->getColorTexture(0) : 0;
 	outTargets[1] = m_gbufferTargetSet ? m_gbufferTargetSet->getColorTexture(1) : 0;
 	outTargets[2] = m_lightMapTargetSet ? m_lightMapTargetSet->getColorTexture(0) : 0;
-	outTargets[3] = !m_shadowMaskFilterTargetSet.empty() ? m_shadowMaskFilterTargetSet[0]->getColorTexture(0) : 0;
+	outTargets[3] = m_shadowMaskFilterTargetSet ? m_shadowMaskFilterTargetSet->getColorTexture(0) : 0;
 }
 
 void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView, int frame)

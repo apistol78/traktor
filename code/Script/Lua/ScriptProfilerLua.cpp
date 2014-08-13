@@ -55,7 +55,7 @@ void ScriptProfilerLua::hookCallback(lua_State* L, lua_Debug* ar)
 		return;
 
 	double timeStamp = ms_instance->m_timer.getElapsedTime();
-	std::wstring name = mbstows(ar->name) + L":" + toString(ar->linedefined);
+	std::wstring name = mbstows(ar->name ? ar->name : "(Unnamed)") + L":" + toString(ar->linedefined);
 
 	if (ar->event == LUA_HOOKCALL)
 	{
@@ -67,6 +67,10 @@ void ScriptProfilerLua::hookCallback(lua_State* L, lua_Debug* ar)
 	}
 	else if (ar->event == LUA_HOOKRET || ar->event == LUA_HOOKTAILRET)
 	{
+		// Make sure we don't break if hooks are behaving strange.
+		if (ms_instance->m_stack.empty())
+			return;
+
 		std::wstring currentName = name;
 		int32_t currentLine = 0;
 
@@ -86,28 +90,20 @@ void ScriptProfilerLua::hookCallback(lua_State* L, lua_Debug* ar)
 			}
 		}
 
-		while (!ms_instance->m_stack.empty())
-		{
-			ProfileStack& ps = ms_instance->m_stack.back();
-			if (ps.function == name)
-			{
-				double inclusiveDuration = timeStamp - ps.timeStamp;
-				double exclusiveDuration = inclusiveDuration - ps.childDuration;
+		ProfileStack& ps = ms_instance->m_stack.back();
 
-				// Notify all listeners about new measurement.
-				for (std::set< IListener* >::const_iterator i = ms_instance->m_listeners.begin(); i != ms_instance->m_listeners.end(); ++i)
-					(*i)->callMeasured(currentName, ps.timeStamp, inclusiveDuration, exclusiveDuration);
+		double inclusiveDuration = timeStamp - ps.timeStamp;
+		double exclusiveDuration = inclusiveDuration - ps.childDuration;
 
-				ms_instance->m_stack.pop_back();
+		// Notify all listeners about new measurement.
+		for (std::set< IListener* >::const_iterator i = ms_instance->m_listeners.begin(); i != ms_instance->m_listeners.end(); ++i)
+			(*i)->callMeasured(currentName, ps.timeStamp, inclusiveDuration, exclusiveDuration);
 
-				// Accumulate child call duration so we can isolate how much time is spent in function and not in calls.
-				if (!ms_instance->m_stack.empty())
-					ms_instance->m_stack.back().childDuration += inclusiveDuration;
+		ms_instance->m_stack.pop_back();
 
-				break;
-			}
-			ms_instance->m_stack.pop_back();
-		}
+		// Accumulate child call duration so we can isolate how much time is spent in function and not in calls.
+		if (!ms_instance->m_stack.empty())
+			ms_instance->m_stack.back().childDuration += inclusiveDuration;
 	}
 }
 

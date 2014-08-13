@@ -2,6 +2,7 @@
 #define traktor_physics_PhysicsManagerPhysX_H
 
 #include "Core/Thread/Semaphore.h"
+#include "Physics/CollisionListener.h"
 #include "Physics/PhysicsManager.h"
 #include "Physics/PhysX/Types.h"
 
@@ -147,6 +148,7 @@ private:
 	physx::PxCooking* m_cooking;
 	physx::PxScene* m_scene;
 	RefArray< BodyPhysX > m_bodies;
+	AlignedVector< CollisionInfo > m_collisionInfo;
 
 	virtual void insertActor(physx::PxRigidActor* actor);
 

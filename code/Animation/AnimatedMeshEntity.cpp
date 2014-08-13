@@ -95,11 +95,7 @@ Aabb3 AnimatedMeshEntity::getBoundingBox() const
 		{
 			const Joint* joint = m_skeleton->getJoint(i);
 			float radius = joint->getRadius();
-
-			Aabb3 jointLocalAabb(Vector4(-radius, -radius, -radius), Vector4(radius, radius, radius));
-			Aabb3 jointAabb = jointLocalAabb.transform(m_poseTransforms[i]);
-
-			boundingBox.contain(jointAabb);
+			boundingBox.contain(m_poseTransforms[i].translation().xyz1(), Scalar(radius));
 		}
 	}
 

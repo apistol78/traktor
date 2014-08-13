@@ -25,7 +25,8 @@ enum WidgetStyles
 	WsAccelerated		= 1 << 10,
 	WsAcceptFileDrop	= 1 << 11,
 	WsTabStop			= 1 << 12,
-	WsUser				= 1 << 13
+	WsWantAllInput		= 1 << 13,
+	WsUser				= 1 << 14
 };
 
 enum MessageBoxStyles

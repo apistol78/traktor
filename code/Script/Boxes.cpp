@@ -1,6 +1,7 @@
 #include "Core/Io/StringOutputStream.h"
-#include "Core/Memory/IAllocator.h"
-#include "Core/Memory/MemoryConfig.h"
+#include "Core/Log/Log.h"
+#include "Core/Memory/Alloc.h"
+#include "Core/Memory/BlockAllocator.h"
 #include "Core/Misc/String.h"
 #include "Script/AutoScriptClass.h"
 #include "Script/CastAny.h"
@@ -11,31 +12,76 @@ namespace traktor
 {
 	namespace script
 	{
+		namespace
+		{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.script.Boxed", Boxed, Object)
-
-void* Boxed::operator new (size_t size)
+template < typename BoxedType, int BoxesPerBlock >
+class BoxedAllocator
 {
-	IAllocator* allocator = getAllocator();
-	return allocator->alloc(size, 16, "Boxed");
-}
+public:
+	void* alloc()
+	{
+		void* ptr = 0;
 
-void* Boxed::operator new (size_t size, void* memory)
-{
-	T_FATAL_ERROR;
-	return 0;
-}
+		for (std::vector< BlockAllocator* >::iterator i = m_allocators.begin(); i != m_allocators.end(); ++i)
+		{
+			BlockAllocator* allocator = *i;
+			if ((ptr = allocator->alloc()) != 0)
+				return ptr;
+		}
 
-void Boxed::operator delete (void* ptr)
-{
-	IAllocator* allocator = getAllocator();
-	allocator->free(ptr);
-}
+		// No more space in block allocators; create a new block allocator.
+		void* top = Alloc::acquireAlign(BoxesPerBlock * sizeof(BoxedType), alignOf< BoxedType >(), T_FILE_LINE);
+		T_FATAL_ASSERT_M (top, L"Out of memory");
 
-void Boxed::operator delete (void* ptr, void* memory)
-{
-	T_FATAL_ERROR;
-}
+		BlockAllocator* allocator = new BlockAllocator(top, BoxesPerBlock, sizeof(BoxedType));
+		T_FATAL_ASSERT_M (allocator, L"Out of memory");
+
+		m_allocators.push_back(allocator);
+
+#if defined(_DEBUG)
+		log::info << L"Alloc " << BoxesPerBlock << L" of " << type_of< BoxedType >().getName() << L"; " << (BoxesPerBlock * sizeof(BoxedType)) << L" bytes" << Endl;
+		log::info << L"  " << int32_t(m_allocators.size()) << L" chunk(s)" << Endl;
+#endif
+
+		return allocator->alloc();
+	}
+
+	void free(void* ptr)
+	{
+		for (std::vector< BlockAllocator* >::iterator i = m_allocators.begin(); i != m_allocators.end(); ++i)
+		{
+			BlockAllocator* allocator = *i;
+			if (allocator->free(ptr))
+				return;
+		}
+		T_FATAL_ERROR;
+	}
+
+private:
+	std::vector< BlockAllocator* > m_allocators;
+};
+
+BoxedAllocator< BoxedUInt64, 16 > s_allocBoxedUInt64;
+BoxedAllocator< BoxedGuid, 512 > s_allocBoxedGuid;
+BoxedAllocator< BoxedVector2, 4096 > s_allocBoxedVector2;
+BoxedAllocator< BoxedVector4, 131072 > s_allocBoxedVector4;
+BoxedAllocator< BoxedQuaternion, 4096 > s_allocBoxedQuaternion;
+BoxedAllocator< BoxedPlane, 256 > s_allocBoxedPlane;
+BoxedAllocator< BoxedTransform, 32768 > s_allocBoxedTransform;
+BoxedAllocator< BoxedAabb3, 64 > s_allocBoxedAabb3;
+BoxedAllocator< BoxedFrustum, 16 > s_allocBoxedFrustum;
+BoxedAllocator< BoxedColor4f, 16 > s_allocBoxedColor4f;
+BoxedAllocator< BoxedColor4ub, 16 > s_allocBoxedColor4ub;
+BoxedAllocator< BoxedRefArray, 512 > s_allocBoxedRefArray;
+BoxedAllocator< BoxedRange, 256 > s_allocBoxedRange;
+BoxedAllocator< BoxedStdVector, 16 > s_allocBoxedStdVector;
+
+		}
+
+
+T_IMPLEMENT_RTTI_CLASS_ROOT(L"traktor.script.Boxed", Boxed)
+
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.UInt64", BoxedUInt64, Boxed)
 
@@ -58,6 +104,17 @@ std::wstring BoxedUInt64::toString() const
 	return format();
 }
 
+void* BoxedUInt64::operator new (size_t size)
+{
+	return s_allocBoxedUInt64.alloc();
+}
+
+void BoxedUInt64::operator delete (void* ptr)
+{
+	s_allocBoxedUInt64.free(ptr);
+}
+
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Guid", BoxedGuid, Boxed)
 
 BoxedGuid::BoxedGuid()
@@ -79,6 +136,17 @@ std::wstring BoxedGuid::toString() const
 	return m_value.format();
 }
 
+void* BoxedGuid::operator new (size_t size)
+{
+	return s_allocBoxedGuid.alloc();
+}
+
+void BoxedGuid::operator delete (void* ptr)
+{
+	s_allocBoxedGuid.free(ptr);
+}
+
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Vector2", BoxedVector2, Boxed)
 
 BoxedVector2::BoxedVector2()
@@ -96,77 +164,23 @@ BoxedVector2::BoxedVector2(float x, float y)
 {
 }
 
-Vector2 BoxedVector2::add(const Vector2& v) const
-{
-	return m_value + v;
-}
-
-Vector2 BoxedVector2::sub(const Vector2& v) const
-{
-	return m_value - v;
-}
-
-Vector2 BoxedVector2::mul(const Vector2& v) const
-{
-	return m_value * v;
-}
-
-Vector2 BoxedVector2::div(const Vector2& v) const
-{
-	return m_value / v;
-}
-
-Vector2 BoxedVector2::add(float v) const
-{
-	return m_value + v;
-}
-
-Vector2 BoxedVector2::sub(float v) const
-{
-	return m_value - v;
-}
-
-Vector2 BoxedVector2::mul(float v) const
-{
-	return m_value * v;
-}
-
-Vector2 BoxedVector2::div(float v) const
-{
-	return m_value / v;
-}
-
-float BoxedVector2::dot(const Vector2& v) const
-{
-	return traktor::dot(m_value, v);
-}
-
-float BoxedVector2::length() const
-{
-	return m_value.length();
-}
-
-Vector2 BoxedVector2::normalized() const
-{
-	return m_value.normalized();
-}
-
-Vector2 BoxedVector2::neg() const
-{
-	return -m_value;
-}
-
-Vector2 BoxedVector2::perpendicular() const
-{
-	return m_value.perpendicular();
-}
-
 std::wstring BoxedVector2::toString() const
 {
 	StringOutputStream ss;
 	ss << m_value.x << L", " << m_value.y;
 	return ss.str();
 }
+
+void* BoxedVector2::operator new (size_t size)
+{
+	return s_allocBoxedVector2.alloc();
+}
+
+void BoxedVector2::operator delete (void* ptr)
+{
+	s_allocBoxedVector2.free(ptr);
+}
+
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Vector4", BoxedVector4, Boxed)
 
@@ -190,82 +204,23 @@ BoxedVector4::BoxedVector4(float x, float y, float z, float w)
 {
 }
 
-void BoxedVector4::set(float x, float y, float z, float w)
-{
-	m_value.set(x, y, z, w);
-}
-
-Vector4 BoxedVector4::add(const Vector4& v) const
-{
-	return m_value + v;
-}
-
-Vector4 BoxedVector4::sub(const Vector4& v) const
-{
-	return m_value - v;
-}
-
-Vector4 BoxedVector4::mul(const Vector4& v) const
-{
-	return m_value * v;
-}
-
-Vector4 BoxedVector4::div(const Vector4& v) const
-{
-	return m_value / v;
-}
-
-Vector4 BoxedVector4::add(float v) const
-{
-	return m_value + Scalar(v);
-}
-
-Vector4 BoxedVector4::sub(float v) const
-{
-	return m_value - Scalar(v);
-}
-
-Vector4 BoxedVector4::mul(float v) const
-{
-	return m_value * Scalar(v);
-}
-
-Vector4 BoxedVector4::div(float v) const
-{
-	return m_value / Scalar(v);
-}
-
-float BoxedVector4::dot(const Vector4& v) const
-{
-	return dot3(m_value, v);
-}
-
-Vector4 BoxedVector4::cross(const Vector4& v) const
-{
-	return traktor::cross(m_value, v);
-}
-
-float BoxedVector4::length() const
-{
-	return m_value.length();
-}
-
-Vector4 BoxedVector4::normalized() const
-{
-	return m_value.normalized();
-}
-
-Vector4 BoxedVector4::neg() const
-{
-	return -m_value;
-}
-
 std::wstring BoxedVector4::toString() const
 {
 	StringOutputStream ss;
 	ss << m_value.x() << L", " << m_value.y() << L", " << m_value.z() << L", " << m_value.w();
 	return ss.str();
 }
+
+void* BoxedVector4::operator new (size_t size)
+{
+	return s_allocBoxedVector4.alloc();
+}
+
+void BoxedVector4::operator delete (void* ptr)
+{
+	s_allocBoxedVector4.free(ptr);
+}
+
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Quaternion", BoxedQuaternion, Boxed)
 
@@ -346,6 +301,17 @@ std::wstring BoxedQuaternion::toString() const
 	return ss.str();
 }
 
+void* BoxedQuaternion::operator new (size_t size)
+{
+	return s_allocBoxedQuaternion.alloc();
+}
+
+void BoxedQuaternion::operator delete (void* ptr)
+{
+	s_allocBoxedQuaternion.free(ptr);
+}
+
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Plane", BoxedPlane, Boxed)
 
 BoxedPlane::BoxedPlane()
@@ -383,6 +349,17 @@ std::wstring BoxedPlane::toString() const
 	ss << m_value.normal().x() << L", " << m_value.normal().y() << L", " << m_value.normal().z() << L", " << m_value.distance();
 	return ss.str();
 }
+
+void* BoxedPlane::operator new (size_t size)
+{
+	return s_allocBoxedPlane.alloc();
+}
+
+void BoxedPlane::operator delete (void* ptr)
+{
+	s_allocBoxedPlane.free(ptr);
+}
+
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Transform", BoxedTransform, Boxed)
 
@@ -460,6 +437,17 @@ std::wstring BoxedTransform::toString() const
 	return L"(transform)";
 }
 
+void* BoxedTransform::operator new (size_t size)
+{
+	return s_allocBoxedTransform.alloc();
+}
+
+void BoxedTransform::operator delete (void* ptr)
+{
+	s_allocBoxedTransform.free(ptr);
+}
+
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Aabb3", BoxedAabb3, Boxed)
 
 BoxedAabb3::BoxedAabb3()
@@ -488,6 +476,16 @@ Any BoxedAabb3::intersectRay(const Vector4& origin, const Vector4& direction) co
 std::wstring BoxedAabb3::toString() const
 {
 	return L"(aabb3)";
+}
+
+void* BoxedAabb3::operator new (size_t size)
+{
+	return s_allocBoxedAabb3.alloc();
+}
+
+void BoxedAabb3::operator delete (void* ptr)
+{
+	s_allocBoxedAabb3.free(ptr);
 }
 
 
@@ -567,6 +565,17 @@ std::wstring BoxedFrustum::toString() const
 	return L"(frustum)";
 }
 
+void* BoxedFrustum::operator new (size_t size)
+{
+	return s_allocBoxedFrustum.alloc();
+}
+
+void BoxedFrustum::operator delete (void* ptr)
+{
+	s_allocBoxedFrustum.free(ptr);
+}
+
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Color4f", BoxedColor4f, Boxed)
 
 BoxedColor4f::BoxedColor4f(const Color4f& value)
@@ -595,6 +604,17 @@ std::wstring BoxedColor4f::toString() const
 	ss << m_value.getRed() << L", " << m_value.getGreen() << L", " << m_value.getBlue() << L", " << m_value.getAlpha();
 	return ss.str();
 }
+
+void* BoxedColor4f::operator new (size_t size)
+{
+	return s_allocBoxedColor4f.alloc();
+}
+
+void BoxedColor4f::operator delete (void* ptr)
+{
+	s_allocBoxedColor4f.free(ptr);
+}
+
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Color4ub", BoxedColor4ub, Boxed)
 
@@ -625,7 +645,18 @@ std::wstring BoxedColor4ub::toString() const
 	return ss.str();
 }
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.Array", BoxedRefArray, Boxed)
+void* BoxedColor4ub::operator new (size_t size)
+{
+	return s_allocBoxedColor4ub.alloc();
+}
+
+void BoxedColor4ub::operator delete (void* ptr)
+{
+	s_allocBoxedColor4ub.free(ptr);
+}
+
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.RefArray", BoxedRefArray, Boxed)
 
 BoxedRefArray::BoxedRefArray()
 {
@@ -677,6 +708,17 @@ std::wstring BoxedRefArray::toString() const
 	return ss.str();
 }
 
+void* BoxedRefArray::operator new (size_t size)
+{
+	return s_allocBoxedRefArray.alloc();
+}
+
+void BoxedRefArray::operator delete (void* ptr)
+{
+	s_allocBoxedRefArray.free(ptr);
+}
+
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Range", BoxedRange, Boxed)
 
 BoxedRange::BoxedRange()
@@ -689,6 +731,17 @@ std::wstring BoxedRange::toString() const
 	ss << m_min.getWideString() << L" - " << m_max.getWideString();
 	return ss.str();
 }
+
+void* BoxedRange::operator new (size_t size)
+{
+	return s_allocBoxedRange.alloc();
+}
+
+void BoxedRange::operator delete (void* ptr)
+{
+	s_allocBoxedRange.free(ptr);
+}
+
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.StdVector", BoxedStdVector, Boxed)
 
@@ -721,6 +774,17 @@ std::wstring BoxedStdVector::toString() const
 	ss << L"[" << int32_t(m_arr.size()) << L"]";
 	return ss.str();
 }
+
+void* BoxedStdVector::operator new (size_t size)
+{
+	return s_allocBoxedStdVector.alloc();
+}
+
+void BoxedStdVector::operator delete (void* ptr)
+{
+	s_allocBoxedStdVector.free(ptr);
+}
+
 
 void registerBoxClasses(IScriptManager* scriptManager)
 {
