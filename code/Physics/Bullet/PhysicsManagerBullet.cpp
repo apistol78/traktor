@@ -15,6 +15,7 @@
 #include "Physics/ConeTwistJointDesc.h"
 #include "Physics/CylinderShapeDesc.h"
 #include "Physics/DynamicBodyDesc.h"
+#include "Physics/FixedJointDesc.h"
 #include "Physics/HeightfieldShapeDesc.h"
 #include "Physics/HingeJointDesc.h"
 #include "Physics/Hinge2JointDesc.h"
@@ -27,6 +28,7 @@
 #include "Physics/Bullet/BallJointBullet.h"
 #include "Physics/Bullet/BodyBullet.h"
 #include "Physics/Bullet/ConeTwistJointBullet.h"
+#include "Physics/Bullet/FixedJointBullet.h"
 #include "Physics/Bullet/HeightfieldShapeBullet.h"
 #include "Physics/Bullet/HingeJointBullet.h"
 #include "Physics/Bullet/Hinge2JointBullet.h"
@@ -897,6 +899,44 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 			joint = coneTwistJoint;
 		}
 	}
+	else if (const FixedJointDesc* fixedDesc = dynamic_type_cast< const FixedJointDesc* >(desc))
+	{
+		btGeneric6DofConstraint* fixedConstraint = 0;
+		
+		if (b1 && b2)
+		{
+			Transform Tbody1Inv = body1->getCenterTransform().inverse();
+			Transform Tbody2Inv = body2->getCenterTransform().inverse();
+
+			fixedConstraint = new btGeneric6DofConstraint(
+				*b1,
+				*b2,
+				toBtTransform(transform * Tbody1Inv),
+				toBtTransform(transform * Tbody2Inv),
+				true
+			);
+		}
+		else
+		{
+			Transform Tbody1Inv = body1->getCenterTransform().inverse();
+
+			fixedConstraint = new btGeneric6DofConstraint(
+				*b1,
+				toBtTransform(transform * Tbody1Inv),
+				true
+			);
+		}
+
+		fixedConstraint->setLimit(0, 0.0f, 0.0f);
+		fixedConstraint->setLimit(1, 0.0f, 0.0f);
+		fixedConstraint->setLimit(2, 0.0f, 0.0f);
+
+		fixedConstraint->setLimit(3, 0.0f, 0.0f);
+		fixedConstraint->setLimit(4, 0.0f, 0.0f);
+		fixedConstraint->setLimit(5, 0.0f, 0.0f);
+
+		joint = new FixedJointBullet(this, fixedConstraint, bb1, bb2);
+	}
 	else if (const HingeJointDesc* hingeDesc = dynamic_type_cast< const HingeJointDesc* >(desc))
 	{
 		btHingeConstraint* hingeConstraint = 0;
@@ -1018,6 +1058,7 @@ void PhysicsManagerBullet::update(bool issueCollisionEvents)
 	// Step simulation.
 	m_dynamicsWorld->stepSimulation(m_simulationDeltaTime * m_timeScale, 0);
 
+	/*
 	// Issue collision events.
 	if (issueCollisionEvents)
 	{
@@ -1088,6 +1129,7 @@ void PhysicsManagerBullet::update(bool issueCollisionEvents)
 			manifold->m_fresh = false;
 		}
 	}
+	*/
 
 	m_queryCountLast = m_queryCount;
 	m_queryCount = 0;
@@ -1118,7 +1160,6 @@ void PhysicsManagerBullet::solveConstraints(const RefArray< Body >& bodies, cons
 		joints.size(),
 		m_dynamicsWorld->getSolverInfo(),
 		0,
-		m_dynamicsWorld->getStackAlloc(),
 		m_dynamicsWorld->getDispatcher()
 	);
 }

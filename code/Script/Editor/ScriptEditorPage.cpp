@@ -8,7 +8,9 @@
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Database/Traverse.h"
+#include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
+#include "Editor/IEditorPageSite.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "I18N/Text.h"
 #include "Script/CallStack.h"
@@ -18,7 +20,7 @@
 #include "Script/Editor/Script.h"
 #include "Script/Editor/ScriptBreakpointEvent.h"
 #include "Script/Editor/ScriptDebuggerView.h"
-#include "Script/Editor/ScriptEditor.h"
+#include "Script/Editor/ScriptEditorPage.h"
 #include "Script/Editor/ScriptProfilerView.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
@@ -53,30 +55,31 @@ namespace traktor
 	namespace script
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptEditor", ScriptEditor, editor::IObjectEditor)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptEditorPage", ScriptEditorPage, editor::IEditorPage)
 
-ScriptEditor::ScriptEditor(editor::IEditor* editor)
+ScriptEditorPage::ScriptEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document)
 :	m_editor(editor)
+,	m_site(site)
+,	m_document(document)
 ,	m_compileCountDown(0)
 {
 	m_bitmapFunction = ui::Bitmap::load(c_ResourceScriptFunction, sizeof(c_ResourceScriptFunction), L"png");
 	m_bitmapFunctionReference = ui::Bitmap::load(c_ResourceScriptFunctionReference, sizeof(c_ResourceScriptFunctionReference), L"png");
 }
 
-bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializable* object)
+bool ScriptEditorPage::create(ui::Container* parent)
 {
-	m_instance = instance;
-
-	m_script = dynamic_type_cast< Script* >(object);
+	m_script = m_document->getObject< Script >(0);
 	if (!m_script)
 		return false;
 
-	m_splitter = new ui::custom::Splitter();
-	if (!m_splitter->create(parent, true, 250))
-		return false;
+	// Explorer panel container.
+	m_containerExplorer = new ui::Container();
+	m_containerExplorer->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0, 0));
+	m_containerExplorer->setText(L"Script Explorer");
 
 	Ref< ui::Tab > tab = new ui::Tab();
-	if (!tab->create(m_splitter, ui::WsNone))
+	if (!tab->create(m_containerExplorer, ui::WsNone))
 		return false;
 
 	Ref< ui::TabPage > tabOutline = new ui::TabPage();
@@ -84,12 +87,12 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 		return false;
 
 	m_outlineGrid = new ui::custom::GridView();
-	if (!m_outlineGrid->create(tabOutline, ui::custom::GridView::WsColumnHeader | ui::WsClientBorder | ui::WsDoubleBuffer))
+	if (!m_outlineGrid->create(tabOutline, ui::custom::GridView::WsColumnHeader |ui::WsDoubleBuffer))
 		return false;
 	m_outlineGrid->addColumn(new ui::custom::GridColumn(L"", 30));
 	m_outlineGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_OUTLINE_NAME"), 165));
 	m_outlineGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_OUTLINE_LINE"), 45));
-	m_outlineGrid->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptEditor::eventOutlineDoubleClick);
+	m_outlineGrid->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptEditorPage::eventOutlineDoubleClick);
 
 	Ref< ui::TabPage > tabDependencies = new ui::TabPage();
 	if (!tabDependencies->create(tab, L"Dependencies", new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
@@ -105,13 +108,13 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	dependencyTools->addItem(new ui::custom::ToolBarSeparator());
 	dependencyTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_MOVE_DEPENDENCY_UP"), 2, ui::Command(L"Script.Editor.MoveDependencyUp")));
 	dependencyTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_MOVE_DEPENDENCY_DOWN"), 3, ui::Command(L"Script.Editor.MoveDependencyDown")));
-	dependencyTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ScriptEditor::eventDependencyToolClick);
+	dependencyTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ScriptEditorPage::eventDependencyToolClick);
 
 	m_dependencyList = new ui::ListBox();
-	if (!m_dependencyList->create(tabDependencies))
+	if (!m_dependencyList->create(tabDependencies, L"", ui::ListBox::WsSingle))
 		return false;
 
-	m_dependencyList->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptEditor::eventDependencyListDoubleClick);
+	m_dependencyList->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptEditorPage::eventDependencyListDoubleClick);
 
 	Ref< ui::TabPage > tabDependents = new ui::TabPage();
 	if (!tabDependents->create(tab, L"Dependents", new ui::TableLayout(L"100%", L"100%", 0, 0)))
@@ -121,27 +124,27 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	if (!m_dependentList->create(tabDependents))
 		return false;
 
-	m_dependentList->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptEditor::eventDependentListDoubleClick);
+	m_dependentList->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptEditorPage::eventDependentListDoubleClick);
 
 	tab->addPage(tabOutline);
 	tab->addPage(tabDependencies);
 	tab->addPage(tabDependents);
 	tab->setActivePage(tabOutline);
 
-	Ref< ui::custom::Splitter > splitterWork = new ui::custom::Splitter();
-	splitterWork->create(m_splitter, false, -200);
+	m_site->createAdditionalPanel(m_containerExplorer, 300, false);
 
+	// Edit area panel.
 	Ref< ui::Container > containerEdit = new ui::Container();
-	if (!containerEdit->create(splitterWork, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%,*", 0, 0)))
+	if (!containerEdit->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%,*", 0, 0)))
 		return false;
 
 	Ref< ui::custom::ToolBar > toolBarEdit = new ui::custom::ToolBar();
 	toolBarEdit->create(containerEdit);
 	toolBarEdit->addItem(new ui::custom::ToolBarButton(L"Toggle comments", ui::Command(L"Script.Editor.ToggleComments")));
-	toolBarEdit->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ScriptEditor::eventToolBarEditClick);
+	toolBarEdit->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ScriptEditorPage::eventToolBarEditClick);
 
 	m_edit = new ui::custom::SyntaxRichEdit();
-	if (!m_edit->create(containerEdit, m_script->getText()))
+	if (!m_edit->create(containerEdit, m_script->getText(), ui::WsDoubleBuffer))
 		return false;
 
 	m_edit->addImage(ui::Bitmap::load(c_ResourceEditor, sizeof(c_ResourceEditor), L"png"), 1);
@@ -153,18 +156,22 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 #else
 	m_edit->setFont(ui::Font(L"Consolas", 14));
 #endif
-	m_edit->addEventHandler< ui::ContentChangeEvent >(this, &ScriptEditor::eventScriptChange);
-	m_edit->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptEditor::eventScriptDoubleClick);
+	m_edit->addEventHandler< ui::ContentChangeEvent >(this, &ScriptEditorPage::eventScriptChange);
+	m_edit->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptEditorPage::eventScriptDoubleClick);
 
 	m_compileStatus = new ui::custom::StatusBar();
 	if (!m_compileStatus->create(containerEdit, ui::WsClientBorder))
 		return false;
 
-	Ref< ui::custom::Panel > panelDebugger = new ui::custom::Panel();
-	panelDebugger->create(splitterWork, L"Debugger", new ui::FloodLayout());
+	// Debugger panel.
+	m_containerDebugger = new ui::Container();
+	m_containerDebugger->create(parent, ui::WsNone, new ui::FloodLayout());
+	m_containerDebugger->setText(L"Debugger");
 
 	m_tabSessions = new ui::Tab();
-	m_tabSessions->create(panelDebugger, ui::WsNone);
+	m_tabSessions->create(m_containerDebugger, ui::WsNone);
+
+	m_site->createAdditionalPanel(m_containerDebugger, 180, true);
 
 	// Create language specific implementations.
 	{
@@ -197,7 +204,7 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	// Setup compile timer.
 	if (m_scriptManager)
 	{
-		parent->addEventHandler< ui::TimerEvent >(this, &ScriptEditor::eventTimer);
+		parent->addEventHandler< ui::TimerEvent >(this, &ScriptEditorPage::eventTimer);
 		parent->startTimer(100);
 		m_compileCountDown = 1;
 	}
@@ -215,7 +222,7 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	return true;
 }
 
-void ScriptEditor::destroy()
+void ScriptEditorPage::destroy()
 {
 	if (m_scriptDebuggerSessions != 0)
 	{
@@ -225,17 +232,29 @@ void ScriptEditor::destroy()
 
 	m_preprocessor = 0;
 
+	// Destroy panels.
+	m_site->destroyAdditionalPanel(m_containerDebugger);
+	m_site->destroyAdditionalPanel(m_containerExplorer);
+
+	safeDestroy(m_containerDebugger);
+	safeDestroy(m_containerExplorer);
 	safeDestroy(m_scriptManager);
-	safeDestroy(m_splitter);
 }
 
-void ScriptEditor::apply()
+void ScriptEditorPage::activate()
 {
-	m_script->setText(m_edit->getText());
-	m_instance->setObject(m_script);
 }
 
-bool ScriptEditor::handleCommand(const ui::Command& command)
+void ScriptEditorPage::deactivate()
+{
+}
+
+bool ScriptEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
+{
+	return false;
+}
+
+bool ScriptEditorPage::handleCommand(const ui::Command& command)
 {
 	if (command == L"Editor.Find")
 	{
@@ -373,16 +392,11 @@ bool ScriptEditor::handleCommand(const ui::Command& command)
 	return true;
 }
 
-void ScriptEditor::handleDatabaseEvent(db::Database* database, const Guid& eventId)
+void ScriptEditorPage::handleDatabaseEvent(db::Database* database, const Guid& eventId)
 {
 }
 
-ui::Size ScriptEditor::getPreferredSize() const
-{
-	return ui::Size(1000, 800);
-}
-
-void ScriptEditor::syntaxError(const std::wstring& name, uint32_t line, const std::wstring& message)
+void ScriptEditorPage::syntaxError(const std::wstring& name, uint32_t line, const std::wstring& message)
 {
 	StringOutputStream ss;
 	ss << L"Syntax error (" << line << L") : " << message;
@@ -391,14 +405,14 @@ void ScriptEditor::syntaxError(const std::wstring& name, uint32_t line, const st
 		m_edit->setErrorHighlight(line - 1);
 }
 
-void ScriptEditor::otherError(const std::wstring& message)
+void ScriptEditorPage::otherError(const std::wstring& message)
 {
 	StringOutputStream ss;
 	ss << L"Error : " << message;
 	m_compileStatus->setText(ss.str());
 }
 
-void ScriptEditor::notifyBeginSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler)
+void ScriptEditorPage::notifyBeginSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler)
 {
 	Ref< ui::TabPage > tabPageSession = new ui::TabPage();
 	tabPageSession->create(m_tabSessions, L"Session 0", new ui::FloodLayout());
@@ -408,7 +422,7 @@ void ScriptEditor::notifyBeginSession(IScriptDebugger* scriptDebugger, IScriptPr
 
 	Ref< ScriptDebuggerView > debuggerView = new ScriptDebuggerView(scriptDebugger);
 	debuggerView->create(splitter);
-	debuggerView->addEventHandler< ScriptBreakpointEvent >(this, &ScriptEditor::eventBreakPoint);
+	debuggerView->addEventHandler< ScriptBreakpointEvent >(this, &ScriptEditorPage::eventBreakPoint);
 
 	Ref< ScriptProfilerView > profilerView = new ScriptProfilerView(scriptProfiler);
 	profilerView->create(splitter);
@@ -422,7 +436,7 @@ void ScriptEditor::notifyBeginSession(IScriptDebugger* scriptDebugger, IScriptPr
 	m_tabSessions->update();
 }
 
-void ScriptEditor::notifyEndSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler)
+void ScriptEditorPage::notifyEndSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler)
 {
 	int32_t pageCount = m_tabSessions->getPageCount();
 	for (int32_t i = 0; i < pageCount; ++i)
@@ -440,25 +454,27 @@ void ScriptEditor::notifyEndSession(IScriptDebugger* scriptDebugger, IScriptProf
 	m_tabSessions->update();
 }
 
-void ScriptEditor::notifySetBreakpoint(const Guid& scriptId, int32_t lineNumber)
+void ScriptEditorPage::notifySetBreakpoint(const Guid& scriptId, int32_t lineNumber)
 {
-	if (scriptId == m_instance->getGuid())
+	Guid instanceGuid = m_document->getInstance(0)->getGuid();
+	if (scriptId == instanceGuid)
 	{
 		m_edit->setImage(lineNumber, 0);
 		m_edit->update();
 	}
 }
 
-void ScriptEditor::notifyRemoveBreakpoint(const Guid& scriptId, int32_t lineNumber)
+void ScriptEditorPage::notifyRemoveBreakpoint(const Guid& scriptId, int32_t lineNumber)
 {
-	if (scriptId == m_instance->getGuid())
+	Guid instanceGuid = m_document->getInstance(0)->getGuid();
+	if (scriptId == instanceGuid)
 	{
 		m_edit->setImage(lineNumber, 1);
 		m_edit->update();
 	}
 }
 
-void ScriptEditor::updateDependencyList()
+void ScriptEditorPage::updateDependencyList()
 {
 	m_dependencyList->removeAll();
 
@@ -473,12 +489,14 @@ void ScriptEditor::updateDependencyList()
 	}
 }
 
-void ScriptEditor::updateDependentList()
+void ScriptEditorPage::updateDependentList()
 {
 	m_dependentList->removeAll();
 
 	RefArray< db::Instance > scriptInstances;
 	db::recursiveFindChildInstances(m_editor->getSourceDatabase()->getRootGroup(), db::FindInstanceByType(type_of< Script >()), scriptInstances);
+
+	Guid instanceGuid = m_document->getInstance(0)->getGuid();
 
 	for (RefArray< db::Instance >::const_iterator i = scriptInstances.begin(); i != scriptInstances.end(); ++i)
 	{
@@ -486,7 +504,7 @@ void ScriptEditor::updateDependentList()
 		if (scriptObject)
 		{
 			const std::vector< Guid >& scriptDependencies = scriptObject->getDependencies();
-			if (std::find(scriptDependencies.begin(), scriptDependencies.end(), m_instance->getGuid()) != scriptDependencies.end())
+			if (std::find(scriptDependencies.begin(), scriptDependencies.end(), instanceGuid) != scriptDependencies.end())
 			{
 				m_dependentList->add((*i)->getPath(), *i);
 			}
@@ -494,7 +512,7 @@ void ScriptEditor::updateDependentList()
 	}
 }
 
-void ScriptEditor::buildOutlineGrid(ui::custom::GridView* grid, ui::custom::GridRow* parent, const IScriptOutline::Node* on)
+void ScriptEditorPage::buildOutlineGrid(ui::custom::GridView* grid, ui::custom::GridRow* parent, const IScriptOutline::Node* on)
 {
 	while (on)
 	{
@@ -531,7 +549,7 @@ void ScriptEditor::buildOutlineGrid(ui::custom::GridView* grid, ui::custom::Grid
 	}
 }
 
-void ScriptEditor::eventOutlineDoubleClick(ui::MouseDoubleClickEvent* event)
+void ScriptEditorPage::eventOutlineDoubleClick(ui::MouseDoubleClickEvent* event)
 {
 	const ui::custom::GridRow* selectedRow = m_outlineGrid->getSelectedRow();
 	if (!selectedRow)
@@ -546,7 +564,7 @@ void ScriptEditor::eventOutlineDoubleClick(ui::MouseDoubleClickEvent* event)
 	}
 }
 
-void ScriptEditor::eventDependencyToolClick(ui::custom::ToolBarButtonClickEvent* event)
+void ScriptEditorPage::eventDependencyToolClick(ui::custom::ToolBarButtonClickEvent* event)
 {
 	const ui::Command& cmd = event->getCommand();
 	if (cmd == L"Script.Editor.AddDependency")
@@ -593,7 +611,7 @@ void ScriptEditor::eventDependencyToolClick(ui::custom::ToolBarButtonClickEvent*
 	}
 }
 
-void ScriptEditor::eventDependencyListDoubleClick(ui::MouseDoubleClickEvent* event)
+void ScriptEditorPage::eventDependencyListDoubleClick(ui::MouseDoubleClickEvent* event)
 {
 	int selectedIndex = m_dependencyList->getSelected();
 	if (selectedIndex >= 0)
@@ -605,7 +623,7 @@ void ScriptEditor::eventDependencyListDoubleClick(ui::MouseDoubleClickEvent* eve
 	}
 }
 
-void ScriptEditor::eventDependentListDoubleClick(ui::MouseDoubleClickEvent* event)
+void ScriptEditorPage::eventDependentListDoubleClick(ui::MouseDoubleClickEvent* event)
 {
 	int selectedIndex = m_dependentList->getSelected();
 	if (selectedIndex >= 0)
@@ -616,7 +634,7 @@ void ScriptEditor::eventDependentListDoubleClick(ui::MouseDoubleClickEvent* even
 	}
 }
 
-void ScriptEditor::eventToolBarEditClick(ui::custom::ToolBarButtonClickEvent* event)
+void ScriptEditorPage::eventToolBarEditClick(ui::custom::ToolBarButtonClickEvent* event)
 {
 	const ui::Command& command = event->getCommand();
 	if (command == L"Script.Editor.ToggleComments")
@@ -647,13 +665,15 @@ void ScriptEditor::eventToolBarEditClick(ui::custom::ToolBarButtonClickEvent* ev
 	}
 }
 
-void ScriptEditor::eventScriptChange(ui::ContentChangeEvent* event)
+void ScriptEditorPage::eventScriptChange(ui::ContentChangeEvent* event)
 {
+	m_script->setText(m_edit->getText());
+
 	m_compileCountDown = 10;
 	m_compileStatus->setText(L"");
 }
 
-void ScriptEditor::eventScriptDoubleClick(ui::MouseDoubleClickEvent* event)
+void ScriptEditorPage::eventScriptDoubleClick(ui::MouseDoubleClickEvent* event)
 {
 	int32_t offset = m_edit->getCaretOffset();
 	int32_t line = m_edit->getLineFromOffset(offset);
@@ -661,13 +681,15 @@ void ScriptEditor::eventScriptDoubleClick(ui::MouseDoubleClickEvent* event)
 	if (line < 0)
 		return;
 
-	if (!m_scriptDebuggerSessions->haveBreakpoint(m_instance->getGuid(), line))
-		m_scriptDebuggerSessions->setBreakpoint(m_instance->getGuid(), line);
+	Guid instanceGuid = m_document->getInstance(0)->getGuid();
+
+	if (!m_scriptDebuggerSessions->haveBreakpoint(instanceGuid, line))
+		m_scriptDebuggerSessions->setBreakpoint(instanceGuid, line);
 	else
-		m_scriptDebuggerSessions->removeBreakpoint(m_instance->getGuid(), line);
+		m_scriptDebuggerSessions->removeBreakpoint(instanceGuid, line);
 }
 
-void ScriptEditor::eventTimer(ui::TimerEvent* event)
+void ScriptEditorPage::eventTimer(ui::TimerEvent* event)
 {
 	T_ASSERT (m_scriptManager);
 
@@ -694,12 +716,14 @@ void ScriptEditor::eventTimer(ui::TimerEvent* event)
 	}
 }
 
-void ScriptEditor::eventBreakPoint(ScriptBreakpointEvent* event)
+void ScriptEditorPage::eventBreakPoint(ScriptBreakpointEvent* event)
 {
 	const CallStack* callStack = event->getCallStack();
 	const CallStack::Frame& currentFrame = callStack->getCurrentFrame();
 
-	if (currentFrame.scriptId == m_instance->getGuid())
+	Guid instanceGuid = m_document->getInstance(0)->getGuid();
+
+	if (currentFrame.scriptId == instanceGuid)
 	{
 		m_edit->showLine(currentFrame.line);
 		m_edit->placeCaret(m_edit->getLineOffset(currentFrame.line));

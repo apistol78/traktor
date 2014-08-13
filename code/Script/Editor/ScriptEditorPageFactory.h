@@ -1,7 +1,7 @@
-#ifndef traktor_script_ScriptEditorFactory_H
-#define traktor_script_ScriptEditorFactory_H
+#ifndef traktor_script_ScriptEditorPageFactory_H
+#define traktor_script_ScriptEditorPageFactory_H
 
-#include "Editor/IObjectEditorFactory.h"
+#include "Editor/IEditorPageFactory.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,7 +16,7 @@ namespace traktor
 	namespace script
 	{
 
-class T_DLLCLASS ScriptEditorFactory : public editor::IObjectEditorFactory
+class T_DLLCLASS ScriptEditorPageFactory : public editor::IEditorPageFactory
 {
 	T_RTTI_CLASS;
 
@@ -25,7 +25,7 @@ public:
 
 	virtual bool needOutputResources(const TypeInfo& typeInfo) const;
 
-	virtual Ref< editor::IObjectEditor > createObjectEditor(editor::IEditor* editor) const;
+	virtual Ref< editor::IEditorPage > createEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document) const;
 
 	virtual void getCommands(std::list< ui::Command >& outCommands) const;
 };
@@ -33,4 +33,4 @@ public:
 	}
 }
 
-#endif	// traktor_script_ScriptEditorFactory_H
+#endif	// traktor_script_ScriptEditorPageFactory_H

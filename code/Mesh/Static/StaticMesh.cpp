@@ -42,6 +42,9 @@ void StaticMesh::render(
 	SmallMap< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderPass.getTechnique());
 	T_ASSERT (it != m_parts.end());
 
+	Matrix44 transform = worldTransform.toMatrix44();
+	Aabb3 boundingBox = m_renderMesh->getBoundingBox();
+
 	const std::vector< render::Mesh::Part >& meshParts = m_renderMesh->getParts();
 	for (std::vector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
 	{
@@ -49,8 +52,8 @@ void StaticMesh::render(
 
 		worldRenderPass.setShaderCombination(
 			m_shader,
-			worldTransform.toMatrix44(),
-			getBoundingBox()
+			transform,
+			boundingBox
 		);
 
 		if (parameterCallback)
@@ -78,8 +81,8 @@ void StaticMesh::render(
 		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
 			m_shader->getCurrentPriority(),
-			worldTransform.toMatrix44(),
-			getBoundingBox()
+			transform,
+			boundingBox
 		);
 		
 		if (parameterCallback)

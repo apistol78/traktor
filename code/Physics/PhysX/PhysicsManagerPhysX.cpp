@@ -12,29 +12,32 @@
 #include <foundation\PxFoundation.h>
 
 // Traktor
+#include "Core/Containers/StaticVector.h"
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Acquire.h"
 #include "Heightfield/Heightfield.h"
+#include "Physics/BallJointDesc.h"
 #include "Physics/BoxShapeDesc.h"
 #include "Physics/CapsuleShapeDesc.h"
-#include "Physics/CylinderShapeDesc.h"
-#include "Physics/MeshShapeDesc.h"
-#include "Physics/SphereShapeDesc.h"
-#include "Physics/HeightfieldShapeDesc.h"
-#include "Physics/StaticBodyDesc.h"
-#include "Physics/DynamicBodyDesc.h"
-#include "Physics/BallJointDesc.h"
 #include "Physics/ConeTwistJointDesc.h"
+#include "Physics/CylinderShapeDesc.h"
+#include "Physics/DynamicBodyDesc.h"
+#include "Physics/FixedJointDesc.h"
+#include "Physics/HeightfieldShapeDesc.h"
 #include "Physics/HingeJointDesc.h"
 #include "Physics/Hinge2JointDesc.h"
 #include "Physics/Mesh.h"
+#include "Physics/MeshShapeDesc.h"
+#include "Physics/SphereShapeDesc.h"
+#include "Physics/StaticBodyDesc.h"
 #include "Physics/PhysX/BallJointPhysX.h"
 #include "Physics/PhysX/BodyPhysX.h"
 #include "Physics/PhysX/ConeTwistJointPhysX.h"
 #include "Physics/PhysX/Conversion.h"
+#include "Physics/PhysX/FixedJointPhysX.h"
 #include "Physics/PhysX/HingeJointPhysX.h"
 #include "Physics/PhysX/Hinge2JointPhysX.h"
 #include "Physics/PhysX/PhysicsManagerPhysX.h"
@@ -73,10 +76,6 @@ physx::PxFilterFlags collisionFilterShader(
 		uint32_t cluster1 = body1->getClusterId();
 		if (cluster0 == cluster1)
 		{
-#if defined(_DEBUG)
-	log::debug << L"Collision pair " << mbstows(body0->getTag()) << L" <-> " << mbstows(body1->getTag()) << L" rejected (cluster)" << Endl;
-#endif
-
 			// No contact.
 			return physx::PxFilterFlag::eSUPPRESS;
 		}
@@ -90,21 +89,75 @@ physx::PxFilterFlags collisionFilterShader(
 
 	if ((group1 & mask2) == 0 || (group2 & mask1) == 0)
 	{
-#if defined(_DEBUG)
-	log::debug << L"Collision pair " << mbstows(body0->getTag()) << L" <-> " << mbstows(body1->getTag()) << L" rejected (mask)" << Endl;
-#endif
 		// No contact.
 		return physx::PxFilterFlag::eSUPPRESS;
 	}
 
-#if defined(_DEBUG)
-	log::debug << L"Collision pair " << mbstows(body0->getTag()) << L" <-> " << mbstows(body1->getTag()) << L" accepted" << Endl;
-#endif
-
 	// Should issue collisions.
-	pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
+	pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT; // | physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
 	return physx::PxFilterFlags();
 }
+
+class EventCallback : public physx::PxSimulationEventCallback
+{
+public:
+	EventCallback(AlignedVector< CollisionInfo >& outCollisionInfo)
+	:	m_outCollisionInfo(outCollisionInfo)
+	{
+	}
+
+	virtual void onConstraintBreak(physx::PxConstraintInfo* constraints, physx::PxU32 count)
+	{
+	}
+
+	virtual void onWake(physx::PxActor** actors, physx::PxU32 count)
+	{
+	}
+
+	virtual void onSleep(physx::PxActor** actors, physx::PxU32 count)
+	{
+	}
+
+	virtual void onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs)
+	{
+		for (physx::PxU32 i = 0; i < nbPairs; ++i)
+		{
+			BodyPhysX* body1 = reinterpret_cast< BodyPhysX* >(pairs[i].shapes[0]->userData);
+			BodyPhysX* body2 = reinterpret_cast< BodyPhysX* >(pairs[i].shapes[1]->userData);
+
+			//CollisionInfo& info = m_outCollisionInfo.push_back();
+			//info.body1 = body1;
+			//info.body2 = body2;
+			//info.contacts.resize(0);
+			//info.contacts.reserve(contacts);
+
+			//int32_t material1 = body1->getMaterial();
+			//int32_t material2 = body2->getMaterial();
+
+			//for (int32_t j = 0; j < contacts; ++j)
+			//{
+			//	const btManifoldPoint& pt = manifold->getContactPoint(j);
+			//	if (pt.getDistance() < 0.0f)
+			//	{
+			//		CollisionContact cc;
+			//		cc.depth = -pt.getDistance();
+			//		cc.normal = fromBtVector3(pt.m_normalWorldOnB, 0.0f);
+			//		cc.position = fromBtVector3(pt.m_positionWorldOnA, 1.0f);
+			//		cc.material1 = material1;
+			//		cc.material2 = material2;
+			//		info.contacts.push_back(cc);
+			//	}
+			//}
+		}
+	}
+
+	virtual void onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count)
+	{
+	}
+
+private:
+	AlignedVector< CollisionInfo >& m_outCollisionInfo;
+};
 
 class IgnoreBodyFilter : public physx::PxQueryFilterCallback
 {
@@ -204,10 +257,11 @@ bool PhysicsManagerPhysX::create(float simulationDeltaTime, float timeScale)
 		m_sdk->getVisualDebugger()->setVisualDebuggerFlags(physx::PxVisualDebuggerFlag::eTRANSMIT_CONSTRAINTS | physx::PxVisualDebuggerFlag::eTRANSMIT_SCENEQUERIES);
 	}
 
-	physx::PxSceneDesc sceneDesc(m_sdk->getTolerancesScale());
+	physx::PxSceneDesc sceneDesc(toleranceScale);
 	sceneDesc.gravity = physx::PxVec3(0.0f, -9.8f, 0.0f);
 	sceneDesc.cpuDispatcher = physx::PxDefaultCpuDispatcherCreate(2);
 	sceneDesc.filterShader = collisionFilterShader;
+	sceneDesc.simulationEventCallback = new EventCallback(m_collisionInfo);
 
 	m_scene = m_sdk->createScene(sceneDesc);
 	if (!m_scene) 
@@ -270,6 +324,7 @@ Ref< Body > PhysicsManagerPhysX::createBody(resource::IResourceManager* resource
 	physx::PxGeometry* geometry = 0;
 	physx::PxTransform shapePose = toPxTransform(shapeDesc->getLocalTransform());
 	Vector4 centerOfGravity = Vector4::origo();
+	float margin = 0.0f;
 
 	if (const BoxShapeDesc* boxShape = dynamic_type_cast< const BoxShapeDesc* >(shapeDesc))
 	{
@@ -320,17 +375,27 @@ Ref< Body > PhysicsManagerPhysX::createBody(resource::IResourceManager* resource
 			convexDesc.triangles.count = hullTriangles.size();
 			convexDesc.triangles.stride = sizeof(Mesh::Triangle);
 			convexDesc.triangles.data = &hullTriangles[0];
-			convexDesc.flags = physx::PxConvexFlag::eFLIPNORMALS | physx::PxConvexFlag::eINFLATE_CONVEX;
+			convexDesc.flags = physx::PxConvexFlag::eFLIPNORMALS;
 
 			PxMemoryOutputStream writeBuffer;
 			bool status = m_cooking->cookConvexMesh(convexDesc, writeBuffer);
 			if (!status)
+			{
+				log::error << L"Failed to create body; unable to cook convex collision shape." << Endl;
+				log::error << L"\t" << int32_t(vertices.size()) << L" point(s)" << Endl;
+				log::error << L"\t" << int32_t(hullTriangles.size()) << L" triangle(s)" << Endl;
 				return 0;
+			}
 
 			PxMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
 			physx::PxConvexMesh* convexMesh = m_sdk->createConvexMesh(readBuffer);
 			if (!convexMesh)
+			{
+				log::error << L"Failed to create body; unable to create convex collision shape." << Endl;
+				log::error << L"\t" << int32_t(vertices.size()) << L" point(s)" << Endl;
+				log::error << L"\t" << int32_t(hullTriangles.size()) << L" triangle(s)" << Endl;
 				return 0;
+			}
 
 			physx::PxConvexMeshGeometry* convexMeshGeometry = new physx::PxConvexMeshGeometry(
 				convexMesh
@@ -351,12 +416,22 @@ Ref< Body > PhysicsManagerPhysX::createBody(resource::IResourceManager* resource
 			PxMemoryOutputStream writeBuffer;
 			bool status = m_cooking->cookTriangleMesh(meshDesc, writeBuffer);
 			if (!status)
+			{
+				log::error << L"Failed to create body; unable to cook mesh collision shape." << Endl;
+				log::error << L"\t" << int32_t(vertices.size()) << L" point(s)" << Endl;
+				log::error << L"\t" << int32_t(shapeTriangles.size()) << L" triangle(s)" << Endl;
 				return 0;
+			}
 
 			PxMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
 			physx::PxTriangleMesh* triangleMesh = m_sdk->createTriangleMesh(readBuffer);
 			if (!triangleMesh)
+			{
+				log::error << L"Failed to create body; unable to create mesh collision shape." << Endl;
+				log::error << L"\t" << int32_t(vertices.size()) << L" point(s)" << Endl;
+				log::error << L"\t" << int32_t(shapeTriangles.size()) << L" triangle(s)" << Endl;
 				return 0;
+			}
 
 			physx::PxTriangleMeshGeometry* triangleMeshGeometry = new physx::PxTriangleMeshGeometry(
 				triangleMesh
@@ -365,6 +440,7 @@ Ref< Body > PhysicsManagerPhysX::createBody(resource::IResourceManager* resource
 		}
 
 		centerOfGravity = mesh->getOffset();
+		margin = mesh->getMargin();
 	}
 	else if (const SphereShapeDesc* sphereShape = dynamic_type_cast< const SphereShapeDesc* >(shapeDesc))
 	{
@@ -400,9 +476,8 @@ Ref< Body > PhysicsManagerPhysX::createBody(resource::IResourceManager* resource
 				hf::height_t height = heights[z + x * hsize];
 
 				ptr->height = physx::PxI16(int32_t(height) - 32767);
-				ptr->setTessFlag();
 
-				if (heightfield->getGridCut(x, z))
+				if (heightfield->getGridCut(z, x))
 				{
 					ptr->materialIndex0 = 0;
 					ptr->materialIndex1 = 0;
@@ -423,8 +498,10 @@ Ref< Body > PhysicsManagerPhysX::createBody(resource::IResourceManager* resource
 		hfDesc.nbRows = hsize;
 		hfDesc.samples.data = pxh;
 		hfDesc.samples.stride = sizeof(physx::PxHeightFieldSample);
+		hfDesc.thickness = -4.0f;
+		hfDesc.convexEdgeThreshold = 1e8f;
 
-		physx::PxHeightField* pxhf = m_sdk->createHeightField(hfDesc);
+		physx::PxHeightField* pxhf = m_cooking->createHeightField(hfDesc, m_sdk->getPhysicsInsertionCallback());
 		T_ASSERT (pxhf);
 
 		float sizeScaleX = heightfield->getWorldExtent().x() / hsize;
@@ -490,6 +567,9 @@ Ref< Body > PhysicsManagerPhysX::createBody(resource::IResourceManager* resource
 			shape->setSimulationFilterData(filterData);
 			shape->setQueryFilterData(filterData);
 
+			if (margin > FUZZY_EPSILON)
+				shape->setContactOffset(margin);
+
 			m_bodies.push_back(staticBody);
 
 			shape->userData = staticBody;
@@ -529,6 +609,9 @@ Ref< Body > PhysicsManagerPhysX::createBody(resource::IResourceManager* resource
 
 			shape->setSimulationFilterData(filterData);
 			shape->setQueryFilterData(filterData);
+
+			if (margin > FUZZY_EPSILON)
+				shape->setContactOffset(margin);
 
 			m_bodies.push_back(kineticBody);
 
@@ -575,6 +658,9 @@ Ref< Body > PhysicsManagerPhysX::createBody(resource::IResourceManager* resource
 
 		shape->setSimulationFilterData(filterData);
 		shape->setQueryFilterData(filterData);
+
+		if (margin > FUZZY_EPSILON)
+			shape->setContactOffset(margin);
 
 		physx::PxRigidBodyExt::setMassAndUpdateInertia(*rigidBody, dynamicDesc->getMass());
 
@@ -651,20 +737,77 @@ Ref< Joint > PhysicsManagerPhysX::createJoint(const JointDesc* desc, const Trans
 		outJoint = new ConeTwistJointPhysX(this, joint, body1, body2);
 	}
 	*/
+	else if (const FixedJointDesc* fixedDesc = dynamic_type_cast< const FixedJointDesc* >(desc))
+	{
+		Transform Tbody1Inv = body1->getCenterTransform().inverse();
+		Transform Tbody2Inv = body2->getCenterTransform().inverse();
+
+		physx::PxFixedJoint* fixedJoint = physx::PxFixedJointCreate(
+			*m_sdk,
+			actor1,
+			toPxTransform(transform * Tbody1Inv),
+			actor2,
+			toPxTransform(transform * Tbody2Inv)
+		);
+
+		outJoint = new FixedJointPhysX(this, fixedJoint, body1, body2);
+	}
 	else if (const HingeJointDesc* hingeDesc = dynamic_type_cast< const HingeJointDesc* >(desc))
 	{
 		Vector4 anchorW = transform * hingeDesc->getAnchor().xyz1();
 		Vector4 axisW = transform * hingeDesc->getAxis().xyz0();
 
-		Transform local1 = body1->getTransform().inverse() * Transform(anchorW, Quaternion(Vector4(1.0f, 0.0f, 0.0f), axisW));
-		Transform local2 = body2->getTransform().inverse() * Transform(anchorW, Quaternion(Vector4(1.0f, 0.0f, 0.0f), axisW));
+		Transform Tbody1Inv = body1->getCenterTransform().inverse();
+		Transform Tbody2Inv = body2->getCenterTransform().inverse();
+
+		Vector4 axisIn1 = Tbody1Inv * axisW;
+		Vector4 axisIn2 = Tbody2Inv * axisW;
+
+		// Calculate reference axises in body 1 space.
+		Vector4 axisA1 = Tbody1Inv.axisX();
+		Vector4 axisA2;
+
+		Scalar projection = dot3(axisIn1, axisA1);
+		if (projection >= 1.0f - FUZZY_EPSILON)
+		{
+			axisA1 = -Tbody1Inv.axisZ();
+			axisA2 = Tbody1Inv.axisY();
+		}
+		else if (projection <= -1.0f + FUZZY_EPSILON)
+		{
+			axisA1 = Tbody1Inv.axisZ();
+			axisA2 = Tbody1Inv.axisY();
+		}
+		else
+		{
+			axisA2 = cross(axisIn1, axisA1).normalized();
+			axisA1 = cross(axisA2, axisIn1).normalized();
+		}
+
+		// Calculate reference axises in body 2 space.
+		Vector4 axisB1 = Quaternion(axisIn1, axisIn2) * axisA1;
+		Vector4 axisB2 = cross(axisIn2, axisB1).normalized();
+
+		Matrix44 R1(
+			axisIn1,
+			axisA1,
+			axisA2,
+			Tbody1Inv * anchorW
+		);
+
+		Matrix44 R2(
+			axisIn2,
+			axisB1,
+			axisB2,
+			Tbody2Inv * anchorW
+		);
 
 		physx::PxRevoluteJoint* revoluteJoint = physx::PxRevoluteJointCreate(
 			*m_sdk,
 			actor1,
-			toPxTransform(local1),
+			toPxTransform(Transform(R1)),
 			actor2,
-			toPxTransform(local2)
+			toPxTransform(Transform(R2))
 		);
 
 		if (hingeDesc->getEnableLimits())
@@ -679,6 +822,8 @@ Ref< Joint > PhysicsManagerPhysX::createJoint(const JointDesc* desc, const Trans
 			revoluteJoint->setLimit(limits);
 		}
 
+		revoluteJoint->setConstraintFlags(physx::PxConstraintFlag::ePROJECTION);
+
 		outJoint = new HingeJointPhysX(this, revoluteJoint, body1, body2);
 	}
 	else if (const Hinge2JointDesc* hinge2Desc = dynamic_type_cast< const Hinge2JointDesc* >(desc))
@@ -687,15 +832,57 @@ Ref< Joint > PhysicsManagerPhysX::createJoint(const JointDesc* desc, const Trans
 		Vector4 axis1W = transform * hinge2Desc->getAxis1().xyz0();
 		Vector4 axis2W = transform * hinge2Desc->getAxis1().xyz0();
 
-		Transform local1 = body1->getTransform().inverse() * Transform(anchorW, Quaternion(Vector4(1.0f, 0.0f, 0.0f), axis1W));
-		Transform local2 = body2->getTransform().inverse() * Transform(anchorW, Quaternion(Vector4(1.0f, 0.0f, 0.0f), axis1W));
+		Transform Tbody1Inv = body1->getCenterTransform().inverse();
+		Transform Tbody2Inv = body2->getCenterTransform().inverse();
+
+		Vector4 axis1In1 = Tbody1Inv * axis1W;
+		Vector4 axis1In2 = Tbody2Inv * axis1W;
+
+		// Calculate reference axises in body 1 space.
+		Vector4 axisA1 = Tbody1Inv.axisX();
+		Vector4 axisA2;
+
+		Scalar projection = dot3(axis1In1, axisA1);
+		if (projection >= 1.0f - FUZZY_EPSILON)
+		{
+			axisA1 = -Tbody1Inv.axisZ();
+			axisA2 = Tbody1Inv.axisY();
+		}
+		else if (projection <= -1.0f + FUZZY_EPSILON)
+		{
+			axisA1 = Tbody1Inv.axisZ();
+			axisA2 = Tbody1Inv.axisY();
+		}
+		else
+		{
+			axisA2 = cross(axis1In1, axisA1).normalized();
+			axisA1 = cross(axisA2, axis1In1).normalized();
+		}
+
+		// Calculate reference axises in body 2 space.
+		Vector4 axisB1 = Quaternion(axis1In1, axis1In2) * axisA1;
+		Vector4 axisB2 = cross(axis1In2, axisB1).normalized();
+
+		Matrix44 R1(
+			axis1In1,
+			axisA1,
+			axisA2,
+			Tbody1Inv * anchorW
+		);
+
+		Matrix44 R2(
+			axis1In2,
+			axisB1,
+			axisB2,
+			Tbody2Inv * anchorW
+		);
 
 		physx::PxRevoluteJoint* revoluteJoint = physx::PxRevoluteJointCreate(
 			*m_sdk,
 			actor1,
-			toPxTransform(local1),
+			toPxTransform(Transform(R1)),
 			actor2,
-			toPxTransform(local2)
+			toPxTransform(Transform(R2))
 		);
 
 		outJoint = new Hinge2JointPhysX(this, revoluteJoint, body1, body2);
@@ -713,9 +900,17 @@ void PhysicsManagerPhysX::update(bool issueCollisionEvents)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
+	m_collisionInfo.resize(0);
+
 	m_scene->simulate(m_simulationDeltaTime * m_timeScale);
 	if (!m_scene->fetchResults(true))
 		log::error << L"Unable to fetch simulation results; physics may be inconsistent" << Endl;
+
+	if (issueCollisionEvents)
+	{
+		for (AlignedVector< CollisionInfo >::const_iterator i = m_collisionInfo.begin(); i != m_collisionInfo.end(); ++i)
+			notifyCollisionListeners(*i);
+	}
 }
 
 void PhysicsManagerPhysX::solveConstraints(const RefArray< Body >& bodies, const RefArray< Joint >& joints)
@@ -822,12 +1017,57 @@ bool PhysicsManagerPhysX::queryShadowRay(
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	physx::PxRaycastHit hit;
-	return m_scene->raycastAny(
-		toPxVec3(at),
-		toPxVec3(direction),
-		maxLength,
-		hit
-	);
+
+	if (ignoreClusterId == 0)
+	{
+		physx::PxQueryFilterData filterData;
+		filterData.data.word0 = group;
+		filterData.data.word1 = 0;
+		filterData.data.word2 = 0;
+		filterData.data.word3 = 0;
+
+		if (queryTypes & QtStatic)
+			filterData.flags |= physx::PxQueryFlag::eSTATIC;
+		if (queryTypes & QtDynamic)
+			filterData.flags |= physx::PxQueryFlag::eDYNAMIC;
+
+		if (!m_scene->raycastAny(
+			toPxVec3(at),
+			toPxVec3(direction),
+			maxLength,
+			hit,
+			filterData
+		))
+			return false;
+	}
+	else
+	{
+		IgnoreBodyFilter filter(ignoreClusterId, group);
+
+		physx::PxQueryFilterData filterData;
+		filterData.data.word0 = group;
+		filterData.data.word1 = 0;
+		filterData.data.word2 = 0;
+		filterData.data.word3 = 0;
+		filterData.flags = physx::PxQueryFlag::ePREFILTER;
+
+		if (queryTypes & QtStatic)
+			filterData.flags |= physx::PxQueryFlag::eSTATIC;
+		if (queryTypes & QtDynamic)
+			filterData.flags |= physx::PxQueryFlag::eDYNAMIC;
+
+		if (!m_scene->raycastAny(
+			toPxVec3(at),
+			toPxVec3(direction),
+			maxLength,
+			hit,
+			filterData,
+			&filter
+		))
+			return false;
+	}
+
+	return true;
 }
 
 uint32_t PhysicsManagerPhysX::querySphere(
@@ -941,7 +1181,7 @@ bool PhysicsManagerPhysX::querySweep(
 	T_ASSERT (body);
 	T_ASSERT ((body->getCollisionGroup() & group) != 0);
 
-	outResult.distance = hit.distance;
+	outResult.distance = hit.distance + radius;
 	outResult.position = fromPxVec3(hit.position, 1.0f);
 	outResult.normal = fromPxVec3(hit.normal, 0.0f);
 	outResult.body = body;

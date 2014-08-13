@@ -530,6 +530,9 @@ protected:
 		m_hWnd.registerMessageHandler(WM_DROPFILES,		new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventDropFiles));
 #endif
 
+		if (style & WsWantAllInput)
+			m_hWnd.registerMessageHandler(WM_GETDLGCODE, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventGetDlgCode));
+
 		return true;
 	}
 
@@ -816,6 +819,11 @@ protected:
 		return FALSE;
 	}
 #endif
+
+	LRESULT eventGetDlgCode(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
+	{
+		return DLGC_WANTMESSAGE;
+	}
 };
 
 	}
