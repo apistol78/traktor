@@ -1,7 +1,9 @@
 #ifndef traktor_amalgam_ScriptServer_H
 #define traktor_amalgam_ScriptServer_H
 
+#include <map>
 #include "Amalgam/IScriptServer.h"
+#include "Core/Thread/Semaphore.h"
 #include "Core/Thread/Thread.h"
 #include "Script/IScriptDebugger.h"
 #include "Script/IScriptProfiler.h"
@@ -46,17 +48,33 @@ public:
 	virtual script::IScriptManager* getScriptManager();
 
 private:
+	struct CallSample
+	{
+		uint32_t callCount;
+		double inclusiveDuration;
+		double exclusiveDuration;
+
+		CallSample()
+		:	callCount(0)
+		,	inclusiveDuration(0.0)
+		,	exclusiveDuration(0.0)
+		{
+		}
+	};
+
 	Ref< script::IScriptManager > m_scriptManager;
 	Ref< script::IScriptDebugger > m_scriptDebugger;
 	Ref< script::IScriptProfiler > m_scriptProfiler;
 	Ref< net::BidirectionalObjectTransport > m_transport;
+	std::map< std::wstring, CallSample > m_callSamples[3];
+	int32_t m_callSamplesIndex;
 	Thread* m_scriptDebuggerThread;
 
 	void threadDebugger();
 
 	virtual void breakpointReached(script::IScriptDebugger* scriptDebugger, const script::CallStack& callStack);
 
-	virtual void callMeasured(const std::wstring& function, double timeStamp, double inclusiveDuration, double exclusiveDuration);
+	virtual void callMeasured(const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration);
 };
 
 	}

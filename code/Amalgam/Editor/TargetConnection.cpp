@@ -103,7 +103,7 @@ bool TargetConnection::update()
 		{
 			m_targetProfiler->notifyListeners(
 				measured->getFunction(),
-				measured->getTimeStamp(),
+				measured->getCallCount(),
 				measured->getInclusiveDuration(),
 				measured->getExclusiveDuration()
 			);

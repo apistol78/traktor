@@ -23,11 +23,11 @@ class T_DLLCLASS ScriptProfilerCallMeasured : public ISerializable
 public:
 	ScriptProfilerCallMeasured();
 
-	ScriptProfilerCallMeasured(const std::wstring& function, double timeStamp, double inclusiveDuration, double exclusiveDuration);
+	ScriptProfilerCallMeasured(const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration);
 
 	const std::wstring& getFunction() const { return m_function; }
 
-	double getTimeStamp() const { return m_timeStamp; }
+	uint32_t getCallCount() const { return m_callCount; }
 
 	double getInclusiveDuration() const { return m_inclusiveDuration; }
 
@@ -37,7 +37,7 @@ public:
 
 private:
 	std::wstring m_function;
-	double m_timeStamp;
+	uint32_t m_callCount;
 	double m_inclusiveDuration;
 	double m_exclusiveDuration;
 };

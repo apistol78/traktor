@@ -39,6 +39,8 @@
 #include "ProduceOutput.h"
 #include "Run.h"
 #include "StdOutput.h"
+#include "StreamInput.h"
+#include "StreamOutput.h"
 
 using namespace traktor;
 
@@ -225,6 +227,23 @@ Ref< script::IScriptManager > createScriptManager()
 	// StdOutput
 	Ref< script::AutoScriptClass< StdOutput > > classStdOutput = new script::AutoScriptClass< StdOutput >();
 	scriptManager->registerClass(classStdOutput);
+
+	// StreamOutput
+	Ref< script::AutoScriptClass< StreamOutput > > classStreamOutput = new script::AutoScriptClass< StreamOutput >();
+	classStreamOutput->addConstructor< traktor::IStream*, IEncoding* >();
+	scriptManager->registerClass(classStreamOutput);
+
+	// IInput
+	Ref< script::AutoScriptClass< IInput > > classIInput = new script::AutoScriptClass< IInput >();
+	classIInput->addMethod("endOfFile", &IInput::endOfFile);
+	classIInput->addMethod("readChar", &IInput::readChar);
+	classIInput->addMethod("readLn", &IInput::readLn);
+	scriptManager->registerClass(classIInput);
+
+	// StreamInput
+	Ref< script::AutoScriptClass< StreamInput > > classStreamInput = new script::AutoScriptClass< StreamInput >();
+	classStreamInput->addConstructor< traktor::IStream*, IEncoding* >();
+	scriptManager->registerClass(classStreamInput);
 
 	// Environment
 	Ref< script::AutoScriptClass< Environment > > classEnvironment = new script::AutoScriptClass< Environment >();
@@ -809,7 +828,7 @@ int main(int argc, const char** argv)
 
 	if (cmdLine.getCount() < 1)
 	{
-		log::info << L"Run 1.0.0" << Endl;
+		log::info << L"Run 1.1.0" << Endl;
 		log::info << Endl;
 		log::info << L"Usage: Run (option(s)) [<file>.run|<file>.template] (args ...)" << Endl;
 		log::info << Endl;

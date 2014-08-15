@@ -163,12 +163,13 @@ void GridRow::paint(Canvas& canvas, const Rect& rect)
 {
 	GridView* gridView = checked_type_cast< GridView*, false >(getWidget());
 	const RefArray< GridColumn >& columns = gridView->getColumns();
+	Rect rowRect(0, rect.top, rect.getWidth(), rect.bottom);
 
 	// Paint custom background.
 	if (m_background.a > 0)
 	{
 		canvas.setBackground(m_background);
-		canvas.fillRect(rect);
+		canvas.fillRect(rowRect);
 	}
 
 	// Paint selection background.
@@ -176,7 +177,7 @@ void GridRow::paint(Canvas& canvas, const Rect& rect)
 	{
 		canvas.setForeground(Color4ub(240, 240, 250, 180));
 		canvas.setBackground(Color4ub(220, 220, 230, 180));
-		canvas.fillGradientRect(rect);
+		canvas.fillGradientRect(rowRect);
 	}
 
 	if (!m_children.empty())
@@ -185,7 +186,7 @@ void GridRow::paint(Canvas& canvas, const Rect& rect)
 
 		Bitmap* expand = m_expand[(m_state & GridRow::RsExpanded) ? 1 : 0];
 		canvas.drawBitmap(
-			Point(2 + depth * 16, rect.top + (rect.getHeight() - expand->getSize().cy) / 2),
+			Point(rect.left + 2 + depth * 16, rect.top + (rect.getHeight() - expand->getSize().cy) / 2),
 			Point(0, 0),
 			expand->getSize(),
 			expand
@@ -204,7 +205,7 @@ void GridRow::paint(Canvas& canvas, const Rect& rect)
 		}
 	}
 
-	canvas.drawLine(rect.left, rect.bottom - 1, rect.right, rect.bottom - 1);
+	canvas.drawLine(0, rect.bottom - 1, rect.getWidth(), rect.bottom - 1);
 }
 
 int32_t GridRow::getHeight() const

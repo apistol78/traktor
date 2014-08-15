@@ -27,7 +27,7 @@ public:
 
 	virtual void removeListener(IListener* listener);
 
-	void notifyListeners(const std::wstring& function, double timeStamp, double duration, double callOutDuration);
+	void notifyListeners(const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration);
 
 private:
 	Ref< net::BidirectionalObjectTransport > m_transport;

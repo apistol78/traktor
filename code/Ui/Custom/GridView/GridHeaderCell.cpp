@@ -61,9 +61,9 @@ void GridHeaderCell::paint(Canvas& canvas, const Rect& rect)
 {
 	canvas.setForeground(Color4ub(255, 255, 255));
 	canvas.setBackground(getSystemColor(ScButtonFace));
-	canvas.fillGradientRect(Rect(rect.left, rect.top, rect.right, rect.bottom));
+	canvas.fillGradientRect(Rect(0, rect.top, rect.getWidth(), rect.bottom));
 
-	int32_t left = 0;
+	int32_t left = rect.left;
 	for (uint32_t i = 0; i < m_columns.size(); ++i)
 	{
 		GridColumn* column = m_columns[i];

@@ -165,6 +165,11 @@ void ScriptDebuggerLua::removeListener(IListener* listener)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_listeners.erase(listener);
+
+	// If all listeners have been removed then automatically continue running;
+	// don't want the application to be kept locking up running thread.
+	if (m_listeners.empty())
+		m_state = StRunning;
 }
 
 bool ScriptDebuggerLua::isRunning() const

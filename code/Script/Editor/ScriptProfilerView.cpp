@@ -93,7 +93,7 @@ void ScriptProfilerView::updateProfileGrid()
 			pe.row->add(new ui::custom::GridItem(toString(pe.exclusiveDuration * 1000.0, 2)));
 			pe.row->add(new ui::custom::GridItem(toString(pe.inclusiveDuration * 100.0 / totalDuration, 2)));
 			pe.row->add(new ui::custom::GridItem(toString(pe.exclusiveDuration * 100.0 / totalDuration, 2)));
-			pe.row->add(new ui::custom::GridItem(toString(pe.count)));
+			pe.row->add(new ui::custom::GridItem(toString(pe.callCount)));
 			m_profileGrid->addRow(pe.row);
 		}
 		else
@@ -102,7 +102,7 @@ void ScriptProfilerView::updateProfileGrid()
 			checked_type_cast< ui::custom::GridItem*, false >(pe.row->get().at(2))->setText(toString(pe.exclusiveDuration * 1000.0, 2));
 			checked_type_cast< ui::custom::GridItem*, false >(pe.row->get().at(3))->setText(toString(pe.inclusiveDuration * 100.0 / totalDuration, 2));
 			checked_type_cast< ui::custom::GridItem*, false >(pe.row->get().at(4))->setText(toString(pe.exclusiveDuration * 100.0 / totalDuration, 2));
-			checked_type_cast< ui::custom::GridItem*, false >(pe.row->get().at(5))->setText(toString(pe.count));
+			checked_type_cast< ui::custom::GridItem*, false >(pe.row->get().at(5))->setText(toString(pe.callCount));
 		}
 	}
 
@@ -115,12 +115,12 @@ void ScriptProfilerView::eventProfilerToolClick(ui::custom::ToolBarButtonClickEv
 	handleCommand(event->getCommand());
 }
 
-void ScriptProfilerView::callMeasured(const std::wstring& function, double timeStamp, double inclusiveDuration, double exclusiveDuration)
+void ScriptProfilerView::callMeasured(const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration)
 {
 	ProfileEntry& pe = m_profile[function];
+	pe.callCount += callCount;
 	pe.inclusiveDuration += inclusiveDuration;
 	pe.exclusiveDuration += exclusiveDuration;
-	pe.count++;
 	updateProfileGrid();
 }
 
