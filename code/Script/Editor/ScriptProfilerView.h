@@ -45,15 +45,15 @@ public:
 private:
 	struct ProfileEntry
 	{
+		uint64_t callCount;
 		double inclusiveDuration;
 		double exclusiveDuration;
-		uint64_t count;
 		Ref< ui::custom::GridRow > row;
 
 		ProfileEntry()
-		:	inclusiveDuration(0.0)
+		:	callCount(0)
+		,	inclusiveDuration(0.0)
 		,	exclusiveDuration(0.0)
-		,	count(0)
 		{
 		}
 	};
@@ -70,7 +70,7 @@ private:
 	/*! \name IScriptProfiler::IListener */
 	/*! \{ */
 
-	virtual void callMeasured(const std::wstring& function, double timeStamp, double inclusiveDuration, double exclusiveDuration);
+	virtual void callMeasured(const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration);
 
 	/*! \} */
 };

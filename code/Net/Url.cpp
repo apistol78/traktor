@@ -1,7 +1,9 @@
 #include "Net/Url.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Io/Path.h"
+#include "Core/Io/Utf8Encoding.h"
 #include "Core/Misc/String.h"
+#include "Core/Misc/TString.h"
 
 namespace traktor
 {
@@ -200,6 +202,12 @@ std::wstring Url::encode(const uint8_t* bytes, uint32_t len)
 		}
 	}
 	return ss.str();
+}
+
+std::wstring Url::encode(const std::wstring& text)
+{
+	std::string s = wstombs(Utf8Encoding(), text);
+	return encode((const uint8_t*)s.c_str(), s.length());
 }
 
 std::vector< uint8_t > Url::decode(const std::wstring& text)

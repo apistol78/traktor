@@ -212,7 +212,6 @@ void ScriptManagerLua::registerClass(IScriptClass* scriptClass)
 
 	const TypeInfo& exportType = scriptClass->getExportType();
 	const TypeInfo* superType = exportType.getSuper();
-	T_ASSERT (superType);
 
 	lua_newtable(m_luaState);
 

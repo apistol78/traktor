@@ -97,7 +97,7 @@ void ScriptProfilerLua::hookCallback(lua_State* L, lua_Debug* ar)
 
 		// Notify all listeners about new measurement.
 		for (std::set< IListener* >::const_iterator i = ms_instance->m_listeners.begin(); i != ms_instance->m_listeners.end(); ++i)
-			(*i)->callMeasured(currentName, ps.timeStamp, inclusiveDuration, exclusiveDuration);
+			(*i)->callMeasured(currentName, 1, inclusiveDuration, exclusiveDuration);
 
 		ms_instance->m_stack.pop_back();
 

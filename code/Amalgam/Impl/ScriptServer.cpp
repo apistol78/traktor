@@ -9,6 +9,7 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/Thread/Acquire.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Net/BidirectionalObjectTransport.h"
 #include "Resource/IResourceManager.h"
@@ -23,7 +24,8 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ScriptServer", ScriptServer, IScriptServer)
 
 ScriptServer::ScriptServer()
-:	m_scriptDebuggerThread(0)
+:	m_callSamplesIndex(0)
+,	m_scriptDebuggerThread(0)
 {
 }
 
@@ -40,17 +42,14 @@ bool ScriptServer::create(const PropertyGroup* settings, bool debugger, bool pro
 		m_scriptDebugger = m_scriptManager->createDebugger();
 		if (m_scriptDebugger)
 		{
-			m_scriptDebuggerThread = ThreadManager::getInstance().create(makeFunctor(this, &ScriptServer::threadDebugger), L"Script debugger thread");
-			if (!m_scriptDebuggerThread)
-				return false;
-
 			m_transport = transport;
 			m_scriptDebugger->addListener(this);
-
-			m_scriptDebuggerThread->start();
 		}
 		else
+		{
 			log::warning << L"Unable to create script debugger" << Endl;
+			debugger = false;
+		}
 	}
 
 	if (profiler)
@@ -61,7 +60,19 @@ bool ScriptServer::create(const PropertyGroup* settings, bool debugger, bool pro
 			m_scriptProfiler->addListener(this);
 		}
 		else
+		{
 			log::warning << L"Unable to create script profiler" << Endl;
+			profiler = false;
+		}
+	}
+
+	if (debugger || profiler)
+	{
+		m_scriptDebuggerThread = ThreadManager::getInstance().create(makeFunctor(this, &ScriptServer::threadDebugger), L"Script debugger/profiler thread");
+		if (!m_scriptDebuggerThread)
+			return false;
+
+		m_scriptDebuggerThread->start();
 	}
 
 	return true;
@@ -69,17 +80,17 @@ bool ScriptServer::create(const PropertyGroup* settings, bool debugger, bool pro
 
 void ScriptServer::destroy()
 {
-	if (m_scriptDebugger)
-	{
-		m_scriptDebugger->removeListener(this);
-		m_scriptDebugger = 0;
-	}
-
 	if (m_scriptDebuggerThread)
 	{
 		m_scriptDebuggerThread->stop();
 		ThreadManager::getInstance().destroy(m_scriptDebuggerThread);
 		m_scriptDebuggerThread = 0;
+	}
+
+	if (m_scriptDebugger)
+	{
+		m_scriptDebugger->removeListener(this);
+		m_scriptDebugger = 0;
 	}
 
 	if (m_scriptProfiler)
@@ -120,42 +131,59 @@ void ScriptServer::threadDebugger()
 	while (!m_scriptDebuggerThread->stopped() && m_transport->connected())
 	{
 		if (!m_transport->wait(100))
-			continue;
-
-		Ref< ScriptDebuggerBreakpoint > breakpoint;
-		if (m_transport->recv< ScriptDebuggerBreakpoint >(0, breakpoint) == net::BidirectionalObjectTransport::RtSuccess)
 		{
-			T_ASSERT (breakpoint);
-			if (breakpoint->shouldAdd())
-				m_scriptDebugger->setBreakpoint(breakpoint->getScriptId(), breakpoint->getLineNumber());
-			else
-				m_scriptDebugger->removeBreakpoint(breakpoint->getScriptId(), breakpoint->getLineNumber());
+			int32_t index = (m_callSamplesIndex + 1) % 3;
+
+			std::map< std::wstring, CallSample >& samples = m_callSamples[index];
+			for (std::map< std::wstring, CallSample >::const_iterator i = samples.begin(); i != samples.end(); ++i)
+			{
+				ScriptProfilerCallMeasured measured(i->first, i->second.callCount, i->second.inclusiveDuration, i->second.exclusiveDuration);
+				m_transport->send(&measured);
+			}
+			samples.clear();
+
+			Atomic::exchange(m_callSamplesIndex, index);
+			continue;
 		}
 
-		Ref< ScriptDebuggerControl > control;
-		if (m_transport->recv< ScriptDebuggerControl >(0, control) == net::BidirectionalObjectTransport::RtSuccess)
+		if (m_scriptDebugger)
 		{
-			T_ASSERT (control);
-			switch (control->getAction())
+			Ref< ScriptDebuggerBreakpoint > breakpoint;
+			if (m_transport->recv< ScriptDebuggerBreakpoint >(0, breakpoint) == net::BidirectionalObjectTransport::RtSuccess)
 			{
-			case ScriptDebuggerControl::AcBreak:
-				m_scriptDebugger->actionBreak();
-				break;
+				T_ASSERT (breakpoint);
+				if (breakpoint->shouldAdd())
+					m_scriptDebugger->setBreakpoint(breakpoint->getScriptId(), breakpoint->getLineNumber());
+				else
+					m_scriptDebugger->removeBreakpoint(breakpoint->getScriptId(), breakpoint->getLineNumber());
+			}
 
-			case ScriptDebuggerControl::AcContinue:
-				m_scriptDebugger->actionContinue();
-				break;
+			Ref< ScriptDebuggerControl > control;
+			if (m_transport->recv< ScriptDebuggerControl >(0, control) == net::BidirectionalObjectTransport::RtSuccess)
+			{
+				T_ASSERT (control);
+				switch (control->getAction())
+				{
+				case ScriptDebuggerControl::AcBreak:
+					m_scriptDebugger->actionBreak();
+					break;
 
-			case ScriptDebuggerControl::AcStepInto:
-				m_scriptDebugger->actionStepInto();
-				break;
+				case ScriptDebuggerControl::AcContinue:
+					m_scriptDebugger->actionContinue();
+					break;
 
-			case ScriptDebuggerControl::AcStepOver:
-				m_scriptDebugger->actionStepOver();
-				break;
+				case ScriptDebuggerControl::AcStepInto:
+					m_scriptDebugger->actionStepInto();
+					break;
+
+				case ScriptDebuggerControl::AcStepOver:
+					m_scriptDebugger->actionStepOver();
+					break;
+				}
 			}
 		}
 	}
+
 	if (m_scriptDebugger)
 		m_scriptDebugger->actionContinue();
 }
@@ -166,10 +194,12 @@ void ScriptServer::breakpointReached(script::IScriptDebugger* scriptDebugger, co
 	m_transport->send(&halted);
 }
 
-void ScriptServer::callMeasured(const std::wstring& function, double timeStamp, double inclusiveDuration, double exclusiveDuration)
+void ScriptServer::callMeasured(const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration)
 {
-	ScriptProfilerCallMeasured measured(function, timeStamp, inclusiveDuration, exclusiveDuration);
-	m_transport->send(&measured);
+	CallSample& sample = m_callSamples[m_callSamplesIndex][function];
+	sample.callCount += callCount;
+	sample.inclusiveDuration += inclusiveDuration;
+	sample.exclusiveDuration += exclusiveDuration;
 }
 
 	}

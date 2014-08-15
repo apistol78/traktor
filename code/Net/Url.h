@@ -58,6 +58,8 @@ public:
 
 	static std::wstring encode(const uint8_t* bytes, uint32_t len);
 
+	static std::wstring encode(const std::wstring& text);
+
 	static std::vector< uint8_t > decode(const std::wstring& text);
 	
 private:
