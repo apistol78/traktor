@@ -2,7 +2,7 @@
 <object type="traktor.world.PostProcessSettings" version="1">
 	<requireHighRange>false</requireHighRange>
 	<definitions>
-		<item type="traktor.world.PostProcessDefineTarget" version="3">
+		<item type="traktor.world.PostProcessDefineTarget" version="4">
 			<id>Flip</id>
 			<width>0</width>
 			<height>0</height>
@@ -15,8 +15,9 @@
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
 			<clearColor>0, 0, 0, 0</clearColor>
+			<persistent>false</persistent>
 		</item>
-		<item type="traktor.world.PostProcessDefineTarget" version="3">
+		<item type="traktor.world.PostProcessDefineTarget" version="4">
 			<id>Flop</id>
 			<width>0</width>
 			<height>0</height>
@@ -29,6 +30,7 @@
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
 			<clearColor>0, 0, 0, 0</clearColor>
+			<persistent>false</persistent>
 		</item>
 	</definitions>
 	<steps>
@@ -57,7 +59,7 @@
 					<index>0</index>
 				</item>
 			</sources>
-			<direction>3, 0, 0, 0</direction>
+			<direction>2, 0, 0, 0</direction>
 			<taps>15</taps>
 			<blurType>BtGaussian</blurType>
 		</item>
@@ -73,7 +75,7 @@
 					<index>0</index>
 				</item>
 			</sources>
-			<direction>0, 3, 0, 0</direction>
+			<direction>0, 2, 0, 0</direction>
 			<taps>15</taps>
 			<blurType>BtGaussian</blurType>
 		</item>
