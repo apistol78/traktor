@@ -1887,6 +1887,7 @@ Type::Type()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Uniform", 1, Uniform, ImmutableNode)
 
+const ImmutableNode::InputPinDesc c_Uniform_i[] = { { L"Initial", true }, 0 };
 const ImmutableNode::OutputPinDesc c_Uniform_o[] = { L"Output", 0 };
 
 Uniform::Uniform(
@@ -1894,7 +1895,7 @@ Uniform::Uniform(
 	ParameterType type,
 	UpdateFrequency frequency
 )
-:	ImmutableNode(0, c_Uniform_o)
+:	ImmutableNode(c_Uniform_i, c_Uniform_o)
 ,	m_parameterName(parameterName)
 ,	m_type(type)
 ,	m_frequency(frequency)

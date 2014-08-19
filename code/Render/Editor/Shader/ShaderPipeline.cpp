@@ -177,6 +177,36 @@ struct BuildCombinationTask : public Object
 			return;
 		}
 
+		// Extract uniform initial values and add to initialization block in shader resource.
+		RefArray< Uniform > uniformNodes;
+		programGraph->findNodesOf< Uniform >(uniformNodes);
+
+		for (RefArray< Uniform >::iterator i = uniformNodes.begin(); i != uniformNodes.end(); ++i)
+		{
+			const OutputPin* outputPin = programGraph->findSourcePin((*i)->getInputPin(0));
+			if (!outputPin)
+				continue;
+
+			const Node* outputNode = outputPin->getNode();
+			T_ASSERT (outputNode);
+
+			if (const Scalar* scalarNode = dynamic_type_cast< const Scalar* >(outputNode))
+				shaderResourceCombination->initializeUniformScalar.push_back(ShaderResource::InitializeUniformScalar((*i)->getParameterName(), scalarNode->get()));
+			else if (const Vector* vectorNode = dynamic_type_cast< const Vector* >(outputNode))
+				shaderResourceCombination->initializeUniformVector.push_back(ShaderResource::InitializeUniformVector((*i)->getParameterName(), vectorNode->get()));
+			else if (const Color* colorNode = dynamic_type_cast< const Color* >(outputNode))
+			{
+				const Color4ub& colorValue = colorNode->getColor();
+				Vector4 colorAsVector(colorValue.r / 255.0f, colorValue.g / 255.0f, colorValue.b / 255.0f, colorValue.a / 255.0f);
+				shaderResourceCombination->initializeUniformVector.push_back(ShaderResource::InitializeUniformVector((*i)->getParameterName(), colorAsVector));
+			}
+			else
+			{
+				log::error << L"ShaderPipeline failed; initial value of uniform must be constant" << Endl;
+				return;
+			}
+		}
+
 		// Replace texture nodes with uniforms; keep list of texture references in shader resource.
 		RefArray< Texture > textureNodes;
 		programGraph->findNodesOf< Texture >(textureNodes);
@@ -348,7 +378,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CachedProgramHints", CachedProgramHints,
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 63, ShaderPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 64, ShaderPipeline, editor::IPipeline)
 
 ShaderPipeline::ShaderPipeline()
 :	m_frequentUniformsAsLinear(false)

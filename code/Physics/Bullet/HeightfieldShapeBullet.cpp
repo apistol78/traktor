@@ -10,7 +10,7 @@ namespace traktor
 		namespace
 		{
 
-const int32_t c_maximumStep = 16;
+const int32_t c_maximumStep = 32;
 
 inline float quantizeMin(float v)
 {
@@ -82,19 +82,24 @@ void HeightfieldShapeBullet::processAllTriangles(btTriangleCallback* callback, c
 	if (imnx >= imxx || imnz >= imxz)
 		return;
 
-	int32_t cx = ((imxx - imnx) >> 1) | 1;
-	int32_t cz = ((imxz - imnz) >> 1) | 1;
+	int32_t cx = ((imxx - imnx)/* >> 1*/) | 1;
+	int32_t cz = ((imxz - imnz)/* >> 1*/) | 1;
 
 	cx = min(cx, c_maximumStep);
 	cz = min(cz, c_maximumStep);
 
+	float cxf = float(cx);
+	float czf = float(cz);
+
+	mnx = float(imnx);
+	mxx = mnx + cxf;
+
+	btVector3 triangles[2][3];
+	
 	for (int32_t u = imnx; u < imxx; u += cx)
 	{
-		float mnx = float(u);
-		float mxx = float(u + cx);
-
-		float mnz = float(imnz);
-		float mxz = float(imnz + cz);
+		mnz = float(imnz);
+		mxz = mnz + czf;
 
 		bool cp0 = m_heightfield->getWorldCut(mnx, mnz);
 		bool cp1 = m_heightfield->getWorldCut(mxx, mnz);
@@ -103,9 +108,6 @@ void HeightfieldShapeBullet::processAllTriangles(btTriangleCallback* callback, c
 
 		for (int32_t v = imnz; v < imxz; v += cz)
 		{
-			float mnz = float(v);
-			float mxz = float(v + cz);
-
 			bool c[] =
 			{
 				cp0,
@@ -128,19 +130,13 @@ void HeightfieldShapeBullet::processAllTriangles(btTriangleCallback* callback, c
 			hp0 = h[3];
 			hp1 = h[2];
 
-			btVector3 triangles[][3] =
-			{
-				{
-					btVector3(mnx, h[0], mnz),
-					btVector3(mnx, h[3], mxz),
-					btVector3(mxx, h[2], mxz)
-				},
-				{
-					btVector3(mxx, h[2], mxz),
-					btVector3(mxx, h[1], mnz),
-					btVector3(mnx, h[0], mnz)
-				}
-			};
+			triangles[0][0] = btVector3(mnx, h[0], mnz);
+			triangles[0][1] = btVector3(mnx, h[3], mxz);
+			triangles[0][2] = btVector3(mxx, h[2], mxz);
+
+			triangles[1][0] = btVector3(mxx, h[2], mxz);
+			triangles[1][1] = btVector3(mxx, h[1], mnz);
+			triangles[1][2] = btVector3(mnx, h[0], mnz);
 
 			if (c[0] && c[2])
 			{
@@ -149,7 +145,13 @@ void HeightfieldShapeBullet::processAllTriangles(btTriangleCallback* callback, c
 				if (c[1])
 					callback->processTriangle(triangles[1], 0, 1);
 			}
+
+			mnz += czf;
+			mxz += czf;
 		}
+
+		mnx += cxf;
+		mxx += cxf;
 	}
 }
 

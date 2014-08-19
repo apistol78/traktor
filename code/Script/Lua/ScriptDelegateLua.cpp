@@ -1,6 +1,6 @@
 #include "Core/Log/Log.h"
+#include "Script/Lua/ScriptContextLua.h"
 #include "Script/Lua/ScriptDelegateLua.h"
-#include "Script/Lua/ScriptManagerLua.h"
 #include "Script/Lua/ScriptUtilitiesLua.h"
 
 namespace traktor
@@ -16,9 +16,8 @@ int32_t s_delegateCount = 0;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptDelegateLua", ScriptDelegateLua, IScriptDelegate)
 
-ScriptDelegateLua::ScriptDelegateLua(ScriptManagerLua* manager, ScriptContextLua* context, lua_State*& luaState)
-:	m_manager(manager)
-,	m_context(context)
+ScriptDelegateLua::ScriptDelegateLua(ScriptContextLua* context, lua_State*& luaState)
+:	m_context(context)
 ,	m_luaState(luaState)
 ,	m_functionRef(0)
 ,	m_tag(s_delegateCount++)
@@ -44,25 +43,7 @@ void ScriptDelegateLua::push()
 
 Any ScriptDelegateLua::call(int32_t argc, const Any* argv)
 {
-	T_ASSERT (m_luaState);
-	Any returnValue;
-	m_manager->lock(m_context);
-	{
-		CHECK_LUA_STACK(m_luaState, 0);
-
-		push();
-
-		for (uint32_t i = 0; i < argc; ++i)
-			m_manager->pushAny(argv[i]);
-
-		int32_t err = lua_pcall(m_luaState, argc, 1, 0);
-		if (err == 0)
-			returnValue = m_manager->toAny(-1);
-
-		lua_pop(m_luaState, 1);
-	}
-	m_manager->unlock();
-	return returnValue;
+	return m_context->executeDelegate(m_functionRef, argc, argv);
 }
 
 	}

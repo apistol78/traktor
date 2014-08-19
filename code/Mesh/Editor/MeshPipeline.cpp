@@ -122,7 +122,7 @@ Guid incrementGuid(const Guid& g)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 23, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 25, MeshPipeline, editor::IPipeline)
 
 MeshPipeline::MeshPipeline()
 :	m_promoteHalf(false)
@@ -400,7 +400,12 @@ bool MeshPipeline::buildOutput(
 			if (render::IndexedUniform* indexedUniform = dynamic_type_cast< render::IndexedUniform* >(*j))
 			{
 				if (indexedUniform->getParameterName() == L"Joints")
-					indexedUniform->setLength(jointCount * 2);		// Each bone is represented of a quaternion and a vector thus multiply by 2.
+				{
+					// Quantize joint count to reduce number of vertex shader permutations as it
+					// will cost more than excessive parameters.
+					int32_t uniformJointCount = alignUp(jointCount, 4);
+					indexedUniform->setLength(uniformJointCount * 2);		// Each bone is represented of a quaternion and a vector thus multiply by 2.
+				}
 			}
 		}
 

@@ -655,7 +655,7 @@ Any ScriptManagerLua::toAny(int32_t index)
 	{
 		// Box LUA function into C++ container.
 		lua_pushvalue(m_luaState, index);
-		return Any::fromObject(new ScriptDelegateLua(this, m_lockContext, m_luaState));
+		return Any::fromObject(new ScriptDelegateLua(m_lockContext, m_luaState));
 	}
 	if (lua_istable(m_luaState, index))
 	{
@@ -702,7 +702,7 @@ void ScriptManagerLua::toAny(int32_t base, int32_t count, Any* outAnys)
 		{
 			// Box LUA function into C++ container.
 			lua_pushvalue(m_luaState, index);
-			outAnys[i] = Any::fromObject(new ScriptDelegateLua(this, m_lockContext, m_luaState));
+			outAnys[i] = Any::fromObject(new ScriptDelegateLua(m_lockContext, m_luaState));
 		}
 		else if (lua_istable(m_luaState, index))
 		{
