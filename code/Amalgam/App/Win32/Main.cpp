@@ -214,16 +214,34 @@ void logSystemInfo()
 	osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
 	GetVersionEx((OSVERSIONINFO *) &osvi);
 	log::info << L"Operating System" << Endl;
-	log::info << L"\tVersion " << uint32_t(osvi.dwMajorVersion) << L"." << uint32_t(osvi.dwMinorVersion) << L"." << uint32_t(osvi.dwBuildNumber) << Endl;
-	if (osvi.szCSDVersion)
-		log::info << L"\t" << osvi.szCSDVersion << Endl;
-	else 
-		log::info << L"\tNo service pack" << Endl;
-
-	if (osvi.wProductType == VER_NT_WORKSTATION )
-		log::info << L"\tWorkstation" << Endl;
+	if (osvi.wProductType == VER_NT_WORKSTATION ) 
+	{
+		if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 3)
+			log::info << L"\tWindows 8.1";
+		else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 2)
+			log::info << L"\tWindows 8";
+		else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 1)
+			log::info << L"\tWindows 7";
+		else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 0)
+			log::info << L"\tWindows Vista";		
+	}
 	else
-		log::info << L"\tServer" << Endl;
+	{
+		if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 3)
+			log::info << L"\tWindows Server 2012 R2";
+		else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 2)
+			log::info << L"\tWindows Server 2012";
+		else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 1)
+			log::info << L"\tWindows Server 2008 R2";
+		else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 0)
+			log::info << L"\tWindows Server 2008";		
+	}
+	if (osvi.szCSDVersion)
+		log::info << L" " << osvi.szCSDVersion << Endl;
+	else 
+		log::info << Endl;
+	log::info << L"\tOS version " << uint32_t(osvi.dwMajorVersion) << L"." << uint32_t(osvi.dwMinorVersion) << L"." << uint32_t(osvi.dwBuildNumber) << Endl;
+	log::info << L"\tSP version " << uint32_t(osvi.wServicePackMajor) << L"." << uint32_t(osvi.wServicePackMinor) << Endl;
 }
 
 std::wstring getExceptionString(DWORD exceptionCode)
