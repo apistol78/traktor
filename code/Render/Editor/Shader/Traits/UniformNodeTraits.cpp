@@ -76,8 +76,27 @@ PinType UniformNodeTraits::getInputPinType(
 {
 	if (is_a< IndexedUniform >(node))
 		return PntScalar1;
-	else
-		return PntVoid;
+	else if (const Uniform* uniformNode = dynamic_type_cast< const Uniform* >(node))
+	{
+		switch (uniformNode->getParameterType())
+		{
+		case PtScalar:
+			return PntScalar1;
+		case PtVector:
+			return PntScalar4;
+		case PtMatrix:
+			return PntMatrix;
+		case PtTexture2D:
+			return PntTexture2D;
+		case PtTexture3D:
+			return PntTexture3D;
+		case PtTextureCube:
+			return PntTextureCube;
+		default:
+			return PntVoid;
+	}
+
+	}
 }
 
 int32_t UniformNodeTraits::getInputPinGroup(

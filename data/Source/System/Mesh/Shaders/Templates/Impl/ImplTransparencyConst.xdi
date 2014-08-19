@@ -4,8 +4,8 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>918</first>
-				<second>445</second>
+				<first>940</first>
+				<second>442</second>
 			</position>
 			<name>T_Transparency</name>
 		</item>
@@ -16,8 +16,8 @@ Tag_Transparency
 			]]>
 			</comment>
 			<position>
-				<first>699</first>
-				<second>339</second>
+				<first>747</first>
+				<second>418</second>
 			</position>
 			<value>0</value>
 		</item>

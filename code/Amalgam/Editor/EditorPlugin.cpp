@@ -143,6 +143,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_toolTweaks->add(createTweakMenuItem(L"Attach Script Profiler", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Profile Rendering", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Disable All DLC", false));
+	m_toolTweaks->add(createTweakMenuItem(L"Disable Adaptive Updates", false));
 	m_toolBar->addItem(m_toolTweaks);
 
 	// Create target configuration list control.
@@ -376,6 +377,8 @@ void EditorPlugin::eventTargetListPlay(TargetPlayEvent* event)
 			}
 			if (m_toolTweaks->get(8)->isChecked())
 				tweakSettings->setProperty< PropertyBoolean >(L"Online.DownloadableContent", false);
+			if (m_toolTweaks->get(9)->isChecked())
+				tweakSettings->setProperty< PropertyInteger >(L"Amalgam.MaxSimulationUpdates", 1);
 
 			// Add deploy and launch actions.
 			action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsDeploying);

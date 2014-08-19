@@ -129,9 +129,16 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 			if (!combination.program)
 				return 0;
 
+			// Set implicit texture uniforms.
 			TextureReaderAdapter textureReader(resourceManager);
 			if (!TextureLinker(textureReader).link(*j, combination.program))
 				return 0;
+
+			// Set uniform default values.
+			for (AlignedVector< ShaderResource::InitializeUniformScalar >::const_iterator k = j->initializeUniformScalar.begin(); k != j->initializeUniformScalar.end(); ++k)
+				combination.program->setFloatParameter(k->name, k->value);
+			for (AlignedVector< ShaderResource::InitializeUniformVector >::const_iterator k = j->initializeUniformVector.begin(); k != j->initializeUniformVector.end(); ++k)
+				combination.program->setVectorParameter(k->name, k->value);
 
 			technique.combinations.push_back(combination);
 		}

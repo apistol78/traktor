@@ -36,6 +36,8 @@ public:
 
 	virtual Any executeMethod(Object* self, const std::string& methodName, uint32_t argc, const Any* argv);
 
+	Any executeDelegate(int32_t functionRef, uint32_t argc, const Any* argv);
+
 private:
 	friend class ScriptDebuggerLua;
 	friend class ScriptManagerLua;

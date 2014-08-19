@@ -8,8 +8,8 @@ Tag_Reflective
 			]]>
 			</comment>
 			<position>
-				<first>716</first>
-				<second>523</second>
+				<first>762</first>
+				<second>531</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -32,8 +32,8 @@ Tag_Reflective
 		<item type="traktor.render.Texture">
 			<comment/>
 			<position>
-				<first>705</first>
-				<second>624</second>
+				<first>735</first>
+				<second>590</second>
 			</position>
 			<external>{46ABEF4C-A855-0E43-9CEC-8124D2DEF32C}</external>
 			<type>PtTextureCube</type>
@@ -64,21 +64,21 @@ Tag_Reflective
 	<edges>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[3]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[2]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
 				<name>Input</name>
 			</destination>
 		</item>

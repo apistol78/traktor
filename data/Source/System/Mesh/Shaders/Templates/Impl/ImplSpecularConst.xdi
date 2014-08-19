@@ -4,16 +4,16 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>909</first>
-				<second>445</second>
+				<first>1004</first>
+				<second>410</second>
 			</position>
 			<name>T_SpecularRoughness</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>909</first>
-				<second>404</second>
+				<first>1004</first>
+				<second>369</second>
 			</position>
 			<name>T_SpecularTerm</name>
 		</item>
@@ -24,8 +24,8 @@ Tag_SpecularRoughness
 			]]>
 			</comment>
 			<position>
-				<first>668</first>
-				<second>366</second>
+				<first>599</first>
+				<second>361</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -36,16 +36,16 @@ Tag_SpecularTerm
 			]]>
 			</comment>
 			<position>
-				<first>668</first>
-				<second>319</second>
+				<first>599</first>
+				<second>273</second>
 			</position>
 			<value>0</value>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>581</first>
-				<second>432</second>
+				<first>518</first>
+				<second>457</second>
 			</position>
 			<name>T_TexCoord0</name>
 			<connectable>true</connectable>
@@ -55,19 +55,59 @@ Tag_SpecularTerm
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>581</first>
-				<second>471</second>
+				<first>518</first>
+				<second>496</second>
 			</position>
 			<name>T_TexCoord1</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<defaultValue>0</defaultValue>
 		</item>
+		<item type="traktor.render.Uniform" version="1">
+			<comment/>
+			<position>
+				<first>729</first>
+				<second>279</second>
+			</position>
+			<parameterName>Mesh_SpecularTerm</parameterName>
+			<type>PtScalar</type>
+			<frequency>UfFrame</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="1">
+			<comment/>
+			<position>
+				<first>729</first>
+				<second>358</second>
+			</position>
+			<parameterName>Mesh_SpecularRoughness</parameterName>
+			<type>PtScalar</type>
+			<frequency>UfFrame</frequency>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[2]"/>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Initial</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -77,12 +117,12 @@ Tag_SpecularTerm
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<name>Input</name>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Initial</name>
 			</destination>
 		</item>
 	</edges>

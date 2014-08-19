@@ -197,6 +197,34 @@ Any ScriptContextLua::executeMethod(Object* self, const std::string& methodName,
 	return returnValue;
 }
 
+Any ScriptContextLua::executeDelegate(int32_t functionRef, uint32_t argc, const Any* argv)
+{
+	Any returnValue;
+	m_scriptManager->lock(this);
+	{
+		CHECK_LUA_STACK(m_luaState, 0);
+
+		lua_pushlightuserdata(m_luaState, (void*)this);
+		lua_pushcclosure(m_luaState, runtimeError, 1);
+		int32_t errfunc = lua_gettop(m_luaState);
+
+		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, functionRef);
+		T_ASSERT (lua_isfunction(m_luaState, -1));
+
+		for (uint32_t i = 0; i < argc; ++i)
+			m_scriptManager->pushAny(argv[i]);
+
+		int32_t err = lua_pcall(m_luaState, argc, 1, errfunc);
+		if (err == 0)
+			returnValue = m_scriptManager->toAny(-1);
+
+		lua_pop(m_luaState, 1);
+	}
+	m_scriptManager->unlock();
+	return returnValue;
+
+}
+
 ScriptContextLua::ScriptContextLua(ScriptManagerLua* scriptManager, lua_State* luaState, int32_t environmentRef, const source_map_t& map)
 :	m_scriptManager(scriptManager)
 ,	m_luaState(luaState)

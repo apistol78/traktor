@@ -4,6 +4,8 @@
 #include <map>
 #include <vector>
 #include "Core/Guid.h"
+#include "Core/Containers/AlignedVector.h"
+#include "Core/Math/Vector4.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -30,6 +32,44 @@ class T_DLLCLASS ShaderResource : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	struct InitializeUniformScalar
+	{
+		std::wstring name;
+		float value;
+
+		InitializeUniformScalar()
+		:	value(0.0f)
+		{
+		}
+
+		InitializeUniformScalar(const std::wstring& name_, float value_)
+		:	name(name_)
+		,	value(value_)
+		{
+		}
+
+		void serialize(ISerializer& s);
+	};
+
+	struct InitializeUniformVector
+	{
+		std::wstring name;
+		Vector4 value;
+
+		InitializeUniformVector()
+		:	value(Vector4::zero())
+		{
+		}
+
+		InitializeUniformVector(const std::wstring& name_, const Vector4& value_)
+		:	name(name_)
+		,	value(value_)
+		{
+		}
+
+		void serialize(ISerializer& s);
+	};
+
 	struct Combination
 	{
 		uint32_t mask;
@@ -37,6 +77,8 @@ public:
 		uint32_t priority;
 		Ref< ISerializable > program;
 		std::vector< Guid > textures;
+		AlignedVector< InitializeUniformScalar > initializeUniformScalar;
+		AlignedVector< InitializeUniformVector > initializeUniformVector;
 
 		Combination()
 		:	mask(0)
