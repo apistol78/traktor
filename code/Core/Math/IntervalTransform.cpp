@@ -4,16 +4,12 @@ namespace traktor
 {
 
 IntervalTransform::IntervalTransform()
-:	m_step(false)
-,	m_first(true)
-,	m_index(0)
+:	m_modified(false)
 {
 }
 
 IntervalTransform::IntervalTransform(const Transform& transform)
-:	m_step(false)
-,	m_first(true)
-,	m_index(0)
+:	m_modified(false)
 {
 	m_transform[0] = transform;
 	m_transform[1] = transform;
@@ -21,31 +17,26 @@ IntervalTransform::IntervalTransform(const Transform& transform)
 
 void IntervalTransform::set(const Transform& transform)
 {
-	if (m_step || m_first)
-	{
-		m_index = 1 - m_index;
-		m_step = false;
-	}
-	m_transform[1 - m_index] = transform;
+	m_transform[1] = transform;
+	m_modified = true;
 }
 
 Transform IntervalTransform::get(float interval) const
 {
 	return lerp(
-		m_transform[m_index],
-		m_transform[1 - m_index],
+		m_transform[0],
+		m_transform[1],
 		Scalar(clamp(interval, 0.0f, 1.0f))
 	);
 }
 
 void IntervalTransform::step()
 {
-	if (m_step)
-		m_index = 1 - m_index;
-	else
-		m_step = true;
-
-	m_first = false;
+	if (m_modified)
+	{
+		m_transform[0] = m_transform[1];
+		m_modified = false;
+	}
 }
 
 }

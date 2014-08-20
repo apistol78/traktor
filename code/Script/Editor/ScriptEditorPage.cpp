@@ -256,7 +256,27 @@ bool ScriptEditorPage::dropInstance(db::Instance* instance, const ui::Point& pos
 
 bool ScriptEditorPage::handleCommand(const ui::Command& command)
 {
-	if (command == L"Editor.Find")
+	if (command == L"Editor.Undo")
+	{
+		if (m_document->undo())
+		{
+			m_script = m_document->getObject< Script >(0);
+			m_edit->setText(m_script->getText());
+			updateDependencyList();
+			updateDependentList();
+		}
+	}
+	else if (command == L"Editor.Redo")
+	{
+		if (m_document->redo())
+		{
+			m_script = m_document->getObject< Script >(0);
+			m_edit->setText(m_script->getText());
+			updateDependencyList();
+			updateDependentList();
+		}
+	}
+	else if (command == L"Editor.Find")
 	{
 		ui::custom::InputDialog::Field fields[] =
 		{
@@ -574,6 +594,7 @@ void ScriptEditorPage::eventDependencyToolClick(ui::custom::ToolBarButtonClickEv
 		if (scriptInstance)
 		{
 			m_script->addDependency(scriptInstance->getGuid());
+			m_document->push();
 			updateDependencyList();
 		}
 	}
@@ -584,6 +605,7 @@ void ScriptEditorPage::eventDependencyToolClick(ui::custom::ToolBarButtonClickEv
 		{
 			std::vector< Guid >& dependencies = m_script->getDependencies();
 			dependencies.erase(dependencies.begin() + selectedIndex);
+			m_document->push();
 			updateDependencyList();
 		}
 	}
@@ -594,6 +616,7 @@ void ScriptEditorPage::eventDependencyToolClick(ui::custom::ToolBarButtonClickEv
 		{
 			std::vector< Guid >& dependencies = m_script->getDependencies();
 			std::swap(dependencies[selectedIndex - 1], dependencies[selectedIndex]);
+			m_document->push();
 			updateDependencyList();
 			m_dependencyList->select(selectedIndex - 1);
 		}
@@ -605,6 +628,7 @@ void ScriptEditorPage::eventDependencyToolClick(ui::custom::ToolBarButtonClickEv
 		{
 			std::vector< Guid >& dependencies = m_script->getDependencies();
 			std::swap(dependencies[selectedIndex + 1], dependencies[selectedIndex]);
+			m_document->push();
 			updateDependencyList();
 			m_dependencyList->select(selectedIndex + 1);
 		}
@@ -691,26 +715,32 @@ void ScriptEditorPage::eventScriptDoubleClick(ui::MouseDoubleClickEvent* event)
 
 void ScriptEditorPage::eventTimer(ui::TimerEvent* event)
 {
-	T_ASSERT (m_scriptManager);
-
-	if (--m_compileCountDown == 0 && m_scriptManager)
+	if (--m_compileCountDown == 0)
 	{
-		// Take snapshot of script and try to compile it.
-		std::wstring script;
-		m_preprocessor->evaluate(m_edit->getText(), script);
+		// This is triggered by script change; push for undo here
+		// as we don't want to keep pushing for all input.
+		if (m_document)
+			m_document->push();
 
-		if (m_scriptManager->compile(L"", script, 0, this))
+		if (m_scriptManager)
 		{
-			// Reset error status.
-			m_compileStatus->setText(L"");
-			m_edit->setErrorHighlight(-1);
+			// Take snapshot of script and try to compile it.
+			std::wstring script;
+			m_preprocessor->evaluate(m_edit->getText(), script);
 
-			if (m_scriptOutline)
+			if (m_scriptManager->compile(L"", script, 0, this))
 			{
-				m_outlineGrid->removeAllRows();
+				// Reset error status.
+				m_compileStatus->setText(L"");
+				m_edit->setErrorHighlight(-1);
 
-				Ref< IScriptOutline::Node > on = m_scriptOutline->parse(script);
-				buildOutlineGrid(m_outlineGrid, 0, on);
+				if (m_scriptOutline)
+				{
+					m_outlineGrid->removeAllRows();
+
+					Ref< IScriptOutline::Node > on = m_scriptOutline->parse(script);
+					buildOutlineGrid(m_outlineGrid, 0, on);
+				}
 			}
 		}
 	}

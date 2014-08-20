@@ -126,6 +126,7 @@ void registerInputClasses(script::IScriptManager* scriptManager)
 	classInputMapping->addMethod("isStatePressed", &input::InputMapping::isStatePressed);
 	classInputMapping->addMethod("isStateReleased", &input::InputMapping::isStateReleased);
 	classInputMapping->addMethod("hasStateChanged", &input::InputMapping::hasStateChanged);
+	classInputMapping->addMethod("getIdleDuration", &input::InputMapping::getIdleDuration);
 	scriptManager->registerClass(classInputMapping);
 
 	Ref< script::AutoScriptClass< input::IInputSource > > classInputSource = new script::AutoScriptClass< input::IInputSource >();

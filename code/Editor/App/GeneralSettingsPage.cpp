@@ -49,6 +49,10 @@ bool GeneralSettingsPage::create(ui::Container* parent, PropertyGroup* settings,
 	m_checkBuildWhenAssetModified->create(container, i18n::Text(L"EDITOR_SETTINGS_BUILD_WHEN_ASSET_MODIFIED"));
 	m_checkBuildWhenAssetModified->setChecked(settings->getProperty< PropertyBoolean >(L"Editor.BuildWhenAssetModified"));
 
+	m_checkBuildAfterBrowseInstance = new ui::CheckBox();
+	m_checkBuildAfterBrowseInstance->create(container, i18n::Text(L"EDITOR_SETTINGS_BUILD_AFTER_BROWSE_INSTANCE"));
+	m_checkBuildAfterBrowseInstance->setChecked(settings->getProperty< PropertyBoolean >(L"Editor.BuildAfterBrowseInstance"));
+
 	parent->setText(i18n::Text(L"EDITOR_SETTINGS_GENERAL"));
 	return true;
 }
@@ -64,6 +68,7 @@ bool GeneralSettingsPage::apply(PropertyGroup* settings)
 	settings->setProperty< PropertyBoolean >(L"Editor.AutoSave", m_checkAutoSave->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Editor.BuildWhenSourceModified", m_checkBuildWhenSourceModified->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Editor.BuildWhenAssetModified", m_checkBuildWhenAssetModified->isChecked());
+	settings->setProperty< PropertyBoolean >(L"Editor.BuildAfterBrowseInstance", m_checkBuildAfterBrowseInstance->isChecked());
 	return true;
 }
 

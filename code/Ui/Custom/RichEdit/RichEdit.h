@@ -77,10 +77,6 @@ public:
 
 	void placeCaret(int32_t offset);
 
-	bool redo();
-
-	bool undo();
-
 	bool copy();
 
 	bool paste();

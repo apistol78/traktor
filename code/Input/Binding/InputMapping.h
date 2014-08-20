@@ -55,7 +55,7 @@ public:
 		const InputMappingStateData* stateData
 	);
 
-	void update(float dT);
+	void update(float dT, bool inputEnable);
 
 	void reset();
 
@@ -93,6 +93,8 @@ public:
 	bool hasStateChanged(const std::wstring& id) const;
 
 	// \}
+
+	float getIdleDuration() const;
 	
 private:
 	Ref< DeviceControlManager > m_deviceControlManager;
@@ -100,6 +102,7 @@ private:
 	RefArray< IInputFilter > m_filters;
 	std::map< std::wstring, Ref< InputState > > m_states;
 	InputValueSet m_valueSet;
+	float m_idleTimer;
 	float m_T;
 };
 	

@@ -27,13 +27,11 @@ public:
 
 	void step();
 
-	const Transform& get() const { return m_transform[1 - m_index]; }
+	const Transform& get() const { return m_transform[1]; }
 
 private:
 	Transform m_transform[2];
-	int32_t m_index;
-	bool m_step;
-	bool m_first;
+	bool m_modified;
 };
 
 }

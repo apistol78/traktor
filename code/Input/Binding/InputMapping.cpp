@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
 #include "Input/Binding/DeviceControlManager.h"
 #include "Input/Binding/IInputFilter.h"
 #include "Input/Binding/IInputSource.h"
@@ -17,7 +18,8 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputMapping", InputMapping, Object)
 
 InputMapping::InputMapping()
-:	m_T(0.0f)
+:	m_idleTimer(0.0f)
+,	m_T(0.0f)
 {
 }
 
@@ -70,38 +72,49 @@ bool InputMapping::create(
 	return true;
 }
 
-void InputMapping::update(float dT)
+void InputMapping::update(float dT, bool inputEnable)
 {
-	// Update device control manager.
-	m_deviceControlManager->update();
+	m_idleTimer += dT;
 
-	// Update value set with state's current values.
-	for (std::map< std::wstring, Ref< InputState > >::iterator i = m_states.begin(); i != m_states.end(); ++i)
+	if (inputEnable)
 	{
-		float value = i->second->getValue();
-		m_valueSet.set(i->first, value);
-	}
+		// Update device control manager.
+		m_deviceControlManager->update();
+
+		// Update value set with state's current values.
+		for (std::map< std::wstring, Ref< InputState > >::iterator i = m_states.begin(); i != m_states.end(); ++i)
+		{
+			float value = i->second->getValue();
+			m_valueSet.set(i->first, value);
+		}
 	
-	// Prepare all sources for a new state.
-	for (std::map< std::wstring, Ref< IInputSource > >::iterator i = m_sources.begin(); i != m_sources.end(); ++i)
-		i->second->prepare(m_T, dT);
+		// Prepare all sources for a new state.
+		for (std::map< std::wstring, Ref< IInputSource > >::iterator i = m_sources.begin(); i != m_sources.end(); ++i)
+			i->second->prepare(m_T, dT);
 	
-	// Input value set by updating all sources.
-	for (std::map< std::wstring, Ref< IInputSource > >::iterator i = m_sources.begin(); i != m_sources.end(); ++i)
-	{
-		float value = i->second->read(m_T, dT);
-		m_valueSet.set(i->first, value);
-	}
+		// Input value set by updating all sources.
+		for (std::map< std::wstring, Ref< IInputSource > >::iterator i = m_sources.begin(); i != m_sources.end(); ++i)
+		{
+			float value = i->second->read(m_T, dT);
+
+			// Reset idle timer when value change.
+			float currentValue = m_valueSet.get(i->first);
+			if (abs(currentValue - value) > FUZZY_EPSILON)
+				m_idleTimer = 0.0f;
+
+			m_valueSet.set(i->first, value);
+		}
 	
-	// Filter values.
-	for (RefArray< IInputFilter >::iterator i = m_filters.begin(); i != m_filters.end(); ++i)
-		(*i)->evaluate(m_valueSet);
+		// Filter values.
+		for (RefArray< IInputFilter >::iterator i = m_filters.begin(); i != m_filters.end(); ++i)
+			(*i)->evaluate(m_valueSet);
 		
-	// Update states.
-	for (std::map< std::wstring, Ref< InputState > >::iterator i = m_states.begin(); i != m_states.end(); ++i)
-		i->second->update(m_valueSet, m_T, dT);
+		// Update states.
+		for (std::map< std::wstring, Ref< InputState > >::iterator i = m_states.begin(); i != m_states.end(); ++i)
+			i->second->update(m_valueSet, m_T, dT);
 		
-	m_T += dT;
+		m_T += dT;
+	}
 }
 
 void InputMapping::reset()
@@ -195,6 +208,11 @@ bool InputMapping::hasStateChanged(const std::wstring& id) const
 {
 	InputState* state = getState(id);
 	return state ? state->hasChanged() : false;
+}
+
+float InputMapping::getIdleDuration() const
+{
+	return m_idleTimer;
 }
 
 	}

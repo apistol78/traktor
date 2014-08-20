@@ -72,7 +72,6 @@ bool RichEdit::create(Widget* parent, const std::wstring& text, int32_t style)
 	m_attributes.push_back(attrib);
 
 	setText(text);
-	updateScrollBars();
 
 	CHECK;
 
@@ -86,10 +85,14 @@ void RichEdit::setText(const std::wstring& text)
 
 	if (!text.empty())
 	{
-		StringSplit< std::wstring > ss(replaceAll< std::wstring >(text, L"\n\r", L"\n"), L"\n");
-		for (StringSplit< std::wstring >::const_iterator i = ss.begin(); i != ss.end(); ++i)
+		std::wstring tmp = replaceAll< std::wstring >(text, L"\n\r", L"\n");
+		
+		size_t i = 0;
+		while (i < tmp.length())
 		{
-			const std::wstring& ln = *i;
+			size_t j = tmp.find(L'\n', i);
+
+			std::wstring ln = (j != tmp.npos) ? tmp.substr(i, j - i) : tmp.substr(i);
 
 			Line line;
 			line.start = m_text.size();
@@ -98,6 +101,11 @@ void RichEdit::setText(const std::wstring& text)
 
 			m_text.insert(m_text.end(), ln.begin(), ln.end());
 			m_text.push_back(L'\n');
+
+			if (j != tmp.npos)
+				i = j + 1;
+			else
+				break;
 		}
 	}
 	else
@@ -111,6 +119,15 @@ void RichEdit::setText(const std::wstring& text)
 
 	m_meta.clear();
 	m_meta.resize(m_text.size(), 0);
+
+	m_selectionStart =
+	m_selectionStop = -1;
+
+	int32_t lastOffset = int32_t(m_text.size());
+	if (m_caret >= lastOffset)
+		m_caret = lastOffset;
+
+	updateScrollBars();
 }
 	
 std::wstring RichEdit::getText() const
@@ -224,7 +241,8 @@ void RichEdit::clear(bool attributes, bool images, bool content)
 
 void RichEdit::insert(const std::wstring& text)
 {
-	for (std::wstring::const_iterator i = text.begin(); i != text.end(); ++i)
+	std::wstring tmp = replaceAll< std::wstring >(text, L"\r\n", L"\n");
+	for (std::wstring::const_iterator i = tmp.begin(); i != tmp.end(); ++i)
 		insertCharacter(*i);
 }
 
@@ -355,16 +373,6 @@ void RichEdit::placeCaret(int32_t offset)
 {
 	m_caret = offset;
 	update();
-}
-
-bool RichEdit::redo()
-{
-	return false;
-}
-
-bool RichEdit::undo()
-{
-	return false;
 }
 
 bool RichEdit::copy()
@@ -754,41 +762,35 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 		break;
 	}
 
-	if ((event->getKeyState() & KsShift) != 0)
+	// If caret moved while holding "shift" key then expand selection range.
+	if (caretMovement && (event->getKeyState() & KsShift) != 0)
 	{
-		if (caretMovement)
+		if (m_selectionStart < 0)
 		{
-			if (m_selectionStart < 0)
-			{
-				m_selectionStart = std::min(caret, m_caret);
-				m_selectionStop = std::max(caret, m_caret);
-			}
-			else
-			{
-				bool caretAtSelectionHead = bool(caret == m_selectionStart);
-				bool caretAtSelectionTail = bool(caret == m_selectionStop);
-
-				if (caretAtSelectionHead && !caretAtSelectionTail)
-					m_selectionStart = m_caret;
-				else if (!caretAtSelectionHead && caretAtSelectionTail)
-					m_selectionStop = m_caret;
-				else
-				{
-					m_selectionStart = std::min(m_selectionStart, m_caret);
-					m_selectionStop = std::max(m_selectionStop, m_caret);
-				}
-
-				if (m_selectionStart > m_selectionStop)
-					std::swap(m_selectionStart, m_selectionStop);
-			}
+			m_selectionStart = std::min(caret, m_caret);
+			m_selectionStop = std::max(caret, m_caret);
 		}
 		else
 		{
-			m_selectionStart =
-			m_selectionStop = -1;
+			bool caretAtSelectionHead = bool(caret == m_selectionStart);
+			bool caretAtSelectionTail = bool(caret == m_selectionStop);
+
+			if (caretAtSelectionHead && !caretAtSelectionTail)
+				m_selectionStart = m_caret;
+			else if (!caretAtSelectionHead && caretAtSelectionTail)
+				m_selectionStop = m_caret;
+			else
+			{
+				m_selectionStart = std::min(m_selectionStart, m_caret);
+				m_selectionStop = std::max(m_selectionStop, m_caret);
+			}
+
+			if (m_selectionStart > m_selectionStop)
+				std::swap(m_selectionStart, m_selectionStop);
 		}
 	}
-	else if (event->getKeyState() == KsNone)
+	// If caret moved but no "shift" key held, discard selection.
+	else if (caretMovement)
 	{
 		m_selectionStart =
 		m_selectionStop = -1;
