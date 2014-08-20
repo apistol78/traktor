@@ -1115,9 +1115,36 @@ bool emitPow(HlslContext& cx, Pow* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
 	HlslVariable* exponent = cx.emitInput(node, L"Exponent");
+	
+	const Node* inputNode = cx.getInputNode(node, L"Input");
+	if (!inputNode)
+		return false;
+
+	if (const Scalar* inputScalar = dynamic_type_cast< const Scalar* >(inputNode))
+	{
+		if (abs(inputScalar->get() - 2.0f) < FUZZY_EPSILON)
+		{
+			// 2 as base; emit exp2 intrinsic instead of pow as it's more efficient.
+			HlslType type = std::max< HlslType >(exponent->getType(), HtFloat);
+			HlslVariable* out = cx.emitOutput(node, L"Output", type);
+			assign(cx, f, out) << L"exp2(" << exponent->cast(type) << L");" << Endl;
+			return true;
+		}
+		else if (abs(inputScalar->get() - 2.718f) < FUZZY_EPSILON)
+		{
+			// e as base; emit exp intrinsic instead of pow as it's more efficient.
+			HlslType type = std::max< HlslType >(exponent->getType(), HtFloat);
+			HlslVariable* out = cx.emitOutput(node, L"Output", type);
+			assign(cx, f, out) << L"exp(" << exponent->cast(type) << L");" << Endl;
+			return true;
+		}
+	}
+
+	// Non-trivial base.	
 	HlslVariable* in = cx.emitInput(node, L"Input");
 	if (!exponent || !in)
 		return false;
+
 	HlslType type = std::max< HlslType >(exponent->getType(), in->getType());
 	HlslVariable* out = cx.emitOutput(node, L"Output", type);
 	assign(cx, f, out) << L"pow(" << in->cast(type) << L", " << exponent->cast(type) << L");" << Endl;

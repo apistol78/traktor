@@ -902,6 +902,12 @@ Ref< db::Instance > EditorForm::browseInstance(const IBrowseFilter* filter)
 		dlgBrowse.destroy();
 	}
 
+	if (instance)
+	{
+		if (m_mergedSettings->getProperty< PropertyBoolean >(L"Editor.BuildAfterBrowseInstance"))
+			buildAsset(instance->getGuid(), false);
+	}
+
 	return instance;
 }
 
@@ -1168,6 +1174,7 @@ void EditorForm::setActiveEditorPage(IEditorPage* editorPage)
 	}
 
 	updateAdditionalPanelMenu();
+	updateTitle();
 }
 
 bool EditorForm::createWorkspace()
@@ -1861,6 +1868,9 @@ void EditorForm::updateTitle()
 		ss << targetTitle << L" - ";
 
 	ss << c_title;
+
+	if (m_activeDocument && m_activeDocument->getInstanceCount() > 0)
+		ss << L" - " << m_activeDocument->getInstance(0)->getPath();
 
 	setText(ss.str());
 }

@@ -210,6 +210,12 @@ void InputServer::update(float deltaTime, bool renderViewActive)
 				m_inputMapping->reset();
 			m_inputActive = true;
 		}
+
+		// Massage input mapping even if input is disabled; this
+		// is to let mapping handle timers etc.
+		if (m_inputMapping)
+			m_inputMapping->update(deltaTime, false);
+
 		return;
 	}
 
@@ -217,7 +223,7 @@ void InputServer::update(float deltaTime, bool renderViewActive)
 	{
 		// Normal condition; update mapping and proceed.
 		if (m_inputMapping)
-			m_inputMapping->update(deltaTime);
+			m_inputMapping->update(deltaTime, true);
 	}
 	else if (m_inputFabricatorAbortDevice)
 	{
@@ -238,7 +244,7 @@ void InputServer::update(float deltaTime, bool renderViewActive)
 
 					m_inputMapping->create(m_inputSystem, m_inputMappingSourceData, m_inputMappingStateData);
 					m_inputMapping->setValue(L"GLOBAL_MOUSE_SENSITIVITY", m_mouseSensitivity);
-					m_inputMapping->update(deltaTime);
+					m_inputMapping->update(deltaTime, true);
 				}
 				else
 					m_inputMapping = 0;
@@ -281,7 +287,7 @@ void InputServer::update(float deltaTime, bool renderViewActive)
 
 				m_inputMapping->create(m_inputSystem, m_inputMappingSourceData, m_inputMappingStateData);
 				m_inputMapping->setValue(L"GLOBAL_MOUSE_SENSITIVITY", m_mouseSensitivity);
-				m_inputMapping->update(deltaTime);
+				m_inputMapping->update(deltaTime, true);
 			}
 			else
 				m_inputMapping = 0;
@@ -415,7 +421,7 @@ bool InputServer::resetInputSource(const std::wstring& sourceId)
 
 		m_inputMapping->create(m_inputSystem, m_inputMappingSourceData, m_inputMappingStateData);
 		m_inputMapping->setValue(L"GLOBAL_MOUSE_SENSITIVITY", m_mouseSensitivity);
-		m_inputMapping->update(1.0f / 30.0f);
+		m_inputMapping->update(1.0f / 30.0f, true);
 	}
 	else
 		m_inputMapping = 0;
@@ -458,7 +464,7 @@ void InputServer::revert()
 
 		m_inputMapping->create(m_inputSystem, m_inputMappingSourceData, m_inputMappingStateData);
 		m_inputMapping->setValue(L"GLOBAL_MOUSE_SENSITIVITY", m_mouseSensitivity);
-		m_inputMapping->update(1.0f / 60.0f);
+		m_inputMapping->update(1.0f / 60.0f, true);
 	}
 	else
 		m_inputMapping = 0;

@@ -401,6 +401,10 @@
       <second>Build when asset modified</second>
     </item>
     <item>
+      <first>EDITOR_SETTINGS_BUILD_AFTER_BROWSE_INSTANCE</first>
+      <second>Build after browe instance</second>
+    </item>    
+    <item>
       <first>EDITOR_SETTINGS_COLOR</first>
       <second>Colors</second>
     </item>

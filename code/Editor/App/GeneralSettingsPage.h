@@ -36,6 +36,7 @@ private:
 	Ref< ui::CheckBox > m_checkAutoSave;
 	Ref< ui::CheckBox > m_checkBuildWhenSourceModified;
 	Ref< ui::CheckBox > m_checkBuildWhenAssetModified;
+	Ref< ui::CheckBox > m_checkBuildAfterBrowseInstance;
 };
 
 	}
