@@ -1,3 +1,4 @@
+#include <cmath>
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Input/Binding/DeviceControlManager.h"
@@ -99,7 +100,7 @@ void InputMapping::update(float dT, bool inputEnable)
 
 			// Reset idle timer when value change.
 			float currentValue = m_valueSet.get(i->first);
-			if (abs(currentValue - value) > FUZZY_EPSILON)
+			if (std::abs(currentValue - value) > FUZZY_EPSILON)
 				m_idleTimer = 0.0f;
 
 			m_valueSet.set(i->first, value);
