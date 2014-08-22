@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
 #include "Core/Misc/Adler32.h"
 #include "Core/Misc/String.h"
 #include "Render/VertexElement.h"
