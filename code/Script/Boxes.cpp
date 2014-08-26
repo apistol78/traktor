@@ -71,6 +71,7 @@ BoxedAllocator< BoxedPlane, 256 > s_allocBoxedPlane;
 BoxedAllocator< BoxedTransform, 32768 > s_allocBoxedTransform;
 BoxedAllocator< BoxedAabb3, 64 > s_allocBoxedAabb3;
 BoxedAllocator< BoxedFrustum, 16 > s_allocBoxedFrustum;
+BoxedAllocator< BoxedMatrix44, 16 > s_allocBoxedMatrix44;
 BoxedAllocator< BoxedColor4f, 16 > s_allocBoxedColor4f;
 BoxedAllocator< BoxedColor4ub, 16 > s_allocBoxedColor4ub;
 BoxedAllocator< BoxedRefArray, 512 > s_allocBoxedRefArray;
@@ -254,6 +255,11 @@ BoxedQuaternion::BoxedQuaternion(const Vector4& from, const Vector4& to)
 {
 }
 
+BoxedQuaternion::BoxedQuaternion(const Matrix44& m)
+:	m_value(m)
+{
+}
+
 Quaternion BoxedQuaternion::normalized() const
 {
 	return m_value.normalized();
@@ -377,6 +383,11 @@ BoxedTransform::BoxedTransform(const Vector4& translation, const Quaternion& rot
 {
 }
 
+BoxedTransform::BoxedTransform(const Matrix44& m)
+:	m_value(m)
+{
+}
+
 const Vector4& BoxedTransform::translation() const
 {
 	return m_value.translation();
@@ -420,6 +431,11 @@ Plane BoxedTransform::planeZ() const
 Transform BoxedTransform::inverse() const
 {
 	return m_value.inverse();
+}
+
+Matrix44 BoxedTransform::toMatrix44() const
+{
+	return m_value.toMatrix44();
 }
 
 Transform BoxedTransform::concat(const Transform& t) const
@@ -573,6 +589,146 @@ void* BoxedFrustum::operator new (size_t size)
 void BoxedFrustum::operator delete (void* ptr)
 {
 	s_allocBoxedFrustum.free(ptr);
+}
+
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Matrix44", BoxedMatrix44, Boxed)
+
+BoxedMatrix44::BoxedMatrix44()
+{
+}
+
+BoxedMatrix44::BoxedMatrix44(const Matrix44& value)
+:	m_value(value)
+{
+}
+
+BoxedMatrix44::BoxedMatrix44(const Vector4& axisX, const Vector4& axisY, const Vector4& axisZ, const Vector4& translation)
+:	m_value(axisX, axisY, axisZ, translation)
+{
+}
+
+Vector4 BoxedMatrix44::axisX() const
+{
+	return m_value.axisX();
+}
+
+Vector4 BoxedMatrix44::axisY() const
+{
+	return m_value.axisY();
+}
+
+Vector4 BoxedMatrix44::axisZ() const
+{
+	return m_value.axisZ();
+}
+
+Plane BoxedMatrix44::planeX() const
+{
+	return Plane(m_value.axisX(), m_value.translation());
+}
+
+Plane BoxedMatrix44::planeY() const
+{
+	return Plane(m_value.axisY(), m_value.translation());
+}
+
+Plane BoxedMatrix44::planeZ() const
+{
+	return Plane(m_value.axisZ(), m_value.translation());
+}
+
+Vector4 BoxedMatrix44::translation() const
+{
+	return m_value.translation();
+}
+
+Vector4 BoxedMatrix44::diagonal() const
+{
+	return m_value.diagonal();
+}
+
+bool BoxedMatrix44::isOrtho() const
+{
+	return m_value.isOrtho();
+}
+
+float BoxedMatrix44::determinant() const
+{
+	return m_value.determinant();
+}
+
+Matrix44 BoxedMatrix44::transpose() const
+{
+	return m_value.transpose();
+}
+
+Matrix44 BoxedMatrix44::inverse() const
+{
+	return m_value.inverse();
+}
+
+void BoxedMatrix44::setColumn(int c, const Vector4& v)
+{
+	m_value.set(c, v);
+}
+
+Vector4 BoxedMatrix44::getColumn(int c)
+{
+	return m_value.get(c);
+}
+
+void BoxedMatrix44::setRow(int r, const Vector4& v)
+{
+	m_value.set(r, 0, v.x());
+	m_value.set(r, 1, v.x());
+	m_value.set(r, 2, v.x());
+	m_value.set(r, 3, v.x());
+}
+
+Vector4 BoxedMatrix44::getRow(int r)
+{
+	return Vector4(
+		m_value.get(r, 0),
+		m_value.get(r, 1),
+		m_value.get(r, 2),
+		m_value.get(r, 3)
+	);
+}
+
+void BoxedMatrix44::set(int r, int c, float v)
+{
+	m_value.set(r, c, Scalar(v));
+}
+
+float BoxedMatrix44::get(int r, int c) const
+{
+	return m_value.get(r, c);
+}
+
+Matrix44 BoxedMatrix44::concat(const Matrix44& t) const
+{
+	return m_value * t;
+}
+
+Vector4 BoxedMatrix44::transform(const Vector4& v) const
+{
+	return m_value * v;
+}
+
+std::wstring BoxedMatrix44::toString() const
+{
+	return L"(matrix44)";
+}
+
+void* BoxedMatrix44::operator new (size_t size)
+{
+	return s_allocBoxedMatrix44.alloc();
+}
+
+void BoxedMatrix44::operator delete (void* ptr)
+{
+	s_allocBoxedMatrix44.free(ptr);
 }
 
 
@@ -882,6 +1038,7 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedQuaternion->addConstructor< const Vector4&, float >();
 	classBoxedQuaternion->addConstructor< float, float, float >();
 	classBoxedQuaternion->addConstructor< const Vector4&, const Vector4& >();
+	classBoxedQuaternion->addConstructor< const Matrix44& >();
 	classBoxedQuaternion->addMethod("x", &BoxedQuaternion::x);
 	classBoxedQuaternion->addMethod("y", &BoxedQuaternion::y);
 	classBoxedQuaternion->addMethod("z", &BoxedQuaternion::z);
@@ -918,6 +1075,7 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	Ref< AutoScriptClass< BoxedTransform > > classBoxedTransform = new AutoScriptClass< BoxedTransform >();
 	classBoxedTransform->addConstructor();
 	classBoxedTransform->addConstructor< const Vector4&, const Quaternion& >();
+	classBoxedTransform->addConstructor< const Matrix44& >();
 	classBoxedTransform->addMethod("translation", &BoxedTransform::translation);
 	classBoxedTransform->addMethod("rotation", &BoxedTransform::rotation);
 	classBoxedTransform->addMethod("axisX", &BoxedTransform::axisX);
@@ -927,6 +1085,7 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedTransform->addMethod("planeY", &BoxedTransform::planeY);
 	classBoxedTransform->addMethod("planeZ", &BoxedTransform::planeZ);
 	classBoxedTransform->addMethod("inverse", &BoxedTransform::inverse);
+	classBoxedTransform->addMethod("toMatrix44", &BoxedTransform::toMatrix44);
 	classBoxedTransform->addMethod("concat", &BoxedTransform::concat);
 	classBoxedTransform->addMethod("transform", &BoxedTransform::transform);
 	classBoxedTransform->addStaticMethod("identity", &BoxedTransform::identity);
@@ -964,6 +1123,35 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedFrustum->addMethod("getCorner", &BoxedFrustum::getCorner);
 	classBoxedFrustum->addMethod("getCenter", &BoxedFrustum::getCenter);
 	scriptManager->registerClass(classBoxedFrustum);
+
+	Ref< AutoScriptClass< BoxedMatrix44 > > classBoxedMatrix44 = new AutoScriptClass< BoxedMatrix44 >();
+	classBoxedMatrix44->addConstructor();
+	classBoxedMatrix44->addConstructor< const Vector4&, const Vector4&, const Vector4&, const Vector4& >();
+	classBoxedMatrix44->addMethod("axisX", &BoxedMatrix44::axisX);
+	classBoxedMatrix44->addMethod("axisY", &BoxedMatrix44::axisY);
+	classBoxedMatrix44->addMethod("axisZ", &BoxedMatrix44::axisZ);
+	classBoxedMatrix44->addMethod("planeX", &BoxedMatrix44::planeX);
+	classBoxedMatrix44->addMethod("planeY", &BoxedMatrix44::planeY);
+	classBoxedMatrix44->addMethod("planeZ", &BoxedMatrix44::planeZ);
+	classBoxedMatrix44->addMethod("translation", &BoxedMatrix44::translation);
+	classBoxedMatrix44->addMethod("diagonal", &BoxedMatrix44::diagonal);
+	classBoxedMatrix44->addMethod("isOrtho", &BoxedMatrix44::isOrtho);
+	classBoxedMatrix44->addMethod("determinant", &BoxedMatrix44::determinant);
+	classBoxedMatrix44->addMethod("transpose", &BoxedMatrix44::transpose);
+	classBoxedMatrix44->addMethod("inverse", &BoxedMatrix44::inverse);
+	classBoxedMatrix44->addMethod("setColumn", &BoxedMatrix44::setColumn);
+	classBoxedMatrix44->addMethod("getColumn", &BoxedMatrix44::getColumn);
+	classBoxedMatrix44->addMethod("setRow", &BoxedMatrix44::setRow);
+	classBoxedMatrix44->addMethod("getRow", &BoxedMatrix44::getRow);
+	classBoxedMatrix44->addMethod("set", &BoxedMatrix44::set);
+	classBoxedMatrix44->addMethod("get", &BoxedMatrix44::get);
+	classBoxedMatrix44->addMethod("concat", &BoxedMatrix44::concat);
+	classBoxedMatrix44->addMethod("transform", &BoxedMatrix44::transform);
+	classBoxedMatrix44->addStaticMethod("zero", &BoxedMatrix44::zero);
+	classBoxedMatrix44->addStaticMethod("identity", &BoxedMatrix44::identity);
+	classBoxedMatrix44->addOperator< Vector4, const Vector4& >('*', &BoxedMatrix44::transform);
+	classBoxedMatrix44->addOperator< Matrix44, const Matrix44& >('*', &BoxedMatrix44::concat);
+	scriptManager->registerClass(classBoxedMatrix44);
 
 	Ref< AutoScriptClass< BoxedColor4f > > classBoxedColor4f = new AutoScriptClass< BoxedColor4f >();
 	classBoxedColor4f->addConstructor();
