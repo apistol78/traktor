@@ -49,8 +49,12 @@ private:
 	Ref< ui::custom::ToolBar > m_debuggerTools;
 	Ref< ui::custom::GridView > m_callStackGrid;
 	Ref< ui::custom::GridView > m_localsGrid;
+	CallStack m_callStack;
+	int32_t m_activeFrame;
 
 	Ref< ui::custom::GridRow > createVariableRow(const script::Local* local);
+
+	void updateLocals(int32_t depth);
 
 	/*! \name IScriptDebugger::IListener */
 	/*! \{ */
@@ -60,6 +64,8 @@ private:
 	/*! \} */
 
 	void eventDebuggerToolClick(ui::custom::ToolBarButtonClickEvent* event);
+
+	void eventCallStackGridDoubleClick(ui::MouseDoubleClickEvent* event);
 };
 
 	}

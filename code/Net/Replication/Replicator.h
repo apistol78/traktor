@@ -122,19 +122,27 @@ public:
 
 	/*! \brief
 	 */
+	IListener* addListener(IListener* listener);
+
+	/*! \brief
+	 */
+	void removeListener(IListener* listener);
+
+	/*! \brief
+	 */
 	void removeAllListeners();
 
 	/*! \brief
 	 */
-	void addListener(IListener* listener);
+	IEventListener* addEventListener(const TypeInfo& eventType, IEventListener* eventListener);
+
+	/*! \brief
+	 */
+	void removeEventListener(IEventListener* eventListener);
 
 	/*! \brief
 	 */
 	void removeAllEventListeners();
-
-	/*! \brief
-	 */
-	void addEventListener(const TypeInfo& eventType, IEventListener* eventListener);
 
 	/*! \brief
 	 *

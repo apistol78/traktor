@@ -1573,6 +1573,26 @@
       <second>Auto-build entity when drag'n'drop</second>
     </item>
     <item>
+      <first>SCRIPT_EDITOR_DEBUG_FUNCTION</first>
+      <second>Function</second>
+    </item>
+    <item>
+      <first>SCRIPT_EDITOR_DEBUG_LINE</first>
+      <second>Line</second>
+    </item>
+    <item>
+      <first>SCRIPT_EDITOR_DEBUG_SCRIPT</first>
+      <second>Script</second>
+    </item>
+    <item>
+      <first>SCRIPT_EDITOR_DEBUG_LOCAL_NAME</first>
+      <second>Name</second>
+    </item>
+    <item>
+      <first>SCRIPT_EDITOR_DEBUG_LOCAL_VALUE</first>
+      <second>Value</second>
+    </item>
+    <item>
       <first>SCRIPT_EDITOR_ADD_DEPENDENCY</first>
       <second>Add dependency</second>
     </item>

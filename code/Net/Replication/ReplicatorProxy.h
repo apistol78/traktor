@@ -108,6 +108,7 @@ private:
 	{
 		double time;
 		uint32_t size;
+		uint32_t count;
 		RMessage msg;
 	};
 
@@ -126,7 +127,7 @@ private:
 	double m_stateTime0;
 	uint8_t m_sequence;
 	std::list< Event > m_events;
-	CircularVector< uint8_t, 32 > m_lastEvents;
+	CircularVector< uint8_t, 128 > m_lastEvents;
 	float m_distance;
 	double m_timeUntilTxPing;
 	double m_timeUntilTxState;

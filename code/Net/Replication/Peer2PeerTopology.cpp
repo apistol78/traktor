@@ -488,9 +488,7 @@ bool Peer2PeerTopology::update(double dT)
 				{
 					T_ASSERT (targetIndex != myIndex);
 					if (!m_provider->send(m_peers[targetIndex].send, &msg, nrecv))
-					{
-						// error
-					}
+						log::info << getLogPrefix() << L"Unable to relay message to peer " << msg.relay.target << L" through " << m_peers[targetIndex].send << L"; message discarded." << Endl;
 				}
 			}
 		}
