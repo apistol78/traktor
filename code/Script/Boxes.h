@@ -8,6 +8,7 @@
 #include "Core/Math/Color4f.h"
 #include "Core/Math/Color4ub.h"
 #include "Core/Math/Frustum.h"
+#include "Core/Math/Matrix44.h"
 #include "Core/Math/Quaternion.h"
 #include "Core/Math/Range.h"
 #include "Core/Math/Transform.h"
@@ -240,6 +241,8 @@ public:
 	explicit BoxedQuaternion(float head, float pitch, float bank);
 
 	explicit BoxedQuaternion(const Vector4& from, const Vector4& to);
+
+	explicit BoxedQuaternion(const Matrix44& m);
 	
 	float x() const { return m_value.e.x(); }
 	
@@ -332,6 +335,8 @@ public:
 	explicit BoxedTransform(const Transform& value);
 	
 	explicit BoxedTransform(const Vector4& translation, const Quaternion& rotation);
+
+	explicit BoxedTransform(const Matrix44& m);
 	
 	const Vector4& translation() const;
 	
@@ -350,6 +355,8 @@ public:
 	Plane planeZ() const;
 
 	Transform inverse() const;
+
+	Matrix44 toMatrix44() const;
 
 	Transform concat(const Transform& t) const;
 
@@ -455,6 +462,73 @@ public:
 
 private:
 	Frustum m_value;
+};
+
+class T_DLLCLASS BoxedMatrix44 : public RefCountImpl< Boxed >
+{
+	T_RTTI_CLASS;
+
+public:
+	BoxedMatrix44();
+
+	explicit BoxedMatrix44(const Matrix44& value);
+
+	explicit BoxedMatrix44(const Vector4& axisX, const Vector4& axisY, const Vector4& axisZ, const Vector4& translation);
+
+	Vector4 axisX() const;
+
+	Vector4 axisY() const;
+
+	Vector4 axisZ() const;
+
+	Plane planeX() const;
+
+	Plane planeY() const;
+
+	Plane planeZ() const;
+
+	Vector4 translation() const;
+
+	Vector4 diagonal() const;
+
+	bool isOrtho() const;
+
+	float determinant() const;
+
+	Matrix44 transpose() const;
+
+	Matrix44 inverse() const;
+
+	void setColumn(int c, const Vector4& v);
+
+	Vector4 getColumn(int c);
+
+	void setRow(int r, const Vector4& v);
+
+	Vector4 getRow(int r);
+
+	void set(int r, int c, float v);
+
+	float get(int r, int c) const;
+
+	Matrix44 concat(const Matrix44& t) const;
+
+	Vector4 transform(const Vector4& v) const;
+
+	static Matrix44 zero() { return Matrix44::zero(); }
+
+	static Matrix44 identity() { return Matrix44::identity(); }
+
+	const Matrix44& unbox() const { return m_value; }
+
+	virtual std::wstring toString() const;
+
+	void* operator new (size_t size);
+
+	void operator delete (void* ptr);
+
+private:
+	Matrix44 m_value;
 };
 
 class T_DLLCLASS BoxedColor4f : public RefCountImpl< Boxed >
@@ -920,6 +994,34 @@ struct CastAny < const Frustum&, false >
 	}	
 	static Frustum get(const Any& value) {
 		return checked_type_cast< BoxedFrustum*, false >(value.getObject())->unbox();
+	}
+};
+
+template < >
+struct CastAny < Matrix44, false >
+{
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedMatrix44 >(value.getObjectUnsafe());
+	}
+	static Any set(const Matrix44& value) {
+		return Any::fromObject(new BoxedMatrix44(value));
+	}	
+	static Matrix44 get(const Any& value) {
+		return checked_type_cast< BoxedMatrix44*, false >(value.getObject())->unbox();
+	}
+};
+
+template < >
+struct CastAny < const Matrix44&, false >
+{
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedMatrix44 >(value.getObjectUnsafe());
+	}
+	static Any set(const Matrix44& value) {
+		return Any::fromObject(new BoxedMatrix44(value));
+	}	
+	static Matrix44 get(const Any& value) {
+		return checked_type_cast< BoxedMatrix44*, false >(value.getObject())->unbox();
 	}
 };
 
