@@ -457,7 +457,9 @@ bool AnimationEditorPage::handleCommand(const ui::Command& command)
 
 		Animation::KeyPose keyPose;
 		keyPose.at = time;
-		m_animation->getPose(time, keyPose.pose);
+
+		int32_t indexHint = -1;
+		m_animation->getPose(time, false, indexHint, keyPose.pose);
 		m_animation->addKeyPose(keyPose);
 
 		updateRenderWidgets();
@@ -595,7 +597,9 @@ bool AnimationEditorPage::calculateRelativeTwist(int poseIndex, int boneIndex, f
 void AnimationEditorPage::drawSkeleton(float time, const Color4ub& defaultColor, const Color4ub& selectedColor, bool drawAxis) const
 {
 	Pose pose;
-	m_animation->getPose(time, pose);
+
+	int32_t indexHint = -1;
+	m_animation->getPose(time, false, indexHint, pose);
 
 	AlignedVector< Transform > boneTransforms;
 	calculatePoseTransforms(
@@ -961,7 +965,9 @@ void AnimationEditorPage::eventRenderPaint(ui::PaintEvent* event)
 
 			// Update picker volumes.
 			Pose pose;
-			m_animation->getPose(time, pose);
+
+			int32_t indexHint = -1;
+			m_animation->getPose(time, false, indexHint, pose);
 
 			AlignedVector< Transform > boneTransforms;
 			calculatePoseTransforms(

@@ -18,6 +18,7 @@ namespace traktor
 	{
 
 class Heightfield;
+class MaterialMask;
 
 	}
 
@@ -51,6 +52,8 @@ public:
 
 	const resource::Proxy< hf::Heightfield >& getHeightfield() const { return m_heightfield; }
 
+	const resource::Proxy< hf::MaterialMask >& getMaterialMask() const { return m_materialMask; }
+
 	const resource::Proxy< render::ISimpleTexture >& getColorMap() const { return m_colorMap; }
 
 	const resource::Proxy< render::ISimpleTexture >& getNormalMap() const { return m_normalMap; }
@@ -76,6 +79,7 @@ private:
 	uint32_t m_detailSkip;
 	uint32_t m_patchDim;
 	resource::Proxy< hf::Heightfield > m_heightfield;
+	resource::Proxy< hf::MaterialMask > m_materialMask;
 	resource::Proxy< render::ISimpleTexture > m_colorMap;
 	resource::Proxy< render::ISimpleTexture > m_normalMap;
 	resource::Proxy< render::ISimpleTexture > m_heightMap;

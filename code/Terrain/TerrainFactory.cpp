@@ -1,5 +1,6 @@
 #include "Database/Database.h"
 #include "Heightfield/Heightfield.h"
+#include "Heightfield/MaterialMask.h"
 #include "Render/ISimpleTexture.h"
 #include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
@@ -51,6 +52,12 @@ Ref< Object > TerrainFactory::create(resource::IResourceManager* resourceManager
 
 	if (!resourceManager->bind(terrainResource->getHeightfield(), terrain->m_heightfield))
 		return 0;
+
+	if (terrainResource->getMaterialMask())
+	{
+		if (!resourceManager->bind(terrainResource->getMaterialMask(), terrain->m_materialMask))
+			return 0;
+	}
 
 	if (terrainResource->getColorMap())
 	{

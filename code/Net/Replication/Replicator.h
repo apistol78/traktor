@@ -1,13 +1,13 @@
 #ifndef traktor_net_Replicator_H
 #define traktor_net_Replicator_H
 
-#include <list>
 #include <map>
+#include "Core/Object.h"
 #include "Core/RefArray.h"
-#include "Core/Containers/CircularVector.h"
 #include "Core/Math/Transform.h"
-#include "Core/Serialization/ISerializable.h"
-#include "Net/Replication/ReplicatorTypes.h"
+#include "Core/Timer/Timer.h"
+#include "Net/Replication/INetworkTopology.h"
+#include "Net/Replication/NetworkTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,17 +19,19 @@
 
 namespace traktor
 {
+
+class ISerializable;
+
 	namespace net
 	{
 
-//#define T_PROFILE_REPLICATOR
-
-class IReplicatorPeers;
-struct Message;
+class ReplicatorProxy;
 class State;
 class StateTemplate;
 
-class T_DLLCLASS Replicator : public Object
+class T_DLLCLASS Replicator
+:	public Object
+,	public INetworkTopology::INetworkCallback
 {
 	T_RTTI_CLASS;
 
@@ -43,16 +45,27 @@ public:
 		{
 			ReConnected = 1,
 			ReDisconnected = 2,
-			ReBroadcastEvent = 3,
-			ReState = 4,
-			ReLost = 5
+			ReState = 3
 		};
 
 		virtual void notify(
 			Replicator* replicator,
 			float eventTime,
 			uint32_t eventId,
-			handle_t peerHandle,
+			ReplicatorProxy* proxy,
+			const Object* eventObject
+		) = 0;
+	};
+
+	class T_DLLCLASS IEventListener : public Object
+	{
+		T_RTTI_CLASS;
+
+	public:
+		virtual void notify(
+			Replicator* replicator,
+			float eventTime,
+			ReplicatorProxy* fromProxy,
 			const Object* eventObject
 		) = 0;
 	};
@@ -62,27 +75,19 @@ public:
 		float nearDistance;
 		float farDistance;
 		float furthestDistance;
-		int32_t nearTimeUntilTx;
-		int32_t farTimeUntilTx;
-		int32_t timeUntilIAm;
-		int32_t timeUntilPing;
-		uint32_t maxErrorCount;
-		uint32_t maxDeltaStates;
+		float timeUntilTxStateNear;
+		float timeUntilTxStateFar;
+		float timeUntilTxPing;
 		float maxExtrapolationDelta;
-		bool deltaCompression;
 
 		Configuration()
 		:	nearDistance(8.0f)
 		,	farDistance(90.0f)
 		,	furthestDistance(120.0f)
-		,	nearTimeUntilTx(100)
-		,	farTimeUntilTx(300)
-		,	timeUntilIAm(500)
-		,	timeUntilPing(2000)
-		,	maxErrorCount(120)
-		,	maxDeltaStates(4)
-		,	maxExtrapolationDelta(0.6f)
-		,	deltaCompression(false)
+		,	timeUntilTxStateNear(0.1f)
+		,	timeUntilTxStateFar(0.3f)
+		,	timeUntilTxPing(1.0f)
+		,	maxExtrapolationDelta(1.0f)
 		{
 		}
 	};
@@ -93,7 +98,7 @@ public:
 
 	/*! \brief
 	 */
-	bool create(IReplicatorPeers* replicatorPeers, const Configuration& configuration);
+	bool create(INetworkTopology* topology, const Configuration& configuration);
 
 	/*! \brief
 	 */
@@ -125,23 +130,21 @@ public:
 
 	/*! \brief
 	 */
-	void reset();
+	void removeAllEventListeners();
+
+	/*! \brief
+	 */
+	void addEventListener(const TypeInfo& eventType, IEventListener* eventListener);
 
 	/*! \brief
 	 *
-	 * \param T Time since application started.
-	 * \param dT Delta time since last update.
 	 * \return True if still connected.
 	 */
-	bool update(float T, float dT);
-
-	/*! \brief Get our handle.
-	 */
-	handle_t getHandle() const;
+	bool update();
 
 	/*! \brief Get our name.
 	 */
-	std::wstring getName() const;
+	const std::wstring& getName() const;
 
 	/*! \brief Set our status.
 	 */
@@ -150,6 +153,10 @@ public:
 	/*! \brief Get our status.
 	 */
 	uint8_t getStatus() const;
+
+	/*! \brief
+	 */
+	bool isPrimary() const;
 
 	/*! \brief Set our origin.
 	 *
@@ -171,266 +178,58 @@ public:
 	 */
 	void setState(const State* state);
 
-	/*! \brief Send high priority event to a single peer.
+	/*! \brief Get state.
 	 */
-	void sendEvent(handle_t peerHandle, const ISerializable* eventObject);
+	const State* getState() const;
+
+	/*! \
+	 */
+	uint32_t getProxyCount() const;
+
+	/*! \
+	 */
+	ReplicatorProxy* getProxy(uint32_t index) const;
+
+	/*! \
+	 */
+	ReplicatorProxy* getPrimaryProxy() const;
 
 	/*! \brief Broadcast high priority event to all peers.
 	 */
-	void broadcastEvent(const ISerializable* eventObject);
+	bool broadcastEvent(const ISerializable* eventObject);
 
-	/*! \brief Set acceptance of primary transfer requests.
+	/*! \brief Send high priority event to primary peer.
 	 */
-	void setAcceptPrimaryRequests(bool acceptPrimaryRequest);
-
-	/*! \brief Request becoming primary peer.
-	 */
-	void requestPrimary();
-
-	/*! \brief
-	 */
-	bool isPrimary() const;
-
-	/*! \brief
-	 */
-	uint32_t getPeerCount() const;
-
-	/*! \brief
-	 */
-	handle_t getPeerHandle(uint32_t peerIndex) const;
-
-	/*! \brief Get peer name.
-	 */
-	std::wstring getPeerName(handle_t peerHandle) const;
-
-	/*! \brief Get peer end site object.
-	 */
-	Object* getPeerEndSite(handle_t peerHandle) const;
-
-	/*! \brief Get peer status.
-	 */
-	uint8_t getPeerStatus(handle_t peerHandle) const;
-
-	/*! \brief Get peer minimum latency.
-	 * \return Latency in milliseconds.
-	 */
-	int32_t getPeerLatency(handle_t peerHandle) const;
-
-	/*! \brief Get peer reversed minimum latency of myself.
-	 * \return Latency in milliseconds.
-	 */
-	int32_t getPeerReversedLatency(handle_t peerHandle) const;
-
-	/*! \brief Get best peer reversed minimum latency of myself.
-	 * \return Latency in milliseconds.
-	 */
-	int32_t getBestReversedLatency() const;
-
-	/*! \brief Get worst peer reversed minimum latency of myself.
-	 * \return Latency in milliseconds.
-	 */
-	int32_t getWorstReversedLatency() const;
-
-	/*! \brief Check if peer is connected.
-	 */
-	bool isPeerConnected(handle_t peerHandle) const;
-
-	/*! \brief Check if peer is relayed.
-	 */
-	bool isPeerRelayed(handle_t peerHandle) const;
-
-	/*! \brief Set primary peer; only valid if we're primary in the first place.
-	 */
-	bool setPeerPrimary(handle_t peerHandle);
-
-	/*! \brief Get handle of primary peer.
-	 *
-	 * \return Primary peer handle.
-	 */
-	handle_t getPrimaryPeerHandle() const;
-
-	/*! \brief Check if peer is primary.
-	 */
-	bool isPeerPrimary(handle_t peerHandle) const;
-
-	/*! \brief Check if all peers are connected.
-	 */
-	bool areAllPeersConnected() const;
-
-	/*! \brief Attach an object to a ghost peer.
-	 *
-	 * This permits attaching user objects to ghost
-	 * peers at anytime.
-	 */
-	void setGhostObject(handle_t peerHandle, Object* ghostObject);
-
-	/*! \brief
-	 */
-	Object* getGhostObject(handle_t peerHandle) const;
-
-	/*! \brief Set ghost origin.
-	 *
-	 * Ghost origin is used to determine which frequency
-	 * of transmission to use for each peer.
-	 */
-	void setGhostOrigin(handle_t peerHandle, const Transform& origin);
-
-	/*!
-	 */
-	void setGhostStateTemplate(handle_t peerHandle, const StateTemplate* stateTemplate);
-
-	const StateTemplate* getGhostStateTemplate(handle_t peerHandle) const;
-
-	float getGhostStateTime(handle_t peerHandle) const;
-
-	Ref< const State > getGhostState(handle_t peerHandle, float T) const;
-
-	/*! \brief Get loopback state.
-	 *
-	 * Loopback state is our own state but mangled
-	 * through the state template to enable
-	 * debugging of packing/unpacking of state variables.
-	 */
-	Ref< const State > getLoopBackState() const;
-
-	/*! \brief Get state.
-	 */
-	const State* getState() const { return m_state; }
+	bool sendEventToPrimary(const ISerializable* eventObject);
 
 	/*! \brief Get network time.
 	 */
-	float getTime() const { return m_time / 1000.0f; }
+	double getTime() const;
 
 private:
-	enum
-	{
-		MaxRoundTrips = 17,
-		Adjustments = 7
-	};
+	friend class ReplicatorProxy;
 
-	struct EventIn
-	{
-		int32_t time;
-		uint32_t eventId;
-		handle_t handle;
-		Ref< const Object > object;
-	};
-
-	struct EventOut
-	{
-		uint32_t eventId;
-		handle_t handle;
-		Ref< const ISerializable > object;
-	};
-
-	struct Ghost
-	{
-		Transform origin;
-		Ref< Object > object;
-		Ref< const StateTemplate > stateTemplate;
-		Ref< const State > Sn2;
-		Ref< const State > Sn1;
-		Ref< const State > S0;
-		int32_t Tn2;
-		int32_t Tn1;
-		int32_t T0;
-	};
-
-	enum PeerState
-	{
-		PsInitial,
-		PsEstablished,
-		PsDisconnected
-	};
-
-	struct Peer
-	{
-		PeerState state;
-		std::wstring name;
-		Object* endSite;
-		Ghost* ghost;
-		bool direct;
-		bool criticalEnable;
-		uint8_t status;
-		int32_t timeUntilTx;
-		int32_t lastTimeLocal;
-		int32_t lastTimeRemote;
-		CircularVector< int32_t, MaxRoundTrips > roundTrips;
-		CircularVector< int32_t, Adjustments > timeOffsets;
-		int32_t latencyMedian;
-		int32_t latencyReversed;
-		int32_t lastPongTime;
-		int32_t stateCount;
-		int32_t errorCount;
-		Ref< const State > iframe;
-
-		Peer()
-		:	state(PsInitial)
-		,	endSite(0)
-		,	ghost(0)
-		,	direct(false)
-		,	criticalEnable(true)
-		,	status(0)
-		,	timeUntilTx(0)
-		,	lastTimeLocal(0)
-		,	lastTimeRemote(0)
-		,	latencyMedian(0)
-		,	latencyReversed(0)
-		,	lastPongTime(0)
-		,	stateCount(0)
-		,	errorCount(0)
-		{
-		}
-	};
-
-	uint32_t m_id;
+	Ref< INetworkTopology > m_topology;
 	Configuration m_configuration;
 	std::vector< const TypeInfo* > m_eventTypes;
-	Ref< IReplicatorPeers > m_replicatorPeers;
 	RefArray< IListener > m_listeners;
+	std::map< const TypeInfo*, RefArray< IEventListener > > m_eventListeners;
+	std::wstring m_name;
+	Timer m_timer;
+	double m_time0;				/*!< Local time. */
+	double m_time;				/*!< Network latency compensated time. */
 	uint8_t m_status;
+	bool m_allowPrimaryRequests;
 	Transform m_origin;
 	Ref< const StateTemplate > m_stateTemplate;
 	Ref< const State > m_state;
-	std::map< handle_t, Peer > m_peers;
-	std::list< EventIn > m_eventsIn;
-	std::list< EventOut > m_eventsOut;
-	int32_t m_time0;
-	int32_t m_time;
-	int32_t m_pingCount;
-	int32_t m_timeUntilPing;
-	double m_lastT;
-	bool m_acceptPrimaryRequest;
+	RefArray< ReplicatorProxy > m_proxies;
 
-	void updatePeers(int32_t dT);
+	std::wstring getLogPrefix() const;
 
-	void sendState(int32_t dT);
+	virtual bool nodeConnected(INetworkTopology* topology, net_handle_t node);
 
-	void sendEvents();
-
-	void sendPings(int32_t dT);
-
-	void receiveMessages();
-
-	void updateTimeSynchronization();
-
-	void dispatchEventListeners();
-
-	bool sendIAm(handle_t peerHandle, uint8_t sequence, uint32_t id);
-
-	bool sendBye(handle_t peerHandle);
-
-	bool sendPing(handle_t peerHandle);
-
-	bool sendPong(handle_t peerHandle, int32_t time0);
-
-	bool sendRequestPrimary(handle_t peerHandle);
-
-	void adjustTime(int32_t offset);
-
-	bool send(handle_t peerHandle, const Message* msg, uint32_t size, bool reliable);
-
-	int32_t receive(Message* msg, handle_t& outPeerHandle);
+	virtual bool nodeDisconnected(INetworkTopology* topology, net_handle_t node);
 };
 
 	}

@@ -33,10 +33,9 @@ uint64_t Atomic::exchange(uint64_t& s, uint64_t v)
 
 int32_t Atomic::compareAndSwap(int32_t& value, int32_t compareTo, int32_t replaceWithIfEqual)
 {
-	int32_t old = value;
 	if (value == compareTo)
 		value = replaceWithIfEqual;
-	return old;
+	return value;
 }
 
 }

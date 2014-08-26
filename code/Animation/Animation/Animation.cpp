@@ -116,12 +116,57 @@ const Animation::KeyPose& Animation::getLastKeyPose() const
 	return m_poses.back();
 }
 
-bool Animation::getPose(float at, Pose& outPose) const
+bool Animation::getPose(float at, bool linear, int32_t& indexHint, Pose& outPose) const
 {
 	size_t nposes = m_poses.size();
 	if (nposes > 2)
 	{
-		outPose = Hermite< KeyPose, Pose, KeyPoseAccessor, ClampTime >(&m_poses[0], nposes).evaluate(at);
+		if (!linear)
+			outPose = Hermite< KeyPose, Pose, KeyPoseAccessor, ClampTime >(&m_poses[0], nposes).evaluate(at);
+		else
+		{
+			int32_t index = -1;
+
+			if (indexHint >= 0 && indexHint < nposes - 1)
+			{
+				float Tkey0 = m_poses[indexHint].at;
+				float Tkey1 = m_poses[indexHint + 1].at;
+				if (at >= Tkey0 && at <= Tkey1)
+					index = indexHint;
+				else if (at > Tkey1 && indexHint < nposes - 2)
+					index = indexHint + 1;
+			}
+
+			if (index < 0)
+			{
+				int32_t index0 = 0;
+				int32_t index1 = int32_t(nposes - 2);
+
+				while (index0 < index1)
+				{
+					index = (index0 + index1) / 2;
+
+					float Tkey0 = m_poses[index].at;
+					float Tkey1 = m_poses[index + 1].at;
+
+					if (at < Tkey0)
+						index1 = index - 1;
+					else if (at > Tkey1)
+						index0 = index + 1;
+					else
+						break;
+				}
+			}
+
+			blendPoses(
+				&m_poses[index].pose,
+				&m_poses[index + 1].pose,
+				Scalar((at - m_poses[index].at) / (m_poses[index + 1].at - m_poses[index].at)),
+				&outPose
+				);
+
+			indexHint = index;
+		}
 		return true;
 	}
 	else if (nposes > 1)

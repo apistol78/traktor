@@ -2,6 +2,7 @@
 #include "Amalgam/Editor/EditorPlugin.h"
 #include "Amalgam/Editor/HostEnumerator.h"
 #include "Amalgam/Editor/Platform.h"
+#include "Amalgam/Editor/ProfilerDialog.h"
 #include "Amalgam/Editor/Target.h"
 #include "Amalgam/Editor/TargetConfiguration.h"
 #include "Amalgam/Editor/TargetConnection.h"
@@ -460,6 +461,11 @@ void EditorPlugin::eventTargetListCapture(TargetCaptureEvent* event)
 		TargetConnection* connection = connections[connectionId];
 		T_ASSERT (connection);
 
+		Ref< ProfilerDialog > profilerDialog = new ProfilerDialog(connection);
+		profilerDialog->create(m_parent);
+		profilerDialog->show();
+
+		/*
 		connection->getTransport()->send(new CaptureScreenShot());
 
 		Ref< CapturedScreenShot > capturedScreenShot;
@@ -483,6 +489,7 @@ void EditorPlugin::eventTargetListCapture(TargetCaptureEvent* event)
 		}
 		else
 			log::error << L"Timeout while capturing screenshot" << Endl;
+		*/
 	}
 }
 

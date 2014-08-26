@@ -48,7 +48,7 @@ public:
 
 	virtual bool prepareContext(StateContext& outContext) = 0;
 
-	virtual void evaluate(const StateContext& context, Pose& outPose) = 0;
+	virtual void evaluate(StateContext& context, Pose& outPose) = 0;
 
 	virtual void serialize(ISerializer& s);
 

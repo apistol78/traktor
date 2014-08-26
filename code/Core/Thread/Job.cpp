@@ -6,7 +6,7 @@
 #include "Core/Thread/Atomic.h"
 #include "Core/Thread/Event.h"
 #include "Core/Thread/Job.h"
-#include "Core/Thread/Semaphore.h"
+#include "Core/Thread/SpinLock.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 
@@ -32,7 +32,7 @@ public:
 	void* alloc(uint32_t size)
 	{
 		T_ASSERT_M (size <= MaxJobSize, L"Allocation size too big");
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_allocatorLock);
+		T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_allocatorLock);
 		void* ptr = m_blockAllocator.alloc();
 		if (!ptr)
 			T_FATAL_ERROR;
@@ -47,7 +47,7 @@ public:
 		if (!ptr)
 			return;
 
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_allocatorLock);
+		T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_allocatorLock);
 		bool result = m_blockAllocator.free(ptr);
 		T_ASSERT_M (result, L"Invalid pointer");
 #if defined(_DEBUG)
@@ -64,7 +64,7 @@ private:
 
 	void* m_block;
 	BlockAllocator m_blockAllocator;
-	Semaphore m_allocatorLock;
+	SpinLock m_allocatorLock;
 #if defined(_DEBUG)
 	int32_t m_count;
 #endif
