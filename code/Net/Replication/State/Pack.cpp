@@ -1,5 +1,5 @@
 #include "Core/Math/Const.h"
-#include "Net/Replication/Pack.h"
+#include "Net/Replication/State/Pack.h"
 
 namespace traktor
 {

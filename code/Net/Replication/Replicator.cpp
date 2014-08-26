@@ -1,19 +1,11 @@
-#include <cstring>
 #include "Core/Io/MemoryStream.h"
 #include "Core/Log/Log.h"
-#include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
-#include "Core/Math/Random.h"
-#include "Core/Memory/IAllocator.h"
-#include "Core/Memory/MemoryConfig.h"
-#include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/String.h"
 #include "Core/Serialization/CompactSerializer.h"
-#include "Core/Thread/Thread.h"
-#include "Core/Thread/ThreadManager.h"
-#include "Core/Timer/Timer.h"
-#include "Net/Replication/IReplicatorPeers.h"
-#include "Net/Replication/Message.h"
 #include "Net/Replication/Replicator.h"
+#include "Net/Replication/ReplicatorProxy.h"
+#include "Net/Replication/ReplicatorTypes.h"
 #include "Net/Replication/State/State.h"
 #include "Net/Replication/State/StateTemplate.h"
 
@@ -24,48 +16,23 @@ namespace traktor
 		namespace
 		{
 
-const handle_t c_broadcastHandle = 0UL;
-const int32_t c_initialTimeOffset = 50;
-const int32_t c_maxPongTime = 10000;			// N millisecond(s) since last pong reply indicate failure.
-
-Timer g_timer;
-Random g_random;
-
-#define T_REPLICATOR_DEBUG(x) traktor::log::info << x << traktor::Endl
-
-struct PredHandle
-{
-	handle_t handle;
-
-	PredHandle(handle_t handle_)
-	:	handle(handle_)
-	{
-	}
-
-	bool operator () (const IReplicatorPeers::PeerInfo info) const
-	{
-		return info.handle == handle;
-	}
-};
-
+const double c_maxDeltaTime = 0.1f;
+		
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.Replicator", Replicator, Object)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.Replicator.IListener", Replicator::IListener, Object)
 
+T_IMPLEMENT_RTTI_CLASS(L"traktor.net.Replicator.IEventListener", Replicator::IEventListener, Object)
+
 Replicator::Replicator()
-:	m_id(0)
+:	m_time0(0.0)
+,	m_time(0.0)
 ,	m_status(0)
+,	m_allowPrimaryRequests(true)
 ,	m_origin(Transform::identity())
-,	m_time0(0)
-,	m_time(0)
-,	m_pingCount(0)
-,	m_timeUntilPing(0)
-,	m_lastT(0.0)
-,	m_acceptPrimaryRequest(true)
 {
-	m_id = uint32_t(g_timer.getElapsedTime());
 }
 
 Replicator::~Replicator()
@@ -73,71 +40,25 @@ Replicator::~Replicator()
 	destroy();
 }
 
-bool Replicator::create(IReplicatorPeers* replicatorPeers, const Configuration& configuration)
+bool Replicator::create(INetworkTopology* topology, const Configuration& configuration)
 {
-	std::vector< IReplicatorPeers::PeerInfo > info;
-
+	m_topology = topology;
+	m_topology->setCallback(this);
 	m_configuration = configuration;
-	m_replicatorPeers = replicatorPeers;
-	m_state = 0;
-
-	m_replicatorPeers->update();
-	m_replicatorPeers->getPeers(info);
-
-	// Discard any pending data.
-	for (;;)
-	{
-		Message discard;
-		handle_t fromHandle;
-
-		if (receive(&discard, fromHandle) <= 0)
-			break;
-	}
-
-	// Create non-established entries for each peer.
-	for (std::vector< IReplicatorPeers::PeerInfo >::const_iterator i = info.begin(); i != info.end(); ++i)
-	{
-		Peer& peer = m_peers[i->handle];
-		peer.state = PsInitial;
-		peer.name = i->name;
-		peer.endSite = i->endSite;
-	}
-
-	m_lastT = g_timer.getElapsedTime();
+	m_timer.start();
 	return true;
 }
 
 void Replicator::destroy()
 {
-	if (!m_peers.empty())
+	removeAllEventTypes();
+	removeAllListeners();
+
+	if (m_topology)
 	{
-		// Send Bye message to all peers.
-		for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
-		{
-			if (i->second.state == PsEstablished)
-				sendBye(i->first);
-		}
-
-		// Delete all peer control.
-		for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
-		{
-			if (i->second.ghost)
-			{
-				i->second.ghost->~Ghost();
-				getAllocator()->free(i->second.ghost);
-				i->second.ghost = 0;
-			}
-		}
+		m_topology->setCallback(0);
+		m_topology = 0;
 	}
-
-	m_peers.clear();
-	m_eventsIn.clear();
-	m_eventsOut.clear();
-	m_listeners.clear();
-	m_eventTypes.clear();
-
-	safeDestroy(m_replicatorPeers);
-	m_state = 0;
 }
 
 void Replicator::setConfiguration(const Configuration& configuration)
@@ -162,7 +83,7 @@ void Replicator::addEventType(const TypeInfo& eventType)
 
 void Replicator::removeAllListeners()
 {
-	m_listeners.resize(0);
+	m_listeners.clear();
 }
 
 void Replicator::addListener(IListener* listener)
@@ -170,93 +91,246 @@ void Replicator::addListener(IListener* listener)
 	m_listeners.push_back(listener);
 }
 
-void Replicator::reset()
+void Replicator::removeAllEventListeners()
 {
-	m_origin = Transform::identity();
+	m_eventListeners.clear();
+}
 
-	m_stateTemplate = 0;
-	m_state = 0;
+void Replicator::addEventListener(const TypeInfo& eventType, IEventListener* eventListener)
+{
+	m_eventListeners[&eventType].push_back(eventListener);
+}
 
-	for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
+bool Replicator::update()
+{
+	RMessage msg;
+	RMessage reply;
+	net_handle_t from;
+
+	double dT = std::min(m_timer.getDeltaTime(), c_maxDeltaTime);
+
+	// Update underlying network topology layer.
+	if (!m_topology->update(dT))
+		return false;
+
+	// Send ping to proxies.
 	{
-		Peer& p = i->second;
-		p.state = PsInitial;
-		p.endSite = 0;
-		p.ghost = 0;
-		p.timeUntilTx = 0;
-		p.stateCount = 0;
-		p.errorCount = 0;
-		p.iframe = 0;
+		msg.id = RmiPing;
+		msg.time = time2net(m_time0);
+		msg.ping.status = m_status;
+
+		for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+		{
+			if (((*i)->m_timeUntilTxPing -= dT) <= 0.0)
+			{
+				m_topology->send((*i)->m_handle, &msg, RmiPing_NetSize());
+				(*i)->m_timeUntilTxPing = m_configuration.timeUntilTxPing;
+			}
+		}
 	}
 
-	m_eventsIn.clear();
-	m_eventsOut.clear();
+	// Send our state to proxies.
+	if (m_stateTemplate && m_state)
+	{
+		msg.id = RmiState;
+		msg.time = time2net(m_time);
+	
+		uint32_t stateDataSize = m_stateTemplate->pack(
+			m_state,
+			msg.state.data,
+			RmiState_MaxStateSize()
+		);
+
+		for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+		{
+			if (((*i)->m_timeUntilTxState -= dT) <= 0.0)
+			{
+				m_topology->send((*i)->m_handle, &msg, RmiState_NetSize(stateDataSize));
+
+				Vector4 direction = (*i)->m_origin.translation() - m_origin.translation();
+				Scalar distance = direction.length();
+
+				float t = clamp((distance - m_configuration.nearDistance) / (m_configuration.farDistance - m_configuration.nearDistance), 0.0f, 1.0f);
+
+				(*i)->m_distance = distance;
+				(*i)->m_timeUntilTxState = lerp(m_configuration.timeUntilTxStateNear, m_configuration.timeUntilTxStateFar, t);
+			}
+		}
+	}
+
+	double timeOffset = 0.0;
+
+	// Receive messages.
+	for (;;)
+	{
+		int32_t nrecv = m_topology->recv(&msg, sizeof(msg), from);
+		if (nrecv <= 0)
+			break;
+
+		Ref< ReplicatorProxy > fromGhost;
+		for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+		{
+			if ((*i)->m_handle == from)
+			{
+				fromGhost = *i;
+				break;
+			}
+		}
+
+		if (!fromGhost)
+		{
+			log::error << getLogPrefix() << L"Received message from unknown proxy " << from << L"; message ignored." << Endl;
+			continue;
+		}
+
+		if (msg.id == RmiPing)
+		{
+			fromGhost->m_status = msg.ping.status;
+
+			reply.id = RmiPong;
+			reply.time = time2net(m_time0);
+			reply.pong.time0 = msg.time;
+			reply.pong.latency = time2net(fromGhost->getLatency());
+
+			m_topology->send(fromGhost->m_handle, &reply, RmiPong_NetSize());
+		}
+		else if (msg.id == RmiPong)
+		{
+			double pingTime = min(m_time0, net2time(msg.pong.time0));
+			double roundTrip = m_time0 - pingTime;
+			double reverseLatency = net2time(msg.pong.latency);
+
+			fromGhost->updateLatency(roundTrip, reverseLatency);
+		}
+		else if (msg.id == RmiState)
+		{
+			if (fromGhost->receivedState(net2time(msg.time), msg.state.data, RmiState_StateSize(nrecv)))
+			{
+				double latency = fromGhost->getLatency();
+				timeOffset = std::max(
+					net2time(msg.time) + latency - m_time,
+					timeOffset
+				);
+
+				for (RefArray< IListener >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
+				{
+					(*i)->notify(
+						this,
+						float(net2time(msg.time)),
+						IListener::ReState,
+						fromGhost,
+						fromGhost->m_state0
+					);
+				}
+			}
+		}
+		else if (msg.id == RmiEvent)
+		{
+			double latency = fromGhost->getLatency();
+			timeOffset = std::max(
+				net2time(msg.time) + latency - m_time,
+				timeOffset
+			);
+
+			// Send back event acknowledge.
+			reply.id = RmiEventAck;
+			reply.time = time2net(m_time);
+			reply.eventAck.sequence = msg.event.sequence;
+			m_topology->send(fromGhost->m_handle, &reply, RmiEventAck_NetSize());
+
+			// Unwrap event object.
+			MemoryStream ms(msg.event.data, RmiEvent_EventSize(nrecv), true, false);
+			Ref< ISerializable > eventObject = CompactSerializer(&ms, &m_eventTypes[0], m_eventTypes.size()).readObject< ISerializable >();
+			if (eventObject)
+			{
+				// Prevent resent events from being issued into game.
+				if (fromGhost->isEventNew(msg.event.sequence))
+				{
+					std::map< const TypeInfo*, RefArray< IEventListener > >::const_iterator it = m_eventListeners.find(&type_of(eventObject));
+					if (it != m_eventListeners.end())
+					{
+						//log::info << getLogPrefix() << L"Dispatching event " << int32_t(msg.event.sequence) << L" \"" << type_name(eventObject) << L"\" to " << it->second.size() << L" listener(s)..." << Endl;
+						for (RefArray< IEventListener >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
+						{
+							(*i)->notify(
+								this,
+								float(net2time(msg.time)),
+								fromGhost,
+								eventObject
+							);
+						}
+					}
+				}
+				else
+					log::info << getLogPrefix() << L"Discarding duplicated event " << int32_t(msg.event.sequence) << L" \"" << type_name(eventObject) << L"\"" << Endl;
+			}
+			else if (!m_eventTypes.empty())
+				log::error << getLogPrefix() << L"Unable to unwrap event object; size = " << RmiEvent_EventSize(nrecv) << Endl;
+		}
+		else if (msg.id == RmiEventAck)
+		{
+			double latency = fromGhost->getLatency();
+			timeOffset = std::max(
+				net2time(msg.time) + latency - m_time,
+				timeOffset
+			);
+
+			// Received an event acknowledge; discard event from queue.
+			//log::info << getLogPrefix() << L"Received acknowledge of event " << int32_t(msg.eventAck.sequence) << Endl;
+			fromGhost->receivedEventAcknowledge(msg.eventAck.sequence);
+		}
+	}
+
+	// Update proxy queues.
+	for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+		(*i)->updateEventQueue();
+
+	// Adjust times based from estimated time offset.
+	timeOffset = (timeOffset < 0.03) ? (timeOffset * 0.4) : (timeOffset * 0.8);
+	if (timeOffset > 0.01)
+	{
+		m_time += timeOffset;
+		for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+		{
+			(*i)->m_stateTimeN2 += timeOffset;
+			(*i)->m_stateTimeN1 += timeOffset;
+			(*i)->m_stateTime0 += timeOffset;
+		}
+	}
+
+	m_time += dT;
+	m_time0 += dT;
+
+	return true;
 }
 
-bool Replicator::update(float /*T*/, float /*dT*/)
+const std::wstring& Replicator::getName() const
 {
-	if (!m_replicatorPeers)
-		return false;
-
-	double T = g_timer.getElapsedTime();
-	int32_t idT = int32_t((T - m_lastT) * 1000.0);
-
-	updatePeers(idT);
-
-	if (!m_replicatorPeers)
-		return false;
-
-	sendState(idT);
-	sendEvents();
-	sendPings(idT);
-	receiveMessages();
-	updateTimeSynchronization();
-	dispatchEventListeners();
-
-	m_time0 += idT;
-	m_time += idT;
-	m_lastT = T;
-
-	return bool(m_replicatorPeers != 0);
-}
-
-handle_t Replicator::getHandle() const
-{
-	return m_replicatorPeers->getHandle();
-}
-
-std::wstring Replicator::getName() const
-{
-	return m_replicatorPeers->getName();
+	return m_name;
 }
 
 void Replicator::setStatus(uint8_t status)
 {
-	T_ASSERT (m_replicatorPeers);
-	if (status != m_status)
+	if (m_status != status)
 	{
+		// If status has changed we need to ping our
+		// fellow peers as soon as possible to let them
+		// know about our new status.
+		for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+			(*i)->m_timeUntilTxPing = 0.0;
+
 		m_status = status;
-
-		// Send immediate pings to all established peers as status is a payload of ping.
-		for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
-		{
-			if (!sendPing(i->first))
-			{
-				log::error << L"ERROR: Unable to send ping to peer " << i->second.name << Endl;
-				i->second.errorCount++;
-			}
-		}
-
-		if (m_peers.size() > 0)
-			m_timeUntilPing = m_configuration.timeUntilPing / m_peers.size();
-		else
-			m_timeUntilPing = m_configuration.timeUntilPing;
 	}
 }
 
 uint8_t Replicator::getStatus() const
 {
 	return m_status;
+}
+
+bool Replicator::isPrimary() const
+{
+	return m_topology->getPrimaryHandle() == m_topology->getLocalHandle();
 }
 
 void Replicator::setOrigin(const Transform& origin)
@@ -266,1057 +340,168 @@ void Replicator::setOrigin(const Transform& origin)
 
 void Replicator::setStateTemplate(const StateTemplate* stateTemplate)
 {
-	// Replace template.
 	m_stateTemplate = stateTemplate;
-
-	// Nuke states from previous template.
-	m_state = 0;
-	for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
-		i->second.iframe = 0;
 }
 
 void Replicator::setState(const State* state)
 {
-	T_FATAL_ASSERT (m_stateTemplate);
-
-	// Clear count-down timer if state is critical which
-	// will cause the state to be replicated at next update
-	// to all peers.
+	// If state represent a radical change we need to send
+	// the state to fellow peers as soon as possible.
 	if (state != 0 && m_stateTemplate->critical(m_state, state))
 	{
-		for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
+		for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
 		{
-			Peer& peer = i->second;
-			if (peer.state == PsEstablished && peer.criticalEnable)
-				peer.timeUntilTx = 0.0f;
+			if ((*i)->m_distance < m_configuration.furthestDistance)
+				(*i)->m_timeUntilTxState = 0.0;
 		}
 	}
-
 	m_state = state;
 }
 
-void Replicator::sendEvent(handle_t peerHandle, const ISerializable* eventObject)
+const State* Replicator::getState() const
 {
-	EventOut e;
-	e.eventId = 0;
-	e.handle = peerHandle;
-	e.object = eventObject;
-	m_eventsOut.push_back(e);
+	return m_state;
 }
 
-void Replicator::broadcastEvent(const ISerializable* eventObject)
+uint32_t Replicator::getProxyCount() const
 {
-	EventOut e;
-	e.eventId = 0;
-	e.handle = c_broadcastHandle;
-	e.object = eventObject;
-	m_eventsOut.push_back(e);
+	return m_proxies.size();
 }
 
-void Replicator::setAcceptPrimaryRequests(bool acceptPrimaryRequest)
+ReplicatorProxy* Replicator::getProxy(uint32_t index) const
 {
-	m_acceptPrimaryRequest = acceptPrimaryRequest;
+	return m_proxies[index];
 }
 
-void Replicator::requestPrimary()
+bool Replicator::broadcastEvent(const ISerializable* eventObject)
 {
-	if (!isPrimary())
+	for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+		(*i)->sendEvent(eventObject);
+	return true;
+}
+
+ReplicatorProxy* Replicator::getPrimaryProxy() const
+{
+	for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
 	{
-		handle_t handle = getPrimaryPeerHandle();
-		if (handle != 0)
-			sendRequestPrimary(handle);
-	}
-}
-
-bool Replicator::isPrimary() const
-{
-	return m_replicatorPeers->getPrimaryPeerHandle() == m_replicatorPeers->getHandle();
-}
-
-uint32_t Replicator::getPeerCount() const
-{
-	return uint32_t(m_peers.size());
-}
-
-handle_t Replicator::getPeerHandle(uint32_t peerIndex) const
-{
-	std::map< handle_t, Peer >::const_iterator it = m_peers.begin();
-	std::advance(it, peerIndex);
-	return it->first;
-}
-
-std::wstring Replicator::getPeerName(handle_t peerHandle) const
-{
-	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
-	return i != m_peers.end() ? i->second.name : L"";
-}
-
-Object* Replicator::getPeerEndSite(handle_t peerHandle) const
-{
-	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
-	return i != m_peers.end() ? i->second.endSite : 0;
-}
-
-uint8_t Replicator::getPeerStatus(handle_t peerHandle) const
-{
-	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
-	return i != m_peers.end() ? i->second.status : 0;
-}
-
-int32_t Replicator::getPeerLatency(handle_t peerHandle) const
-{
-	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
-	return i != m_peers.end() ? i->second.latencyMedian : 0;
-}
-
-int32_t Replicator::getPeerReversedLatency(handle_t peerHandle) const
-{
-	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
-	return i != m_peers.end() ? i->second.latencyReversed : 0;
-}
-
-int32_t Replicator::getBestReversedLatency() const
-{
-	int32_t latencyBest = 0;
-	for (std::map< handle_t, Peer >::const_iterator i = m_peers.begin(); i != m_peers.end(); ++i)
-	{
-		if (latencyBest > 0)
-			latencyBest = std::min(latencyBest, i->second.latencyReversed);
-		else
-			latencyBest = i->second.latencyReversed;
-	}
-	return latencyBest;
-}
-
-int32_t Replicator::getWorstReversedLatency() const
-{
-	int32_t latencyWorst = 0;
-	for (std::map< handle_t, Peer >::const_iterator i = m_peers.begin(); i != m_peers.end(); ++i)
-		latencyWorst = std::max(latencyWorst, i->second.latencyReversed);
-	return latencyWorst;
-}
-
-bool Replicator::isPeerConnected(handle_t peerHandle) const
-{
-	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
-	if (i == m_peers.end() || i->second.state != PsEstablished)
-		return false;
-	else
-		return true;
-}
-
-bool Replicator::isPeerRelayed(handle_t peerHandle) const
-{
-	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
-	return i != m_peers.end() ? !i->second.direct : false;
-}
-
-bool Replicator::setPeerPrimary(handle_t peerHandle)
-{
-	T_ASSERT (m_replicatorPeers);
-	return m_replicatorPeers->setPrimaryPeerHandle(peerHandle);
-}
-
-handle_t Replicator::getPrimaryPeerHandle() const
-{
-	for (std::map< handle_t, Peer >::const_iterator i = m_peers.begin(); i != m_peers.end(); ++i)
-	{
-		if (isPeerPrimary(i->first))
-			return i->first;
+		if ((*i)->isPrimary())
+			return *i;
 	}
 	return 0;
 }
 
-bool Replicator::isPeerPrimary(handle_t peerHandle) const
+bool Replicator::sendEventToPrimary(const ISerializable* eventObject)
 {
-	return m_replicatorPeers->getPrimaryPeerHandle() == peerHandle;
+	if (!isPrimary())
+	{
+		// Find primary proxy and send event to it.
+		ReplicatorProxy* primaryProxy = getPrimaryProxy();
+		if (primaryProxy)
+		{
+			primaryProxy->sendEvent(eventObject);
+			return true;
+		}
+		else
+		{
+			log::error << getLogPrefix() << L"Unable to send event " << type_name(eventObject) << L" to primary; no primary found." << Endl;
+			return false;
+		}
+	}
+	else
+	{
+		// We are primary peer; dispatch event directly.
+		std::map< const TypeInfo*, RefArray< IEventListener > >::const_iterator it = m_eventListeners.find(&type_of(eventObject));
+		if (it != m_eventListeners.end())
+		{
+			for (RefArray< IEventListener >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
+			{
+				(*i)->notify(
+					this,
+					float(m_time),
+					0,
+					eventObject
+				);
+			}
+		}
+		return true;
+	}
 }
 
-bool Replicator::areAllPeersConnected() const
+double Replicator::getTime() const
 {
-	for (std::map< handle_t, Peer >::const_iterator i = m_peers.begin(); i != m_peers.end(); ++i)
+	return m_time;
+}
+
+std::wstring Replicator::getLogPrefix() const
+{
+	return L"Replicator: [" + toString(m_topology->getLocalHandle()) + L"] ";
+}
+
+bool Replicator::nodeConnected(INetworkTopology* topology, net_handle_t node)
+{
+	std::wstring name;
+
+	for (int32_t i = 0; i < topology->getNodeCount(); ++i)
 	{
-		if (i->second.state != PsEstablished)
-			return false;
+		if (topology->getNodeHandle(i) == node)
+		{
+			name = topology->getNodeName(i);
+			break;
+		}
 	}
+
+	if (node != m_topology->getLocalHandle())
+	{
+		Ref< ReplicatorProxy > proxy = new ReplicatorProxy(this, node, name);
+		m_proxies.push_back(proxy);
+
+		log::info << getLogPrefix() << L"Proxy for node " << node << L" (" << name << L") created." << Endl;
+
+		for (RefArray< IListener >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
+		{
+			(*i)->notify(
+				this,
+				m_time,
+				IListener::ReConnected,
+				proxy,
+				0
+			);
+		}
+	}
+	else
+	{
+		m_name = name;
+	}
+
 	return true;
 }
 
-void Replicator::setGhostObject(handle_t peerHandle, Object* ghostObject)
+bool Replicator::nodeDisconnected(INetworkTopology* topology, net_handle_t node)
 {
-	std::map< handle_t, Peer >::iterator i = m_peers.find(peerHandle);
-	if (i != m_peers.end() && i->second.ghost)
-		i->second.ghost->object = ghostObject;
-	else
-		T_REPLICATOR_DEBUG(L"ERROR: Trying to set ghost object of unknown peer handle " << int32_t(peerHandle));
-}
-
-Object* Replicator::getGhostObject(handle_t peerHandle) const
-{
-	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
-	if (i != m_peers.end() && i->second.ghost)
-		return i->second.ghost->object;
-	else
+	for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
 	{
-		T_REPLICATOR_DEBUG(L"ERROR: Trying to get ghost object of unknown peer handle " << int32_t(peerHandle));
-		return 0;
-	}
-}
-
-void Replicator::setGhostOrigin(handle_t peerHandle, const Transform& origin)
-{
-	std::map< handle_t, Peer >::iterator i = m_peers.find(peerHandle);
-	if (i != m_peers.end() && i->second.ghost)
-		i->second.ghost->origin = origin;
-	else
-		T_REPLICATOR_DEBUG(L"ERROR: Trying to set ghost origin of unknown peer handle " << int32_t(peerHandle));
-}
-
-void Replicator::setGhostStateTemplate(handle_t peerHandle, const StateTemplate* stateTemplate)
-{
-	std::map< handle_t, Peer >::iterator i = m_peers.find(peerHandle);
-	if (i != m_peers.end() && i->second.ghost)
-	{
-		i->second.ghost->stateTemplate = stateTemplate;
-		i->second.ghost->Sn2 = 0;
-		i->second.ghost->Sn1 = 0;
-		i->second.ghost->S0 = 0;
-		i->second.ghost->Tn2 = 0;
-		i->second.ghost->Tn1 = 0;
-		i->second.ghost->T0 = 0;
-	}
-	else
-		T_REPLICATOR_DEBUG(L"ERROR: Trying to get ghost state of unknown peer handle " << int32_t(peerHandle));
-}
-
-const StateTemplate* Replicator::getGhostStateTemplate(handle_t peerHandle) const
-{
-	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
-	if (i != m_peers.end() && i->second.ghost)
-		return i->second.ghost->stateTemplate;
-	else
-		return 0;
-}
-
-float Replicator::getGhostStateTime(handle_t peerHandle) const
-{
-	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
-	if (i != m_peers.end() && i->second.ghost)
-		return i->second.ghost->T0 / 1000.0f;
-	else
-	{
-		T_REPLICATOR_DEBUG(L"ERROR: Trying to get ghost state of unknown peer handle " << int32_t(peerHandle));
-		return 0.0f;
-	}
-}
-
-Ref< const State > Replicator::getGhostState(handle_t peerHandle, float timeOffset) const
-{
-	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
-	if (i != m_peers.end() && i->second.ghost)
-	{
-		const Peer& peer = i->second;
-
-		float delta = timeOffset - peer.ghost->T0 / 1000.0f;
-		if (abs(delta) > m_configuration.maxExtrapolationDelta)
-			T_REPLICATOR_DEBUG(L"WARNING: Peer " << peer.name << L" extrapolation delta out-of-range, delta = " << delta);
-
-		delta = clamp(delta, -m_configuration.maxExtrapolationDelta, m_configuration.maxExtrapolationDelta);
-		timeOffset = peer.ghost->T0 / 1000.0f + delta;
-
-		const StateTemplate* stateTemplate = peer.ghost->stateTemplate;
-		if (stateTemplate)
-			return stateTemplate->extrapolate(
-				peer.ghost->Sn2,
-				peer.ghost->Tn2 / 1000.0f,
-				peer.ghost->Sn1,
-				peer.ghost->Tn1 / 1000.0f,
-				peer.ghost->S0,
-				peer.ghost->T0 / 1000.0f,
-				timeOffset
-			);
-		else
-			return 0;
-	}
-	else
-	{
-		T_REPLICATOR_DEBUG(L"ERROR: Trying to get ghost state of unknown peer handle " << int32_t(peerHandle));
-		return 0;
-	}
-}
-
-Ref< const State > Replicator::getLoopBackState() const
-{
-	if (m_stateTemplate)
-	{
-		uint8_t data[Message::MessageSize];
-		uint32_t size = m_stateTemplate->pack(m_state, data, sizeof(data));
-		return m_stateTemplate->unpack(data, size);
-	}
-	else
-		return 0;
-}
-
-void Replicator::updatePeers(int32_t dT)
-{
-	std::vector< IReplicatorPeers::PeerInfo > info;
-	info.reserve(m_peers.size());
-
-	// Massage replicator peers back-end first and
-	// then get fresh list of peer handles.
-	if (!m_replicatorPeers->update())
-	{
-		T_REPLICATOR_DEBUG(L"ERROR: Connection to game lost (1)");
-		destroy();
-		return;
-	}
-
-	m_replicatorPeers->getPeers(info);
-
-	// Keep list of un-fresh handles.
-	for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); )
-	{
-		if (std::find_if(info.begin(), info.end(), PredHandle(i->first)) != info.end())
+		if ((*i)->m_handle == node)
 		{
-			++i;
-			continue;
-		}
-
-		Peer& peer = i->second;
-		if (peer.state == PsEstablished)
-		{
-			T_REPLICATOR_DEBUG(L"WARNING: Peer " << i->second.name << L" connection suddenly terminated");
-
-			// Need to notify listeners immediately as peer becomes dismounted.
-			for (RefArray< IListener >::iterator j = m_listeners.begin(); j != m_listeners.end(); ++j)
-				(*j)->notify(this, 0, IListener::ReLost, i->first, 0);
-
-			if (peer.ghost)
+			log::info << getLogPrefix() << L"Proxy for node " << node << L" (" << (*i)->getName() << L") destroyed." << Endl;
+			
+			for (RefArray< IListener >::const_iterator j = m_listeners.begin(); j != m_listeners.end(); ++j)
 			{
-				peer.ghost->~Ghost(); getAllocator()->free(peer.ghost);
-				peer.ghost = 0;
+				(*j)->notify(
+					this,
+					m_time,
+					IListener::ReDisconnected,
+					*i,
+					0
+				);
 			}
 
-			peer.state = PsDisconnected;
-			peer.iframe = 0;
-			peer.errorCount = 0;
+			(*i)->disconnect();
+			m_proxies.erase(i);
 
-			++i;
-		}
-		else
-			m_peers.erase(i++);
-	}
-
-	// Iterate all handles, check error state or send "I am" to new peers.
-	for (std::vector< IReplicatorPeers::PeerInfo >::const_iterator i = info.begin(); i != info.end(); ++i)
-	{
-		Peer& peer = m_peers[i->handle];
-
-		// Issue "I am" to unestablished peers.
-		if (peer.state == PsInitial)
-		{
-			peer.name = i->name;
-			peer.endSite = i->endSite;
-
-			if ((peer.timeUntilTx -= dT) <= 0)
-			{
-				T_REPLICATOR_DEBUG(L"OK: Unestablished peer found; sending \"I am\" to peer \"" << peer.name << L"\"");
-
-				if (!sendIAm(i->handle, 0, m_id))
-				{
-					log::error << L"ERROR: Unable to send \"I am\" to peer \"" << peer.name << L"\"" << Endl;
-					peer.errorCount++;
-				}
-
-				peer.timeUntilTx = int32_t(m_configuration.timeUntilIAm * (1.0f + g_random.nextFloat()));
-			}
-		}
-
-		// Check if peer doesn't respond, timeout;ed or unable to communicate.
-		else if (peer.state == PsEstablished)
-		{
-			if (peer.errorCount >= m_configuration.maxErrorCount)
-			{
-				T_REPLICATOR_DEBUG(L"WARNING: Peer \"" << peer.name << L"\" failing, unable to communicate with peer");
-
-				// Need to notify listeners immediately as peer becomes dismounted.
-				for (RefArray< IListener >::iterator j = m_listeners.begin(); j != m_listeners.end(); ++j)
-					(*j)->notify(this, 0, IListener::ReLost, i->handle, 0);
-
-				if (peer.ghost)
-				{
-					peer.ghost->~Ghost(); getAllocator()->free(peer.ghost);
-					peer.ghost = 0;
-				}
-
-				peer.state = PsDisconnected;
-				peer.iframe = 0;
-				peer.errorCount = 0;
-			}
-		}
-
-		// Save info about peer.
-		peer.direct = i->direct;
-	}
-}
-
-void Replicator::sendState(int32_t dT)
-{
-	uint8_t iframeData[Message::DataSize];
-	uint8_t frameData[Message::DataSize];
-	Message msg;
-
-	// Broadcast my state to all peers.
-	if (!m_state || !m_stateTemplate)
-		return;
-
-	// Pack iframe from current state.
-	uint32_t iframeSize = m_stateTemplate->pack(
-		m_state,
-		iframeData,
-		sizeof(iframeData)
-	);
-
-	// Send state to all connected peers.
-	msg.time = m_time;
-	for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
-	{
-		Peer& peer = i->second;
-
-		if (peer.state != PsEstablished || !peer.ghost || !peer.ghost->stateTemplate)
-			continue;
-
-		bool shouldSend = bool((peer.timeUntilTx -= dT) <= 0);
-		if (!shouldSend)
-			continue;
-
-		uint32_t msgSize = Message::HeaderSize;
-
-		// Send delta frames only if we've successfully sent
-		// an iframe and we're not experiencing package loss.
-		if (
-			m_configuration.deltaCompression &&
-			peer.iframe &&
-			peer.stateCount % m_configuration.maxDeltaStates > 0
-		)
-		{
-			// Pack delta frame from last sent state.
-			uint32_t frameSize = m_stateTemplate->pack(
-				peer.iframe,
-				m_state,
-				frameData,
-				sizeof(frameData)
-			);
-
-			if (frameSize < iframeSize)
-			{
-				std::memcpy(msg.state.data, frameData, frameSize);
-				msgSize += frameSize;
-				msg.type = MtDeltaState;
-			}
-			else
-			{
-				std::memcpy(msg.state.data, iframeData, iframeSize);
-				msgSize += iframeSize;
-				msg.type = MtFullState;
-				peer.stateCount = 0;
-			}
-		}
-		else
-		{
-			std::memcpy(msg.state.data, iframeData, iframeSize);
-			msgSize += iframeSize;
-			msg.type = MtFullState;
-			peer.stateCount = 0;
-			peer.iframe = 0;
-		}
-
-		if (send(i->first, &msg, msgSize, false))
-		{
-			peer.timeUntilTx = m_configuration.farTimeUntilTx;
-			peer.errorCount = 0;
-			peer.stateCount++;
-			peer.iframe = m_state;
-		}
-		else
-		{
-			log::error << L"ERROR: Unable to send state to peer " << peer.name << Endl;
-			peer.timeUntilTx = m_configuration.farTimeUntilTx;
-			peer.errorCount++;
-			peer.stateCount = 0;
-			peer.iframe = 0;
-		}
-
-		Vector4 ghostToPlayer = m_origin.translation() - peer.ghost->origin.translation();
-		Scalar distanceToPeer = ghostToPlayer.length();
-		float t = clamp((distanceToPeer - m_configuration.nearDistance) / (m_configuration.farDistance - m_configuration.nearDistance), 0.0f, 1.0f);
-		peer.timeUntilTx = (int32_t)lerp(m_configuration.nearTimeUntilTx, m_configuration.farTimeUntilTx + int32_t((g_random.nextFloat() - 0.5f) * (m_configuration.farTimeUntilTx - m_configuration.nearTimeUntilTx) * 0.5f), t);
-		peer.criticalEnable = bool(distanceToPeer < m_configuration.furthestDistance);
-	}
-}
-
-void Replicator::sendEvents()
-{
-	std::list< EventOut > eventsOut;
-	Message msg;
-
-	if (m_eventsOut.empty())
-		return;
-
-	for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
-	{
-		Peer& peer = i->second;
-
-		if (peer.state != PsEstablished || !peer.ghost)
-			continue;
-
-		std::vector< EventOut > peerEventsOut;
-
-		// Collect events to peer.
-		for (std::list< EventOut >::const_iterator j = m_eventsOut.begin(); j != m_eventsOut.end(); ++j)
-		{
-			if (j->handle == c_broadcastHandle || j->handle == i->first)
-			{
-				peerEventsOut.push_back(*j);
-				peerEventsOut.back().handle = i->first;
-			}
-		}
-
-		if (peerEventsOut.empty())
-			continue;
-
-		// Pack as many events into same message as possible.
-		for (uint32_t j = 0; j < peerEventsOut.size(); )
-		{
-			uint32_t count = uint32_t(peerEventsOut.size() - j);
-			T_ASSERT (count > 0);
-
-			msg.type = MtEvent0;
-			msg.time = m_time;
-
-			uint8_t data[sizeof(msg.event.data) + 1];	// Add a padding to be able to detect if a single object exceed max size.
-			uint8_t* msgDataPtr = msg.event.data;
-			uint8_t* msgDataEndPtr = msgDataPtr + sizeof(msg.event.data);
-
-			uint32_t jj = j;
-			while (jj < peerEventsOut.size() && msg.type < MtEvent4)
-			{
-				MemoryStream s(data, sizeof(data), false, true);
-				CompactSerializer cs(&s, &m_eventTypes[0], m_eventTypes.size());
-				cs.writeObject(peerEventsOut[jj].object);
-				cs.flush();
-
-				uint32_t dataSize = s.tell();
-				if (dataSize > uint32_t(msgDataEndPtr - msgDataPtr))
-					break;
-
-				std::memcpy(msgDataPtr, data, dataSize);
-				msgDataPtr += dataSize;
-
-				++jj;
-				++msg.type;
-			}
-
-			uint32_t msgSize = Message::HeaderSize + uint32_t(msgDataPtr - msg.event.data);
-
-			if (send(i->first, &msg, msgSize, true))
-			{
-				i->second.errorCount = 0;
-				j = jj;
-			}
-			else
-			{
-				log::error << L"ERROR: Unable to send event(s) to peer " << peer.name << Endl;
-
-				for (; j < jj; ++j)
-					eventsOut.push_back(peerEventsOut[j]);
-
-				i->second.errorCount++;
-				break;
-			}
-		}
-	}
-
-	m_eventsOut.swap(eventsOut);
-}
-
-void Replicator::sendPings(int32_t dT)
-{
-	m_timeUntilPing -= dT;
-	if (m_timeUntilPing > 0)
-		return;
-
-	if (!m_peers.empty())
-	{
-		std::map< handle_t, Peer >::iterator i = m_peers.begin();
-
-		// Ping one peer at a time.
-		m_pingCount = (m_pingCount + 1) % m_peers.size();
-		std::advance(i, m_pingCount);
-
-		Peer& peer = i->second;
-		if (peer.state == PsEstablished)
-		{
-			if (!sendPing(i->first))
-			{
-				log::error << L"ERROR: Unable to send ping to peer " << peer.name << Endl;
-				peer.errorCount++;
-			}
-		}
-
-		m_timeUntilPing = m_configuration.timeUntilPing / m_peers.size();
-	}
-	else
-		m_timeUntilPing = m_configuration.timeUntilPing;
-}
-
-void Replicator::receiveMessages()
-{
-	handle_t handle;
-	Message msg;
-	int32_t size;
-
-	// Read messages from any peer.
-	while (m_replicatorPeers)
-	{
-		std::memset(&msg, 0, sizeof(msg));
-		if ((size = receive(&msg, handle)) <= 0)
 			break;
-
-		// Always handle handshake messages.
-		if (msg.type == MtIAm)
-		{
-			Peer& peer = m_peers[handle];
-
-			// Assume peer time is correct if exceeding my time.
-			int32_t offset = msg.time + c_initialTimeOffset - m_time;
-			if (offset > 0)
-				adjustTime(offset);
-
-			if (msg.iam.sequence == 0)
-			{
-				T_REPLICATOR_DEBUG(L"OK: Got initial \"I am\" from peer \"" << peer.name << L"\"");
-				if (sendIAm(handle, 1, msg.iam.id))
-					log::error << L"ERROR: Unable to send \"I am\" response to peer \"" << peer.name << L"\"" << Endl;
-			}
-			else if (msg.iam.sequence == 1 || msg.iam.sequence == 2)
-			{
-				// "I am" with sequence 1 can only be received if I was the handshake initiator.
-				// "I am" with sequence 2 can only be received if I was NOT the handshake initiator.
-
-				if (msg.iam.sequence == 1)
-				{
-					if (msg.iam.id != m_id)
-					{
-						log::error << L"ERROR: \"I am\" message with incorrect id (received " << msg.iam.id << L", should be " << m_id << L") from peer \"" << peer.name << L"\"; ignoring" << Endl;
-						peer.errorCount++;
-						continue;
-					}
-					sendIAm(handle, 2, msg.iam.id);
-				}
-
-				if (!peer.ghost)
-				{
-					// Create ghost data.
-					void* ghostMem = getAllocator()->alloc(sizeof(Ghost), 16, "Ghost");
-
-					peer.ghost = new (ghostMem) Ghost();
-					peer.ghost->origin = m_origin;
-					peer.ghost->Tn2 = 0;
-					peer.ghost->Tn1 = 0;
-					peer.ghost->T0 = 0;
-				}
-
-				if (peer.state != PsEstablished)
-				{
-					peer.state = PsEstablished;
-					peer.timeUntilTx = 0;
-
-					// Send ping to peer.
-					if (!sendPing(handle))
-					{
-						log::error << L"ERROR: Unable to send ping to peer " << peer.name << Endl;
-						peer.errorCount++;
-					}
-
-					// Issue connect event to listeners.
-					EventIn evt;
-					evt.eventId = IListener::ReConnected;
-					evt.handle = handle;
-					evt.object = 0;
-					m_eventsIn.push_back(evt);
-
-					T_REPLICATOR_DEBUG(L"OK: Peer \"" << peer.name << L"\" connection established (" << int32_t(msg.iam.sequence) << L")");
-				}
-
-				peer.lastTimeRemote = std::max< int32_t >(msg.time, peer.lastTimeRemote + 1);
-				peer.lastTimeLocal = m_time;
-			}
-		}
-		else if (msg.type == MtBye)
-		{
-			Peer& peer = m_peers[handle];
-			if (
-				peer.state == PsEstablished &&
-				peer.ghost
-			)
-			{
-				T_REPLICATOR_DEBUG(L"OK: Established peer \"" << peer.name << L"\" gracefully disconnected; issue listener event");
-
-				// Need to notify listeners immediately as peer becomes dismounted.
-				for (RefArray< IListener >::iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
-					(*i)->notify(this, 0, IListener::ReDisconnected, handle, 0);
-			}
-
-			if (peer.ghost)
-			{
-				peer.ghost->~Ghost(); getAllocator()->free(peer.ghost);
-				peer.ghost = 0;
-			}
-
-			peer.state = PsDisconnected;
-			peer.iframe = 0;
-
-			peer.lastTimeRemote = std::max< int32_t >(msg.time, peer.lastTimeRemote + 1);
-			peer.lastTimeLocal = m_time;
-		}
-		else if (msg.type == MtPing)
-		{
-			// I've got pinged; save status and reply with a pong.
-			Peer& peer = m_peers[handle];
-			peer.status = msg.ping.status;
-			if (!sendPong(handle, msg.time))
-			{
-				log::error << L"ERROR: Unable to send pong to peer " << peer.name << Endl;
-				peer.errorCount++;
-			}
-		}
-		else if (msg.type == MtPong)
-		{
-			// I've received a pong reply from an earlier ping;
-			// calculate round-trip time.
-			Peer& peer = m_peers[handle];
-
-			int32_t pingTime = msg.pong.time0;
-			int32_t roundTrip = max(m_time0 - pingTime, 0);
-
-			peer.roundTrips.push_back(roundTrip);
-
-			// Get lowest and median round-trips and calculate latencies.
-			int32_t sorted[MaxRoundTrips];
-			for (uint32_t i = 0; i < peer.roundTrips.size(); ++i)
-				sorted[i] = peer.roundTrips[i];
-
-			std::sort(&sorted[0], &sorted[peer.roundTrips.size()]);
-
-			peer.latencyMedian = sorted[peer.roundTrips.size() / 2] / 2;
-			peer.latencyReversed = msg.pong.latency;
-			peer.lastPongTime = m_time0;
-		}
-		else if (msg.type == MtRequestPrimary)
-		{
-			Peer& peer = m_peers[handle];
-
-			// I've received a request of primary token; accept if
-			// we are primary to begin with and also if we do allow the transfer.
-			if (m_acceptPrimaryRequest)
-			{
-				setPeerPrimary(handle);
-				T_REPLICATOR_DEBUG(L"OK: Primary token transfer request from peer " << peer.name << L" accepted");
-			}
-			else
-			{
-				T_REPLICATOR_DEBUG(L"OK: Primary token transfer request from peer " << peer.name << L" rejected");
-			}
-		}
-		else if (msg.type == MtFullState || msg.type == MtDeltaState)	// Data message.
-		{
-			Peer& peer = m_peers[handle];
-			if (!peer.ghost)
-				continue;
-
-			int32_t stateDataSize = size - Message::HeaderSize;
-			if (stateDataSize <= 0)
-				continue;
-
-			Ref< const State > state;
-
-			// Ignore old messages; as we're using unreliable transportation
-			// messages can arrive out-of-order.
-			if (msg.time > peer.lastTimeRemote)
-			{
-				// Accumulate time offsets. Offset calculation is bit of magic
-				// as there is no way of 100% accurately measure one-way latency in a network
-				// thus we assume one-way latency is somewhere between both round-trip times.
-				int32_t latency = (peer.latencyMedian + peer.latencyReversed) / 2;
-				int32_t offset = msg.time + latency - m_time;
-				peer.timeOffsets.push_back(offset < 30 ? offset / 4 : offset / 2);
-
-				if (peer.ghost->stateTemplate)
-				{
-					if (msg.type == MtFullState)
-						state = peer.ghost->stateTemplate->unpack(msg.state.data, stateDataSize);
-					else if (peer.ghost->S0)
-						state = peer.ghost->stateTemplate->unpack(peer.ghost->S0, msg.state.data, stateDataSize);
-
-					if (state)
-					{
-						peer.ghost->Sn2 = peer.ghost->Sn1;
-						peer.ghost->Tn2 = peer.ghost->Tn1;
-						peer.ghost->Sn1 = peer.ghost->S0;
-						peer.ghost->Tn1 = peer.ghost->T0;
-						peer.ghost->S0 = state;
-						peer.ghost->T0 = msg.time;
-					}
-					else
-						T_REPLICATOR_DEBUG(L"ERROR: Unable to unpack state of peer " << peer.name);
-				}
-
-				peer.lastTimeLocal = m_time;
-				peer.lastTimeRemote = msg.time;
-
-				// Put an input event to notify listeners about new state.
-				if (
-					peer.ghost &&
-					peer.ghost->S0 &&
-					peer.ghost->Sn1 &&
-					peer.ghost->Sn2
-				)
-				{
-					std::list< EventIn >::iterator it = m_eventsIn.begin();
-					for (; it != m_eventsIn.end(); ++it)
-					{
-						if (it->eventId == IListener::ReState && it->handle == handle)
-						{
-							it->time = peer.ghost->T0;
-							it->object = peer.ghost->S0;
-							break;
-						}
-					}
-					if (it == m_eventsIn.end())
-					{
-						EventIn evt;
-						evt.time = peer.ghost->T0;
-						evt.eventId = IListener::ReState;
-						evt.handle = handle;
-						evt.object = peer.ghost->S0;
-						m_eventsIn.push_back(evt);
-					}
-				}
-			}
-			else
-			{
-				// Received an old out-of-order package.
-				if (peer.ghost->stateTemplate)
-				{
-					if (msg.type == MtFullState)
-						state = peer.ghost->stateTemplate->unpack(msg.state.data, stateDataSize);
-					else
-					{
-						Ref< const State > Sn;
-
-						if (msg.time > peer.ghost->Tn1)
-							Sn = peer.ghost->Sn1;
-						else if (msg.time > peer.ghost->Tn2)
-							Sn = peer.ghost->Sn2;
-
-						if (Sn)
-							state = peer.ghost->stateTemplate->unpack(Sn, msg.state.data, stateDataSize);
-						else
-							T_REPLICATOR_DEBUG(L"ERROR: Received delta state from peer \"" << peer.name << L"\" but have no iframe; state ignored (2)");
-					}
-
-					if (state)
-					{
-						if (msg.time > peer.ghost->Tn1)
-						{
-							peer.ghost->Sn2 = peer.ghost->Sn1;
-							peer.ghost->Tn2 = peer.ghost->Tn1;
-							peer.ghost->Sn1 = state;
-							peer.ghost->Tn1 = msg.time;
-						}
-						else if (msg.time > peer.ghost->Tn2)
-						{
-							peer.ghost->Sn2 = state;
-							peer.ghost->Tn2 = msg.time;
-						}
-					}
-					else
-						T_REPLICATOR_DEBUG(L"ERROR: Unable to unpack ghost state (2)");
-				}
-			}
-		}
-		else if (msg.type >= MtEvent1 && msg.type <= MtEvent4)	// Event message(s).
-		{
-			Peer& peer = m_peers[handle];
-			if (!peer.ghost)
-			{
-				T_REPLICATOR_DEBUG(L"ERROR: Peer \"" << peer.name << L"\" partially connected but received MtEvent; ignoring");
-				continue;
-			}
-
-			peer.lastTimeLocal = m_time;
-			peer.lastTimeRemote = msg.time;
-
-			if (!m_eventTypes.empty())
-			{
-				const uint8_t* msgDataPtr = msg.event.data;
-				const uint8_t* msgDataEndPtr = msgDataPtr + sizeof(msg.event.data);
-
-				uint32_t eventObjectCount = uint32_t(msg.type - MtEvent0);
-				for (uint32_t i = 0; i < eventObjectCount; ++i)
-				{
-					MemoryStream s(msgDataPtr, uint32_t(msgDataEndPtr - msgDataPtr));
-					Ref< ISerializable > eventObject = CompactSerializer(&s, &m_eventTypes[0], m_eventTypes.size()).readObject< ISerializable >();
-					if (eventObject)
-					{
-						EventIn e;
-						e.time = msg.time;
-						e.eventId = IListener::ReBroadcastEvent;
-						e.handle = handle;
-						e.object = eventObject;
-						m_eventsIn.push_back(e);
-					}
-					msgDataPtr += s.tell();
-				}
-			}
 		}
 	}
-}
-
-void Replicator::updateTimeSynchronization()
-{
-	std::vector< int32_t > timeOffsets(Adjustments);
-	int32_t timeOffset = 0;
-
-	// Get max median time offset.
-	for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
-	{
-		Peer& peer = i->second;
-		if (peer.state == PsEstablished && peer.timeOffsets.full())
-		{
-			for (uint32_t j = 0; j < Adjustments; ++j)
-				timeOffsets[j] = peer.timeOffsets[j];
-
-			std::sort(timeOffsets.begin(), timeOffsets.end());
-			timeOffset = std::max(timeOffset, timeOffsets[Adjustments / 2]);
-
-			peer.timeOffsets.clear();
-		}
-	}
-
-	// Adjust time; don't adjust entire offset at once as it's, at best, an approximation.
-	timeOffset = (timeOffset < 30) ? timeOffset / 2 : (timeOffset * 2) / 3;
-	if (timeOffset > 0)
-		adjustTime(timeOffset);
-}
-
-void Replicator::dispatchEventListeners()
-{
-	for (std::list< EventIn >::const_iterator i = m_eventsIn.begin(); i != m_eventsIn.end(); ++i)
-	{
-		const EventIn& event = *i;
-		for (RefArray< IListener >::iterator j = m_listeners.begin(); j != m_listeners.end(); ++j)
-			(*j)->notify(this, event.time / 1000.0f, event.eventId, event.handle, event.object);
-	}
-	m_eventsIn.clear();
-}
-
-bool Replicator::sendIAm(handle_t peerHandle, uint8_t sequence, uint32_t id)
-{
-	Message msg;
-
-	msg.type = MtIAm;
-	msg.time = m_time;
-	msg.iam.sequence = sequence;
-	msg.iam.id = id;
-
-	uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t) + sizeof(uint8_t) + sizeof(uint32_t);
-	return send(peerHandle, &msg, msgSize, false);
-}
-
-bool Replicator::sendBye(handle_t peerHandle)
-{
-	Message msg;
-
-	msg.type = MtBye;
-	msg.time = m_time0;
-
-	uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t);
-	return send(peerHandle, &msg, msgSize, true);
-}
-
-bool Replicator::sendPing(handle_t peerHandle)
-{
-	Message msg;
-
-	msg.type = MtPing;
-	msg.time = m_time0;
-	msg.ping.status = m_status;
-
-	uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t) + sizeof(uint8_t);
-	return send(peerHandle, &msg, msgSize, false);
-}
-
-bool Replicator::sendPong(handle_t peerHandle, int32_t time0)
-{
-	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
-	Message msg;
-
-	msg.type = MtPong;
-	msg.time = m_time0;
-	msg.pong.time0 = time0;
-	msg.pong.latency = (i != m_peers.end()) ? i->second.latencyMedian : 0;	// Report back my perception of latency to this peer.
-
-	uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t);
-	return send(peerHandle, &msg, msgSize, false);
-}
-
-bool Replicator::sendRequestPrimary(handle_t peerHandle)
-{
-	Message msg;
-
-	msg.type = MtRequestPrimary;
-	msg.time = m_time0;
-
-	uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t);
-	return send(peerHandle, &msg, msgSize, true);
-}
-
-void Replicator::adjustTime(int32_t offset)
-{
-	m_time += offset;
-
-	// Adjust all ghost states.
-	for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
-	{
-		Ghost* ghost = i->second.ghost;
-		if (ghost)
-		{
-			ghost->Tn2 += offset;
-			ghost->Tn1 += offset;
-			ghost->T0 += offset;
-		}
-	}
-
-	// Adjust on all queued events also.
-	for (std::list< EventIn >::iterator i = m_eventsIn.begin(); i != m_eventsIn.end(); ++i)
-		i->time += offset;
-}
-
-bool Replicator::send(handle_t peerHandle, const Message* msg, uint32_t size, bool reliable)
-{
-	T_ASSERT (size <= Message::MessageSize);
-	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
-	if (i != m_peers.end())
-		return m_replicatorPeers->send(peerHandle, msg, size, reliable);
-	else
-		return false;
-}
-
-int32_t Replicator::receive(Message* msg, handle_t& outPeerHandle)
-{
-	return m_replicatorPeers->receive(msg, sizeof(Message), outPeerHandle);
+	return true;
 }
 
 	}

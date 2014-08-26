@@ -188,7 +188,7 @@ void calculatePatches(const TerrainAsset* terrainAsset, const hf::Heightfield* h
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainPipeline", 9, TerrainPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainPipeline", 10, TerrainPipeline, editor::DefaultPipeline)
 
 bool TerrainPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -214,6 +214,7 @@ bool TerrainPipeline::buildDependencies(
 	const TerrainAsset* terrainAsset = checked_type_cast< const TerrainAsset*, false >(sourceAsset);
 
 	pipelineDepends->addDependency(terrainAsset->getHeightfield(), editor::PdfUse | editor::PdfBuild | editor::PdfResource);
+	pipelineDepends->addDependency(terrainAsset->getMaterialMask(), editor::PdfUse | editor::PdfBuild | editor::PdfResource);
 	pipelineDepends->addDependency(terrainAsset->getSurfaceShader(), editor::PdfUse);
 
 	pipelineDepends->addDependency(c_guidTerrainCoarseShaderTemplate, editor::PdfUse);
@@ -481,6 +482,7 @@ bool TerrainPipeline::buildOutput(
 	terrainResource->m_detailSkip = terrainAsset->getDetailSkip();
 	terrainResource->m_patchDim = terrainAsset->getPatchDim();
 	terrainResource->m_heightfield = terrainAsset->getHeightfield();
+	terrainResource->m_materialMask = terrainAsset->getMaterialMask();
 	terrainResource->m_colorMap = resource::Id< render::ISimpleTexture >(colorMapGuid);
 	terrainResource->m_normalMap = resource::Id< render::ISimpleTexture >(normalMapGuid);
 	terrainResource->m_heightMap = resource::Id< render::ISimpleTexture >(heightMapGuid);

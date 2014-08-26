@@ -8,17 +8,26 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Thread/JobManager.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
+#include "World/IWorldRenderPass.h"
 #include "World/WorldContext.h"
 #include "World/WorldRenderView.h"
 
 #if !defined(__EMSCRIPTEN__)
-#	define T_USE_UPDATE_JOBS
+//#	define T_USE_UPDATE_JOBS
 #endif
 
 namespace traktor
 {
 	namespace animation
 	{
+		namespace
+		{
+
+render::handle_t s_handleWorld_DepthWrite;
+render::handle_t s_handleWorld_GBufferWrite;
+render::handle_t s_handleWorld_ShadowWrite;
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimatedMeshEntity", AnimatedMeshEntity, mesh::MeshEntity)
 
@@ -43,8 +52,13 @@ AnimatedMeshEntity::AnimatedMeshEntity(
 ,	m_normalizeTransform(normalizeTransform)
 ,	m_totalTime(0.0f)
 ,	m_index(0)
-,	m_updateController(true)
+,	m_updateController(1)
+,	m_updateTimeScale(1.0f)
 {
+	s_handleWorld_DepthWrite = render::getParameterHandle(L"World_DepthWrite");
+	s_handleWorld_GBufferWrite = render::getParameterHandle(L"World_GBufferWrite");
+	s_handleWorld_ShadowWrite = render::getParameterHandle(L"World_ShadowWrite");
+
 	if (m_skeleton)
 	{
 		calculateJointTransforms(
@@ -62,7 +76,7 @@ AnimatedMeshEntity::AnimatedMeshEntity(
 		updatePoseController(m_index, 0.0f);
 
 		m_index = 1 - m_index;
-		m_updateController = false;
+		m_updateController = 0;
 	}
 }
 
@@ -148,12 +162,22 @@ void AnimatedMeshEntity::render(
 	for (std::vector< Binding >::iterator i = m_bindings.begin(); i != m_bindings.end(); ++i)
 		worldContext.build(worldRenderView, worldRenderPass, i->entity);
 
-	m_updateController = true;
+	// If only entity's shadow is visible then reduce frequency of controller updates.
+	if (m_updateController == 0 && worldRenderPass.getTechnique() == s_handleWorld_ShadowWrite)
+	{
+		m_updateController = 4;
+		m_updateTimeScale = 4.0f;
+	}
+	else
+	{
+		m_updateController = 1;
+		m_updateTimeScale = 1.0f;
+	}
 }
 
 void AnimatedMeshEntity::update(const world::UpdateParams& update)
 {
-	if (m_updateController)
+	if (m_updateController == 1)
 	{
 		synchronize();
 
@@ -181,7 +205,7 @@ void AnimatedMeshEntity::update(const world::UpdateParams& update)
 		// each pose controller needs to set this flag if it's
 		// required to continue running even when this entity
 		// hasn't been rendered.
-		m_updateController = false;
+		m_updateController = 0;
 		m_index = 1 - m_index;
 
 #if defined(T_USE_UPDATE_JOBS)
@@ -209,6 +233,9 @@ void AnimatedMeshEntity::update(const world::UpdateParams& update)
 			i->entity->setTransform(m_transform.get() * T);
 		i->entity->update(update);
 	}
+
+	if (m_updateController > 0)
+		--m_updateController;
 
 	mesh::MeshEntity::update(update);
 }
@@ -322,6 +349,8 @@ void AnimatedMeshEntity::synchronize() const
 
 void AnimatedMeshEntity::updatePoseController(int32_t index, float deltaTime)
 {
+	bool updateController = false;
+
 	// Calculate pose transforms and skinning transforms.
 	if (m_poseController)
 	{
@@ -329,12 +358,12 @@ void AnimatedMeshEntity::updatePoseController(int32_t index, float deltaTime)
 
 		// Evaluate pose transforms in object space.
 		m_poseController->evaluate(
-			deltaTime,
+			deltaTime * m_updateTimeScale,
 			m_transform.get(),
 			m_skeleton,
 			m_jointTransforms,
 			m_poseTransforms,
-			m_updateController
+			updateController
 		);
 
 		size_t skeletonJointCount = m_jointTransforms.size();
@@ -396,6 +425,12 @@ void AnimatedMeshEntity::updatePoseController(int32_t index, float deltaTime)
 				m_skinTransforms[index][jointIndex * 2 + 1] = skinTransform.translation().xyz1();
 			}
 		}
+	}
+
+	if (updateController)
+	{
+		m_updateController = 1;
+		m_updateTimeScale = 1.0f;
 	}
 }
 

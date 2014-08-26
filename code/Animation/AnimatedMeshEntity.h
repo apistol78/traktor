@@ -111,7 +111,8 @@ private:
 	AlignedVector< Vector4 > m_skinTransforms[3];
 	float m_totalTime;
 	int32_t m_index;
-	bool m_updateController;
+	int32_t m_updateController;
+	float m_updateTimeScale;
 	mutable Ref< Job > m_updatePoseControllerJob;
 
 	void synchronize() const;

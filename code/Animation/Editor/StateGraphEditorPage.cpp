@@ -145,7 +145,7 @@ bool StateGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point&
 
 	if (is_type_of< Animation >(*primaryType))
 	{
-		Ref< StateNode > state = new StateNodeAnimation(instance->getName(), resource::IdProxy< Animation >(instance->getGuid()));
+		Ref< StateNode > state = new StateNodeAnimation(instance->getName(), resource::IdProxy< Animation >(instance->getGuid()), false);
 
 		ui::Point absolutePosition = m_editorGraph->screenToClient(position) - m_editorGraph->getOffset();
 		state->setPosition(std::pair< int, int >(absolutePosition.x, absolutePosition.y));
@@ -533,7 +533,7 @@ Ref< ui::custom::Node > StateGraphEditorPage::createEditorNode(StateNode* state)
 
 void StateGraphEditorPage::createState(const ui::Point& at)
 {
-	Ref< StateNode > state = new StateNodeAnimation(i18n::Text(L"STATEGRAPH_UNNAMED"), resource::IdProxy< Animation >());
+	Ref< StateNode > state = new StateNodeAnimation(i18n::Text(L"STATEGRAPH_UNNAMED"), resource::IdProxy< Animation >(), false);
 	state->setPosition(std::pair< int, int >(at.x, at.y));
 	m_stateGraph->addState(state);
 

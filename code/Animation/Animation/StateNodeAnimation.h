@@ -29,20 +29,23 @@ class T_DLLCLASS StateNodeAnimation : public StateNode
 public:
 	StateNodeAnimation();
 
-	StateNodeAnimation(const std::wstring& name, const resource::IdProxy< Animation >& animation);
+	StateNodeAnimation(const std::wstring& name, const resource::IdProxy< Animation >& animation, bool linearInterpolation);
 
 	virtual bool bind(resource::IResourceManager* resourceManager);
 
 	virtual bool prepareContext(StateContext& outContext);
 
-	virtual void evaluate(const StateContext& context, Pose& outPose);
+	virtual void evaluate(StateContext& context, Pose& outPose);
 
 	virtual void serialize(ISerializer& s);
 
 	const resource::IdProxy< Animation >& getAnimation() const { return m_animation; }
 
+	bool getLinearInterpolation() const { return m_linearInterpolation; }
+
 private:
 	resource::IdProxy< Animation > m_animation;
+	bool m_linearInterpolation;
 };
 
 	}

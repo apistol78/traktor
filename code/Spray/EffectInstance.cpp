@@ -23,7 +23,7 @@ void EffectInstance::update(Context& context, const Transform& transform, bool e
 	m_time += context.deltaTime;
 	if (m_loopEnable)
 	{
-		while (m_time >= m_effect->getLoopEnd())
+		if (m_time >= m_effect->getLoopEnd())
 			m_time = m_effect->getLoopStart();
 	}
 

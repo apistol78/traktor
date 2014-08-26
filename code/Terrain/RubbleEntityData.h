@@ -53,6 +53,11 @@ private:
 	resource::Id< Terrain > m_terrain;
 	Ref< world::EntityData > m_entityData;
 	uint32_t m_count;
+	uint32_t m_seed;
+	float m_alignToNormal;
+	bool m_randomHeadAngle;
+	float m_groundOffset;
+	float m_spreadDistance;
 };
 
 	}

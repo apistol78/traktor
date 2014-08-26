@@ -285,6 +285,8 @@ void LogList::eventScroll(ScrollEvent* event)
 
 void LogList::eventTimer(TimerEvent* event)
 {
+	int32_t added = 0;
+
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_pendingLock);
 
@@ -295,14 +297,20 @@ void LogList::eventTimer(TimerEvent* event)
 		{
 			m_logFull.push_back(*i);
 			if ((i->logLevel & m_filter) != 0)
+			{
 				m_logFiltered.push_back(*i);
+				++added;
+			}
 		}
 
 		m_pending.clear();
 	}
 
-	updateScrollBar();
-	m_scrollBar->setPosition(int(m_logFiltered.size()));
+	if (added > 0)
+	{
+		updateScrollBar();
+		m_scrollBar->setPosition(int(m_logFiltered.size()));
+	}
 
 	update();
 }

@@ -2,6 +2,7 @@
 #include "Animation/Animation/StateNodeAnimation.h"
 #include "Animation/Animation/StateContext.h"
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/MemberIdProxy.h"
 
@@ -10,15 +11,17 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.StateNodeAnimation", 0, StateNodeAnimation, StateNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.StateNodeAnimation", 1, StateNodeAnimation, StateNode)
 
 StateNodeAnimation::StateNodeAnimation()
+:	m_linearInterpolation(false)
 {
 }
 
-StateNodeAnimation::StateNodeAnimation(const std::wstring& name, const resource::IdProxy< Animation >& animation)
+StateNodeAnimation::StateNodeAnimation(const std::wstring& name, const resource::IdProxy< Animation >& animation, bool linearInterpolation)
 :	StateNode(name)
 ,	m_animation(animation)
+,	m_linearInterpolation(linearInterpolation)
 {
 }
 
@@ -45,18 +48,26 @@ bool StateNodeAnimation::prepareContext(StateContext& outContext)
 }
 
 void StateNodeAnimation::evaluate(
-	const StateContext& context,
+	StateContext& context,
 	Pose& outPose
 )
 {
 	float time = context.getTime();
-	m_animation->getPose(time, outPose);
+	int32_t indexHint = context.getIndexHint();
+
+	m_animation->getPose(time, m_linearInterpolation, indexHint, outPose);
+
+	context.setIndexHint(indexHint);
 }
 
 void StateNodeAnimation::serialize(ISerializer& s)
 {
 	StateNode::serialize(s);
+	
 	s >> resource::MemberIdProxy< Animation >(L"animation", m_animation);
+
+	if (s.getVersion() >= 1)
+		s >> Member< bool >(L"linearInterpolation", m_linearInterpolation);
 }
 
 	}

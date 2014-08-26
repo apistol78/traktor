@@ -53,15 +53,15 @@ bool ThreadPool::spawn(Functor* functor, Thread*& outThread)
 	for (uint32_t i = 0; i < m_workerThreads.size(); ++i)
 	{
 		Worker& worker = m_workerThreads[i];
-		if (Atomic::compareAndSwap(worker.busy, 0, 1) == 1)
+		if (Atomic::compareAndSwap(worker.busy, 0, 1) == 0)
 		{
+			T_ASSERT (worker.busy == 1);
 			T_ASSERT (worker.threadWorker);
 			T_ASSERT (!worker.threadWorker->finished());
 			T_ASSERT (!worker.functorWork);
 
 			outThread = worker.threadWorker;
 
-			worker.busy = 2;
 			worker.functorWork = functor;
 			worker.eventFinishedWork.reset();
 			worker.eventAttachWork.broadcast();
@@ -74,7 +74,7 @@ bool ThreadPool::spawn(Functor* functor, Thread*& outThread)
 		return false;
 
 	Worker& worker = m_workerThreads.push_back();
-	worker.busy = 2;
+	worker.busy = 1;
 	worker.functorWork = functor;
 	worker.threadWorker = ThreadManager::getInstance().create(
 		makeStaticFunctor< Event&, Event&, Ref< Functor >&, int32_t&, int32_t& >(

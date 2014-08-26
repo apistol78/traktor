@@ -162,6 +162,20 @@ struct CastAny < float, false >
 };
 
 template < >
+struct CastAny < double, false >
+{
+	static bool accept(const Any& value) {
+		return value.isFloat();
+	}
+	static Any set(double value) {
+		return Any::fromFloat(float(value));
+	}
+	static double get(const Any& value) {
+		return double(value.getFloat());
+	}
+};
+
+template < >
 struct CastAny < Scalar, false >
 {
 	static bool accept(const Any& value) {
