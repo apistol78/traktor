@@ -57,7 +57,7 @@ const int32_t c_databasePollInterval = 5;
 const uint32_t c_simulationFrequency = 60;
 const float c_simulationDeltaTime = 1.0f / c_simulationFrequency;
 const float c_maxDeltaTime = 1.0f / 15.0f;
-const int32_t c_maxDeltaTimeErrors = 120;
+const int32_t c_maxDeltaTimeErrors = 240;
 const float c_deltaTimeFilterCoeff = 0.99f;
 
 		}

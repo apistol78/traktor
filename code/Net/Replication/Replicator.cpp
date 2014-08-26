@@ -3,6 +3,7 @@
 #include "Core/Math/Float.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/CompactSerializer.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Net/Replication/Replicator.h"
 #include "Net/Replication/ReplicatorProxy.h"
 #include "Net/Replication/ReplicatorTypes.h"
@@ -71,14 +72,25 @@ const Replicator::Configuration& Replicator::getConfiguration() const
 	return m_configuration;
 }
 
+void Replicator::addEventType(const TypeInfo& eventType)
+{
+	m_eventTypes.push_back(&eventType);
+}
+
 void Replicator::removeAllEventTypes()
 {
 	m_eventTypes.resize(0);
 }
 
-void Replicator::addEventType(const TypeInfo& eventType)
+Replicator::IListener* Replicator::addListener(IListener* listener)
 {
-	m_eventTypes.push_back(&eventType);
+	m_listeners.push_back(listener);
+	return listener;
+}
+
+void Replicator::removeListener(IListener* listener)
+{
+	m_listeners.remove(listener);
 }
 
 void Replicator::removeAllListeners()
@@ -86,19 +98,21 @@ void Replicator::removeAllListeners()
 	m_listeners.clear();
 }
 
-void Replicator::addListener(IListener* listener)
+Replicator::IEventListener* Replicator::addEventListener(const TypeInfo& eventType, IEventListener* eventListener)
 {
-	m_listeners.push_back(listener);
+	m_eventListeners[&eventType].push_back(eventListener);
+	return eventListener;
+}
+
+void Replicator::removeEventListener(IEventListener* eventListener)
+{
+	for (std::map< const TypeInfo*, RefArray< IEventListener > >::iterator i = m_eventListeners.begin(); i != m_eventListeners.end(); ++i)
+		i->second.remove(eventListener);
 }
 
 void Replicator::removeAllEventListeners()
 {
 	m_eventListeners.clear();
-}
-
-void Replicator::addEventListener(const TypeInfo& eventType, IEventListener* eventListener)
-{
-	m_eventListeners[&eventType].push_back(eventListener);
 }
 
 bool Replicator::update()
@@ -249,7 +263,11 @@ bool Replicator::update()
 					std::map< const TypeInfo*, RefArray< IEventListener > >::const_iterator it = m_eventListeners.find(&type_of(eventObject));
 					if (it != m_eventListeners.end())
 					{
-						//log::info << getLogPrefix() << L"Dispatching event " << int32_t(msg.event.sequence) << L" \"" << type_name(eventObject) << L"\" to " << it->second.size() << L" listener(s)..." << Endl;
+						log::info << getLogPrefix() << L"Dispatching event " << type_name(eventObject) << L" to " << it->second.size() << L" listener(s)..." << Endl;
+						log::info << getLogPrefix() << L"\t  sender " << fromGhost->m_handle << Endl;
+						log::info << getLogPrefix() << L"\tsequence " << int32_t(msg.event.sequence) << Endl;
+						log::info << getLogPrefix() << L"\t    hash " << DeepHash(eventObject).get() << Endl;
+
 						for (RefArray< IEventListener >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
 						{
 							(*i)->notify(
@@ -260,9 +278,21 @@ bool Replicator::update()
 							);
 						}
 					}
+					else
+					{
+						log::info << getLogPrefix() << L"Discarding event " << type_name(eventObject) << L", no listeners." << Endl;
+						log::info << getLogPrefix() << L"\t  sender " << fromGhost->m_handle << Endl;
+						log::info << getLogPrefix() << L"\tsequence " << int32_t(msg.event.sequence) << Endl;
+						log::info << getLogPrefix() << L"\t    hash " << DeepHash(eventObject).get() << Endl;
+					}
 				}
 				else
-					log::info << getLogPrefix() << L"Discarding duplicated event " << int32_t(msg.event.sequence) << L" \"" << type_name(eventObject) << L"\"" << Endl;
+				{
+					log::info << getLogPrefix() << L"Discarding duplicated event " << type_name(eventObject) << Endl;
+					log::info << getLogPrefix() << L"\t  sender " << fromGhost->m_handle << Endl;
+					log::info << getLogPrefix() << L"\tsequence " << int32_t(msg.event.sequence) << Endl;
+					log::info << getLogPrefix() << L"\t    hash " << DeepHash(eventObject).get() << Endl;
+				}
 			}
 			else if (!m_eventTypes.empty())
 				log::error << getLogPrefix() << L"Unable to unwrap event object; size = " << RmiEvent_EventSize(nrecv) << Endl;

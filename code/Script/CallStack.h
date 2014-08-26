@@ -29,8 +29,11 @@ class T_DLLCLASS CallStack : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	struct T_DLLCLASS Frame
+	class T_DLLCLASS Frame : public ISerializable
 	{
+		T_RTTI_CLASS;
+
+	public:
 		Guid scriptId;
 		std::wstring scriptName;
 		std::wstring functionName;
@@ -38,6 +41,8 @@ public:
 		RefArray< Local > locals;
 
 		Frame();
+
+		virtual void serialize(ISerializer& s);
 	};
 
 	void pushFrame(const Frame& frame);

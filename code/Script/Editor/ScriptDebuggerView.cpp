@@ -1,4 +1,5 @@
 #include "Core/Misc/String.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "I18N/Text.h"
 #include "Script/CallStack.h"
 #include "Script/LocalComposite.h"
@@ -6,9 +7,8 @@
 #include "Script/Editor/ScriptBreakpointEvent.h"
 #include "Script/Editor/ScriptDebuggerView.h"
 #include "Ui/Bitmap.h"
-#include "Ui/Tab.h"
 #include "Ui/TableLayout.h"
-#include "Ui/TabPage.h"
+#include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/GridView/GridColumn.h"
 #include "Ui/Custom/GridView/GridItem.h"
 #include "Ui/Custom/GridView/GridRow.h"
@@ -53,34 +53,22 @@ bool ScriptDebuggerView::create(ui::Widget* parent)
 	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_STEP_OVER"), 3, ui::Command(L"Script.Editor.StepOver")));
 	m_debuggerTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ScriptDebuggerView::eventDebuggerToolClick);
 
-	Ref< ui::Tab > tabDebugger = new ui::Tab();
-	tabDebugger->create(this, ui::WsNone);
-
-	Ref< ui::TabPage > tabPageCallStack = new ui::TabPage();
-	tabPageCallStack->create(tabDebugger, L"Call Stack", new ui::TableLayout(L"100%", L"100%", 0, 0));
+	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
+	splitter->create(this, true, 50, true);
 
 	m_callStackGrid = new ui::custom::GridView();
-	m_callStackGrid->create(tabPageCallStack, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader);
-	m_callStackGrid->addColumn(new ui::custom::GridColumn(L"Function", 200));
-	m_callStackGrid->addColumn(new ui::custom::GridColumn(L"Line", 100));
-	m_callStackGrid->addColumn(new ui::custom::GridColumn(L"Script", 200));
+	m_callStackGrid->create(splitter, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader);
+	m_callStackGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_FUNCTION"), 180));
+	m_callStackGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_LINE"), 100));
+	m_callStackGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_SCRIPT"), 200));
 	m_callStackGrid->setEnable(false);
-
-	tabDebugger->addPage(tabPageCallStack);
-
-	Ref< ui::TabPage > tabPageLocals = new ui::TabPage();
-	tabPageLocals->create(tabDebugger, L"Locals", new ui::TableLayout(L"100%", L"100%", 0, 0));
+	m_callStackGrid->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptDebuggerView::eventCallStackGridDoubleClick);
 
 	m_localsGrid = new ui::custom::GridView();
-	m_localsGrid->create(tabPageLocals, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader);
-	m_localsGrid->addColumn(new ui::custom::GridColumn(L"Name", 200));
-	m_localsGrid->addColumn(new ui::custom::GridColumn(L"Value", 300));
+	m_localsGrid->create(splitter, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader);
+	m_localsGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_LOCAL_NAME"), 120));
+	m_localsGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_LOCAL_VALUE"), 300));
 	m_localsGrid->setEnable(false);
-
-	tabDebugger->addPage(tabPageLocals);
-
-	tabDebugger->setActivePage(tabPageCallStack);
-	tabDebugger->update();
 
 	m_scriptDebugger->addListener(this);
 	return true;
@@ -139,33 +127,47 @@ Ref< ui::custom::GridRow > ScriptDebuggerView::createVariableRow(const script::L
 	return row;
 }
 
-void ScriptDebuggerView::breakpointReached(IScriptDebugger* scriptDebugger, const CallStack& callStack)
+void ScriptDebuggerView::updateLocals(int32_t depth)
 {
-	const script::CallStack::Frame& currentFrame = callStack.getCurrentFrame();
-
-	m_callStackGrid->setEnable(true);
-	m_callStackGrid->removeAllRows();
-
-	const std::list< script::CallStack::Frame >& frames = callStack.getFrames();
-	for (std::list< script::CallStack::Frame >::const_iterator i = frames.begin(); i != frames.end(); ++i)
-	{
-		Ref< ui::custom::GridRow > row = new ui::custom::GridRow(0);
-		row->add(new ui::custom::GridItem(i->functionName));
-		row->add(new ui::custom::GridItem(toString(i->line + 1)));
-		row->add(new ui::custom::GridItem(i->scriptName));
-		m_callStackGrid->addRow(row);
-	}
+	const std::list< script::CallStack::Frame >& frames = m_callStack.getFrames();
 
 	m_localsGrid->setEnable(true);
 	m_localsGrid->removeAllRows();
 
-	const RefArray< script::Local >& locals = currentFrame.locals;
-	for (RefArray< script::Local >::const_iterator i = locals.begin(); i != locals.end(); ++i)
+	std::list< script::CallStack::Frame >::const_iterator i = frames.begin();
+	std::advance(i, depth);
+
+	for (RefArray< script::Local >::const_iterator j = i->locals.begin(); j != i->locals.end(); ++j)
 	{
-		Ref< ui::custom::GridRow > row = createVariableRow(*i);
+		Ref< ui::custom::GridRow > row = createVariableRow(*j);
 		if (row)
 			m_localsGrid->addRow(row);
 	}
+}
+
+void ScriptDebuggerView::breakpointReached(IScriptDebugger* scriptDebugger, const CallStack& callStack)
+{
+	m_callStack = callStack;
+
+	m_callStackGrid->setEnable(true);
+	m_callStackGrid->removeAllRows();
+
+	int32_t depth = 0;
+
+	const std::list< script::CallStack::Frame >& frames = m_callStack.getFrames();
+	for (std::list< script::CallStack::Frame >::const_iterator i = frames.begin(); i != frames.end(); ++i)
+	{
+		Ref< ui::custom::GridRow > row = new ui::custom::GridRow(0);
+
+		row->add(new ui::custom::GridItem(i->functionName));
+		row->add(new ui::custom::GridItem(toString(i->line + 1)));
+		row->add(new ui::custom::GridItem(i->scriptName));
+		row->setData(L"FRAME_DEPTH", new PropertyInteger(depth++));
+
+		m_callStackGrid->addRow(row);
+	}
+
+	updateLocals(0);
 
 	ScriptBreakpointEvent eventBreakPoint(this, &callStack);
 	raiseEvent(&eventBreakPoint);
@@ -174,6 +176,21 @@ void ScriptDebuggerView::breakpointReached(IScriptDebugger* scriptDebugger, cons
 void ScriptDebuggerView::eventDebuggerToolClick(ui::custom::ToolBarButtonClickEvent* event)
 {
 	handleCommand(event->getCommand());
+}
+
+void ScriptDebuggerView::eventCallStackGridDoubleClick(ui::MouseDoubleClickEvent* event)
+{
+	if (!m_callStackGrid->isEnable())
+		return;
+
+	ui::custom::GridRow* selectedRow = m_callStackGrid->getSelectedRow();
+	if (selectedRow)
+	{
+		int32_t depth = *(selectedRow->getData< PropertyInteger >(L"FRAME_DEPTH"));
+		updateLocals(depth);
+	}
+	else
+		updateLocals(0);
 }
 
 	}

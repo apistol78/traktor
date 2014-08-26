@@ -51,7 +51,7 @@ struct RMessage
 			uint8_t sequence;
 		} eventAck;
 
-		uint8_t reserved[512 - sizeof(uint8_t) - sizeof(uint32_t)];
+		uint8_t reserved[1024 - sizeof(uint8_t) - sizeof(uint32_t)];
 	};
 };
 #pragma pack()
@@ -63,11 +63,11 @@ T_FORCE_INLINE int32_t RmiPong_NetSize()					{ return RMessage_HeaderSize() + si
 
 T_FORCE_INLINE int32_t RmiState_NetSize(int32_t stateSize)	{ return RMessage_HeaderSize() + stateSize; }
 T_FORCE_INLINE int32_t RmiState_StateSize(int32_t netSize)	{ return netSize - RMessage_HeaderSize(); }
-T_FORCE_INLINE int32_t RmiState_MaxStateSize()				{ return RmiState_StateSize(512); }
+T_FORCE_INLINE int32_t RmiState_MaxStateSize()				{ return RmiState_StateSize(1024); }
 
 T_FORCE_INLINE int32_t RmiEvent_NetSize(int32_t eventSize)	{ return RMessage_HeaderSize() + sizeof(uint8_t) + eventSize; }
 T_FORCE_INLINE int32_t RmiEvent_EventSize(int32_t netSize)	{ return netSize - RMessage_HeaderSize() - sizeof(uint8_t); }
-T_FORCE_INLINE int32_t RmiEvent_MaxEventSize()				{ return RmiEvent_EventSize(512); }
+T_FORCE_INLINE int32_t RmiEvent_MaxEventSize()				{ return RmiEvent_EventSize(1024); }
 
 T_FORCE_INLINE int32_t RmiEventAck_NetSize()				{ return RMessage_HeaderSize() + sizeof(uint8_t); }
 

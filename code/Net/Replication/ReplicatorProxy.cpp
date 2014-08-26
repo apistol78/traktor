@@ -107,7 +107,7 @@ Ref< const State > ReplicatorProxy::getState(double timeOffset) const
 {
 	if (m_stateTemplate)
 	{
-		double maxDelta = m_replicator->m_configuration.maxExtrapolationDelta;
+		const double maxDelta = m_replicator->m_configuration.maxExtrapolationDelta;
 		double delta = clamp< double >(timeOffset - m_stateTime0, -maxDelta, maxDelta);
 
 		return m_stateTemplate->extrapolate(
@@ -145,10 +145,15 @@ void ReplicatorProxy::sendEvent(const ISerializable* eventObject)
 
 	e.time = m_replicator->m_time0;
 	e.size = ms.tell();
+	e.count = 1;
 
 	m_events.push_back(e);
 
-	//log::info << m_replicator->getLogPrefix() << L"Sending event " << int32_t(e.msg.event.sequence) << L" " << type_name(eventObject) << L"..." << Endl;
+	log::info << m_replicator->getLogPrefix() << L"Sending event " << type_name(eventObject) << L"..." << Endl;
+	log::info << m_replicator->getLogPrefix() << L"\t  target " << m_handle << Endl;
+	log::info << m_replicator->getLogPrefix() << L"\tsequence " << int32_t(e.msg.event.sequence) << Endl;
+	log::info << m_replicator->getLogPrefix() << L"\t    size " << int32_t(e.size) << Endl;
+
 	m_replicator->m_topology->send(m_handle, &e.msg, RmiEvent_NetSize(e.size));
 }
 
@@ -159,8 +164,13 @@ bool ReplicatorProxy::updateEventQueue()
 		if (m_replicator->m_time0 - i->time > c_resendTimeThreshold)
 		{
 			i->time = m_replicator->m_time0;
+			i->count++;
 
-			//log::info << m_replicator->getLogPrefix() << L"Re-sending event " << int32_t(i->msg.event.sequence) << L"..." << Endl;
+			log::info << m_replicator->getLogPrefix() << L"Re-sending event, attempt " << i->count << L"..." << Endl;
+			log::info << m_replicator->getLogPrefix() << L"\t  target " << m_handle << Endl;
+			log::info << m_replicator->getLogPrefix() << L"\tsequence " << int32_t(i->msg.event.sequence) << Endl;
+			log::info << m_replicator->getLogPrefix() << L"\t    size " << int32_t(i->size) << Endl;
+
 			m_replicator->m_topology->send(m_handle, &i->msg, RmiEvent_NetSize(i->size));
 		}
 	}
@@ -205,14 +215,23 @@ void ReplicatorProxy::updateLatency(double roundTrip, double latencyReverse)
 bool ReplicatorProxy::receivedState(double stateTime, const void* stateData, uint32_t stateDataSize)
 {
 	if (!m_stateTemplate)
+	{
+		log::info << m_replicator->getLogPrefix() << L"Received state from " << m_handle << L" but no state template registered; state ignored." << Endl;
 		return false;
+	}
 
 	if (stateTime < m_stateTime0)
+	{
+		log::info << m_replicator->getLogPrefix() << L"Received old state from " << m_handle << L"; state ignored." << Endl;
 		return false;
+	}
 
 	Ref< const State > state = m_stateTemplate->unpack(stateData, stateDataSize);
 	if (!state)
+	{
+		log::info << m_replicator->getLogPrefix() << L"Failed to unpack state from " << m_handle << L"; state ignored." << Endl;
 		return false;
+	}
 
 	m_stateN2 = m_stateN1;
 	m_stateTimeN2 = m_stateTimeN1;
