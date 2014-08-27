@@ -223,12 +223,14 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	classReplicator->addMethod("destroy", &net::Replicator::destroy);
 	classReplicator->addMethod("setConfiguration", &net_Replicator_setConfiguration);
 	classReplicator->addMethod("getConfiguration", &net_Replicator_getConfiguration);
-	classReplicator->addMethod("removeAllEventTypes", &net::Replicator::removeAllEventTypes);
 	classReplicator->addMethod("addEventType", &net::Replicator::addEventType);
-	classReplicator->addMethod("removeAllListeners", &net::Replicator::removeAllListeners);
+	classReplicator->addMethod("removeAllEventTypes", &net::Replicator::removeAllEventTypes);
 	classReplicator->addMethod("addListener", &net::Replicator::addListener);
-	classReplicator->addMethod("removeAllEventListeners", &net::Replicator::removeAllEventListeners);
+	classReplicator->addMethod("removeListener", &net::Replicator::removeListener);
+	classReplicator->addMethod("removeAllListeners", &net::Replicator::removeAllListeners);
 	classReplicator->addMethod("addEventListener", &net::Replicator::addEventListener);
+	classReplicator->addMethod("removeEventListener", &net::Replicator::removeEventListener);
+	classReplicator->addMethod("removeAllEventListeners", &net::Replicator::removeAllEventListeners);
 	classReplicator->addMethod("update", &net::Replicator::update);
 	classReplicator->addMethod("getName", &net::Replicator::getName);
 	classReplicator->addMethod("setStatus", &net::Replicator::setStatus);

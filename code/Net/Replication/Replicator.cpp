@@ -263,7 +263,7 @@ bool Replicator::update()
 					std::map< const TypeInfo*, RefArray< IEventListener > >::const_iterator it = m_eventListeners.find(&type_of(eventObject));
 					if (it != m_eventListeners.end())
 					{
-						log::info << getLogPrefix() << L"Dispatching event " << type_name(eventObject) << L" to " << it->second.size() << L" listener(s)..." << Endl;
+						log::info << getLogPrefix() << L"Dispatching event " << type_name(eventObject) << L" to " << uint32_t(it->second.size()) << L" listener(s)..." << Endl;
 						log::info << getLogPrefix() << L"\t  sender " << fromGhost->m_handle << Endl;
 						log::info << getLogPrefix() << L"\tsequence " << int32_t(msg.event.sequence) << Endl;
 						log::info << getLogPrefix() << L"\t    hash " << DeepHash(eventObject).get() << Endl;
@@ -316,7 +316,12 @@ bool Replicator::update()
 		(*i)->updateEventQueue();
 
 	// Adjust times based from estimated time offset.
-	timeOffset = (timeOffset < 0.03) ? (timeOffset * 0.4) : (timeOffset * 0.8);
+	timeOffset *= 0.8;
+	if (abs(timeOffset) < 0.03)
+	{
+		double k = abs(timeOffset) / 0.03;
+		timeOffset *= k;
+	}
 	if (timeOffset > 0.01)
 	{
 		m_time += timeOffset;
