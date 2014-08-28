@@ -1053,6 +1053,7 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedQuaternion->addStaticMethod("fromEulerAngles", &BoxedQuaternion::fromEulerAngles);
 	classBoxedQuaternion->addStaticMethod("fromAxisAngle", &BoxedQuaternion::fromAxisAngle);
 	classBoxedQuaternion->addStaticMethod("lerp", &BoxedQuaternion::lerp);
+	classBoxedQuaternion->addStaticMethod("slerp", &BoxedQuaternion::slerp);
 	classBoxedQuaternion->addOperator< Vector4, const Vector4& >('*', &BoxedQuaternion::transform);
 	classBoxedQuaternion->addOperator< Quaternion, const Quaternion& >('*', &BoxedQuaternion::concat);
 	scriptManager->registerClass(classBoxedQuaternion);

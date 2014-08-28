@@ -271,7 +271,9 @@ public:
 	static Quaternion fromAxisAngle(const Vector4& axisAngle);
 
 	static Quaternion lerp(const Quaternion& a, const Quaternion& b, float c) { return traktor::lerp(a, b, c); }
-	
+
+	static Quaternion slerp(const Quaternion& a, const Quaternion& b, float c) { return traktor::slerp(a, b, c); }
+
 	const Quaternion& unbox() const { return m_value; }
 
 	virtual std::wstring toString() const;
