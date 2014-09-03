@@ -23,6 +23,16 @@ for module in deployModules:gmatch("[%w%.%-%_]+") do
 	end
 end
 
+local additional = {}
+
+for i = 0, args:size() - 1 do
+	local a = {}
+	a.file = args:get(i)
+	a.fileRef = "2711EBA718DDB14D005F000" .. i
+	a.buildRef = "2711EBA718DDB14D006F000" .. i
+	table.insert(additional, a)
+end
+
 --!>// !$*UTF8*$!
 {
 	archiveVersion = 1;
@@ -45,7 +55,13 @@ end
 		2711EBB118DDB14D005F551E /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 2711EBA518DDB14D005F551E /* Icon.png */; };
 		2711EBB218DDB14D005F551E /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2711EBA618DDB14D005F551E /* Icon@2x.png */; };
 		2711EBB418DDB23C005F551E /* Application.config in Resources */ = {isa = PBXBuildFile; fileRef = 2711EBB318DDB23C005F551E /* Application.config */; };
-		337379A630150547A5C6CF6F /* Main.cpp in Sources */ = { isa = PBXBuildFile; fileRef = 39B478A5B5290D49A78145C4 /* Main.cpp */; };
+<!--
+
+for _, a in ipairs(additional) do
+		output:printLn("\t\t" .. a.buildRef .. " /* " .. a.file .. " in Resources */ = {isa = PBXBuildFile; fileRef = " .. a.fileRef .. " /* " .. a.file .. " */; };")
+end
+
+--!>		337379A630150547A5C6CF6F /* Main.cpp in Sources */ = { isa = PBXBuildFile; fileRef = 39B478A5B5290D49A78145C4 /* Main.cpp */; };
 		A2C1744D82FD0B4991225147 /* Foundation.framework in Frameworks */ = { isa = PBXBuildFile; fileRef = 54640E8964337B43BDF49D3E /* Foundation.framework */; };
 		DC025D9299B1D3409D5CA339 /* OpenAL.framework in Frameworks */ = { isa = PBXBuildFile; fileRef = DFD48B94BA7D544D801ECC9B /* OpenAL.framework */; };
 		ADBB1F72969AE749A22CE15B /* OpenGLES.framework in Frameworks */ = { isa = PBXBuildFile; fileRef = B2F470F085B48F469B924210 /* OpenGLES.framework */; };
@@ -73,7 +89,14 @@ end
 		2711EBA518DDB14D005F551E /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		2711EBA618DDB14D005F551E /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		2711EBB318DDB23C005F551E /* Application.config */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Application.config; sourceTree = "<group>"; };
-		39B478A5B5290D49A78145C4 /* Main.cpp */ = { isa = PBXFileReference; name = Main.cpp; path = Main.cpp; sourceTree = "<group>"; };
+<!--
+
+for _, a in ipairs(additional) do
+		output:printLn("\t\t" .. a.fileRef .. " /* " .. a.file .. " */ = {isa = PBXFileReference; path = " .. a.file .. "; sourceTree = \"<group>\"; };")
+end
+
+
+--!>		39B478A5B5290D49A78145C4 /* Main.cpp */ = { isa = PBXFileReference; name = Main.cpp; path = Main.cpp; sourceTree = "<group>"; };
 		AB2066142D122F498D88B55F /* Info.plist */ = { isa = PBXFileReference; name = Info.plist; path = Info.plist; sourceTree = "<group>"; };
 		62E1560702D8E643A8B347CD /* <!-- output:print(environment:get("DEPLOY_PROJECT_NAME")) --!> */ = { isa = PBXFileReference; includeInIndex = 0; path = "<!-- output:print(environment:get("DEPLOY_PROJECT_NAME")) --!>"; sourceTree = BUILT_PRODUCTS_DIR; };
 		54640E8964337B43BDF49D3E /* Foundation.framework in Frameworks */ = { isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -123,7 +146,13 @@ end
 				2711EBA518DDB14D005F551E /* Icon.png */,
 				2711EBA618DDB14D005F551E /* Icon@2x.png */,
 				2711EBB318DDB23C005F551E /* Application.config */,
-				39B478A5B5290D49A78145C4 /* Main.cpp */,
+<!--
+
+for _, a in ipairs(additional) do
+		output:printLn("\t\t" .. a.fileRef .. " /* " .. a.file .. " */,")
+end
+
+--!>				39B478A5B5290D49A78145C4 /* Main.cpp */,
 				AB2066142D122F498D88B55F /* Info.plist */,
 				54640E8964337B43BDF49D3E /* Foundation.framework */,
 				DFD48B94BA7D544D801ECC9B /* OpenAL.framework */,
@@ -221,7 +250,13 @@ end
 				2711EBB018DDB14D005F551E /* Icon-Small@2x.png in Resources */,
 				2711EBA918DDB14D005F551E /* Default.png in Resources */,
 				2711EBB418DDB23C005F551E /* Application.config in Resources */,
-				2711EBAD18DDB14D005F551E /* Icon-76@2x.png in Resources */,
+<!--
+
+for _, a in ipairs(additional) do
+		output:printLn("\t\t" .. a.buildRef .. " /* " .. a.file .. " in Resources */,")
+end
+
+--!>				2711EBAD18DDB14D005F551E /* Icon-76@2x.png in Resources */,
 				2711EBAE18DDB14D005F551E /* Icon-Small-50.png in Resources */,
 				2711EBA818DDB14D005F551E /* Default-ipad.png in Resources */,
 				2711EBB118DDB14D005F551E /* Icon.png in Resources */,

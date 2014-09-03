@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="Solution" version="2">
-	<name>RemoteTools MacOSX</name>
-	<rootPath>$(TRAKTOR_HOME)/tools/RemoteTools/build/macosx</rootPath>
+	<name>RemoteTools OSX</name>
+	<rootPath>$(TRAKTOR_HOME)/tools/RemoteTools/build/osx</rootPath>
 	<definitions/>
 	<projects>
 		<item type="Project" version="1">
@@ -55,17 +55,17 @@
 			<dependencies>
 				<item type="ExternalDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<solutionFileName>$(TRAKTOR_HOME)/TraktorMacOSX.xms</solutionFileName>
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorOSX.xms</solutionFileName>
 					<projectName>Traktor.Core</projectName>
 				</item>
 				<item type="ExternalDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<solutionFileName>$(TRAKTOR_HOME)/TraktorMacOSX.xms</solutionFileName>
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorOSX.xms</solutionFileName>
 					<projectName>Traktor.Net</projectName>
 				</item>
 				<item type="ExternalDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<solutionFileName>$(TRAKTOR_HOME)/TraktorMacOSX.xms</solutionFileName>
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorOSX.xms</solutionFileName>
 					<projectName>Traktor.Compress</projectName>
 				</item>
 			</dependencies>
@@ -121,12 +121,12 @@
 			<dependencies>
 				<item type="ExternalDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<solutionFileName>$(TRAKTOR_HOME)/TraktorMacOSX.xms</solutionFileName>
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorOSX.xms</solutionFileName>
 					<projectName>Traktor.Core</projectName>
 				</item>
 				<item type="ExternalDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<solutionFileName>$(TRAKTOR_HOME)/TraktorMacOSX.xms</solutionFileName>
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorOSX.xms</solutionFileName>
 					<projectName>Traktor.Net</projectName>
 				</item>
 			</dependencies>
@@ -182,17 +182,17 @@
 			<dependencies>
 				<item type="ExternalDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<solutionFileName>$(TRAKTOR_HOME)/TraktorMacOSX.xms</solutionFileName>
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorOSX.xms</solutionFileName>
 					<projectName>Traktor.Core</projectName>
 				</item>
 				<item type="ExternalDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<solutionFileName>$(TRAKTOR_HOME)/TraktorMacOSX.xms</solutionFileName>
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorOSX.xms</solutionFileName>
 					<projectName>Traktor.Net</projectName>
 				</item>
 				<item type="ExternalDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<solutionFileName>$(TRAKTOR_HOME)/TraktorMacOSX.xms</solutionFileName>
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorOSX.xms</solutionFileName>
 					<projectName>Traktor.Compress</projectName>
 				</item>
 			</dependencies>

@@ -26,12 +26,10 @@
 #include <Ui/Bitmap.h>
 #include <Ui/Clipboard.h>
 #include <Ui/Command.h>
-#include <Ui/FunctionHandler.h>
 #include <Ui/MenuItem.h>
 #include <Ui/MessageBox.h>
 #include <Ui/NotificationIcon.h>
 #include <Ui/PopupMenu.h>
-#include <Ui/Events/MouseEvent.h>
 #if defined(_WIN32)
 #	include <Ui/Win32/EventLoopWin32.h>
 #	include <Ui/Win32/WidgetFactoryWin32.h>
@@ -450,6 +448,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 		if (!clientSocket)
 			continue;
 
+        /*
+        
 		traktor::log::info << L"Client connected; spawning thread..." << Endl;
 
 		Thread* clientThread = ThreadManager::getInstance().create(
@@ -464,6 +464,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 
 		clientThread->start();
 		clientThreads.push_back(clientThread);
+        */
+        
+        threadProcessClient(clientSocket);
 	}
 
 #if defined(_WIN32)

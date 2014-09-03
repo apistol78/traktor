@@ -148,7 +148,7 @@ function migrate(args)
 
 	stdout:printLn("Generating Xcode project...")
 	run:mkdir("$(DEPLOY_PROJECT_NAME).xcodeproj")
-	if run:run("$(DEPLOY_PROJECT_ROOT)/res/deploy/ios/project.pbxproj.template", "$(DEPLOY_PROJECT_NAME).xcodeproj/project.pbxproj") ~= 0 then
+	if run:run("$(DEPLOY_PROJECT_ROOT)/res/deploy/ios/project.pbxproj.template Content.compact", "$(DEPLOY_PROJECT_NAME).xcodeproj/project.pbxproj") ~= 0 then
 		stderr:printLn("Failed to generate Xcode project")
 		return 1
 	end
