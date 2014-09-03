@@ -35,7 +35,7 @@
 #include "Editor/Pipeline/FilePipelineCache.h"
 #include "Editor/Pipeline/MemCachedPipelineCache.h"
 #include "Editor/Pipeline/PipelineBuilder.h"
-#include "Editor/Pipeline/PipelineDb.h"
+#include "Editor/Pipeline/PipelineDbFlat.h"
 #include "Editor/Pipeline/PipelineDependencySet.h"
 #include "Editor/Pipeline/PipelineDependsIncremental.h"
 #include "Editor/Pipeline/PipelineDependsParallel.h"
@@ -541,7 +541,7 @@ bool perform(const PipelineParameters* params)
 	std::wstring connectionString = settings->getProperty< PropertyString >(L"Pipeline.Db");
 	std::wstring cachePath = settings->getProperty< PropertyString >(L"Pipeline.CachePath");
 
-	Ref< editor::PipelineDb > pipelineDb = new editor::PipelineDb();
+	Ref< editor::IPipelineDb > pipelineDb = new editor::PipelineDbFlat();
 	if (!pipelineDb->open(connectionString))
 	{
 		traktor::log::error << L"Unable to connect to pipeline database" << Endl;

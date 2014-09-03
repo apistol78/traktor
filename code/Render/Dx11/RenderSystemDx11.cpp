@@ -1,5 +1,7 @@
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Thread/Acquire.h"
+#include "Render/Dx11/BufferHeap.h"
 #include "Render/Dx11/ContextDx11.h"
 #include "Render/Dx11/CubeTextureDx11.h"
 #include "Render/Dx11/IndexBufferDynamicDx11.h"
@@ -203,6 +205,24 @@ bool RenderSystemDx11::create(const RenderSystemDesc& desc)
 	}
 
 	m_context = new ContextDx11(d3dDevice, d3dDeviceContext, dxgiFactory, dxgiOutput);
+
+	// Create a heap for static vertex buffers; as each different vertex size
+	// will create a new buffer we must be somewhat conservative of actual buffer size.
+	D3D11_BUFFER_DESC dbd;
+	dbd.ByteWidth = 16 * 1024 * 1024;
+	dbd.Usage = D3D11_USAGE_DEFAULT;
+	dbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	dbd.CPUAccessFlags = 0;
+	dbd.MiscFlags = 0;
+	m_vertexBufferStaticHeap = new BufferHeap(m_context, dbd);
+
+	dbd.ByteWidth = 4 * 1024 * 1024;
+	dbd.Usage = D3D11_USAGE_DEFAULT;
+	dbd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	dbd.CPUAccessFlags = 0;
+	dbd.MiscFlags = 0;
+	m_indexBufferStaticHeap = new BufferHeap(m_context, dbd);
+
 	m_resourceCache = new ResourceCache(d3dDevice, desc.mipBias, clamp(desc.maxAnisotropy, 1, 16));
 
 	return true;
@@ -211,6 +231,10 @@ bool RenderSystemDx11::create(const RenderSystemDesc& desc)
 void RenderSystemDx11::destroy()
 {
 	m_resourceCache = 0;
+
+	safeDestroy(m_indexBufferStaticHeap);
+	safeDestroy(m_vertexBufferStaticHeap);
+
 	if (m_context)
 	{
 		m_context->deleteResources();
@@ -365,7 +389,7 @@ Ref< IRenderView > RenderSystemDx11::createRenderView(const RenderViewEmbeddedDe
 Ref< VertexBuffer > RenderSystemDx11::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
 	if (!dynamic)
-		return VertexBufferStaticDx11::create(m_context, bufferSize, vertexElements);
+		return VertexBufferStaticDx11::create(m_context, m_vertexBufferStaticHeap, bufferSize, vertexElements);
 	else
 		return VertexBufferDynamicDx11::create(m_context, bufferSize, vertexElements);
 }
@@ -373,7 +397,7 @@ Ref< VertexBuffer > RenderSystemDx11::createVertexBuffer(const std::vector< Vert
 Ref< IndexBuffer > RenderSystemDx11::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
 	if (!dynamic)
-		return IndexBufferStaticDx11::create(m_context, indexType, bufferSize);
+		return IndexBufferStaticDx11::create(m_context, m_indexBufferStaticHeap, indexType, bufferSize);
 	else
 		return IndexBufferDynamicDx11::create(m_context, indexType, bufferSize);
 }

@@ -1,15 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature">
+<object type="traktor.amalgam.Feature" version="4">
 	<description>Steam Online Provider</description>
+	<priority>0</priority>
 	<platforms>
-		<ios>false</ios>
-		<linux>false</linux>
-		<mobile6>false</mobile6>
-		<osx>true</osx>
-		<ps3>false</ps3>
-		<win32>true</win32>
-		<win64>true</win64>
-		<xbox360>false</xbox360>
+		<item>
+			<platform>{C5B672D1-E72D-AC47-97D4-ABAA41F2F6BD}</platform>
+			<deployFiles>
+				<item>steam_api.so</item>
+				<item>libTraktor.Core.so</item>
+				<item>libTraktor.Net.so</item>
+				<item>libTraktor.Online.so</item>
+				<item>libTraktor.Online.Steam.so</item>
+			</deployFiles>
+		</item>
+		<item>
+			<platform>{9105E00C-D6AA-9140-B4D6-0CFD5B2FD76A}</platform>
+			<deployFiles>
+				<item>steam_api.dylib</item>
+				<item>libTraktor.Core.a</item>
+				<item>libTraktor.Net.a</item>
+				<item>libTraktor.Online.a</item>
+				<item>libTraktor.Online.Steam.a</item>
+			</deployFiles>
+		</item>
+		<item>
+			<platform>{7D0F1280-E37A-2541-8892-723B3C81569C}</platform>
+			<deployFiles>
+				<item>steam_api.dll</item>
+				<item>Traktor.Core.dll</item>
+				<item>Traktor.Net.dll</item>
+				<item>Traktor.Online.dll</item>
+				<item>Traktor.Online.Steam.dll</item>
+			</deployFiles>
+		</item>
+		<item>
+			<platform>{DC125AEC-2E6B-AF4D-A852-35731A782340}</platform>
+			<deployFiles>
+				<item>steam_api.dll</item>
+				<item>Traktor.Core.dll</item>
+				<item>Traktor.Net.dll</item>
+				<item>Traktor.Online.dll</item>
+				<item>Traktor.Online.Steam.dll</item>
+			</deployFiles>
+		</item>
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">
 		<value>

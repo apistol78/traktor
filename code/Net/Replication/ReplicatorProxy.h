@@ -35,6 +35,10 @@ class T_DLLCLASS ReplicatorProxy : public Object
 public:
 	/*! \brief
 	 */
+	net_handle_t getHandle() const;
+
+	/*! \brief
+	 */
 	const std::wstring& getName() const;
 
 	/*! \brief
@@ -97,6 +101,10 @@ public:
 	 */
 	Ref< const State > getState(double timeOffset) const;
 
+	/*! \brief
+	 */
+	void setSendState(bool sendState);
+
 	/*! \brief Send high priority event to this ghost.
 	 */
 	void sendEvent(const ISerializable* eventObject);
@@ -114,10 +122,22 @@ private:
 
 	Replicator* m_replicator;
 	net_handle_t m_handle;
+
+	/*! \group Proxy information. */
+	//@{
+
 	std::wstring m_name;
 	uint8_t m_status;
 	Ref< Object > m_object;
 	Transform m_origin;
+	float m_distance;
+	bool m_sendState;
+
+	//@}
+
+	/*! \group Shadow states. */
+	//@{
+	 
 	Ref< const StateTemplate > m_stateTemplate;
 	Ref< const State > m_stateN2;
 	double m_stateTimeN2;
@@ -125,21 +145,34 @@ private:
 	double m_stateTimeN1;
 	Ref< const State > m_state0;
 	double m_stateTime0;
+
+	//@}
+
+	/*! \group Event management. */
+	//@{
+
 	uint8_t m_sequence;
 	std::list< Event > m_events;
-	CircularVector< uint8_t, 128 > m_lastEvents;
-	float m_distance;
+	CircularVector< std::pair< uint8_t, uint32_t >, 128 > m_lastEvents;
+
+	//@}
+
+	/*! \group Time measurements. */
+	//@{
+
 	double m_timeUntilTxPing;
 	double m_timeUntilTxState;
 	CircularVector< double, 17 > m_roundTrips;
 	double m_latencyMedian;
 	double m_latencyReverse;
 
+	// @}
+
 	bool updateEventQueue();
 
-	bool isEventNew(uint8_t sequence);
-
 	void receivedEventAcknowledge(uint8_t sequence);
+
+	bool acceptEvent(uint8_t sequence, const ISerializable* eventObject);
 
 	void updateLatency(double roundTrip, double reverseLatency);
 

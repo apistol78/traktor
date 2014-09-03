@@ -24,14 +24,17 @@ class T_DLLCLASS TargetID : public ISerializable
 public:
 	TargetID();
 
-	TargetID(const Guid& id);
+	TargetID(const Guid& id, const std::wstring& name);
 
 	const Guid& getId() const;
+
+	const std::wstring& getName() const;
 
 	virtual void serialize(ISerializer& s);
 
 private:
 	Guid m_id;
+	std::wstring m_name;
 };
 
 	}

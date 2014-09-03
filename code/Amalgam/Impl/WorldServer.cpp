@@ -40,6 +40,7 @@
 #include "World/Entity/DecalEntityRenderer.h"
 #include "World/Entity/GroupEntityRenderer.h"
 #include "World/Entity/LightEntityRenderer.h"
+#include "World/Entity/SwitchEntityRenderer.h"
 #include "World/Entity/TransientEntityRenderer.h"
 #include "World/Entity/WorldEntityFactory.h"
 #include "World/Forward/WorldRendererForward.h"
@@ -124,6 +125,7 @@ bool WorldServer::create(const PropertyGroup* settings, IRenderServer* renderSer
 	m_entityRenderers->add(new world::DecalEntityRenderer(m_renderServer->getRenderSystem()));
 	m_entityRenderers->add(new world::GroupEntityRenderer());
 	m_entityRenderers->add(new world::LightEntityRenderer());
+	m_entityRenderers->add(new world::SwitchEntityRenderer());
 	m_entityRenderers->add(new world::TransientEntityRenderer());
 	m_entityRenderers->add(new mesh::MeshEntityRenderer());
 	m_entityRenderers->add(new mesh::InstanceMeshEntityRenderer());

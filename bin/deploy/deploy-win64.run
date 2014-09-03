@@ -19,7 +19,7 @@ function deploy(args)
 	-- Deploy binaries to target.
 	stdout:printLn("Deploying binaries to target host...")
 	run:pushd("$(DEPLOY_PROJECT_ROOT)/bin/latest/win64/releaseshared")
-	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) *.dll *.exe *.txt", "(null)")
+	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) $(DEPLOY_FILES)", "(null)")
 	if run:exitCode() ~= 0 then return run:exitCode() end
 	run:popd()
 

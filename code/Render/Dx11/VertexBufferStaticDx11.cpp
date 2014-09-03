@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
 #include "Render/Dx11/ContextDx11.h"
 #include "Render/Dx11/Platform.h"
@@ -13,29 +14,28 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferStaticDx11", VertexBufferSta
 
 Ref< VertexBufferStaticDx11 > VertexBufferStaticDx11::create(
 	ContextDx11* context,
+	BufferHeap* bufferHeap,
 	uint32_t bufferSize,
 	const std::vector< VertexElement >& vertexElements
 )
 {
-	ComRef< ID3D11Buffer > d3dBuffer;
-	D3D11_BUFFER_DESC dbd;
-	HRESULT hr;
+	BufferHeap::Chunk bufferChunk;
 
-	dbd.ByteWidth = bufferSize;
-	dbd.Usage = D3D11_USAGE_DEFAULT;
-	dbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	dbd.CPUAccessFlags = 0;
-	dbd.MiscFlags = 0;
+	uint32_t vertexStride = getVertexSize(vertexElements);
 
-	hr = context->getD3DDevice()->CreateBuffer(&dbd, NULL, &d3dBuffer.getAssign());
-	if (FAILED(hr))
+	if (!bufferHeap->alloc(bufferSize, vertexStride, bufferChunk))
 		return 0;
+
+	T_FATAL_ASSERT (bufferChunk.vertexOffset % vertexStride == 0);
 
 	Ref< VertexBufferStaticDx11 > vb = new VertexBufferStaticDx11(bufferSize);
 
 	vb->m_context = context;
-	vb->m_d3dBuffer = d3dBuffer;
-	vb->m_d3dStride = getVertexSize(vertexElements);
+	vb->m_bufferHeap = bufferHeap;
+	vb->m_bufferChunk = bufferChunk;
+	vb->m_d3dBuffer = bufferChunk.d3dBuffer;
+	vb->m_d3dStride = vertexStride;
+	vb->m_d3dBaseVertexOffset = bufferChunk.vertexOffset / vertexStride;
 
 	vb->m_d3dInputElements.resize(vertexElements.size());
 	for (uint32_t i = 0; i < vertexElements.size(); ++i)
@@ -70,11 +70,16 @@ VertexBufferStaticDx11::~VertexBufferStaticDx11()
 
 void VertexBufferStaticDx11::destroy()
 {
-	if (!m_context)
-		return;
-
-	m_context->releaseComRef(m_d3dBuffer);
-	m_context = 0;
+	if (m_bufferHeap)
+	{
+		m_bufferHeap->free(m_bufferChunk);
+		m_bufferHeap = 0;
+	}
+	if (m_context)
+	{
+		m_context->releaseComRef(m_d3dBuffer);
+		m_context = 0;
+	}
 }
 
 void* VertexBufferStaticDx11::lock()
@@ -99,14 +104,24 @@ void VertexBufferStaticDx11::prepare(ID3D11DeviceContext* d3dDeviceContext, Stat
 {
 	if (m_data.ptr())
 	{
+		D3D11_BOX d3db;
+		
+		d3db.left = m_bufferChunk.vertexOffset;
+		d3db.right = m_bufferChunk.vertexOffset + getBufferSize();
+		d3db.top = 0;
+		d3db.bottom = 1;
+		d3db.front = 0;
+		d3db.back = 1;
+
 		d3dDeviceContext->UpdateSubresource(
 			m_d3dBuffer,
 			0,
-			NULL,
+			&d3db,
 			m_data.c_ptr(),
-			getBufferSize(),
-			1
+			0,
+			0
 		);
+		
 		m_data.release();
 	}
 	VertexBufferDx11::prepare(d3dDeviceContext, stateCache);

@@ -18,6 +18,7 @@
 #include "World/Entity/GroupEntityData.h"
 #include "World/Entity/NullEntity.h"
 #include "World/Entity/PointLightEntity.h"
+#include "World/Entity/SwitchEntity.h"
 #include "World/Entity/TransientEntity.h"
 #include "World/Entity/VolumeEntity.h"
 
@@ -195,6 +196,14 @@ void registerWorldClasses(script::IScriptManager* scriptManager)
 	Ref< script::AutoScriptClass< world::NullEntity > > classNullEntity = new script::AutoScriptClass< world::NullEntity >();
 	classNullEntity->addConstructor< const Transform& >();
 	scriptManager->registerClass(classNullEntity);
+
+	Ref< script::AutoScriptClass< world::SwitchEntity > > classSwitchEntity = new script::AutoScriptClass< world::SwitchEntity >();
+	classSwitchEntity->addConstructor();
+	classSwitchEntity->addConstructor< const Transform&, int32_t >();
+	classSwitchEntity->addMethod("setActive", &world::SwitchEntity::setActive);
+	classSwitchEntity->addMethod("getActive", &world::SwitchEntity::getActive);
+	classSwitchEntity->addMethod("getActiveEntity", &world::SwitchEntity::getActiveEntity);
+	scriptManager->registerClass(classSwitchEntity);
 
 	Ref< script::AutoScriptClass< world::TransientEntity > > classTransientEntity = new script::AutoScriptClass< world::TransientEntity >();
 	classTransientEntity->addConstructor< world::GroupEntity*, world::Entity*, float >();

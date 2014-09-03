@@ -25,9 +25,11 @@ public:
 
 	ID3D11Buffer* getD3D11Buffer() const { return m_d3dBuffer; }
 
+	UINT getD3D11BaseIndexOffset() const { return m_d3dBaseIndexOffset; }
+
 protected:
-	Ref< ContextDx11 > m_context;
 	ComRef< ID3D11Buffer > m_d3dBuffer;
+	UINT m_d3dBaseIndexOffset;
 
 	IndexBufferDx11(IndexType indexType, uint32_t bufferSize);
 };

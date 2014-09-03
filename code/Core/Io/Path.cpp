@@ -160,27 +160,30 @@ Path Path::normalized() const
 	std::vector< std::wstring > p;
 	Split< std::wstring >::any(getPathNameNoVolume(), L"/", p);
 
-	std::vector< std::wstring > n;
-	for (std::vector< std::wstring >::iterator i = p.begin(); i != p.end(); ++i)
+	for (size_t i = 0; i < p.size(); )
 	{
-		if (*i == L".")
-			continue;
-		else if (*i == L".." && !n.empty() && n.back() != L"..")
+		if (p[i] == L".")
 		{
-			n.pop_back();
-			continue;
+			p.erase(p.begin() + i);
 		}
-		n.push_back(*i);
+		else if (i > 0 && p[i] == L"..")
+		{
+			p.erase(p.begin() + i - 1);
+			p.erase(p.begin() + i - 1);
+			--i;
+		}
+		else
+			++i;
 	}
 
 	std::wstring out = hasVolume() ? getVolume() + L":" : L"";
-	if (!n.empty())
+	if (!p.empty())
 	{
 		if (!isRelative())
 			out += L"/";
-		for (std::vector< std::wstring >::iterator i = n.begin(); i != n.end() - 1; ++i)
+		for (std::vector< std::wstring >::const_iterator i = p.begin(); i != p.end() - 1; ++i)
 			out += *i + L"/";
-		out += n.back();
+		out += p.back();
 	}
 	else
 		out += L"/";

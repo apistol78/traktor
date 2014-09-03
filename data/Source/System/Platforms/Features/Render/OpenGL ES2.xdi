@@ -1,18 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="3">
+<object type="traktor.amalgam.Feature" version="4">
 	<description>OpenGL ES 2.0</description>
 	<priority>0</priority>
 	<platforms>
-		<ios>true</ios>
-		<linux>false</linux>
-		<mobile6>false</mobile6>
-		<osx>true</osx>
-		<ps3>false</ps3>
-		<win32>true</win32>
-		<win64>true</win64>
-		<xbox360>false</xbox360>
-		<emscripten>false</emscripten>
-		<android>false</android>
+		<item>
+			<platform>{13FF3E12-076E-274E-B347-8F323ECD53A7}</platform>
+			<deployFiles>
+				<item>libTraktor.Core.a</item>
+				<item>libTraktor.Compress.a</item>
+				<item>libTraktor.Resource.a</item>
+				<item>libTraktor.Render.a</item>
+				<item>libTraktor.Render.OpenGL.ES2.a</item>
+			</deployFiles>
+		</item>
+		<item>
+			<platform>{7D0F1280-E37A-2541-8892-723B3C81569C}</platform>
+			<deployFiles>
+				<item>Traktor.Core.dll</item>
+				<item>Traktor.Compress.dll</item>
+				<item>Traktor.Resource.dll</item>
+				<item>Traktor.Render.dll</item>
+				<item>Traktor.Render.OpenGL.ES2.dll</item>
+			</deployFiles>
+		</item>
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">
 		<value>

@@ -8,26 +8,22 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.IndexBufferStaticDx11", IndexBufferStaticDx11, IndexBufferDx11)
 
-Ref< IndexBufferStaticDx11 > IndexBufferStaticDx11::create(ContextDx11* context, IndexType indexType, uint32_t bufferSize)
+Ref< IndexBufferStaticDx11 > IndexBufferStaticDx11::create(ContextDx11* context, BufferHeap* bufferHeap, IndexType indexType, uint32_t bufferSize)
 {
-	ComRef< ID3D11Buffer > d3dBuffer;
-	D3D11_BUFFER_DESC dbd;
-	HRESULT hr;
+	BufferHeap::Chunk bufferChunk;
 
-	dbd.ByteWidth = bufferSize;
-	dbd.Usage = D3D11_USAGE_DEFAULT;
-	dbd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	dbd.CPUAccessFlags = 0;
-	dbd.MiscFlags = 0;
+	uint32_t indexStride = (indexType == ItUInt16) ? 2 : 4;
 
-	hr = context->getD3DDevice()->CreateBuffer(&dbd, NULL, &d3dBuffer.getAssign());
-	if (FAILED(hr))
+	if (!bufferHeap->alloc(bufferSize, indexStride, bufferChunk))
 		return 0;
 
 	Ref< IndexBufferStaticDx11 > ib = new IndexBufferStaticDx11(indexType, bufferSize);
 
 	ib->m_context = context;
-	ib->m_d3dBuffer = d3dBuffer;
+	ib->m_bufferHeap = bufferHeap;
+	ib->m_bufferChunk = bufferChunk;
+	ib->m_d3dBuffer = bufferChunk.d3dBuffer;
+	ib->m_d3dBaseIndexOffset = bufferChunk.vertexOffset / indexStride;
 
 	return ib;
 }
@@ -39,11 +35,16 @@ IndexBufferStaticDx11::~IndexBufferStaticDx11()
 
 void IndexBufferStaticDx11::destroy()
 {
-	if (!m_context)
-		return;
-
-	m_context->releaseComRef(m_d3dBuffer);
-	m_context = 0;
+	if (m_bufferHeap)
+	{
+		m_bufferHeap->free(m_bufferChunk);
+		m_bufferHeap = 0;
+	}
+	if (m_context)
+	{
+		m_context->releaseComRef(m_d3dBuffer);
+		m_context = 0;
+	}
 }
 
 void* IndexBufferStaticDx11::lock()
@@ -61,14 +62,33 @@ void IndexBufferStaticDx11::prepare(ID3D11DeviceContext* d3dDeviceContext, State
 {
 	if (m_data.ptr())
 	{
+		//d3dDeviceContext->UpdateSubresource(
+		//	m_d3dBuffer,
+		//	0,
+		//	NULL,
+		//	m_data.c_ptr(),
+		//	getBufferSize(),
+		//	1
+		//);
+
+		D3D11_BOX d3db;
+		
+		d3db.left = m_bufferChunk.vertexOffset;
+		d3db.right = m_bufferChunk.vertexOffset + getBufferSize();
+		d3db.top = 0;
+		d3db.bottom = 1;
+		d3db.front = 0;
+		d3db.back = 1;
+
 		d3dDeviceContext->UpdateSubresource(
 			m_d3dBuffer,
 			0,
-			NULL,
+			&d3db,
 			m_data.c_ptr(),
-			getBufferSize(),
-			1
+			0,
+			0
 		);
+
 		m_data.release();
 	}
 	IndexBufferDx11::prepare(d3dDeviceContext, stateCache);

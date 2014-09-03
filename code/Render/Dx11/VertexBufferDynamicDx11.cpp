@@ -89,6 +89,7 @@ Ref< VertexBufferDynamicDx11 > VertexBufferDynamicDx11::create(
 	vb->m_dirty = false;
 	vb->m_d3dBuffer = d3dBuffer;
 	vb->m_d3dStride = getVertexSize(vertexElements);
+	vb->m_d3dBaseVertexOffset = 0;
 
 	vb->m_d3dInputElements.resize(vertexElements.size());
 	for (uint32_t i = 0; i < vertexElements.size(); ++i)

@@ -31,6 +31,7 @@ public:
 	virtual void prepare(ID3D11DeviceContext* d3dDeviceContext, StateCache& stateCache);
 
 private:
+	Ref< ContextDx11 > m_context;
 	ComRef< ID3D11DeviceContext > m_d3dDeferredContext;
 	ComRef< ID3D11CommandList > m_d3dPendingCommandList;
 	Semaphore m_lock;

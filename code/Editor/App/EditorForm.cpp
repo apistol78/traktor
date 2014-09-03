@@ -62,7 +62,7 @@
 #include "Editor/Pipeline/PipelineAgentsManager.h"
 #include "Editor/Pipeline/PipelineBuilder.h"
 #include "Editor/Pipeline/PipelineBuilderDistributed.h"
-#include "Editor/Pipeline/PipelineDb.h"
+#include "Editor/Pipeline/PipelineDbFlat.h"
 #include "Editor/Pipeline/PipelineDependencySet.h"
 #include "Editor/Pipeline/PipelineDependsIncremental.h"
 #include "Editor/Pipeline/PipelineDependsParallel.h"
@@ -1362,7 +1362,7 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 	// Open pipeline database.
 	std::wstring pipelineDbConnectionStr = m_mergedSettings->getProperty< PropertyString >(L"Pipeline.Db");
 
-	m_pipelineDb = new PipelineDb();
+	m_pipelineDb = new PipelineDbFlat();
 	m_pipelineDb->open(pipelineDbConnectionStr);
 
 	// Expose servers as stock objects.

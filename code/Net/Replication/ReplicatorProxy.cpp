@@ -2,6 +2,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/CompactSerializer.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Net/Replication/INetworkTopology.h"
 #include "Net/Replication/Replicator.h"
 #include "Net/Replication/ReplicatorProxy.h"
@@ -21,6 +22,11 @@ const double c_resendTimeThreshold = 0.5;
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.ReplicatorProxy", ReplicatorProxy, Object)
+
+net_handle_t ReplicatorProxy::getHandle() const
+{
+	return m_handle;
+}
 
 const std::wstring& ReplicatorProxy::getName() const
 {
@@ -124,15 +130,19 @@ Ref< const State > ReplicatorProxy::getState(double timeOffset) const
 		return 0;
 }
 
+void ReplicatorProxy::setSendState(bool sendState)
+{
+	m_sendState = sendState;
+}
+
 void ReplicatorProxy::sendEvent(const ISerializable* eventObject)
 {
 	Event e;
 
 	e.msg.id = RmiEvent;
 	e.msg.time = time2net(m_replicator->m_time);
-
 	e.msg.event.sequence = m_sequence++;
-	
+
 	MemoryStream ms(e.msg.event.data, RmiEvent_MaxEventSize(), false, true);
 	CompactSerializer cs(&ms, &m_replicator->m_eventTypes[0], m_replicator->m_eventTypes.size());
 	if (!cs.writeObject(eventObject))
@@ -140,21 +150,14 @@ void ReplicatorProxy::sendEvent(const ISerializable* eventObject)
 		log::error << m_replicator->getLogPrefix() << L"Unable to wrap event object of " << type_name(eventObject) << L"." << Endl;
 		return;
 	}
-
 	cs.flush();
 
-	e.time = m_replicator->m_time0;
 	e.size = ms.tell();
-	e.count = 1;
+	e.time = -c_resendTimeThreshold;
+	e.count = 0;
 
 	m_events.push_back(e);
-
-	log::info << m_replicator->getLogPrefix() << L"Sending event " << type_name(eventObject) << L"..." << Endl;
-	log::info << m_replicator->getLogPrefix() << L"\t  target " << m_handle << Endl;
-	log::info << m_replicator->getLogPrefix() << L"\tsequence " << int32_t(e.msg.event.sequence) << Endl;
-	log::info << m_replicator->getLogPrefix() << L"\t    size " << int32_t(e.size) << Endl;
-
-	m_replicator->m_topology->send(m_handle, &e.msg, RmiEvent_NetSize(e.size));
+	T_FATAL_ASSERT_M (m_events.size() <= 128, L"Too many pending events");
 }
 
 bool ReplicatorProxy::updateEventQueue()
@@ -166,23 +169,9 @@ bool ReplicatorProxy::updateEventQueue()
 			i->time = m_replicator->m_time0;
 			i->count++;
 
-			log::info << m_replicator->getLogPrefix() << L"Re-sending event, attempt " << i->count << L"..." << Endl;
-			log::info << m_replicator->getLogPrefix() << L"\t  target " << m_handle << Endl;
-			log::info << m_replicator->getLogPrefix() << L"\tsequence " << int32_t(i->msg.event.sequence) << Endl;
-			log::info << m_replicator->getLogPrefix() << L"\t    size " << int32_t(i->size) << Endl;
-
 			m_replicator->m_topology->send(m_handle, &i->msg, RmiEvent_NetSize(i->size));
 		}
 	}
-	return true;
-}
-
-bool ReplicatorProxy::isEventNew(uint8_t sequence)
-{
-	if (m_lastEvents.find(sequence) >= 0)
-		return false;
-
-	m_lastEvents.push_back(sequence);
 	return true;
 }
 
@@ -193,9 +182,25 @@ void ReplicatorProxy::receivedEventAcknowledge(uint8_t sequence)
 		if (i->msg.event.sequence == sequence)
 		{
 			m_events.erase(i);
-			break;
+			return;
 		}
 	}
+	log::info << m_replicator->getLogPrefix() << L"Received acknowledge of unsent event, sequence " << int32_t(sequence) << Endl;
+}
+
+bool ReplicatorProxy::acceptEvent(uint8_t sequence, const ISerializable* eventObject)
+{
+	uint32_t hash = DeepHash(eventObject).get();
+	for (uint32_t i = 0; i < m_lastEvents.size(); ++i)
+	{
+		if (m_lastEvents[i].first == sequence)
+		{
+			T_FATAL_ASSERT_M (hash == m_lastEvents[i].second, L"Received event with early sequence number but different hash");
+			return false;
+		}
+	}
+	m_lastEvents.push_back(std::make_pair(sequence, hash));
+	return true;
 }
 
 void ReplicatorProxy::updateLatency(double roundTrip, double latencyReverse)
@@ -220,12 +225,6 @@ bool ReplicatorProxy::receivedState(double stateTime, const void* stateData, uin
 		return false;
 	}
 
-	if (stateTime < m_stateTime0)
-	{
-		log::info << m_replicator->getLogPrefix() << L"Received old state from " << m_handle << L"; state ignored." << Endl;
-		return false;
-	}
-
 	Ref< const State > state = m_stateTemplate->unpack(stateData, stateDataSize);
 	if (!state)
 	{
@@ -233,12 +232,32 @@ bool ReplicatorProxy::receivedState(double stateTime, const void* stateData, uin
 		return false;
 	}
 
-	m_stateN2 = m_stateN1;
-	m_stateTimeN2 = m_stateTimeN1;
-	m_stateN1 = m_state0;
-	m_stateTimeN1 = m_stateTime0;
-	m_state0 = state;
-	m_stateTime0 = stateTime;
+	if (stateTime >= m_stateTime0)
+	{
+		m_stateN2 = m_stateN1;
+		m_stateTimeN2 = m_stateTimeN1;
+		m_stateN1 = m_state0;
+		m_stateTimeN1 = m_stateTime0;
+		m_state0 = state;
+		m_stateTime0 = stateTime;
+	}
+	else if (stateTime >= m_stateTimeN1)
+	{
+		m_stateN2 = m_stateN1;
+		m_stateTimeN2 = m_stateTimeN1;
+		m_stateN1 = state;
+		m_stateTimeN1 = stateTime;
+	}
+	else if (stateTime >= m_stateTimeN2)
+	{
+		m_stateN2 = state;
+		m_stateTimeN2 = stateTime;
+	}
+	else
+	{
+		log::info << m_replicator->getLogPrefix() << L"Received old state from " << m_handle << L"; state ignored." << Endl;
+		return false;
+	}
 
 	return true;
 }
@@ -249,8 +268,9 @@ void ReplicatorProxy::disconnect()
 	m_handle = 0;
 	m_status = 0;
 	m_object = 0;
-	m_sequence = 0;
 	m_distance = 0.0f;
+	m_sendState = false;
+	m_sequence = 0;
 	m_timeUntilTxPing = 0.0;
 	m_timeUntilTxState = 0.0;
 	m_latencyMedian = 0.0;
@@ -265,11 +285,12 @@ ReplicatorProxy::ReplicatorProxy(Replicator* replicator, net_handle_t handle, co
 ,	m_name(name)
 ,	m_status(0)
 ,	m_origin(Transform::identity())
+,	m_distance(0.0f)
+,	m_sendState(false)
 ,	m_stateTimeN2(0.0)
 ,	m_stateTimeN1(0.0)
 ,	m_stateTime0(0.0)
 ,	m_sequence(0)
-,	m_distance(0.0f)
 ,	m_timeUntilTxPing(0.0)
 ,	m_timeUntilTxState(0.0)
 ,	m_latencyMedian(0.0)

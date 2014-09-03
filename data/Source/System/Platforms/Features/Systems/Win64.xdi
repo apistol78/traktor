@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature">
+<object type="traktor.amalgam.Feature" version="4">
 	<description>Microsoft Windows (64-bit)</description>
+	<priority>0</priority>
 	<platforms>
-		<ios>false</ios>
-		<linux>false</linux>
-		<mobile6>false</mobile6>
-		<osx>false</osx>
-		<ps3>false</ps3>
-		<win32>false</win32>
-		<win64>true</win64>
-		<xbox360>false</xbox360>
+		<item>
+			<platform>{DC125AEC-2E6B-AF4D-A852-35731A782340}</platform>
+			<deployFiles/>
+		</item>
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">
 		<value>

@@ -18,6 +18,8 @@
 #include "World/Entity/PointLightEntityData.h"
 #include "World/Entity/SpotLightEntity.h"
 #include "World/Entity/SpotLightEntityData.h"
+#include "World/Entity/SwitchEntity.h"
+#include "World/Entity/SwitchEntityData.h"
 #include "World/Entity/VolumeEntity.h"
 #include "World/Entity/VolumeEntityData.h"
 #include "World/Entity/WorldEntityFactory.h"
@@ -46,6 +48,7 @@ const TypeInfoSet WorldEntityFactory::getEntityTypes() const
 	typeSet.insert(&type_of< NullEntityData >());
 	typeSet.insert(&type_of< PointLightEntityData >());
 	typeSet.insert(&type_of< SpotLightEntityData >());
+	typeSet.insert(&type_of< SwitchEntityData >());
 	typeSet.insert(&type_of< VolumeEntityData >());
 	return typeSet;
 }
@@ -154,6 +157,14 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 			spotLightData->getRange(),
 			spotLightData->getRadius(),
 			spotLightData->getCastShadow()
+		);
+	}
+
+	if (const SwitchEntityData* switchEntityData = dynamic_type_cast< const SwitchEntityData* >(&entityData))
+	{
+		return new SwitchEntity(
+			switchEntityData->getTransform(),
+			0
 		);
 	}
 

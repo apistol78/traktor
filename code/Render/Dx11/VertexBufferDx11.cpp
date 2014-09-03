@@ -15,6 +15,9 @@ void VertexBufferDx11::prepare(ID3D11DeviceContext* d3dDeviceContext, StateCache
 
 VertexBufferDx11::VertexBufferDx11(uint32_t bufferSize)
 :	VertexBuffer(bufferSize)
+,	m_d3dStride(0)
+,	m_d3dBaseVertexOffset(0)
+,	m_d3dInputElementsHash(0)
 {
 }
 

@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature">
+<object type="traktor.amalgam.Feature" version="4">
 	<description>Havok Physics</description>
+	<priority>0</priority>
 	<platforms>
-		<ios>false</ios>
-		<linux>false</linux>
-		<mobile6>false</mobile6>
-		<osx>false</osx>
-		<ps3>false</ps3>
-		<win32>true</win32>
-		<win64>false</win64>
-		<xbox360>false</xbox360>
+		<item>
+			<platform>{7D0F1280-E37A-2541-8892-723B3C81569C}</platform>
+			<deployFiles>
+				<item>Traktor.Core.dll</item>
+				<item>Traktor.Database.dll</item>
+				<item>Traktor.Heightfield.dll</item>
+				<item>Traktor.Resource.dll</item>
+				<item>Traktor.World.dll</item>
+				<item>Traktor.Physics.dll</item>
+				<item>Traktor.Physics.Havok.dll</item>
+			</deployFiles>
+		</item>
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">
 		<value>

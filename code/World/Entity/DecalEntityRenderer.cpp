@@ -18,10 +18,12 @@ namespace traktor
 		namespace
 		{
 
+#pragma pack(1)
 struct Vertex
 {
 	float position[3];
 };
+#pragma pack()
 
 render::handle_t s_handleDecalParams;
 render::handle_t s_handleMagicCoeffs;

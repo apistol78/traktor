@@ -32,13 +32,13 @@ class T_DLLCLASS PipelineDb : public IPipelineDb
 public:
 	PipelineDb();
 
-	bool open(const std::wstring& connectionString);
+	virtual bool open(const std::wstring& connectionString);
 
-	void close();
+	virtual void close();
 
-	void beginTransaction();
+	virtual void beginTransaction();
 
-	void endTransaction();
+	virtual void endTransaction();
 
 	virtual void setDependency(const Guid& guid, const DependencyHash& hash);
 

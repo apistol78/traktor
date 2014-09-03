@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature">
+<object type="traktor.amalgam.Feature" version="4">
 	<description>Apple GameCenter</description>
+	<priority>0</priority>
 	<platforms>
-		<ios>true</ios>
-		<linux>false</linux>
-		<mobile6>false</mobile6>
-		<osx>false</osx>
-		<ps3>false</ps3>
-		<win32>false</win32>
-		<win64>false</win64>
-		<xbox360>false</xbox360>
+		<item>
+			<platform>{13FF3E12-076E-274E-B347-8F323ECD53A7}</platform>
+			<deployFiles>
+				<item>libTraktor.Core.a</item>
+				<item>libTraktor.Online.a</item>
+				<item>libTraktor.Online.Gc.a</item>
+			</deployFiles>
+		</item>
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">
 		<value>
