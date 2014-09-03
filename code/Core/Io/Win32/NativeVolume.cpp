@@ -181,7 +181,7 @@ Ref< IStream > NativeVolume::open(const Path& fileName, uint32_t mode)
 	{
 		DWORD errorCode = GetLastError();
 		if ((mode & File::FmRead) != File::FmRead || errorCode != ERROR_FILE_NOT_FOUND)
-			log::error << L"Unable to open file \"" << systemPath << L"\"; error code " << int32_t(errorCode) << Endl;
+			log::debug << L"Unable to open file \"" << systemPath << L"\"; error code " << int32_t(errorCode) << Endl;
 		return 0;
 	}
 
@@ -290,7 +290,6 @@ void NativeVolume::mountVolumes(FileSystem& fileSystem)
 		driveFormat[0] = L'A' + drive;
 
 		Ref< IVolume > volume = new NativeVolume(driveFormat);
-
 		fileSystem.mount(mountPoint, volume);
 		
 		if ((L'A' + drive) == toupper(currentDirectory[0]))
@@ -312,8 +311,6 @@ void NativeVolume::mountVolumes(FileSystem& fileSystem)
 	GetModuleFileName(NULL, moduleName, MAX_PATH);
 
 	Path originalDirectory(moduleName);
-	log::info << L"Using \"" << originalDirectory.getPathOnly() << L"\" as original directory" << Endl;
-
 	Ref< IVolume > volume = new NativeVolume(originalDirectory.getPathOnly());
 	fileSystem.mount(L"C", volume);
 	fileSystem.setCurrentVolume(volume);
