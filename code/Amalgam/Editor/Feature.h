@@ -4,6 +4,7 @@
 #include <list>
 #include "Core/Guid.h"
 #include "Core/Ref.h"
+#include "Core/Containers/StaticVector.h"
 #include "Core/Serialization/ISerializable.h"
 
 namespace traktor
@@ -19,20 +20,10 @@ class Feature : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	struct Platforms
+	struct Platform
 	{
-		bool ios;
-		bool linuks;
-		bool mobile6;
-		bool osx;
-		bool ps3;
-		bool win32;
-		bool win64;
-		bool xbox360;
-		bool emscripten;
-		bool android;
-
-		Platforms();
+		Guid platform;
+		std::list< std::wstring > deployFiles;
 
 		void serialize(ISerializer& s);
 	};
@@ -43,7 +34,7 @@ public:
 
 	int32_t getPriority() const { return m_priority; }
 
-	const Platforms& getPlatforms() const { return m_platforms; }
+	const Platform* getPlatform(const Guid& id) const;
 
 	const PropertyGroup* getPipelineProperties() const { return m_pipelineProperties; }
 
@@ -56,7 +47,7 @@ public:
 private:
 	std::wstring m_description;
 	int32_t m_priority;
-	Platforms m_platforms;
+	std::list< Platform > m_platforms;
 	Ref< PropertyGroup > m_pipelineProperties;
 	Ref< PropertyGroup > m_migrateProperties;
 	Ref< PropertyGroup > m_runtimeProperties;

@@ -33,6 +33,7 @@ Replicator::Replicator()
 ,	m_status(0)
 ,	m_allowPrimaryRequests(true)
 ,	m_origin(Transform::identity())
+,	m_sendState(false)
 {
 }
 
@@ -144,7 +145,7 @@ bool Replicator::update()
 	}
 
 	// Send our state to proxies.
-	if (m_stateTemplate && m_state)
+	if (m_sendState && m_stateTemplate && m_state)
 	{
 		msg.id = RmiState;
 		msg.time = time2net(m_time);
@@ -157,7 +158,7 @@ bool Replicator::update()
 
 		for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
 		{
-			if (((*i)->m_timeUntilTxState -= dT) <= 0.0)
+			if ((*i)->m_sendState && ((*i)->m_timeUntilTxState -= dT) <= 0.0)
 			{
 				m_topology->send((*i)->m_handle, &msg, RmiState_NetSize(stateDataSize));
 
@@ -258,16 +259,11 @@ bool Replicator::update()
 			if (eventObject)
 			{
 				// Prevent resent events from being issued into game.
-				if (fromGhost->isEventNew(msg.event.sequence))
+				if (fromGhost->acceptEvent(msg.event.sequence, eventObject))
 				{
 					std::map< const TypeInfo*, RefArray< IEventListener > >::const_iterator it = m_eventListeners.find(&type_of(eventObject));
 					if (it != m_eventListeners.end())
 					{
-						log::info << getLogPrefix() << L"Dispatching event " << type_name(eventObject) << L" to " << uint32_t(it->second.size()) << L" listener(s)..." << Endl;
-						log::info << getLogPrefix() << L"\t  sender " << fromGhost->m_handle << Endl;
-						log::info << getLogPrefix() << L"\tsequence " << int32_t(msg.event.sequence) << Endl;
-						log::info << getLogPrefix() << L"\t    hash " << DeepHash(eventObject).get() << Endl;
-
 						for (RefArray< IEventListener >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
 						{
 							(*i)->notify(
@@ -278,20 +274,6 @@ bool Replicator::update()
 							);
 						}
 					}
-					else
-					{
-						log::info << getLogPrefix() << L"Discarding event " << type_name(eventObject) << L", no listeners." << Endl;
-						log::info << getLogPrefix() << L"\t  sender " << fromGhost->m_handle << Endl;
-						log::info << getLogPrefix() << L"\tsequence " << int32_t(msg.event.sequence) << Endl;
-						log::info << getLogPrefix() << L"\t    hash " << DeepHash(eventObject).get() << Endl;
-					}
-				}
-				else
-				{
-					log::info << getLogPrefix() << L"Discarding duplicated event " << type_name(eventObject) << Endl;
-					log::info << getLogPrefix() << L"\t  sender " << fromGhost->m_handle << Endl;
-					log::info << getLogPrefix() << L"\tsequence " << int32_t(msg.event.sequence) << Endl;
-					log::info << getLogPrefix() << L"\t    hash " << DeepHash(eventObject).get() << Endl;
 				}
 			}
 			else if (!m_eventTypes.empty())
@@ -306,7 +288,6 @@ bool Replicator::update()
 			);
 
 			// Received an event acknowledge; discard event from queue.
-			//log::info << getLogPrefix() << L"Received acknowledge of event " << int32_t(msg.eventAck.sequence) << Endl;
 			fromGhost->receivedEventAcknowledge(msg.eventAck.sequence);
 		}
 	}
@@ -396,6 +377,11 @@ void Replicator::setState(const State* state)
 const State* Replicator::getState() const
 {
 	return m_state;
+}
+
+void Replicator::setSendState(bool sendState)
+{
+	m_sendState = sendState;
 }
 
 uint32_t Replicator::getProxyCount() const

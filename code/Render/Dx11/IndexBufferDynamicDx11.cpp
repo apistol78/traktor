@@ -35,6 +35,7 @@ Ref< IndexBufferDynamicDx11 > IndexBufferDynamicDx11::create(ContextDx11* contex
 	ib->m_context = context;
 	ib->m_d3dDeferredContext = d3dDeferredContext;
 	ib->m_d3dBuffer = d3dBuffer;
+	ib->m_d3dBaseIndexOffset = 0;
 
 	return ib;
 }

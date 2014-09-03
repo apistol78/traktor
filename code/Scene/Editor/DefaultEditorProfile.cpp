@@ -22,6 +22,8 @@
 #include "World/Entity/DecalEntityRenderer.h"
 #include "World/Entity/LightEntityRenderer.h"
 #include "World/Entity/GroupEntityRenderer.h"
+#include "World/Entity/SwitchEntityRenderer.h"
+#include "World/Entity/TransientEntityRenderer.h"
 #include "Weather/WeatherEntityRenderer.h"
 
 // Entity editor factories
@@ -93,6 +95,8 @@ void DefaultEditorProfile::createEntityRenderers(
 	outEntityRenderers.push_back(new world::DecalEntityRenderer(context->getRenderSystem()));
 	outEntityRenderers.push_back(new world::LightEntityRenderer());
 	outEntityRenderers.push_back(new world::GroupEntityRenderer());
+	outEntityRenderers.push_back(new world::SwitchEntityRenderer());
+	outEntityRenderers.push_back(new world::TransientEntityRenderer());
 	outEntityRenderers.push_back(new weather::WeatherEntityRenderer(primitiveRenderer));
 }
 

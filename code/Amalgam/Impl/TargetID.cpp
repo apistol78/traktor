@@ -13,8 +13,9 @@ TargetID::TargetID()
 {
 }
 
-TargetID::TargetID(const Guid& id)
+TargetID::TargetID(const Guid& id, const std::wstring& name)
 :	m_id(id)
+,	m_name(name)
 {
 }
 
@@ -23,9 +24,15 @@ const Guid& TargetID::getId() const
 	return m_id;
 }
 
+const std::wstring& TargetID::getName() const
+{
+	return m_name;
+}
+
 void TargetID::serialize(ISerializer& s)
 {
 	s >> Member< Guid >(L"id", m_id);
+	s >> Member< std::wstring >(L"name", m_name);
 }
 
 	}

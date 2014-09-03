@@ -21,7 +21,7 @@ T alignDown(T v, size_t a)
 template < typename T >
 T alignUp(T v, size_t a)
 {
-	return (T)(((size_t)v + (a - 1)) & ~(a - 1));
+	return (T)(((size_t)v + a - 1) - ((size_t)v + a - 1) % a);
 }
 
 }

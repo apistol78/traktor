@@ -28,6 +28,7 @@ void IndexBufferDx11::prepare(ID3D11DeviceContext* d3dDeviceContext, StateCache&
 
 IndexBufferDx11::IndexBufferDx11(IndexType indexType, uint32_t bufferSize)
 :	IndexBuffer(indexType, bufferSize)
+,	m_d3dBaseIndexOffset(0)
 {
 }
 

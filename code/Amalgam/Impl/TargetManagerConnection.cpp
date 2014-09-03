@@ -2,6 +2,7 @@
 #include "Amalgam/Impl/TargetLog.h"
 #include "Amalgam/Impl/TargetManagerConnection.h"
 #include "Core/Log/Log.h"
+#include "Core/System/OS.h"
 #include "Net/BidirectionalObjectTransport.h"
 #include "Net/Network.h"
 #include "Net/SocketAddressIPv4.h"
@@ -66,7 +67,7 @@ bool TargetManagerConnection::connect(const std::wstring& host, uint16_t port, c
 
 	m_transport = new net::BidirectionalObjectTransport(socket);
 
-    TargetID targetId(id);
+    TargetID targetId(id, OS::getInstance().getCurrentUser() + L"@" + OS::getInstance().getComputerName());
 	if (!m_transport->send(&targetId))
 	{
 		log::error << L"Failed to create target manager connection; unable to send ID" << Endl;

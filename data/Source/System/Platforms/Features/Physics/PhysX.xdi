@@ -1,15 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature">
+<object type="traktor.amalgam.Feature" version="4">
 	<description>NVidia PhysX</description>
+	<priority>0</priority>
 	<platforms>
-		<ios>false</ios>
-		<linux>false</linux>
-		<mobile6>false</mobile6>
-		<osx>false</osx>
-		<ps3>false</ps3>
-		<win32>true</win32>
-		<win64>false</win64>
-		<xbox360>false</xbox360>
+		<item>
+			<platform>{C5B672D1-E72D-AC47-97D4-ABAA41F2F6BD}</platform>
+			<deployFiles>
+				<item>PhysX3_x86.so</item>
+				<item>PxTask.so</item>
+				<item>PhysX3Extensions.so</item>
+				<item>PhysX3Common_x86.so</item>
+				<item>PhysX3Cooking_x86.so</item>
+				<item>libTraktor.Core.so</item>
+				<item>libTraktor.Database.so</item>
+				<item>libTraktor.Heightfield.so</item>
+				<item>libTraktor.Resource.so</item>
+				<item>libTraktor.World.so</item>
+				<item>libTraktor.Physics.so</item>
+				<item>libTraktor.Physics.PhysX.so</item>
+			</deployFiles>
+		</item>
+		<item>
+			<platform>{7D0F1280-E37A-2541-8892-723B3C81569C}</platform>
+			<deployFiles>
+				<item>PhysX3_x86.dll</item>
+				<item>PxTask.dll</item>
+				<item>PhysX3Extensions.dll</item>
+				<item>PhysX3Common_x86.dll</item>
+				<item>PhysX3Cooking_x86.dll</item>
+				<item>Traktor.Core.dll</item>
+				<item>Traktor.Database.dll</item>
+				<item>Traktor.Heightfield.dll</item>
+				<item>Traktor.Resource.dll</item>
+				<item>Traktor.World.dll</item>
+				<item>Traktor.Physics.dll</item>
+				<item>Traktor.Physics.PhysX.dll</item>
+			</deployFiles>
+		</item>
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">
 		<value>

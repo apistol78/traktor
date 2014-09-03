@@ -1,17 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="2">
+<object type="traktor.amalgam.Feature" version="4">
 	<description>XInput</description>
+	<priority>0</priority>
 	<platforms>
-		<ios>false</ios>
-		<linux>false</linux>
-		<mobile6>false</mobile6>
-		<osx>false</osx>
-		<ps3>false</ps3>
-		<win32>true</win32>
-		<win64>true</win64>
-		<xbox360>true</xbox360>
-		<emscripten>false</emscripten>
-		<android>false</android>
+		<item>
+			<platform>{7D0F1280-E37A-2541-8892-723B3C81569C}</platform>
+			<deployFiles>
+				<item>Traktor.Core.dll</item>
+				<item>Traktor.Input.dll</item>
+				<item>Traktor.Input.Xi.dll</item>
+			</deployFiles>
+		</item>
+		<item>
+			<platform>{DC125AEC-2E6B-AF4D-A852-35731A782340}</platform>
+			<deployFiles>
+				<item>Traktor.Core.dll</item>
+				<item>Traktor.Input.dll</item>
+				<item>Traktor.Input.Xi.dll</item>
+			</deployFiles>
+		</item>
+		<item>
+			<platform>{D6FF12FC-9FEF-394D-B898-F563786A8789}</platform>
+			<deployFiles/>
+		</item>
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">
 		<value>

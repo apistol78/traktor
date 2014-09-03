@@ -69,7 +69,7 @@ struct P2PMessage
 #pragma pack()
 
 const double c_IAmInterval = 1.0;
-const uint32_t c_maxPendingIAm = 4;
+const uint32_t c_maxPendingIAm = 16;
 const double c_propagateInterval = 2.0;
 const double c_timeRandomFlux = 0.5;
 

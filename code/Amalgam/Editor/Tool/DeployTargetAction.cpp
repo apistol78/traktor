@@ -71,6 +71,8 @@ DeployTargetAction::DeployTargetAction(
 
 bool DeployTargetAction::execute(IProgressListener* progressListener)
 {
+	std::set< std::wstring > deployFiles;
+
 	// Get platform description object from database.
 	Ref< Platform > platform = m_database->getObjectReadOnly< Platform >(m_targetConfiguration->getPlatform());
 	if (!platform)
@@ -102,7 +104,7 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 
 	features.sort(FeaturePriorityPred());
 
-	// Insert target's features into pipeline configuration.
+	// Insert target's features into pipeline configuration. Also generate a set of files to deploy.
 	for (RefArray< const Feature >::const_iterator i = features.begin(); i != features.end(); ++i)
 	{
 		const Feature* feature = *i;
@@ -113,6 +115,12 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 			continue;
 
 		applicationConfiguration = applicationConfiguration->mergeJoin(runtimeProperties);
+
+		const Feature::Platform* fp = feature->getPlatform(m_targetConfiguration->getPlatform());
+		if (fp)
+			deployFiles.insert(fp->deployFiles.begin(), fp->deployFiles.end());
+		else
+			log::warning << L"Feature \"" << feature->getDescription() << L"\" doesn't support selected platform." << Endl;
 	}
 
 	int32_t targetManagerPort = m_globalSettings->getProperty< PropertyInteger >(L"Amalgam.TargetManagerPort", c_targetConnectionPort);
@@ -188,6 +196,7 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 	envmap[L"DEPLOY_MODULES"] = implode(runtimeModules.begin(), runtimeModules.end(), L" ");
 	envmap[L"DEPLOY_OUTPUT_PATH"] = m_outputPath;
 	envmap[L"DEPLOY_CERTIFICATE"] = m_globalSettings->getProperty< PropertyString >(L"Amalgam.Certificate", L"");
+	envmap[L"DEPLOY_FILES"] = implode(deployFiles.begin(), deployFiles.end(), L" ");
 
 	// Merge tool environment variables.
 	const DeployTool& deployTool = platform->getDeployTool();

@@ -190,6 +190,10 @@ public:
 	 */
 	const State* getState() const;
 
+	/*! \brief
+	 */
+	void setSendState(bool sendState);
+
 	/*! \
 	 */
 	uint32_t getProxyCount() const;
@@ -232,6 +236,7 @@ private:
 	Ref< const StateTemplate > m_stateTemplate;
 	Ref< const State > m_state;
 	RefArray< ReplicatorProxy > m_proxies;
+	bool m_sendState;
 
 	std::wstring getLogPrefix() const;
 

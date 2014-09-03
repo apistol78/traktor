@@ -1,17 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="2">
+<object type="traktor.amalgam.Feature" version="4">
 	<description>Emscripten Audio</description>
+	<priority>0</priority>
 	<platforms>
-		<ios>false</ios>
-		<linux>false</linux>
-		<mobile6>false</mobile6>
-		<osx>false</osx>
-		<ps3>false</ps3>
-		<win32>false</win32>
-		<win64>false</win64>
-		<xbox360>false</xbox360>
-		<emscripten>true</emscripten>
-		<android>false</android>
+		<item>
+			<platform>{1C5EBC43-2395-9549-8FF7-BA51A6C30B7B}</platform>
+			<deployFiles/>
+		</item>
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">
 		<value>

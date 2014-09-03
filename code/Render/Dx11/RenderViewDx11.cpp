@@ -675,9 +675,16 @@ void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 	}
 
 	if (primitives.indexed)
-		m_context->getD3DDeviceContext()->DrawIndexed(vertexCount, primitives.offset, 0);
+		m_context->getD3DDeviceContext()->DrawIndexed(
+			vertexCount,
+			primitives.offset + m_currentIndexBuffer->getD3D11BaseIndexOffset(),
+			m_currentVertexBuffer->getD3D11BaseVertexOffset()
+		);
 	else
-		m_context->getD3DDeviceContext()->Draw(vertexCount, primitives.offset);
+		m_context->getD3DDeviceContext()->Draw(
+			vertexCount,
+			primitives.offset + m_currentVertexBuffer->getD3D11BaseVertexOffset()
+		);
 
 	m_drawCalls++;
 	m_primitiveCount += primitives.count;
@@ -741,9 +748,20 @@ void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 	}
 
 	if (primitives.indexed)
-		m_context->getD3DDeviceContext()->DrawIndexedInstanced(vertexCount, instanceCount, primitives.offset, 0, 0);
+		m_context->getD3DDeviceContext()->DrawIndexedInstanced(
+			vertexCount,
+			instanceCount,
+			primitives.offset + m_currentIndexBuffer->getD3D11BaseIndexOffset(),
+			m_currentVertexBuffer->getD3D11BaseVertexOffset(),
+			0
+		);
 	else
-		m_context->getD3DDeviceContext()->DrawInstanced(vertexCount, instanceCount, primitives.offset, 0);
+		m_context->getD3DDeviceContext()->DrawInstanced(
+			vertexCount,
+			instanceCount,
+			primitives.offset + m_currentVertexBuffer->getD3D11BaseVertexOffset(),
+			0
+		);
 
 	m_drawCalls++;
 	m_primitiveCount += primitives.count * instanceCount;

@@ -166,6 +166,7 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	scriptManager->registerClass(classPeer2PeerTopology);
 
 	Ref< script::AutoScriptClass< net::ReplicatorProxy > > classReplicatorProxy = new script::AutoScriptClass< net::ReplicatorProxy >();
+	classReplicatorProxy->addMethod("getHandle", &net::ReplicatorProxy::getHandle);
 	classReplicatorProxy->addMethod("getName", &net::ReplicatorProxy::getName);
 	classReplicatorProxy->addMethod("getStatus", &net::ReplicatorProxy::getStatus);
 	classReplicatorProxy->addMethod("getLatency", &net::ReplicatorProxy::getLatency);
@@ -182,6 +183,7 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	classReplicatorProxy->addMethod("setStateTemplate", &net::ReplicatorProxy::setStateTemplate);
 	classReplicatorProxy->addMethod("getStateTemplate", &net::ReplicatorProxy::getStateTemplate);
 	classReplicatorProxy->addMethod("getState", &net::ReplicatorProxy::getState);
+	classReplicatorProxy->addMethod("setSendState", &net::ReplicatorProxy::setSendState);
 	classReplicatorProxy->addMethod("sendEvent", &net::ReplicatorProxy::sendEvent);
 	scriptManager->registerClass(classReplicatorProxy);
 
@@ -240,6 +242,7 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	classReplicator->addMethod("setStateTemplate", &net::Replicator::setStateTemplate);
 	classReplicator->addMethod("setState", &net::Replicator::setState);
 	classReplicator->addMethod("getState", &net::Replicator::getState);
+	classReplicator->addMethod("setSendState", &net::Replicator::setSendState);
 	classReplicator->addMethod("getProxyCount", &net::Replicator::getProxyCount);
 	classReplicator->addMethod("getProxy", &net::Replicator::getProxy);
 	classReplicator->addMethod("getPrimaryProxy", &net::Replicator::getPrimaryProxy);
