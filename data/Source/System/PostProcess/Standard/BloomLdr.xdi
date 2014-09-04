@@ -59,7 +59,7 @@
 					<index>0</index>
 				</item>
 			</sources>
-			<direction>2, 0, 0, 0</direction>
+			<direction>4, 0, 0, 0</direction>
 			<taps>15</taps>
 			<blurType>BtGaussian</blurType>
 		</item>
@@ -75,7 +75,7 @@
 					<index>0</index>
 				</item>
 			</sources>
-			<direction>0, 2, 0, 0</direction>
+			<direction>0, 4, 0, 0</direction>
 			<taps>15</taps>
 			<blurType>BtGaussian</blurType>
 		</item>
