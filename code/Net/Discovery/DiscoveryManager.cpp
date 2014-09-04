@@ -21,6 +21,7 @@ namespace traktor
 
 const wchar_t* c_discoveryMulticastGroup = L"225.0.0.37";
 const uint16_t c_discoveryMulticastPort = 40000;
+const int32_t c_maxServiceTickCount = 4;
 
 OutputStream& operator << (OutputStream& os, const net::SocketAddressIPv4& addr)
 {
@@ -147,9 +148,19 @@ void DiscoveryManager::threadMulticastListener()
 			beacon = timer.getElapsedTime() + 1.0;
 		}
 
-		Ref< IDiscoveryMessage > message = recvMessage(m_multicastRecvSocket, &fromAddress, 100);
+		Ref< IDiscoveryMessage > message = recvMessage(m_multicastRecvSocket, &fromAddress, 500);
 		if (!message)
+		{
+			// Increment tick count of already found services; remove too old services.
+			for (std::map< Guid, ExternalService >::iterator i = m_externalServices.begin(); i != m_externalServices.end(); )
+			{
+				if (++i->second.tick >= c_maxServiceTickCount)
+					m_externalServices.erase(i++);
+				else
+					++i;
+			}
 			continue;
+		}
 
 		if (DmFindServices* findServices = dynamic_type_cast< DmFindServices* >(message))
 		{

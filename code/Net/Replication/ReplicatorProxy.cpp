@@ -18,6 +18,7 @@ namespace traktor
 		{
 
 const double c_resendTimeThreshold = 0.5;
+const int32_t c_maxSendEventsPerUpdate = 4;
 
 		}
 
@@ -76,7 +77,18 @@ bool ReplicatorProxy::isPrimary() const
 
 bool ReplicatorProxy::isRelayed() const
 {
-	return false;
+	if (m_replicator)
+	{
+		int32_t nodeCount = m_replicator->m_topology->getNodeCount();
+		for (int32_t i = 0; i < nodeCount; ++i)
+		{
+			if (m_replicator->m_topology->getNodeHandle(i) == m_handle)
+				return m_replicator->m_topology->isNodeRelayed(i);
+		}
+		return false;
+	}
+	else
+		return false;
 }
 
 void ReplicatorProxy::setObject(Object* object)
@@ -157,11 +169,11 @@ void ReplicatorProxy::sendEvent(const ISerializable* eventObject)
 	e.count = 0;
 
 	m_events.push_back(e);
-	T_FATAL_ASSERT_M (m_events.size() <= 128, L"Too many pending events");
 }
 
 bool ReplicatorProxy::updateEventQueue()
 {
+	int32_t sentCount = 0;
 	for (std::list< Event >::iterator i = m_events.begin(); i != m_events.end(); ++i)
 	{
 		if (m_replicator->m_time0 - i->time > c_resendTimeThreshold)
@@ -170,22 +182,25 @@ bool ReplicatorProxy::updateEventQueue()
 			i->count++;
 
 			m_replicator->m_topology->send(m_handle, &i->msg, RmiEvent_NetSize(i->size));
+
+			if (++sentCount >= c_maxSendEventsPerUpdate)
+				break;
 		}
 	}
 	return true;
 }
 
-void ReplicatorProxy::receivedEventAcknowledge(uint8_t sequence)
+bool ReplicatorProxy::receivedEventAcknowledge(uint8_t sequence)
 {
 	for (std::list< Event >::iterator i = m_events.begin(); i != m_events.end(); ++i)
 	{
 		if (i->msg.event.sequence == sequence)
 		{
 			m_events.erase(i);
-			return;
+			return true;
 		}
 	}
-	log::info << m_replicator->getLogPrefix() << L"Received acknowledge of unsent event, sequence " << int32_t(sequence) << Endl;
+	return false;	
 }
 
 bool ReplicatorProxy::acceptEvent(uint8_t sequence, const ISerializable* eventObject)
@@ -193,11 +208,8 @@ bool ReplicatorProxy::acceptEvent(uint8_t sequence, const ISerializable* eventOb
 	uint32_t hash = DeepHash(eventObject).get();
 	for (uint32_t i = 0; i < m_lastEvents.size(); ++i)
 	{
-		if (m_lastEvents[i].first == sequence)
-		{
-			T_FATAL_ASSERT_M (hash == m_lastEvents[i].second, L"Received event with early sequence number but different hash");
+		if (m_lastEvents[i].first == sequence && hash == m_lastEvents[i].second)
 			return false;
-		}
 	}
 	m_lastEvents.push_back(std::make_pair(sequence, hash));
 	return true;

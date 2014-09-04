@@ -123,6 +123,12 @@ std::wstring Peer2PeerTopology::getNodeName(int32_t index) const
 	return m_peers[peerIndex].name;
 }
 
+bool Peer2PeerTopology::isNodeRelayed(int32_t index) const
+{
+	int32_t peerIndex = m_nodes[index];
+	return m_peers[peerIndex].handle != m_peers[peerIndex].send;
+}
+
 bool Peer2PeerTopology::send(net_handle_t node, const void* data, int32_t size)
 {
 	int32_t nodeIndex = indexOf(node);

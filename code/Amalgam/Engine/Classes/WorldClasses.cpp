@@ -200,6 +200,7 @@ void registerWorldClasses(script::IScriptManager* scriptManager)
 	Ref< script::AutoScriptClass< world::SwitchEntity > > classSwitchEntity = new script::AutoScriptClass< world::SwitchEntity >();
 	classSwitchEntity->addConstructor();
 	classSwitchEntity->addConstructor< const Transform&, int32_t >();
+	classSwitchEntity->addMethod("addEntity", &world::SwitchEntity::addEntity);
 	classSwitchEntity->addMethod("setActive", &world::SwitchEntity::setActive);
 	classSwitchEntity->addMethod("getActive", &world::SwitchEntity::getActive);
 	classSwitchEntity->addMethod("getActiveEntity", &world::SwitchEntity::getActiveEntity);

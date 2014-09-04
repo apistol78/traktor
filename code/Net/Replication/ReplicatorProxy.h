@@ -170,7 +170,7 @@ private:
 
 	bool updateEventQueue();
 
-	void receivedEventAcknowledge(uint8_t sequence);
+	bool receivedEventAcknowledge(uint8_t sequence);
 
 	bool acceptEvent(uint8_t sequence, const ISerializable* eventObject);
 
