@@ -43,6 +43,8 @@ public:
 
 	virtual std::wstring getNodeName(int32_t index) const;
 
+	virtual bool isNodeRelayed(int32_t index) const;
+
 	virtual bool send(net_handle_t node, const void* data, int32_t size);
 
 	virtual int32_t recv(void* data, int32_t size, net_handle_t& outNode);

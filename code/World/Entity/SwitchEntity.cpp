@@ -29,6 +29,11 @@ void SwitchEntity::destroy()
 	m_entities.resize(0);
 }
 
+void SwitchEntity::addEntity(Entity* entity)
+{
+	m_entities.push_back(entity);
+}
+
 void SwitchEntity::setActive(int32_t active)
 {
 	if (m_active != active)

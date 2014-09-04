@@ -281,14 +281,17 @@ bool Replicator::update()
 		}
 		else if (msg.id == RmiEventAck)
 		{
-			double latency = fromGhost->getLatency();
-			timeOffset = std::max(
-				net2time(msg.time) + latency - m_time,
-				timeOffset
-			);
-
 			// Received an event acknowledge; discard event from queue.
-			fromGhost->receivedEventAcknowledge(msg.eventAck.sequence);
+			if (fromGhost->receivedEventAcknowledge(msg.eventAck.sequence))
+			{
+				double latency = fromGhost->getLatency();
+				timeOffset = std::max(
+					net2time(msg.time) + latency - m_time,
+					timeOffset
+				);
+			}
+			else
+				log::info << getLogPrefix() << L"Received acknowledge of unsent event from " << fromGhost->m_handle << L", sequence " << int32_t(msg.eventAck.sequence) << Endl;
 		}
 	}
 

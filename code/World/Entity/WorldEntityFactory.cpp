@@ -162,10 +162,17 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 
 	if (const SwitchEntityData* switchEntityData = dynamic_type_cast< const SwitchEntityData* >(&entityData))
 	{
-		return new SwitchEntity(
-			switchEntityData->getTransform(),
-			0
-		);
+		Ref< SwitchEntity > switchEntity = new SwitchEntity(switchEntityData->getTransform(), 0);
+
+		const RefArray< EntityData >& entityData = switchEntityData->getEntityData();
+		for (RefArray< EntityData >::const_iterator i = entityData.begin(); i != entityData.end(); ++i)
+		{
+			Ref< Entity > childEntity = builder->create(*i);
+			if (childEntity)
+				switchEntity->addEntity(childEntity);
+		}
+
+		return switchEntity;
 	}
 
 	if (const NullEntityData* nullData = dynamic_type_cast< const NullEntityData* >(&entityData))
