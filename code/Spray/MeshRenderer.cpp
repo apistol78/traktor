@@ -51,6 +51,9 @@ void MeshRenderer::flush(
 {
 	for (std::map< Ref< mesh::InstanceMesh >, std::pair< PointVector, bool > >::iterator i = m_meshes.begin(); i != m_meshes.end(); ++i)
 	{
+		if (i->second.first.empty())
+			continue;
+
 		if (!i->first->supportTechnique(worldRenderPass.getTechnique()))
 		{
 			i->second.first.resize(0);

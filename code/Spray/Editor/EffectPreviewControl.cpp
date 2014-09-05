@@ -552,7 +552,7 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 		world::Light globalLight;
 		globalLight.type = world::LtDirectional;
 		globalLight.position = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
-		globalLight.direction = Vector4(0.0f, -1.0f, 1.0f, 0.0f).normalized();
+		globalLight.direction = Vector4(0.0f, 1.0f, -1.0f, 0.0f).normalized();
 		globalLight.sunColor = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 		globalLight.baseColor = Vector4(0.75f, 0.75f, 0.75f, 1.0f);
 		globalLight.shadowColor = Vector4(0.5f, 0.5f, 0.5f, 1.0f);

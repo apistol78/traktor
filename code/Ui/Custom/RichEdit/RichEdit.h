@@ -136,6 +136,8 @@ private:
 
 	void insertCharacter(wchar_t ch);
 
+	void insertAt(int32_t offset, wchar_t ch);
+
 	void scrollToCaret();
 
 	int32_t getCharacterStops(const std::wstring& text, std::vector< int32_t >& outStops) const;
