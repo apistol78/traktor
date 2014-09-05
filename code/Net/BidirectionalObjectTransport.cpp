@@ -1,5 +1,4 @@
 #include "Core/Io/MemoryStream.h"
-#include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/CompactSerializer.h"
 #include "Core/Thread/Acquire.h"
@@ -69,10 +68,7 @@ bool BidirectionalObjectTransport::send(const ISerializable* object)
 
 	uint32_t objectSize = dms.tell();
 	if (objectSize >= c_maxObjectSize)
-	{
-		log::error << L"BidirectionalObjectTransport failed; object too big" << Endl;
 		return false;
-	}
 
 	*(uint32_t*)buffer = objectSize;
 
@@ -95,8 +91,6 @@ bool BidirectionalObjectTransport::send(const ISerializable* object)
 
 	if (result <= 0)
 	{
-		if (result < 0)
-			log::info << L"Unable to send object (" << result << L"); connection closed unexpectedly." << Endl;
 		m_socket = 0;
 		return false;
 	}
@@ -135,8 +129,6 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 		int32_t result = m_socket->recv(&objectSize, 4);
 		if (result <= 0)
 		{
-			if (result < 0)
-				log::warning << L"Unable to read object size; connection closed unexpectedly (" << result << L")." << Endl;
 			m_socket = 0;
 			m_inQueue.clear();
 			return RtDisconnected;
@@ -167,7 +159,6 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 
 		if (result <= 0)
 		{
-			log::warning << L"Unable to read object; connection closed unexpectedly (" << result << L")." << Endl;
 			m_socket = 0;
 			m_inQueue.clear();
 			return RtDisconnected;

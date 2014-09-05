@@ -59,12 +59,17 @@ public:
 		return m_items.size();
 	}
 
-	void insert(Class* item)
+	bool insert(Class* item)
 	{
 		T_ASSERT (item);
 		std::pair< typename set_t::iterator, bool > ins = m_items.insert(item);
 		if (ins.second)
+		{
 			T_SAFE_ADDREF(item);
+			return true;
+		}
+		else
+			return false;
 	}
 
 	size_t erase(Class* item)

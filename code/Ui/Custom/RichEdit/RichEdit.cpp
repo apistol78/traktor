@@ -486,52 +486,97 @@ void RichEdit::insertCharacter(wchar_t ch)
 {
 	if (ch == L'\n' || ch == L'\r')
 	{
-		m_text.insert(m_text.begin() + m_caret, L'\n');
-		m_meta.insert(m_meta.begin() + m_caret, 0);
+		if (m_selectionStart >= 0)
+			deleteCharacters();
 
-		for (std::vector< Line >::iterator i = m_lines.begin(); i != m_lines.end(); ++i)
-		{
-			if (m_caret >= i->start && m_caret <= i->stop)
-			{
-				Line line;
-				line.start = i->start;
-				line.stop = m_caret;
-				i->start = m_caret + 1;
-				i->stop++;
-				i = m_lines.insert(i, line) + 1;
-			}
-			else if (i->start > m_caret)
-			{
-				i->start++;
-				i->stop++;
-			}
-		}
-
-		++m_caret;
+		insertAt(m_caret++, L'\n');
 
 		ContentChangeEvent contentChangeEvent(this);
 		raiseEvent(&contentChangeEvent);
 	}
-	else if (ch == '\t' || ch >= 32)
+	else if (ch == '\t')
 	{
-		m_text.insert(m_text.begin() + m_caret, ch);
-		m_meta.insert(m_meta.begin() + m_caret, 0);
+		if (m_selectionStart >= 0)
+		{
+			int32_t indentFromLine = getLineFromOffset(m_selectionStart);
+			int32_t indentToLine = getLineFromOffset(m_selectionStop - 1);
 
+			if (indentFromLine <= indentToLine)
+			{
+				for (int32_t i = indentFromLine; i <= indentToLine; ++i)
+				{
+					int32_t offset = getLineOffset(i);
+					insertAt(offset, L'\t');
+				}
+
+				m_selectionStart = getLineOffset(indentFromLine);
+				m_selectionStop = getLineOffset(indentToLine) + getLineLength(indentToLine);
+
+				m_caret++;
+
+				ContentChangeEvent contentChangeEvent(this);
+				raiseEvent(&contentChangeEvent);
+
+				return;
+			}
+			else
+				deleteCharacters();
+		}
+
+		insertAt(m_caret++, L'\t');
+
+		ContentChangeEvent contentChangeEvent(this);
+		raiseEvent(&contentChangeEvent);
+	}
+	else if (ch >= 32)
+	{
+		if (m_selectionStart >= 0)
+			deleteCharacters();
+
+		insertAt(m_caret++, ch);
+
+		ContentChangeEvent contentChangeEvent(this);
+		raiseEvent(&contentChangeEvent);
+	}
+}
+
+void RichEdit::insertAt(int32_t offset, wchar_t ch)
+{
+	m_text.insert(m_text.begin() + offset, ch);
+	m_meta.insert(m_meta.begin() + offset, 0);
+
+	if (ch == L'\n' || ch == L'\r')
+	{
 		for (std::vector< Line >::iterator i = m_lines.begin(); i != m_lines.end(); ++i)
 		{
-			if (m_caret >= i->start && m_caret <= i->stop)
+			if (offset >= i->start && offset <= i->stop)
+			{
+				Line line;
+				line.start = i->start;
+				line.stop = offset;
+				i->start = offset + 1;
 				i->stop++;
-			else if (m_caret < i->start)
+				i = m_lines.insert(i, line) + 1;
+			}
+			else if (i->start > offset)
 			{
 				i->start++;
 				i->stop++;
 			}
 		}
-
-		++m_caret;
-
-		ContentChangeEvent contentChangeEvent(this);
-		raiseEvent(&contentChangeEvent);
+	}
+	else
+	{
+		for (std::vector< Line >::iterator i = m_lines.begin(); i != m_lines.end(); ++i)
+		{
+			if (offset >= i->start && offset <= i->stop)
+				i->stop++;
+			else if (offset < i->start)
+			{
+				i->start++;
+				i->stop++;
+			}
+		}
 	}
 }
 
@@ -814,11 +859,7 @@ void RichEdit::eventKey(KeyEvent* event)
 		deleteCharacters();
 	}
 	else if (ch != 8)
-	{
-		if (m_selectionStart >= 0)
-			deleteCharacters();
 		insertCharacter(ch);
-	}
 
 	CHECK;
 
@@ -994,7 +1035,7 @@ void RichEdit::eventPaint(PaintEvent* event)
 					int32_t nx = alignUp(x + 4 * 8, 4 * 8);
 
 					textRc.left = c_lineMargin + 2 + x;
-					textRc.right = textRc.left + nx;
+					textRc.right = c_lineMargin + 2 + nx;
 
 					if (solidBackground)
 						canvas.fillRect(textRc);

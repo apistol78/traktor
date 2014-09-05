@@ -22,161 +22,161 @@ Serializer::Direction ReflectionApplySerializer::getDirection() const
 
 void ReflectionApplySerializer::operator >> (const Member< bool >& m)
 {
-	Ref< const RfmPrimitive< bool > > member = dynamic_type_cast< const RfmPrimitive< bool >* >(getNextMember());
+	Ref< const RfmPrimitiveBoolean > member = dynamic_type_cast< const RfmPrimitiveBoolean* >(getNextMember());
 	if (member)
 		m = member->get();
 }
 
 void ReflectionApplySerializer::operator >> (const Member< int8_t >& m)
 {
-	Ref< const RfmPrimitive< int8_t > > member = dynamic_type_cast< const RfmPrimitive< int8_t >* >(getNextMember());
+	Ref< const RfmPrimitiveInt8 > member = dynamic_type_cast< const RfmPrimitiveInt8* >(getNextMember());
 	if (member)
 		m = member->get();
 }
 
 void ReflectionApplySerializer::operator >> (const Member< uint8_t >& m)
 {
-	Ref< const RfmPrimitive< uint8_t > > member = dynamic_type_cast< const RfmPrimitive< uint8_t >* >(getNextMember());
+	Ref< const RfmPrimitiveUInt8 > member = dynamic_type_cast< const RfmPrimitiveUInt8* >(getNextMember());
 	if (member)
 		m = member->get();
 }
 
 void ReflectionApplySerializer::operator >> (const Member< int16_t >& m)
 {
-	Ref< const RfmPrimitive< int16_t > > member = dynamic_type_cast< const RfmPrimitive< int16_t >* >(getNextMember());
+	Ref< const RfmPrimitiveInt16 > member = dynamic_type_cast< const RfmPrimitiveInt16* >(getNextMember());
 	if (member)
 		m = member->get();
 }
 
 void ReflectionApplySerializer::operator >> (const Member< uint16_t >& m)
 {
-	Ref< const RfmPrimitive< uint16_t > > member = dynamic_type_cast< const RfmPrimitive< uint16_t >* >(getNextMember());
+	Ref< const RfmPrimitiveUInt16 > member = dynamic_type_cast< const RfmPrimitiveUInt16* >(getNextMember());
 	if (member)
 		m = member->get();
 }
 
 void ReflectionApplySerializer::operator >> (const Member< int32_t >& m)
 {
-	Ref< const RfmPrimitive< int32_t > > member = dynamic_type_cast< const RfmPrimitive< int32_t >* >(getNextMember());
+	Ref< const RfmPrimitiveInt32 > member = dynamic_type_cast< const RfmPrimitiveInt32* >(getNextMember());
 	if (member)
 		m = member->get();
 }
 
 void ReflectionApplySerializer::operator >> (const Member< uint32_t >& m)
 {
-	Ref< const RfmPrimitive< uint32_t > > member = dynamic_type_cast< const RfmPrimitive< uint32_t >* >(getNextMember());
+	Ref< const RfmPrimitiveUInt32 > member = dynamic_type_cast< const RfmPrimitiveUInt32* >(getNextMember());
 	if (member)
 		m = member->get();
 }
 
 void ReflectionApplySerializer::operator >> (const Member< int64_t >& m)
 {
-	Ref< const RfmPrimitive< int64_t > > member = dynamic_type_cast< const RfmPrimitive< int64_t >* >(getNextMember());
+	Ref< const RfmPrimitiveInt64 > member = dynamic_type_cast< const RfmPrimitiveInt64* >(getNextMember());
 	if (member)
 		m = member->get();
 }
 
 void ReflectionApplySerializer::operator >> (const Member< uint64_t >& m)
 {
-	Ref< const RfmPrimitive< uint64_t > > member = dynamic_type_cast< const RfmPrimitive< uint64_t >* >(getNextMember());
+	Ref< const RfmPrimitiveUInt64 > member = dynamic_type_cast< const RfmPrimitiveUInt64* >(getNextMember());
 	if (member)
 		m = member->get();
 }
 
 void ReflectionApplySerializer::operator >> (const Member< float >& m)
 {
-	Ref< const RfmPrimitive< float > > member = dynamic_type_cast< const RfmPrimitive< float >* >(getNextMember());
+	Ref< const RfmPrimitiveFloat > member = dynamic_type_cast< const RfmPrimitiveFloat* >(getNextMember());
 	if (member)
 		m = member->get();
 }
 
 void ReflectionApplySerializer::operator >> (const Member< double >& m)
 {
-	Ref< const RfmPrimitive< double > > member = dynamic_type_cast< const RfmPrimitive< double >* >(getNextMember());
+	Ref< const RfmPrimitiveDouble > member = dynamic_type_cast< const RfmPrimitiveDouble* >(getNextMember());
 	if (member)
 		m = member->get();
 }
 
 void ReflectionApplySerializer::operator >> (const Member< std::string >& m)
 {
-	Ref< const RfmPrimitive< std::string > > member = dynamic_type_cast< const RfmPrimitive< std::string >* >(getNextMember());
+	Ref< const RfmPrimitiveString > member = dynamic_type_cast< const RfmPrimitiveString* >(getNextMember());
 	if (member)
 		m = member->get();
 }
 
 void ReflectionApplySerializer::operator >> (const Member< std::wstring >& m)
 {
-	Ref< const RfmPrimitive< std::wstring > > member = dynamic_type_cast< const RfmPrimitive< std::wstring >* >(getNextMember());
+	Ref< const RfmPrimitiveWideString > member = dynamic_type_cast< const RfmPrimitiveWideString* >(getNextMember());
 	if (member)
 		m = member->get();
 }
 
 void ReflectionApplySerializer::operator >> (const Member< Guid >& m)
 {
-	Ref< const RfmPrimitive< Guid > > member = dynamic_type_cast< const RfmPrimitive< Guid >* >(getNextMember());
+	Ref< const RfmPrimitiveGuid > member = dynamic_type_cast< const RfmPrimitiveGuid* >(getNextMember());
 	if (member)
 		m = member->get();
 }
 
 void ReflectionApplySerializer::operator >> (const Member< Path >& m)
 {
-	Ref< const RfmPrimitive< Path > > member = dynamic_type_cast< const RfmPrimitive< Path >* >(getNextMember());
+	Ref< const RfmPrimitivePath > member = dynamic_type_cast< const RfmPrimitivePath* >(getNextMember());
 	if (member)
 		m = member->get();
 }
 
 void ReflectionApplySerializer::operator >> (const Member< Color4f >& m)
 {
-	Ref< const RfmPrimitive< Color4f > > member = dynamic_type_cast< const RfmPrimitive< Color4f >* >(getNextMember());
+	Ref< const RfmPrimitiveColor4f > member = dynamic_type_cast< const RfmPrimitiveColor4f* >(getNextMember());
 	if (member)
 		m = member->get();
 }
 
 void ReflectionApplySerializer::operator >> (const Member< Color4ub >& m)
 {
-	Ref< const RfmPrimitive< Color4ub > > member = dynamic_type_cast< const RfmPrimitive< Color4ub >* >(getNextMember());
+	Ref< const RfmPrimitiveColor4ub > member = dynamic_type_cast< const RfmPrimitiveColor4ub* >(getNextMember());
 	if (member)
 		m = member->get();
 }
 
 void ReflectionApplySerializer::operator >> (const Member< Scalar >& m)
 {
-	Ref< const RfmPrimitive< Scalar > > member = dynamic_type_cast< const RfmPrimitive< Scalar >* >(getNextMember());
+	Ref< const RfmPrimitiveScalar > member = dynamic_type_cast< const RfmPrimitiveScalar* >(getNextMember());
 	if (member)
 		m = member->get();
 }
 
 void ReflectionApplySerializer::operator >> (const Member< Vector2 >& m)
 {
-	Ref< const RfmPrimitive< Vector2 > > member = dynamic_type_cast< const RfmPrimitive< Vector2 >* >(getNextMember());
+	Ref< const RfmPrimitiveVector2 > member = dynamic_type_cast< const RfmPrimitiveVector2* >(getNextMember());
 	if (member)
 		m = member->get();
 }
 
 void ReflectionApplySerializer::operator >> (const Member< Vector4 >& m)
 {
-	Ref< const RfmPrimitive< Vector4 > > member = dynamic_type_cast< const RfmPrimitive< Vector4 >* >(getNextMember());
+	Ref< const RfmPrimitiveVector4 > member = dynamic_type_cast< const RfmPrimitiveVector4* >(getNextMember());
 	if (member)
 		m = member->get();
 }
 
 void ReflectionApplySerializer::operator >> (const Member< Matrix33 >& m)
 {
-	Ref< const RfmPrimitive< Matrix33 > > member = dynamic_type_cast< const RfmPrimitive< Matrix33 >* >(getNextMember());
+	Ref< const RfmPrimitiveMatrix33 > member = dynamic_type_cast< const RfmPrimitiveMatrix33* >(getNextMember());
 	if (member)
 		m = member->get();
 }
 
 void ReflectionApplySerializer::operator >> (const Member< Matrix44 >& m)
 {
-	Ref< const RfmPrimitive< Matrix44 > > member = dynamic_type_cast< const RfmPrimitive< Matrix44 >* >(getNextMember());
+	Ref< const RfmPrimitiveMatrix44 > member = dynamic_type_cast< const RfmPrimitiveMatrix44* >(getNextMember());
 	if (member)
 		m = member->get();
 }
 
 void ReflectionApplySerializer::operator >> (const Member< Quaternion >& m)
 {
-	Ref< const RfmPrimitive< Quaternion > > member = dynamic_type_cast< const RfmPrimitive< Quaternion >* >(getNextMember());
+	Ref< const RfmPrimitiveQuaternion > member = dynamic_type_cast< const RfmPrimitiveQuaternion* >(getNextMember());
 	if (member)
 		m = member->get();
 }

@@ -604,6 +604,8 @@ void WorldRendererForward::endBuild(WorldRenderView& worldRenderView, int frame)
 			buildNoShadows(worldRenderView, *i, frame);
 	}
 
+	worldRenderView.resetLights();
+
 	// Prepare stereoscopic projection.
 	float screenWidth = float(m_renderView->getWidth());
 	f.A = std::abs((worldRenderView.getDistortionValue() * worldRenderView.getInterocularDistance()) / screenWidth);
@@ -1019,8 +1021,6 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 	f.view = worldRenderView.getView();
 	f.viewFrustum = worldRenderView.getViewFrustum();
 	f.haveShadows = true;
-
-	worldRenderView.resetLights();
 }
 
 void WorldRendererForward::buildNoShadows(WorldRenderView& worldRenderView, Entity* entity, int frame)
@@ -1047,8 +1047,6 @@ void WorldRendererForward::buildNoShadows(WorldRenderView& worldRenderView, Enti
 	f.view = worldRenderView.getView();
 	f.viewFrustum = worldRenderView.getViewFrustum();
 	f.haveShadows = false;
-
-	worldRenderView.resetLights();
 }
 
 	}

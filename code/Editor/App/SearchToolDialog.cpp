@@ -1,0 +1,316 @@
+#include "Core/RefSet.h"
+#include "Core/Functor/Functor.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
+#include "Core/Misc/TString.h"
+#include "Core/Reflection/Reflection.h"
+#include "Core/Reflection/RfmObject.h"
+#include "Core/Reflection/RfmPrimitive.h"
+#include "Core/Thread/Job.h"
+#include "Core/Thread/JobManager.h"
+#include "Database/Database.h"
+#include "Database/Group.h"
+#include "Database/Instance.h"
+#include "Database/Traverse.h"
+#include "Editor/IEditor.h"
+#include "Editor/App/SearchToolDialog.h"
+#include "I18N/Text.h"
+#include "Ui/Button.h"
+#include "Ui/CheckBox.h"
+#include "Ui/Edit.h"
+#include "Ui/FloodLayout.h"
+#include "Ui/MenuItem.h"
+#include "Ui/PopupMenu.h"
+#include "Ui/TableLayout.h"
+#include "Ui/Custom/ProgressBar.h"
+#include "Ui/Custom/Splitter.h"
+#include "Ui/Custom/GridView/GridColumn.h"
+#include "Ui/Custom/GridView/GridItem.h"
+#include "Ui/Custom/GridView/GridRow.h"
+#include "Ui/Custom/GridView/GridView.h"
+
+namespace traktor
+{
+	namespace editor
+	{
+		namespace
+		{
+
+/*! \brief Stylize member name.
+ *
+ * Transform from internal naming convention to
+ * more human acceptable form.
+ *
+ * Example:
+ * thisIsACommonName -> This is a common name
+ *
+ * \param memberName Name of member in internal naming convention.
+ * \return Human acceptable form.
+ */
+std::wstring stylizeMemberName(const std::wstring& memberName)
+{
+	T_ASSERT (!memberName.empty());
+	StringOutputStream ss;
+	std::wstring::const_iterator i = memberName.begin();
+	ss.put(toupper(*i++));
+	for (; i != memberName.end(); ++i)
+	{
+		if (isupper(*i))
+		{
+			ss.put(L' ');
+			ss.put(tolower(*i));
+		}
+		else
+			ss.put(*i);
+	}
+	return ss.str();
+}
+
+bool match(const std::wstring& value, const std::wstring& needle, bool caseSensitive)
+{
+	if (caseSensitive)
+		return value.find(needle) != std::wstring::npos;
+	else
+		return toLower(value).find(toLower(needle)) != std::wstring::npos;
+}
+
+const ReflectionMember* searchMember(db::Instance* instance, Reflection* reflection, const ReflectionMember* member, RefSet< Object >& visited, const std::wstring& needle, bool caseSensitive, ui::custom::GridView* gridResults)
+{
+	if (match(stylizeMemberName(member->getName()), needle, caseSensitive))
+		return member;
+	else if (const RfmCompound* memberCompound = dynamic_type_cast< const RfmCompound* >(member))
+	{
+		const RefArray< ReflectionMember >& members = memberCompound->getMembers();
+		for (RefArray< ReflectionMember >::const_iterator i = members.begin(); i != members.end(); ++i)
+		{
+			const ReflectionMember* foundMember = searchMember(instance, reflection, *i, visited, needle, caseSensitive, gridResults);
+			if (foundMember)
+				return foundMember;
+		}
+	}
+	else if (const RfmObject* memberObject = dynamic_type_cast< const RfmObject* >(member))
+	{
+		if (memberObject->get() && visited.insert(memberObject->get()))
+		{
+			Ref< Reflection > childReflection = Reflection::create(memberObject->get());
+			if (childReflection)
+			{
+				const RefArray< ReflectionMember >& members = childReflection->getMembers();
+				for (RefArray< ReflectionMember >::const_iterator i = members.begin(); i != members.end(); ++i)
+				{
+					const ReflectionMember* foundMember = searchMember(instance, childReflection, *i, visited, needle, caseSensitive, gridResults);
+					if (foundMember)
+						return foundMember;
+				}
+			}
+		}
+	}
+	else if (const RfmPrimitiveString* memberString = dynamic_type_cast< const RfmPrimitiveString* >(member))
+	{
+		if (match(mbstows(memberString->get()), needle, caseSensitive))
+			return member;
+	}
+	else if (const RfmPrimitiveWideString* memberWideString = dynamic_type_cast< const RfmPrimitiveWideString* >(member))
+	{
+		if (match(memberWideString->get(), needle, caseSensitive))
+			return member;
+	}
+	else if (const RfmPrimitivePath* memberPath = dynamic_type_cast< const RfmPrimitivePath* >(member))
+	{
+		if (match(memberPath->get().getPathName(), needle, caseSensitive))
+			return member;
+	}
+
+	return 0;
+}
+
+void searchInstance(db::Instance* instance, const std::wstring& needle, bool caseSensitive, ui::custom::GridView* gridResults)
+{
+	Ref< ISerializable > object = instance->getObject();
+	if (!object)
+		return;
+
+	Ref< Reflection > reflection = Reflection::create(object);
+	if (!reflection)
+		return;
+
+	RefSet< Object > visited;
+
+	const RefArray< ReflectionMember >& members = reflection->getMembers();
+	for (RefArray< ReflectionMember >::const_iterator i = members.begin(); i != members.end(); ++i)
+	{
+		const ReflectionMember* foundMember = searchMember(instance, reflection, *i, visited, needle, caseSensitive, gridResults);
+		if (foundMember)
+		{
+			Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
+			row->add(new ui::custom::GridItem(instance->getPath()));
+			row->add(new ui::custom::GridItem(instance->getPrimaryType()->getName()));
+			row->add(new ui::custom::GridItem(stylizeMemberName(foundMember->getName())));
+			row->setData(L"INSTANCE", instance);
+			gridResults->addRow(row);
+		}
+	}
+}
+
+void searchGroup(db::Group* group, const std::wstring& needle, bool caseSensitive, ui::custom::ProgressBar* progressBar, ui::custom::GridView* gridResults)
+{
+	RefArray< db::Instance > childInstances;
+	db::recursiveFindChildInstances(group, db::FindInstanceAll(), childInstances);
+
+	progressBar->setRange(0, int32_t(childInstances.size()));
+	for (int32_t i = 0; i < int32_t(childInstances.size()); ++i)
+	{
+		searchInstance(childInstances[i], needle, caseSensitive, gridResults);
+		progressBar->setProgress(i);
+	}
+}
+
+		}
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.SearchToolDialog", SearchToolDialog, ui::Dialog)
+
+SearchToolDialog::SearchToolDialog(IEditor* editor)
+:	m_editor(editor)
+{
+}
+
+void SearchToolDialog::destroy()
+{
+	if (m_jobSearch)
+		m_jobSearch->wait();
+
+	ui::Dialog::destroy();
+}
+
+bool SearchToolDialog::create(ui::Widget* parent)
+{
+	if (!ui::Dialog::create(parent, i18n::Text(L"EDITOR_SEARCH_TOOL_TITLE"), 1100, 600, ui::Dialog::WsDefaultResizable, new ui::FloodLayout()))
+		return false;
+
+	Ref< ui::custom::Splitter > splitterV = new ui::custom::Splitter();
+	splitterV->create(this, true, 220, false);
+
+	Ref< ui::Container > containerSearch = new ui::Container();
+	containerSearch->create(splitterV, ui::WsNone, new ui::TableLayout(L"100%", L"*", 4, 4));
+
+	m_editSearch = new ui::Edit();
+	m_editSearch->create(containerSearch);
+
+	m_checkCaseSensitive = new ui::CheckBox();
+	m_checkCaseSensitive->create(containerSearch, i18n::Text(L"EDITOR_SEARCH_TOOL_CASE_SENSITIVE"));
+
+	m_buttonFind = new ui::Button();
+	m_buttonFind->create(containerSearch, i18n::Text(L"EDITOR_SEARCH_TOOL_FIND"));
+	m_buttonFind->addEventHandler< ui::ButtonClickEvent >(this, &SearchToolDialog::eventButtonSearchClick);
+
+	m_progressBar = new ui::custom::ProgressBar();
+	m_progressBar->create(containerSearch, ui::WsDoubleBuffer);
+	m_progressBar->setVisible(false);
+
+	m_gridResults = new ui::custom::GridView();
+	m_gridResults->create(splitterV, ui::custom::GridView::WsColumnHeader | ui::WsDoubleBuffer);
+	m_gridResults->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SEARCH_TOOL_INSTANCE"), 350));
+	m_gridResults->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SEARCH_TOOL_TYPE"), 220));
+	m_gridResults->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SEARCH_TOOL_MEMBER"), 200));
+	m_gridResults->addEventHandler< ui::MouseDoubleClickEvent >(this, &SearchToolDialog::eventGridResultDoubleClick);
+	m_gridResults->addEventHandler< ui::MouseButtonUpEvent >(this, &SearchToolDialog::eventGridResultButtonUp);
+
+	addEventHandler< ui::TimerEvent >(this, &SearchToolDialog::eventTimer);
+	addEventHandler< ui::CloseEvent >(this, &SearchToolDialog::eventClose);
+
+	update();
+
+	return true;
+}
+
+void SearchToolDialog::eventButtonSearchClick(ui::ButtonClickEvent* event)
+{
+	std::wstring needle = m_editSearch->getText();
+	if (needle.empty())
+		return;
+
+	bool caseSensitive = m_checkCaseSensitive->isChecked();
+
+	m_gridResults->removeAllRows();
+	m_jobSearch = JobManager::getInstance().add(makeFunctor(this, &SearchToolDialog::jobSearch, needle, caseSensitive));
+
+	m_editSearch->setEnable(false);
+	m_checkCaseSensitive->setEnable(false);
+	m_buttonFind->setEnable(false);
+	m_progressBar->setVisible(true);
+
+	startTimer(100);
+}
+
+void SearchToolDialog::eventGridResultDoubleClick(ui::MouseDoubleClickEvent* event)
+{
+	Ref< ui::custom::GridRow > row = m_gridResults->getSelectedRow();
+	if (row)
+	{
+		Ref< db::Instance > instance = row->getData< db::Instance >(L"INSTANCE");
+		T_ASSERT (instance);
+
+		m_editor->openEditor(instance);
+	}
+}
+
+void SearchToolDialog::eventGridResultButtonUp(ui::MouseButtonUpEvent* event)
+{
+	Ref< ui::custom::GridRow > row = m_gridResults->getSelectedRow();
+	if (row && event->getButton() == ui::MbtRight)
+	{
+		Ref< db::Instance > instance = row->getData< db::Instance >(L"INSTANCE");
+		T_ASSERT (instance);
+
+		Ref< ui::PopupMenu > popupMenu = new ui::PopupMenu();
+		popupMenu->create();
+		popupMenu->add(new ui::MenuItem(ui::Command(L"SearchTool.OpenInstance"), i18n::Text(L"EDITOR_SEARCH_TOOL_OPEN_INSTANCE")));
+		popupMenu->add(new ui::MenuItem(ui::Command(L"SearchTool.HighlightInstance"), i18n::Text(L"EDITOR_SEARCH_TOOL_HIGHLIGHT_INSTANCE")));
+		
+		Ref< ui::MenuItem > selectedItem = popupMenu->show(m_gridResults, event->getPosition());
+		if (selectedItem)
+		{
+			if (selectedItem->getCommand() == L"SearchTool.OpenInstance")
+				m_editor->openEditor(instance);
+			else if (selectedItem->getCommand() == L"SearchTool.HighlightInstance")
+				m_editor->highlightInstance(instance);
+		}
+	}
+}
+
+void SearchToolDialog::eventTimer(ui::TimerEvent* event)
+{
+	if (m_jobSearch->wait(0))
+	{
+		stopTimer();
+		m_editSearch->setEnable(true);
+		m_checkCaseSensitive->setEnable(true);
+		m_buttonFind->setEnable(true);
+		m_progressBar->setProgress(0);
+		m_progressBar->setVisible(false);
+		update();
+	}
+}
+
+void SearchToolDialog::eventClose(ui::CloseEvent* event)
+{
+	destroy();
+}
+
+void SearchToolDialog::jobSearch(std::wstring needle, bool caseSensitive)
+{
+	Ref< db::Database > database = m_editor->getSourceDatabase();
+	if (!database)
+		return;
+
+	searchGroup(
+		database->getRootGroup(),
+		needle,
+		caseSensitive,
+		m_progressBar,
+		m_gridResults
+	);
+}
+
+	}
+}

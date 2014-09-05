@@ -64,11 +64,11 @@ private:
 
 BoxedAllocator< BoxedUInt64, 16 > s_allocBoxedUInt64;
 BoxedAllocator< BoxedGuid, 512 > s_allocBoxedGuid;
-BoxedAllocator< BoxedVector2, 4096 > s_allocBoxedVector2;
-BoxedAllocator< BoxedVector4, 131072 > s_allocBoxedVector4;
+BoxedAllocator< BoxedVector2, 1024 > s_allocBoxedVector2;
+BoxedAllocator< BoxedVector4, 32768 > s_allocBoxedVector4;
 BoxedAllocator< BoxedQuaternion, 4096 > s_allocBoxedQuaternion;
 BoxedAllocator< BoxedPlane, 256 > s_allocBoxedPlane;
-BoxedAllocator< BoxedTransform, 32768 > s_allocBoxedTransform;
+BoxedAllocator< BoxedTransform, 8192 > s_allocBoxedTransform;
 BoxedAllocator< BoxedAabb3, 64 > s_allocBoxedAabb3;
 BoxedAllocator< BoxedFrustum, 16 > s_allocBoxedFrustum;
 BoxedAllocator< BoxedMatrix44, 16 > s_allocBoxedMatrix44;

@@ -605,6 +605,42 @@
       <second>Workspace</second>
     </item>
     <item>
+      <first>EDITOR_SEARCH_TOOL</first>
+      <second>Search in database</second>
+    </item>
+    <item>
+      <first>EDITOR_SEARCH_TOOL_TITLE</first>
+      <second>Search</second>
+    </item>
+    <item>
+      <first>EDITOR_SEARCH_TOOL_CASE_SENSITIVE</first>
+      <second>Case sensitive</second>
+    </item>
+    <item>
+      <first>EDITOR_SEARCH_TOOL_FIND</first>
+      <second>Find</second>
+    </item>
+    <item>
+      <first>EDITOR_SEARCH_TOOL_INSTANCE</first>
+      <second>Instance</second>
+    </item>
+    <item>
+      <first>EDITOR_SEARCH_TOOL_TYPE</first>
+      <second>Type</second>
+    </item>
+    <item>
+      <first>EDITOR_SEARCH_TOOL_MEMBER</first>
+      <second>Member</second>
+    </item>
+    <item>
+      <first>EDITOR_SEARCH_TOOL_OPEN_INSTANCE</first>
+      <second>Open...</second>
+    </item>
+    <item>
+      <first>EDITOR_SEARCH_TOOL_HIGHLIGHT_INSTANCE</first>
+      <second>Find in database view</second>
+    </item>
+    <item>
       <first>EDIT_BATCH_DESCRIPTION</first>
       <second>Edit import batch...</second>
     </item>
