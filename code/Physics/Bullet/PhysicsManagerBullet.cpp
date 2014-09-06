@@ -61,6 +61,21 @@ namespace traktor
 		namespace
 		{
 
+void* traktorAlloc(size_t size)
+{
+	return getAllocator()->alloc(size, 4, "Bullet");
+}
+
+void* traktorAllocAlign(size_t size, int alignment)
+{
+	return getAllocator()->alloc(size, alignment, "Bullet");
+}
+
+void traktorFree(void* memblock)
+{
+	getAllocator()->free(memblock);
+}
+
 class MeshProxyIndexVertexArray : public btStridingMeshInterface
 {
 public:
@@ -464,6 +479,10 @@ PhysicsManagerBullet::~PhysicsManagerBullet()
 bool PhysicsManagerBullet::create(float simulationDeltaTime, float timeScale)
 {
 	btDefaultCollisionConstructionInfo info;
+
+	// Set our own memory allocator routines instead of Bullet's default.
+	btAlignedAllocSetCustom(&traktorAlloc, &traktorFree);
+	btAlignedAllocSetCustomAligned(&traktorAllocAlign, &traktorFree);
 
 	m_simulationDeltaTime = simulationDeltaTime;
 	m_timeScale = timeScale;

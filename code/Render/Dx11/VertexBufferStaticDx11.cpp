@@ -14,12 +14,12 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferStaticDx11", VertexBufferSta
 
 Ref< VertexBufferStaticDx11 > VertexBufferStaticDx11::create(
 	ContextDx11* context,
-	BufferHeap* bufferHeap,
+	IBufferHeapDx11* bufferHeap,
 	uint32_t bufferSize,
 	const std::vector< VertexElement >& vertexElements
 )
 {
-	BufferHeap::Chunk bufferChunk;
+	IBufferHeapDx11::Chunk bufferChunk;
 
 	uint32_t vertexStride = getVertexSize(vertexElements);
 

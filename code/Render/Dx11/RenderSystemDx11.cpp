@@ -1,7 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Thread/Acquire.h"
-#include "Render/Dx11/BufferHeap.h"
 #include "Render/Dx11/ContextDx11.h"
 #include "Render/Dx11/CubeTextureDx11.h"
 #include "Render/Dx11/IndexBufferDynamicDx11.h"
@@ -13,6 +12,8 @@
 #include "Render/Dx11/RenderTargetSetDx11.h"
 #include "Render/Dx11/RenderViewDx11.h"
 #include "Render/Dx11/ResourceCache.h"
+#include "Render/Dx11/SharedBufferHeapDx11.h"
+#include "Render/Dx11/SimpleBufferHeapDx11.h"
 #include "Render/Dx11/SimpleTextureDx11.h"
 #include "Render/Dx11/TimeQueryDx11.h"
 #include "Render/Dx11/TypesDx11.h"
@@ -214,14 +215,22 @@ bool RenderSystemDx11::create(const RenderSystemDesc& desc)
 	dbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	dbd.CPUAccessFlags = 0;
 	dbd.MiscFlags = 0;
-	m_vertexBufferStaticHeap = new BufferHeap(m_context, dbd);
+#if 1
+	m_vertexBufferStaticHeap = new SharedBufferHeapDx11(m_context, dbd);
+#else
+	m_vertexBufferStaticHeap = new SimpleBufferHeapDx11(m_context, dbd);
+#endif
 
 	dbd.ByteWidth = 4 * 1024 * 1024;
 	dbd.Usage = D3D11_USAGE_DEFAULT;
 	dbd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	dbd.CPUAccessFlags = 0;
 	dbd.MiscFlags = 0;
-	m_indexBufferStaticHeap = new BufferHeap(m_context, dbd);
+#if 1
+	m_indexBufferStaticHeap = new SharedBufferHeapDx11(m_context, dbd);
+#else
+	m_indexBufferStaticHeap = new SimpleBufferHeapDx11(m_context, dbd);
+#endif
 
 	m_resourceCache = new ResourceCache(d3dDevice, desc.mipBias, clamp(desc.maxAnisotropy, 1, 16));
 

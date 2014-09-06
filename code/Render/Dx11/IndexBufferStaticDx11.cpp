@@ -8,9 +8,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.IndexBufferStaticDx11", IndexBufferStaticDx11, IndexBufferDx11)
 
-Ref< IndexBufferStaticDx11 > IndexBufferStaticDx11::create(ContextDx11* context, BufferHeap* bufferHeap, IndexType indexType, uint32_t bufferSize)
+Ref< IndexBufferStaticDx11 > IndexBufferStaticDx11::create(ContextDx11* context, IBufferHeapDx11* bufferHeap, IndexType indexType, uint32_t bufferSize)
 {
-	BufferHeap::Chunk bufferChunk;
+	IBufferHeapDx11::Chunk bufferChunk;
 
 	uint32_t indexStride = (indexType == ItUInt16) ? 2 : 4;
 
@@ -62,15 +62,6 @@ void IndexBufferStaticDx11::prepare(ID3D11DeviceContext* d3dDeviceContext, State
 {
 	if (m_data.ptr())
 	{
-		//d3dDeviceContext->UpdateSubresource(
-		//	m_d3dBuffer,
-		//	0,
-		//	NULL,
-		//	m_data.c_ptr(),
-		//	getBufferSize(),
-		//	1
-		//);
-
 		D3D11_BOX d3db;
 		
 		d3db.left = m_bufferChunk.vertexOffset;

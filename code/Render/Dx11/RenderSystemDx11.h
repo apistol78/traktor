@@ -20,8 +20,8 @@ namespace traktor
 	namespace render
 	{
 
-class BufferHeap;
 class ContextDx11;
+class IBufferHeapDx11;
 class ResourceCache;
 class Window;
 
@@ -79,8 +79,8 @@ public:
 
 private:
 	Ref< ContextDx11 > m_context;
-	Ref< BufferHeap > m_vertexBufferStaticHeap;
-	Ref< BufferHeap > m_indexBufferStaticHeap;
+	Ref< IBufferHeapDx11 > m_vertexBufferStaticHeap;
+	Ref< IBufferHeapDx11 > m_indexBufferStaticHeap;
 	Ref< Window > m_window;
 	Ref< ResourceCache > m_resourceCache;
 	float m_displayAspect;

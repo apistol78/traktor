@@ -19,21 +19,26 @@ namespace traktor
 
 void collectResources(editor::IPipelineBuilder* pipelineBuilder, const editor::IPipelineDependencySet* dependencySet, const editor::PipelineDependency* dependency, std::vector< std::pair< const TypeInfo*, Guid > >& outResources)
 {
-	for (std::vector< uint32_t >::const_iterator i = dependency->children.begin(); i != dependency->children.end(); ++i)
+	if ((dependency->flags & editor::PdfResource) == 0)
 	{
-		const editor::PipelineDependency* childDependency = dependencySet->get(*i);
-		T_ASSERT (childDependency);
-
-		collectResources(pipelineBuilder, dependencySet, childDependency, outResources);
-		if ((childDependency->flags & editor::PdfResource) != 0)
+		// Recurse until a resource is found; isn't necessary to recurse further as
+		// resource loading will need to load any other dependent resource anyway.
+		for (std::vector< uint32_t >::const_iterator i = dependency->children.begin(); i != dependency->children.end(); ++i)
 		{
-			Ref< db::Instance > assetInstance = pipelineBuilder->getOutputDatabase()->getInstance(childDependency->outputGuid);
-			if (!assetInstance)
-				continue;
+			const editor::PipelineDependency* childDependency = dependencySet->get(*i);
+			T_ASSERT (childDependency);
 
+			collectResources(pipelineBuilder, dependencySet, childDependency, outResources);
+		}
+	}
+	else
+	{
+		Ref< db::Instance > assetInstance = pipelineBuilder->getOutputDatabase()->getInstance(dependency->outputGuid);
+		if (assetInstance)
+		{
 			outResources.push_back(std::make_pair(
 				assetInstance->getPrimaryType(),
-				childDependency->outputGuid
+				dependency->outputGuid
 			));
 		}
 	}
@@ -49,7 +54,7 @@ struct ResourceTypePred
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.ResourceBundlePipeline", 1, ResourceBundlePipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.ResourceBundlePipeline", 4, ResourceBundlePipeline, editor::IPipeline)
 
 bool ResourceBundlePipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -101,6 +106,7 @@ bool ResourceBundlePipeline::buildOutput(
 	// Collect resources, should be in depth-first to reduce
 	// change of inter-dependencies.
 	collectResources(pipelineBuilder, dependencySet, dependency, resources);
+	log::info << int32_t(resources.size()) << L" resource(s) in bundle found." << Endl;
 
 	// Sort bundle resources on type.
 	std::sort(resources.begin(), resources.end(), ResourceTypePred());

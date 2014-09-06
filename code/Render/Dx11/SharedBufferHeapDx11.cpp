@@ -1,23 +1,23 @@
 #include <algorithm>
 #include "Core/Log/Log.h"
 #include "Core/Misc/Align.h"
-#include "Render/Dx11/BufferHeap.h"
 #include "Render/Dx11/ContextDx11.h"
+#include "Render/Dx11/SharedBufferHeapDx11.h"
 
 namespace traktor
 {
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.BufferHeap", BufferHeap, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SharedBufferHeapDx11", SharedBufferHeapDx11, Object)
 
-BufferHeap::BufferHeap(ContextDx11* context, const D3D11_BUFFER_DESC& dbd)
+SharedBufferHeapDx11::SharedBufferHeapDx11(ContextDx11* context, const D3D11_BUFFER_DESC& dbd)
 :	m_context(context)
 ,	m_dbd(dbd)
 {
 }
 
-void BufferHeap::destroy()
+void SharedBufferHeapDx11::destroy()
 {
 	for (std::map< uint32_t, std::list< Chain > >::iterator i = m_chains.begin(); i != m_chains.end(); ++i)
 	{
@@ -27,7 +27,7 @@ void BufferHeap::destroy()
 	m_chains.clear();
 }
 
-bool BufferHeap::alloc(uint32_t bufferSize, uint32_t vertexStride, Chunk& outChunk)
+bool SharedBufferHeapDx11::alloc(uint32_t bufferSize, uint32_t vertexStride, Chunk& outChunk)
 {
 	Chain chain;
 	HRESULT hr;
@@ -91,7 +91,7 @@ bool BufferHeap::alloc(uint32_t bufferSize, uint32_t vertexStride, Chunk& outChu
 	return true;
 }
 
-void BufferHeap::free(const Chunk& chunk)
+void SharedBufferHeapDx11::free(const Chunk& chunk)
 {
 	for (std::map< uint32_t, std::list< Chain > >::iterator i = m_chains.begin(); i != m_chains.end(); ++i)
 	{
@@ -129,7 +129,7 @@ void BufferHeap::free(const Chunk& chunk)
 	}
 }
 
-bool BufferHeap::FreeList::operator < (const FreeList& rh) const
+bool SharedBufferHeapDx11::FreeList::operator < (const FreeList& rh) const
 {
 	return offset + size <= rh.offset;
 }
