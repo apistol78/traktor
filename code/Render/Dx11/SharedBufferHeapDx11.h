@@ -1,10 +1,10 @@
-#ifndef traktor_render_BufferHeap_H
-#define traktor_render_BufferHeap_H
+#ifndef traktor_render_SharedBufferHeapDx11_H
+#define traktor_render_SharedBufferHeapDx11_H
 
 #include <list>
 #include <map>
-#include "Core/Object.h"
 #include "Core/Misc/ComRef.h"
+#include "Render/Dx11/IBufferHeapDx11.h"
 #include "Render/Dx11/Platform.h"
 
 namespace traktor
@@ -23,26 +23,18 @@ class ContextDx11;
  * This reduces the number of state changes required by the driver thus
  * improves performance.
  */
-class BufferHeap : public Object
+class SharedBufferHeapDx11 : public IBufferHeapDx11
 {
 	T_RTTI_CLASS;
 
 public:
-	struct Chunk
-	{
-		ID3D11Buffer* d3dBuffer;
-		uint32_t byteOffset;
-		uint32_t vertexOffset;
-		uint32_t size;
-	};
+	SharedBufferHeapDx11(ContextDx11* context, const D3D11_BUFFER_DESC& dbd);
 
-	BufferHeap(ContextDx11* context, const D3D11_BUFFER_DESC& dbd);
+	virtual void destroy();
 
-	void destroy();
+	virtual bool alloc(uint32_t bufferSize, uint32_t vertexStride, Chunk& outChunk);
 
-	bool alloc(uint32_t bufferSize, uint32_t vertexStride, Chunk& outChunk);
-
-	void free(const Chunk& chunk);
+	virtual void free(const Chunk& chunk);
 
 private:
 	struct FreeList
@@ -67,4 +59,4 @@ private:
 	}
 }
 
-#endif	// traktor_render_BufferHeap_H
+#endif	// traktor_render_SharedBufferHeapDx11_H

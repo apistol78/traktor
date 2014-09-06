@@ -15,6 +15,25 @@ namespace traktor
 		namespace
 		{
 
+class FindCombinationMaskValue
+{
+public:
+	FindCombinationMaskValue(uint32_t mask, uint32_t value)
+	:	m_mask(mask)
+	,	m_value(value)
+	{
+	}
+
+	bool operator () (const ShaderGraphCombinations::Combination& c) const
+	{
+		return c.mask == m_mask && c.value == m_value;
+	}
+
+private:
+	uint32_t m_mask;
+	uint32_t m_value;
+};
+
 Ref< ShaderGraph > replaceBranch(const ShaderGraph* shaderGraph, Branch* branch, bool path)
 {
 	Ref< ShaderGraph > shaderGraphResult = new ShaderGraph(
@@ -92,11 +111,14 @@ void buildCombinations(
 	}
 	else
 	{
-		ShaderGraphCombinations::Combination c;
-		c.mask = parameterMask;
-		c.value = parameterValue;
-		c.shaderGraph = shaderGraph;
-		outCombinations.push_back(c);
+		if (std::find_if(outCombinations.begin(), outCombinations.end(), FindCombinationMaskValue(parameterMask, parameterValue)) == outCombinations.end())
+		{
+			ShaderGraphCombinations::Combination c;
+			c.mask = parameterMask;
+			c.value = parameterValue;
+			c.shaderGraph = shaderGraph;
+			outCombinations.push_back(c);
+		}
 	}
 }
 
