@@ -91,12 +91,6 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	Ref< ui::Static > staticBuildRootInstance = new ui::Static();
 	staticBuildRootInstance->create(panelGeneral, L"{0000000-000000-000000-000000}");
 
-	Ref< ui::Static > staticExecutable = new ui::Static();
-	staticExecutable->create(panelGeneral, L"Executable");
-
-	m_editExecutable = new ui::Edit();
-	m_editExecutable->create(panelGeneral);
-
 	Ref< ui::Static > staticStartup = new ui::Static();
 	staticStartup->create(panelGeneral, L"Startup");
 
@@ -301,14 +295,11 @@ void TargetEditor::eventListBoxTargetConfigurationsSelect(ui::SelectionChangeEve
 	updateAvailableFeatures();
 	updateUsedFeatures();
 
-	m_editExecutable->setText(L"");
 	m_dropDownPlatform->select(-1);
 
 	TargetConfiguration* targetConfiguration = m_listBoxTargetConfigurations->getSelectedData< TargetConfiguration >();
 	if (targetConfiguration)
 	{
-		m_editExecutable->setText(targetConfiguration->getExecutable());
-
 		Guid platformGuid = targetConfiguration->getPlatform();
 		selectPlatform(platformGuid);
 	}

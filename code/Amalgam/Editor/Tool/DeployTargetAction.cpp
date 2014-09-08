@@ -72,6 +72,7 @@ DeployTargetAction::DeployTargetAction(
 bool DeployTargetAction::execute(IProgressListener* progressListener)
 {
 	std::set< std::wstring > deployFiles;
+	std::wstring executableFile;
 
 	// Get platform description object from database.
 	Ref< Platform > platform = m_database->getObjectReadOnly< Platform >(m_targetConfiguration->getPlatform());
@@ -118,7 +119,11 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 
 		const Feature::Platform* fp = feature->getPlatform(m_targetConfiguration->getPlatform());
 		if (fp)
+		{
 			deployFiles.insert(fp->deployFiles.begin(), fp->deployFiles.end());
+			if (!fp->executableFile.empty())
+				executableFile = fp->executableFile;
+		}
 		else
 			log::warning << L"Feature \"" << feature->getDescription() << L"\" doesn't support selected platform." << Endl;
 	}
@@ -191,8 +196,9 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 	envmap[L"DEPLOY_PROJECT_NAME"] = m_targetName;
 	envmap[L"DEPLOY_PROJECT_IDENTIFIER"] = m_target->getIdentifier();
 	envmap[L"DEPLOY_PROJECT_ICON"] = m_targetConfiguration->getIcon();
+	envmap[L"DEPLOY_SYSTEM_ROOT"] = m_targetConfiguration->getSystemRoot();
 	envmap[L"DEPLOY_TARGET_HOST"] = m_deployHost;
-	envmap[L"DEPLOY_EXECUTABLE"] = m_targetConfiguration->getExecutable();
+	envmap[L"DEPLOY_EXECUTABLE"] = executableFile;
 	envmap[L"DEPLOY_MODULES"] = implode(runtimeModules.begin(), runtimeModules.end(), L" ");
 	envmap[L"DEPLOY_OUTPUT_PATH"] = m_outputPath;
 	envmap[L"DEPLOY_CERTIFICATE"] = m_globalSettings->getProperty< PropertyString >(L"Amalgam.Certificate", L"");

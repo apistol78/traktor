@@ -1,4 +1,6 @@
+#include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
 #include "Ui/WebBrowser.h"
 #include "Ui/Win32/WebBrowserWin32.h"
 
@@ -310,7 +312,7 @@ public:
 		DWORD grfMode,
 		DWORD reserved1,
 		DWORD reserved2,
-		IStream **ppstm
+		::IStream **ppstm
 	)
 	{
 		return E_NOTIMPL;
@@ -321,7 +323,7 @@ public:
 		void *reserved1,
 		DWORD grfMode,
 		DWORD reserved2,
-		IStream **ppstm
+		::IStream **ppstm
 	)
    	{
 		return E_NOTIMPL;
@@ -505,9 +507,20 @@ void WebBrowserWin32::navigate(const std::wstring& url)
 	VARIANT vurl;
 	HRESULT hr;
 
-	VariantInit(&vurl);
-	vurl.vt = VT_BSTR;
-	vurl.bstrVal = SysAllocString(url.c_str());
+	// Ensure path is absolute if using file:// protocol.
+	if (startsWith< std::wstring >(url, L"file://"))
+	{
+		std::wstring qurl = L"file://" + FileSystem::getInstance().getAbsolutePath(url.substr(7)).getPathName();
+		VariantInit(&vurl);
+		vurl.vt = VT_BSTR;
+		vurl.bstrVal = SysAllocString(qurl.c_str());
+	}
+	else
+	{
+		VariantInit(&vurl);
+		vurl.vt = VT_BSTR;
+		vurl.bstrVal = SysAllocString(url.c_str());
+	}
 
 	hr = m_webBrowser->Navigate2(&vurl, 0, 0, 0, 0);
 	if (FAILED(hr))

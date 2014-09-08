@@ -26,6 +26,7 @@ struct RMessage
 	{
 		struct
 		{
+			uint32_t time0;
 			uint8_t status;
 		} ping;
 
@@ -58,7 +59,7 @@ struct RMessage
 
 T_FORCE_INLINE int32_t RMessage_HeaderSize()				{ return sizeof(uint8_t) + sizeof(uint32_t); }
 
-T_FORCE_INLINE int32_t RmiPing_NetSize()					{ return RMessage_HeaderSize() + sizeof(uint8_t); }
+T_FORCE_INLINE int32_t RmiPing_NetSize()					{ return RMessage_HeaderSize() + sizeof(uint32_t) + sizeof(uint8_t); }
 T_FORCE_INLINE int32_t RmiPong_NetSize()					{ return RMessage_HeaderSize() + sizeof(uint32_t) + sizeof(uint32_t); }
 
 T_FORCE_INLINE int32_t RmiState_NetSize(int32_t stateSize)	{ return RMessage_HeaderSize() + stateSize; }

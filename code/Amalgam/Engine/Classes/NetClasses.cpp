@@ -249,6 +249,7 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	classReplicator->addMethod("broadcastEvent", &net::Replicator::broadcastEvent);
 	classReplicator->addMethod("sendEventToPrimary", &net::Replicator::sendEventToPrimary);
 	classReplicator->addMethod("getTime", &net::Replicator::getTime);
+	classReplicator->addMethod("getTimeVariance", &net::Replicator::getTimeVariance);
 	scriptManager->registerClass(classReplicator);
 }
 

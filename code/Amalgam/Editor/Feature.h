@@ -23,6 +23,7 @@ public:
 	struct Platform
 	{
 		Guid platform;
+		std::wstring executableFile;
 		std::list< std::wstring > deployFiles;
 
 		void serialize(ISerializer& s);

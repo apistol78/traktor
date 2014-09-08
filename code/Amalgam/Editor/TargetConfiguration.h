@@ -15,6 +15,8 @@ class TargetConfiguration : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	TargetConfiguration();
+
 	void setName(const std::wstring& name);
 
 	const std::wstring& getName() const;
@@ -23,9 +25,9 @@ public:
 
 	const Guid& getPlatform() const;
 
-	void setExecutable(const std::wstring& executable);
+	void setSystemRoot(const std::wstring& systemRoot);
 
-	const std::wstring& getExecutable() const;
+	const std::wstring& getSystemRoot() const;
 
 	void setIcon(const std::wstring& icon);
 
@@ -60,7 +62,7 @@ public:
 private:
 	std::wstring m_name;
 	Guid m_platform;
-	std::wstring m_executable;
+	std::wstring m_systemRoot;
 	std::wstring m_icon;
 	std::list< Guid > m_features;
 	Guid m_root;
