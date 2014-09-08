@@ -154,6 +154,7 @@ private:
 	uint8_t m_sequence;
 	std::list< Event > m_events;
 	CircularVector< std::pair< uint8_t, uint32_t >, 128 > m_lastEvents;
+	CircularVector< uint8_t, 16 > m_acknowledgeHistory;
 
 	//@}
 
@@ -170,7 +171,7 @@ private:
 
 	bool updateEventQueue();
 
-	bool receivedEventAcknowledge(uint8_t sequence);
+	bool receivedEventAcknowledge(const ReplicatorProxy* from, uint8_t sequence);
 
 	bool acceptEvent(uint8_t sequence, const ISerializable* eventObject);
 

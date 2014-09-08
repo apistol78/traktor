@@ -14,6 +14,7 @@
 #include "Ui/Win32/MessageBoxWin32.h"
 #include "Ui/Win32/NotificationIconWin32.h"
 #include "Ui/Win32/PanelWin32.h"
+#include "Ui/Win32/PathDialogWin32.h"
 #include "Ui/Win32/PopupMenuWin32.h"
 #include "Ui/Win32/RadioButtonWin32.h"
 #include "Ui/Win32/RichEditWin32.h"
@@ -106,6 +107,11 @@ INotificationIcon* WidgetFactoryWin32::createNotificationIcon(EventSubject* owne
 IPanel* WidgetFactoryWin32::createPanel(EventSubject* owner)
 {
 	return new PanelWin32(owner);
+}
+
+IPathDialog* WidgetFactoryWin32::createPathDialog(EventSubject* owner)
+{
+	return new PathDialogWin32(owner);
 }
 
 IPopupMenu* WidgetFactoryWin32::createPopupMenu(EventSubject* owner)

@@ -97,6 +97,11 @@ IPanel* WidgetFactoryGtk::createPanel(EventSubject* owner)
 	return 0;
 }
 
+IPathDialog* WidgetFactoryGtk::createPathDialog(EventSubject* owner)
+{
+	return 0;
+}
+
 IPopupMenu* WidgetFactoryGtk::createPopupMenu(EventSubject* owner)
 {
 	return new PopupMenuGtk();

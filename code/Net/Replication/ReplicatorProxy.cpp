@@ -190,17 +190,22 @@ bool ReplicatorProxy::updateEventQueue()
 	return true;
 }
 
-bool ReplicatorProxy::receivedEventAcknowledge(uint8_t sequence)
+bool ReplicatorProxy::receivedEventAcknowledge(const ReplicatorProxy* from, uint8_t sequence)
 {
 	for (std::list< Event >::iterator i = m_events.begin(); i != m_events.end(); ++i)
 	{
 		if (i->msg.event.sequence == sequence)
 		{
+			m_acknowledgeHistory.push_back(sequence);
 			m_events.erase(i);
 			return true;
 		}
 	}
-	return false;	
+
+	if (m_acknowledgeHistory.find(sequence) < 0)
+		log::info << m_replicator->getLogPrefix() << L"Received acknowledge of unsent event from " << from->m_handle << L", sequence " << int32_t(sequence) << Endl;
+
+	return false;
 }
 
 bool ReplicatorProxy::acceptEvent(uint8_t sequence, const ISerializable* eventObject)
