@@ -84,7 +84,6 @@ private:
 	Ref< ui::Container > m_containerOuter;
 	Ref< ui::custom::EditList > m_listBoxTargetConfigurations;
 	Ref< ui::DropDown > m_dropDownPlatform;
-	Ref< ui::Edit > m_editExecutable;
 	Ref< ui::ListBox > m_listBoxAvailFeatures;
 	Ref< ui::ListBox > m_listBoxUsedFeatures;
 

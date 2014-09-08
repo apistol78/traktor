@@ -11,7 +11,12 @@ namespace traktor
 	namespace amalgam
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.TargetConfiguration", 0, TargetConfiguration, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.TargetConfiguration", 2, TargetConfiguration, ISerializable)
+
+TargetConfiguration::TargetConfiguration()
+:	m_systemRoot(L"$(TRAKTOR_HOME)")
+{
+}
 
 void TargetConfiguration::setName(const std::wstring& name)
 {
@@ -33,14 +38,14 @@ const Guid& TargetConfiguration::getPlatform() const
 	return m_platform;
 }
 
-void TargetConfiguration::setExecutable(const std::wstring& executable)
+void TargetConfiguration::setSystemRoot(const std::wstring& systemRoot)
 {
-	m_executable = executable;
+	m_systemRoot = systemRoot;
 }
 
-const std::wstring& TargetConfiguration::getExecutable() const
+const std::wstring& TargetConfiguration::getSystemRoot() const
 {
-	return m_executable;
+	return m_systemRoot;
 }
 
 void TargetConfiguration::setIcon(const std::wstring& icon)
@@ -119,7 +124,16 @@ void TargetConfiguration::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> Member< Guid >(L"platform", m_platform);
-	s >> Member< std::wstring >(L"executable", m_executable);
+
+	if (s.getVersion() >= 1)
+		s >> Member< std::wstring >(L"systemRoot", m_systemRoot);
+
+	if (s.getVersion() < 2)
+	{
+		std::wstring executable;
+		s >> Member< std::wstring >(L"executable", executable);
+	}
+
 	s >> Member< std::wstring >(L"icon", m_icon);
 	s >> MemberStlList< Guid >(L"features", m_features);
 	s >> Member< Guid >(L"root", m_root);

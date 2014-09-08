@@ -191,14 +191,21 @@ struct BuildCombinationTask : public Object
 			T_ASSERT (outputNode);
 
 			if (const Scalar* scalarNode = dynamic_type_cast< const Scalar* >(outputNode))
-				shaderResourceCombination->initializeUniformScalar.push_back(ShaderResource::InitializeUniformScalar((*i)->getParameterName(), scalarNode->get()));
+			{
+				if (abs(scalarNode->get()) > FUZZY_EPSILON)
+					shaderResourceCombination->initializeUniformScalar.push_back(ShaderResource::InitializeUniformScalar((*i)->getParameterName(), scalarNode->get()));
+			}
 			else if (const Vector* vectorNode = dynamic_type_cast< const Vector* >(outputNode))
-				shaderResourceCombination->initializeUniformVector.push_back(ShaderResource::InitializeUniformVector((*i)->getParameterName(), vectorNode->get()));
+			{
+				if (horizontalAdd4(vectorNode->get().absolute()) > FUZZY_EPSILON)
+					shaderResourceCombination->initializeUniformVector.push_back(ShaderResource::InitializeUniformVector((*i)->getParameterName(), vectorNode->get()));
+			}
 			else if (const Color* colorNode = dynamic_type_cast< const Color* >(outputNode))
 			{
 				const Color4ub& colorValue = colorNode->getColor();
 				Vector4 colorAsVector(colorValue.r / 255.0f, colorValue.g / 255.0f, colorValue.b / 255.0f, colorValue.a / 255.0f);
-				shaderResourceCombination->initializeUniformVector.push_back(ShaderResource::InitializeUniformVector((*i)->getParameterName(), colorAsVector));
+				if (horizontalAdd4(colorAsVector.absolute()) > FUZZY_EPSILON)
+					shaderResourceCombination->initializeUniformVector.push_back(ShaderResource::InitializeUniformVector((*i)->getParameterName(), colorAsVector));
 			}
 			else
 			{

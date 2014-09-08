@@ -30,6 +30,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.net.Replicator.IEventListener", Replicator::IEv
 Replicator::Replicator()
 :	m_time0(0.0)
 ,	m_time(0.0)
+,	m_timeVariance(0.0)
 ,	m_status(0)
 ,	m_allowPrimaryRequests(true)
 ,	m_origin(Transform::identity())
@@ -131,7 +132,8 @@ bool Replicator::update()
 	// Send ping to proxies.
 	{
 		msg.id = RmiPing;
-		msg.time = time2net(m_time0);
+		msg.time = time2net(m_time);
+		msg.ping.time0 = time2net(m_time0);
 		msg.ping.status = m_status;
 
 		for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
@@ -174,6 +176,7 @@ bool Replicator::update()
 	}
 
 	double timeOffset = 0.0;
+	bool timeOffsetReceived = false;
 
 	// Receive messages.
 	for (;;)
@@ -198,13 +201,20 @@ bool Replicator::update()
 			continue;
 		}
 
+		double latency = fromGhost->getLatency();
+		timeOffset = std::max(
+			net2time(msg.time) + latency - m_time,
+			timeOffset
+		);
+		timeOffsetReceived = true;
+
 		if (msg.id == RmiPing)
 		{
 			fromGhost->m_status = msg.ping.status;
 
 			reply.id = RmiPong;
-			reply.time = time2net(m_time0);
-			reply.pong.time0 = msg.time;
+			reply.time = time2net(m_time);
+			reply.pong.time0 = msg.ping.time0;
 			reply.pong.latency = time2net(fromGhost->getLatency());
 
 			m_topology->send(fromGhost->m_handle, &reply, RmiPong_NetSize());
@@ -221,12 +231,6 @@ bool Replicator::update()
 		{
 			if (fromGhost->receivedState(net2time(msg.time), msg.state.data, RmiState_StateSize(nrecv)))
 			{
-				double latency = fromGhost->getLatency();
-				timeOffset = std::max(
-					net2time(msg.time) + latency - m_time,
-					timeOffset
-				);
-
 				for (RefArray< IListener >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
 				{
 					(*i)->notify(
@@ -241,12 +245,6 @@ bool Replicator::update()
 		}
 		else if (msg.id == RmiEvent)
 		{
-			double latency = fromGhost->getLatency();
-			timeOffset = std::max(
-				net2time(msg.time) + latency - m_time,
-				timeOffset
-			);
-
 			// Send back event acknowledge.
 			reply.id = RmiEventAck;
 			reply.time = time2net(m_time);
@@ -282,15 +280,7 @@ bool Replicator::update()
 		else if (msg.id == RmiEventAck)
 		{
 			// Received an event acknowledge; discard event from queue.
-			if (fromGhost->receivedEventAcknowledge(msg.eventAck.sequence))
-			{
-				double latency = fromGhost->getLatency();
-				timeOffset = std::max(
-					net2time(msg.time) + latency - m_time,
-					timeOffset
-				);
-			}
-			else
+			if (!fromGhost->receivedEventAcknowledge(msg.eventAck.sequence))
 				log::info << getLogPrefix() << L"Received acknowledge of unsent event from " << fromGhost->m_handle << L", sequence " << int32_t(msg.eventAck.sequence) << Endl;
 		}
 	}
@@ -299,21 +289,34 @@ bool Replicator::update()
 	for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
 		(*i)->updateEventQueue();
 
-	// Adjust times based from estimated time offset.
-	timeOffset *= 0.8;
-	if (abs(timeOffset) < 0.03)
+	if (timeOffsetReceived)
 	{
-		double k = abs(timeOffset) / 0.03;
-		timeOffset *= k;
-	}
-	if (timeOffset > 0.01)
-	{
-		m_time += timeOffset;
-		for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+		// Adjust times based from estimated time offset.
+		timeOffset *= 0.8;
+		if (abs(timeOffset) < 0.03)
 		{
-			(*i)->m_stateTimeN2 += timeOffset;
-			(*i)->m_stateTimeN1 += timeOffset;
-			(*i)->m_stateTime0 += timeOffset;
+			double k = abs(timeOffset) / 0.03;
+			timeOffset *= k;
+		}
+		if (timeOffset > 0.01)
+		{
+			m_time += timeOffset;
+			for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+			{
+				(*i)->m_stateTimeN2 += timeOffset;
+				(*i)->m_stateTimeN1 += timeOffset;
+				(*i)->m_stateTime0 += timeOffset;
+			}
+		}
+
+		// Update time variance; this should become fairly stable after a couple of estimates.
+		m_timeErrors.push_back(timeOffset);
+		{
+			double k = 0.0;
+			for (uint32_t i = 0; i < m_timeErrors.size(); ++i)
+				k += m_timeErrors[i];
+			k /= double(m_timeErrors.size());
+			m_timeVariance = std::sqrt((k * k) / 6.0);
 		}
 	}
 
@@ -454,6 +457,11 @@ bool Replicator::sendEventToPrimary(const ISerializable* eventObject)
 double Replicator::getTime() const
 {
 	return m_time;
+}
+
+double Replicator::getTimeVariance() const
+{
+	return m_timeVariance;
 }
 
 std::wstring Replicator::getLogPrefix() const

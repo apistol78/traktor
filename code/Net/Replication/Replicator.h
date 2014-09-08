@@ -4,6 +4,7 @@
 #include <map>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Core/Containers/CircularVector.h"
 #include "Core/Math/Transform.h"
 #include "Core/Timer/Timer.h"
 #include "Net/Replication/INetworkTopology.h"
@@ -218,6 +219,10 @@ public:
 	 */
 	double getTime() const;
 
+	/*! \brief Get network time variance.
+	 */
+	double getTimeVariance() const;
+
 private:
 	friend class ReplicatorProxy;
 
@@ -228,8 +233,10 @@ private:
 	std::map< const TypeInfo*, RefArray< IEventListener > > m_eventListeners;
 	std::wstring m_name;
 	Timer m_timer;
-	double m_time0;				/*!< Local time. */
-	double m_time;				/*!< Network latency compensated time. */
+	double m_time0;								/*!< Local time. */
+	double m_time;								/*!< Network latency compensated time. */
+	CircularVector< double, 32 > m_timeErrors;	/*!< History of time errors. */
+	double m_timeVariance;						/*!< Network time compensation time variance. */
 	uint8_t m_status;
 	bool m_allowPrimaryRequests;
 	Transform m_origin;

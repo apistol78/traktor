@@ -13,7 +13,7 @@ namespace traktor
 	namespace amalgam
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.amalgam.Feature", 4, Feature, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.amalgam.Feature", 5, Feature, ISerializable)
 
 Feature::Feature()
 :	m_priority(0)
@@ -45,6 +45,10 @@ void Feature::serialize(ISerializer& s)
 void Feature::Platform::serialize(ISerializer& s)
 {
 	s >> Member< Guid >(L"platform", platform, AttributeType(type_of< traktor::amalgam::Platform >()));
+
+	if (s.getVersion() >= 5)
+		s >> Member< std::wstring >(L"executableFile", executableFile);
+
 	s >> MemberStlList< std::wstring >(L"deployFiles", deployFiles);
 }
 

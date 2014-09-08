@@ -61,6 +61,8 @@ MigrateTargetAction::MigrateTargetAction(
 
 bool MigrateTargetAction::execute(IProgressListener* progressListener)
 {
+	std::wstring executableFile;
+
 	// Get platform description object from database.
 	Ref< Platform > platform = m_database->getObjectReadOnly< Platform >(m_targetConfiguration->getPlatform());
 	if (!platform)
@@ -123,7 +125,7 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 	// Create target application configuration.
 	Ref< PropertyGroup > applicationConfiguration = new PropertyGroup();
 
-	// Insert features into runtime configuration.
+	// Insert features into runtime configuration. Also get executable file.
 	for (RefArray< const Feature >::const_iterator i = features.begin(); i != features.end(); ++i)
 	{
 		const Feature* feature = *i;
@@ -134,6 +136,15 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 			continue;
 
 		applicationConfiguration = applicationConfiguration->mergeJoin(runtimeProperties);
+
+		const Feature::Platform* fp = feature->getPlatform(m_targetConfiguration->getPlatform());
+		if (fp)
+		{
+			if (!fp->executableFile.empty())
+				executableFile = fp->executableFile;
+		}
+		else
+			log::warning << L"Feature \"" << feature->getDescription() << L"\" doesn't support selected platform." << Endl;
 	}
 
 	// Modify configuration to connect to migrated database.
@@ -193,8 +204,9 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 	envmap[L"DEPLOY_PROJECT_NAME"] = m_targetName;
 	envmap[L"DEPLOY_PROJECT_IDENTIFIER"] = m_target->getIdentifier();
 	envmap[L"DEPLOY_PROJECT_ICON"] = m_targetConfiguration->getIcon();
+	envmap[L"DEPLOY_SYSTEM_ROOT"] = m_targetConfiguration->getSystemRoot();
 	envmap[L"DEPLOY_TARGET_HOST"] = m_deployHost;
-	envmap[L"DEPLOY_EXECUTABLE"] = m_targetConfiguration->getExecutable();
+	envmap[L"DEPLOY_EXECUTABLE"] = executableFile;
 	envmap[L"DEPLOY_MODULES"] = implode(runtimeModules.begin(), runtimeModules.end(), L" ");
 	envmap[L"DEPLOY_OUTPUT_PATH"] = m_outputPath;
 	envmap[L"DEPLOY_CERTIFICATE"] = m_globalSettings->getProperty< PropertyString >(L"Amalgam.Certificate", L"");

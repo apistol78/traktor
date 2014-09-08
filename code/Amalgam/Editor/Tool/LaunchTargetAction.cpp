@@ -1,3 +1,4 @@
+#include "Amalgam/Editor/Feature.h"
 #include "Amalgam/Editor/Platform.h"
 #include "Amalgam/Editor/Target.h"
 #include "Amalgam/Editor/TargetConfiguration.h"
@@ -18,6 +19,18 @@ namespace traktor
 {
 	namespace amalgam
 	{
+		namespace
+		{
+
+struct FeaturePriorityPred
+{
+	bool operator () (const Feature* l, const Feature* r) const
+	{
+		return l->getPriority() < r->getPriority();
+	}
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.LaunchTargetAction", LaunchTargetAction, ITargetAction)
 
@@ -42,6 +55,8 @@ LaunchTargetAction::LaunchTargetAction(
 
 bool LaunchTargetAction::execute(IProgressListener* progressListener)
 {
+	std::wstring executableFile;
+
 	// Get platform description object from database.
 	Ref< Platform > platform = m_database->getObjectReadOnly< Platform >(m_targetConfiguration->getPlatform());
 	if (!platform)
@@ -53,6 +68,39 @@ bool LaunchTargetAction::execute(IProgressListener* progressListener)
 	if (progressListener)
 		progressListener->notifyTargetActionProgress(1, 2);
 
+	// Get features; sorted by priority.
+	const std::list< Guid >& featureIds = m_targetConfiguration->getFeatures();
+
+	RefArray< const Feature > features;
+	for (std::list< Guid >::const_iterator i = featureIds.begin(); i != featureIds.end(); ++i)
+	{
+		Ref< const Feature > feature = m_database->getObjectReadOnly< Feature >(*i);
+		if (!feature)
+		{
+			log::warning << L"Unable to get feature \"" << i->format() << L"\"; feature skipped." << Endl;
+			continue;
+		}
+		features.push_back(feature);
+	}
+
+	features.sort(FeaturePriorityPred());
+
+	// Get executable file from features.
+	for (RefArray< const Feature >::const_iterator i = features.begin(); i != features.end(); ++i)
+	{
+		const Feature* feature = *i;
+		T_ASSERT (feature);
+
+		const Feature::Platform* fp = feature->getPlatform(m_targetConfiguration->getPlatform());
+		if (fp)
+		{
+			if (!fp->executableFile.empty())
+				executableFile = fp->executableFile;
+		}
+		else
+			log::warning << L"Feature \"" << feature->getDescription() << L"\" doesn't support selected platform." << Endl;
+	}
+
 	// Launch application through deploy tool.
 	Path projectRoot = FileSystem::getInstance().getCurrentVolume()->getCurrentDirectory();
 	OS::envmap_t envmap = OS::getInstance().getEnvironment();
@@ -63,8 +111,9 @@ bool LaunchTargetAction::execute(IProgressListener* progressListener)
 #endif
 	envmap[L"DEPLOY_PROJECT_NAME"] = m_targetName;
 	envmap[L"DEPLOY_PROJECT_IDENTIFIER"] = m_target->getIdentifier();
+	envmap[L"DEPLOY_SYSTEM_ROOT"] = m_targetConfiguration->getSystemRoot();
 	envmap[L"DEPLOY_TARGET_HOST"] = m_deployHost;
-	envmap[L"DEPLOY_EXECUTABLE"] = m_targetConfiguration->getExecutable();
+	envmap[L"DEPLOY_EXECUTABLE"] = executableFile;
 	envmap[L"DEPLOY_OUTPUT_PATH"] = m_outputPath;
 	envmap[L"DEPLOY_CERTIFICATE"] = m_globalSettings->getProperty< PropertyString >(L"Amalgam.Certificate", L"");
 
