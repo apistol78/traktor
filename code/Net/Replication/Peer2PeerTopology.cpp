@@ -221,8 +221,6 @@ bool Peer2PeerTopology::update(double dT)
 			std::vector< net_handle_t >::iterator it = std::find(myPeer.connections.begin(), myPeer.connections.end(), peer.handle);
 			if (it != myPeer.connections.end())
 			{
-				log::info << getLogPrefix() << L"Peer " << peer.handle << L" disconnected. (0)" << Endl;
-
 				myPeer.connections.erase(it);
 				myPeer.sequence++;
 
@@ -283,8 +281,6 @@ bool Peer2PeerTopology::update(double dT)
 			std::vector< net_handle_t >::iterator it = std::find(myPeer.connections.begin(), myPeer.connections.end(), peer.handle);
 			if (it != myPeer.connections.end())
 			{
-				log::info << getLogPrefix() << L"Peer " << peer.handle << L" disconnected. (1)" << Endl;
-
 				myPeer.connections.erase(it);
 				myPeer.sequence++;
 
@@ -307,8 +303,6 @@ bool Peer2PeerTopology::update(double dT)
 		{
 			if (i != myIndex && !m_peers[i].connections.empty())
 			{
-				log::info << getLogPrefix() << L"Peer " << m_peers[i].handle << L" disconnected. (2)" << Endl;
-
 				m_peers[i].sequence = 0;
 				m_peers[i].connections.clear();
 				m_peers[i].whenIAm = 0.0;
@@ -346,8 +340,6 @@ bool Peer2PeerTopology::update(double dT)
 
 		if (!thisReachable)
 		{
-			log::info << getLogPrefix() << L"Peer " << thisPeer.handle << L" disconnected. (3)" << Endl;
-
 			thisPeer.sequence = 0;
 			thisPeer.connections.clear();
 			thisPeer.whenIAm = 0.0;
@@ -513,6 +505,8 @@ bool Peer2PeerTopology::update(double dT)
 
 				if (!m_peers[i].established)
 				{
+					log::info << getLogPrefix() << L"Peer " << m_peers[i].handle << L" connected." << Endl;
+
 					if (m_callback)
 						m_callback->nodeConnected(this, m_peers[i].handle);
 
@@ -523,6 +517,8 @@ bool Peer2PeerTopology::update(double dT)
 			{
 				if (m_peers[i].established)
 				{
+					log::info << getLogPrefix() << L"Peer " << m_peers[i].handle << L" disconnected." << Endl;
+
 					if (m_callback)
 						m_callback->nodeDisconnected(this, m_peers[i].handle);
 
@@ -537,6 +533,8 @@ bool Peer2PeerTopology::update(double dT)
 
 			if (!m_peers[i].established)
 			{
+				log::info << getLogPrefix() << L"Peer " << m_peers[i].handle << L" connected." << Endl;
+
 				if (m_callback)
 					m_callback->nodeConnected(this, m_peers[i].handle);
 

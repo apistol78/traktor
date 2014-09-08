@@ -51,6 +51,7 @@
 #include "Editor/App/LogView.h"
 #include "Editor/App/MRU.h"
 #include "Editor/App/NewInstanceDialog.h"
+#include "Editor/App/NewWorkspaceDialog.h"
 #include "Editor/App/ObjectEditorDialog.h"
 #include "Editor/App/PropertiesView.h"
 #include "Editor/App/SettingsDialog.h"
@@ -809,19 +810,24 @@ void EditorForm::revertWorkspaceSettings()
 
 Ref< ILogTarget > EditorForm::createLogTarget(const std::wstring& title)
 {
-	Ref< ui::TabPage > tabPageLog = new ui::TabPage();
-	if (!tabPageLog->create(m_tabOutput, title, new ui::FloodLayout()))
-		return 0;
+	if (m_logTargets[title] == 0)
+	{
+		Ref< ui::TabPage > tabPageLog = new ui::TabPage();
+		if (!tabPageLog->create(m_tabOutput, title, new ui::FloodLayout()))
+			return 0;
 
-	Ref< LogView > logView = new LogView(this);
-	logView->create(tabPageLog);
-	logView->setText(title);
+		Ref< LogView > logView = new LogView(this);
+		logView->create(tabPageLog);
+		logView->setText(title);
 
-	Ref< ui::TabPage > activePage = m_tabOutput->getActivePage();
-	m_tabOutput->addPage(tabPageLog);
-	m_tabOutput->setActivePage(activePage);
+		Ref< ui::TabPage > activePage = m_tabOutput->getActivePage();
+		m_tabOutput->addPage(tabPageLog);
+		m_tabOutput->setActivePage(activePage);
+		m_tabOutput->update();
 
-	return logView->getLogTarget();
+		m_logTargets[title] = logView->getLogTarget();
+	}
+	return m_logTargets[title];
 }
 
 Ref< db::Database > EditorForm::getSourceDatabase() const
@@ -1179,106 +1185,19 @@ void EditorForm::setActiveEditorPage(IEditorPage* editorPage)
 
 bool EditorForm::createWorkspace()
 {
-	// Query workspace filename.
-	ui::FileDialog fileDialog;
-	if (!fileDialog.create(this, i18n::Text(L"EDITOR_BROWSE_WORKSPACE"), L"Workspace files (*.workspace);*.workspace;All files (*.*);*.*", true))
+	NewWorkspaceDialog newWorkspaceDialog;
+	if (!newWorkspaceDialog.create(this))
 		return false;
 
-	Path path;
-	if (fileDialog.showModal(path) != ui::DrOk)
+	if (newWorkspaceDialog.showModal() != ui::DrOk || newWorkspaceDialog.getWorkspacePath().empty())
 	{
-		fileDialog.destroy();
+		newWorkspaceDialog.destroy();
 		return false;
 	}
 
-	// Create blank workspace.
-	Ref< PropertyGroup > workspaceSettings = new PropertyGroup();
-	workspaceSettings->setProperty< PropertyString >(L"Editor.TargetTitle", path.getFileNameNoExtension());
+	newWorkspaceDialog.destroy();
 
-	// Show workspace dialog to let user specify details.
-	WorkspaceDialog workspaceDialog;
-	if (!workspaceDialog.create(this, workspaceSettings))
-		return false;
-
-	if (workspaceDialog.showModal() != ui::DrOk)
-	{
-		workspaceDialog.destroy();
-		return false;
-	}
-
-	// Save workspace.
-	if (!saveProperties(path, workspaceSettings, true))
-		return false;
-
-	// Replace current workspace with created workspace.
-	if (m_workspaceSettings)
-		closeWorkspace();
-
-	m_workspacePath = path.getPathName();
-	m_workspaceSettings = workspaceSettings;
-
-	// Create merged settings.
-	m_mergedSettings = m_globalSettings->mergeJoin(m_workspaceSettings);
-	T_ASSERT (m_mergedSettings);
-
-	// Open databases.
-	std::wstring sourceDatabase = m_mergedSettings->getProperty< PropertyString >(L"Editor.SourceDatabase");
-	std::wstring outputDatabase = m_mergedSettings->getProperty< PropertyString >(L"Editor.OutputDatabase");
-
-	m_sourceDatabase = openDatabase(sourceDatabase, false);
-	m_outputDatabase = openDatabase(outputDatabase, true);
-
-	if (!m_sourceDatabase || !m_outputDatabase)
-	{
-		if (!m_sourceDatabase)
-			log::error << L"Unable to open source database \"" << sourceDatabase << L"\"" << Endl;
-
-		if (!m_outputDatabase)
-			log::error << L"Unable to open output database \"" << outputDatabase << L"\"" << Endl;
-
-		closeWorkspace();
-		return false;
-	}
-
-	// Update UI views.
-	updateTitle();
-	m_dataBaseView->setDatabase(m_sourceDatabase);
-
-	// Create stream server.
-	m_streamServer = new net::StreamServer();
-	m_streamServer->create(34000);
-
-	// Create remote database server.
-	m_dbConnectionManager = new db::ConnectionManager(m_streamServer);
-	m_dbConnectionManager->create(35000);
-
-	// Create pipeline agent manager.
-	m_agentsManager = new PipelineAgentsManager(m_discoveryManager, m_streamServer, m_dbConnectionManager);
-	m_agentsManager->create(
-		m_mergedSettings,
-		sourceDatabase,
-		outputDatabase
-	);
-
-	// Expose servers as stock objects.
-	setStoreObject(L"StreamServer", m_streamServer);
-	setStoreObject(L"DbConnectionManager", m_dbConnectionManager);
-	setStoreObject(L"PipelineAgentsManager", m_agentsManager);
-
-	// Notify plugins about opened workspace.
-	for (RefArray< EditorPluginSite >::iterator i = m_editorPluginSites.begin(); i != m_editorPluginSites.end(); ++i)
-		(*i)->handleWorkspaceOpened();
-
-	// Create "Home" page.
-	Ref< ui::TabPage > tabPage = new ui::TabPage();
-	tabPage->create(m_tab, L"Home", 0, new ui::FloodLayout());
-
-	Ref< WebBrowserPage > homePage = new WebBrowserPage(this);
-	homePage->create(tabPage);
-
-	m_tab->addPage(tabPage);
-	m_tab->update(0, true);
-
+	openWorkspace(newWorkspaceDialog.getWorkspacePath());
 	return true;
 }
 

@@ -101,7 +101,6 @@ private:
 	Ref< ui::custom::ToolBarDropDown > m_toolTargets;
 	Ref< ui::custom::ToolBarDropMenu > m_toolTweaks;
 	Ref< TargetListControl > m_targetList;
-	Ref< ILogTarget > m_targetLog;
 	// \}
 
 	// \name Tool

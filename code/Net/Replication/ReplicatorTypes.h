@@ -10,11 +10,11 @@ namespace traktor
 
 enum RMessageId
 {
-	RmiPing	= 0x10,
-	RmiPong = 0x11,
-	RmiState = 0x20,
-	RmiEvent = 0x30,
-	RmiEventAck = 0x40
+	RmiPing	= 0xa0,
+	RmiPong = 0xa1,
+	RmiState = 0xb0,
+	RmiEvent = 0xc0,
+	RmiEventAck = 0xc1
 };
 
 #pragma pack(1)

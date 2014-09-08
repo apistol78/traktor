@@ -181,6 +181,7 @@ bool Replicator::update()
 	// Receive messages.
 	for (;;)
 	{
+		std::memset(&msg, 0, sizeof(msg));
 		int32_t nrecv = m_topology->recv(&msg, sizeof(msg), from);
 		if (nrecv <= 0)
 			break;
@@ -197,7 +198,7 @@ bool Replicator::update()
 
 		if (!fromGhost)
 		{
-			log::error << getLogPrefix() << L"Received message from unknown proxy " << from << L"; message ignored." << Endl;
+			log::error << getLogPrefix() << L"Received message (" << int32_t(msg.id) << L") from unknown proxy " << from << L"; message ignored." << Endl;
 			continue;
 		}
 
@@ -280,8 +281,7 @@ bool Replicator::update()
 		else if (msg.id == RmiEventAck)
 		{
 			// Received an event acknowledge; discard event from queue.
-			if (!fromGhost->receivedEventAcknowledge(msg.eventAck.sequence))
-				log::info << getLogPrefix() << L"Received acknowledge of unsent event from " << fromGhost->m_handle << L", sequence " << int32_t(msg.eventAck.sequence) << Endl;
+			fromGhost->receivedEventAcknowledge(fromGhost, msg.eventAck.sequence);
 		}
 	}
 

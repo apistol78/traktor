@@ -4,6 +4,7 @@
 #include "Amalgam/Impl/TargetID.h"
 #include "Core/Log/Log.h"
 #include "Core/Serialization/BinarySerializer.h"
+#include "Editor/IEditor.h"
 #include "Net/BidirectionalObjectTransport.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/SocketSet.h"
@@ -15,8 +16,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.TargetManager", TargetManager, Object)
 
-TargetManager::TargetManager(ILogTarget* targetLog, TargetScriptDebuggerSessions* targetDebuggerSessions)
-:	m_targetLog(targetLog)
+TargetManager::TargetManager(editor::IEditor* editor, TargetScriptDebuggerSessions* targetDebuggerSessions)
+:	m_editor(editor)
 ,	m_targetDebuggerSessions(targetDebuggerSessions)
 {
 }
@@ -46,8 +47,8 @@ void TargetManager::destroy()
 		m_listenSocket = 0;
 	}
 
-	m_targetLog = 0;
 	m_targetDebuggerSessions = 0;
+	m_editor = 0;
 }
 
 void TargetManager::addInstance(TargetInstance* targetInstance)
@@ -121,8 +122,10 @@ bool TargetManager::update()
 
 				if (instance)
 				{
+					Ref< ILogTarget > targetLog = m_editor->createLogTarget(targetId->getName());
+
 					// Create connection object and add to instance.
-					instance->addConnection(new TargetConnection(targetId->getName(), transport, m_targetLog, m_targetDebuggerSessions));
+					instance->addConnection(new TargetConnection(targetId->getName(), transport, targetLog, m_targetDebuggerSessions));
 					needUpdate |= true;
 					log::info << L"New target connection accepted; ID " << targetId->getId().format() << Endl;
 				}

@@ -49,6 +49,8 @@ public:
 
 	virtual IPanel* createPanel(EventSubject* owner);
 
+	virtual IPathDialog* createPathDialog(EventSubject* owner);
+
 	virtual IPopupMenu* createPopupMenu(EventSubject* owner);
 
 	virtual IRadioButton* createRadioButton(EventSubject* owner);

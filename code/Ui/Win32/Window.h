@@ -8,6 +8,7 @@
 #include <windows.h>
 #include <windowsx.h>
 #include <commctrl.h>
+#include <shlobj.h>
 #include <tchar.h>
 #if defined(WINCE)
 #	include <aygshell.h>

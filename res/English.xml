@@ -641,6 +641,22 @@
       <second>Find in database view</second>
     </item>
     <item>
+      <first>EDITOR_NEW_WORKSPACE_TITLE</first>
+      <second>New workspace</second>
+    </item>
+    <item>
+      <first>EDITOR_NEW_WORKSPACE_NAME</first>
+      <second>Name</second>
+    </item>
+    <item>
+      <first>EDITOR_NEW_WORKSPACE_NAME_DEFAULT</first>
+      <second>Unnamed</second>
+    </item>
+    <item>
+      <first>EDITOR_NEW_WORKSPACE_PATH</first>
+      <second>Output path</second>
+    </item>
+    <item>
       <first>EDIT_BATCH_DESCRIPTION</first>
       <second>Edit import batch...</second>
     </item>

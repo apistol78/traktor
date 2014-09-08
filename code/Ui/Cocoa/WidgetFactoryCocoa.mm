@@ -101,6 +101,11 @@ IPanel* WidgetFactoryCocoa::createPanel(EventSubject* owner)
 	return 0;
 }
 
+IPathDialog* WidgetFactoryCocoa::createPathDialog(EventSubject* owner)
+{
+	return 0;
+}
+
 IPopupMenu* WidgetFactoryCocoa::createPopupMenu(EventSubject* owner)
 {
 	return new PopupMenuCocoa(owner);

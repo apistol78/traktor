@@ -1,0 +1,49 @@
+-- Create workspace from template.
+--
+-- WIZARD_NAME			Project name
+-- WIZARD_OUTPUT_PATH	Output path
+-- WIZARD_TEMPLATE_FILE	Template file
+
+function main(args)
+	local WIZARD_NAME = os:getEnvironment("WIZARD_NAME")
+	local WIZARD_OUTPUT_PATH = os:getEnvironment("WIZARD_OUTPUT_PATH")
+	local WIZARD_TEMPLATE_FILE = os:getEnvironment("WIZARD_TEMPLATE_FILE")
+
+	-- Load template document.
+	local doc = Document()
+	if not doc:loadFromFile(Path(WIZARD_TEMPLATE_FILE)) then
+		stderr:printLn("Unable to read template")
+		return 1
+	end
+
+	local xitems = doc:get("/template/items/item")
+	for i = 0, xitems:size() - 1 do
+		local xitem = xitems:get(i)
+		assert (xitem ~= nil)
+
+		local source = xitem:getChildElementByName("source"):getValue()
+		local target = xitem:getChildElementByName("target"):getValue()
+
+		-- Ensure full output path exists.
+		if not run:mkdir(Path(target):getPathOnly()) then
+			stderr:printLn("Unable to make output path \"" .. Path(target):getPathOnly() .. "\"")
+			return 1
+		end
+
+		-- Transform or copy source into target.
+		local transform = (xitem:getChildElementByName("transform"):getValue() == "true")
+		if transform then
+			stdout:printLn("Transforming file \"" .. source .. "\" into \"" .. target .. "\"...")
+			if run:run("-as-template \"" .. source .. "\"", target) ~= 0 then
+				stderr:printLn("Unable to transform source file")
+				return 1
+			end
+		else
+			stdout:printLn("Copying file \"" .. source .. "\" into \"" .. target .. "\"...")
+			if not run:copy(source, target) then
+				stderr:printLn("Unable to copy source file")
+				return 1
+			end
+		end
+	end
+end

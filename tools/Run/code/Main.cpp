@@ -828,9 +828,13 @@ int main(int argc, const char** argv)
 
 	if (cmdLine.getCount() < 1)
 	{
-		log::info << L"Run 1.1.0" << Endl;
+		log::info << L"Run 1.2.0" << Endl;
 		log::info << Endl;
 		log::info << L"Usage: Run (option(s)) [<file>.run|<file>.template] (args ...)" << Endl;
+		log::info << Endl;
+		log::info << L"  Options:" << Endl;
+		log::info << L"    -as-run                   Run file as run" << Endl;
+		log::info << L"    -as-template              Run file as template" << Endl;
 		log::info << Endl;
 		log::info << L"  For .run files:" << Endl;
 		log::info << L"    -e,-entry-point=function  Script entry point (default \"main\")" << Endl;
@@ -871,9 +875,12 @@ int main(int argc, const char** argv)
 
 	int32_t result = 1;
 
-	if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"run") == 0)
+	bool explicitRun = cmdLine.hasOption(L"as-run");
+	bool explicitTemplate = cmdLine.hasOption(L"as-template");
+
+	if ((explicitRun && !explicitTemplate) || compareIgnoreCase< std::wstring >(fileName.getExtension(), L"run") == 0)
 		result = executeRun(scriptManager, text, fileName, cmdLine);
-	else if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"template") == 0)
+	else if ((!explicitRun && explicitTemplate) || compareIgnoreCase< std::wstring >(fileName.getExtension(), L"template") == 0)
 		result = executeTemplate(scriptManager, text, fileName, cmdLine);
 	else
 		log::error << L"Unknown file type \"" << fileName.getExtension() << L"\"; must be either \"run\" or \"template\"" << Endl;

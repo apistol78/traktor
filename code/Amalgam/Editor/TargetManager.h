@@ -6,6 +6,13 @@
 
 namespace traktor
 {
+	namespace editor
+	{
+
+class IEditor;
+
+	}
+
 	namespace amalgam
 	{
 
@@ -17,7 +24,7 @@ class TargetManager : public Object
 	T_RTTI_CLASS;
 
 public:
-	TargetManager(ILogTarget* targetLog, TargetScriptDebuggerSessions* targetDebuggerSessions);
+	TargetManager(editor::IEditor* editor, TargetScriptDebuggerSessions* targetDebuggerSessions);
 
 	bool create(uint16_t port);
 
@@ -30,7 +37,7 @@ public:
 	bool update();
 
 private:
-	Ref< ILogTarget > m_targetLog;
+	editor::IEditor* m_editor;
 	Ref< TargetScriptDebuggerSessions > m_targetDebuggerSessions;
 	Ref< net::TcpSocket > m_listenSocket;
 	RefArray< TargetInstance > m_instances;

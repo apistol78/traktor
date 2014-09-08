@@ -28,6 +28,7 @@ class IMenuBar;
 class IMessageBox;
 class INotificationIcon;
 class IPanel;
+class IPathDialog;
 class IPopupMenu;
 class IRadioButton;
 class IRichEdit;
@@ -79,6 +80,8 @@ public:
 	virtual INotificationIcon* createNotificationIcon(EventSubject* owner) = 0;
 
 	virtual IPanel* createPanel(EventSubject* owner) = 0;
+
+	virtual IPathDialog* createPathDialog(EventSubject* owner) = 0;
 
 	virtual IPopupMenu* createPopupMenu(EventSubject* owner) = 0;
 
