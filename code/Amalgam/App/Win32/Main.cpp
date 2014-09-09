@@ -322,6 +322,15 @@ LONG WINAPI exceptionVectoredHandler(struct _EXCEPTION_POINTERS* ep)
 	return EXCEPTION_CONTINUE_SEARCH;
 }
 
+void pureVirtualCallHandler(void)
+{
+	CONTEXT c;
+	GET_CURRENT_CONTEXT(c, CONTEXT_FULL);
+	StackWalkerToConsole sw;
+	sw.ShowCallstack(GetCurrentThread(), &c);
+	exit(0);
+}
+
 }
 
 #if !defined(WINCE)
@@ -439,6 +448,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 		SetErrorMode(SEM_NOGPFAULTERRORBOX);
 		PVOID eh = AddVectoredExceptionHandler(1, exceptionVectoredHandler);
 #endif
+		_set_purecall_handler(pureVirtualCallHandler);
 
 		// Override settings path either from command line or application bundle.
 		Path settingsPath = L"Application.config";
