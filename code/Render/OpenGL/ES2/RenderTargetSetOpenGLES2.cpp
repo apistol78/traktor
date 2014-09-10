@@ -367,8 +367,10 @@ bool RenderTargetSetOpenGLES2::createFramebuffer(GLuint primaryDepthBuffer)
 		}
 
 		// Attach color target.
+/*
 		T_OGL_SAFE(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0));
 		T_OGL_SAFE(glBindFramebuffer(GL_READ_FRAMEBUFFER, 0));
+*/
 		T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, 0));
 
 		T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, m_targetFBO[i]));
