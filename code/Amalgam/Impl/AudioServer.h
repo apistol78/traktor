@@ -27,7 +27,7 @@ class AudioServer : public IAudioServer
 public:
 	AudioServer();
 
-	bool create(const PropertyGroup* settings);
+	bool create(const PropertyGroup* settings, void* nativeHandle);
 
 	void destroy();
 

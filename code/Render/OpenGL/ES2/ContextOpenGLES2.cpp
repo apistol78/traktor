@@ -193,6 +193,15 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(ContextOpenGLES2* resour
 		return 0;
 	}
 
+#elif defined(__PNACL__)
+
+	context->m_context = PPContextWrapper::createRenderContext(
+		(pp::Instance*)nativeHandle,
+		resourceContext->m_context
+	);
+	if (!context->m_context)
+		return 0;
+
 #else
 
 	return 0;
@@ -436,9 +445,7 @@ void ContextOpenGLES2::swapBuffers()
 {
 #if defined(T_OPENGL_ES2_HAVE_EGL)
 	eglSwapBuffers(m_display, m_surface);
-#elif defined(__PNACL__)
-	m_context->swapBuffers();
-#elif defined(__IOS__)
+#elif defined(__IOS__) || defined(__PNACL__)
 	m_context->swapBuffers();
 #endif
 }
@@ -450,7 +457,7 @@ Semaphore& ContextOpenGLES2::lock()
 
 void ContextOpenGLES2::bindPrimary()
 {
-#if defined(__IOS__)
+#if defined(__IOS__) || defined(__PNACL__)
 	T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, m_context->getFrameBuffer()));
 #else
 	T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, 0));
@@ -482,7 +489,7 @@ GLuint ContextOpenGLES2::getPrimaryDepth() const
 {
 #if defined(T_OPENGL_ES2_HAVE_EGL)
 	return m_primaryDepth;
-#elif defined(__IOS__)
+#elif defined(__IOS__) || defined(__PNACL__)
 	return m_context->getDepthBuffer();
 #else
 	return 0;

@@ -1,5 +1,6 @@
 #include <cstring>
 #include "Core/Log/Log.h"
+#include "Core/Math/Log2.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/IContext.h"
@@ -82,6 +83,12 @@ bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 	T_ASSERT (desc.multiSample <= 1);
 	m_desc = desc;
 
+	if (!m_desc.createDepthStencil && !m_desc.usingPrimaryDepthStencil)
+	{
+		m_desc.width = nearestLog2(m_desc.width);
+		m_desc.height = nearestLog2(m_desc.height);
+	}
+
 	// Create color targets.
 	T_ASSERT (desc.count < sizeof_array(m_targetTextures));
 	T_OGL_SAFE(glGenTextures(desc.count, m_targetTextures));
@@ -104,7 +111,7 @@ bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 			}
 			else
 			{
-				log::warning << L"Extension \"GL_EXT_texture_rg\" not supported; using different format which may cause performance issues" << Endl;
+				log::warning << L"Extension \"GL_EXT_texture_rg\" not supported; using different format which may cause performance issues (TfR8 requested)." << Endl;
 				internalFormat = GL_RGBA;
 				format = GL_RGBA;
 				type = GL_UNSIGNED_BYTE;
@@ -152,7 +159,7 @@ bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 			}
 			else
 			{
-				log::warning << L"Extension \"GL_EXT_texture_rg\" not supported; using different format which may cause performance issues" << Endl;
+				log::warning << L"Extension \"GL_EXT_texture_rg\" not supported; using different format which may cause performance issues (TfR16F requested)." << Endl;
 				internalFormat = GL_RGBA;
 				format = GL_RGBA;
 				type = GL_HALF_FLOAT_OES;
@@ -168,7 +175,7 @@ bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 			}
 			else
 			{
-				log::warning << L"Extension \"GL_EXT_texture_rg\" not supported; using different format which may cause performance issues" << Endl;
+				log::warning << L"Extension \"GL_EXT_texture_rg\" not supported; using different format which may cause performance issues (TfR32F requested)." << Endl;
 				internalFormat = GL_RGBA;
 				format = GL_RGBA;
 				type = GL_FLOAT;
@@ -200,6 +207,8 @@ bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 			type,
 			NULL
 		));
+
+		T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, 0));
 
 		m_renderTargets[i] = new RenderTargetOpenGLES2(
 			m_context,
@@ -272,6 +281,16 @@ bool RenderTargetSetOpenGLES2::bind(GLuint primaryDepthBuffer, int32_t renderTar
 	if (status != GL_FRAMEBUFFER_COMPLETE)
 	{
 		log::error << L"Framebuffer incomplete!" << Endl;
+
+		log::info << m_desc.width << L" * " << m_desc.height << Endl;
+		log::info << L"createDepthStencil " << m_desc.createDepthStencil << Endl;
+		log::info << L"usingPrimaryDepthStencil " << m_desc.usingPrimaryDepthStencil << Endl;
+
+		for (int32_t i = 0; i < m_desc.count; ++i)
+		{
+			log::info << i << L". " << m_desc.targets[i].format << Endl;
+		}
+
 		return false;
 	}
 #endif
@@ -297,7 +316,7 @@ bool RenderTargetSetOpenGLES2::createFramebuffer(GLuint primaryDepthBuffer)
 			T_OGL_SAFE(glBindRenderbuffer(GL_RENDERBUFFER, m_depthBuffer));
 
 			GLenum format = GL_DEPTH_COMPONENT16;
-#if TARGET_OS_IPHONE
+#if GL_OES_packed_depth_stencil
 			if (!m_desc.ignoreStencil)
 				format = GL_DEPTH24_STENCIL8_OES;
 #endif
@@ -348,6 +367,11 @@ bool RenderTargetSetOpenGLES2::createFramebuffer(GLuint primaryDepthBuffer)
 		}
 
 		// Attach color target.
+		T_OGL_SAFE(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0));
+		T_OGL_SAFE(glBindFramebuffer(GL_READ_FRAMEBUFFER, 0));
+		T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, 0));
+
+		T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, m_targetFBO[i]));
 		T_OGL_SAFE(glFramebufferTexture2D(
 			GL_FRAMEBUFFER,
 			GL_COLOR_ATTACHMENT0,

@@ -28,7 +28,7 @@ class T_DLLCLASS SoundDriverPulse : public ISoundDriver
 public:
 	SoundDriverPulse();
 
-	virtual bool create(const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer);
+	virtual bool create(void* nativeHandle, const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer);
 
 	virtual void destroy();
 

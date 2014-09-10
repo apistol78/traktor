@@ -34,7 +34,7 @@ class T_DLLCLASS SoundDriverOpenAL : public ISoundDriver
 public:
 	SoundDriverOpenAL();
 
-	virtual bool create(const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer);
+	virtual bool create(void* nativeHandle, const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer);
 
 	virtual void destroy();
 

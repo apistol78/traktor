@@ -241,7 +241,7 @@ SystemWindow RenderViewOpenGLES2::getSystemWindow()
 
 bool RenderViewOpenGLES2::begin(EyeType eye)
 {
-#if !TARGET_OS_IPHONE
+#if !defined(__IOS__) && !defined(__PNACL__)
 	if (!m_globalContext->lock().wait())
 		return false;
 #endif
@@ -618,7 +618,7 @@ void RenderViewOpenGLES2::end()
 	{
 		RenderTargetStack& s = m_renderTargetStack.top();
 		
-		s.renderTargetSet->bind(/*m_primaryTargetSet->getDepthBuffer()*/0, s.renderTarget);
+		s.renderTargetSet->bind(m_context->getPrimaryDepth(), s.renderTarget);
 		
 		T_OGL_SAFE(glViewport(
 			s.viewport.left,
@@ -667,7 +667,7 @@ void RenderViewOpenGLES2::present()
 	m_context->swapBuffers();
 	m_context->leave();
 
-#if !defined(__IOS__)
+#if !defined(__IOS__) && !defined(__PNACL__)
 	m_globalContext->lock().release();
 #endif
 	m_globalContext->deleteResources();

@@ -128,6 +128,19 @@
 				<item>libTraktor.Physics.Bullet.a</item>
 			</deployFiles>
 		</item>
+		<item>
+			<platform>{CAE489CE-1592-234F-ADB9-A7D75646B53D}</platform>
+			<deployFiles>
+				<item>Extern.bullet.a</item>
+				<item>Traktor.Core.a</item>
+				<item>Traktor.Database.a</item>
+				<item>Traktor.Heightfield.a</item>
+				<item>Traktor.Resource.a</item>
+				<item>Traktor.World.a</item>
+				<item>Traktor.Physics.a</item>
+				<item>Traktor.Physics.Bullet.a</item>
+			</deployFiles>
+		</item>			
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">
 		<value>

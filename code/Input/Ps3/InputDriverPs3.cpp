@@ -23,7 +23,7 @@ InputDriverPs3::InputDriverPs3(int padCount)
 		m_devices[i] = new InputDevicePs3(i);
 }
 
-bool InputDriverPs3::create(const SystemWindow& systemWindow, uint32_t inputCategories)
+bool InputDriverPs3::create(void* nativeHandle, const SystemWindow& systemWindow, uint32_t inputCategories)
 {
 	return true;
 }

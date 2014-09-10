@@ -30,7 +30,7 @@ class T_DLLCLASS SoundDriverWriteOut : public ISoundDriver
 public:
 	SoundDriverWriteOut(ISoundDriver* childDriver = 0);
 
-	virtual bool create(const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer);
+	virtual bool create(void* nativeHandle, const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer);
 
 	virtual void destroy();
 

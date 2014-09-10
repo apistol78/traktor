@@ -26,7 +26,7 @@ public:
 	{
 	}
 
-	virtual bool create(const sound::SoundDriverCreateDesc& desc, Ref< sound::ISoundMixer >& outMixer)
+	virtual bool create(void* nativeHandle, const sound::SoundDriverCreateDesc& desc, Ref< sound::ISoundMixer >& outMixer)
 	{
 		return true;
 	}

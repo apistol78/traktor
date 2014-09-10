@@ -56,7 +56,7 @@ bool SoundSystem::create(const SoundSystemCreateDesc& desc)
 	m_desc.driverDesc.frameSamples &= ~3U;
 
 	// Create driver.
-	if (!m_driver->create(m_desc.driverDesc, m_mixer))
+	if (!m_driver->create(m_desc.nativeHandle, m_desc.driverDesc, m_mixer))
 		return false;
 
 	// If driver didn't create an alternative sound mixer we create
@@ -167,7 +167,7 @@ bool SoundSystem::reset(ISoundDriver* driver)
 	safeDestroy(m_driver);
 
 	// Create new driver and mixer.
-	if (!driver->create(m_desc.driverDesc, m_mixer))
+	if (!driver->create(m_desc.nativeHandle, m_desc.driverDesc, m_mixer))
 		return false;
 
 	m_driver = driver;

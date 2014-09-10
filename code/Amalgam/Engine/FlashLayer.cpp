@@ -361,7 +361,7 @@ void FlashLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdate
 
 void FlashLayer::build(const amalgam::IUpdateInfo& info, uint32_t frame)
 {
-	if (!m_displayRenderer || !m_visible)
+	if (!m_displayRenderer || !m_moviePlayer || !m_visible)
 		return;
 
 	m_displayRenderer->build(frame);

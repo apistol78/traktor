@@ -101,6 +101,26 @@ int32_t Run::execute(const std::wstring& command, const std::wstring& saveOutput
 	}
 	while (!process->wait(0));
 
+	if (fileOutput || !nullOutput)
+	{
+		while (stdOutReader.readLine(str, 100))
+		{
+			if (fileOutput)
+				(*fileOutput) << str << Endl;
+			else if (!nullOutput)
+				log::info << str << Endl;
+
+			stdOut << str << Endl;
+		}
+
+		while (stdErrReader.readLine(str, 100))
+		{
+			if (!nullOutput)
+				log::error << str << Endl;
+			stdErr << str << Endl;
+		}
+	}
+
 	safeClose(fileOutput);
 
 	m_stdOut = stdOut.str();

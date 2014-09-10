@@ -32,7 +32,7 @@ AudioServer::AudioServer()
 {
 }
 
-bool AudioServer::create(const PropertyGroup* settings)
+bool AudioServer::create(const PropertyGroup* settings, void* nativeHandle)
 {
 	m_audioType = settings->getProperty< PropertyString >(L"Audio.Type");
 
@@ -52,16 +52,17 @@ bool AudioServer::create(const PropertyGroup* settings)
 	m_soundSystem = new sound::SoundSystem(soundDriver);
 
 	sound::SoundSystemCreateDesc sscd;
+	sscd.nativeHandle = nativeHandle;
 #if !defined(_PS3)
 	sscd.channels = settings->getProperty< PropertyInteger >(L"Audio.Channels", 16);
 	sscd.driverDesc.sampleRate = settings->getProperty< PropertyInteger >(L"Audio.SampleRate", 44100);
 	sscd.driverDesc.bitsPerSample = settings->getProperty< PropertyInteger >(L"Audio.BitsPerSample", 16);
 	sscd.driverDesc.hwChannels = settings->getProperty< PropertyInteger >(L"Audio.HwChannels", 2);
-#	if !defined(__IOS__)
-	sscd.driverDesc.frameSamples = 512;
+#	if defined(__IOS__) || defined(__PNACL__)
+	sscd.driverDesc.frameSamples = 1024;
 	sscd.driverDesc.mixerFrames = 3;
 #	else
-	sscd.driverDesc.frameSamples = 1024;
+	sscd.driverDesc.frameSamples = 512;
 	sscd.driverDesc.mixerFrames = 3;
 #	endif
 #else

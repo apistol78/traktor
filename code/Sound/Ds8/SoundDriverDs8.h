@@ -26,7 +26,7 @@ class T_DLLCLASS SoundDriverDs8 : public ISoundDriver
 	T_RTTI_CLASS;
 
 public:
-	virtual bool create(const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer);
+	virtual bool create(void* nativeHandle, const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer);
 
 	virtual void destroy();
 

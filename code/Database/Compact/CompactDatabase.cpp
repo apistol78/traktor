@@ -26,14 +26,20 @@ CompactDatabase::CompactDatabase()
 bool CompactDatabase::create(const ConnectionString& connectionString)
 {
 	if (!connectionString.have(L"fileName"))
+	{
+		log::error << L"Unable to create compact database; fileName missing." << Endl;
 		return false;
+	}
 
 	Path fileName = connectionString.get(L"fileName");
 	bool flushAlways = parseString< bool >(connectionString.get(L"flushAlways"));
 
 	Ref< BlockFile > blockFile = new BlockFile();
 	if (!blockFile->create(fileName, flushAlways))
+	{
+		log::error << L"Unable to create compact database \"" << fileName.getPathName() << L"\"; missing or corrupt." << Endl;
 		return false;
+	}
 
 	uint32_t registryBlockId = blockFile->allocBlockId();
 	T_ASSERT (registryBlockId == 1);
@@ -59,7 +65,10 @@ bool CompactDatabase::create(const ConnectionString& connectionString)
 bool CompactDatabase::open(const ConnectionString& connectionString)
 {
 	if (!connectionString.have(L"fileName"))
+	{
+		log::error << L"Unable to open compact database; fileName missing." << Endl;
 		return false;
+	}
 
 	Path fileName = connectionString.get(L"fileName");
 	bool readOnly = parseString< bool >(connectionString.get(L"readOnly"));
@@ -67,11 +76,15 @@ bool CompactDatabase::open(const ConnectionString& connectionString)
 
 	Ref< BlockFile > blockFile = new BlockFile();
 	if (!blockFile->open(fileName, readOnly, flushAlways))
+	{
+		log::error << L"Unable to open compact database \"" << fileName.getPathName() << L"\"; missing or corrupt." << Endl;
 		return false;
+	}
 
 	Ref< IStream > registryStream = blockFile->readBlock(1);
 	if (!registryStream)
 	{
+		log::error << L"Unable to open compact database \"" << fileName.getPathName() << L"\"; corrupt registry." << Endl;
 		blockFile->close();
 		return false;
 	}
@@ -81,6 +94,7 @@ bool CompactDatabase::open(const ConnectionString& connectionString)
 
 	if (!registry)
 	{
+		log::error << L"Unable to open compact database \"" << fileName.getPathName() << L"\"; corrupt registry." << Endl;
 		blockFile->close();
 		return false;
 	}

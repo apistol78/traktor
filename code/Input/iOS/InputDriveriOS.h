@@ -26,7 +26,7 @@ class T_DLLCLASS InputDriveriOS : public IInputDriver
 public:
 	InputDriveriOS();
 	
-	virtual bool create(const SystemWindow& systemWindow, uint32_t inputCategories);
+	virtual bool create(void* nativeHandle, const SystemWindow& systemWindow, uint32_t inputCategories);
 	
 	virtual int getDeviceCount();
 	

@@ -47,7 +47,7 @@ InputDriverOsX::InputDriverOsX()
 {
 }
 
-bool InputDriverOsX::create(const SystemWindow& systemWindow, uint32_t inputCategories)
+bool InputDriverOsX::create(void* nativeHandle, const SystemWindow& systemWindow, uint32_t inputCategories)
 {
 	IOHIDManagerRef managerRef = IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone);
 	if (!managerRef)

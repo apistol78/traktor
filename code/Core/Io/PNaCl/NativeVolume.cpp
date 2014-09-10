@@ -79,7 +79,7 @@ bool NativeVolume::exist(const Path& filename)
 
 bool NativeVolume::remove(const Path& filename)
 {
-	return bool(unlink(wstombs(getSystemPath(filename)).c_str()) == 0);
+	return false;
 }
 
 bool NativeVolume::move(const Path& fileName, const std::wstring& newName, bool overwrite)
@@ -102,10 +102,7 @@ bool NativeVolume::makeDirectory(const Path& directory)
 
 bool NativeVolume::removeDirectory(const Path& directory)
 {
-	int status = rmdir(wstombs(directory.getPathName()).c_str());
-	if (status != 0)
-		return false;
-	return true;
+	return false;
 }
 
 bool NativeVolume::renameDirectory(const Path& directory, const std::wstring& newName)
@@ -136,17 +133,7 @@ Path NativeVolume::getCurrentDirectory() const
 
 void NativeVolume::mountVolumes(FileSystem& fileSystem)
 {
-	char cwd[256];
-	if (!getcwd(cwd, sizeof(cwd)))
-	{
-		log::error << L"Unable to get current working directory; failed to mount virtual volume" << Endl;
-		return;
-	}
-
-	std::wstring workingDirectory = std::wstring(L"C:") + mbstows(cwd);
-	log::info << L"Current working directory \"" << workingDirectory << L"\"" << Endl;
-
-	Ref< IVolume > volume = new NativeVolume(workingDirectory);
+	Ref< IVolume > volume = new NativeVolume(L"C:");
 	fileSystem.mount(L"C", volume);
 	fileSystem.setCurrentVolume(volume);
 }

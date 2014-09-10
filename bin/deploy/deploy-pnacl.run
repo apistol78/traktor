@@ -1,0 +1,133 @@
+
+
+function string:starts(start)
+   return string.sub(self, 1, string.len(start)) == start
+end
+
+function string:split(sep)
+	local sep, fields = sep or ":", {}
+	local pattern = string.format("([^%s]+)", sep)
+	self:gsub(pattern, function(c) fields[#fields+1] = c end)
+	return fields
+end
+
+
+function build(args)
+	stdout:printLn("Building asset(s)...")
+	local cmdline = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App -p -s=Pipeline"
+	for i = 1, args:size() - 1 do
+		cmdline = cmdline .. " " .. args:get(i)
+	end
+	return run:execute(cmdline)
+end
+
+
+function deploy(args)
+	stdout:printLn("Deploying PNaCl...")
+
+	local debug = false
+	local clang = "$(NACL_SDK_ROOT)/toolchain/win_pnacl/bin/pnacl-clang++.bat"
+	local finalize = "$(NACL_SDK_ROOT)/toolchain/win_pnacl/bin/pnacl-finalize.bat"
+	local defaultLibraries = "-lpthread -lppapi -lppapi_cpp -lnacl_io -lppapi_gles2"
+
+	-- Ensure debug symbols are kept when linking.
+	if debug then
+		clang = clang .. " -g"
+	end
+
+	-- Determine path to module libraries.
+	local prepend
+	if not debug then
+	 	prepend = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/pnacl/releasestatic/"
+	else
+	 	prepend = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/pnacl/debugstatic/"
+	end
+
+	-- Append system path to files.
+	local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
+	local wholeLinkFiles = ""
+	local externalLinkFiles = ""
+	for _, f in ipairs(files) do
+
+		-- Append "_d" to each file; indicating a debug build.
+		if debug then
+			f = f:sub(1, string.len(f) - 2) .. "_d.a"
+		end
+
+		if f:starts("Extern") then
+			externalLinkFiles = externalLinkFiles .. prepend .. f .. " "
+		else
+			wholeLinkFiles = wholeLinkFiles .. prepend .. f .. " "
+		end
+	end
+
+	-- Link files into an executable product.
+	local cmd = clang .. " -L$(NACL_SDK_ROOT)/lib/pnacl/Release -Xlinker --whole-archive " .. wholeLinkFiles .. " -Xlinker --no-whole-archive " .. externalLinkFiles .. " " .. defaultLibraries .. " -o $(DEPLOY_EXECUTABLE).unfinal.pexe"
+	local result = run:execute(cmd)
+	if result ~= 0 then
+		stderr:printLn("Unable to build executable product.")
+		stderr:printLn(cmd)
+		return 1
+	end
+
+	-- Finalize executable product.
+	run:replace("$(DEPLOY_EXECUTABLE).unfinal.pexe", "$(DEPLOY_EXECUTABLE).pexe")
+	run:execute(finalize .. " $(DEPLOY_EXECUTABLE).pexe")
+
+	-- Bundle everything into a folder.
+	run:mkdir("$(DEPLOY_PROJECT_NAME)")
+
+	run:replace("Application.config", "$(DEPLOY_PROJECT_NAME)/Application.config")
+	run:replace("$(DEPLOY_EXECUTABLE).pexe", "$(DEPLOY_PROJECT_NAME)/$(DEPLOY_EXECUTABLE).pexe")
+	run:replace("$(DEPLOY_SYSTEM_ROOT)/res/deploy/pnacl/common.js", "$(DEPLOY_PROJECT_NAME)/common.js")
+	run:replace("$(DEPLOY_SYSTEM_ROOT)/res/deploy/pnacl/nacl_icon_16.jpg", "$(DEPLOY_PROJECT_NAME)/nacl_icon_16.jpg")
+	run:replace("$(DEPLOY_SYSTEM_ROOT)/res/deploy/pnacl/nacl_icon_128.jpg", "$(DEPLOY_PROJECT_NAME)/nacl_icon_128.jpg")
+
+	if not debug then
+		run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/pnacl/manifest.nmf.template", "$(DEPLOY_PROJECT_NAME)/$(DEPLOY_EXECUTABLE).nmf")
+	else
+		run:replace("$(DEPLOY_EXECUTABLE).unfinal.pexe", "$(DEPLOY_PROJECT_NAME)/$(DEPLOY_EXECUTABLE).unfinal.pexe")
+		run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/pnacl/manifest-debug.nmf.template", "$(DEPLOY_PROJECT_NAME)/$(DEPLOY_EXECUTABLE).nmf")
+	end
+
+	run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/pnacl/manifest.json.template", "$(DEPLOY_PROJECT_NAME)/manifest.json")
+	run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/pnacl/run-nacl.html.template", "$(DEPLOY_PROJECT_NAME)/run-nacl.html")
+
+	return 0
+end
+
+
+function launch(args)
+	stdout:printLn("Launching PNaCl...")
+
+	local chrome = "\"C:/Program Files (x86)/Google/Chrome/Application/chrome.exe\""
+
+	local result = run:execute(chrome .. " --no-default-browser-check --no-first-run --user-data-dir=$(DEPLOY_OUTPUT_PATH)/temp/chrome_debug_profile --allow-nacl-socket-api=localhost http://localhost:5103/run-nacl.html")
+	if result ~= 0 then
+		stderr:printLn("Unable to launch Chrome.")
+		return 1
+	end
+
+	return 0
+end
+
+
+function migrate(args)
+	stdout:printLn("Migrating PNaCl...")
+	return run:execute("$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Database.Migrate.App -p -s=Migrate")
+end
+
+
+function main(args)
+	local action = args:get(0)
+	if action == "build" then
+		return build(args)
+	elseif action == "deploy" then
+		return deploy(args)
+	elseif action == "launch" then
+		return launch(args)
+	elseif action == "migrate" then
+		return migrate(args)
+	end
+	return 1
+end

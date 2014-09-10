@@ -278,6 +278,12 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 	}
 	while (!process->wait(0));
 
+	while (stdOutReader.readLine(str, 100))
+		log::info << str << Endl;
+
+	while (stdErrReader.readLine(str, 100))
+		log::error << str << Endl;
+
 	if (!errors.empty())
 	{
 		log::error << L"Unsuccessful migrate, error(s):" << Endl;

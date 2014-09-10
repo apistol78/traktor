@@ -1,6 +1,7 @@
 #include <cstring>
 #include <pthread.h>
 #include <sched.h>
+#include <time.h>
 #include <sys/time.h>
 #include "Core/Thread/Thread.h"
 #include "Core/Functor/Functor.h"
@@ -165,7 +166,11 @@ bool Thread::resume()
 
 void Thread::sleep(int duration)
 {
-	usleep(long(duration) * 1000);
+	const timespec time = {
+		0,                  // 0 seconds.
+		duration * 1000L * 1000L,  // And n ms.
+	};
+	nanosleep(&time, NULL);
 }
 
 void Thread::yield()

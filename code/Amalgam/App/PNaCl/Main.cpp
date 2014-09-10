@@ -1,7 +1,6 @@
 #include <ppapi/cpp/instance.h>
 #include <ppapi/cpp/module.h>
 #include <ppapi/cpp/var.h>
-
 #include <ppapi/cpp/message_loop.h>
 #include <ppapi/cpp/completion_callback.h>
 #include <ppapi/cpp/url_loader.h>
@@ -21,6 +20,7 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Serialization/DeepClone.h"
+#include "Core/System/PNaCl/DelegateInstance.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Xml/XmlDeserializer.h"
@@ -71,22 +71,21 @@ private:
 class FileIOVolume : public IVolume
 {
 public:
+	pp::Instance* m_instance;
 	pp::CompletionCallbackFactory< FileIOVolume > m_callbackFactory;
 	pp::URLLoader m_urlLoader;
 	pp::URLRequestInfo m_urlRequest;
 	pp::CompletionCallback m_callback;
 	uint8_t m_buffer[4096];
-
 	std::wstring m_deferredUrl;
 	pp::CompletionCallback m_deferredCallback;
-
 	Ref< DynamicMemoryStream > m_stream;
 	Signal m_streamFinished;
+	Semaphore m_volumeLock;
 
 	FileIOVolume(pp::Instance* instance)
-	:	m_callbackFactory(this)
-	,	m_urlLoader(instance)
-	,	m_urlRequest(instance)
+	:	m_instance(instance)
+	,	m_callbackFactory(this)
 	{
 	}
 
@@ -115,6 +114,7 @@ public:
 		if (result == PP_OK)
 		{
 			m_streamFinished.set();
+			m_volumeLock.release();
 		}
 		else if (result > 0)
 		{
@@ -127,9 +127,10 @@ public:
 		}
 		else
 		{
-			log::error << L"Unable to read URL" << Endl;
+			log::error << L"Unable to read URL (" << result << L")" << Endl;
 			m_stream = 0;
 			m_streamFinished.set();
+			m_volumeLock.release();
 		}
 	}
 
@@ -143,23 +144,29 @@ public:
 		}
 		else
 		{
-			log::error << L"Unable to open URL" << Endl;
+			log::error << L"Unable to open URL (" << result << L")" << Endl;
 			m_stream = 0;
 			m_streamFinished.set();
+			m_volumeLock.release();
 		}
 	}
 
 	void OnDeferredOpen(int32_t result)
 	{
+		m_urlRequest = pp::URLRequestInfo(m_instance);
 		m_urlRequest.SetURL(wstombs(m_deferredUrl));
 		m_urlRequest.SetMethod("GET");
 
 		m_callback = m_callbackFactory.NewCallback(&FileIOVolume::OnOpen);
+
+		m_urlLoader = pp::URLLoader(m_instance);
 		m_urlLoader.Open(m_urlRequest, m_callback);
 	}
 
 	virtual Ref< IStream > open(const Path& fileName, uint32_t mode)
 	{
+		m_volumeLock.wait();
+
 		// Create output stream.
 		m_stream = new DynamicMemoryStream();
 
@@ -226,11 +233,11 @@ public:
 
 }
 
-class AmalgamInstance : public pp::Instance
+class AmalgamInstance : public DelegateInstance
 {
 public:
 	explicit AmalgamInstance(PP_Instance instance)
-	:	pp::Instance(instance)
+	:	DelegateInstance(instance)
 	,	m_applicationThread(0)
 	{
 		nacl_io_init_ppapi(instance, pp::Module::Get()->get_browser_interface());
@@ -257,6 +264,7 @@ public:
 
 	virtual void DidChangeView(const pp::View& view)
 	{
+		DelegateInstance::DidChangeView(view);
 	}
 
 	virtual void HandleMessage(const pp::Var& var_message)
@@ -269,6 +277,8 @@ public:
 			create();
 		else if (message == "destroy")
 			destroy();
+
+		DelegateInstance::HandleMessage(var_message);
 	}
 
 private:

@@ -253,9 +253,15 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 			log::info << str << Endl;
 
 		while (stdErrReader.readLine(str, 100))
-			log::info << str << Endl;
+			log::error << str << Endl;
 	}
 	while (!process->wait(0));
+
+	while (stdOutReader.readLine(str, 100))
+		log::info << str << Endl;
+
+	while (stdErrReader.readLine(str, 100))
+		log::error << str << Endl;
 
 	int32_t exitCode = process->exitCode();
 	if (exitCode != 0)

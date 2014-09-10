@@ -99,6 +99,17 @@
 				<item>libTraktor.Database.Compact.a</item>
 			</deployFiles>
 		</item>
+		<item>
+			<platform>{CAE489CE-1592-234F-ADB9-A7D75646B53D}</platform>
+			<deployFiles>
+				<item>Traktor.Core.a</item>
+				<item>Traktor.Net.a</item>
+				<item>Traktor.Xml.a</item>
+				<item>Traktor.Compress.a</item>
+				<item>Traktor.Database.a</item>
+				<item>Traktor.Database.Compact.a</item>
+			</deployFiles>
+		</item>		
 	</platforms>
 	<pipelineProperties/>
 	<migrateProperties/>

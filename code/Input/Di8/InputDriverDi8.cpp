@@ -211,7 +211,7 @@ void InputDriverDi8::destroy()
 	m_directInput.release();
 }
 
-bool InputDriverDi8::create(const SystemWindow& systemWindow, uint32_t inputCategories)
+bool InputDriverDi8::create(void* nativeHandle, const SystemWindow& systemWindow, uint32_t inputCategories)
 {
 	HRESULT hr;
 

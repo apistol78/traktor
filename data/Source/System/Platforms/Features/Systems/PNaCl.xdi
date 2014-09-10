@@ -2,7 +2,12 @@
 <object type="traktor.amalgam.Feature" version="4">
 	<description>PNaCl</description>
 	<priority>0</priority>
-	<platforms/>
+	<platforms>
+		<item>
+			<platform>{CAE489CE-1592-234F-ADB9-A7D75646B53D}</platform>
+			<deployFiles/>
+		</item>
+	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">
 		<value>
 			<item>
