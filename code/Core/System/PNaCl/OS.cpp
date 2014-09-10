@@ -17,6 +17,8 @@
 namespace traktor
 {
 
+T_IMPLEMENT_RTTI_CLASS(L"traktor.OS", OS, Object)
+
 OS& OS::getInstance()
 {
 	static OS* s_instance = 0;
@@ -30,7 +32,12 @@ OS& OS::getInstance()
 
 uint32_t OS::getCPUCoreCount() const
 {
-	return 4;
+	return 1;
+}
+
+Path OS::getExecutable() const
+{
+	return Path();
 }
 
 std::wstring OS::getCommandLine() const
@@ -113,7 +120,6 @@ bool OS::getEnvironment(const std::wstring& name, std::wstring& outValue) const
 }
 
 Ref< IProcess > OS::execute(
-	const Path& file,
 	const std::wstring& commandLine,
 	const Path& workingDirectory,
 	const envmap_t* envmap,

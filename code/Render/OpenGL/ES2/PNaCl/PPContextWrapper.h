@@ -5,6 +5,7 @@
 #include <ppapi/cpp/graphics_3d_client.h>
 #include "Core/Object.h"
 #include "Core/Thread/Signal.h"
+#include "Render/OpenGL/Platform.h"
 
 namespace pp
 {
@@ -43,9 +44,19 @@ public:
 
 	void _doSwapBuffersFinished();
 
+	GLuint getFrameBuffer() const { return m_frameBuffer; }
+
+	GLuint getDepthBuffer() const { return m_depthBuffer; }
+
 private:
 	pp::Graphics3D m_context;
 	Signal m_swap;
+	int32_t m_width;
+	int32_t m_height;
+
+	GLuint m_frameBuffer;
+	GLuint m_renderBuffer;
+	GLuint m_depthBuffer;
 
 	PPContextWrapper();
 };

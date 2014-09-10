@@ -1,0 +1,41 @@
+
+
+function build(args)
+	stdout:printLn("Building asset(s)...")
+	local cmdline = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App -p -s=Pipeline"
+	for i = 1, args:size() - 1 do
+		cmdline = cmdline .. " " .. args:get(i)
+	end
+	return run:execute(cmdline)
+end
+
+
+function deploy(args)
+	return 0
+end
+
+
+function launch(args)
+	return 0
+end
+
+
+function migrate(args)
+	stdout:printLn("Migrating Linux...")
+	return run:execute("$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Database.Migrate.App -p -s=Migrate")
+end
+
+
+function main(args)
+	local action = args:get(0)
+	if action == "build" then
+		return build(args)
+	elseif action == "deploy" then
+		return deploy(args)
+	elseif action == "launch" then
+		return launch(args)
+	elseif action == "migrate" then
+		return migrate(args)
+	end
+	return 1
+end

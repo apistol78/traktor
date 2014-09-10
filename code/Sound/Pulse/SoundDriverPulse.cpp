@@ -16,7 +16,7 @@ SoundDriverPulse::SoundDriverPulse()
 {
 }
 
-bool SoundDriverPulse::create(const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer)
+bool SoundDriverPulse::create(void* nativeHandle, const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer)
 {
 	int error;
 

@@ -15,7 +15,7 @@ InputDriverWin32::InputDriverWin32()
 {
 }
 
-bool InputDriverWin32::create(const SystemWindow& systemWindow, uint32_t inputCategories)
+bool InputDriverWin32::create(void* nativeHandle, const SystemWindow& systemWindow, uint32_t inputCategories)
 {
 	if (inputCategories & CtKeyboard)
 	{

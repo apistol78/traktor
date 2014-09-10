@@ -9,7 +9,7 @@ end
 
 function build(args)
 	stdout:printLn("Building asset(s)...")
-	local cmdline = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App -standalone -p -s=Pipeline"
+	local cmdline = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App -p -s=Pipeline"
 	for i = 1, args:size() - 1 do
 		cmdline = cmdline .. " " .. args:get(i)
 	end

@@ -37,7 +37,7 @@ class InputServer : public IInputServer
 public:
 	InputServer();
 
-	bool create(const PropertyGroup* defaultSettings, PropertyGroup* settings, db::Database* db, const SystemWindow& systemWindow);
+	bool create(const PropertyGroup* defaultSettings, PropertyGroup* settings, db::Database* db, void* nativeHandle, const SystemWindow& systemWindow);
 
 	void destroy();
 

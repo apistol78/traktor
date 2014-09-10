@@ -1,0 +1,9 @@
+{
+  "program": {
+    "portable": {
+      "pnacl-translate": {
+        "url": "<!-- output:print(os:getEnvironment("DEPLOY_EXECUTABLE")) --!>.pexe"
+      }
+    }
+  }
+}

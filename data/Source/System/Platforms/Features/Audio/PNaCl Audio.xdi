@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.amalgam.Feature" version="5">
+	<description>PNaCl Audio</description>
+	<priority>0</priority>
+	<platforms>
+		<item>
+			<platform>{CAE489CE-1592-234F-ADB9-A7D75646B53D}</platform>
+			<executableFile/>
+			<deployFiles>
+				<item>Traktor.Core.a</item>
+				<item>Traktor.Sound.a</item>
+				<item>Traktor.Sound.PNaCl.a</item>
+			</deployFiles>
+		</item>
+	</platforms>
+	<pipelineProperties type="traktor.PropertyGroup">
+		<value>
+			<item>
+				<first>Editor.Modules</first>
+				<second type="traktor.PropertyStringSet">
+					<value>
+						<item>Traktor.Sound</item>
+						<item>Traktor.Sound.Editor</item>
+					</value>
+				</second>
+			</item>
+		</value>
+	</pipelineProperties>
+	<migrateProperties type="traktor.PropertyGroup">
+		<value>
+			<item>
+				<first>Migrate.Modules</first>
+				<second type="traktor.PropertyStringSet">
+					<value>
+						<item>Traktor.Sound</item>
+					</value>
+				</second>
+			</item>
+		</value>
+	</migrateProperties>
+	<runtimeProperties type="traktor.PropertyGroup">
+		<value>
+			<item>
+				<first>Amalgam.Modules</first>
+				<second type="traktor.PropertyStringSet">
+					<value>
+						<item>Traktor.Sound</item>
+						<item>Traktor.Sound.PNaCl</item>
+					</value>
+				</second>
+			</item>
+			<item>
+				<first>Audio.MasterVolume</first>
+				<second type="traktor.PropertyFloat">
+					<value>1</value>
+				</second>
+			</item>
+			<item>
+				<first>Audio.Surround</first>
+				<second type="traktor.PropertyGroup">
+					<value>
+						<item>
+							<first>InnerRadius</first>
+							<second type="traktor.PropertyFloat">
+								<value>2</value>
+							</second>
+						</item>
+						<item>
+							<first>MaxDistance</first>
+							<second type="traktor.PropertyFloat">
+								<value>4</value>
+							</second>
+						</item>
+					</value>
+				</second>
+			</item>
+			<item>
+				<first>Audio.Type</first>
+				<second type="traktor.PropertyString">
+					<value>traktor.sound.SoundDriverPNaCl</value>
+				</second>
+			</item>
+		</value>
+	</runtimeProperties>
+</object>

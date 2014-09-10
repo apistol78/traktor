@@ -27,7 +27,7 @@ class T_DLLCLASS SoundDriverWinMM : public ISoundDriver
 public:
 	SoundDriverWinMM();
 
-	virtual bool create(const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer);
+	virtual bool create(void* nativeHandle, const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer);
 
 	virtual void destroy();
 

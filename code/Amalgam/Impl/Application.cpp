@@ -177,6 +177,7 @@ bool Application::create(
 		defaultSettings,
 		settings,
 		m_database,
+		nativeHandle,
 		inputWindow
 	))
 		return false;
@@ -222,7 +223,7 @@ bool Application::create(
 	if (settings->getProperty(L"Audio.Type"))
 	{
 		m_audioServer = new AudioServer();
-		if (!m_audioServer->create(settings))
+		if (!m_audioServer->create(settings, nativeHandle))
 			return false;
 	}
 

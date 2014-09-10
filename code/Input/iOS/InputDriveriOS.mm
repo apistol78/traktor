@@ -111,7 +111,7 @@ InputDriveriOS::InputDriveriOS()
 {
 }
 
-bool InputDriveriOS::create(const SystemWindow& systemWindow, uint32_t inputCategories)
+bool InputDriveriOS::create(void* nativeHandle, const SystemWindow& systemWindow, uint32_t inputCategories)
 {
 	m_impl = new InputDriveriOSImpl();
 	if (!m_impl->create(systemWindow.view))

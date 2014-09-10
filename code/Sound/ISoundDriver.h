@@ -47,7 +47,7 @@ public:
 	 * \param outMixer Return alternative mixer implementation.
 	 * \return True if successful.
 	 */
-	virtual bool create(const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer) = 0;
+	virtual bool create(void* nativeHandle, const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer) = 0;
 
 	virtual void destroy() = 0;
 

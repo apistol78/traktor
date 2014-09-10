@@ -38,10 +38,11 @@ public:
 
 	/*! \brief Create input driver.
 	 *
+	 * \param nativeHandle Opaque pointer to system specific object.
 	 * \param systemWindow Description of application's system window.
 	 * \param inputCategories Input device categories.
 	 */
-	virtual bool create(const SystemWindow& systemWindow, uint32_t inputCategories) = 0;
+	virtual bool create(void* nativeHandle, const SystemWindow& systemWindow, uint32_t inputCategories) = 0;
 	
 	/*! \brief Get number of devices implemented by the driver.
 	 *

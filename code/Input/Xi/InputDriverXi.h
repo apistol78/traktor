@@ -32,7 +32,7 @@ class T_DLLCLASS InputDriverXi : public IInputDriver
 public:
 	InputDriverXi(DWORD deviceCount = 4);
 
-	virtual bool create(const SystemWindow& systemWindow, uint32_t inputCategories);
+	virtual bool create(void* nativeHandle, const SystemWindow& systemWindow, uint32_t inputCategories);
 
 	virtual int getDeviceCount();
 

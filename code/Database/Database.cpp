@@ -65,15 +65,24 @@ bool Database::open(IProviderDatabase* providerDatabase)
 bool Database::open(const ConnectionString& connectionString)
 {
 	if (!connectionString.have(L"provider"))
+	{
+		log::error << L"Unable to open database; provider missing." << Endl;
 		return false;
+	}
 
 	const TypeInfo* providerType = TypeInfo::find(connectionString.get(L"provider"));
 	if (!providerType)
+	{
+		log::error << L"Unable to open database; no such provider \"" << connectionString.get(L"provider") << L"\"." << Endl;
 		return false;
+	}
 
 	Ref< IProviderDatabase > providerDatabase = checked_type_cast< IProviderDatabase* >(providerType->createInstance());
 	if (!providerDatabase)
+	{
+		log::error << L"Unable to open database; failed to instanciate provider \"" << connectionString.get(L"provider") << L"\"." << Endl;
 		return false;
+	}
 
 	if (!providerDatabase->open(connectionString))
 		return false;
@@ -84,15 +93,24 @@ bool Database::open(const ConnectionString& connectionString)
 bool Database::create(const ConnectionString& connectionString)
 {
 	if (!connectionString.have(L"provider"))
+	{
+		log::error << L"Unable to open database; provider missing." << Endl;
 		return false;
+	}
 
 	const TypeInfo* providerType = TypeInfo::find(connectionString.get(L"provider"));
 	if (!providerType)
+	{
+		log::error << L"Unable to open database; no such provider \"" << connectionString.get(L"provider") << L"\"." << Endl;
 		return false;
+	}
 
 	Ref< IProviderDatabase > providerDatabase = checked_type_cast< IProviderDatabase* >(providerType->createInstance());
 	if (!providerDatabase)
+	{
+		log::error << L"Unable to open database; failed to instanciate provider \"" << connectionString.get(L"provider") << L"\"." << Endl;
 		return false;
+	}
 
 	if (!providerDatabase->create(connectionString))
 		return false;

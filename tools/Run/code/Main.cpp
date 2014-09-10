@@ -828,7 +828,7 @@ int main(int argc, const char** argv)
 
 	if (cmdLine.getCount() < 1)
 	{
-		log::info << L"Run 1.2.0" << Endl;
+		log::info << L"Run 1.2.1" << Endl;
 		log::info << Endl;
 		log::info << L"Usage: Run (option(s)) [<file>.run|<file>.template] (args ...)" << Endl;
 		log::info << Endl;

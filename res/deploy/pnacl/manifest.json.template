@@ -1,0 +1,28 @@
+{
+	"name": "<!-- output:print(os:getEnvironment("DEPLOY_PROJECT_NAME")) --!>",
+	"description": "Simple Game",
+	"version": "0.1",
+	"manifest_version": 2,
+	"icons": {
+		"16": "nacl_icon_16.jpg",
+		"128": "nacl_icon_128.jpg"
+	},
+	"app": {
+		"launch": {
+			"local_path": "run-nacl.html"
+		}
+	},
+	"offline_enabled": true,
+	"permissions": [
+		{
+			"socket": [
+				"tcp-listen:*:*", 
+				"tcp-connect", 
+				"resolve-host", 
+				"udp-bind:*:*", 
+				"udp-send-to:*:*"
+			],
+			"audio"
+		}
+	]	
+}

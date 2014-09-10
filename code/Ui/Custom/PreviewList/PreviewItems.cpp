@@ -26,7 +26,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.PreviewItems", PreviewItems, Object)
 void PreviewItems::add(PreviewItem* item)
 {
 	m_items.push_back(item);
-#if !defined(__APPLE__)
+#if !defined(__APPLE__) && !defined(__PNACL__)
 	std::sort(m_items.begin(), m_items.end(), ItemSortPred());
 #endif
 }

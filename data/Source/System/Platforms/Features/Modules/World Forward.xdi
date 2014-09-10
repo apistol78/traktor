@@ -85,12 +85,12 @@
 			</deployFiles>
 		</item>
 		<item>
-			<platform>{947FBCA7-FECE-7248-AEC4-046EB01E9A31}</platform>
+			<platform>{CAE489CE-1592-234F-ADB9-A7D75646B53D}</platform>
 			<deployFiles>
-				<item>libTraktor.Core.a</item>
-				<item>libTraktor.Database.a</item>
-				<item>libTraktor.Render.a</item>
-				<item>libTraktor.Resource.a</item>
+				<item>Traktor.Core.a</item>
+				<item>Traktor.Database.a</item>
+				<item>Traktor.Render.a</item>
+				<item>Traktor.Resource.a</item>
 			</deployFiles>
 		</item>
 	</platforms>

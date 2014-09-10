@@ -188,7 +188,7 @@ void WorldLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdate
 
 void WorldLayer::build(const amalgam::IUpdateInfo& info, uint32_t frame)
 {
-	if (!m_worldRenderer)
+	if (!m_worldRenderer || !m_scene)
 		return;
 
 	// Get camera entity and extract view transform.
@@ -198,10 +198,12 @@ void WorldLayer::build(const amalgam::IUpdateInfo& info, uint32_t frame)
 		Transform view = cameraEntity->getTransform(info.getInterval()) * m_cameraOffset;
 		m_worldRenderView.setView(view.inverse().toMatrix44());
 
+		/*
 		// Also update sound listener transform based on camera.
 		sound::SurroundEnvironment* surroundEnvironment = m_environment->getAudio()->getSurroundEnvironment();
 		if (surroundEnvironment)
 			surroundEnvironment->setListenerTransform(view);
+		*/
 	}
 
 	// Build frame through world renderer.
@@ -226,7 +228,7 @@ void WorldLayer::build(const amalgam::IUpdateInfo& info, uint32_t frame)
 
 void WorldLayer::render(render::EyeType eye, uint32_t frame)
 {
-	if (!m_scene || !m_worldRenderer)
+	if (!m_worldRenderer || !m_scene)
 		return;
 
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();

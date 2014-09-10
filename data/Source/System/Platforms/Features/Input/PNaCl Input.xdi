@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="4">
+<object type="traktor.amalgam.Feature" version="5">
 	<description>PNaCl Input</description>
 	<priority>0</priority>
-	<platforms/>
+	<platforms>
+		<item>
+			<platform>{CAE489CE-1592-234F-ADB9-A7D75646B53D}</platform>
+			<executableFile/>
+			<deployFiles>
+				<item>Traktor.Input.a</item>
+				<item>Traktor.Input.PNaCl.a</item>
+			</deployFiles>
+		</item>
+	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">
 		<value>
 			<item>
@@ -42,7 +51,9 @@
 			<item>
 				<first>Input.DriverTypes</first>
 				<second type="traktor.PropertyStringSet">
-					<value/>
+					<value>
+						<item>traktor.input.InputDriverPNaCl</item>
+					</value>
 				</second>
 			</item>
 		</value>

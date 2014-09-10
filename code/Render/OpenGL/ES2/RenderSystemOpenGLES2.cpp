@@ -125,18 +125,11 @@ float RenderSystemOpenGLES2::getDisplayAspectRatio() const
 
 Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewDefaultDesc& desc)
 {
-#if defined(_WIN32)
+#if defined(_WIN32) || defined(__PNACL__) || defined(__EMSCRIPTEN__)
 	Ref< ContextOpenGLES2 > context = ContextOpenGLES2::createContext(
 		m_globalContext,
 		m_nativeHandle,
 		desc
-	);
-	return new RenderViewOpenGLES2(m_globalContext, context);
-#elif defined(__PNACL__) || defined(__EMSCRIPTEN__)
-	Ref< ContextOpenGLES2 > context = ContextOpenGLES2::createContext(
-		m_globalContext,
-		m_nativeHandle,
-		0
 	);
 	return new RenderViewOpenGLES2(m_globalContext, context);
 #else
