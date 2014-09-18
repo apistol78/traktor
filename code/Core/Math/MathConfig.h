@@ -34,7 +34,7 @@
 #		define T_MATH_INLINE inline
 #		if defined(__APPLE__)
 #			if TARGET_OS_IPHONE && !TARGET_IPHONE_SIMULATOR
-#				define T_MATH_USE_NEON
+//#				define T_MATH_USE_NEON
 #			elif !TARGET_OS_IPHONE
 #				define T_MATH_USE_SSE2
 #			endif
@@ -44,7 +44,7 @@
 #	else	// _DEBUG
 #		if defined(__APPLE__)
 #			if TARGET_OS_IPHONE && !TARGET_IPHONE_SIMULATOR
-#				define T_MATH_USE_NEON
+//#				define T_MATH_USE_NEON
 #			elif !TARGET_OS_IPHONE
 #				define T_MATH_USE_SSE2
 #			endif
