@@ -27,10 +27,16 @@ bool TargetManager::create(uint16_t port)
 	// Create our server socket.
 	m_listenSocket = new net::TcpSocket();
 	if (!m_listenSocket->bind(net::SocketAddressIPv4(port)))
+	{
+		log::error << L"Failed to create target manager; Unable to bind socket to port " << port << L"." << Endl;
 		return false;
+	}
 
 	if (!m_listenSocket->listen())
+	{
+		log::error << L"Failed to create target manager; Unable to listen on socket." << Endl;
 		return false;
+	}
 
 	log::info << L"Target manager @" << port << L" created" << Endl;
 	return true;

@@ -203,6 +203,7 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 	envmap[L"DEPLOY_OUTPUT_PATH"] = m_outputPath;
 	envmap[L"DEPLOY_CERTIFICATE"] = m_globalSettings->getProperty< PropertyString >(L"Amalgam.Certificate", L"");
 	envmap[L"DEPLOY_FILES"] = implode(deployFiles.begin(), deployFiles.end(), L" ");
+	envmap[L"DEPLOY_DEBUG"] = (m_globalSettings->getProperty< PropertyBoolean >(L"Amalgam.UseDebugBinaries", false) ? L"YES" : L"");
 
 	// Merge tool environment variables.
 	const DeployTool& deployTool = platform->getDeployTool();

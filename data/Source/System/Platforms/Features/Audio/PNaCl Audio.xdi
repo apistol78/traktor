@@ -7,9 +7,9 @@
 			<platform>{CAE489CE-1592-234F-ADB9-A7D75646B53D}</platform>
 			<executableFile/>
 			<deployFiles>
-				<item>Traktor.Core.a</item>
-				<item>Traktor.Sound.a</item>
-				<item>Traktor.Sound.PNaCl.a</item>
+				<item>libTraktor.Core.a</item>
+				<item>libTraktor.Sound.a</item>
+				<item>libTraktor.Sound.PNaCl.a</item>
 			</deployFiles>
 		</item>
 	</platforms>

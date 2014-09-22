@@ -114,7 +114,6 @@ Ref< ProgramResource > ProgramOpenGLES2::compile(const GlslProgram& glslProgram,
 	resource = new ProgramResourceOpenGL(
 		wstombs(glslProgram.getVertexShader()),
 		wstombs(glslProgram.getFragmentShader()),
-		//glslProgram.getSamplerTextures(),
 		glslProgram.getTextures(),
 		glslProgram.getSamplers(),
 		glslProgram.getRenderState()
@@ -287,8 +286,10 @@ bool ProgramOpenGLES2::activate(StateCache* stateCache, float targetSize[2], flo
 	// Update dirty uniforms.
 	for (std::vector< Uniform >::iterator i = m_uniforms.begin(); i != m_uniforms.end(); ++i)
 	{
+#	if !defined(_WIN32)	// Somehow it's necessary to set uniforms each call in "Angle" wrapper.
 		if (!i->dirty)
 			continue;
+#endif
 			
 		const float* uniformData = &m_uniformData[i->offset];
 		switch (i->type)

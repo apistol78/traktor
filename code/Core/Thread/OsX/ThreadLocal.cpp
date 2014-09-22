@@ -9,6 +9,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ThreadLocal", ThreadLocal, Object)
 
 ThreadLocal::ThreadLocal()
 {
+	T_ASSERT_M(sizeof(m_handle) >= sizeof(pthread_key_t), L"Size of handle not enough to encompass pthread_key_t value");
 	pthread_key_t& key = *reinterpret_cast< pthread_key_t* >(&m_handle);
 	int32_t rc = pthread_key_create(&key, 0);
 	T_FATAL_ASSERT_M(rc == 0, L"Unable to create thread key");

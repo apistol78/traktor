@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <map>
 #include "Core/Log/Log.h"
 #include "Script/Editor/Lexer.h"

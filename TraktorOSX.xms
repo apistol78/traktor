@@ -6461,7 +6461,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2014.2/include</item>
+						<item>$(FBX_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_ANIMATION_EDITOR_EXPORT</item>
@@ -6469,10 +6469,10 @@
 						<item>FBXSDK_NEW_API</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2014.2/lib/clang/ub/debug</item>
+						<item>$(FBX_SDK)/lib/gcc4/ub</item>
 					</libraryPaths>
 					<libraries>
-						<item>fbxsdk</item>
+						<item>fbxsdk-2013.1</item>
 						<item>CoreServices.framework</item>
 						<item>iconv</item>
 						<item>SystemConfiguration.framework</item>
@@ -6487,7 +6487,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2014.2/include</item>
+						<item>$(FBX_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_ANIMATION_EDITOR_EXPORT</item>
@@ -6495,10 +6495,10 @@
 						<item>FBXSDK_NEW_API</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2014.2/lib/clang/ub/release</item>
+						<item>$(FBX_SDK)/lib/gcc4/ub</item>
 					</libraryPaths>
 					<libraries>
-						<item>fbxsdk</item>
+						<item>fbxsdk-2013.1</item>
 						<item>CoreServices.framework</item>
 						<item>iconv</item>
 						<item>SystemConfiguration.framework</item>
@@ -6513,7 +6513,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2014.2/include</item>
+						<item>$(FBX_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -6521,10 +6521,10 @@
 						<item>FBXSDK_NEW_API</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2014.2/lib/clang/ub/debug</item>
+						<item>$(FBX_SDK)/lib/gcc4/ub</item>
 					</libraryPaths>
 					<libraries>
-						<item>fbxsdk</item>
+						<item>fbxsdk-2013.1</item>
 						<item>CoreServices.framework</item>
 						<item>iconv</item>
 						<item>SystemConfiguration.framework</item>
@@ -6539,7 +6539,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2014.2/include</item>
+						<item>$(FBX_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -6547,10 +6547,10 @@
 						<item>FBXSDK_NEW_API</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2014.2/lib/clang/ub/release</item>
+						<item>$(FBX_SDK)/lib/gcc4/ub</item>
 					</libraryPaths>
 					<libraries>
-						<item>fbxsdk</item>
+						<item>fbxsdk-2013.1</item>
 						<item>CoreServices.framework</item>
 						<item>iconv</item>
 						<item>SystemConfiguration.framework</item>
@@ -9056,7 +9056,7 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2014.2/include</item>
+												<item>$(FBX_SDK)/include</item>
 											</includePaths>
 											<definitions>
 												<item>T_MODEL_EXPORT</item>
@@ -9064,10 +9064,10 @@
 												<item>FBXSDK_NEW_API</item>
 											</definitions>
 											<libraryPaths>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2014.2/lib/clang/ub/debug</item>
+												<item>$(FBX_SDK)/lib/gcc4/ub</item>
 											</libraryPaths>
 											<libraries>
-												<item>fbxsdk</item>
+												<item>fbxsdk-2013.1</item>
 												<item>CoreServices.framework</item>
 												<item>iconv</item>
 												<item>SystemConfiguration.framework</item>
@@ -9083,7 +9083,7 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2014.2/include</item>
+												<item>$(FBX_SDK)/include</item>
 											</includePaths>
 											<definitions>
 												<item>T_MODEL_EXPORT</item>
@@ -9091,10 +9091,10 @@
 												<item>FBXSDK_NEW_API</item>
 											</definitions>
 											<libraryPaths>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2014.2/lib/clang/ub/release</item>
+												<item>$(FBX_SDK)/lib/gcc4/ub</item>
 											</libraryPaths>
 											<libraries>
-												<item>fbxsdk</item>
+												<item>fbxsdk-2013.1</item>
 												<item>CoreServices.framework</item>
 												<item>iconv</item>
 												<item>SystemConfiguration.framework</item>
@@ -9110,7 +9110,7 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2014.2/include</item>
+												<item>$(FBX_SDK)/include</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
@@ -9118,10 +9118,10 @@
 												<item>FBXSDK_NEW_API</item>
 											</definitions>
 											<libraryPaths>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2014.2/lib/clang/ub/debug</item>
+												<item>$(FBX_SDK)/lib/gcc4/ub</item>
 											</libraryPaths>
 											<libraries>
-												<item>fbxsdk</item>
+												<item>fbxsdk-2013.1</item>
 												<item>CoreServices.framework</item>
 												<item>iconv</item>
 												<item>SystemConfiguration.framework</item>
@@ -9137,7 +9137,7 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2014.2/include</item>
+												<item>$(FBX_SDK)/include</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
@@ -9145,10 +9145,10 @@
 												<item>FBXSDK_NEW_API</item>
 											</definitions>
 											<libraryPaths>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2014.2/lib/clang/ub/release</item>
+												<item>$(FBX_SDK)/lib/gcc4/ub</item>
 											</libraryPaths>
 											<libraries>
-												<item>fbxsdk</item>
+												<item>fbxsdk-2013.1</item>
 												<item>CoreServices.framework</item>
 												<item>iconv</item>
 												<item>SystemConfiguration.framework</item>
@@ -11708,6 +11708,10 @@
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -15357,6 +15361,10 @@
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[7]/project"/>
 				</item>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project"/>
+				</item>
 			</dependencies>
 		</item>
 		<item ref="/object/projects/item[84]/dependencies/item[8]/project"/>
@@ -16259,125 +16267,94 @@
 				</item>
 			</dependencies>
 		</item>
-	</projects>
-	<aggregations>
-		<item type="Aggregation" version="1">
-			<enable>false</enable>
-			<name>Editor</name>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Illuminate.Editor</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Illuminate/Editor</sourcePath>
+			<configurations>
+				<item type="Configuration" version="1">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_ILLUMINATE_EDITOR_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_ILLUMINATE_EDITOR_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+			</configurations>
 			<items>
-				<item type="AggregationItem">
-					<sourceFile>res/osx/Info.plist</sourceFile>
-					<targetPath>Contents</targetPath>
-				</item>
-				<item type="AggregationItem">
-					<sourceFile>res/osx/Traktor.Editor.config</sourceFile>
-					<targetPath>Contents/Resources</targetPath>
-				</item>
-				<item type="AggregationItem">
-					<sourceFile>res/English.xml</sourceFile>
-					<targetPath>Contents/Resources</targetPath>
-				</item>
-				<item type="AggregationItem">
-					<sourceFile>res/icons/Traktor.icns</sourceFile>
-					<targetPath>Contents/Resources</targetPath>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[84]/dependencies/item[8]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[84]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[14]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
-				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[7]/project/dependencies/item[2]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[7]/project/dependencies/item[3]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[6]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[21]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[7]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[3]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[26]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[27]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[28]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[29]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[14]/dependencies/item[5]/project/dependencies/item[4]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[57]/dependencies/item[10]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[26]/dependencies/item[10]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[6]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[32]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[33]"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
@@ -16393,51 +16370,7 @@
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[3]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[80]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[14]/dependencies/item[5]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[39]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[40]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[72]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[15]/project/dependencies/item[8]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[44]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[73]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[7]/project/dependencies/item[4]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
@@ -16445,203 +16378,94 @@
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[48]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[49]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[50]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[27]/dependencies/item[7]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[28]/dependencies/item[11]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[53]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[54]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[55]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[56]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[57]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[58]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[59]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[26]/dependencies/item[9]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[7]/project/dependencies/item[6]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[78]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[79]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[7]/project/dependencies/item[8]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[66]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[14]/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
 					<project ref="/object/projects/item[15]/dependencies/item[7]/project/dependencies/item[13]/project"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[92]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[81]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[83]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[4]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[15]/project/dependencies/item[8]/project"/>
 				</item>
 			</dependencies>
 		</item>
+	</projects>
+	<aggregations>
 		<item type="Aggregation" version="1">
 			<enable>true</enable>
-			<name>All</name>
-			<items/>
+			<name>Traktor.Editor.App.Bundle</name>
+			<items>
+				<item type="AggregationItem">
+					<sourceFile>$(TRAKTOR_HOME)/res/osx/Info.plist</sourceFile>
+					<targetPath>Contents</targetPath>
+				</item>
+				<item type="AggregationItem">
+					<sourceFile>$(TRAKTOR_HOME)/res/icons/Traktor.icns</sourceFile>
+					<targetPath>Contents/Resources</targetPath>
+				</item>
+				<item type="AggregationItem">
+					<sourceFile>$(TRAKTOR_HOME)/res/English.xml</sourceFile>
+					<targetPath>Contents/Resources/res</targetPath>
+				</item>
+				<item type="AggregationItem">
+					<sourceFile>$(TRAKTOR_HOME)/res/Help.xml</sourceFile>
+					<targetPath>Contents/Resources/res</targetPath>
+				</item>
+				<item type="AggregationItem">
+					<sourceFile>$(TRAKTOR_HOME)/res/deploy</sourceFile>
+					<targetPath>Contents/Resources/res</targetPath>
+				</item>
+				<item type="AggregationItem">
+					<sourceFile>$(TRAKTOR_HOME)/res/templates</sourceFile>
+					<targetPath>Contents/Resources/res</targetPath>
+				</item>
+				<item type="AggregationItem">
+					<sourceFile>$(TRAKTOR_HOME)/bin/deploy</sourceFile>
+					<targetPath>Contents/Resources/bin</targetPath>
+				</item>
+				<item type="AggregationItem">
+					<sourceFile>$(TRAKTOR_HOME)/bin/template</sourceFile>
+					<targetPath>Contents/Resources/bin</targetPath>
+				</item>
+				<item type="AggregationItem">
+					<sourceFile>$(TRAKTOR_HOME)/bin/osx</sourceFile>
+					<targetPath>Contents/Resources/bin</targetPath>
+				</item>
+				<item type="AggregationItem">
+					<sourceFile>$(TRAKTOR_HOME)/Traktor.Editor.config</sourceFile>
+					<targetPath>Contents/Resources</targetPath>
+				</item>
+				<item type="AggregationItem">
+					<sourceFile>$(TRAKTOR_HOME)/Traktor.Editor.osx.config</sourceFile>
+					<targetPath>Contents/Resources</targetPath>
+				</item>
+				<item type="AggregationItem">
+					<sourceFile>$(FBX_SDK)/lib/gcc4/ub/libfbxsdk-2013.1.dylib</sourceFile>
+					<targetPath>Contents/MacOS</targetPath>
+				</item>
+				<item type="AggregationItem">
+					<sourceFile>$(TRAKTOR_HOME)/data/Source</sourceFile>
+					<targetPath>Contents/Resources/data</targetPath>
+				</item>
+				<item type="AggregationItem">
+					<sourceFile>$(TRAKTOR_HOME)/data/Assets</sourceFile>
+					<targetPath>Contents/Resources/data</targetPath>
+				</item>
+				<item type="AggregationItem">
+					<sourceFile>$(TRAKTOR_HOME)/bin/latest/ios/releasestatic</sourceFile>
+					<targetPath>Contents/Resources/bin/latest/ios</targetPath>
+				</item>
+				<item type="AggregationItem">
+					<sourceFile>$(TRAKTOR_HOME)/bin/latest/osx/releaseshared</sourceFile>
+					<targetPath>Contents/Resources/bin/latest/osx</targetPath>
+				</item>
+				<item type="AggregationItem">
+					<sourceFile>$(TRAKTOR_HOME)/bin/latest/pnacl/releasestatic</sourceFile>
+					<targetPath>Contents/Resources/bin/latest/pnacl</targetPath>
+				</item>
+			</items>
 			<dependencies>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[1]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[2]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[44]/dependencies/item[2]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[3]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[4]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project/dependencies/item[3]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[5]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[6]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[77]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[7]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[8]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[9]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project/dependencies/item[2]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[27]/dependencies/item[7]/project/dependencies/item[4]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[5]/project/dependencies/item[2]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[11]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[27]/dependencies/item[7]/project/dependencies/item[5]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[13]"/>
-				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[84]/dependencies/item[8]/project"/>
@@ -16941,6 +16765,26 @@
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[71]"/>
+				</item>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[84]/dependencies/item[8]/project/dependencies/item[22]/project"/>
+				</item>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[98]"/>
+				</item>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[96]"/>
+				</item>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[102]"/>
+				</item>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[103]"/>
 				</item>
 			</dependencies>
 		</item>

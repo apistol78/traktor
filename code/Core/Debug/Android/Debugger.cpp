@@ -27,6 +27,11 @@ void Debugger::assertionFailed(const std::string& expression, const std::string&
 #endif
 }
 
+bool Debugger::isDebuggerAttached() const
+{
+	return false;
+}
+
 void Debugger::breakDebugger()
 {
 #if defined(_WIN32)

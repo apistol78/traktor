@@ -3,6 +3,14 @@
 
 #include "Render/OpenGL/Platform.h"
 
+#ifdef __OBJC__
+typedef CAEAGLLayer CAEAGLLayer_t;
+typedef EAGLContext EAGLContext_t;
+#else
+typedef void CAEAGLLayer_t;
+typedef void EAGLContext_t;
+#endif
+
 namespace traktor
 {
 	namespace render
@@ -40,8 +48,8 @@ public:
 	static int32_t getCurrentHeight();
 	
 private:
-	void* m_layer;
-	void* m_context;
+	CAEAGLLayer_t* m_layer;
+	EAGLContext_t* m_context;
 	GLuint m_frameBuffer;
 	GLuint m_renderBuffer;
 	GLuint m_depthBuffer;

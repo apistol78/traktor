@@ -167,7 +167,7 @@ bool UserWidgetCocoa::event_keyDown(NSEvent* theEvent)
 	
 	KeyDownEvent keyEvent(
 		m_owner,
-		VkNull,
+		translateKeyCode(keyCode),
 		keyCode,
 		keyChar
 	);
@@ -188,7 +188,7 @@ bool UserWidgetCocoa::event_keyUp(NSEvent* theEvent)
 	
 	KeyUpEvent keyEvent(
 		m_owner,
-		VkNull,
+		translateKeyCode(keyCode),
 		keyCode,
 		keyChar
 	);
@@ -203,13 +203,15 @@ bool UserWidgetCocoa::event_performKeyEquivalent(NSEvent* theEvent)
 		return false;
 
 	NSString* chs = [theEvent characters];
+	if (!chs || [chs length] <= 0)
+		return false;
 	
 	uint32_t keyCode = [theEvent keyCode];
-	wchar_t keyChar = [chs length] > 0 ? (wchar_t)[chs characterAtIndex: 0] : 0;
+	wchar_t keyChar = (wchar_t)[chs characterAtIndex: 0];
 	
 	KeyEvent keyEvent(
 		m_owner,
-		VkNull,
+		translateKeyCode(keyCode),
 		keyCode,
 		keyChar
 	);

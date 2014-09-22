@@ -1,4 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+-- Ensure product name is valid.
+local productName = environment:get("DEPLOY_EXECUTABLE"):gsub("[.,;:-]", "_")
+
+--!><?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
@@ -7,7 +12,7 @@
 	<key>CFBundleDisplayName</key>
 	<string><!-- output:print(environment:get("DEPLOY_PROJECT_NAME")) --!></string>
 	<key>CFBundleExecutable</key>
-	<string><!-- output:print(environment:get("DEPLOY_EXECUTABLE")) --!></string>
+	<string><!-- output:print(productName) --!></string>
 	<key>CFBundleIdentifier</key>
 	<string><!-- output:print(environment:get("DEPLOY_PROJECT_IDENTIFIER")) --!></string>
 	<key>CFBundleInfoDictionaryVersion</key>

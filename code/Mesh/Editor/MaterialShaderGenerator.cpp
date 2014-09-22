@@ -27,6 +27,7 @@ const Guid c_tplRimParams(L"{57310F3A-FEB0-7644-B641-EC3876773470}");
 const Guid c_tplReflectionParams(L"{859D3A98-EB16-0F4B-A766-34B6D65096AA}");
 const Guid c_tplSpecularParams(L"{68DA66E7-1D9E-FD4C-9692-D947BEA3EBAD}");
 const Guid c_tplTransparencyParams(L"{052265E6-233C-754C-A297-9369803ADB88}");
+const Guid c_tplLightMapParams(L"{2449B257-5B2A-5242-86F9-32105E1F1771}");
 const Guid c_tplVertexParams(L"{AEBE83FB-68D4-9D45-A672-0A8487A197CD}");
 const Guid c_implDiffuseConst(L"{BA68E2CA-77EB-684E-AD2B-0CD4BC35608D}");
 const Guid c_implDiffuseMap0(L"{EE7D62D6-B5A8-DC48-8328-A3513B998DD4}");
@@ -45,12 +46,16 @@ const Guid c_implOutputAdd(L"{321B8969-32D7-D44A-BF91-B056E4728DE2}");
 const Guid c_implOutputAlpha(L"{1CDA749C-D713-974F-8E84-895AFEE8D552}");
 const Guid c_implOutputDecal(L"{31FD2B2B-3D3C-024F-9AA6-544B73D6009C}");
 const Guid c_implOutputMultiply(L"{C635E09A-8DFD-BF40-A863-81301D2388AC}");
+const Guid c_implOutputLightMapDecal(L"{4FFCDA64-4B42-DA46-973E-63C740B06A16}");
 const Guid c_implSpecularConst(L"{6D818781-04A2-2E48-9340-BEFB493F1F9E}");
 const Guid c_implSpecularMap0(L"{208A6FD9-8591-294F-BEAB-B2B872992960}");
 const Guid c_implSpecularMap1(L"{11FB0173-2120-704D-A310-B63172A20768}");
 const Guid c_implTransparencyConst(L"{FD6737C4-582B-0C41-B1C8-9D4E91B93DD2}");
 const Guid c_implTransparencyMap0(L"{F7F9394F-912A-9243-A38D-0A1527920FEF}");
 const Guid c_implTransparencyMap1(L"{63451E3C-CC4E-A245-B721-8498E0AE5D0D}");
+const Guid c_implLightMapNull(L"{F8EAEDCD-67C6-B540-A9D0-40141A7FA267}");
+const Guid c_implLightMap0(L"{DD1F6C98-F5E2-D34B-A5FB-B21CCE3034A2}");
+const Guid c_implLightMap1(L"{54546782-D141-7C48-BF31-FDAC1161516C}");
 const Guid c_implVertex(L"{5CCADFD7-6421-9848-912E-205358848F37}");
 
 class FragmentReaderAdapter : public render::FragmentLinker::IFragmentReader
@@ -113,6 +118,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 	Guid emissiveTexture = lookupTexture(textures, material.getEmissiveMap().name);
 	Guid reflectiveTexture = lookupTexture(textures, material.getReflectiveMap().name);
 	Guid normalTexture = lookupTexture(textures, material.getNormalMap().name);
+	Guid lightMapTexture = lookupTexture(textures, material.getLightMap().name);
 
 	RefArray< render::External > externalNodes;
 	materialShaderGraph->findNodesOf< render::External >(externalNodes);
@@ -145,22 +151,27 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 		}
 		else if (fragmentGuid == c_tplOutput)
 		{
-			switch (material.getBlendOperator())
+			if (lightMapTexture.isNull())
 			{
-			default:
-			case model::Material::BoDecal:
-				(*i)->setFragmentGuid(c_implOutputDecal);
-				break;
-			case model::Material::BoAdd:
-				(*i)->setFragmentGuid(c_implOutputAdd);
-				break;
-			case model::Material::BoMultiply:
-				(*i)->setFragmentGuid(c_implOutputMultiply);
-				break;
-			case model::Material::BoAlpha:
-				(*i)->setFragmentGuid(c_implOutputAlpha);
-				break;
+				switch (material.getBlendOperator())
+				{
+				default:
+				case model::Material::BoDecal:
+					(*i)->setFragmentGuid(c_implOutputDecal);
+					break;
+				case model::Material::BoAdd:
+					(*i)->setFragmentGuid(c_implOutputAdd);
+					break;
+				case model::Material::BoMultiply:
+					(*i)->setFragmentGuid(c_implOutputMultiply);
+					break;
+				case model::Material::BoAlpha:
+					(*i)->setFragmentGuid(c_implOutputAlpha);
+					break;
+				}
 			}
+			else
+				(*i)->setFragmentGuid(c_implOutputLightMapDecal);
 		}
 		else if (fragmentGuid == c_tplRimParams)
 			(*i)->setFragmentGuid(c_implRimConst);
@@ -184,6 +195,13 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 				(*i)->setFragmentGuid(c_implTransparencyConst);
 			else
 				(*i)->setFragmentGuid(material.getTransparencyMap().channel == 0 ? c_implTransparencyMap0 : c_implTransparencyMap1);
+		}
+		else if (fragmentGuid == c_tplLightMapParams)
+		{
+			if (lightMapTexture.isNull())
+				(*i)->setFragmentGuid(c_implLightMapNull);
+			else
+				(*i)->setFragmentGuid(material.getLightMap().channel == 0 ? c_implLightMap0 : c_implLightMap1);
 		}
 		else if (fragmentGuid == c_tplVertexParams)
 			(*i)->setFragmentGuid(c_implVertex);
@@ -288,6 +306,12 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 			transparencyTextureNode->setExternal(transparencyTexture);
 			propagateAnisotropic(materialShaderGraph, transparencyTextureNode, material.getTransparencyMap().anisotropic);
 		}
+		else if (comment == L"Tag_LightMap")
+		{
+			render::Texture* lightMapTextureNode = checked_type_cast< render::Texture* >(*i);
+			lightMapTextureNode->setComment(L"");
+			lightMapTextureNode->setExternal(lightMapTexture);
+		}
 	}
 
 	render::ShaderGraphValidator(materialShaderGraph).validateIntegrity();
@@ -305,6 +329,7 @@ void MaterialShaderGenerator::addDependencies(editor::IPipelineDepends* pipeline
 	pipelineDepends->addDependency(c_tplReflectionParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplSpecularParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplTransparencyParams, editor::PdfUse);
+	pipelineDepends->addDependency(c_tplLightMapParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplVertexParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_implDiffuseConst, editor::PdfUse);
 	pipelineDepends->addDependency(c_implDiffuseMap0, editor::PdfUse);
@@ -323,12 +348,16 @@ void MaterialShaderGenerator::addDependencies(editor::IPipelineDepends* pipeline
 	pipelineDepends->addDependency(c_implOutputAlpha, editor::PdfUse);
 	pipelineDepends->addDependency(c_implOutputDecal, editor::PdfUse);
 	pipelineDepends->addDependency(c_implOutputMultiply, editor::PdfUse);
+	pipelineDepends->addDependency(c_implOutputLightMapDecal, editor::PdfUse);
 	pipelineDepends->addDependency(c_implSpecularConst, editor::PdfUse);
 	pipelineDepends->addDependency(c_implSpecularMap0, editor::PdfUse);
 	pipelineDepends->addDependency(c_implSpecularMap1, editor::PdfUse);
 	pipelineDepends->addDependency(c_implTransparencyConst, editor::PdfUse);
 	pipelineDepends->addDependency(c_implTransparencyMap0, editor::PdfUse);
 	pipelineDepends->addDependency(c_implTransparencyMap1, editor::PdfUse);
+	pipelineDepends->addDependency(c_implLightMapNull, editor::PdfUse);
+	pipelineDepends->addDependency(c_implLightMap0, editor::PdfUse);
+	pipelineDepends->addDependency(c_implLightMap1, editor::PdfUse);
 	pipelineDepends->addDependency(c_implVertex, editor::PdfUse);
 }
 

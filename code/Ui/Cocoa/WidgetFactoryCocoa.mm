@@ -12,6 +12,7 @@
 #include "Ui/Cocoa/ListViewCocoa.h"
 #include "Ui/Cocoa/MenuBarCocoa.h"
 #include "Ui/Cocoa/MessageBoxCocoa.h"
+#include "Ui/Cocoa/PathDialogCocoa.h"
 #include "Ui/Cocoa/PopupMenuCocoa.h"
 #include "Ui/Cocoa/ScrollBarCocoa.h"
 #include "Ui/Cocoa/SliderCocoa.h"
@@ -103,7 +104,7 @@ IPanel* WidgetFactoryCocoa::createPanel(EventSubject* owner)
 
 IPathDialog* WidgetFactoryCocoa::createPathDialog(EventSubject* owner)
 {
-	return 0;
+	return new PathDialogCocoa(owner);
 }
 
 IPopupMenu* WidgetFactoryCocoa::createPopupMenu(EventSubject* owner)

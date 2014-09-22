@@ -86,10 +86,10 @@
 		<item>
 			<platform>{CAE489CE-1592-234F-ADB9-A7D75646B53D}</platform>
 			<deployFiles>
-				<item>Extern.detour.a</item>
-				<item>Extern.recast.a</item>
-				<item>Traktor.Core.a</item>
-				<item>Traktor.Ai.a</item>
+				<item>libExtern.detour.a</item>
+				<item>libExtern.recast.a</item>
+				<item>libTraktor.Core.a</item>
+				<item>libTraktor.Ai.a</item>
 			</deployFiles>
 		</item>		
 	</platforms>

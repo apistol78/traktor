@@ -220,25 +220,27 @@ namespace
 		
 		std::wstring getBuildPhaseCopyFilesUid() const { return calculateUid(m_project, -9); }
 
-		std::wstring getBuildPhaseShellScriptUid() const { return calculateUid(m_project, -13); }
+		std::wstring getBuildPhaseShellScriptUid() const { return calculateUid(m_project, -10); }
+
+		std::wstring getTargetUid() const { return calculateUid(m_project, -11); }
+
+		std::wstring getProductUid() const { return calculateUid(m_project, -12); }
 
 		std::wstring getBuildFileUid(const Path& file) const { return calculateUid(m_project, file, -1); }
+
+		std::wstring getBuildFileCopyFileUid(const Path& file) const { return calculateUid(m_project, file, -2); }
 		
 		std::wstring getBuildFileUid(const Project* dependencyProject) const { return calculateUid(m_project, dependencyProject, -1); }
 
-		std::wstring getBuildFileCopyFileUid(const Path& file) const { return calculateUid(m_project, file, -2); }
-
 		std::wstring getBuildFileCopyFileUid(const Project* dependencyProject) const { return calculateUid(m_project, dependencyProject, -2); }
-
-		std::wstring getTargetUid() const { return calculateUid(m_project, -10); }
-
-		std::wstring getProductUid() const { return calculateUid(m_project, -11); }
 		
-		std::wstring getContainerItemProxy() const { return calculateUid(m_project, -12); }
+		std::wstring getContainerItemProxy(const Project* ownerProject) const { return calculateUid(m_project, ownerProject, -3); }
 
-		std::wstring getTargetDependencyUid(const Project* dependencyProject) const { return calculateUid(m_project, dependencyProject, -3); }
+		std::wstring getContainerItemProxy(const Aggregation* ownerAggregation) const { return calculateUid(m_project, ownerAggregation, -4); }
 
-		std::wstring getExternalProductGroupUid(const Project* dependencyProject) const { return calculateUid(m_project, dependencyProject, -4); }
+		std::wstring getTargetDependencyUid(const Project* dependencyProject) const { return calculateUid(m_project, dependencyProject, -5); }
+
+		std::wstring getExternalProductGroupUid(const Project* dependencyProject) const { return calculateUid(m_project, dependencyProject, -6); }
 
 	private:
 		Ref< const Project > m_project;
@@ -722,7 +724,7 @@ void SolutionBuilderXcode::generatePBXContainerItemProxySection(OutputStream& s,
 			if (j->external || localProjects.find(j->project) != localProjects.end())
 				continue;
 
-			s << L"\t\t" << ProjectUids(j->project).getContainerItemProxy() << L" /* PBXContainerItemProxy */ = {" << Endl;
+			s << L"\t\t" << ProjectUids(j->project).getContainerItemProxy(*i) << L" /* PBXContainerItemProxy */ = {" << Endl;
 			s << L"\t\t\tisa = PBXContainerItemProxy;" << Endl;
 			s << L"\t\t\tcontainerPortal = " << SolutionUids(solution).getProjectUid() << L" /* Project object */;" << Endl;
 			s << L"\t\t\tproxyType = 1;" << Endl;
@@ -748,7 +750,7 @@ void SolutionBuilderXcode::generatePBXContainerItemProxySection(OutputStream& s,
 			if (j->external || localProjects.find(j->project) != localProjects.end())
 				continue;
 
-			s << L"\t\t" << ProjectUids(j->project).getContainerItemProxy() << L" /* PBXContainerItemProxy */ = {" << Endl;
+			s << L"\t\t" << ProjectUids(j->project).getContainerItemProxy(*i) << L" /* PBXContainerItemProxy */ = {" << Endl;
 			s << L"\t\t\tisa = PBXContainerItemProxy;" << Endl;
 			s << L"\t\t\tcontainerPortal = " << SolutionUids(solution).getProjectUid() << L" /* Project object */;" << Endl;
 			s << L"\t\t\tproxyType = 1;" << Endl;
@@ -777,7 +779,7 @@ void SolutionBuilderXcode::generatePBXContainerItemProxySection(OutputStream& s,
 			Configuration::TargetFormat targetFormat = getTargetFormat(j->project);
 			std::wstring externalProductName = getProductName(j->project, targetFormat);
 
-			s << L"\t\t" << ProjectUids(j->project).getContainerItemProxy() << L" /* PBXContainerItemProxy */ = {" << Endl;
+			s << L"\t\t" << ProjectUids(j->project).getContainerItemProxy(*i) << L" /* PBXContainerItemProxy */ = {" << Endl;
 			s << L"\t\t\tisa = PBXContainerItemProxy;" << Endl;
 			s << L"\t\t\tcontainerPortal = " << FileUids(externalXcodeProjectPath).getFileUid() << L" /* " << externalXcodeProjectPath.getFileName() << L" */;" << Endl;
 			s << L"\t\t\tproxyType = 2;" << Endl;
@@ -806,7 +808,7 @@ void SolutionBuilderXcode::generatePBXContainerItemProxySection(OutputStream& s,
 			Configuration::TargetFormat targetFormat = getTargetFormat(j->project);
 			std::wstring externalProductName = getProductName(j->project, targetFormat);
 
-			s << L"\t\t" << ProjectUids(j->project).getContainerItemProxy() << L" /* PBXContainerItemProxy */ = {" << Endl;
+			s << L"\t\t" << ProjectUids(j->project).getContainerItemProxy(*i) << L" /* PBXContainerItemProxy */ = {" << Endl;
 			s << L"\t\t\tisa = PBXContainerItemProxy;" << Endl;
 			s << L"\t\t\tcontainerPortal = " << FileUids(externalXcodeProjectPath).getFileUid() << L" /* " << externalXcodeProjectPath.getFileName() << L" */;" << Endl;
 			s << L"\t\t\tproxyType = 2;" << Endl;
@@ -1417,7 +1419,7 @@ void SolutionBuilderXcode::generatePBXReferenceProxySection(OutputStream& s, con
 			s << L"\t\t\tisa = PBXReferenceProxy;" << Endl;
 			s << L"\t\t\tfileType = \"" << productType << L"\";" << Endl;
 			s << L"\t\t\tpath = \"" << productName << L"\";" << Endl;
-			s << L"\t\t\tremoteRef = " << ProjectUids(j->project).getContainerItemProxy() << L" /* PBXContainerItemProxy */;" << Endl;
+			s << L"\t\t\tremoteRef = " << ProjectUids(j->project).getContainerItemProxy(*i) << L" /* PBXContainerItemProxy */;" << Endl;
 			s << L"\t\t\tsourceTree = BUILT_PRODUCTS_DIR;" << Endl;
 			s << L"\t\t};" << Endl;
 			
@@ -1446,7 +1448,7 @@ void SolutionBuilderXcode::generatePBXReferenceProxySection(OutputStream& s, con
 			s << L"\t\t\tisa = PBXReferenceProxy;" << Endl;
 			s << L"\t\t\tfileType = \"" << productType << L"\";" << Endl;
 			s << L"\t\t\tpath = \"" << productName << L"\";" << Endl;
-			s << L"\t\t\tremoteRef = " << ProjectUids(j->project).getContainerItemProxy() << L" /* PBXContainerItemProxy */;" << Endl;
+			s << L"\t\t\tremoteRef = " << ProjectUids(j->project).getContainerItemProxy(*i) << L" /* PBXContainerItemProxy */;" << Endl;
 			s << L"\t\t\tsourceTree = BUILT_PRODUCTS_DIR;" << Endl;
 			s << L"\t\t};" << Endl;
 
@@ -1627,7 +1629,7 @@ void SolutionBuilderXcode::generatePBXTargetDependencySection(OutputStream& s, c
 				s << L"\t\t" << ProjectUids(*i).getTargetDependencyUid(projectDependency->getProject()) << L" /* PBXTargetDependency */ = {" << Endl;
 				s << L"\t\t\tisa = PBXTargetDependency;" << Endl;
 				s << L"\t\t\ttarget = " << ProjectUids(projectDependency->getProject()).getTargetUid() << L" /* " << projectDependency->getProject()->getName() << L" */;" << Endl;
-				s << L"\t\t\ttargetProxy = " << ProjectUids(projectDependency->getProject()).getContainerItemProxy() << L" /* PBXContainerItemProxy */;" << Endl;
+				s << L"\t\t\ttargetProxy = " << ProjectUids(projectDependency->getProject()).getContainerItemProxy(*i) << L" /* PBXContainerItemProxy */;" << Endl;
 				s << L"\t\t};" << Endl;
 			}
 		}
@@ -1646,7 +1648,7 @@ void SolutionBuilderXcode::generatePBXTargetDependencySection(OutputStream& s, c
 				s << L"\t\t" << AggregationUids(*i).getTargetDependencyUid(projectDependency->getProject()) << L" /* PBXTargetDependency */ = {" << Endl;
 				s << L"\t\t\tisa = PBXTargetDependency;" << Endl;
 				s << L"\t\t\ttarget = " << ProjectUids(projectDependency->getProject()).getTargetUid() << L" /* " << projectDependency->getProject()->getName() << L" */;" << Endl;
-				s << L"\t\t\ttargetProxy = " << ProjectUids(projectDependency->getProject()).getContainerItemProxy() << L" /* PBXContainerItemProxy */;" << Endl;
+				s << L"\t\t\ttargetProxy = " << ProjectUids(projectDependency->getProject()).getContainerItemProxy(*i) << L" /* PBXContainerItemProxy */;" << Endl;
 				s << L"\t\t};" << Endl;
 			}
 		}
@@ -1771,17 +1773,17 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 			}
 			s << L"'${DERIVED_FILES_DIR}'\";" << Endl;
 
-			s << L"\t\t\t\tPRODUCT_NAME = \"" << (*i)->getName() << L"\";" << Endl;
+			s << L"\t\t\t\tPRODUCT_NAME = \"" << getProductNameNoSuffix(*i, configurations[0]->getTargetFormat()) << L"\";" << Endl;
 			if (!plistFile.empty())
 				s << L"\t\t\t\tINFOPLIST_FILE = \"" << plistFile << L"\";" << Endl;
 			
 			if (configurations[0]->getTargetFormat() == Configuration::TfSharedLibrary)
-				s << L"\t\t\t\tINSTALL_PATH = \"@loader_path\";" << Endl;
+				s << L"\t\t\t\tINSTALL_PATH = \"@executable_path\";" << Endl;
 
 			if (
-				configurations[1]->getTargetFormat() == Configuration::TfSharedLibrary ||
-				configurations[1]->getTargetFormat() == Configuration::TfExecutable ||
-				configurations[1]->getTargetFormat() == Configuration::TfExecutableConsole
+				configurations[0]->getTargetFormat() == Configuration::TfSharedLibrary ||
+				configurations[0]->getTargetFormat() == Configuration::TfExecutable ||
+				configurations[0]->getTargetFormat() == Configuration::TfExecutableConsole
 			)
 			{
 				const std::vector< std::wstring >& libraryPaths = configurations[0]->getLibraryPaths();
@@ -1884,12 +1886,12 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 			}
 			s << L"'${DERIVED_FILES_DIR}'\";" << Endl;
 			
-			s << L"\t\t\t\tPRODUCT_NAME = \"" << (*i)->getName() << L"\";" << Endl;
+			s << L"\t\t\t\tPRODUCT_NAME = \"" << getProductNameNoSuffix(*i, configurations[1]->getTargetFormat()) << L"\";" << Endl;
 			if (!plistFile.empty())
 				s << L"\t\t\t\tINFOPLIST_FILE = \"" << plistFile << L"\";" << Endl;
 
 			if (configurations[1]->getTargetFormat() == Configuration::TfSharedLibrary)
-				s << L"\t\t\t\tINSTALL_PATH = \"@loader_path\";" << Endl;
+				s << L"\t\t\t\tINSTALL_PATH = \"@executable_path\";" << Endl;
 
 			if (
 				configurations[1]->getTargetFormat() == Configuration::TfSharedLibrary ||
@@ -2064,7 +2066,23 @@ std::wstring SolutionBuilderXcode::getProductName(const Project* project, Config
 	case Configuration::TfStaticLibrary:
 		return L"lib" + project->getName() + L".a";
 	case Configuration::TfSharedLibrary:
-		return project->getName() + L".dylib";
+		return L"lib" + project->getName() + L".dylib";
+	case Configuration::TfExecutable:
+		return project->getName();
+	case Configuration::TfExecutableConsole:
+		return project->getName();
+	}
+	return L"";
+}
+
+std::wstring SolutionBuilderXcode::getProductNameNoSuffix(const Project* project, Configuration::TargetFormat targetFormat) const
+{
+	switch (targetFormat)
+	{
+	case Configuration::TfStaticLibrary:
+		return project->getName();
+	case Configuration::TfSharedLibrary:
+		return L"lib" + project->getName();
 	case Configuration::TfExecutable:
 		return project->getName();
 	case Configuration::TfExecutableConsole:

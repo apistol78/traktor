@@ -170,11 +170,13 @@ uint32_t getClusterId(const btCollisionObject* collisionObject)
 
 struct ClosestConvexExcludeResultCallback : public btCollisionWorld::ClosestConvexResultCallback
 {
+	const BodyBullet* m_ignoreBody;
 	uint32_t m_group;
 	uint32_t m_ignoreClusterId;
 
-	ClosestConvexExcludeResultCallback(uint32_t group, uint32_t ignoreClusterId, const btVector3& convexFromWorld, const btVector3& convexToWorld)
+	ClosestConvexExcludeResultCallback(const BodyBullet* ignoreBody, uint32_t group, uint32_t ignoreClusterId, const btVector3& convexFromWorld, const btVector3& convexToWorld)
 	:	btCollisionWorld::ClosestConvexResultCallback(convexFromWorld, convexToWorld)
+	,	m_ignoreBody(ignoreBody)
 	,	m_group(group)
 	,	m_ignoreClusterId(ignoreClusterId)
 	{
@@ -183,6 +185,9 @@ struct ClosestConvexExcludeResultCallback : public btCollisionWorld::ClosestConv
 	virtual	btScalar addSingleResult(btCollisionWorld::LocalConvexResult& convexResult, bool normalInWorldSpace)
 	{
 		T_ASSERT (convexResult.m_hitFraction <= m_closestHitFraction);
+
+		if (m_ignoreBody == static_cast< BodyBullet* >(convexResult.m_hitCollisionObject->getUserPointer()))
+			return 1.0f;
 
 		if (m_ignoreClusterId != 0 && getClusterId(convexResult.m_hitCollisionObject) == m_ignoreClusterId)
 			return 1.0f;
@@ -1380,7 +1385,7 @@ bool PhysicsManagerBullet::querySweep(
 	to.setIdentity();
 	to.setOrigin(toBtVector3(at + direction * Scalar(maxLength)));
 
-	ClosestConvexExcludeResultCallback callback(group, ignoreClusterId, from.getOrigin(), to.getOrigin());
+	ClosestConvexExcludeResultCallback callback(0, group, ignoreClusterId, from.getOrigin(), to.getOrigin());
 	m_dynamicsWorld->convexSweepTest(
 		&sphereShape,
 		from,
@@ -1426,7 +1431,10 @@ bool PhysicsManagerBullet::querySweep(
 	{
 		btCompoundShape* compoundShape = static_cast< btCompoundShape* >(shape);
 		if (compoundShape->getNumChildShapes() > 0)
+		{
 			localRotation = compoundShape->getChildTransform(0).getRotation();
+			shape = compoundShape->getChildShape(0);
+		}
 	}
 
 	// Ensure shape is a convex shape; required when performing sweep test.
@@ -1443,7 +1451,7 @@ bool PhysicsManagerBullet::querySweep(
 	to.setRotation(toBtQuaternion(orientation) * localRotation);
 	to.setOrigin(toBtVector3(at + direction * Scalar(maxLength)));
 
-	ClosestConvexExcludeResultCallback callback(group, ignoreClusterId, from.getOrigin(), to.getOrigin());
+	ClosestConvexExcludeResultCallback callback(checked_type_cast< const BodyBullet* >(body), group, ignoreClusterId, from.getOrigin(), to.getOrigin());
 	m_dynamicsWorld->convexSweepTest(
 		static_cast< const btConvexShape* >(shape),
 		from,

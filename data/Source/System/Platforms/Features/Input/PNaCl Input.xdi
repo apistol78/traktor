@@ -7,8 +7,8 @@
 			<platform>{CAE489CE-1592-234F-ADB9-A7D75646B53D}</platform>
 			<executableFile/>
 			<deployFiles>
-				<item>Traktor.Input.a</item>
-				<item>Traktor.Input.PNaCl.a</item>
+				<item>libTraktor.Input.a</item>
+				<item>libTraktor.Input.PNaCl.a</item>
 			</deployFiles>
 		</item>
 	</platforms>

@@ -61,6 +61,11 @@ void Debugger::assertionFailed(const std::string& expression, const std::string&
 	}
 }
 
+bool Debugger::isDebuggerAttached() const
+{
+	return false;
+}
+
 void Debugger::breakDebugger()
 {
 	DebugBreak();

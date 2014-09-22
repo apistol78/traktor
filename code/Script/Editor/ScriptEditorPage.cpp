@@ -150,7 +150,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	m_edit->addImage(ui::Bitmap::load(c_ResourceEditor, sizeof(c_ResourceEditor), L"png"), 1);
 
 #if defined(__APPLE__)
-	m_edit->setFont(ui::Font(L"Courier New", 14));
+	m_edit->setFont(ui::Font(L"Menlo Regular", 11));
 #elif defined(__LINUX__)
 	m_edit->setFont(ui::Font(L"Courier New", 14));
 #else

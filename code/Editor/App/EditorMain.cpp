@@ -1,9 +1,11 @@
 #if defined(_DEBUG)
 #	include "Core/CycleRefDebugger.h"
 #endif
+#include "Core/Debug/Debugger.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/Split.h"
+#include "Core/System/OS.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Editor/App/EditorForm.h"
@@ -51,6 +53,27 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 #if 0
 	CycleRefDebugger cycleDebugger;
 	Object::setReferenceDebugger(&cycleDebugger);
+#endif
+
+#if defined(__APPLE__)
+	// Everything should live inside the bundle and not have
+	// a special location in the file system; thus we override
+	// our special environment variable to point to our bundle.
+	if (!Debugger::getInstance().isDebuggerAttached())
+	{
+		std::wstring bundlePath;
+		if (OS::getInstance().getEnvironment(L"BUNDLE_PATH", bundlePath))
+			setenv("TRAKTOR_HOME", wstombs(bundlePath + L"/Contents/Resources").c_str(), 1);
+	}
+
+	// Log some relevant environment variables to ease debugging.
+	std::wstring check;
+
+	OS::getInstance().getEnvironment(L"TRAKTOR_HOME", check);
+	log::info << L"TRAKTOR_HOME = \"" << check << L"\"" << Endl;
+
+	OS::getInstance().getEnvironment(L"DYLD_LIBRARY_PATH", check);
+	log::info << L"DYLD_LIBRARY_PATH = \"" << check << L"\"" << Endl;
 #endif
 
 	ui::Application::getInstance()->initialize(

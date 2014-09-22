@@ -76,8 +76,8 @@
 		<item>
 			<platform>{CAE489CE-1592-234F-ADB9-A7D75646B53D}</platform>
 			<deployFiles>
-				<item>Traktor.Core.a</item>
-				<item>Traktor.Resource.a</item>
+				<item>libTraktor.Core.a</item>
+				<item>libTraktor.Resource.a</item>
 			</deployFiles>
 		</item>		
 	</platforms>

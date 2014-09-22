@@ -15,6 +15,11 @@ void Debugger::assertionFailed(const std::string& expression, const std::string&
 	assert (0);
 }
 
+bool Debugger::isDebuggerAttached() const
+{
+	return false;
+}
+
 void Debugger::breakDebugger()
 {
 	assert (0);

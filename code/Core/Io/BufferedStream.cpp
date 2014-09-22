@@ -60,22 +60,24 @@ void BufferedStream::close()
 
 bool BufferedStream::canRead() const
 {
-	return m_stream->canRead();
+	return m_stream ? m_stream->canRead() : false;
 }
 
 bool BufferedStream::canWrite() const
 {
-	return m_stream->canWrite();
+	return m_stream ? m_stream->canWrite() : false;
 }
 
 bool BufferedStream::canSeek() const
 {
-	return m_stream->canSeek();
+	return m_stream ? m_stream->canSeek() : false;
 }
 
 int BufferedStream::tell() const
 {
-	if (m_stream->canRead())
+	if (!m_stream)
+		return 0;
+	else if (m_stream->canRead())
 		return m_stream->tell() - m_readBufCnt[1] + m_readBufCnt[0];
 	else if (m_stream->canWrite())
 		return m_stream->tell() + m_writeBufCnt;
@@ -85,7 +87,9 @@ int BufferedStream::tell() const
 
 int BufferedStream::available() const
 {
-	if (m_stream->canRead())
+	if (!m_stream)
+		return 0;
+	else if (m_stream->canRead())
 		return m_stream->available() + (m_readBufCnt[1] - m_readBufCnt[0]);
 	else
 		return m_stream->available();
@@ -93,6 +97,9 @@ int BufferedStream::available() const
 
 int BufferedStream::seek(SeekOriginType origin, int offset)
 {
+	if (!m_stream)
+		return -1;
+
 	if (m_stream->canRead())
 	{
 		int32_t readBufAvail = m_readBufCnt[1] - m_readBufCnt[0];
@@ -152,6 +159,9 @@ int BufferedStream::seek(SeekOriginType origin, int offset)
 
 int BufferedStream::read(void* block, int nbytes)
 {
+	if (!m_stream)
+		return 0;
+
 	uint8_t* out = static_cast< uint8_t* >(block);
 	uint8_t* end = out + nbytes;
 
@@ -212,6 +222,9 @@ int BufferedStream::read(void* block, int nbytes)
 int BufferedStream::write(const void* block, int nbytes)
 {
 	int nwritten = 0;
+
+	if (!m_stream)
+		return 0;
 
 	if (nbytes < int32_t(m_internalBufferSize))
 	{

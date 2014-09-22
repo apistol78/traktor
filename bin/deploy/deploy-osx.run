@@ -1,5 +1,13 @@
 
 
+function string:split(sep)
+	local sep, fields = sep or ":", {}
+	local pattern = string.format("([^%s]+)", sep)
+	self:gsub(pattern, function(c) fields[#fields+1] = c end)
+	return fields
+end
+
+
 function build(args)
 	stdout:printLn("Building asset(s)...")
 	local cmdline = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App -p -standalone -s=Pipeline"
@@ -11,25 +19,49 @@ end
 
 
 function deploy(args)
-	-- Deploy application configuration to target.
-	stdout:printLn("Deploying resources to target host...")
-	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) Application.config", "(null)")
-	if run:exitCode() ~= 0 then return run:exitCode() end
+	local executable = os:getEnvironment("DEPLOY_EXECUTABLE")
+	local bundle = os:getEnvironment("DEPLOY_PROJECT_NAME"):gsub("%s", "") .. ".app"
 
-	-- Deploy binaries to target.
-	stdout:printLn("Deploying binaries to target host...")
-	run:pushd("$(DEPLOY_SYSTEM_ROOT)/bin/latest/osx/releaseshared")
-	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) *.*", "(null)")
-	if run:exitCode() ~= 0 then return run:exitCode() end
+	-- Create application bundle.
+	run:mkdir(bundle .. "/Contents/MacOS")
+	run:mkdir(bundle .. "/Contents/Resources")
+
+	run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/osx/Info.plist.template", bundle .. "/Contents/Info.plist")
+	run:replace("$(DEPLOY_SYSTEM_ROOT)/res/deploy/osx/Icon.icns", bundle .. "/Contents/Icon.icns")
+	run:replace("Application.config", bundle .. "/Contents/Resources/Application.config")
+	
+	-- Copy binaries into bundle.
+	local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
+	for _, f in ipairs(files) do
+		run:replace("$(DEPLOY_SYSTEM_ROOT)/bin/latest/osx/releaseshared/" .. f, bundle .. "/Contents/MacOS/" .. f)
+	end
+
+	-- Deploy bundle to target.
+	stdout:printLn("Deploying application to target host...")
+	run:pushd(bundle)
+	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy -recursive -target-base=" .. bundle .. " $(DEPLOY_TARGET_HOST) *", "(null)")
+	if run:exitCode() ~= 0 then
+		stderr:printLn("Failed to deploy application to target.")
+		return run:exitCode()
+	end	
 	run:popd()
 
+	-- Create launcher script.
+	local f = fileSystem:open(Path("launch.sh"), 2)
+	local s = StreamOutput(f, Utf8Encoding())
+	s:printLn("chmod u+x " .. bundle .. "/Contents/MacOS/*")
+	s:printLn(bundle .. "/Contents/MacOS/" .. executable .. " -s")
+	f:close()
+
+	-- Deploy launcher script.
+	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) launch.sh", "(null)")
 	return 0
 end
 
 
 function launch(args)
 	stdout:printLn("Launching OSX...")
-	return run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteLaunch $(DEPLOY_TARGET_HOST) $(DEPLOY_EXECUTABLE) \\-s Application.config", "(null)")
+	return run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteLaunch $(DEPLOY_TARGET_HOST) launch.sh", "(null)")
 end
 
 

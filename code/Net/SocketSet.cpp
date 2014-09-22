@@ -1,6 +1,10 @@
 #include <algorithm>
-#include "Net/SocketSet.h"
+#if !defined(_WIN32)
+#	include <poll.h>
+#endif
+#include "Core/Containers/StaticVector.h"
 #include "Net/Socket.h"
+#include "Net/SocketSet.h"
 
 namespace traktor
 {
@@ -36,6 +40,33 @@ Ref< Socket > SocketSet::get(int index) const
 
 int SocketSet::select(bool read, bool write, bool except, int timeout, SocketSet& outResultSet)
 {
+#if !defined(_WIN32)
+	StaticVector< struct pollfd, 128 > fds;
+
+	for (uint32_t i = 0; i < m_sockets.size(); ++i)
+	{
+		struct pollfd& fd = fds.push_back();
+
+		fd.fd = m_sockets[i]->handle();
+		fd.events = 0;
+		fd.revents = 0;
+
+		if (read || except)
+			fd.events |= POLLIN;
+		if (write)
+			fd.events |= POLLOUT;
+	}
+
+	int32_t rv = ::poll(fds, fds.size(), timeout);
+	if (rv <= 0)
+		return 0;
+
+	for (uint32_t i = 0; i < m_sockets.size(); ++i)
+	{
+		if (fds[i].revents != 0)
+			outResultSet.add(m_sockets[i]);
+	}
+#else
 	timeval to = { timeout / 1000, (timeout % 1000) * 1000 };
 	fd_set* fds[] = { 0, 0, 0 };
 	fd_set readfds, writefds, exceptfds;
@@ -65,13 +96,8 @@ int SocketSet::select(bool read, bool write, bool except, int timeout, SocketSet
 		fds[2] = &exceptfds;
 	}
 
-#if !defined(_PS3)
 	if (::select(0, fds[0], fds[1], fds[2], &to) > 0)
-#else
-	if (socketselect(0, fds[0], fds[1], fds[2], &to) > 0)
-#endif
 	{
-#if defined(_WIN32)
 		for (int ii = 0; ii < 3; ++ii)
 		{
 			if (!fds[ii])
@@ -88,10 +114,8 @@ int SocketSet::select(bool read, bool write, bool except, int timeout, SocketSet
 				}
 			}
 		}
-#else
-#pragma warning("Not implemented")
-#endif
 	}
+#endif
 
 	return outResultSet.count();
 }

@@ -1,8 +1,14 @@
 
 
+function string:trim()
+	return self:find'^%s*$' and '' or self:match'^%s*(.*%S)'
+end
+
+
 function string:starts(start)
    return string.sub(self, 1, string.len(start)) == start
 end
+
 
 function string:split(sep)
 	local sep, fields = sep or ":", {}
@@ -12,9 +18,33 @@ function string:split(sep)
 end
 
 
+function findPython()
+	local host = os:getEnvironment("DEPLOY_HOST_OS")
+	if host == "win32" or host == "win64" then
+		return "C:/Python27/python"
+	elseif host == "osx" or host == "linux" then
+		return "/usr/bin/python"
+	else
+		return nil
+	end	
+end
+
+
+function findChrome()
+	local host = os:getEnvironment("DEPLOY_HOST_OS")
+	if host == "win32" or host == "win64" then
+		return "\"C:/Program Files (x86)/Google/Chrome/Application/chrome.exe\""
+	elseif host == "osx" then
+		return "\"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\""
+	else
+		return nil
+	end
+end
+
+
 function build(args)
 	stdout:printLn("Building asset(s)...")
-	local cmdline = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App -p -s=Pipeline"
+	local cmdline = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App -p -standalone -s=Pipeline"
 	for i = 1, args:size() - 1 do
 		cmdline = cmdline .. " " .. args:get(i)
 	end
@@ -25,10 +55,42 @@ end
 function deploy(args)
 	stdout:printLn("Deploying PNaCl...")
 
-	local debug = false
-	local clang = "$(NACL_SDK_ROOT)/toolchain/win_pnacl/bin/pnacl-clang++.bat"
-	local finalize = "$(NACL_SDK_ROOT)/toolchain/win_pnacl/bin/pnacl-finalize.bat"
+	local host = os:getEnvironment("DEPLOY_HOST_OS")
+	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
+
+	-- Determine Python executable location.
+	local python = findPython()
+	if python == nil then
+		stderr:printLn("Unable to determine Python location.")
+		return 1
+	end
+
+	local naclSdk = os:getEnvironment("NACL_SDK_ROOT")
+	if #naclSdk <= 0 then
+		stderr:printLn("NACL_SDK_ROOT not set; ensure NaCl SDK is properly installed and try again.")
+		return 1
+	end
+
+	local naclConfig = python .. " " .. naclSdk .. "/tools/nacl_config.py"
 	local defaultLibraries = "-lpthread -lppapi -lppapi_cpp -lnacl_io -lppapi_gles2"
+
+	-- Get toolchain binaries.
+	run:execute(naclConfig .. " -t pnacl --tool=c++", "(null)")
+	local clang = run:stdOut():trim()
+
+	run:execute(naclConfig .. " -t pnacl --tool=finalize", "(null)")
+	local finalize = run:stdOut():trim()
+
+	if #clang <= 0 or #finalize <= 0 then
+		stderr:printLn("Unable to determine toolchain binaries; ensure NaCl SDK is properly installed and try again.")
+		return 1
+	end
+
+	-- As toolchain binaries on Windows are actually bat-file wrappers we need to append suffix.
+	if host == "win32" or host == "win64" then
+		clang = clang .. ".bat"
+		finalize = finalize .. ".bat"
+	end
 
 	-- Ensure debug symbols are kept when linking.
 	if debug then
@@ -40,6 +102,7 @@ function deploy(args)
 	if not debug then
 	 	prepend = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/pnacl/releasestatic/"
 	else
+		stdout:printLn("Using *DEBUG* binaries")
 	 	prepend = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/pnacl/debugstatic/"
 	end
 
@@ -54,7 +117,7 @@ function deploy(args)
 			f = f:sub(1, string.len(f) - 2) .. "_d.a"
 		end
 
-		if f:starts("Extern") then
+		if f:starts("libExtern") then
 			externalLinkFiles = externalLinkFiles .. prepend .. f .. " "
 		else
 			wholeLinkFiles = wholeLinkFiles .. prepend .. f .. " "
@@ -62,7 +125,7 @@ function deploy(args)
 	end
 
 	-- Link files into an executable product.
-	local cmd = clang .. " -L$(NACL_SDK_ROOT)/lib/pnacl/Release -Xlinker --whole-archive " .. wholeLinkFiles .. " -Xlinker --no-whole-archive " .. externalLinkFiles .. " " .. defaultLibraries .. " -o $(DEPLOY_EXECUTABLE).unfinal.pexe"
+	local cmd = clang .. " -L$(NACL_SDK_ROOT)/lib/pnacl/Release -Wl,--whole-archive " .. wholeLinkFiles .. "-Wl,--no-whole-archive " .. externalLinkFiles .. defaultLibraries .. " -o $(DEPLOY_EXECUTABLE).unfinal.pexe"
 	local result = run:execute(cmd)
 	if result ~= 0 then
 		stderr:printLn("Unable to build executable product.")
@@ -91,7 +154,7 @@ function deploy(args)
 	end
 
 	run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/pnacl/manifest.json.template", "$(DEPLOY_PROJECT_NAME)/manifest.json")
-	run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/pnacl/run-nacl.html.template", "$(DEPLOY_PROJECT_NAME)/run-nacl.html")
+	run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/pnacl/index.html.template", "$(DEPLOY_PROJECT_NAME)/index.html")
 
 	return 0
 end
@@ -100,9 +163,23 @@ end
 function launch(args)
 	stdout:printLn("Launching PNaCl...")
 
-	local chrome = "\"C:/Program Files (x86)/Google/Chrome/Application/chrome.exe\""
+	local chrome = findChrome()
+	if chrome == nil then
+		stderr:printLn("Unable to determine Chrome location.")
+		return 1
+	end
 
-	local result = run:execute(chrome .. " --no-default-browser-check --no-first-run --user-data-dir=$(DEPLOY_OUTPUT_PATH)/temp/chrome_debug_profile --allow-nacl-socket-api=localhost http://localhost:5103/run-nacl.html")
+	local python = findPython()
+	if python == nil then
+		stderr:printLn("Unable to determine Python location.")
+		return 1
+	end
+
+	-- Launch HTTP server; detach process as we don't want to block on it.
+	os:execute(python .. " $(NACL_SDK_ROOT)/tools/httpd.py --no_dir_check", "$(DEPLOY_PROJECT_NAME)", nil, false, false, true)
+
+	-- Launch Chrome with custom debugging profile.
+	local result = run:execute(chrome .. " --no-default-browser-check --no-first-run --user-data-dir=$(DEPLOY_OUTPUT_PATH)/temp/chrome_debug_profile --allow-nacl-socket-api=localhost http://localhost:5103")
 	if result ~= 0 then
 		stderr:printLn("Unable to launch Chrome.")
 		return 1

@@ -3,13 +3,13 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleName</key>
-	<string>$DEPLOY_PROJECT_NAME</string>
+	<string><!-- output:print(os:getEnvironment("DEPLOY_PROJECT_NAME")) --!></string>
 	<key>CFBundleIdentifier</key>
-	<string>$DEPLOY_PROJECT_IDENTIFIER</string>
+	<string><!-- output:print(os:getEnvironment("DEPLOY_PROJECT_IDENTIFIER")) --!></string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleExecutable</key>
-	<string>$DEPLOY_EXECUTABLE</string>
+	<string><!-- output:print(os:getEnvironment("DEPLOY_EXECUTABLE")) --!></string>
 	<key>CFBundleIconFile</key>
 	<string>Icon.icns</string>
 	<key>DEAConfiguration</key>

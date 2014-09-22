@@ -98,6 +98,7 @@ bool SahTree::queryClosestIntersection(const Vector4& origin, const Vector4& dir
 				{
 					if (T >= -F && T <= outResult.distance)
 					{
+						outResult.index = *i;
 						outResult.distance = T;
 						outResult.position = origin + direction * T;
 						result = true;
