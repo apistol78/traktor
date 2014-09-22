@@ -126,13 +126,13 @@
 		<item>
 			<platform>{CAE489CE-1592-234F-ADB9-A7D75646B53D}</platform>
 			<deployFiles>
-				<item>Traktor.Core.a</item>
-				<item>Traktor.Database.a</item>
-				<item>Traktor.Mesh.a</item>
-				<item>Traktor.Render.a</item>
-				<item>Traktor.Resource.a</item>
-				<item>Traktor.Sound.a</item>
-				<item>Traktor.World.a</item>
+				<item>libTraktor.Core.a</item>
+				<item>libTraktor.Database.a</item>
+				<item>libTraktor.Mesh.a</item>
+				<item>libTraktor.Render.a</item>
+				<item>libTraktor.Resource.a</item>
+				<item>libTraktor.Sound.a</item>
+				<item>libTraktor.World.a</item>
 			</deployFiles>
 		</item>	
 	</platforms>

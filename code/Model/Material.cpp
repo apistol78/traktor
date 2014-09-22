@@ -107,6 +107,16 @@ const Material::Map& Material::getNormalMap() const
 	return m_normalMap;
 }
 
+void Material::setLightMap(const Map& lightMap)
+{
+	m_lightMap = lightMap;
+}
+
+const Material::Map& Material::getLightMap() const
+{
+	return m_lightMap;
+}
+
 void Material::setColor(const Color4ub& color)
 {
 	m_color = color;

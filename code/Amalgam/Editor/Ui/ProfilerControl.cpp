@@ -1,3 +1,4 @@
+#include <cmath>
 #include "Amalgam/Editor/Ui/ProfilerControl.h"
 #include "Core/Math/Const.h"
 

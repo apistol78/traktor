@@ -1,17 +1,17 @@
 @echo off
 
-rem Setup VC environment variables.
-call "C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\vcvarsall.bat"
+:: Setup VC environment variables.
+call "C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\vcvarsall.bat"
 
-rem Setup our build environment.
+:: Setup our build environment.
 call %~dp0../config.bat
 
-rem Remove old log.
+:: Remove old log.
 del /F /Q %~dp0autobuild-win64.log
 
-rem Rebuild entire solution.
+:: Rebuild entire solution.
 pushd %TRAKTOR_HOME%
-call build-projects-vs2008-win64.bat
+call build-projects-vs2012-win64.bat
 devenv "build\win64\Traktor Win64.sln" /Build DebugShared /Out %~dp0autobuild-win64.log
 devenv "build\win64\Traktor Win64.sln" /Build ReleaseShared /Out %~dp0autobuild-win64.log
 popd

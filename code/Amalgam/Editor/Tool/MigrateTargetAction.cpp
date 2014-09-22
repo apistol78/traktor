@@ -10,6 +10,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/PropertyStringSet.h"
@@ -210,6 +211,7 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 	envmap[L"DEPLOY_MODULES"] = implode(runtimeModules.begin(), runtimeModules.end(), L" ");
 	envmap[L"DEPLOY_OUTPUT_PATH"] = m_outputPath;
 	envmap[L"DEPLOY_CERTIFICATE"] = m_globalSettings->getProperty< PropertyString >(L"Amalgam.Certificate", L"");
+	envmap[L"DEPLOY_DEBUG"] = (m_globalSettings->getProperty< PropertyBoolean >(L"Amalgam.UseDebugBinaries", false) ? L"YES" : L"");
 
 	const DeployTool& deployTool = platform->getDeployTool();
 	envmap.insert(deployTool.getEnvironment().begin(), deployTool.getEnvironment().end());

@@ -7,8 +7,8 @@
     <keyword>Win32Proj</keyword>
   	<toolset>v110</toolset>
   	<targetPrefixes>
-  		<item/>
-  		<item/>
+  		<item>lib</item>
+  		<item>lib</item>
   		<item/>
   		<item/>
   	</targetPrefixes>

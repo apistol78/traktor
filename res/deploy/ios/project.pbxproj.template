@@ -1,6 +1,5 @@
 <!--
 
--- Determine all libraries which must be linked.
 
 function table.find(t, val)
 	for _, v in ipairs(t) do
@@ -11,20 +10,34 @@ function table.find(t, val)
 	return false
 end
 
-local deployModules = "Traktor.Amalgam.App " .. environment:get("DEPLOY_MODULES")
-local modules = {}
 
-for module in deployModules:gmatch("[%w%.%-%_]+") do
-	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/SolutionBuilder -f=dependencies $(TRAKTOR_HOME)/TraktorIOS.xms -p=" .. module, "null")
-	for m in run:stdOut():gmatch("[%w%.%-%_]+") do
-		if not table.find(modules, m) then
-			table.insert(modules, m)
-		end
-	end
+function string:split(sep)
+	local sep, fields = sep or ":", {}
+	local pattern = string.format("([^%s]+)", sep)
+	self:gsub(pattern, function(c) fields[#fields+1] = c end)
+	return fields
 end
 
-local additional = {}
 
+-- Ensure product name is valid.
+local productName = environment:get("DEPLOY_EXECUTABLE"):gsub("[.,;:-]", "_")
+
+
+-- Determine all libraries which must be linked.
+local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
+local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
+local modules = {}
+for _, f in ipairs(files) do
+	-- Append "_d" to each file; indicating a debug build.
+	if debug then
+		f = f:sub(1, string.len(f) - 2) .. "_d.a"
+	end
+	table.insert(modules, f)
+end
+
+
+-- Accumulate, and generate UID for, each additional file.
+local additional = {}
 for i = 0, args:size() - 1 do
 	local a = {}
 	a.file = args:get(i)
@@ -32,6 +45,7 @@ for i = 0, args:size() - 1 do
 	a.buildRef = "2711EBA718DDB14D006F000" .. i
 	table.insert(additional, a)
 end
+
 
 --!>// !$*UTF8*$!
 {
@@ -297,7 +311,7 @@ end
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
-				VALID_ARCHS = armv7;
+				VALID_ARCHS = "armv7 armv7s";
 			};
 			name = Debug;
 		};
@@ -315,7 +329,7 @@ end
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
-				VALID_ARCHS = armv7;
+				VALID_ARCHS = "armv7 armv7s";
 			};
 			name = Release;
 		};
@@ -332,15 +346,15 @@ end
 				USE_HEADERMAP = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				USER_HEADER_SEARCH_PATHS = "'${DERIVED_FILES_DIR}'";
-				PRODUCT_NAME = "<!-- output:print(environment:get("DEPLOY_EXECUTABLE")) --!>";
+				PRODUCT_NAME = "<!-- output:print(productName) --!>";
 				INFOPLIST_FILE = "Info.plist";
 				OTHER_LDFLAGS = (
 <!--
 for _, module in ipairs(modules) do
-	if string.sub(module, 1, 6) ~= "Extern" then
+	if string.sub(module, 1, 9) ~= "libExtern" then
 		output:printLn("					\"-force_load\",")
 	end
-	output:printLn("					\"lib" .. module .. ".a\",")
+	output:printLn("					\"" .. module .. "\",")
 end
 --!>				);
 			};
@@ -357,15 +371,15 @@ end
 				USE_HEADERMAP = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				USER_HEADER_SEARCH_PATHS = "'${DERIVED_FILES_DIR}'";
-				PRODUCT_NAME = "<!-- output:print(environment:get("DEPLOY_EXECUTABLE")) --!>";
+				PRODUCT_NAME = "<!-- output:print(productName) --!>";
 				INFOPLIST_FILE = "Info.plist";
 				OTHER_LDFLAGS = (
 <!--
 for _, module in ipairs(modules) do
-	if string.sub(module, 1, 6) ~= "Extern" then
+	if string.sub(module, 1, 9) ~= "libExtern" then
 		output:printLn("					\"-force_load\",")
 	end
-	output:printLn("					\"lib" .. module .. ".a\",")
+	output:printLn("					\"" .. module .. "\",")
 end
 --!>				);
 			};

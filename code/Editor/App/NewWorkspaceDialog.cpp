@@ -105,6 +105,8 @@ void NewWorkspaceDialog::eventBrowsePathButtonClick(ui::ButtonClickEvent* event)
 	pathDialog.create(this, i18n::Text(L"EDITOR_NEW_WORKSPACE_PATH"));
 	if (pathDialog.showModal(path) == ui::DrOk)
 		m_editPath->setText(path.getPathName());
+
+	pathDialog.destroy();
 }
 
 void NewWorkspaceDialog::eventDialogClick(ui::ButtonClickEvent* event)

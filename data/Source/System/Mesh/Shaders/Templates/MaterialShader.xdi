@@ -4,7 +4,7 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>468</first>
+				<first>469</first>
 				<second>70</second>
 			</position>
 			<fragmentGuid>{4AC7418D-FF43-FE40-ADDC-33A162636FDC}</fragmentGuid>
@@ -31,7 +31,7 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>430</first>
+				<first>431</first>
 				<second>147</second>
 			</position>
 			<fragmentGuid>{68DA66E7-1D9E-FD4C-9692-D947BEA3EBAD}</fragmentGuid>
@@ -58,7 +58,7 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>446</first>
+				<first>447</first>
 				<second>378</second>
 			</position>
 			<fragmentGuid>{77489017-FBE8-4A4F-B11A-FDE48C69E021}</fragmentGuid>
@@ -143,7 +143,7 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>536</first>
+				<first>537</first>
 				<second>519</second>
 			</position>
 			<fragmentGuid>{57310F3A-FEB0-7644-B641-EC3876773470}</fragmentGuid>
@@ -161,7 +161,7 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>482</first>
+				<first>483</first>
 				<second>596</second>
 			</position>
 			<fragmentGuid>{859D3A98-EB16-0F4B-A766-34B6D65096AA}</fragmentGuid>
@@ -196,6 +196,10 @@
 				</item>
 				<item>
 					<name>T_Emissive</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>T_Irradiance</name>
 					<optional>false</optional>
 				</item>
 				<item>
@@ -241,7 +245,7 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>489</first>
+				<first>490</first>
 				<second>301</second>
 			</position>
 			<fragmentGuid>{1E35F0A7-23A9-EA49-A518-125A77BAD564}</fragmentGuid>
@@ -265,7 +269,7 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>463</first>
+				<first>464</first>
 				<second>224</second>
 			</position>
 			<fragmentGuid>{052265E6-233C-754C-A297-9369803ADB88}</fragmentGuid>
@@ -282,6 +286,30 @@
 			<outputPins>
 				<item>
 					<name>T_Transparency</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.External" version="1">
+			<comment/>
+			<position>
+				<first>482</first>
+				<second>673</second>
+			</position>
+			<fragmentGuid>{2449B257-5B2A-5242-86F9-32105E1F1771}</fragmentGuid>
+			<inputPins>
+				<item>
+					<name>T_TexCoord0</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>T_TexCoord1</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<name>T_Irradiance</name>
 				</item>
 			</outputPins>
 			<values/>
@@ -556,6 +584,36 @@
 			<destination>
 				<node ref="/object/nodes/item[6]"/>
 				<name>T_Transparency</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>T_TexCoord0</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<name>T_TexCoord0</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>T_TexCoord1</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<name>T_TexCoord1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
+				<name>T_Irradiance</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>T_Irradiance</name>
 			</destination>
 		</item>
 	</edges>

@@ -86,9 +86,9 @@
 		<item>
 			<platform>{CAE489CE-1592-234F-ADB9-A7D75646B53D}</platform>
 			<deployFiles>
-				<item>Traktor.Core.a</item>
-				<item>Traktor.Scene.a</item>
-				<item>Traktor.World.a</item>
+				<item>libTraktor.Core.a</item>
+				<item>libTraktor.Scene.a</item>
+				<item>libTraktor.World.a</item>
 			</deployFiles>
 		</item>
 	</platforms>

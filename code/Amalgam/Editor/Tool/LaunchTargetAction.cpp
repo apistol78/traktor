@@ -8,6 +8,7 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
@@ -116,6 +117,7 @@ bool LaunchTargetAction::execute(IProgressListener* progressListener)
 	envmap[L"DEPLOY_EXECUTABLE"] = executableFile;
 	envmap[L"DEPLOY_OUTPUT_PATH"] = m_outputPath;
 	envmap[L"DEPLOY_CERTIFICATE"] = m_globalSettings->getProperty< PropertyString >(L"Amalgam.Certificate", L"");
+	envmap[L"DEPLOY_DEBUG"] = (m_globalSettings->getProperty< PropertyBoolean >(L"Amalgam.UseDebugBinaries", false) ? L"YES" : L"");
 
 	// Merge tool environment variables.
 	const DeployTool& deployTool = platform->getDeployTool();

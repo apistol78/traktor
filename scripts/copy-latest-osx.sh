@@ -24,7 +24,7 @@ cp -f $TRAKTOR_BUILD/Traktor.Database.Remote.Server.App .
 cp -f $STEAMWORKS_SDK/redistributable_bin/osx32/libsteam_api.dylib .
 
 # Copy FBX dependencies.
-cp -f $FBX_SDK/lib/clang/ub/release/libfbxsdk.dylib .
+cp -f $FBX_SDK/lib/gcc4/ub/*.dylib .
 
 # Assemble Editor bundle.
 mkdir -p TraktorEditor.app/Contents/MacOS
@@ -60,7 +60,7 @@ cp -f $TRAKTOR_BUILD/Traktor.Database.Remote.Server.App_d .
 cp -f $STEAMWORKS_SDK/redistributable_bin/osx32/libsteam_api.dylib .
 
 # Copy FBX dependencies.
-cp -f $FBX_SDK/lib/clang/ub/release/libfbxsdk.dylib .
+cp -f $FBX_SDK/lib/gcc4/ub/*.dylib .
 
 # Assemble Editor bundle.
 mkdir -p TraktorEditor.app/Contents/MacOS

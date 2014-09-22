@@ -18,7 +18,9 @@ namespace traktor
  *  FBX usage.
  * \ingroup Core
  */
+#if defined(_WIN32) || defined(__APPLE__) || defined(__LINUX__)
 extern Semaphore T_DLLCLASS g_fbxLock;
+#endif
 
 }
 

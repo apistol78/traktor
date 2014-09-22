@@ -95,6 +95,8 @@ private:
 	std::wstring getProductType(Configuration::TargetFormat targetFormat) const;
 	
 	std::wstring getProductName(const Project* project, Configuration::TargetFormat targetFormat) const;
+
+	std::wstring getProductNameNoSuffix(const Project* project, Configuration::TargetFormat targetFormat) const;
 	
 	void collectCopyDependencies(const Solution* solution, const Project* project, std::set< ResolvedDependency >& outDependencies, bool parentExternal) const;
 

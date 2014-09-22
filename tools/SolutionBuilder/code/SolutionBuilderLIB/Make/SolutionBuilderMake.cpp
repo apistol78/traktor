@@ -10,7 +10,6 @@
 #include <Core/Log/Log.h>
 #include <Core/Misc/String.h>
 #include <Core/Misc/MD5.h>
-#include <Core/Thread/JobManager.h>
 #include "SolutionBuilderLIB/Make/SolutionBuilderMake.h"
 #include "SolutionBuilderLIB/Solution.h"
 #include "SolutionBuilderLIB/Project.h"
@@ -206,11 +205,8 @@ bool SolutionBuilderMake::generate(Solution* solution)
 	s.close();
 
 	// Generate project makefiles.
-	RefArray< Functor > jobs;
 	for (RefArray< Project >::iterator i = generate.begin(); i != generate.end(); ++i)
-		jobs.push_back(makeFunctor< SolutionBuilderMake, Solution*, Project* >(this, &SolutionBuilderMake::generateProject, solution, *i));
-
-	JobManager::getInstance().fork(jobs);
+		generateProject(solution, *i);
 
 	return true;
 }

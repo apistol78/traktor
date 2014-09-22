@@ -219,8 +219,6 @@ void NativeVolume::mountVolumes(FileSystem& fileSystem)
 		}
 	}
 
-	log::info << L"Initial working directory \"" << workingDirectory << L"\"" << Endl;
-
 	Ref< IVolume > volume = new NativeVolume(workingDirectory);
 	fileSystem.mount(L"C", volume);
 	fileSystem.setCurrentVolume(volume);

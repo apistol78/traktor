@@ -34,11 +34,11 @@
 			<platform>{CAE489CE-1592-234F-ADB9-A7D75646B53D}</platform>
 			<executableFile/>
 			<deployFiles>
-				<item>Traktor.Core.a</item>
-				<item>Traktor.Compress.a</item>
-				<item>Traktor.Resource.a</item>
-				<item>Traktor.Render.a</item>
-				<item>Traktor.Render.OpenGL.ES2.a</item>
+				<item>libTraktor.Core.a</item>
+				<item>libTraktor.Compress.a</item>
+				<item>libTraktor.Resource.a</item>
+				<item>libTraktor.Render.a</item>
+				<item>libTraktor.Render.OpenGL.ES2.a</item>
 			</deployFiles>
 		</item>
 	</platforms>
@@ -169,7 +169,7 @@
 			<item>
 				<first>Render.MultiSample</first>
 				<second type="traktor.PropertyInteger">
-					<value>4</value>
+					<value>0</value>
 				</second>
 			</item>
 			<item>
@@ -204,12 +204,6 @@
 			</item>
 			<item>
 				<first>World.AntiAliasQuality</first>
-				<second type="traktor.PropertyInteger">
-					<value>0</value>
-				</second>
-			</item>
-			<item>
-				<first>World.ShadowQuality</first>
 				<second type="traktor.PropertyInteger">
 					<value>0</value>
 				</second>

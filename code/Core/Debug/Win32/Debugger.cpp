@@ -117,6 +117,11 @@ void Debugger::assertionFailed(const std::string& expression, const std::string&
 		s_ignored.insert(fileId.str());
 }
 
+bool Debugger::isDebuggerAttached() const
+{
+	return false;
+}
+
 void Debugger::breakDebugger()
 {
 #if defined(_MSC_VER)

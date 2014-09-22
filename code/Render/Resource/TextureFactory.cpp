@@ -88,7 +88,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 
 	uint32_t version;
 	reader >> version;
-	if (version != 11)
+	if (version != 12)
 	{
 		log::error << L"Unable to read texture, unknown version " << version << Endl;
 		return 0;
@@ -96,7 +96,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 
 	int32_t imageWidth, imageHeight, imageDepth, mipCount, texelFormat;
 	uint8_t textureType;
-	bool sRGB, compressed;
+	bool sRGB, compressed, system;
 
 	reader >> imageWidth;
 	reader >> imageHeight;
@@ -106,10 +106,11 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 	reader >> sRGB;
 	reader >> textureType;
 	reader >> compressed;
+	reader >> system;
 
 	if (textureType == Tt2D)	// 2D
 	{
-		int32_t skipMips = (m_skipMips < mipCount) ? m_skipMips : 0;
+		int32_t skipMips = (!system && m_skipMips < mipCount) ? m_skipMips : 0;
 
 		// Do not skip mips on already small enough textures.
 		if (imageWidth <= 16 || imageHeight <= 16)
@@ -166,7 +167,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 	}
 	else if (textureType == Tt3D)	// 3D
 	{
-		int32_t skipMips = (m_skipMips < mipCount) ? m_skipMips : 0;
+		int32_t skipMips = (!system && m_skipMips < mipCount) ? m_skipMips : 0;
 
 		// Do not skip mips on already small enough textures.
 		if (imageWidth <= 16 || imageHeight <= 16)

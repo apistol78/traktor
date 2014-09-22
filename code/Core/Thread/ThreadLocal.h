@@ -26,7 +26,7 @@ public:
 	void* get() const;
 
 private:
-	uint32_t m_handle;
+	uint64_t m_handle;
 };
 
 }

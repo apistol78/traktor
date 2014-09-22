@@ -83,12 +83,6 @@ bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 	T_ASSERT (desc.multiSample <= 1);
 	m_desc = desc;
 
-	if (!m_desc.createDepthStencil && !m_desc.usingPrimaryDepthStencil)
-	{
-		m_desc.width = nearestLog2(m_desc.width);
-		m_desc.height = nearestLog2(m_desc.height);
-	}
-
 	// Create color targets.
 	T_ASSERT (desc.count < sizeof_array(m_targetTextures));
 	T_OGL_SAFE(glGenTextures(desc.count, m_targetTextures));
@@ -367,12 +361,6 @@ bool RenderTargetSetOpenGLES2::createFramebuffer(GLuint primaryDepthBuffer)
 		}
 
 		// Attach color target.
-/*
-		T_OGL_SAFE(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0));
-		T_OGL_SAFE(glBindFramebuffer(GL_READ_FRAMEBUFFER, 0));
-*/
-		T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, 0));
-
 		T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, m_targetFBO[i]));
 		T_OGL_SAFE(glFramebufferTexture2D(
 			GL_FRAMEBUFFER,

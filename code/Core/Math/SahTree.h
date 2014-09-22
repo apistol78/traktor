@@ -33,6 +33,7 @@ class T_DLLCLASS SahTree : public Object
 public:
 	struct QueryResult
 	{
+		int32_t index;
 		float distance;
 		Vector4 position;
 	};

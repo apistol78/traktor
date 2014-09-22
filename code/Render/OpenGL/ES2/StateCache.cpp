@@ -77,15 +77,15 @@ void StateCache::setRenderState(const RenderStateOpenGL& renderState, bool inver
 
 	if (renderState.depthTestEnable)
 	{
+		if (!m_renderState.depthTestEnable || renderState.depthFunc != m_renderState.depthFunc)
+		{
+			T_OGL_SAFE(glDepthFunc(renderState.depthFunc));
+			m_renderState.depthFunc = renderState.depthFunc;
+		}
 		if (!m_renderState.depthTestEnable)
 		{
 			T_OGL_SAFE(glEnable(GL_DEPTH_TEST));
 			m_renderState.depthTestEnable = true;
-		}
-		if (renderState.depthFunc != m_renderState.depthFunc)
-		{
-			T_OGL_SAFE(glDepthFunc(renderState.depthFunc));
-			m_renderState.depthFunc = renderState.depthFunc;
 		}
 	}
 	else

@@ -702,7 +702,7 @@ Ref< Model > ModelFormatFbx::read(IStream* stream, uint32_t importFlags) const
 		s_fbxManager = FbxManager::Create();
 		if (!s_fbxManager)
 		{
-			log::error << L"Unable to import FBX model; failed to create FBX SDK instance" << Endl;
+			log::error << L"Unable to import FBX model; failed to create FBX SDK instance." << Endl;
 			return 0;
 		}
 
@@ -714,11 +714,16 @@ Ref< Model > ModelFormatFbx::read(IStream* stream, uint32_t importFlags) const
 
 	FbxIOPluginRegistry* registry = s_fbxManager->GetIOPluginRegistry();
 	int readerID = registry->FindReaderIDByExtension("fbx");
+    if (readerID < 0)
+	{
+		log::error << L"Unable to import FBX model; no reader for \"fbx\" extension registered." << Endl;
+		return 0;
+	}
 
 	FbxImporter* importer = FbxImporter::Create(s_fbxManager, "");
 	if (!importer)
 	{
-		log::error << L"Unable to import FBX model; failed to create FBX s_importer instance" << Endl;
+		log::error << L"Unable to import FBX model; failed to create FBX importer instance." << Endl;
 		return 0;
 	}
 
@@ -726,7 +731,7 @@ Ref< Model > ModelFormatFbx::read(IStream* stream, uint32_t importFlags) const
 	bool status = importer->Initialize(fbxStream.ptr(), stream, readerID, s_fbxManager->GetIOSettings());
 	if (!status)
 	{
-		log::error << L"Unable to import FBX model; failed to initialize FBX s_importer" << Endl;
+		log::error << L"Unable to import FBX model; failed to initialize FBX importer (" << mbstows(importer->GetLastErrorString()) << L")." << Endl;
 		return 0;
 	}
 
@@ -735,7 +740,7 @@ Ref< Model > ModelFormatFbx::read(IStream* stream, uint32_t importFlags) const
 	status = importer->Import(s_scene);
 	if (!status)
 	{
-		log::error << L"Unable to import FBX model; FBX s_importer failed" << Endl;
+		log::error << L"Unable to import FBX model; FBX importer failed (" << mbstows(importer->GetLastErrorString()) << L")." << Endl;
 		return 0;
 	}
 

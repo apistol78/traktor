@@ -22,8 +22,7 @@ EAGLContextWrapper::EAGLContextWrapper()
 
 bool EAGLContextWrapper::create()
 {
-	EAGLContext* context = [[EAGLContext alloc] initWithAPI: kEAGLRenderingAPIOpenGLES2];
-	m_context = (void*)context;
+	m_context = [[EAGLContext alloc] initWithAPI: kEAGLRenderingAPIOpenGLES2];
 	return true;
 }
 
@@ -43,12 +42,12 @@ bool EAGLContextWrapper::create(EAGLContextWrapper* shareContext, void* nativeHa
 		kEAGLDrawablePropertyColorFormat,
 		nil];
 	
-	EAGLContext* shareCtx = (EAGLContext*)shareContext->m_context;
+	EAGLContext* shareCtx = shareContext->m_context;
 	EAGLSharegroup* shareGroup = [shareCtx sharegroup];
 	EAGLContext* context = [[EAGLContext alloc] initWithAPI: kEAGLRenderingAPIOpenGLES2 sharegroup: shareGroup];
 	
 	m_layer = layer;
-	m_context = (void*)context;
+	m_context = context;
 	
 	CGRect bounds = [layer bounds];
 	m_width = bounds.size.width;
@@ -68,22 +67,16 @@ void EAGLContextWrapper::destroy()
 bool EAGLContextWrapper::setCurrent(EAGLContextWrapper* context)
 {
 	if (context)
-	{
-		EAGLContext* eaglctx = (EAGLContext*)context->m_context;
-		[EAGLContext setCurrentContext:eaglctx];
-	}
+		[EAGLContext setCurrentContext:context->m_context];
 	else
-	{
 		[EAGLContext setCurrentContext:nil];
-	}
 	return true;
 }
 
 void EAGLContextWrapper::swapBuffers()
 {
-	EAGLContext* context = (EAGLContext*)m_context;
 	glBindRenderbuffer(GL_RENDERBUFFER, m_renderBuffer);
-	[context presentRenderbuffer:GL_RENDERBUFFER];
+	[m_context presentRenderbuffer:GL_RENDERBUFFER];
 }
 
 void EAGLContextWrapper::resize(GLint width, GLint height)
@@ -103,8 +96,6 @@ bool EAGLContextWrapper::getLandscape() const
 
 void EAGLContextWrapper::createFrameBuffer()
 {
-	EAGLContext* context = (EAGLContext*)m_context;
-
 	// Create primary buffer.
 	glGenFramebuffers(1, &m_frameBuffer);
 	glGenRenderbuffers(1, &m_renderBuffer);
@@ -112,7 +103,7 @@ void EAGLContextWrapper::createFrameBuffer()
 	glBindFramebuffer(GL_FRAMEBUFFER, m_frameBuffer);
 	glBindRenderbuffer(GL_RENDERBUFFER, m_renderBuffer);
 	
-	[context renderbufferStorage:GL_RENDERBUFFER fromDrawable:(CAEAGLLayer*)m_layer];
+	[m_context renderbufferStorage:GL_RENDERBUFFER fromDrawable:m_layer];
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, m_renderBuffer);
 	
 	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &m_width);
@@ -121,7 +112,7 @@ void EAGLContextWrapper::createFrameBuffer()
 	// Create depth buffer.
 	glGenRenderbuffers(1, &m_depthBuffer);
 	glBindRenderbuffer(GL_RENDERBUFFER, m_depthBuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, m_width, m_height);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, m_width, m_height);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBuffer);
 	
 	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)

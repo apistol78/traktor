@@ -211,6 +211,7 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	envmap[L"DEPLOY_SYSTEM_ROOT"] = m_targetConfiguration->getSystemRoot();
 	envmap[L"DEPLOY_OUTPUT_PATH"] = m_outputPath;
 	envmap[L"DEPLOY_CERTIFICATE"] = m_globalSettings->getProperty< PropertyString >(L"Amalgam.Certificate", L"");
+	envmap[L"DEPLOY_DEBUG"] = (m_globalSettings->getProperty< PropertyBoolean >(L"Amalgam.UseDebugBinaries", false) ? L"YES" : L"");
 
 	const DeployTool& deployTool = platform->getDeployTool();
 	envmap.insert(deployTool.getEnvironment().begin(), deployTool.getEnvironment().end());

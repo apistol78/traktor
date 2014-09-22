@@ -35,6 +35,9 @@ public:
 	 */
 	void assertionFailed(const std::string& expression, const std::string& file, int line, const std::wstring& message = L"");
 
+	/*! \brief Check if debugger is attached. */
+	bool isDebuggerAttached() const;
+
 	/*! \brief Break application into debugger. */
 	void breakDebugger();
 

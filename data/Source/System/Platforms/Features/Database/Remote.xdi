@@ -102,12 +102,12 @@
 		<item>
 			<platform>{CAE489CE-1592-234F-ADB9-A7D75646B53D}</platform>
 			<deployFiles>
-				<item>Traktor.Core.a</item>
-				<item>Traktor.Net.a</item>
-				<item>Traktor.Xml.a</item>
-				<item>Traktor.Database.a</item>
-				<item>Traktor.Database.Remote.a</item>
-				<item>Traktor.Database.Remote.Client.a</item>
+				<item>libTraktor.Core.a</item>
+				<item>libTraktor.Net.a</item>
+				<item>libTraktor.Xml.a</item>
+				<item>libTraktor.Database.a</item>
+				<item>libTraktor.Database.Remote.a</item>
+				<item>libTraktor.Database.Remote.Client.a</item>
 			</deployFiles>
 		</item>			
 	</platforms>

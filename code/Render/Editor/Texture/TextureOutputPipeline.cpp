@@ -128,7 +128,7 @@ struct ScaleTextureTask : public Object
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 30, TextureOutputPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 31, TextureOutputPipeline, editor::IPipeline)
 
 TextureOutputPipeline::TextureOutputPipeline()
 :	m_generateMipsThread(false)
@@ -545,7 +545,7 @@ bool TextureOutputPipeline::buildOutput(
 
 		Writer writer(stream);
 
-		writer << uint32_t(11);
+		writer << uint32_t(12);
 		writer << int32_t(width);
 		writer << int32_t(height);
 		writer << int32_t(1);
@@ -554,6 +554,7 @@ bool TextureOutputPipeline::buildOutput(
 		writer << bool(sRGB);
 		writer << uint8_t(Tt2D);
 		writer << bool(true);
+		writer << bool(textureOutput->m_systemTexture);
 
 		dataOffsetBegin = stream->tell();
 
@@ -706,7 +707,7 @@ bool TextureOutputPipeline::buildOutput(
 
 		Writer writer(stream);
 
-		writer << uint32_t(11);
+		writer << uint32_t(12);
 		writer << int32_t(sliceWidth);
 		writer << int32_t(sliceHeight);
 		writer << int32_t(sliceDepth);
@@ -715,6 +716,7 @@ bool TextureOutputPipeline::buildOutput(
 		writer << bool(sRGB);
 		writer << uint8_t(Tt3D);
 		writer << bool(true);
+		writer << bool(textureOutput->m_systemTexture);
 
 		dataOffsetBegin = stream->tell();
 
@@ -804,7 +806,7 @@ bool TextureOutputPipeline::buildOutput(
 
 		Writer writer(stream);
 
-		writer << uint32_t(11);
+		writer << uint32_t(12);
 		writer << int32_t(sideSize);
 		writer << int32_t(sideSize);
 		writer << int32_t(6);
@@ -813,6 +815,7 @@ bool TextureOutputPipeline::buildOutput(
 		writer << bool(sRGB);
 		writer << uint8_t(TtCube);
 		writer << bool(true);
+		writer << bool(textureOutput->m_systemTexture);
 
 		dataOffsetBegin = stream->tell();
 

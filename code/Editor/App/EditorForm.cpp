@@ -2080,7 +2080,9 @@ void EditorForm::loadLanguageDictionary()
 
 void EditorForm::loadHelpDictionary()
 {
-	Ref< IStream > file = FileSystem::getInstance().open(L"$(TRAKTOR_HOME)/res/Help.xml", File::FmRead);
+	std::wstring helpFile = m_mergedSettings->getProperty< PropertyString >(L"Editor.Help");
+
+	Ref< IStream > file = FileSystem::getInstance().open(helpFile, File::FmRead);
 	if (!file)
 	{
 		log::warning << L"Unable to open dictionary \"Help.xml\"; file missing." << Endl;

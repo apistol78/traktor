@@ -19,6 +19,7 @@
 						<item>$(BULLET_SDK)/src</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -36,6 +37,7 @@
 						<item>$(BULLET_SDK)/src</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -53,6 +55,7 @@
 						<item>$(BULLET_SDK)/src</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -70,6 +73,7 @@
 						<item>$(BULLET_SDK)/src</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -219,6 +223,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>MACOS_CLASSIC</item>
 						<item>XML_STATIC</item>
 						<item>XML_BUILDING_EXPAT</item>
@@ -239,6 +244,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>MACOS_CLASSIC</item>
 						<item>XML_STATIC</item>
 						<item>XML_BUILDING_EXPAT</item>
@@ -259,6 +265,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>MACOS_CLASSIC</item>
 						<item>XML_STATIC</item>
 						<item>XML_BUILDING_EXPAT</item>
@@ -279,6 +286,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>MACOS_CLASSIC</item>
 						<item>XML_STATIC</item>
 						<item>XML_BUILDING_EXPAT</item>
@@ -325,6 +333,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/src</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 						<item>FT2_BUILD_LIBRARY</item>
@@ -344,6 +353,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/src</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 						<item>FT2_BUILD_LIBRARY</item>
@@ -363,6 +373,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/src</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 						<item>FT2_BUILD_LIBRARY</item>
@@ -382,6 +393,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/src</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 						<item>FT2_BUILD_LIBRARY</item>
@@ -1374,6 +1386,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -1391,6 +1404,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -1408,6 +1422,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -1425,6 +1440,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -1650,6 +1666,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_LIBFLAC_EXPORT</item>
 						<item>_DEBUG</item>
 						<item>FLAC__NO_DLL</item>
@@ -1671,6 +1688,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_LIBFLAC_EXPORT</item>
 						<item>NDEBUG</item>
 						<item>FLAC__NO_DLL</item>
@@ -1692,6 +1710,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 						<item>FLAC__NO_DLL</item>
@@ -1713,6 +1732,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 						<item>FLAC__NO_DLL</item>
@@ -1835,6 +1855,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/libmad-0.15.1b/platforms/osx</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_LIBMAD_EXPORT</item>
 						<item>_DEBUG</item>
 						<item>FPM_DEFAULT</item>
@@ -1856,6 +1877,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/libmad-0.15.1b/platforms/osx</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_LIBMAD_EXPORT</item>
 						<item>NDEBUG</item>
 						<item>FPM_DEFAULT</item>
@@ -1877,6 +1899,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/libmad-0.15.1b/platforms/osx</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 						<item>FPM_DEFAULT</item>
@@ -1898,6 +1921,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/libmad-0.15.1b/platforms/osx</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 						<item>FPM_DEFAULT</item>
@@ -2033,6 +2057,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_LIBOGG-1_1_3_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -2051,6 +2076,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_LIBOGG-1_1_3_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -2069,6 +2095,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -2087,6 +2114,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -2125,6 +2153,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_LIBVORBIS-1_2_0_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -2145,6 +2174,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_LIBVORBIS-1_2_0_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -2165,6 +2195,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -2185,6 +2216,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -2482,6 +2514,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.2</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -2499,6 +2532,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.2</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -2516,6 +2550,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.2</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_LPNG128_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -2534,6 +2569,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.2</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_LPNG128_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -2569,6 +2605,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -2585,6 +2622,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -2601,6 +2639,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -2617,6 +2656,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -2859,6 +2899,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -2876,6 +2917,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -2893,6 +2935,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -2910,6 +2953,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -2945,6 +2989,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -2961,6 +3006,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -2977,6 +3023,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_ZLIB_1_2_3_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -2994,6 +3041,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_ZLIB_1_2_3_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -3029,6 +3077,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_ANIMATION_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -3046,6 +3095,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_ANIMATION_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -3063,6 +3113,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -3080,6 +3131,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -3166,6 +3218,7 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 								</includePaths>
 								<definitions>
+									<item>__IOS__</item>
 									<item>T_CORE_EXPORT</item>
 									<item>_DEBUG</item>
 								</definitions>
@@ -3185,6 +3238,7 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 								</includePaths>
 								<definitions>
+									<item>__IOS__</item>
 									<item>T_CORE_EXPORT</item>
 									<item>NDEBUG</item>
 								</definitions>
@@ -3204,6 +3258,7 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 								</includePaths>
 								<definitions>
+									<item>__IOS__</item>
 									<item>T_STATIC</item>
 									<item>_DEBUG</item>
 								</definitions>
@@ -3223,6 +3278,7 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 								</includePaths>
 								<definitions>
+									<item>__IOS__</item>
 									<item>T_STATIC</item>
 									<item>NDEBUG</item>
 								</definitions>
@@ -3511,6 +3567,7 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 								</includePaths>
 								<definitions>
+									<item>__IOS__</item>
 									<item>T_WORLD_EXPORT</item>
 									<item>_DEBUG</item>
 								</definitions>
@@ -3528,6 +3585,7 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 								</includePaths>
 								<definitions>
+									<item>__IOS__</item>
 									<item>T_WORLD_EXPORT</item>
 									<item>NDEBUG</item>
 								</definitions>
@@ -3545,6 +3603,7 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 								</includePaths>
 								<definitions>
+									<item>__IOS__</item>
 									<item>T_STATIC</item>
 									<item>_DEBUG</item>
 								</definitions>
@@ -3562,6 +3621,7 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 								</includePaths>
 								<definitions>
+									<item>__IOS__</item>
 									<item>T_STATIC</item>
 									<item>NDEBUG</item>
 								</definitions>
@@ -3652,6 +3712,7 @@
 												<item>$(TRAKTOR_HOME)/code</item>
 											</includePaths>
 											<definitions>
+												<item>__IOS__</item>
 												<item>T_RENDER_EXPORT</item>
 												<item>_DEBUG</item>
 											</definitions>
@@ -3669,6 +3730,7 @@
 												<item>$(TRAKTOR_HOME)/code</item>
 											</includePaths>
 											<definitions>
+												<item>__IOS__</item>
 												<item>T_RENDER_EXPORT</item>
 												<item>NDEBUG</item>
 											</definitions>
@@ -3686,6 +3748,7 @@
 												<item>$(TRAKTOR_HOME)/code</item>
 											</includePaths>
 											<definitions>
+												<item>__IOS__</item>
 												<item>T_STATIC</item>
 												<item>_DEBUG</item>
 											</definitions>
@@ -3703,6 +3766,7 @@
 												<item>$(TRAKTOR_HOME)/code</item>
 											</includePaths>
 											<definitions>
+												<item>__IOS__</item>
 												<item>T_STATIC</item>
 												<item>NDEBUG</item>
 											</definitions>
@@ -3784,6 +3848,7 @@
 															<item>$(TRAKTOR_HOME)/code</item>
 														</includePaths>
 														<definitions>
+															<item>__IOS__</item>
 															<item>T_RESOURCE_EXPORT</item>
 															<item>_DEBUG</item>
 														</definitions>
@@ -3801,6 +3866,7 @@
 															<item>$(TRAKTOR_HOME)/code</item>
 														</includePaths>
 														<definitions>
+															<item>__IOS__</item>
 															<item>T_RESOURCE_EXPORT</item>
 															<item>NDEBUG</item>
 														</definitions>
@@ -3818,6 +3884,7 @@
 															<item>$(TRAKTOR_HOME)/code</item>
 														</includePaths>
 														<definitions>
+															<item>__IOS__</item>
 															<item>T_STATIC</item>
 															<item>_DEBUG</item>
 														</definitions>
@@ -3835,6 +3902,7 @@
 															<item>$(TRAKTOR_HOME)/code</item>
 														</includePaths>
 														<definitions>
+															<item>__IOS__</item>
 															<item>T_STATIC</item>
 															<item>NDEBUG</item>
 														</definitions>
@@ -3878,6 +3946,7 @@
 															<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
 														</includePaths>
 														<definitions>
+															<item>__IOS__</item>
 															<item>T_COMPRESS_EXPORT</item>
 															<item>_DEBUG</item>
 														</definitions>
@@ -3899,6 +3968,7 @@
 															<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
 														</includePaths>
 														<definitions>
+															<item>__IOS__</item>
 															<item>T_COMPRESS_EXPORT</item>
 															<item>NDEBUG</item>
 														</definitions>
@@ -3920,6 +3990,7 @@
 															<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
 														</includePaths>
 														<definitions>
+															<item>__IOS__</item>
 															<item>T_STATIC</item>
 															<item>_DEBUG</item>
 														</definitions>
@@ -3941,6 +4012,7 @@
 															<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
 														</includePaths>
 														<definitions>
+															<item>__IOS__</item>
 															<item>T_STATIC</item>
 															<item>NDEBUG</item>
 														</definitions>
@@ -4009,6 +4081,7 @@
 																		<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
 																	</includePaths>
 																	<definitions>
+																		<item>__IOS__</item>
 																		<item>_DEBUG</item>
 																	</definitions>
 																	<libraryPaths/>
@@ -4026,6 +4099,7 @@
 																		<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
 																	</includePaths>
 																	<definitions>
+																		<item>__IOS__</item>
 																		<item>NDEBUG</item>
 																	</definitions>
 																	<libraryPaths/>
@@ -4043,6 +4117,7 @@
 																		<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
 																	</includePaths>
 																	<definitions>
+																		<item>__IOS__</item>
 																		<item>_DEBUG</item>
 																	</definitions>
 																	<libraryPaths/>
@@ -4060,6 +4135,7 @@
 																		<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
 																	</includePaths>
 																	<definitions>
+																		<item>__IOS__</item>
 																		<item>NDEBUG</item>
 																	</definitions>
 																	<libraryPaths/>
@@ -4115,6 +4191,7 @@
 																		<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
 																	</includePaths>
 																	<definitions>
+																		<item>__IOS__</item>
 																		<item>_DEBUG</item>
 																	</definitions>
 																	<libraryPaths/>
@@ -4133,6 +4210,7 @@
 																		<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
 																	</includePaths>
 																	<definitions>
+																		<item>__IOS__</item>
 																		<item>NDEBUG</item>
 																	</definitions>
 																	<libraryPaths/>
@@ -4151,6 +4229,7 @@
 																		<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
 																	</includePaths>
 																	<definitions>
+																		<item>__IOS__</item>
 																		<item>_DEBUG</item>
 																	</definitions>
 																	<libraryPaths/>
@@ -4169,6 +4248,7 @@
 																		<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
 																	</includePaths>
 																	<definitions>
+																		<item>__IOS__</item>
 																		<item>NDEBUG</item>
 																	</definitions>
 																	<libraryPaths/>
@@ -4216,6 +4296,7 @@
 												<item>$(TRAKTOR_HOME)/code</item>
 											</includePaths>
 											<definitions>
+												<item>__IOS__</item>
 												<item>T_DATABASE_EXPORT</item>
 												<item>_DEBUG</item>
 											</definitions>
@@ -4233,6 +4314,7 @@
 												<item>$(TRAKTOR_HOME)/code</item>
 											</includePaths>
 											<definitions>
+												<item>__IOS__</item>
 												<item>T_DATABASE_EXPORT</item>
 												<item>NDEBUG</item>
 											</definitions>
@@ -4250,6 +4332,7 @@
 												<item>$(TRAKTOR_HOME)/code</item>
 											</includePaths>
 											<definitions>
+												<item>__IOS__</item>
 												<item>T_STATIC</item>
 												<item>_DEBUG</item>
 											</definitions>
@@ -4267,6 +4350,7 @@
 												<item>$(TRAKTOR_HOME)/code</item>
 											</includePaths>
 											<definitions>
+												<item>__IOS__</item>
 												<item>T_STATIC</item>
 												<item>NDEBUG</item>
 											</definitions>
@@ -4322,6 +4406,7 @@
 															<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
 														</includePaths>
 														<definitions>
+															<item>__IOS__</item>
 															<item>T_XML_EXPORT</item>
 															<item>_DEBUG</item>
 														</definitions>
@@ -4340,6 +4425,7 @@
 															<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
 														</includePaths>
 														<definitions>
+															<item>__IOS__</item>
 															<item>T_XML_EXPORT</item>
 															<item>NDEBUG</item>
 														</definitions>
@@ -4358,6 +4444,7 @@
 															<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
 														</includePaths>
 														<definitions>
+															<item>__IOS__</item>
 															<item>T_STATIC</item>
 															<item>_DEBUG</item>
 														</definitions>
@@ -4376,6 +4463,7 @@
 															<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
 														</includePaths>
 														<definitions>
+															<item>__IOS__</item>
 															<item>T_STATIC</item>
 															<item>NDEBUG</item>
 														</definitions>
@@ -4425,6 +4513,7 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 								</includePaths>
 								<definitions>
+									<item>__IOS__</item>
 									<item>T_MESH_EXPORT</item>
 									<item>_DEBUG</item>
 								</definitions>
@@ -4442,6 +4531,7 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 								</includePaths>
 								<definitions>
+									<item>__IOS__</item>
 									<item>T_MESH_EXPORT</item>
 									<item>NDEBUG</item>
 								</definitions>
@@ -4459,6 +4549,7 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 								</includePaths>
 								<definitions>
+									<item>__IOS__</item>
 									<item>T_STATIC</item>
 									<item>_DEBUG</item>
 								</definitions>
@@ -4476,6 +4567,7 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 								</includePaths>
 								<definitions>
+									<item>__IOS__</item>
 									<item>T_STATIC</item>
 									<item>NDEBUG</item>
 								</definitions>
@@ -4616,6 +4708,7 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 								</includePaths>
 								<definitions>
+									<item>__IOS__</item>
 									<item>T_PHYSICS_EXPORT</item>
 									<item>_DEBUG</item>
 								</definitions>
@@ -4633,6 +4726,7 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 								</includePaths>
 								<definitions>
+									<item>__IOS__</item>
 									<item>T_PHYSICS_EXPORT</item>
 									<item>NDEBUG</item>
 								</definitions>
@@ -4650,6 +4744,7 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 								</includePaths>
 								<definitions>
+									<item>__IOS__</item>
 									<item>T_STATIC</item>
 									<item>_DEBUG</item>
 								</definitions>
@@ -4667,6 +4762,7 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 								</includePaths>
 								<definitions>
+									<item>__IOS__</item>
 									<item>T_STATIC</item>
 									<item>NDEBUG</item>
 								</definitions>
@@ -4724,6 +4820,7 @@
 												<item>$(TRAKTOR_HOME)/code</item>
 											</includePaths>
 											<definitions>
+												<item>__IOS__</item>
 												<item>T_HEIGHTFIELD_EXPORT</item>
 												<item>_DEBUG</item>
 											</definitions>
@@ -4741,6 +4838,7 @@
 												<item>$(TRAKTOR_HOME)/code</item>
 											</includePaths>
 											<definitions>
+												<item>__IOS__</item>
 												<item>T_HEIGHTFIELD_EXPORT</item>
 												<item>NDEBUG</item>
 											</definitions>
@@ -4758,6 +4856,7 @@
 												<item>$(TRAKTOR_HOME)/code</item>
 											</includePaths>
 											<definitions>
+												<item>__IOS__</item>
 												<item>T_STATIC</item>
 												<item>_DEBUG</item>
 											</definitions>
@@ -4775,6 +4874,7 @@
 												<item>$(TRAKTOR_HOME)/code</item>
 											</includePaths>
 											<definitions>
+												<item>__IOS__</item>
 												<item>T_STATIC</item>
 												<item>NDEBUG</item>
 											</definitions>
@@ -4823,6 +4923,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_DATABASE_COMPACT_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -4840,6 +4941,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_DATABASE_COMPACT_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -4857,6 +4959,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -4874,6 +4977,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -4918,6 +5022,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_DATABASE_LOCAL_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -4935,6 +5040,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_DATABASE_LOCAL_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -4952,6 +5058,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -4969,6 +5076,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -5013,6 +5121,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -5029,6 +5138,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -5045,6 +5155,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -5062,6 +5173,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -5111,6 +5223,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_DATABASE_REMOTE_CLIENT_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -5128,6 +5241,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_DATABASE_REMOTE_CLIENT_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -5145,6 +5259,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -5162,6 +5277,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -5206,6 +5322,7 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 								</includePaths>
 								<definitions>
+									<item>__IOS__</item>
 									<item>T_NET_EXPORT</item>
 									<item>_DEBUG</item>
 								</definitions>
@@ -5223,6 +5340,7 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 								</includePaths>
 								<definitions>
+									<item>__IOS__</item>
 									<item>T_NET_EXPORT</item>
 									<item>NDEBUG</item>
 								</definitions>
@@ -5240,6 +5358,7 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 								</includePaths>
 								<definitions>
+									<item>__IOS__</item>
 									<item>T_STATIC</item>
 									<item>_DEBUG</item>
 								</definitions>
@@ -5257,6 +5376,7 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 								</includePaths>
 								<definitions>
+									<item>__IOS__</item>
 									<item>T_STATIC</item>
 									<item>NDEBUG</item>
 								</definitions>
@@ -5368,6 +5488,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_DATABASE_REMOTE_SERVER_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -5385,6 +5506,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_DATABASE_REMOTE_SERVER_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -5402,6 +5524,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -5419,6 +5542,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -5478,6 +5602,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/jpeg-6b</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_DRAWING_EXPORT</item>
 						<item>_DEBUG</item>
 						<item>T_INCLUDE_PNG</item>
@@ -5499,6 +5624,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/jpeg-6b</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_DRAWING_EXPORT</item>
 						<item>NDEBUG</item>
 						<item>T_INCLUDE_PNG</item>
@@ -5520,6 +5646,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/jpeg-6b</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 						<item>T_INCLUDE_PNG</item>
@@ -5541,6 +5668,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/jpeg-6b</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 						<item>T_INCLUDE_PNG</item>
@@ -5608,6 +5736,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_FLASH_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -5625,6 +5754,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_FLASH_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -5642,6 +5772,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -5659,6 +5790,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -5792,6 +5924,7 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 								</includePaths>
 								<definitions>
+									<item>__IOS__</item>
 									<item>T_HTML_EXPORT</item>
 									<item>_DEBUG</item>
 								</definitions>
@@ -5809,6 +5942,7 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 								</includePaths>
 								<definitions>
+									<item>__IOS__</item>
 									<item>T_HTML_EXPORT</item>
 									<item>NDEBUG</item>
 								</definitions>
@@ -5826,6 +5960,7 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 								</includePaths>
 								<definitions>
+									<item>__IOS__</item>
 									<item>T_STATIC</item>
 									<item>_DEBUG</item>
 								</definitions>
@@ -5843,6 +5978,7 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 								</includePaths>
 								<definitions>
+									<item>__IOS__</item>
 									<item>T_STATIC</item>
 									<item>NDEBUG</item>
 								</definitions>
@@ -5890,6 +6026,7 @@
 									<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
 								</includePaths>
 								<definitions>
+									<item>__IOS__</item>
 									<item>T_SOUND_EXPORT</item>
 									<item>_DEBUG</item>
 									<item>FLAC_NO_DLL</item>
@@ -5912,6 +6049,7 @@
 									<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
 								</includePaths>
 								<definitions>
+									<item>__IOS__</item>
 									<item>T_SOUND_EXPORT</item>
 									<item>NDEBUG</item>
 									<item>FLAC_NO_DLL</item>
@@ -5934,6 +6072,7 @@
 									<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
 								</includePaths>
 								<definitions>
+									<item>__IOS__</item>
 									<item>T_STATIC</item>
 									<item>_DEBUG</item>
 									<item>FLAC_NO_DLL</item>
@@ -5956,6 +6095,7 @@
 									<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
 								</includePaths>
 								<definitions>
+									<item>__IOS__</item>
 									<item>T_STATIC</item>
 									<item>NDEBUG</item>
 									<item>FLAC_NO_DLL</item>
@@ -6039,6 +6179,7 @@
 												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/osx</item>
 											</includePaths>
 											<definitions>
+												<item>__IOS__</item>
 												<item>T_MPG123_EXPORT</item>
 												<item>_DEBUG</item>
 												<item>OPT_GENERIC</item>
@@ -6060,6 +6201,7 @@
 												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/osx</item>
 											</includePaths>
 											<definitions>
+												<item>__IOS__</item>
 												<item>T_MPG123_EXPORT</item>
 												<item>NDEBUG</item>
 												<item>OPT_GENERIC</item>
@@ -6081,6 +6223,7 @@
 												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/osx</item>
 											</includePaths>
 											<definitions>
+												<item>__IOS__</item>
 												<item>T_STATIC</item>
 												<item>_DEBUG</item>
 												<item>OPT_GENERIC</item>
@@ -6102,6 +6245,7 @@
 												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/osx</item>
 											</includePaths>
 											<definitions>
+												<item>__IOS__</item>
 												<item>T_STATIC</item>
 												<item>NDEBUG</item>
 												<item>OPT_GENERIC</item>
@@ -6350,6 +6494,7 @@
 											<precompiledHeader/>
 											<includePaths/>
 											<definitions>
+												<item>__IOS__</item>
 												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
@@ -6364,6 +6509,7 @@
 											<precompiledHeader/>
 											<includePaths/>
 											<definitions>
+												<item>__IOS__</item>
 												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
@@ -6378,6 +6524,7 @@
 											<precompiledHeader/>
 											<includePaths/>
 											<definitions>
+												<item>__IOS__</item>
 												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
@@ -6392,6 +6539,7 @@
 											<precompiledHeader/>
 											<includePaths/>
 											<definitions>
+												<item>__IOS__</item>
 												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
@@ -6428,6 +6576,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_GRAPHICS_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -6445,6 +6594,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_GRAPHICS_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -6462,6 +6612,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -6479,6 +6630,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -6516,6 +6668,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_I18N_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -6533,6 +6686,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_I18N_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -6550,6 +6704,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -6567,6 +6722,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -6603,6 +6759,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_INPUT_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -6620,6 +6777,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_INPUT_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -6637,6 +6795,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -6654,6 +6813,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -6705,6 +6865,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_MODEL_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -6723,6 +6884,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_MODEL_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -6741,6 +6903,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -6759,6 +6922,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -6812,6 +6976,7 @@
 						<item>$(BULLET_SDK)/src</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_PHYSICS_BULLET_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -6831,6 +6996,7 @@
 						<item>$(BULLET_SDK)/src</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_PHYSICS_BULLET_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -6850,6 +7016,7 @@
 						<item>$(BULLET_SDK)/src</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -6869,6 +7036,7 @@
 						<item>$(BULLET_SDK)/src</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -6922,6 +7090,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_RENDER_OPENGL_ES2_EXPORT</item>
 						<item>_DEBUG</item>
 						<item>T_OPENGL_ES2</item>
@@ -6943,6 +7112,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_RENDER_OPENGL_ES2_EXPORT</item>
 						<item>NDEBUG</item>
 						<item>T_OPENGL_ES2</item>
@@ -6964,6 +7134,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 						<item>T_OPENGL_ES2</item>
@@ -6985,6 +7156,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 						<item>T_OPENGL_ES2</item>
@@ -7048,6 +7220,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_SCENE_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -7065,6 +7238,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_SCENE_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -7082,6 +7256,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -7099,6 +7274,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -7147,6 +7323,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_SCRIPT_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -7164,6 +7341,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_SCRIPT_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -7181,6 +7359,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -7198,6 +7377,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -7239,6 +7419,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_SCRIPT_LUA_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -7257,6 +7438,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_SCRIPT_LUA_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -7275,6 +7457,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -7293,6 +7476,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -7338,6 +7522,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_SPRAY_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -7355,6 +7540,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_SPRAY_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -7372,6 +7558,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -7389,6 +7576,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -7476,6 +7664,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_TERRAIN_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -7493,6 +7682,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_TERRAIN_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -7510,6 +7700,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -7527,6 +7718,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -7579,6 +7771,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_THEATER_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -7596,6 +7789,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_THEATER_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -7613,6 +7807,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -7630,6 +7825,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -7674,6 +7870,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_UI_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -7691,6 +7888,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_UI_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -7708,6 +7906,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -7725,6 +7924,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -7804,6 +8004,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_UI_CUSTOM_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -7821,6 +8022,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_UI_CUSTOM_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -7838,6 +8040,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -7855,6 +8058,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -8153,6 +8357,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_WEATHER_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -8170,6 +8375,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_WEATHER_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -8187,6 +8393,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -8204,6 +8411,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -8273,6 +8481,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_UNITTEST</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -8290,6 +8499,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_UNITTEST</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -8307,6 +8517,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_UNITTEST</item>
 						<item>_DEBUG</item>
 						<item>T_STATIC</item>
@@ -8325,6 +8536,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_UNITTEST</item>
 						<item>NDEBUG</item>
 						<item>T_STATIC</item>
@@ -8378,6 +8590,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_INPUT_IOS_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -8397,6 +8610,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_INPUT_IOS_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -8416,6 +8630,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -8435,6 +8650,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -8477,6 +8693,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_SOUND_OPENAL_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -8496,6 +8713,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_SOUND_OPENAL_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -8515,6 +8733,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -8534,6 +8753,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -8576,6 +8796,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.7.6.3</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>_DEBUG</item>
 						<item>SQLITE_ENABLE_COLUMN_METADATA</item>
 						<item>T_IOS_HACK</item>
@@ -8594,6 +8815,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.7.6.3</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>NDEBUG</item>
 						<item>SQLITE_ENABLE_COLUMN_METADATA</item>
 						<item>T_IOS_HACK</item>
@@ -8612,6 +8834,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.7.6.3</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>_DEBUG</item>
 						<item>SQLITE_ENABLE_COLUMN_METADATA</item>
 						<item>T_IOS_HACK</item>
@@ -8630,6 +8853,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.7.6.3</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>NDEBUG</item>
 						<item>SQLITE_ENABLE_COLUMN_METADATA</item>
 						<item>T_IOS_HACK</item>
@@ -8670,6 +8894,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_SQL_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -8687,6 +8912,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_SQL_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -8704,6 +8930,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -8721,6 +8948,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -8758,6 +8986,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.7.6.3</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_SQL_SQLITE3_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -8776,6 +9005,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.7.6.3</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_SQL_SQLITE3_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -8794,6 +9024,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.7.6.3</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -8812,6 +9043,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.7.6.3</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -8858,6 +9090,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -8876,6 +9109,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -8894,6 +9128,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -8912,6 +9147,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -8957,6 +9193,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_VIDEO_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -8976,6 +9213,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_VIDEO_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -8995,6 +9233,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -9014,6 +9253,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -9075,6 +9315,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_ONLINE_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -9092,6 +9333,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_ONLINE_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -9109,6 +9351,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -9126,6 +9369,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -9193,6 +9437,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_ONLINE_LOCAL_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -9210,6 +9455,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_ONLINE_LOCAL_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -9227,6 +9473,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -9244,6 +9491,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -9292,6 +9540,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_AMALGAM_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -9309,6 +9558,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_AMALGAM_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -9326,6 +9576,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -9343,6 +9594,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -9518,6 +9770,7 @@
 									<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
 								</includePaths>
 								<definitions>
+									<item>__IOS__</item>
 									<item>T_AI_EXPORT</item>
 									<item>_DEBUG</item>
 								</definitions>
@@ -9536,6 +9789,7 @@
 									<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
 								</includePaths>
 								<definitions>
+									<item>__IOS__</item>
 									<item>T_AI_EXPORT</item>
 									<item>NDEBUG</item>
 								</definitions>
@@ -9554,6 +9808,7 @@
 									<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
 								</includePaths>
 								<definitions>
+									<item>__IOS__</item>
 									<item>T_STATIC</item>
 									<item>_DEBUG</item>
 								</definitions>
@@ -9572,6 +9827,7 @@
 									<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
 								</includePaths>
 								<definitions>
+									<item>__IOS__</item>
 									<item>T_STATIC</item>
 									<item>NDEBUG</item>
 								</definitions>
@@ -9608,6 +9864,7 @@
 												<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
 											</includePaths>
 											<definitions>
+												<item>__IOS__</item>
 												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
@@ -9624,6 +9881,7 @@
 												<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
 											</includePaths>
 											<definitions>
+												<item>__IOS__</item>
 												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
@@ -9640,6 +9898,7 @@
 												<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
 											</includePaths>
 											<definitions>
+												<item>__IOS__</item>
 												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
@@ -9656,6 +9915,7 @@
 												<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
 											</includePaths>
 											<definitions>
+												<item>__IOS__</item>
 												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
@@ -9726,6 +9986,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_ONLINE_GC_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -9745,6 +10006,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_ONLINE_GC_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -9764,6 +10026,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -9783,6 +10046,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -9825,6 +10089,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -9841,6 +10106,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -9857,6 +10123,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
@@ -9874,6 +10141,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
@@ -9936,6 +10204,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Recast/Include</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -9952,6 +10221,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Recast/Include</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -9968,6 +10238,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Recast/Include</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -9984,6 +10255,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Recast/Include</item>
 					</includePaths>
 					<definitions>
+						<item>__IOS__</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>

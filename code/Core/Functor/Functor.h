@@ -575,6 +575,100 @@ inline Ref< StaticFunctor6< P1, P2, P3, P4, P5, P6 > > makeStaticFunctor(typenam
 	return new StaticFunctor6< P1, P2, P3, P4, P5, P6 >(function, p1, p2, p3, p4, p5, p6);
 }
 
+/*! \brief Static function functor.
+ * \ingroup Core
+ */
+template < typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7 >
+class StaticFunctor7 : public Functor
+{
+public:
+	typedef void (*function_t)(P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7);
+
+	StaticFunctor7(function_t function, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7)
+	:	m_function(function)
+	,	m_p1(p1)
+	,	m_p2(p2)
+	,	m_p3(p3)
+	,	m_p4(p4)
+	,	m_p5(p5)
+	,	m_p6(p6)
+	,	m_p7(p7)
+	{
+	}
+
+	virtual void operator () ()
+	{
+		(*m_function)(m_p1, m_p2, m_p3, m_p4, m_p5, m_p6, m_p7);
+	}
+
+private:
+	function_t m_function;
+	P1 m_p1;
+	P2 m_p2;
+	P3 m_p3;
+	P4 m_p4;
+	P5 m_p5;
+	P6 m_p6;
+	P7 m_p7;
+};
+
+/*! \brief Create functor object.
+ * \ingroup Core
+ */
+template < typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7 >
+inline Ref< StaticFunctor7< P1, P2, P3, P4, P5, P6, P7 > > makeStaticFunctor(typename StaticFunctor7< P1, P2, P3, P4, P5, P6, P7 >::function_t function, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7)
+{
+	return new StaticFunctor7< P1, P2, P3, P4, P5, P6, P7 >(function, p1, p2, p3, p4, p5, p6, p7);
+}
+
+/*! \brief Static function functor.
+ * \ingroup Core
+ */
+template < typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7, typename P8 >
+class StaticFunctor8 : public Functor
+{
+public:
+	typedef void (*function_t)(P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7, P8 p8);
+
+	StaticFunctor8(function_t function, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7, P8 p8)
+	:	m_function(function)
+	,	m_p1(p1)
+	,	m_p2(p2)
+	,	m_p3(p3)
+	,	m_p4(p4)
+	,	m_p5(p5)
+	,	m_p6(p6)
+	,	m_p7(p7)
+	,	m_p8(p8)
+	{
+	}
+
+	virtual void operator () ()
+	{
+		(*m_function)(m_p1, m_p2, m_p3, m_p4, m_p5, m_p6, m_p7, m_p8);
+	}
+
+private:
+	function_t m_function;
+	P1 m_p1;
+	P2 m_p2;
+	P3 m_p3;
+	P4 m_p4;
+	P5 m_p5;
+	P6 m_p6;
+	P7 m_p7;
+	P8 m_p8;
+};
+
+/*! \brief Create functor object.
+ * \ingroup Core
+ */
+template < typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7, typename P8 >
+inline Ref< StaticFunctor8< P1, P2, P3, P4, P5, P6, P7, P8 > > makeStaticFunctor(typename StaticFunctor8< P1, P2, P3, P4, P5, P6, P7, P8 >::function_t function, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7, P8 p8)
+{
+	return new StaticFunctor8< P1, P2, P3, P4, P5, P6, P7, P8 >(function, p1, p2, p3, p4, p5, p6, p7, p8);
+}
+
 }
 
 #endif	// traktor_Functor_H
