@@ -147,7 +147,7 @@ bool ModelFormatObj::write(IStream* stream, const Model* model) const
 
 	const AlignedVector< Vector2 >& texCoords = model->getTexCoords();
 	for (AlignedVector< Vector2 >::const_iterator i = texCoords.begin(); i != texCoords.end(); ++i)
-		s << L"vt " << i->x << L" " << i->y << Endl;
+		s << L"vt " << i->x << L" " << (1.0f - i->y) << Endl;
 
 	const AlignedVector< Vector4 >& normals = model->getNormals();
 	for (AlignedVector< Vector4 >::const_iterator i = normals.begin(); i != normals.end(); ++i)

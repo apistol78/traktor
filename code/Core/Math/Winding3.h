@@ -15,12 +15,16 @@
 namespace traktor
 {
 
+class Winding2;
+
 /*! \brief 3d point winding.
  * \ingroup Core
  */
 class T_DLLCLASS Winding3
 {
 public:
+	typedef AlignedVector< Vector4 > points_t;
+
 	enum Classification
 	{
 		CfFront,
@@ -29,15 +33,21 @@ public:
 		CfSpan
 	};
 
-	AlignedVector< Vector4 > points;
-
 	Winding3();
 
-	Winding3(const AlignedVector< Vector4 >& points);
+	Winding3(const points_t& points);
 
 	Winding3(const Vector4* points, size_t npoints);
 
+	Winding3(const Vector4& p1, const Vector4& p2, const Vector4& p3);
+
+	void clear();
+
+	void push(const Vector4& p);
+
 	bool angleIndices(uint32_t& outI1, uint32_t& outI2, uint32_t& outI3) const;
+
+	bool getProjection(Winding2& outProjection, Vector4& outU, Vector4& outV) const;
 
 	bool getPlane(Plane& outPlane) const;
 
@@ -55,6 +65,20 @@ public:
 		Scalar& outK,
 		Vector4* outPoint = 0
 	) const;
+
+	void flip();
+
+	const points_t& getPoints() const { return m_points; }
+
+	uint32_t size() const { return m_points.size(); }
+
+	bool empty() const { return m_points.empty(); }
+
+	const Vector4& operator [] (uint32_t index) const { return m_points[index]; }
+
+private:
+	points_t m_points;
+	Plane m_plane;
 };
 
 }

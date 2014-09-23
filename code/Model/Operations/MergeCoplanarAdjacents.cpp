@@ -47,9 +47,9 @@ bool MergeCoplanarAdjacents::apply(Model& model) const
 		if (polygon.getVertexCount() < 3)
 			continue;
 
-		w.points.resize(0);
+		w.clear();
 		for (uint32_t j = 0; j < polygon.getVertexCount(); ++j)
-			w.points.push_back(model.getVertexPosition(polygon.getVertex(j)));
+			w.push(model.getVertexPosition(polygon.getVertex(j)));
 
 		if (w.getPlane(p))
 			normals[i] = p.normal();

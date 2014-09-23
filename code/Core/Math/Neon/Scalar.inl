@@ -46,6 +46,12 @@ T_MATH_INLINE Scalar::Scalar(float32x4_t value)
 {
 }
 
+T_MATH_INLINE Scalar& Scalar::operator = (const Scalar& value)
+{
+	m_data = value.m_data;
+	return *this;
+}
+
 T_MATH_INLINE Scalar Scalar::operator - () const
 {
 	return Scalar(vnegq_f32(m_data));

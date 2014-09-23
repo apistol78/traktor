@@ -24,10 +24,13 @@ class T_DLLCLASS DilateFilter : public IImageFilter
 	T_RTTI_CLASS;
 
 public:
-	DilateFilter();
+	DilateFilter(int32_t iterations);
 
 protected:
 	virtual void apply(Image* image) const;
+
+private:
+	int32_t m_iterations;
 };
 	
 	}

@@ -116,10 +116,10 @@ bool CalculateOccluder::apply(Model& model) const
 			if (position == c_InvalidIndex)
 				continue;
 
-			winding.points.push_back(model.getPosition(position));
+			winding.push(model.getPosition(position));
 		}
 
-		if (winding.points.size() < 3)
+		if (winding.size() < 3)
 			continue;
 
 		windings.push_back(winding);
@@ -189,7 +189,7 @@ bool CalculateOccluder::apply(Model& model) const
 			for (uint32_t i = 0; i < windings.size(); ++i)
 			{
 				Winding3 w = windings[i];
-				T_ASSERT (!w.points.empty());
+				T_ASSERT (!w.empty());
 
 				for (uint32_t j = 0; j < sizeof_array(tunnelPlanes); ++j)
 				{
@@ -198,11 +198,11 @@ bool CalculateOccluder::apply(Model& model) const
 					
 					w = wb;
 
-					if (w.points.empty())
+					if (w.empty())
 						break;
 				}
 
-				if (w.points.size() >= 3)
+				if (w.size() >= 3)
 					tunnelWindings.push_back(w);
 			}
 
@@ -230,7 +230,7 @@ bool CalculateOccluder::apply(Model& model) const
 				for (uint32_t i = 0; i < tunnelWindings.size(); ++i)
 				{
 					Winding3 w = tunnelWindings[i];
-					T_ASSERT (!w.points.empty());
+					T_ASSERT (!w.empty());
 
 					for (uint32_t j = 0; j < sizeof_array(voxelPlanes); ++j)
 					{
@@ -239,11 +239,11 @@ bool CalculateOccluder::apply(Model& model) const
 
 						w = wb;
 
-						if (w.points.empty())
+						if (w.empty())
 							break;
 					}
 
-					if (w.points.size() >= 3)
+					if (w.size() >= 3)
 						voxelWindings.push_back(w);
 				}
 
@@ -1289,7 +1289,7 @@ bool CalculateOccluder::apply(Model& model) const
 	for (AlignedVector< Winding3 >::const_iterator i = windings.begin(); i != windings.end(); ++i)
 	{
 		Polygon p;
-		for (AlignedVector< Vector4 >::const_iterator j = i->points.begin(); j != i->points.end(); ++j)
+		for (Winding3::points_t::const_iterator j = i->getPoints().begin(); j != i->getPoints().end(); ++j)
 		{
 			Vertex v;
 			v.setPosition(strippedModel.addUniquePosition(*j));

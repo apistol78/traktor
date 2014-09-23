@@ -124,14 +124,14 @@ private:
 		{
 			Winding3 f, b;
 			w.split(p, f, b);
-			if (!f.points.empty())
+			if (!f.empty())
 			{
 				if (node->front)
 					clip_1(node->front, f, true, visitor);
 				else
 					visitor(node->plane, f, Winding3::CfFront, true);
 			}
-			if (!b.points.empty())
+			if (!b.empty())
 			{
 				if (node->back)
 					clip_1(node->back, b, true, visitor);

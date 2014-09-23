@@ -149,14 +149,14 @@ void IndoorMesh::findVisibleSectors(
 				continue;
 
 			Winding3 clipped;
-			for (AlignedVector< Vector4 >::const_iterator j = i->winding.points.begin(); j != i->winding.points.end(); ++j)
-				clipped.points.push_back(
+			for (Winding3::points_t::const_iterator j = i->winding.getPoints().begin(); j != i->winding.getPoints().end(); ++j)
+				clipped.push(
 					view * *j
 				);
 
 			Plane clippedPlane;
 			if (clipped.getPlane(clippedPlane) && clippedPlane.normal().z() >= 0.0f)
-				std::reverse(clipped.points.begin(), clipped.points.end());
+				clipped.flip();
 
 			for (AlignedVector< Plane >::const_iterator j = frustum.begin(); j != frustum.end(); ++j)
 			{
@@ -164,21 +164,21 @@ void IndoorMesh::findVisibleSectors(
 				clipped.split(*j, front, back);
 				clipped = front;
 
-				if (clipped.points.size() < 3)
+				if (clipped.size() < 3)
 					break;
 			}
 
-			if (clipped.points.size() >= 3)
+			if (clipped.size() >= 3)
 			{
 				outVisibleSectors.insert(nextSector);
 
-				AlignedVector< Plane > nextFrustum(clipped.points.size());
-				for (size_t i = 0, j = clipped.points.size() - 1; i < clipped.points.size(); j = i++)
+				AlignedVector< Plane > nextFrustum(clipped.size());
+				for (size_t i = 0, j = clipped.size() - 1; i < clipped.size(); j = i++)
 				{
 					nextFrustum[i] = Plane(
 						Vector4(0.0f, 0.0f, 0.0f, 1.0f),
-						clipped.points[i],
-						clipped.points[j]
+						clipped[i],
+						clipped[j]
 					);
 				}
 

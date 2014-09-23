@@ -63,7 +63,7 @@ Ref< IMesh > IndoorMeshResource::createMesh(
 	indoorMesh->m_portals.resize(m_portals.size());
 	for (size_t i = 0; i < m_portals.size(); ++i)
 	{
-		indoorMesh->m_portals[i].winding.points = m_portals[i].pts;
+		indoorMesh->m_portals[i].winding = Winding3(m_portals[i].pts);
 		indoorMesh->m_portals[i].sectorA = m_portals[i].sectorA;
 		indoorMesh->m_portals[i].sectorB = m_portals[i].sectorB;
 	}

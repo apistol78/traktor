@@ -22,6 +22,12 @@ T_MATH_INLINE Scalar::Scalar(__m128 value)
 {
 }
 
+T_MATH_INLINE Scalar& Scalar::operator = (const Scalar& v)
+{
+	m_data = v.m_data;
+	return *this;
+}
+
 T_MATH_INLINE Scalar Scalar::operator - () const
 {
 	static const uint32_t T_ALIGN16 c_negateMask[] = { 0x80000000, 0x80000000, 0x80000000, 0x80000000 };
