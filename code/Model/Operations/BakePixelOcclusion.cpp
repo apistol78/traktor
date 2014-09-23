@@ -20,6 +20,7 @@ struct BakePixelVisitor
 	Vector4 P[3];
 	Vector4 N[3];
 	drawing::Image& outImage;
+	SahTree::QueryCache cache;
 
 	BakePixelVisitor(
 		RandomGeometry& _random,
@@ -53,7 +54,7 @@ struct BakePixelVisitor
 		{
 			Vector4 rayDirection = lerp(normal, random.nextHemi(normal), c_occlusionRaySpread).normalized().xyz0();
 			Vector4 rayOrigin = (position + normal * c_occlusionRayBias).xyz1();
-			if (sah.queryAnyIntersection(rayOrigin, rayDirection, 0.0f))
+			if (sah.queryAnyIntersection(rayOrigin, rayDirection, 0.0f, cache))
 				occluded++;
 		}
 
