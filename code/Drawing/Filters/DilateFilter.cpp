@@ -9,57 +9,63 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.DilateFilter", DilateFilter, IImageFilter)
 
-DilateFilter::DilateFilter()
+DilateFilter::DilateFilter(int32_t iterations)
+:	m_iterations(iterations)
 {
 }
 
 void DilateFilter::apply(Image* image) const
 {
-	Ref< Image > final = image->clone(false);
 	Color4f tmp;
-
-	for (int32_t y = 0; y < image->getHeight(); ++y)
+	for (int32_t i = 0; i < m_iterations; ++i)
 	{
-		for (int32_t x = 0; x < image->getWidth(); ++x)
+		Ref< Image > final = image->clone(false);
+
+		for (int32_t y = 0; y < image->getHeight(); ++y)
 		{
-			image->getPixelUnsafe(x, y, tmp);
-			if (tmp.getAlpha() > FUZZY_EPSILON)
+			for (int32_t x = 0; x < image->getWidth(); ++x)
 			{
-				final->setPixelUnsafe(x, y, tmp);
-				continue;
-			}
-
-			Color4f acc(0.0f, 0.0f, 0.0f, 0.0f);
-			int32_t cnt = 0;
-
-			for (int32_t iy = -1; iy <= 1; ++iy)
-			{
-				for (int32_t ix = -1; ix <= 1; ++ix)
+				image->getPixelUnsafe(x, y, tmp);
+				if (tmp.getAlpha() > FUZZY_EPSILON)
 				{
-					if (ix == 0 || iy == 0)
-						continue;
+					final->setPixelUnsafe(x, y, tmp);
+					continue;
+				}
 
-					if (image->getPixel(x + ix, y + iy, tmp))
+				Color4f acc(0.0f, 0.0f, 0.0f, 0.0f);
+				int32_t cnt = 0;
+
+				for (int32_t iy = -1; iy <= 1; ++iy)
+				{
+					for (int32_t ix = -1; ix <= 1; ++ix)
 					{
-						if (tmp.getAlpha() > FUZZY_EPSILON)
+						if (ix == 0 || iy == 0)
+							continue;
+
+						if (image->getPixel(x + ix, y + iy, tmp))
 						{
-							acc += tmp;
-							cnt++;
+							if (tmp.getAlpha() > FUZZY_EPSILON)
+							{
+								acc = Color4f(max((const Vector4&)acc, (const Vector4&)tmp));
+								cnt++;
+							}
 						}
 					}
 				}
-			}
 
-			if (cnt > 0)
-			{
-				acc /= Scalar(float(cnt));
-				acc.setAlpha(Scalar(1.0f));
-				final->setPixelUnsafe(x, y, acc);
+				if (cnt > 0)
+				{
+					//acc /= Scalar(float(cnt));
+					acc.setAlpha(Scalar(1.0f));
+					final->setPixelUnsafe(x, y, acc);
+				}
+				else
+					final->setPixelUnsafe(x, y, tmp);
 			}
 		}
-	}
 
-	image->swap(final);
+		image->swap(final);
+	}
 }
 
 	}

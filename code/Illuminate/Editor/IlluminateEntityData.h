@@ -37,10 +37,25 @@ public:
 
 	const Guid& getSeedGuid() const { return m_seedGuid; }
 
+	float getLumelsPerUnit() const { return m_lumelsPerUnit; }
+
+	bool traceDirectLighting() const { return m_directLighting; }
+
+	bool traceIndirectLighting() const { return m_indirectLighting; }
+
+	int32_t getIndirectTraceSamples() const { return m_indirectTraceSamples; }
+
+	bool compressLightMap() const { return m_compressLightMap; }
+
 	const RefArray< world::EntityData >& getEntityData() const { return m_entityData; }
 
 private:
 	Guid m_seedGuid;
+	float m_lumelsPerUnit;
+	bool m_directLighting;
+	bool m_indirectLighting;
+	int32_t m_indirectTraceSamples;
+	bool m_compressLightMap;
 	RefArray< world::EntityData > m_entityData;
 };
 

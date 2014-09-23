@@ -4,6 +4,16 @@
 	<image>Desktop/meta/Preview.png</image>
 	<items>
 		<item>
+			<source>Desktop/data/Source/Input/Input.xdi</source>
+			<target>$(WIZARD_OUTPUT_PATH)/data/Source/Input/Input.xdi</target>
+			<transform>false</transform>
+		</item>
+		<item>
+			<source>Desktop/data/Source/Input/Input.xdm</source>
+			<target>$(WIZARD_OUTPUT_PATH)/data/Source/Input/Input.xdm</target>
+			<transform>false</transform>
+		</item>
+		<item>
 			<source>Desktop/data/Assets/Objects/Cube/Cube.lwo</source>
 			<target>$(WIZARD_OUTPUT_PATH)/data/Assets/Objects/Cube/Cube.lwo</target>
 			<transform>false</transform>

@@ -18,6 +18,12 @@ T_MATH_INLINE Scalar::Scalar(float value)
 {
 }
 
+T_MATH_INLINE Scalar& Scalar::operator = (const Scalar& v)
+{
+	m_data = v.m_data;
+	return *this;
+}
+
 T_MATH_INLINE Scalar Scalar::operator - () const
 {
 	return Scalar(-m_data);

@@ -69,8 +69,8 @@ Ref< BspTree::BspNode > BspTree::recursiveBuild(AlignedVector< Winding3 >& polyg
 			Winding3 f, b;
 			
 			polygons[i].split(p, f, b);
-			T_ASSERT (f.points.size() >= 3);
-			T_ASSERT (b.points.size() >= 3);
+			T_ASSERT (f.size() >= 3);
+			T_ASSERT (b.size() >= 3);
 
 			frontPolygons.push_back(f);
 			frontPlanes.push_back(planes[i]);
@@ -127,8 +127,8 @@ bool BspTree::inside(const BspNode* node, const Winding3& w) const
 		Winding3 f, b;
 
 		w.split(m_planes[node->plane], f, b);
-		T_ASSERT (!f.points.empty());
-		T_ASSERT (!b.points.empty());
+		T_ASSERT (!f.empty());
+		T_ASSERT (!b.empty());
 
 		if (node->front)
 			result |= inside(node->front, f);
@@ -138,15 +138,5 @@ bool BspTree::inside(const BspNode* node, const Winding3& w) const
 
 	return result;
 }
-
-//void* BspTree::BspNode::operator new (size_t size)
-//{
-//	return getAllocator()->alloc(size, 16, "BspNode");
-//}
-//
-//void BspTree::BspNode::operator delete (void* ptr)
-//{
-//	getAllocator()->free(ptr);
-//}
 
 }

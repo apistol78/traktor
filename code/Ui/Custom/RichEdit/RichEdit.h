@@ -73,6 +73,8 @@ public:
 
 	bool scrollToLine(int32_t line);
 
+	int32_t getScrollLine() const;
+
 	bool showLine(int32_t line);
 
 	void placeCaret(int32_t offset);
@@ -125,6 +127,7 @@ private:
 	int32_t m_caret;
 	int32_t m_selectionStart;
 	int32_t m_selectionStop;
+	int32_t m_lineMargin;
 
 #if defined(_DEBUG)
 	std::vector< Line > m_linesLastGood;

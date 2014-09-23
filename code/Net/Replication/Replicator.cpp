@@ -203,12 +203,15 @@ bool Replicator::update()
 			continue;
 		}
 
-		double latency = fromGhost->getLatency();
-		timeOffset = std::max(
-			net2time(msg.time) + latency - m_time,
-			timeOffset
-		);
-		timeOffsetReceived = true;
+		if (fromGhost->isPrimary())
+		{
+			double latency = fromGhost->getLatency();
+			timeOffset = std::max(
+				net2time(msg.time) + latency - m_time,
+				timeOffset
+			);
+			timeOffsetReceived = true;
+		}
 
 		if (msg.id == RmiPing)
 		{

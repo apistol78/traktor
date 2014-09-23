@@ -11,7 +11,8 @@
 #include "Render/OpenGL/ES2/ProgramCompilerOpenGLES2.h"
 #include "Render/OpenGL/ES2/ProgramOpenGLES2.h"
 #include "Render/OpenGL/ES2/IndexBufferOpenGLES2.h"
-#include "Render/OpenGL/ES2/VertexBufferOpenGLES2.h"
+#include "Render/OpenGL/ES2/VertexBufferDynamicOpenGLES2.h"
+#include "Render/OpenGL/ES2/VertexBufferStaticOpenGLES2.h"
 #include "Render/OpenGL/ES2/VolumeTextureOpenGLES2.h"
 #include "Render/OpenGL/ES2/SimpleTextureOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderTargetSetOpenGLES2.h"
@@ -155,7 +156,10 @@ Ref< VertexBuffer > RenderSystemOpenGLES2::createVertexBuffer(const std::vector<
 {
 #if !defined(T_OFFLINE_ONLY)
 	T_ANONYMOUS_VAR(IContext::Scope)(m_globalContext);
-	return new VertexBufferOpenGLES2(m_globalContext, vertexElements, bufferSize, dynamic);
+	if (!dynamic)
+		return new VertexBufferStaticOpenGLES2(m_globalContext, vertexElements, bufferSize);
+	else
+		return new VertexBufferDynamicOpenGLES2(m_globalContext, vertexElements, bufferSize);
 #else
 	return 0;
 #endif

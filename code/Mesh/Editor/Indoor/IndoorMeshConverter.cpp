@@ -158,13 +158,13 @@ void createHulls(const model::Model& model, std::map< std::wstring, Hull >& outH
 		{
 			bw.push_back(Winding3());
 			for (Hull::polygon_t::const_iterator k = j->begin(); k != j->end(); ++k)
-				bw.back().points.push_back(i->second.points[*k]);
+				bw.back().push(i->second.points[*k]);
 		}
 		for (std::vector< Hull::portal_t >::const_iterator j = i->second.portals.begin(); j != i->second.portals.end(); ++j)
 		{
 			bw.push_back(Winding3());
 			for (Hull::portal_t::const_iterator k = j->begin(); k != j->end(); ++k)
-				bw.back().points.push_back(i->second.points[k->first]);
+				bw.back().push(i->second.points[k->first]);
 		}
 		i->second.bsp.build(bw);
 	}
@@ -217,7 +217,7 @@ struct BspPolygon
 	{
 		Winding3 w;
 		for (AlignedVector< Vertex >::const_iterator i = vertices.begin(); i != vertices.end(); ++i)
-			w.points.push_back(i->position);
+			w.push(i->position);
 		return w;
 	}
 
@@ -351,7 +351,7 @@ void createSectors(
 		{
 			Winding3 wp;
 			for (Hull::portal_t::const_iterator k = j->begin(); k != j->end(); ++k)
-				wp.points.push_back(hull.points[k->first]);
+				wp.push(hull.points[k->first]);
 
 			Plane portalPlane;
 			if (!wp.getPlane(portalPlane))
@@ -442,7 +442,7 @@ void createSectors(
 		for (portal_t::const_iterator i = portal.second.begin(); i != portal.second.end(); ++i)
 		{
 			AlignedVector< Vector4 >::iterator it = points.begin(); std::advance(it, *i);
-			outPortals.back().winding.points.push_back(*it);
+			outPortals.back().winding.push(*it);
 		}
 
 		outPortals.back().sectors[0] = int(portal.first);
@@ -471,14 +471,14 @@ void createSectors(
 		{
 			Winding3 winding;
 			for (std::vector< size_t >::const_iterator k = j->indices.begin(); k != j->indices.end(); ++k)
-				winding.points.push_back(i->vertices[*k].position);
+				winding.push(i->vertices[*k].position);
 
 			Plane windingPlane;
 			winding.getPlane(windingPlane);
 
 			std::vector< Triangulator::Triangle > triangulation;
 			Triangulator().freeze(
-				winding.points,
+				winding.getPoints(),
 				windingPlane.normal(),
 				triangulation
 			);
@@ -660,7 +660,7 @@ bool IndoorMeshConverter::convert(
 	for (AlignedVector< Portal >::const_iterator i = portals.begin(); i != portals.end(); ++i)
 	{
 		assetPortals.push_back(IndoorMeshResource::Portal());
-		assetPortals.back().pts = i->winding.points;
+		assetPortals.back().pts = i->winding.getPoints();
 		assetPortals.back().sectorA = i->sectors[0];
 		assetPortals.back().sectorB = i->sectors[1];
 	}

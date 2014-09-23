@@ -2,6 +2,7 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/Vector2.h"
+#include "Core/Math/Winding2.h"
 #include "Core/Math/Winding3.h"
 
 namespace traktor
@@ -11,30 +12,48 @@ Winding3::Winding3()
 {
 }
 
-Winding3::Winding3(const AlignedVector< Vector4 >& points_)
-:	points(points_)
+Winding3::Winding3(const points_t& points)
+:	m_points(points)
 {
 }
 
-Winding3::Winding3(const Vector4* points_, size_t npoints)
-:	points(npoints)
+Winding3::Winding3(const Vector4* points, size_t npoints)
+:	m_points(npoints)
 {
 	for (size_t i = 0; i < npoints; ++i)
-		points[i] = points_[i];
+		m_points[i] = points[i];
+}
+
+Winding3::Winding3(const Vector4& p1, const Vector4& p2, const Vector4& p3)
+:	m_points(3)
+{
+	m_points[0] = p1;
+	m_points[1] = p2;
+	m_points[2] = p3;
+}
+
+void Winding3::clear()
+{
+	m_points.clear();
+}
+
+void Winding3::push(const Vector4& p)
+{
+	m_points.push_back(p);
 }
 
 bool Winding3::angleIndices(uint32_t& outI1, uint32_t& outI2, uint32_t& outI3) const
 {
-	if (points.size() < 3)
+	if (m_points.size() < 3)
 		return false;
 
-	for (size_t p = points.size() - 1, i = 0; i < points.size(); p = i++)
+	for (size_t p = m_points.size() - 1, i = 0; i < m_points.size(); p = i++)
 	{
-		size_t n = (i + 1) % points.size();
+		size_t n = (i + 1) % m_points.size();
 
-		const Vector4& p1 = points[p];
-		const Vector4& p2 = points[i];
-		const Vector4& p3 = points[n];
+		const Vector4& p1 = m_points[p];
+		const Vector4& p2 = m_points[i];
+		const Vector4& p3 = m_points[n];
 
 		Vector4 e1 = p1 - p2;
 		Vector4 e2 = p3 - p2;
@@ -61,6 +80,49 @@ bool Winding3::angleIndices(uint32_t& outI1, uint32_t& outI2, uint32_t& outI3) c
 	return false;
 }
 
+bool Winding3::getProjection(Winding2& outProjection, Vector4& outU, Vector4& outV) const
+{
+	Plane plane;
+	Vector4 p;
+
+	if (!getPlane(plane))
+		return false;
+
+	Vector4 normal = plane.normal();
+	int32_t major = majorAxis3(normal);
+
+	// Use maximum axis to determine projection plane.
+	Vector4 u(0.0f, 0.0f, 0.0f), v(0.0f, 0.0f, 0.0f);
+	if (major == 0)	// X
+	{
+		u = normal.x() > 0.0f ? Vector4(0.0f, 0.0f, -1.0f) : Vector4(0.0f, 0.0f, 1.0f);
+		v = Vector4(0.0f, 1.0f, 0.0f);
+	}
+	else if (major == 1)	// Y
+	{
+		u = normal.y() > 0.0f ? Vector4(0.0f, 0.0f, 1.0f) : Vector4(0.0f, 0.0f, -1.0f);
+		v = Vector4(1.0f, 0.0f, 0.0f);
+	}
+	else if (major == 2)	// Z
+	{
+		u = normal.z() > 0.0f ? Vector4(1.0f, 0.0f, 0.0f) : Vector4(-1.0f, 0.0f, 0.0f);
+		v = Vector4(0.0f, 1.0f, 0.0f);
+	}
+
+	// Project all points onto 2d plane.
+	outProjection.points.resize(m_points.size());
+	for (size_t i = 0; i < m_points.size(); ++i)
+	{
+		outProjection.points[i].x = dot3(u, m_points[i]);
+		outProjection.points[i].y = dot3(v, m_points[i]);
+	}
+
+	outU = u;
+	outV = v;
+
+	return true;
+}
+
 bool Winding3::getPlane(Plane& outPlane) const
 {
 	// Get indices to points which form a good frame.
@@ -69,16 +131,16 @@ bool Winding3::getPlane(Plane& outPlane) const
 		return false;
 
 	// Create plane from indexed points.
-	outPlane = Plane(points[i1], points[i2], points[i3]);
+	outPlane = Plane(m_points[i1], m_points[i2], m_points[i3]);
 	return true;
 }
 
 void Winding3::split(const Plane& plane, Winding3& outFront, Winding3& outBack) const
 {
-	for (size_t i = 0, j = points.size() - 1; i < points.size(); j = i++)
+	for (size_t i = 0, j = m_points.size() - 1; i < m_points.size(); j = i++)
 	{
-		const Vector4& a = points[i];
-		const Vector4& b = points[j];
+		const Vector4& a = m_points[i];
+		const Vector4& b = m_points[j];
 
 		Scalar da = plane.distance(a);
 		Scalar db = plane.distance(b);
@@ -90,23 +152,23 @@ void Winding3::split(const Plane& plane, Winding3& outFront, Winding3& outBack) 
 			T_ASSERT (k >= 0.0f && k <= 1.0f);
 
 			Vector4 p = lerp(a, b, k);
-			outFront.points.push_back(p);
-			outBack.points.push_back(p);
+			outFront.m_points.push_back(p);
+			outBack.m_points.push_back(p);
 		}
 
 		if (da >= -FUZZY_EPSILON)
-			outFront.points.push_back(a);
+			outFront.m_points.push_back(a);
 		if (da <= FUZZY_EPSILON)
-			outBack.points.push_back(a);
+			outBack.m_points.push_back(a);
 	}
 }
 
 int Winding3::classify(const Plane& plane) const
 {
 	int side[2] = { 0, 0 };
-	for (size_t i = 0; i < points.size(); ++i)
+	for (size_t i = 0; i < m_points.size(); ++i)
 	{
-		float d = plane.distance(points[i]);
+		float d = plane.distance(m_points[i]);
 		if (d > FUZZY_EPSILON)
 			side[CfFront]++;
 		else if (d < -FUZZY_EPSILON)
@@ -126,7 +188,7 @@ int Winding3::classify(const Plane& plane) const
 
 float Winding3::area() const
 {
-	int32_t n = int32_t(points.size());
+	int32_t n = int32_t(m_points.size());
 	if (n <= 2)
 		return 0.0f;
 
@@ -150,15 +212,15 @@ float Winding3::area() const
 		switch (coord)
 		{
 		case 0:
-			area += (points[ii].y() * (points[jj].z() - points[kk].z()));
+			area += (m_points[ii].y() * (m_points[jj].z() - m_points[kk].z()));
 			break;
 
 		case 1:
-			area += (points[ii].x() * (points[jj].z() - points[kk].z()));
+			area += (m_points[ii].x() * (m_points[jj].z() - m_points[kk].z()));
 			break;
 
 		case 2:
-			area += (points[ii].x() * (points[jj].y() - points[kk].y()));
+			area += (m_points[ii].x() * (m_points[jj].y() - m_points[kk].y()));
 			break;
 		}
 	}
@@ -185,9 +247,9 @@ float Winding3::area() const
 Vector4 Winding3::center() const
 {
 	Vector4 acc = Vector4::zero();
-	for (AlignedVector< Vector4 >::const_iterator i = points.begin(); i != points.end(); ++i)
+	for (points_t::const_iterator i = m_points.begin(); i != m_points.end(); ++i)
 		acc += *i;
-	acc /= Scalar(float(points.size()));
+	acc /= Scalar(float(m_points.size()));
 	return acc.xyz1();
 }
 
@@ -230,11 +292,11 @@ bool Winding3::rayIntersection(
 
 	// Project all points onto 2d plane.
 	Vector2 projected[32];
-	T_ASSERT (points.size() <= sizeof_array(projected));
-	for (size_t i = 0; i < points.size(); ++i)
+	T_ASSERT (m_points.size() <= sizeof_array(projected));
+	for (size_t i = 0; i < m_points.size(); ++i)
 	{
-		projected[i].x = dot3(u, points[i]);
-		projected[i].y = dot3(v, points[i]);
+		projected[i].x = dot3(u, m_points[i]);
+		projected[i].y = dot3(v, m_points[i]);
 	}
 	
 	// Use odd-even rule to determine if point is in polygon.
@@ -244,7 +306,7 @@ bool Winding3::rayIntersection(
 	);
 	
 	bool pass = false;
-	for (size_t i = 0, j = points.size() - 1; i < points.size(); j = i++)
+	for (size_t i = 0, j = m_points.size() - 1; i < m_points.size(); j = i++)
 	{
 		float dx = projected[j].x - projected[i].x;
 		float dy = projected[j].y - projected[i].y;
@@ -270,6 +332,11 @@ bool Winding3::rayIntersection(
 		*outPoint = p;
 
 	return true;
+}
+
+void Winding3::flip()
+{
+	std::reverse(m_points.begin(), m_points.end());
 }
 
 }

@@ -60,6 +60,8 @@ BuildTargetAction::BuildTargetAction(
 
 bool BuildTargetAction::execute(IProgressListener* progressListener)
 {
+	std::set< std::wstring > deployFiles;
+
 	// Get platform description object from database.
 	Ref< Platform > platform = m_database->getObjectReadOnly< Platform >(m_targetConfiguration->getPlatform());
 	if (!platform)
@@ -98,6 +100,12 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	{
 		const Feature* feature = *i;
 		T_ASSERT (feature);
+
+		const Feature::Platform* fp = feature->getPlatform(m_targetConfiguration->getPlatform());
+		if (fp)
+			deployFiles.insert(fp->deployFiles.begin(), fp->deployFiles.end());
+		else
+			log::warning << L"Feature \"" << feature->getDescription() << L"\" doesn't support selected platform." << Endl;
 
 		Ref< const PropertyGroup > pipelineProperties = feature->getPipelineProperties();
 		if (!pipelineProperties)
@@ -211,6 +219,7 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	envmap[L"DEPLOY_SYSTEM_ROOT"] = m_targetConfiguration->getSystemRoot();
 	envmap[L"DEPLOY_OUTPUT_PATH"] = m_outputPath;
 	envmap[L"DEPLOY_CERTIFICATE"] = m_globalSettings->getProperty< PropertyString >(L"Amalgam.Certificate", L"");
+	envmap[L"DEPLOY_FILES"] = implode(deployFiles.begin(), deployFiles.end(), L" ");
 	envmap[L"DEPLOY_DEBUG"] = (m_globalSettings->getProperty< PropertyBoolean >(L"Amalgam.UseDebugBinaries", false) ? L"YES" : L"");
 
 	const DeployTool& deployTool = platform->getDeployTool();

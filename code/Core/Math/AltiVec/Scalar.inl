@@ -38,6 +38,12 @@ T_MATH_INLINE Scalar::Scalar(vec_float4 value)
 {
 }
 
+T_MATH_INLINE Scalar& Scalar::operator = (const Scalar& value)
+{
+	m_data = value.m_data;
+	return *this;
+}
+
 T_MATH_INLINE Scalar Scalar::operator - () const
 {
 	vec_uint4 umask = (vec_uint4){ 0x80000000, 0x80000000, 0x80000000, 0x80000000 };

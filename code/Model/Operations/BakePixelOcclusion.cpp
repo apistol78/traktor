@@ -98,7 +98,7 @@ bool BakePixelOcclusion::apply(Model& model) const
 		{
 			const Vertex& polyVertex = model.getVertex(*j);
 			const Vector4& polyVertexPosition = model.getPosition(polyVertex.getPosition());
-			w.points.push_back(polyVertexPosition);
+			w.push(polyVertexPosition);
 		}
 	}
 

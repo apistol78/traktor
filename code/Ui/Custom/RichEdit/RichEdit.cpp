@@ -17,7 +17,7 @@ namespace traktor
 			namespace
 			{
 
-const int32_t c_lineMargin = 40;
+const int32_t c_lineMarginMin = 40;
 const int32_t c_iconSize = 16;
 
 #if !defined(__APPLE__)
@@ -43,6 +43,7 @@ RichEdit::RichEdit()
 ,	m_caret(0)
 ,	m_selectionStart(-1)
 ,	m_selectionStop(-1)
+,	m_lineMargin(c_lineMarginMin)
 {
 }
 
@@ -91,14 +92,12 @@ void RichEdit::setText(const std::wstring& text)
 
 	if (!text.empty())
 	{
-		std::wstring tmp = replaceAll< std::wstring >(text, L"\n\r", L"\n");
-		
 		size_t i = 0;
-		while (i < tmp.length())
+		while (i < text.length())
 		{
-			size_t j = tmp.find(L'\n', i);
+			size_t j = text.find(L'\n', i);
 
-			std::wstring ln = (j != tmp.npos) ? tmp.substr(i, j - i) : tmp.substr(i);
+			std::wstring ln = (j != text.npos) ? text.substr(i, j - i) : text.substr(i);
 
 			Line line;
 			line.start = m_text.size();
@@ -108,8 +107,12 @@ void RichEdit::setText(const std::wstring& text)
 			m_text.insert(m_text.end(), ln.begin(), ln.end());
 			m_text.push_back(L'\n');
 
-			if (j != tmp.npos)
+			if (j != text.npos)
+			{
 				i = j + 1;
+				if (i < text.length() && text[i] == L'\r')
+					++i;
+			}
 			else
 				break;
 		}
@@ -350,6 +353,14 @@ bool RichEdit::scrollToLine(int32_t line)
 		update();
 	}
 	return true;
+}
+
+int32_t RichEdit::getScrollLine() const
+{
+	if (m_scrollBarV->isVisible(false))
+		return m_scrollBarV->getPosition();
+	else
+		return 0;
 }
 
 bool RichEdit::showLine(int32_t line)
@@ -896,7 +907,7 @@ void RichEdit::eventButtonDown(MouseButtonDownEvent* event)
 	std::vector< int32_t > stops;
 	int32_t lineWidth = getCharacterStops(text, stops);
 
-	int32_t linePosition = mousePosition.x - c_lineMargin;
+	int32_t linePosition = mousePosition.x - m_lineMargin;
 	if (linePosition < lineWidth)
 	{
 		for (int32_t i = stops.size() - 1; i >= 0; --i)
@@ -951,11 +962,14 @@ void RichEdit::eventPaint(PaintEvent* event)
 	uint32_t lineHeight = abs(font.getSize()) + c_fontHeightMargin;
 	uint32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
 
+	// Calculate margin width from highest visible line number.
+	m_lineMargin = c_iconSize + canvas.getTextExtent(toString(lineOffset + pageLines)).cx + 2;
+
 	// Background
 	{
-		Rect marginRc(rc.left, rc.top, rc.left + c_lineMargin, rc.bottom);
+		Rect marginRc(rc.left, rc.top, rc.left + m_lineMargin, rc.bottom);
 		Rect iconsRc(rc.left, rc.top, rc.left + c_iconSize, rc.top + lineHeight);
-		Rect lineRc(rc.left + c_iconSize, rc.top, rc.left + c_lineMargin, rc.top + lineHeight);
+		Rect lineRc(rc.left + c_iconSize, rc.top, rc.left + m_lineMargin, rc.top + lineHeight);
 
 		canvas.setForeground(Color4ub(180, 180, 180));
 		canvas.setBackground(Color4ub(200, 200, 200));
@@ -1000,7 +1014,7 @@ void RichEdit::eventPaint(PaintEvent* event)
 
 				if (m_caret == j)
 				{
-					textRc.left = c_lineMargin + 2 + x - 1;
+					textRc.left = m_lineMargin + 2 + x - 1;
 					textRc.right = textRc.left + 1;
 
 					canvas.setBackground(Color4ub(0, 0, 0));
@@ -1026,7 +1040,7 @@ void RichEdit::eventPaint(PaintEvent* event)
 					std::wstring ch(&m_text[j], &m_text[j + 1]);
 					int32_t chw = canvas.getTextExtent(ch).cx;
 
-					textRc.left = c_lineMargin + 2 + x;
+					textRc.left = m_lineMargin + 2 + x;
 					textRc.right = textRc.left + chw;
 
 					if (solidBackground)
@@ -1040,8 +1054,8 @@ void RichEdit::eventPaint(PaintEvent* event)
 					// Adjust offset to nearest tab-stop.
 					int32_t nx = alignUp(x + 4 * 8, 4 * 8);
 
-					textRc.left = c_lineMargin + 2 + x;
-					textRc.right = c_lineMargin + 2 + nx;
+					textRc.left = m_lineMargin + 2 + x;
+					textRc.right = m_lineMargin + 2 + nx;
 
 					if (solidBackground)
 						canvas.fillRect(textRc);
@@ -1053,7 +1067,7 @@ void RichEdit::eventPaint(PaintEvent* event)
 			// Special condition; caret at the very end of a line.
 			if (m_caret == line.stop)
 			{
-				textRc.left = c_lineMargin + 2 + x - 1;
+				textRc.left = m_lineMargin + 2 + x - 1;
 				textRc.right = textRc.left + 1;
 
 				canvas.setBackground(Color4ub(0, 0, 0));

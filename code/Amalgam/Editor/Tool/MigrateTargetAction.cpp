@@ -62,6 +62,7 @@ MigrateTargetAction::MigrateTargetAction(
 
 bool MigrateTargetAction::execute(IProgressListener* progressListener)
 {
+	std::set< std::wstring > deployFiles;
 	std::wstring executableFile;
 
 	// Get platform description object from database.
@@ -141,6 +142,7 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 		const Feature::Platform* fp = feature->getPlatform(m_targetConfiguration->getPlatform());
 		if (fp)
 		{
+			deployFiles.insert(fp->deployFiles.begin(), fp->deployFiles.end());
 			if (!fp->executableFile.empty())
 				executableFile = fp->executableFile;
 		}
@@ -211,6 +213,7 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 	envmap[L"DEPLOY_MODULES"] = implode(runtimeModules.begin(), runtimeModules.end(), L" ");
 	envmap[L"DEPLOY_OUTPUT_PATH"] = m_outputPath;
 	envmap[L"DEPLOY_CERTIFICATE"] = m_globalSettings->getProperty< PropertyString >(L"Amalgam.Certificate", L"");
+	envmap[L"DEPLOY_FILES"] = implode(deployFiles.begin(), deployFiles.end(), L" ");
 	envmap[L"DEPLOY_DEBUG"] = (m_globalSettings->getProperty< PropertyBoolean >(L"Amalgam.UseDebugBinaries", false) ? L"YES" : L"");
 
 	const DeployTool& deployTool = platform->getDeployTool();

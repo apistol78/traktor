@@ -45,6 +45,8 @@ public:
 	explicit T_MATH_INLINE Scalar(float32x4_t value);
 #endif
 
+	T_MATH_INLINE Scalar& operator = (const Scalar& v);
+
 	T_MATH_INLINE Scalar operator - () const;
 
 	T_MATH_INLINE Scalar& operator += (const Scalar& v);

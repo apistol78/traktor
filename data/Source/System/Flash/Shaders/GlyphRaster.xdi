@@ -34,8 +34,8 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1286</first>
-				<second>394</second>
+				<first>1368</first>
+				<second>401</second>
 			</position>
 			<name>Output</name>
 		</item>
@@ -117,6 +117,33 @@
 				<first>417</first>
 				<second>414</second>
 			</position>
+		</item>
+		<item type="traktor.render.Platform">
+			<comment/>
+			<position>
+				<first>1137</first>
+				<second>455</second>
+			</position>
+		</item>
+		<item type="traktor.render.External" version="1">
+			<comment/>
+			<position>
+				<first>162</first>
+				<second>698</second>
+			</position>
+			<fragmentGuid>{3964A615-B081-5B42-AC2E-E569C1BAE4EA}</fragmentGuid>
+			<inputPins>
+				<item>
+					<name>Offset</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<name>Output</name>
+				</item>
+			</outputPins>
+			<values/>
 		</item>
 	</nodes>
 	<edges>
@@ -266,8 +293,38 @@
 				<name>Output</name>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[13]"/>
+				<name>Other</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[13]"/>
+				<name>Output</name>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[4]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[14]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[13]"/>
+				<name>OpenGL ES2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[14]"/>
+				<name>Offset</name>
 			</destination>
 		</item>
 	</edges>

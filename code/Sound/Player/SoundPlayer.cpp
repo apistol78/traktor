@@ -186,6 +186,7 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 	// Surround filter.
 	Ref< SurroundFilter > surroundFilter = new SurroundFilter(m_surroundEnvironment, position.xyz1());
 
+	/*
 	// Calculate initial cut-off frequency.
 	float cutOff = lerp(c_nearCutOff, c_farCutOff, clamp(std::sqrt(k0), 0.0f, 1.0f));
 	Ref< LowPassFilter > lowPassFilter = new LowPassFilter(cutOff);
@@ -209,6 +210,7 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 		groupFilter = new GroupFilter(lowPassFilter, echoFilter, surroundFilter);
 	else
 		groupFilter = new GroupFilter(lowPassFilter, surroundFilter);
+	*/
 
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
@@ -234,8 +236,8 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 
 				i->position = position.xyz1();
 				i->surroundFilter = surroundFilter;
-				i->lowPassFilter = lowPassFilter;
-				i->echoFilter = echoFilter;
+				i->lowPassFilter = 0; //lowPassFilter;
+				i->echoFilter = 0; //echoFilter;
 				i->sound = sound;
 				i->soundChannel->play(
 					sound->getBuffer(),
@@ -244,7 +246,7 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 					presence,
 					sound->getPresenceRate()
 				);
-				i->soundChannel->setFilter(groupFilter);
+				i->soundChannel->setFilter(/*groupFilter*/surroundFilter);
 				i->soundChannel->setVolume(1.0f);
 				i->priority = priority;
 				i->fadeOff = -1.0f;
@@ -265,8 +267,8 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 
 				i->position = position.xyz1();
 				i->surroundFilter = surroundFilter;
-				i->lowPassFilter = lowPassFilter;
-				i->echoFilter = echoFilter;
+				i->lowPassFilter = 0; //lowPassFilter;
+				i->echoFilter = 0; //echoFilter;
 				i->sound = sound;
 				i->soundChannel->play(
 					sound->getBuffer(),
@@ -275,7 +277,7 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 					presence,
 					sound->getPresenceRate()
 				);
-				i->soundChannel->setFilter(groupFilter);
+				i->soundChannel->setFilter(/*groupFilter*/surroundFilter);
 				i->soundChannel->setVolume(1.0f);
 				i->priority = priority;
 				i->fadeOff = -1.0f;
@@ -301,8 +303,8 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 
 				i->position = position.xyz1();
 				i->surroundFilter = surroundFilter;
-				i->lowPassFilter = lowPassFilter;
-				i->echoFilter = echoFilter;
+				i->lowPassFilter = 0; //lowPassFilter;
+				i->echoFilter = 0; //echoFilter;
 				i->sound = sound;
 				i->soundChannel->play(
 					sound->getBuffer(),
@@ -311,7 +313,7 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 					presence,
 					sound->getPresenceRate()
 				);
-				i->soundChannel->setFilter(groupFilter);
+				i->soundChannel->setFilter(/*groupFilter*/surroundFilter);
 				i->soundChannel->setVolume(1.0f);
 				i->priority = priority;
 				i->fadeOff = -1.0f;

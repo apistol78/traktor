@@ -21,7 +21,7 @@ struct GatherFront
 
 	void operator () (uint32_t index, const Winding3& w, int32_t cl, bool splitted)
 	{
-		if (w.points.size() < 3)
+		if (w.size() < 3)
 			return;
 
 		mask |= (1 << cl);
@@ -37,11 +37,10 @@ void buildWindings(const Model& model, const Transform& transform, AlignedVector
 	for (uint32_t i = 0; i < polygons.size(); ++i)
 	{
 		const Polygon& polygon = polygons[i];
-		outWindings[i].points.resize(polygon.getVertexCount());
+		
+		outWindings[i] = Winding3();
 		for (uint32_t j = 0; j < polygon.getVertexCount(); ++j)
-		{
-			outWindings[i].points[j] = transform * model.getVertexPosition(polygon.getVertex(j)).xyz1();
-		}
+			outWindings[i].push(transform * model.getVertexPosition(polygon.getVertex(j)).xyz1());
 	}
 }
 
@@ -105,10 +104,10 @@ bool Boolean::apply(Model& model) const
 					const Winding3& w = visitor.windings[j];
 
 					Polygon polygon;
-					for (uint32_t k = 0; k < w.points.size(); ++k)
+					for (uint32_t k = 0; k < w.size(); ++k)
 					{
 						Vertex vertex;
-						vertex.setPosition(model.addUniquePosition(w.points[k]));
+						vertex.setPosition(model.addUniquePosition(w[k]));
 						polygon.addVertex(model.addUniqueVertex(vertex));
 					}
 					model.addPolygon(polygon);
@@ -119,10 +118,10 @@ bool Boolean::apply(Model& model) const
 				const Winding3& w = windingsA[i];
 
 				Polygon polygon;
-				for (uint32_t k = 0; k < w.points.size(); ++k)
+				for (uint32_t k = 0; k < w.size(); ++k)
 				{
 					Vertex vertex;
-					vertex.setPosition(model.addUniquePosition(w.points[k]));
+					vertex.setPosition(model.addUniquePosition(w[k]));
 					polygon.addVertex(model.addUniqueVertex(vertex));
 				}
 				model.addPolygon(polygon);
@@ -147,10 +146,10 @@ bool Boolean::apply(Model& model) const
 					const Winding3& w = visitor.windings[j];
 
 					Polygon polygon;
-					for (uint32_t k = 0; k < w.points.size(); ++k)
+					for (uint32_t k = 0; k < w.size(); ++k)
 					{
 						Vertex vertex;
-						vertex.setPosition(model.addUniquePosition(w.points[k]));
+						vertex.setPosition(model.addUniquePosition(w[k]));
 						polygon.addVertex(model.addUniqueVertex(vertex));
 					}
 					model.addPolygon(polygon);
@@ -161,10 +160,10 @@ bool Boolean::apply(Model& model) const
 				const Winding3& w = windingsB[i];
 
 				Polygon polygon;
-				for (uint32_t k = 0; k < w.points.size(); ++k)
+				for (uint32_t k = 0; k < w.size(); ++k)
 				{
 					Vertex vertex;
-					vertex.setPosition(model.addUniquePosition(w.points[k]));
+					vertex.setPosition(model.addUniquePosition(w[k]));
 					polygon.addVertex(model.addUniqueVertex(vertex));
 				}
 				model.addPolygon(polygon);

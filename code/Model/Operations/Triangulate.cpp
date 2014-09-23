@@ -25,9 +25,8 @@ bool Triangulate::apply(Model& model) const
 		{
 			Winding3 polygonWinding;
 
-			polygonWinding.points.resize(vertices.size());
 			for (size_t j = 0; j < vertices.size(); ++j)
-				polygonWinding.points[j] = model.getPosition(model.getVertex(vertices[j]).getPosition());
+				polygonWinding.push(model.getPosition(model.getVertex(vertices[j]).getPosition()));
 
 			Vector4 polygonNormal;
 			if (i->getNormal() != c_InvalidIndex)
@@ -44,7 +43,7 @@ bool Triangulate::apply(Model& model) const
 
 			triangles.resize(0);
 			Triangulator().freeze(
-				polygonWinding.points,
+				polygonWinding.getPoints(),
 				polygonNormal,
 				triangles
 			);

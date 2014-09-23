@@ -352,13 +352,11 @@ bool OcclusionTexturePipeline::buildOutput(
 				Winding3& w = windings[j];
 
 				const std::vector< uint32_t >& vertexIndices = polygons[j].getVertices();
-				w.points.reserve(vertexIndices.size());
-
 				for (std::vector< uint32_t >::const_iterator k = vertexIndices.begin(); k != vertexIndices.end(); ++k)
 				{
 					const model::Vertex& polyVertex = vertices[*k];
 					Vector4 polyVertexPosition = model->getPosition(polyVertex.getPosition()).xyz1();
-					w.points.push_back(polyVertexPosition);
+					w.push(polyVertexPosition);
 				}
 			}
 

@@ -41,28 +41,41 @@ void SahTree::build(const AlignedVector< Winding3 >& polygons)
 	m_root = allocNode();
 
 	// Build list of transformed triangles from each shape.
-	m_polygons.reserve(polygons.size());
-	for (AlignedVector< Winding3 >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
+	m_polygons.resize(polygons.size());
+	m_projected.resize(polygons.size());
+	m_projectedU.resize(polygons.size());
+	m_projectedV.resize(polygons.size());
+	m_planes.resize(polygons.size());
+
+	for (uint32_t i = 0; i < polygons.size(); ++i)
 	{
-		for (AlignedVector< Vector4 >::const_iterator j = i->points.begin(); j != i->points.end(); ++j)
+		const Winding3::points_t& points = polygons[i].getPoints();
+		for (Winding3::points_t::const_iterator j = points.begin(); j != points.end(); ++j)
 			m_root->aabb.contain(*j);
 
-		m_root->indices.push_back(int32_t(m_polygons.size()));
-		m_polygons.push_back(*i);
+		m_root->indices.push_back(int32_t(i));
+		
+		m_polygons[i] = polygons[i];
+		m_polygons[i].getProjection(m_projected[i], m_projectedU[i], m_projectedV[i]);
+		m_polygons[i].getPlane(m_planes[i]);
 	}
 
 	// Build spatial tree.
 	buildNode(m_root, 0);
 }
 
-bool SahTree::queryClosestIntersection(const Vector4& origin, const Vector4& direction, QueryResult& outResult) const
+bool SahTree::queryClosestIntersection(const Vector4& origin, const Vector4& direction, QueryResult& outResult, QueryCache& inoutCache) const
 {
 	#define IS_LEAF(node) ((node)->leftChild == 0)
 
-	const float F(1e-3f);
+	const Scalar F(1e-3f);
 	bool result = false;
 	Scalar nearT, farT;
 	Scalar T;
+	Vector4 p;
+
+	outResult.index = -1;
+	outResult.distance = Scalar(std::numeric_limits< float >::max());
 
 	if (!m_root->aabb.intersectRay(origin, direction, nearT, farT) || farT < 0.0f)
 		return false;
@@ -70,33 +83,37 @@ bool SahTree::queryClosestIntersection(const Vector4& origin, const Vector4& dir
 	if (nearT < 0.0f)
 		nearT = Scalar(0.0f);
 
-	outResult.distance = std::numeric_limits< float >::max();
+	BitVector& tags = inoutCache.tags;
+	tags.assign(m_polygons.size(), false);
 
-	std::vector< bool > tags(m_polygons.size(), false);
-
-	AlignedVector< Stack > stack;
+	AlignedVector< QueryStack >& stack = inoutCache.stack;
 	stack.reserve(64);
-	stack.push_back(Stack(m_root, nearT, farT));
+	stack.resize(0);
+	stack.push_back(QueryStack(m_root, nearT, farT));
 
 	while (!stack.empty())
 	{
 		Node* N = stack.back().node;
-		nearT = Scalar(stack.back().nearT);
-		farT = Scalar(stack.back().farT);
+		nearT = stack.back().nearT;
+		farT = stack.back().farT;
 
 		stack.pop_back();
 
 		if (IS_LEAF(N))
 		{
-			for (std::vector< int32_t >::iterator i = N->indices.begin(); i != N->indices.end(); ++i)
+			for (std::vector< int32_t >::const_iterator i = N->indices.begin(); i != N->indices.end(); ++i)
 			{
 				if (tags[*i])
 					continue;
 
-				const Winding3& polygon = m_polygons[*i];
-				if (polygon.rayIntersection(origin, direction, T))
+				const Plane& plane = m_planes[*i];
+				if (plane.rayIntersection(origin, direction, T, &p) && T > 0.0f && T <= outResult.distance)
 				{
-					if (T >= -F && T <= outResult.distance)
+					Vector2 pnt(
+						dot3(m_projectedU[*i], p),
+						dot3(m_projectedV[*i], p)
+					);
+					if (m_projected[*i].inside(pnt))
 					{
 						outResult.index = *i;
 						outResult.distance = T;
@@ -105,36 +122,35 @@ bool SahTree::queryClosestIntersection(const Vector4& origin, const Vector4& dir
 					}
 				}
 
-				tags[*i] = true;
+				tags.set(*i);
 			}
 		}
 		else
 		{
 			Vector4 O = origin + direction * nearT;
-			float e = O[N->axis];
+			Scalar e = O[N->axis];
 
 			if (e <= N->split + F)
 			{
-				T = nearT + Scalar(N->split - e) / direction[N->axis];
+				T = nearT + (N->split - e) / direction[N->axis];
 				if (T >= nearT && T <= farT)
 				{
-					stack.push_back(Stack(N->leftChild, nearT, T));
-					stack.push_back(Stack(N->rightChild, T, farT));
+					stack.push_back(QueryStack(N->leftChild, nearT, T));
+					stack.push_back(QueryStack(N->rightChild, T, farT));
 				}
 				else
-					stack.push_back(Stack(N->leftChild, nearT, farT));
+					stack.push_back(QueryStack(N->leftChild, nearT, farT));
 			}
-
-			if (e >= N->split - F)
+			else if (e >= N->split - F)
 			{
-				T = nearT + Scalar(N->split - e) / direction[N->axis];
+				T = nearT + (N->split - e) / direction[N->axis];
 				if (T >= nearT  && T <= farT)
 				{
-					stack.push_back(Stack(N->rightChild, nearT, T));
-					stack.push_back(Stack(N->leftChild, T, farT));
+					stack.push_back(QueryStack(N->rightChild, nearT, T));
+					stack.push_back(QueryStack(N->leftChild, T, farT));
 				}
 				else
-					stack.push_back(Stack(N->rightChild, nearT, farT));
+					stack.push_back(QueryStack(N->rightChild, nearT, farT));
 			}
 		}
 	}
@@ -142,14 +158,15 @@ bool SahTree::queryClosestIntersection(const Vector4& origin, const Vector4& dir
 	return result;
 }
 
-bool SahTree::queryAnyIntersection(const Vector4& origin, const Vector4& direction, float maxDistance) const
+bool SahTree::queryAnyIntersection(const Vector4& origin, const Vector4& direction, float maxDistance, QueryCache& inoutCache) const
 {
 	#define IS_LEAF(node) ((node)->leftChild == 0)
 
-	const float F(1e-3f);
-	const float md(maxDistance);
+	const Scalar F(1e-3f);
+	const Scalar md(maxDistance);
 	Scalar nearT, farT;
 	Scalar T;
+	Vector4 p;
 
 	if (!m_root->aabb.intersectRay(origin, direction, nearT, farT) || farT < 0.0f)
 		return false;
@@ -157,64 +174,69 @@ bool SahTree::queryAnyIntersection(const Vector4& origin, const Vector4& directi
 	if (nearT < 0.0f)
 		nearT = Scalar(0.0f);
 
-	std::vector< bool > tags(m_polygons.size(), false);
+	BitVector& tags = inoutCache.tags;
+	tags.assign(m_polygons.size(), false);
 
-	AlignedVector< Stack > stack;
+	AlignedVector< QueryStack >& stack = inoutCache.stack;
 	stack.reserve(64);
-	stack.push_back(Stack(m_root, nearT, farT));
+	stack.resize(0);
+	stack.push_back(QueryStack(m_root, nearT, farT));
 
 	while (!stack.empty())
 	{
 		Node* N = stack.back().node;
-		nearT = Scalar(stack.back().nearT);
-		farT = Scalar(stack.back().farT);
+		nearT = stack.back().nearT;
+		farT = stack.back().farT;
 
 		stack.pop_back();
 
 		if (IS_LEAF(N))
 		{
-			for (std::vector< int32_t >::iterator i = N->indices.begin(); i != N->indices.end(); ++i)
+			for (std::vector< int32_t >::const_iterator i = N->indices.begin(); i != N->indices.end(); ++i)
 			{
 				if (tags[*i])
 					continue;
 
-				const Winding3& polygon = m_polygons[*i];
-				if (polygon.rayIntersection(origin, direction, T))
+				const Plane& plane = m_planes[*i];
+				if (plane.rayIntersection(origin, direction, T, &p) && T > 0.0f && T < md)
 				{
-					if (T >= -F && (md <= F || T <= md))
+					Vector2 pnt(
+						dot3(m_projectedU[*i], p),
+						dot3(m_projectedV[*i], p)
+					);
+					if (m_projected[*i].inside(pnt))
 						return true;
 				}
 
-				tags[*i] = true;
+				tags.set(*i);
 			}
 		}
 		else
 		{
 			Vector4 O = origin + direction * nearT;
-			float e = O[N->axis];
+			Scalar e = O[N->axis];
 
 			if (e <= N->split + F)
 			{
-				T = nearT + Scalar(N->split - e) / direction[N->axis];
+				T = nearT + (N->split - e) / direction[N->axis];
 				if (T >= nearT && T <= farT)
 				{
-					stack.push_back(Stack(N->leftChild, nearT, T));
-					stack.push_back(Stack(N->rightChild, T, farT));
+					stack.push_back(QueryStack(N->leftChild, nearT, T));
+					stack.push_back(QueryStack(N->rightChild, T, farT));
 				}
 				else
-					stack.push_back(Stack(N->leftChild, nearT, farT));
+					stack.push_back(QueryStack(N->leftChild, nearT, farT));
 			}
-
-			if (e >= N->split - F)
+			else if (e >= N->split - F)
 			{
-				T = nearT + Scalar(N->split - e) / direction[N->axis];
+				T = nearT + (N->split - e) / direction[N->axis];
 				if (T >= nearT  && T <= farT)
 				{
-					stack.push_back(Stack(N->rightChild, nearT, T));
-					stack.push_back(Stack(N->leftChild, T, farT));
+					stack.push_back(QueryStack(N->rightChild, nearT, T));
+					stack.push_back(QueryStack(N->leftChild, T, farT));
 				}
 				else
-					stack.push_back(Stack(N->rightChild, nearT, farT));
+					stack.push_back(QueryStack(N->rightChild, nearT, farT));
 			}
 		}
 	}
@@ -238,14 +260,15 @@ void SahTree::buildNode(Node* node, int32_t depth)
 	for (std::vector< int32_t >::const_iterator i = node->indices.begin(); i != node->indices.end(); ++i)
 	{
 		const Winding3& polygon = m_polygons[*i];
+		const Winding3::points_t& points = polygon.getPoints();
 		
 		std::pair< float, float > range(
 			std::numeric_limits< float >::max(),
 			-std::numeric_limits< float >::max()
 		);
-		for (size_t j = 0; j < polygon.points.size(); ++j)
+		for (size_t j = 0; j < points.size(); ++j)
 		{
-			float e = polygon.points[j][node->axis];
+			float e = points[j][node->axis];
 			
 			if (
 				e >= node->aabb.mn[node->axis] + FUZZY_EPSILON &&
@@ -331,7 +354,7 @@ void SahTree::buildNode(Node* node, int32_t depth)
 	T_ASSERT (bestCandidate->countRight == rightIndices.size());
 
 	// Create child nodes.
-	node->split = bestCandidate->position;
+	node->split = Scalar(bestCandidate->position);
 
 	node->leftChild = allocNode();
 	node->leftChild->aabb = bestLeftAabb;

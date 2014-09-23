@@ -5,7 +5,9 @@
 #include "Core/Ref.h"
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/BitVector.h"
 #include "Core/Math/Aabb3.h"
+#include "Core/Math/Winding2.h"
 #include "Core/Math/Winding3.h"
 
 // import/export mechanism.
@@ -30,12 +32,47 @@ class T_DLLCLASS SahTree : public Object
 {
 	T_RTTI_CLASS;
 
+	struct Node;
+
 public:
 	struct QueryResult
 	{
 		int32_t index;
-		float distance;
+		Scalar distance;
 		Vector4 position;
+
+		QueryResult()
+		:	index(-1)
+		,	distance(0.0f)
+		{
+		}
+	};
+
+	struct QueryStack
+	{
+		Node* node;
+		Scalar nearT;
+		Scalar farT;
+
+		QueryStack()
+		:	node(0)
+		,	nearT(0.0f)
+		,	farT(1e9f)
+		{
+		}
+
+		QueryStack(Node* _node, float _nearT, float _farT)
+		:	node(_node)
+		,	nearT(_nearT)
+		,	farT(_farT)
+		{
+		}
+	};
+
+	struct QueryCache
+	{
+		BitVector tags;
+		AlignedVector< QueryStack > stack;
 	};
 
 	SahTree();
@@ -56,7 +93,7 @@ public:
 	 * \param outResult Intersection result.
 	 * \return True if any intersection found.
 	 */
-	bool queryClosestIntersection(const Vector4& origin, const Vector4& direction, QueryResult& outResult) const;
+	bool queryClosestIntersection(const Vector4& origin, const Vector4& direction, QueryResult& outResult, QueryCache& inoutCache = QueryCache()) const;
 
 	/*! \brief Query for any intersection.
 	 *
@@ -65,7 +102,7 @@ public:
 	 * \param maxDistance Intersection must occur prior to this distance from origin, 0 distance is infinite.
 	 * \return True if any intersection found.
 	 */
-	bool queryAnyIntersection(const Vector4& origin, const Vector4& direction, float maxDistance) const;
+	bool queryAnyIntersection(const Vector4& origin, const Vector4& direction, float maxDistance, QueryCache& inoutCache = QueryCache()) const;
 
 	/*! \brief Get polygons. */
 	const AlignedVector< Winding3 >& getPolygons() const { return m_polygons; }
@@ -79,7 +116,7 @@ private:
 		Aabb3 aabb;
 		std::vector< int32_t > indices;
 		int32_t axis;
-		float split;
+		Scalar split;
 		Node* leftChild;
 		Node* rightChild;
 
@@ -92,29 +129,12 @@ private:
 		}
 	};
 
-	struct Stack
-	{
-		Node* node;
-		float nearT;
-		float farT;
-
-		Stack()
-		:	node(0)
-		,	nearT(0.0f)
-		,	farT(1e9f)
-		{
-		}
-
-		Stack(Node* _node, float _nearT, float _farT)
-		:	node(_node)
-		,	nearT(_nearT)
-		,	farT(_farT)
-		{
-		}
-	};
-
 	Node* m_root;
 	AlignedVector< Winding3 > m_polygons;
+	AlignedVector< Winding2 > m_projected;
+	AlignedVector< Vector4 > m_projectedU;
+	AlignedVector< Vector4 > m_projectedV;
+	AlignedVector< Plane > m_planes;
 	AlignedVector< Node* > m_nodes;
 
 	void buildNode(Node* node, int32_t depth);

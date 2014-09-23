@@ -37,7 +37,7 @@ bool CullDistantFaces::apply(Model& model) const
 		{
 			const Vertex& vertex = model.getVertex(polygons[i].getVertex(j));
 			const Vector4& position = model.getPosition(vertex.getPosition());
-			winding.points.push_back(position);
+			winding.push(position);
 		}
 
 		Plane plane;

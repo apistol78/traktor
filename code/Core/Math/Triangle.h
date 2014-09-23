@@ -96,26 +96,16 @@ void triangle(
 		int CX2 = CY2;
 		int CX3 = CY3;
 
-		for(int x = minx; x <= maxx; x++)
+		for(int x = minx; x < maxx; x++)
 		{
 			if(CX1 > 0 && CX2 > 0 && CX3 > 0)
 			{
-				for (; x <= maxx; x++)
-				{
-					// Calculate barycentric coordinates.
-					float alpha = ((v1.y - v2.y) * x + (v2.x - v1.x) * y + baryOffset0) * baryDenom0;
-					float beta = ((v2.y - v0.y) * x + (v0.x - v2.x) * y + baryOffset1) * baryDenom1;
-					float gamma = ((v0.y - v1.y) * x + (v1.x - v0.x) * y + baryOffset2) * baryDenom2;
+				// Calculate barycentric coordinates.
+				float alpha = ((v1.y - v2.y) * x + (v2.x - v1.x) * y + baryOffset0) * baryDenom0;
+				float beta = ((v2.y - v0.y) * x + (v0.x - v2.x) * y + baryOffset1) * baryDenom1;
+				float gamma = ((v0.y - v1.y) * x + (v1.x - v0.x) * y + baryOffset2) * baryDenom2;
 
-					visitor(x, y, alpha, beta, gamma);
-
-					CX1 -= FDY12;
-					CX2 -= FDY23;
-					CX3 -= FDY31;
-
-					if(!(CX1 > 0 && CX2 > 0 && CX3 > 0))
-						break;
-				}
+				visitor(x, y, alpha, beta, gamma);
 			}
 
 			CX1 -= FDY12;

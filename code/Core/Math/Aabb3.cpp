@@ -96,19 +96,28 @@ bool Aabb3::intersectRay(const Vector4& p, const Vector4& d, Scalar& outDistance
 bool Aabb3::intersectRay(const Vector4& p, const Vector4& d, Scalar& outDistanceEnter, Scalar& outDistanceExit) const
 {
 	Vector4 id = Scalar(1.0f) / d.xyz1();
+
+	float T_MATH_ALIGN16 mnmx[2][4];
+	mn.storeAligned(mnmx[0]);
+	mx.storeAligned(mnmx[1]);
+
+	float T_MATH_ALIGN16 pe[4];
+	p.storeAligned(pe);
+
+	float T_MATH_ALIGN16 ide[4];
+	id.storeAligned(ide);
+
 	int32_t sign[] =
 	{
-		id.x() < 0.0f,
-		id.y() < 0.0f,
-		id.z() < 0.0f
+		ide[0] < 0.0f,
+		ide[1] < 0.0f,
+		ide[2] < 0.0f
 	};
 
-	const Vector4 mnmx[] = { mn, mx };
-
-	Scalar tmin = (mnmx[sign[0]].x() - p.x()) * id.x();
-	Scalar tmax = (mnmx[1 - sign[0]].x() - p.x()) * id.x();
-	Scalar tymin = (mnmx[sign[1]].y() - p.y()) * id.y();
-	Scalar tymax = (mnmx[1 - sign[1]].y() - p.y()) * id.y();
+	float tmin = (mnmx[sign[0]][0] - pe[0]) * ide[0];
+	float tmax = (mnmx[1 - sign[0]][0] - pe[0]) * ide[0];
+	float tymin = (mnmx[sign[1]][1] - pe[1]) * ide[1];
+	float tymax = (mnmx[1 - sign[1]][1] - pe[1]) * ide[1];
 	if ((tmin > tymax) || (tymin > tmax))
 		return false;
 
@@ -117,8 +126,8 @@ bool Aabb3::intersectRay(const Vector4& p, const Vector4& d, Scalar& outDistance
 	if (tymax < tmax)
 		tmax = tymax;
 
-	Scalar tzmin = (mnmx[sign[2]].z() - p.z()) * id.z();
-	Scalar tzmax = (mnmx[1-sign[2]].z() - p.z()) * id.z();
+	float tzmin = (mnmx[sign[2]][2] - pe[2]) * ide[2];
+	float tzmax = (mnmx[1-sign[2]][2] - pe[2]) * ide[2];
 	if ((tmin > tzmax) || (tzmin > tmax))
 		return false;
 
@@ -127,8 +136,8 @@ bool Aabb3::intersectRay(const Vector4& p, const Vector4& d, Scalar& outDistance
 	if (tzmax < tmax)
 		tmax = tzmax;
 
-	outDistanceEnter = tmin;
-	outDistanceExit = tmax;
+	outDistanceEnter = Scalar(tmin);
+	outDistanceExit = Scalar(tmax);
 
 	return true;
 }

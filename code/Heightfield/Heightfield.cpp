@@ -170,9 +170,6 @@ bool Heightfield::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRa
 	if (!boundingBox.intersectRay(worldRayOrigin, worldRayDirection, kIn, kOut))
 		return false;
 
-	Winding3 w;
-	w.points.resize(3);
-
 	bool foundIntersection = false;
 
 	outDistance = Scalar(std::numeric_limits< float >::max());
@@ -231,11 +228,7 @@ bool Heightfield::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRa
 						Vector4(x2w, yw[3], z2w, 1.0f)
 					};
 
-					w.points[0] = vw[0];
-					w.points[1] = vw[1];
-					w.points[2] = vw[2];
-
-					if (w.rayIntersection(worldRayOrigin, worldRayDirection, k))
+					if (Winding3(vw[0], vw[1], vw[2]).rayIntersection(worldRayOrigin, worldRayDirection, k))
 					{
 						if (k < outDistance)
 						{
@@ -244,11 +237,7 @@ bool Heightfield::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRa
 						}
 					}
 
-					w.points[0] = vw[1];
-					w.points[1] = vw[3];
-					w.points[2] = vw[2];
-
-					if (w.rayIntersection(worldRayOrigin, worldRayDirection, k))
+					if (Winding3(vw[1], vw[3], vw[2]).rayIntersection(worldRayOrigin, worldRayDirection, k))
 					{
 						if (k < outDistance)
 						{
