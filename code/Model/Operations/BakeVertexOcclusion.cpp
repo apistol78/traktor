@@ -48,6 +48,7 @@ bool BakeVertexOcclusion::apply(Model& model) const
 	SahTree sah;
 	sah.build(windings);
 	
+	SahTree::QueryCache cache;
 	for (std::vector< Vertex >::iterator i = vertices.begin(); i != vertices.end(); ++i)
 	{
 		const Vector4& position = model.getPosition(i->getPosition());
@@ -58,7 +59,7 @@ bool BakeVertexOcclusion::apply(Model& model) const
 		{
 			Vector4 rayDirection = lerp(normal, rnd.nextHemi(normal), Scalar(m_raySpread)).normalized().xyz0();
 			Vector4 rayOrigin = (position + normal * Scalar(m_rayBias)).xyz1();
-			if (sah.queryAnyIntersection(rayOrigin, rayDirection, 0.0f))
+			if (sah.queryAnyIntersection(rayOrigin, rayDirection, 0.0f, cache))
 				occluded++;
 		}
 		

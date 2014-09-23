@@ -130,6 +130,7 @@ struct TraceTask : public Object
 
 	void execute()
 	{
+		SahTree::QueryCache cache;
 		RandomGeometry rnd;
 
 		const Aabb3& aabb = tree->getBoundingBox();
@@ -182,7 +183,7 @@ struct TraceTask : public Object
 				int32_t occluded = 0;
 				for (int32_t ii = 0; ii < rayCount; ++ii)
 				{
-					if (tree->queryAnyIntersection(origin, (rnd.nextHemi(direction) + directionHalf).normalized(), maxTraceDistance))
+					if (tree->queryAnyIntersection(origin, (rnd.nextHemi(direction) + directionHalf).normalized(), maxTraceDistance, cache))
 						++occluded;
 				}
 

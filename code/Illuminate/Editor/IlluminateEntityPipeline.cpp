@@ -1,3 +1,4 @@
+#include <cstring>
 #include <ctime>
 #include "Core/Functor/Functor.h"
 #include "Core/Log/Log.h"
@@ -604,7 +605,7 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		if (!illumEntityData)
 		{
 			log::error << L"IlluminateEntityPipeline failed; unable to resolve all external entities" << Endl;
-			return false;
+			return 0;
 		}
 
 		// Get all trace entities.
@@ -863,7 +864,7 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 
 					Ref< Job > job = JobManager::getInstance().add(makeFunctor< JobTraceDirect >(trace, &JobTraceDirect::execute));
 					if (!job)
-						return false;
+						return 0;
 
 					tracesDirect.push_back(trace);
 					jobs.push_back(job);
@@ -904,7 +905,7 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 
 						Ref< Job > job = JobManager::getInstance().add(makeFunctor< JobTraceIndirect >(trace, &JobTraceIndirect::execute));
 						if (!job)
-							return false;
+							return 0;
 
 						tracesIndirect.push_back(trace);
 						jobs.push_back(job);

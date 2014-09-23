@@ -93,7 +93,7 @@ public:
 	 * \param outResult Intersection result.
 	 * \return True if any intersection found.
 	 */
-	bool queryClosestIntersection(const Vector4& origin, const Vector4& direction, QueryResult& outResult, QueryCache& inoutCache = QueryCache()) const;
+	bool queryClosestIntersection(const Vector4& origin, const Vector4& direction, QueryResult& outResult, QueryCache& inoutCache) const;
 
 	/*! \brief Query for any intersection.
 	 *
@@ -102,7 +102,7 @@ public:
 	 * \param maxDistance Intersection must occur prior to this distance from origin, 0 distance is infinite.
 	 * \return True if any intersection found.
 	 */
-	bool queryAnyIntersection(const Vector4& origin, const Vector4& direction, float maxDistance, QueryCache& inoutCache = QueryCache()) const;
+	bool queryAnyIntersection(const Vector4& origin, const Vector4& direction, float maxDistance, QueryCache& inoutCache) const;
 
 	/*! \brief Get polygons. */
 	const AlignedVector< Winding3 >& getPolygons() const { return m_polygons; }
