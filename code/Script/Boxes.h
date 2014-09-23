@@ -395,6 +395,12 @@ public:
 
 	Aabb3 transform(const Transform& tf) const { return m_value.transform(tf); }
 
+	void contain(const Vector4& pt) { m_value.contain(pt); }
+
+	Aabb3 scale(const Scalar& factor) const { return m_value.scale(factor); }
+
+	Aabb3 expand(const Scalar& margin) const { return m_value.expand(margin); }
+
 	const Vector4& getMin() const { return m_value.mn; }
 
 	const Vector4& getMax() const { return m_value.mx; }
