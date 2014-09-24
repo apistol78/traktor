@@ -1099,6 +1099,9 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedAabb3->addConstructor();
 	classBoxedAabb3->addConstructor< const Vector4&, const Vector4& >();
 	classBoxedAabb3->addMethod("inside", &BoxedAabb3::inside);
+	classBoxedAabb3->addMethod("contain", &BoxedAabb3::contain);
+	classBoxedAabb3->addMethod("scale", &BoxedAabb3::scale);
+	classBoxedAabb3->addMethod("expand", &BoxedAabb3::expand);
 	classBoxedAabb3->addMethod("transform", &BoxedAabb3::transform);
 	classBoxedAabb3->addMethod("getMin", &BoxedAabb3::getMin);
 	classBoxedAabb3->addMethod("getMax", &BoxedAabb3::getMax);
