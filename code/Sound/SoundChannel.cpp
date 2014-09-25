@@ -202,6 +202,11 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 		}
 	}
 
+	// Build output block.
+	outBlock.samplesCount = m_hwFrameSamples;
+	outBlock.sampleRate = m_hwSampleRate;
+	outBlock.maxChannel = 0;
+
 	while (m_outputSamplesIn < m_hwFrameSamples)
 	{
 		// Request sound block from buffer.
@@ -260,12 +265,12 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 			for (uint32_t i = 0; i < SbcMaxChannelCount; ++i)
 			{
 				const float* inputSamples = soundBlock.samples[i];
-				
-				float* outputSamples = m_outputSamples[i] + m_outputSamplesIn;
-				T_ASSERT (alignUp(outputSamples, 16) == outputSamples);
-				T_ASSERT (m_outputSamplesIn + outputSamplesCount < m_hwFrameSamples * c_outputSamplesBlockCount);
-
 				if (inputSamples)
+				{
+					float* outputSamples = m_outputSamples[i] + m_outputSamplesIn;
+					T_ASSERT (alignUp(outputSamples, 16) == outputSamples);
+					T_ASSERT (m_outputSamplesIn + outputSamplesCount < m_hwFrameSamples * c_outputSamplesBlockCount);
+
 					mixer->stretch(
 						outputSamples,
 						outputSamplesCount,
@@ -273,8 +278,10 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 						soundBlock.samplesCount,
 						m_volume * m_state.volume
 					);
-				else
-					mixer->mute(outputSamples, outputSamplesCount);
+
+					outBlock.samples[i] = m_outputSamples[i];
+					outBlock.maxChannel = max(outBlock.maxChannel, i + 1);
+				}
 			}
 
 			m_outputSamplesIn += outputSamplesCount;
@@ -284,29 +291,25 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 			for (uint32_t i = 0; i < SbcMaxChannelCount; ++i)
 			{
 				const float* inputSamples = soundBlock.samples[i];
-				float* outputSamples = m_outputSamples[i] + m_outputSamplesIn;
-				T_ASSERT (m_outputSamplesIn + soundBlock.samplesCount < m_hwFrameSamples * c_outputSamplesBlockCount);
-
 				if (inputSamples)
+				{
+					float* outputSamples = m_outputSamples[i] + m_outputSamplesIn;
+					T_ASSERT (m_outputSamplesIn + soundBlock.samplesCount < m_hwFrameSamples * c_outputSamplesBlockCount);
+
 					mixer->mulConst(
 						outputSamples,
 						inputSamples,
 						soundBlock.samplesCount,
 						m_volume * m_state.volume
 					);
-				else
-					mixer->mute(outputSamples, soundBlock.samplesCount);
+
+					outBlock.samples[i] = m_outputSamples[i];
+					outBlock.maxChannel = max(outBlock.maxChannel, i + 1);
+				}
 			}
 			m_outputSamplesIn += soundBlock.samplesCount;
 		}
 	}
-
-	// Build output block.
-	outBlock.samplesCount = m_hwFrameSamples;
-	outBlock.sampleRate = m_hwSampleRate;
-	outBlock.maxChannel = SbcMaxChannelCount;
-	for (uint32_t i = 0; i < SbcMaxChannelCount; ++i)
-		outBlock.samples[i] = m_outputSamples[i];
 
 	return true;
 }
