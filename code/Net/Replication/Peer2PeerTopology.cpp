@@ -435,29 +435,31 @@ bool Peer2PeerTopology::update(double dT)
 			T_ASSERT (msg.cmask.of != myPeer.handle);
 
 			int32_t ofPeerIndex = indexOf(msg.cmask.of);
-			Peer& ofPeer = m_peers[ofPeerIndex];
-
-			if (msg.cmask.sequence >= ofPeer.sequence)
+			if (ofPeerIndex >= 0 && ofPeerIndex < m_peers.size())
 			{
-				int32_t nconnections = MsgCMask_Connections(nrecv);
+				Peer& ofPeer = m_peers[ofPeerIndex];
+				if (msg.cmask.sequence >= ofPeer.sequence)
+				{
+					int32_t nconnections = MsgCMask_Connections(nrecv);
 
-				std::vector< net_handle_t > connections(nconnections);
-				for (int32_t i = 0; i < nconnections; ++i)
-					connections[i] = msg.cmask.connections[i];
+					std::vector< net_handle_t > connections(nconnections);
+					for (int32_t i = 0; i < nconnections; ++i)
+						connections[i] = msg.cmask.connections[i];
 
-				std::sort(connections.begin(), connections.end());
+					std::sort(connections.begin(), connections.end());
 
-				bool equal = false;
-				if (connections.size() == ofPeer.connections.size())
-					equal = std::equal(connections.begin(), connections.end(), ofPeer.connections.begin());
+					bool equal = false;
+					if (connections.size() == ofPeer.connections.size())
+						equal = std::equal(connections.begin(), connections.end(), ofPeer.connections.begin());
 
-				if (!equal)
-					ofPeer.connections = connections;
+					if (!equal)
+						ofPeer.connections = connections;
 
-				if (!equal || msg.cmask.sequence > ofPeer.sequence)
-					m_whenPropagate = m_time;
+					if (!equal || msg.cmask.sequence > ofPeer.sequence)
+						m_whenPropagate = m_time;
 
-				ofPeer.sequence = msg.cmask.sequence;
+					ofPeer.sequence = msg.cmask.sequence;
+				}
 			}
 		}
 		else if (msg.id == MsgDirect)

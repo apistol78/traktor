@@ -238,10 +238,10 @@ bool TextureOutputPipeline::buildOutput(
 			pixelFormat = drawing::PixelFormat::getR4G4B4A4();
 			break;
 		case TfR16G16B16A16F:
-			pixelFormat = drawing::PixelFormat::getRGBAF16();
+			pixelFormat = drawing::PixelFormat::getABGRF16();
 			break;
 		case TfR32G32B32A32F:
-			pixelFormat = drawing::PixelFormat::getRGBAF32();
+			pixelFormat = drawing::PixelFormat::getABGRF32();
 			break;
 		//case TfR16G16F:
 		//	pixelFormat = drawing::PixelFormat::getR16G16F();
