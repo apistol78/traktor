@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include <MaxRectsBinPack.h>
 #include "Core/Log/Log.h"
 #include "Core/Math/Aabb2.h"
@@ -35,8 +33,6 @@ bool UnwrapUV::apply(Model& model) const
 	std::vector< Polygon > originalPolygons = model.getPolygons();
 	AlignedVector< Winding2 > wuvs;
 	std::vector< int32_t > majors;
-
-	ModelAdjacency adjacency(&model, ModelAdjacency::MdByPosition);
 
 	// Create windings, determine projection plane and calculate initial projected UV set.
 	for (uint32_t i = 0; i < originalPolygons.size(); ++i)
@@ -105,19 +101,21 @@ bool UnwrapUV::apply(Model& model) const
 				return false;
 			}
 		}
-
 		wuvs.push_back(wuv);
 	}
+
+	T_FATAL_ASSERT (wuvs.size() == originalPolygons.size());
 
 	// Put neighbor polygons in same groups
 	std::vector< uint32_t > groups(originalPolygons.size(), c_InvalidIndex);
 	std::vector< uint32_t > sharedEdges;
-	uint32_t group = 0;
+	uint32_t lastGroupId = 0;
 
+	ModelAdjacency adjacency(&model, ModelAdjacency::MdByPosition);
 	for (uint32_t i = 0; i < originalPolygons.size(); ++i)
 	{
 		if (groups[i] == c_InvalidIndex)
-			groups[i] = group++;
+			groups[i] = lastGroupId++;
 
 		for (uint32_t edge = 0; edge < originalPolygons[i].getVertexCount(); ++edge)
 		{
@@ -133,11 +131,13 @@ bool UnwrapUV::apply(Model& model) const
 		}
 	}
 
+	T_FATAL_ASSERT (groups.size() == originalPolygons.size());
+
 	// For each group calculate bounding boxes.
 	AlignedVector< Aabb2 > aabbuvs;
 	float totalTexelArea = 0.0f;
 
-	for (uint32_t i = 0; i < group; ++i)
+	for (uint32_t i = 0; i < lastGroupId; ++i)
 	{
 		Aabb2 aabbuv;
 
@@ -150,6 +150,8 @@ bool UnwrapUV::apply(Model& model) const
 			}
 		}
 
+		T_FATAL_ASSERT (!aabbuv.empty());
+
 		aabbuv.mn -= Vector2(m_margin, m_margin);
 		aabbuv.mx += Vector2(m_margin, m_margin);
 
@@ -159,7 +161,10 @@ bool UnwrapUV::apply(Model& model) const
 		aabbuvs.push_back(aabbuv);
 	}
 
+	T_FATAL_ASSERT (aabbuvs.size() == lastGroupId);
+
 	int32_t size = nearestLog2(int32_t(std::sqrt(totalTexelArea)));
+	T_FATAL_ASSERT (size > 0);
 	
 	// Pack each group into a separate rectangle.
 	rbp::MaxRectsBinPack binPack;
@@ -231,8 +236,6 @@ bool UnwrapUV::apply(Model& model) const
 
 			originalPolygons[i].setVertex(j, model.addUniqueVertex(vertex));
 		}
-
-		++i;
 	}
 
 	model.setPolygons(originalPolygons);

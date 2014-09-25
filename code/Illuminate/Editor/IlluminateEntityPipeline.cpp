@@ -45,7 +45,7 @@ namespace traktor
 		namespace
 		{
 
-const Scalar c_traceRayOffset(0.025f);
+const Scalar c_traceRayOffset(0.05f);
 const int32_t c_outputWidth = 2048;
 const int32_t c_outputHeight = 2048;
 const int32_t c_jobTileWidth = 128;
@@ -165,7 +165,7 @@ public:
 				for (int32_t dx = -1; dx <= 1; ++dx)
 				{
 					m_outGBuffer[(x + dx) + (y + dy) * c_outputWidth].position = position;
-					m_outGBuffer[(x + dx) + (y + dy) * c_outputWidth].normal = normal;
+					m_outGBuffer[(x + dx) + (y + dy) * c_outputWidth].normal = normal.normalized();
 				}
 			}
 		}
@@ -201,7 +201,7 @@ public:
 			Vector4 position = (m_P[0] * Scalar(alpha) + m_P[1] * Scalar(beta) + m_P[2] * Scalar(gamma)).xyz1();
 			Vector4 normal = (m_N[0] * Scalar(alpha) + m_N[1] * Scalar(beta) + m_N[2] * Scalar(gamma)).xyz0();
 			m_outGBuffer[x + y * c_outputWidth].position = position;
-			m_outGBuffer[x + y * c_outputWidth].normal = normal;
+			m_outGBuffer[x + y * c_outputWidth].normal = normal.normalized();
 		}
 	}
 
@@ -210,9 +210,6 @@ private:
 	Vector4 m_N[3];
 	AlignedVector< GBuffer >& m_outGBuffer;
 };
-
-
-
 
 class JobTraceDirect
 {
@@ -349,8 +346,6 @@ private:
 	drawing::Image* m_outputImageDirect;
 };
 
-
-
 class JobTraceIndirect
 {
 public:
@@ -382,7 +377,7 @@ public:
 		SahTree::QueryResult result;
 		Color4f tmp;
 
-		const Scalar c_maxIndirectDistance(100.0f);
+		const Scalar c_maxIndirectDistance(200.0f);
 
 		for (int32_t y = m_tileY; y < m_tileY + c_jobTileHeight; ++y)
 		{
@@ -467,7 +462,29 @@ private:
 	int32_t m_indirectTraceSamples;
 };
 
+uint32_t getAvailableTexCoordChannel(const model::Model& model)
+{
+	uint32_t channel = 0;
 
+	const std::vector< model::Material >& materials = model.getMaterials();
+	for (std::vector< model::Material >::const_iterator i = materials.begin(); i != materials.end(); ++i)
+	{
+		if (!i->getDiffuseMap().name.empty())
+			channel = traktor::max(channel, i->getDiffuseMap().channel + 1);
+		if (!i->getSpecularMap().name.empty())
+			channel = traktor::max(channel, i->getSpecularMap().channel + 1);
+		if (!i->getTransparencyMap().name.empty())
+			channel = traktor::max(channel, i->getTransparencyMap().channel + 1);
+		if (!i->getEmissiveMap().name.empty())
+			channel = traktor::max(channel, i->getEmissiveMap().channel + 1);
+		if (!i->getReflectiveMap().name.empty())
+			channel = traktor::max(channel, i->getReflectiveMap().channel + 1);
+		if (!i->getNormalMap().name.empty())
+			channel = traktor::max(channel, i->getNormalMap().channel + 1);
+	}
+
+	return channel;
+}
 
 Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const ISerializable* object)
 {
@@ -578,8 +595,28 @@ bool IlluminateEntityPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	// FIXME
-	// Prevent building mesh;es which will be replaced by this entity.
+	if (!m_targetEditor)
+	{
+		const IlluminateEntityData* sourceIlluminateEntityData = checked_type_cast< const IlluminateEntityData* >(sourceAsset);
+
+		// Flatten entire hierarchy of illuminate entity.
+		Ref< IlluminateEntityData > illumEntityData = checked_type_cast< IlluminateEntityData* >(resolveAllExternal(pipelineDepends, sourceIlluminateEntityData));
+		if (!illumEntityData)
+		{
+			log::error << L"IlluminateEntityPipeline failed; unable to resolve all external entities" << Endl;
+			return 0;
+		}
+
+		// Get all trace entities.
+		RefArray< world::DirectionalLightEntityData > directionalLightEntityData;
+		RefArray< world::PointLightEntityData > pointLightEntityData;
+		RefArray< mesh::MeshEntityData > meshEntityData;
+		collectTraceEntities(illumEntityData, directionalLightEntityData, pointLightEntityData, meshEntityData);
+
+		// Add dependencies to all mesh assets.
+		for (RefArray< mesh::MeshEntityData >::const_iterator i = meshEntityData.begin(); i != meshEntityData.end(); ++i)
+			pipelineDepends->addDependency((*i)->getMesh(), editor::PdfUse);
+	}
 
 	return world::EntityPipeline::buildDependencies(
 		pipelineDepends,
@@ -679,9 +716,12 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 			);
 		}
 
+		// Get next free channel to store lightmap UV.
+		uint32_t channel = getAvailableTexCoordChannel(*mergedModel);
+
 		// UV unwrap entire model.
-		log::info << L"UV unwrapping..." << Endl;
-		if (!model::UnwrapUV(1, 5.0f).apply(*mergedModel))
+		log::info << L"UV unwrapping, using channel " << channel << L"..." << Endl;
+		if (!model::UnwrapUV(channel, 5.0f).apply(*mergedModel))
 			return false;
 
 		// Setup tracer.
@@ -723,7 +763,7 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 				const model::Vertex& polyVertex = mergedModel->getVertex(vertexIndices[k]);
 
 				s.points[k] = mergedModel->getPosition(polyVertex.getPosition());
-				s.texCoords[k] = mergedModel->getTexCoord(polyVertex.getTexCoord(1));
+				s.texCoords[k] = mergedModel->getTexCoord(polyVertex.getTexCoord(channel));
 				s.normals[k] = mergedModel->getNormal(polyVertex.getNormal());
 			}
 
@@ -990,7 +1030,7 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		std::vector< model::Material > materials = mergedModel->getMaterials();
 		for (std::vector< model::Material >::iterator j = materials.begin(); j != materials.end(); ++j)
 		{
-			j->setLightMap(model::Material::Map(L"__Illumination__", 1, false));
+			j->setLightMap(model::Material::Map(L"__Illumination__", channel, false));
 			j->setEmissive(0.0f);
 		}
 		mergedModel->setMaterials(materials);

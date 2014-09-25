@@ -227,12 +227,28 @@ public:
 		return ms_pfR32F;
 	}
 
+	static const PixelFormat& getARGBF16() {
+		return ms_pfARGBF16;
+	}
+
+	static const PixelFormat& getARGBF32() {
+		return ms_pfARGBF32;
+	}
+
 	static const PixelFormat& getRGBAF16() {
 		return ms_pfRGBAF16;
 	}
 
 	static const PixelFormat& getRGBAF32() {
 		return ms_pfRGBAF32;
+	}
+
+	static const PixelFormat& getABGRF16() {
+		return ms_pfABGRF16;
+	}
+
+	static const PixelFormat& getABGRF32() {
+		return ms_pfABGRF32;
 	}
 
 	//@}
@@ -275,8 +291,12 @@ private:
 	static const PixelFormat ms_pfB8G8R8A8;
 	static const PixelFormat ms_pfR16F;
 	static const PixelFormat ms_pfR32F;
+	static const PixelFormat ms_pfARGBF16;
+	static const PixelFormat ms_pfARGBF32;
 	static const PixelFormat ms_pfRGBAF16;
 	static const PixelFormat ms_pfRGBAF32;
+	static const PixelFormat ms_pfABGRF16;
+	static const PixelFormat ms_pfABGRF32;
 };
 	
 	}

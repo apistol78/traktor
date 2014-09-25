@@ -195,6 +195,10 @@ public:
 	 */
 	void setSendState(bool sendState);
 
+	/*! \brief
+	 */
+	void setTimeSynchronization(bool timeSynchronization);
+
 	/*! \
 	 */
 	uint32_t getProxyCount() const;
@@ -244,6 +248,8 @@ private:
 	Ref< const State > m_state;
 	RefArray< ReplicatorProxy > m_proxies;
 	bool m_sendState;
+	bool m_timeSynchronization;
+	bool m_timeSynchronized;
 
 	std::wstring getLogPrefix() const;
 

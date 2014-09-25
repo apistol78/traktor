@@ -18,7 +18,7 @@ namespace traktor
 		namespace
 		{
 
-const double c_maxDeltaTime = 0.1f;
+const double c_maxDeltaTime = 10.0;
 		
 		}
 
@@ -36,6 +36,8 @@ Replicator::Replicator()
 ,	m_allowPrimaryRequests(true)
 ,	m_origin(Transform::identity())
 ,	m_sendState(false)
+,	m_timeSynchronization(true)
+,	m_timeSynchronized(false)
 {
 }
 
@@ -124,7 +126,12 @@ bool Replicator::update()
 	RMessage reply;
 	net_handle_t from;
 
-	double dT = std::min(m_timer.getDeltaTime(), c_maxDeltaTime);
+	double dT = m_timer.getDeltaTime();
+	if (dT > c_maxDeltaTime)
+	{
+		log::error << getLogPrefix() << L"Delta time from system clock too large; Unable to keep replicator up to date." << Endl;
+		return false;
+	}
 
 	// Update underlying network topology layer.
 	if (!m_topology->update(dT))
@@ -309,33 +316,50 @@ bool Replicator::update()
 	{
 		// Adjust times based from estimated time offset.
 		if (abs(timeOffset) >= 1.0)
+		{
+			m_timeSynchronized = false;
 			timeOffset *= 0.8;
+		}
 		else if (abs(timeOffset) > 0.06)
+		{
+			m_timeSynchronized = false;
 			timeOffset *= 0.4;
+		}
 		else
 		{
 			double k = abs(timeOffset) / 0.06;
 			timeOffset *= 0.4 * k;
 		}
-		if (abs(timeOffset) > 0.01)
+
+		if (m_timeSynchronization || !m_timeSynchronized)
 		{
-			m_time += timeOffset;
-			for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+			if (abs(timeOffset) > 0.01)
 			{
-				(*i)->m_stateTimeN2 += timeOffset;
-				(*i)->m_stateTimeN1 += timeOffset;
-				(*i)->m_stateTime0 += timeOffset;
+				m_time += timeOffset;
+				for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+				{
+					(*i)->m_stateTimeN2 += timeOffset;
+					(*i)->m_stateTimeN1 += timeOffset;
+					(*i)->m_stateTime0 += timeOffset;
+				}
 			}
 		}
 
 		// Update time variance; this should become fairly stable after a couple of estimates.
-		m_timeErrors.push_back(timeOffset);
+		m_timeErrors.push_back(abs(timeOffset));
 		{
 			double k = 0.0;
 			for (uint32_t i = 0; i < m_timeErrors.size(); ++i)
 				k += m_timeErrors[i];
 			k /= double(m_timeErrors.size());
 			m_timeVariance = std::sqrt((k * k) / 6.0);
+
+			// Have we reached acceptable variance?
+			if (!m_timeSynchronized && m_timeVariance <= 0.03 && abs(timeOffset) <= 0.01)
+			{
+				log::info << getLogPrefix() << L"Time synchronized" << Endl;
+				m_timeSynchronized = true;
+			}
 		}
 	}
 
@@ -407,6 +431,11 @@ const State* Replicator::getState() const
 void Replicator::setSendState(bool sendState)
 {
 	m_sendState = sendState;
+}
+
+void Replicator::setTimeSynchronization(bool timeSynchronization)
+{
+	m_timeSynchronization = timeSynchronization;
 }
 
 uint32_t Replicator::getProxyCount() const
