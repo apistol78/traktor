@@ -36,8 +36,6 @@ class T_DLLCLASS LogStream : public OutputStream
 public:
 	LogStream(int32_t level, ILogTarget* globalTarget);
 
-	LogStream(IOutputStreamBuffer* streamBuffer);
-
 	virtual ~LogStream();
 
 	ILogTarget* getGlobalTarget();

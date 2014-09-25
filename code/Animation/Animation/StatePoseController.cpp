@@ -22,6 +22,28 @@ StatePoseController::StatePoseController(const resource::Proxy< StateGraph >& st
 {
 }
 
+bool StatePoseController::setState(const std::wstring& stateName)
+{
+	if (!m_stateGraph)
+		return false;
+
+	const RefArray< StateNode >& states = m_stateGraph->getStates();
+	for (RefArray< StateNode >::const_iterator i = states.begin(); i != states.end(); ++i)
+	{
+		if ((*i)->getName() == stateName)
+		{
+			m_currentState = *i;
+			m_currentState->prepareContext(m_currentStateContext);
+			m_nextState = 0;
+			m_blendState = 0.0f;
+			m_blendDuration = 0.0f;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void StatePoseController::setCondition(const std::wstring& condition, bool enabled, bool reset)
 {
 	m_conditions[condition].first = enabled;

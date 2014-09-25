@@ -45,6 +45,8 @@ public:
 
 	int32_t getIndirectTraceSamples() const { return m_indirectTraceSamples; }
 
+	bool highDynamicRange() const { return m_highDynamicRange; }
+
 	bool compressLightMap() const { return m_compressLightMap; }
 
 	const RefArray< world::EntityData >& getEntityData() const { return m_entityData; }
@@ -55,6 +57,7 @@ private:
 	bool m_directLighting;
 	bool m_indirectLighting;
 	int32_t m_indirectTraceSamples;
+	bool m_highDynamicRange;
 	bool m_compressLightMap;
 	RefArray< world::EntityData > m_entityData;
 };

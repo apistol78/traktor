@@ -18,6 +18,11 @@ bool ProcessLinux::signal(SignalType signalType)
 	return false;
 }
 
+bool ProcessLinux::terminate(int32_t exitCode)
+{
+	return false;
+}
+
 int32_t ProcessLinux::exitCode() const
 {
 	return m_exitCode;

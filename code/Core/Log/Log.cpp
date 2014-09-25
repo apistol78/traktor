@@ -219,11 +219,6 @@ LogStream::LogStream(int32_t level, ILogTarget* globalTarget)
 {
 }
 
-LogStream::LogStream(IOutputStreamBuffer* streamBuffer)
-:	OutputStream(streamBuffer, LeUnix)
-{
-}
-
 LogStream::~LogStream()
 {
 	T_EXCEPTION_GUARD_BEGIN
@@ -267,15 +262,10 @@ static LogTargetConsole warningTarget;
 static LogTargetConsole errorTarget;
 static LogTargetDebug debugTarget;
 
-static LogStreamGlobalBuffer infoGlobalBuffer(0, &infoTarget);
-static LogStreamGlobalBuffer warningGlobalBuffer(1, &warningTarget);
-static LogStreamGlobalBuffer errorGlobalBuffer(2, &errorTarget);
-static LogStreamGlobalBuffer debugGlobalBuffer(3, &debugTarget);
-
-LogStream info(&infoGlobalBuffer);
-LogStream warning(&warningGlobalBuffer);
-LogStream error(&errorGlobalBuffer);
-LogStream debug(&debugGlobalBuffer);
+LogStream info(0, &infoTarget);
+LogStream warning(1, &warningTarget);
+LogStream error(2, &errorTarget);
+LogStream debug(3, &debugTarget);
 
 	}
 }

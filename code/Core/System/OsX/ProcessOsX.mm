@@ -112,6 +112,11 @@ bool ProcessOsX::signal(SignalType signalType)
 {
 	return false;
 }
+
+bool ProcessOsX::terminate(int32_t exitCode)
+{
+	return false;
+}
 	
 int32_t ProcessOsX::exitCode() const
 {

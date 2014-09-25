@@ -16,6 +16,7 @@ IlluminateEntityData::IlluminateEntityData()
 ,	m_directLighting(true)
 ,	m_indirectLighting(true)
 ,	m_indirectTraceSamples(64)
+,	m_highDynamicRange(false)
 ,	m_compressLightMap(true)
 {
 }
@@ -58,6 +59,7 @@ void IlluminateEntityData::serialize(ISerializer& s)
 	s >> Member< bool >(L"directLighting", m_directLighting);
 	s >> Member< bool >(L"indirectLighting", m_indirectLighting);
 	s >> Member< int32_t >(L"indirectTraceSamples", m_indirectTraceSamples);
+	s >> Member< bool >(L"highDynamicRange", m_highDynamicRange);
 	s >> Member< bool >(L"compressLightMap", m_compressLightMap);
 	s >> MemberRefArray< world::EntityData >(L"entityData", m_entityData);
 }

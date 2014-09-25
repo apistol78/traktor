@@ -29,6 +29,7 @@
 #include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
 #include "Model/ModelFormat.h"
+#include "Model/Operations/MergeModel.h"
 #include "Model/Operations/Triangulate.h"
 #include "Model/Operations/UnwrapUV.h"
 #include "Render/Editor/Texture/TextureOutput.h"
@@ -558,7 +559,7 @@ IlluminateEntityPipeline::IlluminateEntityPipeline()
 bool IlluminateEntityPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
-	m_targetEditor = false; // settings->getProperty< PropertyBoolean >(L"Pipeline.TargetEditor", false);
+	m_targetEditor = settings->getProperty< PropertyBoolean >(L"Pipeline.TargetEditor", false);
 	return true;
 }
 
@@ -641,7 +642,11 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 			lights.push_back(light);
 		}
 
-		// Bake light onto each mesh entity; need to create unique mesh;es for each entity.
+		Ref< model::Model > mergedModel = new model::Model();
+		std::map< std::wstring, Guid > meshMaterialTextures;
+
+		// Merge all models into one, big, model.
+		log::info << L"Merging meshes..." << Endl;
 		for (RefArray< mesh::MeshEntityData >::const_iterator i = meshEntityData.begin(); i != meshEntityData.end(); ++i)
 		{
 			Ref< mesh::MeshAsset > meshAsset = pipelineBuilder->getSourceDatabase()->getObjectReadOnly< mesh::MeshAsset >((*i)->getMesh());
@@ -665,208 +670,261 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 				continue;
 			}
 
-			if (!model::UnwrapUV(1, 5.0f).apply(*model))
+			if (!model::MergeModel(*model, (*i)->getTransform(), 0.1f).apply(*mergedModel))
+				return false;
+
+			meshMaterialTextures.insert(
+				meshAsset->getMaterialTextures().begin(),
+				meshAsset->getMaterialTextures().end()
+			);
+		}
+
+		// UV unwrap entire model.
+		log::info << L"UV unwrapping..." << Endl;
+		if (!model::UnwrapUV(1, 5.0f).apply(*mergedModel))
+			return false;
+
+		// Setup tracer.
+		log::info << L"Preparing tracer..." << Endl;
+		const std::vector< model::Polygon >& polygons = mergedModel->getPolygons();
+		std::vector< model::Vertex > vertices = mergedModel->getVertices();
+
+		// Create 3d windings.
+		AlignedVector< Winding3 > windings(polygons.size());
+		for (uint32_t j = 0; j < polygons.size(); ++j)
+		{
+			Winding3& w = windings[j];
+				
+			const std::vector< uint32_t >& vertexIndices = polygons[j].getVertices();
+			if (vertexIndices.size() < 3 || vertexIndices.size() > 16)
 				continue;
 
-			// Setup tracer.
-			const std::vector< model::Polygon >& polygons = model->getPolygons();
-			std::vector< model::Vertex > vertices = model->getVertices();
-
-			// Create 3d windings.
-			AlignedVector< Winding3 > windings(polygons.size());
-			for (uint32_t j = 0; j < polygons.size(); ++j)
+			for (std::vector< uint32_t >::const_iterator k = vertexIndices.begin(); k != vertexIndices.end(); ++k)
 			{
-				Winding3& w = windings[j];
-				
-				const std::vector< uint32_t >& vertexIndices = polygons[j].getVertices();
-				if (vertexIndices.size() < 3 || vertexIndices.size() > 16)
-					continue;
+				const model::Vertex& polyVertex = mergedModel->getVertex(*k);
+				const Vector4& polyVertexPosition = mergedModel->getPosition(polyVertex.getPosition());
+				w.push(polyVertexPosition);
+			}
+		}
 
-				for (std::vector< uint32_t >::const_iterator k = vertexIndices.begin(); k != vertexIndices.end(); ++k)
-				{
-					const model::Vertex& polyVertex = model->getVertex(*k);
-					const Vector4& polyVertexPosition = model->getPosition(polyVertex.getPosition());
-					w.push(polyVertexPosition);
-				}
+		// Create traceable surfaces.
+		AlignedVector< Surface > surfaces(polygons.size());
+		for (uint32_t j = 0; j < polygons.size(); ++j)
+		{
+			Surface& s = surfaces[j];
+
+			const std::vector< uint32_t >& vertexIndices = polygons[j].getVertices();
+			if (vertexIndices.size() < 3 || vertexIndices.size() > 16)
+				continue;
+
+			s.count = int32_t(vertexIndices.size());
+			for (int32_t k = 0; k < s.count; ++k)
+			{
+				const model::Vertex& polyVertex = mergedModel->getVertex(vertexIndices[k]);
+
+				s.points[k] = mergedModel->getPosition(polyVertex.getPosition());
+				s.texCoords[k] = mergedModel->getTexCoord(polyVertex.getTexCoord(1));
+				s.normals[k] = mergedModel->getNormal(polyVertex.getNormal());
 			}
 
-			// Create traceable surfaces.
-			AlignedVector< Surface > surfaces(polygons.size());
-			for (uint32_t j = 0; j < polygons.size(); ++j)
+			Plane plane;
+			if (windings[j].getPlane(plane))
+				s.normal = plane.normal();
+			else
+				s.normal = Vector4::zero();
+
+			uint32_t materialId = polygons[j].getMaterial();
+			const model::Material& material = mergedModel->getMaterial(materialId);
+
+			float rgba[4];
+			material.getColor().getRGBA32F(rgba);
+
+			s.color = Color4f(rgba);
+			s.emissive = Scalar(material.getEmissive());
+
+			// Add each emissive surface as a light source.
+			if (s.emissive > FUZZY_EPSILON)
 			{
-				Surface& s = surfaces[j];
-
-				const std::vector< uint32_t >& vertexIndices = polygons[j].getVertices();
-				if (vertexIndices.size() < 3 || vertexIndices.size() > 16)
-					continue;
-
-				s.count = int32_t(vertexIndices.size());
-				for (int32_t k = 0; k < s.count; ++k)
-				{
-					const model::Vertex& polyVertex = model->getVertex(vertexIndices[k]);
-
-					s.points[k] = model->getPosition(polyVertex.getPosition());
-					s.texCoords[k] = model->getTexCoord(polyVertex.getTexCoord(1));
-					s.normals[k] = model->getNormal(polyVertex.getNormal());
-				}
-
-				Plane plane;
-				if (windings[j].getPlane(plane))
-					s.normal = plane.normal();
-				else
-					s.normal = Vector4::zero();
-
-				uint32_t materialId = polygons[j].getMaterial();
-				const model::Material& material = model->getMaterial(materialId);
-
-				float rgba[4];
-				material.getColor().getRGBA32F(rgba);
-
-				s.color = Color4f(rgba);
-				s.emissive = Scalar(material.getEmissive());
-
-				// Add each emissive surface as a light source.
-				if (s.emissive > FUZZY_EPSILON)
-				{
-					Light light;
-					light.type = 2;
-					light.position = Vector4::zero();
-					light.direction = Vector4::zero();
-					light.sunColor = s.color;
-					light.range = Scalar(100.0f);
-					light.surface = j;
-					lights.push_back(light);
-				}
+				Light light;
+				light.type = 2;
+				light.position = Vector4::zero();
+				light.direction = Vector4::zero();
+				light.sunColor = s.color;
+				light.range = Scalar(100.0f);
+				light.surface = j;
+				lights.push_back(light);
 			}
+		}
 
-			// Build acceleration tree.
-			SahTree sah;
-			sah.build(windings);
+		// Build acceleration tree.
+		SahTree sah;
+		sah.build(windings);
 
-			// Create GBuffer images.
-			const GBuffer zero = { Vector4::zero(), Vector4::zero() };
-			AlignedVector< GBuffer > gbuffer(c_outputWidth * c_outputHeight, zero);
+		// Create GBuffer images.
+		const GBuffer zero = { Vector4::zero(), Vector4::zero() };
+		AlignedVector< GBuffer > gbuffer(c_outputWidth * c_outputHeight, zero);
 
-			// Trace each polygon in UV space.
-			Vector2 dim(c_outputWidth, c_outputHeight);
-			Vector2 uv[3];
-			Vector4 P[3], N[3];
+		// Trace each polygon in UV space.
+		Vector2 dim(c_outputWidth, c_outputHeight);
+		Vector2 uv[3];
+		Vector4 P[3], N[3];
 
-			// Trace first, direct illumination, pass.
-			log::info << L"Generating g-buffer..." << Endl;
+		// Trace first, direct illumination, pass.
+		log::info << L"Generating g-buffer..." << Endl;
 
-			// First draw triangle poly-line to draw a big gutter around triangle.
-			for (uint32_t j = 0; j < surfaces.size(); ++j)
+		// First draw triangle poly-line to draw a big gutter around triangle.
+		for (uint32_t j = 0; j < surfaces.size(); ++j)
+		{
+			const Surface& s = surfaces[j];
+
+			AlignedVector< Vector2 > texCoords(s.count);
+			for (int32_t k = 0; k < s.count; ++k)
+				texCoords[k] = s.texCoords[k] * dim;
+
+			std::vector< Triangulator::Triangle > triangles;
+			Triangulator().freeze(
+				texCoords,
+				triangles
+			);
+
+			for (std::vector< Triangulator::Triangle >::const_iterator k = triangles.begin(); k != triangles.end(); ++k)
 			{
-				const Surface& s = surfaces[j];
-
-				AlignedVector< Vector2 > texCoords(s.count);
-				for (int32_t k = 0; k < s.count; ++k)
-					texCoords[k] = s.texCoords[k] * dim;
-
-				std::vector< Triangulator::Triangle > triangles;
-				Triangulator().freeze(
-					texCoords,
-					triangles
-				);
-
-				for (std::vector< Triangulator::Triangle >::const_iterator k = triangles.begin(); k != triangles.end(); ++k)
+				for (int32_t ii = 0; ii < 3; ++ii)
 				{
-					for (int32_t ii = 0; ii < 3; ++ii)
-					{
-						size_t i0 = k->indices[ii];
-						size_t i1 = k->indices[(ii + 1) % 3];
-
-						uv[0] = texCoords[i0];
-						uv[1] = texCoords[i1];
-
-						P[0] = s.points[i0];
-						P[1] = s.points[i1];
-
-						N[0] = s.normals[i0];
-						N[1] = s.normals[i1];
-
-						GBufferLineVisitor visitor(P, N, gbuffer);
-						line(uv[0].x, uv[0].y, uv[1].x, uv[1].y, visitor);
-					}
-				}
-			}
-
-			// Then draw solid triangles to fill with correct data.
-			for (uint32_t j = 0; j < surfaces.size(); ++j)
-			{
-				const Surface& s = surfaces[j];
-
-				AlignedVector< Vector2 > texCoords(s.count);
-				for (int32_t k = 0; k < s.count; ++k)
-					texCoords[k] = s.texCoords[k] * dim;
-
-				std::vector< Triangulator::Triangle > triangles;
-				Triangulator().freeze(
-					texCoords,
-					triangles
-				);
-
-				for (std::vector< Triangulator::Triangle >::const_iterator k = triangles.begin(); k != triangles.end(); ++k)
-				{
-					size_t i0 = k->indices[0];
-					size_t i1 = k->indices[1];
-					size_t i2 = k->indices[2];
+					size_t i0 = k->indices[ii];
+					size_t i1 = k->indices[(ii + 1) % 3];
 
 					uv[0] = texCoords[i0];
 					uv[1] = texCoords[i1];
-					uv[2] = texCoords[i2];
 
 					P[0] = s.points[i0];
 					P[1] = s.points[i1];
-					P[2] = s.points[i2];
 
 					N[0] = s.normals[i0];
 					N[1] = s.normals[i1];
-					N[2] = s.normals[i2];
 
-					GBufferVisitor visitor1(P, N, gbuffer);
-					triangle(uv[0], uv[1], uv[2], visitor1);
-
-					std::swap(P[0], P[2]);
-					std::swap(N[0], N[2]);
-					std::swap(uv[0], uv[2]);
-
-					GBufferVisitor visitor2(P, N, gbuffer);
-					triangle(uv[0], uv[1], uv[2], visitor2);
+					GBufferLineVisitor visitor(P, N, gbuffer);
+					line(uv[0].x, uv[0].y, uv[1].x, uv[1].y, visitor);
 				}
 			}
+		}
 
-			// Create output image.
-			Ref< drawing::Image > outputImageDirect = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), c_outputWidth, c_outputHeight);
-			Ref< drawing::Image > outputImageIndirect = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), c_outputWidth, c_outputHeight);
+		// Then draw solid triangles to fill with correct data.
+		for (uint32_t j = 0; j < surfaces.size(); ++j)
+		{
+			const Surface& s = surfaces[j];
+
+			AlignedVector< Vector2 > texCoords(s.count);
+			for (int32_t k = 0; k < s.count; ++k)
+				texCoords[k] = s.texCoords[k] * dim;
+
+			std::vector< Triangulator::Triangle > triangles;
+			Triangulator().freeze(
+				texCoords,
+				triangles
+			);
+
+			for (std::vector< Triangulator::Triangle >::const_iterator k = triangles.begin(); k != triangles.end(); ++k)
+			{
+				size_t i0 = k->indices[0];
+				size_t i1 = k->indices[1];
+				size_t i2 = k->indices[2];
+
+				uv[0] = texCoords[i0];
+				uv[1] = texCoords[i1];
+				uv[2] = texCoords[i2];
+
+				P[0] = s.points[i0];
+				P[1] = s.points[i1];
+				P[2] = s.points[i2];
+
+				N[0] = s.normals[i0];
+				N[1] = s.normals[i1];
+				N[2] = s.normals[i2];
+
+				GBufferVisitor visitor1(P, N, gbuffer);
+				triangle(uv[0], uv[1], uv[2], visitor1);
+
+				std::swap(P[0], P[2]);
+				std::swap(N[0], N[2]);
+				std::swap(uv[0], uv[2]);
+
+				GBufferVisitor visitor2(P, N, gbuffer);
+				triangle(uv[0], uv[1], uv[2], visitor2);
+			}
+		}
+
+		// Create output image.
+		Ref< drawing::Image > outputImageDirect = new drawing::Image(drawing::PixelFormat::getRGBAF32(), c_outputWidth, c_outputHeight);
+		Ref< drawing::Image > outputImageIndirect = new drawing::Image(drawing::PixelFormat::getRGBAF32(), c_outputWidth, c_outputHeight);
 			
-			outputImageDirect->clear(Color4f(0.0f, 0.0f, 1.0f, 0.0f));
-			outputImageIndirect->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+		outputImageDirect->clear(Color4f(0.0f, 0.0f, 1.0f, 0.0f));
+		outputImageIndirect->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
-			RefArray< Job > jobs;
+		RefArray< Job > jobs;
 
-			log::info << L"Tracing direct lighting..." << Endl;
-			std::list< JobTraceDirect* > tracesDirect;
+		log::info << L"Tracing direct lighting..." << Endl;
+		std::list< JobTraceDirect* > tracesDirect;
+		for (int32_t y = 0; y < c_outputHeight; y += c_jobTileHeight)
+		{
+			for (int32_t x = 0; x < c_outputWidth; x += c_jobTileWidth)
+			{
+				JobTraceDirect* trace = new JobTraceDirect(
+					x,
+					y,
+					sah,
+					gbuffer,
+					surfaces,
+					lights,
+					outputImageDirect
+				);
+
+				Ref< Job > job = JobManager::getInstance().add(makeFunctor< JobTraceDirect >(trace, &JobTraceDirect::execute));
+				if (!job)
+					return 0;
+
+				tracesDirect.push_back(trace);
+				jobs.push_back(job);
+			}
+		}
+
+		for (RefArray< Job >::iterator j = jobs.begin(); j != jobs.end(); ++j)
+			(*j)->wait();
+
+		for(std::list< JobTraceDirect* >::iterator j = tracesDirect.begin(); j != tracesDirect.end(); ++j)
+			delete *j;
+
+		tracesDirect.clear();
+		jobs.clear();
+
+		log::info << L"Dilating direct light map..." << Endl;
+		drawing::DilateFilter dilateFilter(4);
+		outputImageDirect->apply(&dilateFilter);
+
+		if (illumEntityData->traceIndirectLighting())
+		{
+			log::info << L"Tracing indirect lighting..." << Endl;
+			std::list< JobTraceIndirect* > tracesIndirect;
 			for (int32_t y = 0; y < c_outputHeight; y += c_jobTileHeight)
 			{
 				for (int32_t x = 0; x < c_outputWidth; x += c_jobTileWidth)
 				{
-					JobTraceDirect* trace = new JobTraceDirect(
+					JobTraceIndirect* trace = new JobTraceIndirect(
 						x,
 						y,
 						sah,
 						gbuffer,
 						surfaces,
-						lights,
-						outputImageDirect
+						outputImageDirect,
+						outputImageIndirect,
+						illumEntityData->getIndirectTraceSamples()
 					);
 
-					Ref< Job > job = JobManager::getInstance().add(makeFunctor< JobTraceDirect >(trace, &JobTraceDirect::execute));
+					Ref< Job > job = JobManager::getInstance().add(makeFunctor< JobTraceIndirect >(trace, &JobTraceIndirect::execute));
 					if (!job)
 						return 0;
 
-					tracesDirect.push_back(trace);
+					tracesIndirect.push_back(trace);
 					jobs.push_back(job);
 				}
 			}
@@ -874,134 +932,91 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 			for (RefArray< Job >::iterator j = jobs.begin(); j != jobs.end(); ++j)
 				(*j)->wait();
 
-			for(std::list< JobTraceDirect* >::iterator j = tracesDirect.begin(); j != tracesDirect.end(); ++j)
+			for(std::list< JobTraceIndirect* >::iterator j = tracesIndirect.begin(); j != tracesIndirect.end(); ++j)
 				delete *j;
 
-			tracesDirect.clear();
+			tracesIndirect.clear();
 			jobs.clear();
 
-			log::info << L"Dilating direct light map..." << Endl;
+			log::info << L"Dilating indirect light map..." << Endl;
 			drawing::DilateFilter dilateFilter(4);
-			outputImageDirect->apply(&dilateFilter);
+			outputImageIndirect->apply(&dilateFilter);
 
-			if (illumEntityData->traceIndirectLighting())
-			{
-				log::info << L"Tracing indirect lighting..." << Endl;
-				std::list< JobTraceIndirect* > tracesIndirect;
-				for (int32_t y = 0; y < c_outputHeight; y += c_jobTileHeight)
-				{
-					for (int32_t x = 0; x < c_outputWidth; x += c_jobTileWidth)
-					{
-						JobTraceIndirect* trace = new JobTraceIndirect(
-							x,
-							y,
-							sah,
-							gbuffer,
-							surfaces,
-							outputImageDirect,
-							outputImageIndirect,
-							illumEntityData->getIndirectTraceSamples()
-						);
-
-						Ref< Job > job = JobManager::getInstance().add(makeFunctor< JobTraceIndirect >(trace, &JobTraceIndirect::execute));
-						if (!job)
-							return 0;
-
-						tracesIndirect.push_back(trace);
-						jobs.push_back(job);
-					}
-				}
-
-				for (RefArray< Job >::iterator j = jobs.begin(); j != jobs.end(); ++j)
-					(*j)->wait();
-
-				for(std::list< JobTraceIndirect* >::iterator j = tracesIndirect.begin(); j != tracesIndirect.end(); ++j)
-					delete *j;
-
-				tracesIndirect.clear();
-				jobs.clear();
-
-				log::info << L"Dilating indirect light map..." << Endl;
-				drawing::DilateFilter dilateFilter(4);
-				outputImageIndirect->apply(&dilateFilter);
-
-				log::info << L"Convolving indirect lighting..." << Endl;
-				outputImageIndirect->apply(drawing::ConvolutionFilter::createGaussianBlur5());
-			}
-
-			outputImageDirect->save(illumEntityData->getSeedGuid().format() + L"_direct.png");
-			outputImageIndirect->save(illumEntityData->getSeedGuid().format() + L"_indirect.png");
-
-			// Merge light-maps.
-			for (int32_t y = 0; y < c_outputHeight; ++y)
-			{
-				for (int32_t x = 0; x < c_outputWidth; ++x)
-				{
-					Color4f inA, inB;
-					outputImageIndirect->getPixelUnsafe(x, y, inA);
-					outputImageDirect->getPixelUnsafe(x, y, inB);
-					outputImageDirect->setPixelUnsafe(x, y, (inA + inB) * Color4f(1.0f, 1.0f, 1.0f, 0.0f) + Color4f(0.0f, 0.0f, 0.0f, 1.0f));
-				}
-			}
-
-			outputImageIndirect = 0;
-
-			// Save light-map for debugging.
-			outputImageDirect->save(illumEntityData->getSeedGuid().format() + L".png");
-			model::ModelFormat::writeAny(illumEntityData->getSeedGuid().format() + L".obj", model);
-
-			log::info << L"Creating resources..." << Endl;
-
-			// Create a texture build step.
-			Ref< render::TextureOutput > textureOutput = new render::TextureOutput();
-			textureOutput->m_keepZeroAlpha = false;
-			textureOutput->m_hasAlpha = false;
-			textureOutput->m_ignoreAlpha = true;
-			textureOutput->m_linearGamma = true;
-			textureOutput->m_systemTexture = true;
-			textureOutput->m_enableCompression = illumEntityData->compressLightMap();
-			pipelineBuilder->buildOutput(
-				textureOutput,
-				L"Generated/__Illumination__Texture__" + advanceGuid(illumEntityData->getSeedGuid(), 0).format(),
-				advanceGuid(illumEntityData->getSeedGuid(), 0),
-				outputImageDirect
-			);
-
-			// Modify model materials to use our illumination texture.
-			std::vector< model::Material > materials = model->getMaterials();
-			for (std::vector< model::Material >::iterator j = materials.begin(); j != materials.end(); ++j)
-			{
-				j->setLightMap(model::Material::Map(L"__Illumination__", 1, false));
-				j->setEmissive(0.0f);
-			}
-			model->setMaterials(materials);
-
-			// Create a new mesh asset which use the fresh baked illumination texture.
-			std::map< std::wstring, Guid > meshMaterialTextures = meshAsset->getMaterialTextures();
-			meshMaterialTextures[L"__Illumination__"] = advanceGuid(illumEntityData->getSeedGuid(), 0);
-
-			Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
-			outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
-			outputMeshAsset->setMaterialTextures(meshMaterialTextures);
-			outputMeshAsset->setGenerateOccluder(false);
-
-			pipelineBuilder->buildOutput(
-				outputMeshAsset,
-				L"Generated/__Illumination__Mesh__" + advanceGuid(illumEntityData->getSeedGuid(), 1).format(),
-				advanceGuid(illumEntityData->getSeedGuid(), 1),
-				model
-			);
-
-			// Then replace mesh used by mesh entity with the illuminated version.
-			(*i)->setMesh(resource::Id< mesh::IMesh >(advanceGuid(illumEntityData->getSeedGuid(), 1)));
+			log::info << L"Convolving indirect lighting..." << Endl;
+			outputImageIndirect->apply(drawing::ConvolutionFilter::createGaussianBlur5());
 		}
 
-		// Replace illumination entity data with a plain group.
-		Ref< world::GroupEntityData > groupEntityData = new world::GroupEntityData();
-		groupEntityData->setName(illumEntityData->getName());
-		groupEntityData->setTransform(illumEntityData->getTransform());
-		groupEntityData->setEntityData(illumEntityData->getEntityData());
-		return groupEntityData;
+		outputImageDirect->save(illumEntityData->getSeedGuid().format() + L"_direct.png");
+		outputImageIndirect->save(illumEntityData->getSeedGuid().format() + L"_indirect.png");
+
+		// Merge light-maps.
+		for (int32_t y = 0; y < c_outputHeight; ++y)
+		{
+			for (int32_t x = 0; x < c_outputWidth; ++x)
+			{
+				Color4f inA, inB;
+				outputImageIndirect->getPixelUnsafe(x, y, inA);
+				outputImageDirect->getPixelUnsafe(x, y, inB);
+				outputImageDirect->setPixelUnsafe(x, y, (inA + inB) * Color4f(1.0f, 1.0f, 1.0f, 0.0f) + Color4f(0.0f, 0.0f, 0.0f, 1.0f));
+			}
+		}
+
+		outputImageIndirect = 0;
+
+		// Save light-map for debugging.
+		outputImageDirect->save(illumEntityData->getSeedGuid().format() + L".png");
+		model::ModelFormat::writeAny(illumEntityData->getSeedGuid().format() + L".obj", mergedModel);
+
+		log::info << L"Creating resources..." << Endl;
+
+		// Create a texture build step.
+		Ref< render::TextureOutput > textureOutput = new render::TextureOutput();
+		if (illumEntityData->highDynamicRange() && !illumEntityData->compressLightMap())
+			textureOutput->m_textureFormat = render::TfR16G16B16A16F;
+		textureOutput->m_keepZeroAlpha = false;
+		textureOutput->m_hasAlpha = false;
+		textureOutput->m_ignoreAlpha = true;
+		textureOutput->m_linearGamma = true;
+		textureOutput->m_systemTexture = true;
+		textureOutput->m_enableCompression = illumEntityData->compressLightMap();
+		pipelineBuilder->buildOutput(
+			textureOutput,
+			L"Generated/__Illumination__Texture__" + advanceGuid(illumEntityData->getSeedGuid(), 0).format(),
+			advanceGuid(illumEntityData->getSeedGuid(), 0),
+			outputImageDirect
+		);
+
+		// Modify model materials to use our illumination texture.
+		std::vector< model::Material > materials = mergedModel->getMaterials();
+		for (std::vector< model::Material >::iterator j = materials.begin(); j != materials.end(); ++j)
+		{
+			j->setLightMap(model::Material::Map(L"__Illumination__", 1, false));
+			j->setEmissive(0.0f);
+		}
+		mergedModel->setMaterials(materials);
+
+		// Create a new mesh asset which use the fresh baked illumination texture.
+		meshMaterialTextures[L"__Illumination__"] = advanceGuid(illumEntityData->getSeedGuid(), 0);
+
+		Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
+		outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
+		outputMeshAsset->setMaterialTextures(meshMaterialTextures);
+		outputMeshAsset->setGenerateOccluder(false);
+
+		pipelineBuilder->buildOutput(
+			outputMeshAsset,
+			L"Generated/__Illumination__Mesh__" + advanceGuid(illumEntityData->getSeedGuid(), 1).format(),
+			advanceGuid(illumEntityData->getSeedGuid(), 1),
+			mergedModel
+		);
+
+		// Create new mesh entity.
+		Ref< mesh::MeshEntityData > outputMeshEntityData = new mesh::MeshEntityData();
+		outputMeshEntityData->setName(L"__Illumination__");
+		outputMeshEntityData->setMesh(resource::Id< mesh::IMesh >(advanceGuid(illumEntityData->getSeedGuid(), 1)));
+
+		// Replace entire illuminate entity group with fresh baked mesh entity.
+		return outputMeshEntityData;
 	}
 	else
 		return world::EntityPipeline::buildOutput(

@@ -245,6 +245,7 @@ Mutex g_pipelineMutex(Guid(L"{91B42B2E-652D-4251-BA5B-9683F30518DD}"));
 bool g_receivedBreakSignal = false;
 bool g_success = false;
 std::map< std::wstring, ConnectionAndCache > g_databaseConnections;
+std::set< std::wstring > g_loadedModules;
 
 #if defined(_WIN32)
 
@@ -511,14 +512,17 @@ bool perform(const PipelineParameters* params)
 	std::set< std::wstring > modules = settings->getProperty< PropertyStringSet >(L"Editor.Modules");
 	for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
 	{
-		Library library;
-		if (!library.open(*i))
+		if (g_loadedModules.find(*i) == g_loadedModules.end())
 		{
-			traktor::log::error << L"Unable to load module \"" << *i << L"\"" << Endl;
-			return false;
+			Library library;
+			if (!library.open(*i))
+			{
+				traktor::log::error << L"Unable to load module \"" << *i << L"\"" << Endl;
+				return false;
+			}
+			library.detach();
+			g_loadedModules.insert(*i);
 		}
-
-		library.detach();
 	}
 
 	std::wstring sourceDatabaseCS = settings->getProperty< PropertyString >(L"Editor.SourceDatabase");
