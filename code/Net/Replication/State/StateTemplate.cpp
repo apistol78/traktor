@@ -75,7 +75,10 @@ Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const
 
 	// Ensure times are valid.
 	if (isNanOrInfinite(Tn2) || isNanOrInfinite(Tn1) || isNanOrInfinite(T0) || isNanOrInfinite(T))
+	{
+		log::error << L"Invalid state time(s); either NaN or Inf" << Endl;
 		return 0;
+	}
 
 	if (Sn2 && Sn1 && S0)
 	{
@@ -88,12 +91,21 @@ Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const
 			Vn1.size() != m_valueTemplates.size() ||
 			V0.size() != m_valueTemplates.size()
 		)
+		{
+			log::error << L"Number of state values mismatch template definition; #Vn2 " << int32_t(Vn2.size()) << L", #Vn1 " << int32_t(Vn1.size()) << L", #V0 " << int32_t(V0.size()) << Endl;
 			return 0;
+		}
 
 		if (Tn2 > Tn1 - FUZZY_EPSILON)
+		{
+			log::error << L"Difference between Tn2 and Tn1 too small" << Endl;
 			return 0;
+		}
 		if (Tn1 > T0 - FUZZY_EPSILON)
+		{
+			log::error << L"Difference between Tn1 and T0 too small" << Endl;
 			return 0;
+		}
 
 		for (uint32_t i = 0; i < m_valueTemplates.size(); ++i)
 		{
@@ -106,7 +118,14 @@ Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const
 				!is_type_a(valueType, type_of(Vn1[i])) ||
 				!is_type_a(valueType, type_of(V0[i]))
 			)
+			{
+				log::error << L"Value types mismatch template definition" << Endl;
+				log::error << L"\tDefinition \"" << valueType.getName() << L"\"" << Endl;
+				log::error << L"\tVn2 \"" << type_of(Vn2[i]).getName() << L"\"" << Endl;
+				log::error << L"\tVn1 \"" << type_of(Vn1[i]).getName() << L"\"" << Endl;
+				log::error << L"\tV0 \"" << type_of(V0[i]).getName() << L"\"" << Endl;
 				return 0;
+			}
 
 			Vr[i] = valueTemplate->extrapolate(Vn2[i], Tn2, Vn1[i], Tn1, V0[i], T0, T);
 			T_ASSERT (Vr[i]);
@@ -121,10 +140,16 @@ Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const
 			Vn1.size() != m_valueTemplates.size() ||
 			V0.size() != m_valueTemplates.size()
 		)
+		{
+			log::error << L"Number of state values mismatch template definition; #Vn1 " << int32_t(Vn1.size()) << L", #V0 " << int32_t(V0.size()) << Endl;
 			return 0;
+		}
 
 		if (Tn1 > T0 - FUZZY_EPSILON)
+		{
+			log::error << L"Difference between Tn1 and T0 too small" << Endl;
 			return 0;
+		}
 
 		for (uint32_t i = 0; i < m_valueTemplates.size(); ++i)
 		{
@@ -136,7 +161,13 @@ Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const
 				!is_type_a(valueType, type_of(Vn1[i])) ||
 				!is_type_a(valueType, type_of(V0[i]))
 			)
+			{
+				log::error << L"Value types mismatch template definition" << Endl;
+				log::error << L"\tDefinition \"" << valueType.getName() << L"\"" << Endl;
+				log::error << L"\tVn1 \"" << type_of(Vn1[i]).getName() << L"\"" << Endl;
+				log::error << L"\tV0 \"" << type_of(V0[i]).getName() << L"\"" << Endl;
 				return 0;
+			}
 
 			Vr[i] = valueTemplate->extrapolate(Vn1[i], 0.0f, Vn1[i], Tn1, V0[i], T0, T);
 			T_ASSERT (Vr[i]);
@@ -147,7 +178,10 @@ Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const
 		const RefArray< const IValue >& V0 = S0->getValues();
 
 		if (V0.size() != m_valueTemplates.size())
+		{
+			log::error << L"Number of state values mismatch template definition; #V0 " << int32_t(V0.size()) << Endl;
 			return 0;
+		}
 
 		for (uint32_t i = 0; i < m_valueTemplates.size(); ++i)
 		{
@@ -156,14 +190,22 @@ Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const
 
 			const TypeInfo& valueType = valueTemplate->getValueType();
 			if (!is_type_a(valueType, type_of(V0[i])))
+			{
+				log::error << L"Value types mismatch template definition" << Endl;
+				log::error << L"\tDefinition \"" << valueType.getName() << L"\"" << Endl;
+				log::error << L"\tV0 \"" << type_of(V0[i]).getName() << L"\"" << Endl;
 				return 0;
+			}
 
 			Vr[i] = V0[i];
 			T_ASSERT (Vr[i]);
 		}
 	}
 	else
+	{
+		log::error << L"No states to evaluate given" << Endl;
 		return 0;
+	}
 
 	return new State(Vr);
 }
