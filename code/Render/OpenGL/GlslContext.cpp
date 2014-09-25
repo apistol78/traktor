@@ -221,17 +221,29 @@ void GlslContext::defineTexture(const std::wstring& texture)
 
 bool GlslContext::defineSampler(uint32_t stateHash, GLenum target, const std::wstring& texture, int32_t& outStage)
 {
-	outStage = m_nextStage++;
-
-	// Create sampler binding.
 	std::vector< std::wstring >::iterator i = std::find(m_textures.begin(), m_textures.end(), texture);
 	T_ASSERT (i != m_textures.end());
+
+	uint32_t textureId = uint32_t(std::distance(m_textures.begin(), i));
+
+	for (uint32_t i = 0; i < uint32_t(m_samplers.size()); ++i)
+	{
+		const SamplerBindingOpenGL& sampler = m_samplers[i];
+		if (m_samplerStateHashes[i] == stateHash && sampler.target == target && sampler.texture == textureId)
+		{
+			outStage = sampler.stage;
+			return false;
+		}
+	}
+
+	outStage = m_nextStage++;
 
 	SamplerBindingOpenGL sb;
 	sb.stage = outStage;
 	sb.target = target;
-	sb.texture = std::distance(m_textures.begin(), i);
+	sb.texture = textureId;
 	m_samplers.push_back(sb);
+	m_samplerStateHashes.push_back(stateHash);
 
 	return true;
 }

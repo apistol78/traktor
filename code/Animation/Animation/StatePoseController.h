@@ -33,6 +33,8 @@ class T_DLLCLASS StatePoseController : public IPoseController
 public:
 	StatePoseController(const resource::Proxy< StateGraph >& stateGraph);
 
+	bool setState(const std::wstring& stateName);
+
 	void setCondition(const std::wstring& condition, bool enabled, bool reset);
 
 	void setTimeFactor(float timeFactor);

@@ -56,6 +56,13 @@ public:
 	 */
 	virtual bool signal(SignalType signalType) = 0;
 
+	/*! \brief Terminate process.
+	 *
+	 * \param exitCode Exit code of process.
+	 * \return True if process being terminated.
+	 */
+	virtual bool terminate(int32_t exitCode) = 0;
+
 	/*! \brief Get exit code returned by process.
 	 *
 	 * \return Exit code.

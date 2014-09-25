@@ -1,3 +1,5 @@
+#pragma optimize( "", off )
+
 #include <MaxRectsBinPack.h>
 #include "Core/Log/Log.h"
 #include "Core/Math/Aabb2.h"
@@ -6,6 +8,7 @@
 #include "Core/Math/Winding2.h"
 #include "Core/Math/Winding3.h"
 #include "Model/Model.h"
+#include "Model/ModelAdjacency.h"
 #include "Model/Operations/UnwrapUV.h"
 
 namespace traktor
@@ -31,9 +34,11 @@ bool UnwrapUV::apply(Model& model) const
 {
 	std::vector< Polygon > originalPolygons = model.getPolygons();
 	AlignedVector< Winding2 > wuvs;
-	AlignedVector< Aabb2 > aabbuvs;
-	float totalTexelArea = 0.0f;
+	std::vector< int32_t > majors;
 
+	ModelAdjacency adjacency(&model, ModelAdjacency::MdByPosition);
+
+	// Create windings, determine projection plane and calculate initial projected UV set.
 	for (uint32_t i = 0; i < originalPolygons.size(); ++i)
 	{
 		const Polygon& polygon = originalPolygons[i];
@@ -43,9 +48,7 @@ bool UnwrapUV::apply(Model& model) const
 		const std::vector< uint32_t >& vertexIds = polygon.getVertices();
 		for (uint32_t j = 0; j < vertexIds.size(); ++j)
 		{
-			const Vertex& vertex = model.getVertex(vertexIds[j]);
-			uint32_t positionId = vertex.getPosition();
-			const Vector4& position = model.getPosition(positionId);
+			const Vector4& position = model.getVertexPosition(vertexIds[j]);
 			w.push(position);
 		}
 
@@ -55,9 +58,12 @@ bool UnwrapUV::apply(Model& model) const
 
 		int32_t major = majorAxis3(wp.normal());
 
-		Winding2 wuv;
-		Aabb2 aabbuv;
+		if (wp.normal().get(major) > 0.0f)
+			majors.push_back((major + 1));
+		else
+			majors.push_back(-(major + 1));
 
+		Winding2 wuv;
 		for (uint32_t j = 0; j < w.size(); ++j)
 		{
 			switch (major)
@@ -98,29 +104,69 @@ bool UnwrapUV::apply(Model& model) const
 			default:
 				return false;
 			}
-
-			aabbuv.contain(wuv.points[j]);
 		}
 
 		wuvs.push_back(wuv);
-		aabbuvs.push_back(aabbuv);
+	}
 
-		aabbuvs[i].mn -= Vector2(m_margin, m_margin);
-		aabbuvs[i].mx += Vector2(m_margin, m_margin);
+	// Put neighbor polygons in same groups
+	std::vector< uint32_t > groups(originalPolygons.size(), c_InvalidIndex);
+	std::vector< uint32_t > sharedEdges;
+	uint32_t group = 0;
 
-		Vector2 size = (aabbuvs[i].mx - aabbuvs[i].mn);
+	for (uint32_t i = 0; i < originalPolygons.size(); ++i)
+	{
+		if (groups[i] == c_InvalidIndex)
+			groups[i] = group++;
+
+		for (uint32_t edge = 0; edge < originalPolygons[i].getVertexCount(); ++edge)
+		{
+			adjacency.getSharedEdges(i, edge, sharedEdges);
+			for (std::vector< uint32_t >::const_iterator it = sharedEdges.begin(); it != sharedEdges.end(); ++it)
+			{
+				uint32_t sharedPolygon = adjacency.getPolygon(*it);
+				T_FATAL_ASSERT (sharedPolygon != i);
+
+				if (majors[sharedPolygon] == majors[i] && groups[sharedPolygon] == c_InvalidIndex)
+					groups[sharedPolygon] = groups[i];
+			}
+		}
+	}
+
+	// For each group calculate bounding boxes.
+	AlignedVector< Aabb2 > aabbuvs;
+	float totalTexelArea = 0.0f;
+
+	for (uint32_t i = 0; i < group; ++i)
+	{
+		Aabb2 aabbuv;
+
+		for (uint32_t j = 0; j < originalPolygons.size(); ++j)
+		{
+			if (groups[j] == i)
+			{
+				for (uint32_t k = 0; k < wuvs[j].points.size(); ++k)
+					aabbuv.contain(wuvs[j].points[k]);
+			}
+		}
+
+		aabbuv.mn -= Vector2(m_margin, m_margin);
+		aabbuv.mx += Vector2(m_margin, m_margin);
+
+		Vector2 size = (aabbuv.mx - aabbuv.mn);
 		totalTexelArea += size.x * size.y;
+
+		aabbuvs.push_back(aabbuv);
 	}
 
 	int32_t size = nearestLog2(int32_t(std::sqrt(totalTexelArea)));
 	
-	std::vector< Vertex > originalVertices = model.getVertices();
-	model.clear(Model::CfPolygons | Model::CfVertices);
-
+	// Pack each group into a separate rectangle.
 	rbp::MaxRectsBinPack binPack;
 	binPack.Init(size, size);
 
-	for (uint32_t i = 0; i < wuvs.size(); )
+	std::vector< rbp::Rect > rects;
+	for (uint32_t i = 0; i < aabbuvs.size(); )
 	{
 		int32_t width = int32_t((aabbuvs[i].mx - aabbuvs[i].mn).x + 0.5f);
 		int32_t height = int32_t((aabbuvs[i].mx - aabbuvs[i].mn).y + 0.5f);
@@ -133,9 +179,25 @@ bool UnwrapUV::apply(Model& model) const
 			i = 0;
 			size *= 2;
 			binPack.Init(size, size);
-			model.clear(Model::CfPolygons | Model::CfVertices);
+			rects.resize(0);
 			continue;
 		}
+
+		rects.push_back(packedRect);
+		++i;
+	}
+
+	// Update UV for each polygon.
+	std::vector< Vertex > originalVertices = model.getVertices();
+	model.clear(Model::CfPolygons | Model::CfVertices);
+
+	for (uint32_t i = 0; i < originalPolygons.size(); ++i)
+	{
+		uint32_t g = groups[i];
+		const rbp::Rect& packedRect = rects[g];
+
+		int32_t width = int32_t((aabbuvs[g].mx - aabbuvs[g].mn).x + 0.5f);
+		int32_t height = int32_t((aabbuvs[g].mx - aabbuvs[g].mn).y + 0.5f);
 
 		bool flipped = false;
 		if (packedRect.width > packedRect.height)
@@ -153,7 +215,7 @@ bool UnwrapUV::apply(Model& model) const
 		{
 			Vertex vertex = originalVertices[originalPolygons[i].getVertex(j)];
 
-			Vector2 uv = (wuvs[i].points[j] - aabbuvs[i].mn) / (aabbuvs[i].mx - aabbuvs[i].mn);
+			Vector2 uv = (wuvs[i].points[j] - aabbuvs[g].mn) / (aabbuvs[g].mx - aabbuvs[g].mn);
 			T_FATAL_ASSERT (uv.x >= -FUZZY_EPSILON && uv.x <= 1.0f + FUZZY_EPSILON);
 			T_FATAL_ASSERT (uv.y >= -FUZZY_EPSILON && uv.y <= 1.0f + FUZZY_EPSILON);
 

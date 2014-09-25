@@ -44,6 +44,8 @@ public:
 
 	virtual bool signal(SignalType signalType);
 
+	virtual bool terminate(int32_t exitCode);
+
 	virtual int32_t exitCode() const;
 
 private:

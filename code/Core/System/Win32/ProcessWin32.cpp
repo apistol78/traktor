@@ -168,6 +168,11 @@ bool ProcessWin32::signal(SignalType signalType)
 #endif
 }
 
+bool ProcessWin32::terminate(int32_t exitCode)
+{
+	return TerminateProcess(m_hProcess, 0) == TRUE;
+}
+
 int32_t ProcessWin32::exitCode() const
 {
 	DWORD code = 0;

@@ -202,12 +202,6 @@
 					<value>0</value>
 				</second>
 			</item>
-			<item>
-				<first>World.AntiAliasQuality</first>
-				<second type="traktor.PropertyInteger">
-					<value>0</value>
-				</second>
-			</item>
 		</value>
 	</runtimeProperties>
 </object>

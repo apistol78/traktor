@@ -29,6 +29,8 @@
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/PropertyStringSet.h"
+#include "Core/System/IProcess.h"
+#include "Core/System/OS.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Database/Database.h"
@@ -256,8 +258,23 @@ void EditorPlugin::handleWorkspaceOpened()
 	}
 
 	// Add to target drop down.
-	for (std::vector< EditTarget >::const_iterator i = m_targets.begin(); i != m_targets.end(); ++i)
-		m_toolTargets->add(i->name);
+	if (!m_targets.empty())
+	{
+		for (std::vector< EditTarget >::const_iterator i = m_targets.begin(); i != m_targets.end(); ++i)
+			m_toolTargets->add(i->name);
+
+		// Select first target.
+		m_toolTargets->select(0);
+		m_toolBar->update();
+
+		m_targetList->removeAll();
+		for (RefArray< TargetInstance >::const_iterator i = m_targetInstances.begin(); i != m_targetInstances.end(); ++i)
+		{
+			if ((*i)->getTarget() == m_targets[0].target)
+				m_targetList->add(new TargetInstanceListItem(m_hostEnumerator, *i));
+		}
+		m_targetList->requestUpdate();
+	}
 
 	// Create target manager.
 	m_targetManager = new TargetManager(m_editor, m_targetDebuggerSessions);
@@ -287,11 +304,36 @@ void EditorPlugin::handleWorkspaceOpened()
 			m_connectionManager->setConnectionString(remoteId, databaseCs);
 		}
 	}
+
+	// Create slave pipeline process.
+	std::wstring systemRoot = m_editor->getSettings()->getProperty< PropertyString >(L"Amalgam.SystemRoot", L"$(TRAKTOR_HOME)");
+	std::wstring systemOs = L"win32";
+
+	m_pipelineSlaveProcess = OS::getInstance().execute(
+		systemRoot + L"/bin/latest/" + systemOs + L"/releaseshared/Traktor.Pipeline.App -slave",
+		L"",
+		0,
+		false,
+		false,
+		false
+	);
 }
 
 void EditorPlugin::handleWorkspaceClosed()
 {
+	// Terminate slave pipeline process.
+	if (m_pipelineSlaveProcess)
+	{
+		m_pipelineSlaveProcess->terminate(0);
+		m_pipelineSlaveProcess->wait(10000);
+		m_pipelineSlaveProcess = 0;
+	}
+
 	m_toolTargets->removeAll();
+	m_toolBar->update();
+
+	m_targetList->removeAll();
+	m_targetList->requestUpdate();
 
 	safeDestroy(m_targetManager);
 

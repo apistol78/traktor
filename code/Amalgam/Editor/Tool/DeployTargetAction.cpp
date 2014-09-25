@@ -196,7 +196,7 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 	envmap[L"DEPLOY_PROJECT_NAME"] = m_targetName;
 	envmap[L"DEPLOY_PROJECT_IDENTIFIER"] = m_target->getIdentifier();
 	envmap[L"DEPLOY_PROJECT_ICON"] = m_targetConfiguration->getIcon();
-	envmap[L"DEPLOY_SYSTEM_ROOT"] = m_targetConfiguration->getSystemRoot();
+	envmap[L"DEPLOY_SYSTEM_ROOT"] = m_globalSettings->getProperty< PropertyString >(L"Amalgam.SystemRoot", L"$(TRAKTOR_HOME)");
 	envmap[L"DEPLOY_TARGET_HOST"] = m_deployHost;
 	envmap[L"DEPLOY_EXECUTABLE"] = executableFile;
 	envmap[L"DEPLOY_MODULES"] = implode(runtimeModules.begin(), runtimeModules.end(), L" ");

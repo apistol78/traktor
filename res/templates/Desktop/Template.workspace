@@ -2,6 +2,12 @@
 <object type="traktor.PropertyGroup">
 	<value>
 		<item>
+			<first>Amalgam.SystemRoot</first>
+			<second type="traktor.PropertyString">
+				<value>$(TRAKTOR_HOME)</value>
+			</second>
+		</item>
+		<item>
 			<first>Editor.HomeUrl</first>
 			<second type="traktor.PropertyString">
 				<value>file://info/index.html</value>

@@ -26,8 +26,8 @@ Calculate direction
 		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
 			<position>
-				<first>6437</first>
-				<second>495</second>
+				<first>6438</first>
+				<second>469</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -968,11 +968,11 @@ Reduce min constant
 			</position>
 			<value>0.01</value>
 		</item>
-		<item type="traktor.render.TextureSize">
+		<item type="traktor.render.TargetSize">
 			<comment/>
 			<position>
-				<first>-233</first>
-				<second>518</second>
+				<first>-192</first>
+				<second>503</second>
 			</position>
 		</item>
 	</nodes>
@@ -2289,36 +2289,6 @@ Reduce min constant
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[30]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[95]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[95]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[24]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[24]"/>
 				<name>Output</name>
 			</source>
@@ -2365,6 +2335,26 @@ Reduce min constant
 			<destination>
 				<node ref="/object/nodes/item[16]"/>
 				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[95]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[24]"/>
+				<name>Input2</name>
 			</destination>
 		</item>
 	</edges>

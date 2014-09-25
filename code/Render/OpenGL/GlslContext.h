@@ -92,6 +92,7 @@ private:
 	std::vector< uint8_t > m_interpolatorMap;
 	std::vector< std::wstring > m_textures;
 	std::vector< SamplerBindingOpenGL > m_samplers;
+	std::vector< uint32_t > m_samplerStateHashes;
 };
 
 	}

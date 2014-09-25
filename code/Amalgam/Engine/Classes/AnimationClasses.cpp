@@ -76,6 +76,7 @@ void registerAnimationClasses(script::IScriptManager* scriptManager)
 	scriptManager->registerClass(classRagDollPoseController);
 
 	Ref< script::AutoScriptClass< animation::StatePoseController > > classStatePoseController = new script::AutoScriptClass< animation::StatePoseController >();
+	classStatePoseController->addMethod("setState", &animation::StatePoseController::setState);
 	classStatePoseController->addMethod("setCondition", &animation::StatePoseController::setCondition);
 	classStatePoseController->addMethod("setTimeFactor", &animation::StatePoseController::setTimeFactor);
 	scriptManager->registerClass(classStatePoseController);

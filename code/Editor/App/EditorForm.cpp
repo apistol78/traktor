@@ -1755,7 +1755,7 @@ Ref< IPipelineDependencySet > EditorForm::buildAssetDependencies(const ISerializ
 
 void EditorForm::setStoreObject(const std::wstring& name, Object* object)
 {
-	m_objectStore.insert(std::make_pair(name, object));
+	m_objectStore[name] = object;
 }
 
 Object* EditorForm::getStoreObject(const std::wstring& name) const
