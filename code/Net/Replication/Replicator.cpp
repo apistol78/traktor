@@ -178,6 +178,8 @@ bool Replicator::update()
 
 	double timeOffset = 0.0;
 	bool timeOffsetReceived = false;
+	uint32_t stateIssued = 0;
+	uint32_t eventsIssued = 0;
 
 	// Receive messages.
 	for (;;)
@@ -205,11 +207,19 @@ bool Replicator::update()
 
 		if (fromGhost->isPrimary())
 		{
-			double latency = fromGhost->getLatency();
-			timeOffset = std::max(
-				net2time(msg.time) + latency - m_time,
-				timeOffset
-			);
+			double latency = fromGhost->getLatencyDown();
+			double ghostOffset = net2time(msg.time) + latency - m_time;
+
+			if (!timeOffsetReceived)
+				timeOffset = ghostOffset;
+			else
+			{
+				if (ghostOffset > 0.0f && timeOffset > 0.0f)
+					timeOffset = std::max(timeOffset, ghostOffset);
+				else if (ghostOffset < 0.0f && timeOffset < 0.0f)
+					timeOffset = std::min(timeOffset, ghostOffset);
+			}
+
 			timeOffsetReceived = true;
 		}
 
@@ -246,6 +256,7 @@ bool Replicator::update()
 						fromGhost->m_state0
 					);
 				}
+				++stateIssued;
 			}
 		}
 		else if (msg.id == RmiEvent)
@@ -276,6 +287,7 @@ bool Replicator::update()
 								eventObject
 							);
 						}
+						++eventsIssued;
 					}
 				}
 			}
@@ -296,13 +308,16 @@ bool Replicator::update()
 	if (timeOffsetReceived)
 	{
 		// Adjust times based from estimated time offset.
-		timeOffset *= 0.8;
-		if (abs(timeOffset) < 0.03)
+		if (abs(timeOffset) >= 1.0)
+			timeOffset *= 0.8;
+		else if (abs(timeOffset) > 0.06)
+			timeOffset *= 0.4;
+		else
 		{
-			double k = abs(timeOffset) / 0.03;
-			timeOffset *= k;
+			double k = abs(timeOffset) / 0.06;
+			timeOffset *= 0.4 * k;
 		}
-		if (timeOffset > 0.01)
+		if (abs(timeOffset) > 0.01)
 		{
 			m_time += timeOffset;
 			for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)

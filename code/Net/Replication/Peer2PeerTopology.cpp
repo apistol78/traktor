@@ -584,9 +584,20 @@ void Peer2PeerTopology::traverseRoute(net_handle_t from, net_handle_t to, const 
 		return;
 	}
 
+	// Early out ff recursing one step further is futile; we've
+	// might already have found a better chain.
+	if (!outChain.empty())
+	{
+		if (chain.size() + 1 >= outChain.size())
+			return;
+	}
+
 	int32_t fromPeerId = indexOf(from);
 	if (fromPeerId < 0)
 		return;
+
+	std::vector< net_handle_t > childChain = chain;
+	childChain.push_back(0);
 
 	const Peer2PeerTopology::Peer& fromPeer = m_peers[fromPeerId];
 	for (int32_t i = 0; i < int32_t(fromPeer.connections.size()); ++i)
@@ -596,9 +607,7 @@ void Peer2PeerTopology::traverseRoute(net_handle_t from, net_handle_t to, const 
 		if (std::find(chain.begin(), chain.end(), next) != chain.end())
 			continue;
 
-		std::vector< net_handle_t > childChain = chain;
-		childChain.push_back(next);
-
+		childChain.back() = next;
 		traverseRoute(next, to, childChain, outChain);
 	}
 }
