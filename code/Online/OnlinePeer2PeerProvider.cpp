@@ -15,6 +15,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.online.OnlinePeer2PeerProvider", OnlinePeer2Pee
 OnlinePeer2PeerProvider::OnlinePeer2PeerProvider(ISessionManager* sessionManager, ILobby* lobby)
 :	m_sessionManager(sessionManager)
 ,	m_lobby(lobby)
+,	m_localHandle(0)
+,	m_primaryHandle(0)
 {
 	Ref< IUser > fromUser;
 	uint8_t data[1024];
@@ -26,16 +28,15 @@ OnlinePeer2PeerProvider::OnlinePeer2PeerProvider(ISessionManager* sessionManager
 
 bool OnlinePeer2PeerProvider::update()
 {
-	if (!m_sessionManager->isConnected())
-		return false;
-
 	m_users = m_lobby->getParticipants();
+	m_localHandle = net::net_handle_t(m_sessionManager->getUser()->getGlobalId());
+	m_primaryHandle = net::net_handle_t(m_lobby->getOwner()->getGlobalId());
 	return true;
 }
 
 net::net_handle_t OnlinePeer2PeerProvider::getLocalHandle() const
 {
-	return net::net_handle_t(m_sessionManager->getUser()->getGlobalId());
+	return m_localHandle;
 }
 
 int32_t OnlinePeer2PeerProvider::getPeerCount() const
@@ -77,7 +78,7 @@ bool OnlinePeer2PeerProvider::setPrimaryPeerHandle(net::net_handle_t node)
 
 net::net_handle_t OnlinePeer2PeerProvider::getPrimaryPeerHandle() const
 {
-	return net::net_handle_t(m_lobby->getOwner()->getGlobalId());
+	return m_primaryHandle;
 }
 
 bool OnlinePeer2PeerProvider::send(net::net_handle_t node, const void* data, int32_t size)
@@ -93,6 +94,9 @@ bool OnlinePeer2PeerProvider::send(net::net_handle_t node, const void* data, int
 int32_t OnlinePeer2PeerProvider::recv(void* data, int32_t size, net::net_handle_t& outNode)
 {
 	Ref< IUser > fromUser;
+
+	if (!m_sessionManager->haveP2PData())
+		return 0;
 
 	uint32_t nrecv = m_sessionManager->receiveP2PData(data, size, fromUser);
 	if (!nrecv || !fromUser)

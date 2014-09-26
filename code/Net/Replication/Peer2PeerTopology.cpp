@@ -72,6 +72,7 @@ const double c_IAmInterval = 1.0;
 const uint32_t c_maxPendingIAm = 16;
 const double c_propagateInterval = 2.0;
 const double c_timeRandomFlux = 0.5;
+const int32_t c_maxReceiveMessages = 8;
 
 		}
 
@@ -387,7 +388,7 @@ bool Peer2PeerTopology::update(double dT)
 	}
 
 	// Receive messages.
-	for (;;)
+	for (int32_t i = 0; i < c_maxReceiveMessages; ++i)
 	{
 		net_handle_t from;
 		P2PMessage msg;
