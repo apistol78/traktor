@@ -49,6 +49,8 @@ private:
 	Ref< ISessionManager > m_sessionManager;
 	Ref< ILobby > m_lobby;
 	RefArray< IUser > m_users;
+	net::net_handle_t m_localHandle;
+	net::net_handle_t m_primaryHandle;
 };
 
 	}

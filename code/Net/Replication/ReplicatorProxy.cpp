@@ -114,6 +114,15 @@ const Transform& ReplicatorProxy::getOrigin() const
 void ReplicatorProxy::setStateTemplate(const StateTemplate* stateTemplate)
 {
 	m_stateTemplate = stateTemplate;
+
+	// Old states must be immediately discarded; we cannot keep
+	// states produced from old template.
+	m_state0 = 0;
+	m_stateTime0 = 0.0;
+	m_stateN1 = 0;
+	m_stateTimeN1 = 0.0;
+	m_stateN2 = 0;
+	m_stateTimeN2 = 0.0;
 }
 
 const StateTemplate* ReplicatorProxy::getStateTemplate() const

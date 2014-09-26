@@ -126,6 +126,7 @@ bool Replicator::update()
 	RMessage reply;
 	net_handle_t from;
 
+	double T0 = m_timer.getElapsedTime();
 	double dT = m_timer.getDeltaTime();
 	if (dT > c_maxDeltaTime)
 	{
@@ -136,6 +137,10 @@ bool Replicator::update()
 	// Update underlying network topology layer.
 	if (!m_topology->update(dT))
 		return false;
+
+	double T2 = m_timer.getElapsedTime();
+	if (T2 - T0 > 0.01)
+		log::warning << getLogPrefix() << L"Topology update exceeded 10 ms (" << int32_t((T2 - T0) * 1000.0) << L" ms)." << Endl;
 
 	// Send ping to proxies.
 	{
@@ -365,6 +370,10 @@ bool Replicator::update()
 
 	m_time += dT;
 	m_time0 += dT;
+
+	double T1 = m_timer.getElapsedTime();
+	if (T1 - T0 > 0.01)
+		log::warning << getLogPrefix() << L"Replicator update exceeded 10 ms (" << int32_t((T1 - T0) * 1000.0) << L" ms)." << Endl;
 
 	return true;
 }
