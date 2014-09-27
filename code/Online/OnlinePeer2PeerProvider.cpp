@@ -1,5 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
+#include "Core/Timer/Timer.h"
 #include "Online/ILobby.h"
 #include "Online/ISessionManager.h"
 #include "Online/IUser.h"
@@ -9,6 +10,24 @@ namespace traktor
 {
 	namespace online
 	{
+		namespace
+		{
+
+Timer s_timer;
+
+#define T_WIDEN_X(x) L ## x
+#define T_WIDEN(x) T_WIDEN_X(x)
+
+#define T_MEASURE(statement, maxDuration) \
+	{ \
+		double start = s_timer.getElapsedTime(); \
+		(statement); \
+		double end = s_timer.getElapsedTime(); \
+		if ((end - start) > maxDuration) \
+			log::warning << L"Statement \"" << T_WIDEN(#statement) << L"\" exceeded max " << int32_t(maxDuration * 1000.0) << L" ms, " << int32_t((end - start) * 1000.0) << L" ms" << Endl; \
+	}
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.OnlinePeer2PeerProvider", OnlinePeer2PeerProvider, net::IPeer2PeerProvider)
 
@@ -24,13 +43,15 @@ OnlinePeer2PeerProvider::OnlinePeer2PeerProvider(ISessionManager* sessionManager
 	// Purge pending data.
 	while(m_sessionManager->receiveP2PData(data, sizeof(data), fromUser) > 0)
 		;
+
+	s_timer.start();
 }
 
 bool OnlinePeer2PeerProvider::update()
 {
-	m_users = m_lobby->getParticipants();
-	m_localHandle = net::net_handle_t(m_sessionManager->getUser()->getGlobalId());
-	m_primaryHandle = net::net_handle_t(m_lobby->getOwner()->getGlobalId());
+	T_MEASURE(m_users = m_lobby->getParticipants(), 0.002)
+	T_MEASURE(m_localHandle = net::net_handle_t(m_sessionManager->getUser()->getGlobalId()), 0.002);
+	T_MEASURE(m_primaryHandle = net::net_handle_t(m_lobby->getOwner()->getGlobalId()), 0.002);
 	return true;
 }
 
@@ -56,9 +77,9 @@ std::wstring OnlinePeer2PeerProvider::getPeerName(int32_t index) const
 {
 	std::wstring name;
 	if (index <= 0)
-		m_sessionManager->getUser()->getName(name);
+		T_MEASURE(m_sessionManager->getUser()->getName(name), 0.001)
 	else
-		m_users[index - 1]->getName(name);
+		T_MEASURE(m_users[index - 1]->getName(name), 0.001)
 	return name;
 }
 
@@ -86,7 +107,11 @@ bool OnlinePeer2PeerProvider::send(net::net_handle_t node, const void* data, int
 	for (RefArray< IUser >::iterator i = m_users.begin(); i != m_users.end(); ++i)
 	{
 		if ((*i)->getGlobalId() == node)
-			return (*i)->sendP2PData(data, size, false);
+		{
+			bool result = false;
+			T_MEASURE(result = (*i)->sendP2PData(data, size, false), 0.002);
+			return result;
+		}
 	}
 	return false;
 }
@@ -95,10 +120,13 @@ int32_t OnlinePeer2PeerProvider::recv(void* data, int32_t size, net::net_handle_
 {
 	Ref< IUser > fromUser;
 
-	if (!m_sessionManager->haveP2PData())
+	bool result = false;
+	T_MEASURE(result = m_sessionManager->haveP2PData(), 0.001);
+	if (!result)
 		return 0;
 
-	uint32_t nrecv = m_sessionManager->receiveP2PData(data, size, fromUser);
+	uint32_t nrecv = 0;
+	T_MEASURE(nrecv = m_sessionManager->receiveP2PData(data, size, fromUser), 0.002);
 	if (!nrecv || !fromUser)
 		return 0;
 

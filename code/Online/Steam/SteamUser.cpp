@@ -77,11 +77,7 @@ bool SteamUser::isP2PAllowed(uint64_t userHandle) const
 
 bool SteamUser::isP2PRelayed(uint64_t userHandle) const
 {
-	P2PSessionState_t ss;
-	if (!SteamNetworking()->GetP2PSessionState(uint64(userHandle), &ss))
-		return false;
-
-	return ss.m_bUsingRelay != 0;
+	return false;
 }
 
 bool SteamUser::sendP2PData(uint64_t userHandle, const void* data, size_t size, bool reliable)
@@ -90,7 +86,7 @@ bool SteamUser::sendP2PData(uint64_t userHandle, const void* data, size_t size, 
 	T_EXCEPTION_GUARD_BEGIN
 	
 	if (data && size > 0)
-		result = SteamNetworking()->SendP2PPacket(uint64(userHandle), data, uint32(size), reliable ? k_EP2PSendReliable : k_EP2PSendUnreliable);
+		result = SteamNetworking()->SendP2PPacket(uint64(userHandle), data, uint32(size), reliable ? k_EP2PSendReliable : k_EP2PSendUnreliableNoDelay);
 	else
 		result = true;
 
