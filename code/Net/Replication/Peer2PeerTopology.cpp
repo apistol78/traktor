@@ -72,7 +72,7 @@ const double c_IAmInterval = 1.0;
 const uint32_t c_maxPendingIAm = 16;
 const double c_propagateInterval = 2.0;
 const double c_timeRandomFlux = 0.5;
-const int32_t c_maxReceiveMessages = 8;
+const int32_t c_maxReceiveMessages = 128;
 
 		}
 
@@ -436,7 +436,7 @@ bool Peer2PeerTopology::update(double dT)
 			T_ASSERT (msg.cmask.of != myPeer.handle);
 
 			int32_t ofPeerIndex = indexOf(msg.cmask.of);
-			if (ofPeerIndex >= 0 && ofPeerIndex < m_peers.size())
+			if (ofPeerIndex >= 0 && ofPeerIndex < int32_t(m_peers.size()))
 			{
 				Peer& ofPeer = m_peers[ofPeerIndex];
 				if (msg.cmask.sequence >= ofPeer.sequence)
