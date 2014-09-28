@@ -28,5 +28,22 @@ User* UserCache::get(uint64_t userHandle)
 	return user;
 }
 
+void UserCache::getMany(const std::vector< uint64_t >& userHandles, RefArray< User >& outUsers)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+	outUsers.reserve(userHandles.size());
+	outUsers.resize(0);
+
+	for (std::vector< uint64_t >::const_iterator i = userHandles.begin(); i != userHandles.end(); ++i)
+	{
+		SmallMap< uint64_t, Ref< User > >::const_iterator it = m_users.find(*i);
+		if (it != m_users.end())
+			outUsers.push_back(it->second);
+		else
+			m_users[*i] = new User(m_userProvider, *i);
+	}
+}
+
 	}
 }

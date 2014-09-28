@@ -35,7 +35,7 @@ public:
 
 	virtual bool leave() = 0;
 
-	virtual RefArray< IUser > getParticipants() = 0;
+	virtual bool getParticipants(RefArray< IUser >& outUsers) = 0;
 
 	virtual uint32_t getParticipantCount() const = 0;
 

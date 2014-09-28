@@ -43,7 +43,9 @@ public:
 
 	virtual bool send(net::net_handle_t node, const void* data, int32_t size);
 
-	virtual int32_t recv(void* data, int32_t size, net::net_handle_t& outNode);	
+	virtual int32_t recv(void* data, int32_t size, net::net_handle_t& outNode);
+
+	virtual bool pendingRecv();
 
 private:
 	Ref< ISessionManager > m_sessionManager;
@@ -51,6 +53,7 @@ private:
 	RefArray< IUser > m_users;
 	net::net_handle_t m_localHandle;
 	net::net_handle_t m_primaryHandle;
+	double m_whenUpdate;
 };
 
 	}

@@ -123,6 +123,13 @@ std::wstring online_ILobby_getParticipantMetaValue(online::ILobby* self, const o
 	return value;
 }
 
+RefArray< online::IUser > online_ILobby_getParticipants(online::ILobby* self)
+{
+	RefArray< online::IUser > users;
+	self->getParticipants(users);
+	return users;
+}
+
 Ref< online::LobbyResult > online_IMatchMaking_createLobby(online::IMatchMaking* self, uint32_t maxUsers, const std::wstring& access)
 {
 	online::LobbyAccess la;
@@ -275,7 +282,7 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 	classILobby->addMethod("getParticipantMetaValue", &online_ILobby_getParticipantMetaValue);
 	classILobby->addMethod("join", &online::ILobby::join);
 	classILobby->addMethod("leave", &online::ILobby::leave);
-	classILobby->addMethod("getParticipants", &online::ILobby::getParticipants);
+	classILobby->addMethod("getParticipants", &online_ILobby_getParticipants);
 	classILobby->addMethod("getParticipantCount", &online::ILobby::getParticipantCount);
 	classILobby->addMethod("getMaxParticipantCount", &online::ILobby::getMaxParticipantCount);
 	classILobby->addMethod("getFriendsCount", &online::ILobby::getFriendsCount);
