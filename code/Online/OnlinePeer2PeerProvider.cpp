@@ -34,11 +34,12 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.online.OnlinePeer2PeerProvider", OnlinePeer2Pee
 OnlinePeer2PeerProvider::OnlinePeer2PeerProvider(ISessionManager* sessionManager, ILobby* lobby)
 :	m_sessionManager(sessionManager)
 ,	m_lobby(lobby)
-,	m_localHandle(0)
+,	m_localHandle(sessionManager->getUser()->getGlobalId())
 ,	m_primaryHandle(0)
+,	m_whenUpdate(0.0)
 {
 	Ref< IUser > fromUser;
-	uint8_t data[1024];
+	uint8_t data[1600];
 
 	// Purge pending data.
 	while(m_sessionManager->receiveP2PData(data, sizeof(data), fromUser) > 0)
@@ -49,9 +50,12 @@ OnlinePeer2PeerProvider::OnlinePeer2PeerProvider(ISessionManager* sessionManager
 
 bool OnlinePeer2PeerProvider::update()
 {
-	T_MEASURE(m_users = m_lobby->getParticipants(), 0.002)
-	T_MEASURE(m_localHandle = net::net_handle_t(m_sessionManager->getUser()->getGlobalId()), 0.002);
-	T_MEASURE(m_primaryHandle = net::net_handle_t(m_lobby->getOwner()->getGlobalId()), 0.002);
+	if (s_timer.getElapsedTime() >= m_whenUpdate)
+	{
+		T_MEASURE(m_lobby->getParticipants(m_users), 0.002)
+		T_MEASURE(m_primaryHandle = net::net_handle_t(m_lobby->getOwner()->getGlobalId()), 0.002);
+		m_whenUpdate = s_timer.getElapsedTime() + 0.5;
+	}
 	return true;
 }
 
@@ -120,11 +124,6 @@ int32_t OnlinePeer2PeerProvider::recv(void* data, int32_t size, net::net_handle_
 {
 	Ref< IUser > fromUser;
 
-	bool result = false;
-	T_MEASURE(result = m_sessionManager->haveP2PData(), 0.001);
-	if (!result)
-		return 0;
-
 	uint32_t nrecv = 0;
 	T_MEASURE(nrecv = m_sessionManager->receiveP2PData(data, size, fromUser), 0.002);
 	if (!nrecv || !fromUser)
@@ -132,6 +131,13 @@ int32_t OnlinePeer2PeerProvider::recv(void* data, int32_t size, net::net_handle_
 
 	outNode = net::net_handle_t(fromUser->getGlobalId());
 	return int32_t(nrecv);
+}
+
+bool OnlinePeer2PeerProvider::pendingRecv()
+{
+	bool result = false;
+	T_MEASURE(result = m_sessionManager->haveP2PData(), 0.002);
+	return result;
 }
 
 	}

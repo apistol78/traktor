@@ -3,6 +3,8 @@
 #include "Core/Containers/StaticVector.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
+#include "Core/Misc/TString.h"
+#include "Core/Timer/Timer.h"
 #include "Net/Replication/Peer2PeerTopology.h"
 
 namespace traktor
@@ -74,6 +76,32 @@ const double c_propagateInterval = 2.0;
 const double c_timeRandomFlux = 0.5;
 const int32_t c_maxReceiveMessages = 128;
 
+Timer s_timer;
+
+#define T_WIDEN_X(x) L ## x
+#define T_WIDEN(x) T_WIDEN_X(x)
+
+#define T_MEASURE_BEGIN() \
+	double __M_start = s_timer.getElapsedTime(); \
+	double __M_last = __M_start;
+
+#define T_MEASURE_UNTIL(maxTimeUntil) \
+	{ \
+		double __M_this = s_timer.getElapsedTime(); \
+		if (__M_this - __M_last > (maxTimeUntil)) \
+			log::warning << L"Time until \"" << mbstows( T_FILE_LINE ) << L"\" reached exceeded max " << int32_t(maxTimeUntil * 1000.0) << L" ms, " << int32_t((__M_this - __M_last) * 1000.0) << L" ms" << Endl; \
+		__M_last = __M_this; \
+	}
+
+#define T_MEASURE_STATEMENT(statement, maxDuration) \
+	{ \
+		double start = s_timer.getElapsedTime(); \
+		(statement); \
+		double end = s_timer.getElapsedTime(); \
+		if ((end - start) > maxDuration) \
+			log::warning << L"Statement \"" << T_WIDEN(#statement) << L"\" exceeded max " << int32_t(maxDuration * 1000.0) << L" ms, " << int32_t((end - start) * 1000.0) << L" ms" << Endl; \
+	}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.Peer2PeerTopology", Peer2PeerTopology, Object)
@@ -85,6 +113,7 @@ Peer2PeerTopology::Peer2PeerTopology(IPeer2PeerProvider* provider)
 ,	m_time(0.0)
 ,	m_whenPropagate(0.0)
 {
+	s_timer.start();
 }
 
 void Peer2PeerTopology::setCallback(INetworkCallback* callback)
@@ -187,15 +216,22 @@ int32_t Peer2PeerTopology::recv(void* data, int32_t size, net_handle_t& outNode)
 bool Peer2PeerTopology::update(double dT)
 {
 	std::vector< net_handle_t > providerPeers;
+	int32_t updateRouting = 0;
+
+	T_MEASURE_BEGIN();
 
 	// Update provider first.
 	if (!m_provider->update())
 		return false;
 
+	T_MEASURE_UNTIL(0.002);
+
 	// Get peers from provider.
 	int32_t providerPeerCount = m_provider->getPeerCount();
 	for (int32_t i = 0; i < providerPeerCount; ++i)
 		providerPeers.push_back(m_provider->getPeerHandle(i));
+
+	T_MEASURE_UNTIL(0.001);
 
 	// Add new peers.
 	for (int32_t i = 0; i < providerPeerCount; ++i)
@@ -206,8 +242,11 @@ bool Peer2PeerTopology::update(double dT)
 			peer.handle = providerPeers[i];
 			peer.name = m_provider->getPeerName(i);
 			m_peers.push_back(peer);
+			updateRouting = 1;
 		}
 	}
+
+	T_MEASURE_UNTIL(0.001);
 
 	int32_t myIndex = indexOf(m_provider->getLocalHandle());
 	Peer& myPeer = m_peers[myIndex];
@@ -231,9 +270,12 @@ bool Peer2PeerTopology::update(double dT)
 				peer.sentIAm = 0;
 
 				m_whenPropagate = m_time;
+				updateRouting = 2;
 			}
 		}
 	}
+
+	T_MEASURE_UNTIL(0.001);
 
 	// Send direct connection handshake messages.
 	for (int32_t i = 0; i < int32_t(m_peers.size()); ++i)
@@ -263,6 +305,7 @@ bool Peer2PeerTopology::update(double dT)
 				peer.sentIAm = 0;
 
 				m_whenPropagate = m_time;
+				updateRouting = 3;
 			}
 		}
 
@@ -291,11 +334,14 @@ bool Peer2PeerTopology::update(double dT)
 				peer.sentIAm = 0;
 
 				m_whenPropagate = m_time;
+				updateRouting = 4;
 			}
 		}
 
 		peer.whenIAm = m_time + c_IAmInterval + m_random.nextDouble() * c_timeRandomFlux;
 	}
+
+	T_MEASURE_UNTIL(0.002);
 
 	// If I am alone then clear every other peer.
 	if (myPeer.connections.empty())
@@ -308,6 +354,7 @@ bool Peer2PeerTopology::update(double dT)
 				m_peers[i].connections.clear();
 				m_peers[i].whenIAm = 0.0;
 				m_peers[i].sentIAm = 0;
+				updateRouting = 5;
 			}
 		}
 		myPeer.sentIAm = 0;
@@ -347,21 +394,25 @@ bool Peer2PeerTopology::update(double dT)
 			thisPeer.sentIAm = 0;
 
 			m_whenPropagate = m_time;
+			updateRouting = 6;
 		}
 	}
+
+	T_MEASURE_UNTIL(0.001);
 
 	// Propagate connections to my neighbor peers.
 	if (m_time >= m_whenPropagate)
 	{
+		P2PMessage msg;
+		std::memset(&msg, 0, sizeof(msg));
+
+		int32_t errors = 0;
 		for (int32_t i = 0; i < int32_t(m_peers.size()); ++i)
 		{
-			Peer& peer = m_peers[i];
+			const Peer& peer = m_peers[i];
 
 			if (peer.connections.empty())
 				continue;
-
-			P2PMessage msg;
-			std::memset(&msg, 0, sizeof(msg));
 
 			msg.id = MsgCMask;
 			msg.cmask.of = peer.handle;
@@ -372,137 +423,153 @@ bool Peer2PeerTopology::update(double dT)
 
 			for (int32_t j = 0; j < int32_t(myPeer.connections.size()); ++j)
 			{
-				if (myPeer.connections[j] == peer.handle)
+				if (myPeer.connections[i] == 0 || myPeer.connections[j] == peer.handle)
 					continue;
 
-				//log::info << getLogPrefix() << L"Propagating connections of " << peer.handle << L" to " << myPeer.connections[j] << Endl;
-
 				if (!m_provider->send(myPeer.connections[j], &msg, MsgCMask_NetSize(peer.connections.size())))
-				{
-					//log::info << getLogPrefix() << L"Unable to send connections to peer " << myPeer.connections[j] << L"." << Endl;
-				}
+					++errors;
 			}
 		}
+
+		if (errors > 0)
+			log::warning << getLogPrefix() << L"Unable to propagate " << errors << L" connection mask(s)." << Endl;
 
 		m_whenPropagate = m_time + c_propagateInterval + m_random.nextDouble() * c_timeRandomFlux;
 	}
 
+	T_MEASURE_UNTIL(0.010);
+
 	// Receive messages.
-	for (int32_t i = 0; i < c_maxReceiveMessages; ++i)
+	if (m_provider->pendingRecv())
 	{
-		net_handle_t from;
-		P2PMessage msg;
-
-		int32_t nrecv = m_provider->recv(&msg, MaxDataSize, from);
-		if (nrecv <= 0)
-			break;
-
-		if (msg.id == MsgIAm_0)
+		for (int32_t i = 0; i < c_maxReceiveMessages; ++i)
 		{
-			P2PMessage reply;
-			std::memset(&reply, 0, sizeof(reply));
+			net_handle_t from;
+			P2PMessage msg;
 
-			reply.id = MsgIAm_1;
-			reply.iam.sequence = msg.iam.sequence;
+			int32_t nrecv = m_provider->recv(&msg, MaxDataSize, from);
+			if (nrecv <= 0)
+				break;
 
-			if (!m_provider->send(from, &reply, MsgIAm_NetSize()))
+			if (msg.id == MsgIAm_0)
 			{
-				//log::info << getLogPrefix() << L"Unable to respond \"I am\" to peer " << from << L"." << Endl;
+				P2PMessage reply;
+				std::memset(&reply, 0, sizeof(reply));
+
+				reply.id = MsgIAm_1;
+				reply.iam.sequence = msg.iam.sequence;
+
+				m_provider->send(from, &reply, MsgIAm_NetSize());
 			}
-		}
-		else if (msg.id == MsgIAm_1)
-		{
-			int32_t peerIndex = indexOf(from);
-			if (peerIndex >= 0)
+			else if (msg.id == MsgIAm_1)
 			{
-				Peer& peer = m_peers[peerIndex];
+				int32_t peerIndex = indexOf(from);
+				if (peerIndex >= 0)
+				{
+					Peer& peer = m_peers[peerIndex];
 				
-				peer.sentIAm = 0;
+					peer.sentIAm = 0;
 
-				std::vector< net_handle_t >::iterator it = std::find(myPeer.connections.begin(), myPeer.connections.end(), from);
-				if (it == myPeer.connections.end())
-				{
-					myPeer.connections.push_back(from);
-					std::sort(myPeer.connections.begin(), myPeer.connections.end());
+					std::vector< net_handle_t >::iterator it = std::find(myPeer.connections.begin(), myPeer.connections.end(), from);
+					if (it == myPeer.connections.end())
+					{
+						myPeer.connections.push_back(from);
+						std::sort(myPeer.connections.begin(), myPeer.connections.end());
 
-					myPeer.sequence++;
+						myPeer.sequence++;
 
-					m_whenPropagate = m_time;
-				}
-			}
-		}
-		else if (msg.id == MsgCMask)
-		{
-			T_ASSERT (msg.cmask.of != myPeer.handle);
-
-			int32_t ofPeerIndex = indexOf(msg.cmask.of);
-			if (ofPeerIndex >= 0 && ofPeerIndex < int32_t(m_peers.size()))
-			{
-				Peer& ofPeer = m_peers[ofPeerIndex];
-				if (msg.cmask.sequence >= ofPeer.sequence)
-				{
-					int32_t nconnections = MsgCMask_Connections(nrecv);
-
-					std::vector< net_handle_t > connections(nconnections);
-					for (int32_t i = 0; i < nconnections; ++i)
-						connections[i] = msg.cmask.connections[i];
-
-					std::sort(connections.begin(), connections.end());
-
-					bool equal = false;
-					if (connections.size() == ofPeer.connections.size())
-						equal = std::equal(connections.begin(), connections.end(), ofPeer.connections.begin());
-
-					if (!equal)
-						ofPeer.connections = connections;
-
-					if (!equal || msg.cmask.sequence > ofPeer.sequence)
 						m_whenPropagate = m_time;
-
-					ofPeer.sequence = msg.cmask.sequence;
+						updateRouting = 7;
+					}
 				}
 			}
-		}
-		else if (msg.id == MsgDirect)
-		{
-			// Received a direct message to myself.
-			Recv& r = m_recvQueue.push_back();
-			r.from = from;
-			std::memcpy(r.data, msg.direct.data, MsgDirect_DataSize(nrecv));
-			r.size = MsgDirect_DataSize(nrecv);
-		}
-		else if (msg.id == MsgRelay)
-		{
-			if (msg.relay.target == myPeer.handle)
+			else if (msg.id == MsgCMask)
 			{
-				// Received a relayed message to myself.
-				Recv& r = m_recvQueue.push_back();
-				r.from = msg.relay.from;
-				std::memcpy(r.data, msg.relay.data, MsgRelay_DataSize(nrecv));
-				r.size = MsgRelay_DataSize(nrecv);
-			}
-			else
-			{
-				// Received a relayed message for someone else; send further.
-				int32_t targetIndex = indexOf(msg.relay.target);
-				if (targetIndex >= 0)
+				T_ASSERT (msg.cmask.of != myPeer.handle);
+
+				int32_t ofPeerIndex = indexOf(msg.cmask.of);
+				if (ofPeerIndex >= 0 && ofPeerIndex < int32_t(m_peers.size()))
 				{
-					T_ASSERT (targetIndex != myIndex);
-					if (!m_provider->send(m_peers[targetIndex].send, &msg, nrecv))
-						log::info << getLogPrefix() << L"Unable to relay message to peer " << msg.relay.target << L" through " << m_peers[targetIndex].send << L"; message discarded." << Endl;
+					Peer& ofPeer = m_peers[ofPeerIndex];
+					if (msg.cmask.sequence >= ofPeer.sequence)
+					{
+						int32_t nconnections = MsgCMask_Connections(nrecv);
+
+						std::vector< net_handle_t > connections(nconnections);
+						for (int32_t i = 0; i < nconnections; ++i)
+							connections[i] = msg.cmask.connections[i];
+
+						std::sort(connections.begin(), connections.end());
+
+						bool equal = false;
+						if (connections.size() == ofPeer.connections.size())
+							equal = std::equal(connections.begin(), connections.end(), ofPeer.connections.begin());
+
+						if (!equal)
+							ofPeer.connections = connections;
+
+						if (!equal || msg.cmask.sequence > ofPeer.sequence)
+						{
+							m_whenPropagate = m_time;
+							if (!equal)
+								updateRouting = 8;
+						}
+
+						ofPeer.sequence = msg.cmask.sequence;
+					}
+				}
+			}
+			else if (msg.id == MsgDirect)
+			{
+				// Received a direct message to myself.
+				Recv& r = m_recvQueue.push_back();
+				r.from = from;
+				std::memcpy(r.data, msg.direct.data, MsgDirect_DataSize(nrecv));
+				r.size = MsgDirect_DataSize(nrecv);
+			}
+			else if (msg.id == MsgRelay)
+			{
+				if (msg.relay.target == myPeer.handle)
+				{
+					// Received a relayed message to myself.
+					Recv& r = m_recvQueue.push_back();
+					r.from = msg.relay.from;
+					std::memcpy(r.data, msg.relay.data, MsgRelay_DataSize(nrecv));
+					r.size = MsgRelay_DataSize(nrecv);
+				}
+				else
+				{
+					// Received a relayed message for someone else; send further.
+					int32_t targetIndex = indexOf(msg.relay.target);
+					if (targetIndex >= 0 && m_peers[targetIndex].send != 0)
+					{
+						T_ASSERT (targetIndex != myIndex);
+						if (!m_provider->send(m_peers[targetIndex].send, &msg, nrecv))
+							log::info << getLogPrefix() << L"Unable to relay message to peer " << msg.relay.target << L" through " << m_peers[targetIndex].send << L"; message discarded." << Endl;
+					}
 				}
 			}
 		}
 	}
 
+	T_MEASURE_UNTIL(0.004);
+
 	// Update local routing information.
-	m_nodes.clear();
+	if (updateRouting)
+		log::info << getLogPrefix() << L"Updating optimal routes (" << updateRouting << L")..." << Endl;
+
+	m_nodes.resize(0);
 	for (int32_t i = 0; i < int32_t(m_peers.size()); ++i)
 	{
 		if (i != myIndex)
 		{
-			m_peers[i].send = 0;
-			if (findOptimalRoute(myPeer.handle, m_peers[i].handle, m_peers[i].send))
+			if (updateRouting)
+			{
+				if (!findOptimalRoute(myPeer.handle, m_peers[i].handle, m_peers[i].send))
+					m_peers[i].send = 0;
+			}
+
+			if (m_peers[i].send != 0)
 			{
 				m_nodes.push_back(i);
 
@@ -546,6 +613,8 @@ bool Peer2PeerTopology::update(double dT)
 		}
 	}
 
+	T_MEASURE_UNTIL(0.004);
+
 	m_time += dT;
 	return true;
 }
@@ -563,12 +632,10 @@ bool Peer2PeerTopology::findOptimalRoute(net_handle_t from, net_handle_t to, net
 	if (fromPeerId == toPeerId)
 		return false;
 
-	const Peer& fromPeer = m_peers[fromPeerId];
-
 	std::vector< net_handle_t > chain, route;
 	chain.push_back(from);
 
-	traverseRoute(from, to, chain, route);
+	traverseRoute(fromPeerId, toPeerId, chain, route);
 
 	if (route.size() < 2)
 		return false;
@@ -577,9 +644,9 @@ bool Peer2PeerTopology::findOptimalRoute(net_handle_t from, net_handle_t to, net
 	return true;
 }
 
-void Peer2PeerTopology::traverseRoute(net_handle_t from, net_handle_t to, const std::vector< net_handle_t >& chain, std::vector< net_handle_t >& outChain) const
+void Peer2PeerTopology::traverseRoute(int32_t fromPeerId, int32_t toPeerId, const std::vector< net_handle_t >& chain, std::vector< net_handle_t >& outChain) const
 {
-	if (from == to)
+	if (fromPeerId == toPeerId)
 	{
 		if (outChain.empty() || chain.size() < outChain.size())
 			outChain = chain;
@@ -587,17 +654,13 @@ void Peer2PeerTopology::traverseRoute(net_handle_t from, net_handle_t to, const 
 		return;
 	}
 
-	// Early out ff recursing one step further is futile; we've
+	// Early out if recursing one step further is futile; we've
 	// might already have found a better chain.
 	if (!outChain.empty())
 	{
 		if (chain.size() + 1 >= outChain.size())
 			return;
 	}
-
-	int32_t fromPeerId = indexOf(from);
-	if (fromPeerId < 0)
-		return;
 
 	std::vector< net_handle_t > childChain = chain;
 	childChain.push_back(0);
@@ -607,11 +670,15 @@ void Peer2PeerTopology::traverseRoute(net_handle_t from, net_handle_t to, const 
 	{
 		net_handle_t next = fromPeer.connections[i];
 
-		if (std::find(chain.begin(), chain.end(), next) != chain.end())
+		if (next == 0 || std::find(chain.begin(), chain.end(), next) != chain.end())
+			continue;
+
+		int32_t nextPeerId = indexOf(next);
+		if (nextPeerId < 0)
 			continue;
 
 		childChain.back() = next;
-		traverseRoute(next, to, childChain, outChain);
+		traverseRoute(nextPeerId, toPeerId, childChain, outChain);
 	}
 }
 

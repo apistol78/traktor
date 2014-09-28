@@ -2,6 +2,7 @@
 #define traktor_online_UserCache_H
 
 #include "Core/Object.h"
+#include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Thread/Semaphore.h"
 
@@ -21,6 +22,8 @@ public:
 	UserCache(IUserProvider* userProvider);
 
 	User* get(uint64_t userHandle);
+
+	void getMany(const std::vector< uint64_t >& userHandles, RefArray< User >& outUsers);
 
 private:
 	Semaphore m_lock;

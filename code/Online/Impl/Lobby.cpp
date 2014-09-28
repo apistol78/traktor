@@ -95,21 +95,18 @@ bool Lobby::leave()
 	return true;
 }
 
-RefArray< IUser > Lobby::getParticipants()
+bool Lobby::getParticipants(RefArray< IUser >& outUsers)
 {
-	RefArray< IUser > users;
+	if (!m_matchMakingProvider)
+		return false;
 
-	if (m_matchMakingProvider)
-	{
-		std::vector< uint64_t > userHandles;
-		m_matchMakingProvider->getParticipants(m_handle, userHandles);
+	std::vector< uint64_t > userHandles;
+	userHandles.reserve(64);
 
-		users.reserve(userHandles.size());
-		for (std::vector< uint64_t >::iterator i = userHandles.begin(); i != userHandles.end(); ++i)
-			users.push_back(m_userCache->get(*i));
-	}
+	m_matchMakingProvider->getParticipants(m_handle, userHandles);
+	m_userCache->getMany(userHandles, (RefArray< User >&)outUsers);
 
-	return users;
+	return true;
 }
 
 uint32_t Lobby::getParticipantCount() const
