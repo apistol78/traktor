@@ -1,3 +1,6 @@
+#if defined(__ANDROID__)
+#	include <android/log.h>
+#endif
 #include <cstdio>
 #include "Core/Platform.h"
 #include "Core/Log/Log.h"
@@ -31,8 +34,17 @@ public:
 #endif
 #if defined(__IOS__)
 		NSLogCpp(str.c_str());
-#endif
-#if defined(_WIN32)
+#elif defined(__ANDROID__)
+
+		char tmp[1024];
+		for (uint32_t i = 0; i < str.size(); ++i)
+		{
+			tmp[i] = char(str[i]);
+			tmp[i + 1] = 0;
+		}
+		__android_log_print(ANDROID_LOG_INFO, "Traktor", "%s", tmp);
+
+#elif defined(_WIN32)
 		tstring tss = wstots(str + L"\n");
 		OutputDebugString(tss.c_str());
 #endif
@@ -54,6 +66,16 @@ public:
 		OutputDebugString(wstots(ss.str()).c_str());
 #elif defined(__IOS__)
 		NSLogCpp(str.c_str());
+#elif defined(__ANDROID__)
+
+		char tmp[1024];
+		for (uint32_t i = 0; i < str.size(); ++i)
+		{
+			tmp[i] = char(str[i]);
+			tmp[i + 1] = 0;
+		}
+		__android_log_print(ANDROID_LOG_DEBUG, "Traktor", "%s", tmp);
+
 #elif defined(_DEBUG)
 		fwprintf(stdout, L"(DEBUG) %ls\n", str.c_str());
 #endif

@@ -165,7 +165,6 @@ bool Thread::resume()
 
 void Thread::sleep(int duration)
 {
-	usleep(long(duration) * 1000);
 }
 
 void Thread::yield()

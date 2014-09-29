@@ -30,6 +30,9 @@
 #elif defined(__PNACL__)	// PNaCl
 #	include "Core/Io/PNaCl/NativeVolume.h"
 #	define HAS_NATIVE_VOLUME
+#elif defined(__ANDROID__)
+#	include "Core/Io/Android/NativeVolume.h"
+#	define HAS_NATIVE_VOLUME
 #else						// LINUX
 #	include "Core/Io/Linux/NativeVolume.h"
 #	define HAS_NATIVE_VOLUME

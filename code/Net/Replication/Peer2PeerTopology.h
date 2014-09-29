@@ -92,8 +92,6 @@ private:
 
 	bool findOptimalRoute(net_handle_t from, net_handle_t to, net_handle_t& outNext) const;
 
-	void traverseRoute(int32_t fromPeerId, int32_t toPeerId, const std::vector< net_handle_t >& chain, std::vector< net_handle_t >& outChain) const;
-
 	int32_t indexOf(net_handle_t handle) const;
 
 	std::wstring getLogPrefix() const;

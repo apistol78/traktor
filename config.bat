@@ -10,6 +10,10 @@ set ANGLE_SDK=%TRAKTOR_HOME%3rdp\angle-2014-05-09
 set P4_X86_SDK=%TRAKTOR_HOME%3rdp\p4api-2013.3.707972.BETA-vs2008_dyn_x86
 set P4_X64_SDK=%TRAKTOR_HOME%3rdp\p4api-2013.3.707972.BETA-vs2008_dyn_x64
 
+set ANT_PATH=C:\apache-ant-1.9.1
+set ANDROID_HOME=C:\android-sdk
+set ANDROID_NDK_ROOT=C:\android-ndk-r10b
+
 set PATH=%PATH%;%STEAMWORKS_SDK%\redistributable_bin
 set PATH=%PATH%;%STEAMWORKS_SDK%\redistributable_bin\win64
 set PATH=%PATH%;%TRAKTOR_HOME%3rdp\DirectX Redist (8.0)\x86
