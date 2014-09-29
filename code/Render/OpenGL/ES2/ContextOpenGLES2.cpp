@@ -164,13 +164,17 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(ContextOpenGLES2* resour
 
 #if defined(T_OPENGL_ES2_HAVE_EGL)
 
+#	if !defined(__ANDROID__)
 	context->m_window = resourceContext->m_window;
+#	endif
 	context->m_display = resourceContext->m_display;
 	context->m_config = resourceContext->m_config;
 	context->m_surface = resourceContext->m_surface;
 
+#	if !defined(__ANDROID__)
 	context->m_window->setTitle(desc.title.c_str());
 	context->m_window->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
+#	endif
 
 	eglBindAPI(EGL_OPENGL_ES_API);
 

@@ -387,7 +387,7 @@ void EmitterInstance::updateTask(float deltaTime)
 		qsort_s(m_renderPoints.ptr(), m_renderPoints.size(), sizeof(Point), pointPredicate, &m_sortPlane);
 #elif defined(__LINUX__)
 		qsort_r(m_renderPoints.ptr(), m_renderPoints.size(), sizeof(Point), pointPredicate, &m_sortPlane);
-#elif !defined(__EMSCRIPTEN__) && !defined(__PNACL__)
+#elif !defined(__EMSCRIPTEN__) && !defined(__PNACL__) && !defined(__ANDROID__)
 		qsort_r(m_renderPoints.ptr(), m_renderPoints.size(), sizeof(Point), &m_sortPlane, &pointPredicate);
 #endif
 	}

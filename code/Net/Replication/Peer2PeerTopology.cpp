@@ -565,7 +565,9 @@ bool Peer2PeerTopology::update(double dT)
 		{
 			if (updateRouting)
 			{
-				if (!findOptimalRoute(myPeer.handle, m_peers[i].handle, m_peers[i].send))
+				bool result = false;
+				T_MEASURE_STATEMENT(result = findOptimalRoute(myPeer.handle, m_peers[i].handle, m_peers[i].send), 0.001);
+				if (!result)
 					m_peers[i].send = 0;
 			}
 
@@ -621,6 +623,9 @@ bool Peer2PeerTopology::update(double dT)
 
 bool Peer2PeerTopology::findOptimalRoute(net_handle_t from, net_handle_t to, net_handle_t& outNext) const
 {
+	if (from == to)
+		return false;
+
 	int32_t fromPeerId = indexOf(from);
 	if (fromPeerId < 0)
 		return false;
@@ -629,57 +634,38 @@ bool Peer2PeerTopology::findOptimalRoute(net_handle_t from, net_handle_t to, net
 	if (toPeerId < 0)
 		return false;
 
-	if (fromPeerId == toPeerId)
+	// Check if "from" can send directly to "to".
+	const Peer& fromPeer = m_peers[fromPeerId];
+	if (std::find(fromPeer.connections.begin(), fromPeer.connections.end(), to) != fromPeer.connections.end())
+	{
+		outNext = to;
+		return true;
+	}
+
+	// Check if anyone "from" knows can send to "to".
+	int32_t throughPeerId = -1;
+	for (int32_t i = 0; i < fromPeer.connections.size(); ++i)
+	{
+		net_handle_t throughPeer = fromPeer.connections[i];
+		if (throughPeer == from || throughPeer == to)
+			continue;
+
+		int32_t id = indexOf(throughPeer);
+		if (id < 0)
+			continue;
+
+		const Peer& checkPeer = m_peers[id];
+		if (std::find(checkPeer.connections.begin(), checkPeer.connections.end(), to) != checkPeer.connections.end())
+		{
+			throughPeerId = id;
+			break;
+		}
+	}
+	if (throughPeerId < 0)
 		return false;
 
-	std::vector< net_handle_t > chain, route;
-	chain.push_back(from);
-
-	traverseRoute(fromPeerId, toPeerId, chain, route);
-
-	if (route.size() < 2)
-		return false;
-
-	outNext = route[1];
+	outNext = m_peers[throughPeerId].handle;
 	return true;
-}
-
-void Peer2PeerTopology::traverseRoute(int32_t fromPeerId, int32_t toPeerId, const std::vector< net_handle_t >& chain, std::vector< net_handle_t >& outChain) const
-{
-	if (fromPeerId == toPeerId)
-	{
-		if (outChain.empty() || chain.size() < outChain.size())
-			outChain = chain;
-
-		return;
-	}
-
-	// Early out if recursing one step further is futile; we've
-	// might already have found a better chain.
-	if (!outChain.empty())
-	{
-		if (chain.size() + 1 >= outChain.size())
-			return;
-	}
-
-	std::vector< net_handle_t > childChain = chain;
-	childChain.push_back(0);
-
-	const Peer2PeerTopology::Peer& fromPeer = m_peers[fromPeerId];
-	for (int32_t i = 0; i < int32_t(fromPeer.connections.size()); ++i)
-	{
-		net_handle_t next = fromPeer.connections[i];
-
-		if (next == 0 || std::find(chain.begin(), chain.end(), next) != chain.end())
-			continue;
-
-		int32_t nextPeerId = indexOf(next);
-		if (nextPeerId < 0)
-			continue;
-
-		childChain.back() = next;
-		traverseRoute(nextPeerId, toPeerId, childChain, outChain);
-	}
 }
 
 int32_t Peer2PeerTopology::indexOf(net_handle_t handle) const
