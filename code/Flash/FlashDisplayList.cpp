@@ -217,9 +217,25 @@ int32_t FlashDisplayList::getNextHighestDepth() const
 
 void FlashDisplayList::swap(int32_t depth1, int32_t depth2)
 {
-	Layer& layer1 = m_layers[depth1];
-	Layer& layer2 = m_layers[depth2];
-	std::swap(layer1, layer2);
+	layer_map_t::iterator it1 = m_layers.find(depth1);
+	layer_map_t::iterator it2 = m_layers.find(depth2);
+
+	if (it1 != m_layers.end() && it2 != m_layers.end())
+	{
+		std::swap(it1->second, it2->second);
+	}
+	else if (it1 != m_layers.end())
+	{
+		Layer layer = it1->second;
+		m_layers.erase(it1);
+		m_layers[depth2] = layer;
+	}
+	else if (it2 != m_layers.end())
+	{
+		Layer layer = it2->second;
+		m_layers.erase(it2);
+		m_layers[depth1] = layer;
+	}
 }
 
 void FlashDisplayList::getVisibleObjects(RefArray< FlashCharacterInstance >& outCharacterInstances) const

@@ -905,9 +905,54 @@ BoxedStdVector::BoxedStdVector()
 {
 }
 
+BoxedStdVector::BoxedStdVector(uint32_t size)
+:	m_arr(size)
+{
+}
+
+void BoxedStdVector::reserve(uint32_t capacity)
+{
+	m_arr.reserve(capacity);
+}
+
+void BoxedStdVector::resize(uint32_t size)
+{
+	m_arr.resize(size);
+}
+
+void BoxedStdVector::clear()
+{
+	m_arr.clear();
+}
+
 int32_t BoxedStdVector::size() const
 {
 	return int32_t(m_arr.size());
+}
+
+bool BoxedStdVector::empty() const
+{
+	return m_arr.empty();
+}
+
+void BoxedStdVector::push_back(const Any& value)
+{
+	m_arr.push_back(value);
+}
+
+void BoxedStdVector::pop_back()
+{
+	m_arr.pop_back();
+}
+
+const Any& BoxedStdVector::front()
+{
+	return m_arr.front();
+}
+
+const Any& BoxedStdVector::back()
+{
+	return m_arr.back();
 }
 
 void BoxedStdVector::set(int32_t index, const Any& value)
@@ -1208,7 +1253,16 @@ void registerBoxClasses(IScriptManager* scriptManager)
 
 	Ref< AutoScriptClass< BoxedStdVector > > classBoxedStdVector = new AutoScriptClass< BoxedStdVector >();
 	classBoxedStdVector->addConstructor();
+	classBoxedStdVector->addConstructor< uint32_t >();
+	classBoxedStdVector->addMethod("reserve", &BoxedStdVector::reserve);
+	classBoxedStdVector->addMethod("resize", &BoxedStdVector::resize);
+	classBoxedStdVector->addMethod("clear", &BoxedStdVector::clear);
 	classBoxedStdVector->addMethod("size", &BoxedStdVector::size);
+	classBoxedStdVector->addMethod("empty", &BoxedStdVector::empty);
+	classBoxedStdVector->addMethod("push_back", &BoxedStdVector::push_back);
+	classBoxedStdVector->addMethod("pop_back", &BoxedStdVector::pop_back);
+	classBoxedStdVector->addMethod("front", &BoxedStdVector::front);
+	classBoxedStdVector->addMethod("back", &BoxedStdVector::back);
 	classBoxedStdVector->addMethod("set", &BoxedStdVector::set);
 	classBoxedStdVector->addMethod("get", &BoxedStdVector::get);
 	scriptManager->registerClass(classBoxedStdVector);
