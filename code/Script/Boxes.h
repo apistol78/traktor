@@ -720,6 +720,8 @@ class T_DLLCLASS BoxedStdVector : public RefCountImpl< Boxed >
 public:
 	BoxedStdVector();
 
+	explicit BoxedStdVector(uint32_t size);
+
 	template < typename ItemType >
 	BoxedStdVector(const std::vector< ItemType >& arr)
 	{
@@ -728,7 +730,23 @@ public:
 			m_arr[i] = CastAny< ItemType >::set(arr[i]);
 	}
 
+	void reserve(uint32_t capacity);
+
+	void resize(uint32_t size);
+
+	void clear();
+
 	int32_t size() const;
+
+	bool empty() const;
+
+	void push_back(const Any& value);
+
+	void pop_back();
+
+	const Any& front();
+
+	const Any& back();
 
 	void set(int32_t index, const Any& value);
 
