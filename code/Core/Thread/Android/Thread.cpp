@@ -165,6 +165,11 @@ bool Thread::resume()
 
 void Thread::sleep(int duration)
 {
+	const timespec time = {
+		0,							// 0 seconds.
+		duration * 1000L * 1000L,	// And n ms.
+	};
+	nanosleep(&time, NULL);
 }
 
 void Thread::yield()

@@ -99,7 +99,7 @@ public:
 
 	/*! \brief
 	 */
-	Ref< const State > getState(double timeOffset) const;
+	Ref< const State > getState(double time) const;
 
 	/*! \brief
 	 */

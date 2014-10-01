@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.amalgam.Feature" version="5">
+	<description>OpenSL ES Audio</description>
+	<priority>0</priority>
+	<platforms>
+		<item>
+			<platform>{947FBCA7-FECE-7248-AEC4-046EB01E9A31}</platform>
+			<executableFile/>
+			<deployFiles>
+				<item>libTraktor.Core.a</item>
+				<item>libTraktor.Sound.a</item>
+				<item>libTraktor.Sound.OpenSL.ES.a</item>
+			</deployFiles>
+		</item>
+	</platforms>
+	<pipelineProperties type="traktor.PropertyGroup">
+		<value>
+			<item>
+				<first>Editor.Modules</first>
+				<second type="traktor.PropertyStringSet">
+					<value>
+						<item>Traktor.Sound</item>
+						<item>Traktor.Sound.Editor</item>
+					</value>
+				</second>
+			</item>
+		</value>
+	</pipelineProperties>
+	<migrateProperties type="traktor.PropertyGroup">
+		<value>
+			<item>
+				<first>Migrate.Modules</first>
+				<second type="traktor.PropertyStringSet">
+					<value>
+						<item>Traktor.Sound</item>
+					</value>
+				</second>
+			</item>
+		</value>
+	</migrateProperties>
+	<runtimeProperties type="traktor.PropertyGroup">
+		<value>
+			<item>
+				<first>Amalgam.Modules</first>
+				<second type="traktor.PropertyStringSet">
+					<value>
+						<item>Traktor.Sound</item>
+						<item>Traktor.Sound.OpenSL.ES</item>
+					</value>
+				</second>
+			</item>
+			<item>
+				<first>Audio.MasterVolume</first>
+				<second type="traktor.PropertyFloat">
+					<value>1</value>
+				</second>
+			</item>
+			<item>
+				<first>Audio.Surround</first>
+				<second type="traktor.PropertyGroup">
+					<value>
+						<item>
+							<first>InnerRadius</first>
+							<second type="traktor.PropertyFloat">
+								<value>2</value>
+							</second>
+						</item>
+						<item>
+							<first>MaxDistance</first>
+							<second type="traktor.PropertyFloat">
+								<value>4</value>
+							</second>
+						</item>
+					</value>
+				</second>
+			</item>
+			<item>
+				<first>Audio.Type</first>
+				<second type="traktor.PropertyString">
+					<value>traktor.sound.SoundDriverOpenSL</value>
+				</second>
+			</item>
+		</value>
+	</runtimeProperties>
+</object>

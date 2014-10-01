@@ -28,7 +28,13 @@
 		<item>
 			<platform>{947FBCA7-FECE-7248-AEC4-046EB01E9A31}</platform>
 			<executableFile/>
-			<deployFiles/>
+			<deployFiles>
+				<item>libTraktor.Core.a</item>
+				<item>libTraktor.Compress.a</item>
+				<item>libTraktor.Resource.a</item>
+				<item>libTraktor.Render.a</item>
+				<item>libTraktor.Render.OpenGL.ES2.a</item>
+			</deployFiles>
 		</item>
 		<item>
 			<platform>{CAE489CE-1592-234F-ADB9-A7D75646B53D}</platform>

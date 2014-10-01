@@ -162,6 +162,13 @@ void FlashLayer::transition(Layer* fromLayer)
 	if (m_clearBackground != fromFlashLayer->m_clearBackground)
 		return;
 
+	// Pass movie as well, if it's the same movie.
+	if (m_movie == fromFlashLayer->m_movie)
+	{
+		m_moviePlayer = fromFlashLayer->m_moviePlayer;
+		fromFlashLayer->m_moviePlayer = 0;
+	}
+
 	// Keep display and sound renderer.
 	m_displayRenderer = fromFlashLayer->m_displayRenderer;
 	m_soundRenderer = fromFlashLayer->m_soundRenderer;

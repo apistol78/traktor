@@ -130,13 +130,10 @@ const StateTemplate* ReplicatorProxy::getStateTemplate() const
 	return m_stateTemplate;
 }
 
-Ref< const State > ReplicatorProxy::getState(double timeOffset) const
+Ref< const State > ReplicatorProxy::getState(double time) const
 {
 	if (m_stateTemplate)
 	{
-		const double maxDelta = m_replicator->m_configuration.maxExtrapolationDelta;
-		double delta = clamp< double >(timeOffset - m_stateTime0, -maxDelta, maxDelta);
-
 		return m_stateTemplate->extrapolate(
 			m_stateN2,
 			float(m_stateTimeN2),
@@ -144,7 +141,7 @@ Ref< const State > ReplicatorProxy::getState(double timeOffset) const
 			float(m_stateTimeN1),
 			m_state0,
 			float(m_stateTime0),
-			float(m_stateTime0 + delta)
+			float(time)
 		);
 	}
 	else

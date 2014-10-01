@@ -1,6 +1,6 @@
 #include <cstdio>
 #include "Core/Io/File.h"
-#include "Core/Io/Linux/NativeStream.h"
+#include "Core/Io/Android/NativeStream.h"
 
 namespace traktor
 {

@@ -1,4 +1,4 @@
-#if !defined(__APPLE__) && !defined(__PNACL__)
+#if !defined(__APPLE__) && !defined(__PNACL__) && !defined(__ANDROID__)
 #	include <glsl_optimizer.h>
 #endif
 #include "Core/Log/Log.h"
@@ -41,7 +41,7 @@ Ref< ProgramResource > ProgramCompilerOpenGLES2::compile(
 	if (!Glsl().generate(shaderGraph, glslProgram))
 		return 0;
 
-#if !defined(__APPLE__) && !defined(__PNACL__)
+#if !defined(__APPLE__) && !defined(__PNACL__) && !defined(__ANDROID__)
 	// Optimize GLSL shader.
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_lock);

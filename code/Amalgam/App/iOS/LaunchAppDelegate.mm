@@ -3,12 +3,15 @@
 
 #include "Core/Log/Log.h"
 
-using namespace traktor;
+@interface LaunchAppDelegate ()
+{
+    UIWindow* window;
+	EAGLView* glView;
+}
+
+@end
 
 @implementation LaunchAppDelegate
-
-@synthesize window;
-@synthesize glView;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
