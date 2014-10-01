@@ -347,6 +347,17 @@ bool Replicator::update()
 					(*i)->m_stateTimeN1 += timeOffset;
 					(*i)->m_stateTime0 += timeOffset;
 				}
+
+				for (RefArray< IListener >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
+				{
+					(*i)->notify(
+						this,
+						timeOffset,
+						IListener::ReTimeAdjust,
+						0,
+						0
+					);
+				}
 			}
 		}
 
@@ -362,7 +373,8 @@ bool Replicator::update()
 			// Have we reached acceptable variance?
 			if (!m_timeSynchronized && m_timeVariance <= 0.03 && abs(timeOffset) <= 0.01)
 			{
-				log::info << getLogPrefix() << L"Time synchronized" << Endl;
+				if (!m_timeSynchronization)
+					log::info << getLogPrefix() << L"Time re-synchronized" << Endl;
 				m_timeSynchronized = true;
 			}
 		}

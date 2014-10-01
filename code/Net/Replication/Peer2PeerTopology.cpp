@@ -215,7 +215,6 @@ int32_t Peer2PeerTopology::recv(void* data, int32_t size, net_handle_t& outNode)
 
 bool Peer2PeerTopology::update(double dT)
 {
-	std::vector< net_handle_t > providerPeers;
 	int32_t updateRouting = 0;
 
 	T_MEASURE_BEGIN();
@@ -228,18 +227,19 @@ bool Peer2PeerTopology::update(double dT)
 
 	// Get peers from provider.
 	int32_t providerPeerCount = m_provider->getPeerCount();
+	m_providerPeers.resize(providerPeerCount);
 	for (int32_t i = 0; i < providerPeerCount; ++i)
-		providerPeers.push_back(m_provider->getPeerHandle(i));
+		m_providerPeers[i] = m_provider->getPeerHandle(i);
 
 	T_MEASURE_UNTIL(0.001);
 
 	// Add new peers.
 	for (int32_t i = 0; i < providerPeerCount; ++i)
 	{
-		if (indexOf(providerPeers[i]) < 0)
+		if (indexOf(m_providerPeers[i]) < 0)
 		{
 			Peer peer;
-			peer.handle = providerPeers[i];
+			peer.handle = m_providerPeers[i];
 			peer.name = m_provider->getPeerName(i);
 			m_peers.push_back(peer);
 			updateRouting = 1;
@@ -256,22 +256,25 @@ bool Peer2PeerTopology::update(double dT)
 	{
 		Peer& peer = m_peers[i];
 
-		if (std::find(providerPeers.begin(), providerPeers.end(), peer.handle) == providerPeers.end())
+		if (std::find(m_providerPeers.begin(), m_providerPeers.end(), peer.handle) == m_providerPeers.end())
 		{
 			std::vector< net_handle_t >::iterator it = std::find(myPeer.connections.begin(), myPeer.connections.end(), peer.handle);
 			if (it != myPeer.connections.end())
 			{
 				myPeer.connections.erase(it);
 				myPeer.sequence++;
-
-				peer.sequence = 0;
-				peer.connections.clear();
-				peer.whenIAm = 0.0;
-				peer.sentIAm = 0;
-
-				m_whenPropagate = m_time;
 				updateRouting = 2;
 			}
+
+			if (!peer.connections.empty())
+				updateRouting = 2;
+
+			peer.sequence = 0;
+			peer.connections.clear();
+			peer.whenIAm = 0.0;
+			peer.sentIAm = 0;
+
+			m_whenPropagate = m_time;
 		}
 	}
 

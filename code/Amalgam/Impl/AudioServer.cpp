@@ -58,7 +58,7 @@ bool AudioServer::create(const PropertyGroup* settings, void* nativeHandle)
 	sscd.driverDesc.sampleRate = settings->getProperty< PropertyInteger >(L"Audio.SampleRate", 44100);
 	sscd.driverDesc.bitsPerSample = settings->getProperty< PropertyInteger >(L"Audio.BitsPerSample", 16);
 	sscd.driverDesc.hwChannels = settings->getProperty< PropertyInteger >(L"Audio.HwChannels", 2);
-#	if defined(__IOS__) || defined(__PNACL__)
+#	if defined(__IOS__) || defined(__PNACL__) || defined(__ANDROID__)
 	sscd.driverDesc.frameSamples = 1024;
 	sscd.driverDesc.mixerFrames = 3;
 #	else

@@ -3,16 +3,7 @@
 
 #import <UIKit/UIKit.h>
 
-@class EAGLView;
-
-@interface LaunchAppDelegate : NSObject <UIApplicationDelegate>
-{
-    UIWindow* window;
-	EAGLView* glView;
-}
-
-@property (nonatomic, retain) UIWindow* window;
-@property (nonatomic, retain) EAGLView* glView;
+@interface LaunchAppDelegate : UIResponder <UIApplicationDelegate>
 
 @end
 

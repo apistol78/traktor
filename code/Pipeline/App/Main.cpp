@@ -488,7 +488,7 @@ struct ScopePriorityBias
 
 bool perform(const PipelineParameters* params)
 {
-	T_ANONYMOUS_VAR(ScopePriorityBias)();
+	T_ANONYMOUS_VAR(ScopePriorityBias);
 
 	if (!FileSystem::getInstance().setCurrentVolumeAndDirectory(params->getWorkingDirectory()))
 	{

@@ -108,6 +108,9 @@ float InGesturePinch::evaluate(
 					case PdY:
 						result = bool(adir1.y > adir1.x) && bool(adir2.y > adir2.x);
 						break;
+
+					default:
+						break;
 					}
 				}
 

@@ -40,13 +40,16 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createResourceContext(void* nativeHand
 #if defined(T_OPENGL_ES2_HAVE_EGL)
 
 #	if defined(_WIN32)
+
 	context->m_window = new Window();
 	if (!context->m_window->create())
 		return 0;
 
 	context->m_display = eglGetDisplay(GetDC(*context->m_window));
-	if (context->m_display == EGL_NO_DISPLAY) 
+	if (context->m_display == EGL_NO_DISPLAY)
+
 #	endif
+
 	{
 		context->m_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 		if (context->m_display == EGL_NO_DISPLAY)

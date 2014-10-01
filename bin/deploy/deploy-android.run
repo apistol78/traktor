@@ -18,6 +18,13 @@ function string:split(sep)
 end
 
 
+function generateImage(fileName, image, width, height)
+	local output = image:clone(true)
+	output:apply(ScaleFilter(width, height))
+	output:save(fileName)
+end
+
+
 function build(args)
 	stdout:printLn("Building asset(s)...")
 	local cmdline = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App -p -s=Pipeline"
@@ -41,8 +48,16 @@ function deploy(args)
 		return 1
 	end
 
-	local toolpath = ndk .. "/toolchains/" .. toolchain .. "/prebuilt/windows-x86_64/bin"
-	local libpath = ndk .. "/toolchains/" .. toolchain .. "/prebuilt/windows-x86_64/lib/gcc/arm-linux-androideabi/4.8/armv7-a"
+	-- Determine tool suitable for os.
+	local os = os:getEnvironment("DEPLOY_HOST_OS")
+	if os == "win32" or os == "win64" then
+		os = "windows-x86_64"
+	elseif os == "osx" then
+		os = "darwin-x86_64"
+	end
+
+	local toolpath = ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. os .."/bin"
+	local libpath = ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. os .."/lib/gcc/arm-linux-androideabi/4.8/armv7-a"
 
 	-- Get toolchain binaries.
 	local cl = toolpath .. "/arm-linux-androideabi-g++"
@@ -81,6 +96,9 @@ function deploy(args)
 	cmd = cmd .. " -llog"
 	cmd = cmd .. " -landroid"
 	cmd = cmd .. " -lgcc"
+	cmd = cmd .. " -lEGL"
+	cmd = cmd .. " -lGLESv2"
+	cmd = cmd .. " -lOpenSLES"
 	cmd = cmd .. " -Wl,-soname,$(DEPLOY_EXECUTABLE)"
 	cmd = cmd .. " -Wl,--no-undefined"
 	cmd = cmd .. " -shared"
@@ -93,7 +111,7 @@ function deploy(args)
 	cmd = cmd .. " -lgcc"
 	cmd = cmd .. " -L" .. ndk .. "/platforms/" .. android .. "/" .. architecture .. "/usr/lib"
 	cmd = cmd .. " -L" .. ndk .. "/sources/cxx-stl/gnu-libstdc++/4.8/libs/armeabi-v7a"
-	cmd = cmd .. " -L" .. ndk .. "/toolchains/" .. toolchain .. "/prebuilt/windows-x86_64/lib/gcc/arm-linux-androideabi/4.8/armv7-a"
+	cmd = cmd .. " -L" .. ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. os .."/lib/gcc/arm-linux-androideabi/4.8/armv7-a"
 
 	local result = run:execute(cmd)
 	if result ~= 0 then
@@ -102,10 +120,20 @@ function deploy(args)
 		return 1
 	end
 
+	return 0
+end
+
+
+function launch(args)
+
 	-- Create android project.
 	run:mkdir("assets")
 	run:mkdir("libs/armeabi-v7a")
 	run:mkdir("res/values")
+	run:mkdir("res/drawable-hdpi")
+	run:mkdir("res/drawable-ldpi")
+	run:mkdir("res/drawable-mdpi")
+	run:mkdir("res/drawable-xhdpi")
 	run:replace("Application.config", "assets/Application.config")
 	run:replace("lib$(DEPLOY_EXECUTABLE).so", "libs/armeabi-v7a/lib$(DEPLOY_EXECUTABLE).so")
 	run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/AndroidManifest.xml.template", "AndroidManifest.xml")
@@ -114,30 +142,174 @@ function deploy(args)
 	run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/local.properties.template", "local.properties")
 	run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/build.xml.template", "build.xml")
 
+	-- Create icons.
+	stdout:printLn("Generating Android icon images...")
+	local iconImage = Image.loadFromFile("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/ic_launcher.png")
+	if iconImage ~= nil then
+		generateImage("res/drawable-hdpi/ic_launcher.png", iconImage, 72, 72)
+		generateImage("res/drawable-ldpi/ic_launcher.png", iconImage, 36, 36)
+		generateImage("res/drawable-mdpi/ic_launcher.png", iconImage, 48, 48)
+		generateImage("res/drawable-xhdpi/ic_launcher.png", iconImage, 96, 96)
+	else
+		stderr:printLn("Failed to generate Android icon images; unable to read source image")
+		return 1
+	end
+
 	-- Use ant to build apk package.
 	stdout:printLn("Building package...")
 	run:execute("$(ANT_PATH)/bin/ant.bat debug", "(null)")
 
 	-- Launch application on attached device.
 	stdout:printLn("Installing package...")
-	run:execute("$(ANDROID_HOME)/platform-tools/adb -d install -r \"bin/$(DEPLOY_PROJECT_NAME)-debug.apk\"")
+	local result = run:execute("$(ANDROID_HOME)/platform-tools/adb -d install -r \"bin/$(DEPLOY_PROJECT_NAME)-debug.apk\"", "(null)")
+	if result ~= 0 then
+		stderr:printLn("Failed to install package on device; Please ensure device is attached and in developer mode.")
+		return 1
+	end
 
-	stdout:printLn("Launching...")
-	run:execute("$(ANDROID_HOME)/platform-tools/adb shell am start -S -n $DEPLOY_PROJECT_IDENTIFIER/android.app.NativeActivity")
+	-- stdout:printLn("Launching...")
+	-- run:execute("$(ANDROID_HOME)/platform-tools/adb shell am start -S -n $DEPLOY_PROJECT_IDENTIFIER/android.app.NativeActivity")
 
 	stdout:printLn("Done")
 	return 0
 end
 
 
-function launch(args)
-	return 0
-end
-
-
 function migrate(args)
+
+	local toolchain = "arm-linux-androideabi-4.8"
+	local android = "android-19"
+	local architecture = "arch-arm"
+
+	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
+
+	local ndk = os:getEnvironment("ANDROID_NDK_ROOT")
+	if #ndk <= 0 then
+		stderr:printLn("ANDROID_NDK_ROOT not set; ensure Android NDK is properly installed and try again.")
+		return 1
+	end
+
+	-- Migrate database into compact database.
 	stdout:printLn("Migrating Android...")
-	return run:execute("$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Database.Migrate.App -p -s=Migrate")
+	if run:execute("$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Database.Migrate.App -p -s=Migrate") ~= 0 then
+		stderr:printLn("Failed to migrate Android database")
+		return 1
+	end
+
+	-- Determine tool suitable for os.
+	local os = os:getEnvironment("DEPLOY_HOST_OS")
+	if os == "win32" or os == "win64" then
+		os = "windows-x86_64"
+	elseif os == "osx" then
+		os = "darwin-x86_64"
+	end	
+
+	local toolpath = ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. os .. "/bin"
+	local libpath = ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. os .. "/lib/gcc/arm-linux-androideabi/4.8/armv7-a"
+
+	-- Get toolchain binaries.
+	local cl = toolpath .. "/arm-linux-androideabi-g++"
+
+	-- Determine path to module libraries.
+	local prepend
+	if not debug then
+	 	prepend = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/android/releasestatic/"
+	else
+		stdout:printLn("Using *DEBUG* binaries")
+	 	prepend = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/android/debugstatic/"
+	end
+
+	-- Append system path to files.
+	local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
+	local wholeLinkFiles = ""
+	local externalLinkFiles = ""
+	for _, f in ipairs(files) do
+
+		-- Append "_d" to each file; indicating a debug build.
+		if debug then
+			f = f:sub(1, string.len(f) - 2) .. "_d.a"
+		end
+
+		if f:starts("libExtern") then
+			externalLinkFiles = externalLinkFiles .. prepend .. f .. " "
+		else
+			wholeLinkFiles = wholeLinkFiles .. prepend .. f .. " "
+		end
+	end
+
+	-- Link files into an executable product.
+	local cmd = cl .. " -Wl,--whole-archive " .. wholeLinkFiles .. "-Wl,--no-whole-archive " .. externalLinkFiles .. " -o lib$(DEPLOY_EXECUTABLE).so"
+	cmd = cmd .. " -lc"
+	cmd = cmd .. " -lm"
+	cmd = cmd .. " -llog"
+	cmd = cmd .. " -landroid"
+	cmd = cmd .. " -lgcc"
+	cmd = cmd .. " -lEGL"
+	cmd = cmd .. " -lGLESv2"
+	cmd = cmd .. " -lOpenSLES"
+	cmd = cmd .. " -Wl,-soname,$(DEPLOY_EXECUTABLE)"
+	cmd = cmd .. " -Wl,--no-undefined"
+	cmd = cmd .. " -shared"
+	cmd = cmd .. " -Wl,-z,noexecstack"
+	cmd = cmd .. " -Wl,-rpath-link=" .. ndk .. "/platforms/" .. android .. "/" .. architecture .. "/usr/lib"
+	cmd = cmd .. " --sysroot=" .. ndk .. "/platforms/" .. android .. "/" .. architecture
+	cmd = cmd .. " -lstdc++"
+	cmd = cmd .. " -lsupc++"
+	cmd = cmd .. " -lgnustl_static"
+	cmd = cmd .. " -lgcc"
+	cmd = cmd .. " -L" .. ndk .. "/platforms/" .. android .. "/" .. architecture .. "/usr/lib"
+	cmd = cmd .. " -L" .. ndk .. "/sources/cxx-stl/gnu-libstdc++/4.8/libs/armeabi-v7a"
+	cmd = cmd .. " -L" .. ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. os .. "/lib/gcc/arm-linux-androideabi/4.8/armv7-a"
+
+	local result = run:execute(cmd)
+	if result ~= 0 then
+		stderr:printLn("Unable to build executable product.")
+		stderr:printLn(cmd)
+		return 1
+	end
+
+	run:mkdir("assets")
+	run:mkdir("libs/armeabi-v7a")
+	run:mkdir("res/values")
+	run:mkdir("res/drawable-hdpi")
+	run:mkdir("res/drawable-ldpi")
+	run:mkdir("res/drawable-mdpi")
+	run:mkdir("res/drawable-xhdpi")
+	run:replace("Application.config", "assets/Application.config")
+	run:replace("Content.compact", "assets/Content.compact")
+	run:replace("lib$(DEPLOY_EXECUTABLE).so", "libs/armeabi-v7a/lib$(DEPLOY_EXECUTABLE).so")
+	run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/AndroidManifest.xml.template", "AndroidManifest.xml")
+	run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/strings.xml.template", "res/values/strings.xml")
+	run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/project.properties.template", "project.properties")
+	run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/local.properties.template", "local.properties")
+	run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/build.xml.template", "build.xml")
+
+	-- Create icons.
+	stdout:printLn("Generating Android icon images...")
+	local iconImage = Image.loadFromFile("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/ic_launcher.png")
+	if iconImage ~= nil then
+		generateImage("res/drawable-hdpi/ic_launcher.png", iconImage, 72, 72)
+		generateImage("res/drawable-ldpi/ic_launcher.png", iconImage, 36, 36)
+		generateImage("res/drawable-mdpi/ic_launcher.png", iconImage, 48, 48)
+		generateImage("res/drawable-xhdpi/ic_launcher.png", iconImage, 96, 96)
+	else
+		stderr:printLn("Failed to generate Android icon images; unable to read source image")
+		return 1
+	end
+
+	-- Use ant to build apk package.
+	stdout:printLn("Building package...")
+	run:execute("$(ANT_PATH)/bin/ant.bat debug", "(null)")
+
+	-- Install application on attached device.
+	stdout:printLn("Installing package...")
+	local result = run:execute("$(ANDROID_HOME)/platform-tools/adb -d install -r \"bin/$(DEPLOY_PROJECT_NAME)-debug.apk\"", "(null)")
+	if result ~= 0 then
+		stderr:printLn("Failed to install package on device; Please ensure device is attached and in developer mode.")
+		return 1
+	end
+
+	stdout:printLn("Done")
 end
 
 

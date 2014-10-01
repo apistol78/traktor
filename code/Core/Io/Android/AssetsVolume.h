@@ -1,20 +1,30 @@
-#ifndef traktor_NativeVolume_H
-#define traktor_NativeVolume_H
+#ifndef traktor_AssetsVolume_H
+#define traktor_AssetsVolume_H
 
 #include <string>
 #include "Core/Io/IVolume.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_CORE_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
+struct ANativeActivity;
 
 namespace traktor
 {
 
 class FileSystem;
 
-class NativeVolume : public IVolume
+class T_DLLCLASS AssetsVolume : public IVolume
 {
 	T_RTTI_CLASS;
 
 public:
-	NativeVolume(const Path& currentDirectory);
+	AssetsVolume(ANativeActivity* activity);
 
 	virtual std::wstring getDescription() const;
 
@@ -44,14 +54,10 @@ public:
 
 	virtual Path getCurrentDirectory() const;
 
-	static void mountVolumes(FileSystem& fileSystem);
-
 private:
-	Path m_currentDirectory;
-
-	std::wstring getSystemPath(const Path& path) const;
+	ANativeActivity* m_activity;
 };
 
 }
 
-#endif	// traktor_NativeVolume_H
+#endif	// traktor_AssetsVolume_H

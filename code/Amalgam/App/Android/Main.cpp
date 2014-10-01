@@ -7,6 +7,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/Utf8Encoding.h"
+#include "Core/Io/Android/AssetsVolume.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -15,6 +16,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/System/OS.h"
+#include "Core/System/Android/DelegateInstance.h"
 #include "Xml/XmlDeserializer.h"
 #include "Xml/XmlSerializer.h"
 
@@ -53,12 +55,36 @@ bool saveSettings(const PropertyGroup* settings, const Path& settingsFile)
 
 }
 
-void android_main(struct android_app* state)
+class AndroidApplication : public DelegateInstance
 {
-	// Make sure glue isn't stripped.
-	app_dummy();
+public:
+	AndroidApplication(struct android_app* app);
 
-	Path settingsPath = L"ASSETS:Application.config";
+	bool readSettings();
+
+	bool createApplication();
+
+	void destroyApplication();
+
+	bool updateApplication();
+
+	virtual void handleCommand(struct android_app* app, int32_t cmd);
+
+private:
+	struct android_app* m_app;
+	Ref< const PropertyGroup > m_defaultSettings;
+	Ref< PropertyGroup > m_settings;
+	Ref< amalgam::Application > m_application;
+};
+
+AndroidApplication::AndroidApplication(struct android_app* app)
+:	m_app(app)
+{
+}
+
+bool AndroidApplication::readSettings()
+{
+	Path settingsPath = L"Application.config";
 	traktor::log::info << L"Using settings \"" << settingsPath.getPathName() << L"\"" << Endl;
 
 	Ref< PropertyGroup > defaultSettings = loadSettings(settingsPath);
@@ -66,7 +92,7 @@ void android_main(struct android_app* state)
 	{
 		traktor::log::error << L"Unable to read application settings (" << settingsPath.getPathName() << L"); please reinstall application" << Endl;
 		traktor::log::error << L"Please reinstall application." << Endl;
-		return;
+		return false;
 	}
 
 	Ref< PropertyGroup > settings = DeepClone(defaultSettings).create< PropertyGroup >();
@@ -76,34 +102,114 @@ void android_main(struct android_app* state)
 	{
 		traktor::log::error << L"Unable to read application settings (" << settingsPath.getPathName() << L")." << Endl;
 		traktor::log::error << L"Please reinstall application." << Endl;
-		return;
+		return false;
 	}
 
-	Ref< amalgam::Application > application = new amalgam::Application();
-	if (application->create(
-		defaultSettings,
-		settings,
-		0,
-		0
-	))
+	m_defaultSettings = defaultSettings;
+	m_settings = settings;
+
+	return true;
+}
+
+bool AndroidApplication::createApplication()
+{
+	m_application = new amalgam::Application();
+	return m_application->create(
+		m_defaultSettings,
+		m_settings,
+		this,
+		m_app->window
+	);
+}
+
+void AndroidApplication::destroyApplication()
+{
+	safeDestroy(m_application);
+}
+
+bool AndroidApplication::updateApplication()
+{
+	if (m_application)
+		return m_application->update();
+	else
+		return true;
+}
+
+void AndroidApplication::handleCommand(struct android_app* app, int32_t cmd)
+{
+	T_ASSERT (app == m_app);
+
+	switch (cmd)
+	{
+	case APP_CMD_INIT_WINDOW:
+		if (app->window != 0)
+		{
+			log::info << L"APP_CMD_INIT_WINDOW" << Endl;
+			createApplication();
+		}
+		break;
+
+	case APP_CMD_TERM_WINDOW:
+		log::info << L"APP_CMD_TERM_WINDOW" << Endl;
+		destroyApplication();
+		break;
+
+	case APP_CMD_GAINED_FOCUS:
+		log::info << L"APP_CMD_GAINED_FOCUS" << Endl;
+		break;
+
+	case APP_CMD_LOST_FOCUS:
+		log::info << L"APP_CMD_LOST_FOCUS" << Endl;
+		break;
+	}
+
+	DelegateInstance::handleCommand(app, cmd);
+}
+
+// Android ============================
+
+void handleCommand(struct android_app* app, int32_t cmd)
+{
+	AndroidApplication* aa = (AndroidApplication*)app->userData;
+	aa->handleCommand(app, cmd);
+}
+
+int32_t handleInput(struct android_app* app, AInputEvent* event)
+{
+	AndroidApplication* aa = (AndroidApplication*)app->userData;
+	aa->handleInput(app, event);
+	return 0;
+}
+
+void android_main(struct android_app* state)
+{
+	AndroidApplication aa(state);
+
+	app_dummy();
+	FileSystem::getInstance().mount(L"assets", new AssetsVolume(state->activity));
+	FileSystem::getInstance().setCurrentVolumeAndDirectory(L"assets:");
+
+	state->userData = &aa;
+	state->onAppCmd = handleCommand;
+	state->onInputEvent = handleInput;
+
+	if (!aa.readSettings())
+		return;
+
 	{
 		struct android_poll_source* source;
 		int ident;
 		int events;
 
-		while ((ident = ALooper_pollAll(true, NULL, &events, (void**)&source)) >= 0)
+		for (;;)
 		{
-			if (!application->update())
+			while ((ident = ALooper_pollAll(0, NULL, &events, (void**)&source)) >= 0)
 			{
-				traktor::log::info << L"Update returned false; terminating application..." << Endl;
-				break;
+				if (source != NULL)
+					source->process(state, source);
 			}
+			if (!aa.updateApplication())
+				break;
 		}
-
-		safeDestroy(application);
 	}
-	else
-		traktor::log::error << L"Unable to create application" << Endl;
-
-	traktor::log::info << L"Bye" << Endl;
 }

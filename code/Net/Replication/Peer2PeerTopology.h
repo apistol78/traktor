@@ -82,6 +82,7 @@ private:
 	};
 
 	Ref< IPeer2PeerProvider > m_provider;
+	std::vector< net_handle_t > m_providerPeers;
 	INetworkCallback* m_callback;
 	Random m_random;
 	double m_time;

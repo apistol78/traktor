@@ -1,4 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+
+-- Ensure product name is valid.
+local productName = environment:get("DEPLOY_EXECUTABLE"):gsub("[.,;:-]", "_")
+
+--!><?xml version="1.0" encoding="UTF-8"?>
 <Scheme
    LastUpgradeVersion = "0510"
    version = "1.3">
@@ -15,7 +20,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B86125BD821FB74E884DA7DA"
-               BuildableName = "<!-- output:print(environment:get("DEPLOY_EXECUTABLE")) --!>.app"
+               BuildableName = "<!-- output:print(productName) --!>.app"
                BlueprintName = "<!-- output:print(environment:get("DEPLOY_PROJECT_NAME")) --!>"
                ReferencedContainer = "container:<!-- output:print(environment:get("DEPLOY_PROJECT_NAME")) --!>.xcodeproj">
             </BuildableReference>
@@ -33,7 +38,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B86125BD821FB74E884DA7DA"
-            BuildableName = "<!-- output:print(environment:get("DEPLOY_EXECUTABLE")) --!>.app"
+            BuildableName = "<!-- output:print(productName) --!>.app"
             BlueprintName = "<!-- output:print(environment:get("DEPLOY_PROJECT_NAME")) --!>"
             ReferencedContainer = "container:<!-- output:print(environment:get("DEPLOY_PROJECT_NAME")) --!>.xcodeproj">
          </BuildableReference>
@@ -52,7 +57,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B86125BD821FB74E884DA7DA"
-            BuildableName = "<!-- output:print(environment:get("DEPLOY_EXECUTABLE")) --!>.app"
+            BuildableName = "<!-- output:print(productName) --!>.app"
             BlueprintName = "<!-- output:print(environment:get("DEPLOY_PROJECT_NAME")) --!>"
             ReferencedContainer = "container:<!-- output:print(environment:get("DEPLOY_PROJECT_NAME")) --!>.xcodeproj">
          </BuildableReference>
@@ -70,7 +75,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B86125BD821FB74E884DA7DA"
-            BuildableName = "<!-- output:print(environment:get("DEPLOY_EXECUTABLE")) --!>.app"
+            BuildableName = "<!-- output:print(productName) --!>.app"
             BlueprintName = "<!-- output:print(environment:get("DEPLOY_PROJECT_NAME")) --!>"
             ReferencedContainer = "container:<!-- output:print(environment:get("DEPLOY_PROJECT_NAME")) --!>.xcodeproj">
          </BuildableReference>

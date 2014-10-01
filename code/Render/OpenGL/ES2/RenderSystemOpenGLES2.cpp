@@ -126,7 +126,7 @@ float RenderSystemOpenGLES2::getDisplayAspectRatio() const
 
 Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewDefaultDesc& desc)
 {
-#if defined(_WIN32) || defined(__PNACL__) || defined(__EMSCRIPTEN__)
+#if defined(_WIN32) || defined(__PNACL__) || defined(__EMSCRIPTEN__) || defined(__ANDROID__)
 	Ref< ContextOpenGLES2 > context = ContextOpenGLES2::createContext(
 		m_globalContext,
 		m_nativeHandle,

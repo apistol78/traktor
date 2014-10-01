@@ -46,7 +46,8 @@ public:
 		{
 			ReConnected = 1,
 			ReDisconnected = 2,
-			ReState = 3
+			ReState = 3,
+			ReTimeAdjust = 4
 		};
 
 		virtual void notify(
