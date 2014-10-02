@@ -4,8 +4,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>294</first>
-				<second>395</second>
+				<first>237</first>
+				<second>438</second>
 			</position>
 			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
 			<inputPins/>
@@ -100,7 +100,7 @@
 				<first>749</first>
 				<second>462</second>
 			</position>
-			<value>1.15</value>
+			<value>1.4</value>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
