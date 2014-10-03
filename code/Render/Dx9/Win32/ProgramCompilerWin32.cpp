@@ -207,9 +207,9 @@ const wchar_t* ProgramCompilerWin32::getPlatformSignature() const
 
 Ref< ProgramResource > ProgramCompilerWin32::compile(
 	const ShaderGraph* shaderGraph,
+	const PropertyGroup* settings,
 	int32_t optimize,
 	bool validate,
-	IProgramHints* hints,
 	Stats* outStats
 ) const
 {
@@ -218,7 +218,7 @@ Ref< ProgramResource > ProgramCompilerWin32::compile(
 
 	// Generate HLSL shaders.
 	HlslProgram program;
-	if (!Hlsl().generate(shaderGraph, hints, program))
+	if (!Hlsl().generate(shaderGraph, program))
 	{
 		log::error << L"ProgramCompilerWin32 failed; unable to generate HLSL" << Endl;
 		return 0;
@@ -365,12 +365,13 @@ Ref< ProgramResource > ProgramCompilerWin32::compile(
 
 bool ProgramCompilerWin32::generate(
 	const ShaderGraph* shaderGraph,
+	const PropertyGroup* settings,
 	int32_t optimize,
 	std::wstring& outShader
 ) const
 {
 	HlslProgram hlslProgram;
-	if (!Hlsl().generate(shaderGraph, 0, hlslProgram))
+	if (!Hlsl().generate(shaderGraph, hlslProgram))
 		return false;
 
 	outShader =

@@ -1,5 +1,4 @@
 #include <cassert>
-#include "Render/IProgramHints.h"
 #include "Render/Dx11/Platform.h"
 #include "Render/Dx11/HlslShader.h"
 
@@ -8,9 +7,8 @@ namespace traktor
 	namespace render
 	{
 
-HlslShader::HlslShader(ShaderType shaderType, IProgramHints* programHints)
+HlslShader::HlslShader(ShaderType shaderType)
 :	m_shaderType(shaderType)
-,	m_programHints(programHints)
 ,	m_interpolatorCount(0)
 ,	m_booleanRegisterCount(0)
 ,	m_nextTemporaryVariable(0)

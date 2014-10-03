@@ -13,6 +13,7 @@ namespace traktor
 
 bool Glsl::generate(
 	const ShaderGraph* shaderGraph,
+	const PropertyGroup* settings,
 	GlslProgram& outProgram
 )
 {
@@ -28,7 +29,7 @@ bool Glsl::generate(
 		return false;
 	}
 
-	GlslContext cx(shaderGraph);
+	GlslContext cx(shaderGraph, settings);
 	cx.getEmitter().emit(cx, pixelOutputs[0]);
 	cx.getEmitter().emit(cx, vertexOutputs[0]);
 
@@ -36,8 +37,8 @@ bool Glsl::generate(
 	bool requireTranspose = cx.getRequireTranspose();
 
 	outProgram = GlslProgram(
-		cx.getVertexShader().getGeneratedShader(false, requireTranspose),
-		cx.getFragmentShader().getGeneratedShader(requireDerivatives, requireTranspose),
+		cx.getVertexShader().getGeneratedShader(settings, false, requireTranspose),
+		cx.getFragmentShader().getGeneratedShader(settings, requireDerivatives, requireTranspose),
 		cx.getTextures(),
 		cx.getSamplers(),
 		cx.getRenderState()

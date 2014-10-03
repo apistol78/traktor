@@ -26,9 +26,9 @@ const wchar_t* ProgramCompilerSw::getPlatformSignature() const
 
 Ref< ProgramResource > ProgramCompilerSw::compile(
 	const ShaderGraph* shaderGraph,
+	const PropertyGroup* settings,
 	int32_t optimize,
 	bool validate,
-	IProgramHints* hints,
 	Stats* outStats
 ) const
 {
@@ -74,6 +74,7 @@ Ref< ProgramResource > ProgramCompilerSw::compile(
 
 bool ProgramCompilerSw::generate(
 	const ShaderGraph* shaderGraph,
+	const PropertyGroup* settings,
 	int32_t optimize,
 	std::wstring& outShader
 ) const

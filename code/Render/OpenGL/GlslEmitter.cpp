@@ -2,6 +2,9 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
 #include "Core/Misc/String.h"
+#include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyString.h"
 #include "Render/VertexElement.h"
 #include "Render/OpenGL/GlslContext.h"
 #include "Render/OpenGL/GlslEmitter.h"
@@ -420,7 +423,11 @@ bool emitInstance(GlslContext& cx, Instance* node)
 #if !defined(T_OPENGL_ES2)
 	assign(f, out) << L"float(gl_InstanceID);" << Endl;
 #else
-	assign(f, out) << L"_gl_instanceID;" << Endl;
+	const PropertyGroup* settings = cx.getSettings();
+	if (settings && settings->getProperty< PropertyBoolean >(L"Glsl.ES2.SupportHwInstancing", false))
+		assign(f, out) << L"float(gl_InstanceIDEXT);" << Endl;
+	else
+		assign(f, out) << L"_gl_instanceID;" << Endl;
 #endif
 	return true;
 }

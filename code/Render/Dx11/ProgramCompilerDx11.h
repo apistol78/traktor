@@ -22,14 +22,15 @@ public:
 
 	virtual Ref< ProgramResource > compile(
 		const ShaderGraph* shaderGraph,
+		const PropertyGroup* settings,
 		int32_t optimize,
 		bool validate,
-		IProgramHints* hints,
 		Stats* outStats
 	) const;
 
 	virtual bool generate(
 		const ShaderGraph* shaderGraph,
+		const PropertyGroup* settings,
 		int32_t optimize,
 		std::wstring& outShader
 	) const;

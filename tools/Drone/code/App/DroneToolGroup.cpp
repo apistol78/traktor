@@ -44,11 +44,10 @@ bool DroneToolGroup::execute(ui::Widget* parent, ui::MenuItem* menuItem)
 	return false;
 }
 
-bool DroneToolGroup::serialize(ISerializer& s)
+void DroneToolGroup::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"title", m_title);
 	s >> MemberRefArray< DroneTool >(L"tools", m_tools);
-	return true;
 }
 
 	}

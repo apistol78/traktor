@@ -28,7 +28,7 @@ public:
 
 	PerforceAction getAction() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	std::wstring m_depotPath;

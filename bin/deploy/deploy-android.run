@@ -31,7 +31,7 @@ function build(args)
 	for i = 1, args:size() - 1 do
 		cmdline = cmdline .. " " .. args:get(i)
 	end
-	return run:execute(cmdline)
+	run:execute(cmdline)
 end
 
 
@@ -49,15 +49,18 @@ function deploy(args)
 	end
 
 	-- Determine tool suitable for os.
-	local os = os:getEnvironment("DEPLOY_HOST_OS")
-	if os == "win32" or os == "win64" then
-		os = "windows-x86_64"
-	elseif os == "osx" then
-		os = "darwin-x86_64"
+	local host = os:getEnvironment("DEPLOY_HOST_OS")
+	if host == "win32" or host == "win64" then
+		host = "windows-x86_64"
+	elseif host == "osx" then
+		host = "darwin-x86_64"
+	else
+		stderr:printLn("Unsupported host OS.")
+		return 1
 	end
 
-	local toolpath = ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. os .."/bin"
-	local libpath = ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. os .."/lib/gcc/arm-linux-androideabi/4.8/armv7-a"
+	local toolpath = ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. host .."/bin"
+	local libpath = ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. host .."/lib/gcc/arm-linux-androideabi/4.8/armv7-a"
 
 	-- Get toolchain binaries.
 	local cl = toolpath .. "/arm-linux-androideabi-g++"
@@ -111,7 +114,7 @@ function deploy(args)
 	cmd = cmd .. " -lgcc"
 	cmd = cmd .. " -L" .. ndk .. "/platforms/" .. android .. "/" .. architecture .. "/usr/lib"
 	cmd = cmd .. " -L" .. ndk .. "/sources/cxx-stl/gnu-libstdc++/4.8/libs/armeabi-v7a"
-	cmd = cmd .. " -L" .. ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. os .."/lib/gcc/arm-linux-androideabi/4.8/armv7-a"
+	cmd = cmd .. " -L" .. ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. host .."/lib/gcc/arm-linux-androideabi/4.8/armv7-a"
 
 	local result = run:execute(cmd)
 	if result ~= 0 then
@@ -144,14 +147,20 @@ function launch(args)
 
 	-- Create icons.
 	stdout:printLn("Generating Android icon images...")
-	local iconImage = Image.loadFromFile("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/ic_launcher.png")
+
+	local iconFile = os:getEnvironment("DEPLOY_PROJECT_ICON")
+	if #iconFile <= 0 then
+		iconFile = "$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/ic_launcher.png"
+	end
+
+	local iconImage = Image.loadFromFile(iconFile)
 	if iconImage ~= nil then
 		generateImage("res/drawable-hdpi/ic_launcher.png", iconImage, 72, 72)
 		generateImage("res/drawable-ldpi/ic_launcher.png", iconImage, 36, 36)
 		generateImage("res/drawable-mdpi/ic_launcher.png", iconImage, 48, 48)
 		generateImage("res/drawable-xhdpi/ic_launcher.png", iconImage, 96, 96)
 	else
-		stderr:printLn("Failed to generate Android icon images; unable to read source image")
+		stderr:printLn("Failed to generate Android icon images; unable to read source image \"" .. iconFile .. "\".")
 		return 1
 	end
 
@@ -197,15 +206,18 @@ function migrate(args)
 	end
 
 	-- Determine tool suitable for os.
-	local os = os:getEnvironment("DEPLOY_HOST_OS")
-	if os == "win32" or os == "win64" then
-		os = "windows-x86_64"
-	elseif os == "osx" then
-		os = "darwin-x86_64"
+	local host = os:getEnvironment("DEPLOY_HOST_OS")
+	if host == "win32" or host == "win64" then
+		host = "windows-x86_64"
+	elseif host == "osx" then
+		host = "darwin-x86_64"
+	else
+		stderr:printLn("Unsupported host OS.")
+		return 1
 	end	
 
-	local toolpath = ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. os .. "/bin"
-	local libpath = ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. os .. "/lib/gcc/arm-linux-androideabi/4.8/armv7-a"
+	local toolpath = ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. host .. "/bin"
+	local libpath = ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. host .. "/lib/gcc/arm-linux-androideabi/4.8/armv7-a"
 
 	-- Get toolchain binaries.
 	local cl = toolpath .. "/arm-linux-androideabi-g++"
@@ -259,7 +271,7 @@ function migrate(args)
 	cmd = cmd .. " -lgcc"
 	cmd = cmd .. " -L" .. ndk .. "/platforms/" .. android .. "/" .. architecture .. "/usr/lib"
 	cmd = cmd .. " -L" .. ndk .. "/sources/cxx-stl/gnu-libstdc++/4.8/libs/armeabi-v7a"
-	cmd = cmd .. " -L" .. ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. os .. "/lib/gcc/arm-linux-androideabi/4.8/armv7-a"
+	cmd = cmd .. " -L" .. ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. host .. "/lib/gcc/arm-linux-androideabi/4.8/armv7-a"
 
 	local result = run:execute(cmd)
 	if result ~= 0 then
@@ -286,14 +298,20 @@ function migrate(args)
 
 	-- Create icons.
 	stdout:printLn("Generating Android icon images...")
-	local iconImage = Image.loadFromFile("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/ic_launcher.png")
+
+	local iconFile = os:getEnvironment("DEPLOY_PROJECT_ICON")
+	if #iconFile <= 0 then
+		iconFile = "$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/ic_launcher.png"
+	end
+
+	local iconImage = Image.loadFromFile(iconFile)
 	if iconImage ~= nil then
 		generateImage("res/drawable-hdpi/ic_launcher.png", iconImage, 72, 72)
 		generateImage("res/drawable-ldpi/ic_launcher.png", iconImage, 36, 36)
 		generateImage("res/drawable-mdpi/ic_launcher.png", iconImage, 48, 48)
 		generateImage("res/drawable-xhdpi/ic_launcher.png", iconImage, 96, 96)
 	else
-		stderr:printLn("Failed to generate Android icon images; unable to read source image")
+		stderr:printLn("Failed to generate Android icon images; unable to read source image \"" .. iconFile .. "\".")
 		return 1
 	end
 

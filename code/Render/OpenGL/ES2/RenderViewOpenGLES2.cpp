@@ -558,6 +558,56 @@ void RenderViewOpenGLES2::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuf
 		T_ASSERT (0);
 	}
 
+#if GL_EXT_instanced_arrays
+
+	if (!programGL->activate(m_stateCache, targetSize, postTransform, invertCull, 0))
+		return;
+
+	if (primitives.indexed)
+	{
+		T_ASSERT_M (indexBufferGL, L"No index buffer");
+
+		GLenum indexType = 0;
+		GLint offsetMultiplier = 0;
+
+		switch (indexBufferGL->getIndexType())
+		{
+		case ItUInt16:
+			indexType = GL_UNSIGNED_SHORT;
+			offsetMultiplier = 2;
+			break;
+
+		case ItUInt32:
+			indexType = GL_UNSIGNED_INT;
+			offsetMultiplier = 4;
+			break;
+
+		default:
+			return;
+		}
+
+		indexBufferGL->activate(m_stateCache);
+
+		T_OGL_SAFE(glDrawElementsInstancedEXT(
+			primitiveType,
+			vertexCount,
+			indexType,
+			(const GLubyte*)(primitives.offset * offsetMultiplier),
+			instanceCount
+		));
+	}
+	else
+	{
+		T_OGL_SAFE(glDrawArraysInstancedEXT(
+			primitiveType,
+			primitives.offset,
+			vertexCount,
+			instanceCount
+		));
+	}
+
+#else
+
 	for (uint32_t i = 0; i < instanceCount; ++i)
 	{
 		if (!programGL->activate(m_stateCache, targetSize, postTransform, invertCull, i))
@@ -604,6 +654,8 @@ void RenderViewOpenGLES2::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuf
 			));
 		}
 	}
+
+#endif
 }
 
 void RenderViewOpenGLES2::end()

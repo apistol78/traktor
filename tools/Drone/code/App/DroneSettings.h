@@ -19,7 +19,7 @@ public:
 
 	const RefArray< DroneTool >& getTools() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	RefArray< DroneTool > m_tools;

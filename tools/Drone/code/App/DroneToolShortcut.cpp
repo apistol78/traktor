@@ -54,9 +54,12 @@ void DroneToolShortcut::getMenuItems(RefArray< ui::MenuItem >& outItems)
 
 bool DroneToolShortcut::execute(ui::Widget* parent, ui::MenuItem* menuItem)
 {
+	std::wstring commandLine = m_command;
+	if (!m_commandArguments.empty())
+		commandLine = commandLine + L" " + m_commandArguments;
+
 	Ref< IProcess > process = OS::getInstance().execute(
-		m_command,
-		m_commandArguments,
+		commandLine,
 		m_workingDirectory,
 		0,
 		false,
@@ -66,13 +69,12 @@ bool DroneToolShortcut::execute(ui::Widget* parent, ui::MenuItem* menuItem)
 	return process != 0;
 }
 
-bool DroneToolShortcut::serialize(ISerializer& s)
+void DroneToolShortcut::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"title", m_title);
 	s >> Member< std::wstring >(L"command", m_command);
 	s >> Member< std::wstring >(L"commandArguments", m_commandArguments);
 	s >> Member< std::wstring >(L"workingDirectory", m_workingDirectory);
-	return true;
 }
 
 	}

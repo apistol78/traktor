@@ -2,11 +2,9 @@
 #include <Ui/NotificationIcon.h>
 #include <Ui/Bitmap.h>
 #include <Ui/Command.h>
-#include <Ui/MethodHandler.h>
 #include <Ui/PopupMenu.h>
 #include <Ui/MenuItem.h>
 #include <Ui/MessageBox.h>
-#include <Ui/Events/MouseEvent.h>
 #include <Xml/XmlDeserializer.h>
 #include <Core/Io/FileSystem.h>
 #include <Core/Io/IStream.h>
@@ -24,7 +22,7 @@ namespace traktor
 	namespace drone
 	{
 
-const wchar_t c_title[] = { L"Traktor Drone; v0.2" };
+const wchar_t c_title[] = { L"Traktor Drone; v0.3" };
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drone.DroneForm", DroneForm, ui::Form)
 
@@ -73,7 +71,7 @@ bool DroneForm::create(const CommandLine& cmdLine)
 
 	m_notificationIcon = new ui::NotificationIcon();
 	m_notificationIcon->create(c_title, ui::Bitmap::load(c_ResourceTraktorTiny, sizeof(c_ResourceTraktorTiny), L"png"));
-	m_notificationIcon->addButtonDownEventHandler(ui::createMethodHandler(this, &DroneForm::eventNotificationButtonDown));
+	m_notificationIcon->addEventHandler< ui::MouseButtonDownEvent >(this, &DroneForm::eventNotificationButtonDown);
 
 	m_toolExecuting = false;
 
@@ -87,17 +85,15 @@ void DroneForm::destroy()
 	ui::Form::destroy();
 }
 
-void DroneForm::eventNotificationButtonDown(ui::Event* event)
+void DroneForm::eventNotificationButtonDown(ui::MouseButtonDownEvent* event)
 {
-	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
-	
 	if (m_toolExecuting)
 		return;
 
 	setFocus();
 	setForeground();
 
-	Ref< ui::MenuItem > item = m_menuTools->show(this, screenToClient(mouseEvent->getPosition()));
+	Ref< ui::MenuItem > item = m_menuTools->show(this, screenToClient(event->getPosition()));
 
 	if (!item)
 		return;

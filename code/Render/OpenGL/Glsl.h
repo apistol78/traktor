@@ -5,6 +5,9 @@
 
 namespace traktor
 {
+
+class PropertyGroup;
+
 	namespace render
 	{
 
@@ -19,6 +22,7 @@ class Glsl
 public:
 	bool generate(
 		const ShaderGraph* shaderGraph,
+		const PropertyGroup* settings,
 		GlslProgram& outProgram
 	);
 };

@@ -1,4 +1,4 @@
-#include "Core/Io/IStream.h"
+#include "Core/Io/BufferedStream.h"
 #include "Core/System/Win32/ProcessWin32.h"
 
 namespace traktor
@@ -13,6 +13,7 @@ class PipeStream : public IStream
 public:
 	PipeStream(HANDLE hPipe)
 	:	m_hPipe(hPipe)
+	,	m_dwPending(0)
 	{
 	}
 
@@ -42,9 +43,12 @@ public:
 
 	virtual int available() const
 	{
-		DWORD dwAvail = 0;
-		PeekNamedPipe(m_hPipe, NULL, 0, NULL, &dwAvail, NULL);
-		return int(dwAvail);
+		if (m_dwPending == 0)
+		{
+			if (!PeekNamedPipe(m_hPipe, NULL, 0, NULL, &m_dwPending, NULL))
+				return 0;
+		}
+		return int(m_dwPending);
 	}
 
 	virtual int seek(SeekOriginType origin, int offset)
@@ -54,17 +58,22 @@ public:
 
 	virtual int read(void* block, int nbytes)
 	{
-		int navail = available();
-		if (navail < 0)
-			return -1;
+		if (m_dwPending == 0)
+		{
+			if (!PeekNamedPipe(m_hPipe, NULL, 0, NULL, &m_dwPending, NULL))
+				return -1;
+		}
 
-		int nread = std::min< int >(nbytes, navail);
+		int nread = std::min< int >(nbytes, int(m_dwPending));
 		if (nread == 0)
 			return 0;
 
 		DWORD dwRead = 0;
 		if (!ReadFile(m_hPipe, block, nread, &dwRead, NULL))
 			return -1;
+
+		T_FATAL_ASSERT (m_dwPending >= dwRead);
+		m_dwPending -= dwRead;
 
 		return int(dwRead);
 	}
@@ -80,6 +89,7 @@ public:
 
 private:
 	HANDLE m_hPipe;
+	mutable DWORD m_dwPending;
 };
 
 #endif
@@ -138,9 +148,9 @@ Ref< IStream > ProcessWin32::getPipeStream(StdPipe pipe)
 {
 #if !defined(WINCE)
 	if (pipe == SpStdOut)
-		return m_pipeStdOut;
+		return new BufferedStream(m_pipeStdOut);
 	else if (pipe == SpStdErr)
-		return m_pipeStdErr;
+		return new BufferedStream(m_pipeStdErr);
 	else
 #endif
 		return 0;

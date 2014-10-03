@@ -12,8 +12,9 @@ namespace traktor
 	namespace render
 	{
 
-GlslContext::GlslContext(const ShaderGraph* shaderGraph)
+GlslContext::GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* settings)
 :	m_shaderGraph(shaderGraph)
+,	m_settings(settings)
 ,	m_vertexShader(GlslShader::StVertex)
 ,	m_fragmentShader(GlslShader::StFragment)
 ,	m_currentShader(0)
@@ -185,6 +186,11 @@ void GlslContext::setRequireTranspose()
 bool GlslContext::getRequireTranspose() const
 {
 	return m_requireTranspose;
+}
+
+const PropertyGroup* GlslContext::getSettings() const
+{
+	return m_settings;
 }
 
 GlslShader& GlslContext::getVertexShader()

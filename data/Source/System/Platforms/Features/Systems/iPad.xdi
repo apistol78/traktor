@@ -70,7 +70,20 @@
 						<item>IPAD</item>
 					</value>
 				</second>
-			</item>			
+			</item>
+			<item>
+				<first>ShaderPipeline.ProgramCompilerSettings</first>
+				<second type="traktor.PropertyGroup">
+					<value>
+						<item>
+							<first>Glsl.ES2.SupportHwInstancing</first>
+							<second type="traktor.PropertyBoolean">
+								<value>true</value>
+							</second>
+						</item>
+					</value>
+				</second>
+			</item>
 		</value>
 	</pipelineProperties>
 	<migrateProperties type="traktor.PropertyGroup">

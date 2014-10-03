@@ -13,6 +13,9 @@
 
 namespace traktor
 {
+
+class PropertyGroup;
+
 	namespace render
 	{
 
@@ -54,17 +57,17 @@ public:
 	/*! \brief Compile program.
 	 *
 	 * \param shaderGraph Program shader graph.
+	 * \param settings Compiler settings.
 	 * \param optimize Optimization level (0-4; 0 = No optimization; 4 = Maximum optimization).
 	 * \param validate Validate compiled program.
-	 * \param hints Optional compiler hints.
 	 * \param outStats Optional stats.
 	 * \return Compiled program resource.
 	 */
 	virtual Ref< ProgramResource > compile(
 		const ShaderGraph* shaderGraph,
+		const PropertyGroup* settings,
 		int32_t optimize,
 		bool validate,
-		IProgramHints* hints,
 		Stats* outStats
 	) const = 0;
 
@@ -74,12 +77,14 @@ public:
 	 * from within the editor.
 	 *
 	 * \param shaderGraph Program shader graph.
+	 * \param settings Compiler settings.
 	 * \param optimize Optimization level (0-4; 0 = No optimization; 4 = Maximum optimization).
 	 * \param outShader Output render specific shader.
 	 * \return True if shader was successfully generated.
 	 */
 	virtual bool generate(
 		const ShaderGraph* shaderGraph,
+		const PropertyGroup* settings,
 		int32_t optimize,
 		std::wstring& outShader
 	) const = 0;

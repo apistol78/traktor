@@ -22,7 +22,7 @@ namespace traktor
 	namespace amalgam
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.amalgam.StageData", 5, StageData, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.amalgam.StageData", 6, StageData, ISerializable)
 
 StageData::StageData()
 :	m_fadeRate(1.5f)
@@ -73,6 +73,9 @@ Ref< Stage > StageData::createInstance(amalgam::IEnvironment* environment, const
 
 void StageData::serialize(ISerializer& s)
 {
+	if (s.getVersion() >= 6)
+		s >> Member< Guid >(L"inherit", m_inherit, AttributeType(type_of< StageData >()));
+
 	s >> MemberRefArray< LayerData >(L"layers", m_layers);
 	s >> resource::Member< script::IScriptContext >(L"script", m_script);
 

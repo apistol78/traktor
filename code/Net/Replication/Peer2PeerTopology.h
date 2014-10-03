@@ -62,6 +62,7 @@ private:
 		std::vector< net_handle_t > connections;
 		double whenIAm;
 		uint32_t sentIAm;
+		double whenPropagate;
 
 		Peer()
 		:	handle(0)
@@ -70,6 +71,7 @@ private:
 		,	sequence(0)
 		,	whenIAm(0.0)
 		,	sentIAm(0)
+		,	whenPropagate(0.0)
 		{
 		}
 	};
@@ -89,7 +91,6 @@ private:
 	std::vector< Peer > m_peers;
 	std::vector< int32_t > m_nodes;
 	CircularVector< Recv, 128 > m_recvQueue;
-	double m_whenPropagate;
 
 	bool findOptimalRoute(net_handle_t from, net_handle_t to, net_handle_t& outNext) const;
 

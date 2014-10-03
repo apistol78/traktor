@@ -6,10 +6,10 @@ TOOLCHAIN_BIN=$(ANDROID_NDK_ROOT)/toolchains/arm-linux-androideabi-4.8/prebuilt/
 # Build tools.
 CC=$(TOOLCHAIN_BIN)/arm-linux-androideabi-g++
 
-CC_FLAGS_COMMON=-fno-strict-aliasing -fno-common -pthread -MMD -D __ANDROID__
+CC_FLAGS_COMMON=-fno-strict-aliasing -fno-common -pthread -MMD -marm -march=armv7-a -mtune=xscale -fno-strict-aliasing -funswitch-loops -finline-limit=100 -fomit-frame-pointer -fno-exceptions -fstack-protector -fno-rtti -fno-short-enums -fPIC -x c++ -Wno-psabi -D __ANDROID__ -I$(ANDROID_NDK_ROOT)/platforms/android-19/arch-arm/usr/include -I$(ANDROID_NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/4.8/include -I$(ANDROID_NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/4.8/libs/armeabi-v7a/include
 
-CC_FLAGS_DEBUG_SHARED=$(CC_FLAGS_COMMON) -g -D _UNICODE -D UNICODE -fPIC
-CC_FLAGS_RELEASE_SHARED=$(CC_FLAGS_COMMON) -O2 -D _UNICODE -D UNICODE -D NDEBUG -fPIC
+CC_FLAGS_DEBUG_SHARED=$(CC_FLAGS_COMMON) -g -D _UNICODE -D UNICODE
+CC_FLAGS_RELEASE_SHARED=$(CC_FLAGS_COMMON) -O2 -D _UNICODE -D UNICODE -D NDEBUG
 
 CC_FLAGS_DEBUG_STATIC=$(CC_FLAGS_COMMON) -g -D _UNICODE -D UNICODE
 CC_FLAGS_RELEASE_STATIC=$(CC_FLAGS_COMMON) -O2 -D _UNICODE -D UNICODE -D NDEBUG

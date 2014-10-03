@@ -216,13 +216,12 @@ bool ReplicatorProxy::receivedEventAcknowledge(const ReplicatorProxy* from, uint
 
 bool ReplicatorProxy::acceptEvent(uint8_t sequence, const ISerializable* eventObject)
 {
-	uint32_t hash = DeepHash(eventObject).get();
 	for (uint32_t i = 0; i < m_lastEvents.size(); ++i)
 	{
-		if (m_lastEvents[i].first == sequence && hash == m_lastEvents[i].second)
+		if (m_lastEvents[i].first == sequence)
 			return false;
 	}
-	m_lastEvents.push_back(std::make_pair(sequence, hash));
+	m_lastEvents.push_back(std::make_pair(sequence, 0));
 	return true;
 }
 

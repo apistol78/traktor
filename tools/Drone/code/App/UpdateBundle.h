@@ -19,7 +19,7 @@ public:
 		std::wstring url;
 		std::wstring path;
 
-		bool serialize(ISerializer& s);
+		void serialize(ISerializer& s);
 	};
 
 	UpdateBundle();
@@ -30,7 +30,7 @@ public:
 
 	const std::vector< BundledItem >& getItems() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	uint32_t m_version;

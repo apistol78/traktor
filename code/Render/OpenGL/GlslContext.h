@@ -9,6 +9,9 @@
 
 namespace traktor
 {
+
+class PropertyGroup;
+
 	namespace render
 	{
 
@@ -23,7 +26,7 @@ class GlslVariable;
 class GlslContext
 {
 public:
-	GlslContext(const ShaderGraph* shaderGraph);
+	GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* settings);
 
 	Node* getInputNode(const InputPin* inputPin);
 
@@ -61,6 +64,8 @@ public:
 
 	bool getRequireTranspose() const;
 
+	const PropertyGroup* getSettings() const;
+
 	GlslShader& getVertexShader();
 
 	GlslShader& getFragmentShader();
@@ -81,6 +86,7 @@ public:
 
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
+	Ref< const PropertyGroup > m_settings;
 	GlslShader m_vertexShader;
 	GlslShader m_fragmentShader;
 	GlslShader* m_currentShader;
