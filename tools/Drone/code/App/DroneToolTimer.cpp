@@ -66,9 +66,8 @@ bool DroneToolTimer::execute(ui::Widget* parent, ui::MenuItem* menuItem)
 	return true;
 }
 
-bool DroneToolTimer::serialize(ISerializer& s)
+void DroneToolTimer::serialize(ISerializer& s)
 {
-	return true;
 }
 
 	}

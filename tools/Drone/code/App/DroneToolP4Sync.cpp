@@ -44,12 +44,11 @@ bool DroneToolP4Sync::execute(ui::Widget* parent, ui::MenuItem* menuItem)
 	return true;
 }
 
-bool DroneToolP4Sync::serialize(ISerializer& s)
+void DroneToolP4Sync::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"title", m_title);
 	s >> MemberComposite< PerforceClientDesc >(L"clientDesc", m_clientDesc);
 	s >> Member< bool >(L"verbose", m_verbose);
-	return true;
 }
 
 	}

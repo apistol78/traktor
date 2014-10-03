@@ -1,3 +1,5 @@
+#include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Render/OpenGL/GlslShader.h"
 
 namespace traktor
@@ -131,16 +133,19 @@ StringOutputStream& GlslShader::getOutputStream(BlockType blockType)
 	return *(m_outputStreams[int(blockType)].back());
 }
 
-std::wstring GlslShader::getGeneratedShader(bool requireDerivatives, bool requireTranspose)
+std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, bool requireDerivatives, bool requireTranspose)
 {
 	StringOutputStream ss;
 
 #if defined(T_OPENGL_ES2)
 	if (m_shaderType == StFragment && requireDerivatives)
-	{
 		ss << L"#extension GL_OES_standard_derivatives : enable" << Endl;
-		ss << Endl;
-	}
+
+	if (settings && settings->getProperty< PropertyBoolean >(L"Glsl.ES2.SupportHwInstancing", false))
+		ss << L"#extension GL_EXT_instanced_arrays : enable" << Endl;
+
+	ss << Endl;
+
 #else
 	ss << L"#version 150" << Endl;
 #endif
@@ -225,7 +230,8 @@ std::wstring GlslShader::getGeneratedShader(bool requireDerivatives, bool requir
 
 #if defined(T_OPENGL_ES2)
 	ss << L"uniform vec4 _gl_targetSize;" << Endl;
-	ss << L"uniform float _gl_instanceID;" << Endl;
+	if (!settings || !settings->getProperty< PropertyBoolean >(L"Glsl.ES2.SupportHwInstancing", false))
+		ss << L"uniform float _gl_instanceID;" << Endl;
 #else
 	ss << L"uniform vec2 _gl_targetSize;" << Endl;
 #endif

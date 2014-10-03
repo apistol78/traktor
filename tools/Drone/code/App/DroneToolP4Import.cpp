@@ -152,13 +152,13 @@ bool DroneToolP4Import::execute(ui::Widget* parent, ui::MenuItem* menuItem)
 					}
 
 					StringOutputStream ss;
+					ss << m_mergeExecutable << L" ";
 					ss << Path(localFile).getPathName() << L" ";	// Base
 					ss << Path(importFile).getPathName() << L" ";	// Left
 					ss << Path(localFile).getPathName() << L" ";	// Right
 					ss << mbstows(mergeFile);		// Merge
 
 					Ref< IProcess > process = OS::getInstance().execute(
-						m_mergeExecutable,
 						ss.str(),
 						L"",
 						0,
@@ -240,14 +240,13 @@ bool DroneToolP4Import::execute(ui::Widget* parent, ui::MenuItem* menuItem)
 	return true;
 }
 
-bool DroneToolP4Import::serialize(ISerializer& s)
+void DroneToolP4Import::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"title", m_title);
 	s >> MemberComposite< PerforceClientDesc >(L"clientDesc", m_clientDesc);
 	s >> Member< std::wstring >(L"exportPath", m_exportPath);
 	s >> Member< std::wstring >(L"mergeExecutable", m_mergeExecutable);
 	s >> Member< bool >(L"verbose", m_verbose);
-	return true;
 }
 
 	}

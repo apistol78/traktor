@@ -18,9 +18,8 @@ bool DroneToolSeparator::execute(ui::Widget* parent, ui::MenuItem* menuItem)
 	return false;
 }
 
-bool DroneToolSeparator::serialize(ISerializer& s)
+void DroneToolSeparator::serialize(ISerializer& s)
 {
-	return true;
 }
 
 	}

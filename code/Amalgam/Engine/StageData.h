@@ -55,11 +55,30 @@ public:
 
 	virtual void serialize(ISerializer& s);
 
+	const Guid& getInherit() const { return m_inherit; }
+
+	const RefArray< LayerData >& getLayers() const { return m_layers; }
+
+	void setScript(const resource::Id< script::IScriptContext >& script) { m_script = script; }
+
+	const resource::Id< script::IScriptContext >& getScript() const { return m_script; }
+
+	void setShaderFade(const resource::Id< render::Shader >& shaderFade) { m_shaderFade = shaderFade; }
+
+	const resource::Id< render::Shader >& getShaderFade() const { return m_shaderFade; }
+
+	void setFadeRate(float fadeRate) { m_fadeRate; }
+
+	float getFadeRate() const { return m_fadeRate; }
+
+	void setTransitions(const std::map< std::wstring, Guid >& transitions) { m_transitions = transitions; }
+
 	const std::map< std::wstring, Guid >& getTransitions() const { return m_transitions; }
 
 private:
 	friend class StagePipeline;
 
+	Guid m_inherit;
 	RefArray< LayerData > m_layers;
 	resource::Id< script::IScriptContext > m_script;
 	resource::Id< render::Shader > m_shaderFade;

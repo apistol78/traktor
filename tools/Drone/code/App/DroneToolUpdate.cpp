@@ -93,11 +93,10 @@ bool DroneToolUpdate::execute(ui::Widget* parent, ui::MenuItem* menuItem)
 	return true;
 }
 
-bool DroneToolUpdate::serialize(ISerializer& s)
+void DroneToolUpdate::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"url", m_url);
 	s >> Member< std::wstring >(L"rootPath", m_rootPath);
-	return true;
 }
 
 void DroneToolUpdate::updateThread(ui::Widget* parent, UpdateBundle* bundle, ui::custom::BackgroundWorkerStatus* status)

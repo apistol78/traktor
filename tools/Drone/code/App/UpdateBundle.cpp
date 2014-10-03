@@ -31,19 +31,17 @@ const std::vector< UpdateBundle::BundledItem >& UpdateBundle::getItems() const
 	return m_items;
 }
 
-bool UpdateBundle::serialize(ISerializer& s)
+void UpdateBundle::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"version", m_version);
 	s >> Member< std::wstring >(L"description", m_description);
 	s >> MemberStlVector< BundledItem, MemberComposite< BundledItem > >(L"items", m_items);
-	return true;
 }
 
-bool UpdateBundle::BundledItem::serialize(ISerializer& s)
+void UpdateBundle::BundledItem::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"url", url);
 	s >> Member< std::wstring >(L"path", path);
-	return true;
 }
 
 	}

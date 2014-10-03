@@ -9,7 +9,6 @@ namespace traktor
 	{
 
 class HlslProgram;
-class IProgramHints;
 class ShaderGraph;
 
 /*!
@@ -20,7 +19,6 @@ class Hlsl
 public:
 	bool generate(
 		const ShaderGraph* shaderGraph,
-		IProgramHints* programHints,
 		HlslProgram& outProgram
 	);
 };

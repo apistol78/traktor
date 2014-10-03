@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.amalgam.Feature" version="5">
+	<description>View - iPhone (6+)</description>
+	<priority>1</priority>
+	<platforms>
+		<item>
+			<platform>{13FF3E12-076E-274E-B347-8F323ECD53A7}</platform>
+			<executableFile/>
+			<deployFiles/>
+		</item>
+		<item>
+			<platform>{C5B672D1-E72D-AC47-97D4-ABAA41F2F6BD}</platform>
+			<executableFile/>
+			<deployFiles/>
+		</item>
+		<item>
+			<platform>{991B63B2-97FC-AA44-9FAE-466B5B153B4A}</platform>
+			<executableFile/>
+			<deployFiles/>
+		</item>
+		<item>
+			<platform>{9105E00C-D6AA-9140-B4D6-0CFD5B2FD76A}</platform>
+			<executableFile/>
+			<deployFiles/>
+		</item>
+		<item>
+			<platform>{14814B5B-2FF1-2F4B-BE92-08CAB3D0D544}</platform>
+			<executableFile/>
+			<deployFiles/>
+		</item>
+		<item>
+			<platform>{7D0F1280-E37A-2541-8892-723B3C81569C}</platform>
+			<executableFile/>
+			<deployFiles/>
+		</item>
+		<item>
+			<platform>{DC125AEC-2E6B-AF4D-A852-35731A782340}</platform>
+			<executableFile/>
+			<deployFiles/>
+		</item>
+		<item>
+			<platform>{D6FF12FC-9FEF-394D-B898-F563786A8789}</platform>
+			<executableFile/>
+			<deployFiles/>
+		</item>
+		<item>
+			<platform>{1C5EBC43-2395-9549-8FF7-BA51A6C30B7B}</platform>
+			<executableFile/>
+			<deployFiles/>
+		</item>
+		<item>
+			<platform>{947FBCA7-FECE-7248-AEC4-046EB01E9A31}</platform>
+			<executableFile/>
+			<deployFiles/>
+		</item>
+	</platforms>
+	<pipelineProperties/>
+	<migrateProperties/>
+	<runtimeProperties type="traktor.PropertyGroup">
+		<value>
+			<item>
+				<first>Render.DisplayMode.Window</first>
+				<second type="traktor.PropertyGroup">
+					<value>
+						<item>
+							<first>Height</first>
+							<second type="traktor.PropertyInteger">
+								<value>2208</value>
+							</second>
+						</item>
+						<item>
+							<first>Width</first>
+							<second type="traktor.PropertyInteger">
+								<value>1242</value>
+							</second>
+						</item>
+					</value>
+				</second>
+			</item>
+			<item>
+				<first>Render.FullScreen</first>
+				<second type="traktor.PropertyBoolean">
+					<value>false</value>
+				</second>
+			</item>
+		</value>
+	</runtimeProperties>
+</object>

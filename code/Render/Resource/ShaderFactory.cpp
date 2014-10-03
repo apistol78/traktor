@@ -113,7 +113,7 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 				if (!programCompiler)
 					return 0;
 
-				programResource = programCompiler->compile(programShaderGraph, 4, false, 0, 0);
+				programResource = programCompiler->compile(programShaderGraph, 0, 4, false, 0);
 			}
 			else
 				programResource = checked_type_cast< ProgramResource* >(j->program);

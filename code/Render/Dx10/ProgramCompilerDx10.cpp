@@ -19,9 +19,9 @@ const wchar_t* ProgramCompilerDx10::getPlatformSignature() const
 
 Ref< ProgramResource > ProgramCompilerDx10::compile(
 	const ShaderGraph* shaderGraph,
+	const PropertyGroup* settings,
 	int32_t optimize,
 	bool validate,
-	IProgramHints* hints,
 	Stats* outStats
 ) const
 {
@@ -40,6 +40,7 @@ Ref< ProgramResource > ProgramCompilerDx10::compile(
 
 bool ProgramCompilerDx10::generate(
 	const ShaderGraph* shaderGraph,
+	const PropertyGroup* settings,
 	int32_t optimize,
 	std::wstring& outShader
 ) const

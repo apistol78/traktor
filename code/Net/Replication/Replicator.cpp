@@ -3,8 +3,10 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Float.h"
 #include "Core/Misc/String.h"
+#include "Core/Misc/TString.h"
 #include "Core/Serialization/CompactSerializer.h"
 #include "Core/Serialization/DeepHash.h"
+#include "Core/Timer/Measure.h"
 #include "Net/Replication/Replicator.h"
 #include "Net/Replication/ReplicatorProxy.h"
 #include "Net/Replication/ReplicatorTypes.h"
@@ -19,7 +21,7 @@ namespace traktor
 		{
 
 const double c_maxDeltaTime = 10.0;
-		
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.Replicator", Replicator, Object)
@@ -122,11 +124,13 @@ void Replicator::removeAllEventListeners()
 
 bool Replicator::update()
 {
+	T_MEASURE_BEGIN();
+
 	RMessage msg;
 	RMessage reply;
 	net_handle_t from;
 
-	double T0 = m_timer.getElapsedTime();
+	//double T0 = m_timer.getElapsedTime();
 	double dT = m_timer.getDeltaTime();
 	if (dT > c_maxDeltaTime)
 	{
@@ -138,9 +142,7 @@ bool Replicator::update()
 	if (!m_topology->update(dT))
 		return false;
 
-	double T2 = m_timer.getElapsedTime();
-	if (T2 - T0 > 0.01)
-		log::warning << getLogPrefix() << L"Topology update exceeded 10 ms (" << int32_t((T2 - T0) * 1000.0) << L" ms)." << Endl;
+	T_MEASURE_UNTIL(0.01);
 
 	// Send ping to proxies.
 	{
@@ -153,11 +155,13 @@ bool Replicator::update()
 		{
 			if (((*i)->m_timeUntilTxPing -= dT) <= 0.0)
 			{
-				m_topology->send((*i)->m_handle, &msg, RmiPing_NetSize());
+				T_MEASURE_STATEMENT(m_topology->send((*i)->m_handle, &msg, RmiPing_NetSize()), 0.001);
 				(*i)->m_timeUntilTxPing = m_configuration.timeUntilTxPing;
 			}
 		}
 	}
+
+	T_MEASURE_UNTIL(0.002);
 
 	// Send our state to proxies.
 	if (m_sendState && m_stateTemplate && m_state)
@@ -165,17 +169,18 @@ bool Replicator::update()
 		msg.id = RmiState;
 		msg.time = time2net(m_time);
 	
-		uint32_t stateDataSize = m_stateTemplate->pack(
+		uint32_t stateDataSize = 0;
+		T_MEASURE_STATEMENT(stateDataSize = m_stateTemplate->pack(
 			m_state,
 			msg.state.data,
 			RmiState_MaxStateSize()
-		);
+		), 0.001);
 
 		for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
 		{
 			if ((*i)->m_sendState && ((*i)->m_timeUntilTxState -= dT) <= 0.0)
 			{
-				m_topology->send((*i)->m_handle, &msg, RmiState_NetSize(stateDataSize));
+				T_MEASURE_STATEMENT(m_topology->send((*i)->m_handle, &msg, RmiState_NetSize(stateDataSize)), 0.001);
 
 				Vector4 direction = (*i)->m_origin.translation() - m_origin.translation();
 				Scalar distance = direction.length();
@@ -188,6 +193,8 @@ bool Replicator::update()
 		}
 	}
 
+	T_MEASURE_UNTIL(0.002);
+
 	double timeOffset = 0.0;
 	bool timeOffsetReceived = false;
 	uint32_t stateIssued = 0;
@@ -196,8 +203,8 @@ bool Replicator::update()
 	// Receive messages.
 	for (;;)
 	{
-		std::memset(&msg, 0, sizeof(msg));
-		int32_t nrecv = m_topology->recv(&msg, sizeof(msg), from);
+		int32_t nrecv = 0;
+		T_MEASURE_STATEMENT(nrecv = m_topology->recv(&msg, sizeof(msg), from), 0.001);
 		if (nrecv <= 0)
 			break;
 
@@ -244,7 +251,7 @@ bool Replicator::update()
 			reply.pong.time0 = msg.ping.time0;
 			reply.pong.latency = time2net(fromGhost->getLatency());
 
-			m_topology->send(fromGhost->m_handle, &reply, RmiPong_NetSize());
+			T_MEASURE_STATEMENT(m_topology->send(fromGhost->m_handle, &reply, RmiPong_NetSize()), 0.001);
 		}
 		else if (msg.id == RmiPong)
 		{
@@ -252,21 +259,23 @@ bool Replicator::update()
 			double roundTrip = m_time0 - pingTime;
 			double reverseLatency = net2time(msg.pong.latency);
 
-			fromGhost->updateLatency(roundTrip, reverseLatency);
+			T_MEASURE_STATEMENT(fromGhost->updateLatency(roundTrip, reverseLatency), 0.001);
 		}
 		else if (msg.id == RmiState)
 		{
-			if (fromGhost->receivedState(net2time(msg.time), msg.state.data, RmiState_StateSize(nrecv)))
+			bool received;
+			T_MEASURE_STATEMENT(received = fromGhost->receivedState(net2time(msg.time), msg.state.data, RmiState_StateSize(nrecv)), 0.001);
+			if (received)
 			{
 				for (RefArray< IListener >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
 				{
-					(*i)->notify(
+					T_MEASURE_STATEMENT((*i)->notify(
 						this,
 						float(net2time(msg.time)),
 						IListener::ReState,
 						fromGhost,
 						fromGhost->m_state0
-					);
+					), 0.001);
 				}
 				++stateIssued;
 			}
@@ -277,27 +286,30 @@ bool Replicator::update()
 			reply.id = RmiEventAck;
 			reply.time = time2net(m_time);
 			reply.eventAck.sequence = msg.event.sequence;
-			m_topology->send(fromGhost->m_handle, &reply, RmiEventAck_NetSize());
+			T_MEASURE_STATEMENT(m_topology->send(fromGhost->m_handle, &reply, RmiEventAck_NetSize()), 0.001);
 
 			// Unwrap event object.
 			MemoryStream ms(msg.event.data, RmiEvent_EventSize(nrecv), true, false);
-			Ref< ISerializable > eventObject = CompactSerializer(&ms, &m_eventTypes[0], m_eventTypes.size()).readObject< ISerializable >();
+			Ref< ISerializable > eventObject;
+			T_MEASURE_STATEMENT(eventObject = CompactSerializer(&ms, &m_eventTypes[0], m_eventTypes.size()).readObject< ISerializable >(), 0.001);
 			if (eventObject)
 			{
 				// Prevent resent events from being issued into game.
-				if (fromGhost->acceptEvent(msg.event.sequence, eventObject))
+				bool accept;
+				T_MEASURE_STATEMENT(accept = fromGhost->acceptEvent(msg.event.sequence, eventObject), 0.001);
+				if (accept)
 				{
 					std::map< const TypeInfo*, RefArray< IEventListener > >::const_iterator it = m_eventListeners.find(&type_of(eventObject));
 					if (it != m_eventListeners.end())
 					{
 						for (RefArray< IEventListener >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
 						{
-							(*i)->notify(
+							T_MEASURE_STATEMENT((*i)->notify(
 								this,
 								float(net2time(msg.time)),
 								fromGhost,
 								eventObject
-							);
+							), 0.001);
 						}
 						++eventsIssued;
 					}
@@ -309,13 +321,17 @@ bool Replicator::update()
 		else if (msg.id == RmiEventAck)
 		{
 			// Received an event acknowledge; discard event from queue.
-			fromGhost->receivedEventAcknowledge(fromGhost, msg.eventAck.sequence);
+			T_MEASURE_STATEMENT(fromGhost->receivedEventAcknowledge(fromGhost, msg.eventAck.sequence), 0.001);
 		}
 	}
+
+	T_MEASURE_UNTIL(0.004);
 
 	// Update proxy queues.
 	for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
 		(*i)->updateEventQueue();
+
+	T_MEASURE_UNTIL(0.001);
 
 	if (timeOffsetReceived)
 	{
@@ -350,13 +366,13 @@ bool Replicator::update()
 
 				for (RefArray< IListener >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
 				{
-					(*i)->notify(
+					T_MEASURE_STATEMENT((*i)->notify(
 						this,
 						timeOffset,
 						IListener::ReTimeAdjust,
 						0,
 						0
-					);
+					), 0.001);
 				}
 			}
 		}
@@ -380,12 +396,10 @@ bool Replicator::update()
 		}
 	}
 
+	T_MEASURE_UNTIL(0.001);
+
 	m_time += dT;
 	m_time0 += dT;
-
-	double T1 = m_timer.getElapsedTime();
-	if (T1 - T0 > 0.01)
-		log::warning << getLogPrefix() << L"Replicator update exceeded 10 ms (" << int32_t((T1 - T0) * 1000.0) << L" ms)." << Endl;
 
 	return true;
 }

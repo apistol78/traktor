@@ -4,12 +4,55 @@
 #include "Amalgam/Engine/FlashLayerData.h"
 #include "Amalgam/Engine/VideoLayerData.h"
 #include "Amalgam/Engine/WorldLayerData.h"
+#include "Core/Serialization/DeepClone.h"
+#include "Core/Log/Log.h"
+#include "Database/Instance.h"
+#include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 
 namespace traktor
 {
 	namespace amalgam
 	{
+		namespace
+		{
+	
+Ref< StageData > flattenInheritance(editor::IPipelineBuilder* pipelineBuilder, const StageData* stageData)
+{
+	Ref< StageData > stageDataOut = DeepClone(checked_type_cast< const StageData*, false >(stageData)).create< StageData >();
+	T_ASSERT (stageDataOut);
+
+	if (stageData->getInherit().isNotNull())
+	{
+		Ref< const StageData > downStageData = pipelineBuilder->getObjectReadOnly< StageData >(stageData->getInherit());
+		if (!downStageData)
+			return 0;
+
+		Ref< StageData > downStageDataFlatten = flattenInheritance(pipelineBuilder, downStageData);
+		if (!downStageData)
+			return 0;
+
+		// Replace script.
+		if (stageDataOut->getScript().isNull())
+			stageDataOut->setScript(downStageDataFlatten->getScript());
+
+		// Replace shader fade.
+		if (stageDataOut->getShaderFade().isNull())
+		{
+			stageDataOut->setShaderFade(downStageDataFlatten->getShaderFade());
+			stageDataOut->setFadeRate(downStageDataFlatten->getFadeRate());
+		}
+
+		// Merge transitions.
+		std::map< std::wstring, Guid > transitions = downStageDataFlatten->getTransitions();
+		transitions.insert(stageDataOut->getTransitions().begin(), stageDataOut->getTransitions().end());
+		stageDataOut->setTransitions(transitions);
+	}
+
+	return stageDataOut;
+}
+		
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.StagePipeline", 3, StagePipeline, editor::DefaultPipeline)
 
@@ -30,6 +73,7 @@ bool StagePipeline::buildDependencies(
 {
 	const StageData* stageData = checked_type_cast< const StageData*, false >(sourceAsset);
 
+	pipelineDepends->addDependency(stageData->m_inherit, editor::PdfBuild);
 	pipelineDepends->addDependency(stageData->m_script, editor::PdfBuild);
 	pipelineDepends->addDependency(stageData->m_shaderFade, editor::PdfBuild | editor::PdfResource);
 
@@ -61,6 +105,41 @@ bool StagePipeline::buildDependencies(
 	}
 
 	pipelineDepends->addDependency(stageData->m_resourceBundle, editor::PdfBuild);
+	return true;
+}
+
+bool StagePipeline::buildOutput(
+	editor::IPipelineBuilder* pipelineBuilder,
+	const editor::IPipelineDependencySet* dependencySet,
+	const editor::PipelineDependency* dependency,
+	const db::Instance* sourceInstance,
+	const ISerializable* sourceAsset,
+	uint32_t sourceAssetHash,
+	const std::wstring& outputPath,
+	const Guid& outputGuid,
+	const Object* buildParams,
+	uint32_t reason
+) const
+{
+	Ref< StageData > stageData = flattenInheritance(pipelineBuilder, checked_type_cast< const StageData*, false >(sourceAsset));
+	if (!stageData)
+		return false;
+	
+	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);
+	if (!outputInstance)
+	{
+		log::error << L"Unable to create output instance" << Endl;
+		return false;
+	}
+
+	outputInstance->setObject(stageData);
+
+	if (!outputInstance->commit())
+	{
+		log::error << L"Unable to commit output instance" << Endl;
+		return false;
+	}
+
 	return true;
 }
 

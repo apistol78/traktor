@@ -37,7 +37,7 @@ private:
 	Ref< DroneSettings > m_settings;
 	bool m_toolExecuting;
 
-	void eventNotificationButtonDown(ui::Event* event);
+	void eventNotificationButtonDown(ui::MouseButtonDownEvent* event);
 };
 
 	}

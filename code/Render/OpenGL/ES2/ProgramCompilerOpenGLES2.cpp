@@ -30,15 +30,15 @@ const wchar_t* ProgramCompilerOpenGLES2::getPlatformSignature() const
 
 Ref< ProgramResource > ProgramCompilerOpenGLES2::compile(
 	const ShaderGraph* shaderGraph,
+	const PropertyGroup* settings,
 	int32_t optimize,
 	bool validate,
-	IProgramHints* hints,
 	Stats* outStats
 ) const
 {
 	// Generate GLSL shader.
 	GlslProgram glslProgram;
-	if (!Glsl().generate(shaderGraph, glslProgram))
+	if (!Glsl().generate(shaderGraph, settings, glslProgram))
 		return 0;
 
 #if !defined(__APPLE__) && !defined(__PNACL__) && !defined(__ANDROID__)
@@ -96,12 +96,13 @@ Ref< ProgramResource > ProgramCompilerOpenGLES2::compile(
 
 bool ProgramCompilerOpenGLES2::generate(
 	const ShaderGraph* shaderGraph,
+	const PropertyGroup* settings,
 	int32_t optimize,
 	std::wstring& outShader
 ) const
 {
 	GlslProgram glslProgram;
-	if (!Glsl().generate(shaderGraph, glslProgram))
+	if (!Glsl().generate(shaderGraph, settings, glslProgram))
 		return false;
 
 	outShader =

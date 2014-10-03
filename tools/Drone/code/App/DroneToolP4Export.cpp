@@ -119,13 +119,12 @@ bool DroneToolP4Export::execute(ui::Widget* parent, ui::MenuItem* menuItem)
 	return true;
 }
 
-bool DroneToolP4Export::serialize(ISerializer& s)
+void DroneToolP4Export::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"title", m_title);
 	s >> MemberComposite< PerforceClientDesc >(L"clientDesc", m_clientDesc);
 	s >> Member< std::wstring >(L"exportPath", m_exportPath);
 	s >> Member< bool >(L"verbose", m_verbose);
-	return true;
 }
 
 	}

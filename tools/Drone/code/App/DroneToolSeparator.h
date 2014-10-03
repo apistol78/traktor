@@ -17,7 +17,7 @@ public:
 
 	virtual bool execute(ui::Widget* parent, ui::MenuItem* menuItem);
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 };
 
 	}

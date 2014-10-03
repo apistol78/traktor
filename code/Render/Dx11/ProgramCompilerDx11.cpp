@@ -102,14 +102,14 @@ const wchar_t* ProgramCompilerDx11::getPlatformSignature() const
 
 Ref< ProgramResource > ProgramCompilerDx11::compile(
 	const ShaderGraph* shaderGraph,
+	const PropertyGroup* settings,
 	int32_t optimize,
 	bool validate,
-	IProgramHints* hints,
 	Stats* outStats
 ) const
 {
 	HlslProgram hlslProgram;
-	if (!Hlsl().generate(shaderGraph, hints, hlslProgram))
+	if (!Hlsl().generate(shaderGraph, hlslProgram))
 		return 0;
 
 	optimize = clamp< int32_t >(optimize, 0, sizeof_array(c_optimizationFlags));
@@ -252,12 +252,13 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 
 bool ProgramCompilerDx11::generate(
 	const ShaderGraph* shaderGraph,
+	const PropertyGroup* settings,
 	int32_t optimize,
 	std::wstring& outShader
 ) const
 {
 	HlslProgram hlslProgram;
-	if (!Hlsl().generate(shaderGraph, 0, hlslProgram))
+	if (!Hlsl().generate(shaderGraph, hlslProgram))
 		return false;
 
 	outShader =

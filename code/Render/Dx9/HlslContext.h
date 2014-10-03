@@ -12,7 +12,6 @@ namespace traktor
 
 class HlslVariable;
 class InputPin;
-class IProgramHints;
 class OutputPin;
 class ShaderGraph;
 
@@ -22,7 +21,7 @@ class ShaderGraph;
 class HlslContext
 {
 public:
-	HlslContext(const ShaderGraph* shaderGraph, IProgramHints* programHints);
+	HlslContext(const ShaderGraph* shaderGraph);
 
 	Node* getInputNode(const InputPin* inputPin);
 

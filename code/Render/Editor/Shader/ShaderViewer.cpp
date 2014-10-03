@@ -265,7 +265,7 @@ void ShaderViewer::threadUpdateViews()
 
 				// Finally ready to compile program graph.
 				std::wstring programShader;
-				if (programCompiler->generate(programGraph, 0, programShader))
+				if (programCompiler->generate(programGraph, m_editor->getSettings(), 0, programShader))
 					ss << programShader;
 				else
 					ss << L"N/A" << Endl;

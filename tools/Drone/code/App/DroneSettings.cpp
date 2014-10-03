@@ -20,9 +20,9 @@ const RefArray< DroneTool >& DroneSettings::getTools() const
 	return m_tools;
 }
 
-bool DroneSettings::serialize(ISerializer& s)
+void DroneSettings::serialize(ISerializer& s)
 {
-	return s >> MemberRefArray< DroneTool >(L"tools", m_tools);
+	s >> MemberRefArray< DroneTool >(L"tools", m_tools);
 }
 
 	}

@@ -4,6 +4,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
+#include "Core/Timer/Measure.h"
 #include "Core/Timer/Timer.h"
 #include "Net/Replication/Peer2PeerTopology.h"
 
@@ -72,35 +73,9 @@ struct P2PMessage
 
 const double c_IAmInterval = 1.0;
 const uint32_t c_maxPendingIAm = 16;
-const double c_propagateInterval = 2.0;
+const double c_propagateInterval = 4.0;
 const double c_timeRandomFlux = 0.5;
 const int32_t c_maxReceiveMessages = 128;
-
-Timer s_timer;
-
-#define T_WIDEN_X(x) L ## x
-#define T_WIDEN(x) T_WIDEN_X(x)
-
-#define T_MEASURE_BEGIN() \
-	double __M_start = s_timer.getElapsedTime(); \
-	double __M_last = __M_start;
-
-#define T_MEASURE_UNTIL(maxTimeUntil) \
-	{ \
-		double __M_this = s_timer.getElapsedTime(); \
-		if (__M_this - __M_last > (maxTimeUntil)) \
-			log::warning << L"Time until \"" << mbstows( T_FILE_LINE ) << L"\" reached exceeded max " << int32_t(maxTimeUntil * 1000.0) << L" ms, " << int32_t((__M_this - __M_last) * 1000.0) << L" ms" << Endl; \
-		__M_last = __M_this; \
-	}
-
-#define T_MEASURE_STATEMENT(statement, maxDuration) \
-	{ \
-		double start = s_timer.getElapsedTime(); \
-		(statement); \
-		double end = s_timer.getElapsedTime(); \
-		if ((end - start) > maxDuration) \
-			log::warning << L"Statement \"" << T_WIDEN(#statement) << L"\" exceeded max " << int32_t(maxDuration * 1000.0) << L" ms, " << int32_t((end - start) * 1000.0) << L" ms" << Endl; \
-	}
 
 		}
 
@@ -111,9 +86,7 @@ Peer2PeerTopology::Peer2PeerTopology(IPeer2PeerProvider* provider)
 ,	m_callback(0)
 ,	m_random(std::clock())
 ,	m_time(0.0)
-,	m_whenPropagate(0.0)
 {
-	s_timer.start();
 }
 
 void Peer2PeerTopology::setCallback(INetworkCallback* callback)
@@ -215,6 +188,7 @@ int32_t Peer2PeerTopology::recv(void* data, int32_t size, net_handle_t& outNode)
 
 bool Peer2PeerTopology::update(double dT)
 {
+	P2PMessage msg;
 	int32_t updateRouting = 0;
 
 	T_MEASURE_BEGIN();
@@ -223,7 +197,7 @@ bool Peer2PeerTopology::update(double dT)
 	if (!m_provider->update())
 		return false;
 
-	T_MEASURE_UNTIL(0.002);
+	T_MEASURE_UNTIL(0.0005);
 
 	// Get peers from provider.
 	int32_t providerPeerCount = m_provider->getPeerCount();
@@ -231,7 +205,7 @@ bool Peer2PeerTopology::update(double dT)
 	for (int32_t i = 0; i < providerPeerCount; ++i)
 		m_providerPeers[i] = m_provider->getPeerHandle(i);
 
-	T_MEASURE_UNTIL(0.001);
+	T_MEASURE_UNTIL(0.00025);
 
 	// Add new peers.
 	for (int32_t i = 0; i < providerPeerCount; ++i)
@@ -246,7 +220,7 @@ bool Peer2PeerTopology::update(double dT)
 		}
 	}
 
-	T_MEASURE_UNTIL(0.001);
+	T_MEASURE_UNTIL(0.00025);
 
 	int32_t myIndex = indexOf(m_provider->getLocalHandle());
 	Peer& myPeer = m_peers[myIndex];
@@ -263,6 +237,7 @@ bool Peer2PeerTopology::update(double dT)
 			{
 				myPeer.connections.erase(it);
 				myPeer.sequence++;
+				myPeer.whenPropagate = m_time;
 				updateRouting = 2;
 			}
 
@@ -273,12 +248,10 @@ bool Peer2PeerTopology::update(double dT)
 			peer.connections.clear();
 			peer.whenIAm = 0.0;
 			peer.sentIAm = 0;
-
-			m_whenPropagate = m_time;
 		}
 	}
 
-	T_MEASURE_UNTIL(0.001);
+	T_MEASURE_UNTIL(0.00025);
 
 	// Send direct connection handshake messages.
 	for (int32_t i = 0; i < int32_t(m_peers.size()); ++i)
@@ -300,6 +273,7 @@ bool Peer2PeerTopology::update(double dT)
 				log::info << getLogPrefix() << L"Peer " << peer.handle << L" no longer respond to \"I am\" messages." << Endl;
 
 				myPeer.connections.erase(it);
+				myPeer.whenPropagate = m_time;
 				myPeer.sequence++;
 
 				peer.sequence = 0;
@@ -307,15 +281,11 @@ bool Peer2PeerTopology::update(double dT)
 				peer.whenIAm = 0.0;
 				peer.sentIAm = 0;
 
-				m_whenPropagate = m_time;
 				updateRouting = 3;
 			}
 		}
 
 		// Keep sending "I am" messages as long as peer exist from provider; ie is in lobby.
-		P2PMessage msg;
-		std::memset(&msg, 0, sizeof(msg));
-
 		msg.id = MsgIAm_0;
 		msg.iam.sequence = 0;
 
@@ -329,6 +299,7 @@ bool Peer2PeerTopology::update(double dT)
 			if (it != myPeer.connections.end())
 			{
 				myPeer.connections.erase(it);
+				myPeer.whenPropagate = m_time;
 				myPeer.sequence++;
 
 				peer.sequence = 0;
@@ -336,7 +307,6 @@ bool Peer2PeerTopology::update(double dT)
 				peer.whenIAm = 0.0;
 				peer.sentIAm = 0;
 
-				m_whenPropagate = m_time;
 				updateRouting = 4;
 			}
 		}
@@ -344,7 +314,7 @@ bool Peer2PeerTopology::update(double dT)
 		peer.whenIAm = m_time + c_IAmInterval + m_random.nextDouble() * c_timeRandomFlux;
 	}
 
-	T_MEASURE_UNTIL(0.002);
+	T_MEASURE_UNTIL(0.001);
 
 	// If I am alone then clear every other peer.
 	if (myPeer.connections.empty())
@@ -362,6 +332,8 @@ bool Peer2PeerTopology::update(double dT)
 		}
 		myPeer.sentIAm = 0;
 	}
+
+	T_MEASURE_UNTIL(0.0001);
 
 	// Non two-way connected peers.
 	for (int32_t i = 0; i < int32_t(m_peers.size()); ++i)
@@ -396,73 +368,66 @@ bool Peer2PeerTopology::update(double dT)
 			thisPeer.whenIAm = 0.0;
 			thisPeer.sentIAm = 0;
 
-			m_whenPropagate = m_time;
 			updateRouting = 6;
 		}
 	}
 
-	T_MEASURE_UNTIL(0.001);
+	T_MEASURE_UNTIL(0.0001);
 
 	// Propagate connections to my neighbor peers.
-	if (m_time >= m_whenPropagate)
+	int32_t errors = 0;
+	for (int32_t i = 0; i < int32_t(m_peers.size()); ++i)
 	{
-		P2PMessage msg;
-		std::memset(&msg, 0, sizeof(msg));
+		Peer& peer = m_peers[i];
 
-		int32_t errors = 0;
-		for (int32_t i = 0; i < int32_t(m_peers.size()); ++i)
+		if (m_time < peer.whenPropagate || peer.connections.empty())
+			continue;
+
+		msg.id = MsgCMask;
+		msg.cmask.of = peer.handle;
+		msg.cmask.sequence = peer.sequence;
+
+		for (int32_t j = 0; j < int32_t(peer.connections.size()); ++j)
+			msg.cmask.connections[j] = peer.connections[j];
+
+		for (int32_t j = 0; j < int32_t(myPeer.connections.size()); ++j)
 		{
-			const Peer& peer = m_peers[i];
-
-			if (peer.connections.empty())
+			if (myPeer.connections[i] == 0 || myPeer.connections[j] == peer.handle)
 				continue;
 
-			msg.id = MsgCMask;
-			msg.cmask.of = peer.handle;
-			msg.cmask.sequence = peer.sequence;
-
-			for (int32_t j = 0; j < int32_t(peer.connections.size()); ++j)
-				msg.cmask.connections[j] = peer.connections[j];
-
-			for (int32_t j = 0; j < int32_t(myPeer.connections.size()); ++j)
-			{
-				if (myPeer.connections[i] == 0 || myPeer.connections[j] == peer.handle)
-					continue;
-
-				if (!m_provider->send(myPeer.connections[j], &msg, MsgCMask_NetSize(peer.connections.size())))
-					++errors;
-			}
+			if (!m_provider->send(myPeer.connections[j], &msg, MsgCMask_NetSize(peer.connections.size())))
+				++errors;
 		}
 
-		if (errors > 0)
-			log::warning << getLogPrefix() << L"Unable to propagate " << errors << L" connection mask(s)." << Endl;
-
-		m_whenPropagate = m_time + c_propagateInterval + m_random.nextDouble() * c_timeRandomFlux;
+		peer.whenPropagate = m_time + c_propagateInterval + m_random.nextDouble() * c_timeRandomFlux;
 	}
 
-	T_MEASURE_UNTIL(0.010);
+	if (errors > 0)
+		log::warning << getLogPrefix() << L"Unable to propagate " << errors << L" connection mask(s)." << Endl;
+
+	T_MEASURE_UNTIL(0.001);
 
 	// Receive messages.
-	if (m_provider->pendingRecv())
+	bool pending;
+	T_MEASURE_STATEMENT(pending = m_provider->pendingRecv(), 0.001);
+	if (pending)
 	{
-		for (int32_t i = 0; i < c_maxReceiveMessages; ++i)
-		{
-			net_handle_t from;
-			P2PMessage msg;
+		net_handle_t from;
+		P2PMessage reply;
+		int32_t nrecv;
+		int32_t i;
 
-			int32_t nrecv = m_provider->recv(&msg, MaxDataSize, from);
+		for (i = 0; i < c_maxReceiveMessages; ++i)
+		{
+			T_MEASURE_STATEMENT(nrecv = m_provider->recv(&msg, MaxDataSize, from), 0.001);
 			if (nrecv <= 0)
 				break;
 
 			if (msg.id == MsgIAm_0)
 			{
-				P2PMessage reply;
-				std::memset(&reply, 0, sizeof(reply));
-
 				reply.id = MsgIAm_1;
 				reply.iam.sequence = msg.iam.sequence;
-
-				m_provider->send(from, &reply, MsgIAm_NetSize());
+				T_MEASURE_STATEMENT(m_provider->send(from, &reply, MsgIAm_NetSize()), 0.001);
 			}
 			else if (msg.id == MsgIAm_1)
 			{
@@ -479,9 +444,9 @@ bool Peer2PeerTopology::update(double dT)
 						myPeer.connections.push_back(from);
 						std::sort(myPeer.connections.begin(), myPeer.connections.end());
 
+						myPeer.whenPropagate = m_time;
 						myPeer.sequence++;
 
-						m_whenPropagate = m_time;
 						updateRouting = 7;
 					}
 				}
@@ -513,7 +478,7 @@ bool Peer2PeerTopology::update(double dT)
 
 						if (!equal || msg.cmask.sequence > ofPeer.sequence)
 						{
-							m_whenPropagate = m_time;
+							ofPeer.whenPropagate = m_time;
 							if (!equal)
 								updateRouting = 8;
 						}
@@ -547,21 +512,27 @@ bool Peer2PeerTopology::update(double dT)
 					if (targetIndex >= 0 && m_peers[targetIndex].send != 0)
 					{
 						T_ASSERT (targetIndex != myIndex);
-						if (!m_provider->send(m_peers[targetIndex].send, &msg, nrecv))
+						bool result;
+						T_MEASURE_STATEMENT(result = m_provider->send(m_peers[targetIndex].send, &msg, nrecv), 0.001);
+						if (!result)
 							log::info << getLogPrefix() << L"Unable to relay message to peer " << msg.relay.target << L" through " << m_peers[targetIndex].send << L"; message discarded." << Endl;
 					}
 				}
 			}
 		}
+
+		if (i > 0)
+			log::info << getLogPrefix() << L"Received " << i << L" message(s)" << Endl;
 	}
 
-	T_MEASURE_UNTIL(0.004);
+	T_MEASURE_UNTIL(0.010);
 
 	// Update local routing information.
 	if (updateRouting)
 		log::info << getLogPrefix() << L"Updating optimal routes (" << updateRouting << L")..." << Endl;
 
 	m_nodes.resize(0);
+	m_nodes.reserve(m_peers.size());
 	for (int32_t i = 0; i < int32_t(m_peers.size()); ++i)
 	{
 		if (i != myIndex)
@@ -583,7 +554,7 @@ bool Peer2PeerTopology::update(double dT)
 					log::info << getLogPrefix() << L"Peer " << m_peers[i].handle << L" connected." << Endl;
 
 					if (m_callback)
-						m_callback->nodeConnected(this, m_peers[i].handle);
+						T_MEASURE_STATEMENT(m_callback->nodeConnected(this, m_peers[i].handle), 0.001);
 
 					m_peers[i].established = true;
 				}
@@ -595,7 +566,7 @@ bool Peer2PeerTopology::update(double dT)
 					log::info << getLogPrefix() << L"Peer " << m_peers[i].handle << L" disconnected." << Endl;
 
 					if (m_callback)
-						m_callback->nodeDisconnected(this, m_peers[i].handle);
+						T_MEASURE_STATEMENT(m_callback->nodeDisconnected(this, m_peers[i].handle), 0.001);
 
 					m_peers[i].established = false;
 				}
@@ -611,14 +582,14 @@ bool Peer2PeerTopology::update(double dT)
 				log::info << getLogPrefix() << L"Peer " << m_peers[i].handle << L" connected." << Endl;
 
 				if (m_callback)
-					m_callback->nodeConnected(this, m_peers[i].handle);
+					T_MEASURE_STATEMENT(m_callback->nodeConnected(this, m_peers[i].handle), 0.001);
 
 				m_peers[i].established = true;
 			}
 		}
 	}
 
-	T_MEASURE_UNTIL(0.004);
+	T_MEASURE_UNTIL(0.001);
 
 	m_time += dT;
 	return true;

@@ -1,6 +1,5 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
-#include "Render/IProgramHints.h"
 #include "Render/Dx9/HlslShader.h"
 
 namespace traktor
@@ -14,9 +13,8 @@ const uint32_t c_registerInternalTargetSize = 0;
 
 		}
 
-HlslShader::HlslShader(ShaderType shaderType, IProgramHints* programHints)
+HlslShader::HlslShader(ShaderType shaderType)
 :	m_shaderType(shaderType)
-,	m_programHints(programHints)
 ,	m_uniformAllocated(256, false)
 ,	m_nextTemporaryVariable(0)
 ,	m_nextStage(0)
@@ -165,18 +163,13 @@ uint32_t HlslShader::addUniform(const std::wstring& uniform, HlslType type, uint
 		int32_t fromIndex = 0;
 		int32_t toIndex = (m_shaderType == StVertex ? 256 : 224) - elementCount;
 
-		if (m_programHints)
-			index = (int32_t)m_programHints->getParameterPosition(uniform, elementCount, toIndex);
-		else
-		{
-			// No hints provided; use hash of parameter name to get at least some locality.
-			Adler32 cs;
-			cs.begin();
-			cs.feed(uniform.c_str(), uniform.length() * sizeof(wchar_t));
-			cs.end();
-			index = (int32_t)cs.get();
-			index = fromIndex + index % (toIndex - fromIndex + 1);
-		}
+		// Use hash of parameter name to get at least some locality.
+		Adler32 cs;
+		cs.begin();
+		cs.feed(uniform.c_str(), uniform.length() * sizeof(wchar_t));
+		cs.end();
+		index = (int32_t)cs.get();
+		index = fromIndex + index % (toIndex - fromIndex + 1);
 
 		// Ensure index isn't colliding.
 		for (;;)
