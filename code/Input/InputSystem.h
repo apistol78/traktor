@@ -48,7 +48,7 @@ public:
 
 	void setExclusive(bool exclusive);
 
-	bool update(float deltaTime);
+	bool update(float deltaTime, bool enable);
 
 private:
 	struct PendingDevice

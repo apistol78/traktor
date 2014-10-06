@@ -558,7 +558,7 @@ void RenderViewOpenGLES2::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuf
 		T_ASSERT (0);
 	}
 
-#if GL_EXT_instanced_arrays
+#if GL_EXT_draw_instanced
 
 	if (!programGL->activate(m_stateCache, targetSize, postTransform, invertCull, 0))
 		return;

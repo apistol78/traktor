@@ -158,6 +158,10 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createResourceContext(void* nativeHand
 
 #endif
 
+	const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
+    if (extensions)
+        log::info << L"GL_EXTENSIONS = " << mbstows(extensions) << Endl;
+
 	return context;
 }
 
@@ -275,6 +279,10 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(ContextOpenGLES2* resour
 		return 0;
 
 #endif
+    
+    const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
+    if (extensions)
+        log::info << L"GL_EXTENSIONS = " << mbstows(extensions) << Endl;
 
 	return context;
 }
