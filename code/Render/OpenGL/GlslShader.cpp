@@ -142,7 +142,7 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, bool 
 		ss << L"#extension GL_OES_standard_derivatives : enable" << Endl;
 
 	if (settings && settings->getProperty< PropertyBoolean >(L"Glsl.ES2.SupportHwInstancing", false))
-		ss << L"#extension GL_EXT_instanced_arrays : enable" << Endl;
+		ss << L"#extension GL_EXT_draw_instanced : enable" << Endl;
 
 	ss << Endl;
 

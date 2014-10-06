@@ -207,6 +207,128 @@ script::Any ActionObjectClass::invokeOperator(const InvokeParam& param, uint8_t 
 	return script::Any();
 }
 
+class ActionFunctionClass : public ActionObjectClass
+{
+	T_RTTI_CLASS;
+
+public:
+	virtual const TypeInfo& getExportType() const;
+
+	virtual uint32_t getMethodCount() const;
+
+	virtual std::string getMethodName(uint32_t methodId) const;
+
+	virtual script::Any invoke(const InvokeParam& param, uint32_t methodId, uint32_t argc, const script::Any* argv) const;
+};
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ActionFunctionClass", ActionFunctionClass, ActionObjectClass)
+
+const TypeInfo& ActionFunctionClass::getExportType() const
+{
+	return type_of< flash::ActionFunction >();
+}
+
+uint32_t ActionFunctionClass::getMethodCount() const
+{
+	return 6;
+}
+
+std::string ActionFunctionClass::getMethodName(uint32_t methodId) const
+{
+	switch (methodId)
+	{
+	case 0:
+		return "getMember";
+	case 1:
+		return "getMemberByQName";
+	case 2:
+		return "setMember";
+	case 3:
+		return "getProperty";
+	case 4:
+		return "setProperty";
+	case 5:
+		return "call";
+	default:
+		return "";
+	}
+}
+
+script::Any ActionFunctionClass::invoke(const InvokeParam& param, uint32_t methodId, uint32_t argc, const script::Any* argv) const
+{
+	flash::ActionFunction* object = checked_type_cast< flash::ActionFunction*, false >(param.object);
+	switch (methodId)
+	{
+	case 0:
+		{
+			flash::ActionValue memberValue;
+			if (object->getMember(argv[0].getString(), memberValue))
+				return script::CastAny< flash::ActionValue >::set(memberValue);
+		}
+		break;
+
+	case 1:
+		{
+			flash::ActionValue memberValue;
+			if (object->getMemberByQName(argv[0].getString(), memberValue))
+				return script::CastAny< flash::ActionValue >::set(memberValue);
+		}
+		break;
+
+	case 2:
+		{
+			flash::ActionValue memberValue = script::CastAny< flash::ActionValue >::get(argv[1]);
+			object->setMember(argv[0].getString(), memberValue);
+		}
+		break;
+
+	case 3:
+		{
+			Ref< flash::ActionFunction > propertyGetFn;
+			if (object->getPropertyGet(argv[0].getString(), propertyGetFn))
+			{
+				flash::ActionValue propertyValue = propertyGetFn->call(object);
+				return script::CastAny< flash::ActionValue >::set(propertyValue);
+			}
+		}
+		break;
+
+	case 4:
+		{
+			Ref< flash::ActionFunction > propertySetFn;
+			if (object->getPropertySet(argv[0].getString(), propertySetFn))
+			{
+				flash::ActionValueArray callArgv(object->getContext()->getPool(), 1);
+				callArgv[0] = script::CastAny< flash::ActionValue >::get(argv[1]);
+				propertySetFn->call(object, callArgv);
+			}
+		}
+		break;
+
+	case 5:
+		{
+			flash::ActionValuePool& pool = object->getContext()->getPool();
+			T_ANONYMOUS_VAR(flash::ActionValuePool::Scope)(pool);
+
+			flash::ActionValueArray args(pool, argc - 1);
+			for (uint32_t i = 0; i < argc - 1; ++i)
+				args[i] = script::CastAny< flash::ActionValue >::get(argv[i + 1]);
+
+			flash::ActionValue ret = object->call(
+				checked_type_cast< flash::ActionObject*, true >(argv[0].getObject()),
+				args
+				);
+
+			return script::CastAny< flash::ActionValue >::set(ret);
+		}
+		break;
+
+	default:
+		break;
+	}
+	return script::Any();
+}
+
 void registerFlashClasses(script::IScriptManager* scriptManager)
 {
 	Ref< script::AutoScriptClass< flash::FlashMoviePlayer > > classFlashMoviePlayer = new script::AutoScriptClass< flash::FlashMoviePlayer >();
@@ -238,6 +360,9 @@ void registerFlashClasses(script::IScriptManager* scriptManager)
 
 	Ref< ActionObjectClass > classActionObject = new ActionObjectClass();
 	scriptManager->registerClass(classActionObject);
+
+	Ref< ActionFunctionClass > classActionFunction = new ActionFunctionClass();
+	scriptManager->registerClass(classActionFunction);
 }
 
 	}

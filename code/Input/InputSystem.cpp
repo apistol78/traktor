@@ -105,53 +105,69 @@ void InputSystem::setExclusive(bool exclusive)
 		(*i)->setExclusive(exclusive);
 }
 
-bool InputSystem::update(float deltaTime)
+bool InputSystem::update(float deltaTime, bool enable)
 {
 	deltaTime = std::min(deltaTime, 1.0f / 30.0f);
 
-	// Update drivers.
-	bool shouldUpdateDevices = false;
-	for (RefArray< IInputDriver >::iterator i = m_drivers.begin(); i != m_drivers.end(); ++i)
+	if (enable)
 	{
-		IInputDriver::UpdateResult result = (*i)->update();
-		if (result == IInputDriver::UrDevicesChanged)
-			shouldUpdateDevices |= true;
-	}
-	if (shouldUpdateDevices)
-		updateDevices();
+		// Update drivers.
+		bool shouldUpdateDevices = false;
+		for (RefArray< IInputDriver >::iterator i = m_drivers.begin(); i != m_drivers.end(); ++i)
+		{
+			IInputDriver::UpdateResult result = (*i)->update();
+			if (result == IInputDriver::UrDevicesChanged)
+				shouldUpdateDevices |= true;
+		}
+		if (shouldUpdateDevices)
+			updateDevices();
 		
-	// Check if pending devices are ready.
-	for (std::list< PendingDevice >::iterator i = m_pendingDevices.begin(); i != m_pendingDevices.end(); )
-	{
-		i->device->readState();
+		// Check if pending devices are ready.
+		for (std::list< PendingDevice >::iterator i = m_pendingDevices.begin(); i != m_pendingDevices.end(); )
+		{
+			i->device->readState();
 
-		if (!i->device->isConnected())
-		{
-			i->timeout = c_deviceStuckTimeout;
-			++i;
-			continue;
-		}
-
-		if (isDeviceReady(i->device))
-		{
-			m_devices.push_back(i->device);
-			i = m_pendingDevices.erase(i);
-		}
-		else
-		{
-			if ((i->timeout -= deltaTime) <= 0.0f)
+			if (!i->device->isConnected())
 			{
-				log::warning << L"Input device \"" << i->device->getName() << L"\" seems stuck; ignoring input from device" << Endl;
+				i->timeout = c_deviceStuckTimeout;
+				++i;
+				continue;
+			}
+
+			if (isDeviceReady(i->device))
+			{
+				m_devices.push_back(i->device);
 				i = m_pendingDevices.erase(i);
 			}
 			else
-				++i;
+			{
+				if ((i->timeout -= deltaTime) <= 0.0f)
+				{
+					log::warning << L"Input device \"" << i->device->getName() << L"\" seems stuck; ignoring input from device" << Endl;
+					i = m_pendingDevices.erase(i);
+				}
+				else
+					++i;
+			}
 		}
-	}
 
-	// Read state of all ready devices.
-	for (RefArray< IInputDevice >::iterator i = m_devices.begin(); i != m_devices.end(); ++i)
-		(*i)->readState();
+		// Read state of all ready devices.
+		for (RefArray< IInputDevice >::iterator i = m_devices.begin(); i != m_devices.end(); ++i)
+			(*i)->readState();
+	}
+	else
+	{
+		// Ensure all devices are put in pending list; need to be re-configured when
+		// application becomes enabled again.
+		for (RefArray< IInputDevice >::iterator i = m_devices.begin(); i != m_devices.end(); ++i)
+		{
+			PendingDevice pd;
+			pd.device = *i;
+			pd.timeout = c_deviceStuckTimeout;
+			m_pendingDevices.push_back(pd);
+		}
+		m_devices.clear();
+	}
 
 	return true;
 }

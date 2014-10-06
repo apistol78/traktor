@@ -66,10 +66,12 @@ struct Surface
 	Vector4 normal;
 	Color4f color;
 	Scalar emissive;
+	Scalar translucency;
 
 	Surface()
 	:	count(0)
 	,	emissive(0.0f)
+	,	translucency(0.0f)
 	{
 	}
 };
@@ -896,10 +898,7 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 
 		// Create output image.
 		Ref< drawing::Image > outputImageDirect = new drawing::Image(drawing::PixelFormat::getRGBAF32(), c_outputWidth, c_outputHeight);
-		Ref< drawing::Image > outputImageIndirect = new drawing::Image(drawing::PixelFormat::getRGBAF32(), c_outputWidth, c_outputHeight);
-			
 		outputImageDirect->clear(Color4f(0.0f, 0.0f, 1.0f, 0.0f));
-		outputImageIndirect->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
 		RefArray< Job > jobs;
 
@@ -945,63 +944,76 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		{
 			log::info << L"Tracing indirect lighting..." << Endl;
 			std::list< JobTraceIndirect* > tracesIndirect;
-			for (int32_t y = 0; y < c_outputHeight; y += c_jobTileHeight)
+
+			Ref< drawing::Image > outputImageIndirect[] = 
 			{
-				for (int32_t x = 0; x < c_outputWidth; x += c_jobTileWidth)
+				new drawing::Image(drawing::PixelFormat::getRGBAF32(), c_outputWidth, c_outputHeight),
+				new drawing::Image(drawing::PixelFormat::getRGBAF32(), c_outputWidth, c_outputHeight)
+			};
+			Ref< drawing::Image > imageIndirectSource = outputImageDirect;
+
+			for (int32_t i = 0; i < illumEntityData->getIndirectTraceIterations(); ++i)
+			{
+				Ref< drawing::Image > outputImageIndirectTarget = outputImageIndirect[i % 2];
+				outputImageIndirectTarget->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+
+				for (int32_t y = 0; y < c_outputHeight; y += c_jobTileHeight)
 				{
-					JobTraceIndirect* trace = new JobTraceIndirect(
-						x,
-						y,
-						sah,
-						gbuffer,
-						surfaces,
-						outputImageDirect,
-						outputImageIndirect,
-						illumEntityData->getIndirectTraceSamples()
-					);
+					for (int32_t x = 0; x < c_outputWidth; x += c_jobTileWidth)
+					{
+						JobTraceIndirect* trace = new JobTraceIndirect(
+							x,
+							y,
+							sah,
+							gbuffer,
+							surfaces,
+							imageIndirectSource,
+							outputImageIndirectTarget,
+							illumEntityData->getIndirectTraceSamples()
+						);
 
-					Ref< Job > job = JobManager::getInstance().add(makeFunctor< JobTraceIndirect >(trace, &JobTraceIndirect::execute));
-					if (!job)
-						return 0;
+						Ref< Job > job = JobManager::getInstance().add(makeFunctor< JobTraceIndirect >(trace, &JobTraceIndirect::execute));
+						if (!job)
+							return 0;
 
-					tracesIndirect.push_back(trace);
-					jobs.push_back(job);
+						tracesIndirect.push_back(trace);
+						jobs.push_back(job);
+					}
 				}
+
+				for (RefArray< Job >::iterator j = jobs.begin(); j != jobs.end(); ++j)
+					(*j)->wait();
+
+				for(std::list< JobTraceIndirect* >::iterator j = tracesIndirect.begin(); j != tracesIndirect.end(); ++j)
+					delete *j;
+
+				tracesIndirect.clear();
+				jobs.clear();
+
+				log::info << L"Dilating indirect light map..." << Endl;
+				drawing::DilateFilter dilateFilter(4);
+				outputImageIndirectTarget->apply(&dilateFilter);
+
+				log::info << L"Convolving indirect lighting..." << Endl;
+				for (int32_t j = 0; j < illumEntityData->getIndirectConvolveIterations(); ++j)
+					outputImageIndirectTarget->apply(drawing::ConvolutionFilter::createGaussianBlur5());
+
+				for (int32_t y = 0; y < c_outputHeight; ++y)
+				{
+					for (int32_t x = 0; x < c_outputWidth; ++x)
+					{
+						Color4f inA, inB;
+						outputImageIndirectTarget->getPixelUnsafe(x, y, inA);
+						outputImageDirect->getPixelUnsafe(x, y, inB);
+						outputImageDirect->setPixelUnsafe(x, y, (inA + inB) * Color4f(1.0f, 1.0f, 1.0f, 0.0f) + Color4f(0.0f, 0.0f, 0.0f, 1.0f));
+					}
+				}
+
+				imageIndirectSource = outputImageIndirectTarget;
 			}
-
-			for (RefArray< Job >::iterator j = jobs.begin(); j != jobs.end(); ++j)
-				(*j)->wait();
-
-			for(std::list< JobTraceIndirect* >::iterator j = tracesIndirect.begin(); j != tracesIndirect.end(); ++j)
-				delete *j;
-
-			tracesIndirect.clear();
-			jobs.clear();
-
-			log::info << L"Dilating indirect light map..." << Endl;
-			drawing::DilateFilter dilateFilter(4);
-			outputImageIndirect->apply(&dilateFilter);
-
-			log::info << L"Convolving indirect lighting..." << Endl;
-			outputImageIndirect->apply(drawing::ConvolutionFilter::createGaussianBlur5());
 		}
 
-		outputImageDirect->save(illumEntityData->getSeedGuid().format() + L"_direct.png");
-		outputImageIndirect->save(illumEntityData->getSeedGuid().format() + L"_indirect.png");
-
-		// Merge light-maps.
-		for (int32_t y = 0; y < c_outputHeight; ++y)
-		{
-			for (int32_t x = 0; x < c_outputWidth; ++x)
-			{
-				Color4f inA, inB;
-				outputImageIndirect->getPixelUnsafe(x, y, inA);
-				outputImageDirect->getPixelUnsafe(x, y, inB);
-				outputImageDirect->setPixelUnsafe(x, y, (inA + inB) * Color4f(1.0f, 1.0f, 1.0f, 0.0f) + Color4f(0.0f, 0.0f, 0.0f, 1.0f));
-			}
-		}
-
-		outputImageIndirect = 0;
+		outputImageDirect->save(illumEntityData->getSeedGuid().format() + L".png");
 
 		// Save light-map for debugging.
 		outputImageDirect->save(illumEntityData->getSeedGuid().format() + L".png");
@@ -1017,8 +1029,9 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		textureOutput->m_hasAlpha = false;
 		textureOutput->m_ignoreAlpha = true;
 		textureOutput->m_linearGamma = true;
-		textureOutput->m_systemTexture = true;
 		textureOutput->m_enableCompression = illumEntityData->compressLightMap();
+		textureOutput->m_sharpenRadius = 0;
+		textureOutput->m_systemTexture = true;
 		pipelineBuilder->buildOutput(
 			textureOutput,
 			L"Generated/__Illumination__Texture__" + advanceGuid(illumEntityData->getSeedGuid(), 0).format(),
