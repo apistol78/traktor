@@ -29,6 +29,8 @@ void registerMeshClasses(script::IScriptManager* scriptManager)
 	scriptManager->registerClass(classBlendMeshEntity);
 
 	Ref< script::AutoScriptClass< mesh::CompositeMeshEntity > > classCompositeMeshEntity = new script::AutoScriptClass< mesh::CompositeMeshEntity >();
+	classCompositeMeshEntity->addMethod("addMeshEntity", &mesh::CompositeMeshEntity::addMeshEntity);
+	classCompositeMeshEntity->addMethod("getMeshEntity", &mesh::CompositeMeshEntity::getMeshEntity);
 	scriptManager->registerClass(classCompositeMeshEntity);
 
 	Ref< script::AutoScriptClass< mesh::IndoorMeshEntity > > classIndoorMeshEntity = new script::AutoScriptClass< mesh::IndoorMeshEntity >();
