@@ -27,6 +27,7 @@ public:
 
 private:
 	Ref< PropertyGroup > m_settings;
+	Ref< ui::Edit > m_editSystemRoot;
 	Ref< ui::Edit > m_editHomeUrl;
 	Ref< ui::Edit > m_editSourceDatabase;
 	Ref< ui::Edit > m_editOutputDatabase;
