@@ -40,9 +40,20 @@
 			<comment/>
 			<position>
 				<first>277</first>
-				<second>252</second>
+				<second>253</second>
 			</position>
 			<name>T_TexCoord1</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>272</first>
+				<second>293</second>
+			</position>
+			<name>T_VertexColor</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<defaultValue>0</defaultValue>
