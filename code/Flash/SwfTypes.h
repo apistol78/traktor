@@ -13,6 +13,8 @@ namespace traktor
 //@{
 /*! \ingroup Flash */
 
+#pragma pack(1)
+
 struct SwfColor
 {
 	uint8_t red;
@@ -448,6 +450,8 @@ enum SwfScaleModeType
 	SmExactFit = 2,
 	SmNoScale = 3
 };
+
+#pragma pack()
 
 //@}
 
