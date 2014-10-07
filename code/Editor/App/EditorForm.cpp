@@ -384,7 +384,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	loadHelpDictionary();
 
 	// Load recently used files dictionary.
-	m_mru = loadRecent(L"Traktor.Editor.mru");
+	m_mru = loadRecent(OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB/Traktor.Editor.mru");
 
 	if (!ui::Form::create(c_title, 800, 600, ui::Form::WsDefault, new ui::TableLayout(L"100%", L"*,100%,*", 0, 0)))
 		return false;
@@ -1305,7 +1305,7 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 	m_tab->addPage(tabPage);
 	m_tab->update(0, true);
 
-	saveRecent(L"Traktor.Editor.mru", m_mru);
+	saveRecent(OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB/Traktor.Editor.mru", m_mru);
 	updateMRU();
 
 	return true;
