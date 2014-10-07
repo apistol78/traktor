@@ -52,12 +52,6 @@ const int32_t c_outputHeight = 2048;
 const int32_t c_jobTileWidth = 128;
 const int32_t c_jobTileHeight = 128;
 
-struct GBuffer
-{
-	Vector4 position;
-	Vector4 normal;
-};
-
 struct Surface
 {
 	int32_t count;
@@ -93,6 +87,13 @@ struct Light
 	,	surface(0)
 	{
 	}
+};
+
+struct GBuffer
+{
+	int32_t surface;
+	Vector4 position;
+	Vector4 normal;
 };
 
 template < typename Visitor >
@@ -143,11 +144,13 @@ class GBufferLineVisitor
 {
 public:
 	GBufferLineVisitor(
+		int32_t surface,
 		const Vector4 P[2],
 		const Vector4 N[2],
 		AlignedVector< GBuffer >& outGBuffer
 	)
-	:	m_outGBuffer(outGBuffer)
+	:	m_surface(surface)
+	,	m_outGBuffer(outGBuffer)
 	{
 		for (int i = 0; i < 2; ++i)
 		{
@@ -167,6 +170,7 @@ public:
 			{
 				for (int32_t dx = -1; dx <= 1; ++dx)
 				{
+					m_outGBuffer[(x + dx) + (y + dy) * c_outputWidth].surface = m_surface;
 					m_outGBuffer[(x + dx) + (y + dy) * c_outputWidth].position = position;
 					m_outGBuffer[(x + dx) + (y + dy) * c_outputWidth].normal = normal.normalized();
 				}
@@ -175,6 +179,7 @@ public:
 	}
 
 private:
+	int32_t m_surface;
 	Vector4 m_P[2];
 	Vector4 m_N[2];
 	AlignedVector< GBuffer >& m_outGBuffer;
@@ -184,11 +189,13 @@ class GBufferVisitor
 {
 public:
 	GBufferVisitor(
+		int32_t surface,
 		const Vector4 P[3],
 		const Vector4 N[3],
 		AlignedVector< GBuffer >& outGBuffer
 	)
-	:	m_outGBuffer(outGBuffer)
+	:	m_surface(surface)
+	,	m_outGBuffer(outGBuffer)
 	{
 		for (int i = 0; i < 3; ++i)
 		{
@@ -203,12 +210,14 @@ public:
 		{
 			Vector4 position = (m_P[0] * Scalar(alpha) + m_P[1] * Scalar(beta) + m_P[2] * Scalar(gamma)).xyz1();
 			Vector4 normal = (m_N[0] * Scalar(alpha) + m_N[1] * Scalar(beta) + m_N[2] * Scalar(gamma)).xyz0();
+			m_outGBuffer[x + y * c_outputWidth].surface = m_surface;
 			m_outGBuffer[x + y * c_outputWidth].position = position;
 			m_outGBuffer[x + y * c_outputWidth].normal = normal.normalized();
 		}
 	}
 
 private:
+	int32_t m_surface;
 	Vector4 m_P[3];
 	Vector4 m_N[3];
 	AlignedVector< GBuffer >& m_outGBuffer;
@@ -247,15 +256,22 @@ public:
 		{
 			for (int32_t x = m_tileX; x < m_tileX + c_jobTileWidth; ++x)
 			{
+				int32_t surfaceId = m_gbuffer[x + y * c_outputWidth].surface;
+				if (surfaceId < 0)
+					continue;
+
 				const Vector4& position = m_gbuffer[x + y * c_outputWidth].position;
 				if (position.w() < FUZZY_EPSILON)
 					continue;
 
 				const Vector4& normal = m_gbuffer[x + y * c_outputWidth].normal;
-
 				Vector4 rayOrigin = (position + normal * c_traceRayOffset).xyz1();
 
 				Color4f direct(0.0f, 0.0f, 0.0f, 1.0f);
+
+				const Surface& surface = m_surfaces[surfaceId];
+				if (surface.emissive > FUZZY_EPSILON)
+					direct += Color4f(1.0f, 1.0f, 1.0f, 0.0f) * surface.color * surface.emissive;
 
 				for (AlignedVector< Light >::const_iterator i = m_lights.begin(); i != m_lights.end(); ++i)
 				{
@@ -809,7 +825,7 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		sah.build(windings);
 
 		// Create GBuffer images.
-		const GBuffer zero = { Vector4::zero(), Vector4::zero() };
+		const GBuffer zero = { -1, Vector4::zero(), Vector4::zero() };
 		AlignedVector< GBuffer > gbuffer(c_outputWidth * c_outputHeight, zero);
 
 		// Trace each polygon in UV space.
@@ -851,7 +867,7 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 					N[0] = s.normals[i0];
 					N[1] = s.normals[i1];
 
-					GBufferLineVisitor visitor(P, N, gbuffer);
+					GBufferLineVisitor visitor(j, P, N, gbuffer);
 					line(uv[0].x, uv[0].y, uv[1].x, uv[1].y, visitor);
 				}
 			}
@@ -890,14 +906,14 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 				N[1] = s.normals[i1];
 				N[2] = s.normals[i2];
 
-				GBufferVisitor visitor1(P, N, gbuffer);
+				GBufferVisitor visitor1(j, P, N, gbuffer);
 				triangle(uv[0], uv[1], uv[2], visitor1);
 
 				std::swap(P[0], P[2]);
 				std::swap(N[0], N[2]);
 				std::swap(uv[0], uv[2]);
 
-				GBufferVisitor visitor2(P, N, gbuffer);
+				GBufferVisitor visitor2(j, P, N, gbuffer);
 				triangle(uv[0], uv[1], uv[2], visitor2);
 			}
 		}
