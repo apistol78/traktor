@@ -19,10 +19,10 @@ bool CleanDegenerate::apply(Model& model) const
 		std::vector< uint32_t >& vertices = polygon.getVertices();
 		if (vertices.size() > 1)
 		{
-			for (uint32_t j = 0; j < vertices.size() - 1; )
+			for (uint32_t j = 0; j < vertices.size(); )
 			{
 				uint32_t p0 = model.getVertex(vertices[j]).getPosition();
-				uint32_t p1 = model.getVertex(vertices[j + 1]).getPosition();
+				uint32_t p1 = model.getVertex(vertices[(j + 1) % vertices.size()]).getPosition();
 				if (p0 == p1)
 					vertices.erase(vertices.begin() + j);
 				else

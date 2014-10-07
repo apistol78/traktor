@@ -30,6 +30,7 @@
 #include <Ui/MessageBox.h>
 #include <Ui/NotificationIcon.h>
 #include <Ui/PopupMenu.h>
+#include <Ui/Events/AllEvents.h>
 #if defined(_WIN32)
 #	include <Ui/Win32/EventLoopWin32.h>
 #	include <Ui/Win32/WidgetFactoryWin32.h>
@@ -62,11 +63,9 @@ Mutex g_globalMutex(Guid(L"{DDB3D52F-8893-4f83-9FCD-D8A73211CC96}"));
 Ref< ui::PopupMenu > g_popupMenu;
 Ref< ui::NotificationIcon > g_notificationIcon;
 
-void eventNotificationButtonDown(ui::Event* event)
+void eventNotificationButtonDown(ui::MouseButtonDownEvent* event)
 {
-	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
-
-	Ref< ui::MenuItem > item = g_popupMenu->show(mouseEvent->getPosition());
+	Ref< ui::MenuItem > item = g_popupMenu->show(event->getPosition());
 	if (!item)
 		return;
 
@@ -97,7 +96,7 @@ void eventNotificationButtonDown(ui::Event* event)
 
 uint8_t handleDeploy(net::TcpSocket* clientSocket)
 {
-	net::SocketStream clientStream(clientSocket, true, true, 1000);
+	net::SocketStream clientStream(clientSocket, true, true, 5000);
 	Reader reader(&clientStream);
 	Writer writer(&clientStream);
 	std::wstring user;
@@ -191,7 +190,7 @@ uint8_t handleDeploy(net::TcpSocket* clientSocket)
 
 uint8_t handleLaunchProcess(net::Socket* clientSocket)
 {
-	net::SocketStream clientStream(clientSocket, true, true, 1000);
+	net::SocketStream clientStream(clientSocket, true, true, 5000);
 	Reader reader(&clientStream);
 	Writer writer(&clientStream);
 	std::wstring user;
@@ -227,49 +226,39 @@ uint8_t handleLaunchProcess(net::Socket* clientSocket)
 	return c_errNone;
 }
 
-void threadProcessClient(Ref< net::TcpSocket > clientSocket)
+void processClient(Ref< net::TcpSocket > clientSocket)
 {
 	uint8_t msg;
 	uint8_t ret;
 
-	while (!ThreadManager::getInstance().getCurrentThread()->stopped())
+	if (clientSocket->select(true, false, false, 5000) <= 0)
 	{
-		int32_t res = clientSocket->select(true, false, false, 1000);
-		if (res < 0)
-		{
-			traktor::log::info << L"Client terminated (1)" << Endl;
-			break;
-		}
+		traktor::log::info << L"Client terminated unexpectedly (1)." << Endl;
+		return;
+	}
 
-		if (res == 0)
-			continue;
+	int32_t md = clientSocket->recv();
+	if (md < 0)
+	{
+		traktor::log::info << L"Client terminated unexpectedly (2)." << Endl;
+		return;
+	}
 
-		int32_t md = clientSocket->recv();
-		if (md < 0)
-		{
-			traktor::log::info << L"Client terminated (2)" << Endl;
-			break;
-		}
+	msg = uint8_t(md);
+	switch (msg)
+	{
+	case c_msgDeploy:
+		ret = handleDeploy(clientSocket);
+		break;
 
-		msg = uint8_t(md);
-		switch (msg)
-		{
-		case c_msgDeploy:
-			ret = handleDeploy(clientSocket);
-			break;
+	case c_msgLaunchProcess:
+		ret = handleLaunchProcess(clientSocket);
+		break;
 
-		case c_msgLaunchProcess:
-			ret = handleLaunchProcess(clientSocket);
-			break;
-
-		default:
-			traktor::log::error << L"Invalid message ID from client; " << int32_t(msg) << Endl;
-			ret = c_errUnknown;
-			break;
-		}
-
-		if (ret != c_errNone)
-			break;
+	default:
+		traktor::log::error << L"Invalid message ID from client; " << int32_t(msg) << Endl;
+		ret = c_errUnknown;
+		break;
 	}
 
 	clientSocket->close();
@@ -328,9 +317,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	g_popupMenu->add(new ui::MenuItem(L"-"));
 	g_popupMenu->add(new ui::MenuItem(ui::Command(L"RemoteServer.Exit"), L"Exit"));
 
+	Ref< ui::Bitmap > imageBusy = ui::Bitmap::load(c_ResourceNotificationBusy, sizeof(c_ResourceNotificationBusy), L"png");
+	Ref< ui::Bitmap > imageIdle = ui::Bitmap::load(c_ResourceNotificationIdle, sizeof(c_ResourceNotificationIdle), L"png");
+
 	g_notificationIcon = new ui::NotificationIcon();
-	g_notificationIcon->create(L"Traktor RemoteServer 1.8.2 (" + g_scratchPath + L")", ui::Bitmap::load(c_ResourceNotificationIdle, sizeof(c_ResourceNotificationIdle), L"png"));
-	g_notificationIcon->addButtonDownEventHandler(ui::createFunctionHandler(&eventNotificationButtonDown));
+	g_notificationIcon->create(L"Traktor RemoteServer 1.9 (" + g_scratchPath + L")", imageIdle);
+	g_notificationIcon->addEventHandler< ui::MouseButtonDownEvent >(&eventNotificationButtonDown);
 #endif
 
 	net::Network::initialize();
@@ -350,25 +342,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	}
 
 	// Create discovery manager and publish ourself.
-	Ref< net::DiscoveryManager > discoveryManager = new net::DiscoveryManager();
-	if (!discoveryManager->create(net::MdPublishServices))
-	{
-		traktor::log::error << L"Unable to create discovery manager" << Endl;
-		return 3;
-	}
-
-	net::SocketAddressIPv4::Interface itf;
-	if (!net::SocketAddressIPv4::getBestInterface(itf))
-	{
-		traktor::log::error << L"Unable to get interfaces" << Endl;
-		return 4;
-	}
-
-	Ref< PropertyGroup > properties = new PropertyGroup();
-	properties->setProperty< PropertyString >(L"Host", itf.addr->getHostName());
-	properties->setProperty< PropertyString >(L"Description", OS::getInstance().getComputerName());
-
+	std::wstring hostName = L"";
 	std::vector< std::wstring > platforms;
+
 #if defined(_WIN32)
 	platforms.push_back(L"Mobile6");
 	platforms.push_back(L"PS3");
@@ -392,18 +368,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	platforms.push_back(L"Android");
 	platforms.push_back(L"PNaCl");
 #endif
-	properties->setProperty< PropertyStringArray >(L"Platforms", platforms);
 
-	if (cmdLine.hasOption('k', L"keyword"))
-		properties->setProperty< PropertyString >(L"Keyword", cmdLine.getOption('k', L"keyword").getString());
+	Ref< net::DiscoveryManager > discoveryManager = new net::DiscoveryManager();
+	if (!discoveryManager->create(net::MdPublishServices))
+	{
+		traktor::log::error << L"Unable to create discovery manager" << Endl;
+		return 4;
+	}
 
-	discoveryManager->addService(new net::NetworkService(L"RemoteTools/Server", properties));
-
-	traktor::log::info << L"Discoverable as \"RemoteTools/Server\", host \"" << itf.addr->getHostName() << L"\"" << Endl;
 	traktor::log::info << L"Waiting for client(s)..." << Endl;
-
-	std::list< Thread* > clientThreads;
-	int32_t iconState = 0;
 
 #if defined(_WIN32)
 	while (ui::Application::getInstance()->process())
@@ -411,62 +384,48 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	for (;;)
 #endif
 	{
-#if defined(_WIN32)
-		// Update notification icon if necessary.
-		if (clientThreads.empty() && iconState != 0)
+		// Keep published interface up-to-date.
+		net::SocketAddressIPv4::Interface itf;
+		if (!net::SocketAddressIPv4::getBestInterface(itf))
 		{
-			// Set idle icon.
-			g_notificationIcon->setImage(ui::Bitmap::load(c_ResourceNotificationIdle, sizeof(c_ResourceNotificationIdle), L"png"));
-			iconState = 0;
+			traktor::log::error << L"Unable to get interfaces" << Endl;
+			return 4;
 		}
-		else if (!clientThreads.empty() && iconState == 0)
-		{
-			// Set busy icon.
-			g_notificationIcon->setImage(ui::Bitmap::load(c_ResourceNotificationBusy, sizeof(c_ResourceNotificationBusy), L"png"));
-			iconState = 1;
-		}
-#endif
 
-		// Check for events on server socket; if none we cleanup disconnected clients.
-		if (serverSocket->select(true, false, false, 1000) <= 0)
+		if (itf.addr->getHostName() != hostName)
 		{
-			for (std::list< Thread* >::iterator i = clientThreads.begin(); i != clientThreads.end(); )
-			{
-				if ((*i)->wait(0))
-				{
-					traktor::log::info << L"Client thread destroyed" << Endl;
-					ThreadManager::getInstance().destroy(*i);
-					i = clientThreads.erase(i);
-				}
-				else
-					++i;
-			}
-			continue;
+			traktor::log::info << L"Discoverable as \"RemoteTools/Server\", host \"" << itf.addr->getHostName() << L"\"" << Endl;
+
+			Ref< PropertyGroup > properties = new PropertyGroup();
+			properties->setProperty< PropertyString >(L"Host", itf.addr->getHostName());
+			properties->setProperty< PropertyString >(L"Description", OS::getInstance().getComputerName());
+			properties->setProperty< PropertyStringArray >(L"Platforms", platforms);
+
+			if (cmdLine.hasOption('k', L"keyword"))
+				properties->setProperty< PropertyString >(L"Keyword", cmdLine.getOption('k', L"keyword").getString());
+
+			discoveryManager->removeAllServices();
+			discoveryManager->addService(new net::NetworkService(L"RemoteTools/Server", properties));
+
+			hostName = itf.addr->getHostName();
 		}
+
+		if (serverSocket->select(true, false, false, 1000) <= 0)
+			continue;
 
 		Ref< net::TcpSocket > clientSocket = serverSocket->accept();
 		if (!clientSocket)
 			continue;
 
-        /*
-        
-		traktor::log::info << L"Client connected; spawning thread..." << Endl;
+#if defined(_WIN32)
+		g_notificationIcon->setImage(imageBusy);
+#endif
 
-		Thread* clientThread = ThreadManager::getInstance().create(
-			makeStaticFunctor(&threadProcessClient, clientSocket),
-			L"Client thread"
-		);
-		if (!clientThread)
-		{
-			traktor::log::error << L"Unable to create client thread" << Endl;
-			continue;
-		}
+        processClient(clientSocket);
 
-		clientThread->start();
-		clientThreads.push_back(clientThread);
-        */
-        
-        threadProcessClient(clientSocket);
+#if defined(_WIN32)
+		g_notificationIcon->setImage(imageIdle);
+#endif
 	}
 
 #if defined(_WIN32)

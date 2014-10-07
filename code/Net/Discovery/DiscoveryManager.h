@@ -57,6 +57,8 @@ public:
 
 	void removeService(IService* service);
 
+	void removeAllServices();
+
 	bool findServices(const TypeInfo& serviceType, RefArray< IService >& outServices);
 	
 	template < typename ServiceType >
@@ -84,6 +86,7 @@ private:
 	Guid m_managerGuid;
 	uint32_t m_mode;
 	std::list< LocalService > m_localServices;
+	Semaphore m_localServicesLock;
 	std::map< Guid, ExternalService > m_externalServices;
 	Semaphore m_externalServicesLock;
 

@@ -29,6 +29,7 @@
 #include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
 #include "Model/ModelFormat.h"
+#include "Model/Operations/CleanDegenerate.h"
 #include "Model/Operations/MergeModel.h"
 #include "Model/Operations/Triangulate.h"
 #include "Model/Operations/UnwrapUV.h"
@@ -718,13 +719,18 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 			);
 		}
 
+		model::CleanDegenerate().apply(*mergedModel);
+
 		// Get next free channel to store lightmap UV.
 		uint32_t channel = getAvailableTexCoordChannel(*mergedModel);
 
 		// UV unwrap entire model.
 		log::info << L"UV unwrapping, using channel " << channel << L"..." << Endl;
 		if (!model::UnwrapUV(channel, 5.0f).apply(*mergedModel))
-			return false;
+		{
+			log::error << L"IlluminateEntityPipeline failed; unable to unwrap UV." << Endl;
+			return 0;
+		}
 
 		// Setup tracer.
 		log::info << L"Preparing tracer..." << Endl;

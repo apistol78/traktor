@@ -66,7 +66,7 @@ int main(int argc, const char** argv)
 
 	traktor::log::info << L"Successfully connected to server" << Endl;
 
-	net::SocketStream clientStream(clientSocket);
+	net::SocketStream clientStream(clientSocket, true, true, 5000);
 	Writer writer(&clientStream);
 	Reader reader(&clientStream);
 	uint8_t ret;

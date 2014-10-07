@@ -26,9 +26,16 @@ const uint8_t c_errIoFailed = 1;
 const uint8_t c_errLaunchFailed = 2;
 const uint8_t c_errUnknown = 255;
 
-bool deployFile(net::TcpSocket* clientSocket, const Path& sourceFile, const Path& targetBase)
+bool deployFile(const net::SocketAddressIPv4& addr, const Path& sourceFile, const Path& targetBase)
 {
-	net::SocketStream clientStream(clientSocket, true, true, 1000);
+	Ref< net::TcpSocket > clientSocket = new net::TcpSocket();
+	if (!clientSocket->connect(addr))
+	{
+		traktor::log::info << L"Unable to connect to \"" << addr.getHostName() << L"\"" << Endl;
+		return false;
+	}
+
+	net::SocketStream clientStream(clientSocket, true, true, 5000);
 
 	traktor::log::info << L"Deploying file \"" << sourceFile.getFileName() << L"\"..." << Endl;
 
@@ -109,7 +116,7 @@ bool deployFile(net::TcpSocket* clientSocket, const Path& sourceFile, const Path
 	return true;
 }
 
-bool deployFiles(net::TcpSocket* clientSocket, const Path& sourcePath, const Path& targetBase, bool recursive)
+bool deployFiles(const net::SocketAddressIPv4& addr, const Path& sourcePath, const Path& targetBase, bool recursive)
 {
 	RefArray< File > files;
 
@@ -126,7 +133,7 @@ bool deployFiles(net::TcpSocket* clientSocket, const Path& sourcePath, const Pat
 				if (sourceFile.getFileName() != L"." && sourceFile.getFileName() != L"..")
 				{
 					traktor::log::info << L"Enter directory \"" << sourceFile.getPathName() << L"\"" << Endl;
-					if (!deployFiles(clientSocket, sourceFile.getPathName() + L"/" + sourcePath.getFileName(), targetBase, true))
+					if (!deployFiles(addr, sourceFile.getPathName() + L"/" + sourcePath.getFileName(), targetBase, true))
 						return false;
 					traktor::log::info << L"Leaving directory \"" << sourceFile.getPathName() << L"\"" << Endl;
 				}
@@ -136,7 +143,7 @@ bool deployFiles(net::TcpSocket* clientSocket, const Path& sourcePath, const Pat
 		}
 		else
 		{
-			if (!deployFile(clientSocket, sourceFile, targetBase))
+			if (!deployFile(addr, sourceFile, targetBase))
 				return false;
 		}
 	}
@@ -177,28 +184,18 @@ int main(int argc, const char** argv)
 	log::info << int32_t(cmdLine.getCount()) << L" command line value(s)" << Endl;
 	log::info << L"Target base \"" << targetBase.getPathName() << L"\"" << Endl;
 
-	Ref< net::TcpSocket > clientSocket = new net::TcpSocket();
-	if (!clientSocket->connect(net::SocketAddressIPv4(host, c_serverPort)))
-	{
-		traktor::log::info << L"Unable to connect to \"" << host << L"\"" << Endl;
-		return 2;
-	}
-
-	traktor::log::info << L"Successfully connected to server" << Endl;
+	net::SocketAddressIPv4 addr(host, c_serverPort);
 
 	int32_t ret = 0;
 	for (int i = 1; i < cmdLine.getCount(); ++i)
 	{
 		Path sourcePath = cmdLine.getString(i);
-		if (!deployFiles(clientSocket, sourcePath, targetBase, recursive))
+		if (!deployFiles(addr, sourcePath, targetBase, recursive))
 		{
 			ret = 3;
 			break;
 		}
 	}
-
-	clientSocket->close();
-	clientSocket = 0;
 
 	net::Network::finalize();
 	return ret;
