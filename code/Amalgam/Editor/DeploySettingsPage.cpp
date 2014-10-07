@@ -29,7 +29,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.DeploySettingsPage", 0, DeployS
 bool DeploySettingsPage::create(ui::Container* parent, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands)
 {
 	Ref< ui::Container > container = new ui::Container();
-	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,*,100%", 0, 4)))
+	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,*,*,100%", 0, 4)))
 		return false;
 
 	Ref< ui::Container > containerInner = new ui::Container();
@@ -58,6 +58,12 @@ bool DeploySettingsPage::create(ui::Container* parent, PropertyGroup* settings, 
 
 	bool inheritCache = settings->getProperty< PropertyBoolean >(L"Amalgam.InheritCache", true);
 	m_checkInheritCache->setChecked(inheritCache);
+
+	m_checkHidePipeline = new ui::CheckBox();
+	m_checkHidePipeline->create(container, L"Hide pipeline console");
+
+	bool hidePipeline = settings->getProperty< PropertyBoolean >(L"Amalgam.PipelineHidden", true);
+	m_checkHidePipeline->setChecked(hidePipeline);
 
 	m_checkUseDebugBinaries = new ui::CheckBox();
 	m_checkUseDebugBinaries->create(container, L"Use debug binaries");
@@ -111,6 +117,9 @@ bool DeploySettingsPage::apply(PropertyGroup* settings)
 
 	bool inheritCache = m_checkInheritCache->isChecked();
 	settings->setProperty< PropertyBoolean >(L"Amalgam.InheritCache", inheritCache);
+
+	bool hidePipeline = m_checkHidePipeline->isChecked();
+	settings->setProperty< PropertyBoolean >(L"Amalgam.PipelineHidden", hidePipeline);
 
 	bool useDebugBinaries = m_checkUseDebugBinaries->isChecked();
 	settings->setProperty< PropertyBoolean >(L"Amalgam.UseDebugBinaries", useDebugBinaries);
