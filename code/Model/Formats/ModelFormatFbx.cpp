@@ -136,6 +136,11 @@ Vector4 convertPosition(const Matrix44& axisTransform, const FbxVector4& v)
 	return axisTransform * Vector4(float(v[0]), float(v[1]), float(v[2]), 1.0f);
 }
 
+Vector4 convertColor(const FbxColor& c)
+{
+	return Vector4(float(c.mRed), float(c.mGreen), float(c.mBlue), float(c.mAlpha));
+}
+
 Vector4 convertNormal(const Matrix44& axisTransform, const FbxVector4& v)
 {
 	return axisTransform * Vector4(float(v[0]), float(v[1]), float(v[2]), 0.0f);
@@ -476,6 +481,11 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 	// Convert polygons.
 	if (importFlags & (ModelFormat::IfMeshPolygons | ModelFormat::IfMeshVertices))
 	{
+		FbxLayerElementVertexColor* vertexColors = 0;
+
+		if (mesh->GetElementVertexColorCount() > 0)
+			vertexColors = mesh->GetElementVertexColor();
+
 		int32_t polygonCount = mesh->GetPolygonCount();
 		for (int32_t i = 0; i < polygonCount; ++i)
 		{
@@ -506,6 +516,52 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 				Vertex vertex;
 				vertex.setPosition(positionBase + pointIndex);
 
+				if (vertexColors)
+				{
+					switch (vertexColors->GetMappingMode())
+					{
+					case FbxGeometryElement::eByControlPoint:
+						switch (vertexColors->GetReferenceMode())
+						{
+						case FbxLayerElement::eDirect:
+							{
+								FbxColor color = vertexColors->GetDirectArray().GetAt(pointIndex);
+								vertex.setColor(outModel.addUniqueColor(convertColor(color)));
+							}
+							break;
+
+						case FbxLayerElement::eIndexToDirect:
+							{
+								int32_t id = vertexColors->GetIndexArray().GetAt(pointIndex);
+								FbxColor color = vertexColors->GetDirectArray().GetAt(id);
+								vertex.setColor(outModel.addUniqueColor(convertColor(color)));
+							}
+							break;
+
+						default:
+							break;
+						}
+						break;
+
+					case FbxGeometryElement::eByPolygonVertex:
+						int32_t textureUVIndex = mesh->GetTextureUVIndex(i, j);
+						switch (vertexColors->GetReferenceMode())
+						{
+						case FbxLayerElement::eDirect:
+						case FbxLayerElement::eIndexToDirect:
+							{
+								FbxColor color = vertexColors->GetDirectArray().GetAt(textureUVIndex);
+								vertex.setColor(outModel.addUniqueColor(convertColor(color)));
+							}
+							break;
+
+						default:
+							break;
+						}
+						break;
+					}
+				}
+
 				if (pointIndex < int32_t(vertexJoints.size()))
 				{
 					for (bone_influences_t::const_iterator k = vertexJoints[pointIndex].begin(); k != vertexJoints[pointIndex].end(); ++k)
@@ -514,10 +570,51 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 
 				for (int32_t k = 0; k < mesh->GetLayerCount(); ++k)
 				{
-					// Vertex colors.
 					FbxLayerElementVertexColor* layerVertexColors = mesh->GetLayer(k)->GetVertexColors();
 					if (layerVertexColors)
 					{
+						switch (layerVertexColors->GetMappingMode())
+						{
+						case FbxGeometryElement::eByControlPoint:
+							switch (layerVertexColors->GetReferenceMode())
+							{
+							case FbxLayerElement::eDirect:
+								{
+									FbxColor color = layerVertexColors->GetDirectArray().GetAt(pointIndex);
+									vertex.setColor(outModel.addUniqueColor(convertColor(color)));
+								}
+								break;
+
+							case FbxLayerElement::eIndexToDirect:
+								{
+									int32_t id = layerVertexColors->GetIndexArray().GetAt(pointIndex);
+									FbxColor color = layerVertexColors->GetDirectArray().GetAt(id);
+									vertex.setColor(outModel.addUniqueColor(convertColor(color)));
+								}
+								break;
+
+							default:
+								break;
+							}
+							break;
+
+						case FbxGeometryElement::eByPolygonVertex:
+							int32_t textureUVIndex = mesh->GetTextureUVIndex(i, j);
+							switch (layerVertexColors->GetReferenceMode())
+							{
+							case FbxLayerElement::eDirect:
+							case FbxLayerElement::eIndexToDirect:
+								{
+									FbxColor color = layerVertexColors->GetDirectArray().GetAt(textureUVIndex);
+									vertex.setColor(outModel.addUniqueColor(convertColor(color)));
+								}
+								break;
+
+							default:
+								break;
+							}
+							break;
+						}
 					}
 
 					// Vertex texture UVs.

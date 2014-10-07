@@ -54,7 +54,7 @@ Tag_DiffuseMap
 			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<type>PtTexture2D</type>
 		</item>
-		<item type="traktor.render.Sampler" version="2">
+		<item type="traktor.render.Sampler" version="3">
 			<comment/>
 			<position>
 				<first>651</first>
@@ -67,6 +67,7 @@ Tag_DiffuseMap
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
 			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Mul">
@@ -79,8 +80,8 @@ Tag_DiffuseMap
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>312</first>
-				<second>292</second>
+				<first>314</first>
+				<second>293</second>
 			</position>
 			<name>T_TexCoord0</name>
 			<connectable>true</connectable>
@@ -90,10 +91,21 @@ Tag_DiffuseMap
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>312</first>
-				<second>331</second>
+				<first>314</first>
+				<second>330</second>
 			</position>
 			<name>T_TexCoord1</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>309</first>
+				<second>256</second>
+			</position>
+			<name>T_VertexColor</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<defaultValue>0</defaultValue>

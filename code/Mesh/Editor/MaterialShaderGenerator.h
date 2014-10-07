@@ -45,7 +45,8 @@ public:
 		db::Database* database,
 		const model::Material& material,
 		const Guid& materialTemplate,
-		const std::map< std::wstring, Guid >& textures
+		const std::map< std::wstring, Guid >& textures,
+		bool vertexColor
 	) const;
 	
 	void addDependencies(editor::IPipelineDepends* pipelineDepends);

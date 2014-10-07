@@ -73,6 +73,16 @@ private:
 	Guid m_vertexFragmentGuid;
 };
 
+bool haveVertexColors(const model::Model& model)
+{
+	for (uint32_t i = 0; i < model.getVertexCount(); ++i)
+	{
+		if (model.getVertex(i).getColor() != model::c_InvalidIndex)
+			return true;
+	}
+	return false;
+}
+
 Guid getVertexShaderGuid(MeshAsset::MeshType meshType)
 {
 	switch (meshType)
@@ -318,6 +328,7 @@ bool MeshPipeline::buildOutput(
 	MaterialShaderGenerator generator;
 
 	int32_t jointCount = models[0]->getJointCount();
+	bool vertexColor = haveVertexColors(*models[0]);
 
 	for (std::map< std::wstring, model::Material >::const_iterator i = materials.begin(); i != materials.end(); ++i)
 	{
@@ -351,7 +362,8 @@ bool MeshPipeline::buildOutput(
 				pipelineBuilder->getSourceDatabase(),
 				i->second,
 				materialTemplate,
-				materialTextures
+				materialTextures,
+				vertexColor
 			);
 			if (!materialShaderGraph)
 			{

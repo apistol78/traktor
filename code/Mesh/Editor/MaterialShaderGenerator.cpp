@@ -30,6 +30,7 @@ const Guid c_tplTransparencyParams(L"{052265E6-233C-754C-A297-9369803ADB88}");
 const Guid c_tplLightMapParams(L"{2449B257-5B2A-5242-86F9-32105E1F1771}");
 const Guid c_tplVertexParams(L"{AEBE83FB-68D4-9D45-A672-0A8487A197CD}");
 const Guid c_implDiffuseConst(L"{BA68E2CA-77EB-684E-AD2B-0CD4BC35608D}");
+const Guid c_implDiffuseVertex(L"{A3DC951A-8BAC-BF40-AFEC-6C47DAF2313F}");
 const Guid c_implDiffuseMap0(L"{EE7D62D6-B5A8-DC48-8328-A3513B998DD4}");
 const Guid c_implDiffuseMap1(L"{85794EB5-58ED-E843-AF20-A21558AC406C}");
 const Guid c_implEmissiveConst(L"{61A41113-D9F9-964A-9D90-B7A686058A26}");
@@ -101,7 +102,8 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 	db::Database* database,
 	const model::Material& material,
 	const Guid& materialTemplate,
-	const std::map< std::wstring, Guid >& textures
+	const std::map< std::wstring, Guid >& textures,
+	bool vertexColor
 ) const
 {
 	Guid templateGuid = materialTemplate;
@@ -131,7 +133,12 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 		if (fragmentGuid == c_tplDiffuseParams)
 		{
 			if (diffuseTexture.isNull())
-				(*i)->setFragmentGuid(c_implDiffuseConst);
+			{
+				if (!vertexColor)
+					(*i)->setFragmentGuid(c_implDiffuseConst);
+				else
+					(*i)->setFragmentGuid(c_implDiffuseVertex);
+			}
 			else
 				(*i)->setFragmentGuid(material.getDiffuseMap().channel == 0 ? c_implDiffuseMap0 : c_implDiffuseMap1);
 		}
@@ -332,6 +339,7 @@ void MaterialShaderGenerator::addDependencies(editor::IPipelineDepends* pipeline
 	pipelineDepends->addDependency(c_tplLightMapParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplVertexParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_implDiffuseConst, editor::PdfUse);
+	pipelineDepends->addDependency(c_implDiffuseVertex, editor::PdfUse);
 	pipelineDepends->addDependency(c_implDiffuseMap0, editor::PdfUse);
 	pipelineDepends->addDependency(c_implDiffuseMap1, editor::PdfUse);
 	pipelineDepends->addDependency(c_implEmissiveConst, editor::PdfUse);

@@ -4,8 +4,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>469</first>
-				<second>70</second>
+				<first>465</first>
+				<second>55</second>
 			</position>
 			<fragmentGuid>{4AC7418D-FF43-FE40-ADDC-33A162636FDC}</fragmentGuid>
 			<inputPins>
@@ -15,6 +15,10 @@
 				</item>
 				<item>
 					<name>T_TexCoord1</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>T_VertexColor</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
@@ -31,7 +35,7 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>431</first>
+				<first>432</first>
 				<second>147</second>
 			</position>
 			<fragmentGuid>{68DA66E7-1D9E-FD4C-9692-D947BEA3EBAD}</fragmentGuid>
@@ -58,8 +62,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>447</first>
-				<second>378</second>
+				<first>448</first>
+				<second>375</second>
 			</position>
 			<fragmentGuid>{77489017-FBE8-4A4F-B11A-FDE48C69E021}</fragmentGuid>
 			<inputPins>
@@ -143,8 +147,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>537</first>
-				<second>519</second>
+				<first>538</first>
+				<second>515</second>
 			</position>
 			<fragmentGuid>{57310F3A-FEB0-7644-B641-EC3876773470}</fragmentGuid>
 			<inputPins/>
@@ -161,8 +165,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>483</first>
-				<second>596</second>
+				<first>484</first>
+				<second>591</second>
 			</position>
 			<fragmentGuid>{859D3A98-EB16-0F4B-A766-34B6D65096AA}</fragmentGuid>
 			<inputPins>
@@ -245,8 +249,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>490</first>
-				<second>301</second>
+				<first>491</first>
+				<second>299</second>
 			</position>
 			<fragmentGuid>{1E35F0A7-23A9-EA49-A518-125A77BAD564}</fragmentGuid>
 			<inputPins>
@@ -269,8 +273,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>464</first>
-				<second>224</second>
+				<first>465</first>
+				<second>223</second>
 			</position>
 			<fragmentGuid>{052265E6-233C-754C-A297-9369803ADB88}</fragmentGuid>
 			<inputPins>
@@ -293,8 +297,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>482</first>
-				<second>673</second>
+				<first>483</first>
+				<second>667</second>
 			</position>
 			<fragmentGuid>{2449B257-5B2A-5242-86F9-32105E1F1771}</fragmentGuid>
 			<inputPins>
@@ -614,6 +618,16 @@
 			<destination>
 				<node ref="/object/nodes/item[6]"/>
 				<name>T_Irradiance</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>T_Color</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>T_VertexColor</name>
 			</destination>
 		</item>
 	</edges>

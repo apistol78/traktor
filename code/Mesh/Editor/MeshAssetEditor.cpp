@@ -52,6 +52,16 @@ struct FindMaterialPred
 	}
 };
 
+bool haveVertexColors(const model::Model& model)
+{
+	for (uint32_t i = 0; i < model.getVertexCount(); ++i)
+	{
+		if (model.getVertex(i).getColor() != model::c_InvalidIndex)
+			return true;
+	}
+	return false;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshAssetEditor", MeshAssetEditor, editor::IObjectEditor)
@@ -456,7 +466,8 @@ void MeshAssetEditor::createMaterialShader()
 		m_editor->getSourceDatabase(),
 		*it,
 		materialTemplate,
-		m_asset->getMaterialTextures()
+		m_asset->getMaterialTextures(),
+		haveVertexColors(*m_model)
 	);
 	if (materialShader)
 	{
