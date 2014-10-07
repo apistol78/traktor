@@ -608,7 +608,7 @@ bool FlashTagDefineBitsJpeg::read(SwfReader* swf, ReadContext& context)
 		T_ASSERT (image);
 
 		Ref< FlashBitmap > bitmap = new FlashBitmap();
-		if (!bitmap->create(image))
+		if (!bitmap->create(image, context.allowNPOT))
 			return false;
 
 		context.movie->defineBitmap(bitmapId, bitmap);
@@ -653,7 +653,7 @@ bool FlashTagDefineBitsJpeg::read(SwfReader* swf, ReadContext& context)
 		if (image)
 		{
 			Ref< FlashBitmap > bitmap = new FlashBitmap();
-			if (!bitmap->create(image))
+			if (!bitmap->create(image, context.allowNPOT))
 				return false;
 
 			context.movie->defineBitmap(bitmapId, bitmap);
@@ -718,7 +718,7 @@ bool FlashTagDefineBitsLossLess::read(SwfReader* swf, ReadContext& context)
 		}
 
 		Ref< FlashBitmap > bitmap = new FlashBitmap();
-		if (!bitmap->create(image))
+		if (!bitmap->create(image, context.allowNPOT))
 			return false;
 
 		context.movie->defineBitmap(bitmapId, bitmap);
@@ -786,7 +786,7 @@ bool FlashTagDefineBitsLossLess::read(SwfReader* swf, ReadContext& context)
 		}
 
 		Ref< FlashBitmap > bitmap = new FlashBitmap();
-		if (!bitmap->create(image))
+		if (!bitmap->create(image, context.allowNPOT))
 			return false;
 
 		context.movie->defineBitmap(bitmapId, bitmap);

@@ -23,13 +23,13 @@ FlashBitmap::FlashBitmap()
 {
 }
 
-FlashBitmap::FlashBitmap(drawing::Image* image)
+FlashBitmap::FlashBitmap(drawing::Image* image, bool allowNPOT)
 :	m_width(0)
 ,	m_height(0)
 ,	m_mips(0)
 ,	m_bits(0)
 {
-	create(image);
+	create(image, allowNPOT);
 }
 
 FlashBitmap::~FlashBitmap()
@@ -37,7 +37,7 @@ FlashBitmap::~FlashBitmap()
 	m_bits.release();
 }
 
-bool FlashBitmap::create(drawing::Image* image)
+bool FlashBitmap::create(drawing::Image* image, bool allowNPOT)
 {
 	bool hasAlpha = image->getPixelFormat().getAlphaBits() > 0;
 
@@ -78,11 +78,27 @@ bool FlashBitmap::create(drawing::Image* image)
 
 	m_width = image->getWidth();
 	m_height = image->getHeight();
+	m_mips = log2(std::max(m_width, m_height)) + 1;
 
-	if (isLog2(m_width) && isLog2(m_height))
-		m_mips = log2(std::max(m_width, m_height)) + 1;
-	else
-		m_mips = 1;
+	if (!isLog2(m_width) || !isLog2(m_height))
+	{
+		if (!allowNPOT)
+		{
+			m_width = nearestLog2(m_width);
+			m_height = nearestLog2(m_height);
+			m_mips = log2(std::max(m_width, m_height)) + 1;
+
+			drawing::ScaleFilter scaleFilter(
+				m_width,
+				m_height,
+				drawing::ScaleFilter::MnAverage,
+				drawing::ScaleFilter::MgLinear
+			);
+			clone->apply(&scaleFilter);
+		}
+		else
+			m_mips = 1;
+	}
 
 	uint32_t mipChainSize = 0;
 	for (uint32_t i = 0; i < m_mips; ++i)

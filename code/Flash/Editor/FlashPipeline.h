@@ -21,6 +21,8 @@ class T_DLLCLASS FlashPipeline : public editor::IPipeline
 	T_RTTI_CLASS;
 
 public:
+	FlashPipeline();
+
 	virtual bool create(const editor::IPipelineSettings* settings);
 
 	virtual void destroy();
@@ -55,6 +57,7 @@ public:
 
 private:
 	std::wstring m_assetPath;
+	bool m_allowNPOT;
 };
 
 	}
