@@ -1,5 +1,6 @@
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
@@ -43,11 +44,17 @@ const resource::Id< render::Shader > c_idShaderGlyphMask(Guid(L"{C8FEF24B-D775-A
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", 19, FlashPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", 20, FlashPipeline, editor::IPipeline)
+
+FlashPipeline::FlashPipeline()
+:	m_allowNPOT(true)
+{
+}
 
 bool FlashPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+	m_allowNPOT = settings->getProperty< PropertyBoolean >(L"FlashPipeline.AllowNPOT", true);
 	return true;
 }
 
@@ -127,7 +134,7 @@ bool FlashPipeline::buildOutput(
 	}
 
 	Ref< SwfReader > swf = new SwfReader(sourceStream);
-	Ref< FlashMovie > movie = flash::FlashMovieFactory().createMovie(swf);
+	Ref< FlashMovie > movie = flash::FlashMovieFactory(m_allowNPOT).createMovie(swf);
 	if (!movie)
 	{
 		log::error << L"Failed to import Flash; unable to parse SWF" << Endl;

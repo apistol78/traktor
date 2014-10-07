@@ -35,7 +35,7 @@ class T_DLLCLASS FlashBitmap : public ISerializable
 public:
 	FlashBitmap();
 
-	FlashBitmap(drawing::Image* image);
+	FlashBitmap(drawing::Image* image, bool allowNPOT);
 
 	virtual ~FlashBitmap();
 
@@ -44,7 +44,7 @@ public:
 	 * \param image Source image.
 	 * \return True if successfully created.
 	 */
-	bool create(drawing::Image* image);
+	bool create(drawing::Image* image, bool allowNPOT);
 
 	uint32_t getWidth() const { return m_width; }
 

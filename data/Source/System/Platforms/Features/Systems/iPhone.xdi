@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="4">
+<object type="traktor.amalgam.Feature" version="5">
 	<description>Apple iPhone</description>
 	<priority>0</priority>
 	<platforms>
 		<item>
 			<platform>{13FF3E12-076E-274E-B347-8F323ECD53A7}</platform>
+			<executableFile/>
 			<deployFiles/>
 		</item>
 	</platforms>
@@ -21,37 +22,25 @@
 				</second>
 			</item>
 			<item>
+				<first>FlashPipeline.AllowNPOT</first>
+				<second type="traktor.PropertyBoolean">
+					<value>false</value>
+				</second>
+			</item>
+			<item>
 				<first>Pipeline.Db</first>
 				<second type="traktor.PropertyString">
 					<value>fileName=temp/Pipeline.db</value>
 				</second>
 			</item>
 			<item>
-				<first>TexturePipeline.CompressionMethod</first>
-				<second type="traktor.PropertyString">
-					<value>PVRTC</value>
-				</second>
-			</item>
-			<item>
-				<first>TexturePipeline.CompressionQuality</first>
-				<second type="traktor.PropertyInteger">
-					<value>1</value>
-				</second>
-			</item>
-			<item>
-				<first>TexturePipeline.SkipMips</first>
-				<second type="traktor.PropertyInteger">
-					<value>2</value>
-				</second>
-			</item>
-			<item>
-				<first>ScenePipeline.SuppressLinearLighting</first>
+				<first>ScenePipeline.SuppressDepthPass</first>
 				<second type="traktor.PropertyBoolean">
 					<value>true</value>
 				</second>
 			</item>
 			<item>
-				<first>ScenePipeline.SuppressDepthPass</first>
+				<first>ScenePipeline.SuppressLinearLighting</first>
 				<second type="traktor.PropertyBoolean">
 					<value>true</value>
 				</second>
@@ -82,6 +71,24 @@
 							</second>
 						</item>
 					</value>
+				</second>
+			</item>
+			<item>
+				<first>TexturePipeline.CompressionMethod</first>
+				<second type="traktor.PropertyString">
+					<value>PVRTC</value>
+				</second>
+			</item>
+			<item>
+				<first>TexturePipeline.CompressionQuality</first>
+				<second type="traktor.PropertyInteger">
+					<value>1</value>
+				</second>
+			</item>
+			<item>
+				<first>TexturePipeline.SkipMips</first>
+				<second type="traktor.PropertyInteger">
+					<value>2</value>
 				</second>
 			</item>
 		</value>

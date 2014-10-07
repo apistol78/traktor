@@ -250,7 +250,7 @@ void AsMovieClip::MovieClip_attachBitmap_4(FlashSpriteInstance* self, const Bitm
 	T_ASSERT (dictionary);
 
 	// Define bitmap symbol.
-	uint16_t bitmapId = dictionary->addBitmap(new FlashBitmap(bmp->getImage()));
+	uint16_t bitmapId = dictionary->addBitmap(new FlashBitmap(bmp->getImage(), false));
 
 	// Create a quad shape.
 	Ref< FlashShape > shape = new FlashShape();

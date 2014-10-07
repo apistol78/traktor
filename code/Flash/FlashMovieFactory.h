@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_FLASH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -27,11 +27,12 @@ class FlashTag;
 class T_DLLCLASS FlashMovieFactory : public Object
 {
 public:
-	FlashMovieFactory();
+	FlashMovieFactory(bool allowNPOT);
 
 	Ref< FlashMovie > createMovie(SwfReader* swf);
 
 private:
+	bool m_allowNPOT;
 	std::map< uint16_t, Ref< FlashTag > > m_tagReaders;
 };
 

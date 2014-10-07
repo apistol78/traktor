@@ -16,7 +16,8 @@ namespace traktor
 	namespace flash
 	{
 
-FlashMovieFactory::FlashMovieFactory()
+FlashMovieFactory::FlashMovieFactory(bool allowNPOT)
+:	m_allowNPOT(allowNPOT)
 {
 	// Setup tag readers.
 	m_tagReaders[TiSetBackgroundColor] = new FlashTagSetBackgroundColor();
@@ -98,6 +99,7 @@ Ref< FlashMovie > FlashMovieFactory::createMovie(SwfReader* swf)
 	// Decode tags.
 	FlashTag::ReadContext context;
 	context.version = header->version;
+	context.allowNPOT = m_allowNPOT;
 	context.movie = movie;
 	context.sprite = movieClip;
 	context.frame = new FlashFrame();
