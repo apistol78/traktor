@@ -33,6 +33,7 @@ private:
 	Ref< ui::Edit > m_editTargetManagerPort;
 	Ref< ui::Edit > m_editCertificate;
 	Ref< ui::CheckBox > m_checkInheritCache;
+	Ref< ui::CheckBox > m_checkHidePipeline;
 	Ref< ui::CheckBox > m_checkUseDebugBinaries;
 };
 

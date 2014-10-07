@@ -309,12 +309,14 @@ void EditorPlugin::handleWorkspaceOpened()
 	std::wstring systemRoot = m_editor->getSettings()->getProperty< PropertyString >(L"Amalgam.SystemRoot", L"$(TRAKTOR_HOME)");
 	std::wstring systemOs = L"win32";
 
+	bool hidden = m_editor->getSettings()->getProperty< PropertyBoolean >(L"Amalgam.PipelineHidden", true);
+
 	m_pipelineSlaveProcess = OS::getInstance().execute(
 		systemRoot + L"/bin/latest/" + systemOs + L"/releaseshared/Traktor.Pipeline.App -slave",
 		L"",
 		0,
 		false,
-		false,
+		hidden,
 		false
 	);
 }

@@ -49,6 +49,8 @@
 #include "Xml/XmlDeserializer.h"
 
 #if defined(_WIN32)
+#	include <windows.h>
+#	include <tlhelp32.h>
 #	include "Pipeline/App/Win32/StackWalker.h"
 #endif
 
@@ -705,8 +707,41 @@ int slave(const CommandLine& cmdLine)
 		return 1;
 	}
 
+#if defined(_WIN32)
+
+	HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+	DWORD dwParentPID = 0;
+	
+	PROCESSENTRY32 pe = { 0 };
+	pe.dwSize = sizeof(PROCESSENTRY32);
+
+	if (Process32First(hSnapshot, &pe))
+	{
+		DWORD dwPID = GetCurrentProcessId();
+		do 
+		{
+			if (pe.th32ProcessID == dwPID)
+			{
+				dwParentPID = pe.th32ParentProcessID;
+				break;
+			}
+		}
+		while (Process32Next(hSnapshot, &pe));
+	}
+
+	CloseHandle(hSnapshot);
+
+	HANDLE hParentProcess = OpenProcess(SYNCHRONIZE | PROCESS_QUERY_INFORMATION, FALSE, dwParentPID);
+
+#endif
+
 	while (!g_receivedBreakSignal)
 	{
+#if defined(_WIN32)
+		if (hParentProcess != NULL && WaitForSingleObject(hParentProcess, 0) == WAIT_OBJECT_0)
+			break;
+#endif
+
 		updateDatabases();
 
 		if (socket.select(true, false, false, 250) <= 0)
@@ -743,6 +778,10 @@ int slave(const CommandLine& cmdLine)
 		transport->close();
 		transport = 0;
 	}
+
+#if defined(_WIN32)
+	CloseHandle(hParentProcess);
+#endif
 
 	traktor::log::info << L"Bye" << Endl;
 	return 0;
