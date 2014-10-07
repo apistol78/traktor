@@ -18,6 +18,8 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashBitmap", 0, FlashBitmap, ISe
 FlashBitmap::FlashBitmap()
 :	m_width(0)
 ,	m_height(0)
+,	m_dataWidth(0)
+,	m_dataHeight(0)
 ,	m_mips(0)
 ,	m_bits(0)
 {
@@ -26,6 +28,8 @@ FlashBitmap::FlashBitmap()
 FlashBitmap::FlashBitmap(drawing::Image* image, bool allowNPOT)
 :	m_width(0)
 ,	m_height(0)
+,	m_dataWidth(0)
+,	m_dataHeight(0)
 ,	m_mips(0)
 ,	m_bits(0)
 {
@@ -78,23 +82,19 @@ bool FlashBitmap::create(drawing::Image* image, bool allowNPOT)
 
 	m_width = image->getWidth();
 	m_height = image->getHeight();
+
+	m_dataWidth = m_width;
+	m_dataHeight = m_height;
+
 	m_mips = log2(std::max(m_width, m_height)) + 1;
 
 	if (!isLog2(m_width) || !isLog2(m_height))
 	{
 		if (!allowNPOT)
 		{
-			m_width = nearestLog2(m_width);
-			m_height = nearestLog2(m_height);
-			m_mips = log2(std::max(m_width, m_height)) + 1;
-
-			drawing::ScaleFilter scaleFilter(
-				m_width,
-				m_height,
-				drawing::ScaleFilter::MnAverage,
-				drawing::ScaleFilter::MgLinear
-			);
-			clone->apply(&scaleFilter);
+			m_dataWidth = nearestLog2(m_width);
+			m_dataHeight = nearestLog2(m_height);
+			m_mips = log2(std::max(m_dataWidth, m_dataHeight)) + 1;
 		}
 		else
 			m_mips = 1;
@@ -103,8 +103,8 @@ bool FlashBitmap::create(drawing::Image* image, bool allowNPOT)
 	uint32_t mipChainSize = 0;
 	for (uint32_t i = 0; i < m_mips; ++i)
 	{
-		uint32_t mipWidth = std::max< uint32_t >(m_width >> i, 1);
-		uint32_t mipHeight = std::max< uint32_t >(m_height >> i, 1);
+		uint32_t mipWidth = std::max< uint32_t >(m_dataWidth >> i, 1);
+		uint32_t mipHeight = std::max< uint32_t >(m_dataHeight >> i, 1);
 		mipChainSize += mipWidth * mipHeight;
 	}
 
@@ -115,15 +115,12 @@ bool FlashBitmap::create(drawing::Image* image, bool allowNPOT)
 
 	for (uint32_t i = 0; i < m_mips; ++i)
 	{
-		uint32_t mipWidth = std::max< uint32_t >(m_width >> i, 1);
-		uint32_t mipHeight = std::max< uint32_t >(m_height >> i, 1);
+		uint32_t mipWidth = std::max< uint32_t >(m_dataWidth >> i, 1);
+		uint32_t mipHeight = std::max< uint32_t >(m_dataHeight >> i, 1);
 
-		if (i > 0)
-		{
-			drawing::ScaleFilter scaleFilter(mipWidth, mipHeight, drawing::ScaleFilter::MnAverage, drawing::ScaleFilter::MgLinear);
-			clone = clone->clone();
-			clone->apply(&scaleFilter);
-		}
+		drawing::ScaleFilter scaleFilter(mipWidth, mipHeight, drawing::ScaleFilter::MnAverage, drawing::ScaleFilter::MgLinear);
+		clone = clone->clone();
+		clone->apply(&scaleFilter);
 
 		std::memcpy(
 			bits,
@@ -147,13 +144,15 @@ void FlashBitmap::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"width", m_width);
 	s >> Member< uint32_t >(L"height", m_height);
+	s >> Member< uint32_t >(L"dataWidth", m_dataWidth);
+	s >> Member< uint32_t >(L"dataHeight", m_dataHeight);
 	s >> Member< uint32_t >(L"mips", m_mips);
 
 	uint32_t mipChainSize = 0;
 	for (uint32_t i = 0; i < m_mips; ++i)
 	{
-		uint32_t mipWidth = std::max< uint32_t >(m_width >> i, 1);
-		uint32_t mipHeight = std::max< uint32_t >(m_height >> i, 1);
+		uint32_t mipWidth = std::max< uint32_t >(m_dataWidth >> i, 1);
+		uint32_t mipHeight = std::max< uint32_t >(m_dataHeight >> i, 1);
 		mipChainSize += mipWidth * mipHeight;
 	}
 
