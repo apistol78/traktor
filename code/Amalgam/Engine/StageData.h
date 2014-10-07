@@ -67,7 +67,7 @@ public:
 
 	const resource::Id< render::Shader >& getShaderFade() const { return m_shaderFade; }
 
-	void setFadeRate(float fadeRate) { m_fadeRate; }
+	void setFadeRate(float fadeRate) { m_fadeRate = fadeRate; }
 
 	float getFadeRate() const { return m_fadeRate; }
 

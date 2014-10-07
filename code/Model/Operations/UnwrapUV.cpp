@@ -39,9 +39,11 @@ bool UnwrapUV::apply(Model& model) const
 	{
 		const Polygon& polygon = originalPolygons[i];
 
-		Winding3 w;
-
 		const std::vector< uint32_t >& vertexIds = polygon.getVertices();
+		if (vertexIds.size() < 3)
+			return false;
+
+		Winding3 w;
 		for (uint32_t j = 0; j < vertexIds.size(); ++j)
 		{
 			const Vector4& position = model.getVertexPosition(vertexIds[j]);

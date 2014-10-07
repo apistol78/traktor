@@ -78,7 +78,6 @@ public:
 
 private:
 	points_t m_points;
-	Plane m_plane;
 };
 
 }

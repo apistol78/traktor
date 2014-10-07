@@ -36,6 +36,28 @@ public:
 		virtual void notify(Event* event) = 0;
 	};
 
+	template < typename EventType >
+	class FunctionEventHandler : public RefCountImpl< IEventHandler >
+	{
+	public:
+		typedef void (*function_t)(EventType*);
+
+		FunctionEventHandler(function_t fn)
+		:	m_fn(fn)
+		{
+		}
+
+		virtual void notify(Event* event)
+		{
+			(*m_fn)(
+				checked_type_cast< EventType*, false >(event)
+			);
+		}
+
+	private:
+		function_t m_fn;
+	};
+
 	template < typename ClassType, typename EventType >
 	class MethodEventHandler : public RefCountImpl< IEventHandler >
 	{
@@ -72,6 +94,14 @@ public:
 	IEventHandler* addEventHandler(ClassType* target, typename MethodEventHandler< ClassType, EventType >::method_t method)
 	{
 		Ref< IEventHandler > eventHandler = new MethodEventHandler< ClassType, EventType >(target, method);
+		addEventHandler(type_of< EventType >(), eventHandler);
+		return eventHandler;
+	}
+
+	template < typename EventType >
+	IEventHandler* addEventHandler(typename FunctionEventHandler< EventType >::function_t fn)
+	{
+		Ref< IEventHandler > eventHandler = new FunctionEventHandler< EventType >(fn);
 		addEventHandler(type_of< EventType >(), eventHandler);
 		return eventHandler;
 	}

@@ -46,7 +46,7 @@ void DilateFilter::apply(Image* image) const
 						{
 							if (tmp.getAlpha() > FUZZY_EPSILON)
 							{
-								acc = Color4f(max((const Vector4&)acc, (const Vector4&)tmp));
+								acc += tmp;
 								cnt++;
 							}
 						}
@@ -55,7 +55,7 @@ void DilateFilter::apply(Image* image) const
 
 				if (cnt > 0)
 				{
-					//acc /= Scalar(float(cnt));
+					acc /= Scalar(float(cnt));
 					acc.setAlpha(Scalar(1.0f));
 					final->setPixelUnsafe(x, y, acc);
 				}

@@ -101,6 +101,7 @@ void DiscoveryManager::destroy()
 
 void DiscoveryManager::addService(IService* service)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_localServicesLock);
 	LocalService ls;
 	ls.serviceGuid = Guid::create();
 	ls.service = service;
@@ -109,6 +110,21 @@ void DiscoveryManager::addService(IService* service)
 
 void DiscoveryManager::removeService(IService* service)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_localServicesLock);
+	for (std::list< LocalService >::iterator i = m_localServices.begin(); i != m_localServices.end(); ++i)
+	{
+		if (i->service == service)
+		{
+			m_localServices.erase(i);
+			break;
+		}
+	}
+}
+
+void DiscoveryManager::removeAllServices()
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_localServicesLock);
+	m_localServices.clear();
 }
 
 bool DiscoveryManager::findServices(const TypeInfo& serviceType, RefArray< IService >& outServices)
@@ -175,13 +191,16 @@ void DiscoveryManager::threadMulticastListener()
 			if ((m_mode & MdVerbose) != 0)
 				log::info << L"Discovery manager: Got \"find services\" request from " << fromAddress << Endl;
 
-			for (std::list< LocalService >::const_iterator i = m_localServices.begin(); i != m_localServices.end(); ++i)
 			{
-				DmServiceInfo serviceInfo(requestingManagerGuid, i->serviceGuid, i->service);
-				if (!sendMessage(m_multicastSendSocket, address, &serviceInfo))
-					log::error << L"Unable to reply service to requesting manager" << Endl;
-				else if ((m_mode & MdVerbose) != 0)
-					log::info << L"Discovery manager: Reply sent to " << address << Endl;
+				T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_localServicesLock);
+				for (std::list< LocalService >::const_iterator i = m_localServices.begin(); i != m_localServices.end(); ++i)
+				{
+					DmServiceInfo serviceInfo(requestingManagerGuid, i->serviceGuid, i->service);
+					if (!sendMessage(m_multicastSendSocket, address, &serviceInfo))
+						log::error << L"Unable to reply service to requesting manager" << Endl;
+					else if ((m_mode & MdVerbose) != 0)
+						log::info << L"Discovery manager: Reply sent to " << address << Endl;
+				}
 			}
 		}
 		else if (DmServiceInfo* serviceInfo = dynamic_type_cast< DmServiceInfo* >(message))
