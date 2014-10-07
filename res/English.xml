@@ -469,6 +469,10 @@
       <second>Source database</second>
     </item>
     <item>
+    	<first>EDITOR_SETTINGS_SYSTEM_ROOT</first>
+    	<second>System root</second>
+    </item>
+    <item>
       <first>EDITOR_SETTINGS_OUTPUT_DATABASE</first>
       <second>Output database</second>
     </item>
