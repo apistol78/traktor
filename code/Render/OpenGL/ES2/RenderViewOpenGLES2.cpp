@@ -275,6 +275,9 @@ bool RenderViewOpenGLES2::begin(EyeType eye)
 		m_viewport.farZ
 	));
 
+	m_drawCalls = 0;
+	m_primitiveCount = 0;
+
 	return true;
 }
 
@@ -475,6 +478,9 @@ void RenderViewOpenGLES2::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuf
 			vertexCount
 		));
 	}
+
+	m_drawCalls++;
+	m_primitiveCount += primitives.count;
 }
 
 void RenderViewOpenGLES2::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
@@ -656,6 +662,9 @@ void RenderViewOpenGLES2::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuf
 	}
 
 #endif
+
+	m_drawCalls++;
+	m_primitiveCount += primitives.count * instanceCount;
 }
 
 void RenderViewOpenGLES2::end()
@@ -741,6 +750,8 @@ void RenderViewOpenGLES2::popMarker()
 
 void RenderViewOpenGLES2::getStatistics(RenderViewStatistics& outStatistics) const
 {
+	outStatistics.drawCalls = m_drawCalls;
+	outStatistics.primitiveCount = m_primitiveCount;
 }
 
 bool RenderViewOpenGLES2::getBackBufferContent(void* buffer) const

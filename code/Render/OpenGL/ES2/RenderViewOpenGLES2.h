@@ -114,6 +114,8 @@ private:
 	bool m_landscape;
 	bool m_cursorVisible;
 	std::list< RenderEvent > m_eventQueue;
+	uint32_t m_drawCalls;
+	uint32_t m_primitiveCount;
 
 #if defined(_WIN32)
 	bool windowListenerEvent(Window* window, UINT message, WPARAM wParam, LPARAM lParam, LRESULT& outResult);
