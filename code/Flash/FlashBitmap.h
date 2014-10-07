@@ -50,6 +50,10 @@ public:
 
 	uint32_t getHeight() const { return m_height; }
 
+	uint32_t getDataWidth() const { return m_dataWidth; }
+
+	uint32_t getDataHeight() const { return m_dataHeight; }
+
 	uint32_t getMips() const { return m_mips; }
 
 	const SwfColor* getBits() const { return m_bits.c_ptr(); }
@@ -59,6 +63,8 @@ public:
 private:
 	uint32_t m_width;
 	uint32_t m_height;
+	uint32_t m_dataWidth;
+	uint32_t m_dataHeight;
 	uint32_t m_mips;
 	AutoArrayPtr< SwfColor > m_bits;
 };

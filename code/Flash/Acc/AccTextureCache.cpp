@@ -161,8 +161,8 @@ Ref< render::ITexture > AccTextureCache::getBitmapTexture(const FlashBitmap& bit
 
 	render::SimpleTextureCreateDesc desc;
 
-	desc.width = bitmap.getWidth();
-	desc.height = bitmap.getHeight();
+	desc.width = bitmap.getDataWidth();
+	desc.height = bitmap.getDataHeight();
 	desc.mipCount = bitmap.getMips();
 	desc.format = render::TfR8G8B8A8;
 	desc.immutable = true;
@@ -170,8 +170,8 @@ Ref< render::ITexture > AccTextureCache::getBitmapTexture(const FlashBitmap& bit
 	uint32_t mipOffset = 0;
 	for (uint32_t i = 0; i < bitmap.getMips(); ++i)
 	{
-		uint32_t mipWidth = std::max< uint32_t >(bitmap.getWidth() >> i, 1);
-		uint32_t mipHeight = std::max< uint32_t >(bitmap.getHeight() >> i, 1);
+		uint32_t mipWidth = std::max< uint32_t >(bitmap.getDataWidth() >> i, 1);
+		uint32_t mipHeight = std::max< uint32_t >(bitmap.getDataHeight() >> i, 1);
 
 		desc.initialData[i].data = bitmap.getBits() + mipOffset;
 		desc.initialData[i].pitch = mipWidth * 4;
