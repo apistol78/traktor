@@ -78,9 +78,13 @@ public:
 
 	void defineTexture(const std::wstring& texture);
 
+	bool defineUniform(const std::wstring& name, GLenum type, GLuint length);
+
 	bool defineSampler(uint32_t stateHash, GLenum target, const std::wstring& texture, int32_t& outStage);
 
 	const std::vector< std::wstring >& getTextures() const;
+
+	const std::vector< NamedUniformType >& getUniforms() const;
 
 	const std::vector< SamplerBindingOpenGL >& getSamplers() const;
 
@@ -97,6 +101,7 @@ private:
 	bool m_requireTranspose;
 	std::vector< uint8_t > m_interpolatorMap;
 	std::vector< std::wstring > m_textures;
+	std::vector< NamedUniformType > m_uniforms;
 	std::vector< SamplerBindingOpenGL > m_samplers;
 	std::vector< uint32_t > m_samplerStateHashes;
 };

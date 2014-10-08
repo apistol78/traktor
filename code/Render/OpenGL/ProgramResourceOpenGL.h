@@ -23,6 +23,7 @@ public:
 		const std::string& vertexShader,
 		const std::string& fragmentShader,
 		const std::vector< std::wstring >& textures,
+		const std::vector< NamedUniformType >& uniforms,
 		const std::vector< SamplerBindingOpenGL >& samplers,
 		const RenderStateOpenGL& renderState
 	);
@@ -32,6 +33,8 @@ public:
 	const std::string& getFragmentShader() const { return m_fragmentShader; }
 
 	const std::vector< std::wstring >& getTextures() const { return m_textures; }
+
+	const std::vector< NamedUniformType >& getUniforms() const { return m_uniforms; }
 
 	const std::vector< SamplerBindingOpenGL >& getSamplers() const { return m_samplers; }
 
@@ -47,6 +50,7 @@ private:
 	std::string m_vertexShader;
 	std::string m_fragmentShader;
 	std::vector< std::wstring > m_textures;
+	std::vector< NamedUniformType > m_uniforms;
 	std::vector< SamplerBindingOpenGL > m_samplers;
 	RenderStateOpenGL m_renderState;
 	uint32_t m_hash;

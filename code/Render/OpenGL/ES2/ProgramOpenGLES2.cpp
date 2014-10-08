@@ -115,6 +115,7 @@ Ref< ProgramResource > ProgramOpenGLES2::compile(const GlslProgram& glslProgram,
 		wstombs(glslProgram.getVertexShader()),
 		wstombs(glslProgram.getFragmentShader()),
 		glslProgram.getTextures(),
+		glslProgram.getUniforms(),
 		glslProgram.getSamplers(),
 		glslProgram.getRenderState()
 	);
@@ -422,84 +423,51 @@ ProgramOpenGLES2::ProgramOpenGLES2(ContextOpenGLES2* resourceContext, GLuint pro
 		m_samplers.push_back(sampler);
 	}
 
-	// Map samplers and uniforms.
-	GLint uniformCount;
-	T_OGL_SAFE(glGetProgramiv(m_program, GL_ACTIVE_UNIFORMS, &uniformCount));
-
-	for (GLint j = 0; j < uniformCount; ++j)
+	const std::vector< NamedUniformType >& uniforms = resourceOpenGL->getUniforms();
+	for (uint32_t i = 0; i < uint32_t(uniforms.size()); ++i)
 	{
-		GLint uniformSize;
-		GLenum uniformType;
-		char uniformName[256];
+		handle_t handle = getParameterHandle(uniforms[i].name);
+		T_FATAL_ASSERT_M (m_parameterMap.find(handle) == m_parameterMap.end(), L"Duplicated uniform in resource");
 
-		T_OGL_SAFE(glGetActiveUniform(m_program, j, sizeof(uniformName), 0, &uniformSize, &uniformType, uniformName));
-		std::wstring uniformNameW = mbstows(uniformName);
-		
-		// Skip uniforms which starts with _gl_ as they are private.
-		if (startsWith< std::wstring >(uniformNameW, L"_gl_"))
-			continue;
+		std::string uniformName = wstombs(uniforms[i].name);
 
-		// Trim indexed uniforms; seems to vary dependending on OGL implementation.
-		size_t p = uniformNameW.find('[');
-		if (p != uniformNameW.npos)
-			uniformNameW = uniformNameW.substr(0, p);
+		GLint location = glGetUniformLocation(m_program, uniformName.c_str());
+		T_FATAL_ASSERT_M (location >= 0, L"Invalid uniform location");
 
-		if (uniformType != GL_SAMPLER_2D)
+		uint32_t offsetUniform = uint32_t(m_uniforms.size());
+		uint32_t offsetData = uint32_t(m_uniformData.size());
+		uint32_t allocSize = 0;
+
+		switch (uniforms[i].type)
 		{
-			handle_t handle = getParameterHandle(uniformNameW);
-			if (m_parameterMap.find(handle) != m_parameterMap.end())
-				continue;
+		case GL_FLOAT:
+			allocSize = alignUp(1 * uniforms[i].length, 4);
+			break;
 
-			uint32_t allocSize = 0;
-			switch (uniformType)
-			{
-			case GL_FLOAT:
-				allocSize = alignUp(1 * uniformSize, 4);
-				break;
+		case GL_FLOAT_VEC4:
+			allocSize = 4 * uniforms[i].length;
+			break;
 
-			case GL_FLOAT_VEC4:
-				allocSize = 4 * uniformSize;
-				break;
+		case GL_FLOAT_MAT4:
+			allocSize = 16 * uniforms[i].length;
+			break;
 
-			case GL_FLOAT_MAT4:
-				allocSize = 16 * uniformSize;
-				break;
-
-			default:
-				log::error << L"Invalid uniform type " << uint32_t(uniformType) << Endl;
-				break;
-			}
-
-			uint32_t offsetUniform = uint32_t(m_uniforms.size());
-			uint32_t offsetData = uint32_t(m_uniformData.size());
-			
-			m_parameterMap[handle] = offsetUniform;
-
-			m_uniforms.push_back(Uniform());
-			m_uniforms.back().location = glGetUniformLocation(m_program, uniformName);
-			m_uniforms.back().type = uniformType;
-			m_uniforms.back().offset = offsetData;
-			m_uniforms.back().length = uniformSize;
-			m_uniforms.back().dirty = true;
-
-			m_uniformData.resize(offsetData + allocSize, 0.0f);
+		default:
+			T_FATAL_ERROR;
+			break;
 		}
-	}
 
-	/*
-	for (int j = 0; j < sizeof_array(m_attributeLocs); ++j)
-		m_attributeLocs[j] = -1;
+		m_parameterMap[handle] = offsetUniform;
 
-	for (int j = 0; j < T_OGL_MAX_INDEX; ++j)
-	{
-		m_attributeLocs[T_OGL_USAGE_INDEX(DuPosition, j)] = glGetAttribLocation(m_program, wstombs(glsl_vertex_attr_name(DuPosition, j)).c_str());
-		m_attributeLocs[T_OGL_USAGE_INDEX(DuNormal, j)] = glGetAttribLocation(m_program, wstombs(glsl_vertex_attr_name(DuNormal, j)).c_str());
-		m_attributeLocs[T_OGL_USAGE_INDEX(DuTangent, j)] = glGetAttribLocation(m_program, wstombs(glsl_vertex_attr_name(DuTangent, j)).c_str());
-		m_attributeLocs[T_OGL_USAGE_INDEX(DuBinormal, j)] = glGetAttribLocation(m_program, wstombs(glsl_vertex_attr_name(DuBinormal, j)).c_str());
-		m_attributeLocs[T_OGL_USAGE_INDEX(DuColor, j)] = glGetAttribLocation(m_program, wstombs(glsl_vertex_attr_name(DuColor, j)).c_str());
-		m_attributeLocs[T_OGL_USAGE_INDEX(DuCustom, j)] = glGetAttribLocation(m_program, wstombs(glsl_vertex_attr_name(DuCustom, j)).c_str());
+		m_uniforms.push_back(Uniform());
+		m_uniforms.back().location = location;
+		m_uniforms.back().type = uniforms[i].type;
+		m_uniforms.back().offset = offsetData;
+		m_uniforms.back().length = uniforms[i].length;
+		m_uniforms.back().dirty = true;
+
+		m_uniformData.resize(offsetData + allocSize, 0.0f);
 	}
-	*/
 
 	// Create a display list from the render states.
 	m_renderState = resourceOpenGL->getRenderState();
