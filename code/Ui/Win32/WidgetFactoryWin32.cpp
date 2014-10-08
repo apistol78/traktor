@@ -161,7 +161,11 @@ IUserWidget* WidgetFactoryWin32::createUserWidget(EventSubject* owner)
 
 IWebBrowser* WidgetFactoryWin32::createWebBrowser(EventSubject* owner)
 {
+#if !defined(WINCE)
 	return new WebBrowserWin32(owner);
+#else
+	return 0;
+#endif
 }
 
 INative* WidgetFactoryWin32::createNative(EventSubject* owner)

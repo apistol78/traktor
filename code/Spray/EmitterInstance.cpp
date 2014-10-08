@@ -383,11 +383,11 @@ void EmitterInstance::updateTask(float deltaTime)
 		m_skip < 4
 	)
 	{
-#if defined(_WIN32)
+#if defined(_WIN32) && !defined(WINCE)
 		qsort_s(m_renderPoints.ptr(), m_renderPoints.size(), sizeof(Point), pointPredicate, &m_sortPlane);
 #elif defined(__LINUX__)
 		qsort_r(m_renderPoints.ptr(), m_renderPoints.size(), sizeof(Point), pointPredicate, &m_sortPlane);
-#elif !defined(__EMSCRIPTEN__) && !defined(__PNACL__) && !defined(__ANDROID__)
+#elif !defined(__EMSCRIPTEN__) && !defined(__PNACL__) && !defined(__ANDROID__) && !defined(WINCE)
 		qsort_r(m_renderPoints.ptr(), m_renderPoints.size(), sizeof(Point), &m_sortPlane, &pointPredicate);
 #endif
 	}

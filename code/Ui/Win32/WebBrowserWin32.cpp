@@ -1,3 +1,5 @@
+#if !defined(WINCE)
+
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
@@ -572,3 +574,5 @@ LRESULT WebBrowserWin32::eventSize(HWND hWnd, UINT message, WPARAM wParam, LPARA
 
 	}
 }
+
+#endif

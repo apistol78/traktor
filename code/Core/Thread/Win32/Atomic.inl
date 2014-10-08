@@ -65,7 +65,7 @@ int32_t Atomic::compareAndSwap(int32_t& value, int32_t compareTo, int32_t replac
 #if !defined(WINCE)
 	return _InterlockedCompareExchange((long volatile*)&value, replaceWithIfEqual, compareTo);
 #else
-	return InterlockedCompareExchange((long volatile*)&value, replaceWithIfEqual, compareTo);
+	return InterlockedCompareExchange((LPLONG)&value, replaceWithIfEqual, compareTo);
 #endif
 }
 

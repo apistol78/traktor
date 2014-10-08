@@ -1,6 +1,8 @@
 #ifndef traktor_ui_WebBrowserWin32_H
 #define traktor_ui_WebBrowserWin32_H
 
+#if !defined(WINCE)
+
 #include <exdisp.h>
 #include "Core/Misc/ComRef.h"
 #include "Ui/Itf/IWebBrowser.h"
@@ -41,5 +43,7 @@ private:
 
 	}
 }
+
+#endif
 
 #endif	// traktor_ui_WebBrowserWin32_H
