@@ -49,7 +49,8 @@ private:
 	render::handle_t m_handleCxFormMul;
 	render::handle_t m_handleCxFormAdd;
 	render::handle_t m_handleTexture;
-	render::handle_t m_handleTextureMatrix;
+	render::handle_t m_handleTextureMatrix0;
+	render::handle_t m_handleTextureMatrix1;
 	render::handle_t m_handleTextureClamp;
 	render::handle_t m_handleCurveSign;
 };

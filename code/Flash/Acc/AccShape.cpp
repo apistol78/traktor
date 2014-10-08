@@ -442,11 +442,11 @@ void AccShape::render(
 			{
 				if (shaderTextured[i] && shaderTextured[i]->getCurrentProgram())
 				{
-					Matrix44 textureMatrix(
-						j->textureMatrix.e11, j->textureMatrix.e12, j->textureMatrix.e13, 0.0f,
-						j->textureMatrix.e21, j->textureMatrix.e22, j->textureMatrix.e23, 0.0f,
-						j->textureMatrix.e31, j->textureMatrix.e32, j->textureMatrix.e33, 0.0f,
-						0.0f, 0.0f, 0.0, 0.0f
+					Vector4 textureMatrix0(
+						j->textureMatrix.e11, j->textureMatrix.e12, j->textureMatrix.e13, j->textureMatrix.e23
+					);
+					Vector4 textureMatrix1(
+						j->textureMatrix.e21, j->textureMatrix.e22, 0.0f, 0.0f
 					);
 
 					render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >("Flash AccShape; draw textured batch");
@@ -458,7 +458,8 @@ void AccShape::render(
 					renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 					renderBlock->programParams->beginParameters(renderContext);
 					renderBlock->programParams->setTextureParameter(m_shapeResources->m_handleTexture, j->texture);
-					renderBlock->programParams->setMatrixParameter(m_shapeResources->m_handleTextureMatrix, textureMatrix);
+					renderBlock->programParams->setVectorParameter(m_shapeResources->m_handleTextureMatrix0, textureMatrix0);
+					renderBlock->programParams->setVectorParameter(m_shapeResources->m_handleTextureMatrix1, textureMatrix1);
 					renderBlock->programParams->setFloatParameter(m_shapeResources->m_handleTextureClamp, j->textureClamp ? 1.0f : 0.0f);
 					renderBlock->programParams->endParameters(renderContext);
 					renderContext->draw(render::RpOverlay, renderBlock);
