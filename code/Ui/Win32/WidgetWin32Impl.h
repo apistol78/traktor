@@ -584,7 +584,7 @@ protected:
 	LRESULT eventButtonDown(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
 #if defined(WINCE)
-		if (message == WM_LBUTTONDOWN && m_owner->hasEventHandler(EiButtonDown))
+		if (message == WM_LBUTTONDOWN && m_owner->hasEventHandler< MouseButtonDownEvent >())
 		{
 			SHRGINFO shrg;
 			memset(&shrg, 0, sizeof(shrg));

@@ -1,4 +1,6 @@
-#include <process.h>
+#if !defined(WINCE)
+#	include <process.h>
+#endif
 #include "Core/Platform.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Functor/Functor.h"
@@ -38,6 +40,10 @@ Thread::Thread(Functor* functor, const std::wstring& name, int32_t hardwareCore)
 
 Thread::~Thread()
 {
+#if defined(WINCE)
+	if (m_handle)
+		CloseHandle(m_handle);
+#endif
 }
 
 bool Thread::start(Priority priority)
@@ -45,6 +51,7 @@ bool Thread::start(Priority priority)
 	if (m_handle)
 		return false;
 
+#if !defined(WINCE)
 	m_handle = (void*)_beginthreadex(
 		0,
 		0,
@@ -53,6 +60,16 @@ bool Thread::start(Priority priority)
 		CREATE_SUSPENDED,
 		&m_id
 	);
+#else
+	m_handle = CreateThread(
+		NULL,
+		0,
+		(LPTHREAD_START_ROUTINE)threadProc,
+		(LPVOID)m_functor,
+		CREATE_SUSPENDED,
+		(LPDWORD)&m_id
+	);
+#endif
 	if (!m_handle)
 		return false;
 

@@ -517,6 +517,7 @@ Ref< ISharedMemory > OS::createSharedMemory(const std::wstring& name, uint32_t s
 bool OS::setOwnProcessPriorityBias(int32_t priorityBias)
 {
 	bool result = false;
+#if !defined(WINCE)
 	switch (priorityBias)
 	{
 	case -1:
@@ -531,6 +532,7 @@ bool OS::setOwnProcessPriorityBias(int32_t priorityBias)
 	default:
 		break;
 	}
+#endif
 	return result;
 }
 

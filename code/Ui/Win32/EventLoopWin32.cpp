@@ -29,7 +29,9 @@ EventLoopWin32::EventLoopWin32()
 	g_hInstance = (HINSTANCE)GetModuleHandle(NULL);
 #endif
 
+#if !defined(WINCE)
 	OleInitialize(NULL);
+#endif
 
 #if defined(WINCE)
 	SHInitExtraControls();
@@ -64,7 +66,9 @@ EventLoopWin32::~EventLoopWin32()
 	CanvasDirect2DWin32::shutdown();
 #endif
 
+#if !defined(WINCE)
 	OleUninitialize();
+#endif
 }
 
 bool EventLoopWin32::process(EventSubject* owner)
