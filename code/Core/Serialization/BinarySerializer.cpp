@@ -237,7 +237,7 @@ bool read_string(const Ref< IStream >& stream, uint32_t u8len, std::wstring& out
 
 bool read_string(const Ref< IStream >& stream, std::wstring& outString)
 {
-	uint32_t u8len;
+    uint32_t u8len = 0;
 
 	if (!read_primitive< uint32_t >(stream, u8len))
 		return false;

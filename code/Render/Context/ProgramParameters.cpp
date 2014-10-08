@@ -25,14 +25,14 @@ inline void write(uint8_t*& writePtr, const Type& value)
 }
 
 template < >
-inline void write< const Vector4& >(uint8_t*& writePtr, const Vector4& value)
+inline void write< Vector4 >(uint8_t*& writePtr, const Vector4& value)
 {
 	value.storeAligned(reinterpret_cast< float* >(writePtr));
 	writePtr += sizeof(Vector4);
 }
 
 template < >
-inline void write< const Matrix44& >(uint8_t*& writePtr, const Matrix44& value)
+inline void write< Matrix44 >(uint8_t*& writePtr, const Matrix44& value)
 {
 	value.storeAligned(reinterpret_cast< float* >(writePtr));
 	writePtr += sizeof(Matrix44);

@@ -43,7 +43,7 @@ bool storeIfNotEqual(const float* source, int length, float* dest)
 {
 	for (int i = 0; i < length; ++i)
 	{
-		if (dest[i] != source[i])
+		//if (dest[i] != source[i])
 		{
 			for (; i < length; ++i)
 				dest[i] = source[i];
@@ -57,7 +57,7 @@ bool storeIfNotEqual(const Vector4* source, int length, float* dest)
 {
 	for (int i = 0; i < length; ++i)
 	{
-		if (Vector4::loadAligned(&dest[i * 4]) != source[i])
+		//if (Vector4::loadAligned(&dest[i * 4]) != source[i])
 		{
 			for (; i < length; ++i)
 				source[i].storeAligned(&dest[i * 4]);
@@ -71,7 +71,7 @@ bool storeIfNotEqual(const Matrix44* source, int length, float* dest)
 {
 	for (int i = 0; i < length; ++i)
 	{
-		if (Matrix44::loadAligned(&dest[i * 4 * 4]) != source[i])
+		//if (Matrix44::loadAligned(&dest[i * 4 * 4]) != source[i])
 		{
 			for (; i < length; ++i)
 				source[i].storeAligned(&dest[i * 4 * 4]);
@@ -287,10 +287,8 @@ bool ProgramOpenGLES2::activate(StateCache* stateCache, float targetSize[2], flo
 	// Update dirty uniforms.
 	for (std::vector< Uniform >::iterator i = m_uniforms.begin(); i != m_uniforms.end(); ++i)
 	{
-#	if !defined(_WIN32)	// Somehow it's necessary to set uniforms each call in "Angle" wrapper.
-		if (!i->dirty)
-			continue;
-#endif
+//		if (!i->dirty)
+//			continue;
 			
 		const float* uniformData = &m_uniformData[i->offset];
 		switch (i->type)

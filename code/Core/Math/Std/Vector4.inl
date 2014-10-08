@@ -17,7 +17,7 @@ static const Vector4 c_origo(0.0f, 0.0f, 0.0f, 1.0f);
 
 inline bool compare(float e1, float e2)
 {
-	return abs(e2 - e1) <= 1e-3f;
+	return abs(e2 - e1) <= 1e-8f;
 }
 
 	}
