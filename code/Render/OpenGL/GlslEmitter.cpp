@@ -413,6 +413,29 @@ bool emitIndexedUniform(GlslContext& cx, IndexedUniform* node)
 		cx.getShader().addUniform(node->getParameterName());
 	}
 
+	switch (out->getType())
+	{
+	case GtFloat:
+		if (!cx.defineUniform(node->getParameterName(), GL_FLOAT, node->getLength()))
+			return false;
+		break;
+
+	case GtFloat2:
+	case GtFloat3:
+	case GtFloat4:
+		if (!cx.defineUniform(node->getParameterName(), GL_FLOAT_VEC4, node->getLength()))
+			return false;
+		break;
+
+	case GtFloat4x4:
+		if (!cx.defineUniform(node->getParameterName(), GL_FLOAT_MAT4, node->getLength()))
+			return false;
+		break;
+
+	default:
+		return false;
+	}
+
 	return true;
 }
 
@@ -1907,6 +1930,29 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 			StringOutputStream& fu = cx.getShader().getOutputStream(GlslShader::BtUniform);
 			fu << L"uniform " << glsl_type_name(out->getType()) << L" " << node->getParameterName() << L";" << Endl;
 			cx.getShader().addUniform(node->getParameterName());
+		}
+
+		switch (out->getType())
+		{
+		case GtFloat:
+			if (!cx.defineUniform(node->getParameterName(), GL_FLOAT, 1))
+				return false;
+			break;
+
+		case GtFloat2:
+		case GtFloat3:
+		case GtFloat4:
+			if (!cx.defineUniform(node->getParameterName(), GL_FLOAT_VEC4, 1))
+				return false;
+			break;
+
+		case GtFloat4x4:
+			if (!cx.defineUniform(node->getParameterName(), GL_FLOAT_MAT4, 1))
+				return false;
+			break;
+
+		default:
+			return false;
 		}
 	}
 	else

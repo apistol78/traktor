@@ -11,6 +11,26 @@ namespace traktor
 		namespace
 		{
 
+class MemberNamedUniformTypeOpenGL : public MemberComplex
+{
+public:
+	MemberNamedUniformTypeOpenGL(const wchar_t* const name, NamedUniformType& ref)
+	:	MemberComplex(name, true)
+	,	m_ref(ref)
+	{
+	}
+
+	virtual void serialize(ISerializer& s) const
+	{
+		s >> Member< std::wstring >(L"name", m_ref.name);
+		s >> Member< GLenum >(L"type", m_ref.type);
+		s >> Member< GLuint >(L"length", m_ref.length);
+	}
+
+private:
+	NamedUniformType& m_ref;
+};
+
 class MemberSamplerBindingOpenGL : public MemberComplex
 {
 public:
@@ -92,7 +112,7 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceOpenGL", 7, ProgramResourceOpenGL, ProgramResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceOpenGL", 8, ProgramResourceOpenGL, ProgramResource)
 
 ProgramResourceOpenGL::ProgramResourceOpenGL()
 :	m_hash(0)
@@ -103,12 +123,14 @@ ProgramResourceOpenGL::ProgramResourceOpenGL(
 	const std::string& vertexShader,
 	const std::string& fragmentShader,
 	const std::vector< std::wstring >& textures,
+	const std::vector< NamedUniformType >& uniforms,
 	const std::vector< SamplerBindingOpenGL >& samplers,
 	const RenderStateOpenGL& renderState
 )
 :	m_vertexShader(vertexShader)
 ,	m_fragmentShader(fragmentShader)
 ,	m_textures(textures)
+,	m_uniforms(uniforms)
 ,	m_samplers(samplers)
 ,	m_renderState(renderState)
 ,	m_hash(0)
@@ -117,11 +139,12 @@ ProgramResourceOpenGL::ProgramResourceOpenGL(
 
 void ProgramResourceOpenGL::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion() >= 7);
+	T_ASSERT (s.getVersion() >= 8);
 
 	s >> Member< std::string >(L"vertexShader", m_vertexShader);
 	s >> Member< std::string >(L"fragmentShader", m_fragmentShader);
 	s >> MemberStlVector< std::wstring >(L"textures", m_textures);
+	s >> MemberStlVector< NamedUniformType, MemberNamedUniformTypeOpenGL >(L"uniforms", m_uniforms);
 	s >> MemberStlVector< SamplerBindingOpenGL, MemberSamplerBindingOpenGL >(L"samplers", m_samplers);
 	s >> MemberRenderStateOpenGL(L"renderState", m_renderState);
 	s >> Member< uint32_t >(L"hash", m_hash);

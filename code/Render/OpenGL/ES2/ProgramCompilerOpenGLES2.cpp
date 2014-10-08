@@ -67,6 +67,7 @@ Ref< ProgramResource > ProgramCompilerOpenGLES2::compile(
 					mbstows(vss),
 					mbstows(fss),
 					glslProgram.getTextures(),
+					glslProgram.getUniforms(),
 					glslProgram.getSamplers(),
 					glslProgram.getRenderState()
 				);

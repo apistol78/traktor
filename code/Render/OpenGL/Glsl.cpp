@@ -40,6 +40,7 @@ bool Glsl::generate(
 		cx.getVertexShader().getGeneratedShader(settings, false, requireTranspose),
 		cx.getFragmentShader().getGeneratedShader(settings, requireDerivatives, requireTranspose),
 		cx.getTextures(),
+		cx.getUniforms(),
 		cx.getSamplers(),
 		cx.getRenderState()
 	);

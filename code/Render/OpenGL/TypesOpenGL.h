@@ -12,6 +12,19 @@ namespace traktor
 /*! \ingroup OGL */
 //@{
 
+struct NamedUniformType
+{
+	std::wstring name;
+	GLenum type;
+	GLuint length;
+
+	NamedUniformType()
+	:	type(GL_INVALID_ENUM)
+	,	length(0)
+	{
+	}
+};
+
 struct SamplerBindingOpenGL
 {
 	GLuint stage;

@@ -21,6 +21,7 @@ public:
 		const std::wstring& vertexShader,
 		const std::wstring& fragmentShader,
 		const std::vector< std::wstring >& textures,
+		const std::vector< NamedUniformType >& uniforms,
 		const std::vector< SamplerBindingOpenGL >& samplers,
 		const RenderStateOpenGL& renderState
 	);
@@ -31,6 +32,8 @@ public:
 
 	const std::vector< std::wstring >& getTextures() const;
 
+	const std::vector< NamedUniformType >& getUniforms() const;
+
 	const std::vector< SamplerBindingOpenGL >& getSamplers() const;
 
 	const RenderStateOpenGL& getRenderState() const;
@@ -39,6 +42,7 @@ private:
 	std::wstring m_vertexShader;
 	std::wstring m_fragmentShader;
 	std::vector< std::wstring > m_textures;
+	std::vector< NamedUniformType > m_uniforms;
 	std::vector< SamplerBindingOpenGL > m_samplers;
 	RenderStateOpenGL m_renderState;
 };

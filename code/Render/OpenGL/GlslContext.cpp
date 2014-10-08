@@ -225,6 +225,28 @@ void GlslContext::defineTexture(const std::wstring& texture)
 		m_textures.push_back(texture);
 }
 
+bool GlslContext::defineUniform(const std::wstring& name, GLenum type, GLuint length)
+{
+	for (std::vector< NamedUniformType >::const_iterator i = m_uniforms.begin(); i != m_uniforms.end(); ++i)
+	{
+		if (i->name == name)
+		{
+			if (i->type == type && i->length == length)
+				return true;
+			else
+				return false;
+		}
+	}
+
+	NamedUniformType nut;
+	nut.name = name;
+	nut.type = type;
+	nut.length = length;
+	m_uniforms.push_back(nut);
+
+	return true;
+}
+
 bool GlslContext::defineSampler(uint32_t stateHash, GLenum target, const std::wstring& texture, int32_t& outStage)
 {
 	std::vector< std::wstring >::iterator i = std::find(m_textures.begin(), m_textures.end(), texture);
@@ -257,6 +279,11 @@ bool GlslContext::defineSampler(uint32_t stateHash, GLenum target, const std::ws
 const std::vector< std::wstring >& GlslContext::getTextures() const
 {
 	return m_textures;
+}
+
+const std::vector< NamedUniformType >& GlslContext::getUniforms() const
+{
+	return m_uniforms;
 }
 
 const std::vector< SamplerBindingOpenGL >& GlslContext::getSamplers() const
