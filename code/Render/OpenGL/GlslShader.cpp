@@ -154,7 +154,7 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, bool 
 	ss << Endl;
 
 #if defined(T_OPENGL_ES2)
-	ss << L"precision mediump float;" << Endl;
+	ss << L"precision highp float;" << Endl;
 	ss << Endl;
 
 	if (m_shaderType == StVertex)
