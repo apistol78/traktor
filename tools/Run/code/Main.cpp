@@ -886,5 +886,5 @@ int main(int argc, const char** argv)
 		log::error << L"Unknown file type \"" << fileName.getExtension() << L"\"; must be either \"run\" or \"template\"" << Endl;
 
 	safeDestroy(scriptManager);
-	return 0;
+	return result;
 }

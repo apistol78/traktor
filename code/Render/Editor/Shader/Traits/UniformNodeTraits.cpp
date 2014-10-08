@@ -94,9 +94,10 @@ PinType UniformNodeTraits::getInputPinType(
 			return PntTextureCube;
 		default:
 			return PntVoid;
+		}
 	}
-
-	}
+	else
+		return PntVoid;
 }
 
 int32_t UniformNodeTraits::getInputPinGroup(

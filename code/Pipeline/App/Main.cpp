@@ -405,6 +405,42 @@ void PipelineParameters::serialize(ISerializer& s)
 }
 
 
+class PipelineResult : public ISerializable
+{
+	T_RTTI_CLASS;
+
+public:
+	PipelineResult();
+
+	PipelineResult(int32_t result);
+
+	int32_t getResult() const { return m_result; }
+
+	virtual void serialize(ISerializer& s);
+
+private:
+	int32_t m_result;
+};
+
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"PipelineResult", 0, PipelineResult, ISerializable)
+
+PipelineResult::PipelineResult()
+:	m_result(0)
+{
+}
+
+PipelineResult::PipelineResult(int32_t result)
+:	m_result(result)
+{
+}
+
+void PipelineResult::serialize(ISerializer& s)
+{
+	s >> Member< int32_t >(L"result", m_result);
+}
+
+
 class PipelineLog : public ISerializable
 {
 	T_RTTI_CLASS;
@@ -473,19 +509,6 @@ public:
 private:
 	Ref< ILogTarget > m_originalTarget;
 	Ref< net::BidirectionalObjectTransport > m_transport;
-};
-
-struct ScopePriorityBias
-{
-	ScopePriorityBias()
-	{
-		OS::getInstance().setOwnProcessPriorityBias(1);
-	}
-
-	~ScopePriorityBias()
-	{
-		OS::getInstance().setOwnProcessPriorityBias(0);
-	}
 };
 
 bool perform(const PipelineParameters* params)
@@ -766,10 +789,14 @@ int slave(const CommandLine& cmdLine)
 		Ref< PipelineParameters > params;
 		transport->recv< PipelineParameters >(1000, params);
 
+		bool success = false;
 		if (params)
-			perform(params);
+			success = perform(params);
 		else
 			traktor::log::error << L"Unable to read pipeline parameters" << Endl;
+
+		const PipelineResult result(success ? 0 : 1);
+		transport->send(&result);
 
 		traktor::log::info   .setGlobalTarget(infoTarget);
 		traktor::log::warning.setGlobalTarget(warningTarget);
@@ -790,6 +817,7 @@ int slave(const CommandLine& cmdLine)
 int master(const CommandLine& cmdLine)
 {
 	Ref< traktor::IStream > logFile;
+	int32_t result = 1;
 
 	if (cmdLine.hasOption('l', L"log"))
 	{
@@ -878,28 +906,32 @@ int master(const CommandLine& cmdLine)
 	transport->send(&params);
 	for (;;)
 	{
-		Ref< PipelineLog > plog;
-		if (transport->recv< PipelineLog >(1000, plog) == net::BidirectionalObjectTransport::RtDisconnected)
+		Ref< ISerializable > slaveMessage;
+		if (transport->recv< ISerializable >(1000, slaveMessage) == net::BidirectionalObjectTransport::RtDisconnected)
 			break;
 
-		if (plog)
+		if (const PipelineLog* slaveLog = dynamic_type_cast< const PipelineLog* >(slaveMessage))
 		{
-			switch (plog->getLevel())
+			switch (slaveLog->getLevel())
 			{
 			default:
 			case 0:
-				traktor::log::info << plog->getText() << Endl;
+				traktor::log::info << slaveLog->getText() << Endl;
 				break;
 			case 1:
-				traktor::log::warning << plog->getText() << Endl;
+				traktor::log::warning << slaveLog->getText() << Endl;
 				break;
 			case 2:
-				traktor::log::error << plog->getText() << Endl;
+				traktor::log::error << slaveLog->getText() << Endl;
 				break;
 			case 3:
-				traktor::log::debug << plog->getText() << Endl;
+				traktor::log::debug << slaveLog->getText() << Endl;
 				break;
 			}
+		}
+		else if (const PipelineResult* slaveResult = dynamic_type_cast< const PipelineResult* >(slaveMessage))
+		{
+			result = slaveResult->getResult();
 		}
 	}
 
@@ -917,7 +949,7 @@ int master(const CommandLine& cmdLine)
 		logFile = 0;
 	}
 
-	return 0;
+	return result;
 }
 
 int standalone(const CommandLine& cmdLine)
@@ -976,10 +1008,10 @@ int standalone(const CommandLine& cmdLine)
 		roots
 	);
 
-	perform(&params);
+	bool success = perform(&params);
 
 	traktor::log::info << L"Bye" << Endl;
-	return 0;
+	return success ? 0 : 1;
 }
 
 int main(int argc, const char** argv)
@@ -1027,6 +1059,5 @@ int main(int argc, const char** argv)
 #endif
 
 	net::Network::finalize();
-
 	return result;
 }
