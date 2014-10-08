@@ -17,8 +17,13 @@ namespace traktor
 		namespace
 		{
 
-void collectResources(editor::IPipelineBuilder* pipelineBuilder, const editor::IPipelineDependencySet* dependencySet, const editor::PipelineDependency* dependency, std::vector< std::pair< const TypeInfo*, Guid > >& outResources)
+void collectResources(editor::IPipelineBuilder* pipelineBuilder, const editor::IPipelineDependencySet* dependencySet, const editor::PipelineDependency* dependency, std::vector< std::pair< const TypeInfo*, Guid > >& outResources, std::set< Guid >& inoutHistory)
 {
+	if (inoutHistory.find(dependency->outputGuid) != inoutHistory.end())
+		return;
+
+	inoutHistory.insert(dependency->outputGuid);
+
 	if ((dependency->flags & editor::PdfResource) == 0)
 	{
 		// Recurse until a resource is found; isn't necessary to recurse further as
@@ -28,7 +33,7 @@ void collectResources(editor::IPipelineBuilder* pipelineBuilder, const editor::I
 			const editor::PipelineDependency* childDependency = dependencySet->get(*i);
 			T_ASSERT (childDependency);
 
-			collectResources(pipelineBuilder, dependencySet, childDependency, outResources);
+			collectResources(pipelineBuilder, dependencySet, childDependency, outResources, inoutHistory);
 		}
 	}
 	else
@@ -102,10 +107,11 @@ bool ResourceBundlePipeline::buildOutput(
 {
 	const ResourceBundleAsset* bundleAsset = checked_type_cast< const ResourceBundleAsset* >(sourceAsset);
 	std::vector< std::pair< const TypeInfo*, Guid > > resources;
+	std::set< Guid > history;
 
 	// Collect resources, should be in depth-first to reduce
 	// change of inter-dependencies.
-	collectResources(pipelineBuilder, dependencySet, dependency, resources);
+	collectResources(pipelineBuilder, dependencySet, dependency, resources, history);
 	log::info << int32_t(resources.size()) << L" resource(s) in bundle found." << Endl;
 
 	// Sort bundle resources on type.
