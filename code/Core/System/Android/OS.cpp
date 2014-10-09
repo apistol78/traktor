@@ -84,12 +84,20 @@ std::wstring OS::getUserHomePath() const
 
 std::wstring OS::getUserApplicationDataPath() const
 {
-	return getUserHomePath() + L"/Library";
+	std::wstring path;
+	if (getEnvironment(L"INTERNAL_DATA_PATH", path))
+		return L"C:" + path;
+	else
+		return L"";
 }
 
 std::wstring OS::getWritableFolderPath() const
 {
-	return getUserHomePath() + L"/Library";
+	std::wstring path;
+	if (getEnvironment(L"INTERNAL_DATA_PATH", path))
+		return L"C:" + path;
+	else
+		return L"";
 }
 
 bool OS::openFile(const std::wstring& file) const
