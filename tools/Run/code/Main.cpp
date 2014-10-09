@@ -178,6 +178,13 @@ bool drawing_Image_save(drawing::Image* image, const std::wstring& filePath)
 	return image->save(filePath);
 }
 
+std::wstring xml_Node_write(xml::Node* node)
+{
+	StringOutputStream ss;
+	node->write(ss);
+	return ss.str();
+}
+
 RefArray< xml::Element > xml_Element_get(xml::Element* element, const std::wstring& path)
 {
 	RefArray< xml::Element > elements;
@@ -518,6 +525,7 @@ Ref< script::IScriptManager > createScriptManager()
 	classNode->addMethod("setName", &xml::Node::setName);
 	classNode->addMethod("getValue", &xml::Node::getValue);
 	classNode->addMethod("setValue", &xml::Node::setValue);
+	classNode->addMethod("write", &xml_Node_write);
 	classNode->addMethod("unlink", &xml::Node::unlink);
 	classNode->addMethod("addChild", &xml::Node::addChild);
 	classNode->addMethod("removeChild", &xml::Node::removeChild);
@@ -710,12 +718,9 @@ int32_t executeRun(script::IScriptManager* scriptManager, const std::wstring& te
 	Ref< Environment > environment = new Environment(OS::getInstance().getEnvironment());
 	environment->set(L"RUN_SCRIPT", fileName.getPathName());
 	globalContext->setGlobal("environment", script::Any::fromObject(environment));
-
 	globalContext->setGlobal("run", script::Any::fromObject(new Run()));
-
 	globalContext->setGlobal("fileSystem", script::Any::fromObject(&FileSystem::getInstance()));
 	globalContext->setGlobal("os", script::Any::fromObject(&OS::getInstance()));
-
 	globalContext->setGlobal("stdout", script::Any::fromObject(new StdOutput(stdout)));
 	globalContext->setGlobal("stderr", script::Any::fromObject(new StdOutput(stderr)));
 
@@ -799,12 +804,9 @@ int32_t executeTemplate(script::IScriptManager* scriptManager, const std::wstrin
 	Ref< Environment > environment = new Environment(OS::getInstance().getEnvironment());
 	environment->set(L"RUN_SCRIPT", fileName.getPathName());
 	globalContext->setGlobal("environment", script::Any::fromObject(environment));
-
 	globalContext->setGlobal("run", script::Any::fromObject(new Run()));
-
 	globalContext->setGlobal("fileSystem", script::Any::fromObject(&FileSystem::getInstance()));
 	globalContext->setGlobal("os", script::Any::fromObject(&OS::getInstance()));
-
 	globalContext->setGlobal("stdout", script::Any::fromObject(new StdOutput(stdout)));
 	globalContext->setGlobal("stderr", script::Any::fromObject(new StdOutput(stderr)));
 	globalContext->setGlobal("output", script::Any::fromObject(o));
@@ -828,7 +830,7 @@ int main(int argc, const char** argv)
 
 	if (cmdLine.getCount() < 1)
 	{
-		log::info << L"Run 1.2.1" << Endl;
+		log::info << L"Run 1.3" << Endl;
 		log::info << Endl;
 		log::info << L"Usage: Run (option(s)) [<file>.run|<file>.template] (args ...)" << Endl;
 		log::info << Endl;
