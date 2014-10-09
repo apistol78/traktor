@@ -793,6 +793,8 @@ bool Application::update()
 			}
 			else
 			{
+				double renderBegin = m_timer.getElapsedTime();
+
 				// Single threaded rendering; perform rendering here.
 				render::IRenderView* renderView = m_renderServer->getRenderView();
 				if (renderView)
@@ -854,6 +856,11 @@ bool Application::update()
 						renderView->present();
 					}
 				}
+
+				double renderEnd = m_timer.getElapsedTime();
+				m_renderDuration = float(renderEnd - renderBegin);
+
+				m_renderServer->setFrameRate(int32_t(1.0f / m_renderDuration));
 			}
 		}
 

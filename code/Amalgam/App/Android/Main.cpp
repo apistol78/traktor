@@ -1,5 +1,9 @@
 #include <jni.h>
 #include <android_native_app_glue.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <errno.h>
 #include "Amalgam/IOnlineServer.h"
 #include "Amalgam/Impl/Application.h"
 #include "Amalgam/Impl/Environment.h"
@@ -17,6 +21,8 @@
 #include "Core/Serialization/DeepClone.h"
 #include "Core/System/OS.h"
 #include "Core/System/Android/DelegateInstance.h"
+#include "Core/Thread/ThreadManager.h"
+#include "Core/Thread/Thread.h"
 #include "Xml/XmlDeserializer.h"
 #include "Xml/XmlSerializer.h"
 
@@ -53,6 +59,16 @@ bool saveSettings(const PropertyGroup* settings, const Path& settingsFile)
 	return result;
 }
 
+void updateApplicationThread(amalgam::Application* app)
+{
+	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
+	while (!currentThread->stopped())
+	{
+		if (!app->update())
+			break;
+	}
+}
+
 }
 
 class AndroidApplication : public DelegateInstance
@@ -66,7 +82,11 @@ public:
 
 	void destroyApplication();
 
-	bool updateApplication();
+	//bool updateApplication();
+
+	void startAnimation();
+
+	void stopAnimation();
 
 	virtual void handleCommand(struct android_app* app, int32_t cmd);
 
@@ -75,10 +95,12 @@ private:
 	Ref< const PropertyGroup > m_defaultSettings;
 	Ref< PropertyGroup > m_settings;
 	Ref< amalgam::Application > m_application;
+	Thread* m_thread;
 };
 
 AndroidApplication::AndroidApplication(struct android_app* app)
 :	m_app(app)
+,	m_thread(0)
 {
 }
 
@@ -127,13 +149,34 @@ void AndroidApplication::destroyApplication()
 	safeDestroy(m_application);
 }
 
-bool AndroidApplication::updateApplication()
+void AndroidApplication::startAnimation()
 {
-	if (m_application)
-		return m_application->update();
-	else
-		return true;
+	if (!m_thread)
+	{
+		m_thread = ThreadManager::getInstance().create(
+			makeStaticFunctor(updateApplicationThread, m_application.ptr()),
+			L"Application update thread"
+		);
+		m_thread->start();
+	}
 }
+
+void AndroidApplication::stopAnimation()
+{
+	if (m_thread)
+	{
+		m_thread->stop();
+		m_thread = 0;
+	}
+}
+
+//bool AndroidApplication::updateApplication()
+//{
+//	if (m_application)
+//		return m_application->update();
+//	else
+//		return true;
+//}
 
 void AndroidApplication::handleCommand(struct android_app* app, int32_t cmd)
 {
@@ -146,20 +189,24 @@ void AndroidApplication::handleCommand(struct android_app* app, int32_t cmd)
 		{
 			log::info << L"APP_CMD_INIT_WINDOW" << Endl;
 			createApplication();
+			startAnimation();
 		}
 		break;
 
 	case APP_CMD_TERM_WINDOW:
 		log::info << L"APP_CMD_TERM_WINDOW" << Endl;
+		stopAnimation();
 		destroyApplication();
 		break;
 
 	case APP_CMD_GAINED_FOCUS:
 		log::info << L"APP_CMD_GAINED_FOCUS" << Endl;
+		startAnimation();
 		break;
 
 	case APP_CMD_LOST_FOCUS:
 		log::info << L"APP_CMD_LOST_FOCUS" << Endl;
+		stopAnimation();
 		break;
 	}
 
@@ -185,6 +232,17 @@ void android_main(struct android_app* state)
 {
 	AndroidApplication aa(state);
 
+	// Expose application's data paths in our environment.
+	setenv("INTERNAL_DATA_PATH", state->activity->internalDataPath, 1); 
+	setenv("EXTERNAL_DATA_PATH", state->activity->externalDataPath, 1); 
+
+	log::info << L"Using following data paths," << Endl;
+	log::info << L"\tINTERNAL_DATA_PATH = \"" << mbstows(state->activity->internalDataPath) << L"\"" << Endl;
+	log::info << L"\tEXTERNAL_DATA_PATH = \"" << mbstows(state->activity->externalDataPath) << L"\"" << Endl;
+
+	mkdir(state->activity->internalDataPath, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+	mkdir(state->activity->externalDataPath, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+
 	app_dummy();
 	FileSystem::getInstance().mount(L"assets", new AssetsVolume(state->activity));
 	FileSystem::getInstance().setCurrentVolumeAndDirectory(L"assets:");
@@ -203,13 +261,13 @@ void android_main(struct android_app* state)
 
 		for (;;)
 		{
-			while ((ident = ALooper_pollAll(0, NULL, &events, (void**)&source)) >= 0)
+			while ((ident = ALooper_pollAll(100, NULL, &events, (void**)&source)) >= 0)
 			{
 				if (source != NULL)
 					source->process(state, source);
 			}
-			if (!aa.updateApplication())
-				break;
+			//if (!aa.updateApplication())
+			//	break;
 		}
 	}
 }

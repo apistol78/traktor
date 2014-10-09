@@ -36,6 +36,8 @@ end
 
 
 function deploy(args)
+	stdout:printLn("Deploying...")
+
 	local toolchain = "arm-linux-androideabi-4.8"
 	local android = "android-19"
 	local architecture = "arch-arm"
@@ -128,6 +130,7 @@ end
 
 
 function launch(args)
+	stdout:printLn("Launching...")
 
 	-- Create android project.
 	run:mkdir("assets")

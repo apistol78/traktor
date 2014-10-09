@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Core/System/OS.h"
 #include "Online/Local/LocalAchievements.h"
 #include "Online/Local/LocalGameConfiguration.h"
@@ -23,7 +24,7 @@ bool LocalSessionManager::create(const IGameConfiguration* configuration)
 	if (!gc)
 		return false;
 
-#if TARGET_OS_IPHONE
+#if defined(__IOS__) || defined(__ANDROID__)
 	std::wstring dbPath = OS::getInstance().getWritableFolderPath() + L"/" + std::wstring(gc->m_dbName) + L".db";
 #else
 	std::wstring dbPath = OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB/" + std::wstring(gc->m_dbName) + L".db";
@@ -32,8 +33,8 @@ bool LocalSessionManager::create(const IGameConfiguration* configuration)
 	m_db = new sql::ConnectionSqlite3();
 	if (!m_db->connect(L"fileName=" + dbPath))
 	{
-		if (!m_db->connect(L"fileName=" + std::wstring(gc->m_dbName) + L".db"))
-			return false;
+		log::error << L"Local session create failed; Unable to connect to local session database" << Endl;
+		return false;
 	}
 
 	if (!m_db->tableExists(L"Achievements"))
