@@ -80,9 +80,10 @@ int32_t Run::execute(const std::wstring& command, const std::wstring& saveOutput
 	StringOutputStream stdOut;
 	StringOutputStream stdErr;
 	std::wstring str;
-	do
+	for (;;)
 	{
-		while (stdOutReader.readLine(str, 100))
+		PipeReader::Result result1 = stdOutReader.readLine(str, 10);
+		if (result1 == PipeReader::RtOk)
 		{
 			if (fileOutput)
 				(*fileOutput) << str << Endl;
@@ -92,33 +93,16 @@ int32_t Run::execute(const std::wstring& command, const std::wstring& saveOutput
 			stdOut << str << Endl;
 		}
 
-		while (stdErrReader.readLine(str, 100))
+		PipeReader::Result result2 = stdErrReader.readLine(str, 10);
+		if (result2 == PipeReader::RtOk)
 		{
 			if (!nullOutput)
 				log::error << str << Endl;
 			stdErr << str << Endl;
 		}
-	}
-	while (!process->wait(0));
 
-	if (fileOutput || !nullOutput)
-	{
-		while (stdOutReader.readLine(str, 100))
-		{
-			if (fileOutput)
-				(*fileOutput) << str << Endl;
-			else if (!nullOutput)
-				log::info << str << Endl;
-
-			stdOut << str << Endl;
-		}
-
-		while (stdErrReader.readLine(str, 100))
-		{
-			if (!nullOutput)
-				log::error << str << Endl;
-			stdErr << str << Endl;
-		}
+		if (result1 == PipeReader::RtEnd && result2 == PipeReader::RtEnd)
+			break;
 	}
 
 	safeClose(fileOutput);

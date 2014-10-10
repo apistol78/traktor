@@ -1,6 +1,7 @@
 #ifndef traktor_PipeReader_H
 #define traktor_PipeReader_H
 
+#include <list>
 #include "Core/Object.h"
 #include "Core/Ref.h"
 
@@ -25,13 +26,24 @@ class T_DLLCLASS PipeReader : public Object
 	T_RTTI_CLASS;
 
 public:
+	enum Result
+	{
+		RtOk,
+		RtTimeout,
+		RtEnd
+	};
+
 	PipeReader(IStream* stream);
 
-	bool readLine(std::wstring& outLine, int32_t timeout);
+	virtual ~PipeReader();
+
+	Result readLine(std::wstring& outLine, int32_t timeout);
 
 private:
 	Ref< IStream > m_stream;
+	std::vector< char > m_buffer;
 	std::vector< char > m_acc;
+	std::list< std::wstring > m_lines;
 };
 
 }

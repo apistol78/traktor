@@ -270,9 +270,10 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	std::list< std::wstring > errors;
 	std::wstring str;
 
-	do
+	for (;;)
 	{
-		while (stdOutReader.readLine(str, 100))
+		PipeReader::Result result1 = stdOutReader.readLine(str, 10);
+		if (result1 == PipeReader::RtOk)
 		{
 			std::wstring tmp = trim(str);
 			if (!tmp.empty() && tmp[0] == L':')
@@ -293,7 +294,8 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 				log::info << str << Endl;
 		}
 
-		while (stdErrReader.readLine(str, 100))
+		PipeReader::Result result2 = stdErrReader.readLine(str, 10);
+		if (result2 == PipeReader::RtOk)
 		{
 			str = trim(str);
 			if (!str.empty())
@@ -302,14 +304,10 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 				errors.push_back(str);
 			}
 		}
+
+		if (result1 == PipeReader::RtEnd && result2 == PipeReader::RtEnd)
+			break;
 	}
-	while (!process->wait(0));
-
-	while (stdOutReader.readLine(str, 100))
-		log::info << str << Endl;
-
-	while (stdErrReader.readLine(str, 100))
-		log::error << str << Endl;
 
 	if (!errors.empty())
 	{

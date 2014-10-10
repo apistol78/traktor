@@ -1,4 +1,5 @@
 #include "Core/Io/BufferedStream.h"
+#include "Core/Log/Log.h"
 #include "Core/System/Win32/ProcessWin32.h"
 
 namespace traktor
@@ -11,9 +12,9 @@ namespace traktor
 class PipeStream : public IStream
 {
 public:
-	PipeStream(HANDLE hPipe)
-	:	m_hPipe(hPipe)
-	,	m_dwPending(0)
+	PipeStream(HANDLE hProcess, HANDLE hPipe)
+	:	m_hProcess(hProcess)
+	,	m_hPipe(hPipe)
 	{
 	}
 
@@ -43,12 +44,7 @@ public:
 
 	virtual int available() const
 	{
-		if (m_dwPending == 0)
-		{
-			if (!PeekNamedPipe(m_hPipe, NULL, 0, NULL, &m_dwPending, NULL))
-				return 0;
-		}
-		return int(m_dwPending);
+		return 0;
 	}
 
 	virtual int seek(SeekOriginType origin, int offset)
@@ -58,22 +54,39 @@ public:
 
 	virtual int read(void* block, int nbytes)
 	{
-		if (m_dwPending == 0)
+		bool processTerminated = (WaitForSingleObject(m_hProcess, 0) == WAIT_OBJECT_0);
+
+		DWORD dwPending = 0;
+		if (!PeekNamedPipe(m_hPipe, NULL, 0, NULL, &dwPending, NULL))
+			return -1;
+
+		DWORD dwSafeRead = min(nbytes, dwPending);
+		DWORD dwRead = 0;
+
+		if (dwSafeRead > 0)
 		{
-			if (!PeekNamedPipe(m_hPipe, NULL, 0, NULL, &m_dwPending, NULL))
+			if (!ReadFile(m_hPipe, block, dwSafeRead, &dwRead, NULL))
 				return -1;
 		}
 
-		int nread = std::min< int >(nbytes, int(m_dwPending));
-		if (nread == 0)
-			return 0;
+		if (dwRead == 0 && processTerminated)
+		{
+			Sleep(100);
 
-		DWORD dwRead = 0;
-		if (!ReadFile(m_hPipe, block, nread, &dwRead, NULL))
-			return -1;
+			if (!PeekNamedPipe(m_hPipe, NULL, 0, NULL, &dwPending, NULL))
+				return -1;
 
-		T_FATAL_ASSERT (m_dwPending >= dwRead);
-		m_dwPending -= dwRead;
+			dwSafeRead = min(nbytes, dwPending);
+
+			if (dwSafeRead > 0)
+			{
+				if (!ReadFile(m_hPipe, block, dwSafeRead, &dwRead, NULL))
+					return -1;
+			}
+
+			if (dwRead == 0)
+				return -1;
+		}
 
 		return int(dwRead);
 	}
@@ -88,8 +101,8 @@ public:
 	}
 
 private:
+	HANDLE m_hProcess;
 	HANDLE m_hPipe;
-	mutable DWORD m_dwPending;
 };
 
 #endif
@@ -120,8 +133,8 @@ ProcessWin32::ProcessWin32(
 ,	m_hStdErrWrite(hStdErrWrite)
 {
 #if !defined(WINCE)
-	m_pipeStdOut = new PipeStream(m_hStdOutRead);
-	m_pipeStdErr = new PipeStream(m_hStdErrRead);
+	m_pipeStdOut = new PipeStream(m_hProcess, m_hStdOutRead);
+	m_pipeStdErr = new PipeStream(m_hProcess, m_hStdErrRead);
 #endif
 }
 
@@ -148,9 +161,9 @@ Ref< IStream > ProcessWin32::getPipeStream(StdPipe pipe)
 {
 #if !defined(WINCE)
 	if (pipe == SpStdOut)
-		return new BufferedStream(m_pipeStdOut);
+		return m_pipeStdOut;
 	else if (pipe == SpStdErr)
-		return new BufferedStream(m_pipeStdErr);
+		return m_pipeStdErr;
 	else
 #endif
 		return 0;

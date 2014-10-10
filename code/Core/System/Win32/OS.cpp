@@ -341,169 +341,118 @@ Ref< IProcess > OS::execute(
 		T_ASSERT (size_t(p - environment.ptr()) == size);
 	}
 
-	//if (!detach)
+	StringOutputStream ss;
+	ss << L"\"" << fileAbs.getPathName() << L"\"";
+	if (!arguments.empty())
+		ss << L" " << arguments;
+
+#if !defined(WINCE)
+	_tcscpy_s(cmd, wstots(ss.str()).c_str());
+	_tcscpy_s(cwd, wstots(workingDirectoryAbs.getPathName()).c_str());
+#else
+	_tcscpy_s(cmd, sizeof_array(cmd), wstots(ss.str()).c_str());
+	_tcscpy_s(cwd, sizeof_array(cwd), wstots(workingDirectoryAbs.getPathName()).c_str());
+#endif
+
+#if !defined(WINCE)
+	if (redirect)
 	{
-		StringOutputStream ss;
-		ss << L"\"" << fileAbs.getPathName() << L"\"";
-		if (!arguments.empty())
-			ss << L" " << arguments;
-
-#if !defined(WINCE)
-		_tcscpy_s(cmd, wstots(ss.str()).c_str());
-		_tcscpy_s(cwd, wstots(workingDirectoryAbs.getPathName()).c_str());
-#else
-		_tcscpy_s(cmd, sizeof_array(cmd), wstots(ss.str()).c_str());
-		_tcscpy_s(cwd, sizeof_array(cwd), wstots(workingDirectoryAbs.getPathName()).c_str());
-#endif
-
-#if !defined(WINCE)
-		if (redirect)
-		{
-			// Create IO pipes.
-			SECURITY_DESCRIPTOR sd;
-			InitializeSecurityDescriptor(&sd, SECURITY_DESCRIPTOR_REVISION);
-			SetSecurityDescriptorDacl(&sd, true, NULL, false);
+		// Create IO objects.
+		SECURITY_DESCRIPTOR sd;
+		InitializeSecurityDescriptor(&sd, SECURITY_DESCRIPTOR_REVISION);
+		SetSecurityDescriptorDacl(&sd, true, NULL, false);
 		
-			SECURITY_ATTRIBUTES sa;
-			std::memset(&sa, 0, sizeof(sa));
-			sa.nLength = sizeof(SECURITY_ATTRIBUTES);
-			sa.lpSecurityDescriptor = &sd;
-			sa.bInheritHandle = true;
-		
-			CreatePipe(
-				&hStdInRead,
-				&hStdInWrite,
-				&sa,
-				0
-			);
-		
-			CreatePipe(
-				&hStdOutRead,
-				&hStdOutWrite,
-				&sa,
-				0
-			);
-		
-			CreatePipe(
-				&hStdErrRead,
-				&hStdErrWrite,
-				&sa,
-				0
-			);
-		}
-#endif
+		SECURITY_ATTRIBUTES sa;
+		std::memset(&sa, 0, sizeof(sa));
+		sa.nLength = sizeof(SECURITY_ATTRIBUTES);
+		sa.lpSecurityDescriptor = &sd;
+		sa.bInheritHandle = TRUE;
 
-		STARTUPINFO si;
-		std::memset(&si, 0, sizeof(si));
-		si.cb = sizeof(STARTUPINFO);
-#if !defined(WINCE)
-		si.dwFlags = redirect ? STARTF_USESTDHANDLES : 0;
-#else
-		si.dwFlags = 0;
-#endif
-		si.hStdInput = hStdInRead;
-		si.hStdOutput = hStdOutWrite;
-		si.hStdError = hStdErrWrite;
-
-		PROCESS_INFORMATION pi;
-		std::memset(&pi, 0, sizeof(pi));
-
-#if !defined(WINCE)
-		DWORD dwCreationFlags = CREATE_NEW_PROCESS_GROUP;
-
-		if (mute)
-		{
-			dwCreationFlags = CREATE_NO_WINDOW;
-			if (detach)
-				dwCreationFlags |= DETACHED_PROCESS;
-		}
-		else
-			dwCreationFlags = CREATE_NEW_CONSOLE;
-
-		if (environment.ptr())
-			dwCreationFlags |= CREATE_UNICODE_ENVIRONMENT;
-#else
-		DWORD dwCreationFlags = mute ? 0 : CREATE_NEW_CONSOLE;
-#endif
-
-		BOOL result = CreateProcess(
-			NULL,
-			cmd,
-			NULL,
-			NULL,
-			TRUE,
-			dwCreationFlags,
-			environment.ptr(),
-			(cwd[0] != L'\0' ? cwd : NULL),
-			&si,
-			&pi
+		CreatePipe(
+			&hStdInRead,
+			&hStdInWrite,
+			&sa,
+			0
 		);
-		if (result == FALSE)
-		{
-			T_DEBUG(L"Unable to create process, error = " << (int32_t)GetLastError());
-			return 0;
-		}
-
-		return new ProcessWin32(
-			pi.hProcess,
-			pi.dwProcessId,
-			pi.hThread,
-			hStdInRead,
-			hStdInWrite,
-			hStdOutRead,
-			hStdOutWrite,
-			hStdErrRead,
-			hStdErrWrite
+		
+		CreatePipe(
+			&hStdOutRead,
+			&hStdOutWrite,
+			&sa,
+			0
+		);
+		
+		CreatePipe(
+			&hStdErrRead,
+			&hStdErrWrite,
+			&sa,
+			0
 		);
 	}
-//	else	// Detached process; use ShellExecute path instead due to UAC.
-//	{
-//
-//#if !defined(WINCE)
-//		_tcscpy_s(cmd, wstots(fileAbs.getPathName()).c_str());
-//		_tcscpy_s(par, wstots(commandLine).c_str());
-//		_tcscpy_s(cwd, wstots(workingDirectoryAbs.getPathName()).c_str());
-//#else
-//		_tcscpy_s(cmd, sizeof_array(cmd), wstots(fileAbs.getPathName()).c_str());
-//		_tcscpy_s(par, sizeof_array(par), wstots(commandLine).c_str());
-//		_tcscpy_s(cwd, sizeof_array(cwd), wstots(workingDirectoryAbs.getPathName()).c_str());
-//#endif
-//
-//		SHELLEXECUTEINFO xi;
-//
-//		std::memset(&xi, 0, sizeof(xi));
-//		xi.cbSize = sizeof(xi);
-//		xi.fMask = 0;
-//		xi.hwnd = NULL;
-//		xi.lpVerb = L"runas";
-//		xi.lpFile = cmd;
-//		xi.lpParameters = par;
-//		xi.lpDirectory = cwd;
-//#if !defined(WINCE)
-//		xi.nShow = mute ? SW_HIDE : SW_NORMAL;
-//#else
-//		xi.nShow = SW_HIDE;
-//#endif
-//
-//		if (!ShellExecuteEx(&xi))
-//			return 0;
-//
-//		return new ProcessWin32(
-//			xi.hProcess,
-//#if !defined(WINCE)
-//			GetProcessId(xi.hProcess),
-//#else
-//			0,
-//#endif
-//			NULL,
-//			hStdInRead,
-//			hStdInWrite,
-//			hStdOutRead,
-//			hStdOutWrite,
-//			hStdErrRead,
-//			hStdErrWrite
-//		);
-//	}
+#endif
+
+	STARTUPINFO si;
+	std::memset(&si, 0, sizeof(si));
+	si.cb = sizeof(STARTUPINFO);
+#if !defined(WINCE)
+	si.dwFlags = redirect ? STARTF_USESTDHANDLES : 0;
+#else
+	si.dwFlags = 0;
+#endif
+	si.hStdInput = hStdInRead;
+	si.hStdOutput = hStdOutWrite;
+	si.hStdError = hStdErrWrite;
+
+	PROCESS_INFORMATION pi;
+	std::memset(&pi, 0, sizeof(pi));
+
+#if !defined(WINCE)
+	DWORD dwCreationFlags = CREATE_NEW_PROCESS_GROUP;
+
+	if (mute)
+	{
+		dwCreationFlags = CREATE_NO_WINDOW;
+		if (detach)
+			dwCreationFlags |= DETACHED_PROCESS;
+	}
+	else
+		dwCreationFlags = CREATE_NEW_CONSOLE;
+
+	if (environment.ptr())
+		dwCreationFlags |= CREATE_UNICODE_ENVIRONMENT;
+#else
+	DWORD dwCreationFlags = mute ? 0 : CREATE_NEW_CONSOLE;
+#endif
+
+	BOOL result = CreateProcess(
+		NULL,
+		cmd,
+		NULL,
+		NULL,
+		TRUE,
+		dwCreationFlags,
+		environment.ptr(),
+		(cwd[0] != L'\0' ? cwd : NULL),
+		&si,
+		&pi
+	);
+	if (result == FALSE)
+	{
+		T_DEBUG(L"Unable to create process, error = " << (int32_t)GetLastError());
+		return 0;
+	}
+
+	return new ProcessWin32(
+		pi.hProcess,
+		pi.dwProcessId,
+		pi.hThread,
+		hStdInRead,
+		hStdInWrite,
+		hStdOutRead,
+		hStdOutWrite,
+		hStdErrRead,
+		hStdErrWrite
+	);
 }
 
 Ref< ISharedMemory > OS::createSharedMemory(const std::wstring& name, uint32_t size) const
