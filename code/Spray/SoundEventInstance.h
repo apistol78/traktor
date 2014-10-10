@@ -37,7 +37,8 @@ public:
 		sound::ISoundPlayer* soundPlayer,
 		const resource::Proxy< sound::Sound >& sound,
 		bool positional,
-		bool follow
+		bool follow,
+		bool autoStopFar
 	);
 
 	virtual bool update(const world::UpdateParams& update);
@@ -53,6 +54,7 @@ private:
 	resource::Proxy< sound::Sound > m_sound;
 	bool m_positional;
 	bool m_follow;
+	bool m_autoStopFar;
 	Ref< sound::ISoundHandle > m_handle;
 };
 

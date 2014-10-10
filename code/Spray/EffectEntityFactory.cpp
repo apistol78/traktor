@@ -72,7 +72,7 @@ Ref< world::IEntityEvent > EffectEntityFactory::createEntityEvent(const world::I
 		if (!m_resourceManager->bind(soundEventData->m_sound, sound))
 			return 0;
 
-		return new SoundEvent(m_soundPlayer, sound, soundEventData->m_positional, soundEventData->m_follow);
+		return new SoundEvent(m_soundPlayer, sound, soundEventData->m_positional, soundEventData->m_follow, soundEventData->m_autoStopFar);
 	}
 	else if (const SpawnEffectEventData* spawnEventData = dynamic_type_cast< const SpawnEffectEventData* >(&entityEventData))
 	{

@@ -42,7 +42,7 @@ public:
 
 	virtual Ref< ISoundHandle > play(const Sound* sound, uint32_t priority);
 
-	virtual Ref< ISoundHandle > play3d(const Sound* sound, const Vector4& position, uint32_t priority);
+	virtual Ref< ISoundHandle > play3d(const Sound* sound, const Vector4& position, uint32_t priority, bool autoStopFar);
 
 	virtual void setListenerTransform(const Transform& listenerTransform);
 
@@ -62,6 +62,7 @@ private:
 		uint32_t priority;
 		float fadeOff;
 		float time;
+		bool autoStopFar;
 		Ref< SoundHandle > handle;
 	};
 

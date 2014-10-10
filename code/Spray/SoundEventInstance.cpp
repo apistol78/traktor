@@ -17,7 +17,8 @@ SoundEventInstance::SoundEventInstance(
 	sound::ISoundPlayer* soundPlayer,
 	const resource::Proxy< sound::Sound >& sound,
 	bool positional,
-	bool follow
+	bool follow,
+	bool autoStopFar
 )
 :	m_sender(sender)
 ,	m_Toffset(Toffset)
@@ -25,13 +26,14 @@ SoundEventInstance::SoundEventInstance(
 ,	m_sound(sound)
 ,	m_positional(positional)
 ,	m_follow(follow)
+,	m_autoStopFar(autoStopFar)
 {
 	if (m_positional)
 	{
 		Transform T = Transform::identity();
 		if (m_sender)
 			m_sender->getTransform(T);
-		m_handle = m_soundPlayer->play3d(m_sound, (T * m_Toffset).translation(), 16);
+		m_handle = m_soundPlayer->play3d(m_sound, (T * m_Toffset).translation(), 16, m_autoStopFar);
 	}
 	else
 		m_handle = m_soundPlayer->play(m_sound, 16);

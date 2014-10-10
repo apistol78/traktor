@@ -29,7 +29,8 @@ public:
 		sound::ISoundPlayer* soundPlayer,
 		const resource::Proxy< sound::Sound >& sound,
 		bool positional,
-		bool follow
+		bool follow,
+		bool autoStopFar
 	);
 
 	virtual Ref< world::IEntityEventInstance > createInstance(world::IEntityEventManager* eventManager, world::Entity* sender, const Transform& Toffset) const;
@@ -39,6 +40,7 @@ private:
 	resource::Proxy< sound::Sound > m_sound;
 	bool m_positional;
 	bool m_follow;
+	bool m_autoStopFar;
 };
 
 	}

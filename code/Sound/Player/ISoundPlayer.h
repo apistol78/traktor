@@ -36,7 +36,7 @@ public:
 
 	/*! \brief Play positional sound.
 	 */
-	virtual Ref< ISoundHandle > play3d(const Sound* sound, const Vector4& position, uint32_t priority) = 0;
+	virtual Ref< ISoundHandle > play3d(const Sound* sound, const Vector4& position, uint32_t priority, bool autoStopFar) = 0;
 
 	/*! \brief Set listener transform.
 	 */
