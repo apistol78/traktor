@@ -814,7 +814,7 @@ void BoxedColor4ub::operator delete (void* ptr)
 }
 
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.BoxedRandom", BoxedRandom, Boxed)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Random", BoxedRandom, Boxed)
 
 BoxedRandom::BoxedRandom()
 {
@@ -846,7 +846,7 @@ void BoxedRandom::operator delete (void* ptr)
 }
 
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.BoxedRandomGeometry", BoxedRandomGeometry, BoxedRandom)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.RandomGeometry", BoxedRandomGeometry, BoxedRandom)
 
 BoxedRandomGeometry::BoxedRandomGeometry()
 {

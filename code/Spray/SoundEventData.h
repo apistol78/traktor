@@ -43,6 +43,7 @@ private:
 	resource::Id< sound::Sound > m_sound;
 	bool m_positional;
 	bool m_follow;
+	bool m_autoStopFar;
 };
 
 	}

@@ -113,6 +113,7 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 				i->priority = priority;
 				i->fadeOff = -1.0f;
 				i->time = time;
+				i->autoStopFar = false;
 				i->handle = new SoundHandle(i->soundChannel, i->position, i->fadeOff);
 
 				return i->handle;
@@ -144,6 +145,7 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 				i->priority = priority;
 				i->fadeOff = -1.0f;
 				i->time = time;
+				i->autoStopFar = false;
 				i->handle = new SoundHandle(i->soundChannel, i->position, i->fadeOff);
 
 				return i->handle;
@@ -154,7 +156,7 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 	return 0;
 }
 
-Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& position, uint32_t priority)
+Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& position, uint32_t priority, bool autoStopFar)
 {
 	if (!sound)
 		return 0;
@@ -251,6 +253,7 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 				i->priority = priority;
 				i->fadeOff = -1.0f;
 				i->time = time;
+				i->autoStopFar = autoStopFar;
 				i->handle = new SoundHandle(i->soundChannel, i->position, i->fadeOff);
 
 				return i->handle;
@@ -282,6 +285,7 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 				i->priority = priority;
 				i->fadeOff = -1.0f;
 				i->time = time;
+				i->autoStopFar = autoStopFar;
 				i->handle = new SoundHandle(i->soundChannel, i->position, i->fadeOff);
 
 				return i->handle;
@@ -318,6 +322,7 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 				i->priority = priority;
 				i->fadeOff = -1.0f;
 				i->time = time;
+				i->autoStopFar = autoStopFar;
 				i->handle = new SoundHandle(i->soundChannel, i->position, i->fadeOff);
 
 				return i->handle;
@@ -363,9 +368,9 @@ void SoundPlayer::update(float dT)
 			if (maxDistance <= m_surroundEnvironment->getInnerRadius())
 				maxDistance = m_surroundEnvironment->getMaxDistance();
 
-			// Calculate distance from listener; stop sounds which has moved outside max listener distance.
+			// Calculate distance from listener; automatically stop sounds which has moved outside max listener distance.
 			Scalar distance = (i->position - listenerPosition).xyz0().length();
-			if (distance > maxDistance)
+			if (i->autoStopFar && distance > maxDistance)
 			{
 				if (i->handle)
 					i->handle->detach();
@@ -380,11 +385,13 @@ void SoundPlayer::update(float dT)
 
 			// Calculate cut-off frequency.
 			float k0 = clamp< float >(distance / maxDistance, 0.0f, 1.0f);
-			float cutOff = lerp(c_nearCutOff, c_farCutOff, std::sqrt(k0));
 
 			// Set filter parameters.
 			if (i->lowPassFilter)
+			{
+				float cutOff = lerp(c_nearCutOff, c_farCutOff, std::sqrt(k0));
 				i->lowPassFilter->setCutOff(cutOff);
+			}
 			if (i->surroundFilter)
 				i->surroundFilter->setSpeakerPosition(i->position);
 
