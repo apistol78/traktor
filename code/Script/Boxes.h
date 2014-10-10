@@ -10,6 +10,7 @@
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Quaternion.h"
+#include "Core/Math/RandomGeometry.h"
 #include "Core/Math/Range.h"
 #include "Core/Math/Transform.h"
 #include "Core/Math/Vector2.h"
@@ -627,6 +628,60 @@ private:
 	Color4ub m_value;
 };
 
+class T_DLLCLASS BoxedRandom : public RefCountImpl< Boxed >
+{
+	T_RTTI_CLASS;
+
+public:
+	BoxedRandom();
+
+	explicit BoxedRandom(const Random& value);
+
+	explicit BoxedRandom(uint32_t seed);
+
+	uint32_t next() { return m_value.next(); }
+
+	float nextFloat() { return m_value.nextFloat(); }
+
+	const Random& unbox() const { return m_value; }
+
+	virtual std::wstring toString() const;
+
+	void* operator new (size_t size);
+
+	void operator delete (void* ptr);
+
+private:
+	Random m_value;
+};
+
+class T_DLLCLASS BoxedRandomGeometry : public BoxedRandom
+{
+	T_RTTI_CLASS;
+
+public:
+	BoxedRandomGeometry();
+
+	explicit BoxedRandomGeometry(const RandomGeometry& value);
+
+	explicit BoxedRandomGeometry(uint32_t seed);
+
+	Vector4 nextUnit() { return m_value.nextUnit(); }
+
+	Vector4 nextHemi(const Vector4& direction) { return m_value.nextHemi(direction); }
+
+	const RandomGeometry& unbox() const { return m_value; }
+
+	virtual std::wstring toString() const;
+
+	void* operator new (size_t size);
+
+	void operator delete (void* ptr);
+
+private:
+	RandomGeometry m_value;
+};
+
 class T_DLLCLASS BoxedRefArray : public RefCountImpl< Boxed >
 {
 	T_RTTI_CLASS;
@@ -1104,6 +1159,62 @@ struct CastAny < const Color4ub&, false >
 	}
 	static Color4ub get(const Any& value) {
 		return checked_type_cast< BoxedColor4ub*, false >(value.getObject())->unbox();
+	}
+};
+
+template < >
+struct CastAny < Random, false >
+{
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedRandom >(value.getObjectUnsafe());
+	}
+	static Any set(const Random& value) {
+		return Any::fromObject(new BoxedRandom(value));
+	}
+	static Random get(const Any& value) {
+		return checked_type_cast< BoxedRandom*, false >(value.getObject())->unbox();
+	}
+};
+
+template < >
+struct CastAny < const Random&, false >
+{
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedRandom >(value.getObjectUnsafe());
+	}
+	static Any set(const Random& value) {
+		return Any::fromObject(new BoxedRandom(value));
+	}
+	static Random get(const Any& value) {
+		return checked_type_cast< BoxedRandom*, false >(value.getObject())->unbox();
+	}
+};
+
+template < >
+struct CastAny < RandomGeometry, false >
+{
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedRandomGeometry >(value.getObjectUnsafe());
+	}
+	static Any set(const RandomGeometry& value) {
+		return Any::fromObject(new BoxedRandomGeometry(value));
+	}
+	static RandomGeometry get(const Any& value) {
+		return checked_type_cast< BoxedRandomGeometry*, false >(value.getObject())->unbox();
+	}
+};
+
+template < >
+struct CastAny < const RandomGeometry&, false >
+{
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedRandomGeometry >(value.getObjectUnsafe());
+	}
+	static Any set(const RandomGeometry& value) {
+		return Any::fromObject(new BoxedRandomGeometry(value));
+	}
+	static RandomGeometry get(const Any& value) {
+		return checked_type_cast< BoxedRandomGeometry*, false >(value.getObject())->unbox();
 	}
 };
 
