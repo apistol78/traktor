@@ -100,7 +100,7 @@ bool SoundDriverOpenSL::create(void* nativeHandle, const SoundDriverCreateDesc& 
 		}
 	}
 
-	SLDataLocator_AndroidBufferQueue locatorBufferQueue = { SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE, 2 };
+	SLDataLocator_AndroidSimpleBufferQueue locatorBufferQueue = { SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE, 2 };
 	SLDataFormat_PCM formatPCM =
 	{
 		SL_DATAFORMAT_PCM,

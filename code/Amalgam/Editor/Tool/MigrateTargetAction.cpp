@@ -245,18 +245,16 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 	std::list< std::wstring > errors;
 	std::wstring str;
 
-	do
+	for (;;)
 	{
-		while (stdOutReader.readLine(str, 100))
+		PipeReader::Result result1 = stdOutReader.readLine(str, 10);
+		if (result1 == PipeReader::RtOk)
 		{
-			str = trim(str);
-			if (str.empty())
-				continue;
-
-			if (str[0] == L':')
+			std::wstring tmp = trim(str);
+			if (!tmp.empty() && tmp[0] == L':')
 			{
 				std::vector< std::wstring > out;
-				if (Split< std::wstring >::any(str, L":", out) == 2)
+				if (Split< std::wstring >::any(tmp, L":", out) == 2)
 				{
 					int32_t index = parseString< int32_t >(out[0]);
 					int32_t count = parseString< int32_t >(out[1]);
@@ -271,7 +269,8 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 				log::info << str << Endl;
 		}
 
-		while (stdErrReader.readLine(str, 100))
+		PipeReader::Result result2 = stdErrReader.readLine(str, 10);
+		if (result2 == PipeReader::RtOk)
 		{
 			str = trim(str);
 			if (!str.empty())
@@ -280,14 +279,10 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 				errors.push_back(str);
 			}
 		}
+
+		if (result1 == PipeReader::RtEnd && result2 == PipeReader::RtEnd)
+			break;
 	}
-	while (!process->wait(0));
-
-	while (stdOutReader.readLine(str, 100))
-		log::info << str << Endl;
-
-	while (stdErrReader.readLine(str, 100))
-		log::error << str << Endl;
 
 	if (!errors.empty())
 	{

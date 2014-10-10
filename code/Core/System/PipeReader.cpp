@@ -3,7 +3,6 @@
 #include "Core/System/PipeReader.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
-#include "Core/Timer/Timer.h"
 
 namespace traktor
 {
@@ -15,69 +14,79 @@ PipeReader::PipeReader(IStream* stream)
 {
 }
 
-bool PipeReader::readLine(std::wstring& outLine, int32_t timeout)
+PipeReader::~PipeReader()
 {
+}
+
+PipeReader::Result PipeReader::readLine(std::wstring& outLine, int32_t timeout)
+{
+	char buffer[128];
+
 	outLine.clear();
 
-	if (!m_stream)
-		return false;
-
-	int32_t navail;
-	char ch;
-	char pch = 0;
-
-	Timer timer;
-	timer.start();
-	for (;;)
+	// Pop line from line queue if any.
+	if (!m_lines.empty())
 	{
-		for (;;)
-		{
-			if ((navail = m_stream->available()) < 0)
-			{
-				m_stream = 0;
-				return false;
-			}
-
-			// Does the stream have a character ready then don't wait no more.
-			if (navail > 0)
-				break;
-
-			// No character available; wait for more.
-			if (int32_t(1000.0f * timer.getElapsedTime()) > timeout)
-				return false;
-
-			ThreadManager::getInstance().getCurrentThread()->sleep(10);
-		}
-		
-		// Extract character from stream.
-		int32_t res = m_stream->read(&ch, sizeof(ch));
-		if (res <= 0)
-			return false;
-
-#if defined(__APPLE__)
-		if (ch == 10)
-		{
-			outLine = mbstows(std::string(m_acc.begin(), m_acc.end()));
-			m_acc.resize(0);
-			break;			
-		}
-		else
-			m_acc.push_back(ch);
-#else
-		if (ch == 13)
-		{
-			outLine = mbstows(std::string(m_acc.begin(), m_acc.end()));
-			m_acc.resize(0);
-			break;
-		}
-		else if (ch != 10)
-			m_acc.push_back(ch);
-#endif
-
-		pch = ch;
+		outLine = m_lines.front();
+		m_lines.pop_front();
+		return RtOk;
 	}
 
-	return true;
+	// Cannot continue after stream has closed.
+	if (!m_stream)
+		return RtEnd;
+
+	while (m_lines.empty())
+	{
+		int32_t nrecv = m_stream->read(buffer, sizeof(buffer));
+		if (nrecv < 0)
+		{
+			m_stream = 0;
+			break;
+		}
+
+		if (nrecv == 0)
+		{
+			if (timeout <= 0)
+				break;
+
+			timeout -= 10;
+			ThreadManager::getInstance().getCurrentThread()->sleep(10);
+			continue;
+		}
+
+		// Transform into lines.
+		for (int32_t i = 0; i < nrecv; ++i)
+		{
+			char ch = buffer[i];
+
+#if defined(__APPLE__)
+			if (ch == 10)
+			{
+				m_lines.push_back(mbstows(std::string(m_acc.begin(), m_acc.end())));
+				m_acc.resize(0);
+			}
+			else
+				m_acc.push_back(ch);
+#else
+			if (ch == 13)
+			{
+				m_lines.push_back(mbstows(std::string(m_acc.begin(), m_acc.end())));
+				m_acc.resize(0);
+			}
+			else if (ch != 10)
+				m_acc.push_back(ch);
+#endif		
+		}
+	}
+
+	if (m_lines.empty())
+		return RtTimeout;
+
+	// Pop line from queue.
+	outLine = m_lines.front();
+	m_lines.pop_front();
+	return RtOk;
 }
 
 }

@@ -248,21 +248,19 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 	);
 
 	std::wstring str;
-	do
+	for (;;)
 	{
-		while (stdOutReader.readLine(str, 100))
+		PipeReader::Result result1 = stdOutReader.readLine(str, 10);
+		if (result1 == PipeReader::RtOk)
 			log::info << str << Endl;
 
-		while (stdErrReader.readLine(str, 100))
+		PipeReader::Result result2 = stdErrReader.readLine(str, 10);
+		if (result2 == PipeReader::RtOk)
 			log::error << str << Endl;
+
+		if (result1 == PipeReader::RtEnd && result2 == PipeReader::RtEnd)
+			break;
 	}
-	while (!process->wait(0));
-
-	while (stdOutReader.readLine(str, 100))
-		log::info << str << Endl;
-
-	while (stdErrReader.readLine(str, 100))
-		log::error << str << Endl;
 
 	int32_t exitCode = process->exitCode();
 	if (exitCode != 0)

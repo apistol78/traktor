@@ -7,6 +7,7 @@
 #include "Core/Io/IStream.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -14,6 +15,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Core/System/IProcess.h"
 #include "Core/System/OS.h"
+#include "Core/System/PipeReader.h"
 #include "Database/Database.h"
 
 namespace traktor
@@ -161,6 +163,66 @@ bool LaunchTargetAction::execute(IProgressListener* progressListener)
 		log::error << L"Failed to launch process \"" << deployTool.getExecutable() << L"\"" << Endl;
 		return false;
 	}
+
+	PipeReader stdOutReader(
+		process->getPipeStream(IProcess::SpStdOut)
+	);
+	PipeReader stdErrReader(
+		process->getPipeStream(IProcess::SpStdErr)
+	);
+
+	std::list< std::wstring > errors;
+	std::wstring str;
+
+	for (;;)
+	{
+		PipeReader::Result result1 = stdOutReader.readLine(str, 10);
+		if (result1 == PipeReader::RtOk)
+		{
+			std::wstring tmp = trim(str);
+			if (!tmp.empty() && tmp[0] == L':')
+			{
+				std::vector< std::wstring > out;
+				if (Split< std::wstring >::any(tmp, L":", out) == 2)
+				{
+					int32_t index = parseString< int32_t >(out[0]);
+					int32_t count = parseString< int32_t >(out[1]);
+					if (count > 0)
+					{
+						if (progressListener)
+							progressListener->notifyTargetActionProgress(2 + (98 * index) / count, 100);
+					}
+				}
+			}
+			else
+				log::info << str << Endl;
+		}
+
+		PipeReader::Result result2 = stdErrReader.readLine(str, 10);
+		if (result2 == PipeReader::RtOk)
+		{
+			str = trim(str);
+			if (!str.empty())
+			{
+				log::error << str << Endl;
+				errors.push_back(str);
+			}
+		}
+
+		if (result1 == PipeReader::RtEnd && result2 == PipeReader::RtEnd)
+			break;
+	}
+
+	if (!errors.empty())
+	{
+		log::error << L"Unsuccessful build, error(s):" << Endl;
+		for (std::list< std::wstring >::const_iterator i = errors.begin(); i != errors.end(); ++i)
+			log::error << L"\t" << *i << Endl;
+	}
+
+	int32_t exitCode = process->exitCode();
+	if (exitCode != 0)
+		log::error << L"Process failed with exit code " << exitCode << Endl;
 
 	if (progressListener)
 		progressListener->notifyTargetActionProgress(2, 2);

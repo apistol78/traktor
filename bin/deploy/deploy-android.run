@@ -32,6 +32,7 @@ function build(args)
 		cmdline = cmdline .. " " .. args:get(i)
 	end
 	run:execute(cmdline)
+	stdout:printLn("Done")
 end
 
 
@@ -54,8 +55,14 @@ function deploy(args)
 	local host = os:getEnvironment("DEPLOY_HOST_OS")
 	if host == "win32" or host == "win64" then
 		host = "windows-x86_64"
+		if not fileSystem:exist(ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. host) then
+			host = "windows"
+		end
 	elseif host == "osx" then
 		host = "darwin-x86_64"
+		if not fileSystem:exist(ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. host) then
+			host = "darwin"
+		end		
 	else
 		stderr:printLn("Unsupported host OS.")
 		return 1
@@ -125,12 +132,19 @@ function deploy(args)
 		return 1
 	end
 
+	stdout:printLn("Done")
 	return 0
 end
 
 
 function launch(args)
 	stdout:printLn("Launching...")
+
+	local ant = os:getEnvironment("ANT_HOME")
+	if #ant <= 0 then
+		stderr:printLn("ANT_HOME not set; ensure Apache ANT is properly installed and try again.")
+		return 1
+	end
 
 	-- Create android project.
 	run:mkdir("assets")
@@ -169,18 +183,18 @@ function launch(args)
 
 	-- Use ant to build apk package.
 	stdout:printLn("Building package...")
-	run:execute("$(ANT_PATH)/bin/ant.bat debug", "(null)")
+	run:execute("$(ANT_HOME)/bin/ant.bat debug", "(null)")
 
 	-- Launch application on attached device.
 	stdout:printLn("Installing package...")
-	local result = run:execute("$(ANDROID_HOME)/platform-tools/adb -d install -r \"bin/$(DEPLOY_PROJECT_NAME)-debug.apk\"", "(null)")
-	if result ~= 0 then
-		stderr:printLn("Failed to install package on device; Please ensure device is attached and in developer mode.")
-		return 1
-	end
+--	local result = run:execute("$(ANDROID_HOME)/platform-tools/adb -d install -r \"bin/$(DEPLOY_PROJECT_NAME)-debug.apk\"", "(null)")
+--	if result ~= 0 then
+--		stderr:printLn("Failed to install package on device; Please ensure device is attached and in developer mode.")
+--		return 1
+--	end
 
 	-- stdout:printLn("Launching...")
-	-- run:execute("$(ANDROID_HOME)/platform-tools/adb shell am start -S -n $DEPLOY_PROJECT_IDENTIFIER/android.app.NativeActivity")
+	-- run:execute("$(ANDROID_HOME)/platform-tools/adb -d shell am start -S -n $DEPLOY_PROJECT_IDENTIFIER/android.app.NativeActivity")
 
 	stdout:printLn("Done")
 	return 0
@@ -188,6 +202,7 @@ end
 
 
 function migrate(args)
+	stdout:printLn("Migrating...")
 
 	local toolchain = "arm-linux-androideabi-4.8"
 	local android = "android-19"
@@ -198,6 +213,12 @@ function migrate(args)
 	local ndk = os:getEnvironment("ANDROID_NDK_ROOT")
 	if #ndk <= 0 then
 		stderr:printLn("ANDROID_NDK_ROOT not set; ensure Android NDK is properly installed and try again.")
+		return 1
+	end
+
+	local ant = os:getEnvironment("ANT_HOME")
+	if #ant <= 0 then
+		stderr:printLn("ANT_HOME not set; ensure Apache ANT is properly installed and try again.")
 		return 1
 	end
 
@@ -212,8 +233,14 @@ function migrate(args)
 	local host = os:getEnvironment("DEPLOY_HOST_OS")
 	if host == "win32" or host == "win64" then
 		host = "windows-x86_64"
+		if not fileSystem:exist(ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. host) then
+			host = "windows"
+		end
 	elseif host == "osx" then
 		host = "darwin-x86_64"
+		if not fileSystem:exist(ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. host) then
+			host = "darwin"
+		end		
 	else
 		stderr:printLn("Unsupported host OS.")
 		return 1
@@ -320,7 +347,7 @@ function migrate(args)
 
 	-- Use ant to build apk package.
 	stdout:printLn("Building package...")
-	run:execute("$(ANT_PATH)/bin/ant.bat debug", "(null)")
+	run:execute("$(ANT_HOME)/bin/ant.bat debug", "(null)")
 
 	-- Install application on attached device.
 	stdout:printLn("Installing package...")
