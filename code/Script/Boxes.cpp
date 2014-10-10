@@ -74,6 +74,8 @@ BoxedAllocator< BoxedFrustum, 16 > s_allocBoxedFrustum;
 BoxedAllocator< BoxedMatrix44, 16 > s_allocBoxedMatrix44;
 BoxedAllocator< BoxedColor4f, 16 > s_allocBoxedColor4f;
 BoxedAllocator< BoxedColor4ub, 16 > s_allocBoxedColor4ub;
+BoxedAllocator< BoxedRandom, 8 > s_allocBoxedRandom;
+BoxedAllocator< BoxedRandomGeometry, 8 > s_allocBoxedRandomGeometry;
 BoxedAllocator< BoxedRefArray, 512 > s_allocBoxedRefArray;
 BoxedAllocator< BoxedRange, 256 > s_allocBoxedRange;
 BoxedAllocator< BoxedStdVector, 16 > s_allocBoxedStdVector;
@@ -812,6 +814,70 @@ void BoxedColor4ub::operator delete (void* ptr)
 }
 
 
+T_IMPLEMENT_RTTI_CLASS(L"traktor.BoxedRandom", BoxedRandom, Boxed)
+
+BoxedRandom::BoxedRandom()
+{
+}
+
+BoxedRandom::BoxedRandom(const Random& value)
+:	m_value(value)
+{
+}
+
+BoxedRandom::BoxedRandom(uint32_t seed)
+:	m_value(seed)
+{
+}
+
+std::wstring BoxedRandom::toString() const
+{
+	return L"(random)";
+}
+
+void* BoxedRandom::operator new (size_t size)
+{
+	return s_allocBoxedRandom.alloc();
+}
+
+void BoxedRandom::operator delete (void* ptr)
+{
+	s_allocBoxedRandom.free(ptr);
+}
+
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.BoxedRandomGeometry", BoxedRandomGeometry, BoxedRandom)
+
+BoxedRandomGeometry::BoxedRandomGeometry()
+{
+}
+
+BoxedRandomGeometry::BoxedRandomGeometry(const RandomGeometry& value)
+:	m_value(value)
+{
+}
+
+BoxedRandomGeometry::BoxedRandomGeometry(uint32_t seed)
+:	m_value(seed)
+{
+}
+
+std::wstring BoxedRandomGeometry::toString() const
+{
+	return L"(random geometry)";
+}
+
+void* BoxedRandomGeometry::operator new (size_t size)
+{
+	return s_allocBoxedRandomGeometry.alloc();
+}
+
+void BoxedRandomGeometry::operator delete (void* ptr)
+{
+	s_allocBoxedRandomGeometry.free(ptr);
+}
+
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.RefArray", BoxedRefArray, Boxed)
 
 BoxedRefArray::BoxedRefArray()
@@ -1232,6 +1298,20 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedColor4ub->addMethod("setBlue", &BoxedColor4ub::setBlue);
 	classBoxedColor4ub->addMethod("setAlpha", &BoxedColor4ub::setAlpha);
 	scriptManager->registerClass(classBoxedColor4ub);
+
+	Ref< AutoScriptClass< BoxedRandom > > classBoxedRandom = new AutoScriptClass< BoxedRandom >();
+	classBoxedRandom->addConstructor();
+	classBoxedRandom->addConstructor< uint32_t >();
+	classBoxedRandom->addMethod("next", &BoxedRandom::next);
+	classBoxedRandom->addMethod("nextFloat", &BoxedRandom::nextFloat);
+	scriptManager->registerClass(classBoxedRandom);
+
+	Ref< AutoScriptClass< BoxedRandomGeometry > > classBoxedRandomGeometry = new AutoScriptClass< BoxedRandomGeometry >();
+	classBoxedRandomGeometry->addConstructor();
+	classBoxedRandomGeometry->addConstructor< uint32_t >();
+	classBoxedRandomGeometry->addMethod("nextUnit", &BoxedRandomGeometry::nextUnit);
+	classBoxedRandomGeometry->addMethod("nextHemi", &BoxedRandomGeometry::nextHemi);
+	scriptManager->registerClass(classBoxedRandomGeometry);
 
 	Ref< AutoScriptClass< BoxedRange > > classBoxedRange = new AutoScriptClass< BoxedRange >();
 	classBoxedRange->addConstructor();
