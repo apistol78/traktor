@@ -45,6 +45,9 @@ public:
 	/*! \brief Swap color targets. */
 	virtual void swap(int index1, int index2) = 0;
 
+	/*! \brief Discard target content. */
+	virtual void discard() = 0;
+
 	/*! \brief Read back color target into system memory.
 	 *
 	 * \note

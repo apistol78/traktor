@@ -38,6 +38,8 @@ public:
 
 	virtual void swap(int index1, int index2);
 
+	virtual void discard();
+
 	virtual bool read(int index, void* buffer) const;
 
 	inline ID3D11DepthStencilView* getD3D11DepthTextureView() const {

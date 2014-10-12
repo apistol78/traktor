@@ -161,6 +161,10 @@ void RenderTargetSetOpenGL::swap(int index1, int index2)
 	std::swap(m_renderTargets[index1], m_renderTargets[index2]);
 }
 
+void RenderTargetSetOpenGL::discard()
+{
+}
+
 bool RenderTargetSetOpenGL::read(int index, void* buffer) const
 {
 	return false;

@@ -1,6 +1,7 @@
 #include <cstring>
 #include "Core/Misc/Adler32.h"
 #include "Render/IRenderSystem.h"
+#include "Render/RenderTargetSet.h"
 #include "World/PostProcess/PostProcessTargetPool.h"
 
 namespace traktor
@@ -61,6 +62,8 @@ void PostProcessTargetPool::releaseTarget(const render::RenderTargetSetCreateDes
 
 	pool.acquired.remove(rts);
 	pool.free.push_back(rts);
+
+	rts->discard();
 }
 
 	}
