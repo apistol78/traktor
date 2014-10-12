@@ -114,6 +114,10 @@ void RenderTargetSetWin32::swap(int index1, int index2)
 	std::swap(m_colorTextures[index1], m_colorTextures[index2]);
 }
 
+void RenderTargetSetWin32::discard()
+{
+}
+
 bool RenderTargetSetWin32::read(int index, void* buffer) const
 {
 	ComRef< IDirect3DSurface9 > d3dMemorySurface;

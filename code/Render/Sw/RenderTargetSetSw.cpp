@@ -89,6 +89,10 @@ void RenderTargetSetSw::swap(int index1, int index2)
 	std::swap(m_colorTargets[index1], m_colorTargets[index2]);
 }
 
+void RenderTargetSetSw::discard()
+{
+}
+
 bool RenderTargetSetSw::read(int index, void* buffer) const
 {
 	return false;

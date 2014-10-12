@@ -36,6 +36,8 @@ public:
 
 	virtual void swap(int index1, int index2);
 
+	virtual void discard();
+
 	virtual bool read(int index, void* buffer) const;
 
 	float* getDepthSurface() { return m_depthSurface.ptr(); }

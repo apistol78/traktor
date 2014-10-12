@@ -1,3 +1,6 @@
+#if defined(__ANDROID__)
+#	include <dlfcn.h>
+#endif
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Math/Log2.h"
@@ -15,6 +18,10 @@ namespace traktor
 	{
 		namespace
 		{
+
+#if defined(__ANDROID__)
+PFNGLDISCARDFRAMEBUFFEREXTPROC s_glDiscardFramebufferEXT = 0;
+#endif
 
 struct DeleteFramebufferCallback : public IContext::IDeleteCallback
 {
@@ -212,6 +219,9 @@ bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 		);
 	}
 
+#if defined(__ANDROID__)
+	s_glDiscardFramebufferEXT = (PFNGLDISCARDFRAMEBUFFEREXTPROC)dlsym(RTLD_DEFAULT, "glDiscardFramebufferEXT");
+#endif
 	return true;
 }
 
@@ -256,6 +266,26 @@ void RenderTargetSetOpenGLES2::swap(int index1, int index2)
 	std::swap(m_targetFBO[index1], m_targetFBO[index2]);
 	std::swap(m_targetTextures[index1], m_targetTextures[index2]);
 	std::swap(m_renderTargets[index1], m_renderTargets[index2]);
+}
+
+void RenderTargetSetOpenGLES2::discard()
+{
+#if defined(__ANDROID__)
+	if (!s_glDiscardFramebufferEXT)
+		return;
+#endif
+
+	const GLenum discards[]  = { GL_COLOR_ATTACHMENT0 };
+	for (int32_t i = 0; i < m_desc.count; ++i)
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, m_targetFBO[i]);
+#if defined(__ANDROID__)
+		(*s_glDiscardFramebufferEXT)(GL_FRAMEBUFFER, 1, discards);
+#else
+		glDiscardFramebufferEXT(GL_FRAMEBUFFER, 1, discards);
+#endif
+	}
+	setContentValid(false);
 }
 
 bool RenderTargetSetOpenGLES2::read(int index, void* buffer) const
