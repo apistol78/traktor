@@ -55,12 +55,12 @@ function deploy(args)
 	local host = os:getEnvironment("DEPLOY_HOST_OS")
 	if host == "win32" or host == "win64" then
 		host = "windows-x86_64"
-		if not fileSystem:exist(ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. host) then
+		if not fileSystem:exist(Path(ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. host)) then
 			host = "windows"
 		end
 	elseif host == "osx" then
 		host = "darwin-x86_64"
-		if not fileSystem:exist(ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. host) then
+		if not fileSystem:exist(Path(ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. host)) then
 			host = "darwin"
 		end		
 	else
@@ -187,15 +187,19 @@ function launch(args)
 
 	-- Launch application on attached device.
 	stdout:printLn("Installing package...")
---	local result = run:execute("$(ANDROID_HOME)/platform-tools/adb -d install -r \"bin/$(DEPLOY_PROJECT_NAME)-debug.apk\"", "(null)")
---	if result ~= 0 then
---		stderr:printLn("Failed to install package on device; Please ensure device is attached and in developer mode.")
---		return 1
---	end
+	local result = run:execute("$(ANDROID_HOME)/platform-tools/adb -d install -r \"bin/$(DEPLOY_PROJECT_NAME)-debug.apk\"", "(null)")
+	if result ~= 0 then
+		stderr:printLn("Failed to install package on device; Please ensure device is attached and in developer mode.")
+		return 1
+	end
 
-	-- stdout:printLn("Launching...")
-	-- run:execute("$(ANDROID_HOME)/platform-tools/adb -d shell am start -S -n $DEPLOY_PROJECT_IDENTIFIER/android.app.NativeActivity")
-
+	stdout:printLn("Launching...")
+	local result = run:execute("$(ANDROID_HOME)/platform-tools/adb -d shell am start -S -n $DEPLOY_PROJECT_IDENTIFIER/android.app.NativeActivity")
+	if result ~= 0 then
+		stderr:printLn("Failed to launch package on device; Please ensure device is attached and in developer mode.")
+		return 1
+	end
+	
 	stdout:printLn("Done")
 	return 0
 end
