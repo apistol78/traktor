@@ -1,6 +1,6 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
-#include "Core/Io/BufferedStream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/System/Osx/ProcessOsX.h"
 
@@ -12,8 +12,9 @@ namespace traktor
 class PipeStream : public IStream
 {
 public:
-	PipeStream(int pipe)
-	:	m_pipe(pipe)
+	PipeStream(pid_t pid, int pipe)
+    :   m_pid(pid)
+	,	m_pipe(pipe)
 	{
 	}
 
@@ -43,9 +44,7 @@ public:
 
 	virtual int available() const
 	{
-		int avail = 0;
-		::ioctl(m_pipe, FIONREAD, &avail);
-		return avail;
+        return 0;
 	}
 
 	virtual int seek(SeekOriginType origin, int offset)
@@ -55,8 +54,52 @@ public:
 
 	virtual int read(void* block, int nbytes)
 	{
-		int ret = ::read(m_pipe, block, nbytes);
-		return ret;
+        int exitCode;
+        int avail;
+        int ret;
+        
+        bool processTerminated = (waitpid(m_pid, &exitCode, WNOHANG) >= 0);
+        
+        ret = ::ioctl(m_pipe, FIONREAD, &avail);
+        if (ret < 0)
+            return -1;
+        
+        int safeRead = std::min(nbytes, avail);
+        int read = 0;
+        
+        if (safeRead > 0)
+        {
+            ret = ::read(m_pipe, block, safeRead);
+            if (ret < 0)
+                return -1;
+
+            read = ret;
+        }
+        
+        if (read == 0 && processTerminated)
+        {
+            usleep(100 * 1000);
+            
+            ret = ::ioctl(m_pipe, FIONREAD, &avail);
+            if (ret < 0)
+                return -1;
+            
+            safeRead = std::min(nbytes, avail);
+            
+            if (safeRead > 0)
+            {
+                ret = ::read(m_pipe, block, safeRead);
+                if (ret < 0)
+                    return -1;
+                
+                read = ret;
+            }
+            
+            if (read == 0)
+                return -1;
+        }
+        
+		return read;
 	}
 
 	virtual int write(const void* block, int nbytes)
@@ -69,6 +112,7 @@ public:
 	}
 
 private:
+    pid_t m_pid;
 	int m_pipe;
 };
 
@@ -95,10 +139,10 @@ Ref< IStream > ProcessOsX::getPipeStream(StdPipe pipe)
 		switch (pipe)
 		{
 		case SpStdOut:
-			return new BufferedStream(new PipeStream(m_childStdOut));
+			return new PipeStream(m_pid, m_childStdOut);
 
 		case SpStdErr:
-			return new BufferedStream(new PipeStream(m_childStdErr));
+			return new PipeStream(m_pid, m_childStdErr);
 
 		default:
 			return 0;
