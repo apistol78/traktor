@@ -158,12 +158,14 @@ bool Animation::getPose(float at, bool linear, int32_t& indexHint, Pose& outPose
 				}
 			}
 
+			Scalar k((at - m_poses[index].at) / (m_poses[index + 1].at - m_poses[index].at));
+
 			blendPoses(
 				&m_poses[index].pose,
 				&m_poses[index + 1].pose,
-				Scalar((at - m_poses[index].at) / (m_poses[index + 1].at - m_poses[index].at)),
+				clamp(k, Scalar(0.0f), Scalar(1.0f)),
 				&outPose
-				);
+			);
 
 			indexHint = index;
 		}
