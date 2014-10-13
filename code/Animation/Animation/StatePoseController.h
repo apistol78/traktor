@@ -37,7 +37,13 @@ public:
 
 	void setCondition(const std::wstring& condition, bool enabled, bool reset);
 
+	void setTime(float time);
+
+	float getTime() const;
+
 	void setTimeFactor(float timeFactor);
+
+	float getTimeFactor() const;
 
 	virtual void destroy();
 
