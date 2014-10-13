@@ -5,6 +5,7 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Flash/FlashBitmap.h"
 #include "Flash/FlashCanvas.h"
+#include "Flash/FlashDictionary.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashSprite.h"
 #include "Flash/FlashSpriteInstance.h"
@@ -114,6 +115,7 @@ AccDisplayRenderer::AccDisplayRenderer()
 ,	m_frameSize(0.0f, 0.0f, 0.0f, 0.0f)
 ,	m_viewSize(0.0f, 0.0f, 0.0f, 0.0f)
 ,	m_viewOffset(0.0f, 0.0f, 1.0f, 1.0f)
+,	m_warmUpTextureCache(true)
 ,	m_clearBackground(false)
 ,	m_stereoscopicOffset(0.0f)
 ,	m_maskWrite(false)
@@ -293,6 +295,7 @@ void AccDisplayRenderer::flushCaches()
 	m_glyphCache.clear();
 
 	m_nextIndex = 0;
+	m_warmUpTextureCache = true;
 }
 
 void AccDisplayRenderer::begin(
@@ -339,6 +342,14 @@ void AccDisplayRenderer::begin(
 	m_maskWrite = false;
 	m_maskIncrement = false;
 	m_maskReference = 0;
+
+	if (m_warmUpTextureCache)
+	{
+		const SmallMap< uint16_t, Ref< FlashBitmap > >& bitmaps = dictionary.getBitmaps();
+		for (SmallMap< uint16_t, Ref< FlashBitmap > >::const_iterator i = bitmaps.begin(); i != bitmaps.end(); ++i)
+			m_textureCache->getBitmapTexture(*(i->second));
+		m_warmUpTextureCache = false;
+	}
 }
 
 void AccDisplayRenderer::beginMask(bool increment)
