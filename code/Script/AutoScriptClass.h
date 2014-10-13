@@ -175,7 +175,7 @@ template<
 >
 struct FnConstructor_1 : public IConstructor
 {
-	typedef Ref< ClassType > (*fn_t)(Argument1Type a1);
+	typedef Ref< ClassType > (*fn_t)(Argument1Type);
 	fn_t fn;
 
 	FnConstructor_1(fn_t fn_)
@@ -198,7 +198,7 @@ template<
 >
 struct FnConstructor_2 : public IConstructor
 {
-	typedef Ref< ClassType > (*fn_t)(Argument1Type a1, Argument2Type a2);
+	typedef Ref< ClassType > (*fn_t)(Argument1Type, Argument2Type);
 	fn_t fn;
 
 	FnConstructor_2(fn_t fn_)
@@ -211,6 +211,60 @@ struct FnConstructor_2 : public IConstructor
 		return (*fn)(
 			CastAny< Argument1Type >::get(argv[0]),
 			CastAny< Argument2Type >::get(argv[1])
+		);
+	}
+};
+
+template<
+	typename ClassType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type
+>
+struct FnConstructor_3 : public IConstructor
+{
+	typedef Ref< ClassType > (*fn_t)(Argument1Type, Argument2Type, Argument3Type);
+	fn_t fn;
+
+	FnConstructor_3(fn_t fn_)
+	:	fn(fn_)
+	{
+	}
+
+	virtual Ref< ITypedObject > construct(uint32_t argc, const Any* argv) const
+	{
+		return (*fn)(
+			CastAny< Argument1Type >::get(argv[0]),
+			CastAny< Argument2Type >::get(argv[1]),
+			CastAny< Argument3Type >::get(argv[2])
+		);
+	}
+};
+
+template<
+	typename ClassType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type
+>
+struct FnConstructor_4 : public IConstructor
+{
+	typedef Ref< ClassType > (*fn_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type);
+	fn_t fn;
+
+	FnConstructor_4(fn_t fn_)
+	:	fn(fn_)
+	{
+	}
+
+	virtual Ref< ITypedObject > construct(uint32_t argc, const Any* argv) const
+	{
+		return (*fn)(
+			CastAny< Argument1Type >::get(argv[0]),
+			CastAny< Argument2Type >::get(argv[1]),
+			CastAny< Argument3Type >::get(argv[2]),
+			CastAny< Argument4Type >::get(argv[3])
 		);
 	}
 };
@@ -2266,6 +2320,27 @@ public:
 	void addConstructor(typename FnConstructor_2< ClassType, Argument1Type, Argument2Type >::fn_t fn)
 	{
 		addConstructor(2, new FnConstructor_2< ClassType, Argument1Type, Argument2Type >(fn));
+	}
+
+	template <
+		typename Argument1Type,
+		typename Argument2Type,
+		typename Argument3Type
+	>
+	void addConstructor(typename FnConstructor_3< ClassType, Argument1Type, Argument2Type, Argument3Type >::fn_t fn)
+	{
+		addConstructor(3, new FnConstructor_3< ClassType, Argument1Type, Argument2Type, Argument3Type >(fn));
+	}
+
+	template <
+		typename Argument1Type,
+		typename Argument2Type,
+		typename Argument3Type,
+		typename Argument4Type
+	>
+	void addConstructor(typename FnConstructor_4< ClassType, Argument1Type, Argument2Type, Argument3Type, Argument4Type >::fn_t fn)
+	{
+		addConstructor(4, new FnConstructor_4< ClassType, Argument1Type, Argument2Type, Argument3Type, Argument4Type >(fn));
 	}
 
 	/*! \} */

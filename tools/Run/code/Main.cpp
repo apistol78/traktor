@@ -17,7 +17,25 @@
 #include <Core/System/ISharedMemory.h>
 #include <Core/System/OS.h>
 #include <Drawing/Image.h>
+
+#include <Drawing/Filters/BrightnessContrastFilter.h>
+#include <Drawing/Filters/ChainFilter.h>
+#include <Drawing/Filters/ConvolutionFilter.h>
+#include <Drawing/Filters/CropFilter.h>
+#include <Drawing/Filters/DilateFilter.h>
+#include <Drawing/Filters/GammaFilter.h>
+#include <Drawing/Filters/GrayscaleFilter.h>
+#include <Drawing/Filters/MirrorFilter.h>
+#include <Drawing/Filters/NormalizeFilter.h>
+#include <Drawing/Filters/NormalMapFilter.h>
+#include <Drawing/Filters/PerlinNoiseFilter.h>
+#include <Drawing/Filters/PremultiplyAlphaFilter.h>
+#include <Drawing/Filters/QuantizeFilter.h>
 #include <Drawing/Filters/ScaleFilter.h>
+#include <Drawing/Filters/SharpenFilter.h>
+#include <Drawing/Filters/SwizzleFilter.h>
+#include <Drawing/Filters/TonemapFilter.h>
+#include <Drawing/Filters/TransformFilter.h>
 #include <Net/MulticastUdpSocket.h>
 #include <Net/SocketAddressIPv4.h>
 #include <Net/SocketAddressIPv6.h>
@@ -149,6 +167,11 @@ std::wstring OS_getEnvironment_1(OS* self, const std::wstring& key)
 Ref< IProcess > OS_execute(OS* self, const std::wstring& commandLine, const std::wstring& workingDirectory, const Environment* environment, bool redirect, bool mute, bool detach)
 {
 	return self->execute(commandLine, workingDirectory, environment ? &environment->envmap() : 0, redirect, mute, detach);
+}
+
+Ref< drawing::CropFilter > drawing_CropFilter_constructor(int32_t anchorX, int32_t anchorY, int32_t width, int32_t height)
+{
+	return new drawing::CropFilter((drawing::CropFilter::AnchorType)anchorX, (drawing::CropFilter::AnchorType)anchorY, width, height);
 }
 
 Ref< drawing::ScaleFilter > drawing_ScaleFilter_constructor(int32_t width, int32_t height)
@@ -488,9 +511,81 @@ Ref< script::IScriptManager > createScriptManager()
 	Ref< script::AutoScriptClass< drawing::IImageFilter > > classIImageFilter = new script::AutoScriptClass< drawing::IImageFilter >();
 	scriptManager->registerClass(classIImageFilter);
 
+	Ref< script::AutoScriptClass< drawing::BrightnessContrastFilter > > classBrightnessContrastFilter = new script::AutoScriptClass< drawing::BrightnessContrastFilter >();
+	classBrightnessContrastFilter->addConstructor< float, float >();
+	scriptManager->registerClass(classBrightnessContrastFilter);
+
+	Ref< script::AutoScriptClass< drawing::ChainFilter > > classChainFilter = new script::AutoScriptClass< drawing::ChainFilter >();
+	classChainFilter->addConstructor();
+	classChainFilter->addMethod("add", &drawing::ChainFilter::add);
+	scriptManager->registerClass(classChainFilter);
+
+	Ref< script::AutoScriptClass< drawing::ConvolutionFilter > > classConvolutionFilter = new script::AutoScriptClass< drawing::ConvolutionFilter >();
+	classConvolutionFilter->addStaticMethod("createGaussianBlur3", &drawing::ConvolutionFilter::createGaussianBlur3);
+	classConvolutionFilter->addStaticMethod("createGaussianBlur5", &drawing::ConvolutionFilter::createGaussianBlur5);
+	classConvolutionFilter->addStaticMethod("createEmboss", &drawing::ConvolutionFilter::createEmboss);
+	scriptManager->registerClass(classConvolutionFilter);
+
+	Ref< script::AutoScriptClass< drawing::CropFilter > > classCropFilter = new script::AutoScriptClass< drawing::CropFilter >();
+	classCropFilter->addConstructor< int32_t, int32_t, int32_t, int32_t >(&drawing_CropFilter_constructor);
+	scriptManager->registerClass(classCropFilter);
+
+	Ref< script::AutoScriptClass< drawing::DilateFilter > > classDilateFilter = new script::AutoScriptClass< drawing::DilateFilter >();
+	classDilateFilter->addConstructor< int32_t >();
+	scriptManager->registerClass(classDilateFilter);
+
+	Ref< script::AutoScriptClass< drawing::GammaFilter > > classGammaFilter = new script::AutoScriptClass< drawing::GammaFilter >();
+	classGammaFilter->addConstructor< float >();
+	//classGammaFilter->addConstructor< float, float, float, float >();
+	scriptManager->registerClass(classGammaFilter);
+
+	Ref< script::AutoScriptClass< drawing::GrayscaleFilter > > classGrayscaleFilter = new script::AutoScriptClass< drawing::GrayscaleFilter >();
+	classGrayscaleFilter->addConstructor();
+	scriptManager->registerClass(classGrayscaleFilter);
+
+	Ref< script::AutoScriptClass< drawing::MirrorFilter > > classMirrorFilter = new script::AutoScriptClass< drawing::MirrorFilter >();
+	classMirrorFilter->addConstructor< bool, bool >();
+	scriptManager->registerClass(classMirrorFilter);
+
+	Ref< script::AutoScriptClass< drawing::NormalizeFilter > > classNormalizeFilter = new script::AutoScriptClass< drawing::NormalizeFilter >();
+	classNormalizeFilter->addConstructor();
+	scriptManager->registerClass(classNormalizeFilter);
+
+	Ref< script::AutoScriptClass< drawing::NormalMapFilter > > classNormalMapFilter = new script::AutoScriptClass< drawing::NormalMapFilter >();
+	classNormalMapFilter->addConstructor< float >();
+	scriptManager->registerClass(classNormalMapFilter);
+
+	Ref< script::AutoScriptClass< drawing::PerlinNoiseFilter > > classPerlinNoiseFilter = new script::AutoScriptClass< drawing::PerlinNoiseFilter >();
+	classPerlinNoiseFilter->addConstructor< int, float, float >();
+	scriptManager->registerClass(classPerlinNoiseFilter);
+
+	Ref< script::AutoScriptClass< drawing::PremultiplyAlphaFilter > > classPremultiplyAlphaFilter = new script::AutoScriptClass< drawing::PremultiplyAlphaFilter >();
+	classPremultiplyAlphaFilter->addConstructor();
+	scriptManager->registerClass(classPremultiplyAlphaFilter);
+
+	Ref< script::AutoScriptClass< drawing::QuantizeFilter > > classQuantizeFilter = new script::AutoScriptClass< drawing::QuantizeFilter >();
+	classQuantizeFilter->addConstructor< int >();
+	scriptManager->registerClass(classQuantizeFilter);
+
 	Ref< script::AutoScriptClass< drawing::ScaleFilter > > classScaleFilter = new script::AutoScriptClass< drawing::ScaleFilter >();
 	classScaleFilter->addConstructor< int32_t, int32_t >(&drawing_ScaleFilter_constructor);
 	scriptManager->registerClass(classScaleFilter);
+
+	Ref< script::AutoScriptClass< drawing::SharpenFilter > > classSharpenFilter = new script::AutoScriptClass< drawing::SharpenFilter >();
+	classSharpenFilter->addConstructor< int, float >();
+	scriptManager->registerClass(classSharpenFilter);
+
+	Ref< script::AutoScriptClass< drawing::SwizzleFilter > > classSwizzleFilter = new script::AutoScriptClass< drawing::SwizzleFilter >();
+	classSwizzleFilter->addConstructor< const std::wstring& >();
+	scriptManager->registerClass(classSwizzleFilter);
+
+	Ref< script::AutoScriptClass< drawing::TonemapFilter > > classTonemapFilter = new script::AutoScriptClass< drawing::TonemapFilter >();
+	classTonemapFilter->addConstructor();
+	scriptManager->registerClass(classTonemapFilter);
+
+	Ref< script::AutoScriptClass< drawing::TransformFilter > > classTransformFilter = new script::AutoScriptClass< drawing::TransformFilter >();
+	classTransformFilter->addConstructor< const Color4f&, const Color4f& >();
+	scriptManager->registerClass(classTransformFilter);
 
 	// Image
 	Ref< script::AutoScriptClass< drawing::Image > > classImage = new script::AutoScriptClass< drawing::Image >();
@@ -830,7 +925,7 @@ int main(int argc, const char** argv)
 
 	if (cmdLine.getCount() < 1)
 	{
-		log::info << L"Run 1.3" << Endl;
+		log::info << L"Run 1.3.1" << Endl;
 		log::info << Endl;
 		log::info << L"Usage: Run (option(s)) [<file>.run|<file>.template] (args ...)" << Endl;
 		log::info << Endl;

@@ -19,7 +19,16 @@ end
 
 
 function generateImage(fileName, image, width, height)
+	local outputAspect = width / height
+
+	local sourceWidth = image:getWidth()
+	local sourceHeight = image:getHeight()
+
+	local cropWidth = sourceWidth
+	local cropHeight = math.floor(sourceWidth / outputAspect)
+
 	local output = image:clone(true)
+	output:apply(CropFilter(0, 0, cropWidth, cropHeight))
 	output:apply(ScaleFilter(width, height))
 	output:save(fileName)
 end
