@@ -1028,13 +1028,19 @@ int main(int argc, const char** argv)
 		SetErrorMode(SEM_NOGPFAULTERRORBOX);
 		PVOID eh = AddVectoredExceptionHandler(1, exceptionVectoredHandler);
 #endif
+
 		CommandLine cmdLine(argc, argv);
+#if !defined(__APPLE__)
 		if (cmdLine.hasOption(L"slave"))
 			result = slave(cmdLine);
 		else if (cmdLine.hasOption(L"standalone"))
 			result = standalone(cmdLine);
 		else
 			result = master(cmdLine);
+#else
+		result = standalone(cmdLine);
+#endif
+
 #if defined(_WIN32) && !defined(_DEBUG)
 		RemoveVectoredExceptionHandler(eh);
 #endif

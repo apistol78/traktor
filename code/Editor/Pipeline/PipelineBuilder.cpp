@@ -149,6 +149,8 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 	_controlfp_s(&dummy,_RC_NEAR, _MCW_RC);
 #endif
 
+	log::info << L"Analyzing build conditions..." << Endl;
+
 	// Determine build reasons.
 	uint32_t dependencyCount = dependencySet->size();
 	
@@ -184,19 +186,22 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 			IPipelineDb::DependencyHash previousDependencyHash;
 			if (!m_pipelineDb->getDependency(dependency->outputGuid, previousDependencyHash))
 			{
+#if defined(_DEBUG)
 				log::info << L"Asset \"" << dependency->outputPath << L"\" modified; not hashed" << Endl;
+#endif
 				m_reasons[i] |= PbrSourceModified;
 			}
 			else if (previousDependencyHash.pipelineVersion != dependency->pipelineType->getVersion())
 			{
+#if defined(_DEBUG)
 				log::info << L"Asset \"" << dependency->outputPath << L"\" modified; pipeline version differ" << Endl;
+#endif
 				m_reasons[i] |= PbrSourceModified;
 			}
 			else if (previousDependencyHash.hash != hash)
 			{
-				log::info << L"Asset \"" << dependency->outputPath << L"\" modified; source has been modified" << Endl;
-
 #if defined(_DEBUG)
+				log::info << L"Asset \"" << dependency->outputPath << L"\" modified; source has been modified" << Endl;
 				log::info << IncreaseIndent;
 				log::info << L"("; FormatHex(log::info, previousDependencyHash.hash, 8); log::info << L" != "; FormatHex(log::info, hash, 8); log::info << L")" << Endl;
 				log::info << L"Pipeline hash "; FormatHex(log::info, pipelineHash, 8); log::info << Endl;
@@ -212,8 +217,6 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 		else
 			m_reasons[i] |= PbrForced;
 	}
-
-	log::info << L"Analyzing build conditions..." << Endl;
 
 	for (uint32_t i = 0; i < dependencyCount; ++i)
 	{

@@ -38,6 +38,7 @@ PipeReader::Result PipeReader::readLine(std::wstring& outLine, int32_t timeout)
 
 	while (m_lines.empty())
 	{
+		std::memset(buffer, 0, sizeof(buffer));
 		int32_t nrecv = m_stream->read(buffer, sizeof(buffer));
 		if (nrecv < 0)
 		{
