@@ -270,22 +270,24 @@ void RenderTargetSetOpenGLES2::swap(int index1, int index2)
 
 void RenderTargetSetOpenGLES2::discard()
 {
-#if defined(__ANDROID__)
+#if defined(GL_EXT_discard_framebuffer) && !defined(_WIN32)
+#	if defined(__ANDROID__)
 	if (!s_glDiscardFramebufferEXT)
 		return;
-#endif
+#	endif
 
 	const GLenum discards[]  = { GL_COLOR_ATTACHMENT0 };
 	for (int32_t i = 0; i < m_desc.count; ++i)
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_targetFBO[i]);
-#if defined(__ANDROID__)
+#	if defined(__ANDROID__)
 		(*s_glDiscardFramebufferEXT)(GL_FRAMEBUFFER, 1, discards);
-#else
+#	else
 		glDiscardFramebufferEXT(GL_FRAMEBUFFER, 1, discards);
-#endif
+#	endif
 	}
 	setContentValid(false);
+#endif
 }
 
 bool RenderTargetSetOpenGLES2::read(int index, void* buffer) const
