@@ -298,7 +298,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 
 	T_FORCE_LINK_REF(PropertyInteger);
 
-	traktor::log::info << L"Traktor RemoteServer 1.8.2" << Endl;
+	traktor::log::info << L"Traktor RemoteServer 1.9" << Endl;
 
 	if (cmdLine.getCount() <= 0)
 	{
