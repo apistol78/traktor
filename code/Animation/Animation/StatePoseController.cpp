@@ -50,9 +50,26 @@ void StatePoseController::setCondition(const std::wstring& condition, bool enabl
 	m_conditions[condition].second = reset;
 }
 
+void StatePoseController::setTime(float time)
+{
+	T_FATAL_ASSERT (m_currentState);
+	m_currentStateContext.setTime(time);
+	m_currentStateContext.setIndexHint(-1);
+}
+
+float StatePoseController::getTime() const
+{
+	return m_currentStateContext.getTime();
+}
+
 void StatePoseController::setTimeFactor(float timeFactor)
 {
 	m_timeFactor = timeFactor;
+}
+
+float StatePoseController::getTimeFactor() const
+{
+	return m_timeFactor;
 }
 
 void StatePoseController::destroy()

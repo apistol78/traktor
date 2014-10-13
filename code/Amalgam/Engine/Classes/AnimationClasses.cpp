@@ -78,7 +78,10 @@ void registerAnimationClasses(script::IScriptManager* scriptManager)
 	Ref< script::AutoScriptClass< animation::StatePoseController > > classStatePoseController = new script::AutoScriptClass< animation::StatePoseController >();
 	classStatePoseController->addMethod("setState", &animation::StatePoseController::setState);
 	classStatePoseController->addMethod("setCondition", &animation::StatePoseController::setCondition);
+	classStatePoseController->addMethod("setTime", &animation::StatePoseController::setTime);
+	classStatePoseController->addMethod("getTime", &animation::StatePoseController::getTime);
 	classStatePoseController->addMethod("setTimeFactor", &animation::StatePoseController::setTimeFactor);
+	classStatePoseController->addMethod("getTimeFactor", &animation::StatePoseController::getTimeFactor);
 	scriptManager->registerClass(classStatePoseController);
 }
 
