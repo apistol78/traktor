@@ -1189,7 +1189,7 @@ bool emitRound(GlslContext& cx, Round* node)
 #if !defined(T_OPENGL_ES2)
 	assign(f, out) << L"round(" << in->getName() << L");" << Endl;
 #else
-	assign(f, out) << L"trunc(" << in->getName() << L" + 0.5);" << Endl;
+	assign(f, out) << L"trunc(" << in->getName() << L" + " << expandScalar(0.5f, in->getType()) << L");" << Endl;
 #endif
 	return true;
 }
