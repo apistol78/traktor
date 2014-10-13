@@ -137,6 +137,7 @@ private:
 	Vector4 m_frameSize;
 	Vector4 m_viewSize;
 	Vector4 m_viewOffset;
+	bool m_warmUpTextureCache;
 	bool m_clearBackground;
 	float m_stereoscopicOffset;
 	bool m_maskWrite;

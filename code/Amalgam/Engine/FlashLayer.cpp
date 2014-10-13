@@ -157,6 +157,7 @@ void FlashLayer::destroy()
 void FlashLayer::transition(Layer* fromLayer)
 {
 	FlashLayer* fromFlashLayer = checked_type_cast< FlashLayer*, false >(fromLayer);
+	bool shouldFlush = true;
 
 	// Ensure matching settings.
 	if (m_clearBackground != fromFlashLayer->m_clearBackground)
@@ -167,6 +168,7 @@ void FlashLayer::transition(Layer* fromLayer)
 	{
 		m_moviePlayer = fromFlashLayer->m_moviePlayer;
 		fromFlashLayer->m_moviePlayer = 0;
+		shouldFlush = false;
 	}
 
 	// Keep display and sound renderer.
@@ -176,7 +178,7 @@ void FlashLayer::transition(Layer* fromLayer)
 	fromFlashLayer->m_soundRenderer = 0;
 
 	// Ensure display renderer's caches are fresh.
-	if (m_displayRenderer)
+	if (m_displayRenderer && shouldFlush)
 		m_displayRenderer->flushCaches();
 }
 
