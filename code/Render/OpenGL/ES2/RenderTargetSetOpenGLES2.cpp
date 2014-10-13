@@ -270,6 +270,7 @@ void RenderTargetSetOpenGLES2::swap(int index1, int index2)
 
 void RenderTargetSetOpenGLES2::discard()
 {
+	/*
 #if defined(GL_EXT_discard_framebuffer) && !defined(_WIN32)
 #	if defined(__ANDROID__)
 	if (!s_glDiscardFramebufferEXT)
@@ -286,8 +287,9 @@ void RenderTargetSetOpenGLES2::discard()
 		glDiscardFramebufferEXT(GL_FRAMEBUFFER, 1, discards);
 #	endif
 	}
-	setContentValid(false);
 #endif
+	*/
+	setContentValid(false);
 }
 
 bool RenderTargetSetOpenGLES2::read(int index, void* buffer) const
@@ -320,6 +322,12 @@ bool RenderTargetSetOpenGLES2::bind(GLuint primaryDepthBuffer, int32_t renderTar
 		return false;
 	}
 #endif
+
+	// Clear target to prevent driver from loading from system memory.
+	if (!isContentValid())
+	{
+		T_OGL_SAFE(glClear(GL_COLOR_BUFFER_BIT));
+	}
 
 	return true;
 }
