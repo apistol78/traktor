@@ -1,4 +1,6 @@
+#include <errno.h>
 #include <unistd.h>
+#include <sys/fcntl.h>
 #include <sys/ioctl.h>
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
@@ -13,9 +15,11 @@ class PipeStream : public IStream
 {
 public:
 	PipeStream(pid_t pid, int pipe)
-    :   m_pid(pid)
+	:   m_pid(pid)
 	,	m_pipe(pipe)
 	{
+		int flags = fcntl(m_pipe, F_GETFL, 0);
+		fcntl(m_pipe, F_SETFL, flags | O_NONBLOCK);
 	}
 
 	virtual void close()
@@ -44,7 +48,7 @@ public:
 
 	virtual int available() const
 	{
-        return 0;
+		return 0;
 	}
 
 	virtual int seek(SeekOriginType origin, int offset)
@@ -54,52 +58,20 @@ public:
 
 	virtual int read(void* block, int nbytes)
 	{
-        int exitCode;
-        int avail;
-        int ret;
-        
-        bool processTerminated = (waitpid(m_pid, &exitCode, WNOHANG) >= 0);
-        
-        ret = ::ioctl(m_pipe, FIONREAD, &avail);
-        if (ret < 0)
-            return -1;
-        
-        int safeRead = std::min(nbytes, avail);
-        int read = 0;
-        
-        if (safeRead > 0)
-        {
-            ret = ::read(m_pipe, block, safeRead);
-            if (ret < 0)
-                return -1;
+		int exitCode;
+		int ret;
 
-            read = ret;
-        }
-        
-        if (read == 0 && processTerminated)
-        {
-            usleep(100 * 1000);
-            
-            ret = ::ioctl(m_pipe, FIONREAD, &avail);
-            if (ret < 0)
-                return -1;
-            
-            safeRead = std::min(nbytes, avail);
-            
-            if (safeRead > 0)
-            {
-                ret = ::read(m_pipe, block, safeRead);
-                if (ret < 0)
-                    return -1;
-                
-                read = ret;
-            }
-            
-            if (read == 0)
-                return -1;
-        }
-        
-		return read;
+		ret = ::read(m_pipe, block, nbytes);
+		if (ret < 0)
+		{
+			bool processTerminated = !(waitpid(m_pid, &exitCode, WNOHANG) >= 0);
+			if (!processTerminated && errno == EAGAIN)
+				return 0;
+			else
+				return -1;
+		}
+
+		return ret;
 	}
 
 	virtual int write(const void* block, int nbytes)
@@ -112,7 +84,7 @@ public:
 	}
 
 private:
-    pid_t m_pid;
+	pid_t m_pid;
 	int m_pipe;
 };
 
@@ -138,13 +110,13 @@ Ref< IStream > ProcessOsX::getPipeStream(StdPipe pipe)
 	{
 		switch (pipe)
 		{
-		case SpStdOut:
+			case SpStdOut:
 			return new PipeStream(m_pid, m_childStdOut);
 
-		case SpStdErr:
+			case SpStdErr:
 			return new PipeStream(m_pid, m_childStdErr);
 
-		default:
+			default:
 			return 0;
 		}
 	}
@@ -161,12 +133,12 @@ bool ProcessOsX::terminate(int32_t exitCode)
 {
 	return false;
 }
-	
+
 int32_t ProcessOsX::exitCode() const
 {
 	return m_exitCode;
 }
-	
+
 bool ProcessOsX::wait(int32_t timeout)
 {
 	if (timeout >= 0)
@@ -175,10 +147,10 @@ bool ProcessOsX::wait(int32_t timeout)
 		{
 			if (waitpid(m_pid, &m_exitCode, WNOHANG) > 0)
 				return true;
-				
+			
 			if ((timeout -= 10) < 0)
 				return false;
-			
+
 			usleep(10 * 1000);
 		}
 	}
