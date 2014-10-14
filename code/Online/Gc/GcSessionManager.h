@@ -29,7 +29,7 @@ class T_DLLCLASS GcSessionManager : public ISessionManagerProvider
 	T_RTTI_CLASS;
 
 public:
-	bool create();
+	virtual bool create(const IGameConfiguration* configuration);
 
 	virtual void destroy();
 
@@ -41,11 +41,23 @@ public:
 
 	virtual bool requireUserAttention() const;
 
+	virtual bool haveDLC(const std::wstring& id) const;
+
+	virtual bool buyDLC(const std::wstring& id) const;
+
+	virtual bool navigateUrl(const net::Url& url) const;
+
 	virtual uint64_t getCurrentUserHandle() const;
+
+	virtual bool getFriends(std::vector< uint64_t >& outFriends, bool onlineOnly) const;
+
+	virtual bool findFriend(const std::wstring& name, uint64_t& outFriendUserHandle) const;
 
 	virtual bool haveP2PData() const;
 
 	virtual uint32_t receiveP2PData(void* data, uint32_t size, uint64_t& outFromUserHandle) const;
+
+	virtual uint32_t getCurrentGameCount() const;
 
 	virtual IAchievementsProvider* getAchievements() const;
 
