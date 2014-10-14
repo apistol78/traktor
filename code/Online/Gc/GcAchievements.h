@@ -1,6 +1,7 @@
 #ifndef traktor_online_GcAchievements_H
 #define traktor_online_GcAchievements_H
 
+#include <list>
 #include "Online/Provider/IAchievementsProvider.h"
 
 namespace traktor
@@ -15,7 +16,7 @@ class GcAchievements : public IAchievementsProvider
 	T_RTTI_CLASS;
 
 public:
-	GcAchievements();
+	GcAchievements(const std::list< std::wstring >& achievementIds);
 
 	virtual bool enumerate(std::map< std::wstring, bool >& outAchievements);
 

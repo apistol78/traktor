@@ -1,6 +1,7 @@
 #import <GameKit/GameKit.h>
 #include "Core/Log/Log.h"
 #include "Online/Gc/GcAchievements.h"
+#include "Online/Gc/GcGameConfiguration.h"
 #include "Online/Gc/GcLeaderboards.h"
 #include "Online/Gc/GcMatchMaking.h"
 #include "Online/Gc/GcSaveData.h"
@@ -13,10 +14,12 @@ namespace traktor
 	namespace online
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.online.GcSessionManager", GcSessionManager, ISessionManagerProvider)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.online.GcSessionManager", 0, GcSessionManager, ISessionManagerProvider)
 
-bool GcSessionManager::create()
+bool GcSessionManager::create(const IGameConfiguration* configuration)
 {
+	const GcGameConfiguration* gcgc = checked_type_cast< const GcGameConfiguration*, false >(configuration);
+
 	// Ensure presence of game center API.
 	Class gcClass = (NSClassFromString(@"GKLocalPlayer"));
 	if (!gcClass)
@@ -38,11 +41,46 @@ bool GcSessionManager::create()
 	// Authenticate user.
 	if ([GKLocalPlayer localPlayer].authenticated == NO)
 	{
+		GKLocalPlayer* localPlayer = [GKLocalPlayer localPlayer];
+		localPlayer.authenticateHandler = ^(UIViewController *viewController, NSError *error)
+		{
+			if (viewController != nil)
+			{
+				NSLog(@"NEED TO VIEW AUTHENTICATION DIALOG");
+				// [self presentViewController:viewController animated:YES completion:nil];
+			}
+			else
+			{
+				if ([GKLocalPlayer localPlayer].authenticated)
+				{
+					if (error == nil)
+						NSLog(@"LOCAL PLAYER AUTHENTICATED");
+					else
+						NSLog(@"LOCAL PLAYER NOT AUTHENTICATED");
+
+					/*
+					// Get the default leaderboard identifier.
+					[[GKLocalPlayer localPlayer] loadDefaultLeaderboardIdentifierWithCompletionHandler:^(NSString *leaderboardIdentifier, NSError *error)
+					{
+						if (error == nil)
+						{
+							// _leaderboardIdentifier = leaderboardIdentifier;
+							NSLog(@"GOT DEFAULT LEADERBOARD IDENTIFIER %@", leaderboardIdentifier);
+						}
+						else
+						{
+							NSLog(@"%@", [error localizedDescription]);
+						}
+					}];
+					*/
+				}
+			}
+		};
 	}
 	
 	// Create provider wrappers.
-	m_achievements = new GcAchievements();
-//	m_leaderboards = new GcLeaderboards();
+	m_achievements = new GcAchievements(gcgc->m_achievementIds);
+	m_leaderboards = new GcLeaderboards(gcgc->m_leaderboardIds);
 //	m_matchMaking = new GcMatchMaking();
 	m_saveData = new GcSaveData();
 //	m_statistics = new GcStatistics();
@@ -81,9 +119,34 @@ bool GcSessionManager::requireUserAttention() const
 	return false;
 }
 
+bool GcSessionManager::haveDLC(const std::wstring& id) const
+{
+	return false;
+}
+
+bool GcSessionManager::buyDLC(const std::wstring& id) const
+{
+	return false;
+}
+
+bool GcSessionManager::navigateUrl(const net::Url& url) const
+{
+	return false;
+}
+
 uint64_t GcSessionManager::getCurrentUserHandle() const
 {
 	return 0;
+}
+
+bool GcSessionManager::getFriends(std::vector< uint64_t >& outFriends, bool onlineOnly) const
+{
+	return false;
+}
+
+bool GcSessionManager::findFriend(const std::wstring& name, uint64_t& outFriendUserHandle) const
+{
+	return false;
 }
 
 bool GcSessionManager::haveP2PData() const
@@ -92,6 +155,11 @@ bool GcSessionManager::haveP2PData() const
 }
 
 uint32_t GcSessionManager::receiveP2PData(void* data, uint32_t size, uint64_t& outFromUserHandle) const
+{
+	return 0;
+}
+
+uint32_t GcSessionManager::getCurrentGameCount() const
 {
 	return 0;
 }

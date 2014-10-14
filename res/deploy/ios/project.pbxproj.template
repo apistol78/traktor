@@ -81,6 +81,7 @@ end
 		ADBB1F72969AE749A22CE15B /* OpenGLES.framework in Frameworks */ = { isa = PBXBuildFile; fileRef = B2F470F085B48F469B924210 /* OpenGLES.framework */; };
 		6C7D1146B3A22D40A1C7D3B5 /* QuartzCore.framework in Frameworks */ = { isa = PBXBuildFile; fileRef = A9138E58FB5CD2499174DD2F /* QuartzCore.framework */; };
 		B2FC53B8AE8CB9488E581870 /* UIKit.framework in Frameworks */ = { isa = PBXBuildFile; fileRef = 7E85E801F51B03439B394DB3 /* UIKit.framework */; };
+		C2FC53B8AE8CB9488E581870 /* GameKit.framework in Frameworks */ = { isa = PBXBuildFile; fileRef = 8E85E801F51B03439B394DB3 /* GameKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -118,6 +119,7 @@ end
 		B2F470F085B48F469B924210 /* OpenGLES.framework in Frameworks */ = { isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		A9138E58FB5CD2499174DD2F /* QuartzCore.framework in Frameworks */ = { isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		7E85E801F51B03439B394DB3 /* UIKit.framework in Frameworks */ = { isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; }; 
+		8E85E801F51B03439B394DB3 /* GameKit.framework in Frameworks */ = { isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; }; 
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,7 +131,8 @@ end
 				DC025D9299B1D3409D5CA339 /* OpenAL.framework in Frameworks */,
 				ADBB1F72969AE749A22CE15B /* OpenGLES.framework in Frameworks */,
 				6C7D1146B3A22D40A1C7D3B5 /* QuartzCore.framework in Frameworks */,
-				B2FC53B8AE8CB9488E581870 /* UIKit.framework in Frameworks */,			
+				B2FC53B8AE8CB9488E581870 /* UIKit.framework in Frameworks */,
+				C2FC53B8AE8CB9488E581870 /* GameKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -172,7 +175,8 @@ end
 				DFD48B94BA7D544D801ECC9B /* OpenAL.framework */,
 				B2F470F085B48F469B924210 /* OpenGLES.framework */,
 				A9138E58FB5CD2499174DD2F /* QuartzCore.framework */,
-				7E85E801F51B03439B394DB3 /* UIKit.framework */,				
+				7E85E801F51B03439B394DB3 /* UIKit.framework */,
+				8E85E801F51B03439B394DB3 /* GameKit.framework */,
 			);
 			name = "<!-- output:print(environment:get("DEPLOY_PROJECT_NAME")) --!>";
 			sourceTree = "<group>";

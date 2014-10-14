@@ -1,10 +1,14 @@
 #import <GameKit/GameKit.h>
+#include "Core/Log/Log.h"
+#include "Core/Thread/Event.h"
 #include "Online/Gc/GcAchievements.h"
 
 namespace traktor
 {
 	namespace online
 	{
+		namespace
+		{
 
 NSString* makeNSString(const std::wstring& str)
 {
@@ -18,32 +22,45 @@ std::wstring fromNSString(const NSString* str)
 	return std::wstring(buffer);
 }
 
+		}
+
 class GcAchievementsImpl : public Object
 {
 public:
-	GcAchievementsImpl()
-	:	m_achievements(0)
+	GcAchievementsImpl(const std::list< std::wstring >& achievementIds)
+	:	m_achievementIds(achievementIds)
 	{
 	}
 
 	bool enumerate(std::map< std::wstring, bool >& outAchievements)
 	{
-		// Load a local cache of all achievements.
-		if (!m_achievements)
+		__block std::map< std::wstring, bool >* boutAchievements;
+		__block Event* bevent;
+		Event event;
+
+		for (std::list< std::wstring >::const_iterator i = m_achievementIds.begin(); i != m_achievementIds.end(); ++i)
+			outAchievements[*i] = false;
+
+		boutAchievements = &outAchievements;
+		bevent = &event;
+
+		[GKAchievement loadAchievementsWithCompletionHandler:^(NSArray* achievements, NSError* error)
 		{
-			[GKAchievement loadAchievementsWithCompletionHandler:^(NSArray* achievements, NSError* error)
+			if (error == nil)
 			{
-				m_achievements = achievements;
-			}];
-		}
-		
-		// Enumerate all achievements.
-		for (GKAchievement* achievement in m_achievements)
+				for (GKAchievement* achievement in achievements)
+				{
+					std::wstring id = fromNSString(achievement.identifier);
+					(*boutAchievements)[id] = bool(achievement.percentComplete >= 99.0f);
+				}				
+			}
+			bevent->broadcast();
+		}];
+
+		if (!event.wait(10000))
 		{
-			outAchievements.insert(std::make_pair(
-				fromNSString(achievement.identifier),
-				achievement.percentComplete >= 99.0f
-			));
+			log::error << L"Failed to download achievements; No response when download achievements" << Endl;
+			return false;
 		}
 		
 		return true;
@@ -51,28 +68,36 @@ public:
 	
 	bool set(const std::wstring& achievementId, bool reward)
 	{
-		for (GKAchievement* achievement in m_achievements)
-		{
-			if (achievementId == fromNSString(achievement.identifier))
-			{
-				achievement.percentComplete = reward ? 100.0f : 0.0f;
-				[achievement reportAchievementWithCompletionHandler:^(NSError *error) {
-					// \fixme
-				}];
-				return true;
-			}
-		}
-		return false;
+		__block Event* bevent;
+		__block bool result;
+		Event event;
+
+		GKAchievement* achievement = [[GKAchievement alloc] initWithIdentifier: makeNSString(achievementId)];
+		achievement.percentComplete = reward ? 100.0f : 0.0f;
+
+		bevent = &event;
+		[achievement reportAchievementWithCompletionHandler:^(NSError *error) {
+			result = bool(error == nil);
+			bevent->broadcast();
+		}];
+        
+        if (!event.wait(10000))
+        {
+            log::error << L"Failed to reward achievement; No response when rewarding achievement" << Endl;
+            return false;
+        }
+
+		return result;
 	}
 
 private:
-	NSArray* m_achievements;
+	std::list< std::wstring > m_achievementIds;
 };
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.GcAchievements", GcAchievements, IAchievementsProvider)
 
-GcAchievements::GcAchievements()
-:	m_impl(new GcAchievementsImpl())
+GcAchievements::GcAchievements(const std::list< std::wstring >& achievementIds)
+:	m_impl(new GcAchievementsImpl(achievementIds))
 {
 }
 
