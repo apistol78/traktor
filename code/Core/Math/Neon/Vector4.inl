@@ -356,7 +356,8 @@ T_MATH_INLINE int majorAxis3(const Vector4& v)
 {
 	if (abs(v.x()) > abs(v.y()))
 		return (abs(v.x()) > abs(v.z())) ? 0 : 2;
-	return (abs(v.y()) > abs(v.z())) ? 1 : 2;
+	else
+		return (abs(v.y()) > abs(v.z())) ? 1 : 2;
 }
 
 T_MATH_INLINE Vector4 min(const Vector4& l, const Vector4& r)

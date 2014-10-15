@@ -23,7 +23,7 @@ using namespace traktor;
 namespace
 {
 
-#define SCAN_RECURSIVE_DEPENDENCIES 0	// Scan header dependencies recursive.
+#define SCAN_RECURSIVE_DEPENDENCIES 1	// Scan header dependencies recursive.
 
 void collectFiles(const Project* project, const RefArray< ProjectItem >& items, std::set< Path >& outFiles)
 {
@@ -174,7 +174,12 @@ bool SolutionBuilderMake::generate(Solution* solution)
 	s << L".PHONY : all" << Endl;
 	s << L"all :" << Endl;
 	for (RefArray< Project >::iterator i = generate.begin(); i != generate.end(); ++i)
-		s << L"\t-$(MAKE) -f " << (*i)->getName() << L"/" << (*i)->getName() << L".mak all" << Endl;
+	{
+		if (m_dialect == MdGnuMake)
+			s << L"\t-$(MAKE) -j 8 -f " << (*i)->getName() << L"/" << (*i)->getName() << L".mak all" << Endl;
+		else
+			s << L"\t-$(MAKE) -f " << (*i)->getName() << L"/" << (*i)->getName() << L".mak all" << Endl;
+	}
 	s << Endl;
 
 	for (std::set< std::wstring >::iterator i = configurationNames.begin(); i != configurationNames.end(); ++i)
@@ -188,7 +193,10 @@ bool SolutionBuilderMake::generate(Solution* solution)
 			{
 				if ((*k)->getName() == *i)
 				{
-					s << L"\t-$(MAKE) -f " << (*j)->getName() << L"/" << (*j)->getName() << L".mak " << *i << Endl;
+					if (m_dialect == MdGnuMake)
+						s << L"\t-$(MAKE) -j 8 -f " << (*j)->getName() << L"/" << (*j)->getName() << L".mak " << *i << Endl;
+					else
+						s << L"\t-$(MAKE) -f " << (*j)->getName() << L"/" << (*j)->getName() << L".mak " << *i << Endl;
 					break;
 				}
 			}
