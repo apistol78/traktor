@@ -13,9 +13,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.theater.TheaterController", TheaterController, 
 
 TheaterController::TheaterController(const RefArray< const Act >& acts)
 :	m_acts(acts)
-,	m_current(0)
 ,	m_lastTime(-1.0f)
-,	m_actTime(-1.0f)
 {
 }
 
@@ -24,27 +22,31 @@ void TheaterController::update(scene::Scene* scene, float time, float deltaTime)
 	if (m_acts.empty() || traktor::abs(time - m_lastTime) <= FUZZY_EPSILON)
 		return;
 
-	if (m_actTime < 0.0f || m_actTime > time)
-		m_actTime = time;
-
-	if (!m_acts[m_current]->update(scene, time - m_actTime, deltaTime))
+	float actStartTime = 0.0f;
+	for (int32_t i = 0; i < int32_t(m_acts.size()); ++i)
 	{
-		m_current = (m_current + 1) % m_acts.size();
-		m_actTime = time;
-		m_acts[m_current]->update(scene, time - m_actTime, deltaTime);
+		float actDuration = m_acts[i]->getDuration();
+		if (time >= actStartTime && (m_acts[i]->isInfinite() || time <= actStartTime + actDuration + FUZZY_EPSILON))
+		{
+			m_acts[i]->update(scene, time - actStartTime, deltaTime);
+			break;
+		}
+		actStartTime += actDuration;
 	}
 
 	m_lastTime = time;
 }
 
-void TheaterController::setCurrentAct(uint32_t current)
+float TheaterController::getActStartTime(int32_t act) const
 {
-	if (current != m_current)
+	float actStartTime = 0.0f;
+	for (int32_t i = 0; i < int32_t(m_acts.size()); ++i)
 	{
-		m_current = current;
-		m_actTime = m_lastTime;
-		m_lastTime = -1.0f;
+		if (act == i || m_acts[i]->isInfinite())
+			return actStartTime;
+		actStartTime += m_acts[i]->getDuration();
 	}
+	return actStartTime;
 }
 
 	}

@@ -15,13 +15,14 @@ class PostFrameEvent;
 	namespace ui
 	{
 
-class ListBox;
 class SelectionChangeEvent;
 
 		namespace custom
 		{
 
 class CursorMoveEvent;
+class EditList;
+class EditListEditEvent;
 class KeyMoveEvent;
 class ToolBar;
 class ToolBarButtonClickEvent;
@@ -40,6 +41,8 @@ class TheaterControllerEditor : public scene::ISceneControllerEditor
 	T_RTTI_CLASS;
 
 public:
+	TheaterControllerEditor();
+
 	virtual bool create(scene::SceneEditorContext* context, ui::Container* parent);
 
 	virtual void destroy();
@@ -55,10 +58,12 @@ public:
 	virtual void draw(render::PrimitiveRenderer* primitiveRenderer);
 
 private:
-	Ref< ui::ListBox > m_listActs;
+	Ref< ui::custom::ToolBar > m_toolBarActs;
+	Ref< ui::custom::EditList > m_listActs;
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::SequencerControl > m_trackSequencer;
 	Ref< scene::SceneEditorContext > m_context;
+	float m_timeOffset;
 
 	void updateView();
 
@@ -75,6 +80,8 @@ private:
 	void gotoNextKey();
 
 	void eventActSelected(ui::SelectionChangeEvent* event);
+
+	void eventActEdit(ui::custom::EditListEditEvent* event);
 
 	void eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event);
 

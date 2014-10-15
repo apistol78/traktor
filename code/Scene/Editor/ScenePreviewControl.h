@@ -78,6 +78,7 @@ private:
 	Ref< SceneEditorContext > m_context;
 	Timer m_timer;
 	float m_lastDeltaTime;
+	float m_lastTime;
 	float m_lastPhysicsTime;
 
 	void updateRenderControls();

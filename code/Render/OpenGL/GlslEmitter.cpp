@@ -1276,11 +1276,7 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 		else if (minLinear && !mipLinear)
 			rs.samplerStates[stage].minFilter = GL_LINEAR_MIPMAP_NEAREST;
 		else
-#if defined(T_OPENGL_STD)
 			rs.samplerStates[stage].minFilter = GL_LINEAR_MIPMAP_LINEAR;
-#else
-			rs.samplerStates[stage].minFilter = GL_LINEAR_MIPMAP_NEAREST;	// Don't use trilinear filtering on OpenGL ES as it's too expensive.
-#endif
 
 		rs.samplerStates[stage].magFilter = c_glFilter[node->getMagFilter()];
 		rs.samplerStates[stage].wrapS = c_glWrap[node->getAddressU()];

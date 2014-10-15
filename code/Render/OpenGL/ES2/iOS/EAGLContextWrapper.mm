@@ -77,6 +77,11 @@ void EAGLContextWrapper::swapBuffers()
 {
 	glBindRenderbuffer(GL_RENDERBUFFER, m_renderBuffer);
 	[m_context presentRenderbuffer:GL_RENDERBUFFER];
+
+	// Discard depth and color attachments after swap; must be re-drawn
+	// next frame.
+	const GLenum discards[] = { GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT };
+	glDiscardFramebufferEXT(GL_FRAMEBUFFER, sizeof_array(discards), discards);
 }
 
 void EAGLContextWrapper::resize(GLint width, GLint height)

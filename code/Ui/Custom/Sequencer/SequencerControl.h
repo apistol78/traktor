@@ -32,6 +32,11 @@ class T_DLLCLASS SequencerControl : public Widget
 	T_RTTI_CLASS;
 
 public:
+	enum StyleFlags
+	{
+		WsDragTrack = (WsUser << 1)
+	};
+
 	enum GetSequenceFlags
 	{
 		GfDefault = 0,
@@ -42,7 +47,7 @@ public:
 
 	SequencerControl();
 
-	bool create(Widget* parent, int style = WsDoubleBuffer);
+	bool create(Widget* parent, int style = WsDoubleBuffer | WsDragTrack);
 
 	void setSeparator(int32_t separator);
 
@@ -80,6 +85,7 @@ private:
 	Ref< ScrollBar > m_scrollBarV;
 	Ref< ScrollBar > m_scrollBarH;
 	RefArray< SequenceItem > m_sequenceItems;
+	bool m_allowDragTracks;
 	MouseTrackItem m_mouseTrackItem;
 	int32_t m_separator;
 	int32_t m_timeScale;

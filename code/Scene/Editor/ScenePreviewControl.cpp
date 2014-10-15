@@ -53,6 +53,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.ScenePreviewControl", ScenePreviewControl
 ScenePreviewControl::ScenePreviewControl()
 :	m_splitCount(StQuadruple)
 ,	m_lastDeltaTime(0.0f)
+,	m_lastTime(0.0f)
 ,	m_lastPhysicsTime(0.0f)
 {
 }
@@ -487,6 +488,15 @@ void ScenePreviewControl::eventIdle(ui::IdleEvent* event)
 		// Issue updates on render controls.
 		for (RefArray< ISceneRenderControl >::iterator i = m_renderControls.begin(); i != m_renderControls.end(); ++i)
 			(*i)->update();
+
+		// Update modifiers as selected entity might have moved.
+		if (m_lastTime != scaledTime)
+		{
+			if (m_context->getModifier())
+				m_context->getModifier()->selectionChanged();
+
+			m_lastTime = scaledTime;
+		}
 
 		// Issue frame handlers.
 		FrameEvent eventFrame(this);

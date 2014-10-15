@@ -27,6 +27,10 @@ public:
 
 	bool update(scene::Scene* scene, float time, float deltaTime) const;
 
+	float getDuration() const { return m_duration; }
+
+	bool isInfinite() const { return m_infinite; }
+
 private:
 	float m_duration;
 	bool m_infinite;
