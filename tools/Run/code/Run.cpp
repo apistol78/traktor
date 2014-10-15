@@ -7,6 +7,8 @@
 #include <Core/System/IProcess.h>
 #include <Core/System/OS.h>
 #include <Core/System/PipeReader.h>
+#include <Core/Thread/Thread.h>
+#include <Core/Thread/ThreadManager.h>
 #include "Run.h"
 
 using namespace traktor;
@@ -169,4 +171,9 @@ bool Run::rmdir(const std::wstring& path)
 {
 	Path fullPath = FileSystem::getInstance().getAbsolutePath(cwd(), path);
 	return FileSystem::getInstance().removeDirectory(fullPath);
+}
+
+void Run::sleep(int32_t ms)
+{
+	ThreadManager::getInstance().getCurrentThread()->sleep(ms);
 }

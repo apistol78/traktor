@@ -104,7 +104,8 @@ int SocketStream::read(void* block, int nbytes)
 		nread += result;
 	}
 
-	m_offset += nread;
+	if (nread > 0)
+		m_offset += nread;
 
 	T_ASSERT (nread <= nbytes);
 	return nread;

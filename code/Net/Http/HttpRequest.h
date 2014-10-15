@@ -25,9 +25,19 @@ class T_DLLCLASS HttpRequest : public Object
 public:
 	enum Method
 	{
+		MtUnknown,
 		MtGet,
-		MtPost
+		MtHead,
+		MtPost,
+		MtPut,
+		MtDelete,
+		MtTrace,
+		MtOptions,
+		MtConnect,
+		MtPatch
 	};
+
+	HttpRequest();
 
 	Method getMethod() const;
 

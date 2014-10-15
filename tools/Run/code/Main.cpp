@@ -17,7 +17,6 @@
 #include <Core/System/ISharedMemory.h>
 #include <Core/System/OS.h>
 #include <Drawing/Image.h>
-
 #include <Drawing/Filters/BrightnessContrastFilter.h>
 #include <Drawing/Filters/ChainFilter.h>
 #include <Drawing/Filters/ConvolutionFilter.h>
@@ -43,9 +42,12 @@
 #include <Net/TcpSocket.h>
 #include <Net/UdpSocket.h>
 #include <Net/UrlConnection.h>
+#include <Net/Http/HttpRequest.h>
+#include <Net/Http/HttpServer.h>
 #include <Script/AutoScriptClass.h>
 #include <Script/Boxes.h>
 #include <Script/IScriptContext.h>
+#include <Script/IScriptDelegate.h>
 #include <Script/Lua/ScriptManagerLua.h>
 #include <Sql/IResultSet.h>
 #include <Sql/Sqlite3/ConnectionSqlite3.h>
@@ -232,6 +234,72 @@ RefArray< xml::Element > xml_Document_get(xml::Document* document, const std::ws
 	return elements;
 }
 
+std::wstring net_HttpRequest_getMethod(net::HttpRequest* self)
+{
+	switch (self->getMethod())
+	{
+	case net::HttpRequest::MtGet:
+		return L"GET";
+	case net::HttpRequest::MtHead:
+		return L"HEAD";
+	case net::HttpRequest::MtPost:
+		return L"POST";
+	case net::HttpRequest::MtPut:
+		return L"PUT";
+	case net::HttpRequest::MtDelete:
+		return L"DELETE";
+	case net::HttpRequest::MtTrace:
+		return L"TRACE";
+	case net::HttpRequest::MtOptions:
+		return L"OPTIONS";
+	case net::HttpRequest::MtConnect:
+		return L"CONNECT";
+	case net::HttpRequest::MtPatch:
+		return L"PATCH";
+	default:
+		return L"";
+	}
+}
+
+bool net_HttpServer_create(net::HttpServer* self, int32_t port)
+{
+	return self->create(net::SocketAddressIPv4(port));
+}
+
+class HttpServerListenerDelegate : public net::HttpServer::IRequestListener
+{
+public:
+	HttpServerListenerDelegate(script::IScriptDelegate* delegateListener)
+	:	m_delegateListener(delegateListener)
+	{
+	}
+
+	virtual int32_t clientRequest(net::HttpServer* server, const net::HttpRequest* request, OutputStream& os)
+	{
+		script::Any argv[] =
+		{
+			script::CastAny< net::HttpServer* >::set(server),
+			script::CastAny< const net::HttpRequest* >::set(request)
+		};
+		script::Any ret = m_delegateListener->call(sizeof_array(argv), argv);
+		if (ret.isString())
+		{
+			os << ret.getWideString();
+			return 200;
+		}
+		else
+			return 404;
+	}
+
+private:
+	Ref< script::IScriptDelegate > m_delegateListener;
+};
+
+void net_HttpServer_setRequestListener(net::HttpServer* self, script::IScriptDelegate* delegateListener)
+{
+	self->setRequestListener(new HttpServerListenerDelegate(delegateListener));
+}
+
 Ref< script::IScriptManager > createScriptManager()
 {
 	Ref< script::IScriptManager > scriptManager = new script::ScriptManagerLua();
@@ -300,6 +368,7 @@ Ref< script::IScriptManager > createScriptManager()
 	classRun->addMethod("replace", &Run::replace);
 	classRun->addMethod("mkdir", &Run::mkdir);
 	classRun->addMethod("rmdir", &Run::rmdir);
+	classRun->addMethod("sleep", &Run::sleep);
 	scriptManager->registerClass(classRun);
 
 	// DateTime
@@ -755,6 +824,29 @@ Ref< script::IScriptManager > createScriptManager()
 	classUrlConnection->addMethod("getStream", &net::UrlConnection::getStream);
 	scriptManager->registerClass(classUrlConnection);
 
+	// HttpRequest
+	Ref< script::AutoScriptClass< net::HttpRequest > > classHttpRequest = new script::AutoScriptClass< net::HttpRequest >();
+	classHttpRequest->addMethod("getMethod", &net_HttpRequest_getMethod);
+	classHttpRequest->addMethod("getResource", &net::HttpRequest::getResource);
+	classHttpRequest->addMethod("hasValue", &net::HttpRequest::hasValue);
+	classHttpRequest->addMethod("setValue", &net::HttpRequest::setValue);
+	classHttpRequest->addMethod("getValue", &net::HttpRequest::getValue);
+	classHttpRequest->addStaticMethod("parse", &net::HttpRequest::parse);
+	scriptManager->registerClass(classHttpRequest);
+
+	// HttpServer::IRequestListener
+	Ref< script::AutoScriptClass< net::HttpServer::IRequestListener > > classHttpServer_IRequestListener = new script::AutoScriptClass< net::HttpServer::IRequestListener >();
+	scriptManager->registerClass(classHttpServer_IRequestListener);
+
+	// HttpServer
+	Ref< script::AutoScriptClass< net::HttpServer > > classHttpServer = new script::AutoScriptClass< net::HttpServer >();
+	classHttpServer->addConstructor();
+	classHttpServer->addMethod("create", &net_HttpServer_create);
+	classHttpServer->addMethod("destroy", &net::HttpServer::destroy);
+	classHttpServer->addMethod("setRequestListener", &net_HttpServer_setRequestListener);
+	classHttpServer->addMethod("update", &net::HttpServer::update);
+	scriptManager->registerClass(classHttpServer);
+
 	// IResultSet
 	Ref< script::AutoScriptClass< sql::IResultSet > > classIResultSet = new script::AutoScriptClass< sql::IResultSet >();
 	classIResultSet->addMethod("next", &sql::IResultSet::next);
@@ -925,7 +1017,7 @@ int main(int argc, const char** argv)
 
 	if (cmdLine.getCount() < 1)
 	{
-		log::info << L"Run 1.3.1" << Endl;
+		log::info << L"Run 1.3.2" << Endl;
 		log::info << Endl;
 		log::info << L"Usage: Run (option(s)) [<file>.run|<file>.template] (args ...)" << Endl;
 		log::info << Endl;
@@ -970,6 +1062,8 @@ int main(int argc, const char** argv)
 		return 1;
 	}
 
+	net::Network::initialize();
+
 	int32_t result = 1;
 
 	bool explicitRun = cmdLine.hasOption(L"as-run");
@@ -981,6 +1075,8 @@ int main(int argc, const char** argv)
 		result = executeTemplate(scriptManager, text, fileName, cmdLine);
 	else
 		log::error << L"Unknown file type \"" << fileName.getExtension() << L"\"; must be either \"run\" or \"template\"" << Endl;
+
+	net::Network::finalize();
 
 	safeDestroy(scriptManager);
 	return result;

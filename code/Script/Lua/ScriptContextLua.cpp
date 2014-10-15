@@ -218,7 +218,7 @@ Any ScriptContextLua::executeDelegate(int32_t functionRef, uint32_t argc, const 
 		if (err == 0)
 			returnValue = m_scriptManager->toAny(-1);
 
-		lua_pop(m_luaState, 1);
+		lua_pop(m_luaState, 2);
 	}
 	m_scriptManager->unlock();
 	return returnValue;
