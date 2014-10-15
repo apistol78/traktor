@@ -156,15 +156,15 @@ T_MATH_INLINE Scalar abs(const Scalar& s)
 T_MATH_INLINE Scalar squareRoot(const Scalar& s)
 {
 #if 0
-	float fs = sqrtf(s);
-	return Scalar(fs);
-#else
 	return abs(s) > Scalar(1e-8f) ? Scalar(1.0f) / reciprocalSquareRoot(s) : Scalar(0.0f);
+#else
+	return Scalar((float)std::sqrt(s.m_data));
 #endif
 }
 
 T_MATH_INLINE Scalar reciprocalSquareRoot(const Scalar& s)
 {
+#if 0
 	const float32x4_t half = { 0.5f, 0.5f, 0.5f, 0.5f };
 	const float32x4_t one = { 1.0f, 1.0f, 1.0f, 1.0f };
 	
@@ -182,6 +182,9 @@ T_MATH_INLINE Scalar reciprocalSquareRoot(const Scalar& s)
 	estimate = vmlaq_f32(estimate, t2, halfEstimate);
 
 	return Scalar(estimate);
+#else
+	return Scalar(1.0f / (float)std::sqrt(s.m_data));
+#endif
 }
 
 T_MATH_INLINE Scalar lerp(const Scalar& a, const Scalar& b, const Scalar& c)
