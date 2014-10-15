@@ -165,7 +165,7 @@ bool UnwrapUV::apply(Model& model) const
 
 	T_FATAL_ASSERT (aabbuvs.size() == lastGroupId);
 
-	int32_t size = std::max(int32_t(std::sqrt(totalTexelArea)), 16);
+	int32_t size = std::max(int32_t(std::sqrt(totalTexelArea) / 2.0f), 16);
 	
 	// Pack each group into a separate rectangle.
 	rbp::MaxRectsBinPack binPack;
@@ -183,7 +183,7 @@ bool UnwrapUV::apply(Model& model) const
 		if (packedRect.height <= 0)
 		{
 			i = 0;
-			size += size / 2;
+			size += size / 4;
 			binPack.Init(size, size);
 			rects.resize(0);
 			continue;

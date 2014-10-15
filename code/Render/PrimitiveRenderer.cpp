@@ -297,8 +297,8 @@ void PrimitiveRenderer::drawLine(
 	if (dln <= FUZZY_EPSILON)
 		return;
 
-	dx = (dx * Scalar(width)) / (dln * Scalar(m_viewWidth));
-	dy = (dy * Scalar(width)) / (dln * Scalar(m_viewHeight));
+	dx = (dx * Scalar(width)) / (dln * Scalar(500.0f));
+	dy = (dy * Scalar(width)) / (dln * Scalar(500.0f));
 
 	Scalar dx1 = dx * cs1.w();
 	Scalar dy1 = dy * cs1.w();
@@ -647,8 +647,8 @@ void PrimitiveRenderer::drawSolidPoint(
 	Vector4 cv = m_worldView * center.xyz1();
 	Vector4 cc = m_projection.back() * cv;
 
-	Scalar dx = cc.w() * Scalar(size / m_viewWidth);
-	Scalar dy = cc.w() * Scalar(size / m_viewHeight);
+	Scalar dx = cc.w() * Scalar(size / 500.0f);
+	Scalar dy = cc.w() * Scalar(size / 500.0f);
 
 	uint32_t projection = m_projection.size() - 1;
 

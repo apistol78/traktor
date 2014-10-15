@@ -2165,6 +2165,34 @@
       <second>(Root)</second>
     </item>
     <item>
+      <first>THEATER_EDITOR_UNNAMED_ACT</first>
+      <second>Unnamed</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_ADD_ACT</first>
+      <second>Add act</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_REMOVE_ACT</first>
+      <second>Remove act</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_MESSAGE_REMOVE_ACT</first>
+      <second>Are you sure you want to remove selected act?</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_TITLE_REMOVE_ACT</first>
+      <second>Remove act</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_SET_LOOKAT_ENTITY</first>
+      <second>Set look-at entity</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_EASE_VELOCITY</first>
+      <second>Easy velocity</second>
+    </item>
+    <item>
       <first>THEATER_EDITOR_CAPTURE_ENTITIES</first>
       <second>Capture entities</second>
     </item>

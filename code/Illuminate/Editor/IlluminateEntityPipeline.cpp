@@ -46,7 +46,7 @@ namespace traktor
 		namespace
 		{
 
-const Scalar c_traceRayOffset(0.05f);
+const Scalar c_traceRayOffset(0.025f);
 const int32_t c_outputWidth = 2048;
 const int32_t c_outputHeight = 2048;
 const int32_t c_jobTileWidth = 128;
@@ -252,6 +252,16 @@ public:
 		SahTree::QueryResult result;
 		Color4f tmp;
 
+		const int32_t c_shadowSamples = 64;
+		const Scalar c_shadowSampleRadius(4.0f);
+		const int32_t c_shadowDelta[][2] =
+		{
+			{ -1, 0 },
+			{  1, 0 },
+			{ 0, -1 },
+			{ 0,  1 }
+		};
+
 		for (int32_t y = m_tileY; y < m_tileY + c_jobTileHeight; ++y)
 		{
 			for (int32_t x = m_tileX; x < m_tileX + c_jobTileWidth; ++x)
@@ -263,6 +273,25 @@ public:
 				const Vector4& position = m_gbuffer[x + y * c_outputWidth].position;
 				if (position.w() < FUZZY_EPSILON)
 					continue;
+
+				Vector4 shadowPositions[sizeof_array(c_shadowDelta)];
+				for (int32_t i = 0; i < sizeof_array(c_shadowDelta); ++i)
+				{
+					const int32_t dx = c_shadowDelta[i][0];
+					const int32_t dy = c_shadowDelta[i][1];
+					if (x + dx >= 0 && x + dx < c_outputWidth && y + dy >= 0 && y + dy < c_outputHeight)
+					{
+						shadowPositions[i] = m_gbuffer[(x + dx) + (y + dy) * c_outputWidth].position;
+						if (shadowPositions[i].w() < FUZZY_EPSILON)
+							shadowPositions[i] = position;
+					}
+					else
+						shadowPositions[i] = position;
+				}
+
+				Vector4 shadowU = (shadowPositions[1] - shadowPositions[0]) * c_shadowSampleRadius;
+				Vector4 shadowV = (shadowPositions[3] - shadowPositions[2]) * c_shadowSampleRadius;
+				Vector4 shadowOrigin = position - (shadowU + shadowV) * Scalar(0.5f);
 
 				const Vector4& normal = m_gbuffer[x + y * c_outputWidth].normal;
 				Vector4 rayOrigin = (position + normal * c_traceRayOffset).xyz1();
@@ -280,8 +309,15 @@ public:
 						Scalar phi = dot3(-i->direction, normal);
 						if (phi > 0.0f)
 						{
-							if (m_sah.queryAnyIntersection(rayOrigin, -i->direction, 0.0f, cache))
-								phi = Scalar(0.0f);
+							int32_t shadowCount = 0;
+							for (int32_t j = 0; j < c_shadowSamples; ++j)
+							{
+								Vector4 shadowPosition = shadowOrigin + shadowU * Scalar(random.nextFloat()) + shadowV * Scalar(random.nextFloat());
+								Vector4 shadowOrigin = (shadowPosition + normal * c_traceRayOffset).xyz1();
+								if (m_sah.queryAnyIntersection(shadowOrigin, -i->direction, 0.0f, cache))
+									shadowCount++;
+							}
+							phi *= Scalar(1.0f - float(shadowCount) / c_shadowSamples);
 
 							Scalar k1 = clamp(phi * Scalar(2.0f), Scalar(0.0f), Scalar(1.0f));
 							Color4f c1 = i->shadowColor * (Scalar(1.0f) - k1) + i->baseColor * k1;
@@ -305,8 +341,16 @@ public:
 						if (phi <= 0.0f)
 							continue;
 
-						if (m_sah.queryAnyIntersection(rayOrigin, lightDirection, lightDistance - FUZZY_EPSILON, cache))
-							continue;
+						int32_t shadowCount = 0;
+						for (int32_t j = 0; j < c_shadowSamples; ++j)
+						{
+							Vector4 shadowPosition = shadowOrigin + shadowU * Scalar(random.nextFloat()) + shadowV * Scalar(random.nextFloat());
+							Vector4 shadowOrigin = (shadowPosition + normal * c_traceRayOffset).xyz1();
+							Vector4 shadowDirection = (i->position - shadowOrigin).xyz0();
+							if (m_sah.queryAnyIntersection(shadowOrigin, shadowDirection.normalized(), lightDistance - FUZZY_EPSILON, cache))
+								shadowCount++;
+						}
+						phi *= Scalar(1.0f - float(shadowCount) / c_shadowSamples);
 
 						Scalar attenuate = Scalar(1.0f) - lightDistance / i->range;
 						direct += Color4f(phi, phi, phi, 0.0f) * i->sunColor * attenuate;

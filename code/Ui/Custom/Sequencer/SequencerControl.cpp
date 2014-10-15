@@ -28,7 +28,8 @@ const int c_endWidth = 200;
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.SequencerControl", SequencerControl, Widget)
 
 SequencerControl::SequencerControl()
-:	m_separator(140)
+:	m_allowDragTracks(false)
+,	m_separator(140)
 ,	m_timeScale(8)
 ,	m_length(5000)
 ,	m_cursor(0)
@@ -61,6 +62,7 @@ bool SequencerControl::create(Widget* parent, int style)
 	addEventHandler< MouseWheelEvent >(this, &SequencerControl::eventMouseWheel);
 	addEventHandler< PaintEvent >(this, &SequencerControl::eventPaint);
 
+	m_allowDragTracks = bool((style & WsDragTrack) == WsDragTrack);
 	return true;
 }
 
@@ -242,7 +244,8 @@ void SequencerControl::eventButtonDown(MouseButtonDownEvent* event)
 	if (event->getButton() != MbtLeft)
 		return;
 
-	bool selectionModified = false;
+	Point position = event->getPosition();
+	Rect rc = getInnerRect();
 
 	// Grab focus, need it to be able to get key events.
 	setFocus();
@@ -251,28 +254,43 @@ void SequencerControl::eventButtonDown(MouseButtonDownEvent* event)
 	RefArray< SequenceItem > sequenceItems;
 	getSequenceItems(sequenceItems, GfDescendants | GfExpandedOnly);
 
-	// If not shift is down we de-select all items.
-	if (!(event->getKeyState() & KsShift))
+	// Update only selection in left column.
+	if (position.x < rc.left + m_separator)
 	{
-		for (RefArray< SequenceItem >::iterator i = sequenceItems.begin(); i != sequenceItems.end(); ++i)
-			selectionModified |= (*i)->setSelected(false);
+		bool selectionModified = false;
+
+		// If not shift is down we de-select all items.
+		if (!(event->getKeyState() & KsShift))
+		{
+			for (RefArray< SequenceItem >::iterator i = sequenceItems.begin(); i != sequenceItems.end(); ++i)
+				selectionModified |= (*i)->setSelected(false);
+		}
+
+		// Ensure sequence is selected.
+		int sequenceId = (position.y + m_scrollBarV->getPosition()) / c_sequenceHeight;
+		if (sequenceId >= 0 && sequenceId < int(sequenceItems.size()))
+		{
+			RefArray< SequenceItem >::iterator i = sequenceItems.begin();
+			std::advance(i, sequenceId);
+			selectionModified |= (*i)->setSelected(true);
+		}
+
+		// Issue selection change event.
+		if (selectionModified)
+		{
+			SelectionChangeEvent selectionChangeEvent(this);
+			raiseEvent(&selectionChangeEvent);
+		}
 	}
 
-	Point position = event->getPosition();
-	Rect rc = getInnerRect();
-
+	// Issue local mouse down event on sequence item.
 	int sequenceId = (position.y + m_scrollBarV->getPosition()) / c_sequenceHeight;
 	if (sequenceId >= 0 && sequenceId < int(sequenceItems.size()))
 	{
 		RefArray< SequenceItem >::iterator i = sequenceItems.begin();
 		std::advance(i, sequenceId);
 
-		// Ensure sequence is selected.
-		selectionModified |= (*i)->setSelected(true);
-
-		// Issue local mouse down event on sequence item.
-		m_mouseTrackItem.rc = Rect(rc.left, 0, rc.right - m_scrollBarV->getPreferedSize().cx, c_sequenceHeight)
-			.offset(0, rc.top - m_scrollBarV->getPosition() + c_sequenceHeight * sequenceId);
+		m_mouseTrackItem.rc = Rect(rc.left, 0, rc.right - m_scrollBarV->getPreferedSize().cx, c_sequenceHeight).offset(0, rc.top - m_scrollBarV->getPosition() + c_sequenceHeight * sequenceId);
 		m_mouseTrackItem.item = *i;
 		m_mouseTrackItem.item->mouseDown(
 			this,
@@ -285,13 +303,6 @@ void SequencerControl::eventButtonDown(MouseButtonDownEvent* event)
 			m_separator,
 			m_scrollBarH->getPosition()
 		);
-	}
-
-	// Issue selection change event.
-	if (selectionModified)
-	{
-		SelectionChangeEvent selectionChangeEvent(this);
-		raiseEvent(&selectionChangeEvent);
 	}
 
 	m_startPosition = position;
@@ -307,7 +318,7 @@ void SequencerControl::eventButtonDown(MouseButtonDownEvent* event)
 		CursorMoveEvent cursorMoveEvent(this, m_cursor);
 		raiseEvent(&cursorMoveEvent);
 	}
-	else if (m_mouseTrackItem.item)
+	else if (m_allowDragTracks && m_mouseTrackItem.item)
 	{
 		m_moveTrack = 1;
 		m_dropIndex = -1;

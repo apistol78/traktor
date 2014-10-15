@@ -69,6 +69,12 @@ void Tick::paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcCli
 
 	canvas.setForeground(Color4ub(0, 0, 0, 128));
 	canvas.drawRect(rc);
+
+	if (sequence->getSelectedKey() == this)
+	{
+		canvas.setForeground(Color4ub(255, 255, 255));
+		canvas.drawRect(rc.inflate(2, 2));
+	}
 }
 
 		}

@@ -28,15 +28,11 @@ public:
 
 	virtual void update(scene::Scene* scene, float time, float deltaTime);
 
-	void setCurrentAct(uint32_t current);
-
-	uint32_t getCurrentAct() const { return m_current; }
+	float getActStartTime(int32_t act) const;
 
 private:
 	RefArray< const Act > m_acts;
-	uint32_t m_current;
 	float m_lastTime;
-	float m_actTime;
 };
 
 	}
