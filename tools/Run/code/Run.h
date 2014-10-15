@@ -37,6 +37,8 @@ public:
 
 	bool rmdir(const std::wstring& path);
 
+	void sleep(int32_t ms);
+
 private:
 	std::list< std::wstring > m_cwd;
 	std::wstring m_stdOut;

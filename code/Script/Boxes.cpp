@@ -39,10 +39,8 @@ public:
 
 		m_allocators.push_back(allocator);
 
-#if defined(_DEBUG)
-		log::info << L"Alloc " << BoxesPerBlock << L" of " << type_of< BoxedType >().getName() << L"; " << uint32_t(BoxesPerBlock * sizeof(BoxedType)) << L" bytes" << Endl;
-		log::info << L"  " << int32_t(m_allocators.size()) << L" chunk(s)" << Endl;
-#endif
+		T_DEBUG(L"Alloc " << BoxesPerBlock << L" of " << type_of< BoxedType >().getName() << L"; " << uint32_t(BoxesPerBlock * sizeof(BoxedType)) << L" bytes");
+		T_DEBUG(L"  " << int32_t(m_allocators.size()) << L" chunk(s)");
 
 		return allocator->alloc();
 	}

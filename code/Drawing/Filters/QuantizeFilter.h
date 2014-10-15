@@ -19,7 +19,7 @@ namespace traktor
 /*! \brief Quantize filter.
  * \ingroup Drawing
  */
-class QuantizeFilter : public IImageFilter
+class T_DLLCLASS QuantizeFilter : public IImageFilter
 {
 	T_RTTI_CLASS;
 
