@@ -1,3 +1,4 @@
+#include <cmath>
 #include "Core/Math/Scalar.h"
 #include "Core/Math/MathUtils.h"
 
@@ -158,7 +159,7 @@ T_MATH_INLINE Scalar squareRoot(const Scalar& s)
 #if 0
 	return abs(s) > Scalar(1e-8f) ? Scalar(1.0f) / reciprocalSquareRoot(s) : Scalar(0.0f);
 #else
-	return Scalar((float)std::sqrt(s.m_data));
+	return Scalar((float)std::sqrt(vgetq_lane_f32(s.m_data, 0)));
 #endif
 }
 
@@ -183,7 +184,7 @@ T_MATH_INLINE Scalar reciprocalSquareRoot(const Scalar& s)
 
 	return Scalar(estimate);
 #else
-	return Scalar(1.0f / (float)std::sqrt(s.m_data));
+	return Scalar(1.0f / (float)std::sqrt(vgetq_lane_f32(s.m_data, 0)));
 #endif
 }
 
