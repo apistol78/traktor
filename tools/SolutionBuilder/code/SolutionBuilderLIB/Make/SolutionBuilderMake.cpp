@@ -783,6 +783,23 @@ bool SolutionBuilderMake::scanDependencies(
 	return scanDependencies(solution, configuration, fileName, visitiedDependencies, outDependencies);
 }
 
+bool SolutionBuilderMake::getCachedDependencies(const std::wstring& dependencyName, std::set< std::wstring >& outDependencies)
+{
+	std::map< std::wstring, std::set< std::wstring > >::const_iterator i = m_dependencyCache.find(dependencyName);
+	if (i != m_dependencyCache.end())
+	{
+		outDependencies = i->second;
+		return true;
+	}
+	else
+		return false;
+}
+
+void SolutionBuilderMake::addCacheDependencies(const std::wstring& dependencyName, const std::set< std::wstring >& dependencies)
+{
+	m_dependencyCache[dependencyName] = dependencies;
+}
+
 bool SolutionBuilderMake::scanDependencies(
 	Solution* solution,
 	Configuration* configuration,
@@ -801,11 +818,18 @@ bool SolutionBuilderMake::scanDependencies(
 	std::wstring line;
 	while (sr.readLine(line) >= 0)
 	{
-		std::wstring::size_type p = line.find(L"#include ");
+		line = trim(line);
+		if (line.empty())
+			continue;
+
+		if (line[0] != L'#')
+			continue;
+
+		std::wstring::size_type p = line.find(L"include ");
 		if (p == line.npos)
 			continue;
 
-		std::wstring dep = trim(line.substr(p + 9));
+		std::wstring dep = line.substr(p + 8);
 		if (dep.length() <= 2 || dep[0] != L'\"')
 			continue;
 
@@ -826,32 +850,38 @@ bool SolutionBuilderMake::scanDependencies(
 		for (std::vector< std::wstring >::const_iterator i = includePaths.begin(); i != includePaths.end(); ++i)
 		{
 			std::wstring dependencyName = (*i) + L"/" + dep;
+			std::set< std::wstring > localDependencies;
 
-#if SCAN_RECURSIVE_DEPENDENCIES
-			if (!scanDependencies(
-				solution,
-				configuration,
-				dependencyName,
-				visitedDependencies,
-				resolvedDependencies
-			))
-				continue;
-#else
-			if (!FileSystem::getInstance().exist(dependencyName))
-				continue;
-#endif
+			if (getCachedDependencies(dependencyName, localDependencies))
+			{
+				resolvedDependencies.insert(localDependencies.begin(), localDependencies.end());
+			}
+			else
+			{
+				Path relativeDependencyName;
+				FileSystem::getInstance().getRelativePath(
+					dependencyName,
+					solution->getRootPath() + m_rootSuffix,
+					relativeDependencyName
+				);
+				if (relativeDependencyName.getPathName().empty())
+					continue;
 
-			Path relativeDependencyName;
-			FileSystem::getInstance().getRelativePath(
-				dependencyName,
-				solution->getRootPath() + m_rootSuffix,
-				relativeDependencyName
-			);
-			if (relativeDependencyName.getPathName().empty())
-				continue;
+				if (!scanDependencies(
+					solution,
+					configuration,
+					dependencyName,
+					visitedDependencies,
+					localDependencies
+				))
+					continue;
 
-			resolvedDependencies.insert(relativeDependencyName.getPathName());
-			break;
+				localDependencies.insert(relativeDependencyName.getPathName());
+
+				addCacheDependencies(dependencyName, localDependencies);
+
+				resolvedDependencies.insert(localDependencies.begin(), localDependencies.end());
+			}
 		}
 	}
 
