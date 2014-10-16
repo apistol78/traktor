@@ -177,7 +177,7 @@ T_MATH_INLINE void Vector4::storeUnaligned(float* out) const
 
 T_MATH_INLINE Scalar Vector4::get(int index) const
 {
-	return *((const float *)&m_data + index);
+	return Scalar(*((const float *)&m_data + index));
 }
 
 T_MATH_INLINE void Vector4::set(int index, const Scalar& value)
