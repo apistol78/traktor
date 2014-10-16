@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Io/IStream.h"
 #include "Core/Misc/TString.h"
 #include "Core/System/PipeReader.h"
@@ -8,7 +9,7 @@ namespace traktor
 {
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.PipeReader", PipeReader, Object)
-
+	
 PipeReader::PipeReader(IStream* stream)
 :	m_stream(stream)
 {
