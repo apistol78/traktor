@@ -1,6 +1,7 @@
 #ifndef SolutionBuilderMake_H
 #define SolutionBuilderMake_H
 
+#include <map>
 #include <set>
 #include <string>
 #include <Core/Misc/CommandLine.h>
@@ -48,6 +49,7 @@ private:
 	Platform m_platform;
 	std::wstring m_config;
 	std::wstring m_rootSuffix;
+	std::map< std::wstring, std::set< std::wstring > > m_dependencyCache;
 
 	void generateProject(Solution* solution, Project* project);
 
@@ -65,6 +67,10 @@ private:
 		const std::wstring& fileName,
 		std::set< std::wstring >& outDependencies
 	);
+
+	bool getCachedDependencies(const std::wstring& dependencyName, std::set< std::wstring >& outDependencies);
+
+	void addCacheDependencies(const std::wstring& dependencyName, const std::set< std::wstring >& dependencies);
 
 	bool scanDependencies(
 		Solution* solution,
