@@ -6114,8 +6114,37 @@
 							<item type="Filter">
 								<name>Decoders</name>
 								<items>
+									<item type="Filter">
+										<name>iOS</name>
+										<items>
+											<item type="File">
+												<fileName>Decoders/iOS/*.*</fileName>
+												<items/>
+											</item>
+										</items>
+									</item>
 									<item type="File">
-										<fileName>Decoders/*.*</fileName>
+										<fileName>Decoders/FlacStreamDecoder.cpp</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Decoders/FlacStreamDecoder.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Decoders/OggStreamDecoder.cpp</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Decoders/OggStreamDecoder.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Decoders/WavStreamDecoder.cpp</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Decoders/WavStreamDecoder.h</fileName>
 										<items/>
 									</item>
 								</items>
