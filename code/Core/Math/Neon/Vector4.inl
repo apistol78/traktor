@@ -29,6 +29,11 @@ float32x4_t v_vec_div(float32x4_t divend, float32x4_t denom)
 	);
 }
 
+inline bool compare(float e1, float e2)
+{
+	return abs(e2 - e1) <= 1e-8f;
+}
+
 	}
 
 T_MATH_INLINE Vector4::Vector4()
@@ -41,8 +46,8 @@ T_MATH_INLINE Vector4::Vector4(const Vector4& v)
 }
 
 T_MATH_INLINE Vector4::Vector4(const Scalar& s)
-:	m_data(s.m_data)
 {
+	m_data = vdupq_n_f32(s.m_data);
 }
 
 T_MATH_INLINE Vector4::Vector4(float32x4_t v)
@@ -58,7 +63,7 @@ T_MATH_INLINE Vector4::Vector4(float x, float y, float z, float w)
 T_MATH_INLINE Vector4::Vector4(const float* p)
 {
 	T_ASSERT (p);
-	m_data = (float32x4_t){ p[0], p[1], p[2], p[3] };
+	m_data = vld1q_f32((const float32_t*)p);
 }
 
 T_MATH_INLINE const Vector4& Vector4::zero()
@@ -124,9 +129,18 @@ T_MATH_INLINE Scalar Vector4::length2() const
 	return dot4(*this, *this);
 }
 
+T_MATH_INLINE Scalar Vector4::normalize()
+{
+	Scalar ln = length();
+	T_ASSERT (abs(ln) > 0.0f);
+	*this /= ln;
+	return ln;
+}
+
 T_MATH_INLINE Vector4 Vector4::normalized() const
 {
 	Scalar il = reciprocalSquareRoot(dot4(*this, *this));
+	T_ASSERT (abs(il) > 0.0f);
 	return *this * il;
 }
 
@@ -163,9 +177,7 @@ T_MATH_INLINE void Vector4::storeUnaligned(float* out) const
 
 T_MATH_INLINE Scalar Vector4::get(int index) const
 {
-	float e[4];
-	storeUnaligned(e);
-	return Scalar(e[index]);
+	return *((const float *)&m_data + index);
 }
 
 T_MATH_INLINE void Vector4::set(int index, const Scalar& value)
@@ -186,7 +198,8 @@ T_MATH_INLINE Vector4 Vector4::operator - () const
 
 T_MATH_INLINE Vector4& Vector4::operator += (const Scalar& v)
 {
-	m_data = vaddq_f32(m_data, v.m_data);
+	float32x4_t v4 = vdupq_n_f32(v.m_data);
+	m_data = vaddq_f32(m_data, v4);
 	return *this;
 }
 
@@ -198,7 +211,8 @@ T_MATH_INLINE Vector4& Vector4::operator += (const Vector4& v)
 
 T_MATH_INLINE Vector4& Vector4::operator -= (const Scalar& v)
 {
-	m_data = vsubq_f32(m_data, v.m_data);
+	float32x4_t v4 = vdupq_n_f32(v.m_data);
+	m_data = vsubq_f32(m_data, v4);
 	return *this;
 }
 
@@ -210,7 +224,8 @@ T_MATH_INLINE Vector4& Vector4::operator -= (const Vector4& v)
 
 T_MATH_INLINE Vector4& Vector4::operator *= (const Scalar& v)
 {
-	m_data = vmulq_f32(m_data, v.m_data);
+	float32x4_t v4 = vdupq_n_f32(v.m_data);
+	m_data = vmulq_f32(m_data, v4);
 	return *this;
 }
 
@@ -222,7 +237,9 @@ T_MATH_INLINE Vector4& Vector4::operator *= (const Vector4& v)
 
 T_MATH_INLINE Vector4& Vector4::operator /= (const Scalar& v)
 {
-	m_data = v_vec_div(m_data, v.m_data);
+	T_ASSERT (abs(v.m_data) > 0.0f);
+	float32x4_t v4 = vdupq_n_f32(v.m_data);
+	m_data = v_vec_div(m_data, v4);
 	return *this;
 }
 
@@ -234,14 +251,34 @@ T_MATH_INLINE Vector4& Vector4::operator /= (const Vector4& v)
 
 T_MATH_INLINE bool Vector4::operator == (const Vector4& v) const
 {
-	const float* p1 = (const float*)&m_data;
-	const float* p2 = (const float*)&v.m_data;
-	return p1[0] == p2[0] && p1[1] == p2[1] && p1[2] == p2[2] && p1[3] == p2[3];
+	float T_MATH_ALIGN16 le[4];
+	float T_MATH_ALIGN16 re[4];
+
+	storeAligned(le);
+	v.storeAligned(re);
+
+	return bool(
+		compare(le[0], re[0]) &&
+		compare(le[1], re[1]) &&
+		compare(le[2], re[2]) &&
+		compare(le[3], re[3])
+	);	
 }
 
 T_MATH_INLINE bool Vector4::operator != (const Vector4& v) const
 {
-	return !(*this == v);
+	float T_MATH_ALIGN16 le[4];
+	float T_MATH_ALIGN16 re[4];
+
+	storeAligned(le);
+	v.storeAligned(re);
+
+	return bool(
+		!compare(le[0], re[0]) ||
+		!compare(le[1], re[1]) ||
+		!compare(le[2], re[2]) ||
+		!compare(le[3], re[3])
+	);	
 }
 
 T_MATH_INLINE Scalar Vector4::operator [] (int index) const
@@ -251,12 +288,14 @@ T_MATH_INLINE Scalar Vector4::operator [] (int index) const
 
 T_MATH_INLINE Vector4 operator + (const Vector4& l, const Scalar& r)
 {
-	return Vector4(vaddq_f32(l.m_data, r.m_data));
+	float32x4_t v4 = vdupq_n_f32(r.m_data);
+	return Vector4(vaddq_f32(l.m_data, v4));
 }
 
 T_MATH_INLINE Vector4 operator + (const Scalar& l, const Vector4& r)
 {
-	return Vector4(vaddq_f32(l.m_data, r.m_data));
+	float32x4_t v4 = vdupq_n_f32(l.m_data);
+	return Vector4(vaddq_f32(v4, r.m_data));
 }
 
 T_MATH_INLINE Vector4 operator + (const Vector4& l, const Vector4& r)
@@ -266,12 +305,14 @@ T_MATH_INLINE Vector4 operator + (const Vector4& l, const Vector4& r)
 
 T_MATH_INLINE Vector4 operator - (const Vector4& l, const Scalar& r)
 {
-	return Vector4(vsubq_f32(l.m_data, r.m_data));
+	float32x4_t v4 = vdupq_n_f32(r.m_data);
+	return Vector4(vsubq_f32(l.m_data, v4));
 }
 
 T_MATH_INLINE Vector4 operator - (const Scalar& l, const Vector4& r)
 {
-	return Vector4(vsubq_f32(l.m_data, r.m_data));
+	float32x4_t v4 = vdupq_n_f32(l.m_data);
+	return Vector4(vsubq_f32(v4, r.m_data));
 }
 
 T_MATH_INLINE Vector4 operator - (const Vector4& l, const Vector4& r)
@@ -281,12 +322,14 @@ T_MATH_INLINE Vector4 operator - (const Vector4& l, const Vector4& r)
 
 T_MATH_INLINE Vector4 operator * (const Vector4& l, const Scalar& r)
 {
-	return Vector4(vmulq_f32(l.m_data, r.m_data));
+	float32x4_t v4 = vdupq_n_f32(r.m_data);
+	return Vector4(vmulq_f32(l.m_data, v4));
 }
 
 T_MATH_INLINE Vector4 operator * (const Scalar& l, const Vector4& r)
 {
-	return Vector4(vmulq_f32(l.m_data, r.m_data));
+	float32x4_t v4 = vdupq_n_f32(l.m_data);
+	return Vector4(vmulq_f32(v4, r.m_data));
 }
 
 T_MATH_INLINE Vector4 operator * (const Vector4& l, const Vector4& r)
@@ -296,12 +339,15 @@ T_MATH_INLINE Vector4 operator * (const Vector4& l, const Vector4& r)
 
 T_MATH_INLINE Vector4 operator / (const Vector4& l, const Scalar& r)
 {
-	return Vector4(v_vec_div(l.m_data, r.m_data));
+	T_ASSERT (abs(r.m_data) > 0.0);
+	float32x4_t v4 = vdupq_n_f32(r.m_data);
+	return Vector4(v_vec_div(l.m_data, v4));
 }
 
 T_MATH_INLINE Vector4 operator / (const Scalar& l, const Vector4& r)
 {
-	return Vector4(v_vec_div(l.m_data, r.m_data));
+	float32x4_t v4 = vdupq_n_f32(l.m_data);
+	return Vector4(v_vec_div(v4, r.m_data));
 }
 
 T_MATH_INLINE Vector4 operator / (const Vector4& l, const Vector4& r)
@@ -317,7 +363,7 @@ T_MATH_INLINE Scalar horizontalAdd3(const Vector4& v)
 T_MATH_INLINE Scalar horizontalAdd4(const Vector4& v)
 {
 	Vector4 tmp = v + v.shuffle< 1, 0, 3, 2 >();
-	return Scalar((tmp + tmp.shuffle< 2, 2, 0, 0 >()).m_data);
+	return (tmp + tmp.shuffle< 2, 2, 0, 0 >()).x();
 }
 
 T_MATH_INLINE Scalar dot3(const Vector4& l, const Vector4& r)
@@ -354,10 +400,22 @@ T_MATH_INLINE Vector4 reflect(const Vector4& v, const Vector4& at)
 
 T_MATH_INLINE int majorAxis3(const Vector4& v)
 {
-	if (abs(v.x()) > abs(v.y()))
-		return (abs(v.x()) > abs(v.z())) ? 0 : 2;
+	float T_MATH_ALIGN16 e[4];
+	v.absolute().storeAligned(e);
+	if (e[0] > e[1])
+	{
+		if (e[0] > e[2])
+			return 0;
+		else
+			return 2;
+	}
 	else
-		return (abs(v.y()) > abs(v.z())) ? 1 : 2;
+	{
+		if (e[1] > e[2])
+			return 1;
+		else
+			return 2;
+	}
 }
 
 T_MATH_INLINE Vector4 min(const Vector4& l, const Vector4& r)

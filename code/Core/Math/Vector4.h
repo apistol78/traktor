@@ -83,16 +83,8 @@ public:
 		Vector4 tmp; tmp.m_data = _mm_shuffle_ps(m_data, m_data, mask);
 		return tmp;
 #else
-#	if defined(T_MATH_USE_ALTIVEC)
 		float T_MATH_ALIGN16 _e[4];
-		vec_st(m_data, 0, _e);
-#	elif defined(T_MATH_USE_ALTIVEC_SPU)
-		float T_MATH_ALIGN16 _e[4];
-		*(vec_float4*)_e = m_data;
-#	elif defined(T_MATH_USE_NEON)
-		float T_MATH_ALIGN16 _e[4];
-		*(float32x4_t*)_e = m_data;
-#	endif
+		storeAligned(_e);
 		return Vector4(_e[iX], _e[iY], _e[iZ], _e[iW]);
 #endif
 	}
