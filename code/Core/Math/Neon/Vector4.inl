@@ -12,6 +12,7 @@ static const Vector4 c_origo(0.0f, 0.0f, 0.0f, 1.0f);
 
 float32x4_t v_vec_div(float32x4_t divend, float32x4_t denom)
 {
+	/*
 	const float32x4_t one = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	float32x4_t idenom = vrecpeq_f32(denom);
@@ -27,6 +28,20 @@ float32x4_t v_vec_div(float32x4_t divend, float32x4_t denom)
 		res0,
 		t2
 	);
+	*/
+
+	float T_MATH_ALIGN16 dv[4];
+	float T_MATH_ALIGN16 de[4];
+
+	vst1q_f32((float32_t*)dv, divend);
+	vst1q_f32((float32_t*)de, denom);
+
+	return (float32x4_t){
+		dv[0] / de[0],
+		dv[1] / de[1],
+		dv[2] / de[2],
+		dv[3] / de[3]
+	};
 }
 
 inline bool compare(float e1, float e2)
