@@ -1,5 +1,9 @@
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/PropertyString.h"
+#include "Database/Database.h"
+#include "Editor/IEditor.h"
+#include "Editor/IEditorPage.h"
 #include "I18N/Text.h"
 #include "Script/CallStack.h"
 #include "Script/LocalComposite.h"
@@ -27,8 +31,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptDebuggerView", ScriptDebuggerView, ui::Container)
 
-ScriptDebuggerView::ScriptDebuggerView(IScriptDebugger* scriptDebugger)
-:	m_scriptDebugger(scriptDebugger)
+ScriptDebuggerView::ScriptDebuggerView(editor::IEditor* editor, IScriptDebugger* scriptDebugger)
+:	m_editor(editor)
+,	m_scriptDebugger(scriptDebugger)
 {
 }
 
@@ -162,6 +167,8 @@ void ScriptDebuggerView::breakpointReached(IScriptDebugger* scriptDebugger, cons
 		row->add(new ui::custom::GridItem(i->functionName));
 		row->add(new ui::custom::GridItem(toString(i->line + 1)));
 		row->add(new ui::custom::GridItem(i->scriptName));
+		row->setData(L"SCRIPT_ID", new PropertyString(i->scriptId.format()));
+		row->setData(L"SCRIPT_LINE", new PropertyInteger(i->line));
 		row->setData(L"FRAME_DEPTH", new PropertyInteger(depth++));
 
 		m_callStackGrid->addRow(row);
@@ -186,7 +193,23 @@ void ScriptDebuggerView::eventCallStackGridDoubleClick(ui::MouseDoubleClickEvent
 	ui::custom::GridRow* selectedRow = m_callStackGrid->getSelectedRow();
 	if (selectedRow)
 	{
+		Guid scriptId = Guid(*(selectedRow->getData< PropertyString >(L"SCRIPT_ID")));
+		int32_t line = *(selectedRow->getData< PropertyInteger >(L"SCRIPT_LINE"));
 		int32_t depth = *(selectedRow->getData< PropertyInteger >(L"FRAME_DEPTH"));
+
+		Ref< db::Instance > scriptInstance = m_editor->getSourceDatabase()->getInstance(scriptId);
+		if (scriptInstance)
+		{
+			m_editor->openEditor(scriptInstance);
+
+			editor::IEditorPage* activeEditorPage = m_editor->getActiveEditorPage();
+			if (activeEditorPage)
+				activeEditorPage->handleCommand(ui::Command(
+					line,
+					L"Script.Editor.GotoLine"
+				));
+		}
+
 		updateLocals(depth);
 	}
 	else

@@ -395,6 +395,12 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 			}
 		}
 	}
+	else if (command == L"Script.Editor.GotoLine")
+	{
+		int32_t lineOffset = m_edit->getLineOffset(command.getId());
+		m_edit->placeCaret(lineOffset);
+		m_edit->showLine(command.getId());
+	}
 	else
 	{
 		ui::TabPage* tabPageSession = m_tabSessions->getActivePage();
@@ -440,7 +446,7 @@ void ScriptEditorPage::notifyBeginSession(IScriptDebugger* scriptDebugger, IScri
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
 	splitter->create(tabPageSession, true, 70, true);
 
-	Ref< ScriptDebuggerView > debuggerView = new ScriptDebuggerView(scriptDebugger);
+	Ref< ScriptDebuggerView > debuggerView = new ScriptDebuggerView(m_editor, scriptDebugger);
 	debuggerView->create(splitter);
 	debuggerView->addEventHandler< ScriptBreakpointEvent >(this, &ScriptEditorPage::eventBreakPoint);
 
