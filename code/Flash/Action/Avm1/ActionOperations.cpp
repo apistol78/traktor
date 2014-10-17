@@ -977,11 +977,9 @@ void opx_callFunction(ExecutionState& state)
 	ActionValue functionName = stack.pop();
 
 	ActionValue functionObject = getVariable(state, functionName);
-	if (functionObject.isObject< ActionFunction >())
+	Ref< ActionFunction > fn = functionObject.getObject< ActionFunction >();
+	if (fn)
 	{
-		ActionFunction* fn = functionObject.getObject< ActionFunction >();
-		T_ASSERT (fn);
-
 		stack.push(fn->call(state.frame));
 		return;
 	}
@@ -1353,16 +1351,23 @@ void opx_setMember(ExecutionState& state)
 		}
 	}
 
+#if defined(_DEBUG)
 	std::string memberName;
+#endif
 	int32_t memberId = -1;
 
 	if (memberNameValue.isString())
 	{
+#if defined(_DEBUG)
 		memberName = memberNameValue.getString();
+#endif
 		memberId = memberNameValue.getStringId();
 	}
 	if (memberId < 0)
 	{
+#if !defined(_DEBUG)
+		std::string // ...
+#endif
 		memberName = memberNameValue.getString();
 		memberId = state.context->getString(memberName);
 	}

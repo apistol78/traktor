@@ -127,7 +127,7 @@ bool InLoopOutGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mix
 
 	if (iloCursor->m_grain)
 	{
-		SoundBlock soundBlock = { { 0, 0, 0, 0, 0, 0, 0, 0 }, outBlock.samplesCount, 0, 0 };
+		SoundBlock soundBlock = { { 0 }, outBlock.samplesCount, 0, 0 };
 		if (iloCursor->m_grain->getBlock(iloCursor->m_cursor, mixer, soundBlock))
 		{
 			outBlock.sampleRate = max(outBlock.sampleRate, soundBlock.sampleRate);

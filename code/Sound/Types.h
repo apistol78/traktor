@@ -19,6 +19,16 @@ namespace traktor
 /*! \ingroup Sound */
 //@{
 
+#define T_SOUND_SPEAKER_SETUP_2_0	1
+#define T_SOUND_SPEAKER_SETUP_5_1	2
+#define T_SOUND_SPEAKER_SETUP_7_1	3
+
+#if defined(__IOS__) || defined(__ANDROID__)
+#	define T_SOUND_SPEAKERS_SETUP T_SOUND_SPEAKER_SETUP_2_0
+#else
+#	define T_SOUND_SPEAKERS_SETUP T_SOUND_SPEAKER_SETUP_7_1
+#endif
+
 /*! \brief Static sound resource flags. */
 enum StaticResourceFlags
 {
@@ -31,6 +41,19 @@ enum StaticResourceFlags
 /*! \brief Sound channel mapping. */
 enum SoundBlockChannel
 {
+#if T_SOUND_SPEAKERS_SETUP == T_SOUND_SPEAKER_SETUP_2_0
+	SbcLeft = 0,
+	SbcRight = 1,
+	SbcMaxChannelCount = 2
+#elif T_SOUND_SPEAKERS_SETUP == T_SOUND_SPEAKER_SETUP_5_1
+	SbcLeft = 0,
+	SbcRight = 1,
+	SbcCenter = 2,
+	SbcLfe = 3,
+	SbcRearLeft = 4,
+	SbcRearRight = 5,
+	SbcMaxChannelCount = 6
+#elif T_SOUND_SPEAKERS_SETUP == T_SOUND_SPEAKER_SETUP_7_1
 	SbcLeft = 0,
 	SbcRight = 1,
 	SbcCenter = 2,
@@ -40,6 +63,7 @@ enum SoundBlockChannel
 	SbcSideLeft = 6,
 	SbcSideRight = 7,
 	SbcMaxChannelCount = 8
+#endif
 };
 
 /*! \brief Sound driver create description. */

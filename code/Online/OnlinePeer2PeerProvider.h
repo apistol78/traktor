@@ -1,6 +1,9 @@
 #ifndef traktor_online_OnlinePeer2PeerProvider_H
 #define traktor_online_OnlinePeer2PeerProvider_H
 
+#include "Core/Containers/CircularVector.h"
+#include "Core/Thread/Semaphore.h"
+#include "Core/Thread/Signal.h"
 #include "Net/Replication/IPeer2PeerProvider.h"
 
 // import/export mechanism.
@@ -13,6 +16,9 @@
 
 namespace traktor
 {
+
+class Thread;
+
 	namespace online
 	{
 
@@ -26,6 +32,8 @@ class T_DLLCLASS OnlinePeer2PeerProvider : public net::IPeer2PeerProvider
 
 public:
 	OnlinePeer2PeerProvider(ISessionManager* sessionManager, ILobby* lobby);
+
+	virtual ~OnlinePeer2PeerProvider();
 
 	virtual bool update();
 
@@ -47,6 +55,13 @@ public:
 
 	virtual bool pendingRecv();
 
+	struct RxTxData
+	{
+		Ref< IUser > user;
+		uint32_t size;
+		uint8_t data[1200];
+	};
+
 private:
 	Ref< ISessionManager > m_sessionManager;
 	Ref< ILobby > m_lobby;
@@ -54,6 +69,15 @@ private:
 	net::net_handle_t m_localHandle;
 	net::net_handle_t m_primaryHandle;
 	double m_whenUpdate;
+	Thread* m_thread;
+	Semaphore m_rxQueueLock;
+	Semaphore m_txQueueLock;
+	Signal m_txQueueSignal;
+	AtomicRefCount m_rxQueuePending;
+	CircularVector< RxTxData, 128 > m_rxQueue;
+	CircularVector< RxTxData, 128 > m_txQueue;
+
+	void transmissionThread();
 };
 
 	}

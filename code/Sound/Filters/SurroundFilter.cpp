@@ -85,15 +85,33 @@ const uint32_t c_speakersStereoMaxChannel = SbcRight + 1;
 
 const Speaker c_speakersFull[] =
 {
+#if T_SOUND_SPEAKERS_SETUP == T_SOUND_SPEAKER_SETUP_2_0
+	{ Scalar(deg2rad(0)), Scalar(0.0f), SbcRight },
+	{ Scalar(deg2rad(180)), Scalar(0.0f), SbcLeft }
+#elif T_SOUND_SPEAKERS_SETUP == T_SOUND_SPEAKER_SETUP_5_1
 	{ Scalar(deg2rad(45)), Scalar(0.0f), SbcRight },
 	{ Scalar(deg2rad(135)), Scalar(0.0f), SbcLeft },
 	{ Scalar(deg2rad(225)), Scalar(0.0f), SbcRearLeft },
 	{ Scalar(deg2rad(315)), Scalar(0.0f), SbcRearRight },
 	{ Scalar(deg2rad(90)), Scalar(1.0f), SbcCenter },
 	{ Scalar(deg2rad(90)), Scalar(1.0f), SbcLfe }
+#elif T_SOUND_SPEAKERS_SETUP == T_SOUND_SPEAKER_SETUP_7_1
+	{ Scalar(deg2rad(45)), Scalar(0.0f), SbcRight },
+	{ Scalar(deg2rad(135)), Scalar(0.0f), SbcLeft },
+	{ Scalar(deg2rad(225)), Scalar(0.0f), SbcRearLeft },
+	{ Scalar(deg2rad(315)), Scalar(0.0f), SbcRearRight },
+	{ Scalar(deg2rad(90)), Scalar(1.0f), SbcCenter },
+	{ Scalar(deg2rad(90)), Scalar(1.0f), SbcLfe }
+#endif
 };
 
+#if T_SOUND_SPEAKERS_SETUP == T_SOUND_SPEAKER_SETUP_2_0
+const uint32_t c_speakersFullMaxChannel = SbcRight + 1;
+#elif T_SOUND_SPEAKERS_SETUP == T_SOUND_SPEAKER_SETUP_5_1
 const uint32_t c_speakersFullMaxChannel = SbcRearRight + 1;
+#elif T_SOUND_SPEAKERS_SETUP == T_SOUND_SPEAKER_SETUP_7_1
+const uint32_t c_speakersFullMaxChannel = SbcRearRight + 1;
+#endif
 
 		}
 

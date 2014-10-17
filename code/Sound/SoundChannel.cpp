@@ -205,7 +205,7 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 	while (m_outputSamplesIn < m_hwFrameSamples)
 	{
 		// Request sound block from buffer.
-		SoundBlock soundBlock = { { 0, 0, 0, 0, 0, 0, 0, 0 }, m_hwFrameSamples, 0, 0 };
+		SoundBlock soundBlock = { { 0 }, m_hwFrameSamples, 0, 0 };
 		if (!soundBuffer->getBlock(m_state.cursor, mixer, soundBlock))
 		{
 			// No more blocks from sound buffer.
