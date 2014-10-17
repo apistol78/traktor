@@ -126,8 +126,8 @@ bool BlendGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, 
 	float p = blendCursor->m_lastP * (1.0f - k) + p0 * k;
 	blendCursor->m_lastP = p;
 
-	SoundBlock soundBlock1 = { { 0, 0, 0, 0, 0, 0, 0, 0 }, outBlock.samplesCount, 0, 0 };
-	SoundBlock soundBlock2 = { { 0, 0, 0, 0, 0, 0, 0, 0 }, outBlock.samplesCount, 0, 0 };
+	SoundBlock soundBlock1 = { { 0 }, outBlock.samplesCount, 0, 0 };
+	SoundBlock soundBlock2 = { { 0 }, outBlock.samplesCount, 0, 0 };
 
 	bool anyBlock = false;
 	if (m_grains[0])

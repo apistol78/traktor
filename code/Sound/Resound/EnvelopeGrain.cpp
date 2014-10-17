@@ -193,7 +193,7 @@ bool EnvelopeGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixe
 		if (v < FUZZY_EPSILON)
 			continue;
 
-		SoundBlock soundBlock = { { 0, 0, 0, 0, 0, 0, 0, 0 }, outBlock.samplesCount, 0, 0 };
+		SoundBlock soundBlock = { { 0 }, outBlock.samplesCount, 0, 0 };
 		if (m_grains[i].grain->getBlock(
 			envelopeCursor->m_cursors[i],
 			mixer,

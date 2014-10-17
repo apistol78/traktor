@@ -23,11 +23,23 @@ namespace traktor
 		namespace
 		{
 
-inline void clearSamples(float* samples, uint32_t samplesCount)
+inline void clearSamples(float* samples, int32_t samplesCount)
 {
 	T_ASSERT ((samplesCount & 3) == 0);
-	for (uint32_t i = 0; i < samplesCount; i += 4)
-		Vector4::zero().storeAligned(&samples[i]);
+
+	const static Vector4 c_zero = Vector4::zero();
+	int32_t i = 0;
+
+	for (i = 0; i < samplesCount - 16; i += 16)
+	{
+		c_zero.storeAligned(&samples[i]);
+		c_zero.storeAligned(&samples[i + 4]);
+		c_zero.storeAligned(&samples[i + 8]);
+		c_zero.storeAligned(&samples[i + 12]);
+	}
+
+	for (; i < samplesCount; i += 4)
+		c_zero.storeAligned(&samples[i]);
 }
 
 		}
@@ -266,6 +278,15 @@ void SoundSystem::threadMixer()
 		double startTime = timerMixer.getElapsedTime();
 		double deltaTime = timerMixer.getDeltaTime();
 
+		// Read blocks from channels.
+		uint32_t channelsCount = uint32_t(m_channels.size());
+		for (uint32_t i = 0; i < channelsCount; ++i)
+		{
+			m_requestBlocks[i].samplesCount = m_desc.driverDesc.frameSamples;
+			m_requestBlocks[i].maxChannel = 0;
+			m_channels[i]->getBlock(m_mixer, m_time, m_requestBlocks[i]);
+		}
+
 		// Allocate new frame block.
 		float* samples = m_samplesBlocks[m_samplesBlockHead];
 		m_samplesBlocks[m_samplesBlockHead] = 0;
@@ -279,17 +300,6 @@ void SoundSystem::threadMixer()
 		frameBlock.samplesCount = m_desc.driverDesc.frameSamples;
 		frameBlock.sampleRate = m_desc.driverDesc.sampleRate;
 		frameBlock.maxChannel = m_desc.driverDesc.hwChannels;
-
-		// Read blocks from channels.
-		uint32_t channelsCount = uint32_t(m_channels.size());
-		for (uint32_t i = 0; i < channelsCount; ++i)
-		{
-			m_requestBlocks[i].samplesCount = m_desc.driverDesc.frameSamples;
-			m_requestBlocks[i].maxChannel = 0;
-			m_channels[i]->getBlock(m_mixer, m_time, m_requestBlocks[i]);
-		}
-
-		m_mixer->synchronize();
 
 		// Get which channel has the highest presence.
 		float presence[64];
@@ -323,6 +333,8 @@ void SoundSystem::threadMixer()
 				}
 			}
 		}
+
+		m_mixer->synchronize();
 
 		// Final combine channels into hardware channels using "combine matrix".
 		for (uint32_t i = 0; i < channelsCount; ++i)

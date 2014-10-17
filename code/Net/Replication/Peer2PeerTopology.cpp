@@ -199,7 +199,7 @@ bool Peer2PeerTopology::update(double dT)
 	if (!m_provider->update())
 		return false;
 
-	T_MEASURE_UNTIL(0.0005);
+	T_MEASURE_UNTIL(0.002);
 
 	// Get peers from provider.
 	int32_t providerPeerCount = m_provider->getPeerCount();
@@ -522,9 +522,6 @@ bool Peer2PeerTopology::update(double dT)
 				}
 			}
 		}
-
-		if (i > 0)
-			log::info << getLogPrefix() << L"Received " << i << L" message(s)" << Endl;
 	}
 
 	T_MEASURE_UNTIL(0.010);

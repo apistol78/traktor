@@ -102,7 +102,7 @@ bool SimultaneousGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* 
 	bool playing = false;
 	for (uint32_t i = 0; i < m_grains.size(); ++i)
 	{
-		SoundBlock soundBlock = { { 0, 0, 0, 0, 0, 0, 0, 0 }, outBlock.samplesCount, 0, 0 };
+		SoundBlock soundBlock = { { 0 }, outBlock.samplesCount, 0, 0 };
 
 		if (m_grains[i]->getBlock(
 			simultaneousCursor->m_grainCursors[i],
