@@ -6,6 +6,13 @@
 
 namespace traktor
 {
+	namespace editor
+	{
+
+class IEditor;
+
+	}
+
 	namespace ui
 	{
 
@@ -34,7 +41,7 @@ class ScriptDebuggerView
 	T_RTTI_CLASS;
 
 public:
-	ScriptDebuggerView(IScriptDebugger* scriptDebugger);
+	ScriptDebuggerView(editor::IEditor* editor, IScriptDebugger* scriptDebugger);
 
 	virtual ~ScriptDebuggerView();
 
@@ -45,6 +52,7 @@ public:
 	bool handleCommand(const ui::Command& command);
 
 private:
+	editor::IEditor* m_editor;
 	Ref< IScriptDebugger > m_scriptDebugger;
 	Ref< ui::custom::ToolBar > m_debuggerTools;
 	Ref< ui::custom::GridView > m_callStackGrid;
