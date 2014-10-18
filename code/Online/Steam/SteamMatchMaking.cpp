@@ -67,6 +67,7 @@ SteamMatchMaking::SteamMatchMaking(SteamSessionManager* sessionManager)
 ,	m_joinedLobby(0)
 ,	m_joinResult(false)
 ,	m_callbackGameLobbyJoinRequested(this, &SteamMatchMaking::OnGameLobbyJoinRequested)
+,	m_callbackChatDataUpdate(this, &SteamMatchMaking::OnLobbyChatUpdate)
 {
 	std::vector< std::wstring > argv;
 	Split< std::wstring >::any(OS::getInstance().getCommandLine(), L" \t", argv);
@@ -172,7 +173,10 @@ bool SteamMatchMaking::createLobby(uint32_t maxUsers, LobbyAccess access, uint64
 	m_outLobby = 0;
 
 	if (result)
+	{
 		m_joinedLobby = outLobbyHandle;
+		updateParticipants();
+	}
 
 	return result;
 }
@@ -205,7 +209,10 @@ bool SteamMatchMaking::joinLobby(uint64_t lobbyHandle)
 		result = false;
 
 	if (result)
+	{
 		m_joinedLobby = lobbyHandle;
+		updateParticipants();
+	}
 
 	return result;
 }
@@ -217,6 +224,7 @@ bool SteamMatchMaking::leaveLobby(uint64_t lobbyHandle)
 
 	SteamMatchmaking()->LeaveLobby(uint64(lobbyHandle));
 	m_joinedLobby = 0;
+	m_participants.resize(0);
 	return true;
 }
 
@@ -271,17 +279,7 @@ bool SteamMatchMaking::getParticipants(uint64_t lobbyHandle, std::vector< uint64
 	T_ASSERT_M (m_joinedLobby != 0, L"Not in any lobby");
 	T_ASSERT_M (m_joinedLobby == lobbyHandle, L"Incorrect lobby");
 
-	CSteamID myId = ::SteamUser()->GetSteamID();
-	int32_t memberCount = SteamMatchmaking()->GetNumLobbyMembers(uint64(lobbyHandle));
-
-	outUserHandles.reserve(memberCount);
-	for (int32_t i = 0; i < memberCount; ++i)
-	{
-		CSteamID memberId = SteamMatchmaking()->GetLobbyMemberByIndex(uint64(lobbyHandle), i);
-		if (memberId != myId)
-			outUserHandles.push_back(memberId.ConvertToUint64());
-	}
-
+	outUserHandles = m_participants;
 	return true;
 }
 
@@ -359,6 +357,23 @@ bool SteamMatchMaking::getOwner(uint64_t lobbyHandle, uint64_t& outUserHandle) c
 	return true;
 }
 
+void SteamMatchMaking::updateParticipants()
+{
+	T_ASSERT_M (m_joinedLobby != 0, L"Not in any lobby");
+
+	CSteamID myId = ::SteamUser()->GetSteamID();
+	int32_t memberCount = SteamMatchmaking()->GetNumLobbyMembers(uint64(m_joinedLobby));
+
+	m_participants.resize(0);
+	m_participants.reserve(memberCount);
+	for (int32_t i = 0; i < memberCount; ++i)
+	{
+		CSteamID memberId = SteamMatchmaking()->GetLobbyMemberByIndex(uint64(m_joinedLobby), i);
+		if (memberId != myId)
+			m_participants.push_back(memberId.ConvertToUint64());
+	}
+}
+
 void SteamMatchMaking::OnLobbyMatch(LobbyMatchList_t* pCallback, bool bIOFailure)
 {
 	T_ASSERT (m_outLobbies != 0);
@@ -391,6 +406,14 @@ void SteamMatchMaking::OnLobbyEnter(LobbyEnter_t* pCallback, bool bIOFailure)
 void SteamMatchMaking::OnGameLobbyJoinRequested(GameLobbyJoinRequested_t* pCallback)
 {
 	m_acceptedInvite = pCallback->m_steamIDLobby.ConvertToUint64();
+}
+
+void SteamMatchMaking::OnLobbyChatUpdate(LobbyChatUpdate_t* pCallback)
+{
+	if (pCallback->m_ulSteamIDLobby != m_joinedLobby)
+		return;
+
+	updateParticipants();
 }
 
 	}

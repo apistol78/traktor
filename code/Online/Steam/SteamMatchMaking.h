@@ -59,9 +59,12 @@ private:
 	uint64_t m_acceptedInvite;
 	uint64_t m_joinedLobby;
 	bool m_joinResult;
+	std::vector< uint64_t > m_participants;
 	CCallResult< SteamMatchMaking, LobbyMatchList_t > m_callbackLobbyMatch;
 	CCallResult< SteamMatchMaking, LobbyCreated_t > m_callbackLobbyCreated;
 	CCallResult< SteamMatchMaking, LobbyEnter_t > m_callbackLobbyEnter;
+
+	void updateParticipants();
 
 	void OnLobbyMatch(LobbyMatchList_t* pCallback, bool bIOFailure);
 
@@ -70,6 +73,8 @@ private:
 	void OnLobbyEnter(LobbyEnter_t* pCallback, bool bIOFailure);
 
 	STEAM_CALLBACK(SteamMatchMaking, OnGameLobbyJoinRequested, GameLobbyJoinRequested_t, m_callbackGameLobbyJoinRequested);
+
+	STEAM_CALLBACK(SteamMatchMaking, OnLobbyChatUpdate, LobbyChatUpdate_t, m_callbackChatDataUpdate);
 };
 
 	}
