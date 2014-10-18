@@ -181,19 +181,14 @@ void ReplicatorProxy::sendEvent(const ISerializable* eventObject)
 bool ReplicatorProxy::updateEventQueue()
 {
 	int32_t sentCount = 0;
-	for (std::list< Event >::iterator i = m_events.begin(); i != m_events.end(); )
+	for (std::list< Event >::iterator i = m_events.begin(); i != m_events.end(); ++i)
 	{
 		if (m_replicator->m_time0 - i->time > c_resendTimeThreshold)
 		{
-			if (++i->count >= c_maxResentCount)
-			{
-				m_events.erase(i);
-				continue;
-			}
-
 			m_replicator->m_topology->send(m_handle, &i->msg, RmiEvent_NetSize(i->size));
 
 			i->time = m_replicator->m_time0;
+			i->count++;
 			i++;
 
 			if (++sentCount >= c_maxSendEventsPerUpdate)

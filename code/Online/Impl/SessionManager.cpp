@@ -95,7 +95,9 @@ bool SessionManager::create(ISessionManagerProvider* provider, const IGameConfig
 		m_statistics = new Statistics(statisticsProvider, m_taskQueues[0]);
 
 	m_downloadableContent = downloadableContent;
+
 	m_updateTask = new TaskUpdateSessionManager(m_provider);
+	m_taskQueues[0]->add(m_updateTask);
 
 	return true;
 }
