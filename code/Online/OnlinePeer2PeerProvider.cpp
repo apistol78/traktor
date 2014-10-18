@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Thread/Thread.h"
