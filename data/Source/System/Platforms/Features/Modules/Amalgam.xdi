@@ -9,7 +9,6 @@
 			<deployFiles>
 				<item>libExtern.detour.a</item>
 				<item>libExtern.recast.a</item>
-				<item>libExtern.mpg123-1.13.2.a</item>
 				<item>libExtern.stb_vorbis.a</item>
 				<item>libExtern.libflac-1.2.1.a</item>
 				<item>libExtern.libvorbis-1.3.3.a</item>
