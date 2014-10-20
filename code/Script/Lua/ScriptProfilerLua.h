@@ -30,6 +30,8 @@ public:
 	virtual void removeListener(IListener* listener);
 
 private:
+	friend class ScriptManagerLua;
+
 	struct ProfileStack
 	{
 		std::wstring function;
@@ -37,14 +39,13 @@ private:
 		double childDuration;
 	};
 
-	static ScriptProfilerLua* ms_instance;
 	ScriptManagerLua* m_scriptManager;
 	lua_State* m_luaState;
 	std::vector< ProfileStack > m_stack;
 	std::set< IListener* > m_listeners;
 	Timer m_timer;
 
-	static void hookCallback(lua_State* L, lua_Debug* ar);
+	void hookCallback(lua_State* L, lua_Debug* ar);
 };
 
 	}

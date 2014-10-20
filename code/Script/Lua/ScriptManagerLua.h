@@ -15,6 +15,7 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+struct lua_Debug;
 struct lua_State;
 
 namespace traktor
@@ -66,6 +67,8 @@ private:
 		Ref< IScriptClass > scriptClass;
 		int32_t metaTableRef;
 	};
+
+	static ScriptManagerLua* ms_instance;
 
 	lua_State* m_luaState;
 	void* m_defaultAllocFn;
@@ -130,6 +133,8 @@ private:
 	static int classDivideMethod(lua_State* luaState);
 
 	static void* luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize);
+
+	static void hookCallback(lua_State* L, lua_Debug* ar);
 
 	static int luaPanic(lua_State* luaState);
 };

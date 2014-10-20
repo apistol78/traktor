@@ -1665,6 +1665,10 @@
       <second>Remove dependency</second>
     </item>
     <item>
+      <first>SCRIPT_EDITOR_TOGGLE_COMMENTS</first>
+      <second>Toggle comments</second>
+    </item>
+    <item>
       <first>SCRIPT_EDITOR_MOVE_DEPENDENCY_UP</first>
       <second>Move dependency up</second>
     </item>

@@ -60,7 +60,6 @@ private:
 
 	ScriptManagerLua* m_scriptManager;
 	lua_State* m_luaState;
-	static ScriptDebuggerLua* ms_instance;
 	Semaphore m_lock;
 	std::map< int32_t, std::set< Guid > > m_breakpoints;
 	std::set< IListener* > m_listeners;
@@ -71,7 +70,7 @@ private:
 
 	void captureCallStack(lua_State* L, CallStack& outCallStack);
 
-	static void hookCallback(lua_State* L, lua_Debug* ar);
+	void hookCallback(lua_State* L, lua_Debug* ar);
 };
 
 	}

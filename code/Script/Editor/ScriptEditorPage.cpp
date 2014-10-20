@@ -47,6 +47,7 @@
 // Resources
 #include "Resources/Editor.h"
 #include "Resources/PlusMinus.h"
+#include "Resources/ScriptEdit.h"
 #include "Resources/ScriptFunction.h"
 #include "Resources/ScriptFunctionReference.h"
 
@@ -140,7 +141,8 @@ bool ScriptEditorPage::create(ui::Container* parent)
 
 	Ref< ui::custom::ToolBar > toolBarEdit = new ui::custom::ToolBar();
 	toolBarEdit->create(containerEdit);
-	toolBarEdit->addItem(new ui::custom::ToolBarButton(L"Toggle comments", ui::Command(L"Script.Editor.ToggleComments")));
+	toolBarEdit->addImage(ui::Bitmap::load(c_ResourceScriptEdit, sizeof(c_ResourceScriptEdit), L"png"), 1);
+	toolBarEdit->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_TOGGLE_COMMENTS"), 0, ui::Command(L"Script.Editor.ToggleComments")));
 	toolBarEdit->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ScriptEditorPage::eventToolBarEditClick);
 
 	m_edit = new ui::custom::SyntaxRichEdit();
