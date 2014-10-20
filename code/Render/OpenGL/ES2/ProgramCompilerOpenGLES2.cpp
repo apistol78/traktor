@@ -2,6 +2,7 @@
 #	include <glsl_optimizer.h>
 #endif
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Semaphore.h"
@@ -46,11 +47,15 @@ Ref< ProgramResource > ProgramCompilerOpenGLES2::compile(
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_lock);
 
-		glslopt_ctx* ctx = glslopt_initialize(true);
+		glslopt_ctx* ctx = glslopt_initialize(kGlslTargetOpenGLES20);
 		if (ctx)
 		{
 			std::string vs = wstombs(glslProgram.getVertexShader());
 			std::string fs = wstombs(glslProgram.getFragmentShader());
+
+			// Hack to allow optimization of instancing shaders.
+			vs = replaceAll< std::string >(vs, "GL_EXT_draw_instanced", "GL_ARB_draw_instanced");
+			vs = replaceAll< std::string >(vs, "gl_InstanceIDEXT", "gl_InstanceIDARB");
 
 			glslopt_shader* vso = glslopt_optimize(ctx, kGlslOptShaderVertex, vs.c_str(), 0);
 			glslopt_shader* fso = glslopt_optimize(ctx, kGlslOptShaderFragment, fs.c_str(), 0);
@@ -60,8 +65,11 @@ Ref< ProgramResource > ProgramCompilerOpenGLES2::compile(
 				glslopt_get_status(fso)
 			)
 			{
-				const char* vss = glslopt_get_output(vso);
-				const char* fss = glslopt_get_output(fso);
+				std::string vss = glslopt_get_output(vso);
+				std::string fss = glslopt_get_output(fso);
+
+				vss = replaceAll< std::string >(vss, "GL_ARB_draw_instanced", "GL_EXT_draw_instanced");
+				vss = replaceAll< std::string >(vss, "gl_InstanceIDARB", "gl_InstanceIDEXT");
 
 				glslProgram = GlslProgram(
 					mbstows(vss),

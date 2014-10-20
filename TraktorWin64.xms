@@ -19201,662 +19201,6 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.mesaglsl2</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master</sourcePath>
-			<configurations>
-				<item type="Configuration" version="1">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/include/c99</item>
-						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/src/mesa</item>
-					</includePaths>
-					<definitions>
-						<item>WIN32</item>
-						<item>_DEBUG</item>
-						<item>_LIB</item>
-						<item>NOMINMAX</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
-						<item>_CRT_SECURE_NO_DEPRECATE</item>
-						<item>snprintf=_snprintf</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/include/c99</item>
-						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/src/mesa</item>
-					</includePaths>
-					<definitions>
-						<item>WIN32</item>
-						<item>NDEBUG</item>
-						<item>_LIB</item>
-						<item>NOMINMAX</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
-						<item>_CRT_SECURE_NO_DEPRECATE</item>
-						<item>snprintf=_snprintf</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>DebugShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/include/c99</item>
-						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/src/mesa</item>
-					</includePaths>
-					<definitions>
-						<item>WIN32</item>
-						<item>_DEBUG</item>
-						<item>_LIB</item>
-						<item>NOMINMAX</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
-						<item>_CRT_SECURE_NO_DEPRECATE</item>
-						<item>snprintf=_snprintf</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>ReleaseShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/include/c99</item>
-						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/src/mesa</item>
-					</includePaths>
-					<definitions>
-						<item>WIN32</item>
-						<item>NDEBUG</item>
-						<item>_LIB</item>
-						<item>NOMINMAX</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
-						<item>_CRT_SECURE_NO_DEPRECATE</item>
-						<item>snprintf=_snprintf</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>src/glsl/msvc/msvccompat.h</fileName>
-					<items/>
-				</item>
-				<item type="Filter">
-					<name>src</name>
-					<items>
-						<item type="Filter">
-							<name>glsl</name>
-							<items>
-								<item type="File">
-									<fileName>src/glsl/ast.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ast_expr.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ast_function.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ast_to_hir.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ast_type.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/builtin_function.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/builtin_types.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/builtin_variables.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/builtin_variables.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/glsl_lexer.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/glsl_lexer.lpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/glsl_optimizer.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/glsl_optimizer.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/glsl_parser.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/glsl_parser.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/glsl_parser.ypp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/glsl_parser_extras.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/glsl_parser_extras.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/glsl_symbol_table.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/glsl_symbol_table.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/glsl_types.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/glsl_types.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/hir_field_selection.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ir.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ir.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ir_basic_block.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ir_basic_block.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ir_clone.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ir_constant_expression.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ir_expression_flattening.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ir_expression_flattening.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ir_function.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ir_function_can_inline.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ir_function_detect_recursion.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ir_function_inlining.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ir_hierarchical_visitor.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ir_hierarchical_visitor.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ir_hv_accept.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ir_import_prototypes.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ir_optimization.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ir_print_glsl_visitor.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ir_print_glsl_visitor.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ir_print_visitor.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ir_print_visitor.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ir_reader.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ir_reader.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ir_rvalue_visitor.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ir_rvalue_visitor.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ir_unused_structs.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ir_unused_structs.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ir_validate.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ir_variable_refcount.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ir_variable_refcount.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ir_visitor.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/link_functions.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/link_uniform_initializers.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/link_uniforms.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/linker.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/linker.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/list.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/loop_analysis.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/loop_analysis.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/loop_controls.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/loop_unroll.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/lower_clip_distance.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/lower_discard.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/lower_discard_flow.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/lower_if_to_cond_assign.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/lower_instructions.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/lower_jumps.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/lower_mat_op_to_vec.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/lower_noise.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/lower_variable_index_to_cond_assign.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/lower_vec_index_to_cond_assign.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/lower_vec_index_to_swizzle.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/lower_vector.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/opt_algebraic.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/opt_array_splitting.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/opt_constant_folding.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/opt_constant_propagation.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/opt_constant_variable.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/opt_copy_propagation.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/opt_copy_propagation_elements.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/opt_dead_code.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/opt_dead_code_local.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/opt_dead_functions.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/opt_function_inlining.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/opt_if_simplification.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/opt_noop_swizzle.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/opt_redundant_jumps.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/opt_structure_splitting.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/opt_swizzle_swizzle.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/opt_tree_grafting.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/program.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ralloc.c</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/ralloc.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/s_expression.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/s_expression.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/standalone_scaffolding.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/standalone_scaffolding.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/strtod.c</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/glsl/strtod.h</fileName>
-									<items/>
-								</item>
-								<item type="Filter">
-									<name>glcpp</name>
-									<items>
-										<item type="File">
-											<fileName>src/glsl/glcpp/glcpp-lex.c</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>src/glsl/glcpp/glcpp-lex.l</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>src/glsl/glcpp/glcpp-parse.c</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>src/glsl/glcpp/glcpp-parse.h</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>src/glsl/glcpp/glcpp-parse.y</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>src/glsl/glcpp/glcpp.c</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>src/glsl/glcpp/glcpp.h</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>src/glsl/glcpp/pp.c</fileName>
-											<items/>
-										</item>
-									</items>
-								</item>
-							</items>
-						</item>
-						<item type="Filter">
-							<name>mesa</name>
-							<items>
-								<item type="Filter">
-									<name>program</name>
-									<items>
-										<item type="File">
-											<fileName>src/glsl/../mesa/program/hash_table.c</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>src/glsl/../mesa/program/hash_table.h</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>src/glsl/../mesa/program/prog_instruction.h</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>src/glsl/../mesa/program/prog_parameter.h</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>src/glsl/../mesa/program/prog_statevars.h</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>src/glsl/../mesa/program/symbol_table.c</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>src/glsl/../mesa/program/symbol_table.h</fileName>
-											<items/>
-										</item>
-									</items>
-								</item>
-								<item type="Filter">
-									<name>main</name>
-									<items>
-										<item type="File">
-											<fileName>src/glsl/../mesa/main/compiler.h</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>src/glsl/../mesa/main/config.h</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>src/glsl/../mesa/main/context.h</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>src/glsl/../mesa/main/core.h</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>src/glsl/../mesa/main/dd.h</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>src/glsl/../mesa/main/glheader.h</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>src/glsl/../mesa/main/glminimal.h</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>src/glsl/../mesa/main/imports.h</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>src/glsl/../mesa/main/macros.h</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>src/glsl/../mesa/main/mtypes.h</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>src/glsl/../mesa/main/shaderobj.h</fileName>
-											<items/>
-										</item>
-										<item type="File">
-											<fileName>src/glsl/../mesa/main/simple_list.h</fileName>
-											<items/>
-										</item>
-									</items>
-								</item>
-							</items>
-						</item>
-					</items>
-				</item>
-			</items>
-			<dependencies/>
-		</item>
-		<item type="Project" version="1">
-			<enable>true</enable>
 			<name>Traktor.Render.OpenGL.ES2</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Render/OpenGL</sourcePath>
 			<configurations>
@@ -19868,7 +19212,7 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(ANGLE_SDK)/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/src/glsl</item>
+						<item>$(GLSL_OPTIMIZER)/src/glsl</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_OPENGL_ES2_EXPORT</item>
@@ -19889,7 +19233,7 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(ANGLE_SDK)/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/src/glsl</item>
+						<item>$(GLSL_OPTIMIZER)/src/glsl</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_OPENGL_ES2_EXPORT</item>
@@ -19910,7 +19254,7 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(ANGLE_SDK)/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/src/glsl</item>
+						<item>$(GLSL_OPTIMIZER)/src/glsl</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -19931,7 +19275,7 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(ANGLE_SDK)/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/src/glsl</item>
+						<item>$(GLSL_OPTIMIZER)/src/glsl</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -19988,7 +19332,227 @@
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[120]"/>
+					<project type="Project" version="1">
+						<enable>true</enable>
+						<name>Extern.mesaglsl2</name>
+						<sourcePath>$(GLSL_OPTIMIZER)</sourcePath>
+						<configurations>
+							<item type="Configuration" version="1">
+								<name>DebugStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(GLSL_OPTIMIZER)/include</item>
+									<item>$(GLSL_OPTIMIZER)/include/c99</item>
+									<item>$(GLSL_OPTIMIZER)/src/mesa</item>
+									<item>$(GLSL_OPTIMIZER)/src/util</item>
+									<item>$(GLSL_OPTIMIZER)/src</item>
+								</includePaths>
+								<definitions>
+									<item>WIN32</item>
+									<item>_DEBUG</item>
+									<item>_LIB</item>
+									<item>NOMINMAX</item>
+									<item>_CRT_SECURE_NO_WARNINGS</item>
+									<item>_CRT_SECURE_NO_DEPRECATE</item>
+									<item>snprintf=_snprintf</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+							<item type="Configuration" version="1">
+								<name>ReleaseStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(GLSL_OPTIMIZER)/include</item>
+									<item>$(GLSL_OPTIMIZER)/include/c99</item>
+									<item>$(GLSL_OPTIMIZER)/src/mesa</item>
+									<item>$(GLSL_OPTIMIZER)/src/util</item>
+									<item>$(GLSL_OPTIMIZER)/src</item>
+								</includePaths>
+								<definitions>
+									<item>WIN32</item>
+									<item>NDEBUG</item>
+									<item>_LIB</item>
+									<item>NOMINMAX</item>
+									<item>_CRT_SECURE_NO_WARNINGS</item>
+									<item>_CRT_SECURE_NO_DEPRECATE</item>
+									<item>snprintf=_snprintf</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+							<item type="Configuration" version="1">
+								<name>DebugShared</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(GLSL_OPTIMIZER)/include</item>
+									<item>$(GLSL_OPTIMIZER)/include/c99</item>
+									<item>$(GLSL_OPTIMIZER)/src/mesa</item>
+									<item>$(GLSL_OPTIMIZER)/src/util</item>
+									<item>$(GLSL_OPTIMIZER)/src</item>
+								</includePaths>
+								<definitions>
+									<item>WIN32</item>
+									<item>_DEBUG</item>
+									<item>_LIB</item>
+									<item>NOMINMAX</item>
+									<item>_CRT_SECURE_NO_WARNINGS</item>
+									<item>_CRT_SECURE_NO_DEPRECATE</item>
+									<item>snprintf=_snprintf</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+							<item type="Configuration" version="1">
+								<name>ReleaseShared</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(GLSL_OPTIMIZER)/include</item>
+									<item>$(GLSL_OPTIMIZER)/include/c99</item>
+									<item>$(GLSL_OPTIMIZER)/src/mesa</item>
+									<item>$(GLSL_OPTIMIZER)/src/util</item>
+									<item>$(GLSL_OPTIMIZER)/src</item>
+								</includePaths>
+								<definitions>
+									<item>WIN32</item>
+									<item>NDEBUG</item>
+									<item>_LIB</item>
+									<item>NOMINMAX</item>
+									<item>_CRT_SECURE_NO_WARNINGS</item>
+									<item>_CRT_SECURE_NO_DEPRECATE</item>
+									<item>snprintf=_snprintf</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+						</configurations>
+						<items>
+							<item type="File">
+								<fileName>src/glsl/msvc/msvccompat.h</fileName>
+								<items/>
+							</item>
+							<item type="Filter">
+								<name>src</name>
+								<items>
+									<item type="Filter">
+										<name>glsl</name>
+										<items>
+											<item type="File">
+												<fileName>src/glsl/*.h</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/*.c</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/*.cpp</fileName>
+												<items/>
+											</item>
+											<item type="Filter">
+												<name>glcpp</name>
+												<items>
+													<item type="File">
+														<fileName>src/glsl/glcpp/*.c</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>src/glsl/glcpp/*.cpp</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>src/glsl/glcpp/*.l</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>src/glsl/glcpp/*.h</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>src/glsl/glcpp/*.y</fileName>
+														<items/>
+													</item>
+												</items>
+											</item>
+										</items>
+									</item>
+									<item type="Filter">
+										<name>mesa</name>
+										<items>
+											<item type="Filter">
+												<name>program</name>
+												<items>
+													<item type="File">
+														<fileName>src/glsl/../mesa/program/*.c</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>src/glsl/../mesa/program/*.cpp</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>src/glsl/../mesa/program/*.h</fileName>
+														<items/>
+													</item>
+												</items>
+											</item>
+											<item type="Filter">
+												<name>main</name>
+												<items>
+													<item type="File">
+														<fileName>src/glsl/../mesa/main/*.c</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>src/glsl/../mesa/main/*.cpp</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>src/glsl/../mesa/main/*.h</fileName>
+														<items/>
+													</item>
+												</items>
+											</item>
+										</items>
+									</item>
+									<item type="Filter">
+										<name>util</name>
+										<items>
+											<item type="File">
+												<fileName>src/util/*.c</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/util/*.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/util/*.h</fileName>
+												<items/>
+											</item>
+										</items>
+									</item>
+								</items>
+							</item>
+						</items>
+						<dependencies/>
+					</project>
 				</item>
 			</dependencies>
 		</item>
@@ -20322,6 +19886,7 @@
 				</item>
 			</dependencies>
 		</item>
+		<item ref="/object/projects/item[120]/dependencies/item[4]/project"/>
 	</projects>
 	<aggregations/>
 </object>

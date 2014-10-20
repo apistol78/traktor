@@ -8,6 +8,7 @@ export TRAKTOR_HOME
 export STEAMWORKS_SDK=$TRAKTOR_HOME/3rdp/steamworks-sdk-131
 export BULLET_SDK=$TRAKTOR_HOME/3rdp/bullet3-master
 export FBX_SDK=$TRAKTOR_HOME/3rdp/FbxSdk/2013.1
+export GLSL_OPTIMIZER=$TRAKTOR_HOME/3rdp/glsl-optimizer-master-20141020
 
 # PNaCl SDK; need to be manually installed in 3rdp folder.
 export NACL_SDK_ROOT=$TRAKTOR_HOME/3rdp/nacl_sdk/pepper_37
