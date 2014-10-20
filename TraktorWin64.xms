@@ -13638,6 +13638,10 @@
 							<fileName>../../../res/editor/ScriptFunctionReference.png</fileName>
 							<items/>
 						</item>
+						<item type="File">
+							<fileName>../../../res/toolbar/ScriptEdit.png</fileName>
+							<items/>
+						</item>
 					</items>
 				</item>
 			</items>

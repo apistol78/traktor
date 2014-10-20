@@ -122,23 +122,15 @@ Ref< Local > describeLocal(const std::wstring& name, lua_State* L, int32_t index
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptDebuggerLua", ScriptDebuggerLua, IScriptDebugger)
 
-ScriptDebuggerLua* ScriptDebuggerLua::ms_instance = 0;
-
 ScriptDebuggerLua::ScriptDebuggerLua(ScriptManagerLua* scriptManager, lua_State* luaState)
 :	m_scriptManager(scriptManager)
 ,	m_luaState(luaState)
 ,	m_state(StRunning)
 {
-	T_ASSERT (!ms_instance);
-	ms_instance = this;
-	lua_sethook(m_luaState, &ScriptDebuggerLua::hookCallback, LUA_MASKLINE, 0);
 }
 
 ScriptDebuggerLua::~ScriptDebuggerLua()
 {
-	T_ASSERT (ms_instance == this);
-	lua_sethook(m_luaState, &ScriptDebuggerLua::hookCallback, 0, 0);
-	ms_instance = 0;
 }
 
 bool ScriptDebuggerLua::setBreakpoint(const Guid& scriptId, int32_t lineNumber)
@@ -396,8 +388,8 @@ void ScriptDebuggerLua::captureCallStack(lua_State* L, CallStack& outCallStack)
 
 void ScriptDebuggerLua::hookCallback(lua_State* L, lua_Debug* ar)
 {
-	T_ASSERT (ms_instance);
-	ms_instance->analyzeState(L, ar);
+	if (ar->event == LUA_HOOKLINE)
+		analyzeState(L, ar);
 }
 
 	}

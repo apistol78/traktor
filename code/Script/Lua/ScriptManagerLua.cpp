@@ -59,6 +59,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.script.TableContainerLua", TableContainerLua, O
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptManagerLua", 0, ScriptManagerLua, IScriptManager)
 
+ScriptManagerLua* ScriptManagerLua::ms_instance = 0;
+
 ScriptManagerLua::ScriptManagerLua()
 :	m_luaState(0)
 ,	m_defaultAllocFn(0)
@@ -72,6 +74,8 @@ ScriptManagerLua::ScriptManagerLua()
 ,	m_classIdBoxedVector4(0)
 ,	m_classIdBoxedTransform(0)
 {
+	ms_instance = this;
+
 #if !defined(__LP64__) && !defined(_LP64)
 	m_luaState = lua_newstate(&luaAlloc, this);
 #else
@@ -120,6 +124,7 @@ ScriptManagerLua::ScriptManagerLua()
 ScriptManagerLua::~ScriptManagerLua()
 {
 	T_FATAL_ASSERT_M(!m_luaState, L"Must call destroy");
+	ms_instance = 0;
 }
 
 void ScriptManagerLua::destroy()
@@ -494,6 +499,8 @@ Ref< IScriptDebugger > ScriptManagerLua::createDebugger()
 	if (!m_debugger)
 		m_debugger = new ScriptDebuggerLua(this, m_luaState);
 
+	lua_sethook(m_luaState, &ScriptManagerLua::hookCallback, LUA_MASKLINE, 0);
+
 	return m_debugger;
 }
 
@@ -503,6 +510,8 @@ Ref< IScriptProfiler > ScriptManagerLua::createProfiler()
 
 	if (!m_profiler)
 		m_profiler = new ScriptProfilerLua(this, m_luaState);
+
+	lua_sethook(m_luaState, &ScriptManagerLua::hookCallback, LUA_MASKLINE | LUA_MASKCALL | LUA_MASKRET, 0);
 
 	return m_profiler;
 }
@@ -1178,6 +1187,14 @@ void* ScriptManagerLua::luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize
 #else
 	return ((lua_Alloc)(this_->m_defaultAllocFn))(this_->m_defaultAllocOpaque, ptr, osize, nsize);
 #endif
+}
+
+void ScriptManagerLua::hookCallback(lua_State* luaState, lua_Debug* ar)
+{
+	if (ms_instance->m_debugger)
+		ms_instance->m_debugger->hookCallback(luaState, ar);
+	if (ms_instance->m_profiler)
+		ms_instance->m_profiler->hookCallback(luaState, ar);
 }
 
 int ScriptManagerLua::luaPanic(lua_State* luaState)
