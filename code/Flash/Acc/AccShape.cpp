@@ -60,6 +60,8 @@ bool AccShape::createTesselation(const std::list< Path >& paths)
 	m_tesselationBatches.reserve(paths.size());
 
 	m_tesselationTriangleCount = 0;
+	m_bounds.mn.x = m_bounds.mn.y =  std::numeric_limits< float >::max();
+	m_bounds.mx.x = m_bounds.mx.y = -std::numeric_limits< float >::max();
 
 	// Create triangles through tessellation.
 	for (std::list< Path >::const_iterator i = paths.begin(); i != paths.end(); ++i)
@@ -115,15 +117,8 @@ bool AccShape::createTesselation(const std::list< Path >& paths)
 
 		triangulator.triangulate(segments, batch.triangles);
 		m_tesselationTriangleCount += uint32_t(batch.triangles.size());
-	}
 
-	// Calculate bounding box.
-	m_bounds.mn.x = m_bounds.mn.y =  std::numeric_limits< float >::max();
-	m_bounds.mx.x = m_bounds.mx.y = -std::numeric_limits< float >::max();
-
-	for (AlignedVector< TesselationBatch >::const_iterator i = m_tesselationBatches.begin(); i != m_tesselationBatches.end(); ++i)
-	{
-		for (AlignedVector< Triangle >::const_iterator j = i->triangles.begin(); j != i->triangles.end(); ++j)
+		for (AlignedVector< Triangle >::const_iterator j = batch.triangles.begin(); j != batch.triangles.end(); ++j)
 		{
 			for (int k = 0; k < 3; ++k)
 			{

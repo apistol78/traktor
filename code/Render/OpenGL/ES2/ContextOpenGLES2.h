@@ -73,6 +73,8 @@ private:
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
 #	if defined(_WIN32)
 	Ref< Window > m_window;
+	EGLint m_width;
+	EGLint m_height;
 #	endif
 	EGLDisplay m_display;
 	EGLConfig m_config;
