@@ -1,3 +1,4 @@
+#include "Ui/Edit.h"
 #include "Ui/Events/ContentChangeEvent.h"
 #include "Ui/Win32/EditWin32.h"
 
@@ -21,6 +22,9 @@ bool EditWin32::create(IWidget* parent, const std::wstring& text, int style)
 {
 	UINT nativeStyle, nativeStyleEx;
 	getNativeStyles(style, nativeStyle, nativeStyleEx);
+
+	if (style & Edit::WsReadOnly)
+		nativeStyle |= ES_READONLY;
 
 	if (!m_hWnd.create(
 		(HWND)parent->getInternalHandle(),

@@ -37,7 +37,7 @@ public:
 
 	const std::list< Guid >& getFeatures() const;
 
-	void setBuildRoot(const Guid& buildRoot);
+	void setRoot(const Guid& root);
 
 	const Guid& getRoot() const;
 

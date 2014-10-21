@@ -160,7 +160,7 @@ void StateCache::setDepthMask(GLboolean depthMask)
 
 void StateCache::setArrayBuffer(GLint arrayBuffer)
 {
-	//if (m_arrayBuffer != arrayBuffer)
+	if (m_arrayBuffer != arrayBuffer)
 	{
 		T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, arrayBuffer));
 		m_arrayBuffer = arrayBuffer;
@@ -169,7 +169,7 @@ void StateCache::setArrayBuffer(GLint arrayBuffer)
 
 void StateCache::setElementArrayBuffer(GLint elemArrayBuffer)
 {
-	//if (m_elemArrayBuffer != elemArrayBuffer)
+	if (m_elemArrayBuffer != elemArrayBuffer)
 	{
 		T_OGL_SAFE(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elemArrayBuffer));
 		m_elemArrayBuffer = elemArrayBuffer;
@@ -179,7 +179,7 @@ void StateCache::setElementArrayBuffer(GLint elemArrayBuffer)
 void StateCache::setVertexArrayObject(GLint vertexArrayObject)
 {
 #if defined(__APPLE__) && defined(GL_OES_vertex_array_object)
-	//if (m_vertexArrayObject != vertexArrayObject)
+	if (m_vertexArrayObject != vertexArrayObject)
 	{
 		T_OGL_SAFE(glBindVertexArrayOES(vertexArrayObject));
 		m_vertexArrayObject = vertexArrayObject;
