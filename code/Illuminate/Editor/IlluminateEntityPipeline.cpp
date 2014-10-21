@@ -314,7 +314,7 @@ public:
 							{
 								Vector4 shadowPosition = shadowOrigin + shadowU * Scalar(random.nextFloat()) + shadowV * Scalar(random.nextFloat());
 								Vector4 shadowOrigin = (shadowPosition + normal * c_traceRayOffset).xyz1();
-								if (m_sah.queryAnyIntersection(shadowOrigin, -i->direction, 0.0f, cache))
+								if (m_sah.queryAnyIntersection(shadowOrigin, -i->direction, 1e3f, cache))
 									shadowCount++;
 							}
 							phi *= Scalar(1.0f - float(shadowCount) / c_shadowSamples);
