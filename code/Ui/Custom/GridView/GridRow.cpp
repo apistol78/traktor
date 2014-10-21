@@ -175,9 +175,8 @@ void GridRow::paint(Canvas& canvas, const Rect& rect)
 	// Paint selection background.
 	if (m_state & GridRow::RsSelected)
 	{
-		canvas.setForeground(Color4ub(240, 240, 250, 180));
-		canvas.setBackground(Color4ub(220, 220, 230, 180));
-		canvas.fillGradientRect(rowRect);
+		canvas.setBackground(Color4ub(230, 230, 230, 180));
+		canvas.fillRect(rowRect);
 	}
 
 	if (!m_children.empty())

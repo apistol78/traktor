@@ -59,9 +59,11 @@ void GridHeaderCell::mouseMove(const Point& position)
 
 void GridHeaderCell::paint(Canvas& canvas, const Rect& rect)
 {
-	canvas.setForeground(Color4ub(255, 255, 255));
-	canvas.setBackground(getSystemColor(ScButtonFace));
-	canvas.fillGradientRect(Rect(0, rect.top, rect.getWidth(), rect.bottom));
+	Color4ub c1 = getSystemColor(ScMenuBackground);
+	Color4ub c0 = lerp(c1, Color4ub(255, 255, 255), 0.5f);
+
+	canvas.setBackground(c0);
+	canvas.fillRect(Rect(0, rect.top, rect.getWidth(), rect.bottom));
 
 	int32_t left = rect.left;
 	for (uint32_t i = 0; i < m_columns.size(); ++i)
