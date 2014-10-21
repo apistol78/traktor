@@ -124,6 +124,10 @@ void RenderViewOpenGLES2::close()
 
 bool RenderViewOpenGLES2::reset(const RenderViewDefaultDesc& desc)
 {
+	if (!m_context->getLandscape())
+		m_context->resize(desc.displayMode.width, desc.displayMode.height);
+	else
+		m_context->resize(desc.displayMode.height, desc.displayMode.width);
 	return true;
 }
 
@@ -780,7 +784,7 @@ bool RenderViewOpenGLES2::windowListenerEvent(Window* window, UINT message, WPAR
 		if (width <= 0 || height <= 0)
 			return false;
 
-		//if (width != m_context->getWidth() || height != m_context->getHeight())
+		if (width != m_context->getWidth() || height != m_context->getHeight())
 		{
 			RenderEvent evt;
 			evt.type = ReResize;

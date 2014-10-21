@@ -204,6 +204,11 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(ContextOpenGLES2* resour
 		return 0;
 	}
 
+#	if defined(_WIN32)
+	eglQuerySurface(context->m_display, context->m_surface, EGL_WIDTH, &context->m_width);
+	eglQuerySurface(context->m_display, context->m_surface, EGL_HEIGHT, &context->m_height);
+#	endif
+
 #elif defined(__PNACL__)
 
 	context->m_context = PPContextWrapper::createRenderContext(
@@ -412,6 +417,11 @@ bool ContextOpenGLES2::resize(int32_t width, int32_t height)
 {
 #if defined(__PNACL__)
 	return m_context->resize(width, height);
+#elif defined(_WIN32)
+	m_width = width;
+	m_height = height;
+	m_primaryDepth = 0;	// \fixme Should release depth buffer!
+	return true;
 #else
 	return false;
 #endif
@@ -419,10 +429,10 @@ bool ContextOpenGLES2::resize(int32_t width, int32_t height)
 
 int32_t ContextOpenGLES2::getWidth() const
 {
-#if defined(__IOS__)
+#if defined(__IOS__) || defined(__PNACL__)
 	return m_context->getWidth();
-#elif defined(__PNACL__)
-	return m_context->getWidth();
+#elif defined(_WIN32)
+	return m_width;
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
 	EGLint width;
 	eglQuerySurface(m_display, m_surface, EGL_WIDTH, &width);
@@ -434,10 +444,10 @@ int32_t ContextOpenGLES2::getWidth() const
 
 int32_t ContextOpenGLES2::getHeight() const
 {
-#if defined(__IOS__)
+#if defined(__IOS__) || defined(__PNACL__)
 	return m_context->getHeight();
-#elif defined(__PNACL__)
-	return m_context->getHeight();
+#elif defined(_WIN32)
+	return m_height;
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
 	EGLint height;
 	eglQuerySurface(m_display, m_surface, EGL_HEIGHT, &height);
@@ -522,7 +532,13 @@ ContextOpenGLES2::ContextOpenGLES2()
 }
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
 ContextOpenGLES2::ContextOpenGLES2()
+#	if defined(_WIN32)
+:	m_width(0)
+,	m_height(0)
+,	m_primaryDepth(0)
+#	else
 :	m_primaryDepth(0)
+#	endif
 {
 }
 #endif
