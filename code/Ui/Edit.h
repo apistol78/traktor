@@ -26,6 +26,11 @@ class T_DLLCLASS Edit : public Widget
 	T_RTTI_CLASS;
 
 public:
+	enum Styles
+	{
+		WsReadOnly = WsUser
+	};
+
 	bool create(Widget* parent, const std::wstring& text = L"", int style = WsClientBorder, EditValidator* validator = 0);
 	
 	bool setValidator(EditValidator* validator);

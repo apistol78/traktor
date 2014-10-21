@@ -26,9 +26,11 @@ class IEditor;
 	namespace ui
 	{
 
+class Bitmap;
 class Container;
 class DropDown;
 class Edit;
+class Image;
 class ListBox;
 
 		namespace custom
@@ -81,9 +83,15 @@ private:
 	Ref< Target > m_editTarget;
 	RefArray< db::Instance > m_platformInstances;
 	std::list< EditFeature > m_features;
+	Ref< ui::Bitmap > m_bitmapNoIcon;
 	Ref< ui::Container > m_containerOuter;
 	Ref< ui::custom::EditList > m_listBoxTargetConfigurations;
+	Ref< ui::Image > m_imageIcon;
 	Ref< ui::DropDown > m_dropDownPlatform;
+	Ref< ui::Edit > m_editBuildRootInstance;
+	Ref< ui::Edit > m_editStartupInstance;
+	Ref< ui::Edit > m_editDefaultInputInstance;
+	Ref< ui::Edit > m_editOnlineConfigInstance;
 	Ref< ui::ListBox > m_listBoxAvailFeatures;
 	Ref< ui::ListBox > m_listBoxUsedFeatures;
 
@@ -92,6 +100,10 @@ private:
 	void updateAvailableFeatures();
 
 	void updateUsedFeatures();
+
+	void updateRoots();
+
+	void updateIcon();
 
 	void selectPlatform(const Guid& platformGuid) const;
 
@@ -106,6 +118,16 @@ private:
 	void eventButtonRemoveTargetConfigurationClick(ui::ButtonClickEvent* event);
 
 	void eventDropDownPlatformSelect(ui::SelectionChangeEvent* event);
+
+	void eventBrowseRootButtonClick(ui::ButtonClickEvent* event);
+
+	void eventBrowseStartupButtonClick(ui::ButtonClickEvent* event);
+
+	void eventBrowseDefaultInputButtonClick(ui::ButtonClickEvent* event);
+
+	void eventBrowseOnlineConfigButtonClick(ui::ButtonClickEvent* event);
+
+	void eventBrowseIconClick(ui::MouseButtonDownEvent* event);
 
 	void eventButtonAddFeatureClick(ui::ButtonClickEvent* event);
 

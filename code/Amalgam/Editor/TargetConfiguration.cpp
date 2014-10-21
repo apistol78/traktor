@@ -69,9 +69,9 @@ const std::list< Guid >& TargetConfiguration::getFeatures() const
 	return m_features;
 }
 
-void TargetConfiguration::setBuildRoot(const Guid& buildRoot)
+void TargetConfiguration::setRoot(const Guid& root)
 {
-	m_root = buildRoot;
+	m_root = root;
 }
 
 const Guid& TargetConfiguration::getRoot() const

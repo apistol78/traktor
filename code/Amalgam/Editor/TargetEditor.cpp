@@ -3,28 +3,39 @@
 #include "Amalgam/Editor/Target.h"
 #include "Amalgam/Editor/TargetConfiguration.h"
 #include "Amalgam/Editor/TargetEditor.h"
+#include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/DeepClone.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Database/Traverse.h"
+#include "Drawing/Image.h"
+#include "Drawing/Filters/ScaleFilter.h"
 #include "Editor/IEditor.h"
+#include "Ui/Bitmap.h"
 #include "Ui/Button.h"
 #include "Ui/Container.h"
 #include "Ui/DropDown.h"
 #include "Ui/Edit.h"
 #include "Ui/FileDialog.h"
 #include "Ui/FlowLayout.h"
+#include "Ui/Image.h"
 #include "Ui/ListBox.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/EditList.h"
 #include "Ui/Custom/EditListEditEvent.h"
 #include "Ui/Custom/InputDialog.h"
+#include "Ui/Custom/MiniButton.h"
 #include "Ui/Custom/Panel.h"
 #include "Ui/Custom/Splitter.h"
+
+// Resources
+#include "Resources/NoIcon.h"
 
 namespace traktor
 {
@@ -76,26 +87,79 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	containerEditTargetConfiguration->create(splitterInner, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 4));
 
 	Ref< ui::custom::Panel > panelGeneral = new ui::custom::Panel();
-	panelGeneral->create(containerEditTargetConfiguration, L"General", new ui::TableLayout(L"*,100%,*,100%", L"*,*", 8, 4));
+	panelGeneral->create(containerEditTargetConfiguration, L"General", new ui::TableLayout(L"100%,128", L"*", 8, 4));
+
+	Ref< ui::Container > containerLeft = new ui::Container();
+	containerLeft->create(panelGeneral, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0, 4));
 
 	Ref< ui::Static > staticPlatform = new ui::Static();
-	staticPlatform->create(panelGeneral, L"Platform");
+	staticPlatform->create(containerLeft, L"Platform");
 
 	m_dropDownPlatform = new ui::DropDown();
-	m_dropDownPlatform->create(panelGeneral);
+	m_dropDownPlatform->create(containerLeft);
 	m_dropDownPlatform->addEventHandler< ui::SelectionChangeEvent >(this, &TargetEditor::eventDropDownPlatformSelect);
 
 	Ref< ui::Static > staticBuildRoot = new ui::Static();
-	staticBuildRoot->create(panelGeneral, L"Build root");
+	staticBuildRoot->create(containerLeft, L"Build root");
 
-	Ref< ui::Static > staticBuildRootInstance = new ui::Static();
-	staticBuildRootInstance->create(panelGeneral, L"{0000000-000000-000000-000000}");
+	Ref< ui::Container > container1 = new ui::Container();
+	container1->create(containerLeft, ui::WsNone, new ui::TableLayout(L"100%,*", L"*", 0, 4));
+
+	m_editBuildRootInstance = new ui::Edit();
+	m_editBuildRootInstance->create(container1, L"", ui::WsClientBorder | ui::Edit::WsReadOnly);
+	m_editBuildRootInstance->setText(L"");
+
+	Ref< ui::custom::MiniButton > buttonBuildRootInstance = new ui::custom::MiniButton();
+	buttonBuildRootInstance->create(container1, L"...");
+	buttonBuildRootInstance->addEventHandler< ui::ButtonClickEvent >(this, &TargetEditor::eventBrowseRootButtonClick);
 
 	Ref< ui::Static > staticStartup = new ui::Static();
-	staticStartup->create(panelGeneral, L"Startup");
+	staticStartup->create(containerLeft, L"Startup");
 
-	Ref< ui::Static > staticStartupInstance = new ui::Static();
-	staticStartupInstance->create(panelGeneral, L"{0000000-000000-000000-000000}");
+	Ref< ui::Container > container2 = new ui::Container();
+	container2->create(containerLeft, ui::WsNone, new ui::TableLayout(L"100%,*", L"*", 0, 4));
+
+	m_editStartupInstance = new ui::Edit();
+	m_editStartupInstance->create(container2, L"", ui::WsClientBorder | ui::Edit::WsReadOnly);
+	m_editStartupInstance->setText(L"");
+
+	Ref< ui::custom::MiniButton > buttonStartupInstance = new ui::custom::MiniButton();
+	buttonStartupInstance->create(container2, L"...");
+	buttonStartupInstance->addEventHandler< ui::ButtonClickEvent >(this, &TargetEditor::eventBrowseStartupButtonClick);
+
+	Ref< ui::Static > staticDefaultInput = new ui::Static();
+	staticDefaultInput->create(containerLeft, L"Default input");
+
+	Ref< ui::Container > container3 = new ui::Container();
+	container3->create(containerLeft, ui::WsNone, new ui::TableLayout(L"100%,*", L"*", 0, 4));
+
+	m_editDefaultInputInstance = new ui::Edit();
+	m_editDefaultInputInstance->create(container3, L"", ui::WsClientBorder | ui::Edit::WsReadOnly);
+	m_editDefaultInputInstance->setText(L"");
+
+	Ref< ui::custom::MiniButton > buttonDefaultInputInstance = new ui::custom::MiniButton();
+	buttonDefaultInputInstance->create(container3, L"...");
+	buttonDefaultInputInstance->addEventHandler< ui::ButtonClickEvent >(this, &TargetEditor::eventBrowseDefaultInputButtonClick);
+
+	Ref< ui::Static > staticOnlineConfig = new ui::Static();
+	staticOnlineConfig->create(containerLeft, L"Online configuration");
+
+	Ref< ui::Container > container4 = new ui::Container();
+	container4->create(containerLeft, ui::WsNone, new ui::TableLayout(L"100%,*", L"*", 0, 4));
+
+	m_editOnlineConfigInstance = new ui::Edit();
+	m_editOnlineConfigInstance->create(container4, L"", ui::WsClientBorder | ui::Edit::WsReadOnly);
+	m_editOnlineConfigInstance->setText(L"");
+
+	Ref< ui::custom::MiniButton > buttonOnlineConfigInstance = new ui::custom::MiniButton();
+	buttonOnlineConfigInstance->create(container4, L"...");
+	buttonOnlineConfigInstance->addEventHandler< ui::ButtonClickEvent >(this, &TargetEditor::eventBrowseOnlineConfigButtonClick);
+
+	m_bitmapNoIcon = ui::Bitmap::load(c_ResourceNoIcon, sizeof(c_ResourceNoIcon), L"png");
+	
+	m_imageIcon = new ui::Image();
+	m_imageIcon->create(panelGeneral, m_bitmapNoIcon, ui::Image::WsTransparent | ui::WsDoubleBuffer);
+	m_imageIcon->addEventHandler< ui::MouseButtonDownEvent >(this, &TargetEditor::eventBrowseIconClick);
 
 	Ref< ui::custom::Panel > panelFeatures = new ui::custom::Panel();
 	panelFeatures->create(containerEditTargetConfiguration, L"Features", new ui::TableLayout(L"100%,*,100%", L"100%", 8, 4));
@@ -226,10 +290,13 @@ void TargetEditor::updateAvailableFeatures()
 	{
 		for (std::list< EditFeature >::const_iterator i = m_features.begin(); i != m_features.end(); ++i)
 		{
-			if (targetConfiguration->haveFeature(i->featureInstance->getGuid()))
-				continue;
+			if (i->feature != 0 && i->feature->getPlatform(targetConfiguration->getPlatform()) != 0)
+			{
+				if (targetConfiguration->haveFeature(i->featureInstance->getGuid()))
+					continue;
 
-			m_listBoxAvailFeatures->add(i->feature->getDescription(), i->featureInstance);
+				m_listBoxAvailFeatures->add(i->feature->getDescription(), i->featureInstance);
+			}
 		}
 	}
 }
@@ -263,6 +330,67 @@ void TargetEditor::updateUsedFeatures()
 	}
 }
 
+void TargetEditor::updateRoots()
+{
+	TargetConfiguration* targetConfiguration = m_listBoxTargetConfigurations->getSelectedData< TargetConfiguration >();
+	if (targetConfiguration)
+	{
+		Ref< db::Instance > rootInstance = m_editor->getSourceDatabase()->getInstance(targetConfiguration->getRoot());
+		if (rootInstance)
+			m_editBuildRootInstance->setText(rootInstance->getPath());
+		else
+			m_editBuildRootInstance->setText(targetConfiguration->getRoot().format());
+
+		Ref< db::Instance > startupInstance = m_editor->getSourceDatabase()->getInstance(targetConfiguration->getStartup());
+		if (startupInstance)
+			m_editStartupInstance->setText(startupInstance->getPath());
+		else
+			m_editStartupInstance->setText(targetConfiguration->getStartup().format());
+
+		Ref< db::Instance > defaultInputInstance = m_editor->getSourceDatabase()->getInstance(targetConfiguration->getDefaultInput());
+		if (defaultInputInstance)
+			m_editDefaultInputInstance->setText(defaultInputInstance->getPath());
+		else
+			m_editDefaultInputInstance->setText(targetConfiguration->getDefaultInput().format());
+
+		Ref< db::Instance > onlineConfigInstance = m_editor->getSourceDatabase()->getInstance(targetConfiguration->getOnlineConfig());
+		if (onlineConfigInstance)
+			m_editOnlineConfigInstance->setText(onlineConfigInstance->getPath());
+		else
+			m_editOnlineConfigInstance->setText(targetConfiguration->getOnlineConfig().format());
+	}
+	else
+	{
+		m_editBuildRootInstance->setText(L"");
+		m_editStartupInstance->setText(L"");
+		m_editDefaultInputInstance->setText(L"");
+		m_editOnlineConfigInstance->setText(L"");
+	}
+}
+
+void TargetEditor::updateIcon()
+{
+	TargetConfiguration* targetConfiguration = m_listBoxTargetConfigurations->getSelectedData< TargetConfiguration >();
+	if (targetConfiguration)
+	{
+		Path systemRoot = m_editor->getWorkspaceSettings()->getProperty< PropertyString >(L"Amalgam.SystemRoot", L"$(TRAKTOR_HOME)");
+		Path iconPath = targetConfiguration->getIcon();
+
+		Ref< drawing::Image > iconImage = drawing::Image::load(systemRoot + iconPath);
+		if (iconImage)
+		{
+			drawing::ScaleFilter scaleFilter(128, 128, drawing::ScaleFilter::MnAverage, drawing::ScaleFilter::MgLinear);
+			iconImage->apply(&scaleFilter);
+
+			m_imageIcon->setImage(new ui::Bitmap(iconImage), true);
+		}
+		else
+			m_imageIcon->setImage(m_bitmapNoIcon, true);
+	}
+	else
+		m_imageIcon->setImage(m_bitmapNoIcon, true);
+}
+
 void TargetEditor::selectPlatform(const Guid& platformGuid) const
 {
 	int c = m_dropDownPlatform->count();
@@ -294,6 +422,8 @@ void TargetEditor::eventListBoxTargetConfigurationsSelect(ui::SelectionChangeEve
 {
 	updateAvailableFeatures();
 	updateUsedFeatures();
+	updateRoots();
+	updateIcon();
 
 	m_dropDownPlatform->select(-1);
 
@@ -324,6 +454,8 @@ void TargetEditor::eventButtonNewTargetConfigurationClick(ui::ButtonClickEvent* 
 		updateTargetConfigurations();
 		updateAvailableFeatures();
 		updateUsedFeatures();
+		updateRoots();
+		updateIcon();
 
 		m_listBoxTargetConfigurations->select(-1);
 	}
@@ -354,6 +486,8 @@ void TargetEditor::eventButtonCloneTargetConfigurationClick(ui::ButtonClickEvent
 		updateTargetConfigurations();
 		updateAvailableFeatures();
 		updateUsedFeatures();
+		updateRoots();
+		updateIcon();
 
 		m_listBoxTargetConfigurations->select(-1);
 	}
@@ -370,6 +504,8 @@ void TargetEditor::eventButtonRemoveTargetConfigurationClick(ui::ButtonClickEven
 	updateTargetConfigurations();
 	updateAvailableFeatures();
 	updateUsedFeatures();
+	updateRoots();
+	updateIcon();
 
 	m_listBoxTargetConfigurations->select(-1);
 }
@@ -384,6 +520,83 @@ void TargetEditor::eventDropDownPlatformSelect(ui::SelectionChangeEvent* event)
 	T_ASSERT (platformInstance);
 
 	targetConfiguration->setPlatform(platformInstance->getGuid());
+}
+
+void TargetEditor::eventBrowseRootButtonClick(ui::ButtonClickEvent* event)
+{
+	TargetConfiguration* targetConfiguration = m_listBoxTargetConfigurations->getSelectedData< TargetConfiguration >();
+	if (!targetConfiguration)
+		return;
+
+	Ref< db::Instance > rootInstance = m_editor->browseInstance();
+	if (rootInstance)
+		targetConfiguration->setRoot(rootInstance->getGuid());
+
+	updateRoots();
+}
+
+void TargetEditor::eventBrowseStartupButtonClick(ui::ButtonClickEvent* event)
+{
+	TargetConfiguration* targetConfiguration = m_listBoxTargetConfigurations->getSelectedData< TargetConfiguration >();
+	if (!targetConfiguration)
+		return;
+
+	Ref< db::Instance > startupInstance = m_editor->browseInstance();
+	if (startupInstance)
+		targetConfiguration->setStartup(startupInstance->getGuid());
+
+	updateRoots();
+}
+
+void TargetEditor::eventBrowseDefaultInputButtonClick(ui::ButtonClickEvent* event)
+{
+	TargetConfiguration* targetConfiguration = m_listBoxTargetConfigurations->getSelectedData< TargetConfiguration >();
+	if (!targetConfiguration)
+		return;
+
+	Ref< db::Instance > defaultInputInstance = m_editor->browseInstance();
+	if (defaultInputInstance)
+		targetConfiguration->setDefaultInput(defaultInputInstance->getGuid());
+
+	updateRoots();
+}
+
+void TargetEditor::eventBrowseOnlineConfigButtonClick(ui::ButtonClickEvent* event)
+{
+	TargetConfiguration* targetConfiguration = m_listBoxTargetConfigurations->getSelectedData< TargetConfiguration >();
+	if (!targetConfiguration)
+		return;
+
+	Ref< db::Instance > onlineConfigInstance = m_editor->browseInstance();
+	if (onlineConfigInstance)
+		targetConfiguration->setOnlineConfig(onlineConfigInstance->getGuid());
+
+	updateRoots();
+}
+
+void TargetEditor::eventBrowseIconClick(ui::MouseButtonDownEvent* event)
+{
+	TargetConfiguration* targetConfiguration = m_listBoxTargetConfigurations->getSelectedData< TargetConfiguration >();
+	if (!targetConfiguration)
+		return;
+
+	ui::FileDialog fileDialog;
+	if (fileDialog.create(m_containerOuter, L"Select icon image", L"All files;*.*"))
+	{
+		Path fileName;
+		if (fileDialog.showModal(fileName) == ui::DrOk)
+		{
+			std::wstring systemRoot = m_editor->getWorkspaceSettings()->getProperty< PropertyString >(L"Amalgam.SystemRoot", L"$(TRAKTOR_HOME)");
+
+			Path relativePath;
+			if (!FileSystem::getInstance().getRelativePath(fileName, systemRoot, relativePath))
+				relativePath = fileName;
+
+			targetConfiguration->setIcon(relativePath.getPathName());
+			updateIcon();
+		}
+		fileDialog.destroy();
+	}
 }
 
 void TargetEditor::eventButtonAddFeatureClick(ui::ButtonClickEvent* event)

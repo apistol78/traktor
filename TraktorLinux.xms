@@ -14448,6 +14448,10 @@
 							<fileName>../../../res/Amalgam/Platforms.png</fileName>
 							<items/>
 						</item>
+						<item type="File">
+							<fileName>../../../res/Amalgam/NoIcon.png</fileName>
+							<items/>
+						</item>
 					</items>
 				</item>
 				<item type="Filter">
