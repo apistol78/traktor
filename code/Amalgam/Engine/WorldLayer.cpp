@@ -6,6 +6,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/DeepClone.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
@@ -106,6 +107,29 @@ void WorldLayer::destroy()
 
 void WorldLayer::transition(Layer* fromLayer)
 {
+	WorldLayer* fromWorldLayer = checked_type_cast< WorldLayer*, false >(fromLayer);
+
+	// Get post process quality from settings.
+	int32_t postProcessQuality = m_environment->getSettings()->getProperty< PropertyInteger >(L"World.PostProcessQuality", world::QuHigh);
+
+	if (
+		m_scene->getPostProcessSettings((world::Quality)postProcessQuality) == fromWorldLayer->m_scene->getPostProcessSettings((world::Quality)postProcessQuality) &&
+		DeepHash(m_scene->getWorldRenderSettings()) == DeepHash(fromWorldLayer->m_scene->getWorldRenderSettings())
+	)
+	{
+		m_worldRenderer = fromWorldLayer->m_worldRenderer;
+		m_worldRenderView = fromWorldLayer->m_worldRenderView;
+
+		fromWorldLayer->m_worldRenderer = 0;
+
+		// Create render entity group; contain scene root as well as dynamic entities.
+		m_renderGroup = new world::GroupEntity();
+		m_renderGroup->addEntity(m_scene->getRootEntity());
+		m_renderGroup->addEntity(m_dynamicEntities);
+
+		// Also need to ensure scene change doesn't reset world renderer.
+		m_scene.consume();
+	}
 }
 
 void WorldLayer::prepare()
