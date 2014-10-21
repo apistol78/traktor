@@ -203,18 +203,16 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 
 	ui::Rect controlRect = rect; controlRect.bottom = rect.top + 28;
 
-	canvas.setForeground(Color4ub(255, 255, 255));
-	canvas.setBackground(ui::getSystemColor(ui::ScButtonFace));
-	canvas.fillGradientRect(controlRect);
+	canvas.setBackground(Color4ub(255, 255, 255));
+	canvas.fillRect(controlRect);
 
 	ui::Rect performanceRect = rect;
 	performanceRect.top = rect.top + 28;
 	performanceRect.bottom = performanceRect.top + c_performanceHeight;
 	for (uint32_t i = 0; i < connections.size(); ++i)
 	{
-		canvas.setForeground(Color4ub(200, 200, 200));
 		canvas.setBackground(Color4ub(220, 220, 220));
-		canvas.fillGradientRect(performanceRect);
+		canvas.fillRect(performanceRect);
 		performanceRect = performanceRect.offset(0, performanceRect.getHeight());
 	}
 

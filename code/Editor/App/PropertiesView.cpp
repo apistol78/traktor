@@ -48,7 +48,7 @@ bool PropertiesView::create(ui::Widget* parent)
 	m_propertyList->addEventHandler< ui::SelectionChangeEvent >(this, &PropertiesView::eventPropertySelect);
 
 	m_staticHelp = new ui::custom::GradientStatic();
-	m_staticHelp->create(this, Color4ub(220, 220, 220), Color4ub(255, 255, 255), Color4ub(0, 0, 0), L"", ui::WsDoubleBuffer);
+	m_staticHelp->create(this, Color4ub(240, 240, 240), Color4ub(255, 255, 255), Color4ub(0, 0, 0), L"", ui::WsDoubleBuffer);
 
 	return true;
 }
