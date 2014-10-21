@@ -30,16 +30,16 @@ if [ $CONFIG == "both" ] || [ $CONFIG == "debug" ] ; then
 fi
 popd
 
-#pushd build/ios-x86_64
-#if [ $CONFIG == "both" ] || [ $CONFIG == "release" ] ; then
-	#echo "========== ReleaseStatic (x86_64) ==========" >>$BUILD_LOG_DIR/build-ios-stderr.log
-	#make ReleaseStatic 2>>$BUILD_LOG_DIR/build-ios-stderr.log
-#fi
-#if [ $CONFIG == "both" ] || [ $CONFIG == "debug" ] ; then
-	#echo "========== DebugStatic (x86_64) ==========" 2>>$BUILD_LOG_DIR/build-ios-stderr.log
-	#make DebugStatic 2>>$BUILD_LOG_DIR/build-ios-stderr.log
-#fi
-#popd
+pushd build/ios-x86_64
+if [ $CONFIG == "both" ] || [ $CONFIG == "release" ] ; then
+	echo "========== ReleaseStatic (x86_64) ==========" >>$BUILD_LOG_DIR/build-ios-stderr.log
+	make ReleaseStatic 2>>$BUILD_LOG_DIR/build-ios-stderr.log
+fi
+if [ $CONFIG == "both" ] || [ $CONFIG == "debug" ] ; then
+	echo "========== DebugStatic (x86_64) ==========" 2>>$BUILD_LOG_DIR/build-ios-stderr.log
+	make DebugStatic 2>>$BUILD_LOG_DIR/build-ios-stderr.log
+fi
+popd
 
 pushd build/ios-armv7
 if [ $CONFIG == "both" ] || [ $CONFIG == "release" ] ; then
@@ -63,16 +63,16 @@ if [ $CONFIG == "both" ] || [ $CONFIG == "debug" ] ; then
 fi
 popd
 
-#pushd build/ios-arm64
-#if [ $CONFIG == "both" ] || [ $CONFIG == "release" ] ; then
-	#echo "========== ReleaseStatic (ARM64) ==========" >>$BUILD_LOG_DIR/build-ios-stderr.log
-	#make ReleaseStatic 2>>$BUILD_LOG_DIR/build-ios-stderr.log
-#fi
-#if [ $CONFIG == "both" ] || [ $CONFIG == "debug" ] ; then
-	#echo "========== DebugStatic (ARM64) ==========" >>$BUILD_LOG_DIR/build-ios-stderr.log
-	#make DebugStatic 2>>$BUILD_LOG_DIR/build-ios-stderr.log
-#fi
-#popd
+pushd build/ios-arm64
+if [ $CONFIG == "both" ] || [ $CONFIG == "release" ] ; then
+	echo "========== ReleaseStatic (ARM64) ==========" >>$BUILD_LOG_DIR/build-ios-stderr.log
+	make ReleaseStatic 2>>$BUILD_LOG_DIR/build-ios-stderr.log
+fi
+if [ $CONFIG == "both" ] || [ $CONFIG == "debug" ] ; then
+	echo "========== DebugStatic (ARM64) ==========" >>$BUILD_LOG_DIR/build-ios-stderr.log
+	make DebugStatic 2>>$BUILD_LOG_DIR/build-ios-stderr.log
+fi
+popd
 
 popd
 
