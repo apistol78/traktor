@@ -23,8 +23,6 @@ namespace traktor
 		namespace
 		{
 
-render::handle_t s_handleWorld_DepthWrite;
-render::handle_t s_handleWorld_GBufferWrite;
 render::handle_t s_handleWorld_ShadowWrite;
 
 		}
@@ -55,8 +53,6 @@ AnimatedMeshEntity::AnimatedMeshEntity(
 ,	m_updateController(1)
 ,	m_updateTimeScale(1.0f)
 {
-	s_handleWorld_DepthWrite = render::getParameterHandle(L"World_DepthWrite");
-	s_handleWorld_GBufferWrite = render::getParameterHandle(L"World_GBufferWrite");
 	s_handleWorld_ShadowWrite = render::getParameterHandle(L"World_ShadowWrite");
 
 	if (m_skeleton)

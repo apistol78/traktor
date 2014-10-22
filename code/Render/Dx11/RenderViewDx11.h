@@ -108,8 +108,8 @@ private:
 	{
 		D3D11_VIEWPORT d3dViewport;
 		RenderTargetSetDx11* renderTargetSet;
-		RenderTargetDx11* renderTarget[2];
-		ID3D11RenderTargetView* d3dRenderView[2];
+		RenderTargetDx11* renderTarget[3];
+		ID3D11RenderTargetView* d3dRenderView[3];
 		ID3D11DepthStencilView* d3dDepthStencilView;
 		int32_t targetSize[2];
 	};
