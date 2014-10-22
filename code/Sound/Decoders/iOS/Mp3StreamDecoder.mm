@@ -79,15 +79,13 @@ public:
 		UInt32 bufferByteSize = outSoundBlock.samplesCount * sizeof(float);
 		UInt32 numFrames = outSoundBlock.samplesCount;
 
-		uint8_t dummy[sizeof(UInt32) + 1 * sizeof(AudioBuffer)];
-		AudioBufferList* fillBufList = (AudioBufferList*)dummy;
+		AudioBufferList fillBufList;
+		fillBufList.mNumberBuffers = 1;
+		fillBufList.mBuffers[0].mNumberChannels = 2;
+		fillBufList.mBuffers[0].mDataByteSize = 2 * bufferByteSize;
+		fillBufList.mBuffers[0].mData = (void*)m_buffer;
 
-		fillBufList->mNumberBuffers = 1;
-		fillBufList->mBuffers[0].mNumberChannels = 2;
-		fillBufList->mBuffers[0].mDataByteSize = 2 * bufferByteSize;
-		fillBufList->mBuffers[0].mData = (void*)m_buffer;
-
-		OSStatus result = ExtAudioFileRead(m_inputFileID, &numFrames, fillBufList);
+		OSStatus result = ExtAudioFileRead(m_inputFileID, &numFrames, &fillBufList);
 		if (result != noErr)
 			return false;
 
