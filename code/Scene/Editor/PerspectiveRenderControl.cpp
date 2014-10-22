@@ -41,6 +41,7 @@
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
 #include "World/WorldRenderView.h"
+#include "World/Deferred/WorldRendererDeferred.h"
 #include "World/Forward/WorldRendererForward.h"
 #include "World/PostProcess/PostProcess.h"
 #include "World/PreLit/WorldRendererPreLit.h"
@@ -214,7 +215,8 @@ void PerspectiveRenderControl::updateWorldRenderer()
 	//else if (m_worldRenderSettings.renderType == world::WorldRenderSettings::RtPreLit)
 	//	worldRenderer = new world::WorldRendererPreLit();
 
-	Ref< world::IWorldRenderer > worldRenderer = new world::WorldRendererPreLit();
+	//Ref< world::IWorldRenderer > worldRenderer = new world::WorldRendererPreLit();
+	Ref< world::IWorldRenderer > worldRenderer = new world::WorldRendererDeferred();
 	if (!worldRenderer)
 		return;
 

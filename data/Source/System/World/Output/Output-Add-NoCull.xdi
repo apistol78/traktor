@@ -12,13 +12,21 @@
 			<optional>false</optional>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.PixelOutput" version="4">
+		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
 			<position>
-				<first>703</first>
-				<second>665</second>
+				<first>698</first>
+				<second>667</second>
 			</position>
 			<technique>World_PreLitColor</technique>
+			<priority>
+				<setup>false</setup>
+				<opaque>false</opaque>
+				<postOpaque>false</postOpaque>
+				<alphaBlend>false</alphaBlend>
+				<postAlphaBlend>false</postAlphaBlend>
+				<overlay>false</overlay>
+			</priority>
 			<cullMode>CmNever</cullMode>
 			<blendEnable>true</blendEnable>
 			<blendOperation>BoAdd</blendOperation>
@@ -47,13 +55,21 @@
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
 		</item>
-		<item type="traktor.render.PixelOutput" version="4">
+		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
 			<position>
 				<first>698</first>
 				<second>528</second>
 			</position>
 			<technique>World_ForwardColor</technique>
+			<priority>
+				<setup>false</setup>
+				<opaque>false</opaque>
+				<postOpaque>false</postOpaque>
+				<alphaBlend>false</alphaBlend>
+				<postAlphaBlend>false</postAlphaBlend>
+				<overlay>false</overlay>
+			</priority>
 			<cullMode>CmNever</cullMode>
 			<blendEnable>true</blendEnable>
 			<blendOperation>BoAdd</blendOperation>
@@ -92,6 +108,49 @@
 			<connectable>true</connectable>
 			<optional>true</optional>
 			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.PixelOutput" version="5">
+			<comment/>
+			<position>
+				<first>698</first>
+				<second>806</second>
+			</position>
+			<technique>World_DeferredColor</technique>
+			<priority>
+				<setup>false</setup>
+				<opaque>false</opaque>
+				<postOpaque>false</postOpaque>
+				<alphaBlend>false</alphaBlend>
+				<postAlphaBlend>false</postAlphaBlend>
+				<overlay>false</overlay>
+			</priority>
+			<cullMode>CmNever</cullMode>
+			<blendEnable>true</blendEnable>
+			<blendOperation>BoAdd</blendOperation>
+			<blendSource>BfSourceAlpha</blendSource>
+			<blendDestination>BfOne</blendDestination>
+			<colorWriteMask>
+				<red>true</red>
+				<green>true</green>
+				<blue>true</blue>
+				<alpha>true</alpha>
+			</colorWriteMask>
+			<depthEnable>true</depthEnable>
+			<depthWriteEnable>false</depthWriteEnable>
+			<depthFunction>CfLessEqual</depthFunction>
+			<alphaTestEnable>false</alphaTestEnable>
+			<alphaTestFunction>CfLess</alphaTestFunction>
+			<alphaTestReference>128</alphaTestReference>
+			<alphaToCoverageEnable>false</alphaToCoverageEnable>
+			<wireframe>false</wireframe>
+			<stencilEnable>false</stencilEnable>
+			<stencilFail>SoKeep</stencilFail>
+			<stencilZFail>SoKeep</stencilZFail>
+			<stencilPass>SoKeep</stencilPass>
+			<stencilFunction>CfAlways</stencilFunction>
+			<stencilReference>0</stencilReference>
+			<stencilMask>2147483648</stencilMask>
+			<registerCount>0</registerCount>
 		</item>
 	</nodes>
 	<edges>
@@ -133,6 +192,26 @@
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<name>State</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>State</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>

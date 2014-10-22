@@ -343,6 +343,10 @@
 					<name>SpecularRoughness</name>
 					<optional>true</optional>
 				</item>
+				<item>
+					<name>SurfaceColor</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins/>
 			<values>
@@ -352,6 +356,10 @@
 				</item>
 				<item>
 					<first>SpecularRoughness</first>
+					<second>0</second>
+				</item>
+				<item>
+					<first>SurfaceColor</first>
 					<second>0</second>
 				</item>
 			</values>
@@ -658,6 +666,16 @@
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<name>Mask</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[12]"/>
+				<name>SurfaceColor</name>
 			</destination>
 		</item>
 	</edges>

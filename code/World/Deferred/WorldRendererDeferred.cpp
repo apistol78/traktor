@@ -16,12 +16,12 @@
 #include "World/WorldContext.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderView.h"
+#include "World/Deferred/LightRendererDeferred.h"
+#include "World/Deferred/WorldRendererDeferred.h"
+#include "World/Deferred/WorldRenderPassDeferred.h"
 #include "World/PostProcess/PostProcess.h"
 #include "World/PostProcess/PostProcessSettings.h"
 #include "World/PostProcess/PostProcessTargetPool.h"
-#include "World/PreLit/LightRenderer.h"
-#include "World/PreLit/WorldRendererPreLit.h"
-#include "World/PreLit/WorldRenderPassPreLit.h"
 #include "World/SMProj/BoxShadowProjection.h"
 #include "World/SMProj/LiSPShadowProjection.h"
 #include "World/SMProj/TrapezoidShadowProjection.h"
@@ -53,33 +53,33 @@ const static float c_screenPlaneDistance = 13.0f;
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRendererPreLit", 0, WorldRendererPreLit, IWorldRenderer)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRendererDeferred", 0, WorldRendererDeferred, IWorldRenderer)
 
-render::handle_t WorldRendererPreLit::ms_techniquePreLitColor = 0;
-render::handle_t WorldRendererPreLit::ms_techniqueGBuffer = 0;
-render::handle_t WorldRendererPreLit::ms_techniqueShadow = 0;
-render::handle_t WorldRendererPreLit::ms_handleTime = 0;
-render::handle_t WorldRendererPreLit::ms_handleView = 0;
-render::handle_t WorldRendererPreLit::ms_handleViewInverse = 0;
-render::handle_t WorldRendererPreLit::ms_handleProjection = 0;
-render::handle_t WorldRendererPreLit::ms_handleSquareProjection = 0;
-render::handle_t WorldRendererPreLit::ms_handleColorMap = 0;
-render::handle_t WorldRendererPreLit::ms_handleDepthMap = 0;
-render::handle_t WorldRendererPreLit::ms_handleLightMap = 0;
-render::handle_t WorldRendererPreLit::ms_handleNormalMap = 0;
-render::handle_t WorldRendererPreLit::ms_handleReflectionMap = 0;
-render::handle_t WorldRendererPreLit::ms_handleFogDistanceAndDensity = 0;
-render::handle_t WorldRendererPreLit::ms_handleFogColor = 0;
+render::handle_t WorldRendererDeferred::ms_techniqueDeferredColor = 0;
+render::handle_t WorldRendererDeferred::ms_techniqueDeferredGBufferWrite = 0;
+render::handle_t WorldRendererDeferred::ms_techniqueShadow = 0;
+render::handle_t WorldRendererDeferred::ms_handleTime = 0;
+render::handle_t WorldRendererDeferred::ms_handleView = 0;
+render::handle_t WorldRendererDeferred::ms_handleViewInverse = 0;
+render::handle_t WorldRendererDeferred::ms_handleProjection = 0;
+render::handle_t WorldRendererDeferred::ms_handleSquareProjection = 0;
+render::handle_t WorldRendererDeferred::ms_handleColorMap = 0;
+render::handle_t WorldRendererDeferred::ms_handleDepthMap = 0;
+render::handle_t WorldRendererDeferred::ms_handleLightMap = 0;
+render::handle_t WorldRendererDeferred::ms_handleNormalMap = 0;
+render::handle_t WorldRendererDeferred::ms_handleReflectionMap = 0;
+render::handle_t WorldRendererDeferred::ms_handleFogDistanceAndDensity = 0;
+render::handle_t WorldRendererDeferred::ms_handleFogColor = 0;
 
-WorldRendererPreLit::WorldRendererPreLit()
+WorldRendererDeferred::WorldRendererDeferred()
 :	m_shadowsQuality(QuDisabled)
 ,	m_ambientOcclusionQuality(QuDisabled)
 ,	m_antiAliasQuality(QuDisabled)
 ,	m_count(0)
 {
 	// Techniques
-	ms_techniquePreLitColor = render::getParameterHandle(L"World_PreLitColor");
-	ms_techniqueGBuffer = render::getParameterHandle(L"World_PreLitGBufferWrite");
+	ms_techniqueDeferredColor = render::getParameterHandle(L"World_DeferredColor");
+	ms_techniqueDeferredGBufferWrite = render::getParameterHandle(L"World_DeferredGBufferWrite");
 	ms_techniqueShadow = render::getParameterHandle(L"World_ShadowWrite");
 
 	// Global parameters.
@@ -97,7 +97,7 @@ WorldRendererPreLit::WorldRendererPreLit()
 	ms_handleFogColor = render::getParameterHandle(L"FogColor");
 }
 
-bool WorldRendererPreLit::create(
+bool WorldRendererDeferred::create(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
 	render::IRenderView* renderView,
@@ -125,12 +125,8 @@ bool WorldRendererPreLit::create(
 	m_settings.fogColor.getRGBA32F(fogColor);
 	m_fogColor = Vector4::loadUnaligned(fogColor);
 
-	// Calculate target render size.
-	int32_t superSample = int32_t(desc.superSample > 0 ? desc.superSample : 1);
-	int32_t frameWidth = renderView->getWidth();
-	int32_t frameHeight = renderView->getHeight();
-	int32_t width = frameWidth * superSample;
-	int32_t height = frameHeight * superSample;
+	int32_t width = renderView->getWidth();
+	int32_t height = renderView->getHeight();
 
 	// Create post process target pool to enable sharing of targets between multiple processes.
 	Ref< PostProcessTargetPool > postProcessTargetPool = new PostProcessTargetPool(renderSystem);
@@ -139,23 +135,16 @@ bool WorldRendererPreLit::create(
 	{
 		render::RenderTargetSetCreateDesc desc;
 
-		desc.count = 2;
+		desc.count = 3;
 		desc.width = width;
 		desc.height = height;
 		desc.multiSample = desc.multiSample;
 		desc.createDepthStencil = false;
 		desc.usingPrimaryDepthStencil = true;
 		desc.preferTiled = true;
-		desc.targets[0].format = render::TfR16F;		// Depth
-		desc.targets[1].format = render::TfR8G8B8A8;	// Normals
-
-		// Cannot use primary depth when supersampling.
-		if (superSample > 1)
-		{
-			desc.createDepthStencil = true;
-			desc.usingPrimaryDepthStencil = false;
-			desc.ignoreStencil = true;
-		}
+		desc.targets[0].format = render::TfR16F;		// Depth (R)
+		desc.targets[1].format = render::TfR8G8B8A8;	// Normals (RGB), Specular roughness (A)
+		desc.targets[2].format = render::TfR8G8B8A8;	// Surface color (RGB)
 
 		m_gbufferTargetSet = renderSystem->createRenderTargetSet(desc);
 
@@ -454,8 +443,8 @@ bool WorldRendererPreLit::create(
 				postProcessTargetPool,
 				resourceManager,
 				renderSystem,
-				frameWidth,
-				frameHeight
+				width,
+				height
 			))
 			{
 				log::warning << L"Unable to create antialias process; AA disabled" << Endl;
@@ -527,46 +516,12 @@ bool WorldRendererPreLit::create(
 		desc.preferTiled = true;
 		desc.targets[0].format = render::TfR11G11B10F;
 
-		// Cannot use primary depth when supersampling.
-		if (superSample > 1)
-		{
-			desc.createDepthStencil = true;
-			desc.usingPrimaryDepthStencil = false;
-			desc.ignoreStencil = true;
-		}
-
 		m_visualTargetSet = renderSystem->createRenderTargetSet(desc);
 		if (!m_visualTargetSet)
 			return false;
 
 		m_intermediateTargetSet = renderSystem->createRenderTargetSet(desc);
 		if (!m_intermediateTargetSet)
-			return false;
-	}
-
-	// Create light map target.
-	{
-		render::RenderTargetSetCreateDesc desc;
-
-		desc.count = 1;
-		desc.width = width;
-		desc.height = height;
-		desc.multiSample = desc.multiSample;
-		desc.createDepthStencil = false;
-		desc.usingPrimaryDepthStencil = true;
-		desc.preferTiled = true;
-		desc.targets[0].format = render::TfR16G16B16A16F;
-
-		// Cannot use primary depth when supersampling.
-		if (superSample > 1)
-		{
-			desc.createDepthStencil = true;
-			desc.usingPrimaryDepthStencil = false;
-			desc.ignoreStencil = true;
-		}
-
-		m_lightMapTargetSet = renderSystem->createRenderTargetSet(desc);
-		if (!m_lightMapTargetSet)
 			return false;
 	}
 
@@ -605,7 +560,7 @@ bool WorldRendererPreLit::create(
 	m_globalContext = new render::RenderContext(4096);
 
 	// Create light primitive renderer.
-	m_lightRenderer = new LightRenderer();
+	m_lightRenderer = new LightRendererDeferred();
 	if (!m_lightRenderer->create(resourceManager, renderSystem))
 	{
 		log::error << L"Unable to create light primitive renderer" << Endl;
@@ -625,7 +580,7 @@ bool WorldRendererPreLit::create(
 	return true;
 }
 
-void WorldRendererPreLit::destroy()
+void WorldRendererDeferred::destroy()
 {
 	m_frames.clear();
 	m_buildEntities.clear();
@@ -642,9 +597,7 @@ void WorldRendererPreLit::destroy()
 	m_reflectionMap.clear();
 	m_globalContext = 0;
 
-	safeDestroy(m_lightMapTargetSet);
 	safeDestroy(m_shadowMaskFilterTargetSet);
-
 	safeDestroy(m_shadowMaskProjectTargetSet);
 	safeDestroy(m_shadowTargetSet);
 	safeDestroy(m_colorTargetSet);
@@ -657,7 +610,7 @@ void WorldRendererPreLit::destroy()
 	m_renderView = 0;
 }
 
-void WorldRendererPreLit::createRenderView(const WorldViewPerspective& worldView, WorldRenderView& outRenderView) const
+void WorldRendererDeferred::createRenderView(const WorldViewPerspective& worldView, WorldRenderView& outRenderView) const
 {
 	float viewNearZ = m_settings.viewNearZ;
 	float viewFarZ = m_settings.viewFarZ;
@@ -671,7 +624,7 @@ void WorldRendererPreLit::createRenderView(const WorldViewPerspective& worldView
 	outRenderView.setProjection(perspectiveLh(worldView.fov, worldView.aspect, viewNearZ, viewFarZ));
 }
 
-void WorldRendererPreLit::createRenderView(const WorldViewOrtho& worldView, WorldRenderView& outRenderView) const
+void WorldRendererDeferred::createRenderView(const WorldViewOrtho& worldView, WorldRenderView& outRenderView) const
 {
 	float viewFarZ = m_settings.viewFarZ;
 
@@ -684,17 +637,17 @@ void WorldRendererPreLit::createRenderView(const WorldViewOrtho& worldView, Worl
 	outRenderView.setProjection(orthoLh(worldView.width, worldView.height, -viewFarZ, viewFarZ));
 }
 
-bool WorldRendererPreLit::beginBuild()
+bool WorldRendererDeferred::beginBuild()
 {
 	return true;
 }
 
-void WorldRendererPreLit::build(Entity* entity)
+void WorldRendererDeferred::build(Entity* entity)
 {
 	m_buildEntities.push_back(entity);
 }
 
-void WorldRendererPreLit::endBuild(WorldRenderView& worldRenderView, int frame)
+void WorldRendererDeferred::endBuild(WorldRenderView& worldRenderView, int frame)
 {
 	Frame& f = m_frames[frame];
 
@@ -734,8 +687,8 @@ void WorldRendererPreLit::endBuild(WorldRenderView& worldRenderView, int frame)
 		WorldRenderView gbufferRenderView = worldRenderView;
 		gbufferRenderView.resetLights();
 
-		WorldRenderPassPreLit gbufferPass(
-			ms_techniqueGBuffer,
+		WorldRenderPassDeferred gbufferPass(
+			ms_techniqueDeferredGBufferWrite,
 			gbufferRenderView
 		);
 		for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
@@ -759,7 +712,7 @@ void WorldRendererPreLit::endBuild(WorldRenderView& worldRenderView, int frame)
 	m_count++;
 }
 
-bool WorldRendererPreLit::beginRender(int frame, render::EyeType eye, const Color4f& clearColor)
+bool WorldRendererDeferred::beginRender(int frame, render::EyeType eye, const Color4f& clearColor)
 {
 	if (!m_renderView->begin(m_visualTargetSet, 0))
 		return false;
@@ -768,55 +721,36 @@ bool WorldRendererPreLit::beginRender(int frame, render::EyeType eye, const Colo
 	return true;
 }
 
-void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
+void WorldRendererDeferred::render(uint32_t flags, int frame, render::EyeType eye)
 {
 	Frame& f = m_frames[frame];
-	Matrix44 projection;
+	Matrix44 projection = f.projection;
 
-	// Prepare stereoscopic projection.
-	if (eye != render::EtCyclop)
+	// Render gbuffer.
+	if ((flags & (WrfDepthMap | WrfNormalMap | WrfVisualOpaque)) != 0)
 	{
-		float screenWidth = float(m_renderView->getWidth());
-		
-		float A = std::abs((c_distortionValue * c_interocularDistance) / screenWidth);
-		float B = std::abs(A * c_screenPlaneDistance * (1.0f / f.projection(1, 1)));
+		render::ProgramParameters gbufferProgramParams;
+		gbufferProgramParams.beginParameters(m_globalContext);
+		gbufferProgramParams.setFloatParameter(ms_handleTime, f.time);
+		gbufferProgramParams.setMatrixParameter(ms_handleView, f.view);
+		gbufferProgramParams.setMatrixParameter(ms_handleViewInverse, f.view.inverse());
+		gbufferProgramParams.setMatrixParameter(ms_handleProjection, projection);
+		gbufferProgramParams.endParameters(m_globalContext);
 
-		if (eye == render::EtLeft)
-			A = -A;
-		else
-			B = -B;
-
-		projection = translate(A, 0.0f, 0.0f) * f.projection * translate(B, 0.0f, 0.0f);
-	}
-	else
-	{
-		projection = f.projection;
-	}
-
-	// Render depth map; use as z-prepass if able to share depth buffer with primary.
-	if ((flags & (WrfDepthMap | WrfNormalMap)) != 0)
-	{
-		render::ProgramParameters depthProgramParams;
-		depthProgramParams.beginParameters(m_globalContext);
-		depthProgramParams.setFloatParameter(ms_handleTime, f.time);
-		depthProgramParams.setMatrixParameter(ms_handleView, f.view);
-		depthProgramParams.setMatrixParameter(ms_handleViewInverse, f.view.inverse());
-		depthProgramParams.setMatrixParameter(ms_handleProjection, projection);
-		depthProgramParams.endParameters(m_globalContext);
-
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Depth and normals");
+		T_RENDER_PUSH_MARKER(m_renderView, "World: GBuffer");
 		if (m_renderView->begin(m_gbufferTargetSet))
 		{
 			const float clearZ = std::numeric_limits< float >::max();
 
 			const Color4f depthColor(clearZ, clearZ, clearZ, clearZ);
 			const Color4f normalColor(0.5f, 0.5f, 0.0f, 0.5f);
-			const Color4f clearColors[] = { depthColor, normalColor };
+			const Color4f surfaceColor(0.0f, 0.0f, 0.0f, 0.0f);
+			const Color4f clearColors[] = { depthColor, normalColor, surfaceColor };
 
 			m_renderView->clear(render::CfColor | render::CfDepth, clearColors, 1.0f, 0);
 
 			if (f.haveGBuffer)
-				f.gbuffer->getRenderContext()->render(m_renderView, render::RpOpaque, &depthProgramParams);
+				f.gbuffer->getRenderContext()->render(m_renderView, render::RpOpaque, &gbufferProgramParams);
 
 			m_renderView->end();
 		}
@@ -924,7 +858,7 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 				if ((flags & WrfLightMap) != 0)
 				{
 					T_RENDER_PUSH_MARKER(m_renderView, "World: Light primitive (shadow)");
-					if (m_renderView->begin(m_lightMapTargetSet, 0))
+					if (m_renderView->begin(m_visualTargetSet, 0))
 					{
 						if (firstLight)
 						{
@@ -933,13 +867,14 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 							firstLight = false;
 						}
 
-						m_lightRenderer->render(
+						m_lightRenderer->renderLight(
 							m_renderView,
 							projection,
 							f.view,
 							f.lights[i],
 							m_gbufferTargetSet->getColorTexture(0),
 							m_gbufferTargetSet->getColorTexture(1),
+							m_gbufferTargetSet->getColorTexture(2),
 							m_shadowMaskFilterTargetSet->getWidth(),
 							m_shadowMaskFilterTargetSet->getColorTexture(0)
 						);
@@ -953,7 +888,7 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 		// Then render all non-shadowing lights; no need to rebind render target for each light.
 		if ((flags & WrfLightMap) != 0)
 		{
-			if (m_renderView->begin(m_lightMapTargetSet, 0))
+			if (m_renderView->begin(m_visualTargetSet, 0))
 			{
 				if (firstLight)
 				{
@@ -968,18 +903,29 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 						continue;
 
 					T_RENDER_PUSH_MARKER(m_renderView, "World: Light primitive (no shadow)");
-					m_lightRenderer->render(
+					m_lightRenderer->renderLight(
 						m_renderView,
 						projection,
 						f.view,
 						f.lights[i],
 						m_gbufferTargetSet->getColorTexture(0),
 						m_gbufferTargetSet->getColorTexture(1),
+						m_gbufferTargetSet->getColorTexture(2),
 						0,
 						0
 					);
 					T_RENDER_POP_MARKER(m_renderView);
 				}
+
+				m_lightRenderer->renderFinal(
+					m_renderView,
+					projection,
+					m_fogDistanceAndDensity,
+					m_fogColor,
+					m_gbufferTargetSet->getColorTexture(0),
+					m_gbufferTargetSet->getColorTexture(1),
+					m_gbufferTargetSet->getColorTexture(2)
+				);
 
 				m_renderView->end();
 			}
@@ -991,7 +937,7 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 		if ((flags & WrfLightMap) != 0)
 		{
 			T_RENDER_PUSH_MARKER(m_renderView, "World: Light map");
-			if (m_renderView->begin(m_lightMapTargetSet, 0))
+			if (m_renderView->begin(m_visualTargetSet, 0))
 			{
 				const Color4f lightClear(0.0f, 0.0f, 0.0f, 0.0f);
 				m_renderView->clear(render::CfColor, &lightClear, 0.0f, 0);
@@ -1015,7 +961,6 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 		visualProgramParams.setTextureParameter(ms_handleColorMap, m_colorTargetSet->getColorTexture(0));
 		visualProgramParams.setTextureParameter(ms_handleDepthMap, m_gbufferTargetSet->getColorTexture(0));
 		visualProgramParams.setTextureParameter(ms_handleNormalMap, m_gbufferTargetSet->getColorTexture(1));
-		visualProgramParams.setTextureParameter(ms_handleLightMap, m_lightMapTargetSet->getColorTexture(0));
 		visualProgramParams.setTextureParameter(ms_handleReflectionMap, m_reflectionMap);
 		visualProgramParams.endParameters(m_globalContext);
 
@@ -1047,10 +992,6 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 			m_renderView->begin(m_visualTargetSet, 0);
 			T_RENDER_POP_MARKER(m_renderView);
 		}
-
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual post opaque");
-		f.visual->getRenderContext()->render(m_renderView, render::RpPostOpaque, &visualProgramParams);
-		T_RENDER_POP_MARKER(m_renderView);
 
 		if (m_ambientOcclusion)
 		{
@@ -1087,7 +1028,6 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 		visualProgramParams.setTextureParameter(ms_handleColorMap, m_colorTargetSet->getColorTexture(0));
 		visualProgramParams.setTextureParameter(ms_handleDepthMap, m_gbufferTargetSet->getColorTexture(0));
 		visualProgramParams.setTextureParameter(ms_handleNormalMap, m_gbufferTargetSet->getColorTexture(1));
-		visualProgramParams.setTextureParameter(ms_handleLightMap, m_lightMapTargetSet->getColorTexture(0));
 		visualProgramParams.setTextureParameter(ms_handleReflectionMap, m_reflectionMap);
 		visualProgramParams.endParameters(m_globalContext);
 
@@ -1128,7 +1068,7 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 	m_globalContext->flush();
 }
 
-void WorldRendererPreLit::endRender(int frame, render::EyeType eye, float deltaTime)
+void WorldRendererDeferred::endRender(int frame, render::EyeType eye, float deltaTime)
 {
 	Frame& f = m_frames[frame];
 
@@ -1213,36 +1153,36 @@ void WorldRendererPreLit::endRender(int frame, render::EyeType eye, float deltaT
 	}
 }
 
-PostProcess* WorldRendererPreLit::getVisualPostProcess()
+PostProcess* WorldRendererDeferred::getVisualPostProcess()
 {
 	return m_visualPostProcess;
 }
 
-render::RenderTargetSet* WorldRendererPreLit::getVisualTargetSet()
+render::RenderTargetSet* WorldRendererDeferred::getVisualTargetSet()
 {
 	return m_visualTargetSet;
 }
 
-render::RenderTargetSet* WorldRendererPreLit::getDepthTargetSet()
+render::RenderTargetSet* WorldRendererDeferred::getDepthTargetSet()
 {
 	return m_gbufferTargetSet;
 }
 
-render::RenderTargetSet* WorldRendererPreLit::getShadowMaskTargetSet()
+render::RenderTargetSet* WorldRendererDeferred::getShadowMaskTargetSet()
 {
 	return m_shadowMaskFilterTargetSet;
 }
 
-void WorldRendererPreLit::getTargets(RefArray< render::ITexture >& outTargets) const
+void WorldRendererDeferred::getTargets(RefArray< render::ITexture >& outTargets) const
 {
-	outTargets.resize(4);
+	outTargets.resize(5);
 	outTargets[0] = m_gbufferTargetSet ? m_gbufferTargetSet->getColorTexture(0) : 0;
 	outTargets[1] = m_gbufferTargetSet ? m_gbufferTargetSet->getColorTexture(1) : 0;
-	outTargets[2] = m_lightMapTargetSet ? m_lightMapTargetSet->getColorTexture(0) : 0;
-	outTargets[3] = m_shadowMaskFilterTargetSet ? m_shadowMaskFilterTargetSet->getColorTexture(0) : 0;
+	outTargets[2] = m_gbufferTargetSet ? m_gbufferTargetSet->getColorTexture(2) : 0;
+	outTargets[4] = m_shadowMaskFilterTargetSet ? m_shadowMaskFilterTargetSet->getColorTexture(0) : 0;
 }
 
-void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView, int frame)
+void WorldRendererDeferred::buildLightWithShadows(WorldRenderView& worldRenderView, int frame)
 {
 	Frame& f = m_frames[frame];
 
@@ -1308,7 +1248,7 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 					worldRenderView.getInterval()
 				);
 
-				WorldRenderPassPreLit shadowPass(
+				WorldRenderPassDeferred shadowPass(
 					ms_techniqueShadow,
 					shadowRenderView
 				);
@@ -1329,7 +1269,7 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 	}
 }
 
-void WorldRendererPreLit::buildLightWithNoShadows(WorldRenderView& worldRenderView, int frame)
+void WorldRendererDeferred::buildLightWithNoShadows(WorldRenderView& worldRenderView, int frame)
 {
 	Frame& f = m_frames[frame];
 	f.lightCount = worldRenderView.getLightCount();
@@ -1340,15 +1280,15 @@ void WorldRendererPreLit::buildLightWithNoShadows(WorldRenderView& worldRenderVi
 	}
 }
 
-void WorldRendererPreLit::buildVisual(WorldRenderView& worldRenderView, int frame)
+void WorldRendererDeferred::buildVisual(WorldRenderView& worldRenderView, int frame)
 {
 	Frame& f = m_frames[frame];
 
 	Frustum viewFrustum = worldRenderView.getViewFrustum();
 	Aabb3 shadowBox = worldRenderView.getShadowBox();
 
-	WorldRenderPassPreLit defaultPreLitPass(
-		ms_techniquePreLitColor,
+	WorldRenderPassDeferred defaultPreLitPass(
+		ms_techniqueDeferredColor,
 		worldRenderView,
 		m_settings.fogEnabled,
 		m_gbufferTargetSet->getColorTexture(0) != 0

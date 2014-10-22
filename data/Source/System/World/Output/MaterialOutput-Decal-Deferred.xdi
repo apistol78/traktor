@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph">
+	<nodes>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>-113</first>
+				<second>601</second>
+			</position>
+			<name>ViewPosition</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>-110</first>
+				<second>461</second>
+			</position>
+			<name>DiffuseTerm</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>1</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>-113</first>
+				<second>426</second>
+			</position>
+			<name>SurfaceColor</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>-118</first>
+				<second>496</second>
+			</position>
+			<name>SpecularTerm</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>1</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>-98</first>
+				<second>636</second>
+			</position>
+			<name>Reflection</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>-94</first>
+				<second>706</second>
+			</position>
+			<name>RimColor</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>-111</first>
+				<second>671</second>
+			</position>
+			<name>RimIntensity</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>-90</first>
+				<second>566</second>
+			</position>
+			<name>Emissive</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>-98</first>
+				<second>811</second>
+			</position>
+			<name>Refractive</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>-110</first>
+				<second>741</second>
+			</position>
+			<name>ViewNormal</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>-149</first>
+				<second>531</second>
+			</position>
+			<name>SpecularRoughness</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>0.8</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>-73</first>
+				<second>776</second>
+			</position>
+			<name>Mask</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>1</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>-140</first>
+				<second>916</second>
+			</position>
+			<name>RefractiveAmount</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>-146</first>
+				<second>846</second>
+			</position>
+			<name>RefractiveTintColor</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>1</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>-154</first>
+				<second>881</second>
+			</position>
+			<name>RefractiveCoefficient</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>0.025</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>-72</first>
+				<second>951</second>
+			</position>
+			<name>State</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+	</nodes>
+	<edges/>
+</object>
