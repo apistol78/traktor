@@ -2,8 +2,8 @@
 <object type="SolutionBuilderMsvcSettings">
   <slnVersion>12.00</slnVersion>
   <vsVersion>11</vsVersion>
-  <project type="SolutionBuilderMsvcVCXProj" version="3">
-    <platform>Android</platform>
+  <project type="SolutionBuilderMsvcVCXProj" version="4">
+    <platform>Tegra-Android</platform>
     <keyword>Win32Proj</keyword>
     <toolset/>
     <targetPrefixes>
@@ -18,6 +18,17 @@
     	<item/>
     	<item/>
     </targetExts>
+    <propertyGroups>
+      <item type="SolutionBuilderMsvcVCXPropertyGroup">
+        <label>NsightTegraProject</label>
+        <values>
+          <item>
+            <first>NsightTegraProjectRevisionNumber</first>
+            <second>7</second>
+          </item>
+        </values>
+      </item>
+    </propertyGroups>
     <configurationDefinitionsDebug>
       <staticLibrary>
         <item>
