@@ -150,6 +150,14 @@
 					<optional>false</optional>
 				</item>
 				<item>
+					<name>DiffuseTerm</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<name>Emissive</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<name>Mask</name>
 					<optional>true</optional>
 				</item>
@@ -164,6 +172,14 @@
 			</inputPins>
 			<outputPins/>
 			<values>
+				<item>
+					<first>DiffuseTerm</first>
+					<second>1</second>
+				</item>
+				<item>
+					<first>Emissive</first>
+					<second>0</second>
+				</item>
 				<item>
 					<first>Mask</first>
 					<second>1</second>
@@ -421,6 +437,26 @@
 			<destination>
 				<node ref="/object/nodes/item[18]"/>
 				<name>Output</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[12]"/>
+				<name>Emissive</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[12]"/>
+				<name>DiffuseTerm</name>
 			</destination>
 		</item>
 	</edges>

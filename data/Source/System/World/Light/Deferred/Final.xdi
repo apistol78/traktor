@@ -196,6 +196,14 @@
 			</outputPins>
 			<values/>
 		</item>
+		<item type="traktor.render.Swizzle">
+			<comment/>
+			<position>
+				<first>1608</first>
+				<second>112</second>
+			</position>
+			<swizzle>xyz0</swizzle>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -216,16 +224,6 @@
 			<destination>
 				<node ref="/object/nodes/item[2]"/>
 				<name>Texture</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Color</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -346,6 +344,26 @@
 			<destination>
 				<node ref="/object/nodes/item[8]"/>
 				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[13]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[13]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Color</name>
 			</destination>
 		</item>
 	</edges>
