@@ -10,10 +10,6 @@
 #include <Core/Misc/String.h>
 #include <Core/Misc/MD5.h>
 #include <Core/Log/Log.h>
-#include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcVCXProj.h"
-#include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcVCXDefinition.h"
-#include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcVCXBuildTool.h"
-#include "SolutionBuilderLIB/Msvc/GeneratorContext.h"
 #include "SolutionBuilderLIB/Solution.h"
 #include "SolutionBuilderLIB/Project.h"
 #include "SolutionBuilderLIB/ProjectDependency.h"
@@ -21,6 +17,11 @@
 #include "SolutionBuilderLIB/Configuration.h"
 #include "SolutionBuilderLIB/Filter.h"
 #include "SolutionBuilderLIB/File.h"
+#include "SolutionBuilderLIB/Msvc/GeneratorContext.h"
+#include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcVCXDefinition.h"
+#include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcVCXBuildTool.h"
+#include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcVCXProj.h"
+#include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcVCXPropertyGroup.h"
 
 using namespace traktor;
 
@@ -34,7 +35,7 @@ namespace
 
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXProj", 3, SolutionBuilderMsvcVCXProj, SolutionBuilderMsvcProject)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXProj", 4, SolutionBuilderMsvcVCXProj, SolutionBuilderMsvcProject)
 
 SolutionBuilderMsvcVCXProj::SolutionBuilderMsvcVCXProj()
 {
@@ -98,6 +99,9 @@ void SolutionBuilderMsvcVCXProj::serialize(traktor::ISerializer& s)
 		s >> MemberStaticArray< std::wstring, sizeof_array(m_targetPrefixes) >(L"targetPrefixes", m_targetPrefixes);
 		s >> MemberStaticArray< std::wstring, sizeof_array(m_targetExts) >(L"targetExts", m_targetExts);
 	}
+
+	if (s.getVersion() >= 4)
+		s >> MemberRefArray< SolutionBuilderMsvcVCXPropertyGroup >(L"propertyGroups", m_propertyGroups);
 
 	if (s.getVersion() >= 3)
 	{
@@ -195,6 +199,15 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 
 	os << L"<Project DefaultTargets=\"Build\" ToolsVersion=\"4.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">" << Endl;
 	os << IncreaseIndent;
+
+	// Custom property groups.
+	for (RefArray< SolutionBuilderMsvcVCXPropertyGroup >::const_iterator i = m_propertyGroups.begin(); i != m_propertyGroups.end(); ++i)
+		(*i)->generate(
+			context,
+			solution,
+			project,
+			os
+		);
 
 	// Configurations
 	os << L"<ItemGroup Label=\"ProjectConfigurations\">" << Endl;
