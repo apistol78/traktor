@@ -144,7 +144,7 @@ bool WorldRendererDeferred::create(
 		desc.preferTiled = true;
 		desc.targets[0].format = render::TfR16F;		// Depth (R)
 		desc.targets[1].format = render::TfR8G8B8A8;	// Normals (RGB), Specular roughness (A)
-		desc.targets[2].format = render::TfR8G8B8A8;	// Surface color (RGB)
+		desc.targets[2].format = render::TfR11G11B10F;	// Surface color (RGB)
 
 		m_gbufferTargetSet = renderSystem->createRenderTargetSet(desc);
 
@@ -992,6 +992,10 @@ void WorldRendererDeferred::render(uint32_t flags, int frame, render::EyeType ey
 			m_renderView->begin(m_visualTargetSet, 0);
 			T_RENDER_POP_MARKER(m_renderView);
 		}
+
+		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual post opaque");
+		f.visual->getRenderContext()->render(m_renderView, render::RpPostOpaque, &visualProgramParams);
+		T_RENDER_POP_MARKER(m_renderView);
 
 		if (m_ambientOcclusion)
 		{

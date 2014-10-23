@@ -162,7 +162,7 @@
 			<item>
 				<first>World.Type</first>
 				<second type="traktor.PropertyString">
-					<value>traktor.world.WorldRendererPreLit</value>
+					<value>traktor.world.WorldRendererDeferred</value>
 				</second>
 			</item>
 		</value>
