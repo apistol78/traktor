@@ -329,6 +329,7 @@ Ref< script::IScriptManager > createScriptManager()
 	// StreamOutput
 	Ref< script::AutoScriptClass< StreamOutput > > classStreamOutput = new script::AutoScriptClass< StreamOutput >();
 	classStreamOutput->addConstructor< traktor::IStream*, IEncoding* >();
+	classStreamOutput->addConstructor< traktor::IStream*, IEncoding*, const std::wstring& >();
 	scriptManager->registerClass(classStreamOutput);
 
 	// IInput
@@ -1017,7 +1018,7 @@ int main(int argc, const char** argv)
 
 	if (cmdLine.getCount() < 1)
 	{
-		log::info << L"Run 1.3.2" << Endl;
+		log::info << L"Run 1.3.3" << Endl;
 		log::info << Endl;
 		log::info << L"Usage: Run (option(s)) [<file>.run|<file>.template] (args ...)" << Endl;
 		log::info << Endl;

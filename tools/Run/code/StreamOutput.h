@@ -11,6 +11,8 @@ class StreamOutput : public IOutput
 public:
 	StreamOutput(traktor::IStream* stream, traktor::IEncoding* encoding);
 
+	StreamOutput(traktor::IStream* stream, traktor::IEncoding* encoding, std::wstring& lineEnding);
+
 	virtual void print(const std::wstring& s);
 
 	virtual void printLn(const std::wstring& s);

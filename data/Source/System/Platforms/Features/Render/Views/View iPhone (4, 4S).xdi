@@ -53,6 +53,11 @@
 			<executableFile/>
 			<deployFiles/>
 		</item>
+		<item>
+			<platform>{CAE489CE-1592-234F-ADB9-A7D75646B53D}</platform>
+			<executableFile/>
+			<deployFiles/>
+		</item>
 	</platforms>
 	<pipelineProperties/>
 	<migrateProperties/>

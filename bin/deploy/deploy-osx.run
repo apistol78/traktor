@@ -48,7 +48,7 @@ function deploy(args)
 
 	-- Create launcher script.
 	local f = fileSystem:open(Path("launch.sh"), 2)
-	local s = StreamOutput(f, Utf8Encoding())
+	local s = StreamOutput(f, Utf8Encoding(), "unix")
 	s:printLn("chmod u+x " .. bundle .. "/Contents/MacOS/*")
 	s:printLn(bundle .. "/Contents/MacOS/" .. executable .. " -s")
 	f:close()
