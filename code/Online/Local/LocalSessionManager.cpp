@@ -115,8 +115,6 @@ bool LocalSessionManager::create(const IGameConfiguration* configuration)
 		}
 	}
 
-	m_db->executeUpdate(L"begin transaction");
-
 	m_achievements = new LocalAchievements(m_db);
 	m_leaderboards = new LocalLeaderboards(m_db);
 	m_matchMaking = new LocalMatchMaking();
@@ -138,7 +136,6 @@ void LocalSessionManager::destroy()
 
 	if (m_db)
 	{
-		m_db->executeUpdate(L"commit transaction");
 		m_db->disconnect();
 		m_db = 0;
 	}
