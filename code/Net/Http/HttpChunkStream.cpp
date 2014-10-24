@@ -97,7 +97,11 @@ int HttpChunkStream::read(void* block, int nbytes)
 
 	int32_t nread = m_stream->read(block, std::min< int32_t >(nbytes, m_available));
 	if (nread > 0)
+	{
 		m_available -= nread;
+		if (m_available <= 0)
+			m_available = -1;
+	}
 
 	return nread;
 }

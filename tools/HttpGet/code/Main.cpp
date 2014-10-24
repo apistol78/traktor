@@ -16,7 +16,8 @@ int main(int argc, const char** argv)
 
 	if (cmdLine.getCount() < 1)
 	{
-		log::info << L"Usage: HttpGet [url] (file)" << Endl;
+		log::info << L"Usage: HttpGet (option(s)) [url] (file)" << Endl;
+		log::info << L"   -v, -verbose   Verbose log" << Endl;
 		return 0;
 	}
 
@@ -28,6 +29,9 @@ int main(int argc, const char** argv)
 		log::error << L"Invalid URL" << Endl;
 		return 1;
 	}
+
+	if (cmdLine.hasOption(L'v', L"verbose"))
+		log::info << L"Connecting to " << url.getString() << L"..." << Endl;
 
 	Ref< net::UrlConnection > connection = net::UrlConnection::open(url);
 	if (!connection)
@@ -44,6 +48,9 @@ int main(int argc, const char** argv)
 	Ref< traktor::IStream > stream = connection->getStream();
 	T_ASSERT (stream);
 
+	if (cmdLine.hasOption(L'v', L"verbose"))
+		log::info << L"Creating target file " << fileName << L"..." << Endl;
+
 	Ref< traktor::IStream > file = FileSystem::getInstance().open(fileName, File::FmWrite);
 	if (!file)
 	{
@@ -51,25 +58,23 @@ int main(int argc, const char** argv)
 		return 3;
 	}
 
+	if (cmdLine.hasOption(L'v', L"verbose"))
+		log::info << L"Downloading..." << Endl;
+
 	uint32_t total = 0;
 	uint8_t buf[4096];
 
 	for (;;)
 	{
-		int avail = stream->available();
-		if (avail <= 0)
-			break;
-
-		int read = std::min< int >(avail, sizeof(buf));
-
-		int nread = stream->read(buf, read);
+		int nread = stream->read(buf, sizeof(buf));
 		if (nread <= 0)
 			break;
 
 		total += file->write(buf, nread);
 	}
 
-	log::info << L"Recieved " << total << L" byte(s)" << Endl;
+	if (cmdLine.hasOption(L'v', L"verbose"))
+		log::info << L"Received " << total << L" byte(s)" << Endl;
 
 	file->close();
 	stream->close();
