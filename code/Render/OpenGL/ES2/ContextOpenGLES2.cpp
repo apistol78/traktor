@@ -56,7 +56,7 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createResourceContext(void* nativeHand
 		{
 			EGLint error = eglGetError();
 			log::error << L"Create OpenGL ES2.0 failed; unable to get EGL display (" << getEGLErrorString(error) << L")" << Endl;
-			return false;
+			return 0;
 		}
 	}
 
@@ -64,7 +64,7 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createResourceContext(void* nativeHand
 	{
 		EGLint error = eglGetError();
 		log::error << L"Create OpenGL ES2.0 failed; unable to initialize EGL (" << getEGLErrorString(error) << L")" << Endl;
-		return false;
+		return 0;
 	}
 
 	const EGLint configAttribs[] =
@@ -92,14 +92,14 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createResourceContext(void* nativeHand
 	{
 		EGLint error = eglGetError();
 		log::error << L"Create OpenGL ES2.0 failed; unable to create choose EGL config (" << getEGLErrorString(error) << L")" << Endl;
-		return false;
+		return 0;
 	}
 
 	if (numMatchingConfigs == 0)
 	{
 		EGLint error = eglGetError();
 		log::error << L"Create OpenGL ES2.0 failed; no matching configurations" << Endl;
-		return false;
+		return 0;
 	}
 
 	context->m_config = matchingConfigs[0];
@@ -171,14 +171,14 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(ContextOpenGLES2* resour
 
 #if defined(T_OPENGL_ES2_HAVE_EGL)
 
-#	if !defined(__ANDROID__)
+#	if !defined(__ANDROID__) && !defined(__EMSCRIPTEN__)
 	context->m_window = resourceContext->m_window;
 #	endif
 	context->m_display = resourceContext->m_display;
 	context->m_config = resourceContext->m_config;
 	context->m_surface = resourceContext->m_surface;
 
-#	if !defined(__ANDROID__)
+#	if !defined(__ANDROID__) && !defined(__EMSCRIPTEN__)
 	context->m_window->setTitle(desc.title.c_str());
 	context->m_window->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
 #	endif
