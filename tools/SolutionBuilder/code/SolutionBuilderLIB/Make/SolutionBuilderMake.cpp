@@ -517,38 +517,46 @@ void SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 			}
 
 			// Write link rule.
+			std::wstring linkProfile = L"$(LINK_FLAGS";
+			if (configuration->getTargetProfile() == Configuration::TpDebug)
+				linkProfile += L"_DEBUG";
+			else if (configuration->getTargetProfile() == Configuration::TpRelease)
+				linkProfile += L"_RELEASE";
+			linkProfile += L"_STATIC";
+			linkProfile += L")";
+
 			if (m_platform == MpWin32)
 			{
 				if (configuration->getTargetFormat() == Configuration::TfSharedLibrary)
-					s << L"\t$(LINK) $(" << configuration->getName() << L"_OBJECTS) " << libs << L" /DLL /MACHINE:X86 /SUBSYSTEM:WINDOWS $(ADDITIONAL_LIBRARY_PATHS) /OUT:" << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << L".dll" << Endl;
+					s << L"\t$(LINK) " << linkProfile << L" $(" << configuration->getName() << L"_OBJECTS) " << libs << L" /DLL /MACHINE:X86 /SUBSYSTEM:WINDOWS $(ADDITIONAL_LIBRARY_PATHS) /OUT:" << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << L".dll" << Endl;
 				else if (configuration->getTargetFormat() == Configuration::TfExecutable)
-					s << L"\t$(LINK) $(" << configuration->getName() << L"_OBJECTS) " << libs << L" /MACHINE:X86 /SUBSYSTEM:WINDOWS $(ADDITIONAL_LIBRARY_PATHS) /OUT:" << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << L".exe" << Endl;
+					s << L"\t$(LINK) " << linkProfile << L" $(" << configuration->getName() << L"_OBJECTS) " << libs << L" /MACHINE:X86 /SUBSYSTEM:WINDOWS $(ADDITIONAL_LIBRARY_PATHS) /OUT:" << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << L".exe" << Endl;
 				else if (configuration->getTargetFormat() == Configuration::TfExecutableConsole)
-					s << L"\t$(LINK) $(" << configuration->getName() << L"_OBJECTS) " << libs << L" /MACHINE:X86 /SUBSYSTEM:WINDOWS $(ADDITIONAL_LIBRARY_PATHS) /OUT:" << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << L".exe" << Endl;
+					s << L"\t$(LINK) " << linkProfile << L" $(" << configuration->getName() << L"_OBJECTS) " << libs << L" /MACHINE:X86 /SUBSYSTEM:WINDOWS $(ADDITIONAL_LIBRARY_PATHS) /OUT:" << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << L".exe" << Endl;
 			}
 			else if (m_platform == MpMacOSX || m_platform == MpiOS)
 			{
 				if (configuration->getTargetFormat() == Configuration::TfSharedLibrary)
 				{
 					std::wstring productName = L"lib" + project->getName() + productSuffix + L".dylib";
-					s << L"\t$(LINK) $(" << configuration->getName() << L"_OBJECTS) -dynamiclib -install_name @executable_path/" << productName << libPaths << libs << L" -o " << toLower(configuration->getName()) << L"/" << productName << Endl;
+					s << L"\t$(LINK) " << linkProfile << L" $(" << configuration->getName() << L"_OBJECTS) -dynamiclib -install_name @executable_path/" << productName << libPaths << libs << L" -o " << toLower(configuration->getName()) << L"/" << productName << Endl;
 				}
 				else if (configuration->getTargetFormat() == Configuration::TfExecutable)
-					s << L"\t$(LINK) $(" << configuration->getName() << L"_OBJECTS)" << libPaths << libs << L" -o " << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << Endl;
+					s << L"\t$(LINK) " << linkProfile << L" $(" << configuration->getName() << L"_OBJECTS)" << libPaths << libs << L" -o " << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << Endl;
 				else if (configuration->getTargetFormat() == Configuration::TfExecutableConsole)
-					s << L"\t$(LINK) $(" << configuration->getName() << L"_OBJECTS)" << libPaths << libs << L" -o " << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << Endl;
+					s << L"\t$(LINK) " << linkProfile << L" $(" << configuration->getName() << L"_OBJECTS)" << libPaths << libs << L" -o " << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << Endl;
 			}
 			else if (m_platform == MpLinux)
 			{
 				if (configuration->getTargetFormat() == Configuration::TfSharedLibrary)
 				{
 					std::wstring productName = L"lib" + project->getName() + productSuffix;
-					s << L"\t$(LINK) -shared -Wl,-soname," << productName << L".so -o " << toLower(configuration->getName()) << L"/" << productName << L".so $(" << configuration->getName() << L"_OBJECTS)" << libPaths << libs << Endl;
+					s << L"\t$(LINK) " << linkProfile << L" -shared -Wl,-soname," << productName << L".so -o " << toLower(configuration->getName()) << L"/" << productName << L".so $(" << configuration->getName() << L"_OBJECTS)" << libPaths << libs << Endl;
 				}
 				else if (configuration->getTargetFormat() == Configuration::TfExecutable)
-					s << L"\t$(LINK) $(" << configuration->getName() << L"_OBJECTS)" << libPaths << libs << L" -o " << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << Endl;
+					s << L"\t$(LINK) " << linkProfile << L" $(" << configuration->getName() << L"_OBJECTS)" << libPaths << libs << L" -o " << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << Endl;
 				else if (configuration->getTargetFormat() == Configuration::TfExecutableConsole)
-					s << L"\t$(LINK) $(" << configuration->getName() << L"_OBJECTS)" << libPaths << libs << L" -o " << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << Endl;
+					s << L"\t$(LINK) " << linkProfile << L" $(" << configuration->getName() << L"_OBJECTS)" << libPaths << libs << L" -o " << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << Endl;
 			}
 		}
 		s << Endl;
