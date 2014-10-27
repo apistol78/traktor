@@ -13,7 +13,7 @@ del /F /Q %~dp0autobuild-emscripten.log
 pushd %TRAKTOR_HOME%
 call build-projects-make-emscripten.bat
 cd build\emscripten
-nmake > %~dp0autobuild-emscripten.log 2>&1
+nmake all > %~dp0autobuild-emscripten.log 2>&1
 popd
 
 call copy-latest-emscripten.bat

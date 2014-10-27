@@ -33,7 +33,13 @@ end
 function findChrome()
 	local host = os:getEnvironment("DEPLOY_HOST_OS")
 	if host == "win32" or host == "win64" then
-		return "\"C:/Program Files (x86)/Google/Chrome/Application/chrome.exe\""
+		if fileSystem:exist(Path("C:/Program Files (x86)/Google/Chrome/Application/chrome.exe")) then
+			return "\"C:/Program Files (x86)/Google/Chrome/Application/chrome.exe\""
+		elseif fileSystem:exist(Path("C:/Program Files/Google/Chrome/Application/chrome.exe")) then
+			return "\"C:/Program Files/Google/Chrome/Application/chrome.exe\""
+		else
+			return os:getEnvironment("LOCALAPPDATA") .. "/Google/Chrome/Application/chrome.exe"
+		end
 	elseif host == "osx" then
 		return "\"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\""
 	else
@@ -169,18 +175,18 @@ function launch(args)
 		return 1
 	end
 
-	local python = findPython()
-	if python == nil then
-		stderr:printLn("Unable to determine Python location.")
-		return 1
-	end
-
-	-- Launch HTTP server; detach process as we don't want to block on it.
-	os:execute(python .. " $(NACL_SDK_ROOT)/tools/httpd.py --no_dir_check", "$(DEPLOY_PROJECT_NAME)", nil, false, false, true)
+	local url = os:getEnvironment("DEPLOY_OUTPUT_URL") .. "/index.html"
 
 	-- Launch Chrome with custom debugging profile.
-	local result = run:execute(chrome .. " --no-default-browser-check --no-first-run --user-data-dir=$(DEPLOY_OUTPUT_PATH)/temp/chrome_debug_profile --allow-nacl-socket-api=localhost http://localhost:5103")
-	if result ~= 0 then
+	local result = os:execute(
+		chrome .. " --no-default-browser-check --no-first-run --user-data-dir=$(DEPLOY_OUTPUT_PATH)/temp/chrome_debug_profile --allow-nacl-socket-api=localhost " .. url,
+		"",
+		nil,
+		false,
+		false,
+		true
+	)
+	if result == nil then
 		stderr:printLn("Unable to launch Chrome.")
 		return 1
 	end
