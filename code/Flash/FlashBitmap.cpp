@@ -85,19 +85,13 @@ bool FlashBitmap::create(drawing::Image* image, bool allowNPOT)
 
 	m_dataWidth = m_width;
 	m_dataHeight = m_height;
+	m_mips = log2(std::max(m_dataWidth, m_dataHeight)) + 1;
 
-	m_mips = log2(std::max(m_width, m_height)) + 1;
-
-	if (!isLog2(m_width) || !isLog2(m_height))
+	if (!allowNPOT && (!isLog2(m_width) || !isLog2(m_height)))
 	{
-		if (!allowNPOT)
-		{
-			m_dataWidth = nearestLog2(m_width);
-			m_dataHeight = nearestLog2(m_height);
-			m_mips = log2(std::max(m_dataWidth, m_dataHeight)) + 1;
-		}
-		else
-			m_mips = 1;
+		m_dataWidth = nearestLog2(m_width);
+		m_dataHeight = nearestLog2(m_height);
+		m_mips = log2(std::max(m_dataWidth, m_dataHeight)) + 1;
 	}
 
 	uint32_t mipChainSize = 0;
