@@ -276,6 +276,8 @@ void registerAmalgamClasses(script::IScriptManager* scriptManager)
 	classWorldLayer->addMethod("getFeedbackScale", &WorldLayer::getFeedbackScale);
 	classWorldLayer->addMethod("setCamera", &WorldLayer::setCamera);
 	classWorldLayer->addMethod("getCamera", &WorldLayer::getCamera);
+	classWorldLayer->addMethod("setListener", &WorldLayer::setListener);
+	classWorldLayer->addMethod("getListener", &WorldLayer::getListener);
 	scriptManager->registerClass(classWorldLayer);
 
 	Ref< script::AutoScriptClass< StageLoader > > classStageLoader = new script::AutoScriptClass< StageLoader >();
