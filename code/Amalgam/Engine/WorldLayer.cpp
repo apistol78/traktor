@@ -53,7 +53,6 @@ WorldLayer::WorldLayer(
 ,	m_scene(scene)
 ,	m_entities(entities)
 ,	m_dynamicEntities(new world::GroupEntity())
-,	m_camera(L"Camera")
 ,	m_alternateTime(0.0f)
 ,	m_deltaTime(0.0f)
 ,	m_controllerTime(-1.0f)
@@ -152,6 +151,10 @@ void WorldLayer::prepare()
 		// Scene has been successfully validated; drop existing world renderer if we've been flushed.
 		m_worldRenderer = 0;
 		m_scene.consume();
+
+		// Get initial camera.
+		m_cameraEntity = m_scene->getEntitySchema()->getEntity(L"Camera");
+		m_listenerEntity = m_cameraEntity;
 	}
 
 	// Re-create world renderer.
@@ -216,19 +219,22 @@ void WorldLayer::build(const amalgam::IUpdateInfo& info, uint32_t frame)
 		return;
 
 	// Get camera entity and extract view transform.
-	world::NullEntity* cameraEntity = m_scene->getEntitySchema()->getEntity< world::NullEntity >(m_camera);
-	if (cameraEntity)
+	if (m_cameraEntity)
 	{
-		Transform view = cameraEntity->getTransform(info.getInterval()) * m_cameraOffset;
-		m_worldRenderView.setView(view.inverse().toMatrix44());
+		Transform cameraTransform;
+		m_cameraEntity->getTransform(cameraTransform);
+		m_worldRenderView.setView((cameraTransform * m_cameraOffset).inverse().toMatrix44());
+	}
 
-		// Also update sound listener transform based on camera.
-		if (m_environment->getAudio())
-		{
-			sound::SurroundEnvironment* surroundEnvironment = m_environment->getAudio()->getSurroundEnvironment();
-			if (surroundEnvironment)
-				surroundEnvironment->setListenerTransform(view);
-		}
+	// Update sound listener transform.
+	if (m_listenerEntity && m_environment->getAudio())
+	{
+		Transform listenerTransform;
+		m_listenerEntity->getTransform(listenerTransform);
+
+		sound::SurroundEnvironment* surroundEnvironment = m_environment->getAudio()->getSurroundEnvironment();
+		if (surroundEnvironment)
+			surroundEnvironment->setListenerTransform(listenerTransform);
 	}
 
 	// Build frame through world renderer.
@@ -488,14 +494,24 @@ float WorldLayer::getFeedbackScale() const
 	return m_feedbackScale;
 }
 
-void WorldLayer::setCamera(const std::wstring& camera)
+void WorldLayer::setCamera(const world::Entity* cameraEntity)
 {
-	m_camera = camera;
+	m_cameraEntity = cameraEntity;
 }
 
-const std::wstring& WorldLayer::getCamera() const
+const world::Entity* WorldLayer::getCamera() const
 {
-	return m_camera;
+	return m_cameraEntity;
+}
+
+void WorldLayer::setListener(const world::Entity* listenerEntity)
+{
+	m_listenerEntity = listenerEntity;
+}
+
+const world::Entity* WorldLayer::getListener() const
+{
+	return m_listenerEntity;
 }
 
 void WorldLayer::feedbackValues(spray::FeedbackType type, const float* values, int32_t count)

@@ -134,9 +134,13 @@ public:
 
 	float getFeedbackScale() const;
 
-	void setCamera(const std::wstring& camera);
+	void setCamera(const world::Entity* cameraEntity);
 
-	const std::wstring& getCamera() const;
+	const world::Entity* getCamera() const;
+
+	void setListener(const world::Entity* listenerEntity);
+
+	const world::Entity* getListener() const;
 
 protected:
 	virtual void feedbackValues(spray::FeedbackType type, const float* values, int32_t count);
@@ -149,7 +153,8 @@ private:
 	world::WorldRenderView m_worldRenderView;
 	Ref< world::GroupEntity > m_renderGroup;
 	Ref< world::GroupEntity > m_dynamicEntities;
-	std::wstring m_camera;
+	Ref< const world::Entity > m_cameraEntity;
+	Ref< const world::Entity > m_listenerEntity;
 	Transform m_cameraOffset;
 	float m_alternateTime;
 	float m_deltaTime;
