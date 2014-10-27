@@ -23,6 +23,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -43,7 +44,10 @@
 #include "Editor/IEditorPageSite.h"
 #include "I18N/Text.h"
 #include "Net/BidirectionalObjectTransport.h"
+#include "Net/SocketAddressIPv4.h"
 #include "Net/Discovery/DiscoveryManager.h"
+#include "Net/Http/HttpRequest.h"
+#include "Net/Http/HttpServer.h"
 #include "Ui/Application.h"
 #include "Ui/CheckBox.h"
 #include "Ui/Clipboard.h"
@@ -90,6 +94,43 @@ private:
 	TargetState m_targetState;
 };
 
+class HttpRequestListener : public net::HttpServer::IRequestListener
+{
+public:
+	virtual int32_t httpClientRequest(net::HttpServer* server, const net::HttpRequest* request, OutputStream& os, Ref< IStream >& outStream)
+	{
+		std::wstring resource = request->getResource();
+
+		Ref< File > file = FileSystem::getInstance().get(L"." + resource);
+		if (!file)
+			return 404;
+
+		if (file->isDirectory())
+		{
+			os << L"<html>" << Endl;
+			os << L"	<body>" << Endl;
+
+			RefArray< File > files;
+			FileSystem::getInstance().find(file->getPath().getPathName() + L"/*.*", files);
+
+			if (!endsWith< std::wstring >(resource, L"/"))
+				resource += L"/";
+
+			for (RefArray< File >::const_iterator i = files.begin(); i != files.end(); ++i)
+				os << L"<a href=\"" << resource << (*i)->getPath().getFileName() << L"\">" << (*i)->getPath().getFileName() << L"</a><br>" << Endl;
+
+			os << L"	</body>" << Endl;
+			os << L"</html>" << Endl;
+		}
+		else
+		{
+			outStream = FileSystem::getInstance().open(file->getPath(), File::FmRead);
+		}
+
+		return 200;
+	}
+};
+
 Ref< ui::MenuItem > createTweakMenuItem(const std::wstring& text, bool initiallyChecked)
 {
 	Ref< ui::MenuItem > menuItem = new ui::MenuItem(text, true, 0);
@@ -105,6 +146,7 @@ EditorPlugin::EditorPlugin(editor::IEditor* editor)
 :	m_editor(editor)
 ,	m_threadHostEnumerator(0)
 ,	m_threadTargetActions(0)
+,	m_threadHttpServer(0)
 {
 }
 
@@ -116,6 +158,11 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	// Create host enumerator.
 	m_discoveryManager = m_editor->getStoreObject< net::DiscoveryManager >(L"DiscoveryManager");
 	m_hostEnumerator = new HostEnumerator(m_editor->getSettings(), m_discoveryManager);
+
+	// Create http server.
+	m_httpServer = new net::HttpServer();
+	m_httpServer->create(net::SocketAddressIPv4(44246));
+	m_httpServer->setRequestListener(new HttpRequestListener());
 
 	// Create target script debugger dispatcher.
 	m_targetDebuggerSessions = new TargetScriptDebuggerSessions();
@@ -165,6 +212,9 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_threadTargetActions = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadTargetActions), L"Targets");
 	m_threadTargetActions->start();
 
+	m_threadHttpServer = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadHttpServer), L"HTTP server");
+	m_threadHttpServer->start();
+
 	container->addEventHandler< ui::TimerEvent >(this, &EditorPlugin::eventTimer);
 	container->startTimer(30);
 
@@ -173,6 +223,12 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 
 void EditorPlugin::destroy()
 {
+	if (m_threadHttpServer)
+	{
+		m_threadHttpServer->stop();
+		ThreadManager::getInstance().destroy(m_threadHttpServer);
+	}
+
 	if (m_threadTargetActions)
 	{
 		m_threadTargetActions->stop();
@@ -190,6 +246,7 @@ void EditorPlugin::destroy()
 	m_connectionManager = 0;
 	m_discoveryManager = 0;
 
+	safeDestroy(m_httpServer);
 	safeDestroy(m_targetManager);
 
 	if (m_editor)
@@ -648,6 +705,12 @@ void EditorPlugin::threadTargetActions()
 		chain.actions.resize(0);
 		chain.targetInstance = 0;
 	}
+}
+
+void EditorPlugin::threadHttpServer()
+{
+	while (!m_threadHttpServer->stopped())
+		m_httpServer->update(250);
 }
 
 	}

@@ -14,6 +14,7 @@
 namespace traktor
 {
 
+class IStream;
 class OutputStream;
 
 	namespace net
@@ -41,7 +42,7 @@ public:
 		T_RTTI_CLASS;
 
 	public:
-		virtual int32_t clientRequest(HttpServer* server, const HttpRequest* request, OutputStream& os) = 0;
+		virtual int32_t httpClientRequest(HttpServer* server, const HttpRequest* request, OutputStream& os, Ref< IStream >& outStream) = 0;
 	};
 
 	bool create(const SocketAddressIPv4& bind);

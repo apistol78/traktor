@@ -1,5 +1,6 @@
 #include "Core/RefArray.h"
 #include "Core/Io/FileOutputStream.h"
+#include "Core/Io/StreamCopy.h"
 #include "Core/Io/StringReader.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Io/Utf8Encoding.h"
@@ -90,10 +91,11 @@ public:
 			if (request)
 			{
 				StringOutputStream ss;
+				Ref< IStream > ds;
 				int32_t result = 503;
 
 				if (m_listener)
-					result = m_listener->clientRequest(m_server, request, ss);
+					result = m_listener->httpClientRequest(m_server, request, ss, ds);
 
 				FileOutputStream os(&clientStream, new Utf8Encoding(), OutputStream::LeWin);
 				if (result >= 200 && result < 300)
@@ -104,7 +106,10 @@ public:
 				os << L"Connection: close" << Endl;
 				os << Endl;
 
-				os << ss.str();
+				if (ds)
+					StreamCopy(&clientStream, ds).execute();
+				else
+					os << ss.str();
 			}
 
 			safeClose(clientSocket);

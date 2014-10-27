@@ -40,7 +40,87 @@ function deploy(args)
 		return 1
 	end
 
-	local defaultLibraries = "" -- "-lpthread -lppapi -lppapi_cpp -lnacl_io -lppapi_gles2"
+	-- Get toolchain binaries.
+	local emcc = emscripten .. "/emcc" 
+	if #emcc <= 0 then
+		stderr:printLn("Unable to determine toolchain binaries; ensure Emscripten SDK is properly installed and try again.")
+		return 1
+	end
+
+	-- As toolchain binaries on Windows are actually bat-file wrappers we need to append suffix.
+	if host == "win32" or host == "win64" then
+		emcc = emcc .. ".bat"
+	end
+
+	-- Ensure debug symbols are kept when linking.
+	if debug then
+		emcc = emcc .. " -g"
+	end
+
+	-- Determine path to module libraries.
+	local prepend
+	if not debug then
+	 	prepend = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/emscripten/releasestatic/"
+	else
+		stdout:printLn("Using *DEBUG* binaries")
+	 	prepend = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/emscripten/debugstatic/"
+	end
+
+	-- Append system path to files.
+	local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
+	local wholeLinkFiles = ""
+	local externalLinkFiles = ""
+	for _, f in ipairs(files) do
+
+		-- Append "_d" to each file; indicating a debug build.
+		if debug then
+			f = f:sub(1, string.len(f) - 2) .. "_d.a"
+		end
+
+		if f:starts("libExtern") then
+			externalLinkFiles = externalLinkFiles .. prepend .. f .. " "
+		else
+			wholeLinkFiles = wholeLinkFiles .. prepend .. f .. " "
+		end
+	end
+
+	-- Link files into an executable product.
+	local cmd = emcc .. " -Wl,--whole-archive " .. wholeLinkFiles .. "-Wl,--no-whole-archive " .. externalLinkFiles  .. " -o $(DEPLOY_EXECUTABLE).html --embed-file Application.config"
+	local result = run:execute(cmd)
+	if result ~= 0 then
+		stderr:printLn("Unable to build executable product.")
+		stderr:printLn(cmd)
+		return 1
+	end
+
+	return 0
+end
+
+
+function launch(args)
+	return 0
+end
+
+
+function migrate(args)
+	stdout:printLn("Migrating Emscripten...")
+	
+	local result = run:execute("$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Database.Migrate.App -p -s=Migrate")
+	if result ~= 0 then
+		stderr:printLn("Unable to migrate content.")
+		return 1
+	end
+
+	stdout:printLn("Deploying Emscripten...")
+
+	local host = os:getEnvironment("DEPLOY_HOST_OS")
+	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
+
+	local emscripten = os:getEnvironment("EMSCRIPTEN")
+	if #emscripten <= 0 then
+		stderr:printLn("EMSCRIPTEN not set; ensure Emscripten SDK is properly installed and try again.")
+		return 1
+	end
 
 	-- Get toolchain binaries.
 	local emcc = emscripten .. "/emcc" 
@@ -87,7 +167,7 @@ function deploy(args)
 	end
 
 	-- Link files into an executable product.
-	local cmd = emcc .. " -Wl,--whole-archive " .. wholeLinkFiles .. "-Wl,--no-whole-archive " .. externalLinkFiles .. defaultLibraries .. " -o $(DEPLOY_EXECUTABLE).html"
+	local cmd = emcc .. " -Wl,--whole-archive " .. wholeLinkFiles .. "-Wl,--no-whole-archive " .. externalLinkFiles  .. " -o $(DEPLOY_EXECUTABLE).html --embed-file Application.config --embed-file Content.compact"
 	local result = run:execute(cmd)
 	if result ~= 0 then
 		stderr:printLn("Unable to build executable product.")
@@ -96,17 +176,6 @@ function deploy(args)
 	end
 
 	return 0
-end
-
-
-function launch(args)
-	return 0
-end
-
-
-function migrate(args)
-	stdout:printLn("Migrating Emscripten...")
-	return run:execute("$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Database.Migrate.App -p -s=Migrate")
 end
 
 

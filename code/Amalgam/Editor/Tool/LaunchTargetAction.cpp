@@ -108,6 +108,10 @@ bool LaunchTargetAction::execute(IProgressListener* progressListener)
 
 	// Launch application through deploy tool.
 	Path projectRoot = FileSystem::getInstance().getCurrentVolume()->getCurrentDirectory();
+	
+	Path outputRelativePath;
+	FileSystem::getInstance().getRelativePath(m_outputPath, projectRoot, outputRelativePath);
+
 	OS::envmap_t envmap = OS::getInstance().getEnvironment();
 #if defined(_WIN32)
 	envmap[L"DEPLOY_PROJECT_ROOT"] = projectRoot.getPathName();
@@ -121,6 +125,7 @@ bool LaunchTargetAction::execute(IProgressListener* progressListener)
 	envmap[L"DEPLOY_TARGET_HOST"] = m_deployHost;
 	envmap[L"DEPLOY_EXECUTABLE"] = executableFile;
 	envmap[L"DEPLOY_OUTPUT_PATH"] = m_outputPath;
+	envmap[L"DEPLOY_OUTPUT_URL"] = L"http://localhost:44246/" + outputRelativePath.getPathName();
 	envmap[L"DEPLOY_CERTIFICATE"] = m_globalSettings->getProperty< PropertyString >(L"Amalgam.Certificate", L"");
 	envmap[L"DEPLOY_FILES"] = implode(deployFiles.begin(), deployFiles.end(), L" ");
 	envmap[L"DEPLOY_DEBUG"] = (m_globalSettings->getProperty< PropertyBoolean >(L"Amalgam.UseDebugBinaries", false) ? L"YES" : L"");
