@@ -4,8 +4,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>351</first>
-				<second>440</second>
+				<first>365</first>
+				<second>369</second>
 			</position>
 			<parameterName>Flash_Texture</parameterName>
 			<type>PtTexture2D</type>
@@ -35,14 +35,14 @@
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
 			<mipBias>0</mipBias>
-			<ignoreMips>true</ignoreMips>
+			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>371</first>
-				<second>483</second>
+				<first>307</first>
+				<second>452</second>
 			</position>
 			<parameterName>Flash_TextureClamp</parameterName>
 			<type>PtScalar</type>
