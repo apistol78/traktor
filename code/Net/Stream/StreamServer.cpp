@@ -19,6 +19,12 @@ namespace traktor
 {
 	namespace net
 	{
+		namespace
+		{
+
+const int32_t c_preloadSmallStreamSize = 4096;
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.StreamServer", StreamServer, Object)
 
@@ -176,7 +182,11 @@ void StreamServer::threadClient(Ref< TcpSocket > clientSocket)
 
 					int32_t avail = 0;
 					if ((status & 0x03) == 0x01)
-						avail = stream->available();
+					{
+						int32_t streamAvail = stream->available();
+						if (streamAvail <= c_preloadSmallStreamSize)
+							avail = streamAvail;
+					}
 
 					net::sendBatch< uint8_t, int32_t >(clientSocket, status, avail);
 

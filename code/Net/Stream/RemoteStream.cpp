@@ -1,5 +1,4 @@
 #include <map>
-#include "Core/Io/BufferedStream.h"
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
@@ -72,7 +71,7 @@ Ref< IStream > RemoteStream::connect(const SocketAddressIPv4& addr, uint32_t id)
 	rs->m_addr = addr;
 	rs->m_socket = socket;
 	rs->m_status = uint8_t(status);
-	return new BufferedStream(rs);
+	return rs;
 }
 
 RemoteStream::~RemoteStream()
