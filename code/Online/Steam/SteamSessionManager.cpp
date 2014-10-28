@@ -382,6 +382,11 @@ IUserProvider* SteamSessionManager::getUser() const
 	return m_user;
 }
 
+IVideoSharingProvider* SteamSessionManager::getVideoSharing() const
+{
+	return 0;
+}
+
 bool SteamSessionManager::waitForStats()
 {
 	if (!m_receivedStats)

@@ -11,6 +11,7 @@
 #include "Online/ISessionManager.h"
 #include "Online/IStatistics.h"
 #include "Online/IUser.h"
+#include "Online/IVideoSharing.h"
 #include "Online/LobbyFilter.h"
 #include "Online/OnlinePeer2PeerProvider.h"
 #include "Online/Score.h"
@@ -326,6 +327,7 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 	classISessionManager->addMethod("getSaveData", &online::ISessionManager::getSaveData);
 	classISessionManager->addMethod("getStatistics", &online::ISessionManager::getStatistics);
 	classISessionManager->addMethod("getUser", &online::ISessionManager::getUser);
+	classISessionManager->addMethod("getVideoSharing", &online::ISessionManager::getVideoSharing);
 	scriptManager->registerClass(classISessionManager);
 
 	Ref< script::AutoScriptClass< online::IStatistics > > classIStatistics = new script::AutoScriptClass< online::IStatistics >();
@@ -346,6 +348,12 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 	classIUser->addMethod("getPresenceValue", &online_IUser_getPresenceValue);
 	classIUser->addMethod("isP2PAllowed", &online::IUser::isP2PAllowed);
 	scriptManager->registerClass(classIUser);
+
+	Ref< script::AutoScriptClass< online::IVideoSharing > > classIVideoSharing = new script::AutoScriptClass< online::IVideoSharing >();
+	classIVideoSharing->addMethod("beginCapture", &online::IVideoSharing::beginCapture);
+	classIVideoSharing->addMethod("endCapture", &online::IVideoSharing::endCapture);
+	classIVideoSharing->addMethod("isCapturing", &online::IVideoSharing::isCapturing);
+	scriptManager->registerClass(classIVideoSharing);
 
 	Ref< script::AutoScriptClass< online::OnlinePeer2PeerProvider > > classOnlinePeer2PeerProvider = new script::AutoScriptClass< online::OnlinePeer2PeerProvider >();
 	classOnlinePeer2PeerProvider->addConstructor< online::ISessionManager*, online::ILobby* >();
