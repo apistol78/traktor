@@ -329,6 +329,24 @@ void SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 			}
 		}
 
+		// Append library paths as well as they might contain frameworks.
+		if (m_platform == MpMacOSX || m_platform == MpiOS)
+		{
+			std::set< std::wstring > libraryPaths;
+			std::vector< std::wstring > libraryNames;
+
+			collectLinkDependencies(
+				solution,
+				project,
+				configuration->getName(),
+				libraryPaths,
+				libraryNames
+			);
+
+			for (std::set< std::wstring >::const_iterator k = libraryPaths.begin(); k != libraryPaths.end(); ++k)
+				s << L"-F" << *k << L" ";
+		}
+		
 		s << Endl;
 	}
 	s << Endl;
