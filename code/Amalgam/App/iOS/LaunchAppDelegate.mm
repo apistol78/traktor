@@ -26,9 +26,8 @@ using namespace traktor;
 	log::info << L"Creating view controller ..." << Endl;
 
 	// Create view controller.
-	viewController = [[AppViewController alloc] init];
+	viewController = [[AppViewController alloc] initWithNibName: nil bundle: nil];
 	window.rootViewController = viewController;
-	//[viewController loadView];
 
 	[window makeKeyAndVisible];
 

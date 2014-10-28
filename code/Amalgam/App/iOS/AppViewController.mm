@@ -14,12 +14,6 @@ using namespace traktor;
 
 @implementation AppViewController
 
-- (id) init
-{
-	glView = 0;
-	return self;
-}
-
 - (void) loadView
 {
 	log::info << L"loadView" << Endl;
@@ -44,7 +38,7 @@ using namespace traktor;
 	log::info << L"End of viewDidLoad" << Endl;
 }
 
-- (BOOL)prefersStatusBarHidden
+- (BOOL) prefersStatusBarHidden
 {
 	return YES;
 }

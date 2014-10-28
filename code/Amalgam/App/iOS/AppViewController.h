@@ -5,8 +5,6 @@
 
 @interface AppViewController : UIViewController
 
-- (id) init;
-
 - (void) loadView;
 
 - (void) viewDidLoad;
