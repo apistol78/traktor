@@ -353,6 +353,7 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 	classIVideoSharing->addMethod("beginCapture", &online::IVideoSharing::beginCapture);
 	classIVideoSharing->addMethod("endCapture", &online::IVideoSharing::endCapture);
 	classIVideoSharing->addMethod("isCapturing", &online::IVideoSharing::isCapturing);
+	classIVideoSharing->addMethod("showShareUI", &online::IVideoSharing::showShareUI);
 	scriptManager->registerClass(classIVideoSharing);
 
 	Ref< script::AutoScriptClass< online::OnlinePeer2PeerProvider > > classOnlinePeer2PeerProvider = new script::AutoScriptClass< online::OnlinePeer2PeerProvider >();
