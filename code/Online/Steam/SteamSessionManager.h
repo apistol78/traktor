@@ -76,6 +76,8 @@ public:
 
 	virtual IUserProvider* getUser() const;
 
+	virtual IVideoSharingProvider* getVideoSharing() const;
+
 	bool waitForStats();
 
 	bool storeStats();

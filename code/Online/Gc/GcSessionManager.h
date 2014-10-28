@@ -23,6 +23,7 @@ class GcMatchMaking;
 class GcSaveData;
 class GcStatistics;
 class GcUser;
+class GcVideoSharing;
 
 class T_DLLCLASS GcSessionManager : public ISessionManagerProvider
 {
@@ -71,6 +72,8 @@ public:
 
 	virtual IUserProvider* getUser() const;
 
+	virtual IVideoSharingProvider* getVideoSharing() const;
+
 private:
 	Ref< GcAchievements > m_achievements;
 	Ref< GcLeaderboards > m_leaderboards;
@@ -78,6 +81,7 @@ private:
 	Ref< GcSaveData > m_saveData;
 	Ref< GcStatistics > m_statistics;
 	Ref< GcUser > m_user;
+	Ref< GcVideoSharing > m_videoSharing;
 };
 
 	}

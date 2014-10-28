@@ -236,5 +236,10 @@ IUserProvider* LocalSessionManager::getUser() const
 	return m_user;
 }
 
+IVideoSharingProvider* LocalSessionManager::getVideoSharing() const
+{
+	return 0;
+}
+
 	}
 }

@@ -71,6 +71,8 @@ public:
 
 	virtual IUser* getUser() const;
 
+	virtual IVideoSharing* getVideoSharing() const;
+
 private:
 	Ref< ISessionManagerProvider > m_provider;
 	Ref< TaskQueue > m_taskQueues[2];
@@ -80,6 +82,7 @@ private:
 	Ref< ISaveData > m_saveData;
 	Ref< IStatistics > m_statistics;
 	Ref< IUser > m_user;
+	Ref< IVideoSharing > m_videoSharing;
 	Ref< UserCache > m_userCache;
 	Ref< TaskUpdateSessionManager > m_updateTask;
 	bool m_downloadableContent;

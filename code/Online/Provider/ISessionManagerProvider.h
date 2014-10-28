@@ -30,6 +30,7 @@ class IMatchMakingProvider;
 class ISaveDataProvider;
 class IStatisticsProvider;
 class IUserProvider;
+class IVideoSharingProvider;
 
 class T_DLLCLASS ISessionManagerProvider : public Object
 {
@@ -77,6 +78,8 @@ public:
 	virtual IStatisticsProvider* getStatistics() const = 0;
 
 	virtual IUserProvider* getUser() const = 0;
+
+	virtual IVideoSharingProvider* getVideoSharing() const = 0;
 };
 
 	}

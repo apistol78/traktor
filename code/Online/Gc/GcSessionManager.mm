@@ -8,6 +8,7 @@
 #include "Online/Gc/GcSessionManager.h"
 #include "Online/Gc/GcStatistics.h"
 #include "Online/Gc/GcUser.h"
+#include "Online/Gc/GcVideoSharingKamcord.h"
 
 namespace traktor
 {
@@ -85,12 +86,14 @@ bool GcSessionManager::create(const IGameConfiguration* configuration)
 	m_saveData = new GcSaveData();
 //	m_statistics = new GcStatistics();
 //	m_user = new GcUser();
+	m_videoSharing = new GcVideoSharingKamcord();
 
 	return true;
 }
 
 void GcSessionManager::destroy()
 {
+	m_videoSharing = 0;
 	m_user = 0;
 	m_statistics = 0;
 	m_saveData = 0;
@@ -192,6 +195,11 @@ IStatisticsProvider* GcSessionManager::getStatistics() const
 IUserProvider* GcSessionManager::getUser() const
 {
 	return m_user;
+}
+
+IVideoSharingProvider* GcSessionManager::getVideoSharing() const
+{
+	return m_videoSharing;
 }
 
 	}

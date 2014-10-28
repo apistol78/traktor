@@ -11,6 +11,7 @@
 #include "Online/Impl/TaskQueue.h"
 #include "Online/Impl/User.h"
 #include "Online/Impl/UserCache.h"
+#include "Online/Impl/VideoSharing.h"
 #include "Online/Impl/Tasks/TaskUpdateSessionManager.h"
 #include "Online/Provider/ISessionManagerProvider.h"
 
@@ -72,6 +73,7 @@ bool SessionManager::create(ISessionManagerProvider* provider, const IGameConfig
 	ISaveDataProvider* saveDataProvider = m_provider->getSaveData();
 	IStatisticsProvider* statisticsProvider = m_provider->getStatistics();
 	IUserProvider* userProvider = m_provider->getUser();
+	IVideoSharingProvider* videoSharingProvider = m_provider->getVideoSharing();
 
 	if (userProvider)
 	{
@@ -94,6 +96,9 @@ bool SessionManager::create(ISessionManagerProvider* provider, const IGameConfig
 	if (statisticsProvider)
 		m_statistics = new Statistics(statisticsProvider, m_taskQueues[0]);
 
+	if (videoSharingProvider)
+		m_videoSharing = new VideoSharing(videoSharingProvider);
+
 	m_downloadableContent = downloadableContent;
 
 	m_updateTask = new TaskUpdateSessionManager(m_provider);
@@ -105,6 +110,7 @@ bool SessionManager::create(ISessionManagerProvider* provider, const IGameConfig
 void SessionManager::destroy()
 {
 	m_userCache = 0;
+	m_videoSharing = 0;
 	m_user = 0;
 	m_statistics = 0;
 	m_saveData = 0;
@@ -251,6 +257,11 @@ IStatistics* SessionManager::getStatistics() const
 IUser* SessionManager::getUser() const
 {
 	return m_user;
+}
+
+IVideoSharing* SessionManager::getVideoSharing() const
+{
+	return m_videoSharing;
 }
 
 	}

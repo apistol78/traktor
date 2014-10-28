@@ -77,6 +77,8 @@ public:
 
 	virtual IUserProvider* getUser() const;
 
+	virtual IVideoSharingProvider* getVideoSharing() const;
+
 private:
 	Ref< sql::IConnection > m_db;
 	Ref< LocalAchievements > m_achievements;
