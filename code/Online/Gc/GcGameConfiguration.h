@@ -18,10 +18,15 @@ public:
 
 private:
 	friend class GcSessionManager;
+	friend class GcVideoSharingKamcord;
 
 	std::list< std::wstring > m_achievementIds;
 	std::list< std::wstring > m_leaderboardIds;
 	std::list< std::wstring > m_statsIds;
+
+	std::wstring m_kamcordDeveloperKey;
+	std::wstring m_kamcordDeveloperSecret;
+	std::wstring m_kamcordAppName;
 };
 
 	}
