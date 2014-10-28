@@ -1,12 +1,14 @@
-#import "Amalgam/App/iOS/EAGLView.h"
+#import "Amalgam/App/iOS/AppViewController.h"
 #import "Amalgam/App/iOS/LaunchAppDelegate.h"
 
 #include "Core/Log/Log.h"
 
+using namespace traktor;
+
 @interface LaunchAppDelegate ()
 {
     UIWindow* window;
-	EAGLView* glView;
+	AppViewController* viewController;
 }
 
 @end
@@ -15,51 +17,63 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+	log::info << L"Creating window ..." << Endl;
+
 	// Create window.
 	window = [[UIWindow alloc] initWithFrame: [[UIScreen mainScreen] bounds]];
-	[window setBackgroundColor: [UIColor blackColor]];
+	[window setBackgroundColor: [UIColor whiteColor]];
 
-	// Create view.
-	glView = [[EAGLView alloc] initWithFrame: window.bounds];
-	[window addSubview: glView];
+	log::info << L"Creating view controller ..." << Endl;
+
+	// Create view controller.
+	viewController = [[AppViewController alloc] init];
+	window.rootViewController = viewController;
+	//[viewController loadView];
+
 	[window makeKeyAndVisible];
 
-	// Create application.
-	if ([glView createApplication] != YES)
-		return NO;
-
-	// Begin animation thread.
-	[glView startAnimation];
+	log::info << L"End of didFinishLaunchingWithOptions" << Endl;
     return YES;
 }
 
 - (void) applicationWillResignActive:(UIApplication *)application
 {
-	[glView stopAnimation];
+	log::info << L"applicationWillResignActive" << Endl;
+	if (viewController != nil)
+		[viewController stopAnimation];
 }
 
 - (void) applicationDidBecomeActive:(UIApplication *)application
 {
-	[glView startAnimation];
+	log::info << L"applicationDidBecomeActive" << Endl;
+	if (viewController != nil)
+		[viewController startAnimation];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-	[glView stopAnimation];
+	log::info << L"applicationWillTerminate" << Endl;
+	if (viewController != nil)
+		[viewController stopAnimation];
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-	[glView stopAnimation];
+	log::info << L"applicationDidEnterBackground" << Endl;
+	if (viewController != nil)
+		[viewController stopAnimation];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
-	[glView startAnimation];
+	log::info << L"applicationWillEnterForeground" << Endl;
+	if (viewController != nil)
+		[viewController startAnimation];
 }
 
 - (void) dealloc
 {
+	[viewController release];
 	[window release];	
 	[super dealloc];
 }
