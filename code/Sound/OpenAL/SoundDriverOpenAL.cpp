@@ -111,7 +111,9 @@ bool SoundDriverOpenAL::create(void* nativeHandle, const SoundDriverCreateDesc& 
 
 	// Open device and create context.
 	const ALCchar* defaultDevice = alcGetString(NULL, ALC_DEFAULT_DEVICE_SPECIFIER);
-	log::info << L"OpenAL; using default device \"" << mbstows(defaultDevice) << L"\"" << Endl;
+
+	if (defaultDevice)
+		log::info << L"OpenAL; using default device \"" << mbstows(defaultDevice) << L"\"" << Endl;
 
 	m_device = alcOpenDevice(defaultDevice);
 	if (!m_device)
