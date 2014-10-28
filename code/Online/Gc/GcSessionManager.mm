@@ -46,8 +46,8 @@ bool GcSessionManager::create(const IGameConfiguration* configuration)
 		{
 			if (viewController != nil)
 			{
-				NSLog(@"NEED TO VIEW AUTHENTICATION DIALOG");
-				// [self presentViewController:viewController animated:YES completion:nil];
+				UIViewController* rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;				
+				[rootViewController presentViewController: viewController animated: YES completion: nil];
 			}
 			else
 			{
