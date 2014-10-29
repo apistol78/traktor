@@ -120,6 +120,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolAspect->add(L"16:10");
 	m_toolAspect->add(L"3:4");
 	m_toolAspect->add(L"4:6");
+	m_toolAspect->add(L"9:16");
 	m_toolAspect->select(0);
 
 	m_toolShadows = new ui::custom::ToolBarDropDown(ui::Command(1, L"Scene.Editor.ShadowQuality"), 80, i18n::Text(L"SCENE_EDITOR_SHADOWS"));
@@ -424,7 +425,8 @@ void DefaultRenderControl::eventToolClick(ui::custom::ToolBarButtonClickEvent* e
 			16.0f / 9.0f,
 			16.0f / 10.0f,
 			3.0f / 4.0f,
-			4.0f / 6.0f
+			4.0f / 6.0f,
+			9.0f / 16.0f
 		};
 		m_renderControl->setAspect(c_aspects[m_toolAspect->getSelected()]);
 	}
