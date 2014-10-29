@@ -12,6 +12,9 @@
 				<item>libTraktor.Resource.a</item>
 				<item>libTraktor.Render.a</item>
 				<item>libTraktor.Render.OpenGL.ES2.a</item>
+				<item>OpenGLES.framework</item>
+				<item>UIKit.framework</item>
+				<item>QuartzCore.framework</item>
 			</deployFiles>
 		</item>
 		<item>

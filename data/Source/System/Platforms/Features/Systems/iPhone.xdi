@@ -6,7 +6,9 @@
 		<item>
 			<platform>{13FF3E12-076E-274E-B347-8F323ECD53A7}</platform>
 			<executableFile/>
-			<deployFiles/>
+			<deployFiles>
+				<item>Foundation.framework</item>
+			</deployFiles>
 		</item>
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">
