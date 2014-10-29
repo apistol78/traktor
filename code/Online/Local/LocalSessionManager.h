@@ -29,6 +29,7 @@ class LocalMatchMaking;
 class LocalSaveData;
 class LocalStatistics;
 class LocalUser;
+class LocalVideoSharing;
 
 class T_DLLCLASS LocalSessionManager : public ISessionManagerProvider
 {
@@ -87,6 +88,7 @@ private:
 	Ref< LocalSaveData > m_saveData;
 	Ref< LocalStatistics > m_statistics;
 	Ref< LocalUser > m_user;
+	Ref< LocalVideoSharing > m_videoSharing;
 };
 
 	}

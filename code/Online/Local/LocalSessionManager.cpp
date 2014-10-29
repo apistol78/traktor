@@ -8,6 +8,7 @@
 #include "Online/Local/LocalStatistics.h"
 #include "Online/Local/LocalSessionManager.h"
 #include "Online/Local/LocalUser.h"
+#include "Online/Local/LocalVideoSharing.h"
 #include "Sql/IResultSet.h"
 #include "Sql/Sqlite3/ConnectionSqlite3.h"
 
@@ -121,6 +122,7 @@ bool LocalSessionManager::create(const IGameConfiguration* configuration)
 	m_saveData = new LocalSaveData(m_db);
 	m_statistics = new LocalStatistics(m_db);
 	m_user = new LocalUser();
+	m_videoSharing = new LocalVideoSharing();
 
 	return true;
 }
@@ -238,7 +240,7 @@ IUserProvider* LocalSessionManager::getUser() const
 
 IVideoSharingProvider* LocalSessionManager::getVideoSharing() const
 {
-	return 0;
+	return m_videoSharing;
 }
 
 	}
