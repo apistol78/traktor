@@ -22,7 +22,7 @@ namespace traktor
 		namespace
 		{
 
-const int32_t c_preloadSmallStreamSize = 4096;
+const int32_t c_preloadSmallStreamSize = 8 * 1024 * 1024;
 
 		}
 
