@@ -8,6 +8,11 @@ function string:split(sep)
 end
 
 
+function string:endswith(send)
+	return #self >= #send and self:find(send, #self - #send + 1, true) and true or false
+end
+
+
 function generateImage(fileName, image, width, height)
 	local outputAspect = width / height
 
@@ -108,15 +113,30 @@ function deploy(args)
 		end
 
 		local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
+		
 		local deployFiles = ""
+		local deployBundles = {}
+
 		for _, f in ipairs(files) do
-			if debug then
-				f = f:sub(1, string.len(f) - 2) .. "_d.a"
+
+			if string.endswith(f, ".a") then
+				if debug then
+					f = f:sub(1, string.len(f) - 2) .. "_d.a"
+				end
+				deployFiles = deployFiles .. " " .. f
+			elseif string.endswith(f, ".framework") or string.endswith(f, ".bundle") then
+				table.insert(deployBundles, f)
 			end
-			deployFiles = deployFiles .. " " .. f
 		end
 
-		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST)" .. deployFiles, "(null)")
+		if #deployFiles > 0 then
+			run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST)" .. deployFiles, "(null)")
+		end
+
+		for _, bundle in ipairs(deployBundles) do
+			run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy -recursive $(DEPLOY_TARGET_HOST) " .. bundle .. "/*.*", "(null)")
+		end
+
 		run:popd()
 	end
 

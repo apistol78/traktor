@@ -1,14 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="4">
+<object type="traktor.amalgam.Feature" version="5">
 	<description>Apple GameCenter</description>
 	<priority>0</priority>
 	<platforms>
 		<item>
 			<platform>{13FF3E12-076E-274E-B347-8F323ECD53A7}</platform>
+			<executableFile/>
 			<deployFiles>
 				<item>libTraktor.Core.a</item>
 				<item>libTraktor.Online.a</item>
 				<item>libTraktor.Online.Gc.a</item>
+				<item>GameKit.framework</item>
+				<item>AdSupport.framework</item>
+				<item>AssetsLibrary.framework</item>
+				<item>AudioToolbox.framework</item>
+				<item>AVFoundation.framework</item>
+				<item>CoreGraphics.framework</item>
+				<item>CoreImage.framework</item>
+				<item>CoreMedia.framework</item>
+				<item>CoreVideo.framework</item>
+				<item>Foundation.framework</item>
+				<item>MessageUI.framework</item>
+				<item>MobileCoreServices.framework</item>
+				<item>OpenGLES.framework</item>
+				<item>QuartzCore.framework</item>
+				<item>Security.framework</item>
+				<item>Social.framework</item>
+				<item>StoreKit.framework</item>
+				<item>SystemConfiguration.framework</item>
+				<item>Twitter.framework</item>
+				<item>UIKit.framework</item>
+				<item>Everyplay.framework</item>
+				<item>Everyplay.bundle</item>
 			</deployFiles>
 		</item>
 	</platforms>
