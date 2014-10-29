@@ -5,11 +5,7 @@
 
 @interface AppViewController : UIViewController
 
-- (void) loadView;
-
-- (void) viewDidLoad;
-
-- (BOOL) prefersStatusBarHidden;
+- (BOOL) createApplication;
 
 - (void) startAnimation;
 
