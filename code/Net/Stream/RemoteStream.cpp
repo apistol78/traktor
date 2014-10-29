@@ -22,6 +22,8 @@ Ref< IStream > RemoteStream::connect(const SocketAddressIPv4& addr, uint32_t id)
 		return 0;
 	}
 
+	socket->setNoDelay(true);
+
 	net::sendBatch< uint8_t, uint32_t >(socket, 0x01, id);
 
 	uint8_t status;
