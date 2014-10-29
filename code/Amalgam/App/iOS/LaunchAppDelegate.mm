@@ -17,13 +17,9 @@ using namespace traktor;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-	log::info << L"Creating window ..." << Endl;
-
 	// Create window.
 	window = [[UIWindow alloc] initWithFrame: [[UIScreen mainScreen] bounds]];
 	[window setBackgroundColor: [UIColor whiteColor]];
-
-	log::info << L"Creating view controller ..." << Endl;
 
 	// Create view controller.
 	viewController = [[AppViewController alloc] initWithNibName: nil bundle: nil];
@@ -31,41 +27,40 @@ using namespace traktor;
 
 	[window makeKeyAndVisible];
 
-	log::info << L"End of didFinishLaunchingWithOptions" << Endl;
+	// Create application and start animating.
+	if ([viewController createApplication] == NO)
+		return NO;
+
+	[viewController startAnimation];
     return YES;
 }
 
 - (void) applicationWillResignActive:(UIApplication *)application
 {
-	log::info << L"applicationWillResignActive" << Endl;
 	if (viewController != nil)
 		[viewController stopAnimation];
 }
 
 - (void) applicationDidBecomeActive:(UIApplication *)application
 {
-	log::info << L"applicationDidBecomeActive" << Endl;
 	if (viewController != nil)
 		[viewController startAnimation];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-	log::info << L"applicationWillTerminate" << Endl;
 	if (viewController != nil)
 		[viewController stopAnimation];
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-	log::info << L"applicationDidEnterBackground" << Endl;
 	if (viewController != nil)
 		[viewController stopAnimation];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
-	log::info << L"applicationWillEnterForeground" << Endl;
 	if (viewController != nil)
 		[viewController startAnimation];
 }

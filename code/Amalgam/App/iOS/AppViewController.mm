@@ -16,31 +16,21 @@ using namespace traktor;
 
 - (void) loadView
 {
-	log::info << L"loadView" << Endl;
-
 	glView = [[EAGLView alloc] initWithFrame: [[UIScreen mainScreen] bounds]];
-
-	if ([glView createApplication] != YES)
-		log::error << L"Unable to create application; application need to be reinstalled." << Endl;
-
 	self.view = glView;
-
-	log::info << L"End of loadView" << Endl;
-}
-
-- (void) viewDidLoad
-{
-	log::info << L"viewDidLoad" << Endl;
-
-	[super viewDidLoad];
-	[glView startAnimation];
-
-	log::info << L"End of viewDidLoad" << Endl;
 }
 
 - (BOOL) prefersStatusBarHidden
 {
 	return YES;
+}
+
+- (BOOL) createApplication
+{
+	if (glView != nil)
+		return [glView createApplication];
+	else
+		return NO;
 }
 
 - (void) startAnimation

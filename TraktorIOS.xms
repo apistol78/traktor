@@ -10113,9 +10113,30 @@
 						<item>T_ONLINE_GC_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
-					<libraryPaths/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/Everyplay</item>
+					</libraryPaths>
 					<libraries>
+						<item>AdSupport.framework</item>
+						<item>AssetsLibrary.framework</item>
+						<item>AudioToolbox.framework</item>
+						<item>AVFoundation.framework</item>
+						<item>CoreGraphics.framework</item>
+						<item>CoreImage.framework</item>
+						<item>CoreMedia.framework</item>
+						<item>Foundation.framework</item>
+						<item>MessageUI.framework</item>
+						<item>MobileCoreServices.framework</item>
+						<item>OpenGLES.framework</item>
+						<item>QuartzCore.framework</item>
+						<item>Security.framework</item>
+						<item>Social.framework</item>
+						<item>StoreKit.framework</item>
+						<item>SystemConfiguration.framework</item>
+						<item>Twitter.framework</item>
+						<item>UIKit.framework</item>
 						<item>GameKit.framework</item>
+						<item>Everyplay.framework</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -10133,9 +10154,30 @@
 						<item>T_ONLINE_GC_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
-					<libraryPaths/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/Everyplay</item>
+					</libraryPaths>
 					<libraries>
+						<item>AdSupport.framework</item>
+						<item>AssetsLibrary.framework</item>
+						<item>AudioToolbox.framework</item>
+						<item>AVFoundation.framework</item>
+						<item>CoreGraphics.framework</item>
+						<item>CoreImage.framework</item>
+						<item>CoreMedia.framework</item>
+						<item>Foundation.framework</item>
+						<item>MessageUI.framework</item>
+						<item>MobileCoreServices.framework</item>
+						<item>OpenGLES.framework</item>
+						<item>QuartzCore.framework</item>
+						<item>Security.framework</item>
+						<item>Social.framework</item>
+						<item>StoreKit.framework</item>
+						<item>SystemConfiguration.framework</item>
+						<item>Twitter.framework</item>
+						<item>UIKit.framework</item>
 						<item>GameKit.framework</item>
+						<item>Everyplay.framework</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -10153,9 +10195,30 @@
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
-					<libraryPaths/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/Everyplay</item>
+					</libraryPaths>
 					<libraries>
+						<item>AdSupport.framework</item>
+						<item>AssetsLibrary.framework</item>
+						<item>AudioToolbox.framework</item>
+						<item>AVFoundation.framework</item>
+						<item>CoreGraphics.framework</item>
+						<item>CoreImage.framework</item>
+						<item>CoreMedia.framework</item>
+						<item>Foundation.framework</item>
+						<item>MessageUI.framework</item>
+						<item>MobileCoreServices.framework</item>
+						<item>OpenGLES.framework</item>
+						<item>QuartzCore.framework</item>
+						<item>Security.framework</item>
+						<item>Social.framework</item>
+						<item>StoreKit.framework</item>
+						<item>SystemConfiguration.framework</item>
+						<item>Twitter.framework</item>
+						<item>UIKit.framework</item>
 						<item>GameKit.framework</item>
+						<item>Everyplay.framework</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -10173,9 +10236,30 @@
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
-					<libraryPaths/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/Everyplay</item>
+					</libraryPaths>
 					<libraries>
+						<item>AdSupport.framework</item>
+						<item>AssetsLibrary.framework</item>
+						<item>AudioToolbox.framework</item>
+						<item>AVFoundation.framework</item>
+						<item>CoreGraphics.framework</item>
+						<item>CoreImage.framework</item>
+						<item>CoreMedia.framework</item>
+						<item>Foundation.framework</item>
+						<item>MessageUI.framework</item>
+						<item>MobileCoreServices.framework</item>
+						<item>OpenGLES.framework</item>
+						<item>QuartzCore.framework</item>
+						<item>Security.framework</item>
+						<item>Social.framework</item>
+						<item>StoreKit.framework</item>
+						<item>SystemConfiguration.framework</item>
+						<item>Twitter.framework</item>
+						<item>UIKit.framework</item>
 						<item>GameKit.framework</item>
+						<item>Everyplay.framework</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
