@@ -29,17 +29,24 @@ echo Downloading Win64...
 %TRAKTOR_HOME%\bin\win32\HttpGet %BUILD_SERVER%/guestAuth/repository/downloadAll/Traktor_Win64/.lastFinished/artifacts.zip Traktor_Win64.zip
 
 
+:: Ensure old binaries folder is cleaned.
+
+echo Preparing...
+
+rmdir /s /q "%TRAKTOR_HOME%\bin\latest"
+
+
 :: Unzip into binaries folder.
 
 echo Decompressing...
 
-%TRAKTOR_HOME%\bin\win32\7za x -y -o"%TRAKTOR_HOME%\bin\latest2\android" Traktor_Android.zip
-%TRAKTOR_HOME%\bin\win32\7za x -y -o"%TRAKTOR_HOME%\bin\latest2\ios" Traktor_IOS.zip
-%TRAKTOR_HOME%\bin\win32\7za x -y -o"%TRAKTOR_HOME%\bin\latest2\linux" Traktor_LinuxX86.zip
-%TRAKTOR_HOME%\bin\win32\7za x -y -o"%TRAKTOR_HOME%\bin\latest2\osx" Traktor_OSX.zip
-%TRAKTOR_HOME%\bin\win32\7za x -y -o"%TRAKTOR_HOME%\bin\latest2\pnacl" Traktor_PNaCl.zip
-%TRAKTOR_HOME%\bin\win32\7za x -y -o"%TRAKTOR_HOME%\bin\latest2\win32" Traktor_Win32.zip
-%TRAKTOR_HOME%\bin\win32\7za x -y -o"%TRAKTOR_HOME%\bin\latest2\win64" Traktor_Win64.zip
+%TRAKTOR_HOME%\bin\win32\7za x -y -o"%TRAKTOR_HOME%\bin\latest\android" Traktor_Android.zip
+%TRAKTOR_HOME%\bin\win32\7za x -y -o"%TRAKTOR_HOME%\bin\latest\ios" Traktor_IOS.zip
+%TRAKTOR_HOME%\bin\win32\7za x -y -o"%TRAKTOR_HOME%\bin\latest\linux" Traktor_LinuxX86.zip
+%TRAKTOR_HOME%\bin\win32\7za x -y -o"%TRAKTOR_HOME%\bin\latest\osx" Traktor_OSX.zip
+%TRAKTOR_HOME%\bin\win32\7za x -y -o"%TRAKTOR_HOME%\bin\latest\pnacl" Traktor_PNaCl.zip
+%TRAKTOR_HOME%\bin\win32\7za x -y -o"%TRAKTOR_HOME%\bin\latest\win32" Traktor_Win32.zip
+%TRAKTOR_HOME%\bin\win32\7za x -y -o"%TRAKTOR_HOME%\bin\latest\win64" Traktor_Win64.zip
 
 
 :: Cleanup
