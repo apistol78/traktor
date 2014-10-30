@@ -112,13 +112,21 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.online.GcVideoSharingEveryplay", GcVideoSharing
 
 bool GcVideoSharingEveryplay::create(const GcGameConfiguration& configuration)
 {
-	s_callback = [[EveryplayCallback alloc] init];
+	@try
+	{
+		[Everyplay
+			setClientId: @"6a5a429635aac0766f5edeceade6f93d8facada4" //makeNSString(configuration.m_sharingClientId)
+			clientSecret: @"44e5c52b03df64685a36b77ae3c78d495c1e7f80" //makeNSString(configuration.m_sharingClientSecret)
+			redirectURI: @"https://m.everyplay.com/auth" //makeNSString(configuration.m_sharingRedirectURI)
+		];
+	}
+	@catch (NSException* exception)
+	{
+		log::error << L"Unable to initialize Everyplay; incorrect configuration." << Endl;
+		return false;
+	}
 
-	[Everyplay
-		setClientId: makeNSString(configuration.m_sharingClientId)
-		clientSecret: makeNSString(configuration.m_sharingClientSecret)
-		redirectURI: makeNSString(configuration.m_sharingRedirectURI)
-	];
+	s_callback = [[EveryplayCallback alloc] init];
 
 	UIViewController* rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
 	[Everyplay initWithDelegate: s_callback andParentViewController: rootViewController];
@@ -128,19 +136,30 @@ bool GcVideoSharingEveryplay::create(const GcGameConfiguration& configuration)
 
 bool GcVideoSharingEveryplay::beginCapture(int32_t duration)
 {
-	[[[Everyplay sharedInstance] capture] startRecording];
-	return true;
+	if (s_callback)
+	{
+		[[[Everyplay sharedInstance] capture] startRecording];
+		return true;
+	}
+	else
+		return false;
 }
 
 void GcVideoSharingEveryplay::endCapture()
 {
-	[[[Everyplay sharedInstance] capture] stopRecording];
+	if (s_callback)
+		[[[Everyplay sharedInstance] capture] stopRecording];
 }
 
 bool GcVideoSharingEveryplay::showShareUI()
 {
-	[[Everyplay sharedInstance] showEveryplaySharingModal];
-	return true;
+	if (s_callback)
+	{
+		[[Everyplay sharedInstance] showEveryplaySharingModal];
+		return true;
+	}
+	else
+		return false;
 }
 
 	}
