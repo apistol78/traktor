@@ -33,8 +33,8 @@ if [ $CONFIG == "both" ] || [ $CONFIG == "release" ] ; then
 	popd
 
 	# Copy 3rd-party frameworks.
-	cp -r $TRAKTOR_HOME/3rdp/Everyplay/Everyplay.bundle bin/latest/ios/releasestatic/
-	cp -r $TRAKTOR_HOME/3rdp/Everyplay/Everyplay.framework bin/latest/ios/releasestatic/
+	cp -R -f $TRAKTOR_HOME/3rdp/Everyplay/Everyplay.bundle bin/latest/ios/releasestatic/
+	cp -R -f $TRAKTOR_HOME/3rdp/Everyplay/Everyplay.framework bin/latest/ios/releasestatic/
 
 fi
 
@@ -64,7 +64,7 @@ if [ $CONFIG == "both" ] || [ $CONFIG == "debug" ] ; then
 	popd
 
 	# Copy 3rd-party frameworks.
-	cp -r $TRAKTOR_HOME/3rdp/Everyplay/Everyplay.bundle bin/latest/ios/debugstatic/
-	cp -r $TRAKTOR_HOME/3rdp/Everyplay/Everyplay.framework bin/latest/ios/debugstatic/
+	cp -R -f $TRAKTOR_HOME/3rdp/Everyplay/Everyplay.bundle bin/latest/ios/debugstatic/
+	cp -R -f $TRAKTOR_HOME/3rdp/Everyplay/Everyplay.framework bin/latest/ios/debugstatic/
 
 fi
