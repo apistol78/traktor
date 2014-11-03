@@ -62,6 +62,8 @@ public:
 
 	world::IEntityEventInstance* raiseEvent(const std::wstring& eventId);
 
+	world::IEntityEventInstance* raiseEvent(const std::wstring& eventId, const Transform& Toffset);
+
 	void setTag(const std::wstring& tag) { m_tag = tag; }
 
 	const std::wstring& getTag() const { return m_tag; }
