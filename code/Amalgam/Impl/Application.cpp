@@ -139,7 +139,7 @@ bool Application::create(
 	{
 		T_DEBUG(L"Creating online server...");
 		m_onlineServer = new OnlineServer();
-		if (!m_onlineServer->create(settings, m_database))
+		if (!m_onlineServer->create(defaultSettings, settings, m_database))
 			return false;
 	}
 
@@ -148,14 +148,14 @@ bool Application::create(
 	if (nativeWindowHandle)
 	{
 		Ref< RenderServerEmbedded > renderServer = new RenderServerEmbedded(m_targetManagerConnection ? m_targetManagerConnection->getTransport() : 0);
-		if (!renderServer->create(settings, nativeHandle, nativeWindowHandle))
+		if (!renderServer->create(defaultSettings, settings, nativeHandle, nativeWindowHandle))
 			return false;
 		m_renderServer = renderServer;
 	}
 	else
 	{
 		Ref< RenderServerDefault > renderServer = new RenderServerDefault(m_targetManagerConnection ? m_targetManagerConnection->getTransport() : 0);
-		if (!renderServer->create(settings, nativeHandle))
+		if (!renderServer->create(defaultSettings, settings, nativeHandle))
 			return false;
 		m_renderServer = renderServer;
 	}
@@ -187,7 +187,7 @@ bool Application::create(
 	{
 		T_DEBUG(L"Creating physics server...");
 		m_physicsServer = new PhysicsServer();
-		if (!m_physicsServer->create(settings, c_simulationDeltaTime))
+		if (!m_physicsServer->create(defaultSettings, settings, c_simulationDeltaTime))
 			return false;
 	}
 
@@ -202,12 +202,12 @@ bool Application::create(
 
 		if ((attachDebugger || attachProfiler) && m_targetManagerConnection)
 		{
-			if (!m_scriptServer->create(settings, attachDebugger, attachProfiler, m_targetManagerConnection->getTransport()))
+			if (!m_scriptServer->create(defaultSettings, settings, attachDebugger, attachProfiler, m_targetManagerConnection->getTransport()))
 				return false;
 		}
 		else
 		{
-			if (!m_scriptServer->create(settings, false, false, 0))
+			if (!m_scriptServer->create(defaultSettings, settings, false, false, 0))
 				return false;
 		}
 	}
@@ -215,7 +215,7 @@ bool Application::create(
 	// World
 	T_DEBUG(L"Creating world server...");
 	m_worldServer = new WorldServer();
-	if (!m_worldServer->create(settings, m_renderServer, m_resourceServer))
+	if (!m_worldServer->create(defaultSettings, settings, m_renderServer, m_resourceServer))
 		return false;
 
 	// Audio

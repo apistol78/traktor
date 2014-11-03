@@ -147,9 +147,9 @@ RenderServerDefault::RenderServerDefault(net::BidirectionalObjectTransport* tran
 {
 }
 
-bool RenderServerDefault::create(PropertyGroup* settings, void* nativeHandle)
+bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyGroup* settings, void* nativeHandle)
 {
-	std::wstring renderType = settings->getProperty< PropertyString >(L"Render.Type");
+	std::wstring renderType = defaultSettings->getProperty< PropertyString >(L"Render.Type");
 	std::wstring captureRenderType = settings->getProperty< PropertyString >(L"Render.CaptureType");
 
 	Ref< render::IRenderSystem > renderSystem = loadAndInstantiate< render::IRenderSystem >(renderType);

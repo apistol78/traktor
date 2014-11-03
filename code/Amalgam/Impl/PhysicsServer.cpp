@@ -25,9 +25,9 @@ const float c_timeScale = 1.25f;	//< Make simulation 25% faster than normal; emp
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.PhysicsServer", PhysicsServer, IPhysicsServer)
 
-bool PhysicsServer::create(const PropertyGroup* settings, float simulationDeltaTime)
+bool PhysicsServer::create(const PropertyGroup* defaultSettings, const PropertyGroup* settings, float simulationDeltaTime)
 {
-	std::wstring physicsType = settings->getProperty< PropertyString >(L"Physics.Type");
+	std::wstring physicsType = defaultSettings->getProperty< PropertyString >(L"Physics.Type");
 	float timeScale = settings->getProperty< PropertyFloat >(L"Physics.TimeScale", 1.0f);
 
 	Ref< physics::PhysicsManager > physicsManager = loadAndInstantiate< physics::PhysicsManager >(physicsType);

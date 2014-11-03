@@ -15,7 +15,7 @@ class RenderServerDefault : public RenderServer
 public:
 	RenderServerDefault(net::BidirectionalObjectTransport* transport);
 
-	bool create(PropertyGroup* settings, void* nativeHandle);
+	bool create(const PropertyGroup* defaultSettings, PropertyGroup* settings, void* nativeHandle);
 
 	virtual void destroy();
 

@@ -29,9 +29,9 @@ ScriptServer::ScriptServer()
 {
 }
 
-bool ScriptServer::create(const PropertyGroup* settings, bool debugger, bool profiler, net::BidirectionalObjectTransport* transport)
+bool ScriptServer::create(const PropertyGroup* defaultSettings, const PropertyGroup* settings, bool debugger, bool profiler, net::BidirectionalObjectTransport* transport)
 {
-	std::wstring scriptType = settings->getProperty< PropertyString >(L"Script.Type");
+	std::wstring scriptType = defaultSettings->getProperty< PropertyString >(L"Script.Type");
 
 	m_scriptManager = loadAndInstantiate< script::IScriptManager >(scriptType);
 	if (!m_scriptManager)

@@ -23,7 +23,7 @@ class OnlineServer : public IOnlineServer
 	T_RTTI_CLASS;
 
 public:
-	bool create(const PropertyGroup* settings, db::Database* db);
+	bool create(const PropertyGroup* defaultSettings, const PropertyGroup* settings, db::Database* db);
 
 	void destroy();
 
