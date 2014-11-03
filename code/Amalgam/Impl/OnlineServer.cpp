@@ -18,9 +18,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.OnlineServer", OnlineServer, IOnlineServer)
 
-bool OnlineServer::create(const PropertyGroup* settings, db::Database* db)
+bool OnlineServer::create(const PropertyGroup* defaultSettings, const PropertyGroup* settings, db::Database* db)
 {
-	Guid configGuid(settings->getProperty< PropertyString >(L"Online.Config"));
+	Guid configGuid(defaultSettings->getProperty< PropertyString >(L"Online.Config"));
 	if (!configGuid.isValid() || configGuid.isNull())
 	{
 		log::error << L"Online server failed; invalid game guid" << Endl;
@@ -34,7 +34,7 @@ bool OnlineServer::create(const PropertyGroup* settings, db::Database* db)
 		return false;
 	}
 
-	std::wstring providerType = settings->getProperty< PropertyString >(L"Online.Type");
+	std::wstring providerType = defaultSettings->getProperty< PropertyString >(L"Online.Type");
 
 	Ref< online::ISessionManagerProvider > sessionManagerProvider = loadAndInstantiate< online::ISessionManagerProvider >(providerType);
 	if (!sessionManagerProvider)
@@ -43,7 +43,7 @@ bool OnlineServer::create(const PropertyGroup* settings, db::Database* db)
 		return false;
 	}
 
-	bool downloadableContent = settings->getProperty< PropertyBoolean >(L"Online.DownloadableContent", true);
+	bool downloadableContent = defaultSettings->getProperty< PropertyBoolean >(L"Online.DownloadableContent", true);
 
 	Ref< online::SessionManager > sessionManager = new online::SessionManager();
 	if (!sessionManager->create(sessionManagerProvider, gameConfiguration, downloadableContent))

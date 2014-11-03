@@ -18,7 +18,7 @@ class PhysicsServer : public IPhysicsServer
 	T_RTTI_CLASS;
 
 public:
-	bool create(const PropertyGroup* settings, float simulationDeltaTime);
+	bool create(const PropertyGroup* defaultSettings, const PropertyGroup* settings, float simulationDeltaTime);
 
 	void destroy();
 

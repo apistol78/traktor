@@ -75,9 +75,9 @@ RenderServerEmbedded::RenderServerEmbedded(net::BidirectionalObjectTransport* tr
 {
 }
 
-bool RenderServerEmbedded::create(PropertyGroup* settings, void* nativeHandle, void* nativeWindowHandle)
+bool RenderServerEmbedded::create(const PropertyGroup* defaultSettings, PropertyGroup* settings, void* nativeHandle, void* nativeWindowHandle)
 {
-	std::wstring renderType = settings->getProperty< PropertyString >(L"Render.Type");
+	std::wstring renderType = defaultSettings->getProperty< PropertyString >(L"Render.Type");
 	std::wstring captureRenderType = settings->getProperty< PropertyString >(L"Render.CaptureType");
 
 	Ref< render::IRenderSystem > renderSystem = loadAndInstantiate< render::IRenderSystem >(renderType);

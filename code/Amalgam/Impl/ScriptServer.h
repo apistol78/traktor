@@ -35,7 +35,7 @@ class ScriptServer
 public:
 	ScriptServer();
 
-	bool create(const PropertyGroup* settings, bool debugger, bool profiler, net::BidirectionalObjectTransport* transport);
+	bool create(const PropertyGroup* defaultSettings, const PropertyGroup* settings, bool debugger, bool profiler, net::BidirectionalObjectTransport* transport);
 
 	void destroy();
 

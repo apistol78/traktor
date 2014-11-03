@@ -38,7 +38,7 @@ class WorldServer : public IWorldServer
 public:
 	WorldServer();
 
-	bool create(const PropertyGroup* settings, IRenderServer* renderServer, IResourceServer* resourceServer);
+	bool create(const PropertyGroup* defaultSettings, const PropertyGroup* settings, IRenderServer* renderServer, IResourceServer* resourceServer);
 
 	void destroy();
 

@@ -88,9 +88,9 @@ WorldServer::WorldServer()
 {
 }
 
-bool WorldServer::create(const PropertyGroup* settings, IRenderServer* renderServer, IResourceServer* resourceServer)
+bool WorldServer::create(const PropertyGroup* defaultSettings, const PropertyGroup* settings, IRenderServer* renderServer, IResourceServer* resourceServer)
 {
-	std::wstring worldType = settings->getProperty< PropertyString >(L"World.Type");
+	std::wstring worldType = defaultSettings->getProperty< PropertyString >(L"World.Type");
 
 	m_worldType = TypeInfo::find(worldType);
 	if (!m_worldType)
