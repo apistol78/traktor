@@ -121,6 +121,16 @@ Ref< script::BoxedVector2 > WorldLayer_viewToScreen(WorldLayer* self, const Vect
 		return 0;
 }
 
+world::IEntityEventInstance* GameEntity_raiseEvent_1(GameEntity* self, const std::wstring& eventId)
+{
+	return self->raiseEvent(eventId);
+}
+
+world::IEntityEventInstance* GameEntity_raiseEvent_2(GameEntity* self, const std::wstring& eventId, const Transform& Toffset)
+{
+	return self->raiseEvent(eventId, Toffset);
+}
+
 	}
 
 void registerAmalgamClasses(script::IScriptManager* scriptManager)
@@ -292,7 +302,8 @@ void registerAmalgamClasses(script::IScriptManager* scriptManager)
 	scriptManager->registerClass(classGameEntityData);
 
 	Ref< script::AutoScriptClass< GameEntity > > classGameEntity = new script::AutoScriptClass< GameEntity >();
-	classGameEntity->addMethod("raiseEvent", &GameEntity::raiseEvent);
+	classGameEntity->addMethod("raiseEvent", &GameEntity_raiseEvent_1);
+	classGameEntity->addMethod("raiseEvent", &GameEntity_raiseEvent_2);
 	classGameEntity->addMethod("setTag", &GameEntity::setTag);
 	classGameEntity->addMethod("getTag", &GameEntity::getTag);
 	classGameEntity->addMethod("setObject", &GameEntity::setObject);

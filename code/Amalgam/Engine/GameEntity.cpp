@@ -68,5 +68,13 @@ world::IEntityEventInstance* GameEntity::raiseEvent(const std::wstring& eventId)
 		return 0;
 }
 
+world::IEntityEventInstance* GameEntity::raiseEvent(const std::wstring& eventId, const Transform& Toffset)
+{
+	if (m_eventManager)
+		return m_eventManager->raise(m_eventSet, eventId, this, Toffset);
+	else
+		return 0;
+}
+
 	}
 }
