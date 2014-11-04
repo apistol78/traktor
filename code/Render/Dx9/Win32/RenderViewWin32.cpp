@@ -299,6 +299,52 @@ void RenderViewWin32::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer,
 
 void RenderViewWin32::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
 {
+	T_ASSERT (is_a< VertexBufferDx9 >(vertexBuffer));
+	T_ASSERT (indexBuffer == 0 || is_a< IndexBufferDx9 >(indexBuffer));
+	T_ASSERT (is_a< ProgramWin32 >(program));
+	T_ASSERT (!m_renderStateStack.empty());
+
+	VertexBufferDx9* vertexBufferDx9 = static_cast< VertexBufferDx9* >(vertexBuffer);
+	IndexBufferDx9* indexBufferDx9 = static_cast< IndexBufferDx9* >(indexBuffer);
+	ProgramWin32* programDx9 = static_cast< ProgramWin32* >(program);
+
+	if (m_targetDirty)
+		bindTargets();
+
+	vertexBufferDx9->activate(m_d3dDevice);
+
+	IndexBufferDx9::activate(m_d3dDevice, indexBufferDx9);
+
+	for (uint32_t i = 0; i < instanceCount; ++i)
+	{
+		programDx9->setFloatParameter(getParameterHandle(L"__private__instanceID"), float(i));
+
+		if (!programDx9->activate())
+			break;
+
+		if (primitives.indexed)
+		{
+			m_d3dDevice->DrawIndexedPrimitive(
+				c_d3dPrimitiveType[primitives.type],
+				0,
+				primitives.minIndex,
+				primitives.maxIndex - primitives.minIndex,
+				primitives.offset,
+				primitives.count
+			);
+		}
+		else
+		{
+			m_d3dDevice->DrawPrimitive(
+				c_d3dPrimitiveType[primitives.type],
+				primitives.offset,
+				primitives.count
+			);
+		}
+	}
+
+	m_drawCalls++;
+	m_primitiveCount += primitives.count;
 }
 
 void RenderViewWin32::end()

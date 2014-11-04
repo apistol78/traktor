@@ -384,6 +384,25 @@ bool emitIndexedUniform(HlslContext& cx, IndexedUniform* node)
 	return true;
 }
 
+bool emitInstance(HlslContext& cx, Instance* node)
+{
+	HlslVariable* out = cx.getShader().createVariable(
+		node->findOutputPin(L"Output"),
+		L"__private__instanceID",
+		HtFloat
+	);
+
+	const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
+	if (uniforms.find(L"__private__instanceID") == uniforms.end())
+	{
+		uint32_t registerIndex = cx.getShader().addUniform(L"__private__instanceID", HtFloat, 1);
+		StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtUniform);
+		fu << L"uniform float __private__instanceID : register(c" << registerIndex << L");" << Endl;
+	}
+
+	return true;
+}
+
 bool emitInterpolator(HlslContext& cx, Interpolator* node)
 {
 	if (!cx.inPixel())
@@ -514,6 +533,103 @@ bool emitIterate(HlslContext& cx, Iterate* node)
 	// output stream.
 	f << fs.str();
 	f << out->getName() << L" = " << inputName << L";" << Endl;
+
+	f << DecreaseIndent;
+	f << L"}" << Endl;	
+
+	return true;
+}
+
+bool emitIterate2d(HlslContext& cx, Iterate2d* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
+	std::wstring inputName;
+
+	// Create iterator variables.
+	HlslVariable* X = cx.emitOutput(node, L"X", HtFloat);
+	T_ASSERT (X);
+
+	HlslVariable* Y = cx.emitOutput(node, L"Y", HtFloat);
+	T_ASSERT (Y);
+
+	// Create void output variable; change type later when we know
+	// the type of the input branch.
+	HlslVariable* out = cx.emitOutput(node, L"Output", HtVoid);
+	T_ASSERT (out);
+
+	// Find non-dependent, external, output pins from input branch;
+	// we emit those first in order to have them evaluated
+	// outside of iteration.
+	std::vector< const OutputPin* > outputPins;
+	std::vector< const OutputPin* > dependentOutputPins(3);
+	dependentOutputPins[0] = node->findOutputPin(L"X");
+	dependentOutputPins[1] = node->findOutputPin(L"Y");
+	dependentOutputPins[2] = node->findOutputPin(L"Output");
+	cx.findNonDependentOutputs(node, L"Input", dependentOutputPins, outputPins);
+	for (std::vector< const OutputPin* >::const_iterator i = outputPins.begin(); i != outputPins.end(); ++i)
+		cx.emit((*i)->getNode());
+
+	// Write input branch in a temporary output stream.
+	StringOutputStream fs;
+	cx.getShader().pushOutputStream(HlslShader::BtBody, &fs);
+	cx.getShader().pushScope();
+
+	HlslVariable* input = cx.emitInput(node, L"Input");
+	if (!input)
+		return false;
+
+	// Emit post condition if connected; break iteration if condition is false.
+	HlslVariable* condition = cx.emitInput(node, L"Condition");
+	if (condition)
+	{
+		fs << L"if (!(bool)" << condition->cast(HtFloat) << L")" << Endl;
+		fs << L"\tbreak;" << Endl;
+	}
+
+	inputName = input->getName();
+
+	// Modify output variable; need to have input variable ready as it
+	// will determine output type.
+	out->setType(input->getType());
+
+	cx.getShader().popScope();
+	cx.getShader().popOutputStream(HlslShader::BtBody);
+
+	// As we now know the type of output variable we can safely
+	// initialize it.
+	HlslVariable* initial = cx.emitInput(node, L"Initial");
+	if (initial)
+		assign(f, out) << initial->cast(out->getType()) << L";" << Endl;
+	else
+		assign(f, out) << L"0;" << Endl;
+
+	// Write outer for-loop statement.
+	if (cx.inPixel())
+		f << L"[unroll]" << Endl;
+	f << L"for (float " << X->getName() << L" = " << node->getFromX() << L"; " << X->getName() << L" <= " << node->getToX() << L"; ++" << X->getName() << L")" << Endl;
+	f << L"{" << Endl;
+	f << IncreaseIndent;
+
+	if (cx.inPixel())
+		f << L"[unroll]" << Endl;
+	f << L"for (float " << Y->getName() << L" = " << node->getFromY() << L"; " << Y->getName() << L" <= " << node->getToY() << L"; ++" << Y->getName() << L")" << Endl;
+	f << L"{" << Endl;
+	f << IncreaseIndent;
+
+	// Insert input branch here; it's already been generated in a temporary
+	// output stream.
+	f << fs.str();
+	f << out->getName() << L" = " << inputName << L";" << Endl;
+
+	f << DecreaseIndent;
+	f << L"}" << Endl;	
+
+	// Emit outer loop post condition.
+	if (condition)
+	{
+		fs << L"if (!(bool)" << condition->cast(HtFloat) << L")" << Endl;
+		fs << L"\tbreak;" << Endl;
+	}
 
 	f << DecreaseIndent;
 	f << L"}" << Endl;	
@@ -1827,8 +1943,10 @@ HlslEmitter::HlslEmitter()
 	m_emitters[&type_of< Fraction >()] = new EmitterCast< Fraction >(emitFraction);
 	m_emitters[&type_of< FragmentPosition >()] = new EmitterCast< FragmentPosition >(emitFragmentPosition);
 	m_emitters[&type_of< IndexedUniform >()] = new EmitterCast< IndexedUniform >(emitIndexedUniform);
+	m_emitters[&type_of< Instance >()] = new EmitterCast< Instance >(emitInstance);
 	m_emitters[&type_of< Interpolator >()] = new EmitterCast< Interpolator >(emitInterpolator);
 	m_emitters[&type_of< Iterate >()] = new EmitterCast< Iterate >(emitIterate);
+	m_emitters[&type_of< Iterate2d >()] = new EmitterCast< Iterate2d >(emitIterate2d);
 	m_emitters[&type_of< Length >()] = new EmitterCast< Length >(emitLength);
 	m_emitters[&type_of< Lerp >()] = new EmitterCast< Lerp >(emitLerp);
 	m_emitters[&type_of< Log >()] = new EmitterCast< Log >(emitLog);
