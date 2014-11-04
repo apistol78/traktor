@@ -26,6 +26,8 @@
 				<item>Traktor.Resource.dll</item>
 				<item>Traktor.Render.dll</item>
 				<item>Traktor.Render.OpenGL.ES2.dll</item>
+				<item>Extern.angle.libEGL.dll</item>
+				<item>Extern.angle.libGLESv2.dll</item>
 			</deployFiles>
 		</item>
 		<item>
