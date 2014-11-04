@@ -5,7 +5,7 @@
 #include "Core/Misc/TString.h"
 #include "Net/SocketAddressIPv4.h"
 
-#if defined(_WIN32) && !defined(WINCE)
+#if defined(_WIN32) && !defined(WINCE) && !defined(_XBOX)
 #	include <ws2ipdef.h>
 #	include <iphlpapi.h>
 #endif
@@ -126,7 +126,7 @@ const sockaddr_in& SocketAddressIPv4::getSockAddr() const
 
 bool SocketAddressIPv4::getInterfaces(std::list< Interface >& outInterfaces)
 {
-#if defined(_WIN32) && !defined(WINCE)
+#if defined(_WIN32) && !defined(WINCE) && !defined(_XBOX)
 
 	ULONG bufLen = 0;
 	GetAdaptersInfo(0, &bufLen);
@@ -161,7 +161,7 @@ bool SocketAddressIPv4::getInterfaces(std::list< Interface >& outInterfaces)
 		outInterfaces.push_back(itf);
 	}
 
-#elif defined(_WIN32) || TARGET_OS_MAC
+#elif (defined(_WIN32) && !defined(_XBOX)) || TARGET_OS_MAC
 
 	char hostName[200];
 	if (gethostname(hostName, sizeof(hostName)) == 0)

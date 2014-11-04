@@ -217,7 +217,7 @@ void TypeInfo::findAllOf(std::set< const TypeInfo* >& outTypes, bool inclusive) 
 
 void __forceLinkReference(const TypeInfo& type)
 {
-#if !defined(__EMSCRIPTEN__)
+#if !defined(__EMSCRIPTEN__) && !defined(_XBOX)
 	wchar_t* dummy = static_cast< wchar_t* >(alloca(256 * sizeof(wchar_t)));
 #	if defined(_WIN32)
 	wcscpy_s(dummy, 256, type.getName());

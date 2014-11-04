@@ -8,17 +8,7 @@
 #include "Core/Misc/ComRef.h"
 #include "Render/IProgram.h"
 #include "Render/Types.h"
-#include "Render/Dx9/Unmanaged.h"
 #include "Render/Dx9/StateBlockDx9.h"
-#include "Render/Dx9/ParameterMap.h"
-
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_RENDER_DX9_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
-#else
-#define T_DLLCLASS T_DLLIMPORT
-#endif
 
 namespace traktor
 {
@@ -34,9 +24,7 @@ class ParameterCache;
 /*!
  * \ingroup DX9
  */
-class T_DLLCLASS ProgramXbox360
-:	public IProgram
-,	public Unmanaged
+class ProgramXbox360 : public IProgram
 {
 	T_RTTI_CLASS;
 
@@ -56,7 +44,7 @@ public:
 		uint16_t texture;
 	};
 
-	ProgramXbox360(UnmanagedListener* unmanagedListener, ContextDx9* context, ParameterCache* parameterCache);
+	ProgramXbox360(ParameterCache* parameterCache);
 
 	virtual ~ProgramXbox360();
 
@@ -81,7 +69,7 @@ public:
 
 	virtual void setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length);
 
-	virtual void setSamplerTexture(handle_t handle, ITexture* texture);
+	virtual void setTextureParameter(handle_t handle, ITexture* texture);
 
 	virtual void setStencilReference(uint32_t stencilReference);
 
@@ -102,7 +90,6 @@ protected:
 private:
 	static ProgramXbox360* ms_activeProgram;
 
-	Ref< ContextDx9 > m_context;
 	ComRef< IDirect3DDevice9 > m_d3dDevice;
 	ComRef< IDirect3DVertexShader9 > m_d3dVertexShader;
 	ComRef< IDirect3DPixelShader9 > m_d3dPixelShader;
@@ -112,7 +99,6 @@ private:
 	std::vector< Sampler > m_vertexSamplers;
 	std::vector< Sampler > m_pixelSamplers;
 	StateBlockDx9 m_state;
-	ParameterMap m_parameterMap;
 	std::vector< float > m_uniformFloatData;
 	RefArray< ITexture > m_samplerTextures;
 	bool m_dirty;

@@ -1,15 +1,13 @@
+#include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
+#include "Render/Dx9/CubeTextureDx9.h"
+#include "Render/Dx9/ParameterCache.h"
 #include "Render/Dx9/Platform.h"
+#include "Render/Dx9/ProgramResourceDx9.h"
+#include "Render/Dx9/SimpleTextureDx9.h"
+#include "Render/Dx9/VolumeTextureDx9.h"
 #include "Render/Dx9/Xbox360/ProgramXbox360.h"
 #include "Render/Dx9/Xbox360/RenderTargetXbox360.h"
-#include "Render/Dx9/ContextDx9.h"
-#include "Render/Dx9/ProgramResourceDx9.h"
-#include "Render/Dx9/ParameterCache.h"
-#include "Render/Dx9/TextureBaseDx9.h"
-#include "Render/Dx9/SimpleTextureDx9.h"
-#include "Render/Dx9/CubeTextureDx9.h"
-#include "Render/Dx9/VolumeTextureDx9.h"
-#include "Core/Misc/TString.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -67,7 +65,7 @@ IDirect3DBaseTexture9* getD3DTexture(ITexture* texture)
 {
 	if (!texture)
 		return 0;
-
+/*
 	if (is_a< SimpleTextureDx9 >(texture))
 		return static_cast< TextureBaseDx9* >(static_cast< SimpleTextureDx9* >(texture))->getD3DBaseTexture();
 	if (is_a< CubeTextureDx9 >(texture))
@@ -76,23 +74,20 @@ IDirect3DBaseTexture9* getD3DTexture(ITexture* texture)
 		return static_cast< TextureBaseDx9* >(static_cast< VolumeTextureDx9* >(texture))->getD3DBaseTexture();
 	if (is_a< RenderTargetXbox360 >(texture))
 		return static_cast< TextureBaseDx9* >(static_cast< RenderTargetXbox360* >(texture))->getD3DBaseTexture();
-
+*/
 	return 0;
 }
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramXbox360", ProgramXbox360, Shader)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramXbox360", ProgramXbox360, IProgram)
 
 ProgramXbox360* ProgramXbox360::ms_activeProgram = 0;
 
-ProgramXbox360::ProgramXbox360(UnmanagedListener* unmanagedListener, ContextDx9* context, ParameterCache* parameterCache)
-:	Unmanaged(unmanagedListener)
-,	m_context(context)
-,	m_parameterCache(parameterCache)
+ProgramXbox360::ProgramXbox360(ParameterCache* parameterCache)
+:	m_parameterCache(parameterCache)
 ,	m_dirty(true)
 {
-	Unmanaged::addToListener();
 }
 
 ProgramXbox360::~ProgramXbox360()
@@ -140,69 +135,69 @@ bool ProgramXbox360::create(
 	collectParameters(d3dVertexConstantTable, vertexUniformMap, vertexSamplerMap);
 	collectParameters(d3dPixelConstantTable, pixelUniformMap, pixelSamplerMap);
 
-	// Build parameter map and allocate uniform data.
-	for (std::map< handle_t, Uniform >::iterator j = vertexUniformMap.begin(); j != vertexUniformMap.end(); ++j)
-	{
-		uint32_t index = m_parameterMap.get(j->first);
-		if (index != ~0U)
-			j->second.offset = index;
-		else
-		{
-			uint16_t offset = uint32_t(m_uniformFloatData.size());
-			j->second.offset = offset;
-			m_parameterMap.set(j->first, offset);
-			m_uniformFloatData.resize(offset + j->second.length);
-		}
-		m_vertexUniforms.push_back(j->second);
-	}
+	//// Build parameter map and allocate uniform data.
+	//for (std::map< handle_t, Uniform >::iterator j = vertexUniformMap.begin(); j != vertexUniformMap.end(); ++j)
+	//{
+	//	uint32_t index = m_parameterMap.get(j->first);
+	//	if (index != ~0U)
+	//		j->second.offset = index;
+	//	else
+	//	{
+	//		uint16_t offset = uint32_t(m_uniformFloatData.size());
+	//		j->second.offset = offset;
+	//		m_parameterMap.set(j->first, offset);
+	//		m_uniformFloatData.resize(offset + j->second.length);
+	//	}
+	//	m_vertexUniforms.push_back(j->second);
+	//}
 
-	// Build parameter map and allocate uniform data.
-	for (std::map< handle_t, Uniform >::iterator j = pixelUniformMap.begin(); j != pixelUniformMap.end(); ++j)
-	{
-		uint32_t index = m_parameterMap.get(j->first);
-		if (index != ~0U)
-			j->second.offset = index;
-		else
-		{
-			uint16_t offset = uint32_t(m_uniformFloatData.size());
-			j->second.offset = offset;
-			m_parameterMap.set(j->first, offset);
-			m_uniformFloatData.resize(offset + j->second.length);
-		}
-		m_pixelUniforms.push_back(j->second);
-	}
+	//// Build parameter map and allocate uniform data.
+	//for (std::map< handle_t, Uniform >::iterator j = pixelUniformMap.begin(); j != pixelUniformMap.end(); ++j)
+	//{
+	//	uint32_t index = m_parameterMap.get(j->first);
+	//	if (index != ~0U)
+	//		j->second.offset = index;
+	//	else
+	//	{
+	//		uint16_t offset = uint32_t(m_uniformFloatData.size());
+	//		j->second.offset = offset;
+	//		m_parameterMap.set(j->first, offset);
+	//		m_uniformFloatData.resize(offset + j->second.length);
+	//	}
+	//	m_pixelUniforms.push_back(j->second);
+	//}
 
-	// Build parameter map and texture array.
-	for (std::map< handle_t, Sampler >::iterator j = vertexSamplerMap.begin(); j != vertexSamplerMap.end(); ++j)
-	{
-		uint32_t index = m_parameterMap.get(j->first);
-		if (index != ~0U)
-			j->second.texture = index;
-		else
-		{
-			uint16_t texture = uint16_t(m_samplerTextures.size());
-			j->second.texture = texture;
-			m_parameterMap.set(j->first, texture);
-			m_samplerTextures.resize(texture + 1);
-		}
-		m_vertexSamplers.push_back(j->second);
-	}
+	//// Build parameter map and texture array.
+	//for (std::map< handle_t, Sampler >::iterator j = vertexSamplerMap.begin(); j != vertexSamplerMap.end(); ++j)
+	//{
+	//	uint32_t index = m_parameterMap.get(j->first);
+	//	if (index != ~0U)
+	//		j->second.texture = index;
+	//	else
+	//	{
+	//		uint16_t texture = uint16_t(m_samplerTextures.size());
+	//		j->second.texture = texture;
+	//		m_parameterMap.set(j->first, texture);
+	//		m_samplerTextures.resize(texture + 1);
+	//	}
+	//	m_vertexSamplers.push_back(j->second);
+	//}
 
-	// Build parameter map and texture array.
-	for (std::map< handle_t, Sampler >::iterator j = pixelSamplerMap.begin(); j != pixelSamplerMap.end(); ++j)
-	{
-		uint32_t index = m_parameterMap.get(j->first);
-		if (index != ~0U)
-			j->second.texture = index;
-		else
-		{
-			uint16_t texture = uint16_t(m_samplerTextures.size());
-			j->second.texture = texture;
-			m_parameterMap.set(j->first, texture);
-			m_samplerTextures.resize(texture + 1);
-		}
-		m_pixelSamplers.push_back(j->second);
-	}
+	//// Build parameter map and texture array.
+	//for (std::map< handle_t, Sampler >::iterator j = pixelSamplerMap.begin(); j != pixelSamplerMap.end(); ++j)
+	//{
+	//	uint32_t index = m_parameterMap.get(j->first);
+	//	if (index != ~0U)
+	//		j->second.texture = index;
+	//	else
+	//	{
+	//		uint16_t texture = uint16_t(m_samplerTextures.size());
+	//		j->second.texture = texture;
+	//		m_parameterMap.set(j->first, texture);
+	//		m_samplerTextures.resize(texture + 1);
+	//	}
+	//	m_pixelSamplers.push_back(j->second);
+	//}
 
 	m_state = resource->m_state;
 	m_d3dDevice = d3dDevice;
@@ -253,28 +248,30 @@ void ProgramXbox360::destroy()
 	m_context->releaseComRef(m_d3dVertexShader);
 	m_context->releaseComRef(m_d3dPixelShader);
 #endif
-
-	Unmanaged::removeFromListener();
 }
 
 void ProgramXbox360::setFloatParameter(handle_t handle, float param)
 {
+	/*
 	uint32_t index = m_parameterMap.get(handle);
 	if (index == ~0U || m_uniformFloatData[index] == param)
 		return;
 
 	m_uniformFloatData[index] = param;
 	m_dirty = true;
+	*/
 }
 
 void ProgramXbox360::setFloatArrayParameter(handle_t handle, const float* param, int length)
 {
+	/*
 	uint32_t index = m_parameterMap.get(handle);
 	if (index == ~0U)
 		return;
 
 	std::memcpy(&m_uniformFloatData[index], param, length * sizeof(float));
 	m_dirty = true;
+	*/
 }
 
 void ProgramXbox360::setVectorParameter(handle_t handle, const Vector4& param)
@@ -297,14 +294,16 @@ void ProgramXbox360::setMatrixArrayParameter(handle_t handle, const Matrix44* pa
 	setFloatArrayParameter(handle, reinterpret_cast< const float* >(param), length * 16);
 }
 
-void ProgramXbox360::setSamplerTexture(handle_t handle, ITexture* texture)
+void ProgramXbox360::setTextureParameter(handle_t handle, ITexture* texture)
 {
+	/*
 	uint32_t index = m_parameterMap.get(handle);
 	if (index == ~0U || m_samplerTextures[index] == texture)
 		return;
 
 	m_samplerTextures[index] = texture;
 	m_dirty = true;
+	*/
 }
 
 void ProgramXbox360::setStencilReference(uint32_t stencilReference)

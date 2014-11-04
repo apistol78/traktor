@@ -1,7 +1,7 @@
 #include <cstring>
 #include <sstream>
-#include "Net/SocketAddressIPv6.h"
 #include "Core/Misc/TString.h"
+#include "Net/SocketAddressIPv6.h"
 
 namespace traktor
 {
@@ -10,7 +10,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.SocketAddressIPv6", SocketAddressIPv6, SocketAddress)
 
-#if !defined(_PS3) && !defined(__EMSCRIPTEN__) && !defined(__PNACL__)
+#if !defined(_PS3) && !defined(__EMSCRIPTEN__) && !defined(__PNACL__) && !defined(_XBOX)
 
 SocketAddressIPv6::SocketAddressIPv6()
 :	m_info(0)

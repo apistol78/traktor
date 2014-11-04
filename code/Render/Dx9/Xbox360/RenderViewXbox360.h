@@ -4,17 +4,9 @@
 #include <list>
 #include <map>
 #include <stack>
-#include "Render/Dx9/Platform.h"
-#include "Render/IRenderView.h"
 #include "Core/Misc/ComRef.h"
-
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_RENDER_DX9_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
-#else
-#define T_DLLCLASS T_DLLIMPORT
-#endif
+#include "Render/IRenderView.h"
+#include "Render/Dx9/Platform.h"
 
 namespace traktor
 {
@@ -31,13 +23,13 @@ class IndexBufferDx9;
 /*!
  * \ingroup Xbox360
  */
-class T_DLLCLASS RenderViewXbox360 : public IRenderView
+class RenderViewXbox360 : public IRenderView
 {
 	T_RTTI_CLASS;
 
 public:
 	RenderViewXbox360(
-		const RenderViewCreateDesc& createDesc,
+		const RenderViewDefaultDesc& createDesc,
 		RenderSystemXbox360* renderSystem,
 		IDirect3DDevice9* d3dDevice,
 		RenderTargetPool* renderTargetPool,
@@ -48,36 +40,64 @@ public:
 
 	virtual ~RenderViewXbox360();
 
+	virtual bool nextEvent(RenderEvent& outEvent);
+
 	virtual void close();
 
-	virtual void resize(int32_t width, int32_t height);
+	virtual bool reset(const RenderViewDefaultDesc& desc);
+
+	virtual bool reset(int32_t width, int32_t height);
+
+	virtual int getWidth() const;
+
+	virtual int getHeight() const;
+
+	virtual bool isActive() const;
+
+	virtual bool isFullScreen() const;
+
+	virtual void showCursor();
+
+	virtual void hideCursor();
+
+	virtual bool isCursorVisible() const;
+
+	virtual bool setGamma(float gamma);
 
 	virtual void setViewport(const Viewport& viewport);
 
 	virtual Viewport getViewport();
 
-	virtual bool begin();
+	virtual SystemWindow getSystemWindow();
 
-	virtual bool begin(RenderTargetSet* renderTargetSet, int renderTarget, bool keepDepthStencil);
+	virtual bool begin(EyeType eye);
 
-	virtual void clear(uint32_t clearMask, const float color[4], float depth, int32_t stencil);
+	virtual bool begin(RenderTargetSet* renderTargetSet);
 
-	virtual void setVertexBuffer(VertexBuffer* vertexBuffer);
-	
-	virtual void setIndexBuffer(IndexBuffer* indexBuffer);
+	virtual bool begin(RenderTargetSet* renderTargetSet, int renderTarget);
 
-	virtual void setProgram(IProgram* progrma);
-	
-	virtual void draw(const Primitives& primitives);
+	virtual void clear(uint32_t clearMask, const Color4f* colors, float depth, int32_t stencil);
+
+	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives);
+
+	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount);
 
 	virtual void end();
 
 	virtual void present();
 
+	virtual void pushMarker(const char* const marker);
+
+	virtual void popMarker();
+
+	virtual void getStatistics(RenderViewStatistics& outStatistics) const;
+
+	virtual bool getBackBufferContent(void* buffer) const;
+
 	IDirect3DDevice9* getD3DDevice() const { return m_d3dDevice; }
 
 private:
-	RenderViewCreateDesc m_createDesc;
+	RenderViewDefaultDesc m_createDesc;
 	Ref< RenderSystemXbox360 > m_renderSystem;
 	ComRef< IDirect3DDevice9 > m_d3dDevice;
 	Ref< RenderTargetPool > m_renderTargetPool;

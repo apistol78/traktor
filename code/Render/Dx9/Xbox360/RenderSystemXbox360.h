@@ -2,10 +2,9 @@
 #define traktor_render_RenderSystemXbox360_H
 
 #include <list>
-#include "Render/Dx9/Platform.h"
-#include "Render/Dx9/Unmanaged.h"
-#include "Render/IRenderSystem.h"
 #include "Core/Misc/ComRef.h"
+#include "Render/IRenderSystem.h"
+#include "Render/Dx9/Platform.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,41 +19,43 @@ namespace traktor
 	namespace render
 	{
 
-class ContextDx9;
 class ParameterCache;
 class VertexDeclCache;
 class RenderTargetPool;
 class RenderViewXbox360;
+class ResourceManagerDx9;
 
 /*! \brief DirectX 9 (XBOX360) render system.
  * \ingroup Xbox360
  *
  * DX9 render system implementation.
  */
-class T_DLLCLASS RenderSystemXbox360
-:	public IRenderSystem
-,	public UnmanagedListener
+class T_DLLCLASS RenderSystemXbox360 : public IRenderSystem
 {
 	T_RTTI_CLASS;
 
 public:
 	RenderSystemXbox360();
 
-	virtual bool create();
+	virtual bool create(const RenderSystemDesc& desc);
 
 	virtual void destroy();
 
-	virtual int getDisplayModeCount() const;
+	virtual bool reset(const RenderSystemDesc& desc);
+
+	virtual void getInformation(RenderSystemInformation& outInfo) const;
+
+	virtual uint32_t getDisplayModeCount() const;
 	
-	virtual Ref< DisplayMode > getDisplayMode(int index);
+	virtual DisplayMode getDisplayMode(uint32_t index) const;
 	
-	virtual Ref< DisplayMode > getCurrentDisplayMode();
+	virtual DisplayMode getCurrentDisplayMode() const;
 
-	virtual bool handleMessages();
+	virtual float getDisplayAspectRatio() const;
 
-	virtual Ref< IRenderView > createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc);
+	virtual Ref< IRenderView > createRenderView(const RenderViewDefaultDesc& desc);
 
-	virtual Ref< IRenderView > createRenderView(void* windowHandle, const RenderViewCreateDesc& desc);
+	virtual Ref< IRenderView > createRenderView(const RenderViewEmbeddedDesc& desc);
 
 	virtual Ref< VertexBuffer > createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic);
 
@@ -68,18 +69,13 @@ public:
 
 	virtual Ref< RenderTargetSet > createRenderTargetSet(const RenderTargetSetCreateDesc& desc);
 
-	virtual Ref< IProgram > createProgram(const ProgramResource* programResource);
+	virtual Ref< IProgram > createProgram(const ProgramResource* programResource, const wchar_t* const tag);
 
 	virtual Ref< IProgramCompiler > createProgramCompiler() const;
 
-	/*! \name Unmanaged listener. */
-	//@{
+	virtual Ref< ITimeQuery > createTimeQuery() const;
 
-	virtual void addUnmanaged(Unmanaged* unmanaged);
-
-	virtual void removeUnmanaged(Unmanaged* unmanaged);
-
-	//@}
+	virtual void getStatistics(RenderSystemStatistics& outStatistics) const;
 
 	/*! \name Direct3D interface. */
 	//@{
@@ -89,9 +85,9 @@ public:
 	//@}
 
 private:
-	Ref< ContextDx9 > m_context;
 	ComRef< IDirect3D9 > m_d3d;
 	ComRef< IDirect3DDevice9 > m_d3dDevice;
+	Ref< ResourceManagerDx9 > m_resourceManager;
 	ParameterCache* m_parameterCache;
 	VertexDeclCache* m_vertexDeclCache;
 	Ref< RenderTargetPool > m_renderTargetPool;

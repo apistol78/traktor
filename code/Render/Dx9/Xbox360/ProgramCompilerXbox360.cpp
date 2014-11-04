@@ -1,9 +1,11 @@
 #include "Core/Log/Log.h"
+#include "Core/Math/MathUtils.h"
 #include "Core/Misc/Adler32.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Render/Dx9/Hlsl.h"
 #include "Render/Dx9/HlslProgram.h"
+#include "Render/Dx9/ParameterCache.h"
 #include "Render/Dx9/ProgramResourceDx9.h"
 #include "Render/Dx9/Xbox360/ProgramCompilerXbox360.h"
 
@@ -13,6 +15,15 @@ namespace traktor
 	{
 		namespace
 		{
+
+const DWORD c_optimizationLevels[] =
+{
+	D3DXSHADER_SKIPOPTIMIZATION,
+	0,
+	0,
+	0,
+	0
+};
 
 bool compileShader(
 	const std::wstring& hlslShader,
@@ -42,7 +53,7 @@ bool compileShader(
 	{
 		if (d3dErrorMsgs)
 			log::error << L"HLSL compile error : \"" << trim(mbstows((LPCSTR)d3dErrorMsgs->GetBufferPointer())) << L"\"" << Endl;
-		log::error << hlslShader << Endl;
+		FormatMultipleLines(log::error, hlslShader);
 		return false;
 	}
 
@@ -58,7 +69,7 @@ bool compileShader(
 
 bool collectScalarParameters(
 	ID3DXConstantTable* d3dConstantTable,
-	std::vector< ProgramScalar >& outScalars,
+	AlignedVector< ProgramScalar >& outScalars,
 	std::map< std::wstring, uint32_t >& outScalarParameterMap,
 	uint32_t& outOffset
 )
@@ -87,6 +98,9 @@ bool collectScalarParameters(
 
 			std::wstring parameterName = mbstows(dcd.Name);
 
+			if (startsWith< std::wstring >(parameterName, L"__private__"))
+				continue;
+
 			ProgramScalar scalar;
 			scalar.registerIndex = dcd.RegisterIndex;
 			scalar.registerCount = dcd.RegisterCount;
@@ -109,26 +123,74 @@ bool collectScalarParameters(
 	return true;
 }
 
-bool collectSamplerParameters(
-	const std::map< std::wstring, int32_t >& samplerTextures,
-	std::vector< ProgramSampler >& outSamplers,
+bool collectTextureParameters(
+	ID3DXConstantTable* d3dConstantTable,
+	const std::set< std::wstring >& textures,
+	AlignedVector< ProgramTexture >& outTextures,
 	std::map< std::wstring, uint32_t >& outTextureParameterMap,
 	uint32_t& outOffset
 )
 {
-	for (std::map< std::wstring, int32_t >::const_iterator i = samplerTextures.begin(); i != samplerTextures.end(); ++i)
+	D3DXCONSTANTTABLE_DESC dctd;
+	D3DXCONSTANT_DESC dcd;
+	HRESULT hr;
+
+	hr = d3dConstantTable->GetDesc(&dctd);
+	if (FAILED(hr))
+		return false;
+
+	for (std::set< std::wstring >::const_iterator i = textures.begin(); i != textures.end(); ++i)
 	{
-		ProgramSampler sampler;
-		sampler.stage = i->second;
-		sampler.texture = outOffset;
+		std::wstring uniformName = L"__private__" + (*i) + L"_size";
 
-		std::map< std::wstring, uint32_t >::const_iterator j = outTextureParameterMap.find(i->first);
+		D3DXHANDLE handle = d3dConstantTable->GetConstantByName(NULL, wstombs(uniformName).c_str());
+		if (handle == NULL)
+			continue;
+
+		UINT count = 1;
+		if (FAILED(d3dConstantTable->GetConstantDesc(handle, &dcd, &count)))
+			continue;
+
+		T_ASSERT (dcd.Type == D3DXPT_FLOAT);
+		T_ASSERT (dcd.Class == D3DXPC_VECTOR);
+		T_ASSERT (dcd.RegisterCount == 1);
+
+		ProgramTexture pt;
+		pt.texture = outOffset;
+		pt.sizeIndex = dcd.RegisterIndex;
+
+		std::map< std::wstring, uint32_t >::const_iterator j = outTextureParameterMap.find(*i);
 		if (j != outTextureParameterMap.end())
-			sampler.texture = j->second;
+			pt.texture = j->second;
 		else
-			outTextureParameterMap[i->first] = outOffset++;
+			outTextureParameterMap[*i] = outOffset++;
 
-		outSamplers.push_back(sampler);
+		outTextures.push_back(pt);
+	}
+	return true;
+}
+
+bool collectSamplerParameters(
+	ID3DXConstantTable* d3dConstantTable,
+	const std::map< uint32_t, std::pair< std::wstring, int32_t > >& samplers,
+	AlignedVector< ProgramSampler >& outSamplers,
+	std::map< std::wstring, uint32_t >& outTextureParameterMap,
+	uint32_t& outOffset
+)
+{
+	for (std::map< uint32_t, std::pair< std::wstring, int32_t > >::const_iterator i = samplers.begin(); i != samplers.end(); ++i)
+	{
+		ProgramSampler ps;
+		ps.texture = outOffset;
+		ps.stage = i->second.second;
+
+		std::map< std::wstring, uint32_t >::const_iterator j = outTextureParameterMap.find(i->second.first);
+		if (j != outTextureParameterMap.end())
+			ps.texture = j->second;
+		else
+			outTextureParameterMap[i->second.first] = outOffset++;
+
+		outSamplers.push_back(ps);
 	}
 
 	return true;
@@ -140,11 +202,12 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramCompilerXbox360", 0, Prog
 
 const wchar_t* ProgramCompilerXbox360::getPlatformSignature() const
 {
-	return L"DX9 Xbox360";
+	return L"DX9";
 }
 
 Ref< ProgramResource > ProgramCompilerXbox360::compile(
 	const ShaderGraph* shaderGraph,
+	const PropertyGroup* settings,
 	int32_t optimize,
 	bool validate,
 	Stats* outStats
@@ -156,10 +219,13 @@ Ref< ProgramResource > ProgramCompilerXbox360::compile(
 	// Generate HLSL shaders.
 	HlslProgram program;
 	if (!Hlsl().generate(shaderGraph, program))
+	{
+		log::error << L"ProgramCompilerXbox360 failed; unable to generate HLSL" << Endl;
 		return 0;
+	}
 
 	// Compile shaders.
-	DWORD flags = 0/*c_optimizationLevels[clamp(optimize, 0, 4)]*/;
+	DWORD flags = c_optimizationLevels[clamp(optimize, 0, 4)];
 	if (!validate)
 		flags |= D3DXSHADER_SKIPVALIDATION;
 
@@ -173,17 +239,23 @@ Ref< ProgramResource > ProgramCompilerXbox360::compile(
 		resource->m_vertexShader,
 		resource->m_vertexShaderHash
 	))
+	{
+		log::error << L"ProgramCompilerXbox360 failed; unable to compile vertex shader" << Endl;
 		return 0;
+	}
 
 	if (!compileShader(
 		program.getPixelShader(),
 		"main",
 		"ps_3_0",
-		flags,
+		flags | D3DXSHADER_PARTIALPRECISION,
 		resource->m_pixelShader,
 		resource->m_pixelShaderHash
 	))
+	{
+		log::error << L"ProgramCompilerXbox360 failed; unable to compile pixel shader" << Endl;
 		return 0;
+	}
 
 	D3DXGetShaderConstantTable((const DWORD *)resource->m_vertexShader->GetBufferPointer(), &d3dVertexConstantTable.getAssign());
 	D3DXGetShaderConstantTable((const DWORD *)resource->m_pixelShader->GetBufferPointer(), &d3dPixelConstantTable.getAssign());
@@ -210,26 +282,108 @@ Ref< ProgramResource > ProgramCompilerXbox360::compile(
 	// Create texture parameters.
 	resource->m_textureParameterDataSize = 0;
 
-	if (!collectSamplerParameters(
+	if (!collectTextureParameters(
+		d3dVertexConstantTable,
 		program.getVertexTextures(),
+		resource->m_vertexTextures,
+		resource->m_textureParameterMap,
+		resource->m_textureParameterDataSize
+	))
+		return 0;
+
+	if (!collectSamplerParameters(
+		d3dVertexConstantTable,
+		program.getVertexSamplers(),
 		resource->m_vertexSamplers,
 		resource->m_textureParameterMap,
 		resource->m_textureParameterDataSize
 	))
 		return 0;
 
-	if (!collectSamplerParameters(
+	if (resource->m_vertexSamplers.size() > ParameterCache::VertexTextureCount)
+	{
+		log::error << L"ProgramCompilerXbox360 failed; too many vertex samplers used (max 8)" << Endl;
+		return false;
+	}
+
+	if (!collectTextureParameters(
+		d3dPixelConstantTable,
 		program.getPixelTextures(),
+		resource->m_pixelTextures,
+		resource->m_textureParameterMap,
+		resource->m_textureParameterDataSize
+	))
+		return 0;
+
+	if (!collectSamplerParameters(
+		d3dPixelConstantTable,
+		program.getPixelSamplers(),
 		resource->m_pixelSamplers,
 		resource->m_textureParameterMap,
 		resource->m_textureParameterDataSize
 	))
 		return 0;
 
+	if (resource->m_pixelSamplers.size() > ParameterCache::PixelTextureCount)
+	{
+		log::error << L"ProgramCompilerXbox360 failed; too many pixel samplers used (max 8)" << Endl;
+		return false;
+	}
+
 	// Copy render state.
 	resource->m_state = program.getState();
 
+	// Estimate cost from number of bytes in shaders.
+	if (outStats)
+	{
+		ComRef< ID3DXBuffer > d3dDisasmBuffer;
+		HRESULT hr;
+
+		hr = D3DXDisassembleShader((const DWORD *)resource->m_vertexShader->GetBufferPointer(), FALSE, NULL, &d3dDisasmBuffer.getAssign());
+		if (SUCCEEDED(hr))
+		{
+			// Find and extract cost from "approximately ??? instruction slots used" comment.
+			const char* tmp = (const char *)d3dDisasmBuffer->GetBufferPointer();
+			const char* costp = strstr(tmp, "approximately");
+			if (costp)
+				outStats->vertexCost = atoi(costp + 14);
+		}
+
+		hr = D3DXDisassembleShader((const DWORD *)resource->m_pixelShader->GetBufferPointer(), FALSE, NULL, &d3dDisasmBuffer.getAssign());
+		if (SUCCEEDED(hr))
+		{
+			// Find and extract cost from "approximately ??? instruction slots used" comment.
+			const char* tmp = (const char *)d3dDisasmBuffer->GetBufferPointer();
+			const char* costp = strstr(tmp, "approximately");
+			if (costp)
+				outStats->pixelCost = atoi(costp + 14);
+		}
+	}
+
 	return resource;
+}
+
+bool ProgramCompilerXbox360::generate(
+	const ShaderGraph* shaderGraph,
+	const PropertyGroup* settings,
+	int32_t optimize,
+	std::wstring& outShader
+) const
+{
+	HlslProgram hlslProgram;
+	if (!Hlsl().generate(shaderGraph, hlslProgram))
+		return false;
+
+	outShader =
+		std::wstring(L"// Vertex shader\n") +
+		std::wstring(L"\n") +
+		hlslProgram.getVertexShader() +
+		std::wstring(L"\n") +
+		std::wstring(L"// Pixel shader\n") +
+		std::wstring(L"\n") +
+		hlslProgram.getPixelShader();
+
+	return true;
 }
 
 	}

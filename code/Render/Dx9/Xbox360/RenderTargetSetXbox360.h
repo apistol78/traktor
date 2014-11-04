@@ -3,14 +3,6 @@
 
 #include "Render/RenderTargetSet.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_RENDER_DX9_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
-#else
-#define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace render
@@ -19,8 +11,7 @@ namespace traktor
 /*!
  * \ingroup DX9
  */
-class T_DLLCLASS RenderTargetSetXbox360
-:	public RenderTargetSet
+class RenderTargetSetXbox360 : public RenderTargetSet
 {
 	T_RTTI_CLASS;
 
@@ -31,7 +22,13 @@ public:
 	
 	virtual int getHeight() const;
 	
-	virtual Ref< ITexture > getColorTexture(int index) const;
+	virtual ISimpleTexture* getColorTexture(int index) const;
+
+	virtual void swap(int index1, int index2);
+
+	virtual void discard();
+
+	virtual bool read(int index, void* buffer) const;
 };
 
 	}

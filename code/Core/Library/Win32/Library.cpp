@@ -41,7 +41,7 @@ bool Library::open(const Path& libraryName)
 
 bool Library::open(const Path& libraryName, const std::vector< Path >& searchPaths, bool includeDefaultPaths)
 {
-#if !defined(WINCE)
+#if !defined(WINCE) && !defined(_XBOX)
 	TCHAR currentPath[32767];
 
 	if (!GetEnvironmentVariable(_T("PATH"), currentPath, sizeof_array(currentPath)))

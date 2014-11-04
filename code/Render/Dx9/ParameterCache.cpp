@@ -1,4 +1,6 @@
-#include <xmmintrin.h>
+#if !defined(_XBOX)
+#	include <xmmintrin.h>
+#endif
 #include "Core/Memory/Alloc.h"
 #include "Render/Dx9/ParameterCache.h"
 
@@ -11,6 +13,7 @@ namespace traktor
 
 bool compareExchangeEqual4(float* ptr1, const float* ptr2, size_t count)
 {
+#if !defined(_XBOX)
 	T_ASSERT ((count & 3) == 0);
 
 	const float* src = ptr2;
@@ -35,6 +38,9 @@ bool compareExchangeEqual4(float* ptr1, const float* ptr2, size_t count)
 	}
 
 	return equal;
+#else
+	return false;
+#endif
 }
 
 		}

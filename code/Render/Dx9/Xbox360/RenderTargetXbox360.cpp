@@ -143,6 +143,11 @@ void RenderTargetXbox360::destroy()
 	//getRenderSystem()->releaseResource(m_d3dTargetDepthStencilSurface);
 }
 
+ITexture* RenderTargetXbox360::resolve()
+{
+	return this;
+}
+
 int RenderTargetXbox360::getWidth() const
 {
 	return m_width;

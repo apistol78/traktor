@@ -1,22 +1,21 @@
-#include "Render/Dx9/Xbox360/RenderSystemXbox360.h"
-#include "Render/Dx9/Xbox360/RenderViewXbox360.h"
-#include "Render/Dx9/Xbox360/RenderTargetPool.h"
-#include "Render/Dx9/Xbox360/RenderTargetSetXbox360.h"
+#include "Core/Log/Log.h"
+#include "Render/VertexElement.h"
+#include "Render/Dx9/CubeTextureDx9.h"
+#include "Render/Dx9/IndexBufferDx9.h"
+#include "Render/Dx9/ParameterCache.h"
+#include "Render/Dx9/ProgramResourceDx9.h"
+#include "Render/Dx9/SimpleTextureDx9.h"
+#include "Render/Dx9/TypesDx9.h"
+#include "Render/Dx9/VertexBufferDynamicDx9.h"
+#include "Render/Dx9/VertexBufferStaticDx9.h"
+#include "Render/Dx9/VertexDeclCache.h"
+#include "Render/Dx9/VolumeTextureDx9.h"
 #include "Render/Dx9/Xbox360/ProgramXbox360.h"
 #include "Render/Dx9/Xbox360/ProgramCompilerXbox360.h"
-#include "Render/Dx9/ContextDx9.h"
-#include "Render/Dx9/ParameterCache.h"
-#include "Render/Dx9/VertexDeclCache.h"
-#include "Render/Dx9/ProgramResourceDx9.h"
-#include "Render/Dx9/VertexBufferDx9.h"
-#include "Render/Dx9/IndexBufferDx9.h"
-#include "Render/Dx9/SimpleTextureDx9.h"
-#include "Render/Dx9/CubeTextureDx9.h"
-#include "Render/Dx9/VolumeTextureDx9.h"
-#include "Render/Dx9/TypesDx9.h"
-#include "Render/DisplayMode.h"
-#include "Render/VertexElement.h"
-#include "Core/Log/Log.h"
+#include "Render/Dx9/Xbox360/RenderSystemXbox360.h"
+#include "Render/Dx9/Xbox360/RenderTargetPool.h"
+#include "Render/Dx9/Xbox360/RenderTargetSetXbox360.h"
+#include "Render/Dx9/Xbox360/RenderViewXbox360.h"
 
 namespace traktor
 {
@@ -31,7 +30,7 @@ RenderSystemXbox360::RenderSystemXbox360()
 {
 }
 
-bool RenderSystemXbox360::create()
+bool RenderSystemXbox360::create(const RenderSystemDesc& desc)
 {
 	m_d3d = Direct3DCreate9(D3D_SDK_VERSION);
 	return m_d3d != 0;
@@ -44,12 +43,6 @@ void RenderSystemXbox360::destroy()
 	//	m_renderTargetPool->destroy(m_d3dDevice);
 	//	m_renderTargetPool = 0;
 	//}
-
-	if (m_context)
-	{
-		m_context->deleteResources();
-		m_context = 0;
-	}
 
 	if (m_parameterCache)
 	{
@@ -64,50 +57,54 @@ void RenderSystemXbox360::destroy()
 	}
 }
 
-int RenderSystemXbox360::getDisplayModeCount() const
+bool RenderSystemXbox360::reset(const RenderSystemDesc& desc)
+{
+	return false;
+}
+
+void RenderSystemXbox360::getInformation(RenderSystemInformation& outInfo) const
+{
+}
+
+uint32_t RenderSystemXbox360::getDisplayModeCount() const
 {
 	return 1;
 }
 
-Ref< DisplayMode > RenderSystemXbox360::getDisplayMode(int index)
+DisplayMode RenderSystemXbox360::getDisplayMode(uint32_t index) const
 {
-	return new DisplayMode(
-		0,
-		1280,
-		720,
-		0
-	);
+	DisplayMode dm;
+	dm.width = 1280;
+	dm.height = 720;
+	return dm;
 }
 
-Ref< DisplayMode > RenderSystemXbox360::getCurrentDisplayMode()
+DisplayMode RenderSystemXbox360::getCurrentDisplayMode() const
 {
-	return new DisplayMode(
-		0,
-		1280,
-		720,
-		0
-	);
+	DisplayMode dm;
+	dm.width = 1280;
+	dm.height = 720;
+	return dm;
 }
 
-bool RenderSystemXbox360::handleMessages()
+float RenderSystemXbox360::getDisplayAspectRatio() const
 {
-	return true;
+	return 0.0f;
 }
 
-Ref< IRenderView > RenderSystemXbox360::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
+Ref< IRenderView > RenderSystemXbox360::createRenderView(const RenderViewDefaultDesc& desc)
 {
 	D3DPRESENT_PARAMETERS d3dPresent;
 	D3DFORMAT d3dDepthStencilFormat;
 	HRESULT hr;
 
 	T_ASSERT (!m_renderView);
-	T_ASSERT (displayMode);
 
 	std::memset(&d3dPresent, 0, sizeof(d3dPresent));
 	d3dPresent.BackBufferFormat = D3DFMT_X8R8G8B8;
 	d3dPresent.BackBufferCount = 0;
-	d3dPresent.BackBufferWidth = displayMode->getWidth();
-	d3dPresent.BackBufferHeight = displayMode->getHeight();
+	d3dPresent.BackBufferWidth = desc.displayMode.width;
+	d3dPresent.BackBufferHeight = desc.displayMode.height;
 	d3dPresent.MultiSampleType = D3DMULTISAMPLE_NONE;
 	d3dPresent.SwapEffect = D3DSWAPEFFECT_DISCARD;
 	d3dPresent.hDeviceWindow = NULL;
@@ -136,9 +133,8 @@ Ref< IRenderView > RenderSystemXbox360::createRenderView(const DisplayMode* disp
 	);
 	T_ASSERT (SUCCEEDED(hr));
 
-	m_context = new ContextDx9();
-	m_parameterCache = new ParameterCache(this, m_d3dDevice);
-	m_vertexDeclCache = new VertexDeclCache(this, m_d3dDevice);
+	m_parameterCache = new ParameterCache(m_d3dDevice, 0.0f, 0);
+	m_vertexDeclCache = new VertexDeclCache(m_d3dDevice);
 
 	m_renderTargetPool = new RenderTargetPool();
 	m_renderView = new RenderViewXbox360(
@@ -146,30 +142,40 @@ Ref< IRenderView > RenderSystemXbox360::createRenderView(const DisplayMode* disp
 		this,
 		m_d3dDevice,
 		m_renderTargetPool,
-		displayMode->getWidth(),
-		displayMode->getHeight(),
+		desc.displayMode.width,
+		desc.displayMode.height,
 		D3DFMT_LE_X8R8G8B8
 	);
 
 	return m_renderView;
 }
 
-Ref< IRenderView > RenderSystemXbox360::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
+Ref< IRenderView > RenderSystemXbox360::createRenderView(const RenderViewEmbeddedDesc& desc)
 {
 	return 0;
 }
 
 Ref< VertexBuffer > RenderSystemXbox360::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
-	Ref< VertexBufferDx9 > vertexBuffer = new VertexBufferDx9(this, m_context, bufferSize, m_vertexDeclCache);
-	if (!vertexBuffer->create(m_d3dDevice, vertexElements, dynamic))
-		return 0;
-	return vertexBuffer;
+	if (dynamic)
+	{
+		Ref< VertexBufferStaticDx9 > vertexBuffer = new VertexBufferStaticDx9(bufferSize, m_vertexDeclCache);
+		if (!vertexBuffer->create(m_d3dDevice, vertexElements))
+			return 0;
+		return vertexBuffer;
+	}
+	else
+	{
+		Ref< VertexBufferDynamicDx9 > vertexBuffer = new VertexBufferDynamicDx9(m_resourceManager, bufferSize, m_vertexDeclCache);
+		if (!vertexBuffer->create(m_d3dDevice, vertexElements))
+			return 0;
+		return vertexBuffer;
+	}
 }
 
 Ref< IndexBuffer > RenderSystemXbox360::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
-	Ref< IndexBufferDx9 > indexBuffer = new IndexBufferDx9(this, m_context, indexType, bufferSize);
+	Ref< IndexBufferDx9 > indexBuffer = new IndexBufferDx9(m_resourceManager, indexType, bufferSize);
 	if (!indexBuffer->create(m_d3dDevice, dynamic))
 		return 0;
 	return indexBuffer;
@@ -177,7 +183,7 @@ Ref< IndexBuffer > RenderSystemXbox360::createIndexBuffer(IndexType indexType, u
 
 Ref< ISimpleTexture > RenderSystemXbox360::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
-	Ref< SimpleTextureDx9 > texture = new SimpleTextureDx9(m_context);
+	Ref< SimpleTextureDx9 > texture = new SimpleTextureDx9(m_resourceManager);
 	if (!texture->create(m_d3dDevice, desc))
 		return 0;
 	return texture;
@@ -185,7 +191,7 @@ Ref< ISimpleTexture > RenderSystemXbox360::createSimpleTexture(const SimpleTextu
 
 Ref< ICubeTexture > RenderSystemXbox360::createCubeTexture(const CubeTextureCreateDesc& desc)
 {
-	Ref< CubeTextureDx9 > texture = new CubeTextureDx9(m_context);
+	Ref< CubeTextureDx9 > texture = new CubeTextureDx9(m_resourceManager);
 	if (!texture->create(m_d3dDevice, desc))
 		return 0;
 	return texture;
@@ -193,7 +199,7 @@ Ref< ICubeTexture > RenderSystemXbox360::createCubeTexture(const CubeTextureCrea
 
 Ref< IVolumeTexture > RenderSystemXbox360::createVolumeTexture(const VolumeTextureCreateDesc& desc)
 {
-	Ref< VolumeTextureDx9 > texture = new VolumeTextureDx9(m_context);
+	Ref< VolumeTextureDx9 > texture = new VolumeTextureDx9(m_resourceManager);
 	if (!texture->create(m_d3dDevice, desc))
 		return 0;
 	return texture;
@@ -204,7 +210,7 @@ Ref< RenderTargetSet > RenderSystemXbox360::createRenderTargetSet(const RenderTa
 	return 0;
 }
 
-Ref< IProgram > RenderSystemXbox360::createProgram(const ProgramResource* programResource)
+Ref< IProgram > RenderSystemXbox360::createProgram(const ProgramResource* programResource, const wchar_t* const tag)
 {
 	T_ASSERT (m_parameterCache);
 
@@ -212,7 +218,7 @@ Ref< IProgram > RenderSystemXbox360::createProgram(const ProgramResource* progra
 	if (!resource)
 		return 0;
 
-	Ref< ProgramXbox360 > program = new ProgramXbox360(this, m_context, m_parameterCache);
+	Ref< ProgramXbox360 > program = new ProgramXbox360(m_parameterCache);
 	if (!program->create(m_d3dDevice, resource))
 		return 0;
 
@@ -224,11 +230,12 @@ Ref< IProgramCompiler > RenderSystemXbox360::createProgramCompiler() const
 	return new ProgramCompilerXbox360();
 }
 
-void RenderSystemXbox360::addUnmanaged(Unmanaged* unmanaged)
+Ref< ITimeQuery > RenderSystemXbox360::createTimeQuery() const
 {
+	return 0;
 }
 
-void RenderSystemXbox360::removeUnmanaged(Unmanaged* unmanaged)
+void RenderSystemXbox360::getStatistics(RenderSystemStatistics& outStatistics) const
 {
 }
 

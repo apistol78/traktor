@@ -40,7 +40,7 @@ const D3DPRIMITIVETYPE c_d3dPrimitiveType[] =
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewXbox360", RenderViewXbox360, IRenderView)
 
 RenderViewXbox360::RenderViewXbox360(
-	const RenderViewCreateDesc& createDesc,
+	const RenderViewDefaultDesc& createDesc,
 	RenderSystemXbox360* renderSystem,
 	IDirect3DDevice9* d3dDevice,
 	RenderTargetPool* renderTargetPool,
@@ -70,6 +70,11 @@ RenderViewXbox360::~RenderViewXbox360()
 	close();
 }
 
+bool RenderViewXbox360::nextEvent(RenderEvent& outEvent)
+{
+	return false;
+}
+
 void RenderViewXbox360::close()
 {
 	T_ASSERT (m_renderStateStack.empty());
@@ -78,8 +83,52 @@ void RenderViewXbox360::close()
 	m_d3dDevice.release();
 }
 
-void RenderViewXbox360::resize(int32_t width, int32_t height)
+bool RenderViewXbox360::reset(const RenderViewDefaultDesc& desc)
 {
+	return false;
+}
+
+bool RenderViewXbox360::reset(int32_t width, int32_t height)
+{
+	return false;
+}
+
+int RenderViewXbox360::getWidth() const
+{
+	return 1280;
+}
+
+int RenderViewXbox360::getHeight() const
+{
+	return 720;
+}
+
+bool RenderViewXbox360::isActive() const
+{
+	return true;
+}
+
+bool RenderViewXbox360::isFullScreen() const
+{
+	return true;
+}
+
+void RenderViewXbox360::showCursor()
+{
+}
+
+void RenderViewXbox360::hideCursor()
+{
+}
+
+bool RenderViewXbox360::isCursorVisible() const
+{
+	return false;
+}
+
+bool RenderViewXbox360::setGamma(float gamma)
+{
+	return false;
 }
 
 void RenderViewXbox360::setViewport(const Viewport& viewport)
@@ -122,7 +171,13 @@ Viewport RenderViewXbox360::getViewport()
 	);
 }
 
-bool RenderViewXbox360::begin()
+SystemWindow RenderViewXbox360::getSystemWindow()
+{
+	SystemWindow sw;
+	return sw;
+}
+
+bool RenderViewXbox360::begin(EyeType eye)
 {
 	T_ASSERT (m_d3dDevice);
 	T_ASSERT (!m_currentRenderState);
@@ -141,7 +196,7 @@ bool RenderViewXbox360::begin()
 	return true;
 }
 
-bool RenderViewXbox360::begin(RenderTargetSet* renderTargetSet, int renderTarget, bool keepDepthStencil)
+bool RenderViewXbox360::begin(RenderTargetSet* renderTargetSet)
 {
 	T_ASSERT (m_d3dDevice);
 	
@@ -158,32 +213,31 @@ bool RenderViewXbox360::begin(RenderTargetSet* renderTargetSet, int renderTarget
 	return true;
 }
 
-void RenderViewXbox360::clear(uint32_t clearMask, const float color[4], float depth, int32_t stencil)
+bool RenderViewXbox360::begin(RenderTargetSet* renderTargetSet, int renderTarget)
+{
+	T_ASSERT (m_d3dDevice);
+	
+	//RenderTargetSetXbox360* rts = static_cast< RenderTargetSetXbox360* >(renderTargetSet);
+	//RenderTargetXbox360* rt = rts->getRenderTarget(renderTarget);
+
+	//RenderState rs =
+	//{
+	//	{ 0, 0, renderTarget->getWidth(), renderTarget->getHeight(), 1.0f, 0.0f },
+	//	rt
+	//};
+	//m_renderStateStack.push_back(rs);
+
+	return true;
+}
+
+void RenderViewXbox360::clear(uint32_t clearMask, const Color4f* colors, float depth, int32_t stencil)
 {
 }
 
-void RenderViewXbox360::setVertexBuffer(VertexBuffer* vertexBuffer)
-{
-	T_ASSERT (is_a< VertexBufferDx9 >(vertexBuffer));
-	m_currentVertexBuffer = static_cast< VertexBufferDx9* >(vertexBuffer);
-}
-
-void RenderViewXbox360::setIndexBuffer(IndexBuffer* indexBuffer)
-{
-	T_ASSERT (indexBuffer == 0 || is_a< IndexBufferDx9 >(indexBuffer));
-	m_currentIndexBuffer = static_cast< IndexBufferDx9* >(indexBuffer);
-}
-
-void RenderViewXbox360::setProgram(IProgram* program)
-{
-	T_ASSERT (is_a< ProgramXbox360 >(program));
-	m_currentProgram = static_cast< ProgramXbox360* >(program);
-}
-
-void RenderViewXbox360::draw(const Primitives& primitives)
+void RenderViewXbox360::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)
 {
 	T_ASSERT (!m_renderStateStack.empty());
-
+/*
 	RenderState& rs = m_renderStateStack.back();
 	if (m_currentRenderState != &rs)
 	{
@@ -221,6 +275,11 @@ void RenderViewXbox360::draw(const Primitives& primitives)
 			primitives.count
 		);
 	}
+*/
+}
+
+void RenderViewXbox360::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
+{
 }
 
 void RenderViewXbox360::end()
@@ -260,6 +319,23 @@ void RenderViewXbox360::present()
 
 	// Cleanup deferred resources.
 	//m_renderSystem->cleanupResources();
+}
+
+void RenderViewXbox360::pushMarker(const char* const marker)
+{
+}
+
+void RenderViewXbox360::popMarker()
+{
+}
+
+void RenderViewXbox360::getStatistics(RenderViewStatistics& outStatistics) const
+{
+}
+
+bool RenderViewXbox360::getBackBufferContent(void* buffer) const
+{
+	return false;
 }
 
 	}
