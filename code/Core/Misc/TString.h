@@ -4,6 +4,9 @@
 #if defined(_PS3)
 #	include <calloca>
 #endif
+#if defined(_XBOX)
+#	include <malloc.h>
+#endif
 #include <cstdlib>
 #include <string>
 #include <vector>

@@ -62,6 +62,8 @@ struct CastSample
 	}
 };
 
+#if !defined(_XBOX)
+
 template < >
 struct CastSample < int8_t >
 {
@@ -99,6 +101,8 @@ struct CastSample < int16_t >
 		return (int16_t)_mm_cvtt_ss2si(sf);
 	}
 };
+
+#endif
 
 template < typename SampleType >
 void writeSamples(void* dest, const float* samples, uint32_t samplesCount, uint32_t writeStride)

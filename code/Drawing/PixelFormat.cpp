@@ -1,4 +1,4 @@
-#if defined(_MSC_VER) && !defined(WINCE)
+#if defined(_MSC_VER) && !defined(WINCE) && !defined(_XBOX)
 #	define USE_XMM_INTRINSICS
 #	include <emmintrin.h>
 #elif defined(__APPLE__)
@@ -126,6 +126,16 @@ uint32_t unpack_4(const void* T_RESTRICT p)
 	return (c[0] << 24) | (c[1] << 16) | (c[2] << 8) | c[3];
 }
 
+float unpack_fp(const void* T_RESTRICT p, uint32_t nbits)
+{
+	if (nbits == 16)
+		return halfToFloat(*(const half_t*)p);
+	else if (nbits == 32)
+		return *(const float*)p;
+	else
+		return 0.0f;
+}
+
 void pack_1(void* T_RESTRICT p, uint32_t v)
 {
 	uint8_t* T_RESTRICT d = static_cast< uint8_t* T_RESTRICT >(p);
@@ -154,6 +164,14 @@ void pack_4(void* T_RESTRICT p, uint32_t v)
 	d[1] = (v >> 16) & 255;
 	d[2] = (v >> 8) & 255;
 	d[3] = v & 255;
+}
+
+void pack_fp(void* T_RESTRICT p, float v, uint32_t nbits)
+{
+	if (nbits == 16)
+		*(half_t* T_RESTRICT)p = floatToHalf(v);
+	else if (nbits == 32)
+		*(float* T_RESTRICT)p = v;
 }
 
 #endif

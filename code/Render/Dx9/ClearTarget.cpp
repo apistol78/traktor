@@ -84,7 +84,11 @@ public:
 	STDMETHOD(LightEnable)(THIS_ DWORD Index, BOOL Enable) { T_BREAKPOINT; return S_FALSE; }
 	STDMETHOD(SetRenderState)(THIS_ D3DRENDERSTATETYPE State, DWORD Value) { T_BREAKPOINT; return S_FALSE; }
 	STDMETHOD(SetTexture)(THIS_ DWORD Stage, LPDIRECT3DBASETEXTURE9 pTexture) { T_BREAKPOINT; return S_FALSE; }
+#if defined(_XBOX)
+	STDMETHOD(Do_Not_Use_SetTextureStageState)(THIS_ DWORD Stage, DWORD Type, DWORD Value) { T_BREAKPOINT; return S_FALSE; }
+#else
 	STDMETHOD(SetTextureStageState)(THIS_ DWORD Stage, D3DTEXTURESTAGESTATETYPE Type, DWORD Value) { T_BREAKPOINT; return S_FALSE; }
+#endif
 	STDMETHOD(SetSamplerState)(THIS_ DWORD Sampler, D3DSAMPLERSTATETYPE Type, DWORD Value) { T_BREAKPOINT; return S_FALSE; }
 	STDMETHOD(SetNPatchMode)(THIS_ FLOAT NumSegments) { T_BREAKPOINT; return S_FALSE; }
 	STDMETHOD(SetFVF)(THIS_ DWORD FVF) { T_BREAKPOINT; return S_FALSE; }

@@ -43,7 +43,7 @@ std::wstring NativeVolume::getDescription() const
 {
 #if defined(_XBOX) || defined(WINCE)
 
-	return m_currentDirectory;
+	return m_currentDirectory.getPathName();
 
 #else
 

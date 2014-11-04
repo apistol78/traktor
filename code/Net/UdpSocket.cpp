@@ -51,7 +51,7 @@ bool UdpSocket::bind(const SocketAddressIPv4& socketAddress)
 
 bool UdpSocket::bind(const SocketAddressIPv6& socketAddress)
 {
-#if !defined(_PS3) && !defined(EMSCRIPTEN)
+#if !defined(_PS3) && !defined(EMSCRIPTEN) && !defined(_XBOX)
 	const addrinfo* info = socketAddress.getAddrInfo(SOCK_DGRAM);
 	if (!info)
 		return false;
@@ -103,7 +103,7 @@ bool UdpSocket::connect(const SocketAddressIPv4& socketAddress)
 
 bool UdpSocket::connect(const SocketAddressIPv6& socketAddress)
 {
-#if !defined(_PS3) && !defined(EMSCRIPTEN)
+#if !defined(_PS3) && !defined(EMSCRIPTEN) && !defined(_XBOX)
 	const addrinfo* info = socketAddress.getAddrInfo(SOCK_DGRAM);
 	if (!info)
 		return false;
