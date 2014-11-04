@@ -168,6 +168,7 @@ bool ProgramWin32::create(
 	for (std::map< std::wstring, uint32_t >::const_iterator i = resource->m_scalarParameterMap.begin(); i != resource->m_scalarParameterMap.end(); ++i)
 	{
 		handle_t handle = getParameterHandle(i->first);
+
 		m_scalarParameterMap.insert(std::make_pair(
 			handle,
 			i->second

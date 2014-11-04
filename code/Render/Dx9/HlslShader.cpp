@@ -160,9 +160,10 @@ uint32_t HlslShader::addUniform(const std::wstring& uniform, HlslType type, uint
 	if (elementCount > 0)
 	{
 		// Ensure index are within limits.
-		int32_t fromIndex = 0;
+		//int32_t fromIndex = 0;
 		int32_t toIndex = (m_shaderType == StVertex ? 256 : 224) - elementCount;
 
+		/*
 		// Use hash of parameter name to get at least some locality.
 		Adler32 cs;
 		cs.begin();
@@ -170,6 +171,7 @@ uint32_t HlslShader::addUniform(const std::wstring& uniform, HlslType type, uint
 		cs.end();
 		index = (int32_t)cs.get();
 		index = fromIndex + index % (toIndex - fromIndex + 1);
+		*/
 
 		// Ensure index isn't colliding.
 		for (;;)
@@ -185,8 +187,10 @@ uint32_t HlslShader::addUniform(const std::wstring& uniform, HlslType type, uint
 			}
 			if (!occupied)
 				break;
-			if (++index >= toIndex)
-				fromIndex = 0;
+			//if (++index >= toIndex)
+			//	fromIndex = 0;
+
+			++index;
 		}
 
 		for (int32_t i = 0; i < elementCount; ++i)
