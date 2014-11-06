@@ -105,7 +105,7 @@ for _, f in ipairs(frameworks) do
 		output:printLn("\t\t" .. f.buildRef .. " /* " .. f.file .. " in Frameworks */ = {isa = PBXBuildFile; fileRef = " .. f.fileRef .. " /* " .. f.file .. " */; };")
 end
 
---!>		337379A630150547A5C6CF6F /* Main.cpp in Sources */ = { isa = PBXBuildFile; fileRef = 39B478A5B5290D49A78145C4 /* Main.cpp */; };
+--!>		337379A630150547A5C6CF6F /* Main.mm in Sources */ = { isa = PBXBuildFile; fileRef = 39B478A5B5290D49A78145C4 /* Main.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -146,7 +146,7 @@ for _, f in ipairs(frameworks) do
 		end
 end
 
---!>		39B478A5B5290D49A78145C4 /* Main.cpp */ = { isa = PBXFileReference; name = Main.cpp; path = Main.cpp; sourceTree = "<group>"; };
+--!>		39B478A5B5290D49A78145C4 /* Main.mm */ = { isa = PBXFileReference; name = Main.mm; path = Main.mm; sourceTree = "<group>"; };
 		AB2066142D122F498D88B55F /* Info.plist */ = { isa = PBXFileReference; name = Info.plist; path = Info.plist; sourceTree = "<group>"; };
 		62E1560702D8E643A8B347CD /* <!-- output:print(environment:get("DEPLOY_PROJECT_NAME")) --!> */ = { isa = PBXFileReference; includeInIndex = 0; path = "<!-- output:print(environment:get("DEPLOY_PROJECT_NAME")) --!>"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -202,7 +202,7 @@ for _, b in ipairs(bundles) do
 		output:printLn("\t\t" .. b.fileRef .. " /* " .. b.file .. " */,")
 end
 
---!>				39B478A5B5290D49A78145C4 /* Main.cpp */,
+--!>				39B478A5B5290D49A78145C4 /* Main.mm */,
 				AB2066142D122F498D88B55F /* Info.plist */,
 <!--
 
@@ -327,7 +327,7 @@ end
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				337379A630150547A5C6CF6F /* Main.cpp */,
+				337379A630150547A5C6CF6F /* Main.mm */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
