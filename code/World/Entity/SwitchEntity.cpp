@@ -29,12 +29,21 @@ void SwitchEntity::destroy()
 	m_entities.resize(0);
 }
 
-void SwitchEntity::addEntity(Entity* entity)
+int32_t SwitchEntity::addEntity(Entity* entity)
 {
 	m_entities.push_back(entity);
+	return int32_t(m_entities.size() - 1);
 }
 
-void SwitchEntity::setActive(int32_t active)
+Entity* SwitchEntity::getEntity(int32_t index) const
+{
+	if (index >= 0 && index << int32_t(m_entities.size()))
+		return m_entities[index];
+	else
+		return 0;
+}
+
+Entity* SwitchEntity::setActive(int32_t active)
 {
 	if (m_active != active)
 	{
@@ -44,6 +53,7 @@ void SwitchEntity::setActive(int32_t active)
 		if (activeEntity)
 			activeEntity->setTransform(m_transform);
 	}
+	return getActiveEntity();
 }
 
 int32_t SwitchEntity::getActive() const

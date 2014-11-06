@@ -31,9 +31,11 @@ public:
 
 	virtual void destroy();
 
-	void addEntity(Entity* entity);
+	int32_t addEntity(Entity* entity);
 
-	void setActive(int32_t active);
+	Entity* getEntity(int32_t index) const;
+
+	Entity* setActive(int32_t active);
 
 	int32_t getActive() const;
 
