@@ -27,6 +27,9 @@ bool StatePoseController::setState(const std::wstring& stateName)
 	if (!m_stateGraph)
 		return false;
 
+	if (m_currentState && m_currentState->getName() == stateName)
+		return true;
+
 	const RefArray< StateNode >& states = m_stateGraph->getStates();
 	for (RefArray< StateNode >::const_iterator i = states.begin(); i != states.end(); ++i)
 	{
