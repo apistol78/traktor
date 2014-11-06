@@ -2,11 +2,14 @@
 #include "Animation/AnimatedMeshEntity.h"
 #include "Animation/Animation/StatePoseController.h"
 #include "Animation/IK/IKPoseController.h"
+#include "Animation/PathEntity/PathEntity.h"
+#include "Animation/PathEntity/PathEntityData.h"
 #include "Animation/RagDoll/RagDollPoseController.h"
 #include "Physics/Body.h"
 #include "Physics/PhysicsManager.h"
 #include "Script/AutoScriptClass.h"
 #include "Script/Boxes.h"
+#include "Script/IScriptDelegate.h"
 #include "Script/IScriptManager.h"
 
 namespace traktor
@@ -46,6 +49,61 @@ Transform animation_AnimatedMeshEntity_getSkinTransform(animation::AnimatedMeshE
 	return transform;
 }
 
+void animation_PathEntity_setTimeMode(animation::PathEntity* self, const std::wstring& timeMode)
+{
+	if (timeMode == L"manual")
+		self->setTimeMode(animation::PathEntity::TmManual);
+	else if (timeMode == L"once")
+		self->setTimeMode(animation::PathEntity::TmOnce);
+	else if (timeMode == L"loop")
+		self->setTimeMode(animation::PathEntity::TmLoop);
+	else if (timeMode == L"pingPong")
+		self->setTimeMode(animation::PathEntity::TmPingPong);
+}
+
+std::wstring animation_PathEntity_getTimeMode(animation::PathEntity* self)
+{
+	switch (self->getTimeMode())
+	{
+	case animation::PathEntity::TmManual:
+		return L"manual";
+	case animation::PathEntity::TmOnce:
+		return L"once";
+	case animation::PathEntity::TmLoop:
+		return L"loop";
+	case animation::PathEntity::TmPingPong:
+		return L"pingPong";
+	default:
+		return L"";
+	}
+}
+
+class DelegatePathEntityListener : public RefCountImpl< animation::PathEntity::IListener >
+{
+public:
+	DelegatePathEntityListener(script::IScriptDelegate* delegate)
+	:	m_delegate(delegate)
+	{
+	}
+
+	virtual void notifyPathFinished(animation::PathEntity* entity)
+	{
+		script::Any argv[] =
+		{
+			script::CastAny< animation::PathEntity* >::set(entity)
+		};
+		m_delegate->call(sizeof_array(argv), argv);
+	}
+
+private:
+	Ref< script::IScriptDelegate > m_delegate;
+};
+
+void animation_PathEntity_setListener(animation::PathEntity* self, script::IScriptDelegate* listener)
+{
+	self->setListener(new DelegatePathEntityListener(listener));
+}
+
 		}
 
 void registerAnimationClasses(script::IScriptManager* scriptManager)
@@ -83,6 +141,21 @@ void registerAnimationClasses(script::IScriptManager* scriptManager)
 	classStatePoseController->addMethod("setTimeFactor", &animation::StatePoseController::setTimeFactor);
 	classStatePoseController->addMethod("getTimeFactor", &animation::StatePoseController::getTimeFactor);
 	scriptManager->registerClass(classStatePoseController);
+
+	Ref< script::AutoScriptClass< animation::PathEntity > > classPathEntity = new script::AutoScriptClass< animation::PathEntity >();
+	classPathEntity->addMethod("setTimeMode", &animation_PathEntity_setTimeMode);
+	classPathEntity->addMethod("getTimeMode", &animation_PathEntity_getTimeMode);
+	classPathEntity->addMethod("setTimeScale", &animation::PathEntity::setTimeScale);
+	classPathEntity->addMethod("getTimeScale", &animation::PathEntity::getTimeScale);
+	classPathEntity->addMethod("setTime", &animation::PathEntity::setTime);
+	classPathEntity->addMethod("getTime", &animation::PathEntity::getTime);
+	classPathEntity->addMethod("getEntity", &animation::PathEntity::getEntity);
+	classPathEntity->addMethod("setListener", &animation_PathEntity_setListener);
+	scriptManager->registerClass(classPathEntity);
+
+	Ref< script::AutoScriptClass< animation::PathEntityData > > classPathEntityData = new script::AutoScriptClass< animation::PathEntityData >();
+	classPathEntityData->addConstructor();
+	scriptManager->registerClass(classPathEntityData);
 }
 
 	}

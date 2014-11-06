@@ -62,6 +62,9 @@ void PathEntity::update(const world::UpdateParams& update)
 		case TmOnce:
 			if (m_time > m_path.getEndTime())
 			{
+				if (m_listener && abs(m_timeDeltaSign) > 0.0f)
+					m_listener->notifyPathFinished(this);
+
 				m_time = m_path.getEndTime();
 				m_timeDeltaSign = 0.0f;
 			}
@@ -69,17 +72,28 @@ void PathEntity::update(const world::UpdateParams& update)
 
 		case TmLoop:
 			if (m_time > m_path.getEndTime())
+			{
+				if (m_listener)
+					m_listener->notifyPathFinished(this);
+
 				m_time = 0.0f;
+			}
 			break;
 
 		case TmPingPong:
 			if (m_time > m_path.getEndTime())
 			{
+				if (m_listener)
+					m_listener->notifyPathFinished(this);
+
 				m_time = m_path.getEndTime();
 				m_timeDeltaSign = -1.0f;
 			}
 			else if (m_time < 0.0f)
 			{
+				if (m_listener)
+					m_listener->notifyPathFinished(this);
+
 				m_time = 0.0f;
 				m_timeDeltaSign = 1.0f;
 			}
