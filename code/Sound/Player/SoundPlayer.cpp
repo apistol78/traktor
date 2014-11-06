@@ -174,7 +174,7 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 
 	// Calculate distance from listener.
 	Scalar distance = (position - listenerPosition).xyz0().length();
-	if (distance > maxDistance)
+	if (autoStopFar && distance > maxDistance)
 		return 0;
 
 	float k0 = distance / maxDistance;
