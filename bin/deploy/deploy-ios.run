@@ -76,9 +76,9 @@ function deploy(args)
 		return 1
 	end
 
-	stdout:printLn("Generating Main.cpp...")
-	if run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/ios/Main.cpp.template", "Main.cpp") ~= 0 then
-		stderr:printLn("Failed to generate Main.cpp")
+	stdout:printLn("Generating Main.mm...")
+	if run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/ios/Main.mm.template", "Main.mm") ~= 0 then
+		stderr:printLn("Failed to generate Main.mm")
 		return 1
 	end
 
@@ -101,7 +101,7 @@ function deploy(args)
 		run:pushd("$(TRAKTOR_HOME)/bin/osx")
 		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) kick-open.sh", "(null)")
 		run:popd()
-		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) *.plist *.png *.cpp Application.config", "(null)")
+		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) *.plist *.png *.mm Application.config", "(null)")
 		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) \"$(DEPLOY_PROJECT_NAME).xcodeproj/project.pbxproj\"", "(null)")
 
 		if not debug then
@@ -118,7 +118,6 @@ function deploy(args)
 		local deployBundles = {}
 
 		for _, f in ipairs(files) do
-
 			if string.endswith(f, ".a") then
 				if debug then
 					f = f:sub(1, string.len(f) - 2) .. "_d.a"
@@ -199,9 +198,9 @@ function migrate(args)
 		return 1
 	end
 
-	stdout:printLn("Generating Main.cpp...")
-	if run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/ios/Main.cpp.template", "Main.cpp") ~= 0 then
-		stderr:printLn("Failed to generate Main.cpp")
+	stdout:printLn("Generating Main.mm...")
+	if run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/ios/Main.mm.template", "Main.mm") ~= 0 then
+		stderr:printLn("Failed to generate Main.mm")
 		return 1
 	end
 
@@ -221,7 +220,7 @@ function migrate(args)
 
 	if environment:get("DEPLOY_TARGET_HOST") ~= "localhost" then
 		stdout:printLn("Deploying resources to target host...")
-		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) *.plist *.png *.cpp Content.compact Application.config", "(null)")
+		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) *.plist *.png *.mm Content.compact Application.config", "(null)")
 		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) \"$(DEPLOY_PROJECT_NAME).xcodeproj/project.pbxproj\"", "(null)")
 
 		stdout:printLn("Deploying binaries to target host...")
