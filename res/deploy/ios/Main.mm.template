@@ -1,0 +1,25 @@
+// Application configurable callbacks
+
+/*! \brief Called when application starts.
+ */
+void applicationStart()
+{
+}
+
+/*! \brief Called when application terminates.
+ */
+void applicationEnd()
+{
+}
+
+/*! \brief Called when application will become suspended.
+ */
+void applicationSuspend()
+{
+}
+
+/*! \brief Called after application resumed from suspended state.
+ */
+void applicationResume()
+{
+}

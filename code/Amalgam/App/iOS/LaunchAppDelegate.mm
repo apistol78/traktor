@@ -5,6 +5,11 @@
 
 using namespace traktor;
 
+extern void applicationStart();
+extern void applicationEnd();
+extern void applicationSuspend();
+extern void applicationResume();
+
 @interface LaunchAppDelegate ()
 {
     UIWindow* window;
@@ -31,12 +36,16 @@ using namespace traktor;
 	if ([viewController createApplication] == NO)
 		return NO;
 
+	applicationStart();
+
 	[viewController startAnimation];
     return YES;
 }
 
 - (void) applicationWillResignActive:(UIApplication *)application
 {
+	applicationSuspend();
+
 	if (viewController != nil)
 		[viewController stopAnimation];
 }
@@ -45,16 +54,22 @@ using namespace traktor;
 {
 	if (viewController != nil)
 		[viewController startAnimation];
+
+	applicationResume();
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
+	applicationEnd();
+
 	if (viewController != nil)
 		[viewController stopAnimation];
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
+	applicationSuspend();
+	
 	if (viewController != nil)
 		[viewController stopAnimation];
 }
@@ -63,6 +78,8 @@ using namespace traktor;
 {
 	if (viewController != nil)
 		[viewController startAnimation];
+
+	applicationResume();
 }
 
 - (void) dealloc
