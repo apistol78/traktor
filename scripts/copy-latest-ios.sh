@@ -33,8 +33,8 @@ if [ $CONFIG == "both" ] || [ $CONFIG == "release" ] ; then
 	# Copy 3rd-party frameworks.
 	cp -R -f $TRAKTOR_HOME/3rdp/Everyplay/Everyplay.bundle bin/latest/ios/releasestatic/
 	cp -R -f $TRAKTOR_HOME/3rdp/Everyplay/Everyplay.framework bin/latest/ios/releasestatic/
-	cp -R -f $TRAKTOR_HOME/3rdp/mobage-adsdk-ios-0.4.1-20140724-g04701ad/MobageAd.bundle bin/latest/ios/releasestatic/
-	cp -R -f $TRAKTOR_HOME/3rdp/mobage-adsdk-ios-0.4.1-20140724-g04701ad/MobageAd.framework bin/latest/ios/releasestatic/
+	cp -R -f $TRAKTOR_HOME/3rdp/mobage-adsdk-ios-0.4.1-20140724-g04701ad/MobageAd.bundle/* bin/latest/ios/releasestatic/MobageAd.bundle
+	cp -R -f $TRAKTOR_HOME/3rdp/mobage-adsdk-ios-0.4.1-20140724-g04701ad/MobageAd.framework/* bin/latest/ios/releasestatic/MobageAd.framework
 
 	popd
 
@@ -66,8 +66,8 @@ if [ $CONFIG == "both" ] || [ $CONFIG == "debug" ] ; then
 	# Copy 3rd-party frameworks.
 	cp -R -f $TRAKTOR_HOME/3rdp/Everyplay/Everyplay.bundle bin/latest/ios/debugstatic/
 	cp -R -f $TRAKTOR_HOME/3rdp/Everyplay/Everyplay.framework bin/latest/ios/debugstatic/
-	cp -R -f $TRAKTOR_HOME/3rdp/mobage-adsdk-ios-0.4.1-20140724-g04701ad/MobageAd.bundle bin/latest/ios/debugstatic/
-	cp -R -f $TRAKTOR_HOME/3rdp/mobage-adsdk-ios-0.4.1-20140724-g04701ad/MobageAd.framework bin/latest/ios/debugstatic/
+	cp -R -f $TRAKTOR_HOME/3rdp/mobage-adsdk-ios-0.4.1-20140724-g04701ad/MobageAd.bundle/* bin/latest/ios/debugstatic/MobageAd.bundle
+	cp -R -f $TRAKTOR_HOME/3rdp/mobage-adsdk-ios-0.4.1-20140724-g04701ad/MobageAd.framework/* bin/latest/ios/debugstatic/MobageAd.framework
 
 	popd
 
