@@ -42,6 +42,11 @@ public:
 		TmPingPong
 	};
 
+	struct IListener : public IRefCount
+	{
+		virtual void notifyPathFinished(PathEntity* entity) = 0;
+	};
+
 	PathEntity(const Transform& transform, const TransformPath& path, TimeMode timeMode, world::Entity* entity);
 
 	virtual ~PathEntity();
@@ -85,6 +90,8 @@ public:
 
 	world::Entity* getEntity() { return m_entity; }
 
+	void setListener(IListener* listener) { m_listener = listener; }
+
 private:
 	Transform m_transform;
 	TransformPath m_path;
@@ -93,6 +100,7 @@ private:
 	float m_timeScale;
 	float m_timeDeltaSign;
 	float m_time;
+	Ref< IListener > m_listener;
 };
 
 	}
