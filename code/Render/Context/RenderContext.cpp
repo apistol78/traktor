@@ -13,6 +13,9 @@ const float c_distanceQuantizeRangeInv = 1.0f / 4.0f;
 
 T_FORCE_INLINE bool SortOpaquePredicate(const RenderBlock* renderBlock1, const RenderBlock* renderBlock2)
 {
+// Don't sort front-to-back on iOS as it's a TDBR architecture thus
+// we focus on minimizing state changes on the CPU instead.
+#if !defined(__IOS__)
 	float d1 = std::floor(renderBlock1->distance * c_distanceQuantizeRangeInv);
 	float d2 = std::floor(renderBlock2->distance * c_distanceQuantizeRangeInv);
 
@@ -20,6 +23,7 @@ T_FORCE_INLINE bool SortOpaquePredicate(const RenderBlock* renderBlock1, const R
 		return true;
 	else if (d1 > d2)
 		return false;
+#endif
 
 	return renderBlock1->program < renderBlock2->program;
 }
