@@ -863,7 +863,7 @@ struct CastAny < Guid, false >
 	static Any set(const Guid& value) {
 		return Any::fromObject(new BoxedGuid(value));
 	}	
-	static Guid get(const Any& value) {
+	static const Guid& get(const Any& value) {
 		return checked_type_cast< BoxedGuid*, false >(value.getObject())->unbox();
 	}
 };
@@ -877,7 +877,7 @@ struct CastAny < const Guid&, false >
 	static Any set(const Guid& value) {
 		return Any::fromObject(new BoxedGuid(value));
 	}	
-	static Guid get(const Any& value) {
+	static const Guid& get(const Any& value) {
 		return checked_type_cast< BoxedGuid*, false >(value.getObject())->unbox();
 	}
 };
@@ -891,7 +891,7 @@ struct CastAny < Vector2, false >
 	static Any set(const Vector2& value) {
 		return Any::fromObject(new BoxedVector2(value));
 	}	
-	static Vector2 get(const Any& value) {
+	static const Vector2& get(const Any& value) {
 		return checked_type_cast< BoxedVector2*, false >(value.getObject())->unbox();
 	}
 };
@@ -905,7 +905,7 @@ struct CastAny < const Vector2&, false >
 	static Any set(const Vector2& value) {
 		return Any::fromObject(new BoxedVector2(value));
 	}	
-	static Vector2 get(const Any& value) {
+	static const Vector2& get(const Any& value) {
 		return checked_type_cast< BoxedVector2*, false >(value.getObject())->unbox();
 	}
 };
@@ -919,7 +919,7 @@ struct CastAny < Vector4, false >
     static Any set(const Vector4& value) {
         return Any::fromObject(new BoxedVector4(value));
     }	
-    static Vector4 get(const Any& value) {
+    static const Vector4& get(const Any& value) {
         return checked_type_cast< BoxedVector4*, false >(value.getObject())->unbox();
     }
 };
@@ -933,7 +933,7 @@ struct CastAny < const Vector4&, false >
     static Any set(const Vector4& value) {
         return Any::fromObject(new BoxedVector4(value));
     }	
-    static Vector4 get(const Any& value) {
+    static const Vector4& get(const Any& value) {
         return checked_type_cast< BoxedVector4*, false >(value.getObject())->unbox();
     }
 };
@@ -947,7 +947,7 @@ struct CastAny < Quaternion, false >
     static Any set(const Quaternion& value) {
         return Any::fromObject(new BoxedQuaternion(value));
     }
-    static Quaternion get(const Any& value) {
+    static const Quaternion& get(const Any& value) {
         return checked_type_cast< BoxedQuaternion*, false >(value.getObject())->unbox();
     }
 };
@@ -961,7 +961,7 @@ struct CastAny < const Quaternion&, false >
     static Any set(const Quaternion& value) {
         return Any::fromObject(new BoxedQuaternion(value));
     }
-    static Quaternion get(const Any& value) {
+    static const Quaternion& get(const Any& value) {
         return checked_type_cast< BoxedQuaternion*, false >(value.getObject())->unbox();
     }
 };
@@ -975,7 +975,7 @@ struct CastAny < Plane, false >
 	static Any set(const Plane& value) {
 		return Any::fromObject(new BoxedPlane(value));
 	}
-	static Plane get(const Any& value) {
+	static const Plane& get(const Any& value) {
 		return checked_type_cast< BoxedPlane*, false >(value.getObject())->unbox();
 	}
 };
@@ -989,7 +989,7 @@ struct CastAny < const Plane&, false >
 	static Any set(const Plane& value) {
 		return Any::fromObject(new BoxedPlane(value));
 	}
-	static Plane get(const Any& value) {
+	static const Plane& get(const Any& value) {
 		return checked_type_cast< BoxedPlane*, false >(value.getObject())->unbox();
 	}
 };
@@ -1003,7 +1003,7 @@ struct CastAny < Transform, false >
     static Any set(const Transform& value) {
         return Any::fromObject(new BoxedTransform(value));
     }
-    static Transform get(const Any& value) {
+    static const Transform& get(const Any& value) {
         return checked_type_cast< BoxedTransform*, false >(value.getObject())->unbox();
     }
 };
@@ -1017,7 +1017,7 @@ struct CastAny < const Transform&, false >
     static Any set(const Transform& value) {
         return Any::fromObject(new BoxedTransform(value));
     }
-    static Transform get(const Any& value) {
+    static const Transform& get(const Any& value) {
         return checked_type_cast< BoxedTransform*, false >(value.getObject())->unbox();
     }
 };
@@ -1031,7 +1031,7 @@ struct CastAny < Aabb3, false >
 	static Any set(const Aabb3& value) {
 		return Any::fromObject(new BoxedAabb3(value));
 	}	
-	static Aabb3 get(const Any& value) {
+	static const Aabb3& get(const Any& value) {
 		return checked_type_cast< BoxedAabb3*, false >(value.getObject())->unbox();
 	}
 };
@@ -1045,7 +1045,7 @@ struct CastAny < const Aabb3&, false >
 	static Any set(const Aabb3& value) {
 		return Any::fromObject(new BoxedAabb3(value));
 	}	
-	static Aabb3 get(const Any& value) {
+	static const Aabb3& get(const Any& value) {
 		return checked_type_cast< BoxedAabb3*, false >(value.getObject())->unbox();
 	}
 };
@@ -1059,7 +1059,7 @@ struct CastAny < Frustum, false >
 	static Any set(const Frustum& value) {
 		return Any::fromObject(new BoxedFrustum(value));
 	}	
-	static Frustum get(const Any& value) {
+	static const Frustum& get(const Any& value) {
 		return checked_type_cast< BoxedFrustum*, false >(value.getObject())->unbox();
 	}
 };
@@ -1073,7 +1073,7 @@ struct CastAny < const Frustum&, false >
 	static Any set(const Frustum& value) {
 		return Any::fromObject(new BoxedFrustum(value));
 	}	
-	static Frustum get(const Any& value) {
+	static const Frustum& get(const Any& value) {
 		return checked_type_cast< BoxedFrustum*, false >(value.getObject())->unbox();
 	}
 };
@@ -1087,7 +1087,7 @@ struct CastAny < Matrix44, false >
 	static Any set(const Matrix44& value) {
 		return Any::fromObject(new BoxedMatrix44(value));
 	}	
-	static Matrix44 get(const Any& value) {
+	static const Matrix44& get(const Any& value) {
 		return checked_type_cast< BoxedMatrix44*, false >(value.getObject())->unbox();
 	}
 };
@@ -1101,7 +1101,7 @@ struct CastAny < const Matrix44&, false >
 	static Any set(const Matrix44& value) {
 		return Any::fromObject(new BoxedMatrix44(value));
 	}	
-	static Matrix44 get(const Any& value) {
+	static const Matrix44& get(const Any& value) {
 		return checked_type_cast< BoxedMatrix44*, false >(value.getObject())->unbox();
 	}
 };
@@ -1115,7 +1115,7 @@ struct CastAny < Color4f, false >
 	static Any set(const Color4f& value) {
 		return Any::fromObject(new BoxedColor4f(value));
 	}
-	static Color4f get(const Any& value) {
+	static const Color4f& get(const Any& value) {
 		return checked_type_cast< BoxedColor4f*, false >(value.getObject())->unbox();
 	}
 };
@@ -1129,7 +1129,7 @@ struct CastAny < const Color4f&, false >
 	static Any set(const Color4f& value) {
 		return Any::fromObject(new BoxedColor4f(value));
 	}
-	static Color4f get(const Any& value) {
+	static const Color4f& get(const Any& value) {
 		return checked_type_cast< BoxedColor4f*, false >(value.getObject())->unbox();
 	}
 };
@@ -1143,7 +1143,7 @@ struct CastAny < Color4ub, false >
 	static Any set(const Color4ub& value) {
 		return Any::fromObject(new BoxedColor4ub(value));
 	}
-	static Color4ub get(const Any& value) {
+	static const Color4ub& get(const Any& value) {
 		return checked_type_cast< BoxedColor4ub*, false >(value.getObject())->unbox();
 	}
 };
@@ -1157,7 +1157,7 @@ struct CastAny < const Color4ub&, false >
 	static Any set(const Color4ub& value) {
 		return Any::fromObject(new BoxedColor4ub(value));
 	}
-	static Color4ub get(const Any& value) {
+	static const Color4ub& get(const Any& value) {
 		return checked_type_cast< BoxedColor4ub*, false >(value.getObject())->unbox();
 	}
 };
@@ -1171,7 +1171,7 @@ struct CastAny < Random, false >
 	static Any set(const Random& value) {
 		return Any::fromObject(new BoxedRandom(value));
 	}
-	static Random get(const Any& value) {
+	static const Random& get(const Any& value) {
 		return checked_type_cast< BoxedRandom*, false >(value.getObject())->unbox();
 	}
 };
@@ -1185,7 +1185,7 @@ struct CastAny < const Random&, false >
 	static Any set(const Random& value) {
 		return Any::fromObject(new BoxedRandom(value));
 	}
-	static Random get(const Any& value) {
+	static const Random& get(const Any& value) {
 		return checked_type_cast< BoxedRandom*, false >(value.getObject())->unbox();
 	}
 };
@@ -1199,7 +1199,7 @@ struct CastAny < RandomGeometry, false >
 	static Any set(const RandomGeometry& value) {
 		return Any::fromObject(new BoxedRandomGeometry(value));
 	}
-	static RandomGeometry get(const Any& value) {
+	static const RandomGeometry& get(const Any& value) {
 		return checked_type_cast< BoxedRandomGeometry*, false >(value.getObject())->unbox();
 	}
 };
@@ -1213,7 +1213,7 @@ struct CastAny < const RandomGeometry&, false >
 	static Any set(const RandomGeometry& value) {
 		return Any::fromObject(new BoxedRandomGeometry(value));
 	}
-	static RandomGeometry get(const Any& value) {
+	static const RandomGeometry& get(const Any& value) {
 		return checked_type_cast< BoxedRandomGeometry*, false >(value.getObject())->unbox();
 	}
 };
