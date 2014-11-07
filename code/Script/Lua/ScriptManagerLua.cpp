@@ -650,23 +650,17 @@ Any ScriptManagerLua::toAny(int32_t index)
 
 	if (lua_isnumber(m_luaState, index))
 		return Any::fromFloat(float(lua_tonumber(m_luaState, index)));
-	if (lua_isboolean(m_luaState, index))
+	else if (lua_isboolean(m_luaState, index))
 		return Any::fromBoolean(bool(lua_toboolean(m_luaState, index) != 0));
-	if (lua_isstring(m_luaState, index))
+	else if (lua_isstring(m_luaState, index))
 		return Any::fromString(lua_tostring(m_luaState, index));
-	if (lua_isuserdata(m_luaState, index))
+	else if (lua_isuserdata(m_luaState, index))
 	{
 		Object* object = *reinterpret_cast< Object** >(lua_touserdata(m_luaState, index));
 		if (object)
 			return Any::fromObject(object);
 	}
-	if (lua_isfunction(m_luaState, index))
-	{
-		// Box LUA function into C++ container.
-		lua_pushvalue(m_luaState, index);
-		return Any::fromObject(new ScriptDelegateLua(m_lockContext, m_luaState));
-	}
-	if (lua_istable(m_luaState, index))
+	else if (lua_istable(m_luaState, index))
 	{
 		// Unbox wrapped native type.
 		lua_rawgeti(m_luaState, index, c_tableKey_class);
@@ -682,6 +676,12 @@ Any ScriptManagerLua::toAny(int32_t index)
 		// Box LUA table into C++ container.
 		lua_pushvalue(m_luaState, index);
 		return Any::fromObject(new TableContainerLua(m_luaState));
+	}
+	else if (lua_isfunction(m_luaState, index))
+	{
+		// Box LUA function into C++ container.
+		lua_pushvalue(m_luaState, index);
+		return Any::fromObject(new ScriptDelegateLua(m_lockContext, m_luaState));
 	}
 
 	return Any();
@@ -751,21 +751,24 @@ void ScriptManagerLua::collectGarbageFull()
 
 void ScriptManagerLua::collectGarbagePartial()
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
-	if (m_collectSteps < 0)
-	{
-		lua_gc(m_luaState, LUA_GCSTOP, 0);
-		m_collectSteps = 0;
-	}
-
 	m_collectTargetSteps += float(m_timer.getDeltaTime() * m_collectStepFrequency);
 
 	int32_t targetSteps = int32_t(m_collectTargetSteps);
-	while (m_collectSteps < targetSteps)
+	if (m_collectSteps < targetSteps)
 	{
-		lua_gc(m_luaState, LUA_GCSTEP, 0);
-		++m_collectSteps;
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+		if (m_collectSteps < 0)
+		{
+			lua_gc(m_luaState, LUA_GCSTOP, 0);
+			m_collectSteps = 0;
+		}
+
+		while (m_collectSteps < targetSteps)
+		{
+			lua_gc(m_luaState, LUA_GCSTEP, 0);
+			++m_collectSteps;
+		}
 	}
 
 	if (m_lastMemoryUse <= 0)
