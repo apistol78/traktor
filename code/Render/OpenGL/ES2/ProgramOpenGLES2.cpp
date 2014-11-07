@@ -184,6 +184,16 @@ Ref< ProgramOpenGLES2 > ProgramOpenGLES2::create(ContextOpenGLES2* resourceConte
 		}
 	}
 
+	// Prewarm shader to prevent stall when first used.
+	while (glGetError() != GL_NO_ERROR)
+		;
+
+	glUseProgram(programObject);
+	glDrawArrays(GL_TRIANGLES, 0, 0);
+
+	if (glGetError() != GL_NO_ERROR)
+		log::warning << L"Prewarming shader failed; might cause stall during normal render" << Endl;
+
 	return new ProgramOpenGLES2(resourceContext, programObject, resource);
 	
 #else
