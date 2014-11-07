@@ -123,6 +123,8 @@ function deploy(args)
 					f = f:sub(1, string.len(f) - 2) .. "_d.a"
 				end
 				deployFiles = deployFiles .. " " .. f
+			elseif string.endswith(f, ".plist") then
+				deployFiles = deployFiles .. " " .. f
 			elseif string.endswith(f, ".framework") or string.endswith(f, ".bundle") then
 				table.insert(deployBundles, f)
 			end
@@ -145,7 +147,7 @@ end
 
 
 function launch(args)
-	stdout:printLn("Launching iOS...")
+	stdout:printLn("Launching Xcode on target host...")
 	if environment:get("DEPLOY_TARGET_HOST") ~= "localhost" then
 		local result = run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteLaunch $(DEPLOY_TARGET_HOST) kick-open.sh \"$(DEPLOY_PROJECT_NAME)\"", "(null)")
 		if result ~= 0 then
@@ -225,8 +227,32 @@ function migrate(args)
 
 		stdout:printLn("Deploying binaries to target host...")
 		run:pushd("$(DEPLOY_SYSTEM_ROOT)/bin/latest/ios/releasestatic")
-		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) *.a", "(null)")
-		run:popd()
+
+		local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
+		
+		local deployFiles = ""
+		local deployBundles = {}
+
+		for _, f in ipairs(files) do
+			if string.endswith(f, ".a") then
+				if debug then
+					f = f:sub(1, string.len(f) - 2) .. "_d.a"
+				end
+				deployFiles = deployFiles .. " " .. f
+			elseif string.endswith(f, ".plist") then
+				deployFiles = deployFiles .. " " .. f
+			elseif string.endswith(f, ".framework") or string.endswith(f, ".bundle") then
+				table.insert(deployBundles, f)
+			end
+		end
+
+		if #deployFiles > 0 then
+			run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST)" .. deployFiles, "(null)")
+		end
+
+		for _, bundle in ipairs(deployBundles) do
+			run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy -recursive $(DEPLOY_TARGET_HOST) " .. bundle .. "/*.*", "(null)")
+		end
 
 		stdout:printLn("Launching Xcode on target host...")
 		if run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteLaunch $(DEPLOY_TARGET_HOST) kick-open.sh \"$(DEPLOY_PROJECT_NAME)\"", "(null)") ~= 0 then

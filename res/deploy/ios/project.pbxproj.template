@@ -24,6 +24,12 @@ function string:endswith(send)
 end
 
 
+function combine(uuidgroup, index)
+	local s = tostring(index)
+	return uuidgroup:sub(1, #uuidgroup - #s) .. s
+end
+
+
 -- Ensure product name is valid.
 local productName = environment:get("DEPLOY_EXECUTABLE"):gsub("[.,;:-]", "_")
 
@@ -35,6 +41,7 @@ local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
 local modules = {}
 local frameworks = {}
 local bundles = {}
+local additional = {}
 
 for _, f in ipairs(files) do
 	if string.endswith(f, ".a") then
@@ -45,26 +52,29 @@ for _, f in ipairs(files) do
 	elseif string.endswith(f, ".framework") then
 		local fw = {}
 		fw.file = f
-		fw.fileRef = "A0000000000000000000000" .. #frameworks
-		fw.buildRef = "A1000000000000000000000" .. #frameworks
+		fw.fileRef = combine("A00000000000000000000000", #frameworks)
+		fw.buildRef = combine("A10000000000000000000000", #frameworks)
 		table.insert(frameworks, fw)
 	elseif string.endswith(f, ".bundle") then
 		local bd = {}
 		bd.file = f
-		bd.fileRef = "B0000000000000000000000" .. #bundles
-		bd.buildRef = "B1000000000000000000000" .. #bundles
+		bd.fileRef = combine("B00000000000000000000000", #bundles)
+		bd.buildRef = combine("B10000000000000000000000", #bundles)
 		table.insert(bundles, bd)
+	elseif string.endswith(f, ".plist") then
+		local ad = {}
+		ad.file = f
+		ad.fileRef = combine("C00000000000000000000000", #additional)
+		ad.buildRef = combine("C10000000000000000000000", #additional)
+		table.insert(additional, ad)
 	end
 end
 
-
--- Accumulate, and generate UID for, each additional file.
-local additional = {}
 for i = 0, args:size() - 1 do
 	local a = {}
 	a.file = args:get(i)
-	a.fileRef = "C0000000000000000000000" .. i
-	a.buildRef = "C1000000000000000000000" .. i
+	a.fileRef = combine("D00000000000000000000000", i)
+	a.buildRef = combine("D10000000000000000000000", i)
 	table.insert(additional, a)
 end
 
@@ -195,11 +205,11 @@ end
 <!--
 
 for _, a in ipairs(additional) do
-		output:printLn("\t\t" .. a.fileRef .. " /* " .. a.file .. " */,")
+		output:printLn("\t\t\t\t" .. a.fileRef .. " /* " .. a.file .. " */,")
 end
 
 for _, b in ipairs(bundles) do
-		output:printLn("\t\t" .. b.fileRef .. " /* " .. b.file .. " */,")
+		output:printLn("\t\t\t\t" .. b.fileRef .. " /* " .. b.file .. " */,")
 end
 
 --!>				39B478A5B5290D49A78145C4 /* Main.mm */,
@@ -304,11 +314,11 @@ end
 <!--
 
 for _, a in ipairs(additional) do
-		output:printLn("\t\t" .. a.buildRef .. " /* " .. a.file .. " in Resources */,")
+		output:printLn("\t\t\t\t" .. a.buildRef .. " /* " .. a.file .. " in Resources */,")
 end
 
 for _, b in ipairs(bundles) do
-		output:printLn("\t\t" .. b.buildRef .. " /* " .. b.file .. " in Resources */,")
+		output:printLn("\t\t\t\t" .. b.buildRef .. " /* " .. b.file .. " in Resources */,")
 end
 
 --!>				2711EBAD18DDB14D005F551E /* Icon-76@2x.png in Resources */,
