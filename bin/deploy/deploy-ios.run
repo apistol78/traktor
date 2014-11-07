@@ -96,12 +96,15 @@ function deploy(args)
 		return 1
 	end
 
+	stdout:printLn("Generating Xcode launcher script...")
+	local f = fileSystem:open(Path("launch.sh"), 2)
+	local s = StreamOutput(f, Utf8Encoding(), "unix")
+	s:printLn("open \"${*:1}\".xcodeproj")
+	f:close()	
+
 	if environment:get("DEPLOY_TARGET_HOST") ~= "localhost" then
 		stdout:printLn("Deploying resources to target host...")
-		run:pushd("$(TRAKTOR_HOME)/bin/osx")
-		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) kick-open.sh", "(null)")
-		run:popd()
-		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) *.plist *.png *.mm Application.config", "(null)")
+		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) launch.sh *.plist *.png *.mm Application.config", "(null)")
 		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) \"$(DEPLOY_PROJECT_NAME).xcodeproj/project.pbxproj\"", "(null)")
 
 		if not debug then
@@ -149,7 +152,7 @@ end
 function launch(args)
 	stdout:printLn("Launching Xcode on target host...")
 	if environment:get("DEPLOY_TARGET_HOST") ~= "localhost" then
-		local result = run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteLaunch $(DEPLOY_TARGET_HOST) kick-open.sh \"$(DEPLOY_PROJECT_NAME)\"", "(null)")
+		local result = run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteLaunch $(DEPLOY_TARGET_HOST) launch.sh \"$(DEPLOY_PROJECT_NAME)\"", "(null)")
 		if result ~= 0 then
 			stderr:printLn("Failed to launch iOS application")
 			return 1
@@ -220,9 +223,15 @@ function migrate(args)
 		return 1
 	end
 
+	stdout:printLn("Generating Xcode launcher script...")
+	local f = fileSystem:open(Path("launch.sh"), 2)
+	local s = StreamOutput(f, Utf8Encoding(), "unix")
+	s:printLn("open \"${*:1}\".xcodeproj")
+	f:close()	
+
 	if environment:get("DEPLOY_TARGET_HOST") ~= "localhost" then
 		stdout:printLn("Deploying resources to target host...")
-		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) *.plist *.png *.mm Content.compact Application.config", "(null)")
+		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) launch.sh *.plist *.png *.mm Content.compact Application.config", "(null)")
 		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) \"$(DEPLOY_PROJECT_NAME).xcodeproj/project.pbxproj\"", "(null)")
 
 		stdout:printLn("Deploying binaries to target host...")
@@ -255,7 +264,7 @@ function migrate(args)
 		end
 
 		stdout:printLn("Launching Xcode on target host...")
-		if run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteLaunch $(DEPLOY_TARGET_HOST) kick-open.sh \"$(DEPLOY_PROJECT_NAME)\"", "(null)") ~= 0 then
+		if run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteLaunch $(DEPLOY_TARGET_HOST) launch.sh \"$(DEPLOY_PROJECT_NAME)\"", "(null)") ~= 0 then
 			stderr:printLn("Failed to launch Xcode")
 			return 1
 		end
