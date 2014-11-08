@@ -1,6 +1,7 @@
 #include "Core/Io/Path.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/WildCompare.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -38,6 +39,7 @@
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
+#include "Ui/Custom/ToolBar/ToolBarDropDown.h"
 #include "Ui/Custom/ToolBar/ToolBarEmbed.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 
@@ -153,6 +155,26 @@ private:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.DatabaseView.GuidSetFilter", GuidSetFilter, DatabaseView::Filter)
 
+class CollectInstanceTypes
+{
+public:
+	CollectInstanceTypes(TypeInfoSet& outInstanceTypes)
+	:	m_outInstanceTypes(outInstanceTypes)
+	{
+	}
+
+	bool operator () (const db::Instance* instance) const
+	{
+		const TypeInfo* instanceType = instance->getPrimaryType();
+		if (instanceType)
+				m_outInstanceTypes.insert(instanceType);
+		return false;
+	}
+
+private:
+	TypeInfoSet& m_outInstanceTypes;
+};
+
 ui::TreeViewItem* findTreeItem(ui::TreeViewItem* item, const db::Instance* instance)
 {
 	if (!item)
@@ -171,6 +193,24 @@ ui::TreeViewItem* findTreeItem(ui::TreeViewItem* item, const db::Instance* insta
 	}
 
 	return 0;
+}
+
+bool isInstanceInPrivate(const db::Instance* instance)
+{
+	db::Group* group = instance->getParent();
+	while (group)
+	{
+		if (group->getName() == L"System")
+			return true;
+		group = group->getParent();
+	}
+	return false;
+}
+
+std::wstring getCategoryText(const TypeInfo* categoryType)
+{
+	std::wstring id = L"DATABASE_CATEGORY_" + replaceAll< std::wstring >(toUpper(std::wstring(categoryType->getName())), L".", L"_");
+	return i18n::Text(id, categoryType->getName());
 }
 
 		}
@@ -229,6 +269,14 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_editFilter->create(m_toolSelection, L"", ui::WsNone);
 	m_editFilter->addEventHandler< ui::KeyUpEvent >(this, &DatabaseView::eventFilterKey);
 	m_toolSelection->addItem(new ui::custom::ToolBarEmbed(m_editFilter, 100));
+
+	m_toolSelection->addItem(new ui::custom::ToolBarSeparator());
+
+	m_toolViewMode = new ui::custom::ToolBarDropDown(ui::Command(L"Editor.ViewModes"), 80, i18n::Text(L"DATABASE_VIEW_MODE"));
+	m_toolViewMode->add(i18n::Text(L"DATABASE_VIEW_MODE_HIERARCHY"));
+	m_toolViewMode->add(i18n::Text(L"DATABASE_VIEW_MODE_CATEGORY"));
+	m_toolViewMode->select(0);
+	m_toolSelection->addItem(m_toolViewMode);
 
 	m_toolSelection->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &DatabaseView::eventToolSelectionClicked);
 
@@ -382,7 +430,78 @@ void DatabaseView::updateView()
 		for (std::vector< std::wstring >::const_iterator i = favoriteInstances.begin(); i != favoriteInstances.end(); ++i)
 			m_favoriteInstances.insert(Guid(*i));
 
-		buildTreeItem(m_treeDatabase, 0, m_db->getRootGroup());
+		int32_t viewMode = m_toolViewMode->getSelected();
+
+		if (viewMode == 0)	// Hierarchy
+			buildTreeItem(m_treeDatabase, 0, m_db->getRootGroup());
+		else if (viewMode == 1)	// Category
+		{
+			bool showFiltered = m_toolFilterShow->isToggled();
+			bool showFavorites = m_toolFavoritesShow->isToggled();
+			bool showPrivate = false;
+
+			TypeInfoSet instanceTypes;
+			db::recursiveFindChildInstance(m_db->getRootGroup(), CollectInstanceTypes(instanceTypes));
+
+			for (TypeInfoSet::const_iterator i = instanceTypes.begin(); i != instanceTypes.end(); ++i)
+			{
+				const TypeInfo* instanceType = *i;
+				T_ASSERT (instanceType);
+
+				Ref< ui::TreeViewItem > instanceTypeItem = m_treeDatabase->createItem(0, getCategoryText(instanceType), 0, 1);
+
+				RefArray< db::Instance > instances;
+				db::recursiveFindChildInstances(m_db->getRootGroup(), db::FindInstanceByType(*instanceType), instances);
+
+				for (RefArray< db::Instance >::const_iterator j = instances.begin(); j != instances.end(); ++j)
+				{
+					const TypeInfo* primaryType = (*j)->getPrimaryType();
+					if (!primaryType)
+						continue;
+
+					if (showFavorites)
+					{
+						if (m_favoriteInstances.find((*j)->getGuid()) == m_favoriteInstances.end())
+							continue;
+					}
+
+					if (!showPrivate)
+					{
+						if (isInstanceInPrivate(*j))
+							continue;
+					}
+
+					int32_t iconIndex = getIconIndex(primaryType);
+
+					if (!showFiltered)
+					{
+						if (!m_filter->acceptInstance((*j)))
+							continue;
+					}
+					else
+					{
+						if (!m_filter->acceptInstance((*j)))
+							iconIndex += 15;
+					}
+
+					Ref< ui::TreeViewItem > instanceItem = m_treeDatabase->createItem(
+						instanceTypeItem,
+						(*j)->getName(),
+						iconIndex
+					);
+
+					if (m_rootInstances.find((*j)->getGuid()) != m_rootInstances.end())
+						instanceItem->setBold(true);
+
+					instanceItem->setData(L"GROUP", (*j)->getParent());
+					instanceItem->setData(L"INSTANCE", (*j));
+				}
+
+				if (!instanceTypeItem->hasChildren())
+					m_treeDatabase->removeItem(instanceTypeItem);
+			}
+		}
+
 		setEnable(true);
 	}
 	else
@@ -797,6 +916,7 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::
 
 	bool showFiltered = m_toolFilterShow->isToggled();
 	bool showFavorites = m_toolFavoritesShow->isToggled();
+	bool showPrivate = true;
 
 	RefArray< db::Instance > childInstances;
 	group->getChildInstances(childInstances);
@@ -810,6 +930,12 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::
 		if (showFavorites)
 		{
 			if (m_favoriteInstances.find((*i)->getGuid()) == m_favoriteInstances.end())
+				continue;
+		}
+
+		if (!showPrivate)
+		{
+			if (isInstanceInPrivate(*i))
 				continue;
 		}
 

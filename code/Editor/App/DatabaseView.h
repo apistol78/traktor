@@ -21,6 +21,7 @@ class PopupMenu;
 class ToolBar;
 class ToolBarButton;
 class ToolBarButtonClickEvent;
+class ToolBarDropDown;
 
 		}
 	}
@@ -78,6 +79,7 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolFilterAssets;
 	Ref< ui::custom::ToolBarButton > m_toolFilterShow;
 	Ref< ui::custom::ToolBarButton > m_toolFavoritesShow;
+	Ref< ui::custom::ToolBarDropDown > m_toolViewMode;
 	Ref< ui::Edit > m_editFilter;
 	Ref< ui::TreeView > m_treeDatabase;
 	Ref< ui::HierarchicalState > m_treeState;
