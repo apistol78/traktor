@@ -6,6 +6,7 @@
 #include "Flash/FlashBitmap.h"
 #include "Flash/FlashCanvas.h"
 #include "Flash/FlashDictionary.h"
+#include "Flash/FlashFont.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashSprite.h"
 #include "Flash/FlashSpriteInstance.h"
@@ -345,9 +346,42 @@ void AccDisplayRenderer::begin(
 
 	if (m_warmUpTextureCache)
 	{
+		// Warm up all bitmap textures.
 		const SmallMap< uint16_t, Ref< FlashBitmap > >& bitmaps = dictionary.getBitmaps();
 		for (SmallMap< uint16_t, Ref< FlashBitmap > >::const_iterator i = bitmaps.begin(); i != bitmaps.end(); ++i)
 			m_textureCache->getBitmapTexture(*(i->second));
+
+		// Warm up tesselation and vertex buffers for common glyphs of each font.
+		const SmallMap< uint16_t, Ref< FlashFont > >& fonts = dictionary.getFonts();
+		for (SmallMap< uint16_t, Ref< FlashFont > >::const_iterator i = fonts.begin(); i != fonts.end(); ++i)
+		{
+			FlashFont* font = (*i).second;
+
+			const wchar_t* c_warmUpGlyphs = L"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.,:-+!?";
+			const SwfColor c_warmUpGlyphColor = { 0 };
+			const SwfCxTransform c_warmUpGlyphCxT = { 0 };
+
+			for (uint32_t j = 0; c_warmUpGlyphs[j]; ++j)
+			{
+				uint16_t glyphIndex = font->lookupIndex(c_warmUpGlyphs[j]);
+
+				const FlashShape* glyphShape = font->getShape(glyphIndex);
+				if (!glyphShape)
+					continue;
+
+				renderGlyph(
+					dictionary,
+					Matrix33::zero(),
+					Vector2::zero(),
+					*glyphShape,
+					c_warmUpGlyphColor,
+					c_warmUpGlyphCxT,
+					0,
+					c_warmUpGlyphColor
+				);
+			}
+		}
+
 		m_warmUpTextureCache = false;
 	}
 }

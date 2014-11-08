@@ -42,6 +42,8 @@ public:
 
 	bool getExportName(uint16_t exportId, std::string& outName) const;
 
+	const SmallMap< uint16_t, Ref< FlashFont > >& getFonts() const { return m_fonts; }
+
 	const SmallMap< uint16_t, Ref< FlashBitmap > >& getBitmaps() const { return m_bitmaps; }
 
 private:
