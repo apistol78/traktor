@@ -66,6 +66,7 @@ void TextureOutput::serialize(ISerializer& s)
 			{ L"TfPVRTC2", TfPVRTC2 },
 			{ L"TfPVRTC3", TfPVRTC3 },
 			{ L"TfPVRTC4", TfPVRTC4 },
+			{ L"TfETC1", TfETC1 },
 			{ 0 }
 		};
 		s >> MemberEnum< TextureFormat >(L"textureFormat", m_textureFormat, c_TextureFormat_Keys);

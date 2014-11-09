@@ -60,7 +60,8 @@ private:
 	{
 		CmNone,
 		CmDXTn,
-		CmPVRTC
+		CmPVRTC,
+		CmETC1
 	};
 
 	bool m_generateMipsThread;

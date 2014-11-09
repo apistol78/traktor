@@ -34,6 +34,7 @@
 #include "Editor/IPipelineSettings.h"
 #include "Render/Types.h"
 #include "Render/Editor/Texture/DxtnCompressor.h"
+#include "Render/Editor/Texture/EtcCompressor.h"
 #include "Render/Editor/Texture/PvrtcCompressor.h"
 #include "Render/Editor/Texture/SphereMapFilter.h"
 #include "Render/Editor/Texture/TextureOutput.h"
@@ -157,6 +158,8 @@ bool TextureOutputPipeline::create(const editor::IPipelineSettings* settings)
 		m_compressionMethod = CmDXTn;
 	else if (compareIgnoreCase< std::wstring >(compressionMethod, L"PVRTC") == 0)
 		m_compressionMethod = CmPVRTC;
+	else if (compareIgnoreCase< std::wstring >(compressionMethod, L"ETC1") == 0)
+		m_compressionMethod = CmETC1;
 	else
 	{
 		log::error << L"Unknown compression method \"" << compressionMethod << L"\"" << Endl;
@@ -284,6 +287,9 @@ bool TextureOutputPipeline::buildOutput(
 		case TfPVRTC4:
 			pixelFormat = drawing::PixelFormat::getR8G8B8A8();
 			break;
+		case TfETC1:
+			pixelFormat = drawing::PixelFormat::getR8G8B8A8();
+			break;
 		default:
 			log::error << L"TextureOutputPipeline failed; unsupported explicit texture format" << Endl;
 			return false;
@@ -360,6 +366,16 @@ bool TextureOutputPipeline::buildOutput(
 						log::info << L"Using PVRTC1 compression" << Endl;
 						textureFormat = TfPVRTC1;
 					}
+				}
+				else
+					log::info << L"Using no compression" << Endl;
+			}
+			else if (m_compressionMethod == CmETC1)
+			{
+				if (!needAlpha)
+				{
+					log::info << L"Using ETC1 compression" << Endl;
+					textureFormat = TfETC1;
 				}
 				else
 					log::info << L"Using no compression" << Endl;
@@ -681,6 +697,8 @@ bool TextureOutputPipeline::buildOutput(
 			compressor = new DxtnCompressor();
 		else if (textureFormat >= TfPVRTC1 && textureFormat <= TfPVRTC4)
 			compressor = new PvrtcCompressor();
+		else if (textureFormat == TfETC1)
+			compressor = new EtcCompressor();
 		else
 			compressor = new UnCompressor();
 
@@ -898,6 +916,8 @@ bool TextureOutputPipeline::buildOutput(
 				compressor = new DxtnCompressor();
 			else if (textureFormat >= TfPVRTC1 && textureFormat <= TfPVRTC4)
 				compressor = new PvrtcCompressor();
+			else if (textureFormat == TfETC1)
+				compressor = new EtcCompressor();
 			else
 				compressor = new UnCompressor();
 

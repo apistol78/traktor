@@ -103,6 +103,15 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 		break;
 #endif
 
+#if defined(GL_OES_compressed_ETC1_RGB8_texture)
+	case TfETC1:
+		outPixelSize = 0;
+		outComponents = GL_OES_compressed_ETC1_RGB8_texture;
+		outFormat = GL_RGBA;
+		outType = GL_UNSIGNED_BYTE;
+		break;
+#endif
+
 	default:
 		return false;
 	}
@@ -172,7 +181,8 @@ bool SimpleTextureOpenGLES2::create(const SimpleTextureCreateDesc& desc)
 
 			if (
 				(desc.format >= TfDXT1 && desc.format <= TfDXT5) ||
-				(desc.format >= TfPVRTC1 && desc.format <= TfPVRTC4)
+				(desc.format >= TfPVRTC1 && desc.format <= TfPVRTC4) ||
+				desc.format == TfETC1
 			)
 			{
 				uint32_t mipSize = getTextureMipPitch(desc.format, width, height);

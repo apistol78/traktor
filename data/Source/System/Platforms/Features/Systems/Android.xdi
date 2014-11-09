@@ -35,6 +35,18 @@
 					</value>
 				</second>
 			</item>
+			<item>
+				<first>TexturePipeline.CompressionMethod</first>
+				<second type="traktor.PropertyString">
+					<value>ETC1</value>
+				</second>
+			</item>
+			<item>
+				<first>TexturePipeline.SkipMips</first>
+				<second type="traktor.PropertyInteger">
+					<value>2</value>
+				</second>
+			</item>
 		</value>
 	</pipelineProperties>
 	<migrateProperties type="traktor.PropertyGroup">
