@@ -102,6 +102,9 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 		break;
 #endif
 
+	case TfETC1:
+		break;
+
 	default:
 		return false;
 	}

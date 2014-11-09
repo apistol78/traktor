@@ -9458,6 +9458,7 @@
 												<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
 												<item>$(TRAKTOR_HOME)/3rdp/stb_dxt</item>
 												<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Utilities/Pvrtc/dll</item>
+												<item>$(TRAKTOR_HOME)/3rdp/rg_etc1_v104</item>
 											</includePaths>
 											<definitions>
 												<item>T_RENDER_EDITOR_EXPORT</item>
@@ -9483,6 +9484,7 @@
 												<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
 												<item>$(TRAKTOR_HOME)/3rdp/stb_dxt</item>
 												<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Utilities/Pvrtc/dll</item>
+												<item>$(TRAKTOR_HOME)/3rdp/rg_etc1_v104</item>
 											</includePaths>
 											<definitions>
 												<item>T_RENDER_EDITOR_EXPORT</item>
@@ -9508,6 +9510,7 @@
 												<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
 												<item>$(TRAKTOR_HOME)/3rdp/stb_dxt</item>
 												<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Utilities/Pvrtc/dll</item>
+												<item>$(TRAKTOR_HOME)/3rdp/rg_etc1_v104</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
@@ -9533,6 +9536,7 @@
 												<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
 												<item>$(TRAKTOR_HOME)/3rdp/stb_dxt</item>
 												<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Utilities/Pvrtc/dll</item>
+												<item>$(TRAKTOR_HOME)/3rdp/rg_etc1_v104</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
@@ -9652,6 +9656,87 @@
 										<item type="ProjectDependency" version="2">
 											<link>LnkYes</link>
 											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
+										</item>
+										<item type="ProjectDependency" version="2">
+											<link>LnkYes</link>
+											<project type="Project" version="1">
+												<enable>true</enable>
+												<name>Extern.rg_etc1</name>
+												<sourcePath>$(TRAKTOR_HOME)/3rdp/rg_etc1_v104</sourcePath>
+												<configurations>
+													<item type="Configuration" version="1">
+														<name>DebugShared</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpDebug</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/3rdp/rg_etc1_v104</item>
+														</includePaths>
+														<definitions>
+															<item>_DEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+													</item>
+													<item type="Configuration" version="1">
+														<name>ReleaseShared</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpRelease</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/3rdp/rg_etc1_v104</item>
+														</includePaths>
+														<definitions>
+															<item>NDEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+													</item>
+													<item type="Configuration" version="1">
+														<name>DebugStatic</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpDebug</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/3rdp/rg_etc1_v104</item>
+														</includePaths>
+														<definitions>
+															<item>_DEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+													</item>
+													<item type="Configuration" version="1">
+														<name>ReleaseStatic</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpRelease</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/3rdp/rg_etc1_v104</item>
+														</includePaths>
+														<definitions>
+															<item>NDEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+													</item>
+												</configurations>
+												<items>
+													<item type="File">
+														<fileName>*.*</fileName>
+														<items/>
+													</item>
+												</items>
+												<dependencies/>
+											</project>
 										</item>
 									</dependencies>
 								</project>
@@ -20520,6 +20605,7 @@
 				</item>
 			</dependencies>
 		</item>
+		<item ref="/object/projects/item[16]/dependencies/item[15]/project/dependencies/item[8]/project/dependencies/item[12]/project"/>
 	</projects>
 	<aggregations/>
 </object>

@@ -99,6 +99,9 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 		break;
 #endif
 
+	case TfETC1:
+		break;
+
 	default:
 		T_DEBUG(L"Unsupported texture outFormat used");
 		return false;
