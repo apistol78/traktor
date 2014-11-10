@@ -91,7 +91,7 @@ private:
 
 	void MovieClip_getTextSnapshot(FlashSpriteInstance* self) const;
 
-	void MovieClip_getURL(FlashSpriteInstance* self) const;
+	void MovieClip_getURL(FlashSpriteInstance* self, const std::wstring& url) const;
 
 	void MovieClip_globalToLocal(FlashSpriteInstance* self) const;
 

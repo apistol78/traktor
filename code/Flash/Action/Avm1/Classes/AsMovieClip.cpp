@@ -611,11 +611,26 @@ void AsMovieClip::MovieClip_getTextSnapshot(FlashSpriteInstance* self) const
 	)
 }
 
-void AsMovieClip::MovieClip_getURL(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_getURL(FlashSpriteInstance* self, const std::wstring& url) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"MovieClip::getURL not implemented" << Endl;
-	)
+	ActionContext* context = self->getContext();
+
+	ActionValue getUrl;
+	context->getGlobal()->getLocalMember("getURL", getUrl);
+
+	Ref< ActionFunction > fn = getUrl.getObject< ActionFunction >();
+	if (fn)
+	{
+		flash::ActionValueArray args(context->getPool(), 2);
+		args[0] = ActionValue(url);
+		fn->call(args);
+	}
+	else
+	{
+		T_IF_VERBOSE(
+			log::warning << L"MovieClip::getURL, _global.getURL must be a function object" << Endl;
+		)
+	}
 }
 
 void AsMovieClip::MovieClip_globalToLocal(FlashSpriteInstance* self) const
