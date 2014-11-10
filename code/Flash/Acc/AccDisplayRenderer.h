@@ -68,6 +68,8 @@ public:
 
 	void destroy();
 
+	void precache(const FlashDictionary& dictionary);
+
 	void build(uint32_t frame);
 
 	void build(render::RenderContext* renderContext, uint32_t frame);
@@ -137,7 +139,6 @@ private:
 	Vector4 m_frameSize;
 	Vector4 m_viewSize;
 	Vector4 m_viewOffset;
-	bool m_warmUpTextureCache;
 	bool m_clearBackground;
 	float m_stereoscopicOffset;
 	bool m_maskWrite;
