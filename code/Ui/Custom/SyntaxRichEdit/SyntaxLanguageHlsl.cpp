@@ -98,6 +98,7 @@ bool SyntaxLanguageHlsl::consume(const std::wstring& text, State& outState, int&
 		word == L"return" ||
 		word == L"struct" ||
 		word == L"switch" ||
+		word == L"uniform" ||
 		word == L"while"
 	)
 	{
@@ -129,14 +130,103 @@ bool SyntaxLanguageHlsl::consume(const std::wstring& text, State& outState, int&
 	}
 
 	if (
+		word == L"abort" ||
+		word == L"abs" ||
+		word == L"acos" ||
+		word == L"all" ||
+		word == L"any" ||
+		word == L"asdouble" ||
+		word == L"asfloat" ||
+		word == L"asin" ||
+		word == L"asint" ||
+		word == L"asuint" ||
+		word == L"atan" ||
+		word == L"atan2" ||
+		word == L"ceil" ||
+		word == L"clamp" ||
+		word == L"clip" ||
+		word == L"cos" ||
+		word == L"cosh" ||
+		word == L"countbits" ||
+		word == L"cross" ||
+		word == L"ddx" ||
+		word == L"ddx_coarse" ||
+		word == L"ddx_fine" ||
+		word == L"ddy" ||
+		word == L"ddy_coarse" ||
+		word == L"ddy_fine" ||
+		word == L"degrees" ||
+		word == L"determinant" ||
 		word == L"discard" ||
+		word == L"distance" ||
 		word == L"dot" ||
+		word == L"dst" ||
+		word == L"errorf" ||
+		word == L"exp" ||
+		word == L"exp2" ||
+		word == L"floor" ||
+		word == L"fma" ||
+		word == L"fmod" ||
+		word == L"frac" ||
+		word == L"frexp" ||
+		word == L"fwidth" ||
+		word == L"isfinite" ||
+		word == L"isinf" ||
+		word == L"isnan" ||
+		word == L"ldexp" ||
+		word == L"length" ||
 		word == L"lerp" ||
+		word == L"lit" ||
+		word == L"log" ||
+		word == L"log10" ||
+		word == L"log2" ||
+		word == L"mad" ||
+		word == L"max" ||
+		word == L"min" ||
+		word == L"modf" ||
+		word == L"mul" ||
+		word == L"noise" ||
 		word == L"normalize" ||
 		word == L"pow" ||
+		word == L"printf" ||
+		word == L"radians" ||
+		word == L"rcp" ||
+		word == L"reflect" ||
+		word == L"refract" ||
+		word == L"round" ||
+		word == L"rsqrt" ||
 		word == L"saturate" ||
+		word == L"sin" ||
+		word == L"sincos" ||
+		word == L"sinh" ||
+		word == L"smoothstep" ||
+		word == L"sqrt" ||
+		word == L"step" ||
+		word == L"tan" ||
+		word == L"tanh" ||
+		word == L"tex1D" ||
+		word == L"tex1Dbias" ||
+		word == L"tex1Dgrad" ||
+		word == L"tex1Dlod" ||
+		word == L"tex1Dproj" ||
 		word == L"tex2D" ||
-		word == L"tex2Dlod"
+		word == L"tex2Dbias" ||
+		word == L"tex2Dgrad" ||
+		word == L"tex2Dlod" ||
+		word == L"tex2Dproj" ||
+		word == L"tex3D" ||
+		word == L"tex3Dbias" ||
+		word == L"tex3Dlod" ||
+		word == L"tex3Dproj" ||
+		word == L"texCUBE" ||
+		word == L"texCUBEbias" ||
+		word == L"texCUBEgrad" ||
+		word == L"texCUBElod" ||
+		word == L"texCUBEproj" ||
+		word == L"transpose" ||
+		word == L"trunc" ||
+		word == L"Texture" ||
+		word == L"Sample"
 	)
 	{
 		outState = StFunction;
