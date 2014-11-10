@@ -29,8 +29,7 @@ extern void applicationResume();
 	// Create view controller.
 	viewController = [[AppViewController alloc] initWithNibName: nil bundle: nil];
 	window.rootViewController = viewController;
-
-	[window makeKeyAndVisible];
+	[window makeKey];
 
 	// Create application and start animating.
 	if ([viewController createApplication] == NO)
@@ -38,6 +37,11 @@ extern void applicationResume();
 
 	applicationStart();
 
+	// Show window.
+	[window makeKeyAndVisible];
+
+	// Start animation; ie launch background thread to contineously
+	// update application.
 	[viewController startAnimation];
     return YES;
 }
