@@ -1,5 +1,7 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Serialization/DeepClone.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyString.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
@@ -82,10 +84,18 @@ bool ShaderViewer::create(ui::Widget* parent)
 
 	std::set< const TypeInfo* > programCompilerTypes;
 	type_of< IProgramCompiler >().findAllOf(programCompilerTypes, false);
-	for (std::set< const TypeInfo* >::const_iterator i = programCompilerTypes.begin(); i != programCompilerTypes.end(); ++i)
-		m_compilerTool->add((*i)->getName());
 
-	m_compilerTool->select(0);
+	std::wstring programCompilerTypeName = m_editor->getSettings()->getProperty< PropertyString >(L"ShaderPipeline.ProgramCompiler");
+	int compilerIndex = 0;
+	for (std::set< const TypeInfo* >::const_iterator i = programCompilerTypes.begin(); i != programCompilerTypes.end(); ++i)
+	{
+		if (programCompilerTypeName == (*i)->getName())
+			compilerIndex = m_compilerTool->add((*i)->getName());
+		else
+			m_compilerTool->add((*i)->getName());
+	}
+	m_compilerTool->select(compilerIndex);
+
 	m_shaderTools->addItem(m_compilerTool);
 	m_shaderTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ShaderViewer::eventShaderToolsClick);
 
@@ -131,6 +141,10 @@ void ShaderViewer::threadReflect()
 		// Grab enqueued shader graph for reflection.
 		{
 			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_reflectLock);
+			
+			if (!m_reflectShaderGraph)
+				continue;
+
 			m_shaderGraph = m_reflectShaderGraph;
 			m_reflectShaderGraph = 0;
 		}
