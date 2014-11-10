@@ -1,6 +1,7 @@
 #include "Amalgam/IEnvironment.h"
 #include "Amalgam/Engine/GameEntityFactory.h"
 #include "Amalgam/Engine/GameEntityRenderer.h"
+#include "Amalgam/Engine/Layer.h"
 #include "Amalgam/Engine/RuntimePlugin.h"
 #include "Amalgam/Engine/Stage.h"
 #include "Amalgam/Engine/StageData.h"
@@ -98,6 +99,12 @@ Ref< amalgam::IState > RuntimePlugin::createInitialState(amalgam::IEnvironment* 
 		log::error << L"Unable to create startup stage; startup failed" << Endl;
 		return 0;
 	}
+
+	// Prepare all initial layers; this will cause pending resources and systems
+	// to be created before first frame.
+	const RefArray< Layer >& layers = stage->getLayers();
+	for (RefArray< Layer >::const_iterator i = layers.begin(); i != layers.end(); ++i)
+		(*i)->prepare();
 
 	return new StageState(environment, stage);
 }

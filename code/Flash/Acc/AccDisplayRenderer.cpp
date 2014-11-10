@@ -116,7 +116,6 @@ AccDisplayRenderer::AccDisplayRenderer()
 ,	m_frameSize(0.0f, 0.0f, 0.0f, 0.0f)
 ,	m_viewSize(0.0f, 0.0f, 0.0f, 0.0f)
 ,	m_viewOffset(0.0f, 0.0f, 1.0f, 1.0f)
-,	m_warmUpTextureCache(true)
 ,	m_clearBackground(false)
 ,	m_stereoscopicOffset(0.0f)
 ,	m_maskWrite(false)
@@ -234,6 +233,63 @@ void AccDisplayRenderer::destroy()
 	m_globalContext = 0;
 }
 
+void AccDisplayRenderer::precache(const FlashDictionary& dictionary)
+{
+	const wchar_t* c_precacheGlyphs = L"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.,:-+!?";
+
+	const SmallMap< uint16_t, Ref< FlashBitmap > >& bitmaps = dictionary.getBitmaps();
+	for (SmallMap< uint16_t, Ref< FlashBitmap > >::const_iterator i = bitmaps.begin(); i != bitmaps.end(); ++i)
+		m_textureCache->getBitmapTexture(*(i->second));
+
+	const SmallMap< uint16_t, Ref< FlashFont > >& fonts = dictionary.getFonts();
+	for (SmallMap< uint16_t, Ref< FlashFont > >::const_iterator i = fonts.begin(); i != fonts.end(); ++i)
+	{
+		FlashFont* font = (*i).second;
+		for (uint32_t j = 0; c_precacheGlyphs[j]; ++j)
+		{
+			uint16_t glyphIndex = font->lookupIndex(c_precacheGlyphs[j]);
+
+			const FlashShape* glyphShape = font->getShape(glyphIndex);
+			if (!glyphShape)
+				continue;
+
+			uint32_t tag = glyphShape->getCacheTag();
+
+			SmallMap< int32_t, GlyphCache >::iterator it1 = m_glyphCache.find(tag);
+			if (it1 == m_glyphCache.end())
+			{
+				Ref< AccShape > accShape = new AccShape(m_shapeResources);
+				if (!accShape->createTesselation(*glyphShape))
+				{
+					T_DEBUG(L"Glyph tesselation failed");
+					continue;
+				}
+
+				m_glyphCache[tag].shape = accShape;
+				m_glyphCache[tag].index = -1;
+
+				it1 = m_glyphCache.find(tag);
+				T_ASSERT (it1 != m_glyphCache.end());
+			}
+
+			Ref< AccShape > accShape = it1->second.shape;
+			T_ASSERT (accShape);
+
+			if (!accShape->updateRenderable(
+				m_vertexPool,
+				0,
+				dictionary,
+				glyphShape->getFillStyles(),
+				glyphShape->getLineStyles()
+			))
+			{
+				it1->second.index = -1;
+				continue;
+			}
+		}
+	}
+}
+
 void AccDisplayRenderer::build(uint32_t frame)
 {
 	m_renderContext = m_renderContexts[frame];
@@ -296,7 +352,6 @@ void AccDisplayRenderer::flushCaches()
 	m_glyphCache.clear();
 
 	m_nextIndex = 0;
-	m_warmUpTextureCache = true;
 }
 
 void AccDisplayRenderer::begin(
@@ -343,47 +398,6 @@ void AccDisplayRenderer::begin(
 	m_maskWrite = false;
 	m_maskIncrement = false;
 	m_maskReference = 0;
-
-	if (m_warmUpTextureCache)
-	{
-		// Warm up all bitmap textures.
-		const SmallMap< uint16_t, Ref< FlashBitmap > >& bitmaps = dictionary.getBitmaps();
-		for (SmallMap< uint16_t, Ref< FlashBitmap > >::const_iterator i = bitmaps.begin(); i != bitmaps.end(); ++i)
-			m_textureCache->getBitmapTexture(*(i->second));
-
-		// Warm up tesselation and vertex buffers for common glyphs of each font.
-		const SmallMap< uint16_t, Ref< FlashFont > >& fonts = dictionary.getFonts();
-		for (SmallMap< uint16_t, Ref< FlashFont > >::const_iterator i = fonts.begin(); i != fonts.end(); ++i)
-		{
-			FlashFont* font = (*i).second;
-
-			const wchar_t* c_warmUpGlyphs = L"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.,:-+!?";
-			const SwfColor c_warmUpGlyphColor = { 0 };
-			const SwfCxTransform c_warmUpGlyphCxT = { 0 };
-
-			for (uint32_t j = 0; c_warmUpGlyphs[j]; ++j)
-			{
-				uint16_t glyphIndex = font->lookupIndex(c_warmUpGlyphs[j]);
-
-				const FlashShape* glyphShape = font->getShape(glyphIndex);
-				if (!glyphShape)
-					continue;
-
-				renderGlyph(
-					dictionary,
-					Matrix33::zero(),
-					Vector2::zero(),
-					*glyphShape,
-					c_warmUpGlyphColor,
-					c_warmUpGlyphCxT,
-					0,
-					c_warmUpGlyphColor
-				);
-			}
-		}
-
-		m_warmUpTextureCache = false;
-	}
 }
 
 void AccDisplayRenderer::beginMask(bool increment)
