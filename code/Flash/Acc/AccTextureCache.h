@@ -15,6 +15,13 @@ class ITexture;
 
 	}
 
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace flash
 	{
 
@@ -27,7 +34,10 @@ class FlashBitmap;
 class AccTextureCache : public Object
 {
 public:
-	AccTextureCache(render::IRenderSystem* renderSystem);
+	AccTextureCache(
+		resource::IResourceManager* resourceManager,
+		render::IRenderSystem* renderSystem
+	);
 
 	virtual ~AccTextureCache();
 
@@ -40,6 +50,7 @@ public:
 	Ref< render::ITexture > getBitmapTexture(const FlashBitmap& bitmap);
 
 private:
+	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
 	SmallMap< uint64_t, Ref< render::ITexture > > m_cache;
 };

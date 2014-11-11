@@ -1,7 +1,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/String.h"
-#include "Flash/FlashBitmap.h"
+#include "Flash/FlashBitmapData.h"
 #include "Flash/FlashDictionary.h"
 #include "Flash/FlashCanvas.h"
 #include "Flash/FlashEdit.h"
@@ -250,7 +250,7 @@ void AsMovieClip::MovieClip_attachBitmap_4(FlashSpriteInstance* self, const Bitm
 	T_ASSERT (dictionary);
 
 	// Define bitmap symbol.
-	uint16_t bitmapId = dictionary->addBitmap(new FlashBitmap(bmp->getImage(), false));
+	uint16_t bitmapId = dictionary->addBitmap(new FlashBitmapData(bmp->getImage()));
 
 	// Create a quad shape.
 	Ref< FlashShape > shape = new FlashShape();
