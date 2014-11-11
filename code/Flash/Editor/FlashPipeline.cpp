@@ -3,15 +3,20 @@
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
+#include "Drawing/Image.h"
+#include "Drawing/PixelFormat.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
+#include "Flash/FlashBitmapData.h"
+#include "Flash/FlashBitmapResource.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashMovieFactory.h"
 #include "Flash/SwfReader.h"
 #include "Flash/Editor/FlashPipeline.h"
 #include "Flash/Editor/FlashMovieAsset.h"
 #include "Render/Shader.h"
+#include "Render/Editor/Texture/TextureOutput.h"
 #include "Resource/Id.h"
 
 namespace traktor
@@ -42,9 +47,18 @@ const resource::Id< render::Shader > c_idShaderQuadDecrementMask(Guid(L"{D682100
 const resource::Id< render::Shader > c_idShaderGlyph(Guid(L"{A8BC2D03-EB52-B744-8D4B-29E39FF0B4F5}"));
 const resource::Id< render::Shader > c_idShaderGlyphMask(Guid(L"{C8FEF24B-D775-A14D-9FF3-E34A17495FB4}"));
 
+Guid incrementGuid(const Guid& g, uint32_t steps)
+{
+	uint8_t d[16];
+	for (int i = 0; i < 16; ++i)
+		d[i] = g[i];
+	reinterpret_cast< uint32_t& >(d[12]) += steps;
+	return Guid(d);
+}
+
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", 21, FlashPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", 22, FlashPipeline, editor::IPipeline)
 
 FlashPipeline::FlashPipeline()
 :	m_allowNPOT(true)
@@ -143,6 +157,68 @@ bool FlashPipeline::buildOutput(
 
 	sourceStream->close();
 	sourceStream = 0;
+
+	// Replace all bitmaps with resource references to textures.
+	SmallMap< uint16_t, Ref< FlashBitmap > > bitmaps = movie->getBitmaps();
+	uint32_t count = 1;
+
+	for (SmallMap< uint16_t, Ref< FlashBitmap > >::const_iterator i = bitmaps.begin(); i != bitmaps.end(); ++i)
+	{
+		const FlashBitmapData* bitmapData = dynamic_type_cast< const FlashBitmapData* >(i->second);
+		if (!bitmapData)
+			continue;
+
+		Ref< drawing::Image > bitmapImage = new drawing::Image(
+			drawing::PixelFormat::getA8B8G8R8(),
+			bitmapData->getWidth(),
+			bitmapData->getHeight()
+		);
+
+		std::memcpy(
+			bitmapImage->getData(),
+			bitmapData->getBits(),
+			bitmapData->getWidth() * bitmapData->getHeight() * 4
+		);
+
+		Guid bitmapOutputGuid = incrementGuid(outputGuid, count++);
+
+		Ref< render::TextureOutput > output = new render::TextureOutput();
+		output->m_textureFormat = render::TfInvalid;
+		output->m_generateNormalMap = false;
+		output->m_scaleDepth = 0.0f;
+		output->m_generateMips = true;
+		output->m_keepZeroAlpha = false;
+		output->m_textureType = render::Tt2D;
+		output->m_hasAlpha = false;
+		output->m_ignoreAlpha = false;
+		output->m_scaleImage = false;
+		output->m_scaleWidth = 0;
+		output->m_scaleHeight = 0;
+		output->m_enableCompression = true;
+		output->m_enableNormalMapCompression = false;
+		output->m_inverseNormalMapY = false;
+		output->m_linearGamma = true;
+		output->m_generateSphereMap = false;
+		output->m_preserveAlphaCoverage = false;
+		output->m_alphaCoverageReference = 0.0f;
+		output->m_sharpenRadius = 0;
+		output->m_systemTexture = true;
+
+		std::wstring bitmapOutputPath = Path(outputPath).getPathOnly() + L"/Textures/" + bitmapOutputGuid.format();
+		if (!pipelineBuilder->buildOutput(
+			output,
+			bitmapOutputPath,
+			bitmapOutputGuid,
+			bitmapImage
+		))
+			return false;
+
+		movie->defineBitmap(i->first, new FlashBitmapResource(
+			bitmapImage->getWidth(),
+			bitmapImage->getHeight(),
+			bitmapOutputGuid
+		));
+	}
 
 	Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 		outputPath,

@@ -147,7 +147,7 @@ bool AccDisplayRenderer::create(
 {
 	m_resourceManager = resourceManager;
 	m_renderSystem = renderSystem;
-	m_textureCache = new AccTextureCache(m_renderSystem);
+	m_textureCache = new AccTextureCache(m_resourceManager, m_renderSystem);
 	m_clearBackground = clearBackground;
 	m_stereoscopicOffset = stereoscopicOffset;
 

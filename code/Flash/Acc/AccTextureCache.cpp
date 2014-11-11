@@ -1,7 +1,10 @@
 #include "Flash/FlashFillStyle.h"
-#include "Flash/FlashBitmap.h"
+#include "Flash/FlashBitmapData.h"
+#include "Flash/FlashBitmapResource.h"
 #include "Flash/Acc/AccTextureCache.h"
 #include "Render/ISimpleTexture.h"
+#include "Resource/IResourceManager.h"
+#include "Resource/Proxy.h"
 
 namespace traktor
 {
@@ -46,8 +49,12 @@ SwfColor interpolateGradient(const AlignedVector< FlashFillStyle::ColorRecord >&
 
 		}
 
-AccTextureCache::AccTextureCache(render::IRenderSystem* renderSystem)
-:	m_renderSystem(renderSystem)
+AccTextureCache::AccTextureCache(
+	resource::IResourceManager* resourceManager,
+	render::IRenderSystem* renderSystem
+)
+:	m_resourceManager(resourceManager)
+,	m_renderSystem(renderSystem)
 {
 }
 
@@ -155,37 +162,43 @@ Ref< render::ITexture > AccTextureCache::getGradientTexture(const FlashFillStyle
 Ref< render::ITexture > AccTextureCache::getBitmapTexture(const FlashBitmap& bitmap)
 {
 	uint64_t hash = reinterpret_cast< uint64_t >(&bitmap);
+
 	SmallMap< uint64_t, Ref< render::ITexture > >::iterator it = m_cache.find(hash);
 	if (it != m_cache.end())
 		return it->second;
 
-	render::SimpleTextureCreateDesc desc;
-
-	desc.width = bitmap.getDataWidth();
-	desc.height = bitmap.getDataHeight();
-	desc.mipCount = bitmap.getMips();
-	desc.format = render::TfR8G8B8A8;
-	desc.immutable = true;
-
-	uint32_t mipOffset = 0;
-	for (uint32_t i = 0; i < bitmap.getMips(); ++i)
+	if (const FlashBitmapResource* bitmapResource = dynamic_type_cast< const FlashBitmapResource* >(&bitmap))
 	{
-		uint32_t mipWidth = std::max< uint32_t >(bitmap.getDataWidth() >> i, 1);
-		uint32_t mipHeight = std::max< uint32_t >(bitmap.getDataHeight() >> i, 1);
-
-		desc.initialData[i].data = bitmap.getBits() + mipOffset;
-		desc.initialData[i].pitch = mipWidth * 4;
-		desc.initialData[i].slicePitch = mipWidth * mipHeight * 4;
-
-		mipOffset += mipWidth * mipHeight;
+		resource::Proxy< render::ISimpleTexture > texture;
+		m_resourceManager->bind(
+			resource::Id< render::ISimpleTexture >(bitmapResource->getResourceId()),
+			texture
+		);
+		m_cache[hash] = texture;
+		return texture.getResource();
 	}
+	else if (const FlashBitmapData* bitmapData = dynamic_type_cast< const FlashBitmapData* >(&bitmap))
+	{
+		render::SimpleTextureCreateDesc desc;
 
-	Ref< render::ISimpleTexture > texture = m_renderSystem->createSimpleTexture(desc);
-	if (!texture)
+		desc.width = bitmapData->getWidth();
+		desc.height = bitmapData->getHeight();
+		desc.mipCount = 1;
+		desc.format = render::TfR8G8B8A8;
+		desc.immutable = true;
+		desc.initialData[0].data = bitmapData->getBits();
+		desc.initialData[0].pitch = desc.width * 4;
+		desc.initialData[0].slicePitch = desc.width * desc.height * 4;
+
+		Ref< render::ISimpleTexture > texture = m_renderSystem->createSimpleTexture(desc);
+		if (!texture)
+			return 0;
+
+		m_cache[hash] = texture;
+		return texture;
+	}
+	else
 		return 0;
-
-	m_cache[hash] = texture;
-	return texture;
 }
 
 	}
