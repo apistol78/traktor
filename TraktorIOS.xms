@@ -3225,6 +3225,7 @@
 								<libraryPaths/>
 								<libraries>
 									<item>Foundation.framework</item>
+									<item>UIKit.framework</item>
 								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
@@ -3245,6 +3246,7 @@
 								<libraryPaths/>
 								<libraries>
 									<item>Foundation.framework</item>
+									<item>UIKit.framework</item>
 								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
@@ -3265,6 +3267,7 @@
 								<libraryPaths/>
 								<libraries>
 									<item>Foundation.framework</item>
+									<item>UIKit.framework</item>
 								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
@@ -3285,6 +3288,7 @@
 								<libraryPaths/>
 								<libraries>
 									<item>Foundation.framework</item>
+									<item>UIKit.framework</item>
 								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
