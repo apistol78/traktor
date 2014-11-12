@@ -41,18 +41,6 @@
 			</position>
 			<name>ViewPosition</name>
 		</item>
-		<item type="traktor.render.Scalar">
-			<comment>
-			<![CDATA[
-This fragment is just a placeholder for an appropriate vertex fragment; it's automatically replaced in MeshPipeline
-			]]>
-			</comment>
-			<position>
-				<first>25</first>
-				<second>122</second>
-			</position>
-			<value>0</value>
-		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
@@ -77,72 +65,75 @@ This fragment is just a placeholder for an appropriate vertex fragment; it's aut
 			</position>
 			<name>Position</name>
 		</item>
+		<item type="traktor.render.External" version="1">
+			<comment/>
+			<position>
+				<first>-93</first>
+				<second>200</second>
+			</position>
+			<fragmentGuid>{14AE48E1-723D-0944-821C-4B73AC942437}</fragmentGuid>
+			<inputPins/>
+			<outputPins>
+				<item>
+					<name>Color</name>
+				</item>
+				<item>
+					<name>Position</name>
+				</item>
+				<item>
+					<name>TexCoord0</name>
+				</item>
+				<item>
+					<name>TexCoord1</name>
+				</item>
+				<item>
+					<name>ViewBinormal</name>
+				</item>
+				<item>
+					<name>ViewNormal</name>
+				</item>
+				<item>
+					<name>ViewPosition</name>
+				</item>
+				<item>
+					<name>ViewTangent</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.Comment">
+			<comment>
+			<![CDATA[
+This fragment is just a placeholder for
+an appropriate vertex fragment;
+it's automatically replaced in MeshPipeline.
+By default we map with StaticMesh vertex
+fragment just to make the shader previewer
+work.
+
+			]]>
+			</comment>
+			<position>
+				<first>-16</first>
+				<second>-18</second>
+			</position>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Output</name>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Color</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Output</name>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Position</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[7]"/>
@@ -151,11 +142,61 @@ This fragment is just a placeholder for an appropriate vertex fragment; it's aut
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Output</name>
+				<node ref="/object/nodes/item[8]"/>
+				<name>TexCoord0</name>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[8]"/>
+				<name>TexCoord1</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>ViewBinormal</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>ViewNormal</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>ViewPosition</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>ViewTangent</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
 				<name>Input</name>
 			</destination>
 		</item>
