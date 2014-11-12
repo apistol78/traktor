@@ -73,6 +73,10 @@ public:
 
 	bool update();
 
+	void suspend();
+
+	void resume();
+
 	virtual Ref< IEnvironment > getEnvironment();
 
 	virtual Ref< IStateManager > getStateManager();

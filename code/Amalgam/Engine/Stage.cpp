@@ -24,7 +24,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.Stage", Stage, Object)
 
 Stage::Stage(
-	amalgam::IEnvironment* environment,
+	IEnvironment* environment,
 	const resource::Proxy< script::IScriptContext >& scriptContext,
 	const resource::Proxy< render::Shader >& shaderFade,
 	float fadeRate,
@@ -163,7 +163,7 @@ bool Stage::gotoStage(Stage* stage)
 	return true;
 }
 
-bool Stage::update(amalgam::IStateManager* stateManager, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
+bool Stage::update(IStateManager* stateManager, IUpdateControl& control, const IUpdateInfo& info)
 {
 	if (!m_running)
 		return false;
@@ -180,7 +180,7 @@ bool Stage::update(amalgam::IStateManager* stateManager, amalgam::IUpdateControl
 			script::Any argv[] =
 			{
 				script::Any::fromObject(&control),
-				script::Any::fromObject(const_cast< amalgam::IUpdateInfo* >(&info))
+				script::Any::fromObject(const_cast< IUpdateInfo* >(&info))
 			};
 			m_scriptContext->executeFunction("update", sizeof_array(argv), argv);
 
@@ -206,7 +206,7 @@ bool Stage::update(amalgam::IStateManager* stateManager, amalgam::IUpdateControl
 	return true;
 }
 
-bool Stage::build(const amalgam::IUpdateInfo& info, uint32_t frame)
+bool Stage::build(const IUpdateInfo& info, uint32_t frame)
 {
 	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 		(*i)->build(info, frame);
@@ -259,6 +259,24 @@ void Stage::postReconfigured()
 {
 	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 		(*i)->postReconfigured();
+}
+
+void Stage::suspend()
+{
+	if (validateScriptContext())
+	{
+		if (m_scriptContext->haveFunction("suspend"))
+			m_scriptContext->executeFunction("suspend");
+	}
+}
+
+void Stage::resume()
+{
+	if (validateScriptContext())
+	{
+		if (m_scriptContext->haveFunction("resume"))
+			m_scriptContext->executeFunction("resume");
+	}
 }
 
 bool Stage::validateScriptContext()

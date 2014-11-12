@@ -17,21 +17,15 @@ namespace traktor
 	{
 
 class IEnvironment;
-
-	}
-
-	namespace amalgam
-	{
-
 class Stage;
 
-class T_DLLCLASS StageState : public amalgam::IState
+class T_DLLCLASS StageState : public IState
 {
 	T_RTTI_CLASS;
 
 public:
 	StageState(
-		amalgam::IEnvironment* environment,
+		IEnvironment* environment,
 		Stage* stage
 	);
 
@@ -39,16 +33,16 @@ public:
 
 	virtual void leave();
 
-	virtual UpdateResult update(amalgam::IStateManager* stateManager, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info);
+	virtual UpdateResult update(IStateManager* stateManager, IUpdateControl& control, const IUpdateInfo& info);
 
-	virtual BuildResult build(uint32_t frame, const amalgam::IUpdateInfo& info);
+	virtual BuildResult build(uint32_t frame, const IUpdateInfo& info);
 
-	virtual bool render(uint32_t frame, render::EyeType eye, const amalgam::IUpdateInfo& info);
+	virtual bool render(uint32_t frame, render::EyeType eye, const IUpdateInfo& info);
 
-	virtual bool take(const amalgam::IEvent* event);
+	virtual bool take(const IEvent* event);
 
 private:
-	Ref< amalgam::IEnvironment > m_environment;
+	Ref< IEnvironment > m_environment;
 	Ref< Stage > m_stage;
 };
 

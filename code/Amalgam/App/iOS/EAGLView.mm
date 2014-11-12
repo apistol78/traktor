@@ -32,11 +32,16 @@ Ref< PropertyGroup > loadSettings(const Path& settingsPath)
 void updateApplicationThread(amalgam::Application* app)
 {
 	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
+
+	app->resume();
+
 	while (!currentThread->stopped())
 	{
 		if (!app->update())
 			break;
 	}
+
+	app->suspend();
 }
 
 }

@@ -569,6 +569,7 @@ bool Application::update()
 
 	if ((currentState = m_stateManager->getCurrent()) != 0)
 	{
+#if !defined(__IOS__)
 		// Check render active state; notify application when changes.
 		bool renderViewActive = m_renderServer->getRenderView()->isActive();
 		if (renderViewActive != m_renderViewActive)
@@ -581,6 +582,7 @@ bool Application::update()
 			// help updating resources from editor if running on the same machine.
 			OS::getInstance().setOwnProcessPriorityBias(renderViewActive ? 0 : -1);
 		}
+#endif
 
 		// Determine if input should be enabled.
 		bool inputEnabled = m_renderViewActive;
@@ -948,6 +950,26 @@ bool Application::update()
 	}
 
 	return true;
+}
+
+void Application::suspend()
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
+	if (m_stateManager->getCurrent() != 0)
+	{
+		ActiveEvent activeEvent(false);
+		m_stateManager->getCurrent()->take(&activeEvent);
+	}
+}
+
+void Application::resume()
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
+	if (m_stateManager->getCurrent() != 0)
+	{
+		ActiveEvent activeEvent(true);
+		m_stateManager->getCurrent()->take(&activeEvent);
+	}
 }
 
 Ref< IEnvironment > Application::getEnvironment()

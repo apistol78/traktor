@@ -1,6 +1,7 @@
 #include "Amalgam/IEnvironment.h"
 #include "Amalgam/Engine/Stage.h"
 #include "Amalgam/Engine/StageState.h"
+#include "Amalgam/Events/ActiveEvent.h"
 #include "Amalgam/Events/ReconfigureEvent.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/IRenderView.h"
@@ -10,10 +11,10 @@ namespace traktor
 	namespace amalgam
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.StageState", StageState, amalgam::IState)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.StageState", StageState, IState)
 
 StageState::StageState(
-	amalgam::IEnvironment* environment,
+	IEnvironment* environment,
 	Stage* stage
 )
 :	m_environment(environment)
@@ -34,7 +35,7 @@ void StageState::leave()
 	}
 }
 
-StageState::UpdateResult StageState::update(amalgam::IStateManager* stateManager, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
+StageState::UpdateResult StageState::update(IStateManager* stateManager, IUpdateControl& control, const IUpdateInfo& info)
 {
 	if (m_stage->update(stateManager, control, info))
 		return UrOk;
@@ -42,7 +43,7 @@ StageState::UpdateResult StageState::update(amalgam::IStateManager* stateManager
 		return UrExit;
 }
 
-StageState::BuildResult StageState::build(uint32_t frame, const amalgam::IUpdateInfo& info)
+StageState::BuildResult StageState::build(uint32_t frame, const IUpdateInfo& info)
 {
 	if (m_stage->build(info, frame))
 		return BrOk;
@@ -50,7 +51,7 @@ StageState::BuildResult StageState::build(uint32_t frame, const amalgam::IUpdate
 		return BrFailed;
 }
 
-bool StageState::render(uint32_t frame, render::EyeType eye, const amalgam::IUpdateInfo& info)
+bool StageState::render(uint32_t frame, render::EyeType eye, const IUpdateInfo& info)
 {
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
 
@@ -62,14 +63,21 @@ bool StageState::render(uint32_t frame, render::EyeType eye, const amalgam::IUpd
 	return true;
 }
 
-bool StageState::take(const amalgam::IEvent* event)
+bool StageState::take(const IEvent* event)
 {
-	if (const amalgam::ReconfigureEvent* reconfigureEvent = dynamic_type_cast< const amalgam::ReconfigureEvent* >(event))
+	if (const ReconfigureEvent* reconfigureEvent = dynamic_type_cast< const ReconfigureEvent* >(event))
 	{
 		if (!reconfigureEvent->isFinished())
 			m_stage->preReconfigured();
 		else
 			m_stage->postReconfigured();
+	}
+	else if (const ActiveEvent* activeEvent = dynamic_type_cast< const ActiveEvent* >(event))
+	{
+		if (activeEvent->becameActivated())
+			m_stage->resume();
+		else
+			m_stage->suspend();
 	}
 	return true;
 }
