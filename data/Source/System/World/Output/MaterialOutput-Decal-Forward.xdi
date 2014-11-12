@@ -118,10 +118,14 @@
 			</values>
 		</item>
 		<item type="traktor.render.Neg">
-			<comment/>
+			<comment>
+			<![CDATA[
+Eye direction
+			]]>
+			</comment>
 			<position>
 				<first>330</first>
-				<second>484</second>
+				<second>488</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
@@ -411,9 +415,17 @@
 		<item type="traktor.render.Normalize">
 			<comment/>
 			<position>
-				<first>155</first>
-				<second>471</second>
+				<first>188</first>
+				<second>488</second>
 			</position>
+		</item>
+		<item type="traktor.render.Swizzle">
+			<comment/>
+			<position>
+				<first>94</first>
+				<second>508</second>
+			</position>
+			<swizzle>xyz</swizzle>
 		</item>
 	</nodes>
 	<edges>
@@ -709,21 +721,31 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[25]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[25]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[26]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[26]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[25]"/>
 				<name>Input</name>
 			</destination>
 		</item>

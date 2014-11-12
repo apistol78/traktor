@@ -98,7 +98,11 @@
 			<max>1</max>
 		</item>
 		<item type="traktor.render.Dot">
-			<comment/>
+			<comment>
+			<![CDATA[
+Spec. dot
+			]]>
+			</comment>
 			<position>
 				<first>173</first>
 				<second>654</second>
