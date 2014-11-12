@@ -1,6 +1,7 @@
 #include "Core/Guid.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/String.h"
 #include "Core/System/OS.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
@@ -26,6 +27,16 @@ namespace traktor
 {
 	namespace scene
 	{
+		namespace
+		{
+
+std::wstring getCategoryText(const TypeInfo* categoryType)
+{
+	std::wstring id = L"DATABASE_CATEGORY_" + replaceAll< std::wstring >(toUpper(std::wstring(categoryType->getName())), L".", L"_");
+	return i18n::Text(id, categoryType->getName());
+}
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.EntityDependencyInvestigator", EntityDependencyInvestigator, ui::Container)
 
@@ -88,7 +99,7 @@ void EntityDependencyInvestigator::setEntityAdapter(EntityAdapter* entityAdapter
 			Ref< ui::TreeViewItem > typeGroup = typeGroups[assetType];
 			if (!typeGroup)
 			{
-				typeGroup = m_dependencyTree->createItem(entityRootItem, i18n::Format(L"SCENE_EDITOR_DEPENDENCY_GROUP", assetType->getName()), 0, 1);
+				typeGroup = m_dependencyTree->createItem(entityRootItem, getCategoryText(assetType), 0, 1);
 				typeGroups[assetType] = typeGroup;
 			}
 
