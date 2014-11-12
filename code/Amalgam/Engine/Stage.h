@@ -18,16 +18,6 @@
 
 namespace traktor
 {
-	namespace amalgam
-	{
-
-class IEnvironment;
-class IStateManager;
-class IUpdateControl;
-class IUpdateInfo;
-
-	}
-
 	namespace render
 	{
 
@@ -46,6 +36,10 @@ class IScriptContext;
 	namespace amalgam
 	{
 
+class IEnvironment;
+class IStateManager;
+class IUpdateControl;
+class IUpdateInfo;
 class Layer;
 class StageLoader;
 
@@ -55,7 +49,7 @@ class T_DLLCLASS Stage : public Object
 
 public:
 	Stage(
-		amalgam::IEnvironment* environment,
+		IEnvironment* environment,
 		const resource::Proxy< script::IScriptContext >& scriptContext,
 		const resource::Proxy< render::Shader >& shaderFade,
 		float fadeRate,
@@ -85,9 +79,9 @@ public:
 
 	bool gotoStage(Stage* stage);
 
-	bool update(amalgam::IStateManager* stateManager, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info);
+	bool update(IStateManager* stateManager, IUpdateControl& control, const IUpdateInfo& info);
 
-	bool build(const amalgam::IUpdateInfo& info, uint32_t frame);
+	bool build(const IUpdateInfo& info, uint32_t frame);
 
 	void render(render::EyeType eye, uint32_t frame);
 
@@ -97,14 +91,18 @@ public:
 
 	void postReconfigured();
 
-	amalgam::IEnvironment* getEnvironment() { return m_environment; }
+	void suspend();
+
+	void resume();
+
+	IEnvironment* getEnvironment() { return m_environment; }
 
 	const RefArray< Layer >& getLayers() const { return m_layers; }
 
 	const Object* getParams() const { return m_params; }
 
 private:
-	Ref< amalgam::IEnvironment > m_environment;
+	Ref< IEnvironment > m_environment;
 	resource::Proxy< script::IScriptContext > m_scriptContext;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	resource::Proxy< render::Shader > m_shaderFade;
@@ -120,7 +118,7 @@ private:
 
 	bool validateScriptContext();
 
-	script::Any invokeScriptUpdate(amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info);
+	script::Any invokeScriptUpdate(IUpdateControl& control, const IUpdateInfo& info);
 };
 
 	}
