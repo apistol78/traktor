@@ -208,7 +208,9 @@ void ShaderViewer::threadUpdateViews()
 			ss << L"// Technique \"" << *i << L"\"";
 
 			// Get combination parameter names.
-			std::vector< std::wstring > names = combinations.getParameterNames(combination);
+			uint32_t mask = combinations.getCombinationMask(combination);
+			uint32_t value = combinations.getCombinationValue(combination);
+			std::vector< std::wstring > names = combinations.getParameterNames(value & mask);
 			for (std::vector< std::wstring >::const_iterator i = names.begin(); i != names.end(); ++i)
 				ss << L", " << *i;
 

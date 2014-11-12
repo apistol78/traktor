@@ -393,8 +393,8 @@ bool emitFrontFace(GlslContext& cx, FrontFace* node)
 
 bool emitIndexedUniform(GlslContext& cx, IndexedUniform* node)
 {
-	GlslVariable* index = cx.emitInput(node, L"Index");
-	if (!index)
+	const Node* indexNode = cx.getInputNode(node, L"Index");
+	if (!indexNode)
 		return false;
 
 	GlslVariable* out = cx.getShader().createTemporaryVariable(
@@ -403,7 +403,17 @@ bool emitIndexedUniform(GlslContext& cx, IndexedUniform* node)
 	);
 
 	StringOutputStream& fb = cx.getShader().getOutputStream(GlslShader::BtBody);
-	assign(fb, out) << node->getParameterName() << L"[int(" << index->getName() << L")];" << Endl;
+
+	if (const Scalar* scalarIndexNode = dynamic_type_cast< const Scalar* >(indexNode))
+		assign(fb, out) << node->getParameterName() << L"[" << int32_t(scalarIndexNode->get()) << L"];" << Endl;
+	else
+	{
+		GlslVariable* index = cx.emitInput(node, L"Index");
+		if (!index)
+			return false;
+
+		assign(fb, out) << node->getParameterName() << L"[int(" << index->getName() << L")];" << Endl;
+	}
 
 	const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
 	if (uniforms.find(node->getParameterName()) == uniforms.end())
