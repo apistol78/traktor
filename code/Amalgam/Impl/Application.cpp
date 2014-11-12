@@ -594,7 +594,7 @@ bool Application::update()
 		if (deltaTime > c_maxDeltaTime)
 		{
 			deltaTime = c_maxDeltaTime;
-			if (renderViewActive && !m_updateControl.m_pause)
+			if (m_renderViewActive && !m_updateControl.m_pause)
 			{
 				if (++m_deltaTimeError >= c_maxDeltaTimeErrors)
 					m_updateInfo.m_runningSlow = true;
