@@ -23,6 +23,8 @@ public:
 	virtual void back() = 0;
 
 	virtual void reload(bool forced) = 0;
+
+	virtual bool ready() const = 0;
 };
 
 	}
