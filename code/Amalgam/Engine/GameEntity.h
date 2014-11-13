@@ -76,12 +76,17 @@ public:
 
 	world::Entity* getEntity() const { return m_entity; }
 
+	void setVisible(bool visible) { m_visible = visible; }
+
+	bool isVisible() const { return m_visible; }
+
 private:
 	std::wstring m_tag;
 	Ref< Object > m_object;
 	Ref< world::Entity > m_entity;
 	Ref< world::EntityEventSet > m_eventSet;
 	Ref< world::IEntityEventManager > m_eventManager;
+	bool m_visible;
 };
 
 	}

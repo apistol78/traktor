@@ -21,6 +21,7 @@ GameEntity::GameEntity(
 ,	m_entity(entity)
 ,	m_eventSet(eventSet)
 ,	m_eventManager(eventManager)
+,	m_visible(true)
 {
 }
 
