@@ -105,7 +105,10 @@ EntityAdapterBuilder::EntityAdapterBuilder(
 		if (cache)
 		{
 			world::Entity* entity = entityAdapter->getEntity();
-			if (entity)
+			if (
+				entity &&
+				entityAdapter->getChildren().empty()
+			)
 			{
 				uint32_t hash = entityAdapter->getHash();
 				T_FATAL_ASSERT (hash != 0);
