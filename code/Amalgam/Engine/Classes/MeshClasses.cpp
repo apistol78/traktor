@@ -65,7 +65,7 @@ private:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.BoxedProgramParameters", BoxedProgramParameters, Object)
 
-class DelegateMeshParameterCallback : public mesh::IMeshParameterCallback
+class DelegateMeshParameterCallback : public RefCountImpl< mesh::IMeshParameterCallback >
 {
 public:
 	DelegateMeshParameterCallback(script::IScriptDelegate* callback)

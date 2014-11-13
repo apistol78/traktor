@@ -74,7 +74,7 @@ public:
 
 protected:
 	IntervalTransform m_transform;
-	const IMeshParameterCallback* m_parameterCallback;
+	Ref< const IMeshParameterCallback > m_parameterCallback;
 	bool m_screenSpaceCulling;
 
 	/*! \brief Calculate render transform.
