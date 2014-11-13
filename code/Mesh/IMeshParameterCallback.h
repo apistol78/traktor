@@ -1,7 +1,7 @@
 #ifndef traktor_mesh_IMeshParameterCallback_H
 #define traktor_mesh_IMeshParameterCallback_H
 
-#include "Core/Config.h"
+#include "Core/IRefCount.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -29,7 +29,7 @@ class Shader;
  * Called when meshes are rendered in order to allow
  * user defined shader parameters.
  */
-class T_DLLCLASS IMeshParameterCallback
+class T_DLLCLASS IMeshParameterCallback : public IRefCount
 {
 public:
 	virtual void setCombination(render::Shader* shader) const = 0;
