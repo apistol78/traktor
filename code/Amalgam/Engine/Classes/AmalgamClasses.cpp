@@ -310,6 +310,8 @@ void registerAmalgamClasses(script::IScriptManager* scriptManager)
 	classGameEntity->addMethod("getObject", &GameEntity::getObject);
 	classGameEntity->addMethod("setEntity", &GameEntity::setEntity);
 	classGameEntity->addMethod("getEntity", &GameEntity::getEntity);
+	classGameEntity->addMethod("setVisible", &GameEntity::setVisible);
+	classGameEntity->addMethod("isVisible", &GameEntity::isVisible);
 	scriptManager->registerClass(classGameEntity);
 }
 

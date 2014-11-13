@@ -23,7 +23,8 @@ void GameEntityRenderer::precull(
 )
 {
 	GameEntity* gameEntity = checked_type_cast< GameEntity*, false >(entity);
-	worldContext.precull(worldRenderView, gameEntity->getEntity());
+	if (gameEntity->isVisible())
+		worldContext.precull(worldRenderView, gameEntity->getEntity());
 }
 
 void GameEntityRenderer::render(
@@ -34,7 +35,8 @@ void GameEntityRenderer::render(
 )
 {
 	GameEntity* gameEntity = checked_type_cast< GameEntity*, false >(entity);
-	worldContext.build(worldRenderView, worldRenderPass, gameEntity->getEntity());
+	if (gameEntity->isVisible())
+		worldContext.build(worldRenderView, worldRenderPass, gameEntity->getEntity());
 }
 
 void GameEntityRenderer::flush(
