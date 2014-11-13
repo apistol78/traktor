@@ -436,11 +436,7 @@ WebBrowserWin32::WebBrowserWin32(EventSubject* owner)
 bool WebBrowserWin32::create(IWidget* parent, const std::wstring& url)
 {
 	DWORD dwStyle = WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_TABSTOP;
-#if !defined(WINCE)
 	DWORD dwStyleEx = WS_EX_CONTROLPARENT;
-#else
-	DWORD dwStyleEx = 0;
-#endif
 
 	if (!m_hWnd.create(
 		(HWND)parent->getInternalHandle(),
@@ -547,6 +543,13 @@ void WebBrowserWin32::reload(bool forced)
 	v.vt = VT_I4;
 	v.intVal = forced ? REFRESH_COMPLETELY : REFRESH_NORMAL;
 	m_webBrowser->Refresh2(&v);
+}
+
+bool WebBrowserWin32::ready() const
+{
+	READYSTATE rs;
+	m_webBrowser->get_ReadyState(&rs);
+	return rs == READYSTATE_COMPLETE;
 }
 
 LRESULT WebBrowserWin32::eventSize(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)

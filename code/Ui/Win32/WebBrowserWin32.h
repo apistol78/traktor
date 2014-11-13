@@ -31,6 +31,8 @@ public:
 
 	virtual void reload(bool forced);
 
+	virtual bool ready() const;
+
 private:
 	ComRef< ::IOleClientSite > m_clientSite;
 	ComRef< ::IStorage > m_storage;
