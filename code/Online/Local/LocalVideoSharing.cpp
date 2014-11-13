@@ -12,7 +12,7 @@ bool LocalVideoSharing::beginCapture(int32_t duration)
 	return true;
 }
 
-void LocalVideoSharing::endCapture()
+void LocalVideoSharing::endCapture(const PropertyGroup* metaData)
 {
 }
 

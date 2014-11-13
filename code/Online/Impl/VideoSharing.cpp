@@ -16,11 +16,11 @@ bool VideoSharing::beginCapture(int32_t duration)
 	return m_capturing;
 }
 
-void VideoSharing::endCapture()
+void VideoSharing::endCapture(const PropertyGroup* metaData)
 {
 	if (m_capturing)
 	{
-		m_provider->endCapture();
+		m_provider->endCapture(metaData);
 		m_capturing = false;
 	}
 }

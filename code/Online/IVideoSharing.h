@@ -13,6 +13,9 @@
 
 namespace traktor
 {
+
+class PropertyGroup;
+
 	namespace online
 	{
 
@@ -23,7 +26,7 @@ class T_DLLCLASS IVideoSharing : public Object
 public:
 	virtual bool beginCapture(int32_t duration) = 0;
 
-	virtual void endCapture() = 0;
+	virtual void endCapture(const PropertyGroup* metaData) = 0;
 
 	virtual bool isCapturing() const = 0;
 

@@ -17,7 +17,7 @@ class VideoSharing : public IVideoSharing
 public:
 	virtual bool beginCapture(int32_t duration);
 
-	virtual void endCapture();
+	virtual void endCapture(const PropertyGroup* metaData);
 
 	virtual bool isCapturing() const;
 

@@ -145,7 +145,7 @@ bool GcVideoSharingEveryplay::beginCapture(int32_t duration)
 		return false;
 }
 
-void GcVideoSharingEveryplay::endCapture()
+void GcVideoSharingEveryplay::endCapture(const PropertyGroup* metaData)
 {
 	if (s_callback)
 		[[[Everyplay sharedInstance] capture] stopRecording];
