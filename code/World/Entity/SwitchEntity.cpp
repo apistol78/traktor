@@ -37,7 +37,7 @@ int32_t SwitchEntity::addEntity(Entity* entity)
 
 Entity* SwitchEntity::getEntity(int32_t index) const
 {
-	if (index >= 0 && index << int32_t(m_entities.size()))
+	if (index >= 0 && index < int32_t(m_entities.size()))
 		return m_entities[index];
 	else
 		return 0;
