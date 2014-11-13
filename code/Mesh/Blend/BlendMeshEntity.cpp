@@ -13,6 +13,8 @@ BlendMeshEntity::BlendMeshEntity(const Transform& transform, bool screenSpaceCul
 :	MeshEntity(transform, screenSpaceCulling)
 ,	m_mesh(mesh)
 {
+	uint32_t blendTargetCount = m_mesh->getBlendTargetCount();
+	m_blendWeights.resize(blendTargetCount, 0.0f);
 }
 
 void BlendMeshEntity::setBlendWeights(const std::vector< float >& blendWeights)
