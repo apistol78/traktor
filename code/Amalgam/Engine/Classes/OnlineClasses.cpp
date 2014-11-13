@@ -1,6 +1,7 @@
 #include "Amalgam/Engine/Classes/OnlineClasses.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/ISerializable.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Drawing/Image.h"
 #include "Net/Url.h"
 #include "Online/IAchievements.h"
