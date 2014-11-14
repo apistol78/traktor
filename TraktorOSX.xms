@@ -9954,6 +9954,10 @@
 							<fileName>../../../res/Navigate.png</fileName>
 							<items/>
 						</item>
+						<item type="File">
+							<fileName>../../../res/editor/TypesHidden.png</fileName>
+							<items/>
+						</item>
 					</items>
 				</item>
 			</items>

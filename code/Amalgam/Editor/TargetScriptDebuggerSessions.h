@@ -27,6 +27,8 @@ public:
 
 	virtual bool removeBreakpoint(const Guid& scriptId, int32_t lineNumber);
 
+	virtual bool removeAllBreakpoints(const Guid& scriptId);
+
 	virtual bool haveBreakpoint(const Guid& scriptId, int32_t lineNumber) const;
 
 	virtual void addListener(IListener* listener);

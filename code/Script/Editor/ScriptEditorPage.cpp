@@ -141,8 +141,9 @@ bool ScriptEditorPage::create(ui::Container* parent)
 
 	Ref< ui::custom::ToolBar > toolBarEdit = new ui::custom::ToolBar();
 	toolBarEdit->create(containerEdit);
-	toolBarEdit->addImage(ui::Bitmap::load(c_ResourceScriptEdit, sizeof(c_ResourceScriptEdit), L"png"), 1);
+	toolBarEdit->addImage(ui::Bitmap::load(c_ResourceScriptEdit, sizeof(c_ResourceScriptEdit), L"png"), 2);
 	toolBarEdit->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_TOGGLE_COMMENTS"), 0, ui::Command(L"Script.Editor.ToggleComments")));
+	toolBarEdit->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_REMOVE_ALL_BREAKPOINTS"), 1, ui::Command(L"Script.Editor.RemoveAllBreakpoints")));
 	toolBarEdit->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ScriptEditorPage::eventToolBarEditClick);
 
 	m_edit = new ui::custom::SyntaxRichEdit();
@@ -694,6 +695,11 @@ void ScriptEditorPage::eventToolBarEditClick(ui::custom::ToolBarButtonClickEvent
 			m_edit->updateLanguage(startLine, stopLine);
 			m_edit->update();
 		}
+	}
+	else if (command == L"Script.Editor.RemoveAllBreakpoints")
+	{
+		Guid instanceGuid = m_document->getInstance(0)->getGuid();
+		m_scriptDebuggerSessions->removeAllBreakpoints(instanceGuid);
 	}
 }
 

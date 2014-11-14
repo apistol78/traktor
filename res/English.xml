@@ -1809,6 +1809,10 @@
       <second>Toggle comments</second>
     </item>
     <item>
+      <first>SCRIPT_EDITOR_REMOVE_ALL_BREAKPOINTS</first>
+      <second>Remove all breakpoints</second>
+    </item>
+    <item>
       <first>SCRIPT_EDITOR_MOVE_DEPENDENCY_UP</first>
       <second>Move dependency up</second>
     </item>

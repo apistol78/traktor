@@ -46,6 +46,7 @@
 // Resources
 #include "Resources/DatabaseView.h"
 #include "Resources/Types.h"
+#include "Resources/TypesHidden.h"
 
 namespace traktor
 {
@@ -284,6 +285,7 @@ bool DatabaseView::create(ui::Widget* parent)
 	if (!m_treeDatabase->create(this, (ui::TreeView::WsDefault | ui::TreeView::WsDrag) & ~ui::WsClientBorder))
 		return false;
 	m_treeDatabase->addImage(ui::Bitmap::load(c_ResourceTypes, sizeof(c_ResourceTypes), L"png"), 23);
+	m_treeDatabase->addImage(ui::Bitmap::load(c_ResourceTypesHidden, sizeof(c_ResourceTypesHidden), L"png"), 23);
 	m_treeDatabase->addEventHandler< ui::TreeViewItemActivateEvent >(this, &DatabaseView::eventInstanceActivate);
 	m_treeDatabase->addEventHandler< ui::MouseButtonDownEvent >(this, &DatabaseView::eventInstanceButtonDown);
 	m_treeDatabase->addEventHandler< ui::TreeViewContentChangeEvent >(this, &DatabaseView::eventInstanceRenamed);
@@ -481,7 +483,7 @@ void DatabaseView::updateView()
 					else
 					{
 						if (!m_filter->acceptInstance((*j)))
-							iconIndex += 15;
+							iconIndex += 23;
 					}
 
 					Ref< ui::TreeViewItem > instanceItem = m_treeDatabase->createItem(
@@ -949,7 +951,7 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::
 		else
 		{
 			if (!m_filter->acceptInstance((*i)))
-				iconIndex += 15;
+				iconIndex += 23;
 		}
 
 		Ref< ui::TreeViewItem > instanceItem = treeView->createItem(
