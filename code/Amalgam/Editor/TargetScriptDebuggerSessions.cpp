@@ -80,6 +80,27 @@ bool TargetScriptDebuggerSessions::removeBreakpoint(const Guid& scriptId, int32_
 	return true;
 }
 
+bool TargetScriptDebuggerSessions::removeAllBreakpoints(const Guid& scriptId)
+{
+	for (std::map< int32_t, std::set< Guid > >::iterator i = m_breakpoints.begin(); i != m_breakpoints.end(); ++i)
+	{
+		int32_t lineNumber = i->first;
+
+		std::set< Guid >::iterator it = i->second.find(scriptId);
+		if (it != i->second.end())
+		{
+			for (std::list< Session >::iterator k = m_sessions.begin(); k != m_sessions.end(); ++k)
+				k->debugger->removeBreakpoint(scriptId, lineNumber);
+
+			for (std::list< IListener* >::iterator k = m_listeners.begin(); k != m_listeners.end(); ++k)
+				(*k)->notifyRemoveBreakpoint(scriptId, lineNumber);
+
+			i->second.erase(it);
+		}
+	}
+	return true;
+}
+
 bool TargetScriptDebuggerSessions::haveBreakpoint(const Guid& scriptId, int32_t lineNumber) const
 {
 	std::map< int32_t, std::set< Guid > >::const_iterator i = m_breakpoints.find(lineNumber);
