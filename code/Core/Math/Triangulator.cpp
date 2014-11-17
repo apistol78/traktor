@@ -155,8 +155,8 @@ void Triangulator::freeze(
 				if (j == prev || j == i || j == next)
 					continue;
 
-				bool convex = isConvex(uncut, j) ^ !cw;
-				if (convex)
+				bool convex2 = isConvex(uncut, j) ^ !cw;
+				if (convex2)
 					continue;
 
 				if (pointInTriangle(uncut[j], uncut[prev], uncut[i], uncut[next]))

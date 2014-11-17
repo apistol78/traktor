@@ -27,19 +27,19 @@ inline void clearSamples(float* samples, int32_t samplesCount)
 {
 	T_ASSERT ((samplesCount & 3) == 0);
 
-	const static Vector4 c_zero = Vector4::zero();
+	const static Vector4 c_zero4 = Vector4::zero();
 	int32_t i = 0;
 
 	for (i = 0; i < samplesCount - 16; i += 16)
 	{
-		c_zero.storeAligned(&samples[i]);
-		c_zero.storeAligned(&samples[i + 4]);
-		c_zero.storeAligned(&samples[i + 8]);
-		c_zero.storeAligned(&samples[i + 12]);
+		c_zero4.storeAligned(&samples[i]);
+		c_zero4.storeAligned(&samples[i + 4]);
+		c_zero4.storeAligned(&samples[i + 8]);
+		c_zero4.storeAligned(&samples[i + 12]);
 	}
 
 	for (; i < samplesCount; i += 4)
-		c_zero.storeAligned(&samples[i]);
+		c_zero4.storeAligned(&samples[i]);
 }
 
 		}

@@ -137,36 +137,36 @@ bool WorldRendererPreLit::create(
 
 	// Create "gbuffer" targets.
 	{
-		render::RenderTargetSetCreateDesc desc;
+		render::RenderTargetSetCreateDesc rtscd;
 
-		desc.count = 2;
-		desc.width = width;
-		desc.height = height;
-		desc.multiSample = desc.multiSample;
-		desc.createDepthStencil = false;
-		desc.usingPrimaryDepthStencil = true;
-		desc.preferTiled = true;
-		desc.targets[0].format = render::TfR16F;		// Depth
-		desc.targets[1].format = render::TfR8G8B8A8;	// Normals
+		rtscd.count = 2;
+		rtscd.width = width;
+		rtscd.height = height;
+		rtscd.multiSample = desc.multiSample;
+		rtscd.createDepthStencil = false;
+		rtscd.usingPrimaryDepthStencil = true;
+		rtscd.preferTiled = true;
+		rtscd.targets[0].format = render::TfR16F;		// Depth
+		rtscd.targets[1].format = render::TfR8G8B8A8;	// Normals
 
 		// Cannot use primary depth when supersampling.
 		if (superSample > 1)
 		{
-			desc.createDepthStencil = true;
-			desc.usingPrimaryDepthStencil = false;
-			desc.ignoreStencil = true;
+			rtscd.createDepthStencil = true;
+			rtscd.usingPrimaryDepthStencil = false;
+			rtscd.ignoreStencil = true;
 		}
 
-		m_gbufferTargetSet = renderSystem->createRenderTargetSet(desc);
+		m_gbufferTargetSet = renderSystem->createRenderTargetSet(rtscd);
 
 		if (!m_gbufferTargetSet && desc.multiSample > 0)
 		{
-			desc.multiSample = 0;
-			desc.createDepthStencil = true;
-			desc.usingPrimaryDepthStencil = false;
-			desc.ignoreStencil = true;
+			rtscd.multiSample = 0;
+			rtscd.createDepthStencil = true;
+			rtscd.usingPrimaryDepthStencil = false;
+			rtscd.ignoreStencil = true;
 
-			m_gbufferTargetSet = renderSystem->createRenderTargetSet(desc);
+			m_gbufferTargetSet = renderSystem->createRenderTargetSet(rtscd);
 			if (m_gbufferTargetSet)
 				log::warning << L"MSAA depth render target unsupported; may cause poor performance" << Endl;
 		}
@@ -180,18 +180,18 @@ bool WorldRendererPreLit::create(
 
 	// Create "color read-back" target.
 	{
-		render::RenderTargetSetCreateDesc desc;
+		render::RenderTargetSetCreateDesc rtscd;
 
-		desc.count = 1;
-		desc.width = width;
-		desc.height = height;
-		desc.multiSample = 0;
-		desc.createDepthStencil = false;
-		desc.usingPrimaryDepthStencil = false;
-		desc.preferTiled = true;
-		desc.targets[0].format = render::TfR11G11B10F;
+		rtscd.count = 1;
+		rtscd.width = width;
+		rtscd.height = height;
+		rtscd.multiSample = 0;
+		rtscd.createDepthStencil = false;
+		rtscd.usingPrimaryDepthStencil = false;
+		rtscd.preferTiled = true;
+		rtscd.targets[0].format = render::TfR11G11B10F;
 
-		m_colorTargetSet = renderSystem->createRenderTargetSet(desc);
+		m_colorTargetSet = renderSystem->createRenderTargetSet(rtscd);
 		if (!m_colorTargetSet)
 		{
 			log::error << L"Unable to create color read-back render target" << Endl;
@@ -213,37 +213,37 @@ bool WorldRendererPreLit::create(
 		T_DEBUG(L"Using shadow map resolution " << resolution);
 
 		// Create shadow map target.
-		render::RenderTargetSetCreateDesc desc;
-		desc.count = 1;
-		desc.width =
-		desc.height = resolution;
-		desc.multiSample = 0;
-		desc.createDepthStencil = true;
-		desc.usingPrimaryDepthStencil = false;
-		desc.ignoreStencil = true;
-		desc.preferTiled = true;
-		desc.targets[0].format = render::TfR16F;
-		m_shadowTargetSet = renderSystem->createRenderTargetSet(desc);
+		render::RenderTargetSetCreateDesc rtscd;
+		rtscd.count = 1;
+		rtscd.width =
+		rtscd.height = resolution;
+		rtscd.multiSample = 0;
+		rtscd.createDepthStencil = true;
+		rtscd.usingPrimaryDepthStencil = false;
+		rtscd.ignoreStencil = true;
+		rtscd.preferTiled = true;
+		rtscd.targets[0].format = render::TfR16F;
+		m_shadowTargetSet = renderSystem->createRenderTargetSet(rtscd);
 
 		// Create shadow mask target.
-		desc.count = 1;
-		desc.width = width / m_shadowSettings.maskDenominator;
-		desc.height = height / m_shadowSettings.maskDenominator;
-		desc.multiSample = 0;
-		desc.createDepthStencil = false;
-		desc.usingPrimaryDepthStencil = false;
-		desc.targets[0].format = render::TfR8;
-		desc.preferTiled = true;
-		m_shadowMaskProjectTargetSet = renderSystem->createRenderTargetSet(desc);
+		rtscd.count = 1;
+		rtscd.width = width / m_shadowSettings.maskDenominator;
+		rtscd.height = height / m_shadowSettings.maskDenominator;
+		rtscd.multiSample = 0;
+		rtscd.createDepthStencil = false;
+		rtscd.usingPrimaryDepthStencil = false;
+		rtscd.targets[0].format = render::TfR8;
+		rtscd.preferTiled = true;
+		m_shadowMaskProjectTargetSet = renderSystem->createRenderTargetSet(rtscd);
 
 		// Create filtered shadow mask target.
-		desc.count = 1;
-		desc.multiSample = 0;
-		desc.createDepthStencil = false;
-		desc.usingPrimaryDepthStencil = false;
-		desc.targets[0].format = render::TfR8;
-		desc.preferTiled = true;
-		m_shadowMaskFilterTargetSet = renderSystem->createRenderTargetSet(desc);
+		rtscd.count = 1;
+		rtscd.multiSample = 0;
+		rtscd.createDepthStencil = false;
+		rtscd.usingPrimaryDepthStencil = false;
+		rtscd.targets[0].format = render::TfR8;
+		rtscd.preferTiled = true;
+		m_shadowMaskFilterTargetSet = renderSystem->createRenderTargetSet(rtscd);
 		if (!m_shadowMaskFilterTargetSet)
 			safeDestroy(m_shadowMaskProjectTargetSet);
 
@@ -272,8 +272,8 @@ bool WorldRendererPreLit::create(
 					postProcessTargetPool,
 					resourceManager,
 					renderSystem,
-					desc.width,
-					desc.height
+					rtscd.width,
+					rtscd.height
 				))
 				{
 					log::warning << L"Unable to create shadow project process; shadows disabled" << Endl;
@@ -286,8 +286,8 @@ bool WorldRendererPreLit::create(
 					postProcessTargetPool,
 					resourceManager,
 					renderSystem,
-					desc.width,
-					desc.height
+					rtscd.width,
+					rtscd.height
 				))
 				{
 					log::warning << L"Unable to create shadow filter process; shadows disabled" << Endl;
@@ -516,56 +516,56 @@ bool WorldRendererPreLit::create(
 
 	// Create "visual" and "intermediate" target.
 	{
-		render::RenderTargetSetCreateDesc desc;
+		render::RenderTargetSetCreateDesc rtscd;
 		
-		desc.count = 1;
-		desc.width = width;
-		desc.height = height;
-		desc.multiSample = desc.multiSample;
-		desc.createDepthStencil = false;
-		desc.usingPrimaryDepthStencil = true;
-		desc.preferTiled = true;
-		desc.targets[0].format = render::TfR11G11B10F;
+		rtscd.count = 1;
+		rtscd.width = width;
+		rtscd.height = height;
+		rtscd.multiSample = desc.multiSample;
+		rtscd.createDepthStencil = false;
+		rtscd.usingPrimaryDepthStencil = true;
+		rtscd.preferTiled = true;
+		rtscd.targets[0].format = render::TfR11G11B10F;
 
 		// Cannot use primary depth when supersampling.
 		if (superSample > 1)
 		{
-			desc.createDepthStencil = true;
-			desc.usingPrimaryDepthStencil = false;
-			desc.ignoreStencil = true;
+			rtscd.createDepthStencil = true;
+			rtscd.usingPrimaryDepthStencil = false;
+			rtscd.ignoreStencil = true;
 		}
 
-		m_visualTargetSet = renderSystem->createRenderTargetSet(desc);
+		m_visualTargetSet = renderSystem->createRenderTargetSet(rtscd);
 		if (!m_visualTargetSet)
 			return false;
 
-		m_intermediateTargetSet = renderSystem->createRenderTargetSet(desc);
+		m_intermediateTargetSet = renderSystem->createRenderTargetSet(rtscd);
 		if (!m_intermediateTargetSet)
 			return false;
 	}
 
 	// Create light map target.
 	{
-		render::RenderTargetSetCreateDesc desc;
+		render::RenderTargetSetCreateDesc rtscd;
 
-		desc.count = 1;
-		desc.width = width;
-		desc.height = height;
-		desc.multiSample = desc.multiSample;
-		desc.createDepthStencil = false;
-		desc.usingPrimaryDepthStencil = true;
-		desc.preferTiled = true;
-		desc.targets[0].format = render::TfR16G16B16A16F;
+		rtscd.count = 1;
+		rtscd.width = width;
+		rtscd.height = height;
+		rtscd.multiSample = desc.multiSample;
+		rtscd.createDepthStencil = false;
+		rtscd.usingPrimaryDepthStencil = true;
+		rtscd.preferTiled = true;
+		rtscd.targets[0].format = render::TfR16G16B16A16F;
 
 		// Cannot use primary depth when supersampling.
 		if (superSample > 1)
 		{
-			desc.createDepthStencil = true;
-			desc.usingPrimaryDepthStencil = false;
-			desc.ignoreStencil = true;
+			rtscd.createDepthStencil = true;
+			rtscd.usingPrimaryDepthStencil = false;
+			rtscd.ignoreStencil = true;
 		}
 
-		m_lightMapTargetSet = renderSystem->createRenderTargetSet(desc);
+		m_lightMapTargetSet = renderSystem->createRenderTargetSet(rtscd);
 		if (!m_lightMapTargetSet)
 			return false;
 	}

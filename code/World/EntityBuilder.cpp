@@ -52,9 +52,9 @@ const IEntityFactory* EntityBuilder::getFactory(const EntityData* entityData) co
 	{
 		// Need to find factory best suited to create entity from it's data.
 		uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
-		for (RefArray< const IEntityFactory >::const_iterator i = m_entityFactories.begin(); i != m_entityFactories.end() && minClassDifference > 0; ++i)
+		for (RefArray< const IEntityFactory >::const_iterator it = m_entityFactories.begin(); it != m_entityFactories.end() && minClassDifference > 0; ++it)
 		{
-			const TypeInfoSet& typeSet = (*i)->getEntityTypes();
+			const TypeInfoSet& typeSet = (*it)->getEntityTypes();
 			for (TypeInfoSet::const_iterator j = typeSet.begin(); j != typeSet.end() && minClassDifference > 0; ++j)
 			{
 				if (is_type_of(**j, entityDataType))
@@ -63,7 +63,7 @@ const IEntityFactory* EntityBuilder::getFactory(const EntityData* entityData) co
 					if (classDifference < minClassDifference)
 					{
 						minClassDifference = classDifference;
-						entityFactory = *i;
+						entityFactory = *it;
 					}
 				}
 			}
@@ -103,9 +103,9 @@ const IEntityFactory* EntityBuilder::getFactory(const IEntityEventData* entityEv
 	{
 		// Need to find factory best suited to create entity from it's data.
 		uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
-		for (RefArray< const IEntityFactory >::const_iterator i = m_entityFactories.begin(); i != m_entityFactories.end() && minClassDifference > 0; ++i)
+		for (RefArray< const IEntityFactory >::const_iterator it = m_entityFactories.begin(); it != m_entityFactories.end() && minClassDifference > 0; ++it)
 		{
-			const TypeInfoSet& typeSet = (*i)->getEntityEventTypes();
+			const TypeInfoSet& typeSet = (*it)->getEntityEventTypes();
 			for (TypeInfoSet::const_iterator j = typeSet.begin(); j != typeSet.end() && minClassDifference > 0; ++j)
 			{
 				if (is_type_of(**j, entityEventDataType))
@@ -114,7 +114,7 @@ const IEntityFactory* EntityBuilder::getFactory(const IEntityEventData* entityEv
 					if (classDifference < minClassDifference)
 					{
 						minClassDifference = classDifference;
-						entityFactory = *i;
+						entityFactory = *it;
 					}
 				}
 			}

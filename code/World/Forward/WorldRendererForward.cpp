@@ -427,26 +427,26 @@ bool WorldRendererForward::create(
 	// Create "visual" and "intermediate" target.
 	if (m_antiAlias || m_visualPostProcess || m_gammaCorrectionPostProcess)
 	{
-		render::RenderTargetSetCreateDesc desc;
+		render::RenderTargetSetCreateDesc rtscd;
 		
-		desc.count = 1;
-		desc.width = width;
-		desc.height = height;
-		desc.multiSample = desc.multiSample;
-		desc.createDepthStencil = false;
-		desc.usingPrimaryDepthStencil = true;
-		desc.preferTiled = true;
+		rtscd.count = 1;
+		rtscd.width = width;
+		rtscd.height = height;
+		rtscd.multiSample = desc.multiSample;
+		rtscd.createDepthStencil = false;
+		rtscd.usingPrimaryDepthStencil = true;
+		rtscd.preferTiled = true;
 
 		if (m_settings.linearLighting || (m_visualPostProcess && m_visualPostProcess->requireHighRange()))
-			desc.targets[0].format = render::TfR11G11B10F;
+			rtscd.targets[0].format = render::TfR11G11B10F;
 		else
-			desc.targets[0].format = render::TfR8G8B8A8;
+			rtscd.targets[0].format = render::TfR8G8B8A8;
 
-		m_visualTargetSet = renderSystem->createRenderTargetSet(desc);
+		m_visualTargetSet = renderSystem->createRenderTargetSet(rtscd);
 		if (!m_visualTargetSet)
 			return false;
 
-		m_intermediateTargetSet = renderSystem->createRenderTargetSet(desc);
+		m_intermediateTargetSet = renderSystem->createRenderTargetSet(rtscd);
 		if (!m_intermediateTargetSet)
 			return false;
 	}

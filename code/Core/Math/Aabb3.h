@@ -153,9 +153,9 @@ public:
 	{
 		Vector4 center = getCenter();
 		Vector4 extent = getExtent() * factor;
-		Vector4 mn = center - extent;
-		Vector4 mx = center + extent;
-		return Aabb3(mn, mx);
+		Vector4 bbmn = center - extent;
+		Vector4 bbmx = center + extent;
+		return Aabb3(bbmn, bbmx);
 	}
 	
 	/*! \brief Expand bounding box. */
@@ -163,9 +163,9 @@ public:
 	{
 		Vector4 center = getCenter();
 		Vector4 extent = getExtent() + Vector4(margin, margin, margin, 0);
-		Vector4 mn = center - extent;
-		Vector4 mx = center + extent;
-		return Aabb3(mn, mx);
+		Vector4 bbmn = center - extent;
+		Vector4 bbmx = center + extent;
+		return Aabb3(bbmn, bbmx);
 	}
 	
 	/*! \brief Query intersection with sphere. */

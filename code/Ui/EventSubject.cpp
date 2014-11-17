@@ -22,9 +22,9 @@ void EventSubject::raiseEvent(Event* event)
 		// Invoke event handlers reversed as the most prioritized are at the end and they should
 		// be able to "consume" the event so it wont reach other, less prioritized, handlers.
 		std::vector< EventHandlers > eventHandlers = i->second;
-		for (std::vector< EventHandlers >::reverse_iterator i = eventHandlers.rbegin(); i != eventHandlers.rend(); ++i)
+		for (std::vector< EventHandlers >::reverse_iterator it = eventHandlers.rbegin(); it != eventHandlers.rend(); ++it)
 		{
-			for (EventHandlers::iterator j = i->begin(); j != i->end(); )
+			for (EventHandlers::iterator j = it->begin(); j != it->end(); )
 			{
 				Ref< IEventHandler > eventHandler = *j++;
 				if (!eventHandler)

@@ -2172,8 +2172,8 @@ void opx_pushData(ExecutionState& state)
 		}
 		else if (type == 4)	// Register
 		{
-			uint8_t index = *data++;
-			value = state.frame->getRegister(index);
+			uint8_t index2 = *data++;
+			value = state.frame->getRegister(index2);
 		}
 		else if (type == 5)	// Boolean
 		{
@@ -2208,27 +2208,27 @@ void opx_pushData(ExecutionState& state)
 		}
 		else if (type == 8)	// Dictionary (8bit index)
 		{
-			uint8_t index = *data++;
-			value = state.frame->getDictionary()->get(index);
+			uint8_t index2 = *data++;
+			value = state.frame->getDictionary()->get(index2);
 
 			T_IF_TRACE(
-				*state.trace << L" (" << int32_t(index) << L")";
+				*state.trace << L" (" << int32_t(index2) << L")";
 			)
 		}
 		else if (type == 9)	// Dictionary (16bit index)
 		{
-			uint16_t index = *reinterpret_cast< const uint16_t* >(data);
-			value = state.frame->getDictionary()->get(index);
+			uint16_t index2 = *reinterpret_cast< const uint16_t* >(data);
+			value = state.frame->getDictionary()->get(index2);
 			data += sizeof(uint16_t);
 
 			T_IF_TRACE(
-				*state.trace << L" (" << int32_t(index) << L")";
+				*state.trace << L" (" << int32_t(index2) << L")";
 			)
 		}
 		else if (type == 100)	// Preconverted constant value.
 		{
-			uint16_t index = *reinterpret_cast< const uint16_t* >(data);
-			value = state.image->getConstData(index);
+			uint16_t index2 = *reinterpret_cast< const uint16_t* >(data);
+			value = state.image->getConstData(index2);
 			data += sizeof(uint16_t);
 		}
 		else if (type == 200)	// End

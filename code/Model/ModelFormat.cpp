@@ -66,9 +66,9 @@ bool ModelFormat::writeAny(IStream* stream, const std::wstring& extension, const
 		std::vector< std::wstring > extensions;
 		modelFormat->getExtensions(description, extensions);
 
-		for (std::vector< std::wstring >::const_iterator i = extensions.begin(); i != extensions.end(); ++i)
+		for (std::vector< std::wstring >::const_iterator j = extensions.begin(); j != extensions.end(); ++j)
 		{
-			if (compareIgnoreCase(extension, *i) == 0)
+			if (compareIgnoreCase(extension, *j) == 0)
 				return modelFormat->write(stream, model);
 		}
 	}

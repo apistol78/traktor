@@ -165,7 +165,7 @@ int BufferedStream::read(void* block, int nbytes)
 	uint8_t* out = static_cast< uint8_t* >(block);
 	uint8_t* end = out + nbytes;
 
-	if (nbytes <= m_internalBufferSize)
+	if (nbytes <= int32_t(m_internalBufferSize))
 	{
 		// Read and copy until number of desired bytes read is meet.
 		while (out < end)

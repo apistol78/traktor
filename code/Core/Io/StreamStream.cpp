@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Core/Io/StreamStream.h"
 
 namespace traktor

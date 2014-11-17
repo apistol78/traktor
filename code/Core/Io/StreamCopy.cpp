@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Core/Io/IStream.h"
 #include "Core/Io/StreamCopy.h"
 #include "Core/Misc/AutoPtr.h"

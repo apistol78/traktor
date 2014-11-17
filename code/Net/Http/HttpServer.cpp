@@ -90,12 +90,12 @@ public:
 			Ref< HttpRequest > request = HttpRequest::parse(ss.str());
 			if (request)
 			{
-				StringOutputStream ss;
+				StringOutputStream ssr;
 				Ref< IStream > ds;
 				int32_t result = 503;
 
 				if (m_listener)
-					result = m_listener->httpClientRequest(m_server, request, ss, ds);
+					result = m_listener->httpClientRequest(m_server, request, ssr, ds);
 
 				FileOutputStream os(&clientStream, new Utf8Encoding(), OutputStream::LeWin);
 				if (result >= 200 && result < 300)
@@ -109,7 +109,7 @@ public:
 				if (ds)
 					StreamCopy(&clientStream, ds).execute();
 				else
-					os << ss.str();
+					os << ssr.str();
 			}
 
 			safeClose(clientSocket);

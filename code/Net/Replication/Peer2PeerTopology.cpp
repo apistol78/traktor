@@ -466,8 +466,8 @@ bool Peer2PeerTopology::update(double dT)
 						int32_t nconnections = MsgCMask_Connections(nrecv);
 
 						std::vector< net_handle_t > connections(nconnections);
-						for (int32_t i = 0; i < nconnections; ++i)
-							connections[i] = msg.cmask.connections[i];
+						for (int32_t j = 0; j < nconnections; ++j)
+							connections[j] = msg.cmask.connections[j];
 
 						std::sort(connections.begin(), connections.end());
 

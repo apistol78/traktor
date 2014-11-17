@@ -60,9 +60,9 @@ void DebugAllocator::free(void* ptr)
 	{
 		if (static_cast< uint8_t* >(i->top) + c_wallSize == ptr)
 		{
-			uint8_t* ptr = static_cast< uint8_t* >(i->top);
+			uint8_t* bptr = static_cast< uint8_t* >(i->top);
 			for (size_t j = 0; j < i->size; ++j)
-				ptr[j] = 0xdd;
+				bptr[j] = 0xdd;
 
 			m_freedBlocks.push_back(*i);
 			m_aliveBlocks.erase(i);

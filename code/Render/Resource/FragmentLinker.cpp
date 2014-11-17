@@ -296,23 +296,23 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool 
 	if (fullResolve)
 	{
 		std::map< const External*, std::set< std::wstring > > unresolvedExternalPins;
-		for (RefArray< Edge >::const_iterator i = resolvedEdges.begin(); i != resolvedEdges.end(); ++i)
+		for (RefArray< Edge >::const_iterator it = resolvedEdges.begin(); it != resolvedEdges.end(); ++it)
 		{
-			if (External* externalNode = dynamic_type_cast< External* >((*i)->getSource()->getNode()))
-				unresolvedExternalPins[externalNode].insert((*i)->getSource()->getName());
-			else if (External* externalNode = dynamic_type_cast< External* >((*i)->getDestination()->getNode()))
-				unresolvedExternalPins[externalNode].insert((*i)->getDestination()->getName());
+			if (External* externalNode1 = dynamic_type_cast< External* >((*it)->getSource()->getNode()))
+				unresolvedExternalPins[externalNode1].insert((*it)->getSource()->getName());
+			else if (External* externalNode2 = dynamic_type_cast< External* >((*it)->getDestination()->getNode()))
+				unresolvedExternalPins[externalNode2].insert((*it)->getDestination()->getName());
 		}
 		if (!unresolvedExternalPins.empty())
 		{
-			for (std::map< const External*, std::set< std::wstring > >::const_iterator i = unresolvedExternalPins.begin(); i != unresolvedExternalPins.end(); ++i)
+			for (std::map< const External*, std::set< std::wstring > >::const_iterator it = unresolvedExternalPins.begin(); it != unresolvedExternalPins.end(); ++it)
 			{
 				if (optionalShaderGraphGuid)
-					log::error << L"Fragment linkage of \"" << optionalShaderGraphGuid->format() << L"\" failed; unresolved edges, signature with fragment \"" << i->first->getFragmentGuid().format() << L"\" mismatch" << Endl;
+					log::error << L"Fragment linkage of \"" << optionalShaderGraphGuid->format() << L"\" failed; unresolved edges, signature with fragment \"" << it->first->getFragmentGuid().format() << L"\" mismatch" << Endl;
 				else
-					log::error << L"Fragment linkage failed; unresolved edges, signature with fragment \"" << i->first->getFragmentGuid().format() << L"\" mismatch" << Endl;
+					log::error << L"Fragment linkage failed; unresolved edges, signature with fragment \"" << it->first->getFragmentGuid().format() << L"\" mismatch" << Endl;
 
-				for (std::set< std::wstring >::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
+				for (std::set< std::wstring >::const_iterator j = it->second.begin(); j != it->second.end(); ++j)
 					log::error << L"\tPort \"" << *j << L"\" not defined" << Endl;
 			}
 			return 0;

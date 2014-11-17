@@ -98,16 +98,16 @@ T_MATH_INLINE Matrix33 Matrix33::inverse() const
 	);
 }
 
-T_MATH_INLINE Matrix33& Matrix33::operator = (const Matrix33& m)
+T_MATH_INLINE Matrix33& Matrix33::operator = (const Matrix33& m_)
 {
 	for (int i = 0; i < 9; ++i)
-		this->m[i] = m.m[i];
+		this->m[i] = m_.m[i];
 	return *this;
 }
 
-T_MATH_INLINE Matrix33& Matrix33::operator *= (const Matrix33& m)
+T_MATH_INLINE Matrix33& Matrix33::operator *= (const Matrix33& m_)
 {
-	*this = *this * m;
+	*this = *this * m_;
 	return *this;
 }
 

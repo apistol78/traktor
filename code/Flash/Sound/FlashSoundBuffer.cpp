@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Core/Misc/Align.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Flash/FlashSound.h"

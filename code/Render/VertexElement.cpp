@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Render/VertexElement.h"
 
 namespace traktor

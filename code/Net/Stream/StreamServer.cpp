@@ -269,8 +269,8 @@ void StreamServer::threadClient(Ref< TcpSocket > clientSocket)
 				{
 					int32_t origin, offset;
 					net::recvBatch< int32_t, int32_t >(clientSocket, origin, offset);
-					int32_t result = stream->seek((IStream::SeekOriginType)origin, offset);
-					net::sendBatch< int32_t >(clientSocket, result);
+					int32_t resultSeek = stream->seek((IStream::SeekOriginType)origin, offset);
+					net::sendBatch< int32_t >(clientSocket, resultSeek);
 				}
 			}
 			break;

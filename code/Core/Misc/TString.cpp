@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Core/Io/IEncoding.h"
 #include "Core/Misc/TString.h"
 

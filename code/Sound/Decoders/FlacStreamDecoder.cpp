@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstring>
 #include <FLAC/stream_decoder.h>
 #include "Core/Io/IStream.h"

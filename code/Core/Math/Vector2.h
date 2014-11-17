@@ -38,13 +38,13 @@ public:
 
 	T_MATH_INLINE Vector2(const Vector2& v);
 
-	explicit T_MATH_INLINE Vector2(float x, float y);
+	explicit T_MATH_INLINE Vector2(float x_, float y_);
 
 	static T_MATH_INLINE const Vector2& zero();
 
 	static T_MATH_INLINE const Vector2& one();
 
-	T_MATH_INLINE void set(float x, float y);
+	T_MATH_INLINE void set(float x_, float y_);
 
 	T_MATH_INLINE float length() const;
 

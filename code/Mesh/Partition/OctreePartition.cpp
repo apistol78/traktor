@@ -22,11 +22,11 @@ void OctreePartition::traverse(
 	std::vector< uint32_t >& outPartIndices
 ) const
 {
-	std::vector< render::handle_t >::const_iterator i = std::find(m_worldTechniques.begin(), m_worldTechniques.end(), worldTechnique);
-	if (i == m_worldTechniques.end())
+	std::vector< render::handle_t >::const_iterator it = std::find(m_worldTechniques.begin(), m_worldTechniques.end(), worldTechnique);
+	if (it == m_worldTechniques.end())
 		return;
 
-	uint8_t worldTechniqueId = uint8_t(std::distance(m_worldTechniques.begin(), i));
+	uint8_t worldTechniqueId = uint8_t(std::distance(m_worldTechniques.begin(), it));
 
 	Matrix44 worldViewInv = worldView.inverse();
 	Frustum frustumObject;

@@ -94,8 +94,8 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 	{
 		Ref< GroupEntity > groupEntity = new GroupEntity(groupData->getTransform());
 
-		const RefArray< EntityData >& entityData = groupData->getEntityData();
-		for (RefArray< EntityData >::const_iterator i = entityData.begin(); i != entityData.end(); ++i)
+		const RefArray< EntityData >& groupChildEntityData = groupData->getEntityData();
+		for (RefArray< EntityData >::const_iterator i = groupChildEntityData.begin(); i != groupChildEntityData.end(); ++i)
 		{
 			Ref< Entity > childEntity = builder->create(*i);
 			if (childEntity)
@@ -164,8 +164,8 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 	{
 		Ref< SwitchEntity > switchEntity = new SwitchEntity(switchEntityData->getTransform(), 0);
 
-		const RefArray< EntityData >& entityData = switchEntityData->getEntityData();
-		for (RefArray< EntityData >::const_iterator i = entityData.begin(); i != entityData.end(); ++i)
+		const RefArray< EntityData >& switchChildEntityData = switchEntityData->getEntityData();
+		for (RefArray< EntityData >::const_iterator i = switchChildEntityData.begin(); i != switchChildEntityData.end(); ++i)
 		{
 			Ref< Entity > childEntity = builder->create(*i);
 			if (childEntity)

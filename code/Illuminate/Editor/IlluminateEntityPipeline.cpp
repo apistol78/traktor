@@ -1079,11 +1079,11 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 			}
 		}
 
-		outputImageDirect->save(illumEntityData->getSeedGuid().format() + L".png");
-
+#if defined(_DEBUG)
 		// Save light-map for debugging.
 		outputImageDirect->save(illumEntityData->getSeedGuid().format() + L".png");
 		model::ModelFormat::writeAny(illumEntityData->getSeedGuid().format() + L".obj", mergedModel);
+#endif
 
 		log::info << L"Creating resources..." << Endl;
 
