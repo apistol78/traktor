@@ -644,6 +644,30 @@ void ScriptManagerLua::pushAny(const Any& any)
 		lua_pushnil(m_luaState);
 }
 
+void ScriptManagerLua::pushAny(const Any* anys, int32_t count)
+{
+	CHECK_LUA_STACK(m_luaState, 1);
+
+	for (int32_t i = 0; i < count; ++i)
+	{
+		const Any any = anys[i];
+		if (any.isVoid())
+			lua_pushnil(m_luaState);
+		else if (any.isBoolean())
+			lua_pushboolean(m_luaState, any.getBooleanUnsafe() ? 1 : 0);
+		else if (any.isInteger())
+			lua_pushinteger(m_luaState, any.getIntegerUnsafe());
+		else if (any.isFloat())
+			lua_pushnumber(m_luaState, any.getFloatUnsafe());
+		else if (any.isString())
+			lua_pushstring(m_luaState, any.getStringUnsafe().c_str());
+		else if (any.isObject())
+			pushObject(any.getObjectUnsafe());
+		else
+			lua_pushnil(m_luaState);
+	}
+}
+
 Any ScriptManagerLua::toAny(int32_t index)
 {
 	CHECK_LUA_STACK(m_luaState, 0);

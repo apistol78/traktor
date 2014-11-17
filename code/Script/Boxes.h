@@ -35,10 +35,30 @@ class T_DLLCLASS Boxed : public ITypedObject
 	T_RTTI_CLASS;
 
 public:
+	Boxed()
+	:	m_refCount(0)
+	{
+	}
+
+	virtual void addRef(void* owner) const
+	{
+		++m_refCount;
+	}
+
+	virtual void release(void* owner) const
+	{
+		T_ASSERT (m_refCount > 0);
+		if (--m_refCount == 0)
+			delete this;
+	}
+
 	virtual std::wstring toString() const = 0;
+
+private:
+	mutable int32_t m_refCount;
 };
 
-class T_DLLCLASS BoxedUInt64 : public RefCountImpl< Boxed >
+class T_DLLCLASS BoxedUInt64 : public Boxed
 {
 	T_RTTI_CLASS;
 
@@ -61,7 +81,7 @@ private:
 	uint64_t m_value;
 };
 
-class T_DLLCLASS BoxedGuid : public RefCountImpl< Boxed >
+class T_DLLCLASS BoxedGuid : public Boxed
 {
 	T_RTTI_CLASS;
 
@@ -96,7 +116,7 @@ private:
 	Guid m_value;
 };
 
-class T_DLLCLASS BoxedVector2 : public RefCountImpl< Boxed >
+class T_DLLCLASS BoxedVector2 : public Boxed
 {
 	T_RTTI_CLASS;
 
@@ -155,7 +175,7 @@ private:
 	Vector2 m_value;
 };
 
-class T_DLLCLASS BoxedVector4 : public RefCountImpl< Boxed >
+class T_DLLCLASS BoxedVector4 : public Boxed
 {
 	T_RTTI_CLASS;
 	
@@ -226,7 +246,7 @@ private:
 	Vector4 m_value;
 };
 
-class T_DLLCLASS BoxedQuaternion : public RefCountImpl< Boxed >
+class T_DLLCLASS BoxedQuaternion : public Boxed
 {
 	T_RTTI_CLASS;
 	
@@ -287,7 +307,7 @@ private:
 	Quaternion m_value;
 };
 
-class T_DLLCLASS BoxedPlane : public RefCountImpl< Boxed >
+class T_DLLCLASS BoxedPlane : public Boxed
 {
 	T_RTTI_CLASS;
 
@@ -328,7 +348,7 @@ private:
 	Plane m_value;
 };
 
-class T_DLLCLASS BoxedTransform : public RefCountImpl< Boxed >
+class T_DLLCLASS BoxedTransform : public Boxed
 {
 	T_RTTI_CLASS;
 	
@@ -381,7 +401,7 @@ private:
 	Transform m_value;
 };
 
-class T_DLLCLASS BoxedAabb3 : public RefCountImpl< Boxed >
+class T_DLLCLASS BoxedAabb3 : public Boxed
 {
 	T_RTTI_CLASS;
 
@@ -428,7 +448,7 @@ private:
 	Aabb3 m_value;
 };
 
-class T_DLLCLASS BoxedFrustum : public RefCountImpl< Boxed >
+class T_DLLCLASS BoxedFrustum : public Boxed
 {
 	T_RTTI_CLASS;
 
@@ -473,7 +493,7 @@ private:
 	Frustum m_value;
 };
 
-class T_DLLCLASS BoxedMatrix44 : public RefCountImpl< Boxed >
+class T_DLLCLASS BoxedMatrix44 : public Boxed
 {
 	T_RTTI_CLASS;
 
@@ -540,7 +560,7 @@ private:
 	Matrix44 m_value;
 };
 
-class T_DLLCLASS BoxedColor4f : public RefCountImpl< Boxed >
+class T_DLLCLASS BoxedColor4f : public Boxed
 {
 	T_RTTI_CLASS;
 
@@ -585,7 +605,7 @@ private:
 	Color4f m_value;
 };
 
-class T_DLLCLASS BoxedColor4ub : public RefCountImpl< Boxed >
+class T_DLLCLASS BoxedColor4ub : public Boxed
 {
 	T_RTTI_CLASS;
 
@@ -628,7 +648,7 @@ private:
 	Color4ub m_value;
 };
 
-class T_DLLCLASS BoxedRandom : public RefCountImpl< Boxed >
+class T_DLLCLASS BoxedRandom : public Boxed
 {
 	T_RTTI_CLASS;
 
@@ -682,7 +702,7 @@ private:
 	RandomGeometry m_value;
 };
 
-class T_DLLCLASS BoxedRefArray : public RefCountImpl< Boxed >
+class T_DLLCLASS BoxedRefArray : public Boxed
 {
 	T_RTTI_CLASS;
 
@@ -730,7 +750,7 @@ private:
 	RefArray< Object > m_arr;
 };
 
-class T_DLLCLASS BoxedRange : public RefCountImpl< Boxed >
+class T_DLLCLASS BoxedRange : public Boxed
 {
 	T_RTTI_CLASS;
 
@@ -768,7 +788,7 @@ private:
 	Any m_max;
 };
 
-class T_DLLCLASS BoxedStdVector : public RefCountImpl< Boxed >
+class T_DLLCLASS BoxedStdVector : public Boxed
 {
 	T_RTTI_CLASS;
 
