@@ -63,7 +63,11 @@ void ActionVM1::execute(ActionFrame* frame) const
 	T_ASSERT (image);
 
 	// Prepare image on first execution.
-	const_cast< ActionVMImage1* >(image)->prepare();
+	if (!image->m_prepared)
+	{
+		const_cast< ActionVMImage1* >(image)->prepare();
+		T_ASSERT (image->m_prepared);
+	}
 
 	// Setup execution state.
 	ExecutionState state;

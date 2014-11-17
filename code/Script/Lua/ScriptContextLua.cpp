@@ -143,8 +143,7 @@ Any ScriptContextLua::executeFunction(const std::string& functionName, uint32_t 
 
 		if (lua_isfunction(m_luaState, -1))
 		{
-			for (uint32_t i = 0; i < argc; ++i)
-				m_scriptManager->pushAny(argv[i]);
+			m_scriptManager->pushAny(argv, argc);
 
 			int32_t err = lua_pcall(m_luaState, argc, 1, errfunc);
 			if (err == 0)
@@ -180,8 +179,7 @@ Any ScriptContextLua::executeMethod(Object* self, const std::string& methodName,
 			lua_setglobal(m_luaState, "self");
 
 			// Push arguments.
-			for (uint32_t i = 0; i < argc; ++i)
-				m_scriptManager->pushAny(argv[i]);
+			m_scriptManager->pushAny(argv, argc);
 		
 			// Call script function.
 			int32_t err = lua_pcall(m_luaState, argc, 1, errfunc);
@@ -211,8 +209,7 @@ Any ScriptContextLua::executeDelegate(int32_t functionRef, uint32_t argc, const 
 		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, functionRef);
 		T_ASSERT (lua_isfunction(m_luaState, -1));
 
-		for (uint32_t i = 0; i < argc; ++i)
-			m_scriptManager->pushAny(argv[i]);
+		m_scriptManager->pushAny(argv, argc);
 
 		int32_t err = lua_pcall(m_luaState, argc, 1, errfunc);
 		if (err == 0)
