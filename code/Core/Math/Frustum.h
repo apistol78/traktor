@@ -48,7 +48,7 @@ public:
 
 	Frustum();
 
-	void buildFromPlanes(const Plane planes[6]);
+	void buildFromPlanes(const Plane planes_[6]);
 
 	void buildPerspective(float vfov, float aspect, float zn, float zf);
 
@@ -64,7 +64,7 @@ public:
 
 	InsideResult inside(const Vector4& point) const;
 	
-	InsideResult inside(const Vector4& center, const Scalar& radius) const;
+	InsideResult inside(const Vector4& center_, const Scalar& radius) const;
 	
 	InsideResult inside(const Aabb3& aabb) const;
 

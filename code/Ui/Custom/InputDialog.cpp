@@ -83,9 +83,9 @@ int InputDialog::showModal()
 	{
 		for (uint32_t i = 0; i < uint32_t(m_editFields.size()); ++i)
 		{
-			Ref< Edit > edit = dynamic_type_cast< Edit* >(m_editFields[i]);
+			Ref< Edit > editField = dynamic_type_cast< Edit* >(m_editFields[i]);
 			if (edit)
-				m_outFields[i].value = edit->getText();
+				m_outFields[i].value = editField->getText();
 
 			Ref< DropDown > dropDown = dynamic_type_cast< DropDown* >(m_editFields[i]);
 			if (dropDown)

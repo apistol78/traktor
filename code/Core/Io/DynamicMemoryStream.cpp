@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstring>
 #include "Core/Io/DynamicMemoryStream.h"
 

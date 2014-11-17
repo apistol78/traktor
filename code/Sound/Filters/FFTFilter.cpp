@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstring>
 #include "Core/Math/Const.h"
 #include "Core/Math/Hermite.h"

@@ -20,20 +20,20 @@ T_MATH_INLINE Color4ub::Color4ub(const Color4ub& v)
 	a = v.a;
 }
 
-T_MATH_INLINE Color4ub::Color4ub(uint8_t r, uint8_t g, uint8_t b)
+T_MATH_INLINE Color4ub::Color4ub(uint8_t r_, uint8_t g_, uint8_t b_)
 {
-	this->r = r;
-	this->g = g;
-	this->b = b;
+	this->r = r_;
+	this->g = g_;
+	this->b = b_;
 	this->a = 255;
 }
 
-T_MATH_INLINE Color4ub::Color4ub(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+T_MATH_INLINE Color4ub::Color4ub(uint8_t r_, uint8_t g_, uint8_t b_, uint8_t a_)
 {
-	this->r = r;
-	this->g = g;
-	this->b = b;
-	this->a = a;
+	this->r = r_;
+	this->g = g_;
+	this->b = b_;
+	this->a = a_;
 }
 
 T_MATH_INLINE Color4ub::Color4ub(uint32_t argb)
@@ -44,20 +44,20 @@ T_MATH_INLINE Color4ub::Color4ub(uint32_t argb)
 	this->a = (argb >> 24) & 255;
 }
 
-T_MATH_INLINE void Color4ub::set(uint8_t r, uint8_t g, uint8_t b)
+T_MATH_INLINE void Color4ub::set(uint8_t r_, uint8_t g_, uint8_t b_)
 {
-	this->r = r;
-	this->g = g;
-	this->b = b;
+	this->r = r_;
+	this->g = g_;
+	this->b = b_;
 	this->a = 255;
 }
 
-T_MATH_INLINE void Color4ub::set(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+T_MATH_INLINE void Color4ub::set(uint8_t r_, uint8_t g_, uint8_t b_, uint8_t a_)
 {
-	this->r = r;
-	this->g = g;
-	this->b = b;
-	this->a = a;
+	this->r = r_;
+	this->g = g_;
+	this->b = b_;
+	this->a = a_;
 }
 
 T_MATH_INLINE uint32_t Color4ub::getARGB() const

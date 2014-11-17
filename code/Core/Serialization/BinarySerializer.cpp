@@ -758,9 +758,9 @@ void BinarySerializer::operator >> (const Member< ISerializable* >& m)
 				if (!write_primitive< uint64_t >(m_stream, hash))
 					return;
 
-				std::map< const TypeInfo*, uint32_t >::const_iterator i = m_typeWriteCache.find(&type_of(object));
-				if (i != m_typeWriteCache.end())
-					write_primitive< uint32_t >(m_stream, 0x80000000 | i->second);
+				std::map< const TypeInfo*, uint32_t >::const_iterator it = m_typeWriteCache.find(&type_of(object));
+				if (it != m_typeWriteCache.end())
+					write_primitive< uint32_t >(m_stream, 0x80000000 | it->second);
 				else
 				{
 					if (!write_string(m_stream, type_name(object)))

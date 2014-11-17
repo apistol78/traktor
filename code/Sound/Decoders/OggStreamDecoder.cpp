@@ -2,6 +2,7 @@
 #define OGG_VORBIS_DECODER_STB 2
 #define OGG_VORBIS_DECODER OGG_VORBIS_DECODER_STB
 
+#include <algorithm>
 #include <cstring>
 #if OGG_VORBIS_DECODER == OGG_VORBIS_DECODER_REF
 #	include <vorbis/codec.h>

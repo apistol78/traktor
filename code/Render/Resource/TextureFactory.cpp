@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Compress/Lzf/InflateStreamLzf.h"
 #include "Core/Io/Reader.h"
 #include "Core/Log/Log.h"

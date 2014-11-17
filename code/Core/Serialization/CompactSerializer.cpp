@@ -803,7 +803,7 @@ void CompactSerializer::operator >> (const Member< ISerializable* >& m)
 			typeId != 0x1f
 		)
 		{
-			if (typeId - 1 >= m_ntypes)
+			if (uint32_t(typeId - 1) >= m_ntypes)
 				return;
 
 			const TypeInfo* type = m_types[typeId - 1];

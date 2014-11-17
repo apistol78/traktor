@@ -173,12 +173,12 @@ void IndoorMesh::findVisibleSectors(
 				outVisibleSectors.insert(nextSector);
 
 				AlignedVector< Plane > nextFrustum(clipped.size());
-				for (size_t i = 0, j = clipped.size() - 1; i < clipped.size(); j = i++)
+				for (size_t j = 0, k = clipped.size() - 1; j < clipped.size(); k = j++)
 				{
-					nextFrustum[i] = Plane(
+					nextFrustum[j] = Plane(
 						Vector4(0.0f, 0.0f, 0.0f, 1.0f),
-						clipped[i],
-						clipped[j]
+						clipped[j],
+						clipped[k]
 					);
 				}
 

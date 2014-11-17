@@ -1,4 +1,5 @@
 #include <cmath>
+#include "Core/Math/MathUtils.h"
 #include "Core/Math/Vector2.h"
 
 namespace traktor
@@ -16,28 +17,28 @@ T_MATH_INLINE Vector2::Vector2(const Vector2& v)
 	y = v.y;
 }
 
-T_MATH_INLINE Vector2::Vector2(float x, float y)
+T_MATH_INLINE Vector2::Vector2(float x_, float y_)
 {
-	this->x = x;
-	this->y = y;
+	this->x = x_;
+	this->y = y_;
 }
 
 T_MATH_INLINE const Vector2& Vector2::zero()
 {
-	static const Vector2 c_zero(0.0f, 0.0f);
-	return c_zero;
+	static const Vector2 c_zero2(0.0f, 0.0f);
+	return c_zero2;
 }
 
 T_MATH_INLINE const Vector2& Vector2::one()
 {
-	static const Vector2 c_one(1.0f, 1.0f);
-	return c_one;
+	static const Vector2 c_one2(1.0f, 1.0f);
+	return c_one2;
 }
 
-T_MATH_INLINE void Vector2::set(float x, float y)
+T_MATH_INLINE void Vector2::set(float x_, float y_)
 {
-	this->x = x;
-	this->y = y;
+	this->x = x_;
+	this->y = y_;
 }
 
 T_MATH_INLINE float Vector2::length() const
@@ -216,16 +217,16 @@ T_MATH_INLINE float determinant(const Vector2& a, const Vector2& b)
 T_MATH_INLINE Vector2 min(const Vector2& l, const Vector2& r)
 {
 	return Vector2(
-		std::min(l.x, r.x),
-		std::min(l.y, r.y)
+		min(l.x, r.x),
+		min(l.y, r.y)
 	);
 }
 
 T_MATH_INLINE Vector2 max(const Vector2& l, const Vector2& r)
 {
 	return Vector2(
-		std::max(l.x, r.x),
-		std::max(l.y, r.y)
+		max(l.x, r.x),
+		max(l.y, r.y)
 	);
 }
 

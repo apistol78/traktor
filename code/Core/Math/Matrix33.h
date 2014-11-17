@@ -57,9 +57,9 @@ public:
 
 	T_MATH_INLINE Matrix33 inverse() const;
 
-	T_MATH_INLINE Matrix33& operator = (const Matrix33& m);
+	T_MATH_INLINE Matrix33& operator = (const Matrix33& m_);
 
-	T_MATH_INLINE Matrix33& operator *= (const Matrix33& m);
+	T_MATH_INLINE Matrix33& operator *= (const Matrix33& m_);
 
 	/*extern*/ friend T_MATH_INLINE T_DLLCLASS Vector2 operator * (const Matrix33& m, const Vector2& v);
 

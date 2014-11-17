@@ -133,8 +133,8 @@ void decodeLzw(const std::vector< uint8_t >& in, int initialCodeSize, std::vecto
 		
 		while (!stack.empty())
 		{
-			unsigned code = stack.top();
-			out.push_back(dict[code].color);
+			unsigned code2 = stack.top();
+			out.push_back(dict[code2].color);
 			stack.pop();
 		}
 	}

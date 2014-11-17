@@ -65,8 +65,8 @@ Ref< Entity > EntityBuilderWithSchema::create(const EntityData* entityData) cons
 
 	if (!m_entityScope.empty())
 	{
-		scope_t& scope = m_entityScope.top();
-		scope.push_back(std::make_pair(entityData->getName(), entity));
+		scope_t& scopeTop = m_entityScope.top();
+		scopeTop.push_back(std::make_pair(entityData->getName(), entity));
 	}
 	else
 		m_entitySchema->insertEntity(0, entityData->getName(), entity);

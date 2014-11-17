@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstring>
 
 #if defined(_MSC_VER) && !defined(WINCE) && !defined(_XBOX)

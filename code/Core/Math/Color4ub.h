@@ -31,15 +31,15 @@ public:
 
 	T_MATH_INLINE Color4ub(const Color4ub& v);
 
-	explicit T_MATH_INLINE Color4ub(uint8_t r, uint8_t g, uint8_t b);
+	explicit T_MATH_INLINE Color4ub(uint8_t r_, uint8_t g_, uint8_t b_);
 
-	explicit T_MATH_INLINE Color4ub(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+	explicit T_MATH_INLINE Color4ub(uint8_t r_, uint8_t g_, uint8_t b_, uint8_t a_);
 
 	explicit T_MATH_INLINE Color4ub(uint32_t argb);
 
-	T_MATH_INLINE void set(uint8_t r, uint8_t g, uint8_t b);
+	T_MATH_INLINE void set(uint8_t r_, uint8_t g_, uint8_t b_);
 
-	T_MATH_INLINE void set(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+	T_MATH_INLINE void set(uint8_t r_, uint8_t g_, uint8_t b_, uint8_t a_);
 
 	T_MATH_INLINE uint32_t getARGB() const;
 
