@@ -64,7 +64,7 @@
 			</position>
 			<swizzle>0x00</swizzle>
 		</item>
-		<item type="traktor.render.Sampler" version="2">
+		<item type="traktor.render.Sampler" version="3">
 			<comment/>
 			<position>
 				<first>-210</first>
@@ -77,6 +77,7 @@
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
 			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
@@ -195,10 +196,6 @@
 					<optional>true</optional>
 				</item>
 				<item>
-					<name>Mask</name>
-					<optional>true</optional>
-				</item>
-				<item>
 					<name>Reflection</name>
 					<optional>true</optional>
 				</item>
@@ -228,10 +225,6 @@
 				<item>
 					<first>Emissive</first>
 					<second>0</second>
-				</item>
-				<item>
-					<first>Mask</first>
-					<second>1</second>
 				</item>
 				<item>
 					<first>Reflection</first>
@@ -266,14 +259,14 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>868</first>
-				<second>45</second>
+				<first>929</first>
+				<second>25</second>
 			</position>
 			<parameterName>PatchLodColor</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.Sampler" version="2">
+		<item type="traktor.render.Sampler" version="3">
 			<comment>
 			<![CDATA[
 Generated texture from surface cache.
@@ -290,13 +283,14 @@ Generated texture from surface cache.
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
 			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>377</first>
-				<second>-48</second>
+				<first>386</first>
+				<second>-74</second>
 			</position>
 			<parameterName>Surface</parameterName>
 			<type>PtTexture2D</type>
@@ -335,8 +329,8 @@ Generated texture from surface cache.
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>60</first>
-				<second>74</second>
+				<first>58</first>
+				<second>62</second>
 			</position>
 			<parameterName>SurfaceOffset</parameterName>
 			<type>PtVector</type>

@@ -30,10 +30,6 @@
 					<optional>true</optional>
 				</item>
 				<item>
-					<name>Mask</name>
-					<optional>true</optional>
-				</item>
-				<item>
 					<name>Reflection</name>
 					<optional>true</optional>
 				</item>
@@ -43,6 +39,14 @@
 				</item>
 				<item>
 					<name>RefractiveAmount</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<name>RefractiveCoefficient</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<name>RefractiveTintColor</name>
 					<optional>true</optional>
 				</item>
 				<item>
@@ -61,6 +65,10 @@
 					<name>SpecularTerm</name>
 					<optional>true</optional>
 				</item>
+				<item>
+					<name>State</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins/>
 			<values>
@@ -73,10 +81,6 @@
 					<second>0</second>
 				</item>
 				<item>
-					<first>Mask</first>
-					<second>1</second>
-				</item>
-				<item>
 					<first>Reflection</first>
 					<second>0</second>
 				</item>
@@ -87,6 +91,14 @@
 				<item>
 					<first>RefractiveAmount</first>
 					<second>0</second>
+				</item>
+				<item>
+					<first>RefractiveCoefficient</first>
+					<second>0.025</second>
+				</item>
+				<item>
+					<first>RefractiveTintColor</first>
+					<second>1</second>
 				</item>
 				<item>
 					<first>RimColor</first>
@@ -103,6 +115,10 @@
 				<item>
 					<first>SpecularTerm</first>
 					<second>1</second>
+				</item>
+				<item>
+					<first>State</first>
+					<second>0</second>
 				</item>
 			</values>
 		</item>

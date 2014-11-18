@@ -40,8 +40,8 @@
 		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
 			<position>
-				<first>1097</first>
-				<second>211</second>
+				<first>726</first>
+				<second>199</second>
 			</position>
 			<technique>World_NormalWrite</technique>
 			<priority>
@@ -79,30 +79,6 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-		</item>
-		<item type="traktor.render.External" version="1">
-			<comment/>
-			<position>
-				<first>727</first>
-				<second>227</second>
-			</position>
-			<fragmentGuid>{FF10034C-15CA-C941-9080-8A35F67716E3}</fragmentGuid>
-			<inputPins>
-				<item>
-					<name>Input</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<name>Mask</name>
-					<optional>false</optional>
-				</item>
-			</inputPins>
-			<outputPins>
-				<item>
-					<name>Output</name>
-				</item>
-			</outputPins>
-			<values/>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
@@ -176,8 +152,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-90</first>
-				<second>250</second>
+				<first>-86</first>
+				<second>257</second>
 			</position>
 			<name>SpecularRoughness</name>
 			<connectable>true</connectable>
@@ -191,17 +167,6 @@
 				<second>311</second>
 			</position>
 			<value>16</value>
-		</item>
-		<item type="traktor.render.InputPort" version="1">
-			<comment/>
-			<position>
-				<first>557</first>
-				<second>297</second>
-			</position>
-			<name>Mask</name>
-			<connectable>true</connectable>
-			<optional>true</optional>
-			<defaultValue>1</defaultValue>
 		</item>
 	</nodes>
 	<edges>
@@ -237,22 +202,12 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[6]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
-				<name>Input</name>
+				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -262,7 +217,7 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[6]"/>
-				<name>Input1</name>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -281,8 +236,8 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Input</name>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -291,8 +246,8 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Input2</name>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -302,7 +257,7 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[10]"/>
-				<name>Input</name>
+				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -312,7 +267,7 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[11]"/>
-				<name>Input1</name>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -321,28 +276,18 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[12]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[14]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[11]"/>
+				<node ref="/object/nodes/item[10]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[15]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Mask</name>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>

@@ -326,7 +326,10 @@ Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 				outputConstant
 			))
 			{
-				outputConstants[outputPin] = outputConstant;
+				if (outputConstant.getType() != PntVoid)
+					outputConstants[outputPin] = outputConstant;
+				else
+					return 0;
 			}
 		}
 	}
@@ -407,8 +410,13 @@ Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 						outputConstant
 					))
 					{
-						outputConstants[outputPin] = outputConstant;
-						++constantQualifiedCount;
+						if (outputConstant.getType() != PntVoid)
+						{
+							outputConstants[outputPin] = outputConstant;
+							++constantQualifiedCount;
+						}
+						else
+							return 0;
 					}
 				}
 			}
@@ -499,12 +507,14 @@ Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 					outputConstant
 				))
 				{
-					if (outputConstant.getWidth() > 0)
+					if (outputConstant.getType() != PntVoid)
 					{
 						outputConstants[outputPin] = outputConstant;
 						++partialQualifiedCount;
 						continue;
 					}
+					else
+						return 0;
 				}
 
 				// Then try to evaluate rewiring from partial constant input set.
@@ -518,66 +528,66 @@ Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 					foldOutputPin
 				))
 				{
-					if (foldOutputPin)
-					{
-						PinType outputPinType = typePropagation.evaluate(outputPin);
-						PinType foldOutputPinType = typePropagation.evaluate(foldOutputPin);
+					if (!foldOutputPin)
+						return 0;
 
-						if (!isPinTypeScalar(outputPinType) || !isPinTypeScalar(foldOutputPinType))
-							continue;
+					PinType outputPinType = typePropagation.evaluate(outputPin);
+					PinType foldOutputPinType = typePropagation.evaluate(foldOutputPin);
 
-						Ref< Swizzle > swizzleNode;
-						if (outputPinType != foldOutputPinType)
-						{
-							// Need to add a swizzle node in order to expand into expected type.
-							T_ASSERT (foldOutputPinType < outputPinType);
-
-							if (foldOutputPinType == PntScalar1)
-							{
-								const wchar_t* c_scalarSwizzles[] = { L"", L"xx", L"xxx", L"xxxx" };
-								swizzleNode = new Swizzle(c_scalarSwizzles[getPinTypeWidth(outputPinType) - 1]);
-							}
-							else if (foldOutputPinType == PntScalar2)
-							{
-								const wchar_t* c_tupleSwizzles[] = { L"", L"", L"xy0", L"xy00" };
-								swizzleNode = new Swizzle(c_tupleSwizzles[getPinTypeWidth(outputPinType) - 1]);
-							}
-							else if (foldOutputPinType == PntScalar3)
-							{
-								const wchar_t* c_tripleSwizzles[] = { L"", L"", L"", L"xyz0" };
-								swizzleNode = new Swizzle(c_tripleSwizzles[getPinTypeWidth(outputPinType) - 1]);
-							}
-							else
-								continue;
-						}
-
-						if (swizzleNode)
-						{
-							Ref< Edge > edgeIn = new Edge(foldOutputPin, swizzleNode->getInputPin(0));
-
-							shaderGraph->addEdge(edgeIn);
-							shaderGraph->addNode(swizzleNode);
-
-							typePropagation.set(swizzleNode->getInputPin(0), outputPinType);
-							typePropagation.set(swizzleNode->getOutputPin(0), outputPinType);
-
-							foldOutputPin = swizzleNode->getOutputPin(0);
-						}
-
-						RefSet< Edge > edges;
-						shaderGraph->findEdges(outputPin, edges);
-
-						for (RefSet< Edge >::const_iterator it = edges.begin(); it != edges.end(); ++it)
-						{
-							shaderGraph->removeEdge(*it);
-
-							Ref< Edge > foldEdge = new Edge(foldOutputPin, (*it)->getDestination());
-							shaderGraph->addEdge(foldEdge);
-						}
-
-						++partialQualifiedCount;
+					if (!isPinTypeScalar(outputPinType) || !isPinTypeScalar(foldOutputPinType))
 						continue;
+
+					Ref< Swizzle > swizzleNode;
+					if (outputPinType != foldOutputPinType)
+					{
+						// Need to add a swizzle node in order to expand into expected type.
+						T_ASSERT (foldOutputPinType < outputPinType);
+
+						if (foldOutputPinType == PntScalar1)
+						{
+							const wchar_t* c_scalarSwizzles[] = { L"", L"xx", L"xxx", L"xxxx" };
+							swizzleNode = new Swizzle(c_scalarSwizzles[getPinTypeWidth(outputPinType) - 1]);
+						}
+						else if (foldOutputPinType == PntScalar2)
+						{
+							const wchar_t* c_tupleSwizzles[] = { L"", L"", L"xy0", L"xy00" };
+							swizzleNode = new Swizzle(c_tupleSwizzles[getPinTypeWidth(outputPinType) - 1]);
+						}
+						else if (foldOutputPinType == PntScalar3)
+						{
+							const wchar_t* c_tripleSwizzles[] = { L"", L"", L"", L"xyz0" };
+							swizzleNode = new Swizzle(c_tripleSwizzles[getPinTypeWidth(outputPinType) - 1]);
+						}
+						else
+							continue;
 					}
+
+					if (swizzleNode)
+					{
+						Ref< Edge > edgeIn = new Edge(foldOutputPin, swizzleNode->getInputPin(0));
+
+						shaderGraph->addEdge(edgeIn);
+						shaderGraph->addNode(swizzleNode);
+
+						typePropagation.set(swizzleNode->getInputPin(0), outputPinType);
+						typePropagation.set(swizzleNode->getOutputPin(0), outputPinType);
+
+						foldOutputPin = swizzleNode->getOutputPin(0);
+					}
+
+					RefSet< Edge > edges;
+					shaderGraph->findEdges(outputPin, edges);
+
+					for (RefSet< Edge >::const_iterator it = edges.begin(); it != edges.end(); ++it)
+					{
+						shaderGraph->removeEdge(*it);
+
+						Ref< Edge > foldEdge = new Edge(foldOutputPin, (*it)->getDestination());
+						shaderGraph->addEdge(foldEdge);
+					}
+
+					++partialQualifiedCount;
+					continue;
 				}
 			}
 		}

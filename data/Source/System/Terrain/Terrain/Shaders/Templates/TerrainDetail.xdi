@@ -4,8 +4,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>2350</first>
-				<second>-401</second>
+				<first>2536</first>
+				<second>-444</second>
 			</position>
 			<fragmentGuid>{B633DBF6-FC42-5341-B0D8-940670973041}</fragmentGuid>
 			<inputPins>
@@ -27,10 +27,6 @@
 				</item>
 				<item>
 					<name>Emissive</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<name>Mask</name>
 					<optional>true</optional>
 				</item>
 				<item>
@@ -63,10 +59,6 @@
 				<item>
 					<first>Emissive</first>
 					<second>0</second>
-				</item>
-				<item>
-					<first>Mask</first>
-					<second>1</second>
 				</item>
 				<item>
 					<first>Reflection</first>
@@ -552,8 +544,8 @@ Generated texture from surface cache.
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>1444</first>
-				<second>-618</second>
+				<first>1446</first>
+				<second>-641</second>
 			</position>
 			<parameterName>CutMap</parameterName>
 			<type>PtTexture2D</type>
@@ -594,8 +586,8 @@ Generated texture from surface cache.
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>1696</first>
-				<second>-535</second>
+				<first>1695</first>
+				<second>-515</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -703,6 +695,22 @@ Generated texture from surface cache.
 			<parameterName>DetailDistance</parameterName>
 			<type>PtScalar</type>
 			<frequency>UfOnce</frequency>
+		</item>
+		<item type="traktor.render.Discard">
+			<comment/>
+			<position>
+				<first>2298</first>
+				<second>-582</second>
+			</position>
+			<operator>CoGreaterEqual</operator>
+		</item>
+		<item type="traktor.render.Scalar">
+			<comment/>
+			<position>
+				<first>2138</first>
+				<second>-530</second>
+			</position>
+			<value>0.5</value>
 		</item>
 	</nodes>
 	<edges>
@@ -1398,32 +1406,12 @@ Generated texture from surface cache.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>SurfaceColor</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[54]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[53]"/>
 				<name>False</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[53]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>Mask</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -1604,6 +1592,46 @@ Generated texture from surface cache.
 			<destination>
 				<node ref="/object/nodes/item[13]"/>
 				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[68]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[67]"/>
+				<name>Reference</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[67]"/>
+				<name>Pass</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[67]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>SurfaceColor</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[53]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[67]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>

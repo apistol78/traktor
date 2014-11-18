@@ -389,14 +389,6 @@ bool MeshPipeline::buildOutput(
 			return false;
 		}
 
-		// Perform constant folding early; will probably yield better hashing.
-		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph).getConstantFolded();
-		if (!materialShaderGraph)
-		{
-			log::error << L"MeshPipeline failed; unable to fold constant branches, material shader \"" << i->first << L"\"" << Endl;
-			return false;
-		}
-
 		// Merge identical branches.
 		materialShaderGraph = render::ShaderGraphOptimizer(materialShaderGraph).mergeBranches();
 		if (!materialShaderGraph)
