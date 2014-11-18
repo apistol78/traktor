@@ -11,7 +11,7 @@
 		</environment>
 	</deployToolWin32>
 	<deployToolWin64>
-		<executable>$(TRAKTOR_HOME)/bin/win64/Run $(TRAKTOR_HOME)/bin/deploy/deploy-pnacl.run</executable>
+		<executable>$(TRAKTOR_HOME)/bin/win32/Run $(TRAKTOR_HOME)/bin/deploy/deploy-pnacl.run</executable>
 		<environment>
 			<item>
 				<first>DEPLOY_HOST_OS</first>
