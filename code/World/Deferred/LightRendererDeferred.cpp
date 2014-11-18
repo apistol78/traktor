@@ -26,7 +26,9 @@ const float c_pointLightScreenAreaThreshold = 4.0f * (c_pointLightScreenAreaThre
 
 render::handle_t s_handleShadowEnable;
 render::handle_t s_handleExtent;
+render::handle_t s_handleViewInverse;
 render::handle_t s_handleMagicCoeffs;
+render::handle_t s_handleReflectionMap;
 render::handle_t s_handleDepthMap;
 render::handle_t s_handleNormalMap;
 render::handle_t s_handleColorMap;
@@ -57,7 +59,9 @@ LightRendererDeferred::LightRendererDeferred()
 {
 	s_handleShadowEnable = render::getParameterHandle(L"ShadowEnable");
 	s_handleExtent = render::getParameterHandle(L"Extent");
+	s_handleViewInverse = render::getParameterHandle(L"ViewInverse");
 	s_handleMagicCoeffs = render::getParameterHandle(L"MagicCoeffs");
+	s_handleReflectionMap = render::getParameterHandle(L"ReflectionMap");
 	s_handleDepthMap = render::getParameterHandle(L"DepthMap");
 	s_handleNormalMap = render::getParameterHandle(L"NormalMap");
 	s_handleColorMap = render::getParameterHandle(L"ColorMap");
@@ -308,8 +312,10 @@ void LightRendererDeferred::renderLight(
 void LightRendererDeferred::renderFinal(
 	render::IRenderView* renderView,
 	const Matrix44& projection,
+	const Matrix44& view,
 	const Vector4& fogDistanceAndDensity,
 	const Vector4& fogColor,
+	render::ITexture* reflectionMap,
 	render::ITexture* depthMap,
 	render::ITexture* normalMap,
 	render::ITexture* colorMap
@@ -318,9 +324,11 @@ void LightRendererDeferred::renderFinal(
 	Scalar p11 = projection.get(0, 0);
 	Scalar p22 = projection.get(1, 1);
 
+	m_finalShader->setMatrixParameter(s_handleViewInverse, view.inverse());
 	m_finalShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 	m_finalShader->setVectorParameter(s_handleFogDistanceAndDensity, fogDistanceAndDensity);
 	m_finalShader->setVectorParameter(s_handleFogColor, fogColor);
+	m_finalShader->setTextureParameter(s_handleReflectionMap, reflectionMap);
 	m_finalShader->setTextureParameter(s_handleDepthMap, depthMap);
 	m_finalShader->setTextureParameter(s_handleNormalMap, normalMap);
 	m_finalShader->setTextureParameter(s_handleColorMap, colorMap);

@@ -348,6 +348,10 @@
 					<optional>true</optional>
 				</item>
 				<item>
+					<name>Reflection</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<name>SpecularRoughness</name>
 					<optional>true</optional>
 				</item>
@@ -369,6 +373,10 @@
 				<item>
 					<first>Mask</first>
 					<second>1</second>
+				</item>
+				<item>
+					<first>Reflection</first>
+					<second>0</second>
 				</item>
 				<item>
 					<first>SpecularRoughness</first>
@@ -712,6 +720,16 @@
 			<destination>
 				<node ref="/object/nodes/item[12]"/>
 				<name>DiffuseTerm</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[12]"/>
+				<name>Reflection</name>
 			</destination>
 		</item>
 	</edges>

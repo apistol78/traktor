@@ -64,8 +64,10 @@ public:
 	void renderFinal(
 		render::IRenderView* renderView,
 		const Matrix44& projection,
+		const Matrix44& view,
 		const Vector4& fogDistanceAndDensity,
 		const Vector4& fogColor,
+		render::ITexture* reflectionMap,
 		render::ITexture* depthMap,
 		render::ITexture* normalMap,
 		render::ITexture* colorMap

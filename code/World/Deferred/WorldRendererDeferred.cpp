@@ -142,9 +142,9 @@ bool WorldRendererDeferred::create(
 		rtscd.createDepthStencil = false;
 		rtscd.usingPrimaryDepthStencil = true;
 		rtscd.preferTiled = true;
-		rtscd.targets[0].format = render::TfR16F;		// Depth (R)
-		rtscd.targets[1].format = render::TfR8G8B8A8;	// Normals (RGB), Specular roughness (A)
-		rtscd.targets[2].format = render::TfR11G11B10F;	// Surface color (RGB)
+		rtscd.targets[0].format = render::TfR16F;			// Depth (R)
+		rtscd.targets[1].format = render::TfR8G8B8A8;		// Normals (RGB), Specular roughness (A)
+		rtscd.targets[2].format = render::TfR16G16B16A16F;	// Surface color (RGB), Reflectivity (A)
 
 		m_gbufferTargetSet = renderSystem->createRenderTargetSet(rtscd);
 
@@ -920,8 +920,10 @@ void WorldRendererDeferred::render(uint32_t flags, int frame, render::EyeType ey
 				m_lightRenderer->renderFinal(
 					m_renderView,
 					projection,
+					f.view,
 					m_fogDistanceAndDensity,
 					m_fogColor,
+					m_reflectionMap,
 					m_gbufferTargetSet->getColorTexture(0),
 					m_gbufferTargetSet->getColorTexture(1),
 					m_gbufferTargetSet->getColorTexture(2)
