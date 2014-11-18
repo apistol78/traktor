@@ -306,6 +306,70 @@
       <second>Sound banks</second>
     </item>
     <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_I18N_DICTIONARY</first>
+      <second>Language dictionaries</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_MESH_LODMESHENTITYDATA</first>
+      <second>LOD mesh entities</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_WORLD_ENTITYEVENTSETDATA</first>
+      <second>Entity event sets</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_WORLD_DECALENTITYDATA</first>
+      <second>Decal entities</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_SCENE_SCENEPERMUTATIONASSET</first>
+      <second>Scene permutations</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_PHYSICS_MESHASSET</first>
+      <second>Physics meshes</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_PHYSICS_RIGIDENTITYDATA</first>
+      <second>Rigid physics entities</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_ANIMATION_ANIMATEDMESHENTITYDATA</first>
+      <second>Animated mesh entities</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_SPRAY_EFFECTENTITYDATA</first>
+      <second>Effect entities</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_AI_NAVMESHASSET</first>
+      <second>AI navigation meshes</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_HF_HEIGHTFIELDASSET</first>
+      <second>Heightfield assets</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_HF_MATERIALMASKASSET</first>
+      <second>Heightfield material masks</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_HF_OCCLUSIONTEXTUREASSET</first>
+      <second>Heightfield occlusion textures</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_TERRAIN_TERRAINASSET</first>
+      <second>Terrain assets</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_ONLINE_STEAMGAMECONFIGURATION</first>
+      <second>Steam game configurations</second>
+    </item>
+    <item>
+      <first>DATABASE_CATEGORY_TRAKTOR_VIDEO_VIDEOASSET</first>
+      <second>Video assets</second>
+    </item>
+    <item>
       <first>DATABASE_VIEW_MODE</first>
       <second>View mode</second>
     </item>
