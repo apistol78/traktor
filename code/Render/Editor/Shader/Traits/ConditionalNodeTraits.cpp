@@ -163,11 +163,16 @@ bool ConditionalNodeTraits::evaluateFull(
 
 		if (result)
 		{
+			// Never discard any fragment; return input constant as is.
 			outputConstant = inputConstants[2];
-			return true;
+		}
+		else
+		{
+			// The fragments will always get discarded thus invalidate entire graph.
+			outputConstant = Constant();
 		}
 
-		return false;
+		return true;
 	}
 	else if (const Step* step = dynamic_type_cast< const Step* >(node))
 	{
@@ -337,10 +342,11 @@ bool ConditionalNodeTraits::evaluatePartial(
 		}
 
 		if (result)
-		{
 			foldOutputPin = inputOutputPins[2];
-			return true;
-		}
+		else
+			foldOutputPin = 0;
+
+		return true;
 	}
 	return false;
 }

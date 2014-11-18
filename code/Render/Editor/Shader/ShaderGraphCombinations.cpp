@@ -93,31 +93,43 @@ void buildCombinations(
 		std::vector< std::wstring >::const_iterator parameterIter = std::find(parameterNames.begin(), parameterNames.end(), branch->getParameterName());
 		uint32_t parameterBit = 1 << uint32_t(std::distance(parameterNames.begin(), parameterIter));
 
-		buildCombinations(
-			replaceBranch(shaderGraph, branch, true),
-			parameterNames,
-			parameterMask | parameterBit,
-			parameterValue | parameterBit,
-			outCombinations
-		);
+		Ref< ShaderGraph > shaderGraphBranchTrue = replaceBranch(shaderGraph, branch, true);
+		if (shaderGraphBranchTrue)
+		{
+			buildCombinations(
+				shaderGraphBranchTrue,
+				parameterNames,
+				parameterMask | parameterBit,
+				parameterValue | parameterBit,
+				outCombinations
+			);
+		}
 
-		buildCombinations(
-			replaceBranch(shaderGraph, branch, false),
-			parameterNames,
-			parameterMask | parameterBit,
-			parameterValue,
-			outCombinations
-		);
+		Ref< ShaderGraph > shaderGraphBranchFalse = replaceBranch(shaderGraph, branch, false);
+		if (shaderGraphBranchFalse)
+		{
+			buildCombinations(
+				shaderGraphBranchFalse,
+				parameterNames,
+				parameterMask | parameterBit,
+				parameterValue,
+				outCombinations
+			);
+		}
 	}
 	else
 	{
 		if (std::find_if(outCombinations.begin(), outCombinations.end(), FindCombinationMaskValue(parameterMask, parameterValue)) == outCombinations.end())
 		{
-			ShaderGraphCombinations::Combination c;
-			c.mask = parameterMask;
-			c.value = parameterValue;
-			c.shaderGraph = shaderGraph;
-			outCombinations.push_back(c);
+			Ref< ShaderGraph > shaderGraphNoBranch = ShaderGraphStatic(shaderGraph).getConstantFolded();
+			if (shaderGraphNoBranch)
+			{
+				ShaderGraphCombinations::Combination c;
+				c.mask = parameterMask;
+				c.value = parameterValue;
+				c.shaderGraph = shaderGraph;
+				outCombinations.push_back(c);
+			}
 		}
 	}
 }

@@ -196,10 +196,6 @@
 					<optional>true</optional>
 				</item>
 				<item>
-					<name>Mask</name>
-					<optional>true</optional>
-				</item>
-				<item>
 					<name>Reflection</name>
 					<optional>true</optional>
 				</item>
@@ -229,10 +225,6 @@
 				<item>
 					<first>Emissive</first>
 					<second>0</second>
-				</item>
-				<item>
-					<first>Mask</first>
-					<second>1</second>
 				</item>
 				<item>
 					<first>Reflection</first>

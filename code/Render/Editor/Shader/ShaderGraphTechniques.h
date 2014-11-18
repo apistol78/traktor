@@ -1,7 +1,7 @@
 #ifndef traktor_render_ShaderGraphTechniques_H
 #define traktor_render_ShaderGraphTechniques_H
 
-#include <set>
+#include <map>
 #include "Core/Object.h"
 
 // import/export mechanism.
@@ -35,7 +35,7 @@ public:
 	Ref< ShaderGraph > generate(const std::wstring& name) const;
 
 private:
-	Ref< const ShaderGraph > m_shaderGraph;
+	std::map< std::wstring, Ref< ShaderGraph > > m_techniques;
 };
 
 	}

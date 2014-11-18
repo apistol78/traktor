@@ -154,7 +154,7 @@ void DebugRenderControl::eventMouseMove(ui::MouseMoveEvent* event)
 		return;
 
 	ui::Size moveDelta = event->getPosition() - m_moveMouseOrigin;
-	m_renderOffset = m_moveRenderOffset + Vector2(moveDelta.cx / 100.0f, -moveDelta.cy / 100.0f);
+	m_renderOffset = m_moveRenderOffset + Vector2(moveDelta.cx / 800.0f, -moveDelta.cy / 800.0f) * m_renderScale;
 
 	m_renderWidget->update();
 }
