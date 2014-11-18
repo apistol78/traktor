@@ -41,10 +41,6 @@
               <name>WarningLevel</name>
               <value>Level3</value>
             </item>
-            <item>
-              <name>EnableEnhancedInstructionSet</name>
-              <value>StreamingSIMDExtensions2</value>
-            </item>
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -91,10 +87,6 @@
             <item>
               <name>WarningLevel</name>
               <value>Level3</value>
-            </item>
-            <item>
-              <name>EnableEnhancedInstructionSet</name>
-              <value>StreamingSIMDExtensions2</value>
             </item>
           </options>
         </item>
@@ -191,10 +183,6 @@
               <name>WarningLevel</name>
               <value>Level3</value>
             </item>
-            <item>
-              <name>EnableEnhancedInstructionSet</name>
-              <value>StreamingSIMDExtensions2</value>
-            </item>
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -285,10 +273,6 @@
             <item>
               <name>WarningLevel</name>
               <value>Level3</value>
-            </item>
-            <item>
-              <name>EnableEnhancedInstructionSet</name>
-              <value>StreamingSIMDExtensions2</value>
             </item>
           </options>
         </item>
@@ -403,10 +387,6 @@
               <name>WarningLevel</name>
               <value>Level3</value>
             </item>
-            <item>
-              <name>EnableEnhancedInstructionSet</name>
-              <value>StreamingSIMDExtensions2</value>
-            </item>
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -473,10 +453,6 @@
             <item>
               <name>WarningLevel</name>
               <value>Level3</value>
-            </item>
-            <item>
-              <name>EnableEnhancedInstructionSet</name>
-              <value>StreamingSIMDExtensions2</value>
             </item>
           </options>
         </item>
@@ -593,10 +569,6 @@
               <name>WarningLevel</name>
               <value>Level3</value>
             </item>
-            <item>
-              <name>EnableEnhancedInstructionSet</name>
-              <value>StreamingSIMDExtensions2</value>
-            </item>
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -707,10 +679,6 @@
             <item>
               <name>WarningLevel</name>
               <value>Level3</value>
-            </item>
-            <item>
-              <name>EnableEnhancedInstructionSet</name>
-              <value>StreamingSIMDExtensions2</value>
             </item>
           </options>
         </item>

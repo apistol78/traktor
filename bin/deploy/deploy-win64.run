@@ -13,13 +13,13 @@ end
 function deploy(args)
 	-- Deploy application configuration to target.
 	stdout:printLn("Deploying resources to target host...")
-	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) Application.config", "(null)")
+	run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) Application.config", "(null)")
 	if run:exitCode() ~= 0 then return run:exitCode() end
 
 	-- Deploy binaries to target.
 	stdout:printLn("Deploying binaries to target host...")
-	run:pushd("$(DEPLOY_SYSTEM_ROOT)/bin/latest/win64/releaseshared")
-	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) $(DEPLOY_FILES)", "(null)")
+	run:pushd("$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared")
+	run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) $(DEPLOY_FILES)", "(null)")
 	if run:exitCode() ~= 0 then return run:exitCode() end
 	run:popd()
 
@@ -29,7 +29,7 @@ end
 
 function launch(args)
 	stdout:printLn("Launching Win64...")
-	return run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteLaunch $(DEPLOY_TARGET_HOST) $(DEPLOY_EXECUTABLE) \\-s Application.config", "(null)")
+	return run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteLaunch $(DEPLOY_TARGET_HOST) $(DEPLOY_EXECUTABLE) \\-s Application.config", "(null)")
 end
 
 
