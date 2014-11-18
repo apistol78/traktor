@@ -364,7 +364,18 @@ void EditorPlugin::handleWorkspaceOpened()
 
 	// Create slave pipeline process.
 	std::wstring systemRoot = m_editor->getSettings()->getProperty< PropertyString >(L"Amalgam.SystemRoot", L"$(TRAKTOR_HOME)");
+
+#if defined(_WIN32)
+#	if defined(_WIN64)
+	std::wstring systemOs = L"win64";
+#	else
 	std::wstring systemOs = L"win32";
+#	endif
+#elif defined(__APPLE__)
+	std::wstring systemOs = L"osx";
+#elif defined(__LINUX__)
+	std::wstring systemOs = L"linux";
+#endif
 
 	bool hidden = m_editor->getSettings()->getProperty< PropertyBoolean >(L"Amalgam.PipelineHidden", true);
 
