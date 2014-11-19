@@ -13,22 +13,13 @@ namespace
 
 NSString* makeNSString(const std::wstring& str)
 {
-	return [[[NSString alloc] initWithBytes: str.c_str() length: str.length() encoding: NSUTF32StringEncoding] autorelease];
-}
-
-std::wstring fromNSString(const NSString* str)
-{
-	wchar_t buffer[4096];
-	[str getCString: (char*)buffer maxLength: sizeof_array(buffer) encoding: NSUTF32StringEncoding];
-	return std::wstring(buffer);
+	return [NSString stringWithCString: (const char*)str.c_str() encoding: NSUTF32StringEncoding];
 }
 
 }
 
 @interface EveryplayCallback : NSObject< EveryplayDelegate >
 {
-@public
-	Ref< const PropertyGroup > m_metaData;
 }
 
 @end
@@ -53,26 +44,6 @@ std::wstring fromNSString(const NSString* str)
 
 - (void)everyplayRecordingStopped
 {
-	if (m_metaData)
-	{
-		const std::map< std::wstring, Ref< IPropertyValue > >& values = m_metaData->getValues();
-		for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = values.begin(); i != values.end(); ++i)
-		{
-			NSString* key = makeNSString(i->first);
-
-			if (const PropertyInteger* propInt = dynamic_type_cast< const PropertyInteger* >(i->second))
-			{
-				NSNumber* value = [[NSNumber numberWithInt: PropertyInteger::get(propInt)] autorelease];
-				[[Everyplay sharedInstance] mergeSessionDeveloperData:@{ key : value }];
-			}
-			else if (const PropertyString* propStr = dynamic_type_cast< const PropertyString* >(i->second))
-			{
-				NSString* value = makeNSString(PropertyString::get(propStr));
-				[[Everyplay sharedInstance] mergeSessionDeveloperData:@{ key : value }];
-			}
-		}
-		m_metaData = 0;
-	}
 }
 
 - (void)everyplayFaceCamSessionStarted
@@ -165,8 +136,36 @@ void GcVideoSharingEveryplay::endCapture(const PropertyGroup* metaData)
 {
 	if (s_callback)
 	{
-		s_callback->m_metaData = metaData;
 		[[[Everyplay sharedInstance] capture] stopRecording];
+		if (metaData)
+		{
+			const std::map< std::wstring, Ref< IPropertyValue > >& values = metaData->getValues();
+			for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = values.begin(); i != values.end(); ++i)
+			{
+				NSString* key = makeNSString(i->first);
+				if (!key)
+					continue;
+
+				if (const PropertyInteger* propInt = dynamic_type_cast< const PropertyInteger* >(i->second))
+				{
+					log::info << L"Meta data \"" << i->first << L"\"; integer " << PropertyInteger::get(propInt) << Endl;
+					NSNumber* value = [NSNumber numberWithInt: PropertyInteger::get(propInt)];
+					if (value)
+					{
+						[[Everyplay sharedInstance] mergeSessionDeveloperData:@{ key : value }];
+					}
+				}
+				else if (const PropertyString* propStr = dynamic_type_cast< const PropertyString* >(i->second))
+				{
+					log::info << L"Meta data \"" << i->first << L"\"; string \"" << PropertyString::get(propStr) << L"\"" << Endl;
+					NSString* value = makeNSString(PropertyString::get(propStr));
+					if (value)
+					{
+						[[Everyplay sharedInstance] mergeSessionDeveloperData:@{ key : value }];
+					}
+				}
+			}
+		}
 	}
 }
 
