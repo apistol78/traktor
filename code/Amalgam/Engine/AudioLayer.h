@@ -70,6 +70,10 @@ public:
 
 	virtual void postReconfigured();
 
+	virtual void suspend();
+
+	virtual void resume();
+
 private:
 	struct Tween
 	{

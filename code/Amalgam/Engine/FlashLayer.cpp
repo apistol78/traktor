@@ -448,6 +448,14 @@ void FlashLayer::postReconfigured()
 	}
 }
 
+void FlashLayer::suspend()
+{
+}
+
+void FlashLayer::resume()
+{
+}
+
 flash::FlashMoviePlayer* FlashLayer::getMoviePlayer()
 {
 	return m_moviePlayer;

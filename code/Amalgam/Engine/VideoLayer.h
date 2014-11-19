@@ -72,6 +72,10 @@ public:
 
 	virtual void postReconfigured();
 
+	virtual void suspend();
+
+	virtual void resume();
+
 private:
 	Ref< amalgam::IEnvironment > m_environment;
 	resource::Proxy< video::Video > m_video;

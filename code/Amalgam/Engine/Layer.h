@@ -55,6 +55,10 @@ public:
 
 	virtual void postReconfigured() = 0;
 
+	virtual void suspend() = 0;
+
+	virtual void resume() = 0;
+
 	Stage* getStage() const { return m_stage; }
 
 	const std::wstring& getName() const { return m_name; }

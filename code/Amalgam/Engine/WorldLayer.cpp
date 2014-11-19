@@ -299,6 +299,19 @@ void WorldLayer::postReconfigured()
 {
 }
 
+void WorldLayer::suspend()
+{
+#if defined(__IOS__)
+	// Destroy previous world renderer; do this
+	// to save memory which is easily re-constructed at resume.
+	safeDestroy(m_worldRenderer);
+#endif
+}
+
+void WorldLayer::resume()
+{
+}
+
 Ref< world::EntityData > WorldLayer::getEntityData(const std::wstring& name) const
 {
 	std::map< std::wstring, resource::Proxy< world::EntityData > >::const_iterator i = m_entities.find(name);

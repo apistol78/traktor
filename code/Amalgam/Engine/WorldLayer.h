@@ -80,6 +80,10 @@ public:
 
 	virtual void postReconfigured();
 
+	virtual void suspend();
+
+	virtual void resume();
+
 	Ref< world::EntityData > getEntityData(const std::wstring& name) const;
 
 	world::Entity* getEntity(const std::wstring& name) const;
