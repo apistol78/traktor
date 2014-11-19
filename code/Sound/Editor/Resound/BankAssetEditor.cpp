@@ -358,7 +358,7 @@ bool BankAssetEditor::handleCommand(const ui::Command& command)
 void BankAssetEditor::handleDatabaseEvent(db::Database* database, const Guid& eventId)
 {
 	if (m_resourceManager)
-		m_resourceManager->reload(eventId);
+		m_resourceManager->reload(eventId, false);
 }
 
 ui::Size BankAssetEditor::getPreferredSize() const

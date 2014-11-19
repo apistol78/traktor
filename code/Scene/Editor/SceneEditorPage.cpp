@@ -696,7 +696,7 @@ void SceneEditorPage::handleDatabaseEvent(db::Database* database, const Guid& ev
 		return;
 
 	// Flush resource from manager.
-	m_context->getResourceManager()->reload(eventId);
+	m_context->getResourceManager()->reload(eventId, false);
 
 	// Check if guid is used as an external reference.
 	RefArray< EntityAdapter > entityAdapters;

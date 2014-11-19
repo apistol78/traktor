@@ -167,7 +167,7 @@ Ref< IResourceHandle > ResourceManager::bind(const TypeInfo& type, const Guid& g
 	return handle;
 }
 
-void ResourceManager::reload(const Guid& guid)
+void ResourceManager::reload(const Guid& guid, bool flushedOnly)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
@@ -179,7 +179,7 @@ void ResourceManager::reload(const Guid& guid)
 		{
 			const TypeInfo& productType = (*i)->getProductType();
 			const IResourceFactory* factory = findFactoryFromProductType(productType);
-			if (factory)
+			if (factory && (!flushedOnly || (*i)->get() == 0))
 				load(guid, factory, productType, *i);
 		}
 		return;
@@ -190,13 +190,13 @@ void ResourceManager::reload(const Guid& guid)
 	{
 		const TypeInfo& productType = i1->second->getProductType();
 		const IResourceFactory* factory = findFactoryFromProductType(productType);
-		if (factory)
+		if (factory && (!flushedOnly || i1->second->get() == 0))
 			load(guid, factory, productType, i1->second);
 		return;
 	}
 }
 
-void ResourceManager::reload(const TypeInfo& type)
+void ResourceManager::reload(const TypeInfo& type, bool flushedOnly)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
@@ -209,7 +209,7 @@ void ResourceManager::reload(const TypeInfo& type)
 			if (is_type_of(type, productType))
 			{
 				const IResourceFactory* factory = findFactoryFromProductType(productType);
-				if (factory)
+				if (factory && (!flushedOnly || (*j)->get() == 0))
 				{
 					(*j)->flush();
 					load(i->first, factory, productType, *j);
@@ -224,7 +224,7 @@ void ResourceManager::reload(const TypeInfo& type)
 		if (is_type_of(type, productType))
 		{
 			const IResourceFactory* factory = findFactoryFromProductType(productType);
-			if (factory)
+			if (factory && (!flushedOnly || i->second->get() == 0))
 			{
 				i->second->flush();
 				load(i->first, factory, productType, i->second);

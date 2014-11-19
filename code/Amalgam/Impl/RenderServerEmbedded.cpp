@@ -187,7 +187,7 @@ int32_t RenderServerEmbedded::reconfigure(IEnvironment* environment, const Prope
 	if (skipMips != m_textureFactory->getSkipMips())
 	{
 		m_textureFactory->setSkipMips(skipMips);
-		resourceManager->reload(type_of< render::ITexture >());
+		resourceManager->reload(type_of< render::ITexture >(), false);
 		result |= CrAccepted;
 	}
 

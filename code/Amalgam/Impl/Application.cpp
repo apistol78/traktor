@@ -1021,7 +1021,7 @@ void Application::threadDatabase()
 				for (std::vector< Guid >::iterator i = eventIds.begin(); i != eventIds.end(); ++i)
 				{
 					log::info << L"Data modified; reloading resource \"" << i->format() << L"\"..." << Endl;
-					resourceManager->reload(*i);
+					resourceManager->reload(*i, false);
 				}
 			}
 		}

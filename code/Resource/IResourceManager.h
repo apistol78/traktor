@@ -82,14 +82,16 @@ public:
 	/*! \brief Reload resource.
 	 *
 	 * \param guid Resource identifier.
+	 * \param flushedOnly Reload flushed resources only.
 	 */
-	virtual void reload(const Guid& guid) = 0;
+	virtual void reload(const Guid& guid, bool flushedOnly) = 0;
 
 	/*! \brief Reload all resources of given type.
 	 *
 	 * \param type Type of resource.
+	 * \param flushedOnly Reload flushed resources only.
 	 */
-	virtual void reload(const TypeInfo& type) = 0;
+	virtual void reload(const TypeInfo& type, bool flushedOnly) = 0;
 
 	/*! \brief Unload all resources of given type.
 	 *
