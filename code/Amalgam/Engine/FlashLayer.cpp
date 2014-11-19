@@ -166,7 +166,9 @@ void FlashLayer::transition(Layer* fromLayer)
 	// Pass movie as well, if it's the same movie.
 	if (m_movie == fromFlashLayer->m_movie)
 	{
+		m_movie.consume();
 		m_moviePlayer = fromFlashLayer->m_moviePlayer;
+		m_moviePlayer->setExternalCall(this);
 		fromFlashLayer->m_moviePlayer = 0;
 		shouldFlush = false;
 	}
