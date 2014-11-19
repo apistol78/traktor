@@ -75,11 +75,9 @@ void AccTextureCache::destroy()
 
 void AccTextureCache::clear()
 {
-	for (SmallMap< uint64_t, Ref< render::ITexture > >::iterator i = m_cache.begin(); i != m_cache.end(); ++i)
-	{
-		if (i->second)
-			i->second->destroy();
-	}
+	for (SmallMap< uint64_t, resource::Proxy< render::ITexture > >::iterator i = m_cache.begin(); i != m_cache.end(); ++i)
+		i->second.clear();
+
 	m_cache.clear();
 }
 
@@ -88,9 +86,9 @@ Ref< render::ITexture > AccTextureCache::getGradientTexture(const FlashFillStyle
 	Ref< render::ISimpleTexture > texture;
 
 	uint64_t hash = reinterpret_cast< uint64_t >(&style);
-	SmallMap< uint64_t, Ref< render::ITexture > >::iterator it = m_cache.find(hash);
+	SmallMap< uint64_t, resource::Proxy< render::ITexture > >::iterator it = m_cache.find(hash);
 	if (it != m_cache.end())
-		return it->second;
+		return it->second.getResource();
 
 	const AlignedVector< FlashFillStyle::ColorRecord >& colorRecords = style.getColorRecords();
 	T_ASSERT (colorRecords.size() > 1);
@@ -155,7 +153,7 @@ Ref< render::ITexture > AccTextureCache::getGradientTexture(const FlashFillStyle
 		texture = m_renderSystem->createSimpleTexture(desc);
 	}
 
-	m_cache[hash] = texture;
+	m_cache[hash] = resource::Proxy< render::ITexture >(texture);
 	return texture;
 }
 
@@ -163,15 +161,15 @@ Ref< render::ITexture > AccTextureCache::getBitmapTexture(const FlashBitmap& bit
 {
 	uint64_t hash = reinterpret_cast< uint64_t >(&bitmap);
 
-	SmallMap< uint64_t, Ref< render::ITexture > >::iterator it = m_cache.find(hash);
+	SmallMap< uint64_t, resource::Proxy< render::ITexture > >::iterator it = m_cache.find(hash);
 	if (it != m_cache.end())
-		return it->second;
+		return it->second.getResource();
 
 	if (const FlashBitmapResource* bitmapResource = dynamic_type_cast< const FlashBitmapResource* >(&bitmap))
 	{
-		resource::Proxy< render::ISimpleTexture > texture;
+		resource::Proxy< render::ITexture > texture;
 		m_resourceManager->bind(
-			resource::Id< render::ISimpleTexture >(bitmapResource->getResourceId()),
+			resource::Id< render::ITexture >(bitmapResource->getResourceId()),
 			texture
 		);
 		m_cache[hash] = texture;
@@ -190,11 +188,11 @@ Ref< render::ITexture > AccTextureCache::getBitmapTexture(const FlashBitmap& bit
 		desc.initialData[0].pitch = desc.width * 4;
 		desc.initialData[0].slicePitch = desc.width * desc.height * 4;
 
-		Ref< render::ISimpleTexture > texture = m_renderSystem->createSimpleTexture(desc);
+		Ref< render::ITexture > texture = m_renderSystem->createSimpleTexture(desc);
 		if (!texture)
 			return 0;
 
-		m_cache[hash] = texture;
+		m_cache[hash] = resource::Proxy< render::ITexture >(texture);
 		return texture;
 	}
 	else

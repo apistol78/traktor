@@ -4,6 +4,7 @@
 #include "Core/Object.h"
 #include "Core/Containers/SmallMap.h"
 #include "Render/IRenderSystem.h"
+#include "Resource/Proxy.h"
 
 namespace traktor
 {
@@ -52,7 +53,7 @@ public:
 private:
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
-	SmallMap< uint64_t, Ref< render::ITexture > > m_cache;
+	SmallMap< uint64_t, resource::Proxy< render::ITexture > > m_cache;
 };
 
 	}
