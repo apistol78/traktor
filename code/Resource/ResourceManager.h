@@ -52,6 +52,8 @@ public:
 
 	virtual void reload(const TypeInfo& type);
 
+	virtual void unload(const TypeInfo& type);
+
 	virtual void unloadUnusedResident();
 	
 	virtual void getStatistics(ResourceManagerStatistics& outStatistics) const;

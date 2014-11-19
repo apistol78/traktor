@@ -42,6 +42,7 @@
 #include "Physics/PhysicsManager.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
+#include "Render/ITexture.h"
 #include "Resource/IResourceManager.h"
 #include "Script/IScriptManager.h"
 #include "World/IEntityEventManager.h"
@@ -960,11 +961,20 @@ void Application::suspend()
 		ActiveEvent activeEvent(false);
 		m_stateManager->getCurrent()->take(&activeEvent);
 	}
+
+#if defined(__IOS__)
+	m_resourceServer->getResourceManager()->unload(type_of< render::ITexture >());
+#endif
 }
 
 void Application::resume()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
+
+#if defined(__IOS__)
+	m_resourceServer->getResourceManager()->reload(type_of< render::ITexture >());
+#endif
+
 	if (m_stateManager->getCurrent() != 0)
 	{
 		ActiveEvent activeEvent(true);
