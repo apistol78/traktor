@@ -233,6 +233,37 @@ void ResourceManager::reload(const TypeInfo& type)
 	}
 }
 
+void ResourceManager::unload(const TypeInfo& type)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+	for (std::map< Guid, RefArray< ExclusiveResourceHandle > >::iterator i = m_exclusiveHandles.begin(); i != m_exclusiveHandles.end(); ++i)
+	{
+		const RefArray< ExclusiveResourceHandle >& handles = i->second;
+		for (RefArray< ExclusiveResourceHandle >::const_iterator j = handles.begin(); j != handles.end(); ++j)
+		{
+			const TypeInfo& productType = (*j)->getProductType();
+			if (is_type_of(type, productType))
+			{
+				const IResourceFactory* factory = findFactoryFromProductType(productType);
+				if (factory)
+					(*j)->flush();
+			}
+		}
+	}
+
+	for (std::map< Guid, Ref< ResidentResourceHandle > >::iterator i = m_residentHandles.begin(); i != m_residentHandles.end(); ++i)
+	{
+		const TypeInfo& productType = i->second->getProductType();
+		if (is_type_of(type, productType))
+		{
+			const IResourceFactory* factory = findFactoryFromProductType(productType);
+			if (factory)
+				i->second->flush();
+		}
+	}
+}
+
 void ResourceManager::unloadUnusedResident()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
