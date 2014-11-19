@@ -48,9 +48,9 @@ public:
 	
 	virtual Ref< IResourceHandle > bind(const TypeInfo& type, const Guid& guid);
 
-	virtual void reload(const Guid& guid);
+	virtual void reload(const Guid& guid, bool flushedOnly);
 
-	virtual void reload(const TypeInfo& type);
+	virtual void reload(const TypeInfo& type, bool flushedOnly);
 
 	virtual void unload(const TypeInfo& type);
 
