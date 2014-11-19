@@ -105,5 +105,13 @@ void VideoLayer::postReconfigured()
 {
 }
 
+void VideoLayer::suspend()
+{
+}
+
+void VideoLayer::resume()
+{
+}
+
 	}
 }

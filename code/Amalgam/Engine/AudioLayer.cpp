@@ -165,5 +165,13 @@ void AudioLayer::postReconfigured()
 {
 }
 
+void AudioLayer::suspend()
+{
+}
+
+void AudioLayer::resume()
+{
+}
+
 	}
 }

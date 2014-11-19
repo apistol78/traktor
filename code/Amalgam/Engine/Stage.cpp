@@ -268,10 +268,16 @@ void Stage::suspend()
 		if (m_scriptContext->haveFunction("suspend"))
 			m_scriptContext->executeFunction("suspend");
 	}
+
+	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+		(*i)->suspend();
 }
 
 void Stage::resume()
 {
+	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+		(*i)->resume();
+
 	if (validateScriptContext())
 	{
 		if (m_scriptContext->haveFunction("resume"))

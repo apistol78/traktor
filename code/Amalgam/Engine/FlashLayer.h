@@ -99,6 +99,10 @@ public:
 
 	virtual void postReconfigured();
 
+	virtual void suspend();
+
+	virtual void resume();
+
 	flash::FlashMoviePlayer* getMoviePlayer();
 
 	flash::ActionObject* getGlobal();
