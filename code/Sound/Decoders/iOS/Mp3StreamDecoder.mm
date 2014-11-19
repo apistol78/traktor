@@ -41,11 +41,11 @@ public:
 		std::memset(&clientFormat, 0, sizeof(clientFormat));
 		clientFormat.mFormatID = kAudioFormatLinearPCM;
 		clientFormat.mFramesPerPacket = 1;
-		clientFormat.mChannelsPerFrame = 1;
-		clientFormat.mBitsPerChannel = 32;
+		clientFormat.mChannelsPerFrame = 2;
+		clientFormat.mBitsPerChannel = 16;
 		clientFormat.mBytesPerPacket =
-		clientFormat.mBytesPerFrame = 4;
-		clientFormat.mFormatFlags = kAudioFormatFlagsNativeFloatPacked | kAudioFormatFlagIsNonInterleaved;
+		clientFormat.mBytesPerFrame = 2 * 2;
+		clientFormat.mFormatFlags = kAudioFormatFlagIsSignedInteger | kAudioFormatFlagIsPacked;
 		clientFormat.mSampleRate = 44100;
 
 		int size = sizeof(clientFormat);
@@ -67,6 +67,11 @@ public:
 
 	void reset()
 	{
+		destroy();
+
+		m_stream->seek(IStream::SeekSet, 0);
+
+		create(m_stream);
 	}
 
 	double getDuration() const
@@ -76,24 +81,35 @@ public:
 
 	bool getBlock(SoundBlock& outSoundBlock)
 	{
-		UInt32 bufferByteSize = outSoundBlock.samplesCount * sizeof(float);
+		UInt32 bufferByteSize = outSoundBlock.samplesCount * sizeof(int16_t) * 2;
 		UInt32 numFrames = outSoundBlock.samplesCount;
 
-		AudioBufferList fillBufList;
+		AudioBufferList fillBufList = { 0 };
 		fillBufList.mNumberBuffers = 1;
 		fillBufList.mBuffers[0].mNumberChannels = 2;
-		fillBufList.mBuffers[0].mDataByteSize = 2 * bufferByteSize;
+		fillBufList.mBuffers[0].mDataByteSize = bufferByteSize;
 		fillBufList.mBuffers[0].mData = (void*)m_buffer;
 
 		OSStatus result = ExtAudioFileRead(m_inputFileID, &numFrames, &fillBufList);
 		if (result != noErr)
+		{
+			log::error << L"Unable to decode frame; ExtAudioFileRead returned error " << int32_t(result) << Endl;
 			return false;
+		}
 
 		if (numFrames == 0)
 			return false;
 
-		outSoundBlock.samples[0] = m_buffer;
-		outSoundBlock.samples[1] = &m_buffer[numFrames];
+		// De-interleave buffers and convert to fp32 into left and right channels.
+		const int16_t* s = m_buffer;
+		for (int32_t i = 0; i < numFrames; ++i)
+		{
+			m_left[i] = *s++ / 32767.0f;
+			m_right[i] = *s++ / 32767.0f;
+		}
+
+		outSoundBlock.samples[0] = m_left;
+		outSoundBlock.samples[1] = m_right;
 		outSoundBlock.samplesCount = numFrames;
 		outSoundBlock.sampleRate = 44100;
 		outSoundBlock.maxChannel = 2;
@@ -106,7 +122,9 @@ private:
 	int32_t m_streamSize;
 	AudioFileID m_refAudioFileID;
 	ExtAudioFileRef m_inputFileID;
-	float m_buffer[65536];
+	int16_t m_buffer[65536];
+	float m_left[4096];
+	float m_right[4096];
 
 	static OSStatus readProc(void* clientData, SInt64 position, UInt32 requestCount, void* buffer, UInt32* actualCount)
 	{
