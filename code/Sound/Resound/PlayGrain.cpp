@@ -112,6 +112,9 @@ bool PlayGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, S
 	// Have sound been externally changed then we need to re-create buffer and cursor.
 	if (m_sound.changed())
 	{
+		if (!m_sound)
+			return false;
+
 		Ref< ISoundBuffer > soundBuffer = m_sound->getBuffer();
 		if (!soundBuffer)
 			return false;
