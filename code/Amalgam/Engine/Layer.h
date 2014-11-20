@@ -34,7 +34,8 @@ class T_DLLCLASS Layer : public Object
 public:
 	Layer(
 		Stage* stage,
-		const std::wstring& name
+		const std::wstring& name,
+		bool permitTransition
 	);
 
 	virtual ~Layer();
@@ -51,6 +52,8 @@ public:
 
 	virtual void render(render::EyeType eye, uint32_t frame) = 0;
 
+	virtual void flush() = 0;
+
 	virtual void preReconfigured() = 0;
 
 	virtual void postReconfigured() = 0;
@@ -63,9 +66,12 @@ public:
 
 	const std::wstring& getName() const { return m_name; }
 
+	bool isTransitionPermitted() const { return m_permitTransition; }
+
 private:
 	Stage* m_stage;
 	std::wstring m_name;
+	bool m_permitTransition;
 };
 
 	}

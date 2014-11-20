@@ -44,11 +44,12 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.WorldLayer", WorldLayer, Layer)
 WorldLayer::WorldLayer(
 	Stage* stage,
 	const std::wstring& name,
+	bool permitTransition,
 	amalgam::IEnvironment* environment,
 	const resource::Proxy< scene::Scene >& scene,
 	const std::map< std::wstring, resource::Proxy< world::EntityData > >& entities
 )
-:	Layer(stage, name)
+:	Layer(stage, name, permitTransition)
 ,	m_environment(environment)
 ,	m_scene(scene)
 ,	m_entities(entities)
@@ -284,6 +285,13 @@ void WorldLayer::render(render::EyeType eye, uint32_t frame)
 
 		m_worldRenderer->endRender(frame, eye, m_deltaTime);
 	}
+}
+
+void WorldLayer::flush()
+{
+	// World renderer doesn't have a specific flush path; thus
+	// we teer down the world renderer completely.
+	safeDestroy(m_worldRenderer);
 }
 
 void WorldLayer::preReconfigured()

@@ -13,10 +13,12 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.Layer", Layer, Object)
 
 Layer::Layer(
 	Stage* stage,
-	const std::wstring& name
+	const std::wstring& name,
+	bool permitTransition
 )
 :	m_stage(stage)
 ,	m_name(name)
+,	m_permitTransition(permitTransition)
 {
 }
 

@@ -84,6 +84,10 @@ public:
 	 */
 	virtual bool render(uint32_t frame, render::EyeType eye, const IUpdateInfo& info) = 0;
 
+	/*! \brief Flush built frames.
+	 */
+	virtual void flush() = 0;
+
 	/*! \brief Take event.
 	 *
 	 * \param event Event.

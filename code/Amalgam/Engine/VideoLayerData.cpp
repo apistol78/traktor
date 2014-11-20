@@ -14,7 +14,7 @@ namespace traktor
 	namespace amalgam
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.VideoLayerData", 0, VideoLayerData, LayerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.VideoLayerData", LayerData::Version, VideoLayerData, LayerData)
 
 Ref< Layer > VideoLayerData::createInstance(Stage* stage, amalgam::IEnvironment* environment) const
 {
@@ -33,6 +33,7 @@ Ref< Layer > VideoLayerData::createInstance(Stage* stage, amalgam::IEnvironment*
 	return new VideoLayer(
 		stage,
 		m_name,
+		m_permitTransition,
 		environment,
 		video,
 		shader

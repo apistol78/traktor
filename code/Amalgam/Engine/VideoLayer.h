@@ -47,6 +47,7 @@ public:
 	VideoLayer(
 		Stage* stage,
 		const std::wstring& name,
+		bool permitTransition,
 		amalgam::IEnvironment* environment,
 		const resource::Proxy< video::Video >& video,
 		const resource::Proxy< render::Shader >& shader
@@ -67,6 +68,8 @@ public:
 	virtual void build(const amalgam::IUpdateInfo& info, uint32_t frame);
 
 	virtual void render(render::EyeType eye, uint32_t frame);
+
+	virtual void flush();
 
 	virtual void preReconfigured();
 

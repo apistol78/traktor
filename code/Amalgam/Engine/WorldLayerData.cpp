@@ -14,7 +14,7 @@ namespace traktor
 	namespace amalgam
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.WorldLayerData", 0, WorldLayerData, LayerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.WorldLayerData", LayerData::Version, WorldLayerData, LayerData)
 
 Ref< Layer > WorldLayerData::createInstance(Stage* stage, amalgam::IEnvironment* environment) const
 {
@@ -36,6 +36,7 @@ Ref< Layer > WorldLayerData::createInstance(Stage* stage, amalgam::IEnvironment*
 	return new WorldLayer(
 		stage,
 		m_name,
+		m_permitTransition,
 		environment,
 		scene,
 		entities

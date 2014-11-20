@@ -13,7 +13,7 @@ namespace traktor
 	namespace amalgam
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.FlashLayerData", 2, FlashLayerData, LayerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.FlashLayerData", LayerData::Version, FlashLayerData, LayerData)
 
 FlashLayerData::FlashLayerData()
 :	m_clearBackground(false)
@@ -50,6 +50,7 @@ Ref< Layer > FlashLayerData::createInstance(Stage* stage, amalgam::IEnvironment*
 	return new FlashLayer(
 		stage,
 		m_name,
+		m_permitTransition,
 		environment,
 		movie,
 		externalMovies,

@@ -36,6 +36,7 @@ public:
 	AudioLayer(
 		Stage* stage,
 		const std::wstring& name,
+		bool permitTransition,
 		amalgam::IEnvironment* environment,
 		const resource::Proxy< sound::Sound >& sound,
 		bool autoPlay,
@@ -65,6 +66,8 @@ public:
 	virtual void build(const amalgam::IUpdateInfo& info, uint32_t frame);
 
 	virtual void render(render::EyeType eye, uint32_t frame);
+
+	virtual void flush();
 
 	virtual void preReconfigured();
 

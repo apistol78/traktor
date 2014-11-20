@@ -9,7 +9,7 @@ namespace traktor
 	namespace amalgam
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.AudioLayerData", 2, AudioLayerData, LayerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.AudioLayerData", LayerData::Version, AudioLayerData, LayerData)
 
 AudioLayerData::AudioLayerData()
 :	m_autoPlay(true)
@@ -30,6 +30,7 @@ Ref< Layer > AudioLayerData::createInstance(Stage* stage, amalgam::IEnvironment*
 	return new AudioLayer(
 		stage,
 		m_name,
+		m_permitTransition,
 		environment,
 		sound,
 		m_autoPlay,

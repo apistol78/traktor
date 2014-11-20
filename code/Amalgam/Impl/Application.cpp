@@ -961,6 +961,7 @@ void Application::suspend()
 	{
 		ActiveEvent activeEvent(false);
 		m_stateManager->getCurrent()->take(&activeEvent);
+		m_stateManager->getCurrent()->flush();
 	}
 
 #if defined(__IOS__)
@@ -1017,6 +1018,9 @@ void Application::threadDatabase()
 		{
 			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockUpdate);
 			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
+
+			if (m_stateManager->getCurrent() != 0)
+				m_stateManager->getCurrent()->flush();
 
 			Ref< resource::IResourceManager > resourceManager = m_resourceServer->getResourceManager();
 			if (resourceManager)

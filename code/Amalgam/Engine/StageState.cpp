@@ -63,6 +63,11 @@ bool StageState::render(uint32_t frame, render::EyeType eye, const IUpdateInfo& 
 	return true;
 }
 
+void StageState::flush()
+{
+	m_stage->flush();
+}
+
 bool StageState::take(const IEvent* event)
 {
 	if (const ReconfigureEvent* reconfigureEvent = dynamic_type_cast< const ReconfigureEvent* >(event))
