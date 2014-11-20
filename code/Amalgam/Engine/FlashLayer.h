@@ -73,6 +73,7 @@ public:
 	FlashLayer(
 		Stage* stage,
 		const std::wstring& name,
+		bool permitTransition,
 		amalgam::IEnvironment* environment,
 		const resource::Proxy< flash::FlashMovie >& movie,
 		const std::map< std::wstring, resource::Proxy< flash::FlashMovie > >& externalMovies,
@@ -94,6 +95,8 @@ public:
 	virtual void build(const amalgam::IUpdateInfo& info, uint32_t frame);
 
 	virtual void render(render::EyeType eye, uint32_t frame);
+
+	virtual void flush();
 
 	virtual void preReconfigured();
 

@@ -228,6 +228,12 @@ void Stage::render(render::EyeType eye, uint32_t frame)
 	}
 }
 
+void Stage::flush()
+{
+	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+		(*i)->flush();
+}
+
 void Stage::transition()
 {
 	if (!m_transitionStage)
@@ -237,12 +243,15 @@ void Stage::transition()
 	// to transition data, such as playing music etc.
 	for (RefArray< Layer >::iterator i = m_transitionStage->m_layers.begin(); i != m_transitionStage->m_layers.end(); ++i)
 	{
+		if (!(*i)->isTransitionPermitted())
+			continue;
+
 		std::wstring layerName = (*i)->getName();
 		if (layerName.empty())
 			continue;
 
 		Layer* currentLayer = findLayer(layerName);
-		if (currentLayer != 0 && &type_of(currentLayer) == &type_of(*i))
+		if (currentLayer != 0 && currentLayer->isTransitionPermitted() && &type_of(currentLayer) == &type_of(*i))
 			(*i)->transition(currentLayer);
 	}
 

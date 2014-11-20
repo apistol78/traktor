@@ -76,6 +76,8 @@ public:
 
 	void render(render::IRenderView* renderView, uint32_t frame, render::EyeType eye, const Vector2& offset, float scale);
 
+	void flush();
+
 	void flushCaches();
 
 	// \name IDisplayRenderer

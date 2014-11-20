@@ -16,12 +16,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.AudioLayer", AudioLayer, Layer)
 AudioLayer::AudioLayer(
 	Stage* stage,
 	const std::wstring& name,
+	bool permitTransition,
 	amalgam::IEnvironment* environment,
 	const resource::Proxy< sound::Sound >& sound,
 	bool autoPlay,
 	bool repeat
 )
-:	Layer(stage, name)
+:	Layer(stage, name, permitTransition)
 ,	m_environment(environment)
 ,	m_sound(sound)
 ,	m_autoPlay(autoPlay)
@@ -154,6 +155,10 @@ void AudioLayer::build(const amalgam::IUpdateInfo& info, uint32_t frame)
 }
 
 void AudioLayer::render(render::EyeType eye, uint32_t frame)
+{
+}
+
+void AudioLayer::flush()
 {
 }
 

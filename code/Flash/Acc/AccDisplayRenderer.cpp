@@ -338,6 +338,14 @@ void AccDisplayRenderer::render(render::IRenderView* renderView, uint32_t frame,
 	T_RENDER_POP_MARKER(renderView);
 }
 
+void AccDisplayRenderer::flush()
+{
+	for (RefArray< render::RenderContext >::iterator i = m_renderContexts.begin(); i != m_renderContexts.end(); ++i)
+		(*i)->flush();
+
+	m_globalContext->flush();
+}
+
 void AccDisplayRenderer::flushCaches()
 {
 	m_textureCache->clear();

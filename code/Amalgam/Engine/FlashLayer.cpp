@@ -104,6 +104,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.FlashLayer", FlashLayer, Layer)
 FlashLayer::FlashLayer(
 	Stage* stage,
 	const std::wstring& name,
+	bool permitTransition,
 	amalgam::IEnvironment* environment,
 	const resource::Proxy< flash::FlashMovie >& movie,
 	const std::map< std::wstring, resource::Proxy< flash::FlashMovie > >& externalMovies,
@@ -111,7 +112,7 @@ FlashLayer::FlashLayer(
 	bool clearBackground,
 	bool enableSound
 )
-:	Layer(stage, name)
+:	Layer(stage, name, permitTransition)
 ,	m_environment(environment)
 ,	m_movie(movie)
 ,	m_externalMovies(externalMovies)
@@ -424,6 +425,12 @@ void FlashLayer::render(render::EyeType eye, uint32_t frame)
 			m_scale
 		);
 	}
+}
+
+void FlashLayer::flush()
+{
+	if (m_displayRenderer)
+		m_displayRenderer->flush();
 }
 
 void FlashLayer::preReconfigured()

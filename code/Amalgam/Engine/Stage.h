@@ -85,6 +85,8 @@ public:
 
 	void render(render::EyeType eye, uint32_t frame);
 
+	void flush();
+
 	void transition();
 
 	void preReconfigured();

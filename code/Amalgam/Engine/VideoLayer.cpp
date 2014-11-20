@@ -21,11 +21,12 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.VideoLayer", VideoLayer, Layer)
 VideoLayer::VideoLayer(
 	Stage* stage,
 	const std::wstring& name,
+	bool permitTransition,
 	amalgam::IEnvironment* environment,
 	const resource::Proxy< video::Video >& video,
 	const resource::Proxy< render::Shader >& shader
 )
-:	Layer(stage, name)
+:	Layer(stage, name, permitTransition)
 ,	m_environment(environment)
 ,	m_video(video)
 ,	m_shader(shader)
@@ -95,6 +96,10 @@ void VideoLayer::render(render::EyeType eye, uint32_t frame)
 			m_shader
 		);
 	}
+}
+
+void VideoLayer::flush()
+{
 }
 
 void VideoLayer::preReconfigured()

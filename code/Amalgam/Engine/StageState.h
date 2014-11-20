@@ -39,6 +39,8 @@ public:
 
 	virtual bool render(uint32_t frame, render::EyeType eye, const IUpdateInfo& info);
 
+	virtual void flush();
+
 	virtual bool take(const IEvent* event);
 
 private:
