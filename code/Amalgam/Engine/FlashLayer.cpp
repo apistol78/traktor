@@ -166,12 +166,18 @@ void FlashLayer::transition(Layer* fromLayer)
 
 	// Pass movie as well, if it's the same movie and we're allowed.
 	bool permit = fromLayer->isTransitionPermitted() && isTransitionPermitted();
-	if (permit && m_movie == fromFlashLayer->m_movie)
+	if (m_movie == fromFlashLayer->m_movie)
 	{
-		m_movie.consume();
-		m_moviePlayer = fromFlashLayer->m_moviePlayer;
-		m_moviePlayer->setExternalCall(this);
-		fromFlashLayer->m_moviePlayer = 0;
+		if (permit)
+		{
+			m_movie.consume();
+			m_moviePlayer = fromFlashLayer->m_moviePlayer;
+			m_moviePlayer->setExternalCall(this);
+			fromFlashLayer->m_moviePlayer = 0;
+		}
+
+		// Also do not flush caches if same movie will be used again;
+		// this improve performance as images and such doesn't need to be reloaded.
 		shouldFlush = false;
 	}
 
