@@ -46,9 +46,9 @@ public:
 
 	void clear();
 
-	Ref< render::ITexture > getGradientTexture(const FlashFillStyle& style);
+	resource::Proxy< render::ITexture > getGradientTexture(const FlashFillStyle& style);
 
-	Ref< render::ITexture > getBitmapTexture(const FlashBitmap& bitmap);
+	resource::Proxy< render::ITexture > getBitmapTexture(const FlashBitmap& bitmap);
 
 private:
 	Ref< resource::IResourceManager > m_resourceManager;

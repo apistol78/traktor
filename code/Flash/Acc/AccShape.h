@@ -85,7 +85,7 @@ private:
 
 	struct RenderBatch
 	{
-		render::ITexture* texture;
+		resource::Proxy< render::ITexture > texture;
 		Matrix33 textureMatrix;
 		bool textureClamp;
 		render::Primitives primitives;
