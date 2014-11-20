@@ -38,7 +38,7 @@
 			<root>{0E2AEBB2-697F-B24D-9E56-9D7F7E8EC081}</root>
 			<startup>{4C21D382-3338-5E43-9EB6-7520F1E7CDA4}</startup>
 			<onlineConfig>{00000000-0000-0000-0000-000000000000}</onlineConfig>
-			<defaultInput>{00000000-0000-0000-0000-000000000000}</defaultInput>
+			<defaultInput>{0D7575D9-C87A-5647-B36D-6A5F1F067F97}</defaultInput>
 		</item>
 		<item type="traktor.amalgam.TargetConfiguration" version="2">
 			<name>Windows (x64)</name>
@@ -76,7 +76,7 @@
 			<root>{0E2AEBB2-697F-B24D-9E56-9D7F7E8EC081}</root>
 			<startup>{4C21D382-3338-5E43-9EB6-7520F1E7CDA4}</startup>
 			<onlineConfig>{00000000-0000-0000-0000-000000000000}</onlineConfig>
-			<defaultInput>{00000000-0000-0000-0000-000000000000}</defaultInput>
+			<defaultInput>{0D7575D9-C87A-5647-B36D-6A5F1F067F97}</defaultInput>
 		</item>
 		<item type="traktor.amalgam.TargetConfiguration" version="2">
 			<name>OSX</name>
@@ -111,7 +111,7 @@
 			<root>{0E2AEBB2-697F-B24D-9E56-9D7F7E8EC081}</root>
 			<startup>{4C21D382-3338-5E43-9EB6-7520F1E7CDA4}</startup>
 			<onlineConfig>{00000000-0000-0000-0000-000000000000}</onlineConfig>
-			<defaultInput>{00000000-0000-0000-0000-000000000000}</defaultInput>
+			<defaultInput>{0D7575D9-C87A-5647-B36D-6A5F1F067F97}</defaultInput>
 		</item>
 		<item type="traktor.amalgam.TargetConfiguration" version="2">
 			<name>Linux</name>
@@ -148,7 +148,7 @@
 			<root>{0E2AEBB2-697F-B24D-9E56-9D7F7E8EC081}</root>
 			<startup>{4C21D382-3338-5E43-9EB6-7520F1E7CDA4}</startup>
 			<onlineConfig>{00000000-0000-0000-0000-000000000000}</onlineConfig>
-			<defaultInput>{00000000-0000-0000-0000-000000000000}</defaultInput>
+			<defaultInput>{0D7575D9-C87A-5647-B36D-6A5F1F067F97}</defaultInput>
 		</item>
 		<item type="traktor.amalgam.TargetConfiguration" version="2">
 			<name>iOS</name>
@@ -183,7 +183,7 @@
 			<root>{0E2AEBB2-697F-B24D-9E56-9D7F7E8EC081}</root>
 			<startup>{4C21D382-3338-5E43-9EB6-7520F1E7CDA4}</startup>
 			<onlineConfig>{00000000-0000-0000-0000-000000000000}</onlineConfig>
-			<defaultInput>{00000000-0000-0000-0000-000000000000}</defaultInput>
+			<defaultInput>{0D7575D9-C87A-5647-B36D-6A5F1F067F97}</defaultInput>
 		</item>
 		<item type="traktor.amalgam.TargetConfiguration" version="2">
 			<name>Android</name>
@@ -216,7 +216,7 @@
 			<root>{0E2AEBB2-697F-B24D-9E56-9D7F7E8EC081}</root>
 			<startup>{4C21D382-3338-5E43-9EB6-7520F1E7CDA4}</startup>
 			<onlineConfig>{00000000-0000-0000-0000-000000000000}</onlineConfig>
-			<defaultInput>{00000000-0000-0000-0000-000000000000}</defaultInput>
+			<defaultInput>{0D7575D9-C87A-5647-B36D-6A5F1F067F97}</defaultInput>
 		</item>
 	</configurations>
 </object>

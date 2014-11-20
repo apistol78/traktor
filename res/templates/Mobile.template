@@ -9,6 +9,16 @@
 			<transform>false</transform>
 		</item>
 		<item>
+			<source>Mobile/data/Source/Input/Input.xdi</source>
+			<target>$(WIZARD_OUTPUT_PATH)/data/Source/Input/Input.xdi</target>
+			<transform>false</transform>
+		</item>
+		<item>
+			<source>Mobile/data/Source/Input/Input.xdm</source>
+			<target>$(WIZARD_OUTPUT_PATH)/data/Source/Input/Input.xdm</target>
+			<transform>false</transform>
+		</item>
+		<item>
 			<source>Mobile/data/Source/Objects/Cube/Cube.xdi</source>
 			<target>$(WIZARD_OUTPUT_PATH)/data/Source/Objects/Cube/Cube.xdi</target>
 			<transform>false</transform>
