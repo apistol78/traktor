@@ -164,8 +164,9 @@ void FlashLayer::transition(Layer* fromLayer)
 	if (m_clearBackground != fromFlashLayer->m_clearBackground)
 		return;
 
-	// Pass movie as well, if it's the same movie.
-	if (m_movie == fromFlashLayer->m_movie)
+	// Pass movie as well, if it's the same movie and we're allowed.
+	bool permit = fromLayer->isTransitionPermitted() && isTransitionPermitted();
+	if (permit && m_movie == fromFlashLayer->m_movie)
 	{
 		m_movie.consume();
 		m_moviePlayer = fromFlashLayer->m_moviePlayer;

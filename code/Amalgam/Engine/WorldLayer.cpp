@@ -107,6 +107,10 @@ void WorldLayer::destroy()
 
 void WorldLayer::transition(Layer* fromLayer)
 {
+	bool permit = fromLayer->isTransitionPermitted() && isTransitionPermitted();
+	if (!permit)
+		return;
+
 	WorldLayer* fromWorldLayer = checked_type_cast< WorldLayer*, false >(fromLayer);
 
 	// Get post process quality from settings.

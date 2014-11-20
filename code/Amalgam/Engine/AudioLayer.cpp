@@ -97,6 +97,10 @@ void AudioLayer::tweenParameter(const std::wstring& parameterName, float fromVal
 
 void AudioLayer::transition(Layer* fromLayer)
 {
+	bool permit = fromLayer->isTransitionPermitted() && isTransitionPermitted();
+	if (!permit)
+		return;
+
 	AudioLayer* fromAudioLayer = checked_type_cast< AudioLayer*, false >(fromLayer);
 	if (m_sound == fromAudioLayer->m_sound)
 	{
