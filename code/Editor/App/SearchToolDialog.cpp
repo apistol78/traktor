@@ -66,6 +66,24 @@ std::wstring stylizeMemberName(const std::wstring& memberName)
 	return ss.str();
 }
 
+std::wstring getMemberValue(const ReflectionMember* member)
+{
+	if (!member)
+		return L"null";
+	else if (const RfmPrimitiveBoolean* memberBool = dynamic_type_cast< const RfmPrimitiveBoolean* >(member))
+		return memberBool->get() ? L"True" : L"False";
+	else if (const RfmPrimitiveInt32* memberInt32 = dynamic_type_cast< const RfmPrimitiveInt32* >(member))
+		return toString(memberInt32->get());
+	else if (const RfmPrimitiveString* memberString = dynamic_type_cast< const RfmPrimitiveString* >(member))
+		return mbstows(memberString->get());
+	else if (const RfmPrimitiveWideString* memberWideString = dynamic_type_cast< const RfmPrimitiveWideString* >(member))
+		return memberWideString->get();
+	else if (const RfmPrimitivePath* memberPath = dynamic_type_cast< const RfmPrimitivePath* >(member))
+		return memberPath->get().getPathName();
+	else
+		return L"";
+}
+
 bool match(const std::wstring& value, const std::wstring& needle, bool caseSensitive)
 {
 	if (caseSensitive)
@@ -74,7 +92,7 @@ bool match(const std::wstring& value, const std::wstring& needle, bool caseSensi
 		return toLower(value).find(toLower(needle)) != std::wstring::npos;
 }
 
-const ReflectionMember* searchMember(db::Instance* instance, Reflection* reflection, const ReflectionMember* member, RefSet< Object >& visited, const std::wstring& needle, bool caseSensitive, ui::custom::GridView* gridResults)
+Ref< const ReflectionMember > searchMember(db::Instance* instance, Reflection* reflection, const ReflectionMember* member, RefSet< Object >& visited, const std::wstring& needle, bool caseSensitive, ui::custom::GridView* gridResults)
 {
 	if (match(stylizeMemberName(member->getName()), needle, caseSensitive))
 		return member;
@@ -83,7 +101,7 @@ const ReflectionMember* searchMember(db::Instance* instance, Reflection* reflect
 		const RefArray< ReflectionMember >& members = memberCompound->getMembers();
 		for (RefArray< ReflectionMember >::const_iterator i = members.begin(); i != members.end(); ++i)
 		{
-			const ReflectionMember* foundMember = searchMember(instance, reflection, *i, visited, needle, caseSensitive, gridResults);
+			Ref< const ReflectionMember > foundMember = searchMember(instance, reflection, *i, visited, needle, caseSensitive, gridResults);
 			if (foundMember)
 				return foundMember;
 		}
@@ -98,7 +116,7 @@ const ReflectionMember* searchMember(db::Instance* instance, Reflection* reflect
 				const RefArray< ReflectionMember >& members = childReflection->getMembers();
 				for (RefArray< ReflectionMember >::const_iterator i = members.begin(); i != members.end(); ++i)
 				{
-					const ReflectionMember* foundMember = searchMember(instance, childReflection, *i, visited, needle, caseSensitive, gridResults);
+					Ref< const ReflectionMember > foundMember = searchMember(instance, childReflection, *i, visited, needle, caseSensitive, gridResults);
 					if (foundMember)
 						return foundMember;
 				}
@@ -139,13 +157,14 @@ void searchInstance(db::Instance* instance, const std::wstring& needle, bool cas
 	const RefArray< ReflectionMember >& members = reflection->getMembers();
 	for (RefArray< ReflectionMember >::const_iterator i = members.begin(); i != members.end(); ++i)
 	{
-		const ReflectionMember* foundMember = searchMember(instance, reflection, *i, visited, needle, caseSensitive, gridResults);
+		Ref< const ReflectionMember > foundMember = searchMember(instance, reflection, *i, visited, needle, caseSensitive, gridResults);
 		if (foundMember)
 		{
 			Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
 			row->add(new ui::custom::GridItem(instance->getPath()));
 			row->add(new ui::custom::GridItem(instance->getPrimaryType()->getName()));
 			row->add(new ui::custom::GridItem(stylizeMemberName(foundMember->getName())));
+			row->add(new ui::custom::GridItem(getMemberValue(foundMember)));
 			row->setData(L"INSTANCE", instance);
 			gridResults->addRow(row);
 		}
@@ -209,9 +228,10 @@ bool SearchToolDialog::create(ui::Widget* parent)
 
 	m_gridResults = new ui::custom::GridView();
 	m_gridResults->create(splitterV, ui::custom::GridView::WsColumnHeader | ui::WsDoubleBuffer);
-	m_gridResults->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SEARCH_TOOL_INSTANCE"), 350));
-	m_gridResults->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SEARCH_TOOL_TYPE"), 220));
+	m_gridResults->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SEARCH_TOOL_INSTANCE"), 320));
+	m_gridResults->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SEARCH_TOOL_TYPE"), 200));
 	m_gridResults->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SEARCH_TOOL_MEMBER"), 200));
+	m_gridResults->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SEARCH_TOOL_VALUE"), 200));
 	m_gridResults->addEventHandler< ui::MouseDoubleClickEvent >(this, &SearchToolDialog::eventGridResultDoubleClick);
 	m_gridResults->addEventHandler< ui::MouseButtonUpEvent >(this, &SearchToolDialog::eventGridResultButtonUp);
 

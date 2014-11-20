@@ -837,6 +837,10 @@
       <second>Member</second>
     </item>
     <item>
+      <first>EDITOR_SEARCH_TOOL_VALUE</first>
+      <second>Value</second>
+    </item>
+    <item>
       <first>EDITOR_SEARCH_TOOL_OPEN_INSTANCE</first>
       <second>Open...</second>
     </item>
