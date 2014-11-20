@@ -362,11 +362,18 @@ void ContextOpenGLES2::leave()
 void ContextOpenGLES2::deleteResource(IDeleteCallback* callback)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+#if !defined(__IOS__)
 	m_deleteResources.push_back(callback);
+#else
+	enter();
+	callback->deleteResource();
+	leave();
+#endif
 }
 
 void ContextOpenGLES2::deleteResources()
 {
+#if !defined(__IOS__)
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	if (!m_deleteResources.empty())
 	{
@@ -376,6 +383,7 @@ void ContextOpenGLES2::deleteResources()
 		m_deleteResources.resize(0);
 		leave();
 	}
+#endif
 }
 
 GLuint ContextOpenGLES2::createShaderObject(const char* shader, GLenum shaderType)
