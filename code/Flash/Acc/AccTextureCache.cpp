@@ -81,14 +81,14 @@ void AccTextureCache::clear()
 	m_cache.clear();
 }
 
-Ref< render::ITexture > AccTextureCache::getGradientTexture(const FlashFillStyle& style)
+resource::Proxy< render::ITexture > AccTextureCache::getGradientTexture(const FlashFillStyle& style)
 {
 	Ref< render::ISimpleTexture > texture;
 
 	uint64_t hash = reinterpret_cast< uint64_t >(&style);
 	SmallMap< uint64_t, resource::Proxy< render::ITexture > >::iterator it = m_cache.find(hash);
 	if (it != m_cache.end())
-		return it->second.getResource();
+		return it->second;
 
 	const AlignedVector< FlashFillStyle::ColorRecord >& colorRecords = style.getColorRecords();
 	T_ASSERT (colorRecords.size() > 1);
@@ -154,26 +154,27 @@ Ref< render::ITexture > AccTextureCache::getGradientTexture(const FlashFillStyle
 	}
 
 	m_cache[hash] = resource::Proxy< render::ITexture >(texture);
-	return texture;
+
+	return resource::Proxy< render::ITexture >(texture);
 }
 
-Ref< render::ITexture > AccTextureCache::getBitmapTexture(const FlashBitmap& bitmap)
+resource::Proxy< render::ITexture > AccTextureCache::getBitmapTexture(const FlashBitmap& bitmap)
 {
 	uint64_t hash = reinterpret_cast< uint64_t >(&bitmap);
 
 	SmallMap< uint64_t, resource::Proxy< render::ITexture > >::iterator it = m_cache.find(hash);
 	if (it != m_cache.end())
-		return it->second.getResource();
+		return it->second;
+
+	resource::Proxy< render::ITexture > texture;
 
 	if (const FlashBitmapResource* bitmapResource = dynamic_type_cast< const FlashBitmapResource* >(&bitmap))
 	{
-		resource::Proxy< render::ITexture > texture;
 		m_resourceManager->bind(
 			resource::Id< render::ITexture >(bitmapResource->getResourceId()),
 			texture
 		);
 		m_cache[hash] = texture;
-		return texture.getResource();
 	}
 	else if (const FlashBitmapData* bitmapData = dynamic_type_cast< const FlashBitmapData* >(&bitmap))
 	{
@@ -188,15 +189,12 @@ Ref< render::ITexture > AccTextureCache::getBitmapTexture(const FlashBitmap& bit
 		desc.initialData[0].pitch = desc.width * 4;
 		desc.initialData[0].slicePitch = desc.width * desc.height * 4;
 
-		Ref< render::ITexture > texture = m_renderSystem->createSimpleTexture(desc);
-		if (!texture)
-			return 0;
+		texture = resource::Proxy< render::ITexture >(m_renderSystem->createSimpleTexture(desc));
 
-		m_cache[hash] = resource::Proxy< render::ITexture >(texture);
-		return texture;
+		m_cache[hash] = texture;
 	}
-	else
-		return 0;
+
+	return texture;
 }
 
 	}

@@ -51,6 +51,11 @@ AccShape::AccShape(AccShapeResources* shapeResources)
 {
 }
 
+AccShape::~AccShape()
+{
+	destroy();
+}
+
 bool AccShape::createTesselation(const std::list< Path >& paths)
 {
 	AlignedVector< Segment > segments;
@@ -203,7 +208,7 @@ bool AccShape::updateRenderable(
 					continue;
 
 				Color4ub color(255, 255, 255, 255);
-				render::ITexture* texture = 0;
+				resource::Proxy< render::ITexture > texture;
 				bool textureClamp = false;
 
 				if (j->fillStyle && j->fillStyle - 1 < uint16_t(fillStyles.size()))
@@ -287,11 +292,6 @@ bool AccShape::updateRenderable(
 	return true;
 }
 
-AccShape::~AccShape()
-{
-	destroy();
-}
-
 void AccShape::destroy()
 {
 	m_shapeResources = 0;
@@ -306,6 +306,7 @@ void AccShape::destroy()
 	m_tesselationBatches.clear();
 	m_renderBatches[0].clear();
 	m_renderBatches[1].clear();
+	m_renderBatches[2].clear();
 }
 
 void AccShape::render(
