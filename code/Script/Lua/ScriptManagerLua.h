@@ -3,9 +3,12 @@
 
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
-#include "Core/Thread/Semaphore.h"
 #include "Core/Timer/Timer.h"
 #include "Script/IScriptManager.h"
+
+#if defined(T_SCRIPT_LUA_USE_MT_LOCK)
+#	include "Core/Thread/Semaphore.h"
+#endif
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -74,11 +77,13 @@ private:
 	void* m_defaultAllocFn;
 	void* m_defaultAllocOpaque;
 	int32_t m_objectTableRef;
+#if defined(T_SCRIPT_LUA_USE_MT_LOCK)
 	mutable Semaphore m_lock;
+#endif
+	ScriptContextLua* m_lockContext;
 	std::vector< RegisteredClass > m_classRegistry;
 	SmallMap< const TypeInfo*, uint32_t > m_classRegistryLookup;
 	RefArray< ScriptContextLua > m_contexts;
-	ScriptContextLua* m_lockContext;
 	Ref< ScriptDebuggerLua > m_debugger;
 	Ref< ScriptProfilerLua > m_profiler;
 	Timer m_timer;
@@ -90,11 +95,22 @@ private:
 	uint32_t m_classIdBoxedVector4;
 	uint32_t m_classIdBoxedTransform;
 
+	void lock(ScriptContextLua* context)
+	{
+#if defined(T_SCRIPT_LUA_USE_MT_LOCK)
+		m_lock.wait();
+#endif
+		m_lockContext = context;
+	}
+
+	void unlock()
+	{
+#if defined(T_SCRIPT_LUA_USE_MT_LOCK)
+		m_lock.release();
+#endif
+	}
+
 	void destroyContext(ScriptContextLua* context);
-
-	void lock(ScriptContextLua* context);
-
-	void unlock();
 
 	void pushObject(ITypedObject* object);
 

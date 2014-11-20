@@ -292,7 +292,9 @@ void ScriptManagerLua::registerClass(IScriptClass* scriptClass)
 
 Ref< IScriptResource > ScriptManagerLua::compile(const std::wstring& fileName, const std::wstring& script, const source_map_t* map, IErrorCallback* errorCallback) const
 {
+#if defined(T_SCRIPT_LUA_USE_MT_LOCK)
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+#endif
 	CHECK_LUA_STACK(m_luaState, 0);
 
 	std::string metaFileName = "@" + wstombs(Utf8Encoding(), fileName);
@@ -357,7 +359,9 @@ Ref< IScriptResource > ScriptManagerLua::compile(const std::wstring& fileName, c
 
 Ref< IScriptContext > ScriptManagerLua::createContext(const IScriptResource* scriptResource, const IScriptContext* contextPrototype)
 {
+#if defined(T_SCRIPT_LUA_USE_MT_LOCK)
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+#endif
 	CHECK_LUA_STACK(m_luaState, 0);
 
 	const ScriptResourceLua* scriptResourceLua = checked_type_cast< const ScriptResourceLua* >(scriptResource);
@@ -494,7 +498,9 @@ Ref< IScriptContext > ScriptManagerLua::createContext(const IScriptResource* scr
 
 Ref< IScriptDebugger > ScriptManagerLua::createDebugger()
 {
+#if defined(T_SCRIPT_LUA_USE_MT_LOCK)
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+#endif
 
 	if (!m_debugger)
 		m_debugger = new ScriptDebuggerLua(this, m_luaState);
@@ -506,7 +512,9 @@ Ref< IScriptDebugger > ScriptManagerLua::createDebugger()
 
 Ref< IScriptProfiler > ScriptManagerLua::createProfiler()
 {
+#if defined(T_SCRIPT_LUA_USE_MT_LOCK)
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+#endif
 
 	if (!m_profiler)
 		m_profiler = new ScriptProfilerLua(this, m_luaState);
@@ -532,17 +540,6 @@ void ScriptManagerLua::getStatistics(ScriptStatistics& outStatistics) const
 void ScriptManagerLua::destroyContext(ScriptContextLua* context)
 {
 	m_contexts.remove(context);
-}
-
-void ScriptManagerLua::lock(ScriptContextLua* context)
-{
-	m_lock.wait();
-	m_lockContext = context;
-}
-
-void ScriptManagerLua::unlock()
-{
-	m_lock.release();
 }
 
 void ScriptManagerLua::pushObject(ITypedObject* object)
@@ -762,7 +759,9 @@ void ScriptManagerLua::toAny(int32_t base, int32_t count, Any* outAnys)
 
 void ScriptManagerLua::collectGarbageFull()
 {
+#if defined(T_SCRIPT_LUA_USE_MT_LOCK)
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+#endif
 	uint32_t memoryUse = 0;
 	do
 	{
@@ -780,8 +779,9 @@ void ScriptManagerLua::collectGarbagePartial()
 	int32_t targetSteps = int32_t(m_collectTargetSteps);
 	if (m_collectSteps < targetSteps)
 	{
+#if defined(T_SCRIPT_LUA_USE_MT_LOCK)
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
+#endif
 		if (m_collectSteps < 0)
 		{
 			lua_gc(m_luaState, LUA_GCSTOP, 0);
