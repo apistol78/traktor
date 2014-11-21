@@ -1,5 +1,6 @@
 #import <GameKit/GameKit.h>
 #include "Core/Log/Log.h"
+#include "Net/Url.h"
 #include "Online/Gc/GcAchievements.h"
 #include "Online/Gc/GcGameConfiguration.h"
 #include "Online/Gc/GcLeaderboards.h"
