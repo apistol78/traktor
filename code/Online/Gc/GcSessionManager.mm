@@ -123,7 +123,7 @@ bool GcSessionManager::buyDLC(const std::wstring& id) const
 
 bool GcSessionManager::navigateUrl(const net::Url& url) const
 {
-	if (url.getString() == "gamecenter://default")
+	if (url.getString() == L"gamecenter://default")
 	{
 		GKGameCenterViewController* gameCenterController = [[GKGameCenterViewController alloc] init];
 		if (gameCenterController != nil)
@@ -135,7 +135,7 @@ bool GcSessionManager::navigateUrl(const net::Url& url) const
 			[rootViewController presentViewController: gameCenterController animated: YES completion: nil];
 		}		
 	}
-	if (url.getString() == "gamecenter://leaderboards")
+	if (url.getString() == L"gamecenter://leaderboards")
 	{
 		GKGameCenterViewController* gameCenterController = [[GKGameCenterViewController alloc] init];
 		if (gameCenterController != nil)
@@ -147,7 +147,7 @@ bool GcSessionManager::navigateUrl(const net::Url& url) const
 			[rootViewController presentViewController: gameCenterController animated: YES completion: nil];
 		}		
 	}
-	else if (url.getString() == "gamecenter://achievements")
+	else if (url.getString() == L"gamecenter://achievements")
 	{
 		GKGameCenterViewController* gameCenterController = [[GKGameCenterViewController alloc] init];
 		if (gameCenterController != nil)
@@ -159,7 +159,7 @@ bool GcSessionManager::navigateUrl(const net::Url& url) const
 			[rootViewController presentViewController: gameCenterController animated: YES completion: nil];
 		}		
 	}
-	else if (url.getString() == "gamecenter://challenges")
+	else if (url.getString() == L"gamecenter://challenges")
 	{
 		GKGameCenterViewController* gameCenterController = [[GKGameCenterViewController alloc] init];
 		if (gameCenterController != nil)
