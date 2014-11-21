@@ -1,3 +1,4 @@
+#include <limits>
 #include "Animation/Animation/Animation.h"
 #include "Animation/Editor/AnimationAsset.h"
 #include "Animation/Editor/AnimationFormatBvh.h"
@@ -18,7 +19,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationPipeline", 4, AnimationPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationPipeline", 6, AnimationPipeline, editor::IPipeline)
 
 bool AnimationPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -100,6 +101,91 @@ bool AnimationPipeline::buildOutput(
 		log::error << L"Unable to build animation; import failed \"" << fileName.getPathName() << L"\"" << Endl;
 		return false;
 	}
+
+	// Discard redundant key poses.
+	uint32_t uncompressedCount = anim->getKeyPoseCount();
+	if (uncompressedCount > 2)
+	{
+		bool anyRemoved = true;
+
+		while (anyRemoved)
+		{
+			anyRemoved = false;
+
+			int32_t indexHint = -1;
+
+			uint32_t count = anim->getKeyPoseCount();
+			for (uint32_t i = 0; i < count - 2; ++i)
+			{
+				Animation::KeyPose k0 = anim->getKeyPose(i);
+				Animation::KeyPose k1 = anim->getKeyPose(i + 1);
+				Animation::KeyPose k2 = anim->getKeyPose(i + 2);
+
+				uint32_t jointCount = max(max(k0.pose.getMaxIndex(), k1.pose.getMaxIndex()), k2.pose.getMaxIndex()) + 1;
+
+				// Evaluate reference path.
+				AlignedVector< Pose > ref;
+
+				indexHint = -1;
+				for (float T = k0.at; T <= k2.at; T += 1.0f / 60.0f)
+				{
+					Pose pose;
+					anim->getPose(T, false, indexHint, pose);
+					ref.push_back(pose);
+				}
+
+				// Remove middle key pose and re-evaluate.
+				anim->removeKeyPose(i + 1);
+
+				AlignedVector< Pose >::const_iterator ir = ref.begin();
+
+				Scalar totalOffsetError(0.0f);
+				Scalar totalOrientationError(0.0f);
+
+				indexHint = -1;
+				for (float T = k0.at; T <= k2.at; T += 1.0f / 60.0f)
+				{
+					if (ir == ref.end())
+					{
+						totalOffsetError = Scalar(std::numeric_limits< float >::max());
+						totalOrientationError = Scalar(std::numeric_limits< float >::max());
+						break;
+					}
+
+					Pose pose;
+					anim->getPose(T, false, indexHint, pose);
+
+					for (uint32_t j = 0; j < jointCount; ++j)
+					{
+						Vector4 jointOffsetRef = ir->getJointOffset(j);
+						Vector4 jointOffsetCheck = pose.getJointOffset(j);
+
+						Rotator jointOrientationRef = ir->getJointOrientation(j);
+						Rotator jointOrientationCheck = pose.getJointOrientation(j);
+
+						Scalar offsetError = (jointOffsetRef - jointOffsetCheck).length();
+						Scalar orientationError = (jointOrientationRef.toQuaternion().inverse() * jointOrientationCheck.toQuaternion()).toAxisAngle().length();
+
+						totalOffsetError += offsetError;
+						totalOrientationError += orientationError;
+					}
+
+					++ir;
+				}
+
+				if (totalOffsetError > FUZZY_EPSILON || totalOrientationError > FUZZY_EPSILON)
+					anim->addKeyPose(k1);
+				else
+				{
+					anyRemoved = true;
+					break;
+				}
+			}
+		}
+	}
+
+	if (uncompressedCount != anim->getKeyPoseCount())
+		log::info << L"Removed " << (uncompressedCount - anim->getKeyPoseCount()) << L" redundant key poses in animation; was " << uncompressedCount << L", now " << anim->getKeyPoseCount() << Endl;
 
 	Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);
 	if (!instance)

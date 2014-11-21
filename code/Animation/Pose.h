@@ -36,6 +36,8 @@ public:
 
 	Rotator getJointOrientation(uint32_t jointIndex) const;
 
+	uint32_t getMaxIndex() const;
+
 	void getIndexMask(BitSet& outIndices) const;
 
 	virtual void serialize(ISerializer& s);
