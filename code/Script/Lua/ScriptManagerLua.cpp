@@ -1178,7 +1178,7 @@ void* ScriptManagerLua::luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize
 		if (osize >= nsize)
 			return ptr;
 
-		void* nptr = getAllocator()->alloc(nsize, 16, "LUA");
+		void* nptr = getAllocator()->alloc(nsize, 4, T_FILE_LINE);
 		if (!nptr)
 			return 0;
 #endif
