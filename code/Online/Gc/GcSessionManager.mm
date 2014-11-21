@@ -58,22 +58,6 @@ bool GcSessionManager::create(const IGameConfiguration* configuration)
 						NSLog(@"LOCAL PLAYER AUTHENTICATED");
 					else
 						NSLog(@"LOCAL PLAYER NOT AUTHENTICATED");
-
-					/*
-					// Get the default leaderboard identifier.
-					[[GKLocalPlayer localPlayer] loadDefaultLeaderboardIdentifierWithCompletionHandler:^(NSString *leaderboardIdentifier, NSError *error)
-					{
-						if (error == nil)
-						{
-							// _leaderboardIdentifier = leaderboardIdentifier;
-							NSLog(@"GOT DEFAULT LEADERBOARD IDENTIFIER %@", leaderboardIdentifier);
-						}
-						else
-						{
-							NSLog(@"%@", [error localizedDescription]);
-						}
-					}];
-					*/
 				}
 			}
 		};
@@ -138,7 +122,58 @@ bool GcSessionManager::buyDLC(const std::wstring& id) const
 
 bool GcSessionManager::navigateUrl(const net::Url& url) const
 {
-	return false;
+	if (url.getString() == "gamecenter://default")
+	{
+		GKGameCenterViewController* gameCenterController = [[GKGameCenterViewController alloc] init];
+		if (gameCenterController != nil)
+		{
+			//gameCenterController.gameCenterDelegate = self;
+			gameCenterController.viewState = GKGameCenterViewControllerStateDefault;
+
+			UIViewController* rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;				
+			[rootViewController presentViewController: gameCenterController animated: YES completion: nil];
+		}		
+	}
+	if (url.getString() == "gamecenter://leaderboards")
+	{
+		GKGameCenterViewController* gameCenterController = [[GKGameCenterViewController alloc] init];
+		if (gameCenterController != nil)
+		{
+			//gameCenterController.gameCenterDelegate = self;
+			gameCenterController.viewState = GKGameCenterViewControllerStateLeaderboards;
+
+			UIViewController* rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;				
+			[rootViewController presentViewController: gameCenterController animated: YES completion: nil];
+		}		
+	}
+	else if (url.getString() == "gamecenter://achievements")
+	{
+		GKGameCenterViewController* gameCenterController = [[GKGameCenterViewController alloc] init];
+		if (gameCenterController != nil)
+		{
+			//gameCenterController.gameCenterDelegate = self;
+			gameCenterController.viewState = GKGameCenterViewControllerStateAchievements;
+
+			UIViewController* rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;				
+			[rootViewController presentViewController: gameCenterController animated: YES completion: nil];
+		}		
+	}
+	else if (url.getString() == "gamecenter://challenges")
+	{
+		GKGameCenterViewController* gameCenterController = [[GKGameCenterViewController alloc] init];
+		if (gameCenterController != nil)
+		{
+			//gameCenterController.gameCenterDelegate = self;
+			gameCenterController.viewState = GKGameCenterViewControllerStateChallenges;
+
+			UIViewController* rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;				
+			[rootViewController presentViewController: gameCenterController animated: YES completion: nil];
+		}		
+	}
+	else
+		return false;
+
+	return true;
 }
 
 uint64_t GcSessionManager::getCurrentUserHandle() const
