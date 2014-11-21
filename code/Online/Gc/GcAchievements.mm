@@ -73,6 +73,7 @@ public:
 		Event event;
 
 		GKAchievement* achievement = [[GKAchievement alloc] initWithIdentifier: makeNSString(achievementId)];
+		achievement.showsCompletionBanner = reward ? YES : NO;
 		achievement.percentComplete = reward ? 100.0f : 0.0f;
 
 		bevent = &event;
