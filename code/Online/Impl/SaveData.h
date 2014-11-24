@@ -38,6 +38,8 @@ private:
 
 	SaveData(ISaveDataProvider* provider, TaskQueue* taskQueue);
 
+	void enqueueEnumeration();
+
 	void callbackEnumSaveData(const std::set< std::wstring >& saveDataIds);
 };
 

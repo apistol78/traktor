@@ -37,6 +37,8 @@ private:
 
 	Achievements(IAchievementsProvider* provider, TaskQueue* taskQueue);
 
+	void enqueueEnumeration();
+
 	void callbackEnumAchievements(const std::map< std::wstring, bool >& achievements);
 };
 

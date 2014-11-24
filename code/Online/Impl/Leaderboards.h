@@ -48,6 +48,8 @@ private:
 
 	Leaderboards(ILeaderboardsProvider* provider, UserCache* userCache, TaskQueue* taskQueue);
 
+	void enqueueEnumeration();
+
 	void callbackEnumLeaderboards(const std::map< std::wstring, ILeaderboardsProvider::LeaderboardData >& leaderboards);
 };
 

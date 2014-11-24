@@ -74,11 +74,15 @@ SaveData::SaveData(ISaveDataProvider* provider, TaskQueue* taskQueue)
 ,	m_taskQueue(taskQueue)
 ,	m_ready(false)
 {
+}
+
+void SaveData::enqueueEnumeration()
+{
 	m_taskQueue->add(new TaskEnumSaveData(
 		m_provider,
 		this,
 		(TaskEnumSaveData::sink_method_t)&SaveData::callbackEnumSaveData
-	));
+	));	
 }
 
 void SaveData::callbackEnumSaveData(const std::set< std::wstring >& saveDataIds)

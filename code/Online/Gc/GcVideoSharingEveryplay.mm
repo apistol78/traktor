@@ -13,7 +13,7 @@ namespace
 
 NSString* makeNSString(const std::wstring& str)
 {
-	return [NSString stringWithCString: (const char*)str.c_str() encoding: NSUTF32StringEncoding];
+	return [[[NSString alloc] initWithBytes: str.data() length: str.size() * sizeof(wchar_t) encoding: NSUTF32LittleEndianStringEncoding] autorelease];
 }
 
 }

@@ -175,11 +175,15 @@ Leaderboards::Leaderboards(ILeaderboardsProvider* provider, UserCache* userCache
 ,	m_taskQueue(taskQueue)
 ,	m_ready(false)
 {
+}
+
+void Leaderboards::enqueueEnumeration()
+{
 	m_taskQueue->add(new TaskEnumLeaderboards(
 		m_provider,
 		this,
 		(TaskEnumLeaderboards::sink_method_t)&Leaderboards::callbackEnumLeaderboards
-	));
+	));	
 }
 
 void Leaderboards::callbackEnumLeaderboards(const std::map< std::wstring, ILeaderboardsProvider::LeaderboardData >& leaderboards)

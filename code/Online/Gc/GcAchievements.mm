@@ -12,13 +12,13 @@ namespace traktor
 
 NSString* makeNSString(const std::wstring& str)
 {
-	return [[[NSString alloc] initWithBytes: str.c_str() length: str.length() encoding: NSUTF32StringEncoding] autorelease];
+	return [[[NSString alloc] initWithBytes: str.data() length: str.size() * sizeof(wchar_t) encoding: NSUTF32LittleEndianStringEncoding] autorelease];
 }
 
 std::wstring fromNSString(const NSString* str)
 {
 	wchar_t buffer[4096];
-	[str getCString: (char*)buffer maxLength: sizeof_array(buffer) encoding: NSUTF32StringEncoding];
+	[str getCString: (char*)buffer maxLength: sizeof_array(buffer) encoding: NSUTF32LittleEndianStringEncoding];
 	return std::wstring(buffer);
 }
 
@@ -41,6 +41,9 @@ public:
 		for (std::list< std::wstring >::const_iterator i = m_achievementIds.begin(); i != m_achievementIds.end(); ++i)
 			outAchievements[*i] = false;
 
+		if ([GKLocalPlayer localPlayer].authenticated == NO)
+			return true;
+
 		boutAchievements = &outAchievements;
 		bevent = &event;
 
@@ -52,14 +55,20 @@ public:
 				{
 					std::wstring id = fromNSString(achievement.identifier);
 					(*boutAchievements)[id] = bool(achievement.percentComplete >= 99.0f);
+					log::info << L"Enum achievement \"" << id << L"\", percent " << float(achievement.percentComplete) << Endl;
 				}				
+			}
+			else
+			{
+				log::error << L"Failed to enumerate achievements;" << Endl;				
+				log::error << fromNSString([error localizedDescription]) << Endl;
 			}
 			bevent->broadcast();
 		}];
 
 		if (!event.wait(10000))
 		{
-			log::error << L"Failed to download achievements; No response when download achievements" << Endl;
+			log::error << L"Failed to enumerate achievements; No response when download achievements" << Endl;
 			return false;
 		}
 		
@@ -82,9 +91,9 @@ public:
 			bevent->broadcast();
 		}];
         
-        if (!event.wait(10000))
+        if (!event.wait(100000))
         {
-            log::error << L"Failed to reward achievement; No response when rewarding achievement" << Endl;
+            log::error << L"Failed to reward achievement; No response when rewarding achievement \"" << achievementId << L"\"" << Endl;
             return false;
         }
 
