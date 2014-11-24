@@ -283,20 +283,25 @@ Any& Any::operator = (const Any& src)
 	return *this;
 }
 
-#if 0 // defined(T_CXX11)
+#if defined(T_CXX11)
 Any& Any::operator = (Any&& src)
 {
 	if (m_type == AtString)
-		refStringDec(m_data.m_string);
+	{
+		if (src.m_type != AtString || m_data.m_string != src.m_data.m_string)
+			refStringDec(m_data.m_string);
+	}
 	else if (m_type == AtObject)
-		T_SAFE_RELEASE(m_data.m_object);
+	{
+		if (src.m_type != AtObject || m_data.m_object != src.m_data.m_object)
+			T_SAFE_RELEASE(m_data.m_object);
+	}
 
 	m_type = src.m_type;
 	m_data = src.m_data;
 
 	src.m_type = AtVoid;
 	return *this;
-
 }
 #endif
 

@@ -58,9 +58,15 @@
 #	define T_UNALIGNED
 #endif
 
+// C++11 final support.
+#if defined(T_CXX11)
+#	define T_FINAL final
+#else
+#	define T_FINAL
+#endif
+
 // Detect endian.
 #if defined(__APPLE__)
-
 // Mac has a special header defining target endian.
 #	include <TargetConditionals.h>
 #	if TARGET_RT_LITTLE_ENDIAN
@@ -68,22 +74,15 @@
 #	elif TARGET_RT_BIG_ENDIAN
 #		define T_BIG_ENDIAN
 #	endif
-
 #elif defined(_XBOX) || defined(_PS3)
-
 // Both Xenon and PS3 use a PowerPC derivate.
 #	define T_BIG_ENDIAN
-
 #elif defined(_WIN32) || defined(__EMSCRIPTEN__) || defined(__PNACL__)
-
 // Assume little endian on Win32 as it's probably most common.
 #	define T_LITTLE_ENDIAN
-
 #elif defined(__GNUC__)
-
 // Assume little endian on unknown platform using GCC, assuming Linux/x86 for now.
 #	define T_LITTLE_ENDIAN
-
 #endif
 
 // Disable various compiler warnings.

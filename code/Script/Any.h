@@ -106,7 +106,7 @@ public:
 
 	Any& operator = (const Any& src);
 
-#if 0 // defined(T_CXX11)
+#if defined(T_CXX11)
 	Any& operator = (Any&& src);
 #endif
 
