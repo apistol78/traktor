@@ -29,19 +29,32 @@ Ref< PropertyGroup > loadSettings(const Path& settingsPath)
 	return settings;
 }
 
+uint32_t g_runMode = 0;
+uint32_t g_runModePending = 0;
+
 void updateApplicationThread(amalgam::Application* app)
 {
 	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
-
-	app->resume();
-
 	while (!currentThread->stopped())
 	{
-		if (!app->update())
-			break;
-	}
+		if (g_runMode != g_runModePending)
+		{
+			if (g_runModePending == 0)
+				app->suspend();
+			else if (g_runModePending == 1)
+				app->resume();
 
-	app->suspend();
+			g_runMode = g_runModePending;
+		}
+
+		if (g_runMode == 1)
+		{
+			if (!app->update())
+				break;
+		}
+		else
+			currentThread->sleep(100);
+	}
 }
 
 }
@@ -87,15 +100,21 @@ void updateApplicationThread(amalgam::Application* app)
 
 	// Create application.
 	m_application = new amalgam::Application();
-	if (m_application->create(
+	if (!m_application->create(
 		defaultSettings,
 		settings,
         0,
 		(void*)self
 	))
-		return YES;
-	else
 		return NO;
+
+	// Create update thread.
+	m_thread = ThreadManager::getInstance().create(
+		makeStaticFunctor(updateApplicationThread, m_application.ptr()),
+		L"Application update thread"
+	);
+	m_thread->start();
+	return YES;
 }
 
 - (void) drawView:(id)sender
@@ -108,27 +127,29 @@ void updateApplicationThread(amalgam::Application* app)
 
 - (void) startAnimation
 {
-	if (!m_thread)
-	{
-		m_thread = ThreadManager::getInstance().create(
-			makeStaticFunctor(updateApplicationThread, m_application.ptr()),
-			L"Application update thread"
-		);
-		m_thread->start();
-	}
+	g_runModePending = 1;
+	while (g_runMode != g_runModePending)
+		ThreadManager::getInstance().getCurrentThread()->sleep(10);
 }
 
 - (void)stopAnimation
 {
-	if (m_thread)
-	{
-		m_thread->stop();
-		m_thread = 0;
-	}
+	g_runModePending = 0;
+	while (g_runMode != g_runModePending)
+		ThreadManager::getInstance().getCurrentThread()->sleep(10);
 }
 
 - (void) dealloc
 {
+	[self stopAnimation];
+
+	if (m_thread)
+	{
+		m_thread->stop();
+		ThreadManager::getInstance().destroy(m_thread);
+		m_thread = 0;
+	}
+	
 	if (m_application)
 	{
 		m_application->destroy();
