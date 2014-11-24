@@ -1,6 +1,8 @@
 #ifndef traktor_script_ScriptManagerLua_H
 #define traktor_script_ScriptManagerLua_H
 
+#define T_SCRIPT_LUA_USE_MT_LOCK
+
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Timer/Timer.h"
@@ -123,6 +125,8 @@ private:
 	void toAny(int32_t base, int32_t count, Any* outAnys);
 
 	void collectGarbageFull();
+
+	void collectGarbageFullNoLock();
 
 	void collectGarbagePartial();
 

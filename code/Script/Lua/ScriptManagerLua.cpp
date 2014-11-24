@@ -762,6 +762,11 @@ void ScriptManagerLua::collectGarbageFull()
 #if defined(T_SCRIPT_LUA_USE_MT_LOCK)
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 #endif
+	collectGarbageFullNoLock();
+}
+
+void ScriptManagerLua::collectGarbageFullNoLock()
+{
 	uint32_t memoryUse = 0;
 	do
 	{
