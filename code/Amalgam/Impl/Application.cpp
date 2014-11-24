@@ -42,7 +42,6 @@
 #include "Physics/PhysicsManager.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
-#include "Render/ITexture.h"
 #include "Resource/IResourceManager.h"
 #include "Script/IScriptManager.h"
 #include "Sound/Sound.h"
@@ -965,7 +964,6 @@ void Application::suspend()
 	}
 
 #if defined(__IOS__)
-	m_resourceServer->getResourceManager()->unload(type_of< render::ITexture >());
 	m_resourceServer->getResourceManager()->unload(type_of< sound::Sound >());
 #endif
 }
@@ -975,7 +973,6 @@ void Application::resume()
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
 
 #if defined(__IOS__)
-	m_resourceServer->getResourceManager()->reload(type_of< render::ITexture >(), true);
 	m_resourceServer->getResourceManager()->reload(type_of< sound::Sound >(), true);
 #endif
 
