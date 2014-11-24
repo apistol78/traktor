@@ -73,6 +73,10 @@ Achievements::Achievements(IAchievementsProvider* provider, TaskQueue* taskQueue
 ,	m_taskQueue(taskQueue)
 ,	m_ready(false)
 {
+}
+
+void Achievements::enqueueEnumeration()
+{
 	m_taskQueue->add(new TaskEnumAchievements(
 		m_provider,
 		this,

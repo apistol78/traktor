@@ -15,15 +15,14 @@ namespace traktor
 
 NSString* makeNSString(const std::wstring& str)
 {
-	std::string mbs = wstombs(Utf8Encoding(), str);
-	return [[[NSString alloc] initWithCString: mbs.c_str() encoding: NSUTF8StringEncoding] autorelease];
+	return [[[NSString alloc] initWithBytes: str.data() length: str.size() * sizeof(wchar_t) encoding: NSUTF32LittleEndianStringEncoding] autorelease];
 }
 
 std::wstring fromNSString(const NSString* str)
 {
-	char buffer[4096];
-	[str getCString: buffer maxLength: sizeof_array(buffer) encoding: NSUTF8StringEncoding];
-	return mbstows(buffer);
+	wchar_t buffer[4096];
+	[str getCString: (char*)buffer maxLength: sizeof_array(buffer) encoding: NSUTF32LittleEndianStringEncoding];
+	return std::wstring(buffer);
 }
 
 		}
@@ -49,39 +48,46 @@ bool GcLeaderboards::enumerate(std::map< std::wstring, LeaderboardData >& outLea
 		data.score = 0;
 		data.rank = 0;
 
-		bevent = &event;
-
-		GKLeaderboard* lb = [[GKLeaderboard alloc] init];
-		lb.identifier = makeNSString(*i);
-		[lb loadScoresWithCompletionHandler:^(NSArray* scores, NSError* error)
+		if ([GKLocalPlayer localPlayer].authenticated == YES)
 		{
-			if (error == nil)
-			{
-				result = true;
-			}
-			else
-			{
-				log::error << L"Failed to download leaderboard!" << Endl;
-				result = false;
-			}
-			bevent->broadcast();
-		}];
+			bevent = &event;
 
-		if (!event.wait(10000))
-		{
-			log::error << L"Failed to enumerate leaderboards; No response when loading scores of " << *i << Endl;
-			return false;
+			NSString* identifier = makeNSString(*i);
+			if (!identifier)
+				return false;
+
+			NSLog(@"loadScoresWithCompletionHandler of leaderboard \"%@\"...\n", identifier);
+
+			GKLeaderboard* lb = [[GKLeaderboard alloc] init];
+			lb.identifier = identifier;
+			[lb loadScoresWithCompletionHandler:^(NSArray* scores, NSError* error)
+			{
+				if (error == nil)
+				{
+					result = true;
+				}
+				else
+				{
+					log::error << L"Failed to enumerate leaderboard;" << Endl;
+					log::error << fromNSString([error localizedDescription]) << Endl;
+					result = false;
+				}
+				bevent->broadcast();
+			}];
+
+			if (!event.wait(10000))
+			{
+				log::error << L"Failed to enumerate leaderboards; No response when loading scores of " << *i << Endl;
+				return false;
+			}
+
+			event.reset();
+
+			if (result)
+				data.score = int32_t(lb.localPlayerScore.value);
 		}
 
-		if (result)
-		{
-			data.score = int32_t(lb.localPlayerScore.value);
-			outLeaderboards[*i] = data;
-		}
-		else
-			return false;
-
-		event.reset();
+		outLeaderboards[*i] = data;
 	}
 
 	return true;

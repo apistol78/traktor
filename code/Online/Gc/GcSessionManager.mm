@@ -1,5 +1,6 @@
 #import <GameKit/GameKit.h>
 #include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
 #include "Net/Url.h"
 #include "Online/Gc/GcAchievements.h"
 #include "Online/Gc/GcGameConfiguration.h"
@@ -11,10 +12,42 @@
 #include "Online/Gc/GcUser.h"
 #include "Online/Gc/GcVideoSharingEveryplay.h"
 
+@interface GameCenterViewDelegate : NSObject< GKGameCenterControllerDelegate >
+{
+}
+
+@end
+
+@implementation GameCenterViewDelegate
+
+- (void)gameCenterViewControllerDidFinish: (GKGameCenterViewController*)gameCenterViewController
+{
+	UIViewController* rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;				
+	[rootViewController dismissViewControllerAnimated: YES completion: nil];
+}
+
+@end
+
 namespace traktor
 {
 	namespace online
 	{
+		namespace
+		{
+		
+NSString* makeNSString(const std::wstring& str)
+{
+	return [[[NSString alloc] initWithBytes: str.data() length: str.size() * sizeof(wchar_t) encoding: NSUTF32LittleEndianStringEncoding] autorelease];
+}
+
+std::wstring fromNSString(const NSString* str)
+{
+	wchar_t buffer[4096];
+	[str getCString: (char*)buffer maxLength: sizeof_array(buffer) encoding: NSUTF32LittleEndianStringEncoding];
+	return std::wstring(buffer);
+}
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.online.GcSessionManager", 0, GcSessionManager, ISessionManagerProvider)
 
@@ -43,22 +76,28 @@ bool GcSessionManager::create(const IGameConfiguration* configuration)
 	// Authenticate user.
 	if ([GKLocalPlayer localPlayer].authenticated == NO)
 	{
+		log::info << L"GameCenter; Need to authenticate local player..." << Endl;
+
 		GKLocalPlayer* localPlayer = [GKLocalPlayer localPlayer];
 		localPlayer.authenticateHandler = ^(UIViewController *viewController, NSError *error)
 		{
 			if (viewController != nil)
 			{
-				UIViewController* rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;				
-				[rootViewController presentViewController: viewController animated: YES completion: nil];
+				UIViewController* rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
+				if (rootViewController)
+					[rootViewController presentViewController: viewController animated: YES completion: nil];
+				else
+					log::error << L"GameCenter; no root view controller, cannot present sign-in view." << Endl;
 			}
 			else
 			{
-				if ([GKLocalPlayer localPlayer].authenticated)
+				if ([GKLocalPlayer localPlayer].authenticated && error == nil)
+					log::info << L"GameCenter; local player authenticated successfully." << Endl;
+				else
 				{
-					if (error == nil)
-						NSLog(@"LOCAL PLAYER AUTHENTICATED");
-					else
-						NSLog(@"LOCAL PLAYER NOT AUTHENTICATED");
+					log::error << L"GameCenter; local player not authenticated;" << Endl;
+					if (error != nil)
+						log::error << fromNSString([error localizedDescription]) << Endl;
 				}
 			}
 		};
@@ -103,7 +142,7 @@ std::wstring GcSessionManager::getLanguageCode() const
 
 bool GcSessionManager::isConnected() const
 {
-	return true;
+	return ([GKLocalPlayer localPlayer].authenticated == YES);
 }
 
 bool GcSessionManager::requireUserAttention() const
@@ -123,48 +162,54 @@ bool GcSessionManager::buyDLC(const std::wstring& id) const
 
 bool GcSessionManager::navigateUrl(const net::Url& url) const
 {
-	if (url.getString() == L"gamecenter://default")
+	if ([GKLocalPlayer localPlayer].authenticated == NO)
+	{
+		log::error << L"GameCenter; cannot navigate to url as local player is not authenticated." << Endl;
+		return false;
+	}
+
+	if (url.getString() == L"gamecenter://default/")
 	{
 		GKGameCenterViewController* gameCenterController = [[GKGameCenterViewController alloc] init];
 		if (gameCenterController != nil)
 		{
-			//gameCenterController.gameCenterDelegate = self;
+			gameCenterController.gameCenterDelegate = [[[GameCenterViewDelegate alloc] init] autorelease];
 			gameCenterController.viewState = GKGameCenterViewControllerStateDefault;
 
 			UIViewController* rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;				
 			[rootViewController presentViewController: gameCenterController animated: YES completion: nil];
 		}		
 	}
-	if (url.getString() == L"gamecenter://leaderboards")
+	if (url.getString() == L"gamecenter://leaderboards/")
 	{
 		GKGameCenterViewController* gameCenterController = [[GKGameCenterViewController alloc] init];
 		if (gameCenterController != nil)
 		{
-			//gameCenterController.gameCenterDelegate = self;
+			gameCenterController.gameCenterDelegate = [[[GameCenterViewDelegate alloc] init] autorelease];
 			gameCenterController.viewState = GKGameCenterViewControllerStateLeaderboards;
 
 			UIViewController* rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;				
 			[rootViewController presentViewController: gameCenterController animated: YES completion: nil];
 		}		
 	}
-	else if (url.getString() == L"gamecenter://achievements")
+	else if (url.getString() == L"gamecenter://achievements/")
 	{
 		GKGameCenterViewController* gameCenterController = [[GKGameCenterViewController alloc] init];
 		if (gameCenterController != nil)
 		{
-			//gameCenterController.gameCenterDelegate = self;
+			gameCenterController.gameCenterDelegate = [[[GameCenterViewDelegate alloc] init] autorelease];
 			gameCenterController.viewState = GKGameCenterViewControllerStateAchievements;
 
 			UIViewController* rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;				
 			[rootViewController presentViewController: gameCenterController animated: YES completion: nil];
 		}		
 	}
-	else if (url.getString() == L"gamecenter://challenges")
+	else if (url.getString() == L"gamecenter://challenges/")
 	{
 		GKGameCenterViewController* gameCenterController = [[GKGameCenterViewController alloc] init];
 		if (gameCenterController != nil)
 		{
-			//gameCenterController.gameCenterDelegate = self;
+			gameCenterController.gameCenterDelegate = [[[GameCenterViewDelegate alloc] init] autorelease];
 			gameCenterController.viewState = GKGameCenterViewControllerStateChallenges;
 
 			UIViewController* rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;				

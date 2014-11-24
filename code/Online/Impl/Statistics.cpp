@@ -100,6 +100,10 @@ Statistics::Statistics(IStatisticsProvider* provider, TaskQueue* taskQueue)
 ,	m_taskQueue(taskQueue)
 ,	m_ready(false)
 {
+}
+
+void Statistics::enqueueEnumeration()
+{
 	m_taskQueue->add(new TaskEnumStatistics(
 		m_provider,
 		this,

@@ -38,6 +38,8 @@ private:
 
 	Statistics(IStatisticsProvider* provider, TaskQueue* taskQueue);
 
+	void enqueueEnumeration();
+
 	void callbackEnumStatistics(const std::map< std::wstring, int32_t >& statistics);
 };
 

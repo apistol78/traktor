@@ -48,6 +48,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.online.SessionManager", SessionManager, ISessio
 
 SessionManager::SessionManager()
 :	m_downloadableContent(false)
+,	m_connected(false)
 {
 }
 
@@ -100,9 +101,21 @@ bool SessionManager::create(ISessionManagerProvider* provider, const IGameConfig
 		m_videoSharing = new VideoSharing(videoSharingProvider);
 
 	m_downloadableContent = downloadableContent;
+	m_connected = m_provider->isConnected();
 
 	m_updateTask = new TaskUpdateSessionManager(m_provider);
 	m_taskQueues[0]->add(m_updateTask);
+
+	// Perform an initial enumeration; do this even if the provider
+	// is disconnected as we need to have systems partially up and running.
+	if (m_saveData)
+		m_saveData->enqueueEnumeration();
+	if (m_achievements)
+		m_achievements->enqueueEnumeration();
+	if (m_leaderboards)
+		m_leaderboards->enqueueEnumeration();
+	if (m_statistics)
+		m_statistics->enqueueEnumeration();
 
 	return true;
 }
@@ -137,6 +150,21 @@ bool SessionManager::update()
 		m_taskQueues[0]->add(m_updateTask);
 	}
 
+	// If provider has become connected then we need to re-enumerate systems.
+	bool connected = m_provider->isConnected();
+	if (connected && !m_connected)
+	{
+		if (m_saveData)
+			m_saveData->enqueueEnumeration();
+		if (m_achievements)
+			m_achievements->enqueueEnumeration();
+		if (m_leaderboards)
+			m_leaderboards->enqueueEnumeration();
+		if (m_statistics)
+			m_statistics->enqueueEnumeration();
+		m_connected = true;		
+	}
+
 	return true;
 }
 
@@ -147,7 +175,7 @@ std::wstring SessionManager::getLanguageCode() const
 
 bool SessionManager::isConnected() const
 {
-	return m_provider ? m_provider->isConnected() : false;
+	return m_connected;
 }
 
 bool SessionManager::requireUserAttention() const
