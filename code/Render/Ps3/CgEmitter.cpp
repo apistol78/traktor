@@ -807,36 +807,37 @@ bool emitPixelOutput(CgContext& cx, PixelOutput* node)
 	StringOutputStream& fpb = cx.getPixelShader().getOutputStream(CgShader::BtBody);
 	fpb << L"o.Color0" << L" = " << in->cast(CtFloat4) << L";" << Endl;
 
-	RenderState& rs = cx.getRenderState();
+	const RenderState& rs = node->getRenderState();
+	RenderStateGCM& rsgcm = cx.getRenderState();
 
-	rs.cullFaceEnable = node->getCullMode() == PixelOutput::CmNever ? CELL_GCM_FALSE : CELL_GCM_TRUE;
-	rs.cullFace = gcmCullFace[node->getCullMode()];
-	rs.blendEnable = node->getBlendEnable() ? CELL_GCM_TRUE : CELL_GCM_FALSE;
-	rs.blendEquation = gcmBlendEquation[node->getBlendOperation()];
-	rs.blendFuncSrc = gcmBlendFunction[node->getBlendSource()];
-	rs.blendFuncDest = gcmBlendFunction[node->getBlendDestination()];
-	rs.depthTestEnable = node->getDepthEnable() ? CELL_GCM_TRUE : CELL_GCM_FALSE;
-	rs.depthMask = node->getDepthWriteEnable() ? CELL_GCM_TRUE : CELL_GCM_FALSE;
-	rs.depthFunc = gcmFunction[node->getDepthFunction()];
-	rs.alphaTestEnable = node->getAlphaTestEnable() ? CELL_GCM_TRUE : CELL_GCM_FALSE;
-	rs.alphaFunc = gcmFunction[node->getAlphaTestFunction()];
-	rs.alphaRef = node->getAlphaTestReference();
-	rs.stencilTestEnable = node->getStencilEnable() ? CELL_GCM_TRUE : CELL_GCM_FALSE;
-	rs.stencilFunc = gcmFunction[node->getStencilFunction()];
-	rs.stencilRef = node->getStencilReference();
-	rs.stencilOpFail = gcmStencilOperation[node->getStencilFail()];
-	rs.stencilOpZFail = gcmStencilOperation[node->getStencilZFail()];
-	rs.stencilOpZPass = gcmStencilOperation[node->getStencilPass()];
+	rsgcm.cullFaceEnable = rs.cullMode == CmNever ? CELL_GCM_FALSE : CELL_GCM_TRUE;
+	rsgcm.cullFace = gcmCullFace[rs.cullMode];
+	rsgcm.blendEnable = rs.blendEnable ? CELL_GCM_TRUE : CELL_GCM_FALSE;
+	rsgcm.blendEquation = gcmBlendEquation[rs.blendOperation];
+	rsgcm.blendFuncSrc = gcmBlendFunction[rs.blendSource];
+	rsgcm.blendFuncDest = gcmBlendFunction[rs.blendDestination];
+	rsgcm.depthTestEnable = rs.depthEnable ? CELL_GCM_TRUE : CELL_GCM_FALSE;
+	rsgcm.depthMask = rs.depthWriteEnable ? CELL_GCM_TRUE : CELL_GCM_FALSE;
+	rsgcm.depthFunc = gcmFunction[rs.depthFunction];
+	rsgcm.alphaTestEnable = rs.alphaTestEnable ? CELL_GCM_TRUE : CELL_GCM_FALSE;
+	rsgcm.alphaFunc = gcmFunction[rs.alphaTestFunction];
+	rsgcm.alphaRef = rs.alphaTestReference;
+	rsgcm.stencilTestEnable = rs.stencilEnable ? CELL_GCM_TRUE : CELL_GCM_FALSE;
+	rsgcm.stencilFunc = gcmFunction[rs.stencilFunction];
+	rsgcm.stencilRef = rs.stencilReference;
+	rsgcm.stencilOpFail = gcmStencilOperation[rs.stencilFail];
+	rsgcm.stencilOpZFail = gcmStencilOperation[rs.stencilZFail];
+	rsgcm.stencilOpZPass = gcmStencilOperation[rs.stencilPass];
 
-	rs.colorMask = 0;
-	if (node->getColorWriteMask() & PixelOutput::CwRed)
-		rs.colorMask |= CELL_GCM_COLOR_MASK_R;
-	if (node->getColorWriteMask() & PixelOutput::CwGreen)
-		rs.colorMask |= CELL_GCM_COLOR_MASK_G;
-	if (node->getColorWriteMask() & PixelOutput::CwBlue)
-		rs.colorMask |= CELL_GCM_COLOR_MASK_B;
-	if (node->getColorWriteMask() & PixelOutput::CwAlpha)
-		rs.colorMask |= CELL_GCM_COLOR_MASK_A;
+	rsgcm.colorMask = 0;
+	if (rs.colorWriteMask & CwRed)
+		rsgcm.colorMask |= CELL_GCM_COLOR_MASK_R;
+	if (rs.colorWriteMask & CwGreen)
+		rsgcm.colorMask |= CELL_GCM_COLOR_MASK_G;
+	if (rs.colorWriteMask & CwBlue)
+		rsgcm.colorMask |= CELL_GCM_COLOR_MASK_B;
+	if (rs.colorWriteMask & CwAlpha)
+		rsgcm.colorMask |= CELL_GCM_COLOR_MASK_A;
 
 	cx.setRegisterCount(node->getRegisterCount());
 	return true;
@@ -946,8 +947,8 @@ bool emitSampler(CgContext& cx, Sampler* node)
 		StringOutputStream& fu = cx.getShader().getOutputStream(CgShader::BtUniform);
 		fu << L"sampler " << samplerName << L" : register(s" << stage << L");" << Endl;
 
-		RenderState& rs = cx.getRenderState();
-		SamplerState& ss = rs.samplerStates[stage];
+		RenderStateGCM& rs = cx.getRenderState();
+		SamplerStateGCM& ss = rs.samplerStates[stage];
 
 		bool minLinear = node->getMinFilter() != Sampler::FtPoint;
 		bool mipLinear = node->getMipFilter() != Sampler::FtPoint;
@@ -1018,7 +1019,7 @@ bool emitScript(CgContext& cx, Script* node)
 	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
 
 	// Get platform specific script from node.
-	std::wstring script = node->getScript(L"DX9");
+	std::wstring script = node->getScript(L"PS3");
 	if (script.empty())
 		return false;
 
@@ -1425,17 +1426,6 @@ bool emitTargetSize(CgContext& cx, TargetSize* node)
 	return true;
 }
 
-bool emitTexture(CgContext& cx, Texture* node)
-{
-	std::wstring parameterName = getParameterNameFromGuid(node->getExternal());
-	cx.getShader().createVariable(
-		node->findOutputPin(L"Output"),
-		parameterName,
-		cg_from_parameter_type(node->getParameterType())
-	);
-	return true;
-}
-
 bool emitTransform(CgContext& cx, Transform* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
@@ -1620,6 +1610,8 @@ bool emitVertexOutput(CgContext& cx, VertexOutput* node)
 
 struct Emitter
 {
+	virtual ~Emitter() {}
+
 	virtual bool emit(CgContext& c, Node* node) = 0;
 };
 
@@ -1630,8 +1622,8 @@ struct EmitterCast : public Emitter
 
 	function_t m_function;
 
-	EmitterCast(function_t function) :
-		m_function(function)
+	EmitterCast(function_t function)
+	:	m_function(function)
 	{
 	}
 
@@ -1684,6 +1676,7 @@ CgEmitter::CgEmitter()
 	m_emitters[&type_of< Reflect >()] = new EmitterCast< Reflect >(emitReflect);
 	m_emitters[&type_of< Round >()] = new EmitterCast< Round >(emitRound);
 	m_emitters[&type_of< Sampler >()] = new EmitterCast< Sampler >(emitSampler);
+	m_emitters[&type_of< Script >()] = new EmitterCast< Script >(emitScript);
 	m_emitters[&type_of< Scalar >()] = new EmitterCast< Scalar >(emitScalar);
 	m_emitters[&type_of< Sign >()] = new EmitterCast< Sign >(emitSign);
 	m_emitters[&type_of< Sin >()] = new EmitterCast< Sin >(emitSin);
@@ -1695,7 +1688,6 @@ CgEmitter::CgEmitter()
 	m_emitters[&type_of< Switch >()] = new EmitterCast< Switch >(emitSwitch);
 	m_emitters[&type_of< Tan >()] = new EmitterCast< Tan >(emitTan);
 	m_emitters[&type_of< TargetSize >()] = new EmitterCast< TargetSize >(emitTargetSize);
-	m_emitters[&type_of< Texture >()] = new EmitterCast< Texture >(emitTexture);
 	m_emitters[&type_of< Transform >()] = new EmitterCast< Transform >(emitTransform);
 	m_emitters[&type_of< Transpose >()] = new EmitterCast< Transpose >(emitTranspose);
 	m_emitters[&type_of< Truncate >()] = new EmitterCast< Truncate >(emitTruncate);

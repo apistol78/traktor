@@ -26,6 +26,8 @@ class T_DLLCLASS IScriptProfiler : public Object
 public:
 	struct IListener
 	{
+		virtual ~IListener() {}
+
 		virtual void callMeasured(const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration) = 0;
 	};
 

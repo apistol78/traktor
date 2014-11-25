@@ -9,7 +9,7 @@ namespace traktor
 	namespace render
 	{
 
-struct SamplerState
+struct SamplerStateGCM
 {
 	uint8_t minFilter;
 	uint8_t magFilter;
@@ -17,7 +17,7 @@ struct SamplerState
 	uint8_t wrapV;
 	uint8_t wrapW;
 
-	SamplerState()
+	SamplerStateGCM()
 	:	minFilter(CELL_GCM_TEXTURE_NEAREST_LINEAR)
 	,	magFilter(CELL_GCM_TEXTURE_LINEAR)
 	,	wrapU(CELL_GCM_TEXTURE_WRAP)
@@ -27,7 +27,7 @@ struct SamplerState
 	}
 };
 
-struct RenderState
+struct RenderStateGCM
 {
 	uint32_t cullFaceEnable;
 	uint32_t cullFace;
@@ -48,9 +48,9 @@ struct RenderState
 	uint32_t stencilOpFail;
 	uint32_t stencilOpZFail;
 	uint32_t stencilOpZPass;
-	SamplerState samplerStates[8];
+	SamplerStateGCM samplerStates[8];
 
-	RenderState()
+	RenderStateGCM()
 	:	cullFaceEnable(CELL_GCM_FALSE)
 	,	cullFace(CELL_GCM_BACK)
 	,	blendEnable(CELL_GCM_FALSE)

@@ -47,7 +47,7 @@ RenderSystemPs3::~RenderSystemPs3()
 {
 }
 
-bool RenderSystemPs3::create(const RenderSystemCreateDesc& desc)
+bool RenderSystemPs3::create(const RenderSystemDesc& desc)
 {
 	int32_t err;
 
@@ -134,6 +134,11 @@ void RenderSystemPs3::destroy()
 {
 	//cellGcmSetWaitFlip();
 	//cellGcmFinish(1);
+}
+
+bool RenderSystemPs3::reset(const RenderSystemDesc& desc)
+{
+	return false;
 }
 
 uint32_t RenderSystemPs3::getDisplayModeCount() const
@@ -291,7 +296,7 @@ Ref< RenderTargetSet > RenderSystemPs3::createRenderTargetSet(const RenderTarget
 		return 0;
 }
 
-Ref< IProgram > RenderSystemPs3::createProgram(const ProgramResource* programResource)
+Ref< IProgram > RenderSystemPs3::createProgram(const ProgramResource* programResource, const wchar_t* const tag)
 {
 	Ref< const ProgramResourcePs3 > resource = dynamic_type_cast< const ProgramResourcePs3* >(programResource);
 	if (!resource)

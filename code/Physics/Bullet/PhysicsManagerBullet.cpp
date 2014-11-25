@@ -1161,6 +1161,7 @@ void PhysicsManagerBullet::update(bool issueCollisionEvents)
 
 void PhysicsManagerBullet::solveConstraints(const RefArray< Body >& bodies, const RefArray< Joint >& joints)
 {
+#if !defined(_PS3)
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	btCollisionObject* btBodies[32];
@@ -1186,6 +1187,7 @@ void PhysicsManagerBullet::solveConstraints(const RefArray< Body >& bodies, cons
 		0,
 		m_dynamicsWorld->getDispatcher()
 	);
+#endif
 }
 
 RefArray< Body > PhysicsManagerBullet::getBodies() const

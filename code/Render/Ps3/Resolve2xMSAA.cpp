@@ -149,7 +149,7 @@ void Resolve2xMSAA::resolve(StateCachePs3& stateCache, const CellGcmTexture* res
 
 	stateCache.setViewport(Viewport(0, 0, sf.width, sf.height, 0.0f, 1.0f));
 
-	RenderState rs;
+	RenderStateGCM rs;
 	rs.depthMask = CELL_GCM_FALSE;
 	stateCache.setRenderState(rs);
 
@@ -160,7 +160,7 @@ void Resolve2xMSAA::resolve(StateCachePs3& stateCache, const CellGcmTexture* res
 		false
 	);
 
-	SamplerState ss;
+	SamplerStateGCM ss;
 	if (m_texture0Index >= 0)
 	{
 		stateCache.setSamplerState(m_texture0Index, ss);

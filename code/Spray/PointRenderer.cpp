@@ -55,6 +55,7 @@ const uint32_t c_pointCount = 3000;
 const uint32_t c_pointCount = 8000;
 #endif
 
+#if !defined(_PS3)
 const static float c_extents[4][2] =
 {
 	{ -1.0f, -1.0f },
@@ -62,6 +63,7 @@ const static float c_extents[4][2] =
 	{  1.0f,  1.0f },
 	{ -1.0f,  1.0f }
 };
+#endif
 
 		}
 
@@ -176,8 +178,8 @@ void PointRenderer::render(
 	job.data.middleAge = middleAge;
 	job.data.pointsEA = (uintptr_t)&points[0];
 	job.data.pointsCount = size;
-	job.data.vertexOutEA = (uintptr_t)(m_vertex + m_vertexOffset);
-	job.data.batchEA = (uintptr_t)&batches.back();
+	job.data.vertexOutEA = (uintptr_t)(m_vertex);
+	job.data.batchEA = (uintptr_t)&back;
 
 	m_jobQueue->push(&job);
 

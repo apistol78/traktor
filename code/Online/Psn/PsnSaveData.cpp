@@ -148,7 +148,7 @@ bool PsnSaveData::enumerate(std::set< std::wstring >& outSaveDataIds)
 	m_currentSavedataSizeKB = 0;
 
 	int32_t err = cellSaveDataListAutoLoad(
-		CELL_SAVEDATA_VERSION_CURRENT,
+		CELL_SAVEDATA_VERSION_420,
 		CELL_SAVEDATA_ERRDIALOG_NOREPEAT,
 		&list,
 		&buf,
@@ -210,7 +210,7 @@ bool PsnSaveData::get(const std::wstring& saveDataId, Ref< ISerializable >& outA
 	std::strcat(dirName, wstombs(toUpper(saveDataId)).c_str());
 
 	int32_t err = cellSaveDataAutoLoad2(
-		CELL_SAVEDATA_VERSION_CURRENT,
+		CELL_SAVEDATA_VERSION_420,
 		dirName,
 		CELL_SAVEDATA_ERRDIALOG_NOREPEAT,
 		&buf,
@@ -257,7 +257,7 @@ bool PsnSaveData::set(const std::wstring& saveDataId, const SaveDataDesc& saveDa
 
 	SaveDataHelper saveDataHelper(this, saveDataDesc, dms.getBuffer(), m_saveIconBuffer, m_saveIconSize); 
 	int32_t err = cellSaveDataAutoSave2(
-		CELL_SAVEDATA_VERSION_CURRENT,
+		CELL_SAVEDATA_VERSION_420,
 		dirName,
 		CELL_SAVEDATA_ERRDIALOG_ALWAYS,
 		&buf,
@@ -280,6 +280,11 @@ bool PsnSaveData::set(const std::wstring& saveDataId, const SaveDataDesc& saveDa
 	}
 
 	return true;
+}
+
+bool PsnSaveData::remove(const std::wstring& saveDataId)
+{
+	return false;
 }
 
 void PsnSaveData::callbackEnumFixed(CellSaveDataCBResult* cbResult, CellSaveDataListGet* get, CellSaveDataFixedSet* set)

@@ -17,6 +17,8 @@ namespace traktor
  */
 struct JointSolver
 {
+	virtual ~JointSolver() {}
+
 	virtual void prepare() {}
 
 	virtual void update(float deltaTime) {}

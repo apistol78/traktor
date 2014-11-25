@@ -78,7 +78,7 @@ void StateCachePs3::setInFp32Mode(bool inFp32Mode)
 	m_inFp32Mode = inFp32Mode;
 }
 
-void StateCachePs3::setRenderState(const RenderState& rs)
+void StateCachePs3::setRenderState(const RenderStateGCM& rs)
 {
 	if (rs.cullFaceEnable != m_renderState.cullFaceEnable)
 	{
@@ -215,9 +215,9 @@ void StateCachePs3::setRenderState(const RenderState& rs)
 	}
 }
 
-void StateCachePs3::setSamplerState(int32_t stage, const SamplerState& ss)
+void StateCachePs3::setSamplerState(int32_t stage, const SamplerStateGCM& ss)
 {
-	SamplerState& samplerState = m_samplerStates[stage];
+	SamplerStateGCM& samplerState = m_samplerStates[stage];
 
 	if (
 		ss.minFilter != samplerState.minFilter ||
@@ -395,10 +395,10 @@ void StateCachePs3::setVertexDataArray(uint8_t index, uint8_t stride, uint8_t si
 
 void StateCachePs3::reset()
 {
-	m_renderState = RenderState();
+	m_renderState = RenderStateGCM();
 	for (int i = 0; i < SamplerCount; ++i)
 	{
-		m_samplerStates[i] = SamplerState();
+		m_samplerStates[i] = SamplerStateGCM();
 		m_textureOffsets[i] = 0;
 		m_textureLods[i] = 12 << 8;
 		m_textureAnisotropy[i] = CELL_GCM_TEXTURE_MAX_ANISO_1;

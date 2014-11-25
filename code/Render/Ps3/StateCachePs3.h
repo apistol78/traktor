@@ -26,9 +26,9 @@ public:
 
 	void setInFp32Mode(bool inFp32Mode);
 
-	void setRenderState(const RenderState& rs);
+	void setRenderState(const RenderStateGCM& rs);
 
-	void setSamplerState(int32_t stage, const SamplerState& ss);
+	void setSamplerState(int32_t stage, const SamplerStateGCM& ss);
 
 	void setSamplerTexture(int32_t stage, const CellGcmTexture* texture, uint16_t maxLod, uint8_t anisotropy);
 
@@ -60,8 +60,8 @@ private:
 	};
 
 	bool m_inFp32Mode;
-	RenderState m_renderState;
-	SamplerState m_samplerStates[SamplerCount];
+	RenderStateGCM m_renderState;
+	SamplerStateGCM m_samplerStates[SamplerCount];
 	const void* m_vertexUCode;
 	uint32_t m_fragmentOffset;
 	float* m_vertexConstantsShadow;

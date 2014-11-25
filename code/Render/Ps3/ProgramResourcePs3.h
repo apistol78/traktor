@@ -21,7 +21,7 @@ class ProgramResourcePs3 : public ProgramResource
 public:
 	ProgramResourcePs3();
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	friend class ProgramPs3;
@@ -38,7 +38,7 @@ private:
 	uint32_t m_scalarParameterDataSize;
 	uint32_t m_textureParameterDataSize;
 	std::vector< uint8_t > m_inputSignature;
-	RenderState m_renderState;
+	RenderStateGCM m_renderState;
 };
 
 	}

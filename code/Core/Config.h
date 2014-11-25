@@ -133,7 +133,7 @@ typedef unsigned __int64 uint64_t;
 #endif
 
 // Use these macros in c/d tors only.
-#if defined(__ANDROID__) || defined(__EMSCRIPTEN__) || defined(__PNACL__)
+#if defined(__ANDROID__) || defined(__EMSCRIPTEN__) || defined(__PNACL__) || defined(_PS3)
 #	define T_EXCEPTION_GUARD_BEGIN
 #	define T_EXCEPTION_GUARD_END
 #endif

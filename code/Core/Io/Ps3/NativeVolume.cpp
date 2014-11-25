@@ -110,7 +110,12 @@ bool NativeVolume::remove(const Path& filename)
 	return cellFsUnlink(wstombs(getSystemPath(filename)).c_str()) == CELL_FS_SUCCEEDED;
 }
 
-bool NativeVolume::rename(const Path& fileName, const std::wstring& newName)
+bool NativeVolume::move(const Path& fileName, const std::wstring& newName, bool overwrite)
+{
+	return false;
+}
+
+bool NativeVolume::copy(const Path& fileName, const std::wstring& newName, bool overwrite)
 {
 	return false;
 }

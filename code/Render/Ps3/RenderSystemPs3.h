@@ -30,9 +30,13 @@ public:
 
 	virtual ~RenderSystemPs3();
 
-	virtual bool create(const RenderSystemCreateDesc& desc);
+	virtual bool create(const RenderSystemDesc& desc);
 
 	virtual void destroy();
+
+	virtual bool reset(const RenderSystemDesc& desc);
+
+	virtual void getInformation(RenderSystemInformation& outInfo) const;
 
 	virtual uint32_t getDisplayModeCount() const;
 	
@@ -58,7 +62,7 @@ public:
 
 	virtual Ref< RenderTargetSet > createRenderTargetSet(const RenderTargetSetCreateDesc& desc);
 
-	virtual Ref< IProgram > createProgram(const ProgramResource* programResource);
+	virtual Ref< IProgram > createProgram(const ProgramResource* programResource, const wchar_t* const tag);
 
 	virtual Ref< IProgramCompiler > createProgramCompiler() const;
 

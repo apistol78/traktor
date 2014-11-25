@@ -203,8 +203,8 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 
 		Transform updateTransform = m_emitter->worldSpace() ? m_transform : Transform::identity();
 
-		const RefArray< Modifier >& modifiers = m_emitter->getModifiers();
-		for (RefArray< Modifier >::const_iterator i = modifiers.begin(); i != modifiers.end(); ++i)
+		const RefArray< const Modifier >& modifiers = m_emitter->getModifiers();
+		for (RefArray< const Modifier >::const_iterator i = modifiers.begin(); i != modifiers.end(); ++i)
 		{
 			if (*i)
 				(*i)->update(

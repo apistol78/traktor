@@ -27,6 +27,8 @@ enum FeedbackType
 class T_DLLCLASS IFeedbackListener
 {
 public:
+	virtual ~IFeedbackListener() {}
+
 	virtual void feedbackValues(FeedbackType type, const float* values, int32_t count) = 0;
 };
 

@@ -25,6 +25,8 @@ public:
 		}
 	};
 
+	virtual ~Case() {}
+
 	void execute(Context& context);
 
 protected:

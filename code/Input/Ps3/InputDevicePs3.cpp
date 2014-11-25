@@ -38,27 +38,29 @@ struct ControlInfo
 	InputDefaultControlType type;
 	bool analogue;
 	int32_t control;
+	float rangeMin;
+	float rangeMax;
 }
 c_controlInfo[] =
 {
-	{ L"INPUT_GAMEPAD_UP", DtUp, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL1, CELL_PAD_CTRL_UP) },
-	{ L"INPUT_GAMEPAD_DOWN", DtDown, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL1, CELL_PAD_CTRL_DOWN) },
-	{ L"INPUT_GAMEPAD_LEFT", DtLeft, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL1, CELL_PAD_CTRL_LEFT) },
-	{ L"INPUT_GAMEPAD_RIGHT", DtRight, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL1, CELL_PAD_CTRL_RIGHT) },
-	{ L"INPUT_GAMEPAD_SELECT", DtSelect, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL1, CELL_PAD_CTRL_SELECT) },
-	{ L"INPUT_GAMEPAD_CANCEL", DtCancel, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL1, CELL_PAD_CTRL_START) },
-	{ L"INPUT_GAMEPAD_BUTTON_1", DtButton1, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_CROSS) },
-	{ L"INPUT_GAMEPAD_BUTTON_2", DtButton2, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_CIRCLE) },
-	{ L"INPUT_GAMEPAD_BUTTON_3", DtButton3, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_TRIANGLE) },
-	{ L"INPUT_GAMEPAD_BUTTON_4", DtButton4, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_SQUARE) },
-	{ L"INPUT_GAMEPAD_TRIGGER_LEFT", DtTriggerLeft, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_L2) },
-	{ L"INPUT_GAMEPAD_TRIGGER_RIGHT", DtTriggerRight, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_R2) },
-	{ L"INPUT_GAMEPAD_SHOULDER_LEFT", DtShoulderLeft, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_L1) },
-	{ L"INPUT_GAMEPAD_SHOULDER_RIGHT", DtShoulderRight, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_R1) },
-	{ L"INPUT_GAMEPAD_THUMB_LEFT_X", DtThumbLeftX, true, 0 },
-	{ L"INPUT_GAMEPAD_THUMB_LEFT_Y", DtThumbLeftY, true, 1 },
-	{ L"INPUT_GAMEPAD_THUMB_RIGHT_X", DtThumbRightX, true, 2 },
-	{ L"INPUT_GAMEPAD_THUMB_RIGHT_Y", DtThumbRightY, true, 3 }
+	{ L"INPUT_GAMEPAD_UP", DtUp, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL1, CELL_PAD_CTRL_UP), 0.0f, 1.0f },
+	{ L"INPUT_GAMEPAD_DOWN", DtDown, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL1, CELL_PAD_CTRL_DOWN), 0.0f, 1.0f },
+	{ L"INPUT_GAMEPAD_LEFT", DtLeft, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL1, CELL_PAD_CTRL_LEFT), 0.0f, 1.0f },
+	{ L"INPUT_GAMEPAD_RIGHT", DtRight, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL1, CELL_PAD_CTRL_RIGHT), 0.0f, 1.0f },
+	{ L"INPUT_GAMEPAD_SELECT", DtSelect, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL1, CELL_PAD_CTRL_SELECT), 0.0f, 1.0f },
+	{ L"INPUT_GAMEPAD_CANCEL", DtCancel, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL1, CELL_PAD_CTRL_START), 0.0f, 1.0f },
+	{ L"INPUT_GAMEPAD_BUTTON_1", DtButton1, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_CROSS), 0.0f, 1.0f },
+	{ L"INPUT_GAMEPAD_BUTTON_2", DtButton2, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_CIRCLE), 0.0f, 1.0f },
+	{ L"INPUT_GAMEPAD_BUTTON_3", DtButton3, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_TRIANGLE), 0.0f, 1.0f },
+	{ L"INPUT_GAMEPAD_BUTTON_4", DtButton4, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_SQUARE), 0.0f, 1.0f },
+	{ L"INPUT_GAMEPAD_TRIGGER_LEFT", DtTriggerLeft, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_L2), 0.0f, 1.0f },
+	{ L"INPUT_GAMEPAD_TRIGGER_RIGHT", DtTriggerRight, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_R2), 0.0f, 1.0f },
+	{ L"INPUT_GAMEPAD_SHOULDER_LEFT", DtShoulderLeft, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_L1), 0.0f, 1.0f },
+	{ L"INPUT_GAMEPAD_SHOULDER_RIGHT", DtShoulderRight, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_R1), 0.0f, 1.0f },
+	{ L"INPUT_GAMEPAD_THUMB_LEFT_X", DtThumbLeftX, true, 0, -1.0f, 1.0f },
+	{ L"INPUT_GAMEPAD_THUMB_LEFT_Y", DtThumbLeftY, true, 1, -1.0f, 1.0f },
+	{ L"INPUT_GAMEPAD_THUMB_RIGHT_X", DtThumbRightX, true, 2, -1.0f, 1.0f },
+	{ L"INPUT_GAMEPAD_THUMB_RIGHT_Y", DtThumbRightY, true, 3, -1.0f, 1.0f }
 };
 
 		}
@@ -150,6 +152,14 @@ float InputDevicePs3::getControlValue(int32_t control)
 	return 0.0f;
 }
 
+bool InputDevicePs3::getControlRange(int32_t control, float& outMin, float& outMax) const
+{
+	const ControlInfo& controlInfo = c_controlInfo[control];
+	outMin = controlInfo.rangeMin;
+	outMax = controlInfo.rangeMax;
+	return true;
+}
+
 bool InputDevicePs3::getDefaultControl(InputDefaultControlType controlType, bool analogue, int& control) const
 {
 	for (int i = 0; i < sizeof_array(c_controlInfo); ++i)
@@ -160,6 +170,11 @@ bool InputDevicePs3::getDefaultControl(InputDefaultControlType controlType, bool
 			return true;
 		}
 	}
+	return false;
+}
+
+bool InputDevicePs3::getKeyEvent(KeyEvent& outEvent)
+{
 	return false;
 }
 
@@ -243,6 +258,10 @@ void InputDevicePs3::setRumble(const InputRumble& rumble)
 		cellPadSetActDirect(m_padIndex, &param);
 		std::memcpy(&m_padActuator, &param, sizeof(CellPadActParam));
 	}
+}
+
+void InputDevicePs3::setExclusive(bool exclusive)
+{
 }
 
 	}

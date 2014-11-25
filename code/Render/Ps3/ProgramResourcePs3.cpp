@@ -21,11 +21,10 @@ public:
 	{
 	}
 
-	virtual bool serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const
 	{
 		s >> Member< uint32_t >(L"ucodeOffset", m_ref.ucodeOffset);
 		s >> Member< uint32_t >(L"parameterOffset", m_ref.parameterOffset);
-		return true;
 	}
 
 private:
@@ -41,13 +40,12 @@ public:
 	{
 	}
 
-	virtual bool serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const
 	{
 		s >> Member< uint16_t >(L"vertexRegisterIndex", m_ref.vertexRegisterIndex);
 		s >> Member< uint16_t >(L"vertexRegisterCount", m_ref.vertexRegisterCount);
 		s >> MemberStlVector< FragmentOffset, MemberFragmentOffset >(L"fragmentOffsets", m_ref.fragmentOffsets);
 		s >> Member< uint16_t >(L"offset", m_ref.offset);
-		return true;
 	}
 
 private:
@@ -63,11 +61,10 @@ public:
 	{
 	}
 
-	virtual bool serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const
 	{
 		s >> Member< uint16_t >(L"stage", m_ref.stage);
 		s >> Member< uint16_t >(L"texture", m_ref.texture);
-		return true;
 	}
 
 private:
@@ -83,11 +80,10 @@ public:
 	{
 	}
 
-	virtual bool serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const
 	{
 		s >> Member< uint32_t >(L"offset", m_ref.offset);
 		s >> Member< uint8_t >(L"usage", m_ref.usage);
-		return true;
 	}
 
 private:
@@ -97,36 +93,35 @@ private:
 class MemberSamplerState : public MemberComplex
 {
 public:
-	MemberSamplerState(const wchar_t* const name, SamplerState& ref)
+	MemberSamplerState(const wchar_t* const name, SamplerStateGCM& ref)
 	:	MemberComplex(name, true)
 	,	m_ref(ref)
 	{
 	}
 
-	virtual bool serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const
 	{
 		s >> Member< uint8_t >(L"minFilter", m_ref.minFilter);
 		s >> Member< uint8_t >(L"magFilter", m_ref.magFilter);
 		s >> Member< uint8_t >(L"wrapU", m_ref.wrapU);
 		s >> Member< uint8_t >(L"wrapV", m_ref.wrapV);
 		s >> Member< uint8_t >(L"wrapW", m_ref.wrapW);
-		return true;
 	}
 
 private:
-	SamplerState& m_ref;
+	SamplerStateGCM& m_ref;
 };
 
 class MemberRenderState : public MemberComplex
 {
 public:
-	MemberRenderState(const wchar_t* const name, RenderState& ref)
+	MemberRenderState(const wchar_t* const name, RenderStateGCM& ref)
 	:	MemberComplex(name, true)
 	,	m_ref(ref)
 	{
 	}
 
-	virtual bool serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const
 	{
 		s >> Member< uint32_t >(L"cullFaceEnable", m_ref.cullFaceEnable);
 		s >> Member< uint32_t >(L"cullFace", m_ref.cullFace);
@@ -147,17 +142,16 @@ public:
 		s >> Member< uint32_t >(L"stencilOpFail", m_ref.stencilOpFail);
 		s >> Member< uint32_t >(L"stencilOpZFail", m_ref.stencilOpZFail);
 		s >> Member< uint32_t >(L"stencilOpZPass", m_ref.stencilOpZPass);
-		s >> MemberStaticArray< SamplerState, 8, MemberSamplerState >(L"samplerStates", m_ref.samplerStates);
-		return true;
+		s >> MemberStaticArray< SamplerStateGCM, 8, MemberSamplerState >(L"samplerStates", m_ref.samplerStates);
 	}
 
 private:
-	RenderState& m_ref;
+	RenderStateGCM& m_ref;
 };
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourcePs3", 1, ProgramResourcePs3, ProgramResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourcePs3", 0, ProgramResourcePs3, ProgramResource)
 
 ProgramResourcePs3::ProgramResourcePs3()
 :	m_scalarParameterDataSize(0)
@@ -165,10 +159,8 @@ ProgramResourcePs3::ProgramResourcePs3()
 {
 }
 
-bool ProgramResourcePs3::serialize(ISerializer& s)
+void ProgramResourcePs3::serialize(ISerializer& s)
 {
-	T_FATAL_ASSERT (s.getVersion() >= 1);
-
 	s >> MemberComposite< Blob >(L"vertexProgramBin", m_vertexShaderBin);
 	s >> MemberComposite< Blob >(L"pixelProgramBin", m_pixelShaderBin);
 	s >> MemberStlVector< ProgramScalar, MemberProgramScalar >(L"vertexScalars", m_vertexScalars);
@@ -181,8 +173,6 @@ bool ProgramResourcePs3::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"textureParameterDataSize", m_textureParameterDataSize);
 	s >> MemberStlVector< uint8_t >(L"inputSignature", m_inputSignature);
 	s >> MemberRenderState(L"renderState", m_renderState);
-
-	return true;
 }
 
 	}

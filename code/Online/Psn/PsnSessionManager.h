@@ -30,7 +30,7 @@ class T_DLLCLASS PsnSessionManager : public ISessionManagerProvider
 public:
 	PsnSessionManager();
 
-	bool create(const PsnCreateDesc& desc);
+	virtual bool create(const IGameConfiguration* configuration);
 
 	virtual void destroy();
 

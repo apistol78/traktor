@@ -31,6 +31,8 @@ class T_DLLCLASS IScriptDebugger : public Object
 public:
 	struct IListener
 	{
+		virtual ~IListener() {}
+
 		virtual void breakpointReached(IScriptDebugger* scriptDebugger, const CallStack& callStack) = 0;
 	};
 

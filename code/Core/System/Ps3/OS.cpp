@@ -20,6 +20,8 @@ struct OSData
 
 	}
 
+T_IMPLEMENT_RTTI_CLASS(L"traktor.OS", OS, Object)
+
 OS& OS::getInstance()
 {
 	static OS* s_instance = 0;
@@ -34,6 +36,11 @@ OS& OS::getInstance()
 uint32_t OS::getCPUCoreCount() const
 {
 	return 2;
+}
+
+Path OS::getExecutable() const
+{
+	return Path();
 }
 
 std::wstring OS::getCommandLine() const
@@ -73,12 +80,17 @@ std::wstring OS::getWritableFolderPath() const
 	return data->contentPath;
 }
 
-bool OS::editFile(const Path& file) const
+bool OS::openFile(const std::wstring& file) const
 {
 	return false;
 }
 
-bool OS::exploreFile(const Path& file) const
+bool OS::editFile(const std::wstring& file) const
+{
+	return false;
+}
+
+bool OS::exploreFile(const std::wstring& file) const
 {
 	return false;
 }
@@ -113,7 +125,6 @@ bool OS::getEnvironment(const std::wstring& name, std::wstring& outValue) const
 }
 
 Ref< IProcess > OS::execute(
-	const Path& file,
 	const std::wstring& commandLine,
 	const Path& workingDirectory,
 	const envmap_t* envmap,

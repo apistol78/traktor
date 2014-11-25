@@ -224,7 +224,7 @@ void RenderTargetPs3::unlock(int level)
 {
 }
 
-void RenderTargetPs3::bind(StateCachePs3& stateCache, int stage, const SamplerState& samplerState)
+void RenderTargetPs3::bind(StateCachePs3& stateCache, int stage, const SamplerStateGCM& samplerState)
 {
 	T_ASSERT (!m_inRender);
 
@@ -237,7 +237,7 @@ void RenderTargetPs3::bind(StateCachePs3& stateCache, int stage, const SamplerSt
 	}
 	else	// FP targets.
 	{
-		SamplerState fpss;
+		SamplerStateGCM fpss;
 		fpss.minFilter = CELL_GCM_TEXTURE_NEAREST_NEAREST;
 		fpss.magFilter = CELL_GCM_TEXTURE_NEAREST;
 		fpss.wrapU = CELL_GCM_TEXTURE_CLAMP;

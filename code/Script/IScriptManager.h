@@ -29,6 +29,8 @@ class IScriptResource;
 class IErrorCallback
 {
 public:
+	virtual ~IErrorCallback() {}
+
 	virtual void syntaxError(const std::wstring& name, uint32_t line, const std::wstring& message) = 0;
 
 	virtual void otherError(const std::wstring& message) = 0;

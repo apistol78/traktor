@@ -28,7 +28,6 @@ namespace traktor
 		{
 
 const SwfCxTransform c_cxWhite = { { 0, 255 }, { 0, 255 }, { 0, 255 }, { 0, 255 } };
-const SwfCxTransform c_cxRed =   { { 0, 255 }, { 0, 0 }, { 0, 0 }, { 0, 255 } };
 
 Timer s_timer;
 

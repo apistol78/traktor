@@ -72,8 +72,11 @@ PsnSessionManager::PsnSessionManager()
 {
 }
 
-bool PsnSessionManager::create(const PsnCreateDesc& desc)
+bool PsnSessionManager::create(const IGameConfiguration* configuration)
 {
+	// FIXME
+	PsnCreateDesc desc = { 0 };
+
 	uint64_t reqTrophySpaceBytes = 0;
 	int32_t err;
 

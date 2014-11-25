@@ -89,7 +89,7 @@ private:
 	uint32_t m_patchFrame;
 	uint32_t m_patchCounter;
 	std::vector< uint8_t > m_inputSignature;
-	RenderState m_renderState;
+	RenderStateGCM m_renderState;
 	std::vector< ProgramScalar > m_vertexScalars;
 	std::vector< ProgramScalar > m_pixelScalars;
 	std::vector< uint32_t > m_pixelTargetSizeUCodeOffsets;

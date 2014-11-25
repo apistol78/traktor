@@ -55,7 +55,7 @@ public:
 
 	inline CgEmitter& getEmitter() { return m_emitter; }
 
-	inline RenderState& getRenderState() { return m_renderState; }
+	inline RenderStateGCM& getRenderState() { return m_renderState; }
 
 	inline bool needVPos() const { return m_needVPos; }
 
@@ -67,7 +67,7 @@ private:
 	CgShader m_pixelShader;
 	CgShader* m_currentShader;
 	CgEmitter m_emitter;
-	RenderState m_renderState;
+	RenderStateGCM m_renderState;
 	std::vector< uint8_t > m_interpolatorMap;
 	int32_t m_booleanRegisterCount;
 	bool m_needVPos;

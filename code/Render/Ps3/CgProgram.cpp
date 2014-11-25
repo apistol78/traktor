@@ -15,7 +15,7 @@ CgProgram::CgProgram(
 	const std::wstring& pixelShader,
 	const std::map< std::wstring, int32_t >& vertexTextures,
 	const std::map< std::wstring, int32_t >& pixelTextures,
-	const RenderState& renderState,
+	const RenderStateGCM& renderState,
 	uint32_t registerCount
 )
 :	m_vertexShader(vertexShader)
@@ -47,7 +47,7 @@ const std::map< std::wstring, int32_t >& CgProgram::getPixelTextures() const
 	return m_pixelTextures;
 }
 
-const RenderState& CgProgram::getRenderState() const
+const RenderStateGCM& CgProgram::getRenderState() const
 {
 	return m_renderState;
 }

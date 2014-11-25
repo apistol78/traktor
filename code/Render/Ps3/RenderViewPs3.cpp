@@ -730,6 +730,11 @@ bool RenderViewPs3::begin(EyeType eye)
 	return true;
 }
 
+bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet)
+{
+	return false;
+}
+
 bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 {
 	T_ASSERT (!m_renderTargetStack.empty());
@@ -780,7 +785,7 @@ bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 	return true;
 }
 
-void RenderViewPs3::clear(uint32_t clearMask, const float color[4], float depth, int32_t stencil)
+void RenderViewPs3::clear(uint32_t clearMask, const Color4f* colors, float depth, int32_t stencil)
 {
 	T_ASSERT (!m_renderTargetStack.empty());
 
@@ -788,10 +793,10 @@ void RenderViewPs3::clear(uint32_t clearMask, const float color[4], float depth,
 	rs.clearMask |= clearMask;
 	if (clearMask & CfColor)
 	{
-		rs.clearColor[0] = color[0];
-		rs.clearColor[1] = color[1];
-		rs.clearColor[2] = color[2];
-		rs.clearColor[3] = color[3];
+		rs.clearColor[0] = colors[0].getRed();
+		rs.clearColor[1] = colors[0].getGreen();
+		rs.clearColor[2] = colors[0].getBlue();
+		rs.clearColor[3] = colors[0].getAlpha();
 	}
 	if (clearMask & CfDepth)
 		rs.clearDepth = depth;
@@ -802,22 +807,7 @@ void RenderViewPs3::clear(uint32_t clearMask, const float color[4], float depth,
 		clearImmediate();
 }
 
-void RenderViewPs3::setVertexBuffer(VertexBuffer* vertexBuffer)
-{
-	m_currentVertexBuffer = checked_type_cast< VertexBufferPs3* >(vertexBuffer);
-}
-
-void RenderViewPs3::setIndexBuffer(IndexBuffer* indexBuffer)
-{
-	m_currentIndexBuffer = checked_type_cast< IndexBufferPs3* >(indexBuffer);
-}
-
-void RenderViewPs3::setProgram(IProgram* program)
-{
-	m_currentProgram = checked_type_cast< ProgramPs3* >(program);
-}
-
-void RenderViewPs3::draw(const Primitives& primitives)
+void RenderViewPs3::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)
 {
 	const uint8_t c_mode[] =
 	{
@@ -828,8 +818,9 @@ void RenderViewPs3::draw(const Primitives& primitives)
 		CELL_GCM_PRIMITIVE_TRIANGLES
 	};
 
-	T_ASSERT (m_currentVertexBuffer);
-	T_ASSERT (m_currentProgram);
+	m_currentVertexBuffer = checked_type_cast< VertexBufferPs3* >(vertexBuffer);
+	m_currentIndexBuffer = checked_type_cast< IndexBufferPs3* >(indexBuffer);
+	m_currentProgram = checked_type_cast< ProgramPs3* >(program);
 
 	if (m_renderTargetDirty)
 		setCurrentRenderState();
@@ -897,6 +888,10 @@ void RenderViewPs3::draw(const Primitives& primitives)
 	// Synchronize RSX after each draw; help to find RSX crashes.
 	cellGcmFinish(gCellGcmCurrentContext, ++s_finishRef);
 #endif
+}
+
+void RenderViewPs3::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
+{
 }
 
 void RenderViewPs3::end()

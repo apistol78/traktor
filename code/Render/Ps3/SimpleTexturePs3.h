@@ -45,7 +45,7 @@ public:
 
 	virtual void unlock(int level);
 
-	void bind(StateCachePs3& stateCache, int stage, const SamplerState& samplerState);
+	void bind(StateCachePs3& stateCache, int stage, const SamplerStateGCM& samplerState);
 
 private:
 	MemoryHeapObject* m_data;
