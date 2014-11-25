@@ -165,18 +165,24 @@ Any ScriptContextLua::executeMethod(Object* self, const std::string& methodName,
 	{
 		CHECK_LUA_STACK(m_luaState, 0);
 
+		// Push error function.
 		lua_pushlightuserdata(m_luaState, (void*)this);
 		lua_pushcclosure(m_luaState, runtimeError, 1);
 		int32_t errfunc = lua_gettop(m_luaState);
 
+		// Get method from environment.
 		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
 		lua_getfield(m_luaState, -1, methodName.c_str());
 
 		if (lua_isfunction(m_luaState, -1))
 		{
-			// Set "self" variable in global environment.
-			m_scriptManager->pushAny(Any::fromObject(self));
-			lua_setglobal(m_luaState, "self");
+			// Set "self" variable in environment.
+			if (m_lastSelf != self)
+			{
+				m_scriptManager->pushAny(Any::fromObject(self));
+				lua_setfield(m_luaState, -3, "self");
+				m_lastSelf = self;
+			}
 
 			// Push arguments.
 			m_scriptManager->pushAny(argv, argc);
@@ -202,6 +208,7 @@ Any ScriptContextLua::executeDelegate(int32_t functionRef, uint32_t argc, const 
 	{
 		CHECK_LUA_STACK(m_luaState, 0);
 
+		// Push error function.
 		lua_pushlightuserdata(m_luaState, (void*)this);
 		lua_pushcclosure(m_luaState, runtimeError, 1);
 		int32_t errfunc = lua_gettop(m_luaState);
@@ -227,6 +234,7 @@ ScriptContextLua::ScriptContextLua(ScriptManagerLua* scriptManager, lua_State* l
 ,	m_luaState(luaState)
 ,	m_environmentRef(environmentRef)
 ,	m_map(map)
+,	m_lastSelf(0)
 {
 }
 

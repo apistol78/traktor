@@ -94,8 +94,17 @@ ScriptManagerLua::ScriptManagerLua()
 	luaopen_string(m_luaState);
 	luaopen_math(m_luaState);
 	luaopen_os(m_luaState);
+
 #if defined(LUA_BITLIBNAME)
+#	if defined(T_LUA_5_2)
+	luaopen_bit32(m_luaState);
+#	else
 	luaopen_bit(m_luaState);
+#	endif
+#endif
+
+#if defined(T_LUA_5_2)
+	luaL_openlibs(m_luaState);
 #endif
 
 	lua_register(m_luaState, "print", luaPrint);
@@ -366,7 +375,7 @@ Ref< IScriptContext > ScriptManagerLua::createContext(const IScriptResource* scr
 
 	const ScriptResourceLua* scriptResourceLua = checked_type_cast< const ScriptResourceLua* >(scriptResource);
 
-	// Create local environment.
+	// Create local environment table and add to registry.
 	lua_newtable(m_luaState);
 	int32_t environmentRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
 	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, environmentRef);
@@ -418,11 +427,25 @@ Ref< IScriptContext > ScriptManagerLua::createContext(const IScriptResource* scr
 		);
 	}
 
-	// Copy global member values from prototype.
+	// Call script.
+	if (scriptResourceLua)
+	{
+		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, environmentRef);
+#if defined(T_LUA_5_2)
+		lua_setupvalue(m_luaState, -2, 1);
+		lua_call(m_luaState, 0, 0);
+#else
+		lua_setfenv(m_luaState, -2);
+		lua_call(m_luaState, 0, 0);
+#endif
+	}
+
+	// Copy values from prototype.
 	if (contextPrototype)
 	{
 		const ScriptContextLua* sourceContext = checked_type_cast< const ScriptContextLua*, false >(contextPrototype);
 
+		// Copy globals.
 		int32_t top = lua_gettop(m_luaState) + 1;
 
 		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, sourceContext->m_environmentRef);
@@ -482,14 +505,6 @@ Ref< IScriptContext > ScriptManagerLua::createContext(const IScriptResource* scr
 		// -2 = sourceContext->m_environmentRef
 		// -1 = environmentRef
 		lua_pop(m_luaState, 2);
-	}
-
-	// Call script.
-	if (scriptResourceLua)
-	{
-		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, environmentRef);
-		lua_setfenv(m_luaState, -2);
-		lua_call(m_luaState, 0, 0);
 	}
 
 	m_contexts.push_back(context);
@@ -767,6 +782,11 @@ void ScriptManagerLua::collectGarbageFull()
 
 void ScriptManagerLua::collectGarbageFullNoLock()
 {
+#if defined(T_LUA_5_2)
+
+	lua_gc(m_luaState, LUA_GCCOLLECT, 0);
+
+#else
 	uint32_t memoryUse = 0;
 	do
 	{
@@ -775,10 +795,30 @@ void ScriptManagerLua::collectGarbageFullNoLock()
 	}
 	while (memoryUse != m_totalMemoryUse);
 	m_lastMemoryUse = m_totalMemoryUse;
+#endif
 }
 
 void ScriptManagerLua::collectGarbagePartial()
 {
+#if defined(T_LUA_5_2)
+
+	if (m_collectSteps < 0)
+	{
+		lua_gc(m_luaState, LUA_GCSTOP, 0);
+		lua_gc(m_luaState, LUA_GCGEN, 0);
+		m_collectSteps = 0;
+	}
+
+	m_collectTargetSteps += float(m_timer.getDeltaTime() * m_collectStepFrequency);
+
+	int32_t targetSteps = int32_t(m_collectTargetSteps);
+	while (m_collectSteps < targetSteps)
+	{
+		lua_gc(m_luaState, LUA_GCCOLLECT, 0);
+		++m_collectSteps;
+	}
+
+#else
 	m_collectTargetSteps += float(m_timer.getDeltaTime() * m_collectStepFrequency);
 
 	int32_t targetSteps = int32_t(m_collectTargetSteps);
@@ -826,6 +866,7 @@ void ScriptManagerLua::collectGarbagePartial()
 	}
 
 	m_lastMemoryUse = m_totalMemoryUse;
+#endif
 }
 
 void ScriptManagerLua::breakDebugger(lua_State* luaState)
@@ -987,8 +1028,9 @@ int ScriptManagerLua::classCallUnknownMethod(lua_State* luaState)
 
 int ScriptManagerLua::classGcMethod(lua_State* luaState)
 {
-	Object* object = *reinterpret_cast< Object** >(lua_touserdata(luaState, 1));
-	T_SAFE_ANONYMOUS_RELEASE(object);
+	Object** object = reinterpret_cast< Object** >(lua_touserdata(luaState, 1));
+	if (object)
+		T_SAFE_ANONYMOUS_RELEASE(*object);
 	return 0;
 }
 

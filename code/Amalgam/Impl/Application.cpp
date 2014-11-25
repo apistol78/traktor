@@ -557,17 +557,6 @@ bool Application::update()
 	float updateInterval = 0.0f;
 	int32_t updateCount = 0;
 
-	// Update scripting language runtime.
-	double gcTimeStart = m_timer.getElapsedTime();
-	if (m_scriptServer)
-	{
-		m_frameProfiler.beginScope(FptScriptGC);
-		m_scriptServer->cleanup(false);
-		m_frameProfiler.endScope();
-	}
-	double gcTimeEnd = m_timer.getElapsedTime();
-	gcDuration = gcTimeEnd - gcTimeStart;
-
 	if ((currentState = m_stateManager->getCurrent()) != 0)
 	{
 #if !defined(__IOS__)
@@ -768,8 +757,18 @@ bool Application::update()
 		IState::BuildResult buildResult = currentState->build(m_frameBuild, m_updateInfo);
 		m_frameProfiler.endScope();
 		double buildTimeEnd = m_timer.getElapsedTime();
-
 		m_buildDuration = float(buildTimeEnd - buildTimeStart);
+
+		// Update scripting language runtime.
+		double gcTimeStart = m_timer.getElapsedTime();
+		if (m_scriptServer)
+		{
+			m_frameProfiler.beginScope(FptScriptGC);
+			m_scriptServer->cleanup(false);
+			m_frameProfiler.endScope();
+		}
+		double gcTimeEnd = m_timer.getElapsedTime();
+		gcDuration = gcTimeEnd - gcTimeStart;
 
 		if (buildResult == IState::BrOk || buildResult == IState::BrNothing)
 		{
