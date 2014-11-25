@@ -19,7 +19,9 @@ struct Block
 };
 #pragma pack()
 
+#if defined(_DEBUG)
 const uint32_t c_magic = 'LIVE';
+#endif
 int32_t s_allocated = 0;
 
 	}

@@ -24,7 +24,6 @@ namespace traktor
 		{
 
 const int32_t c_tableKey_class = -1;
-const int32_t c_maxTargetSteps = 100;
 
 class TableContainerLua : public Object
 {

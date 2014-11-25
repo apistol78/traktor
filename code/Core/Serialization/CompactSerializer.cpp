@@ -1,3 +1,6 @@
+#if defined(_PS3)
+#	include <calloca>
+#endif
 #include "Core/Io/IStream.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Math/Const.h"

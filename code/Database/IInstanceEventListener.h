@@ -19,6 +19,8 @@ class Instance;
 class IInstanceEventListener
 {
 public:
+	virtual ~IInstanceEventListener() {}
+
 	virtual void instanceEventCreated(Instance* instance) = 0;
 
 	virtual void instanceEventRemoved(Instance* instance) = 0;

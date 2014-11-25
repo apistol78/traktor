@@ -13,9 +13,9 @@ class PsnStatistics : public IStatisticsProvider
 	T_RTTI_CLASS;
 
 public:
-	virtual bool enumerate(std::map< std::wstring, float >& outStats);
+	virtual bool enumerate(std::map< std::wstring, int32_t >& outStats);
 
-	virtual bool set(const std::wstring& statId, float value);
+	virtual bool set(const std::wstring& statId, int32_t value);
 };
 
 	}

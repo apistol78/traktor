@@ -13,6 +13,8 @@ struct CallArgs;
 
 struct IExternalCall
 {
+	virtual ~IExternalCall() {}
+
 	virtual ActionValue dispatchExternalCall(const std::string& methodName, int32_t argc, const ActionValue* argv) = 0;
 };
 

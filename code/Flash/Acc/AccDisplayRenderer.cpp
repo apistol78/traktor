@@ -51,8 +51,6 @@ const uint32_t c_cacheGlyphDimY = c_cacheGlyphSize * c_cacheGlyphCountY;
 
 const SwfCxTransform c_cxfZero = { { 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 1.0f } };
 const SwfCxTransform c_cxfYellow = { { 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f }, { 1.0f, 0.0f } };
-const SwfCxTransform c_cxfGreen = { { 0.0f, 0.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f }, { 1.0f, 0.0f } };
-const SwfCxTransform c_cxfIdentity = { { 1.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 0.0f } };
 
 bool rectangleVisible(
 	const Vector4& frameSize,

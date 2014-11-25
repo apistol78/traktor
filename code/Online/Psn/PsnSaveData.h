@@ -28,6 +28,8 @@ public:
 
 	virtual bool set(const std::wstring& saveDataId, const SaveDataDesc& saveDataDesc, const ISerializable* attachment, bool replace);
 
+	virtual bool remove(const std::wstring& saveDataId);
+
 private:
 	int32_t m_excessSpaceNeededKB;
 	int32_t m_hddFreeSpaceKB;

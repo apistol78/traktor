@@ -4,6 +4,7 @@
 #include <map>
 #include "Core/Object.h"
 #include "Core/Ref.h"
+#include "Core/Io/Path.h"
 #include "Core/Singleton/ISingleton.h"
 
 // import/export mechanism.
@@ -17,7 +18,6 @@
 namespace traktor
 {
 
-class Path;
 class IProcess;
 class ISharedMemory;
 

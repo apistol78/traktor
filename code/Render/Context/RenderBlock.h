@@ -50,6 +50,8 @@ public:
 	{
 	}
 
+	virtual ~RenderBlock() {}
+
 	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const = 0;
 };
 

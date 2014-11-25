@@ -2,7 +2,7 @@
 #define traktor_TString_H
 
 #if defined(_PS3)
-#	include <calloca>
+#	include <alloca.h>
 #endif
 #if defined(_XBOX)
 #	include <malloc.h>

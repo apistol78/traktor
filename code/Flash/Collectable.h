@@ -25,11 +25,15 @@ class T_DLLCLASS Collectable : public Object
 public:
 	struct IVisitor
 	{
+		virtual ~IVisitor() {}
+
 		virtual void operator () (Collectable* childCollectable) const = 0;
 	};
 
 	struct IWeakRefDispose
 	{
+		virtual ~IWeakRefDispose() {}
+
 		virtual void disposeReference(Collectable* collectable) = 0;
 	};
 

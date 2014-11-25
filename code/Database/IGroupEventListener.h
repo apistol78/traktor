@@ -16,6 +16,8 @@ class Group;
 class IGroupEventListener
 {
 public:
+	virtual ~IGroupEventListener() {}
+
 	virtual void groupEventRenamed(Group* group, const std::wstring& previousName) = 0;
 };
 

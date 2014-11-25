@@ -19,7 +19,6 @@ namespace traktor
 
 const double c_resendTimeThreshold = 0.5;
 const int32_t c_maxSendEventsPerUpdate = 2;
-const int32_t c_maxResentCount = 4;
 
 		}
 

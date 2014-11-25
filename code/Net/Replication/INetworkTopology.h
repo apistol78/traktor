@@ -24,6 +24,8 @@ class T_DLLCLASS INetworkTopology : public Object
 public:
 	struct INetworkCallback
 	{
+		virtual ~INetworkCallback() {}
+
 		virtual bool nodeConnected(INetworkTopology* topology, net_handle_t node) = 0;
 
 		virtual bool nodeDisconnected(INetworkTopology* topology, net_handle_t node) = 0;

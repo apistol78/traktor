@@ -1,5 +1,5 @@
 #include <algorithm>
-#if !defined(_WIN32)
+#if !defined(_WIN32) && !defined(_PS3)
 #	include <poll.h>
 #endif
 #include "Core/Containers/StaticVector.h"
@@ -40,7 +40,7 @@ Ref< Socket > SocketSet::get(int index) const
 
 int SocketSet::select(bool read, bool write, bool except, int timeout, SocketSet& outResultSet)
 {
-#if !defined(_WIN32)
+#if !defined(_WIN32) && !defined(_PS3)
 	StaticVector< struct pollfd, 128 > fds;
 
 	for (uint32_t i = 0; i < m_sockets.size(); ++i)
@@ -66,7 +66,7 @@ int SocketSet::select(bool read, bool write, bool except, int timeout, SocketSet
 		if (fds[i].revents != 0)
 			outResultSet.add(m_sockets[i]);
 	}
-#else
+#elif defined(_WIN32) && !defined(_PS3)
 	timeval to = { timeout / 1000, (timeout % 1000) * 1000 };
 	fd_set* fds[] = { 0, 0, 0 };
 	fd_set readfds, writefds, exceptfds;
