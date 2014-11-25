@@ -73,6 +73,7 @@ void ScriptContextLua::destroy()
 			// Perform a full garbage collect; don't want
 			// lingering objects.
 			scriptManager->collectGarbageFullNoLock();
+			scriptManager->collectGarbageFullNoLock();
 			scriptManager->destroyContext(this);
 		}
 		scriptManager->unlock();

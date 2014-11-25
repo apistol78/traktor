@@ -30,32 +30,12 @@ namespace traktor
 	namespace script
 	{
 
-class T_DLLCLASS Boxed : public ITypedObject
+class T_DLLCLASS Boxed : public RefCountImpl< ITypedObject >
 {
 	T_RTTI_CLASS;
 
 public:
-	Boxed()
-	:	m_refCount(0)
-	{
-	}
-
-	virtual void addRef(void* owner) const
-	{
-		++m_refCount;
-	}
-
-	virtual void release(void* owner) const
-	{
-		T_ASSERT (m_refCount > 0);
-		if (--m_refCount == 0)
-			delete this;
-	}
-
 	virtual std::wstring toString() const = 0;
-
-private:
-	mutable int32_t m_refCount;
 };
 
 class T_DLLCLASS BoxedUInt64 : public Boxed
