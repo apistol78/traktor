@@ -3,6 +3,8 @@
 #include "Core/Memory/Alloc.h"
 #include "Core/Memory/BlockAllocator.h"
 #include "Core/Misc/String.h"
+#include "Core/Thread/Acquire.h"
+#include "Core/Thread/SpinLock.h"
 #include "Script/AutoScriptClass.h"
 #include "Script/CastAny.h"
 #include "Script/Boxes.h"
@@ -21,8 +23,9 @@ class BoxedAllocator
 public:
 	void* alloc()
 	{
-		void* ptr = 0;
+		T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_lock);
 
+		void* ptr = 0;
 		for (std::vector< BlockAllocator* >::iterator i = m_allocators.begin(); i != m_allocators.end(); ++i)
 		{
 			BlockAllocator* allocator = *i;
@@ -47,6 +50,7 @@ public:
 
 	void free(void* ptr)
 	{
+		T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_lock);
 		for (std::vector< BlockAllocator* >::iterator i = m_allocators.begin(); i != m_allocators.end(); ++i)
 		{
 			BlockAllocator* allocator = *i;
@@ -57,6 +61,7 @@ public:
 	}
 
 private:
+	SpinLock m_lock;
 	std::vector< BlockAllocator* > m_allocators;
 };
 

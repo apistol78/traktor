@@ -793,10 +793,19 @@ void ScriptManagerLua::collectGarbagePartial()
 			m_collectSteps = 0;
 		}
 
+		int32_t noDecline = 0;
 		while (m_collectSteps < targetSteps)
 		{
+			size_t fromUse = m_totalMemoryUse;
+
 			lua_gc(m_luaState, LUA_GCSTEP, 0);
 			++m_collectSteps;
+
+			if (m_totalMemoryUse >= fromUse)
+			{
+				if (++noDecline >= 4)
+					break;
+			}
 		}
 	}
 
@@ -807,13 +816,13 @@ void ScriptManagerLua::collectGarbagePartial()
 	{
 		size_t garbageProduced = m_totalMemoryUse - m_lastMemoryUse;
 		m_collectStepFrequency = max< float >(
-			clamp((60.0f * garbageProduced) / (16*1024), 1.0f, 200.0f),
+			clamp((60.0f * garbageProduced) / (16*1024), 1.0f, 1000.0f),
 			m_collectStepFrequency
 		);
 	}
 	else
 	{
-		m_collectStepFrequency = max< float >(1.0f, m_collectStepFrequency - 1.0f);
+		m_collectStepFrequency = max< float >(1.0f, m_collectStepFrequency - m_collectStepFrequency / 10.0f);
 	}
 
 	m_lastMemoryUse = m_totalMemoryUse;
