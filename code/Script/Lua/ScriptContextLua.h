@@ -47,6 +47,7 @@ private:
 	lua_State* m_luaState;
 	int32_t m_environmentRef;
 	source_map_t m_map;
+	const Object* m_lastSelf;
 
 	ScriptContextLua(ScriptManagerLua* scriptManager, lua_State* luaState, int32_t environmentRef, const source_map_t& map);
 
