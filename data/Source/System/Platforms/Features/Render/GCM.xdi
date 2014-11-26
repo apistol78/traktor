@@ -6,11 +6,15 @@
 		<item>
 			<platform>{14814B5B-2FF1-2F4B-BE92-08CAB3D0D544}</platform>
 			<deployFiles>
-				<item>libTraktor.Core.a</item>
-				<item>libTraktor.Compress.a</item>
-				<item>libTraktor.Resource.a</item>
-				<item>libTraktor.Render.a</item>
-				<item>libTraktor.Render.Ps3.a</item>
+				<item>libsysutil_avconf_ext_stub.a</item>
+				<item>libgcm_cmd.a</item>
+				<item>libgcm_pm.a</item>
+				<item>libgcm_sys_stub.a</item>
+				<item>Traktor.Core.lib</item>
+				<item>Traktor.Compress.lib</item>
+				<item>Traktor.Resource.lib</item>
+				<item>Traktor.Render.lib</item>
+				<item>Traktor.Render.Ps3.lib</item>
 			</deployFiles>
 		</item>
 	</platforms>

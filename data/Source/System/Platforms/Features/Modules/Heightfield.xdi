@@ -8,6 +8,7 @@
 			<deployFiles>
 				<item>libTraktor.Core.a</item>
 				<item>libTraktor.Resource.a</item>
+				<item>libTraktor.Heightfield.a</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -15,6 +16,7 @@
 			<deployFiles>
 				<item>libTraktor.Core.so</item>
 				<item>libTraktor.Resource.so</item>
+				<item>libTraktor.Heightfield.so</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -22,6 +24,7 @@
 			<deployFiles>
 				<item>Traktor.Core.dll</item>
 				<item>Traktor.Resource.dll</item>
+				<item>Traktor.Heightfield.dll</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -29,13 +32,15 @@
 			<deployFiles>
 				<item>libTraktor.Core.dylib</item>
 				<item>libTraktor.Resource.dylib</item>
+				<item>libTraktor.Heightfield.dylib</item>
 			</deployFiles>
 		</item>
 		<item>
 			<platform>{14814B5B-2FF1-2F4B-BE92-08CAB3D0D544}</platform>
 			<deployFiles>
-				<item>libTraktor.Core.a</item>
-				<item>libTraktor.Resource.a</item>
+				<item>Traktor.Core.lib</item>
+				<item>Traktor.Resource.lib</item>
+				<item>Traktor.Heightfield.lib</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -43,6 +48,7 @@
 			<deployFiles>
 				<item>Traktor.Core.dll</item>
 				<item>Traktor.Resource.dll</item>
+				<item>Traktor.Heightfield.dll</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -50,6 +56,7 @@
 			<deployFiles>
 				<item>Traktor.Core.dll</item>
 				<item>Traktor.Resource.dll</item>
+				<item>Traktor.Heightfield.dll</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -57,6 +64,7 @@
 			<deployFiles>
 				<item>Traktor.Core.lib</item>
 				<item>Traktor.Resource.lib</item>
+				<item>Traktor.Heightfield.lib</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -64,6 +72,7 @@
 			<deployFiles>
 				<item>libTraktor.Core.a</item>
 				<item>libTraktor.Resource.a</item>
+				<item>libTraktor.Heightfield.a</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -71,6 +80,7 @@
 			<deployFiles>
 				<item>libTraktor.Core.a</item>
 				<item>libTraktor.Resource.a</item>
+				<item>libTraktor.Heightfield.a</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -78,6 +88,7 @@
 			<deployFiles>
 				<item>libTraktor.Core.a</item>
 				<item>libTraktor.Resource.a</item>
+				<item>libTraktor.Heightfield.a</item>
 			</deployFiles>
 		</item>		
 	</platforms>

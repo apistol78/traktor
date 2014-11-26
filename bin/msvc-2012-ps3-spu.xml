@@ -2,10 +2,187 @@
 <object type="SolutionBuilderMsvcSettings">
   <slnVersion>12.00</slnVersion>
   <vsVersion>11</vsVersion>
-  <project type="SolutionBuilderMsvcVCXProj" version="1">
+  <project type="SolutionBuilderMsvcVCXProj" version="4">
     <platform>PS3</platform>
     <keyword>Win32Proj</keyword>
     <toolset>SPU</toolset>
+    <targetPrefixes>
+      <item>lib</item>
+      <item>lib</item>
+      <item/>
+      <item/>
+    </targetPrefixes>
+    <targetExts>
+      <item>.a</item>
+      <item>.so</item>
+      <item>.elf</item>
+      <item>.elf</item>
+    </targetExts>
+    <propertyGroups/>
+    <configurationDefinitionsDebug>
+      <staticLibrary>
+        <item>
+          <first>CharacterSet</first>
+          <second>MultiByte</second>
+        </item>
+        <item>
+          <first>ConfigurationType</first>
+          <second>StaticLibrary</second>
+        </item>
+        <item>
+          <first>PlatformToolset</first>
+          <second>SPU</second>
+        </item>
+        <item>
+          <first>WholeProgramOptimization</first>
+          <second>false</second>
+        </item>
+      </staticLibrary>
+      <sharedLibrary>
+        <item>
+          <first>CharacterSet</first>
+          <second>MultiByte</second>
+        </item>
+        <item>
+          <first>ConfigurationType</first>
+          <second>DynamicLibrary</second>
+        </item>
+        <item>
+          <first>PlatformToolset</first>
+          <second>SPU</second>
+        </item>
+        <item>
+          <first>WholeProgramOptimization</first>
+          <second>false</second>
+        </item>
+      </sharedLibrary>
+      <executable>
+        <item>
+          <first>CharacterSet</first>
+          <second>MultiByte</second>
+        </item>
+        <item>
+          <first>ConfigurationType</first>
+          <second>Application</second>
+        </item>
+        <item>
+          <first>PlatformToolset</first>
+          <second>SPU</second>
+        </item>
+        <item>
+          <first>WholeProgramOptimization</first>
+          <second>false</second>
+        </item>
+        <item>
+          <first>SpursUsage</first>
+          <second>SpursInit</second>
+        </item>
+      </executable>
+      <executableConsole>
+        <item>
+          <first>CharacterSet</first>
+          <second>MultiByte</second>
+        </item>
+        <item>
+          <first>ConfigurationType</first>
+          <second>Application</second>
+        </item>
+        <item>
+          <first>PlatformToolset</first>
+          <second>SPU</second>
+        </item>
+        <item>
+          <first>WholeProgramOptimization</first>
+          <second>false</second>
+        </item>
+        <item>
+          <first>SpursUsage</first>
+          <second>SpursInit</second>
+        </item>
+      </executableConsole>
+    </configurationDefinitionsDebug>
+    <configurationDefinitionsRelease>
+      <staticLibrary>
+        <item>
+          <first>CharacterSet</first>
+          <second>MultiByte</second>
+        </item>
+        <item>
+          <first>ConfigurationType</first>
+          <second>StaticLibrary</second>
+        </item>
+        <item>
+          <first>PlatformToolset</first>
+          <second>SPU</second>
+        </item>
+        <item>
+          <first>WholeProgramOptimization</first>
+          <second>false</second>
+        </item>
+      </staticLibrary>
+      <sharedLibrary>
+        <item>
+          <first>CharacterSet</first>
+          <second>MultiByte</second>
+        </item>
+        <item>
+          <first>ConfigurationType</first>
+          <second>DynamicLibrary</second>
+        </item>
+        <item>
+          <first>PlatformToolset</first>
+          <second>SPU</second>
+        </item>
+        <item>
+          <first>WholeProgramOptimization</first>
+          <second>false</second>
+        </item>
+      </sharedLibrary>
+      <executable>
+        <item>
+          <first>CharacterSet</first>
+          <second>MultiByte</second>
+        </item>
+        <item>
+          <first>ConfigurationType</first>
+          <second>Application</second>
+        </item>
+        <item>
+          <first>PlatformToolset</first>
+          <second>SPU</second>
+        </item>
+        <item>
+          <first>WholeProgramOptimization</first>
+          <second>false</second>
+        </item>
+        <item>
+          <first>SpursUsage</first>
+          <second>SpursInit</second>
+        </item>
+      </executable>
+      <executableConsole>
+        <item>
+          <first>CharacterSet</first>
+          <second>MultiByte</second>
+        </item>
+        <item>
+          <first>ConfigurationType</first>
+          <second>Application</second>
+        </item>
+        <item>
+          <first>PlatformToolset</first>
+          <second>SPU</second>
+        </item>
+        <item>
+          <first>WholeProgramOptimization</first>
+          <second>false</second>
+        </item>
+        <item>
+          <first>SpursUsage</first>
+          <second>SpursInit</second>
+        </item>
+      </executableConsole>
+    </configurationDefinitionsRelease>
     <buildDefinitionsDebug>
       <!-- Static library -->
       <item>
@@ -110,7 +287,7 @@
             </item>
             <item>
               <name>AdditionalLibraryDirectories</name>
-              <value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+              <value/>
             </item>
             <item>
               <name>GenerateDebugInformation</name>
@@ -205,7 +382,7 @@
             </item>
             <item>
               <name>AdditionalLibraryDirectories</name>
-              <value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+              <value/>
             </item>
             <item>
               <name>GenerateDebugInformation</name>
@@ -296,7 +473,7 @@
             </item>
             <item>
               <name>AdditionalLibraryDirectories</name>
-              <value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+              <value/>
             </item>
             <item>
               <name>GenerateDebugInformation</name>
@@ -476,7 +653,7 @@
             </item>
             <item>
               <name>AdditionalLibraryDirectories</name>
-              <value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+              <value/>
             </item>
             <item>
               <name>GenerateDebugInformation</name>
@@ -591,7 +768,7 @@
             </item>
             <item>
               <name>AdditionalLibraryDirectories</name>
-              <value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+              <value/>
             </item>
             <item>
               <name>GenerateDebugInformation</name>
@@ -702,7 +879,7 @@
             </item>
             <item>
               <name>AdditionalLibraryDirectories</name>
-              <value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+              <value/>
             </item>
             <item>
               <name>GenerateDebugInformation</name>

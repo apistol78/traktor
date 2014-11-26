@@ -13,6 +13,7 @@
 				<item>libTraktor.Resource.a</item>
 				<item>libTraktor.Sound.a</item>
 				<item>libTraktor.World.a</item>
+				<item>libTraktor.Spray.a</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -25,6 +26,7 @@
 				<item>libTraktor.Resource.so</item>
 				<item>libTraktor.Sound.so</item>
 				<item>libTraktor.World.so</item>
+				<item>libTraktor.Spray.so</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -37,6 +39,7 @@
 				<item>Traktor.Resource.dll</item>
 				<item>Traktor.Sound.dll</item>
 				<item>Traktor.World.dll</item>
+				<item>Traktor.Spray.dll</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -49,18 +52,27 @@
 				<item>libTraktor.Resource.dylib</item>
 				<item>libTraktor.Sound.dylib</item>
 				<item>libTraktor.World.dylib</item>
+				<item>libTraktor.Spray.dylib</item>
 			</deployFiles>
 		</item>
 		<item>
 			<platform>{14814B5B-2FF1-2F4B-BE92-08CAB3D0D544}</platform>
 			<deployFiles>
-				<item>libTraktor.Core.a</item>
-				<item>libTraktor.Database.a</item>
-				<item>libTraktor.Mesh.a</item>
-				<item>libTraktor.Render.a</item>
-				<item>libTraktor.Resource.a</item>
-				<item>libTraktor.Sound.a</item>
-				<item>libTraktor.World.a</item>
+				<item>Traktor.Core.lib</item>
+				<item>Traktor.Database.lib</item>
+				<item>Traktor.Mesh.lib</item>
+				<item>Traktor.Render.lib</item>
+				<item>Traktor.Resource.lib</item>
+				<item>Traktor.Sound.lib</item>
+				<item>Traktor.World.lib</item>
+				<item>Traktor.Spray.lib</item>
+				<item>Traktor.Spray.JobDragModifier.ppu.o</item>
+				<item>Traktor.Spray.JobGravityModifier.ppu.o</item>
+				<item>Traktor.Spray.JobIntegrateModifier.ppu.o</item>
+				<item>Traktor.Spray.JobPlaneCollisionModifier.ppu.o</item>
+				<item>Traktor.Spray.JobPointRenderer.ppu.o</item>
+				<item>Traktor.Spray.JobSizeModifier.ppu.o</item>
+				<item>Traktor.Spray.JobVortexModifier.ppu.o</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -73,6 +85,7 @@
 				<item>Traktor.Resource.dll</item>
 				<item>Traktor.Sound.dll</item>
 				<item>Traktor.World.dll</item>
+				<item>Traktor.Spray.dll</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -85,6 +98,7 @@
 				<item>Traktor.Resource.dll</item>
 				<item>Traktor.Sound.dll</item>
 				<item>Traktor.World.dll</item>
+				<item>Traktor.Spray.dll</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -97,6 +111,7 @@
 				<item>Traktor.Resource.lib</item>
 				<item>Traktor.Sound.lib</item>
 				<item>Traktor.World.lib</item>
+				<item>Traktor.Spray.lib</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -109,6 +124,7 @@
 				<item>libTraktor.Resource.a</item>
 				<item>libTraktor.Sound.a</item>
 				<item>libTraktor.World.a</item>
+				<item>libTraktor.Spray.a</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -121,6 +137,7 @@
 				<item>libTraktor.Resource.a</item>
 				<item>libTraktor.Sound.a</item>
 				<item>libTraktor.World.a</item>
+				<item>libTraktor.Spray.a</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -133,6 +150,7 @@
 				<item>libTraktor.Resource.a</item>
 				<item>libTraktor.Sound.a</item>
 				<item>libTraktor.World.a</item>
+				<item>libTraktor.Spray.a</item>
 			</deployFiles>
 		</item>	
 	</platforms>

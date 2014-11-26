@@ -9,6 +9,7 @@
 				<item>libTraktor.Core.a</item>
 				<item>libTraktor.Scene.a</item>
 				<item>libTraktor.World.a</item>
+				<item>libTraktor.Theater.a</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -17,6 +18,7 @@
 				<item>libTraktor.Core.so</item>
 				<item>libTraktor.Scene.so</item>
 				<item>libTraktor.World.so</item>
+				<item>libTraktor.Theater.so</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -25,6 +27,7 @@
 				<item>Traktor.Core.dll</item>
 				<item>Traktor.Scene.dll</item>
 				<item>Traktor.World.dll</item>
+				<item>Traktor.Theater.dll</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -33,14 +36,16 @@
 				<item>libTraktor.Core.dylib</item>
 				<item>libTraktor.Scene.dylib</item>
 				<item>libTraktor.World.dylib</item>
+				<item>libTraktor.Theater.dylib</item>
 			</deployFiles>
 		</item>
 		<item>
 			<platform>{14814B5B-2FF1-2F4B-BE92-08CAB3D0D544}</platform>
 			<deployFiles>
-				<item>libTraktor.Core.a</item>
-				<item>libTraktor.Scene.a</item>
-				<item>libTraktor.World.a</item>
+				<item>Traktor.Core.lib</item>
+				<item>Traktor.Scene.lib</item>
+				<item>Traktor.World.lib</item>
+				<item>Traktor.Theater.lib</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -49,6 +54,7 @@
 				<item>Traktor.Core.dll</item>
 				<item>Traktor.Scene.dll</item>
 				<item>Traktor.World.dll</item>
+				<item>Traktor.Theater.dll</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -57,6 +63,7 @@
 				<item>Traktor.Core.dll</item>
 				<item>Traktor.Scene.dll</item>
 				<item>Traktor.World.dll</item>
+				<item>Traktor.Theater.dll</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -65,6 +72,7 @@
 				<item>Traktor.Core.lib</item>
 				<item>Traktor.Scene.lib</item>
 				<item>Traktor.World.lib</item>
+				<item>Traktor.Theater.lib</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -73,6 +81,7 @@
 				<item>libTraktor.Core.a</item>
 				<item>libTraktor.Scene.a</item>
 				<item>libTraktor.World.a</item>
+				<item>libTraktor.Theater.a</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -81,6 +90,7 @@
 				<item>libTraktor.Core.a</item>
 				<item>libTraktor.Scene.a</item>
 				<item>libTraktor.World.a</item>
+				<item>libTraktor.Theater.a</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -89,6 +99,7 @@
 				<item>libTraktor.Core.a</item>
 				<item>libTraktor.Scene.a</item>
 				<item>libTraktor.World.a</item>
+				<item>libTraktor.Theater.a</item>
 			</deployFiles>
 		</item>
 	</platforms>

@@ -1,4 +1,5 @@
 #include "Core/Io/MemoryStream.h"
+#include "Core/Misc/Endian.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/CompactSerializer.h"
 #include "Core/Thread/Acquire.h"
@@ -71,6 +72,9 @@ bool BidirectionalObjectTransport::send(const ISerializable* object)
 		return false;
 
 	*(uint32_t*)buffer = objectSize;
+#if defined(T_BIG_ENDIAN)
+	swap8in32(*(uint32_t*)buffer);
+#endif
 
 	uint8_t* sendPtr = buffer;
 	int32_t sendCount = 4 + objectSize;
@@ -133,6 +137,10 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 			m_inQueue.clear();
 			return RtDisconnected;
 		}
+
+#if defined(T_BIG_ENDIAN)
+		swap8in32(objectSize);
+#endif
 		if (result != 4 || objectSize == 0)
 			continue;
 

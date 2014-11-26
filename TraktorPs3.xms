@@ -6,7 +6,7 @@
 	<projects>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.Expat</name>
+			<name>Extern.expat-2.1.0</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</sourcePath>
 			<configurations>
 				<item type="Configuration" version="1">
@@ -1115,264 +1115,6 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.lua-5.1.4</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</sourcePath>
-			<configurations>
-				<item type="Configuration" version="1">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
-					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
-					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>lapi.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lapi.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lauxlib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lauxlib.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lbaselib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lcode.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lcode.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ldblib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ldebug.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ldebug.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ldo.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ldo.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ldump.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lfunc.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lfunc.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lgc.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lgc.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>linit.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>liolib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>llex.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>llex.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>llimits.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lmathlib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lmem.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lmem.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>loadlib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lobject.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lobject.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lopcodes.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lopcodes.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>loslib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lparser.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lparser.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lstate.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lstate.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lstring.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lstring.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lstrlib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ltable.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ltable.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ltablib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ltm.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ltm.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lua.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lua.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>luaconf.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lualib.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lundump.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lundump.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lvm.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lvm.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lzio.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lzio.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>print.c</fileName>
-					<items/>
-				</item>
-			</items>
-			<dependencies/>
-		</item>
-		<item type="Project" version="1">
-			<enable>true</enable>
 			<name>Extern.squish-1.10</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/squish-1.10</sourcePath>
 			<configurations>
@@ -1971,7 +1713,7 @@
 			<dependencies>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]"/>
+					<project ref="/object/projects/item[11]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -2024,11 +1766,11 @@
 			<dependencies>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]"/>
+					<project ref="/object/projects/item[11]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[13]"/>
+					<project ref="/object/projects/item[12]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -2081,11 +1823,11 @@
 			<dependencies>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]"/>
+					<project ref="/object/projects/item[11]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[13]"/>
+					<project ref="/object/projects/item[12]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -2147,11 +1889,11 @@
 			<dependencies>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]"/>
+					<project ref="/object/projects/item[11]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[13]"/>
+					<project ref="/object/projects/item[12]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -2204,15 +1946,15 @@
 			<dependencies>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
+					<project ref="/object/projects/item[11]"/>
+				</item>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[12]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[13]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]"/>
+					<project ref="/object/projects/item[15]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -2291,7 +2033,7 @@
 			<dependencies>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]"/>
+					<project ref="/object/projects/item[11]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
@@ -2299,7 +2041,7 @@
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[9]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
@@ -2437,15 +2179,15 @@
 			<dependencies>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
+					<project ref="/object/projects/item[11]"/>
+				</item>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[12]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[13]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[18]"/>
+					<project ref="/object/projects/item[17]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
@@ -2533,11 +2275,11 @@
 						<dependencies>
 							<item type="ProjectDependency" version="2">
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[12]"/>
+								<project ref="/object/projects/item[11]"/>
 							</item>
 							<item type="ProjectDependency" version="2">
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[10]"/>
+								<project ref="/object/projects/item[9]"/>
 							</item>
 							<item type="ProjectDependency" version="2">
 								<link>LnkYes</link>
@@ -2721,7 +2463,7 @@
 						<dependencies>
 							<item type="ProjectDependency" version="2">
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[12]"/>
+								<project ref="/object/projects/item[11]"/>
 							</item>
 						</dependencies>
 					</project>
@@ -2822,7 +2564,7 @@
 						<dependencies>
 							<item type="ProjectDependency" version="2">
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[12]"/>
+								<project ref="/object/projects/item[11]"/>
 							</item>
 						</dependencies>
 					</project>
@@ -2878,7 +2620,7 @@
 						<dependencies>
 							<item type="ProjectDependency" version="2">
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[12]"/>
+								<project ref="/object/projects/item[11]"/>
 							</item>
 						</dependencies>
 					</project>
@@ -2980,11 +2722,11 @@
 						<dependencies>
 							<item type="ProjectDependency" version="2">
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[12]"/>
+								<project ref="/object/projects/item[11]"/>
 							</item>
 							<item type="ProjectDependency" version="2">
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[19]/dependencies/item[6]/project"/>
+								<project ref="/object/projects/item[18]/dependencies/item[6]/project"/>
 							</item>
 							<item type="ProjectDependency" version="2">
 								<link>LnkYes</link>
@@ -3360,11 +3102,11 @@
 			<dependencies>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]"/>
+					<project ref="/object/projects/item[11]"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[19]/dependencies/item[4]/project"/>
+		<item ref="/object/projects/item[18]/dependencies/item[4]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.I18N</name>
@@ -3414,7 +3156,7 @@
 			<dependencies>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]"/>
+					<project ref="/object/projects/item[11]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -3476,7 +3218,7 @@
 			<dependencies>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]"/>
+					<project ref="/object/projects/item[11]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -3610,7 +3352,7 @@
 			<dependencies>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]"/>
+					<project ref="/object/projects/item[11]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -3743,7 +3485,7 @@
 			<dependencies>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]"/>
+					<project ref="/object/projects/item[11]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -3823,11 +3565,11 @@
 			<dependencies>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]"/>
+					<project ref="/object/projects/item[11]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[25]"/>
+					<project ref="/object/projects/item[24]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -3889,11 +3631,11 @@
 			<dependencies>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]"/>
+					<project ref="/object/projects/item[11]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[13]"/>
+					<project ref="/object/projects/item[12]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
@@ -3946,11 +3688,11 @@
 						<dependencies>
 							<item type="ProjectDependency" version="2">
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[12]"/>
+								<project ref="/object/projects/item[11]"/>
 							</item>
 							<item type="ProjectDependency" version="2">
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[19]/dependencies/item[6]/project"/>
+								<project ref="/object/projects/item[18]/dependencies/item[6]/project"/>
 							</item>
 						</dependencies>
 					</project>
@@ -4012,15 +3754,15 @@
 			<dependencies>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]"/>
+					<project ref="/object/projects/item[11]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[27]"/>
+					<project ref="/object/projects/item[26]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[27]/dependencies/item[2]/project"/>
+					<project ref="/object/projects/item[26]/dependencies/item[2]/project"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
@@ -4195,11 +3937,11 @@
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[19]/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[18]/dependencies/item[6]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[19]/dependencies/item[5]/project"/>
+		<item ref="/object/projects/item[18]/dependencies/item[5]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Render.Ps3</name>
@@ -4270,15 +4012,15 @@
 			<dependencies>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]"/>
+					<project ref="/object/projects/item[11]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[19]/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[18]/dependencies/item[5]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[19]/dependencies/item[6]/project"/>
+		<item ref="/object/projects/item[18]/dependencies/item[6]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Scene</name>
@@ -4328,15 +4070,15 @@
 			<dependencies>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]"/>
+					<project ref="/object/projects/item[11]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[19]/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[18]/dependencies/item[6]/project"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[19]/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[18]/dependencies/item[5]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -4389,11 +4131,11 @@
 			<dependencies>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]"/>
+					<project ref="/object/projects/item[11]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[19]/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[18]/dependencies/item[6]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -4409,11 +4151,12 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/lua-5.2.3/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
+						<item>T_LUA_5_2</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -4427,11 +4170,12 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/lua-5.2.3/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
+						<item>T_LUA_5_2</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -4448,19 +4192,78 @@
 			<dependencies>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]"/>
+					<project ref="/object/projects/item[11]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[33]"/>
+					<project ref="/object/projects/item[32]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[8]"/>
+					<project type="Project" version="1">
+						<enable>true</enable>
+						<name>Extern.lua-5.2.3</name>
+						<sourcePath>$(TRAKTOR_HOME)/3rdp/lua-5.2.3/src</sourcePath>
+						<configurations>
+							<item type="Configuration" version="1">
+								<name>DebugStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/lua-5.2.3/src</item>
+								</includePaths>
+								<definitions>
+									<item>_DEBUG</item>
+									<item>_CRT_SECURE_NO_WARNINGS</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+							<item type="Configuration" version="1">
+								<name>ReleaseStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/lua-5.2.3/src</item>
+								</includePaths>
+								<definitions>
+									<item>NDEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+						</configurations>
+						<items>
+							<item type="File">
+								<fileName>*.c</fileName>
+								<items/>
+							</item>
+							<item type="File">
+								<fileName>*.h</fileName>
+								<items/>
+							</item>
+							<item type="Filter">
+								<name>ps3</name>
+								<items>
+									<item type="File">
+										<fileName>ps3/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+						</items>
+						<dependencies/>
+					</project>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[19]/dependencies/item[7]/project"/>
+		<item ref="/object/projects/item[18]/dependencies/item[7]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Spray</name>
@@ -4546,19 +4349,19 @@
 			<dependencies>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
+					<project ref="/object/projects/item[11]"/>
+				</item>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[12]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[13]"/>
+					<project ref="/object/projects/item[18]/dependencies/item[6]/project"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[19]/dependencies/item[6]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[19]/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[18]/dependencies/item[5]/project"/>
 				</item>
 				<item type="ExternalDependency" version="2">
 					<link>LnkYes</link>
@@ -4602,11 +4405,11 @@
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[19]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[18]/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[24]"/>
+					<project ref="/object/projects/item[23]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -4659,19 +4462,19 @@
 			<dependencies>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]"/>
+					<project ref="/object/projects/item[11]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[19]/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[18]/dependencies/item[5]/project"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[19]/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[18]/dependencies/item[6]/project"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[27]/dependencies/item[2]/project"/>
+					<project ref="/object/projects/item[26]/dependencies/item[2]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -4724,11 +4527,11 @@
 			<dependencies>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]"/>
+					<project ref="/object/projects/item[11]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[32]"/>
+					<project ref="/object/projects/item[31]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -4799,15 +4602,15 @@
 			<dependencies>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]"/>
+					<project ref="/object/projects/item[11]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[19]/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[18]/dependencies/item[5]/project"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[19]/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[18]/dependencies/item[6]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -4923,19 +4726,19 @@
 			<dependencies>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
+					<project ref="/object/projects/item[11]"/>
+				</item>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[18]/dependencies/item[5]/project"/>
+				</item>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[18]/dependencies/item[6]/project"/>
+				</item>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[12]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[19]/dependencies/item[5]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[19]/dependencies/item[6]/project"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[13]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -4990,7 +4793,7 @@
 			<dependencies>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]"/>
+					<project ref="/object/projects/item[11]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
@@ -4998,7 +4801,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[19]/dependencies/item[3]/project"/>
+		<item ref="/object/projects/item[18]/dependencies/item[3]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Input.Ps3</name>
@@ -5048,11 +4851,11 @@
 			<dependencies>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]"/>
+					<project ref="/object/projects/item[11]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[23]"/>
+					<project ref="/object/projects/item[22]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -5107,23 +4910,23 @@
 			<dependencies>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]"/>
+					<project ref="/object/projects/item[11]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[41]"/>
+					<project ref="/object/projects/item[40]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[19]/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[18]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[19]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[18]/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[25]"/>
+					<project ref="/object/projects/item[24]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -5188,11 +4991,11 @@
 			<dependencies>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]"/>
+					<project ref="/object/projects/item[11]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[19]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[18]/dependencies/item[7]/project"/>
 				</item>
 				<item type="ExternalDependency" version="2">
 					<link>LnkYes</link>
@@ -5270,11 +5073,11 @@
 			<dependencies>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]"/>
+					<project ref="/object/projects/item[11]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[26]"/>
+					<project ref="/object/projects/item[25]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -5407,19 +5210,19 @@
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[47]"/>
+					<project ref="/object/projects/item[46]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]"/>
+					<project ref="/object/projects/item[11]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[19]/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[18]/dependencies/item[5]/project"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[19]/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[18]/dependencies/item[6]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -5527,6 +5330,10 @@
 			<dependencies>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
+					<project ref="/object/projects/item[10]"/>
+				</item>
+				<item type="ProjectDependency" version="2">
+					<link>LnkYes</link>
 					<project ref="/object/projects/item[11]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
@@ -5535,11 +5342,11 @@
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[13]"/>
+					<project ref="/object/projects/item[18]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[19]"/>
+					<project ref="/object/projects/item[21]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
@@ -5563,15 +5370,15 @@
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[27]"/>
+					<project ref="/object/projects/item[18]/dependencies/item[5]/project"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[19]/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[18]/dependencies/item[6]/project"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[19]/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[31]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
@@ -5579,11 +5386,11 @@
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[33]"/>
+					<project ref="/object/projects/item[18]/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[19]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[35]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
@@ -5591,11 +5398,11 @@
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[37]"/>
+					<project ref="/object/projects/item[47]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[48]"/>
+					<project ref="/object/projects/item[38]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
@@ -5607,18 +5414,14 @@
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[41]"/>
-				</item>
-				<item type="ProjectDependency" version="2">
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[27]/dependencies/item[2]/project"/>
+					<project ref="/object/projects/item[26]/dependencies/item[2]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[19]/dependencies/item[7]/project/dependencies/item[3]/project"/>
-		<item ref="/object/projects/item[19]/dependencies/item[3]/project/dependencies/item[2]/project"/>
-		<item ref="/object/projects/item[19]/dependencies/item[3]/project/dependencies/item[3]/project"/>
-		<item ref="/object/projects/item[27]/dependencies/item[2]/project"/>
+		<item ref="/object/projects/item[18]/dependencies/item[7]/project/dependencies/item[3]/project"/>
+		<item ref="/object/projects/item[18]/dependencies/item[3]/project/dependencies/item[2]/project"/>
+		<item ref="/object/projects/item[18]/dependencies/item[3]/project/dependencies/item[3]/project"/>
+		<item ref="/object/projects/item[26]/dependencies/item[2]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Amalgam.App</name>
@@ -5677,20 +5480,20 @@
 			<dependencies>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]"/>
+					<project ref="/object/projects/item[11]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[49]"/>
+					<project ref="/object/projects/item[48]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[41]"/>
+					<project ref="/object/projects/item[40]"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[28]/dependencies/item[3]/project"/>
-		<item ref="/object/projects/item[19]/dependencies/item[7]/project/dependencies/item[4]/project"/>
+		<item ref="/object/projects/item[27]/dependencies/item[3]/project"/>
+		<item ref="/object/projects/item[18]/dependencies/item[7]/project/dependencies/item[4]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Extern.recast</name>
@@ -5862,22 +5665,23 @@
 			<dependencies>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]"/>
+					<project ref="/object/projects/item[11]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[58]"/>
+					<project ref="/object/projects/item[57]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[40]"/>
+					<project ref="/object/projects/item[39]"/>
 				</item>
 				<item type="ProjectDependency" version="2">
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[19]/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[18]/dependencies/item[6]/project"/>
 				</item>
 			</dependencies>
 		</item>
+		<item ref="/object/projects/item[33]/dependencies/item[2]/project"/>
 	</projects>
 	<aggregations/>
 </object>

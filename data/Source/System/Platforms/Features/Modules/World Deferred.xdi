@@ -11,6 +11,7 @@
 				<item>libTraktor.Database.a</item>
 				<item>libTraktor.Render.a</item>
 				<item>libTraktor.Resource.a</item>
+				<item>libTraktor.World.a</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -21,6 +22,7 @@
 				<item>libTraktor.Database.so</item>
 				<item>libTraktor.Render.so</item>
 				<item>libTraktor.Resource.so</item>
+				<item>libTraktor.World.so</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -31,6 +33,7 @@
 				<item>Traktor.Database.dll</item>
 				<item>Traktor.Render.dll</item>
 				<item>Traktor.Resource.dll</item>
+				<item>Traktor.World.dll</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -41,16 +44,18 @@
 				<item>libTraktor.Database.dylib</item>
 				<item>libTraktor.Render.dylib</item>
 				<item>libTraktor.Resource.dylib</item>
+				<item>libTraktor.World.dylib</item>
 			</deployFiles>
 		</item>
 		<item>
 			<platform>{14814B5B-2FF1-2F4B-BE92-08CAB3D0D544}</platform>
 			<executableFile/>
 			<deployFiles>
-				<item>libTraktor.Core.a</item>
-				<item>libTraktor.Database.a</item>
-				<item>libTraktor.Render.a</item>
-				<item>libTraktor.Resource.a</item>
+				<item>Traktor.Core.lib</item>
+				<item>Traktor.Database.lib</item>
+				<item>Traktor.Render.lib</item>
+				<item>Traktor.Resource.lib</item>
+				<item>Traktor.World.lib</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -61,6 +66,7 @@
 				<item>Traktor.Database.dll</item>
 				<item>Traktor.Render.dll</item>
 				<item>Traktor.Resource.dll</item>
+				<item>Traktor.World.dll</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -71,6 +77,7 @@
 				<item>Traktor.Database.dll</item>
 				<item>Traktor.Render.dll</item>
 				<item>Traktor.Resource.dll</item>
+				<item>Traktor.World.dll</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -81,6 +88,7 @@
 				<item>Traktor.Database.lib</item>
 				<item>Traktor.Render.lib</item>
 				<item>Traktor.Resource.lib</item>
+				<item>Traktor.World.lib</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -91,6 +99,7 @@
 				<item>libTraktor.Database.a</item>
 				<item>libTraktor.Render.a</item>
 				<item>libTraktor.Resource.a</item>
+				<item>libTraktor.World.a</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -101,6 +110,7 @@
 				<item>libTraktor.Database.a</item>
 				<item>libTraktor.Render.a</item>
 				<item>libTraktor.Resource.a</item>
+				<item>libTraktor.World.a</item>
 			</deployFiles>
 		</item>
 		<item>
@@ -111,6 +121,7 @@
 				<item>libTraktor.Database.a</item>
 				<item>libTraktor.Render.a</item>
 				<item>libTraktor.Resource.a</item>
+				<item>libTraktor.World.a</item>
 			</deployFiles>
 		</item>
 	</platforms>

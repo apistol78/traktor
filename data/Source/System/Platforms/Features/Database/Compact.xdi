@@ -49,7 +49,14 @@
 		</item>
 		<item>
 			<platform>{14814B5B-2FF1-2F4B-BE92-08CAB3D0D544}</platform>
-			<deployFiles/>
+			<deployFiles>
+				<item>Traktor.Core.lib</item>
+				<item>Traktor.Net.lib</item>
+				<item>Traktor.Xml.lib</item>
+				<item>Traktor.Compress.lib</item>
+				<item>Traktor.Database.lib</item>
+				<item>Traktor.Database.Compact.lib</item>
+			</deployFiles>
 		</item>
 		<item>
 			<platform>{7D0F1280-E37A-2541-8892-723B3C81569C}</platform>

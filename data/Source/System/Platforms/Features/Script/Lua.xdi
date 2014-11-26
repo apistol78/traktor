@@ -44,10 +44,10 @@
 			<platform>{14814B5B-2FF1-2F4B-BE92-08CAB3D0D544}</platform>
 			<executableFile/>
 			<deployFiles>
-				<item>libExtern.lua-5.2.3.a</item>
-				<item>libTraktor.Core.a</item>
-				<item>libTraktor.Script.a</item>
-				<item>libTraktor.Script.Lua.a</item>
+				<item>Extern.lua-5.2.3.lib</item>
+				<item>Traktor.Core.lib</item>
+				<item>Traktor.Script.lib</item>
+				<item>Traktor.Script.Lua.lib</item>
 			</deployFiles>
 		</item>
 		<item>

@@ -4,23 +4,12 @@
 #	include "Core/Thread/Ps3/Spurs/SpursJobQueue.h"
 #	include "Spray/Ps3/Spu/JobModifierUpdate.h"
 
-#	if !defined(_DEBUG)
-
 extern char _binary_jqjob_Traktor_Spray_JobDragModifier_bin_start[];
 extern char _binary_jqjob_Traktor_Spray_JobDragModifier_bin_size[];
 
 static char* job_start = _binary_jqjob_Traktor_Spray_JobDragModifier_bin_start;
 static char* job_size = _binary_jqjob_Traktor_Spray_JobDragModifier_bin_size;
 
-#	else
-
-extern char _binary_jqjob_Traktor_Spray_JobDragModifier_d_bin_start[];
-extern char _binary_jqjob_Traktor_Spray_JobDragModifier_d_bin_size[];
-
-static char* job_start = _binary_jqjob_Traktor_Spray_JobDragModifier_d_bin_start;
-static char* job_size = _binary_jqjob_Traktor_Spray_JobDragModifier_d_bin_size;
-
-#	endif
 #endif
 
 namespace traktor

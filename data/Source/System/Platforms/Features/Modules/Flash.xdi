@@ -71,21 +71,21 @@
 		<item>
 			<platform>{14814B5B-2FF1-2F4B-BE92-08CAB3D0D544}</platform>
 			<deployFiles>
-				<item>libExtern.jpeg-6b.a</item>
-				<item>libExtern.lpng128.a</item>
-				<item>libExtern.liblzf-3.6.a</item>
-				<item>libExtern.minilzo-2.05.a</item>
-				<item>libExtern.zlib-1.2.3.a</item>
-				<item>libTraktor.Compress.a</item>
-				<item>libTraktor.Core.a</item>
-				<item>libTraktor.Database.a</item>
-				<item>libTraktor.Drawing.a</item>
-				<item>libTraktor.Html.a</item>
-				<item>libTraktor.Net.a</item>
-				<item>libTraktor.Render.a</item>
-				<item>libTraktor.Resource.a</item>
-				<item>libTraktor.Sound.a</item>
-				<item>libTraktor.Xml.a</item>
+				<item>Extern.jpeg-6b.lib</item>
+				<item>Extern.lpng128.lib</item>
+				<item>Extern.liblzf-3.6.lib</item>
+				<item>Extern.minilzo-2.05.lib</item>
+				<item>Extern.zlib-1.2.3.lib</item>
+				<item>Traktor.Compress.lib</item>
+				<item>Traktor.Core.lib</item>
+				<item>Traktor.Database.lib</item>
+				<item>Traktor.Drawing.lib</item>
+				<item>Traktor.Html.lib</item>
+				<item>Traktor.Net.lib</item>
+				<item>Traktor.Render.lib</item>
+				<item>Traktor.Resource.lib</item>
+				<item>Traktor.Sound.lib</item>
+				<item>Traktor.Xml.lib</item>
 			</deployFiles>
 		</item>
 		<item>

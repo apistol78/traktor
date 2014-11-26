@@ -134,10 +134,8 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 		T_ASSERT (feature);
 
 		Ref< const PropertyGroup > runtimeProperties = feature->getRuntimeProperties();
-		if (!runtimeProperties)
-			continue;
-
-		applicationConfiguration = applicationConfiguration->mergeJoin(runtimeProperties);
+		if (runtimeProperties)
+			applicationConfiguration = applicationConfiguration->mergeJoin(runtimeProperties);
 
 		const Feature::Platform* fp = feature->getPlatform(m_targetConfiguration->getPlatform());
 		if (fp)
