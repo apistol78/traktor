@@ -594,6 +594,19 @@ bool RenderViewPs3::isFullScreen() const
 	return true;
 }
 
+void RenderViewPs3::showCursor()
+{
+}
+
+void RenderViewPs3::hideCursor()
+{
+}
+
+bool RenderViewPs3::isCursorVisible() const
+{
+	return false;
+}
+
 bool RenderViewPs3::setGamma(float gamma)
 {
 	if (m_gamma == gamma)
@@ -625,6 +638,11 @@ Viewport RenderViewPs3::getViewport()
 		return m_viewport;
 	else
 		return m_renderTargetStack.back().viewport;
+}
+
+SystemWindow RenderViewPs3::getSystemWindow()
+{
+	return SystemWindow();
 }
 
 bool RenderViewPs3::begin(EyeType eye)
@@ -1005,6 +1023,11 @@ void RenderViewPs3::popMarker()
 void RenderViewPs3::getStatistics(RenderViewStatistics& outStatistics) const
 {
 	outStatistics = m_statistics;
+}
+
+bool RenderViewPs3::getBackBufferContent(void* buffer) const
+{
+	return false;
 }
 
 void RenderViewPs3::setCurrentRenderState()

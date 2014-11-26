@@ -52,6 +52,8 @@ public:
 
 	virtual void swap(int index1, int index2);
 
+	virtual void discard();
+
 	virtual bool read(int index, void* buffer) const;
 
 	const CellGcmTexture& getGcmDepthTexture();

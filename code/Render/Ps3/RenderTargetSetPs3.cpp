@@ -219,6 +219,10 @@ void RenderTargetSetPs3::swap(int index1, int index2)
 	m_renderTargets[index2] = rt1;
 }
 
+void RenderTargetSetPs3::discard()
+{
+}
+
 bool RenderTargetSetPs3::read(int index, void* buffer) const
 {
 	return false;

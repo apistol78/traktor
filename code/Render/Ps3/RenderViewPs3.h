@@ -62,11 +62,19 @@ public:
 
 	virtual bool isFullScreen() const;
 
+	virtual void showCursor();
+
+	virtual void hideCursor();
+
+	virtual bool isCursorVisible() const;
+
 	virtual bool setGamma(float gamma);
 
 	virtual void setViewport(const Viewport& viewport);
 
 	virtual Viewport getViewport();
+
+	virtual SystemWindow getSystemWindow();
 
 	virtual bool begin(EyeType eye);
 
@@ -89,6 +97,8 @@ public:
 	virtual void popMarker();
 
 	virtual void getStatistics(RenderViewStatistics& outStatistics) const;
+
+	virtual bool getBackBufferContent(void* buffer) const;
 
 private:
 	struct RenderState

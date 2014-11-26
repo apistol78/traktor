@@ -318,6 +318,11 @@ Ref< IProgramCompiler > RenderSystemPs3::createProgramCompiler() const
 #endif
 }
 
+Ref< ITimeQuery > RenderSystemPs3::createTimeQuery() const
+{
+	return 0;
+}
+
 void RenderSystemPs3::getStatistics(RenderSystemStatistics& outStatistics) const
 {
 }
