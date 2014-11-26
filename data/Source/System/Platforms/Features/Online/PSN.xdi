@@ -6,10 +6,13 @@
 		<item>
 			<platform>{14814B5B-2FF1-2F4B-BE92-08CAB3D0D544}</platform>
 			<deployFiles>
-				<item>libTraktor.Core.a</item>
-				<item>libTraktor.Net.a</item>
-				<item>libTraktor.Online.a</item>
-				<item>libTraktor.Online.Psn.a</item>
+				<item>libsysutil_np_stub.a</item>
+				<item>libsysutil_np_trophy_stub.a</item>
+				<item>libsysutil_np2_stub.a</item>
+				<item>Traktor.Core.lib</item>
+				<item>Traktor.Net.lib</item>
+				<item>Traktor.Online.lib</item>
+				<item>Traktor.Online.Psn.lib</item>
 			</deployFiles>
 		</item>
 	</platforms>

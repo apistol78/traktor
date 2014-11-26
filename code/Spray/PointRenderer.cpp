@@ -17,23 +17,12 @@
 #	include "Core/Thread/Ps3/Spurs/SpursManager.h"
 #	include "Spray/Ps3/Spu/JobPointRenderer.h"
 
-#	if !defined(_DEBUG)
-
 extern char _binary_jqjob_Traktor_Spray_JobPointRenderer_bin_start[];
 extern char _binary_jqjob_Traktor_Spray_JobPointRenderer_bin_size[];
 
 static char* job_start = _binary_jqjob_Traktor_Spray_JobPointRenderer_bin_start;
 static char* job_size = _binary_jqjob_Traktor_Spray_JobPointRenderer_bin_size;
 
-#	else
-
-extern char _binary_jqjob_Traktor_Spray_JobPointRenderer_d_bin_start[];
-extern char _binary_jqjob_Traktor_Spray_JobPointRenderer_d_bin_size[];
-
-static char* job_start = _binary_jqjob_Traktor_Spray_JobPointRenderer_d_bin_start;
-static char* job_size = _binary_jqjob_Traktor_Spray_JobPointRenderer_d_bin_size;
-
-#	endif
 #endif
 
 namespace traktor

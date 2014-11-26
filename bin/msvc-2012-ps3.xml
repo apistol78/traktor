@@ -41,6 +41,10 @@
               <name>WarningLevel</name>
               <value>Level3</value>
             </item>
+            <item>
+              <name>GenerateDebugInformation</name>
+              <value>true</value>
+            </item>
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -88,6 +92,10 @@
               <name>WarningLevel</name>
               <value>Level3</value>
             </item>
+            <item>
+              <name>GenerateDebugInformation</name>
+              <value>true</value>
+            </item>            
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -183,6 +191,10 @@
               <name>WarningLevel</name>
               <value>Level3</value>
             </item>
+            <item>
+              <name>GenerateDebugInformation</name>
+              <value>true</value>
+            </item>            
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -274,6 +286,10 @@
               <name>WarningLevel</name>
               <value>Level3</value>
             </item>
+            <item>
+              <name>GenerateDebugInformation</name>
+              <value>true</value>
+            </item>            
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -759,6 +775,30 @@
         <command>$(TRAKTOR_HOME)/bin/win32/BinaryInclude %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
         <message>Building embedded resource file %(FileName).h</message>
         <outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
+      </item>
+      <item type="SolutionBuilderMsvcVCXCustomBuildTool">
+        <name>CustomBuild</name>
+        <fileType>cgv</fileType>
+        <command><![CDATA[
+          $(SCE_PS3_ROOT)\host-win32\Cg\bin\sce-cgc -profile sce_vp_rsx -o &quot;$(IntDir)\%(Filename).vpo&quot; &quot;%(FullPath)&quot;&#x0D;&#x0A;
+          pushd &quot;$(IntDir)&quot;&#x0D;&#x0A;
+          $(SCE_PS3_ROOT)\host-win32\ppu\bin\ppu-lv2-objcopy -I binary -O elf64-powerpc-celloslv2 -B powerpc &quot;%(Filename).vpo&quot; &quot;%(Filename).vpo.obj&quot;&#x0D;&#x0A;
+          popd&#x0D;&#x0A;
+        ]]></command>
+        <message>Compiling CG shader $(FullPath) (vertex)</message>
+        <outputs>$(IntDir)\%(Filename).vpo.obj</outputs>
+      </item>
+      <item type="SolutionBuilderMsvcVCXCustomBuildTool">
+        <name>CustomBuild</name>
+        <fileType>cgf</fileType>
+        <command><![CDATA[
+          $(SCE_PS3_ROOT)\host-win32\Cg\bin\sce-cgc -profile sce_fp_rsx -o &quot;$(IntDir)\%(Filename).fpo&quot; &quot;%(FullPath)&quot;&#x0D;&#x0A;
+          pushd &quot;$(IntDir)&quot;&#x0D;&#x0A;
+          $(SCE_PS3_ROOT)\host-win32\ppu\bin\ppu-lv2-objcopy -I binary -O elf64-powerpc-celloslv2 -B powerpc &quot;%(Filename).fpo&quot; &quot;%(Filename).fpo.obj&quot;&#x0D;&#x0A;
+          popd&#x0D;&#x0A;
+        ]]></command>
+        <message>Compiling CG shader $(FullPath) (fragment)</message>
+        <outputs>$(IntDir)\%(Filename).fpo.obj</outputs>
       </item>
       <item type="SolutionBuilderMsvcVCXBuildTool">
         <name>ClInclude</name>

@@ -284,9 +284,9 @@ const wchar_t* ProgramCompilerPs3::getPlatformSignature() const
 
 Ref< ProgramResource > ProgramCompilerPs3::compile(
 	const ShaderGraph* shaderGraph,
+	const PropertyGroup* settings,
 	int32_t optimize,
 	bool validate,
-	IProgramHints* hints,
 	Stats* outStats
 ) const
 {
@@ -376,6 +376,29 @@ Ref< ProgramResource > ProgramCompilerPs3::compile(
 	}
 
 	return resource;
+}
+
+bool ProgramCompilerPs3::generate(
+	const ShaderGraph* shaderGraph,
+	const PropertyGroup* settings,
+	int32_t optimize,
+	std::wstring& outShader
+) const
+{
+	CgProgram cgProgram;
+	if (!Cg().generate(shaderGraph, cgProgram))
+		return false;
+
+	outShader =
+		std::wstring(L"// Vertex shader\n") +
+		std::wstring(L"\n") +
+		cgProgram.getVertexShader() +
+		std::wstring(L"\n") +
+		std::wstring(L"// Pixel shader\n") +
+		std::wstring(L"\n") +
+		cgProgram.getPixelShader();
+
+	return true;
 }
 
 	}

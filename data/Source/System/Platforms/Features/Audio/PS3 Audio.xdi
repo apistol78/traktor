@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="4">
+<object type="traktor.amalgam.Feature" version="5">
 	<description>PS3 DSP Audio</description>
 	<priority>0</priority>
 	<platforms>
 		<item>
 			<platform>{14814B5B-2FF1-2F4B-BE92-08CAB3D0D544}</platform>
-			<deployFiles/>
+			<executableFile/>
+			<deployFiles>
+				<item>libsysutil_avconf_ext_stub.a</item>
+				<item>libaudio_stub.a</item>
+				<item>Traktor.Core.lib</item>
+				<item>Traktor.Sound.lib</item>
+				<item>Traktor.Sound.Ps3.lib</item>
+				<item>Traktor.Sound.JobAddMulConst.ppu.o</item>
+				<item>Traktor.Sound.JobMulConst.ppu.o</item>
+				<item>Traktor.Sound.JobStretch.ppu.o</item>
+			</deployFiles>
 		</item>
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">

@@ -5,7 +5,10 @@
 	<platforms>
 		<item>
 			<platform>{14814B5B-2FF1-2F4B-BE92-08CAB3D0D544}</platform>
-			<deployFiles/>
+			<deployFiles>
+				<item>Traktor.Input.lib</item>
+				<item>Traktor.Input.Ps3.lib</item>
+			</deployFiles>
 		</item>
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">

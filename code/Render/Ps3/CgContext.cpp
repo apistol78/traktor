@@ -1,11 +1,14 @@
 #include <sstream>
 #include "Render/Ps3/CgContext.h"
 #include "Render/Ps3/CgShader.h"
-#include "Render/Shader/ShaderGraph.h"
-#include "Render/Shader/Node.h"
-#include "Render/Shader/InputPin.h"
-#include "Render/Shader/OutputPin.h"
+
+#include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
+#include "Render/Shader/InputPin.h"
+#include "Render/Shader/Node.h"
+#include "Render/Shader/OutputPin.h"
+#include "Render/Shader/ShaderGraph.h"
+#include "Render/Shader/ShaderGraphTraverse.h"
 
 namespace traktor
 {
@@ -21,6 +24,24 @@ CgContext::CgContext(const ShaderGraph* shaderGraph)
 ,	m_needVPos(false)
 ,	m_registerCount(0)
 {
+}
+
+void CgContext::emit(Node* node)
+{
+	int32_t outputPinCount = node->getOutputPinCount();
+	for (int32_t i = 0; i < outputPinCount; ++i)
+	{
+		CgVariable* variable = m_currentShader->getVariable(node->getOutputPin(i));
+		if (!variable)
+		{
+			if (!m_emitter.emit(*this, node))
+			{
+				log::error << L"Failed to emit " << type_name(node) << Endl;
+				log::error << L"  " << type_name(node) << L"[" << node->getOutputPin(i)->getName() << L"] " << node->getInformation() << Endl;
+			}
+			break;
+		}
+	}
 }
 
 CgVariable* CgContext::emitInput(const InputPin* inputPin)
@@ -68,6 +89,19 @@ void CgContext::emitOutput(Node* node, const std::wstring& outputPinName, CgVari
 	T_ASSERT (outputPin);
 
 	m_currentShader->associateVariable(outputPin, variable);
+}
+
+void CgContext::findNonDependentOutputs(Node* node, const std::wstring& inputPinName, const std::vector< const OutputPin* >& dependentOutputPins, std::vector< const OutputPin* >& outOutputPins) const
+{
+	getNonDependentOutputs(m_shaderGraph, node->findInputPin(inputPinName), dependentOutputPins, outOutputPins);
+}
+
+void CgContext::findCommonOutputs(Node* node, const std::wstring& inputPin1, const std::wstring& inputPin2, std::vector< const OutputPin* >& outOutputPins) const
+{
+	std::vector< const InputPin* > inputPins(2);
+	inputPins[0] = node->findInputPin(inputPin1);
+	inputPins[1] = node->findInputPin(inputPin2);
+	getMergingOutputs(m_shaderGraph, inputPins, outOutputPins); 
 }
 
 void CgContext::enterVertex()

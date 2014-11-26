@@ -54,13 +54,13 @@
 		<item>
 			<platform>{14814B5B-2FF1-2F4B-BE92-08CAB3D0D544}</platform>
 			<deployFiles>
-				<item>libTraktor.Animation.a</item>
-				<item>libTraktor.Core.a</item>
-				<item>libTraktor.Database.a</item>
-				<item>libTraktor.Mesh.a</item>
-				<item>libTraktor.Physics.a</item>
-				<item>libTraktor.Render.a</item>
-				<item>libTraktor.World.a</item>
+				<item>Traktor.Animation.lib</item>
+				<item>Traktor.Core.lib</item>
+				<item>Traktor.Database.lib</item>
+				<item>Traktor.Mesh.lib</item>
+				<item>Traktor.Physics.lib</item>
+				<item>Traktor.Render.lib</item>
+				<item>Traktor.World.lib</item>
 			</deployFiles>
 		</item>
 		<item>

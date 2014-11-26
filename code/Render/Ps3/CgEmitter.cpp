@@ -4,8 +4,8 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Render/VertexElement.h"
-#include "Render/Shader/Script.h"
 #include "Render/Shader/Nodes.h"
+#include "Render/Shader/Script.h"
 
 namespace traktor
 {
@@ -379,6 +379,14 @@ bool emitIndexedUniform(CgContext& cx, IndexedUniform* node)
 	return true;
 }
 
+bool emitInstance(CgContext& cx, Instance* node)
+{
+	StringOutputStream& fb = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* out = cx.emitOutput(node, L"Output", CtFloat);
+	assign(fb, out) << L"0;" << Endl;
+	return true;
+}
+
 bool emitInterpolator(CgContext& cx, Interpolator* node)
 {
 	if (!cx.inPixel())
@@ -451,6 +459,17 @@ bool emitIterate(CgContext& cx, Iterate* node)
 	CgVariable* out = cx.emitOutput(node, L"Output", CtVoid);
 	T_ASSERT (out);
 
+	// Find non-dependent, external, output pins from input branch;
+	// we emit those first in order to have them evaluated
+	// outside of iteration.
+	std::vector< const OutputPin* > outputPins;
+	std::vector< const OutputPin* > dependentOutputPins(2);
+	dependentOutputPins[0] = node->findOutputPin(L"N");
+	dependentOutputPins[1] = node->findOutputPin(L"Output");
+	cx.findNonDependentOutputs(node, L"Input", dependentOutputPins, outputPins);
+	for (std::vector< const OutputPin* >::const_iterator i = outputPins.begin(); i != outputPins.end(); ++i)
+		cx.emit((*i)->getNode());
+
 	// Write input branch in a temporary output stream.
 	StringOutputStream fs;
 	cx.getShader().pushOutputStream(CgShader::BtBody, &fs);
@@ -496,6 +515,99 @@ bool emitIterate(CgContext& cx, Iterate* node)
 	// output stream.
 	f << fs.str();
 	f << out->getName() << L" = " << inputName << L";" << Endl;
+
+	f << DecreaseIndent;
+	f << L"}" << Endl;	
+
+	return true;
+}
+
+bool emitIterate2d(CgContext& cx, Iterate2d* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	std::wstring inputName;
+
+	// Create iterator variables.
+	CgVariable* X = cx.emitOutput(node, L"X", CtFloat);
+	T_ASSERT (X);
+
+	CgVariable* Y = cx.emitOutput(node, L"Y", CtFloat);
+	T_ASSERT (Y);
+
+	// Create void output variable; change type later when we know
+	// the type of the input branch.
+	CgVariable* out = cx.emitOutput(node, L"Output", CtVoid);
+	T_ASSERT (out);
+
+	// Find non-dependent, external, output pins from input branch;
+	// we emit those first in order to have them evaluated
+	// outside of iteration.
+	std::vector< const OutputPin* > outputPins;
+	std::vector< const OutputPin* > dependentOutputPins(3);
+	dependentOutputPins[0] = node->findOutputPin(L"X");
+	dependentOutputPins[1] = node->findOutputPin(L"Y");
+	dependentOutputPins[2] = node->findOutputPin(L"Output");
+	cx.findNonDependentOutputs(node, L"Input", dependentOutputPins, outputPins);
+	for (std::vector< const OutputPin* >::const_iterator i = outputPins.begin(); i != outputPins.end(); ++i)
+		cx.emit((*i)->getNode());
+
+	// Write input branch in a temporary output stream.
+	StringOutputStream fs;
+	cx.getShader().pushOutputStream(CgShader::BtBody, &fs);
+	cx.getShader().pushScope();
+
+	CgVariable* input = cx.emitInput(node, L"Input");
+	if (!input)
+		return false;
+
+	// Emit post condition if connected; break iteration if condition is false.
+	CgVariable* condition = cx.emitInput(node, L"Condition");
+	if (condition)
+	{
+		fs << L"if (!(bool)" << condition->cast(CtFloat) << L")" << Endl;
+		fs << L"\tbreak;" << Endl;
+	}
+
+	inputName = input->getName();
+
+	// Modify output variable; need to have input variable ready as it
+	// will determine output type.
+	out->setType(input->getType());
+
+	cx.getShader().popScope();
+	cx.getShader().popOutputStream(CgShader::BtBody);
+
+	// As we now know the type of output variable we can safely
+	// initialize it.
+	CgVariable* initial = cx.emitInput(node, L"Initial");
+	if (initial)
+		assign(f, out) << initial->cast(out->getType()) << L";" << Endl;
+	else
+		assign(f, out) << L"0;" << Endl;
+
+	// Write outer for-loop statement.
+	f << L"for (float " << X->getName() << L" = " << node->getFromX() << L"; " << X->getName() << L" <= " << node->getToX() << L"; ++" << X->getName() << L")" << Endl;
+	f << L"{" << Endl;
+	f << IncreaseIndent;
+
+	f << L"for (float " << Y->getName() << L" = " << node->getFromY() << L"; " << Y->getName() << L" <= " << node->getToY() << L"; ++" << Y->getName() << L")" << Endl;
+	f << L"{" << Endl;
+	f << IncreaseIndent;
+
+	// Insert input branch here; it's already been generated in a temporary
+	// output stream.
+	f << fs.str();
+	f << out->getName() << L" = " << inputName << L";" << Endl;
+
+	f << DecreaseIndent;
+	f << L"}" << Endl;	
+
+	// Emit outer loop post condition.
+	if (condition)
+	{
+		fs << L"if (!(bool)" << condition->cast(CtFloat) << L")" << Endl;
+		fs << L"\tbreak;" << Endl;
+	}
 
 	f << DecreaseIndent;
 	f << L"}" << Endl;	
@@ -840,6 +952,17 @@ bool emitPixelOutput(CgContext& cx, PixelOutput* node)
 		rsgcm.colorMask |= CELL_GCM_COLOR_MASK_A;
 
 	cx.setRegisterCount(node->getRegisterCount());
+	return true;
+}
+
+bool emitRecipSqrt(CgContext& cx, RecipSqrt* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* in = cx.emitInput(node, L"Input");
+	if (!in)
+		return false;
+	CgVariable* out = cx.emitOutput(node, L"Output", in->getType());
+	assign(f, out) << L"rsqrt(" << in->getName() << L");" << Endl;
 	return true;
 }
 
@@ -1426,6 +1549,31 @@ bool emitTargetSize(CgContext& cx, TargetSize* node)
 	return true;
 }
 
+bool emitTextureSize(CgContext& cx, TextureSize* node)
+{
+	CgVariable* in = cx.emitInput(node, L"Input");
+	if (!in || in->getType() < CtTexture2D)
+		return false;
+
+	std::wstring uniformName = L"__private__" + in->getName() + L"_size";
+
+	CgVariable* out = cx.getShader().createVariable(
+		node->findOutputPin(L"Output"),
+		uniformName,
+		CtFloat3
+	);
+
+	const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
+	if (uniforms.find(uniformName) == uniforms.end())
+	{
+		uint32_t registerIndex = cx.getShader().addUniform(uniformName, CtFloat3, 1);
+		StringOutputStream& fu = cx.getShader().getOutputStream(CgShader::BtUniform);
+		fu << L"uniform float3 " << uniformName << L" : register(c" << registerIndex << L");" << Endl;
+	}
+
+	return true;
+}
+
 bool emitTransform(CgContext& cx, Transform* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
@@ -1655,8 +1803,10 @@ CgEmitter::CgEmitter()
 	m_emitters[&type_of< Fraction >()] = new EmitterCast< Fraction >(emitFraction);
 	m_emitters[&type_of< FragmentPosition >()] = new EmitterCast< FragmentPosition >(emitFragmentPosition);
 	m_emitters[&type_of< IndexedUniform >()] = new EmitterCast< IndexedUniform >(emitIndexedUniform);
+	m_emitters[&type_of< Instance >()] = new EmitterCast< Instance >(emitInstance);
 	m_emitters[&type_of< Interpolator >()] = new EmitterCast< Interpolator >(emitInterpolator);
 	m_emitters[&type_of< Iterate >()] = new EmitterCast< Iterate >(emitIterate);
+	m_emitters[&type_of< Iterate2d >()] = new EmitterCast< Iterate2d >(emitIterate2d);
 	m_emitters[&type_of< Length >()] = new EmitterCast< Length >(emitLength);
 	m_emitters[&type_of< Lerp >()] = new EmitterCast< Lerp >(emitLerp);
 	m_emitters[&type_of< Log >()] = new EmitterCast< Log >(emitLog);
@@ -1673,6 +1823,7 @@ CgEmitter::CgEmitter()
 	m_emitters[&type_of< Polynomial >()] = new EmitterCast< Polynomial >(emitPolynomial);
 	m_emitters[&type_of< Pow >()] = new EmitterCast< Pow >(emitPow);
 	m_emitters[&type_of< PixelOutput >()] = new EmitterCast< PixelOutput >(emitPixelOutput);
+	m_emitters[&type_of< RecipSqrt >()] = new EmitterCast< RecipSqrt >(emitRecipSqrt);
 	m_emitters[&type_of< Reflect >()] = new EmitterCast< Reflect >(emitReflect);
 	m_emitters[&type_of< Round >()] = new EmitterCast< Round >(emitRound);
 	m_emitters[&type_of< Sampler >()] = new EmitterCast< Sampler >(emitSampler);
@@ -1688,6 +1839,7 @@ CgEmitter::CgEmitter()
 	m_emitters[&type_of< Switch >()] = new EmitterCast< Switch >(emitSwitch);
 	m_emitters[&type_of< Tan >()] = new EmitterCast< Tan >(emitTan);
 	m_emitters[&type_of< TargetSize >()] = new EmitterCast< TargetSize >(emitTargetSize);
+	m_emitters[&type_of< TextureSize >()] = new EmitterCast< TextureSize >(emitTextureSize);
 	m_emitters[&type_of< Transform >()] = new EmitterCast< Transform >(emitTransform);
 	m_emitters[&type_of< Transpose >()] = new EmitterCast< Transpose >(emitTranspose);
 	m_emitters[&type_of< Truncate >()] = new EmitterCast< Truncate >(emitTruncate);

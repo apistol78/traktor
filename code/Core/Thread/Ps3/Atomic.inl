@@ -53,7 +53,7 @@ int32_t Atomic::compareAndSwap(int32_t& value, int32_t compareTo, int32_t replac
 {
 	int32_t old = value;
 #if !defined(SPU)
-	cellAtomicCompareAndSwap32((uint32_t*)value, (uint32_t)compareTo, (uint32_t)replaceWithIfEqual);
+	cellAtomicCompareAndSwap32((uint32_t*)&value, (uint32_t)compareTo, (uint32_t)replaceWithIfEqual);
 #endif
 	return old;
 }

@@ -55,14 +55,14 @@
 		<item>
 			<platform>{14814B5B-2FF1-2F4B-BE92-08CAB3D0D544}</platform>
 			<deployFiles>
-				<item>libExtern.bullet.a</item>
-				<item>libTraktor.Core.a</item>
-				<item>libTraktor.Database.a</item>
-				<item>libTraktor.Heightfield.a</item>
-				<item>libTraktor.Resource.a</item>
-				<item>libTraktor.World.a</item>
-				<item>libTraktor.Physics.a</item>
-				<item>libTraktor.Physics.Bullet.a</item>
+				<item>Extern.bullet-2.80.lib</item>
+				<item>Traktor.Core.lib</item>
+				<item>Traktor.Database.lib</item>
+				<item>Traktor.Heightfield.lib</item>
+				<item>Traktor.Resource.lib</item>
+				<item>Traktor.World.lib</item>
+				<item>Traktor.Physics.lib</item>
+				<item>Traktor.Physics.Bullet.lib</item>
 			</deployFiles>
 		</item>
 		<item>

@@ -33,7 +33,7 @@ void cellSpursJobQueueMain(CellSpursJobContext2* context, CellSpursJob256* job25
 	enum { PointCount = 64 };
 
 	static spray::Point points[PointCount] __attribute__((aligned(16)));
-	static spray::Vertex vertices[PointCount * 4] __attribute__((aligned(16)));
+	static spray::EmitterVertex vertices[PointCount * 4] __attribute__((aligned(16)));
 	static Batch batch __attribute__((aligned(16)));
 
 	Plane cameraPlane __attribute__((aligned(16)));
@@ -94,19 +94,19 @@ void cellSpursJobQueueMain(CellSpursJobContext2* context, CellSpursJob256* job25
 
 			for (int j = 0; j < 4; ++j)
 			{
-				spray::Vertex& vertex = vertices[vertexOffset++];
+				spray::EmitterVertex& vertex = vertices[vertexOffset++];
 
-				point.position.storeAligned(vertex.positionAndOrientation.position);
-				point.velocity.storeAligned(vertex.velocityAndRandom.velocity);
-				point.color.storeAligned(vertex.attrib2.color);
+				point.position.storeAligned(vertex.positionAndOrientation);
+				point.velocity.storeAligned(vertex.velocityAndRandom);
+				point.color.storeAligned(vertex.colorAndAge);
 
-				vertex.positionAndOrientation.orientation = point.orientation;
-				vertex.velocityAndRandom.random = point.random;
-				vertex.attrib1.extent[0] = c_extents[j][0];
-				vertex.attrib1.extent[1] = c_extents[j][1];
-				vertex.attrib1.alpha = alpha;
-				vertex.attrib1.size = point.size;
-				vertex.attrib2.age = age;
+				vertex.positionAndOrientation[3] = point.orientation;
+				vertex.velocityAndRandom[3] = point.random;
+				vertex.extentAlphaAndSize[0] = c_extents[j][0];
+				vertex.extentAlphaAndSize[1] = c_extents[j][1];
+				vertex.extentAlphaAndSize[2] = alpha;
+				vertex.extentAlphaAndSize[3] = point.size;
+				vertex.colorAndAge[3] = age;
 			}
 
 			batch.distance = min(batch.distance, distance);
@@ -119,13 +119,13 @@ void cellSpursJobQueueMain(CellSpursJobContext2* context, CellSpursJob256* job25
 			cellDmaPut(
 				vertices,
 				job->data.vertexOutEA + vertexOutOffset,
-				vertexOffset * sizeof(spray::Vertex),
+				vertexOffset * sizeof(spray::EmitterVertex),
 				context->dmaTag,
 				0,
 				0
 			);
 			//cellSpursJobQueueDmaWaitTagStatusAll(1 << context->dmaTag);
-			vertexOutOffset += vertexOffset * sizeof(spray::Vertex);
+			vertexOutOffset += vertexOffset * sizeof(spray::EmitterVertex);
 		}
 	}
 

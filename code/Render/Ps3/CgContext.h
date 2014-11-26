@@ -23,6 +23,8 @@ class CgContext
 public:
 	CgContext(const ShaderGraph* shaderGraph);
 
+	void emit(Node* node);
+
 	CgVariable* emitInput(const InputPin* inputPin);
 
 	CgVariable* emitInput(Node* node, const std::wstring& inputPinName);
@@ -30,6 +32,10 @@ public:
 	CgVariable* emitOutput(Node* node, const std::wstring& outputPinName, CgType type);
 
 	void emitOutput(Node* node, const std::wstring& outputPinName, CgVariable* variable);
+
+	void findNonDependentOutputs(Node* node, const std::wstring& inputPinName, const std::vector< const OutputPin* >& dependentOutputPins, std::vector< const OutputPin* >& outOutputPins) const;
+
+	void findCommonOutputs(Node* node, const std::wstring& inputPin1, const std::wstring& inputPin2, std::vector< const OutputPin* >& outOutputPins) const;
 
 	void enterVertex();
 

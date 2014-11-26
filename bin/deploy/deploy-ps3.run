@@ -1,0 +1,133 @@
+
+
+function string:split(sep)
+	local sep, fields = sep or ":", {}
+	local pattern = string.format("([^%s]+)", sep)
+	self:gsub(pattern, function(c) fields[#fields+1] = c end)
+	return fields
+end
+
+
+function string:endswith(send)
+	return #self >= #send and self:find(send, #self - #send + 1, true) and true or false
+end
+
+
+function build(args)
+	stdout:printLn("Building asset(s)...")
+	local cmdline = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App -p -s=Pipeline"
+	for i = 1, args:size() - 1 do
+		cmdline = cmdline .. " " .. args:get(i)
+	end
+	return run:execute(cmdline)
+end
+
+
+function deploy(args)
+	local executable = os:getEnvironment("DEPLOY_EXECUTABLE")
+	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
+	local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
+
+	-- Collect libraries to link.
+	local modulesLocal = {}
+	local modulesExtern = {}
+
+	for _, f in ipairs(files) do
+		if string.endswith(f, ".lib") then
+			if debug then
+				f = f:sub(1, string.len(f) - 4) .. "_d.lib"
+			end
+			if string.sub(f, 1, 6) ~= "Extern" then
+				table.insert(modulesLocal, f)
+			else
+				table.insert(modulesExtern, f)
+			end
+		elseif string.endswith(f, ".a") or string.endswith(f, ".o") then
+			table.insert(modulesExtern, f)
+		else
+			stderr:printLn("Unknown deploy file \"" .. f .. "\"")
+		end
+	end
+
+	-- Determine path to module libraries.
+	local libraryPathPPU
+	local libraryPathSPU
+	if not debug then
+	 	libraryPathPPU = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/ps3/ppu/releasestatic"
+	 	libraryPathSPU = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/ps3/spu/releasestatic"
+	else
+		stdout:printLn("Using *DEBUG* binaries")
+	 	libraryPathPPU = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/ps3/ppu/debugstatic"
+	 	libraryPathSPU = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/ps3/spu/debugstatic"
+	end	
+
+	-- Build link command line.
+	local ld = "$(SCE_PS3_ROOT)/host-$(DEPLOY_HOST_OS)/sn/bin/ps3ppuld --library-path=" .. libraryPathPPU .. " --library-path=" .. libraryPathSPU
+
+	if #modulesLocal > 0 then
+		ld = ld .. " --whole-archive"
+		for _, m in ipairs(modulesLocal) do
+			ld = ld .. " " .. m
+		end
+	end
+	if #modulesExtern > 0 then
+		ld = ld .. " --no-whole-archive"
+		for _, m in ipairs(modulesExtern) do
+			ld = ld .. " " .. m
+		end
+	end
+
+	ld = ld .. " -o " .. executable .. ".elf"
+
+	-- Link executable product.
+	local result = run:execute(ld)
+	if result ~= 0 then
+		stderr:printLn("Failed to link PS3 executable.")
+		return 1
+	end
+
+	-- Sign executable product.
+	local result = run:execute("$(SCE_PS3_ROOT)/host-$(DEPLOY_HOST_OS)/bin/make_fself " .. executable .. ".elf " .. executable .. ".self")
+	if result ~= 0 then
+		stderr:printLn("Failed to sign PS3 executable.")
+		return 1
+	end
+
+	stdout:printLn("PS3 deployed successfully.")
+	return 0
+end
+
+
+function launch(args)
+	local executable = os:getEnvironment("DEPLOY_EXECUTABLE")
+
+	stdout:printLn("Launching PS3...")
+	local result = run:execute("\"$(SN_PS3_PATH)/bin/ps3run.exe\" -k -r2 -f . " .. executable .. ".self", "(null)")
+	if result ~= 0 then
+		stderr:printLn("Failed to launch PS3 executable (" .. result .. ").")
+		return 1
+	end
+
+	return 0
+end
+
+
+function migrate(args)
+	stdout:printLn("Migrating PS3...")
+	return run:execute("$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Database.Migrate.App -p -s=Migrate")
+end
+
+
+function main(args)
+	local action = args:get(0)
+	if action == "build" then
+		return build(args)
+	elseif action == "deploy" then
+		return deploy(args)
+	elseif action == "launch" then
+		return launch(args)
+	elseif action == "migrate" then
+		return migrate(args)
+	end
+	return 1
+end

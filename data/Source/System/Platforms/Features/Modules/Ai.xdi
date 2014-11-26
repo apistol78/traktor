@@ -36,10 +36,10 @@
 		<item>
 			<platform>{14814B5B-2FF1-2F4B-BE92-08CAB3D0D544}</platform>
 			<deployFiles>
-				<item>libExtern.detour.a</item>
-				<item>libExtern.recast.a</item>
-				<item>libTraktor.Core.a</item>
-				<item>libTraktor.Ai.a</item>
+				<item>Extern.detour.lib</item>
+				<item>Extern.recast.lib</item>
+				<item>Traktor.Core.lib</item>
+				<item>Traktor.Ai.lib</item>
 			</deployFiles>
 		</item>
 		<item>

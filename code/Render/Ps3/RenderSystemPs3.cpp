@@ -141,6 +141,10 @@ bool RenderSystemPs3::reset(const RenderSystemDesc& desc)
 	return false;
 }
 
+void RenderSystemPs3::getInformation(RenderSystemInformation& outInfo) const
+{
+}
+
 uint32_t RenderSystemPs3::getDisplayModeCount() const
 {
 	return m_resolutions.size();
