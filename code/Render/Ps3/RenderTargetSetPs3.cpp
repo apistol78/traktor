@@ -24,7 +24,7 @@ RenderTargetSetPs3::RenderTargetSetPs3(
 #endif
 ,	m_width(0)
 ,	m_height(0)
-,	m_depthFormat(CELL_GCM_SURFACE_Z16)
+,	m_depthFormat(CELL_GCM_SURFACE_Z24S8)
 ,	m_depthData(0)
 ,	m_usingPrimaryDepthStencil(false)
 ,	m_counter(counter)
@@ -161,6 +161,7 @@ bool RenderTargetSetPs3::create(
 		m_depthTexture.location = CELL_GCM_LOCATION_LOCAL;
 		m_depthTexture.pitch = 64;
 		m_depthTexture.offset = 0;
+		m_depthFormat = CELL_GCM_SURFACE_Z24S8;
 	}
 
 	return true;

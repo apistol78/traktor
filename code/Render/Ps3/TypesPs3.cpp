@@ -75,6 +75,12 @@ bool getGcmSurfaceInfo(TextureFormat textureFormat, uint8_t& outGcmTextureFormat
 		outByteSize = 4;
 		break;
 
+	case TfR11G11B10F:
+		outGcmTextureFormat = CELL_GCM_TEXTURE_W16_Z16_Y16_X16_FLOAT;
+		outGcmSurfaceFormat = CELL_GCM_SURFACE_F_W16Z16Y16X16;
+		outByteSize = 4 * 2;
+		break;
+
 	default:
 		return false;
 	}
@@ -101,8 +107,16 @@ bool getGcmTextureInfo(TextureFormat textureFormat, uint8_t& outGcmFormat)
 		outGcmFormat = CELL_GCM_TEXTURE_W32_Z32_Y32_X32_FLOAT;
 		break;
 
+	case TfR16G16F:
+		outGcmFormat = CELL_GCM_TEXTURE_Y16_X16_FLOAT;
+		break;
+
 	case TfR32F:
 		outGcmFormat = CELL_GCM_TEXTURE_X32_FLOAT;
+		break;
+
+	case TfR11G11B10F:
+		outGcmFormat = CELL_GCM_TEXTURE_W16_Z16_Y16_X16_FLOAT;
 		break;
 
 	case TfDXT1:

@@ -366,13 +366,13 @@ void StateCachePs3::setViewport(const Viewport& viewport)
 void StateCachePs3::setVertexDataArray(uint8_t index, uint8_t stride, uint8_t size, uint8_t type, uint8_t location, uint32_t offset)
 {
 	VertexAttribute& vattr = m_vertexAttributes[index];
-	if (
-		vattr.stride != stride ||
-		vattr.size != size ||
-		vattr.type != type ||
-		vattr.location != location ||
-		vattr.offset != offset
-	)
+	//if (
+	//	vattr.stride != stride ||
+	//	vattr.size != size ||
+	//	vattr.type != type ||
+	//	vattr.location != location ||
+	//	vattr.offset != offset
+	//)
 	{
 		T_GCM_CALL(cellGcmSetVertexDataArray)(
 			gCellGcmCurrentContext,
@@ -396,6 +396,7 @@ void StateCachePs3::setVertexDataArray(uint8_t index, uint8_t stride, uint8_t si
 void StateCachePs3::reset()
 {
 	m_renderState = RenderStateGCM();
+
 	for (int i = 0; i < SamplerCount; ++i)
 	{
 		m_samplerStates[i] = SamplerStateGCM();
@@ -403,6 +404,7 @@ void StateCachePs3::reset()
 		m_textureLods[i] = 12 << 8;
 		m_textureAnisotropy[i] = CELL_GCM_TEXTURE_MAX_ANISO_1;
 	}
+
 	for (int i = 0; i < sizeof_array(m_vertexAttributes); ++i)
 	{
 		m_vertexAttributes[i].stride = 0;
@@ -411,6 +413,9 @@ void StateCachePs3::reset()
 		m_vertexAttributes[i].location = CELL_GCM_LOCATION_LOCAL;
 		m_vertexAttributes[i].offset = 0;
 	}
+
+	const uint32_t c_invalidFloat = 0;
+	std::memset(m_vertexConstantsShadow, c_invalidFloat, VertexConstantCount * 4 * sizeof(float));
 }
 
 	}

@@ -92,6 +92,10 @@ bool WorldRendererForward::create(
 	m_ambientOcclusionQuality = desc.ambientOcclusionQuality;
 	m_antiAliasQuality = desc.antiAliasQuality;
 
+	// Disable shadows early if filter or projection is null.
+	if (m_shadowSettings.maskFilter.isNull() || m_shadowSettings.maskProject.isNull())
+		m_shadowsQuality = QuDisabled;
+
 	m_frames.resize(desc.frameCount);
 
 	float fogColor[4];

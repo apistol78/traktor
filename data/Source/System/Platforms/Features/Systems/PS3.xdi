@@ -30,6 +30,7 @@
 					<value>
 						<item>Traktor.Database</item>
 						<item>Traktor.Database.Local</item>
+						<item>Traktor.Illuminate.Editor</item>
 						<item>Traktor.Resource.Editor</item>
 					</value>
 				</second>
@@ -61,7 +62,7 @@
 			<item>
 				<first>ScenePipeline.SuppressPostProcess</first>
 				<second type="traktor.PropertyBoolean">
-					<value>true</value>
+					<value>false</value>
 				</second>
 			</item>
 			<item>
@@ -88,5 +89,14 @@
 			</item>
 		</value>
 	</migrateProperties>
-	<runtimeProperties/>
+	<runtimeProperties type="traktor.PropertyGroup">
+		<value>
+			<item>
+				<first>World.AntiAliasQuality</first>
+				<second type="traktor.PropertyInteger">
+					<value>0</value>
+				</second>
+			</item>
+		</value>
+	</runtimeProperties>
 </object>

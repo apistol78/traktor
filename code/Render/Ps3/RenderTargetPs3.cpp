@@ -65,7 +65,7 @@ bool RenderTargetPs3::create(MemoryHeap* memoryHeap, const RenderTargetSetCreate
 	if (setDesc.preferTiled)
 		m_colorTexture.pitch = cellGcmGetTiledPitchSize(m_width * byteSize);
 	else
-		m_colorTexture.pitch = m_width * byteSize;
+		m_colorTexture.pitch = alignUp(m_width * byteSize, 64);
 
 	uint32_t colorSize = alignUp(m_colorTexture.pitch * alignUp(m_colorTexture.height, 64), 65536);
 	

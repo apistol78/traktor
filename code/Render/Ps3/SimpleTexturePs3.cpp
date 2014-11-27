@@ -80,6 +80,19 @@ bool SimpleTexturePs3::create(MemoryHeap* memoryHeap, const SimpleTextureCreateD
 			CELL_GCM_TEXTURE_REMAP_FROM_R << 2 |
 			CELL_GCM_TEXTURE_REMAP_FROM_A;
 	}
+	else if (desc.format >= TfR16G16B16A16F && desc.format <= TfR11G11B10F)
+	{
+		// ARGB (Cannot remap FP textures).
+		m_texture.remap =
+			CELL_GCM_TEXTURE_REMAP_REMAP << 14 |
+			CELL_GCM_TEXTURE_REMAP_REMAP << 12 |
+			CELL_GCM_TEXTURE_REMAP_REMAP << 10 |
+			CELL_GCM_TEXTURE_REMAP_REMAP << 8 |
+			CELL_GCM_TEXTURE_REMAP_FROM_B << 6 |
+			CELL_GCM_TEXTURE_REMAP_FROM_G << 4 |
+			CELL_GCM_TEXTURE_REMAP_FROM_R << 2 |
+			CELL_GCM_TEXTURE_REMAP_FROM_A;
+	}
 	else
 	{
 		// BARG (LE RGBA8)
