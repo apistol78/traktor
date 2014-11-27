@@ -23,7 +23,9 @@ class BoxedAllocator
 public:
 	void* alloc()
 	{
+#if defined(T_SCRIPT_BOXES_USE_MT_LOCK)
 		T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_lock);
+#endif
 
 		void* ptr = 0;
 		for (std::vector< BlockAllocator* >::iterator i = m_allocators.begin(); i != m_allocators.end(); ++i)
@@ -50,18 +52,24 @@ public:
 
 	void free(void* ptr)
 	{
+#if defined(T_SCRIPT_BOXES_USE_MT_LOCK)
 		T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_lock);
+#endif
+
 		for (std::vector< BlockAllocator* >::iterator i = m_allocators.begin(); i != m_allocators.end(); ++i)
 		{
 			BlockAllocator* allocator = *i;
 			if (allocator->free(ptr))
 				return;
 		}
+
 		T_FATAL_ERROR;
 	}
 
 private:
+#if defined(T_SCRIPT_BOXES_USE_MT_LOCK)
 	SpinLock m_lock;
+#endif
 	std::vector< BlockAllocator* > m_allocators;
 };
 
