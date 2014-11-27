@@ -143,7 +143,28 @@ Any ScriptContextLua::executeFunction(const std::string& functionName, uint32_t 
 
 		if (lua_isfunction(m_luaState, -1))
 		{
-			m_scriptManager->pushAny(argv, argc);
+			// Push arguments.
+			{
+				CHECK_LUA_STACK(m_luaState, argc);
+				for (int32_t i = 0; i < argc; ++i)
+				{
+					const Any& any = argv[i];
+					if (any.isVoid())
+						lua_pushnil(m_luaState);
+					else if (any.isBoolean())
+						lua_pushboolean(m_luaState, any.getBooleanUnsafe() ? 1 : 0);
+					else if (any.isInteger())
+						lua_pushinteger(m_luaState, any.getIntegerUnsafe());
+					else if (any.isFloat())
+						lua_pushnumber(m_luaState, any.getFloatUnsafe());
+					else if (any.isString())
+						lua_pushstring(m_luaState, any.getStringUnsafe().c_str());
+					else if (any.isObject())
+						m_scriptManager->pushObject(any.getObjectUnsafe());
+					else
+						lua_pushnil(m_luaState);
+				}
+			}
 
 			int32_t err = lua_pcall(m_luaState, argc, 1, errfunc);
 			if (err == 0)
@@ -185,7 +206,27 @@ Any ScriptContextLua::executeMethod(Object* self, const std::string& methodName,
 			}
 
 			// Push arguments.
-			m_scriptManager->pushAny(argv, argc);
+			{
+				CHECK_LUA_STACK(m_luaState, argc);
+				for (int32_t i = 0; i < argc; ++i)
+				{
+					const Any& any = argv[i];
+					if (any.isVoid())
+						lua_pushnil(m_luaState);
+					else if (any.isBoolean())
+						lua_pushboolean(m_luaState, any.getBooleanUnsafe() ? 1 : 0);
+					else if (any.isInteger())
+						lua_pushinteger(m_luaState, any.getIntegerUnsafe());
+					else if (any.isFloat())
+						lua_pushnumber(m_luaState, any.getFloatUnsafe());
+					else if (any.isString())
+						lua_pushstring(m_luaState, any.getStringUnsafe().c_str());
+					else if (any.isObject())
+						m_scriptManager->pushObject(any.getObjectUnsafe());
+					else
+						lua_pushnil(m_luaState);
+				}
+			}
 		
 			// Call script function.
 			int32_t err = lua_pcall(m_luaState, argc, 1, errfunc);
@@ -216,7 +257,28 @@ Any ScriptContextLua::executeDelegate(int32_t functionRef, uint32_t argc, const 
 		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, functionRef);
 		T_ASSERT (lua_isfunction(m_luaState, -1));
 
-		m_scriptManager->pushAny(argv, argc);
+		// Push arguments.
+		{
+			CHECK_LUA_STACK(m_luaState, argc);
+			for (int32_t i = 0; i < argc; ++i)
+			{
+				const Any& any = argv[i];
+				if (any.isVoid())
+					lua_pushnil(m_luaState);
+				else if (any.isBoolean())
+					lua_pushboolean(m_luaState, any.getBooleanUnsafe() ? 1 : 0);
+				else if (any.isInteger())
+					lua_pushinteger(m_luaState, any.getIntegerUnsafe());
+				else if (any.isFloat())
+					lua_pushnumber(m_luaState, any.getFloatUnsafe());
+				else if (any.isString())
+					lua_pushstring(m_luaState, any.getStringUnsafe().c_str());
+				else if (any.isObject())
+					m_scriptManager->pushObject(any.getObjectUnsafe());
+				else
+					lua_pushnil(m_luaState);
+			}
+		}
 
 		int32_t err = lua_pcall(m_luaState, argc, 1, errfunc);
 		if (err == 0)
