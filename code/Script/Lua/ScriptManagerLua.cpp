@@ -6,6 +6,7 @@
 #include "Core/Misc/TString.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Thread/Acquire.h"
+#include "Core/Timer/Timer.h"
 #include "Script/Boxes.h"
 #include "Script/IScriptClass.h"
 #include "Script/Lua/ScriptContextLua.h"
@@ -22,6 +23,8 @@ namespace traktor
 	{
 		namespace
 		{
+
+Timer s_timer;
 
 const int32_t c_tableKey_class = -1;
 
@@ -126,7 +129,7 @@ ScriptManagerLua::ScriptManagerLua()
 		lua_pop(m_luaState, 1);
 	}
 
-	m_timer.start();
+	s_timer.start();
 }
 
 ScriptManagerLua::~ScriptManagerLua()
@@ -657,11 +660,11 @@ void ScriptManagerLua::pushAny(const Any& any)
 
 void ScriptManagerLua::pushAny(const Any* anys, int32_t count)
 {
-	CHECK_LUA_STACK(m_luaState, 1);
+	CHECK_LUA_STACK(m_luaState, count);
 
 	for (int32_t i = 0; i < count; ++i)
 	{
-		const Any any = anys[i];
+		const Any& any = anys[i];
 		if (any.isVoid())
 			lua_pushnil(m_luaState);
 		else if (any.isBoolean())
@@ -799,7 +802,7 @@ void ScriptManagerLua::collectGarbageFullNoLock()
 
 void ScriptManagerLua::collectGarbagePartial()
 {
-#if defined(T_LUA_5_2)
+#if defined(T_LUA_5_2) && defined(T_SCRIPT_LUA_USE_GENERATIONAL_COLLECTOR)
 #	if defined(T_SCRIPT_LUA_USE_MT_LOCK)
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 #	endif
@@ -811,7 +814,9 @@ void ScriptManagerLua::collectGarbagePartial()
 		m_collectSteps = 0;
 	}
 
-	m_collectTargetSteps += float(m_timer.getDeltaTime() * m_collectStepFrequency);
+	T_ASSERT (lua_gc(m_luaState, LUA_GCISRUNNING, 0) == 0);
+
+	m_collectTargetSteps += float(s_timer.getDeltaTime() * m_collectStepFrequency);
 
 	int32_t targetSteps = int32_t(m_collectTargetSteps);
 	while (m_collectSteps < targetSteps)
@@ -821,7 +826,9 @@ void ScriptManagerLua::collectGarbagePartial()
 	}
 
 #else
-	m_collectTargetSteps += float(m_timer.getDeltaTime() * m_collectStepFrequency);
+
+	float dT = min< float >(float(s_timer.getDeltaTime()), 0.1f);
+	m_collectTargetSteps += dT * m_collectStepFrequency;
 
 	int32_t targetSteps = int32_t(m_collectTargetSteps);
 	if (m_collectSteps < targetSteps)
@@ -835,20 +842,17 @@ void ScriptManagerLua::collectGarbagePartial()
 			m_collectSteps = 0;
 		}
 
-		int32_t noDecline = 0;
+#if defined(T_LUA_5_2)
+		T_ASSERT (lua_gc(m_luaState, LUA_GCISRUNNING, 0) == 0);
+#endif
+
+		// Progress with garbage collector.
 		while (m_collectSteps < targetSteps)
 		{
-			size_t fromUse = m_totalMemoryUse;
-
-			lua_gc(m_luaState, LUA_GCSTEP, 0);
+			lua_gc(m_luaState, LUA_GCSTEP, 128);
 			++m_collectSteps;
-
-			if (m_totalMemoryUse >= fromUse)
-			{
-				if (++noDecline >= 4)
-					break;
-			}
 		}
+		m_collectSteps = targetSteps;
 	}
 
 	if (m_lastMemoryUse <= 0)
@@ -856,18 +860,24 @@ void ScriptManagerLua::collectGarbagePartial()
 
 	if (m_totalMemoryUse > m_lastMemoryUse)
 	{
-		size_t garbageProduced = m_totalMemoryUse - m_lastMemoryUse;
+		// Calculate amount of garbage produced per second.
+		float garbageProduced = (m_totalMemoryUse - m_lastMemoryUse) / dT;
+
+		// Determine collector frequency from amount of garbage per second.
 		m_collectStepFrequency = max< float >(
-			clamp((60.0f * garbageProduced) / (16*1024), 1.0f, 1000.0f),
+			clamp(garbageProduced / (64*1024), 1.0f, 60.0f),
 			m_collectStepFrequency
 		);
 	}
-	else
+	else if (m_totalMemoryUse < m_lastMemoryUse)
 	{
+		// Using less memory after this collection; slowly decrease
+		// frequency until memory start to rise again.
 		m_collectStepFrequency = max< float >(1.0f, m_collectStepFrequency - m_collectStepFrequency / 10.0f);
 	}
 
 	m_lastMemoryUse = m_totalMemoryUse;
+
 #endif
 }
 
@@ -1032,7 +1042,9 @@ int ScriptManagerLua::classGcMethod(lua_State* luaState)
 {
 	Object** object = reinterpret_cast< Object** >(lua_touserdata(luaState, 1));
 	if (object)
+	{
 		T_SAFE_ANONYMOUS_RELEASE(*object);
+	}
 	return 0;
 }
 
@@ -1232,16 +1244,20 @@ void* ScriptManagerLua::luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize
 
 	if (nsize > 0)
 	{
+		totalMemoryUse += nsize;
+
 #if !defined(__LP64__) && !defined(_LP64)
-		if (osize >= nsize)
+		if (osize >= nsize && osize - nsize < 512)
+		{
+			T_ASSERT (ptr);
+			totalMemoryUse -= osize;
 			return ptr;
+		}
 
 		void* nptr = getAllocator()->alloc(nsize, 16, T_FILE_LINE);
 		if (!nptr)
 			return 0;
 #endif
-
-		totalMemoryUse += nsize;
 
 		if (ptr && osize > 0)
 		{
@@ -1257,12 +1273,11 @@ void* ScriptManagerLua::luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize
 		return nptr;
 #endif
 	}
-	else if (ptr && osize > 0)
+	else if (ptr)
 	{
 #if !defined(__LP64__) && !defined(_LP64)
 		getAllocator()->free(ptr);
 #endif
-
 		T_ASSERT (osize <= totalMemoryUse);
 		totalMemoryUse -= osize;
 	}

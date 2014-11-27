@@ -5,7 +5,6 @@
 
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
-#include "Core/Timer/Timer.h"
 #include "Script/IScriptManager.h"
 
 #if defined(T_SCRIPT_LUA_USE_MT_LOCK)
@@ -88,7 +87,6 @@ private:
 	RefArray< ScriptContextLua > m_contexts;
 	Ref< ScriptDebuggerLua > m_debugger;
 	Ref< ScriptProfilerLua > m_profiler;
-	Timer m_timer;
 	float m_collectStepFrequency;
 	int32_t m_collectSteps;
 	float m_collectTargetSteps;
