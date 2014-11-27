@@ -17,6 +17,7 @@
 						<item>Traktor.Database</item>
 						<item>Traktor.Database.Local</item>
 						<item>Traktor.Resource.Editor</item>
+						<item>Traktor.Illuminate.Editor</item>
 					</value>
 				</second>
 			</item>

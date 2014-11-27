@@ -25,7 +25,12 @@
 
 #	define SOCKET int
 #	define INVALID_SOCKET -1
-#	define CLOSE_SOCKET(s) ::close(s)
+
+#	if defined(_PS3)
+#		define CLOSE_SOCKET(s) socketclose(s)
+#	else
+#		define CLOSE_SOCKET(s) ::close(s)
+#	endif
 
 #	if !defined(SOMAXCONN)
 #		define SOMAXCONN 4
