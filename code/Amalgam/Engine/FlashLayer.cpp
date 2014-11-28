@@ -207,13 +207,10 @@ void FlashLayer::prepare()
 		m_postProcessSettings.consume();
 	}
 
-	// Re-create movie player.
+	// Re-create if necessary movie player.
+	createMoviePlayer();
 	if (!m_moviePlayer)
-	{
-		createMoviePlayer();
-		if (!m_moviePlayer)
-			return;
-	}
+		return;
 
 	// Re-create post processing.
 	if (m_postProcessSettings && !m_postProcess)
@@ -478,7 +475,10 @@ flash::FlashMoviePlayer* FlashLayer::getMoviePlayer()
 flash::ActionObject* FlashLayer::getGlobal()
 {
 	if (!m_moviePlayer)
+	{
+		log::warning << L"FlashLayer::getGlobal fail; no movie player initialized." << Endl;
 		return 0;
+	}
 
 	flash::FlashSpriteInstance* movieInstance = m_moviePlayer->getMovieInstance();
 	T_ASSERT (movieInstance);
@@ -492,7 +492,10 @@ flash::ActionObject* FlashLayer::getGlobal()
 flash::ActionObject* FlashLayer::getRoot()
 {
 	if (!m_moviePlayer)
+	{
+		log::warning << L"FlashLayer::getRoot fail; no movie player initialized." << Endl;
 		return 0;
+	}
 
 	flash::FlashSpriteInstance* movieInstance = m_moviePlayer->getMovieInstance();
 	T_ASSERT (movieInstance);
@@ -506,7 +509,10 @@ flash::ActionObject* FlashLayer::getRoot()
 Ref< flash::ActionObject > FlashLayer::createObject() const
 {
 	if (!m_moviePlayer)
+	{
+		log::warning << L"FlashLayer::createObject fail; no movie player initialized." << Endl;
 		return 0;
+	}
 
 	flash::FlashSpriteInstance* movieInstance = m_moviePlayer->getMovieInstance();
 	T_ASSERT (movieInstance);
@@ -519,7 +525,13 @@ Ref< flash::ActionObject > FlashLayer::createObject() const
 
 Ref< flash::ActionObject > FlashLayer::createObject(uint32_t argc, const script::Any* argv) const
 {
-	if (!m_moviePlayer || argc < 1)
+	if (!m_moviePlayer)
+	{
+		log::warning << L"FlashLayer::createObject fail; no movie player initialized." << Endl;
+		return 0;
+	}
+
+	if (argc < 1)
 		return 0;
 
 	std::string prototype = argv[0].getString();
@@ -565,7 +577,10 @@ Ref< flash::ActionObject > FlashLayer::createObject(uint32_t argc, const script:
 Ref< flash::ActionObject > FlashLayer::createBitmap(drawing::Image* image) const
 {
 	if (!m_moviePlayer)
+	{
+		log::warning << L"FlashLayer::createBitmap fail; no movie player initialized." << Endl;
 		return 0;
+	}
 
 	flash::FlashSpriteInstance* movieInstance = m_moviePlayer->getMovieInstance();
 	T_ASSERT (movieInstance);
@@ -595,17 +610,6 @@ script::Any FlashLayer::externalCall(const std::string& methodName, uint32_t arg
 
 void FlashLayer::createMoviePlayer()
 {
-	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
-	T_ASSERT (renderView);
-
-	int32_t width = renderView->getWidth();
-	int32_t height = renderView->getHeight();
-
-	float viewRatio = m_environment->getRender()->getViewAspectRatio();
-	float aspectRatio = m_environment->getRender()->getAspectRatio();
-
-	width = int32_t(width * aspectRatio / viewRatio);
-
 	// Create accelerated Flash renderer.
 	if (!m_displayRenderer)
 	{
@@ -641,48 +645,62 @@ void FlashLayer::createMoviePlayer()
 	}
 
 	// Create Flash movie player.
-	Ref< flash::FlashMoviePlayer > moviePlayer = new flash::FlashMoviePlayer(
-		m_displayRenderer,
-		m_soundRenderer,
-		new CustomFlashMovieLoader(m_environment->getDatabase(), m_externalMovies)
-	);
-	if (!moviePlayer->create(m_movie, width, height))
+	if (!m_moviePlayer)
 	{
-		log::error << L"Unable to create movie player" << Endl;
-		return;
-	}
+		render::IRenderView* renderView = m_environment->getRender()->getRenderView();
+		T_ASSERT (renderView);
 
-	// Register additional AS classes.
-	flash::ActionContext* context = moviePlayer->getMovieInstance()->getContext();
-	T_ASSERT (context);
+		int32_t width = renderView->getWidth();
+		int32_t height = renderView->getHeight();
 
-	Ref< flash::ActionObject > asTraktor = moviePlayer->getGlobal("traktor").getObject();
-	if (!asTraktor)
-		asTraktor = new flash::ActionObject(context);
-	{
-		Ref< flash::ActionObject > asAmalgam = new flash::ActionObject(context);
+		float viewRatio = m_environment->getRender()->getViewAspectRatio();
+		float aspectRatio = m_environment->getRender()->getAspectRatio();
+
+		width = int32_t(width * aspectRatio / viewRatio);
+
+		Ref< flash::FlashMoviePlayer > moviePlayer = new flash::FlashMoviePlayer(
+			m_displayRenderer,
+			m_soundRenderer,
+			new CustomFlashMovieLoader(m_environment->getDatabase(), m_externalMovies)
+		);
+		if (!moviePlayer->create(m_movie, width, height))
 		{
-			asAmalgam->setMember("Configuration", flash::ActionValue(new As_traktor_amalgam_Configuration(context, m_environment)));
-			asAmalgam->setMember("DisplayMode", flash::ActionValue(new As_traktor_amalgam_DisplayMode(context, m_environment)));
-			asAmalgam->setMember("I18N", flash::ActionValue(new As_traktor_amalgam_I18N(context)));
-			asAmalgam->setMember("InputFabricator", flash::ActionValue(new As_traktor_amalgam_InputFabricator(context, m_environment)));
-			asAmalgam->setMember("SoundDriver", flash::ActionValue(new As_traktor_amalgam_SoundDriver(context)));
+			log::error << L"Unable to create movie player" << Endl;
+			return;
 		}
-		asTraktor->setMember("amalgam", flash::ActionValue(asAmalgam));
+
+		// Register additional AS classes.
+		flash::ActionContext* context = moviePlayer->getMovieInstance()->getContext();
+		T_ASSERT (context);
+
+		Ref< flash::ActionObject > asTraktor = moviePlayer->getGlobal("traktor").getObject();
+		if (!asTraktor)
+			asTraktor = new flash::ActionObject(context);
+		{
+			Ref< flash::ActionObject > asAmalgam = new flash::ActionObject(context);
+			{
+				asAmalgam->setMember("Configuration", flash::ActionValue(new As_traktor_amalgam_Configuration(context, m_environment)));
+				asAmalgam->setMember("DisplayMode", flash::ActionValue(new As_traktor_amalgam_DisplayMode(context, m_environment)));
+				asAmalgam->setMember("I18N", flash::ActionValue(new As_traktor_amalgam_I18N(context)));
+				asAmalgam->setMember("InputFabricator", flash::ActionValue(new As_traktor_amalgam_InputFabricator(context, m_environment)));
+				asAmalgam->setMember("SoundDriver", flash::ActionValue(new As_traktor_amalgam_SoundDriver(context)));
+			}
+			asTraktor->setMember("amalgam", flash::ActionValue(asAmalgam));
+		}
+		moviePlayer->setGlobal("traktor", flash::ActionValue(asTraktor));
+
+		// Set ourself as external call hook.
+		moviePlayer->setExternalCall(this);
+
+		// Pre-cache resources.
+		m_displayRenderer->precache(*context->getDictionary());
+
+		// Execute first frame.
+		while (!moviePlayer->progressFrame(1.0f / 60.0f));
+
+		// All success, replace instances.
+		m_moviePlayer = moviePlayer;
 	}
-	moviePlayer->setGlobal("traktor", flash::ActionValue(asTraktor));
-
-	// Set ourself as external call hook.
-	moviePlayer->setExternalCall(this);
-
-	// Pre-cache resources.
-	m_displayRenderer->precache(*context->getDictionary());
-
-	// Execute first frame.
-	while (!moviePlayer->progressFrame(1.0f / 60.0f));
-
-	// All success, replace instances.
-	m_moviePlayer = moviePlayer;
 }
 
 flash::ActionValue FlashLayer::dispatchExternalCall(const std::string& methodName, int32_t argc, const flash::ActionValue* argv)
