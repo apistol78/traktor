@@ -34,7 +34,6 @@ private:
 
 	struct ProfileStack
 	{
-		std::wstring function;
 		double timeStamp;
 		double childDuration;
 	};

@@ -49,10 +49,6 @@ void ScriptProfilerLua::hookCallback(lua_State* L, lua_Debug* ar)
 
 	double timeStamp = m_timer.getElapsedTime();
 
-	std::wstring name = mbstows(ar->name ? ar->name : "(Unnamed)");
-	if (*ar->what != 'C')
-		name += L":" + toString(ar->linedefined);
-
 #if defined(T_LUA_5_2)
 	if (ar->event == LUA_HOOKCALL || ar->event == LUA_HOOKTAILCALL)
 #else
@@ -60,7 +56,6 @@ void ScriptProfilerLua::hookCallback(lua_State* L, lua_Debug* ar)
 #endif
 	{
 		ProfileStack ps;
-		ps.function = name;
 		ps.timeStamp = timeStamp;
 		ps.childDuration = 0.0;
 		m_stack.push_back(ps);
@@ -76,22 +71,26 @@ void ScriptProfilerLua::hookCallback(lua_State* L, lua_Debug* ar)
 			return;
 
 		Guid scriptId;
-		int32_t currentLine = 0;
+		std::wstring name = mbstows(ar->name ? ar->name : "(Unnamed)");
 
-		if (ar->linedefined >= 1)
+		if (*ar->what != 'C')
 		{
-			currentLine = ar->linedefined - 1;
-
-			const source_map_t& map = currentContext->m_map;
-			for (source_map_t::const_reverse_iterator i = map.rbegin(); i != map.rend(); ++i)
+			int32_t currentLine = 0;
+			if (ar->linedefined >= 1)
 			{
-				if (currentLine >= i->line)
+				currentLine = ar->linedefined - 1;
+				const source_map_t& map = currentContext->m_map;
+				for (source_map_t::const_reverse_iterator i = map.rbegin(); i != map.rend(); ++i)
 				{
-					scriptId = i->id;
-					currentLine = currentLine - i->line;
-					break;
+					if (currentLine >= i->line)
+					{
+						scriptId = i->id;
+						currentLine = currentLine - i->line;
+						break;
+					}
 				}
 			}
+			name += L":" + toString(currentLine);
 		}
 
 		ProfileStack& ps = m_stack.back();

@@ -143,6 +143,8 @@ public:
 
 	static Vector2 lerp(const Vector2& a, const Vector2& b, float c) { return traktor::lerp(a, b, c); }
 
+	static float distance(const Vector2& a, const Vector2& b) { return (b - a).length(); }
+
 	const Vector2& unbox() const { return m_value; }
 
 	virtual std::wstring toString() const;
@@ -214,6 +216,10 @@ public:
 
 	static Vector4 lerp(const Vector4& a, const Vector4& b, float c) { return traktor::lerp(a, b, Scalar(c)); }
 	
+	static float distance3(const Vector4& a, const Vector4& b) { return (b - a).xyz0().length(); }
+
+	static float distance4(const Vector4& a, const Vector4& b) { return (b - a).length(); }
+
 	const Vector4& unbox() const { return m_value; }
 
 	virtual std::wstring toString() const;

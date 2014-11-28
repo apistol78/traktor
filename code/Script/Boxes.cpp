@@ -1107,6 +1107,7 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedVector2->addMethod("perpendicular", &BoxedVector2::perpendicular);
 	classBoxedVector2->addStaticMethod("zero", &BoxedVector2::zero);
 	classBoxedVector2->addStaticMethod("lerp", &BoxedVector2::lerp);
+	classBoxedVector2->addStaticMethod("distance", &BoxedVector2::distance);
 	classBoxedVector2->addOperator< Vector2, const Vector2& >('+', &BoxedVector2::add);
 	classBoxedVector2->addOperator< Vector2, float >('+', &BoxedVector2::add);
 	classBoxedVector2->addOperator< Vector2, const Vector2& >('-', &BoxedVector2::sub);
@@ -1144,6 +1145,8 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedVector4->addStaticMethod("zero", &BoxedVector4::zero);
 	classBoxedVector4->addStaticMethod("origo", &BoxedVector4::origo);
 	classBoxedVector4->addStaticMethod("lerp", &BoxedVector4::lerp);
+	classBoxedVector4->addStaticMethod("distance3", &BoxedVector4::distance3);
+	classBoxedVector4->addStaticMethod("distance4", &BoxedVector4::distance4);
 	classBoxedVector4->addOperator< Vector4, const Vector4& >('+', &BoxedVector4::add);
 	classBoxedVector4->addOperator< Vector4, float >('+', &BoxedVector4::add);
 	classBoxedVector4->addOperator< Vector4, const Vector4& >('-', &BoxedVector4::sub);
