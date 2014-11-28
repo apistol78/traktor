@@ -6,6 +6,13 @@
 
 namespace traktor
 {
+	namespace editor
+	{
+
+class IEditor;
+
+	}
+
 	namespace ui
 	{
 
@@ -32,7 +39,7 @@ class ScriptProfilerView
 	T_RTTI_CLASS;
 
 public:
-	ScriptProfilerView(IScriptProfiler* scriptProfiler);
+	ScriptProfilerView(editor::IEditor* editor, IScriptProfiler* scriptProfiler);
 
 	virtual ~ScriptProfilerView();
 
@@ -58,10 +65,11 @@ private:
 		}
 	};
 
+	editor::IEditor* m_editor;
 	Ref< IScriptProfiler > m_scriptProfiler;
 	Ref< ui::custom::ToolBar > m_profilerTools;
 	Ref< ui::custom::GridView > m_profileGrid;
-	std::map< std::wstring, ProfileEntry > m_profile;
+	std::map< std::pair< Guid, std::wstring >, ProfileEntry > m_profile;
 
 	void updateProfileGrid();
 
@@ -70,7 +78,7 @@ private:
 	/*! \name IScriptProfiler::IListener */
 	/*! \{ */
 
-	virtual void callMeasured(const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration);
+	virtual void callMeasured(const Guid& scriptId, const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration);
 
 	/*! \} */
 };

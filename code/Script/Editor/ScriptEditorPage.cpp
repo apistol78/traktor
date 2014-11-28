@@ -21,7 +21,6 @@
 #include "Script/Editor/ScriptBreakpointEvent.h"
 #include "Script/Editor/ScriptDebuggerView.h"
 #include "Script/Editor/ScriptEditorPage.h"
-#include "Script/Editor/ScriptProfilerView.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
 #include "Ui/FloodLayout.h"
@@ -446,18 +445,11 @@ void ScriptEditorPage::notifyBeginSession(IScriptDebugger* scriptDebugger, IScri
 	Ref< ui::TabPage > tabPageSession = new ui::TabPage();
 	tabPageSession->create(m_tabSessions, L"Session 0", new ui::FloodLayout());
 
-	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
-	splitter->create(tabPageSession, true, 70, true);
-
 	Ref< ScriptDebuggerView > debuggerView = new ScriptDebuggerView(m_editor, scriptDebugger);
-	debuggerView->create(splitter);
+	debuggerView->create(tabPageSession);
 	debuggerView->addEventHandler< ScriptBreakpointEvent >(this, &ScriptEditorPage::eventBreakPoint);
 
-	Ref< ScriptProfilerView > profilerView = new ScriptProfilerView(scriptProfiler);
-	profilerView->create(splitter);
-
 	tabPageSession->setData(L"DEBUGGER", scriptDebugger);
-	tabPageSession->setData(L"PROFILER", scriptProfiler);
 	tabPageSession->setData(L"VIEW", debuggerView);
 
 	m_tabSessions->addPage(tabPageSession);

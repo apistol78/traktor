@@ -102,6 +102,7 @@ bool TargetConnection::update()
 		while (m_transport->recv< ScriptProfilerCallMeasured >(0, measured) == net::BidirectionalObjectTransport::RtSuccess)
 		{
 			m_targetProfiler->notifyListeners(
+				measured->getScriptId(),
 				measured->getFunction(),
 				measured->getCallCount(),
 				measured->getInclusiveDuration(),

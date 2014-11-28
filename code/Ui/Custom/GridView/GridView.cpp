@@ -222,12 +222,12 @@ void GridView::layoutCells(const Rect& rc)
 		if (m_sortMode == SmLexical)
 		{
 			SortRowPredicateLexical sortPredicate(m_sortColumnIndex, m_sortAscending);
-			std::sort(rows.begin(), rows.end(), sortPredicate);
+			rows.sort(sortPredicate);
 		}
 		else if (m_sortMode == SmNumerical)
 		{
 			SortRowPredicateNumerical sortPredicate(m_sortColumnIndex, m_sortAscending);
-			std::sort(rows.begin(), rows.end(), sortPredicate);
+			rows.sort(sortPredicate);
 		}
 	}
 #endif
