@@ -11,22 +11,15 @@ namespace traktor
 
 class Thread;
 
-	namespace amalgam
-	{
-
-class Application;
-
-	}
 }
 
 @interface EAGLView : UIView
-{    
-@private
-	traktor::Ref< traktor::amalgam::Application > m_application;
-	traktor::Thread* m_thread;
-}
 
 - (BOOL) createApplication;
+
+- (void) showSplash;
+
+- (void) hideSplash;
 
 - (void) drawView:(id)sender;
 
@@ -35,6 +28,8 @@ class Application;
 - (void) startAnimation;
 
 - (void) stopAnimation;
+
+- (void) waitUntilRunMode;
 
 - (void) dealloc;
 
