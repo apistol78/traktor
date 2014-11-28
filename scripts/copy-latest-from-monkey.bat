@@ -5,7 +5,6 @@ call %~dp0../config.bat
 set BUILD_SERVER=http://intranet.doctore:8111
 set PLATFORM="%1"
 
-
 :: Get each platform binaries from build machines.
 
 if /i %PLATFORM% == "" ( goto :download_android )
@@ -80,6 +79,13 @@ echo Downloading Mobile6...
 %TRAKTOR_HOME%\bin\win32\HttpGet %BUILD_SERVER%/guestAuth/repository/download/Traktor_Win32/.lastFinished/traktor_mobile6.zip traktor_mobile6.zip
 :skip_mobile6
 
+if /i %PLATFORM% == "" ( goto :download_ps3 )
+if /i %PLATFORM% == "ps3" ( goto :download_ps3 )
+goto :skip_ps3
+:download_ps3
+echo Downloading PS3...
+%TRAKTOR_HOME%\bin\win32\HttpGet %BUILD_SERVER%/guestAuth/repository/download/Traktor_PNaCl/.lastFinished/traktor_ps3.zip traktor_ps3.zip
+:skip_ps3
 
 :: Unzip into binaries folder.
 
@@ -130,13 +136,15 @@ rmdir /s /q "%TRAKTOR_HOME%\bin\latest\mobile6"
 %TRAKTOR_HOME%\bin\win32\7za x -y -o"%TRAKTOR_HOME%\bin\latest\mobile6" traktor_mobile6.zip
 :no_mobile6
 
+if not exist traktor_ps3.zip ( goto :no_ps3 )
+rmdir /s /q "%TRAKTOR_HOME%\bin\latest\ps3"
+%TRAKTOR_HOME%\bin\win32\7za x -y -o"%TRAKTOR_HOME%\bin\latest\ps3" traktor_ps3.zip
+:no_ps3
 
 :: Cleanup
 
 echo Cleaning...
-
 del *.zip
-
 
 :: Done
 
