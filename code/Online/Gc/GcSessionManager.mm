@@ -162,12 +162,6 @@ bool GcSessionManager::buyDLC(const std::wstring& id) const
 
 bool GcSessionManager::navigateUrl(const net::Url& url) const
 {
-	if ([GKLocalPlayer localPlayer].authenticated == NO)
-	{
-		log::error << L"GameCenter; cannot navigate to url as local player is not authenticated." << Endl;
-		return false;
-	}
-
 	if (url.getString() == L"gamecenter://default/")
 	{
 		GKGameCenterViewController* gameCenterController = [[GKGameCenterViewController alloc] init];
