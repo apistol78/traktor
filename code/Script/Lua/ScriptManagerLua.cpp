@@ -1,6 +1,7 @@
 #include <cstring>
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/Save.h"
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
@@ -432,6 +433,8 @@ Ref< IScriptContext > ScriptManagerLua::createContext(const IScriptResource* scr
 	// Call script.
 	if (scriptResourceLua)
 	{
+		T_ANONYMOUS_VAR(Save< ScriptContextLua* >)(m_lockContext, context);
+
 		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, environmentRef);
 #if defined(T_LUA_5_2)
 		lua_setupvalue(m_luaState, -2, 1);

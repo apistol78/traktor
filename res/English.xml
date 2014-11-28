@@ -1889,6 +1889,46 @@
       <second>Move dependency down</second>
     </item>
     <item>
+      <first>SCRIPT_PROFILER_TOOL</first>
+      <second>Script profiler</second>
+    </item>
+    <item>
+      <first>SCRIPT_PROFILER_CLEAR_SAMPLES</first>
+      <second>Clear samples</second>
+    </item>
+    <item>
+      <first>SCRIPT_PROFILER_COLUMN_FUNCTION</first>
+      <second>Function</second>
+    </item>
+    <item>
+      <first>SCRIPT_PROFILER_COLUMN_SCRIPT</first>
+      <second>Script</second>
+    </item>
+    <item>
+      <first>SCRIPT_PROFILER_COLUMN_INCLUSIVE_TIME</first>
+      <second>Inc. (ms)</second>
+    </item>
+    <item>
+      <first>SCRIPT_PROFILER_COLUMN_EXCLUSIVE_TIME</first>
+      <second>Excl. (ms)</second>
+    </item>
+    <item>
+      <first>SCRIPT_PROFILER_COLUMN_INCLUSIVE_PERCENT</first>
+      <second>Inc. (%)</second>
+    </item>
+    <item>
+      <first>SCRIPT_PROFILER_COLUMN_EXCLUSIVE_PERCENT</first>
+      <second>Excl. (%)</second>
+    </item>
+    <item>
+      <first>SCRIPT_PROFILER_COLUMN_COUNT</first>
+      <second>Count</second>
+    </item>
+    <item>
+      <first>SCRIPT_PROFILER_NATIVE_FUNCTION</first>
+      <second>(Native)</second>
+    </item>
+    <item>
       <first>SHADERGRAPH_REFEREES</first>
       <second>Referees</second>
     </item>

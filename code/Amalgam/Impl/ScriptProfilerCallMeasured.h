@@ -1,6 +1,7 @@
 #ifndef traktor_amalgam_ScriptProfilerCallMeasured_H
 #define traktor_amalgam_ScriptProfilerCallMeasured_H
 
+#include "Core/Guid.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -23,7 +24,9 @@ class T_DLLCLASS ScriptProfilerCallMeasured : public ISerializable
 public:
 	ScriptProfilerCallMeasured();
 
-	ScriptProfilerCallMeasured(const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration);
+	ScriptProfilerCallMeasured(const Guid& scriptId, const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration);
+
+	const Guid& getScriptId() const { return m_scriptId; }
 
 	const std::wstring& getFunction() const { return m_function; }
 
@@ -36,6 +39,7 @@ public:
 	virtual void serialize(ISerializer& s);
 
 private:
+	Guid m_scriptId;
 	std::wstring m_function;
 	uint32_t m_callCount;
 	double m_inclusiveDuration;

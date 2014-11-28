@@ -42,7 +42,6 @@ bool ScriptServer::create(const PropertyGroup* defaultSettings, const PropertyGr
 		m_scriptDebugger = m_scriptManager->createDebugger();
 		if (m_scriptDebugger)
 		{
-			m_transport = transport;
 			m_scriptDebugger->addListener(this);
 		}
 		else
@@ -68,6 +67,8 @@ bool ScriptServer::create(const PropertyGroup* defaultSettings, const PropertyGr
 
 	if (debugger || profiler)
 	{
+		m_transport = transport;
+
 		m_scriptDebuggerThread = ThreadManager::getInstance().create(makeFunctor(this, &ScriptServer::threadDebugger), L"Script debugger/profiler thread");
 		if (!m_scriptDebuggerThread)
 			return false;
@@ -130,14 +131,14 @@ void ScriptServer::threadDebugger()
 {
 	while (!m_scriptDebuggerThread->stopped() && m_transport->connected())
 	{
-		if (!m_transport->wait(100))
+		if (!m_transport->wait(500))
 		{
 			int32_t index = (m_callSamplesIndex + 1) % 3;
 
-			std::map< std::wstring, CallSample >& samples = m_callSamples[index];
-			for (std::map< std::wstring, CallSample >::const_iterator i = samples.begin(); i != samples.end(); ++i)
+			std::map< std::pair< Guid, std::wstring >, CallSample >& samples = m_callSamples[index];
+			for (std::map< std::pair< Guid, std::wstring >, CallSample >::const_iterator i = samples.begin(); i != samples.end(); ++i)
 			{
-				ScriptProfilerCallMeasured measured(i->first, i->second.callCount, i->second.inclusiveDuration, i->second.exclusiveDuration);
+				ScriptProfilerCallMeasured measured(i->first.first, i->first.second, i->second.callCount, i->second.inclusiveDuration, i->second.exclusiveDuration);
 				m_transport->send(&measured);
 			}
 			samples.clear();
@@ -194,9 +195,9 @@ void ScriptServer::breakpointReached(script::IScriptDebugger* scriptDebugger, co
 	m_transport->send(&halted);
 }
 
-void ScriptServer::callMeasured(const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration)
+void ScriptServer::callMeasured(const Guid& scriptId, const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration)
 {
-	CallSample& sample = m_callSamples[m_callSamplesIndex][function];
+	CallSample& sample = m_callSamples[m_callSamplesIndex][std::make_pair(scriptId, function)];
 	sample.callCount += callCount;
 	sample.inclusiveDuration += inclusiveDuration;
 	sample.exclusiveDuration += exclusiveDuration;

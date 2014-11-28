@@ -1,5 +1,8 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
+#include "Database/Database.h"
+#include "Database/Instance.h"
+#include "Editor/IEditor.h"
 #include "I18N/Text.h"
 #include "Script/Editor/ScriptProfilerView.h"
 #include "Ui/Bitmap.h"
@@ -22,8 +25,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptProfilerView", ScriptProfilerView, ui::Container)
 
-ScriptProfilerView::ScriptProfilerView(IScriptProfiler* scriptProfiler)
-:	m_scriptProfiler(scriptProfiler)
+ScriptProfilerView::ScriptProfilerView(editor::IEditor* editor, IScriptProfiler* scriptProfiler)
+:	m_editor(editor)
+,	m_scriptProfiler(scriptProfiler)
 {
 	m_scriptProfiler->addListener(this);
 }
@@ -43,17 +47,18 @@ bool ScriptProfilerView::create(ui::Widget* parent)
 		return false;
 
 	m_profilerTools->addImage(ui::Bitmap::load(c_ResourceDebug, sizeof(c_ResourceDebug), L"png"), 4);
-	m_profilerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_CLEAR_PROFILE"), 1, ui::Command(L"Script.Editor.ClearProfile")));
+	m_profilerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_PROFILER_CLEAR_SAMPLES"), 1, ui::Command(L"Script.Editor.ClearProfile")));
 	m_profilerTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ScriptProfilerView::eventProfilerToolClick);
 
 	m_profileGrid = new ui::custom::GridView();
 	m_profileGrid->create(this, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader);
-	m_profileGrid->addColumn(new ui::custom::GridColumn(L"Function", 120));
-	m_profileGrid->addColumn(new ui::custom::GridColumn(L"Inc. (ms)", 100));
-	m_profileGrid->addColumn(new ui::custom::GridColumn(L"Exc. (ms)", 100));
-	m_profileGrid->addColumn(new ui::custom::GridColumn(L"Inc. (%)", 80));
-	m_profileGrid->addColumn(new ui::custom::GridColumn(L"Exc. (%)", 80));
-	m_profileGrid->addColumn(new ui::custom::GridColumn(L"Count", 100));
+	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_FUNCTION"), 160));
+	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_SCRIPT"), 180));
+	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_INCLUSIVE_TIME"), 100));
+	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_EXCLUSIVE_TIME"), 100));
+	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_INCLUSIVE_PERCENT"), 80));
+	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_EXCLUSIVE_PERCENT"), 80));
+	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_COUNT"), 100));
 
 	return true;
 }
@@ -79,16 +84,28 @@ bool ScriptProfilerView::handleCommand(const ui::Command& command)
 void ScriptProfilerView::updateProfileGrid()
 {
 	double totalDuration = 0.0;
-	for (std::map< std::wstring, ProfileEntry >::const_iterator i = m_profile.begin(); i != m_profile.end(); ++i)
+	for (std::map< std::pair< Guid, std::wstring >, ProfileEntry >::const_iterator i = m_profile.begin(); i != m_profile.end(); ++i)
 		totalDuration += i->second.exclusiveDuration;
 
-	for (std::map< std::wstring, ProfileEntry >::iterator i = m_profile.begin(); i != m_profile.end(); ++i)
+	for (std::map< std::pair< Guid, std::wstring >, ProfileEntry >::iterator i = m_profile.begin(); i != m_profile.end(); ++i)
 	{
 		ProfileEntry& pe = i->second;
 		if (!pe.row)
 		{
 			pe.row = new ui::custom::GridRow();
-			pe.row->add(new ui::custom::GridItem(i->first));
+			pe.row->add(new ui::custom::GridItem(i->first.second));
+
+			if (i->first.first.isNotNull())
+			{
+				Ref< db::Instance > scriptInstance = m_editor->getSourceDatabase()->getInstance(i->first.first);
+				if (scriptInstance)
+					pe.row->add(new ui::custom::GridItem(scriptInstance->getName()));
+				else
+					pe.row->add(new ui::custom::GridItem(i->first.first.format()));
+			}
+			else
+				pe.row->add(new ui::custom::GridItem(i18n::Text(L"SCRIPT_PROFILER_NATIVE_FUNCTION")));
+
 			pe.row->add(new ui::custom::GridItem(toString(pe.inclusiveDuration * 1000.0, 2)));
 			pe.row->add(new ui::custom::GridItem(toString(pe.exclusiveDuration * 1000.0, 2)));
 			pe.row->add(new ui::custom::GridItem(toString(pe.inclusiveDuration * 100.0 / totalDuration, 2)));
@@ -98,16 +115,16 @@ void ScriptProfilerView::updateProfileGrid()
 		}
 		else
 		{
-			checked_type_cast< ui::custom::GridItem*, false >(pe.row->get().at(1))->setText(toString(pe.inclusiveDuration * 1000.0, 2));
-			checked_type_cast< ui::custom::GridItem*, false >(pe.row->get().at(2))->setText(toString(pe.exclusiveDuration * 1000.0, 2));
-			checked_type_cast< ui::custom::GridItem*, false >(pe.row->get().at(3))->setText(toString(pe.inclusiveDuration * 100.0 / totalDuration, 2));
-			checked_type_cast< ui::custom::GridItem*, false >(pe.row->get().at(4))->setText(toString(pe.exclusiveDuration * 100.0 / totalDuration, 2));
-			checked_type_cast< ui::custom::GridItem*, false >(pe.row->get().at(5))->setText(toString(pe.callCount));
+			checked_type_cast< ui::custom::GridItem*, false >(pe.row->get().at(2))->setText(toString(pe.inclusiveDuration * 1000.0, 2));
+			checked_type_cast< ui::custom::GridItem*, false >(pe.row->get().at(3))->setText(toString(pe.exclusiveDuration * 1000.0, 2));
+			checked_type_cast< ui::custom::GridItem*, false >(pe.row->get().at(4))->setText(toString(pe.inclusiveDuration * 100.0 / totalDuration, 2));
+			checked_type_cast< ui::custom::GridItem*, false >(pe.row->get().at(5))->setText(toString(pe.exclusiveDuration * 100.0 / totalDuration, 2));
+			checked_type_cast< ui::custom::GridItem*, false >(pe.row->get().at(6))->setText(toString(pe.callCount));
 		}
 	}
 
-	m_profileGrid->setSortColumn(2, true, ui::custom::GridView::SmNumerical);
-	m_profileGrid->update();
+	m_profileGrid->setSortColumn(3, true, ui::custom::GridView::SmNumerical);
+	m_profileGrid->requestUpdate();
 }
 
 void ScriptProfilerView::eventProfilerToolClick(ui::custom::ToolBarButtonClickEvent* event)
@@ -115,9 +132,9 @@ void ScriptProfilerView::eventProfilerToolClick(ui::custom::ToolBarButtonClickEv
 	handleCommand(event->getCommand());
 }
 
-void ScriptProfilerView::callMeasured(const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration)
+void ScriptProfilerView::callMeasured(const Guid& scriptId, const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration)
 {
-	ProfileEntry& pe = m_profile[function];
+	ProfileEntry& pe = m_profile[std::make_pair(scriptId, function)];
 	pe.callCount += callCount;
 	pe.inclusiveDuration += inclusiveDuration;
 	pe.exclusiveDuration += exclusiveDuration;

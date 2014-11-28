@@ -16,8 +16,9 @@ ScriptProfilerCallMeasured::ScriptProfilerCallMeasured()
 {
 }
 
-ScriptProfilerCallMeasured::ScriptProfilerCallMeasured(const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration)
-:	m_function(function)
+ScriptProfilerCallMeasured::ScriptProfilerCallMeasured(const Guid& scriptId, const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration)
+:	m_scriptId(scriptId)
+,	m_function(function)
 ,	m_callCount(callCount)
 ,	m_inclusiveDuration(inclusiveDuration)
 ,	m_exclusiveDuration(exclusiveDuration)
@@ -26,6 +27,7 @@ ScriptProfilerCallMeasured::ScriptProfilerCallMeasured(const std::wstring& funct
 
 void ScriptProfilerCallMeasured::serialize(ISerializer& s)
 {
+	s >> Member< Guid >(L"scriptId", m_scriptId);
 	s >> Member< std::wstring >(L"function", m_function);
 	s >> Member< uint32_t >(L"callCount", m_callCount);
 	s >> Member< double >(L"inclusiveDuration", m_inclusiveDuration);

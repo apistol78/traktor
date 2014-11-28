@@ -1,6 +1,7 @@
 #ifndef traktor_script_IScriptProfiler_H
 #define traktor_script_IScriptProfiler_H
 
+#include "Core/Guid.h"
 #include "Core/Object.h"
 
 // import/export mechanism.
@@ -28,7 +29,7 @@ public:
 	{
 		virtual ~IListener() {}
 
-		virtual void callMeasured(const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration) = 0;
+		virtual void callMeasured(const Guid& scriptId, const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration) = 0;
 	};
 
 	virtual void addListener(IListener* listener) = 0;

@@ -66,7 +66,7 @@ private:
 	Ref< script::IScriptDebugger > m_scriptDebugger;
 	Ref< script::IScriptProfiler > m_scriptProfiler;
 	Ref< net::BidirectionalObjectTransport > m_transport;
-	std::map< std::wstring, CallSample > m_callSamples[3];
+	std::map< std::pair< Guid, std::wstring >, CallSample > m_callSamples[3];
 	int32_t m_callSamplesIndex;
 	Thread* m_scriptDebuggerThread;
 
@@ -74,7 +74,7 @@ private:
 
 	virtual void breakpointReached(script::IScriptDebugger* scriptDebugger, const script::CallStack& callStack);
 
-	virtual void callMeasured(const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration);
+	virtual void callMeasured(const Guid& scriptId, const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration);
 };
 
 	}
