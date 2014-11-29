@@ -520,6 +520,9 @@ void TargetEditor::eventDropDownPlatformSelect(ui::SelectionChangeEvent* event)
 	T_ASSERT (platformInstance);
 
 	targetConfiguration->setPlatform(platformInstance->getGuid());
+
+	updateAvailableFeatures();
+	updateUsedFeatures();
 }
 
 void TargetEditor::eventBrowseRootButtonClick(ui::ButtonClickEvent* event)
