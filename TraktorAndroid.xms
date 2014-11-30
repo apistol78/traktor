@@ -7151,8 +7151,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.sqlite-3.7.6.3</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/sqlite-3.7.6.3</sourcePath>
+			<name>Extern.sqlite</name>
+			<sourcePath>$(SQLITE_SDK)</sourcePath>
 			<configurations>
 				<item type="Configuration" version="1">
 					<name>DebugShared</name>
@@ -7160,7 +7160,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.7.6.3</item>
+						<item>$(SQLITE_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -7179,7 +7179,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.7.6.3</item>
+						<item>$(SQLITE_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -7198,7 +7198,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.7.6.3</item>
+						<item>$(SQLITE_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -7217,7 +7217,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.7.6.3</item>
+						<item>$(SQLITE_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -7350,7 +7350,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.7.6.3</item>
+						<item>$(SQLITE_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -7369,7 +7369,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.7.6.3</item>
+						<item>$(SQLITE_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -7388,7 +7388,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.7.6.3</item>
+						<item>$(SQLITE_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -7407,7 +7407,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.7.6.3</item>
+						<item>$(SQLITE_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>

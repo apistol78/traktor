@@ -36,7 +36,9 @@ bool ConnectionSqlite3::connect(const std::wstring& connectionString)
 	}
 
 	Path fileName = FileSystem::getInstance().getAbsolutePath(cs[L"fileName"]);
+#if !defined(_PS3)
 	FileSystem::getInstance().makeAllDirectories(fileName.getPathOnly());
+#endif
 
 #if defined(TARGET_OS_MAC) || defined(__LINUX__) || defined(__ANDROID__)
 	std::wstring dbName = fileName.getPathNameNoVolume();
@@ -54,7 +56,7 @@ bool ConnectionSqlite3::connect(const std::wstring& connectionString)
 	);
 	if (err != SQLITE_OK)
 	{
-		log::error << L"SQLite error (" << dbName << L"):" << Endl;
+		log::error << L"In connect, sqlite3_open failed (" << dbName << L"):" << Endl;
 		log::error << mbstows(sqlite3_errmsg((sqlite3*)m_db)) << Endl;
 		return false;
 	}
@@ -85,7 +87,7 @@ Ref< IResultSet > ConnectionSqlite3::executeQuery(const std::wstring& query)
 	);
 	if (err != SQLITE_OK)
 	{
-		log::error << L"SQLite error:" << Endl;
+		log::error << L"In executeQuery, sqlite3_prepare_v2 failed:" << Endl;
 		log::error << mbstows(sqlite3_errmsg((sqlite3*)m_db)) << Endl;
 		return 0;
 	}
@@ -107,7 +109,7 @@ int32_t ConnectionSqlite3::executeUpdate(const std::wstring& update)
 	);
 	if (err != SQLITE_OK)
 	{
-		log::error << L"SQLite error:" << Endl;
+		log::error << L"In executeUpdate, sqlite3_prepare_v2 failed:" << Endl;
 		log::error << mbstows(sqlite3_errmsg((sqlite3*)m_db)) << Endl;
 		return 0;
 	}
