@@ -58,7 +58,7 @@ function deploy(args)
 	else
 		stdout:printLn("Using *DEBUG* binaries")
 	 	libraryPathPPU = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/ps3/ppu/debugstatic"
-	 	libraryPathSPU = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/ps3/spu/debugstatic"
+	 	libraryPathSPU = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/ps3/spu/releasestatic"	-- Using release SPU binaries until link issues fixed.
 	end	
 
 	-- Build link command line.
