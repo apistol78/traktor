@@ -40,6 +40,8 @@ public:
 	virtual void serialize(ISerializer& s);
 	
 private:
+	friend class InHysteresisTraits;
+
 	Ref< IInputNode > m_source;
 	float m_limit[2];
 	float m_output[2];

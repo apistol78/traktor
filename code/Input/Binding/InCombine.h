@@ -38,6 +38,8 @@ public:
 	virtual void serialize(ISerializer& s);
 	
 private:
+	friend class InCombineTraits;
+
 	struct Entry
 	{
 		Ref< IInputNode > source;

@@ -46,6 +46,8 @@ public:
 	virtual void serialize(ISerializer& s);
 	
 private:
+	friend class InTriggerTraits;
+
 	Ref< IInputNode > m_source;
 	Flank m_flank;
 	float m_duration;

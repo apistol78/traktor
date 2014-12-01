@@ -53,6 +53,8 @@ public:
 	virtual void serialize(ISerializer& s);
 	
 private:
+	friend class InGestureSwipeTraits;
+
 	Ref< IInputNode > m_sourceActive;
 	Ref< IInputNode > m_sourceX;
 	Ref< IInputNode > m_sourceY;

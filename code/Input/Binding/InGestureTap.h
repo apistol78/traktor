@@ -36,12 +36,13 @@ public:
 	) const;
 
 	virtual void serialize(ISerializer& s);
-	
+
 private:
+	friend class InGestureTapTraits;
+
 	Ref< IInputNode > m_sourceActive;
 	Ref< IInputNode > m_sourceX;
 	Ref< IInputNode > m_sourceY;
-
 	Ref< IInputNode > m_fixedX;
 	Ref< IInputNode > m_fixedY;
 };

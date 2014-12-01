@@ -1,6 +1,7 @@
 #ifndef traktor_input_InBoolean_H
 #define traktor_input_InBoolean_H
 
+#include "Core/RefArray.h"
 #include "Input/Binding/IInputNode.h"
 
 // import/export mechanism.
@@ -52,6 +53,8 @@ public:
 	virtual void serialize(ISerializer& s);
 	
 private:
+	friend class InBooleanTraits;
+
 	RefArray< IInputNode > m_source;
 	Operator m_op;
 };

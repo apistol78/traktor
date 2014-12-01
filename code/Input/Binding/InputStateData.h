@@ -30,6 +30,8 @@ public:
 	
 	InputStateData(IInputNode* source);
 
+	void setSource(IInputNode* source);
+
 	const IInputNode* getSource() const;
 
 	virtual void serialize(ISerializer& s);

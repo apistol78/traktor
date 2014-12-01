@@ -40,6 +40,8 @@ public:
 	virtual void serialize(ISerializer& s);
 	
 private:
+	friend class InConstTraits;
+
 	float m_value;
 };
 

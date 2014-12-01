@@ -38,8 +38,10 @@ public:
 	) const;
 
 	virtual void serialize(ISerializer& s);
-	
+
 private:
+	friend class InRemapAxisTraits;
+
 	Ref< IInputNode > m_source;
 	float m_limit[2];
 	float m_output[3];

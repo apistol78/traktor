@@ -38,8 +38,10 @@ public:
 	) const;
 
 	virtual void serialize(ISerializer& s);
-	
+
 private:
+	friend class InClampTraits;
+
 	Ref< IInputNode > m_source;
 	float m_limit[2];
 };
