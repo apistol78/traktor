@@ -73,7 +73,7 @@ Any::Any(const Any& src)
 		m_data = src.m_data;
 }
 
-#if 0 // defined(T_CXX11)
+#if defined(T_CXX11)
 Any::Any(Any&& src)
 :	m_type(src.m_type)
 ,	m_data(src.m_data)

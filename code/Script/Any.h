@@ -35,7 +35,7 @@ public:
 
 	Any(const Any& src);
 
-#if 0 // defined(T_CXX11)
+#if defined(T_CXX11)
 	Any(Any&& src);
 #endif
 
