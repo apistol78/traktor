@@ -29,6 +29,11 @@ std::wstring InGestureSwipeTraits::getDescription(const IInputNode* node) const
 	}
 }
 
+Ref< IInputNode > InGestureSwipeTraits::createNode() const
+{
+	return new InGestureSwipe();
+}
+
 void InGestureSwipeTraits::getInputNodes(const IInputNode* node, std::map< const std::wstring, Ref< const IInputNode > >& outInputNodes) const
 {
 	const InGestureSwipe* inGestureSwipe = checked_type_cast< const InGestureSwipe*, false >(node);

@@ -18,6 +18,11 @@ std::wstring InConstTraits::getDescription(const IInputNode* node) const
 	return toString(inConst->m_value);
 }
 
+Ref< IInputNode > InConstTraits::createNode() const
+{
+	return new InConst();
+}
+
 void InConstTraits::getInputNodes(const IInputNode* node, std::map< const std::wstring, Ref< const IInputNode > >& outInputNodes) const
 {
 }

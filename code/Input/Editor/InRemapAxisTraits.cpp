@@ -16,6 +16,11 @@ std::wstring InRemapAxisTraits::getDescription(const IInputNode* node) const
 	return L"";
 }
 
+Ref< IInputNode > InRemapAxisTraits::createNode() const
+{
+	return new InRemapAxis();
+}
+
 void InRemapAxisTraits::getInputNodes(const IInputNode* node, std::map< const std::wstring, Ref< const IInputNode > >& outInputNodes) const
 {
 	const InRemapAxis* inRemapAxis = checked_type_cast< const InRemapAxis*, false >(node);

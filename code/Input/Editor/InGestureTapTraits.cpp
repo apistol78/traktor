@@ -16,6 +16,11 @@ std::wstring InGestureTapTraits::getDescription(const IInputNode* node) const
 	return L"";
 }
 
+Ref< IInputNode > InGestureTapTraits::createNode() const
+{
+	return new InGestureTap();
+}
+
 void InGestureTapTraits::getInputNodes(const IInputNode* node, std::map< const std::wstring, Ref< const IInputNode > >& outInputNodes) const
 {
 	const InGestureTap* inGestureTap = checked_type_cast< const InGestureTap*, false >(node);

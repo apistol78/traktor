@@ -16,6 +16,11 @@ std::wstring InTriggerTraits::getDescription(const IInputNode* node) const
 	return L"";
 }
 
+Ref< IInputNode > InTriggerTraits::createNode() const
+{
+	return new InTrigger();
+}
+
 void InTriggerTraits::getInputNodes(const IInputNode* node, std::map< const std::wstring, Ref< const IInputNode > >& outInputNodes) const
 {
 	const InTrigger* inTrigger = checked_type_cast< const InTrigger*, false >(node);

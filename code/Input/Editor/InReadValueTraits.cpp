@@ -17,6 +17,11 @@ std::wstring InReadValueTraits::getDescription(const IInputNode* node) const
 	return inReadValue->getValueId();
 }
 
+Ref< IInputNode > InReadValueTraits::createNode() const
+{
+	return new InReadValue();
+}
+
 void InReadValueTraits::getInputNodes(const IInputNode* node, std::map< const std::wstring, Ref< const IInputNode > >& outInputNodes) const
 {
 }

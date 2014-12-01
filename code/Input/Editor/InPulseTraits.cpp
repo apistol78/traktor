@@ -20,6 +20,11 @@ std::wstring InPulseTraits::getDescription(const IInputNode* node) const
 		L"Interval " + toString(inPulse->m_interval);
 }
 
+Ref< IInputNode > InPulseTraits::createNode() const
+{
+	return new InPulse();
+}
+
 void InPulseTraits::getInputNodes(const IInputNode* node, std::map< const std::wstring, Ref< const IInputNode > >& outInputNodes) const
 {
 	const InPulse* inPulse = checked_type_cast< const InPulse*, false >(node);

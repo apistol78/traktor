@@ -20,6 +20,11 @@ std::wstring InHysteresisTraits::getDescription(const IInputNode* node) const
 		L"Output " + toString(inHysteresis->m_output[0]) + L" -> " + toString(inHysteresis->m_output[1]);
 }
 
+Ref< IInputNode > InHysteresisTraits::createNode() const
+{
+	return new InHysteresis();
+}
+
 void InHysteresisTraits::getInputNodes(const IInputNode* node, std::map< const std::wstring, Ref< const IInputNode > >& outInputNodes) const
 {
 	const InHysteresis* inHysteresis = checked_type_cast< const InHysteresis*, false >(node);
