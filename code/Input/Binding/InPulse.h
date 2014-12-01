@@ -40,6 +40,8 @@ public:
 	virtual void serialize(ISerializer& s);
 	
 private:
+	friend class InPulseTraits;
+
 	Ref< IInputNode > m_source;
 	float m_delay;
 	float m_interval;

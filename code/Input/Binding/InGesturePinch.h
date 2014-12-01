@@ -53,6 +53,8 @@ public:
 	virtual void serialize(ISerializer& s);
 	
 private:
+	friend class InGesturePinchTraits;
+
 	Ref< IInputNode > m_sourceActive;
 	Ref< IInputNode > m_sourceX1;
 	Ref< IInputNode > m_sourceY1;

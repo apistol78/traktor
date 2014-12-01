@@ -38,6 +38,8 @@ public:
 	) const;	
 
 	virtual void serialize(ISerializer& s);
+
+	const std::wstring& getValueId() const { return m_valueId; }
 	
 private:
 	std::wstring m_valueId;

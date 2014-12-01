@@ -40,6 +40,8 @@ public:
 	virtual void serialize(ISerializer& s);
 	
 private:
+	friend class InThresholdTraits;
+
 	Ref< IInputNode > m_source;
 	float m_duration;
 };

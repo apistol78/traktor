@@ -19,6 +19,11 @@ InputStateData::InputStateData(IInputNode* source)
 {
 }
 
+void InputStateData::setSource(IInputNode* source)
+{
+	m_source = source;
+}
+
 const IInputNode* InputStateData::getSource() const
 {
 	return m_source;
