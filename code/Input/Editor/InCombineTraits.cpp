@@ -56,6 +56,11 @@ std::wstring InCombineTraits::getDescription(const IInputNode* node) const
 	return ss.str();
 }
 
+Ref< IInputNode > InCombineTraits::createNode() const
+{
+	return new InCombine();
+}
+
 void InCombineTraits::getInputNodes(const IInputNode* node, std::map< const std::wstring, Ref< const IInputNode > >& outInputNodes) const
 {
 	const InCombine* inCombine = checked_type_cast< const InCombine*, false >(node);

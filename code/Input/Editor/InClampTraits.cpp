@@ -18,6 +18,11 @@ std::wstring InClampTraits::getDescription(const IInputNode* node) const
 	return toString(inClamp->m_limit[0]) + L" -> " + toString(inClamp->m_limit[1]);
 }
 
+Ref< IInputNode > InClampTraits::createNode() const
+{
+	return new InClamp();
+}
+
 void InClampTraits::getInputNodes(const IInputNode* node, std::map< const std::wstring, Ref< const IInputNode > >& outInputNodes) const
 {
 	const InClamp* inClamp = checked_type_cast< const InClamp*, false >(node);

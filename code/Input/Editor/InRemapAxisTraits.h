@@ -15,6 +15,8 @@ public:
 
 	virtual std::wstring getDescription(const IInputNode* node) const;
 
+	virtual Ref< IInputNode > createNode() const;
+
 	virtual void getInputNodes(const IInputNode* node, std::map< const std::wstring, Ref< const IInputNode > >& outInputNodes) const;
 
 	virtual void connectInputNode(IInputNode* node, const std::wstring& inputName, IInputNode* sourceNode) const;

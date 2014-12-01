@@ -27,6 +27,11 @@ std::wstring InGesturePinchTraits::getDescription(const IInputNode* node) const
 	}
 }
 
+Ref< IInputNode > InGesturePinchTraits::createNode() const
+{
+	return new InGesturePinch();
+}
+
 void InGesturePinchTraits::getInputNodes(const IInputNode* node, std::map< const std::wstring, Ref< const IInputNode > >& outInputNodes) const
 {
 	const InGesturePinch* inGesturePinch = checked_type_cast< const InGesturePinch*, false >(node);

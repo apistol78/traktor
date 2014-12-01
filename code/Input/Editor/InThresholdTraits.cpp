@@ -16,6 +16,11 @@ std::wstring InThresholdTraits::getDescription(const IInputNode* node) const
 	return L"";
 }
 
+Ref< IInputNode > InThresholdTraits::createNode() const
+{
+	return new InThreshold();
+}
+
 void InThresholdTraits::getInputNodes(const IInputNode* node, std::map< const std::wstring, Ref< const IInputNode > >& outInputNodes) const
 {
 	const InThreshold* inThreshold = checked_type_cast< const InThreshold*, false >(node);

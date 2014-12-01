@@ -30,6 +30,11 @@ std::wstring InBooleanTraits::getDescription(const IInputNode* node) const
 	}
 }
 
+Ref< IInputNode > InBooleanTraits::createNode() const
+{
+	return new InBoolean();
+}
+
 void InBooleanTraits::getInputNodes(const IInputNode* node, std::map< const std::wstring, Ref< const IInputNode > >& outInputNodes) const
 {
 	const InBoolean* inBoolean = checked_type_cast< const InBoolean*, false >(node);

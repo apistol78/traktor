@@ -1,3 +1,5 @@
+#include "Core/Misc/String.h"
+
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
@@ -221,16 +223,18 @@ bool InputMappingEditor::create(ui::Container* parent)
 
 	Ref< ui::MenuItem > menuItemCreate = new ui::MenuItem(L"Create"); // i18n::Text(L"INPUT_EDITOR_CREATE_NODE"));
 
+	Ref< ui::MenuItem > menuItem = new ui::MenuItem(ui::Command(L"Input.Editor.Create"), L"State");
+	menuItemCreate->add(menuItem);
+
 	for (std::map< const TypeInfo*, Ref< const InputNodeTraits > >::const_iterator i = m_traits.begin(); i != m_traits.end(); ++i)
 	{
-		menuItemCreate->add(
-			new ui::MenuItem(i->first->getName())
-		);
+		Ref< ui::MenuItem > menuItem = new ui::MenuItem(ui::Command(L"Input.Editor.Create"), i->first->getName());
+		menuItem->setData(L"TRAITS", const_cast< InputNodeTraits* >(i->second.ptr()));
+		menuItemCreate->add(menuItem);
 	}
 
 	m_menuPopup->add(menuItemCreate);
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), L"Delete")); //, i18n::Text(L"SHADERGRAPH_DELETE_NODE")));
-
 
 	updateGraphView();
 	return true;
@@ -255,7 +259,14 @@ bool InputMappingEditor::dropInstance(db::Instance* instance, const ui::Point& p
 
 bool InputMappingEditor::handleCommand(const ui::Command& command)
 {
-	return false;
+	if (command == L"Editor.PropertiesChanged")
+	{
+		updateGraphView();
+	}
+	else
+		return false;
+
+	return true;
 }
 
 void InputMappingEditor::handleDatabaseEvent(db::Database* database, const Guid& eventId)
@@ -309,6 +320,8 @@ void InputMappingEditor::updateGraphView()
 			}
 		}
 	}
+
+	m_graph->update();
 }
 
 void InputMappingEditor::eventButtonDown(ui::MouseButtonDownEvent* event)
@@ -320,16 +333,92 @@ void InputMappingEditor::eventButtonDown(ui::MouseButtonDownEvent* event)
 	if (!selected)
 		return;
 
-	//const ui::Command& command = selected->getCommand();
+	if (selected->getCommand() == L"Input.Editor.Create")
+	{
+		const InputNodeTraits* traits = selected->getData< InputNodeTraits >(L"TRAITS");
+		if (traits)
+		{
+			Ref< IInputNode > node = traits->createNode();
+			if (!node)
+				return;
 
-	//if (command == L"ShaderGraph.Editor.Create")	// Create
-	//{
-	//	m_document->push();
-	//	const TypeInfo& type = c_nodeCategories[command.getId()].type;
-	//	createNode(&type, event->getPosition() - m_editorGraph->getOffset());
-	//}
-	//else
-	//	handleCommand(command);
+			InputMappingAsset::Position position =
+			{
+				event->getPosition().x,
+				event->getPosition().y
+			};
+
+			m_mappingAsset->addInputNode(node);
+			m_mappingAsset->setPosition(node, position);
+		}
+		else
+		{
+			InputMappingStateData* stateData = m_mappingAsset->getStateData();
+			if (stateData)
+			{
+				Ref< InputStateData > sd = new InputStateData();
+
+				InputMappingAsset::Position position =
+				{
+					event->getPosition().x,
+					event->getPosition().y
+				};
+
+				m_mappingAsset->setPosition(sd, position);
+				stateData->setStateData(L"STATE_UNNAMED_" + toString(stateData->getStateData().size()), sd);
+			}
+		}
+
+		updateGraphView();
+	}
+	else if (selected->getCommand() == L"Editor.Delete")
+	{
+		RefArray< ui::custom::Node > selectedNodes;
+		m_graph->getSelectedNodes(selectedNodes);
+
+		for (RefArray< ui::custom::Node >::const_iterator i = selectedNodes.begin(); i != selectedNodes.end(); ++i)
+		{
+			const RefArray< ui::custom::Pin >& outputPins = (*i)->getOutputPins();
+			for (RefArray< ui::custom::Pin >::const_iterator j = outputPins.begin(); j != outputPins.end(); ++j)
+			{
+				RefArray< ui::custom::Edge > edges;
+				m_graph->getConnectedEdges(*j, edges);
+
+				for (RefArray< ui::custom::Edge >::const_iterator k = edges.begin(); k != edges.end(); ++k)
+				{
+					ui::custom::Edge* edge = *k;
+					ui::custom::Pin* destinationPin = edge->getDestinationPin();
+					ui::custom::Node* destinationNode = destinationPin->getNode();
+
+					IInputNode* destinationInputNode = destinationNode->getData< IInputNode >(L"DATA");
+					if (destinationInputNode)
+					{
+						std::map< const TypeInfo*, Ref< const InputNodeTraits > >::const_iterator it = m_traits.find(&type_of(destinationInputNode));
+						T_ASSERT (it != m_traits.end());
+
+						const InputNodeTraits* destinationTraits = it->second;
+						T_ASSERT (destinationTraits);
+
+						destinationTraits->disconnectInputNode(destinationInputNode, destinationPin->getName());
+					}
+
+					InputStateData* destinationStateData = destinationNode->getData< InputStateData >(L"DATA");
+					if (destinationStateData)
+					{
+						destinationStateData->setSource(0);
+					}
+				}
+			}
+
+			IInputNode* sourceInputNode = (*i)->getData< IInputNode >(L"DATA");
+			if (sourceInputNode)
+				m_mappingAsset->removeInputNode(sourceInputNode);
+
+			// \fixme Else remove state node.
+		}
+
+		updateGraphView();
+	}
 }
 
 void InputMappingEditor::eventListValueSourceSelect(ui::SelectionChangeEvent* event)
