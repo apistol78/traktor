@@ -38,8 +38,11 @@ class EdgeDisconnectEvent;
 class EditList;
 class EditListEditEvent;
 class GraphControl;
+class NodeActivateEvent;
 class NodeMovedEvent;
 class SelectEvent;
+class ToolBar;
+class ToolBarButtonClickEvent;
 
 		}
 	}
@@ -77,11 +80,14 @@ private:
 	editor::IDocument* m_document;
 	std::map< const TypeInfo*, Ref< const InputNodeTraits > > m_traits;
 	Ref< InputMappingAsset > m_mappingAsset;
+	Ref< ui::custom::ToolBar > m_toolBarGraph;
 	Ref< ui::custom::EditList > m_listValueSources;
 	Ref< ui::custom::GraphControl > m_graph;
 	Ref< ui::PopupMenu > m_menuPopup;
 
 	void updateGraphView();
+
+	void eventToolBarGraphClick(ui::custom::ToolBarButtonClickEvent* event);
 
 	void eventButtonDown(ui::MouseButtonDownEvent* event);
 
@@ -92,6 +98,8 @@ private:
 	void eventNodeSelect(ui::custom::SelectEvent* event);
 
 	void eventNodeMoved(ui::custom::NodeMovedEvent* event);
+
+	void eventNodeActivated(ui::custom::NodeActivateEvent* event);
 
 	void eventEdgeConnected(ui::custom::EdgeConnectEvent* event);
 

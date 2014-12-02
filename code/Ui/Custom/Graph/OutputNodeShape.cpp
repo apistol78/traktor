@@ -1,12 +1,13 @@
 #include <algorithm>
 #include <cmath>
+#include "Core/Misc/Align.h"
+#include "Drawing/Image.h"
+#include "Ui/Bitmap.h"
 #include "Ui/Custom/Graph/OutputNodeShape.h"
 #include "Ui/Custom/Graph/GraphControl.h"
 #include "Ui/Custom/Graph/PaintSettings.h"
 #include "Ui/Custom/Graph/Node.h"
 #include "Ui/Custom/Graph/Pin.h"
-#include "Ui/Bitmap.h"
-#include "Drawing/Image.h"
 
 // Resources
 #include "Resources/Output.h"
@@ -21,11 +22,12 @@ namespace traktor
 			namespace
 			{
 
-const int c_marginWidth = 4;	// Distance from image edge to "visual" edge.
-const int c_textMargin = 12;
+const int c_marginWidth = 3;		//<! Distance from image edge to "visual" edge.
+const int c_textMargin = 16;
 const int c_textPad = 8;
 const int c_textHeight = 16;
-const int c_pinHitWidth = 14;	/*< Width of pin hit area from visual edge. */
+const int c_textWidthAlign = 10;	//<! Align width.
+const int c_pinHitWidth = 14;		//<! Width of pin hit area from visual edge.
 
 			}
 
@@ -142,7 +144,7 @@ Size OutputNodeShape::calculateSize(const Node* node)
 {
 	Font currentFont = m_graphControl->getFont();
 
-	int width = c_marginWidth * 2 + c_textMargin * 2;
+	int width = 0;
 
 	if (!node->getTitle().empty())
 	{
@@ -155,6 +157,8 @@ Size OutputNodeShape::calculateSize(const Node* node)
 		m_graphControl->setFont(m_graphControl->getPaintSettings()->getFont());
 		width += c_textPad + m_graphControl->getTextExtent(node->getInfo()).cx;
 	}
+
+	width = alignUp(width, c_textWidthAlign) + c_marginWidth * 2 + c_textMargin * 2;
 
 	m_graphControl->setFont(currentFont);
 

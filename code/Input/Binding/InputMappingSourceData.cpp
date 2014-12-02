@@ -13,7 +13,16 @@ T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.input.InputMappingSourceData", 0, InputMap
 
 void InputMappingSourceData::setSourceData(const std::wstring& id, IInputSourceData* data)
 {
-	m_sourceData[id] = data;
+	if (data != 0)
+		m_sourceData[id] = data;
+	else
+		m_sourceData.erase(id);
+}
+
+IInputSourceData* InputMappingSourceData::getSourceData(const std::wstring& id)
+{
+	std::map< std::wstring, Ref< IInputSourceData > >::const_iterator i = m_sourceData.find(id);
+	return i != m_sourceData.end() ? i->second : 0;
 }
 
 const std::map< std::wstring, Ref< IInputSourceData > >& InputMappingSourceData::getSourceData() const

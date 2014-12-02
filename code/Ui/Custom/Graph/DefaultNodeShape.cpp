@@ -25,7 +25,7 @@ const int c_marginHeight = 8;
 const int c_topMargin = 4;		/*< Distance from top to top of title. */
 const int c_textHeight = 16;
 const int c_titlePad = 8;		/*< Padding between title (and info) from first pin. */
-const int c_pinNamePad = 14;	/*< Distance between pin and pin's name. */
+const int c_pinNamePad = 24;	/*< Distance between pin and pin's name. */
 const int c_pinCenterPad = 16;	/*< Distance between input and output pin names. */
 const int c_pinHitWidth = 14;	/*< Width of pin hit area from visual edge. */
 
@@ -296,7 +296,7 @@ Size DefaultNodeShape::calculateSize(const Node* node)
 		width = std::max(width, imageExtent);
 	}
 
-	width += c_marginWidth * 2 + c_pinCenterPad;
+	width += c_marginWidth * 2 + c_pinCenterPad + c_pinNamePad * 2;
 
 	return Size(width, height);
 }

@@ -2612,5 +2612,105 @@
       <first>TOOLBAR_UNDO</first>
       <second>Undo</second>
     </item>
+    <item>
+      <first>INPUT_EDITOR_ALIGN_LEFT</first>
+      <second>Align left</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_ALIGN_RIGHT</first>
+      <second>Align right</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_ALIGN_TOP</first>
+      <second>Align top</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_ALIGN_BOTTOM</first>
+      <second>Align bottom</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_EVEN_VERTICALLY</first>
+      <second>Even vertically</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_EVEN_HORIZONTALLY</first>
+      <second>Even horizontally</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_CREATE_NODE</first>
+      <second>Create</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_CREATE_NODE_STATE</first>
+      <second>State</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_DELETE_NODE</first>
+      <second>Delete</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INBOOLEAN</first>
+      <second>Boolean</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INCLAMP</first>
+      <second>Clamp</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INCOMBINE</first>
+      <second>Combine</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INCONST</first>
+      <second>Constant</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INGESTUREPINCH</first>
+      <second>Gesture Pinch</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INGESTURESWIPE</first>
+      <second>Gesture Swipe</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INGESTURETAP</first>
+      <second>Gesture Tap</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INHYSTERESIS</first>
+      <second>Hysteresis</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INPULSE</first>
+      <second>Pulse</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INREADVALUE</first>
+      <second>Read Value</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INREMAPAXIS</first>
+      <second>Remap Axis</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INTHRESHOLD</first>
+      <second>Threshold</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_CREATE_NODE_TRAKTOR_INPUT_INTRIGGER</first>
+      <second>Trigger</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_STATE_NAME</first>
+      <second>Name</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_STATE_NAME_TITLE</first>
+      <second>Change name</second>
+    </item>
+    <item>
+      <first>INPUT_EDITOR_STATE_NAME_MESSAGE</first>
+      <second>Enter state name</second>
+    </item>
   </map>
 </object>

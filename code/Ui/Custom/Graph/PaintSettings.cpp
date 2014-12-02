@@ -24,8 +24,8 @@ PaintSettings::PaintSettings(const ui::Font& font)
 	m_nodeTextInfo = Color4ub(80, 90, 80);
 	m_nodeTextUnconnected = Color4ub(250, 40, 40);
 	m_nodeHalo = Color4ub(80, 120, 200);
-	m_edge = Color4ub(120, 120, 120);
-	m_edgeSelected = Color4ub(80, 90, 220);
+	m_edge = Color4ub(255, 255, 255);
+	m_edgeSelected = Color4ub(80, 90, 255);
 	m_edgeCursor = Color4ub(110, 110, 110);
 	m_selectionCursor = Color4ub(0, 0, 0, 64);
 	m_guideCursor = Color4ub(180, 180, 140);

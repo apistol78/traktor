@@ -50,9 +50,13 @@ public:
 
 	virtual void serialize(ISerializer& s);
 
+	void setSourceData(InputMappingSourceData* sourceData) { m_sourceData = sourceData; }
+
 	InputMappingSourceData* getSourceData() { return m_sourceData; }
 
 	const InputMappingSourceData* getSourceData() const { return m_sourceData; }
+
+	void setStateData(InputMappingStateData* stateData)  { m_stateData = stateData; }
 
 	InputMappingStateData* getStateData() { return m_stateData; }
 

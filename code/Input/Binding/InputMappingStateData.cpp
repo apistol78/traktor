@@ -25,7 +25,10 @@ const RefArray< IInputFilter >& InputMappingStateData::getFilters() const
 
 void InputMappingStateData::setStateData(const std::wstring& id, InputStateData* data)
 {
-	m_stateData[id] = data;
+	if (data)
+		m_stateData[id] = data;
+	else
+		m_stateData.erase(id);
 }
 
 const std::map< std::wstring, Ref< InputStateData > >& InputMappingStateData::getStateData() const
