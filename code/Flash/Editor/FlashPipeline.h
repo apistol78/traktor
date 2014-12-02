@@ -57,7 +57,7 @@ public:
 
 private:
 	std::wstring m_assetPath;
-	bool m_allowNPOT;
+	bool m_useTextureCompression;
 };
 
 	}

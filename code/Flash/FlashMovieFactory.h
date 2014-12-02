@@ -27,12 +27,11 @@ class FlashTag;
 class T_DLLCLASS FlashMovieFactory : public Object
 {
 public:
-	FlashMovieFactory(bool allowNPOT);
+	FlashMovieFactory();
 
 	Ref< FlashMovie > createMovie(SwfReader* swf);
 
 private:
-	bool m_allowNPOT;
 	std::map< uint16_t, Ref< FlashTag > > m_tagReaders;
 };
 
