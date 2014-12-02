@@ -31,6 +31,8 @@ bool EditList::create(Widget* parent, int style)
 	m_editItem->addEventHandler< FocusEvent >(this, &EditList::eventEditFocus);
 
 	m_editId = -1;
+	m_autoAdd = bool((style & WsAutoAdd) != 0);
+	m_autoRemove = bool((style & WsAutoRemove) != 0);
 
 	return true;
 }
@@ -41,6 +43,8 @@ void EditList::eventDoubleClick(MouseDoubleClickEvent* event)
 
 	if (m_editId != -1 || m_editItem->isVisible(false))
 		return;
+
+	bool foundItem = false;
 
 	for (int i = 0; i < count(); ++i)
 	{
@@ -53,11 +57,12 @@ void EditList::eventDoubleClick(MouseDoubleClickEvent* event)
 			m_editItem->selectAll();
 			m_editItem->setFocus();
 			m_editItem->show();
+			foundItem = true;
 			break;
 		}
 	}
 
-	if (m_autoAdd && !m_editItem->isVisible(false))
+	if (m_autoAdd && !foundItem)
 	{
 		// Calculate "next" item rectangle.
 		Rect rc = getInnerRect();

@@ -30,6 +30,8 @@ class T_DLLCLASS InputMappingSourceData : public ISerializable
 
 public:
 	void setSourceData(const std::wstring& id, IInputSourceData* data);
+
+	IInputSourceData* getSourceData(const std::wstring& id);
 	
 	const std::map< std::wstring, Ref< IInputSourceData > >& getSourceData() const;
 

@@ -1,14 +1,14 @@
 #include "Core/Misc/String.h"
-
+#include "Core/Settings/PropertyString.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
+#include "I18N/Text.h"
 #include "Input/Binding/IInputNode.h"
 #include "Input/Binding/IInputSourceData.h"
 #include "Input/Binding/InputMappingSourceData.h"
 #include "Input/Binding/InputMappingStateData.h"
 #include "Input/Binding/InputStateData.h"
-
 #include "Input/Binding/InBoolean.h"
 #include "Input/Binding/InClamp.h"
 #include "Input/Binding/InCombine.h"
@@ -22,10 +22,8 @@
 #include "Input/Binding/InRemapAxis.h"
 #include "Input/Binding/InThreshold.h"
 #include "Input/Binding/InTrigger.h"
-
 #include "Input/Editor/InputMappingAsset.h"
 #include "Input/Editor/InputMappingEditor.h"
-
 #include "Input/Editor/InBooleanTraits.h"
 #include "Input/Editor/InClampTraits.h"
 #include "Input/Editor/InCombineTraits.h"
@@ -39,14 +37,14 @@
 #include "Input/Editor/InRemapAxisTraits.h"
 #include "Input/Editor/InThresholdTraits.h"
 #include "Input/Editor/InTriggerTraits.h"
-
+#include "Ui/Bitmap.h"
 #include "Ui/Container.h"
 #include "Ui/MenuItem.h"
 #include "Ui/PopupMenu.h"
 #include "Ui/TableLayout.h"
-
 #include "Ui/Custom/EditList.h"
 #include "Ui/Custom/EditListEditEvent.h"
+#include "Ui/Custom/InputDialog.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/Graph/DefaultNodeShape.h"
 #include "Ui/Custom/Graph/Edge.h"
@@ -55,10 +53,18 @@
 #include "Ui/Custom/Graph/GraphControl.h"
 #include "Ui/Custom/Graph/InputNodeShape.h"
 #include "Ui/Custom/Graph/Node.h"
+#include "Ui/Custom/Graph/NodeActivateEvent.h"
 #include "Ui/Custom/Graph/NodeMovedEvent.h"
 #include "Ui/Custom/Graph/OutputNodeShape.h"
 #include "Ui/Custom/Graph/Pin.h"
 #include "Ui/Custom/Graph/SelectEvent.h"
+#include "Ui/Custom/ToolBar/ToolBar.h"
+#include "Ui/Custom/ToolBar/ToolBarButton.h"
+#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
+#include "Ui/Custom/ToolBar/ToolBarSeparator.h"
+
+// Resources
+#include "Resources/Alignment.h"
 
 namespace traktor
 {
@@ -185,16 +191,35 @@ bool InputMappingEditor::create(ui::Container* parent)
 	if (!m_mappingAsset)
 		return false;
 
+	if (!m_mappingAsset->getSourceData())
+		m_mappingAsset->setSourceData(new InputMappingSourceData());
+	if (!m_mappingAsset->getStateData())
+		m_mappingAsset->setStateData(new InputMappingStateData());
+
 	InputMappingStateData* stateData = m_mappingAsset->getStateData();
-	if (stateData)
-	{
-		const std::map< std::wstring, Ref< InputStateData > >& sd = stateData->getStateData();
-		for (std::map< std::wstring, Ref< InputStateData > >::const_iterator i = sd.begin(); i != sd.end(); ++i)
-			updateInputMappingAsset(m_mappingAsset, i->second->getSource(), m_traits);
-	}
+	T_ASSERT (stateData);
+
+	const std::map< std::wstring, Ref< InputStateData > >& sd = stateData->getStateData();
+	for (std::map< std::wstring, Ref< InputStateData > >::const_iterator i = sd.begin(); i != sd.end(); ++i)
+		updateInputMappingAsset(m_mappingAsset, i->second->getSource(), m_traits);
+
+	Ref< ui::Container > container = new ui::Container();
+	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+
+	m_toolBarGraph = new ui::custom::ToolBar();
+	m_toolBarGraph->create(container);
+	m_toolBarGraph->addImage(ui::Bitmap::load(c_ResourceAlignment, sizeof(c_ResourceAlignment), L"png"), 14);
+	m_toolBarGraph->addItem(new ui::custom::ToolBarButton(i18n::Text(L"INPUT_EDITOR_ALIGN_LEFT"), 0, ui::Command(L"Input.Editor.AlignLeft")));
+	m_toolBarGraph->addItem(new ui::custom::ToolBarButton(i18n::Text(L"INPUT_EDITOR_ALIGN_RIGHT"), 1, ui::Command(L"Input.Editor.AlignRight")));
+	m_toolBarGraph->addItem(new ui::custom::ToolBarButton(i18n::Text(L"INPUT_EDITOR_ALIGN_TOP"), 2, ui::Command(L"Input.Editor.AlignTop")));
+	m_toolBarGraph->addItem(new ui::custom::ToolBarButton(i18n::Text(L"INPUT_EDITOR_ALIGN_BOTTOM"), 3, ui::Command(L"Input.Editor.AlignBottom")));
+	m_toolBarGraph->addItem(new ui::custom::ToolBarSeparator());
+	m_toolBarGraph->addItem(new ui::custom::ToolBarButton(i18n::Text(L"INPUT_EDITOR_EVEN_VERTICALLY"), 4, ui::Command(L"Input.Editor.EvenSpaceVertically")));
+	m_toolBarGraph->addItem(new ui::custom::ToolBarButton(i18n::Text(L"INPUT_EDITOR_EVEN_HORIZONTALLY"), 5, ui::Command(L"Input.Editor.EventSpaceHorizontally")));
+	m_toolBarGraph->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &InputMappingEditor::eventToolBarGraphClick);
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
-	splitter->create(parent, true, 10, true);
+	splitter->create(container, true, 10, true);
 
 	m_listValueSources = new ui::custom::EditList();
 	m_listValueSources->create(splitter, ui::ListBox::WsSingle | ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove);
@@ -206,6 +231,7 @@ bool InputMappingEditor::create(ui::Container* parent)
 	m_graph->addEventHandler< ui::MouseButtonDownEvent >(this, &InputMappingEditor::eventButtonDown);
 	m_graph->addEventHandler< ui::custom::SelectEvent >(this, &InputMappingEditor::eventNodeSelect);
 	m_graph->addEventHandler< ui::custom::NodeMovedEvent >(this, &InputMappingEditor::eventNodeMoved);
+	m_graph->addEventHandler< ui::custom::NodeActivateEvent >(this, &InputMappingEditor::eventNodeActivated);
 	m_graph->addEventHandler< ui::custom::EdgeConnectEvent >(this, &InputMappingEditor::eventEdgeConnected);
 	m_graph->addEventHandler< ui::custom::EdgeDisconnectEvent >(this, &InputMappingEditor::eventEdgeDisconnected);
 
@@ -221,20 +247,24 @@ bool InputMappingEditor::create(ui::Container* parent)
 	m_menuPopup = new ui::PopupMenu();
 	m_menuPopup->create();
 
-	Ref< ui::MenuItem > menuItemCreate = new ui::MenuItem(L"Create"); // i18n::Text(L"INPUT_EDITOR_CREATE_NODE"));
+	Ref< ui::MenuItem > menuItemCreate = new ui::MenuItem(i18n::Text(L"INPUT_EDITOR_CREATE_NODE"));
 
-	Ref< ui::MenuItem > menuItem = new ui::MenuItem(ui::Command(L"Input.Editor.Create"), L"State");
+	Ref< ui::MenuItem > menuItem = new ui::MenuItem(ui::Command(L"Input.Editor.Create"), i18n::Text(L"INPUT_EDITOR_CREATE_NODE_STATE"));
 	menuItemCreate->add(menuItem);
 
 	for (std::map< const TypeInfo*, Ref< const InputNodeTraits > >::const_iterator i = m_traits.begin(); i != m_traits.end(); ++i)
 	{
-		Ref< ui::MenuItem > menuItem = new ui::MenuItem(ui::Command(L"Input.Editor.Create"), i->first->getName());
+		std::wstring i18nId = i->first->getName();
+		i18nId = replaceAll(i18nId, L'.', L'_');
+		i18nId = toUpper(i18nId);
+
+		Ref< ui::MenuItem > menuItem = new ui::MenuItem(ui::Command(L"Input.Editor.Create"), i18n::Text(L"INPUT_EDITOR_CREATE_NODE_" + i18nId));
 		menuItem->setData(L"TRAITS", const_cast< InputNodeTraits* >(i->second.ptr()));
 		menuItemCreate->add(menuItem);
 	}
 
 	m_menuPopup->add(menuItemCreate);
-	m_menuPopup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), L"Delete")); //, i18n::Text(L"SHADERGRAPH_DELETE_NODE")));
+	m_menuPopup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"INPUT_EDITOR_DELETE_NODE")));
 
 	updateGraphView();
 	return true;
@@ -259,9 +289,73 @@ bool InputMappingEditor::dropInstance(db::Instance* instance, const ui::Point& p
 
 bool InputMappingEditor::handleCommand(const ui::Command& command)
 {
-	if (command == L"Editor.PropertiesChanged")
+	if (command == L"Editor.PropertiesChanging")
+	{
+		m_document->push();
+	}
+	else if (command == L"Editor.PropertiesChanged")
 	{
 		updateGraphView();
+	}
+	else if (command == L"Editor.Undo")
+	{
+		if (m_document->undo())
+		{
+			m_mappingAsset = m_document->getObject< InputMappingAsset >(0);
+			T_FATAL_ASSERT (m_mappingAsset);
+
+			updateGraphView();
+
+			m_site->setPropertyObject(0);
+		}
+	}
+	else if (command == L"Editor.Redo")
+	{
+		if (m_document->redo())
+		{
+			m_mappingAsset = m_document->getObject< InputMappingAsset >(0);
+			T_FATAL_ASSERT (m_mappingAsset);
+
+			updateGraphView();
+
+			m_site->setPropertyObject(0);
+		}
+	}
+	else if (command == L"Input.Editor.AlignLeft")
+	{
+		m_document->push();
+		m_graph->alignNodes(ui::custom::GraphControl::AnLeft);
+		m_graph->update();
+	}
+	else if (command == L"Input.Editor.AlignRight")
+	{
+		m_document->push();
+		m_graph->alignNodes(ui::custom::GraphControl::AnRight);
+		m_graph->update();
+	}
+	else if (command == L"Input.Editor.AlignTop")
+	{
+		m_document->push();
+		m_graph->alignNodes(ui::custom::GraphControl::AnTop);
+		m_graph->update();
+	}
+	else if (command == L"Input.Editor.AlignBottom")
+	{
+		m_document->push();
+		m_graph->alignNodes(ui::custom::GraphControl::AnBottom);
+		m_graph->update();
+	}
+	else if (command == L"Input.Editor.EvenSpaceVertically")
+	{
+		m_document->push();
+		m_graph->evenSpace(ui::custom::GraphControl::EsVertically);
+		m_graph->update();
+	}
+	else if (command == L"Input.Editor.EventSpaceHorizontally")
+	{
+		m_document->push();
+		m_graph->evenSpace(ui::custom::GraphControl::EsHorizontally);
+		m_graph->update();
 	}
 	else
 		return false;
@@ -285,43 +379,49 @@ void InputMappingEditor::updateGraphView()
 
 	// Add all output states.
 	InputMappingStateData* stateData = m_mappingAsset->getStateData();
-	if (stateData)
+	T_ASSERT (stateData);
+
+	const std::map< std::wstring, Ref< InputStateData > >& sd = stateData->getStateData();
+	for (std::map< std::wstring, Ref< InputStateData > >::const_iterator i = sd.begin(); i != sd.end(); ++i)
 	{
-		const std::map< std::wstring, Ref< InputStateData > >& sd = stateData->getStateData();
-		for (std::map< std::wstring, Ref< InputStateData > >::const_iterator i = sd.begin(); i != sd.end(); ++i)
+		InputMappingAsset::Position p = m_mappingAsset->getPosition(i->second);
+
+		Ref< ui::custom::Node > node = new ui::custom::Node(
+			L"State",
+			i->first,
+			ui::Point(p.x, p.y),
+			new ui::custom::OutputNodeShape(m_graph)
+		);
+		node->setData(L"NAME", new PropertyString(i->first));
+		node->setData(L"DATA", i->second);
+		Ref< ui::custom::Pin > inputPin = node->createInputPin(L"Input", false);
+		m_graph->addNode(node);
+
+		// Create edge to input node.
+		if (i->second->getSource() != 0)
 		{
-			InputMappingAsset::Position p = m_mappingAsset->getPosition(i->second);
-
-			Ref< ui::custom::Node > node = new ui::custom::Node(
-				L"State",
-				i->first,
-				ui::Point(p.x, p.y),
-				new ui::custom::OutputNodeShape(m_graph)
-			);
-			node->setData(L"DATA", i->second);
-			Ref< ui::custom::Pin > inputPin = node->createInputPin(L"Input", false);
-			m_graph->addNode(node);
-
-			// Create edge to input node.
-			if (i->second->getSource() != 0)
+			const RefArray< ui::custom::Node >& nodes = m_graph->getNodes();
+			for (RefArray< ui::custom::Node >::const_iterator j = nodes.begin(); j != nodes.end(); ++j)
 			{
-				const RefArray< ui::custom::Node >& nodes = m_graph->getNodes();
-				for (RefArray< ui::custom::Node >::const_iterator j = nodes.begin(); j != nodes.end(); ++j)
+				if ((*j)->getData< IInputNode >(L"DATA") == i->second->getSource())
 				{
-					if ((*j)->getData< IInputNode >(L"DATA") == i->second->getSource())
-					{
-						m_graph->addEdge(new ui::custom::Edge(
-							(*j)->findOutputPin(L"Value"),
-							inputPin
-						));
-						break;
-					}
+					m_graph->addEdge(new ui::custom::Edge(
+						(*j)->findOutputPin(L"Value"),
+						inputPin
+					));
+					break;
 				}
 			}
 		}
 	}
 
 	m_graph->update();
+}
+
+void InputMappingEditor::eventToolBarGraphClick(ui::custom::ToolBarButtonClickEvent* event)
+{
+	const ui::Command& command = event->getCommand();
+	handleCommand(command);
 }
 
 void InputMappingEditor::eventButtonDown(ui::MouseButtonDownEvent* event)
@@ -335,6 +435,8 @@ void InputMappingEditor::eventButtonDown(ui::MouseButtonDownEvent* event)
 
 	if (selected->getCommand() == L"Input.Editor.Create")
 	{
+		m_document->push();
+
 		const InputNodeTraits* traits = selected->getData< InputNodeTraits >(L"TRAITS");
 		if (traits)
 		{
@@ -354,25 +456,26 @@ void InputMappingEditor::eventButtonDown(ui::MouseButtonDownEvent* event)
 		else
 		{
 			InputMappingStateData* stateData = m_mappingAsset->getStateData();
-			if (stateData)
+			T_ASSERT (stateData);
+
+			Ref< InputStateData > sd = new InputStateData();
+
+			InputMappingAsset::Position position =
 			{
-				Ref< InputStateData > sd = new InputStateData();
+				event->getPosition().x,
+				event->getPosition().y
+			};
 
-				InputMappingAsset::Position position =
-				{
-					event->getPosition().x,
-					event->getPosition().y
-				};
-
-				m_mappingAsset->setPosition(sd, position);
-				stateData->setStateData(L"STATE_UNNAMED_" + toString(stateData->getStateData().size()), sd);
-			}
+			m_mappingAsset->setPosition(sd, position);
+			stateData->setStateData(L"STATE_UNNAMED_" + toString(stateData->getStateData().size()), sd);
 		}
 
 		updateGraphView();
 	}
 	else if (selected->getCommand() == L"Editor.Delete")
 	{
+		m_document->push();
+
 		RefArray< ui::custom::Node > selectedNodes;
 		m_graph->getSelectedNodes(selectedNodes);
 
@@ -410,11 +513,17 @@ void InputMappingEditor::eventButtonDown(ui::MouseButtonDownEvent* event)
 				}
 			}
 
-			IInputNode* sourceInputNode = (*i)->getData< IInputNode >(L"DATA");
+			Ref< IInputNode > sourceInputNode = (*i)->getData< IInputNode >(L"DATA");
 			if (sourceInputNode)
 				m_mappingAsset->removeInputNode(sourceInputNode);
 
-			// \fixme Else remove state node.
+			Ref< PropertyString > stateName = (*i)->getData< PropertyString >(L"NAME");
+			Ref< InputStateData > stateData = (*i)->getData< InputStateData >(L"DATA");
+			if (stateName && stateData)
+			{
+				std::wstring currentName = PropertyString::get(stateName);
+				m_mappingAsset->getStateData()->setStateData(currentName, 0);
+			}
 		}
 
 		updateGraphView();
@@ -437,6 +546,47 @@ void InputMappingEditor::eventNodeSelect(ui::custom::SelectEvent* event)
 
 void InputMappingEditor::eventListValueEdit(ui::custom::EditListEditEvent* event)
 {
+	InputMappingSourceData* sourceData = m_mappingAsset->getSourceData();
+	T_ASSERT (sourceData);
+
+	if (event->getIndex() < 0)	// Add item.
+	{
+		// Ensure name doesn't clash with existing.
+		const std::map< std::wstring, Ref< IInputSourceData > >& sd = sourceData->getSourceData();
+		if (sd.find(event->getText()) != sd.end())
+			return;
+
+		// Browse for type of source.
+		const TypeInfo* inputSourceDataType = m_editor->browseType(&type_of< IInputSourceData >());
+		if (!inputSourceDataType)
+			return;
+
+		// Add source to mapping.
+		Ref< IInputSourceData > inputSourceData = checked_type_cast< IInputSourceData*, false >(inputSourceDataType->createInstance());
+		sourceData->setSourceData(event->getText(), inputSourceData);
+
+		// Add new item to list.
+		m_listValueSources->add(event->getText(), inputSourceData);
+	}
+	else if (event->getText().empty())	// Remove item.
+	{
+		std::wstring id = m_listValueSources->getItem(event->getIndex());
+		sourceData->setSourceData(id, 0);
+		event->consume();
+	}
+	else	// Rename item.
+	{
+		// Ensure name doesn't clash with existing.
+		const std::map< std::wstring, Ref< IInputSourceData > >& sd = sourceData->getSourceData();
+		if (sd.find(event->getText()) != sd.end())
+			return;
+
+		std::wstring fromId = m_listValueSources->getItem(event->getIndex());
+		Ref< IInputSourceData > inputSourceData = sourceData->getSourceData(fromId);
+		sourceData->setSourceData(fromId, 0);
+		sourceData->setSourceData(event->getText(), inputSourceData);
+		event->consume();
+	}
 }
 
 void InputMappingEditor::eventNodeMoved(ui::custom::NodeMovedEvent* event)
@@ -451,6 +601,43 @@ void InputMappingEditor::eventNodeMoved(ui::custom::NodeMovedEvent* event)
 	};
 
 	m_mappingAsset->setPosition(node->getData(L"DATA"), p);
+}
+
+void InputMappingEditor::eventNodeActivated(ui::custom::NodeActivateEvent* event)
+{
+	ui::custom::Node* node = event->getNode();
+	T_ASSERT (node);
+
+	Ref< PropertyString > stateName = node->getData< PropertyString >(L"NAME");
+	Ref< InputStateData > stateData = node->getData< InputStateData >(L"DATA");
+	if (stateName && stateData)
+	{
+		std::wstring currentName = PropertyString::get(stateName);
+
+		ui::custom::InputDialog::Field fields[] =
+		{
+			{ i18n::Text(L"INPUT_EDITOR_STATE_NAME"), currentName, 0, 0 }
+		};
+
+		ui::custom::InputDialog inputDialog;
+		inputDialog.create(
+			m_graph,
+			i18n::Text(L"INPUT_EDITOR_STATE_NAME_TITLE"),
+			i18n::Text(L"INPUT_EDITOR_STATE_NAME_MESSAGE"),
+			fields,
+			sizeof_array(fields)
+		);
+		if (inputDialog.showModal() == ui::DrOk && !fields[0].value.empty())
+		{
+			InputMappingStateData* mappingStateData = m_mappingAsset->getStateData();
+			T_ASSERT (mappingStateData);
+
+			mappingStateData->setStateData(currentName, 0);
+			mappingStateData->setStateData(fields[0].value, stateData);
+
+			updateGraphView();
+		}
+	}
 }
 
 void InputMappingEditor::eventEdgeConnected(ui::custom::EdgeConnectEvent* event)

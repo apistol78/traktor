@@ -47,7 +47,16 @@ std::wstring InCombineTraits::getDescription(const IInputNode* node) const
 		{
 			if (i > 0)
 				ss << L" " << opc << L" ";
-			ss << L"([" << i << L"] * " << entries[i].mul << L" + " << entries[i].add << L")";
+
+			ss << L"([" << i << L"]";
+			
+			if (entries[i].mul != 1.0f)
+				ss << L" * " << entries[i].mul;
+			
+			if (entries[i].add != 0.0f)
+				ss << L" + " << entries[i].add;
+			
+			ss << L")";
 		}
 	}
 	else

@@ -786,26 +786,34 @@ void GraphControl::eventPaint(PaintEvent* event)
 	// Select font from settings.
 	canvas.setFont(m_paintSettings->getFont());
 
-	// Fill solid background.
-	canvas.setBackground(getSystemColor(ScButtonFace));
-	canvas.fillRect(rc);
+	// Draw background.
+	if (m_imageBackground)
+	{
+		Size backgroundSize = m_imageBackground->getSize();
 
-	//// Draw background.
-	//if (m_imageBackground)
-	//{
-	//	Size backgroundSize = m_imageBackground->getSize();
-	//	canvas.setBackground(Color(255, 255, 255));
-	//	canvas.drawBitmap(
-	//		Point(
-	//			(rc.getWidth() - backgroundSize.cx) / 2,
-	//			(rc.getHeight() - backgroundSize.cy) / 2
-	//		),
-	//		Point(0, 0),
-	//		backgroundSize,
-	//		m_imageBackground,
-	//		ui::BmAlpha
-	//	);
-	//}
+		int32_t ox = m_offset.cx % backgroundSize.cx;
+		int32_t oy = m_offset.cy % backgroundSize.cy;
+
+		canvas.setBackground(Color4ub(255, 255, 255, 255));
+		for (int32_t y = oy - backgroundSize.cy; y < rc.getHeight(); y += backgroundSize.cy)
+		{
+			for (int32_t x = ox - backgroundSize.cx; x < rc.getWidth(); x += backgroundSize.cx)
+			{
+				canvas.drawBitmap(
+					Point(x, y),
+					Point(0, 0),
+					backgroundSize,
+					m_imageBackground,
+					ui::BmNone
+				);
+			}
+		}
+	}
+	else
+	{
+		canvas.setBackground(getSystemColor(ScButtonFace));
+		canvas.fillRect(rc);
+	}
 
 	// Draw arrow hints.
 	canvas.setBackground(m_paintSettings->getNodeShadow());
@@ -868,12 +876,22 @@ void GraphControl::eventPaint(PaintEvent* event)
 
 	// Draw edges.
 	for (RefArray< Edge >::iterator i = m_edges.begin(); i != m_edges.end(); ++i)
-		(*i)->paint(m_paintSettings, &canvas, m_offset);
+	{
+		if (!(*i)->isSelected())
+			(*i)->paint(m_paintSettings, &canvas, m_offset);
+	}
 
 	// Node shapes.
 	for (RefArray< Node >::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
 	{
 		if ((*i)->calculateRect().offset(m_offset).intersect(rc))
+			(*i)->paint(m_paintSettings, &canvas, m_offset);
+	}
+
+	// Draw selected edges.
+	for (RefArray< Edge >::iterator i = m_edges.begin(); i != m_edges.end(); ++i)
+	{
+		if ((*i)->isSelected())
 			(*i)->paint(m_paintSettings, &canvas, m_offset);
 	}
 

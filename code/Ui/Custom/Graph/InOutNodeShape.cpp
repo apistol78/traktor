@@ -21,7 +21,7 @@ namespace traktor
 			namespace
 			{
 
-const int c_marginWidth = 4;	/*< Distance from image edge to "visual" edge. */
+const int c_marginWidth = 3;	/*< Distance from image edge to "visual" edge. */
 const int c_textMargin = 8;
 const int c_textHeight = 16;
 const int c_minExtent = 30;

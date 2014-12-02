@@ -19,7 +19,7 @@ namespace traktor
 			{
 
 const int c_sourcePinOffset = 10;
-const int c_destPinOffset = 12;
+const int c_destPinOffset = 16;
 
 void calculateLinearSpline(Point s1, Point d1, std::vector< Point >& outSpline)
 {
@@ -78,12 +78,12 @@ void calculateLinearSpline(Point s1, Point d1, std::vector< Point >& outSpline)
 	}
 
 	outSpline.resize(6);
-	outSpline[0] = s1;
+	outSpline[0] = Point(s1.x + 6, s1.y);
 	outSpline[1] = s;
 	outSpline[2] = m1;
 	outSpline[3] = m2;
 	outSpline[4] = d;
-	outSpline[5] = d1;
+	outSpline[5] = Point(d1.x - 6, d1.y);
 }
 
 void calculateSmoothSpline(Point s1, Point d1, std::vector< Point >& outSpline)
@@ -203,7 +203,6 @@ void Edge::paint(const PaintSettings* paintSettings, Canvas* canvas, const Size&
 	{
 		canvas->setForeground(paintSettings->getEdgeSelected());
 		canvas->setBackground(paintSettings->getEdgeSelected());
-		canvas->setPenThickness(3);
 	}
 	else
 	{
@@ -219,17 +218,16 @@ void Edge::paint(const PaintSettings* paintSettings, Canvas* canvas, const Size&
 	else
 		calculateLinearSpline(s, d, m_spline);
 
+	canvas->setPenThickness(2);
 	canvas->drawLines(m_spline);
-
-	if (m_selected)
-		canvas->setPenThickness(1);
+	canvas->setPenThickness(1);
 
 	Point at = m_destination->getPosition() + offset;
 	Point arrow[] =
 	{
-		Point(at.x - 8, at.y - 5),
-		at,
-		Point(at.x - 8, at.y + 5)
+		Point(at.x - 12, at.y - 5),
+		Point(at.x - 2, at.y),
+		Point(at.x - 12, at.y + 5)
 	};
 	canvas->fillPolygon(arrow, 3);
 }
