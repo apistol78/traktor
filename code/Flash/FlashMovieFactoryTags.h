@@ -38,7 +38,6 @@ public:
 	struct ReadContext
 	{
 		uint8_t version;
-		bool allowNPOT;
 		Ref< FlashMovie > movie;
 		Ref< FlashSprite > sprite;
 		Ref< FlashFrame > frame;
