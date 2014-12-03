@@ -467,7 +467,7 @@ void InputMappingEditor::eventButtonDown(ui::MouseButtonDownEvent* event)
 			};
 
 			m_mappingAsset->setPosition(sd, position);
-			stateData->setStateData(L"STATE_UNNAMED_" + toString(stateData->getStateData().size()), sd);
+			stateData->setStateData(L"STATE_UNNAMED_" + toString(uint32_t(stateData->getStateData().size())), sd);
 		}
 
 		updateGraphView();
