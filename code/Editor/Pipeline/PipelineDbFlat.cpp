@@ -17,6 +17,7 @@ namespace traktor
 		{
 
 const uint32_t c_version = 1;
+const uint32_t c_flushAfterChanges = 10;	//!< Flush pipeline after N changes.
 
 class MemberDependencyHash : public MemberComplex
 {
@@ -188,7 +189,8 @@ void PipelineDbFlat::setDependency(const Guid& guid, const DependencyHash& hash)
 {
 	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireWriter)(m_lock);
 	m_dependencies[guid] = hash;
-	++m_changes;
+	if (++m_changes >= c_flushAfterChanges)
+		endTransaction();
 }
 
 bool PipelineDbFlat::getDependency(const Guid& guid, DependencyHash& outHash) const
@@ -207,7 +209,8 @@ void PipelineDbFlat::setFile(const Path& path, const FileHash& file)
 {
 	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireWriter)(m_lock);
 	m_files[path.getPathName()] = file;
-	++m_changes;
+	if (++m_changes >= c_flushAfterChanges)
+		endTransaction();
 }
 
 bool PipelineDbFlat::getFile(const Path& path, FileHash& outFile)

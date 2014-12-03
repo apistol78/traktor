@@ -73,6 +73,12 @@
 					</value>
 				</second>
 			</item>
+			<item>
+				<first>TerrainPipeline.SuppressDetailShader</first>
+				<second type="traktor.PropertyBoolean">
+					<value>true</value>
+				</second>
+			</item>
 		</value>
 	</pipelineProperties>
 	<migrateProperties type="traktor.PropertyGroup">

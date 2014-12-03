@@ -3,6 +3,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Float.h"
 #include "Core/Serialization/DeepClone.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
@@ -190,9 +191,15 @@ void calculatePatches(const TerrainAsset* terrainAsset, const hf::Heightfield* h
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainPipeline", 10, TerrainPipeline, editor::DefaultPipeline)
 
+TerrainPipeline::TerrainPipeline()
+:	m_suppressDetailShader(false)
+{
+}
+
 bool TerrainPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+	m_suppressDetailShader = settings->getProperty< PropertyBoolean >(L"TerrainPipeline.SuppressDetailShader", false);
 	return editor::DefaultPipeline::create(settings);
 }
 
@@ -218,9 +225,14 @@ bool TerrainPipeline::buildDependencies(
 	pipelineDepends->addDependency(terrainAsset->getSurfaceShader(), editor::PdfUse);
 
 	pipelineDepends->addDependency(c_guidTerrainCoarseShaderTemplate, editor::PdfUse);
-	pipelineDepends->addDependency(c_guidTerrainDetailShaderTemplate, editor::PdfUse);
 	pipelineDepends->addDependency(c_guidTerrainCoarseShaderTemplate_VFetch, editor::PdfUse);
-	pipelineDepends->addDependency(c_guidTerrainDetailShaderTemplate_VFetch, editor::PdfUse);
+	
+	if (!m_suppressDetailShader)
+	{
+		pipelineDepends->addDependency(c_guidTerrainDetailShaderTemplate, editor::PdfUse);
+		pipelineDepends->addDependency(c_guidTerrainDetailShaderTemplate_VFetch, editor::PdfUse);
+	}
+
 	pipelineDepends->addDependency(c_guidSurfaceShaderTemplate, editor::PdfUse);
 	pipelineDepends->addDependency(c_guidSurfaceShaderPlaceholder, editor::PdfUse);
 
@@ -430,11 +442,20 @@ bool TerrainPipeline::buildOutput(
 		return false;
 	}
 
-	Ref< render::ShaderGraph > terrainDetailShader = render::FragmentLinker(fragmentReader).resolve(terrainDetailShaderTemplate, true);
-	if (!terrainDetailShader)
+	Ref< render::ShaderGraph > terrainDetailShader;
+	if (!m_suppressDetailShader)
 	{
-		log::error << L"Terrain pipeline failed; unable to link terrain detail shader" << Endl;
-		return false;
+		terrainDetailShader = render::FragmentLinker(fragmentReader).resolve(terrainDetailShaderTemplate, true);
+		if (!terrainDetailShader)
+		{
+			log::error << L"Terrain pipeline failed; unable to link terrain detail shader" << Endl;
+			return false;
+		}
+	}
+	else
+	{
+		terrainDetailShader = DeepClone(terrainCoarseShader).create< render::ShaderGraph >();
+		T_ASSERT (terrainDetailShader);
 	}
 
 	Ref< render::ShaderGraph > surfaceShader = render::FragmentLinker(fragmentReader).resolve(surfaceShaderTemplate, true);
