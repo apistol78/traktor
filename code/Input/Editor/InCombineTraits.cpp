@@ -75,7 +75,7 @@ void InCombineTraits::getInputNodes(const IInputNode* node, std::map< const std:
 	const InCombine* inCombine = checked_type_cast< const InCombine*, false >(node);
 	
 	const std::vector< InCombine::Entry >& entries = inCombine->m_entries;
-	for (size_t i = 0; i < entries.size(); ++i)
+	for (uint32_t i = 0; i < uint32_t(entries.size()); ++i)
 		outInputNodes[toString(i)] = entries[i].source;
 
 	outInputNodes[L"*"] = 0;
