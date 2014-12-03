@@ -21,6 +21,8 @@ class T_DLLCLASS TerrainPipeline : public editor::DefaultPipeline
 	T_RTTI_CLASS;
 
 public:
+	TerrainPipeline();
+
 	virtual bool create(const editor::IPipelineSettings* settings);
 
 	virtual TypeInfoSet getAssetTypes() const;
@@ -48,6 +50,7 @@ public:
 
 private:
 	std::wstring m_assetPath;
+	bool m_suppressDetailShader;
 };
 
 	}
