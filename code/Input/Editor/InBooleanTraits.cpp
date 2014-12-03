@@ -40,7 +40,7 @@ void InBooleanTraits::getInputNodes(const IInputNode* node, std::map< const std:
 	const InBoolean* inBoolean = checked_type_cast< const InBoolean*, false >(node);
 
 	const RefArray< IInputNode >& sources = inBoolean->m_source;
-	for (size_t i = 0; i < sources.size(); ++i)
+	for (uint32_t i = 0; i < uint32_t(sources.size()); ++i)
 		outInputNodes[toString(i)] = sources[i];
 
 	outInputNodes[L"*"] = 0;
