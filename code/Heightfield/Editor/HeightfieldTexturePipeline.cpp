@@ -1,5 +1,6 @@
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Thread/Acquire.h"
 #include "Database/Database.h"
@@ -77,9 +78,15 @@ Vector4 normalAt(const Heightfield* heightfield, int32_t u, int32_t v)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.HeightfieldTexturePipeline", 3, HeightfieldTexturePipeline, editor::DefaultPipeline)
 
+HeightfieldTexturePipeline::HeightfieldTexturePipeline()
+:	m_use32bitHeightFormat(false)
+{
+}
+
 bool HeightfieldTexturePipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+	m_use32bitHeightFormat = settings->getProperty< PropertyBoolean >(L"HeightfieldTexturePipeline.Use32bitHeightFormat", false);
 	return true;
 }
 
@@ -175,7 +182,7 @@ bool HeightfieldTexturePipeline::buildOutput(
 		}
 
 		Ref< render::TextureOutput > output = new render::TextureOutput();
-		output->m_textureFormat = render::TfR16F;
+		output->m_textureFormat = m_use32bitHeightFormat ? render::TfR32F : render::TfR16F;
 		output->m_generateNormalMap = false;
 		output->m_scaleDepth = 0.0f;
 		output->m_generateMips = false;

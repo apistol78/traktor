@@ -1,3 +1,4 @@
+#include <limits>
 #include "Core/Log/Log.h"
 #include "Core/Math/Aabb3.h"
 #include "Heightfield/Heightfield.h"
@@ -194,6 +195,8 @@ void HeightfieldShapeBullet::processAllTriangles(btTriangleCallback* callback, c
 		mxx += cxf;
 	}
 }
+
+#if !defined(_PS3)
 
 void HeightfieldShapeBullet::processRaycastAllTriangles(btTriangleRaycastCallback *callback, const btVector3 &raySource, const btVector3 &rayTarget)
 {
@@ -435,6 +438,8 @@ void HeightfieldShapeBullet::processConvexcastAllTriangles(btTriangleConvexcastC
 		}
 	}
 }
+
+#endif
 
 void HeightfieldShapeBullet::calculateLocalInertia(btScalar mass, btVector3& inertia) const
 {

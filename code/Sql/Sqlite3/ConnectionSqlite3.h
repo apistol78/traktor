@@ -1,6 +1,7 @@
 #ifndef traktor_sql_ConnectionSqlite3_H
 #define traktor_sql_ConnectionSqlite3_H
 
+#include "Core/Thread/Semaphore.h"
 #include "Sql/IConnection.h"
 
 // import/export mechanism.
@@ -44,6 +45,7 @@ public:
 	virtual bool tableExists(const std::wstring& tableName);
 
 private:
+	Semaphore m_lock;
 	void* m_db;
 };
 

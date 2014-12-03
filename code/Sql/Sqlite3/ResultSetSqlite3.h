@@ -13,6 +13,9 @@
 
 namespace traktor
 {
+
+class Semaphore;
+
 	namespace sql
 	{
 
@@ -45,9 +48,10 @@ public:
 private:
 	friend class ConnectionSqlite3;
 
+	Semaphore& m_lock;
 	void* m_stmt;
 
-	ResultSetSqlite3(void* stmt);
+	ResultSetSqlite3(Semaphore& lock, void* stmt);
 
 	virtual ~ResultSetSqlite3();
 };
