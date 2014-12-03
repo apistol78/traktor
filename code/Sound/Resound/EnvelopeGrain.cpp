@@ -73,6 +73,7 @@ Ref< ISoundBufferCursor > EnvelopeGrain::createCursor() const
 	cursor->m_id = m_id;
 	cursor->m_parameter = 0.0f;
 	cursor->m_lastP = 0.0f;
+	cursor->m_outputSamples[0] = 0;
 
 	cursor->m_cursors.resize(m_grains.size());
 	for (uint32_t i = 0; i < m_grains.size(); ++i)
