@@ -132,8 +132,15 @@ void updateApplicationThread(Ref< PropertyGroup > defaultSettings, EAGLView* vie
 	if (defaultSettings->getProperty< PropertyBoolean >(L"Amalgam.SupportRetina", false))
 	{
 		// Adjust scale as we want full resolution of a retina display.
-		// Use "nativeScale" as we don't want iPhone 6+ downscaling.
-		float scale = [UIScreen mainScreen].nativeScale;
+		float scale = 1.0f;
+
+		// Primarily use "nativeScale" as we don't want iPhone 6+ downscaling;
+		// in case non iOS 8 we use ordinary "scale" property.
+		if ([[UIScreen mainScreen] respondsToSelector:@selector(nativeScale)])
+			scale = [UIScreen mainScreen].nativeScale;
+		else
+			scale = [UIScreen mainScreen].scale;
+
 		self.contentScaleFactor = scale;
 
 		CAEAGLLayer* eaglLayer = (CAEAGLLayer*)self.layer;
