@@ -2,7 +2,7 @@
 #define traktor_spray_Modifier_H
 
 #if defined(_PS3)
-#	define T_MODIFIER_USE_PS3_SPURS
+//#	define T_MODIFIER_USE_PS3_SPURS
 #endif
 
 #include "Core/Math/Transform.h"

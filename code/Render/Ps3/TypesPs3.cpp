@@ -190,6 +190,15 @@ namespace
 				*dst++ = src[(ypos * width + xpos) * depth + 1];
 				*dst++ = src[(ypos * width + xpos) * depth + 2];
 			}
+			else if (depth == 2)	// RG
+			{
+				*dst++ = src[(ypos * width + xpos) * depth];
+				*dst++ = src[(ypos * width + xpos) * depth + 1];
+			}
+			else if (depth == 1)	// R
+			{
+				*dst++ = src[ypos * width + xpos];
+			}
 			else
 				T_ASSERT_M (0, L"Invalid depth size");
 			return;

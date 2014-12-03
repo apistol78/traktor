@@ -3,7 +3,7 @@
 #include "Core/Misc/Endian.h"
 #include "Render/Ps3/MemoryHeap.h"
 #include "Render/Ps3/MemoryHeapObject.h"
-#include "Render/Ps3/SimpleTexturePs3.h"
+#include "Render/Ps3/VolumeTexturePs3.h"
 #include "Render/Ps3/StateCachePs3.h"
 #include "Render/Ps3/TypesPs3.h"
 
@@ -11,19 +11,10 @@ namespace traktor
 {
 	namespace render
 	{
-		namespace
-		{
 
-bool isPowerOf2(int value)
-{
-	return bool((value & -value) == value);
-}
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VolumeTexturePs3", VolumeTexturePs3, IVolumeTexture)
 
-		}
-
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTexturePs3", SimpleTexturePs3, ISimpleTexture)
-
-SimpleTexturePs3::SimpleTexturePs3(int32_t& counter)
+VolumeTexturePs3::VolumeTexturePs3(int32_t& counter)
 :	m_data(0)
 ,	m_counter(counter)
 {
@@ -31,12 +22,12 @@ SimpleTexturePs3::SimpleTexturePs3(int32_t& counter)
 	++m_counter;
 }
 
-SimpleTexturePs3::~SimpleTexturePs3()
+VolumeTexturePs3::~VolumeTexturePs3()
 {
 	destroy();
 }
 
-bool SimpleTexturePs3::create(MemoryHeap* memoryHeap, const SimpleTextureCreateDesc& desc)
+bool VolumeTexturePs3::create(MemoryHeap* memoryHeap, const VolumeTextureCreateDesc& desc)
 {
 	if (!getGcmTextureInfo(desc.format, m_texture.format))
 	{
@@ -44,14 +35,7 @@ bool SimpleTexturePs3::create(MemoryHeap* memoryHeap, const SimpleTextureCreateD
 		return false;
 	}
 
-	bool linear = false;
-	if (desc.immutable)
-	{
-		if (!isPowerOf2(desc.width) || !isPowerOf2(desc.height))
-			linear = true;
-	}
-	else
-		linear = true;
+	const bool linear = false;
 
 	if (linear)
 		m_texture.format |= CELL_GCM_TEXTURE_LN | CELL_GCM_TEXTURE_NR;
@@ -64,7 +48,7 @@ bool SimpleTexturePs3::create(MemoryHeap* memoryHeap, const SimpleTextureCreateD
 	uint32_t texturePitch = getTextureRowPitch(desc.format, desc.width);
 
 	m_texture.mipmap = desc.mipCount;
-	m_texture.dimension = CELL_GCM_TEXTURE_DIMENSION_2;
+	m_texture.dimension = CELL_GCM_TEXTURE_DIMENSION_3;
 	m_texture.cubemap = CELL_GCM_FALSE;
 
 	if (desc.format >= TfDXT1 && desc.format <= TfDXT5)
@@ -109,7 +93,7 @@ bool SimpleTexturePs3::create(MemoryHeap* memoryHeap, const SimpleTextureCreateD
 
 	m_texture.width = desc.width;
 	m_texture.height = desc.height;
-	m_texture.depth = 1;
+	m_texture.depth = desc.depth;
 	m_texture.location = CELL_GCM_LOCATION_LOCAL;
 	m_texture.pitch = texturePitch;
 	m_texture.offset = 0;
@@ -121,6 +105,8 @@ bool SimpleTexturePs3::create(MemoryHeap* memoryHeap, const SimpleTextureCreateD
 		desc.mipCount
 	);
 
+	textureSize *= desc.depth;
+
 	m_data = memoryHeap->alloc(textureSize, 128, false);
 	if (!m_data)
 		return false;
@@ -128,45 +114,48 @@ bool SimpleTexturePs3::create(MemoryHeap* memoryHeap, const SimpleTextureCreateD
 	if (desc.immutable)
 	{
 		uint32_t offset = 0;
-		for (uint32_t i = 0; i < desc.mipCount; ++i)
+		for (uint32_t slice = 0; slice < desc.depth; ++slice)
 		{
-			uint32_t mipWidth = getTextureMipSize(desc.width, i);
-			uint32_t mipHeight = getTextureMipSize(desc.height, i);
-			uint32_t mipSize = getTextureMipPitch(desc.format, mipWidth, mipHeight);
-			uint32_t mipPitch = getTextureRowPitch(desc.format, desc.width, i);
-
-			const uint8_t* src = static_cast< const uint8_t* >(desc.initialData[i].data);
-			uint8_t* dest = static_cast< uint8_t* >(m_data->getPointer()) + offset;
-
-			if (dxtn || linear)
+			for (uint32_t i = 0; i < desc.mipCount; ++i)
 			{
-				uint32_t blockRows = std::max< uint32_t >(mipHeight / blockDenom, 1);
-				for (uint32_t y = 0; y < blockRows; ++y)
+				uint32_t mipWidth = getTextureMipSize(desc.width, i);
+				uint32_t mipHeight = getTextureMipSize(desc.height, i);
+				uint32_t mipSize = getTextureMipPitch(desc.format, mipWidth, mipHeight);
+				uint32_t mipPitch = getTextureRowPitch(desc.format, desc.width, i);
+
+				const uint8_t* src = static_cast< const uint8_t* >(desc.initialData[i].data) + desc.initialData[i].slicePitch * slice;
+				uint8_t* dest = static_cast< uint8_t* >(m_data->getPointer()) + offset;
+
+				if (dxtn || linear)
 				{
-					std::memcpy(dest, src, desc.initialData[i].pitch);
-					src += desc.initialData[i].pitch;
-					dest += mipPitch;
+					uint32_t blockRows = std::max< uint32_t >(mipWidth / blockDenom, 1);
+					for (uint32_t y = 0; y < blockRows; ++y)
+					{
+						std::memcpy(dest, src, desc.initialData[i].pitch);
+						src += desc.initialData[i].pitch;
+						dest += mipPitch;
+					}
 				}
-			}
-			else
-			{
-				cellUtilConvertLinearToSwizzle(
-					dest,
-					src,
-					mipWidth,
-					mipHeight,
-					getTextureBlockSize(desc.format)
-				);
-			}
+				else
+				{
+					cellUtilConvertLinearToSwizzle(
+						dest,
+						src,
+						mipWidth,
+						mipHeight,
+						getTextureBlockSize(desc.format)
+					);
+				}
 
-			offset += mipSize;
+				offset += mipSize;
+			}
 		}
 	}
 
 	return true;
 }
 
-void SimpleTexturePs3::destroy()
+void VolumeTexturePs3::destroy()
 {
 	if (m_data)
 	{
@@ -175,39 +164,27 @@ void SimpleTexturePs3::destroy()
 	}
 }
 
-ITexture* SimpleTexturePs3::resolve()
+ITexture* VolumeTexturePs3::resolve()
 {
 	return this;
 }
 
-int SimpleTexturePs3::getWidth() const
+int VolumeTexturePs3::getWidth() const
 {
 	return m_texture.width;
 }
 
-int SimpleTexturePs3::getHeight() const
+int VolumeTexturePs3::getHeight() const
 {
 	return m_texture.height;
 }
 
-bool SimpleTexturePs3::lock(int level, Lock& lock)
+int VolumeTexturePs3::getDepth() const
 {
-	if (m_texture.pitch != 0 && level == 0)
-	{
-		uint8_t* ptr = static_cast< uint8_t* >(m_data->getPointer());
-		lock.bits = ptr;
-		lock.pitch = m_texture.pitch;
-		return true;
-	}
-	else
-		return false;
+	return m_texture.depth;
 }
 
-void SimpleTexturePs3::unlock(int level)
-{
-}
-
-void SimpleTexturePs3::bind(StateCachePs3& stateCache, int stage, const SamplerStateGCM& samplerState)
+void VolumeTexturePs3::bind(StateCachePs3& stateCache, int stage, const SamplerStateGCM& samplerState)
 {
 	if (m_data)
 	{

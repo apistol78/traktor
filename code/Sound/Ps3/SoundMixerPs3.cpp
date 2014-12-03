@@ -9,6 +9,10 @@
 #include "Sound/Ps3/SoundMixerPs3.h"
 #include "Sound/Ps3/Spu/JobMC.h"
 
+#define T_USE_PPU_MIXER	1
+#define T_SPU_SYNCHRONIZED 0
+
+#if !T_USE_PPU_MIXER
 extern char _binary_jqjob_Traktor_Sound_JobMulConst_bin_start[];
 extern char _binary_jqjob_Traktor_Sound_JobMulConst_bin_size[];
 extern char _binary_jqjob_Traktor_Sound_JobAddMulConst_bin_start[];
@@ -22,9 +26,7 @@ static char* job_amc_start = _binary_jqjob_Traktor_Sound_JobAddMulConst_bin_star
 static char* job_amc_size = _binary_jqjob_Traktor_Sound_JobAddMulConst_bin_size;
 static char* job_stretch_start = _binary_jqjob_Traktor_Sound_JobStretch_bin_start;
 static char* job_stretch_size = _binary_jqjob_Traktor_Sound_JobStretch_bin_size;
-
-#define T_USE_PPU_MIXER	0
-#define T_SPU_SYNCHRONIZED 0
+#endif
 
 namespace traktor
 {

@@ -1,0 +1,57 @@
+#ifndef traktor_render_VolumeTexturePs3_H
+#define traktor_render_VolumeTexturePs3_H
+
+#include "Render/IVolumeTexture.h"
+#include "Render/Types.h"
+#include "Render/Ps3/TypesPs3.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_RENDER_PS3_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+	namespace render
+	{
+
+class MemoryHeap;
+class MemoryHeapObject;
+class StateCachePs3;
+		
+class T_DLLCLASS VolumeTexturePs3 : public IVolumeTexture
+{
+	T_RTTI_CLASS;
+
+public:
+	VolumeTexturePs3(int32_t& counter);
+
+	virtual ~VolumeTexturePs3();
+	
+	bool create(MemoryHeap* memoryHeap, const VolumeTextureCreateDesc& desc);
+
+	virtual void destroy();
+
+	virtual ITexture* resolve();
+
+	virtual int getWidth() const;
+	
+	virtual int getHeight() const;
+
+	virtual int getDepth() const;
+
+	void bind(StateCachePs3& stateCache, int stage, const SamplerStateGCM& samplerState);
+
+private:
+	MemoryHeapObject* m_data;
+	CellGcmTexture m_texture;
+	int32_t& m_counter;
+};
+		
+	}
+}
+
+#endif	// traktor_render_VolumeTexturePs3_H

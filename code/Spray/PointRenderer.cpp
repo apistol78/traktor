@@ -13,6 +13,10 @@
 #include "World/IWorldRenderPass.h"
 
 #if defined(_PS3)
+//#define T_POINTRENDERER_USE_PS3_SPURS
+#endif
+
+#if defined(T_POINTRENDERER_USE_PS3_SPURS)
 #	include "Core/Thread/Ps3/Spurs/SpursJobQueue.h"
 #	include "Core/Thread/Ps3/Spurs/SpursManager.h"
 #	include "Spray/Ps3/Spu/JobPointRenderer.h"
@@ -44,7 +48,7 @@ const uint32_t c_pointCount = 3000;
 const uint32_t c_pointCount = 8000;
 #endif
 
-#if !defined(_PS3)
+#if !defined(T_POINTRENDERER_USE_PS3_SPURS)
 const static float c_extents[4][2] =
 {
 	{ -1.0f, -1.0f },
@@ -94,7 +98,7 @@ PointRenderer::PointRenderer(render::IRenderSystem* renderSystem, float lod1Dist
 	}
 	m_indexBuffer->unlock();
 
-#if defined(_PS3)
+#if defined(T_POINTRENDERER_USE_PS3_SPURS)
 	m_jobQueue = SpursManager::getInstance().createJobQueue(sizeof(JobPointRenderer), 256, SpursManager::Normal);
 #endif
 }
@@ -106,7 +110,7 @@ PointRenderer::~PointRenderer()
 
 void PointRenderer::destroy()
 {
-#if defined(_PS3)
+#if defined(T_POINTRENDERER_USE_PS3_SPURS)
 	safeDestroy(m_jobQueue);
 #endif
 
@@ -152,7 +156,7 @@ void PointRenderer::render(
 	back.count = 0;
 	back.distance = std::numeric_limits< float >::max();
 
-#if defined(_PS3)
+#if defined(T_POINTRENDERER_USE_PS3_SPURS)
 
 	JobPointRenderer job;
 
@@ -237,7 +241,7 @@ void PointRenderer::flush(
 {
 	if (m_pointOffset > 0)
 	{
-#if defined(_PS3)
+#if defined(T_POINTRENDERER_USE_PS3_SPURS)
 		m_jobQueue->wait();
 #endif
 

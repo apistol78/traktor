@@ -3,6 +3,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Split.h"
+#include "Core/Thread/Acquire.h"
 #include "Sql/Sqlite3/ConnectionSqlite3.h"
 #include "Sql/Sqlite3/ResultSetSqlite3.h"
 
@@ -76,6 +77,8 @@ void ConnectionSqlite3::disconnect()
 
 Ref< IResultSet > ConnectionSqlite3::executeQuery(const std::wstring& query)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	sqlite3_stmt* stmt = 0;
 
 	int err = sqlite3_prepare_v2(
@@ -92,11 +95,13 @@ Ref< IResultSet > ConnectionSqlite3::executeQuery(const std::wstring& query)
 		return 0;
 	}
 
-	return new ResultSetSqlite3((void*)stmt);
+	return new ResultSetSqlite3(m_lock, (void*)stmt);
 }
 
 int32_t ConnectionSqlite3::executeUpdate(const std::wstring& update)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	sqlite3_stmt* stmt = 0;
 	int err;
 

@@ -4,6 +4,7 @@
 #include "Core/Memory/Alloc.h"
 #include "Core/Thread/Acquire.h"
 #include "Render/Ps3/PlatformPs3.h"
+#include "Render/Ps3/CubeTexturePs3.h"
 #include "Render/Ps3/IndexBufferPs3.h"
 #include "Render/Ps3/MemoryHeap.h"
 #include "Render/Ps3/ProgramPs3.h"
@@ -14,6 +15,7 @@
 #include "Render/Ps3/RenderViewPs3.h"
 #include "Render/Ps3/SimpleTexturePs3.h"
 #include "Render/Ps3/VertexBufferPs3.h"
+#include "Render/Ps3/VolumeTexturePs3.h"
 
 using namespace cell::Gcm;
 
@@ -282,12 +284,20 @@ Ref< ISimpleTexture > RenderSystemPs3::createSimpleTexture(const SimpleTextureCr
 
 Ref< ICubeTexture > RenderSystemPs3::createCubeTexture(const CubeTextureCreateDesc& desc)
 {
-	return 0;
+	Ref< CubeTexturePs3 > texture = new CubeTexturePs3(m_counterSimpleTextures);
+	if (texture->create(m_memoryHeapLocal, desc))
+		return texture;
+	else
+		return 0;
 }
 
 Ref< IVolumeTexture > RenderSystemPs3::createVolumeTexture(const VolumeTextureCreateDesc& desc)
 {
-	return 0;
+	Ref< VolumeTexturePs3 > texture = new VolumeTexturePs3(m_counterSimpleTextures);
+	if (texture->create(m_memoryHeapLocal, desc))
+		return texture;
+	else
+		return 0;
 }
 
 Ref< RenderTargetSet > RenderSystemPs3::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
