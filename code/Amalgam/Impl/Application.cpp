@@ -44,7 +44,6 @@
 #include "Render/IRenderView.h"
 #include "Resource/IResourceManager.h"
 #include "Script/IScriptManager.h"
-#include "Sound/Sound.h"
 #include "World/IEntityEventManager.h"
 
 namespace traktor
@@ -961,20 +960,11 @@ void Application::suspend()
 		m_stateManager->getCurrent()->take(&activeEvent);
 		m_stateManager->getCurrent()->flush();
 	}
-
-#if defined(__IOS__)
-	m_resourceServer->getResourceManager()->unload(type_of< sound::Sound >());
-#endif
 }
 
 void Application::resume()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
-
-#if defined(__IOS__)
-	m_resourceServer->getResourceManager()->reload(type_of< sound::Sound >(), true);
-#endif
-
 	if (m_stateManager->getCurrent() != 0)
 	{
 		ActiveEvent activeEvent(true);
