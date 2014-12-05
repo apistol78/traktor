@@ -102,9 +102,9 @@ bool GcVideoSharingEveryplay::create(const GcGameConfiguration& configuration)
 	@try
 	{
 		[Everyplay
-			setClientId: @"6a5a429635aac0766f5edeceade6f93d8facada4" //makeNSString(configuration.m_sharingClientId)
-			clientSecret: @"44e5c52b03df64685a36b77ae3c78d495c1e7f80" //makeNSString(configuration.m_sharingClientSecret)
-			redirectURI: @"https://m.everyplay.com/auth" //makeNSString(configuration.m_sharingRedirectURI)
+			setClientId: makeNSString(configuration.m_sharingClientId)
+			clientSecret: makeNSString(configuration.m_sharingClientSecret)
+			redirectURI: makeNSString(configuration.m_sharingRedirectURI)
 		];
 	}
 	@catch (NSException* exception)
