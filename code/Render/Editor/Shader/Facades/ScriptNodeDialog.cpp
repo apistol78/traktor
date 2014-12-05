@@ -1,12 +1,10 @@
 #include "I18N/Text.h"
-#include "Render/Shader/InputPin.h"
-#include "Render/Shader/OutputPin.h"
 #include "Render/Shader/Script.h"
 #include "Render/Editor/Shader/Facades/ScriptNodeDialog.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/ListBox.h"
-#include "Ui/Tab.h"
-#include "Ui/TabPage.h"
+#include "Ui/Custom/EditList.h"
+#include "Ui/Custom/EditListEditEvent.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/SyntaxRichEdit/SyntaxLanguageHlsl.h"
 #include "Ui/Custom/SyntaxRichEdit/SyntaxRichEdit.h"
@@ -15,21 +13,6 @@ namespace traktor
 {
 	namespace render
 	{
-		namespace
-		{
-
-const wchar_t* c_platforms[] =
-{
-	L"DX9",
-	L"DX9 Xbox360",
-	L"DX10",
-	L"DX11",
-	L"OpenGL",
-	L"OpenGL ES2",
-	L"GCM"
-};
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ScriptNodeDialog", ScriptNodeDialog, ui::ConfigDialog)
 
@@ -51,43 +34,83 @@ bool ScriptNodeDialog::create(ui::Widget* parent)
 	Ref< ui::custom::Splitter > splitter2 = new ui::custom::Splitter();
 	splitter2->create(splitter, false, -20, true);
 
-	Ref< ui::ListBox > inputPinList = new ui::ListBox();
-	inputPinList->create(splitter2);
+	m_inputPinList = new ui::custom::EditList();
+	m_inputPinList->create(splitter2, ui::ListBox::WsDefault | ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove);
+	m_inputPinList->addEventHandler< ui::custom::EditListEditEvent >(this, &ScriptNodeDialog::eventInputEditEvent);
 
 	int32_t inputPinCount = m_script->getInputPinCount();
 	for (int32_t i = 0; i < inputPinCount; ++i)
-		inputPinList->add(m_script->getInputPin(i)->getName());
+		m_inputPinList->add(m_script->getInputPin(i)->getName());
 
-	Ref< ui::ListBox > outputPinList = new ui::ListBox();
-	outputPinList->create(splitter2);
+	m_outputPinList = new ui::custom::EditList();
+	m_outputPinList->create(splitter2, ui::ListBox::WsDefault | ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove);
+	m_outputPinList->addEventHandler< ui::custom::EditListEditEvent >(this, &ScriptNodeDialog::eventOutputEditEvent);
 
 	int32_t outputPinCount = m_script->getOutputPinCount();
 	for (int32_t i = 0; i < outputPinCount; ++i)
-		outputPinList->add(m_script->getOutputPin(i)->getName());
+		m_outputPinList->add(m_script->getOutputPin(i)->getName());
 
-	Ref< ui::Tab > tabPlatforms = new ui::Tab();
-	tabPlatforms->create(splitter, ui::WsBorder);
-	
-	m_edit.resize(sizeof_array(c_platforms));
-	for (uint32_t i = 0; i < sizeof_array(c_platforms); ++i)
-	{
-		Ref< ui::TabPage > tabPage = new ui::TabPage();
-		tabPage->create(tabPlatforms, c_platforms[i], new ui::FloodLayout());
+	m_edit = new ui::custom::SyntaxRichEdit();
+	if (!m_edit->create(splitter, m_script->getScript()))
+		return false;
 
-		m_edit[i] = new ui::custom::SyntaxRichEdit();
-		if (!m_edit[i]->create(tabPage, m_script->getScript(c_platforms[i])))
-			return false;
-
-		m_edit[i]->setLanguage(new ui::custom::SyntaxLanguageHlsl());
-		m_edit[i]->setFont(ui::Font(L"Courier New", 14));
-
-		tabPlatforms->addPage(tabPage);
-	}
-
-	tabPlatforms->setActivePage(tabPlatforms->getPage(0));
+	m_edit->setLanguage(new ui::custom::SyntaxLanguageHlsl());
+	m_edit->setFont(ui::Font(L"Courier New", 14));
 
 	update();
 	return true;
+}
+
+void ScriptNodeDialog::eventInputEditEvent(ui::custom::EditListEditEvent* event)
+{
+	if (event->getIndex() < 0)	// Add item.
+	{
+		m_script->addInputPin(event->getText(), render::PtScalar);
+		m_inputPinList->add(event->getText());
+	}
+	else if (event->getText().empty())	// Remove item.
+	{
+		m_script->removeInputPin(event->getText());
+		event->consume();
+	}
+	else	// Rename item.
+	{
+		std::wstring currentName = m_inputPinList->getItem(event->getIndex());
+		const TypedInputPin* currentPin = static_cast< const TypedInputPin* >(m_script->findInputPin(currentName));
+		if (currentPin)
+		{
+			ParameterType pinType = currentPin->getType();
+			m_script->removeInputPin(currentName);
+			m_script->addInputPin(currentName, pinType);
+		}
+		event->consume();
+	}
+}
+
+void ScriptNodeDialog::eventOutputEditEvent(ui::custom::EditListEditEvent* event)
+{
+	if (event->getIndex() < 0)	// Add item.
+	{
+		m_script->addOutputPin(event->getText(), render::PtScalar);
+		m_outputPinList->add(event->getText());
+	}
+	else if (event->getText().empty())	// Remove item.
+	{
+		m_script->removeOutputPin(event->getText());
+		event->consume();
+	}
+	else	// Rename item.
+	{
+		std::wstring currentName = m_outputPinList->getItem(event->getIndex());
+		const TypedOutputPin* currentPin = static_cast< const TypedOutputPin* >(m_script->findOutputPin(currentName));
+		if (currentPin)
+		{
+			ParameterType pinType = currentPin->getType();
+			m_script->removeOutputPin(currentName);
+			m_script->addOutputPin(currentName, pinType);
+		}
+		event->consume();
+	}
 }
 
 void ScriptNodeDialog::eventClick(ui::ButtonClickEvent* event)
@@ -95,11 +118,8 @@ void ScriptNodeDialog::eventClick(ui::ButtonClickEvent* event)
 	const ui::Command& command = event->getCommand();
 	if (command.getId() == ui::DrOk || command.getId() == ui::DrApply)
 	{
-		for (uint32_t i = 0; i < sizeof_array(c_platforms); ++i)
-		{
-			std::wstring script = m_edit[i]->getText();
-			m_script->setScript(c_platforms[i], script);
-		}
+		std::wstring script = m_edit->getText();
+		m_script->setScript(script);
 	}
 }
 

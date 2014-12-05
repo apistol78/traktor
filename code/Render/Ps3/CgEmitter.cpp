@@ -1142,7 +1142,7 @@ bool emitScript(CgContext& cx, Script* node)
 	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
 
 	// Get platform specific script from node.
-	std::wstring script = node->getScript(L"PS3");
+	std::wstring script = node->getScript();
 	if (script.empty())
 		return false;
 

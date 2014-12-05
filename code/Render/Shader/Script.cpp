@@ -1,8 +1,8 @@
+#include <algorithm>
 #include "Core/Serialization/AttributeMultiLine.h"
 #include "Core/Serialization/AttributeReadOnly.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComplex.h"
-#include "Core/Serialization/MemberStl.h"
 #include "Render/Shader/Script.h"
 
 namespace traktor
@@ -11,6 +11,24 @@ namespace traktor
 	{
 		namespace
 		{
+
+template < typename PinType >
+class NamedPinPredicate
+{
+public:
+	NamedPinPredicate(const std::wstring& name)
+	:	m_name(name)
+	{
+	}
+
+	bool operator () (const PinType* pin) const
+	{
+		return pin->getName() == m_name;
+	}
+
+private:
+	std::wstring m_name;
+};
 
 class MemberTypedInputPin : public MemberComplex
 {
@@ -192,23 +210,61 @@ private:
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Script", 0, Script, Node)
 
+Script::~Script()
+{
+	for (std::vector< TypedInputPin* >::iterator i = m_inputPins.begin(); i != m_inputPins.end(); ++i)
+		delete *i;
+	for (std::vector< TypedOutputPin* >::iterator i = m_outputPins.begin(); i != m_outputPins.end(); ++i)
+		delete *i;
+}
+
 const std::wstring& Script::getName() const
 {
 	return m_name;
 }
 
-void Script::setScript(const std::wstring& platform, const std::wstring& script)
+void Script::setScript(const std::wstring& script)
 {
-	if (!script.empty())
-		m_scripts[platform] = script;
-	else
-		m_scripts.erase(platform);
+	m_script = script;
 }
 
-std::wstring Script::getScript(const std::wstring& platform) const
+const std::wstring& Script::getScript() const
 {
-	const std::map< std::wstring, std::wstring >::const_iterator i = m_scripts.find(platform);
-	return i != m_scripts.end() ? i->second : L"";
+	return m_script;
+}
+
+const InputPin* Script::addInputPin(const std::wstring& name, ParameterType type)
+{
+	TypedInputPin* inputPin = new TypedInputPin(this, name, false, type);
+	m_inputPins.push_back(inputPin);
+	return inputPin;
+}
+
+const OutputPin* Script::addOutputPin(const std::wstring& name, ParameterType type)
+{
+	TypedOutputPin* outputPin = new TypedOutputPin(this, name, type);
+	m_outputPins.push_back(outputPin);
+	return outputPin;
+}
+
+void Script::removeInputPin(const std::wstring& name)
+{
+	std::vector< TypedInputPin* >::iterator i = std::find_if(m_inputPins.begin(), m_inputPins.end(), NamedPinPredicate< TypedInputPin >(name));
+	if (i != m_inputPins.end())
+	{
+		delete *i;
+		m_inputPins.erase(i);
+	}
+}
+
+void Script::removeOutputPin(const std::wstring& name)
+{
+	std::vector< TypedOutputPin* >::iterator i = std::find_if(m_outputPins.begin(), m_outputPins.end(), NamedPinPredicate< TypedOutputPin >(name));
+	if (i != m_outputPins.end())
+	{
+		delete *i;
+		m_outputPins.erase(i);
+	}
 }
 
 int Script::getInputPinCount() const
@@ -240,7 +296,7 @@ void Script::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> MemberPinArray< MemberTypedInputPin >(L"inputPins", m_inputPins);
 	s >> MemberPinArray< MemberTypedOutputPin >(L"outputPins", m_outputPins);
-	s >> MemberStlMap< std::wstring, std::wstring >(L"scripts", m_scripts, AttributeMultiLine());
+	s >> Member< std::wstring >(L"script", m_script, AttributeMultiLine());
 }
 
 	}

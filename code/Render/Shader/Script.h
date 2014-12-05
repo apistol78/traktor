@@ -32,11 +32,21 @@ class T_DLLCLASS Script : public Node
 	T_RTTI_CLASS;
 
 public:
+	virtual ~Script();
+
 	const std::wstring& getName() const;
 
-	void setScript(const std::wstring& platform, const std::wstring& script);
+	void setScript(const std::wstring& script);
 
-	std::wstring getScript(const std::wstring& platform) const;
+	const std::wstring& getScript() const;
+
+	const InputPin* addInputPin(const std::wstring& name, ParameterType type);
+
+	const OutputPin* addOutputPin(const std::wstring& name, ParameterType type);
+
+	void removeInputPin(const std::wstring& name);
+
+	void removeOutputPin(const std::wstring& name);
 
 	virtual int getInputPinCount() const;
 
@@ -52,7 +62,7 @@ private:
 	std::wstring m_name;
 	std::vector< TypedInputPin* > m_inputPins;
 	std::vector< TypedOutputPin* > m_outputPins;
-	std::map< std::wstring, std::wstring > m_scripts;
+	std::wstring m_script;
 };
 
 	}

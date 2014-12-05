@@ -1325,7 +1325,7 @@ bool emitScript(HlslContext& cx, Script* node)
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
 
 	// Get platform specific script from node.
-	std::wstring script = node->getScript(L"DX11");
+	std::wstring script = node->getScript();
 	if (script.empty())
 		return false;
 
@@ -1366,7 +1366,7 @@ bool emitScript(HlslContext& cx, Script* node)
 		{
 			if (i > 0)
 				fs << L", ";
-			fs << hlsl_type_name(in[i]->getType(), cx.inPixel()) << L" " << node->getInputPin(i)->getName();
+			fs << hlsl_type_name(in[i]->getType(), false) << L" " << node->getInputPin(i)->getName();
 		}
 
 		if (!in.empty())
@@ -1376,7 +1376,7 @@ bool emitScript(HlslContext& cx, Script* node)
 		{
 			if (i > 0)
 				fs << L", ";
-			fs << L"out " << hlsl_type_name(out[i]->getType(), cx.inPixel()) << L" " << node->getOutputPin(i)->getName();
+			fs << L"out " << hlsl_type_name(out[i]->getType(), false) << L" " << node->getOutputPin(i)->getName();
 		}
 
 		fs << L")" << Endl;
