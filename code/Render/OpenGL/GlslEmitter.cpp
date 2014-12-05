@@ -1447,11 +1447,7 @@ bool emitScript(GlslContext& cx, Script* node)
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	// Get platform specific script from node.
-#if defined(T_OPENGL_STD)
-	std::wstring script = node->getScript(L"OpenGL");
-#else
-	std::wstring script = node->getScript(L"OpenGL ES2");
-#endif
+	std::wstring script = node->getScript();
 	if (script.empty())
 		return false;
 

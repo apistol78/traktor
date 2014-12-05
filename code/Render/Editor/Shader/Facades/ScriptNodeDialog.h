@@ -14,6 +14,8 @@ class ButtonClickEvent;
 		namespace custom
 		{
 
+class EditList;
+class EditListEditEvent;
 class SyntaxRichEdit;
 
 		}
@@ -35,7 +37,13 @@ public:
 
 private:
 	Ref< Script > m_script;
-	RefArray< ui::custom::SyntaxRichEdit > m_edit;
+	Ref< ui::custom::EditList > m_inputPinList;
+	Ref< ui::custom::EditList > m_outputPinList;
+	Ref< ui::custom::SyntaxRichEdit > m_edit;
+	
+	void eventInputEditEvent(ui::custom::EditListEditEvent* event);
+
+	void eventOutputEditEvent(ui::custom::EditListEditEvent* event);
 
 	void eventClick(ui::ButtonClickEvent* event);
 };

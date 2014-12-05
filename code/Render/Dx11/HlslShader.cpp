@@ -259,6 +259,14 @@ std::wstring HlslShader::getGeneratedShader()
 		ss << Endl;
 	}
 
+	std::wstring scriptText = getOutputStream(BtScript).str();
+	if (!scriptText.empty())
+	{
+		ss << Endl;
+		ss << scriptText;
+		ss << Endl;
+	}
+
 	if (m_shaderType == StVertex)
 	{
 		ss << L"void main(InputData i";
