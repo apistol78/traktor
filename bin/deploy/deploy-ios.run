@@ -163,6 +163,8 @@ end
 
 
 function migrate(args)
+	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
+
 	stdout:printLn("Migrating iOS...")
 	if run:execute("$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Database.Migrate.App -p -s=Migrate") ~= 0 then
 		stderr:printLn("Failed to migrate iOS database")
@@ -234,8 +236,13 @@ function migrate(args)
 		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) launch.sh *.plist *.png *.mm Content.compact Application.config", "(null)")
 		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) \"$(DEPLOY_PROJECT_NAME).xcodeproj/project.pbxproj\"", "(null)")
 
-		stdout:printLn("Deploying binaries to target host...")
-		run:pushd("$(DEPLOY_SYSTEM_ROOT)/bin/latest/ios/releasestatic")
+		if not debug then
+			stdout:printLn("Deploying binaries to target host...")
+			run:pushd("$(DEPLOY_SYSTEM_ROOT)/bin/latest/ios/releasestatic")
+		else
+			stdout:printLn("Deploying *DEBUG* binaries to target host...")
+			run:pushd("$(DEPLOY_SYSTEM_ROOT)/bin/latest/ios/debugstatic")
+		end
 
 		local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
 		
