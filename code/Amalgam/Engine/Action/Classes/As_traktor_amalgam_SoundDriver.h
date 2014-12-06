@@ -11,6 +11,9 @@ namespace traktor
 
 class AsSoundDriver;
 
+/*! \brief Traktor sound driver descriptor ActionScript wrapper.
+ * \ingroup Amalgam
+ */
 class As_traktor_amalgam_SoundDriver : public flash::ActionClass
 {
 	T_RTTI_CLASS;

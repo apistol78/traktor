@@ -10,6 +10,9 @@ namespace traktor
 	namespace amalgam
 	{
 
+/*! \brief Traktor input fabricator ActionScript wrapper.
+ * \ingroup Amalgam
+ */
 class As_traktor_amalgam_InputFabricator : public flash::ActionClass
 {
 	T_RTTI_CLASS;

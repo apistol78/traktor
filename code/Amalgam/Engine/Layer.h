@@ -27,6 +27,9 @@ class IUpdateInfo;
 
 class Stage;
 
+/*! \brief Abstract stage layer.
+ * \ingroup Amalgam
+ */
 class T_DLLCLASS Layer : public Object
 {
 	T_RTTI_CLASS;
@@ -42,30 +45,78 @@ public:
 
 	void destroy();
 
+	/*! \brief Called during transition between stages.
+	 *
+	 * Transition is called for layers which have the
+	 * same type and matching names.
+	 *
+	 * \param fromLayer Previous stage's layer.
+	 */
 	virtual void transition(Layer* fromLayer) = 0;
 
+	/*! \brief Prepare layer for update. */
 	virtual void prepare() = 0;
 
+	/*! \brief Update layer logic.
+	 *
+	 * control Engine control interface.
+	 * info Engine update information.
+	 */
 	virtual void update(amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info) = 0;
 
+	/*! \brief Build renderable context.
+	 *
+	 * \param info Engine update information.
+	 * \param frame Render frame.
+	 */
 	virtual void build(const amalgam::IUpdateInfo& info, uint32_t frame) = 0;
 
+	/*! \brief Render previously build context.
+	 *
+	 * This is usually called from another thread than
+	 * the "build" method so special care must be
+	 * taken to ensure integrity of data.
+	 *
+	 * \param eye Render eye.
+	 * \param frame Render frame.
+	 */
 	virtual void render(render::EyeType eye, uint32_t frame) = 0;
 
+	/*! \brief Flush anything pending; such as render contexts etc.
+	 *
+	 * Flush is called prior to state changes, configuration changes
+	 * or application runtime state.
+	 */
 	virtual void flush() = 0;
 
+	/*! \brief Called before application is to be reconfigured. */
 	virtual void preReconfigured() = 0;
 
+	/*! \brief Called after configuration has been applied. */
 	virtual void postReconfigured() = 0;
 
+	/*! \brief Called when application is to be suspended. */
 	virtual void suspend() = 0;
 
+	/*! \brief Called after application has resumed executing. */
 	virtual void resume() = 0;
 
+	/*! \brief Get owner stage object.
+	 *
+	 * \return Stage object.
+	 */
 	Stage* getStage() const { return m_stage; }
 
+	/*! \brief Get name of this layer.
+	 *
+	 * \return This layer's name.
+	 */
 	const std::wstring& getName() const { return m_name; }
 
+	/*! \brief Return flag if transition of this layer is permitted.
+	 *
+	 * \return True if transition is permitted.
+	 */
 	bool isTransitionPermitted() const { return m_permitTransition; }
 
 private:

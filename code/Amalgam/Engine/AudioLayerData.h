@@ -24,6 +24,9 @@ class Sound;
 	namespace amalgam
 	{
 
+/*! \brief Stage audio layer persistent data.
+ * \ingroup Amalgam
+ */
 class T_DLLCLASS AudioLayerData : public LayerData
 {
 	T_RTTI_CLASS;

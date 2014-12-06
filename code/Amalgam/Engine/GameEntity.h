@@ -60,24 +60,70 @@ public:
 
 	virtual void update(const world::UpdateParams& update);
 
+	/*! \brief Raise attached event.
+	 *
+	 * \param eventId Name of event.
+	 * \return Instance of raised event.
+	 */
 	world::IEntityEventInstance* raiseEvent(const std::wstring& eventId);
 
+	/*! \brief Raise attached event.
+	 *
+	 * \param eventId Name of event.
+	 * \param Toffset Transformation offset from this entity.
+	 * \return Instance of raised event.
+	 */
 	world::IEntityEventInstance* raiseEvent(const std::wstring& eventId, const Transform& Toffset);
 
+	/*! \brief Set string tag.
+	 *
+	 * \param tag String tag.
+	 */
 	void setTag(const std::wstring& tag) { m_tag = tag; }
 
+	/*! \brief Get string tag.
+	 *
+	 * \return String tag.
+	 */
 	const std::wstring& getTag() const { return m_tag; }
 
+	/*! \brief Set user-defined object.
+	 *
+	 * \param object User-defined object.
+	 */
 	void setObject(Object* object) { m_object = object; }
 
+	/*! \brief Get user-defined object.
+	 *
+	 * \return User-defined object.
+	 */
 	Object* getObject() const { return m_object; }
 
+	/*! \brief Set controlled entity.
+	 *
+	 * The controlled entity is usually the visual representation
+	 * of this game entity; thus a mesh entity or a like.
+	 *
+	 * \param entity Controlled entity.
+	 */
 	void setEntity(world::Entity* entity) { m_entity = entity; }
 
+	/*! \brief Get controlled entity.
+	 *
+	 * \return Controlled entity.
+	 */
 	world::Entity* getEntity() const { return m_entity; }
 
+	/*! \brief Determine if controlled entity should be visible.
+	 *
+	 * \param visible True if controlled entity should be visible.
+	 */
 	void setVisible(bool visible) { m_visible = visible; }
 
+	/*! \brief Return true if controlled entity is visible.
+	 *
+	 * \return True if controlled entity is visible.
+	 */
 	bool isVisible() const { return m_visible; }
 
 private:

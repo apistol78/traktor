@@ -16,6 +16,9 @@ namespace traktor
 	namespace ai
 	{
 
+/*! \brief Navigation mesh entity pipeline.
+ * \ingroup AI
+ */
 class T_DLLCLASS NavMeshEntityPipeline : public world::EntityPipeline
 {
 	T_RTTI_CLASS;

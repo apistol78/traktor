@@ -22,7 +22,7 @@ class IEnvironment;
 class Stage;
 
 /*! \brief
- * \ingroup Parade
+ * \ingroup Amalgam
  */
 class StageLoader : public Object
 {

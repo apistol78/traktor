@@ -17,6 +17,9 @@ namespace traktor
 	namespace ai
 	{
 
+/*! \brief Navigation mesh asset.
+ * \ingroup AI
+ */
 class T_DLLCLASS NavMeshAsset : public ISerializable
 {
 	T_RTTI_CLASS;

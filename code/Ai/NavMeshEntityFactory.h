@@ -23,6 +23,9 @@ class IResourceManager;
 	namespace ai
 	{
 
+/*! \brief Navigation mesh entity factory.
+ * \ingroup AI
+ */
 class T_DLLCLASS NavMeshEntityFactory : public world::IEntityFactory
 {
 	T_RTTI_CLASS;
