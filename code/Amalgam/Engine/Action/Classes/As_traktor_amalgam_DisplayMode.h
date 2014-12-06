@@ -18,6 +18,9 @@ class IEnvironment;
 
 class AsDisplayMode;
 
+/*! \brief Traktor display mode class ActionScript wrapper.
+ * \ingroup Amalgam
+ */
 class As_traktor_amalgam_DisplayMode : public flash::ActionClass
 {
 	T_RTTI_CLASS;

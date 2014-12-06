@@ -62,6 +62,9 @@ class PostProcessSettings;
 	namespace amalgam
 	{
 
+/*! \brief Stage Flash layer.
+ * \ingroup Amalgam
+ */
 class T_DLLCLASS FlashLayer
 :	public Layer
 ,	public flash::IExternalCall
@@ -106,22 +109,67 @@ public:
 
 	virtual void resume();
 
+	/*! \brief Get reference to current Flash movie player.
+	 * 
+	 * \return Flash movie player object.
+	 */
 	flash::FlashMoviePlayer* getMoviePlayer();
 
+	/*! \brief Get ActionScript "_global" object.
+	 *
+	 * \return ActionScript "_global" object.
+	 */
 	flash::ActionObject* getGlobal();
 
+	/*! \brief Get ActionScript "_root" object.
+	 *
+	 * \return ActionScript "_root" object.
+	 */
 	flash::ActionObject* getRoot();
 
+	/*! \brief Create empty ActionScript object.
+	 *
+	 * \return ActionScript object.
+	 */
 	Ref< flash::ActionObject > createObject() const;
 
+	/*! \brief Create ActionScript object.
+	 *
+	 * First argument should contain the name
+	 * of the class prototype.
+	 *
+	 * \param argc Argument count.
+	 * \param argv Arguments.
+	 * \return ActionScript object.
+	 */
 	Ref< flash::ActionObject > createObject(uint32_t argc, const script::Any* argv) const;
 
+	/*! \brief Create Flash bitmap object from image.
+	 *
+	 * \param image Image object.
+	 * \return Flash bitmap object.
+	 */
 	Ref< flash::ActionObject > createBitmap(drawing::Image* image) const;
 
+	/*! \brief Invoke methods registered through Flash ExternalInterface protocol.
+	 *
+	 * \param methodName Name of registered method.
+	 * \param argc Argument count.
+	 * \param argv Arguments.
+	 * \return Return value from call.
+	 */
 	script::Any externalCall(const std::string& methodName, uint32_t argc, const script::Any* argv);
 
+	/*! \brief Set if Flash should be rendererd.
+	 *
+	 * \param visible True if Flash should be rendered.
+	 */
 	void setVisible(bool visible) { m_visible = visible; }
 
+	/*! \brief Check if Flash is being rendered.
+	 *
+	 * \return True if Flash is being rendered.
+	 */
 	bool isVisible() const { return m_visible; }
 
 private:

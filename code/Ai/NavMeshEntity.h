@@ -19,6 +19,12 @@ namespace traktor
 
 class NavMesh;
 
+/*! \brief Navigation mesh entity.
+ * \ingroup AI
+ *
+ * Navigation mesh entities are used to attach a navigation mesh
+ * to a scene and thus being accessible through-out the engine.
+ */
 class T_DLLCLASS NavMeshEntity : public world::Entity
 {
 	T_RTTI_CLASS;
@@ -30,6 +36,10 @@ public:
 
 	virtual void update(const world::UpdateParams& update);
 
+	/*! \brief Get navigation mesh.
+	 *
+	 * \return Navigation mesh proxy.
+	 */
 	const resource::Proxy< NavMesh >& get() const { return m_navMesh; }
 
 private:

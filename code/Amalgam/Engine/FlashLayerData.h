@@ -31,6 +31,9 @@ class PostProcessSettings;
 	namespace amalgam
 	{
 
+/*! \brief Stage Flash layer persistent data.
+ * \ingroup Amalgam
+ */
 class T_DLLCLASS FlashLayerData : public LayerData
 {
 	T_RTTI_CLASS;

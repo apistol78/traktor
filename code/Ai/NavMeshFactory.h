@@ -23,6 +23,9 @@ class Database;
 	namespace ai
 	{
 
+/*! \brief Navigation mesh resource factory.
+ * \ingroup AI
+ */
 class T_DLLCLASS NavMeshFactory : public resource::IResourceFactory
 {
 	T_RTTI_CLASS;

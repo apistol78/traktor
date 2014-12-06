@@ -28,6 +28,9 @@ class Sound;
 	namespace amalgam
 	{
 
+/*! \brief Stage audio layer.
+ * \ingroup Amalgam
+ */
 class T_DLLCLASS AudioLayer : public Layer
 {
 	T_RTTI_CLASS;
@@ -47,14 +50,29 @@ public:
 
 	void destroy();
 
+	/*! \brief Play sound. */
 	void play();
 
+	/*! \brief Stop sound. */
 	void stop();
 
+	/*! \brief Fade off sound. */
 	void fadeOff();
 
+	/*! \brief Set sound effect parameter.
+	 *
+	 * \param parameterName Name of effect parameter.
+	 * \param value Effect parameter value.
+	 */
 	void setParameter(const std::wstring& parameterName, float value);
 
+	/*! \brief Tween effect parameter over a period of time.
+	 *
+	 * \param parameterName Name of effect parameter.
+	 * \param fromValue Effect parameter "from" value.
+	 * \param toValue Effect parameter "to" value.
+	 * \param duration Duration in seconds for transition.
+	 */
 	void tweenParameter(const std::wstring& parameterName, float fromValue, float toValue, float duration);
 
 	virtual void transition(Layer* fromLayer);

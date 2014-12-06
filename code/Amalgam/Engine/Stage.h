@@ -43,6 +43,13 @@ class IUpdateInfo;
 class Layer;
 class StageLoader;
 
+/*! \brief Stage class.
+ * \ingroup Amalgam
+ *
+ * Stages describe a current state of the application;
+ * it contains a ordered list of layers which describe the current
+ * high-level setup of the application.
+ */
 class T_DLLCLASS Stage : public Object
 {
 	T_RTTI_CLASS;
@@ -61,24 +68,78 @@ public:
 
 	void destroy();
 
+	/*! \brief Add layer to stage.
+	 *
+	 * \param layer Layer to add.
+	 */
 	void addLayer(Layer* layer);
 
+	/*! \brief Remove layer from stage.
+	 *
+	 * \param layer Layer to remove.
+	 */
 	void removeLayer(Layer* layer);
 
+	/*! \brief Remove all layers from stage. */
 	void removeAllLayers();
 
+	/*! \brief Find layer by name.
+	 *
+	 * \param name Name of layer ot find.
+	 * \return Layer object if found; null if not found.
+	 */
 	Layer* findLayer(const std::wstring& name) const;
 
+	/*! \brief Signal that the application should terminate. */
 	void terminate();
 
+	/*! \brief Invoke a function in stage's script.
+	 *
+	 * \param fn Script function name.
+	 * \param argc Number of arguments.
+	 * \param argv Arguments.
+	 * \return Return value from script function.
+	 */
 	script::Any invokeScript(const std::string& fn, uint32_t argc, const script::Any* argv);
 
+	/*! \brief Load next stage.
+	 *
+	 * Next stage is determined by this stage's "transitions"; each
+	 * transition has a name and is used to link to other stages.
+	 *
+	 * \param name Name of transition.
+	 * \param params User-defined parameter object which is passed to next stage's "initialize" call.
+	 * \return Next stage.
+	 */
 	Ref< Stage > loadStage(const std::wstring& name, const Object* params);
 
+	/*! \brief Asynchronously load next stage.
+	 *
+	 * Next stage is determined by this stage's "transitions"; each
+	 * transition has a name and is used to link to other stages.
+	 *
+	 * As this call is asynchronous it will return a "stage loader"
+	 * object which can be polled until next stage has been successfully loaded.
+	 *
+	 * \param name Name of transition.
+	 * \param params User-defined parameter object which is passed to next stage's "initialize" call.
+	 * \return Stage loader object.
+	 */
 	Ref< StageLoader > loadStageAsync(const std::wstring& name, const Object* params);
 
+	/*! \brief Leave this stage and enter another stage.
+	 *
+	 * \param stage Next stage.
+	 */
 	bool gotoStage(Stage* stage);
 
+	/*! \brief Update this stage.
+	 *
+	 * \param stateManager Engine state manager.
+	 * \param control Engine control interface.
+	 * \param info Engine update information.
+	 * \return True if this update succeeded.
+	 */
 	bool update(IStateManager* stateManager, IUpdateControl& control, const IUpdateInfo& info);
 
 	bool build(const IUpdateInfo& info, uint32_t frame);

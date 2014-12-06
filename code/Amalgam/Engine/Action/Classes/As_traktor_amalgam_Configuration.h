@@ -14,6 +14,9 @@ class AsConfiguration;
 class AsDisplayMode;
 class AsSoundDriver;
 
+/*! \brief Traktor configuration ActionScript wrapper.
+ * \ingroup Amalgam
+ */
 class As_traktor_amalgam_Configuration : public flash::ActionClass
 {
 	T_RTTI_CLASS;

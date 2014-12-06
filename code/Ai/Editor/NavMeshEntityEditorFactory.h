@@ -8,6 +8,9 @@ namespace traktor
 	namespace ai
 	{
 
+/*! \brief Navigation mesh entity scene editor factory.
+ * \ingroup AI
+ */
 class NavMeshEntityEditorFactory : public scene::IEntityEditorFactory
 {
 	T_RTTI_CLASS;

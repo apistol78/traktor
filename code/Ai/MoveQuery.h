@@ -21,6 +21,9 @@ namespace traktor
 	namespace ai
 	{
 
+/*! \brief Continuous movement query.
+ * \ingroup AI
+ */
 class T_DLLCLASS MoveQuery : public Object
 {
 	T_RTTI_CLASS;
@@ -30,6 +33,12 @@ public:
 
 	virtual ~MoveQuery();
 
+	/*! \brief Update query to get desired "move to" position.
+	 *
+	 * \param currentPosition Current entity position.
+	 * \param outMoveToPosition Desired move to position to advance on movement query.
+	 * \return True if successfully determined "move to" position.
+	 */
 	bool update(const Vector4& currentPosition, Vector4& outMoveToPosition);
 
 private:
