@@ -34,8 +34,8 @@ const uint32_t c_labelFlipControlWait = 1;
 const uint32_t c_labelFlipControlFlipIt = 2;
 
 static volatile uint32_t* s_labelFlipControlData;
-
 static uint32_t s_finishRef = 0;
+static handle_t s_handleInstanceID = 0;
 
 void callbackUser(const uint32_t head)
 {
@@ -86,6 +86,8 @@ RenderViewPs3::RenderViewPs3(
 ,	m_patchCounter(0)
 ,	m_renderTargetDirty(false)
 {
+	s_handleInstanceID = getParameterHandle(L"__private__instanceID");
+
 	std::memset(m_colorAddr, 0, sizeof(m_colorAddr));
 	std::memset(m_colorOffset, 0, sizeof(m_colorOffset));
 	std::memset(&m_depthTexture, 0, sizeof(m_depthTexture));
@@ -910,6 +912,11 @@ void RenderViewPs3::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, I
 
 void RenderViewPs3::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
 {
+	for (uint32_t i = 0; i < instanceCount; ++i)
+	{
+		program->setFloatParameter(s_handleInstanceID, float(i));
+		draw(vertexBuffer, indexBuffer, program, primitives);
+	}
 }
 
 void RenderViewPs3::end()

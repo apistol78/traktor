@@ -381,9 +381,20 @@ bool emitIndexedUniform(CgContext& cx, IndexedUniform* node)
 
 bool emitInstance(CgContext& cx, Instance* node)
 {
-	StringOutputStream& fb = cx.getShader().getOutputStream(CgShader::BtBody);
-	CgVariable* out = cx.emitOutput(node, L"Output", CtFloat);
-	assign(fb, out) << L"0;" << Endl;
+	CgVariable* out = cx.getShader().createVariable(
+		node->findOutputPin(L"Output"),
+		L"__private__instanceID",
+		CtFloat
+	);
+
+	const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
+	if (uniforms.find(L"__private__instanceID") == uniforms.end())
+	{
+		uint32_t registerIndex = cx.getShader().addUniform(L"__private__instanceID", CtFloat, 1);
+		StringOutputStream& fu = cx.getShader().getOutputStream(CgShader::BtUniform);
+		fu << L"uniform float __private__instanceID : register(c" << registerIndex << L");" << Endl;
+	}
+
 	return true;
 }
 

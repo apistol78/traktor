@@ -90,6 +90,12 @@ bool collectScalarParameters(
 				break;
 			}
 		}
+		else if (const Instance* instanceName = dynamic_type_cast< const Instance* >(*i))
+		{
+			parameterName = L"__private__instanceID";
+			parameterCount = 1;
+			parameterSize = 1;
+		}
 
 		if (parameterSize > 0)
 		{

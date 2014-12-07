@@ -4,29 +4,29 @@
 		<item type="traktor.render.FragmentPosition">
 			<comment/>
 			<position>
-				<first>71</first>
-				<second>338</second>
+				<first>23</first>
+				<second>355</second>
 			</position>
 		</item>
 		<item type="traktor.render.TargetSize">
 			<comment/>
 			<position>
-				<first>115</first>
-				<second>370</second>
+				<first>63</first>
+				<second>387</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div">
 			<comment/>
 			<position>
-				<first>260</first>
-				<second>328</second>
+				<first>208</first>
+				<second>345</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>224</first>
-				<second>288</second>
+				<first>214</first>
+				<second>262</second>
 			</position>
 			<parameterName>NormalMap</parameterName>
 			<type>PtTexture2D</type>
@@ -62,7 +62,7 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>707</first>
+				<first>731</first>
 				<second>355</second>
 			</position>
 			<name>SpecularRoughness</name>
@@ -70,7 +70,7 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>707</first>
+				<first>731</first>
 				<second>301</second>
 			</position>
 			<name>Normal</name>

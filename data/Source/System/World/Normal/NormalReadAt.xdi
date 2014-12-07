@@ -4,16 +4,16 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>884</first>
-				<second>254</second>
+				<first>921</first>
+				<second>220</second>
 			</position>
 			<name>Normal</name>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>662</first>
-				<second>234</second>
+				<first>700</first>
+				<second>200</second>
 			</position>
 			<fragmentGuid>{5C2C9CD8-185C-D14A-9FF0-3E564E2DB442}</fragmentGuid>
 			<inputPins>
@@ -32,8 +32,8 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>560</first>
-				<second>254</second>
+				<first>609</first>
+				<second>220</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -56,7 +56,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>147</first>
+				<first>108</first>
 				<second>232</second>
 			</position>
 			<name>NormalMap</name>
@@ -67,7 +67,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>131</first>
+				<first>98</first>
 				<second>282</second>
 			</position>
 			<name>NormalMapUV</name>
@@ -78,31 +78,31 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>840</first>
-				<second>322</second>
+				<first>921</first>
+				<second>296</second>
 			</position>
 			<name>SpecularRoughness</name>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>675</first>
-				<second>310</second>
+				<first>713</first>
+				<second>276</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>567</first>
-				<second>320</second>
+				<first>609</first>
+				<second>286</second>
 			</position>
 			<swizzle>w</swizzle>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>554</first>
-				<second>379</second>
+				<first>563</first>
+				<second>333</second>
 			</position>
 			<value>16</value>
 		</item>
