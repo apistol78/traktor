@@ -46,7 +46,11 @@ class T_DLLCLASS Database
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Open database from provider instance. */
+	/*! \brief Open database from provider instance.
+	 *
+	 * \param providerDatabase Concrete provider database implementation.
+	 * \return True if database opened successfully.
+	 */
 	virtual bool open(IProviderDatabase* providerDatabase);
 
 	/*! \brief Open database from connection string. */
@@ -55,6 +59,7 @@ public:
 	/*! \brief Create database from connection string. */
 	virtual bool create(const ConnectionString& connectionString);
 
+	/*! \brief Close database. */
 	virtual void close();
 
 	/*! \brief Root group. */
@@ -105,6 +110,11 @@ public:
 	 */
 	virtual Ref< ISerializable > getObjectReadOnly(const Guid& guid);
 
+	/*! \brief Get instance object by guid.
+	 *
+	 * \param guid Instance guid.
+	 * \return Instance's object; null if no instance found.
+	 */
 	template < typename T >
 	Ref< T > getObjectReadOnly(const Guid& guid)
 	{

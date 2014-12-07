@@ -17,6 +17,9 @@ namespace traktor
 	namespace db
 	{
 
+/*! \brief Instance base event.
+ * \ingroup Database
+ */
 class T_DLLCLASS EvtInstance : public IEvent
 {
 	T_RTTI_CLASS;
@@ -24,6 +27,10 @@ class T_DLLCLASS EvtInstance : public IEvent
 public:
 	EvtInstance(const Guid& instanceGuid);
 
+	/*! \brief Instance's guid.
+	 *
+	 * \return Instance's guid.
+	 */
 	const Guid& getInstanceGuid() const;
 
 	virtual void serialize(ISerializer& s);

@@ -16,6 +16,9 @@ namespace traktor
 	namespace db
 	{
 
+/*! \brief Instance committed event.
+ * \ingroup Database
+ */
 class T_DLLCLASS EvtInstanceCommitted : public EvtInstance
 {
 	T_RTTI_CLASS;

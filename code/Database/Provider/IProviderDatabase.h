@@ -28,14 +28,33 @@ class T_DLLCLASS IProviderDatabase : public Object
 	T_RTTI_CLASS;
 
 public:
+	/*! \brief Create database using connection string.
+	 *
+	 * \param connectionString Connection string.
+	 * \return True if database was created successfully.
+	 */
 	virtual bool create(const ConnectionString& connectionString) = 0;
 
+	/*! \brief Open existing database using connection string.
+	 *
+	 * \param connectionString Connection string.
+	 * \return True if database was succefully opened.
+	 */
 	virtual bool open(const ConnectionString& connectionString) = 0;
 
+	/*! \brief Close connection to database. */
 	virtual void close() = 0;
 
+	/*! \brief Get event bus in database.
+	 *
+	 * \return Event bus interface.
+	 */
 	virtual Ref< IProviderBus > getBus() = 0;
 
+	/*! \brief Get database's root group.
+	 *
+	 * \return Root group.
+	 */
 	virtual Ref< IProviderGroup > getRootGroup() = 0;
 };
 

@@ -11,6 +11,7 @@ namespace traktor
 /*! \ingroup Database */
 //@{
 
+/*! \brief Find child group. */
 template < typename GroupPredicate >
 Ref< Group > findChildGroup(Group* group, const GroupPredicate& pred)
 {
@@ -26,6 +27,7 @@ Ref< Group > findChildGroup(Group* group, const GroupPredicate& pred)
 	return 0;
 }
 
+/*! \brief Find child instance. */
 template < typename InstancePredicate >
 Ref< Instance > findChildInstance(Group* group, const InstancePredicate& pred)
 {
@@ -41,6 +43,7 @@ Ref< Instance > findChildInstance(Group* group, const InstancePredicate& pred)
 	return 0;
 }
 
+/*! \brief Find multiple child instances. */
 template < typename InstancePredicate >
 void findChildInstances(Group* group, const InstancePredicate& pred, RefArray< Instance >& outInstances)
 {
@@ -54,6 +57,7 @@ void findChildInstances(Group* group, const InstancePredicate& pred, RefArray< I
 	}
 }
 
+/*! \brief Recursively find child group. */
 template < typename GroupPredicate >
 Ref< Group > recursiveFindChildGroup(Group* group, const GroupPredicate& pred)
 {
@@ -76,6 +80,7 @@ Ref< Group > recursiveFindChildGroup(Group* group, const GroupPredicate& pred)
 	return 0;
 }
 
+/*! \brief Recursively find child instance. */
 template < typename InstancePredicate >
 Ref< Instance > recursiveFindChildInstance(Group* group, const InstancePredicate& pred)
 {
@@ -101,6 +106,7 @@ Ref< Instance > recursiveFindChildInstance(Group* group, const InstancePredicate
 	return 0;
 }
 
+/*! \brief Recursively find multiple child instances. */
 template < typename InstancePredicate >
 void recursiveFindChildInstances(Group* group, const InstancePredicate& pred, RefArray< Instance >& outInstances)
 {
@@ -120,6 +126,7 @@ void recursiveFindChildInstances(Group* group, const InstancePredicate& pred, Re
 		recursiveFindChildInstances(*i, pred, outInstances);
 }
 
+/*! \brief Find group by name predicate. */
 struct FindGroupByName
 {
 	const std::wstring& groupName;
@@ -135,6 +142,7 @@ struct FindGroupByName
 	}
 };
 
+/*! \brief Find all instances predicate. */
 struct FindInstanceAll
 {
 	bool operator () (const Instance* instance) const
@@ -143,6 +151,7 @@ struct FindInstanceAll
 	}
 };
 
+/*! \brief Find instance by guid predicate. */
 struct FindInstanceByGuid
 {
 	const Guid& instanceGuid;
@@ -158,6 +167,7 @@ struct FindInstanceByGuid
 	}
 };
 
+/*! \brief Find instance by primary type predicate. */
 struct FindInstanceByType
 {
 	const TypeInfo& instanceType;
@@ -176,6 +186,7 @@ struct FindInstanceByType
 	}
 };
 
+/*! \brief Find instance by name predicate. */
 struct FindInstanceByName
 {
 	const std::wstring& instanceName;

@@ -16,6 +16,9 @@ namespace traktor
 	namespace db
 	{
 
+/*! \brief Instance created event.
+ * \ingroup Database
+ */
 class T_DLLCLASS EvtInstanceCreated : public EvtInstance
 {
 	T_RTTI_CLASS;
@@ -23,6 +26,10 @@ class T_DLLCLASS EvtInstanceCreated : public EvtInstance
 public:
 	EvtInstanceCreated(const std::wstring& groupPath = L"", const Guid& instanceGuid = Guid());
 
+	/*! \brief Path to group which contain new instance.
+	 *
+	 * \return Group path.
+	 */
 	const std::wstring& getGroupPath() const;
 
 	virtual void serialize(ISerializer& s);
