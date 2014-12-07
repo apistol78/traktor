@@ -34,6 +34,8 @@ public:
 
 	void removeInstance(TargetInstance* targetInstance);
 
+	void removeAllInstances();
+
 	bool update();
 
 private:

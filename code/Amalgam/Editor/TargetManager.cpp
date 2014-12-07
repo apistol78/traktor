@@ -67,6 +67,11 @@ void TargetManager::removeInstance(TargetInstance* targetInstance)
 	m_instances.remove(targetInstance);
 }
 
+void TargetManager::removeAllInstances()
+{
+	m_instances.clear();
+}
+
 bool TargetManager::update()
 {
 	net::SocketSet socketSet, socketSetResult;
