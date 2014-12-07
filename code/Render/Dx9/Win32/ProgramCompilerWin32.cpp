@@ -98,7 +98,7 @@ bool collectScalarParameters(
 
 			std::wstring parameterName = mbstows(dcd.Name);
 
-			if (startsWith< std::wstring >(parameterName, L"__private__"))
+			if (startsWith< std::wstring >(parameterName, L"__private__") && parameterName != L"__private__instanceID")
 				continue;
 
 			ProgramScalar scalar;

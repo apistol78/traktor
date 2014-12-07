@@ -38,6 +38,8 @@ const D3DPRIMITIVETYPE c_d3dPrimitiveType[] =
 	D3DPT_TRIANGLELIST
 };
 
+render::handle_t s_handleInstanceID;
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewWin32", RenderViewWin32, IRenderView)
@@ -57,6 +59,7 @@ RenderViewWin32::RenderViewWin32(
 ,	m_drawCalls(0)
 ,	m_primitiveCount(0)
 {
+	s_handleInstanceID = getParameterHandle(L"__private__instanceID");
 	m_renderSystem->addRenderView(this);
 }
 
@@ -317,7 +320,7 @@ void RenderViewWin32::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer,
 
 	for (uint32_t i = 0; i < instanceCount; ++i)
 	{
-		programDx9->setFloatParameter(getParameterHandle(L"__private__instanceID"), float(i));
+		programDx9->setFloatParameter(s_handleInstanceID, float(i));
 
 		if (!programDx9->activate())
 			break;
