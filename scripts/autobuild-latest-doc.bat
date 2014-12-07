@@ -6,10 +6,10 @@ call %~dp0../config.bat
 pushd %TRAKTOR_HOME%\doc
 
 :: Remove old documentation.
-::del /F /Q html
+del /F /Q html
 
 :: Rebuild entire documentation.
-::doxygen traktor.doxycfg
+doxygen traktor.doxycfg
 
 :: Copy generated documentation.
 del /F /Q latest
