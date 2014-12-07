@@ -16,6 +16,9 @@ namespace traktor
 	namespace db
 	{
 
+/*! \brief Group renamed event.
+ * \ingroup Database
+ */
 class T_DLLCLASS EvtGroupRenamed : public IEvent
 {
 	T_RTTI_CLASS;
@@ -25,8 +28,19 @@ public:
 
 	EvtGroupRenamed(const std::wstring& name, const std::wstring& previousPath);
 
+	/*! \brief New group name.
+	 *
+	 * \return New group name.
+	 */
 	const std::wstring& getName() const;
 
+	/*! \brief Path to group.
+	 *
+	 * This path also contain the current name
+	 * of the group.
+	 *
+	 * \return Path to group.
+	 */
 	const std::wstring& getPreviousPath() const;
 
 	virtual void serialize(ISerializer& s);

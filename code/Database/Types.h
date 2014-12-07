@@ -11,15 +11,15 @@ namespace traktor
 
 enum CreateInstanceFlags
 {
-	CifDefault = 0,			//< Default flag.
-	CifReplaceExisting = 1,	//< Replace existing instance.
-	CifKeepExistingGuid = 2	//< Keep existing instance's guid.	
+	CifDefault = 0,			//!< Default flag.
+	CifReplaceExisting = 1,	//!< Replace existing instance.
+	CifKeepExistingGuid = 2	//!< Keep existing instance's guid.	
 };
 
 enum CommitInstanceFlags
 {
-	CfDefault = 0,
-	CfKeepCheckedOut = 1
+	CfDefault = 0,			//!< Default commit flags; transaction will be closed after commit.
+	CfKeepCheckedOut = 1	//!< Keep transaction opened after commit.
 };
 
 //@}

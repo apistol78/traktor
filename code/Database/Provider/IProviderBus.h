@@ -34,6 +34,11 @@ class T_DLLCLASS IProviderBus : public Object
 	T_RTTI_CLASS;
 
 public:
+	/*! \brief Put an event onto the bus.
+	 *
+	 * \param event Event instance.
+	 * \return True if event has been put onto the bus.
+	 */
 	virtual bool putEvent(const IEvent* event) = 0;
 
 	/*! \brief Get event from bus.
