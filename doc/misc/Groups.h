@@ -1,6 +1,8 @@
 
 /*! \defgroup Amalgam Amalgam */
 
+/*! \defgroup AI AI */
+
 /*! \defgroup Core Core */
 
 /*! \defgroup Database Database */
