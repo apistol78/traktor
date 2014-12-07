@@ -28,6 +28,8 @@ class T_DLLCLASS TextureLinker : public Object
 public:
 	struct TextureReader
 	{
+		virtual ~TextureReader() {}
+
 		virtual Ref< ITexture > read(const Guid& textureGuid) = 0;
 	};
 

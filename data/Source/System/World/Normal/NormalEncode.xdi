@@ -707,5 +707,15 @@
 				<name>Input3</name>
 			</destination>
 		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>GCM</name>
+			</destination>
+		</item>
 	</edges>
 </object>
