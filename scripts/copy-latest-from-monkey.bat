@@ -87,6 +87,14 @@ echo Downloading PS3...
 %TRAKTOR_HOME%\bin\win32\HttpGet %BUILD_SERVER%/guestAuth/repository/download/Traktor_PNaCl/.lastFinished/traktor_ps3.zip traktor_ps3.zip
 :skip_ps3
 
+if /i %PLATFORM% == "" ( goto :download_doc )
+if /i %PLATFORM% == "doc" ( goto :download_doc )
+goto :skip_doc
+:download_doc
+echo Downloading Documentation...
+%TRAKTOR_HOME%\bin\win32\HttpGet %BUILD_SERVER%/guestAuth/repository/download/Traktor_Win32/.lastFinished/traktor_doc.zip traktor_doc.zip
+:skip_doc
+
 :: Unzip into binaries folder.
 
 echo Decompressing...
@@ -140,6 +148,11 @@ if not exist traktor_ps3.zip ( goto :no_ps3 )
 rmdir /s /q "%TRAKTOR_HOME%\bin\latest\ps3"
 %TRAKTOR_HOME%\bin\win32\7za x -y -o"%TRAKTOR_HOME%\bin\latest\ps3" traktor_ps3.zip
 :no_ps3
+
+if not exist traktor_doc.zip ( goto :no_doc )
+rmdir /s /q "%TRAKTOR_HOME%\doc\latest"
+%TRAKTOR_HOME%\bin\win32\7za x -y -o"%TRAKTOR_HOME%\doc\latest" traktor_doc.zip
+:no_doc
 
 :: Cleanup
 
