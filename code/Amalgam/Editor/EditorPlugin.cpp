@@ -273,76 +273,26 @@ bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)
 
 void EditorPlugin::handleDatabaseEvent(db::Database* database, const Guid& eventId)
 {
+	for (std::vector< EditTarget >::iterator i = m_targets.begin(); i != m_targets.end(); ++i)
+	{
+		if (i->guid == eventId)
+		{
+			updateTargetLists();
+			updateTargetManagers();
+			break;
+		}
+	}
 }
 
 void EditorPlugin::handleWorkspaceOpened()
 {
-	// Get targets from source database.
-	Ref< db::Database > sourceDatabase = m_editor->getSourceDatabase();
-	if (sourceDatabase)
-	{
-		RefArray< db::Instance > targetInstances;
-		db::recursiveFindChildInstances(sourceDatabase->getRootGroup(), db::FindInstanceByType(type_of< Target >()), targetInstances);
-
-		for (RefArray< db::Instance >::iterator i = targetInstances.begin(); i != targetInstances.end(); ++i)
-		{
-			EditTarget et;
-
-			et.name = (*i)->getName();
-			et.target = (*i)->getObject< Target >();
-			T_ASSERT (et.target);
-
-			m_targets.push_back(et);
-
-			const RefArray< TargetConfiguration >& targetConfigurations = et.target->getConfigurations();
-			for (RefArray< TargetConfiguration >::const_iterator j = targetConfigurations.begin(); j != targetConfigurations.end(); ++j)
-			{
-				TargetConfiguration* targetConfiguration = *j;
-				T_ASSERT (targetConfiguration);
-
-				Ref< db::Instance > platformInstance = sourceDatabase->getInstance(targetConfiguration->getPlatform());
-				T_ASSERT (platformInstance);
-
-				Ref< const Platform > platform = platformInstance->getObject< Platform >();
-				T_ASSERT (platform);
-
-				Ref< TargetInstance > targetInstance = new TargetInstance(et.name, et.target, targetConfiguration, platformInstance->getName(), platform);
-				T_ASSERT (targetInstance);
-
-				m_targetInstances.push_back(targetInstance);
-			}
-		}
-	}
-
-	// Add to target drop down.
-	if (!m_targets.empty())
-	{
-		for (std::vector< EditTarget >::const_iterator i = m_targets.begin(); i != m_targets.end(); ++i)
-			m_toolTargets->add(i->name);
-
-		// Select first target.
-		m_toolTargets->select(0);
-		m_toolBar->update();
-
-		m_targetList->removeAll();
-		for (RefArray< TargetInstance >::const_iterator i = m_targetInstances.begin(); i != m_targetInstances.end(); ++i)
-		{
-			if ((*i)->getTarget() == m_targets[0].target)
-				m_targetList->add(new TargetInstanceListItem(m_hostEnumerator, *i));
-		}
-		m_targetList->requestUpdate();
-	}
+	updateTargetLists();
 
 	// Create target manager.
 	m_targetManager = new TargetManager(m_editor, m_targetDebuggerSessions);
-	if (m_targetManager->create(
+	if (!m_targetManager->create(
 		m_editor->getSettings()->getProperty< PropertyInteger >(L"Amalgam.TargetManagerPort", c_targetConnectionPort)
 	))
-	{
-		for (RefArray< TargetInstance >::iterator i = m_targetInstances.begin(); i != m_targetInstances.end(); ++i)
-			m_targetManager->addInstance(*i);
-	}
-	else
 	{
 		log::error << L"Unable to create target manager; target manager disabled" << Endl;
 		m_targetManager = 0;
@@ -350,17 +300,6 @@ void EditorPlugin::handleWorkspaceOpened()
 
 	// Get connection manager.
 	m_connectionManager = m_editor->getStoreObject< db::ConnectionManager >(L"DbConnectionManager");
-	if (m_connectionManager)
-	{
-		// Create configuration from targets.
-		for (RefArray< TargetInstance >::iterator i = m_targetInstances.begin(); i != m_targetInstances.end(); ++i)
-		{
-			std::wstring remoteId = (*i)->getDatabaseName();
-			std::wstring databasePath = (*i)->getOutputPath() + L"/db";
-			std::wstring databaseCs = L"provider=traktor.db.LocalDatabase;groupPath=" + databasePath + L";binary=true";
-			m_connectionManager->setConnectionString(remoteId, databaseCs);
-		}
-	}
 
 	// Create slave pipeline process.
 	std::wstring systemRoot = m_editor->getSettings()->getProperty< PropertyString >(L"Amalgam.SystemRoot", L"$(TRAKTOR_HOME)");
@@ -387,6 +326,8 @@ void EditorPlugin::handleWorkspaceOpened()
 		hidden,
 		false
 	);
+
+	updateTargetManagers();
 }
 
 void EditorPlugin::handleWorkspaceClosed()
@@ -411,6 +352,92 @@ void EditorPlugin::handleWorkspaceClosed()
 	m_targetInstances.resize(0);
 
 	m_connectionManager = 0;
+}
+
+void EditorPlugin::updateTargetLists()
+{
+	m_targets.clear();
+	m_targetInstances.clear();
+
+	// Get targets from source database.
+	Ref< db::Database > sourceDatabase = m_editor->getSourceDatabase();
+	if (sourceDatabase)
+	{
+		RefArray< db::Instance > targetInstances;
+		db::recursiveFindChildInstances(sourceDatabase->getRootGroup(), db::FindInstanceByType(type_of< Target >()), targetInstances);
+
+		for (RefArray< db::Instance >::iterator i = targetInstances.begin(); i != targetInstances.end(); ++i)
+		{
+			EditTarget et;
+
+			et.guid = (*i)->getGuid();
+			et.name = (*i)->getName();
+			et.target = (*i)->getObject< Target >();
+			T_ASSERT (et.target);
+
+			m_targets.push_back(et);
+
+			const RefArray< TargetConfiguration >& targetConfigurations = et.target->getConfigurations();
+			for (RefArray< TargetConfiguration >::const_iterator j = targetConfigurations.begin(); j != targetConfigurations.end(); ++j)
+			{
+				TargetConfiguration* targetConfiguration = *j;
+				T_ASSERT (targetConfiguration);
+
+				Ref< db::Instance > platformInstance = sourceDatabase->getInstance(targetConfiguration->getPlatform());
+				T_ASSERT (platformInstance);
+
+				Ref< const Platform > platform = platformInstance->getObject< Platform >();
+				T_ASSERT (platform);
+
+				Ref< TargetInstance > targetInstance = new TargetInstance(et.name, et.target, targetConfiguration, platformInstance->getName(), platform);
+				T_ASSERT (targetInstance);
+
+				m_targetInstances.push_back(targetInstance);
+			}
+		}
+	}
+
+	m_toolTargets->removeAll();
+	m_targetList->removeAll();
+
+	// Add to target drop down.
+	if (!m_targets.empty())
+	{
+		for (std::vector< EditTarget >::const_iterator i = m_targets.begin(); i != m_targets.end(); ++i)
+			m_toolTargets->add(i->name);
+
+		m_toolTargets->select(0);
+
+		for (RefArray< TargetInstance >::const_iterator i = m_targetInstances.begin(); i != m_targetInstances.end(); ++i)
+		{
+			if ((*i)->getTarget() == m_targets[0].target)
+				m_targetList->add(new TargetInstanceListItem(m_hostEnumerator, *i));
+		}
+	}
+
+	m_toolBar->update();
+	m_targetList->requestUpdate();
+}
+
+void EditorPlugin::updateTargetManagers()
+{
+	if (m_targetManager)
+	{
+		m_targetManager->removeAllInstances();
+		for (RefArray< TargetInstance >::iterator i = m_targetInstances.begin(); i != m_targetInstances.end(); ++i)
+			m_targetManager->addInstance(*i);
+	}
+
+	if (m_connectionManager)
+	{
+		for (RefArray< TargetInstance >::iterator i = m_targetInstances.begin(); i != m_targetInstances.end(); ++i)
+		{
+			std::wstring remoteId = (*i)->getDatabaseName();
+			std::wstring databasePath = (*i)->getOutputPath() + L"/db";
+			std::wstring databaseCs = L"provider=traktor.db.LocalDatabase;groupPath=" + databasePath + L";binary=true";
+			m_connectionManager->setConnectionString(remoteId, databaseCs);
+		}
+	}
 }
 
 void EditorPlugin::eventTargetListPlay(TargetPlayEvent* event)

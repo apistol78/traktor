@@ -78,6 +78,7 @@ public:
 private:
 	struct EditTarget
 	{
+		Guid guid;
 		std::wstring name;
 		Ref< const Target > target;
 	};
@@ -139,6 +140,10 @@ private:
 	Thread* m_threadTargetActions;
 	Thread* m_threadHttpServer;
 	Ref< IProcess > m_pipelineSlaveProcess;
+
+	void updateTargetLists();
+
+	void updateTargetManagers();
 
 	void eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event);
 
