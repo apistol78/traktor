@@ -1,9 +1,5 @@
 #include <Ui/TableLayout.h>
-#include <Ui/MethodHandler.h>
 #include <Ui/Static.h>
-#include <Ui/Events/EditEvent.h>
-#include <Ui/Events/FocusEvent.h>
-#include "SolutionBuilderUI/EditList.h"
 #include "SolutionBuilderUI/SolutionPropertyPage.h"
 #include "SolutionBuilderLIB/Solution.h"
 
@@ -23,14 +19,14 @@ bool SolutionPropertyPage::create(ui::Widget* parent)
 
 	m_rootPath = new ui::Edit();
 	m_rootPath->create(this);
-	m_rootPath->addFocusEventHandler(ui::createMethodHandler(this, &SolutionPropertyPage::eventEditFocus));
+	m_rootPath->addEventHandler< ui::FocusEvent >(this, &SolutionPropertyPage::eventEditFocus);
 
 	Ref< ui::Static > staticDefinitions = new ui::Static();
 	staticDefinitions->create(this, L"Definitions");
 
-	m_listDefinitions = new EditList();
-	m_listDefinitions->create(this);
-	m_listDefinitions->addEditEventHandler(ui::createMethodHandler(this, &SolutionPropertyPage::eventChangeDefinitions));
+	m_listDefinitions = new ui::custom::EditList();
+	m_listDefinitions->create(this, ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove | ui::custom::EditList::WsDefault);
+	m_listDefinitions->addEventHandler< ui::custom::EditListEditEvent >(this, &SolutionPropertyPage::eventChangeDefinitions);
 
 	return true;
 }
@@ -47,25 +43,26 @@ void SolutionPropertyPage::set(Solution* solution)
 		m_listDefinitions->add(*i);
 }
 
-void SolutionPropertyPage::eventEditFocus(ui::Event* event)
+void SolutionPropertyPage::eventEditFocus(ui::FocusEvent* event)
 {
-	if (static_cast< ui::FocusEvent* >(event)->lostFocus())
+	if (event->lostFocus())
 		m_solution->setRootPath(m_rootPath->getText());
 }
 
-void SolutionPropertyPage::eventChangeDefinitions(ui::Event* event)
+void SolutionPropertyPage::eventChangeDefinitions(ui::custom::EditListEditEvent* event)
 {
 	std::vector< std::wstring > definitions = m_solution->getDefinitions();
-	int editId = static_cast< ui::EditEvent* >(event)->getParam();
+	int32_t editId = event->getIndex();
 	if (editId >= 0)
 	{
-		std::wstring text = static_cast< ui::EditEvent* >(event)->getText();
+		std::wstring text = event->getText();
 		if (!text.empty())
 			definitions[editId] = text;
 		else
 			definitions.erase(definitions.begin() + editId);
 	}
 	else
-		definitions.push_back(static_cast< ui::EditEvent* >(event)->getText());
+		definitions.push_back(event->getText());
 	m_solution->setDefinitions(definitions);
+	event->consume();
 }

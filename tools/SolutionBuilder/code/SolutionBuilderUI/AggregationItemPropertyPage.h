@@ -13,13 +13,11 @@ public:
 
 	void set(AggregationItem* aggregationItem);
 
-	void addChangeEventHandler(traktor::ui::EventHandler* eventHandler);
-
 private:
 	traktor::Ref< AggregationItem > m_aggregationItem;
 	traktor::Ref< traktor::ui::Edit > m_editTargetPath;
 
-	void eventEditFocus(traktor::ui::Event* event);
+	void eventEditFocus(traktor::ui::FocusEvent* event);
 };
 
 #endif	// AggregationItemPropertyPage_H

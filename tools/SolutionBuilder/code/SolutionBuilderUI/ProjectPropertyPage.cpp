@@ -5,9 +5,6 @@
 #include <Ui/FileDialog.h>
 #include <Ui/MessageBox.h>
 #include <Ui/Custom/InputDialog.h>
-#include <Ui/MethodHandler.h>
-#include <Ui/Events/FocusEvent.h>
-#include <Ui/Events/MouseEvent.h>
 #include "SolutionBuilderLIB/Solution.h"
 #include "SolutionBuilderLIB/Project.h"
 #include "SolutionBuilderLIB/ProjectDependency.h"
@@ -49,7 +46,7 @@ bool ProjectPropertyPage::create(ui::Widget* parent)
 
 	m_checkEnable = new ui::CheckBox();
 	m_checkEnable->create(this, L"Include project in build");
-	m_checkEnable->addClickEventHandler(ui::createMethodHandler(this, &ProjectPropertyPage::eventEnableClick));
+	m_checkEnable->addEventHandler< ui::ButtonClickEvent >(this, &ProjectPropertyPage::eventEnableClick);
 
 	Ref< ui::Container > container = new ui::Container();
 	container->create(this, ui::WsNone, new ui::TableLayout(L"*,100%", L"*,100%,*", 0, 4));
@@ -59,7 +56,7 @@ bool ProjectPropertyPage::create(ui::Widget* parent)
 
 	m_editSourcePath = new ui::Edit();
 	m_editSourcePath->create(container);
-	m_editSourcePath->addFocusEventHandler(ui::createMethodHandler(this, &ProjectPropertyPage::eventFocusSource));
+	m_editSourcePath->addEventHandler< ui::FocusEvent >(this, &ProjectPropertyPage::eventFocusSource);
 
 	Ref< ui::Static > staticDependencies = new ui::Static();
 	staticDependencies->create(container, L"Dependencies");
@@ -67,9 +64,10 @@ bool ProjectPropertyPage::create(ui::Widget* parent)
 	m_listDependencies = new ui::ListView();
 	m_listDependencies->create(container, ui::WsClientBorder | ui::ListView::WsReport);
 	m_listDependencies->addColumn(L"Dependency", 130);
-	m_listDependencies->addColumn(L"Location", 270);
+	m_listDependencies->addColumn(L"Location", 200);
+	m_listDependencies->addColumn(L"Inherit include paths", 100);
 	m_listDependencies->addColumn(L"Link", 50);
-	m_listDependencies->addDoubleClickEventHandler(ui::createMethodHandler(this, &ProjectPropertyPage::eventDependencyDoubleClick));
+	m_listDependencies->addEventHandler< ui::MouseDoubleClickEvent >(this, &ProjectPropertyPage::eventDependencyDoubleClick);
 
 	Ref< ui::Static > staticAvailable = new ui::Static();
 	staticAvailable->create(container, L"Available");
@@ -82,24 +80,15 @@ bool ProjectPropertyPage::create(ui::Widget* parent)
 
 	Ref< ui::Button > buttonAdd = new ui::Button();
 	buttonAdd->create(containerAvailable, L"Add");
-	buttonAdd->addClickEventHandler(ui::createMethodHandler(
-		this,
-		&ProjectPropertyPage::eventClickAdd
-	));
+	buttonAdd->addEventHandler< ui::ButtonClickEvent >(this, &ProjectPropertyPage::eventClickAdd);
 
 	Ref< ui::Button > buttonRemove = new ui::Button();
 	buttonRemove->create(containerAvailable, L"Remove");
-	buttonRemove->addClickEventHandler(ui::createMethodHandler(
-		this,
-		&ProjectPropertyPage::eventClickRemove
-	));
+	buttonRemove->addEventHandler< ui::ButtonClickEvent >(this, &ProjectPropertyPage::eventClickRemove);
 
 	Ref< ui::Button > buttonAddExternal = new ui::Button();
 	buttonAddExternal->create(containerAvailable, L"External...");
-	buttonAddExternal->addClickEventHandler(ui::createMethodHandler(
-		this,
-		&ProjectPropertyPage::eventClickAddExternal
-	));
+	buttonAddExternal->addEventHandler< ui::ButtonClickEvent >(this, &ProjectPropertyPage::eventClickAddExternal);
 
 	return true;
 }
@@ -134,7 +123,8 @@ void ProjectPropertyPage::updateDependencyList()
 		Ref< ui::ListViewItem > dependencyItem = new ui::ListViewItem();
 		dependencyItem->setText(0, (*i)->getName());
 		dependencyItem->setText(1, (*i)->getLocation());
-		dependencyItem->setText(2, c_link[(*i)->getLink()]);
+		dependencyItem->setText(2, (*i)->getInheritIncludePaths() ? L"Yes" : L"No");
+		dependencyItem->setText(3, c_link[(*i)->getLink()]);
 		dependencyItem->setData(L"DEPENDENCY", *i);
 		dependencyItems->add(dependencyItem);
 	}
@@ -148,7 +138,8 @@ void ProjectPropertyPage::updateDependencyList()
 		Ref< ui::ListViewItem > dependencyItem = new ui::ListViewItem();
 		dependencyItem->setText(0, (*i)->getName());
 		dependencyItem->setText(1, (*i)->getLocation());
-		dependencyItem->setText(2, c_link[(*i)->getLink()]);
+		dependencyItem->setText(2, (*i)->getInheritIncludePaths() ? L"Yes" : L"No");
+		dependencyItem->setText(3, c_link[(*i)->getLink()]);
 		dependencyItem->setData(L"DEPENDENCY", *i);
 		dependencyItems->add(dependencyItem);
 	}
@@ -177,20 +168,20 @@ void ProjectPropertyPage::updateDependencyList()
 	}
 }
 
-void ProjectPropertyPage::eventEnableClick(ui::Event* event)
+void ProjectPropertyPage::eventEnableClick(ui::ButtonClickEvent* event)
 {
 	m_project->setEnable(m_checkEnable->isChecked());
 }
 
-void ProjectPropertyPage::eventFocusSource(ui::Event* event)
+void ProjectPropertyPage::eventFocusSource(ui::FocusEvent* event)
 {
-	if (checked_type_cast< ui::FocusEvent* >(event)->lostFocus())
+	if (event->lostFocus())
 		m_project->setSourcePath(m_editSourcePath->getText());
 }
 
-void ProjectPropertyPage::eventDependencyDoubleClick(ui::Event* event)
+void ProjectPropertyPage::eventDependencyDoubleClick(ui::MouseDoubleClickEvent* event)
 {
-	ui::Point mousePosition = checked_type_cast< const ui::MouseEvent* >(event)->getPosition();
+	ui::Point mousePosition = event->getPosition();
 
 	Ref< ui::ListViewItem > selectedItem = m_listDependencies->getSelectedItem();
 	if (!selectedItem)
@@ -200,9 +191,11 @@ void ProjectPropertyPage::eventDependencyDoubleClick(ui::Event* event)
 	if (!dependency)
 		return;
 
-	// Check if user double clicked on "link" column.
-	int32_t left = m_listDependencies->getColumnWidth(0) + m_listDependencies->getColumnWidth(1);
-	if (mousePosition.x < left)
+	int32_t column = m_listDependencies->getColumnFromPosition(mousePosition.x);
+	if (column < 0)
+		return;
+
+	if (column == 1)	// Location
 	{
 		Ref< ExternalDependency > selectedDependency = dynamic_type_cast< ExternalDependency* >(dependency);
 		if (!selectedDependency)
@@ -228,7 +221,13 @@ void ProjectPropertyPage::eventDependencyDoubleClick(ui::Event* event)
 		}
 		inputDialog.destroy();
 	}
-	else
+	else if (column == 2)	// Inherit
+	{
+		bool inherit = !dependency->getInheritIncludePaths();
+		dependency->setInheritIncludePaths(inherit);
+		updateDependencyList();
+	}
+	else if (column == 3)	// Link
 	{
 		int32_t link = (dependency->getLink() + 1) % (Dependency::LnkForce + 1);
 		dependency->setLink((Dependency::Link)link);
@@ -236,7 +235,7 @@ void ProjectPropertyPage::eventDependencyDoubleClick(ui::Event* event)
 	}
 }
 
-void ProjectPropertyPage::eventClickAdd(ui::Event* event)
+void ProjectPropertyPage::eventClickAdd(ui::ButtonClickEvent* event)
 {
 	std::wstring dependencyName = m_dropAvailable->getSelectedItem();
 	if (!dependencyName.empty())
@@ -256,7 +255,7 @@ void ProjectPropertyPage::eventClickAdd(ui::Event* event)
 	}
 }
 
-void ProjectPropertyPage::eventClickRemove(ui::Event* event)
+void ProjectPropertyPage::eventClickRemove(ui::ButtonClickEvent* event)
 {
 	Ref< ui::ListViewItem > selectedItem = m_listDependencies->getSelectedItem();
 	if (!selectedItem)
@@ -275,7 +274,7 @@ void ProjectPropertyPage::eventClickRemove(ui::Event* event)
 	updateDependencyList();
 }
 
-void ProjectPropertyPage::eventClickAddExternal(ui::Event* event)
+void ProjectPropertyPage::eventClickAddExternal(ui::ButtonClickEvent* event)
 {
 	ui::FileDialog fileDialog;
 	fileDialog.create(this, L"Select solution", L"SolutionBuilder solutions;*.xms");

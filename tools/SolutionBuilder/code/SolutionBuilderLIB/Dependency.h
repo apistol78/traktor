@@ -19,6 +19,10 @@ public:
 
 	Dependency();
 
+	void setInheritIncludePaths(bool inheritIncludePaths);
+
+	bool getInheritIncludePaths() const;
+
 	void setLink(Link link);
 
 	Link getLink() const;
@@ -32,6 +36,7 @@ public:
 	virtual void serialize(traktor::ISerializer& s);
 
 private:
+	bool m_inheritIncludePaths;
 	Link m_link;
 };
 

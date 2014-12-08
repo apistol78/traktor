@@ -1,8 +1,6 @@
 #include <Ui/TableLayout.h>
 #include <Ui/Static.h>
 #include <Ui/Edit.h>
-#include <Ui/MethodHandler.h>
-#include <Ui/Events/FocusEvent.h>
 #include "SolutionBuilderLIB/AggregationItem.h"
 #include "SolutionBuilderUI/AggregationItemPropertyPage.h"
 
@@ -22,7 +20,7 @@ bool AggregationItemPropertyPage::create(ui::Widget* parent)
 
 	m_editTargetPath = new ui::Edit();
 	m_editTargetPath->create(this);
-	m_editTargetPath->addFocusEventHandler(ui::createMethodHandler(this, &AggregationItemPropertyPage::eventEditFocus));
+	m_editTargetPath->addEventHandler< ui::FocusEvent >(this, &AggregationItemPropertyPage::eventEditFocus);
 
 	return true;
 }
@@ -33,16 +31,13 @@ void AggregationItemPropertyPage::set(AggregationItem* aggregationItem)
 	m_editTargetPath->setText(m_aggregationItem->getTargetPath());
 }
 
-void AggregationItemPropertyPage::addChangeEventHandler(ui::EventHandler* eventHandler)
+void AggregationItemPropertyPage::eventEditFocus(ui::FocusEvent* event)
 {
-	addEventHandler(ui::EiContentChange, eventHandler);
-}
-
-void AggregationItemPropertyPage::eventEditFocus(ui::Event* event)
-{
-	if (static_cast< ui::FocusEvent* >(event)->lostFocus())
+	if (event->lostFocus())
 	{
 		m_aggregationItem->setTargetPath(m_editTargetPath->getText());
-		raiseEvent(ui::EiContentChange, 0);
+
+		ui::ContentChangeEvent contentChangeEvent(this);
+		raiseEvent(&contentChangeEvent);
 	}
 }

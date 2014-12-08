@@ -88,23 +88,23 @@ private:
 
 	bool commandExit();
 
-	void eventTimer(traktor::ui::Event*);
+	void eventTimer(traktor::ui::TimerEvent*);
 
-	void eventClose(traktor::ui::Event*);
+	void eventClose(traktor::ui::CloseEvent*);
 
-	void eventShortcut(traktor::ui::Event*);
+	void eventShortcut(traktor::ui::ShortcutEvent*);
 
-	void eventMenuClick(traktor::ui::Event*);
+	void eventMenuClick(traktor::ui::MenuClickEvent*);
 
-	void eventTreeButtonDown(traktor::ui::Event*);
+	void eventTreeButtonDown(traktor::ui::MouseButtonDownEvent*);
 
-	void eventTreeSelect(traktor::ui::Event*);
+	void eventTreeSelect(traktor::ui::SelectionChangeEvent*);
 
-	void eventTreeEdit(traktor::ui::Event*);
+	void eventTreeEdit(traktor::ui::TreeViewEditEvent*);
 
-	void eventTreeChange(traktor::ui::Event*);
+	void eventTreeChange(traktor::ui::TreeViewContentChangeEvent*);
 
-	void eventPropertyPageChange(traktor::ui::Event*);
+	void eventPropertyPageChange(traktor::ui::ContentChangeEvent*);
 };
 
 #endif	// SolutionForm_H
