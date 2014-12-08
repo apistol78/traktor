@@ -2,6 +2,8 @@
 #include <cstring>
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/Align.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Sound/Decoders/iOS/Mp3StreamDecoder.h"
 
@@ -56,6 +58,10 @@ public:
 			return false;
 		}
 
+		m_buffer.reset((int16_t*)Alloc::acquireAlign(65536 * sizeof(int16_t), 16, T_FILE_LINE));
+		m_left.reset((float*)Alloc::acquireAlign(4096 * sizeof(float), 16, T_FILE_LINE));
+		m_right.reset((float*)Alloc::acquireAlign(4096 * sizeof(float), 16, T_FILE_LINE));
+
 		return true;
 	}
 
@@ -88,7 +94,7 @@ public:
 		fillBufList.mNumberBuffers = 1;
 		fillBufList.mBuffers[0].mNumberChannels = 2;
 		fillBufList.mBuffers[0].mDataByteSize = bufferByteSize;
-		fillBufList.mBuffers[0].mData = (void*)m_buffer;
+		fillBufList.mBuffers[0].mData = (void*)m_buffer.ptr();
 
 		OSStatus result = ExtAudioFileRead(m_inputFileID, &numFrames, &fillBufList);
 		if (result != noErr)
@@ -101,15 +107,26 @@ public:
 			return false;
 
 		// De-interleave buffers and convert to fp32 into left and right channels.
-		const int16_t* s = m_buffer;
-		for (int32_t i = 0; i < numFrames; ++i)
+		const int16_t* s = m_buffer.c_ptr();
+
+		int32_t i = 0;
+		for (; i < numFrames; ++i)
 		{
 			m_left[i] = *s++ / 32767.0f;
 			m_right[i] = *s++ / 32767.0f;
 		}
 
-		outSoundBlock.samples[0] = m_left;
-		outSoundBlock.samples[1] = m_right;
+		// Must produce a multiple of 4 samples thus we need to pad with mute samples,
+		// which should only happen at the end of the stream.
+		numFrames = alignUp(numFrames, 4);
+		for (; i < numFrames; ++i)
+		{
+			m_left[i] = 0.0f;
+			m_right[i] = 0.0f;
+		}
+
+		outSoundBlock.samples[0] = m_left.ptr();
+		outSoundBlock.samples[1] = m_right.ptr();
 		outSoundBlock.samplesCount = numFrames;
 		outSoundBlock.sampleRate = 44100;
 		outSoundBlock.maxChannel = 2;
@@ -122,9 +139,9 @@ private:
 	int32_t m_streamSize;
 	AudioFileID m_refAudioFileID;
 	ExtAudioFileRef m_inputFileID;
-	int16_t m_buffer[65536];
-	float m_left[4096];
-	float m_right[4096];
+	AutoArrayPtr< int16_t, AllocFreeAlign > m_buffer;
+	AutoArrayPtr< float, AllocFreeAlign > m_left;
+	AutoArrayPtr< float, AllocFreeAlign > m_right;
 
 	static OSStatus readProc(void* clientData, SInt64 position, UInt32 requestCount, void* buffer, UInt32* actualCount)
 	{

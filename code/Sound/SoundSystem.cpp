@@ -162,8 +162,7 @@ bool SoundSystem::reset(ISoundDriver* driver)
 {
 	// Tear down current driver and threads.
 	suspend();
-	m_mixer = 0;
-	safeDestroy(m_driver);
+	m_driver = 0;
 
 	// Create new driver and mixer.
 	if (!driver->create(m_desc.nativeHandle, m_desc.driverDesc, m_mixer))
@@ -195,18 +194,42 @@ void SoundSystem::suspend()
 		ThreadManager::getInstance().destroy(m_threadMixer);
 		m_threadMixer = 0;
 	}
+
+	// Destroy driver; but keep pointer to driver, as we will re-create it.
+	m_driver->destroy();
+	m_mixer = 0;
 }
 
 void SoundSystem::resume()
 {
-	m_threadMixer = ThreadManager::getInstance().create(makeFunctor(this, &SoundSystem::threadMixer), L"Sound mixer", 1);
+	if (m_threadMixer && m_threadSubmit)
+		return;
+
+	// Create driver.
+	if (!m_driver->create(m_desc.nativeHandle, m_desc.driverDesc, m_mixer))
+		return;
+
+	// If driver didn't create an alternative sound mixer we create
+	// a default mixer.
+	if (!m_mixer)
+		m_mixer = new SoundMixer();
+
+	// Create threads.
 	if (!m_threadMixer)
-		return;
+	{
+		m_threadMixer = ThreadManager::getInstance().create(makeFunctor(this, &SoundSystem::threadMixer), L"Sound mixer", 1);
+		if (!m_threadMixer)
+			return;
+	}
 
-	m_threadSubmit = ThreadManager::getInstance().create(makeFunctor(this, &SoundSystem::threadSubmit), L"Sound submit", 2);
 	if (!m_threadSubmit)
-		return;
+	{
+		m_threadSubmit = ThreadManager::getInstance().create(makeFunctor(this, &SoundSystem::threadSubmit), L"Sound submit", 2);
+		if (!m_threadSubmit)
+			return;
+	}
 
+	// Start threads.
 	m_threadMixer->start(Thread::Above);
 	m_threadSubmit->start(Thread::Highest);
 }
