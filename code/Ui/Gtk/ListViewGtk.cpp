@@ -72,6 +72,11 @@ int ListViewGtk::getColumnWidth(int columnIndex) const
 	return 0;
 }
 
+int ListViewGtk::getColumnFromPosition(int position) const
+{
+	return -1;
+}
+
 void ListViewGtk::setItems(ListViewItems* items)
 {
 }

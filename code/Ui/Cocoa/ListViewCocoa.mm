@@ -109,6 +109,11 @@ int ListViewCocoa::getColumnWidth(int columnIndex) const
 	return [column width];
 }
 
+int ListViewCocoa::getColumnFromPosition(int position) const
+{
+	return -1;
+}
+
 void ListViewCocoa::setItems(ListViewItems* items)
 {
 	m_items = items;

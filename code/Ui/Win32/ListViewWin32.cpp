@@ -171,6 +171,23 @@ int ListViewWin32::getColumnWidth(int columnIndex) const
 	return ListView_GetColumnWidth(m_hWnd, columnIndex);
 }
 
+int ListViewWin32::getColumnFromPosition(int position) const
+{
+	POINT origin = { 0 };
+	ListView_GetOrigin(m_hWnd, &origin);
+
+	int left = -origin.x;
+	for (int i = 0; i < m_columnCount; ++i)
+	{
+		int width = ListView_GetColumnWidth(m_hWnd, i);
+		if (position >= left && position <= left + width)
+			return i;
+		left += width;
+	}
+
+	return -1;
+}
+
 void ListViewWin32::setItems(ListViewItems* items)
 {
 	if (items)
