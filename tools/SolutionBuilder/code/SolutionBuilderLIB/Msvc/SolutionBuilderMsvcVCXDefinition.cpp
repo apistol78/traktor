@@ -53,6 +53,18 @@ bool SolutionBuilderMsvcVCXDefinition::generate(
 	context.set(L"PROJECT_LIBRARIES", ssl.str());
 	context.set(L"PROJECT_LIBRARY_PATHS", sslp.str());
 
+	std::wstring aco = configuration->getAdditionalCompilerOptions();
+	if (!aco.empty())
+		context.set(L"PROJECT_ADDITIONAL_COMPILER_OPTIONS", aco + L" ");
+	else
+		context.set(L"PROJECT_ADDITIONAL_COMPILER_OPTIONS", L"");
+
+	std::wstring alo = configuration->getAdditionalLinkerOptions();
+	if (!alo.empty())
+		context.set(L"PROJECT_ADDITIONAL_LINKER_OPTIONS", alo + L" ");
+	else
+		context.set(L"PROJECT_ADDITIONAL_LINKER_OPTIONS", L"");
+
 	context.set(L"MODULE_DEFINITION_FILE", L"");
 	findDefinitions(context, solution, project, project->getItems());
 

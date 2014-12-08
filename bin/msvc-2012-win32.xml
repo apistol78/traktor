@@ -45,6 +45,10 @@
               <name>EnableEnhancedInstructionSet</name>
               <value>StreamingSIMDExtensions2</value>
             </item>
+            <item>
+              <name>AdditionalOptions</name>
+              <value>%(PROJECT_ADDITIONAL_COMPILER_OPTIONS)%(AdditionalOptions)</value>
+            </item>
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -95,6 +99,10 @@
             <item>
               <name>EnableEnhancedInstructionSet</name>
               <value>StreamingSIMDExtensions2</value>
+            </item>
+            <item>
+              <name>AdditionalOptions</name>
+              <value>%(PROJECT_ADDITIONAL_COMPILER_OPTIONS)%(AdditionalOptions)</value>
             </item>
           </options>
         </item>
@@ -195,6 +203,10 @@
               <name>EnableEnhancedInstructionSet</name>
               <value>StreamingSIMDExtensions2</value>
             </item>
+            <item>
+              <name>AdditionalOptions</name>
+              <value>%(PROJECT_ADDITIONAL_COMPILER_OPTIONS)%(AdditionalOptions)</value>
+            </item>
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -289,6 +301,10 @@
             <item>
               <name>EnableEnhancedInstructionSet</name>
               <value>StreamingSIMDExtensions2</value>
+            </item>
+            <item>
+              <name>AdditionalOptions</name>
+              <value>%(PROJECT_ADDITIONAL_COMPILER_OPTIONS)%(AdditionalOptions)</value>
             </item>
           </options>
         </item>
@@ -407,6 +423,10 @@
               <name>EnableEnhancedInstructionSet</name>
               <value>StreamingSIMDExtensions2</value>
             </item>
+            <item>
+              <name>AdditionalOptions</name>
+              <value>%(PROJECT_ADDITIONAL_COMPILER_OPTIONS)%(AdditionalOptions)</value>
+            </item>
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -477,6 +497,10 @@
             <item>
               <name>EnableEnhancedInstructionSet</name>
               <value>StreamingSIMDExtensions2</value>
+            </item>
+            <item>
+              <name>AdditionalOptions</name>
+              <value>%(PROJECT_ADDITIONAL_COMPILER_OPTIONS)%(AdditionalOptions)</value>
             </item>
           </options>
         </item>
@@ -597,6 +621,10 @@
               <name>EnableEnhancedInstructionSet</name>
               <value>StreamingSIMDExtensions2</value>
             </item>
+            <item>
+              <name>AdditionalOptions</name>
+              <value>%(PROJECT_ADDITIONAL_COMPILER_OPTIONS)%(AdditionalOptions)</value>
+            </item>
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -711,6 +739,10 @@
             <item>
               <name>EnableEnhancedInstructionSet</name>
               <value>StreamingSIMDExtensions2</value>
+            </item>
+            <item>
+              <name>AdditionalOptions</name>
+              <value>%(PROJECT_ADDITIONAL_COMPILER_OPTIONS)%(AdditionalOptions)</value>
             </item>
           </options>
         </item>
