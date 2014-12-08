@@ -43,29 +43,47 @@ class T_DLLCLASS SoundSystem : public Object
 public:
 	SoundSystem(ISoundDriver* driver);
 
+	/*! \brief Create sound system.
+	 *
+	 * \param desc Initialize description.
+	 * \return True if sound system created successfully.
+	 */
 	bool create(const SoundSystemCreateDesc& desc);
 
+	/*! \brief Destroy sound system.
+	 */
 	void destroy();
 
 	/*! \brief Reset sound system.
+	 *
+	 * \param driver New sound driver implementation.
+	 * \return True if reset succeeded.
 	 */
 	bool reset(ISoundDriver* driver);
 
+	/*! \brief Suspend playback.
+	 */
+	void suspend();
+
+	/*! \brief Resume playback.
+	 */
+	void resume();
+
 	/*! \brief Set global volume.
 	 *
-	 * \param volume Volume (0-1)
+	 * \param volume Volume (0-1).
 	 */
 	void setVolume(float volume);
 
 	/*! \brief Get global volume.
 	 *
-	 * \return Global volume.
+	 * \return Global volume (0-1).
 	 */
 	float getVolume() const;
 
 	/*! \brief Set category volume.
 	 *
-	 * \param volume Volume (0-1)
+	 * \param volume Volume (0-1).
 	 */
 	void setVolume(handle_t category, float volume);
 
@@ -90,10 +108,17 @@ public:
 	 */
 	Ref< SoundChannel > getChannel(uint32_t channelId);
 
-	/*! \brief Get current mixer time. */
+	/*! \brief Get current mixer time.
+	 *
+	 * \return Mixer time in seconds.
+	 */
 	double getTime() const;
 
-	/*! \brief Query performance of each thread. */
+	/*! \brief Query performance of each thread.
+	 *
+	 * \param outMixerTime Last mixer thread duration in seconds.
+	 * \param outSubmitTime Last submit duration in seconds.
+	 */
 	void getThreadPerformances(double& outMixerTime, double& outSubmitTime) const;
 
 private:

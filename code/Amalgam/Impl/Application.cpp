@@ -44,6 +44,7 @@
 #include "Render/IRenderView.h"
 #include "Resource/IResourceManager.h"
 #include "Script/IScriptManager.h"
+#include "Sound/SoundSystem.h"
 #include "World/IEntityEventManager.h"
 
 namespace traktor
@@ -954,22 +955,30 @@ bool Application::update()
 void Application::suspend()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
+
 	if (m_stateManager->getCurrent() != 0)
 	{
 		ActiveEvent activeEvent(false);
 		m_stateManager->getCurrent()->take(&activeEvent);
 		m_stateManager->getCurrent()->flush();
 	}
+
+	if (m_audioServer)
+		m_audioServer->getSoundSystem()->suspend();
 }
 
 void Application::resume()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
+
 	if (m_stateManager->getCurrent() != 0)
 	{
 		ActiveEvent activeEvent(true);
 		m_stateManager->getCurrent()->take(&activeEvent);
 	}
+
+	if (m_audioServer)
+		m_audioServer->getSoundSystem()->resume();
 }
 
 Ref< IEnvironment > Application::getEnvironment()
