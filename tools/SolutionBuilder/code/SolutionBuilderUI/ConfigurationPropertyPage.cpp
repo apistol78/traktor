@@ -1,12 +1,8 @@
 #include <Core/Log/Log.h>
-#include <Ui/MethodHandler.h>
 #include <Ui/Static.h>
 #include <Ui/TableLayout.h>
-#include <Ui/Events/CommandEvent.h>
-#include <Ui/Events/EditEvent.h>
 #include "SolutionBuilderLIB/Configuration.h"
 #include "SolutionBuilderUI/ConfigurationPropertyPage.h"
-#include "SolutionBuilderUI/EditList.h"
 
 using namespace traktor;
 
@@ -41,7 +37,7 @@ bool ConfigurationPropertyPage::create(ui::Widget* parent)
 	m_dropType->add(L"Shared library");
 	m_dropType->add(L"Executable");
 	m_dropType->add(L"Executable (console)");
-	m_dropType->addSelectEventHandler(ui::createMethodHandler(this, &ConfigurationPropertyPage::eventSelectType));
+	m_dropType->addEventHandler< ui::SelectionChangeEvent >(this, &ConfigurationPropertyPage::eventSelectType);
 
 	Ref< ui::Static > staticProfile = new ui::Static();
 	staticProfile->create(this, L"Profile");
@@ -50,49 +46,49 @@ bool ConfigurationPropertyPage::create(ui::Widget* parent)
 	m_dropProfile->create(this);
 	m_dropProfile->add(L"Debug");
 	m_dropProfile->add(L"Release");
-	m_dropProfile->addSelectEventHandler(ui::createMethodHandler(this, &ConfigurationPropertyPage::eventSelectProfile));
+	m_dropProfile->addEventHandler< ui::SelectionChangeEvent >(this, &ConfigurationPropertyPage::eventSelectProfile);
 
 	Ref< ui::Static > staticIncludePaths = new ui::Static();
 	staticIncludePaths->create(this, L"Include paths");
 
-	m_listIncludePaths = new EditList();
-	m_listIncludePaths->create(this);
-	m_listIncludePaths->addEditEventHandler(ui::createMethodHandler(this, &ConfigurationPropertyPage::eventChangeIncludePath));
+	m_listIncludePaths = new ui::custom::EditList();
+	m_listIncludePaths->create(this, ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove | ui::custom::EditList::WsDefault);
+	m_listIncludePaths->addEventHandler< ui::custom::EditListEditEvent >(this, &ConfigurationPropertyPage::eventChangeIncludePath);
 
 	Ref< ui::Static > staticDefinitions = new ui::Static();
 	staticDefinitions->create(this, L"Definitions");
 
-	m_listDefinitions = new EditList();
-	m_listDefinitions->create(this);
-	m_listDefinitions->addEditEventHandler(ui::createMethodHandler(this, &ConfigurationPropertyPage::eventChangeDefinitions));
+	m_listDefinitions = new ui::custom::EditList();
+	m_listDefinitions->create(this, ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove | ui::custom::EditList::WsDefault);
+	m_listDefinitions->addEventHandler< ui::custom::EditListEditEvent >(this, &ConfigurationPropertyPage::eventChangeDefinitions);
 
 	Ref< ui::Static > staticLibraryPaths = new ui::Static();
 	staticLibraryPaths->create(this, L"Library paths");
 
-	m_listLibraryPaths = new EditList();
-	m_listLibraryPaths->create(this);
-	m_listLibraryPaths->addEditEventHandler(ui::createMethodHandler(this, &ConfigurationPropertyPage::eventChangeLibraryPaths));
+	m_listLibraryPaths = new ui::custom::EditList();
+	m_listLibraryPaths->create(this, ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove | ui::custom::EditList::WsDefault);
+	m_listLibraryPaths->addEventHandler< ui::custom::EditListEditEvent >(this, &ConfigurationPropertyPage::eventChangeLibraryPaths);
 
 	Ref< ui::Static > staticLibraries = new ui::Static();
 	staticLibraries->create(this, L"Libraries");
 
-	m_listLibraries = new EditList();
-	m_listLibraries->create(this);
-	m_listLibraries->addEditEventHandler(ui::createMethodHandler(this, &ConfigurationPropertyPage::eventChangeLibraries));
+	m_listLibraries = new ui::custom::EditList();
+	m_listLibraries->create(this, ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove | ui::custom::EditList::WsDefault);
+	m_listLibraries->addEventHandler< ui::custom::EditListEditEvent >(this, &ConfigurationPropertyPage::eventChangeLibraries);
 
 	Ref< ui::Static > staticAdditionalCompilerOptions = new ui::Static();
 	staticAdditionalCompilerOptions->create(this, L"Compiler options");
 
 	m_editAdditionalCompilerOptions = new ui::Edit();
 	m_editAdditionalCompilerOptions->create(this);
-	m_editAdditionalCompilerOptions->addFocusEventHandler(ui::createMethodHandler(this, &ConfigurationPropertyPage::eventFocusAdditionalOptions));
+	m_editAdditionalCompilerOptions->addEventHandler< ui::FocusEvent >(this, &ConfigurationPropertyPage::eventFocusAdditionalOptions);
 
 	Ref< ui::Static > staticAdditionalLinkerOptions = new ui::Static();
 	staticAdditionalLinkerOptions->create(this, L"Linker options");
 
 	m_editAdditionalLinkerOptions = new ui::Edit();
 	m_editAdditionalLinkerOptions->create(this);
-	m_editAdditionalLinkerOptions->addFocusEventHandler(ui::createMethodHandler(this, &ConfigurationPropertyPage::eventFocusAdditionalOptions));
+	m_editAdditionalLinkerOptions->addEventHandler< ui::FocusEvent >(this, &ConfigurationPropertyPage::eventFocusAdditionalOptions);
 
 	fit();
 
@@ -142,87 +138,91 @@ void ConfigurationPropertyPage::set(Configuration* configuration)
 	m_editAdditionalLinkerOptions->setText(m_configuration->getAdditionalLinkerOptions());
 }
 
-void ConfigurationPropertyPage::eventSelectType(ui::Event* event)
+void ConfigurationPropertyPage::eventSelectType(ui::SelectionChangeEvent* event)
 {
-	int id = checked_type_cast< ui::CommandEvent* >(event)->getCommand().getId();
+	int id = m_dropType->getSelected();
 	m_configuration->setTargetFormat((Configuration::TargetFormat)id);
 }
 
-void ConfigurationPropertyPage::eventSelectProfile(ui::Event* event)
+void ConfigurationPropertyPage::eventSelectProfile(ui::SelectionChangeEvent* event)
 {
-	int id = checked_type_cast< ui::CommandEvent* >(event)->getCommand().getId();
+	int id = m_dropProfile->getSelected();
 	m_configuration->setTargetProfile((Configuration::TargetProfile)id);
 }
 
-void ConfigurationPropertyPage::eventChangeIncludePath(ui::Event* event)
+void ConfigurationPropertyPage::eventChangeIncludePath(ui::custom::EditListEditEvent* event)
 {
 	std::vector< std::wstring > includePaths = m_configuration->getIncludePaths();
-	int editId = static_cast< ui::EditEvent* >(event)->getParam();
+	int32_t editId = event->getIndex();
 	if (editId >= 0)
 	{
-		std::wstring text = static_cast< ui::EditEvent* >(event)->getText();
+		std::wstring text = event->getText();
 		if (!text.empty())
 			includePaths[editId] = text;
 		else
 			includePaths.erase(includePaths.begin() + editId);
 	}
 	else
-		includePaths.push_back(static_cast< ui::EditEvent* >(event)->getText());
+		includePaths.push_back(event->getText());
 	m_configuration->setIncludePaths(includePaths);
+	event->consume();
 }
 
-void ConfigurationPropertyPage::eventChangeDefinitions(ui::Event* event)
+void ConfigurationPropertyPage::eventChangeDefinitions(ui::custom::EditListEditEvent* event)
 {
 	std::vector< std::wstring > definitions = m_configuration->getDefinitions();
-	int editId = static_cast< ui::EditEvent* >(event)->getParam();
+	int32_t editId = event->getIndex();
 	if (editId >= 0)
 	{
-		std::wstring text = static_cast< ui::EditEvent* >(event)->getText();
+		std::wstring text = event->getText();
 		if (!text.empty())
 			definitions[editId] = text;
 		else
 			definitions.erase(definitions.begin() + editId);
 	}
 	else
-		definitions.push_back(static_cast< ui::EditEvent* >(event)->getText());
+		definitions.push_back(event->getText());
 	m_configuration->setDefinitions(definitions);
+	event->consume();
 }
 
-void ConfigurationPropertyPage::eventChangeLibraryPaths(ui::Event* event)
+void ConfigurationPropertyPage::eventChangeLibraryPaths(ui::custom::EditListEditEvent* event)
 {
 	std::vector< std::wstring > libraryPaths = m_configuration->getLibraryPaths();
-	int editId = static_cast< ui::EditEvent* >(event)->getParam();
+	int32_t editId = event->getIndex();
 	if (editId >= 0)
 	{
-		std::wstring text = static_cast< ui::EditEvent* >(event)->getText();
+		std::wstring text = event->getText();
 		if (!text.empty())
 			libraryPaths[editId] = text;
 		else
 			libraryPaths.erase(libraryPaths.begin() + editId);
 	}
 	else
-		libraryPaths.push_back(static_cast< ui::EditEvent* >(event)->getText());
+		libraryPaths.push_back(event->getText());
 	m_configuration->setLibraryPaths(libraryPaths);
+	event->consume();
 }
 
-void ConfigurationPropertyPage::eventChangeLibraries(ui::Event* event)
+void ConfigurationPropertyPage::eventChangeLibraries(ui::custom::EditListEditEvent* event)
 {
 	std::vector< std::wstring > libraries = m_configuration->getLibraries();
-	int editId = static_cast< ui::EditEvent* >(event)->getParam();
+	int32_t editId = event->getIndex();
 	if (editId >= 0)
 	{
-		std::wstring text = static_cast< ui::EditEvent* >(event)->getText();
+		std::wstring text = event->getText();
 		if (!text.empty())
 			libraries[editId] = text;
 		else
 			libraries.erase(libraries.begin() + editId);
 	}
 	else
-		libraries.push_back(static_cast< ui::EditEvent* >(event)->getText());
+		libraries.push_back(event->getText());
 	m_configuration->setLibraries(libraries);
+	event->consume();
 }
 
-void ConfigurationPropertyPage::eventFocusAdditionalOptions(ui::Event* event)
+void ConfigurationPropertyPage::eventFocusAdditionalOptions(ui::FocusEvent* event)
 {
 	m_configuration->setAdditionalCompilerOptions(m_editAdditionalCompilerOptions->getText());
 	m_configuration->setAdditionalLinkerOptions(m_editAdditionalLinkerOptions->getText());

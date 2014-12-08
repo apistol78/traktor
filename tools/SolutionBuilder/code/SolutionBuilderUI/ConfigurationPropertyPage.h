@@ -4,9 +4,10 @@
 #include <Ui/Container.h>
 #include <Ui/DropDown.h>
 #include <Ui/Edit.h>
+#include <Ui/Custom/EditList.h>
+#include <Ui/Custom/EditListEditEvent.h>
 
 class Configuration;
-class EditList;
 
 class ConfigurationPropertyPage : public traktor::ui::Container
 {
@@ -19,26 +20,26 @@ private:
 	traktor::Ref< Configuration > m_configuration;
 	traktor::Ref< traktor::ui::DropDown > m_dropType;
 	traktor::Ref< traktor::ui::DropDown > m_dropProfile;
-	traktor::Ref< EditList > m_listIncludePaths;
-	traktor::Ref< EditList > m_listDefinitions;
-	traktor::Ref< EditList > m_listLibraryPaths;
-	traktor::Ref< EditList > m_listLibraries;
+	traktor::Ref< traktor::ui::custom::EditList > m_listIncludePaths;
+	traktor::Ref< traktor::ui::custom::EditList > m_listDefinitions;
+	traktor::Ref< traktor::ui::custom::EditList > m_listLibraryPaths;
+	traktor::Ref< traktor::ui::custom::EditList > m_listLibraries;
 	traktor::Ref< traktor::ui::Edit > m_editAdditionalCompilerOptions;
 	traktor::Ref< traktor::ui::Edit > m_editAdditionalLinkerOptions;
 
-	void eventSelectType(traktor::ui::Event* event);
+	void eventSelectType(traktor::ui::SelectionChangeEvent* event);
 
-	void eventSelectProfile(traktor::ui::Event* event);
+	void eventSelectProfile(traktor::ui::SelectionChangeEvent* event);
 
-	void eventChangeIncludePath(traktor::ui::Event* event);
+	void eventChangeIncludePath(traktor::ui::custom::EditListEditEvent* event);
 
-	void eventChangeDefinitions(traktor::ui::Event* event);
+	void eventChangeDefinitions(traktor::ui::custom::EditListEditEvent* event);
 
-	void eventChangeLibraryPaths(traktor::ui::Event* event);
+	void eventChangeLibraryPaths(traktor::ui::custom::EditListEditEvent* event);
 
-	void eventChangeLibraries(traktor::ui::Event* event);
+	void eventChangeLibraries(traktor::ui::custom::EditListEditEvent* event);
 
-	void eventFocusAdditionalOptions(traktor::ui::Event* event);
+	void eventFocusAdditionalOptions(traktor::ui::FocusEvent* event);
 };
 
 #endif	// ConfigurationPropertyPage_H

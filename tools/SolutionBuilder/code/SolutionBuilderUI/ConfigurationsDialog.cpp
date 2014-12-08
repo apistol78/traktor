@@ -1,7 +1,6 @@
 #include <Ui/TableLayout.h>
 #include <Ui/Container.h>
 #include <Ui/Button.h>
-#include <Ui/MethodHandler.h>
 #include <Ui/Custom/InputDialog.h>
 #include "SolutionBuilderLIB/Solution.h"
 #include "SolutionBuilderLIB/Project.h"
@@ -30,15 +29,15 @@ bool ConfigurationsDialog::create(ui::Widget* parent, Solution* solution)
 
 	Ref< ui::Button > buttonNew = new ui::Button();
 	buttonNew->create(container, L"New...");
-	buttonNew->addClickEventHandler(ui::createMethodHandler(this, &ConfigurationsDialog::eventButtonNew));
+	buttonNew->addEventHandler< ui::ButtonClickEvent >(this, &ConfigurationsDialog::eventButtonNew);
 
 	Ref< ui::Button > buttonRename = new ui::Button();
 	buttonRename->create(container, L"Rename...");
-	buttonRename->addClickEventHandler(ui::createMethodHandler(this, &ConfigurationsDialog::eventButtonRename));
+	buttonRename->addEventHandler< ui::ButtonClickEvent >(this, &ConfigurationsDialog::eventButtonRename);
 
 	Ref< ui::Button > buttonRemove = new ui::Button();
 	buttonRemove->create(container, L"Remove");
-	buttonRemove->addClickEventHandler(ui::createMethodHandler(this, &ConfigurationsDialog::eventButtonRemove));
+	buttonRemove->addEventHandler< ui::ButtonClickEvent >(this, &ConfigurationsDialog::eventButtonRemove);
 
 	std::set< std::wstring > configurations;
 
@@ -63,7 +62,7 @@ const std::vector< ConfigurationsDialog::Action >& ConfigurationsDialog::getActi
 	return m_actions;
 }
 
-void ConfigurationsDialog::eventButtonNew(ui::Event* event)
+void ConfigurationsDialog::eventButtonNew(ui::ButtonClickEvent* event)
 {
 	int selectedId = m_listConfigurations->getSelected();
 	if (selectedId < 0)
@@ -97,7 +96,7 @@ void ConfigurationsDialog::eventButtonNew(ui::Event* event)
 	inputDialog.destroy();
 }
 
-void ConfigurationsDialog::eventButtonRename(ui::Event* event)
+void ConfigurationsDialog::eventButtonRename(ui::ButtonClickEvent* event)
 {
 	int selectedId = m_listConfigurations->getSelected();
 	if (selectedId < 0)
@@ -131,7 +130,7 @@ void ConfigurationsDialog::eventButtonRename(ui::Event* event)
 	inputDialog.destroy();
 }
 
-void ConfigurationsDialog::eventButtonRemove(ui::Event* event)
+void ConfigurationsDialog::eventButtonRemove(ui::ButtonClickEvent* event)
 {
 	int selectedId = m_listConfigurations->getSelected();
 	if (selectedId < 0)

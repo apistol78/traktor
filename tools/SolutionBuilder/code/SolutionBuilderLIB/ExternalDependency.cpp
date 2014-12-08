@@ -7,7 +7,7 @@
 #include "Solution.h"
 #include "SolutionLoader.h"
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"ExternalDependency", 2, ExternalDependency, Dependency)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"ExternalDependency", 3, ExternalDependency, Dependency)
 
 ExternalDependency::ExternalDependency(const std::wstring& solutionFileName, const std::wstring& projectName)
 :	m_solutionFileName(solutionFileName)

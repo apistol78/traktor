@@ -8,8 +8,19 @@ using namespace traktor;
 T_IMPLEMENT_RTTI_CLASS(L"Dependency", Dependency, ISerializable)
 
 Dependency::Dependency()
-:	m_link(LnkYes)
+:	m_inheritIncludePaths(true)
+,	m_link(LnkYes)
 {
+}
+
+void Dependency::setInheritIncludePaths(bool inheritIncludePaths)
+{
+	m_inheritIncludePaths = inheritIncludePaths;
+}
+
+bool Dependency::getInheritIncludePaths() const
+{
+	return m_inheritIncludePaths;
 }
 
 void Dependency::setLink(Link link)
@@ -24,6 +35,9 @@ Dependency::Link Dependency::getLink() const
 
 void Dependency::serialize(ISerializer& s)
 {
+	if (s.getVersion() >= 3)
+		s >> Member< bool >(L"inheritIncludePaths", m_inheritIncludePaths);
+
 	if (s.getVersion() >= 2)
 	{
 		const MemberEnum< Link >::Key c_Link[] =

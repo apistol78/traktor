@@ -19,13 +19,38 @@
 
 using namespace traktor;
 
-#define TITLE L"SolutionBuilder v2.9.2"
+#define TITLE L"SolutionBuilder v2.9.3"
 
 #define ERROR_UNKNOWN_FORMAT 1
 #define ERROR_UNABLE_TO_READ_SOLUTION 2
 #define ERROR_UNABLE_TO_RESOLVE_DEPENDENCIES 3
 #define ERROR_UNABLE_TO_CREATE_BUILDER 4
 #define ERROR_UNABLE_TO_CREATE_SOLUTION 5
+
+void flattenIncludePaths(Project* project, std::map< std::wstring, std::set< std::wstring > >& outConfigurationIncludePaths)
+{
+	const RefArray< Configuration >& configurations = project->getConfigurations();
+	for (RefArray< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
+	{
+		const std::vector< std::wstring >& includePaths = (*i)->getIncludePaths();
+		outConfigurationIncludePaths[(*i)->getName()].insert(
+			includePaths.begin(),
+			includePaths.end()
+		);
+	}
+
+	const RefArray< Dependency >& dependencies = project->getDependencies();
+	for (RefArray< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+	{
+		if (!(*i)->getInheritIncludePaths())
+			continue;
+
+		if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*i))
+			flattenIncludePaths(projectDependency->getProject(), outConfigurationIncludePaths);
+		else if (const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*i))
+			flattenIncludePaths(externalDependency->getProject(), outConfigurationIncludePaths);
+	}
+}
 
 int main(int argc, const char** argv)
 {
@@ -128,6 +153,33 @@ int main(int argc, const char** argv)
 				traktor::log::error << L"Unable to resolve all dependencies" << Endl;
 				return ERROR_UNABLE_TO_RESOLVE_DEPENDENCIES;
 			}
+		}
+	}
+
+	if (cmdLine.hasOption('v', L"verbose"))
+		traktor::log::info << L"Flatten include paths..." << Endl;
+
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	{
+		std::map< std::wstring, std::set< std::wstring > > configurationIncludePaths;
+		flattenIncludePaths(*i, configurationIncludePaths);
+
+		const RefArray< Configuration >& configurations = (*i)->getConfigurations();
+		for (RefArray< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
+		{
+			const std::set< std::wstring >& includePaths = configurationIncludePaths[(*j)->getName()];
+
+			if (cmdLine.hasOption('v', L"verbose"))
+			{
+				traktor::log::info << L"Include paths of \"" << (*i)->getName() << L"\" " << (*j)->getName() << Endl;
+				for (std::set< std::wstring >::const_iterator k = includePaths.begin(); k != includePaths.end(); ++k)
+					traktor::log::info << L"\t" << *k << Endl;
+			}
+
+			(*j)->setIncludePaths(std::vector< std::wstring >(
+				includePaths.begin(),
+				includePaths.end()
+			));
 		}
 	}
 

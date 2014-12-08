@@ -27,17 +27,17 @@ private:
 
 	void updateDependencyList();
 
-	void eventEnableClick(traktor::ui::Event* event);
+	void eventEnableClick(traktor::ui::ButtonClickEvent* event);
 
-	void eventFocusSource(traktor::ui::Event* event);
+	void eventFocusSource(traktor::ui::FocusEvent* event);
 
-	void eventDependencyDoubleClick(traktor::ui::Event* event);
+	void eventDependencyDoubleClick(traktor::ui::MouseDoubleClickEvent* event);
 
-	void eventClickAdd(traktor::ui::Event* event);
+	void eventClickAdd(traktor::ui::ButtonClickEvent* event);
 
-	void eventClickRemove(traktor::ui::Event* event);
+	void eventClickRemove(traktor::ui::ButtonClickEvent* event);
 
-	void eventClickAddExternal(traktor::ui::Event* event);
+	void eventClickAddExternal(traktor::ui::ButtonClickEvent* event);
 };
 
 #endif	// ProjectPropertyPage_H

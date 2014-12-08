@@ -3,8 +3,9 @@
 
 #include <Ui/Container.h>
 #include <Ui/Edit.h>
+#include <Ui/Custom/EditList.h>
+#include <Ui/Custom/EditListEditEvent.h>
 
-class EditList;
 class Solution;
 
 class SolutionPropertyPage : public traktor::ui::Container
@@ -16,12 +17,12 @@ public:
 
 private:
 	traktor::Ref< traktor::ui::Edit > m_rootPath;
-	traktor::Ref< EditList > m_listDefinitions;
+	traktor::Ref< traktor::ui::custom::EditList > m_listDefinitions;
 	traktor::Ref< Solution > m_solution;
 
-	void eventEditFocus(traktor::ui::Event* event);
+	void eventEditFocus(traktor::ui::FocusEvent* event);
 
-	void eventChangeDefinitions(traktor::ui::Event* event);
+	void eventChangeDefinitions(traktor::ui::custom::EditListEditEvent* event);
 };
 
 #endif	// SolutionPropertyPage_H

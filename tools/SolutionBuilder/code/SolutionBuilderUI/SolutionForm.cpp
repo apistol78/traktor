@@ -9,13 +9,8 @@
 #include <Ui/MessageBox.h>
 #include <Ui/FloodLayout.h>
 #include <Ui/FileDialog.h>
-#include <Ui/MethodHandler.h>
 #include <Ui/Bitmap.h>
 #include <Ui/Custom/Splitter.h>
-#include <Ui/Events/CloseEvent.h>
-#include <Ui/Events/CommandEvent.h>
-#include <Ui/Events/MouseEvent.h>
-#include <Ui/Events/TreeViewEditEvent.h>
 #include <Xml/XmlSerializer.h>
 #include <Xml/XmlDeserializer.h>
 #include "SolutionBuilderLIB/Aggregation.h"
@@ -46,7 +41,7 @@
 
 using namespace traktor;
 
-#define TITLE L"SolutionBuilder v2.6"
+#define TITLE L"SolutionBuilder v2.7"
 
 T_IMPLEMENT_RTTI_CLASS(L"SolutionForm", SolutionForm, ui::Form)
 
@@ -84,8 +79,8 @@ bool SolutionForm::create(const traktor::CommandLine& cmdLine)
 
 	setIcon(ui::Bitmap::load(c_ResourceTraktorSmall, sizeof(c_ResourceTraktorSmall), L"png"));
 
-	addTimerEventHandler(ui::createMethodHandler(this, &SolutionForm::eventTimer));
-	addCloseEventHandler(ui::createMethodHandler(this, &SolutionForm::eventClose));
+	addEventHandler< ui::TimerEvent >(this, &SolutionForm::eventTimer);
+	addEventHandler< ui::CloseEvent >(this, &SolutionForm::eventClose);
 
 	m_shortcutTable = new ui::ShortcutTable();
 	m_shortcutTable->create();
@@ -94,11 +89,11 @@ bool SolutionForm::create(const traktor::CommandLine& cmdLine)
 	m_shortcutTable->addCommand(ui::KsCommand, ui::VkS, ui::Command(L"File.Save"));
 	m_shortcutTable->addCommand(ui::KsCommand | ui::KsShift, ui::VkS, ui::Command(L"File.SaveAs"));
 	m_shortcutTable->addCommand(ui::KsCommand, ui::VkX, ui::Command(L"File.Exit"));
-	m_shortcutTable->addShortcutEventHandler(ui::createMethodHandler(this, &SolutionForm::eventShortcut));
+	m_shortcutTable->addEventHandler< ui::ShortcutEvent >(this, &SolutionForm::eventShortcut);
 
 	m_menuBar = new ui::MenuBar();
 	m_menuBar->create(this);
-	m_menuBar->addClickEventHandler(ui::createMethodHandler(this, &SolutionForm::eventMenuClick));
+	m_menuBar->addEventHandler< ui::MenuClickEvent >(this, &SolutionForm::eventMenuClick);
 
 	m_menuItemMRU = new ui::MenuItem(L"Recent");
 
@@ -132,10 +127,10 @@ bool SolutionForm::create(const traktor::CommandLine& cmdLine)
 		ui::TreeView::WsTreeLines
 	);
 	m_treeSolution->addImage(ui::Bitmap::load(c_ResourceSolution, sizeof(c_ResourceSolution), L"png"), 8);
-	m_treeSolution->addButtonDownEventHandler(ui::createMethodHandler(this, &SolutionForm::eventTreeButtonDown));
-	m_treeSolution->addSelectEventHandler(ui::createMethodHandler(this, &SolutionForm::eventTreeSelect));
-	m_treeSolution->addEditEventHandler(ui::createMethodHandler(this, &SolutionForm::eventTreeEdit));
-	m_treeSolution->addEditedEventHandler(ui::createMethodHandler(this, &SolutionForm::eventTreeChange));
+	m_treeSolution->addEventHandler< ui::MouseButtonDownEvent >(this, &SolutionForm::eventTreeButtonDown);
+	m_treeSolution->addEventHandler< ui::SelectionChangeEvent >(this, &SolutionForm::eventTreeSelect);
+	m_treeSolution->addEventHandler< ui::TreeViewEditEvent >(this, &SolutionForm::eventTreeEdit);
+	m_treeSolution->addEventHandler< ui::TreeViewContentChangeEvent >(this, &SolutionForm::eventTreeChange);
 
 	m_menuSolution = new ui::PopupMenu();
 	m_menuSolution->create();
@@ -193,7 +188,7 @@ bool SolutionForm::create(const traktor::CommandLine& cmdLine)
 
 	m_pageAggregationItem = new AggregationItemPropertyPage();
 	m_pageAggregationItem->create(pageContainer);
-	m_pageAggregationItem->addChangeEventHandler(ui::createMethodHandler(this, &SolutionForm::eventPropertyPageChange));
+	m_pageAggregationItem->addEventHandler< ui::ContentChangeEvent >(this, &SolutionForm::eventPropertyPageChange);
 	m_pageAggregationItem->hide();
 
 	m_pageConfiguration = new ConfigurationPropertyPage();
@@ -519,23 +514,23 @@ bool SolutionForm::commandExit()
 	return true;
 }
 
-void SolutionForm::eventTimer(ui::Event*)
+void SolutionForm::eventTimer(ui::TimerEvent*)
 {
 	updateTitle();
 }
 
-void SolutionForm::eventClose(ui::Event* event)
+void SolutionForm::eventClose(ui::CloseEvent* event)
 {
 	if (!commandExit())
 	{
-		checked_type_cast< ui::CloseEvent* >(event)->cancel();
-		checked_type_cast< ui::CloseEvent* >(event)->consume();
+		event->cancel();
+		event->consume();
 	}
 }
 
-void SolutionForm::eventShortcut(ui::Event* event)
+void SolutionForm::eventShortcut(ui::ShortcutEvent* event)
 {
-	const ui::Command& command = checked_type_cast< ui::CommandEvent* >(event)->getCommand();
+	const ui::Command& command = event->getCommand();
 	if (command == L"File.New")
 		commandNew();
 	else if (command == L"File.Open")
@@ -548,9 +543,9 @@ void SolutionForm::eventShortcut(ui::Event* event)
 		commandExit();
 }
 
-void SolutionForm::eventMenuClick(ui::Event* event)
+void SolutionForm::eventMenuClick(ui::MenuClickEvent* event)
 {
-	const ui::Command& command = checked_type_cast< ui::CommandEvent* >(event)->getCommand();
+	const ui::Command& command = event->getCommand();
 	if (command == L"File.New")
 		commandNew();
 	else if (command == L"File.Open")
@@ -561,7 +556,7 @@ void SolutionForm::eventMenuClick(ui::Event* event)
 		commandSave(true);
 	else if (command == L"File.MRU")
 	{
-		Ref< Path > path = checked_type_cast< ui::MenuItem* >(event->getItem())->getData< Path >(L"PATH");
+		Ref< Path > path = event->getItem()->getData< Path >(L"PATH");
 		T_ASSERT (path);
 
 		Ref< IStream > file = FileSystem::getInstance().open(*path, traktor::File::FmRead);
@@ -616,11 +611,9 @@ void SolutionForm::eventMenuClick(ui::Event* event)
 	}
 }
 
-void SolutionForm::eventTreeButtonDown(ui::Event* event)
+void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 {
-	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
-
-	if (mouseEvent->getButton() != ui::MouseEvent::BtRight)
+	if (event->getButton() != ui::MbtRight)
 		return;
 
 	Ref< ui::TreeViewItem > selectedItem = m_treeSolution->getSelectedItem();
@@ -630,7 +623,7 @@ void SolutionForm::eventTreeButtonDown(ui::Event* event)
 	Ref< Solution > solution = selectedItem->getData< Solution >(L"PRIMARY");
 	if (solution)
 	{
-		Ref< ui::MenuItem > menuItem = m_menuSolution->show(m_treeSolution, mouseEvent->getPosition());
+		Ref< ui::MenuItem > menuItem = m_menuSolution->show(m_treeSolution, event->getPosition());
 		if (menuItem)
 		{
 			const ui::Command& command = menuItem->getCommand();
@@ -660,7 +653,7 @@ void SolutionForm::eventTreeButtonDown(ui::Event* event)
 	Ref< Project > project = selectedItem->getData< Project >(L"PRIMARY");
 	if (project)
 	{
-		Ref< ui::MenuItem > menuItem = m_menuProject->show(m_treeSolution, mouseEvent->getPosition());
+		Ref< ui::MenuItem > menuItem = m_menuProject->show(m_treeSolution, event->getPosition());
 		if (menuItem)
 		{
 			const ui::Command& command = menuItem->getCommand();
@@ -735,7 +728,7 @@ void SolutionForm::eventTreeButtonDown(ui::Event* event)
 	Ref< Aggregation > aggregation = selectedItem->getData< Aggregation >(L"PRIMARY");
 	if (aggregation)
 	{
-		Ref< ui::MenuItem > menuItem = m_menuAggregation->show(m_treeSolution, mouseEvent->getPosition());
+		Ref< ui::MenuItem > menuItem = m_menuAggregation->show(m_treeSolution, event->getPosition());
 		if (menuItem)
 		{
 			const ui::Command& command = menuItem->getCommand();
@@ -790,7 +783,7 @@ void SolutionForm::eventTreeButtonDown(ui::Event* event)
 	Ref< Configuration > configuration = selectedItem->getData< Configuration >(L"PRIMARY");
 	if (configuration)
 	{
-		Ref< ui::MenuItem > menuItem = m_menuConfiguration->show(m_treeSolution, mouseEvent->getPosition());
+		Ref< ui::MenuItem > menuItem = m_menuConfiguration->show(m_treeSolution, event->getPosition());
 		if (menuItem)
 		{
 			const ui::Command& command = menuItem->getCommand();
@@ -812,7 +805,7 @@ void SolutionForm::eventTreeButtonDown(ui::Event* event)
 		Ref< Project > project = selectedItem->getData< Project >(L"PROJECT");
 		T_ASSERT (project);
 
-		Ref< ui::MenuItem > menuItem = m_menuFilter->show(m_treeSolution, mouseEvent->getPosition());
+		Ref< ui::MenuItem > menuItem = m_menuFilter->show(m_treeSolution, event->getPosition());
 		if (menuItem)
 		{
 			const ui::Command& command = menuItem->getCommand();
@@ -888,7 +881,7 @@ void SolutionForm::eventTreeButtonDown(ui::Event* event)
 	Ref< ::File > file = selectedItem->getData< ::File >(L"PRIMARY");
 	if (file)
 	{
-		Ref< ui::MenuItem > menuItem = m_menuFile->show(m_treeSolution, mouseEvent->getPosition());
+		Ref< ui::MenuItem > menuItem = m_menuFile->show(m_treeSolution, event->getPosition());
 		if (menuItem)
 		{
 			const ui::Command& command = menuItem->getCommand();
@@ -955,7 +948,7 @@ void SolutionForm::eventTreeButtonDown(ui::Event* event)
 	Ref< AggregationItem > aggregationItem = selectedItem->getData< AggregationItem >(L"PRIMARY");
 	if (aggregationItem)
 	{
-		Ref< ui::MenuItem > menuItem = m_menuAggregationItem->show(m_treeSolution, mouseEvent->getPosition());
+		Ref< ui::MenuItem > menuItem = m_menuAggregationItem->show(m_treeSolution, event->getPosition());
 		if (menuItem)
 		{
 			const ui::Command& command = menuItem->getCommand();
@@ -977,11 +970,9 @@ void SolutionForm::eventTreeButtonDown(ui::Event* event)
 	m_treeSolution->update();
 }
 
-void SolutionForm::eventTreeSelect(ui::Event* event)
+void SolutionForm::eventTreeSelect(ui::SelectionChangeEvent* event)
 {
-	Ref< ui::TreeViewItem > treeItem = checked_type_cast< ui::TreeViewItem* >(
-		checked_type_cast< ui::CommandEvent* >(event)->getItem()
-	);
+	Ref< ui::TreeViewItem > treeItem = m_treeSolution->getSelectedItem();
 
 	m_treeSolution->setFocus();
 
@@ -1032,19 +1023,17 @@ void SolutionForm::eventTreeSelect(ui::Event* event)
 	update();
 }
 
-void SolutionForm::eventTreeEdit(ui::Event* event)
+void SolutionForm::eventTreeEdit(ui::TreeViewEditEvent* event)
 {
-	Ref< ui::TreeViewItem > treeItem = static_cast< ui::TreeViewItem* >(event->getItem());
+	Ref< ui::TreeViewItem > treeItem = event->getItem();
 	Ref< AggregationItem > aggregationItem = treeItem->getData< AggregationItem >(L"PRIMARY");
 	if (aggregationItem)
 		treeItem->setText(aggregationItem->getSourceFile());
 }
 
-void SolutionForm::eventTreeChange(ui::Event* event)
+void SolutionForm::eventTreeChange(ui::TreeViewContentChangeEvent* event)
 {
-	Ref< ui::TreeViewItem > treeItem = static_cast< ui::TreeViewItem* >(
-		static_cast< ui::CommandEvent* >(event)->getItem()
-	);
+	Ref< ui::TreeViewItem > treeItem = event->getItem();
 
 	Ref< Solution > solution = treeItem->getData< Solution >(L"PRIMARY");
 	if (solution)
@@ -1080,7 +1069,7 @@ void SolutionForm::eventTreeChange(ui::Event* event)
 	event->consume();
 }
 
-void SolutionForm::eventPropertyPageChange(ui::Event*)
+void SolutionForm::eventPropertyPageChange(ui::ContentChangeEvent*)
 {
 	updateSolutionTree();
 }

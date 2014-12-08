@@ -5,9 +5,6 @@
 #include <Ui/FileDialog.h>
 #include <Ui/MessageBox.h>
 #include <Ui/Custom/InputDialog.h>
-#include <Ui/MethodHandler.h>
-#include <Ui/Events/FocusEvent.h>
-#include <Ui/Events/MouseEvent.h>
 #include "SolutionBuilderLIB/Solution.h"
 #include "SolutionBuilderLIB/Aggregation.h"
 #include "SolutionBuilderLIB/Project.h"
@@ -50,7 +47,7 @@ bool AggregationPropertyPage::create(ui::Widget* parent)
 
 	m_checkEnable = new ui::CheckBox();
 	m_checkEnable->create(this, L"Include aggregation in build");
-	m_checkEnable->addClickEventHandler(ui::createMethodHandler(this, &AggregationPropertyPage::eventEnableClick));
+	m_checkEnable->addEventHandler< ui::ButtonClickEvent >(this, &AggregationPropertyPage::eventEnableClick);
 
 	Ref< ui::Container > container = new ui::Container();
 	container->create(this, ui::WsNone, new ui::TableLayout(L"*,100%", L"100%,*", 0, 4));
@@ -63,7 +60,7 @@ bool AggregationPropertyPage::create(ui::Widget* parent)
 	m_listDependencies->addColumn(L"Dependency", 130);
 	m_listDependencies->addColumn(L"Location", 270);
 	m_listDependencies->addColumn(L"Link", 50);
-	m_listDependencies->addDoubleClickEventHandler(ui::createMethodHandler(this, &AggregationPropertyPage::eventDependencyDoubleClick));
+	m_listDependencies->addEventHandler< ui::MouseDoubleClickEvent >(this, &AggregationPropertyPage::eventDependencyDoubleClick);
 
 	Ref< ui::Static > staticAvailable = new ui::Static();
 	staticAvailable->create(container, L"Available");
@@ -76,24 +73,15 @@ bool AggregationPropertyPage::create(ui::Widget* parent)
 
 	Ref< ui::Button > buttonAdd = new ui::Button();
 	buttonAdd->create(containerAvailable, L"Add");
-	buttonAdd->addClickEventHandler(ui::createMethodHandler(
-		this,
-		&AggregationPropertyPage::eventClickAdd
-	));
+	buttonAdd->addEventHandler< ui::ButtonClickEvent >(this, &AggregationPropertyPage::eventClickAdd);
 
 	Ref< ui::Button > buttonRemove = new ui::Button();
 	buttonRemove->create(containerAvailable, L"Remove");
-	buttonRemove->addClickEventHandler(ui::createMethodHandler(
-		this,
-		&AggregationPropertyPage::eventClickRemove
-	));
+	buttonRemove->addEventHandler< ui::ButtonClickEvent >(this, &AggregationPropertyPage::eventClickRemove);
 
 	Ref< ui::Button > buttonAddExternal = new ui::Button();
 	buttonAddExternal->create(containerAvailable, L"External...");
-	buttonAddExternal->addClickEventHandler(ui::createMethodHandler(
-		this,
-		&AggregationPropertyPage::eventClickAddExternal
-	));
+	buttonAddExternal->addEventHandler< ui::ButtonClickEvent >(this, &AggregationPropertyPage::eventClickAddExternal);
 
 	return true;
 }
@@ -167,14 +155,14 @@ void AggregationPropertyPage::updateDependencyList()
 		m_dropAvailable->add((*i)->getName());
 }
 
-void AggregationPropertyPage::eventEnableClick(ui::Event* event)
+void AggregationPropertyPage::eventEnableClick(ui::ButtonClickEvent* event)
 {
 	m_aggregation->setEnable(m_checkEnable->isChecked());
 }
 
-void AggregationPropertyPage::eventDependencyDoubleClick(ui::Event* event)
+void AggregationPropertyPage::eventDependencyDoubleClick(ui::MouseDoubleClickEvent* event)
 {
-	ui::Point mousePosition = checked_type_cast< const ui::MouseEvent* >(event)->getPosition();
+	ui::Point mousePosition = event->getPosition();
 
 	Ref< ui::ListViewItem > selectedItem = m_listDependencies->getSelectedItem();
 	if (!selectedItem)
@@ -220,7 +208,7 @@ void AggregationPropertyPage::eventDependencyDoubleClick(ui::Event* event)
 	}
 }
 
-void AggregationPropertyPage::eventClickAdd(ui::Event* event)
+void AggregationPropertyPage::eventClickAdd(ui::ButtonClickEvent* event)
 {
 	std::wstring dependencyName = m_dropAvailable->getSelectedItem();
 	if (!dependencyName.empty())
@@ -240,7 +228,7 @@ void AggregationPropertyPage::eventClickAdd(ui::Event* event)
 	}
 }
 
-void AggregationPropertyPage::eventClickRemove(ui::Event* event)
+void AggregationPropertyPage::eventClickRemove(ui::ButtonClickEvent* event)
 {
 	Ref< ui::ListViewItem > selectedItem = m_listDependencies->getSelectedItem();
 	if (!selectedItem)
@@ -259,7 +247,7 @@ void AggregationPropertyPage::eventClickRemove(ui::Event* event)
 	updateDependencyList();
 }
 
-void AggregationPropertyPage::eventClickAddExternal(ui::Event* event)
+void AggregationPropertyPage::eventClickAddExternal(ui::ButtonClickEvent* event)
 {
 	ui::FileDialog fileDialog;
 	fileDialog.create(this, L"Select solution", L"SolutionBuilder solutions;*.xms");

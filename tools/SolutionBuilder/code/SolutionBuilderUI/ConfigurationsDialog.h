@@ -31,11 +31,11 @@ private:
 	traktor::Ref< traktor::ui::ListBox > m_listConfigurations;
 	std::vector< Action > m_actions;
 
-	void eventButtonNew(traktor::ui::Event* event);
+	void eventButtonNew(traktor::ui::ButtonClickEvent* event);
 
-	void eventButtonRename(traktor::ui::Event* event);
+	void eventButtonRename(traktor::ui::ButtonClickEvent* event);
 
-	void eventButtonRemove(traktor::ui::Event* event);
+	void eventButtonRemove(traktor::ui::ButtonClickEvent* event);
 };
 
 #endif	// ConfigurationsDialog_H
