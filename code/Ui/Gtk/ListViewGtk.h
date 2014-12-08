@@ -36,6 +36,8 @@ public:
 
 	virtual int getColumnWidth(int columnIndex) const;
 
+	virtual int getColumnFromPosition(int position) const;
+
 	virtual void setItems(ListViewItems* items);
 
 	virtual Ref< ListViewItems > getItems() const;

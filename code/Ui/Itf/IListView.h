@@ -41,6 +41,8 @@ public:
 
 	virtual int getColumnWidth(int columnIndex) const = 0;
 
+	virtual int getColumnFromPosition(int position) const = 0;
+
 	virtual void setItems(ListViewItems* items) = 0;
 
 	virtual Ref< ListViewItems > getItems() const = 0;

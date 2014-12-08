@@ -59,6 +59,8 @@ public:
 
 	int getColumnWidth(int columnIndex) const;
 
+	int getColumnFromPosition(int position) const;
+
 	void setItems(ListViewItems* items);
 
 	Ref< ListViewItems > getItems() const;

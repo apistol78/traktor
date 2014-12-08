@@ -97,6 +97,12 @@ int ListView::getColumnWidth(int columnIndex) const
 	return static_cast< IListView* >(m_widget)->getColumnWidth(columnIndex);
 }
 
+int ListView::getColumnFromPosition(int position) const
+{
+	T_ASSERT (m_widget);
+	return static_cast< IListView* >(m_widget)->getColumnFromPosition(position);
+}
+
 void ListView::setItems(ListViewItems* items)
 {
 	T_ASSERT (m_widget);
