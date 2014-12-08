@@ -21,7 +21,7 @@ namespace traktor
 class IStreamWrapper : public Imf::IStream
 {
 public:
-	IStreamWrapper(IStream* stream)
+	IStreamWrapper(traktor::IStream* stream)
 	:	Imf::IStream("n/a")
 	,	m_stream(stream)
 	{
@@ -39,17 +39,17 @@ public:
 
 	virtual void seekg(Imf::Int64 pos)
 	{
-		m_stream->seek(IStream::SeekSet, int(pos));
+		m_stream->seek(traktor::IStream::SeekSet, int(pos));
 	}
 
 private:
-	Ref< IStream > m_stream;
+	Ref< traktor::IStream > m_stream;
 };
 
 class OStreamWrapper : public Imf::OStream
 {
 public:
-	OStreamWrapper(IStream* stream)
+	OStreamWrapper(traktor::IStream* stream)
 	:	Imf::OStream("n/a")
 	,	m_stream(stream)
 	{
@@ -67,11 +67,11 @@ public:
 
 	virtual void seekp(Imf::Int64 pos)
 	{
-		m_stream->seek(IStream::SeekSet, int(pos));
+		m_stream->seek(traktor::IStream::SeekSet, int(pos));
 	}
 
 private:
-	Ref< IStream > m_stream;
+	Ref< traktor::IStream > m_stream;
 };
 
 		}
