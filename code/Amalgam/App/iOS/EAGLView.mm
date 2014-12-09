@@ -71,6 +71,9 @@ void updateApplicationThread(Ref< PropertyGroup > defaultSettings, EAGLView* vie
 		{
 			if (g_runModePending == 0)
 			{
+				// Show splash again; to have something more pretty than a stuck application.
+			    [view performSelectorOnMainThread:@selector(showSplash) withObject:nil waitUntilDone:NO];
+
 				application->suspend();
 			}
 			else if (g_runModePending == 1)
@@ -79,9 +82,7 @@ void updateApplicationThread(Ref< PropertyGroup > defaultSettings, EAGLView* vie
 
 				// Finished creating/resuming application; let view know so
 				// it can hide the splash screen.
-				dispatch_sync(dispatch_get_main_queue(), ^{
-					[view hideSplash];
-				});
+			    [view performSelectorOnMainThread:@selector(hideSplash) withObject:nil waitUntilDone:NO];
 			}
 
 			g_runMode = g_runModePending;
