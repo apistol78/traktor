@@ -96,8 +96,8 @@ float Heightfield::getGridHeightBilinear(float gridX, float gridZ) const
 
 float Heightfield::getWorldHeight(float worldX, float worldZ) const
 {
-	float gridX = m_size * (worldX + m_worldExtent.x() * 0.5f) / m_worldExtent.x() - 0.5f;
-	float gridZ = m_size * (worldZ + m_worldExtent.z() * 0.5f) / m_worldExtent.z() - 0.5f;
+	float gridX, gridZ;
+	worldToGrid(worldX, worldZ, gridX, gridZ);
 	float gridY = getGridHeightBilinear(gridX, gridZ);
 	return -m_worldExtent.y() * 0.5f + gridY * m_worldExtent.y();
 }
@@ -120,9 +120,9 @@ bool Heightfield::getGridCut(int32_t gridX, int32_t gridZ) const
 
 bool Heightfield::getWorldCut(float worldX, float worldZ) const
 {
-	float gridX = m_size * (worldX + m_worldExtent.x() * 0.5f) / m_worldExtent.x() - 0.5f;
-	float gridZ = m_size * (worldZ + m_worldExtent.z() * 0.5f) / m_worldExtent.z() - 0.5f;
-	return getGridCut(int32_t(gridX), int32_t(gridZ));
+	int32_t gridX, gridZ;
+	worldToGrid(worldX, worldZ, gridX, gridZ);
+	return getGridCut(gridX, gridZ);
 }
 
 void Heightfield::gridToWorld(int32_t gridX, int32_t gridZ, float& outWorldX, float& outWorldZ) const
@@ -138,14 +138,16 @@ void Heightfield::gridToWorld(float gridX, float gridZ, float& outWorldX, float&
 
 void Heightfield::worldToGrid(float worldX, float worldZ, int32_t& outGridX, int32_t& outGridZ) const
 {
-	outGridX = int32_t(m_size * (worldX + m_worldExtent.x() * 0.5f) / m_worldExtent.x() - 0.5f);
-	outGridZ = int32_t(m_size * (worldZ + m_worldExtent.z() * 0.5f) / m_worldExtent.z() - 0.5f);
+	float gridX, gridZ;
+	worldToGrid(worldX, worldZ, gridX, gridZ);
+	outGridX = int32_t(gridX);
+	outGridZ = int32_t(gridZ);
 }
 
 void Heightfield::worldToGrid(float worldX, float worldZ, float& outGridX, float& outGridZ) const
 {
-	outGridX = m_size * (worldX + m_worldExtent.x() * 0.5f) / m_worldExtent.x() - 0.5f;
-	outGridZ = m_size * (worldZ + m_worldExtent.z() * 0.5f) / m_worldExtent.z() - 0.5f;
+	outGridX = m_size * (worldX + m_worldExtent.x() * 0.5f) / m_worldExtent.x()/* - 0.5f*/;
+	outGridZ = m_size * (worldZ + m_worldExtent.z() * 0.5f) / m_worldExtent.z()/* - 0.5f*/;
 }
 
 float Heightfield::unitToWorld(float unitY) const
