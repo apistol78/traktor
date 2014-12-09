@@ -48,6 +48,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundSystem", SoundSystem, Object)
 
 SoundSystem::SoundSystem(ISoundDriver* driver)
 :	m_driver(driver)
+,	m_suspended(false)
 ,	m_volume(1.0f)
 ,	m_threadMixer(0)
 ,	m_threadSubmit(0)
@@ -181,6 +182,10 @@ bool SoundSystem::reset(ISoundDriver* driver)
 
 void SoundSystem::suspend()
 {
+	// Prevent multiple suspends.
+	if (m_suspended)
+		return;
+
 	if (m_threadSubmit)
 	{
 		m_threadSubmit->stop();
@@ -200,12 +205,17 @@ void SoundSystem::suspend()
 		m_driver->destroy();
 
 	m_mixer = 0;
+	m_suspended = true;
 }
 
 void SoundSystem::resume()
 {
-	if (m_threadMixer && m_threadSubmit)
+	// Prevent multiple resumes.
+	if (!m_suspended)
 		return;
+
+	T_ASSERT (m_threadMixer == 0);
+	T_ASSERT (m_threadSubmit == 0);
 
 	if (!m_driver)
 		return;
@@ -242,6 +252,8 @@ void SoundSystem::resume()
 	// Start threads.
 	m_threadMixer->start(Thread::Above);
 	m_threadSubmit->start(Thread::Highest);
+
+	m_suspended = false;
 }
 
 void SoundSystem::setVolume(float volume)

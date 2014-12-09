@@ -125,6 +125,7 @@ private:
 	Ref< ISoundDriver > m_driver;
 	Ref< ISoundMixer > m_mixer;
 	SoundSystemCreateDesc m_desc;
+	bool m_suspended;
 	float m_volume;
 	SmallMap< handle_t, float > m_categoryVolumes;
 	Thread* m_threadMixer;
