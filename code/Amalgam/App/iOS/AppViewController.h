@@ -11,6 +11,10 @@
 
 - (void) stopAnimation;
 
+- (void) suspend;
+
+- (void) resume;
+
 @end
 
 #endif	// traktor_amalgam_AppViewController_H

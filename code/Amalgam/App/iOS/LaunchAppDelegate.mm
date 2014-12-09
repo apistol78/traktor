@@ -44,8 +44,6 @@ extern void applicationResume();
 
 - (void) applicationWillResignActive:(UIApplication *)application
 {
-	applicationSuspend();
-
 	if (viewController != nil)
 		[viewController stopAnimation];
 }
@@ -54,8 +52,6 @@ extern void applicationResume();
 {
 	if (viewController != nil)
 		[viewController startAnimation];
-
-	applicationResume();
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
@@ -71,13 +67,13 @@ extern void applicationResume();
 	applicationSuspend();
 	
 	if (viewController != nil)
-		[viewController stopAnimation];
+		[viewController suspend];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
 	if (viewController != nil)
-		[viewController startAnimation];
+		[viewController resume];
 
 	applicationResume();
 }

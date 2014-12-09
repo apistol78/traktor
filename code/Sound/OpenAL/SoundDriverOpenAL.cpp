@@ -7,6 +7,10 @@
 #include "Core/Thread/ThreadManager.h"
 #include "Sound/OpenAL/SoundDriverOpenAL.h"
 
+#if defined(__IOS__)
+#	include "Sound/OpenAL/iOS/AudioSession.h"
+#endif
+
 namespace traktor
 {
 	namespace sound
@@ -201,7 +205,11 @@ void SoundDriverOpenAL::wait()
 		currentThread->sleep(10);
 	}
 
+#if defined(__IOS__)
+	activateAudioSession();
+#else
 	log::error << L"OpenAL error detected; timeout while waiting for processed buffer" << Endl;
+#endif
 }
 
 void SoundDriverOpenAL::submit(const SoundBlock& soundBlock)

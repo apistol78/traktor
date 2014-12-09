@@ -32,8 +32,8 @@ Ref< PropertyGroup > loadSettings(const Path& settingsPath)
 	return settings;
 }
 
-uint32_t g_runMode = 0;
-uint32_t g_runModePending = 0;
+bool g_animation = false;
+bool g_suspend[2] = { false, true };
 
 void updateApplicationThread(Ref< PropertyGroup > defaultSettings, EAGLView* view)
 {
@@ -67,28 +67,24 @@ void updateApplicationThread(Ref< PropertyGroup > defaultSettings, EAGLView* vie
 	// Enter update loop.
 	while (!currentThread->stopped())
 	{
-		if (g_runMode != g_runModePending)
+		// Should we suspend/resume?
+		if (g_suspend[0] != g_suspend[1])
 		{
-			if (g_runModePending == 0)
+			if (g_suspend[0])
 			{
-				// Show splash again; to have something more pretty than a stuck application.
 			    [view performSelectorOnMainThread:@selector(showSplash) withObject:nil waitUntilDone:NO];
-
 				application->suspend();
 			}
-			else if (g_runModePending == 1)
+			else
 			{
 				application->resume();
-
-				// Finished creating/resuming application; let view know so
-				// it can hide the splash screen.
-			    [view performSelectorOnMainThread:@selector(hideSplash) withObject:nil waitUntilDone:NO];
+				[view performSelectorOnMainThread:@selector(hideSplash) withObject:nil waitUntilDone:NO];
 			}
-
-			g_runMode = g_runModePending;
+			g_suspend[1] = g_suspend[0];
 		}
 
-		if (g_runMode == 1)
+		// Animation update.
+		if (g_animation && !g_suspend[1])
 		{
 			if (!application->update())
 				break;
@@ -212,17 +208,25 @@ void updateApplicationThread(Ref< PropertyGroup > defaultSettings, EAGLView* vie
 
 - (void) startAnimation
 {
-	g_runModePending = 1;
+	g_animation = true;
 }
 
 - (void) stopAnimation
 {
-	g_runModePending = 0;
+	g_animation = false;
 }
 
-- (void) waitUntilRunMode
+- (void) suspend
 {
-	while (m_thread && g_runMode != g_runModePending)
+	g_suspend[0] = true;
+	while (m_thread && g_suspend[0] != g_suspend[1])
+		ThreadManager::getInstance().getCurrentThread()->sleep(10);
+}
+
+- (void) resume
+{
+	g_suspend[0] = false;
+	while (m_thread && g_suspend[0] != g_suspend[1])
 		ThreadManager::getInstance().getCurrentThread()->sleep(10);
 }
 
