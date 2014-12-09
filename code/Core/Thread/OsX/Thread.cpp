@@ -17,7 +17,9 @@ struct Internal
 	pthread_t thread;
 	pthread_mutex_t mutex;
 	pthread_cond_t signal;
-	char name[32];
+#if defined(_DEBUG)
+	char name[256];
+#endif
 	Functor* functor;
 	bool finished;
 };
@@ -26,14 +28,19 @@ void* trampoline(void* data)
 {
 	Internal* in = reinterpret_cast< Internal* >(data);
 
+#if defined(_DEBUG)
 	if (in->name)
 		pthread_setname_np(in->name);
+#endif
 
 	(in->functor->operator())();
 	in->finished = true;
 
 	pthread_cond_signal(&in->signal);
+
+#if !defined(__IOS__)
 	pthread_exit(0);
+#endif
 	return 0;
 }
 
@@ -46,7 +53,9 @@ Thread::Thread(Functor* functor, const std::wstring& name, int hardwareCore)
 ,	m_functor(functor)
 {
 	Internal* in = new Internal();
+#if defined(_DEBUG)
 	std::strcpy(in->name, !name.empty() ? wstombs(name).c_str() : "Unnamed");
+#endif
 	in->functor = m_functor;
 	in->finished = false;
 	m_handle = in;
@@ -75,7 +84,12 @@ bool Thread::start(Priority priority)
 	pthread_attr_init(&attr);
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 	pthread_attr_setinheritsched(&attr, PTHREAD_EXPLICIT_SCHED);
-	
+
+#if defined(__IOS__)
+	// By default iOS allocate only 512kb for secondary threads.
+	pthread_attr_setstacksize(&attr, 2 * 1024 * 1024);
+#endif
+
 	std::memset(&param, 0, sizeof(param));
 	switch (priority)
 	{
@@ -116,8 +130,8 @@ bool Thread::wait(int timeout)
 {
 	Internal* in = reinterpret_cast< Internal* >(m_handle);
 
-	int status;
-	int rc;
+	int status = 0;
+	int rc = 0;
 	
 	if (timeout >= 0)
 	{
@@ -148,7 +162,11 @@ bool Thread::wait(int timeout)
 	
 	rc = pthread_join(
 		in->thread,
+#if defined(__IOS__)
+		0
+#else		
 		(void**)&status
+#endif
 	);
 	
 	return bool(rc == 0); 
