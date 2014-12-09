@@ -57,7 +57,7 @@
 				<first>1451</first>
 				<second>713</second>
 			</position>
-			<swizzle>000x</swizzle>
+			<swizzle>xxx</swizzle>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>

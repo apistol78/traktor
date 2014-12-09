@@ -4,8 +4,8 @@
 		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
 			<position>
-				<first>1109</first>
-				<second>312</second>
+				<first>1467</first>
+				<second>323</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -47,8 +47,8 @@
 		<item type="traktor.render.Conditional" version="1">
 			<comment/>
 			<position>
-				<first>936</first>
-				<second>312</second>
+				<first>1294</first>
+				<second>323</second>
 			</position>
 			<branch>BrAuto</branch>
 			<operator>CoLess</operator>
@@ -108,39 +108,39 @@
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>797</first>
-				<second>364</second>
+				<first>1155</first>
+				<second>375</second>
 			</position>
 			<value>100000</value>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>825</first>
-				<second>395</second>
+				<first>1183</first>
+				<second>406</second>
 			</position>
 			<value>1</value>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>825</first>
-				<second>423</second>
+				<first>1183</first>
+				<second>434</second>
 			</position>
 			<value>0</value>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>599</first>
-				<second>360</second>
+				<first>990</first>
+				<second>371</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>503</first>
-				<second>372</second>
+				<first>861</first>
+				<second>383</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -381,26 +381,18 @@
 			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
-		<item type="traktor.render.Swizzle">
-			<comment/>
-			<position>
-				<first>505</first>
-				<second>405</second>
-			</position>
-			<swizzle>000x</swizzle>
-		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>378</first>
-				<second>442</second>
+				<first>365</first>
+				<second>437</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>286</first>
-				<second>438</second>
+				<first>280</first>
+				<second>435</second>
 			</position>
 			<swizzle>w</swizzle>
 		</item>
@@ -423,6 +415,23 @@
 				</item>
 			</outputPins>
 			<values/>
+		</item>
+		<item type="traktor.render.Swizzle">
+			<comment/>
+			<position>
+				<first>894</first>
+				<second>468</second>
+			</position>
+			<swizzle>xxx</swizzle>
+		</item>
+		<item type="traktor.render.Clamp">
+			<comment/>
+			<position>
+				<first>562</first>
+				<second>437</second>
+			</position>
+			<min>0</min>
+			<max>1</max>
 		</item>
 	</nodes>
 	<edges>
@@ -718,31 +727,11 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[27]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[28]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[27]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[29]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[28]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
@@ -752,7 +741,7 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[29]"/>
+				<node ref="/object/nodes/item[28]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -762,7 +751,7 @@
 				<name>Specular</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[28]"/>
+				<node ref="/object/nodes/item[27]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
@@ -792,8 +781,18 @@
 				<name>TexCoord</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[30]"/>
+				<node ref="/object/nodes/item[29]"/>
 				<name>ShadowUV</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[29]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[14]"/>
+				<name>Shadow</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -802,8 +801,28 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[14]"/>
-				<name>Shadow</name>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[27]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[31]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[31]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[30]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>
