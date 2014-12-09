@@ -165,7 +165,7 @@ bool SoundSystem::reset(ISoundDriver* driver)
 	m_driver = 0;
 
 	// Create new driver and mixer.
-	if (!driver->create(m_desc.nativeHandle, m_desc.driverDesc, m_mixer))
+	if (!driver || !driver->create(m_desc.nativeHandle, m_desc.driverDesc, m_mixer))
 		return false;
 
 	m_driver = driver;
@@ -196,13 +196,23 @@ void SoundSystem::suspend()
 	}
 
 	// Destroy driver; but keep pointer to driver, as we will re-create it.
-	m_driver->destroy();
+	if (m_driver)
+		m_driver->destroy();
+
 	m_mixer = 0;
 }
 
 void SoundSystem::resume()
 {
 	if (m_threadMixer && m_threadSubmit)
+		return;
+
+	if (!m_driver)
+		return;
+
+	// Re-instanciate driver.
+	m_driver = checked_type_cast< ISoundDriver* >(type_of(m_driver).createInstance());
+	if (!m_driver)
 		return;
 
 	// Create driver.
