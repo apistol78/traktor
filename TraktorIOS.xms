@@ -8302,6 +8302,8 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
+						<item>UIKit.framework</item>
+						<item>AVFoundation.framework</item>
 						<item>OpenAL.framework</item>
 					</libraries>
 					<additionalCompilerOptions/>
@@ -8322,6 +8324,8 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
+						<item>UIKit.framework</item>
+						<item>AVFoundation.framework</item>
 						<item>OpenAL.framework</item>
 					</libraries>
 					<additionalCompilerOptions/>
@@ -8342,6 +8346,8 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
+						<item>UIKit.framework</item>
+						<item>AVFoundation.framework</item>
 						<item>OpenAL.framework</item>
 					</libraries>
 					<additionalCompilerOptions/>
@@ -8362,6 +8368,8 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
+						<item>UIKit.framework</item>
+						<item>AVFoundation.framework</item>
 						<item>OpenAL.framework</item>
 					</libraries>
 					<additionalCompilerOptions/>
@@ -8372,6 +8380,15 @@
 				<item type="File">
 					<fileName>*.*</fileName>
 					<items/>
+				</item>
+				<item type="Filter">
+					<name>iOS</name>
+					<items>
+						<item type="File">
+							<fileName>iOS/*.*</fileName>
+							<items/>
+						</item>
+					</items>
 				</item>
 			</items>
 			<dependencies>

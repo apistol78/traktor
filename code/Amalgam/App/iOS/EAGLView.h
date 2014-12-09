@@ -29,7 +29,9 @@ class Thread;
 
 - (void) stopAnimation;
 
-- (void) waitUntilRunMode;
+- (void) suspend;
+
+- (void) resume;
 
 - (void) dealloc;
 

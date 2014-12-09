@@ -45,4 +45,16 @@ using namespace traktor;
 		[glView stopAnimation];
 }
 
+- (void) suspend
+{
+	if (glView != nil)
+		[glView suspend];
+}
+
+- (void) resume
+{
+	if (glView != nil)
+		[glView resume];
+}
+
 @end
