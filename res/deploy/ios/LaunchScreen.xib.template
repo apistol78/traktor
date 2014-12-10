@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6250" systemVersion="14A389" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6244"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
@@ -11,11 +11,27 @@
             <rect key="frame" x="0.0" y="0.0" width="480" height="480"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Launch" translatesAutoresizingMaskIntoConstraints="NO" id="T6R-fk-nJE">
+                <imageView
+                    userInteractionEnabled="NO"
+                    contentMode="scaleAspectFill"
+                    horizontalHuggingPriority="251"
+                    verticalHuggingPriority="251"
+                    image="Launch"
+                    translatesAutoresizingMaskIntoConstraints="NO"
+                    id="T6R-fk-nJE"
+                >
                     <rect key="frame" x="0.0" y="0.0" width="480" height="480"/>
                 </imageView>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="T6R-fk-nJE" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="2PC-ZC-kFq"/>
+                <constraint firstItem="T6R-fk-nJE" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="3Cg-xh-Wcc"/>
+                <constraint firstAttribute="bottom" secondItem="T6R-fk-nJE" secondAttribute="bottom" id="6N1-H0-r9T"/>
+                <constraint firstAttribute="centerX" secondItem="T6R-fk-nJE" secondAttribute="centerX" id="GsV-VS-Stl"/>
+                <constraint firstAttribute="trailing" secondItem="T6R-fk-nJE" secondAttribute="trailing" id="a3s-D9-HdF"/>
+                <constraint firstAttribute="centerY" secondItem="T6R-fk-nJE" secondAttribute="centerY" id="xgM-wz-12l"/>
+            </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <point key="canvasLocation" x="548" y="455"/>
