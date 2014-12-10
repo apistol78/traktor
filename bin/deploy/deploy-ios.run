@@ -1,5 +1,44 @@
 
 
+-- Application icon definitions.
+local iconDefinitions =
+{
+	{ idiom = "iphone", width = 29, height = 29, scale = 2 },
+	{ idiom = "iphone", width = 29, height = 29, scale = 3 },
+	{ idiom = "iphone", width = 40, height = 40, scale = 2 },
+	{ idiom = "iphone", width = 40, height = 40, scale = 3 },
+	{ idiom = "iphone", width = 60, height = 60, scale = 2 },
+	{ idiom = "iphone", width = 60, height = 60, scale = 3 },
+	{ idiom = "ipad",   width = 29, height = 29, scale = 1 },
+	{ idiom = "ipad",   width = 29, height = 29, scale = 2 },
+	{ idiom = "ipad",   width = 40, height = 40, scale = 1 },
+	{ idiom = "ipad",   width = 40, height = 40, scale = 2 },
+	{ idiom = "ipad",   width = 76, height = 76, scale = 1 },
+	{ idiom = "ipad",   width = 76, height = 76, scale = 2 },
+}
+
+
+-- Launch image definitions (pre-iOS 7.0).
+local imageDefinitions =
+{
+	{ extent = "full-screen",   idiom = "ipad",   subtype = nil,       width = 1536/2, height = 2048/2, minversion = "7.0", orientation = "portrait",  scale = 2 },
+	{ extent = "full-screen",   idiom = "ipad",   subtype = nil,       width = 1024/1, height = 768/1,  minversion = "7.0", orientation = "landscape", scale = 1 },
+	{ extent = "full-screen",   idiom = "ipad",   subtype = nil,       width = 2048/2, height = 1536/2, minversion = "7.0", orientation = "landscape", scale = 2 },
+	{ extent = nil,             idiom = "iphone", subtype = nil,       width = 640/2,  height = 960/2,  minversion = "7.0", orientation = "portrait",  scale = 2 },
+	{ extent = nil,             idiom = "iphone", subtype = "retina4", width = 640/2,  height = 1136/2, minversion = "7.0", orientation = "portrait",  scale = 2 },
+	{ extent = "full-screen",   idiom = "ipad",   subtype = nil,       width = 768/1,  height = 1024/1, minversion = "7.0", orientation = "portrait",  scale = 1 },
+}
+
+
+-- Launch screen image definitions (iOS 8.0+).
+local launchScreenDefinitions =
+{
+	{ width = 1242/3, height = 2208/3, scale = 1 },
+	{ width = 1242/3, height = 2208/3, scale = 2 },
+	{ width = 1242/3, height = 2208/3, scale = 3 }
+}
+
+
 function string:split(sep)
 	local sep, fields = sep or ":", {}
 	local pattern = string.format("([^%s]+)", sep)
@@ -42,34 +81,6 @@ end
 function deploy(args)
 	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
 
-	stdout:printLn("Generating iOS default images...")
-	local defaultImage = Image.loadFromFile("$(DEPLOY_SYSTEM_ROOT)/res/deploy/ios/Default.png")
-	if defaultImage ~= nil then
-		generateImage("Default.png", defaultImage, 320, 480)
-		generateImage("Default@2x.png", defaultImage, 640, 960)
-		generateImage("Default-568h@2x.png", defaultImage, 640, 1136)
-		generateImage("Default-ipad.png", defaultImage, 768, 1024)
-		generateImage("Default@2x-ipad.png", defaultImage, 1536, 2048)
-	else
-		stderr:printLn("Failed to generate iOS default images; unable to read source image")
-		return 1
-	end
-
-	stdout:printLn("Generating iOS icon images...")
-	local iconImage = Image.loadFromFile("$(DEPLOY_SYSTEM_ROOT)/res/deploy/ios/Icon.png")
-	if iconImage ~= nil then
-		generateImage("Icon.png", iconImage, 60, 60)
-		generateImage("Icon@2x.png", iconImage, 120, 120)
-		generateImage("Icon-76.png", iconImage, 76, 76)
-		generateImage("Icon-76@2x.png", iconImage, 152, 152)
-		generateImage("Icon-Small.png", iconImage, 29, 29)
-		generateImage("Icon-Small@2x.png", iconImage, 58, 58)
-		generateImage("Icon-Small-50.png", iconImage, 50, 50)
-	else
-		stderr:printLn("Failed to generate iOS icon images; unable to read source image")
-		return 1
-	end
-
 	stdout:printLn("Generating Info.plist...")
 	if run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/ios/Info.plist.template", "Info.plist") ~= 0 then
 		stderr:printLn("Failed to generate Info.plist")
@@ -81,6 +92,144 @@ function deploy(args)
 		stderr:printLn("Failed to generate Main.mm")
 		return 1
 	end
+
+	stdout:printLn("Generating LaunchScreen.xib...")
+	if run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/ios/LaunchScreen.xib.template", "LaunchScreen.xib") ~= 0 then
+		stderr:printLn("Failed to generate LaunchScreen.xib")
+		return 1
+	end
+
+	stdout:printLn("Generating Images.xcassets...")
+	run:mkdir("Images.xcassets/Icon.appiconset")
+	local iconImage = Image.loadFromFile("$(DEPLOY_SYSTEM_ROOT)/res/deploy/ios/Icon.png")
+	if iconImage ~= nil then
+		local f = fileSystem:open(Path("Images.xcassets/Icon.appiconset/Contents.json"), 2)
+		local s = StreamOutput(f, Utf8Encoding(), "unix")
+		s:printLn("{")
+		s:printLn("  \"images\" : [")
+
+		for i, id in ipairs(iconDefinitions) do
+
+			generateImage(
+				"Images.xcassets/Icon.appiconset/Icon-" .. i .. ".png",
+				iconImage,
+				id.width * id.scale,
+				id.height * id.scale
+			)
+
+			s:printLn("    {")
+			s:printLn("      \"size\" : \"" .. id.width .. "x" .. id.height .. "\",")
+			s:printLn("      \"idiom\" : \"" .. id.idiom .. "\",")
+			s:printLn("      \"filename\" : \"Icon-" .. i .. ".png\",")
+			s:printLn("      \"scale\" : \"" .. id.scale .. "x\"")
+			s:printLn("    },")
+
+		end
+
+		s:printLn("  ],")
+		s:printLn("  \"info\" : {")
+		s:printLn("    \"version\" : 1,")
+		s:printLn("    \"author\" : \"xcode\"")
+		s:printLn("  }")
+		s:printLn("}")
+
+		f:close()
+	else
+		stderr:printLn("Failed to generate iOS icon images; unable to read source image")
+		return 1
+	end
+
+	run:mkdir("Images.xcassets/Default.launchimage")
+	local defaultImage = Image.loadFromFile("$(DEPLOY_SYSTEM_ROOT)/res/deploy/ios/Default.png")
+	if defaultImage ~= nil then
+		local f = fileSystem:open(Path("Images.xcassets/Default.launchimage/Contents.json"), 2)
+		local s = StreamOutput(f, Utf8Encoding(), "unix")
+		s:printLn("{")
+		s:printLn("  \"images\" : [")
+
+		for i, id in ipairs(imageDefinitions) do
+
+			generateImage(
+				"Images.xcassets/Default.launchimage/Default-" .. i .. ".png",
+			 	defaultImage,
+			 	id.width * id.scale,
+			 	id.height * id.scale
+			)
+
+			s:printLn("    {")
+			
+			if id.extent ~= nil then
+				s:printLn("      \"extent\" : \"" .. id.extent .. "\",")
+			end
+
+			s:printLn("      \"idiom\" : \"" .. id.idiom .. "\",")
+
+			if id.subtype ~= nil then
+				s:printLn("      \"subtype\" : \"" .. id.subtype .. "\",")
+			end
+
+			s:printLn("      \"filename\" : \"Default-" .. i .. ".png\",")
+
+			if id.minversion ~= nil then
+				s:printLn("      \"minimum-system-version\" : \"" .. id.minversion .. "\",")
+			end
+
+			s:printLn("      \"orientation\" : \"" .. id.orientation .. "\",")
+			s:printLn("      \"scale\" : \"" .. id.scale .. "x\"")
+			s:printLn("    },")
+
+		end
+
+		s:printLn("  ],")
+		s:printLn("  \"info\" : {")
+		s:printLn("    \"version\" : 1,")
+		s:printLn("    \"author\" : \"xcode\"")
+		s:printLn("  }")
+		s:printLn("}")
+
+		f:close()
+	else
+		stderr:printLn("Failed to generate iOS launch images; unable to read source image")
+		return 1
+	end	
+
+	run:mkdir("Images.xcassets/Launch.imageset")
+	local defaultImage = Image.loadFromFile("$(DEPLOY_SYSTEM_ROOT)/res/deploy/ios/Default.png")
+	if defaultImage ~= nil then
+		local f = fileSystem:open(Path("Images.xcassets/Launch.imageset/Contents.json"), 2)
+		local s = StreamOutput(f, Utf8Encoding(), "unix")
+		s:printLn("{")
+		s:printLn("  \"images\" : [")
+
+		for i, id in ipairs(launchScreenDefinitions) do
+
+			generateImage(
+				"Images.xcassets/Launch.imageset/Launch-" .. i .. ".png",
+			 	defaultImage,
+			 	id.width * id.scale,
+			 	id.height * id.scale
+			)
+
+			s:printLn("    {")
+			s:printLn("      \"idiom\" : \"universal\",")
+			s:printLn("      \"filename\" : \"Launch-" .. i .. ".png\",")
+			s:printLn("      \"scale\" : \"" .. id.scale .. "x\"")
+			s:printLn("    },")
+
+		end
+
+		s:printLn("  ],")
+		s:printLn("  \"info\" : {")
+		s:printLn("    \"version\" : 1,")
+		s:printLn("    \"author\" : \"xcode\"")
+		s:printLn("  }")
+		s:printLn("}")
+
+		f:close()
+	else
+		stderr:printLn("Failed to generate iOS launch images; unable to read source image")
+		return 1
+	end	
 
 	stdout:printLn("Generating Xcode project...")
 	run:mkdir("$(DEPLOY_PROJECT_NAME).xcodeproj")
@@ -104,7 +253,8 @@ function deploy(args)
 
 	if environment:get("DEPLOY_TARGET_HOST") ~= "localhost" then
 		stdout:printLn("Deploying resources to target host...")
-		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) launch.sh *.plist *.png *.mm Application.config", "(null)")
+		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) launch.sh *.plist *.mm *.xib *.png Application.config", "(null)")
+		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) -recursive Images.xcassets/*.*", "(null)")
 		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) \"$(DEPLOY_PROJECT_NAME).xcodeproj/project.pbxproj\"", "(null)")
 
 		if not debug then
@@ -171,34 +321,6 @@ function migrate(args)
 		return 1
 	end
 
-	stdout:printLn("Generating iOS default images...")
-	local defaultImage = Image.loadFromFile("$(DEPLOY_SYSTEM_ROOT)/res/deploy/ios/Default.png")
-	if defaultImage ~= nil then
-		generateImage("Default.png", defaultImage, 320, 480)
-		generateImage("Default@2x.png", defaultImage, 640, 960)
-		generateImage("Default-568h@2x.png", defaultImage, 640, 1136)
-		generateImage("Default-ipad.png", defaultImage, 768, 1024)
-		generateImage("Default@2x-ipad.png", defaultImage, 1536, 2048)
-	else
-		stderr:printLn("Failed to generate iOS default images; unable to read source image")
-		return 1
-	end
-
-	stdout:printLn("Generating iOS icon images...")
-	local iconImage = Image.loadFromFile("$(DEPLOY_SYSTEM_ROOT)/res/deploy/ios/Icon.png")
-	if iconImage ~= nil then
-		generateImage("Icon.png", iconImage, 60, 60)
-		generateImage("Icon@2x.png", iconImage, 120, 120)
-		generateImage("Icon-76.png", iconImage, 76, 76)
-		generateImage("Icon-76@2x.png", iconImage, 152, 152)
-		generateImage("Icon-Small.png", iconImage, 29, 29)
-		generateImage("Icon-Small@2x.png", iconImage, 58, 58)
-		generateImage("Icon-Small-50.png", iconImage, 50, 50)
-	else
-		stderr:printLn("Failed to generate iOS icon images; unable to read source image")
-		return 1
-	end
-
 	stdout:printLn("Generating Info.plist...")
 	if run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/ios/Info.plist.template", "Info.plist") ~= 0 then
 		stderr:printLn("Failed to generate Info.plist")
@@ -210,6 +332,144 @@ function migrate(args)
 		stderr:printLn("Failed to generate Main.mm")
 		return 1
 	end
+
+	stdout:printLn("Generating LaunchScreen.xib...")
+	if run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/ios/LaunchScreen.xib.template", "LaunchScreen.xib") ~= 0 then
+		stderr:printLn("Failed to generate LaunchScreen.xib")
+		return 1
+	end
+
+	stdout:printLn("Generating Images.xcassets...")
+	run:mkdir("Images.xcassets/Icon.appiconset")
+	local iconImage = Image.loadFromFile("$(DEPLOY_SYSTEM_ROOT)/res/deploy/ios/Icon.png")
+	if iconImage ~= nil then
+		local f = fileSystem:open(Path("Images.xcassets/Icon.appiconset/Contents.json"), 2)
+		local s = StreamOutput(f, Utf8Encoding(), "unix")
+		s:printLn("{")
+		s:printLn("  \"images\" : [")
+
+		for i, id in ipairs(iconDefinitions) do
+
+			generateImage(
+				"Images.xcassets/Icon.appiconset/Icon-" .. i .. ".png",
+				iconImage,
+				id.width * id.scale,
+				id.height * id.scale
+			)
+
+			s:printLn("    {")
+			s:printLn("      \"size\" : \"" .. id.width .. "x" .. id.height .. "\",")
+			s:printLn("      \"idiom\" : \"" .. id.idiom .. "\",")
+			s:printLn("      \"filename\" : \"Icon-" .. i .. ".png\",")
+			s:printLn("      \"scale\" : \"" .. id.scale .. "x\"")
+			s:printLn("    },")
+
+		end
+
+		s:printLn("  ],")
+		s:printLn("  \"info\" : {")
+		s:printLn("    \"version\" : 1,")
+		s:printLn("    \"author\" : \"xcode\"")
+		s:printLn("  }")
+		s:printLn("}")
+
+		f:close()
+	else
+		stderr:printLn("Failed to generate iOS icon images; unable to read source image")
+		return 1
+	end
+
+	run:mkdir("Images.xcassets/Default.launchimage")
+	local defaultImage = Image.loadFromFile("$(DEPLOY_SYSTEM_ROOT)/res/deploy/ios/Default.png")
+	if defaultImage ~= nil then
+		local f = fileSystem:open(Path("Images.xcassets/Default.launchimage/Contents.json"), 2)
+		local s = StreamOutput(f, Utf8Encoding(), "unix")
+		s:printLn("{")
+		s:printLn("  \"images\" : [")
+
+		for i, id in ipairs(imageDefinitions) do
+
+			generateImage(
+				"Images.xcassets/Default.launchimage/Default-" .. i .. ".png",
+				defaultImage,
+				id.width * id.scale,
+				id.height * id.scale
+			)
+			
+			s:printLn("    {")
+
+			if id.extent ~= nil then
+				s:printLn("      \"extent\" : \"" .. id.extent .. "\",")
+			end
+
+			s:printLn("      \"idiom\" : \"" .. id.idiom .. "\",")
+
+			if id.subtype ~= nil then
+				s:printLn("      \"subtype\" : \"" .. id.subtype .. "\",")
+			end
+
+			s:printLn("      \"filename\" : \"Default-" .. i .. ".png\",")
+
+			if id.minversion ~= nil then
+				s:printLn("      \"minimum-system-version\" : \"" .. id.minversion .. "\",")
+			end
+
+			s:printLn("      \"orientation\" : \"" .. id.orientation .. "\",")
+			s:printLn("      \"scale\" : \"" .. id.scale .. "x\"")
+			s:printLn("    },")
+
+		end
+
+		s:printLn("  ],")
+		s:printLn("  \"info\" : {")
+		s:printLn("    \"version\" : 1,")
+		s:printLn("    \"author\" : \"xcode\"")
+		s:printLn("  }")
+		s:printLn("}")
+
+		f:close()
+	else
+		stderr:printLn("Failed to generate iOS launch images; unable to read source image")
+		return 1
+	end
+
+	run:mkdir("Images.xcassets/Launch.imageset")
+	local defaultImage = Image.loadFromFile("$(DEPLOY_SYSTEM_ROOT)/res/deploy/ios/Default.png")
+	if defaultImage ~= nil then
+		local f = fileSystem:open(Path("Images.xcassets/Launch.imageset/Contents.json"), 2)
+		local s = StreamOutput(f, Utf8Encoding(), "unix")
+		s:printLn("{")
+		s:printLn("  \"images\" : [")
+
+		for i, id in ipairs(launchScreenDefinitions) do
+
+			generateImage(
+				"Images.xcassets/Launch.imageset/Launch-" .. i .. ".png",
+			 	defaultImage,
+			 	id.width * id.scale,
+			 	id.height * id.scale
+			)
+
+			s:printLn("    {")
+			s:printLn("      \"idiom\" : \"universal\",")
+			s:printLn("      \"filename\" : \"Launch-" .. i .. ".png\",")
+			s:printLn("      \"scale\" : \"" .. id.scale .. "x\"")
+			s:printLn("    },")
+
+		end
+
+		s:printLn("  ],")
+		s:printLn("  \"info\" : {")
+		s:printLn("    \"version\" : 1,")
+		s:printLn("    \"author\" : \"xcode\"")
+		s:printLn("  }")
+		s:printLn("}")
+
+		f:close()
+	else
+		stderr:printLn("Failed to generate iOS launch images; unable to read source image")
+		return 1
+	end		
 
 	stdout:printLn("Generating Xcode project...")
 	run:mkdir("$(DEPLOY_PROJECT_NAME).xcodeproj")
@@ -233,7 +493,8 @@ function migrate(args)
 
 	if environment:get("DEPLOY_TARGET_HOST") ~= "localhost" then
 		stdout:printLn("Deploying resources to target host...")
-		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) launch.sh *.plist *.png *.mm Content.compact Application.config", "(null)")
+		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) launch.sh *.plist *.mm *.xib *.png Content.compact Application.config", "(null)")
+		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) -recursive Images.xcassets/*.*", "(null)")
 		run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) \"$(DEPLOY_PROJECT_NAME).xcodeproj/project.pbxproj\"", "(null)")
 
 		if not debug then
