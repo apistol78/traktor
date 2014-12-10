@@ -170,21 +170,45 @@ void updateApplicationThread(Ref< PropertyGroup > defaultSettings, EAGLView* vie
 
 		UIImage* splashImage = nil;
 
-		if (screenHeight == 568.0f)
-			splashImage = [UIImage imageNamed: @"Default-568h"];
-		else if (screenHeight == 667.0f)
-			splashImage = [UIImage imageNamed: @"Default-667h"];
-		
-		if (!splashImage)
-			splashImage = [UIImage imageNamed: @"Default"];
+		// Load our own image; designed to be shown for a "long" time.
+		splashImage = [UIImage imageNamed: @"Launch"];
+		if (splashImage)
+			log::info << L"Loaded \"Launch\" splash image." << Endl;
 
+		// Otherwise show default launch image.
+		if (!splashImage)
+		{
+			if (screenHeight == 568.0f)
+			{
+				splashImage = [UIImage imageNamed: @"Default-568h"];
+				if (splashImage)
+					log::info << L"Loaded \"Default-568h\" splash image." << Endl;
+			}
+			else if (screenHeight == 667.0f)
+			{
+				splashImage = [UIImage imageNamed: @"Default-667h"];
+				if (splashImage)
+					log::info << L"Loaded \"Default-667h\" splash image." << Endl;
+			}
+		}
+		if (!splashImage)
+		{
+			splashImage = [UIImage imageNamed: @"Default"];
+			if (splashImage)
+				log::info << L"Loaded \"Default\" splash image." << Endl;
+		}
+
+		// Show splash image using image view; should mimic launch screen.
 		if (splashImage)
 		{
 			m_splashView = [[UIImageView alloc] initWithFrame: CGRectMake(0, 0, screenWidth, screenHeight)];
 			m_splashView.image = splashImage;
+			m_splashView.contentMode = UIViewContentModeScaleAspectFit;
 
 			[self addSubview: m_splashView];
 		}
+		else
+			log::error << L"No splash image loaded; no splash screen shown." << Endl;
 	}
 }
 
