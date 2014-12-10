@@ -203,7 +203,7 @@ void updateApplicationThread(Ref< PropertyGroup > defaultSettings, EAGLView* vie
 		{
 			m_splashView = [[UIImageView alloc] initWithFrame: CGRectMake(0, 0, screenWidth, screenHeight)];
 			m_splashView.image = splashImage;
-			m_splashView.contentMode = UIViewContentModeScaleAspectFit;
+			m_splashView.contentMode = UIViewContentModeScaleAspectFill;
 
 			[self addSubview: m_splashView];
 		}
