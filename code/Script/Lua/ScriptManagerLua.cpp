@@ -430,22 +430,7 @@ Ref< IScriptContext > ScriptManagerLua::createContext(const IScriptResource* scr
 		);
 	}
 
-	// Call script.
-	if (scriptResourceLua)
-	{
-		T_ANONYMOUS_VAR(Save< ScriptContextLua* >)(m_lockContext, context);
-
-		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, environmentRef);
-#if defined(T_LUA_5_2)
-		lua_setupvalue(m_luaState, -2, 1);
-		lua_call(m_luaState, 0, 0);
-#else
-		lua_setfenv(m_luaState, -2);
-		lua_call(m_luaState, 0, 0);
-#endif
-	}
-
-	// Copy values from prototype.
+	// Copy values from prototype; First attempt to have globals ready when calling script.
 	if (contextPrototype)
 	{
 		const ScriptContextLua* sourceContext = checked_type_cast< const ScriptContextLua*, false >(contextPrototype);
@@ -510,6 +495,89 @@ Ref< IScriptContext > ScriptManagerLua::createContext(const IScriptResource* scr
 		// -2 = sourceContext->m_environmentRef
 		// -1 = environmentRef
 		lua_pop(m_luaState, 2);
+	}
+
+	// Call script.
+	if (scriptResourceLua)
+	{
+		T_ANONYMOUS_VAR(Save< ScriptContextLua* >)(m_lockContext, context);
+
+		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, environmentRef);
+#if defined(T_LUA_5_2)
+		lua_setupvalue(m_luaState, -2, 1);
+		lua_call(m_luaState, 0, 0);
+#else
+		lua_setfenv(m_luaState, -2);
+		lua_call(m_luaState, 0, 0);
+#endif
+
+		// Copy values from prototype again in case they we're overwritten
+		// when calling script.
+		if (contextPrototype)
+		{
+			const ScriptContextLua* sourceContext = checked_type_cast< const ScriptContextLua*, false >(contextPrototype);
+
+			// Copy globals.
+			int32_t top = lua_gettop(m_luaState) + 1;
+
+			lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, sourceContext->m_environmentRef);
+			lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, environmentRef);
+			lua_pushnil(m_luaState);
+
+			// -3 = sourceContext->m_environmentRef
+			// -2 = environmentRef
+			// -1 = nil
+			while (lua_next(m_luaState, -3))
+			{
+				// -4 = sourceContext->m_environmentRef
+				// -3 = environmentRef
+				// -2 = key
+				// -1 = value
+				if (lua_isfunction(m_luaState, -1))
+				{
+					lua_pop(m_luaState, 1);
+
+					// -3 = sourceContext->m_environmentRef
+					// -2 = environmentRef
+					// -1 = key
+					continue;
+				}
+
+				// -4 = sourceContext->m_environmentRef
+				// -3 = environmentRef
+				// -2 = key
+				// -1 = value
+				lua_pop(m_luaState, 1);
+
+				// -3 = sourceContext->m_environmentRef
+				// -2 = environmentRef
+				// -1 = key
+				lua_pushvalue(m_luaState, -1);
+				lua_pushvalue(m_luaState, -1);
+
+				// -5 = sourceContext->m_environmentRef
+				// -4 = environmentRef
+				// -3 = key
+				// -2 = key
+				// -1 = key
+				lua_rawget(m_luaState, -5);
+
+				// -5 = sourceContext->m_environmentRef
+				// -4 = environmentRef
+				// -3 = key
+				// -2 = key
+				// -1 = prototype value
+				lua_rawset(m_luaState, -4);
+
+				// -3 = sourceContext->m_environmentRef
+				// -2 = environmentRef
+				// -1 = key
+			}
+
+			// -2 = sourceContext->m_environmentRef
+			// -1 = environmentRef
+			lua_pop(m_luaState, 2);
+		}
 	}
 
 	m_contexts.push_back(context);
