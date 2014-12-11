@@ -52,90 +52,107 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ExternalDependency" version="2">
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin32.xms</solutionFileName>
 					<projectName>Traktor.Core</projectName>
 				</item>
-				<item type="ExternalDependency" version="2">
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin32.xms</solutionFileName>
 					<projectName>Traktor.Net</projectName>
 				</item>
-				<item type="ExternalDependency" version="2">
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin32.xms</solutionFileName>
 					<projectName>Traktor.Compress</projectName>
 				</item>
-				<item type="ExternalDependency" version="2">
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin32.xms</solutionFileName>
 					<projectName>Traktor.Database</projectName>
 				</item>
-				<item type="ExternalDependency" version="2">
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin32.xms</solutionFileName>
 					<projectName>Traktor.Database.Compact</projectName>
 				</item>
-				<item type="ExternalDependency" version="2">
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin32.xms</solutionFileName>
 					<projectName>Traktor.Database.Local</projectName>
 				</item>
-				<item type="ExternalDependency" version="2">
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin32.xms</solutionFileName>
 					<projectName>Traktor.Database.Remote</projectName>
 				</item>
-				<item type="ExternalDependency" version="2">
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin32.xms</solutionFileName>
 					<projectName>Traktor.Database.Remote.Client</projectName>
 				</item>
-				<item type="ExternalDependency" version="2">
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin32.xms</solutionFileName>
 					<projectName>Traktor.Drawing</projectName>
 				</item>
-				<item type="ExternalDependency" version="2">
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin32.xms</solutionFileName>
 					<projectName>Traktor.Html</projectName>
 				</item>
-				<item type="ExternalDependency" version="2">
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin32.xms</solutionFileName>
 					<projectName>Traktor.Net</projectName>
 				</item>
-				<item type="ExternalDependency" version="2">
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin32.xms</solutionFileName>
 					<projectName>Traktor.Script</projectName>
 				</item>
-				<item type="ExternalDependency" version="2">
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin32.xms</solutionFileName>
 					<projectName>Traktor.Xml</projectName>
 				</item>
-				<item type="ExternalDependency" version="2">
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin32.xms</solutionFileName>
 					<projectName>Traktor.Sql</projectName>
 				</item>
-				<item type="ExternalDependency" version="2">
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin32.xms</solutionFileName>
 					<projectName>Traktor.Sql.Sqlite3</projectName>
 				</item>
-				<item type="ExternalDependency" version="2">
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin32.xms</solutionFileName>
-					<projectName>Extern.LuaJIT-2.0.0</projectName>
+					<projectName>Extern.lua-5.2.3</projectName>
 				</item>
-				<item type="ExternalDependency" version="2">
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin32.xms</solutionFileName>
-					<projectName>Traktor.Script.LuaJIT</projectName>
+					<solutionFileName>d:/private/traktor/TraktorWin32.xms</solutionFileName>
+					<projectName>Traktor.Script.Lua</projectName>
 				</item>
 			</dependencies>
 		</item>
