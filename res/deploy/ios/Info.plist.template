@@ -29,8 +29,6 @@ local productName = environment:get("DEPLOY_EXECUTABLE"):gsub("[.,;:-]", "_")
 	<string>1.0</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
 	<key>UIStatusBarHidden</key>
 	<true/>
 	<key>UIViewControllerBasedStatusBarAppearance</key>

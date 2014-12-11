@@ -89,7 +89,6 @@ end
 
 /* Begin PBXBuildFile section */
 		2711EBA718DDB14D005F551E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2711EB9B18DDB14D005F551E /* Images.xcassets */; };
-		2716049B1A383CEF00B85BFB /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 271604991A383CEF00B85BFB /* LaunchScreen.xib */; };
 		2711EBB418DDB23C005F551E /* Application.config in Resources */ = {isa = PBXBuildFile; fileRef = 2711EBB318DDB23C005F551E /* Application.config */; };
 <!--
 
@@ -116,7 +115,6 @@ end
 
 /* Begin PBXFileReference section */
 		2711EB9B18DDB14D005F551E /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Images.xcassets"; sourceTree = "<group>"; };
-		271604991A383CEF00B85BFB /* LaunchScreen.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = "LaunchScreen.xib"; sourceTree = "<group>"; }; 
 		2711EBB318DDB23C005F551E /* Application.config */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "Application.config"; sourceTree = "<group>"; };
 <!--
 
@@ -170,7 +168,6 @@ end
 			isa = PBXGroup;
 			children = (
 				2711EB9B18DDB14D005F551E /* Images.xcassets */,
-				271604991A383CEF00B85BFB /* LaunchScreen.xib */,
 				2711EBB318DDB23C005F551E /* Application.config */,
 <!--
 
@@ -275,7 +272,6 @@ end
 			buildActionMask = 2147483647;
 			files = (
 				2711EBA718DDB14D005F551E /* Images.xcassets in Resources */,
-				2716049B1A383CEF00B85BFB /* LaunchScreen.xib in Resources */, 
 				2711EBB418DDB23C005F551E /* Application.config in Resources */,
 <!--
 
@@ -363,8 +359,8 @@ end
 				USER_HEADER_SEARCH_PATHS = "'${DERIVED_FILES_DIR}'";
 				PRODUCT_NAME = "<!-- output:print(productName) --!>";
 				INFOPLIST_FILE = "Info.plist";
-				ASSETCATALOG_COMPILER_APPICON_NAME = "Icon";
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "Default";				
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon";
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "LaunchImage";				
 				OTHER_LDFLAGS = (
 <!--
 for _, module in ipairs(modules) do
@@ -394,8 +390,8 @@ end
 				USER_HEADER_SEARCH_PATHS = "'${DERIVED_FILES_DIR}'";
 				PRODUCT_NAME = "<!-- output:print(productName) --!>";
 				INFOPLIST_FILE = "Info.plist";
-				ASSETCATALOG_COMPILER_APPICON_NAME = "Icon";
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "Default";				
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon";
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "LaunchImage";				
 				OTHER_LDFLAGS = (
 <!--
 for _, module in ipairs(modules) do
