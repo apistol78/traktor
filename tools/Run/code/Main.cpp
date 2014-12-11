@@ -274,7 +274,7 @@ public:
 	{
 	}
 
-	virtual int32_t clientRequest(net::HttpServer* server, const net::HttpRequest* request, OutputStream& os)
+	virtual int32_t httpClientRequest(net::HttpServer* server, const net::HttpRequest* request, OutputStream& os, Ref< IStream >& outStream)
 	{
 		script::Any argv[] =
 		{

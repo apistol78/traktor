@@ -28,7 +28,7 @@ StreamOutput::StreamOutput(IStream* stream, IEncoding* encoding)
 {
 }
 
-StreamOutput::StreamOutput(IStream* stream, IEncoding* encoding, std::wstring& lineEnding)
+StreamOutput::StreamOutput(IStream* stream, IEncoding* encoding, const std::wstring& lineEnding)
 :	m_output(stream, encoding, translateLineEnding(lineEnding))
 {
 }
