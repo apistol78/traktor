@@ -157,35 +157,65 @@ bool Aabb3::intersectSegment(const Vector4& p1, const Vector4& p2, Scalar& outDi
 
 	Vector4 r = end - start;
 
-	Scalar lambdaStart = Scalar(0.0f);
-	Scalar lambdaEnd = Scalar(1.0f);
+	float lambdaStart = 0.0f;
+	float lambdaEnd = 1.0f;
 
 	uint32_t bit = 1;
-	Scalar sign = Scalar(1.0f);
+	float sign = 1.0f;
 
-	for (int i = 0; i < 2; ++i)
+	float T_MATH_ALIGN16 se[4];
+	float T_MATH_ALIGN16 he[4];
+	float T_MATH_ALIGN16 re[4];
+
+	start.storeAligned(se);
+	halfExtent.storeAligned(he);
+	r.storeAligned(re);
+
+	for (int j = 0; j < 3; ++j)
 	{
-		for (int j = 0; j < 3; ++j)
+		if (abs(re[j]) < FUZZY_EPSILON)
+			continue;
+
+		float lambda = (-se[j] - he[j] * sign) / re[j];
+		if (startCode & bit)
 		{
-			Scalar lambda = (-start[j] - halfExtent[j] * sign) / r[j];
-			if (startCode & bit)
-			{
-				if (lambdaStart <= lambda)
-					lambdaStart = lambda;
-			}
-			else if (endCode & bit)
-			{
-				if (lambda < lambdaEnd)
-					lambdaEnd = lambda;
-			}
-			bit <<= 1;
+			if (lambdaStart <= lambda)
+				lambdaStart = lambda;
 		}
-		sign = Scalar(-1.0f);
+		else if (endCode & bit)
+		{
+			if (lambda < lambdaEnd)
+				lambdaEnd = lambda;
+		}
+
+		bit <<= 1;
+	}
+
+	sign = -1.0f;
+
+	for (int j = 0; j < 3; ++j)
+	{
+		if (abs(re[j]) < FUZZY_EPSILON)
+			continue;
+
+		float lambda = (-se[j] - he[j] * sign) / re[j];
+		if (startCode & bit)
+		{
+			if (lambdaStart <= lambda)
+				lambdaStart = lambda;
+		}
+		else if (endCode & bit)
+		{
+			if (lambda < lambdaEnd)
+				lambdaEnd = lambda;
+		}
+
+		bit <<= 1;
 	}
 
 	if (lambdaStart <= lambdaEnd)
 	{
-		outDistance = ((startCode != 0x00) ? lambdaStart : lambdaEnd) * r.length();
+		outDistance = Scalar((startCode != 0x00) ? lambdaStart : lambdaEnd) * r.length();
 		return true;
 	}
 
