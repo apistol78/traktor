@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <dispatch/dispatch.h>
 
 #import "Amalgam/App/iOS/EAGLView.h"
@@ -170,35 +171,45 @@ void updateApplicationThread(Ref< PropertyGroup > defaultSettings, EAGLView* vie
 
 		UIImage* splashImage = nil;
 
-		// Load our own image; designed to be shown for a "long" time.
-		splashImage = [UIImage imageNamed: @"Launch"];
-		if (splashImage)
-			log::info << L"Loaded \"Launch\" splash image." << Endl;
+		bool ipad = bool(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
+		bool landscape = bool(screenWidth > screenHeight);
 
-		// Otherwise show default launch image.
-		if (!splashImage)
+		log::info << L"Screen bounds, width " << screenWidth << L", height " << screenHeight << Endl;
+		log::info << L"Idiom: " << (ipad ? L"iPad" : L"iPhone") << Endl;
+		log::info << L"Orientation: " << (landscape ? L"Landscape" : L"Portrait") << Endl;
+
+		if (ipad)
 		{
-			if (screenHeight == 568.0f)
-			{
-				splashImage = [UIImage imageNamed: @"Default-568h"];
-				if (splashImage)
-					log::info << L"Loaded \"Default-568h\" splash image." << Endl;
-			}
-			else if (screenHeight == 667.0f)
-			{
-				splashImage = [UIImage imageNamed: @"Default-667h"];
-				if (splashImage)
-					log::info << L"Loaded \"Default-667h\" splash image." << Endl;
-			}
+			if (landscape)
+				splashImage = [UIImage imageNamed: @"LaunchImage-700-Landscape"];
+			else
+				splashImage = [UIImage imageNamed: @"LaunchImage-700-Portrait"];
 		}
+		else
+		{
+			float s = std::max(screenWidth, screenHeight);
+			if (s == 568.0f)
+				splashImage = [UIImage imageNamed: @"LaunchImage-700-568h"];
+			else if (s == 667.0f)
+				splashImage = [UIImage imageNamed: @"LaunchImage-800-667h"];
+			else if (s == 736.0f)
+			{
+				if (landscape)
+					splashImage = [UIImage imageNamed: @"LaunchImage-800-Landscape-736h"];
+				else
+					splashImage = [UIImage imageNamed: @"LaunchImage-800-Portrait-736h"];
+			}
+			else
+				splashImage = [UIImage imageNamed: @"LaunchImage-700"];				
+		}
+
 		if (!splashImage)
 		{
-			splashImage = [UIImage imageNamed: @"Default"];
+			splashImage = [UIImage imageNamed: @"LaunchImage"];
 			if (splashImage)
-				log::info << L"Loaded \"Default\" splash image." << Endl;
+				log::info << L"Loaded \"LaunchImage\" splash image." << Endl;
 		}
 
-		// Show splash image using image view; should mimic launch screen.
 		if (splashImage)
 		{
 			m_splashView = [[UIImageView alloc] initWithFrame: CGRectMake(0, 0, screenWidth, screenHeight)];
