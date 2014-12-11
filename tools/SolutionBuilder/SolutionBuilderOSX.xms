@@ -212,7 +212,10 @@
 						<item>T_STATIC</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>Cocoa.framework</item>
+						<item>AppKit.framework</item>
+					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 				</item>
@@ -229,7 +232,10 @@
 						<item>T_STATIC</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>Cocoa.framework</item>
+						<item>AppKit.framework</item>
+					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 				</item>
