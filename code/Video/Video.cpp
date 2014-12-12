@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/IRenderSystem.h"
 #include "Render/ISimpleTexture.h"
