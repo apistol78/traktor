@@ -350,12 +350,15 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.video.VideoDecoderTheora", VideoDecoderTheora, 
 
 bool VideoDecoderTheora::create(IStream* stream)
 {
+	m_stream = stream;
+
 	m_impl = new VideoDecoderTheoraImpl();
 	if (!m_impl->create(stream))
 	{
 		m_impl = 0;
 		return false;
 	}
+
 	return true;
 }
 
@@ -367,6 +370,17 @@ void VideoDecoderTheora::destroy()
 bool VideoDecoderTheora::getInformation(VideoDecoderInfo& outInfo) const
 {
 	return m_impl ? m_impl->getInformation(outInfo) : false;
+}
+
+void VideoDecoderTheora::rewind()
+{
+	safeDestroy(m_impl);
+
+	m_stream->seek(IStream::SeekSet, 0);
+
+	m_impl = new VideoDecoderTheoraImpl();
+	if (!m_impl->create(m_stream))
+		m_impl = 0;
 }
 
 bool VideoDecoderTheora::decode(uint32_t frame, void* bits, uint32_t pitch)

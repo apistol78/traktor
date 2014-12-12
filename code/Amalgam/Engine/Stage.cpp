@@ -120,7 +120,7 @@ void Stage::terminate()
 
 script::Any Stage::invokeScript(const std::string& fn, uint32_t argc, const script::Any* argv)
 {
-	if (validateScriptContext())
+	if (validateScriptContext() && m_scriptContext->haveFunction(fn))
 		return m_scriptContext->executeFunction(fn, argc, argv);
 	else
 		return script::Any();

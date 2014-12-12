@@ -2,6 +2,7 @@
 #define traktor_amalgam_VideoLayerData_H
 
 #include "Amalgam/Engine/LayerData.h"
+#include "Core/Math/Aabb2.h"
 #include "Resource/Id.h"
 
 // import/export mechanism.
@@ -36,6 +37,8 @@ class T_DLLCLASS VideoLayerData : public LayerData
 	T_RTTI_CLASS;
 
 public:
+	VideoLayerData();
+
 	virtual Ref< Layer > createInstance(Stage* stage, amalgam::IEnvironment* environment) const;
 
 	virtual void serialize(ISerializer& s);
@@ -45,6 +48,10 @@ private:
 
 	resource::Id< video::Video > m_video;
 	resource::Id< render::Shader > m_shader;
+	Aabb2 m_screenBounds;
+	bool m_visible;
+	bool m_autoPlay;
+	bool m_repeat;
 };
 
 	}

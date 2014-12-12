@@ -2,6 +2,7 @@
 #define traktor_video_Video_H
 
 #include "Core/Object.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Video/Types.h"
 
 // import/export mechanism.
@@ -53,13 +54,17 @@ public:
 
 private:
 	Ref< IVideoDecoder > m_decoder;
-	Ref< render::ISimpleTexture > m_textures[2];
+	Ref< render::ISimpleTexture > m_textures[4];
 	VideoFormat m_format;
 	float m_time;
 	float m_rate;
-	uint32_t m_frame;
-	uint32_t m_current;
+	AutoPtr< uint8_t, AllocFreeAlign > m_frameBuffer;
+	uint32_t m_frameBufferPitch;
+	uint32_t m_frameBufferSize;
 	bool m_playing;
+	uint32_t m_lastDecodedFrame;
+	uint32_t m_lastUploadedFrame;
+	uint32_t m_current;
 };
 
 	}
