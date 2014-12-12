@@ -4,8 +4,8 @@
 		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
 			<position>
-				<first>1730</first>
-				<second>667</second>
+				<first>2001</first>
+				<second>671</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -47,30 +47,30 @@
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>1545</first>
-				<second>668</second>
+				<first>1802</first>
+				<second>749</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>1451</first>
-				<second>713</second>
+				<first>1705</first>
+				<second>785</second>
 			</position>
 			<swizzle>xxx</swizzle>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>1119</first>
-				<second>840</second>
+				<first>1296</first>
+				<second>838</second>
 			</position>
 		</item>
 		<item type="traktor.render.Clamp">
 			<comment/>
 			<position>
-				<first>706</first>
-				<second>878</second>
+				<first>747</first>
+				<second>884</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
@@ -347,16 +347,16 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>1449</first>
-				<second>680</second>
+				<first>1720</first>
+				<second>684</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>1282</first>
-				<second>609</second>
+				<first>1459</first>
+				<second>607</second>
 			</position>
 			<fragmentGuid>{3BDB38CE-AE49-4D4D-A158-78E64469DF0A}</fragmentGuid>
 			<inputPins>
@@ -387,15 +387,15 @@
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>1082</first>
-				<second>725</second>
+				<first>1259</first>
+				<second>723</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>866</first>
-				<second>771</second>
+				<first>1043</first>
+				<second>769</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sub">
@@ -435,8 +435,8 @@ Fall off
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>1038</first>
-				<second>637</second>
+				<first>1215</first>
+				<second>635</second>
 			</position>
 			<parameterName>LightSunColor</parameterName>
 			<type>PtVector</type>
@@ -445,8 +445,8 @@ Fall off
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>1034</first>
-				<second>611</second>
+				<first>1211</first>
+				<second>557</second>
 			</position>
 			<parameterName>LightBaseColor</parameterName>
 			<type>PtVector</type>
@@ -455,8 +455,8 @@ Fall off
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>1016</first>
-				<second>585</second>
+				<first>1192</first>
+				<second>481</second>
 			</position>
 			<parameterName>LightShadowColor</parameterName>
 			<type>PtVector</type>

@@ -144,7 +144,7 @@ bool WorldRendererDeferred::create(
 		rtscd.preferTiled = true;
 		rtscd.targets[0].format = render::TfR16F;			// Depth (R)
 		rtscd.targets[1].format = render::TfR8G8B8A8;		// Normals (RGB), Specular roughness (A)
-		rtscd.targets[2].format = render::TfR16G16B16A16F;	// Surface color (RGB), Reflectivity (A)
+		rtscd.targets[2].format = render::TfR16G16B16A16F;	// Surface color (RGB), Specular term & Reflectivity (A 8:8)
 
 		m_gbufferTargetSet = renderSystem->createRenderTargetSet(rtscd);
 

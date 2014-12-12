@@ -370,6 +370,10 @@
 					<optional>true</optional>
 				</item>
 				<item>
+					<name>SpecularTerm</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<name>SurfaceColor</name>
 					<optional>true</optional>
 				</item>
@@ -390,6 +394,10 @@
 				</item>
 				<item>
 					<first>SpecularRoughness</first>
+					<second>0</second>
+				</item>
+				<item>
+					<first>SpecularTerm</first>
 					<second>0</second>
 				</item>
 				<item>
@@ -1083,6 +1091,16 @@ shadow write, depth write and gbuffer write.
 			<destination>
 				<node ref="/object/nodes/item[14]"/>
 				<name>ViewPosition</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[14]"/>
+				<name>SpecularTerm</name>
 			</destination>
 		</item>
 	</edges>

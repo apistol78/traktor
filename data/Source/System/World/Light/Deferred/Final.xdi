@@ -22,8 +22,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>347</first>
-				<second>213</second>
+				<first>313</first>
+				<second>216</second>
 			</position>
 			<parameterName>ColorMap</parameterName>
 			<type>PtTexture2D</type>
@@ -48,7 +48,7 @@
 		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
 			<position>
-				<first>2308</first>
+				<first>2400</first>
 				<second>204</second>
 			</position>
 			<technique>Default</technique>
@@ -180,8 +180,8 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>1121</first>
-				<second>395</second>
+				<first>1061</first>
+				<second>390</second>
 			</position>
 			<swizzle>w</swizzle>
 		</item>
@@ -323,6 +323,28 @@
 				</item>
 			</outputPins>
 			<values/>
+		</item>
+		<item type="traktor.render.Div">
+			<comment/>
+			<position>
+				<first>1406</first>
+				<second>401</second>
+			</position>
+		</item>
+		<item type="traktor.render.Scalar">
+			<comment/>
+			<position>
+				<first>1214</first>
+				<second>458</second>
+			</position>
+			<value>256</value>
+		</item>
+		<item type="traktor.render.Truncate">
+			<comment/>
+			<position>
+				<first>1198</first>
+				<second>370</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -568,7 +590,37 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item[22]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[21]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[13]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[23]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[23]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[21]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[21]"/>
 				<name>Output</name>
 			</source>
 			<destination>
