@@ -61,8 +61,8 @@
 		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
 			<position>
-				<first>1004</first>
-				<second>444</second>
+				<first>1432</first>
+				<second>447</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -165,8 +165,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-672</first>
-				<second>507</second>
+				<first>-706</first>
+				<second>492</second>
 			</position>
 			<parameterName>LightDirectionAndRange</parameterName>
 			<type>PtVector</type>
@@ -218,8 +218,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>610</first>
-				<second>379</second>
+				<first>873</first>
+				<second>375</second>
 			</position>
 			<fragmentGuid>{3BDB38CE-AE49-4D4D-A158-78E64469DF0A}</fragmentGuid>
 			<inputPins>
@@ -250,8 +250,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>366</first>
-				<second>407</second>
+				<first>629</first>
+				<second>403</second>
 			</position>
 			<parameterName>LightSunColor</parameterName>
 			<type>PtVector</type>
@@ -260,8 +260,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>362</first>
-				<second>381</second>
+				<first>625</first>
+				<second>338</second>
 			</position>
 			<parameterName>LightBaseColor</parameterName>
 			<type>PtVector</type>
@@ -270,8 +270,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>344</first>
-				<second>355</second>
+				<first>606</first>
+				<second>269</second>
 			</position>
 			<parameterName>LightShadowColor</parameterName>
 			<type>PtVector</type>
@@ -280,31 +280,31 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>769</first>
-				<second>451</second>
+				<first>1092</first>
+				<second>455</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>771</first>
-				<second>484</second>
+				<first>1094</first>
+				<second>488</second>
 			</position>
 			<swizzle>000x</swizzle>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>865</first>
-				<second>439</second>
+				<first>1188</first>
+				<second>443</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sub">
 			<comment/>
 			<position>
-				<first>-700</first>
-				<second>337</second>
+				<first>-783</first>
+				<second>339</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
@@ -318,8 +318,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-893</first>
-				<second>332</second>
+				<first>-976</first>
+				<second>334</second>
 			</position>
 			<parameterName>LightPosition</parameterName>
 			<type>PtVector</type>
@@ -368,15 +368,15 @@ Fall off
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>429</first>
-				<second>509</second>
+				<first>692</first>
+				<second>505</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>429</first>
-				<second>598</second>
+				<first>692</first>
+				<second>594</second>
 			</position>
 		</item>
 		<item type="traktor.render.Neg">
@@ -442,6 +442,54 @@ Fall off
 				<second>501</second>
 			</position>
 			<value>1</value>
+		</item>
+		<item type="traktor.render.Sampler" version="3">
+			<comment/>
+			<position>
+				<first>-211</first>
+				<second>736</second>
+			</position>
+			<minFilter>FtPoint</minFilter>
+			<mipFilter>FtPoint</mipFilter>
+			<magFilter>FtPoint</magFilter>
+			<addressU>AdWrap</addressU>
+			<addressV>AdWrap</addressV>
+			<addressW>AdWrap</addressW>
+			<mipBias>0</mipBias>
+			<ignoreMips>true</ignoreMips>
+			<useAnisotropic>false</useAnisotropic>
+		</item>
+		<item type="traktor.render.Uniform" version="1">
+			<comment/>
+			<position>
+				<first>-505</first>
+				<second>697</second>
+			</position>
+			<parameterName>ColorMap</parameterName>
+			<type>PtTexture2D</type>
+			<frequency>UfOnce</frequency>
+		</item>
+		<item type="traktor.render.Swizzle">
+			<comment/>
+			<position>
+				<first>33</first>
+				<second>756</second>
+			</position>
+			<swizzle>w</swizzle>
+		</item>
+		<item type="traktor.render.Mul">
+			<comment/>
+			<position>
+				<first>368</first>
+				<second>679</second>
+			</position>
+		</item>
+		<item type="traktor.render.Fraction">
+			<comment/>
+			<position>
+				<first>139</first>
+				<second>736</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -737,16 +785,6 @@ Fall off
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[13]"/>
-				<name>Specular</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[30]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[30]"/>
 				<name>Output</name>
 			</source>
@@ -913,6 +951,76 @@ Fall off
 			<destination>
 				<node ref="/object/nodes/item[31]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[39]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[38]"/>
+				<name>Texture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[38]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[40]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[13]"/>
+				<name>Specular</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[41]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[41]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[30]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[33]"/>
+				<name>TexCoord</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[38]"/>
+				<name>TexCoord</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[40]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[42]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[42]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[41]"/>
+				<name>Input2</name>
 			</destination>
 		</item>
 	</edges>
