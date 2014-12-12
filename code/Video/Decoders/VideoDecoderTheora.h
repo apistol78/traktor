@@ -32,9 +32,12 @@ public:
 
 	virtual bool getInformation(VideoDecoderInfo& outInfo) const;
 
+	virtual void rewind();
+
 	virtual bool decode(uint32_t frame, void* bits, uint32_t pitch);
 
 private:
+	Ref< IStream > m_stream;
 	Ref< VideoDecoderTheoraImpl > m_impl;
 };
 

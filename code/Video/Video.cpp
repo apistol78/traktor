@@ -15,8 +15,6 @@ Video::Video()
 :	m_format(VfUnknown)
 ,	m_time(0.0f)
 ,	m_rate(0.0f)
-,	m_frame(0)
-,	m_current(0)
 ,	m_playing(false)
 {
 }
@@ -31,6 +29,7 @@ bool Video::create(render::IRenderSystem* renderSystem, IVideoDecoder* decoder)
 	desc.height = info.height;
 	desc.mipCount = 1;
 	desc.format = render::TfR8G8B8A8;
+	desc.sRGB = false;
 	desc.immutable = false;
 
 	for (uint32_t i = 0; i < sizeof_array(m_textures); ++i)
@@ -44,10 +43,17 @@ bool Video::create(render::IRenderSystem* renderSystem, IVideoDecoder* decoder)
 	m_format = info.format;
 	m_time = 0.0f;
 	m_rate = info.rate;
-	m_frame = ~0U;
-	m_current = 0;
-	m_playing = true;
 
+	m_frameBuffer.reset((uint8_t*)Alloc::acquireAlign(info.width * info.height * 4, 16, T_FILE_LINE));
+	m_frameBufferPitch = info.width * 4;
+	m_frameBufferSize = info.width * info.height * 4;
+
+	m_playing = true;
+	m_lastDecodedFrame = ~0U;
+	m_lastUploadedFrame = ~0U;
+	m_current = 0;
+
+	update(0.0f);
 	return true;
 }
 
@@ -55,28 +61,24 @@ void Video::destroy()
 {
 	for (uint32_t i = 0; i < sizeof_array(m_textures); ++i)
 		safeDestroy(m_textures[i]);
+
 	m_decoder = 0;
 	m_playing = false;
+	m_frameBuffer.release();
 }
 
 bool Video::update(float deltaTime)
 {
+	if (!m_playing)
+		return false;
+
 	uint32_t frame = uint32_t(m_rate * m_time);
-	if (frame != m_frame)
+	if (frame != m_lastDecodedFrame)
 	{
-		uint32_t next = (m_current + 1) % sizeof_array(m_textures);
-		render::ISimpleTexture* texture = m_textures[next];
-
-		render::ITexture::Lock lock;
-		if (texture->lock(0, lock))
-		{
-			m_playing = m_decoder->decode(frame, lock.bits, uint32_t(lock.pitch));
-			texture->unlock(0);
-
-			m_frame = frame;
-			m_current = next;
-		}
+		m_playing = m_decoder->decode(frame, m_frameBuffer.ptr(), m_frameBufferPitch);
+		m_lastDecodedFrame = frame;
 	}
+
 	m_time += deltaTime;
 	return m_playing;
 }
@@ -88,15 +90,43 @@ bool Video::playing() const
 
 void Video::rewind()
 {
+	m_decoder->rewind();
+
 	m_time = 0.0f;
-	m_frame = ~0U;
-	m_current = 0;
 	m_playing = true;
+	m_lastDecodedFrame = ~0U;
+	m_lastUploadedFrame = ~0U;
+
+	update(0.0f);
 }
 
 render::ISimpleTexture* Video::getTexture()
 {
-	return m_textures[m_current];
+	if (m_lastUploadedFrame != m_lastDecodedFrame)
+	{
+		m_current = (m_current + 1) % sizeof_array(m_textures);
+		render::ISimpleTexture* texture = m_textures[m_current];
+		render::ITexture::Lock lock;
+		if (texture->lock(0, lock))
+		{
+			const uint8_t* s = m_frameBuffer.c_ptr();
+			uint8_t* d = static_cast< uint8_t* >(lock.bits);
+
+			uint32_t rows = m_frameBufferSize / m_frameBufferPitch;
+			for (uint32_t y = 0; y < rows; ++y)
+			{
+				std::memcpy(d, s, m_frameBufferPitch);
+				s += m_frameBufferPitch;
+				d += lock.pitch;
+			}
+
+			texture->unlock(0);
+		}
+		m_lastUploadedFrame = m_lastDecodedFrame;
+		return texture;
+	}
+	else
+		return m_textures[m_current];
 }
 
 VideoFormat Video::getFormat() const

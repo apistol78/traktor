@@ -4,6 +4,7 @@
 #include "Core/Guid.h"
 #include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Core/Math/Aabb2.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Math/Color4f.h"
 #include "Core/Math/Color4ub.h"
@@ -385,6 +386,39 @@ public:
 
 private:
 	Transform m_value;
+};
+
+class T_DLLCLASS BoxedAabb2 : public Boxed
+{
+	T_RTTI_CLASS;
+
+public:
+	BoxedAabb2();
+
+	explicit BoxedAabb2(const Aabb2& value);
+
+	explicit BoxedAabb2(const Vector2& min, const Vector2& max);
+
+	bool inside(const Vector2& pt) const { return m_value.inside(pt); }
+
+	void contain(const Vector2& pt) { m_value.contain(pt); }
+
+	const Vector2& getCenter() const { return m_value.getCenter(); }
+
+	const Vector2& getExtent() const { return m_value.getExtent(); }
+
+	bool empty() const { return m_value.empty(); }
+
+	const Aabb2& unbox() const { return m_value; }
+
+	virtual std::wstring toString() const;
+
+	void* operator new (size_t size);
+
+	void operator delete (void* ptr);
+
+private:
+	Aabb2 m_value;
 };
 
 class T_DLLCLASS BoxedAabb3 : public Boxed
@@ -1026,6 +1060,34 @@ struct CastAny < const Transform&, false >
     static const Transform& get(const Any& value) {
         return checked_type_cast< BoxedTransform*, false >(value.getObject())->unbox();
     }
+};
+
+template < >
+struct CastAny < Aabb2, false >
+{
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedAabb2 >(value.getObjectUnsafe());
+	}
+	static Any set(const Aabb2& value) {
+		return Any::fromObject(new BoxedAabb2(value));
+	}	
+	static const Aabb2& get(const Any& value) {
+		return checked_type_cast< BoxedAabb2*, false >(value.getObject())->unbox();
+	}
+};
+
+template < >
+struct CastAny < const Aabb2&, false >
+{
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedAabb2 >(value.getObjectUnsafe());
+	}
+	static Any set(const Aabb2& value) {
+		return Any::fromObject(new BoxedAabb2(value));
+	}	
+	static const Aabb2& get(const Any& value) {
+		return checked_type_cast< BoxedAabb2*, false >(value.getObject())->unbox();
+	}
 };
 
 template < >

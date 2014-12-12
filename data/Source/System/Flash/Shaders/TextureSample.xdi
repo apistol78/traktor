@@ -34,7 +34,7 @@
 			<addressU>AdWrap</addressU>
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
-			<mipBias>0</mipBias>
+			<mipBias>-1</mipBias>
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
@@ -51,7 +51,7 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1127</first>
+				<first>1188</first>
 				<second>475</second>
 			</position>
 			<name>Output</name>

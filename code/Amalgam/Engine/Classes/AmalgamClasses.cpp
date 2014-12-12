@@ -252,7 +252,17 @@ void registerAmalgamClasses(script::IScriptManager* scriptManager)
 	scriptManager->registerClass(classAudioLayer);
 
 	Ref< script::AutoScriptClass< VideoLayer > > classVideoLayer = new script::AutoScriptClass< VideoLayer >();
-	classVideoLayer->addMethod("playing", &VideoLayer::playing);
+	classVideoLayer->addMethod("play", &VideoLayer::play);
+	classVideoLayer->addMethod("stop", &VideoLayer::stop);
+	classVideoLayer->addMethod("rewind", &VideoLayer::rewind);
+	classVideoLayer->addMethod("show", &VideoLayer::show);
+	classVideoLayer->addMethod("hide", &VideoLayer::hide);
+	classVideoLayer->addMethod("isPlaying", &VideoLayer::isPlaying);
+	classVideoLayer->addMethod("isVisible", &VideoLayer::isVisible);
+	classVideoLayer->addMethod("setScreenBounds", &VideoLayer::setScreenBounds);
+	classVideoLayer->addMethod("getScreenBounds", &VideoLayer::getScreenBounds);
+	classVideoLayer->addMethod("setRepeat", &VideoLayer::setRepeat);
+	classVideoLayer->addMethod("getRepeat", &VideoLayer::getRepeat);
 	scriptManager->registerClass(classVideoLayer);
 
 	Ref< script::AutoScriptClass< WorldLayer > > classWorldLayer = new script::AutoScriptClass< WorldLayer >();

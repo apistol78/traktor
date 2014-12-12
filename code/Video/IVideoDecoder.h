@@ -45,6 +45,8 @@ public:
 
 	virtual bool getInformation(VideoDecoderInfo& outInfo) const = 0;
 
+	virtual void rewind() = 0;
+
 	virtual bool decode(uint32_t frame, void* bits, uint32_t pitch) = 0;
 };
 

@@ -79,7 +79,7 @@ const int32_t c_maxReceiveMessages = 128;
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.net.Peer2PeerTopology", Peer2PeerTopology, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.net.Peer2PeerTopology", Peer2PeerTopology, INetworkTopology)
 
 Peer2PeerTopology::Peer2PeerTopology(IPeer2PeerProvider* provider)
 :	m_provider(provider)

@@ -533,7 +533,11 @@ Ref< ActionObject > AsMovieClip::MovieClip_getBounds(FlashSpriteInstance* self, 
 
 	if (reference)
 	{
-		Matrix33 transform = reference->getTransform();
+		Matrix33 transformRef = reference->getFullTransform();
+		Matrix33 transformSelf = self->getFullTransform();
+
+		Matrix33 transform = transformRef.inverse() * transformSelf;
+
 		bounds.mn = transform * bounds.mn;
 		bounds.mx = transform * bounds.mx;
 	}

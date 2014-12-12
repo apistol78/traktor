@@ -80,6 +80,7 @@ BoxedAllocator< BoxedVector4, 32768 > s_allocBoxedVector4;
 BoxedAllocator< BoxedQuaternion, 4096 > s_allocBoxedQuaternion;
 BoxedAllocator< BoxedPlane, 256 > s_allocBoxedPlane;
 BoxedAllocator< BoxedTransform, 8192 > s_allocBoxedTransform;
+BoxedAllocator< BoxedAabb2, 64 > s_allocBoxedAabb2;
 BoxedAllocator< BoxedAabb3, 64 > s_allocBoxedAabb3;
 BoxedAllocator< BoxedFrustum, 16 > s_allocBoxedFrustum;
 BoxedAllocator< BoxedMatrix44, 16 > s_allocBoxedMatrix44;
@@ -474,6 +475,38 @@ void* BoxedTransform::operator new (size_t size)
 void BoxedTransform::operator delete (void* ptr)
 {
 	s_allocBoxedTransform.free(ptr);
+}
+
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Aabb2", BoxedAabb2, Boxed)
+
+BoxedAabb2::BoxedAabb2()
+{
+}
+
+BoxedAabb2::BoxedAabb2(const Aabb2& value)
+:	m_value(value)
+{
+}
+
+BoxedAabb2::BoxedAabb2(const Vector2& min, const Vector2& max)
+:	m_value(min, max)
+{
+}
+
+std::wstring BoxedAabb2::toString() const
+{
+	return L"(aabb2)";
+}
+
+void* BoxedAabb2::operator new (size_t size)
+{
+	return s_allocBoxedAabb2.alloc();
+}
+
+void BoxedAabb2::operator delete (void* ptr)
+{
+	s_allocBoxedAabb2.free(ptr);
 }
 
 
@@ -1219,6 +1252,16 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedTransform->addOperator< Vector4, const Vector4& >('*', &BoxedTransform::transform);
 	classBoxedTransform->addOperator< Transform, const Transform& >('*', &BoxedTransform::concat);
 	scriptManager->registerClass(classBoxedTransform);
+
+	Ref< AutoScriptClass< BoxedAabb2 > > classBoxedAabb2 = new AutoScriptClass< BoxedAabb2 >();
+	classBoxedAabb2->addConstructor();
+	classBoxedAabb2->addConstructor< const Vector2&, const Vector2& >();
+	classBoxedAabb2->addMethod("inside", &BoxedAabb2::inside);
+	classBoxedAabb2->addMethod("contain", &BoxedAabb2::contain);
+	classBoxedAabb2->addMethod("getCenter", &BoxedAabb2::getCenter);
+	classBoxedAabb2->addMethod("getExtent", &BoxedAabb2::getExtent);
+	classBoxedAabb2->addMethod("empty", &BoxedAabb2::empty);
+	scriptManager->registerClass(classBoxedAabb2);
 
 	Ref< AutoScriptClass< BoxedAabb3 > > classBoxedAabb3 = new AutoScriptClass< BoxedAabb3 >();
 	classBoxedAabb3->addConstructor();
