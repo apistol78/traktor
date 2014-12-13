@@ -189,7 +189,7 @@ void calculatePatches(const TerrainAsset* terrainAsset, const hf::Heightfield* h
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainPipeline", 10, TerrainPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainPipeline", 11, TerrainPipeline, editor::DefaultPipeline)
 
 TerrainPipeline::TerrainPipeline()
 :	m_suppressDetailShader(false)
@@ -354,6 +354,8 @@ bool TerrainPipeline::buildOutput(
 		file->close();
 		file = 0;
 
+		log::info << L"Terrain color map size " << colorImage->getWidth() << L" * " << colorImage->getHeight() << Endl;
+
 		colorMapGuid = combineGuids(c_guidColorMapSeed, outputGuid);
 
 		Ref< render::TextureOutput > colorTexture = new render::TextureOutput();
@@ -361,6 +363,7 @@ bool TerrainPipeline::buildOutput(
 		colorTexture->m_ignoreAlpha = false;
 		colorTexture->m_hasAlpha = true;
 		colorTexture->m_linearGamma = true;
+		colorTexture->m_systemTexture = true;
 		pipelineBuilder->buildOutput(colorTexture, outputPath + L"/Colors", colorMapGuid, colorImage);
 	}
 
@@ -378,11 +381,14 @@ bool TerrainPipeline::buildOutput(
 		file->close();
 		file = 0;
 
+		log::info << L"Terrain splat map size " << splatImage->getWidth() << L" * " << splatImage->getHeight() << Endl;
+
 		Ref< render::TextureOutput > splatTexture = new render::TextureOutput();
 		splatTexture->m_keepZeroAlpha = false;
 		splatTexture->m_ignoreAlpha = false;
 		splatTexture->m_hasAlpha = true;
 		splatTexture->m_linearGamma = true;
+		splatTexture->m_systemTexture = true;
 		pipelineBuilder->buildOutput(splatTexture, outputPath + L"/Splat", splatMapGuid, splatImage);
 	}
 	else
