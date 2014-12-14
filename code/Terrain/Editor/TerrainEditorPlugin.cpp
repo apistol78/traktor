@@ -2,6 +2,7 @@
 #include "I18N/Text.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/Events/ModifierChangedEvent.h"
+#include "Terrain/TerrainEntity.h"
 #include "Terrain/Editor/AverageBrush.h"
 #include "Terrain/Editor/ColorBrush.h"
 #include "Terrain/Editor/CutBrush.h"
@@ -94,6 +95,17 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::custom::ToolBar* toolBa
 	m_toolMaterial->add(L"Material 3");
 	m_toolMaterial->add(L"Material 4");
 	m_toolMaterial->select(0);
+
+	m_toolVisualize = new ui::custom::ToolBarDropDown(ui::Command(L"Terrain.Editor.SelectVisualize"), 80, i18n::Text(L"TERRAIN_EDITOR_VISUALIZE"));
+	m_toolVisualize->add(L"Default");
+	m_toolVisualize->add(L"Surface LOD");
+	m_toolVisualize->add(L"Patch LOD");
+	m_toolVisualize->add(L"Color Map");
+	m_toolVisualize->add(L"Normal Map");
+	m_toolVisualize->add(L"Height Map");
+	m_toolVisualize->add(L"Splat Map");
+	m_toolVisualize->add(L"Cut Map");
+	m_toolVisualize->select(0);
 	
 	m_toolToggleElevate->setToggled(true);
 	m_toolToggleFallOffSmooth->setToggled(true);
@@ -124,6 +136,8 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::custom::ToolBar* toolBa
 	toolBar->addItem(m_toolGroup->addItem(m_toolStrength));
 	toolBar->addItem(m_toolGroup->addItem(m_toolColor));
 	toolBar->addItem(m_toolGroup->addItem(m_toolMaterial));
+	toolBar->addItem(new ui::custom::ToolBarSeparator());
+	toolBar->addItem(m_toolGroup->addItem(m_toolVisualize));
 
 	// Group is initially disabled as terrain edit modifier hasn't yet been selected.
 	m_toolGroup->setEnable(false);
@@ -225,6 +239,14 @@ bool TerrainEditorPlugin::handleCommand(const ui::Command& command)
 		}
 	}
 
+	{
+		if (command == L"Terrain.Editor.SelectVisualize")
+		{
+			updateModifierState();
+			return true;
+		}
+	}
+
 	return false;
 }
 
@@ -266,6 +288,10 @@ void TerrainEditorPlugin::updateModifierState()
 	int32_t material = m_toolMaterial->getSelected();
 	if (material >= 0)
 		m_terrainEditModifier->setMaterial(material);
+
+	int32_t visualize = m_toolVisualize->getSelected();
+	if (visualize >= 0)
+		m_terrainEditModifier->setVisualizeMode((TerrainEntity::VisualizeMode)visualize);
 
 	m_terrainEditModifier->setStrength(m_sliderStrength->getValue() / 10.0f);
 }

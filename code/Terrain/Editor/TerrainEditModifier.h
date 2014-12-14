@@ -5,6 +5,7 @@
 #include "Core/Misc/AutoPtr.h"
 #include "Resource/Proxy.h"
 #include "Scene/Editor/IModifier.h"
+#include "Terrain/TerrainEntity.h"
 
 namespace traktor
 {
@@ -50,7 +51,6 @@ class SceneEditorContext;
 
 class IBrush;
 class IFallOff;
-class TerrainEntity;
 class TerrainEntityData;
 
 class TerrainEditModifier : public scene::IModifier
@@ -101,6 +101,8 @@ public:
 
 	void setMaterial(int32_t material);
 
+	void setVisualizeMode(TerrainEntity::VisualizeMode visualizeMode);
+
 private:
 	scene::SceneEditorContext* m_context;
 	Ref< terrain::TerrainEntity > m_entity;
@@ -125,6 +127,7 @@ private:
 	float m_strength;
 	Color4f m_color;
 	int32_t m_material;
+	TerrainEntity::VisualizeMode m_visualizeMode;
 	Vector4 m_center;
 };
 

@@ -72,6 +72,18 @@ public:
 		LodCount = 4
 	};
 
+	enum VisualizeMode
+	{
+		VmDefault = 0,
+		VmSurfaceLod = 1,
+		VmPatchLod = 2,
+		VmColorMap = 3,
+		VmNormalMap = 4,
+		VmHeightMap = 5,
+		VmSplatMap = 6,
+		VmCutMap = 7
+	};
+
 	struct Patch
 	{
 		float minHeight;
@@ -95,6 +107,8 @@ public:
 		world::IWorldRenderPass& worldRenderPass,
 		float detailDistance
 	);
+
+	void setVisualizeMode(VisualizeMode visualizeMode);
 
 	const resource::Proxy< Terrain >& getTerrain() const { return m_terrain; }
 
@@ -131,7 +145,7 @@ private:
 	float m_surfaceLodDistance;
 	float m_surfaceLodBias;
 	float m_surfaceLodExponent;
-	TerrainEntityData::VisualizeMode m_visualizeMode;
+	VisualizeMode m_visualizeMode;
 
 	render::handle_t m_handleSurface;
 	render::handle_t m_handleSurfaceOffset;
@@ -145,8 +159,9 @@ private:
 	render::handle_t m_handleWorldExtent;
 	render::handle_t m_handlePatchOrigin;
 	render::handle_t m_handlePatchExtent;
-	render::handle_t m_handlePatchLodColor;
 	render::handle_t m_handleDetailDistance;
+	render::handle_t m_handleDebugPatchColor;
+	render::handle_t m_handleDebugMap;
 
 	bool updatePatches();
 

@@ -72,6 +72,7 @@ private:
 	Ref< ui::custom::ColorControl > m_colorControl;
 	Ref< ui::custom::ToolBarEmbed > m_toolColor;
 	Ref< ui::custom::ToolBarDropDown > m_toolMaterial;
+	Ref< ui::custom::ToolBarDropDown > m_toolVisualize;
 	Ref< ui::custom::ToolBarItemGroup > m_toolGroup;
 
 	void updateModifierState();

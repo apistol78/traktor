@@ -92,8 +92,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>1954</first>
-				<second>-19</second>
+				<first>2097</first>
+				<second>-31</second>
 			</position>
 			<fragmentGuid>{B633DBF6-FC42-5341-B0D8-940670973041}</fragmentGuid>
 			<inputPins>
@@ -184,7 +184,7 @@
 				<first>892</first>
 				<second>-146</second>
 			</position>
-			<parameterName>PatchLodColor</parameterName>
+			<parameterName>DebugPatchColor</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
@@ -340,7 +340,7 @@ Generated texture from surface cache.
 		<item type="traktor.render.Branch">
 			<comment/>
 			<position>
-				<first>1288</first>
+				<first>1361</first>
 				<second>-252</second>
 			</position>
 			<parameterName>CutEnable</parameterName>
@@ -374,7 +374,7 @@ Generated texture from surface cache.
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>1164</first>
+				<first>1237</first>
 				<second>-234</second>
 			</position>
 			<swizzle>x</swizzle>
@@ -382,7 +382,7 @@ Generated texture from surface cache.
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>1151</first>
+				<first>1224</first>
 				<second>-184</second>
 			</position>
 			<value>1</value>
@@ -432,6 +432,40 @@ Generated texture from surface cache.
 				<second>-96</second>
 			</position>
 			<value>0.5</value>
+		</item>
+		<item type="traktor.render.Branch">
+			<comment/>
+			<position>
+				<first>1742</first>
+				<second>-322</second>
+			</position>
+			<parameterName>VisualizeMap</parameterName>
+		</item>
+		<item type="traktor.render.Uniform" version="1">
+			<comment/>
+			<position>
+				<first>1260</first>
+				<second>-512</second>
+			</position>
+			<parameterName>DebugMap</parameterName>
+			<type>PtTexture2D</type>
+			<frequency>UfFrame</frequency>
+		</item>
+		<item type="traktor.render.Sampler" version="3">
+			<comment/>
+			<position>
+				<first>1458</first>
+				<second>-460</second>
+			</position>
+			<minFilter>FtLinear</minFilter>
+			<mipFilter>FtLinear</mipFilter>
+			<magFilter>FtLinear</magFilter>
+			<addressU>AdWrap</addressU>
+			<addressV>AdWrap</addressV>
+			<addressW>AdWrap</addressW>
+			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 	</nodes>
 	<edges>
@@ -857,12 +891,52 @@ Generated texture from surface cache.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item[39]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[40]"/>
+				<name>Texture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[40]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[38]"/>
+				<name>True</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[36]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[38]"/>
+				<name>False</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[38]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[10]"/>
 				<name>SurfaceColor</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[23]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[40]"/>
+				<name>TexCoord</name>
 			</destination>
 		</item>
 	</edges>
