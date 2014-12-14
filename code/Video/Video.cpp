@@ -1,5 +1,8 @@
 #include <cstring>
+#include "Core/Functor/Functor.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Thread/Job.h"
+#include "Core/Thread/JobManager.h"
 #include "Render/IRenderSystem.h"
 #include "Render/ISimpleTexture.h"
 #include "Video/IVideoDecoder.h"
@@ -58,8 +61,19 @@ bool Video::create(render::IRenderSystem* renderSystem, IVideoDecoder* decoder)
 	return true;
 }
 
+Video::~Video()
+{
+	destroy();
+}
+
 void Video::destroy()
 {
+	if (m_job)
+	{
+		m_job->wait();
+		m_job = 0;
+	}
+
 	for (uint32_t i = 0; i < sizeof_array(m_textures); ++i)
 		safeDestroy(m_textures[i]);
 
@@ -76,7 +90,20 @@ bool Video::update(float deltaTime)
 	uint32_t frame = uint32_t(m_rate * m_time);
 	if (frame != m_lastDecodedFrame)
 	{
-		m_playing = m_decoder->decode(frame, m_frameBuffer.ptr(), m_frameBufferPitch);
+		// Wait for previous decode job to finish.
+		if (m_job)
+		{
+			m_job->wait();
+			m_job = 0;
+		}
+
+		// Enqueue new decoding job.
+		m_job = JobManager::getInstance().add(makeFunctor(
+			this,
+			&Video::decodeFrame,
+			frame
+		));
+
 		m_lastDecodedFrame = frame;
 	}
 
@@ -133,6 +160,11 @@ render::ISimpleTexture* Video::getTexture()
 VideoFormat Video::getFormat() const
 {
 	return m_format;
+}
+
+void Video::decodeFrame(uint32_t frame)
+{
+	m_playing = m_decoder->decode(frame, m_frameBuffer.ptr(), m_frameBufferPitch);
 }
 
 	}
