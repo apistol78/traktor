@@ -90,7 +90,7 @@ void FilePropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Widget
 		));
 }
 
-void FilePropertyItem::mouseButtonDown(MouseEvent* event)
+void FilePropertyItem::mouseButtonDown(MouseButtonDownEvent* event)
 {
 	m_editor->setText(m_path.getOriginal());
 	m_editor->setVisible(true);

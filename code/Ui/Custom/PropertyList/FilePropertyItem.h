@@ -45,7 +45,7 @@ protected:
 
 	virtual void resizeInPlaceControls(const Rect& rc, std::vector< WidgetRect >& outChildRects);
 
-	virtual void mouseButtonDown(MouseEvent* event);
+	virtual void mouseButtonDown(MouseButtonDownEvent* event);
 
 	virtual void paintValue(Canvas& canvas, const Rect& rc);
 
