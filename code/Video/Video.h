@@ -15,6 +15,9 @@
 
 namespace traktor
 {
+
+class Job;
+
 	namespace render
 	{
 
@@ -37,6 +40,8 @@ class T_DLLCLASS Video : public Object
 
 public:
 	Video();
+
+	virtual ~Video();
 
 	bool create(render::IRenderSystem* renderSystem, IVideoDecoder* decoder);
 
@@ -65,6 +70,9 @@ private:
 	uint32_t m_lastDecodedFrame;
 	uint32_t m_lastUploadedFrame;
 	uint32_t m_current;
+	Ref< Job > m_job;
+
+	void decodeFrame(uint32_t frame);
 };
 
 	}
