@@ -4,8 +4,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>2536</first>
-				<second>-444</second>
+				<first>2889</first>
+				<second>-452</second>
 			</position>
 			<fragmentGuid>{B633DBF6-FC42-5341-B0D8-940670973041}</fragmentGuid>
 			<inputPins>
@@ -93,18 +93,18 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>1288</first>
-				<second>-223</second>
+				<first>1235</first>
+				<second>-252</second>
 			</position>
-			<parameterName>PatchLodColor</parameterName>
+			<parameterName>DebugPatchColor</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Platform">
 			<comment/>
 			<position>
-				<first>1177</first>
-				<second>-180</second>
+				<first>1205</first>
+				<second>-155</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sampler" version="3">
@@ -114,8 +114,8 @@ Generated texture from surface cache.
 			]]>
 			</comment>
 			<position>
-				<first>490</first>
-				<second>-206</second>
+				<first>524</first>
+				<second>-207</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -130,8 +130,8 @@ Generated texture from surface cache.
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>243</first>
-				<second>-218</second>
+				<first>244</first>
+				<second>-259</second>
 			</position>
 			<parameterName>Surface</parameterName>
 			<type>PtTexture2D</type>
@@ -140,8 +140,8 @@ Generated texture from surface cache.
 		<item type="traktor.render.Interpolator">
 			<comment/>
 			<position>
-				<first>411</first>
-				<second>-159</second>
+				<first>459</first>
+				<second>-157</second>
 			</position>
 		</item>
 		<item type="traktor.render.MulAdd">
@@ -711,6 +711,40 @@ Generated texture from surface cache.
 				<second>-530</second>
 			</position>
 			<value>0.5</value>
+		</item>
+		<item type="traktor.render.Branch">
+			<comment/>
+			<position>
+				<first>2581</first>
+				<second>-691</second>
+			</position>
+			<parameterName>VisualizeMap</parameterName>
+		</item>
+		<item type="traktor.render.Uniform" version="1">
+			<comment/>
+			<position>
+				<first>2099</first>
+				<second>-881</second>
+			</position>
+			<parameterName>DebugMap</parameterName>
+			<type>PtTexture2D</type>
+			<frequency>UfFrame</frequency>
+		</item>
+		<item type="traktor.render.Sampler" version="3">
+			<comment/>
+			<position>
+				<first>2297</first>
+				<second>-829</second>
+			</position>
+			<minFilter>FtLinear</minFilter>
+			<mipFilter>FtLinear</mipFilter>
+			<magFilter>FtLinear</magFilter>
+			<addressU>AdWrap</addressU>
+			<addressV>AdWrap</addressV>
+			<addressW>AdWrap</addressW>
+			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 	</nodes>
 	<edges>
@@ -1616,7 +1650,27 @@ Generated texture from surface cache.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item[53]"/>
+				<name>Output</name>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[67]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[67]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[69]"/>
+				<name>False</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[69]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1626,12 +1680,32 @@ Generated texture from surface cache.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[53]"/>
+				<node ref="/object/nodes/item[70]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[67]"/>
-				<name>Input</name>
+				<node ref="/object/nodes/item[71]"/>
+				<name>Texture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[71]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[69]"/>
+				<name>True</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[21]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[71]"/>
+				<name>TexCoord</name>
 			</destination>
 		</item>
 	</edges>

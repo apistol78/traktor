@@ -61,7 +61,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainEntity", TerrainEntity, world::E
 
 TerrainEntity::TerrainEntity(render::IRenderSystem* renderSystem)
 :	m_renderSystem(renderSystem)
-,	m_visualizeMode(TerrainEntityData::VmDefault)
+,	m_visualizeMode(VmDefault)
 ,	m_handleSurface(render::getParameterHandle(L"Surface"))
 ,	m_handleSurfaceOffset(render::getParameterHandle(L"SurfaceOffset"))
 ,	m_handleHeightfield(render::getParameterHandle(L"Heightfield"))
@@ -74,8 +74,9 @@ TerrainEntity::TerrainEntity(render::IRenderSystem* renderSystem)
 ,	m_handleWorldExtent(render::getParameterHandle(L"WorldExtent"))
 ,	m_handlePatchOrigin(render::getParameterHandle(L"PatchOrigin"))
 ,	m_handlePatchExtent(render::getParameterHandle(L"PatchExtent"))
-,	m_handlePatchLodColor(render::getParameterHandle(L"PatchLodColor"))
 ,	m_handleDetailDistance(render::getParameterHandle(L"DetailDistance"))
+,	m_handleDebugPatchColor(render::getParameterHandle(L"DebugPatchColor"))
+,	m_handleDebugMap(render::getParameterHandle(L"DebugMap"))
 {
 }
 
@@ -99,19 +100,6 @@ bool TerrainEntity::create(resource::IResourceManager* resourceManager, const Te
 
 	if (!createPatches())
 		return false;
-
-	m_visualizeMode = data.getVisualizeMode();
-	if (m_visualizeMode != TerrainEntityData::VmDefault)
-	{
-		render::Shader* coarseShader = m_terrain->getTerrainCoarseShader();
-		render::Shader* detailShader = m_terrain->getTerrainDetailShader();
-
-		if (coarseShader)
-			coarseShader->setCombination(L"VisualizeLods", true);
-
-		if (detailShader)
-			detailShader->setCombination(L"VisualizeLods", true);
-	}
 
 	return true;
 }
@@ -424,10 +412,10 @@ void TerrainEntity::render(
 		renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, i->patchOrigin);
 		renderBlock->programParams->setFloatParameter(m_handleDetailDistance, detailDistance);
 
-		if (m_visualizeMode == TerrainEntityData::VmSurfaceLod)
-			renderBlock->programParams->setVectorParameter(m_handlePatchLodColor, c_lodColor[patch.lastSurfaceLod]);
-		else if (m_visualizeMode == TerrainEntityData::VmPatchLod)
-			renderBlock->programParams->setVectorParameter(m_handlePatchLodColor, c_lodColor[patch.lastPatchLod]);
+		if (m_visualizeMode == VmSurfaceLod)
+			renderBlock->programParams->setVectorParameter(m_handleDebugPatchColor, c_lodColor[patch.lastSurfaceLod]);
+		else if (m_visualizeMode == VmPatchLod)
+			renderBlock->programParams->setVectorParameter(m_handleDebugPatchColor, c_lodColor[patch.lastPatchLod]);
 
 		renderBlock->programParams->endParameters(worldContext.getRenderContext());
 
@@ -468,10 +456,20 @@ void TerrainEntity::render(
 		renderBlock->programParams->setVectorParameter(m_handlePatchExtent, patchExtent);
 		renderBlock->programParams->setFloatParameter(m_handleDetailDistance, detailDistance);
 
-		if (m_visualizeMode == TerrainEntityData::VmSurfaceLod)
-			renderBlock->programParams->setVectorParameter(m_handlePatchLodColor, c_lodColor[patch.lastSurfaceLod]);
-		else if (m_visualizeMode == TerrainEntityData::VmPatchLod)
-			renderBlock->programParams->setVectorParameter(m_handlePatchLodColor, c_lodColor[patch.lastPatchLod]);
+		if (m_visualizeMode == VmSurfaceLod)
+			renderBlock->programParams->setVectorParameter(m_handleDebugPatchColor, c_lodColor[patch.lastSurfaceLod]);
+		else if (m_visualizeMode == VmPatchLod)
+			renderBlock->programParams->setVectorParameter(m_handleDebugPatchColor, c_lodColor[patch.lastPatchLod]);
+		else if (m_visualizeMode == VmColorMap)
+			renderBlock->programParams->setTextureParameter(m_handleDebugMap, m_terrain->getColorMap());
+		else if (m_visualizeMode == VmNormalMap)
+			renderBlock->programParams->setTextureParameter(m_handleDebugMap, m_terrain->getNormalMap());
+		else if (m_visualizeMode == VmHeightMap)
+			renderBlock->programParams->setTextureParameter(m_handleDebugMap, m_terrain->getHeightMap());
+		else if (m_visualizeMode == VmSplatMap)
+			renderBlock->programParams->setTextureParameter(m_handleDebugMap, m_terrain->getSplatMap());
+		else if (m_visualizeMode == VmCutMap)
+			renderBlock->programParams->setTextureParameter(m_handleDebugMap, m_terrain->getCutMap());
 
 		renderBlock->programParams->endParameters(worldContext.getRenderContext());
 
@@ -479,6 +477,40 @@ void TerrainEntity::render(
 	}
 
 #endif
+}
+
+void TerrainEntity::setVisualizeMode(VisualizeMode visualizeMode)
+{
+	m_visualizeMode = visualizeMode;
+
+	render::Shader* coarseShader = m_terrain->getTerrainCoarseShader();
+	render::Shader* detailShader = m_terrain->getTerrainDetailShader();
+
+	if (coarseShader)
+	{
+		coarseShader->setCombination(L"VisualizeLods", false);
+		coarseShader->setCombination(L"VisualizeMap", false);
+	}
+	if (detailShader)
+	{
+		detailShader->setCombination(L"VisualizeLods", false);
+		detailShader->setCombination(L"VisualizeMap", false);
+	}
+
+	if (m_visualizeMode == VmSurfaceLod || m_visualizeMode == VmPatchLod)
+	{
+		if (coarseShader)
+			coarseShader->setCombination(L"VisualizeLods", true);
+		if (detailShader)
+			detailShader->setCombination(L"VisualizeLods", true);
+	}
+	else if (m_visualizeMode == VmColorMap || m_visualizeMode == VmNormalMap || m_visualizeMode == VmHeightMap || m_visualizeMode == VmSplatMap || m_visualizeMode == VmCutMap)
+	{
+		if (coarseShader)
+			coarseShader->setCombination(L"VisualizeMap", true);
+		if (detailShader)
+			detailShader->setCombination(L"VisualizeMap", true);
+	}
 }
 
 Aabb3 TerrainEntity::getBoundingBox() const

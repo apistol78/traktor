@@ -259,10 +259,10 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>1317</first>
-				<second>-12</second>
+				<first>1325</first>
+				<second>-47</second>
 			</position>
-			<parameterName>PatchLodColor</parameterName>
+			<parameterName>DebugPatchColor</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
@@ -418,7 +418,7 @@ Generated texture from surface cache.
 			<comment/>
 			<position>
 				<first>402</first>
-				<second>-35</second>
+				<second>-77</second>
 			</position>
 			<parameterName>Surface</parameterName>
 			<type>PtTexture2D</type>
@@ -467,8 +467,8 @@ Generated texture from surface cache.
 		<item type="traktor.render.Clamp">
 			<comment/>
 			<position>
-				<first>972</first>
-				<second>121</second>
+				<first>1053</first>
+				<second>126</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
@@ -588,12 +588,46 @@ Generated texture from surface cache.
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>488</first>
-				<second>165</second>
+				<first>394</first>
+				<second>126</second>
 			</position>
 			<parameterName>DetailDistance</parameterName>
 			<type>PtScalar</type>
 			<frequency>UfOnce</frequency>
+		</item>
+		<item type="traktor.render.Branch">
+			<comment/>
+			<position>
+				<first>1823</first>
+				<second>-353</second>
+			</position>
+			<parameterName>VisualizeMap</parameterName>
+		</item>
+		<item type="traktor.render.Uniform" version="1">
+			<comment/>
+			<position>
+				<first>1341</first>
+				<second>-543</second>
+			</position>
+			<parameterName>DebugMap</parameterName>
+			<type>PtTexture2D</type>
+			<frequency>UfFrame</frequency>
+		</item>
+		<item type="traktor.render.Sampler" version="3">
+			<comment/>
+			<position>
+				<first>1539</first>
+				<second>-491</second>
+			</position>
+			<minFilter>FtLinear</minFilter>
+			<mipFilter>FtLinear</mipFilter>
+			<magFilter>FtLinear</magFilter>
+			<addressU>AdWrap</addressU>
+			<addressV>AdWrap</addressV>
+			<addressW>AdWrap</addressW>
+			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 	</nodes>
 	<edges>
@@ -775,16 +809,6 @@ Generated texture from surface cache.
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<name>Transform</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[18]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[17]"/>
-				<name>SurfaceColor</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -1325,6 +1349,56 @@ Generated texture from surface cache.
 			<destination>
 				<node ref="/object/nodes/item[40]"/>
 				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[56]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[57]"/>
+				<name>Texture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[57]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[55]"/>
+				<name>True</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[55]"/>
+				<name>False</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[55]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[17]"/>
+				<name>SurfaceColor</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[24]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[57]"/>
+				<name>TexCoord</name>
 			</destination>
 		</item>
 	</edges>

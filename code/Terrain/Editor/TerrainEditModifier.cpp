@@ -377,6 +377,9 @@ void TerrainEditModifier::selectionChanged()
 
 	if (!m_fallOff)
 		m_fallOff = new SmoothFallOff();
+
+	// Set visualize mode.
+	m_entity->setVisualizeMode(m_visualizeMode);
 }
 
 bool TerrainEditModifier::cursorMoved(
@@ -809,6 +812,13 @@ void TerrainEditModifier::setColor(const Color4f& color)
 void TerrainEditModifier::setMaterial(int32_t material)
 {
 	m_material = material;
+}
+
+void TerrainEditModifier::setVisualizeMode(TerrainEntity::VisualizeMode visualizeMode)
+{
+	m_visualizeMode = visualizeMode;
+	if (m_entity)
+		m_entity->setVisualizeMode(m_visualizeMode);
 }
 
 	}

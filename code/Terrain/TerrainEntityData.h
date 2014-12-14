@@ -24,13 +24,6 @@ class T_DLLCLASS TerrainEntityData : public world::EntityData
 	T_RTTI_CLASS;
 
 public:
-	enum VisualizeMode
-	{
-		VmDefault,
-		VmSurfaceLod,
-		VmPatchLod
-	};
-
 	TerrainEntityData();
 
 	virtual void serialize(ISerializer& s);
@@ -49,8 +42,6 @@ public:
 
 	float getSurfaceLodExponent() const { return m_surfaceLodExponent; }
 
-	VisualizeMode getVisualizeMode() const { return m_visualizeMode; }
-
 private:
 	resource::Id< Terrain > m_terrain;
 	float m_patchLodDistance;
@@ -59,7 +50,6 @@ private:
 	float m_surfaceLodDistance;
 	float m_surfaceLodBias;
 	float m_surfaceLodExponent;
-	VisualizeMode m_visualizeMode;
 };
 
 	}
