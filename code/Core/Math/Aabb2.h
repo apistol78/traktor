@@ -44,6 +44,13 @@ public:
 	 */
 	bool inside(const Vector2& pt) const;
 
+	/*! \brief Intersect segment with bounding box.
+	 *
+	 * \param outDistance Distance from start point to intersection.
+	 * \return True if intersection found.
+	 */
+	bool intersectSegment(const Vector2& p1, const Vector2& p2, float& outDistance) const;
+
 	/*! \brief Expand bounding box to contain point. */
 	T_MATH_INLINE Aabb2& contain(const Vector2& pt)
 	{

@@ -7,15 +7,30 @@ namespace traktor
 	namespace
 	{
 
-T_FORCE_INLINE uint32_t outcode(const Vector4& p, const Vector4& halfExtent) 
+bool intersectSegment1D(float smin, float smax, float raystart, float rayend, float& outEnter, float& outExit)
 {
-	return
-		(p.x() < -halfExtent.x() ? 0x01 : 0x00) |    
-		(p.y() < -halfExtent.y() ? 0x02 : 0x00) |
-		(p.z() < -halfExtent.z() ? 0x04 : 0x00) |
-		(p.x() >  halfExtent.x() ? 0x08 : 0x00) |
-		(p.y() >  halfExtent.y() ? 0x10 : 0x00) |
-		(p.z() >  halfExtent.z() ? 0x20 : 0x00);
+	float raydir = rayend - raystart;
+
+	if (abs< float >(raydir) <= FUZZY_EPSILON)
+	{
+		if (raystart < smin || raystart > smax)
+			return false;
+		else
+			return true;
+	}
+
+	float enter = (smin - raystart) / raydir;
+	float exit = (smax - raystart) / raydir;
+
+	if (enter > exit)
+		std::swap< float >(enter, exit);
+
+	if (outEnter > exit || enter > outExit)
+		return false;
+
+	outEnter = max< float >(outEnter, enter);
+	outExit = min< float >(outExit, exit);
+	return true;
 }
 
 	}
@@ -145,82 +160,17 @@ bool Aabb3::intersectRay(const Vector4& p, const Vector4& d, Scalar& outDistance
 
 bool Aabb3::intersectSegment(const Vector4& p1, const Vector4& p2, Scalar& outDistance) const
 {
-	Vector4 start = p1 - getCenter();
-	Vector4 end = p2 - getCenter();
+	float enter = 0.0f, exit = 1.0f;
 
-	Vector4 halfExtent = getExtent();
-
-	uint32_t startCode = outcode(start, halfExtent);
-	uint32_t endCode = outcode(end, halfExtent);
-
-	if ((startCode & endCode) != 0x00)
+	if (!intersectSegment1D(mn.x(), mx.x(), p1.x(), p2.x(), enter, exit))
+		return false;
+	if (!intersectSegment1D(mn.y(), mx.y(), p1.y(), p2.y(), enter, exit))
+		return false;
+	if (!intersectSegment1D(mn.z(), mx.z(), p1.z(), p2.z(), enter, exit))
 		return false;
 
-	Vector4 r = end - start;
-
-	float lambdaStart = 0.0f;
-	float lambdaEnd = 1.0f;
-
-	uint32_t bit = 1;
-	float sign = 1.0f;
-
-	float T_MATH_ALIGN16 se[4];
-	float T_MATH_ALIGN16 he[4];
-	float T_MATH_ALIGN16 re[4];
-
-	start.storeAligned(se);
-	halfExtent.storeAligned(he);
-	r.storeAligned(re);
-
-	for (int j = 0; j < 3; ++j)
-	{
-		if (abs(re[j]) < FUZZY_EPSILON)
-			continue;
-
-		float lambda = (-se[j] - he[j] * sign) / re[j];
-		if (startCode & bit)
-		{
-			if (lambdaStart <= lambda)
-				lambdaStart = lambda;
-		}
-		else if (endCode & bit)
-		{
-			if (lambda < lambdaEnd)
-				lambdaEnd = lambda;
-		}
-
-		bit <<= 1;
-	}
-
-	sign = -1.0f;
-
-	for (int j = 0; j < 3; ++j)
-	{
-		if (abs(re[j]) < FUZZY_EPSILON)
-			continue;
-
-		float lambda = (-se[j] - he[j] * sign) / re[j];
-		if (startCode & bit)
-		{
-			if (lambdaStart <= lambda)
-				lambdaStart = lambda;
-		}
-		else if (endCode & bit)
-		{
-			if (lambda < lambdaEnd)
-				lambdaEnd = lambda;
-		}
-
-		bit <<= 1;
-	}
-
-	if (lambdaStart <= lambdaEnd)
-	{
-		outDistance = Scalar((startCode != 0x00) ? lambdaStart : lambdaEnd) * r.length();
-		return true;
-	}
-
-	return false;
+	outDistance = Scalar(enter);
+	return true;
 }
 
 Aabb3 Aabb3::transform(const Matrix44& m) const
