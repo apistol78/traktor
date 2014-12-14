@@ -36,8 +36,11 @@ void AverageBrush::apply(int32_t x, int32_t y)
 	{
 		for (int32_t ix = -m_radius; ix <= m_radius; ++ix)
 		{
-			int32_t d = ix * ix + iy * iy;
-			if (d >= m_radius * m_radius)
+			float fx = float(ix) / m_radius;
+			float fy = float(iy) / m_radius;
+
+			float a = m_fallOff->evaluate(fx, fy) * m_strength;
+			if (a <= 0.0f)
 				continue;
 
 			height += m_heightfield->getGridHeightNearest(x + ix, y + iy);
@@ -54,11 +57,13 @@ void AverageBrush::apply(int32_t x, int32_t y)
 	{
 		for (int32_t ix = -m_radius; ix <= m_radius; ++ix)
 		{
-			int32_t d = ix * ix + iy * iy;
-			if (d >= m_radius * m_radius)
+			float fx = float(ix) / m_radius;
+			float fy = float(iy) / m_radius;
+
+			float a = m_fallOff->evaluate(fx, fy) * m_strength;
+			if (abs(a) <= FUZZY_EPSILON)
 				continue;
 
-			float a = m_fallOff->evaluate(1.0f - sqrtf(float(d)) / m_radius) * m_strength;
 			float h = m_heightfield->getGridHeightNearest(x + ix, y + iy);
 			m_heightfield->setGridHeight(x + ix, y + iy, lerp(h, height, a));
 		}

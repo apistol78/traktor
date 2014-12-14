@@ -13,7 +13,7 @@ class SmoothFallOff : public IFallOff
 	T_RTTI_CLASS;
 
 public:
-	virtual float evaluate(float x) const;
+	virtual float evaluate(float x, float y) const;
 };
 
 	}
