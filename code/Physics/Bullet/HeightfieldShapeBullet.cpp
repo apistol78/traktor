@@ -1,6 +1,7 @@
 #include <limits>
 #include "Core/Log/Log.h"
-#include "Core/Math/Aabb3.h"
+#include "Core/Math/Const.h"
+#include "Core/Misc/Align.h"
 #include "Heightfield/Heightfield.h"
 #include "Physics/Bullet/Conversion.h"
 #include "Physics/Bullet/HeightfieldShapeBullet.h"
@@ -12,9 +13,8 @@ namespace traktor
 		namespace
 		{
 
-const int32_t c_gridMinMaxStep = 8;
-const int32_t c_gridMinMaxStepSkip = 4;
 const int32_t c_maximumStep = 32;
+const int32_t c_raycastStepSize = 4;
 
 inline float quantizeMin(float v)
 {
@@ -26,6 +26,148 @@ inline float quantizeMax(float v)
 	return ceilf(v);
 }
 
+template < typename Visitor >
+void line_dda(float x0, float y0, float x1, float y1, Visitor& visitor)
+{
+	float dx = x1 - x0;
+	float dy = y1 - y0;
+
+	float dln = std::sqrt(dx * dx + dy * dy);
+	if (dln > FUZZY_EPSILON)
+	{
+		dx /= dln;
+		dy /= dln;
+	}
+
+	float x = std::floor(x0);
+	float y = std::floor(y0);
+
+	float stepx, stepy;
+	float cbx, cby;
+
+	if (dx > 0.0f)
+	{
+		stepx = 1.0f;
+		cbx = x + 1.0f;
+	}
+	else
+	{
+		stepx = -1.0f;
+		cbx = x;
+	}
+
+	if (dy > 0.0f)
+	{
+		stepy = 1.0f;
+		cby = y + 1.0f;
+	}
+	else
+	{
+		stepy = -1.0f;
+		cby = y;
+	}
+
+	float tmaxx, tmaxy;
+	float tdeltax, tdeltay;
+	float rxr, ryr;
+
+	if (std::abs(dx) > FUZZY_EPSILON)
+	{
+		rxr = 1.0f / dx;
+		tmaxx = (cbx - x0) * rxr;
+		tdeltax = stepx * rxr;
+	}
+	else
+		tmaxx = std::numeric_limits< float >::max();
+
+	if (std::abs(dy) > FUZZY_EPSILON)
+	{
+		ryr = 1.0f / dy;
+		tmaxy = (cby - y0) * ryr;
+		tdeltay = stepy * ryr;
+	}
+	else
+		tmaxy = std::numeric_limits< float >::max();
+
+	int32_t ix1 = int32_t(x1);
+	int32_t iy1 = int32_t(y1);
+
+	for (int32_t i = 0; i < 10000; ++i)
+	{
+		int32_t ix = int32_t(x);
+		int32_t iy = int32_t(y);
+
+		visitor(ix, iy);
+
+		if (ix == ix1 && iy == iy1)
+			break;
+
+		if (tmaxx < tmaxy)
+		{
+			x += stepx;
+			tmaxx += tdeltax;
+		}
+		else
+		{
+			y += stepy;
+			tmaxy += tdeltay;
+		}
+	}
+}
+
+struct ProcessRaycastAllTrianglesVisitor
+{
+	hf::Heightfield* heightfield;
+	btTriangleRaycastCallback* callback;
+	btVector3 triangles[3];
+
+	void operator () (int32_t x, int32_t z)
+	{
+		int32_t xx = x * c_raycastStepSize;
+		int32_t zz = z * c_raycastStepSize;
+
+		bool c[] =
+		{
+			heightfield->getGridCut(xx, zz),
+			heightfield->getGridCut(xx + c_raycastStepSize, zz),
+			heightfield->getGridCut(xx + c_raycastStepSize, zz + c_raycastStepSize),
+			heightfield->getGridCut(xx, zz + c_raycastStepSize)
+		};
+
+		if (c[0] && c[2])
+		{
+			float h[] =
+			{
+				heightfield->unitToWorld(heightfield->getGridHeightNearest(xx, zz)),
+				heightfield->unitToWorld(heightfield->getGridHeightNearest(xx + c_raycastStepSize, zz)),
+				heightfield->unitToWorld(heightfield->getGridHeightNearest(xx + c_raycastStepSize, zz + c_raycastStepSize)),
+				heightfield->unitToWorld(heightfield->getGridHeightNearest(xx, zz + c_raycastStepSize))
+			};
+
+			float mnx, mnz;
+			heightfield->gridToWorld(xx, zz, mnx, mnz);
+
+			float mxx, mxz;
+			heightfield->gridToWorld(xx + c_raycastStepSize, zz + c_raycastStepSize, mxx, mxz);
+
+			if (c[3])
+			{
+				triangles[0] = btVector3(mnx, h[0], mnz);
+				triangles[1] = btVector3(mnx, h[3], mxz);
+				triangles[2] = btVector3(mxx, h[2], mxz);
+				callback->processTriangle(triangles, 0, 0);
+			}
+			if (c[1])
+			{
+				triangles[0] = btVector3(mxx, h[2], mxz);
+				triangles[1] = btVector3(mxx, h[1], mnz);
+				triangles[2] = btVector3(mnx, h[0], mnz);
+				callback->processTriangle(triangles, 0, 1);
+			}
+		}
+	}
+};
+
 		}
 
 HeightfieldShapeBullet::HeightfieldShapeBullet(const resource::Proxy< hf::Heightfield >& heightfield)
@@ -33,43 +175,6 @@ HeightfieldShapeBullet::HeightfieldShapeBullet(const resource::Proxy< hf::Height
 ,	m_localScaling(1.0f, 1.0f, 1.0f)
 {
 	m_shapeType = TERRAIN_SHAPE_PROXYTYPE;
-
-	// Build grid of min/max heights.
-	int32_t size = m_heightfield->getSize();	// Size in N*N heights
-
-	// Allocate min/max 2d grid.
-	int32_t gridSize = size / c_gridMinMaxStep;
-	m_gridMinMax.reset(new MinMax [gridSize * gridSize]);
-
-	// Calculate min/max 2d grid.
-	for (int32_t z = 0; z < gridSize; ++z)
-	{
-		for (int32_t x = 0; x < gridSize; ++x)
-		{
-			int32_t offset = x + z * gridSize;
-
-			int32_t hx0 = x * c_gridMinMaxStep;
-			int32_t hz0 = z * c_gridMinMaxStep;
-
-			int32_t hx1 = hx0 + c_gridMinMaxStep;
-			int32_t hz1 = hz0 + c_gridMinMaxStep;
-
-			m_gridMinMax[offset].mn = std::numeric_limits< float >::max();
-			m_gridMinMax[offset].mx = -std::numeric_limits< float >::max();
-
-			for (int32_t hz = hz0; hz < hz1; ++hz)
-			{
-				for (int32_t hx = hx0; hx < hx1; ++hx)
-				{
-					float hu = heightfield->getGridHeightNearest(hx, hz);
-					float hw = heightfield->unitToWorld(hu);
-
-					m_gridMinMax[offset].mn = std::min(m_gridMinMax[offset].mn, hw);
-					m_gridMinMax[offset].mx = std::max(m_gridMinMax[offset].mx, hw);
-				}
-			}
-		}
-	}
 }
 
 HeightfieldShapeBullet::~HeightfieldShapeBullet()
@@ -200,8 +305,8 @@ void HeightfieldShapeBullet::processAllTriangles(btTriangleCallback* callback, c
 
 void HeightfieldShapeBullet::processRaycastAllTriangles(btTriangleRaycastCallback *callback, const btVector3 &raySource, const btVector3 &rayTarget)
 {
-	int32_t x0, z0;
-	int32_t x1, z1;
+	float x0, z0;
+	float x1, z1;
 	
 	m_heightfield->worldToGrid(
 		raySource.x(),
@@ -217,226 +322,15 @@ void HeightfieldShapeBullet::processRaycastAllTriangles(btTriangleRaycastCallbac
 		z1
 	);
 
-	int32_t size = m_heightfield->getSize();
-	int32_t gridSize = size / c_gridMinMaxStep;
+	x0 /= c_raycastStepSize;
+	z0 /= c_raycastStepSize;
+	x1 /= c_raycastStepSize;
+	z1 /= c_raycastStepSize;
 
-	x0 = clamp(x0, 0, size - 1);
-	z0 = clamp(z0, 0, size - 1);
-
-	x1 = clamp(x1, 0, size - 1);
-	z1 = clamp(z1, 0, size - 1);
-
-	if (x0 > x1)
-		std::swap(x0, x1);
-	if (z0 > z1)
-		std::swap(z0, z1);
-
-	Vector4 rs = Vector4::loadAligned(raySource.m_floats).xyz1();
-	Vector4 rt = Vector4::loadAligned(rayTarget.m_floats).xyz1();
-
-	for (int32_t z = z0; z <= z1; z += c_gridMinMaxStep)
-	{
-		for (int32_t x = x0; x <= x1; x += c_gridMinMaxStep)
-		{
-			int32_t gx = x / c_gridMinMaxStep;
-			int32_t gz = z / c_gridMinMaxStep;
-
-			int32_t offset = gx + gz * gridSize;
-
-			float wx0, wz0;
-			m_heightfield->gridToWorld(
-				x,
-				z,
-				wx0,
-				wz0
-			);
-
-			float wx1, wz1;
-			m_heightfield->gridToWorld(
-				x + c_gridMinMaxStep - 1,
-				z + c_gridMinMaxStep - 1,
-				wx1,
-				wz1
-			);
-
-			Aabb3 aabb(
-				Vector4(wx0, m_gridMinMax[offset].mn, wz0),
-				Vector4(wx1, m_gridMinMax[offset].mx, wz1)
-			);
-
-			Scalar d;
-			if (aabb.intersectSegment(rs, rt, d))
-			{
-				btVector3 triangles[2][3];
-
-				for (int32_t zz = z; zz < z + c_gridMinMaxStep; zz += c_gridMinMaxStepSkip)
-				{
-					for (int32_t xx = x; xx < x + c_gridMinMaxStep; xx += c_gridMinMaxStepSkip)
-					{
-						bool c[] =
-						{
-							m_heightfield->getGridCut(xx                       , zz                       ),
-							m_heightfield->getGridCut(xx + c_gridMinMaxStepSkip, zz                       ),
-							m_heightfield->getGridCut(xx + c_gridMinMaxStepSkip, zz + c_gridMinMaxStepSkip),
-							m_heightfield->getGridCut(xx                       , zz + c_gridMinMaxStepSkip)
-						};
-
-						if (c[0] && c[2])
-						{
-							float h[] =
-							{
-								m_heightfield->unitToWorld(m_heightfield->getGridHeightNearest(xx                       , zz                       )),
-								m_heightfield->unitToWorld(m_heightfield->getGridHeightNearest(xx + c_gridMinMaxStepSkip, zz                       )),
-								m_heightfield->unitToWorld(m_heightfield->getGridHeightNearest(xx + c_gridMinMaxStepSkip, zz + c_gridMinMaxStepSkip)),
-								m_heightfield->unitToWorld(m_heightfield->getGridHeightNearest(xx                       , zz + c_gridMinMaxStepSkip))
-							};
-
-							float mnx, mnz;
-							m_heightfield->gridToWorld(xx, zz, mnx, mnz);
-
-							float mxx, mxz;
-							m_heightfield->gridToWorld(xx + c_gridMinMaxStepSkip, zz + c_gridMinMaxStepSkip, mxx, mxz);
-
-							triangles[0][0] = btVector3(mnx, h[0], mnz);
-							triangles[0][1] = btVector3(mnx, h[3], mxz);
-							triangles[0][2] = btVector3(mxx, h[2], mxz);
-
-							triangles[1][0] = btVector3(mxx, h[2], mxz);
-							triangles[1][1] = btVector3(mxx, h[1], mnz);
-							triangles[1][2] = btVector3(mnx, h[0], mnz);
-
-							if (c[3])
-								callback->processTriangle(triangles[0], 0, 0);
-							if (c[1])
-								callback->processTriangle(triangles[1], 0, 1);
-						}
-					}
-				}
-			}
-		}
-	}
-}
-
-void HeightfieldShapeBullet::processConvexcastAllTriangles(btTriangleConvexcastCallback *callback, const btVector3 &boxSource, const btVector3 &boxTarget, const btVector3 &boxMin, const btVector3 &boxMax)
-{
-	int32_t x0, z0;
-	int32_t x1, z1;
-	
-	m_heightfield->worldToGrid(
-		boxSource.x(),
-		boxSource.z(),
-		x0,
-		z0
-	);
-
-	m_heightfield->worldToGrid(
-		boxTarget.x(),
-		boxTarget.z(),
-		x1,
-		z1
-	);
-
-	int32_t size = m_heightfield->getSize();
-	int32_t gridSize = size / c_gridMinMaxStep;
-
-	x0 = clamp(x0, 0, size - 1);
-	z0 = clamp(z0, 0, size - 1);
-
-	x1 = clamp(x1, 0, size - 1);
-	z1 = clamp(z1, 0, size - 1);
-
-	if (x0 > x1)
-		std::swap(x0, x1);
-	if (z0 > z1)
-		std::swap(z0, z1);
-
-	Vector4 rs = Vector4::loadAligned(boxSource.m_floats).xyz1();
-	Vector4 rt = Vector4::loadAligned(boxTarget.m_floats).xyz1();
-
-	Vector4 bmn = Vector4::loadAligned(boxMin.m_floats).xyz0();
-	Vector4 bmx = Vector4::loadAligned(boxMax.m_floats).xyz0();
-
-	for (int32_t z = z0; z <= z1; z += c_gridMinMaxStep)
-	{
-		for (int32_t x = x0; x <= x1; x += c_gridMinMaxStep)
-		{
-			int32_t gx = x / c_gridMinMaxStep;
-			int32_t gz = z / c_gridMinMaxStep;
-
-			int32_t offset = gx + gz * gridSize;
-
-			float wx0, wz0;
-			m_heightfield->gridToWorld(
-				x,
-				z,
-				wx0,
-				wz0
-			);
-
-			float wx1, wz1;
-			m_heightfield->gridToWorld(
-				x + c_gridMinMaxStep - 1,
-				z + c_gridMinMaxStep - 1,
-				wx1,
-				wz1
-			);
-
-			Aabb3 aabb(
-				Vector4(wx0, m_gridMinMax[offset].mn, wz0) + bmn,
-				Vector4(wx1, m_gridMinMax[offset].mx, wz1) + bmx
-			);
-
-			Scalar d;
-			if (aabb.intersectSegment(rs, rt, d))
-			{
-				btVector3 triangles[2][3];
-
-				for (int32_t zz = z; zz < z + c_gridMinMaxStep; zz += c_gridMinMaxStepSkip)
-				{
-					for (int32_t xx = x; xx < x + c_gridMinMaxStep; xx += c_gridMinMaxStepSkip)
-					{
-						bool c[] =
-						{
-							m_heightfield->getGridCut(xx                       , zz                       ),
-							m_heightfield->getGridCut(xx + c_gridMinMaxStepSkip, zz                       ),
-							m_heightfield->getGridCut(xx + c_gridMinMaxStepSkip, zz + c_gridMinMaxStepSkip),
-							m_heightfield->getGridCut(xx                       , zz + c_gridMinMaxStepSkip)
-						};
-
-						if (c[0] && c[2])
-						{
-							float h[] =
-							{
-								m_heightfield->unitToWorld(m_heightfield->getGridHeightNearest(xx                       , zz                       )),
-								m_heightfield->unitToWorld(m_heightfield->getGridHeightNearest(xx + c_gridMinMaxStepSkip, zz                       )),
-								m_heightfield->unitToWorld(m_heightfield->getGridHeightNearest(xx + c_gridMinMaxStepSkip, zz + c_gridMinMaxStepSkip)),
-								m_heightfield->unitToWorld(m_heightfield->getGridHeightNearest(xx                       , zz + c_gridMinMaxStepSkip))
-							};
-
-							float mnx, mnz;
-							m_heightfield->gridToWorld(xx, zz, mnx, mnz);
-
-							float mxx, mxz;
-							m_heightfield->gridToWorld(xx + c_gridMinMaxStepSkip, zz + c_gridMinMaxStepSkip, mxx, mxz);
-
-							triangles[0][0] = btVector3(mnx, h[0], mnz);
-							triangles[0][1] = btVector3(mnx, h[3], mxz);
-							triangles[0][2] = btVector3(mxx, h[2], mxz);
-
-							triangles[1][0] = btVector3(mxx, h[2], mxz);
-							triangles[1][1] = btVector3(mxx, h[1], mnz);
-							triangles[1][2] = btVector3(mnx, h[0], mnz);
-
-							if (c[3])
-								callback->processTriangle(triangles[0], 0, 0);
-							if (c[1])
-								callback->processTriangle(triangles[1], 0, 1);
-						}
-					}
-				}
-			}
-		}
-	}
+	ProcessRaycastAllTrianglesVisitor prt;
+	prt.heightfield = m_heightfield;
+	prt.callback = callback;
+	line_dda(x0, z0, x1, z1, prt);
 }
 
 #endif

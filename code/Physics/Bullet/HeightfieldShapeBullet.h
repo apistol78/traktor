@@ -39,8 +39,6 @@ public:
 
 	virtual void processRaycastAllTriangles(btTriangleRaycastCallback *callback, const btVector3 &raySource, const btVector3 &rayTarget);
 
-	virtual void processConvexcastAllTriangles(btTriangleConvexcastCallback *callback, const btVector3 &boxSource, const btVector3 &boxTarget, const btVector3 &boxMin, const btVector3 &boxMax);
-
 #endif
 
 	virtual void calculateLocalInertia(btScalar mass, btVector3& inertia) const;
@@ -48,14 +46,7 @@ public:
 	virtual const char*	getName() const;
 
 private:
-	struct MinMax
-	{
-		float mn;
-		float mx;
-	};
-
 	resource::Proxy< hf::Heightfield > m_heightfield;
-	AutoArrayPtr< MinMax > m_gridMinMax;
 	btVector3 m_localScaling;
 };
 
