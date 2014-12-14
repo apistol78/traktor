@@ -1,4 +1,5 @@
 #include "Core/Misc/String.h"
+#include "Drawing/Image.h"
 #include "I18N/Text.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/Events/ModifierChangedEvent.h"
@@ -17,6 +18,7 @@
 #include "Terrain/Editor/TerrainEditModifier.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
+#include "Ui/FileDialog.h"
 #include "Ui/MenuItem.h"
 #include "Ui/Slider.h"
 #include "Ui/Static.h"
@@ -65,6 +67,7 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::custom::ToolBar* toolBa
 	m_toolToggleCut = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_CUT_BRUSH"), image + 7, ui::Command(L"Terrain.Editor.CutBrush"), ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleFallOffSmooth = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SMOOTH_FALLOFF"), image + 4, ui::Command(L"Terrain.Editor.SmoothFallOff"), ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleFallOffSharp = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SHARP_FALLOFF"), image + 5, ui::Command(L"Terrain.Editor.SharpFallOff"), ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolToggleFallOffImage = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SHARP_IMAGE"), image + 5, ui::Command(L"Terrain.Editor.ImageFallOff"), ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleSymmetryX = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SYMMETRY_X"), image + 11, ui::Command(L"Terrain.Editor.SymmetryX"), ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleSymmetryZ = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SYMMETRY_Z"), image + 12, ui::Command(L"Terrain.Editor.SymmetryZ"), ui::custom::ToolBarButton::BsDefaultToggle);
 
@@ -96,7 +99,7 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::custom::ToolBar* toolBa
 	m_toolMaterial->add(L"Material 4");
 	m_toolMaterial->select(0);
 
-	m_toolVisualize = new ui::custom::ToolBarDropDown(ui::Command(L"Terrain.Editor.SelectVisualize"), 80, i18n::Text(L"TERRAIN_EDITOR_VISUALIZE"));
+	m_toolVisualize = new ui::custom::ToolBarDropDown(ui::Command(L"Terrain.Editor.SelectVisualize"), 100, i18n::Text(L"TERRAIN_EDITOR_VISUALIZE"));
 	m_toolVisualize->add(L"Default");
 	m_toolVisualize->add(L"Surface LOD");
 	m_toolVisualize->add(L"Patch LOD");
@@ -129,6 +132,7 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::custom::ToolBar* toolBa
 	toolBar->addItem(new ui::custom::ToolBarSeparator());
 	toolBar->addItem(m_toolGroup->addItem(m_toolToggleFallOffSmooth));
 	toolBar->addItem(m_toolGroup->addItem(m_toolToggleFallOffSharp));
+	toolBar->addItem(m_toolGroup->addItem(m_toolToggleFallOffImage));
 	toolBar->addItem(new ui::custom::ToolBarSeparator());
 	toolBar->addItem(m_toolGroup->addItem(m_toolToggleSymmetryX));
 	toolBar->addItem(m_toolGroup->addItem(m_toolToggleSymmetryZ));
@@ -206,11 +210,32 @@ bool TerrainEditorPlugin::handleCommand(const ui::Command& command)
 			toolSelected = m_toolToggleFallOffSmooth;
 		else if (command == L"Terrain.Editor.SharpFallOff")
 			toolSelected = m_toolToggleFallOffSharp;
+		else if (command == L"Terrain.Editor.ImageFallOff")
+		{
+			ui::FileDialog fileDialog;
+
+			if (!fileDialog.create(m_parent, i18n::Text(L"TERRAIN_EDITOR_BROWSE_IMAGE"), L"All files (*.*);*.*"))
+				return false;
+
+			Path path;
+			if (fileDialog.showModal(path) == ui::DrOk)
+			{
+				Ref< drawing::Image > image = drawing::Image::load(path);
+				if (image)
+				{
+					m_terrainEditModifier->setFallOffImage(image);
+					toolSelected = m_toolToggleFallOffImage;
+				}
+			}
+
+			fileDialog.destroy();
+		}
 
 		if (toolSelected)
 		{
 			m_toolToggleFallOffSmooth->setToggled(m_toolToggleFallOffSmooth == toolSelected);
 			m_toolToggleFallOffSharp->setToggled(m_toolToggleFallOffSharp == toolSelected);
+			m_toolToggleFallOffImage->setToggled(m_toolToggleFallOffImage == toolSelected);
 			updateModifierState();
 			return true;
 		}
@@ -277,6 +302,8 @@ void TerrainEditorPlugin::updateModifierState()
 		m_terrainEditModifier->setFallOff(L"Terrain.Editor.SmoothFallOff");
 	else if (m_toolToggleFallOffSharp->isToggled())
 		m_terrainEditModifier->setFallOff(L"Terrain.Editor.SharpFallOff");
+	else if (m_toolToggleFallOffImage->isToggled())
+		m_terrainEditModifier->setFallOff(L"Terrain.Editor.ImageFallOff");
 
 	uint32_t symmetry = 0;
 	if (m_toolToggleSymmetryX->isToggled())

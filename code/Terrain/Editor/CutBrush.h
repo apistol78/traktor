@@ -36,7 +36,8 @@ public:
 private:
 	resource::Proxy< hf::Heightfield > m_heightfield;
 	int32_t m_radius;
-	bool m_cut;
+	const IFallOff* m_fallOff;
+	float m_strength;
 };
 
 	}

@@ -103,6 +103,8 @@ public:
 
 	void setVisualizeMode(TerrainEntity::VisualizeMode visualizeMode);
 
+	void setFallOffImage(drawing::Image* fallOffImage);
+
 private:
 	scene::SceneEditorContext* m_context;
 	Ref< terrain::TerrainEntity > m_entity;
@@ -123,6 +125,7 @@ private:
 	Ref< IBrush > m_spatialBrush;
 	uint32_t m_brushMode;
 	Ref< IFallOff > m_fallOff;
+	Ref< drawing::Image > m_fallOffImage;
 	uint32_t m_symmetry;
 	float m_strength;
 	Color4f m_color;

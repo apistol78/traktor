@@ -9,9 +9,14 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.SmoothFallOff", SmoothFallOff, IFallOff)
 
-float SmoothFallOff::evaluate(float x) const
+float SmoothFallOff::evaluate(float x, float y) const
 {
-	return clamp(sinf(x * PI / 4.0f), 0.0f, 1.0f);
+	float d = x * x + y * y;
+	if (d >= 1.0f)
+		return 0.0f;
+
+	float v = 1.0f - sqrtf(d);
+	return clamp(sinf(v * PI / 4.0f), 0.0f, 1.0f);
 }
 
 	}

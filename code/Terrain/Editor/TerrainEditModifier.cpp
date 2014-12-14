@@ -26,6 +26,7 @@
 #include "Terrain/Editor/EmissiveBrush.h"
 #include "Terrain/Editor/ErodeBrush.h"
 #include "Terrain/Editor/FlattenBrush.h"
+#include "Terrain/Editor/ImageFallOff.h"
 #include "Terrain/Editor/MaterialBrush.h"
 #include "Terrain/Editor/NoiseBrush.h"
 #include "Terrain/Editor/SharpFallOff.h"
@@ -774,6 +775,8 @@ void TerrainEditModifier::setFallOff(const std::wstring& fallOff)
 		m_fallOff = new SmoothFallOff();
 	else if (fallOff == L"Terrain.Editor.SharpFallOff")
 		m_fallOff = new SharpFallOff();
+	else if (fallOff == L"Terrain.Editor.ImageFallOff")
+		m_fallOff = new ImageFallOff(m_fallOffImage);
 }
 
 void TerrainEditModifier::setSymmetry(uint32_t symmetry)
@@ -819,6 +822,11 @@ void TerrainEditModifier::setVisualizeMode(TerrainEntity::VisualizeMode visualiz
 	m_visualizeMode = visualizeMode;
 	if (m_entity)
 		m_entity->setVisualizeMode(m_visualizeMode);
+}
+
+void TerrainEditModifier::setFallOffImage(drawing::Image* fallOffImage)
+{
+	m_fallOffImage = fallOffImage;
 }
 
 	}

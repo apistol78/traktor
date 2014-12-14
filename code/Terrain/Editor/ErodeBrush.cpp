@@ -121,18 +121,18 @@ void ErodeBrush::apply(int32_t x, int32_t y)
 	{
 		for (int32_t ix = -m_radius; ix <= m_radius; ++ix)
 		{
-			int32_t d = ix * ix + iy * iy;
-			if (d >= m_radius * m_radius)
+			float fx = float(ix) / m_radius;
+			float fy = float(iy) / m_radius;
+
+			float a = m_fallOff->evaluate(fx, fy) * m_strength;
+			if (abs(a) <= FUZZY_EPSILON)
 				continue;
 
 			int32_t iix = ix + x;
 			int32_t iiy = iy + y;
 
 			if (iix >= 0 && iiy >= 0 && iix < size && iiy < size)
-			{
-				float a = m_fallOff->evaluate(1.0f - sqrtf(float(d)) / m_radius) * m_strength;
 				m_water[iix + iiy * size].level += a;
-			}
 		}
 	}
 
