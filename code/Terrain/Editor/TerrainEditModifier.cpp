@@ -96,45 +96,90 @@ Vector4 normalAt(const hf::Heightfield* heightfield, int32_t u, int32_t v)
 }
 
 template < typename Visitor >
-void line(int32_t x0, int32_t y0, int32_t x1, int32_t y1, Visitor& visitor)
+void line_dda(float x0, float y0, float x1, float y1, Visitor& visitor)
 {
-	float dx = float(x1 - x0);
-	float dy = float(y1 - y0);
+	float dx = x1 - x0;
+	float dy = y1 - y0;
 
-	visitor(x0, y0);
-
-	if (std::abs(dx) > std::abs(dy) && dx != 0)
+	float dln = std::sqrt(dx * dx + dy * dy);
+	if (dln > FUZZY_EPSILON)
 	{
-		if (dx < 0)
-		{
-			std::swap(x0, x1);
-			std::swap(y0, y1);
-		}
-
-		float k = dy / dx;
-		float y = y0 + k;
-
-		for (int32_t x = x0 + 1; x < x1; ++x)
-		{
-			visitor(x, int32_t(y + 0.5f));
-			y += k;
-		}
+		dx /= dln;
+		dy /= dln;
 	}
-	else if (dy != 0)
+
+	float x = std::floor(x0);
+	float y = std::floor(y0);
+
+	float stepx, stepy;
+	float cbx, cby;
+
+	if (dx > 0.0f)
 	{
-		if (dy < 0)
+		stepx = 1.0f;
+		cbx = x + 1.0f;
+	}
+	else
+	{
+		stepx = -1.0f;
+		cbx = x;
+	}
+
+	if (dy > 0.0f)
+	{
+		stepy = 1.0f;
+		cby = y + 1.0f;
+	}
+	else
+	{
+		stepy = -1.0f;
+		cby = y;
+	}
+
+	float tmaxx, tmaxy;
+	float tdeltax, tdeltay;
+	float rxr, ryr;
+
+	if (std::abs(dx) > FUZZY_EPSILON)
+	{
+		rxr = 1.0f / dx;
+		tmaxx = (cbx - x0) * rxr;
+		tdeltax = stepx * rxr;
+	}
+	else
+		tmaxx = std::numeric_limits< float >::max();
+
+	if (std::abs(dy) > FUZZY_EPSILON)
+	{
+		ryr = 1.0f / dy;
+		tmaxy = (cby - y0) * ryr;
+		tdeltay = stepy * ryr;
+	}
+	else
+		tmaxy = std::numeric_limits< float >::max();
+
+	int32_t ix1 = int32_t(x1);
+	int32_t iy1 = int32_t(y1);
+
+	for (int32_t i = 0; i < 10000; ++i)
+	{
+		int32_t ix = int32_t(x);
+		int32_t iy = int32_t(y);
+
+		visitor(ix, iy);
+
+		if (ix == ix1 && iy == iy1)
+			break;
+
+		if (tmaxx < tmaxy)
 		{
-			std::swap(x0, x1);
-			std::swap(y0, y1);
+			x += stepx;
+			tmaxx += tdeltax;
 		}
-
-		float k = dx / dy;
-		float x = x0 + k;
-
-		for (int32_t y = y0 + 1; y < y1; ++y)
+		else
 		{
-			visitor(int32_t(x + 0.5f), y);
-			x += k;
+			y += stepy;
+			tmaxy += tdeltay;
 		}
 	}
 }
@@ -257,7 +302,7 @@ void TerrainEditModifier::selectionChanged()
 		if (file)
 		{
 			m_colorImage = drawing::Image::load(file, L"tga");
-			m_colorImage->convert(drawing::PixelFormat::getR8G8B8A8().endianSwapped());
+			m_colorImage->convert(drawing::PixelFormat::getABGRF32());
 			file->close();
 			file = 0;
 		}
@@ -266,9 +311,13 @@ void TerrainEditModifier::selectionChanged()
 	// Create color image if none attached.
 	if (!m_colorImage)
 	{
-		m_colorImage = new drawing::Image(drawing::PixelFormat::getR8G8B8A8().endianSwapped(), size, size);
+		m_colorImage = new drawing::Image(drawing::PixelFormat::getABGRF32(), size, size);
 		m_colorImage->clear(Color4f(0.5f, 0.5f, 0.5f, 0.0f));
 	}
+
+	// Create low-precision color image used for transfer.
+	m_colorImageLowPrecision = new drawing::Image(drawing::PixelFormat::getA8B8G8R8(), size, size);
+	m_colorImageLowPrecision->copy(m_colorImage, 0, 0, size, size);
 
 	// Create non-compressed texture for colors.
 	desc.width = size;
@@ -285,7 +334,7 @@ void TerrainEditModifier::selectionChanged()
 		render::ITexture::Lock nl;
 		if (m_colorMap->lock(0, nl))
 		{
-			std::memcpy(nl.bits, m_colorImage->getData(), size * size * 4);
+			std::memcpy(nl.bits, m_colorImageLowPrecision->getData(), size * size * 4);
 			m_colorMap->unlock(0);
 		}
 
@@ -460,15 +509,15 @@ void TerrainEditModifier::apply(
 
 	Vector4 center = (worldRayOrigin + worldRayDirection * distance).xyz1();
 
-	int32_t gx0, gz0;
-	int32_t gx1, gz1;
+	float gx0, gz0;
+	float gx1, gz1;
 
 	m_heightfield->worldToGrid(m_center.x(), m_center.z(), gx0, gz0);
 	m_heightfield->worldToGrid(center.x(), center.z(), gx1, gz1);
 
 	BrushVisitor visitor;
 	visitor.brush = m_spatialBrush;
-	line(gx0, gz0, gx1, gz1, visitor);
+	line_dda(gx0, gz0, gx1, gz1, visitor);
 
 	m_entity->updatePatches();
 	m_center = center;
@@ -484,8 +533,8 @@ void TerrainEditModifier::apply(
 		float worldRadius = m_context->getGuideSize();
 		int32_t gridRadius = int32_t(size * worldRadius / m_heightfield->getWorldExtent().x());
 
-		mnx = min(gx0 - gridRadius, gx1 - gridRadius), mxx = max(gx0 + gridRadius, gx1 + gridRadius);
-		mnz = min(gz0 - gridRadius, gz1 - gridRadius), mxz = max(gz0 + gridRadius, gz1 + gridRadius);
+		mnx = min(std::floor(gx0) - gridRadius, std::floor(gx1) - gridRadius), mxx = max(std::ceil(gx0) + gridRadius, std::ceil(gx1) + gridRadius);
+		mnz = min(std::floor(gz0) - gridRadius, std::floor(gz1) - gridRadius), mxz = max(std::ceil(gz0) + gridRadius, std::ceil(gz1) + gridRadius);
 
 		mnx = clamp(mnx, 0, size - 1);
 		mxx = clamp(mxx, 0, size - 1);
@@ -512,7 +561,8 @@ void TerrainEditModifier::apply(
 		render::ITexture::Lock cl;
 		if (m_colorMap->lock(0, cl))
 		{
-			std::memcpy(cl.bits, m_colorImage->getData(), size * size * 4);
+			m_colorImageLowPrecision->copy(m_colorImage, mnx, mnz, mnx, mnz, mxx - mnx, mxz - mnz);
+			std::memcpy(cl.bits, m_colorImageLowPrecision->getData(), size * size * 4);
 			m_colorMap->unlock(0);
 		}
 	}
@@ -622,7 +672,7 @@ void TerrainEditModifier::end(const scene::TransformChain& transformChain)
 		Ref< IStream > file = m_terrainInstance->writeData(L"Color");
 		if (file)
 		{
-			m_colorImage->save(file, L"tga");
+			m_colorImageLowPrecision->save(file, L"tga");
 			file->close();
 			file = 0;
 		}

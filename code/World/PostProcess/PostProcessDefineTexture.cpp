@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Render/ITexture.h"

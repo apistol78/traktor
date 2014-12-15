@@ -35,6 +35,16 @@ bool drawing_Image_save(drawing::Image* image, const std::wstring& filePath)
 	return image->save(Path(filePath));
 }
 
+void drawing_Image_copy_1(drawing::Image* image, const drawing::Image* src, int32_t x, int32_t y, int32_t width, int32_t height)
+{
+	image->copy(src, x, y, width, height);
+}
+
+void drawing_Image_copy_2(drawing::Image* image, const drawing::Image* src, int32_t dx, int32_t dy, int32_t x, int32_t y, int32_t width, int32_t height)
+{
+	image->copy(src, dx, dy, x, y, width, height);
+}
+
 		}
 
 void registerDrawingClasses(script::IScriptManager* scriptManager)
@@ -45,7 +55,8 @@ void registerDrawingClasses(script::IScriptManager* scriptManager)
 	Ref< script::AutoScriptClass< drawing::Image > > classImage = new script::AutoScriptClass< drawing::Image >();
 	classImage->addConstructor();
 	classImage->addMethod("clone", &drawing::Image::clone);
-	classImage->addMethod("copy", &drawing::Image::copy);
+	classImage->addMethod("copy", &drawing_Image_copy_1);
+	classImage->addMethod("copy", &drawing_Image_copy_2);
 	classImage->addMethod("clear", &drawing::Image::clear);
 	classImage->addMethod("getPixel", &drawing_Image_getPixel);
 	classImage->addMethod("setPixel", &drawing::Image::setPixel);

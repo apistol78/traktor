@@ -116,6 +116,7 @@ private:
 	Ref< drawing::Image > m_splatImage;
 	Ref< render::ISimpleTexture > m_splatMap;
 	Ref< drawing::Image > m_colorImage;
+	Ref< drawing::Image > m_colorImageLowPrecision;
 	Ref< render::ISimpleTexture > m_colorMap;
 	AutoArrayPtr< uint8_t > m_normalData;
 	Ref< render::ISimpleTexture > m_normalMap;
