@@ -6,6 +6,7 @@
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
+#include "Drawing/Filters/ScaleFilter.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Heightfield/Heightfield.h"
@@ -203,7 +204,7 @@ TerrainEditModifier::TerrainEditModifier(scene::SceneEditorContext* context)
 ,	m_brushMode(0)
 ,	m_symmetry(0)
 ,	m_strength(1.0f)
-,	m_color(Color4f(1.0f, 1.0f, 1.0f, 1.0f))
+,	m_color(Color4f(0.5f, 0.5f, 0.5f, 1.0f))
 ,	m_material(0)
 ,	m_center(Vector4::zero())
 {
@@ -277,6 +278,13 @@ void TerrainEditModifier::selectionChanged()
 		m_splatImage->clear(Color4f(1.0f, 0.0f, 0.0f, 0.0f));
 	}
 
+	// Ensure splat image is of correct size.
+	if (m_splatImage->getWidth() != size)
+	{
+		drawing::ScaleFilter scaleFilter(size, size, drawing::ScaleFilter::MnAverage, drawing::ScaleFilter::MgLinear);
+		m_splatImage->apply(&scaleFilter);
+	}
+
 	// Create non-compressed texture for splats.
 	desc.width = size;
 	desc.height = size;
@@ -323,6 +331,13 @@ void TerrainEditModifier::selectionChanged()
 	{
 		m_colorImage = new drawing::Image(drawing::PixelFormat::getABGRF32(), size, size);
 		m_colorImage->clear(Color4f(0.5f, 0.5f, 0.5f, 0.0f));
+	}
+
+	// Ensure color image is of correct size.
+	if (m_colorImage->getWidth() != size)
+	{
+		drawing::ScaleFilter scaleFilter(size, size, drawing::ScaleFilter::MnAverage, drawing::ScaleFilter::MgLinear);
+		m_colorImage->apply(&scaleFilter);
 	}
 
 	// Create low-precision color image used for transfer.
@@ -533,11 +548,12 @@ void TerrainEditModifier::apply(
 	m_center = center;
 
 	int32_t size = m_heightfield->getSize();
-	int32_t mnx = 0, mxx = size - 1;
-	int32_t mnz = 0, mxz = size - 1;
 
 	// Calculate region which needs to be updated; only
 	// applies to "contained" brushes.
+	int32_t mnx = 0, mxx = size - 1;
+	int32_t mnz = 0, mxz = size - 1;
+
 	if (m_spatialBrush->contained())
 	{
 		float worldRadius = m_context->getGuideSize();
@@ -870,6 +886,7 @@ void TerrainEditModifier::setStrength(float strength)
 void TerrainEditModifier::setColor(const Color4f& color)
 {
 	m_color = color;
+	m_color.setAlpha(Scalar(1.0f));
 }
 
 void TerrainEditModifier::setMaterial(int32_t material)
