@@ -258,7 +258,12 @@ void TerrainEditModifier::selectionChanged()
 		Ref< IStream > file = m_terrainInstance->readData(L"Splat");
 		if (file)
 		{
-			m_splatImage = drawing::Image::load(file, L"tga");
+			m_splatImage = drawing::Image::load(file, L"tri");
+			if (!m_splatImage)
+			{
+				file->seek(IStream::SeekSet, 0);
+				m_splatImage = drawing::Image::load(file, L"tga");
+			}
 			m_splatImage->convert(drawing::PixelFormat::getR8G8B8A8().endianSwapped());
 			file->close();
 			file = 0;
@@ -301,7 +306,12 @@ void TerrainEditModifier::selectionChanged()
 		Ref< IStream > file = m_terrainInstance->readData(L"Color");
 		if (file)
 		{
-			m_colorImage = drawing::Image::load(file, L"tga");
+			m_colorImage = drawing::Image::load(file, L"tri");
+			if (!m_colorImage)
+			{
+				file->seek(IStream::SeekSet, 0);
+				m_colorImage = drawing::Image::load(file, L"tga");
+			}
 			m_colorImage->convert(drawing::PixelFormat::getABGRF32());
 			file->close();
 			file = 0;
@@ -642,7 +652,7 @@ void TerrainEditModifier::end(const scene::TransformChain& transformChain)
 		Ref< IStream > file = m_terrainInstance->writeData(L"Splat");
 		if (file)
 		{
-			m_splatImage->save(file, L"tga");
+			m_splatImage->save(file, L"tri");
 			file->close();
 			file = 0;
 		}
@@ -672,7 +682,7 @@ void TerrainEditModifier::end(const scene::TransformChain& transformChain)
 		Ref< IStream > file = m_terrainInstance->writeData(L"Color");
 		if (file)
 		{
-			m_colorImageLowPrecision->save(file, L"tga");
+			m_colorImageLowPrecision->save(file, L"tri");
 			file->close();
 			file = 0;
 		}

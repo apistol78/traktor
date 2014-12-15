@@ -344,7 +344,12 @@ bool TerrainPipeline::buildOutput(
 	Ref< IStream > file = sourceInstance->readData(L"Color");
 	if (file)
 	{
-		Ref< drawing::Image > colorImage = drawing::Image::load(file, L"tga");
+		Ref< drawing::Image > colorImage = drawing::Image::load(file, L"tri");
+		if (!colorImage)
+		{
+			file->seek(IStream::SeekSet, 0);
+			colorImage = drawing::Image::load(file, L"tga");
+		}
 		if (!colorImage)
 		{
 			log::error << L"Terrain pipeline failed; unable to read attached color image" << Endl;
@@ -371,7 +376,12 @@ bool TerrainPipeline::buildOutput(
 	file = sourceInstance->readData(L"Splat");
 	if (file)
 	{
-		Ref< drawing::Image > splatImage = drawing::Image::load(file, L"tga");
+		Ref< drawing::Image > splatImage = drawing::Image::load(file, L"tri");
+		if (!splatImage)
+		{
+			file->seek(IStream::SeekSet, 0);
+			splatImage = drawing::Image::load(file, L"tga");
+		}
 		if (!splatImage)
 		{
 			log::error << L"Terrain pipeline failed; unable to read attached splat image" << Endl;
