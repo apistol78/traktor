@@ -746,6 +746,14 @@ Generated texture from surface cache.
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
+		<item type="traktor.render.Branch">
+			<comment/>
+			<position>
+				<first>528</first>
+				<second>-1030</second>
+			</position>
+			<parameterName>VisualizeMap</parameterName>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -1186,16 +1194,6 @@ Generated texture from surface cache.
 			<destination>
 				<node ref="/object/nodes/item[38]"/>
 				<name>Type</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[39]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[38]"/>
-				<name>Vector</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -1706,6 +1704,36 @@ Generated texture from surface cache.
 			<destination>
 				<node ref="/object/nodes/item[71]"/>
 				<name>TexCoord</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[20]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[72]"/>
+				<name>True</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[39]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[72]"/>
+				<name>False</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[72]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[38]"/>
+				<name>Vector</name>
 			</destination>
 		</item>
 	</edges>

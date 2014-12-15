@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include "Model/Model.h"
 #include "Model/ModelAdjacency.h"
 
