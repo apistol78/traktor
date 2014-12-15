@@ -206,12 +206,16 @@ void RenderControlModel::eventDoubleClick(ISceneRenderControl* renderControl, ui
 		return;
 	if ((event->getKeyState() & (ui::KsShift | ui::KsControl)) != 0)
 		return;
-	
+
 	Vector4 worldRayOrigin, worldRayDirection;
 	if (renderControl->calculateRay(m_mousePosition, worldRayOrigin, worldRayDirection))
 	{
 		Ref< EntityAdapter > entityAdapter = context->queryRay(worldRayOrigin, worldRayDirection, true);
-		if (entityAdapter && entityAdapter->isExternal())
+		if (
+			entityAdapter &&
+			entityAdapter->isSelected() &&
+			entityAdapter->isExternal()
+		)
 		{
 			Guid externalGuid;
 			entityAdapter->getExternalGuid(externalGuid);

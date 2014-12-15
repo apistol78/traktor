@@ -87,7 +87,7 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::custom::ToolBar* toolBa
 
 	m_colorControl = new ui::custom::ColorControl();
 	m_colorControl->create(toolBar, ui::WsBorder);
-	m_colorControl->setColor(Color4ub(255, 255, 255, 255));
+	m_colorControl->setColor(Color4ub(128, 128, 128, 255));
 	m_colorControl->addEventHandler< ui::MouseButtonUpEvent >(this, &TerrainEditorPlugin::eventColorClick);
 
 	m_toolColor = new ui::custom::ToolBarEmbed(m_colorControl, 32);
