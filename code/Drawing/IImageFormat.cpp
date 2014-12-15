@@ -1,3 +1,4 @@
+#include "Core/Misc/String.h"
 #include "Drawing/Config.h"
 #include "Drawing/IImageFormat.h"
 #include "Drawing/Formats/ImageFormatBmp.h"
@@ -13,9 +14,9 @@
 #if defined(DRAWING_INCLUDE_EXR)
 #	include "Drawing/Formats/ImageFormatExr.h"
 #endif
-#include "Drawing/Formats/ImageFormatTga.h"
 #include "Drawing/Formats/ImageFormatPcx.h"
-#include "Core/Misc/String.h"
+#include "Drawing/Formats/ImageFormatTga.h"
+#include "Drawing/Formats/ImageFormatTri.h"
 
 namespace traktor
 {
@@ -46,10 +47,12 @@ Ref< IImageFormat > IImageFormat::determineFormat(const std::wstring& extension)
 	else if (compareIgnoreCase< std::wstring >(extension, L"exr") == 0)
 		imageFormat = new ImageFormatExr();
 #endif
-	else if (compareIgnoreCase< std::wstring >(extension, L"tga") == 0)
-		imageFormat = new ImageFormatTga();
 	else if (compareIgnoreCase< std::wstring >(extension, L"pcx") == 0)
 		imageFormat = new ImageFormatPcx();
+	else if (compareIgnoreCase< std::wstring >(extension, L"tga") == 0)
+		imageFormat = new ImageFormatTga();
+	else if (compareIgnoreCase< std::wstring >(extension, L"tri") == 0)
+		imageFormat = new ImageFormatTri();
 
 	return imageFormat;
 }
