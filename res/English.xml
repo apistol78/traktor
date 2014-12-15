@@ -2712,5 +2712,13 @@
       <first>INPUT_EDITOR_STATE_NAME_MESSAGE</first>
       <second>Enter state name</second>
     </item>
+    <item>
+      <first>EDITOR_SURE_TO_REBUILD_MESSAGE</first>
+      <second>Are you sure you want to rebuild all content?</second>
+    </item>
+    <item>
+      <first>EDITOR_SURE_TO_REBUILD_CAPTION</first>
+      <second>Rebuild content</second>
+    </item>
   </map>
 </object>
