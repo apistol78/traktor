@@ -2195,7 +2195,10 @@ bool EditorForm::handleCommand(const ui::Command& command)
 	else if (command == L"Editor.Build")
 		buildAssets(false);
 	else if (command == L"Editor.Rebuild")
-		buildAssets(true);
+	{
+		if (ui::MessageBox::show(this, i18n::Text(L"EDITOR_SURE_TO_REBUILD_MESSAGE"), i18n::Text(L"EDITOR_SURE_TO_REBUILD_CAPTION"), ui::MbYesNo | ui::MbIconExclamation) == ui::DrYes)
+			buildAssets(true);
+	}
 	else if (command == L"Editor.CancelBuild")
 		buildCancel();
 	else if (command == L"Editor.ActivatePreviousEditor")
