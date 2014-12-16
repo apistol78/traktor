@@ -1,5 +1,6 @@
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
@@ -50,6 +51,23 @@ bool SteamUser::isFriend(uint64_t userHandle)
 	return SteamFriends()->GetFriendRelationship(uint64(userHandle)) == k_EFriendRelationshipFriend;
 }
 
+bool SteamUser::isMemberOfGroup(uint64_t userHandle, const std::wstring& groupName) const
+{
+	if (uint64(userHandle) != ::SteamUser()->GetSteamID().ConvertToUint64())
+		return false;
+
+	int32_t clanCount = SteamFriends()->GetClanCount();
+	for (int32_t i = 0; i < clanCount; ++i)
+	{
+		CSteamID clanId = SteamFriends()->GetClanByIndex(i);
+		const char* clanName = SteamFriends()->GetClanName(clanId);
+		if (clanName != 0 && compareIgnoreCase< std::wstring >(groupName, mbstows(clanName)) == 0)
+			return true;
+	}
+
+	return false;
+}
+
 bool SteamUser::invite(uint64_t userHandle)
 {
 	return SteamFriends()->InviteUserToGame(uint64(userHandle), "");
@@ -57,7 +75,10 @@ bool SteamUser::invite(uint64_t userHandle)
 
 bool SteamUser::setPresenceValue(uint64_t userHandle, const std::wstring& key, const std::wstring& value)
 {
-	return SteamFriends()->SetRichPresence(wstombs(key).c_str(), wstombs(Utf8Encoding(), value).c_str());
+	if (uint64(userHandle) == ::SteamUser()->GetSteamID().ConvertToUint64())
+		return SteamFriends()->SetRichPresence(wstombs(key).c_str(), wstombs(Utf8Encoding(), value).c_str());
+	else
+		return false;
 }
 
 bool SteamUser::getPresenceValue(uint64_t userHandle, const std::wstring& key, std::wstring& outValue)

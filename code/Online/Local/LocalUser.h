@@ -19,6 +19,8 @@ public:
 
 	virtual bool isFriend(uint64_t userHandle);
 
+	virtual bool isMemberOfGroup(uint64_t userHandle, const std::wstring& groupName) const;
+
 	virtual bool invite(uint64_t userHandle);
 
 	virtual bool setPresenceValue(uint64_t userHandle, const std::wstring& key, const std::wstring& value);

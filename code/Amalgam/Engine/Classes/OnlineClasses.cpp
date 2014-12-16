@@ -344,6 +344,7 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 	classIUser->addMethod("getImage", &online::IUser::getImage);
 	classIUser->addMethod("getGlobalId", &online::IUser::getGlobalId);
 	classIUser->addMethod("isFriend", &online::IUser::isFriend);
+	classIUser->addMethod("isMemberOfGroup", &online::IUser::isMemberOfGroup);
 	classIUser->addMethod("invite", &online::IUser::invite);
 	classIUser->addMethod("setPresenceValue", &online::IUser::setPresenceValue);
 	classIUser->addMethod("getPresenceValue", &online_IUser_getPresenceValue);

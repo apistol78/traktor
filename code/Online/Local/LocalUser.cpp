@@ -24,6 +24,11 @@ bool LocalUser::isFriend(uint64_t userHandle)
 	return true;
 }
 
+bool LocalUser::isMemberOfGroup(uint64_t userHandle, const std::wstring& groupName) const
+{
+	return false;
+}
+
 bool LocalUser::invite(uint64_t userHandle)
 {
 	return false;
