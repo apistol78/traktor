@@ -16,6 +16,9 @@ namespace traktor
 	namespace terrain
 	{
 
+/*! \brief Undergrowth plant descriptor.
+ * \ingroup Terrain
+ */
 class T_DLLCLASS UndergrowthPlant : public ISerializable
 {
 	T_RTTI_CLASS;

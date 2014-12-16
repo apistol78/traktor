@@ -46,6 +46,9 @@ class WorldRenderView;
 
 class RiverEntityData;
 
+/*! \brief River entity.
+ * \ingroup Terrain
+ */
 class T_DLLCLASS RiverEntity : public world::Entity
 {
 	T_RTTI_CLASS;

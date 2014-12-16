@@ -30,6 +30,9 @@ class Shader;
 
 class OceanEntity;
 
+/*! \brief Ocean entity data.
+ * \ingroup Terrain
+ */
 class T_DLLCLASS OceanEntityData : public world::EntityData
 {
 	T_RTTI_CLASS;

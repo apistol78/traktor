@@ -19,6 +19,9 @@ namespace traktor
 
 class Terrain;
 
+/*! \brief Terrain entity data.
+ * \ingroup Terrain
+ */
 class T_DLLCLASS TerrainEntityData : public world::EntityData
 {
 	T_RTTI_CLASS;

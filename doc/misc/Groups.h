@@ -68,3 +68,5 @@
 /*! \defgroup SQL SQL database */
 
 /*! \defgroup Video Video playback */
+
+/*! \defgroup Terrain Terrain renderer */

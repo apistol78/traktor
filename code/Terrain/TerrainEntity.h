@@ -62,6 +62,9 @@ class TerrainSurfaceCache;
 //#	define T_USE_TERRAIN_VERTEX_TEXTURE_FETCH
 //#endif
 
+/*! \brief Terrain entity.
+ * \ingroup Terrain
+ */
 class T_DLLCLASS TerrainEntity : public world::Entity
 {
 	T_RTTI_CLASS;

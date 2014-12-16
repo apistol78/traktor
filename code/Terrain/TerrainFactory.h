@@ -23,6 +23,9 @@ class Database;
 	namespace terrain
 	{
 
+/*! \brief Terrain resource factory.
+ * \ingroup Terrain
+ */
 class T_DLLCLASS TerrainFactory : public resource::IResourceFactory
 {
 	T_RTTI_CLASS;
