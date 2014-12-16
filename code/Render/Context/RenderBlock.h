@@ -109,6 +109,36 @@ public:
 	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const;
 };
 
+/*! \brief Instancing render block.
+ * \ingroup Render
+ */
+class T_DLLCLASS IndexedInstancingRenderBlock : public RenderBlock
+{
+public:
+	IndexBuffer* indexBuffer;
+	VertexBuffer* vertexBuffer;
+	PrimitiveType primitive;
+	uint32_t offset;
+	uint32_t count;
+	uint32_t minIndex;
+	uint32_t maxIndex;
+	uint32_t instanceCount;
+
+	IndexedInstancingRenderBlock()
+	:	indexBuffer(0)
+	,	vertexBuffer(0)
+	,	primitive(PtPoints)
+	,	offset(0)
+	,	count(0)
+	,	minIndex(0)
+	,	maxIndex(0)
+	,	instanceCount(0)
+	{
+	}
+
+	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const;
+};
+
 /*! \brief Non-indexed primitives render block.
  * \ingroup Render
  */

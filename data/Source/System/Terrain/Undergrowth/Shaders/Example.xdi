@@ -4,8 +4,8 @@
 		<item type="traktor.render.Texture">
 			<comment/>
 			<position>
-				<first>890</first>
-				<second>409</second>
+				<first>762</first>
+				<second>541</second>
 			</position>
 			<external>{EE7B797B-79B4-824E-8117-B89885C4F7C3}</external>
 			<type>PtTexture2D</type>
@@ -13,8 +13,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>1084</first>
-				<second>504</second>
+				<first>1077</first>
+				<second>666</second>
 			</position>
 			<fragmentGuid>{B7335A96-9F44-CF40-88D9-9AFDF52BB9E3}</fragmentGuid>
 			<inputPins>
@@ -33,7 +33,23 @@
 					<first>GroundColorMap</first>
 					<second>0</second>
 				</item>
+				<item>
+					<first>PlantAtlasColumns</first>
+					<second>2</second>
+				</item>
+				<item>
+					<first>PlantAtlasRows</first>
+					<second>1</second>
+				</item>
 			</values>
+		</item>
+		<item type="traktor.render.Color">
+			<comment/>
+			<position>
+				<first>746</first>
+				<second>811</second>
+			</position>
+			<color>67, 46, 0, 255</color>
 		</item>
 	</nodes>
 	<edges>
@@ -45,6 +61,16 @@
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<name>PlantAtlasMap</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>GroundColorMap</name>
 			</destination>
 		</item>
 	</edges>

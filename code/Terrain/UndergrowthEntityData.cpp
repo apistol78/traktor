@@ -18,13 +18,12 @@ namespace traktor
 		namespace
 		{
 
-UndergrowthEntity::Vertex packVertex(const Vector4& position, float u, float v, int32_t instance)
+UndergrowthEntity::Vertex packVertex(const Vector4& position, float u, float v)
 {
 	UndergrowthEntity::Vertex vtx;
 	vtx.position[0] = position.x();
 	vtx.position[1] = position.y();
 	vtx.position[2] = position.z();
-	vtx.position[3] = float(instance + 0.1f);
 	vtx.texCoord[0] = floatToHalf(u);
 	vtx.texCoord[1] = floatToHalf(v);
 	return vtx;
@@ -48,13 +47,13 @@ UndergrowthEntity* UndergrowthEntityData::createEntity(resource::IResourceManage
 		return 0;
 
 	std::vector< render::VertexElement > vertexElements;
-	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat4, offsetof(UndergrowthEntity::Vertex, position)));
+	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat3, offsetof(UndergrowthEntity::Vertex, position)));
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtHalf2, offsetof(UndergrowthEntity::Vertex, texCoord)));
 	T_ASSERT (render::getVertexSize(vertexElements) == sizeof(UndergrowthEntity::Vertex));
 
 	Ref< render::VertexBuffer > vertexBuffer = renderSystem->createVertexBuffer(
 		vertexElements,
-		4 * 2 * UndergrowthEntity::InstanceCount * sizeof(UndergrowthEntity::Vertex),
+		4 * 2 * sizeof(UndergrowthEntity::Vertex),
 		false
 	);
 	if (!vertexBuffer)
@@ -66,31 +65,28 @@ UndergrowthEntity* UndergrowthEntityData::createEntity(resource::IResourceManage
 
 	Random rnd;
 
-	for (int i = 0; i < UndergrowthEntity::InstanceCount; ++i)
-	{
-		float s = m_settings.plantScale * (rnd.nextFloat() * 0.2f + 0.8f);
+	const float s = m_settings.plantScale;
 
-		Vector4 position(0.0f, 0.0f, 0.0f);
-		Vector4 axisX(0.5f * s, 0.0f, 0.0f);
-		Vector4 axisY(0.0f, 1.0f * s, 0.0f);
-		Vector4 axisZ(0.0f, 0.0f, 0.5f * s);
+	Vector4 position(0.0f, 0.0f, 0.0f);
+	Vector4 axisX(0.5f * s, 0.0f, 0.0f);
+	Vector4 axisY(0.0f, 1.0f * s, 0.0f);
+	Vector4 axisZ(0.0f, 0.0f, 0.5f * s);
 
-		*vertex++ = packVertex(position - axisX         + axisZ, 0.0f, 1.0f, i);
-		*vertex++ = packVertex(position - axisX + axisY + axisZ, 0.0f, 0.0f, i);
-		*vertex++ = packVertex(position + axisX + axisY - axisZ, 0.5f, 0.0f, i);
-		*vertex++ = packVertex(position + axisX         - axisZ, 0.5f, 1.0f, i);
+	*vertex++ = packVertex(position - axisX         + axisZ, 0.0f, 1.0f);
+	*vertex++ = packVertex(position - axisX + axisY + axisZ, 0.0f, 0.0f);
+	*vertex++ = packVertex(position + axisX + axisY - axisZ, 0.5f, 0.0f);
+	*vertex++ = packVertex(position + axisX         - axisZ, 0.5f, 1.0f);
 
-		*vertex++ = packVertex(position - axisX         - axisZ, 0.5f, 1.0f, i);
-		*vertex++ = packVertex(position - axisX + axisY - axisZ, 0.5f, 0.0f, i);
-		*vertex++ = packVertex(position + axisX + axisY + axisZ, 1.0f, 0.0f, i);
-		*vertex++ = packVertex(position + axisX         + axisZ, 1.0f, 1.0f, i);
-	}
+	*vertex++ = packVertex(position - axisX         - axisZ, 0.5f, 1.0f);
+	*vertex++ = packVertex(position - axisX + axisY - axisZ, 0.5f, 0.0f);
+	*vertex++ = packVertex(position + axisX + axisY + axisZ, 1.0f, 0.0f);
+	*vertex++ = packVertex(position + axisX         + axisZ, 1.0f, 1.0f);
 
 	vertexBuffer->unlock();
 
 	Ref< render::IndexBuffer > indexBuffer = renderSystem->createIndexBuffer(
 		render::ItUInt16,
-		3 * 2 * 2 * 2 * UndergrowthEntity::InstanceCount * sizeof(uint16_t),
+		3 * 2 * 2 * 2 * sizeof(uint16_t),
 		false
 	);
 	if (!indexBuffer)
@@ -98,43 +94,37 @@ UndergrowthEntity* UndergrowthEntityData::createEntity(resource::IResourceManage
 
 	uint16_t* index = static_cast< uint16_t* >(indexBuffer->lock());
 
-	for (int i = 0; i < UndergrowthEntity::InstanceCount; ++i)
-	{
-		int offset = i * 4 * 2;
-		T_ASSERT (offset + 8 < 65536);
+	*index++ = 0;
+	*index++ = 1;
+	*index++ = 2;
 
-		*index++ = offset + 0;
-		*index++ = offset + 1;
-		*index++ = offset + 2;
+	*index++ = 0;
+	*index++ = 2;
+	*index++ = 3;
 
-		*index++ = offset + 0;
-		*index++ = offset + 2;
-		*index++ = offset + 3;
+	*index++ = 4;
+	*index++ = 5;
+	*index++ = 6;
 
-		*index++ = offset + 4;
-		*index++ = offset + 5;
-		*index++ = offset + 6;
+	*index++ = 4;
+	*index++ = 6;
+	*index++ = 7;
 
-		*index++ = offset + 4;
-		*index++ = offset + 6;
-		*index++ = offset + 7;
+	*index++ = 2;
+	*index++ = 1;
+	*index++ = 0;
 
-		*index++ = offset + 2;
-		*index++ = offset + 1;
-		*index++ = offset + 0;
+	*index++ = 3;
+	*index++ = 2;
+	*index++ = 0;
 
-		*index++ = offset + 3;
-		*index++ = offset + 2;
-		*index++ = offset + 0;
+	*index++ = 6;
+	*index++ = 5;
+	*index++ = 4;
 
-		*index++ = offset + 6;
-		*index++ = offset + 5;
-		*index++ = offset + 4;
-
-		*index++ = offset + 7;
-		*index++ = offset + 6;
-		*index++ = offset + 4;
-	}
+	*index++ = 7;
+	*index++ = 6;
+	*index++ = 4;
 
 	indexBuffer->unlock();
 

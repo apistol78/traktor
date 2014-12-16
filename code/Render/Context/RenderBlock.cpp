@@ -66,6 +66,28 @@ void InstancingRenderBlock::render(IRenderView* renderView, const ProgramParamet
 	T_CONTEXT_POP_MARKER(renderView);
 }
 
+void IndexedInstancingRenderBlock::render(IRenderView* renderView, const ProgramParameters* globalParameters) const
+{
+	Primitives p(primitive, offset, count, minIndex, maxIndex);
+
+	T_CONTEXT_PUSH_MARKER(renderView, name);
+
+	if (globalParameters)
+		globalParameters->fixup(program);
+	if (programParams)
+		programParams->fixup(program);
+
+	renderView->draw(
+		vertexBuffer,
+		indexBuffer,
+		program,
+		p,
+		instanceCount
+	);
+
+	T_CONTEXT_POP_MARKER(renderView);
+}
+
 void NonIndexedRenderBlock::render(IRenderView* renderView, const ProgramParameters* globalParameters) const
 {
 	Primitives p(primitive, offset, count);
