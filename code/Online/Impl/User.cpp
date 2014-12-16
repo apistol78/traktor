@@ -28,6 +28,11 @@ bool User::isFriend() const
 	return m_userProvider->isFriend(m_handle);
 }
 
+bool User::isMemberOfGroup(const std::wstring& groupName) const
+{
+	return m_userProvider->isMemberOfGroup(m_handle, groupName);
+}
+
 bool User::invite()
 {
 	return m_userProvider->invite(m_handle);

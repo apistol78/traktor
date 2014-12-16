@@ -23,6 +23,8 @@ public:
 
 	virtual bool isFriend() const;
 
+	virtual bool isMemberOfGroup(const std::wstring& groupName) const;
+
 	virtual bool invite();
 
 	virtual bool setPresenceValue(const std::wstring& key, const std::wstring& value);
