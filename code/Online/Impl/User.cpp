@@ -33,6 +33,11 @@ bool User::isMemberOfGroup(const std::wstring& groupName) const
 	return m_userProvider->isMemberOfGroup(m_handle, groupName);
 }
 
+bool User::joinGroup(const std::wstring& groupName)
+{
+	return m_userProvider->joinGroup(m_handle, groupName);
+}
+
 bool User::invite()
 {
 	return m_userProvider->invite(m_handle);

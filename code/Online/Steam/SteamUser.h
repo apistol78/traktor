@@ -25,6 +25,8 @@ public:
 
 	virtual bool isMemberOfGroup(uint64_t userHandle, const std::wstring& groupName) const;
 
+	virtual bool joinGroup(uint64_t userHandle, const std::wstring& groupName);
+
 	virtual bool invite(uint64_t userHandle);
 
 	virtual bool setPresenceValue(uint64_t userHandle, const std::wstring& key, const std::wstring& value);
