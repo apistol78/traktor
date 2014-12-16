@@ -98,12 +98,10 @@ ScriptManagerLua::ScriptManagerLua()
 	luaopen_math(m_luaState);
 	luaopen_os(m_luaState);
 
-#if defined(LUA_BITLIBNAME)
-#	if defined(T_LUA_5_2)
+#if defined(T_LUA_5_2)
 	luaopen_bit32(m_luaState);
-#	else
+#elif defined(LUA_BITLIBNAME)
 	luaopen_bit(m_luaState);
-#	endif
 #endif
 
 #if defined(T_LUA_5_2)
