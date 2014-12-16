@@ -38,6 +38,8 @@ public:
 
 	virtual bool isMemberOfGroup(const std::wstring& groupName) const = 0;
 
+	virtual bool joinGroup(const std::wstring& groupName) = 0;
+
 	virtual bool invite() = 0;
 
 	virtual bool setPresenceValue(const std::wstring& key, const std::wstring& value) = 0;

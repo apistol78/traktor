@@ -29,6 +29,11 @@ bool LocalUser::isMemberOfGroup(uint64_t userHandle, const std::wstring& groupNa
 	return false;
 }
 
+bool LocalUser::joinGroup(uint64_t userHandle, const std::wstring& groupName)
+{
+	return false;
+}
+
 bool LocalUser::invite(uint64_t userHandle)
 {
 	return false;

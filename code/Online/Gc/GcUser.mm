@@ -27,6 +27,11 @@ bool GcUser::isMemberOfGroup(uint64_t userHandle, const std::wstring& groupName)
 	return false;
 }
 
+bool GcUser::joinGroup(uint64_t userHandle, const std::wstring& groupName)
+{
+	return false;
+}
+
 bool GcUser::invite(uint64_t userHandle)
 {
 	return false;

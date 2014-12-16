@@ -526,9 +526,11 @@ bool Peer2PeerTopology::update(double dT)
 
 	T_MEASURE_UNTIL(0.010);
 
+#if defined(_DEBUG)
 	// Update local routing information.
 	if (updateRouting)
 		log::info << getLogPrefix() << L"Updating optimal routes (" << updateRouting << L")..." << Endl;
+#endif
 
 	m_nodes.resize(0);
 	m_nodes.reserve(m_peers.size());

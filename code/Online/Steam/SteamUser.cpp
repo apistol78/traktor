@@ -68,6 +68,15 @@ bool SteamUser::isMemberOfGroup(uint64_t userHandle, const std::wstring& groupNa
 	return false;
 }
 
+bool SteamUser::joinGroup(uint64_t userHandle, const std::wstring& groupName)
+{
+	if (uint64(userHandle) != ::SteamUser()->GetSteamID().ConvertToUint64())
+		return false;
+
+	SteamFriends()->ActivateGameOverlay("OfficialGameGroup");
+	return true;
+}
+
 bool SteamUser::invite(uint64_t userHandle)
 {
 	return SteamFriends()->InviteUserToGame(uint64(userHandle), "");
