@@ -78,7 +78,7 @@ public:
 #pragma pack(1)
 	struct Vertex
 	{
-		float position[4];
+		float position[3];
 		half_t texCoord[2];
 	};
 #pragma pack()
@@ -121,7 +121,6 @@ private:
 	Ref< render::VertexBuffer > m_vertexBuffer;
 	Ref< render::IndexBuffer > m_indexBuffer;
 	resource::Proxy< render::Shader > m_shader;
-	RandomGeometry m_random;
 	AlignedVector< Cluster > m_clusters;
 	AlignedVector< Vector4 > m_plants;
 	Vector4 m_eye;

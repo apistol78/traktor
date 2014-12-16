@@ -30,7 +30,8 @@ render::handle_t s_handleWorldExtent;
 render::handle_t s_handleEye;
 render::handle_t s_handleSpreadDistance;
 render::handle_t s_handleCellRadius;
-render::handle_t s_handleInstances;
+render::handle_t s_handleInstances1;
+render::handle_t s_handleInstances2;
 
 		}
 
@@ -51,15 +52,16 @@ UndergrowthEntity::UndergrowthEntity(
 ,	m_indexBuffer(indexBuffer)
 ,	m_shader(shader)
 {
-	m_plants.resize(m_settings.density);
+	m_plants.resize(m_settings.density * 2);
 
+	RandomGeometry random;
 	for (int32_t i = 0; i < m_settings.density; i += InstanceCount)
 	{
 		Cluster c;
 		c.center = Vector4(
-			(m_random.nextFloat() * 2.0f - 1.0f) * m_terrain->getHeightfield()->getWorldExtent().x(),
+			(random.nextFloat() * 2.0f - 1.0f) * m_terrain->getHeightfield()->getWorldExtent().x(),
 			0.0f,
-			(m_random.nextFloat() * 2.0f - 1.0f) * m_terrain->getHeightfield()->getWorldExtent().z(),
+			(random.nextFloat() * 2.0f - 1.0f) * m_terrain->getHeightfield()->getWorldExtent().z(),
 			1.0f
 		);
 		c.distance = std::numeric_limits< float >::max();
@@ -76,7 +78,8 @@ UndergrowthEntity::UndergrowthEntity(
 	s_handleEye = render::getParameterHandle(L"Eye");
 	s_handleSpreadDistance = render::getParameterHandle(L"SpreadDistance");
 	s_handleCellRadius = render::getParameterHandle(L"CellRadius");
-	s_handleInstances = render::getParameterHandle(L"Instances");
+	s_handleInstances1 = render::getParameterHandle(L"Instances1");
+	s_handleInstances2 = render::getParameterHandle(L"Instances2");
 }
 
 UndergrowthEntity::~UndergrowthEntity()
@@ -92,7 +95,8 @@ void UndergrowthEntity::render(
 	// \fixme Assume depth pass enabled; need some information about first pass from camera POV.
 	bool updateClusters = bool(
 		worldRenderPass.getTechnique() == render::getParameterHandle(L"World_DepthWrite") ||
-		worldRenderPass.getTechnique() == render::getParameterHandle(L"World_PreLitGBufferWrite")
+		worldRenderPass.getTechnique() == render::getParameterHandle(L"World_PreLitGBufferWrite") ||
+		worldRenderPass.getTechnique() == render::getParameterHandle(L"World_DeferredGBufferWrite")
 	);
 
 	if (updateClusters)
@@ -113,9 +117,11 @@ void UndergrowthEntity::render(
 				Vector4 delta = i->center - m_eye;
 				Scalar distance = delta.length();
 
+				RandomGeometry random(int32_t(i->center.x() * 919.0f + i->center.z() * 463.0f));
+
 				if (distance > m_settings.spreadDistance + m_settings.cellRadius)
 				{
-					float phi = (m_random.nextFloat() - 0.5f) * HALF_PI;
+					float phi = (random.nextFloat() - 0.5f) * HALF_PI;
 					float err = distance - (m_settings.spreadDistance + m_settings.cellRadius);
 
 					i->center = m_eye + rotateY(phi) * (-delta * Scalar((m_settings.spreadDistance + m_settings.cellRadius - err - FUZZY_EPSILON) / distance));
@@ -141,7 +147,7 @@ void UndergrowthEntity::render(
 						if (plant)
 						{
 							const std::vector< int32_t >& plantIds = plant->getPlants();
-							int32_t index = int32_t((m_random.nextFloat() + 0.5f) * (plantIds.size() - 1));
+							int32_t index = int32_t((random.nextFloat() + 0.5f) * (plantIds.size() - 1));
 							if (index >= 0)
 							{
 								T_ASSERT (index < plantIds.size());
@@ -152,19 +158,25 @@ void UndergrowthEntity::render(
 									
 									do 
 									{
-										dx = (m_random.nextFloat() * 2.0f - 1.0f) * m_settings.cellRadius;
-										dz = (m_random.nextFloat() * 2.0f - 1.0f) * m_settings.cellRadius;
+										dx = (random.nextFloat() * 2.0f - 1.0f) * m_settings.cellRadius;
+										dz = (random.nextFloat() * 2.0f - 1.0f) * m_settings.cellRadius;
 									}
 									while (std::sqrt(dx * dx + dz * dz) > m_settings.cellRadius);
 
 									float px = i->center.x() + dx;
 									float pz = i->center.z() + dz;
 
-									m_plants[j] = Vector4(
+									m_plants[j * 2 + 0] = Vector4(
 										px,
 										pz,
-										m_random.nextFloat() * TWO_PI,
+										random.nextFloat() * TWO_PI,
 										float(i->plant - 1)
+									);
+									m_plants[j * 2 + 1] = Vector4(
+										random.nextFloat() * 0.5f + 0.5f,
+										0.0f,
+										0.0f,
+										0.0f
 									);
 								}
 							}
@@ -189,7 +201,8 @@ void UndergrowthEntity::render(
 	if (!program)
 		return;
 
-	Vector4 instanceData[InstanceCount];
+	Vector4 instanceData1[InstanceCount];
+	Vector4 instanceData2[InstanceCount];
 	uint32_t plantCount = 0;
 
 	for (AlignedVector< Cluster >::const_iterator i = m_clusters.begin(); i != m_clusters.end(); ++i)
@@ -205,9 +218,12 @@ void UndergrowthEntity::render(
 			continue;
 		
 		for (int32_t j = 0; j < count; ++j)
-			instanceData[j] = m_plants[j + i->from];
+		{
+			instanceData1[j] = m_plants[(j + i->from) * 2 + 0];
+			instanceData2[j] = m_plants[(j + i->from) * 2 + 1];
+		}
 
-		render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >();
+		render::IndexedInstancingRenderBlock* renderBlock = renderContext->alloc< render::IndexedInstancingRenderBlock >();
 
 		renderBlock->distance = i->distance;
 		renderBlock->program = program;
@@ -216,9 +232,10 @@ void UndergrowthEntity::render(
 		renderBlock->vertexBuffer = m_vertexBuffer;
 		renderBlock->primitive = render::PtTriangles;
 		renderBlock->offset = 0;
-		renderBlock->count = count * 2 * 2 * 2;
+		renderBlock->count = 2 * 2 * 2;
 		renderBlock->minIndex = 0;
-		renderBlock->maxIndex = count * 4 * 2 - 1;
+		renderBlock->maxIndex = 4 * 2 - 1;
+		renderBlock->instanceCount = count;
 
 		renderBlock->programParams->beginParameters(renderContext);
 		worldRenderPass.setProgramParameters(renderBlock->programParams, false);
@@ -228,7 +245,8 @@ void UndergrowthEntity::render(
 		renderBlock->programParams->setVectorParameter(s_handleEye, m_eye);
 		renderBlock->programParams->setFloatParameter(s_handleSpreadDistance, m_settings.spreadDistance);
 		renderBlock->programParams->setFloatParameter(s_handleCellRadius, m_settings.cellRadius);
-		renderBlock->programParams->setVectorArrayParameter(s_handleInstances, instanceData, count);
+		renderBlock->programParams->setVectorArrayParameter(s_handleInstances1, instanceData1, count);
+		renderBlock->programParams->setVectorArrayParameter(s_handleInstances2, instanceData2, count);
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(
