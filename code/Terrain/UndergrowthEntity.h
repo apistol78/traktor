@@ -52,6 +52,9 @@ class WorldRenderView;
 
 class Terrain;
 
+/*! \brief Undergrowth entity.
+ * \ingroup Terrain
+ */
 class T_DLLCLASS UndergrowthEntity : public world::Entity
 {
 	T_RTTI_CLASS;

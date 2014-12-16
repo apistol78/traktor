@@ -9,6 +9,9 @@ namespace traktor
 	namespace terrain
 	{
 
+/*! \brief Terrain surface allocator.
+ * \ingroup Terrain
+ */
 class TerrainSurfaceAlloc : public Object
 {
 	T_RTTI_CLASS;

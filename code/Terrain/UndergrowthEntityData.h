@@ -42,6 +42,9 @@ class IResourceManager;
 
 class Terrain;
 
+/*! \brief Undergrowth entity data.
+ * \ingroup Terrain
+ */
 class T_DLLCLASS UndergrowthEntityData : public world::EntityData
 {
 	T_RTTI_CLASS;

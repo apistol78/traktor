@@ -40,6 +40,9 @@ class RenderBlock;
 
 class Terrain;
 
+/*! \brief Terrain surface cache manager.
+ * \ingroup Terrain
+ */
 class T_DLLCLASS TerrainSurfaceCache : public Object
 {
 	T_RTTI_CLASS;

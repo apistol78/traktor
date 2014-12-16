@@ -34,6 +34,9 @@ class Entity;
 
 class Terrain;
 
+/*! \brief Rubble entity data.
+ * \ingroup Terrain
+ */
 class T_DLLCLASS RubbleEntityData : public world::EntityData
 {
 	T_RTTI_CLASS;

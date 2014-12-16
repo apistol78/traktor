@@ -49,6 +49,9 @@ class WorldRenderView;
 
 class OceanEntityData;
 
+/*! \brief Ocean entity.
+ * \ingroup Terrain
+ */
 class T_DLLCLASS OceanEntity : public world::Entity
 {
 	T_RTTI_CLASS;

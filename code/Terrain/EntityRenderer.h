@@ -16,6 +16,9 @@ namespace traktor
 	namespace terrain
 	{
 
+/*! \brief Terrain entity renderer.
+ * \ingroup Terrain
+ */
 class T_DLLCLASS EntityRenderer : public world::IEntityRenderer
 {
 	T_RTTI_CLASS;

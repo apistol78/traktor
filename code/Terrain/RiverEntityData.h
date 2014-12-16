@@ -26,6 +26,9 @@ class Shader;
 	namespace terrain
 	{
 
+/*! \brief River entity data.
+ * \ingroup Terrain
+ */
 class T_DLLCLASS RiverEntityData : public world::EntityData
 {
 	T_RTTI_CLASS;
