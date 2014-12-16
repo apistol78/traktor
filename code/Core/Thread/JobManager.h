@@ -38,7 +38,7 @@ public:
 	 * a worker thread is idle the scheduler assigns
 	 * a new job to that thread from this queue.
 	 */
-	Ref< Job > add(Functor* functor) { return m_queue->add(functor); }
+	Ref< Job > add(Functor* functor) { return m_queue.add(functor); }
 
 	/*! \brief Enqueue jobs and wait for all to finish.
 	 *
@@ -46,23 +46,23 @@ public:
 	 * is always run on the caller thread to reduce
 	 * work for kernel scheduler.
 	 */
-	void fork(const RefArray< Functor >& functors) { return m_queue->fork(functors); }
+	void fork(const RefArray< Functor >& functors) { return m_queue.fork(functors); }
 
 	/*! \brief Wait until all jobs are finished.
 	 *
 	 * \param timeout Timeout in milliseconds; -1 if infinite timeout.
 	 * \return True if jobs have finished, false if timeout.
 	 */
-	bool wait(int32_t timeout = -1) { return m_queue->wait(timeout); }
+	bool wait(int32_t timeout = -1) { return m_queue.wait(timeout); }
 
 	/*! \brief Stop all worker threads. */
-	void stop() { m_queue->stop(); }
+	void stop() { m_queue.stop(); }
 
 protected:
 	virtual void destroy();
 
 private:
-	Ref< JobQueue > m_queue;
+	JobQueue m_queue;
 };
 
 }
