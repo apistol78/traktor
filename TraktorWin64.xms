@@ -2466,296 +2466,6 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.lua-5.1.4</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</sourcePath>
-			<configurations>
-				<item type="Configuration" version="1">
-					<name>DebugShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
-					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>ReleaseShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
-					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
-					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
-					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>lapi.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lapi.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lauxlib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lauxlib.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lbaselib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lcode.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lcode.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ldblib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ldebug.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ldebug.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ldo.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ldo.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ldump.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lfunc.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lfunc.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lgc.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lgc.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>linit.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>liolib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>llex.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>llex.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>llimits.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lmathlib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lmem.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lmem.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>loadlib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lobject.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lobject.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lopcodes.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lopcodes.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>loslib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lparser.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lparser.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lstate.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lstate.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lstring.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lstring.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lstrlib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ltable.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ltable.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ltablib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ltm.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ltm.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lua.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lua.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>luaconf.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lualib.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lundump.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lundump.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lvm.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lvm.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lzio.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lzio.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>print.c</fileName>
-					<items/>
-				</item>
-			</items>
-			<dependencies/>
-		</item>
-		<item type="Project" version="1">
-			<enable>true</enable>
 			<name>Extern.lwObject</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/lwObject</sourcePath>
 			<configurations>
@@ -6033,7 +5743,7 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
@@ -6159,7 +5869,7 @@
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
@@ -6240,7 +5950,7 @@
 													<item type="ProjectDependency" version="3">
 														<inheritIncludePaths>true</inheritIncludePaths>
 														<link>LnkYes</link>
-														<project ref="/object/projects/item[15]/dependencies/item/project"/>
+														<project ref="/object/projects/item[14]/dependencies/item/project"/>
 													</item>
 												</dependencies>
 											</project>
@@ -6351,7 +6061,7 @@
 													<item type="ProjectDependency" version="3">
 														<inheritIncludePaths>true</inheritIncludePaths>
 														<link>LnkYes</link>
-														<project ref="/object/projects/item[15]/dependencies/item/project"/>
+														<project ref="/object/projects/item[14]/dependencies/item/project"/>
 													</item>
 													<item type="ProjectDependency" version="3">
 														<inheritIncludePaths>true</inheritIncludePaths>
@@ -6559,7 +6269,7 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
@@ -6658,7 +6368,7 @@
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
@@ -6739,7 +6449,7 @@
 													<item type="ProjectDependency" version="3">
 														<inheritIncludePaths>true</inheritIncludePaths>
 														<link>LnkYes</link>
-														<project ref="/object/projects/item[15]/dependencies/item/project"/>
+														<project ref="/object/projects/item[14]/dependencies/item/project"/>
 													</item>
 													<item type="ProjectDependency" version="3">
 														<inheritIncludePaths>true</inheritIncludePaths>
@@ -6752,7 +6462,7 @@
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
 										</item>
 									</dependencies>
 								</project>
@@ -6920,22 +6630,22 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item[1]/project"/>
 							</item>
 						</dependencies>
 					</project>
@@ -6943,12 +6653,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -7038,22 +6748,22 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
@@ -7134,12 +6844,12 @@
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 										</item>
 									</dependencies>
 								</project>
@@ -7150,7 +6860,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -7319,17 +7029,17 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]"/>
+					<project ref="/object/projects/item[14]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -7419,7 +7129,7 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
@@ -7539,7 +7249,7 @@
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
@@ -7638,7 +7348,7 @@
 													<item type="ProjectDependency" version="3">
 														<inheritIncludePaths>true</inheritIncludePaths>
 														<link>LnkYes</link>
-														<project ref="/object/projects/item[15]/dependencies/item/project"/>
+														<project ref="/object/projects/item[14]/dependencies/item/project"/>
 													</item>
 													<item type="ProjectDependency" version="3">
 														<inheritIncludePaths>true</inheritIncludePaths>
@@ -7949,7 +7659,7 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
@@ -8114,7 +7824,7 @@
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item/project"/>
 										</item>
 									</dependencies>
 								</project>
@@ -8198,7 +7908,7 @@
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item/project"/>
 										</item>
 									</dependencies>
 								</project>
@@ -8282,12 +7992,12 @@
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[4]/project"/>
+											<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[4]/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
@@ -8474,17 +8184,17 @@
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
+											<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 										</item>
 									</dependencies>
 								</project>
@@ -8568,12 +8278,12 @@
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
@@ -8654,17 +8364,17 @@
 													<item type="ProjectDependency" version="3">
 														<inheritIncludePaths>true</inheritIncludePaths>
 														<link>LnkYes</link>
-														<project ref="/object/projects/item[15]/dependencies/item/project"/>
+														<project ref="/object/projects/item[14]/dependencies/item/project"/>
 													</item>
 													<item type="ProjectDependency" version="3">
 														<inheritIncludePaths>true</inheritIncludePaths>
 														<link>LnkYes</link>
-														<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+														<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 													</item>
 													<item type="ProjectDependency" version="3">
 														<inheritIncludePaths>true</inheritIncludePaths>
 														<link>LnkYes</link>
-														<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
+														<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
 													</item>
 												</dependencies>
 											</project>
@@ -8748,17 +8458,17 @@
 													<item type="ProjectDependency" version="3">
 														<inheritIncludePaths>true</inheritIncludePaths>
 														<link>LnkYes</link>
-														<project ref="/object/projects/item[15]/dependencies/item/project"/>
+														<project ref="/object/projects/item[14]/dependencies/item/project"/>
 													</item>
 													<item type="ProjectDependency" version="3">
 														<inheritIncludePaths>true</inheritIncludePaths>
 														<link>LnkYes</link>
-														<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+														<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 													</item>
 													<item type="ProjectDependency" version="3">
 														<inheritIncludePaths>true</inheritIncludePaths>
 														<link>LnkYes</link>
-														<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+														<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 													</item>
 												</dependencies>
 											</project>
@@ -8766,12 +8476,12 @@
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[6]/project"/>
+											<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[6]/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
+											<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 										</item>
 									</dependencies>
 								</project>
@@ -8782,17 +8492,17 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -9127,17 +8837,17 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
 						</dependencies>
 					</project>
@@ -9280,32 +8990,32 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[3]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
@@ -9386,22 +9096,22 @@
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item[1]/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 										</item>
 									</dependencies>
 								</project>
@@ -9409,7 +9119,7 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
@@ -9508,22 +9218,22 @@
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item[1]/project"/>
 										</item>
 									</dependencies>
 								</project>
@@ -9531,12 +9241,12 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[7]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[7]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
@@ -9617,7 +9327,7 @@
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item/project"/>
 										</item>
 									</dependencies>
 								</project>
@@ -9625,7 +9335,7 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item[5]/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item[5]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
@@ -9728,32 +9438,32 @@
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item[1]/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
+											<project ref="/object/projects/item[15]/dependencies/item[3]/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
+											<project ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+											<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[16]/dependencies/item[7]/project"/>
+											<project ref="/object/projects/item[15]/dependencies/item[7]/project"/>
 										</item>
 									</dependencies>
 								</project>
@@ -9764,17 +9474,17 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[13]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[13]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[2]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[2]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -9927,27 +9637,27 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[3]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item[2]/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item[2]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
@@ -10078,22 +9788,22 @@
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[10]"/>
+											<project ref="/object/projects/item[9]"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+											<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
@@ -10187,12 +9897,12 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
@@ -10322,62 +10032,62 @@
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
+											<project ref="/object/projects/item[15]/dependencies/item[3]/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+											<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[16]/dependencies/item[7]/project"/>
+											<project ref="/object/projects/item[15]/dependencies/item[7]/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+											<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[16]/dependencies/item[12]/project/dependencies/item[5]/project"/>
+											<project ref="/object/projects/item[15]/dependencies/item[12]/project/dependencies/item[5]/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[11]"/>
+											<project ref="/object/projects/item[10]"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
+											<project ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
@@ -10467,27 +10177,27 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[7]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[7]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[13]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[13]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[8]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[8]/project"/>
 							</item>
 						</dependencies>
 					</project>
@@ -10495,26 +10205,26 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[10]"/>
+					<project ref="/object/projects/item[9]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[15]/dependencies/item/project"/>
-		<item ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
-		<item ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project/dependencies/item[2]/project"/>
-		<item ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project/dependencies/item[3]/project"/>
-		<item ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
-		<item ref="/object/projects/item[16]/dependencies/item[3]/project"/>
+		<item ref="/object/projects/item[14]/dependencies/item/project"/>
+		<item ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+		<item ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[7]/project/dependencies/item[2]/project"/>
+		<item ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[7]/project/dependencies/item[3]/project"/>
+		<item ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+		<item ref="/object/projects/item[15]/dependencies/item[3]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Editor.App</name>
@@ -10656,37 +10366,37 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -10812,17 +10522,17 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 							</item>
 						</dependencies>
 					</project>
@@ -10830,32 +10540,32 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project/dependencies/item[2]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[7]/project/dependencies/item[2]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[7]/project/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[6]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -11016,32 +10726,32 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -11122,7 +10832,7 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item/project"/>
 							</item>
 						</dependencies>
 					</project>
@@ -11246,12 +10956,12 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
@@ -11666,12 +11376,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -11764,42 +11474,42 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[24]"/>
+					<project ref="/object/projects/item[23]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -11880,7 +11590,7 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item/project"/>
 							</item>
 						</dependencies>
 					</project>
@@ -11888,17 +11598,17 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[24]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[23]/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -12010,27 +11720,27 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[3]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[24]/dependencies/item[7]/project"/>
+								<project ref="/object/projects/item[23]/dependencies/item[7]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
@@ -12045,12 +11755,12 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[7]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[7]/project"/>
 							</item>
 						</dependencies>
 					</project>
@@ -12058,13 +11768,13 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[12]/project/dependencies/item[8]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[12]/project/dependencies/item[8]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[25]/dependencies/item[8]/project"/>
-		<item ref="/object/projects/item[24]/dependencies/item[6]/project"/>
-		<item ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
+		<item ref="/object/projects/item[24]/dependencies/item[8]/project"/>
+		<item ref="/object/projects/item[23]/dependencies/item[6]/project"/>
+		<item ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.I18N.Editor</name>
@@ -12141,32 +11851,32 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -12255,12 +11965,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -12368,12 +12078,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[30]"/>
+					<project ref="/object/projects/item[29]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -12453,12 +12163,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[30]"/>
+					<project ref="/object/projects/item[29]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -12562,20 +12272,20 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[30]"/>
+					<project ref="/object/projects/item[29]"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[15]/dependencies/item[2]/project"/>
-		<item ref="/object/projects/item[16]/dependencies/item[12]/project"/>
-		<item ref="/object/projects/item[16]/dependencies/item[12]/project/dependencies/item[5]/project"/>
-		<item ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
-		<item ref="/object/projects/item[15]/dependencies/item[5]/project"/>
+		<item ref="/object/projects/item[14]/dependencies/item[2]/project"/>
+		<item ref="/object/projects/item[15]/dependencies/item[12]/project"/>
+		<item ref="/object/projects/item[15]/dependencies/item[12]/project/dependencies/item[5]/project"/>
+		<item ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[3]/project"/>
+		<item ref="/object/projects/item[14]/dependencies/item[5]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Physics.Bullet</name>
@@ -12652,17 +12362,17 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[5]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -12672,7 +12382,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[5]/project/dependencies/item[4]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[5]/project/dependencies/item[4]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -12752,67 +12462,67 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[5]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[12]/project/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[12]/project/dependencies/item[5]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[8]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[13]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[13]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[5]/project/dependencies/item[4]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[5]/project/dependencies/item[4]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -12899,41 +12609,41 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[6]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+		<item ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Render.Dx10</name>
@@ -13042,12 +12752,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -13168,16 +12878,16 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[16]/dependencies/item[12]/project/dependencies/item[8]/project"/>
+		<item ref="/object/projects/item[15]/dependencies/item[12]/project/dependencies/item[8]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Render.OpenGL</name>
@@ -13292,12 +13002,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -13481,22 +13191,22 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[25]/dependencies/item[8]/project"/>
+					<project ref="/object/projects/item[24]/dependencies/item[8]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[11]"/>
+					<project ref="/object/projects/item[10]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -13577,21 +13287,21 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[25]/dependencies/item[8]/project"/>
+								<project ref="/object/projects/item[24]/dependencies/item[8]/project"/>
 							</item>
 						</dependencies>
 					</project>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
-		<item ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[6]/project"/>
-		<item ref="/object/projects/item[16]/dependencies/item[8]/project"/>
+		<item ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+		<item ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[6]/project"/>
+		<item ref="/object/projects/item[15]/dependencies/item[8]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Script</name>
@@ -13668,12 +13378,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -13782,37 +13492,37 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[51]"/>
+					<project ref="/object/projects/item[50]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -13900,17 +13610,17 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>false</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[12]"/>
+					<project ref="/object/projects/item[11]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[51]"/>
+					<project ref="/object/projects/item[50]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -13928,6 +13638,7 @@
 					<definitions>
 						<item>T_SCRIPT_LUA_EXPORT</item>
 						<item>_DEBUG</item>
+						<item>T_LUA_5_2</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -13943,6 +13654,7 @@
 					<definitions>
 						<item>T_SCRIPT_LUA_EXPORT</item>
 						<item>NDEBUG</item>
+						<item>T_LUA_5_2</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -13958,6 +13670,7 @@
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
+						<item>T_LUA_5_2</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -13973,6 +13686,7 @@
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
+						<item>T_LUA_5_2</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -13990,21 +13704,106 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[51]"/>
+					<project ref="/object/projects/item[50]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[9]"/>
+					<project type="Project" version="1">
+						<enable>true</enable>
+						<name>Extern.lua-5.2.3</name>
+						<sourcePath>$(TRAKTOR_HOME)/3rdp/lua-5.2.3/src</sourcePath>
+						<configurations>
+							<item type="Configuration" version="1">
+								<name>DebugShared</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/lua-5.2.3/src</item>
+								</includePaths>
+								<definitions>
+									<item>_DEBUG</item>
+									<item>_CRT_SECURE_NO_WARNINGS</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+							<item type="Configuration" version="1">
+								<name>ReleaseShared</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/lua-5.2.3/src</item>
+								</includePaths>
+								<definitions>
+									<item>NDEBUG</item>
+									<item>_CRT_SECURE_NO_WARNINGS</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+							<item type="Configuration" version="1">
+								<name>DebugStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/lua-5.2.3/src</item>
+								</includePaths>
+								<definitions>
+									<item>_DEBUG</item>
+									<item>_CRT_SECURE_NO_WARNINGS</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+							<item type="Configuration" version="1">
+								<name>ReleaseStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/lua-5.2.3/src</item>
+								</includePaths>
+								<definitions>
+									<item>NDEBUG</item>
+									<item>_CRT_SECURE_NO_WARNINGS</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+						</configurations>
+						<items>
+							<item type="File">
+								<fileName>*.c</fileName>
+								<items/>
+							</item>
+							<item type="File">
+								<fileName>*.h</fileName>
+								<items/>
+							</item>
+						</items>
+						<dependencies/>
+					</project>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[24]/dependencies/item[7]/project"/>
+		<item ref="/object/projects/item[23]/dependencies/item[7]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Sound.Ds8</name>
@@ -14109,16 +13908,16 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[24]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[23]/dependencies/item[7]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[25]/dependencies/item[12]/project"/>
+		<item ref="/object/projects/item[24]/dependencies/item[12]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Sound.WinMM</name>
@@ -14203,12 +14002,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[24]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[23]/dependencies/item[7]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -14304,12 +14103,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[24]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[23]/dependencies/item[7]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -14416,37 +14215,37 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[24]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[23]/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[2]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[2]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -14551,77 +14350,77 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[60]"/>
+					<project ref="/object/projects/item[59]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[8]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[13]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[13]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[12]/project/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[12]/project/dependencies/item[5]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[24]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[23]/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[25]/dependencies/item[12]/project"/>
+					<project ref="/object/projects/item[24]/dependencies/item[12]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[2]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[2]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -14701,27 +14500,27 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[5]/project/dependencies/item[4]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[5]/project/dependencies/item[4]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -14810,52 +14609,52 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[62]"/>
+					<project ref="/object/projects/item[61]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[8]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[13]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[13]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[5]/project/dependencies/item[4]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[5]/project/dependencies/item[4]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -14945,82 +14744,82 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[3]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[8]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[8]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[7]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[7]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item[5]/project/dependencies/item[4]/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item[5]/project/dependencies/item[4]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[12]/project/dependencies/item[8]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[12]/project/dependencies/item[8]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[13]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[13]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item[2]/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item[2]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[12]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[12]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[12]/project/dependencies/item[5]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[12]/project/dependencies/item[5]/project"/>
 							</item>
 						</dependencies>
 					</project>
@@ -15028,28 +14827,28 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[12]/project/dependencies/item[8]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[12]/project/dependencies/item[8]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
-		<item ref="/object/projects/item[16]/dependencies/item[7]/project"/>
-		<item ref="/object/projects/item[23]/dependencies/item[7]/project"/>
+		<item ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+		<item ref="/object/projects/item[15]/dependencies/item[7]/project"/>
+		<item ref="/object/projects/item[22]/dependencies/item[7]/project"/>
 		<item type="Project" version="1">
 			<enable>false</enable>
 			<name>Traktor.Ui.Wx</name>
@@ -15163,22 +14962,22 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[13]"/>
+					<project ref="/object/projects/item[12]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -15275,32 +15074,32 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -15309,7 +15108,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[8]/project"/>
+		<item ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[8]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Weather.Editor</name>
@@ -15395,34 +15194,34 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[8]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[8]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[13]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[13]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[15]/dependencies/item[1]/project"/>
-		<item ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[13]/project"/>
-		<item ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
-		<item ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
+		<item ref="/object/projects/item[14]/dependencies/item[1]/project"/>
+		<item ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[13]/project"/>
+		<item ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+		<item ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>UnitTest</name>
@@ -15501,36 +15300,36 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[47]"/>
+					<project ref="/object/projects/item[46]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[24]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[23]/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[6]/project"/>
+		<item ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[6]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Database.Remote.Client</name>
@@ -15607,26 +15406,26 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[6]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project"/>
+		<item ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[7]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Database.Remote.Server.App</name>
@@ -15701,32 +15500,32 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project/dependencies/item[2]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[7]/project/dependencies/item[2]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[7]/project/dependencies/item[3]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -15806,23 +15605,23 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[5]/project/dependencies/item[2]/project"/>
-		<item ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[4]/project"/>
-		<item ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[5]/project"/>
+		<item ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[5]/project/dependencies/item[2]/project"/>
+		<item ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[4]/project"/>
+		<item ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[5]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Extern.libtheora-1.1.1</name>
@@ -16014,22 +15813,22 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[84]"/>
+					<project ref="/object/projects/item[83]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -16109,43 +15908,43 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[85]"/>
+					<project ref="/object/projects/item[84]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[24]/dependencies/item[7]/project/dependencies/item[3]/project"/>
-		<item ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project/dependencies/item[3]/project"/>
-		<item ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project/dependencies/item[2]/project"/>
+		<item ref="/object/projects/item[23]/dependencies/item[7]/project/dependencies/item[3]/project"/>
+		<item ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project/dependencies/item[3]/project"/>
+		<item ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project/dependencies/item[2]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Render.Dx11</name>
@@ -16262,12 +16061,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -16390,47 +16189,47 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[7]/project/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -16565,102 +16364,102 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]"/>
+								<project ref="/object/projects/item[14]"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[24]"/>
+								<project ref="/object/projects/item[23]"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[30]"/>
+								<project ref="/object/projects/item[29]"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item[2]/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item[2]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item[5]/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item[5]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[6]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[6]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[51]"/>
+								<project ref="/object/projects/item[50]"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[24]/dependencies/item[7]/project"/>
+								<project ref="/object/projects/item[23]/dependencies/item[7]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[60]"/>
+								<project ref="/object/projects/item[59]"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[62]"/>
+								<project ref="/object/projects/item[61]"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[85]"/>
+								<project ref="/object/projects/item[84]"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[8]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[8]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
@@ -16768,12 +16567,12 @@
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
+											<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 										</item>
 									</dependencies>
 								</project>
@@ -16781,7 +16580,7 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[15]/dependencies/item[5]/project/dependencies/item[4]/project"/>
+								<project ref="/object/projects/item[14]/dependencies/item[5]/project/dependencies/item[4]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
@@ -16862,7 +16661,7 @@
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
@@ -16963,12 +16762,12 @@
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item[1]/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 										</item>
 									</dependencies>
 								</project>
@@ -16976,7 +16775,7 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
@@ -17057,17 +16856,17 @@
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
+											<project ref="/object/projects/item[14]/dependencies/item[1]/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[6]/project"/>
+											<project ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[6]/project"/>
 										</item>
 									</dependencies>
 								</project>
@@ -17078,12 +16877,17 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[30]"/>
+					<project ref="/object/projects/item[29]"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[50]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -17093,21 +16897,16 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[52]"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[8]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[91]/dependencies/item[9]/project"/>
+		<item ref="/object/projects/item[90]/dependencies/item[9]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Database.Migrate.App</name>
@@ -17182,21 +16981,21 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[91]/dependencies/item[9]/project/dependencies/item[20]/project"/>
+		<item ref="/object/projects/item[90]/dependencies/item[9]/project/dependencies/item[20]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Online.Local</name>
@@ -17273,29 +17072,29 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[91]/dependencies/item[9]/project/dependencies/item[20]/project"/>
+					<project ref="/object/projects/item[90]/dependencies/item[9]/project/dependencies/item[20]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[4]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[4]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[5]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[47]/dependencies/item[4]/project"/>
-		<item ref="/object/projects/item[63]/dependencies/item[10]/project"/>
-		<item ref="/object/projects/item[15]/dependencies/item[5]/project/dependencies/item[4]/project"/>
-		<item ref="/object/projects/item[91]/dependencies/item[9]/project/dependencies/item[24]/project"/>
+		<item ref="/object/projects/item[46]/dependencies/item[4]/project"/>
+		<item ref="/object/projects/item[62]/dependencies/item[10]/project"/>
+		<item ref="/object/projects/item[14]/dependencies/item[5]/project/dependencies/item[4]/project"/>
+		<item ref="/object/projects/item[90]/dependencies/item[9]/project/dependencies/item[24]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Theater.Editor</name>
@@ -17381,52 +17180,52 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[8]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[91]/dependencies/item[9]/project/dependencies/item[24]/project"/>
+					<project ref="/object/projects/item[90]/dependencies/item[9]/project/dependencies/item[24]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[6]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -17515,37 +17314,37 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[30]"/>
+					<project ref="/object/projects/item[29]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -17657,41 +17456,41 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[91]/dependencies/item[9]/project"/>
+					<project ref="/object/projects/item[90]/dependencies/item[9]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[23]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[22]/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[51]"/>
+					<project ref="/object/projects/item[50]"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[24]/dependencies/item[7]/project/dependencies/item[4]/project"/>
+		<item ref="/object/projects/item[23]/dependencies/item[7]/project/dependencies/item[4]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Online.Steam</name>
@@ -17792,26 +17591,26 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[91]/dependencies/item[9]/project/dependencies/item[20]/project"/>
+					<project ref="/object/projects/item[90]/dependencies/item[9]/project/dependencies/item[20]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[46]/dependencies/item[2]/project"/>
+		<item ref="/object/projects/item[45]/dependencies/item[2]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Extern.recast</name>
@@ -17904,8 +17703,8 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item ref="/object/projects/item[91]/dependencies/item[9]/project/dependencies/item[22]/project/dependencies/item[1]/project"/>
-		<item ref="/object/projects/item[91]/dependencies/item[9]/project/dependencies/item[22]/project"/>
+		<item ref="/object/projects/item[90]/dependencies/item[9]/project/dependencies/item[22]/project/dependencies/item[1]/project"/>
+		<item ref="/object/projects/item[90]/dependencies/item[9]/project/dependencies/item[22]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Ai.Editor</name>
@@ -17982,67 +17781,72 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[106]"/>
+					<project ref="/object/projects/item[105]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[2]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[2]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[12]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[12]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[13]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[13]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[12]/project/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[12]/project/dependencies/item[5]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[91]/dependencies/item[9]/project/dependencies/item[22]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[90]/dependencies/item[9]/project/dependencies/item[22]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[91]/dependencies/item[9]/project/dependencies/item[22]/project"/>
+					<project ref="/object/projects/item[90]/dependencies/item[9]/project/dependencies/item[22]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[8]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[5]/project/dependencies/item[4]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[5]/project/dependencies/item[4]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[63]/dependencies/item[10]/project"/>
+					<project ref="/object/projects/item[62]/dependencies/item[10]/project"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[61]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -18052,17 +17856,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[63]"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]"/>
+					<project ref="/object/projects/item[14]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -18182,22 +17981,22 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[7]/project/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -18275,27 +18074,27 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[4]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[4]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[5]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[51]"/>
+					<project ref="/object/projects/item[50]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[54]"/>
+					<project ref="/object/projects/item[53]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -18375,17 +18174,17 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -18477,12 +18276,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[51]"/>
+					<project ref="/object/projects/item[50]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -18592,7 +18391,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[113]/dependencies/item[2]/project"/>
+		<item ref="/object/projects/item[112]/dependencies/item[2]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Model.Editor</name>
@@ -18669,37 +18468,37 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[12]/project/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[12]/project/dependencies/item[5]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -19146,12 +18945,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[116]"/>
+					<project ref="/object/projects/item[115]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[117]"/>
+					<project ref="/object/projects/item[116]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -19292,7 +19091,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[118]"/>
+					<project ref="/object/projects/item[117]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -19398,22 +19197,22 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[119]"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[118]"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[117]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -19722,41 +19521,41 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[6]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[77]"/>
+					<project ref="/object/projects/item[76]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[16]/dependencies/item[12]/project/dependencies/item[5]/project/dependencies/item[4]/project"/>
+		<item ref="/object/projects/item[15]/dependencies/item[12]/project/dependencies/item[5]/project/dependencies/item[4]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Illuminate.Editor</name>
@@ -19833,52 +19632,52 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item[2]/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item[2]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[12]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[12]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[12]/project/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[12]/project/dependencies/item[5]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[8]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[13]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[8]/project/dependencies/item[13]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[16]/dependencies/item[12]/project/dependencies/item[8]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[12]/project/dependencies/item[8]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -19962,19 +19761,20 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+					<project ref="/object/projects/item[14]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[91]/dependencies/item[9]/project/dependencies/item[20]/project"/>
+					<project ref="/object/projects/item[90]/dependencies/item[9]/project/dependencies/item[20]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[120]/dependencies/item[4]/project"/>
-		<item ref="/object/projects/item[16]/dependencies/item[12]/project/dependencies/item[8]/project/dependencies/item[12]/project"/>
-		<item ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[4]/project"/>
-		<item ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[4]/project/dependencies/item[1]/project"/>
+		<item ref="/object/projects/item[119]/dependencies/item[4]/project"/>
+		<item ref="/object/projects/item[15]/dependencies/item[12]/project/dependencies/item[8]/project/dependencies/item[12]/project"/>
+		<item ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[4]/project"/>
+		<item ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[4]/project/dependencies/item[1]/project"/>
+		<item ref="/object/projects/item[53]/dependencies/item[2]/project"/>
 	</projects>
 	<aggregations/>
 </object>
