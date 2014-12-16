@@ -15,8 +15,7 @@ JobManager& JobManager::getInstance()
 		s_instance = new JobManager();
 		SingletonManager::getInstance().addBefore(s_instance, &ThreadManager::getInstance());
 
-		s_instance->m_queue = new JobQueue();
-		s_instance->m_queue->create(
+		s_instance->m_queue.create(
 			OS::getInstance().getCPUCoreCount(),
 			Thread::Normal
 		);
@@ -26,7 +25,7 @@ JobManager& JobManager::getInstance()
 
 void JobManager::destroy()
 {
-	safeDestroy(m_queue);
+	m_queue.destroy();
 	delete this;
 }
 

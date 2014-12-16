@@ -476,6 +476,7 @@ bool ShaderPipeline::buildOutput(
 		// Optimize and compile all combination programs.
 		log::info << L"Spawning " << combinationCount << L" tasks..." << Endl;
 
+		JobManager& jobManager = JobManager::getInstance();
 		for (uint32_t combination = 0; combination < combinationCount; ++combination)
 		{
 			Ref< BuildCombinationTask > task = new BuildCombinationTask();
@@ -496,7 +497,7 @@ bool ShaderPipeline::buildOutput(
 			tasks.push_back(task);
 
 #if !defined(__APPLE__)
-			Ref< Job > job = JobManager::getInstance().add(makeFunctor(task.ptr(), &BuildCombinationTask::execute));
+			Ref< Job > job = jobManager.add(makeFunctor(task.ptr(), &BuildCombinationTask::execute));
 			jobs.push_back(job);
 #else
 			task->execute();
