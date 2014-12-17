@@ -4,7 +4,7 @@
 /* First off, code is included that follows the "include" declaration
 ** in the input grammar file. */
 #include <stdio.h>
-#line 8 "code\\script\\Editor\\LuaGrammar.y"
+#line 8 "LuaGrammar.y"
 
 
 #include <assert.h>
@@ -74,7 +74,7 @@ void dump(const LuaGrammarToken* A)
 	log::info << L"line = " << A->line << Endl;
 }
 
-#line 78 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 78 "LuaGrammar.cpp"
 /* Next is all token values, in a form suitable for use by makeheaders.
 ** This section will be null unless lemon is run with the -m switch.
 */
@@ -719,9 +719,9 @@ static void yy_destructor(
     case 50: /* LEFT_BRACE */
     case 51: /* RIGHT_BRACE */
 {
-#line 3 "code\\script\\Editor\\LuaGrammar.y"
+#line 3 "LuaGrammar.y"
  delete (yypminor->yy0); 
-#line 725 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 725 "LuaGrammar.cpp"
 }
       break;
     default:  break;   /* If no destructor action specified: do nothing */
@@ -1096,88 +1096,88 @@ static void yy_reduce(
   **     break;
   */
       case 0: /* chunk ::= block */
-#line 86 "code\\script\\Editor\\LuaGrammar.y"
+#line 86 "LuaGrammar.y"
 { outline->parseResult(yymsp[0].minor.yy0->node); }
-#line 1102 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1102 "LuaGrammar.cpp"
         break;
       case 1: /* semi ::= SEMICOLON */
-#line 88 "code\\script\\Editor\\LuaGrammar.y"
+#line 88 "LuaGrammar.y"
 {
   yy_destructor(yypParser,3,&yymsp[0].minor);
 }
-#line 1109 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1109 "LuaGrammar.cpp"
         break;
       case 3: /* block ::= scope statlist */
-#line 91 "code\\script\\Editor\\LuaGrammar.y"
+#line 91 "LuaGrammar.y"
 { yygotominor.yy0 = merge(yymsp[-1].minor.yy0, yymsp[0].minor.yy0); }
-#line 1114 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1114 "LuaGrammar.cpp"
         break;
       case 4: /* block ::= scope statlist laststat semi */
       case 7: /* scope ::= scope statlist binding semi */ yytestcase(yyruleno==7);
-#line 92 "code\\script\\Editor\\LuaGrammar.y"
+#line 92 "LuaGrammar.y"
 { yygotominor.yy0 = merge(merge(yymsp[-3].minor.yy0, yymsp[-2].minor.yy0), yymsp[-1].minor.yy0); }
-#line 1120 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1120 "LuaGrammar.cpp"
         break;
       case 5: /* ublock ::= block UNTIL exp */
-#line 93 "code\\script\\Editor\\LuaGrammar.y"
+#line 93 "LuaGrammar.y"
 { yygotominor.yy0 = merge(yymsp[-2].minor.yy0, yymsp[0].minor.yy0);   yy_destructor(yypParser,4,&yymsp[-1].minor);
 }
-#line 1126 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1126 "LuaGrammar.cpp"
         break;
       case 6: /* scope ::= */
       case 8: /* statlist ::= */ yytestcase(yyruleno==8);
       case 41: /* exp ::= NIL|TRUE|FALSE|NUMBER|STRING|DOT_DOT_DOT */ yytestcase(yyruleno==41);
       case 44: /* exp ::= tableconstructor */ yytestcase(yyruleno==44);
       case 65: /* args ::= tableconstructor */ yytestcase(yyruleno==65);
-#line 95 "code\\script\\Editor\\LuaGrammar.y"
+#line 95 "LuaGrammar.y"
 { yygotominor.yy0 = null(); }
-#line 1135 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1135 "LuaGrammar.cpp"
         break;
       case 9: /* statlist ::= statlist stat semi */
-#line 99 "code\\script\\Editor\\LuaGrammar.y"
+#line 99 "LuaGrammar.y"
 { yygotominor.yy0 = merge(yymsp[-2].minor.yy0, yymsp[-1].minor.yy0); }
-#line 1140 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1140 "LuaGrammar.cpp"
         break;
       case 10: /* stat ::= DO block END */
       case 12: /* stat ::= repetition DO block END */ yytestcase(yyruleno==12);
-#line 101 "code\\script\\Editor\\LuaGrammar.y"
+#line 101 "LuaGrammar.y"
 { yygotominor.yy0 = copy(yymsp[-1].minor.yy0);   yy_destructor(yypParser,5,&yymsp[-2].minor);
   yy_destructor(yypParser,6,&yymsp[0].minor);
 }
-#line 1148 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1148 "LuaGrammar.cpp"
         break;
       case 11: /* stat ::= WHILE exp DO block END */
-#line 102 "code\\script\\Editor\\LuaGrammar.y"
+#line 102 "LuaGrammar.y"
 { yygotominor.yy0 = copy(yymsp[-1].minor.yy0);   yy_destructor(yypParser,7,&yymsp[-4].minor);
   yy_destructor(yypParser,5,&yymsp[-2].minor);
   yy_destructor(yypParser,6,&yymsp[0].minor);
 }
-#line 1156 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1156 "LuaGrammar.cpp"
         break;
       case 13: /* stat ::= REPEAT ublock */
-#line 104 "code\\script\\Editor\\LuaGrammar.y"
+#line 104 "LuaGrammar.y"
 { yygotominor.yy0 = copy(yymsp[0].minor.yy0);   yy_destructor(yypParser,8,&yymsp[-1].minor);
 }
-#line 1162 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1162 "LuaGrammar.cpp"
         break;
       case 14: /* stat ::= IF conds END */
-#line 105 "code\\script\\Editor\\LuaGrammar.y"
+#line 105 "LuaGrammar.y"
 { yygotominor.yy0 = copy(yymsp[-1].minor.yy0);   yy_destructor(yypParser,9,&yymsp[-2].minor);
   yy_destructor(yypParser,6,&yymsp[0].minor);
 }
-#line 1169 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1169 "LuaGrammar.cpp"
         break;
       case 15: /* stat ::= FUNCTION funcname funcbody */
-#line 106 "code\\script\\Editor\\LuaGrammar.y"
-{ yygotominor.yy0 = new LuaGrammarToken(new IScriptOutline::FunctionNode(yymsp[-1].minor.yy0->line, yymsp[-1].minor.yy0->text, yymsp[0].minor.yy0->node), yymsp[-1].minor.yy0->line);   yy_destructor(yypParser,10,&yymsp[-2].minor);
+#line 106 "LuaGrammar.y"
+{ yygotominor.yy0 = new LuaGrammarToken(new IScriptOutline::FunctionNode(yymsp[-1].minor.yy0->line, yymsp[-1].minor.yy0->text, false, yymsp[0].minor.yy0->node), yymsp[-1].minor.yy0->line);   yy_destructor(yypParser,10,&yymsp[-2].minor);
 }
-#line 1175 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1175 "LuaGrammar.cpp"
         break;
       case 16: /* stat ::= setlist EQUAL explist1 */
-#line 107 "code\\script\\Editor\\LuaGrammar.y"
+#line 107 "LuaGrammar.y"
 { yygotominor.yy0 = null();   yy_destructor(yypParser,11,&yymsp[-1].minor);
 }
-#line 1181 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1181 "LuaGrammar.cpp"
         break;
       case 17: /* stat ::= functioncall */
       case 20: /* conds ::= condlist */ yytestcase(yyruleno==20);
@@ -1192,279 +1192,279 @@ static void yy_reduce(
       case 55: /* var ::= NAME */ yytestcase(yyruleno==55);
       case 58: /* prefixexp ::= var */ yytestcase(yyruleno==58);
       case 59: /* prefixexp ::= functioncall */ yytestcase(yyruleno==59);
-#line 108 "code\\script\\Editor\\LuaGrammar.y"
+#line 108 "LuaGrammar.y"
 { yygotominor.yy0 = copy(yymsp[0].minor.yy0); }
-#line 1198 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1198 "LuaGrammar.cpp"
         break;
       case 18: /* repetition ::= FOR NAME EQUAL explist23 */
-#line 110 "code\\script\\Editor\\LuaGrammar.y"
+#line 110 "LuaGrammar.y"
 {
   yy_destructor(yypParser,12,&yymsp[-3].minor);
   yy_destructor(yypParser,13,&yymsp[-2].minor);
   yy_destructor(yypParser,11,&yymsp[-1].minor);
 }
-#line 1207 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1207 "LuaGrammar.cpp"
         break;
       case 19: /* repetition ::= FOR namelist IN explist1 */
-#line 111 "code\\script\\Editor\\LuaGrammar.y"
+#line 111 "LuaGrammar.y"
 {
   yy_destructor(yypParser,12,&yymsp[-3].minor);
   yy_destructor(yypParser,14,&yymsp[-1].minor);
 }
-#line 1215 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1215 "LuaGrammar.cpp"
         break;
       case 21: /* conds ::= condlist ELSE block */
-#line 114 "code\\script\\Editor\\LuaGrammar.y"
+#line 114 "LuaGrammar.y"
 { yygotominor.yy0 = merge(yymsp[-2].minor.yy0, yymsp[0].minor.yy0);   yy_destructor(yypParser,15,&yymsp[-1].minor);
 }
-#line 1221 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1221 "LuaGrammar.cpp"
         break;
       case 23: /* condlist ::= condlist ELSEIF cond */
-#line 116 "code\\script\\Editor\\LuaGrammar.y"
+#line 116 "LuaGrammar.y"
 { yygotominor.yy0 = merge(yymsp[-2].minor.yy0, yymsp[0].minor.yy0);   yy_destructor(yypParser,16,&yymsp[-1].minor);
 }
-#line 1227 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1227 "LuaGrammar.cpp"
         break;
       case 24: /* cond ::= exp THEN block */
-#line 117 "code\\script\\Editor\\LuaGrammar.y"
+#line 117 "LuaGrammar.y"
 { yygotominor.yy0 = merge(yymsp[-2].minor.yy0, yymsp[0].minor.yy0);   yy_destructor(yypParser,17,&yymsp[-1].minor);
 }
-#line 1233 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1233 "LuaGrammar.cpp"
         break;
       case 25: /* laststat ::= BREAK */
-#line 119 "code\\script\\Editor\\LuaGrammar.y"
+#line 119 "LuaGrammar.y"
 { yygotominor.yy0 = null();   yy_destructor(yypParser,18,&yymsp[0].minor);
 }
-#line 1239 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1239 "LuaGrammar.cpp"
         break;
       case 26: /* laststat ::= RETURN */
-#line 120 "code\\script\\Editor\\LuaGrammar.y"
+#line 120 "LuaGrammar.y"
 { yygotominor.yy0 = null();   yy_destructor(yypParser,19,&yymsp[0].minor);
 }
-#line 1245 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1245 "LuaGrammar.cpp"
         break;
       case 27: /* laststat ::= RETURN explist1 */
-#line 121 "code\\script\\Editor\\LuaGrammar.y"
+#line 121 "LuaGrammar.y"
 { yygotominor.yy0 = copy(yymsp[0].minor.yy0);   yy_destructor(yypParser,19,&yymsp[-1].minor);
 }
-#line 1251 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1251 "LuaGrammar.cpp"
         break;
       case 28: /* binding ::= LOCAL namelist */
-#line 123 "code\\script\\Editor\\LuaGrammar.y"
+#line 123 "LuaGrammar.y"
 { yygotominor.yy0 = null();   yy_destructor(yypParser,20,&yymsp[-1].minor);
 }
-#line 1257 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1257 "LuaGrammar.cpp"
         break;
       case 29: /* binding ::= LOCAL namelist EQUAL explist1 */
-#line 124 "code\\script\\Editor\\LuaGrammar.y"
+#line 124 "LuaGrammar.y"
 { yygotominor.yy0 = copy(yymsp[0].minor.yy0);   yy_destructor(yypParser,20,&yymsp[-3].minor);
   yy_destructor(yypParser,11,&yymsp[-1].minor);
 }
-#line 1264 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1264 "LuaGrammar.cpp"
         break;
       case 30: /* binding ::= LOCAL FUNCTION NAME funcbody */
-#line 125 "code\\script\\Editor\\LuaGrammar.y"
-{ yygotominor.yy0 = new LuaGrammarToken(new IScriptOutline::FunctionNode(yymsp[-1].minor.yy0->line, yymsp[-1].minor.yy0->text, yymsp[0].minor.yy0->node), yymsp[-1].minor.yy0->line);   yy_destructor(yypParser,20,&yymsp[-3].minor);
+#line 125 "LuaGrammar.y"
+{ yygotominor.yy0 = new LuaGrammarToken(new IScriptOutline::FunctionNode(yymsp[-1].minor.yy0->line, yymsp[-1].minor.yy0->text, true, yymsp[0].minor.yy0->node), yymsp[-1].minor.yy0->line);   yy_destructor(yypParser,20,&yymsp[-3].minor);
   yy_destructor(yypParser,10,&yymsp[-2].minor);
 }
-#line 1271 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1271 "LuaGrammar.cpp"
         break;
       case 32: /* funcname ::= dottedname COLON NAME */
-#line 128 "code\\script\\Editor\\LuaGrammar.y"
+#line 128 "LuaGrammar.y"
 { yygotominor.yy0 = new LuaGrammarToken(yymsp[-2].minor.yy0->text + L":" + yymsp[0].minor.yy0->text, yymsp[0].minor.yy0->line);   yy_destructor(yypParser,21,&yymsp[-1].minor);
 }
-#line 1277 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1277 "LuaGrammar.cpp"
         break;
       case 34: /* dottedname ::= dottedname DOT NAME */
-#line 131 "code\\script\\Editor\\LuaGrammar.y"
+#line 131 "LuaGrammar.y"
 { yygotominor.yy0 = new LuaGrammarToken(yymsp[-2].minor.yy0->text + L"." + yymsp[0].minor.yy0->text, yymsp[0].minor.yy0->line);   yy_destructor(yypParser,22,&yymsp[-1].minor);
 }
-#line 1283 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1283 "LuaGrammar.cpp"
         break;
       case 36: /* namelist ::= namelist COMMA NAME */
-#line 134 "code\\script\\Editor\\LuaGrammar.y"
+#line 134 "LuaGrammar.y"
 { yygotominor.yy0 = new LuaGrammarToken(yymsp[-2].minor.yy0->text + L"," + yymsp[0].minor.yy0->text, yymsp[0].minor.yy0->line);   yy_destructor(yypParser,23,&yymsp[-1].minor);
 }
-#line 1289 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1289 "LuaGrammar.cpp"
         break;
       case 38: /* explist1 ::= explist1 COMMA exp */
       case 39: /* explist23 ::= exp COMMA exp */ yytestcase(yyruleno==39);
-#line 137 "code\\script\\Editor\\LuaGrammar.y"
+#line 137 "LuaGrammar.y"
 { yygotominor.yy0 = merge(yymsp[-2].minor.yy0, yymsp[0].minor.yy0);   yy_destructor(yypParser,23,&yymsp[-1].minor);
 }
-#line 1296 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1296 "LuaGrammar.cpp"
         break;
       case 40: /* explist23 ::= exp COMMA exp COMMA exp */
-#line 139 "code\\script\\Editor\\LuaGrammar.y"
+#line 139 "LuaGrammar.y"
 { yygotominor.yy0 = merge(merge(yymsp[-4].minor.yy0, yymsp[-2].minor.yy0), yymsp[0].minor.yy0);   yy_destructor(yypParser,23,&yymsp[-3].minor);
   yy_destructor(yypParser,23,&yymsp[-1].minor);
 }
-#line 1303 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1303 "LuaGrammar.cpp"
         break;
       case 46: /* exp ::= exp OR exp */
-#line 155 "code\\script\\Editor\\LuaGrammar.y"
+#line 155 "LuaGrammar.y"
 { yygotominor.yy0 = merge(yymsp[-2].minor.yy0, yymsp[0].minor.yy0);   yy_destructor(yypParser,24,&yymsp[-1].minor);
 }
-#line 1309 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1309 "LuaGrammar.cpp"
         break;
       case 47: /* exp ::= exp AND exp */
-#line 156 "code\\script\\Editor\\LuaGrammar.y"
+#line 156 "LuaGrammar.y"
 { yygotominor.yy0 = merge(yymsp[-2].minor.yy0, yymsp[0].minor.yy0);   yy_destructor(yypParser,25,&yymsp[-1].minor);
 }
-#line 1315 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1315 "LuaGrammar.cpp"
         break;
       case 48: /* exp ::= exp LESS|LESS_EQUAL|GREATER|GREATER_EQUAL|EQUAL_EQUAL|NOT_EQUAL exp */
       case 50: /* exp ::= exp PLUS|MINUS exp */ yytestcase(yyruleno==50);
       case 51: /* exp ::= exp MULTIPLY|DIVIDE|MODULO exp */ yytestcase(yyruleno==51);
-#line 157 "code\\script\\Editor\\LuaGrammar.y"
+#line 157 "LuaGrammar.y"
 { yygotominor.yy0 = merge(yymsp[-2].minor.yy0, yymsp[0].minor.yy0); }
-#line 1322 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1322 "LuaGrammar.cpp"
         break;
       case 49: /* exp ::= exp DOT_DOT exp */
-#line 158 "code\\script\\Editor\\LuaGrammar.y"
+#line 158 "LuaGrammar.y"
 { yygotominor.yy0 = merge(yymsp[-2].minor.yy0, yymsp[0].minor.yy0);   yy_destructor(yypParser,32,&yymsp[-1].minor);
 }
-#line 1328 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1328 "LuaGrammar.cpp"
         break;
       case 52: /* exp ::= exp RAISE exp */
-#line 161 "code\\script\\Editor\\LuaGrammar.y"
+#line 161 "LuaGrammar.y"
 { yygotominor.yy0 = merge(yymsp[-2].minor.yy0, yymsp[0].minor.yy0);   yy_destructor(yypParser,40,&yymsp[-1].minor);
 }
-#line 1334 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1334 "LuaGrammar.cpp"
         break;
       case 54: /* setlist ::= setlist COMMA var */
-#line 164 "code\\script\\Editor\\LuaGrammar.y"
+#line 164 "LuaGrammar.y"
 {
   yy_destructor(yypParser,23,&yymsp[-1].minor);
 }
-#line 1341 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1341 "LuaGrammar.cpp"
         break;
       case 56: /* var ::= prefixexp LEFT_BRACKET exp RIGHT_BRACKET */
-#line 167 "code\\script\\Editor\\LuaGrammar.y"
+#line 167 "LuaGrammar.y"
 { yygotominor.yy0 = merge(yymsp[-3].minor.yy0, yymsp[-1].minor.yy0);   yy_destructor(yypParser,47,&yymsp[-2].minor);
   yy_destructor(yypParser,48,&yymsp[0].minor);
 }
-#line 1348 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1348 "LuaGrammar.cpp"
         break;
       case 57: /* var ::= prefixexp DOT NAME */
-#line 168 "code\\script\\Editor\\LuaGrammar.y"
+#line 168 "LuaGrammar.y"
 { yygotominor.yy0 = new LuaGrammarToken(as_string(yymsp[-2].minor.yy0) + L"." + yymsp[0].minor.yy0->text, yymsp[0].minor.yy0->line);   yy_destructor(yypParser,22,&yymsp[-1].minor);
 }
-#line 1354 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1354 "LuaGrammar.cpp"
         break;
       case 60: /* prefixexp ::= OPEN exp RIGHT_PARANTHESIS */
-#line 172 "code\\script\\Editor\\LuaGrammar.y"
+#line 172 "LuaGrammar.y"
 { yygotominor.yy0 = copy(yymsp[-1].minor.yy0);   yy_destructor(yypParser,1,&yymsp[-2].minor);
   yy_destructor(yypParser,49,&yymsp[0].minor);
 }
-#line 1361 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1361 "LuaGrammar.cpp"
         break;
       case 61: /* functioncall ::= prefixexp args */
-#line 174 "code\\script\\Editor\\LuaGrammar.y"
+#line 174 "LuaGrammar.y"
 { yygotominor.yy0 = merge(new LuaGrammarToken(new IScriptOutline::FunctionReferenceNode(yymsp[-1].minor.yy0->line, as_string(yymsp[-1].minor.yy0)), yymsp[-1].minor.yy0->line), yymsp[0].minor.yy0); }
-#line 1366 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1366 "LuaGrammar.cpp"
         break;
       case 62: /* functioncall ::= prefixexp COLON NAME args */
-#line 175 "code\\script\\Editor\\LuaGrammar.y"
+#line 175 "LuaGrammar.y"
 { yygotominor.yy0 = merge(new LuaGrammarToken(new IScriptOutline::FunctionReferenceNode(yymsp[-1].minor.yy0->line, as_string(yymsp[-3].minor.yy0) + L":" + yymsp[-1].minor.yy0->text), yymsp[-1].minor.yy0->line), yymsp[0].minor.yy0);   yy_destructor(yypParser,21,&yymsp[-2].minor);
 }
-#line 1372 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1372 "LuaGrammar.cpp"
         break;
       case 63: /* args ::= LEFT_PARANTHESIS RIGHT_PARANTHESIS */
-#line 177 "code\\script\\Editor\\LuaGrammar.y"
+#line 177 "LuaGrammar.y"
 { yygotominor.yy0 = null();   yy_destructor(yypParser,2,&yymsp[-1].minor);
   yy_destructor(yypParser,49,&yymsp[0].minor);
 }
-#line 1379 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1379 "LuaGrammar.cpp"
         break;
       case 64: /* args ::= LEFT_PARANTHESIS explist1 RIGHT_PARANTHESIS */
-#line 178 "code\\script\\Editor\\LuaGrammar.y"
+#line 178 "LuaGrammar.y"
 { yygotominor.yy0 = copy(yymsp[-1].minor.yy0);   yy_destructor(yypParser,2,&yymsp[-2].minor);
   yy_destructor(yypParser,49,&yymsp[0].minor);
 }
-#line 1386 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1386 "LuaGrammar.cpp"
         break;
       case 66: /* args ::= STRING */
-#line 180 "code\\script\\Editor\\LuaGrammar.y"
+#line 180 "LuaGrammar.y"
 { yygotominor.yy0 = null();   yy_destructor(yypParser,45,&yymsp[0].minor);
 }
-#line 1392 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1392 "LuaGrammar.cpp"
         break;
       case 67: /* function ::= FUNCTION funcbody */
-#line 182 "code\\script\\Editor\\LuaGrammar.y"
+#line 182 "LuaGrammar.y"
 { yygotominor.yy0 = copy(yymsp[0].minor.yy0);   yy_destructor(yypParser,10,&yymsp[-1].minor);
 }
-#line 1398 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1398 "LuaGrammar.cpp"
         break;
       case 68: /* funcbody ::= params block END */
-#line 184 "code\\script\\Editor\\LuaGrammar.y"
+#line 184 "LuaGrammar.y"
 { yygotominor.yy0 = copy(yymsp[-1].minor.yy0);   yy_destructor(yypParser,6,&yymsp[0].minor);
 }
-#line 1404 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1404 "LuaGrammar.cpp"
         break;
       case 69: /* params ::= LEFT_PARANTHESIS parlist RIGHT_PARANTHESIS */
-#line 186 "code\\script\\Editor\\LuaGrammar.y"
+#line 186 "LuaGrammar.y"
 {
   yy_destructor(yypParser,2,&yymsp[-2].minor);
   yy_destructor(yypParser,49,&yymsp[0].minor);
 }
-#line 1412 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1412 "LuaGrammar.cpp"
         break;
       case 72: /* parlist ::= DOT_DOT_DOT */
-#line 190 "code\\script\\Editor\\LuaGrammar.y"
+#line 190 "LuaGrammar.y"
 {
   yy_destructor(yypParser,46,&yymsp[0].minor);
 }
-#line 1419 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1419 "LuaGrammar.cpp"
         break;
       case 73: /* parlist ::= namelist COMMA DOT_DOT_DOT */
-#line 191 "code\\script\\Editor\\LuaGrammar.y"
+#line 191 "LuaGrammar.y"
 {
   yy_destructor(yypParser,23,&yymsp[-1].minor);
   yy_destructor(yypParser,46,&yymsp[0].minor);
 }
-#line 1427 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1427 "LuaGrammar.cpp"
         break;
       case 74: /* tableconstructor ::= LEFT_BRACE RIGHT_BRACE */
-#line 193 "code\\script\\Editor\\LuaGrammar.y"
+#line 193 "LuaGrammar.y"
 {
   yy_destructor(yypParser,50,&yymsp[-1].minor);
   yy_destructor(yypParser,51,&yymsp[0].minor);
 }
-#line 1435 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1435 "LuaGrammar.cpp"
         break;
       case 75: /* tableconstructor ::= LEFT_BRACE fieldlist RIGHT_BRACE */
-#line 194 "code\\script\\Editor\\LuaGrammar.y"
+#line 194 "LuaGrammar.y"
 {
   yy_destructor(yypParser,50,&yymsp[-2].minor);
   yy_destructor(yypParser,51,&yymsp[0].minor);
 }
-#line 1443 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1443 "LuaGrammar.cpp"
         break;
       case 76: /* tableconstructor ::= LEFT_BRACE fieldlist COMMA|SEMICOLON RIGHT_BRACE */
-#line 195 "code\\script\\Editor\\LuaGrammar.y"
+#line 195 "LuaGrammar.y"
 {
   yy_destructor(yypParser,50,&yymsp[-3].minor);
   yy_destructor(yypParser,51,&yymsp[0].minor);
 }
-#line 1451 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1451 "LuaGrammar.cpp"
         break;
       case 80: /* field ::= NAME EQUAL exp */
-#line 201 "code\\script\\Editor\\LuaGrammar.y"
+#line 201 "LuaGrammar.y"
 {
   yy_destructor(yypParser,13,&yymsp[-2].minor);
   yy_destructor(yypParser,11,&yymsp[-1].minor);
 }
-#line 1459 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1459 "LuaGrammar.cpp"
         break;
       case 81: /* field ::= LEFT_BRACKET exp RIGHT_BRACKET EQUAL exp */
-#line 202 "code\\script\\Editor\\LuaGrammar.y"
+#line 202 "LuaGrammar.y"
 {
   yy_destructor(yypParser,47,&yymsp[-4].minor);
   yy_destructor(yypParser,48,&yymsp[-2].minor);
   yy_destructor(yypParser,11,&yymsp[-1].minor);
 }
-#line 1468 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1468 "LuaGrammar.cpp"
         break;
       default:
       /* (2) semi ::= */ yytestcase(yyruleno==2);
@@ -1533,12 +1533,12 @@ static void yy_syntax_error(
 ){
   ParseARG_FETCH;
 #define TOKEN (yyminor.yy0)
-#line 80 "code\\script\\Editor\\LuaGrammar.y"
+#line 80 "LuaGrammar.y"
 
 
 outline->syntaxError();
 
-#line 1542 "code\\script\\Editor\\LuaGrammar.cpp"
+#line 1542 "LuaGrammar.cpp"
   ParseARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
 

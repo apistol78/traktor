@@ -103,7 +103,7 @@ stat(A)    ::= WHILE exp DO block(B) END .			{ A = copy(B); }
 stat(A)    ::= repetition DO block(B) END .			{ A = copy(B); }
 stat(A)    ::= REPEAT ublock(B) .					{ A = copy(B); }
 stat(A)    ::= IF conds(B) END .					{ A = copy(B); }
-stat(A)    ::= FUNCTION funcname(B) funcbody(C) .	{ A = new LuaGrammarToken(new IScriptOutline::FunctionNode(B->line, B->text, C->node), B->line); }
+stat(A)    ::= FUNCTION funcname(B) funcbody(C) .	{ A = new LuaGrammarToken(new IScriptOutline::FunctionNode(B->line, B->text, false, C->node), B->line); }
 stat(A)    ::= setlist EQUAL explist1 .				{ A = null(); }
 stat(A)    ::= functioncall(B) .					{ A = copy(B); }
 
@@ -122,7 +122,7 @@ laststat(A) ::= RETURN explist1(B) .				{ A = copy(B); }
 
 binding(A) ::= LOCAL namelist .						{ A = null(); }
 binding(A) ::= LOCAL namelist EQUAL explist1(B) .	{ A = copy(B); }
-binding(A) ::= LOCAL FUNCTION NAME(B) funcbody(C) .	{ A = new LuaGrammarToken(new IScriptOutline::FunctionNode(B->line, B->text, C->node), B->line); }
+binding(A) ::= LOCAL FUNCTION NAME(B) funcbody(C) .	{ A = new LuaGrammarToken(new IScriptOutline::FunctionNode(B->line, B->text, true, C->node), B->line); }
 
 funcname(A) ::= dottedname(B) .						{ A = copy(B); }
 funcname(A) ::= dottedname(B) COLON NAME(C) .		{ A = new LuaGrammarToken(B->text + L":" + C->text, C->line); }

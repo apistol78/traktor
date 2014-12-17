@@ -55,14 +55,17 @@ public:
 		T_RTTI_CLASS;
 
 	public:
-		FunctionNode(int32_t line, const std::wstring& name, Node* body);
+		FunctionNode(int32_t line, const std::wstring& name, bool local, Node* body);
 
 		const std::wstring& getName() const;
+
+		bool isLocal() const;
 
 		Node* getBody() const;
 
 	private:
 		std::wstring m_name;
+		bool m_local;
 		Ref< Node > m_body;
 	};
 

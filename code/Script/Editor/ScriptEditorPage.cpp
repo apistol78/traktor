@@ -48,6 +48,7 @@
 #include "Resources/PlusMinus.h"
 #include "Resources/ScriptEdit.h"
 #include "Resources/ScriptFunction.h"
+#include "Resources/ScriptFunctionLocal.h"
 #include "Resources/ScriptFunctionReference.h"
 
 namespace traktor
@@ -64,6 +65,7 @@ ScriptEditorPage::ScriptEditorPage(editor::IEditor* editor, editor::IEditorPageS
 ,	m_compileCountDown(0)
 {
 	m_bitmapFunction = ui::Bitmap::load(c_ResourceScriptFunction, sizeof(c_ResourceScriptFunction), L"png");
+	m_bitmapFunctionLocal = ui::Bitmap::load(c_ResourceScriptFunctionLocal, sizeof(c_ResourceScriptFunctionLocal), L"png");
 	m_bitmapFunctionReference = ui::Bitmap::load(c_ResourceScriptFunctionReference, sizeof(c_ResourceScriptFunctionReference), L"png");
 }
 
@@ -541,7 +543,7 @@ void ScriptEditorPage::buildOutlineGrid(ui::custom::GridView* grid, ui::custom::
 		{
 			Ref< ui::custom::GridRow > row = new ui::custom::GridRow(0);
 
-			row->add(new ui::custom::GridItem(m_bitmapFunction));
+			row->add(new ui::custom::GridItem(fn->isLocal() ? m_bitmapFunctionLocal : m_bitmapFunction));
 			row->add(new ui::custom::GridItem(fn->getName()));
 			row->add(new ui::custom::GridItem(toString(fn->getLine() + 1)));
 
