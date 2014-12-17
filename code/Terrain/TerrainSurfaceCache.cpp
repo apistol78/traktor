@@ -95,7 +95,7 @@ TerrainSurfaceCache::~TerrainSurfaceCache()
 	destroy();
 }
 
-bool TerrainSurfaceCache::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
+bool TerrainSurfaceCache::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, uint32_t size)
 {
 	m_resourceManager = resourceManager;
 	m_renderSystem = renderSystem;
@@ -108,11 +108,11 @@ bool TerrainSurfaceCache::create(resource::IResourceManager* resourceManager, re
 
 	desc.count = 1;
 #if !defined(TARGET_OS_IPHONE)
-	desc.width = 2048;
-	desc.height = 2048;
+	desc.width = size;
+	desc.height = size;
 #else
-	desc.width = 1024;
-	desc.height = 1024;
+	desc.width = size / 2;
+	desc.height = size / 2;
 #endif
 	desc.multiSample = 0;
 	desc.createDepthStencil = false;
@@ -279,7 +279,7 @@ void TerrainSurfaceCache::get(
 	outRenderBlock = renderBlock;
 }
 
-render::ITexture* TerrainSurfaceCache::getVirtualTexture() const
+render::ISimpleTexture* TerrainSurfaceCache::getVirtualTexture() const
 {
 	return m_pool->getColorTexture(0);
 }

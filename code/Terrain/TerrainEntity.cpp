@@ -59,8 +59,9 @@ struct PatchFrontToBackPredicate
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainEntity", TerrainEntity, world::Entity)
 
-TerrainEntity::TerrainEntity(render::IRenderSystem* renderSystem)
-:	m_renderSystem(renderSystem)
+TerrainEntity::TerrainEntity(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
+:	m_resourceManager(resourceManager)
+,	m_renderSystem(renderSystem)
 ,	m_visualizeMode(VmDefault)
 ,	m_handleSurface(render::getParameterHandle(L"Surface"))
 ,	m_handleSurfaceOffset(render::getParameterHandle(L"SurfaceOffset"))
@@ -80,16 +81,12 @@ TerrainEntity::TerrainEntity(render::IRenderSystem* renderSystem)
 {
 }
 
-bool TerrainEntity::create(resource::IResourceManager* resourceManager, const TerrainEntityData& data)
+bool TerrainEntity::create(const TerrainEntityData& data)
 {
-	if (!resourceManager->bind(data.getTerrain(), m_terrain))
+	if (!m_resourceManager->bind(data.getTerrain(), m_terrain))
 		return 0;
 
 	m_heightfield = m_terrain->getHeightfield();
-
-	m_surfaceCache = new TerrainSurfaceCache();
-	if (!m_surfaceCache->create(resourceManager, m_renderSystem))
-		return false;
 
 	m_patchLodDistance = data.getPatchLodDistance();
 	m_patchLodBias = data.getPatchLodBias();
@@ -108,7 +105,8 @@ void TerrainEntity::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
 	world::IWorldRenderPass& worldRenderPass,
-	float detailDistance
+	float detailDistance,
+	uint32_t cacheSize
 )
 {
 	if (
@@ -121,6 +119,14 @@ void TerrainEntity::render(
 
 		m_heightfield.consume();
 		m_terrain.consume();
+	}
+
+	if (!m_surfaceCache || m_surfaceCache->getVirtualTexture()->getWidth() != cacheSize)
+	{
+		safeDestroy(m_surfaceCache);
+		m_surfaceCache = new TerrainSurfaceCache();
+		if (!m_surfaceCache->create(m_resourceManager, m_renderSystem, cacheSize))
+			return;
 	}
 
 	render::Shader* coarseShader = m_terrain->getTerrainCoarseShader();
@@ -577,7 +583,8 @@ bool TerrainEntity::updatePatches()
 			patch.vertexBuffer->unlock();
 #endif
 
-			m_surfaceCache->flush(patchId);
+			if (m_surfaceCache)
+				m_surfaceCache->flush(patchId);
 		}
 	}
 

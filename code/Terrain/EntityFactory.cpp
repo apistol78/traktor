@@ -55,11 +55,8 @@ Ref< world::Entity > EntityFactory::createEntity(const world::IEntityBuilder* bu
 		return rubbleData->createEntity(m_resourceManager, builder);
 	else if (const TerrainEntityData* terrainDataa = dynamic_type_cast< const TerrainEntityData* >(&entityData))
 	{
-		Ref< TerrainEntity > terrain = new TerrainEntity(m_renderSystem);
-		if (terrain->create(
-			m_resourceManager,
-			*terrainDataa
-		))
+		Ref< TerrainEntity > terrain = new TerrainEntity(m_resourceManager, m_renderSystem);
+		if (terrain->create(*terrainDataa))
 			return terrain;
 	}
 	else if (const UndergrowthEntityData* undergrowthData = dynamic_type_cast< const UndergrowthEntityData* >(&entityData))
