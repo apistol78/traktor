@@ -101,11 +101,6 @@ net_handle_t Peer2PeerTopology::getLocalHandle() const
 	return m_provider->getLocalHandle();
 }
 
-bool Peer2PeerTopology::setPrimaryHandle(net_handle_t node)
-{
-	return m_provider->setPrimaryPeerHandle(node);
-}
-
 net_handle_t Peer2PeerTopology::getPrimaryHandle() const
 {
 	return m_provider->getPrimaryPeerHandle();

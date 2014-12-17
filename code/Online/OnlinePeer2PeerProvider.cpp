@@ -88,20 +88,6 @@ std::wstring OnlinePeer2PeerProvider::getPeerName(int32_t index) const
 	return name;
 }
 
-bool OnlinePeer2PeerProvider::setPrimaryPeerHandle(net::net_handle_t node)
-{
-	for (RefArray< IUser >::const_iterator i = m_users.begin(); i != m_users.end(); ++i)
-	{
-		if ((*i)->getGlobalId() == node)
-		{
-			log::info << L"[Online P2P] Migrating primary token to peer " << node << L"..." << Endl;
-			return m_lobby->setOwner(*i);
-		}
-	}
-	log::error << L"[Online P2P] Failed to migrate primary token to peer " << node << L"." << Endl;
-	return false;
-}
-
 net::net_handle_t OnlinePeer2PeerProvider::getPrimaryPeerHandle() const
 {
 	return m_primaryHandle;

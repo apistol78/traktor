@@ -63,10 +63,6 @@ public:
 
 	/*! \brief
 	 */
-	bool setPrimary();
-
-	/*! \brief
-	 */
 	bool isPrimary() const;
 
 	/*! \brief
