@@ -1,3 +1,4 @@
+#include <cwctype>
 #include "Core/Log/Log.h"
 #include "Core/Misc/Align.h"
 #include "Core/Misc/String.h"
@@ -25,6 +26,11 @@ const int32_t c_fontHeightMargin = 1;
 #else
 const int32_t c_fontHeightMargin = 4;
 #endif
+
+bool isWordSeparator(wchar_t ch)
+{
+	return !std::iswalnum(ch);
+}
 
 			}
 
@@ -701,15 +707,42 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 
 	case VkLeft:
 		// Move caret left.
-		if (m_caret > 0)
-			--m_caret;
+		if ((event->getKeyState() & KsControl) == 0)
+		{
+			if (m_caret > 0)
+				--m_caret;
+		}
+		else
+		{
+			if (m_caret > 0)
+				--m_caret;
+
+			while (m_caret > 0)
+			{
+				if (isWordSeparator(m_text[m_caret - 1]))
+					break;
+				--m_caret;
+			}
+		}
 		caretMovement = true;
 		break;
 
 	case VkRight:
 		// Move caret right.
-		if (m_caret < int32_t(m_text.size()) - 1)
-			++m_caret;
+		if ((event->getKeyState() & KsControl) == 0)
+		{
+			if (m_caret < int32_t(m_text.size()) - 1)
+				++m_caret;
+		}
+		else
+		{
+			while (m_caret < int32_t(m_text.size()) - 1)
+			{
+				++m_caret;
+				if (isWordSeparator(m_text[m_caret]))
+					break;
+			}
+		}
 		caretMovement = true;
 		break;
 
