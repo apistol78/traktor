@@ -78,7 +78,7 @@ void TerrainEditorProfile::createEntityRenderers(
 	RefArray< world::IEntityRenderer >& outEntityRenderers
 ) const
 {
-	outEntityRenderers.push_back(new EntityRenderer(100.0f, true));
+	outEntityRenderers.push_back(new EntityRenderer(100.0f, 4096, true));
 }
 
 void TerrainEditorProfile::createControllerEditorFactories(

@@ -100,15 +100,16 @@ public:
 		Vector4 surfaceOffset;
 	};
 
-	TerrainEntity(render::IRenderSystem* renderSystem);
+	TerrainEntity(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
 
-	bool create(resource::IResourceManager* resourceManager, const TerrainEntityData& data);
+	bool create(const TerrainEntityData& data);
 
 	void render(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
 		world::IWorldRenderPass& worldRenderPass,
-		float detailDistance
+		float detailDistance,
+		uint32_t cacheSize
 	);
 
 	void setVisualizeMode(VisualizeMode visualizeMode);
@@ -129,6 +130,7 @@ private:
 	friend class TerrainEditModifier;
 	friend class TerrainEntityEditor;
 
+	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
 	resource::Proxy< Terrain > m_terrain;
 	resource::Proxy< hf::Heightfield > m_heightfield;

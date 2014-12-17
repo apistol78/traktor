@@ -72,6 +72,15 @@ const float c_terrainDetailDistances[] =
 	200.0f
 };
 
+const uint32_t c_terrainSurfaceCacheSizes[] =
+{
+	0,
+	1024,
+	2048,
+	4096,
+	4096
+};
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.WorldServer", WorldServer, IWorldServer)
@@ -117,9 +126,11 @@ bool WorldServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 	float sprayLod2Distance = c_sprayLodDistances[m_particleQuality][1];
 	m_effectEntityRenderer = new spray::EffectEntityRenderer(m_renderServer->getRenderSystem(), sprayLod1Distance, sprayLod2Distance);
 
-	float terrainDetailDistance = c_terrainDetailDistances[m_terrainQuality];
-	bool oceanReflectionEnable = bool(m_oceanQuality >= world::QuHigh);
-	m_terrainEntityRenderer = new terrain::EntityRenderer(terrainDetailDistance, oceanReflectionEnable);
+	m_terrainEntityRenderer = new terrain::EntityRenderer(
+		c_terrainDetailDistances[m_terrainQuality],
+		c_terrainSurfaceCacheSizes[m_terrainQuality],
+		bool(m_oceanQuality >= world::QuHigh)
+	);
 
 	m_entityRenderers = new world::WorldEntityRenderers();
 	m_entityRenderers->add(new world::DecalEntityRenderer(m_renderServer->getRenderSystem()));
@@ -212,10 +223,9 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 	float sprayLod2Distance = c_sprayLodDistances[m_particleQuality][1];
 	m_effectEntityRenderer->setLodDistances(sprayLod1Distance, sprayLod2Distance);
 
-	float terrainDetailDistance = c_terrainDetailDistances[terrainQuality];
-	bool oceanReflectionEnable = bool(oceanQuality >= world::QuHigh);
-	m_terrainEntityRenderer->setTerrainDetailDistance(terrainDetailDistance);
-	m_terrainEntityRenderer->setOceanDynamicReflectionEnable(oceanReflectionEnable);
+	m_terrainEntityRenderer->setTerrainDetailDistance(c_terrainDetailDistances[terrainQuality]);
+	m_terrainEntityRenderer->setTerrainCacheSize(c_terrainSurfaceCacheSizes[terrainQuality]);
+	m_terrainEntityRenderer->setOceanDynamicReflectionEnable(bool(oceanQuality >= world::QuHigh));
 
 	// Save ghost configuration state.
 	m_shadowQuality = shadowQuality;

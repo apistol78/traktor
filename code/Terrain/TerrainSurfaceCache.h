@@ -28,6 +28,7 @@ class IResourceManager;
 	{
 
 class IRenderSystem;
+class ISimpleTexture;
 class RenderTargetSet;
 class ScreenRenderer;
 class RenderContext;
@@ -52,7 +53,7 @@ public:
 
 	virtual ~TerrainSurfaceCache();
 
-	bool create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
+	bool create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, uint32_t size);
 
 	void destroy();
 
@@ -76,7 +77,7 @@ public:
 		Vector4& outTextureOffset
 	);
 
-	render::ITexture* getVirtualTexture() const;
+	render::ISimpleTexture* getVirtualTexture() const;
 
 private:
 	struct Entry
