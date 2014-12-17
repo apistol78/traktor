@@ -33,6 +33,8 @@ public:
 
 	virtual net_handle_t getLocalHandle() const;
 
+	virtual bool setPrimaryHandle(net_handle_t node);
+
 	virtual net_handle_t getPrimaryHandle() const;
 
 	virtual int32_t getNodeCount() const;

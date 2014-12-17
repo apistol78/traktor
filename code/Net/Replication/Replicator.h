@@ -243,6 +243,7 @@ private:
 	CircularVector< double, 32 > m_timeErrors;	/*!< History of time errors. */
 	double m_timeVariance;						/*!< Network time compensation time variance. */
 	uint8_t m_status;
+	bool m_allowPrimaryRequests;
 	Transform m_origin;
 	Ref< const StateTemplate > m_stateTemplate;
 	Ref< const State > m_state;
