@@ -398,6 +398,24 @@ bool Replicator::update()
 
 	T_MEASURE_UNTIL(0.001);
 
+	// Need to migrate primary if anyone is "in session" before I.
+	if ((m_status & 0x80) == 0x00 && isPrimary())
+	{
+		for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+		{
+			if (((*i)->getStatus() & 0x80) == 0x80)
+			{
+				if ((*i)->setPrimary())
+				{
+					log::info << getLogPrefix() << L"Migrated " << (*i)->getHandle() << L" to primary peer." << Endl;
+					break;
+				}
+			}
+		}
+	}
+
+	T_MEASURE_UNTIL(0.001);
+
 	m_time += dT;
 	m_time0 += dT;
 
