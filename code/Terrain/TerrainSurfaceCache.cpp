@@ -18,6 +18,8 @@ namespace traktor
 		namespace
 		{
 
+const uint32_t c_maxUpdatePerFrame = 1;
+
 struct TerrainSurfaceRenderBlock : public render::RenderBlock
 {
 	render::ScreenRenderer* screenRenderer;
@@ -76,6 +78,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainSurfaceCache", TerrainSurfaceCac
 
 TerrainSurfaceCache::TerrainSurfaceCache()
 :	m_clearCache(true)
+,	m_updateCount(0)
 ,	m_handleHeightfield(render::getParameterHandle(L"Heightfield"))
 ,	m_handleColorMap(render::getParameterHandle(L"ColorMap"))
 ,	m_handleSplatMap(render::getParameterHandle(L"SplatMap"))
@@ -121,6 +124,8 @@ bool TerrainSurfaceCache::create(resource::IResourceManager* resourceManager, re
 		return false;
 		
 	m_clearCache = true;
+	m_updateCount = 0;
+
 	return true;
 }
 
@@ -160,6 +165,8 @@ void TerrainSurfaceCache::begin()
 {
 	if (!m_pool->isContentValid())
 		flush();
+
+	m_updateCount = 0;
 }
 
 void TerrainSurfaceCache::get(
@@ -179,10 +186,7 @@ void TerrainSurfaceCache::get(
 	// If the cache is already valid we just reuse it.
 	if (patchId < m_entries.size())
 	{
-		if (
-			m_entries[patchId].lod == surfaceLod &&
-			m_entries[patchId].tile.dim > 0
-		)
+		if (m_updateCount >= c_maxUpdatePerFrame || (m_entries[patchId].lod == surfaceLod && m_entries[patchId].tile.dim > 0))
 		{
 			outTextureOffset = offsetFromTile(m_entries[patchId].tile);
 			return;
@@ -196,6 +200,8 @@ void TerrainSurfaceCache::get(
 		// Patch hasn't been cached before, allocate a new entry.
 		m_entries.resize(patchId + 1);
 	}
+
+	++m_updateCount;
 
 	// Allocate tile for this patch; first try to allocate proper size
 	// then fall back on smaller and smaller tiles.
