@@ -35,7 +35,6 @@ Replicator::Replicator()
 ,	m_time(0.0)
 ,	m_timeVariance(0.0)
 ,	m_status(0)
-,	m_allowPrimaryRequests(true)
 ,	m_origin(Transform::identity())
 ,	m_sendState(false)
 ,	m_timeSynchronization(true)
@@ -224,7 +223,7 @@ bool Replicator::update()
 			continue;
 		}
 
-		if (fromGhost->isPrimary())
+		if (m_topology->getPrimaryHandle() == fromGhost->getHandle())
 		{
 			double latency = fromGhost->getLatencyDown();
 			double ghostOffset = net2time(msg.time) + latency - m_time;
@@ -430,7 +429,28 @@ uint8_t Replicator::getStatus() const
 
 bool Replicator::isPrimary() const
 {
-	return m_topology->getPrimaryHandle() == m_topology->getLocalHandle();
+	// Must be in-session to be primary.
+	if ((m_status & 0x80) == 0x00)
+		return false;
+
+	ReplicatorProxy* minProxy = 0;
+
+	// Get proxy with lowest handle which are in-session.
+	for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+	{
+		net_handle_t handle = (*i)->getHandle();
+		if (((*i)->getStatus() & 0x80) == 0x80 && (minProxy == 0 || handle < minProxy->getHandle()))
+			minProxy = *i;
+	}
+
+	// Check my handle to lower than all other in-session proxies.
+	if (minProxy != 0)
+	{
+		if (m_topology->getLocalHandle() > minProxy->getHandle())
+			return false;
+	}
+
+	return true;
 }
 
 void Replicator::setOrigin(const Transform& origin)
@@ -492,12 +512,24 @@ bool Replicator::broadcastEvent(const ISerializable* eventObject)
 
 ReplicatorProxy* Replicator::getPrimaryProxy() const
 {
+	ReplicatorProxy* minProxy = 0;
+
+	// Get proxy with lowest handle which are in-session.
 	for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
 	{
-		if ((*i)->isPrimary())
-			return *i;
+		net_handle_t handle = (*i)->getHandle();
+		if (((*i)->getStatus() & 0x80) == 0x80 && (minProxy == 0 || handle < minProxy->getHandle()))
+			minProxy = *i;
 	}
-	return 0;
+
+	// Check I'm primary.
+	if (minProxy != 0 && (m_status & 0x80) == 0x80)
+	{
+		if (m_topology->getLocalHandle() < minProxy->getHandle())
+			return 0;
+	}
+
+	return minProxy;
 }
 
 bool Replicator::sendEventToPrimary(const ISerializable* eventObject)

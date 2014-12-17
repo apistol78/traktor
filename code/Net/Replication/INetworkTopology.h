@@ -35,8 +35,6 @@ public:
 
 	virtual net_handle_t getLocalHandle() const = 0;
 
-	virtual bool setPrimaryHandle(net_handle_t node) = 0;
-
 	virtual net_handle_t getPrimaryHandle() const = 0;
 
 	virtual int32_t getNodeCount() const = 0;
