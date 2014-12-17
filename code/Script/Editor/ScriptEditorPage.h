@@ -93,6 +93,7 @@ private:
 	Ref< IScriptOutline > m_scriptOutline;
 	Ref< Preprocessor > m_preprocessor;
 	Ref< ui::Bitmap > m_bitmapFunction;
+	Ref< ui::Bitmap > m_bitmapFunctionLocal;
 	Ref< ui::Bitmap > m_bitmapFunctionReference;
 	Ref< ui::Container > m_containerExplorer;
 	Ref< ui::Container > m_containerDebugger;

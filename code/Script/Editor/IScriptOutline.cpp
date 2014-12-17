@@ -54,9 +54,10 @@ const std::wstring& IScriptOutline::FunctionReferenceNode::getName() const
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.IScriptOutline.FunctionNode", IScriptOutline::FunctionNode, IScriptOutline::Node)
 
-IScriptOutline::FunctionNode::FunctionNode(int32_t line, const std::wstring& name, Node* body)
+IScriptOutline::FunctionNode::FunctionNode(int32_t line, const std::wstring& name, bool local, Node* body)
 :	Node(line)
 ,	m_name(name)
+,	m_local(local)
 ,	m_body(body)
 {
 }
@@ -64,6 +65,11 @@ IScriptOutline::FunctionNode::FunctionNode(int32_t line, const std::wstring& nam
 const std::wstring& IScriptOutline::FunctionNode::getName() const
 {
 	return m_name;
+}
+
+bool IScriptOutline::FunctionNode::isLocal() const
+{
+	return m_local;
 }
 
 IScriptOutline::Node* IScriptOutline::FunctionNode::getBody() const

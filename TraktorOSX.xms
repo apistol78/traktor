@@ -12288,6 +12288,10 @@
 							<fileName>../../../res/toolbar/ScriptEdit.png</fileName>
 							<items/>
 						</item>
+						<item type="File">
+							<fileName>../../../res/editor/ScriptFunctionLocal.png</fileName>
+							<items/>
+						</item>
 					</items>
 				</item>
 			</items>
