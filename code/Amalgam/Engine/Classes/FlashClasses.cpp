@@ -355,6 +355,7 @@ void registerFlashClasses(script::IScriptManager* scriptManager)
 	classFlashLayer->addMethod("createBitmap", &FlashLayer::createBitmap);
 	classFlashLayer->addMethod("isVisible", &FlashLayer::isVisible);
 	classFlashLayer->addMethod("setVisible", &FlashLayer::setVisible);
+	classFlashLayer->addMethod("getPrintableString", &FlashLayer::getPrintableString);
 	classFlashLayer->setUnknownMethod(&FlashLayer::externalCall);
 	scriptManager->registerClass(classFlashLayer);
 

@@ -9,8 +9,10 @@
 #include "Amalgam/Engine/Action/Classes/As_traktor_amalgam_I18N.h"
 #include "Amalgam/Engine/Action/Classes/As_traktor_amalgam_InputFabricator.h"
 #include "Amalgam/Engine/Action/Classes/As_traktor_amalgam_SoundDriver.h"
+#include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Flash/FlashFont.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashMovieLoader.h"
 #include "Flash/FlashMoviePlayer.h"
@@ -64,6 +66,11 @@ c_inputKeyCodes[] =
 	{ input::DtKeyTab, flash::AsKey::AkTab },
 	{ input::DtKeyUp, flash::AsKey::AkUp }
 };
+
+bool isWhiteSpace(wchar_t ch)
+{
+	return ch == 0 || ch == L' ' || ch == L'\t' || ch == L'\n' || ch == L'\r';
+}
 
 uint32_t translateInputKeyCode(uint32_t inputKeyCode)
 {
@@ -606,6 +613,41 @@ script::Any FlashLayer::externalCall(const std::string& methodName, uint32_t arg
 	flash::ActionValue ret = m_moviePlayer->dispatchCallback(methodName, argc, av);
 
 	return script::CastAny< flash::ActionValue >::set(ret);
+}
+
+std::wstring FlashLayer::getPrintableString(const std::wstring& text, const std::wstring& empty) const
+{
+	if (!m_movie)
+		return L"";
+
+	StringOutputStream ss;
+
+	const SmallMap< uint16_t, Ref< flash::FlashFont > >& fonts = m_movie->getFonts();
+	for (size_t i = 0; i < text.length(); ++i)
+	{
+		wchar_t ch = text[i];
+		bool valid = true;
+
+		if (!isWhiteSpace(ch))
+		{
+			for (SmallMap< uint16_t, Ref< flash::FlashFont > >::const_iterator j = fonts.begin(); j != fonts.end(); ++j)
+			{
+				if (j->second->lookupIndex(ch) == 0)
+				{
+					valid = false;
+					break;
+				}
+			}
+		}
+
+		if (valid)
+			ss << ch;
+	}
+
+	if (!ss.empty())
+		return ss.str();
+	else
+		return empty;
 }
 
 void FlashLayer::createMoviePlayer()
