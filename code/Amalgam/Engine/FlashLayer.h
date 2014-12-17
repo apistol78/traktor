@@ -160,6 +160,14 @@ public:
 	 */
 	script::Any externalCall(const std::string& methodName, uint32_t argc, const script::Any* argv);
 
+	/*! \brief Get "safe" string which only contain glyphs which are valid with loaded fonts.
+	 *
+	 * \param text Input text with potential unprintable glyphs.
+	 * \param empty String to return if no glyphs in input text was valid.
+	 * \return String containing only printable glyphs.
+	 */
+	std::wstring getPrintableString(const std::wstring& text, const std::wstring& empty) const;
+
 	/*! \brief Set if Flash should be rendererd.
 	 *
 	 * \param visible True if Flash should be rendered.
