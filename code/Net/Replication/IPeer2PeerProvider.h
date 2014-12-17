@@ -32,6 +32,8 @@ public:
 
 	virtual std::wstring getPeerName(int32_t index) const = 0;
 
+	virtual bool setPrimaryPeerHandle(net_handle_t node) = 0;
+
 	virtual net_handle_t getPrimaryPeerHandle() const = 0;
 
 	virtual bool send(net_handle_t node, const void* data, int32_t size) = 0;

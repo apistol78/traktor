@@ -59,10 +59,18 @@ bool ReplicatorProxy::isConnected() const
 	return m_handle != 0;
 }
 
+bool ReplicatorProxy::setPrimary()
+{
+	if (m_replicator)
+		return m_replicator->m_topology->setPrimaryHandle(m_handle);
+	else
+		return false;
+}
+
 bool ReplicatorProxy::isPrimary() const
 {
 	if (m_replicator)
-		return m_replicator->getPrimaryProxy() == this;
+		return m_replicator->m_topology->getPrimaryHandle() == m_handle;
 	else
 		return false;
 }
