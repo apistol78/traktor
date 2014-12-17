@@ -630,11 +630,12 @@ std::wstring FlashLayer::getPrintableString(const std::wstring& text, const std:
 
 		if (!isWhiteSpace(ch))
 		{
+			valid = false;
 			for (SmallMap< uint16_t, Ref< flash::FlashFont > >::const_iterator j = fonts.begin(); j != fonts.end(); ++j)
 			{
-				if (j->second->lookupIndex(ch) == 0)
+				if (j->second->lookupIndex(ch) != 0)
 				{
-					valid = false;
+					valid = true;
 					break;
 				}
 			}
