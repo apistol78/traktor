@@ -1,5 +1,18 @@
 
 
+function string:split(sep)
+	local sep, fields = sep or ":", {}
+	local pattern = string.format("([^%s]+)", sep)
+	self:gsub(pattern, function(c) fields[#fields+1] = c end)
+	return fields
+end
+
+
+function string:endswith(send)
+	return #self >= #send and self:find(send, #self - #send + 1, true) and true or false
+end
+
+
 function build(args)
 	stdout:printLn("Building asset(s)...")
 	local cmdline = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App -p -s=Pipeline"
@@ -11,15 +24,41 @@ end
 
 
 function deploy(args)
+	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
+
 	-- Deploy application configuration to target.
 	stdout:printLn("Deploying resources to target host...")
 	run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) Application.config", "(null)")
 	if run:exitCode() ~= 0 then return run:exitCode() end
 
 	-- Deploy binaries to target.
-	stdout:printLn("Deploying binaries to target host...")
-	run:pushd("$(DEPLOY_SYSTEM_ROOT)/bin/latest/win64/releaseshared")
-	run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) $(DEPLOY_FILES)", "(null)")
+	if not debug then
+		stdout:printLn("Deploying binaries to target host...")
+		run:pushd("$(DEPLOY_SYSTEM_ROOT)/bin/latest/win64/releaseshared")
+	else
+		stdout:printLn("Deploying *DEBUG* binaries to target host...")
+		run:pushd("$(DEPLOY_SYSTEM_ROOT)/bin/latest/win64/debugshared")
+	end
+
+	local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
+	local deployFiles = ""
+
+	for _, f in ipairs(files) do
+		if debug then
+			local debugFile = f
+			if string.endswith(f, ".dll") then
+				debugFile = f:sub(1, string.len(f) - 4) .. "_d.dll"
+			elseif string.endswith(f, ".exe") then
+				debugFile = f:sub(1, string.len(f) - 4) .. "_d.exe"
+			end
+			if fileSystem:exist(Path(run:cwd() .. "/" .. debugFile)) then
+				f = debugFile
+			end
+		end
+		deployFiles = deployFiles .. " " .. f	
+	end
+
+	run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) " .. deployFiles, "(null)")
 	if run:exitCode() ~= 0 then return run:exitCode() end
 	run:popd()
 
@@ -29,7 +68,19 @@ end
 
 function launch(args)
 	stdout:printLn("Launching Win64...")
-	return run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteLaunch $(DEPLOY_TARGET_HOST) $(DEPLOY_EXECUTABLE) \\-s Application.config", "(null)")
+
+	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
+	local executable = os:getEnvironment("DEPLOY_EXECUTABLE")
+
+	if debug then
+		if string.endswith(executable, ".exe") then
+			executable = executable:sub(1, string.len(f) - 4) .. "_d.exe"
+		else
+			executable = executable .. "_d"
+		end
+	end
+
+	return run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteLaunch $(DEPLOY_TARGET_HOST) " .. executable .. " \\-s Application.config", "(null)")
 end
 
 
