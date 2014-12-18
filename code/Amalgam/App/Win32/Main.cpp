@@ -1,6 +1,7 @@
 #include "Amalgam/App/Win32/ErrorDialog.h"
 #include "Amalgam/App/Win32/StackWalker.h"
 #include "Amalgam/Impl/Application.h"
+#include "Core/Date/DateTime.h"
 #include "Core/Io/FileOutputStreamBuffer.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
@@ -67,7 +68,7 @@ public:
 
 	virtual void log(int32_t level, const std::wstring& str)
 	{
-		(*m_stream) << str << Endl;
+		(*m_stream) << L"[" << DateTime::now().format(L"%H:%M:%S") << L"] " << str << Endl;
 	}
 
 private:
@@ -423,9 +424,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 	log::warning.setGlobalTarget(new LogDualTarget(logTail, log::warning.getGlobalTarget()));
 	log::error  .setGlobalTarget(new LogDualTarget(logTail, log::error  .getGlobalTarget()));
 
+#if !defined(_WIN64)
 	// Ensure FP is in known state.
 	_controlfp(_PC_24, _MCW_PC);
 	_controlfp(_RC_NEAR, _MCW_RC);
+#endif
 
 	// Initialize native UI.
 	ui::Application::getInstance()->initialize(

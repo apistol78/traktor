@@ -188,7 +188,6 @@ bool ReplicatorProxy::updateEventQueue()
 
 			i->time = m_replicator->m_time0;
 			i->count++;
-			i++;
 
 			if (++sentCount >= c_maxSendEventsPerUpdate)
 				break;

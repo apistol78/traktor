@@ -394,7 +394,7 @@ bool Peer2PeerTopology::update(double dT)
 
 		for (int32_t j = 0; j < int32_t(myPeer.connections.size()); ++j)
 		{
-			if (myPeer.connections[i] == 0 || myPeer.connections[j] == peer.handle)
+			if (myPeer.connections[j] == 0 || myPeer.connections[j] == peer.handle)
 				continue;
 
 			if (!m_provider->send(myPeer.connections[j], &msg, MsgCMask_NetSize(peer.connections.size())))
