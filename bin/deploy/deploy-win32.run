@@ -1,5 +1,18 @@
 
 
+function string:split(sep)
+	local sep, fields = sep or ":", {}
+	local pattern = string.format("([^%s]+)", sep)
+	self:gsub(pattern, function(c) fields[#fields+1] = c end)
+	return fields
+end
+
+
+function string:endswith(send)
+	return #self >= #send and self:find(send, #self - #send + 1, true) and true or false
+end
+
+
 function build(args)
 	stdout:printLn("Building asset(s)...")
 	local cmdline = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App -p -s=Pipeline"
