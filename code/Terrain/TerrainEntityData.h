@@ -1,6 +1,7 @@
 #ifndef traktor_terrain_TerrainEntityData_H
 #define traktor_terrain_TerrainEntityData_H
 
+#include "Core/RefArray.h"
 #include "Resource/Id.h"
 #include "World/EntityData.h"
 
@@ -17,6 +18,7 @@ namespace traktor
 	namespace terrain
 	{
 
+class ITerrainLayerData;
 class Terrain;
 
 /*! \brief Terrain entity data.
@@ -45,6 +47,8 @@ public:
 
 	float getSurfaceLodExponent() const { return m_surfaceLodExponent; }
 
+	const RefArray< ITerrainLayerData >& getLayers() const { return m_layers; }
+
 private:
 	resource::Id< Terrain > m_terrain;
 	float m_patchLodDistance;
@@ -53,6 +57,7 @@ private:
 	float m_surfaceLodDistance;
 	float m_surfaceLodBias;
 	float m_surfaceLodExponent;
+	RefArray< ITerrainLayerData > m_layers;
 };
 
 	}

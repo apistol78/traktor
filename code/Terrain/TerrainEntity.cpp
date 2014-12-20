@@ -10,6 +10,8 @@
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
+#include "Terrain/ITerrainLayer.h"
+#include "Terrain/ITerrainLayerData.h"
 #include "Terrain/Terrain.h"
 #include "Terrain/TerrainEntity.h"
 #include "Terrain/TerrainSurfaceCache.h"
@@ -97,6 +99,14 @@ bool TerrainEntity::create(const TerrainEntityData& data)
 
 	if (!createPatches())
 		return false;
+
+	const RefArray< ITerrainLayerData >& layers = data.getLayers();
+	for (RefArray< ITerrainLayerData >::const_iterator i = layers.begin(); i != layers.end(); ++i)
+	{
+		Ref< ITerrainLayer > layer = (*i)->createLayerInstance(m_resourceManager, m_renderSystem, *this);
+		if (layer)
+			m_layers.push_back(layer);
+	}
 
 	return true;
 }
@@ -317,7 +327,13 @@ void TerrainEntity::render(
 	{
 		render::RenderBlock* renderBlock = 0;
 
-		m_surfaceCache->begin();
+		m_surfaceCache->begin(
+			worldContext.getRenderContext(),
+			m_terrain,
+			-worldExtent * Scalar(0.5f),
+			worldExtent
+		);
+
 		for (AlignedVector< CullPatch >::const_iterator i = visiblePatches.begin(); i != visiblePatches.end(); ++i)
 		{
 			Patch& patch = m_patches[i->patchId];
@@ -483,6 +499,14 @@ void TerrainEntity::render(
 	}
 
 #endif
+
+	for (RefArray< ITerrainLayer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+		(*i)->render(
+			*this,
+			worldContext,
+			worldRenderView,
+			worldRenderPass
+		);
 }
 
 void TerrainEntity::setVisualizeMode(VisualizeMode visualizeMode)
@@ -527,6 +551,8 @@ Aabb3 TerrainEntity::getBoundingBox() const
 
 void TerrainEntity::update(const world::UpdateParams& update)
 {
+	for (RefArray< ITerrainLayer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+		(*i)->update(update);
 }
 
 bool TerrainEntity::updatePatches()
@@ -587,6 +613,9 @@ bool TerrainEntity::updatePatches()
 				m_surfaceCache->flush(patchId);
 		}
 	}
+
+	if (m_surfaceCache)
+		m_surfaceCache->flushBase();
 
 	return true;
 }

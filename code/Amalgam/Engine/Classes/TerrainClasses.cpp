@@ -4,7 +4,6 @@
 #include "Terrain/OceanEntity.h"
 #include "Terrain/RiverEntity.h"
 #include "Terrain/TerrainEntity.h"
-#include "Terrain/UndergrowthEntity.h"
 
 namespace traktor
 {
@@ -21,9 +20,6 @@ void registerTerrainClasses(script::IScriptManager* scriptManager)
 
 	Ref< script::AutoScriptClass< terrain::TerrainEntity > > classTerrainEntity = new script::AutoScriptClass< terrain::TerrainEntity >();
 	scriptManager->registerClass(classTerrainEntity);
-
-	Ref< script::AutoScriptClass< terrain::UndergrowthEntity > > classUndergrowthEntity = new script::AutoScriptClass< terrain::UndergrowthEntity >();
-	scriptManager->registerClass(classUndergrowthEntity);
 }
 
 	}

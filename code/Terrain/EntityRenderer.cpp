@@ -3,7 +3,6 @@
 #include "Terrain/TerrainEntity.h"
 #include "Terrain/OceanEntity.h"
 #include "Terrain/RiverEntity.h"
-#include "Terrain/UndergrowthEntity.h"
 #include "World/WorldContext.h"
 
 namespace traktor
@@ -41,7 +40,6 @@ const TypeInfoSet EntityRenderer::getEntityTypes() const
 	typeSet.insert(&type_of< TerrainEntity >());
 	typeSet.insert(&type_of< OceanEntity >());
 	typeSet.insert(&type_of< RiverEntity >());
-	typeSet.insert(&type_of< UndergrowthEntity >());
 	return typeSet;
 }
 
@@ -66,8 +64,6 @@ void EntityRenderer::render(
 		oceanEntity->render(worldContext.getRenderContext(), worldRenderView, worldRenderPass, m_oceanReflectionEnable);
 	else if (RiverEntity* riverEntity = dynamic_type_cast< RiverEntity* >(entity))
 		riverEntity->render(worldContext.getRenderContext(), worldRenderView, worldRenderPass);
-	else if (UndergrowthEntity* undergrowthEntity = dynamic_type_cast< UndergrowthEntity* >(entity))
-		undergrowthEntity->render(worldContext.getRenderContext(), worldRenderView, worldRenderPass);
 }
 
 void EntityRenderer::flush(

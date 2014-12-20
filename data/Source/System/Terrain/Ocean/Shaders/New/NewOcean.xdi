@@ -1040,8 +1040,8 @@ read-back color buffer.
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>4316</first>
-				<second>9</second>
+				<first>4519</first>
+				<second>8</second>
 			</position>
 			<fragmentGuid>{CBB01418-3E3B-2947-9CA1-B75CEFF77C4E}</fragmentGuid>
 			<inputPins>
@@ -1061,6 +1061,21 @@ read-back color buffer.
 					<second>0</second>
 				</item>
 			</values>
+		</item>
+		<item type="traktor.render.Platform">
+			<comment/>
+			<position>
+				<first>4278</first>
+				<second>-192</second>
+			</position>
+		</item>
+		<item type="traktor.render.Color">
+			<comment/>
+			<position>
+				<first>4013</first>
+				<second>-201</second>
+			</position>
+			<color>0, 137, 255, 185</color>
 		</item>
 	</nodes>
 	<edges>
@@ -2366,7 +2381,27 @@ read-back color buffer.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item[98]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[99]"/>
+				<name>State</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[18]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[100]"/>
+				<name>Other</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[100]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -2376,12 +2411,12 @@ read-back color buffer.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[98]"/>
+				<node ref="/object/nodes/item[101]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[99]"/>
-				<name>State</name>
+				<node ref="/object/nodes/item[100]"/>
+				<name>GCM</name>
 			</destination>
 		</item>
 	</edges>
