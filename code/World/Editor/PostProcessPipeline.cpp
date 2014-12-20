@@ -21,6 +21,7 @@
 #include "World/PostProcess/PostProcessStepSimple.h"
 #include "World/PostProcess/PostProcessStepSsao.h"
 #include "World/PostProcess/PostProcessStepSmProj.h"
+#include "World/PostProcess/PostProcessStepTemporal.h"
 
 namespace traktor
 {
@@ -133,6 +134,8 @@ bool PostProcessPipeline::buildDependencies(
 			pipelineDepends->addDependency(stepSsao->getShader(), editor::PdfBuild | editor::PdfResource);
 		else if (const PostProcessStepSmProj* stepSmProj = dynamic_type_cast< const PostProcessStepSmProj* >(step))
 			pipelineDepends->addDependency(stepSmProj->getShader(), editor::PdfBuild | editor::PdfResource);
+		else if (const PostProcessStepTemporal* stepTemporal = dynamic_type_cast< const PostProcessStepTemporal* >(step))
+			pipelineDepends->addDependency(stepTemporal->getShader(), editor::PdfBuild | editor::PdfResource);
 	}
 
 	return true;

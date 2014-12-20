@@ -1058,6 +1058,7 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 
 			PostProcessStep::Instance::RenderParams params;
 			params.viewFrustum = f.viewFrustum;
+			params.view = f.view;
 			params.projection = projection;
 			params.deltaTime = 0.0f;
 

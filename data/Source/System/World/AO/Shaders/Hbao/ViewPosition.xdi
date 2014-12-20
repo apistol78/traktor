@@ -21,38 +21,38 @@
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>1203</first>
-				<second>588</second>
+				<first>1254</first>
+				<second>582</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>1342</first>
-				<second>598</second>
+				<first>1444</first>
+				<second>602</second>
 			</position>
 			<swizzle>xy0</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>1342</first>
-				<second>542</second>
+				<first>1444</first>
+				<second>546</second>
 			</position>
 			<swizzle>00x</swizzle>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>1443</first>
-				<second>541</second>
+				<first>1545</first>
+				<second>545</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>268</first>
-				<second>501</second>
+				<first>41</first>
+				<second>544</second>
 			</position>
 			<parameterName>Depth</parameterName>
 			<type>PtTexture2D</type>
@@ -61,8 +61,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>274</first>
-				<second>574</second>
+				<first>47</first>
+				<second>617</second>
 			</position>
 			<name>UV</name>
 			<connectable>true</connectable>
@@ -72,39 +72,39 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1669</first>
-				<second>590</second>
+				<first>1771</first>
+				<second>594</second>
 			</position>
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.Vector">
 			<comment/>
 			<position>
-				<first>397</first>
-				<second>641</second>
+				<first>170</first>
+				<second>684</second>
 			</position>
 			<value>0.5, 0.5, 0, 0</value>
 		</item>
 		<item type="traktor.render.Vector">
 			<comment/>
 			<position>
-				<first>530</first>
-				<second>675</second>
+				<first>362</first>
+				<second>721</second>
 			</position>
 			<value>0.5, -0.5, 0, 0</value>
 		</item>
 		<item type="traktor.render.Div">
 			<comment/>
 			<position>
-				<first>729</first>
-				<second>626</second>
+				<first>624</first>
+				<second>664</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sub">
 			<comment/>
 			<position>
-				<first>569</first>
-				<second>589</second>
+				<first>401</first>
+				<second>635</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
@@ -118,8 +118,8 @@
 		<item type="traktor.render.Sampler" version="3">
 			<comment/>
 			<position>
-				<first>744</first>
-				<second>505</second>
+				<first>639</first>
+				<second>543</second>
 			</position>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
