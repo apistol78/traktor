@@ -1005,6 +1005,7 @@ void WorldRendererDeferred::render(uint32_t flags, int frame, render::EyeType ey
 
 			PostProcessStep::Instance::RenderParams params;
 			params.viewFrustum = f.viewFrustum;
+			params.view = f.view;
 			params.projection = projection;
 			params.deltaTime = 0.0f;
 
