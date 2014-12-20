@@ -122,7 +122,19 @@ bool TerrainSurfaceCache::create(resource::IResourceManager* resourceManager, re
 	m_pool = renderSystem->createRenderTargetSet(desc);
 	if (!m_pool)
 		return false;
-		
+
+	desc.count = 1;
+	desc.width = 256;
+	desc.height = 256;
+	desc.multiSample = 0;
+	desc.createDepthStencil = false;
+	desc.usingPrimaryDepthStencil = false;
+	desc.targets[0].format = render::TfR8G8B8A8;
+
+	m_base = renderSystem->createRenderTargetSet(desc);
+	if (!m_base)
+		return false;
+
 	m_clearCache = true;
 	m_updateCount = 0;
 
@@ -153,6 +165,12 @@ void TerrainSurfaceCache::flush(uint32_t patchId)
 	}
 }
 
+void TerrainSurfaceCache::flushBase()
+{
+	if (m_base)
+		m_base->setContentValid(false);
+}
+
 void TerrainSurfaceCache::flush()
 {
 	for (uint32_t i = 0; i < m_entries.size(); ++i)
@@ -161,10 +179,53 @@ void TerrainSurfaceCache::flush()
 	m_entries.resize(0);
 }
 
-void TerrainSurfaceCache::begin()
+void TerrainSurfaceCache::begin(
+	render::RenderContext* renderContext,
+	Terrain* terrain,
+	const Vector4& worldOrigin,
+	const Vector4& worldExtent
+)
 {
 	if (!m_pool->isContentValid())
 		flush();
+
+	if (!m_base->isContentValid())
+	{
+		render::Shader* shader = terrain->getSurfaceShader();
+
+		render::ISimpleTexture* heightMap = terrain->getHeightMap();
+		render::ISimpleTexture* colorMap = terrain->getColorMap();
+		render::ISimpleTexture* splatMap = terrain->getSplatMap();
+
+		shader->setCombination(L"ColorEnable", colorMap != 0);
+
+		TerrainSurfaceRenderBlock* renderBlock = renderContext->alloc< TerrainSurfaceRenderBlock >("Terrain surface (base)");
+
+		renderBlock->screenRenderer = m_screenRenderer;
+		renderBlock->distance = 0.0f;
+		renderBlock->program = shader->getCurrentProgram();
+		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+
+		renderBlock->programParams->beginParameters(renderContext);
+		renderBlock->programParams->setTextureParameter(m_handleHeightfield, heightMap);
+		renderBlock->programParams->setTextureParameter(m_handleColorMap, colorMap);
+		renderBlock->programParams->setTextureParameter(m_handleSplatMap, splatMap);
+		renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, worldOrigin);
+		renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
+		renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, worldOrigin);
+		renderBlock->programParams->setVectorParameter(m_handlePatchExtent, worldExtent);
+
+		const Vector4 textureOffset(-1.0f, 1.0f, 2.0f, -2.0f);
+		renderBlock->programParams->setVectorParameter(m_handleTextureOffset, textureOffset);
+		renderBlock->programParams->endParameters(renderContext);
+
+		renderBlock->renderTargetSet = m_base;
+		renderBlock->clear = true;
+
+		renderContext->draw(render::RpOpaque, renderBlock);
+
+		m_base->setContentValid(true);
+	}
 
 	m_updateCount = 0;
 }
@@ -282,6 +343,11 @@ void TerrainSurfaceCache::get(
 render::ISimpleTexture* TerrainSurfaceCache::getVirtualTexture() const
 {
 	return m_pool->getColorTexture(0);
+}
+
+render::ISimpleTexture* TerrainSurfaceCache::getBaseTexture() const
+{
+	return m_base->getColorTexture(0);
 }
 
 	}

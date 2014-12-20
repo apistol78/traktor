@@ -1,5 +1,7 @@
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberRefArray.h"
 #include "Resource/Member.h"
+#include "Terrain/ITerrainLayerData.h"
 #include "Terrain/Terrain.h"
 #include "Terrain/TerrainEntityData.h"
 
@@ -8,7 +10,7 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.TerrainEntityData", 2, TerrainEntityData, world::EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.TerrainEntityData", 3, TerrainEntityData, world::EntityData)
 
 TerrainEntityData::TerrainEntityData()
 :	m_patchLodDistance(100.0f)
@@ -33,6 +35,9 @@ void TerrainEntityData::serialize(ISerializer& s)
 	s >> Member< float >(L"surfaceLodDistance", m_surfaceLodDistance);
 	s >> Member< float >(L"surfaceLodBias", m_surfaceLodBias);
 	s >> Member< float >(L"surfaceLodExponent", m_surfaceLodExponent);
+
+	if (s.getVersion() >= 3)
+		s >> MemberRefArray< ITerrainLayerData >(L"layers", m_layers);
 }
 
 	}

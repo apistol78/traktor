@@ -61,7 +61,14 @@ public:
 
 	void flush();
 
-	void begin();
+	void flushBase();
+
+	void begin(
+		render::RenderContext* renderContext,
+		Terrain* terrain,
+		const Vector4& worldOrigin,
+		const Vector4& worldExtent
+	);
 
 	void get(
 		render::RenderContext* renderContext,
@@ -79,6 +86,8 @@ public:
 
 	render::ISimpleTexture* getVirtualTexture() const;
 
+	render::ISimpleTexture* getBaseTexture() const;
+
 private:
 	struct Entry
 	{
@@ -91,6 +100,7 @@ private:
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	TerrainSurfaceAlloc m_alloc;
 	Ref< render::RenderTargetSet > m_pool;
+	Ref< render::RenderTargetSet > m_base;
 	std::vector< Entry > m_entries;
 	bool m_clearCache;
 	uint32_t m_updateCount;

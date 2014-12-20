@@ -1,8 +1,8 @@
 #include "Terrain/Editor/TerrainEntityPipeline.h"
+#include "Terrain/ITerrainLayerData.h"
 #include "Terrain/TerrainEntityData.h"
 #include "Terrain/OceanEntityData.h"
 #include "Terrain/RiverEntityData.h"
-#include "Terrain/UndergrowthEntityData.h"
 #include "Editor/IPipelineDepends.h"
 
 namespace traktor
@@ -18,7 +18,6 @@ TypeInfoSet TerrainEntityPipeline::getAssetTypes() const
 	typeSet.insert(&type_of< TerrainEntityData >());
 	typeSet.insert(&type_of< OceanEntityData >());
 	typeSet.insert(&type_of< RiverEntityData >());
-	typeSet.insert(&type_of< UndergrowthEntityData >());
 	return typeSet;
 }
 
@@ -33,6 +32,10 @@ bool TerrainEntityPipeline::buildDependencies(
 	if (const TerrainEntityData* terrainEntityData = dynamic_type_cast< const TerrainEntityData* >(sourceAsset))
 	{
 		pipelineDepends->addDependency(terrainEntityData->getTerrain(), editor::PdfBuild | editor::PdfResource);
+
+		const RefArray< ITerrainLayerData >& layers = terrainEntityData->getLayers();
+		for (RefArray< ITerrainLayerData >::const_iterator i = layers.begin(); i != layers.end(); ++i)
+			pipelineDepends->addDependency(*i);
 	}
 	else if (const OceanEntityData* oceanEntityData = dynamic_type_cast< const OceanEntityData* >(sourceAsset))
 	{
@@ -42,12 +45,6 @@ bool TerrainEntityPipeline::buildDependencies(
 	else if (const RiverEntityData* riverEntityData = dynamic_type_cast< const RiverEntityData* >(sourceAsset))
 	{
 		pipelineDepends->addDependency(riverEntityData->getShader(), editor::PdfBuild | editor::PdfResource);
-	}
-	else if (const UndergrowthEntityData* undergrowthEntityData = dynamic_type_cast< const UndergrowthEntityData* >(sourceAsset))
-	{
-		pipelineDepends->addDependency(undergrowthEntityData->getTerrain(), editor::PdfBuild | editor::PdfResource);
-		pipelineDepends->addDependency(undergrowthEntityData->getMaterialMask(), editor::PdfBuild | editor::PdfResource);
-		pipelineDepends->addDependency(undergrowthEntityData->getShader(), editor::PdfBuild | editor::PdfResource);
 	}
 	return true;
 }

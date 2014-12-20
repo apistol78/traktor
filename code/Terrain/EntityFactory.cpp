@@ -6,7 +6,6 @@
 #include "Terrain/RiverEntity.h"
 #include "Terrain/RiverEntityData.h"
 #include "Terrain/RubbleEntityData.h"
-#include "Terrain/UndergrowthEntityData.h"
 
 namespace traktor
 {
@@ -28,7 +27,6 @@ const TypeInfoSet EntityFactory::getEntityTypes() const
 	typeSet.insert(&type_of< RiverEntityData >());
 	typeSet.insert(&type_of< RubbleEntityData >());
 	typeSet.insert(&type_of< TerrainEntityData >());
-	typeSet.insert(&type_of< UndergrowthEntityData >());
 	return typeSet;
 }
 
@@ -59,8 +57,6 @@ Ref< world::Entity > EntityFactory::createEntity(const world::IEntityBuilder* bu
 		if (terrain->create(*terrainDataa))
 			return terrain;
 	}
-	else if (const UndergrowthEntityData* undergrowthData = dynamic_type_cast< const UndergrowthEntityData* >(&entityData))
-		return undergrowthData->createEntity(m_resourceManager, m_renderSystem);
 
 	return 0;
 }

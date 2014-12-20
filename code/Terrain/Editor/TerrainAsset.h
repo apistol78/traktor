@@ -32,6 +32,13 @@ class Shader;
 	namespace terrain
 	{
 
+/*! \brief Terrain source asset.
+ * \ingroup Terrain
+ * 
+ * This contain source information about a terrain.
+ * This class is designed to be stored in the source database
+ * along with multiple associated data blobs (see database blobs).
+ */
 class T_DLLCLASS TerrainAsset : public ISerializable
 {
 	T_RTTI_CLASS;

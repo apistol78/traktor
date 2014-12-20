@@ -56,6 +56,7 @@ class WorldRenderView;
 	namespace terrain
 	{
 
+class ITerrainLayer;
 class TerrainSurfaceCache;
 
 //#if !TARGET_OS_IPHONE
@@ -151,6 +152,8 @@ private:
 	float m_surfaceLodBias;
 	float m_surfaceLodExponent;
 	VisualizeMode m_visualizeMode;
+
+	RefArray< ITerrainLayer > m_layers;
 
 	render::handle_t m_handleSurface;
 	render::handle_t m_handleSurfaceOffset;
