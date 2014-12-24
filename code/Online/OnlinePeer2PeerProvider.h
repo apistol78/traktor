@@ -53,8 +53,6 @@ public:
 
 	virtual int32_t recv(void* data, int32_t size, net::net_handle_t& outNode);
 
-	virtual bool pendingRecv();
-
 	struct RxTxData
 	{
 		Ref< IUser > user;
