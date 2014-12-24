@@ -27,31 +27,6 @@ class T_DLLCLASS Peer2PeerTopology : public INetworkTopology
 	T_RTTI_CLASS;
 
 public:
-	Peer2PeerTopology(IPeer2PeerProvider* provider);
-
-	virtual void setCallback(INetworkCallback* callback);
-
-	virtual net_handle_t getLocalHandle() const;
-
-	virtual bool setPrimaryHandle(net_handle_t node);
-
-	virtual net_handle_t getPrimaryHandle() const;
-
-	virtual int32_t getNodeCount() const;
-
-	virtual net_handle_t getNodeHandle(int32_t index) const;
-
-	virtual std::wstring getNodeName(int32_t index) const;
-
-	virtual bool isNodeRelayed(int32_t index) const;
-
-	virtual bool send(net_handle_t node, const void* data, int32_t size);
-
-	virtual int32_t recv(void* data, int32_t size, net_handle_t& outNode);
-
-	virtual bool update(double dT);
-
-private:
 	struct Peer
 	{
 		net_handle_t handle;
@@ -76,6 +51,33 @@ private:
 		}
 	};
 
+	Peer2PeerTopology(IPeer2PeerProvider* provider);
+
+	virtual void setCallback(INetworkCallback* callback);
+
+	virtual net_handle_t getLocalHandle() const;
+
+	virtual bool setPrimaryHandle(net_handle_t node);
+
+	virtual net_handle_t getPrimaryHandle() const;
+
+	virtual int32_t getNodeCount() const;
+
+	virtual net_handle_t getNodeHandle(int32_t index) const;
+
+	virtual std::wstring getNodeName(int32_t index) const;
+
+	virtual bool isNodeRelayed(int32_t index) const;
+
+	virtual bool send(net_handle_t node, const void* data, int32_t size);
+
+	virtual int32_t recv(void* data, int32_t size, net_handle_t& outNode);
+
+	virtual bool update(double dT);
+
+	const std::vector< Peer >& getPeers() const { return m_peers; }
+
+private:
 	struct Recv
 	{
 		net_handle_t from;

@@ -133,11 +133,12 @@ int32_t OnlinePeer2PeerProvider::recv(void* data, int32_t size, net::net_handle_
 {
 	int32_t nrecv = 0;
 
+	if (m_rxQueuePending <= 0)
+		return 0;
+
 	m_rxQueueLock.wait();
 	if (!m_rxQueue.empty())
 	{
-		T_ASSERT (m_rxQueuePending > 0);
-
 		RxTxData& rx = m_rxQueue.front();
 
 		nrecv = std::min< int32_t >(size, rx.size);
@@ -150,11 +151,6 @@ int32_t OnlinePeer2PeerProvider::recv(void* data, int32_t size, net::net_handle_
 	m_rxQueueLock.release();
 
 	return nrecv;
-}
-
-bool OnlinePeer2PeerProvider::pendingRecv()
-{
-	return m_rxQueuePending > 0;
 }
 
 void OnlinePeer2PeerProvider::transmissionThread()

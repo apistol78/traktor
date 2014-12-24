@@ -410,9 +410,6 @@ bool Peer2PeerTopology::update(double dT)
 	T_MEASURE_UNTIL(0.001);
 
 	// Receive messages.
-	bool pending;
-	T_MEASURE_STATEMENT(pending = m_provider->pendingRecv(), 0.001);
-	if (pending)
 	{
 		net_handle_t from;
 		P2PMessage reply;
