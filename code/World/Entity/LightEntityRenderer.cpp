@@ -1,4 +1,5 @@
 #include <limits>
+#include "Render/ITexture.h"
 #include "World/WorldRenderView.h"
 #include "World/Entity/DirectionalLightEntity.h"
 #include "World/Entity/GodRayEntity.h"
@@ -54,6 +55,7 @@ void LightEntityRenderer::render(
 		light.shadowColor = directionalLightEntity->getShadowColor();
 		light.range = Scalar(0.0f);
 		light.radius = Scalar(0.0f);
+		light.texture = directionalLightEntity->getCloudShadowTexture();
 		light.castShadow = directionalLightEntity->getCastShadow();
 
 		worldRenderView.addLight(light);
@@ -75,6 +77,7 @@ void LightEntityRenderer::render(
 		light.shadowColor = pointLightEntity->getShadowColor();
 		light.range = Scalar(pointLightEntity->getRange());
 		light.radius = Scalar(0.0f);
+		light.texture = 0;
 		light.castShadow = false;
 
 		if (pointLightEntity->getRandomFlicker() <= 1.0f - FUZZY_EPSILON)
@@ -104,6 +107,7 @@ void LightEntityRenderer::render(
 		light.shadowColor = spotLightEntity->getShadowColor();
 		light.range = Scalar(spotLightEntity->getRange());
 		light.radius = Scalar(spotLightEntity->getRadius());
+		light.texture = 0;
 		light.castShadow = spotLightEntity->getCastShadow();
 
 		worldRenderView.addLight(light);

@@ -12,12 +12,14 @@ DirectionalLightEntity::DirectionalLightEntity(
 	const Vector4& sunColor,
 	const Vector4& baseColor,
 	const Vector4& shadowColor,
+	const resource::Proxy< render::ITexture >& cloudShadowTexture,
 	bool castShadow
 )
 :	m_transform(transform)
 ,	m_sunColor(sunColor)
 ,	m_baseColor(baseColor)
 ,	m_shadowColor(shadowColor)
+,	m_cloudShadowTexture(cloudShadowTexture)
 ,	m_castShadow(castShadow)
 {
 }

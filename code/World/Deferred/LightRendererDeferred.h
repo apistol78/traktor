@@ -51,6 +51,7 @@ public:
 
 	void renderLight(
 		render::IRenderView* renderView,
+		float time,
 		const Matrix44& projection,
 		const Matrix44& view,
 		const Light& light,

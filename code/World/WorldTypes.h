@@ -5,6 +5,13 @@
 
 namespace traktor
 {
+	namespace render
+	{
+
+class ITexture;
+
+	}
+
 	namespace world
 	{
 
@@ -49,6 +56,7 @@ struct Light
 	Vector4 shadowColor;
 	Scalar range;
 	Scalar radius;
+	render::ITexture* texture;
 	bool castShadow;
 };
 

@@ -1,6 +1,7 @@
 #ifndef traktor_world_DirectionalLightEntity_H
 #define traktor_world_DirectionalLightEntity_H
 
+#include "Resource/Proxy.h"
 #include "World/Entity.h"
 
 // import/export mechanism.
@@ -13,6 +14,13 @@
 
 namespace traktor
 {
+	namespace render
+	{
+
+class ITexture;
+
+	}
+
 	namespace world
 	{
 
@@ -29,6 +37,7 @@ public:
 		const Vector4& sunColor,
 		const Vector4& baseColor,
 		const Vector4& shadowColor,
+		const resource::Proxy< render::ITexture >& cloudShadowTexture,
 		bool castShadow
 	);
 
@@ -52,6 +61,10 @@ public:
 
 	const Vector4& getShadowColor() const { return m_shadowColor; }
 
+	void setCloudShadowTexture(const resource::Proxy< render::ITexture >& cloudShadowTexture) { m_cloudShadowTexture = cloudShadowTexture; }
+
+	const resource::Proxy< render::ITexture >& getCloudShadowTexture() const { return m_cloudShadowTexture; }
+
 	void setCastShadow(bool castShadow) { m_castShadow = castShadow; }
 
 	bool getCastShadow() const { return m_castShadow; }
@@ -61,6 +74,7 @@ private:
 	Vector4 m_sunColor;
 	Vector4 m_baseColor;
 	Vector4 m_shadowColor;
+	resource::Proxy< render::ITexture > m_cloudShadowTexture;
 	bool m_castShadow;
 };
 
