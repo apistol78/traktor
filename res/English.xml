@@ -2720,5 +2720,25 @@
       <first>EDITOR_SURE_TO_REBUILD_CAPTION</first>
       <second>Rebuild content</second>
     </item>
+    <item>
+      <first>SCRIPT_CLASS_WIZARDTOOL_DESCRIPTION</first>
+      <second>Create new script class..</second>
+    </item>
+    <item>
+      <first>SCRIPT_CLASS_WIZARDTOOL_CLASS_NAME</first>
+      <second>Class name</second>
+    </item>
+    <item>
+      <first>SCRIPT_CLASS_WIZARDTOOL_DIALOG_TITLE</first>
+      <second>Enter class name</second>
+    </item>
+     <item>
+      <first>SCRIPT_CLASS_WIZARDTOOL_DIALOG_MESSAGE</first>
+      <second>Enter class name</second>
+    </item>
+    <item>
+      <first>SCRIPT_CLASS_WIZARDTOOL_INHERIT_CLASS_NAME</first>
+      <second>Inherit from class</second>
+    </item>
   </map>
 </object>

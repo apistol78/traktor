@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="1">
+	<dependencies/>
+	<text>
+	<![CDATA[
+-- Setup simple inheritance
+function inherit(baseClass)
+	local newClass = {}
+	setmetatable(newClass, { __index = baseClass })
+	return newClass
+end
+	]]>
+	</text>
+</object>
