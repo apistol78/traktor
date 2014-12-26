@@ -81,6 +81,7 @@ public:
 		render::handle_t m_handleViewEdgeBottomRight;
 		render::handle_t m_handleProjection;
 		render::handle_t m_handleDeltaView;
+		render::handle_t m_handleDeltaViewProj;
 		render::handle_t m_handleMagicCoeffs;
 	};
 

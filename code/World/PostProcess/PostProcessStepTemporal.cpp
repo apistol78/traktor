@@ -72,6 +72,7 @@ PostProcessStepTemporal::InstanceTemporal::InstanceTemporal(const PostProcessSte
 ,	m_handleViewEdgeBottomRight(render::getParameterHandle(L"ViewEdgeBottomRight"))
 ,	m_handleProjection(render::getParameterHandle(L"Projection"))
 ,	m_handleDeltaView(render::getParameterHandle(L"DeltaView"))
+,	m_handleDeltaViewProj(render::getParameterHandle(L"DeltaViewProj"))
 ,	m_handleMagicCoeffs(render::getParameterHandle(L"MagicCoeffs"))
 {
 }
@@ -107,6 +108,7 @@ void PostProcessStepTemporal::InstanceTemporal::render(
 	m_shader->setVectorParameter(m_handleViewEdgeBottomRight, viewEdgeBottomRight);
 	m_shader->setMatrixParameter(m_handleProjection, params.projection);
 	m_shader->setMatrixParameter(m_handleDeltaView, deltaView);
+	m_shader->setMatrixParameter(m_handleDeltaViewProj, params.projection * deltaView);
 
 	m_shader->setVectorParameter(m_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 
