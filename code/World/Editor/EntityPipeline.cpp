@@ -52,7 +52,7 @@ bool EntityPipeline::buildDependencies(
 
 	while (!objectMembers.empty())
 	{
-		Ref< const RfmObject > objectMember = checked_type_cast< RfmObject*, false >(objectMembers.front());
+		Ref< const RfmObject > objectMember = checked_type_cast< const RfmObject*, false >(objectMembers.front());
 		objectMembers.pop_front();
 
 		if (const EntityData* entityData = dynamic_type_cast< const EntityData* >(objectMember->get()))

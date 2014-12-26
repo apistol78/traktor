@@ -1,6 +1,7 @@
 #ifndef traktor_world_DirectionalLightEntityData_H
 #define traktor_world_DirectionalLightEntityData_H
 
+#include "Resource/Id.h"
 #include "World/EntityData.h"
 
 // import/export mechanism.
@@ -13,6 +14,13 @@
 
 namespace traktor
 {
+	namespace render
+	{
+
+class ITexture;
+
+	}
+
 	namespace world
 	{
 
@@ -28,18 +36,21 @@ public:
 
 	virtual void serialize(ISerializer& s);
 
-	inline const Vector4& getSunColor() const { return m_sunColor; }
+	const Vector4& getSunColor() const { return m_sunColor; }
 
-	inline const Vector4& getBaseColor() const { return m_baseColor; }
+	const Vector4& getBaseColor() const { return m_baseColor; }
 
-	inline const Vector4& getShadowColor() const { return m_shadowColor; }
+	const Vector4& getShadowColor() const { return m_shadowColor; }
 
-	inline bool getCastShadow() const { return m_castShadow; }
+	const resource::Id< render::ITexture >& getCloudShadowTexture() const { return m_cloudShadowTexture; }
+
+	bool getCastShadow() const { return m_castShadow; }
 
 private:
 	Vector4 m_sunColor;
 	Vector4 m_baseColor;
 	Vector4 m_shadowColor;
+	resource::Id< render::ITexture > m_cloudShadowTexture;
 	bool m_castShadow;
 };
 

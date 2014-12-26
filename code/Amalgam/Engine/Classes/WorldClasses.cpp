@@ -182,7 +182,7 @@ void registerWorldClasses(script::IScriptManager* scriptManager)
 	scriptManager->registerClass(classPointLightEntity);
 
 	Ref< script::AutoScriptClass< world::DirectionalLightEntity > > classDirectionalLightEntity = new script::AutoScriptClass< world::DirectionalLightEntity >();
-	classDirectionalLightEntity->addConstructor< const Transform&, const Vector4&, const Vector4&, const Vector4&, bool >();
+	//classDirectionalLightEntity->addConstructor< const Transform&, const Vector4&, const Vector4&, const Vector4&, bool >();
 	classDirectionalLightEntity->addMethod("setSunColor", &world::DirectionalLightEntity::setSunColor);
 	classDirectionalLightEntity->addMethod("getSunColor", &world::DirectionalLightEntity::getSunColor);
 	classDirectionalLightEntity->addMethod("setBaseColor", &world::DirectionalLightEntity::setBaseColor);

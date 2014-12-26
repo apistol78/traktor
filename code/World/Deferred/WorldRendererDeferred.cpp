@@ -869,6 +869,7 @@ void WorldRendererDeferred::render(uint32_t flags, int frame, render::EyeType ey
 
 						m_lightRenderer->renderLight(
 							m_renderView,
+							f.time,
 							projection,
 							f.view,
 							f.lights[i],
@@ -905,6 +906,7 @@ void WorldRendererDeferred::render(uint32_t flags, int frame, render::EyeType ey
 					T_RENDER_PUSH_MARKER(m_renderView, "World: Light primitive (no shadow)");
 					m_lightRenderer->renderLight(
 						m_renderView,
+						f.time,
 						projection,
 						f.view,
 						f.lights[i],

@@ -1,3 +1,4 @@
+#include "Render/ITexture.h"
 #include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
 #include "World/IEntityBuilder.h"
@@ -125,11 +126,19 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 
 	if (const DirectionalLightEntityData* directionalLightData = dynamic_type_cast< const DirectionalLightEntityData* >(&entityData))
 	{
+		resource::Proxy< render::ITexture > cloudShadowTexture;
+		if (directionalLightData->getCloudShadowTexture().isValid())
+		{
+			if (!m_resourceManager->bind(directionalLightData->getCloudShadowTexture(), cloudShadowTexture))
+				return 0;
+		}
+
 		return new DirectionalLightEntity(
 			directionalLightData->getTransform(),
 			directionalLightData->getSunColor(),
 			directionalLightData->getBaseColor(),
 			directionalLightData->getShadowColor(),
+			cloudShadowTexture,
 			directionalLightData->getCastShadow()
 		);
 	}

@@ -24,7 +24,9 @@ const resource::Id< render::Shader > c_finalShader(Guid(L"{F04EEA34-85E0-974F-BE
 const float c_pointLightScreenAreaThresholdDim = 4.0f;
 const float c_pointLightScreenAreaThreshold = 4.0f * (c_pointLightScreenAreaThresholdDim * c_pointLightScreenAreaThresholdDim) / (1280.0f * 720.0f);
 
+render::handle_t s_handleTime;
 render::handle_t s_handleShadowEnable;
+render::handle_t s_handleCloudShadowEnable;
 render::handle_t s_handleExtent;
 render::handle_t s_handleViewInverse;
 render::handle_t s_handleMagicCoeffs;
@@ -34,6 +36,7 @@ render::handle_t s_handleNormalMap;
 render::handle_t s_handleColorMap;
 render::handle_t s_handleShadowMaskSize;
 render::handle_t s_handleShadowMask;
+render::handle_t s_handleCloudShadow;
 render::handle_t s_handleLightPosition;
 render::handle_t s_handleLightPositionAndRadius;
 render::handle_t s_handleLightDirectionAndRange;
@@ -57,7 +60,9 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.LightRendererDeferred", LightRendererDefe
 
 LightRendererDeferred::LightRendererDeferred()
 {
+	s_handleTime = render::getParameterHandle(L"Time");
 	s_handleShadowEnable = render::getParameterHandle(L"ShadowEnable");
+	s_handleCloudShadowEnable = render::getParameterHandle(L"CloudShadowEnable");
 	s_handleExtent = render::getParameterHandle(L"Extent");
 	s_handleViewInverse = render::getParameterHandle(L"ViewInverse");
 	s_handleMagicCoeffs = render::getParameterHandle(L"MagicCoeffs");
@@ -67,6 +72,7 @@ LightRendererDeferred::LightRendererDeferred()
 	s_handleColorMap = render::getParameterHandle(L"ColorMap");
 	s_handleShadowMaskSize = render::getParameterHandle(L"ShadowMaskSize");
 	s_handleShadowMask = render::getParameterHandle(L"ShadowMask");
+	s_handleCloudShadow = render::getParameterHandle(L"CloudShadow");
 	s_handleLightPosition = render::getParameterHandle(L"LightPosition");
 	s_handleLightPositionAndRadius = render::getParameterHandle(L"LightPositionAndRadius");
 	s_handleLightDirectionAndRange = render::getParameterHandle(L"LightDirectionAndRange");
@@ -124,6 +130,7 @@ void LightRendererDeferred::destroy()
 
 void LightRendererDeferred::renderLight(
 	render::IRenderView* renderView,
+	float time,
 	const Matrix44& projection,
 	const Matrix44& view,
 	const Light& light,
@@ -145,9 +152,13 @@ void LightRendererDeferred::renderLight(
 		Vector4 lightDirectionAndRange = view * light.direction.xyz0() + Vector4(0.0f, 0.0f, 0.0f, light.range);
 
 		m_lightDirectionalShader->setCombination(s_handleShadowEnable, shadowMask != 0);
+		m_lightDirectionalShader->setCombination(s_handleCloudShadowEnable, light.texture != 0);
+		m_lightDirectionalShader->setFloatParameter(s_handleTime, time);
 		m_lightDirectionalShader->setFloatParameter(s_handleShadowMaskSize, 0.5f / shadowMaskSize);
-		m_lightDirectionalShader->setTextureParameter(s_handleShadowMask, shadowMask);
 		m_lightDirectionalShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
+		m_lightDirectionalShader->setMatrixParameter(s_handleViewInverse, view.inverse());
+		m_lightDirectionalShader->setTextureParameter(s_handleShadowMask, shadowMask);
+		m_lightDirectionalShader->setTextureParameter(s_handleCloudShadow, light.texture);
 		m_lightDirectionalShader->setTextureParameter(s_handleDepthMap, depthMap);
 		m_lightDirectionalShader->setTextureParameter(s_handleNormalMap, normalMap);
 		m_lightDirectionalShader->setTextureParameter(s_handleColorMap, colorMap);
@@ -218,8 +229,10 @@ void LightRendererDeferred::renderLight(
 		mx = min(mx, Vector4(1.0f, 1.0f, 0.0f, 0.0f));
 
 		// Render quad primitive.
+		m_lightPointShader->setFloatParameter(s_handleTime, time);
 		m_lightPointShader->setVectorParameter(s_handleExtent, Vector4(mn.x(), mn.y(), mx.x(), mx.y()));
 		m_lightPointShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
+		m_lightPointShader->setMatrixParameter(s_handleViewInverse, view.inverse());
 		m_lightPointShader->setTextureParameter(s_handleDepthMap, depthMap);
 		m_lightPointShader->setTextureParameter(s_handleNormalMap, normalMap);
 		m_lightPointShader->setTextureParameter(s_handleColorMap, colorMap);
@@ -292,10 +305,12 @@ void LightRendererDeferred::renderLight(
 
 		// Render quad primitive.
 		m_lightSpotShader->setCombination(s_handleShadowEnable, shadowMask != 0);
+		m_lightSpotShader->setFloatParameter(s_handleTime, time);
 		m_lightSpotShader->setFloatParameter(s_handleShadowMaskSize, 0.5f / shadowMaskSize);
 		m_lightSpotShader->setTextureParameter(s_handleShadowMask, shadowMask);
 		m_lightSpotShader->setVectorParameter(s_handleExtent, Vector4(mn.x(), mn.y(), mx.x(), mx.y()));
 		m_lightSpotShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
+		m_lightSpotShader->setMatrixParameter(s_handleViewInverse, view.inverse());
 		m_lightSpotShader->setTextureParameter(s_handleDepthMap, depthMap);
 		m_lightSpotShader->setTextureParameter(s_handleNormalMap, normalMap);
 		m_lightSpotShader->setTextureParameter(s_handleColorMap, colorMap);
