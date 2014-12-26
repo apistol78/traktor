@@ -176,8 +176,6 @@ void SteamSessionManager::destroy()
 
 bool SteamSessionManager::update()
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
 	if (!m_requestedStats)
 	{
 		if (::SteamUser()->BLoggedOn())
@@ -419,7 +417,6 @@ bool SteamSessionManager::storeStats()
 
 void SteamSessionManager::OnUserStatsReceived(UserStatsReceived_t* pCallback)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_receivedStats = true;
 	m_receivedStatsSucceeded = (pCallback->m_eResult == k_EResultOK);
 	T_DEBUG(L"Steam; Receieved stats (eResult = " << getSteamError(pCallback->m_eResult) << L")");

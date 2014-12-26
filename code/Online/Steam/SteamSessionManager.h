@@ -83,7 +83,6 @@ public:
 	bool storeStats();
 
 private:
-	mutable Semaphore m_lock;
 	Ref< SteamAchievements > m_achievements;
 	Ref< SteamLeaderboards > m_leaderboards;
 	Ref< SteamMatchMaking > m_matchMaking;
