@@ -155,16 +155,17 @@ int32_t OnlinePeer2PeerProvider::recv(void* data, int32_t size, net::net_handle_
 
 void OnlinePeer2PeerProvider::transmissionThread()
 {
+	RxTxData rxtx;
+
 	while (!m_thread->stopped())
 	{
 		if (m_sessionManager->haveP2PData())
 		{
-			RxTxData rx;
-			rx.size = m_sessionManager->receiveP2PData(rx.data, sizeof(rx.data), rx.user);
-			if (rx.size > 0 && rx.user)
+			rxtx.size = m_sessionManager->receiveP2PData(rxtx.data, sizeof(rxtx.data), rxtx.user);
+			if (rxtx.size > 0 && rxtx.user)
 			{
 				m_rxQueueLock.wait();
-				m_rxQueue.push_back(rx);
+				m_rxQueue.push_back(rxtx);
 				++m_rxQueuePending;
 				m_rxQueueLock.release();
 			}
@@ -173,20 +174,18 @@ void OnlinePeer2PeerProvider::transmissionThread()
 
 		if (m_txQueueSignal.wait(0))
 		{
-			RxTxData tx;
-
 			m_txQueueLock.wait();
-			tx = m_txQueue.front();
+			rxtx = m_txQueue.front();
 			m_txQueue.pop_front();
 			if (m_txQueue.empty())
 				m_txQueueSignal.reset();
 			m_txQueueLock.release();
 
-			tx.user->sendP2PData(tx.data, tx.size, false);
+			rxtx.user->sendP2PData(rxtx.data, rxtx.size, false);
 			continue;
 		}
 
-		m_thread->sleep(4);
+		m_txQueueSignal.wait(4);
 	}
 }
 
