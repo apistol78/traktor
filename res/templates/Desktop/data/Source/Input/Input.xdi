@@ -1,5 +1,203 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.input.InputMappingAsset">
+<object type="traktor.input.InputMappingAsset" version="1">
+	<inputNodes>
+		<item type="traktor.input.InReadValue">
+			<valueId>ID_KEY_RIGHT</valueId>
+		</item>
+		<item type="traktor.input.InCombine" version="1">
+			<entries>
+				<item>
+					<source type="traktor.input.InReadValue">
+						<valueId>ID_MOUSE_LBUTTON</valueId>
+					</source>
+					<mul>1</mul>
+					<add>0</add>
+				</item>
+				<item>
+					<source type="traktor.input.InReadValue">
+						<valueId>ID_MOUSE_Y</valueId>
+					</source>
+					<mul>1</mul>
+					<add>0</add>
+				</item>
+			</entries>
+			<operator>CoMul</operator>
+		</item>
+		<item type="traktor.input.InReadValue">
+			<valueId>ID_KEY_LEFT</valueId>
+		</item>
+		<item type="traktor.input.InReadValue">
+			<valueId>ID_KEY_FORWARD</valueId>
+		</item>
+		<item type="traktor.input.InReadValue">
+			<valueId>ID_MOUSE_X</valueId>
+		</item>
+		<item type="traktor.input.InCombine" version="1">
+			<entries>
+				<item>
+					<source ref="/object/inputNodes/item[2]"/>
+					<mul>-1</mul>
+					<add>0</add>
+				</item>
+				<item>
+					<source ref="/object/inputNodes/item"/>
+					<mul>1</mul>
+					<add>0</add>
+				</item>
+			</entries>
+			<operator>CoAdd</operator>
+		</item>
+		<item ref="/object/inputNodes/item[1]/entries/item/source"/>
+		<item type="traktor.input.InCombine" version="1">
+			<entries>
+				<item>
+					<source ref="/object/inputNodes/item[3]"/>
+					<mul>1</mul>
+					<add>0</add>
+				</item>
+				<item>
+					<source type="traktor.input.InReadValue">
+						<valueId>ID_KEY_BACK</valueId>
+					</source>
+					<mul>-1</mul>
+					<add>0</add>
+				</item>
+			</entries>
+			<operator>CoAdd</operator>
+		</item>
+		<item ref="/object/inputNodes/item[1]/entries/item[1]/source"/>
+		<item type="traktor.input.InCombine" version="1">
+			<entries>
+				<item>
+					<source ref="/object/inputNodes/item[1]/entries/item/source"/>
+					<mul>1</mul>
+					<add>0</add>
+				</item>
+				<item>
+					<source ref="/object/inputNodes/item[4]"/>
+					<mul>1</mul>
+					<add>0</add>
+				</item>
+			</entries>
+			<operator>CoMul</operator>
+		</item>
+		<item ref="/object/inputNodes/item[7]/entries/item[1]/source"/>
+	</inputNodes>
+	<positions>
+		<item>
+			<first ref="/object/inputNodes/item"/>
+			<second>
+				<x>420</x>
+				<y>118</y>
+			</second>
+		</item>
+		<item>
+			<first ref="/object/inputNodes/item[1]"/>
+			<second>
+				<x>744</x>
+				<y>594</y>
+			</second>
+		</item>
+		<item>
+			<first ref="/object/inputNodes/item[2]"/>
+			<second>
+				<x>422</x>
+				<y>56</y>
+			</second>
+		</item>
+		<item>
+			<first ref="/object/inputNodes/item[3]"/>
+			<second>
+				<x>406</x>
+				<y>173</y>
+			</second>
+		</item>
+		<item>
+			<first ref="/object/inputNodes/item[4]"/>
+			<second>
+				<x>413</x>
+				<y>510</y>
+			</second>
+		</item>
+		<item>
+			<first ref="/object/inputNodes/item[5]"/>
+			<second>
+				<x>703</x>
+				<y>22</y>
+			</second>
+		</item>
+		<item>
+			<first ref="/object/inputNodes/item[1]/entries/item/source"/>
+			<second>
+				<x>365</x>
+				<y>419</y>
+			</second>
+		</item>
+		<item>
+			<first type="traktor.input.InputStateData">
+				<source ref="/object/inputNodes/item[1]"/>
+			</first>
+			<second>
+				<x>996</x>
+				<y>665</y>
+			</second>
+		</item>
+		<item>
+			<first type="traktor.input.InputStateData">
+				<source ref="/object/inputNodes/item[5]"/>
+			</first>
+			<second>
+				<x>963</x>
+				<y>78</y>
+			</second>
+		</item>
+		<item>
+			<first ref="/object/inputNodes/item[7]"/>
+			<second>
+				<x>705</x>
+				<y>161</y>
+			</second>
+		</item>
+		<item>
+			<first type="traktor.input.InputStateData">
+				<source ref="/object/inputNodes/item[7]"/>
+			</first>
+			<second>
+				<x>980</x>
+				<y>205</y>
+			</second>
+		</item>
+		<item>
+			<first type="traktor.input.InputStateData">
+				<source ref="/object/inputNodes/item[9]"/>
+			</first>
+			<second>
+				<x>964</x>
+				<y>469</y>
+			</second>
+		</item>
+		<item>
+			<first ref="/object/inputNodes/item[1]/entries/item[1]/source"/>
+			<second>
+				<x>322</x>
+				<y>624</y>
+			</second>
+		</item>
+		<item>
+			<first ref="/object/inputNodes/item[9]"/>
+			<second>
+				<x>738</x>
+				<y>417</y>
+			</second>
+		</item>
+		<item>
+			<first ref="/object/inputNodes/item[7]/entries/item[1]/source"/>
+			<second>
+				<x>434</x>
+				<y>248</y>
+			</second>
+		</item>
+	</positions>
 	<sourceData type="traktor.input.InputMappingSourceData">
 		<sourceData>
 			<item>
@@ -35,6 +233,17 @@
 				</second>
 			</item>
 			<item>
+				<first>ID_MOUSE_LBUTTON</first>
+				<second type="traktor.input.GenericInputSourceData" version="2">
+					<category>CtMouse</category>
+					<controlType>DtButton1</controlType>
+					<analogue>false</analogue>
+					<inverted>false</inverted>
+					<normalize>false</normalize>
+					<index>-1</index>
+				</second>
+			</item>
+			<item>
 				<first>ID_MOUSE_X</first>
 				<second type="traktor.input.GenericInputSourceData" version="2">
 					<category>CtMouse</category>
@@ -63,67 +272,19 @@
 		<stateData>
 			<item>
 				<first>STATE_MOVE_X</first>
-				<second type="traktor.input.InputStateData">
-					<source type="traktor.input.InCombine" version="1">
-						<entries>
-							<item>
-								<source type="traktor.input.InReadValue">
-									<valueId>ID_KEY_LEFT</valueId>
-								</source>
-								<mul>-1</mul>
-								<add>0</add>
-							</item>
-							<item>
-								<source type="traktor.input.InReadValue">
-									<valueId>ID_KEY_RIGHT</valueId>
-								</source>
-								<mul>1</mul>
-								<add>0</add>
-							</item>
-						</entries>
-						<operator>CoAdd</operator>
-					</source>
-				</second>
+				<second ref="/object/positions/item[8]/first"/>
 			</item>
 			<item>
 				<first>STATE_MOVE_Z</first>
-				<second type="traktor.input.InputStateData">
-					<source type="traktor.input.InCombine" version="1">
-						<entries>
-							<item>
-								<source type="traktor.input.InReadValue">
-									<valueId>ID_KEY_FORWARD</valueId>
-								</source>
-								<mul>1</mul>
-								<add>0</add>
-							</item>
-							<item>
-								<source type="traktor.input.InReadValue">
-									<valueId>ID_KEY_BACK</valueId>
-								</source>
-								<mul>-1</mul>
-								<add>0</add>
-							</item>
-						</entries>
-						<operator>CoAdd</operator>
-					</source>
-				</second>
+				<second ref="/object/positions/item[10]/first"/>
 			</item>
 			<item>
 				<first>STATE_ROTATE_HEAD</first>
-				<second type="traktor.input.InputStateData">
-					<source type="traktor.input.InReadValue">
-						<valueId>ID_MOUSE_X</valueId>
-					</source>
-				</second>
+				<second ref="/object/positions/item[11]/first"/>
 			</item>
 			<item>
 				<first>STATE_ROTATE_PITCH</first>
-				<second type="traktor.input.InputStateData">
-					<source type="traktor.input.InReadValue">
-						<valueId>ID_MOUSE_Y</valueId>
-					</source>
-				</second>
+				<second ref="/object/positions/item[7]/first"/>
 			</item>
 		</stateData>
 	</stateData>

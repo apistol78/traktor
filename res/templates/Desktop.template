@@ -69,6 +69,26 @@
 			<transform>false</transform>
 		</item>
 		<item>
+			<source>Desktop/data/Assets/UI/UI.fla</source>
+			<target>$(WIZARD_OUTPUT_PATH)/data/Assets/UI/UI.fla</target>
+			<transform>false</transform>
+		</item>
+		<item>
+			<source>Desktop/data/Assets/UI/UI.swf</source>
+			<target>$(WIZARD_OUTPUT_PATH)/data/Assets/UI/UI.swf</target>
+			<transform>false</transform>
+		</item>
+		<item>
+			<source>Desktop/data/Source/UI/UI.xdi</source>
+			<target>$(WIZARD_OUTPUT_PATH)/data/Source/UI/UI.xdi</target>
+			<transform>false</transform>
+		</item>
+		<item>
+			<source>Desktop/data/Source/UI/UI.xdm</source>
+			<target>$(WIZARD_OUTPUT_PATH)/data/Source/UI/UI.xdm</target>
+			<transform>false</transform>
+		</item>		
+		<item>
 			<source>Desktop/data/Source/Template - Assets.xdi</source>
 			<target>$(WIZARD_OUTPUT_PATH)/data/Source/$(WIZARD_NAME) - Assets.xdi</target>
 			<transform>false</transform>
