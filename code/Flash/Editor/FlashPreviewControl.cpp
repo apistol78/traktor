@@ -21,11 +21,11 @@
 #	include "Render/Shader.h"
 #	include "Render/RenderTargetSet.h"
 #else
-#	include "Graphics/GraphicsSystem.h"
+#	include "Graphics/IGraphicsSystem.h"
 #	if defined(_WIN32)
-#		include "Graphics/Dd7/GraphicsSystemDd7.h"
+#		include "Graphics/Gdi/GraphicsSystemGdi.h"
 #	endif
-#	include "Graphics/Surface.h"
+#	include "Graphics/ISurface.h"
 #endif
 
 namespace traktor
@@ -124,12 +124,13 @@ bool FlashPreviewControl::create(
 
 	desc.windowHandle = getIWidget()->getSystemHandle();
 	desc.fullScreen = false;
-	desc.width = 16;
-	desc.height = 16;
+	desc.displayMode.width = 16;
+	desc.displayMode.height = 16;
+	desc.displayMode.bits = 32;
 	desc.pixelFormat = graphics::PfeA8R8G8B8;
 
 #if defined(_WIN32)
-	m_graphicsSystem = new graphics::GraphicsSystemDd7();
+	m_graphicsSystem = new graphics::GraphicsSystemGdi();
 #endif
 
 	if (!m_graphicsSystem->create(desc))
@@ -323,7 +324,7 @@ void FlashPreviewControl::eventPaint(ui::PaintEvent* event)
 	if (!m_graphicsSystem)
 		return;
 
-	Ref< graphics::Surface > surface = m_graphicsSystem->getSecondarySurface();
+	Ref< graphics::ISurface > surface = m_graphicsSystem->getSecondarySurface();
 
 	graphics::SurfaceDesc desc;
 	void* bits = surface->lock(desc);

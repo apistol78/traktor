@@ -10,9 +10,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_GRAPHICS_DD7_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -28,6 +28,8 @@ class T_DLLCLASS GraphicsSystemDd7 : public IGraphicsSystem
 
 public:
 	virtual bool getDisplayModes(std::vector< DisplayMode >& outDisplayModes) const;
+
+	virtual bool getCurrentDisplayMode(DisplayMode& outDisplayMode) const;
 
 	virtual bool create(const CreateDesc& createDesc);
 
