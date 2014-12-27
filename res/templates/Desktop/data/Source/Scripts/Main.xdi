@@ -3,6 +3,7 @@
 	<dependencies/>
 	<text>
 	<![CDATA[
+local cameraTransformInitial = Transform()
 local cameraPosition = Vector4(0, 0, 0, 1)
 local cameraRotation = Vector4(0, 0, 0, 1)
 
@@ -17,7 +18,8 @@ function initialize(params)
 
 	-- Get inital camera position.
 	local cameraEntity = world:getEntity("Camera")
-	cameraPosition = cameraEntity:getTransform():translation()
+	cameraTransformInitial = cameraEntity:getTransform()
+	cameraPosition = cameraTransformInitial:translation()
 end
 
 
@@ -43,7 +45,18 @@ function update(control, info)
 		cameraPosition,
 		Quaternion.fromEulerAngles(cameraRotation:x(), 0, 0) * Quaternion.fromEulerAngles(0, cameraRotation:y(), 0)
 	))
+
+	-- Update user interface.
+	ui:getRoot():setCameraPosition(cameraPosition:x(), cameraPosition:y(), cameraPosition:z())
 end
+
+
+function extern_reset()
+	local cameraEntity = world:getEntity("Camera")
+	cameraEntity:setTransform(cameraTransformInitial)
+	cameraPosition = cameraTransformInitial:translation()
+end
+
 
 	]]>
 	</text>
