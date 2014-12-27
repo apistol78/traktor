@@ -118,6 +118,18 @@ bool LocalSessionManager::create(const IGameConfiguration* configuration)
 		}
 	}
 
+	if (!m_db->tableExists(L"DLC"))
+	{
+		if (m_db->executeUpdate(L"create table DLC (id varchar(64) primary key, value boolean)") < 0)
+			return false;
+
+		for (std::list< std::wstring >::const_iterator i = gc->m_dlcIds.begin(); i != gc->m_dlcIds.end(); ++i)
+		{
+			if (m_db->executeUpdate(L"insert into DLC (id, value) values ('" + *i + L"', false)") < 0)
+				return false;
+		}
+	}
+
 	m_achievements = new LocalAchievements(m_db);
 	m_leaderboards = new LocalLeaderboards(m_db);
 	m_matchMaking = new LocalMatchMaking();
@@ -167,12 +179,19 @@ bool LocalSessionManager::requireUserAttention() const
 
 bool LocalSessionManager::haveDLC(const std::wstring& id) const
 {
-	return false;
+	Ref< sql::IResultSet > rs = m_db->executeQuery(L"select value from DLC where id='" + id + L"'");
+	if (!rs || !rs->next())
+		return false;
+
+	return rs->getInt32(L"value") > 0;
 }
 
 bool LocalSessionManager::buyDLC(const std::wstring& id) const
 {
-	return false;
+	if (m_db->executeUpdate(L"update DLC set value=true where id='" + id + L"'"))
+		return true;
+	else
+		return false;
 }
 
 bool LocalSessionManager::navigateUrl(const net::Url& url) const
