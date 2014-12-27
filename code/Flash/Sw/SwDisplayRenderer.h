@@ -30,11 +30,10 @@ public:
 
 	void setRasterTarget(void* bits, uint32_t width, uint32_t height, uint32_t pitch);
 	
-	virtual void preload(const FlashMovie& movie);
-
 	virtual void begin(
-		const FlashMovie& movie,
+		const FlashDictionary& dictionary,
 		const SwfColor& backgroundColor,
+		const Aabb2& frameBounds,
 		float viewWidth,
 		float viewHeight,
 		const Vector4& viewOffset
@@ -44,15 +43,15 @@ public:
 
 	virtual void endMask();
 
-	virtual void renderShape(const FlashMovie& movie, const Matrix33& transform, const FlashShape& shape, const SwfCxTransform& cxform);
+	virtual void renderShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashShape& shape, const SwfCxTransform& cxform);
 
-	virtual void renderMorphShape(const FlashMovie& movie, const Matrix33& transform, const FlashMorphShape& shape, const SwfCxTransform& cxform);
+	virtual void renderMorphShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashMorphShape& shape, const SwfCxTransform& cxform);
 
-	virtual void renderGlyph(const FlashMovie& movie, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& glyphShape, const SwfColor& color, const SwfCxTransform& cxform, uint8_t filter, const SwfColor& filterColor);
+	virtual void renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& glyphShape, const SwfColor& color, const SwfCxTransform& cxform, uint8_t filter, const SwfColor& filterColor);
 
-	virtual void renderCaret(const Matrix33& transform, const Vector2& fontMaxDimension, const SwfCxTransform& cxform);
+	virtual void renderQuad(const Matrix33& transform, const Aabb2& bounds, const SwfCxTransform& cxform);
 
-	virtual void renderCanvas(const FlashMovie& movie, const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform);
+	virtual void renderCanvas(const FlashDictionary& dictionary, const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform);
 
 	virtual void end();
 
@@ -67,6 +66,7 @@ private:
 	typedef std::vector< Span > spanline_t;
 
 	Matrix33 m_transform;
+	Aabb2 m_frameBounds;
 
 	void* m_bits;
 	uint32_t m_width;

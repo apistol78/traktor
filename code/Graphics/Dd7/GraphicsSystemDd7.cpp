@@ -30,6 +30,11 @@ bool GraphicsSystemDd7::getDisplayModes(std::vector< DisplayMode >& outDisplayMo
 	return false;
 }
 
+bool GraphicsSystemDd7::getCurrentDisplayMode(DisplayMode& outDisplayMode) const
+{
+	return false;
+}
+
 bool GraphicsSystemDd7::create(const CreateDesc& createDesc)
 {
 	HRESULT hr;

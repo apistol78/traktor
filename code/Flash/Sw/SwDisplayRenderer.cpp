@@ -101,13 +101,10 @@ void SwDisplayRenderer::setRasterTarget(void* bits, uint32_t width, uint32_t hei
 	m_spanlines.resize(m_height);
 }
 
-void SwDisplayRenderer::preload(const FlashMovie& movie)
-{
-}
-
 void SwDisplayRenderer::begin(
-	const FlashMovie& movie,
+	const FlashDictionary& dictionary,
 	const SwfColor& backgroundColor,
+	const Aabb2& frameBounds,
 	float viewWidth,
 	float viewHeight,
 	const Vector4& viewOffset
@@ -127,6 +124,8 @@ void SwDisplayRenderer::begin(
 		}
 		bits += m_pitch >> 2;
 	}
+
+	m_frameBounds = frameBounds;
 }
 
 void SwDisplayRenderer::beginMask(bool increment)
@@ -137,14 +136,14 @@ void SwDisplayRenderer::endMask()
 {
 }
 
-void SwDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& transform, const FlashShape& shape, const SwfCxTransform& cxform)
+void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashShape& shape, const SwfCxTransform& cxform)
 {
 	Matrix33 rasterTransform = transform * m_transform;
 
 	const AlignedVector< FlashFillStyle >& fillStyles = shape.getFillStyles();
 
-	float frameWidth = movie.getFrameBounds().mx.x;
-	float frameHeight = movie.getFrameBounds().mx.y;
+	float frameWidth = m_frameBounds.mx.x;
+	float frameHeight = m_frameBounds.mx.y;
 	float screenScale = ((m_width / frameWidth) + (m_height / frameHeight)) / 2.0f;
 
 	const std::list< Path >& paths = shape.getPaths();
@@ -343,16 +342,16 @@ void SwDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& tra
 	}
 }
 
-void SwDisplayRenderer::renderMorphShape(const FlashMovie& movie, const Matrix33& transform, const FlashMorphShape& shape, const SwfCxTransform& cxform)
+void SwDisplayRenderer::renderMorphShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashMorphShape& shape, const SwfCxTransform& cxform)
 {
 }
 
-void SwDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& glyphShape, const SwfColor& color, const SwfCxTransform& cxform, uint8_t filter, const SwfColor& filterColor)
+void SwDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& glyphShape, const SwfColor& color, const SwfCxTransform& cxform, uint8_t filter, const SwfColor& filterColor)
 {
 	Matrix33 rasterTransform = transform * m_transform;
 
-	float frameWidth = movie.getFrameBounds().mx.x;
-	float frameHeight = movie.getFrameBounds().mx.y;
+	float frameWidth = m_frameBounds.mx.x;
+	float frameHeight = m_frameBounds.mx.y;
 	float screenScale = ((m_width / frameWidth) + (m_height / frameHeight)) / 2.0f;
 
 	const std::list< Path >& paths = glyphShape.getPaths();
@@ -536,11 +535,11 @@ void SwDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tra
 	}
 }
 
-void SwDisplayRenderer::renderCaret(const Matrix33& transform, const Vector2& fontMaxDimension, const SwfCxTransform& cxform)
+void SwDisplayRenderer::renderQuad(const Matrix33& transform, const Aabb2& bounds, const SwfCxTransform& cxform)
 {
 }
 
-void SwDisplayRenderer::renderCanvas(const FlashMovie& movie, const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform)
+void SwDisplayRenderer::renderCanvas(const FlashDictionary& dictionary, const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform)
 {
 }
 

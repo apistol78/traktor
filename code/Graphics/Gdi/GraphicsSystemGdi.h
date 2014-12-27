@@ -1,6 +1,7 @@
 #ifndef traktor_graphics_GraphicsSystemGdi_H
 #define traktor_graphics_GraphicsSystemGdi_H
 
+#include <windows.h>
 #include "Graphics/IGraphicsSystem.h"
 
 // import/export mechanism.

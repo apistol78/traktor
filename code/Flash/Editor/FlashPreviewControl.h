@@ -1,7 +1,7 @@
 #ifndef traktor_flash_FlashPreviewControl_H
 #define traktor_flash_FlashPreviewControl_H
 
-#define T_USE_ACCELERATED_RENDERER	1
+#define T_USE_ACCELERATED_RENDERER 1
 
 #include "Core/Timer/Timer.h"
 #include "Ui/Widget.h"
@@ -30,7 +30,6 @@ class IResourceManager;
 
 	}
 
-#if T_USE_ACCELERATED_RENDERER
 	namespace render
 	{
 
@@ -40,7 +39,6 @@ class RenderTargetSet;
 class Shader;
 
 	}
-#endif
 
 	namespace sound
 	{
@@ -52,7 +50,7 @@ class SoundSystem;
 	namespace graphics
 	{
 
-class GraphicsSystem;
+class IGraphicsSystem;
 
 	}
 
@@ -106,7 +104,7 @@ private:
 	Ref< render::IRenderView > m_renderView;
 	Ref< AccDisplayRenderer > m_displayRenderer;
 #else
-	Ref< graphics::GraphicsSystem > m_graphicsSystem;
+	Ref< graphics::IGraphicsSystem > m_graphicsSystem;
 	Ref< SwDisplayRenderer > m_displayRenderer;
 #endif
 	Ref< SoundRenderer > m_soundRenderer;
