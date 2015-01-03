@@ -45,12 +45,14 @@ Ref< render::ISimpleTexture > createRandomRotationTexture(render::IRenderSystem*
 		for (uint32_t x = 0; x < 128; ++x)
 		{
 			float angle = (random.nextFloat() * 2.0f - 1.0f) * PI;
-			float c = cosf(angle) * 127.5f + 127.5f;
-			float s = sinf(angle) * 127.5f + 127.5f;
-			data[(x + y * 128) * 4 + 0] = uint8_t(c);
-			data[(x + y * 128) * 4 + 1] = uint8_t(s);
-			data[(x + y * 128) * 4 + 2] = uint8_t(c);
-			data[(x + y * 128) * 4 + 3] = uint8_t(s);
+			float xa =  cosf(angle) * 127.5f + 127.5f;
+			float xb =  sinf(angle) * 127.5f + 127.5f;
+			float ya =  sinf(angle) * 127.5f + 127.5f;
+			float yb = -cosf(angle) * 127.5f + 127.5f;
+			data[(x + y * 128) * 4 + 0] = uint8_t(xa);
+			data[(x + y * 128) * 4 + 1] = uint8_t(xb);
+			data[(x + y * 128) * 4 + 2] = uint8_t(ya);
+			data[(x + y * 128) * 4 + 3] = uint8_t(yb);
 		}
 	}
 
@@ -153,7 +155,7 @@ void PostProcessStepSmProj::InstanceSmProj::render(
 
 	Vector4 shadowMapSizeAndBias(
 		1.0f / float(sourceShMap->getWidth()),
-		shadowMapBias,
+		shadowMapBias / 1.0f,
 		shadowFadeZ,
 		shadowFadeRate
 	);
@@ -167,7 +169,7 @@ void PostProcessStepSmProj::InstanceSmProj::render(
 	Scalar p11 = params.projection.get(0, 0);
 	Scalar p22 = params.projection.get(1, 1);
 
-	m_shader->setTextureParameter(m_handleShadowMap, sourceShMap->getColorTexture(0));
+	m_shader->setTextureParameter(m_handleShadowMap, sourceShMap->getDepthTexture());
 	m_shader->setTextureParameter(m_handleShadowMapDiscRotation, m_shadowMapDiscRotation[m_frame & 1]);
 	m_shader->setVectorParameter(m_handleShadowMapSizeAndBias, shadowMapSizeAndBias);
 	m_shader->setVectorArrayParameter(m_handleShadowMapPoissonTaps, c_poissonTaps, sizeof_array(c_poissonTaps));

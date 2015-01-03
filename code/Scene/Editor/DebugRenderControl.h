@@ -2,6 +2,7 @@
 #define traktor_scene_DebugRenderControl_H
 
 #include "Core/Math/Vector2.h"
+#include "Resource/Proxy.h"
 #include "Scene/Editor/ISceneRenderControl.h"
 #include "Ui/Point.h"
 #include "Ui/Size.h"
@@ -21,7 +22,8 @@ class Widget;
 
 class IRenderView;
 class ITexture;
-class PrimitiveRenderer;
+class ScreenRenderer;
+class Shader;
 
 	}
 
@@ -65,7 +67,8 @@ private:
 	Ref< SceneEditorContext > m_context;
 	Ref< ui::Widget > m_renderWidget;
 	Ref< render::IRenderView > m_renderView;
-	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
+	Ref< render::ScreenRenderer > m_screenRenderer;
+	resource::Proxy< render::Shader > m_shader;
 	ui::Size m_dirtySize;
 	Vector2 m_renderOffset;
 	float m_renderScale;

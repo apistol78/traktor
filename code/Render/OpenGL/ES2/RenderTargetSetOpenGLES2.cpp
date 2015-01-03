@@ -257,6 +257,11 @@ ISimpleTexture* RenderTargetSetOpenGLES2::getColorTexture(int index) const
 	return m_renderTargets[index];
 }
 
+ISimpleTexture* RenderTargetSetOpenGLES2::getDepthTexture() const
+{
+	return 0;
+}
+
 void RenderTargetSetOpenGLES2::swap(int index1, int index2)
 {
 	T_ASSERT (index1 >= 0);

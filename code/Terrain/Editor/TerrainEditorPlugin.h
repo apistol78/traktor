@@ -52,7 +52,7 @@ private:
 	Ref< TerrainEditModifier > m_terrainEditModifier;
 	Ref< ui::Widget > m_parent;
 	Ref< ui::custom::ToolBarButton > m_toolToggleEditTerrain;
-	Ref< ui::custom::ToolBarButton > m_toolToggleMaterial;
+	Ref< ui::custom::ToolBarButton > m_toolToggleSplat;
 	Ref< ui::custom::ToolBarButton > m_toolToggleColor;
 	Ref< ui::custom::ToolBarButton > m_toolToggleEmissive;
 	Ref< ui::custom::ToolBarButton > m_toolToggleElevate;
@@ -62,6 +62,7 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolToggleNoise;
 	Ref< ui::custom::ToolBarButton > m_toolToggleErode;
 	Ref< ui::custom::ToolBarButton > m_toolToggleCut;
+	Ref< ui::custom::ToolBarButton > m_toolToggleMaterial;
 	Ref< ui::custom::ToolBarButton > m_toolToggleFallOffSmooth;
 	Ref< ui::custom::ToolBarButton > m_toolToggleFallOffSharp;
 	Ref< ui::custom::ToolBarButton > m_toolToggleFallOffImage;

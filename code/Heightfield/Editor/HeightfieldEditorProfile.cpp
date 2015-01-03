@@ -1,5 +1,4 @@
 #include "Heightfield/HeightfieldFactory.h"
-#include "Heightfield/MaterialMaskFactory.h"
 #include "Heightfield/Editor/HeightfieldEditorProfile.h"
 #include "Scene/Editor/SceneEditorContext.h"
 
@@ -35,7 +34,6 @@ void HeightfieldEditorProfile::createResourceFactories(
 ) const
 {
 	outResourceFactories.push_back(new HeightfieldFactory(context->getResourceDatabase()));
-	outResourceFactories.push_back(new MaterialMaskFactory(context->getResourceDatabase()));
 }
 
 void HeightfieldEditorProfile::createEntityFactories(

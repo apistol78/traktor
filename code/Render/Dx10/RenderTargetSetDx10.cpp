@@ -122,6 +122,11 @@ ISimpleTexture* RenderTargetSetDx10::getColorTexture(int index) const
 	return index < int(m_colorTextures.size()) ? m_colorTextures[index] : 0;
 }
 
+ISimpleTexture* RenderTargetSetDx10::getDepthTexture() const
+{
+	return 0;
+}
+
 void RenderTargetSetDx10::swap(int index1, int index2)
 {
 	std::swap(m_colorTextures[index1], m_colorTextures[index2]);

@@ -26,7 +26,7 @@ RenderTargetDx11::~RenderTargetDx11()
 	destroy();
 }
 
-bool RenderTargetDx11::create(ID3D11Device* d3dDevice, const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc)
+bool RenderTargetDx11::create(const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc)
 {
 	D3D11_TEXTURE2D_DESC dtd;
 	D3D11_SHADER_RESOURCE_VIEW_DESC dsrvd;
@@ -51,10 +51,10 @@ bool RenderTargetDx11::create(ID3D11Device* d3dDevice, const RenderTargetSetCrea
 	if (setDesc.generateMips)
 		dtd.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
 
-	if (!setupSampleDesc(d3dDevice, setDesc.multiSample, dtd.Format, DXGI_FORMAT_D16_UNORM, dtd.SampleDesc))
+	if (!setupSampleDesc(m_context->getD3DDevice(), setDesc.multiSample, dtd.Format, DXGI_FORMAT_D16_UNORM, dtd.SampleDesc))
 		return false;
 
-	hr = d3dDevice->CreateTexture2D(
+	hr = m_context->getD3DDevice()->CreateTexture2D(
 		&dtd,
 		NULL,
 		&m_d3dTexture.getAssign()
@@ -65,7 +65,7 @@ bool RenderTargetDx11::create(ID3D11Device* d3dDevice, const RenderTargetSetCrea
 		return false;
 	}
 
-	hr = d3dDevice->CreateRenderTargetView(m_d3dTexture, NULL, &m_d3dRenderTargetView.getAssign());
+	hr = m_context->getD3DDevice()->CreateRenderTargetView(m_d3dTexture, NULL, &m_d3dRenderTargetView.getAssign());
 	if (FAILED(hr))
 	{
 		log::error << L"Unable to create render target, failed to create render target view" << Endl;
@@ -77,7 +77,7 @@ bool RenderTargetDx11::create(ID3D11Device* d3dDevice, const RenderTargetSetCrea
 	dsrvd.Texture2D.MostDetailedMip = 0;
 	dsrvd.Texture2D.MipLevels = 1;
 
-	hr = d3dDevice->CreateShaderResourceView(m_d3dTexture, &dsrvd, &m_d3dTextureResourceView.getAssign());
+	hr = m_context->getD3DDevice()->CreateShaderResourceView(m_d3dTexture, &dsrvd, &m_d3dTextureResourceView.getAssign());
 	if (FAILED(hr))
 	{
 		log::error << L"Unable to create render target, failed to create shader resource view" << Endl;

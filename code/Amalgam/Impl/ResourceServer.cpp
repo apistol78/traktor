@@ -7,7 +7,6 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Flash/FlashMovieResourceFactory.h"
 #include "Heightfield/HeightfieldFactory.h"
-#include "Heightfield/MaterialMaskFactory.h"
 #include "Mesh/MeshFactory.h"
 #include "Spray/EffectFactory.h"
 #include "Video/VideoFactory.h"
@@ -44,7 +43,6 @@ void ResourceServer::createResourceFactories(IEnvironment* environment)
 	m_resourceManager->addFactory(new spray::EffectFactory(database, entityBuilder));
 	m_resourceManager->addFactory(new flash::FlashMovieResourceFactory(database));
 	m_resourceManager->addFactory(new hf::HeightfieldFactory(database));
-	m_resourceManager->addFactory(new hf::MaterialMaskFactory(database));
 	m_resourceManager->addFactory(new video::VideoFactory(database, renderSystem));
 	m_resourceManager->addFactory(new weather::CloudMaskFactory(database));
 }

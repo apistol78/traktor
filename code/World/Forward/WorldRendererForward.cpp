@@ -895,21 +895,6 @@ PostProcess* WorldRendererForward::getVisualPostProcess()
 	return m_visualPostProcess;
 }
 
-render::RenderTargetSet* WorldRendererForward::getVisualTargetSet()
-{
-	return m_visualTargetSet;
-}
-
-render::RenderTargetSet* WorldRendererForward::getDepthTargetSet()
-{
-	return m_depthTargetSet;
-}
-
-render::RenderTargetSet* WorldRendererForward::getShadowMaskTargetSet()
-{
-	return m_shadowMaskFilterTargetSet;
-}
-
 void WorldRendererForward::getTargets(RefArray< render::ITexture >& outTargets) const
 {
 	outTargets.resize(4);

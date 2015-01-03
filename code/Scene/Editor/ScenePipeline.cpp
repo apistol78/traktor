@@ -75,8 +75,16 @@ bool ScenePipeline::buildDependencies(
 
 	pipelineDepends->addDependency(sceneAsset->getControllerData());
 
-	if (sceneAsset->getWorldRenderSettings())
-		pipelineDepends->addDependency(sceneAsset->getWorldRenderSettings()->reflectionMap, editor::PdfBuild | editor::PdfResource);
+	const world::WorldRenderSettings* wrs = sceneAsset->getWorldRenderSettings();
+	if (wrs)
+	{
+		pipelineDepends->addDependency(wrs->reflectionMap, editor::PdfBuild | editor::PdfResource);
+		for (int32_t i = 0; i < sizeof_array(wrs->shadowSettings); ++i)
+		{
+			pipelineDepends->addDependency(wrs->shadowSettings[i].maskProject, editor::PdfBuild | editor::PdfResource);
+			pipelineDepends->addDependency(wrs->shadowSettings[i].maskFilter, editor::PdfBuild | editor::PdfResource);
+		}
+	}
 
 	return true;
 }

@@ -67,6 +67,7 @@ public:
 		s >> Member< GLenum >(L"wrapS", m_ref.wrapS);
 		s >> Member< GLenum >(L"wrapT", m_ref.wrapT);
 		s >> Member< GLenum >(L"wrapR", m_ref.wrapR);
+		s >> Member< GLenum >(L"compare", m_ref.compare);
 	}
 	
 private:
@@ -112,7 +113,7 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceOpenGL", 8, ProgramResourceOpenGL, ProgramResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceOpenGL", 9, ProgramResourceOpenGL, ProgramResource)
 
 ProgramResourceOpenGL::ProgramResourceOpenGL()
 :	m_hash(0)
@@ -139,7 +140,7 @@ ProgramResourceOpenGL::ProgramResourceOpenGL(
 
 void ProgramResourceOpenGL::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion() >= 8);
+	T_ASSERT (s.getVersion() >= 9);
 
 	s >> Member< std::string >(L"vertexShader", m_vertexShader);
 	s >> Member< std::string >(L"fragmentShader", m_fragmentShader);

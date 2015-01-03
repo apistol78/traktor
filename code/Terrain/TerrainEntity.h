@@ -85,7 +85,8 @@ public:
 		VmNormalMap = 4,
 		VmHeightMap = 5,
 		VmSplatMap = 6,
-		VmCutMap = 7
+		VmCutMap = 7,
+		VmMaterialMap = 8
 	};
 
 	struct Patch
@@ -161,6 +162,7 @@ private:
 	render::handle_t m_handleColorMap;
 	render::handle_t m_handleSplatMap;
 	render::handle_t m_handleCutMap;
+	render::handle_t m_handleMaterialMap;
 	render::handle_t m_handleNormals;
 	render::handle_t m_handleEye;
 	render::handle_t m_handleWorldOrigin;

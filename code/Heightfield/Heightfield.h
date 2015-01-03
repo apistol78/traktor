@@ -33,6 +33,8 @@ public:
 
 	void setGridCut(int32_t gridX, int32_t gridZ, bool cut);
 
+	void setGridMaterial(int32_t gridX, int32_t gridZ, uint8_t material);
+
 	float getGridHeightNearest(int32_t gridX, int32_t gridZ) const;
 
 	float getGridHeightBilinear(float gridX, float gridZ) const;
@@ -42,6 +44,10 @@ public:
 	bool getGridCut(int32_t gridX, int32_t gridZ) const;
 
 	bool getWorldCut(float worldX, float worldZ) const;
+
+	uint8_t getGridMaterial(int32_t gridX, int32_t gridZ) const;
+
+	uint8_t getWorldMaterial(float worldX, float worldZ) const;
 
 	void gridToWorld(int32_t gridX, int32_t gridZ, float& outWorldX, float& outWorldZ) const;
 
@@ -69,11 +75,16 @@ public:
 
 	const uint8_t* getCuts() const { return m_cuts.c_ptr(); }
 
+	uint8_t* getMaterial() { return m_material.ptr(); }
+
+	const uint8_t* getMaterial() const { return m_material.c_ptr(); }
+
 private:
 	int32_t m_size;
 	Vector4 m_worldExtent;
 	AutoArrayPtr< height_t > m_heights;
 	AutoArrayPtr< uint8_t > m_cuts;
+	AutoArrayPtr< uint8_t > m_material;
 };
 
 	}

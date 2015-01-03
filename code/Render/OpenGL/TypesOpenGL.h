@@ -46,6 +46,7 @@ struct SamplerStateOpenGL
 	GLenum wrapS;
 	GLenum wrapT;
 	GLenum wrapR;
+	GLenum compare;
 
 	SamplerStateOpenGL()
 	:	minFilter(GL_LINEAR)
@@ -53,6 +54,7 @@ struct SamplerStateOpenGL
 	,	wrapS(GL_REPEAT)
 	,	wrapT(GL_REPEAT)
 	,	wrapR(GL_REPEAT)
+	,	compare(GL_INVALID_ENUM)
 	{
 	}
 };

@@ -1,6 +1,9 @@
+#pragma optimize( "", off )
+
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/OpenGL/Std/ContextOpenGL.h"
+#include "Render/OpenGL/Std/RenderTargetDepthOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetSetOpenGL.h"
 #include "Render/OpenGL/Std/UtilitiesOpenGL.h"
@@ -55,7 +58,7 @@ uint32_t RenderTargetSetOpenGL::ms_primaryTargetTag = 1;
 RenderTargetSetOpenGL::RenderTargetSetOpenGL(ContextOpenGL* resourceContext)
 :	m_resourceContext(resourceContext)
 ,	m_targetFBO(0)
-,	m_depthBuffer(0)
+,	m_depthBufferOrTexture(0)
 ,	m_currentTag(0)
 {
 }
@@ -69,6 +72,61 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 {
 	T_ASSERT (desc.multiSample <= 1);
 	m_desc = desc;
+
+	// Create depth/stencil buffer.
+	if (desc.createDepthStencil && !desc.usingPrimaryDepthStencil)
+	{
+		if (!desc.usingDepthStencilAsTexture)
+		{
+			T_OGL_SAFE(glGenRenderbuffers(1, &m_depthBufferOrTexture));
+			T_OGL_SAFE(glBindRenderbuffer(GL_RENDERBUFFER, m_depthBufferOrTexture));
+
+			GLenum format = GL_DEPTH_COMPONENT24;
+			if (!desc.ignoreStencil)
+				format = GL_DEPTH24_STENCIL8;
+
+			T_OGL_SAFE(glRenderbufferStorage(
+				GL_RENDERBUFFER,
+				format,
+				desc.width,
+				desc.height
+			));
+		}
+		else
+		{
+			if (!m_desc.ignoreStencil)
+				return false;
+
+			T_OGL_SAFE(glActiveTexture(GL_TEXTURE0));
+
+			T_OGL_SAFE(glGenTextures(1, &m_depthBufferOrTexture));
+			T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_depthBufferOrTexture));
+
+			T_OGL_SAFE(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+			T_OGL_SAFE(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+			T_OGL_SAFE(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+			T_OGL_SAFE(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+
+			T_OGL_SAFE(glTexImage2D(
+				GL_TEXTURE_2D,
+				0,
+				GL_DEPTH_COMPONENT32,
+				m_desc.width,
+				m_desc.height,
+				0,
+				GL_DEPTH_COMPONENT,
+				GL_FLOAT,
+				NULL
+			));
+
+			m_depthTarget = new RenderTargetDepthOpenGL(
+				m_resourceContext,
+				m_depthBufferOrTexture,
+				m_desc.width,
+				m_desc.height
+			);
+		}
+	}
 
 	// Create color targets.
 	T_ASSERT (desc.count < sizeof_array(m_targetTextures));
@@ -103,7 +161,7 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 			NULL
 		));
 
-		m_renderTargets[i] = new RenderTargetOpenGL(
+		m_colorTargets[i] = new RenderTargetOpenGL(
 			m_resourceContext,
 			m_targetTextures[i],
 			m_desc.width,
@@ -116,14 +174,14 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 
 void RenderTargetSetOpenGL::destroy()
 {
-	for (uint32_t i = 0; i < sizeof_array(m_renderTargets); ++i)
-		safeDestroy(m_renderTargets[i]);
+	for (uint32_t i = 0; i < sizeof_array(m_colorTargets); ++i)
+		safeDestroy(m_colorTargets[i]);
 
-	if (m_depthBuffer)
+	if (m_depthBufferOrTexture)
 	{
 		if (m_resourceContext)
-			m_resourceContext->deleteResource(new DeleteRenderBufferCallback(m_depthBuffer));
-		m_depthBuffer = 0;
+			m_resourceContext->deleteResource(new DeleteRenderBufferCallback(m_depthBufferOrTexture));
+		m_depthBufferOrTexture = 0;
 	}
 
 	if (m_targetFBO)
@@ -147,18 +205,23 @@ int RenderTargetSetOpenGL::getHeight() const
 ISimpleTexture* RenderTargetSetOpenGL::getColorTexture(int index) const
 {
 	T_ASSERT (index >= 0);
-	T_ASSERT (index < sizeof_array(m_renderTargets));
-	return m_renderTargets[index];
+	T_ASSERT (index < sizeof_array(m_colorTargets));
+	return m_colorTargets[index];
+}
+
+ISimpleTexture* RenderTargetSetOpenGL::getDepthTexture() const
+{
+	return m_depthTarget;
 }
 
 void RenderTargetSetOpenGL::swap(int index1, int index2)
 {
 	T_ASSERT (index1 >= 0);
-	T_ASSERT (index1 < sizeof_array(m_renderTargets));
+	T_ASSERT (index1 < sizeof_array(m_colorTargets));
 	T_ASSERT (index2 >= 0);
-	T_ASSERT (index2 < sizeof_array(m_renderTargets));
+	T_ASSERT (index2 < sizeof_array(m_colorTargets));
 	std::swap(m_targetTextures[index1], m_targetTextures[index2]);
-	std::swap(m_renderTargets[index1], m_renderTargets[index2]);
+	std::swap(m_colorTargets[index1], m_colorTargets[index2]);
 }
 
 void RenderTargetSetOpenGL::discard()
@@ -205,7 +268,7 @@ bool RenderTargetSetOpenGL::bind(ContextOpenGL* renderContext, GLuint primaryDep
 		1.0f
 	));
 
-	if (m_depthBuffer || m_desc.usingPrimaryDepthStencil)
+	if (m_depthBufferOrTexture || m_desc.usingPrimaryDepthStencil)
 		renderContext->setPermitDepth(true);
 	else
 		renderContext->setPermitDepth(false);
@@ -248,7 +311,7 @@ bool RenderTargetSetOpenGL::bind(ContextOpenGL* renderContext, GLuint primaryDep
 		1.0f
 	));
 
-	if (m_depthBuffer || m_desc.usingPrimaryDepthStencil)
+	if (m_depthBufferOrTexture || m_desc.usingPrimaryDepthStencil)
 		renderContext->setPermitDepth(true);
 	else
 		renderContext->setPermitDepth(false);
@@ -284,43 +347,40 @@ bool RenderTargetSetOpenGL::createFramebuffer(GLuint primaryDepthBuffer)
 	T_OGL_SAFE(glGenFramebuffers(1, &m_targetFBO));
 	T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, m_targetFBO));
 
-	// Create depth/stencil buffer.
+	// Attach depth buffer.
 	if (m_desc.createDepthStencil && !m_desc.usingPrimaryDepthStencil)
 	{
-		T_OGL_SAFE(glGenRenderbuffers(1, &m_depthBuffer));
-		T_OGL_SAFE(glBindRenderbuffer(GL_RENDERBUFFER, m_depthBuffer));
-
-		GLenum format = GL_DEPTH_COMPONENT24;
-		if (!m_desc.ignoreStencil)
-			format = GL_DEPTH24_STENCIL8;
-
-		T_OGL_SAFE(glRenderbufferStorage(
-			GL_RENDERBUFFER,
-			format,
-			m_desc.width,
-			m_desc.height
-		));
-
-		T_OGL_SAFE(glFramebufferRenderbuffer(
-			GL_FRAMEBUFFER,
-			GL_DEPTH_ATTACHMENT,
-			GL_RENDERBUFFER,
-			m_depthBuffer
-		));
-
-		if (!m_desc.ignoreStencil)
+		if (!m_desc.usingDepthStencilAsTexture)
 		{
 			T_OGL_SAFE(glFramebufferRenderbuffer(
 				GL_FRAMEBUFFER,
-				GL_STENCIL_ATTACHMENT,
+				GL_DEPTH_ATTACHMENT,
 				GL_RENDERBUFFER,
-				m_depthBuffer
+				m_depthBufferOrTexture
+			));
+
+			if (!m_desc.ignoreStencil)
+			{
+				T_OGL_SAFE(glFramebufferRenderbuffer(
+					GL_FRAMEBUFFER,
+					GL_STENCIL_ATTACHMENT,
+					GL_RENDERBUFFER,
+					m_depthBufferOrTexture
+				));
+			}
+		}
+		else
+		{
+			T_OGL_SAFE(glFramebufferTexture2D(
+				GL_FRAMEBUFFER,
+				GL_DEPTH_ATTACHMENT,
+				GL_TEXTURE_2D,
+				m_depthBufferOrTexture,
+				0
 			));
 		}
 	}
-
-	// Attach primary depth buffer.
-	if (m_desc.usingPrimaryDepthStencil)
+	else if (m_desc.usingPrimaryDepthStencil)
 	{
 		T_OGL_SAFE(glFramebufferRenderbuffer(
 			GL_FRAMEBUFFER,
@@ -349,6 +409,12 @@ bool RenderTargetSetOpenGL::createFramebuffer(GLuint primaryDepthBuffer)
 			m_targetTextures[i],
 			0
 		));
+	}
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		log::error << L"Unexpected renderer error; incomplete framebuffer object!" << Endl;
+		return false;
 	}
 
 	m_currentTag = ms_primaryTargetTag;

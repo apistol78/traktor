@@ -6,8 +6,9 @@
 #include "Render/Dx11/VertexBufferDx11.h"
 #include "Render/Dx11/IndexBufferDx11.h"
 #include "Render/Dx11/ProgramDx11.h"
-#include "Render/Dx11/RenderTargetSetDx11.h"
+#include "Render/Dx11/RenderTargetDepthDx11.h"
 #include "Render/Dx11/RenderTargetDx11.h"
+#include "Render/Dx11/RenderTargetSetDx11.h"
 #include "Render/Dx11/Utilities.h"
 
 namespace traktor
@@ -526,6 +527,7 @@ bool RenderViewDx11::begin(RenderTargetSet* renderTargetSet)
 		return false;
 
 	RenderTargetSetDx11* rts = checked_type_cast< RenderTargetSetDx11*, false >(renderTargetSet);
+	RenderTargetDepthDx11* rtd = checked_type_cast< RenderTargetDepthDx11*, true >(rts->getDepthTexture());
 	RenderTargetDx11* rt0 = checked_type_cast< RenderTargetDx11*, true >(rts->getColorTexture(0));
 	RenderTargetDx11* rt1 = checked_type_cast< RenderTargetDx11*, true >(rts->getColorTexture(1));
 	RenderTargetDx11* rt2 = checked_type_cast< RenderTargetDx11*, true >(rts->getColorTexture(2));
@@ -538,7 +540,7 @@ bool RenderViewDx11::begin(RenderTargetSet* renderTargetSet)
 			rts,
 			{ rt0, rt1, rt2 },
 			{ rt0->getD3D11RenderTargetView(), rt1->getD3D11RenderTargetView(), rt2->getD3D11RenderTargetView() },
-			rts->getD3D11DepthTextureView(),
+			(rtd != 0) ? rtd->getD3D11DepthTextureView() : 0,
 			{ rts->getWidth(), rts->getHeight() }
 		};
 
@@ -556,7 +558,7 @@ bool RenderViewDx11::begin(RenderTargetSet* renderTargetSet)
 			rts,
 			{ rt0, rt1, 0 },
 			{ rt0->getD3D11RenderTargetView(), rt1->getD3D11RenderTargetView(), 0 },
-			rts->getD3D11DepthTextureView(),
+			(rtd != 0) ? rtd->getD3D11DepthTextureView() : 0,
 			{ rts->getWidth(), rts->getHeight() }
 		};
 
@@ -567,7 +569,41 @@ bool RenderViewDx11::begin(RenderTargetSet* renderTargetSet)
 		m_targetsDirty = true;
 	}
 	else if (rt0)
-		return begin(renderTargetSet, 0);
+	{
+		RenderState rs =
+		{
+			{ 0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f },
+			rts,
+			{ rt0, 0, 0 },
+			{ rt0->getD3D11RenderTargetView(), 0, 0 },
+			(rtd != 0) ? rtd->getD3D11DepthTextureView() : 0,
+			{ rts->getWidth(), rts->getHeight() }
+		};
+
+		if (rts->usingPrimaryDepthStencil())
+			rs.d3dDepthStencilView = m_d3dDepthStencilView;
+
+		m_renderStateStack.push_back(rs);
+		m_targetsDirty = true;
+	}
+	else if (rtd)
+	{
+		RenderState rs =
+		{
+			{ 0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f },
+			rts,
+			{ 0, 0, 0 },
+			{ 0, 0, 0 },
+			rtd->getD3D11DepthTextureView(),
+			{ rts->getWidth(), rts->getHeight() }
+		};
+
+		if (rts->usingPrimaryDepthStencil())
+			rs.d3dDepthStencilView = m_d3dDepthStencilView;
+
+		m_renderStateStack.push_back(rs);
+		m_targetsDirty = true;
+	}
 	else
 		return false;
 
@@ -581,15 +617,16 @@ bool RenderViewDx11::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 	if (!m_context)
 		return false;
 
-	RenderTargetSetDx11* rts = checked_type_cast< RenderTargetSetDx11* >(renderTargetSet);
-	RenderTargetDx11* rt = checked_type_cast< RenderTargetDx11* >(rts->getColorTexture(renderTarget));
+	RenderTargetSetDx11* rts = checked_type_cast< RenderTargetSetDx11*, false >(renderTargetSet);
+	RenderTargetDepthDx11* rtd = checked_type_cast< RenderTargetDepthDx11*, true >(rts->getDepthTexture());
+	RenderTargetDx11* rt = checked_type_cast< RenderTargetDx11*, false >(rts->getColorTexture(renderTarget));
 	RenderState rs =
 	{
 		{ 0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f },
 		rts,
 		{ rt, 0, 0 },
 		{ rt->getD3D11RenderTargetView(), 0, 0 },
-		rts->getD3D11DepthTextureView(),
+		(rtd != 0) ? rtd->getD3D11DepthTextureView() : 0,
 		{ rts->getWidth(), rts->getHeight() }
 	};
 

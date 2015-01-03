@@ -724,13 +724,27 @@ public:
 		AdBorder
 	};
 
+	enum Compare
+	{
+		CmNo,
+		CmAlways,
+		CmNever,
+		CmLess,
+		CmLessEqual,
+		CmGreater,
+		CmGreaterEqual,
+		CmEqual,
+		CmNotEqual
+	};
+
 	Sampler(
 		Filter minFilter = FtLinear,
 		Filter mipFilter = FtLinear,
 		Filter magFilter = FtLinear,
 		Address addressU = AdWrap,
 		Address addressV = AdWrap,
-		Address addressW = AdWrap
+		Address addressW = AdWrap,
+		Compare compare = CmNo
 	);
 
 	void setMinFilter(Filter minFilter);
@@ -747,15 +761,19 @@ public:
 
 	void setAddressU(Address addressU);
 
-	Address getAddressU();
+	Address getAddressU() const;
 
 	void setAddressV(Address addressV);
 
-	Address getAddressV();
+	Address getAddressV() const;
 
 	void setAddressW(Address addressW);
 
-	Address getAddressW();
+	Address getAddressW() const;
+
+	void setCompare(Compare compare);
+
+	Compare getCompare() const;
 
 	void setMipBias(float mipBias);
 
@@ -778,6 +796,7 @@ private:
 	Address m_addressU;
 	Address m_addressV;
 	Address m_addressW;
+	Compare m_compare;
 	float m_mipBias;
 	bool m_ignoreMips;
 	bool m_useAnisotropic;

@@ -96,12 +96,6 @@ public:
 
 	virtual PostProcess* getVisualPostProcess();
 
-	virtual render::RenderTargetSet* getVisualTargetSet();
-
-	virtual render::RenderTargetSet* getDepthTargetSet();
-
-	virtual render::RenderTargetSet* getShadowMaskTargetSet();
-
 	virtual void getTargets(RefArray< render::ITexture >& outTargets) const;
 
 private:

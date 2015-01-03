@@ -12,6 +12,7 @@ namespace traktor
 	{
 
 class ContextOpenGL;
+class RenderTargetDepthOpenGL;
 class RenderTargetOpenGL;
 
 /*!
@@ -38,6 +39,8 @@ public:
 
 	virtual ISimpleTexture* getColorTexture(int index) const;
 
+	virtual ISimpleTexture* getDepthTexture() const;
+
 	virtual void swap(int index1, int index2);
 
 	virtual void discard();
@@ -50,15 +53,16 @@ public:
 
 	void blit();
 
-	GLuint getDepthBuffer() const { return m_depthBuffer; }
+	GLuint getDepthBuffer() const { return m_depthBufferOrTexture; }
 
 private:
 	Ref< ContextOpenGL > m_resourceContext;
 	RenderTargetSetCreateDesc m_desc;
 	GLuint m_targetFBO;
-	GLuint m_depthBuffer;
+	GLuint m_depthBufferOrTexture;
 	GLuint m_targetTextures[8];
-	Ref< RenderTargetOpenGL > m_renderTargets[8];
+	Ref< RenderTargetDepthOpenGL > m_depthTarget;
+	Ref< RenderTargetOpenGL > m_colorTargets[8];
 	uint32_t m_currentTag;
 
 	bool createFramebuffer(GLuint primaryDepthBuffer);

@@ -1220,6 +1220,19 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 		GL_CLAMP_TO_EDGE
 	};
 
+	const GLenum c_glCompare[] =
+	{
+		GL_INVALID_ENUM,
+		GL_ALWAYS,
+		GL_NEVER,
+		GL_LESS,
+		GL_LEQUAL,
+		GL_GREATER,
+		GL_GEQUAL,
+		GL_EQUAL,
+		GL_NOTEQUAL
+	};
+
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	GlslVariable* texture = cx.emitInput(node, L"Texture");
@@ -1230,7 +1243,7 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 	if (!texCoord)
 		return false;
 
-	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat4);
+	GlslVariable* out = cx.emitOutput(node, L"Output", (node->getCompare() == Sampler::CmNo) ? GtFloat4 : GtFloat);
 
 	bool needAddressW = bool(texture->getType() > GtTexture2D);
 	GLenum target = GL_INVALID_ENUM;
@@ -1263,6 +1276,7 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 	samplerHash.feed(node->getAddressV());
 	if (needAddressW)
 		samplerHash.feed(node->getAddressW());
+	samplerHash.feed(node->getCompare());
 
     // Use same stage index for both vertex and fragment shader.
     // Sampler name is defined by which stage it's associated with.
@@ -1294,100 +1308,191 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 
 		if (needAddressW)
 			rs.samplerStates[stage].wrapR = c_glWrap[node->getAddressW()];
+
+		rs.samplerStates[stage].compare = c_glCompare[node->getCompare()];
 	}
 
 	if (cx.getShader().getUniforms().find(samplerName) == cx.getShader().getUniforms().end())
 	{
 		StringOutputStream& fu = cx.getShader().getOutputStream(GlslShader::BtUniform);
-		switch (texture->getType())
-		{
-		case GtTexture2D:
-#if defined(T_OPENGL_STD)
-			fu << L"uniform sampler2D " << samplerName << L";" << Endl;
-#elif defined(T_OPENGL_ES2)
-			fu << L"uniform lowp sampler2D " << samplerName << L";" << Endl;
-#endif
-			break;
-
-		case GtTexture3D:
-			fu << L"uniform sampler3D " << samplerName << L";" << Endl;
-			break;
-
-		case GtTextureCube:
-			fu << L"uniform samplerCube " << samplerName << L";" << Endl;
-			break;
-
-		default:
-			return false;
-		}
-		cx.getShader().addUniform(samplerName);
-	}
-
-	if (cx.inFragment())
-	{
-#if defined(T_OPENGL_STD)
-		if (!node->getIgnoreMips())
+		if (node->getCompare() == Sampler::CmNo)
 		{
 			switch (texture->getType())
 			{
 			case GtTexture2D:
-				assign(f, out) << L"texture(" << samplerName << L", " << texCoord->cast(GtFloat2) << L");" << Endl;
+#if defined(T_OPENGL_STD)
+				fu << L"uniform sampler2D " << samplerName << L";" << Endl;
+#elif defined(T_OPENGL_ES2)
+				fu << L"uniform lowp sampler2D " << samplerName << L";" << Endl;
+#endif
 				break;
 
 			case GtTexture3D:
-			case GtTextureCube:
-				assign(f, out) << L"texture(" << samplerName << L", " << texCoord->cast(GtFloat3) << L");" << Endl;
+				fu << L"uniform sampler3D " << samplerName << L";" << Endl;
 				break;
-                
+
+			case GtTextureCube:
+				fu << L"uniform samplerCube " << samplerName << L";" << Endl;
+				break;
+
 			default:
 				return false;
 			}
 		}
 		else
 		{
+			if (!cx.inFragment())
+				return false;
+
 			switch (texture->getType())
 			{
 			case GtTexture2D:
-				assign(f, out) << L"textureLod(" << samplerName << L", " << texCoord->cast(GtFloat2) << L", 0.0);" << Endl;
+#if defined(T_OPENGL_STD)
+				fu << L"uniform sampler2DShadow " << samplerName << L";" << Endl;
+#elif defined(T_OPENGL_ES2)
+				fu << L"uniform lowp sampler2DShadow " << samplerName << L";" << Endl;
+#endif
 				break;
 
 			case GtTexture3D:
-			case GtTextureCube:
-				assign(f, out) << L"textureLod(" << samplerName << L", " << texCoord->cast(GtFloat3) << L", 0.0);" << Endl;
+				fu << L"uniform sampler3DShadow " << samplerName << L";" << Endl;
 				break;
-                
+
+			case GtTextureCube:
+				fu << L"uniform samplerCubeShadow " << samplerName << L";" << Endl;
+				break;
+
 			default:
 				return false;
 			}
 		}
-#else
-		switch (texture->getType())
-		{
-		case GtTexture2D:
-			assign(f, out) << L"texture2D(" << samplerName << L", " << texCoord->cast(GtFloat2) << L");" << Endl;
-			break;
-
-		case GtTexture3D:
-			assign(f, out) << L"texture3D(" << samplerName << L", " << texCoord->cast(GtFloat3) << L");" << Endl;
-			break;
-
-		case GtTextureCube:
-			assign(f, out) << L"textureCube(" << samplerName << L", " << texCoord->cast(GtFloat3) << L");" << Endl;
-			break;
-
-		default:
-			return false;
-		}
-#endif
+		cx.getShader().addUniform(samplerName);
 	}
-	
+
+	if (cx.inFragment())
+	{
+		if (node->getCompare() == Sampler::CmNo)
+		{
+#if defined(T_OPENGL_STD)
+			if (!node->getIgnoreMips())
+			{
+				switch (texture->getType())
+				{
+				case GtTexture2D:
+					assign(f, out) << L"texture(" << samplerName << L", " << texCoord->cast(GtFloat2) << L");" << Endl;
+					break;
+
+				case GtTexture3D:
+				case GtTextureCube:
+					assign(f, out) << L"texture(" << samplerName << L", " << texCoord->cast(GtFloat3) << L");" << Endl;
+					break;
+                
+				default:
+					return false;
+				}
+			}
+			else
+			{
+				switch (texture->getType())
+				{
+				case GtTexture2D:
+					assign(f, out) << L"textureLod(" << samplerName << L", " << texCoord->cast(GtFloat2) << L", 0.0);" << Endl;
+					break;
+
+				case GtTexture3D:
+				case GtTextureCube:
+					assign(f, out) << L"textureLod(" << samplerName << L", " << texCoord->cast(GtFloat3) << L", 0.0);" << Endl;
+					break;
+                
+				default:
+					return false;
+				}
+			}
+#else
+			switch (texture->getType())
+			{
+			case GtTexture2D:
+				assign(f, out) << L"texture2D(" << samplerName << L", " << texCoord->cast(GtFloat2) << L");" << Endl;
+				break;
+
+			case GtTexture3D:
+				assign(f, out) << L"texture3D(" << samplerName << L", " << texCoord->cast(GtFloat3) << L");" << Endl;
+				break;
+
+			case GtTextureCube:
+				assign(f, out) << L"textureCube(" << samplerName << L", " << texCoord->cast(GtFloat3) << L");" << Endl;
+				break;
+
+			default:
+				return false;
+			}
+#endif
+		}
+		else
+		{
+#if defined(T_OPENGL_STD)
+			if (!node->getIgnoreMips())
+			{
+				switch (texture->getType())
+				{
+				case GtTexture2D:
+					assign(f, out) << L"texture(" << samplerName << L", " << texCoord->cast(GtFloat3) << L" * vec3(1.0, 1.0, 0.5) + vec3(0.0, 0.0, 0.5));" << Endl;
+					break;
+
+				case GtTexture3D:
+				case GtTextureCube:
+					assign(f, out) << L"texture(" << samplerName << L", " << texCoord->cast(GtFloat4) << L" * vec3(1.0, 1.0, 1.0, 0.5) + vec3(0.0, 0.0, 0.0, 0.5)));" << Endl;
+					break;
+                
+				default:
+					return false;
+				}
+			}
+			else
+			{
+				switch (texture->getType())
+				{
+				case GtTexture2D:
+					assign(f, out) << L"textureLod(" << samplerName << L", " << texCoord->cast(GtFloat3) << L" * vec3(1.0, 1.0, 0.5) + vec3(0.0, 0.0, 0.5), 0.0);" << Endl;
+					break;
+
+				case GtTexture3D:
+				case GtTextureCube:
+					assign(f, out) << L"textureLod(" << samplerName << L", " << texCoord->cast(GtFloat4) << L" * vec3(1.0, 1.0, 1.0, 0.5) + vec3(0.0, 0.0, 0.0, 0.5), 0.0);" << Endl;
+					break;
+                
+				default:
+					return false;
+				}
+			}
+	#else
+			switch (texture->getType())
+			{
+			case GtTexture2D:
+				assign(f, out) << L"texture2D(" << samplerName << L", " << texCoord->cast(GtFloat3) << L" * vec3(1.0, 1.0, 0.5) + vec3(0.0, 0.0, 0.5));" << Endl;
+				break;
+
+			case GtTexture3D:
+				assign(f, out) << L"texture3D(" << samplerName << L", " << texCoord->cast(GtFloat4) << L" * vec3(1.0, 1.0, 1.0, 0.5) + vec3(0.0, 0.0, 0.0, 0.5));" << Endl;
+				break;
+
+			case GtTextureCube:
+				assign(f, out) << L"textureCube(" << samplerName << L", " << texCoord->cast(GtFloat4) << L" * vec3(1.0, 1.0, 1.0, 0.5) + vec3(0.0, 0.0, 0.0, 0.5));" << Endl;
+				break;
+
+			default:
+				return false;
+			}
+	#endif
+		}
+	}
+
 	if (cx.inVertex())
 	{
 #if defined(T_OPENGL_STD)
 		switch (texture->getType())
 		{
 		case GtTexture2D:
-			//assign(f, out) << L"texture(" << samplerName << L", " << texCoord->cast(GtFloat2) << L", 0.0);" << Endl;
 			assign(f, out) << L"texture2DBilinear(" << samplerName << L", " << texCoord->cast(GtFloat2) << L");" << Endl;
 			break;
 

@@ -71,12 +71,6 @@ public:
 
 	virtual PostProcess* getVisualPostProcess();
 
-	virtual render::RenderTargetSet* getVisualTargetSet();
-
-	virtual render::RenderTargetSet* getDepthTargetSet();
-
-	virtual render::RenderTargetSet* getShadowMaskTargetSet();
-
 	virtual void getTargets(RefArray< render::ITexture >& outTargets) const;
 
 private:
@@ -85,7 +79,6 @@ private:
 		Ref< WorldContext > shadow[MaxLightShadowCount];
 		Matrix44 shadowLightView[MaxLightShadowCount];
 		Matrix44 shadowLightProjection[MaxLightShadowCount];
-		Matrix44 shadowLightSquareProjection[MaxLightShadowCount];
 		Matrix44 viewToLightSpace[MaxLightShadowCount];
 	};
 
@@ -122,7 +115,6 @@ private:
 	static render::handle_t ms_handleView;
 	static render::handle_t ms_handleViewInverse;
 	static render::handle_t ms_handleProjection;
-	static render::handle_t ms_handleSquareProjection;
 	static render::handle_t ms_handleColorMap;
 	static render::handle_t ms_handleDepthMap;
 	static render::handle_t ms_handleLightMap;

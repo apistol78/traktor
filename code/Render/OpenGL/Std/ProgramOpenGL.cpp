@@ -17,6 +17,7 @@
 #include "Render/OpenGL/Std/SimpleTextureOpenGL.h"
 #include "Render/OpenGL/Std/CubeTextureOpenGL.h"
 #include "Render/OpenGL/Std/VolumeTextureOpenGL.h"
+#include "Render/OpenGL/Std/RenderTargetDepthOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetOpenGL.h"
 #include "Render/OpenGL/Std/ContextOpenGL.h"
 
@@ -88,6 +89,8 @@ ITextureBinding* getTextureBinding(ITexture* texture)
 		return static_cast< ITextureBinding* >(vt);
 	else if (RenderTargetOpenGL* rt = dynamic_type_cast< RenderTargetOpenGL* >(texture))
 		return static_cast< ITextureBinding* >(rt);
+	else if (RenderTargetDepthOpenGL* rtd = dynamic_type_cast< RenderTargetDepthOpenGL* >(texture))
+		return static_cast< ITextureBinding* >(rtd);
 	else
 		return 0;
 }

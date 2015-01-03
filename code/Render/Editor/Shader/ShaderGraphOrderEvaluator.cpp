@@ -47,7 +47,9 @@ PinOrderType ShaderGraphOrderEvaluator::evaluate(const OutputPin* outputPin) con
 	int32_t inputPinCount = node->getInputPinCount();
 
 	// Evaluate order of input pins.
-	std::vector< PinOrderType > inputPinOrders(inputPinCount, PotConstant);
+	PinOrderType inputPinOrders[32];
+	T_ASSERT (inputPinCount < sizeof_array(inputPinOrders));
+
 	for (int32_t i = 0; i < inputPinCount; ++i)
 	{
 		const InputPin* inputPin = node->getInputPin(i);
@@ -56,6 +58,8 @@ PinOrderType ShaderGraphOrderEvaluator::evaluate(const OutputPin* outputPin) con
 		const OutputPin* sourceOutputPin = m_shaderGraph->findSourcePin(inputPin);
 		if (sourceOutputPin)
 			inputPinOrders[i] = evaluate(sourceOutputPin);
+		else
+			inputPinOrders[i] = PotConstant;
 	}
 
 	PinOrderType order = PotNonLinear;
@@ -68,7 +72,7 @@ PinOrderType ShaderGraphOrderEvaluator::evaluate(const OutputPin* outputPin) con
 			m_shaderGraph,
 			node,
 			outputPin,
-			inputPinCount > 0 ? &inputPinOrders[0] : 0,
+			inputPinCount > 0 ? inputPinOrders : 0,
 			m_frequentUniformsAsLinear
 		);
 	}

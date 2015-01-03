@@ -36,6 +36,8 @@ public:
 
 	virtual ISimpleTexture* getColorTexture(int index) const;
 
+	virtual ISimpleTexture* getDepthTexture() const;
+
 	virtual void swap(int index1, int index2);
 
 	virtual void discard();

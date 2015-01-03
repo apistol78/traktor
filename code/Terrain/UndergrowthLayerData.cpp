@@ -1,5 +1,7 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberComposite.h"
+#include "Core/Serialization/MemberStl.h"
 #include "Render/Shader.h"
 #include "Resource/Member.h"
 #include "Terrain/UndergrowthLayer.h"
@@ -13,10 +15,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.UndergrowthLayerData", 0, UndergrowthLayerData, ITerrainLayerData)
 
 UndergrowthLayerData::UndergrowthLayerData()
-:	m_density(1000)
-,	m_spreadDistance(30.0f)
-,	m_cellRadius(20.0f)
-,	m_plantScale(1.0f)
+:	m_spreadDistance(100.0f)
 {
 }
 
@@ -37,10 +36,24 @@ Ref< ITerrainLayer > UndergrowthLayerData::createLayerInstance(
 void UndergrowthLayerData::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
-	s >> Member< int32_t >(L"density", m_density);
 	s >> Member< float >(L"spreadDistance", m_spreadDistance);
-	s >> Member< float >(L"cellRadius", m_cellRadius);
-	s >> Member< float >(L"plantScale", m_plantScale);
+	s >> MemberStlVector< Plant, MemberComposite< Plant > >(L"plants", m_plants);
+}
+
+UndergrowthLayerData::Plant::Plant()
+:	material(0)
+,	density(1000)
+,	plant(0)
+,	scale(1.0f)
+{
+}
+
+void UndergrowthLayerData::Plant::serialize(ISerializer& s)
+{
+	s >> Member< uint8_t >(L"material", material);
+	s >> Member< int32_t >(L"density", density);
+	s >> Member< int32_t >(L"plant", plant);
+	s >> Member< float >(L"scale", scale);
 }
 
 	}
