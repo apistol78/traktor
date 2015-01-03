@@ -1219,21 +1219,6 @@ PostProcess* WorldRendererPreLit::getVisualPostProcess()
 	return m_visualPostProcess;
 }
 
-render::RenderTargetSet* WorldRendererPreLit::getVisualTargetSet()
-{
-	return m_visualTargetSet;
-}
-
-render::RenderTargetSet* WorldRendererPreLit::getDepthTargetSet()
-{
-	return m_gbufferTargetSet;
-}
-
-render::RenderTargetSet* WorldRendererPreLit::getShadowMaskTargetSet()
-{
-	return m_shadowMaskFilterTargetSet;
-}
-
 void WorldRendererPreLit::getTargets(RefArray< render::ITexture >& outTargets) const
 {
 	outTargets.resize(4);

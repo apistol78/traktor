@@ -122,6 +122,8 @@ private:
 	Ref< render::ISimpleTexture > m_normalMap;
 	AutoArrayPtr< uint8_t > m_cutData;
 	Ref< render::ISimpleTexture > m_cutMap;
+	AutoArrayPtr< uint8_t > m_materialData;
+	Ref< render::ISimpleTexture > m_materialMap;
 	Ref< IBrush > m_drawBrush;
 	Ref< IBrush > m_spatialBrush;
 	uint32_t m_brushMode;

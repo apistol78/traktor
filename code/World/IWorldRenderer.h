@@ -222,12 +222,6 @@ public:
 
 	virtual PostProcess* getVisualPostProcess() = 0;
 
-	virtual render::RenderTargetSet* getVisualTargetSet() = 0;
-
-	virtual render::RenderTargetSet* getDepthTargetSet() = 0;
-
-	virtual render::RenderTargetSet* getShadowMaskTargetSet() = 0;
-
 	virtual void getTargets(RefArray< render::ITexture >& outTargets) const = 0;
 
 	//@}

@@ -4,8 +4,8 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>789</first>
-				<second>161</second>
+				<first>861</first>
+				<second>158</second>
 			</position>
 			<name>Depth</name>
 		</item>
@@ -17,7 +17,7 @@
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Sampler">
+		<item type="traktor.render.Sampler" version="3">
 			<comment/>
 			<position>
 				<first>382</first>
@@ -29,12 +29,15 @@
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
+			<mipBias>0</mipBias>
+			<ignoreMips>true</ignoreMips>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>219</first>
-				<second>164</second>
+				<first>159</first>
+				<second>125</second>
 			</position>
 			<parameterName>Depth</parameterName>
 			<type>PtTexture2D</type>
@@ -43,8 +46,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>178</first>
-				<second>231</second>
+				<first>145</first>
+				<second>256</second>
 			</position>
 			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
 			<inputPins/>
@@ -61,62 +64,62 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1713</first>
-				<second>149</second>
+				<first>2147</first>
+				<second>147</second>
 			</position>
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>1567</first>
-				<second>120</second>
+				<first>1897</first>
+				<second>127</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>1466</first>
-				<second>121</second>
+				<first>1796</first>
+				<second>128</second>
 			</position>
 			<swizzle>00x1</swizzle>
 		</item>
 		<item type="traktor.render.Discard">
 			<comment/>
 			<position>
-				<first>914</first>
-				<second>35</second>
+				<first>1115</first>
+				<second>48</second>
 			</position>
 			<operator>CoGreater</operator>
 		</item>
 		<item type="traktor.render.Discard">
 			<comment/>
 			<position>
-				<first>741</first>
-				<second>35</second>
+				<first>774</first>
+				<second>30</second>
 			</position>
 			<operator>CoLess</operator>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>1466</first>
-				<second>181</second>
+				<first>1796</first>
+				<second>188</second>
 			</position>
 			<swizzle>xy00</swizzle>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>1325</first>
-				<second>173</second>
+				<first>1567</first>
+				<second>188</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>1158</first>
-				<second>216</second>
+				<first>1359</first>
+				<second>229</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
@@ -148,8 +151,8 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>1022</first>
-				<second>269</second>
+				<first>1223</first>
+				<second>282</second>
 			</position>
 			<swizzle>xy</swizzle>
 		</item>

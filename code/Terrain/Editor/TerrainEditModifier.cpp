@@ -33,6 +33,7 @@
 #include "Terrain/Editor/SharpFallOff.h"
 #include "Terrain/Editor/SmoothBrush.h"
 #include "Terrain/Editor/SmoothFallOff.h"
+#include "Terrain/Editor/SplatBrush.h"
 #include "Terrain/Editor/SymmetricalBrush.h"
 #include "Terrain/Editor/TerrainAsset.h"
 #include "Terrain/Editor/TerrainEditModifier.h"
@@ -428,7 +429,7 @@ void TerrainEditModifier::selectionChanged()
 	m_cutMap = m_context->getRenderSystem()->createSimpleTexture(desc);
 	if (m_cutMap)
 	{
-		// Transfer normals to texture.
+		// Transfer cuts to texture.
 		render::ITexture::Lock nl;
 		if (m_cutMap->lock(0, nl))
 		{
@@ -436,8 +437,41 @@ void TerrainEditModifier::selectionChanged()
 			m_cutMap->unlock(0);
 		}
 
-		// Replace normal map in resource with our texture.
+		// Replace cut map in resource with our texture.
 		m_entity->m_terrain->m_cutMap = resource::Proxy< render::ISimpleTexture >(m_cutMap);
+	}
+
+	// Create material mask texture data.
+	m_materialData.reset(new uint8_t [size * size]);
+	for (int32_t v = 0; v < size; ++v)
+	{
+		for (int32_t u = 0; u < size; ++u)
+		{
+			m_materialData[u + v * size] = m_heightfield->getGridMaterial(u, v);
+		}
+	}
+
+	// Create non-compressed texture for cut data.
+	desc.width = size;
+	desc.height = size;
+	desc.mipCount = 1;
+	desc.format = render::TfR8;
+	desc.sRGB = false;
+	desc.immutable = false;
+
+	m_materialMap = m_context->getRenderSystem()->createSimpleTexture(desc);
+	if (m_materialMap)
+	{
+		// Transfer material mask to texture.
+		render::ITexture::Lock nl;
+		if (m_materialMap->lock(0, nl))
+		{
+			std::memcpy(nl.bits, m_materialData.c_ptr(), size * size);
+			m_materialMap->unlock(0);
+		}
+
+		// Replace material mask map in resource with our texture.
+		m_entity->m_terrain->m_materialMap = resource::Proxy< render::ISimpleTexture >(m_materialMap);
 	}
 
 	// Create default brush; try set same brush type as before.
@@ -492,6 +526,8 @@ bool TerrainEditModifier::begin(
 {
 	if (!m_heightfield)
 		return false;
+
+	m_context->setPlaying(false);
 
 	float worldRadius = m_context->getGuideSize();
 	int32_t gridRadius = int32_t(m_heightfield->getSize() * worldRadius / m_heightfield->getWorldExtent().x());
@@ -639,6 +675,26 @@ void TerrainEditModifier::apply(
 			m_cutMap->unlock(0);
 		}
 	}
+
+	// Update material mask.
+	if ((m_brushMode & IBrush::MdMaterial) != 0)
+	{
+		for (int32_t v = mnz; v <= mxz; ++v)
+		{
+			for (int32_t u = mnx; u <= mxx; ++u)
+			{
+				m_materialData[u + v * size] = m_heightfield->getGridMaterial(u, v);
+			}
+		}
+
+		// Transfer cuts to texture.
+		render::ITexture::Lock cl;
+		if (m_materialMap->lock(0, cl))
+		{
+			std::memcpy(cl.bits, m_materialData.c_ptr(), size * size);
+			m_materialMap->unlock(0);
+		}
+	}
 }
 
 void TerrainEditModifier::end(const scene::TransformChain& transformChain)
@@ -710,9 +766,9 @@ void TerrainEditModifier::end(const scene::TransformChain& transformChain)
 		m_context->getDocument()->setModified();
 	}
 
-	// Write modifications to heightfield.
+	// Checkout heightfield asset.
 	if (
-		(m_brushMode & (IBrush::MdHeight | IBrush::MdCut)) != 0 &&
+		(m_brushMode & (IBrush::MdHeight | IBrush::MdCut | IBrush::MdMaterial)) != 0 &&
 		!m_heightfieldInstance
 	)
 	{
@@ -749,8 +805,9 @@ void TerrainEditModifier::end(const scene::TransformChain& transformChain)
 		);
 	}
 
+	// Write modifications to heightfield.
 	if (
-		(m_brushMode & (IBrush::MdHeight | IBrush::MdCut)) != 0 &&
+		(m_brushMode & (IBrush::MdHeight | IBrush::MdCut | IBrush::MdMaterial)) != 0 &&
 		m_heightfieldInstance
 	)
 	{
@@ -821,14 +878,16 @@ void TerrainEditModifier::setBrush(const TypeInfo& brushType)
 		m_drawBrush = new ElevateBrush(m_heightfield);
 	else if (is_type_a< FlattenBrush >(brushType))
 		m_drawBrush = new FlattenBrush(m_heightfield);
-	else if (is_type_a< MaterialBrush >(brushType))
-		m_drawBrush = new MaterialBrush(m_splatImage);
+	else if (is_type_a< SplatBrush >(brushType))
+		m_drawBrush = new SplatBrush(m_splatImage);
 	else if (is_type_a< NoiseBrush >(brushType))
 		m_drawBrush = new NoiseBrush(m_heightfield);
 	else if (is_type_a< ErodeBrush >(brushType))
 		m_drawBrush = new ErodeBrush(m_heightfield);
 	else if (is_type_a< SmoothBrush >(brushType))
 		m_drawBrush = new SmoothBrush(m_heightfield);
+	else if (is_type_a< MaterialBrush >(brushType))
+		m_drawBrush = new MaterialBrush(m_heightfield);
 
 	m_spatialBrush = m_drawBrush;
 	if (m_symmetry & 1)

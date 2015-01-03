@@ -8,6 +8,7 @@
 #include "Render/Dx11/HlslProgram.h"
 #include "Render/Dx11/ProgramDx11.h"
 #include "Render/Dx11/ProgramResourceDx11.h"
+#include "Render/Dx11/RenderTargetDepthDx11.h"
 #include "Render/Dx11/RenderTargetDx11.h"
 #include "Render/Dx11/ResourceCache.h"
 #include "Render/Dx11/SimpleTextureDx11.h"
@@ -351,6 +352,8 @@ bool ProgramDx11::bind(
 					d3dTextureResourceView = static_cast< CubeTextureDx11* >(resolved.ptr())->getD3D11TextureResourceView();
 				else if (is_a< RenderTargetDx11 >(resolved))
 					d3dTextureResourceView = static_cast< RenderTargetDx11* >(resolved.ptr())->getD3D11TextureResourceView();
+				else if (is_a< RenderTargetDepthDx11 >(resolved))
+					d3dTextureResourceView = static_cast< RenderTargetDepthDx11* >(resolved.ptr())->getD3D11TextureResourceView();
 				else if (is_a< VolumeTextureDx11 >(resolved))
 					d3dTextureResourceView = static_cast< VolumeTextureDx11* >(resolved.ptr())->getD3D11TextureResourceView();
 				else
@@ -381,6 +384,8 @@ bool ProgramDx11::bind(
 					d3dTextureResourceView = static_cast< CubeTextureDx11* >(resolved.ptr())->getD3D11TextureResourceView();
 				else if (is_a< RenderTargetDx11 >(resolved))
 					d3dTextureResourceView = static_cast< RenderTargetDx11* >(resolved.ptr())->getD3D11TextureResourceView();
+				else if (is_a< RenderTargetDepthDx11 >(resolved))
+					d3dTextureResourceView = static_cast< RenderTargetDepthDx11* >(resolved.ptr())->getD3D11TextureResourceView();
 				else if (is_a< VolumeTextureDx11 >(resolved))
 					d3dTextureResourceView = static_cast< VolumeTextureDx11* >(resolved.ptr())->getD3D11TextureResourceView();
 				else

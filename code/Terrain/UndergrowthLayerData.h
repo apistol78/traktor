@@ -36,11 +36,21 @@ private:
 	friend class UndergrowthLayer;
 	friend class UndergrowthPipeline;
 
+	struct Plant
+	{
+		uint8_t material;
+		int32_t density;
+		int32_t plant;
+		float scale;
+
+		Plant();
+
+		void serialize(ISerializer& s);
+	};
+
 	resource::Id< render::Shader > m_shader;
-	int32_t m_density;
 	float m_spreadDistance;
-	float m_cellRadius;
-	float m_plantScale;
+	std::vector< Plant > m_plants;
 };
 
 	}

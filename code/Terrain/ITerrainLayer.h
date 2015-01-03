@@ -33,6 +33,8 @@ public:
 		world::WorldRenderView& worldRenderView,
 		world::IWorldRenderPass& worldRenderPass
 	) = 0;
+
+	virtual void updatePatches(const TerrainEntity& terrainEntity) = 0;
 };
 
 	}

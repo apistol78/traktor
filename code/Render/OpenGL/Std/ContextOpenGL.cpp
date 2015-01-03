@@ -1,3 +1,5 @@
+#pragma optimize( "", off )
+
 #include <cstring>
 #include "Core/RefArray.h"
 #include "Core/Log/Log.h"
@@ -27,7 +29,7 @@ typedef RefArray< ContextOpenGL > context_stack_t;
 void APIENTRY debugCallbackARB(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, GLvoid *userParam)
 {
 #	if !defined(_DEBUG)
-	if (severity == GL_DEBUG_SEVERITY_LOW_ARB)
+	if (severity != GL_DEBUG_SEVERITY_MEDIUM_ARB && severity != GL_DEBUG_SEVERITY_HIGH_ARB)
 		return;
 #	endif
 
@@ -393,6 +395,7 @@ uint32_t ContextOpenGL::createSamplerStateObject(const SamplerStateOpenGL& sampl
 	adler.feed(samplerState.wrapS);
 	adler.feed(samplerState.wrapT);
 	adler.feed(samplerState.wrapR);
+	adler.feed(samplerState.compare);
 
 	std::map< uint32_t, uint32_t >::iterator i = m_samplerStateListCache.find(adler.get());
 	if (i != m_samplerStateListCache.end())
@@ -482,6 +485,14 @@ void ContextOpenGL::bindSamplerStateObject(GLenum textureTarget, uint32_t sample
 	}
 	else
 		{ T_OGL_SAFE(glTexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR)); }
+
+	if (ss.compare != GL_INVALID_ENUM)
+	{
+		T_OGL_SAFE(glTexParameteri(textureTarget, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE));
+		T_OGL_SAFE(glTexParameteri(textureTarget, GL_TEXTURE_COMPARE_FUNC, ss.compare));
+	}
+	else
+		{ T_OGL_SAFE(glTexParameteri(textureTarget, GL_TEXTURE_COMPARE_MODE, GL_NONE)); }
 }
 
 void ContextOpenGL::setPermitDepth(bool permitDepth)

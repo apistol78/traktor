@@ -3,7 +3,6 @@
 #include "Core/Serialization/MemberStaticArray.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Heightfield/Heightfield.h"
-#include "Heightfield/MaterialMask.h"
 #include "Render/ISimpleTexture.h"
 #include "Render/Shader.h"
 #include "Resource/Member.h"
@@ -14,7 +13,7 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainResource", 5, TerrainResource, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainResource", 6, TerrainResource, ISerializable)
 
 TerrainResource::TerrainResource()
 :	m_detailSkip(0)
@@ -24,11 +23,10 @@ TerrainResource::TerrainResource()
 
 void TerrainResource::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion() >= 5);
+	T_ASSERT (s.getVersion() >= 6);
 	s >> Member< uint32_t >(L"detailSkip", m_detailSkip);
 	s >> Member< uint32_t >(L"patchDim", m_patchDim);
 	s >> resource::Member< hf::Heightfield >(L"heightfield", m_heightfield);
-	s >> resource::Member< hf::MaterialMask >(L"materialMask", m_materialMask);
 	s >> resource::Member< render::ISimpleTexture >(L"colorMap", m_colorMap);
 	s >> resource::Member< render::ISimpleTexture >(L"normalMap", m_normalMap);
 	s >> resource::Member< render::ISimpleTexture >(L"heightMap", m_heightMap);

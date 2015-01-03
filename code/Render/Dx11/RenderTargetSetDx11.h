@@ -11,6 +11,7 @@ namespace traktor
 	{
 
 class ContextDx11;
+class RenderTargetDepthDx11;
 class RenderTargetDx11;
 struct RenderTargetSetCreateDesc;
 
@@ -26,7 +27,7 @@ public:
 
 	virtual ~RenderTargetSetDx11();
 
-	bool create(ID3D11Device* d3dDevice, const RenderTargetSetCreateDesc& desc);
+	bool create(const RenderTargetSetCreateDesc& setDesc);
 
 	virtual void destroy();
 
@@ -36,25 +37,22 @@ public:
 
 	virtual ISimpleTexture* getColorTexture(int index) const;
 
+	virtual ISimpleTexture* getDepthTexture() const;
+
 	virtual void swap(int index1, int index2);
 
 	virtual void discard();
 
 	virtual bool read(int index, void* buffer) const;
 
-	inline ID3D11DepthStencilView* getD3D11DepthTextureView() const {
-		return m_d3dDepthTextureView;
-	}
-
-	inline bool usingPrimaryDepthStencil() const {
+	bool usingPrimaryDepthStencil() const {
 		return m_usingPrimaryDepthStencil;
 	}
 
 private:
 	Ref< ContextDx11 > m_context;
 	RefArray< RenderTargetDx11 > m_colorTextures;
-	ComRef< ID3D11Texture2D > m_d3dDepthTexture;
-	ComRef< ID3D11DepthStencilView > m_d3dDepthTextureView;
+	Ref< RenderTargetDepthDx11 > m_depthTexture;
 	int m_width;
 	int m_height;
 	bool m_usingPrimaryDepthStencil;

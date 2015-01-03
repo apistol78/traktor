@@ -572,6 +572,7 @@ struct RenderTargetSetCreateDesc
 	int32_t height;								/*!< Height of render targets. */
 	int32_t multiSample;						/*!< Number of samples; 0 no multisample. */
 	bool createDepthStencil;					/*!< Attach depth/stencil buffer; shared among all targets. */
+	bool usingDepthStencilAsTexture;			/*!< Will be using depth/stencil buffer as a texture input of shaders. */
 	bool usingPrimaryDepthStencil;				/*!< Share primary depth/stencil buffer; shared among all targets. */
 	bool preferTiled;							/*!< Prefer tiled memory; only implemented in PS3 renderer. */
 	bool ignoreStencil;							/*!< Ignoring stencil; stencil isn't used in rendering. */
@@ -584,6 +585,7 @@ struct RenderTargetSetCreateDesc
 	,	height(0)
 	,	multiSample(0)
 	,	createDepthStencil(false)
+	,	usingDepthStencilAsTexture(false)
 	,	usingPrimaryDepthStencil(false)
 	,	preferTiled(false)
 	,	ignoreStencil(true)

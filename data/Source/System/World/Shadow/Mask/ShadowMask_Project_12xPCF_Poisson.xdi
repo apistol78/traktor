@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.world.PostProcessSettings" version="1">
+	<requireHighRange>false</requireHighRange>
+	<definitions/>
+	<steps>
+		<item type="traktor.world.PostProcessStepSmProj">
+			<shader>{7B3BACCD-C229-114C-BCFE-F4E394D3CA9F}</shader>
+		</item>
+	</steps>
+</object>

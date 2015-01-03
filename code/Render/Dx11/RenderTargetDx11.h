@@ -25,7 +25,7 @@ public:
 
 	virtual ~RenderTargetDx11();
 
-	bool create(ID3D11Device* d3dDevice, const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc);
+	bool create(const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc);
 
 	virtual void destroy();
 

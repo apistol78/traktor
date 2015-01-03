@@ -1278,7 +1278,7 @@ Round::Round()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Sampler", 3, Sampler, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Sampler", 4, Sampler, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Sampler_i[] = { { L"Texture", false }, { L"TexCoord", false }, { L"Mip", true }, 0 };
 const ImmutableNode::OutputPinDesc c_Sampler_o[] = { L"Output", 0 };
@@ -1289,7 +1289,8 @@ Sampler::Sampler(
 	Filter magFilter,
 	Address addressU,
 	Address addressV,
-	Address addressW
+	Address addressW,
+	Compare compare
 )
 :	ImmutableNode(c_Sampler_i, c_Sampler_o)
 ,	m_minFilter(minFilter)
@@ -1298,6 +1299,7 @@ Sampler::Sampler(
 ,	m_addressU(addressU)
 ,	m_addressV(addressV)
 ,	m_addressW(addressW)
+,	m_compare(compare)
 ,	m_mipBias(0.0f)
 ,	m_ignoreMips(false)
 ,	m_useAnisotropic(false)
@@ -1339,7 +1341,7 @@ void Sampler::setAddressU(Address addressU)
 	m_addressU = addressU;
 }
 
-Sampler::Address Sampler::getAddressU()
+Sampler::Address Sampler::getAddressU() const
 {
 	return m_addressU;
 }
@@ -1349,7 +1351,7 @@ void Sampler::setAddressV(Address addressV)
 	m_addressV = addressV;
 }
 
-Sampler::Address Sampler::getAddressV()
+Sampler::Address Sampler::getAddressV() const
 {
 	return m_addressV;
 }
@@ -1359,9 +1361,19 @@ void Sampler::setAddressW(Address addressW)
 	m_addressW = addressW;
 }
 
-Sampler::Address Sampler::getAddressW()
+Sampler::Address Sampler::getAddressW() const
 {
 	return m_addressW;
+}
+
+void Sampler::setCompare(Compare compare)
+{
+	m_compare = compare;
+}
+
+Sampler::Compare Sampler::getCompare() const
+{
+	return m_compare;
 }
 
 void Sampler::setMipBias(float mipBias)
@@ -1412,6 +1424,20 @@ void Sampler::serialize(ISerializer& s)
 		{ 0, 0 }
 	};
 
+	const MemberEnum< Compare >::Key kCompare[] =
+	{
+		{ L"CmNo", CmNo },
+		{ L"CmAlways", CmAlways },
+		{ L"CmNever", CmNever },
+		{ L"CmLess", CmLess },
+		{ L"CmLessEqual", CmLessEqual },
+		{ L"CmGreater", CmGreater },
+		{ L"CmGreaterEqual", CmGreaterEqual },
+		{ L"CmEqual", CmEqual },
+		{ L"CmNotEqual", CmNotEqual },
+		{ 0, 0 }
+	};
+
 	Node::serialize(s);
 
 	s >> MemberEnum< Filter >(L"minFilter", m_minFilter, kFilter);
@@ -1420,6 +1446,9 @@ void Sampler::serialize(ISerializer& s)
 	s >> MemberEnum< Address >(L"addressU", m_addressU, kAddress);
 	s >> MemberEnum< Address >(L"addressV", m_addressV, kAddress);
 	s >> MemberEnum< Address >(L"addressW", m_addressW, kAddress);
+
+	if (s.getVersion() >= 4)
+		s >> MemberEnum< Compare >(L"compare", m_compare, kCompare);
 
 	if (s.getVersion() >= 1)
 		s >> Member< float >(L"mipBias", m_mipBias);

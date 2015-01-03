@@ -38,7 +38,8 @@ PinType SamplerNodeTraits::getOutputPinType(
 	const PinType* inputPinTypes
 ) const
 {
-	return PntScalar4;
+	const Sampler* samplerNode = checked_type_cast< const Sampler* >(node);
+	return (samplerNode->getCompare() == Sampler::CmNo) ? PntScalar4 : PntScalar1;
 }
 
 PinType SamplerNodeTraits::getInputPinType(
@@ -49,6 +50,7 @@ PinType SamplerNodeTraits::getInputPinType(
 	const PinType* outputPinTypes
 ) const
 {
+	const Sampler* samplerNode = checked_type_cast< const Sampler* >(node);
 	if (inputPin->getName() == L"Texture")
 		return inputPinTypes[0]; //PntTexture;
 	else if (inputPin->getName() == L"Mip")
@@ -58,12 +60,12 @@ PinType SamplerNodeTraits::getInputPinType(
 		switch (inputPinTypes[0])
 		{
 		case PntTexture2D:
-			return PntScalar2;
+			return (samplerNode->getCompare() == Sampler::CmNo) ? PntScalar2 : PntScalar3;
 			break;
 
 		case PntTexture3D:
 		case PntTextureCube:
-			return PntScalar3;
+			return (samplerNode->getCompare() == Sampler::CmNo) ? PntScalar3 : PntScalar4;
 			break;
 
 		default:

@@ -442,7 +442,7 @@ Ref< RenderTargetSet > RenderSystemDx11::createRenderTargetSet(const RenderTarge
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_context->getLock());
 	Ref< RenderTargetSetDx11 > renderTargetSet = new RenderTargetSetDx11(m_context);
-	if (renderTargetSet->create(m_context->getD3DDevice(), desc))
+	if (renderTargetSet->create(desc))
 		return renderTargetSet;
 	else
 		return 0;

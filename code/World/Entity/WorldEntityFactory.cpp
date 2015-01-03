@@ -127,7 +127,7 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 	if (const DirectionalLightEntityData* directionalLightData = dynamic_type_cast< const DirectionalLightEntityData* >(&entityData))
 	{
 		resource::Proxy< render::ITexture > cloudShadowTexture;
-		if (directionalLightData->getCloudShadowTexture().isValid())
+		if (directionalLightData->getCloudShadowTexture())
 		{
 			if (!m_resourceManager->bind(directionalLightData->getCloudShadowTexture(), cloudShadowTexture))
 				return 0;

@@ -2,40 +2,70 @@
 <object type="traktor.world.PostProcessSettings" version="1">
 	<requireHighRange>true</requireHighRange>
 	<definitions>
-		<item type="traktor.world.PostProcessDefineTarget" version="1">
-			<id>Ssao</id>
+		<item type="traktor.world.PostProcessDefineTarget" version="4">
+			<id>SsaoFlip</id>
 			<width>0</width>
 			<height>0</height>
-			<screenDenom>4</screenDenom>
+			<screenWidthDenom>4</screenWidthDenom>
+			<screenHeightDenom>4</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
 			<format>TfR8</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>true</preferTiled>
 			<multiSample>0</multiSample>
+			<clearColor>0, 0, 0, 0</clearColor>
+			<persistent>true</persistent>
 		</item>
-		<item type="traktor.world.PostProcessDefineTarget" version="1">
+		<item type="traktor.world.PostProcessDefineTarget" version="4">
+			<id>SsaoFlop</id>
+			<width>0</width>
+			<height>0</height>
+			<screenWidthDenom>4</screenWidthDenom>
+			<screenHeightDenom>4</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
+			<format>TfR8</format>
+			<depthStencil>false</depthStencil>
+			<preferTiled>true</preferTiled>
+			<multiSample>0</multiSample>
+			<clearColor>0, 0, 0, 0</clearColor>
+			<persistent>true</persistent>
+		</item>
+		<item type="traktor.world.PostProcessDefineTarget" version="4">
 			<id>SsaoBlur1</id>
 			<width>0</width>
 			<height>0</height>
-			<screenDenom>1</screenDenom>
+			<screenWidthDenom>1</screenWidthDenom>
+			<screenHeightDenom>1</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
 			<format>TfR8</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>true</preferTiled>
 			<multiSample>0</multiSample>
+			<clearColor>0, 0, 0, 0</clearColor>
+			<persistent>false</persistent>
 		</item>
-		<item type="traktor.world.PostProcessDefineTarget" version="1">
+		<item type="traktor.world.PostProcessDefineTarget" version="4">
 			<id>SsaoBlur2</id>
 			<width>0</width>
 			<height>0</height>
-			<screenDenom>1</screenDenom>
+			<screenWidthDenom>1</screenWidthDenom>
+			<screenHeightDenom>1</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
 			<format>TfR8</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>true</preferTiled>
 			<multiSample>0</multiSample>
+			<clearColor>0, 0, 0, 0</clearColor>
+			<persistent>false</persistent>
 		</item>
 	</definitions>
 	<steps>
 		<item type="traktor.world.PostProcessStepSetTarget">
-			<target>Ssao</target>
+			<target>SsaoFlip</target>
 		</item>
 		<item type="traktor.world.PostProcessStepSsao" version="1">
 			<shader>{868B48AA-AC86-F64F-9934-671F2BE9DD80}</shader>
@@ -57,15 +87,34 @@
 				</item>
 			</sources>
 		</item>
+		<item type="traktor.world.PostProcessStepTemporal">
+			<shader>{417A5E0A-7FEB-7745-B655-7E708F641024}</shader>
+			<sources>
+				<item>
+					<param>Source</param>
+					<source>SsaoFlop</source>
+					<index>0</index>
+				</item>
+				<item>
+					<param>Depth</param>
+					<source>InputDepth</source>
+					<index>0</index>
+				</item>
+			</sources>
+		</item>
+		<item type="traktor.world.PostProcessStepSwapTargets">
+			<destination>SsaoFlop</destination>
+			<source>SsaoFlip</source>
+		</item>		
 		<item type="traktor.world.PostProcessStepSetTarget">
 			<target>SsaoBlur1</target>
 		</item>
-		<item type="traktor.world.PostProcessStepBlur" version="1">
+		<item type="traktor.world.PostProcessStepBlur" version="2">
 			<shader>{FECC6D88-5127-0247-B896-A6EDC6FE87A9}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
-					<source>Ssao</source>
+					<source>SsaoFlop</source>
 					<index>0</index>
 				</item>
 				<item>
@@ -76,11 +125,12 @@
 			</sources>
 			<direction>2, 0, 0, 0</direction>
 			<taps>8</taps>
+			<blurType>BtGaussian</blurType>
 		</item>
 		<item type="traktor.world.PostProcessStepSetTarget">
 			<target>SsaoBlur2</target>
 		</item>
-		<item type="traktor.world.PostProcessStepBlur" version="1">
+		<item type="traktor.world.PostProcessStepBlur" version="2">
 			<shader>{FECC6D88-5127-0247-B896-A6EDC6FE87A9}</shader>
 			<sources>
 				<item>
@@ -96,6 +146,7 @@
 			</sources>
 			<direction>0, 2, 0, 0</direction>
 			<taps>8</taps>
+			<blurType>BtGaussian</blurType>
 		</item>
 		<item type="traktor.world.PostProcessStepSetTarget">
 			<target>Output</target>

@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Io/IStream.h"
 #include "Core/Io/Reader.h"
 #include "Core/Io/Writer.h"
@@ -11,7 +12,7 @@ namespace traktor
 		namespace
 		{
 
-const int32_t c_version = 1;
+const int32_t c_version = 2;
 
 		}
 
@@ -22,7 +23,7 @@ Ref< Heightfield > HeightfieldFormat::read(IStream* stream, const Vector4& world
 	int32_t version;
 	Reader(stream) >> version;
 	
-	if (version != c_version)
+	if (version != 1 && version != 2)
 		return 0;
 
 	int32_t size;
@@ -40,6 +41,13 @@ Ref< Heightfield > HeightfieldFormat::read(IStream* stream, const Vector4& world
 	uint8_t* cuts = heightfield->getCuts();
 	T_ASSERT_M (cuts, L"No cuts in heightfield");
 	Reader(stream).read(cuts, size * size / 8, sizeof(uint8_t));
+
+	uint8_t* material = heightfield->getMaterial();
+	T_ASSERT_M (material, L"No material in heightfield");
+	if (version == 2)
+		Reader(stream).read(material, size * size, sizeof(uint8_t));
+	else
+		std::memset(material, 0, size * size * sizeof(uint8_t));
 
 	stream->close();
 	return heightfield;
@@ -59,6 +67,12 @@ bool HeightfieldFormat::write(IStream* stream, const Heightfield* heightfield) c
 	Writer(stream).write(
 		heightfield->getCuts(),
 		heightfield->getSize() * heightfield->getSize() / 8,
+		sizeof(uint8_t)
+	);
+
+	Writer(stream).write(
+		heightfield->getMaterial(),
+		heightfield->getSize() * heightfield->getSize(),
 		sizeof(uint8_t)
 	);
 

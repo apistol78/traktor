@@ -67,10 +67,6 @@ Ref< ShaderGraph > replaceBranch(const ShaderGraph* shaderGraph, Branch* branch,
 	if (!shaderGraphResult)
 		return 0;
 
-	shaderGraphResult = ShaderGraphStatic(shaderGraphResult).getConstantFolded();
-	if (!shaderGraphResult)
-		return 0;
-
 	return shaderGraphResult;
 }
 

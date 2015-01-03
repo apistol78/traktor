@@ -42,6 +42,9 @@ public:
 	/*! \brief Get color target texture. */
 	virtual ISimpleTexture* getColorTexture(int index) const = 0;
 
+	/*! \brief Get depth target texture. */
+	virtual ISimpleTexture* getDepthTexture() const = 0;
+
 	/*! \brief Swap color targets. */
 	virtual void swap(int index1, int index2) = 0;
 

@@ -18,7 +18,6 @@ namespace traktor
 	{
 
 class Heightfield;
-class MaterialMask;
 
 	}
 
@@ -67,12 +66,6 @@ public:
 	 */
 	const resource::Proxy< hf::Heightfield >& getHeightfield() const { return m_heightfield; }
 
-	/*! \brief Get material mask resource.
-	 *
-	 * \return Material mask resource.
-	 */
-	const resource::Proxy< hf::MaterialMask >& getMaterialMask() const { return m_materialMask; }
-
 	/*! \brief Get terrain color map resource.
 	 *
 	 * \return Color map resource.
@@ -102,6 +95,12 @@ public:
 	 * \return Cut map resource.
 	 */
 	const resource::Proxy< render::ISimpleTexture >& getCutMap() const { return m_cutMap; }
+
+	/*! \brief Get terrain material mask map resource.
+	 *
+	 * \return Material mask map resource.
+	 */
+	const resource::Proxy< render::ISimpleTexture >& getMaterialMap() const { return m_materialMap; }
 
 	/*! \brief Get terrain coarse shader resource.
 	 *
@@ -134,12 +133,12 @@ private:
 	uint32_t m_detailSkip;
 	uint32_t m_patchDim;
 	resource::Proxy< hf::Heightfield > m_heightfield;
-	resource::Proxy< hf::MaterialMask > m_materialMask;
 	resource::Proxy< render::ISimpleTexture > m_colorMap;
 	resource::Proxy< render::ISimpleTexture > m_normalMap;
 	resource::Proxy< render::ISimpleTexture > m_heightMap;
 	resource::Proxy< render::ISimpleTexture > m_splatMap;
 	resource::Proxy< render::ISimpleTexture > m_cutMap;
+	resource::Proxy< render::ISimpleTexture > m_materialMap;
 	resource::Proxy< render::Shader > m_terrainCoarseShader;
 	resource::Proxy< render::Shader > m_terrainDetailShader;
 	resource::Proxy< render::Shader > m_surfaceShader;

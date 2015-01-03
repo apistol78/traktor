@@ -71,6 +71,7 @@ TerrainEntity::TerrainEntity(resource::IResourceManager* resourceManager, render
 ,	m_handleColorMap(render::getParameterHandle(L"ColorMap"))
 ,	m_handleSplatMap(render::getParameterHandle(L"SplatMap"))
 ,	m_handleCutMap(render::getParameterHandle(L"CutMap"))
+,	m_handleMaterialMap(render::getParameterHandle(L"MaterialMap"))
 ,	m_handleNormals(render::getParameterHandle(L"Normals"))
 ,	m_handleEye(render::getParameterHandle(L"Eye"))
 ,	m_handleWorldOrigin(render::getParameterHandle(L"WorldOrigin"))
@@ -426,6 +427,7 @@ void TerrainEntity::render(
 		renderBlock->programParams->setTextureParameter(m_handleNormals, m_terrain->getNormalMap());
 		renderBlock->programParams->setTextureParameter(m_handleSplatMap, m_terrain->getSplatMap());
 		renderBlock->programParams->setTextureParameter(m_handleCutMap, m_terrain->getCutMap());
+		renderBlock->programParams->setTextureParameter(m_handleMaterialMap, m_terrain->getMaterialMap());
 		renderBlock->programParams->setVectorParameter(m_handleEye, eyePosition);
 		renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, -worldExtent * Scalar(0.5f));
 		renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
@@ -470,6 +472,7 @@ void TerrainEntity::render(
 		renderBlock->programParams->setTextureParameter(m_handleNormals, m_terrain->getNormalMap());
 		renderBlock->programParams->setTextureParameter(m_handleSplatMap, m_terrain->getSplatMap());
 		renderBlock->programParams->setTextureParameter(m_handleCutMap, m_terrain->getCutMap());
+		renderBlock->programParams->setTextureParameter(m_handleMaterialMap, m_terrain->getMaterialMap());
 		renderBlock->programParams->setVectorParameter(m_handleEye, eyePosition);
 		renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, -worldExtent * Scalar(0.5f));
 		renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
@@ -492,6 +495,8 @@ void TerrainEntity::render(
 			renderBlock->programParams->setTextureParameter(m_handleDebugMap, m_terrain->getSplatMap());
 		else if (m_visualizeMode == VmCutMap)
 			renderBlock->programParams->setTextureParameter(m_handleDebugMap, m_terrain->getCutMap());
+		else if (m_visualizeMode == VmMaterialMap)
+			renderBlock->programParams->setTextureParameter(m_handleDebugMap, m_terrain->getMaterialMap());
 
 		renderBlock->programParams->endParameters(worldContext.getRenderContext());
 
@@ -527,14 +532,14 @@ void TerrainEntity::setVisualizeMode(VisualizeMode visualizeMode)
 		detailShader->setCombination(L"VisualizeMap", false);
 	}
 
-	if (m_visualizeMode == VmSurfaceLod || m_visualizeMode == VmPatchLod)
+	if (m_visualizeMode >= VmSurfaceLod && m_visualizeMode <= VmPatchLod)
 	{
 		if (coarseShader)
 			coarseShader->setCombination(L"VisualizeLods", true);
 		if (detailShader)
 			detailShader->setCombination(L"VisualizeLods", true);
 	}
-	else if (m_visualizeMode == VmColorMap || m_visualizeMode == VmNormalMap || m_visualizeMode == VmHeightMap || m_visualizeMode == VmSplatMap || m_visualizeMode == VmCutMap)
+	else if (m_visualizeMode >= VmColorMap && m_visualizeMode <= VmMaterialMap)
 	{
 		if (coarseShader)
 			coarseShader->setCombination(L"VisualizeMap", true);
@@ -616,6 +621,9 @@ bool TerrainEntity::updatePatches()
 
 	if (m_surfaceCache)
 		m_surfaceCache->flushBase();
+
+	for (RefArray< ITerrainLayer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+		(*i)->updatePatches(*this);
 
 	return true;
 }

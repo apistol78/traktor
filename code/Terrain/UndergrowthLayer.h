@@ -5,6 +5,7 @@
 #include "Core/Math/Vector4.h"
 #include "Resource/Proxy.h"
 #include "Terrain/ITerrainLayer.h"
+#include "Terrain/UndergrowthLayerData.h"
 
 namespace traktor
 {
@@ -27,8 +28,6 @@ class IResourceManager;
 
 	namespace terrain
 	{
-
-class UndergrowthLayerData;
 
 class UndergrowthLayer : public ITerrainLayer
 {
@@ -53,25 +52,28 @@ public:
 		world::IWorldRenderPass& worldRenderPass
 	) override;
 
+	virtual void updatePatches(const TerrainEntity& terrainEntity) override;
+
 private:
 	struct Cluster
 	{
 		Vector4 center;
 		float distance;
 		uint8_t plant;
+		float plantScale;
 		bool visible;
 		int32_t from;
 		int32_t to;
 	};
 
-	float m_spreadDistance;
-	float m_cellRadius;
+	UndergrowthLayerData m_layerData;
+
 	Ref< render::VertexBuffer > m_vertexBuffer;
 	Ref< render::IndexBuffer > m_indexBuffer;
 	resource::Proxy< render::Shader > m_shader;
-	AlignedVector< Cluster > m_clusters;
 	AlignedVector< Vector4 > m_plants;
-	Vector4 m_eye;
+	AlignedVector< Cluster > m_clusters;
+	float m_clusterSize;
 };
 
 	}

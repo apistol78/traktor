@@ -1209,6 +1209,19 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 		D3D11_TEXTURE_ADDRESS_BORDER
 	};
 
+	const D3D11_COMPARISON_FUNC c_d3dComparison[] =
+	{
+		D3D11_COMPARISON_NEVER,
+		D3D11_COMPARISON_ALWAYS,
+		D3D11_COMPARISON_NEVER,
+		D3D11_COMPARISON_LESS,
+		D3D11_COMPARISON_LESS_EQUAL,
+		D3D11_COMPARISON_GREATER,
+		D3D11_COMPARISON_GREATER_EQUAL,
+		D3D11_COMPARISON_EQUAL,
+		D3D11_COMPARISON_NOT_EQUAL
+	};
+
 	D3D11_SAMPLER_DESC dsd;
 	std::memset(&dsd, 0, sizeof(dsd));
 
@@ -1223,7 +1236,7 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 
 	dsd.MipLODBias = node->getMipBias();
 	dsd.MaxAnisotropy = 1;
-	dsd.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	dsd.ComparisonFunc = c_d3dComparison[node->getCompare()];
 	dsd.BorderColor[0] =
 	dsd.BorderColor[1] =
 	dsd.BorderColor[2] =
@@ -1258,11 +1271,16 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 		break;
 	}
 
-	if (
-		node->getUseAnisotropic() &&
-		dsd.Filter == (0x10 | 0x4 | 0x1)
-	)
-		dsd.Filter = D3D11_FILTER_ANISOTROPIC;
+	if (node->getCompare() == Sampler::CmNo)
+	{
+		if (
+			node->getUseAnisotropic() &&
+			dsd.Filter == (0x10 | 0x4 | 0x1)
+		)
+			dsd.Filter = D3D11_FILTER_ANISOTROPIC;
+	}
+	else
+		(UINT&)dsd.Filter |= 0x80;
 
 	Adler32 samplerHash;
 	samplerHash.begin();
@@ -1276,36 +1294,89 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 	if (samplers.find(samplerName) == samplers.end())
 	{
 		StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtSamplers);
-		fu << L"SamplerState " << samplerName << L";" << Endl;
+
+		if (node->getCompare() == Sampler::CmNo)
+			fu << L"SamplerState " << samplerName << L";" << Endl;
+		else
+			fu << L"SamplerComparisonState " << samplerName << L";" << Endl;
+
 		cx.getShader().addSampler(samplerName, dsd);
 	}
 
-	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat4);
+	HlslVariable* out = cx.emitOutput(node, L"Output", (node->getCompare() == Sampler::CmNo) ? HtFloat4 : HtFloat);
 
 	if (!mip && cx.inPixel() && !node->getIgnoreMips())
 	{
-		switch (texture->getType())
+		if (node->getCompare() == Sampler::CmNo)
 		{
-		case HtTexture2D:
-			assign(cx, f, out) << textureName << L".Sample(" << samplerName << L", " << texCoord->cast(HtFloat2) << L");" << Endl;
-			break;
-		case HtTexture3D:
-		case HtTextureCube:
-			assign(cx, f, out) << textureName << L".Sample(" << samplerName << L", " << texCoord->cast(HtFloat3) << L");" << Endl;
-			break;
+			switch (texture->getType())
+			{
+			case HtTexture2D:
+				assign(cx, f, out) << textureName << L".Sample(" << samplerName << L", " << texCoord->cast(HtFloat2) << L");" << Endl;
+				break;
+			case HtTexture3D:
+			case HtTextureCube:
+				assign(cx, f, out) << textureName << L".Sample(" << samplerName << L", " << texCoord->cast(HtFloat3) << L");" << Endl;
+				break;
+			}
+		}
+		else
+		{
+			if (!node->getIgnoreMips())
+			{
+				switch (texture->getType())
+				{
+				case HtTexture2D:
+					assign(cx, f, out) << textureName << L".SampleCmp(" << samplerName << L", " << texCoord->cast(HtFloat2) << L", " << texCoord->cast(HtFloat3) << L".z);" << Endl;
+					break;
+				case HtTexture3D:
+				case HtTextureCube:
+					assign(cx, f, out) << textureName << L".SampleCmp(" << samplerName << L", " << texCoord->cast(HtFloat3) << L", " << texCoord->cast(HtFloat4) << L".w);" << Endl;
+					break;
+				}
+			}
+			else
+			{
+				switch (texture->getType())
+				{
+				case HtTexture2D:
+					assign(cx, f, out) << textureName << L".SampleCmpLevelZero(" << samplerName << L", " << texCoord->cast(HtFloat2) << L", " << texCoord->cast(HtFloat3) << L".z);" << Endl;
+					break;
+				case HtTexture3D:
+				case HtTextureCube:
+					assign(cx, f, out) << textureName << L".SampleCmpLevelZero(" << samplerName << L", " << texCoord->cast(HtFloat3) << L", " << texCoord->cast(HtFloat4) << L".w);" << Endl;
+					break;
+				}
+			}
 		}
 	}
 	else
 	{
-		switch (texture->getType())
+		if (node->getCompare() == Sampler::CmNo)
 		{
-		case HtTexture2D:
-			assign(cx, f, out) << textureName << L".SampleLevel(" << samplerName << L", " << texCoord->cast(HtFloat2) << L", " << (mip ? mip->cast(HtFloat) : L"0.0f") << L");" << Endl;
-			break;
-		case HtTexture3D:
-		case HtTextureCube:
-			assign(cx, f, out) << textureName << L".SampleLevel(" << samplerName << L", " << texCoord->cast(HtFloat3) << L", " << (mip ? mip->cast(HtFloat) : L"0.0f") << L");" << Endl;
-			break;
+			switch (texture->getType())
+			{
+			case HtTexture2D:
+				assign(cx, f, out) << textureName << L".SampleLevel(" << samplerName << L", " << texCoord->cast(HtFloat2) << L", " << (mip ? mip->cast(HtFloat) : L"0.0f") << L");" << Endl;
+				break;
+			case HtTexture3D:
+			case HtTextureCube:
+				assign(cx, f, out) << textureName << L".SampleLevel(" << samplerName << L", " << texCoord->cast(HtFloat3) << L", " << (mip ? mip->cast(HtFloat) : L"0.0f") << L");" << Endl;
+				break;
+			}
+		}
+		else
+		{
+			switch (texture->getType())
+			{
+			case HtTexture2D:
+				assign(cx, f, out) << textureName << L".SampleCmpLevelZero(" << samplerName << L", " << texCoord->cast(HtFloat2) << L", " << texCoord->cast(HtFloat3) << L".z);" << Endl;
+				break;
+			case HtTexture3D:
+			case HtTextureCube:
+				assign(cx, f, out) << textureName << L".SampleCmpLevelZero(" << samplerName << L", " << texCoord->cast(HtFloat3) << L", " << texCoord->cast(HtFloat4) << L".w);" << Endl;
+				break;
+			}
 		}
 	}
 

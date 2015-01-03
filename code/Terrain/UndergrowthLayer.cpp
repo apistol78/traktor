@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Core/Math/Half.h"
 #include "Core/Math/RandomGeometry.h"
 #include "Heightfield/Heightfield.h"
@@ -37,8 +38,7 @@ render::handle_t s_handleHeightfield;
 render::handle_t s_handleSurface;
 render::handle_t s_handleWorldExtent;
 render::handle_t s_handleEye;
-render::handle_t s_handleSpreadDistance;
-render::handle_t s_handleCellRadius;
+render::handle_t s_handleMaxDistance;
 render::handle_t s_handleInstances1;
 render::handle_t s_handleInstances2;
 
@@ -57,17 +57,14 @@ Vertex packVertex(const Vector4& position, float u, float v)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.UndergrowthLayer", UndergrowthLayer, ITerrainLayer)
 
 UndergrowthLayer::UndergrowthLayer()
-:	m_spreadDistance(0.0f)
-,	m_cellRadius(0.0f)
-,	m_eye(Vector4::origo())
+:	m_clusterSize(0.0f)
 {
 	s_handleNormals = render::getParameterHandle(L"Normals");
 	s_handleHeightfield = render::getParameterHandle(L"Heightfield");
 	s_handleSurface = render::getParameterHandle(L"Surface");
 	s_handleWorldExtent = render::getParameterHandle(L"WorldExtent");
 	s_handleEye = render::getParameterHandle(L"Eye");
-	s_handleSpreadDistance = render::getParameterHandle(L"SpreadDistance");
-	s_handleCellRadius = render::getParameterHandle(L"CellRadius");
+	s_handleMaxDistance = render::getParameterHandle(L"MaxDistance");
 	s_handleInstances1 = render::getParameterHandle(L"Instances1");
 	s_handleInstances2 = render::getParameterHandle(L"Instances2");
 }
@@ -79,10 +76,13 @@ bool UndergrowthLayer::create(
 	const TerrainEntity& terrainEntity
 )
 {
-	const resource::Proxy< Terrain >& terrain = terrainEntity.getTerrain();
+	m_layerData = layerData;
 
-	if (!resourceManager->bind(layerData.m_shader, m_shader))
+	if (!resourceManager->bind(m_layerData.m_shader, m_shader))
 		return false;
+
+	const resource::Proxy< Terrain >& terrain = terrainEntity.getTerrain();
+	const resource::Proxy< hf::Heightfield >& heightfield = terrain->getHeightfield();
 
 	std::vector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(Vertex, position)));
@@ -100,8 +100,6 @@ bool UndergrowthLayer::create(
 	Vertex* vertex = static_cast< Vertex* >(m_vertexBuffer->lock());
 	if (!vertex)
 		return false;
-
-	Random rnd;
 
 	Vector4 position(0.0f, 0.0f, 0.0f);
 	Vector4 axisX(1.0f, 0.0f, 0.0f);
@@ -142,29 +140,7 @@ bool UndergrowthLayer::create(
 
 	m_indexBuffer->unlock();
 
-	m_plants.resize(layerData.m_density * 2);
-
-	RandomGeometry random;
-	for (int32_t i = 0; i < layerData.m_density; i += /*InstanceCount*/120)
-	{
-		Cluster c;
-		c.center = Vector4(
-			(random.nextFloat() * 2.0f - 1.0f) * terrain->getHeightfield()->getWorldExtent().x(),
-			0.0f,
-			(random.nextFloat() * 2.0f - 1.0f) * terrain->getHeightfield()->getWorldExtent().z(),
-			1.0f
-		);
-		c.distance = std::numeric_limits< float >::max();
-		c.visible = false;
-		c.plant = 0;
-		c.from = i;
-		c.to = min< int32_t >(i + /*InstanceCount*/120, layerData.m_density);
-		m_clusters.push_back(c);
-	}
-
-	m_spreadDistance = layerData.m_spreadDistance;
-	m_cellRadius = layerData.m_cellRadius;
-
+	updatePatches(terrainEntity);
 	return true;
 }
 
@@ -194,69 +170,48 @@ void UndergrowthLayer::render(
 	if (updateClusters)
 	{
 		Frustum viewFrustum = worldRenderView.getViewFrustum();
-		viewFrustum.setFarZ(Scalar(m_spreadDistance + m_cellRadius * 2.0f));
+		viewFrustum.setFarZ(Scalar(m_layerData.m_spreadDistance + m_clusterSize));
 
 		// Only perform "replanting" when moved more than one unit.
-		if ((eye - m_eye).length() >= 1.0f)
+		//if ((eye - m_eye).length() >= 1.0f)
 		{
-			m_eye = eye;
+			//m_eye = eye;
 
 			for (AlignedVector< Cluster >::iterator i = m_clusters.begin(); i != m_clusters.end(); ++i)
 			{
-				Vector4 delta = i->center - m_eye;
-				Scalar distance = delta.length();
+				i->distance = (i->center - eye).length();
+
+				bool visible = i->visible;
+
+				i->visible = (viewFrustum.inside(view * i->center, Scalar(m_clusterSize)) != Frustum::IrOutside);
+				if (!i->visible)
+					continue;
+
+				if (i->visible && visible)
+					continue;
 
 				RandomGeometry random(int32_t(i->center.x() * 919.0f + i->center.z() * 463.0f));
-
-				if (distance > m_spreadDistance + m_cellRadius)
+				for (int32_t j = i->from; j < i->to; ++j)
 				{
-					float phi = (random.nextFloat() - 0.5f) * HALF_PI;
-					float err = distance - (m_spreadDistance + m_cellRadius);
+					float dx = (random.nextFloat() * 2.0f - 1.0f) * m_clusterSize;
+					float dz = (random.nextFloat() * 2.0f - 1.0f) * m_clusterSize;
 
-					i->center = m_eye + rotateY(phi) * (-delta * Scalar((m_spreadDistance + m_cellRadius - err - FUZZY_EPSILON) / distance));
+					float px = i->center.x() + dx;
+					float pz = i->center.z() + dz;
 
-					float cy = terrain->getHeightfield()->getWorldHeight(i->center.x(), i->center.z());
-					i->center = i->center * Vector4(1.0f, 0.0f, 1.0f, 0.0f) + Vector4(0.0f, cy, 0.0f, 1.0f);
-
-					float gx, gz;
-					terrain->getHeightfield()->worldToGrid(i->center.x(), i->center.z(), gx, gz);
-
-					i->plant = 1;
-					for (int32_t j = i->from; j < i->to; ++j)
-					{
-						float dx, dz;
-									
-						do 
-						{
-							dx = (random.nextFloat() * 2.0f - 1.0f) * m_cellRadius;
-							dz = (random.nextFloat() * 2.0f - 1.0f) * m_cellRadius;
-						}
-						while (std::sqrt(dx * dx + dz * dz) > m_cellRadius);
-
-						float px = i->center.x() + dx;
-						float pz = i->center.z() + dz;
-
-						m_plants[j * 2 + 0] = Vector4(
-							px,
-							pz,
-							0.0f,
-							0.0f
-						);
-						m_plants[j * 2 + 1] = Vector4(
-							random.nextFloat() * 0.5f + 0.5f,
-							random.nextFloat(),
-							0.0f,
-							0.0f
-						);
-					}
+					m_plants[j * 2 + 0] = Vector4(
+						px,
+						pz,
+						float(i->plant),
+						0.0f
+					);
+					m_plants[j * 2 + 1] = Vector4(
+						i->plantScale * (random.nextFloat() * 0.5f + 0.5f),
+						random.nextFloat(),
+						0.0f,
+						0.0f
+					);
 				}
-
-				if (i->plant)
-					i->visible = (viewFrustum.inside(view * i->center, Scalar(m_cellRadius)) != Frustum::IrOutside);
-				else
-					i->visible = false;
-
-				i->distance = distance;
 			}
 		}
 	}
@@ -279,50 +234,151 @@ void UndergrowthLayer::render(
 		if (!i->visible)
 			continue;
 
-		float fc = 1.0f - clamp(i->distance / (m_spreadDistance + m_cellRadius), 0.0f, 1.0f);
 		int32_t count = i->to - i->from;
-		
-		count = int32_t(count * (fc * fc));
-		if (count <= 0)
-			continue;
-		
-		for (int32_t j = 0; j < count; ++j)
+		for (int32_t j = 0; j < count; )
 		{
-			instanceData1[j] = m_plants[(j + i->from) * 2 + 0];
-			instanceData2[j] = m_plants[(j + i->from) * 2 + 1];
+			int32_t batch = std::min(count - j, /*InstanceCount*/120);
+
+			for (int32_t k = 0; k < batch; ++k, ++j)
+			{
+				instanceData1[k] = m_plants[(j + i->from) * 2 + 0];
+				instanceData2[k] = m_plants[(j + i->from) * 2 + 1];
+			}
+
+			render::IndexedInstancingRenderBlock* renderBlock = renderContext->alloc< render::IndexedInstancingRenderBlock >();
+
+			renderBlock->distance = i->distance;
+			renderBlock->program = program;
+			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+			renderBlock->indexBuffer = m_indexBuffer;
+			renderBlock->vertexBuffer = m_vertexBuffer;
+			renderBlock->primitive = render::PtTriangles;
+			renderBlock->offset = 0;
+			renderBlock->count = 2 * 2;
+			renderBlock->minIndex = 0;
+			renderBlock->maxIndex = 3;
+			renderBlock->instanceCount = batch;
+
+			renderBlock->programParams->beginParameters(renderContext);
+			worldRenderPass.setProgramParameters(renderBlock->programParams, false);
+			renderBlock->programParams->setTextureParameter(s_handleNormals, terrain->getNormalMap());
+			renderBlock->programParams->setTextureParameter(s_handleHeightfield, terrain->getHeightMap());
+			renderBlock->programParams->setTextureParameter(s_handleSurface, terrainEntity.getSurfaceCache()->getBaseTexture());
+			renderBlock->programParams->setVectorParameter(s_handleWorldExtent, terrain->getHeightfield()->getWorldExtent());
+			renderBlock->programParams->setVectorParameter(s_handleEye, eye);
+			renderBlock->programParams->setFloatParameter(s_handleMaxDistance, m_layerData.m_spreadDistance + m_clusterSize);
+			renderBlock->programParams->setVectorArrayParameter(s_handleInstances1, instanceData1, count);
+			renderBlock->programParams->setVectorArrayParameter(s_handleInstances2, instanceData2, count);
+			renderBlock->programParams->endParameters(renderContext);
+
+			renderContext->draw(
+				render::RpOpaque,
+				renderBlock
+			);
 		}
+	}
+}
 
-		render::IndexedInstancingRenderBlock* renderBlock = renderContext->alloc< render::IndexedInstancingRenderBlock >();
+void UndergrowthLayer::updatePatches(const TerrainEntity& terrainEntity)
+{
+	m_plants.resize(0);
+	m_clusters.resize(0);
 
-		renderBlock->distance = i->distance;
-		renderBlock->program = program;
-		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-		renderBlock->indexBuffer = m_indexBuffer;
-		renderBlock->vertexBuffer = m_vertexBuffer;
-		renderBlock->primitive = render::PtTriangles;
-		renderBlock->offset = 0;
-		renderBlock->count = 2 * 2;
-		renderBlock->minIndex = 0;
-		renderBlock->maxIndex = 3;
-		renderBlock->instanceCount = count;
+	const resource::Proxy< Terrain >& terrain = terrainEntity.getTerrain();
+	const resource::Proxy< hf::Heightfield >& heightfield = terrain->getHeightfield();
 
-		renderBlock->programParams->beginParameters(renderContext);
-		worldRenderPass.setProgramParameters(renderBlock->programParams, false);
-		renderBlock->programParams->setTextureParameter(s_handleNormals, terrain->getNormalMap());
-		renderBlock->programParams->setTextureParameter(s_handleHeightfield, terrain->getHeightMap());
-		renderBlock->programParams->setTextureParameter(s_handleSurface, terrainEntity.getSurfaceCache()->getBaseTexture());
-		renderBlock->programParams->setVectorParameter(s_handleWorldExtent, terrain->getHeightfield()->getWorldExtent());
-		renderBlock->programParams->setVectorParameter(s_handleEye, eye);
-		renderBlock->programParams->setFloatParameter(s_handleSpreadDistance, m_spreadDistance);
-		renderBlock->programParams->setFloatParameter(s_handleCellRadius, m_cellRadius);
-		renderBlock->programParams->setVectorArrayParameter(s_handleInstances1, instanceData1, count);
-		renderBlock->programParams->setVectorArrayParameter(s_handleInstances2, instanceData2, count);
-		renderBlock->programParams->endParameters(renderContext);
+	// Get set of materials which have undergrowth.
+	std::set< uint8_t > undergrowthMaterials;
+	for (std::vector< UndergrowthLayerData::Plant >::const_iterator i = m_layerData.m_plants.begin(); i != m_layerData.m_plants.end(); ++i)
+		undergrowthMaterials.insert(i->material);
 
-		renderContext->draw(
-			render::RpOpaque,
-			renderBlock
-		);
+	int32_t size = heightfield->getSize();
+	Vector4 extentPerGrid = heightfield->getWorldExtent() / Scalar(size);
+
+	m_clusterSize = (16.0f / 2.0f) * max< float >(extentPerGrid.x(), extentPerGrid.z());
+
+	// Create clusters.
+	RandomGeometry random;
+	for (int32_t z = 0; z < size; z += 16)
+	{
+		for (int32_t x = 0; x < size; x += 16)
+		{
+			std::set< uint8_t > heightfieldMaterials;
+
+			// Get materials inside cluster cell.
+			for (int32_t cz = 0; cz < 16; ++cz)
+			{
+				for (int32_t cx = 0; cx < 16; ++cx)
+				{
+					uint8_t material = heightfield->getGridMaterial(x + cx, z + cz);
+					heightfieldMaterials.insert(material);
+				}
+			}
+
+			// Determine which plants in this cluster cells.
+			std::vector< uint8_t > materials(16);
+			std::vector< uint8_t >::iterator it = std::set_intersection(
+				undergrowthMaterials.begin(),
+				undergrowthMaterials.end(),
+				heightfieldMaterials.begin(),
+				heightfieldMaterials.end(), 
+				materials.begin()
+			);
+			materials.resize(it - materials.begin());
+			if (materials.empty())
+				continue;
+
+			float wx, wz;
+			heightfield->gridToWorld(x + 8, z + 8, wx, wz);
+
+			float wy = heightfield->getWorldHeight(wx, wz);
+
+			for (std::vector< uint8_t >::const_iterator i = materials.begin(); i != materials.end(); ++i)
+			{
+				const UndergrowthLayerData::Plant* plantDef = 0;
+				for (std::vector< UndergrowthLayerData::Plant >::const_iterator j = m_layerData.m_plants.begin(); j != m_layerData.m_plants.end(); ++j)
+				{
+					if (j->material == *i)
+					{
+						plantDef = &(*j);
+						break;
+					}
+				}
+
+				int32_t densityFactor = 0;
+				for (int32_t cz = 0; cz < 16; ++cz)
+				{
+					for (int32_t cx = 0; cx < 16; ++cx)
+					{
+						uint8_t material = heightfield->getGridMaterial(x + cx, z + cz);
+						if (material == *i)
+							++densityFactor;
+					}
+				}
+
+				int32_t density = (plantDef->density * densityFactor) / (16 * 16);
+				if (density <= 4)
+					continue;
+
+				size_t from = m_plants.size();
+				for (int32_t j = 0; j < density; ++j)
+				{
+					m_plants.push_back(Vector4::zero());
+					m_plants.push_back(Vector4::zero());
+				}
+				size_t to = m_plants.size();
+
+				Cluster c;
+				c.center = Vector4(wx, wy, wz, 1.0f);
+				c.distance = std::numeric_limits< float >::max();
+				c.visible = false;
+				c.plant = plantDef->plant;
+				c.plantScale = plantDef->scale * (0.5f + 0.5f * densityFactor / (16.0f * 16.0f));
+				c.from = from / 2;
+				c.to = to / 2;
+				m_clusters.push_back(c);
+			}
+		}
 	}
 }
 

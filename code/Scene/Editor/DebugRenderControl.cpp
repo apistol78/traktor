@@ -1,9 +1,12 @@
 #include <limits>
+#include "Core/Misc/SafeDestroy.h"
 #include "Scene/Editor/DebugRenderControl.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
-#include "Render/PrimitiveRenderer.h"
+#include "Render/ScreenRenderer.h"
+#include "Render/Shader.h"
+#include "Resource/IResourceManager.h"
 #include "Ui/Widget.h"
 #include "Ui/Itf/IWidget.h"
 
@@ -11,6 +14,12 @@ namespace traktor
 {
 	namespace scene
 	{
+		namespace
+		{
+
+const resource::Id< render::Shader > c_shader(Guid(L"{949B3C96-0196-F24E-B36E-98DD504BCE9D}"));
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.DebugRenderControl", DebugRenderControl, ui::Widget)
 
@@ -43,11 +52,13 @@ bool DebugRenderControl::create(ui::Widget* parent, SceneEditorContext* context)
 	if (!m_renderView)
 		return false;
 
-	m_primitiveRenderer = new render::PrimitiveRenderer();
-	if (!m_primitiveRenderer->create(
-		m_context->getResourceManager(),
+	m_screenRenderer = new render::ScreenRenderer();
+	if (!m_screenRenderer->create(
 		m_context->getRenderSystem()
 	))
+		return false;
+
+	if (!m_context->getResourceManager()->bind(c_shader, m_shader))
 		return false;
 
 	m_renderWidget->addEventHandler< ui::MouseButtonDownEvent >(this, &DebugRenderControl::eventButtonDown);
@@ -63,23 +74,9 @@ bool DebugRenderControl::create(ui::Widget* parent, SceneEditorContext* context)
 
 void DebugRenderControl::destroy()
 {
-	if (m_primitiveRenderer)
-	{
-		m_primitiveRenderer->destroy();
-		m_primitiveRenderer = 0;
-	}
-
-	if (m_renderView)
-	{
-		m_renderView->close();
-		m_renderView = 0;
-	}
-
-	if (m_renderWidget)
-	{
-		m_renderWidget->destroy();
-		m_renderWidget = 0;
-	}
+	safeDestroy(m_screenRenderer);
+	safeClose(m_renderView);
+	safeDestroy(m_renderWidget);
 }
 
 void DebugRenderControl::updateWorldRenderer()
@@ -186,7 +183,7 @@ void DebugRenderControl::eventSize(ui::SizeEvent* event)
 
 void DebugRenderControl::eventPaint(ui::PaintEvent* event)
 {
-	if (!m_renderView || !m_primitiveRenderer)
+	if (!m_renderView || !m_screenRenderer)
 		return;
 
 	if (m_renderView->begin(render::EtCyclop))
@@ -199,36 +196,26 @@ void DebugRenderControl::eventPaint(ui::PaintEvent* event)
 			128
 		);
 
+		const wchar_t* c_techniques[] =
+		{
+			L"Depth",
+			L"Normals",
+			L"SpecularRoughness",
+			L"SurfaceColor",
+			L"SpecularTerm",
+			L"Reflectivity",
+			L"ShadowMap",
+			L"ShadowMask",
+			L"Default",
+			L"Default",
+			L"Default",
+			L"Default"
+		};
+
 		const RefArray< render::ITexture >& textures = m_context->getDebugTextures();
 		if (!textures.empty())
 		{
 			int32_t size = int32_t(std::sqrt(float(textures.size())) + 0.5f);
-			float ratio = float(m_dirtySize.cx) / m_dirtySize.cy;
-
-			Matrix44 projection;
-			if (ratio < 1.0f)
-			{
-				projection = orthoLh(
-					m_renderScale,
-					m_renderScale / ratio,
-					-1.0f,
-					1.0f
-				);
-			}
-			else
-			{
-				projection = orthoLh(
-					m_renderScale * ratio,
-					m_renderScale,
-					-1.0f,
-					1.0f
-				);
-			}
-
-			m_primitiveRenderer->begin(m_renderView, projection);
-			m_primitiveRenderer->setClipDistance(100.0f);
-			m_primitiveRenderer->pushView(Matrix44::identity());
-			m_primitiveRenderer->pushDepthState(false, false, false);
 
 			for (uint32_t i = 0; i < textures.size(); ++i)
 			{
@@ -238,17 +225,17 @@ void DebugRenderControl::eventPaint(ui::PaintEvent* event)
 				ox += m_renderOffset.x;
 				oy += m_renderOffset.y;
 
-				m_primitiveRenderer->drawTextureQuad(
-					Vector4(-1.0f + ox,  1.0f + oy, 0.0f, 1.0f), Vector2(0.0f, 0.0f),
-					Vector4( 1.0f + ox,  1.0f + oy, 0.0f, 1.0f), Vector2(1.0f, 0.0f),
-					Vector4( 1.0f + ox, -1.0f + oy, 0.0f, 1.0f), Vector2(1.0f, 1.0f),
-					Vector4(-1.0f + ox, -1.0f + oy, 0.0f, 1.0f), Vector2(0.0f, 1.0f),
-					Color4ub(255, 255, 255),
-					textures[i]
-				);
-			}
+				m_shader->setTechnique(c_techniques[i]);
+				m_shader->setTextureParameter(L"DebugTexture", textures[i]);
+				m_shader->setVectorParameter(L"Transform", Vector4(
+					ox,
+					oy,
+					m_renderScale,
+					0.0f
+				));
 
-			m_primitiveRenderer->end();
+				m_screenRenderer->draw(m_renderView, m_shader);
+			}
 		}
 
 		m_renderView->end();
