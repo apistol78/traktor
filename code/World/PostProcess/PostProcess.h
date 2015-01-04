@@ -10,6 +10,7 @@
 #include "Core/Thread/Semaphore.h"
 #include "Render/Types.h"
 #include "Resource/Proxy.h"
+#include "World/WorldTypes.h"
 #include "World/PostProcess/PostProcessStep.h"
 
 // import/export mechanism.
@@ -88,8 +89,6 @@ public:
 
 	render::RenderTargetSet* getTarget(render::handle_t id);
 
-	void getTargets(RefArray< render::RenderTargetSet >& outTargets) const;
-
 	void swapTargets(render::handle_t id0, render::handle_t id1);
 
 	void discardTarget(render::handle_t id);
@@ -105,6 +104,8 @@ public:
 	void prepareShader(render::Shader* shader) const;
 
 	bool requireHighRange() const;
+
+	void getDebugTargets(std::vector< DebugTarget >& outTargets) const;
 
 private:
 	struct Target

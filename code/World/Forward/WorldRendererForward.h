@@ -85,7 +85,7 @@ public:
 
 	virtual PostProcess* getVisualPostProcess();
 
-	virtual void getTargets(RefArray< render::ITexture >& outTargets) const;
+	virtual void getDebugTargets(std::vector< DebugTarget >& outTargets) const;
 
 private:
 	struct Slice

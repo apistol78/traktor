@@ -5,6 +5,7 @@
 #include "Core/Containers/SmallMap.h"
 #include "Core/Math/Frustum.h"
 #include "Ui/EventSubject.h"
+#include "World/WorldTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -222,11 +223,11 @@ public:
 	/*! \name Debug texture view. */
 	//@{
 
-	void clearDebugTextures();
+	void clearDebugTargets();
 
-	void addDebugTexture(render::ITexture* debugTexture);
+	void addDebugTarget(const world::DebugTarget& debugTarget);
 
-	const RefArray< render::ITexture >& getDebugTextures() const;
+	const std::vector< world::DebugTarget >& getDebugTargets() const;
 
 	//@}
 
@@ -305,7 +306,7 @@ private:
 	Ref< world::IEntityEventManager > m_eventManager;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
-	RefArray< render::ITexture > m_debugTextures;
+	std::vector< world::DebugTarget > m_debugTargets;
 	Ref< physics::PhysicsManager > m_physicsManager;
 	RefArray< ISceneEditorProfile > m_editorProfiles;
 	RefArray< ISceneEditorPlugin > m_editorPlugins;

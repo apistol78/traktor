@@ -196,28 +196,24 @@ void DebugRenderControl::eventPaint(ui::PaintEvent* event)
 			128
 		);
 
-		const wchar_t* c_techniques[] =
+		const wchar_t* c_visualizeTechniques[] =
 		{
+			L"Default",
 			L"Depth",
 			L"Normals",
 			L"SpecularRoughness",
-			L"SurfaceColor",
 			L"SpecularTerm",
 			L"Reflectivity",
 			L"ShadowMap",
-			L"ShadowMask",
-			L"Default",
-			L"Default",
-			L"Default",
-			L"Default"
+			L"ShadowMask"
 		};
 
-		const RefArray< render::ITexture >& textures = m_context->getDebugTextures();
-		if (!textures.empty())
+		const std::vector< world::DebugTarget >& debugTargets = m_context->getDebugTargets();
+		if (!debugTargets.empty())
 		{
-			int32_t size = int32_t(std::sqrt(float(textures.size())) + 0.5f);
+			int32_t size = int32_t(std::sqrt(float(debugTargets.size())) + 0.5f);
 
-			for (uint32_t i = 0; i < textures.size(); ++i)
+			for (uint32_t i = 0; i < debugTargets.size(); ++i)
 			{
 				float ox =  float(i % size) * 2.1f;
 				float oy = -float(i / size) * 2.1f;
@@ -225,14 +221,9 @@ void DebugRenderControl::eventPaint(ui::PaintEvent* event)
 				ox += m_renderOffset.x;
 				oy += m_renderOffset.y;
 
-				m_shader->setTechnique(c_techniques[i]);
-				m_shader->setTextureParameter(L"DebugTexture", textures[i]);
-				m_shader->setVectorParameter(L"Transform", Vector4(
-					ox,
-					oy,
-					m_renderScale,
-					0.0f
-				));
+				m_shader->setTechnique(c_visualizeTechniques[debugTargets[i].visualize]);
+				m_shader->setTextureParameter(L"DebugTexture", debugTargets[i].texture);
+				m_shader->setVectorParameter(L"Transform", Vector4(ox, oy, m_renderScale, 0.0f));
 
 				m_screenRenderer->draw(m_renderView, m_shader);
 			}
