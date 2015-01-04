@@ -76,10 +76,11 @@ Vector4 normalAt(const Heightfield* heightfield, int32_t u, int32_t v)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.HeightfieldTexturePipeline", 3, HeightfieldTexturePipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.HeightfieldTexturePipeline", 4, HeightfieldTexturePipeline, editor::DefaultPipeline)
 
 HeightfieldTexturePipeline::HeightfieldTexturePipeline()
 :	m_use32bitHeightFormat(false)
+,	m_compressNormals(false)
 {
 }
 
@@ -87,6 +88,7 @@ bool HeightfieldTexturePipeline::create(const editor::IPipelineSettings* setting
 {
 	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
 	m_use32bitHeightFormat = settings->getProperty< PropertyBoolean >(L"HeightfieldTexturePipeline.Use32bitHeightFormat", false);
+	m_compressNormals = settings->getProperty< PropertyBoolean >(L"HeightfieldTexturePipeline.CompressNormals", false);
 	return true;
 }
 
@@ -238,8 +240,8 @@ bool HeightfieldTexturePipeline::buildOutput(
 		output->m_scaleImage = false;
 		output->m_scaleWidth = 0;
 		output->m_scaleHeight = 0;
-		output->m_enableCompression = true;
-		output->m_enableNormalMapCompression = true;
+		output->m_enableCompression = m_compressNormals;
+		output->m_enableNormalMapCompression = m_compressNormals;
 		output->m_inverseNormalMapY = false;
 		output->m_linearGamma = true;
 		output->m_generateSphereMap = false;

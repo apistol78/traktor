@@ -52,6 +52,7 @@ public:
 private:
 	std::wstring m_assetPath;
 	bool m_use32bitHeightFormat;
+	bool m_compressNormals;
 	mutable Semaphore m_lock;
 };
 

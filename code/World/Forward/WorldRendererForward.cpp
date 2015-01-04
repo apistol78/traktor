@@ -895,13 +895,19 @@ PostProcess* WorldRendererForward::getVisualPostProcess()
 	return m_visualPostProcess;
 }
 
-void WorldRendererForward::getTargets(RefArray< render::ITexture >& outTargets) const
+void WorldRendererForward::getDebugTargets(std::vector< DebugTarget >& outTargets) const
 {
-	outTargets.resize(4);
-	outTargets[0] = m_depthTargetSet ? m_depthTargetSet->getColorTexture(0) : 0;
-	outTargets[1] = m_shadowTargetSet ? m_shadowTargetSet->getColorTexture(0) : 0;
-	outTargets[2] = m_shadowMaskProjectTargetSet ? m_shadowMaskProjectTargetSet->getColorTexture(0) : 0;
-	outTargets[3] = m_shadowMaskFilterTargetSet ? m_shadowMaskFilterTargetSet->getColorTexture(0) : 0;
+	if (m_depthTargetSet)
+		outTargets.push_back(DebugTarget(L"View depth", DtvDepth, m_depthTargetSet->getColorTexture(0)));
+
+	if (m_shadowTargetSet)
+		outTargets.push_back(DebugTarget(L"Shadow map (last cascade)", DtvShadowMap, m_shadowTargetSet->getDepthTexture()));
+	
+	if (m_shadowMaskProjectTargetSet)
+		outTargets.push_back(DebugTarget(L"Shadow mask (projection)", DtvShadowMask, m_shadowMaskProjectTargetSet->getDepthTexture()));
+
+	if (m_shadowMaskFilterTargetSet)
+		outTargets.push_back(DebugTarget(L"Shadow mask (SS filtered)", DtvShadowMask, m_shadowMaskFilterTargetSet->getDepthTexture()));
 }
 
 void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity* entity, int frame)

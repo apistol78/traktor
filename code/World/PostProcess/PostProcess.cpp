@@ -220,15 +220,6 @@ render::RenderTargetSet* PostProcess::getTarget(render::handle_t id)
 	return t.rts;
 }
 
-void PostProcess::getTargets(RefArray< render::RenderTargetSet >& outTargets) const
-{
-	for (SmallMap< render::handle_t, Target >::const_iterator i = m_targets.begin(); i != m_targets.end(); ++i)
-	{
-		if (i->second.rts)
-			outTargets.push_back(i->second.rts);
-	}
-}
-
 void PostProcess::swapTargets(render::handle_t id0, render::handle_t id1)
 {
 	std::swap(m_targets[id0], m_targets[id1]);
@@ -286,6 +277,15 @@ void PostProcess::prepareShader(render::Shader* shader) const
 bool PostProcess::requireHighRange() const
 {
 	return m_requireHighRange;
+}
+
+void PostProcess::getDebugTargets(std::vector< DebugTarget >& outTargets) const
+{
+	for (SmallMap< render::handle_t, Target >::const_iterator i = m_targets.begin(); i != m_targets.end(); ++i)
+	{
+		if (i->second.rts)
+			outTargets.push_back(DebugTarget(L"Post process target", DtvDefault, i->second.rts->getColorTexture(0)));
+	}
 }
 
 	}

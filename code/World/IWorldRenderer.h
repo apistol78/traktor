@@ -222,7 +222,7 @@ public:
 
 	virtual PostProcess* getVisualPostProcess() = 0;
 
-	virtual void getTargets(RefArray< render::ITexture >& outTargets) const = 0;
+	virtual void getDebugTargets(std::vector< DebugTarget >& outTargets) const = 0;
 
 	//@}
 };

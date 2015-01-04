@@ -1178,21 +1178,26 @@ PostProcess* WorldRendererDeferred::getVisualPostProcess()
 	return m_visualPostProcess;
 }
 
-void WorldRendererDeferred::getTargets(RefArray< render::ITexture >& outTargets) const
+void WorldRendererDeferred::getDebugTargets(std::vector< DebugTarget >& outTargets) const
 {
-	outTargets.resize(8);
-	outTargets[0] = m_gbufferTargetSet ? m_gbufferTargetSet->getColorTexture(0) : 0;	// Depth
-	outTargets[1] = m_gbufferTargetSet ? m_gbufferTargetSet->getColorTexture(1) : 0;	// Normals
-	outTargets[2] = m_gbufferTargetSet ? m_gbufferTargetSet->getColorTexture(1) : 0;	// Specular roughness
-	outTargets[3] = m_gbufferTargetSet ? m_gbufferTargetSet->getColorTexture(2) : 0;	// Surface color
-	outTargets[4] = m_gbufferTargetSet ? m_gbufferTargetSet->getColorTexture(2) : 0;	// Specular term
-	outTargets[5] = m_gbufferTargetSet ? m_gbufferTargetSet->getColorTexture(2) : 0;	// Reflectivity
-	outTargets[6] = m_shadowTargetSet ? m_shadowTargetSet->getDepthTexture() : 0;		// Shadow map
-	outTargets[7] = 0;																	// Shadow mask
+	if (m_gbufferTargetSet)
+	{
+		outTargets.push_back(DebugTarget(L"GBuffer depth", DtvDepth, m_gbufferTargetSet->getColorTexture(0)));
+		outTargets.push_back(DebugTarget(L"GBuffer normals", DtvNormals, m_gbufferTargetSet->getColorTexture(1)));
+		outTargets.push_back(DebugTarget(L"GBuffer specular roughness", DtvDeferredSpecularRoughness, m_gbufferTargetSet->getColorTexture(1)));
+		outTargets.push_back(DebugTarget(L"GBuffer surface color", DtvDefault, m_gbufferTargetSet->getColorTexture(2)));
+		outTargets.push_back(DebugTarget(L"GBuffer specular term", DtvDeferredSpecularTerm, m_gbufferTargetSet->getColorTexture(2)));
+		outTargets.push_back(DebugTarget(L"GBuffer reflectivity", DtvDeferredReflectivity, m_gbufferTargetSet->getColorTexture(2)));
+	}
+
+	if (m_shadowTargetSet)
+		outTargets.push_back(DebugTarget(L"Shadow map (last cascade)", DtvShadowMap, m_shadowTargetSet->getDepthTexture()));
+	
+	if (m_shadowMaskProjectTargetSet)
+		outTargets.push_back(DebugTarget(L"Shadow mask (projection)", DtvShadowMask, m_shadowMaskProjectTargetSet->getDepthTexture()));
+
 	if (m_shadowMaskFilterTargetSet)
-		outTargets[7] = m_shadowMaskFilterTargetSet->getColorTexture(0);
-	else if (m_shadowMaskProjectTargetSet)
-		outTargets[7] = m_shadowMaskProjectTargetSet->getColorTexture(0);
+		outTargets.push_back(DebugTarget(L"Shadow mask (SS filtered)", DtvShadowMask, m_shadowMaskFilterTargetSet->getDepthTexture()));
 }
 
 void WorldRendererDeferred::buildLightWithShadows(WorldRenderView& worldRenderView, int frame)
