@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include "Script/Editor/IScriptOutline.h"
 
 namespace traktor
