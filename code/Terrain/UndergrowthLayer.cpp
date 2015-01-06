@@ -1,3 +1,4 @@
+#include "Core/Containers/StaticVector.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Half.h"
 #include "Core/Math/RandomGeometry.h"
@@ -288,9 +289,10 @@ void UndergrowthLayer::updatePatches(const TerrainEntity& terrainEntity)
 	const resource::Proxy< hf::Heightfield >& heightfield = terrain->getHeightfield();
 
 	// Get set of materials which have undergrowth.
-	std::set< uint8_t > undergrowthMaterials;
+	StaticVector< uint8_t, 16 > um(16, 0);
+	uint8_t maxMaterialIndex = 0;
 	for (std::vector< UndergrowthLayerData::Plant >::const_iterator i = m_layerData.m_plants.begin(); i != m_layerData.m_plants.end(); ++i)
-		undergrowthMaterials.insert(i->material);
+		um[i->material] = ++maxMaterialIndex;
 
 	int32_t size = heightfield->getSize();
 	Vector4 extentPerGrid = heightfield->getWorldExtent() / Scalar(size);
@@ -303,29 +305,24 @@ void UndergrowthLayer::updatePatches(const TerrainEntity& terrainEntity)
 	{
 		for (int32_t x = 0; x < size; x += 16)
 		{
-			std::set< uint8_t > heightfieldMaterials;
+			StaticVector< int32_t, 16 > cm(16, 0);
+			int32_t totalDensity = 0;
 
-			// Get materials inside cluster cell.
 			for (int32_t cz = 0; cz < 16; ++cz)
 			{
 				for (int32_t cx = 0; cx < 16; ++cx)
 				{
 					uint8_t material = heightfield->getGridMaterial(x + cx, z + cz);
-					heightfieldMaterials.insert(material);
+					uint8_t index = um[material];
+					if (index > 0)
+					{
+						cm[index - 1]++;
+						totalDensity++;
+					}
 				}
 			}
 
-			// Determine which plants in this cluster cells.
-			std::vector< uint8_t > materials(16);
-			std::vector< uint8_t >::iterator it = std::set_intersection(
-				undergrowthMaterials.begin(),
-				undergrowthMaterials.end(),
-				heightfieldMaterials.begin(),
-				heightfieldMaterials.end(), 
-				materials.begin()
-			);
-			materials.resize(it - materials.begin());
-			if (materials.empty())
+			if (totalDensity <= 0)
 				continue;
 
 			float wx, wz;
@@ -333,28 +330,24 @@ void UndergrowthLayer::updatePatches(const TerrainEntity& terrainEntity)
 
 			float wy = heightfield->getWorldHeight(wx, wz);
 
-			for (std::vector< uint8_t >::const_iterator i = materials.begin(); i != materials.end(); ++i)
+			for (uint32_t i = 0; i < maxMaterialIndex; ++i)
 			{
+				if (cm[i] <= 0)
+					continue;
+
 				const UndergrowthLayerData::Plant* plantDef = 0;
 				for (std::vector< UndergrowthLayerData::Plant >::const_iterator j = m_layerData.m_plants.begin(); j != m_layerData.m_plants.end(); ++j)
 				{
-					if (j->material == *i)
+					if (um[j->material] == i + 1)
 					{
 						plantDef = &(*j);
 						break;
 					}
 				}
+				if (!plantDef)
+					continue;
 
-				int32_t densityFactor = 0;
-				for (int32_t cz = 0; cz < 16; ++cz)
-				{
-					for (int32_t cx = 0; cx < 16; ++cx)
-					{
-						uint8_t material = heightfield->getGridMaterial(x + cx, z + cz);
-						if (material == *i)
-							++densityFactor;
-					}
-				}
+				int32_t densityFactor = cm[i];
 
 				int32_t density = (plantDef->density * densityFactor) / (16 * 16);
 				if (density <= 4)

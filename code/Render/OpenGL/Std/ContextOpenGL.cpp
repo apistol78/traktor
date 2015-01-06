@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include <cstring>
 #include "Core/RefArray.h"
 #include "Core/Log/Log.h"

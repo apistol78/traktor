@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/OpenGL/Std/ContextOpenGL.h"

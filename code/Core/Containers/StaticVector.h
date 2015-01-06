@@ -236,6 +236,13 @@ public:
 	{
 	}
 
+	StaticVector(size_t size, const ItemType& value)
+	:	m_size(size)
+	{
+		for (uint32_t i = 0; i < m_size; ++i)
+			m_items[i] = value;
+	}
+
 	/*! \brief Get number of elements in vector.
 	 *
 	 * \return Number of elements.
@@ -267,6 +274,19 @@ public:
 	void clear()
 	{
 		m_size = 0;
+	}
+
+	/*! \brief Assign value to vector.
+	 *
+	 * \param size Size of vector.
+	 * \param value Value of each element.
+	 */
+	void assign(uint32_t size, const ItemType& value)
+	{
+		T_ASSERT (size < Capacity);
+		m_size = size;
+		for (uint32_t i = 0; i < m_size; ++i)
+			m_items[i] = value;
 	}
 
 	/*! \brief Push value onto vector.
