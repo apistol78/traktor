@@ -403,9 +403,9 @@ public:
 
 	void contain(const Vector2& pt) { m_value.contain(pt); }
 
-	const Vector2& getCenter() const { return m_value.getCenter(); }
+	Vector2 getCenter() const { return m_value.getCenter(); }
 
-	const Vector2& getExtent() const { return m_value.getExtent(); }
+	Vector2 getExtent() const { return m_value.getExtent(); }
 
 	bool empty() const { return m_value.empty(); }
 
