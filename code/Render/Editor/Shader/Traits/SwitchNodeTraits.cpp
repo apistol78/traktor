@@ -72,23 +72,6 @@ int32_t SwitchNodeTraits::getInputPinGroup(
 	return getInputPinIndex(node, inputPin);
 }
 
-bool SwitchNodeTraits::evaluateFull(
-	const ShaderGraph* shaderGraph,
-	const Node* node,
-	const OutputPin* outputPin,
-	const Constant* inputConstants,
-	Constant& outputConstant
-) const
-{
-	int32_t c = int32_t(inputConstants[0][0]);
-	if (c >= 0 && c < node->getInputPinCount() - 2)
-		outputConstant = inputConstants[c + 2];
-	else
-		outputConstant = inputConstants[1];
-
-	return true;
-}
-
 bool SwitchNodeTraits::evaluatePartial(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
@@ -100,7 +83,7 @@ bool SwitchNodeTraits::evaluatePartial(
 	if (inputConstants[0].getWidth() <= 0)
 		return false;
 
-	int32_t c = int32_t(inputConstants[0][0]);
+	int32_t c = int32_t(inputConstants[0].x());
 	if (c >= 0 && c < node->getInputPinCount() - 2)
 		outputConstant = inputConstants[c + 2];
 	else
@@ -121,7 +104,7 @@ bool SwitchNodeTraits::evaluatePartial(
 	if (inputConstants[0].getWidth() <= 0)
 		return false;
 
-	int32_t c = int32_t(inputConstants[0][0]);
+	int32_t c = int32_t(inputConstants[0].x());
 	if (c >= 0 && c < node->getInputPinCount() - 2)
 		foldOutputPin = inputOutputPins[c + 2];
 	else

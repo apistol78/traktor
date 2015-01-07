@@ -80,110 +80,6 @@ int32_t ConditionalNodeTraits::getInputPinGroup(
 	return getInputPinIndex(node, inputPin);
 }
 
-bool ConditionalNodeTraits::evaluateFull(
-	const ShaderGraph* shaderGraph,
-	const Node* node,
-	const OutputPin* outputPin,
-	const Constant* inputConstants,
-	Constant& outputConstant
-) const
-{
-	if (const Conditional* conditional = dynamic_type_cast< const Conditional* >(node))
-	{
-		bool result = false;
-		switch (conditional->getOperator())
-		{
-		case Conditional::CoLess:
-			result = inputConstants[0][0] < inputConstants[1][0];
-			break;
-
-		case Conditional::CoLessEqual:
-			result = inputConstants[0][0] <= inputConstants[1][0];
-			break;
-
-		case Conditional::CoEqual:
-			result = inputConstants[0][0] == inputConstants[1][0];
-			break;
-
-		case Conditional::CoNotEqual:
-			result = inputConstants[0][0] != inputConstants[1][0];
-			break;
-
-		case Conditional::CoGreater:
-			result = inputConstants[0][0] > inputConstants[1][0];
-			break;
-
-		case Conditional::CoGreaterEqual:
-			result = inputConstants[0][0] >= inputConstants[1][0];
-			break;
-
-		default:
-			return false;
-		}
-
-		if (result)
-			outputConstant = inputConstants[2];
-		else
-			outputConstant = inputConstants[3];
-
-		return true;
-	}
-	else if (const Discard* discard = dynamic_type_cast< const Discard* >(node))
-	{
-		bool result = false;
-		switch (discard->getOperator())
-		{
-		case Discard::CoLess:
-			result = inputConstants[0][0] < inputConstants[1][0];
-			break;
-
-		case Discard::CoLessEqual:
-			result = inputConstants[0][0] <= inputConstants[1][0];
-			break;
-
-		case Discard::CoEqual:
-			result = inputConstants[0][0] == inputConstants[1][0];
-			break;
-
-		case Discard::CoNotEqual:
-			result = inputConstants[0][0] != inputConstants[1][0];
-			break;
-
-		case Discard::CoGreater:
-			result = inputConstants[0][0] > inputConstants[1][0];
-			break;
-
-		case Discard::CoGreaterEqual:
-			result = inputConstants[0][0] >= inputConstants[1][0];
-			break;
-
-		default:
-			return false;
-		}
-
-		if (result)
-		{
-			// Never discard any fragment; return input constant as is.
-			outputConstant = inputConstants[2];
-		}
-		else
-		{
-			// The fragments will always get discarded thus invalidate entire graph.
-			outputConstant = Constant();
-		}
-
-		return true;
-	}
-	else if (const Step* step = dynamic_type_cast< const Step* >(node))
-	{
-		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
-			outputConstant[i] = (inputConstants[0][i] >= inputConstants[1][i]) ? 1.0f : 0.0f;
-		return true;
-	}
-
-	return false;
-}
-
 bool ConditionalNodeTraits::evaluatePartial(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
@@ -194,58 +90,124 @@ bool ConditionalNodeTraits::evaluatePartial(
 {
 	if (const Conditional* conditional = dynamic_type_cast< const Conditional* >(node))
 	{
-		if (inputConstants[0].getWidth() <= 0 || inputConstants[1].getWidth() <= 0)
-			return false;
-
-		bool result = false;
-		switch (conditional->getOperator())
+		if (inputConstants[0].isConst(0) && inputConstants[1].isConst(0))
 		{
-		case Conditional::CoLess:
-			result = inputConstants[0][0] < inputConstants[1][0];
-			break;
-
-		case Conditional::CoLessEqual:
-			result = inputConstants[0][0] <= inputConstants[1][0];
-			break;
-
-		case Conditional::CoEqual:
-			result = inputConstants[0][0] == inputConstants[1][0];
-			break;
-
-		case Conditional::CoNotEqual:
-			result = inputConstants[0][0] != inputConstants[1][0];
-			break;
-
-		case Conditional::CoGreater:
-			result = inputConstants[0][0] > inputConstants[1][0];
-			break;
-
-		case Conditional::CoGreaterEqual:
-			result = inputConstants[0][0] >= inputConstants[1][0];
-			break;
-
-		default:
-			return false;
-		}
-
-		if (result)
-		{
-			if (inputConstants[2].getWidth() > 0)
+			bool result = false;
+			switch (conditional->getOperator())
 			{
-				outputConstant = inputConstants[2];
-				return true;
+			case Conditional::CoLess:
+				result = inputConstants[0].x() < inputConstants[1].x();
+				break;
+
+			case Conditional::CoLessEqual:
+				result = inputConstants[0].x() <= inputConstants[1].x();
+				break;
+
+			case Conditional::CoEqual:
+				result = inputConstants[0].x() == inputConstants[1].x();
+				break;
+
+			case Conditional::CoNotEqual:
+				result = inputConstants[0].x() != inputConstants[1].x();
+				break;
+
+			case Conditional::CoGreater:
+				result = inputConstants[0].x() > inputConstants[1].x();
+				break;
+
+			case Conditional::CoGreaterEqual:
+				result = inputConstants[0].x() >= inputConstants[1].x();
+				break;
+
+			default:
+				return false;
 			}
-		}
-		else
-		{
-			if (inputConstants[3].getWidth() > 0)
+
+			for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
 			{
-				outputConstant = inputConstants[3];
-				return true;
+				if (result)
+				{
+					if (inputConstants[2].isConst(i))
+						outputConstant.setValue(i, inputConstants[2].getValue(i));
+					else
+						outputConstant.setVariant(i);
+				}
+				else
+				{
+					if (inputConstants[3].isConst(i))
+						outputConstant.setValue(i, inputConstants[3].getValue(i));
+					else
+						outputConstant.setVariant(i);
+				}
 			}
+
+			return true;
 		}
 	}
+	else if (const Discard* discard = dynamic_type_cast< const Discard* >(node))
+	{
+		if (inputConstants[0].isConst(0) && inputConstants[1].isConst(0))
+		{
+			bool result = false;
+			switch (discard->getOperator())
+			{
+			case Discard::CoLess:
+				result = inputConstants[0].x() < inputConstants[1].x();
+				break;
 
+			case Discard::CoLessEqual:
+				result = inputConstants[0].x() <= inputConstants[1].x();
+				break;
+
+			case Discard::CoEqual:
+				result = inputConstants[0].x() == inputConstants[1].x();
+				break;
+
+			case Discard::CoNotEqual:
+				result = inputConstants[0].x() != inputConstants[1].x();
+				break;
+
+			case Discard::CoGreater:
+				result = inputConstants[0].x() > inputConstants[1].x();
+				break;
+
+			case Discard::CoGreaterEqual:
+				result = inputConstants[0].x() >= inputConstants[1].x();
+				break;
+
+			default:
+				return false;
+			}
+
+			if (result)
+			{
+				for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
+				{
+					if (inputConstants[2].isConst(i))
+						outputConstant.setValue(i, inputConstants[2].getValue(i));
+					else
+						outputConstant.setVariant(i);
+				}
+			}
+			else
+			{
+				outputConstant = Constant();
+			}
+
+			return true;
+		}
+	}
+	else if (const Step* step = dynamic_type_cast< const Step* >(node))
+	{
+		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
+		{
+			if (inputConstants[0].isConst(i) && inputConstants[1].isConst(i))
+				outputConstant.setValue(i, (inputConstants[0].getValue(i) >= inputConstants[1].getValue(i)) ? 1.0f : 0.0f);
+			else
+				outputConstant.setVariant(i);
+		}
+		return true;
+	}
 	return false;
 }
 
@@ -260,93 +222,89 @@ bool ConditionalNodeTraits::evaluatePartial(
 {
 	if (const Conditional* conditional = dynamic_type_cast< const Conditional* >(node))
 	{
-		if (inputConstants[0].getWidth() <= 0 || inputConstants[1].getWidth() <= 0)
-			return false;
-
-		bool result = false;
-		switch (conditional->getOperator())
+		if (inputConstants[0].isConst(0) && inputConstants[1].isConst(0))
 		{
-		case Conditional::CoLess:
-			result = inputConstants[0][0] < inputConstants[1][0];
-			break;
+			bool result = false;
+			switch (conditional->getOperator())
+			{
+			case Conditional::CoLess:
+				result = inputConstants[0].x() < inputConstants[1].x();
+				break;
 
-		case Conditional::CoLessEqual:
-			result = inputConstants[0][0] <= inputConstants[1][0];
-			break;
+			case Conditional::CoLessEqual:
+				result = inputConstants[0].x() <= inputConstants[1].x();
+				break;
 
-		case Conditional::CoEqual:
-			result = inputConstants[0][0] == inputConstants[1][0];
-			break;
+			case Conditional::CoEqual:
+				result = inputConstants[0].x() == inputConstants[1].x();
+				break;
 
-		case Conditional::CoNotEqual:
-			result = inputConstants[0][0] != inputConstants[1][0];
-			break;
+			case Conditional::CoNotEqual:
+				result = inputConstants[0].x() != inputConstants[1].x();
+				break;
 
-		case Conditional::CoGreater:
-			result = inputConstants[0][0] > inputConstants[1][0];
-			break;
+			case Conditional::CoGreater:
+				result = inputConstants[0].x() > inputConstants[1].x();
+				break;
 
-		case Conditional::CoGreaterEqual:
-			result = inputConstants[0][0] >= inputConstants[1][0];
-			break;
+			case Conditional::CoGreaterEqual:
+				result = inputConstants[0].x() >= inputConstants[1].x();
+				break;
 
-		default:
-			return false;
-		}
+			default:
+				return false;
+			}
 
-		if (result)
-		{
-			foldOutputPin = inputOutputPins[2];
-			return true;
-		}
-		else
-		{
-			foldOutputPin = inputOutputPins[3];
+			if (result)
+				foldOutputPin = inputOutputPins[2];
+			else
+				foldOutputPin = inputOutputPins[3];
+
 			return true;
 		}
 	}
 	else if (const Discard* discard = dynamic_type_cast< const Discard* >(node))
 	{
-		if (inputConstants[0].getWidth() <= 0 || inputConstants[1].getWidth() <= 0)
-			return false;
-
-		bool result = false;
-		switch (discard->getOperator())
+		if (inputConstants[0].isConst(0) && inputConstants[1].isConst(0))
 		{
-		case Discard::CoLess:
-			result = inputConstants[0][0] < inputConstants[1][0];
-			break;
+			bool result = false;
+			switch (discard->getOperator())
+			{
+			case Discard::CoLess:
+				result = inputConstants[0].x() < inputConstants[1].x();
+				break;
 
-		case Discard::CoLessEqual:
-			result = inputConstants[0][0] <= inputConstants[1][0];
-			break;
+			case Discard::CoLessEqual:
+				result = inputConstants[0].x() <= inputConstants[1].x();
+				break;
 
-		case Discard::CoEqual:
-			result = inputConstants[0][0] == inputConstants[1][0];
-			break;
+			case Discard::CoEqual:
+				result = inputConstants[0].x() == inputConstants[1].x();
+				break;
 
-		case Discard::CoNotEqual:
-			result = inputConstants[0][0] != inputConstants[1][0];
-			break;
+			case Discard::CoNotEqual:
+				result = inputConstants[0].x() != inputConstants[1].x();
+				break;
 
-		case Discard::CoGreater:
-			result = inputConstants[0][0] > inputConstants[1][0];
-			break;
+			case Discard::CoGreater:
+				result = inputConstants[0].x() > inputConstants[1].x();
+				break;
 
-		case Discard::CoGreaterEqual:
-			result = inputConstants[0][0] >= inputConstants[1][0];
-			break;
+			case Discard::CoGreaterEqual:
+				result = inputConstants[0].x() >= inputConstants[1].x();
+				break;
 
-		default:
-			return false;
+			default:
+				return false;
+			}
+
+			if (result)
+				foldOutputPin = inputOutputPins[2];
+			else
+				foldOutputPin = 0;
+
+			return true;
 		}
-
-		if (result)
-			foldOutputPin = inputOutputPins[2];
-		else
-			foldOutputPin = 0;
-
-		return true;
 	}
 	return false;
 }

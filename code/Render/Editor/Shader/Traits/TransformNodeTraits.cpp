@@ -63,17 +63,6 @@ int32_t TransformNodeTraits::getInputPinGroup(
 	return getInputPinIndex(node, inputPin);
 }
 
-bool TransformNodeTraits::evaluateFull(
-	const ShaderGraph* shaderGraph,
-	const Node* node,
-	const OutputPin* outputPin,
-	const Constant* inputConstants,
-	Constant& outputConstant
-) const
-{
-	return false;
-}
-
 bool TransformNodeTraits::evaluatePartial(
 	const ShaderGraph* shaderGraph,
 	const Node* node,

@@ -64,16 +64,6 @@ public:
 		const InputPin* inputPin
 	) const = 0;
 
-	/*! \brief Evaluate output pin from a fully constant input set.
-	 */
-	virtual bool evaluateFull(
-		const ShaderGraph* shaderGraph,
-		const Node* node,
-		const OutputPin* outputPin,
-		const Constant* inputConstants,
-		Constant& outputConstant
-	) const = 0;
-
 	/*! \brief Evaluate output pin from partially constant input set.
 	 */
 	virtual bool evaluatePartial(

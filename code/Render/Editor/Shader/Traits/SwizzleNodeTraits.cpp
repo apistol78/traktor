@@ -80,10 +80,10 @@ int32_t SwizzleNodeTraits::getInputPinGroup(
 	return 0;
 }
 
-bool SwizzleNodeTraits::evaluateFull(
+bool SwizzleNodeTraits::evaluatePartial(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
-	const OutputPin* outputPin,
+	const OutputPin* nodeOutputPin,
 	const Constant* inputConstants,
 	Constant& outputConstant
 ) const
@@ -95,38 +95,39 @@ bool SwizzleNodeTraits::evaluateFull(
 		switch (std::tolower(pattern[i]))
 		{
 		case L'x':
-			outputConstant[i] = inputConstants[0][0];
+			if (inputConstants[0].isConstX())
+				outputConstant.setValue(i, inputConstants[0].x());
+			else
+				outputConstant.setVariant(i);
 			break;
 		case L'y':
-			outputConstant[i] = inputConstants[0][1];
+			if (inputConstants[0].isConstY())
+				outputConstant.setValue(i, inputConstants[0].y());
+			else
+				outputConstant.setVariant(i);
 			break;
 		case L'z':
-			outputConstant[i] = inputConstants[0][2];
+			if (inputConstants[0].isConstZ())
+				outputConstant.setValue(i, inputConstants[0].z());
+			else
+				outputConstant.setVariant(i);
 			break;
 		case L'w':
-			outputConstant[i] = inputConstants[0][3];
+			if (inputConstants[0].isConstW())
+				outputConstant.setValue(i, inputConstants[0].w());
+			else
+				outputConstant.setVariant(i);
 			break;
 		case L'0':
-			outputConstant[i] = 0.0f;
+			outputConstant.setValue(i, 0.0f);
 			break;
 		case L'1':
-			outputConstant[i] = 1.0f;
+			outputConstant.setValue(i, 1.0f);
 			break;
 		}
 	}
 
 	return true;
-}
-
-bool SwizzleNodeTraits::evaluatePartial(
-	const ShaderGraph* shaderGraph,
-	const Node* node,
-	const OutputPin* nodeOutputPin,
-	const Constant* inputConstants,
-	Constant& outputConstant
-) const
-{
-	return false;
 }
 
 bool SwizzleNodeTraits::evaluatePartial(

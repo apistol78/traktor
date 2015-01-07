@@ -74,17 +74,6 @@ int32_t MetaNodeTraits::getInputPinGroup(
 	return getInputPinIndex(node, inputPin);
 }
 
-bool MetaNodeTraits::evaluateFull(
-	const ShaderGraph* shaderGraph,
-	const Node* node,
-	const OutputPin* outputPin,
-	const Constant* inputConstants,
-	Constant& outputConstant
-) const
-{
-	return false;
-}
-
 bool MetaNodeTraits::evaluatePartial(
 	const ShaderGraph* shaderGraph,
 	const Node* node,

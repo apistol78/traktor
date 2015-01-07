@@ -66,20 +66,6 @@ int32_t LerpNodeTraits::getInputPinGroup(
 	return getInputPinIndex(node, inputPin);
 }
 
-bool LerpNodeTraits::evaluateFull(
-	const ShaderGraph* shaderGraph,
-	const Node* node,
-	const OutputPin* outputPin,
-	const Constant* inputConstants,
-	Constant& outputConstant
-) const
-{
-	float k = inputConstants[2][0];
-	for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
-		outputConstant[i] = inputConstants[0][i] * (1.0f - k) + inputConstants[1][i] * k;
-	return true;
-}
-
 bool LerpNodeTraits::evaluatePartial(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
@@ -88,7 +74,19 @@ bool LerpNodeTraits::evaluatePartial(
 	Constant& outputConstant
 ) const
 {
-	return false;
+	for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
+	{
+		if (
+			inputConstants[0].isConst(i) &&
+			inputConstants[1].isConst(i) &&
+			inputConstants[2].isConst(i)
+		)
+		{
+			float k = inputConstants[2].getValue(i);
+			outputConstant.setValue(i, inputConstants[0].getValue(i) * (1.0f - k) + inputConstants[1].getValue(i) * k);
+		}
+	}
+	return true;
 }
 
 bool LerpNodeTraits::evaluatePartial(
@@ -102,7 +100,7 @@ bool LerpNodeTraits::evaluatePartial(
 {
 	// If both inputs are constant and the values are equal then we can ignore
 	// blend value even if it's not constant.
-	if (inputConstants[0].getWidth() > 0 && inputConstants[1].getWidth() > 0)
+	if (inputConstants[0].isAllConst() && inputConstants[1].isAllConst())
 	{
 		if (inputConstants[0] == inputConstants[1])
 		{
@@ -112,14 +110,14 @@ bool LerpNodeTraits::evaluatePartial(
 	}
 	
 	// If blend is constant zero.
-	if (inputConstants[2].isZero())
+	if (inputConstants[2].isAllZero())
 	{
 		foldOutputPin = inputOutputPins[0];
 		return true;
 	}
 	
 	// If blend is constant one.
-	if (inputConstants[2].isOne())
+	if (inputConstants[2].isAllOne())
 	{
 		foldOutputPin = inputOutputPins[1];
 		return true;

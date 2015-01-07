@@ -83,17 +83,6 @@ int32_t SamplerNodeTraits::getInputPinGroup(
 	return getInputPinIndex(node, inputPin);
 }
 
-bool SamplerNodeTraits::evaluateFull(
-	const ShaderGraph* shaderGraph,
-	const Node* node,
-	const OutputPin* outputPin,
-	const Constant* inputConstants,
-	Constant& outputConstant
-) const
-{
-	return false;
-}
-
 bool SamplerNodeTraits::evaluatePartial(
 	const ShaderGraph* shaderGraph,
 	const Node* node,

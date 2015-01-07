@@ -44,23 +44,6 @@ int32_t LengthNodeTraits::getInputPinGroup(
 	return 0;
 }
 
-bool LengthNodeTraits::evaluateFull(
-	const ShaderGraph* shaderGraph,
-	const Node* node,
-	const OutputPin* outputPin,
-	const Constant* inputConstants,
-	Constant& outputConstant
-) const
-{
-	outputConstant[0] = std::sqrt(
-		inputConstants[0][0] * inputConstants[0][0] +
-		inputConstants[0][1] * inputConstants[0][1] +
-		inputConstants[0][2] * inputConstants[0][2] +
-		inputConstants[0][3] * inputConstants[0][3]
-	);
-	return true;
-}
-
 bool LengthNodeTraits::evaluatePartial(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
@@ -69,7 +52,18 @@ bool LengthNodeTraits::evaluatePartial(
 	Constant& outputConstant
 ) const
 {
-	return false;
+	if (inputConstants[0].isAllConst())
+	{
+		outputConstant = Constant(std::sqrt(
+			inputConstants[0].x() * inputConstants[0].x() +
+			inputConstants[0].y() * inputConstants[0].y() +
+			inputConstants[0].z() * inputConstants[0].z() +
+			inputConstants[0].w() * inputConstants[0].w()
+		));
+		return true;
+	}
+	else
+		return false;
 }
 
 bool LengthNodeTraits::evaluatePartial(
