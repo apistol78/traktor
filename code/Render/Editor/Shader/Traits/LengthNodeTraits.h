@@ -35,14 +35,6 @@ public:
 		const InputPin* inputPin
 	) const;
 
-	virtual bool evaluateFull(
-		const ShaderGraph* shaderGraph,
-		const Node* node,
-		const OutputPin* outputPin,
-		const Constant* inputConstants,
-		Constant& outputConstant
-	) const;
-
 	virtual bool evaluatePartial(
 		const ShaderGraph* shaderGraph,
 		const Node* node,

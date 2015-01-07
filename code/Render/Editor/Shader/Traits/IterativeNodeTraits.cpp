@@ -86,17 +86,6 @@ int32_t IterativeNodeTraits::getInputPinGroup(
 	return getInputPinIndex(node, inputPin);
 }
 
-bool IterativeNodeTraits::evaluateFull(
-	const ShaderGraph* shaderGraph,
-	const Node* node,
-	const OutputPin* outputPin,
-	const Constant* inputConstants,
-	Constant& outputConstant
-) const
-{
-	return false;
-}
-
 bool IterativeNodeTraits::evaluatePartial(
 	const ShaderGraph* shaderGraph,
 	const Node* node,

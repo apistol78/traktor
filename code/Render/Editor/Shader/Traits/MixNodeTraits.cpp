@@ -95,47 +95,6 @@ int32_t MixNodeTraits::getInputPinGroup(
 	return getInputPinIndex(node, inputPin);
 }
 
-bool MixNodeTraits::evaluateFull(
-	const ShaderGraph* shaderGraph,
-	const Node* node,
-	const OutputPin* outputPin,
-	const Constant* inputConstants,
-	Constant& outputConstant
-) const
-{
-	if (is_a< MixIn >(node))
-	{
-		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
-		{
-			if (inputConstants[i].isZero())
-				outputConstant[i] = 0.0f;
-			else if (inputConstants[i].isOne())
-				outputConstant[i] = 1.0f;
-			else if (inputConstants[i].getWidth() >= 1)
-				outputConstant[i] = inputConstants[i][0];
-			else
-				return false;
-		}
-		return true;
-	}
-	else if (is_a< MixOut >(node))
-	{
-		if (outputPin->getName() == L"X")
-			outputConstant[0] = inputConstants[0][0];
-		else if (outputPin->getName() == L"Y")
-			outputConstant[0] = inputConstants[0][1];
-		else if (outputPin->getName() == L"Z")
-			outputConstant[0] = inputConstants[0][2];
-		else if (outputPin->getName() == L"W")
-			outputConstant[0] = inputConstants[0][3];
-		else
-			return false;
-
-		return true;
-	}
-	return false;
-}
-
 bool MixNodeTraits::evaluatePartial(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
@@ -144,6 +103,52 @@ bool MixNodeTraits::evaluatePartial(
 	Constant& outputConstant
 ) const
 {
+	if (is_a< MixIn >(node))
+	{
+		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
+		{
+			if (inputConstants[i].isConst(0))
+				outputConstant.setValue(i, inputConstants[i].getValue(0));
+			else
+				outputConstant.setVariant(i);
+		}
+		return true;
+	}
+	else if (is_a< MixOut >(node))
+	{
+		if (nodeOutputPin->getName() == L"X")
+		{
+			if (inputConstants[0].isConstX())
+				outputConstant.setValue(0, inputConstants[0].x());
+			else
+				outputConstant.setVariant(0);
+		}
+		else if (nodeOutputPin->getName() == L"Y")
+		{
+			if (inputConstants[0].isConstY())
+				outputConstant.setValue(1, inputConstants[0].y());
+			else
+				outputConstant.setVariant(1);
+		}
+		else if (nodeOutputPin->getName() == L"Z")
+		{
+			if (inputConstants[0].isConstZ())
+				outputConstant.setValue(2, inputConstants[0].z());
+			else
+				outputConstant.setVariant(2);
+		}
+		else if (nodeOutputPin->getName() == L"W")
+		{
+			if (inputConstants[0].isConstW())
+				outputConstant.setValue(3, inputConstants[0].w());
+			else
+				outputConstant.setVariant(3);
+		}
+		else
+			return false;
+
+		return true;
+	}
 	return false;
 }
 

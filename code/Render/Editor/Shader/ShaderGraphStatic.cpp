@@ -42,7 +42,7 @@ struct ConstantFoldingVisitor
 		const OutputPin* source = edge->getSource();
 
 		SmallMap< const OutputPin*, Constant >::const_iterator it = m_outputConstants.find(source);
-		if (it != m_outputConstants.end())
+		if (it != m_outputConstants.end() && it->second.isAllConst())
 		{
 			std::pair< int, int > position = source->getNode()->getPosition();
 			Ref< Node > node;
@@ -50,12 +50,12 @@ struct ConstantFoldingVisitor
 			switch (it->second.getType())
 			{
 			case PntScalar1:
-				node = new Scalar(it->second[0]);
+				node = new Scalar(it->second.x());
 				break;
 
 			case PntScalar2:
 				{
-					Ref< Vector > value = new Vector(Vector4(it->second[0], it->second[1], 0.0f, 0.0f));
+					Ref< Vector > value = new Vector(Vector4(it->second.x(), it->second.y(), 0.0f, 0.0f));
 					Ref< Swizzle > swizzle = new Swizzle(L"xy");
 
 					m_shaderGraph->addNode(value);
@@ -70,7 +70,7 @@ struct ConstantFoldingVisitor
 
 			case PntScalar3:
 				{
-					Ref< Vector > value = new Vector(Vector4(it->second[0], it->second[1], it->second[2], 0.0f));
+					Ref< Vector > value = new Vector(Vector4(it->second.x(), it->second.y(), it->second.z(), 0.0f));
 					Ref< Swizzle > swizzle = new Swizzle(L"xyz");
 
 					m_shaderGraph->addNode(value);
@@ -84,7 +84,7 @@ struct ConstantFoldingVisitor
 				break;
 
 			case PntScalar4:
-				node = new Vector(Vector4(it->second[0], it->second[1], it->second[2], it->second[3]));
+				node = new Vector(Vector4(it->second.x(), it->second.y(), it->second.z(), it->second.w()));
 				break;
 
 			default:
@@ -287,7 +287,6 @@ Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 {
 	SmallMap< const OutputPin*, Constant > outputConstants;
 	AlignedVector< Constant > inputConstants;
-	AlignedVector< Constant > inputConstantsCast;
 	std::vector< const OutputPin* > inputOutputPins;
 
 	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
@@ -295,18 +294,14 @@ Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 	T_ASSERT (ShaderGraphValidator(shaderGraph).validateIntegrity());
 
 	ShaderGraphTypePropagation typePropagation(shaderGraph);
-
 	const RefArray< Node >& nodes = shaderGraph->getNodes();
 
-	// Collect all constant leafs.
+	// Setup map of all output pin "constants"; each such constant has proper width and
+	// are initially set to be completely variant.
 	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
 	{
-		if ((*i)->getInputPinCount() > 0)
-			continue;
-
 		const INodeTraits* nodeTraits = INodeTraits::find(*i);
-		if (!nodeTraits)
-			continue;
+		T_FATAL_ASSERT (nodeTraits);
 
 		int32_t outputPinCount = (*i)->getOutputPinCount();
 		for (int32_t j = 0; j < outputPinCount; ++j)
@@ -317,284 +312,173 @@ Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 			PinType outputPinType = typePropagation.evaluate(outputPin);
 			T_ASSERT (outputPinType != PntVoid);
 
-			Constant outputConstant(outputPinType);
-			if (nodeTraits->evaluateFull(
-				shaderGraph,
-				*i,
-				outputPin,
-				0,
-				outputConstant
-			))
-			{
-				if (outputConstant.getType() != PntVoid)
-					outputConstants[outputPin] = outputConstant;
-				else
-					return 0;
-			}
+			outputConstants[outputPin] = Constant(outputPinType);
 		}
 	}
 
-	// If we don't have any constant leafs then there
-	// cannot be any further constant folding.
-	if (outputConstants.empty())
-		return shaderGraph;
-
-	// Repeat folding nodes until there is no more to fold.
-	for (;;)
+	// Keep on iterating until no constants has been propagated.
+	uint32_t constantPropagationCount;
+	do
 	{
-		// Fold nodes which have all of it's inputs constant.
-		// Evaluate nodes which have all inputs constant; if able to calculate
-		// result then we increase "qualified counter" and add result to outputConstants map.
-		for (;;)
+restart_iteration:
+
+		constantPropagationCount = 0;
+
+		for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
 		{
-			uint32_t constantQualifiedCount = 0;
-			for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
-			{
-				int32_t inputPinCount = (*i)->getInputPinCount();
-				if (inputPinCount <= 0)
-					continue;
+			const INodeTraits* nodeTraits = INodeTraits::find(*i);
+			T_ASSERT (nodeTraits);
 
-				inputConstants.resize(inputPinCount);
+			int32_t inputPinCount = (*i)->getInputPinCount();
 
-				// Check if all inputs is constants.
-				int32_t constantInputCount = 0;
-				for (int32_t j = 0; j < inputPinCount; ++j)
-				{
-					const InputPin* inputPin = (*i)->getInputPin(j);
-					T_ASSERT (inputPin);
-
-					const OutputPin* outputPin = shaderGraph->findSourcePin(inputPin);
-					if (!outputPin)
-						continue;
-
-					PinType inputPinType = typePropagation.evaluate(inputPin);
-					if (!isPinTypeScalar(inputPinType))
-						continue;
-
-					SmallMap< const OutputPin*, Constant >::const_iterator it = outputConstants.find(outputPin);
-					if (it != outputConstants.end())
-					{
-						inputConstants[j] = it->second.cast(inputPinType);
-						++constantInputCount;
-					}
-				}
-
-				if (constantInputCount != inputPinCount)
-					continue;
-
-				// All inputs are constant; try to evaluate constant result for each output.
-				const INodeTraits* nodeTraits = INodeTraits::find(*i);
-				if (!nodeTraits)
-					continue;
-
-				int32_t outputPinCount = (*i)->getOutputPinCount();
-				for (int32_t j = 0; j < outputPinCount; ++j)
-				{
-					const OutputPin* outputPin = (*i)->getOutputPin(j);
-					T_ASSERT (outputPin);
-
-					// Is output already classified as constant?
-					if (outputConstants.find(outputPin) != outputConstants.end())
-						continue;
-
-					PinType outputPinType = typePropagation.evaluate(outputPin);
-					T_ASSERT (outputPinType != PntVoid);
-
-					// Evaluate output constant.
-					Constant outputConstant(outputPinType);
-					if (nodeTraits->evaluateFull(
-						shaderGraph,
-						*i,
-						outputPin,
-						inputPinCount > 0 ? &inputConstants[0] : 0,
-						outputConstant
-					))
-					{
-						if (outputConstant.getType() != PntVoid)
-						{
-							outputConstants[outputPin] = outputConstant;
-							++constantQualifiedCount;
-						}
-						else
-							return 0;
-					}
-				}
-			}
-
-			// No more outputs can be evaluated constantly.
-			if (!constantQualifiedCount)
-				break;
-		}
-
-		// No more constant nodes evaluted; begin second phase of collapsing
-		// partially constant nodes such as multiplication with zero etc.
-
-		// Iterate by index as we will add nodes at tail when partially constants
-		// nodes are found.
-		uint32_t partialQualifiedCount = 0;
-		for (uint32_t i = 0; i < nodes.size(); ++i)
-		{
-			const Node* node = nodes[i];
-			T_ASSERT (node);
-
-			// Partial nodes must have at least two inputs and at least one being constant.
-			int32_t inputPinCount = node->getInputPinCount();
-			if (inputPinCount < 2)
-				continue;
-
-			// Get available constants.
-			inputOutputPins.resize(inputPinCount);
+			// Get set of input constants and source pins.
 			inputConstants.resize(inputPinCount);
-
-			int32_t constantInputCount = 0;
+			inputOutputPins.resize(inputPinCount);
 			for (int32_t j = 0; j < inputPinCount; ++j)
 			{
-				const InputPin* inputPin = node->getInputPin(j);
+				const InputPin* inputPin = (*i)->getInputPin(j);
 				T_ASSERT (inputPin);
 
+				inputConstants[j] = Constant();
+				inputOutputPins[j] = 0;
+
 				const OutputPin* outputPin = shaderGraph->findSourcePin(inputPin);
-				if (!outputPin)
-					continue;
-
-				inputOutputPins[j] = outputPin;
-
-				SmallMap< const OutputPin*, Constant >::const_iterator it = outputConstants.find(outputPin);
-				if (it != outputConstants.end())
+				if (outputPin)
 				{
+					inputOutputPins[j] = outputPin;
+
 					PinType inputPinType = typePropagation.evaluate(inputPin);
-					T_ASSERT (inputPinType != PntVoid);
+					if (isPinTypeScalar(inputPinType))
+					{
+						SmallMap< const OutputPin*, Constant >::const_iterator it = outputConstants.find(outputPin);
+						T_FATAL_ASSERT (it != outputConstants.end());
 
-					inputConstants[j] = it->second.cast(inputPinType);
-					++constantInputCount;
-				}
-				else
-				{
-					// All inputs which isn't constant is void.
-					inputConstants[j] = Constant(PntVoid);
+						inputConstants[j] = it->second.cast(inputPinType);
+					}
 				}
 			}
 
-			// If no inputs are constant then we cannot evaluate a conclusive result.
-			if (constantInputCount <= 0)
-				continue;
-
-			const INodeTraits* nodeTraits = INodeTraits::find(node);
-			if (!nodeTraits)
-				continue;
-
-			// Evaluate output constant from partial constant input set.
-			int32_t outputPinCount = node->getOutputPinCount();
+			// Evaluate result of all output pins.
+			int32_t outputPinCount = (*i)->getOutputPinCount();
 			for (int32_t j = 0; j < outputPinCount; ++j)
 			{
-				const OutputPin* outputPin = node->getOutputPin(j);
+				const OutputPin* outputPin = (*i)->getOutputPin(j);
 				T_ASSERT (outputPin);
-
-				// Ignore evaluation if output is already classified as constant.
-				if (outputConstants.find(outputPin) != outputConstants.end())
-					continue;
 
 				// Don't evaluate output if it's not connected to anything.
 				if (shaderGraph->getDestinationCount(outputPin) <= 0)
 					continue;
 
-				// First evaluate constant result from partial constant input set.
-				Constant outputConstant;
+				PinType outputPinType = typePropagation.evaluate(outputPin);
+				T_ASSERT (outputPinType != PntVoid);
+
+				// First attempt to evaluate re-wiring to circumvent this node entirely.
+				if (inputPinCount > 0)
+				{
+					const OutputPin* foldOutputPin = 0;
+					if (nodeTraits->evaluatePartial(
+						shaderGraph,
+						*i,
+						outputPin,
+						&inputOutputPins[0],
+						&inputConstants[0],
+						foldOutputPin
+					))
+					{
+						Ref< Swizzle > swizzleNode;
+
+						// In case re-wire to pin is returned null then entire graph is folded/discarded.
+						if (!foldOutputPin)
+							return 0;
+
+						PinType outputPinType = typePropagation.evaluate(outputPin);
+						PinType foldOutputPinType = typePropagation.evaluate(foldOutputPin);
+
+						if (isPinTypeScalar(outputPinType) && isPinTypeScalar(foldOutputPinType))
+						{
+							if (outputPinType != foldOutputPinType)
+							{
+								// Need to add a swizzle node in order to expand into expected type.
+								T_ASSERT (foldOutputPinType < outputPinType);
+
+								if (foldOutputPinType == PntScalar1)
+								{
+									const wchar_t* c_scalarSwizzles[] = { L"", L"xx", L"xxx", L"xxxx" };
+									swizzleNode = new Swizzle(c_scalarSwizzles[getPinTypeWidth(outputPinType) - 1]);
+								}
+								else if (foldOutputPinType == PntScalar2)
+								{
+									const wchar_t* c_tupleSwizzles[] = { L"", L"", L"xy0", L"xy00" };
+									swizzleNode = new Swizzle(c_tupleSwizzles[getPinTypeWidth(outputPinType) - 1]);
+								}
+								else if (foldOutputPinType == PntScalar3)
+								{
+									const wchar_t* c_tripleSwizzles[] = { L"", L"", L"", L"xyz0" };
+									swizzleNode = new Swizzle(c_tripleSwizzles[getPinTypeWidth(outputPinType) - 1]);
+								}
+
+								if (swizzleNode)
+								{
+									Ref< Edge > edgeIn = new Edge(foldOutputPin, swizzleNode->getInputPin(0));
+
+									shaderGraph->addEdge(edgeIn);
+									shaderGraph->addNode(swizzleNode);
+
+									foldOutputPin = swizzleNode->getOutputPin(0);
+
+									// Update types in type evaluator.
+									typePropagation.set(swizzleNode->getInputPin(0), outputPinType);
+									typePropagation.set(swizzleNode->getOutputPin(0), outputPinType);
+
+									// Add output pin of new swizzle node to known set.
+									outputConstants[foldOutputPin] = outputConstants[outputPin];
+								}
+							}
+						}
+
+						RefSet< Edge > edges;
+						shaderGraph->findEdges(outputPin, edges);
+
+						for (RefSet< Edge >::const_iterator it = edges.begin(); it != edges.end(); ++it)
+						{
+							shaderGraph->removeEdge(*it);
+
+							Ref< Edge > foldEdge = new Edge(foldOutputPin, (*it)->getDestination());
+							shaderGraph->addEdge(foldEdge);
+						}
+
+						// We need to restart iteration if nodes has been added to iteration set.
+						if (swizzleNode)
+							goto restart_iteration;
+						else
+							constantPropagationCount++;
+					}
+				}
+
+				// Then attempt to evaluate as much output as possible.
+				Constant outputConstant(outputPinType);
 				if (nodeTraits->evaluatePartial(
 					shaderGraph,
-					node,
+					*i,
 					outputPin,
-					&inputConstants[0],
+					inputPinCount > 0 ? &inputConstants[0] : 0,
 					outputConstant
 				))
 				{
-					if (outputConstant.getType() != PntVoid)
+					// If the output of the pin has changed then a propagation must have taken place.
+					if (outputConstants[outputPin] != outputConstant)
 					{
+						T_ASSERT (outputConstants[outputPin].getType() == outputConstant.getType());
+						T_ASSERT (outputConstants[outputPin].getWidth() == outputConstant.getWidth());
+
+						constantPropagationCount++;
 						outputConstants[outputPin] = outputConstant;
-						++partialQualifiedCount;
-						continue;
 					}
-					else
-						return 0;
-				}
-
-				// Then try to evaluate rewiring from partial constant input set.
-				const OutputPin* foldOutputPin = 0;
-				if (nodeTraits->evaluatePartial(
-					shaderGraph,
-					node,
-					outputPin,
-					&inputOutputPins[0],
-					&inputConstants[0],
-					foldOutputPin
-				))
-				{
-					if (!foldOutputPin)
-						return 0;
-
-					PinType outputPinType = typePropagation.evaluate(outputPin);
-					PinType foldOutputPinType = typePropagation.evaluate(foldOutputPin);
-
-					if (!isPinTypeScalar(outputPinType) || !isPinTypeScalar(foldOutputPinType))
-						continue;
-
-					Ref< Swizzle > swizzleNode;
-					if (outputPinType != foldOutputPinType)
-					{
-						// Need to add a swizzle node in order to expand into expected type.
-						T_ASSERT (foldOutputPinType < outputPinType);
-
-						if (foldOutputPinType == PntScalar1)
-						{
-							const wchar_t* c_scalarSwizzles[] = { L"", L"xx", L"xxx", L"xxxx" };
-							swizzleNode = new Swizzle(c_scalarSwizzles[getPinTypeWidth(outputPinType) - 1]);
-						}
-						else if (foldOutputPinType == PntScalar2)
-						{
-							const wchar_t* c_tupleSwizzles[] = { L"", L"", L"xy0", L"xy00" };
-							swizzleNode = new Swizzle(c_tupleSwizzles[getPinTypeWidth(outputPinType) - 1]);
-						}
-						else if (foldOutputPinType == PntScalar3)
-						{
-							const wchar_t* c_tripleSwizzles[] = { L"", L"", L"", L"xyz0" };
-							swizzleNode = new Swizzle(c_tripleSwizzles[getPinTypeWidth(outputPinType) - 1]);
-						}
-						else
-							continue;
-					}
-
-					if (swizzleNode)
-					{
-						Ref< Edge > edgeIn = new Edge(foldOutputPin, swizzleNode->getInputPin(0));
-
-						shaderGraph->addEdge(edgeIn);
-						shaderGraph->addNode(swizzleNode);
-
-						typePropagation.set(swizzleNode->getInputPin(0), outputPinType);
-						typePropagation.set(swizzleNode->getOutputPin(0), outputPinType);
-
-						foldOutputPin = swizzleNode->getOutputPin(0);
-					}
-
-					RefSet< Edge > edges;
-					shaderGraph->findEdges(outputPin, edges);
-
-					for (RefSet< Edge >::const_iterator it = edges.begin(); it != edges.end(); ++it)
-					{
-						shaderGraph->removeEdge(*it);
-
-						Ref< Edge > foldEdge = new Edge(foldOutputPin, (*it)->getDestination());
-						shaderGraph->addEdge(foldEdge);
-					}
-
-					++partialQualifiedCount;
-					continue;
 				}
 			}
 		}
-
-		if (!partialQualifiedCount)
-			break;
 	}
+	while (constantPropagationCount > 0);
 
 	// Collect root nodes; assume all nodes with no output pins to be roots.
 	RefArray< Node > roots;

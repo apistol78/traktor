@@ -44,18 +44,6 @@ int32_t ArcusTanTraits::getInputPinGroup(
 	return 0;
 }
 
-bool ArcusTanTraits::evaluateFull(
-	const ShaderGraph* shaderGraph,
-	const Node* node,
-	const OutputPin* outputPin,
-	const Constant* inputConstants,
-	Constant& outputConstant
-) const
-{
-	outputConstant[0] = std::atan2(inputConstants[0][0], inputConstants[0][1]);
-	return true;
-}
-
 bool ArcusTanTraits::evaluatePartial(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
@@ -64,7 +52,15 @@ bool ArcusTanTraits::evaluatePartial(
 	Constant& outputConstant
 ) const
 {
-	return false;
+	if (inputConstants[0].isConstX() && inputConstants[0].isConstY())
+	{
+		outputConstant = Constant(
+			std::atan2(inputConstants[0].x(), inputConstants[0].y())
+		);
+		return true;
+	}
+	else
+		return false;
 }
 
 bool ArcusTanTraits::evaluatePartial(

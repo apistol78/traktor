@@ -63,17 +63,6 @@ int32_t PolynomialNodeTraits::getInputPinGroup(
 	return getInputPinIndex(node, inputPin);
 }
 
-bool PolynomialNodeTraits::evaluateFull(
-	const ShaderGraph* shaderGraph,
-	const Node* node,
-	const OutputPin* outputPin,
-	const Constant* inputConstants,
-	Constant& outputConstant
-) const
-{
-	return false;
-}
-
 bool PolynomialNodeTraits::evaluatePartial(
 	const ShaderGraph* shaderGraph,
 	const Node* node,

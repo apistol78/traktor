@@ -21,10 +21,9 @@ namespace traktor
 		
 std::wstring formatFloat(float v)
 {
-	std::wstringstream ss;
-	ss << std::setw(1) << std::setprecision(8) << std::fixed << v;
-
-	std::wstring s = ss.str();
+	std::wstring s = toString(v);
+	if (s.find(L'.') == s.npos)
+		s += L".0";
 	return s;
 }
 
@@ -1376,10 +1375,14 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 #if defined(T_OPENGL_STD)
 			if (!node->getIgnoreMips())
 			{
+				float bias = node->getMipBias();
 				switch (texture->getType())
 				{
 				case GtTexture2D:
-					assign(f, out) << L"texture(" << samplerName << L", " << texCoord->cast(GtFloat2) << L");" << Endl;
+					if (std::abs(bias) < FUZZY_EPSILON)
+						assign(f, out) << L"texture(" << samplerName << L", " << texCoord->cast(GtFloat2) << L");" << Endl;
+					else
+						assign(f, out) << L"texture(" << samplerName << L", " << texCoord->cast(GtFloat2) << L", " << formatFloat(bias) << L");" << Endl;
 					break;
 
 				case GtTexture3D:

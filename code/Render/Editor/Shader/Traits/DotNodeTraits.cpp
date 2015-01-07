@@ -44,22 +44,6 @@ int32_t DotNodeTraits::getInputPinGroup(
 	return 0;
 }
 
-bool DotNodeTraits::evaluateFull(
-	const ShaderGraph* shaderGraph,
-	const Node* node,
-	const OutputPin* outputPin,
-	const Constant* inputConstants,
-	Constant& outputConstant
-) const
-{
-	outputConstant[0] =
-		inputConstants[0][0] * inputConstants[1][0] +
-		inputConstants[0][1] * inputConstants[1][1] +
-		inputConstants[0][2] * inputConstants[1][2] +
-		inputConstants[0][3] * inputConstants[1][3];
-	return true;
-}
-
 bool DotNodeTraits::evaluatePartial(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
@@ -68,9 +52,18 @@ bool DotNodeTraits::evaluatePartial(
 	Constant& outputConstant
 ) const
 {
-	if (inputConstants[0].isZero() || inputConstants[1].isZero())
+	if (inputConstants[0].isAllConst() && inputConstants[1].isAllConst())
 	{
-		outputConstant[0] = 0.0f;
+		outputConstant = Constant(
+			inputConstants[0].x() * inputConstants[1].x() +
+			inputConstants[0].y() * inputConstants[1].y() +
+			inputConstants[0].z() * inputConstants[1].z() +
+			inputConstants[0].w() * inputConstants[1].w()
+		);
+	}
+	else if (inputConstants[0].isAllZero() || inputConstants[1].isAllZero())
+	{
+		outputConstant = Constant(0.0f);
 		return true;
 	}
 	return false;

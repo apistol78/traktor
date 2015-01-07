@@ -109,17 +109,6 @@ int32_t UniformNodeTraits::getInputPinGroup(
 	return getInputPinIndex(node, inputPin);
 }
 
-bool UniformNodeTraits::evaluateFull(
-	const ShaderGraph* shaderGraph,
-	const Node* node,
-	const OutputPin* outputPin,
-	const Constant* inputConstants,
-	Constant& outputConstant
-) const
-{
-	return false;
-}
-
 bool UniformNodeTraits::evaluatePartial(
 	const ShaderGraph* shaderGraph,
 	const Node* node,

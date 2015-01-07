@@ -50,17 +50,6 @@ int32_t ValueNodeTraits::getInputPinGroup(
 	return 0;
 }
 
-bool ValueNodeTraits::evaluateFull(
-	const ShaderGraph* shaderGraph,
-	const Node* node,
-	const OutputPin* outputPin,
-	const Constant* inputConstants,
-	Constant& outputConstant
-) const
-{
-	return false;
-}
-
 bool ValueNodeTraits::evaluatePartial(
 	const ShaderGraph* shaderGraph,
 	const Node* node,

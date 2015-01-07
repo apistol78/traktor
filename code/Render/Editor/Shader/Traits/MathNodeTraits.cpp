@@ -115,154 +115,6 @@ int32_t MathNodeTraits::getInputPinGroup(
 		return getInputPinIndex(node, inputPin);
 }
 
-bool MathNodeTraits::evaluateFull(
-	const ShaderGraph* shaderGraph,
-	const Node* node,
-	const OutputPin* outputPin,
-	const Constant* inputConstants,
-	Constant& outputConstant
-) const
-{
-	if (is_a< Abs >(node))
-	{
-		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
-			outputConstant[i] = std::abs(inputConstants[0][i]);
-	}
-	else if (is_a< Add >(node))
-	{
-		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
-			outputConstant[i] = inputConstants[0][i] + inputConstants[1][i];
-	}
-	else if (is_a< ArcusCos >(node))
-	{
-		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
-			outputConstant[i] = std::acos(inputConstants[0][i]);
-	}
-	else if (const Clamp* clmp = dynamic_type_cast< const Clamp* >(node))
-	{
-		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
-			outputConstant[i] = clamp(inputConstants[0][i], clmp->getMin(), clmp->getMax());
-	}
-	else if (is_a< Cos >(node))
-	{
-		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
-			outputConstant[i] = std::cos(inputConstants[0][i]);
-	}
-	//else if (is_a< Cross >(node))
-	else if (is_a< Derivative >(node))
-	{
-		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
-			outputConstant[i] = 0.0f;
-	}
-	else if (is_a< Div >(node))
-	{
-		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
-			outputConstant[i] = inputConstants[0][i] / inputConstants[1][i];
-	}
-	//else if (is_a< Exp >(node))
-	//else if (is_a< Fraction >(node))
-	else if (is_a< Interpolator >(node))
-	{
-		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
-			outputConstant[i] = inputConstants[0][i];
-	}
-	//else if (is_a< Log >(node))
-	else if (is_a< Max >(node))
-	{
-		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
-			outputConstant[i] = std::max(inputConstants[0][i], inputConstants[1][i]);
-	}
-	else if (is_a< Min >(node))
-	{
-		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
-			outputConstant[i] = std::min(inputConstants[0][i], inputConstants[1][i]);
-	}
-	else if (is_a< Mul >(node))
-	{
-		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
-			outputConstant[i] = inputConstants[0][i] * inputConstants[1][i];
-	}
-	else if (is_a< MulAdd >(node))
-	{
-		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
-			outputConstant[i] = inputConstants[0][i] * inputConstants[1][i] + inputConstants[2][i];
-	}
-	else if (is_a< Neg >(node))
-	{
-		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
-			outputConstant[i] = -inputConstants[0][i];
-	}
-	else if (is_a< Normalize >(node))
-	{
-		float ln = std::sqrt(
-			inputConstants[0][0] * inputConstants[0][0] +
-			inputConstants[0][1] * inputConstants[0][1] +
-			inputConstants[0][2] * inputConstants[0][2] +
-			inputConstants[0][3] * inputConstants[0][3]
-		);
-		if (ln != 0.0f)
-		{
-			for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
-				outputConstant[i] = inputConstants[0][i] / ln;
-		}
-		else
-		{
-			for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
-				outputConstant[i] = 0.0f;
-		}
-	}
-	else if (is_a< Pow >(node))
-	{
-		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
-			outputConstant[i] = std::pow(inputConstants[0][i], inputConstants[1][i]);
-	}
-	else if (is_a< RecipSqrt >(node))
-	{
-		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
-			outputConstant[i] = 1.0f / std::sqrt(inputConstants[0][i]);
-	}
-	//else if (is_a< Reflect >(node))
-	else if (is_a< Round >(node))
-	{
-		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
-			outputConstant[i] = std::floor(inputConstants[0][i] + 0.5f);
-	}
-	else if (is_a< Sign >(node))
-	{
-		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
-			outputConstant[i] = (inputConstants[0][i] >= 0.0f) ? 1.0f : -1.0f;
-	}
-	else if (is_a< Sin >(node))
-	{
-		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
-			outputConstant[i] = std::sin(inputConstants[0][i]);
-	}
-	else if (is_a< Sqrt >(node))
-	{
-		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
-			outputConstant[i] = std::sqrt(inputConstants[0][i]);
-	}
-	else if (is_a< Sub >(node))
-	{
-		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
-			outputConstant[i] = inputConstants[0][i] - inputConstants[1][i];
-	}
-	else if (is_a< Tan >(node))
-	{
-		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
-			outputConstant[i] = std::tan(inputConstants[0][i]);
-	}
-	else if (is_a< Truncate >(node))
-	{
-		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
-			outputConstant[i] = std::floor(inputConstants[0][i]);
-	}
-	else
-		return false;
-
-	return true;
-}
-
 bool MathNodeTraits::evaluatePartial(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
@@ -271,39 +123,295 @@ bool MathNodeTraits::evaluatePartial(
 	Constant& outputConstant
 ) const
 {
-	if (is_a< Div >(node))
+	if (is_a< Abs >(node))
 	{
-		if (inputConstants[0].isZero() || inputConstants[1].isZero())
+		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
 		{
-			outputConstant = Constant(0.0f);
-			return true;
+			if (inputConstants[0].isConst(i))
+				outputConstant.setValue(i, std::abs(inputConstants[0].getValue(i)));
+			else
+				outputConstant.setVariant(i);
 		}
+		return true;
+	}
+	else if (is_a< Add >(node))
+	{
+		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
+		{
+			if (inputConstants[0].isConst(i) && inputConstants[1].isConst(i))
+				outputConstant.setValue(i, inputConstants[0].getValue(i) + inputConstants[1].getValue(i));
+			else
+				outputConstant.setVariant(i);
+		}
+		return true;
+	}
+	else if (is_a< ArcusCos >(node))
+	{
+		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
+		{
+			if (inputConstants[0].isConst(i))
+				outputConstant.setValue(i, std::acos(inputConstants[0].getValue(i)));
+			else
+				outputConstant.setVariant(i);
+		}
+		return true;
+	}
+	else if (const Clamp* clmp = dynamic_type_cast< const Clamp* >(node))
+	{
+		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
+		{
+			if (inputConstants[0].isConst(i))
+				outputConstant.setValue(i, clamp(inputConstants[0].getValue(i), clmp->getMin(), clmp->getMax()));
+			else
+				outputConstant.setVariant(i);
+		}
+		return true;
+	}
+	else if (is_a< Cos >(node))
+	{
+		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
+		{
+			if (inputConstants[0].isConst(i))
+				outputConstant.setValue(i, std::cos(inputConstants[0].getValue(i)));
+			else
+				outputConstant.setVariant(i);
+		}
+		return true;
+	}
+	//else if (is_a< Cross >(node))
+	else if (is_a< Derivative >(node))
+	{
+		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
+		{
+			if (inputConstants[0].isConst(i))
+				outputConstant.setValue(i, 0.0f);
+			else
+				outputConstant.setVariant(i);
+		}
+		return true;
+	}
+	else if (is_a< Div >(node))
+	{
+		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
+		{
+			if (inputConstants[0].isZero(i) || inputConstants[1].isZero(i))
+				outputConstant.setValue(i, 0.0f);
+			else if (inputConstants[0].isConst(i) && inputConstants[1].isConst(i))
+				outputConstant.setValue(i, inputConstants[0].getValue(i) / inputConstants[1].getValue(i));
+			else
+				outputConstant.setVariant(i);
+		}
+		return true;
+	}
+	//else if (is_a< Exp >(node))
+	//else if (is_a< Fraction >(node))
+	else if (is_a< Interpolator >(node))
+	{
+		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
+		{
+			if (inputConstants[0].isConst(i))
+				outputConstant.setValue(i, inputConstants[0].getValue(i));
+			else
+				outputConstant.setVariant(i);
+		}
+		return true;
+	}
+	//else if (is_a< Log >(node))
+	else if (is_a< Max >(node))
+	{
+		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
+		{
+			if (inputConstants[0].isConst(i) && inputConstants[1].isConst(i))
+				outputConstant.setValue(i, std::max(inputConstants[0].getValue(i), inputConstants[1].getValue(i)));
+			else
+				outputConstant.setVariant(i);
+		}
+		return true;
+	}
+	else if (is_a< Min >(node))
+	{
+		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
+		{
+			if (inputConstants[0].isConst(i) && inputConstants[1].isConst(i))
+				outputConstant.setValue(i, std::min(inputConstants[0].getValue(i), inputConstants[1].getValue(i)));
+			else
+				outputConstant.setVariant(i);
+		}
+		return true;
 	}
 	else if (is_a< Mul >(node))
 	{
-		if (inputConstants[0].isZero() || inputConstants[1].isZero())
+		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
 		{
-			outputConstant = Constant(0.0f);
-			return true;
+			if (inputConstants[0].isZero(i) || inputConstants[1].isZero(i))
+				outputConstant.setValue(i, 0.0f);
+			else if (inputConstants[0].isConst(i) && inputConstants[1].isConst(i))
+				outputConstant.setValue(i, inputConstants[0].getValue(i) * inputConstants[1].getValue(i));
+			else
+				outputConstant.setVariant(i);
 		}
+		return true;
 	}
 	else if (is_a< MulAdd >(node))
 	{
-		if (inputConstants[2].isZero() && (inputConstants[0].isZero() || inputConstants[1].isZero()))
+		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
 		{
-			outputConstant = Constant(0.0f);
+			if (inputConstants[0].isZero(i) || inputConstants[1].isZero(i))
+			{
+				if (inputConstants[2].isConst(i))
+					outputConstant.setValue(i, inputConstants[2].getValue(i));
+				else
+					outputConstant.setVariant(i);
+			}
+			else
+				outputConstant.setVariant(i);
+		}
+		return true;
+	}
+	else if (is_a< Neg >(node))
+	{
+		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
+		{
+			if (inputConstants[0].isConst(i))
+				outputConstant.setValue(i, -inputConstants[0].getValue(i));
+			else
+				outputConstant.setVariant(i);
+		}
+		return true;
+	}
+	else if (is_a< Normalize >(node))
+	{
+		if (inputConstants[0].isAllConst())
+		{
+			float ln = 0.0f;
+
+			for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
+				ln += inputConstants[0].getValue(i) * inputConstants[0].getValue(i);
+
+			ln = std::sqrt(ln);
+
+			if (std::abs(ln) >= FUZZY_EPSILON)
+			{
+				for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
+					outputConstant.setValue(i, inputConstants[0].getValue(i) / ln);
+			}
+			else
+			{
+				for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
+					outputConstant.setValue(i, 0.0f);
+			}
+
 			return true;
 		}
+		else
+			return false;
 	}
 	else if (is_a< Pow >(node))
 	{
-		if (inputConstants[0].isZero())
+		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
 		{
-			outputConstant = Constant(1.0f);
-			return true;
+			if (inputConstants[0].isZero(i))
+				outputConstant.setValue(i, 1.0f);
+			else if (inputConstants[0].isConst(i) && inputConstants[1].isConst(i))
+				outputConstant.setValue(i, std::pow(inputConstants[0].getValue(i), inputConstants[1].getValue(i)));
+			else
+				outputConstant.setVariant(i);
 		}
+		return true;
 	}
-	return false;
+	else if (is_a< RecipSqrt >(node))
+	{
+		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
+		{
+			if (inputConstants[0].isZero(i))
+				outputConstant.setValue(i, 0.0f);
+			else if (inputConstants[0].isConst(i))
+				outputConstant.setValue(i, 1.0f / std::sqrt(inputConstants[0].getValue(i)));
+			else
+				outputConstant.setVariant(i);
+		}
+		return true;
+	}
+	//else if (is_a< Reflect >(node))
+	else if (is_a< Round >(node))
+	{
+		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
+		{
+			if (inputConstants[0].isConst(i))
+				outputConstant.setValue(i, std::floor(inputConstants[0].getValue(i) + 0.5f));
+			else
+				outputConstant.setVariant(i);
+		}
+		return true;
+	}
+	else if (is_a< Sign >(node))
+	{
+		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
+		{
+			if (inputConstants[0].isConst(i))
+				outputConstant.setValue(i, inputConstants[0].getValue(i) >= 0.0f ? 1.0f : -1.0f);
+			else
+				outputConstant.setVariant(i);
+		}
+		return true;
+	}
+	else if (is_a< Sin >(node))
+	{
+		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
+		{
+			if (inputConstants[0].isConst(i))
+				outputConstant.setValue(i, std::sin(inputConstants[0].getValue(i)));
+			else
+				outputConstant.setVariant(i);
+		}
+		return true;
+	}
+	else if (is_a< Sqrt >(node))
+	{
+		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
+		{
+			if (inputConstants[0].isConst(i))
+				outputConstant.setValue(i, std::sqrt(inputConstants[0].getValue(i)));
+			else
+				outputConstant.setVariant(i);
+		}
+		return true;
+	}
+	else if (is_a< Sub >(node))
+	{
+		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
+		{
+			if (inputConstants[0].isConst(i) && inputConstants[1].isConst(i))
+				outputConstant.setValue(i, inputConstants[0].getValue(i) - inputConstants[1].getValue(i));
+			else
+				outputConstant.setVariant(i);
+		}
+		return true;
+	}
+	else if (is_a< Tan >(node))
+	{
+		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
+		{
+			if (inputConstants[0].isConst(i))
+				outputConstant.setValue(i, std::tan(inputConstants[0].getValue(i)));
+			else
+				outputConstant.setVariant(i);
+		}
+		return true;
+	}
+	else if (is_a< Truncate >(node))
+	{
+		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
+		{
+			if (inputConstants[0].isConst(i))
+				outputConstant.setValue(i, std::floor(inputConstants[0].getValue(i)));
+			else
+				outputConstant.setVariant(i);
+		}
+		return true;
+	}
+	else
+		return false;
 }
 
 bool MathNodeTraits::evaluatePartial(
@@ -317,7 +425,7 @@ bool MathNodeTraits::evaluatePartial(
 {
 	if (is_a< Div >(node))
 	{
-		if (inputConstants[1].isOne())
+		if (inputConstants[1].isAllOne())
 		{
 			foldOutputPin = inputOutputPins[0];
 			return true;
@@ -325,12 +433,12 @@ bool MathNodeTraits::evaluatePartial(
 	}
 	else if (is_a< Mul >(node))
 	{
-		if (inputConstants[0].isOne())
+		if (inputConstants[0].isAllOne())
 		{
 			foldOutputPin = inputOutputPins[1];
 			return true;
 		}
-		else if (inputConstants[1].isOne())
+		else if (inputConstants[1].isAllOne())
 		{
 			foldOutputPin = inputOutputPins[0];
 			return true;
@@ -338,7 +446,7 @@ bool MathNodeTraits::evaluatePartial(
 	}
 	else if (is_a< MulAdd >(node))
 	{
-		if (inputConstants[0].isZero() || inputConstants[1].isZero())
+		if (inputConstants[0].isAllZero() || inputConstants[1].isAllZero())
 		{
 			foldOutputPin = inputOutputPins[2];
 			return true;
@@ -346,7 +454,7 @@ bool MathNodeTraits::evaluatePartial(
 	}
 	else if (is_a< Pow >(node))
 	{
-		if (inputConstants[0].isOne())
+		if (inputConstants[0].isAllOne())
 		{
 			foldOutputPin = inputOutputPins[1];
 			return true;
