@@ -36,13 +36,13 @@ bool MeshEntityEditor::queryRay(
 		return false;
 
 	// Trace bounding box to see if ray intersect.
+	Scalar length = outDistance - Scalar(FUZZY_EPSILON);
 	Scalar distance;
-	if (!boundingBox.intersectSegment(objectRayOrigin, objectRayOrigin + objectRayDirection * (outDistance - Scalar(FUZZY_EPSILON)), distance))
+	if (!boundingBox.intersectSegment(objectRayOrigin, objectRayOrigin + objectRayDirection * length, distance))
 		return false;
 
-	// \fixme Trace mesh intersection.
-
-	outDistance = distance;
+	T_FATAL_ASSERT (distance <= 1.0f);
+	outDistance = distance * length;
 	return true;
 }
 

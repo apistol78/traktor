@@ -118,8 +118,8 @@ bool DefaultEntityEditor::queryRay(const Vector4& worldRayOrigin, const Vector4&
 {
 	// Transform ray into object space.
 	Transform worldInv = m_entityAdapter->getTransform().inverse();
-	Vector4 objectRayOrigin = worldInv * worldRayOrigin;
-	Vector4 objectRayDirection = worldInv * worldRayDirection;
+	Vector4 objectRayOrigin = worldInv * worldRayOrigin.xyz1();
+	Vector4 objectRayDirection = worldInv * worldRayDirection.xyz0();
 
 	// Get entity bounding box; do not pick if origin of ray is within box.
 	Aabb3 boundingBox = m_entityAdapter->getBoundingBox();
@@ -127,12 +127,13 @@ bool DefaultEntityEditor::queryRay(const Vector4& worldRayOrigin, const Vector4&
 		return false;
 
 	// Trace bounding box to see if ray intersect.
+	Scalar length = outDistance - Scalar(FUZZY_EPSILON);
 	Scalar distance;
-	if (!boundingBox.intersectSegment(objectRayOrigin, objectRayOrigin + objectRayDirection * (outDistance - Scalar(FUZZY_EPSILON)), distance))
+	if (!boundingBox.intersectSegment(objectRayOrigin, objectRayOrigin + objectRayDirection * length, distance))
 		return false;
 
-	T_ASSERT (distance <= outDistance);
-	outDistance = distance;
+	T_FATAL_ASSERT (distance <= 1.0f);
+	outDistance = distance * length;
 	return true;
 }
 
