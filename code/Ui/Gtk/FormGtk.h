@@ -1,7 +1,7 @@
 #ifndef traktor_ui_FormGtk_H
 #define traktor_ui_FormGtk_H
 
-#include "Ui/Gtk/WindowGtkImpl.h"
+#include "Ui/Gtk/WidgetGtkImpl.h"
 #include "Ui/Itf/IForm.h"
 
 namespace traktor
@@ -9,7 +9,7 @@ namespace traktor
 	namespace ui
 	{
 
-class FormGtk : public WindowGtkImpl< IForm >
+class FormGtk : public WidgetGtkImpl< IForm >
 {
 public:
 	FormGtk(EventSubject* owner);
@@ -28,12 +28,8 @@ public:
 
 	virtual bool isMinimized() const;
 
-	virtual Rect getInnerRect() const;
-
 private:
 	void on_remove(Gtk::Widget* widget);
-
-	void on_size_allocate(Gtk::Allocation& allocation);
 };
 
 	}

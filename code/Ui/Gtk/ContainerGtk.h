@@ -15,9 +15,6 @@ public:
 	ContainerGtk(EventSubject* owner);
 
 	virtual bool create(IWidget* parent, int style);
-
-private:
-	void on_size_allocate(Gtk::Allocation& allocation);
 };
 
 	}

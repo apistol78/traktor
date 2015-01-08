@@ -14,24 +14,20 @@ TreeViewGtk::TreeViewGtk(EventSubject* owner)
 
 bool TreeViewGtk::create(IWidget* parent, int style)
 {
-	// @fixme Not safe, we must check so the internal handle in fact are a Gtk::Fixed container. Also need to ensure cleanup of m_parentContainer.
-	m_parentContainer = static_cast< Gtk::Fixed* >(parent->getInternalHandle());
-	if (!m_parentContainer)
-	{
-		log::error << L"Unable to get parent GTK container; must be a GTK fixed container" << Endl;
-		return false;
-	}
+	Internal* parentInternal = static_cast< Internal* >(parent->getInternalHandle());
+	T_FATAL_ASSERT(parentInternal);
+
+	Gtk::Fixed* container = new Gtk::Fixed();
+	parentInternal->container->put(*container, 0, 0);
 
 	Gtk::TreeView* treeView = new Gtk::TreeView();
-	//button->signal_clicked().connect(sigc::mem_fun(*this, &TreeViewGtk::on_button_clicked));
-
-	m_parentContainer->put(*treeView, 0, 0);
-
+	container->put(*treeView, 0, 0);
 	treeView->show();
 
-	m_widget = treeView;
+	m_internal.container = container;
+	m_internal.widget = treeView;
 
-	return true;
+	return WidgetGtkImpl< ITreeView >::create();
 }
 
 int TreeViewGtk::addImage(IBitmap* image, int imageCount)

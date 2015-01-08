@@ -1,7 +1,7 @@
 #ifndef traktor_ui_DialogGtk_H
 #define traktor_ui_DialogGtk_H
 
-#include "Ui/Gtk/WindowGtkImpl.h"
+#include "Ui/Gtk/WidgetGtkImpl.h"
 #include "Ui/Itf/IDialog.h"
 
 namespace traktor
@@ -9,7 +9,7 @@ namespace traktor
 	namespace ui
 	{
 
-class DialogGtk : public WindowGtkImpl< IDialog >
+class DialogGtk : public WidgetGtkImpl< IDialog >
 {
 public:
 	DialogGtk(EventSubject* owner);
@@ -26,8 +26,6 @@ public:
 
 private:
 	void on_remove(Gtk::Widget* widget);
-
-	void on_size_allocate(Gtk::Allocation& allocation);
 };
 
 	}

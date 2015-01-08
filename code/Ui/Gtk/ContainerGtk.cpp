@@ -1,6 +1,4 @@
-#include "Core/Log/Log.h"
 #include "Ui/Gtk/ContainerGtk.h"
-#include "Ui/Events/SizeEvent.h"
 
 namespace traktor
 {
@@ -14,30 +12,18 @@ ContainerGtk::ContainerGtk(EventSubject* owner)
 
 bool ContainerGtk::create(IWidget* parent, int style)
 {
-	// @fixme Not safe, we must check so the internal handle in fact are a Gtk::Fixed container. Also need to ensure cleanup of m_parentContainer.
-	m_parentContainer = static_cast< Gtk::Fixed* >(parent->getInternalHandle());
-	if (!m_parentContainer)
-		return false;
+	Internal* parentInternal = static_cast< Internal* >(parent->getInternalHandle());
+	T_FATAL_ASSERT(parentInternal);
 
-	// Create container window.
 	Gtk::Fixed* container = new Gtk::Fixed();
-	container->signal_size_allocate().connect(sigc::mem_fun(*this, &ContainerGtk::on_size_allocate));
-
-	m_parentContainer->put(*container, 0, 0);
+	parentInternal->container->put(*container, 0, 0);
 
 	container->show();
 
-	m_widget = container;
+	m_internal.container = container;
+	m_internal.widget = container;
 
-	return true;
-}
-
-void ContainerGtk::on_size_allocate(Gtk::Allocation& allocation)
-{
-	log::info << L"ContainerGtk::on_size_allocate : " << allocation.get_width() << L" x " << allocation.get_height() << Endl;
-
-	SizeEvent s(m_owner, Size(allocation.get_width(), allocation.get_height()));
-	m_owner->raiseEvent(&s);
+	return WidgetGtkImpl< IContainer >::create();
 }
 
 	}

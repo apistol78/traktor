@@ -1,6 +1,5 @@
 #include "Core/Misc/TString.h"
 #include "Ui/Application.h"
-#include "Ui/Events/SizeEvent.h"
 #include "Ui/Gtk/DialogGtk.h"
 
 namespace traktor
@@ -9,32 +8,27 @@ namespace traktor
 	{
 
 DialogGtk::DialogGtk(EventSubject* owner)
-:	WindowGtkImpl< IDialog >(owner)
+:	WidgetGtkImpl< IDialog >(owner)
 {
 }
 
 bool DialogGtk::create(IWidget* parent, const std::wstring& text, int width, int height, int style)
 {
-	// Create top-level window.
-	m_window = new Gtk::Window();
-	m_window->set_title(wstombs(text).c_str());
-	m_window->set_default_size(width, height);
-	m_window->set_border_width(0);
+	Gtk::Window* window = new Gtk::Window();
+	window->set_title(wstombs(text).c_str());
+	window->set_default_size(width, height);
+	window->set_border_width(0);
+	window->signal_remove().connect(sigc::mem_fun(*this, &DialogGtk::on_remove));
 
-	// Connect signals.
-	m_window->signal_remove().connect(sigc::mem_fun(*this, &DialogGtk::on_remove));
+	window->show();
 
-	// Create our fixed child widget container.
-	m_container = new Gtk::Fixed();
-	m_container->signal_size_allocate().connect(sigc::mem_fun(*this, &DialogGtk::on_size_allocate));
+	Gtk::Fixed* container = new Gtk::Fixed();
+	window->add(*container);
 
-	m_window->add(*m_container);
+	m_internal.container = container;
+	m_internal.widget = window;
 
-	// Show widgets.
-	m_window->show();
-	m_container->show();
-
-	return true;
+	return WidgetGtkImpl< IDialog >::create();
 }
 
 void DialogGtk::setIcon(drawing::Image* icon)
@@ -57,12 +51,6 @@ void DialogGtk::setMinSize(const Size& minSize)
 void DialogGtk::on_remove(Gtk::Widget* widget)
 {
 	Application::getInstance()->exit(0);
-}
-
-void DialogGtk::on_size_allocate(Gtk::Allocation& allocation)
-{
-	SizeEvent s(m_owner, Size(allocation.get_width(), allocation.get_height()));
-	m_owner->raiseEvent(&s);
 }
 
 	}

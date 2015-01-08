@@ -14,21 +14,22 @@ ButtonGtk::ButtonGtk(EventSubject* owner)
 
 bool ButtonGtk::create(IWidget* parent, const std::wstring& text, int style)
 {
-	// @fixme Not safe, we must check so the internal handle in fact are a Gtk::Fixed container. Also need to ensure cleanup of m_parentContainer.
-	m_parentContainer = static_cast< Gtk::Fixed* >(parent->getInternalHandle());
-	if (!m_parentContainer)
-		return false;
+	Internal* parentInternal = static_cast< Internal* >(parent->getInternalHandle());
+	T_FATAL_ASSERT(parentInternal);
+
+	Gtk::Fixed* container = new Gtk::Fixed();
+	parentInternal->container->put(*container, 0, 0);
 
 	Gtk::Button* button = new Gtk::Button(wstombs(text).c_str());
 	button->signal_clicked().connect(sigc::mem_fun(*this, &ButtonGtk::on_button_clicked));
 
-	m_parentContainer->put(*button, 0, 0);
-
+	container->put(*button, 0, 0);
 	button->show();
 
-	m_widget = button;
+	m_internal.container = container;
+	m_internal.widget = button;
 
-	return true;
+	return WidgetGtkImpl< IButton >::create();
 }
 
 void ButtonGtk::setState(bool state)

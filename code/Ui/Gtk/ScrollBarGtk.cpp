@@ -13,22 +13,22 @@ ScrollBarGtk::ScrollBarGtk(EventSubject* owner)
 
 bool ScrollBarGtk::create(IWidget* parent, int style)
 {
-	// @fixme Not safe, we must check so the internal handle in fact are a Gtk::Fixed container. Also need to ensure cleanup of m_parentContainer.
-	m_parentContainer = static_cast< Gtk::Fixed* >(parent->getInternalHandle());
-	if (!m_parentContainer)
-		return false;
+	Internal* parentInternal = static_cast< Internal* >(parent->getInternalHandle());
+	T_FATAL_ASSERT(parentInternal);
 
 	m_adjustment = Gtk::Adjustment::create(0.0, 0.0, 0.0);
 
+	Gtk::Fixed* container = new Gtk::Fixed();
+	parentInternal->container->put(*container, 0, 0);
+
 	Gtk::Scrollbar* scrollbar = new Gtk::Scrollbar(m_adjustment, (style & ScrollBar::WsVertical) != 0 ? Gtk::ORIENTATION_VERTICAL : Gtk::ORIENTATION_HORIZONTAL);
-
-	m_parentContainer->put(*scrollbar, 0, 0);
-
+	container->put(*scrollbar, 0, 0);
 	scrollbar->show();
 
-	m_widget = scrollbar;
+	m_internal.container = container;
+	m_internal.widget = scrollbar;
 
-	return true;
+	return WidgetGtkImpl< IScrollBar >::create();
 }
 
 void ScrollBarGtk::setRange(int range)

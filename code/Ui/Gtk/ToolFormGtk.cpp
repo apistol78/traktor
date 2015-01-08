@@ -1,7 +1,5 @@
-#include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Ui/Application.h"
-#include "Ui/Events/SizeEvent.h"
 #include "Ui/Gtk/ToolFormGtk.h"
 
 namespace traktor
@@ -10,41 +8,30 @@ namespace traktor
 	{
 
 ToolFormGtk::ToolFormGtk(EventSubject* owner)
-:	WindowGtkImpl< IToolForm >(owner)
+:	WidgetGtkImpl< IToolForm >(owner)
 {
 }
 
 bool ToolFormGtk::create(IWidget* parent, const std::wstring& text, int width, int height, int style)
 {
-	// Create top-level window.
-	m_window = new Gtk::Window();
-	m_window->set_title(wstombs(text).c_str());
-	m_window->set_default_size(width, height);
-	m_window->set_border_width(0);
+	Gtk::Window* window = new Gtk::Window();
+	window->set_title(wstombs(text).c_str());
+	window->set_default_size(width, height);
+	window->set_border_width(0);
 
-	// Create our fixed child widget container.
-	m_container = new Gtk::Fixed();
-	m_container->signal_size_allocate().connect(sigc::mem_fun(*this, &ToolFormGtk::on_size_allocate));
+	window->show();
 
-	m_window->add(*m_container);
+	Gtk::Fixed* container = new Gtk::Fixed();
+	window->add(*container);
 
-	// Show widgets.
-	m_window->show();
-	m_container->show();
+	m_internal.container = container;
+	m_internal.widget = window;
 
-	return true;
+	return WidgetGtkImpl< IToolForm >::create();
 }
 
 void ToolFormGtk::center()
 {
-}
-
-void ToolFormGtk::on_size_allocate(Gtk::Allocation& allocation)
-{
-	log::info << L"ToolFormGtk::on_size_allocate : " << allocation.get_width() << L" x " << allocation.get_height() << Endl;
-
-	SizeEvent s(m_owner, Size(allocation.get_width(), allocation.get_height()));
-	m_owner->raiseEvent(&s);
 }
 
 	}

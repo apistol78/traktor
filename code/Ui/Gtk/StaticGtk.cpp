@@ -13,20 +13,19 @@ StaticGtk::StaticGtk(EventSubject* owner)
 
 bool StaticGtk::create(IWidget* parent, const std::wstring& text)
 {
-	// @fixme Not safe, we must check so the internal handle in fact are a Gtk::Fixed container. Also need to ensure cleanup of m_parentContainer.
-	m_parentContainer = static_cast< Gtk::Fixed* >(parent->getInternalHandle());
-	if (!m_parentContainer)
-		return false;
+	Internal* parentInternal = static_cast< Internal* >(parent->getInternalHandle());
+	T_FATAL_ASSERT(parentInternal);
+
+	Gtk::Fixed* container = new Gtk::Fixed();
+	parentInternal->container->put(*container, 0, 0);
 
 	Gtk::Label* label = new Gtk::Label(wstombs(text).c_str());
+	container->put(*label, 0, 0);
 
-	m_parentContainer->put(*label, 0, 0);
+	m_internal.container = container;
+	m_internal.widget = label;
 
-	label->show();
-
-	m_widget = label;
-
-	return true;
+	return WidgetGtkImpl< IStatic >::create();
 }
 
 	}
