@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Math/Triangle.h"
 #include "Model/Model.h"
 #include "Model/Operations/SortProjectedArea.h"
@@ -8,7 +9,7 @@ namespace traktor
 	{
 		namespace
 		{
-			
+
 struct ProjectionRaster
 {
 	uint8_t* face;

@@ -34,7 +34,7 @@ bool Library::open(const Path& libraryName, const std::vector< Path >& searchPat
     // Prefer executable path first.
     {
         std::wstring library = L"$ORIGIN/" + resolved;
-        m_handle = dlopen(wstombs(library).c_str(), RTLD_NOW | RTLD_GLOBAL);
+        m_handle = dlopen(wstombs(library).c_str(), RTLD_LAZY | RTLD_GLOBAL);
         if (m_handle)
         {
             T_DEBUG(L"Library \"" << library << L"\" loaded");
@@ -47,7 +47,7 @@ bool Library::open(const Path& libraryName, const std::vector< Path >& searchPat
 	// Try working directory second.
 	{
 		std::wstring library = L"./" + resolved;
-		m_handle = dlopen(wstombs(library).c_str(), RTLD_NOW | RTLD_GLOBAL);
+		m_handle = dlopen(wstombs(library).c_str(), RTLD_LAZY | RTLD_GLOBAL);
 		if (m_handle)
 		{
 			T_DEBUG(L"Library \"" << library << L"\" loaded");
@@ -60,7 +60,7 @@ bool Library::open(const Path& libraryName, const std::vector< Path >& searchPat
     // Try default search paths.
     {
         std::wstring library = resolved;
-        m_handle = dlopen(wstombs(library).c_str(), RTLD_NOW | RTLD_GLOBAL);
+        m_handle = dlopen(wstombs(library).c_str(), RTLD_LAZY | RTLD_GLOBAL);
         if (m_handle)
         {
             T_DEBUG(L"Library \"" << library << L"\" loaded");
@@ -70,7 +70,7 @@ bool Library::open(const Path& libraryName, const std::vector< Path >& searchPat
              errors += mbstows(dlerror()) + L"\n";
    }
 
-	log::error << L"Failed to load library \"" << libraryName.getPathName() << L"\"" << IncreaseIndent << errors << DecreaseIndent;
+	log::error << L"Failed to load library \"" << libraryName.getPathName() << L"\"" << Endl << IncreaseIndent << errors << DecreaseIndent;
 	return false;
 }
 
