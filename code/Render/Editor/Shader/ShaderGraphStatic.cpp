@@ -201,6 +201,10 @@ Ref< ShaderGraph > ShaderGraphStatic::getTypePermutation() const
 		{
 			inputPin = (*i)->findInputPin(L"State");
 		}
+		else if (inputType == PntVoid)
+		{
+			inputPin = (*i)->findInputPin(L"Default");
+		}
 
 		if (!inputPin)
 			return 0;

@@ -624,6 +624,9 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	{
 		m_document->push();
 
+		m_shaderGraph = ShaderGraphStatic(m_shaderGraph).getTypePermutation();
+		T_ASSERT (m_shaderGraph);
+
 		m_shaderGraph = ShaderGraphStatic(m_shaderGraph).getConstantFolded();
 		T_ASSERT (m_shaderGraph);
 
