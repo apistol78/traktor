@@ -57,6 +57,16 @@ bool FormGtk::isMinimized() const
 	return false;
 }
 
+void FormGtk::setRect(const Rect& rect)
+{
+	Gtk::Allocation allocation(rect.left, rect.top, rect.getWidth(), rect.getHeight());
+	m_internal.container->set_allocation(allocation);
+	m_internal.widget->set_allocation(allocation);
+
+	m_internal.container->set_size_request(rect.getWidth(), rect.getHeight());
+	m_internal.widget->set_size_request(rect.getWidth(), rect.getHeight());
+}
+
 void FormGtk::on_remove(Gtk::Widget* widget)
 {
 	Application::getInstance()->exit(0);

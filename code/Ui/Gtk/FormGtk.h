@@ -28,6 +28,8 @@ public:
 
 	virtual bool isMinimized() const;
 
+	virtual void setRect(const Rect& rect);
+
 private:
 	void on_remove(Gtk::Widget* widget);
 };
