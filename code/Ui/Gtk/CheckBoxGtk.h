@@ -21,7 +21,7 @@ public:
 	virtual bool isChecked() const;
 
 private:
-	void onClicked();
+	void on_checkbox_toggled();
 };
 
 	}

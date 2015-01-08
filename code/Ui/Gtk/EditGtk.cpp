@@ -13,21 +13,20 @@ EditGtk::EditGtk(EventSubject* owner)
 
 bool EditGtk::create(IWidget* parent, const std::wstring& text, int style)
 {
-	// @fixme Not safe, we must check so the internal handle in fact are a Gtk::Fixed container. Also need to ensure cleanup of m_parentContainer.
-	m_parentContainer = static_cast< Gtk::Fixed* >(parent->getInternalHandle());
-	if (!m_parentContainer)
-		return false;
+	Internal* parentInternal = static_cast< Internal* >(parent->getInternalHandle());
+	T_FATAL_ASSERT(parentInternal);
+
+	Gtk::Fixed* container = new Gtk::Fixed();
+	parentInternal->container->put(*container, 0, 0);
 
 	Gtk::Entry* entry = new Gtk::Entry();
-	//button->signal_clicked().connect(sigc::mem_fun(*this, &EditGtk::on_button_clicked));
-
-	m_parentContainer->put(*entry, 0, 0);
-
+	container->put(*entry, 0, 0);
 	entry->show();
 
-	m_widget = entry;
+	m_internal.container = container;
+	m_internal.widget = entry;
 
-	return true;
+	return WidgetGtkImpl< IEdit >::create();
 }
 
 void EditGtk::setSelection(int from, int to)

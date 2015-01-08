@@ -14,35 +14,35 @@ CheckBoxGtk::CheckBoxGtk(EventSubject* owner)
 
 bool CheckBoxGtk::create(IWidget* parent, const std::wstring& text, bool checked)
 {
-	// @fixme Not safe, we must check so the internal handle in fact are a Gtk::Fixed container. Also need to ensure cleanup of m_parentContainer.
-	m_parentContainer = static_cast< Gtk::Fixed* >(parent->getInternalHandle());
-	if (!m_parentContainer)
-		return false;
+	Internal* parentInternal = static_cast< Internal* >(parent->getInternalHandle());
+	T_FATAL_ASSERT(parentInternal);
 
-	Gtk::Switch* witch = new Gtk::Switch();
-	witch->set_active(checked);
-	//witch->signal_clicked().connect(sigc::mem_fun(*this, &CheckBoxGtk::onClicked));
+	Gtk::Fixed* container = new Gtk::Fixed();
+	parentInternal->container->put(*container, 0, 0);
 
-	m_parentContainer->put(*witch, 0, 0);
+	Gtk::CheckButton* button = new Gtk::CheckButton(wstombs(text).c_str());
+	button->signal_toggled().connect(sigc::mem_fun(*this, &CheckBoxGtk::on_checkbox_toggled));
 
-	witch->show();
+	container->put(*button, 0, 0);
+	button->show();
 
-	m_widget = witch;
+	m_internal.container = container;
+	m_internal.widget = button;
 
-	return true;
+	return WidgetGtkImpl< ICheckBox >::create();
 }
 
 void CheckBoxGtk::setChecked(bool checked)
 {
-	static_cast< Gtk::Switch* >(m_widget)->set_active(checked);
+	static_cast< Gtk::CheckButton* >(m_internal.widget)->set_active(checked);
 }
 
 bool CheckBoxGtk::isChecked() const
 {
-	return static_cast< Gtk::Switch* >(m_widget)->get_active();
+	return static_cast< Gtk::CheckButton* >(m_internal.widget)->get_active();
 }
 
-void CheckBoxGtk::onClicked()
+void CheckBoxGtk::on_checkbox_toggled()
 {
 	ButtonClickEvent clickEvent(m_owner);
 	m_owner->raiseEvent(&clickEvent);

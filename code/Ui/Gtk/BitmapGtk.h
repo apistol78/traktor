@@ -26,8 +26,10 @@ public:
 
 	virtual Color4ub getPixel(uint32_t x, uint32_t y) const;
 
+	const Cairo::RefPtr< Cairo::ImageSurface >& getSurface() const { return m_surface; }
+
 private:
-	Glib::RefPtr< Gdk::Pixbuf > m_pb;
+	Cairo::RefPtr< Cairo::ImageSurface > m_surface;
 };
 
 	}

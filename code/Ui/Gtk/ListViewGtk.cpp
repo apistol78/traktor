@@ -13,18 +13,20 @@ ListViewGtk::ListViewGtk(EventSubject* owner)
 
 bool ListViewGtk::create(IWidget* parent, int style)
 {
-	// @fixme Not safe, we must check so the internal handle in fact are a Gtk::Fixed container. Also need to ensure cleanup of m_parentContainer.
-	m_parentContainer = static_cast< Gtk::Fixed* >(parent->getInternalHandle());
-	if (!m_parentContainer)
-		return false;
+	Internal* parentInternal = static_cast< Internal* >(parent->getInternalHandle());
+	T_FATAL_ASSERT(parentInternal);
+
+	Gtk::Fixed* container = new Gtk::Fixed();
+	parentInternal->container->put(*container, 0, 0);
 
 	Gtk::ScrolledWindow* scrolledWindow = new Gtk::ScrolledWindow();
+	container->put(*scrolledWindow, 0, 0);
+	scrolledWindow->show();
 
-	m_parentContainer->put(*scrolledWindow, 0, 0);
+	m_internal.container = container;
+	m_internal.widget = scrolledWindow;
 
-	m_widget = scrolledWindow;
-
-	return true;
+	return WidgetGtkImpl< IListView >::create();
 }
 
 void ListViewGtk::setStyle(int style)

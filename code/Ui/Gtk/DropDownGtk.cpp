@@ -13,20 +13,21 @@ DropDownGtk::DropDownGtk(EventSubject* owner)
 
 bool DropDownGtk::create(IWidget* parent, const std::wstring& text, int style)
 {
-	// @fixme Not safe, we must check so the internal handle in fact are a Gtk::Fixed container. Also need to ensure cleanup of m_parentContainer.
-	m_parentContainer = static_cast< Gtk::Fixed* >(parent->getInternalHandle());
-	if (!m_parentContainer)
-		return false;
+	Internal* parentInternal = static_cast< Internal* >(parent->getInternalHandle());
+	T_FATAL_ASSERT(parentInternal);
+
+	Gtk::Fixed* container = new Gtk::Fixed();
+	parentInternal->container->put(*container, 0, 0);
 
 	Gtk::ComboBox* comboBox = new Gtk::ComboBox();
 
-	m_parentContainer->put(*comboBox, 0, 0);
-
+	container->put(*comboBox, 0, 0);
 	comboBox->show();
 
-	m_widget = comboBox;
+	m_internal.container = container;
+	m_internal.widget = comboBox;
 
-	return true;
+	return WidgetGtkImpl< IDropDown >::create();
 }
 
 int DropDownGtk::add(const std::wstring& item)
