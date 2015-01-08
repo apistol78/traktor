@@ -1,3 +1,4 @@
+#include <limits>
 #include "Core/Containers/StaticVector.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Half.h"

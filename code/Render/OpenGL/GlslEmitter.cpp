@@ -1,5 +1,6 @@
 #include <iomanip>
 #include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
 #include "Core/Misc/Adler32.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
@@ -18,7 +19,7 @@ namespace traktor
 	{
 		namespace
 		{
-		
+
 std::wstring formatFloat(float v)
 {
 	std::wstring s = toString(v);
@@ -37,10 +38,10 @@ std::wstring expandScalar(float v, GlslType type)
 
 	case GtFloat3:
 		return L"vec3(" + vs + L", " + vs + L", " + vs + L")";
-	
+
 	case GtFloat4:
 		return L"vec4(" + vs + L", " + vs + L", " + vs + L", " + vs + L")";
-		
+
 	default:
 		break;
 	}
@@ -124,7 +125,7 @@ bool emitColor(GlslContext& cx, Color* node)
 bool emitConditional(GlslContext& cx, Conditional* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	
+
 	// Emit input and reference branches.
 	GlslVariable* in = cx.emitInput(node, L"Input");
 	GlslVariable* ref = cx.emitInput(node, L"Reference");
@@ -221,7 +222,7 @@ bool emitConditional(GlslContext& cx, Conditional* node)
 
 	f << caseFalseBranch;
 	f << out->getName() << L" = " << caseFalse.cast(outputType) << L";" << Endl;
-	
+
 	f << DecreaseIndent;
 	f << L"}" << Endl;
 
@@ -494,7 +495,7 @@ bool emitInterpolator(GlslContext& cx, Interpolator* node)
 	}
 
 	cx.enterFragment();
-	
+
 	int32_t interpolatorWidth = glsl_type_width(in->getType());
 	if (!interpolatorWidth)
 	{
@@ -509,7 +510,7 @@ bool emitInterpolator(GlslContext& cx, Interpolator* node)
 
 	std::wstring interpolatorName = L"Attr" + toString(interpolatorId);
 	std::wstring interpolatorMask = interpolatorName + L"." + std::wstring(L"xyzw").substr(interpolatorOffset, interpolatorWidth);
-	
+
 	StringOutputStream& fb = cx.getVertexShader().getOutputStream(GlslShader::BtBody);
 	fb << interpolatorMask << L" = " << in->getName() << L";" << Endl;
 
@@ -608,7 +609,7 @@ bool emitIterate(GlslContext& cx, Iterate* node)
 	f << out->getName() << L" = " << inputName << L";" << Endl;
 
 	f << DecreaseIndent;
-	f << L"}" << Endl;	
+	f << L"}" << Endl;
 
 	return true;
 }
@@ -691,7 +692,7 @@ bool emitIterate2d(GlslContext& cx, Iterate2d* node)
 	f << out->getName() << L" = " << inputName << L";" << Endl;
 
 	f << DecreaseIndent;
-	f << L"}" << Endl;	
+	f << L"}" << Endl;
 
 	// Emit outer loop post condition.
 	if (condition)
@@ -701,7 +702,7 @@ bool emitIterate2d(GlslContext& cx, Iterate2d* node)
 	}
 
 	f << DecreaseIndent;
-	f << L"}" << Endl;	
+	f << L"}" << Endl;
 
 	return true;
 }
@@ -787,7 +788,7 @@ bool emitMatrixOut(GlslContext& cx, MatrixOut* node)
 	if (xaxis)
 	{
 		assign(f, xaxis) <<
-			L"vec4(" << 
+			L"vec4(" <<
 				in->getName() << L"[0][0], " <<
 				in->getName() << L"[0][1], " <<
 				in->getName() << L"[0][2], " <<
@@ -799,7 +800,7 @@ bool emitMatrixOut(GlslContext& cx, MatrixOut* node)
 	if (yaxis)
 	{
 		assign(f, yaxis) <<
-			L"vec4(" << 
+			L"vec4(" <<
 				in->getName() << L"[1][0], " <<
 				in->getName() << L"[1][1], " <<
 				in->getName() << L"[1][2], " <<
@@ -811,7 +812,7 @@ bool emitMatrixOut(GlslContext& cx, MatrixOut* node)
 	if (zaxis)
 	{
 		assign(f, zaxis) <<
-			L"vec4(" << 
+			L"vec4(" <<
 				in->getName() << L"[2][0], " <<
 				in->getName() << L"[2][1], " <<
 				in->getName() << L"[2][2], " <<
@@ -823,7 +824,7 @@ bool emitMatrixOut(GlslContext& cx, MatrixOut* node)
 	if (translate)
 	{
 		assign(f, translate) <<
-			L"vec4(" << 
+			L"vec4(" <<
 				in->getName() << L"[3][0], " <<
 				in->getName() << L"[3][1], " <<
 				in->getName() << L"[3][2], " <<
@@ -940,7 +941,7 @@ bool emitMixOut(GlslContext& cx, MixOut* node)
 			assign(f, w) << in->getName() << L".w;" << Endl;
 		}
 		break;
-		
+
 	default:
 		return false;
 	}
@@ -1045,7 +1046,7 @@ bool emitPixelOutput(GlslContext& cx, PixelOutput* node)
 		GL_EQUAL,
 		GL_NOTEQUAL
 	};
-	
+
 	const GLenum c_oglStencilOperation[] =
 	{
 		GL_KEEP,
@@ -1143,7 +1144,7 @@ bool emitPolynomial(GlslContext& cx, Polynomial* node)
 	case GtFloat4:
 		f << coeffs->getName() << L".x * pow(" << x->getName() << L", 4) + " << coeffs->getName() << L".y * pow(" << x->getName() << L", 3) + " << coeffs->getName() << L".z * pow(" << x->getName() << L", 2) + " << coeffs->getName() << L".w * " << x->getName();
 		break;
-		
+
 	default:
 		break;
 	}
@@ -1389,7 +1390,7 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 				case GtTextureCube:
 					assign(f, out) << L"texture(" << samplerName << L", " << texCoord->cast(GtFloat3) << L");" << Endl;
 					break;
-                
+
 				default:
 					return false;
 				}
@@ -1406,7 +1407,7 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 				case GtTextureCube:
 					assign(f, out) << L"textureLod(" << samplerName << L", " << texCoord->cast(GtFloat3) << L", 0.0);" << Endl;
 					break;
-                
+
 				default:
 					return false;
 				}
@@ -1446,7 +1447,7 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 				case GtTextureCube:
 					assign(f, out) << L"texture(" << samplerName << L", " << texCoord->cast(GtFloat4) << L" * vec3(1.0, 1.0, 1.0, 0.5) + vec3(0.0, 0.0, 0.0, 0.5)));" << Endl;
 					break;
-                
+
 				default:
 					return false;
 				}
@@ -1463,7 +1464,7 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 				case GtTextureCube:
 					assign(f, out) << L"textureLod(" << samplerName << L", " << texCoord->cast(GtFloat4) << L" * vec3(1.0, 1.0, 1.0, 0.5) + vec3(0.0, 0.0, 0.0, 0.5), 0.0);" << Endl;
 					break;
-                
+
 				default:
 					return false;
 				}
@@ -1503,7 +1504,7 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 		case GtTextureCube:
 			assign(f, out) << L"texture(" << samplerName << L", " << texCoord->cast(GtFloat3) << L", 0.0);" << Endl;
 			break;
-                
+
         default:
             return false;
 		}
@@ -1753,7 +1754,7 @@ bool emitSum(GlslContext& cx, Sum* node)
 	f << out->getName() << L" += " << inputName << L";" << Endl;
 
 	f << DecreaseIndent;
-	f << L"}" << Endl;	
+	f << L"}" << Endl;
 
 	return true;
 }
@@ -2117,7 +2118,7 @@ bool emitVertexInput(GlslContext& cx, VertexInput* node)
 			case GtFloat3:
 				assign(f, out) << L"vec4(" << attributeName << L".xyz, 1.0);" << Endl;
 				break;
-				
+
 			default:
 				break;
 			}
@@ -2142,7 +2143,7 @@ bool emitVertexInput(GlslContext& cx, VertexInput* node)
 			case GtFloat3:
 				assign(f, out) << L"vec4(" << attributeName << L".xyz, 0.0);" << Endl;
 				break;
-				
+
 			default:
 				break;
 			}
@@ -2171,7 +2172,7 @@ bool emitVertexInput(GlslContext& cx, VertexInput* node)
 			case GtFloat4:
 				assign(f, out) << attributeName << L".zyxw;" << Endl;
 				break;
-				
+
 			default:
 				break;
 			}
@@ -2225,7 +2226,7 @@ bool emitVertexOutput(GlslContext& cx, VertexOutput* node)
 	case GtFloat4:
 		fb << L"gl_Position = PV(" << in->getName() << L");" << Endl;
 		break;
-		
+
 	default:
 		break;
 	}

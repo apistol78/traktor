@@ -1,4 +1,5 @@
 #include <cstring>
+#include <limits>
 #include "Core/RefArray.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
@@ -477,7 +478,7 @@ void TerrainEditModifier::selectionChanged()
 	// Create default brush; try set same brush type as before.
 	if (m_drawBrush)
 		setBrush(type_of(m_drawBrush));
-	
+
 	if (!m_drawBrush)
 		m_drawBrush = new ElevateBrush(m_heightfield);
 
