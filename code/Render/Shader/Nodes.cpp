@@ -1904,7 +1904,7 @@ Truncate::Truncate()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Type", 0, Type, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Type_i[] = { { L"Type", false }, { L"Scalar", true }, { L"Vector", true }, { L"Matrix", true }, { L"Texture", true }, { L"State", true }, { L"Default", false }, 0 };
+const ImmutableNode::InputPinDesc c_Type_i[] = { { L"Type", true }, { L"Scalar", true }, { L"Vector", true }, { L"Matrix", true }, { L"Texture", true }, { L"State", true }, { L"Default", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Type_o[] = { L"Output", 0 };
 
 Type::Type()
