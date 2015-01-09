@@ -31,6 +31,8 @@ class T_DLLCLASS ProgramParameters
 public:
 	ProgramParameters();
 
+	void attachParameters(ProgramParameters* attachParameters);
+
 	/*! \name Record parameters.
 	 *
 	 * Must set all parameters between begin- and endParameters.
@@ -85,6 +87,7 @@ public:
 	//@}
 
 private:
+	ProgramParameters* m_attachParameters;
 	uint8_t* m_parameterFirst;
 	uint8_t* m_parameterLast;
 };

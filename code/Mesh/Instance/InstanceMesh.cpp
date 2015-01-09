@@ -65,7 +65,8 @@ void InstanceMesh::precull(
 void InstanceMesh::render(
 	render::RenderContext* renderContext,
 	const world::IWorldRenderPass& worldRenderPass,
-	AlignedVector< instance_distance_t >& instanceWorld
+	AlignedVector< instance_distance_t >& instanceWorld,
+	render::ProgramParameters* extraParameters
 )
 {
 	InstanceMeshData T_ALIGN16 instanceBatch[MaxInstanceCount];
@@ -131,6 +132,18 @@ void InstanceMesh::render(
 		if (!program)
 			continue;
 
+		// Setup batch shared parameters.
+		render::ProgramParameters* batchParameters = renderContext->alloc< render::ProgramParameters >();
+		batchParameters->attachParameters(extraParameters);
+		batchParameters->beginParameters(renderContext);
+		worldRenderPass.setProgramParameters(
+			batchParameters,
+			m_shader->getCurrentPriority(),
+			boundingBoxCenter,
+			boundingBoxWorld
+		);
+		batchParameters->endParameters(renderContext);
+
 		for (uint32_t batchOffset = 0; batchOffset < instanceWorld.size(); )
 		{
 			uint32_t batchCount = std::min< uint32_t >(uint32_t(instanceWorld.size()) - batchOffset, MaxInstanceCount);
@@ -167,13 +180,8 @@ void InstanceMesh::render(
 
 #endif
 
+			renderBlock->programParams->attachParameters(batchParameters);
 			renderBlock->programParams->beginParameters(renderContext);
-			worldRenderPass.setProgramParameters(
-				renderBlock->programParams,
-				m_shader->getCurrentPriority(),
-				boundingBoxCenter,
-				boundingBoxWorld
-			);
 			renderBlock->programParams->setVectorArrayParameter(
 				s_handleInstanceWorld,
 				reinterpret_cast< const Vector4* >(instanceBatch),
@@ -207,6 +215,18 @@ void InstanceMesh::render(
 			render::IProgram* program = m_shader->getCurrentProgram();
 			if (!program)
 				continue;
+
+			// Setup batch shared parameters.
+			render::ProgramParameters* batchParameters = renderContext->alloc< render::ProgramParameters >();
+			batchParameters->attachParameters(extraParameters);
+			batchParameters->beginParameters(renderContext);
+			worldRenderPass.setProgramParameters(
+				batchParameters,
+				m_shader->getCurrentPriority(),
+				boundingBoxCenter,
+				boundingBoxWorld
+			);
+			batchParameters->endParameters(renderContext);
 
 			for (uint32_t batchOffset = 0; batchOffset < instanceWorld.size(); )
 			{
@@ -244,13 +264,8 @@ void InstanceMesh::render(
 
 #endif
 
+				renderBlock->programParams->attachParameters(batchParameters);
 				renderBlock->programParams->beginParameters(renderContext);
-				worldRenderPass.setProgramParameters(
-					renderBlock->programParams,
-					m_shader->getCurrentPriority(),
-					boundingBoxCenter,
-					boundingBoxWorld
-				);
 				renderBlock->programParams->setVectorArrayParameter(
 					s_handleInstanceWorld,
 					reinterpret_cast< const Vector4* >(instanceBatch),

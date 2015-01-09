@@ -5,7 +5,6 @@
 #include "Terrain/OceanEntityData.h"
 #include "Terrain/RiverEntity.h"
 #include "Terrain/RiverEntityData.h"
-#include "Terrain/RubbleEntityData.h"
 
 namespace traktor
 {
@@ -25,7 +24,6 @@ const TypeInfoSet EntityFactory::getEntityTypes() const
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< OceanEntityData >());
 	typeSet.insert(&type_of< RiverEntityData >());
-	typeSet.insert(&type_of< RubbleEntityData >());
 	typeSet.insert(&type_of< TerrainEntityData >());
 	return typeSet;
 }
@@ -49,12 +47,10 @@ Ref< world::Entity > EntityFactory::createEntity(const world::IEntityBuilder* bu
 		if (river->create(m_resourceManager, m_renderSystem, *riverData))
 			return river;
 	}
-	else if (const RubbleEntityData* rubbleData = dynamic_type_cast< const RubbleEntityData* >(&entityData))
-		return rubbleData->createEntity(m_resourceManager, builder);
-	else if (const TerrainEntityData* terrainDataa = dynamic_type_cast< const TerrainEntityData* >(&entityData))
+	else if (const TerrainEntityData* terrainData = dynamic_type_cast< const TerrainEntityData* >(&entityData))
 	{
 		Ref< TerrainEntity > terrain = new TerrainEntity(m_resourceManager, m_renderSystem);
-		if (terrain->create(*terrainDataa))
+		if (terrain->create(*terrainData))
 			return terrain;
 	}
 

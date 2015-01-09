@@ -41,8 +41,8 @@ void UndergrowthLayerData::serialize(ISerializer& s)
 }
 
 UndergrowthLayerData::Plant::Plant()
-:	material(0)
-,	density(1000)
+:	material(1)
+,	density(100)
 ,	plant(0)
 ,	scale(1.0f)
 {

@@ -79,7 +79,8 @@ void MeshRenderer::flush(
 		i->first->render(
 			renderContext,
 			worldRenderPass,
-			m_instances
+			m_instances,
+			0
 		);
 
 		i->second.first.resize(0);
