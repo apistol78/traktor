@@ -1,5 +1,5 @@
-#ifndef traktor_terrain_UndergrowthLayerData_H
-#define traktor_terrain_UndergrowthLayerData_H
+#ifndef traktor_terrain_RubbleLayerData_H
+#define traktor_terrain_RubbleLayerData_H
 
 #include "Resource/Id.h"
 #include "Terrain/ITerrainLayerData.h"
@@ -14,15 +14,22 @@
 
 namespace traktor
 {
+	namespace mesh
+	{
+
+class InstanceMesh;
+
+	}
+
 	namespace terrain
 	{
 
-class T_DLLCLASS UndergrowthLayerData : public ITerrainLayerData
+class T_DLLCLASS RubbleLayerData : public ITerrainLayerData
 {
 	T_RTTI_CLASS;
 
 public:
-	UndergrowthLayerData();
+	RubbleLayerData();
 
 	virtual Ref< ITerrainLayer > createLayerInstance(
 		resource::IResourceManager* resourceManager,
@@ -33,27 +40,26 @@ public:
 	virtual void serialize(ISerializer& s);
 
 private:
-	friend class UndergrowthLayer;
+	friend class RubbleLayer;
 	friend class TerrainLayerPipeline;
 
-	struct Plant
+	struct RubbleMesh
 	{
 		uint8_t material;
 		int32_t density;
-		int32_t plant;
-		float scale;
+		float randomScaleAmount;
 
-		Plant();
+		RubbleMesh();
 
 		void serialize(ISerializer& s);
 	};
 
-	resource::Id< render::Shader > m_shader;
+	resource::Id< mesh::InstanceMesh > m_mesh;
 	float m_spreadDistance;
-	std::vector< Plant > m_plants;
+	std::vector< RubbleMesh > m_rubble;
 };
 
 	}
 }
 
-#endif	// traktor_terrain_UndergrowthLayerData_H
+#endif	// traktor_terrain_RubbleLayerData_H

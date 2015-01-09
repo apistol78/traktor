@@ -1,5 +1,5 @@
-#ifndef traktor_terrain_UndergrowthPipeline_H
-#define traktor_terrain_UndergrowthPipeline_H
+#ifndef traktor_terrain_TerrainLayerPipeline_H
+#define traktor_terrain_TerrainLayerPipeline_H
 
 #include "Editor/DefaultPipeline.h"
 
@@ -16,7 +16,7 @@ namespace traktor
 	namespace terrain
 	{
 
-class T_DLLCLASS UndergrowthPipeline : public editor::DefaultPipeline
+class T_DLLCLASS TerrainLayerPipeline : public editor::DefaultPipeline
 {
 	T_RTTI_CLASS;
 
@@ -35,4 +35,4 @@ public:
 	}
 }
 
-#endif	// traktor_terrain_UndergrowthPipeline_H
+#endif	// traktor_terrain_TerrainLayerPipeline_H

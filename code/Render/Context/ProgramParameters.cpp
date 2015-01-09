@@ -97,9 +97,15 @@ enum ParameterTypes
 		}
 
 ProgramParameters::ProgramParameters()
-:	m_parameterFirst(0)
+:	m_attachParameters(0)
+,	m_parameterFirst(0)
 ,	m_parameterLast(0)
 {
+}
+
+void ProgramParameters::attachParameters(ProgramParameters* attachParameters)
+{
+	m_attachParameters = attachParameters;
 }
 
 void ProgramParameters::beginParameters(RenderContext* context)
@@ -198,6 +204,7 @@ void ProgramParameters::setStencilReference(uint32_t stencilReference)
 void ProgramParameters::fixup(IProgram* program) const
 {
 	T_ASSERT (program);
+
 	for (uint8_t* parameter = m_parameterFirst; parameter < m_parameterLast; )
 	{
 		align< handle_t >(parameter);
@@ -256,6 +263,9 @@ void ProgramParameters::fixup(IProgram* program) const
 			break;
 		}
 	}
+
+	if (m_attachParameters)
+		m_attachParameters->fixup(program);
 }
 
 	}

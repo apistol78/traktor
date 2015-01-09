@@ -23,6 +23,7 @@ namespace traktor
 	namespace render
 	{
 
+class ProgramParameters;
 class RenderContext;
 class Mesh;
 class Shader;
@@ -86,7 +87,8 @@ public:
 	void render(
 		render::RenderContext* renderContext,
 		const world::IWorldRenderPass& worldRenderPass,
-		AlignedVector< instance_distance_t >& instanceWorld
+		AlignedVector< instance_distance_t >& instanceWorld,
+		render::ProgramParameters* extraParameters
 	);
 
 private:

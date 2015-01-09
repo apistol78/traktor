@@ -80,7 +80,8 @@ void InstanceMeshEntityRenderer::flush(
 		i->first->render(
 			worldContext.getRenderContext(),
 			worldRenderPass,
-			i->second
+			i->second,
+			0
 		);
 
 		i->second.resize(0);
