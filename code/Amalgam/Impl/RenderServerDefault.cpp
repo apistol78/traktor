@@ -463,13 +463,23 @@ RenderServer::UpdateResult RenderServerDefault::update(PropertyGroup* settings)
 		return UrSuccess;
 
 	render::RenderEvent evt;
-	if (m_renderView->nextEvent(evt))
+	while (m_renderView->nextEvent(evt))
 	{
 		if (evt.type == render::ReClose)
 			return UrTerminate;
 		else if (evt.type == render::ReToggleFullScreen)
 		{
 			settings->setProperty< PropertyBoolean >(L"Render.FullScreen", !m_renderViewDesc.fullscreen);
+			return UrReconfigure;
+		}
+		else if (evt.type == render::ReSetWindowed)
+		{
+			settings->setProperty< PropertyBoolean >(L"Render.FullScreen", false);
+			return UrReconfigure;
+		}
+		else if (evt.type == render::ReSetFullScreen)
+		{
+			settings->setProperty< PropertyBoolean >(L"Render.FullScreen", true);
 			return UrReconfigure;
 		}
 		else if (evt.type == render::ReResize)

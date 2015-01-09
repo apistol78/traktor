@@ -150,7 +150,9 @@ enum RenderEventType
 {
 	ReClose = 1,
 	ReResize = 2,
-	ReToggleFullScreen = 3
+	ReToggleFullScreen = 3,
+	ReSetWindowed = 4,
+	ReSetFullScreen = 5
 };
 
 /*! \brief Clear target flags. */
