@@ -3,6 +3,7 @@
 
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Vector4.h"
+#include "Mesh/Instance/InstanceMesh.h"
 #include "Resource/Proxy.h"
 #include "Terrain/ITerrainLayer.h"
 #include "Terrain/RubbleLayerData.h"
@@ -12,10 +13,7 @@ namespace traktor
 	namespace render
 	{
 
-//class IndexBuffer;
 class IRenderSystem;
-//class Shader;
-//class VertexBuffer;
 
 	}
 
@@ -73,11 +71,12 @@ private:
 	};
 
 	RubbleLayerData m_layerData;
-
 	resource::Proxy< mesh::InstanceMesh > m_mesh;
 	AlignedVector< Instance > m_instances;
 	AlignedVector< Cluster > m_clusters;
 	float m_clusterSize;
+	Vector4 m_eye;
+	AlignedVector< mesh::InstanceMesh::instance_distance_t > m_instanceData;
 };
 
 	}

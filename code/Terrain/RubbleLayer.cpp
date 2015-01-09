@@ -4,7 +4,6 @@
 #include "Core/Math/Half.h"
 #include "Core/Math/RandomGeometry.h"
 #include "Heightfield/Heightfield.h"
-#include "Mesh/Instance/InstanceMesh.h"
 #include "Render/ISimpleTexture.h"
 #include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
@@ -37,6 +36,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.RubbleLayer", RubbleLayer, ITerrainLaye
 
 RubbleLayer::RubbleLayer()
 :	m_clusterSize(0.0f)
+,	m_eye(Vector4::zero())
 {
 	s_handleNormals = render::getParameterHandle(L"Normals");
 	s_handleHeightfield = render::getParameterHandle(L"Heightfield");
@@ -91,9 +91,9 @@ void RubbleLayer::render(
 		viewFrustum.setFarZ(Scalar(m_layerData.m_spreadDistance + m_clusterSize));
 
 		// Only perform "replanting" when moved more than one unit.
-		//if ((eye - m_eye).length() >= 1.0f)
+		if ((eye - m_eye).length() >= m_clusterSize)
 		{
-			//m_eye = eye;
+			m_eye = eye;
 
 			for (AlignedVector< Cluster >::iterator i = m_clusters.begin(); i != m_clusters.end(); ++i)
 			{
@@ -140,9 +140,7 @@ void RubbleLayer::render(
 	extraParameters->setFloatParameter(s_handleMaxDistance, m_layerData.m_spreadDistance + m_clusterSize);
 	extraParameters->endParameters(renderContext);
 
-	AlignedVector< mesh::InstanceMesh::instance_distance_t > instanceData(mesh::InstanceMesh::MaxInstanceCount);
 	uint32_t plantCount = 0;
-
 	for (AlignedVector< Cluster >::const_iterator i = m_clusters.begin(); i != m_clusters.end(); ++i)
 	{
 		if (!i->visible)
@@ -153,21 +151,19 @@ void RubbleLayer::render(
 		{
 			int32_t batch = std::min< int32_t >(count - j, mesh::InstanceMesh::MaxInstanceCount);
 
-			instanceData.resize(batch);
+			m_instanceData.resize(batch);
 			for (int32_t k = 0; k < batch; ++k, ++j)
 			{
-				m_instances[j + i->from].position.storeAligned( instanceData[k].first.translation );
-				m_instances[j + i->from].rotation.e.storeAligned( instanceData[k].first.rotation );
-				
-				instanceData[k].first.scale = m_instances[j + i->from].scale;
-
-				instanceData[k].second = i->distance;
+				m_instances[j + i->from].position.storeAligned( m_instanceData[k].first.translation );
+				m_instances[j + i->from].rotation.e.storeAligned( m_instanceData[k].first.rotation );
+				m_instanceData[k].first.scale = m_instances[j + i->from].scale;
+				m_instanceData[k].second = i->distance;
 			}
 
 			m_mesh->render(
 				renderContext,
 				worldRenderPass,
-				instanceData,
+				m_instanceData,
 				extraParameters
 			);
 		}
