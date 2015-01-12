@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_WX_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -49,6 +49,8 @@ public:
 
 	virtual IPanel* createPanel(EventSubject* owner);
 
+	virtual IPathDialog* createPathDialog(EventSubject* owner);
+
 	virtual IPopupMenu* createPopupMenu(EventSubject* owner);
 
 	virtual IRadioButton* createRadioButton(EventSubject* owner);
@@ -67,13 +69,15 @@ public:
 
 	virtual IUserWidget* createUserWidget(EventSubject* owner);
 
+	virtual IWebBrowser* createWebBrowser(EventSubject* owner);
+
 	virtual INative* createNative(EventSubject* owner);
 
 	virtual IBitmap* createBitmap();
 
 	virtual IClipboard* createClipboard();
 
-	virtual bool getSystemColor(SystemColor systemColor, Color& outColor);
+	virtual bool getSystemColor(SystemColor systemColor, Color4ub& outColor);
 };
 
 	}

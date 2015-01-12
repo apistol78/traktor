@@ -73,8 +73,8 @@ bool ButtonWx::getState() const
 
 void ButtonWx::onClick(wxCommandEvent& event)
 {
-	CommandEvent cmdEvent(m_owner, 0);
-	m_owner->raiseEvent(EiClick, &cmdEvent);
+	ButtonClickEvent clickEvent(m_owner);
+	m_owner->raiseEvent(&clickEvent);
 }
 
 	}

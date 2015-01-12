@@ -142,7 +142,7 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 	timer.start();
 
 	// Ensure FP is in known state.
-#if defined(_WIN32)
+#if defined(_WIN32) && !defined(_WIN64)
 	uint32_t dummy;
 	_controlfp_s(&dummy, 0, 0);
 	_controlfp_s(&dummy,_PC_24, _MCW_PC);
@@ -548,7 +548,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 	IPipelineDb::DependencyHash currentDependencyHash;
 
 	// Ensure FP is in known state.
-#if defined(_WIN32)
+#if defined(_WIN32) && !defined(_WIN64)
 	uint32_t dummy;
 	_controlfp_s(&dummy, 0, 0);
 	_controlfp_s(&dummy,_PC_24, _MCW_PC);

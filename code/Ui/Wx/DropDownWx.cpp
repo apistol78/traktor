@@ -5,8 +5,8 @@ namespace traktor
 	namespace ui
 	{
 
-DropDownWx::DropDownWx(EventSubject* owner) :
-	WidgetWxImpl< IDropDown, wxComboBox >(owner)
+DropDownWx::DropDownWx(EventSubject* owner)
+:	WidgetWxImpl< IDropDown, wxComboBox >(owner)
 {
 }
 
@@ -66,6 +66,11 @@ int DropDownWx::count() const
 	return m_window->GetCount();
 }
 
+void DropDownWx::set(int index, const std::wstring& item)
+{
+	m_window->SetString(index, wstots(item));
+}
+
 std::wstring DropDownWx::get(int index) const
 {
 	return tstows((const wxChar*)m_window->GetString(index));
@@ -83,8 +88,8 @@ int DropDownWx::getSelected() const
 
 void DropDownWx::onSelected(wxCommandEvent& event)
 {
-	CommandEvent cmdEvent(m_owner, 0, Command(event.GetSelection()));
-	m_owner->raiseEvent(EiSelectionChange, &cmdEvent);
+	SelectionChangeEvent selectionChangeEvent(m_owner);
+	m_owner->raiseEvent(&selectionChangeEvent);
 }
 
 	}

@@ -16,7 +16,7 @@ public:
 
 	virtual bool create(IWidget* parent, const std::wstring& text, int style);
 
-	virtual int addAttribute(const Color& textColor, const Color& backColor, bool bold, bool italic, bool underline);
+	virtual int addAttribute(const Color4ub& textColor, const Color4ub& backColor, bool bold, bool italic, bool underline);
 
 	virtual void setAttribute(int start, int length, int attribute);
 

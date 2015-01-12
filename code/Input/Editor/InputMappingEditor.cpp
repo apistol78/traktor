@@ -1,3 +1,4 @@
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyString.h"
 #include "Editor/IDocument.h"
@@ -272,6 +273,7 @@ bool InputMappingEditor::create(ui::Container* parent)
 
 void InputMappingEditor::destroy()
 {
+	safeDestroy(m_menuPopup);
 }
 
 void InputMappingEditor::activate()

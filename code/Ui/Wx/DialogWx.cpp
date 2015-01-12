@@ -5,8 +5,8 @@ namespace traktor
 	namespace ui
 	{
 
-DialogWx::DialogWx(EventSubject* owner) :
-	WidgetWxImpl< IDialog, wxDialog >(owner)
+DialogWx::DialogWx(EventSubject* owner)
+:	WidgetWxImpl< IDialog, wxDialog >(owner)
 {
 }
 

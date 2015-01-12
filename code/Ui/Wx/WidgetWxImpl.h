@@ -10,21 +10,14 @@
 #	include <gdk/gdkx.h>
 #	include <wx/gtk/win_gtk.h>
 #endif
+#include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
 #include "Ui/Widget.h"
 #include "Ui/Canvas.h"
-#include "Ui/Events/ShowEvent.h"
-#include "Ui/Events/KeyEvent.h"
-#include "Ui/Events/MoveEvent.h"
-#include "Ui/Events/SizeEvent.h"
-#include "Ui/Events/MouseEvent.h"
-#include "Ui/Events/FocusEvent.h"
-#include "Ui/Events/CommandEvent.h"
-#include "Ui/Events/PaintEvent.h"
+#include "Ui/Events/AllEvents.h"
 #include "Ui/Itf/IWidget.h"
 #include "Ui/Wx/EvtHandler.h"
 #include "Ui/Wx/CanvasWx.h"
-#include "Core/Misc/TString.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -154,8 +147,8 @@ public:
 		{
 			m_window->Show(visible);
 			
-			ShowEvent showEvent(m_owner, 0, visible);
-			m_owner->raiseEvent(EiShow, &showEvent);
+			ShowEvent showEvent(m_owner, visible);
+			m_owner->raiseEvent(&showEvent);
 		}
 	}
 
@@ -209,7 +202,8 @@ public:
 
 	virtual void setCapture()
 	{
-		m_window->CaptureMouse();
+		if (!m_window->HasCapture())
+			m_window->CaptureMouse();
 	}
 
 	virtual void releaseCapture()
@@ -498,25 +492,22 @@ protected:
 
 	void onChar(wxKeyEvent& event)
 	{
-		KeyEvent k(m_owner, 0, event.GetKeyCode());
-		m_owner->raiseEvent(EiKey, &k);
-
+		KeyEvent k(m_owner, VkNull, event.GetKeyCode(), event.GetUnicodeKey());
+		m_owner->raiseEvent(&k);
 		event.Skip(true);
 	}
 
 	void onKeyDown(wxKeyEvent& event)
 	{
-		KeyEvent k(m_owner, 0, event.GetKeyCode());
-		m_owner->raiseEvent(EiKeyDown, &k);
-
+		KeyDownEvent k(m_owner, VkNull, event.GetKeyCode(), event.GetUnicodeKey());
+		m_owner->raiseEvent(&k);
 		event.Skip(true);
 	}
 
 	void onKeyUp(wxKeyEvent& event)
 	{
-		KeyEvent k(m_owner, 0, event.GetKeyCode());
-		m_owner->raiseEvent(EiKeyUp, &k);
-
+		KeyUpEvent k(m_owner, VkNull, event.GetKeyCode(), event.GetUnicodeKey());
+		m_owner->raiseEvent(&k);
 		event.Skip(true);
 	}
 
@@ -524,8 +515,8 @@ protected:
 	{
 		wxPoint pt = event.GetPosition();
 
-		MoveEvent m(m_owner, 0, Point(pt.x, pt.y));
-		m_owner->raiseEvent(EiMove, &m);
+		MoveEvent m(m_owner, Point(pt.x, pt.y));
+		m_owner->raiseEvent(&m);
 
 		if (!m.consumed())
 			event.Skip(true);
@@ -535,8 +526,8 @@ protected:
 	{
 		wxSize sz = event.GetSize();
 
-		SizeEvent s(m_owner, 0, Size(sz.x, sz.y));
-		m_owner->raiseEvent(EiSize, &s);
+		SizeEvent s(m_owner, Size(sz.x, sz.y));
+		m_owner->raiseEvent(&s);
 
 		if (!s.consumed())
 			event.Skip(true);
@@ -546,16 +537,16 @@ protected:
 	{
 		wxPoint p = event.GetPosition();
 
-		const MouseEvent::Button buttons[] =
+		const int32_t buttons[] =
 		{
-			MouseEvent::BtNone,
-			MouseEvent::BtLeft,
-			MouseEvent::BtMiddle,
-			MouseEvent::BtRight
+			MbtNone,
+			MbtLeft,
+			MbtMiddle,
+			MbtRight
 		};
 
-		MouseEvent m(m_owner, 0, buttons[event.GetButton()], Point(p.x, p.y));
-		m_owner->raiseEvent(EiButtonDown, &m);
+		MouseButtonDownEvent m(m_owner, buttons[event.GetButton()], Point(p.x, p.y));
+		m_owner->raiseEvent(&m);
 
 		if (!m.consumed())
 			event.Skip(true);
@@ -565,16 +556,16 @@ protected:
 	{
 		wxPoint p = event.GetPosition();
 
-		const MouseEvent::Button buttons[] =
+		const int32_t buttons[] =
 		{
-			MouseEvent::BtNone,
-			MouseEvent::BtLeft,
-			MouseEvent::BtMiddle,
-			MouseEvent::BtRight
+			MbtNone,
+			MbtLeft,
+			MbtMiddle,
+			MbtRight
 		};
 
-		MouseEvent m(m_owner, 0, buttons[event.GetButton()], Point(p.x, p.y));
-		m_owner->raiseEvent(EiButtonUp, &m);
+		MouseButtonUpEvent m(m_owner, buttons[event.GetButton()], Point(p.x, p.y));
+		m_owner->raiseEvent(&m);
 
 		if (!m.consumed())
 			event.Skip(true);
@@ -584,16 +575,16 @@ protected:
 	{
 		wxPoint p = event.GetPosition();
 
-		const MouseEvent::Button buttons[] =
+		const int32_t buttons[] =
 		{
-			MouseEvent::BtNone,
-			MouseEvent::BtLeft,
-			MouseEvent::BtMiddle,
-			MouseEvent::BtRight
+			MbtNone,
+			MbtLeft,
+			MbtMiddle,
+			MbtRight
 		};
 
-		MouseEvent m(m_owner, 0, buttons[event.GetButton()], Point(p.x, p.y));
-		m_owner->raiseEvent(EiDoubleClick, &m);
+		MouseDoubleClickEvent m(m_owner, buttons[event.GetButton()], Point(p.x, p.y));
+		m_owner->raiseEvent(&m);
 
 		if (!m.consumed())
 			event.Skip(true);
@@ -605,14 +596,14 @@ protected:
 
 		int button = 0;
 		if (event.LeftIsDown())
-			button |= MouseEvent::BtLeft;
+			button |= MbtLeft;
 		if (event.MiddleIsDown())
-			button |= MouseEvent::BtMiddle;
+			button |= MbtMiddle;
 		if (event.RightIsDown())
-			button |= MouseEvent::BtRight;
+			button |= MbtRight;
 
-		MouseEvent m(m_owner, 0, button, Point(p.x, p.y));
-		m_owner->raiseEvent(EiMouseMove, &m);
+		MouseMoveEvent m(m_owner, button, Point(p.x, p.y));
+		m_owner->raiseEvent(&m);
 
 		if (!m.consumed())
 			event.Skip(true);
@@ -622,16 +613,8 @@ protected:
 	{
 		wxPoint p = event.GetPosition();
 
-		int button = 0;
-		if (event.LeftIsDown())
-			button |= MouseEvent::BtLeft;
-		if (event.MiddleIsDown())
-			button |= MouseEvent::BtMiddle;
-		if (event.RightIsDown())
-			button |= MouseEvent::BtRight;
-
-		MouseEvent m(m_owner, 0, button, Point(p.x, p.y), event.GetWheelRotation());
-		m_owner->raiseEvent(EiMouseWheel, &m);
+		MouseWheelEvent m(m_owner, event.GetWheelRotation(), Point(p.x, p.y));
+		m_owner->raiseEvent(&m);
 
 		if (!m.consumed())
 			event.Skip(true);
@@ -639,21 +622,21 @@ protected:
 
 	void onSetFocus(wxFocusEvent& event)
 	{
-		FocusEvent focusEvent(m_owner, 0, true);
-		m_owner->raiseEvent(EiFocus, &focusEvent);
+		FocusEvent focusEvent(m_owner, true);
+		m_owner->raiseEvent(&focusEvent);
 		event.Skip(true);
 	}
 
 	void onKillFocus(wxFocusEvent& event)
 	{
-		FocusEvent focusEvent(m_owner, 0, false);
-		m_owner->raiseEvent(EiFocus, &focusEvent);
+		FocusEvent focusEvent(m_owner, false);
+		m_owner->raiseEvent(&focusEvent);
 		event.Skip(true);
 	}
 
 	void onPaint(wxPaintEvent& event)
 	{
-		if (!m_owner->hasEventHandler(EiPaint) || !m_canvasImpl)
+		if (!m_owner->hasEventHandler< PaintEvent >() || !m_canvasImpl)
 		{
 			// Call default painter.
 			event.Skip(true);
@@ -666,11 +649,10 @@ protected:
 			Canvas canvas(m_canvasImpl);
 			PaintEvent p(
 				m_owner,
-				0,
 				canvas,
 				ui::Rect(rc.GetLeft(), rc.GetTop(), rc.GetRight(), rc.GetBottom())
 			);
-			m_owner->raiseEvent(EiPaint, &p);
+			m_owner->raiseEvent(&p);
 			if (!p.consumed())
 				event.Skip(true);
 			m_canvasImpl->endPaint(m_window);
@@ -681,14 +663,14 @@ protected:
 
 	void onEraseBackground(wxEraseEvent& event)
 	{
-		if (!m_owner->hasEventHandler(EiPaint))
+		if (!m_owner->hasEventHandler< PaintEvent >())
 			event.Skip(true);
 	}
 
 	void onTimer(wxTimerEvent& event)
 	{
-		CommandEvent cmdEvent(m_owner, 0);
-		m_owner->raiseEvent(EiTimer, &cmdEvent);
+		TimerEvent timerEvent(m_owner, 0);
+		m_owner->raiseEvent(&timerEvent);
 		event.Skip(true);
 	}
 };

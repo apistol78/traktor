@@ -6,8 +6,8 @@ namespace traktor
 	namespace ui
 	{
 
-ListBoxWx::ListBoxWx(EventSubject* owner) :
-	WidgetWxImpl< IListBox, wxListBox >(owner)
+ListBoxWx::ListBoxWx(EventSubject* owner)
+:	WidgetWxImpl< IListBox, wxListBox >(owner)
 {
 }
 
@@ -114,8 +114,8 @@ Rect ListBoxWx::getItemRect(int index) const
 
 void ListBoxWx::onSelected(wxCommandEvent& event)
 {
-	CommandEvent cmdEvent(m_owner, 0, Command(event.GetSelection()));
-	m_owner->raiseEvent(EiSelectionChange, &cmdEvent);
+	SelectionChangeEvent selectionChangeEvent(m_owner);
+	m_owner->raiseEvent(&selectionChangeEvent);
 }
 
 	}

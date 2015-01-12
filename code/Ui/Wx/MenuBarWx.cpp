@@ -89,8 +89,8 @@ void MenuBarWx::onMenuSelected(wxCommandEvent& event)
 	int id = event.GetId();
 	T_ASSERT (id >= 1000);
 	
-	CommandEvent cmdEvent(m_owner, m_items[id - 1000], m_items[id - 1000]->getCommand());
-	m_owner->raiseEvent(EiClick, &cmdEvent);
+	MenuClickEvent menuClickEvent(m_owner, m_items[id - 1000], m_items[id - 1000]->getCommand());
+	m_owner->raiseEvent(&menuClickEvent);
 }
 
 	}

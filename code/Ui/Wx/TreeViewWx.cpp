@@ -6,7 +6,6 @@
 #include "Ui/Wx/BitmapWx.h"
 #include "Ui/TreeView.h"
 #include "Ui/Events/TreeViewDragEvent.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
@@ -71,7 +70,7 @@ int TreeViewWx::addImage(IBitmap* image, int imageCount)
 	return m_imageList->Add(*wxi, wxColour(255, 0, 0));
 }
 
-TreeViewItem* TreeViewWx::createItem(TreeViewItem* parent, const std::wstring& text, int image, int expandedImage)
+Ref< TreeViewItem > TreeViewWx::createItem(TreeViewItem* parent, const std::wstring& text, int image, int expandedImage)
 {
 	wxTreeItemId id = parent ?
 		m_window->AppendItem(
@@ -85,7 +84,7 @@ TreeViewItem* TreeViewWx::createItem(TreeViewItem* parent, const std::wstring& t
 		);
 	T_ASSERT_M (id, L"Failed to create TreeView item");
 
-	Ref< TreeViewItemWx > item = gc_new< TreeViewItemWx >(m_window, parent, id);
+	Ref< TreeViewItemWx > item = new TreeViewItemWx(m_window, parent, id);
 
 	m_window->SetItemData(id, new TreeItemData(item));
 
@@ -103,7 +102,7 @@ void TreeViewWx::removeAllItems()
 	m_window->DeleteAllItems();
 }
 
-TreeViewItem* TreeViewWx::getRootItem() const
+Ref< TreeViewItem > TreeViewWx::getRootItem() const
 {
 	wxTreeItemId rootId = m_window->GetRootItem();
 	if (!rootId)
@@ -115,7 +114,7 @@ TreeViewItem* TreeViewWx::getRootItem() const
 	return item;
 }
 
-TreeViewItem* TreeViewWx::getSelectedItem() const
+Ref< TreeViewItem > TreeViewWx::getSelectedItem() const
 {
 	wxTreeItemId id = m_window->GetSelection();
 	if (!id)
@@ -129,8 +128,8 @@ TreeViewItem* TreeViewWx::getSelectedItem() const
 
 void TreeViewWx::onTreeItemActivated(wxTreeEvent& event)
 {
-	CommandEvent cmdEvent(m_owner, getSelectedItem());
-	m_owner->raiseEvent(EiActivate, &cmdEvent);
+	TreeViewItemActivateEvent activateEvent(m_owner, getSelectedItem());
+	m_owner->raiseEvent(&activateEvent);
 }
 
 void TreeViewWx::onTreeSelectionChanged(wxTreeEvent& event)
@@ -138,8 +137,8 @@ void TreeViewWx::onTreeSelectionChanged(wxTreeEvent& event)
 	Ref< TreeViewItemWx > item = static_cast< TreeItemData* >(m_window->GetItemData(event.GetItem()))->getItem();
 	T_ASSERT (item);
 
-	CommandEvent cmdEvent(m_owner, item);
-	m_owner->raiseEvent(EiSelectionChange, &cmdEvent);
+	SelectionChangeEvent selectionChangeEvent(m_owner);
+	m_owner->raiseEvent(&selectionChangeEvent);
 }
 
 void TreeViewWx::onTreeEndLabelEdit(wxTreeEvent& event)
@@ -156,8 +155,8 @@ void TreeViewWx::onTreeEndLabelEdit(wxTreeEvent& event)
 
 	item->setText(newLabel);
 	
-	CommandEvent cmdEvent(m_owner, item);
-	m_owner->raiseEvent(EiContentChange, &cmdEvent);
+	TreeViewContentChangeEvent contentChangeEvent(m_owner, item);
+	m_owner->raiseEvent(&contentChangeEvent);
 }
 
 void TreeViewWx::onTreeBeginDrag(wxTreeEvent& event)
@@ -165,11 +164,11 @@ void TreeViewWx::onTreeBeginDrag(wxTreeEvent& event)
 	if (!m_allowDrag)
 		return;
 
-	Ref< TreeViewItemWx > dragItem = static_cast< TreeItemData* >(m_window->GetItemData(event.GetItem()))->getItem();
-	T_ASSERT (dragItem);
+	Ref< TreeViewItemWx > item = static_cast< TreeItemData* >(m_window->GetItemData(event.GetItem()))->getItem();
+	T_ASSERT (item);
 
-	TreeViewDragEvent dragEvent(m_owner, dragItem, TreeViewDragEvent::DmDrag);
-	m_owner->raiseEvent(TreeView::EiDrag, &dragEvent);
+	TreeViewDragEvent dragEvent(m_owner, item, TreeViewDragEvent::DmDrag);
+	m_owner->raiseEvent(&dragEvent);
 
 	event.Allow();
 }

@@ -2,7 +2,6 @@
 #define traktor_ui_TreeItemData_H
 
 #include <wx/treectrl.h>
-#include "Core/Heap/Ref.h"
 
 namespace traktor
 {
