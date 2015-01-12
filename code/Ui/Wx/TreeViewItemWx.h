@@ -2,7 +2,6 @@
 #define traktor_ui_TreeViewItemWx_H
 
 #include <wx/treectrl.h>
-#include "Core/Heap/Ref.h"
 #include "Ui/TreeViewItem.h"
 
 namespace traktor
@@ -12,7 +11,7 @@ namespace traktor
 	
 class TreeViewItemWx : public TreeViewItem
 {
-	T_RTTI_CLASS(TreeViewItemWx)
+	T_RTTI_CLASS;
 	
 public:
 	TreeViewItemWx(wxTreeCtrl* treeCtrl, TreeViewItem* parent, wxTreeItemId id);
@@ -23,6 +22,10 @@ public:
 	
 	virtual std::wstring getText() const;
 	
+	virtual void setBold(bool bold);
+
+	virtual bool isBold() const;
+
 	virtual void setImage(int image);
 	
 	virtual int getImage() const;
@@ -43,9 +46,19 @@ public:
 	
 	virtual void select();
 
+	virtual bool isVisible() const;
+
+	virtual void show();
+
+	virtual void setEditable(bool editable);
+
+	virtual bool isEditable() const;
+
 	virtual bool edit();
+
+	virtual void sort(bool recursive);
 	
-	virtual TreeViewItem* getParent() const;
+	virtual Ref< TreeViewItem > getParent() const;
 
 	virtual bool hasChildren() const;
 	

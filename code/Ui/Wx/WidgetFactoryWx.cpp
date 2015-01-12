@@ -104,6 +104,11 @@ IPanel* WidgetFactoryWx::createPanel(EventSubject* owner)
 	return new PanelWx(owner);
 }
 
+IPathDialog* WidgetFactoryWx::createPathDialog(EventSubject* owner)
+{
+	return 0;
+}
+
 IPopupMenu* WidgetFactoryWx::createPopupMenu(EventSubject* owner)
 {
 	return new PopupMenuWx(owner);
@@ -149,6 +154,11 @@ IUserWidget* WidgetFactoryWx::createUserWidget(EventSubject* owner)
 	return new UserWidgetWx(owner);
 }
 
+IWebBrowser* WidgetFactoryWx::createWebBrowser(EventSubject* owner)
+{
+	return 0;
+}
+
 INative* WidgetFactoryWx::createNative(EventSubject* owner)
 {
 	return 0;
@@ -164,7 +174,7 @@ IClipboard* WidgetFactoryWx::createClipboard()
 	return 0;
 }
 
-bool WidgetFactoryWx::getSystemColor(SystemColor systemColor, Color& outColor)
+bool WidgetFactoryWx::getSystemColor(SystemColor systemColor, Color4ub& outColor)
 {
 	const wxSystemColour c_systemColors[] =
 	{
@@ -186,10 +196,11 @@ bool WidgetFactoryWx::getSystemColor(SystemColor systemColor, Color& outColor)
 	};
 
 	wxColour colour = wxSystemSettings::GetColour(c_systemColors[systemColor]);
-	outColor = Color(
+	outColor = Color4ub(
 		colour.Red(),
 		colour.Green(),
-		colour.Blue()
+		colour.Blue(),
+		255
 	);
 
 	return true;

@@ -5,8 +5,8 @@ namespace traktor
 	namespace ui
 	{
 
-ComboBoxWx::ComboBoxWx(EventSubject* owner) :
-	WidgetWxImpl< IComboBox, wxComboBox >(owner)
+ComboBoxWx::ComboBoxWx(EventSubject* owner)
+:	WidgetWxImpl< IComboBox, wxComboBox >(owner)
 {
 }
 
@@ -83,8 +83,8 @@ int ComboBoxWx::getSelected() const
 
 void ComboBoxWx::onSelected(wxCommandEvent& event)
 {
-	CommandEvent cmdEvent(m_owner, 0, Command(event.GetSelection()));
-	m_owner->raiseEvent(EiSelectionChange, &cmdEvent);
+	SelectionChangeEvent selectionChangeEvent(m_owner);
+	m_owner->raiseEvent(&selectionChangeEvent);
 }
 
 	}

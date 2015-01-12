@@ -81,8 +81,8 @@ void ToolFormWx::setOutline(const Point* p, int np)
 
 void ToolFormWx::onClose(wxCloseEvent& event)
 {
-	CloseEvent closeEvent(m_owner, 0);
-	m_owner->raiseEvent(EiClose, &closeEvent);
+	CloseEvent closeEvent(m_owner);
+	m_owner->raiseEvent(&closeEvent);
 }
 
 	}

@@ -38,6 +38,9 @@ bool ScrollBarWx::create(IWidget* parent, int style)
 	if (!WidgetWxImpl< IScrollBar, wxScrollBar >::create(style))
 		return false;
 
+	m_window->SetRange(100);
+	m_window->SetThumbPosition(0);
+
 	T_CONNECT(m_window, wxEVT_SCROLL_LINEUP,     wxScrollEvent, ScrollBarWx, &ScrollBarWx::onScroll);
 	T_CONNECT(m_window, wxEVT_SCROLL_LINEDOWN,   wxScrollEvent, ScrollBarWx, &ScrollBarWx::onScroll);
 	T_CONNECT(m_window, wxEVT_SCROLL_PAGEUP,     wxScrollEvent, ScrollBarWx, &ScrollBarWx::onScroll);
@@ -49,14 +52,7 @@ bool ScrollBarWx::create(IWidget* parent, int style)
 
 void ScrollBarWx::setRange(int range)
 {
-	int thumbSize = std::max(range / 10, 30);
-	int pageSize = thumbSize;
-	m_window->SetScrollbar(
-		m_window->GetThumbPosition(),
-		thumbSize,
-		range,
-		pageSize
-	);
+	m_window->SetRange(range);
 }
 
 int ScrollBarWx::getRange() const
@@ -86,8 +82,8 @@ int ScrollBarWx::getPosition() const
 
 void ScrollBarWx::onScroll(wxScrollEvent& event)
 {
-	ScrollEvent scrollEvent(m_owner, 0, event.GetPosition());
-	m_owner->raiseEvent(EiScroll, &scrollEvent);
+	ScrollEvent scrollEvent(m_owner, event.GetPosition());
+	m_owner->raiseEvent(&scrollEvent);
 }
 
 	}

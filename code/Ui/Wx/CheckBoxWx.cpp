@@ -44,8 +44,8 @@ bool CheckBoxWx::isChecked() const
 
 void CheckBoxWx::onClicked(wxCommandEvent& event)
 {
-	CommandEvent cmdEvent(m_owner, 0, Command(event.IsChecked()));
-	m_owner->raiseEvent(EiClick, &cmdEvent);
+	ButtonClickEvent clickEvent(m_owner);
+	m_owner->raiseEvent(&clickEvent);
 }
 
 	}

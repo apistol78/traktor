@@ -55,7 +55,7 @@ void EventLoopWx::exit(int exitCode)
 	m_exitCode = exitCode;
 	m_terminate = true;
 
-	wxEventLoop* eventLoop = wxEventLoop::GetActive();
+	wxEventLoopBase* eventLoop = wxEventLoop::GetActive();
 
 	if (eventLoop)
 		eventLoop->Exit(exitCode);
@@ -71,7 +71,7 @@ int EventLoopWx::getAsyncKeyState() const
 	int keyState = KsNone;
 
 	if (wxGetKeyState(WXK_CONTROL))
-		keyState |= KsControl;
+		keyState |= KsControl | KsCommand;
 	if (wxGetKeyState(WXK_MENU))
 		keyState |= KsMenu;
 	if (wxGetKeyState(WXK_SHIFT))

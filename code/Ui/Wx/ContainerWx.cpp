@@ -5,8 +5,8 @@ namespace traktor
 	namespace ui
 	{
 
-ContainerWx::ContainerWx(EventSubject* owner) :
-	WidgetWxImpl< IContainer, wxWindow >(owner)
+ContainerWx::ContainerWx(EventSubject* owner)
+:	WidgetWxImpl< IContainer, wxWindow >(owner)
 {
 }
 

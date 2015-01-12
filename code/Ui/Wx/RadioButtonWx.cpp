@@ -5,8 +5,8 @@ namespace traktor
 	namespace ui
 	{
 
-RadioButtonWx::RadioButtonWx(EventSubject* owner) :
-	WidgetWxImpl< IRadioButton, wxRadioButton >(owner)
+RadioButtonWx::RadioButtonWx(EventSubject* owner)
+:	WidgetWxImpl< IRadioButton, wxRadioButton >(owner)
 {
 }
 

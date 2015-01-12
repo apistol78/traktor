@@ -1,10 +1,9 @@
 #include <map>
 #include <wx/wx.h>
 #include <wx/dcbuffer.h>
-#include "Ui/Wx/CanvasWx.h"
-#include "Ui/Wx/BitmapWx.h"
-#include "Core/Heap/Ref.h"
 #include "Core/Misc/TString.h"
+#include "Ui/Wx/BitmapWx.h"
+#include "Ui/Wx/CanvasWx.h"
 
 namespace traktor
 {
@@ -13,7 +12,7 @@ namespace traktor
 		namespace
 		{
 
-wxColour toWxColour(const Color& c)
+wxColour toWxColour(const Color4ub& c)
 {
 	return wxColour(
 		c.r,
@@ -54,14 +53,14 @@ void CanvasWx::endPaint(wxWindow* window)
 	}
 }
 
-void CanvasWx::setForeground(const Color& color)
+void CanvasWx::setForeground(const Color4ub& color)
 {
 	m_foreGround = color;
 	m_dc->SetPen(wxPen(toWxColour(m_foreGround), 1));
 	m_dc->SetTextForeground(toWxColour(m_foreGround));
 }
 
-void CanvasWx::setBackground(const Color& color)
+void CanvasWx::setBackground(const Color4ub& color)
 {
 	m_backGround = color;
 	m_dc->SetBrush(wxBrush(toWxColour(m_backGround)));
@@ -118,7 +117,7 @@ void CanvasWx::resetClipRect()
 	m_dc->DestroyClippingRegion();
 }
 
-void CanvasWx::drawPixel(int x, int y, const Color& c)
+void CanvasWx::drawPixel(int x, int y, const Color4ub& c)
 {
 	wxPen currentPen = m_dc->GetPen();
 	m_dc->SetPen(wxPen(toWxColour(c), 1));
@@ -242,7 +241,7 @@ void CanvasWx::fillPolygon(const Point* pnts, int count)
 	m_dc->SetPen(tmp);
 }
 
-void CanvasWx::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, IBitmap* bitmap, BlendMode blendMode)
+void CanvasWx::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, IBitmap* bitmap, uint32_t blendMode)
 {
 	if (!bitmap)
 		return;
@@ -259,7 +258,7 @@ void CanvasWx::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& si
 	);
 }
 
-void CanvasWx::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, BlendMode blendMode)
+void CanvasWx::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, uint32_t blendMode)
 {
 	if (!bitmap)
 		return;
@@ -268,13 +267,10 @@ void CanvasWx::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& 
 	if (!image)
 		return;
 
-	float rx = float(dstSize.cx) / srcSize.cx;
-	float ry = float(dstSize.cy) / srcSize.cy;
-
 #if wxUSE_GRAPHICS_CONTEXT
 	m_context->DrawBitmap(
 		image->GetSubImage(wxRect(srcAt.x, srcAt.y, srcSize.cx, srcSize.cy)),
-		dstAt.x / rx, dstAt.y / ry,
+		dstAt.x, dstAt.y,
 		dstSize.cx, dstSize.cy
 	);
 #endif
@@ -327,6 +323,11 @@ Size CanvasWx::getTextExtent(const std::wstring& text) const
 	tstring tmp = wstots(text);
 	m_dc->GetTextExtent(tmp.c_str(), &w, &h);
 	return Size(w, h);
+}
+
+void* CanvasWx::getSystemHandle()
+{
+	return 0;
 }
 
 	}

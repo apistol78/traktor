@@ -9,8 +9,8 @@ namespace traktor
 	namespace ui
 	{
 
-ListViewWx::ListViewWx(EventSubject* owner) :
-	WidgetWxImpl< IListView, wxListCtrl >(owner)
+ListViewWx::ListViewWx(EventSubject* owner)
+:	WidgetWxImpl< IListView, wxListCtrl >(owner)
 {
 }
 
@@ -118,6 +118,11 @@ int ListViewWx::getColumnWidth(int columnIndex) const
 	return m_window->GetColumnWidth(columnIndex);
 }
 
+int ListViewWx::getColumnFromPosition(int position) const
+{
+	return -1;
+}
+
 void ListViewWx::setItems(ListViewItems* items)
 {
 	m_window->DeleteAllItems();
@@ -150,7 +155,7 @@ void ListViewWx::setItems(ListViewItems* items)
 	}
 }
 
-ListViewItems* ListViewWx::getItems() const
+Ref< ListViewItems > ListViewWx::getItems() const
 {
 	return m_items;
 }
@@ -171,14 +176,14 @@ int ListViewWx::getSelectedItems(std::vector< int >& items) const
 
 void ListViewWx::onSelected(wxListEvent& event)
 {
-	CommandEvent cmdEvent(m_owner, m_items->get(event.GetIndex()), Command(event.GetIndex()));
-	m_owner->raiseEvent(EiSelectionChange, &cmdEvent);
+	SelectionChangeEvent selectionChangeEvent(m_owner);
+	m_owner->raiseEvent(&selectionChangeEvent);
 }
 
 void ListViewWx::onActivated(wxListEvent& event)
 {
-	CommandEvent cmdEvent(m_owner, m_items->get(event.GetIndex()), Command(event.GetIndex()));
-	m_owner->raiseEvent(EiActivate, &cmdEvent);
+	ListViewItemActivateEvent activateEvent(m_owner, m_items->get(event.GetIndex()));
+	m_owner->raiseEvent(&activateEvent);
 }
 
 	}

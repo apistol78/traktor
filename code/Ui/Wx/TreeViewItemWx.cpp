@@ -29,7 +29,16 @@ std::wstring TreeViewItemWx::getText() const
 {
 	return tstows((const wxChar*)m_treeCtrl->GetItemText(m_id));
 }
-	
+
+void TreeViewItemWx::setBold(bool bold)
+{
+}
+
+bool TreeViewItemWx::isBold() const
+{
+	return false;
+}
+
 void TreeViewItemWx::setImage(int image)
 {
 	m_treeCtrl->SetItemImage(m_id, image);
@@ -80,12 +89,34 @@ void TreeViewItemWx::select()
 	m_treeCtrl->SelectItem(m_id);
 }
 
+bool TreeViewItemWx::isVisible() const
+{
+	return true;
+}
+
+void TreeViewItemWx::show()
+{
+}
+
+void TreeViewItemWx::setEditable(bool editable)
+{
+}
+
+bool TreeViewItemWx::isEditable() const
+{
+	return true;
+}
+
 bool TreeViewItemWx::edit()
 {
 	return m_treeCtrl->EditLabel(m_id) != 0;
 }
-	
-TreeViewItem* TreeViewItemWx::getParent() const
+
+void TreeViewItemWx::sort(bool recursive)
+{
+}
+
+Ref< TreeViewItem > TreeViewItemWx::getParent() const
 {
 	return m_parent;
 }

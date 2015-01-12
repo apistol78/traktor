@@ -5,8 +5,8 @@ namespace traktor
 	namespace ui
 	{
 
-PanelWx::PanelWx(EventSubject* owner) :
-	WidgetWxImpl< IPanel, wxPanel >(owner)
+PanelWx::PanelWx(EventSubject* owner)
+:	WidgetWxImpl< IPanel, wxPanel >(owner)
 {
 }
 

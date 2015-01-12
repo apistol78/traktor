@@ -40,7 +40,7 @@ bool RichEditWx::create(IWidget* parent, const std::wstring& text, int style)
 	return true;
 }
 
-int RichEditWx::addAttribute(const Color& textColor, const Color& backColor, bool bold, bool italic, bool underline)
+int RichEditWx::addAttribute(const Color4ub& textColor, const Color4ub& backColor, bool bold, bool italic, bool underline)
 {
 	wxFont font = m_window->GetFont();
 	font.SetWeight(bold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL);
@@ -125,8 +125,8 @@ bool RichEditWx::undo()
 
 void RichEditWx::onUpdate(wxCommandEvent& event)
 {
-	CommandEvent cmdEvent(m_owner, 0);
-	m_owner->raiseEvent(EiSelectionChange, &cmdEvent);
+	SelectionChangeEvent selectionChangeEvent(m_owner);
+	m_owner->raiseEvent(&selectionChangeEvent);
 }
 
 	}

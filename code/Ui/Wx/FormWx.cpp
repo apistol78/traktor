@@ -1,8 +1,8 @@
 #include <wx/wx.h>
+#include "Core/Misc/AutoPtr.h"
+#include "Ui/Events/CloseEvent.h"
 #include "Ui/Wx/FormWx.h"
 #include "Ui/Wx/MenuBarWx.h"
-#include "Ui/Events/CloseEvent.h"
-#include "Core/Misc/AutoPtr.h"
 
 namespace traktor
 {
@@ -150,8 +150,10 @@ void FormWx::update(const Rect* rc, bool immediate)
 
 void FormWx::onClose(wxCloseEvent& event)
 {
-	CloseEvent closeEvent(m_owner, 0);
-	m_owner->raiseEvent(EiClose, &closeEvent);
+	CloseEvent closeEvent(m_owner);
+	m_owner->raiseEvent(&closeEvent);
+	if (closeEvent.consumed() && closeEvent.cancelled())
+		event.Veto();
 }
 
 	}

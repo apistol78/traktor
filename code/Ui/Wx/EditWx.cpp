@@ -5,8 +5,8 @@ namespace traktor
 	namespace ui
 	{
 
-EditWx::EditWx(EventSubject* owner) :
-	WidgetWxImpl< IEdit, wxTextCtrl >(owner)
+EditWx::EditWx(EventSubject* owner)
+:	WidgetWxImpl< IEdit, wxTextCtrl >(owner)
 {
 }
 

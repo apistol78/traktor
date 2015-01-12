@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <wx/wx.h>
-#include "Core/Heap/Ref.h"
+#include "Core/RefArray.h"
 #include "Ui/Itf/IMenuBar.h"
 
 namespace traktor
