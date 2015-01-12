@@ -1,11 +1,55 @@
+#include <cstring>
+#include "Core/Memory/IAllocator.h"
+#include "Core/Memory/MemoryConfig.h"
+#include "Core/Misc/String.h"
 #include "I18N/Format.h"
 #include "I18N/I18N.h"
-#include "Core/Misc/String.h"
 
 namespace traktor
 {
 	namespace i18n
 	{
+		namespace
+		{
+
+wchar_t* refStringCreate(const wchar_t* s)
+{
+	size_t len = wcslen(s);
+
+	void* ptr = getAllocator()->alloc(sizeof(uint16_t) + (len + 1) * sizeof(wchar_t), 4, T_FILE_LINE);
+	if (!ptr)
+		return 0;
+
+	uint16_t* base = static_cast< uint16_t* >(ptr);
+	*base = 1;
+
+	wchar_t* c = reinterpret_cast< wchar_t* >(base + 1);
+	if (len > 0)
+		std::memcpy(c, s, len * sizeof(wchar_t));
+
+	c[len] = L'\0';
+	return c;
+}
+
+wchar_t* refStringInc(wchar_t* s)
+{
+	uint16_t* base = reinterpret_cast< uint16_t* >(s) - 1;
+	(*base)++;
+	return s;
+}
+
+wchar_t* refStringDec(wchar_t* s)
+{
+	uint16_t* base = reinterpret_cast< uint16_t* >(s) - 1;
+	if (--*base == 0)
+	{
+		getAllocator()->free(base);
+		return 0;
+	}
+	return s;
+}
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.i18n.Format", Format, Object)
 
@@ -43,13 +87,27 @@ Format::Argument::Argument(double d)
 Format::Argument::Argument(const std::wstring& s)
 :	m_type(AtString)
 {
-	m_value.s = s.c_str();
+	m_value.s = refStringCreate(s.c_str());
 }
 
 Format::Argument::Argument(const wchar_t* s)
 :	m_type(AtString)
 {
-	m_value.s = s;
+	m_value.s = refStringCreate(s);
+}
+
+Format::Argument::Argument(const Argument& s)
+:	m_type(s.m_type)
+,	m_value(s.m_value)
+{
+	if (m_type == AtString)
+		refStringInc(m_value.s);
+}
+
+Format::Argument::~Argument()
+{
+	if (m_type == AtString)
+		refStringDec(m_value.s);
 }
 
 std::wstring Format::Argument::format() const
