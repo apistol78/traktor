@@ -55,6 +55,10 @@ public:
 
 		Argument(const wchar_t* s);
 
+		Argument(const Argument& s);
+
+		virtual ~Argument();
+
 	private:
 		friend class Format;
 
@@ -64,7 +68,7 @@ public:
 			int32_t i;
 			float f;
 			double d;
-			const wchar_t* s;
+			wchar_t* s;
 		};
 
 		static Argument ms_void;
