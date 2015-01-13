@@ -662,7 +662,7 @@ Ref< script::IScriptManager > createScriptManager()
 	classImage->addConstructor();
 	classImage->addMethod< Ref< drawing::Image > >("clone", &drawing::Image::clone);
 	classImage->addMethod< Ref< drawing::Image >, bool >("clone", &drawing::Image::clone);
-	classImage->addMethod("copy", &drawing::Image::copy);
+	//classImage->addMethod("copy", &drawing::Image::copy);
 	classImage->addMethod("clear", &drawing::Image::clear);
 	classImage->addMethod("getPixel", &drawing_Image_getPixel);
 	classImage->addMethod("setPixel", &drawing::Image::setPixel);

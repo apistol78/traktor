@@ -13,7 +13,7 @@ StdOutput::StdOutput(FILE* handle)
 void StdOutput::print(const std::wstring& s)
 {
 #if !defined(__APPLE__)
-	fwprintf(m_handle, L"%s", s.c_str());
+	fwprintf(m_handle, L"%ls", s.c_str());
 #else
 	fprintf(m_handle, "%s", wstombs(s).c_str());
 #endif
@@ -22,7 +22,7 @@ void StdOutput::print(const std::wstring& s)
 void StdOutput::printLn(const std::wstring& s)
 {
 #if !defined(__APPLE__)
-	fwprintf(m_handle, L"%s\n", s.c_str());
+	fwprintf(m_handle, L"%ls\n", s.c_str());
 #else
 	fprintf(m_handle, "%s\n", wstombs(s).c_str());
 #endif

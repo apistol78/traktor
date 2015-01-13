@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <X11/Xlib.h>
 #include "Amalgam/IOnlineServer.h"
 #include "Amalgam/Impl/Application.h"
 #include "Amalgam/Impl/Environment.h"
@@ -117,6 +118,10 @@ int main(int argc, const char** argv)
 	signal(SIGILL, signalHandler);
 	signal(SIGSEGV, signalHandler);
 
+	// Initialize X11 thread primitives; thus must be performed very early.
+	XInitThreads();
+
+	// Let's continue with the application.
 	CommandLine cmdLine(argc, argv);
 
 	std::wstring writablePath = OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB";

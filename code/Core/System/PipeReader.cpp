@@ -9,7 +9,7 @@ namespace traktor
 {
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.PipeReader", PipeReader, Object)
-	
+
 PipeReader::PipeReader(IStream* stream)
 :	m_stream(stream)
 {
@@ -62,7 +62,7 @@ PipeReader::Result PipeReader::readLine(std::wstring& outLine, int32_t timeout)
 		{
 			char ch = buffer[i];
 
-#if defined(__APPLE__)
+#if defined(__APPLE__) || defined(__LINUX__)
 			if (ch == 10)
 			{
 				m_lines.push_back(mbstows(std::string(m_acc.begin(), m_acc.end())));
@@ -78,7 +78,7 @@ PipeReader::Result PipeReader::readLine(std::wstring& outLine, int32_t timeout)
 			}
 			else if (ch != 10)
 				m_acc.push_back(ch);
-#endif		
+#endif
 		}
 	}
 

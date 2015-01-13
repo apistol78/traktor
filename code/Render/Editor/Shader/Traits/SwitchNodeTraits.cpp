@@ -80,7 +80,7 @@ bool SwitchNodeTraits::evaluatePartial(
 	Constant& outputConstant
 ) const
 {
-	if (inputConstants[0].getWidth() <= 0)
+	if (!inputConstants[0].isConstX())
 		return false;
 
 	int32_t c = int32_t(inputConstants[0].x());
@@ -101,7 +101,7 @@ bool SwitchNodeTraits::evaluatePartial(
 	const OutputPin*& foldOutputPin
 ) const
 {
-	if (inputConstants[0].getWidth() <= 0)
+	if (!inputConstants[0].isConstX())
 		return false;
 
 	int32_t c = int32_t(inputConstants[0].x());

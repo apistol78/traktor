@@ -1,13 +1,13 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <limits.h>
 #include <spawn.h>
 #include <unistd.h>
 #include <sys/param.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <pwd.h>
-#include <unistd.h>
 #include "Core/Io/Path.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
@@ -30,6 +30,7 @@ OS& OS::getInstance()
 	if (!s_instance)
 	{
 		s_instance = new OS();
+		s_instance->addRef(0);
 		SingletonManager::getInstance().add(s_instance);
 	}
 	return *s_instance;
@@ -38,6 +39,16 @@ OS& OS::getInstance()
 uint32_t OS::getCPUCoreCount() const
 {
 	return 4;
+}
+
+Path OS::getExecutable() const
+{
+	char result[PATH_MAX] = { 0 };
+	ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
+	if (count > 0)
+		return Path(mbstows(result));
+	else
+		return Path();
 }
 
 std::wstring OS::getCommandLine() const
@@ -149,14 +160,18 @@ Ref< IProcess > OS::execute(
 	bool detach
 ) const
 {
+	posix_spawn_file_actions_t* fileActions = 0;
 	char cwd[512];
 	char* envv[256];
 	char* argv[64];
 	int envc = 0;
 	int argc = 0;
 	int err;
-	std::string executable;
-	std::string arguments;
+	pid_t pid;
+	int childStdOut[2] = { 0 };
+	int childStdErr[2] = { 0 };
+	std::wstring executable;
+	std::wstring arguments;
 
 	// Resolve entire command line.
 	std::wstring resolvedCommandLine = resolveEnv(commandLine);
@@ -164,56 +179,82 @@ Ref< IProcess > OS::execute(
 	// Extract executable file from command line.
 	if (resolvedCommandLine.empty())
 		return 0;
-
 	if (resolvedCommandLine[0] == L'\"')
 	{
 		size_t i = resolvedCommandLine.find(L'\"', 1);
 		if (i == resolvedCommandLine.npos)
 			return 0;
-		executable = wstombs(resolvedCommandLine.substr(1, i - 1));
-		arguments = wstombs(resolvedCommandLine.substr(i + 1));
+		executable = resolvedCommandLine.substr(1, i - 1);
+		arguments = trim(resolvedCommandLine.substr(i + 1));
 	}
 	else
 	{
 		size_t i = resolvedCommandLine.find(L' ');
 		if (i != resolvedCommandLine.npos)
 		{
-			executable = wstombs(resolvedCommandLine.substr(0, i));
-			arguments = wstombs(resolvedCommandLine.substr(i + 1));
+			executable = resolvedCommandLine.substr(0, i);
+			arguments = trim(resolvedCommandLine.substr(i + 1));
 		}
 		else
-			executable = wstombs(resolvedCommandLine);
+			executable = resolvedCommandLine;
 	}
 
 	// Convert all arguments; append bash if executing shell script.
-	if (endsWith< std::string >(executable, ".sh"))
+	if (endsWith< std::wstring >(executable, L".sh"))
 		argv[argc++] = strdup("/bin/sh");
 	else
 	{
 		// Ensure file has executable permission.
 		struct stat st;
-		if (stat(executable.c_str(), &st) == 0)
+		if (stat(wstombs(executable).c_str(), &st) == 0)
+			chmod(wstombs(executable).c_str(), st.st_mode | S_IXUSR);
+	}
+
+	argv[argc++] = strdup(wstombs(executable).c_str());
+	size_t i = 0;
+	while (i < arguments.length())
+	{
+		if (arguments[i] == L'\"')
 		{
-			if (chmod(executable.c_str(), st.st_mode | S_IXUSR) != 0)
-				log::warning << L"Unable to set mode of executable" << Endl;
+			size_t j = arguments.find(L'\"', i + 1);
+			if (j != arguments.npos)
+			{
+				argv[argc++] = strdup(wstombs(arguments.substr(i + 1, j - i - 1)).c_str());
+				i = j + 1;
+			}
+			else
+				return 0;
 		}
 		else
-			log::warning << L"Unable to get mode of executable" << Endl;
+		{
+			size_t j = arguments.find(L' ', i + 1);
+			if (j != arguments.npos)
+			{
+				argv[argc++] = strdup(wstombs(arguments.substr(i, j - i)).c_str());
+				i = j + 1;
+			}
+			else
+			{
+				argv[argc++] = strdup(wstombs(arguments.substr(i)).c_str());
+				break;
+			}
+		}
 	}
-	
-	argv[argc++] = strdup(executable.c_str());
-	
-	StringSplit< std::string > s(arguments, " ");
-	for (StringSplit< std::string >::const_iterator i = s.begin(); i != s.end(); ++i)
-		argv[argc++] = strdup((*i).c_str());
-	
-	// Convert environment variables.
+
+	// Convert environment variables; don't pass "DYLIB_LIBRARY_PATH" along as we
+	// don't want child process searching our products by default.
 	if (envmap)
 	{
 		for (envmap_t::const_iterator i = envmap->begin(); i != envmap->end(); ++i)
 			envv[envc++] = strdup(wstombs(i->first + L"=" + i->second).c_str());
 	}
-	
+	else
+	{
+		envmap_t own = getEnvironment();
+		for (envmap_t::const_iterator i = own.begin(); i != own.end(); ++i)
+			envv[envc++] = strdup(wstombs(i->first + L"=" + i->second).c_str());
+	}
+
 	// Terminate argument and environment vectors.
 	envv[envc] = 0;
 	argv[argc] = 0;
@@ -224,18 +265,26 @@ Ref< IProcess > OS::execute(
 	chdir(wstombs(workingDirectory.getPathNameNoVolume()).c_str());
 
 	// Redirect standard IO.
-	/*
-	posix_spawn_file_actions_t fileActions;
-	posix_spawn_file_actions_init(&fileActions);
-	posix_spawn_file_actions_adddup2(&fileActions, 1, 2);
-	*/
+	if (redirect)
+	{
+		pipe(childStdOut);
+		pipe(childStdErr);
 
-	// Spawn process.
-	pid_t pid;
-	if (envc > 0)
-		err = posix_spawn(&pid, argv[0], 0, 0, argv, envv);
+		fileActions = new posix_spawn_file_actions_t;
+		posix_spawn_file_actions_init(fileActions);
+		posix_spawn_file_actions_adddup2(fileActions, childStdOut[1], STDOUT_FILENO);
+		posix_spawn_file_actions_addclose(fileActions, childStdOut[0]);
+		posix_spawn_file_actions_adddup2(fileActions, childStdErr[1], STDERR_FILENO);
+		posix_spawn_file_actions_addclose(fileActions, childStdErr[0]);
+
+		// Spawn process.
+		err = posix_spawn(&pid, argv[0], fileActions, 0, argv, envv);
+	}
 	else
-		err = posix_spawn(&pid, argv[0], 0, 0, argv, 0);
+	{
+		// Spawn process.
+		err = posix_spawn(&pid, argv[0], 0, 0, argv, envv);
+	}
 
 	// Restore our working directory before returning.
 	chdir(cwd);
@@ -243,7 +292,7 @@ Ref< IProcess > OS::execute(
 	if (err != 0)
 		return 0;
 
-	return new ProcessLinux(pid);
+	return new ProcessLinux(pid, fileActions, childStdOut[0], childStdErr[0]);
 }
 
 Ref< ISharedMemory > OS::createSharedMemory(const std::wstring& name, uint32_t size) const

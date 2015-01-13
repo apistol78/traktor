@@ -289,7 +289,7 @@ bool RenderTargetSetOpenGL::bind(ContextOpenGL* renderContext, GLuint primaryDep
 		return false;
 	}
 #endif
-	
+
 	const GLenum drawBuffers[] =
 	{
 		GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3,

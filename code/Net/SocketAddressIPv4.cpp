@@ -225,8 +225,6 @@ bool SocketAddressIPv4::getInterfaces(std::list< Interface >& outInterfaces)
     ifr = ifc.ifc_req;
 
     uint32_t nnic = ifc.ifc_len / sizeof(struct ifreq);
-    T_DEBUG(L"Got " << nnic << L" interface(s)");
-
     for (uint32_t i = 0; i < nnic; ++i)
     {
         struct ifreq& r = ifr[i];
@@ -240,15 +238,9 @@ bool SocketAddressIPv4::getInterfaces(std::list< Interface >& outInterfaces)
 			if (ioctl(s, SIOCGIFFLAGS, &r) >= 0)
 			{
                 if (r.ifr_flags & IFF_POINTOPOINT)
-                {
                     n.type = ItVPN;
-                    T_DEBUG(L"Interface " << i << L" is VPN");
-                }
                 if (r.ifr_flags & IFF_LOOPBACK)
-                {
                     n.type = ItLoopback;
-                    T_DEBUG(L"Interface " << i << L" is LOOPBACK");
-                }
 			}
 			else
                 T_DEBUG(L"Unable to query interface flags; assuming wired interface");

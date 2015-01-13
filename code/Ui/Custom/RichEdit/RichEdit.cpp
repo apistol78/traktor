@@ -21,10 +21,12 @@ namespace traktor
 const int32_t c_lineMarginMin = 40;
 const int32_t c_iconSize = 16;
 
-#if !defined(__APPLE__)
-const int32_t c_fontHeightMargin = 1;
-#else
+#if defined(__APPLE__)
 const int32_t c_fontHeightMargin = 4;
+#elif defined(__LINUX__)
+const int32_t c_fontHeightMargin = 4;
+#else
+const int32_t c_fontHeightMargin = 1;
 #endif
 
 bool isWordSeparator(wchar_t ch)
@@ -144,7 +146,7 @@ void RichEdit::setText(const std::wstring& text)
 
 	updateScrollBars();
 }
-	
+
 std::wstring RichEdit::getText() const
 {
 	if (!m_text.empty())
@@ -175,7 +177,7 @@ void RichEdit::setAttribute(int32_t start, int32_t length, int32_t attribute)
 
 	if (start < 0)
 		start = 0;
-	
+
 	if (start + length >= int32_t(m_text.size()))
 	{
 		length = int32_t(m_text.size()) - start;
@@ -232,7 +234,7 @@ void RichEdit::clear(bool attributes, bool images, bool content)
 	if (attributes)
 	{
 		m_attributes.clear();
-		
+
 		m_meta.clear();
 		m_meta.resize(m_text.size(), 0);
 	}
@@ -638,7 +640,7 @@ int32_t RichEdit::getCharacterStops(const std::wstring& text, std::vector< int32
 
 	outStops.resize(0);
 	outStops.reserve(text.length());
-	
+
 	std::wstring::const_iterator i0 = text.begin();
 	for (std::wstring::const_iterator i = text.begin(); i != text.end(); ++i)
 	{
@@ -852,7 +854,7 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 
 	case VkShift:
 		return;
-		
+
 	default:
 		break;
 	}
@@ -936,7 +938,7 @@ void RichEdit::eventButtonDown(MouseButtonDownEvent* event)
 
 	const Line& ln = m_lines[line];
 	std::wstring text(&m_text[ln.start], &m_text[ln.stop]);
-	
+
 	std::vector< int32_t > stops;
 	int32_t lineWidth = getCharacterStops(text, stops);
 
@@ -1007,7 +1009,7 @@ void RichEdit::eventPaint(PaintEvent* event)
 		canvas.setForeground(Color4ub(180, 180, 180));
 		canvas.setBackground(Color4ub(200, 200, 200));
 		canvas.fillGradientRect(marginRc, false);
-	
+
 		canvas.setForeground(Color4ub(0, 0, 0));
 		for (uint32_t i = lineOffset; i < lineOffset + pageLines && i < lineCount; ++i)
 		{

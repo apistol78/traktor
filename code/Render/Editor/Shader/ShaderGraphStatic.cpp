@@ -314,8 +314,6 @@ Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 			T_ASSERT (outputPin);
 
 			PinType outputPinType = typePropagation.evaluate(outputPin);
-			T_ASSERT (outputPinType != PntVoid);
-
 			outputConstants[outputPin] = Constant(outputPinType);
 		}
 	}
@@ -472,9 +470,6 @@ restart_iteration:
 					// If the output of the pin has changed then a propagation must have taken place.
 					if (outputConstants[outputPin] != outputConstant)
 					{
-						T_ASSERT (outputConstants[outputPin].getType() == outputConstant.getType());
-						T_ASSERT (outputConstants[outputPin].getWidth() == outputConstant.getWidth());
-
 						constantPropagationCount++;
 						outputConstants[outputPin] = outputConstant;
 					}

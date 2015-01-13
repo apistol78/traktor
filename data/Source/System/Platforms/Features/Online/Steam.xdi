@@ -7,7 +7,7 @@
 			<platform>{C5B672D1-E72D-AC47-97D4-ABAA41F2F6BD}</platform>
 			<executableFile/>
 			<deployFiles>
-				<item>steam_api.so</item>
+				<item>libsteam_api.so</item>
 				<item>libTraktor.Core.so</item>
 				<item>libTraktor.Net.so</item>
 				<item>libTraktor.Online.so</item>

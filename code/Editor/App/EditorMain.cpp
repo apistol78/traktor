@@ -23,11 +23,13 @@ typedef traktor::ui::WidgetFactoryWin32 WidgetFactoryImpl;
 #	include <Ui/Cocoa/WidgetFactoryCocoa.h>
 typedef traktor::ui::EventLoopCocoa EventLoopImpl;
 typedef traktor::ui::WidgetFactoryCocoa WidgetFactoryImpl;
+/*
 #elif defined(__GNUC__)
 #	include <Ui/Gtk/EventLoopGtk.h>
 #	include <Ui/Gtk/WidgetFactoryGtk.h>
 typedef traktor::ui::EventLoopGtk EventLoopImpl;
 typedef traktor::ui::WidgetFactoryGtk WidgetFactoryImpl;
+*/
 #else
 #	include <Ui/Wx/EventLoopWx.h>
 #	include <Ui/Wx/WidgetFactoryWx.h>

@@ -132,8 +132,6 @@ bool RenderSystemOpenGL::create(const RenderSystemDesc& desc)
 
 #elif defined(__LINUX__)
 
-	XInitThreads();
-
 	m_display = XOpenDisplay(0);
 	if (!m_display)
 	{
@@ -219,7 +217,7 @@ bool RenderSystemOpenGL::create(const RenderSystemDesc& desc)
 		return false;
 	}
 
-	m_resourceContext = new ContextOpenGL(0, m_windowShared, context);
+	m_resourceContext = new ContextOpenGL(0, m_windowShared->getDisplay(), m_windowShared->getWindow(), context);
 	m_resourceContext->enter();
 
 #endif
@@ -620,7 +618,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 	if (!glcontext)
 		return 0;
 
-	Ref< ContextOpenGL > context = new ContextOpenGL(m_resourceContext, m_window, glcontext);
+	Ref< ContextOpenGL > context = new ContextOpenGL(m_resourceContext, m_window->getDisplay(), m_window->getWindow(), glcontext);
 	context->enter();
 
 	if (glewInit() != GLEW_OK)
@@ -728,23 +726,48 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 	context->destroy();
 	context = 0;
 
-/*
 #elif defined(__LINUX__)
 
-	Display* display = XOpenDisplay(0);
-	if (!display)
-		return 0;
+	static int visualAttribs[] =
+	{
+		GLX_RENDER_TYPE, GLX_RGBA_BIT,
+		GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
+		GLX_RED_SIZE, 1,
+		GLX_GREEN_SIZE, 1,
+		GLX_BLUE_SIZE, 1,
+		None
+	};
 
-	int attribs[] = { GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, desc.depthBits, None };
-	XVisualInfo* visual = glXChooseVisual(display, DefaultScreen(display), attribs);
-	if (!visual)
-		return 0;
+	int nfbc = 0;
+	GLXFBConfig* fbc = glXChooseFBConfig(m_display, DefaultScreen(m_display), visualAttribs, &nfbc);
+	if (!fbc || nfbc <= 0)
+	{
+		log::error << L"Unable to create OpenGL renderer; No framebuffer configuration" << Endl;
+		return false;
+	}
 
-	GLXContext resourceContext = glXCreateContext(display, visual, NULL, GL_TRUE);
-	if (!resourceContext)
-		return 0;
+	XVisualInfo* vi = glXGetVisualFromFBConfig(m_display, fbc[0]);
+	if (!vi)
+	{
+		log::error << L"Unable to create OpenGL renderer; No visual information" << Endl;
+		return false;
+	}
 
-	Ref< ContextOpenGL > context = new ContextOpenGL(display, (GLXDrawable)desc.nativeWindowHandle, resourceContext);
+	static int contextAttribs[] =
+	{
+		GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
+		GLX_CONTEXT_MINOR_VERSION_ARB, 0,
+		None
+	};
+
+	GLXContext glcontext = glXCreateContextAttribsARB(m_display, fbc[0], m_resourceContext->getGLXContext(), True, contextAttribs);
+	if (!glcontext)
+	{
+		log::error << L"Unable to create OpenGL renderer; glXCreateContextAttribsARB failed" << Endl;
+		return false;
+	}
+
+	Ref< ContextOpenGL > context = new ContextOpenGL(m_resourceContext, m_display, (::Window)desc.nativeWindowHandle, glcontext);
 	context->enter();
 
 	if (glewInit() != GLEW_OK)
@@ -759,7 +782,6 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 	context->destroy();
 	context = 0;
 
-*/
 #endif
 
 	return 0;

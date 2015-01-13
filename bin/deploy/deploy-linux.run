@@ -1,8 +1,21 @@
 
 
+function string:split(sep)
+	local sep, fields = sep or ":", {}
+	local pattern = string.format("([^%s]+)", sep)
+	self:gsub(pattern, function(c) fields[#fields+1] = c end)
+	return fields
+end
+
+
+function string:endswith(send)
+	return #self >= #send and self:find(send, #self - #send + 1, true) and true or false
+end
+
+
 function build(args)
 	stdout:printLn("Building asset(s)...")
-	local cmdline = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App -p -s=Pipeline"
+	local cmdline = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App -p -standalone -s=Pipeline"
 	for i = 1, args:size() - 1 do
 		cmdline = cmdline .. " " .. args:get(i)
 	end
@@ -11,12 +24,61 @@ end
 
 
 function deploy(args)
+	local executable = os:getEnvironment("DEPLOY_EXECUTABLE")
+	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
+
+	-- Deploy application configuration to target.
+	stdout:printLn("Deploying resources to target host...")
+	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) Application.config", "(null)")
+	if run:exitCode() ~= 0 then return run:exitCode() end
+
+	-- Deploy binaries to target.
+	if not debug then
+		stdout:printLn("Deploying binaries to target host...")
+		run:pushd("$(DEPLOY_SYSTEM_ROOT)/bin/latest/linux/releaseshared")
+	else
+		stdout:printLn("Deploying *DEBUG* binaries to target host...")
+		run:pushd("$(DEPLOY_SYSTEM_ROOT)/bin/latest/linux/debugshared")
+	end
+
+	local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
+	local deployFiles = ""
+
+	for _, f in ipairs(files) do
+		if debug then
+			local debugFile = f
+			if string.endswith(f, ".so") then
+				debugFile = f:sub(1, string.len(f) - 4) .. "_d.so"
+			else
+				debugFile = f .. "_d"
+			end
+			if fileSystem:exist(Path(run:cwd() .. "/" .. debugFile)) then
+				f = debugFile
+			end
+		end
+		deployFiles = deployFiles .. " " .. f	
+	end
+
+	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST)" .. deployFiles, "(null)")
+	if run:exitCode() ~= 0 then return run:exitCode() end
+	run:popd()
+
+	-- Create launcher script.
+	local f = fileSystem:open(Path("launch.sh"), 2)
+	local s = StreamOutput(f, Utf8Encoding(), "unix")
+	s:printLn("chmod u+x " .. executable .. " *.so")
+	s:printLn("./" .. executable .. " -s")
+	f:close()
+
+	-- Deploy launcher script.
+	run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteDeploy $(DEPLOY_TARGET_HOST) launch.sh", "(null)")
 	return 0
 end
 
 
 function launch(args)
-	return 0
+	stdout:printLn("Launching Linux...")
+	return run:execute("$(TRAKTOR_HOME)/bin/$(DEPLOY_HOST_OS)/RemoteLaunch $(DEPLOY_TARGET_HOST) launch.sh", "(null)")
 end
 
 

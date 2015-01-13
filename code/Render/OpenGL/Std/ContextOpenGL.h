@@ -2,6 +2,7 @@
 #define traktor_render_ContextOpenGL_H
 
 #include <map>
+#include <X11/Xlib.h>
 #include "Core/Object.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/ThreadLocal.h"
@@ -13,10 +14,6 @@ namespace traktor
 {
 	namespace render
 	{
-
-#if defined(__LINUX__)
-class Window;
-#endif
 
 /*! \brief OpenGL context.
  * \ingroup OGL
@@ -31,7 +28,7 @@ public:
 #elif defined(__APPLE__)
 	ContextOpenGL(ContextOpenGL* resourceContext, void* context);
 #elif defined(__LINUX__)
-	ContextOpenGL(ContextOpenGL* resourceContext, Window* window, GLXContext context);
+	ContextOpenGL(ContextOpenGL* resourceContext, ::Display* display, ::Window window, GLXContext context);
 #endif
 
 	virtual ~ContextOpenGL();
@@ -83,7 +80,8 @@ private:
 #elif defined(__APPLE__)
 	void* m_context;
 #elif defined(__LINUX__)
-	Ref< Window > m_window;
+	::Display* m_display;
+	::Window m_window;
 	GLXContext m_context;
 #endif
 

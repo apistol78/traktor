@@ -10,8 +10,6 @@
 
 #if defined(__APPLE__)
 #	include "Render/OpenGL/Std/OsX/CGLWrapper.h"
-#elif defined(__LINUX__)
-#	include "Render/OpenGL/Std/Linux/Window.h"
 #endif
 
 namespace traktor
@@ -85,8 +83,9 @@ ContextOpenGL::ContextOpenGL(ContextOpenGL* resourceContext, void* context)
 
 #elif defined(__LINUX__)
 
-ContextOpenGL::ContextOpenGL(ContextOpenGL* resourceContext, Window* window, GLXContext context)
+ContextOpenGL::ContextOpenGL(ContextOpenGL* resourceContext, ::Display* display, ::Window window, GLXContext context)
 :	m_resourceContext(resourceContext)
+,	m_display(display)
 ,	m_window(window)
 ,	m_context(context)
 ,	m_width(0)
@@ -121,8 +120,27 @@ void ContextOpenGL::update()
 	cglwUpdate(m_context);
 	cglwGetSize(m_context, m_width, m_height);
 #elif defined(__LINUX__)
-	m_width = m_window->getWidth();
-	m_height = m_window->getHeight();
+
+	int x = 0, y = 0;
+	unsigned int width = 0, height = 0;
+	unsigned int border = 0;
+	unsigned int depth = 0;
+	::Window rootWindow = 0;
+
+	if (XGetGeometry(
+		m_display,
+		m_window,
+		&rootWindow,
+		&x, &y,
+		&width, &height,
+		&border,
+		&depth
+	) != 0)
+	{
+		m_width = width;
+		m_height = height;
+	}
+
 #endif
 }
 
@@ -135,8 +153,8 @@ void ContextOpenGL::swapBuffers(bool waitVBlank)
 #elif defined(__APPLE__)
 	cglwSwapBuffers(m_context, waitVBlank);
 #elif defined(__LINUX__)
-	glXSwapIntervalEXT(m_window->getDisplay(), m_window->getWindow(), waitVBlank ? 1 : 0);
-	glXSwapBuffers(m_window->getDisplay(), m_window->getWindow());
+	glXSwapIntervalEXT(m_display, m_window, waitVBlank ? 1 : 0);
+	glXSwapBuffers(m_display, m_window);
 #endif
 }
 
@@ -165,7 +183,7 @@ void ContextOpenGL::destroy()
 
 	if (m_context)
 	{
-		glXDestroyContext(m_window->getDisplay(), m_context);
+		glXDestroyContext(m_display, m_context);
 		m_context = 0;
 	}
 
@@ -195,8 +213,8 @@ bool ContextOpenGL::enter()
 		return false;
 #elif defined(__LINUX__)
 	if (!glXMakeCurrent(
-		m_window->getDisplay(),
-		m_window->getWindow(),
+		m_display,
+		m_window,
 		m_context
 	))
 		return false;
@@ -272,16 +290,16 @@ void ContextOpenGL::leave()
 	if (!stack->empty())
 	{
 		result = (glXMakeContextCurrent(
-			stack->back()->m_window->getDisplay(),
-			stack->back()->m_window->getWindow(),
-			stack->back()->m_window->getWindow(),
+			stack->back()->m_display,
+			stack->back()->m_window,
+			stack->back()->m_window,
 			stack->back()->m_context
 		) == True);
 	}
 	else
 	{
 		result = (glXMakeContextCurrent(
-			m_window->getDisplay(),
+			m_display,
 			None,
 			None,
 			NULL
@@ -412,7 +430,7 @@ void ContextOpenGL::bindRenderStateObject(uint32_t renderStateObject)
 	if (renderStateObject == m_currentRenderStateList)
 		return;
 
-	const std::vector< RenderStateOpenGL >& renderStateList = m_resourceContext->m_renderStateList;	
+	const std::vector< RenderStateOpenGL >& renderStateList = m_resourceContext->m_renderStateList;
 
 	T_ASSERT (renderStateObject > 0);
 	T_ASSERT (renderStateObject <= renderStateList.size());
@@ -461,7 +479,7 @@ void ContextOpenGL::bindRenderStateObject(uint32_t renderStateObject)
 
 void ContextOpenGL::bindSamplerStateObject(GLenum textureTarget, uint32_t samplerStateObject, bool haveMips, GLfloat maxAnisotropy)
 {
-	const std::vector< SamplerStateOpenGL >& samplerStateList = m_resourceContext->m_samplerStateList;	
+	const std::vector< SamplerStateOpenGL >& samplerStateList = m_resourceContext->m_samplerStateList;
 
 	T_ASSERT (samplerStateObject > 0);
 	T_ASSERT (samplerStateObject <= samplerStateList.size());
