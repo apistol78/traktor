@@ -2,7 +2,9 @@
 #define traktor_render_ContextOpenGL_H
 
 #include <map>
-#include <X11/Xlib.h>
+#if defined(__LINUX__)
+#	include <X11/Xlib.h>
+#endif
 #include "Core/Object.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/ThreadLocal.h"
