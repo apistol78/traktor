@@ -35,6 +35,7 @@ private:
 	DeployTool m_deployToolWin32;
 	DeployTool m_deployToolWin64;
 	DeployTool m_deployToolOsX;
+	DeployTool m_deployToolLinux;
 };
 
 	}

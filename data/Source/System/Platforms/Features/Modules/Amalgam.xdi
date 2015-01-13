@@ -438,6 +438,7 @@
 				<first>Editor.Modules</first>
 				<second type="traktor.PropertyStringSet">
 					<value>
+						<item>Traktor.Amalgam</item>
 						<item>Traktor.Amalgam.Editor</item>
 					</value>
 				</second>

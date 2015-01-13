@@ -278,12 +278,24 @@ void CanvasWx::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& 
 
 void CanvasWx::drawText(const Point& at, const std::wstring& text)
 {
+	if (text.empty())
+		return;
+
+	if (m_dc->GetFont().IsNull() || !m_dc->GetFont().IsOk())
+		return;
+
 	tstring tmp = wstots(text);
 	m_dc->DrawText(tmp.c_str(), at.x, at.y);
 }
 
 void CanvasWx::drawText(const Rect& rc, const std::wstring& text, Align halign, Align valign)
 {
+	if (text.empty())
+		return;
+
+	if (m_dc->GetFont().IsNull() || !m_dc->GetFont().IsOk())
+		return;
+
 	tstring tmp = wstots(text);
 	wxPoint pt(rc.left, rc.top);
 

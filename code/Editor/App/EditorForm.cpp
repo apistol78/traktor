@@ -1519,7 +1519,6 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	Timer timerBuild;
 	timerBuild.start();
 
-	m_buildProgress->setVisible(true);
 	m_buildProgress->setProgress(0);
 	m_buildProgress->setProgress(c_offsetFindingPipelines);
 
@@ -2642,6 +2641,8 @@ void EditorForm::eventTimer(ui::TimerEvent* /*event*/)
 		m_buildProgress->setVisible(false);
 		m_statusBar->setText(i18n::Text(L"STATUS_IDLE"));
 	}
+	else
+		m_buildProgress->setVisible(true);
 }
 
 void EditorForm::threadAssetMonitor()

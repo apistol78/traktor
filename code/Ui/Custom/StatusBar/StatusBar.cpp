@@ -56,7 +56,7 @@ void StatusBar::eventSize(SizeEvent* event)
 	{
 		Rect rc = getInnerRect();
 		Size preferedSize = child->getPreferedSize();
-		
+
 		rc.top += 2;
 		rc.bottom -= 2;
 		rc.right -= 20;
@@ -94,7 +94,7 @@ void StatusBar::eventPaint(PaintEvent* event)
 			canvas.drawLine(rc.right, rc.bottom - i * 4 - 3, rc.right - i * 4 - 3, rc.bottom);
 		}
 	}
-	
+
 	event->consume();
 }
 

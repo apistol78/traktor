@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Platform" version="1">
+<object type="traktor.amalgam.Platform" version="2">
 	<iconIndex>6</iconIndex>
 	<deployToolWin32>
 		<executable>$(TRAKTOR_HOME)/bin/win32/Run $(TRAKTOR_HOME)/bin/deploy/deploy-ios.run</executable>
@@ -40,4 +40,17 @@
 			</item>
 		</environment>
 	</deployToolOsX>
+	<deployToolLinux>
+		<executable>$(TRAKTOR_HOME)/bin/linux/Run $(TRAKTOR_HOME)/bin/deploy/deploy-ios.run</executable>
+		<environment>
+			<item>
+				<first>DEPLOY_HOST_OS</first>
+				<second>linux</second>
+			</item>
+			<item>
+				<first>DEPLOY_IOS_KIND</first>
+				<second>ipad</second>
+			</item>
+		</environment>
+	</deployToolLinux>
 </object>

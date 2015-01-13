@@ -496,7 +496,7 @@ bool ShaderPipeline::buildOutput(
 			task->result = false;
 			tasks.push_back(task);
 
-#if !defined(__APPLE__)
+#if !defined(__APPLE__) && !defined(__LINUX__)
 			Ref< Job > job = jobManager.add(makeFunctor(task.ptr(), &BuildCombinationTask::execute));
 			jobs.push_back(job);
 #else

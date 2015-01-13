@@ -18,6 +18,10 @@
 #include "Script/Lua/ScriptResourceLua.h"
 #include "Script/Lua/ScriptUtilitiesLua.h"
 
+#if defined(T_LUA_5_2) || (!defined(__LP64__) && !defined(_LP64))
+#	define T_USE_ALLOCATOR 1
+#endif
+
 namespace traktor
 {
 	namespace script
@@ -79,7 +83,7 @@ ScriptManagerLua::ScriptManagerLua()
 {
 	ms_instance = this;
 
-#if !defined(__LP64__) && !defined(_LP64)
+#if defined(T_USE_ALLOCATOR)
 	m_luaState = lua_newstate(&luaAlloc, this);
 #else
 	m_luaState = luaL_newstate();
@@ -1315,7 +1319,7 @@ void* ScriptManagerLua::luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize
 	{
 		totalMemoryUse += nsize;
 
-#if !defined(__LP64__) && !defined(_LP64)
+#if defined(T_USE_ALLOCATOR)
 		if (osize >= nsize && osize - nsize < 512)
 		{
 			T_ASSERT (ptr);
@@ -1330,7 +1334,7 @@ void* ScriptManagerLua::luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize
 
 		if (ptr && osize > 0)
 		{
-#if !defined(__LP64__) && !defined(_LP64)
+#if defined(T_USE_ALLOCATOR)
 			std::memcpy(nptr, ptr, std::min(osize, nsize));
 			getAllocator()->free(ptr);
 #endif
@@ -1338,20 +1342,20 @@ void* ScriptManagerLua::luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize
 			totalMemoryUse -= osize;
 		}
 
-#if !defined(__LP64__) && !defined(_LP64)
+#if defined(T_USE_ALLOCATOR)
 		return nptr;
 #endif
 	}
 	else if (ptr)
 	{
-#if !defined(__LP64__) && !defined(_LP64)
+#if defined(T_USE_ALLOCATOR)
 		getAllocator()->free(ptr);
 #endif
 		T_ASSERT (osize <= totalMemoryUse);
 		totalMemoryUse -= osize;
 	}
 
-#if !defined(__LP64__) && !defined(_LP64)
+#if defined(T_USE_ALLOCATOR)
 	return 0;
 #else
 	return ((lua_Alloc)(this_->m_defaultAllocFn))(this_->m_defaultAllocOpaque, ptr, osize, nsize);

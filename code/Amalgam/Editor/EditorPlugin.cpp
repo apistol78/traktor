@@ -316,6 +316,7 @@ void EditorPlugin::handleWorkspaceOpened()
 	std::wstring systemOs = L"linux";
 #endif
 
+#if !defined(__LINUX__)
 	bool hidden = m_editor->getSettings()->getProperty< PropertyBoolean >(L"Amalgam.PipelineHidden", true);
 
 	m_pipelineSlaveProcess = OS::getInstance().execute(
@@ -326,6 +327,7 @@ void EditorPlugin::handleWorkspaceOpened()
 		hidden,
 		false
 	);
+#endif
 
 	updateTargetManagers();
 }
@@ -384,10 +386,18 @@ void EditorPlugin::updateTargetLists()
 				T_ASSERT (targetConfiguration);
 
 				Ref< db::Instance > platformInstance = sourceDatabase->getInstance(targetConfiguration->getPlatform());
-				T_ASSERT (platformInstance);
+				if (!platformInstance)
+				{
+					log::error << L"Unable to register target \"" << targetConfiguration->getName() << L"\"; no platform instance found." << Endl;
+					continue;
+				}
 
 				Ref< const Platform > platform = platformInstance->getObject< Platform >();
-				T_ASSERT (platform);
+				if (!platform)
+				{
+					log::error << L"Unable to register target \"" << targetConfiguration->getName() << L"\"; unable to read platform instance." << Endl;
+					continue;
+				}
 
 				Ref< TargetInstance > targetInstance = new TargetInstance(et.name, et.target, targetConfiguration, platformInstance->getName(), platform);
 				T_ASSERT (targetInstance);

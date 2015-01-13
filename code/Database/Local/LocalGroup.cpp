@@ -1,10 +1,11 @@
+#include "Core/Io/FileSystem.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
 #include "Database/Local/LocalGroup.h"
 #include "Database/Local/LocalInstance.h"
 #include "Database/Local/LocalFileLink.h"
 #include "Database/Local/Context.h"
 #include "Database/Local/PhysicalAccess.h"
-#include "Core/Io/FileSystem.h"
-#include "Core/Misc/String.h"
 
 namespace traktor
 {
@@ -43,10 +44,16 @@ Ref< IProviderGroup > LocalGroup::createGroup(const std::wstring& groupName)
 	Path newGroupPath = m_groupPath.getPathName() + L"/" + groupName;
 
 	if (FileSystem::getInstance().exist(newGroupPath))
+	{
+		log::error << L"GROUP ALREADY EXIST" << Endl;
 		return 0;
+	}
 
 	if (!FileSystem::getInstance().makeDirectory(newGroupPath))
+	{
+		log::error << L"UNABLE TO CREATE PHYSICAL GROUP " << newGroupPath.getPathName() << Endl;
 		return 0;
+	}
 
 	return new LocalGroup(m_context, newGroupPath);
 }
@@ -57,7 +64,10 @@ Ref< IProviderInstance > LocalGroup::createInstance(const std::wstring& instance
 
 	Ref< LocalInstance > instance = new LocalInstance(m_context, instancePath);
 	if (!instance->internalCreateNew(instanceGuid))
+	{
+		log::error << L"Local instance internalCreateNew failed!" << Endl;
 		return 0;
+	}
 
 	return instance;
 }

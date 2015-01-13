@@ -26,7 +26,7 @@ class T_DLLCLASS IPipelineDependencySet : public ISerializable
 public:
 	enum
 	{
-		DiInvalid = ~0UL
+		DiInvalid = ~0U
 	};
 
 	virtual uint32_t add(PipelineDependency* dependency) = 0;

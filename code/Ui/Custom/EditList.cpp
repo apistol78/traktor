@@ -24,12 +24,12 @@ bool EditList::create(Widget* parent, int style)
 		return false;
 
 	addEventHandler< MouseDoubleClickEvent >(this, &EditList::eventDoubleClick);
-
+#if !defined(__LINUX__)
 	m_editItem = new Edit();
 	m_editItem->create(this, L"", WsBorder);
 	m_editItem->hide();
 	m_editItem->addEventHandler< FocusEvent >(this, &EditList::eventEditFocus);
-
+#endif
 	m_editId = -1;
 	m_autoAdd = bool((style & WsAutoAdd) != 0);
 	m_autoRemove = bool((style & WsAutoRemove) != 0);
@@ -39,6 +39,7 @@ bool EditList::create(Widget* parent, int style)
 
 void EditList::eventDoubleClick(MouseDoubleClickEvent* event)
 {
+#if !defined(__LINUX__)
 	Point pt = event->getPosition();
 
 	if (m_editId != -1 || m_editItem->isVisible(false))
@@ -78,15 +79,17 @@ void EditList::eventDoubleClick(MouseDoubleClickEvent* event)
 	}
 
 	event->consume();
+#endif
 }
 
 void EditList::eventEditFocus(FocusEvent* event)
 {
+#if !defined(__LINUX__)
 	if (m_editItem->isVisible(false) && event->lostFocus())
 	{
 		setFocus();
 		m_editItem->hide();
-		
+
 		if (m_editId >= 0)
 		{
 			if (m_editItem->getText().length() > 0)
@@ -122,6 +125,7 @@ void EditList::eventEditFocus(FocusEvent* event)
 		m_editId = -1;
 	}
 	event->consume();
+#endif
 }
 
 		}

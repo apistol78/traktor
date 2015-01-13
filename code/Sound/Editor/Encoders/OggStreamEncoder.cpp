@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <ogg/ogg.h>
 #include <vorbis/vorbisenc.h>
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"

@@ -241,6 +241,7 @@ end
 
 					<!-- Misc -->
 					<Add option="-Wl,-rpath=\\$$$ORIGIN" />
+					<Add option="-Wl,-z,defs" />
 				</Linker><?--
 				end
 --?>

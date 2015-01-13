@@ -60,7 +60,7 @@ void PoolAllocator::enter()
 void PoolAllocator::leave()
 {
 	T_ASSERT (!m_scope.empty());
-	
+
 	uint8_t* tail = m_scope.top();
 	m_scope.pop();
 
@@ -110,7 +110,7 @@ void* PoolAllocator::alloc(uint32_t size, uint32_t align)
 		else
 			T_FATAL_ERROR;
 	}
-	
+
 	uint8_t* ptr = (uint8_t*)m_tail;
 	ptr = alignUp(ptr, align);
 

@@ -8,7 +8,6 @@
 #if defined(__WXGTK__)
 #	include <gtk/gtk.h>
 #	include <gdk/gdkx.h>
-#	include <wx/gtk/win_gtk.h>
 #endif
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
@@ -146,7 +145,7 @@ public:
 		if (visible ^ m_window->IsShown())
 		{
 			m_window->Show(visible);
-			
+
 			ShowEvent showEvent(m_owner, visible);
 			m_owner->raiseEvent(&showEvent);
 		}
@@ -441,13 +440,10 @@ public:
 		// only called when creating a render widget.
 		gtk_widget_set_double_buffered(internalWidget, FALSE);
 
-		GdkWindow* gw = GTK_PIZZA(internalWidget)->bin_window;
-		Display* display = GDK_WINDOW_XDISPLAY(gw);
-		Window window = GDK_WINDOW_XWINDOW(gw);
+		if (!GTK_WIDGET_REALIZED(internalWidget))
+			gtk_widget_realize(internalWidget);
 
-		// @fixme, Ouch, return pointer to static buffer.
-		static struct { Display* display; Window window; } handle = { display, window };
-		return (void*)&handle;
+		return (void*)GDK_WINDOW_XWINDOW(internalWidget->window);
 #endif
 	}
 
