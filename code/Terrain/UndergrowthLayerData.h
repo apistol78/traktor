@@ -34,7 +34,7 @@ public:
 
 private:
 	friend class UndergrowthLayer;
-	friend class TerrainLayerPipeline;
+	friend class TerrainEntityPipeline;
 
 	struct Plant
 	{
