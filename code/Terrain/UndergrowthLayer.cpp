@@ -60,6 +60,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.UndergrowthLayer", UndergrowthLayer, IT
 
 UndergrowthLayer::UndergrowthLayer()
 :	m_clusterSize(0.0f)
+,	m_eye(Vector4::zero())
 {
 	s_handleNormals = render::getParameterHandle(L"Normals");
 	s_handleHeightfield = render::getParameterHandle(L"Heightfield");
@@ -175,9 +176,9 @@ void UndergrowthLayer::render(
 		viewFrustum.setFarZ(Scalar(m_layerData.m_spreadDistance + m_clusterSize));
 
 		// Only perform "replanting" when moved more than one unit.
-		//if ((eye - m_eye).length() >= 1.0f)
+		if ((eye - m_eye).length() >= m_clusterSize / 2.0f)
 		{
-			//m_eye = eye;
+			m_eye = eye;
 
 			for (AlignedVector< Cluster >::iterator i = m_clusters.begin(); i != m_clusters.end(); ++i)
 			{
@@ -336,41 +337,35 @@ void UndergrowthLayer::updatePatches(const TerrainEntity& terrainEntity)
 				if (cm[i] <= 0)
 					continue;
 
-				const UndergrowthLayerData::Plant* plantDef = 0;
 				for (std::vector< UndergrowthLayerData::Plant >::const_iterator j = m_layerData.m_plants.begin(); j != m_layerData.m_plants.end(); ++j)
 				{
 					if (um[j->material] == i + 1)
 					{
-						plantDef = &(*j);
-						break;
+						int32_t densityFactor = cm[i];
+
+						int32_t density = (j->density * densityFactor) / (16 * 16);
+						if (density <= 4)
+							continue;
+
+						size_t from = m_plants.size();
+						for (int32_t j = 0; j < density; ++j)
+						{
+							m_plants.push_back(Vector4::zero());
+							m_plants.push_back(Vector4::zero());
+						}
+						size_t to = m_plants.size();
+
+						Cluster c;
+						c.center = Vector4(wx, wy, wz, 1.0f);
+						c.distance = std::numeric_limits< float >::max();
+						c.visible = false;
+						c.plant = j->plant;
+						c.plantScale = j->scale * (0.5f + 0.5f * densityFactor / (16.0f * 16.0f));
+						c.from = from / 2;
+						c.to = to / 2;
+						m_clusters.push_back(c);
 					}
 				}
-				if (!plantDef)
-					continue;
-
-				int32_t densityFactor = cm[i];
-
-				int32_t density = (plantDef->density * densityFactor) / (16 * 16);
-				if (density <= 4)
-					continue;
-
-				size_t from = m_plants.size();
-				for (int32_t j = 0; j < density; ++j)
-				{
-					m_plants.push_back(Vector4::zero());
-					m_plants.push_back(Vector4::zero());
-				}
-				size_t to = m_plants.size();
-
-				Cluster c;
-				c.center = Vector4(wx, wy, wz, 1.0f);
-				c.distance = std::numeric_limits< float >::max();
-				c.visible = false;
-				c.plant = plantDef->plant;
-				c.plantScale = plantDef->scale * (0.5f + 0.5f * densityFactor / (16.0f * 16.0f));
-				c.from = from / 2;
-				c.to = to / 2;
-				m_clusters.push_back(c);
 			}
 		}
 	}

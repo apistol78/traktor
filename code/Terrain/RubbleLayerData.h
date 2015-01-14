@@ -45,6 +45,7 @@ private:
 
 	struct RubbleMesh
 	{
+		resource::Id< mesh::InstanceMesh > mesh;
 		uint8_t material;
 		int32_t density;
 		float randomScaleAmount;
@@ -54,7 +55,6 @@ private:
 		void serialize(ISerializer& s);
 	};
 
-	resource::Id< mesh::InstanceMesh > m_mesh;
 	float m_spreadDistance;
 	std::vector< RubbleMesh > m_rubble;
 };

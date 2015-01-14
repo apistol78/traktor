@@ -29,7 +29,10 @@ bool TerrainLayerPipeline::buildDependencies(
 	if (const UndergrowthLayerData* undergrowthLayerData = checked_type_cast< const UndergrowthLayerData*, false >(sourceAsset))
 		pipelineDepends->addDependency(undergrowthLayerData->m_shader, editor::PdfBuild | editor::PdfResource);
 	else if (const RubbleLayerData* rubbleLayerData = checked_type_cast< const RubbleLayerData*, false >(sourceAsset))
-		pipelineDepends->addDependency(rubbleLayerData->m_mesh, editor::PdfBuild | editor::PdfResource);
+	{
+		for (std::vector< RubbleLayerData::RubbleMesh >::const_iterator i = rubbleLayerData->m_rubble.begin(); i != rubbleLayerData->m_rubble.end(); ++i)
+			pipelineDepends->addDependency(i->mesh, editor::PdfBuild | editor::PdfResource);
+	}
 	return true;
 }
 
