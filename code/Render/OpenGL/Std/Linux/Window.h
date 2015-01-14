@@ -25,7 +25,7 @@ public:
 
 	void setTitle(const wchar_t* title);
 
-	void setFullScreenStyle(int32_t width, int32_t height);
+	void setFullScreenStyle();
 
 	void setWindowedStyle(int32_t width, int32_t height);
 
@@ -54,6 +54,16 @@ public:
 private:
 	::Display* m_display;
 	::Window m_window;
+
+	// X11 protocol atoms.
+	Atom m_atomWmBypassCompositor;
+	Atom m_atomWmState;
+	Atom m_atomWmStateFullscreen;
+	Atom m_atomWmStateMaximizedVert;
+	Atom m_atomWmStateMaximizedHorz;
+	Atom m_atomWmStateAbove;
+	Atom m_atomWmDeleteWindow;
+
 	int32_t m_screen;
 	int32_t m_width;
 	int32_t m_height;
@@ -61,10 +71,10 @@ private:
 	bool m_active;
 	bool m_cursorShow;
 	bool m_cursorShown;
-	XRRScreenConfiguration* m_originalConfig;
-	int32_t m_originalSizeIndex;
-	int32_t m_originalRate;
-	Rotation m_originalRotation;
+
+	void setWmProperty(Atom property, int32_t value);
+
+	void setWmProperty(Atom property1, Atom property2, int32_t value);
 };
 
 	}

@@ -95,7 +95,9 @@ ContextOpenGL::ContextOpenGL(ContextOpenGL* resourceContext, ::Display* display,
 
 #endif
 {
+#if !defined(__LINUX__)
 	update();
+#endif
 }
 
 ContextOpenGL::~ContextOpenGL()
@@ -109,7 +111,11 @@ ContextOpenGL::~ContextOpenGL()
 #endif
 }
 
+#if !defined(__LINUX__)
 void ContextOpenGL::update()
+#else
+void ContextOpenGL::update(int32_t width, int32_t height)
+#endif
 {
 #if defined(_WIN32)
 	RECT rc;
@@ -120,27 +126,8 @@ void ContextOpenGL::update()
 	cglwUpdate(m_context);
 	cglwGetSize(m_context, m_width, m_height);
 #elif defined(__LINUX__)
-
-	int x = 0, y = 0;
-	unsigned int width = 0, height = 0;
-	unsigned int border = 0;
-	unsigned int depth = 0;
-	::Window rootWindow = 0;
-
-	if (XGetGeometry(
-		m_display,
-		m_window,
-		&rootWindow,
-		&x, &y,
-		&width, &height,
-		&border,
-		&depth
-	) != 0)
-	{
-		m_width = width;
-		m_height = height;
-	}
-
+	m_width = width;
+	m_height = height;
 #endif
 }
 
@@ -190,12 +177,12 @@ void ContextOpenGL::destroy()
 #endif
 }
 
-int32_t ContextOpenGL::getWidth() const
+int32_t ContextOpenGL::getPhysicalWidth() const
 {
 	return m_width;
 }
 
-int32_t ContextOpenGL::getHeight() const
+int32_t ContextOpenGL::getPhysicalHeight() const
 {
 	return m_height;
 }

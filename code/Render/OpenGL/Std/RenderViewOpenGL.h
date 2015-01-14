@@ -39,7 +39,7 @@ public:
 #if defined(_WIN32)
 
 	RenderViewOpenGL(
-		const RenderViewDesc desc,
+		const RenderViewDesc& desc,
 		Window* window,
 		ContextOpenGL* renderContext,
 		ContextOpenGL* resourceContext
@@ -48,7 +48,7 @@ public:
 #elif defined(__APPLE__)
 
 	RenderViewOpenGL(
-		const RenderViewDesc desc,
+		const RenderViewDesc& desc,
 		void* windowHandle,
 		ContextOpenGL* renderContext,
 		ContextOpenGL* resourceContext
@@ -57,15 +57,13 @@ public:
 #elif defined(__LINUX__)
 
 	RenderViewOpenGL(
-		const RenderViewDesc desc,
+		const RenderViewDesc& desc,
 		Window* window,
 		ContextOpenGL* renderContext,
 		ContextOpenGL* resourceContext
 	);
 
 #endif
-
-	bool createPrimaryTarget();
 
 	virtual ~RenderViewOpenGL();
 
