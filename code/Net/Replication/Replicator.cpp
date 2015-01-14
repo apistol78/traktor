@@ -368,7 +368,7 @@ bool Replicator::update()
 				{
 					T_MEASURE_STATEMENT((*i)->notify(
 						this,
-						timeOffset,
+						float(timeOffset),
 						IListener::ReTimeAdjust,
 						0,
 						0
@@ -407,9 +407,11 @@ bool Replicator::update()
 			{
 				if ((*i)->setPrimary())
 				{
-					log::info << getLogPrefix() << L"Migrated " << (*i)->getHandle() << L" to primary peer." << Endl;
+					log::info << getLogPrefix() << L"Migrated primary token to peer " << (*i)->getHandle() << L"." << Endl;
 					break;
 				}
+				else
+					log::info << getLogPrefix() << L"Unable migrate primary token to peer " << (*i)->getHandle() << L"." << Endl;
 			}
 		}
 	}
@@ -594,7 +596,7 @@ bool Replicator::nodeConnected(INetworkTopology* topology, net_handle_t node)
 		{
 			(*i)->notify(
 				this,
-				m_time,
+				float(m_time),
 				IListener::ReConnected,
 				proxy,
 				0
@@ -621,7 +623,7 @@ bool Replicator::nodeDisconnected(INetworkTopology* topology, net_handle_t node)
 			{
 				(*j)->notify(
 					this,
-					m_time,
+					float(m_time),
 					IListener::ReDisconnected,
 					*i,
 					0
