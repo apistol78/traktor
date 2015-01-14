@@ -34,7 +34,7 @@ public:
 	virtual void destroy();
 
 	virtual int getWidth() const;
-	
+
 	virtual int getHeight() const;
 
 	virtual ISimpleTexture* getColorTexture(int index) const;
@@ -51,7 +51,7 @@ public:
 
 	bool bind(ContextOpenGL* renderContext, GLuint primaryDepthBuffer, int32_t renderTarget);
 
-	void blit();
+	void blit(ContextOpenGL* renderContext);
 
 	GLuint getDepthBuffer() const { return m_depthBufferOrTexture; }
 

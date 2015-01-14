@@ -541,7 +541,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 	context->leave();
 
 	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, m_window, context, m_resourceContext);
-	if (renderView->createPrimaryTarget())
+	if (renderView->reset(desc))
 		return renderView;
 
 	context->destroy();
@@ -579,7 +579,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 	Ref< ContextOpenGL > context = new ContextOpenGL(m_resourceContext, glcontext);
 
 	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, m_windowHandle, context, m_resourceContext);
-	if (renderView->createPrimaryTarget())
+	if (renderView->reset(desc))
 		return renderView;
 
 	log::error << L"createRenderView failed; unable to create primary render target" << Endl;
@@ -603,7 +603,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 	m_window->show();
 
 	if (desc.fullscreen)
-		m_window->setFullScreenStyle(desc.displayMode.width, desc.displayMode.height);
+		m_window->setFullScreenStyle();
 	else
 		m_window->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
 
@@ -627,7 +627,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 	context->leave();
 
 	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, m_window, context, m_resourceContext);
-	if (renderView->createPrimaryTarget())
+	if (renderView->reset(desc))
 		return renderView;
 
 	context->destroy();
@@ -699,7 +699,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 	context->leave();
 
 	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, 0, context, m_resourceContext);
-	if (renderView->createPrimaryTarget())
+	if (renderView->reset(16, 16))
 		return renderView;
 
 	context->destroy();
@@ -720,7 +720,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 	Ref< ContextOpenGL > context = new ContextOpenGL(m_resourceContext, glcontext);
 
 	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, 0, context, m_resourceContext);
-	if (renderView->createPrimaryTarget())
+	if (renderView->reset(16, 16))
 		return renderView;
 
 	context->destroy();
@@ -776,7 +776,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 	context->leave();
 
 	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, 0, context, m_resourceContext);
-	if (renderView->createPrimaryTarget())
+	if (renderView->reset(16, 16))
 		return renderView;
 
 	context->destroy();

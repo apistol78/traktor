@@ -317,15 +317,19 @@ bool RenderTargetSetOpenGL::bind(ContextOpenGL* renderContext, GLuint primaryDep
 	return true;
 }
 
-void RenderTargetSetOpenGL::blit()
+void RenderTargetSetOpenGL::blit(ContextOpenGL* renderContext)
 {
+	int32_t physicalWidth = renderContext->getPhysicalWidth();
+	int32_t physicalHeight = renderContext->getPhysicalHeight();
+
 	T_OGL_SAFE(glBindFramebuffer(GL_READ_FRAMEBUFFER, m_targetFBO));
 	T_OGL_SAFE(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0));
+
 	T_OGL_SAFE(glBlitFramebuffer(
 		0, 0, m_desc.width, m_desc.height,
-		0, m_desc.height, m_desc.width, 0,
+		0, physicalHeight, physicalWidth, 0,
 		GL_COLOR_BUFFER_BIT,
-		GL_NEAREST
+		(physicalWidth == m_desc.width && physicalHeight == m_desc.height) ? GL_NEAREST : GL_LINEAR
 	));
 }
 

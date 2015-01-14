@@ -43,7 +43,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewOpenGL", RenderViewOpenGL, IRe
 #if defined(_WIN32)
 
 RenderViewOpenGL::RenderViewOpenGL(
-	const RenderViewDesc desc,
+	const RenderViewDesc& desc,
 	Window* window,
 	ContextOpenGL* renderContext,
 	ContextOpenGL* resourceContext
@@ -57,6 +57,10 @@ RenderViewOpenGL::RenderViewOpenGL(
 ,	m_drawCalls(0)
 ,	m_primitiveCount(0)
 {
+	m_primaryTargetDesc.count = 1;
+	m_primaryTargetDesc.width = 0;
+	m_primaryTargetDesc.height = 0;
+	m_primaryTargetDesc.targets[0].format = TfR8G8B8A8;
 	m_primaryTargetDesc.multiSample = desc.multiSample;
 	m_primaryTargetDesc.createDepthStencil = bool(desc.depthBits > 0 || desc.stencilBits > 0);
 	m_primaryTargetDesc.usingPrimaryDepthStencil = false;
@@ -71,7 +75,7 @@ RenderViewOpenGL::RenderViewOpenGL(
 #elif defined(__APPLE__)
 
 RenderViewOpenGL::RenderViewOpenGL(
-	const RenderViewDesc desc,
+	const RenderViewDesc& desc,
 	void* windowHandle,
 	ContextOpenGL* renderContext,
 	ContextOpenGL* resourceContext
@@ -82,6 +86,10 @@ RenderViewOpenGL::RenderViewOpenGL(
 ,	m_cursorVisible(true)
 ,	m_waitVBlank(false)
 {
+	m_primaryTargetDesc.count = 1;
+	m_primaryTargetDesc.width = 0;
+	m_primaryTargetDesc.height = 0;
+	m_primaryTargetDesc.targets[0].format = TfR8G8B8A8;
 	m_primaryTargetDesc.multiSample = desc.multiSample;
 	m_primaryTargetDesc.createDepthStencil = bool(desc.depthBits > 0 || desc.stencilBits > 0);
 	m_primaryTargetDesc.usingPrimaryDepthStencil = false;
@@ -93,7 +101,7 @@ RenderViewOpenGL::RenderViewOpenGL(
 #elif defined(__LINUX__)
 
 RenderViewOpenGL::RenderViewOpenGL(
-	const RenderViewDesc desc,
+	const RenderViewDesc& desc,
 	Window* window,
 	ContextOpenGL* renderContext,
 	ContextOpenGL* resourceContext
@@ -105,6 +113,10 @@ RenderViewOpenGL::RenderViewOpenGL(
 ,	m_waitVBlank(false)
 ,	m_targetsDirty(false)
 {
+	m_primaryTargetDesc.count = 1;
+	m_primaryTargetDesc.width = 0;
+	m_primaryTargetDesc.height = 0;
+	m_primaryTargetDesc.targets[0].format = TfR8G8B8A8;
 	m_primaryTargetDesc.multiSample = desc.multiSample;
 	m_primaryTargetDesc.createDepthStencil = bool(desc.depthBits > 0 || desc.stencilBits > 0);
 	m_primaryTargetDesc.usingPrimaryDepthStencil = false;
@@ -118,25 +130,6 @@ RenderViewOpenGL::RenderViewOpenGL(
 RenderViewOpenGL::~RenderViewOpenGL()
 {
 	close();
-}
-
-bool RenderViewOpenGL::createPrimaryTarget()
-{
-	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
-
-	m_primaryTargetDesc.count = 1;
-	m_primaryTargetDesc.width = m_renderContext->getWidth();
-	m_primaryTargetDesc.height = m_renderContext->getHeight();
-	m_primaryTargetDesc.targets[0].format = TfR8G8B8A8;
-
-	if (m_primaryTargetDesc.width > 0 && m_primaryTargetDesc.height > 0)
-	{
-		m_primaryTarget = new RenderTargetSetOpenGL(m_resourceContext);
-		if (!m_primaryTarget->create(m_primaryTargetDesc))
-			return false;
-	}
-
-	return true;
 }
 
 bool RenderViewOpenGL::nextEvent(RenderEvent& outEvent)
@@ -214,20 +207,24 @@ bool RenderViewOpenGL::reset(const RenderViewDefaultDesc& desc)
 #elif defined(__LINUX__)
 		m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - OpenGL Renderer");
 		if (desc.fullscreen)
-			m_window->setFullScreenStyle(desc.displayMode.width, desc.displayMode.height);
+			m_window->setFullScreenStyle();
 		else
 			m_window->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
 #endif
 
 		// Update render context to ensure dimensions are set.
-		m_renderContext->update();
+		m_renderContext->update(
+#if defined(__LINUX__)
+			m_window->getWidth(),
+			m_window->getHeight()
+#endif
+		);
 
 		// Re-create primary FBO target.
 		m_primaryTargetDesc.width = desc.displayMode.width;
 		m_primaryTargetDesc.height = desc.displayMode.height;
 		m_primaryTargetDesc.multiSample = desc.multiSample;
 
-		log::info << L"Creating primary target " << m_primaryTargetDesc.width << L" x " << m_primaryTargetDesc.height << Endl;
 		if (m_primaryTargetDesc.width > 0 && m_primaryTargetDesc.height > 0)
 		{
 			m_primaryTarget = new RenderTargetSetOpenGL(m_resourceContext);
@@ -264,13 +261,17 @@ bool RenderViewOpenGL::reset(int32_t width, int32_t height)
 		m_resourceContext->deleteResources();
 
 		// Update render context to ensure dimensions are set.
-		m_renderContext->update();
+		m_renderContext->update(
+#if defined(__LINUX__)
+			m_window->getWidth(),
+			m_window->getHeight()
+#endif
+		);
 
 		// Re-create primary FBO target.
-		m_primaryTargetDesc.width = m_renderContext->getWidth();
-		m_primaryTargetDesc.height = m_renderContext->getHeight();
+		m_primaryTargetDesc.width = width;
+		m_primaryTargetDesc.height = height;
 
-		log::info << L"Creating primary target " << m_primaryTargetDesc.width << L" x " << m_primaryTargetDesc.height << Endl;
 		if (m_primaryTargetDesc.width > 0 && m_primaryTargetDesc.height > 0)
 		{
 			m_primaryTarget = new RenderTargetSetOpenGL(m_resourceContext);
@@ -288,12 +289,12 @@ bool RenderViewOpenGL::reset(int32_t width, int32_t height)
 
 int RenderViewOpenGL::getWidth() const
 {
-	return m_renderContext->getWidth();
+	return m_primaryTargetDesc.width;
 }
 
 int RenderViewOpenGL::getHeight() const
 {
-	return m_renderContext->getHeight();
+	return m_primaryTargetDesc.height;
 }
 
 bool RenderViewOpenGL::isActive() const
@@ -748,7 +749,7 @@ void RenderViewOpenGL::end()
 	else
 	{
 		T_ASSERT (ts.renderTargetSet == m_primaryTarget);
-		ts.renderTargetSet->blit();
+		ts.renderTargetSet->blit(m_renderContext);
 		T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 	}
 

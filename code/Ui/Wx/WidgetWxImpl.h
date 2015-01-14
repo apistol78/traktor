@@ -272,6 +272,10 @@ public:
 		Size s;
 		tstring tmp = wstots(text);
 		m_window->GetTextExtent(tmp.c_str(), &s.cx, &s.cy);
+#if defined(__WXGTK__)
+		s.cx += 0;
+		s.cy += 4;
+#endif
 		return s;
 	}
 
@@ -609,7 +613,7 @@ protected:
 	{
 		wxPoint p = event.GetPosition();
 
-		MouseWheelEvent m(m_owner, event.GetWheelRotation(), Point(p.x, p.y));
+		MouseWheelEvent m(m_owner, event.GetWheelRotation() / 120, Point(p.x, p.y));
 		m_owner->raiseEvent(&m);
 
 		if (!m.consumed())

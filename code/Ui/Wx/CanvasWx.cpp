@@ -334,6 +334,10 @@ Size CanvasWx::getTextExtent(const std::wstring& text) const
 	wxCoord w, h;
 	tstring tmp = wstots(text);
 	m_dc->GetTextExtent(tmp.c_str(), &w, &h);
+#if defined(__WXGTK__)
+	w += 0;
+	h += 4;
+#endif
 	return Size(w, h);
 }
 

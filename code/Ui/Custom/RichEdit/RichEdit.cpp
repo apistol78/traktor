@@ -24,7 +24,7 @@ const int32_t c_iconSize = 16;
 #if defined(__APPLE__)
 const int32_t c_fontHeightMargin = 4;
 #elif defined(__LINUX__)
-const int32_t c_fontHeightMargin = 4;
+const int32_t c_fontHeightMargin = 1;
 #else
 const int32_t c_fontHeightMargin = 1;
 #endif

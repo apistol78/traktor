@@ -35,7 +35,11 @@ public:
 
 	virtual ~ContextOpenGL();
 
+#if !defined(__LINUX__)
 	void update();
+#else
+	void update(int32_t width, int32_t height);
+#endif
 
 	void swapBuffers(bool waitVBlank);
 
@@ -53,9 +57,9 @@ public:
 
 	void setPermitDepth(bool permitDepth);
 
-	int32_t getWidth() const;
+	int32_t getPhysicalWidth() const;
 
-	int32_t getHeight() const;
+	int32_t getPhysicalHeight() const;
 
 	virtual bool enter();
 

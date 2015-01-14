@@ -11,7 +11,11 @@ namespace traktor
 		{
 
 const int c_splitterDim = 4;
+#if !defined(__LINUX__)
 const int c_gripperDim = 16;
+#else
+const int c_gripperDim = 22;
+#endif
 const int c_minimumSplit = c_gripperDim + 64;
 
 void drawClose(Canvas& canvas, int x, int y)
@@ -131,7 +135,7 @@ void DockPane::dock(Widget* widget, bool detachable, Direction direction, int sp
 		{
 			Ref< DockPane > paneLeft = new DockPane(m_owner, this);
 			Ref< DockPane > paneRight = new DockPane(m_owner, this);
-		
+
 			if (direction == DrNorth || direction == DrWest)
 			{
 				paneLeft->dock(widget, detachable);
@@ -365,7 +369,7 @@ void DockPane::draw(Canvas& canvas)
 		titleRect.right -= 16;
 
 		std::wstring title = m_widget->getText();
-		
+
 		Size titleExtent = canvas.getTextExtent(title);
 		if (titleExtent.cx > titleRect.getWidth())
 		{
