@@ -41,7 +41,7 @@ public:
 
 private:
 	friend class RubbleLayer;
-	friend class TerrainLayerPipeline;
+	friend class TerrainEntityPipeline;
 
 	struct RubbleMesh
 	{

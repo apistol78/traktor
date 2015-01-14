@@ -194,7 +194,7 @@ void RubbleLayer::updatePatches(const TerrainEntity& terrainEntity)
 		um[i->material] = ++maxMaterialIndex;
 
 	int32_t size = heightfield->getSize();
-	Vector4 extentPerGrid = heightfield->getWorldExtent() / Scalar(size);
+	Vector4 extentPerGrid = heightfield->getWorldExtent() / Scalar(float(size));
 
 	m_clusterSize = (16.0f / 2.0f) * max< float >(extentPerGrid.x(), extentPerGrid.z());
 
@@ -244,8 +244,8 @@ void RubbleLayer::updatePatches(const TerrainEntity& terrainEntity)
 						if (density <= 4)
 							continue;
 
-						size_t from = m_instances.size();
-						for (int32_t j = 0; j < density; ++j)
+						int32_t from = int32_t(m_instances.size());
+						for (int32_t k = 0; k < density; ++k)
 						{
 							Instance instance;
 							instance.position = Vector4::zero();
@@ -253,7 +253,7 @@ void RubbleLayer::updatePatches(const TerrainEntity& terrainEntity)
 							instance.scale = 0.0f;
 							m_instances.push_back(instance);
 						}
-						size_t to = m_instances.size();
+						int32_t to = int32_t(m_instances.size());
 
 						Cluster c;
 						c.rubbleDef = &(*j);

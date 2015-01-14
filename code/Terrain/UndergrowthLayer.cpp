@@ -297,7 +297,7 @@ void UndergrowthLayer::updatePatches(const TerrainEntity& terrainEntity)
 		um[i->material] = ++maxMaterialIndex;
 
 	int32_t size = heightfield->getSize();
-	Vector4 extentPerGrid = heightfield->getWorldExtent() / Scalar(size);
+	Vector4 extentPerGrid = heightfield->getWorldExtent() / Scalar(float(size));
 
 	m_clusterSize = (16.0f / 2.0f) * max< float >(extentPerGrid.x(), extentPerGrid.z());
 
@@ -347,13 +347,13 @@ void UndergrowthLayer::updatePatches(const TerrainEntity& terrainEntity)
 						if (density <= 4)
 							continue;
 
-						size_t from = m_plants.size();
-						for (int32_t j = 0; j < density; ++j)
+						int32_t from = int32_t(m_plants.size());
+						for (int32_t k = 0; k < density; ++k)
 						{
 							m_plants.push_back(Vector4::zero());
 							m_plants.push_back(Vector4::zero());
 						}
-						size_t to = m_plants.size();
+						int32_t to = int32_t(m_plants.size());
 
 						Cluster c;
 						c.center = Vector4(wx, wy, wz, 1.0f);
