@@ -35,7 +35,8 @@ render::handle_t s_handleMaxDistance;
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.RubbleLayer", RubbleLayer, ITerrainLayer)
 
 RubbleLayer::RubbleLayer()
-:	m_clusterSize(0.0f)
+:	m_spreadDistance(0.0f)
+,	m_clusterSize(0.0f)
 ,	m_eye(Vector4::zero())
 {
 	s_handleNormals = render::getParameterHandle(L"Normals");
@@ -53,10 +54,18 @@ bool RubbleLayer::create(
 	const TerrainEntity& terrainEntity
 )
 {
-	m_layerData = layerData;
+	m_spreadDistance = layerData.m_spreadDistance;
 
-	if (!resourceManager->bind(m_layerData.m_mesh, m_mesh))
-		return false;
+	m_rubble.resize(layerData.m_rubble.size());
+	for (size_t i = 0; i < m_rubble.size(); ++i)
+	{
+		if (!resourceManager->bind(layerData.m_rubble[i].mesh, m_rubble[i].mesh))
+			return false;
+
+		m_rubble[i].material = layerData.m_rubble[i].material;
+		m_rubble[i].density = layerData.m_rubble[i].density;
+		m_rubble[i].randomScaleAmount = layerData.m_rubble[i].randomScaleAmount;
+	}
 
 	updatePatches(terrainEntity);
 	return true;
@@ -88,10 +97,10 @@ void RubbleLayer::render(
 	if (updateClusters)
 	{
 		Frustum viewFrustum = worldRenderView.getViewFrustum();
-		viewFrustum.setFarZ(Scalar(m_layerData.m_spreadDistance + m_clusterSize));
+		viewFrustum.setFarZ(Scalar(m_spreadDistance + m_clusterSize));
 
 		// Only perform "replanting" when moved more than one unit.
-		if ((eye - m_eye).length() >= m_clusterSize)
+		if ((eye - m_eye).length() >= m_clusterSize / 2.0f)
 		{
 			m_eye = eye;
 
@@ -137,7 +146,7 @@ void RubbleLayer::render(
 	extraParameters->setTextureParameter(s_handleSurface, terrainEntity.getSurfaceCache()->getBaseTexture());
 	extraParameters->setVectorParameter(s_handleWorldExtent, terrain->getHeightfield()->getWorldExtent());
 	extraParameters->setVectorParameter(s_handleEye, eye);
-	extraParameters->setFloatParameter(s_handleMaxDistance, m_layerData.m_spreadDistance + m_clusterSize);
+	extraParameters->setFloatParameter(s_handleMaxDistance, m_spreadDistance + m_clusterSize);
 	extraParameters->endParameters(renderContext);
 
 	uint32_t plantCount = 0;
@@ -160,7 +169,7 @@ void RubbleLayer::render(
 				m_instanceData[k].second = i->distance;
 			}
 
-			m_mesh->render(
+			i->rubbleDef->mesh->render(
 				renderContext,
 				worldRenderPass,
 				m_instanceData,
@@ -181,7 +190,7 @@ void RubbleLayer::updatePatches(const TerrainEntity& terrainEntity)
 	// Get set of materials which have undergrowth.
 	StaticVector< uint8_t, 16 > um(16, 0);
 	uint8_t maxMaterialIndex = 0;
-	for (std::vector< RubbleLayerData::RubbleMesh >::const_iterator i = m_layerData.m_rubble.begin(); i != m_layerData.m_rubble.end(); ++i)
+	for (std::vector< RubbleMesh >::const_iterator i = m_rubble.begin(); i != m_rubble.end(); ++i)
 		um[i->material] = ++maxMaterialIndex;
 
 	int32_t size = heightfield->getSize();
@@ -225,43 +234,37 @@ void RubbleLayer::updatePatches(const TerrainEntity& terrainEntity)
 				if (cm[i] <= 0)
 					continue;
 
-				const RubbleLayerData::RubbleMesh* plantDef = 0;
-				for (std::vector< RubbleLayerData::RubbleMesh >::const_iterator j = m_layerData.m_rubble.begin(); j != m_layerData.m_rubble.end(); ++j)
+				for (std::vector< RubbleMesh >::iterator j = m_rubble.begin(); j != m_rubble.end(); ++j)
 				{
 					if (um[j->material] == i + 1)
 					{
-						plantDef = &(*j);
-						break;
+						int32_t densityFactor = cm[i];
+
+						int32_t density = (j->density * densityFactor) / (16 * 16);
+						if (density <= 4)
+							continue;
+
+						size_t from = m_instances.size();
+						for (int32_t j = 0; j < density; ++j)
+						{
+							Instance instance;
+							instance.position = Vector4::zero();
+							instance.rotation = Quaternion::identity();
+							instance.scale = 0.0f;
+							m_instances.push_back(instance);
+						}
+						size_t to = m_instances.size();
+
+						Cluster c;
+						c.rubbleDef = &(*j);
+						c.center = Vector4(wx, wy, wz, 1.0f);
+						c.distance = std::numeric_limits< float >::max();
+						c.visible = false;
+						c.from = from;
+						c.to = to;
+						m_clusters.push_back(c);
 					}
 				}
-				if (!plantDef)
-					continue;
-
-				int32_t densityFactor = cm[i];
-
-				int32_t density = (plantDef->density * densityFactor) / (16 * 16);
-				if (density <= 4)
-					continue;
-
-				size_t from = m_instances.size();
-				for (int32_t j = 0; j < density; ++j)
-				{
-					Instance instance;
-					instance.position = Vector4::zero();
-					instance.rotation = Quaternion::identity();
-					instance.scale = 0.0f;
-					m_instances.push_back(instance);
-				}
-				size_t to = m_instances.size();
-
-				Cluster c;
-				c.center = Vector4(wx, wy, wz, 1.0f);
-				c.distance = std::numeric_limits< float >::max();
-				c.visible = false;
-				c.scale = plantDef->randomScaleAmount;
-				c.from = from;
-				c.to = to;
-				m_clusters.push_back(c);
 			}
 		}
 	}

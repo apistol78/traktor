@@ -53,6 +53,14 @@ public:
 	virtual void updatePatches(const TerrainEntity& terrainEntity) override;
 
 private:
+	struct RubbleMesh
+	{
+		resource::Proxy< mesh::InstanceMesh > mesh;
+		uint8_t material;
+		int32_t density;
+		float randomScaleAmount;
+	};
+
 	struct Instance
 	{
 		Vector4 position;
@@ -62,6 +70,7 @@ private:
 
 	struct Cluster
 	{
+		RubbleMesh* rubbleDef;
 		Vector4 center;
 		float distance;
 		bool visible;
@@ -70,10 +79,10 @@ private:
 		int32_t to;
 	};
 
-	RubbleLayerData m_layerData;
-	resource::Proxy< mesh::InstanceMesh > m_mesh;
+	std::vector< RubbleMesh > m_rubble;
 	AlignedVector< Instance > m_instances;
 	AlignedVector< Cluster > m_clusters;
+	float m_spreadDistance;
 	float m_clusterSize;
 	Vector4 m_eye;
 	AlignedVector< mesh::InstanceMesh::instance_distance_t > m_instanceData;

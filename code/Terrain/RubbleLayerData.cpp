@@ -13,7 +13,7 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.RubbleLayerData", 0, RubbleLayerData, ITerrainLayerData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.RubbleLayerData", 1, RubbleLayerData, ITerrainLayerData)
 
 RubbleLayerData::RubbleLayerData()
 :	m_spreadDistance(100.0f)
@@ -36,7 +36,8 @@ Ref< ITerrainLayer > RubbleLayerData::createLayerInstance(
 
 void RubbleLayerData::serialize(ISerializer& s)
 {
-	s >> resource::Member< mesh::InstanceMesh >(L"mesh", m_mesh);
+	T_ASSERT (s.getVersion() >= 1);
+
 	s >> Member< float >(L"spreadDistance", m_spreadDistance);
 	s >> MemberStlVector< RubbleMesh, MemberComposite< RubbleMesh > >(L"rubble", m_rubble);
 }
@@ -50,6 +51,7 @@ RubbleLayerData::RubbleMesh::RubbleMesh()
 
 void RubbleLayerData::RubbleMesh::serialize(ISerializer& s)
 {
+	s >> resource::Member< mesh::InstanceMesh >(L"mesh", mesh);
 	s >> Member< uint8_t >(L"material", material);
 	s >> Member< int32_t >(L"density", density, AttributeRange(0.0f));
 	s >> Member< float >(L"randomScaleAmount", randomScaleAmount, AttributeRange(0.0f, 1.0f));

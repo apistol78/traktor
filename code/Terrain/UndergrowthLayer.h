@@ -74,6 +74,7 @@ private:
 	AlignedVector< Vector4 > m_plants;
 	AlignedVector< Cluster > m_clusters;
 	float m_clusterSize;
+	Vector4 m_eye;
 };
 
 	}
