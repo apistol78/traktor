@@ -147,11 +147,11 @@ private:
 uint32_t getCollisionGroup(const btCollisionObject* collisionObject)
 {
 	if (!collisionObject)
-		return ~0UL;
+		return ~0U;
 
 	BodyBullet* body = static_cast< BodyBullet* >(collisionObject->getUserPointer());
 	if (!body)
-		return ~0UL;
+		return ~0U;
 
 	return body->getCollisionGroup();
 }
@@ -159,11 +159,11 @@ uint32_t getCollisionGroup(const btCollisionObject* collisionObject)
 uint32_t getClusterId(const btCollisionObject* collisionObject)
 {
 	if (!collisionObject)
-		return ~0UL;
+		return ~0U;
 
 	BodyBullet* body = static_cast< BodyBullet* >(collisionObject->getUserPointer());
 	if (!body)
-		return ~0UL;
+		return ~0U;
 
 	return body->getClusterId();
 }
@@ -194,7 +194,7 @@ struct ClosestConvexExcludeResultCallback : public btCollisionWorld::ClosestConv
 
 		if (m_group != ~0UL && (getCollisionGroup(convexResult.m_hitCollisionObject) & m_group) == 0)
 			return 1.0f;
-		
+
 		return btCollisionWorld::ClosestConvexResultCallback::addSingleResult(convexResult, normalInWorldSpace);
 	}
 };
@@ -221,7 +221,7 @@ struct ClosestRayExcludeResultCallback : public btCollisionWorld::RayResultCallb
 	virtual	btScalar addSingleResult(btCollisionWorld::LocalRayResult& rayResult, bool normalInWorldSpace)
 	{
 		T_ASSERT (rayResult.m_hitFraction <= m_closestHitFraction);
-		
+
 		if (m_ignoreClusterId != 0 && getClusterId(rayResult.m_collisionObject) == m_ignoreClusterId)
 			return m_closestHitFraction;
 
@@ -269,7 +269,7 @@ struct ClosestRayExcludeAndCullResultCallback : public btCollisionWorld::RayResu
 	virtual	btScalar addSingleResult(btCollisionWorld::LocalRayResult& rayResult, bool normalInWorldSpace)
 	{
 		T_ASSERT (rayResult.m_hitFraction <= m_closestHitFraction);
-		
+
 		if (m_ignoreClusterId != 0 && getClusterId(rayResult.m_collisionObject) == m_ignoreClusterId)
 			return m_closestHitFraction;
 
@@ -490,7 +490,7 @@ bool PhysicsManagerBullet::create(float timeScale)
 
 	m_timeScale = timeScale;
 	m_configuration = new btDefaultCollisionConfiguration(info);
-	
+
 #if !defined(T_BULLET_USE_SPURS)
 	m_dispatcher = new btCollisionDispatcher(m_configuration);
 	m_solver = new btSequentialImpulseConstraintSolver();
@@ -808,7 +808,7 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 
 	btRigidBody* b1 = body1 ? bb1->getBtRigidBody() : 0;
 	btRigidBody* b2 = body2 ? bb2->getBtRigidBody() : 0;
-	
+
 	Ref< Joint > joint;
 
 	if (const AxisJointDesc* axisDesc = dynamic_type_cast< const AxisJointDesc* >(desc))
@@ -886,7 +886,7 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 	else if (const ConeTwistJointDesc* coneTwistDesc = dynamic_type_cast< const ConeTwistJointDesc* >(desc))
 	{
 		JointConstraint* jointConstraint;
-		
+
 		if (b1 && b2)
 		{
 			jointConstraint = new JointConstraint(*b1, *b2);
@@ -922,7 +922,7 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 	else if (const FixedJointDesc* fixedDesc = dynamic_type_cast< const FixedJointDesc* >(desc))
 	{
 		btGeneric6DofConstraint* fixedConstraint = 0;
-		
+
 		if (b1 && b2)
 		{
 			Transform Tbody1Inv = body1->getCenterTransform().inverse();
@@ -1048,7 +1048,7 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 
 			// Setup rotation range allowed around axis1.
 			hinge2Constraint->setLowerLimit(hinge2Desc->getLowStop());
-			hinge2Constraint->setUpperLimit(hinge2Desc->getHighStop()); 
+			hinge2Constraint->setUpperLimit(hinge2Desc->getHighStop());
 
 			hinge2Constraint->setEquilibriumPoint();
 		}
@@ -1267,7 +1267,7 @@ bool PhysicsManagerBullet::queryRay(
 		outResult.position = fromBtVector3(callback.m_hitPointWorld, 1.0f);
 		outResult.normal = fromBtVector3(callback.m_hitNormalWorld, 0.0).normalized();
 		outResult.distance = dot3(direction, outResult.position - at);
-		outResult.material = body->getMaterial(); 
+		outResult.material = body->getMaterial();
 	}
 	else
 	{
@@ -1542,7 +1542,7 @@ void PhysicsManagerBullet::queryTriangles(const Vector4& center, float radius, A
 		if (shape->isCompound())
 		{
 			btCompoundShape* compound = static_cast< btCompoundShape* >(shape);
-			
+
 			int numChilds = compound->getNumChildShapes();
 			for (int j = 0; j < numChilds; ++j)
 			{
