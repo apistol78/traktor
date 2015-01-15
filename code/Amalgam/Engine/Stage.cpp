@@ -163,7 +163,7 @@ bool Stage::gotoStage(Stage* stage)
 	return true;
 }
 
-bool Stage::update(IStateManager* stateManager, IUpdateControl& control, const IUpdateInfo& info)
+bool Stage::update(IStateManager* stateManager, const IUpdateInfo& info)
 {
 	if (!m_running)
 		return false;
@@ -179,7 +179,6 @@ bool Stage::update(IStateManager* stateManager, IUpdateControl& control, const I
 
 			script::Any argv[] =
 			{
-				script::Any::fromObject(&control),
 				script::Any::fromObject(const_cast< IUpdateInfo* >(&info))
 			};
 			m_scriptContext->executeFunction("update", sizeof_array(argv), argv);
@@ -188,7 +187,7 @@ bool Stage::update(IStateManager* stateManager, IUpdateControl& control, const I
 		}
 
 		for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-			(*i)->update(control, info);
+			(*i)->update(info);
 
 		m_fade = max(0.0f, m_fade - info.getSimulationDeltaTime() * m_fadeRate);
 	}

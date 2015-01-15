@@ -461,8 +461,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsManagerBullet", 0, Physi
 PhysicsManagerBullet* PhysicsManagerBullet::ms_this = 0;
 
 PhysicsManagerBullet::PhysicsManagerBullet()
-:	m_simulationDeltaTime(0.0f)
-,	m_configuration(0)
+:	m_configuration(0)
 ,	m_dispatcher(0)
 ,	m_broadphase(0)
 ,	m_solver(0)
@@ -481,7 +480,7 @@ PhysicsManagerBullet::~PhysicsManagerBullet()
 	T_ASSERT (!m_dynamicsWorld);
 }
 
-bool PhysicsManagerBullet::create(float simulationDeltaTime, float timeScale)
+bool PhysicsManagerBullet::create(float timeScale)
 {
 	btDefaultCollisionConstructionInfo info;
 
@@ -489,7 +488,6 @@ bool PhysicsManagerBullet::create(float simulationDeltaTime, float timeScale)
 	btAlignedAllocSetCustom(&traktorAlloc, &traktorFree);
 	btAlignedAllocSetCustomAligned(&traktorAllocAlign, &traktorFree);
 
-	m_simulationDeltaTime = simulationDeltaTime;
 	m_timeScale = timeScale;
 	m_configuration = new btDefaultCollisionConfiguration(info);
 	
@@ -724,7 +722,6 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 		Ref< BodyBullet > staticBody = new BodyBullet(
 			this,
 			m_dynamicsWorld,
-			m_simulationDeltaTime,
 			m_timeScale,
 			rigidBody,
 			shape,
@@ -772,7 +769,6 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 		Ref< BodyBullet > dynamicBody = new BodyBullet(
 			this,
 			m_dynamicsWorld,
-			m_simulationDeltaTime,
 			m_timeScale,
 			rigidBody,
 			shape,
@@ -1072,7 +1068,7 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 	return joint;
 }
 
-void PhysicsManagerBullet::update(bool issueCollisionEvents)
+void PhysicsManagerBullet::update(float simulationDeltaTime, bool issueCollisionEvents)
 {
 	T_ASSERT (m_dynamicsWorld);
 
@@ -1080,7 +1076,7 @@ void PhysicsManagerBullet::update(bool issueCollisionEvents)
 	T_ANONYMOUS_VAR(Save< PhysicsManagerBullet* >)(ms_this, this);
 
 	// Step simulation.
-	m_dynamicsWorld->stepSimulation(m_simulationDeltaTime * m_timeScale, 0);
+	m_dynamicsWorld->stepSimulation(simulationDeltaTime * m_timeScale, 0);
 
 	/*
 	// Issue collision events.

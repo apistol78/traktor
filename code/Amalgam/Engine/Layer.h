@@ -59,10 +59,9 @@ public:
 
 	/*! \brief Update layer logic.
 	 *
-	 * control Engine control interface.
 	 * info Engine update information.
 	 */
-	virtual void update(amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info) = 0;
+	virtual void update(const amalgam::IUpdateInfo& info) = 0;
 
 	/*! \brief Build renderable context.
 	 *

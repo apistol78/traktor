@@ -248,7 +248,7 @@ void FlashLayer::prepare()
 	}
 }
 
-void FlashLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
+void FlashLayer::update(const amalgam::IUpdateInfo& info)
 {
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
 	input::InputSystem* inputSystem = m_environment->getInput()->getInputSystem();

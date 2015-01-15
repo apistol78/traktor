@@ -136,11 +136,10 @@ public:
 	/*! \brief Update this stage.
 	 *
 	 * \param stateManager Engine state manager.
-	 * \param control Engine control interface.
 	 * \param info Engine update information.
 	 * \return True if this update succeeded.
 	 */
-	bool update(IStateManager* stateManager, IUpdateControl& control, const IUpdateInfo& info);
+	bool update(IStateManager* stateManager, const IUpdateInfo& info);
 
 	bool build(const IUpdateInfo& info, uint32_t frame);
 

@@ -35,9 +35,9 @@ void StageState::leave()
 	}
 }
 
-StageState::UpdateResult StageState::update(IStateManager* stateManager, IUpdateControl& control, const IUpdateInfo& info)
+StageState::UpdateResult StageState::update(IStateManager* stateManager, const IUpdateInfo& info)
 {
-	if (m_stage->update(stateManager, control, info))
+	if (m_stage->update(stateManager, info))
 		return UrOk;
 	else
 		return UrExit;

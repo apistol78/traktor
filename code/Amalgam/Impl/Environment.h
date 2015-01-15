@@ -18,6 +18,7 @@ class PhysicsServer;
 class RenderServer;
 class ResourceServer;
 class ScriptServer;
+class UpdateControl;
 class WorldServer;
 
 class Environment : public IEnvironment
@@ -28,6 +29,7 @@ public:
 	Environment(
 		PropertyGroup* settings,
 		db::Database* database,
+		UpdateControl* control,
 		AudioServer* audioServer,
 		InputServer* inputServer,
 		OnlineServer* onlineServer,
@@ -39,6 +41,8 @@ public:
 	);
 
 	virtual db::Database* getDatabase();
+
+	virtual IUpdateControl* getControl();
 
 	virtual IAudioServer* getAudio();
 
@@ -67,6 +71,7 @@ public:
 private:
 	Ref< PropertyGroup > m_settings;
 	Ref< db::Database > m_database;
+	Ref< UpdateControl > m_control;
 	Ref< AudioServer > m_audioServer;
 	Ref< InputServer > m_inputServer;
 	Ref< OnlineServer > m_onlineServer;

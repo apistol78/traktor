@@ -22,7 +22,7 @@ Timer s_timer;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.OnlinePeer2PeerProvider", OnlinePeer2PeerProvider, net::IPeer2PeerProvider)
 
-OnlinePeer2PeerProvider::OnlinePeer2PeerProvider(ISessionManager* sessionManager, ILobby* lobby)
+OnlinePeer2PeerProvider::OnlinePeer2PeerProvider(ISessionManager* sessionManager, ILobby* lobby, bool async)
 :	m_sessionManager(sessionManager)
 ,	m_lobby(lobby)
 ,	m_localHandle(sessionManager->getUser()->getGlobalId())
@@ -37,16 +37,24 @@ OnlinePeer2PeerProvider::OnlinePeer2PeerProvider(ISessionManager* sessionManager
 	while(m_sessionManager->receiveP2PData(data, sizeof(data), fromUser) > 0)
 		;
 
-	m_thread = ThreadManager::getInstance().create(makeFunctor(this, &OnlinePeer2PeerProvider::transmissionThread), L"Online P2P");
-	m_thread->start();
+	// Create transmission thread.
+	if (async)
+	{
+		m_thread = ThreadManager::getInstance().create(makeFunctor(this, &OnlinePeer2PeerProvider::transmissionThread), L"Online P2P");
+		if (!m_thread->start())
+			m_thread = 0;
+	}
 
 	s_timer.start();
 }
 
 OnlinePeer2PeerProvider::~OnlinePeer2PeerProvider()
 {
-	m_thread->stop();
-	ThreadManager::getInstance().destroy(m_thread);
+	if (m_thread)
+	{
+		m_thread->stop();
+		ThreadManager::getInstance().destroy(m_thread);
+	}
 }
 
 bool OnlinePeer2PeerProvider::update()
@@ -113,17 +121,25 @@ bool OnlinePeer2PeerProvider::send(net::net_handle_t node, const void* data, int
 	{
 		if ((*i)->getGlobalId() == node)
 		{
-			m_txQueueLock.wait();
+			if (m_thread)
+			{
+				m_txQueueLock.wait();
 
-			RxTxData& tx = m_txQueue.push_back();
+				RxTxData& tx = m_txQueue.push_back();
 
-			tx.user = *i;
-			tx.size = size;
-			std::memcpy(tx.data, data, size);
+				tx.user = *i;
+				tx.size = size;
+				std::memcpy(tx.data, data, size);
 
-			m_txQueueSignal.set();
-			m_txQueueLock.release();
-			return true;
+				m_txQueueSignal.set();
+				m_txQueueLock.release();
+
+				return true;
+			}
+			else
+			{
+				return (*i)->sendP2PData(data, size, false);
+			}
 		}
 	}
 	return false;
@@ -133,22 +149,42 @@ int32_t OnlinePeer2PeerProvider::recv(void* data, int32_t size, net::net_handle_
 {
 	int32_t nrecv = 0;
 
-	if (m_rxQueuePending <= 0)
-		return 0;
-
-	m_rxQueueLock.wait();
-	if (!m_rxQueue.empty())
+	if (m_thread)
 	{
-		RxTxData& rx = m_rxQueue.front();
+		if (m_rxQueuePending <= 0)
+			return 0;
 
-		nrecv = std::min< int32_t >(size, rx.size);
-		std::memcpy(data, rx.data, nrecv);
-		outNode = net::net_handle_t(rx.user->getGlobalId());
+		m_rxQueueLock.wait();
+		if (!m_rxQueue.empty())
+		{
+			RxTxData& rx = m_rxQueue.front();
 
-		m_rxQueue.pop_front();
-		--m_rxQueuePending;
+			nrecv = std::min< int32_t >(size, rx.size);
+			std::memcpy(data, rx.data, nrecv);
+			outNode = net::net_handle_t(rx.user->getGlobalId());
+
+			m_rxQueue.pop_front();
+			--m_rxQueuePending;
+		}
+		m_rxQueueLock.release();
 	}
-	m_rxQueueLock.release();
+	else
+	{
+		if (m_sessionManager->haveP2PData())
+		{
+			Ref< IUser > fromUser;
+			nrecv = m_sessionManager->receiveP2PData(data, size, fromUser);
+			if (nrecv > 0 && fromUser != 0)
+			{
+				outNode = net::net_handle_t(fromUser->getGlobalId());
+			}
+			else
+			{
+				nrecv = 0;
+				fromUser = 0;
+			}
+		}
+	}
 
 	return nrecv;
 }

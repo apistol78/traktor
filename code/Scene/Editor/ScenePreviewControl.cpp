@@ -469,7 +469,7 @@ void ScenePreviewControl::eventIdle(ui::IdleEvent* event)
 
 				scene->update(update, true, true);
 				m_context->getEntityEventManager()->update(update);
-				m_context->getPhysicsManager()->update(false);
+				m_context->getPhysicsManager()->update(1.0f / 60.0f, false);
 
 				m_lastPhysicsTime += c_updateDeltaTime;
 			}

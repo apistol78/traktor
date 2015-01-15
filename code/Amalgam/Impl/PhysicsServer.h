@@ -18,7 +18,7 @@ class PhysicsServer : public IPhysicsServer
 	T_RTTI_CLASS;
 
 public:
-	bool create(const PropertyGroup* defaultSettings, const PropertyGroup* settings, float simulationDeltaTime);
+	bool create(const PropertyGroup* defaultSettings, const PropertyGroup* settings);
 
 	void destroy();
 
@@ -28,7 +28,7 @@ public:
 
 	int32_t reconfigure(const PropertyGroup* settings);
 
-	void update();
+	void update(float simulationDeltaTime);
 
 	virtual physics::PhysicsManager* getPhysicsManager();
 

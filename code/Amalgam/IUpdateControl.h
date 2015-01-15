@@ -38,6 +38,10 @@ public:
 	virtual void setTimeScale(float timeScale) = 0;
 
 	virtual float getTimeScale() const = 0;
+
+	virtual void setSimulationFrequency(float simulationFrequency) = 0;
+
+	virtual float getSimulationFrequency() const = 0;
 };
 
 	}

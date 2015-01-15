@@ -25,7 +25,7 @@ const float c_timeScale = 1.25f;	//< Make simulation 25% faster than normal; emp
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.PhysicsServer", PhysicsServer, IPhysicsServer)
 
-bool PhysicsServer::create(const PropertyGroup* defaultSettings, const PropertyGroup* settings, float simulationDeltaTime)
+bool PhysicsServer::create(const PropertyGroup* defaultSettings, const PropertyGroup* settings)
 {
 	std::wstring physicsType = defaultSettings->getProperty< PropertyString >(L"Physics.Type");
 	float timeScale = settings->getProperty< PropertyFloat >(L"Physics.TimeScale", 1.0f);
@@ -34,7 +34,7 @@ bool PhysicsServer::create(const PropertyGroup* defaultSettings, const PropertyG
 	if (!physicsManager)
 		return false;
 
-	if (!physicsManager->create(simulationDeltaTime, timeScale * c_timeScale))
+	if (!physicsManager->create(timeScale * c_timeScale))
 	{
 		log::error << L"Physics server failed; unable to create physics manager" << Endl;
 		return false;
@@ -67,9 +67,9 @@ int32_t PhysicsServer::reconfigure(const PropertyGroup* settings)
 	return CrUnaffected;
 }
 
-void PhysicsServer::update()
+void PhysicsServer::update(float simulationDeltaTime)
 {
-	m_physicsManager->update(true);
+	m_physicsManager->update(simulationDeltaTime, true);
 }
 
 physics::PhysicsManager* PhysicsServer::getPhysicsManager()

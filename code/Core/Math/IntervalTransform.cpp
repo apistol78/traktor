@@ -4,12 +4,12 @@ namespace traktor
 {
 
 IntervalTransform::IntervalTransform()
-:	m_modified(false)
+:	m_stepped(false)
 {
 }
 
 IntervalTransform::IntervalTransform(const Transform& transform)
-:	m_modified(false)
+:	m_stepped(false)
 {
 	m_transform[0] = transform;
 	m_transform[1] = transform;
@@ -17,8 +17,12 @@ IntervalTransform::IntervalTransform(const Transform& transform)
 
 void IntervalTransform::set(const Transform& transform)
 {
+	if (m_stepped)
+	{
+		m_transform[0] = m_transform[1];
+		m_stepped = false;
+	}
 	m_transform[1] = transform;
-	m_modified = true;
 }
 
 Transform IntervalTransform::get(float interval) const
@@ -32,11 +36,7 @@ Transform IntervalTransform::get(float interval) const
 
 void IntervalTransform::step()
 {
-	if (m_modified)
-	{
-		m_transform[0] = m_transform[1];
-		m_modified = false;
-	}
+	m_stepped = true;
 }
 
 }

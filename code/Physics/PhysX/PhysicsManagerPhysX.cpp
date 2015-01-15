@@ -192,8 +192,7 @@ private:
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsManagerPhysX", 0, PhysicsManagerPhysX, PhysicsManager)
 
 PhysicsManagerPhysX::PhysicsManagerPhysX()
-:	m_simulationDeltaTime(0.0f)
-,	m_timeScale(1.0f)
+:	m_timeScale(1.0f)
 ,	m_sdk(0)
 ,	m_cooking(0)
 ,	m_scene(0)
@@ -205,7 +204,7 @@ PhysicsManagerPhysX::~PhysicsManagerPhysX()
 	destroy();
 }
 
-bool PhysicsManagerPhysX::create(float simulationDeltaTime, float timeScale)
+bool PhysicsManagerPhysX::create(float timeScale)
 {
 	log::info << L"Initializing PhysX " << PX_PHYSICS_VERSION_MAJOR << L"." << PX_PHYSICS_VERSION_MINOR << L"." << PX_PHYSICS_VERSION_BUGFIX << L"..." << Endl;
 
@@ -270,9 +269,7 @@ bool PhysicsManagerPhysX::create(float simulationDeltaTime, float timeScale)
 		return false;
 	}
 
-	m_simulationDeltaTime = simulationDeltaTime;
 	m_timeScale = timeScale;
-
 	return true;
 }
 
@@ -896,13 +893,13 @@ Ref< Joint > PhysicsManagerPhysX::createJoint(const JointDesc* desc, const Trans
 	return outJoint;
 }
 
-void PhysicsManagerPhysX::update(bool issueCollisionEvents)
+void PhysicsManagerPhysX::update(float simulationDeltaTime, bool issueCollisionEvents)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	m_collisionInfo.resize(0);
 
-	m_scene->simulate(m_simulationDeltaTime * m_timeScale);
+	m_scene->simulate(simulationDeltaTime * m_timeScale);
 	if (!m_scene->fetchResults(true))
 		log::error << L"Unable to fetch simulation results; physics may be inconsistent" << Endl;
 

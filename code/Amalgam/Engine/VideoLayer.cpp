@@ -115,7 +115,7 @@ void VideoLayer::prepare()
 {
 }
 
-void VideoLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
+void VideoLayer::update(const amalgam::IUpdateInfo& info)
 {
 	info.getProfiler()->beginScope(FptVideoLayer);
 

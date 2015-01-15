@@ -129,9 +129,6 @@ public:
 	/*! \brief Get velocity at a given position of body. */
 	virtual Vector4 getVelocityAt(const Vector4& at, bool localSpace) const = 0;
 
-	/*! \brief Calculate constraint forces to match given body state. */
-	virtual bool solveStateConstraint(const BodyState& state) = 0;
-
 	/*! \brief Set body's complete state. */
 	virtual bool setState(const BodyState& state) = 0;
 

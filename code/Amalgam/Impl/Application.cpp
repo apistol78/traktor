@@ -54,10 +54,8 @@ namespace traktor
 		{
 
 const int32_t c_databasePollInterval = 5;
-const uint32_t c_simulationFrequency = 60;
-const float c_simulationDeltaTime = 1.0f / c_simulationFrequency;
-const float c_maxDeltaTime = 1.0f / 15.0f;
-const int32_t c_maxDeltaTimeErrors = 240;
+const float c_maxDeltaTime = 1.0f / 5.0f;
+const int32_t c_maxDeltaTimeErrors = 300;
 const float c_deltaTimeFilterCoeff = 0.99f;
 
 		}
@@ -118,7 +116,7 @@ bool Application::create(
 	}
 #endif
 
-	// Sub step configuration.
+	// Simulation setup.
 	m_maxSimulationUpdates = defaultSettings->getProperty< PropertyInteger >(L"Amalgam.MaxSimulationUpdates", 4);
 	m_maxSimulationUpdates = max(m_maxSimulationUpdates, 1);
 
@@ -187,7 +185,7 @@ bool Application::create(
 	{
 		T_DEBUG(L"Creating physics server...");
 		m_physicsServer = new PhysicsServer();
-		if (!m_physicsServer->create(defaultSettings, settings, c_simulationDeltaTime))
+		if (!m_physicsServer->create(defaultSettings, settings))
 			return false;
 	}
 
@@ -232,6 +230,7 @@ bool Application::create(
 	m_environment = new Environment(
 		settings,
 		m_database,
+		&m_updateControl,
 		m_audioServer,
 		m_inputServer,
 		m_onlineServer,
@@ -530,7 +529,7 @@ bool Application::update()
 			m_resourceServer->performCleanup();
 
 			// Reset time data.
-			m_updateInfo.m_frameDeltaTime = c_simulationDeltaTime;
+			m_updateInfo.m_frameDeltaTime = 1.0f / m_updateControl.m_simulationFrequency;
 			m_updateInfo.m_simulationTime = 0.0f;
 			m_updateInfo.m_stateTime = 0.0f;
 
@@ -624,7 +623,7 @@ bool Application::update()
 		physics::PhysicsManager* physicsManager = m_physicsServer ? m_physicsServer->getPhysicsManager() : 0;
 		if (physicsManager && !m_updateControl.m_pause)
 		{
-			float dT = c_simulationDeltaTime * m_updateControl.m_timeScale;
+			float dT = m_updateControl.m_timeScale / m_updateControl.m_simulationFrequency;
 
 			m_updateInfo.m_simulationDeltaTime = dT;
 			m_updateInfo.m_simulationFrequency = uint32_t(1.0f / dT);
@@ -671,7 +670,7 @@ bool Application::update()
 				// Update current state for each simulation tick.
 				double updateTimeStart = m_timer.getElapsedTime();
 				m_frameProfiler.beginScope(FptStateUpdate);
-				IState::UpdateResult result = currentState->update(m_stateManager, m_updateControl, m_updateInfo);
+				IState::UpdateResult result = currentState->update(m_stateManager, m_updateInfo);
 				m_frameProfiler.endScope();
 				double updateTimeEnd = m_timer.getElapsedTime();
 				updateDuration += updateTimeEnd - updateTimeStart;
@@ -679,7 +678,7 @@ bool Application::update()
 				// Update physics.
 				double physicsTimeStart = m_timer.getElapsedTime();
 				m_frameProfiler.beginScope(FptPhysicsServerUpdate);
-				m_physicsServer->update();
+				m_physicsServer->update(m_updateInfo.m_simulationDeltaTime);
 				m_frameProfiler.endScope();
 				double physicsTimeEnd = m_timer.getElapsedTime();
 				physicsDuration += physicsTimeEnd - physicsTimeStart;
@@ -719,7 +718,7 @@ bool Application::update()
 
 			double updateTimeStart = m_timer.getElapsedTime();
 			m_frameProfiler.beginScope(FptStateUpdate);
-			IState::UpdateResult updateResult = currentState->update(m_stateManager, m_updateControl, m_updateInfo);
+			IState::UpdateResult updateResult = currentState->update(m_stateManager, m_updateInfo);
 			m_frameProfiler.endScope();
 			double updateTimeEnd = m_timer.getElapsedTime();
 			updateDuration += updateTimeEnd - updateTimeStart;

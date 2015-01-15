@@ -35,7 +35,6 @@ public:
 	BodyBullet(
 		IWorldCallback* callback,
 		btDynamicsWorld* dynamicsWorld,
-		float simulationDeltaTime,
 		float timeScale,
 		btRigidBody* body,
 		btCollisionShape* shape,
@@ -93,8 +92,6 @@ public:
 
 	virtual Vector4 getVelocityAt(const Vector4& at, bool localSpace) const;
 
-	virtual bool solveStateConstraint(const BodyState& state);
-
 	virtual bool setState(const BodyState& state);
 
 	virtual BodyState getState() const;
@@ -124,7 +121,6 @@ public:
 private:
 	IWorldCallback* m_callback;
 	btDynamicsWorld* m_dynamicsWorld;
-	float m_simulationDeltaTime;
 	float m_timeScale;
 	btRigidBody* m_body;
 	btCollisionShape* m_shape;
