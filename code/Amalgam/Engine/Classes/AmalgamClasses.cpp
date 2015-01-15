@@ -137,6 +137,7 @@ void registerAmalgamClasses(script::IScriptManager* scriptManager)
 {
 	Ref< script::AutoScriptClass< amalgam::IEnvironment > > classEnvironment = new script::AutoScriptClass< amalgam::IEnvironment >();
 	classEnvironment->addMethod("getDatabase", &amalgam::IEnvironment::getDatabase);
+	classEnvironment->addMethod("getControl", &amalgam::IEnvironment::getControl);
 	classEnvironment->addMethod("getAudio", &amalgam::IEnvironment::getAudio);
 	classEnvironment->addMethod("getInput", &amalgam::IEnvironment::getInput);
 	classEnvironment->addMethod("getOnline", &amalgam::IEnvironment::getOnline);
@@ -204,6 +205,8 @@ void registerAmalgamClasses(script::IScriptManager* scriptManager)
 	classIUpdateControl->addMethod("getPause", &amalgam::IUpdateControl::getPause);
 	classIUpdateControl->addMethod("setTimeScale", &amalgam::IUpdateControl::setTimeScale);
 	classIUpdateControl->addMethod("getTimeScale", &amalgam::IUpdateControl::getTimeScale);
+	classIUpdateControl->addMethod("setSimulationFrequency", &amalgam::IUpdateControl::setSimulationFrequency);
+	classIUpdateControl->addMethod("getSimulationFrequency", &amalgam::IUpdateControl::getSimulationFrequency);
 	scriptManager->registerClass(classIUpdateControl);
 
 	Ref< script::AutoScriptClass< amalgam::IUpdateInfo > > classIUpdateInfo = new script::AutoScriptClass< amalgam::IUpdateInfo >();

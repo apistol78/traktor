@@ -136,10 +136,9 @@ public:
 
 	/*! \brief Create physics manager.
 	 *
-	 * \param simulationDeltaTime Fixed simulation delta time.
 	 * \param timeScale Scaling of simulation time.
 	 */
-	virtual bool create(float simulationDeltaTime, float timeScale) = 0;
+	virtual bool create(float timeScale) = 0;
 
 	/*! \brief Destroy physics manager.
 	 *
@@ -196,9 +195,10 @@ public:
 	 * Time step is fixed and set when the physics
 	 * manager is created.
 	 *
+	 * \param simulationDeltaTime Simulate delta time.
 	 * \param issueCollisionEvents Issue listeners for new collision events.
 	 */
-	virtual void update(bool issueCollisionEvents) = 0;
+	virtual void update(float simulationDeltaTime, bool issueCollisionEvents) = 0;
 
 	/*! \brief Solve joint constraints applied to given bodies.
 	 */

@@ -4,6 +4,7 @@
 #include "Amalgam/IUpdateInfo.h"
 #include "Amalgam/Engine/WorldLayer.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Format.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
@@ -171,7 +172,7 @@ void WorldLayer::prepare()
 	}
 }
 
-void WorldLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
+void WorldLayer::update(const amalgam::IUpdateInfo& info)
 {
 	if (!m_worldRenderer)
 		return;
@@ -227,7 +228,11 @@ void WorldLayer::build(const amalgam::IUpdateInfo& info, uint32_t frame)
 	if (m_cameraEntity)
 	{
 		Transform cameraTransform;
-		m_cameraEntity->getTransform(cameraTransform);
+		if (const world::NullEntity* nullCameraEntity = dynamic_type_cast< const world::NullEntity* >(m_cameraEntity))
+			cameraTransform = nullCameraEntity->getTransform(info.getInterval());
+		else
+			m_cameraEntity->getTransform(cameraTransform);
+
 		m_worldRenderView.setView((cameraTransform * m_cameraOffset).inverse().toMatrix44());
 	}
 

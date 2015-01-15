@@ -79,7 +79,7 @@ public:
 
 	virtual void prepare();
 
-	virtual void update(amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info);
+	virtual void update(const amalgam::IUpdateInfo& info);
 
 	virtual void build(const amalgam::IUpdateInfo& info, uint32_t frame);
 

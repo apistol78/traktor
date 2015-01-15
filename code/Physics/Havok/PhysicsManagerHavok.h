@@ -37,7 +37,7 @@ public:
 
 	virtual ~PhysicsManagerHavok();
 
-	virtual bool create(float simulationDeltaTime, float timeScale);
+	virtual bool create(float timeScale);
 
 	virtual void destroy();
 
@@ -49,7 +49,7 @@ public:
 
 	virtual Ref< Joint > createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2);
 
-	virtual void update(bool issueCollisionEvents);
+	virtual void update(float simulationDeltaTime, bool issueCollisionEvents);
 
 	virtual void solveConstraints(const RefArray< Body >& bodies, const RefArray< Joint >& joints);
 
@@ -135,7 +135,6 @@ public:
 	virtual void getStatistics(PhysicsStatistics& outStatistics) const;
 
 private:
-	float m_simulationDeltaTime;
 	hkPoolMemory* m_memoryManager;
 	hkThreadMemory* m_threadMemory;
 	uint8_t* m_stackBuffer;

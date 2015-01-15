@@ -16,10 +16,12 @@ class UpdateControl : public IUpdateControl
 public:
 	bool m_pause;
 	float m_timeScale;
+	float m_simulationFrequency;
 
 	UpdateControl()
 	:	m_pause(false)
 	,	m_timeScale(1.0f)
+	,	m_simulationFrequency(60.0f)
 	{
 	}
 
@@ -30,6 +32,10 @@ public:
 	virtual void setTimeScale(float timeScale) { m_timeScale = timeScale; }
 
 	virtual float getTimeScale() const { return m_timeScale; }
+
+	virtual void setSimulationFrequency(float simulationFrequency) { m_simulationFrequency = simulationFrequency; }
+
+	virtual float getSimulationFrequency() const { return m_simulationFrequency; }
 };
 
 	}

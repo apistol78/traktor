@@ -9,6 +9,7 @@
 #include "Amalgam/IRenderServer.h"
 #include "Amalgam/IResourceServer.h"
 #include "Amalgam/IScriptServer.h"
+#include "Amalgam/IUpdateControl.h"
 #include "Amalgam/IWorldServer.h"
 #include "Amalgam/Types.h"
 
@@ -39,7 +40,7 @@ class Database;
  * \ingroup Amalgam
  *
  * This class represent the runtime environment.
- * It's a single accessor for applications to access
+ * It's a single accessors for applications to reach
  * various system objects.
  */
 class T_DLLCLASS IEnvironment : public Object
@@ -48,6 +49,8 @@ class T_DLLCLASS IEnvironment : public Object
 
 public:
 	virtual db::Database* getDatabase() = 0;
+
+	virtual IUpdateControl* getControl() = 0;
 
 	/*! \name Server accessors. */
 	/*! \{ */

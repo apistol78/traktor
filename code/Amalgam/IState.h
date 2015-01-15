@@ -19,7 +19,6 @@ namespace traktor
 
 class IEvent;
 class IStateManager;
-class IUpdateControl;
 class IUpdateInfo;
 
 /*! \brief Runtime state.
@@ -61,11 +60,10 @@ public:
 	/*! \brief Update state.
 	 *
 	 * \param stateManager State manager.
-	 * \param control Update control.
 	 * \param info Update information.
 	 * \return Update result.
 	 */
-	virtual UpdateResult update(IStateManager* stateManager, IUpdateControl& control, const IUpdateInfo& info) = 0;
+	virtual UpdateResult update(IStateManager* stateManager, const IUpdateInfo& info) = 0;
 
 	/*! \brief Build frame.
 	 *

@@ -139,8 +139,7 @@ private:
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsManagerHavok", 0, PhysicsManagerHavok, PhysicsManager)
 
 PhysicsManagerHavok::PhysicsManagerHavok()
-:	m_simulationDeltaTime(0.0f)
-,	m_memoryManager(0)
+:	m_memoryManager(0)
 ,	m_threadMemory(0)
 ,	m_stackBuffer(0)
 ,	m_world(0)
@@ -156,10 +155,8 @@ PhysicsManagerHavok::~PhysicsManagerHavok()
 	m_world = 0;
 }
 
-bool PhysicsManagerHavok::create(float simulationDeltaTime, float timeScale)
+bool PhysicsManagerHavok::create(float timeScale)
 {
-	m_simulationDeltaTime = simulationDeltaTime;
-
 	// Initialize the base system including memory system.
 	m_memoryManager = new hkPoolMemory();
 	m_threadMemory = new hkThreadMemory(m_memoryManager);
@@ -424,7 +421,7 @@ Ref< Body > PhysicsManagerHavok::createBody(resource::IResourceManager* resource
 		Ref< BodyHavok > staticBody = new BodyHavok(
 			this,
 			rigidBody,
-			m_simulationDeltaTime
+			/*m_simulationDeltaTime*/ 1.0f / 60.0f
 		);
 		m_bodies.push_back(staticBody);
 
@@ -456,7 +453,7 @@ Ref< Body > PhysicsManagerHavok::createBody(resource::IResourceManager* resource
 		Ref< BodyHavok > dynamicBody = new BodyHavok(
 			this,
 			rigidBody,
-			m_simulationDeltaTime
+			/*m_simulationDeltaTime*/ 1.0f / 60.0f
 		);
 		m_bodies.push_back(dynamicBody);
 
@@ -602,10 +599,10 @@ Ref< Joint > PhysicsManagerHavok::createJoint(const JointDesc* desc, const Trans
 	return joint;
 }
 
-void PhysicsManagerHavok::update(bool issueCollisionEvents)
+void PhysicsManagerHavok::update(float simulationDeltaTime, bool issueCollisionEvents)
 {
 	T_ASSERT (m_world);
-	m_world->stepDeltaTime(m_simulationDeltaTime);
+	m_world->stepDeltaTime(simulationDeltaTime);
 }
 
 void PhysicsManagerHavok::solveConstraints(const RefArray< Body >& bodies, const RefArray< Joint >& joints)

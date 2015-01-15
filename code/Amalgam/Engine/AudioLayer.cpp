@@ -115,7 +115,7 @@ void AudioLayer::prepare()
 {
 }
 
-void AudioLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
+void AudioLayer::update(const amalgam::IUpdateInfo& info)
 {
 	info.getProfiler()->beginScope(FptAudioLayer);
 

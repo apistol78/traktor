@@ -6,6 +6,7 @@
 #include "Amalgam/Impl/RenderServer.h"
 #include "Amalgam/Impl/ResourceServer.h"
 #include "Amalgam/Impl/ScriptServer.h"
+#include "Amalgam/Impl/UpdateControl.h"
 #include "Amalgam/Impl/WorldServer.h"
 
 namespace traktor
@@ -18,6 +19,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.Environment", Environment, IEnvironment
 Environment::Environment(
 	PropertyGroup* settings,
 	db::Database* database,
+	UpdateControl* control,
 	AudioServer* audioServer,
 	InputServer* inputServer,
 	OnlineServer* onlineServer,
@@ -29,6 +31,7 @@ Environment::Environment(
 )
 :	m_settings(settings)
 ,	m_database(database)
+,	m_control(control)
 ,	m_audioServer(audioServer)
 ,	m_inputServer(inputServer)
 ,	m_onlineServer(onlineServer)
@@ -44,6 +47,11 @@ Environment::Environment(
 db::Database* Environment::getDatabase()
 {
 	return m_database;
+}
+
+IUpdateControl* Environment::getControl()
+{
+	return m_control;
 }
 
 IAudioServer* Environment::getAudio()

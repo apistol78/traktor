@@ -242,12 +242,6 @@ Ref< QueryResult > physics_PhysicsManager_querySweep_2(
 		return 0;
 }
 
-void physics_Body_solveStateConstraint(physics::Body* this_, const BodyState* state)
-{
-	if (state)
-		this_->solveStateConstraint(*state);
-}
-
 bool physics_Body_setState(physics::Body* this_, const BodyState* state)
 {
 	if (state)
@@ -315,7 +309,6 @@ void registerPhysicsClasses(script::IScriptManager* scriptManager)
 	classBody->addMethod("setAngularVelocity", &physics::Body::setAngularVelocity);
 	classBody->addMethod("getAngularVelocity", &physics::Body::getAngularVelocity);
 	classBody->addMethod("getVelocityAt", &physics::Body::getVelocityAt);
-	classBody->addMethod("solveStateConstraint", &physics_Body_solveStateConstraint);
 	classBody->addMethod("setState", &physics_Body_setState);
 	classBody->addMethod("getState", &physics_Body_getState);
 	classBody->addMethod("addCollisionListener", &physics::Body::addCollisionListener);
