@@ -134,7 +134,7 @@ private:
 
 	avm_number_t TextField_get_maxhscroll(FlashEditInstance* editInstance) const;
 
-	avm_number_t TextField_get_maxscroll(FlashEditInstance* editInstance) const;
+	int32_t TextField_get_maxscroll(FlashEditInstance* editInstance) const;
 
 	Ref< FlashContextMenu > TextField_get_menu(FlashEditInstance* editInstance) const;
 
@@ -172,9 +172,9 @@ private:
 
 	void TextField_set_rotation(FlashEditInstance* editInstance, avm_number_t rotation) const;
 
-	avm_number_t TextField_get_scroll(FlashEditInstance* editInstance) const;
+	int32_t TextField_get_scroll(FlashEditInstance* editInstance) const;
 
-	void TextField_set_scroll(FlashEditInstance* editInstance, avm_number_t scroll) const;
+	void TextField_set_scroll(FlashEditInstance* editInstance, int32_t scroll) const;
 
 	bool TextField_get_selectable(FlashEditInstance* editInstance) const;
 

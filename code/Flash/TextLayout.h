@@ -82,6 +82,8 @@ public:
 
 	const Aabb2& getBounds() const { return m_bounds; }
 
+	float getLeading() const { return m_leading; }
+
 	float getFontHeight() const { return m_fontHeight; }
 
 	Align getAlignment() const { return m_alignment; }
