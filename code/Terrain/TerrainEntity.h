@@ -111,7 +111,8 @@ public:
 		world::WorldRenderView& worldRenderView,
 		world::IWorldRenderPass& worldRenderPass,
 		float detailDistance,
-		uint32_t cacheSize
+		uint32_t cacheSize,
+		bool layersEnable
 	);
 
 	void setVisualizeMode(VisualizeMode visualizeMode);

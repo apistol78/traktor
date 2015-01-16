@@ -129,6 +129,7 @@ bool WorldServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 	m_terrainEntityRenderer = new terrain::EntityRenderer(
 		c_terrainDetailDistances[m_terrainQuality],
 		c_terrainSurfaceCacheSizes[m_terrainQuality],
+		bool(m_terrainQuality >= world::QuMedium),
 		bool(m_oceanQuality >= world::QuHigh)
 	);
 
@@ -225,6 +226,7 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 
 	m_terrainEntityRenderer->setTerrainDetailDistance(c_terrainDetailDistances[terrainQuality]);
 	m_terrainEntityRenderer->setTerrainCacheSize(c_terrainSurfaceCacheSizes[terrainQuality]);
+	m_terrainEntityRenderer->setTerrainLayersEnable(bool(terrainQuality >= world::QuMedium));
 	m_terrainEntityRenderer->setOceanDynamicReflectionEnable(bool(oceanQuality >= world::QuHigh));
 
 	// Save ghost configuration state.

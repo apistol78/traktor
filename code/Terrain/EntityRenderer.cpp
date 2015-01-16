@@ -12,9 +12,10 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.EntityRenderer", EntityRenderer, world::IEntityRenderer)
 
-EntityRenderer::EntityRenderer(float terrainDetailDistance, uint32_t terrainCacheSize, bool oceanReflectionEnable)
+EntityRenderer::EntityRenderer(float terrainDetailDistance, uint32_t terrainCacheSize, bool terrainLayersEnable, bool oceanReflectionEnable)
 :	m_terrainDetailDistance(terrainDetailDistance)
 ,	m_terrainCacheSize(terrainCacheSize)
+,	m_terrainLayersEnable(terrainLayersEnable)
 ,	m_oceanReflectionEnable(oceanReflectionEnable)
 {
 }
@@ -27,6 +28,11 @@ void EntityRenderer::setTerrainDetailDistance(float terrainDetailDistance)
 void EntityRenderer::setTerrainCacheSize(uint32_t terrainCacheSize)
 {
 	m_terrainCacheSize = terrainCacheSize;
+}
+
+void EntityRenderer::setTerrainLayersEnable(bool terrainLayersEnable)
+{
+	m_terrainLayersEnable = terrainLayersEnable;
 }
 
 void EntityRenderer::setOceanDynamicReflectionEnable(bool oceanReflectionEnable)
@@ -59,7 +65,7 @@ void EntityRenderer::render(
 )
 {
 	if (TerrainEntity* terrainEntity = dynamic_type_cast< TerrainEntity* >(entity))
-		terrainEntity->render(worldContext, worldRenderView, worldRenderPass, m_terrainDetailDistance, m_terrainCacheSize);
+		terrainEntity->render(worldContext, worldRenderView, worldRenderPass, m_terrainDetailDistance, m_terrainCacheSize, m_terrainLayersEnable);
 	else if (OceanEntity* oceanEntity = dynamic_type_cast< OceanEntity* >(entity))
 		oceanEntity->render(worldContext.getRenderContext(), worldRenderView, worldRenderPass, m_oceanReflectionEnable);
 	else if (RiverEntity* riverEntity = dynamic_type_cast< RiverEntity* >(entity))

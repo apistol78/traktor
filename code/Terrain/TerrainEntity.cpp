@@ -117,7 +117,8 @@ void TerrainEntity::render(
 	world::WorldRenderView& worldRenderView,
 	world::IWorldRenderPass& worldRenderPass,
 	float detailDistance,
-	uint32_t cacheSize
+	uint32_t cacheSize,
+	bool layersEnable
 )
 {
 	if (
@@ -516,13 +517,16 @@ void TerrainEntity::render(
 
 #endif
 
-	for (RefArray< ITerrainLayer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-		(*i)->render(
-			*this,
-			worldContext,
-			worldRenderView,
-			worldRenderPass
-		);
+	if (layersEnable)
+	{
+		for (RefArray< ITerrainLayer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+			(*i)->render(
+				*this,
+				worldContext,
+				worldRenderView,
+				worldRenderPass
+			);
+	}
 }
 
 void TerrainEntity::setVisualizeMode(VisualizeMode visualizeMode)
