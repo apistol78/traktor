@@ -282,7 +282,8 @@ LONG WINAPI exceptionVectoredHandler(struct _EXCEPTION_POINTERS* ep)
 	g_exceptionAddress = (void*)ep->ExceptionRecord->ExceptionAddress;
 	g_exceptionCode = ep->ExceptionRecord->ExceptionCode;
 
-	bool ouputCallStack = true;
+	bool outputCallStack = false;
+	bool outputInfo = false;
 	switch (ep->ExceptionRecord->ExceptionCode)
 	{
 	case EXCEPTION_ACCESS_VIOLATION:		
@@ -294,7 +295,9 @@ LONG WINAPI exceptionVectoredHandler(struct _EXCEPTION_POINTERS* ep)
 	case EXCEPTION_NONCONTINUABLE_EXCEPTION:
 	case EXCEPTION_INVALID_DISPOSITION:		
 	case EXCEPTION_GUARD_PAGE:				
-		ouputCallStack = true;
+//	case EXCEPTION_POSSIBLE_DEADLOCK:
+	case EXCEPTION_INVALID_HANDLE:
+		outputCallStack = true;
 		break;
 
 	case EXCEPTION_BREAKPOINT:				
@@ -309,15 +312,27 @@ LONG WINAPI exceptionVectoredHandler(struct _EXCEPTION_POINTERS* ep)
 	case EXCEPTION_FLT_UNDERFLOW:			
 	case EXCEPTION_INT_DIVIDE_BY_ZERO:		
 	case EXCEPTION_INT_OVERFLOW:			
+		outputInfo = true;
+		break;
+
 	default:								
-		ouputCallStack = false;
 		break;
 	}
 
-	if (ouputCallStack)
+	if (outputCallStack)
 	{
 		StackWalkerToConsole sw;
 		sw.ShowCallstack(GetCurrentThread(), ep->ContextRecord);
+	}
+	else if (outputInfo)
+	{
+		HMODULE hCrashModule;
+		if (GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, reinterpret_cast<LPCTSTR>(g_exceptionAddress), &hCrashModule))
+		{
+			TCHAR fileName[MAX_PATH];
+			GetModuleFileName(hCrashModule, fileName, sizeof_array(fileName));
+			log::debug << L"Exception ( " << getExceptionString(g_exceptionCode) << L") occurred at 0x" << g_exceptionAddress << L" in module " << (void*)hCrashModule << L" " << fileName << Endl;
+		}
 	}
 
 	return EXCEPTION_CONTINUE_SEARCH;
