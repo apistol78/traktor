@@ -5,7 +5,7 @@ namespace traktor
 	namespace net
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.net.IValue", IValue, ISerializable)
+T_IMPLEMENT_RTTI_CLASS_ROOT(L"traktor.net.IValue", IValue)
 
 	}
 }

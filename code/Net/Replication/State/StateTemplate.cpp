@@ -5,7 +5,6 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/MathUtils.h"
-#include "Core/Serialization/DeepHash.h"
 #include "Net/Replication/State/IValue.h"
 #include "Net/Replication/State/IValueTemplate.h"
 #include "Net/Replication/State/State.h"
@@ -228,29 +227,6 @@ uint32_t StateTemplate::pack(const State* S, void* buffer, uint32_t bufferSize) 
 	return stream.tell();
 }
 
-uint32_t StateTemplate::pack(const State* Sn1, const State* S, void* buffer, uint32_t bufferSize) const
-{
-	MemoryStream stream(buffer, bufferSize, false, true);
-	BitWriter writer(&stream);
-
-	const RefArray< const IValue >& Vn1 = Sn1->getValues();
-	const RefArray< const IValue >& V = S->getValues();
-
-	for (uint32_t i = 0; i < m_valueTemplates.size(); ++i)
-	{
-		if (DeepHash(Vn1[i]) != DeepHash(V[i]))
-		{
-			writer.writeBit(1);
-			m_valueTemplates[i]->pack(writer, V[i]);
-		}
-		else
-			writer.writeBit(0);
-	}
-
-	writer.flush();
-	return stream.tell();
-}
-
 Ref< const State > StateTemplate::unpack(const void* buffer, uint32_t bufferSize) const
 {
 	MemoryStream stream(buffer, bufferSize);
@@ -264,39 +240,6 @@ Ref< const State > StateTemplate::unpack(const void* buffer, uint32_t bufferSize
 
 		if ((V[i] = valueTemplate->unpack(reader)) == 0)
 			return 0;
-	}
-
-	// Must have read all data from buffer.
-	if (stream.available() > 0)
-		return 0;
-
-	return new State(V);
-}
-
-Ref< const State > StateTemplate::unpack(const State* Sn1, const void* buffer, uint32_t bufferSize) const
-{
-	MemoryStream stream(buffer, bufferSize);
-	BitReader reader(&stream);
-
-	const RefArray< const IValue >& Vn1 = Sn1->getValues();
-	RefArray< const IValue > V(m_valueTemplates.size());
-
-	for (uint32_t i = 0; i < m_valueTemplates.size(); ++i)
-	{
-		const IValueTemplate* valueTemplate = m_valueTemplates[i];
-		T_ASSERT (valueTemplate);
-
-		// Ensure stream doesn't run out of data unexpected.
-		if (stream.available() <= 0)
-			return 0;
-
-		if (reader.readBit())
-		{
-			if ((V[i] = valueTemplate->unpack(reader)) == 0)
-				return 0;
-		}
-		else
-			V[i] = Vn1[i];
 	}
 
 	// Must have read all data from buffer.

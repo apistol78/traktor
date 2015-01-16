@@ -277,7 +277,7 @@ bool ReplicatorProxy::receivedState(double stateTime, const void* stateData, uin
 	}
 	else
 	{
-		log::info << m_replicator->getLogPrefix() << L"Received old state from " << m_handle << L"; state ignored." << Endl;
+		log::info << m_replicator->getLogPrefix() << L"Received old state (" << int32_t((m_stateTimeN2 - stateTime) * 1000.0) << L" ms) from " << m_handle << L"; state ignored." << Endl;
 		return false;
 	}
 

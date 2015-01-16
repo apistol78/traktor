@@ -360,7 +360,7 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 	scriptManager->registerClass(classIVideoSharing);
 
 	Ref< script::AutoScriptClass< online::OnlinePeer2PeerProvider > > classOnlinePeer2PeerProvider = new script::AutoScriptClass< online::OnlinePeer2PeerProvider >();
-	classOnlinePeer2PeerProvider->addConstructor< online::ISessionManager*, online::ILobby*, bool >();
+	classOnlinePeer2PeerProvider->addConstructor< online::ISessionManager*, online::ILobby*, bool, bool >();
 	scriptManager->registerClass(classOnlinePeer2PeerProvider);
 }
 

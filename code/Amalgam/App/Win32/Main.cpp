@@ -439,6 +439,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 	log::warning.setGlobalTarget(new LogDualTarget(logTail, log::warning.getGlobalTarget()));
 	log::error  .setGlobalTarget(new LogDualTarget(logTail, log::error  .getGlobalTarget()));
 
+#if defined(_WIN64)
+	log::info << L"Application starting (64-bit) ..." << Endl;
+#else
+	log::info << L"Application starting (32-bit) ..." << Endl;
+#endif
+
 #if !defined(_WIN64)
 	// Ensure FP is in known state.
 	_controlfp(_PC_24, _MCW_PC);

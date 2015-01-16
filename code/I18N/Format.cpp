@@ -150,7 +150,7 @@ Format::Format(
 )
 {
 	m_text = I18N::getInstance().get(id, id);
-	for (;;)
+	for (int32_t i = 0; i < 16; ++i)
 	{
 		size_t s = m_text.find(L"{");
 		if (s == std::string::npos)

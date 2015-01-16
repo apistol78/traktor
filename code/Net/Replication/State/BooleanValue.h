@@ -16,7 +16,7 @@ namespace traktor
 	namespace net
 	{
 
-class T_DLLCLASS BooleanValue : public IValue
+class T_DLLCLASS BooleanValue : public RefCountImpl< IValue >
 {
 	T_RTTI_CLASS;
 
@@ -37,7 +37,9 @@ public:
 
 	operator bool () const { return m_value; }
 
-	virtual void serialize(ISerializer& s);
+	void* operator new (size_t size);
+
+	void operator delete (void* ptr);
 
 private:
 	bool m_value;
