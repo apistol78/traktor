@@ -153,6 +153,8 @@ bool Peer2PeerTopology::send(net_handle_t node, const void* data, int32_t size)
 
 		if (m_provider->send(nodePeer.send, &msg, MsgDirect_NetSize(size)))
 			return true;
+
+		log::info << getLogPrefix() << L"Failed to send data to peer " << nodePeer.send << L" (1)." << Endl;
 	}
 	else
 	{
@@ -165,11 +167,13 @@ bool Peer2PeerTopology::send(net_handle_t node, const void* data, int32_t size)
 		msg.relay.target = node;
 		std::memcpy(msg.relay.data, data, size);
 
-		if (!m_provider->send(nodePeer.send, &msg, MsgRelay_NetSize(size)))
-			return false;
+		if (m_provider->send(nodePeer.send, &msg, MsgRelay_NetSize(size)))
+			return true;
+
+		log::info << getLogPrefix() << L"Failed to send data to peer " << nodePeer.send << L" (2)." << Endl;
 	}
 
-	return true;
+	return false;
 }
 
 int32_t Peer2PeerTopology::recv(void* data, int32_t size, net_handle_t& outNode)
@@ -228,12 +232,13 @@ bool Peer2PeerTopology::update(double dT)
 	Peer& myPeer = m_peers[myIndex];
 
 	// Remove peers.
-	for (int32_t i = 0; i < int32_t(m_peers.size()); ++i)
+	for (int32_t i = 0; i < int32_t(m_peers.size()); )
 	{
 		Peer& peer = m_peers[i];
 
 		if (std::find(m_providerPeers.begin(), m_providerPeers.end(), peer.handle) == m_providerPeers.end())
 		{
+			// Remove from my list of direct connections.
 			std::vector< net_handle_t >::iterator it = std::find(myPeer.connections.begin(), myPeer.connections.end(), peer.handle);
 			if (it != myPeer.connections.end())
 			{
@@ -243,14 +248,21 @@ bool Peer2PeerTopology::update(double dT)
 				updateRouting = 2;
 			}
 
-			if (!peer.connections.empty())
-				updateRouting = 2;
+			// Issue disconnect callback.
+			if (peer.established)
+			{
+				log::info << getLogPrefix() << L"Peer " << m_peers[i].handle << L" disconnected (no provider)." << Endl;
 
-			peer.sequence = 0;
-			peer.connections.clear();
-			peer.whenIAm = 0.0;
-			peer.sentIAm = 0;
+				if (m_callback)
+					T_MEASURE_STATEMENT(m_callback->nodeDisconnected(this, peer.handle), 0.001);
+
+				peer.established = false;
+			}
+
+			m_peers.erase(m_peers.begin() + i);
 		}
+		else
+			++i;
 	}
 
 	T_MEASURE_UNTIL(0.00025);
@@ -297,6 +309,8 @@ bool Peer2PeerTopology::update(double dT)
 		}
 		else
 		{
+			log::info << getLogPrefix() << L"Failed to send \"I am\" to peer " << peer.handle << L"." << Endl;
+
 			std::vector< net_handle_t >::iterator it = std::find(myPeer.connections.begin(), myPeer.connections.end(), peer.handle);
 			if (it != myPeer.connections.end())
 			{
@@ -398,7 +412,10 @@ bool Peer2PeerTopology::update(double dT)
 				continue;
 
 			if (!m_provider->send(myPeer.connections[j], &msg, MsgCMask_NetSize(peer.connections.size())))
+			{
+				log::info << getLogPrefix() << L"Failed to send connections to peer " << myPeer.connections[j] << L"." << Endl;
 				++errors;
+			}
 		}
 
 		peer.whenPropagate = m_time + c_propagateInterval + m_random.nextDouble() * c_timeRandomFlux;
@@ -561,7 +578,7 @@ bool Peer2PeerTopology::update(double dT)
 			{
 				if (m_peers[i].established)
 				{
-					log::info << getLogPrefix() << L"Peer " << m_peers[i].handle << L" disconnected." << Endl;
+					log::info << getLogPrefix() << L"Peer " << m_peers[i].handle << L" disconnected (no route)." << Endl;
 
 					if (m_callback)
 						T_MEASURE_STATEMENT(m_callback->nodeDisconnected(this, m_peers[i].handle), 0.001);

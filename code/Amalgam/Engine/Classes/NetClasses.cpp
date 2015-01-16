@@ -58,10 +58,6 @@ public:
 
 	float getTimeUntilTxPing() const { return m_configuration.timeUntilTxPing; }
 
-	void setMaxExtrapolationDelta(float maxExtrapolationDelta) { m_configuration.maxExtrapolationDelta = maxExtrapolationDelta; }
-
-	float getMaxExtrapolationDelta() const { return m_configuration.maxExtrapolationDelta; }
-
 	const net::Replicator::Configuration& getConfiguration() const { return m_configuration; }
 
 private:
@@ -207,8 +203,6 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	classReplicatorConfiguration->addMethod("getTimeUntilTxStateFar", &ReplicatorConfiguration::getTimeUntilTxStateFar);
 	classReplicatorConfiguration->addMethod("setTimeUntilTxPing", &ReplicatorConfiguration::setTimeUntilTxPing);
 	classReplicatorConfiguration->addMethod("getTimeUntilTxPing", &ReplicatorConfiguration::getTimeUntilTxPing);
-	classReplicatorConfiguration->addMethod("setMaxExtrapolationDelta", &ReplicatorConfiguration::setMaxExtrapolationDelta);
-	classReplicatorConfiguration->addMethod("getMaxExtrapolationDelta", &ReplicatorConfiguration::getMaxExtrapolationDelta);
 	scriptManager->registerClass(classReplicatorConfiguration);
 
 	Ref< script::AutoScriptClass< ReplicatorListener > > classReplicatorListener = new script::AutoScriptClass< ReplicatorListener >();

@@ -31,7 +31,20 @@ class T_DLLCLASS OnlinePeer2PeerProvider : public net::IPeer2PeerProvider
 	T_RTTI_CLASS;
 
 public:
-	OnlinePeer2PeerProvider(ISessionManager* sessionManager, ILobby* lobby, bool async);
+	struct P2PUser
+	{
+		Ref< IUser > user;
+		int32_t timeout;
+	};
+
+	struct RxTxData
+	{
+		Ref< IUser > user;
+		uint32_t size;
+		uint8_t data[1200];
+	};
+
+	OnlinePeer2PeerProvider(ISessionManager* sessionManager, ILobby* lobby, bool asyncTx, bool asyncRx);
 
 	virtual ~OnlinePeer2PeerProvider();
 
@@ -53,20 +66,15 @@ public:
 
 	virtual int32_t recv(void* data, int32_t size, net::net_handle_t& outNode);
 
-	struct RxTxData
-	{
-		Ref< IUser > user;
-		uint32_t size;
-		uint8_t data[1200];
-	};
-
 private:
 	Ref< ISessionManager > m_sessionManager;
 	Ref< ILobby > m_lobby;
-	RefArray< IUser > m_users;
+	std::vector< P2PUser > m_users;
 	net::net_handle_t m_localHandle;
 	net::net_handle_t m_primaryHandle;
 	double m_whenUpdate;
+	bool m_asyncTx;
+	bool m_asyncRx;
 	Thread* m_thread;
 	Semaphore m_rxQueueLock;
 	Semaphore m_txQueueLock;

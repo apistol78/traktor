@@ -1,7 +1,7 @@
 #ifndef traktor_net_IValue_H
 #define traktor_net_IValue_H
 
-#include "Core/Serialization/ISerializable.h"
+#include "Core/Rtti/ITypedObject.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,7 +16,7 @@ namespace traktor
 	namespace net
 	{
 
-class T_DLLCLASS IValue : public ISerializable
+class T_DLLCLASS IValue : public ITypedObject
 {
 	T_RTTI_CLASS;
 };

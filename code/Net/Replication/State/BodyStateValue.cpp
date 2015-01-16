@@ -1,7 +1,5 @@
-#include "Core/Serialization/AttributeDirection.h"
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
-#include "Core/Serialization/MemberComposite.h"
+#include "Core/Memory/Alloc.h"
+#include "Core/Memory/BlockAllocator.h"
 #include "Net/Replication/State/BodyStateValue.h"
 
 namespace traktor
@@ -11,54 +9,64 @@ namespace traktor
 		namespace
 		{
 
-class MemberBodyState : public MemberComplex
+template < typename ValueType >
+class ValueAllocator
 {
 public:
-	MemberBodyState(const wchar_t* const name, physics::BodyState& ref)
-	:	MemberComplex(name, true)
-	,	m_ref(ref)
+	enum { ValuesPerBlock = 4096 };
+
+	void* alloc()
 	{
+		void* ptr = 0;
+		for (std::vector< BlockAllocator* >::iterator i = m_allocators.begin(); i != m_allocators.end(); ++i)
+		{
+			BlockAllocator* allocator = *i;
+			if ((ptr = allocator->alloc()) != 0)
+				return ptr;
+		}
+
+		// No more space in block allocators; create a new block allocator.
+		void* top = Alloc::acquireAlign(ValuesPerBlock * sizeof(ValueType), alignOf< ValueType >(), T_FILE_LINE);
+		T_FATAL_ASSERT_M (top, L"Out of memory");
+
+		BlockAllocator* allocator = new BlockAllocator(top, ValuesPerBlock, sizeof(ValueType));
+		T_FATAL_ASSERT_M (allocator, L"Out of memory");
+
+		m_allocators.push_back(allocator);
+		return allocator->alloc();
 	}
 
-	virtual void serialize(ISerializer& s) const
+	void free(void* ptr)
 	{
-		if (s.getDirection() == ISerializer::SdRead)
+		for (std::vector< BlockAllocator* >::iterator i = m_allocators.begin(); i != m_allocators.end(); ++i)
 		{
-			Transform transform;
-			Vector4 linearVelocity;
-			Vector4 angularVelocity;
-
-			s >> MemberComposite< Transform >(L"transform", transform);
-			s >> Member< Vector4 >(L"linearVelocity", linearVelocity, AttributeDirection());
-			s >> Member< Vector4 >(L"angularVelocity", angularVelocity, AttributeDirection());
-
-			m_ref.setTransform(transform);
-			m_ref.setLinearVelocity(linearVelocity);
-			m_ref.setAngularVelocity(angularVelocity);
+			BlockAllocator* allocator = *i;
+			if (allocator->free(ptr))
+				return;
 		}
-		else	// SdWrite
-		{
-			Transform transform = m_ref.getTransform();
-			Vector4 linearVelocity = m_ref.getLinearVelocity();
-			Vector4 angularVelocity = m_ref.getAngularVelocity();
 
-			s >> MemberComposite< Transform >(L"transform", transform);
-			s >> Member< Vector4 >(L"linearVelocity", linearVelocity, AttributeDirection());
-			s >> Member< Vector4 >(L"angularVelocity", angularVelocity, AttributeDirection());
-		}
+		T_FATAL_ERROR;
 	}
 
 private:
-	physics::BodyState& m_ref;
+	std::vector< BlockAllocator* > m_allocators;
 };
+
+ValueAllocator< BodyStateValue > s_valueAllocator;
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.net.BodyStateValue", 0, BodyStateValue, IValue)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.net.BodyStateValue", BodyStateValue, IValue)
 
-void BodyStateValue::serialize(ISerializer& s)
+void* BodyStateValue::operator new (size_t size)
 {
-	s >> MemberBodyState(L"value", m_value);
+	T_ASSERT (size == sizeof(BodyStateValue));
+	return s_valueAllocator.alloc();
+}
+
+void BodyStateValue::operator delete (void* ptr)
+{
+	s_valueAllocator.free(ptr);
 }
 
 	}

@@ -27,11 +27,7 @@ public:
 
 	uint32_t pack(const State* S, void* buffer, uint32_t bufferSize) const;
 
-	uint32_t pack(const State* Sn1, const State* S, void* buffer, uint32_t bufferSize) const;
-
 	Ref< const State > unpack(const void* buffer, uint32_t bufferSize) const;
-
-	Ref< const State > unpack(const State* Sn1, const void* buffer, uint32_t bufferSize) const;
 
 private:
 	RefArray< const IValueTemplate > m_valueTemplates;

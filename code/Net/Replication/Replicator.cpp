@@ -203,30 +203,34 @@ bool Replicator::update()
 	// Receive messages.
 	for (;;)
 	{
+		from = 0;
+
+		// Poll message from topology.
 		int32_t nrecv = 0;
 		T_MEASURE_STATEMENT(nrecv = m_topology->recv(&msg, sizeof(msg), from), 0.001);
 		if (nrecv <= 0)
 			break;
 
-		Ref< ReplicatorProxy > fromGhost;
+		// Find proxy from which we received a message.
+		Ref< ReplicatorProxy > fromProxy;
 		for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
 		{
 			if ((*i)->m_handle == from)
 			{
-				fromGhost = *i;
+				fromProxy = *i;
 				break;
 			}
 		}
 
-		if (!fromGhost)
+		if (!fromProxy)
 		{
 			log::error << getLogPrefix() << L"Received message (" << int32_t(msg.id) << L") from unknown proxy " << from << L"; message ignored." << Endl;
 			continue;
 		}
 
-		if (fromGhost->isPrimary())
+		if (fromProxy->isPrimary())
 		{
-			double latency = fromGhost->getLatencyDown();
+			double latency = fromProxy->getLatencyDown();
 			double ghostOffset = net2time(msg.time) + latency - m_time;
 
 			if (!timeOffsetReceived)
@@ -244,14 +248,14 @@ bool Replicator::update()
 
 		if (msg.id == RmiPing)
 		{
-			fromGhost->m_status = msg.ping.status;
+			fromProxy->m_status = msg.ping.status;
 
 			reply.id = RmiPong;
 			reply.time = time2net(m_time);
 			reply.pong.time0 = msg.ping.time0;
-			reply.pong.latency = time2net(fromGhost->getLatency());
+			reply.pong.latency = time2net(fromProxy->getLatency());
 
-			T_MEASURE_STATEMENT(m_topology->send(fromGhost->m_handle, &reply, RmiPong_NetSize()), 0.001);
+			T_MEASURE_STATEMENT(m_topology->send(fromProxy->m_handle, &reply, RmiPong_NetSize()), 0.001);
 		}
 		else if (msg.id == RmiPong)
 		{
@@ -259,25 +263,42 @@ bool Replicator::update()
 			double roundTrip = m_time0 - pingTime;
 			double reverseLatency = net2time(msg.pong.latency);
 
-			T_MEASURE_STATEMENT(fromGhost->updateLatency(roundTrip, reverseLatency), 0.001);
+			T_MEASURE_STATEMENT(fromProxy->updateLatency(roundTrip, reverseLatency), 0.001);
 		}
 		else if (msg.id == RmiState)
 		{
-			bool received;
-			T_MEASURE_STATEMENT(received = fromGhost->receivedState(net2time(msg.time), msg.state.data, RmiState_StateSize(nrecv)), 0.001);
-			if (received)
+			if (fromProxy->m_stateTemplate)
 			{
+				bool received;
+				T_MEASURE_STATEMENT(received = fromProxy->receivedState(net2time(msg.time), msg.state.data, RmiState_StateSize(nrecv)), 0.001);
+				if (received)
+				{
+					for (RefArray< IListener >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
+					{
+						T_MEASURE_STATEMENT((*i)->notify(
+							this,
+							float(net2time(msg.time)),
+							IListener::ReState,
+							fromProxy,
+							fromProxy->m_state0
+						), 0.001);
+					}
+					++stateIssued;
+				}
+			}
+			else
+			{
+				log::info << getLogPrefix() << L"Received state from " << from << L" but no state template registered; state ignored." << Endl;
 				for (RefArray< IListener >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
 				{
 					T_MEASURE_STATEMENT((*i)->notify(
 						this,
 						float(net2time(msg.time)),
-						IListener::ReState,
-						fromGhost,
-						fromGhost->m_state0
+						IListener::ReStateError,
+						fromProxy,
+						0
 					), 0.001);
 				}
-				++stateIssued;
 			}
 		}
 		else if (msg.id == RmiEvent)
@@ -286,7 +307,7 @@ bool Replicator::update()
 			reply.id = RmiEventAck;
 			reply.time = time2net(m_time);
 			reply.eventAck.sequence = msg.event.sequence;
-			T_MEASURE_STATEMENT(m_topology->send(fromGhost->m_handle, &reply, RmiEventAck_NetSize()), 0.001);
+			T_MEASURE_STATEMENT(m_topology->send(fromProxy->m_handle, &reply, RmiEventAck_NetSize()), 0.001);
 
 			// Unwrap event object.
 			MemoryStream ms(msg.event.data, RmiEvent_EventSize(nrecv), true, false);
@@ -296,7 +317,7 @@ bool Replicator::update()
 			{
 				// Prevent resent events from being issued into game.
 				bool accept;
-				T_MEASURE_STATEMENT(accept = fromGhost->acceptEvent(msg.event.sequence, eventObject), 0.001);
+				T_MEASURE_STATEMENT(accept = fromProxy->acceptEvent(msg.event.sequence, eventObject), 0.001);
 				if (accept)
 				{
 					std::map< const TypeInfo*, RefArray< IEventListener > >::const_iterator it = m_eventListeners.find(&type_of(eventObject));
@@ -307,7 +328,7 @@ bool Replicator::update()
 							T_MEASURE_STATEMENT((*i)->notify(
 								this,
 								float(net2time(msg.time)),
-								fromGhost,
+								fromProxy,
 								eventObject
 							), 0.001);
 						}
@@ -321,7 +342,7 @@ bool Replicator::update()
 		else if (msg.id == RmiEventAck)
 		{
 			// Received an event acknowledge; discard event from queue.
-			T_MEASURE_STATEMENT(fromGhost->receivedEventAcknowledge(fromGhost, msg.eventAck.sequence), 0.001);
+			T_MEASURE_STATEMENT(fromProxy->receivedEventAcknowledge(fromProxy, msg.eventAck.sequence), 0.001);
 		}
 	}
 

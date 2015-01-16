@@ -17,7 +17,7 @@ namespace traktor
 	namespace net
 	{
 
-class T_DLLCLASS BodyStateValue : public IValue
+class T_DLLCLASS BodyStateValue : public RefCountImpl< IValue >
 {
 	T_RTTI_CLASS;
 
@@ -37,7 +37,9 @@ public:
 
 	operator const physics::BodyState& () const { return m_value; }
 
-	virtual void serialize(ISerializer& s);
+	void* operator new (size_t size);
+
+	void operator delete (void* ptr);
 
 private:
 	physics::BodyState m_value;

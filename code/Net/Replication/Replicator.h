@@ -47,7 +47,8 @@ public:
 			ReConnected = 1,
 			ReDisconnected = 2,
 			ReState = 3,
-			ReTimeAdjust = 4
+			ReStateError = 4,
+			ReTimeAdjust = 5
 		};
 
 		virtual void notify(
@@ -80,7 +81,6 @@ public:
 		float timeUntilTxStateNear;
 		float timeUntilTxStateFar;
 		float timeUntilTxPing;
-		float maxExtrapolationDelta;
 
 		Configuration()
 		:	nearDistance(8.0f)
@@ -89,7 +89,6 @@ public:
 		,	timeUntilTxStateNear(0.1f)
 		,	timeUntilTxStateFar(0.3f)
 		,	timeUntilTxPing(1.0f)
-		,	maxExtrapolationDelta(1.0f)
 		{
 		}
 	};
