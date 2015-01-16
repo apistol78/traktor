@@ -58,6 +58,12 @@ public:
 
 	int32_t getCaret() const;
 
+	void setScroll(int32_t scroll);
+
+	int32_t getScroll() const;
+
+	int32_t getMaxScroll() const;
+
 	const TextLayout* getTextLayout() const;
 
 	virtual Aabb2 getBounds() const;
@@ -74,6 +80,7 @@ private:
 	std::wstring m_text;
 	bool m_html;
 	int32_t m_caret;
+	int32_t m_scroll;
 	Ref< TextLayout > m_layout;
 
 	bool internalParseText(const std::wstring& text);

@@ -127,6 +127,7 @@ FlashEditInstance::FlashEditInstance(ActionContext* context, FlashCharacterInsta
 ,	m_letterSpacing(0.0f)
 ,	m_html(false)
 ,	m_caret(0)
+,	m_scroll(0)
 ,	m_layout(new TextLayout())
 {
 	if (m_edit->renderHtml())
@@ -235,6 +236,33 @@ std::wstring FlashEditInstance::getText() const
 int32_t FlashEditInstance::getCaret() const
 {
 	return m_caret;
+}
+
+void FlashEditInstance::setScroll(int32_t scroll)
+{
+	m_scroll = scroll;
+}
+
+int32_t FlashEditInstance::getScroll() const
+{
+	return m_scroll;
+}
+
+int32_t FlashEditInstance::getMaxScroll() const
+{
+	if (m_layout)
+	{
+		const AlignedVector< TextLayout::Line >& lines = m_layout->getLines();
+		Aabb2 textBounds = m_edit->getTextBounds();
+
+		float lineHeight = m_layout->getFontHeight() + m_layout->getLeading();
+		float editHeight = textBounds.mx.y - textBounds.mn.y;
+
+		int maxScroll = lines.size() - int32_t(editHeight / lineHeight + 0.5f);
+		return std::max(maxScroll, 0);
+	}
+	else
+		return 0;
 }
 
 const TextLayout* FlashEditInstance::getTextLayout() const

@@ -521,12 +521,9 @@ avm_number_t AsTextField::TextField_get_maxhscroll(FlashEditInstance* self) cons
 	return 0;
 }
 
-avm_number_t AsTextField::TextField_get_maxscroll(FlashEditInstance* self) const
+int32_t AsTextField::TextField_get_maxscroll(FlashEditInstance* self) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"TextField::get_maxscroll not implemented" << Endl;
-	)
-	return 0;
+	return self->getMaxScroll();
 }
 
 Ref< FlashContextMenu > AsTextField::TextField_get_menu(FlashEditInstance* self) const
@@ -656,19 +653,14 @@ void AsTextField::TextField_set_rotation(FlashEditInstance* self, avm_number_t r
 	)
 }
 
-avm_number_t AsTextField::TextField_get_scroll(FlashEditInstance* self) const
+int32_t AsTextField::TextField_get_scroll(FlashEditInstance* self) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"TextField::get_scroll not implemented" << Endl;
-	)
-	return 0;
+	return self->getScroll();
 }
 
-void AsTextField::TextField_set_scroll(FlashEditInstance* self, avm_number_t scroll) const
+void AsTextField::TextField_set_scroll(FlashEditInstance* self, int32_t scroll) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"TextField::set_scroll not implemented" << Endl;
-	)
+	self->setScroll(scroll);
 }
 
 bool AsTextField::TextField_get_selectable(FlashEditInstance* self) const

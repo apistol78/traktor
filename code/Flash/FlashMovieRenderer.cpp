@@ -278,14 +278,16 @@ void FlashMovieRenderer::renderCharacter(
 		int32_t caret = editInstance->getCaret();
 		Aabb2 caretBounds(Vector2(0.0f, 0.0f), Vector2(100.0f, layout->getFontHeight()));
 		float caretEndPosition = 0.0f;
-		float textOffset = 0.0f;
+		float textOffsetX = 0.0f;
+		float textOffsetY = -(layout->getFontHeight() + layout->getLeading()) * editInstance->getScroll();
 
+		// Calculate edit offset; ie scroll text to left while editing.
 		if (haveFocus && lines.size() == 1 && layout->getAlignment() == TextLayout::AnLeft)
 		{
 			const Aabb2& clipBounds = layout->getBounds();
 			float clipWidth = clipBounds.mx.x - clipBounds.mn.x;
 			if (lines[0].width > clipWidth)
-				textOffset = -(lines[0].width - clipWidth);
+				textOffsetX = -(lines[0].width - clipWidth);
 		}
 
 		for (AlignedVector< TextLayout::Line >::const_iterator i = lines.begin(); i != lines.end(); ++i)
@@ -300,7 +302,7 @@ void FlashMovieRenderer::renderCharacter(
 
 				for (uint32_t k = 0; k < chars.size(); ++k)
 				{
-					caretEndPosition = textOffset + i->x + chars[k].x;
+					caretEndPosition = textOffsetX + i->x + chars[k].x;
 
 					if (haveFocus && caret-- == 0)
 					{
@@ -322,7 +324,7 @@ void FlashMovieRenderer::renderCharacter(
 
 						m_displayRenderer->renderGlyph(
 							*dictionary,
-							editTransform * translate(textOffset + i->x + chars[k].x, i->y) * scale(fontScale, fontScale),
+							editTransform * translate(textOffsetX + i->x + chars[k].x, textOffsetY + i->y) * scale(fontScale, fontScale),
 							attrib.font->getMaxDimension(),
 							*glyphShape,
 							attrib.color,
@@ -332,7 +334,7 @@ void FlashMovieRenderer::renderCharacter(
 						);
 					}
 
-					caretEndPosition = textOffset + i->x + chars[k].x + chars[k].w;
+					caretEndPosition = textOffsetX + i->x + chars[k].x + chars[k].w;
 				}
 			}
 		}
