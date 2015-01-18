@@ -204,7 +204,7 @@ PhysicsManagerPhysX::~PhysicsManagerPhysX()
 	destroy();
 }
 
-bool PhysicsManagerPhysX::create(float timeScale)
+bool PhysicsManagerPhysX::create(const PhysicsCreateDesc& desc)
 {
 	log::info << L"Initializing PhysX " << PX_PHYSICS_VERSION_MAJOR << L"." << PX_PHYSICS_VERSION_MINOR << L"." << PX_PHYSICS_VERSION_BUGFIX << L"..." << Endl;
 
@@ -269,7 +269,7 @@ bool PhysicsManagerPhysX::create(float timeScale)
 		return false;
 	}
 
-	m_timeScale = timeScale;
+	m_timeScale = desc.timeScale;
 	return true;
 }
 

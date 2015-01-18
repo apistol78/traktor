@@ -480,7 +480,7 @@ PhysicsManagerBullet::~PhysicsManagerBullet()
 	T_ASSERT (!m_dynamicsWorld);
 }
 
-bool PhysicsManagerBullet::create(float timeScale)
+bool PhysicsManagerBullet::create(const PhysicsCreateDesc& desc)
 {
 	btDefaultCollisionConstructionInfo info;
 
@@ -488,7 +488,7 @@ bool PhysicsManagerBullet::create(float timeScale)
 	btAlignedAllocSetCustom(&traktorAlloc, &traktorFree);
 	btAlignedAllocSetCustomAligned(&traktorAllocAlign, &traktorFree);
 
-	m_timeScale = timeScale;
+	m_timeScale = desc.timeScale;
 	m_configuration = new btDefaultCollisionConfiguration(info);
 
 #if !defined(T_BULLET_USE_SPURS)
@@ -496,6 +496,7 @@ bool PhysicsManagerBullet::create(float timeScale)
 	m_solver = new btSequentialImpulseConstraintSolver();
 	m_broadphase = new btDbvtBroadphase();
 	m_dynamicsWorld = new btDiscreteDynamicsWorld(m_dispatcher, m_broadphase, m_solver, m_configuration);
+	m_dynamicsWorld->getSolverInfo().m_numIterations = std::max(1, desc.solverIterations);
 #else
 	btThreadSupportInterface* collisionThreadSupport = new BulletCollisionSpursSupport(
 		SpursManager::getInstance().getSpurs(),

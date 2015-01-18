@@ -43,7 +43,7 @@ public:
 
 	virtual ~PhysicsManagerPhysX();
 
-	virtual bool create(float timeScale);
+	virtual bool create(const PhysicsCreateDesc& desc);
 
 	virtual void destroy();
 

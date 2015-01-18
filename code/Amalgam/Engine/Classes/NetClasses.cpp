@@ -241,6 +241,7 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	classReplicator->addMethod("getProxyCount", &net::Replicator::getProxyCount);
 	classReplicator->addMethod("getProxy", &net::Replicator::getProxy);
 	classReplicator->addMethod("getPrimaryProxy", &net::Replicator::getPrimaryProxy);
+	classReplicator->addMethod("getAverageLatency", &net::Replicator::getAverageLatency);
 	classReplicator->addMethod("broadcastEvent", &net::Replicator::broadcastEvent);
 	classReplicator->addMethod("sendEventToPrimary", &net::Replicator::sendEventToPrimary);
 	classReplicator->addMethod("getTime", &net::Replicator::getTime);

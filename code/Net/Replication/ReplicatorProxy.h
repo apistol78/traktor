@@ -99,7 +99,7 @@ public:
 
 	/*! \brief
 	 */
-	Ref< const State > getState(double time) const;
+	Ref< const State > getState(double time, double limit) const;
 
 	/*! \brief
 	 */
@@ -145,6 +145,7 @@ private:
 	double m_stateTimeN1;
 	Ref< const State > m_state0;
 	double m_stateTime0;
+	double m_stateReceivedTime;
 
 	//@}
 
