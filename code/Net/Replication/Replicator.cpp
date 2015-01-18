@@ -541,6 +541,18 @@ ReplicatorProxy* Replicator::getPrimaryProxy() const
 	return 0;
 }
 
+double Replicator::getAverageLatency() const
+{
+	double latency = 0.0;
+	if (!m_proxies.empty())
+	{
+		for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+			latency += (*i)->getLatency();
+		latency /= double(m_proxies.size());
+	}
+	return latency;
+}
+
 bool Replicator::sendEventToPrimary(const ISerializable* eventObject)
 {
 	if (!isPrimary())

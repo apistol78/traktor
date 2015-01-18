@@ -74,6 +74,21 @@ struct CollisionPair
 	Ref< Body > body2;
 };
 
+/*! \brief Create configuration.
+ * \ingroup Physics
+ */
+struct PhysicsCreateDesc
+{
+	float timeScale;
+	int32_t solverIterations;
+
+	PhysicsCreateDesc()
+	:	timeScale(1.0f)
+	,	solverIterations(10)
+	{
+	}
+};
+
 /*! \brief Runtime statistics.
  * \ingroup Physics
  */
@@ -136,9 +151,9 @@ public:
 
 	/*! \brief Create physics manager.
 	 *
-	 * \param timeScale Scaling of simulation time.
+	 * \param desc Physics configuration.
 	 */
-	virtual bool create(float timeScale) = 0;
+	virtual bool create(const PhysicsCreateDesc& desc) = 0;
 
 	/*! \brief Destroy physics manager.
 	 *

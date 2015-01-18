@@ -5,6 +5,7 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Physics/MeshFactory.h"
 #include "Physics/PhysicsManager.h"
@@ -28,13 +29,16 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.PhysicsServer", PhysicsServer, IPhysics
 bool PhysicsServer::create(const PropertyGroup* defaultSettings, const PropertyGroup* settings)
 {
 	std::wstring physicsType = defaultSettings->getProperty< PropertyString >(L"Physics.Type");
-	float timeScale = settings->getProperty< PropertyFloat >(L"Physics.TimeScale", 1.0f);
 
 	Ref< physics::PhysicsManager > physicsManager = loadAndInstantiate< physics::PhysicsManager >(physicsType);
 	if (!physicsManager)
 		return false;
 
-	if (!physicsManager->create(timeScale * c_timeScale))
+	physics::PhysicsCreateDesc pcd;
+	pcd.timeScale = settings->getProperty< PropertyFloat >(L"Physics.TimeScale", 1.0f) * c_timeScale;
+	pcd.solverIterations = settings->getProperty< PropertyInteger >(L"Physics.SolverIterations", 10);
+
+	if (!physicsManager->create(pcd))
 	{
 		log::error << L"Physics server failed; unable to create physics manager" << Endl;
 		return false;

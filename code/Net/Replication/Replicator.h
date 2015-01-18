@@ -211,6 +211,10 @@ public:
 	 */
 	ReplicatorProxy* getPrimaryProxy() const;
 
+	/*! \
+	 */
+	double getAverageLatency() const;
+
 	/*! \brief Broadcast high priority event to all peers.
 	 */
 	bool broadcastEvent(const ISerializable* eventObject);

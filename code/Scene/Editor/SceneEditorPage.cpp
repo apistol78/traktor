@@ -128,8 +128,12 @@ bool SceneEditorPage::create(ui::Container* parent)
 	}
 
 	// Create physics manager.
+	physics::PhysicsCreateDesc pcd;
+	pcd.timeScale = 1.0f;
+	pcd.solverIterations = 10;
+
 	Ref< physics::PhysicsManager > physicsManager = checked_type_cast< physics::PhysicsManager* >(physicsManagerType->createInstance());
-	if (!physicsManager->create(1.0f))
+	if (!physicsManager->create(pcd))
 	{
 		log::error << L"Unable to create scene editor; failed to create physics manager." << Endl;
 		return false;

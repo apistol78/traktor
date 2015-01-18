@@ -155,7 +155,7 @@ PhysicsManagerHavok::~PhysicsManagerHavok()
 	m_world = 0;
 }
 
-bool PhysicsManagerHavok::create(float timeScale)
+bool PhysicsManagerHavok::create(const PhysicsCreateDesc& desc)
 {
 	// Initialize the base system including memory system.
 	m_memoryManager = new hkPoolMemory();

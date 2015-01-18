@@ -130,17 +130,20 @@ const StateTemplate* ReplicatorProxy::getStateTemplate() const
 	return m_stateTemplate;
 }
 
-Ref< const State > ReplicatorProxy::getState(double time) const
+Ref< const State > ReplicatorProxy::getState(double time, double limit) const
 {
 	if (m_stateTemplate)
 	{
+		double k = m_stateReceivedTime - m_stateTime0;
+		double offset = std::max(k - limit, 0.0);
+
 		return m_stateTemplate->extrapolate(
 			m_stateN2,
-			float(m_stateTimeN2),
+			float(m_stateTimeN2 + offset),
 			m_stateN1,
-			float(m_stateTimeN1),
+			float(m_stateTimeN1 + offset),
 			m_state0,
-			float(m_stateTime0),
+			float(m_stateTime0 + offset),
 			float(time)
 		);
 	}
@@ -254,6 +257,8 @@ bool ReplicatorProxy::receivedState(double stateTime, const void* stateData, uin
 		return false;
 	}
 
+	m_stateReceivedTime = m_replicator->getTime();
+
 	if (stateTime >= m_stateTime0)
 	{
 		m_stateN2 = m_stateN1;
@@ -312,6 +317,7 @@ ReplicatorProxy::ReplicatorProxy(Replicator* replicator, net_handle_t handle, co
 ,	m_stateTimeN2(0.0)
 ,	m_stateTimeN1(0.0)
 ,	m_stateTime0(0.0)
+,	m_stateReceivedTime(0.0)
 ,	m_sequence(0)
 ,	m_timeUntilTxPing(0.0)
 ,	m_timeUntilTxState(0.0)
