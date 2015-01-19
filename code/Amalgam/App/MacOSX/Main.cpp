@@ -152,9 +152,6 @@ int main(int argc, const char** argv)
 	log::info   .setGlobalTarget(new LogDualTarget(logTail, log::info   .getGlobalTarget()));
 	log::warning.setGlobalTarget(new LogDualTarget(logTail, log::warning.getGlobalTarget()));
 	log::error  .setGlobalTarget(new LogDualTarget(logTail, log::error  .getGlobalTarget()));
-	
-	// Set default path to resources in bundle.
-	FileSystem::getInstance().setCurrentVolumeAndDirectory(L"$(BUNDLE_PATH)/Contents/Resources");
 
 	// Initialize native UI.
 	ui::Application::getInstance()->initialize(
@@ -169,6 +166,10 @@ int main(int argc, const char** argv)
 		settingsPath = cmdLine.getString(0);
 	else
 	{
+		// Set default path to resources in bundle.
+		FileSystem::getInstance().setCurrentVolumeAndDirectory(L"$(BUNDLE_PATH)/Contents/Resources");
+
+		// Get optional configuration filename from Info.plist or environment.
 		std::wstring tmp;
 		if (OS::getInstance().getEnvironment(L"DEAConfiguration", tmp))
 			settingsPath = tmp;

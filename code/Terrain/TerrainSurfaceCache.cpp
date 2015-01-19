@@ -107,13 +107,8 @@ bool TerrainSurfaceCache::create(resource::IResourceManager* resourceManager, re
 	render::RenderTargetSetCreateDesc desc;
 
 	desc.count = 1;
-#if !defined(TARGET_OS_IPHONE)
 	desc.width = size;
 	desc.height = size;
-#else
-	desc.width = size / 2;
-	desc.height = size / 2;
-#endif
 	desc.multiSample = 0;
 	desc.createDepthStencil = false;
 	desc.usingPrimaryDepthStencil = false;
