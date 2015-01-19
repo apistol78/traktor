@@ -103,6 +103,10 @@ public:
 
 	/*! \brief
 	 */
+	void resetStates();
+
+	/*! \brief
+	 */
 	void setSendState(bool sendState);
 
 	/*! \brief Send high priority event to this ghost.

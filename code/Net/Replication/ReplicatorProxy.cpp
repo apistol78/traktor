@@ -117,12 +117,7 @@ void ReplicatorProxy::setStateTemplate(const StateTemplate* stateTemplate)
 
 	// Old states must be immediately discarded; we cannot keep
 	// states produced from old template.
-	m_state0 = 0;
-	m_stateTime0 = 0.0;
-	m_stateN1 = 0;
-	m_stateTimeN1 = 0.0;
-	m_stateN2 = 0;
-	m_stateTimeN2 = 0.0;
+	resetStates();
 }
 
 const StateTemplate* ReplicatorProxy::getStateTemplate() const
@@ -149,6 +144,16 @@ Ref< const State > ReplicatorProxy::getState(double time, double limit) const
 	}
 	else
 		return 0;
+}
+
+void ReplicatorProxy::resetStates()
+{
+	m_state0 = 0;
+	m_stateTime0 = 0.0;
+	m_stateN1 = 0;
+	m_stateTimeN1 = 0.0;
+	m_stateN2 = 0;
+	m_stateTimeN2 = 0.0;
 }
 
 void ReplicatorProxy::setSendState(bool sendState)
