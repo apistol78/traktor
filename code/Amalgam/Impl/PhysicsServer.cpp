@@ -35,8 +35,8 @@ bool PhysicsServer::create(const PropertyGroup* defaultSettings, const PropertyG
 		return false;
 
 	physics::PhysicsCreateDesc pcd;
-	pcd.timeScale = settings->getProperty< PropertyFloat >(L"Physics.TimeScale", 1.0f) * c_timeScale;
-	pcd.solverIterations = settings->getProperty< PropertyInteger >(L"Physics.SolverIterations", 10);
+	pcd.timeScale = defaultSettings->getProperty< PropertyFloat >(L"Physics.TimeScale", 1.0f) * c_timeScale;
+	pcd.solverIterations = defaultSettings->getProperty< PropertyInteger >(L"Physics.SolverIterations", 10);
 
 	if (!physicsManager->create(pcd))
 	{
