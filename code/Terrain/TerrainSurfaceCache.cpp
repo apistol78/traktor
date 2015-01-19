@@ -192,12 +192,17 @@ void TerrainSurfaceCache::begin(
 	if (!m_base->isContentValid())
 	{
 		render::Shader* shader = terrain->getSurfaceShader();
+		if (!shader)
+			return;
 
 		render::ISimpleTexture* heightMap = terrain->getHeightMap();
 		render::ISimpleTexture* colorMap = terrain->getColorMap();
 		render::ISimpleTexture* splatMap = terrain->getSplatMap();
 
 		shader->setCombination(L"ColorEnable", colorMap != 0);
+
+		if (!shader->getCurrentProgram())
+			return;
 
 		TerrainSurfaceRenderBlock* renderBlock = renderContext->alloc< TerrainSurfaceRenderBlock >("Terrain surface (base)");
 
@@ -285,12 +290,17 @@ void TerrainSurfaceCache::get(
 	patchExtentM += Vector4(2.0f / 4096.0f, 0.0f, 2.0f / 4096.0f, 0.0f) * Scalar(10.0f);
 
 	render::Shader* shader = terrain->getSurfaceShader();
+	if (!shader)
+		return;
 
 	render::ISimpleTexture* heightMap = terrain->getHeightMap();
 	render::ISimpleTexture* colorMap = terrain->getColorMap();
 	render::ISimpleTexture* splatMap = terrain->getSplatMap();
 
 	shader->setCombination(L"ColorEnable", colorMap != 0);
+
+	if (!shader->getCurrentProgram())
+		return;
 
 	TerrainSurfaceRenderBlock* renderBlock = renderContext->alloc< TerrainSurfaceRenderBlock >("Terrain surface");
 
