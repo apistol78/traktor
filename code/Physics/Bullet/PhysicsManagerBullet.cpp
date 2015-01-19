@@ -635,26 +635,28 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 
 		if (is_a< DynamicBodyDesc >(desc))
 		{
-			const AlignedVector< Mesh::Triangle >& hullTriangles = mesh->getHullTriangles();
 			const AlignedVector< uint32_t >& hullIndices = mesh->getHullIndices();
-
-			if (hullTriangles.empty())
+			if (hullIndices.empty())
 			{
 				log::error << L"Unable to create body, mesh hull empty" << Endl;
 				return 0;
 			}
 
 			// Build point list, only hull points.
-			AlignedVector< Vector4 > hullPoints;
-			hullPoints.reserve(hullIndices.size());
-			for (AlignedVector< uint32_t >::const_iterator j = hullIndices.begin(); j != hullIndices.end(); ++j)
-				hullPoints.push_back(vertices[*j]);
+			AutoArrayPtr< float, AllocFreeAlign > hullPoints((float*)Alloc::acquireAlign(3 * sizeof(float) * hullIndices.size(), 16, T_FILE_LINE));
+			for (uint32_t j = 0; j < hullIndices.size(); ++j)
+			{
+				float* hp = &hullPoints[j * 3];
+				hp[0] = vertices[hullIndices[j]].x();
+				hp[1] = vertices[hullIndices[j]].y();
+				hp[2] = vertices[hullIndices[j]].z();
+			}
 
 			// Create Bullet shape.
 			shape = new btConvexHullShape(
-				static_cast< const btScalar* >(reinterpret_cast< const float* >(&hullPoints[0])),
-				int(hullPoints.size()),
-				sizeof(Vector4)
+				static_cast< const btScalar* >(hullPoints.c_ptr()),
+				int(hullIndices.size()),
+				3 * sizeof(float)
 			);
 		}
 		else
