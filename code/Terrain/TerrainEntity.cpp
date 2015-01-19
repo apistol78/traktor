@@ -64,6 +64,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainEntity", TerrainEntity, world::E
 TerrainEntity::TerrainEntity(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
 :	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
+,	m_cacheSize(0)
 ,	m_visualizeMode(VmDefault)
 ,	m_handleSurface(render::getParameterHandle(L"Surface"))
 ,	m_handleSurfaceOffset(render::getParameterHandle(L"SurfaceOffset"))
@@ -133,12 +134,14 @@ void TerrainEntity::render(
 		m_terrain.consume();
 	}
 
-	if (!m_surfaceCache || m_surfaceCache->getVirtualTexture()->getWidth() != cacheSize)
+	if (!m_surfaceCache || cacheSize != m_cacheSize)
 	{
 		safeDestroy(m_surfaceCache);
 		m_surfaceCache = new TerrainSurfaceCache();
 		if (!m_surfaceCache->create(m_resourceManager, m_renderSystem, cacheSize))
 			return;
+
+		m_cacheSize = cacheSize;
 	}
 
 	render::Shader* coarseShader = m_terrain->getTerrainCoarseShader();

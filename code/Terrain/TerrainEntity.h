@@ -140,6 +140,7 @@ private:
 	Ref< TerrainSurfaceCache > m_surfaceCache;
 	AlignedVector< Patch > m_patches;
 	uint32_t m_patchCount;
+	uint32_t m_cacheSize;
 	
 	Ref< render::IndexBuffer > m_indexBuffer;
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
