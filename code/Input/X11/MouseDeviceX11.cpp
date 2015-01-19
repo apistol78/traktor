@@ -28,7 +28,7 @@ c_mouseControlMap[] =
 	{ L"Mouse Y axis", DtPositionY, true, false }
 };
 
-const float c_mouseDeltaScale = 1.0f;
+const float c_mouseDeltaScale = 0.5f;
 const float c_mouseDeltaLimit = 200.0f;
 const float c_mouseWheelDelta = 1.0f;
 
