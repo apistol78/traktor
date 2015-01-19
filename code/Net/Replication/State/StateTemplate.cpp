@@ -201,10 +201,7 @@ Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const
 		}
 	}
 	else
-	{
-		log::error << L"No states to evaluate given" << Endl;
 		return 0;
-	}
 
 	return new State(Vr);
 }

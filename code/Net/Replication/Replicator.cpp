@@ -22,6 +22,11 @@ namespace traktor
 
 const double c_maxDeltaTime = 10.0;
 
+bool lowestLatencyPred(const ReplicatorProxy* l, const ReplicatorProxy* r)
+{
+	return l->getLatency() < r->getLatency();
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.Replicator", Replicator, Object)
@@ -312,7 +317,7 @@ bool Replicator::update()
 			// Unwrap event object.
 			MemoryStream ms(msg.event.data, RmiEvent_EventSize(nrecv), true, false);
 			Ref< ISerializable > eventObject;
-			T_MEASURE_STATEMENT(eventObject = CompactSerializer(&ms, &m_eventTypes[0], m_eventTypes.size()).readObject< ISerializable >(), 0.001);
+			T_MEASURE_STATEMENT(eventObject = CompactSerializer(&ms, &m_eventTypes[0], uint32_t(m_eventTypes.size())).readObject< ISerializable >(), 0.001);
 			if (eventObject)
 			{
 				// Prevent resent events from being issued into game.
@@ -422,6 +427,7 @@ bool Replicator::update()
 	// Need to migrate primary if anyone is "in session" before I.
 	if ((m_status & 0x80) == 0x00 && isPrimary())
 	{
+		m_proxies.sort(lowestLatencyPred);
 		for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
 		{
 			if (((*i)->getStatus() & 0x80) == 0x80)
@@ -516,7 +522,7 @@ void Replicator::setTimeSynchronization(bool timeSynchronization)
 
 uint32_t Replicator::getProxyCount() const
 {
-	return m_proxies.size();
+	return uint32_t(m_proxies.size());
 }
 
 ReplicatorProxy* Replicator::getProxy(uint32_t index) const
