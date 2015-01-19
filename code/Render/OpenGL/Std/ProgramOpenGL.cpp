@@ -140,14 +140,13 @@ Ref< ProgramOpenGL > ProgramOpenGL::create(ContextOpenGL* resourceContext, const
 	GLuint programObject = glCreateProgram();
 	T_ASSERT (programObject != 0);
 
-#if defined(GL_ARB_get_program_binary) && !defined(__APPLE__)
+#if defined(GL_ARB_get_program_binary)
 	T_OGL_SAFE(glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &formats));
-	
-	binaryFormats.reset(new GLint[formats]);
-	T_OGL_SAFE(glGetIntegerv(GL_PROGRAM_BINARY_FORMATS, binaryFormats.ptr()));
-
 	if (formats > 0)
 	{
+		binaryFormats.reset(new GLint[formats]);
+		T_OGL_SAFE(glGetIntegerv(GL_PROGRAM_BINARY_FORMATS, binaryFormats.ptr()));
+
 		StringOutputStream ss;
 		ss << OS::getInstance().getWritableFolderPath() << L"/Doctor Entertainment AB/ProgramCache/Program_" << resourceOpenGL->getHash() << L".cache";
 
@@ -197,7 +196,7 @@ Ref< ProgramOpenGL > ProgramOpenGL::create(ContextOpenGL* resourceContext, const
 		T_OGL_SAFE(glBindFragDataLocation(programObject, 2, "_gl_FragData_2"));
 		T_OGL_SAFE(glBindFragDataLocation(programObject, 3, "_gl_FragData_3"));
 
-#if defined(GL_ARB_get_program_binary) && !defined(__APPLE__)
+#if defined(GL_ARB_get_program_binary)
 		if (formats > 0)
 			T_OGL_SAFE(glProgramParameteri(programObject, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE));
 #endif
@@ -217,8 +216,8 @@ Ref< ProgramOpenGL > ProgramOpenGL::create(ContextOpenGL* resourceContext, const
 		}
 	}
 
-#if defined(GL_ARB_get_program_binary) && !defined(__APPLE__)
-	if (needToCompile)
+#if defined(GL_ARB_get_program_binary)
+	if (needToCompile && formats > 0)
 	{
 		StringOutputStream ss;
 		ss << OS::getInstance().getWritableFolderPath() << L"/Doctor Entertainment AB/ProgramCache/Program_" << resourceOpenGL->getHash() << L".cache";
