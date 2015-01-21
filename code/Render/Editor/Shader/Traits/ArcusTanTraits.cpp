@@ -15,6 +15,11 @@ TypeInfoSet ArcusTanTraits::getNodeTypes() const
 	return typeSet;
 }
 
+bool ArcusTanTraits::isRoot(const Node* node) const
+{
+	return false;
+}
+
 PinType ArcusTanTraits::getOutputPinType(
 	const Node* node,
 	const OutputPin* outputPin,

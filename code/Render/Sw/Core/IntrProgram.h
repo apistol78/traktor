@@ -25,7 +25,7 @@ class OutputStream;
 	namespace render
 	{
 
-struct Variable;
+struct EmitterVariable;
 
 /*! \brief Intermediate program representation.
  * \ingroup SW
@@ -49,7 +49,7 @@ public:
 
 	inline const Vector4& getConstant(uint32_t index) const { T_ASSERT (index < uint32_t(m_constants.size())); return m_constants[index]; }
 
-	void dump(OutputStream& os, const std::map< std::wstring, Variable* >& uniforms) const;
+	void dump(OutputStream& os, const std::map< std::wstring, EmitterVariable* >& uniforms) const;
 
 	virtual void serialize(ISerializer& s);
 

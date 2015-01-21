@@ -53,7 +53,7 @@ Ref< ProgramResource > ProgramCompilerSw::compile(
 
 	// Get emitter parameters.
 	std::map< std::wstring, std::pair< int32_t, int32_t > > parameterMap;
-	for (std::map< std::wstring, Variable* >::const_iterator i = parameters.uniforms.begin(); i != parameters.uniforms.end(); ++i)
+	for (std::map< std::wstring, EmitterVariable* >::const_iterator i = parameters.uniforms.begin(); i != parameters.uniforms.end(); ++i)
 		parameterMap[i->first] = std::make_pair(i->second->reg, i->second->size);
 
 	std::map< std::wstring, int32_t > samplerMap;
@@ -97,7 +97,7 @@ bool ProgramCompilerSw::generate(
 
 	// Get emitter parameters.
 	std::map< std::wstring, std::pair< int32_t, int32_t > > parameterMap;
-	for (std::map< std::wstring, Variable* >::const_iterator i = parameters.uniforms.begin(); i != parameters.uniforms.end(); ++i)
+	for (std::map< std::wstring, EmitterVariable* >::const_iterator i = parameters.uniforms.begin(); i != parameters.uniforms.end(); ++i)
 		parameterMap[i->first] = std::make_pair(i->second->reg, i->second->size);
 
 	std::map< std::wstring, int32_t > samplerMap;

@@ -16,6 +16,11 @@ TypeInfoSet VertexNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
+bool VertexNodeTraits::isRoot(const Node* node) const
+{
+	return is_a< VertexOutput >(node);
+}
+
 PinType VertexNodeTraits::getOutputPinType(
 	const Node* node,
 	const OutputPin* outputPin,

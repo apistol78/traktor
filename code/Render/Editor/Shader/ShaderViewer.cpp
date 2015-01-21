@@ -41,7 +41,15 @@ public:
 
 	virtual Ref< const ShaderGraph > read(const Guid& fragmentGuid) const
 	{
-		return m_db->getObjectReadOnly< ShaderGraph >(fragmentGuid);
+		Ref< const ShaderGraph > shaderGraph = m_db->getObjectReadOnly< ShaderGraph >(fragmentGuid);
+		if (!shaderGraph)
+			return 0;
+
+		shaderGraph = ShaderGraphStatic(shaderGraph).getVariableResolved();
+		if (!shaderGraph)
+			return 0;
+
+		return shaderGraph;
 	}
 
 private:
@@ -223,7 +231,10 @@ void ShaderViewer::threadUpdateViews()
 				continue;
 			}
 
-			Ref< ShaderGraph > programGraph = ShaderGraphStatic(combinationGraph).getTypePermutation();
+			Ref< ShaderGraph > programGraph = ShaderGraphStatic(combinationGraph).getVariableResolved();
+
+			if (programGraph)
+				programGraph = ShaderGraphStatic(programGraph).getTypePermutation();
 			
 			if (programGraph)
 				programGraph = ShaderGraphStatic(programGraph).getConstantFolded();

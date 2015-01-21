@@ -31,6 +31,11 @@ TypeInfoSet SwitchNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
+bool SwitchNodeTraits::isRoot(const Node* node) const
+{
+	return false;
+}
+
 PinType SwitchNodeTraits::getOutputPinType(
 	const Node* node,
 	const OutputPin* outputPin,

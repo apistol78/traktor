@@ -76,7 +76,14 @@ public:
 	virtual Ref< const ShaderGraph > read(const Guid& fragmentGuid) const
 	{
 		Ref< const ShaderGraph > shaderGraph = m_pipeline->getObjectReadOnly< ShaderGraph >(fragmentGuid);
-		if (shaderGraph && ShaderGraphValidator(shaderGraph).validateIntegrity())
+		if (!shaderGraph)
+			return 0;
+
+		shaderGraph = ShaderGraphStatic(shaderGraph).getVariableResolved();
+		if (!shaderGraph)
+			return 0;
+
+		if (ShaderGraphValidator(shaderGraph).validateIntegrity())
 			return shaderGraph;
 		else
 			return 0;

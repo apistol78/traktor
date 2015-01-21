@@ -235,6 +235,23 @@ public:
 	}
 };
 
+class VariableNames : public Specification
+{
+public:
+	virtual void check(Report& outReport, const ShaderGraph* shaderGraph, const std::set< const Node* >& activeNodes)
+	{
+		std::set< std::wstring > variableNames, usedOutputNames;
+		for (std::set< const Node* >::const_iterator i = activeNodes.begin(); i != activeNodes.end(); ++i)
+		{
+			if (const Variable* variableNode = dynamic_type_cast< const Variable* >(*i))
+			{
+				if (variableNode->getName().empty())
+					outReport.addError(L"Invalid variable name, no name", variableNode);
+			}
+		}
+	}
+};
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphValidator", ShaderGraphValidator, Object)
@@ -273,6 +290,7 @@ bool ShaderGraphValidator::validate(ShaderGraphType type, std::vector< const Nod
 		if (type == SgtProgram)
 			NoMetaNodes().check(report, m_shaderGraph, visitor.m_nodes);
 	}
+	VariableNames().check(report, m_shaderGraph, visitor.m_nodes);
 
 	return bool(report.getErrorCount() == 0);
 }

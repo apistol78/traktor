@@ -6,7 +6,7 @@
 #include <stack>
 #include "Core/Math/Vector4.h"
 #include "Render/Sw/Emitter/Emitter.h"
-#include "Render/Sw/Emitter/Variable.h"
+#include "Render/Sw/Emitter/EmitterVariable.h"
 #include "Render/Sw/Core/IntrProgram.h"
 #include "Render/Sw/RenderStateDesc.h"
 #include "Render/Types.h"
@@ -29,7 +29,7 @@ class EmitterContext
 public:
 	struct Parameters
 	{
-		std::map< std::wstring, Variable* > uniforms;
+		std::map< std::wstring, EmitterVariable* > uniforms;
 		std::map< std::wstring, int > samplers;
 		uint32_t nextUniformIndex;
 
@@ -48,11 +48,11 @@ public:
 
 	void emit(Node* node);
 
-	Variable* emitInput(const InputPin* inputPin);
+	EmitterVariable* emitInput(const InputPin* inputPin);
 
-	Variable* emitInput(Node* node, const std::wstring& inputPinName);
+	EmitterVariable* emitInput(Node* node, const std::wstring& inputPinName);
 
-	Variable* emitOutput(Node* node, const std::wstring& outputPinName, VariableType type, bool force = false);
+	EmitterVariable* emitOutput(Node* node, const std::wstring& outputPinName, EmitterVariableType type, bool force = false);
 
 	//@}
 
@@ -74,30 +74,30 @@ public:
 
 	uint32_t emitInstruction(
 		unsigned char opcode,
-		const Variable* dest = 0,
-		const Variable* src1 = 0,
-		const Variable* src2 = 0,
-		const Variable* src3 = 0,
-		const Variable* src4 = 0
+		const EmitterVariable* dest = 0,
+		const EmitterVariable* src1 = 0,
+		const EmitterVariable* src2 = 0,
+		const EmitterVariable* src3 = 0,
+		const EmitterVariable* src4 = 0
 	);
 
 	//@}
 
-	Variable* emitConstant(float scalar);
+	EmitterVariable* emitConstant(float scalar);
 
-	Variable* emitConstant(const Vector4& vector);
+	EmitterVariable* emitConstant(const Vector4& vector);
 
-	Variable* emitUniform(const std::wstring& parameterName, VariableType variableType, int length = 1);
+	EmitterVariable* emitUniform(const std::wstring& parameterName, EmitterVariableType variableType, int length = 1);
 
-	Variable* emitVarying(int index);
+	EmitterVariable* emitVarying(int index);
 
 	uint32_t allocInterpolator();
 
 	uint32_t allocSampler(const std::wstring& parameterName);
 
-	Variable* allocTemporary(VariableType variableType);
+	EmitterVariable* allocTemporary(EmitterVariableType variableType);
 
-	void freeTemporary(Variable*& var);
+	void freeTemporary(EmitterVariable*& var);
 
 	void setRenderState(const RenderStateDesc& renderState);
 
@@ -132,7 +132,7 @@ private:
 
 	struct TransientInput
 	{
-		Variable* var;
+		EmitterVariable* var;
 		int32_t count;
 		bool forced;
 	};
@@ -141,7 +141,7 @@ private:
 	{
 		IntrProgram program;
 		std::bitset< 256 > free;
-		std::set< Variable* > vars;
+		std::set< EmitterVariable* > vars;
 		std::map< const OutputPin*, TransientInput > inputs;
 	};
 

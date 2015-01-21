@@ -41,8 +41,11 @@ public:
 
 	Ref< ShaderGraph > getStateResolved() const;
 
+	Ref< ShaderGraph > getVariableResolved() const;
+
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
+	Ref< const ShaderGraph > m_shaderGraphClean;
 };
 
 	}

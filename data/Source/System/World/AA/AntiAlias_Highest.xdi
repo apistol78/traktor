@@ -1,14 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.world.PostProcessSettings" version="1">
 	<requireHighRange>false</requireHighRange>
-	<definitions/>
+	<definitions>
+		<item type="traktor.world.PostProcessDefineTarget" version="4">
+			<id>Edges</id>
+			<width>0</width>
+			<height>0</height>
+			<screenWidthDenom>1</screenWidthDenom>
+			<screenHeightDenom>1</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
+			<format>TfR8G8B8A8</format>
+			<depthStencil>false</depthStencil>
+			<preferTiled>true</preferTiled>
+			<multiSample>0</multiSample>
+			<clearColor>0, 0, 0, 0</clearColor>
+			<persistent>false</persistent>
+		</item>
+		<item type="traktor.world.PostProcessDefineTarget" version="4">
+			<id>Blend</id>
+			<width>0</width>
+			<height>0</height>
+			<screenWidthDenom>1</screenWidthDenom>
+			<screenHeightDenom>1</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
+			<format>TfR8G8B8A8</format>
+			<depthStencil>false</depthStencil>
+			<preferTiled>true</preferTiled>
+			<multiSample>0</multiSample>
+			<clearColor>0, 0, 0, 0</clearColor>
+			<persistent>false</persistent>
+		</item>
+	</definitions>
 	<steps>
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>Edges</target>
+		</item>
 		<item type="traktor.world.PostProcessStepSimple">
-			<shader>{D3F3B35B-F5C6-2747-9EE8-9FA9554D6300}</shader>
+			<shader>{074F2B2C-2597-B54F-B0BF-FBFCCD184D86}</shader>
+			<sources/>
+		</item>
+		<item type="traktor.world.PostProcessStepSimple">
+			<shader>{5AEF4C24-AED0-FB41-A06E-9B047F7CFDDE}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>InputColor</source>
+					<index>0</index>
+				</item>
+			</sources>
+		</item>
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>Blend</target>
+		</item>
+		<item type="traktor.world.PostProcessStepSimple">
+			<shader>{B679C168-3995-4948-B108-B4A413040D74}</shader>
+			<sources>
+				<item>
+					<param>Edges</param>
+					<source>Edges</source>
+					<index>0</index>
+				</item>
+			</sources>
+		</item>
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>Output</target>
+		</item>
+		<item type="traktor.world.PostProcessStepSimple">
+			<shader>{22826F79-6C55-0847-9788-3BF932DC838C}</shader>
+			<sources>
+				<item>
+					<param>Source</param>
+					<source>InputColor</source>
+					<index>0</index>
+				</item>
+				<item>
+					<param>Blend</param>
+					<source>Blend</source>
 					<index>0</index>
 				</item>
 			</sources>

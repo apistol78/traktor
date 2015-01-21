@@ -15,6 +15,11 @@ TypeInfoSet LengthNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
+bool LengthNodeTraits::isRoot(const Node* node) const
+{
+	return false;
+}
+
 PinType LengthNodeTraits::getOutputPinType(
 	const Node* node,
 	const OutputPin* outputPin,

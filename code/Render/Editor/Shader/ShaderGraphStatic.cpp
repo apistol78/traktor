@@ -105,6 +105,29 @@ struct ConstantFoldingVisitor
 	}
 };
 
+struct ReadVariablePred
+{
+	const ShaderGraph* m_shaderGraph;
+	std::wstring m_name;
+
+	ReadVariablePred(const ShaderGraph* shaderGraph, const std::wstring& name)
+	:	m_shaderGraph(shaderGraph)
+	,	m_name(name)
+	{
+	}
+
+	bool operator () (const Variable* node) const
+	{
+		if (node->getName() == m_name)
+		{
+			// Matching names, is this variable written to?
+			if (m_shaderGraph->findSourcePin(node->getInputPin(0)))
+				return true;
+		}
+		return false;
+	}
+};
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphStatic", ShaderGraphStatic, Object)
@@ -118,10 +141,7 @@ ShaderGraphStatic::ShaderGraphStatic(const ShaderGraph* shaderGraph)
 
 Ref< ShaderGraph > ShaderGraphStatic::getPlatformPermutation(const std::wstring& platform) const
 {
-	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
-		m_shaderGraph->getNodes(),
-		m_shaderGraph->getEdges()
-	);
+	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
 
 	RefArray< Platform > nodes;
 	shaderGraph->findNodesOf< Platform >(nodes);
@@ -163,10 +183,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getPlatformPermutation(const std::wstring&
 
 Ref< ShaderGraph > ShaderGraphStatic::getTypePermutation() const
 {
-	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
-		m_shaderGraph->getNodes(),
-		m_shaderGraph->getEdges()
-	);
+	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
 
 	RefArray< Type > nodes;
 	if (shaderGraph->findNodesOf< Type >(nodes) <= 0)
@@ -239,11 +256,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getTypePermutation() const
 
 Ref< ShaderGraph > ShaderGraphStatic::getSwizzledPermutation() const
 {
-	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
-		m_shaderGraph->getNodes(),
-		m_shaderGraph->getEdges()
-	);
-
+	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
 	ShaderGraphTypePropagation typePropagation(shaderGraph);
 
 	// Each output are now assigned a required output width.
@@ -593,6 +606,43 @@ Ref< ShaderGraph > ShaderGraphStatic::getStateResolved() const
 	}
 
 	return shaderGraph;
+}
+
+Ref< ShaderGraph > ShaderGraphStatic::getVariableResolved() const
+{
+	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
+
+	RefArray< Variable > variableNodes;
+	shaderGraph->findNodesOf< Variable >(variableNodes);
+
+	for (RefArray< Variable >::iterator i = variableNodes.begin(); i != variableNodes.end(); ++i)
+	{
+		const OutputPin* variableOutput = (*i)->getOutputPin(0);
+		T_ASSERT (variableOutput);
+
+		if (shaderGraph->getDestinationCount(variableOutput) > 0)
+		{
+			RefArray< Variable >::iterator j = std::find_if(variableNodes.begin(), variableNodes.end(), ReadVariablePred(shaderGraph, (*i)->getName()));
+			if (j == variableNodes.end())
+			{
+				log::error << L"Unable to read variable \"" << (*i)->getName() << L", no such variable." << Endl;
+				return 0;
+			}
+
+			const InputPin* variableInput = (*j)->getInputPin(0);
+			T_ASSERT (variableInput);
+
+			const OutputPin* sourcePin = shaderGraph->findSourcePin(variableInput);
+			T_ASSERT (sourcePin);
+
+			shaderGraph->rewire(
+				variableOutput,
+				sourcePin
+			);
+		}
+	}
+
+	return ShaderGraphOptimizer(shaderGraph).removeUnusedBranches();
 }
 
 	}

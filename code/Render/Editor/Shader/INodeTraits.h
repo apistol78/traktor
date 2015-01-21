@@ -32,6 +32,10 @@ class INodeTraits : public Object
 public:
 	virtual TypeInfoSet getNodeTypes() const = 0;
 
+	/*! \brief Return true if node is considered to be a root.
+	 */
+	virtual bool isRoot(const Node* node) const = 0;
+
 	/*! \brief Determine type of output pin from given types of all input pins.
 	 */
 	virtual PinType getOutputPinType(

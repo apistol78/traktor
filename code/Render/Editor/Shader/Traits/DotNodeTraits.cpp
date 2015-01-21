@@ -15,6 +15,11 @@ TypeInfoSet DotNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
+bool DotNodeTraits::isRoot(const Node* node) const
+{
+	return false;
+}
+
 PinType DotNodeTraits::getOutputPinType(
 	const Node* node,
 	const OutputPin* outputPin,

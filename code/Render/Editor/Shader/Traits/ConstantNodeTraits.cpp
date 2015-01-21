@@ -22,6 +22,11 @@ TypeInfoSet ConstantNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
+bool ConstantNodeTraits::isRoot(const Node* node) const
+{
+	return false;
+}
+
 PinType ConstantNodeTraits::getOutputPinType(
 	const Node* node,
 	const OutputPin* outputPin,

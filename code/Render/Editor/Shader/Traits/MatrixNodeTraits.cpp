@@ -32,6 +32,11 @@ TypeInfoSet MatrixNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
+bool MatrixNodeTraits::isRoot(const Node* node) const
+{
+	return false;
+}
+
 PinType MatrixNodeTraits::getOutputPinType(
 	const Node* node,
 	const OutputPin* outputPin,

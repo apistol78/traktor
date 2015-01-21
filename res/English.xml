@@ -2237,6 +2237,10 @@
       <second>Reflect</second>
     </item>
     <item>
+      <first>SHADERGRAPH_NODE_REPEAT</first>
+      <second>Repeat</second>
+    </item>
+    <item>
       <first>SHADERGRAPH_NODE_ROUND</first>
       <second>Round</second>
     </item>
@@ -2323,6 +2327,10 @@
     <item>
       <first>SHADERGRAPH_NODE_UNIFORM</first>
       <second>Uniform</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_VARIABLE</first>
+      <second>Variable</second>
     </item>
     <item>
       <first>SHADERGRAPH_NODE_VECTOR</first>

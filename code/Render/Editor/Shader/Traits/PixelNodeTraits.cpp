@@ -32,6 +32,11 @@ TypeInfoSet PixelNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
+bool PixelNodeTraits::isRoot(const Node* node) const
+{
+	return true;
+}
+
 PinType PixelNodeTraits::getOutputPinType(
 	const Node* node,
 	const OutputPin* outputPin,

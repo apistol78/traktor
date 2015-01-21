@@ -1266,6 +1266,18 @@ RecipSqrt::RecipSqrt()
 
 /*---------------------------------------------------------------------------*/
 
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Repeat", 0, Repeat, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Repeat_i[] = { { L"Input", false }, { L"Initial", true }, { L"Condition", true }, 0 };
+const ImmutableNode::OutputPinDesc c_Repeat_o[] = { L"N", L"Output", 0 };
+
+Repeat::Repeat()
+:	ImmutableNode(c_Repeat_i, c_Repeat_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Round", 0, Round, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Round_i[] = { { L"Input", false }, 0 };
@@ -1994,6 +2006,39 @@ void Uniform::serialize(ISerializer& s)
 	
 	if (s.getVersion() >= 1)
 		s >> MemberEnum< UpdateFrequency >(L"frequency", m_frequency, kUpdateFrequency_Keys);
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Variable", 0, Variable, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Variable_i[] = { { L"Input", true }, 0 };
+const ImmutableNode::OutputPinDesc c_Variable_o[] = { L"Output", 0 };
+
+Variable::Variable()
+:	ImmutableNode(c_Variable_i, c_Variable_o)
+{
+}
+
+void Variable::setName(const std::wstring& name)
+{
+	m_name = name;
+}
+
+const std::wstring& Variable::getName() const
+{
+	return m_name;
+}
+
+std::wstring Variable::getInformation() const
+{
+	return m_name;
+}
+
+void Variable::serialize(ISerializer& s)
+{
+	Node::serialize(s);
+	s >> Member< std::wstring >(L"name", m_name);
 }
 
 /*---------------------------------------------------------------------------*/
