@@ -31,6 +31,11 @@ TypeInfoSet LerpNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
+bool LerpNodeTraits::isRoot(const Node* node) const
+{
+	return false;
+}
+
 PinType LerpNodeTraits::getOutputPinType(
 	const Node* node,
 	const OutputPin* outputPin,

@@ -33,6 +33,11 @@ TypeInfoSet MixNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
+bool MixNodeTraits::isRoot(const Node* node) const
+{
+	return false;
+}
+
 PinType MixNodeTraits::getOutputPinType(
 	const Node* node,
 	const OutputPin* outputPin,

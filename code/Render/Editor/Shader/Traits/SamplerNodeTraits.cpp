@@ -32,6 +32,11 @@ TypeInfoSet SamplerNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
+bool SamplerNodeTraits::isRoot(const Node* node) const
+{
+	return false;
+}
+
 PinType SamplerNodeTraits::getOutputPinType(
 	const Node* node,
 	const OutputPin* outputPin,

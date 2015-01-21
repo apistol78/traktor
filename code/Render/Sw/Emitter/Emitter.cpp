@@ -17,7 +17,7 @@ namespace traktor
 
 #define SWIZZLE_MASK(x, y, z, w) ( ((x) << 6) | ((y) << 4) | ((z) << 2) | (w) )
 
-Variable* expandTypes(EmitterContext& cx, Variable* in, VariableType intoType)
+EmitterVariable* expandTypes(EmitterContext& cx, EmitterVariable* in, EmitterVariableType intoType)
 {
 	T_ASSERT (in->type != VtFloat4x4);
 	T_ASSERT (intoType != VtFloat4x4);
@@ -26,7 +26,7 @@ Variable* expandTypes(EmitterContext& cx, Variable* in, VariableType intoType)
 		if (in->type == VtFloat)
 		{
 			// Splat single scalars.
-			Variable* tmp = cx.allocTemporary(intoType);
+			EmitterVariable* tmp = cx.allocTemporary(intoType);
 
 			Instruction inst(OpSwizzle, tmp->reg, SWIZZLE_MASK(0, 0, 0, 0), in->reg, 0, 0);
 			cx.emitInstruction(inst);
@@ -44,7 +44,7 @@ Variable* expandTypes(EmitterContext& cx, Variable* in, VariableType intoType)
 				count--;
 			}
 
-			Variable* tmp = cx.allocTemporary(intoType);
+			EmitterVariable* tmp = cx.allocTemporary(intoType);
 
 			Instruction inst(OpExpandWithZero, tmp->reg, in->reg, mask, 0, 0);
 			cx.emitInstruction(inst);
@@ -56,7 +56,7 @@ Variable* expandTypes(EmitterContext& cx, Variable* in, VariableType intoType)
 }
 
 #define EMIT_MANDATORY_IN_PIN(var, cx, inputPin) \
-	Variable* var = cx.emitInput(inputPin); \
+	EmitterVariable* var = cx.emitInput(inputPin); \
 	if (!var) \
 	{ \
 		log::error << L"Failed to emit mandatory input \"" << inputPin->getName() << L"\" of a " << type_name(node) << Endl; \
@@ -64,14 +64,14 @@ Variable* expandTypes(EmitterContext& cx, Variable* in, VariableType intoType)
 	}
 
 #define EMIT_MANDATORY_IN(var, cx, node, input) \
-	Variable* var = cx.emitInput(node, input); \
+	EmitterVariable* var = cx.emitInput(node, input); \
 	if (!var) \
 	{ \
 		log::error << L"Failed to emit mandatory input \"" << input << L"\" of a " << type_name(node) << Endl; \
 		return false; \
 	}
 
-void collapseTypes(EmitterContext& cx, Variable* in, Variable*& xin)
+void collapseTypes(EmitterContext& cx, EmitterVariable* in, EmitterVariable*& xin)
 {
 	if (in != xin)
 		cx.freeTemporary(xin);
@@ -80,7 +80,7 @@ void collapseTypes(EmitterContext& cx, Variable* in, Variable*& xin)
 bool emitAbs(EmitterContext& cx, Abs* node)
 {
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
-	Variable* out = cx.emitOutput(node, L"Output", in->type);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
 	cx.emitInstruction(OpAbs, out, in);
 	return true;
 }
@@ -90,10 +90,10 @@ bool emitAdd(EmitterContext& cx, Add* node)
 	EMIT_MANDATORY_IN(in1, cx, node, L"Input1");
 	EMIT_MANDATORY_IN(in2, cx, node, L"Input2");
 
-	Variable* out = cx.emitOutput(node, L"Output", std::max(in1->type, in2->type));
+	EmitterVariable* out = cx.emitOutput(node, L"Output", std::max(in1->type, in2->type));
 
-	Variable* xin1 = expandTypes(cx, in1, out->type);
-	Variable* xin2 = expandTypes(cx, in2, out->type);
+	EmitterVariable* xin1 = expandTypes(cx, in1, out->type);
+	EmitterVariable* xin2 = expandTypes(cx, in2, out->type);
 
 	cx.emitInstruction(OpAdd, out, xin1, xin2);
 
@@ -105,7 +105,7 @@ bool emitAdd(EmitterContext& cx, Add* node)
 bool emitArcusCos(EmitterContext& cx, ArcusCos* node)
 {
 	EMIT_MANDATORY_IN(theta, cx, node, L"Theta");
-	Variable* out = cx.emitOutput(node, L"Output", VtFloat);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", VtFloat);
 	cx.emitInstruction(OpAcos, out, theta);
 	return true;
 }
@@ -113,7 +113,7 @@ bool emitArcusCos(EmitterContext& cx, ArcusCos* node)
 bool emitArcusTan(EmitterContext& cx, ArcusTan* node)
 {
 	EMIT_MANDATORY_IN(xy, cx, node, L"XY");
-	Variable* out = cx.emitOutput(node, L"Output", VtFloat);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", VtFloat);
 	cx.emitInstruction(OpAtan, out, xy);
 	return true;
 }
@@ -121,18 +121,18 @@ bool emitArcusTan(EmitterContext& cx, ArcusTan* node)
 bool emitClamp(EmitterContext& cx, Clamp* node)
 {
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
-	Variable* out = cx.emitOutput(node, L"Output", in->type);
-	Variable* min = cx.emitConstant(node->getMin());
-	Variable* max = cx.emitConstant(node->getMax());
+	EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
+	EmitterVariable* min = cx.emitConstant(node->getMin());
+	EmitterVariable* max = cx.emitConstant(node->getMax());
 	cx.emitInstruction(OpClamp, out, in, min, max);
 	return true;
 }
 
 bool emitColor(EmitterContext& cx, Color* node)
 {
-	Variable* out = cx.emitOutput(node, L"Output", VtFloat4);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", VtFloat4);
 	Color4ub color = node->getColor();
-	Variable* in = cx.emitConstant(Vector4(color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f));
+	EmitterVariable* in = cx.emitConstant(Vector4(color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f));
 	cx.emitInstruction(OpFetchConstant, out, in);
 	return true;
 }
@@ -150,9 +150,9 @@ bool emitConditional(EmitterContext& cx, Conditional* node)
 	EMIT_MANDATORY_IN(ref, cx, node, L"Reference");
 	T_ASSERT (in->type == ref->type);
 
-	Variable* out = cx.emitOutput(node, L"Output", in->type);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
 
-	Variable* tmp = cx.allocTemporary(in->type);
+	EmitterVariable* tmp = cx.allocTemporary(in->type);
 
 	switch (node->getOperator())
 	{
@@ -188,7 +188,7 @@ bool emitConditional(EmitterContext& cx, Conditional* node)
 
 	uint32_t offsetTrueBegin = cx.getCurrentAddress();
 	{
-		Variable* ct = cx.emitInput(node, L"CaseTrue");
+		EmitterVariable* ct = cx.emitInput(node, L"CaseTrue");
 		T_ASSERT (ct);
 
 		cx.emitInstruction(OpMove, out, ct);
@@ -199,7 +199,7 @@ bool emitConditional(EmitterContext& cx, Conditional* node)
 
 	uint32_t offsetFalseBegin = cx.getCurrentAddress();
 	{
-		Variable* cf = cx.emitInput(node, L"CaseFalse");
+		EmitterVariable* cf = cx.emitInput(node, L"CaseFalse");
 		T_ASSERT (cf);
 
 		cx.emitInstruction(OpMove, out, cf);
@@ -218,7 +218,7 @@ bool emitConditional(EmitterContext& cx, Conditional* node)
 bool emitCos(EmitterContext& cx, Cos* node)
 {
 	EMIT_MANDATORY_IN(theta, cx, node, L"Theta");
-	Variable* out = cx.emitOutput(node, L"Output", VtFloat);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", VtFloat);
 	cx.emitInstruction(OpCos, out, theta);
 	return true;
 }
@@ -228,10 +228,10 @@ bool emitCross(EmitterContext& cx, Cross* node)
 	EMIT_MANDATORY_IN(in1, cx, node, L"Input1");
 	EMIT_MANDATORY_IN(in2, cx, node, L"Input2");
 
-	Variable* out = cx.emitOutput(node, L"Output", VtFloat3);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", VtFloat3);
 
-	Variable* xin1 = expandTypes(cx, in1, VtFloat3);
-	Variable* xin2 = expandTypes(cx, in2, VtFloat3);
+	EmitterVariable* xin1 = expandTypes(cx, in1, VtFloat3);
+	EmitterVariable* xin2 = expandTypes(cx, in2, VtFloat3);
 
 	cx.emitInstruction(OpCross, out, xin1, xin2);
 
@@ -243,7 +243,7 @@ bool emitCross(EmitterContext& cx, Cross* node)
 bool emitDerivative(EmitterContext& cx, Derivative* node)
 {
 	// @fixme
-	Variable* out = cx.emitOutput(node, L"Output", VtFloat);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", VtFloat);
 	Instruction is0(OpSet, out->reg, 0, 1|2|4|8, 0, 0);
 	cx.emitInstruction(is0);
 	return true;
@@ -254,7 +254,7 @@ bool emitDiscard(EmitterContext& cx, Discard* node)
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
 	EMIT_MANDATORY_IN(ref, cx, node, L"Reference");
 
-	Variable* tmp = cx.allocTemporary(in->type);
+	EmitterVariable* tmp = cx.allocTemporary(in->type);
 
 	switch (node->getOperator())
 	{
@@ -293,8 +293,8 @@ bool emitDiscard(EmitterContext& cx, Discard* node)
 	is.offset = getRelativeOffset(offsetJump, cx.getCurrentAddress());
 	cx.emitInstruction(offsetJump, is);
 
-	Variable* pass = cx.emitInput(node, L"Pass");
-	Variable* out = cx.emitOutput(node, L"Output", pass->type);
+	EmitterVariable* pass = cx.emitInput(node, L"Pass");
+	EmitterVariable* out = cx.emitOutput(node, L"Output", pass->type);
 	cx.emitInstruction(OpMove, out, pass);
 	return true;
 }
@@ -304,10 +304,10 @@ bool emitDiv(EmitterContext& cx, Div* node)
 	EMIT_MANDATORY_IN(in1, cx, node, L"Input1");
 	EMIT_MANDATORY_IN(in2, cx, node, L"Input2");
 
-	Variable* out = cx.emitOutput(node, L"Output", std::max(in1->type, in2->type));
+	EmitterVariable* out = cx.emitOutput(node, L"Output", std::max(in1->type, in2->type));
 
-	Variable* xin1 = expandTypes(cx, in1, out->type);
-	Variable* xin2 = expandTypes(cx, in2, out->type);
+	EmitterVariable* xin1 = expandTypes(cx, in1, out->type);
+	EmitterVariable* xin2 = expandTypes(cx, in2, out->type);
 
 	cx.emitInstruction(OpDiv, out, xin1, xin2);
 
@@ -321,12 +321,12 @@ bool emitDot(EmitterContext& cx, Dot* node)
 	EMIT_MANDATORY_IN(in1, cx, node, L"Input1");
 	EMIT_MANDATORY_IN(in2, cx, node, L"Input2");
 
-	Variable* out = cx.emitOutput(node, L"Output", VtFloat);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", VtFloat);
 	
-	VariableType type = std::max(in1->type, in2->type);
+	EmitterVariableType type = std::max(in1->type, in2->type);
 	
-	Variable* xin1 = expandTypes(cx, in1, type);
-	Variable* xin2 = expandTypes(cx, in2, type);
+	EmitterVariable* xin1 = expandTypes(cx, in1, type);
+	EmitterVariable* xin2 = expandTypes(cx, in2, type);
 
 	if (type > VtFloat3)
 		cx.emitInstruction(OpDot4, out, xin1, xin2);
@@ -341,7 +341,7 @@ bool emitDot(EmitterContext& cx, Dot* node)
 bool emitExp(EmitterContext& cx, Exp* node)
 {
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
-	Variable* out = cx.emitOutput(node, L"Output", in->type);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
 	cx.emitInstruction(OpExp, out, in);
 	return true;
 }
@@ -349,14 +349,14 @@ bool emitExp(EmitterContext& cx, Exp* node)
 bool emitFraction(EmitterContext& cx, Fraction* node)
 {
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
-	Variable* out = cx.emitOutput(node, L"Output", in->type);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
 	cx.emitInstruction(OpFraction, out, in);
 	return true;
 }
 
 bool emitFragmentPosition(EmitterContext& cx, FragmentPosition* node)
 {
-	Variable* out = cx.emitOutput(node, L"Output", VtFloat4);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", VtFloat4);
 	cx.emitInstruction(OpFetchFragmentPosition, out);
 	return true;
 }
@@ -366,7 +366,7 @@ bool emitInterpolator(EmitterContext& cx, Interpolator* node)
 	if (!cx.inPixel())
 	{
 		EMIT_MANDATORY_IN(in, cx, node, L"Input");
-		Variable* out = cx.emitOutput(node, L"Output", in->type);
+		EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
 		cx.emitInstruction(OpMove, out, in);
 		return true;
 	}
@@ -379,19 +379,19 @@ bool emitInterpolator(EmitterContext& cx, Interpolator* node)
 
 	cx.enterVertex();
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
-	Variable* vo = cx.emitVarying(varyingOffset);
+	EmitterVariable* vo = cx.emitVarying(varyingOffset);
 	cx.emitInstruction(OpStoreVarying, vo, in);
 
 	cx.enterPixel();
-	Variable* pi = cx.emitVarying(varyingOffset);
-	Variable* out = cx.emitOutput(node, L"Output", in->type);
+	EmitterVariable* pi = cx.emitVarying(varyingOffset);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
 	cx.emitInstruction(OpFetchVarying, out, pi);
 	return true;
 }
 
 bool emitInstance(EmitterContext& cx, Instance* node)
 {
-	Variable* out = cx.emitOutput(node, L"Output", VtFloat);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", VtFloat);
 	cx.emitInstruction(OpFetchInstance, out);
 	return true;
 }
@@ -405,15 +405,15 @@ bool emitIterate(EmitterContext& cx, Iterate* node)
 		log::error << L"Too many iterations in Iterate node" << Endl;
 
 	// Setup counter, load with initial value.
-	Variable* N = cx.emitOutput(node, L"N", VtFloat, true);
+	EmitterVariable* N = cx.emitOutput(node, L"N", VtFloat, true);
 	cx.emitInstruction(OpFetchConstant, N, cx.emitConstant(float(from)));
 
-	Variable* tmp1 = cx.allocTemporary(VtFloat);
+	EmitterVariable* tmp1 = cx.allocTemporary(VtFloat);
 	cx.emitInstruction(OpFetchConstant, tmp1, cx.emitConstant(float(to)));
 
 	// Initialize output accumulator.
-	Variable* out = cx.emitOutput(node, L"Output", VtFloat4);
-	Variable* initial = cx.emitInput(node, L"Initial");
+	EmitterVariable* out = cx.emitOutput(node, L"Output", VtFloat4);
+	EmitterVariable* initial = cx.emitInput(node, L"Initial");
 	if (initial)
 	{
 		Instruction is0(OpMove, out->reg, initial->reg, 0, 0, 0);
@@ -428,12 +428,12 @@ bool emitIterate(EmitterContext& cx, Iterate* node)
 	uint32_t address = cx.getCurrentAddress();
 
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
-	Variable* xin = expandTypes(cx, in, VtFloat4);
+	EmitterVariable* xin = expandTypes(cx, in, VtFloat4);
 	cx.emitInstruction(OpMove, out, xin);
 	collapseTypes(cx, in, xin);
 
 	// Check condition.
-	Variable* cond = cx.emitInput(node, L"Condition");
+	EmitterVariable* cond = cx.emitInput(node, L"Condition");
 	if (cond)
 	{
 		// \fixme
@@ -443,7 +443,7 @@ bool emitIterate(EmitterContext& cx, Iterate* node)
 	// Increment counter, repeat loop if not at target.
 	cx.emitInstruction(OpIncrement, N);
 
-	Variable* tmp2 = cx.allocTemporary(VtFloat);
+	EmitterVariable* tmp2 = cx.allocTemporary(VtFloat);
 	cx.emitInstruction(OpCompareGreater, tmp2, N, tmp1);
 
 	Instruction inst(OpJumpIfZero, tmp2->reg, getRelativeOffset(cx.getCurrentAddress(), address));
@@ -461,7 +461,7 @@ bool emitIterate2d(EmitterContext& cx, Iterate2d* node)
 
 bool emitIndexedUniform(EmitterContext& cx, IndexedUniform* node)
 {
-	VariableType variableType;
+	EmitterVariableType variableType;
 	
 	switch (node->getParameterType())
 	{
@@ -482,8 +482,8 @@ bool emitIndexedUniform(EmitterContext& cx, IndexedUniform* node)
 	}
 
 	EMIT_MANDATORY_IN(index, cx, node, L"Index");
-	Variable* in = cx.emitUniform(node->getParameterName(), variableType, node->getLength());
-	Variable* out = cx.emitOutput(node, L"Output", in->type);
+	EmitterVariable* in = cx.emitUniform(node->getParameterName(), variableType, node->getLength());
+	EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
 	cx.emitInstruction(OpFetchIndexedUniform, out, in, index);
 	return true;
 }
@@ -491,7 +491,7 @@ bool emitIndexedUniform(EmitterContext& cx, IndexedUniform* node)
 bool emitLength(EmitterContext& cx, Length* node)
 {
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
-	Variable* out = cx.emitOutput(node, L"Output", VtFloat);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", VtFloat);
 	cx.emitInstruction(OpLength, out, in);
 	return true;
 }
@@ -501,7 +501,7 @@ bool emitLerp(EmitterContext& cx, Lerp* node)
 	EMIT_MANDATORY_IN(in1, cx, node, L"Input1");
 	EMIT_MANDATORY_IN(in2, cx, node, L"Input2");
 	EMIT_MANDATORY_IN(blend, cx, node, L"Blend");
-	Variable* out = cx.emitOutput(node, L"Output", in1->type);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", in1->type);
 	cx.emitInstruction(OpLerp, out, blend, in1, in2);
 	return true;
 }
@@ -509,7 +509,7 @@ bool emitLerp(EmitterContext& cx, Lerp* node)
 bool emitLog(EmitterContext& cx, Log* node)
 {
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
-	Variable* out = cx.emitOutput(node, L"Output", VtFloat);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", VtFloat);
 	switch (node->getBase())
 	{
 	case Log::LbTwo:
@@ -527,16 +527,16 @@ bool emitLog(EmitterContext& cx, Log* node)
 
 bool emitMatrixIn(EmitterContext& cx, MatrixIn* node)
 {
-	Variable* axisX = cx.emitInput(node, L"XAxis");
-	Variable* axisY = cx.emitInput(node, L"YAxis");
-	Variable* axisZ = cx.emitInput(node, L"ZAxis");
-	Variable* translate = cx.emitInput(node, L"Translate");
-	Variable* tmp = cx.allocTemporary(VtFloat4x4);
-	Variable* out = cx.emitOutput(node, L"Output", VtFloat4x4);
+	EmitterVariable* axisX = cx.emitInput(node, L"XAxis");
+	EmitterVariable* axisY = cx.emitInput(node, L"YAxis");
+	EmitterVariable* axisZ = cx.emitInput(node, L"ZAxis");
+	EmitterVariable* translate = cx.emitInput(node, L"Translate");
+	EmitterVariable* tmp = cx.allocTemporary(VtFloat4x4);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", VtFloat4x4);
 
 	if (axisX)
 	{
-		Variable* xaxisX = expandTypes(cx, axisX, VtFloat4);
+		EmitterVariable* xaxisX = expandTypes(cx, axisX, VtFloat4);
 		Instruction is0(OpMove, tmp->reg + 0, xaxisX->reg, 0, 0, 0);
 		cx.emitInstruction(is0);
 		collapseTypes(cx, axisX, xaxisX);
@@ -551,7 +551,7 @@ bool emitMatrixIn(EmitterContext& cx, MatrixIn* node)
 
 	if (axisY)
 	{
-		Variable* xaxisY = expandTypes(cx, axisY, VtFloat4);
+		EmitterVariable* xaxisY = expandTypes(cx, axisY, VtFloat4);
 		Instruction is1(OpMove, tmp->reg + 1, xaxisY->reg, 0, 0, 0);
 		cx.emitInstruction(is1);
 		collapseTypes(cx, axisY, xaxisY);
@@ -566,7 +566,7 @@ bool emitMatrixIn(EmitterContext& cx, MatrixIn* node)
 
 	if (axisZ)
 	{
-		Variable* xaxisZ = expandTypes(cx, axisZ, VtFloat4);
+		EmitterVariable* xaxisZ = expandTypes(cx, axisZ, VtFloat4);
 		Instruction is2(OpMove, tmp->reg + 2, xaxisZ->reg, 0, 0, 0);
 		cx.emitInstruction(is2);
 		collapseTypes(cx, axisZ, xaxisZ);
@@ -581,7 +581,7 @@ bool emitMatrixIn(EmitterContext& cx, MatrixIn* node)
 
 	if (translate)
 	{
-		Variable* xtranslate = expandTypes(cx, translate, VtFloat4);
+		EmitterVariable* xtranslate = expandTypes(cx, translate, VtFloat4);
 		Instruction is3(OpMove, tmp->reg + 3, xtranslate->reg, 0, 0, 0);
 		cx.emitInstruction(is3);
 		collapseTypes(cx, translate, xtranslate);
@@ -604,10 +604,10 @@ bool emitMatrixOut(EmitterContext& cx, MatrixOut* node)
 {
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
 
-	Variable* axisX = cx.emitOutput(node, L"XAxis", VtFloat4);
-	Variable* axisY = cx.emitOutput(node, L"YAxis", VtFloat4);
-	Variable* axisZ = cx.emitOutput(node, L"ZAxis", VtFloat4);
-	Variable* translate = cx.emitOutput(node, L"Translate", VtFloat4);
+	EmitterVariable* axisX = cx.emitOutput(node, L"XAxis", VtFloat4);
+	EmitterVariable* axisY = cx.emitOutput(node, L"YAxis", VtFloat4);
+	EmitterVariable* axisZ = cx.emitOutput(node, L"ZAxis", VtFloat4);
+	EmitterVariable* translate = cx.emitOutput(node, L"Translate", VtFloat4);
 
 	if (axisX)
 	{
@@ -641,10 +641,10 @@ bool emitMax(EmitterContext& cx, Max* node)
 	EMIT_MANDATORY_IN(in1, cx, node, L"Input1");
 	EMIT_MANDATORY_IN(in2, cx, node, L"Input2");
 
-	Variable* out = cx.emitOutput(node, L"Output", std::max(in1->type, in2->type));
+	EmitterVariable* out = cx.emitOutput(node, L"Output", std::max(in1->type, in2->type));
 
-	Variable* xin1 = expandTypes(cx, in1, out->type);
-	Variable* xin2 = expandTypes(cx, in2, out->type);
+	EmitterVariable* xin1 = expandTypes(cx, in1, out->type);
+	EmitterVariable* xin2 = expandTypes(cx, in2, out->type);
 
 	cx.emitInstruction(OpMax, out, xin1, xin2);
 
@@ -658,10 +658,10 @@ bool emitMin(EmitterContext& cx, Min* node)
 	EMIT_MANDATORY_IN(in1, cx, node, L"Input1");
 	EMIT_MANDATORY_IN(in2, cx, node, L"Input2");
 
-	Variable* out = cx.emitOutput(node, L"Output", std::max(in1->type, in2->type));
+	EmitterVariable* out = cx.emitOutput(node, L"Output", std::max(in1->type, in2->type));
 
-	Variable* xin1 = expandTypes(cx, in1, out->type);
-	Variable* xin2 = expandTypes(cx, in2, out->type);
+	EmitterVariable* xin1 = expandTypes(cx, in1, out->type);
+	EmitterVariable* xin2 = expandTypes(cx, in2, out->type);
 
 	cx.emitInstruction(OpMin, out, xin1, xin2);
 
@@ -672,12 +672,12 @@ bool emitMin(EmitterContext& cx, Min* node)
 
 bool emitMixIn(EmitterContext& cx, MixIn* node)
 {
-	Variable* x = cx.emitInput(node, L"X");
-	Variable* y = cx.emitInput(node, L"Y");
-	Variable* z = cx.emitInput(node, L"Z");
-	Variable* w = cx.emitInput(node, L"W");
+	EmitterVariable* x = cx.emitInput(node, L"X");
+	EmitterVariable* y = cx.emitInput(node, L"Y");
+	EmitterVariable* z = cx.emitInput(node, L"Z");
+	EmitterVariable* w = cx.emitInput(node, L"W");
 
-	Variable* out = cx.emitOutput(node, L"Output", VtFloat4);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", VtFloat4);
 	cx.emitInstruction(OpMixIn, out, x, y, z, w);
 
 	uint8_t s0 = 0x00;
@@ -703,10 +703,10 @@ bool emitMixOut(EmitterContext& cx, MixOut* node)
 {
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
 
-	Variable* x = cx.emitOutput(node, L"X", VtFloat);
-	Variable* y = cx.emitOutput(node, L"Y", VtFloat);
-	Variable* z = cx.emitOutput(node, L"Z", VtFloat);
-	Variable* w = cx.emitOutput(node, L"W", VtFloat);
+	EmitterVariable* x = cx.emitOutput(node, L"X", VtFloat);
+	EmitterVariable* y = cx.emitOutput(node, L"Y", VtFloat);
+	EmitterVariable* z = cx.emitOutput(node, L"Z", VtFloat);
+	EmitterVariable* w = cx.emitOutput(node, L"W", VtFloat);
 
 	if (x)
 	{
@@ -737,10 +737,10 @@ bool emitMul(EmitterContext& cx, Mul* node)
 	EMIT_MANDATORY_IN(in1, cx, node, L"Input1");
 	EMIT_MANDATORY_IN(in2, cx, node, L"Input2");
 
-	Variable* out = cx.emitOutput(node, L"Output", std::max(in1->type, in2->type));
+	EmitterVariable* out = cx.emitOutput(node, L"Output", std::max(in1->type, in2->type));
 	
-	Variable* xin1 = expandTypes(cx, in1, out->type);
-	Variable* xin2 = expandTypes(cx, in2, out->type);
+	EmitterVariable* xin1 = expandTypes(cx, in1, out->type);
+	EmitterVariable* xin2 = expandTypes(cx, in2, out->type);
 
 	cx.emitInstruction(OpMul, out, xin1, xin2);
 
@@ -755,12 +755,12 @@ bool emitMulAdd(EmitterContext& cx, MulAdd* node)
 	EMIT_MANDATORY_IN(in2, cx, node, L"Input2");
 	EMIT_MANDATORY_IN(in3, cx, node, L"Input3");
 	
-	VariableType type = std::max(std::max(in1->type, in2->type), in3->type);
-	Variable* out = cx.emitOutput(node, L"Output", type);
+	EmitterVariableType type = std::max(std::max(in1->type, in2->type), in3->type);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", type);
 
-	Variable* xin1 = expandTypes(cx, in1, out->type);
-	Variable* xin2 = expandTypes(cx, in2, out->type);
-	Variable* xin3 = expandTypes(cx, in3, out->type);
+	EmitterVariable* xin1 = expandTypes(cx, in1, out->type);
+	EmitterVariable* xin2 = expandTypes(cx, in2, out->type);
+	EmitterVariable* xin3 = expandTypes(cx, in3, out->type);
 
 	cx.emitInstruction(OpMulAdd, out, xin1, xin2, xin3);
 
@@ -773,7 +773,7 @@ bool emitMulAdd(EmitterContext& cx, MulAdd* node)
 bool emitNeg(EmitterContext& cx, Neg* node)
 {
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
-	Variable* out = cx.emitOutput(node, L"Output", in->type);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
 	cx.emitInstruction(OpNeg, out, in);
 	return true;
 }
@@ -781,7 +781,7 @@ bool emitNeg(EmitterContext& cx, Neg* node)
 bool emitNormalize(EmitterContext& cx, Normalize* node)
 {
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
-	Variable* out = cx.emitOutput(node, L"Output", in->type);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
 	cx.emitInstruction(OpNormalize, out, in);
 	return true;
 }
@@ -791,7 +791,7 @@ bool emitPixelOutput(EmitterContext& cx, PixelOutput* node)
 	cx.enterPixel();
 
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
-	Variable* out = cx.emitVarying(0);
+	EmitterVariable* out = cx.emitVarying(0);
 	cx.emitInstruction(OpStoreVarying, out, in);
 
 	RenderState rs = node->getRenderState();
@@ -814,18 +814,18 @@ bool emitReflect(EmitterContext& cx, Reflect* node)
 	EMIT_MANDATORY_IN(normal, cx, node, L"Normal");
 	EMIT_MANDATORY_IN(direction, cx, node, L"Direction");
 
-	Variable* out = cx.emitOutput(node, L"Output", direction->type);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", direction->type);
 
-	Variable* tmp1 = cx.allocTemporary(VtFloat);
+	EmitterVariable* tmp1 = cx.allocTemporary(VtFloat);
 	cx.emitInstruction(OpDot3, tmp1, normal, direction);
 
-	Variable* two = cx.emitConstant(2.0f);
-	Variable* tmp2 = cx.allocTemporary(VtFloat);
+	EmitterVariable* two = cx.emitConstant(2.0f);
+	EmitterVariable* tmp2 = cx.allocTemporary(VtFloat);
 	cx.emitInstruction(OpMul, tmp2, tmp1, two);
 
-	Variable* xtmp2 = expandTypes(cx, tmp2, out->type);
+	EmitterVariable* xtmp2 = expandTypes(cx, tmp2, out->type);
 
-	Variable* tmp3 = cx.allocTemporary(out->type);
+	EmitterVariable* tmp3 = cx.allocTemporary(out->type);
 	cx.emitInstruction(OpMul, tmp3, normal, xtmp2);
 
 	collapseTypes(cx, tmp2, xtmp2);
@@ -837,7 +837,7 @@ bool emitReflect(EmitterContext& cx, Reflect* node)
 bool emitRecipSqrt(EmitterContext& cx, RecipSqrt* node)
 {
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
-	Variable* out = cx.emitOutput(node, L"Output", in->type);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
 	cx.emitInstruction(OpRecipSqrt, out, in);
 	return true;
 }
@@ -845,7 +845,7 @@ bool emitRecipSqrt(EmitterContext& cx, RecipSqrt* node)
 bool emitRound(EmitterContext& cx, Round* node)
 {
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
-	Variable* out = cx.emitOutput(node, L"Output", in->type);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
 	cx.emitInstruction(OpRound, out, in);
 	return true;
 }
@@ -857,7 +857,7 @@ bool emitPow(EmitterContext& cx, Pow* node)
 	{
 		EMIT_MANDATORY_IN(in, cx, node, L"Input");
 
-		Variable* out = cx.emitOutput(node, L"Output", in->type);
+		EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
 		switch (int(exponent))
 		{
 		case 0:
@@ -886,7 +886,7 @@ bool emitPow(EmitterContext& cx, Pow* node)
 			break;
 		default:
 			{
-				Variable* exp = cx.emitConstant(exponent);
+				EmitterVariable* exp = cx.emitConstant(exponent);
 				cx.emitInstruction(OpPow, out, in, exp);
 			}
 			break;
@@ -897,7 +897,7 @@ bool emitPow(EmitterContext& cx, Pow* node)
 		EMIT_MANDATORY_IN(exp, cx, node, L"Exponent");
 		EMIT_MANDATORY_IN(in, cx, node, L"Input");
 
-		Variable* out = cx.emitOutput(node, L"Output", std::max(in->type, exp->type));
+		EmitterVariable* out = cx.emitOutput(node, L"Output", std::max(in->type, exp->type));
 		cx.emitInstruction(OpPow, out, in, exp);
 	}
 	return true;
@@ -908,7 +908,7 @@ bool emitSampler(EmitterContext& cx, Sampler* node)
 	EMIT_MANDATORY_IN(texture, cx, node, L"Texture");
 	EMIT_MANDATORY_IN(texCoord, cx, node, L"TexCoord");
 
-	Variable* out = cx.emitOutput(node, L"Output", VtFloat4);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", VtFloat4);
 	Instruction inst(OpSampler, out->reg, texCoord->reg, texture->reg, 0, 0);
 	cx.emitInstruction(inst);
 	return true;
@@ -916,8 +916,8 @@ bool emitSampler(EmitterContext& cx, Sampler* node)
 
 bool emitScalar(EmitterContext& cx, Scalar* node)
 {
-	Variable* in = cx.emitConstant(node->get());
-	Variable* out = cx.emitOutput(node, L"Output", VtFloat);
+	EmitterVariable* in = cx.emitConstant(node->get());
+	EmitterVariable* out = cx.emitOutput(node, L"Output", VtFloat);
 	cx.emitInstruction(OpFetchConstant, out, in);
 	return true;
 }
@@ -925,7 +925,7 @@ bool emitScalar(EmitterContext& cx, Scalar* node)
 bool emitSign(EmitterContext& cx, Sign* node)
 {
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
-	Variable* out = cx.emitOutput(node, L"Output", in->type);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
 	cx.emitInstruction(OpSign, out, in);
 	return true;
 }
@@ -933,7 +933,7 @@ bool emitSign(EmitterContext& cx, Sign* node)
 bool emitSin(EmitterContext& cx, Sin* node)
 {
 	EMIT_MANDATORY_IN(theta, cx, node, L"Theta");
-	Variable* out = cx.emitOutput(node, L"Output", VtFloat);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", VtFloat);
 	cx.emitInstruction(OpSin, out, theta);
 	return true;
 }
@@ -941,7 +941,7 @@ bool emitSin(EmitterContext& cx, Sin* node)
 bool emitSqrt(EmitterContext& cx, Sqrt* node)
 {
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
-	Variable* out = cx.emitOutput(node, L"Output", in->type);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
 	cx.emitInstruction(OpSqrt, out, in);
 	return true;
 }
@@ -950,10 +950,10 @@ bool emitSub(EmitterContext& cx, Sub* node)
 {
 	EMIT_MANDATORY_IN(in1, cx, node, L"Input1");
 	EMIT_MANDATORY_IN(in2, cx, node, L"Input2");
-	Variable* out = cx.emitOutput(node, L"Output", std::max(in1->type, in2->type));
+	EmitterVariable* out = cx.emitOutput(node, L"Output", std::max(in1->type, in2->type));
 
-	Variable* xin1 = expandTypes(cx, in1, out->type);
-	Variable* xin2 = expandTypes(cx, in2, out->type);
+	EmitterVariable* xin1 = expandTypes(cx, in1, out->type);
+	EmitterVariable* xin2 = expandTypes(cx, in2, out->type);
 
 	cx.emitInstruction(OpSub, out, xin1, xin2);
 
@@ -974,21 +974,21 @@ bool emitSum(EmitterContext& cx, Sum* node)
 	}
 
 	// Setup counter, load with initial value.
-	Variable* N = cx.emitOutput(node, L"N", VtFloat, true);
+	EmitterVariable* N = cx.emitOutput(node, L"N", VtFloat, true);
 	cx.emitInstruction(OpFetchConstant, N, cx.emitConstant(float(from)));
 
-	Variable* tmp1 = cx.allocTemporary(VtFloat);
+	EmitterVariable* tmp1 = cx.allocTemporary(VtFloat);
 	cx.emitInstruction(OpFetchConstant, tmp1, cx.emitConstant(float(to)));
 	
 	// Initialize output accumulator.
-	Variable* out = cx.emitOutput(node, L"Output", VtFloat4);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", VtFloat4);
 	Instruction is0(OpSet, out->reg, 0, 0xff, 0, 0);
 	cx.emitInstruction(is0);
 
 	uint32_t address = cx.getCurrentAddress();
 
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
-	Variable* xin = expandTypes(cx, in, VtFloat4);
+	EmitterVariable* xin = expandTypes(cx, in, VtFloat4);
 
 	cx.emitInstruction(OpAdd, out, out, xin);
 
@@ -997,7 +997,7 @@ bool emitSum(EmitterContext& cx, Sum* node)
 	// Increment counter, repeat loop if not at target.
 	cx.emitInstruction(OpIncrement, N);
 
-	Variable* tmp2 = cx.allocTemporary(VtFloat);
+	EmitterVariable* tmp2 = cx.allocTemporary(VtFloat);
 	cx.emitInstruction(OpCompareGreater, tmp2, N, tmp1);
 
 	Instruction inst(OpJumpIfZero, tmp2->reg, getRelativeOffset(cx.getCurrentAddress(), address));
@@ -1011,9 +1011,9 @@ bool emitSum(EmitterContext& cx, Sum* node)
 bool emitSwitch(EmitterContext& cx, Switch* node)
 {
 	EMIT_MANDATORY_IN(select, cx, node, L"Select");
-	Variable* out = cx.emitOutput(node, L"Output", VtFloat4);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", VtFloat4);
 
-	Variable* N = cx.allocTemporary(VtFloat);
+	EmitterVariable* N = cx.allocTemporary(VtFloat);
 
 	std::vector< uint32_t > addressBreaks;
 
@@ -1031,7 +1031,7 @@ bool emitSwitch(EmitterContext& cx, Switch* node)
 
 		EMIT_MANDATORY_IN_PIN(in, cx, caseInputPin);
 
-		Variable* xin = expandTypes(cx, in, VtFloat4);
+		EmitterVariable* xin = expandTypes(cx, in, VtFloat4);
 		cx.emitInstruction(OpMove, out, xin);
 		collapseTypes(cx, in, xin);
 
@@ -1045,10 +1045,10 @@ bool emitSwitch(EmitterContext& cx, Switch* node)
 	cx.freeTemporary(N);
 
 	// Default
-	Variable* in = cx.emitInput(node, L"Default");
+	EmitterVariable* in = cx.emitInput(node, L"Default");
 	T_ASSERT (in);
 
-	Variable* xin = expandTypes(cx, in, VtFloat4);
+	EmitterVariable* xin = expandTypes(cx, in, VtFloat4);
 	cx.emitInstruction(OpMove, out, xin);
 	collapseTypes(cx, in, xin);
 
@@ -1068,11 +1068,11 @@ bool emitSwizzle(EmitterContext& cx, Swizzle* node)
 	std::wstring map = node->get();
 	T_ASSERT (map.length() > 0);
 
-	const VariableType types[] = { VtFloat, VtFloat2, VtFloat3, VtFloat4 };
-	VariableType type = types[map.length() - 1];
+	const EmitterVariableType types[] = { VtFloat, VtFloat2, VtFloat3, VtFloat4 };
+	EmitterVariableType type = types[map.length() - 1];
 
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
-	Variable* out = cx.emitOutput(node, L"Output", type);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", type);
 
 	uint8_t s0 = 0x00, s1 = 0x00;
 	uint8_t ch[4] = { 0, 0, 0, 0 };
@@ -1116,7 +1116,7 @@ bool emitSwizzle(EmitterContext& cx, Swizzle* node)
 
 bool emitTargetSize(EmitterContext& cx, TargetSize* node)
 {
-	Variable* out = cx.emitOutput(node, L"Output", VtFloat4);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", VtFloat4);
 	cx.emitInstruction(OpFetchTargetSize, out);
 	return true;
 }
@@ -1124,7 +1124,7 @@ bool emitTargetSize(EmitterContext& cx, TargetSize* node)
 bool emitTan(EmitterContext& cx, Tan* node)
 {
 	EMIT_MANDATORY_IN(theta, cx, node, L"Theta");
-	Variable* out = cx.emitOutput(node, L"Output", VtFloat);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", VtFloat);
 	cx.emitInstruction(OpTan, out, theta);
 	return true;
 }
@@ -1132,7 +1132,7 @@ bool emitTan(EmitterContext& cx, Tan* node)
 bool emitTextureSize(EmitterContext& cx, TextureSize* node)
 {
 	EMIT_MANDATORY_IN(texture, cx, node, L"Input");
-	Variable* out = cx.emitOutput(node, L"Output", VtFloat4);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", VtFloat4);
 	Instruction inst(OpFetchTextureSize, out->reg, texture->reg, 0, 0, 0);
 	cx.emitInstruction(inst);
 	return true;
@@ -1142,7 +1142,7 @@ bool emitTransform(EmitterContext& cx, Transform* node)
 {
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
 	EMIT_MANDATORY_IN(transform, cx, node, L"Transform");
-	Variable* out = cx.emitOutput(node, L"Output", in->type);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
 	cx.emitInstruction(OpTransform, out, in, transform);
 	return true;
 }
@@ -1150,7 +1150,7 @@ bool emitTransform(EmitterContext& cx, Transform* node)
 bool emitTranspose(EmitterContext& cx, Transpose* node)
 {
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
-	Variable* out = cx.emitOutput(node, L"Output", in->type);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
 	cx.emitInstruction(OpTranspose, out, in);
 	return true;
 }
@@ -1158,14 +1158,14 @@ bool emitTranspose(EmitterContext& cx, Transpose* node)
 bool emitTruncate(EmitterContext& cx, Truncate* node)
 {
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
-	Variable* out = cx.emitOutput(node, L"Output", in->type);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
 	cx.emitInstruction(OpTrunc, out, in);
 	return true;
 }
 
 bool emitUniform(EmitterContext& cx, Uniform* node)
 {
-	VariableType variableType;
+	EmitterVariableType variableType;
 	
 	switch (node->getParameterType())
 	{
@@ -1190,13 +1190,13 @@ bool emitUniform(EmitterContext& cx, Uniform* node)
 
 	if (variableType == VtTexture)
 	{
-		Variable* out = cx.emitOutput(node, L"Output", VtTexture);
+		EmitterVariable* out = cx.emitOutput(node, L"Output", VtTexture);
 		out->reg = cx.allocSampler(node->getParameterName());
 	}
 	else
 	{
-		Variable* in = cx.emitUniform(node->getParameterName(), variableType);
-		Variable* out = cx.emitOutput(node, L"Output", in->type);
+		EmitterVariable* in = cx.emitUniform(node->getParameterName(), variableType);
+		EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
 		cx.emitInstruction(OpFetchUniform, out, in);
 	}
 
@@ -1205,8 +1205,8 @@ bool emitUniform(EmitterContext& cx, Uniform* node)
 
 bool emitVector(EmitterContext& cx, Vector* node)
 {
-	Variable* in = cx.emitConstant(node->get());
-	Variable* out = cx.emitOutput(node, L"Output", VtFloat4);
+	EmitterVariable* in = cx.emitConstant(node->get());
+	EmitterVariable* out = cx.emitOutput(node, L"Output", VtFloat4);
 	cx.emitInstruction(OpFetchConstant, out, in);
 	return true;
 }
@@ -1215,7 +1215,7 @@ bool emitVertexInput(EmitterContext& cx, VertexInput* node)
 {
 	T_ASSERT_M (cx.inVertex(), L"VertexInput node in wrong scope");
 
-	VariableType type;
+	EmitterVariableType type;
 	switch (node->getDataType())
 	{
 	case DtFloat1:
@@ -1249,8 +1249,8 @@ bool emitVertexInput(EmitterContext& cx, VertexInput* node)
 
 	uint32_t varyingOffset = getVaryingOffset(node->getDataUsage(), node->getIndex());
 
-	Variable* in = cx.emitVarying(varyingOffset);
-	Variable* out = cx.emitOutput(node, L"Output", type);
+	EmitterVariable* in = cx.emitVarying(varyingOffset);
+	EmitterVariable* out = cx.emitOutput(node, L"Output", type);
 	cx.emitInstruction(OpFetchVarying, out, in);
 
 	if (node->getDataUsage() == DuPosition && type != VtFloat4)
@@ -1270,7 +1270,7 @@ bool emitVertexOutput(EmitterContext& cx, VertexOutput* node)
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
 	if (in->type != VtFloat4)
 	{
-		Variable* tmp = cx.allocTemporary(VtFloat4);
+		EmitterVariable* tmp = cx.allocTemporary(VtFloat4);
 		cx.emitInstruction(OpMove, tmp, in);
 
 		switch (in->type)
@@ -1295,12 +1295,12 @@ bool emitVertexOutput(EmitterContext& cx, VertexOutput* node)
 			break;
 		}
 
-		Variable* out = cx.emitVarying(0);
+		EmitterVariable* out = cx.emitVarying(0);
 		cx.emitInstruction(OpStoreVarying, out, tmp);
 	}
 	else
 	{
-		Variable* out = cx.emitVarying(0);
+		EmitterVariable* out = cx.emitVarying(0);
 		cx.emitInstruction(OpStoreVarying, out, in);
 	}
 

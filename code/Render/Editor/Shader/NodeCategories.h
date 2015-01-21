@@ -65,6 +65,7 @@ const NodeCategory c_nodeCategories[] =
 	{ type_of< Platform >(), L"SHADERGRAPH_CONDITIONAL", L"Select path based on type of renderer" },
 	{ type_of< Reflect >(), L"SHADERGRAPH_ALGEBRA", L"Calculate reflected vector from a input direction and an axis" },
 	{ type_of< RecipSqrt >(), L"SHADERGRAPH_ALGEBRA", L"Reciprocal square root" },
+	{ type_of< Repeat >(), L"SHADERGRAPH_CONDITIONAL", L"Repeat input until condition is false" },
 	{ type_of< Round >(), L"SHADERGRAPH_MISCELLANEOUS", L"Round to nearest integer" },
 	{ type_of< Sampler >(), L"SHADERGRAPH_VALUE", L"Texture sampler" },
 	{ type_of< Scalar >(), L"SHADERGRAPH_VALUE", L"Scalar constant" },
@@ -87,6 +88,7 @@ const NodeCategory c_nodeCategories[] =
 	{ type_of< Truncate >(), L"SHADERGRAPH_MISCELLANEOUS", L"Truncate" },
 	{ type_of< Type >(), L"SHADERGRAPH_CONDITIONAL", L"Static type switch" },
 	{ type_of< Uniform >(), L"SHADERGRAPH_VALUE", L"Uniform" },
+	{ type_of< Variable >(), L"SHADERGRAPH_VALUE", L"Variable" },
 	{ type_of< Vector >(), L"SHADERGRAPH_VALUE", L"Vector constant" },
 	{ type_of< VertexInput >(), L"SHADERGRAPH_VALUE", L"Read value from vertex stream" },
 	{ type_of< VertexOutput >(), L"SHADERGRAPH_VALUE", L"Output value from vertex shader" }

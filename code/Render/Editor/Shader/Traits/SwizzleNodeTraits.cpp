@@ -16,6 +16,11 @@ TypeInfoSet SwizzleNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
+bool SwizzleNodeTraits::isRoot(const Node* node) const
+{
+	return false;
+}
+
 PinType SwizzleNodeTraits::getOutputPinType(
 	const Node* node,
 	const OutputPin* outputPin,

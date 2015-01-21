@@ -14,7 +14,7 @@ namespace traktor
 		namespace
 		{
 
-int getVariableTypeSize(VariableType variableType)
+int getVariableTypeSize(EmitterVariableType variableType)
 {
 	switch (variableType)
 	{
@@ -75,7 +75,7 @@ void EmitterContext::emit(Node* node)
 	m_scope.pop_back();
 }
 
-Variable* EmitterContext::emitInput(const InputPin* inputPin)
+EmitterVariable* EmitterContext::emitInput(const InputPin* inputPin)
 {
 	const OutputPin* sourcePin = m_shaderGraph->findSourcePin(inputPin);
 	if (!sourcePin)
@@ -94,7 +94,7 @@ Variable* EmitterContext::emitInput(const InputPin* inputPin)
 	return i->second.var;
 }
 
-Variable* EmitterContext::emitInput(Node* node, const std::wstring& inputPinName)
+EmitterVariable* EmitterContext::emitInput(Node* node, const std::wstring& inputPinName)
 {
 	const InputPin* inputPin = node->findInputPin(inputPinName);
 	T_ASSERT_M (inputPin, L"Unable to find input pin");
@@ -102,7 +102,7 @@ Variable* EmitterContext::emitInput(Node* node, const std::wstring& inputPinName
 	return emitInput(inputPin);
 }
 
-Variable* EmitterContext::emitOutput(Node* node, const std::wstring& outputPinName, VariableType type, bool force)
+EmitterVariable* EmitterContext::emitOutput(Node* node, const std::wstring& outputPinName, EmitterVariableType type, bool force)
 {
 	const OutputPin* outputPin = node->findOutputPin(outputPinName);
 	T_ASSERT_M (outputPin, L"Unable to find output pin");
@@ -111,7 +111,7 @@ Variable* EmitterContext::emitOutput(Node* node, const std::wstring& outputPinNa
 	if (count == 0 && !force)
 		return 0;
 
-	Variable* var = allocTemporary(type);
+	EmitterVariable* var = allocTemporary(type);
 	T_FATAL_ASSERT (var);
 
 	TransientInput& input = m_currentState->inputs[outputPin];
@@ -156,11 +156,11 @@ void EmitterContext::emitInstruction(uint32_t offset, const Instruction& inst)
 
 uint32_t EmitterContext::emitInstruction(
 	unsigned char opcode,
-	const Variable* dest,
-	const Variable* src1,
-	const Variable* src2,
-	const Variable* src3,
-	const Variable* src4
+	const EmitterVariable* dest,
+	const EmitterVariable* src1,
+	const EmitterVariable* src2,
+	const EmitterVariable* src3,
+	const EmitterVariable* src4
 )
 {
 	Instruction inst(opcode, 0, 0, 0, 0, 0);
@@ -198,9 +198,9 @@ uint32_t EmitterContext::emitInstruction(
 	return emitInstruction(inst);
 }
 
-Variable* EmitterContext::emitConstant(float scalar)
+EmitterVariable* EmitterContext::emitConstant(float scalar)
 {
-	Variable* var = new Variable();
+	EmitterVariable* var = new EmitterVariable();
 
 	var->type = VtFloat;
 	var->reg = m_currentState->program.addConstant(Vector4(scalar, scalar, scalar, scalar));
@@ -209,9 +209,9 @@ Variable* EmitterContext::emitConstant(float scalar)
 	return var;
 }
 
-Variable* EmitterContext::emitConstant(const Vector4& vector)
+EmitterVariable* EmitterContext::emitConstant(const Vector4& vector)
 {
-	Variable* var = new Variable();
+	EmitterVariable* var = new EmitterVariable();
 
 	var->type = VtFloat4;
 	var->reg = m_currentState->program.addConstant(vector);
@@ -220,13 +220,13 @@ Variable* EmitterContext::emitConstant(const Vector4& vector)
 	return var;
 }
 
-Variable* EmitterContext::emitUniform(const std::wstring& parameterName, VariableType variableType, int length)
+EmitterVariable* EmitterContext::emitUniform(const std::wstring& parameterName, EmitterVariableType variableType, int length)
 {
-	std::map< std::wstring, Variable* >::iterator i = m_parameters.uniforms.find(parameterName);
+	std::map< std::wstring, EmitterVariable* >::iterator i = m_parameters.uniforms.find(parameterName);
 	if (i != m_parameters.uniforms.end())
 		return i->second;
 
-	Variable* var = new Variable();
+	EmitterVariable* var = new EmitterVariable();
 
 	var->type = variableType;
 	var->reg = m_parameters.nextUniformIndex;
@@ -238,9 +238,9 @@ Variable* EmitterContext::emitUniform(const std::wstring& parameterName, Variabl
 	return var;
 }
 
-Variable* EmitterContext::emitVarying(int index)
+EmitterVariable* EmitterContext::emitVarying(int index)
 {
-	Variable* var = new Variable();
+	EmitterVariable* var = new EmitterVariable();
 
 	var->type = VtFloat4;
 	var->reg = index;
@@ -261,7 +261,7 @@ uint32_t EmitterContext::allocSampler(const std::wstring& parameterName)
 	return samplerIndex;
 }
 
-Variable* EmitterContext::allocTemporary(VariableType variableType)
+EmitterVariable* EmitterContext::allocTemporary(EmitterVariableType variableType)
 {
 	int size = getVariableTypeSize(variableType);
 	int reg = -1;
@@ -286,7 +286,7 @@ Variable* EmitterContext::allocTemporary(VariableType variableType)
 		return 0;
 	}
 
-	Variable* var = new Variable();
+	EmitterVariable* var = new EmitterVariable();
 
 	var->type = variableType;
 	var->reg = reg;
@@ -297,7 +297,7 @@ Variable* EmitterContext::allocTemporary(VariableType variableType)
 	return var;
 }
 
-void EmitterContext::freeTemporary(Variable*& var)
+void EmitterContext::freeTemporary(EmitterVariable*& var)
 {
 	if (!var)
 		return;

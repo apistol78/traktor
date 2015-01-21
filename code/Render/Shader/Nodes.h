@@ -695,6 +695,15 @@ public:
 	RecipSqrt();
 };
 
+/*! \brief Repeat until condition. */
+class T_DLLCLASS Repeat : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	Repeat();
+};
+
 /*! \brief Round. */
 class T_DLLCLASS Round : public ImmutableNode
 {
@@ -1094,6 +1103,26 @@ private:
 	std::wstring m_parameterName;
 	ParameterType m_type;
 	UpdateFrequency m_frequency;
+};
+
+/*! \brief Variable */
+class T_DLLCLASS Variable : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	Variable();
+
+	void setName(const std::wstring& name);
+
+	const std::wstring& getName() const;
+
+	virtual std::wstring getInformation() const;
+
+	virtual void serialize(ISerializer& s);
+
+private:
+	std::wstring m_name;
 };
 
 /*! \brief Vector constant. */

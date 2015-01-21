@@ -59,6 +59,11 @@ TypeInfoSet MathNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
+bool MathNodeTraits::isRoot(const Node* node) const
+{
+	return false;
+}
+
 PinType MathNodeTraits::getOutputPinType(
 	const Node* node,
 	const OutputPin* outputPin,

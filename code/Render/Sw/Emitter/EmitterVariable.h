@@ -1,5 +1,5 @@
-#ifndef traktor_render_Variable_H
-#define traktor_render_Variable_H
+#ifndef traktor_render_EmitterVariable_H
+#define traktor_render_EmitterVariable_H
 
 namespace traktor
 {
@@ -9,7 +9,7 @@ namespace traktor
 /*! \ingroup SW */
 //@{
 
-enum VariableType
+enum EmitterVariableType
 {
 	VtVoid,
 	VtFloat,
@@ -20,9 +20,9 @@ enum VariableType
 	VtTexture
 };
 
-struct Variable
+struct EmitterVariable
 {
-	VariableType type;
+	EmitterVariableType type;
 	int reg;		//< Index to first register allocated for this variable.
 	int size;		//< Number of registers allocated for this variable.
 };

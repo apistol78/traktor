@@ -32,6 +32,11 @@ TypeInfoSet UniformNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
+bool UniformNodeTraits::isRoot(const Node* node) const
+{
+	return false;
+}
+
 PinType UniformNodeTraits::getOutputPinType(
 	const Node* node,
 	const OutputPin* outputPin,

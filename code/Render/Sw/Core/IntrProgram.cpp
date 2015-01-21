@@ -6,7 +6,7 @@
 #include "Core/Serialization/MemberStaticArray.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Render/Sw/Core/IntrProgram.h"
-#include "Render/Sw/Emitter/Variable.h"
+#include "Render/Sw/Emitter/EmitterVariable.h"
 
 namespace traktor
 {
@@ -38,7 +38,7 @@ private:
 };
 
 #define DEF_DUMP_FN(op) \
-	void dump_##op##(OutputStream& os, uint32_t offset, const Instruction& inst, const AlignedVector< Vector4 >& constants, const std::map< std::wstring, Variable* >& uniforms)
+	void dump_##op##(OutputStream& os, uint32_t offset, const Instruction& inst, const AlignedVector< Vector4 >& constants, const std::map< std::wstring, EmitterVariable* >& uniforms)
 
 DEF_DUMP_FN(OpFetchConstant)
 {
@@ -54,7 +54,7 @@ DEF_DUMP_FN(OpFetchTargetSize)
 DEF_DUMP_FN(OpFetchUniform)
 {
 	std::wstring uniform = L"(Undefined)";
-	for (std::map< std::wstring, Variable* >::const_iterator i = uniforms.begin(); i != uniforms.end(); ++i)
+	for (std::map< std::wstring, EmitterVariable* >::const_iterator i = uniforms.begin(); i != uniforms.end(); ++i)
 	{
 		if (i->second->reg == inst.src[0])
 		{
@@ -68,7 +68,7 @@ DEF_DUMP_FN(OpFetchUniform)
 DEF_DUMP_FN(OpFetchIndexedUniform)
 {
 	std::wstring uniform = L"(Undefined)";
-	for (std::map< std::wstring, Variable* >::const_iterator i = uniforms.begin(); i != uniforms.end(); ++i)
+	for (std::map< std::wstring, EmitterVariable* >::const_iterator i = uniforms.begin(); i != uniforms.end(); ++i)
 	{
 		if (i->second->reg == inst.src[0])
 		{
@@ -355,7 +355,7 @@ DEF_DUMP_FN(OpTrace)
 const struct DumpInfo
 {
 	uint8_t op;
-	void (*formatter)(OutputStream& os, uint32_t offset, const Instruction& inst, const AlignedVector< Vector4 >& constants, const std::map< std::wstring, Variable* >& uniforms);
+	void (*formatter)(OutputStream& os, uint32_t offset, const Instruction& inst, const AlignedVector< Vector4 >& constants, const std::map< std::wstring, EmitterVariable* >& uniforms);
 }
 c_dumpInfo[] =
 {
@@ -440,7 +440,7 @@ void IntrProgram::setConstant(uint32_t index, const Vector4& value)
 	m_constants[index] = value;
 }
 
-void IntrProgram::dump(OutputStream& os, const std::map< std::wstring, Variable* >& uniforms) const
+void IntrProgram::dump(OutputStream& os, const std::map< std::wstring, EmitterVariable* >& uniforms) const
 {
 	os << L"--- Begin ---" << Endl;
 

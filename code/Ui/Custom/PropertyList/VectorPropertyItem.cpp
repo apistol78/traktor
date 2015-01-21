@@ -56,7 +56,7 @@ void VectorPropertyItem::createInPlaceControls(Widget* parent)
 				true,
 				-std::numeric_limits< float >::max(),
 				std::numeric_limits< float >::max(),
-				3
+				5
 			)
 		);
 		m_editors[i]->setVisible(false);

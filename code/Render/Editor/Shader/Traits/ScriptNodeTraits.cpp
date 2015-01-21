@@ -32,6 +32,11 @@ TypeInfoSet ScriptNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
+bool ScriptNodeTraits::isRoot(const Node* node) const
+{
+	return false;
+}
+
 PinType ScriptNodeTraits::getOutputPinType(
 	const Node* node,
 	const OutputPin* outputPin,

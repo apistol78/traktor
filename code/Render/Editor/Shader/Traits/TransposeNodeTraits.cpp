@@ -15,6 +15,11 @@ TypeInfoSet TransposeNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
+bool TransposeNodeTraits::isRoot(const Node* node) const
+{
+	return false;
+}
+
 PinType TransposeNodeTraits::getOutputPinType(
 	const Node* node,
 	const OutputPin* outputPin,

@@ -33,6 +33,11 @@ TypeInfoSet ConditionalNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
+bool ConditionalNodeTraits::isRoot(const Node* node) const
+{
+	return false;
+}
+
 PinType ConditionalNodeTraits::getOutputPinType(
 	const Node* node,
 	const OutputPin* outputPin,

@@ -15,6 +15,8 @@ class LerpNodeTraits : public INodeTraits
 public:
 	virtual TypeInfoSet getNodeTypes() const;
 
+	virtual bool isRoot(const Node* node) const;
+
 	virtual PinType getOutputPinType(
 		const Node* node,
 		const OutputPin* outputPin,

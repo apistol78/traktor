@@ -5,6 +5,7 @@
 #include "Render/Shader/Nodes.h"
 #include "Render/Shader/ShaderGraph.h"
 #include "Render/Shader/ShaderGraphTraverse.h"
+#include "Render/Editor/Shader/INodeTraits.h"
 #include "Render/Editor/Shader/ShaderGraphHash.h"
 #include "Render/Editor/Shader/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/ShaderGraphOrderEvaluator.h"
@@ -98,7 +99,8 @@ Ref< ShaderGraph > ShaderGraphOptimizer::removeUnusedBranches() const
 	const RefArray< Node >& nodes = m_shaderGraph->getNodes();
 	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
 	{
-		if ((*i)->getOutputPinCount() <= 0 && (*i)->getInputPinCount() > 0)
+		const INodeTraits* nodeTraits = INodeTraits::find(*i);
+		if (nodeTraits && nodeTraits->isRoot(*i))
 			roots.push_back(*i);
 	}
 

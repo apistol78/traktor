@@ -31,6 +31,11 @@ TypeInfoSet PolynomialNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
+bool PolynomialNodeTraits::isRoot(const Node* node) const
+{
+	return false;
+}
+
 PinType PolynomialNodeTraits::getOutputPinType(
 	const Node* node,
 	const OutputPin* outputPin,

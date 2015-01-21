@@ -1175,6 +1175,83 @@ bool emitRecipSqrt(HlslContext& cx, RecipSqrt* node)
 	return true;
 }
 
+bool emitRepeat(HlslContext& cx, Repeat* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
+	std::wstring inputName;
+
+	// Create iterator variable.
+	HlslVariable* N = cx.emitOutput(node, L"N", HtFloat);
+	T_ASSERT (N);
+
+	// Create void output variable; change type later when we know
+	// the type of the input branch.
+	HlslVariable* out = cx.emitOutput(node, L"Output", HtVoid);
+	T_ASSERT (out);
+
+	// Find non-dependent, external, output pins from input branch;
+	// we emit those first in order to have them evaluated
+	// outside of iteration.
+	std::vector< const OutputPin* > outputPins;
+	std::vector< const OutputPin* > dependentOutputPins(2);
+	dependentOutputPins[0] = node->findOutputPin(L"N");
+	dependentOutputPins[1] = node->findOutputPin(L"Output");
+	cx.findNonDependentOutputs(node, L"Input", dependentOutputPins, outputPins);
+	for (std::vector< const OutputPin* >::const_iterator i = outputPins.begin(); i != outputPins.end(); ++i)
+		cx.emit((*i)->getNode());
+
+	// Write input branch in a temporary output stream.
+	StringOutputStream fs;
+	cx.getShader().pushOutputStream(HlslShader::BtBody, &fs);
+	cx.getShader().pushScope();
+
+	{
+		HlslVariable* input = cx.emitInput(node, L"Input");
+		if (!input)
+			return false;
+
+		// Emit post condition if connected; break iteration if condition is false.
+		HlslVariable* condition = cx.emitInput(node, L"Condition");
+		if (condition)
+		{
+			fs << L"if (!(bool)" << condition->cast(HtFloat) << L")" << Endl;
+			fs << L"\tbreak;" << Endl;
+		}
+
+		inputName = input->getName();
+
+		// Modify output variable; need to have input variable ready as it
+		// will determine output type.
+		out->setType(input->getType());
+	}
+
+	cx.getShader().popScope();
+	cx.getShader().popOutputStream(HlslShader::BtBody);
+
+	// As we now know the type of output variable we can safely
+	// initialize it.
+	HlslVariable* initial = cx.emitInput(node, L"Initial");
+	if (initial)
+		assign(cx, f, out) << initial->cast(out->getType()) << L";" << Endl;
+	else
+		assign(cx, f, out) << L"0;" << Endl;
+
+	// Write outer for-loop statement.
+	f << L"for (float " << N->getName() << L" = 0.0f;; ++" << N->getName() << L")" << Endl;
+	f << L"{" << Endl;
+	f << IncreaseIndent;
+
+	// Insert input branch here; it's already been generated in a temporary
+	// output stream.
+	f << fs.str();
+	f << out->getName() << L" = " << inputName << L";" << Endl;
+
+	f << DecreaseIndent;
+	f << L"}" << Endl;	
+
+	return true;
+}
+
 bool emitRound(HlslContext& cx, Round* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
@@ -2162,6 +2239,7 @@ HlslEmitter::HlslEmitter()
 	m_emitters[&type_of< PixelOutput >()] = new EmitterCast< PixelOutput >(emitPixelOutput);
 	m_emitters[&type_of< Reflect >()] = new EmitterCast< Reflect >(emitReflect);
 	m_emitters[&type_of< RecipSqrt >()] = new EmitterCast< RecipSqrt >(emitRecipSqrt);
+	m_emitters[&type_of< Repeat >()] = new EmitterCast< Repeat >(emitRepeat);
 	m_emitters[&type_of< Round >()] = new EmitterCast< Round >(emitRound);
 	m_emitters[&type_of< Sampler >()] = new EmitterCast< Sampler >(emitSampler);
 	m_emitters[&type_of< Script >()] = new EmitterCast< Script >(emitScript);

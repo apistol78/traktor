@@ -1,3 +1,4 @@
+#include "Render/Shader/External.h"
 #include "Render/Shader/Nodes.h"
 #include "Render/Editor/Shader/Traits/MetaNodeTraits.h"
 
@@ -28,11 +29,24 @@ TypeInfoSet MetaNodeTraits::getNodeTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< Branch >());
+	typeSet.insert(&type_of< Comment >());
+	typeSet.insert(&type_of< External >());
 	typeSet.insert(&type_of< InputPort >());
 	typeSet.insert(&type_of< OutputPort >());
 	typeSet.insert(&type_of< Platform >());
 	typeSet.insert(&type_of< Type >());
+	typeSet.insert(&type_of< Variable >());
 	return typeSet;
+}
+
+bool MetaNodeTraits::isRoot(const Node* node) const
+{
+	if (is_a< OutputPort >(node) || is_a< Variable >(node))
+		return true;
+	else if (const External* externalNode = dynamic_type_cast< const External* >(node))
+		return externalNode->getOutputPinCount() == 0;
+	else
+		return false;
 }
 
 PinType MetaNodeTraits::getOutputPinType(

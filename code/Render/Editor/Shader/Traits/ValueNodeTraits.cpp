@@ -16,6 +16,11 @@ TypeInfoSet ValueNodeTraits::getNodeTypes() const
 	return typeSet;
 }
 
+bool ValueNodeTraits::isRoot(const Node* node) const
+{
+	return false;
+}
+
 PinType ValueNodeTraits::getOutputPinType(
 	const Node* node,
 	const OutputPin* outputPin,
