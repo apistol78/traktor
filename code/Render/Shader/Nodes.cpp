@@ -1268,7 +1268,7 @@ RecipSqrt::RecipSqrt()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Repeat", 0, Repeat, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Repeat_i[] = { { L"Input", false }, { L"Initial", true }, { L"Condition", true }, 0 };
+const ImmutableNode::InputPinDesc c_Repeat_i[] = { { L"Input", false }, { L"Initial", true }, { L"Condition", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Repeat_o[] = { L"N", L"Output", 0 };
 
 Repeat::Repeat()

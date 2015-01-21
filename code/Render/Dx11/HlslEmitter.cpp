@@ -1206,17 +1206,17 @@ bool emitRepeat(HlslContext& cx, Repeat* node)
 	cx.getShader().pushScope();
 
 	{
-		HlslVariable* input = cx.emitInput(node, L"Input");
-		if (!input)
-			return false;
-
-		// Emit post condition if connected; break iteration if condition is false.
+		// Emit pre-condition, break iteration if condition is false.
 		HlslVariable* condition = cx.emitInput(node, L"Condition");
 		if (condition)
 		{
 			fs << L"if (!(bool)" << condition->cast(HtFloat) << L")" << Endl;
 			fs << L"\tbreak;" << Endl;
 		}
+
+		HlslVariable* input = cx.emitInput(node, L"Input");
+		if (!input)
+			return false;
 
 		inputName = input->getName();
 

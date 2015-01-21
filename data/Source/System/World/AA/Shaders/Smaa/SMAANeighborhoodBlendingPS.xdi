@@ -739,13 +739,6 @@
 			</position>
 			<color>0, 0, 0, 0</color>
 		</item>
-		<item type="traktor.render.Normalize">
-			<comment/>
-			<position>
-				<first>1152</first>
-				<second>1947</second>
-			</position>
-		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -1560,17 +1553,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[72]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[79]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[79]"/>
+				<node ref="/object/nodes/item[37]"/>
 				<name>Output</name>
 			</source>
 			<destination>

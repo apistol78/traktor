@@ -37,12 +37,21 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>453</first>
-				<second>247</second>
+				<first>435</first>
+				<second>230</second>
 			</position>
 			<fragmentGuid>{41FF157C-E458-6542-A489-4D7413357C85}</fragmentGuid>
 			<inputPins/>
 			<outputPins>
+				<item>
+					<name>SMAA_AREATEX_MAX_DISTANCE</name>
+				</item>
+				<item>
+					<name>SMAA_AREATEX_PIXEL_SIZE</name>
+				</item>
+				<item>
+					<name>SMAA_AREATEX_SUBTEX_SIZE</name>
+				</item>
 				<item>
 					<name>SMAA_DEPTH_THRESHOLD</name>
 				</item>
