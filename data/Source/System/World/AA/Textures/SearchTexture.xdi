@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.TextureAsset" version="10">
 	<fileName>$(TRAKTOR_HOME)/data/Assets/System/Textures/Smaa/SearchTexture.tga</fileName>
-	<textureFormat>TfInvalid</textureFormat>
+	<textureFormat>TfR8</textureFormat>
 	<generateNormalMap>false</generateNormalMap>
 	<scaleDepth>0</scaleDepth>
 	<generateMips>false</generateMips>

@@ -30,11 +30,11 @@
 				<second>360</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
-			<mipFilter>FtLinear</mipFilter>
+			<mipFilter>FtPoint</mipFilter>
 			<magFilter>FtLinear</magFilter>
-			<addressU>AdWrap</addressU>
-			<addressV>AdWrap</addressV>
-			<addressW>AdWrap</addressW>
+			<addressU>AdClamp</addressU>
+			<addressV>AdClamp</addressV>
+			<addressW>AdClamp</addressW>
 			<compare>CmNo</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
@@ -88,6 +88,14 @@
 				<first>403</first>
 				<second>417</second>
 			</position>
+		</item>
+		<item type="traktor.render.Scalar">
+			<comment/>
+			<position>
+				<first>457</first>
+				<second>552</second>
+			</position>
+			<value>0</value>
 		</item>
 	</nodes>
 	<edges>
@@ -159,6 +167,16 @@
 			<destination>
 				<node ref="/object/nodes/item[2]"/>
 				<name>TexCoord</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Mip</name>
 			</destination>
 		</item>
 	</edges>

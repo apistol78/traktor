@@ -273,7 +273,8 @@ bool WorldRendererPreLit::create(
 					resourceManager,
 					renderSystem,
 					rtscd.width,
-					rtscd.height
+					rtscd.height,
+					desc.allTargetsPersistent
 				))
 				{
 					log::warning << L"Unable to create shadow project process; shadows disabled" << Endl;
@@ -287,7 +288,8 @@ bool WorldRendererPreLit::create(
 					resourceManager,
 					renderSystem,
 					rtscd.width,
-					rtscd.height
+					rtscd.height,
+					desc.allTargetsPersistent
 				))
 				{
 					log::warning << L"Unable to create shadow filter process; shadows disabled" << Endl;
@@ -350,7 +352,8 @@ bool WorldRendererPreLit::create(
 				resourceManager,
 				renderSystem,
 				width,
-				height
+				height,
+				desc.allTargetsPersistent
 			))
 			{
 				log::warning << L"Unable to create color read-back processing; color read-back disabled" << Endl;
@@ -402,7 +405,8 @@ bool WorldRendererPreLit::create(
 				resourceManager,
 				renderSystem,
 				width,
-				height
+				height,
+				desc.allTargetsPersistent
 			))
 			{
 				log::warning << L"Unable to create ambient occlusion process; AO disabled" << Endl;
@@ -455,7 +459,8 @@ bool WorldRendererPreLit::create(
 				resourceManager,
 				renderSystem,
 				frameWidth,
-				frameHeight
+				frameHeight,
+				desc.allTargetsPersistent
 			))
 			{
 				log::warning << L"Unable to create antialias process; AA disabled" << Endl;
@@ -474,7 +479,8 @@ bool WorldRendererPreLit::create(
 			resourceManager,
 			renderSystem,
 			width,
-			height
+			height,
+			desc.allTargetsPersistent
 		))
 		{
 			log::warning << L"Unable to create visual post processing; post processing disabled" << Endl;
@@ -498,7 +504,8 @@ bool WorldRendererPreLit::create(
 				resourceManager,
 				renderSystem,
 				width,
-				height
+				height,
+				desc.allTargetsPersistent
 			))
 			{
 				log::warning << L"Unable to create gamma correction process; gamma correction disabled" << Endl;

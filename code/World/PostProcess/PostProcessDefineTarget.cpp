@@ -49,6 +49,7 @@ bool PostProcessDefineTarget::define(PostProcess* postProcess, resource::IResour
 		rtscd.height = min< int32_t >(rtscd.height, m_maxHeight);
 
 	postProcess->defineTarget(
+		m_id,
 		render::getParameterHandle(m_id),
 		rtscd,
 		m_clearColor,

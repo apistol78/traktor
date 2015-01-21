@@ -209,6 +209,7 @@ void PerspectiveRenderControl::updateWorldRenderer()
 	wcd.antiAliasQuality = m_antiAliasQuality;
 	wcd.multiSample = m_multiSample;
 	wcd.frameCount = 1;
+	wcd.allTargetsPersistent = true;
 
 	if (m_postProcessEnable)
 		wcd.postProcessSettings = sceneInstance->getPostProcessSettings(world::QuHigh);
@@ -221,27 +222,7 @@ void PerspectiveRenderControl::updateWorldRenderer()
 	))
 	{
 		m_worldRenderer = worldRenderer;
-
 		updateWorldRenderView();
-
-		m_context->clearDebugTargets();
-
-		std::vector< world::DebugTarget > worldTargets;
-		m_worldRenderer->getDebugTargets(worldTargets);
-
-		for (std::vector< world::DebugTarget >::const_iterator i = worldTargets.begin(); i != worldTargets.end(); ++i)
-			m_context->addDebugTarget(*i);
-
-		world::PostProcess* postProcess = m_worldRenderer->getVisualPostProcess();
-		if (postProcess)
-		{
-			std::vector< world::DebugTarget > postProcessTargets;
-			postProcess->getDebugTargets(postProcessTargets);
-
-			for (std::vector< world::DebugTarget >::const_iterator i = postProcessTargets.begin(); i != postProcessTargets.end(); ++i)
-				m_context->addDebugTarget(*i);
-		}
-
 	}
 }
 
@@ -645,6 +626,15 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 		m_renderView->end();
 		m_renderView->present();
 	}
+
+	// Expose various render targets for debugging.
+	m_context->clearDebugTargets();
+
+	std::vector< world::DebugTarget > worldTargets;
+	m_worldRenderer->getDebugTargets(worldTargets);
+
+	for (std::vector< world::DebugTarget >::const_iterator i = worldTargets.begin(); i != worldTargets.end(); ++i)
+		m_context->addDebugTarget(*i);
 
 	event->consume();
 }

@@ -186,6 +186,8 @@ void DebugRenderControl::eventPaint(ui::PaintEvent* event)
 	if (!m_renderView || !m_screenRenderer)
 		return;
 
+	const std::vector< world::DebugTarget >& debugTargets = m_context->getDebugTargets();
+
 	if (m_renderView->begin(render::EtCyclop))
 	{
 		const Color4f clearColor(0.7f, 0.7f, 0.7f, 0.0f);
@@ -208,7 +210,6 @@ void DebugRenderControl::eventPaint(ui::PaintEvent* event)
 			L"ShadowMask"
 		};
 
-		const std::vector< world::DebugTarget >& debugTargets = m_context->getDebugTargets();
 		if (!debugTargets.empty())
 		{
 			int32_t size = int32_t(std::sqrt(float(debugTargets.size())) + 0.5f);
@@ -231,6 +232,38 @@ void DebugRenderControl::eventPaint(ui::PaintEvent* event)
 
 		m_renderView->end();
 		m_renderView->present();
+	}
+
+	if (!debugTargets.empty())
+	{
+		ui::Size innerSize = m_renderWidget->getInnerRect().getSize();
+		float aspect = float(innerSize.cx) / innerSize.cy;
+
+		ui::Canvas& canvas = event->getCanvas();
+		canvas.setForeground(Color4ub(0, 0, 0, 255));
+
+		int32_t size = int32_t(std::sqrt(float(debugTargets.size())) + 0.5f);
+		for (uint32_t i = 0; i < debugTargets.size(); ++i)
+		{
+			float ox =  float(i % size) * 2.1f;
+			float oy = -float(i / size) * 2.1f;
+
+			ox += m_renderOffset.x;
+			oy += m_renderOffset.y;
+
+			ox -= 1.0f;
+			oy += 1.0f;
+
+			oy *= aspect;
+
+			ox *= 2.0f / m_renderScale;
+			oy *= 2.0f / m_renderScale;
+
+			int32_t x = innerSize.cx * (ox * 0.5f + 0.5f);
+			int32_t y = innerSize.cy * (0.5f - oy * 0.5f) - 16;
+
+			canvas.drawText(ui::Point(x, y), debugTargets[i].name);
+		}
 	}
 
 	event->consume();

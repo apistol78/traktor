@@ -16,11 +16,11 @@
 				<second>500</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
-			<mipFilter>FtLinear</mipFilter>
+			<mipFilter>FtPoint</mipFilter>
 			<magFilter>FtLinear</magFilter>
-			<addressU>AdWrap</addressU>
-			<addressV>AdWrap</addressV>
-			<addressW>AdWrap</addressW>
+			<addressU>AdClamp</addressU>
+			<addressV>AdClamp</addressV>
+			<addressW>AdClamp</addressW>
 			<compare>CmNo</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
@@ -47,6 +47,14 @@
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.Scalar">
+			<comment/>
+			<position>
+				<first>813</first>
+				<second>647</second>
+			</position>
+			<value>0</value>
 		</item>
 	</nodes>
 	<edges>
@@ -78,6 +86,16 @@
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Mip</name>
 			</destination>
 		</item>
 	</edges>

@@ -85,6 +85,9 @@
 				<item>
 					<name>Offset_2</name>
 				</item>
+				<item>
+					<name>PixCoord</name>
+				</item>
 			</outputPins>
 			<values/>
 		</item>
@@ -157,13 +160,6 @@
 			<parameterName>Edges</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfFrame</frequency>
-		</item>
-		<item type="traktor.render.FragmentPosition">
-			<comment/>
-			<position>
-				<first>398</first>
-				<second>423</second>
-			</position>
 		</item>
 		<item type="traktor.render.Texture">
 			<comment/>
@@ -257,16 +253,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<name>PixCoord</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[3]"/>
 				<name>Output</name>
 			</source>
@@ -277,7 +263,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[7]"/>
+				<node ref="/object/nodes/item[6]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -287,12 +273,22 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[8]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[3]"/>
 				<name>AreaTexture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>PixCoord</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>PixCoord</name>
 			</destination>
 		</item>
 	</edges>

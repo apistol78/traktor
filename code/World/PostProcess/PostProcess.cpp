@@ -29,6 +29,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.PostProcess", PostProcess, Object)
 
 PostProcess::PostProcess()
 :	m_requireHighRange(false)
+,	m_allTargetsPersistent(false)
 {
 	s_handleOutput = render::getParameterHandle(L"Output");
 	s_handleInputColor = render::getParameterHandle(L"InputColor");
@@ -42,12 +43,17 @@ bool PostProcess::create(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
 	uint32_t width,
-	uint32_t height
+	uint32_t height,
+	bool allTargetsPersistent
 )
 {
 	m_screenRenderer = new render::ScreenRenderer();
 	if (!m_screenRenderer->create(renderSystem))
 		return false;
+
+	m_targetPool = (targetPool != 0) ? targetPool : new PostProcessTargetPool(renderSystem);
+	m_requireHighRange = settings->requireHighRange();
+	m_allTargetsPersistent = allTargetsPersistent;
 
 	const RefArray< PostProcessDefine >& definitions = settings->getDefinitions();
 	for (RefArray< PostProcessDefine >::const_iterator i = definitions.begin(); i != definitions.end(); ++i)
@@ -71,9 +77,6 @@ bool PostProcess::create(
 			return false;
 		}
 	}
-
-	m_targetPool = (targetPool != 0) ? targetPool : new PostProcessTargetPool(renderSystem);
-	m_requireHighRange = settings->requireHighRange();
 
 	return true;
 }
@@ -165,17 +168,18 @@ bool PostProcess::render(
 	return true;
 }
 
-void PostProcess::defineTarget(render::handle_t id, const render::RenderTargetSetCreateDesc& rtscd, const Color4f& clearColor, bool persistent)
+void PostProcess::defineTarget(const std::wstring& name, render::handle_t id, const render::RenderTargetSetCreateDesc& rtscd, const Color4f& clearColor, bool persistent)
 {
 	T_ASSERT_M(id != s_handleInputColor, L"Cannot define source color buffer");
 	T_ASSERT_M(id != s_handleInputDepth, L"Cannot define source depth buffer");
 	T_ASSERT_M(id != s_handleInputShadowMask, L"Cannot define source shadow mask");
 
 	Target& t = m_targets[id];
+	t.name = name;
 	t.rtscd = rtscd;
 	t.rts = 0;
-	t.shouldClear = persistent;
-	t.persistent = persistent;
+	t.shouldClear = persistent || m_allTargetsPersistent;
+	t.persistent = persistent || m_allTargetsPersistent;
 	clearColor.storeUnaligned(t.clearColor);
 }
 
@@ -284,7 +288,7 @@ void PostProcess::getDebugTargets(std::vector< DebugTarget >& outTargets) const
 	for (SmallMap< render::handle_t, Target >::const_iterator i = m_targets.begin(); i != m_targets.end(); ++i)
 	{
 		if (i->second.rts)
-			outTargets.push_back(DebugTarget(L"Post process target", DtvDefault, i->second.rts->getColorTexture(0)));
+			outTargets.push_back(DebugTarget(i->second.name, DtvDefault, i->second.rts->getColorTexture(0)));
 	}
 }
 
