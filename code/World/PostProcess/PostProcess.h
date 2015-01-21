@@ -70,7 +70,8 @@ public:
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
 		uint32_t width,
-		uint32_t height
+		uint32_t height,
+		bool allTargetsPersistent
 	);
 
 	void destroy();
@@ -83,7 +84,7 @@ public:
 		const PostProcessStep::Instance::RenderParams& params
 	);
 
-	void defineTarget(render::handle_t id, const render::RenderTargetSetCreateDesc& rtscd, const Color4f& clearColor, bool persistent);
+	void defineTarget(const std::wstring& name, render::handle_t id, const render::RenderTargetSetCreateDesc& rtscd, const Color4f& clearColor, bool persistent);
 
 	void setTarget(render::IRenderView* renderView, render::handle_t id);
 
@@ -110,6 +111,7 @@ public:
 private:
 	struct Target
 	{
+		std::wstring name;
 		render::RenderTargetSetCreateDesc rtscd;
 		Ref< render::RenderTargetSet > rts;
 		float clearColor[4];
@@ -137,6 +139,7 @@ private:
 	SmallMap< render::handle_t, resource::Proxy< render::ITexture > > m_textureParameters;
 	Ref< render::RenderTargetSet > m_currentTarget;
 	bool m_requireHighRange;
+	bool m_allTargetsPersistent;
 	Semaphore m_lock;
 };
 

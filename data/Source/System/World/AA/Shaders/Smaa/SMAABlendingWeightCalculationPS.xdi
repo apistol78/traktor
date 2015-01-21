@@ -426,7 +426,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-544</first>
+				<first>-501</first>
 				<second>-181</second>
 			</position>
 			<name>EdgesTexture</name>
@@ -521,15 +521,15 @@
 		<item type="traktor.render.Variable">
 			<comment/>
 			<position>
-				<first>-259</first>
-				<second>-108</second>
+				<first>-268</first>
+				<second>-106</second>
 			</position>
 			<name>SearchTexture</name>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-516</first>
+				<first>-501</first>
 				<second>-81</second>
 			</position>
 			<name>SearchTexture</name>
@@ -556,8 +556,8 @@
 		<item type="traktor.render.Variable">
 			<comment/>
 			<position>
-				<first>-234</first>
-				<second>-14</second>
+				<first>-268</first>
+				<second>-19</second>
 			</position>
 			<name>AreaTexture</name>
 		</item>
@@ -720,7 +720,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-494</first>
+				<first>-471</first>
 				<second>111</second>
 			</position>
 			<name>Offset_0</name>
@@ -731,15 +731,15 @@
 		<item type="traktor.render.Variable">
 			<comment/>
 			<position>
-				<first>-237</first>
-				<second>84</second>
+				<first>-268</first>
+				<second>68</second>
 			</position>
 			<name>Offset_0</name>
 		</item>
 		<item type="traktor.render.Variable">
 			<comment/>
 			<position>
-				<first>-237</first>
+				<first>-268</first>
 				<second>155</second>
 			</position>
 			<name>Offset_1</name>
@@ -747,7 +747,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-494</first>
+				<first>-471</first>
 				<second>182</second>
 			</position>
 			<name>Offset_1</name>
@@ -758,15 +758,15 @@
 		<item type="traktor.render.Variable">
 			<comment/>
 			<position>
-				<first>-239</first>
-				<second>227</second>
+				<first>-268</first>
+				<second>242</second>
 			</position>
 			<name>Offset_2</name>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-496</first>
+				<first>-471</first>
 				<second>253</second>
 			</position>
 			<name>Offset_2</name>
@@ -1408,7 +1408,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-488</first>
+				<first>-471</first>
 				<second>326</second>
 			</position>
 			<name>PixCoord</name>
@@ -1419,7 +1419,7 @@
 		<item type="traktor.render.Variable">
 			<comment/>
 			<position>
-				<first>-256</first>
+				<first>-268</first>
 				<second>329</second>
 			</position>
 			<name>PixCoord</name>
@@ -1443,15 +1443,15 @@
 		<item type="traktor.render.Variable">
 			<comment/>
 			<position>
-				<first>-259</first>
-				<second>422</second>
+				<first>-268</first>
+				<second>416</second>
 			</position>
 			<name>SubsampleIndices</name>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-540</first>
+				<first>-521</first>
 				<second>427</second>
 			</position>
 			<name>SubsampleIndices</name>

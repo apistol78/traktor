@@ -55,6 +55,10 @@
 			<target>Blend</target>
 		</item>
 		<item type="traktor.world.PostProcessStepSimple">
+			<shader>{074F2B2C-2597-B54F-B0BF-FBFCCD184D86}</shader>
+			<sources/>
+		</item>
+		<item type="traktor.world.PostProcessStepSimple">
 			<shader>{B679C168-3995-4948-B108-B4A413040D74}</shader>
 			<sources>
 				<item>

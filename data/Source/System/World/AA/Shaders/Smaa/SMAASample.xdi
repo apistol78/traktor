@@ -30,14 +30,14 @@
 				<second>257</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
-			<mipFilter>FtLinear</mipFilter>
+			<mipFilter>FtPoint</mipFilter>
 			<magFilter>FtLinear</magFilter>
-			<addressU>AdWrap</addressU>
-			<addressV>AdWrap</addressV>
-			<addressW>AdWrap</addressW>
+			<addressU>AdClamp</addressU>
+			<addressV>AdClamp</addressV>
+			<addressW>AdClamp</addressW>
 			<compare>CmNo</compare>
 			<mipBias>0</mipBias>
-			<ignoreMips>true</ignoreMips>
+			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.OutputPort">

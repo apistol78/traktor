@@ -61,6 +61,7 @@ struct WorldCreateDesc
 	uint32_t multiSample;
 	uint32_t superSample;
 	uint32_t frameCount;
+	bool allTargetsPersistent;
 
 	WorldCreateDesc()
 	:	worldRenderSettings(0)
@@ -72,6 +73,7 @@ struct WorldCreateDesc
 	,	multiSample(0)
 	,	superSample(0)
 	,	frameCount(0)
+	,	allTargetsPersistent(false)
 	{
 	}
 };

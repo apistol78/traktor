@@ -101,10 +101,10 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>775</first>
-				<second>394</second>
+				<first>843</first>
+				<second>557</second>
 			</position>
-			<fragmentGuid>{48249BE1-5BB3-8142-ABB8-D7109632AC58}</fragmentGuid>
+			<fragmentGuid>{5623C8A0-8D4D-6147-99B6-2FD118D49677}</fragmentGuid>
 			<inputPins>
 				<item>
 					<name>ColorTexture</name>

@@ -330,7 +330,7 @@ void EffectPreviewControl::updateRenderer()
 	if (m_postProcessSettings)
 	{
 		m_postProcess = new world::PostProcess();
-		m_postProcess->create(m_postProcessSettings, 0, m_resourceManager, m_renderSystem, sz.cx, sz.cy);
+		m_postProcess->create(m_postProcessSettings, 0, m_resourceManager, m_renderSystem, sz.cx, sz.cy, false);
 
 		render::RenderTargetSetCreateDesc desc;
 		desc.count = 1;

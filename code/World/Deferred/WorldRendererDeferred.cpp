@@ -255,7 +255,8 @@ bool WorldRendererDeferred::create(
 				resourceManager,
 				renderSystem,
 				rtscd.width,
-				rtscd.height
+				rtscd.height,
+				desc.allTargetsPersistent
 			))
 			{
 				log::warning << L"Unable to create shadow project process; shadows disabled" << Endl;
@@ -284,7 +285,8 @@ bool WorldRendererDeferred::create(
 					resourceManager,
 					renderSystem,
 					rtscd.width,
-					rtscd.height
+					rtscd.height,
+					desc.allTargetsPersistent
 				))
 				{
 					log::warning << L"Unable to create shadow filter process; shadows disabled" << Endl;
@@ -342,7 +344,8 @@ bool WorldRendererDeferred::create(
 				resourceManager,
 				renderSystem,
 				width,
-				height
+				height,
+				desc.allTargetsPersistent
 			))
 			{
 				log::warning << L"Unable to create color read-back processing; color read-back disabled" << Endl;
@@ -394,7 +397,8 @@ bool WorldRendererDeferred::create(
 				resourceManager,
 				renderSystem,
 				width,
-				height
+				height,
+				desc.allTargetsPersistent
 			))
 			{
 				log::warning << L"Unable to create ambient occlusion process; AO disabled" << Endl;
@@ -447,7 +451,8 @@ bool WorldRendererDeferred::create(
 				resourceManager,
 				renderSystem,
 				width,
-				height
+				height,
+				desc.allTargetsPersistent
 			))
 			{
 				log::warning << L"Unable to create antialias process; AA disabled" << Endl;
@@ -466,7 +471,8 @@ bool WorldRendererDeferred::create(
 			resourceManager,
 			renderSystem,
 			width,
-			height
+			height,
+			desc.allTargetsPersistent
 		))
 		{
 			log::warning << L"Unable to create visual post processing; post processing disabled" << Endl;
@@ -490,7 +496,8 @@ bool WorldRendererDeferred::create(
 				resourceManager,
 				renderSystem,
 				width,
-				height
+				height,
+				desc.allTargetsPersistent
 			))
 			{
 				log::warning << L"Unable to create gamma correction process; gamma correction disabled" << Endl;
@@ -1198,6 +1205,27 @@ void WorldRendererDeferred::getDebugTargets(std::vector< DebugTarget >& outTarge
 
 	if (m_shadowMaskFilterTargetSet)
 		outTargets.push_back(DebugTarget(L"Shadow mask (SS filtered)", DtvShadowMask, m_shadowMaskFilterTargetSet->getDepthTexture()));
+
+	if (m_shadowMaskProject)
+		m_shadowMaskProject->getDebugTargets(outTargets);
+
+	if (m_shadowMaskFilter)
+		m_shadowMaskFilter->getDebugTargets(outTargets);
+
+	if (m_colorTargetCopy)
+		m_colorTargetCopy->getDebugTargets(outTargets);
+
+	if (m_ambientOcclusion)
+		m_ambientOcclusion->getDebugTargets(outTargets);
+
+	if (m_antiAlias)
+		m_antiAlias->getDebugTargets(outTargets);
+
+	if (m_visualPostProcess)
+		m_visualPostProcess->getDebugTargets(outTargets);
+
+	if (m_gammaCorrectionPostProcess)
+		m_gammaCorrectionPostProcess->getDebugTargets(outTargets);
 }
 
 void WorldRendererDeferred::buildLightWithShadows(WorldRenderView& worldRenderView, int frame)
