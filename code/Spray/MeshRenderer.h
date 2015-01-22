@@ -1,8 +1,8 @@
 #ifndef traktor_spray_MeshRenderer_H
 #define traktor_spray_MeshRenderer_H
 
-#include <map>
 #include "Core/Object.h"
+#include "Core/Containers/SmallMap.h"
 #include "Mesh/Instance/InstanceMesh.h"
 #include "Spray/Point.h"
 
@@ -66,7 +66,7 @@ public:
 	);
 
 private:
-	std::map< Ref< mesh::InstanceMesh >, std::pair< PointVector, bool > > m_meshes;
+	SmallMap< Ref< mesh::InstanceMesh >, std::pair< PointVector, bool > > m_meshes;
 	AlignedVector< mesh::InstanceMesh::instance_distance_t > m_instances;
 };
 

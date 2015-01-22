@@ -49,7 +49,7 @@ void MeshRenderer::flush(
 	world::IWorldRenderPass& worldRenderPass
 )
 {
-	for (std::map< Ref< mesh::InstanceMesh >, std::pair< PointVector, bool > >::iterator i = m_meshes.begin(); i != m_meshes.end(); ++i)
+	for (SmallMap< Ref< mesh::InstanceMesh >, std::pair< PointVector, bool > >::iterator i = m_meshes.begin(); i != m_meshes.end(); ++i)
 	{
 		if (i->second.first.empty())
 			continue;
