@@ -198,43 +198,6 @@ Spec. dot
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>80</first>
-				<second>398</second>
-			</position>
-			<fragmentGuid>{E7063A52-B47B-E348-874E-AE9D7F50B070}</fragmentGuid>
-			<inputPins>
-				<item>
-					<name>EyeDirection</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<name>LightDirection</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<name>Normal</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<name>Roughness</name>
-					<optional>true</optional>
-				</item>
-			</inputPins>
-			<outputPins>
-				<item>
-					<name>Diffuse</name>
-				</item>
-			</outputPins>
-			<values>
-				<item>
-					<first>Roughness</first>
-					<second>0.5</second>
-				</item>
-			</values>
-		</item>
-		<item type="traktor.render.External" version="1">
-			<comment/>
-			<position>
 				<first>79</first>
 				<second>526</second>
 			</position>
@@ -473,36 +436,6 @@ Spec. dot
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[21]"/>
-				<name>LightDirection</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[13]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[21]"/>
-				<name>EyeDirection</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[21]"/>
-				<name>Normal</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[10]"/>
 				<name>Output</name>
 			</source>
@@ -517,7 +450,7 @@ Spec. dot
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[22]"/>
+				<node ref="/object/nodes/item[21]"/>
 				<name>LightDirection</name>
 			</destination>
 		</item>
@@ -527,7 +460,7 @@ Spec. dot
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[22]"/>
+				<node ref="/object/nodes/item[21]"/>
 				<name>Normal</name>
 			</destination>
 		</item>
@@ -537,13 +470,13 @@ Spec. dot
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[22]"/>
+				<node ref="/object/nodes/item[21]"/>
 				<name>EyeDirection</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[22]"/>
+				<node ref="/object/nodes/item[21]"/>
 				<name>Diffuse</name>
 			</source>
 			<destination>

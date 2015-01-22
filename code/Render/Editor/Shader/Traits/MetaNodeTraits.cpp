@@ -41,7 +41,7 @@ TypeInfoSet MetaNodeTraits::getNodeTypes() const
 
 bool MetaNodeTraits::isRoot(const Node* node) const
 {
-	if (is_a< OutputPort >(node) || is_a< Variable >(node))
+	if (is_a< InputPort >(node) || is_a< OutputPort >(node) || is_a< Variable >(node))
 		return true;
 	else if (const External* externalNode = dynamic_type_cast< const External* >(node))
 		return externalNode->getOutputPinCount() == 0;
