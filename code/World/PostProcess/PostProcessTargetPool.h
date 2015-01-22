@@ -1,9 +1,9 @@
 #ifndef traktor_world_PostProcessTargetPool_H
 #define traktor_world_PostProcessTargetPool_H
 
-#include <map>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Render/Types.h"
 
 namespace traktor
@@ -27,13 +27,6 @@ class PostProcessTargetPool : public Object
 	T_RTTI_CLASS;
 
 public:
-	PostProcessTargetPool(render::IRenderSystem* renderSystem);
-
-	render::RenderTargetSet* acquireTarget(const render::RenderTargetSetCreateDesc& rtscd);
-
-	void releaseTarget(const render::RenderTargetSetCreateDesc& rtscd, render::RenderTargetSet* rts);
-
-private:
 	struct Pool
 	{
 		render::RenderTargetSetCreateDesc rtscd;
@@ -41,8 +34,15 @@ private:
 		RefArray< render::RenderTargetSet > acquired;
 	};
 
+	PostProcessTargetPool(render::IRenderSystem* renderSystem);
+
+	render::RenderTargetSet* acquireTarget(const render::RenderTargetSetCreateDesc& rtscd);
+
+	void releaseTarget(const render::RenderTargetSetCreateDesc& rtscd, render::RenderTargetSet* rts);
+
+private:
 	Ref< render::IRenderSystem > m_renderSystem;
-	std::map< uint32_t, Pool > m_pool;
+	AlignedVector< Pool > m_pool;
 };
 
 	}

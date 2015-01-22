@@ -43,6 +43,7 @@ public:
 
 		Layer()
 		:	id(0)
+		,	name(0)
 		,	clipDepth(0)
 		,	immutable(false)
 		,	collect(false)

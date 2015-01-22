@@ -88,7 +88,7 @@ bool getMemberOrProperty(ExecutionState& state, ActionObject* self, int32_t vari
 		outValue = propertyGet->call(state.frame, self);
 		return true;
 	}
-	
+
 	return self->getMember(variableId, outValue);
 }
 
@@ -793,7 +793,7 @@ void opx_castOp(ExecutionState& state)
 			}
 		}
 	}
-	
+
 	// Use native class "xplicit" coersion.
 	if (classValue.isObject())
 	{
@@ -2008,7 +2008,7 @@ void opp_pushData(PreparationState& state)
 {
 	// Try to convert values and replace with custom type.
 	{
-		AutoPtr< uint8_t > nd(new uint8_t [65536]);
+		AutoArrayPtr< uint8_t > nd(new uint8_t [65536]);
 		uint8_t* ndp = nd.ptr();
 
 		uint8_t* data = state.data;

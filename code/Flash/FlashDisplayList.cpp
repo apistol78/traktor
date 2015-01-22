@@ -85,7 +85,7 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 	for (SmallMap< uint16_t, FlashFrame::RemoveObject >::const_iterator i = removeObjects.begin(); i != removeObjects.end(); ++i)
 	{
 		const FlashFrame::RemoveObject& removeObject = i->second;
-		
+
 		layer_map_t::iterator j = m_layers.find(removeObject.depth + c_depthOffset);
 		if (j != m_layers.end())
 		{
@@ -99,7 +99,10 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 		}
 #if defined(_DEBUG)
 		else
-			log::warning << L"Unable to find character " << removeObject.characterId << L" in dictionary (1)" << Endl;
+		{
+			if (removeObject.hasCharacterId)
+				log::warning << L"Unable to find character " << removeObject.characterId << L" in dictionary (1)" << Endl;
+		}
 #endif
 	}
 
@@ -189,7 +192,7 @@ void FlashDisplayList::showObject(int32_t depth, uint16_t characterId, FlashChar
 void FlashDisplayList::removeObject(FlashCharacterInstance* characterInstance)
 {
 	T_ASSERT (characterInstance);
-	
+
 	layer_map_t::iterator i = std::find_if(m_layers.begin(), m_layers.end(), FindCharacter(characterInstance));
 	T_ASSERT (i != m_layers.end());
 
