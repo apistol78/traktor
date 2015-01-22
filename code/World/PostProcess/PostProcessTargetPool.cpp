@@ -1,5 +1,4 @@
 #include <cstring>
-#include "Core/Misc/Adler32.h"
 #include "Render/IRenderSystem.h"
 #include "Render/RenderTargetSet.h"
 #include "World/PostProcess/PostProcessTargetPool.h"
@@ -11,14 +10,43 @@ namespace traktor
 		namespace
 		{
 
-uint32_t hash(const render::RenderTargetSetCreateDesc& rtscd)
+struct FindPoolPred
 {
-	Adler32 a;
-	a.begin();
-	a.feed(&rtscd, sizeof(render::RenderTargetSetCreateDesc));
-	a.end();
-	return a.get();
-}
+	const render::RenderTargetSetCreateDesc& m_rtscd;
+
+	FindPoolPred(const render::RenderTargetSetCreateDesc& rtscd)
+	:	m_rtscd(rtscd)
+	{
+	}
+
+	bool operator () (const PostProcessTargetPool::Pool& p) const
+	{
+		if (
+			p.rtscd.count != m_rtscd.count ||
+			p.rtscd.width != m_rtscd.width ||
+			p.rtscd.height != m_rtscd.height ||
+			p.rtscd.multiSample != m_rtscd.multiSample ||
+			p.rtscd.createDepthStencil != m_rtscd.createDepthStencil ||
+			p.rtscd.usingDepthStencilAsTexture != m_rtscd.usingDepthStencilAsTexture ||
+			p.rtscd.usingPrimaryDepthStencil != m_rtscd.usingPrimaryDepthStencil ||
+			p.rtscd.preferTiled != m_rtscd.preferTiled ||
+			p.rtscd.ignoreStencil != m_rtscd.ignoreStencil ||
+			p.rtscd.generateMips != m_rtscd.generateMips
+		)
+			return false;
+
+		for (int32_t i = 0; i < p.rtscd.count; ++i)
+		{
+			if (
+				p.rtscd.targets[i].format != m_rtscd.targets[i].format ||
+				p.rtscd.targets[i].sRGB != m_rtscd.targets[i].sRGB
+			)
+				return false;
+		}
+
+		return true;
+	}
+};
 
 		}
 
@@ -31,37 +59,42 @@ PostProcessTargetPool::PostProcessTargetPool(render::IRenderSystem* renderSystem
 
 render::RenderTargetSet* PostProcessTargetPool::acquireTarget(const render::RenderTargetSetCreateDesc& rtscd)
 {
-	Pool& pool = m_pool[hash(rtscd)];
-	if (!pool.free.empty())
+	Pool* pool = 0;
+
+	// Find or add new pool.
+	AlignedVector< Pool >::iterator it = std::find_if(m_pool.begin(), m_pool.end(), FindPoolPred(rtscd));
+	if (it != m_pool.end())
+		pool = &(*it);
+	else
 	{
-		T_ASSERT (std::memcmp(&rtscd, &pool.rtscd, sizeof(rtscd)) == 0);
+		m_pool.resize(m_pool.size() + 1);
+		pool = &m_pool.back();
+		pool->rtscd = rtscd;
+	}
 
-		Ref< render::RenderTargetSet > rts = pool.free.back();
-		pool.free.pop_back();
-
-		pool.acquired.push_back(rts);
+	if (!pool->free.empty())
+	{
+		Ref< render::RenderTargetSet > rts = pool->free.back();
+		pool->free.pop_back();
+		pool->acquired.push_back(rts);
 		return rts;
 	}
 	else
 	{
-		pool.rtscd = rtscd;
-
 		Ref< render::RenderTargetSet > rts = m_renderSystem->createRenderTargetSet(rtscd);
-		if (!rts)
-			return 0;
-
-		pool.acquired.push_back(rts);
+		if (rts)
+			pool->acquired.push_back(rts);
 		return rts;
 	}
 }
 
 void PostProcessTargetPool::releaseTarget(const render::RenderTargetSetCreateDesc& rtscd, render::RenderTargetSet* rts)
 {
-	Pool& pool = m_pool[hash(rtscd)];
-	T_ASSERT (std::memcmp(&rtscd, &pool.rtscd, sizeof(rtscd)) == 0);
+	AlignedVector< Pool >::iterator it = std::find_if(m_pool.begin(), m_pool.end(), FindPoolPred(rtscd));
+	T_ASSERT (it != m_pool.end());
 
-	pool.acquired.remove(rts);
-	pool.free.push_back(rts);
+	it->acquired.remove(rts);
+	it->free.push_back(rts);
 
 	rts->discard();
 }

@@ -265,13 +265,13 @@ bool read_string(BitReader& r, std::wstring& outString)
 bool write_string(BitWriter& w, const std::wstring& str)
 {
 	T_ASSERT (str.length() <= std::numeric_limits< uint16_t >::max());
-	
+
 	uint32_t length = uint32_t(str.length());
 	if (length > 0)
 	{
 		uint8_t* u8str = (uint8_t*)alloca(length * 4);
 		uint16_t u8len;
-		
+
 		Utf8Encoding utf8enc;
 		u8len = utf8enc.translate(str.c_str(), length, u8str);
 
@@ -328,7 +328,8 @@ Vector4 unpackUnit(const uint8_t u[3])
 
 void packUnit(const Vector4& u, uint8_t out[3])
 {
-	Vector4 un = u.normalized();
+	Scalar ln = u.length();
+	Vector4 un = (ln > FUZZY_EPSILON) ? (u / ln) : Vector4::zero();
 
 	float x = 0.0f, y = 0.0f, z = 0.0f;
 	float dx = un.x() / 128.0f;
@@ -365,13 +366,6 @@ void packUnit(const Vector4& u, uint8_t out[3])
 			md = D;
 		}
 	}
-
-#if defined(_DEBUG)
-	Vector4 check = unpackUnit(out);
-	Vector4 error = (check - un).absolute();
-	Scalar E = horizontalAdd4(error);
-	T_ASSERT (E < 0.01f);
-#endif
 }
 
 template < typename AttributeType, typename MemberType >
@@ -799,7 +793,7 @@ void CompactSerializer::operator >> (const Member< ISerializable* >& m)
 		ISerializable* object = 0;
 
 		uint8_t typeId = m_reader.readUnsigned(5);
-		
+
 		// Index into type table.
 		if (
 			typeId != 0x00 &&
@@ -879,10 +873,10 @@ void CompactSerializer::operator >> (const Member< void* >& m)
 	if (m_direction == SdRead)
 	{
 		uint32_t size;
-			
+
 		if (!ensure(read_uint32(m_reader, size)))
 			return;
-		
+
 		if (!ensure(size <= m.getBlobSize()))
 			return;
 

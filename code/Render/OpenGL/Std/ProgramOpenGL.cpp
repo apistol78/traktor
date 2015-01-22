@@ -69,7 +69,7 @@ bool storeIfNotEqual(const Vector4* source, int length, float* dest)
 			return true;
 		}
 	}
-	return false;	
+	return false;
 }
 
 bool storeIfNotEqual(const Matrix44* source, int length, float* dest)
@@ -130,13 +130,13 @@ Ref< ProgramOpenGL > ProgramOpenGL::create(ContextOpenGL* resourceContext, const
 	const ProgramResourceOpenGL* resourceOpenGL = checked_type_cast< const ProgramResourceOpenGL* >(resource);
 	char errorBuf[32000];
 	AutoArrayPtr< GLint > binaryFormats;
-	AutoPtr< uint8_t > binary;
+	AutoArrayPtr< uint8_t > binary;
 	GLint formats = 0;
 	GLint binaryLength = 0;
 	GLsizei errorBufLen;
 	GLint status;
 	bool needToCompile = true;
-	
+
 	GLuint programObject = glCreateProgram();
 	T_ASSERT (programObject != 0);
 
@@ -226,6 +226,7 @@ Ref< ProgramOpenGL > ProgramOpenGL::create(ContextOpenGL* resourceContext, const
 		T_OGL_SAFE(glGetProgramiv(programObject, GL_PROGRAM_BINARY_LENGTH, &binaryLength));
 
 		binary.reset(new uint8_t [binaryLength]);
+		std::memset(binary.ptr(), 0, binaryLength);
 		T_OGL_SAFE(glGetProgramBinary(programObject, binaryLength, 0, (GLenum*)binaryFormats.ptr(), binary.ptr()));
 
 		FileSystem::getInstance().makeAllDirectories(Path(ss.str()).getPathOnly());
@@ -245,7 +246,7 @@ void ProgramOpenGL::destroy()
 {
 	if (ms_activeProgram == this)
 		ms_activeProgram = 0;
-		
+
 	if (m_program)
 	{
 		if (m_resourceContext)
@@ -264,7 +265,7 @@ void ProgramOpenGL::setFloatArrayParameter(handle_t handle, const float* param, 
 	SmallMap< handle_t, uint32_t >::const_iterator i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())
 		return;
-		
+
 	Uniform& uniform = m_uniforms[i->second];
 	length = std::min< int >(length, uniform.length);
 
@@ -282,7 +283,7 @@ void ProgramOpenGL::setVectorArrayParameter(handle_t handle, const Vector4* para
 	SmallMap< handle_t, uint32_t >::const_iterator i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())
 		return;
-		
+
 	Uniform& uniform = m_uniforms[i->second];
 	length = std::min< int >(length, uniform.length);
 
@@ -300,7 +301,7 @@ void ProgramOpenGL::setMatrixArrayParameter(handle_t handle, const Matrix44* par
 	SmallMap< handle_t, uint32_t >::const_iterator i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())
 		return;
-		
+
 	Uniform& uniform = m_uniforms[i->second];
 	length = std::min< int >(length, uniform.length);
 
@@ -344,13 +345,13 @@ bool ProgramOpenGL::activate(ContextOpenGL* renderContext, float targetSize[2])
 			~0U
 		));
 	}
-	
+
 	// Update dirty uniforms.
 	for (std::vector< Uniform >::iterator i = m_uniforms.begin(); i != m_uniforms.end(); ++i)
 	{
 		if (!i->dirty)
 			continue;
-			
+
 		const float* uniformData = &m_uniformData[i->offset];
 		switch (i->type)
 		{
@@ -369,7 +370,7 @@ bool ProgramOpenGL::activate(ContextOpenGL* renderContext, float targetSize[2])
 		default:
 			T_ASSERT (0);
 		}
-		
+
 		i->dirty = false;
 	}
 
@@ -445,7 +446,7 @@ bool ProgramOpenGL::activate(ContextOpenGL* renderContext, float targetSize[2])
 	{
 		GLchar errorBuf[512];
 		GLint errorBufLen;
-		
+
 		T_OGL_SAFE(glGetProgramInfoLog(m_program, sizeof(errorBuf), &errorBufLen, errorBuf));
 		if (errorBufLen > 0)
 		{
@@ -497,9 +498,9 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLuint program, con
 			m_parameterMap[handle] = m_textures.size();
 			m_textures.push_back(0);
 		}
-		
+
 		std::wstring samplerName = L"_gl_sampler_" + texture + L"_" + toString(i->stage);
-		
+
 		Sampler sampler;
 		sampler.location = glGetUniformLocation(m_program, wstombs(samplerName).c_str());
 		sampler.texture = m_parameterMap[handle];

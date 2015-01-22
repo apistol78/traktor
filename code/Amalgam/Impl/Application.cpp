@@ -579,6 +579,7 @@ bool Application::update()
 
 		// Measure delta time.
 		float deltaTime = float(m_timer.getDeltaTime());
+#if !defined(_DEBUG)
 		if (deltaTime > c_maxDeltaTime)
 		{
 			deltaTime = c_maxDeltaTime;
@@ -595,6 +596,7 @@ bool Application::update()
 			}
 		}
 		else
+#endif
 		{
 			m_deltaTimeError = 0;
 			m_updateInfo.m_runningSlow = false;
