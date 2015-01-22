@@ -20,6 +20,11 @@ namespace traktor
 template < typename ItemType >
 struct AlignedVectorConstructor
 {
+	static void construct(ItemType& uninitialized)
+	{
+		new (&uninitialized) ItemType();
+	}
+
 	static void construct(ItemType& uninitialized, const ItemType& source)
 	{
 		new (&uninitialized) ItemType(source);
@@ -583,7 +588,7 @@ public:
 		grow(1);
 
 		// Initialize grown item.
-		Constructor::construct(m_data[size], ItemType());
+		Constructor::construct(m_data[size]);
 
 		// Move items to make room for item to be inserted.
 		for (size_t i = size; i > offset; --i)
@@ -613,7 +618,7 @@ public:
 
 		// Initialize grown items.
 		for (size_t i = 0; i < count; ++i)
-			Constructor::construct(m_data[i + size], ItemType());
+			Constructor::construct(m_data[i + size]);
 
 		// Move items to make room for items to be inserted.
 		size_t move = std::min< size_t >(size, count);
@@ -647,7 +652,7 @@ public:
 
 		// Initialize grown items.
 		for (size_t i = 0; i < count; ++i)
-			Constructor::construct(m_data[i + size], ItemType());
+			Constructor::construct(m_data[i + size]);
 
 		// Move items to make room for items to be inserted.
 		size_t move = std::min< size_t >(size, count);
