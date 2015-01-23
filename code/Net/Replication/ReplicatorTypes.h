@@ -34,6 +34,7 @@ struct RMessage
 		{
 			uint32_t time0;
 			uint32_t latency;
+			uint32_t latencySpread;
 		} pong;
 
 		struct  
@@ -60,7 +61,7 @@ struct RMessage
 T_FORCE_INLINE int32_t RMessage_HeaderSize()				{ return sizeof(uint8_t) + sizeof(uint32_t); }
 
 T_FORCE_INLINE int32_t RmiPing_NetSize()					{ return RMessage_HeaderSize() + sizeof(uint32_t) + sizeof(uint8_t); }
-T_FORCE_INLINE int32_t RmiPong_NetSize()					{ return RMessage_HeaderSize() + sizeof(uint32_t) + sizeof(uint32_t); }
+T_FORCE_INLINE int32_t RmiPong_NetSize()					{ return RMessage_HeaderSize() + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t); }
 
 T_FORCE_INLINE int32_t RmiState_NetSize(int32_t stateSize)	{ return RMessage_HeaderSize() + stateSize; }
 T_FORCE_INLINE int32_t RmiState_StateSize(int32_t netSize)	{ return netSize - RMessage_HeaderSize(); }
