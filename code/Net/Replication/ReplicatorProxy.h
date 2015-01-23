@@ -51,11 +51,15 @@ public:
 
 	/*! \brief
 	 */
-	double getLatencyUp() const;
+	double getLatencySpread() const;
 
 	/*! \brief
 	 */
-	double getLatencyDown() const;
+	double getReverseLatency() const;
+
+	/*! \brief
+	 */
+	double getReverseLatencySpread() const;
 
 	/*! \brief
 	 */
@@ -168,10 +172,11 @@ private:
 
 	double m_timeUntilTxPing;
 	double m_timeUntilTxState;
-	CircularVector< double, 17 > m_roundTrips;
-	double m_latencyMedian;
+	CircularVector< double, 65 > m_roundTrips;
+	double m_latency;
+	double m_latencyStandardDeviation;
 	double m_latencyReverse;
-
+	double m_latencyReverseStandardDeviation;
 	// @}
 
 	bool updateEventQueue();
@@ -180,7 +185,7 @@ private:
 
 	bool acceptEvent(uint8_t sequence, const ISerializable* eventObject);
 
-	void updateLatency(double roundTrip, double reverseLatency);
+	void updateLatency(double roundTrip, double latencyReverse, double latencyReverseSpread);
 
 	bool receivedState(double stateTime, const void* stateData, uint32_t stateDataSize);
 

@@ -24,7 +24,7 @@ const double c_maxDeltaTime = 10.0;
 
 bool lowestLatencyPred(const ReplicatorProxy* l, const ReplicatorProxy* r)
 {
-	return l->getLatency() < r->getLatency();
+	return l->getLatency() + l->getLatencySpread() < r->getLatency() + r->getLatencySpread();
 }
 
 		}
@@ -235,7 +235,7 @@ bool Replicator::update()
 
 		if (fromProxy->isPrimary())
 		{
-			double latency = fromProxy->getLatencyDown();
+			double latency = fromProxy->getReverseLatency();
 			double ghostOffset = net2time(msg.time) + latency - m_time;
 
 			if (!timeOffsetReceived)
@@ -259,6 +259,7 @@ bool Replicator::update()
 			reply.time = time2net(m_time);
 			reply.pong.time0 = msg.ping.time0;
 			reply.pong.latency = time2net(fromProxy->getLatency());
+			reply.pong.latencySpread = time2net(fromProxy->getLatencySpread());
 
 			T_MEASURE_STATEMENT(m_topology->send(fromProxy->m_handle, &reply, RmiPong_NetSize()), 0.001);
 		}
@@ -266,9 +267,10 @@ bool Replicator::update()
 		{
 			double pingTime = min(m_time0, net2time(msg.pong.time0));
 			double roundTrip = m_time0 - pingTime;
-			double reverseLatency = net2time(msg.pong.latency);
+			double latencyReverse = net2time(msg.pong.latency);
+			double latencyReverseSpread = net2time(msg.pong.latencySpread);
 
-			T_MEASURE_STATEMENT(fromProxy->updateLatency(roundTrip, reverseLatency), 0.001);
+			T_MEASURE_STATEMENT(fromProxy->updateLatency(roundTrip, latencyReverse, latencyReverseSpread), 0.001);
 		}
 		else if (msg.id == RmiState)
 		{
@@ -554,6 +556,18 @@ double Replicator::getAverageLatency() const
 	{
 		for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
 			latency += (*i)->getLatency();
+		latency /= double(m_proxies.size());
+	}
+	return latency;
+}
+
+double Replicator::getAverageReverseLatency() const
+{
+	double latency = 0.0;
+	if (!m_proxies.empty())
+	{
+		for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+			latency += (*i)->getReverseLatency();
 		latency /= double(m_proxies.size());
 	}
 	return latency;

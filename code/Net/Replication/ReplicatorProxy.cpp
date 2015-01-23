@@ -41,17 +41,22 @@ uint8_t ReplicatorProxy::getStatus() const
 
 double ReplicatorProxy::getLatency() const
 {
-	return (m_latencyMedian + m_latencyReverse) / 2.0;
+	return m_latency;
 }
 
-double ReplicatorProxy::getLatencyUp() const
+double ReplicatorProxy::getLatencySpread() const
 {
-	return m_latencyMedian;
+	return m_latencyStandardDeviation;
 }
 
-double ReplicatorProxy::getLatencyDown() const
+double ReplicatorProxy::getReverseLatency() const
 {
 	return m_latencyReverse;
+}
+
+double ReplicatorProxy::getReverseLatencySpread() const
+{
+	return m_latencyReverseStandardDeviation;
 }
 
 bool ReplicatorProxy::isConnected() const
@@ -233,18 +238,31 @@ bool ReplicatorProxy::acceptEvent(uint8_t sequence, const ISerializable* eventOb
 	return true;
 }
 
-void ReplicatorProxy::updateLatency(double roundTrip, double latencyReverse)
+void ReplicatorProxy::updateLatency(double roundTrip, double latencyReverse, double latencyReverseSpread)
 {
+	// Keep circular buffer of latest round trips.
 	m_roundTrips.push_back(roundTrip);
 
-	double sorted[17];
+	double denom = 1.0 / double(m_roundTrips.size());
+
+	// Calculate average latency.
+	double sum = 0;
 	for (uint32_t i = 0; i < m_roundTrips.size(); ++i)
-		sorted[i] = m_roundTrips[i];
+		sum += m_roundTrips[i];
+	m_latency = (sum / 2.0) * denom;
 
-	std::sort(&sorted[0], &sorted[m_roundTrips.size()]);
+	// Calculate standard deviation.
+	double sumDiff = 0;
+	for (uint32_t i = 0; i < m_roundTrips.size(); ++i)
+	{
+		double diff = m_roundTrips[i] / 2.0 - m_latency;
+		sumDiff += diff * diff;
+	}
+	m_latencyStandardDeviation = std::sqrt(sumDiff * denom);
 
-	m_latencyMedian = m_roundTrips[m_roundTrips.size() / 2] / 2;
+	// Save reverse metrics.
 	m_latencyReverse = latencyReverse;
+	m_latencyReverseStandardDeviation = latencyReverseSpread;
 }
 
 bool ReplicatorProxy::receivedState(double stateTime, const void* stateData, uint32_t stateDataSize)
@@ -305,8 +323,10 @@ void ReplicatorProxy::disconnect()
 	m_sequence = 0;
 	m_timeUntilTxPing = 0.0;
 	m_timeUntilTxState = 0.0;
-	m_latencyMedian = 0.0;
+	m_latency = 0.0;
+	m_latencyStandardDeviation = 0.0;
 	m_latencyReverse = 0.0;
+	m_latencyReverseStandardDeviation = 0.0;
 	m_events.clear();
 	m_lastEvents.clear();
 }
@@ -326,8 +346,10 @@ ReplicatorProxy::ReplicatorProxy(Replicator* replicator, net_handle_t handle, co
 ,	m_sequence(0)
 ,	m_timeUntilTxPing(0.0)
 ,	m_timeUntilTxState(0.0)
-,	m_latencyMedian(0.0)
+,	m_latency(0.0)
+,	m_latencyStandardDeviation(0.0)
 ,	m_latencyReverse(0.0)
+,	m_latencyReverseStandardDeviation(0.0)
 {
 }
 

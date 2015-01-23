@@ -215,6 +215,10 @@ public:
 	 */
 	double getAverageLatency() const;
 
+	/*! \
+	 */
+	double getAverageReverseLatency() const;
+
 	/*! \brief Broadcast high priority event to all peers.
 	 */
 	bool broadcastEvent(const ISerializable* eventObject);

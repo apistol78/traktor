@@ -166,8 +166,9 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	classReplicatorProxy->addMethod("getName", &net::ReplicatorProxy::getName);
 	classReplicatorProxy->addMethod("getStatus", &net::ReplicatorProxy::getStatus);
 	classReplicatorProxy->addMethod("getLatency", &net::ReplicatorProxy::getLatency);
-	classReplicatorProxy->addMethod("getLatencyUp", &net::ReplicatorProxy::getLatencyUp);
-	classReplicatorProxy->addMethod("getLatencyDown", &net::ReplicatorProxy::getLatencyDown);
+	classReplicatorProxy->addMethod("getLatencySpread", &net::ReplicatorProxy::getLatencySpread);
+	classReplicatorProxy->addMethod("getReverseLatency", &net::ReplicatorProxy::getReverseLatency);
+	classReplicatorProxy->addMethod("getReverseLatencySpread", &net::ReplicatorProxy::getReverseLatencySpread);
 	classReplicatorProxy->addMethod("isConnected", &net::ReplicatorProxy::isConnected);
 	classReplicatorProxy->addMethod("setPrimary", &net::ReplicatorProxy::setPrimary);
 	classReplicatorProxy->addMethod("isPrimary", &net::ReplicatorProxy::isPrimary);
