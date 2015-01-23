@@ -20,7 +20,7 @@ namespace traktor
 		namespace
 		{
 
-const double c_maxDeltaTime = 10.0;
+const double c_maxDeltaTime = 0.1;
 
 bool lowestLatencyPred(const ReplicatorProxy* l, const ReplicatorProxy* r)
 {
@@ -135,13 +135,8 @@ bool Replicator::update()
 	RMessage reply;
 	net_handle_t from;
 
-	//double T0 = m_timer.getElapsedTime();
+	// Need to use real-time delta; cannot use engine filtered and clamped delta.
 	double dT = m_timer.getDeltaTime();
-	if (dT > c_maxDeltaTime)
-	{
-		log::error << getLogPrefix() << L"Delta time from system clock too large; Unable to keep replicator up to date." << Endl;
-		return false;
-	}
 
 	// Update underlying network topology layer.
 	if (!m_topology->update(dT))
@@ -363,7 +358,8 @@ bool Replicator::update()
 
 	if (timeOffsetReceived)
 	{
-		// Adjust times based from estimated time offset.
+		// Adjust times based from estimated time offset; also loose
+		// synchronization flag if time offset too large.
 		if (abs(timeOffset) >= 1.0)
 		{
 			m_timeSynchronized = false;
@@ -371,7 +367,8 @@ bool Replicator::update()
 		}
 		else if (abs(timeOffset) > 0.06)
 		{
-			m_timeSynchronized = false;
+			if (abs(timeOffset) > 0.2)
+				m_timeSynchronized = false;
 			timeOffset *= 0.4;
 		}
 		else
@@ -426,21 +423,42 @@ bool Replicator::update()
 
 	T_MEASURE_UNTIL(0.001);
 
-	// Need to migrate primary if anyone is "in session" before I.
-	if ((m_status & 0x80) == 0x00 && isPrimary())
+	// Migrate primary peer token to most suitable.
+	if (isPrimary())
 	{
 		m_proxies.sort(lowestLatencyPred);
-		for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+		if ((m_status & 0x80) == 0x00)
 		{
-			if (((*i)->getStatus() & 0x80) == 0x80)
+			// Not "in session"; migrate primary if anyone else is.
+			for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
 			{
-				if ((*i)->setPrimary())
+				if (((*i)->getStatus() & 0x80) == 0x80)
 				{
-					log::info << getLogPrefix() << L"Migrated primary token to peer " << (*i)->getHandle() << L"." << Endl;
-					break;
+					if ((*i)->setPrimary())
+					{
+						log::info << getLogPrefix() << L"Migrated primary token to peer " << (*i)->getHandle() << L" (1)." << Endl;
+						break;
+					}
+					else
+						log::info << getLogPrefix() << L"Unable migrate primary token to peer " << (*i)->getHandle() << L" (1)." << Endl;
 				}
-				else
-					log::info << getLogPrefix() << L"Unable migrate primary token to peer " << (*i)->getHandle() << L"." << Endl;
+			}
+		}
+		else if (dT > c_maxDeltaTime)
+		{
+			// Running poorly; migrate primary to else anyone.
+			for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+			{
+				if (((*i)->getStatus() & 0x80) == 0x80)
+				{
+					if ((*i)->setPrimary())
+					{
+						log::info << getLogPrefix() << L"Migrated primary token to peer " << (*i)->getHandle() << L" (2)." << Endl;
+						break;
+					}
+					else
+						log::info << getLogPrefix() << L"Unable migrate primary token to peer " << (*i)->getHandle() << L" (2)." << Endl;
+				}
 			}
 		}
 	}
