@@ -573,8 +573,12 @@ void FlashSpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 		bool inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
 		if (inside)
 		{
-			if (executeScriptEvent(ActionContext::IdOnPress, ActionValue()))
+			if (haveScriptEvent(ActionContext::IdOnPress) || haveScriptEvent(ActionContext::IdOnRelease))
+			{
+				log::info << L"PRESSED ON " << mbstows(getTarget()) << Endl;
+				executeScriptEvent(ActionContext::IdOnPress, ActionValue());
 				context->setPressed(this);
+			}
 		}
 	}
 
