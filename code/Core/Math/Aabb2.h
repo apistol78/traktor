@@ -3,6 +3,7 @@
 
 #include "Core/Config.h"
 #include "Core/Math/MathConfig.h"
+#include "Core/Math/MathUtils.h"
 #include "Core/Math/Vector2.h"
 
 // import/export mechanism.
