@@ -239,7 +239,6 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	classReplicator->addMethod("setState", &net::Replicator::setState);
 	classReplicator->addMethod("getState", &net::Replicator::getState);
 	classReplicator->addMethod("setSendState", &net::Replicator::setSendState);
-	classReplicator->addMethod("setTimeSynchronization", &net::Replicator::setTimeSynchronization);
 	classReplicator->addMethod("getProxyCount", &net::Replicator::getProxyCount);
 	classReplicator->addMethod("getProxy", &net::Replicator::getProxy);
 	classReplicator->addMethod("getPrimaryProxy", &net::Replicator::getPrimaryProxy);
@@ -248,6 +247,7 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	classReplicator->addMethod("sendEventToPrimary", &net::Replicator::sendEventToPrimary);
 	classReplicator->addMethod("getTime", &net::Replicator::getTime);
 	classReplicator->addMethod("getTimeVariance", &net::Replicator::getTimeVariance);
+	classReplicator->addMethod("isTimeSynchronized", &net::Replicator::isTimeSynchronized);
 	scriptManager->registerClass(classReplicator);
 }
 
