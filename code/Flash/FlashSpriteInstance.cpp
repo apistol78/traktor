@@ -1,4 +1,5 @@
 #include <limits>
+#include "Core/Math/Format.h"
 #include "Flash/FlashDictionary.h"
 #include "Flash/FlashCanvas.h"
 #include "Flash/FlashSound.h"
@@ -177,6 +178,11 @@ void FlashSpriteInstance::updateDisplayList()
 }
 
 FlashDisplayList& FlashSpriteInstance::getDisplayList()
+{
+	return m_displayList;
+}
+
+const FlashDisplayList& FlashSpriteInstance::getDisplayList() const
 {
 	return m_displayList;
 }
@@ -558,9 +564,8 @@ void FlashSpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 	// Issue events on "visible" characters.
 	if (!m_visibleCharacters.empty())
 	{
-		//for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
 		for (int32_t i = int32_t(m_visibleCharacters.size() - 1); i >= 0; --i)
-			/*(*i)*/m_visibleCharacters[i]->eventMouseDown(x, y, button);
+			m_visibleCharacters[i]->eventMouseDown(x, y, button);
 	}
 
 	// Issue script assigned event.
@@ -575,7 +580,6 @@ void FlashSpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 		{
 			if (haveScriptEvent(ActionContext::IdOnPress) || haveScriptEvent(ActionContext::IdOnRelease))
 			{
-				log::info << L"PRESSED ON " << mbstows(getTarget()) << Endl;
 				executeScriptEvent(ActionContext::IdOnPress, ActionValue());
 				context->setPressed(this);
 			}
@@ -603,8 +607,8 @@ void FlashSpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 	// Issue events on "visible" characters.
 	if (!m_visibleCharacters.empty())
 	{
-		for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
-			(*i)->eventMouseUp(x, y, button);
+		for (int32_t i = int32_t(m_visibleCharacters.size() - 1); i >= 0; --i)
+			m_visibleCharacters[i]->eventMouseUp(x, y, button);
 	}
 
 	// Issue script assigned event.
