@@ -420,6 +420,9 @@ bool Replicator::update()
 	// Migrate primary peer token to most suitable.
 	if (isPrimary())
 	{
+		// Time is considered to be sync if I'm primary.
+		m_timeSynchronized = true;
+
 		m_proxies.sort(lowestLatencyPred);
 		if ((m_status & 0x80) == 0x00)
 		{
