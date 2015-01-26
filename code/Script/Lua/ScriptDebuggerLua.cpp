@@ -199,8 +199,6 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 	if (!currentContext)
 		return;
 
-	T_ASSERT (ar->currentline >= 1);
-
 	if (m_state == StRunning)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
