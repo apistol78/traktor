@@ -326,23 +326,24 @@ void FlashCharacterInstance::setParent(FlashCharacterInstance* parent)
 	m_parent = parent;
 }
 
-void FlashCharacterInstance::executeScriptEvent(uint32_t eventName, const ActionValue& arg)
+bool FlashCharacterInstance::executeScriptEvent(uint32_t eventName, const ActionValue& arg)
 {
 	ActionObject* self = getAsObject(m_context);
 	T_ASSERT (self);
 
 	ActionValue memberValue;
 	if (!self->getMember(eventName, memberValue))
-		return;
+		return false;
 
 	Ref< ActionFunction > eventFunction = memberValue.getObject< ActionFunction >();
 	if (!eventFunction)
-		return;
+		return false;
 
 	ActionValueArray argv(m_context->getPool(), 1);
 	argv[0] = arg;
 
 	eventFunction->call(self, argv);
+	return true;
 }
 
 void FlashCharacterInstance::trace(const IVisitor& visitor) const

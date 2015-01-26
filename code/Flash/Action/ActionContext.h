@@ -81,6 +81,8 @@ public:
 
 	void setFocus(FlashCharacterInstance* focus);
 
+	void setPressed(FlashCharacterInstance* pressed);
+
 	void addFrameListener(ActionObject* frameListener);
 
 	void removeFrameListener(ActionObject* frameListener);
@@ -107,6 +109,8 @@ public:
 
 	FlashCharacterInstance* getFocus() const { return m_focus; }
 
+	FlashCharacterInstance* getPressed() const { return m_pressed; }
+
 	ActionValuePool& getPool() { return m_pool; }
 
 protected:
@@ -128,6 +132,7 @@ private:
 	Ref< ActionObject > m_global;
 	Ref< FlashSpriteInstance > m_movieClip;
 	Ref< FlashCharacterInstance > m_focus;
+	Ref< FlashCharacterInstance > m_pressed;
 	ActionStrings m_strings;
 	ActionValuePool m_pool;
 	std::vector< FrameListener > m_frameListeners;

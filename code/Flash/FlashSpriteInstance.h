@@ -63,6 +63,8 @@ public:
 
 	Aabb2 getLocalBounds() const;
 
+	Aabb2 getVisibleLocalBounds() const;
+
 	void setMask(FlashSpriteInstance* maskInstance);
 
 	FlashSpriteInstance* getMask();
@@ -131,7 +133,6 @@ private:
 	bool m_inside;
 	bool m_inDispatch;
 	bool m_gotoIssued;
-	bool m_press;
 	int32_t m_mouseX;
 	int32_t m_mouseY;
 	int32_t m_maskCount;
