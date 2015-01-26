@@ -78,6 +78,22 @@ public:
 		return *this;
 	}
 
+	/*! \brief Get overlapped bounding box. */
+	T_MATH_INLINE Aabb2 overlapped(const Aabb2& other) const
+	{
+		float x1 = max(mn.x, other.mn.x);
+		float y1 = max(mn.y, other.mn.y);
+		float x2 = min(mx.x, other.mx.x);
+		float y2 = min(mx.y, other.mx.y);
+		if (x1 <= x2 && y1 <= y2)
+			return Aabb2(
+				Vector2(x1, y1),
+				Vector2(x2, y2)
+			);
+		else
+			return Aabb2();
+	}
+
 	/*! \brief Get center of bounding box. */
 	T_MATH_INLINE Vector2 getCenter() const
 	{

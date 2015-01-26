@@ -55,6 +55,8 @@ public:
 
 	FlashDisplayList& getDisplayList();
 
+	const FlashDisplayList& getDisplayList() const;
+
 	void updateSounds(FlashSoundPlayer* soundPlayer);
 
 	void removeMovieClip();

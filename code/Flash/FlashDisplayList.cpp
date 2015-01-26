@@ -210,6 +210,35 @@ int32_t FlashDisplayList::getObjectDepth(const FlashCharacterInstance* character
 	return 0;
 }
 
+const FlashCharacterInstance* FlashDisplayList::getObjectMask(const FlashCharacterInstance* characterInstance) const
+{
+	T_ASSERT (characterInstance);
+	for (layer_map_t::const_iterator i = m_layers.begin(); i != m_layers.end(); )
+	{
+		const FlashDisplayList::Layer& layer = i->second;
+		if (!layer.instance)
+		{
+			++i;
+			continue;
+		}
+
+		if (layer.clipDepth)
+		{
+			for (++i; i != m_layers.end(); ++i)
+			{
+				if (layer.clipDepth > 0 && i->first > layer.clipDepth)
+					break;
+
+				if (i->second.instance == characterInstance)
+					return layer.instance;
+			}
+		}
+		else
+			++i;
+	}
+	return 0;
+}
+
 int32_t FlashDisplayList::getNextHighestDepth() const
 {
 	int32_t depth = 0;
