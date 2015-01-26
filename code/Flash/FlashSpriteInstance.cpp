@@ -35,7 +35,6 @@ FlashSpriteInstance::FlashSpriteInstance(ActionContext* context, FlashCharacterI
 ,	m_inside(false)
 ,	m_inDispatch(false)
 ,	m_gotoIssued(false)
-,	m_press(false)
 ,	m_mouseX(0)
 ,	m_mouseY(0)
 ,	m_maskCount(0)
@@ -261,6 +260,24 @@ Aabb2 FlashSpriteInstance::getLocalBounds() const
 	{
 		T_ASSERT (i->second.instance);
 		bounds.contain(i->second.instance->getBounds());
+	}
+
+	return bounds;
+}
+
+Aabb2 FlashSpriteInstance::getVisibleLocalBounds() const
+{
+	Aabb2 bounds;
+
+	if (m_canvas)
+		bounds = m_canvas->getBounds();
+
+	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
+	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
+	{
+		T_ASSERT (i->second.instance);
+		if (i->second.instance->isVisible())
+			bounds.contain(i->second.instance->getBounds());
 	}
 
 	return bounds;
@@ -541,20 +558,24 @@ void FlashSpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 	// Issue events on "visible" characters.
 	if (!m_visibleCharacters.empty())
 	{
-		for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
-			(*i)->eventMouseDown(x, y, button);
+		//for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
+		for (int32_t i = int32_t(m_visibleCharacters.size() - 1); i >= 0; --i)
+			/*(*i)*/m_visibleCharacters[i]->eventMouseDown(x, y, button);
 	}
 
 	// Issue script assigned event.
 	executeScriptEvent(ActionContext::IdOnMouseDown, ActionValue());
 
 	// Check if we're inside then issue press events.
-	Aabb2 bounds = getLocalBounds();
-	bool inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
-	if (inside)
+	if (!context->getPressed())
 	{
-		executeScriptEvent(ActionContext::IdOnPress, ActionValue());
-		m_press = true;
+		Aabb2 bounds = getVisibleLocalBounds();
+		bool inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
+		if (inside)
+		{
+			if (executeScriptEvent(ActionContext::IdOnPress, ActionValue()))
+				context->setPressed(this);
+		}
 	}
 
 	// Call base class event function.
@@ -586,15 +607,22 @@ void FlashSpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 	executeScriptEvent(ActionContext::IdOnMouseUp, ActionValue());
 
 	// Check if we're inside then issue press events.
-	Aabb2 bounds = getLocalBounds();
-	bool inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
-	if (inside && m_press)
-		executeScriptEvent(ActionContext::IdOnRelease, ActionValue());
+	if (context->getPressed() == this)
+	{
+		Aabb2 bounds = getVisibleLocalBounds();
+		bool inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
+		if (inside)
+			executeScriptEvent(ActionContext::IdOnRelease, ActionValue());
+	}
 
 	FlashCharacterInstance::eventMouseUp(x, y, button);
 
 	context->setMovieClip(current);
-	m_press = false;
+	
+	// Finally if mouse up has been issued and we're at the bottom
+	// of event chain, we drop reference to pressed character.
+	if (!getParent())
+		context->setPressed(0);
 }
 
 void FlashSpriteInstance::eventMouseMove0(int32_t x, int32_t y, int32_t button)
@@ -620,7 +648,7 @@ void FlashSpriteInstance::eventMouseMove0(int32_t x, int32_t y, int32_t button)
 	executeScriptEvent(ActionContext::IdOnMouseMove, ActionValue());
 
 	// Roll over and out event handling.
-	Aabb2 bounds = getLocalBounds();
+	Aabb2 bounds = getVisibleLocalBounds();
 	bool inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
 	if (inside != m_inside)
 	{
@@ -646,7 +674,7 @@ void FlashSpriteInstance::eventMouseMove1(int32_t x, int32_t y, int32_t button)
 	m_mouseY = int32_t(xy.y / 20.0f);
 
 	// Roll over and out event handling.
-	Aabb2 bounds = getLocalBounds();
+	Aabb2 bounds = getVisibleLocalBounds();
 	bool inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
 	if (inside != m_inside)
 	{

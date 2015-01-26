@@ -195,7 +195,7 @@ public:
 protected:
 	void setParent(FlashCharacterInstance* parent);
 
-	void executeScriptEvent(uint32_t eventName, const ActionValue& arg);
+	bool executeScriptEvent(uint32_t eventName, const ActionValue& arg);
 
 	virtual void trace(const IVisitor& visitor) const;
 

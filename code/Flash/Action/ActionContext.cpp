@@ -73,6 +73,11 @@ void ActionContext::setFocus(FlashCharacterInstance* focus)
 		m_focus->eventSetFocus();
 }
 
+void ActionContext::setPressed(FlashCharacterInstance* pressed)
+{
+	m_pressed = pressed;
+}
+
 void ActionContext::addFrameListener(ActionObject* frameListener)
 {
 	ActionValue memberValue;
