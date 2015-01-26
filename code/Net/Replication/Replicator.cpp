@@ -37,13 +37,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.net.Replicator.IEventListener", Replicator::IEv
 
 Replicator::Replicator()
 :	m_time0(0.0)
+,	m_timeContinuousSync(0.0)
 ,	m_time(0.0)
 ,	m_timeVariance(0.0)
 ,	m_status(0)
 ,	m_allowPrimaryRequests(true)
 ,	m_origin(Transform::identity())
 ,	m_sendState(false)
-,	m_timeSynchronization(true)
 ,	m_timeSynchronized(false)
 {
 }
@@ -231,7 +231,7 @@ bool Replicator::update()
 		if (fromProxy->isPrimary())
 		{
 			double latency = fromProxy->getReverseLatency();
-			double ghostOffset = net2time(msg.time) + latency - m_time;
+			double ghostOffset = net2time(msg.time) + latency - m_timeContinuousSync;
 
 			if (!timeOffsetReceived)
 				timeOffset = ghostOffset;
@@ -358,17 +358,27 @@ bool Replicator::update()
 
 	if (timeOffsetReceived)
 	{
-		// Adjust times based from estimated time offset; also loose
-		// synchronization flag if time offset too large.
 		if (abs(timeOffset) >= 1.0)
 		{
-			m_timeSynchronized = false;
+			if (m_timeSynchronized)
+			{
+				log::warning << getLogPrefix() << L"Time synchronization lost (1)." << Endl;
+				m_timeErrors.clear();
+				m_timeSynchronized = false;
+			}
 			timeOffset *= 0.8;
 		}
 		else if (abs(timeOffset) > 0.06)
 		{
 			if (abs(timeOffset) > 0.2)
-				m_timeSynchronized = false;
+			{
+				if (m_timeSynchronized)
+				{
+					log::warning << getLogPrefix() << L"Time synchronization lost (2)." << Endl;
+					m_timeErrors.clear();
+					m_timeSynchronized = false;
+				}
+			}
 			timeOffset *= 0.4;
 		}
 		else
@@ -377,30 +387,7 @@ bool Replicator::update()
 			timeOffset *= 0.4 * k;
 		}
 
-		if (m_timeSynchronization || !m_timeSynchronized)
-		{
-			if (abs(timeOffset) > 0.01)
-			{
-				m_time += timeOffset;
-				for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
-				{
-					(*i)->m_stateTimeN2 += timeOffset;
-					(*i)->m_stateTimeN1 += timeOffset;
-					(*i)->m_stateTime0 += timeOffset;
-				}
-
-				for (RefArray< IListener >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
-				{
-					T_MEASURE_STATEMENT((*i)->notify(
-						this,
-						float(timeOffset),
-						IListener::ReTimeAdjust,
-						0,
-						0
-					), 0.001);
-				}
-			}
-		}
+		m_timeContinuousSync += timeOffset;
 
 		// Update time variance; this should become fairly stable after a couple of estimates.
 		m_timeErrors.push_back(abs(timeOffset));
@@ -410,12 +397,19 @@ bool Replicator::update()
 				k += m_timeErrors[i];
 			k /= double(m_timeErrors.size());
 			m_timeVariance = std::sqrt((k * k) / 6.0);
+		}
 
-			// Have we reached acceptable variance?
-			if (!m_timeSynchronized && m_timeVariance <= 0.03 && abs(timeOffset) <= 0.01)
+		// Have we reached acceptable variance?
+		if (
+			m_timeErrors.full() &&
+			m_timeVariance <= 0.03 &&
+			abs(timeOffset) <= 0.01
+		)
+		{
+			if (!m_timeSynchronized)
 			{
-				if (!m_timeSynchronization)
-					log::info << getLogPrefix() << L"Time re-synchronized" << Endl;
+				log::info << getLogPrefix() << L"Time synchronized (" << (m_timeContinuousSync - m_time) * 1000.0 << L" ms)" << Endl;
+				m_time = m_timeContinuousSync;
 				m_timeSynchronized = true;
 			}
 		}
@@ -466,6 +460,7 @@ bool Replicator::update()
 	T_MEASURE_UNTIL(0.001);
 
 	m_time += dT;
+	m_timeContinuousSync += dT;
 	m_time0 += dT;
 
 	return true;
@@ -533,11 +528,6 @@ const State* Replicator::getState() const
 void Replicator::setSendState(bool sendState)
 {
 	m_sendState = sendState;
-}
-
-void Replicator::setTimeSynchronization(bool timeSynchronization)
-{
-	m_timeSynchronization = timeSynchronization;
 }
 
 uint32_t Replicator::getProxyCount() const
@@ -636,6 +626,11 @@ double Replicator::getTime() const
 double Replicator::getTimeVariance() const
 {
 	return m_timeVariance;
+}
+
+bool Replicator::isTimeSynchronized() const
+{
+	return m_timeSynchronized;
 }
 
 std::wstring Replicator::getLogPrefix() const

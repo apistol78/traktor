@@ -195,10 +195,6 @@ public:
 	 */
 	void setSendState(bool sendState);
 
-	/*! \brief
-	 */
-	void setTimeSynchronization(bool timeSynchronization);
-
 	/*! \
 	 */
 	uint32_t getProxyCount() const;
@@ -235,6 +231,10 @@ public:
 	 */
 	double getTimeVariance() const;
 
+	/*! \brief Get time synchronization flag.
+	 */
+	bool isTimeSynchronized() const;
+
 private:
 	friend class ReplicatorProxy;
 
@@ -246,6 +246,7 @@ private:
 	std::wstring m_name;
 	Timer m_timer;
 	double m_time0;								/*!< Local time. */
+	double m_timeContinuousSync;				/*!< Network latency compensated time, but continuously synchronized. */
 	double m_time;								/*!< Network latency compensated time. */
 	CircularVector< double, 32 > m_timeErrors;	/*!< History of time errors. */
 	double m_timeVariance;						/*!< Network time compensation time variance. */
@@ -256,7 +257,6 @@ private:
 	Ref< const State > m_state;
 	RefArray< ReplicatorProxy > m_proxies;
 	bool m_sendState;
-	bool m_timeSynchronization;
 	bool m_timeSynchronized;
 
 	std::wstring getLogPrefix() const;
