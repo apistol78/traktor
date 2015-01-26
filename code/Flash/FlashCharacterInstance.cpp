@@ -326,6 +326,22 @@ void FlashCharacterInstance::setParent(FlashCharacterInstance* parent)
 	m_parent = parent;
 }
 
+bool FlashCharacterInstance::haveScriptEvent(uint32_t eventName)
+{
+	ActionObject* self = getAsObject(m_context);
+	T_ASSERT (self);
+
+	ActionValue memberValue;
+	if (!self->getMember(eventName, memberValue))
+		return false;
+
+	Ref< ActionFunction > eventFunction = memberValue.getObject< ActionFunction >();
+	if (!eventFunction)
+		return false;
+
+	return true;
+}
+
 bool FlashCharacterInstance::executeScriptEvent(uint32_t eventName, const ActionValue& arg)
 {
 	ActionObject* self = getAsObject(m_context);
