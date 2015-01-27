@@ -180,6 +180,7 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	classReplicatorProxy->addMethod("setStateTemplate", &net::ReplicatorProxy::setStateTemplate);
 	classReplicatorProxy->addMethod("getStateTemplate", &net::ReplicatorProxy::getStateTemplate);
 	classReplicatorProxy->addMethod("getState", &net::ReplicatorProxy::getState);
+	classReplicatorProxy->addMethod("getFilteredState", &net::ReplicatorProxy::getFilteredState);
 	classReplicatorProxy->addMethod("resetStates", &net::ReplicatorProxy::resetStates);
 	classReplicatorProxy->addMethod("setSendState", &net::ReplicatorProxy::setSendState);
 	classReplicatorProxy->addMethod("sendEvent", &net::ReplicatorProxy::sendEvent);
