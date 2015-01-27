@@ -1,3 +1,5 @@
+#pragma optimize( "", off )
+
 #include "Core/Io/IStream.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/String.h"
@@ -34,6 +36,12 @@ std::wstring decodeCharacterEntities(const std::wstring& text)
 		{
 			if (code == L"nbsp")
 				ss << L" ";
+			else if (code == L"lt")
+				ss << L"<";
+			else if (code == L"gt")
+				ss << L">";
+			else if (code == L"amp")
+				ss << L"&";
 		}
 
 		offset = ncce + 1;
