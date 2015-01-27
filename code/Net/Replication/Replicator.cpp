@@ -409,6 +409,14 @@ bool Replicator::update()
 			if (!m_timeSynchronized)
 			{
 				log::info << getLogPrefix() << L"Time synchronized (" << (m_timeContinuousSync - m_time) * 1000.0 << L" ms)" << Endl;
+
+				for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+				{
+					(*i)->m_stateTimeN2 += (m_timeContinuousSync - m_time);
+					(*i)->m_stateTimeN1 += (m_timeContinuousSync - m_time);
+					(*i)->m_stateTime0 += (m_timeContinuousSync - m_time);
+				}
+
 				m_time = m_timeContinuousSync;
 				m_timeSynchronized = true;
 			}
