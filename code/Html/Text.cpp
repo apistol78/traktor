@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include "Core/Io/IStream.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/String.h"
