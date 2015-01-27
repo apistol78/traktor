@@ -107,6 +107,10 @@ public:
 
 	/*! \brief
 	 */
+	Ref< const State > getFilteredState(double time, double limit, const State* currentState, float filterCoeff) const;
+
+	/*! \brief
+	 */
 	void resetStates();
 
 	/*! \brief
