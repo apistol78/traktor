@@ -9,7 +9,7 @@ IntervalTransform::IntervalTransform()
 }
 
 IntervalTransform::IntervalTransform(const Transform& transform)
-:	m_stepped(false)
+:	m_stepped(true)
 {
 	m_transform[0] = transform;
 	m_transform[1] = transform;
@@ -36,6 +36,9 @@ Transform IntervalTransform::get(float interval) const
 
 void IntervalTransform::step()
 {
+	if (m_stepped)
+		m_transform[0] = m_transform[1];
+
 	m_stepped = true;
 }
 
