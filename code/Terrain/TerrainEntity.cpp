@@ -454,37 +454,48 @@ void TerrainEntity::render(
 
 	render::RenderContext* renderContext = worldContext.getRenderContext();
 
-	render::ProgramParameters* sharedParameters = renderContext->alloc< render::ProgramParameters >();
-	sharedParameters->beginParameters(renderContext);
+	// Setup shared shader parameters.
+	for (int i = 0; i < 2; ++i)
+	{
+		render::NullRenderBlock* renderBlock = renderContext->alloc< render::NullRenderBlock >("Terrain patch setup");
 
-	sharedParameters->setTextureParameter(m_handleHeightfield, m_terrain->getHeightMap());
-	sharedParameters->setTextureParameter(m_handleSurface, m_surfaceCache->getVirtualTexture());
-	sharedParameters->setTextureParameter(m_handleColorMap, m_terrain->getColorMap());
-	sharedParameters->setTextureParameter(m_handleNormals, m_terrain->getNormalMap());
-	sharedParameters->setTextureParameter(m_handleSplatMap, m_terrain->getSplatMap());
-	sharedParameters->setTextureParameter(m_handleCutMap, m_terrain->getCutMap());
-	sharedParameters->setTextureParameter(m_handleMaterialMap, m_terrain->getMaterialMap());
-	sharedParameters->setVectorParameter(m_handleEye, eyePosition);
-	sharedParameters->setVectorParameter(m_handleWorldOrigin, -worldExtent * Scalar(0.5f));
-	sharedParameters->setVectorParameter(m_handleWorldExtent, worldExtent);
-	sharedParameters->setFloatParameter(m_handleDetailDistance, detailDistance);
+		renderBlock->distance = -std::numeric_limits< float >::max();
+		renderBlock->program = (i == 0) ? coarseProgram : detailProgram;
+		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 
-	if (m_visualizeMode == VmColorMap)
-		sharedParameters->setTextureParameter(m_handleDebugMap, m_terrain->getColorMap());
-	else if (m_visualizeMode == VmNormalMap)
-		sharedParameters->setTextureParameter(m_handleDebugMap, m_terrain->getNormalMap());
-	else if (m_visualizeMode == VmHeightMap)
-		sharedParameters->setTextureParameter(m_handleDebugMap, m_terrain->getHeightMap());
-	else if (m_visualizeMode == VmSplatMap)
-		sharedParameters->setTextureParameter(m_handleDebugMap, m_terrain->getSplatMap());
-	else if (m_visualizeMode == VmCutMap)
-		sharedParameters->setTextureParameter(m_handleDebugMap, m_terrain->getCutMap());
-	else if (m_visualizeMode == VmMaterialMap)
-		sharedParameters->setTextureParameter(m_handleDebugMap, m_terrain->getMaterialMap());
+		renderBlock->programParams->beginParameters(renderContext);
 
-	worldRenderPass.setProgramParameters(sharedParameters, render::RpOpaque);
+		renderBlock->programParams->setTextureParameter(m_handleHeightfield, m_terrain->getHeightMap());
+		renderBlock->programParams->setTextureParameter(m_handleSurface, m_surfaceCache->getVirtualTexture());
+		renderBlock->programParams->setTextureParameter(m_handleColorMap, m_terrain->getColorMap());
+		renderBlock->programParams->setTextureParameter(m_handleNormals, m_terrain->getNormalMap());
+		renderBlock->programParams->setTextureParameter(m_handleSplatMap, m_terrain->getSplatMap());
+		renderBlock->programParams->setTextureParameter(m_handleCutMap, m_terrain->getCutMap());
+		renderBlock->programParams->setTextureParameter(m_handleMaterialMap, m_terrain->getMaterialMap());
+		renderBlock->programParams->setVectorParameter(m_handleEye, eyePosition);
+		renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, -worldExtent * Scalar(0.5f));
+		renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
+		renderBlock->programParams->setFloatParameter(m_handleDetailDistance, detailDistance);
 
-	sharedParameters->endParameters(renderContext);
+		if (m_visualizeMode == VmColorMap)
+			renderBlock->programParams->setTextureParameter(m_handleDebugMap, m_terrain->getColorMap());
+		else if (m_visualizeMode == VmNormalMap)
+			renderBlock->programParams->setTextureParameter(m_handleDebugMap, m_terrain->getNormalMap());
+		else if (m_visualizeMode == VmHeightMap)
+			renderBlock->programParams->setTextureParameter(m_handleDebugMap, m_terrain->getHeightMap());
+		else if (m_visualizeMode == VmSplatMap)
+			renderBlock->programParams->setTextureParameter(m_handleDebugMap, m_terrain->getSplatMap());
+		else if (m_visualizeMode == VmCutMap)
+			renderBlock->programParams->setTextureParameter(m_handleDebugMap, m_terrain->getCutMap());
+		else if (m_visualizeMode == VmMaterialMap)
+			renderBlock->programParams->setTextureParameter(m_handleDebugMap, m_terrain->getMaterialMap());
+
+		worldRenderPass.setProgramParameters(renderBlock->programParams, render::RpOpaque);
+
+		renderBlock->programParams->endParameters(renderContext);
+
+		worldContext.getRenderContext()->draw(render::RpOpaque, renderBlock);
+	}
 
 	// Render each visible patch.
 	for (AlignedVector< CullPatch >::const_iterator i = visiblePatches.begin(); i != visiblePatches.end(); ++i)
@@ -501,7 +512,7 @@ void TerrainEntity::render(
 		renderBlock->vertexBuffer = patch.vertexBuffer;
 		renderBlock->primitives = &m_primitives[patch.lastPatchLod];
 
-		renderBlock->programParams->attachParameters(sharedParameters);
+		//renderBlock->programParams->attachParameters(renderBlock->programParams);
 		renderBlock->programParams->beginParameters(renderContext);
 
 		renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, patchOrigin);
