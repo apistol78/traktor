@@ -140,6 +140,24 @@ public:
 	{
 	}
 
+	Vector4 getTriangleNormal(int triangleIndex, const Vector4& hitNormal) const
+	{
+		const AlignedVector< Vector4 >& vertices = m_mesh->getVertices();
+		const AlignedVector< Mesh::Triangle >& shapeTriangles = m_mesh->getShapeTriangles();
+
+		if (triangleIndex >= 0 && triangleIndex < shapeTriangles.size())
+		{
+			const Mesh::Triangle& t = shapeTriangles[triangleIndex];
+
+			Vector4 e1 = vertices[t.indices[2]] - vertices[t.indices[1]];
+			Vector4 e2 = vertices[t.indices[0]] - vertices[t.indices[1]];
+
+			return cross(e2, e1).normalized();
+		}
+		else
+			return hitNormal;
+	}
+
 private:
 	resource::Proxy< Mesh > m_mesh;
 };
@@ -208,6 +226,7 @@ struct ClosestRayExcludeResultCallback : public btCollisionWorld::RayResultCallb
 	uint32_t m_ignoreClusterId;
 	uint32_t m_group;
 	uint32_t m_queryTypes;
+	int32_t m_triangleIndex;
 
 	ClosestRayExcludeResultCallback(uint32_t ignoreClusterId, uint32_t group, uint32_t queryTypes, const btVector3& rayFromWorld, const btVector3& rayToWorld)
 	:	m_rayFromWorld(rayFromWorld)
@@ -215,6 +234,7 @@ struct ClosestRayExcludeResultCallback : public btCollisionWorld::RayResultCallb
 	,	m_ignoreClusterId(ignoreClusterId)
 	,	m_group(group)
 	,	m_queryTypes(queryTypes)
+	,	m_triangleIndex(-1)
 	{
 	}
 
@@ -243,6 +263,11 @@ struct ClosestRayExcludeResultCallback : public btCollisionWorld::RayResultCallb
 				m_hitNormalWorld = m_collisionObject->getWorldTransform().getBasis() * rayResult.m_hitNormalLocal;
 
 			m_hitPointWorld.setInterpolate3(m_rayFromWorld, m_rayToWorld, rayResult.m_hitFraction);
+
+			if (rayResult.m_localShapeInfo)
+				m_triangleIndex = rayResult.m_localShapeInfo->m_triangleIndex;
+			else
+				m_triangleIndex = -1;
 		}
 
 		return m_closestHitFraction;
@@ -257,12 +282,14 @@ struct ClosestRayExcludeAndCullResultCallback : public btCollisionWorld::RayResu
 	btVector3 m_hitPointWorld;
 	uint32_t m_ignoreClusterId;
 	uint32_t m_group;
+	int32_t m_triangleIndex;
 
 	ClosestRayExcludeAndCullResultCallback(uint32_t ignoreClusterId, uint32_t group, const btVector3& rayFromWorld, const btVector3& rayToWorld)
 	:	m_rayFromWorld(rayFromWorld)
 	,	m_rayToWorld(rayToWorld)
 	,	m_ignoreClusterId(ignoreClusterId)
 	,	m_group(group)
+	,	m_triangleIndex(-1)
 	{
 	}
 
@@ -289,6 +316,11 @@ struct ClosestRayExcludeAndCullResultCallback : public btCollisionWorld::RayResu
 		m_collisionObject = rayResult.m_collisionObject;
 		m_hitNormalWorld = hitNormalWorld;
 		m_hitPointWorld.setInterpolate3(m_rayFromWorld, m_rayToWorld, rayResult.m_hitFraction);
+		
+		if (rayResult.m_localShapeInfo)
+			m_triangleIndex = rayResult.m_localShapeInfo->m_triangleIndex;
+		else
+			m_triangleIndex = -1;
 
 		return m_closestHitFraction;
 	}
@@ -1271,6 +1303,19 @@ bool PhysicsManagerBullet::queryRay(
 		outResult.normal = fromBtVector3(callback.m_hitNormalWorld, 0.0).normalized();
 		outResult.distance = dot3(direction, outResult.position - at);
 		outResult.material = body->getMaterial();
+
+		if (callback.m_triangleIndex >= 0)
+		{
+			const btCollisionShape* collisionShape = callback.m_collisionObject->getCollisionShape();
+			if (collisionShape->getShapeType() == TRIANGLE_MESH_SHAPE_PROXYTYPE)
+			{
+				const btTriangleMeshShape* meshShape = reinterpret_cast< const btTriangleMeshShape* >(collisionShape);
+				const MeshProxyIndexVertexArray* meshInterface = reinterpret_cast< const MeshProxyIndexVertexArray* >(meshShape->getMeshInterface());
+
+				Vector4 triangleNormal = meshInterface->getTriangleNormal(callback.m_triangleIndex, outResult.normal);
+				outResult.normal = body->getTransform() * triangleNormal.xyz0();
+			}
+		}
 	}
 	else
 	{
@@ -1287,6 +1332,19 @@ bool PhysicsManagerBullet::queryRay(
 		outResult.normal = fromBtVector3(callback.m_hitNormalWorld, 0.0).normalized();
 		outResult.distance = dot3(direction, outResult.position - at);
 		outResult.material = body->getMaterial();
+
+		if (callback.m_triangleIndex >= 0)
+		{
+			const btCollisionShape* collisionShape = callback.m_collisionObject->getCollisionShape();
+			if (collisionShape->getShapeType() == TRIANGLE_MESH_SHAPE_PROXYTYPE)
+			{
+				const btTriangleMeshShape* meshShape = reinterpret_cast< const btTriangleMeshShape* >(collisionShape);
+				const MeshProxyIndexVertexArray* meshInterface = reinterpret_cast< const MeshProxyIndexVertexArray* >(meshShape->getMeshInterface());
+
+				Vector4 triangleNormal = meshInterface->getTriangleNormal(callback.m_triangleIndex, outResult.normal);
+				outResult.normal = body->getTransform() * triangleNormal.xyz0();
+			}
+		}
 	}
 
 	return true;
