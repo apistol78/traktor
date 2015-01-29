@@ -1,3 +1,4 @@
+#include "Core/Math/Const.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Spray/Modifiers/SizeModifier.h"
@@ -17,7 +18,10 @@ SizeModifierData::SizeModifierData()
 
 Ref< const Modifier > SizeModifierData::createModifier(resource::IResourceManager* resourceManager) const
 {
-	return new SizeModifier(m_adjustRate);
+	if (abs(m_adjustRate) > FUZZY_EPSILON)
+		return new SizeModifier(m_adjustRate);
+	else
+		return 0;
 }
 
 void SizeModifierData::serialize(ISerializer& s)

@@ -48,6 +48,7 @@ public:
 private:
 	resource::Proxy< hf::Heightfield > m_heightfield;
 	btVector3 m_localScaling;
+	bool m_haveCuts;
 };
 
 	}

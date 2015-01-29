@@ -1,3 +1,4 @@
+#include "Core/Math/Const.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Spray/Modifiers/DragModifier.h"
@@ -18,7 +19,10 @@ DragModifierData::DragModifierData()
 
 Ref< const Modifier > DragModifierData::createModifier(resource::IResourceManager* resourceManager) const
 {
-	return new DragModifier(m_linearDrag, m_angularDrag);
+	if (abs(m_linearDrag) > FUZZY_EPSILON || abs(m_angularDrag) > FUZZY_EPSILON)
+		return new DragModifier(m_linearDrag, m_angularDrag);
+	else
+		return 0;
 }
 
 void DragModifierData::serialize(ISerializer& s)

@@ -1,3 +1,4 @@
+#include "Core/Math/Const.h"
 #include "Core/Serialization/AttributeDirection.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
@@ -19,7 +20,10 @@ GravityModifierData::GravityModifierData()
 
 Ref< const Modifier > GravityModifierData::createModifier(resource::IResourceManager* resourceManager) const
 {
-	return new GravityModifier(m_gravity, m_world);
+	if (m_gravity.length2() > FUZZY_EPSILON * FUZZY_EPSILON)
+		return new GravityModifier(m_gravity, m_world);
+	else
+		return 0;
 }
 
 void GravityModifierData::serialize(ISerializer& s)

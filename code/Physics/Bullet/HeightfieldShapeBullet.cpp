@@ -168,13 +168,63 @@ struct ProcessRaycastAllTrianglesVisitor
 	}
 };
 
+struct ProcessRaycastAllTrianglesNoCutsVisitor
+{
+	hf::Heightfield* heightfield;
+	btTriangleRaycastCallback* callback;
+	btVector3 triangles[3];
+
+	void operator () (int32_t x, int32_t z)
+	{
+		int32_t xx = x * c_raycastStepSize;
+		int32_t zz = z * c_raycastStepSize;
+
+		float h[] =
+		{
+			heightfield->unitToWorld(heightfield->getGridHeightNearest(xx, zz)),
+			heightfield->unitToWorld(heightfield->getGridHeightNearest(xx + c_raycastStepSize, zz)),
+			heightfield->unitToWorld(heightfield->getGridHeightNearest(xx + c_raycastStepSize, zz + c_raycastStepSize)),
+			heightfield->unitToWorld(heightfield->getGridHeightNearest(xx, zz + c_raycastStepSize))
+		};
+
+		float mnx, mnz;
+		heightfield->gridToWorld(xx, zz, mnx, mnz);
+
+		float mxx, mxz;
+		heightfield->gridToWorld(xx + c_raycastStepSize, zz + c_raycastStepSize, mxx, mxz);
+
+		triangles[0] = btVector3(mnx, h[0], mnz);
+		triangles[1] = btVector3(mnx, h[3], mxz);
+		triangles[2] = btVector3(mxx, h[2], mxz);
+		callback->processTriangle(triangles, 0, 0);
+
+		triangles[0] = btVector3(mxx, h[2], mxz);
+		triangles[1] = btVector3(mxx, h[1], mnz);
+		triangles[2] = btVector3(mnx, h[0], mnz);
+		callback->processTriangle(triangles, 0, 1);
+	}
+};
+
 		}
 
 HeightfieldShapeBullet::HeightfieldShapeBullet(const resource::Proxy< hf::Heightfield >& heightfield)
 :	m_heightfield(heightfield)
 ,	m_localScaling(1.0f, 1.0f, 1.0f)
+,	m_haveCuts(false)
 {
 	m_shapeType = TERRAIN_SHAPE_PROXYTYPE;
+
+	// Check if we need to account for cuts in the heightfield;
+	// heightfields with no cuts are slightly faster to check.
+	const uint8_t* cuts = m_heightfield->getCuts();
+	for (uint32_t i = 0; i < m_heightfield->getSize() * m_heightfield->getSize() / 8; ++i)
+	{
+		if (cuts[i] != 0xff)
+		{
+			m_haveCuts = true;
+			break;
+		}
+	}
 }
 
 HeightfieldShapeBullet::~HeightfieldShapeBullet()
@@ -327,10 +377,20 @@ void HeightfieldShapeBullet::processRaycastAllTriangles(btTriangleRaycastCallbac
 	x1 /= c_raycastStepSize;
 	z1 /= c_raycastStepSize;
 
-	ProcessRaycastAllTrianglesVisitor prt;
-	prt.heightfield = m_heightfield;
-	prt.callback = callback;
-	line_dda(x0, z0, x1, z1, prt);
+	if (m_haveCuts)
+	{
+		ProcessRaycastAllTrianglesVisitor prt;
+		prt.heightfield = m_heightfield;
+		prt.callback = callback;
+		line_dda(x0, z0, x1, z1, prt);
+	}
+	else
+	{
+		ProcessRaycastAllTrianglesNoCutsVisitor prt;
+		prt.heightfield = m_heightfield;
+		prt.callback = callback;
+		line_dda(x0, z0, x1, z1, prt);
+	}
 }
 
 #endif
