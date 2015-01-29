@@ -7,6 +7,12 @@
 #include "Core/Misc/TString.h"
 #include "Script/Any.h"
 
+#if defined(_DEBUG)
+#	define T_CAST_ASSERT(x) T_ASSERT((x))
+#else
+#	define T_CAST_ASSERT(x)
+#endif
+
 namespace traktor
 {
 	namespace script
@@ -297,7 +303,8 @@ struct CastAny < Ref< Type >, false >
 		return Any::fromObject(const_cast< typename IsConst< Type >::type_t* >(value.ptr()));
 	}
 	static Ref< Type > get(const Any& value) {
-		return checked_type_cast< Type*, false >(value.getObject());
+		T_CAST_ASSERT (value.getObject() == 0 || is_a< Type >(value.getObject()));
+		return checked_type_cast< Type* >(value.getObject());
 	}
 };
 
@@ -311,7 +318,8 @@ struct CastAny < const Ref< Type >&, false >
 		return Any::fromObject(const_cast< typename IsConst< Type >::type_t* >(value.ptr()));
 	}
 	static Ref< Type > get(const Any& value) {
-		return checked_type_cast< Type*, false >(value.getObject());
+		T_CAST_ASSERT (value.getObject() == 0 || is_a< Type >(value.getObject()));
+		return checked_type_cast< Type* >(value.getObject());
 	}
 };
 
@@ -329,6 +337,7 @@ struct CastAny < Type, false >
 	}
 
 	static Type get(const Any& value) {
+		T_CAST_ASSERT (value.getObject() != 0 && is_a< type_t* >(value.getObject()));
 		return Type(*checked_type_cast< type_t*, false >(value.getObject()));
 	}
 };
@@ -347,6 +356,7 @@ struct CastAny < Type, true >
 	}
 
 	static Type get(const Any& value) {
+		T_CAST_ASSERT (value.getObject() == 0 || is_a< Type >(value.getObject()));
 		return checked_type_cast< Type >(value.getObject());
 	}
 };
@@ -361,6 +371,7 @@ struct CastAny < const TypeInfo&, false >
 		return Any::fromTypeInfo(&value);
 	}
 	static const TypeInfo& get(const Any& value) {
+		T_CAST_ASSERT (value.getTypeInfo() != 0);
 		return *value.getTypeInfo();
 	}
 };

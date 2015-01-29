@@ -1,3 +1,4 @@
+#include "Core/Math/Const.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Spray/Modifiers/IntegrateModifier.h"
@@ -19,7 +20,10 @@ IntegrateModifierData::IntegrateModifierData()
 
 Ref< const Modifier > IntegrateModifierData::createModifier(resource::IResourceManager* resourceManager) const
 {
-	return new IntegrateModifier(m_timeScale, m_linear, m_angular);
+	if ((m_linear || m_angular) && abs(m_timeScale) > FUZZY_EPSILON)
+		return new IntegrateModifier(m_timeScale, m_linear, m_angular);
+	else
+		return 0;
 }
 
 void IntegrateModifierData::serialize(ISerializer& s)
