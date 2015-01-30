@@ -877,13 +877,17 @@ void RenderViewDx11::present()
 
 void RenderViewDx11::pushMarker(const char* const marker)
 {
+#if defined(T_USE_D3DPERF)
 	std::wstring wm = marker ? mbstows(marker) : L"Unnamed"; 
 	D3DPERF_BeginEvent(D3DCOLOR_RGBA(255, 255, 255, 255), wm.c_str());
+#endif
 }
 
 void RenderViewDx11::popMarker()
 {
+#if defined(T_USE_D3DPERF)
 	D3DPERF_EndEvent();
+#endif
 }
 
 void RenderViewDx11::getStatistics(RenderViewStatistics& outStatistics) const
