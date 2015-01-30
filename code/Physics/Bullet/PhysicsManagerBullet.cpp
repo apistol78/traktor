@@ -142,18 +142,9 @@ public:
 
 	Vector4 getTriangleNormal(int triangleIndex, const Vector4& hitNormal) const
 	{
-		const AlignedVector< Vector4 >& vertices = m_mesh->getVertices();
-		const AlignedVector< Mesh::Triangle >& shapeTriangles = m_mesh->getShapeTriangles();
-
-		if (triangleIndex >= 0 && triangleIndex < shapeTriangles.size())
-		{
-			const Mesh::Triangle& t = shapeTriangles[triangleIndex];
-
-			Vector4 e1 = vertices[t.indices[2]] - vertices[t.indices[1]];
-			Vector4 e2 = vertices[t.indices[0]] - vertices[t.indices[1]];
-
-			return cross(e2, e1).normalized();
-		}
+		const AlignedVector< Vector4 >& normals = m_mesh->getNormals();
+		if (triangleIndex >= 0 && triangleIndex < normals.size())
+			return normals[triangleIndex];
 		else
 			return hitNormal;
 	}

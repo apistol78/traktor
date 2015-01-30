@@ -26,7 +26,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshPipeline", 9, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshPipeline", 10, MeshPipeline, editor::IPipeline)
 
 bool MeshPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -134,6 +134,7 @@ bool MeshPipeline::buildOutput(
 	for (AlignedVector< Vector4 >::iterator i = positions.begin(); i != positions.end(); ++i)
 		*i -= centerOfGravity;
 
+	AlignedVector< Vector4 > normals;
 	AlignedVector< Mesh::Triangle > meshShapeTriangles;
 	AlignedVector< Mesh::Triangle > meshHullTriangles;
 	AlignedVector< uint32_t > meshHullIndices;
@@ -148,6 +149,11 @@ bool MeshPipeline::buildOutput(
 			shapeTriangle.indices[j] = model->getVertex(i->getVertex(j)).getPosition();
 
 		meshShapeTriangles.push_back(shapeTriangle);
+
+		Vector4 e1 = positions[shapeTriangle.indices[2]] - positions[shapeTriangle.indices[1]];
+		Vector4 e2 = positions[shapeTriangle.indices[0]] - positions[shapeTriangle.indices[1]];
+
+		normals.push_back(cross(e2, e1).normalized());
 	}
 
 	if (meshAsset->m_calculateConvexHull)
@@ -215,6 +221,7 @@ bool MeshPipeline::buildOutput(
 
 	Mesh mesh;
 	mesh.setVertices(positions);
+	mesh.setNormals(normals);
 	mesh.setShapeTriangles(meshShapeTriangles);
 	mesh.setHullTriangles(meshHullTriangles);
 	mesh.setHullIndices(meshHullIndices);
