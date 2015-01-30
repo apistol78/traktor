@@ -10,7 +10,7 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_version = 5;
+const uint32_t c_version = 6;
 
 		}
 
@@ -29,6 +29,16 @@ void Mesh::setVertices(const AlignedVector< Vector4 >& vertices)
 const AlignedVector< Vector4 >& Mesh::getVertices() const
 {
 	return m_vertices;
+}
+
+void Mesh::setNormals(const AlignedVector< Vector4 >& normals)
+{
+	m_normals = normals;
+}
+
+const AlignedVector< Vector4 >& Mesh::getNormals() const
+{
+	return m_normals;
 }
 
 void Mesh::setShapeTriangles(const AlignedVector< Triangle >& shapeTriangles)
@@ -94,6 +104,9 @@ bool Mesh::read(IStream* stream)
 	uint32_t vertexCount;
 	rd >> vertexCount;
 
+	uint32_t normalCount;
+	rd >> normalCount;
+
 	uint32_t shapeTriangleCount;
 	rd >> shapeTriangleCount;
 
@@ -106,6 +119,10 @@ bool Mesh::read(IStream* stream)
 	m_vertices.resize(vertexCount);
 	if (vertexCount > 0)
 		rd.read(&m_vertices[0], vertexCount, sizeof(Vector4));
+
+	m_normals.resize(normalCount);
+	if (normalCount > 0)
+		rd.read(&m_normals[0], normalCount, sizeof(Vector4));
 
 	m_shapeTriangles.resize(shapeTriangleCount);
 	if (shapeTriangleCount > 0)
@@ -136,12 +153,16 @@ bool Mesh::write(IStream* stream)
 
 	wr << uint32_t(c_version);
 	wr << uint32_t(m_vertices.size());
+	wr << uint32_t(m_normals.size());
 	wr << uint32_t(m_shapeTriangles.size());
 	wr << uint32_t(m_hullTriangles.size());
 	wr << uint32_t(m_hullIndices.size());
 
 	if (!m_vertices.empty())
 		wr.write(&m_vertices[0], int(m_vertices.size()), sizeof(Vector4));
+
+	if (!m_normals.empty())
+		wr.write(&m_normals[0], int(m_normals.size()), sizeof(Vector4));
 
 	if (!m_shapeTriangles.empty())
 		wr.write(&m_shapeTriangles[0], int(m_shapeTriangles.size()), sizeof(Triangle));

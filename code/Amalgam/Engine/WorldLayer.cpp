@@ -314,6 +314,9 @@ void WorldLayer::preReconfigured()
 
 void WorldLayer::postReconfigured()
 {
+	// Issue prepare here as we want the world renderer
+	// to be created during reconfiguration has the render lock.
+	prepare();
 }
 
 void WorldLayer::suspend()

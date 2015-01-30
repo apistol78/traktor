@@ -42,6 +42,10 @@ public:
 
 	const AlignedVector< Vector4 >& getVertices() const;
 
+	void setNormals(const AlignedVector< Vector4 >& normals);
+
+	const AlignedVector< Vector4 >& getNormals() const;
+
 	void setShapeTriangles(const AlignedVector< Triangle >& shapeTriangles);
 
 	const AlignedVector< Triangle >& getShapeTriangles() const;
@@ -68,6 +72,7 @@ public:
 
 private:
 	AlignedVector< Vector4 > m_vertices;
+	AlignedVector< Vector4 > m_normals;
 	AlignedVector< Triangle > m_shapeTriangles;
 	AlignedVector< Triangle > m_hullTriangles;
 	AlignedVector< uint32_t > m_hullIndices;
