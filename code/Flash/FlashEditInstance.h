@@ -56,6 +56,8 @@ public:
 
 	std::wstring getText() const;
 
+	std::wstring getHtmlText() const;
+
 	int32_t getCaret() const;
 
 	void setScroll(int32_t scroll);
@@ -78,6 +80,7 @@ private:
 	SwfColor m_textColor;
 	float m_letterSpacing;
 	std::wstring m_text;
+	std::wstring m_htmlText;
 	bool m_html;
 	int32_t m_caret;
 	int32_t m_scroll;

@@ -482,10 +482,7 @@ void AsTextField::TextField_set_html(FlashEditInstance* self, bool html) const
 
 std::wstring AsTextField::TextField_get_htmlText(FlashEditInstance* self) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"TextField::get_htmlText not implemented" << Endl;
-	)
-	return L"";
+	return self->getHtmlText();
 }
 
 void AsTextField::TextField_set_htmlText(FlashEditInstance* self, const std::wstring& htmlText) const

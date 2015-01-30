@@ -70,7 +70,7 @@ bool parseColor(const std::wstring& color, SwfColor& outColor)
 	return false;
 }
 
-void traverseHtmlDOM(const html::Element* element, const FlashFont* font, const SwfColor& textColor, TextLayout* layout)
+void traverseHtmlDOM(const html::Element* element, const FlashFont* font, const SwfColor& textColor, TextLayout* layout, StringOutputStream& text)
 {
 	SwfColor color = textColor;
 
@@ -84,16 +84,22 @@ void traverseHtmlDOM(const html::Element* element, const FlashFont* font, const 
 		}
 	}
 	else if (element->getName() == L"br")
+	{
 		layout->newLine();
+		text << Endl;
+	}
 
 	layout->setAttribute(font, color);
 
 	for (const html::Node* child = element->getFirstChild(); child; child = child->getNextSibling())
 	{
 		if (const html::Element* childElement = dynamic_type_cast< const html::Element* >(child))
-			traverseHtmlDOM(childElement, font, color, layout);
+			traverseHtmlDOM(childElement, font, color, layout, text);
 		else
+		{
 			layout->insertText(child->getValue());
+			text << child->getValue();
+		}
 	}
 
 	if (element->getName() == L"p")
@@ -233,6 +239,12 @@ std::wstring FlashEditInstance::getText() const
 	return m_text;
 }
 
+std::wstring FlashEditInstance::getHtmlText() const
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	return m_html ? m_htmlText : m_text;
+}
+
 int32_t FlashEditInstance::getCaret() const
 {
 	return m_caret;
@@ -363,6 +375,7 @@ bool FlashEditInstance::internalParseText(const std::wstring& text)
 	m_layout->end();
 
 	m_text = text;
+	m_htmlText.clear();
 	m_html = false;
 
 	return true;
@@ -395,11 +408,13 @@ bool FlashEditInstance::internalParseHtml(const std::wstring& html)
 	const html::Element* element = document.getDocumentElement();
 	T_ASSERT (element);
 
-	traverseHtmlDOM(element, font, m_textColor, m_layout);
+	StringOutputStream text;
+	traverseHtmlDOM(element, font, m_textColor, m_layout, text);
 
 	m_layout->end();
 
-	m_text = html;
+	m_text = text.str();
+	m_htmlText = html;
 	m_html = true;
 
 	return true;
