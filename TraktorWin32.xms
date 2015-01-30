@@ -17139,6 +17139,7 @@
 					<definitions>
 						<item>T_RENDER_DX11_EXPORT</item>
 						<item>_DEBUG</item>
+						<item>T_USE_D3DPERF</item>
 					</definitions>
 					<libraryPaths>
 						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x86</item>
@@ -17173,7 +17174,6 @@
 						<item>dxgi.lib</item>
 						<item>d3dcompiler.lib</item>
 						<item>dxguid.lib</item>
-						<item>d3d9.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -17189,6 +17189,7 @@
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
+						<item>T_USE_D3DPERF</item>
 					</definitions>
 					<libraryPaths>
 						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x86</item>
@@ -17223,7 +17224,6 @@
 						<item>dxgi.lib</item>
 						<item>d3dcompiler.lib</item>
 						<item>dxguid.lib</item>
-						<item>d3d9.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
