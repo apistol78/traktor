@@ -131,6 +131,12 @@ bool RenderSystemDx11::create(const RenderSystemDesc& desc)
 		return false;
 	}
 
+	if (d3dFeatureLevel < D3D_FEATURE_LEVEL_10_0)
+	{
+		log::error << L"Failed to get supported DirectX 11 adapter, need at least feature level 10.0 (adapter supports " << ((d3dFeatureLevel >> 12) & 0xf) << L"." << ((d3dFeatureLevel >> 8) & 0xf) << L")" << Endl;
+		return false;
+	}
+
 	hr = d3dDevice->QueryInterface(__uuidof(IDXGIDevice1), (void **)&dxgiDevice.getAssign());
 	if (FAILED(hr))
 	{
@@ -167,6 +173,7 @@ bool RenderSystemDx11::create(const RenderSystemDesc& desc)
 			log::info << L"DedicatedVideoMemory " << uint64_t(dad.DedicatedVideoMemory / (1024*1024)) << L" MiB" << Endl;
 			log::info << L"DedicatedSystemMemory " << uint64_t(dad.DedicatedSystemMemory / (1024*1024)) << L" MiB" << Endl;
 			log::info << L"SharedSystemMemory " << uint64_t(dad.SharedSystemMemory / (1024*1024)) << L" MiB" << Endl;
+			log::info << L"Feature level " << ((d3dFeatureLevel >> 12) & 0xf) << L"." << ((d3dFeatureLevel >> 8) & 0xf) << Endl;
 			log::info << DecreaseIndent;
 		}
 	}
