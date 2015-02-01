@@ -44,30 +44,5 @@ void Body::notifyCollisionListeners(const CollisionInfo& collisionInfo)
 		(*i)->notify(collisionInfo);
 }
 
-bool Body::haveCollisionListeners() const
-{
-	return !m_collisionListeners.empty();
-}
-
-void Body::setUserObject(Object* userObject)
-{
-	m_userObject = userObject;
-}
-
-Object* Body::getUserObject() const
-{
-	return m_userObject;
-}
-
-void Body::setClusterId(uint32_t clusterId)
-{
-	m_clusterId = clusterId;
-}
-
-uint32_t Body::getClusterId() const
-{
-	return m_clusterId;
-}
-
 	}
 }
