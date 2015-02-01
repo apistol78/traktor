@@ -474,6 +474,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 #endif
 		_set_purecall_handler(pureVirtualCallHandler);
 
+		Path currentPath = FileSystem::getInstance().getAbsolutePath(L".");
+		log::info << L"Working directory: " <<currentPath.getPathName() << Endl;
+
 		// Override settings path either from command line or application bundle.
 		Path settingsPath = L"Application.config";
 		if (cmdLine.getCount() >= 1)
@@ -573,6 +576,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 		}
 		else
 			log::error << L"Unhandled exception ( " << getExceptionString(g_exceptionCode) << L") occurred at 0x" << g_exceptionAddress << Endl;
+		// Dump callstack
+		CONTEXT c;
+		GET_CURRENT_CONTEXT(c, CONTEXT_FULL);
+		StackWalkerToConsole sw;
+		sw.ShowCallstack(GetCurrentThread(), &c);
 
 		safeDestroy(application);
 		showErrorDialog(logTail->m_tail);
