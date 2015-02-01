@@ -1,5 +1,6 @@
 #include "Core/Platform.h"
 #include "Core/Library/Library.h"
+#include "Core/Log/Log.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/TString.h"
 #include "Core/Misc/String.h"
@@ -35,7 +36,11 @@ bool Library::open(const Path& libraryName)
 		path = wstots(libraryName.getPathName());
 		m_handle = (void*)LoadLibrary(path.c_str());
 	}
-	
+	if (m_handle == NULL)
+	{
+		DWORD errorCode = GetLastError();
+		log::warning << L"Unable to load module \"" << libraryName.getPathName() << L"\"; error code " << int32_t(errorCode) << Endl;
+	}	
 	return bool(m_handle != NULL);
 }
 
