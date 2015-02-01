@@ -166,19 +166,19 @@ public:
 	void notifyCollisionListeners(const CollisionInfo& collisionInfo);
 
 	/*! \brief Check if have any collision listeners. */
-	bool haveCollisionListeners() const;
+	bool haveCollisionListeners() const { return !m_collisionListeners.empty(); }
 
 	/*! \brief Attach user defined object.
 	 *
 	 * \param userObject User object.
 	 */
-	void setUserObject(Object* userObject);
+	void setUserObject(Object* userObject) { m_userObject = userObject; }
 
 	/*! \brief Get attached user defined object.
 	 *
 	 * \return User object.
 	 */
-	Object* getUserObject() const;
+	Object* getUserObject() const { return m_userObject; }
 
 	/*! \brief Set cluster id.
 	 *
@@ -186,13 +186,13 @@ public:
 	 * collide thus are useful for isolating
 	 * articulated cluster of bodies.
 	 */
-	void setClusterId(uint32_t clusterId);
+	void setClusterId(uint32_t clusterId) { m_clusterId = clusterId; }
 
 	/*! \brief Get cluster id.
 	 *
 	 * \return Cluster id.
 	 */
-	uint32_t getClusterId() const;
+	uint32_t getClusterId() const { return m_clusterId; }
 
 private:
 	RefArray< CollisionListener > m_collisionListeners;
