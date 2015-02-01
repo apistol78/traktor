@@ -58,6 +58,10 @@ Transform BodyHavok::getCenterTransform() const
 	return getTransform();
 }
 
+void BodyHavok::setKinematic(bool kinematic)
+{
+}
+
 bool BodyHavok::isStatic() const
 {
 	return false;

@@ -51,6 +51,9 @@ public:
 	 */
 	virtual Transform getCenterTransform() const = 0;
 
+	/*! \brief Set body kinematic. */
+	virtual void setKinematic(bool kinematic) = 0;
+
 	/*! \brief Get type of body. */
 	virtual bool isStatic() const = 0;
 
