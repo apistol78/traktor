@@ -243,6 +243,10 @@ bool SteamSessionManager::requireUserAttention() const
 
 bool SteamSessionManager::haveDLC(const std::wstring& id) const
 {
+	// If game is borrowed then disable all DLC.
+	if (SteamApps()->GetAppOwner() != ::SteamUser()->GetSteamID())
+		return false;
+
 	std::map< std::wstring, uint32_t >::const_iterator i = m_dlcIds.find(id);
 	if (i != m_dlcIds.end())
 		return SteamApps()->BIsDlcInstalled(i->second);
@@ -252,6 +256,10 @@ bool SteamSessionManager::haveDLC(const std::wstring& id) const
 
 bool SteamSessionManager::buyDLC(const std::wstring& id) const
 {
+	// If game is borrowed then disable all DLC.
+	if (SteamApps()->GetAppOwner() != ::SteamUser()->GetSteamID())
+		return false;
+
 	std::map< std::wstring, uint32_t >::const_iterator i = m_dlcIds.find(id);
 	if (i != m_dlcIds.end())
 	{
