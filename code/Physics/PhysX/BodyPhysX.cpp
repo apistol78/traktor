@@ -77,6 +77,10 @@ Transform BodyPhysX::getCenterTransform() const
 	return fromPxTransform(m_actor->getGlobalPose());
 }
 
+void BodyPhysX::setKinematic(bool kinematic)
+{
+}
+
 bool BodyPhysX::isStatic() const
 {
 	return m_actor->is< physx::PxRigidStatic >() != 0;

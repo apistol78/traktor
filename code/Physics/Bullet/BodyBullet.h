@@ -52,6 +52,8 @@ public:
 
 	virtual Transform getCenterTransform() const;
 
+	virtual void setKinematic(bool kinematic);
+
 	virtual bool isStatic() const;
 
 	virtual bool isKinematic() const;

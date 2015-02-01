@@ -89,6 +89,16 @@ Transform BodyBullet::getCenterTransform() const
 	return m_body ? fromBtTransform(m_body->getWorldTransform()) : Transform();
 }
 
+void BodyBullet::setKinematic(bool kinematic)
+{
+	int flags = m_body->getCollisionFlags();
+	if (kinematic)
+		flags |= btCollisionObject::CF_KINEMATIC_OBJECT;
+	else
+		flags &= ~btCollisionObject::CF_KINEMATIC_OBJECT;
+	m_body->setCollisionFlags(flags);
+}
+
 bool BodyBullet::isStatic() const
 {
 	return m_body ? m_body->isStaticOrKinematicObject() : false;
