@@ -112,7 +112,11 @@ bool Application::create(
 		if (library->open(*i))
 			m_libraries.push_back(library);
 		else
-			log::warning << L"Unable to load module \"" << *i << L"\"" << Endl;
+		{
+			DWORD errorCode = GetLastError();
+			log::warning << L"Unable to load module \"" << *i << L"\"; error code " << int32_t(errorCode) << Endl;
+		}	
+
 	}
 #endif
 
