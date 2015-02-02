@@ -24,15 +24,21 @@ ContextDx11::ContextDx11(
 void ContextDx11::deleteResource(DeleteCallback* callback)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+#if defined(T_DX11_DEFERRED_DELETE_RESOURCES)
 	m_deleteResources.push_back(callback);
+#else
+	callback->deleteResource();
+#endif
 }
 
 void ContextDx11::deleteResources()
 {
+#if defined(T_DX11_DEFERRED_DELETE_RESOURCES)
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	for (std::vector< DeleteCallback* >::iterator i = m_deleteResources.begin(); i != m_deleteResources.end(); ++i)
 		(*i)->deleteResource();
 	m_deleteResources.resize(0);
+#endif
 }
 
 ContextDx11::ReleaseComObjectCallback::ReleaseComObjectCallback(IUnknown* unk)

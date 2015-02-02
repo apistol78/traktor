@@ -10,7 +10,9 @@
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Database/Database.h"
+#include "Render/IRenderSystem.h"
 #include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
@@ -31,6 +33,7 @@ StageData::StageData()
 
 Ref< Stage > StageData::createInstance(amalgam::IEnvironment* environment, const Object* params) const
 {
+	render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 	resource::Proxy< script::IScriptContext > script;
 	resource::Proxy< render::Shader > shaderFade;
@@ -42,12 +45,25 @@ Ref< Stage > StageData::createInstance(amalgam::IEnvironment* environment, const
 		bool skipPreload = environment->getSettings()->getProperty< PropertyBoolean >(L"Amalgam.SkipPreloadResources", false);
 		if (!skipPreload)
 		{
-			Ref< const resource::ResourceBundle > resourceBundle = environment->getDatabase()->getObjectReadOnly< resource::ResourceBundle >(m_resourceBundle);
-			if (resourceBundle)
-				resourceManager->load(resourceBundle);
+			uint32_t preloadLimit = environment->getSettings()->getProperty< PropertyInteger >(L"Amalgam.SkipPreloadLimit", 768) * 1024 * 1024;
+
+			// Get amount of dedicated video memory; we cannot preload if too little amount of memory available or unknown vendor.
+			render::RenderSystemInformation rsi;
+			renderSystem->getInformation(rsi);
+			if (
+				(rsi.vendor == render::AvtNVidia || rsi.vendor == render::AvtAMD) &&
+				rsi.dedicatedMemoryTotal >= preloadLimit
+			)
+			{
+				Ref< const resource::ResourceBundle > resourceBundle = environment->getDatabase()->getObjectReadOnly< resource::ResourceBundle >(m_resourceBundle);
+				if (resourceBundle)
+					resourceManager->load(resourceBundle);
+			}
+			else
+				log::warning << L"Pre-loading of resources skipped due to limited graphics adapter." << Endl;
 		}
 		else
-			log::warning << L"Pre-loading of resources skipped" << Endl;
+			log::warning << L"Pre-loading of resources ignored" << Endl;
 	}
 #endif
 

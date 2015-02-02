@@ -387,16 +387,28 @@ struct DisplayMode
 	}
 };
 
+/*! \brief Vendor type. */
+enum AdapterVendorType
+{
+	AvtUnknown = 0,
+	AvtNVidia = 1,
+	AvtAMD = 2,
+	AvtIntel = 3,
+	AvtPowerVR = 4
+};
+
 /*! \brief Render system information. */
 struct RenderSystemInformation
 {
+	AdapterVendorType vendor;
 	uint32_t dedicatedMemoryTotal;
 	uint32_t sharedMemoryTotal;
 	uint32_t dedicatedMemoryAvailable;
 	uint32_t sharedMemoryAvailable;
 
 	RenderSystemInformation()
-	:	dedicatedMemoryTotal(0)
+	:	vendor(AvtUnknown)
+	,	dedicatedMemoryTotal(0)
 	,	sharedMemoryTotal(0)
 	,	dedicatedMemoryAvailable(0)
 	,	sharedMemoryAvailable(0)
