@@ -84,6 +84,8 @@ public:
 
 	virtual void getStatistics(RenderSystemStatistics& outStatistics) const;
 
+	virtual void purge();
+
 	// \name Render view management
 	// \{
 

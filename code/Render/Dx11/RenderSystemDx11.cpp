@@ -492,6 +492,12 @@ Ref< ITimeQuery > RenderSystemDx11::createTimeQuery() const
 		return 0;
 }
 
+void RenderSystemDx11::purge()
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_context->getLock());
+	m_context->deleteResources();
+}
+
 void RenderSystemDx11::getStatistics(RenderSystemStatistics& outStatistics) const
 {
 }

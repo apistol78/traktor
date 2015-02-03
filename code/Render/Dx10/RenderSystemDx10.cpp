@@ -343,6 +343,10 @@ Ref< ITimeQuery > RenderSystemDx10::createTimeQuery() const
 	return 0;
 }
 
+void RenderSystemDx10::purge()
+{
+}
+
 void RenderSystemDx10::getStatistics(RenderSystemStatistics& outStatistics) const
 {
 }

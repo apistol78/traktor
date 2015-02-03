@@ -67,6 +67,8 @@ public:
 	virtual Ref< IProgramCompiler > createProgramCompiler() const;
 
 	virtual Ref< ITimeQuery > createTimeQuery() const;
+	
+	virtual void purge();
 
 	virtual void getStatistics(RenderSystemStatistics& outStatistics) const;
 

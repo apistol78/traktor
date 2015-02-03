@@ -337,6 +337,10 @@ Ref< ITimeQuery > RenderSystemPs3::createTimeQuery() const
 	return 0;
 }
 
+void RenderSystemPs3::purge()
+{
+}
+
 void RenderSystemPs3::getStatistics(RenderSystemStatistics& outStatistics) const
 {
 }
