@@ -551,7 +551,7 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLuint program, con
 		{
 			// This probably happen when the GLSL optimizer of the driver is more intelligent than
 			// our GLSL shader generator, thus the uniform has been discarded when the program was loaded.
-			log::debug << L"No location of GL uniform \"" << uniforms[i].name << L"\"; shader parameter ignored." << Endl;
+			T_DEBUG(L"No location of GL uniform \"" << uniforms[i].name << L"\"; shader parameter ignored.");
 			continue;
 		}
 

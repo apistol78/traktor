@@ -316,7 +316,6 @@ LONG WINAPI exceptionVectoredHandler(struct _EXCEPTION_POINTERS* ep)
 		break;
 
 	default:								
-		outputCallStack = true;
 		break;
 	}
 
