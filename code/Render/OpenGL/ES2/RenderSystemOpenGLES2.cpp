@@ -253,8 +253,6 @@ Ref< ITimeQuery > RenderSystemOpenGLES2::createTimeQuery() const
 
 void RenderSystemOpenGLES2::purge()
 {
-	T_ANONYMOUS_VAR(IContext::Scope)(m_globalContext);
-	m_globalContext->deleteResources();
 }
 
 void RenderSystemOpenGLES2::getStatistics(RenderSystemStatistics& outStatistics) const
