@@ -52,7 +52,6 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	int32_t viewType = settings->getProperty< PropertyInteger >(L"SceneEditor.View" + toString(m_viewId), 0);
 	bool gridEnable = settings->getProperty< PropertyBoolean >(L"Scene.Editor.GridEnable" + toString(m_viewId), true);
 	bool guideEnable = settings->getProperty< PropertyBoolean >(L"Scene.Editor.GuideEnable" + toString(m_viewId), true);
-	bool postProcessEnable = settings->getProperty< PropertyBoolean >(L"Scene.Editor.PostProcessEnable" + toString(m_viewId), true);
 
 	m_container = new ui::Container();
 	if (!m_container->create(parent, ui::WsClientBorder, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
@@ -90,13 +89,6 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 		guideEnable ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle
 	);
 
-	m_toolTogglePostProcess = new ui::custom::ToolBarButton(
-		i18n::Text(L"SCENE_EDITOR_TOGGLE_POSTPROCESS"),
-		6,
-		ui::Command(1, L"Scene.Editor.TogglePostProcess"),
-		postProcessEnable ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle
-	);
-
 	m_toolToggleFollowEntity = new ui::custom::ToolBarButton(
 		i18n::Text(L"SCENE_EDITOR_FOLLOW_ENTITY"),
 		17 + 4,
@@ -122,6 +114,14 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolAspect->add(L"4:6");
 	m_toolAspect->add(L"9:16");
 	m_toolAspect->select(0);
+
+	m_toolPostProcess = new ui::custom::ToolBarDropDown(ui::Command(1, L"Scene.Editor.PostProcessQuality"), 80, i18n::Text(L"SCENE_EDITOR_POST_PROCESS"));
+	m_toolPostProcess->add(L"Disabled");
+	m_toolPostProcess->add(L"Low");
+	m_toolPostProcess->add(L"Medium");
+	m_toolPostProcess->add(L"High");
+	m_toolPostProcess->add(L"Ultra");
+	m_toolPostProcess->select(0);
 
 	m_toolShadows = new ui::custom::ToolBarDropDown(ui::Command(1, L"Scene.Editor.ShadowQuality"), 80, i18n::Text(L"SCENE_EDITOR_SHADOWS"));
 	m_toolShadows->add(L"Disabled");
@@ -150,12 +150,12 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolBar->addItem(m_toolView);
 	m_toolBar->addItem(m_toolToggleGrid);
 	m_toolBar->addItem(m_toolToggleGuide);
-	m_toolBar->addItem(m_toolTogglePostProcess);
 	m_toolBar->addItem(m_toolToggleFollowEntity);
 	m_toolBar->addItem(m_toolToggleLookAtEntity);
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBar->addItem(m_toolAspect);
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
+	m_toolBar->addItem(m_toolPostProcess);
 	m_toolBar->addItem(m_toolShadows);
 	m_toolBar->addItem(m_toolAO);
 	m_toolBar->addItem(m_toolAA);
@@ -177,7 +177,6 @@ void DefaultRenderControl::destroy()
 
 	settings->setProperty< PropertyBoolean >(L"Scene.Editor.GridEnable" + toString(m_viewId), m_toolToggleGrid->isToggled());
 	settings->setProperty< PropertyBoolean >(L"Scene.Editor.GuideEnable" + toString(m_viewId), m_toolToggleGuide->isToggled());
-	settings->setProperty< PropertyBoolean >(L"Scene.Editor.PostProcessEnable" + toString(m_viewId), m_toolTogglePostProcess->isToggled());
 
 	m_context->getEditor()->commitGlobalSettings();
 	m_toolView = 0;
@@ -207,10 +206,11 @@ void DefaultRenderControl::setAspect(float aspect)
 		m_renderControl->setAspect(aspect);
 }
 
-void DefaultRenderControl::setQuality(world::Quality shadowQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality)
+void DefaultRenderControl::setQuality(world::Quality postProcessQuality, world::Quality shadowQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality)
 {
 	if (m_renderControl)
 		m_renderControl->setQuality(
+			postProcessQuality,
 			shadowQuality,
 			ambientOcclusionQuality,
 			antiAliasQuality
@@ -348,11 +348,6 @@ void DefaultRenderControl::createRenderControl(int32_t type)
 	else
 		m_renderControl->handleCommand(ui::Command(L"Scene.Editor.DisableGuide"));
 
-	if (m_toolTogglePostProcess->isToggled())
-		m_renderControl->handleCommand(ui::Command(L"Scene.Editor.EnablePostProcess"));
-	else
-		m_renderControl->handleCommand(ui::Command(L"Scene.Editor.DisablePostProcess"));
-
 	Ref< PropertyGroup > settings = m_context->getEditor()->checkoutGlobalSettings();
 	T_ASSERT (settings);
 
@@ -382,13 +377,6 @@ void DefaultRenderControl::eventToolClick(ui::custom::ToolBarButtonClickEvent* e
 			m_renderControl->handleCommand(ui::Command(L"Scene.Editor.EnableGuide"));
 		else
 			m_renderControl->handleCommand(ui::Command(L"Scene.Editor.DisableGuide"));
-	}
-	else if (event->getCommand() == L"Scene.Editor.TogglePostProcess")
-	{
-		if (m_toolTogglePostProcess->isToggled())
-			m_renderControl->handleCommand(ui::Command(L"Scene.Editor.EnablePostProcess"));
-		else
-			m_renderControl->handleCommand(ui::Command(L"Scene.Editor.DisablePostProcess"));
 	}
 	else if (event->getCommand() == L"Scene.Editor.ToggleFollowEntity")
 	{
@@ -431,12 +419,14 @@ void DefaultRenderControl::eventToolClick(ui::custom::ToolBarButtonClickEvent* e
 		m_renderControl->setAspect(c_aspects[m_toolAspect->getSelected()]);
 	}
 	else if (
+		event->getCommand() == L"Scene.Editor.PostProcessQuality" ||
 		event->getCommand() == L"Scene.Editor.ShadowQuality" ||
 		event->getCommand() == L"Scene.Editor.AmbientOcclusionQuality" ||
 		event->getCommand() == L"Scene.Editor.AntiAliasQuality"
 	)
 	{
 		m_renderControl->setQuality(
+			(world::Quality)m_toolPostProcess->getSelected(),
 			(world::Quality)m_toolShadows->getSelected(),
 			(world::Quality)m_toolAO->getSelected(),
 			(world::Quality)m_toolAA->getSelected()

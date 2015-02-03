@@ -78,12 +78,12 @@ Vector4 projectUnit(const ui::Rect& rc, const ui::Point& pnt)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.PerspectiveRenderControl", PerspectiveRenderControl, ISceneRenderControl)
 
 PerspectiveRenderControl::PerspectiveRenderControl()
-:	m_shadowQuality(world::QuDisabled)
+:	m_postProcessQuality(world::QuDisabled)
+,	m_shadowQuality(world::QuDisabled)
 ,	m_ambientOcclusionQuality(world::QuDisabled)
 ,	m_antiAliasQuality(world::QuDisabled)
 ,	m_gridEnable(true)
 ,	m_guideEnable(true)
-,	m_postProcessEnable(true)
 ,	m_fieldOfView(c_defaultFieldOfView)
 ,	m_mouseWheelRate(c_defaultMouseWheelRate)
 ,	m_multiSample(c_defaultMultiSample)
@@ -210,9 +210,7 @@ void PerspectiveRenderControl::updateWorldRenderer()
 	wcd.multiSample = m_multiSample;
 	wcd.frameCount = 1;
 	wcd.allTargetsPersistent = true;
-
-	if (m_postProcessEnable)
-		wcd.postProcessSettings = sceneInstance->getPostProcessSettings(world::QuHigh);
+	wcd.postProcessSettings = sceneInstance->getPostProcessSettings(m_postProcessQuality);
 
 	if (worldRenderer->create(
 		m_context->getResourceManager(),
@@ -236,8 +234,9 @@ void PerspectiveRenderControl::setAspect(float aspect)
 	m_containerAspect->update();
 }
 
-void PerspectiveRenderControl::setQuality(world::Quality shadowQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality)
+void PerspectiveRenderControl::setQuality(world::Quality postProcessQuality, world::Quality shadowQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality)
 {
+	m_postProcessQuality = postProcessQuality;
 	m_shadowQuality = shadowQuality;
 	m_ambientOcclusionQuality = ambientOcclusionQuality;
 	m_antiAliasQuality = antiAliasQuality;
@@ -258,16 +257,6 @@ bool PerspectiveRenderControl::handleCommand(const ui::Command& command)
 		m_guideEnable = true;
 	else if (command == L"Scene.Editor.DisableGuide")
 		m_guideEnable = false;
-	else if (command == L"Scene.Editor.EnablePostProcess")
-	{
-		m_postProcessEnable = true;
-		updateWorldRenderer();
-	}
-	else if (command == L"Scene.Editor.DisablePostProcess")
-	{
-		m_postProcessEnable = false;
-		updateWorldRenderer();
-	}
 
 	return result;
 }
