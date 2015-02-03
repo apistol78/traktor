@@ -116,6 +116,11 @@ Ref< ITimeQuery > RenderSystemCapture::createTimeQuery() const
 	return m_renderSystem->createTimeQuery();
 }
 
+void RenderSystemCapture::purge()
+{
+	m_renderSystem->purge();
+}
+
 void RenderSystemCapture::getStatistics(RenderSystemStatistics& outStatistics) const
 {
 	m_renderSystem->getStatistics(outStatistics);

@@ -153,6 +153,10 @@ public:
 	 */
 	virtual Ref< ITimeQuery > createTimeQuery() const = 0;
 
+	/*! \brief Purge any resource which might be pending destruction.
+	 */
+	virtual void purge() = 0;
+
 	//@}
 
 	/*! \name Statistics. */

@@ -428,6 +428,10 @@ void RenderSystemWin32::getStatistics(RenderSystemStatistics& outStatistics) con
 {
 }
 
+void RenderSystemWin32::purge()
+{
+}
+
 void RenderSystemWin32::addRenderView(RenderViewWin32* renderView)
 {
 	m_renderViews.push_back(renderView);

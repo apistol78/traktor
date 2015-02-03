@@ -863,6 +863,12 @@ Ref< ITimeQuery > RenderSystemOpenGL::createTimeQuery() const
 	return 0;
 }
 
+void RenderSystemOpenGL::purge()
+{
+	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
+	m_resourceContext->deleteResources();
+}
+
 void RenderSystemOpenGL::getStatistics(RenderSystemStatistics& outStatistics) const
 {
 }

@@ -69,6 +69,8 @@ public:
 
 	virtual Ref< ITimeQuery > createTimeQuery() const;
 
+	virtual void purge();
+
 	virtual void getStatistics(RenderSystemStatistics& outStatistics) const;
 
 private:

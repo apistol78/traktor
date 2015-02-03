@@ -325,6 +325,10 @@ Ref< ITimeQuery > RenderSystemSw::createTimeQuery() const
 	return 0;
 }
 
+void RenderSystemSw::purge()
+{
+}
+
 void RenderSystemSw::getStatistics(RenderSystemStatistics& outStatistics) const
 {
 }

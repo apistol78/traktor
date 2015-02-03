@@ -187,7 +187,14 @@ int32_t RenderServerEmbedded::reconfigure(IEnvironment* environment, const Prope
 	if (skipMips != m_textureFactory->getSkipMips())
 	{
 		m_textureFactory->setSkipMips(skipMips);
+
+		// Unload all texture resources from resource manager.
 		resourceManager->unload(type_of< render::ITexture >());
+
+		// Ensure all unloaded textures are purged; ie totally evicted from video memory.
+		m_renderSystem->purge();
+
+		// Reload all texture resources; this time using new skip mips setting.
 		resourceManager->reload(type_of< render::ITexture >(), false);
 		result |= CrAccepted;
 	}
