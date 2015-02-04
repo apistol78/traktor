@@ -57,6 +57,7 @@ public:
 
 private:
 	std::wstring m_assetPath;
+	bool m_generateMips;
 	bool m_useTextureCompression;
 };
 

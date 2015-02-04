@@ -31,12 +31,12 @@
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
 			<magFilter>FtLinear</magFilter>
-			<addressU>AdWrap</addressU>
-			<addressV>AdWrap</addressV>
-			<addressW>AdWrap</addressW>
+			<addressU>AdClamp</addressU>
+			<addressV>AdClamp</addressV>
+			<addressW>AdClamp</addressW>
 			<compare>CmNo</compare>
 			<mipBias>-1</mipBias>
-			<ignoreMips>false</ignoreMips>
+			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
@@ -119,8 +119,8 @@
 		<item type="traktor.render.Fraction">
 			<comment/>
 			<position>
-				<first>16</first>
-				<second>793</second>
+				<first>12</first>
+				<second>834</second>
 			</position>
 		</item>
 	</nodes>
@@ -217,16 +217,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[11]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<name>TexCoord</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[9]"/>
 				<name>Output</name>
 			</source>
@@ -263,6 +253,16 @@
 			<destination>
 				<node ref="/object/nodes/item[6]"/>
 				<name>CaseFalse</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>TexCoord</name>
 			</destination>
 		</item>
 	</edges>
