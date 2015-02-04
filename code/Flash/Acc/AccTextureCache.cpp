@@ -75,18 +75,16 @@ void AccTextureCache::destroy()
 
 void AccTextureCache::clear()
 {
-	for (SmallMap< uint64_t, resource::Proxy< render::ITexture > >::iterator i = m_cache.begin(); i != m_cache.end(); ++i)
-		i->second.clear();
+	for (SmallMap< uint64_t, BitmapRect >::iterator i = m_cache.begin(); i != m_cache.end(); ++i)
+		i->second.texture.clear();
 
 	m_cache.clear();
 }
 
-resource::Proxy< render::ITexture > AccTextureCache::getGradientTexture(const FlashFillStyle& style)
+AccTextureCache::BitmapRect AccTextureCache::getGradientTexture(const FlashFillStyle& style)
 {
-	Ref< render::ISimpleTexture > texture;
-
 	uint64_t hash = reinterpret_cast< uint64_t >(&style);
-	SmallMap< uint64_t, resource::Proxy< render::ITexture > >::iterator it = m_cache.find(hash);
+	SmallMap< uint64_t, BitmapRect >::iterator it = m_cache.find(hash);
 	if (it != m_cache.end())
 		return it->second;
 
@@ -123,7 +121,16 @@ resource::Proxy< render::ITexture > AccTextureCache::getGradientTexture(const Fl
 		desc.initialData[0].data = gradientBitmap;
 		desc.initialData[0].pitch = 256 * 4;
 
-		texture = m_renderSystem->createSimpleTexture(desc);
+		resource::Proxy< render::ISimpleTexture > texture = resource::Proxy< render::ISimpleTexture >(m_renderSystem->createSimpleTexture(desc));
+
+		BitmapRect& br = m_cache[hash];
+		br.texture = texture;
+		br.rect[0] = 0.0f;
+		br.rect[1] = 0.0f;
+		br.rect[2] = 1.0f;
+		br.rect[3] = 1.0f;
+
+		return br;
 	}
 	else if (style.getGradientType() == FlashFillStyle::GtRadial)
 	{
@@ -150,31 +157,49 @@ resource::Proxy< render::ITexture > AccTextureCache::getGradientTexture(const Fl
 		desc.initialData[0].data = gradientBitmap;
 		desc.initialData[0].pitch = 64 * 4;
 
-		texture = m_renderSystem->createSimpleTexture(desc);
+		resource::Proxy< render::ISimpleTexture > texture = resource::Proxy< render::ISimpleTexture >(m_renderSystem->createSimpleTexture(desc));
+
+		BitmapRect& br = m_cache[hash];
+		br.texture = texture;
+		br.rect[0] = 0.0f;
+		br.rect[1] = 0.0f;
+		br.rect[2] = 1.0f;
+		br.rect[3] = 1.0f;
+
+		return br;
 	}
 
-	m_cache[hash] = resource::Proxy< render::ITexture >(texture);
-
-	return resource::Proxy< render::ITexture >(texture);
+	return BitmapRect();
 }
 
-resource::Proxy< render::ITexture > AccTextureCache::getBitmapTexture(const FlashBitmap& bitmap)
+AccTextureCache::BitmapRect AccTextureCache::getBitmapTexture(const FlashBitmap& bitmap)
 {
 	uint64_t hash = reinterpret_cast< uint64_t >(&bitmap);
 
-	SmallMap< uint64_t, resource::Proxy< render::ITexture > >::iterator it = m_cache.find(hash);
+	SmallMap< uint64_t, BitmapRect >::iterator it = m_cache.find(hash);
 	if (it != m_cache.end())
 		return it->second;
 
-	resource::Proxy< render::ITexture > texture;
-
 	if (const FlashBitmapResource* bitmapResource = dynamic_type_cast< const FlashBitmapResource* >(&bitmap))
 	{
+		resource::Proxy< render::ISimpleTexture > texture;
+
 		m_resourceManager->bind(
-			resource::Id< render::ITexture >(bitmapResource->getResourceId()),
+			resource::Id< render::ISimpleTexture >(bitmapResource->getResourceId()),
 			texture
 		);
-		m_cache[hash] = texture;
+
+		float w = float(texture->getWidth());
+		float h = float(texture->getHeight());
+
+		BitmapRect& br = m_cache[hash];
+		br.texture = texture;
+		br.rect[0] = bitmapResource->getX() / w;
+		br.rect[1] = bitmapResource->getY() / h;
+		br.rect[2] = bitmapResource->getWidth() / w;
+		br.rect[3] = bitmapResource->getHeight() / h;
+
+		return br;
 	}
 	else if (const FlashBitmapData* bitmapData = dynamic_type_cast< const FlashBitmapData* >(&bitmap))
 	{
@@ -189,12 +214,19 @@ resource::Proxy< render::ITexture > AccTextureCache::getBitmapTexture(const Flas
 		desc.initialData[0].pitch = desc.width * 4;
 		desc.initialData[0].slicePitch = desc.width * desc.height * 4;
 
-		texture = resource::Proxy< render::ITexture >(m_renderSystem->createSimpleTexture(desc));
+		resource::Proxy< render::ISimpleTexture > texture = resource::Proxy< render::ISimpleTexture >(m_renderSystem->createSimpleTexture(desc));
 
-		m_cache[hash] = texture;
+		BitmapRect& br = m_cache[hash];
+		br.texture = texture;
+		br.rect[0] = 0.0f;
+		br.rect[1] = 0.0f;
+		br.rect[2] = 1.0f;
+		br.rect[3] = 1.0f;
+
+		return br;
 	}
 
-	return texture;
+	return BitmapRect();
 }
 
 	}

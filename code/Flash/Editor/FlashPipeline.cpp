@@ -1,6 +1,9 @@
 #include <cstring>
+#include <list>
+#include <ShelfNextFitBinPack.h>
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
@@ -59,7 +62,7 @@ Guid incrementGuid(const Guid& g, uint32_t steps)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", 22, FlashPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", 29, FlashPipeline, editor::IPipeline)
 
 FlashPipeline::FlashPipeline()
 :	m_useTextureCompression(true)
@@ -161,6 +164,238 @@ bool FlashPipeline::buildOutput(
 
 	// Replace all bitmaps with resource references to textures.
 	SmallMap< uint16_t, Ref< FlashBitmap > > bitmaps = movie->getBitmaps();
+
+	// Create atlas buckets of small bitmaps.
+	struct AtlasBitmap
+	{
+		uint16_t id;
+		Ref< const FlashBitmapData > bitmap;
+		rbp::ShelfNextFitBinPack::Node packedRect;
+	};
+
+	struct AtlasBucket
+	{
+		rbp::ShelfNextFitBinPack binPack;
+		std::list< AtlasBitmap > bitmaps;
+	};
+
+	std::list< AtlasBucket > buckets;
+	std::list< AtlasBitmap > standalone;
+
+	for (SmallMap< uint16_t, Ref< FlashBitmap > >::const_iterator i = bitmaps.begin(); i != bitmaps.end(); ++i)
+	{
+		const FlashBitmapData* bitmapData = dynamic_type_cast< const FlashBitmapData* >(i->second);
+		if (!bitmapData)
+		{
+			log::warning << L"Skipped bitmap as it not a static bitmap (" << type_name(i->second) << L")" << Endl;
+			continue;
+		}
+
+		bool foundBucket = false;
+
+		for (std::list< AtlasBucket >::iterator j = buckets.begin(); j != buckets.end(); ++j)
+		{
+			rbp::ShelfNextFitBinPack::Node packedRect = j->binPack.Insert(
+				bitmapData->getWidth(),
+				bitmapData->getHeight()
+			);
+			if (packedRect.height > 0)
+			{
+				AtlasBitmap ab;
+				ab.id = i->first;
+				ab.bitmap = bitmapData;
+				ab.packedRect = packedRect;
+				j->bitmaps.push_back(ab);
+				foundBucket = true;
+				break;
+			}
+		}
+
+		if (!foundBucket)
+		{
+			buckets.push_back(AtlasBucket());
+			buckets.back().binPack.Init(1024, 1024);
+
+			rbp::ShelfNextFitBinPack::Node packedRect = buckets.back().binPack.Insert(
+				bitmapData->getWidth(),
+				bitmapData->getHeight()
+			);
+			if (packedRect.height > 0)
+			{
+				AtlasBitmap ab;
+				ab.id = i->first;
+				ab.bitmap = bitmapData;
+				ab.packedRect = packedRect;
+				buckets.back().bitmaps.push_back(ab);
+			}
+			else
+			{
+				AtlasBitmap ab;
+				ab.id = i->first;
+				ab.bitmap = bitmapData;
+				ab.packedRect.x = 0;
+				ab.packedRect.y = 0;
+				ab.packedRect.width = bitmapData->getWidth();
+				ab.packedRect.height = bitmapData->getHeight();
+				standalone.push_back(ab);
+			}
+		}
+	}
+
+	log::info << L"Packed bitmaps into " << buckets.size() << L" atlas(es)." << Endl;
+
+	uint32_t count = 1;
+
+	for (std::list< AtlasBucket >::const_iterator i = buckets.begin(); i != buckets.end(); ++i)
+	{
+		log::info << L"Atlas " << count << L", containing " << i->bitmaps.size() << L" bitmaps." << Endl;
+
+		if (i->bitmaps.size() > 1)
+		{
+			Ref< drawing::Image > atlasImage = new drawing::Image(
+				drawing::PixelFormat::getA8B8G8R8(),
+				1024,
+				1024
+			);
+
+			atlasImage->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+
+			for (std::list< AtlasBitmap >::const_iterator j = i->bitmaps.begin(); j != i->bitmaps.end(); ++j)
+			{
+				Ref< drawing::Image > bitmapImage = new drawing::Image(
+					drawing::PixelFormat::getA8B8G8R8(),
+					j->bitmap->getWidth(),
+					j->bitmap->getHeight()
+				);
+
+				std::memcpy(
+					bitmapImage->getData(),
+					j->bitmap->getBits(),
+					j->bitmap->getWidth() * j->bitmap->getHeight() * 4
+				);
+
+				atlasImage->copy(
+					bitmapImage,
+					j->packedRect.x,
+					j->packedRect.y,
+					0,
+					0,
+					j->packedRect.width,
+					j->packedRect.height
+				);
+			}
+
+			atlasImage->save(L"FlashBitmapAtlas" + toString(count) + L".png");
+
+			Guid bitmapOutputGuid = incrementGuid(outputGuid, count++);
+
+			Ref< render::TextureOutput > output = new render::TextureOutput();
+			output->m_textureFormat = render::TfInvalid;
+			output->m_generateNormalMap = false;
+			output->m_scaleDepth = 0.0f;
+			output->m_generateMips = true;
+			output->m_keepZeroAlpha = false;
+			output->m_textureType = render::Tt2D;
+			output->m_hasAlpha = false;
+			output->m_ignoreAlpha = false;
+			output->m_scaleImage = false;
+			output->m_scaleWidth = 0;
+			output->m_scaleHeight = 0;
+			output->m_enableCompression = m_useTextureCompression;
+			output->m_enableNormalMapCompression = false;
+			output->m_inverseNormalMapY = false;
+			output->m_linearGamma = true;
+			output->m_generateSphereMap = false;
+			output->m_preserveAlphaCoverage = false;
+			output->m_alphaCoverageReference = 0.0f;
+			output->m_sharpenRadius = 0;
+			output->m_systemTexture = true;
+
+			std::wstring bitmapOutputPath = Path(outputPath).getPathOnly() + L"/Textures/" + bitmapOutputGuid.format();
+			if (!pipelineBuilder->buildOutput(
+				output,
+				bitmapOutputPath,
+				bitmapOutputGuid,
+				atlasImage
+			))
+				return false;
+
+			for (std::list< AtlasBitmap >::const_iterator j = i->bitmaps.begin(); j != i->bitmaps.end(); ++j)
+			{
+				movie->defineBitmap(j->id, new FlashBitmapResource(
+					j->packedRect.x,
+					j->packedRect.y,
+					j->packedRect.width,
+					j->packedRect.height,
+					bitmapOutputGuid
+				));
+			}
+		}
+		else if (i->bitmaps.size() == 1)
+		{
+			standalone.push_back(i->bitmaps.front());
+		}
+	}
+
+	log::info << standalone.size() << L" bitmap(s) didn't fit in any atlas..." << Endl;
+
+	for (std::list< AtlasBitmap >::const_iterator i = standalone.begin(); i != standalone.end(); ++i)
+	{
+		Ref< drawing::Image > bitmapImage = new drawing::Image(
+			drawing::PixelFormat::getA8B8G8R8(),
+			i->bitmap->getWidth(),
+			i->bitmap->getHeight()
+		);
+
+		std::memcpy(
+			bitmapImage->getData(),
+			i->bitmap->getBits(),
+			i->bitmap->getWidth() * i->bitmap->getHeight() * 4
+		);
+
+		Guid bitmapOutputGuid = incrementGuid(outputGuid, count++);
+
+		Ref< render::TextureOutput > output = new render::TextureOutput();
+		output->m_textureFormat = render::TfInvalid;
+		output->m_generateNormalMap = false;
+		output->m_scaleDepth = 0.0f;
+		output->m_generateMips = true;
+		output->m_keepZeroAlpha = false;
+		output->m_textureType = render::Tt2D;
+		output->m_hasAlpha = false;
+		output->m_ignoreAlpha = false;
+		output->m_scaleImage = false;
+		output->m_scaleWidth = 0;
+		output->m_scaleHeight = 0;
+		output->m_enableCompression = m_useTextureCompression;
+		output->m_enableNormalMapCompression = false;
+		output->m_inverseNormalMapY = false;
+		output->m_linearGamma = true;
+		output->m_generateSphereMap = false;
+		output->m_preserveAlphaCoverage = false;
+		output->m_alphaCoverageReference = 0.0f;
+		output->m_sharpenRadius = 0;
+		output->m_systemTexture = true;
+
+		std::wstring bitmapOutputPath = Path(outputPath).getPathOnly() + L"/Textures/" + bitmapOutputGuid.format();
+		if (!pipelineBuilder->buildOutput(
+			output,
+			bitmapOutputPath,
+			bitmapOutputGuid,
+			bitmapImage
+		))
+			return false;
+
+		movie->defineBitmap(i->id, new FlashBitmapResource(
+			0,
+			0,
+			bitmapImage->getWidth(),
+			bitmapImage->getHeight(),
+			bitmapOutputGuid
+		));
+	}
+
+	/*
 	uint32_t count = 1;
 
 	for (SmallMap< uint16_t, Ref< FlashBitmap > >::const_iterator i = bitmaps.begin(); i != bitmaps.end(); ++i)
@@ -220,6 +455,7 @@ bool FlashPipeline::buildOutput(
 			bitmapOutputGuid
 		));
 	}
+	*/
 
 	Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 		outputPath,

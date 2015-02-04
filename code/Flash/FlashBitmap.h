@@ -26,7 +26,11 @@ class T_DLLCLASS FlashBitmap : public ISerializable
 public:
 	FlashBitmap();
 
-	FlashBitmap(uint32_t width, uint32_t height);
+	FlashBitmap(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
+
+	uint32_t getX() const { return m_x; }
+
+	uint32_t getY() const { return m_y; }
 
 	uint32_t getWidth() const { return m_width; }
 
@@ -35,6 +39,8 @@ public:
 	virtual void serialize(ISerializer& s);
 
 protected:
+	uint32_t m_x;
+	uint32_t m_y;
 	uint32_t m_width;
 	uint32_t m_height;
 };
