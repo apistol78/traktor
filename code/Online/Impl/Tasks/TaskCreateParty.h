@@ -1,6 +1,7 @@
-#ifndef traktor_online_TaskGetParticipants_H
-#define traktor_online_TaskGetParticipants_H
+#ifndef traktor_online_TaskCreateParty_H
+#define traktor_online_TaskCreateParty_H
 
+#include "Online/Types.h"
 #include "Online/Impl/ITask.h"
 
 namespace traktor
@@ -9,19 +10,18 @@ namespace traktor
 	{
 
 class IMatchMakingProvider;
-class UserArrayResult;
+class PartyResult;
 class UserCache;
 
-class TaskGetParticipants : public ITask
+class TaskCreateParty : public ITask
 {
 	T_RTTI_CLASS;
 
 public:
-	TaskGetParticipants(
+	TaskCreateParty(
 		IMatchMakingProvider* matchMakingProvider,
 		UserCache* userCache,
-		uint64_t lobbyHandle,
-		UserArrayResult* result
+		PartyResult* result
 	);
 
 	virtual void execute(TaskQueue* taskQueue);
@@ -29,11 +29,10 @@ public:
 private:
 	Ref< IMatchMakingProvider > m_matchMakingProvider;
 	Ref< UserCache > m_userCache;
-	uint64_t m_lobbyHandle;
-	Ref< UserArrayResult > m_result;
+	Ref< PartyResult > m_result;
 };
 
 	}
 }
 
-#endif	// traktor_online_TaskGetParticipants_H
+#endif	// traktor_online_TaskCreateParty_H

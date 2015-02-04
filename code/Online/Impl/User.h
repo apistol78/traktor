@@ -41,6 +41,7 @@ public:
 
 private:
 	friend class Lobby;
+	friend class Party;
 	friend class UserCache;
 
 	Ref< IUserProvider > m_userProvider;

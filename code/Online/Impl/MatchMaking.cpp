@@ -1,7 +1,9 @@
 #include "Online/Impl/Lobby.h"
 #include "Online/Impl/MatchMaking.h"
+#include "Online/Impl/Party.h"
 #include "Online/Impl/TaskQueue.h"
 #include "Online/Impl/Tasks/TaskCreateLobby.h"
+#include "Online/Impl/Tasks/TaskCreateParty.h"
 #include "Online/Impl/Tasks/TaskFindMatchingLobbies.h"
 #include "Online/Provider/IMatchMakingProvider.h"
 
@@ -51,6 +53,28 @@ Ref< ILobby > MatchMaking::acceptLobby()
 	uint64_t lobbyHandle;
 	if (m_matchMakingProvider->acceptLobby(lobbyHandle))
 		return new Lobby(m_matchMakingProvider, m_userCache, m_taskQueue, lobbyHandle);
+	else
+		return 0;
+}
+
+Ref< PartyResult > MatchMaking::createParty()
+{
+	Ref< PartyResult > result = new PartyResult();
+	if (m_taskQueue->add(new TaskCreateParty(
+		m_matchMakingProvider,
+		m_userCache,
+		result
+	)))
+		return result;
+	else
+		return 0;
+}
+
+Ref< IParty > MatchMaking::acceptParty()
+{
+	uint64_t lobbyHandle;
+	if (m_matchMakingProvider->acceptParty(lobbyHandle))
+		return new Party(m_matchMakingProvider, m_userCache, m_taskQueue, lobbyHandle);
 	else
 		return 0;
 }

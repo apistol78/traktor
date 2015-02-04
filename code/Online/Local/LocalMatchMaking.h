@@ -14,6 +14,8 @@ class LocalMatchMaking : public IMatchMakingProvider
 	T_RTTI_CLASS;
 
 public:
+	// Lobby
+
 	virtual bool findMatchingLobbies(const LobbyFilter* filter, std::vector< uint64_t >& outLobbyHandles);
 
 	virtual bool createLobby(uint32_t maxUsers, LobbyAccess access, uint64_t& outLobbyHandle);
@@ -24,29 +26,51 @@ public:
 
 	virtual bool leaveLobby(uint64_t lobbyHandle);
 
-	virtual bool setMetaValue(uint64_t lobbyHandle, const std::wstring& key, const std::wstring& value);
+	virtual bool setLobbyMetaValue(uint64_t lobbyHandle, const std::wstring& key, const std::wstring& value);
 
-	virtual bool getMetaValue(uint64_t lobbyHandle, const std::wstring& key, std::wstring& outValue);
+	virtual bool getLobbyMetaValue(uint64_t lobbyHandle, const std::wstring& key, std::wstring& outValue);
 
-	virtual bool setParticipantMetaValue(uint64_t lobbyHandle, const std::wstring& key, const std::wstring& value);
+	virtual bool setLobbyParticipantMetaValue(uint64_t lobbyHandle, const std::wstring& key, const std::wstring& value);
 
-	virtual bool getParticipantMetaValue(uint64_t lobbyHandle, uint64_t userHandle, const std::wstring& key, std::wstring& outValue);
+	virtual bool getLobbyParticipantMetaValue(uint64_t lobbyHandle, uint64_t userHandle, const std::wstring& key, std::wstring& outValue);
 
-	virtual bool getParticipants(uint64_t lobbyHandle, std::vector< uint64_t >& outUserHandles);
+	virtual bool getLobbyParticipants(uint64_t lobbyHandle, std::vector< uint64_t >& outUserHandles);
 
-	virtual bool getParticipantCount(uint64_t lobbyHandle, uint32_t& outCount) const;
+	virtual bool getLobbyParticipantCount(uint64_t lobbyHandle, uint32_t& outCount) const;
 
-	virtual bool getMaxParticipantCount(uint64_t lobbyHandle, uint32_t& outCount) const;
+	virtual bool getLobbyMaxParticipantCount(uint64_t lobbyHandle, uint32_t& outCount) const;
 
-	virtual bool getFriendsCount(uint64_t lobbyHandle, uint32_t& outCount) const;
+	virtual bool getLobbyFriendsCount(uint64_t lobbyHandle, uint32_t& outCount) const;
 
-	virtual bool invite(uint64_t lobbyHandle, uint64_t userHandle);
+	virtual bool inviteToLobby(uint64_t lobbyHandle, uint64_t userHandle);
 
-	virtual bool getIndex(uint64_t lobbyHandle, int32_t& outIndex) const;
+	virtual bool setLobbyOwner(uint64_t lobbyHandle, uint64_t userHandle) const;
 
-	virtual bool setOwner(uint64_t lobbyHandle, uint64_t userHandle) const;
+	virtual bool getLobbyOwner(uint64_t lobbyHandle, uint64_t& outUserHandle) const;
 
-	virtual bool getOwner(uint64_t lobbyHandle, uint64_t& outUserHandle) const;
+	// Party
+
+	virtual bool createParty(uint64_t& outPartyHandle);
+
+	virtual bool acceptParty(uint64_t& outPartyHandle);
+
+	virtual bool joinParty(uint64_t partyHandle);
+
+	virtual bool leaveParty(uint64_t partyHandle);
+
+	virtual bool setPartyMetaValue(uint64_t partyHandle, const std::wstring& key, const std::wstring& value);
+
+	virtual bool getPartyMetaValue(uint64_t partyHandle, const std::wstring& key, std::wstring& outValue);
+
+	virtual bool setPartyParticipantMetaValue(uint64_t partyHandle, const std::wstring& key, const std::wstring& value);
+
+	virtual bool getPartyParticipantMetaValue(uint64_t partyHandle, uint64_t userHandle, const std::wstring& key, std::wstring& outValue);
+
+	virtual bool getPartyParticipants(uint64_t partyHandle, std::vector< uint64_t >& outUserHandles);
+
+	virtual bool getPartyParticipantCount(uint64_t partyHandle, uint32_t& outCount) const;
+
+	virtual bool inviteToParty(uint64_t partyHandle, uint64_t userHandle);
 
 private:
 	std::map< std::wstring, std::wstring > m_lobbyMeta;

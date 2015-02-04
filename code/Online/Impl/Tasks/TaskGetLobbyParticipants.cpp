@@ -1,7 +1,7 @@
 #include "Online/UserArrayResult.h"
 #include "Online/Impl/User.h"
 #include "Online/Impl/UserCache.h"
-#include "Online/Impl/Tasks/TaskGetParticipants.h"
+#include "Online/Impl/Tasks/TaskGetLobbyParticipants.h"
 #include "Online/Provider/IMatchMakingProvider.h"
 
 namespace traktor
@@ -9,9 +9,9 @@ namespace traktor
 	namespace online
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.online.TaskGetParticipants", TaskGetParticipants, ITask)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.online.TaskGetLobbyParticipants", TaskGetLobbyParticipants, ITask)
 
-TaskGetParticipants::TaskGetParticipants(
+TaskGetLobbyParticipants::TaskGetLobbyParticipants(
 	IMatchMakingProvider* matchMakingProvider,
 	UserCache* userCache,
 	uint64_t lobbyHandle,
@@ -24,14 +24,14 @@ TaskGetParticipants::TaskGetParticipants(
 {
 }
 
-void TaskGetParticipants::execute(TaskQueue* taskQueue)
+void TaskGetLobbyParticipants::execute(TaskQueue* taskQueue)
 {
 	T_ASSERT (m_matchMakingProvider);
 	T_ASSERT (m_userCache);
 	T_ASSERT (m_result);
 
 	std::vector< uint64_t > userHandles;
-	if (m_matchMakingProvider->getParticipants(m_lobbyHandle, userHandles))
+	if (m_matchMakingProvider->getLobbyParticipants(m_lobbyHandle, userHandles))
 	{
 		RefArray< IUser > users;
 		users.reserve(userHandles.size());

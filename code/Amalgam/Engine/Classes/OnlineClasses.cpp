@@ -8,6 +8,7 @@
 #include "Online/ILeaderboards.h"
 #include "Online/ILobby.h"
 #include "Online/IMatchMaking.h"
+#include "Online/IParty.h"
 #include "Online/ISaveData.h"
 #include "Online/ISessionManager.h"
 #include "Online/IStatistics.h"
@@ -148,6 +149,27 @@ Ref< online::LobbyResult > online_IMatchMaking_createLobby(online::IMatchMaking*
 	return self->createLobby(maxUsers, la);
 }
 
+std::wstring online_IParty_getMetaValue(online::IParty* self, const std::wstring& key)
+{
+	std::wstring value;
+	self->getMetaValue(key, value);
+	return value;
+}
+
+std::wstring online_IParty_getParticipantMetaValue(online::IParty* self, const online::IUser* user, const std::wstring& key)
+{
+	std::wstring value;
+	self->getParticipantMetaValue(user, key, value);
+	return value;
+}
+
+RefArray< online::IUser > online_IParty_getParticipants(online::IParty* self)
+{
+	RefArray< online::IUser > users;
+	self->getParticipants(users);
+	return users;
+}
+
 std::vector< std::wstring > online_ISaveData_enumerate(online::ISaveData* self)
 {
 	std::set< std::wstring > saveDataIds;
@@ -235,6 +257,11 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 	classLobbyArrayResult->addMethod("get", &online::LobbyArrayResult::get);
 	scriptManager->registerClass(classLobbyArrayResult);
 
+	Ref< script::AutoScriptClass< online::PartyResult > > classPartyResult = new script::AutoScriptClass< online::PartyResult >();
+	classPartyResult->addMethod("succeed", &online::PartyResult::succeed);
+	classPartyResult->addMethod("get", &online::PartyResult::get);
+	scriptManager->registerClass(classPartyResult);
+
 	Ref< script::AutoScriptClass< online::Score > > classScore = new script::AutoScriptClass< online::Score >();
 	classScore->addMethod("getUser", &online::Score::getUser);
 	classScore->addMethod("getScore", &online::Score::getScore);
@@ -289,7 +316,6 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 	classILobby->addMethod("getMaxParticipantCount", &online::ILobby::getMaxParticipantCount);
 	classILobby->addMethod("getFriendsCount", &online::ILobby::getFriendsCount);
 	classILobby->addMethod("invite", &online::ILobby::invite);
-	classILobby->addMethod("getIndex", &online::ILobby::getIndex);
 	classILobby->addMethod("setOwner", &online::ILobby::setOwner);
 	classILobby->addMethod("getOwner", &online::ILobby::getOwner);
 	scriptManager->registerClass(classILobby);
@@ -299,7 +325,20 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 	classIMatchMaking->addMethod("findMatchingLobbies", &online::IMatchMaking::findMatchingLobbies);
 	classIMatchMaking->addMethod("createLobby", &online_IMatchMaking_createLobby);
 	classIMatchMaking->addMethod("acceptLobby", &online::IMatchMaking::acceptLobby);
+	classIMatchMaking->addMethod("createParty", &online::IMatchMaking::createParty);
+	classIMatchMaking->addMethod("acceptParty", &online::IMatchMaking::acceptParty);
 	scriptManager->registerClass(classIMatchMaking);
+
+	Ref< script::AutoScriptClass< online::IParty > > classIParty = new script::AutoScriptClass< online::IParty >();
+	classIParty->addMethod("setMetaValue", &online::IParty::setMetaValue);
+	classIParty->addMethod("getMetaValue", &online_IParty_getMetaValue);
+	classIParty->addMethod("setParticipantMetaValue", &online::IParty::setParticipantMetaValue);
+	classIParty->addMethod("getParticipantMetaValue", &online_IParty_getParticipantMetaValue);
+	classIParty->addMethod("leave", &online::IParty::leave);
+	classIParty->addMethod("getParticipants", &online_IParty_getParticipants);
+	classIParty->addMethod("getParticipantCount", &online::IParty::getParticipantCount);
+	classIParty->addMethod("invite", &online::IParty::invite);
+	scriptManager->registerClass(classIParty);
 
 	Ref< script::AutoScriptClass< online::ISaveData > > classISaveData = new script::AutoScriptClass< online::ISaveData >();
 	classISaveData->addMethod("ready", &online::ISaveData::ready);

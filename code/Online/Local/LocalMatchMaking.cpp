@@ -34,13 +34,13 @@ bool LocalMatchMaking::leaveLobby(uint64_t lobbyHandle)
 	return true;
 }
 
-bool LocalMatchMaking::setMetaValue(uint64_t lobbyHandle, const std::wstring& key, const std::wstring& value)
+bool LocalMatchMaking::setLobbyMetaValue(uint64_t lobbyHandle, const std::wstring& key, const std::wstring& value)
 {
 	m_lobbyMeta[key] = value;
 	return true;
 }
 
-bool LocalMatchMaking::getMetaValue(uint64_t lobbyHandle, const std::wstring& key, std::wstring& outValue)
+bool LocalMatchMaking::getLobbyMetaValue(uint64_t lobbyHandle, const std::wstring& key, std::wstring& outValue)
 {
 	std::map< std::wstring, std::wstring >::const_iterator i = m_lobbyMeta.find(key);
 	if (i == m_lobbyMeta.end())
@@ -50,56 +50,105 @@ bool LocalMatchMaking::getMetaValue(uint64_t lobbyHandle, const std::wstring& ke
 	return true;
 }
 
-bool LocalMatchMaking::setParticipantMetaValue(uint64_t lobbyHandle, const std::wstring& key, const std::wstring& value)
+bool LocalMatchMaking::setLobbyParticipantMetaValue(uint64_t lobbyHandle, const std::wstring& key, const std::wstring& value)
 {
 	return true;
 }
 
-bool LocalMatchMaking::getParticipantMetaValue(uint64_t lobbyHandle, uint64_t userHandle, const std::wstring& key, std::wstring& outValue)
+bool LocalMatchMaking::getLobbyParticipantMetaValue(uint64_t lobbyHandle, uint64_t userHandle, const std::wstring& key, std::wstring& outValue)
 {
 	return true;
 }
 
-bool LocalMatchMaking::getParticipants(uint64_t lobbyHandle, std::vector< uint64_t >& outUserHandles)
+bool LocalMatchMaking::getLobbyParticipants(uint64_t lobbyHandle, std::vector< uint64_t >& outUserHandles)
 {
 	return true;
 }
 
-bool LocalMatchMaking::getParticipantCount(uint64_t lobbyHandle, uint32_t& outCount) const
+bool LocalMatchMaking::getLobbyParticipantCount(uint64_t lobbyHandle, uint32_t& outCount) const
 {
 	return false;
 }
 
-bool LocalMatchMaking::getMaxParticipantCount(uint64_t lobbyHandle, uint32_t& outCount) const
+bool LocalMatchMaking::getLobbyMaxParticipantCount(uint64_t lobbyHandle, uint32_t& outCount) const
 {
 	return false;
 }
 
-bool LocalMatchMaking::getFriendsCount(uint64_t lobbyHandle, uint32_t& outCount) const
+bool LocalMatchMaking::getLobbyFriendsCount(uint64_t lobbyHandle, uint32_t& outCount) const
 {
 	return false;
 }
 
-bool LocalMatchMaking::invite(uint64_t lobbyHandle, uint64_t userHandle)
+bool LocalMatchMaking::inviteToLobby(uint64_t lobbyHandle, uint64_t userHandle)
 {
 	return false;
 }
 
-bool LocalMatchMaking::getIndex(uint64_t lobbyHandle, int32_t& outIndex) const
-{
-	outIndex = 0;
-	return true;
-}
-
-bool LocalMatchMaking::setOwner(uint64_t lobbyHandle, uint64_t userHandle) const
+bool LocalMatchMaking::setLobbyOwner(uint64_t lobbyHandle, uint64_t userHandle) const
 {
 	return false;
 }
 
-bool LocalMatchMaking::getOwner(uint64_t lobbyHandle, uint64_t& outUserHandle) const
+bool LocalMatchMaking::getLobbyOwner(uint64_t lobbyHandle, uint64_t& outUserHandle) const
 {
 	outUserHandle = 0;
 	return true;
+}
+
+bool LocalMatchMaking::createParty(uint64_t& outPartyHandle)
+{
+	return false;
+}
+
+bool LocalMatchMaking::acceptParty(uint64_t& outPartyHandle)
+{
+	return false;
+}
+
+bool LocalMatchMaking::joinParty(uint64_t partyHandle)
+{
+	return false;
+}
+
+bool LocalMatchMaking::leaveParty(uint64_t partyHandle)
+{
+	return false;
+}
+
+bool LocalMatchMaking::setPartyMetaValue(uint64_t partyHandle, const std::wstring& key, const std::wstring& value)
+{
+	return false;
+}
+
+bool LocalMatchMaking::getPartyMetaValue(uint64_t partyHandle, const std::wstring& key, std::wstring& outValue)
+{
+	return false;
+}
+
+bool LocalMatchMaking::setPartyParticipantMetaValue(uint64_t partyHandle, const std::wstring& key, const std::wstring& value)
+{
+	return false;
+}
+
+bool LocalMatchMaking::getPartyParticipantMetaValue(uint64_t partyHandle, uint64_t userHandle, const std::wstring& key, std::wstring& outValue)
+{
+	return false;
+}
+
+bool LocalMatchMaking::getPartyParticipants(uint64_t partyHandle, std::vector< uint64_t >& outUserHandles)
+{
+	return false;
+}
+
+bool LocalMatchMaking::getPartyParticipantCount(uint64_t partyHandle, uint32_t& outCount) const
+{
+	return false;
+}
+
+bool LocalMatchMaking::inviteToParty(uint64_t partyHandle, uint64_t userHandle)
+{
+	return false;
 }
 
 	}

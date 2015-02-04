@@ -3,6 +3,7 @@
 
 #include "Online/LobbyResult.h"
 #include "Online/LobbyArrayResult.h"
+#include "Online/PartyResult.h"
 #include "Online/Types.h"
 
 // import/export mechanism.
@@ -19,6 +20,7 @@ namespace traktor
 	{
 
 class ILobby;
+class IParty;
 class LobbyFilter;
 
 class T_DLLCLASS IMatchMaking : public Object
@@ -33,6 +35,10 @@ public:
 	virtual Ref< LobbyResult > createLobby(uint32_t maxUsers, LobbyAccess access) = 0;
 
 	virtual Ref< ILobby > acceptLobby() = 0;
+
+	virtual Ref< PartyResult > createParty() = 0;
+
+	virtual Ref< IParty > acceptParty() = 0;
 };
 
 	}
