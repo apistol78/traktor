@@ -7,8 +7,8 @@
 #include "Flash/FlashBitmap.h"
 #include "Flash/Acc/AccShape.h"
 #include "Flash/Acc/AccShapeResources.h"
-#include "Flash/Acc/AccTextureCache.h"
 #include "Flash/Acc/Triangulator.h"
+#include "Render/ISimpleTexture.h"
 #include "Render/Shader.h"
 #include "Render/VertexBuffer.h"
 #include "Render/Context/RenderContext.h"
@@ -208,7 +208,7 @@ bool AccShape::updateRenderable(
 					continue;
 
 				Color4ub color(255, 255, 255, 255);
-				resource::Proxy< render::ITexture > texture;
+				AccTextureCache::BitmapRect texture;
 				bool textureClamp = false;
 
 				if (j->fillStyle && j->fillStyle - 1 < uint16_t(fillStyles.size()))
@@ -421,7 +421,7 @@ void AccShape::render(
 
 		for (AlignedVector< RenderBatch >::iterator j = m_renderBatches[i].begin(); j != m_renderBatches[i].end(); ++j)
 		{
-			if (!j->texture)
+			if (!j->texture.texture)
 			{
 				if (shaderSolid[i] && shaderSolid[i]->getCurrentProgram())
 				{
@@ -453,7 +453,8 @@ void AccShape::render(
 					renderBlock->count = j->primitives.count;
 					renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 					renderBlock->programParams->beginParameters(renderContext);
-					renderBlock->programParams->setTextureParameter(m_shapeResources->m_handleTexture, j->texture);
+					renderBlock->programParams->setTextureParameter(m_shapeResources->m_handleTexture, j->texture.texture);
+					renderBlock->programParams->setVectorParameter(m_shapeResources->m_handleTextureRect, Vector4::loadUnaligned(j->texture.rect));
 					renderBlock->programParams->setVectorParameter(m_shapeResources->m_handleTextureMatrix0, textureMatrix0);
 					renderBlock->programParams->setVectorParameter(m_shapeResources->m_handleTextureMatrix1, textureMatrix1);
 					renderBlock->programParams->setFloatParameter(m_shapeResources->m_handleTextureClamp, j->textureClamp ? 1.0f : 0.0f);

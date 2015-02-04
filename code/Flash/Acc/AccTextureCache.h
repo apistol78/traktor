@@ -12,7 +12,7 @@ namespace traktor
 	{
 
 class IRenderSystem;
-class ITexture;
+class ISimpleTexture;
 
 	}
 
@@ -35,6 +35,37 @@ class FlashBitmap;
 class AccTextureCache : public Object
 {
 public:
+	struct BitmapRect
+	{
+		resource::Proxy< render::ISimpleTexture > texture;
+		float rect[4];
+
+		BitmapRect()
+		{
+			rect[0] =
+			rect[1] =
+			rect[2] =
+			rect[3] = 0.0f;
+		}
+
+		bool operator == (const BitmapRect& rh) const
+		{
+			if (texture != rh.texture)
+				return false;
+
+			return
+				rect[0] == rh.rect[0] &&
+				rect[1] == rh.rect[1] &&
+				rect[2] == rh.rect[2] &&
+				rect[3] == rh.rect[3];
+		}
+
+		bool operator != (const BitmapRect& rh) const
+		{
+			return !(*this == rh);
+		}
+	};
+
 	AccTextureCache(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem
@@ -46,14 +77,14 @@ public:
 
 	void clear();
 
-	resource::Proxy< render::ITexture > getGradientTexture(const FlashFillStyle& style);
+	BitmapRect getGradientTexture(const FlashFillStyle& style);
 
-	resource::Proxy< render::ITexture > getBitmapTexture(const FlashBitmap& bitmap);
+	BitmapRect getBitmapTexture(const FlashBitmap& bitmap);
 
 private:
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
-	SmallMap< uint64_t, resource::Proxy< render::ITexture > > m_cache;
+	SmallMap< uint64_t, BitmapRect > m_cache;
 };
 
 	}

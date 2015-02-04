@@ -8,6 +8,7 @@
 #include "Core/Math/Matrix44.h"
 #include "Flash/Polygon.h"
 #include "Flash/Acc/AccShapeVertexPool.h"
+#include "Flash/Acc/AccTextureCache.h"
 #include "Resource/Proxy.h"
 #include "Render/Types.h"
 
@@ -85,7 +86,7 @@ private:
 
 	struct RenderBatch
 	{
-		resource::Proxy< render::ITexture > texture;
+		AccTextureCache::BitmapRect texture;
 		Matrix33 textureMatrix;
 		bool textureClamp;
 		render::Primitives primitives;

@@ -27,7 +27,7 @@ class T_DLLCLASS FlashBitmapResource : public FlashBitmap
 public:
 	FlashBitmapResource();
 
-	FlashBitmapResource(uint32_t width, uint32_t height, const Guid& resourceId);
+	FlashBitmapResource(uint32_t x, uint32_t y, uint32_t width, uint32_t height, const Guid& resourceId);
 
 	const Guid& getResourceId() const { return m_resourceId; }
 
