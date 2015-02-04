@@ -25,6 +25,10 @@ public:
 
 	virtual Ref< ILobby > acceptLobby();
 
+	virtual Ref< PartyResult > createParty();
+
+	virtual Ref< IParty > acceptParty();
+
 private:
 	friend class SessionManager;
 

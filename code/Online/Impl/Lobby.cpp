@@ -34,7 +34,7 @@ Ref< Result > Lobby::setMetaValue(const std::wstring& key, const std::wstring& v
 
 bool Lobby::getMetaValue(const std::wstring& key, std::wstring& outValue) const
 {
-	return m_matchMakingProvider ? m_matchMakingProvider->getMetaValue(m_handle, key, outValue) : false;
+	return m_matchMakingProvider ? m_matchMakingProvider->getLobbyMetaValue(m_handle, key, outValue) : false;
 }
 
 Ref< Result > Lobby::setParticipantMetaValue(const std::wstring& key, const std::wstring& value)
@@ -62,7 +62,7 @@ bool Lobby::getParticipantMetaValue(const IUser* user, const std::wstring& key, 
 
 	const User* userImpl = dynamic_type_cast< const User* >(user);
 	if (userImpl)
-		return m_matchMakingProvider->getParticipantMetaValue(m_handle, userImpl->m_handle, key, outValue);
+		return m_matchMakingProvider->getLobbyParticipantMetaValue(m_handle, userImpl->m_handle, key, outValue);
 	else
 		return false;
 }
@@ -103,7 +103,7 @@ bool Lobby::getParticipants(RefArray< IUser >& outUsers)
 	std::vector< uint64_t > userHandles;
 	userHandles.reserve(64);
 
-	m_matchMakingProvider->getParticipants(m_handle, userHandles);
+	m_matchMakingProvider->getLobbyParticipants(m_handle, userHandles);
 	m_userCache->getMany(userHandles, (RefArray< User >&)outUsers);
 
 	return true;
@@ -112,7 +112,7 @@ bool Lobby::getParticipants(RefArray< IUser >& outUsers)
 uint32_t Lobby::getParticipantCount() const
 {
 	uint32_t count;
-	if (m_matchMakingProvider && m_matchMakingProvider->getParticipantCount(m_handle, count))
+	if (m_matchMakingProvider && m_matchMakingProvider->getLobbyParticipantCount(m_handle, count))
 		return count;
 	else
 		return 0;
@@ -121,7 +121,7 @@ uint32_t Lobby::getParticipantCount() const
 uint32_t Lobby::getMaxParticipantCount() const
 {
 	uint32_t count;
-	if (m_matchMakingProvider && m_matchMakingProvider->getMaxParticipantCount(m_handle, count))
+	if (m_matchMakingProvider && m_matchMakingProvider->getLobbyMaxParticipantCount(m_handle, count))
 		return count;
 	else
 		return 0;
@@ -130,7 +130,7 @@ uint32_t Lobby::getMaxParticipantCount() const
 uint32_t Lobby::getFriendsCount() const
 {
 	uint32_t count;
-	if (m_matchMakingProvider && m_matchMakingProvider->getFriendsCount(m_handle, count))
+	if (m_matchMakingProvider && m_matchMakingProvider->getLobbyFriendsCount(m_handle, count))
 		return count;
 	else
 		return 0;
@@ -142,19 +142,10 @@ bool Lobby::invite(const IUser* user)
 	if (!userImpl)
 		return false;
 
-	if (m_matchMakingProvider && m_matchMakingProvider->invite(m_handle, userImpl->m_handle))
+	if (m_matchMakingProvider && m_matchMakingProvider->inviteToLobby(m_handle, userImpl->m_handle))
 		return true;
 	else
 		return true;
-}
-
-int32_t Lobby::getIndex() const
-{
-	int32_t index;
-	if (m_matchMakingProvider && m_matchMakingProvider->getIndex(m_handle, index))
-		return index;
-	else
-		return -1;
 }
 
 bool Lobby::setOwner(const IUser* user)
@@ -166,7 +157,7 @@ bool Lobby::setOwner(const IUser* user)
 	if (!userImpl)
 		return false;
 
-	return m_matchMakingProvider->setOwner(m_handle, userImpl->m_handle);
+	return m_matchMakingProvider->setLobbyOwner(m_handle, userImpl->m_handle);
 }
 
 const IUser* Lobby::getOwner() const
@@ -175,7 +166,7 @@ const IUser* Lobby::getOwner() const
 		return 0;
 
 	uint64_t userHandle;
-	if (!m_matchMakingProvider->getOwner(m_handle, userHandle))
+	if (!m_matchMakingProvider->getLobbyOwner(m_handle, userHandle))
 		return 0;
 
 	return m_userCache->get(userHandle);

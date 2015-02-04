@@ -29,7 +29,7 @@ void TaskSetLobbyMetaValue::execute(TaskQueue* taskQueue)
 	T_ASSERT (m_provider);
 	T_ASSERT (m_result);
 
-	if (m_provider->setMetaValue(m_lobbyHandle, m_key, m_value))
+	if (m_provider->setLobbyMetaValue(m_lobbyHandle, m_key, m_value))
 		m_result->succeed();
 	else
 		m_result->fail();

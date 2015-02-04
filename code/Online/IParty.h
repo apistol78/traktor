@@ -1,7 +1,8 @@
-#ifndef traktor_online_ILobby_H
-#define traktor_online_ILobby_H
+#ifndef traktor_online_IParty_H
+#define traktor_online_IParty_H
 
-#include "Online/UserArrayResult.h"
+#include "Core/RefArray.h"
+#include "Online/Result.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,7 +19,7 @@ namespace traktor
 
 class IUser;
 
-class T_DLLCLASS ILobby : public Object
+class T_DLLCLASS IParty : public Object
 {
 	T_RTTI_CLASS;
 
@@ -31,26 +32,16 @@ public:
 
 	virtual bool getParticipantMetaValue(const IUser* user, const std::wstring& key, std::wstring& outValue) const = 0;
 
-	virtual Ref< Result > join() = 0;
-
 	virtual bool leave() = 0;
 
 	virtual bool getParticipants(RefArray< IUser >& outUsers) = 0;
 
 	virtual uint32_t getParticipantCount() const = 0;
 
-	virtual uint32_t getMaxParticipantCount() const = 0;
-
-	virtual uint32_t getFriendsCount() const = 0;
-
 	virtual bool invite(const IUser* user) = 0;
-
-	virtual bool setOwner(const IUser* user) = 0;
-
-	virtual const IUser* getOwner() const = 0;
 };
 
 	}
 }
 
-#endif	// traktor_online_ILobby_H
+#endif	// traktor_online_IParty_H

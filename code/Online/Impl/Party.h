@@ -1,7 +1,7 @@
-#ifndef traktor_online_Lobby_H
-#define traktor_online_Lobby_H
+#ifndef traktor_online_Party_H
+#define traktor_online_Party_H
 
-#include "Online/ILobby.h"
+#include "Online/IParty.h"
 
 namespace traktor
 {
@@ -12,7 +12,7 @@ class IMatchMakingProvider;
 class TaskQueue;
 class UserCache;
 
-class Lobby : public ILobby
+class Party : public IParty
 {
 	T_RTTI_CLASS;
 
@@ -25,27 +25,17 @@ public:
 
 	virtual bool getParticipantMetaValue(const IUser* user, const std::wstring& key, std::wstring& outValue) const;
 
-	virtual Ref< Result > join();
-
 	virtual bool leave();
 
 	virtual bool getParticipants(RefArray< IUser >& outUsers);
 
 	virtual uint32_t getParticipantCount() const;
 
-	virtual uint32_t getMaxParticipantCount() const;
-
-	virtual uint32_t getFriendsCount() const;
-
 	virtual bool invite(const IUser* user);
-
-	virtual bool setOwner(const IUser* user);
-
-	virtual const IUser* getOwner() const;
 
 private:
 	friend class MatchMaking;
-	friend class TaskCreateLobby;
+	friend class TaskCreateParty;
 	friend class TaskFindMatchingLobbies;
 
 	Ref< IMatchMakingProvider > m_matchMakingProvider;
@@ -53,10 +43,10 @@ private:
 	Ref< TaskQueue > m_taskQueue;
 	uint64_t m_handle;
 
-	Lobby(IMatchMakingProvider* matchMakingProvider, UserCache* userCache, TaskQueue* taskQueue, uint64_t handle);
+	Party(IMatchMakingProvider* matchMakingProvider, UserCache* userCache, TaskQueue* taskQueue, uint64_t handle);
 };
 
 	}
 }
 
-#endif	// traktor_online_Lobby_H
+#endif	// traktor_online_Party_H
