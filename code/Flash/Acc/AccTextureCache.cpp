@@ -189,8 +189,8 @@ AccTextureCache::BitmapRect AccTextureCache::getBitmapTexture(const FlashBitmap&
 			texture
 		);
 
-		float w = float(texture->getWidth());
-		float h = float(texture->getHeight());
+		float w = float(bitmapResource->getAtlasWidth());
+		float h = float(bitmapResource->getAtlasHeight());
 
 		BitmapRect& br = m_cache[hash];
 		br.texture = texture;

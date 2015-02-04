@@ -1,6 +1,6 @@
 #include <cstring>
 #include <list>
-#include <ShelfNextFitBinPack.h>
+#include <MaxRectsBinPack.h>
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
@@ -62,16 +62,18 @@ Guid incrementGuid(const Guid& g, uint32_t steps)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", 29, FlashPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", 35, FlashPipeline, editor::IPipeline)
 
 FlashPipeline::FlashPipeline()
-:	m_useTextureCompression(true)
+:	m_generateMips(false)
+,	m_useTextureCompression(true)
 {
 }
 
 bool FlashPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+	m_generateMips = settings->getProperty< PropertyBoolean >(L"FlashPipeline.GenerateMips", false);
 	m_useTextureCompression = settings->getProperty< PropertyBoolean >(L"FlashPipeline.UseTextureCompression", true);
 	return true;
 }
@@ -170,12 +172,12 @@ bool FlashPipeline::buildOutput(
 	{
 		uint16_t id;
 		Ref< const FlashBitmapData > bitmap;
-		rbp::ShelfNextFitBinPack::Node packedRect;
+		rbp::Rect packedRect;
 	};
 
 	struct AtlasBucket
 	{
-		rbp::ShelfNextFitBinPack binPack;
+		rbp::MaxRectsBinPack binPack;
 		std::list< AtlasBitmap > bitmaps;
 	};
 
@@ -195,9 +197,11 @@ bool FlashPipeline::buildOutput(
 
 		for (std::list< AtlasBucket >::iterator j = buckets.begin(); j != buckets.end(); ++j)
 		{
-			rbp::ShelfNextFitBinPack::Node packedRect = j->binPack.Insert(
-				bitmapData->getWidth(),
-				bitmapData->getHeight()
+			int32_t mdim = std::max(bitmapData->getWidth(), bitmapData->getHeight());
+			rbp::Rect packedRect = j->binPack.Insert(
+				mdim + 2,
+				mdim + 2,
+				rbp::MaxRectsBinPack::RectBestAreaFit
 			);
 			if (packedRect.height > 0)
 			{
@@ -205,6 +209,10 @@ bool FlashPipeline::buildOutput(
 				ab.id = i->first;
 				ab.bitmap = bitmapData;
 				ab.packedRect = packedRect;
+				ab.packedRect.x += 1;
+				ab.packedRect.y += 1;
+				ab.packedRect.width = bitmapData->getWidth();
+				ab.packedRect.height = bitmapData->getHeight();
 				j->bitmaps.push_back(ab);
 				foundBucket = true;
 				break;
@@ -216,9 +224,11 @@ bool FlashPipeline::buildOutput(
 			buckets.push_back(AtlasBucket());
 			buckets.back().binPack.Init(1024, 1024);
 
-			rbp::ShelfNextFitBinPack::Node packedRect = buckets.back().binPack.Insert(
-				bitmapData->getWidth(),
-				bitmapData->getHeight()
+			int32_t mdim = std::max(bitmapData->getWidth(), bitmapData->getHeight());
+			rbp::Rect packedRect = buckets.back().binPack.Insert(
+				mdim + 2,
+				mdim + 2,
+				rbp::MaxRectsBinPack::RectBestAreaFit
 			);
 			if (packedRect.height > 0)
 			{
@@ -226,6 +236,10 @@ bool FlashPipeline::buildOutput(
 				ab.id = i->first;
 				ab.bitmap = bitmapData;
 				ab.packedRect = packedRect;
+				ab.packedRect.x += 1;
+				ab.packedRect.y += 1;
+				ab.packedRect.width = bitmapData->getWidth();
+				ab.packedRect.height = bitmapData->getHeight();
 				buckets.back().bitmaps.push_back(ab);
 			}
 			else
@@ -274,18 +288,34 @@ bool FlashPipeline::buildOutput(
 					j->bitmap->getWidth() * j->bitmap->getHeight() * 4
 				);
 
-				atlasImage->copy(
-					bitmapImage,
-					j->packedRect.x,
-					j->packedRect.y,
-					0,
-					0,
-					j->packedRect.width,
-					j->packedRect.height
-				);
+				for (int32_t y = -1; y < j->packedRect.height + 1; ++y)
+				{
+					for (int32_t x = -1; x < j->packedRect.width + 1; ++x)
+					{
+						int32_t sx = x;
+						int32_t sy = y;
+
+						if (sx < 0)
+							sx = j->packedRect.width - 1;
+						else if (sx > j->packedRect.width - 1)
+							sx = 0;
+
+						if (sy < 0)
+							sy = j->packedRect.height - 1;
+						else if (sy > j->packedRect.height - 1)
+							sy = 0;
+
+						Color4f tmp;
+						bitmapImage->getPixel(sx, sy, tmp);
+
+						atlasImage->setPixel(j->packedRect.x + x, j->packedRect.y + y, tmp);
+					}
+				}
 			}
 
+#if defined(_DEBUG)
 			atlasImage->save(L"FlashBitmapAtlas" + toString(count) + L".png");
+#endif
 
 			Guid bitmapOutputGuid = incrementGuid(outputGuid, count++);
 
@@ -293,7 +323,7 @@ bool FlashPipeline::buildOutput(
 			output->m_textureFormat = render::TfInvalid;
 			output->m_generateNormalMap = false;
 			output->m_scaleDepth = 0.0f;
-			output->m_generateMips = true;
+			output->m_generateMips = m_generateMips;
 			output->m_keepZeroAlpha = false;
 			output->m_textureType = render::Tt2D;
 			output->m_hasAlpha = false;
@@ -327,13 +357,20 @@ bool FlashPipeline::buildOutput(
 					j->packedRect.y,
 					j->packedRect.width,
 					j->packedRect.height,
+					1024,
+					1024,
 					bitmapOutputGuid
 				));
 			}
 		}
 		else if (i->bitmaps.size() == 1)
 		{
-			standalone.push_back(i->bitmaps.front());
+			AtlasBitmap ab = i->bitmaps.front();
+			ab.packedRect.x = 0;
+			ab.packedRect.y = 0;
+			ab.packedRect.width = ab.bitmap->getWidth();
+			ab.packedRect.height = ab.bitmap->getHeight();
+			standalone.push_back(ab);
 		}
 	}
 
@@ -353,13 +390,17 @@ bool FlashPipeline::buildOutput(
 			i->bitmap->getWidth() * i->bitmap->getHeight() * 4
 		);
 
+#if defined(_DEBUG)
+		bitmapImage->save(L"FlashBitmap" + toString(count) + L".png");
+#endif
+
 		Guid bitmapOutputGuid = incrementGuid(outputGuid, count++);
 
 		Ref< render::TextureOutput > output = new render::TextureOutput();
 		output->m_textureFormat = render::TfInvalid;
 		output->m_generateNormalMap = false;
 		output->m_scaleDepth = 0.0f;
-		output->m_generateMips = true;
+		output->m_generateMips = m_generateMips;
 		output->m_keepZeroAlpha = false;
 		output->m_textureType = render::Tt2D;
 		output->m_hasAlpha = false;
@@ -391,71 +432,11 @@ bool FlashPipeline::buildOutput(
 			0,
 			bitmapImage->getWidth(),
 			bitmapImage->getHeight(),
-			bitmapOutputGuid
-		));
-	}
-
-	/*
-	uint32_t count = 1;
-
-	for (SmallMap< uint16_t, Ref< FlashBitmap > >::const_iterator i = bitmaps.begin(); i != bitmaps.end(); ++i)
-	{
-		const FlashBitmapData* bitmapData = dynamic_type_cast< const FlashBitmapData* >(i->second);
-		if (!bitmapData)
-			continue;
-
-		Ref< drawing::Image > bitmapImage = new drawing::Image(
-			drawing::PixelFormat::getA8B8G8R8(),
-			bitmapData->getWidth(),
-			bitmapData->getHeight()
-		);
-
-		std::memcpy(
-			bitmapImage->getData(),
-			bitmapData->getBits(),
-			bitmapData->getWidth() * bitmapData->getHeight() * 4
-		);
-
-		Guid bitmapOutputGuid = incrementGuid(outputGuid, count++);
-
-		Ref< render::TextureOutput > output = new render::TextureOutput();
-		output->m_textureFormat = render::TfInvalid;
-		output->m_generateNormalMap = false;
-		output->m_scaleDepth = 0.0f;
-		output->m_generateMips = true;
-		output->m_keepZeroAlpha = false;
-		output->m_textureType = render::Tt2D;
-		output->m_hasAlpha = false;
-		output->m_ignoreAlpha = false;
-		output->m_scaleImage = false;
-		output->m_scaleWidth = 0;
-		output->m_scaleHeight = 0;
-		output->m_enableCompression = m_useTextureCompression;
-		output->m_enableNormalMapCompression = false;
-		output->m_inverseNormalMapY = false;
-		output->m_linearGamma = true;
-		output->m_generateSphereMap = false;
-		output->m_preserveAlphaCoverage = false;
-		output->m_alphaCoverageReference = 0.0f;
-		output->m_sharpenRadius = 0;
-		output->m_systemTexture = true;
-
-		std::wstring bitmapOutputPath = Path(outputPath).getPathOnly() + L"/Textures/" + bitmapOutputGuid.format();
-		if (!pipelineBuilder->buildOutput(
-			output,
-			bitmapOutputPath,
-			bitmapOutputGuid,
-			bitmapImage
-		))
-			return false;
-
-		movie->defineBitmap(i->first, new FlashBitmapResource(
 			bitmapImage->getWidth(),
 			bitmapImage->getHeight(),
 			bitmapOutputGuid
 		));
 	}
-	*/
 
 	Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 		outputPath,
