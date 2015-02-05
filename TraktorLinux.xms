@@ -10247,6 +10247,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
 					</includePaths>
 					<definitions>
 						<item>T_FLASH_EDITOR_EXPORT</item>
@@ -10264,6 +10265,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
 					</includePaths>
 					<definitions>
 						<item>T_FLASH_EDITOR_EXPORT</item>
@@ -10281,6 +10283,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -10298,6 +10301,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>

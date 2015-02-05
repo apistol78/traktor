@@ -51,6 +51,19 @@ const resource::Id< render::Shader > c_idShaderQuadDecrementMask(Guid(L"{D682100
 const resource::Id< render::Shader > c_idShaderGlyph(Guid(L"{A8BC2D03-EB52-B744-8D4B-29E39FF0B4F5}"));
 const resource::Id< render::Shader > c_idShaderGlyphMask(Guid(L"{C8FEF24B-D775-A14D-9FF3-E34A17495FB4}"));
 
+struct AtlasBitmap
+{
+	uint16_t id;
+	Ref< const FlashBitmapData > bitmap;
+	rbp::Rect packedRect;
+};
+
+struct AtlasBucket
+{
+	rbp::MaxRectsBinPack binPack;
+	std::list< AtlasBitmap > bitmaps;
+};
+
 Guid incrementGuid(const Guid& g, uint32_t steps)
 {
 	uint8_t d[16];
@@ -168,19 +181,6 @@ bool FlashPipeline::buildOutput(
 	SmallMap< uint16_t, Ref< FlashBitmap > > bitmaps = movie->getBitmaps();
 
 	// Create atlas buckets of small bitmaps.
-	struct AtlasBitmap
-	{
-		uint16_t id;
-		Ref< const FlashBitmapData > bitmap;
-		rbp::Rect packedRect;
-	};
-
-	struct AtlasBucket
-	{
-		rbp::MaxRectsBinPack binPack;
-		std::list< AtlasBitmap > bitmaps;
-	};
-
 	std::list< AtlasBucket > buckets;
 	std::list< AtlasBitmap > standalone;
 
@@ -256,13 +256,13 @@ bool FlashPipeline::buildOutput(
 		}
 	}
 
-	log::info << L"Packed bitmaps into " << buckets.size() << L" atlas(es)." << Endl;
+	log::info << L"Packed bitmaps into " << uint32_t(buckets.size()) << L" atlas(es)." << Endl;
 
 	uint32_t count = 1;
 
 	for (std::list< AtlasBucket >::const_iterator i = buckets.begin(); i != buckets.end(); ++i)
 	{
-		log::info << L"Atlas " << count << L", containing " << i->bitmaps.size() << L" bitmaps." << Endl;
+		log::info << L"Atlas " << count << L", containing " << uint32_t(i->bitmaps.size()) << L" bitmaps." << Endl;
 
 		if (i->bitmaps.size() > 1)
 		{
@@ -374,7 +374,7 @@ bool FlashPipeline::buildOutput(
 		}
 	}
 
-	log::info << standalone.size() << L" bitmap(s) didn't fit in any atlas..." << Endl;
+	log::info << uint32_t(standalone.size()) << L" bitmap(s) didn't fit in any atlas..." << Endl;
 
 	for (std::list< AtlasBitmap >::const_iterator i = standalone.begin(); i != standalone.end(); ++i)
 	{

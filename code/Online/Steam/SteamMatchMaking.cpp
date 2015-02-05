@@ -79,7 +79,7 @@ SteamMatchMaking::SteamMatchMaking(SteamSessionManager* sessionManager)
 			if (argv[i] == L"+connect_lobby")
 			{
 				uint64_t lobbyHandle = parseString< uint64_t >(argv[i + 1]);
-				const char* value = SteamMatchmaking()->GetLobbyData(lobbyHandle, "__LOBBY_TYPE__");
+				const char* value = SteamMatchmaking()->GetLobbyData(uint64(lobbyHandle), "__LOBBY_TYPE__");
 				if (value)
 				{
 					if (strcmp(value, "LOBBY"))
