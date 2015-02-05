@@ -485,10 +485,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 		Ref< PropertyGroup > defaultSettings = loadSettings(settingsPath);
 		if (!defaultSettings)
 		{
-			log::error << L"Unable to read application settings (" << settingsPath.getPathName() << L")." << Endl;
-			log::error << L"Please reinstall application." << Endl;
-			showErrorDialog(logTail->m_tail);
-			return 1;
+			// Steam bug fix #1) Apparently there are sometimes issues with current working directory when launched from Steam.
+			defaultSettings = loadSettings(Path(L"..") + settingsPath);
+			if (!defaultSettings)
+			{
+				log::error << L"Unable to read application settings (" << settingsPath.getPathName() << L")." << Endl;
+				log::error << L"Please reinstall application." << Endl;
+				showErrorDialog(logTail->m_tail);
+				return 1;
+			}
+			else
+			{
+				// Application is started in "bin" directory; change cwd and continue.
+				Path cd = FileSystem::getInstance().getCurrentVolume()->getCurrentDirectory();
+				FileSystem::getInstance().getCurrentVolume()->setCurrentDirectory((cd + Path(L"..")).normalized());
+			}
 		}
 
 		Ref< PropertyGroup > settings = DeepClone(defaultSettings).create< PropertyGroup >();
