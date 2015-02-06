@@ -16,6 +16,9 @@
 #include "Resource/IResourceManager.h"
 #include "Script/IScriptContext.h"
 
+//#define T_ENABLE_MEASURE
+#include "Core/Timer/Measure.h"
+
 namespace traktor
 {
 	namespace amalgam
@@ -165,15 +168,19 @@ bool Stage::gotoStage(Stage* stage)
 
 bool Stage::update(IStateManager* stateManager, const IUpdateInfo& info)
 {
+	T_MEASURE_BEGIN()
+
 	if (!m_running)
 		return false;
 
 	if (!m_pendingStage)
 	{
 		for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-			(*i)->prepare();
+			T_MEASURE_STATEMENT_M((*i)->prepare(), 1.0 / 60.0, type_name(*i));
 
-		if (validateScriptContext())
+		bool validScriptContext = false;
+		T_MEASURE_STATEMENT(validScriptContext = validateScriptContext(), 1.0 / 60.0);
+		if (validScriptContext)
 		{
 			info.getProfiler()->beginScope(FptScript);
 
@@ -181,13 +188,13 @@ bool Stage::update(IStateManager* stateManager, const IUpdateInfo& info)
 			{
 				script::Any::fromObject(const_cast< IUpdateInfo* >(&info))
 			};
-			m_scriptContext->executeFunction("update", sizeof_array(argv), argv);
+			T_MEASURE_STATEMENT(m_scriptContext->executeFunction("update", sizeof_array(argv), argv), 1.0 / 60.0);
 
 			info.getProfiler()->endScope();
 		}
 
 		for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-			(*i)->update(info);
+			T_MEASURE_STATEMENT_M((*i)->update(info), 1.0 / 60.0, type_name(*i));
 
 		m_fade = max(0.0f, m_fade - info.getSimulationDeltaTime() * m_fadeRate);
 	}
@@ -196,19 +203,24 @@ bool Stage::update(IStateManager* stateManager, const IUpdateInfo& info)
 		m_fade += info.getSimulationDeltaTime() * m_fadeRate;
 		if (m_fade > 1.0f)
 		{
-			stateManager->enter(new StageState(m_environment, m_pendingStage));
+			T_MEASURE_STATEMENT(stateManager->enter(new StageState(m_environment, m_pendingStage)), 1.0 / 60.0);
 			m_transitionStage = m_pendingStage;
 			m_pendingStage = 0;
 		}
 	}
 
+	T_MEASURE_UNTIL(1.0 / 60.0);
 	return true;
 }
 
 bool Stage::build(const IUpdateInfo& info, uint32_t frame)
 {
+	T_MEASURE_BEGIN()
+
 	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-		(*i)->build(info, frame);
+		T_MEASURE_STATEMENT((*i)->build(info, frame), 1.0 / 60.0);
+
+	T_MEASURE_UNTIL(1.0 / 60.0);
 	return true;
 }
 
@@ -292,33 +304,38 @@ void Stage::resume()
 
 bool Stage::validateScriptContext()
 {
+	T_MEASURE_BEGIN()
+
 	if (!m_scriptContext)
 		return false;
 
 	if (!m_initialized)
 	{
 		// Expose commonly used globals.
-		m_scriptContext->setGlobal("stage", script::Any::fromObject(this));
-		m_scriptContext->setGlobal("environment", script::Any::fromObject(m_environment));
+		T_MEASURE_STATEMENT(m_scriptContext->setGlobal("stage", script::Any::fromObject(this)), 1.0 / 60.0);
+		T_MEASURE_STATEMENT(m_scriptContext->setGlobal("environment", script::Any::fromObject(m_environment)), 1.0 / 60.0);
 
 		for (RefArray< Layer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 		{
 			if (!(*i)->getName().empty())
-				m_scriptContext->setGlobal(wstombs((*i)->getName()), script::Any::fromObject(*i));
+				T_MEASURE_STATEMENT(m_scriptContext->setGlobal(wstombs((*i)->getName()), script::Any::fromObject(*i)), 1.0 / 60.0);
 		}
 
 		// Call script init; do this everytime we re-validate script.
-		if (m_scriptContext->haveFunction("initialize"))
+		bool haveInitialize = false;
+		T_MEASURE_STATEMENT(haveInitialize = m_scriptContext->haveFunction("initialize"), 1.0 / 60.0);
+		if (haveInitialize)
 		{
 			script::Any argv[] =
 			{
 				script::Any::fromObject(const_cast< Object* >(m_params.c_ptr()))
 			};
-			m_scriptContext->executeMethod(this, "initialize", sizeof_array(argv), argv);
+			T_MEASURE_STATEMENT(m_scriptContext->executeMethod(this, "initialize", sizeof_array(argv), argv), 1.0 / 60.0);
 		}
 		m_initialized = true;
 	}
 
+	T_MEASURE_UNTIL(1.0 / 60.0);
 	return true;
 }
 

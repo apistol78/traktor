@@ -6,6 +6,7 @@
 #include "Online/Impl/Tasks/TaskGetSaveData.h"
 #include "Online/Impl/Tasks/TaskRemoveSaveData.h"
 #include "Online/Impl/Tasks/TaskSetSaveData.h"
+#include "Online/Provider/ISaveDataProvider.h"
 
 namespace traktor
 {
@@ -41,6 +42,16 @@ Ref< AttachmentResult > SaveData::get(const std::wstring& saveDataId) const
 		return 0;
 }
 
+Ref< ISerializable > SaveData::getNow(const std::wstring& saveDataId) const
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	Ref< ISerializable > attachment;
+	if (m_provider->get(saveDataId, attachment))
+		return attachment;
+	else
+		return 0;
+}
+
 Ref< Result > SaveData::set(const std::wstring& saveDataId, const SaveDataDesc& saveDataDesc, const ISerializable* attachment, bool replace)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
@@ -57,6 +68,12 @@ Ref< Result > SaveData::set(const std::wstring& saveDataId, const SaveDataDesc& 
 		return result;
 	else
 		return 0;
+}
+
+bool SaveData::setNow(const std::wstring& saveDataId, const SaveDataDesc& saveDataDesc, const ISerializable* attachment, bool replace)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	return m_provider->set(saveDataId, saveDataDesc, attachment, replace);
 }
 
 Ref< Result > SaveData::remove(const std::wstring& saveDataId)

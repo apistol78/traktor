@@ -185,6 +185,14 @@ Ref< online::Result > online_ISaveData_set(online::ISaveData* self, const std::w
 	return self->set(saveDataId, sdd, attachment, replace);
 }
 
+bool online_ISaveData_setNow(online::ISaveData* self, const std::wstring& saveDataId, const std::wstring& saveDataTitle, const std::wstring& saveDataDescription, const ISerializable* attachment, bool replace)
+{
+	online::SaveDataDesc sdd;
+	sdd.title = saveDataTitle;
+	sdd.description = saveDataDescription;
+	return self->setNow(saveDataId, sdd, attachment, replace);
+}
+
 bool online_ISessionManager_navigateUrl(online::ISessionManager* self, const std::wstring& url)
 {
 	return self->navigateUrl(net::Url(url));
@@ -344,7 +352,9 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 	classISaveData->addMethod("ready", &online::ISaveData::ready);
 	classISaveData->addMethod("enumerate", &online_ISaveData_enumerate);
 	classISaveData->addMethod("get", &online::ISaveData::get);
+	classISaveData->addMethod("getNow", &online::ISaveData::getNow);
 	classISaveData->addMethod("set", &online_ISaveData_set);
+	classISaveData->addMethod("setNow", &online_ISaveData_setNow);
 	classISaveData->addMethod("remove", &online::ISaveData::remove);
 	scriptManager->registerClass(classISaveData);
 
