@@ -10,6 +10,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/PropertyStringArray.h"
 #include "Core/Settings/PropertyStringSet.h"
+#include "Core/Timer/Timer.h"
 #include "Script/AutoScriptClass.h"
 #include "Script/IScriptManager.h"
 
@@ -191,6 +192,15 @@ void registerCoreClasses(script::IScriptManager* scriptManager)
 	Ref< script::AutoScriptClass< PropertyStringSet > > classPropertyStringSet = new script::AutoScriptClass< PropertyStringSet >();
 	classPropertyStringSet->addConstructor();
 	scriptManager->registerClass(classPropertyStringSet);
+
+	Ref< script::AutoScriptClass< Timer > > classTimer = new script::AutoScriptClass< Timer >();
+	classTimer->addConstructor();
+	classTimer->addMethod("start", &Timer::start);
+	classTimer->addMethod("pause", &Timer::pause);
+	classTimer->addMethod("stop", &Timer::stop);
+	classTimer->addMethod("getElapsedTime", &Timer::getElapsedTime);
+	classTimer->addMethod("getDeltaTime", &Timer::getDeltaTime);
+	scriptManager->registerClass(classTimer);
 }
 
 	}
