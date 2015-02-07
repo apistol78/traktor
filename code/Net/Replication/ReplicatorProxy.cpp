@@ -39,6 +39,11 @@ uint8_t ReplicatorProxy::getStatus() const
 	return m_status;
 }
 
+bool ReplicatorProxy::isLatencyReliable() const
+{
+	return m_roundTrips.full();
+}
+
 double ReplicatorProxy::getLatency() const
 {
 	return m_latency;
@@ -57,6 +62,15 @@ double ReplicatorProxy::getReverseLatency() const
 double ReplicatorProxy::getReverseLatencySpread() const
 {
 	return m_latencyReverseStandardDeviation;
+}
+
+void ReplicatorProxy::resetLatencies()
+{
+	m_roundTrips.clear();
+	m_latency = 0.0;
+	m_latencyStandardDeviation = 0.0;
+	m_latencyReverse = 0.0;
+	m_latencyReverseStandardDeviation = 0.0;
 }
 
 bool ReplicatorProxy::isConnected() const

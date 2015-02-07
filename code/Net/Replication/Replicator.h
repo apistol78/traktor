@@ -209,6 +209,10 @@ public:
 
 	/*! \
 	 */
+	void resetAllLatencies();
+
+	/*! \
+	 */
 	double getAverageLatency() const;
 
 	/*! \

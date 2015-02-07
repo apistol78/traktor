@@ -228,7 +228,7 @@ bool Replicator::update()
 			continue;
 		}
 
-		if (fromProxy->isPrimary())
+		if (fromProxy->isPrimary() && fromProxy->isLatencyReliable())
 		{
 			double latency = fromProxy->getReverseLatency();
 			double ghostOffset = net2time(msg.time) + latency - m_timeContinuousSync;
@@ -568,14 +568,28 @@ ReplicatorProxy* Replicator::getPrimaryProxy() const
 	return 0;
 }
 
+void Replicator::resetAllLatencies()
+{
+	for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+		(*i)->resetLatencies();
+}
+
 double Replicator::getAverageLatency() const
 {
 	double latency = 0.0;
 	if (!m_proxies.empty())
 	{
+		int32_t reliableCount = 0;
 		for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
-			latency += (*i)->getLatency();
-		latency /= double(m_proxies.size());
+		{
+			if ((*i)->isLatencyReliable())
+			{
+				latency += (*i)->getLatency();
+				reliableCount++;
+			}
+		}
+		if (reliableCount > 0)
+			latency /= double(reliableCount);
 	}
 	return latency;
 }
@@ -585,9 +599,17 @@ double Replicator::getAverageReverseLatency() const
 	double latency = 0.0;
 	if (!m_proxies.empty())
 	{
+		int32_t reliableCount = 0;
 		for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
-			latency += (*i)->getReverseLatency();
-		latency /= double(m_proxies.size());
+		{
+			if ((*i)->isLatencyReliable())
+			{
+				latency += (*i)->getReverseLatency();
+				reliableCount++;
+			}
+		}
+		if (reliableCount > 0)
+			latency /= double(m_proxies.size());
 	}
 	return latency;
 }

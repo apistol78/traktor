@@ -47,6 +47,10 @@ public:
 
 	/*! \brief
 	 */
+	bool isLatencyReliable() const;
+
+	/*! \brief
+	 */
 	double getLatency() const;
 
 	/*! \brief
@@ -60,6 +64,10 @@ public:
 	/*! \brief
 	 */
 	double getReverseLatencySpread() const;
+
+	/*! \brief
+	 */
+	void resetLatencies();
 
 	/*! \brief
 	 */
@@ -167,7 +175,7 @@ private:
 	uint8_t m_sequence;
 	std::list< Event > m_events;
 	CircularVector< std::pair< uint8_t, uint32_t >, 128 > m_lastEvents;
-	CircularVector< uint8_t, 16 > m_acknowledgeHistory;
+	CircularVector< uint8_t, 32 > m_acknowledgeHistory;
 
 	//@}
 
@@ -176,7 +184,7 @@ private:
 
 	double m_timeUntilTxPing;
 	double m_timeUntilTxState;
-	CircularVector< double, 65 > m_roundTrips;
+	CircularVector< double, 33 > m_roundTrips;
 	double m_latency;
 	double m_latencyStandardDeviation;
 	double m_latencyReverse;
