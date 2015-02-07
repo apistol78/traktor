@@ -165,6 +165,7 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	classReplicatorProxy->addMethod("getHandle", &net::ReplicatorProxy::getHandle);
 	classReplicatorProxy->addMethod("getName", &net::ReplicatorProxy::getName);
 	classReplicatorProxy->addMethod("getStatus", &net::ReplicatorProxy::getStatus);
+	classReplicatorProxy->addMethod("isLatencyReliable", &net::ReplicatorProxy::isLatencyReliable);
 	classReplicatorProxy->addMethod("getLatency", &net::ReplicatorProxy::getLatency);
 	classReplicatorProxy->addMethod("getLatencySpread", &net::ReplicatorProxy::getLatencySpread);
 	classReplicatorProxy->addMethod("getReverseLatency", &net::ReplicatorProxy::getReverseLatency);
@@ -243,7 +244,9 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	classReplicator->addMethod("getProxyCount", &net::Replicator::getProxyCount);
 	classReplicator->addMethod("getProxy", &net::Replicator::getProxy);
 	classReplicator->addMethod("getPrimaryProxy", &net::Replicator::getPrimaryProxy);
+	classReplicator->addMethod("resetAllLatencies", &net::Replicator::resetAllLatencies);
 	classReplicator->addMethod("getAverageLatency", &net::Replicator::getAverageLatency);
+	classReplicator->addMethod("getAverageReverseLatency", &net::Replicator::getAverageReverseLatency);
 	classReplicator->addMethod("broadcastEvent", &net::Replicator::broadcastEvent);
 	classReplicator->addMethod("sendEventToPrimary", &net::Replicator::sendEventToPrimary);
 	classReplicator->addMethod("getTime", &net::Replicator::getTime);
