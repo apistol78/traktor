@@ -11,6 +11,7 @@ namespace traktor
 	namespace render
 	{
 
+class Blob;
 class ProgramDx11;
 
 class StateCache : public Object
@@ -36,7 +37,7 @@ public:
 
 	void setTopology(D3D11_PRIMITIVE_TOPOLOGY d3dTopology);
 
-	void setInputLayout(uint32_t d3dVertexShaderHash, ID3DBlob* d3dVertexShaderBlob, uint32_t d3dInputElementsHash, const std::vector< D3D11_INPUT_ELEMENT_DESC >& d3dInputElements);
+	void setInputLayout(uint32_t d3dVertexShaderHash, const Blob* d3dVertexShaderBlob, uint32_t d3dInputElementsHash, const std::vector< D3D11_INPUT_ELEMENT_DESC >& d3dInputElements);
 
 	void setActiveProgram(ProgramDx11* program);
 

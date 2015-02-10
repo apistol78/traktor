@@ -1,4 +1,5 @@
 #include "Core/Misc/Adler32.h"
+#include "Render/Dx11/Blob.h"
 #include "Render/Dx11/ResourceCache.h"
 
 namespace traktor
@@ -142,7 +143,7 @@ ID3D11SamplerState* ResourceCache::getSamplerState(const D3D11_SAMPLER_DESC& dsd
 	return ss;
 }
 
-ID3D11VertexShader* ResourceCache::getVertexShader(ID3DBlob* vertexShaderBlob, uint32_t vertexShaderHash)
+ID3D11VertexShader* ResourceCache::getVertexShader(const Blob* vertexShaderBlob, uint32_t vertexShaderHash)
 {
 	ComRef< ID3D11VertexShader > d3dVertexShader;
 	HRESULT hr;
@@ -152,8 +153,8 @@ ID3D11VertexShader* ResourceCache::getVertexShader(ID3DBlob* vertexShaderBlob, u
 		return i->second;
 
 	hr = m_d3dDevice->CreateVertexShader(
-		(DWORD*)vertexShaderBlob->GetBufferPointer(),
-		vertexShaderBlob->GetBufferSize(),
+		(DWORD*)vertexShaderBlob->getData(),
+		vertexShaderBlob->getSize(),
 		0,
 		&d3dVertexShader.getAssign()
 	);
@@ -164,7 +165,7 @@ ID3D11VertexShader* ResourceCache::getVertexShader(ID3DBlob* vertexShaderBlob, u
 	return d3dVertexShader;
 }
 
-ID3D11PixelShader* ResourceCache::getPixelShader(ID3DBlob* pixelShaderBlob, uint32_t pixelShaderHash)
+ID3D11PixelShader* ResourceCache::getPixelShader(const Blob* pixelShaderBlob, uint32_t pixelShaderHash)
 {
 	ComRef< ID3D11PixelShader > d3dPixelShader;
 	HRESULT hr;
@@ -174,8 +175,8 @@ ID3D11PixelShader* ResourceCache::getPixelShader(ID3DBlob* pixelShaderBlob, uint
 		return i->second;
 
 	hr = m_d3dDevice->CreatePixelShader(
-		(DWORD*)pixelShaderBlob->GetBufferPointer(),
-		pixelShaderBlob->GetBufferSize(),
+		(DWORD*)pixelShaderBlob->getData(),
+		pixelShaderBlob->getSize(),
 		0,
 		&d3dPixelShader.getAssign()
 	);

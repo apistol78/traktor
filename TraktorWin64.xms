@@ -14383,7 +14383,6 @@
 					<libraries>
 						<item>d3d11.lib</item>
 						<item>dxgi.lib</item>
-						<item>d3dcompiler.lib</item>
 						<item>dxguid.lib</item>
 						<item>d3d9.lib</item>
 					</libraries>
@@ -14408,7 +14407,6 @@
 					<libraries>
 						<item>d3d11.lib</item>
 						<item>dxgi.lib</item>
-						<item>d3dcompiler.lib</item>
 						<item>dxguid.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
@@ -14433,7 +14431,6 @@
 					<libraries>
 						<item>d3d11.lib</item>
 						<item>dxgi.lib</item>
-						<item>d3dcompiler.lib</item>
 						<item>dxguid.lib</item>
 						<item>d3d9.lib</item>
 					</libraries>
@@ -14458,7 +14455,6 @@
 					<libraries>
 						<item>d3d11.lib</item>
 						<item>dxgi.lib</item>
-						<item>d3dcompiler.lib</item>
 						<item>dxguid.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
