@@ -1,3 +1,4 @@
+#include "Render/Dx11/Blob.h"
 #include "Render/Dx11/StateCache.h"
 
 namespace traktor
@@ -109,7 +110,7 @@ void StateCache::setTopology(D3D11_PRIMITIVE_TOPOLOGY d3dTopology)
 	}
 }
 
-void StateCache::setInputLayout(uint32_t d3dVertexShaderHash, ID3DBlob* d3dVertexShaderBlob, uint32_t d3dInputElementsHash, const std::vector< D3D11_INPUT_ELEMENT_DESC >& d3dInputElements)
+void StateCache::setInputLayout(uint32_t d3dVertexShaderHash, const Blob* d3dVertexShaderBlob, uint32_t d3dInputElementsHash, const std::vector< D3D11_INPUT_ELEMENT_DESC >& d3dInputElements)
 {
 	uint64_t d3dSignatureHash = (uint64_t(d3dVertexShaderHash) << 32) | d3dInputElementsHash;
 	if (m_d3dSignatureHash != d3dSignatureHash)
@@ -131,8 +132,8 @@ void StateCache::setInputLayout(uint32_t d3dVertexShaderHash, ID3DBlob* d3dVerte
 			hr = d3dDevice->CreateInputLayout(
 				&d3dInputElements[0],
 				UINT(d3dInputElements.size()),
-				d3dVertexShaderBlob->GetBufferPointer(),
-				d3dVertexShaderBlob->GetBufferSize(),
+				d3dVertexShaderBlob->getData(),
+				d3dVertexShaderBlob->getSize(),
 				&d3dInputLayout
 			);
 			T_ASSERT (SUCCEEDED(hr));

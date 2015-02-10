@@ -79,6 +79,9 @@ bool ProgramDx11::create(
 	const ProgramResourceDx11* resource
 )
 {
+	D3D11_BUFFER_DESC dbd;
+	HRESULT hr;
+
 	// Get shaders; reuse existing if already created.
 	m_d3dVertexShader = resourceCache.getVertexShader(resource->m_vertexShader, resource->m_vertexShaderHash);
 	if (!m_d3dVertexShader)
@@ -97,28 +100,110 @@ bool ProgramDx11::create(
 	m_d3dVertexShaderBlob = resource->m_vertexShader;
 	m_d3dVertexShaderHash = resource->m_vertexShaderHash;
 
-	// Create states.
-	if (!createState(
-		d3dDevice,
-		resourceCache,
-		0,
-		resource->m_vertexShader,
-		resource->m_d3dVertexSamplers,
-		/* [out] */
-		m_vertexState
-	))
-		return false;
+	// Create vertex states.
+	{
+		for (uint32_t i = 0; i < sizeof_array(resource->m_vertexCBuffers); ++i)
+		{
+			if (!resource->m_vertexCBuffers[i].size)
+				continue;
 
-	if (!createState(
-		d3dDevice,
-		resourceCache,
-		1,
-		resource->m_pixelShader,
-		resource->m_d3dPixelSamplers,
-		/* [out] */
-		m_pixelState
-	))
-		return false;
+			dbd.ByteWidth = resource->m_vertexCBuffers[i].size;
+			dbd.Usage = D3D11_USAGE_DYNAMIC;
+			dbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+			dbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+			dbd.MiscFlags = 0;
+		
+			hr = d3dDevice->CreateBuffer(&dbd, NULL, &m_vertexState.cbuffer[i].d3dBuffer.getAssign());
+			if (FAILED(hr))
+				return false;
+
+			m_vertexState.cbuffer[i].parameterOffsets.reserve(resource->m_vertexCBuffers[i].parameters.size());
+			for (uint32_t j = 0; j < uint32_t(resource->m_vertexCBuffers[i].parameters.size()); ++j)
+			{
+				m_vertexState.cbuffer[i].parameterOffsets.push_back(ParameterOffset(
+					resource->m_vertexCBuffers[i].parameters[j].cbufferOffset,
+					resource->m_vertexCBuffers[i].parameters[j].parameterOffset,
+					resource->m_vertexCBuffers[i].parameters[j].parameterCount
+				));
+			}
+		}
+
+		for (uint32_t i = 0; i < uint32_t(resource->m_vertexTextureBindings.size()); ++i)
+		{
+			m_vertexState.resourceIndices.push_back(std::make_pair(
+				resource->m_vertexTextureBindings[i].bindPoint,
+				resource->m_vertexTextureBindings[i].parameterOffset
+			));
+		}
+
+		for (uint32_t i = 0; i < uint32_t(resource->m_vertexSamplers.size()); ++i)
+		{
+			ID3D11SamplerState* d3dSamplerState = resourceCache.getSamplerState(resource->m_vertexSamplers[i]);
+			if (!d3dSamplerState)
+				return false;
+
+			m_vertexState.d3dSamplerStates.push_back(d3dSamplerState);
+		}
+	}
+
+	// Create pixel states.
+	{
+		for (uint32_t i = 0; i < sizeof_array(resource->m_pixelCBuffers); ++i)
+		{
+			if (!resource->m_pixelCBuffers[i].size)
+				continue;
+
+			dbd.ByteWidth = resource->m_pixelCBuffers[i].size;
+			dbd.Usage = D3D11_USAGE_DYNAMIC;
+			dbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+			dbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+			dbd.MiscFlags = 0;
+		
+			hr = d3dDevice->CreateBuffer(&dbd, NULL, &m_pixelState.cbuffer[i].d3dBuffer.getAssign());
+			if (FAILED(hr))
+				return false;
+
+			m_pixelState.cbuffer[i].parameterOffsets.reserve(resource->m_pixelCBuffers[i].parameters.size());
+			for (uint32_t j = 0; j < uint32_t(resource->m_pixelCBuffers[i].parameters.size()); ++j)
+			{
+				m_pixelState.cbuffer[i].parameterOffsets.push_back(ParameterOffset(
+					resource->m_pixelCBuffers[i].parameters[j].cbufferOffset,
+					resource->m_pixelCBuffers[i].parameters[j].parameterOffset,
+					resource->m_pixelCBuffers[i].parameters[j].parameterCount
+				));
+			}
+		}
+
+		for (uint32_t i = 0; i < uint32_t(resource->m_pixelTextureBindings.size()); ++i)
+		{
+			m_pixelState.resourceIndices.push_back(std::make_pair(
+				resource->m_pixelTextureBindings[i].bindPoint,
+				resource->m_pixelTextureBindings[i].parameterOffset
+			));
+		}
+
+		for (uint32_t i = 0; i < uint32_t(resource->m_pixelSamplers.size()); ++i)
+		{
+			ID3D11SamplerState* d3dSamplerState = resourceCache.getSamplerState(resource->m_pixelSamplers[i]);
+			if (!d3dSamplerState)
+				return false;
+
+			m_pixelState.d3dSamplerStates.push_back(d3dSamplerState);
+		}
+	}
+
+	// Setup shared parameters.
+	for (uint32_t i = 0; i < uint32_t(resource->m_parameters.size()); ++i)
+	{
+		ParameterMap& pm = m_parameterMap[getParameterHandle(resource->m_parameters[i].name)];
+#if defined(_DEBUG)
+		pm.name = resource->m_parameters[i].name;
+#endif
+		pm.offset = resource->m_parameters[i].offset;
+	}
+
+	m_parameterFloatArray.resize(resource->m_parameterScalarSize);
+	m_parameterTextureArray.resize(resource->m_parameterTextureSize);
 
 	// Create state objects.
 	m_d3dRasterizerState = resourceCache.getRasterizerState(resource->m_d3dRasterizerDesc);
@@ -145,7 +230,8 @@ void ProgramDx11::destroy()
 	for (uint32_t i = 0; i < sizeof_array(m_pixelState.cbuffer); ++i)
 		m_context->releaseComRef(m_pixelState.cbuffer[i].d3dBuffer);
 	m_context->releaseComRef(m_pixelState.d3dSamplerStates);
-	m_context->releaseComRef(m_d3dVertexShaderBlob);
+	
+	m_d3dVertexShaderBlob = 0;
 
 	m_parameterMap.clear();
 	m_parameterFloatArray.resize(0);
@@ -407,156 +493,6 @@ bool ProgramDx11::bind(
 #if defined(_DEBUG)
 	++m_bindCount;
 #endif
-
-	return true;
-}
-
-bool ProgramDx11::createState(
-	ID3D11Device* d3dDevice,
-	ResourceCache& resourceCache,
-	int32_t shaderType,
-	ID3DBlob* d3dShaderBlob,
-	const std::map< std::wstring, D3D11_SAMPLER_DESC >& d3dSamplers,
-	State& outState
-)
-{
-	ComRef< ID3D11ShaderReflection > d3dShaderReflection;
-	ID3D11ShaderReflectionConstantBuffer* d3dConstantBufferReflection;
-	ID3D11ShaderReflectionVariable* d3dVariableReflection;
-	ID3D11ShaderReflectionType* d3dTypeReflection;
-	D3D11_SHADER_DESC dsd;
-	D3D11_SHADER_BUFFER_DESC dsbd;
-	D3D11_SHADER_VARIABLE_DESC dsvd;
-	D3D11_SHADER_TYPE_DESC dstd;
-	D3D11_SHADER_INPUT_BIND_DESC dsibd;
-	D3D11_BUFFER_DESC dbd;
-	HRESULT hr;
-
-	hr = D3DReflect(
-		d3dShaderBlob->GetBufferPointer(),
-		d3dShaderBlob->GetBufferSize(),
-		IID_ID3D11ShaderReflection,
-		(void**)&d3dShaderReflection.getAssign()
-	);
-	if (FAILED(hr))
-		return false;
-
-	d3dShaderReflection->GetDesc(&dsd);
-
-	// Scalar parameters.
-	for (UINT i = 0; i < dsd.ConstantBuffers; ++i)
-	{
-		d3dConstantBufferReflection = d3dShaderReflection->GetConstantBufferByIndex(i);
-		T_ASSERT (d3dConstantBufferReflection);
-
-		d3dConstantBufferReflection->GetDesc(&dsbd);
-		T_ASSERT ((dsbd.Size & 3) == 0);
-
-		dbd.ByteWidth = dsbd.Size;
-		dbd.Usage = D3D11_USAGE_DYNAMIC;
-		dbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		dbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		dbd.MiscFlags = 0;
-
-		hr = d3dDevice->CreateBuffer(&dbd, NULL, &outState.cbuffer[i].d3dBuffer.getAssign());
-		if (FAILED(hr))
-			return false;
-
-#if defined(_DEBUG)
-		outState.cbuffer[i].name = mbstows(dsbd.Name);
-#endif
-
-		for (UINT j = 0; j < dsbd.Variables; ++j)
-		{
-			d3dVariableReflection = d3dConstantBufferReflection->GetVariableByIndex(j);
-			T_ASSERT (d3dVariableReflection);
-
-			d3dTypeReflection = d3dVariableReflection->GetType();
-			T_ASSERT (d3dTypeReflection);
-
-			d3dVariableReflection->GetDesc(&dsvd);
-			T_ASSERT ((dsvd.StartOffset & 3) == 0);
-
-			d3dTypeReflection->GetDesc(&dstd);
-			T_ASSERT (dstd.Type == D3D10_SVT_FLOAT);
-
-			SmallMap< handle_t, ParameterMap >::iterator it = m_parameterMap.find(getParameterHandle(mbstows(dsvd.Name)));
-			if (it == m_parameterMap.end())
-			{
-				uint32_t parameterOffset = alignUp(uint32_t(m_parameterFloatArray.size()), 4);
-				uint32_t parameterCount = dsvd.Size >> 2;
-
-				m_parameterFloatArray.resize(parameterOffset + parameterCount, 0.0f);
-
-				outState.cbuffer[i].parameterOffsets.push_back(ParameterOffset(
-					dsvd.StartOffset,
-					parameterOffset,
-					parameterCount
-				));
-
-				ParameterMap& pm = m_parameterMap[getParameterHandle(mbstows(dsvd.Name))];
-#if defined(_DEBUG)
-				pm.name = mbstows(dsvd.Name);
-#endif
-				pm.offset = parameterOffset;
-				pm.cbuffer[shaderType] = &outState.cbuffer[i];
-			}
-			else
-			{
-				uint32_t parameterOffset = it->second.offset;
-				uint32_t parameterCount = dsvd.Size >> 2;
-
-				outState.cbuffer[i].parameterOffsets.push_back(ParameterOffset(
-					dsvd.StartOffset,
-					parameterOffset,
-					parameterCount
-				));
-
-				it->second.cbuffer[shaderType] = &outState.cbuffer[i];
-			}
-		}
-	}
-
-	// Texture/sampler parameters.
-	for (UINT i = 0; i < dsd.BoundResources; ++i)
-	{
-		d3dShaderReflection->GetResourceBindingDesc(i, &dsibd);
-		if (dsibd.Type == D3D10_SIT_TEXTURE)
-		{
-			T_ASSERT (dsibd.BindCount == 1);
-
-			SmallMap< handle_t, ParameterMap >::iterator it = m_parameterMap.find(getParameterHandle(mbstows(dsibd.Name)));
-			if (it == m_parameterMap.end())
-			{
-				uint32_t resourceIndex = uint32_t(m_parameterTextureArray.size());
-				m_parameterTextureArray.resize(resourceIndex + 1);
-
-				ParameterMap& pm = m_parameterMap[getParameterHandle(mbstows(dsibd.Name))];
-#if defined(_DEBUG)
-				pm.name = mbstows(dsibd.Name);
-#endif
-				pm.offset = resourceIndex;
-
-				outState.resourceIndices.push_back(std::make_pair(dsibd.BindPoint, resourceIndex));
-			}
-			else
-			{
-				outState.resourceIndices.push_back(std::make_pair(dsibd.BindPoint, it->second.offset));
-			}
-		}
-		else if (dsibd.Type == D3D10_SIT_SAMPLER)
-		{
-			std::map< std::wstring, D3D11_SAMPLER_DESC >::const_iterator it = d3dSamplers.find(mbstows(dsibd.Name));
-			if (it == d3dSamplers.end())
-				return false;
-
-			ID3D11SamplerState* d3dSamplerState = resourceCache.getSamplerState(it->second);
-			if (!d3dSamplerState)
-				return false;
-
-			outState.d3dSamplerStates.push_back(d3dSamplerState);
-		}
-	}
 
 	return true;
 }

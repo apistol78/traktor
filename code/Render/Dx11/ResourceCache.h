@@ -11,6 +11,8 @@ namespace traktor
 	namespace render
 	{
 
+class Blob;
+
 class ResourceCache : public Object
 {
 public:
@@ -26,9 +28,9 @@ public:
 
 	ID3D11SamplerState* getSamplerState(const D3D11_SAMPLER_DESC& dsd);
 
-	ID3D11VertexShader* getVertexShader(ID3DBlob* vertexShaderBlob, uint32_t vertexShaderHash);
+	ID3D11VertexShader* getVertexShader(const Blob* vertexShaderBlob, uint32_t vertexShaderHash);
 
-	ID3D11PixelShader* getPixelShader(ID3DBlob* pixelShaderBlob, uint32_t pixelShaderHash);
+	ID3D11PixelShader* getPixelShader(const Blob* pixelShaderBlob, uint32_t pixelShaderHash);
 
 private:
 	ComRef< ID3D11Device > m_d3dDevice;

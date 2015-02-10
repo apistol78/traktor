@@ -861,7 +861,7 @@ void RenderViewDx11::present()
 	BOOL fullScreen = FALSE;
 	if (SUCCEEDED(m_dxgiSwapChain->GetFullscreenState(&fullScreen, 0)))
 	{
-		if (m_fullScreen != fullScreen)
+		if (m_fullScreen != (fullScreen != FALSE))
 		{
 			if (m_fullScreen)
 				log::warning << L"Unexpected transition, DXGI no longer in fullscreen; need to reset render view." << Endl;

@@ -1,6 +1,8 @@
+#include "Render/Dx11/Blob.h"
 #include "Render/Dx11/ProgramResourceDx11.h"
 #include "Render/Shader/ShaderGraph.h"
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberStaticArray.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Serialization/MemberComposite.h"
 
@@ -11,10 +13,10 @@ namespace traktor
 		namespace
 		{
 
-class MemberID3DBlob : public MemberComplex
+class MemberBlob : public MemberComplex
 {
 public:
-	MemberID3DBlob(const wchar_t* const name, ComRef< ID3DBlob >& ref)
+	MemberBlob(const wchar_t* const name, Ref< Blob >& ref)
 	:	MemberComplex(name, false)
 	,	m_ref(ref)
 	{
@@ -30,23 +32,29 @@ public:
 			blobSize = sizeof(blob);
 			s >> Member< void* >(getName(), blob, blobSize);
 
-			D3DCreateBlob(blobSize, &m_ref.getAssign());
-			std::memcpy(m_ref->GetBufferPointer(), blob, blobSize);
+			m_ref = Blob::create(blobSize);
+			if (!m_ref)
+			{
+				s.failure();
+				return;
+			}
+
+			std::memcpy(m_ref->getData(), blob, blobSize);
 		}
 		else	// SdWrite
 		{
-			blobSize = m_ref ? m_ref->GetBufferSize() : 0;
+			blobSize = m_ref ? m_ref->getSize() : 0;
 			T_ASSERT (blobSize < sizeof(blob));
 
 			if (m_ref)
-				std::memcpy(blob, m_ref->GetBufferPointer(), blobSize);
+				std::memcpy(blob, m_ref->getData(), blobSize);
 
 			s >> Member< void* >(getName(), blob, blobSize);
 		}
 	}
 
 private:
-	ComRef< ID3DBlob >& m_ref;
+	Ref< Blob >& m_ref;
 };
 
 class MemberD3D11_RASTERIZER_DESC : public MemberComplex
@@ -132,6 +140,8 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceDx11", 0, Program
 ProgramResourceDx11::ProgramResourceDx11()
 :	m_vertexShaderHash(0)
 ,	m_pixelShaderHash(0)
+,	m_parameterScalarSize(0)
+,	m_parameterTextureSize(0)
 ,	m_stencilReference(0)
 {
 	std::memset(&m_d3dRasterizerDesc, 0, sizeof(m_d3dRasterizerDesc));
@@ -141,34 +151,55 @@ ProgramResourceDx11::ProgramResourceDx11()
 
 void ProgramResourceDx11::serialize(ISerializer& s)
 {
-	s >> MemberID3DBlob(L"vertexShader", m_vertexShader);
-	s >> MemberID3DBlob(L"pixelShader", m_pixelShader);
+	s >> MemberBlob(L"vertexShader", m_vertexShader);
+	s >> MemberBlob(L"pixelShader", m_pixelShader);
+	
 	s >> Member< uint32_t >(L"vertexShaderHash", m_vertexShaderHash);
 	s >> Member< uint32_t >(L"pixelShaderHash", m_pixelShaderHash);
+
+	s >> MemberStaticArray< CBufferDesc, 3, MemberComposite< CBufferDesc > >(L"vertexCBuffers", m_vertexCBuffers);
+	s >> MemberStaticArray< CBufferDesc, 3, MemberComposite< CBufferDesc > >(L"pixelCBuffers", m_pixelCBuffers);
+
+	s >> MemberStlVector< TextureBindingDesc, MemberComposite< TextureBindingDesc > >(L"vertexTextureBindings", m_vertexTextureBindings);
+	s >> MemberStlVector< TextureBindingDesc, MemberComposite< TextureBindingDesc > >(L"pixelTextureBindings", m_pixelTextureBindings);
+
+	s >> MemberStlVector< D3D11_SAMPLER_DESC, MemberD3D11_SAMPLER_DESC >(L"vertexSamplers", m_vertexSamplers);
+	s >> MemberStlVector< D3D11_SAMPLER_DESC, MemberD3D11_SAMPLER_DESC >(L"pixelSamplers", m_pixelSamplers);
+
+	s >> MemberStlVector< ParameterDesc, MemberComposite< ParameterDesc > >(L"parameters", m_parameters);
+	s >> Member< uint32_t >(L"parameterScalarSize", m_parameterScalarSize);
+	s >> Member< uint32_t >(L"parameterTextureSize", m_parameterTextureSize);
+
 	s >> MemberD3D11_RASTERIZER_DESC(L"d3dRasterizerDesc", m_d3dRasterizerDesc);
 	s >> MemberD3D11_DEPTH_STENCIL_DESC(L"d3dDepthStencilDesc", m_d3dDepthStencilDesc);
 	s >> MemberD3D11_BLEND_DESC(L"d3dBlendDesc", m_d3dBlendDesc);
 	s >> Member< uint32_t >(L"stencilReference", m_stencilReference);
-	s >> MemberStlMap<
-		std::wstring,
-		D3D11_SAMPLER_DESC,
-		MemberStlPair<
-			std::wstring,
-			D3D11_SAMPLER_DESC,
-			Member< std::wstring >,
-			MemberD3D11_SAMPLER_DESC
-		>
-	>(L"d3dVertexSamplers", m_d3dVertexSamplers);
-	s >> MemberStlMap<
-		std::wstring,
-		D3D11_SAMPLER_DESC,
-		MemberStlPair<
-			std::wstring,
-			D3D11_SAMPLER_DESC,
-			Member< std::wstring >,
-			MemberD3D11_SAMPLER_DESC
-		>
-	>(L"d3dPixelSamplers", m_d3dPixelSamplers);
+}
+
+void ProgramResourceDx11::ParameterDesc::serialize(ISerializer& s)
+{
+	s >> Member< std::wstring >(L"name", name);
+	s >> Member< uint32_t >(L"offset", offset);
+	s >> Member< uint32_t >(L"count", count);
+}
+
+void ProgramResourceDx11::ParameterMappingDesc::serialize(ISerializer& s)
+{
+	s >> Member< uint32_t >(L"cbufferOffset", cbufferOffset);
+	s >> Member< uint32_t >(L"parameterOffset", parameterOffset);
+	s >> Member< uint32_t >(L"parameterCount", parameterCount);
+}
+
+void ProgramResourceDx11::CBufferDesc::serialize(ISerializer& s)
+{
+	s >> Member< uint32_t >(L"size", size);
+	s >> MemberStlVector< ParameterMappingDesc, MemberComposite< ParameterMappingDesc > >(L"parameters", parameters);
+}
+
+void ProgramResourceDx11::TextureBindingDesc::serialize(ISerializer& s)
+{
+	s >> Member< uint32_t >(L"bindPoint", bindPoint);
+	s >> Member< uint32_t >(L"parameterOffset", parameterOffset);
 }
 
 	}

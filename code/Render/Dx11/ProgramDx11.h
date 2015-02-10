@@ -13,6 +13,7 @@ namespace traktor
 	namespace render
 	{
 
+class Blob;
 class ContextDx11;
 class ProgramResourceDx11;
 class ResourceCache;
@@ -131,7 +132,7 @@ private:
 	ComRef< ID3D11PixelShader > m_d3dPixelShader;
 	State m_vertexState;
 	State m_pixelState;
-	ComRef< ID3DBlob > m_d3dVertexShaderBlob;
+	Ref< Blob > m_d3dVertexShaderBlob;
 	uint32_t m_d3dVertexShaderHash;
 	SmallMap< handle_t, ParameterMap > m_parameterMap;
 	AlignedVector< float > m_parameterFloatArray;
@@ -141,15 +142,6 @@ private:
 #if defined(_DEBUG)
 	int32_t m_bindCount;
 #endif
-
-	bool createState(
-		ID3D11Device* d3dDevice,
-		ResourceCache& resourceCache,
-		int32_t shaderType,
-		ID3DBlob* d3dShaderBlob,
-		const std::map< std::wstring, D3D11_SAMPLER_DESC >& d3dSamplers,
-		State& outState
-	);
 
 	bool updateStateConstants(ID3D11DeviceContext* d3dDeviceContext, State& state);
 };
