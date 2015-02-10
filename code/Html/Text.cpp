@@ -1,3 +1,4 @@
+#include <limits>
 #include "Core/Io/IStream.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/String.h"
@@ -29,7 +30,11 @@ std::wstring decodeCharacterEntities(const std::wstring& text)
 
 		std::wstring code = toLower(text.substr(nccs + 1, ncce - nccs - 1));
 		if (code[0] == L'#')
-			;
+		{
+			int32_t cc = parseString< int32_t >(code.substr(1));
+			if (cc > 0 && cc <= std::numeric_limits< wchar_t >::max())
+				ss << wchar_t(cc);
+		}
 		else
 		{
 			if (code == L"nbsp")
