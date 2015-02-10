@@ -14,6 +14,7 @@
 #include "Input/Binding/InClamp.h"
 #include "Input/Binding/InCombine.h"
 #include "Input/Binding/InConst.h"
+#include "Input/Binding/InDelay.h"
 #include "Input/Binding/InGesturePinch.h"
 #include "Input/Binding/InGestureSwipe.h"
 #include "Input/Binding/InGestureTap.h"
@@ -29,6 +30,7 @@
 #include "Input/Editor/InClampTraits.h"
 #include "Input/Editor/InCombineTraits.h"
 #include "Input/Editor/InConstTraits.h"
+#include "Input/Editor/InDelayTraits.h"
 #include "Input/Editor/InGesturePinchTraits.h"
 #include "Input/Editor/InGestureSwipeTraits.h"
 #include "Input/Editor/InGestureTapTraits.h"
@@ -175,6 +177,7 @@ InputMappingEditor::InputMappingEditor(editor::IEditor* editor, editor::IEditorP
 	m_traits[&type_of< InClamp >()] = new InClampTraits();
 	m_traits[&type_of< InCombine >()] = new InCombineTraits();
 	m_traits[&type_of< InConst >()] = new InConstTraits();
+	m_traits[&type_of< InDelay >()] = new InDelayTraits();
 	m_traits[&type_of< InGesturePinch >()] = new InGesturePinchTraits();
 	m_traits[&type_of< InGestureSwipe >()] = new InGestureSwipeTraits();
 	m_traits[&type_of< InGestureTap >()] = new InGestureTapTraits();
