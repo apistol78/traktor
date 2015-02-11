@@ -62,11 +62,14 @@ void EffectEntity::destroy()
 	if (m_effectInstance)
 	{
 		m_effectInstance->setLoopEnable(false);
+		m_effectInstance->synchronize();
 		m_effectInstance = 0;
 	}
 
 	m_effect.clear();
 	m_techniques.clear();
+
+	m_context.virtualSourceCallback = 0;
 }
 
 void EffectEntity::setTransform(const Transform& transform)
