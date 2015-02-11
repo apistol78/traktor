@@ -93,6 +93,8 @@ public:
 
 	bool haveTechnique(render::handle_t technique) const { return m_techniques.find(technique) != m_techniques.end(); }
 
+	void setVirtualSourceCallback(VirtualSourceCallback* virtualSourceCallback) { m_context.virtualSourceCallback = virtualSourceCallback; }
+
 private:
 	Transform m_transform;
 	resource::Proxy< Effect > m_effect;

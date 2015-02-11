@@ -26,6 +26,7 @@
 #include "Spray/Editor/ConeSourceRenderer.h"
 #include "Spray/Editor/DiscSourceRenderer.h"
 #include "Spray/Editor/EffectPreviewControl.h"
+#include "Spray/Editor/LineSourceRenderer.h"
 #include "Spray/Editor/PointSourceRenderer.h"
 #include "Spray/Editor/PointSetSourceRenderer.h"
 #include "Spray/Editor/QuadSourceRenderer.h"
@@ -33,6 +34,7 @@
 #include "Spray/Sources/BoxSource.h"
 #include "Spray/Sources/ConeSource.h"
 #include "Spray/Sources/DiscSource.h"
+#include "Spray/Sources/LineSource.h"
 #include "Spray/Sources/PointSource.h"
 #include "Spray/Sources/PointSetSource.h"
 #include "Spray/Sources/QuadSource.h"
@@ -88,6 +90,7 @@ EffectPreviewControl::EffectPreviewControl(editor::IEditor* editor)
 	m_sourceRenderers[&type_of< BoxSource >()] = new BoxSourceRenderer();
 	m_sourceRenderers[&type_of< ConeSource >()] = new ConeSourceRenderer();
 	m_sourceRenderers[&type_of< DiscSource >()] = new DiscSourceRenderer();
+	m_sourceRenderers[&type_of< LineSource >()] = new LineSourceRenderer();
 	m_sourceRenderers[&type_of< PointSource >()] = new PointSourceRenderer();
 	m_sourceRenderers[&type_of< PointSetSource >()] = new PointSetSourceRenderer();
 	m_sourceRenderers[&type_of< QuadSource >()] = new QuadSourceRenderer();
@@ -523,7 +526,19 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 				std::cos(time) * 8.0f,
 				1.0f
 			);
-			effectTransform = Transform(effectPosition);
+			Vector4 effectDirection(
+				std::cos(time),
+				0.0f,
+				-std::sin(time),
+				0.0f
+			);
+			effectTransform = Transform(
+				effectPosition,
+				Quaternion(
+					Vector4(0.0f, 0.0f, 1.0f),
+					effectDirection
+				)
+			);
 		}
 
 		m_effectInstance->update(m_context, effectTransform, true);
