@@ -27,7 +27,12 @@ class T_DLLCLASS BodyHavok : public Body
 	T_RTTI_CLASS;
 
 public:
-	BodyHavok(DestroyCallbackHavok* callback, const HvkRef< hkpRigidBody >& rigidBody, float simulationDeltaTime);
+	BodyHavok(
+		const wchar_t* const tag,
+		DestroyCallbackHavok* callback,
+		const HvkRef< hkpRigidBody >& rigidBody,
+		float simulationDeltaTime
+	);
 
 	virtual void destroy();
 

@@ -23,8 +23,14 @@ T_FORCE_INLINE Vector4 convert(const BodyHavok* body, const Vector4& v, bool loc
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.BodyHavok", BodyHavok, Body)
 
-BodyHavok::BodyHavok(DestroyCallbackHavok* callback, const HvkRef< hkpRigidBody >& rigidBody, float simulationDeltaTime)
-:	m_callback(callback)
+BodyHavok::BodyHavok(
+	const wchar_t* const tag,
+	DestroyCallbackHavok* callback,
+	const HvkRef< hkpRigidBody >& rigidBody,
+	float simulationDeltaTime
+)
+:	Body(tag)
+,	m_callback(callback)
 ,	m_rigidBody(rigidBody)
 ,	m_simulationDeltaTime(simulationDeltaTime)
 {
