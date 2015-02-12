@@ -25,6 +25,7 @@ inline Vector4 convert(const BodyPhysX* body, const Vector4& v, bool localSpace)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.BodyPhysX", BodyPhysX, Body)
 
 BodyPhysX::BodyPhysX(
+	const wchar_t* const tag,
 	IWorldCallback* callback,
 	physx::PxScene* scene,
 	physx::PxRigidActor* actor,
@@ -34,7 +35,8 @@ BodyPhysX::BodyPhysX(
 	int32_t material,
 	const wchar_t* const tag
 )
-:	m_callback(callback)
+:	Body(tag)
+,	m_callback(callback)
 ,	m_scene(scene)
 ,	m_actor(actor)
 ,	m_centerOfGravity(centerOfGravity)

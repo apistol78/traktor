@@ -28,6 +28,7 @@ class T_DLLCLASS BodyPhysX : public Body
 
 public:
 	BodyPhysX(
+		const wchar_t* const tag,
 		IWorldCallback* callback,
 		physx::PxScene* scene,
 		physx::PxRigidActor* actor,

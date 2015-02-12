@@ -419,6 +419,7 @@ Ref< Body > PhysicsManagerHavok::createBody(resource::IResourceManager* resource
 
 		// Create our wrapper.
 		Ref< BodyHavok > staticBody = new BodyHavok(
+			tag,
 			this,
 			rigidBody,
 			/*m_simulationDeltaTime*/ 1.0f / 60.0f
@@ -451,6 +452,7 @@ Ref< Body > PhysicsManagerHavok::createBody(resource::IResourceManager* resource
 
 		// Create our wrapper.
 		Ref< BodyHavok > dynamicBody = new BodyHavok(
+			tag,
 			this,
 			rigidBody,
 			/*m_simulationDeltaTime*/ 1.0f / 60.0f

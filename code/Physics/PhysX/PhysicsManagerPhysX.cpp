@@ -544,6 +544,7 @@ Ref< Body > PhysicsManagerPhysX::createBody(resource::IResourceManager* resource
 			T_ASSERT (shape);
 
 			Ref< BodyPhysX > staticBody = new BodyPhysX(
+				tag,
 				this,
 				m_scene,
 				rigidBody,
@@ -587,6 +588,7 @@ Ref< Body > PhysicsManagerPhysX::createBody(resource::IResourceManager* resource
 			T_ASSERT (shape);
 
 			Ref< BodyPhysX > kineticBody = new BodyPhysX(
+				tag,
 				this,
 				m_scene,
 				rigidBody,
@@ -636,6 +638,7 @@ Ref< Body > PhysicsManagerPhysX::createBody(resource::IResourceManager* resource
 		T_ASSERT (shape);
 
 		Ref< BodyPhysX > dynamicBody = new BodyPhysX(
+			tag,
 			this,
 			m_scene,
 			rigidBody,
