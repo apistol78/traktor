@@ -18,7 +18,7 @@ namespace traktor
 		{
 
 const double c_resendTimeThreshold = 0.5;
-const int32_t c_maxSendEventsPerUpdate = 2;
+const int32_t c_maxSendEventsPerUpdate = 4;
 
 		}
 
@@ -234,13 +234,13 @@ void ReplicatorProxy::sendEvent(const ISerializable* eventObject)
 	e.time = -c_resendTimeThreshold;
 	e.count = 0;
 
-	m_events.push_back(e);
+	m_unacknowledgedEvents.push_back(e);
 }
 
 bool ReplicatorProxy::updateEventQueue()
 {
 	int32_t sentCount = 0;
-	for (std::list< Event >::iterator i = m_events.begin(); i != m_events.end(); ++i)
+	for (std::list< Event >::iterator i = m_unacknowledgedEvents.begin(); i != m_unacknowledgedEvents.end(); ++i)
 	{
 		if (m_replicator->m_time0 - i->time > c_resendTimeThreshold)
 		{
@@ -258,18 +258,22 @@ bool ReplicatorProxy::updateEventQueue()
 
 bool ReplicatorProxy::receivedEventAcknowledge(const ReplicatorProxy* from, uint8_t sequence)
 {
-	for (std::list< Event >::iterator i = m_events.begin(); i != m_events.end(); ++i)
+	for (std::list< Event >::iterator i = m_unacknowledgedEvents.begin(); i != m_unacknowledgedEvents.end(); ++i)
 	{
 		if (i->msg.event.sequence == sequence)
 		{
+#if defined(_DEBUG)
 			m_acknowledgeHistory.push_back(sequence);
-			m_events.erase(i);
+#endif
+			m_unacknowledgedEvents.erase(i);
 			return true;
 		}
 	}
 
+#if defined(_DEBUG)
 	if (m_acknowledgeHistory.find(sequence) < 0)
 		log::info << m_replicator->getLogPrefix() << L"Received acknowledge of unsent event from " << from->m_handle << L", sequence " << int32_t(sequence) << Endl;
+#endif
 
 	return false;
 }
@@ -374,7 +378,7 @@ void ReplicatorProxy::disconnect()
 	m_latencyStandardDeviation = 0.0;
 	m_latencyReverse = 0.0;
 	m_latencyReverseStandardDeviation = 0.0;
-	m_events.clear();
+	m_unacknowledgedEvents.clear();
 	m_lastEvents.clear();
 }
 

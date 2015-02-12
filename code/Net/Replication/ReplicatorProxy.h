@@ -173,9 +173,11 @@ private:
 	//@{
 
 	uint8_t m_sequence;
-	std::list< Event > m_events;
+	std::list< Event > m_unacknowledgedEvents;
 	CircularVector< std::pair< uint8_t, uint32_t >, 128 > m_lastEvents;
+#if defined(_DEBUG)
 	CircularVector< uint8_t, 32 > m_acknowledgeHistory;
+#endif
 
 	//@}
 

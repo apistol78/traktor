@@ -33,6 +33,7 @@ class T_DLLCLASS BodyBullet : public Body
 
 public:
 	BodyBullet(
+		const wchar_t* const tag,
 		IWorldCallback* callback,
 		btDynamicsWorld* dynamicsWorld,
 		float timeScale,
