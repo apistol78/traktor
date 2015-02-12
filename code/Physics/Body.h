@@ -31,8 +31,6 @@ class T_DLLCLASS Body : public Object
 	T_RTTI_CLASS;
 
 public:
-	Body();
-
 	/*! \brief Destroy rigid body. */
 	virtual void destroy();
 
@@ -194,7 +192,15 @@ public:
 	 */
 	uint32_t getClusterId() const { return m_clusterId; }
 
+	/*! \brief Get debug tag.
+	 */
+	const std::wstring& getTag() const { return m_tag; }
+
+protected:
+	Body(const wchar_t* const tag);
+
 private:
+	std::wstring m_tag;
 	RefArray< CollisionListener > m_collisionListeners;
 	Ref< Object > m_userObject;
 	uint32_t m_clusterId;

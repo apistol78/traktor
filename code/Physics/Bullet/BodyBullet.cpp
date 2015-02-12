@@ -29,6 +29,7 @@ inline Vector4 convert(const BodyBullet* body, const Vector4& v, bool localSpace
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.BodyBullet", BodyBullet, Body)
 
 BodyBullet::BodyBullet(
+	const wchar_t* const tag,
 	IWorldCallback* callback,
 	btDynamicsWorld* dynamicsWorld,
 	float timeScale,
@@ -39,7 +40,8 @@ BodyBullet::BodyBullet(
 	uint32_t collisionMask,
 	int32_t material
 )
-:	m_callback(callback)
+:	Body(tag)
+,	m_callback(callback)
 ,	m_dynamicsWorld(dynamicsWorld)
 ,	m_timeScale(timeScale)
 ,	m_body(body)

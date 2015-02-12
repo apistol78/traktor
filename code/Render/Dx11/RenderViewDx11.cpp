@@ -855,7 +855,6 @@ void RenderViewDx11::present()
 {
 	m_dxgiSwapChain->Present(m_waitVBlank ? 1 : 0, 0);
 	m_context->deleteResources();
-	m_context->getLock().release();
 
 	// Check if swap chain is still in same mode as window.
 	BOOL fullScreen = FALSE;
@@ -868,11 +867,16 @@ void RenderViewDx11::present()
 			else
 				log::warning << L"Unexpected transition, DXGI in fullscreen; need to reset render view." << Endl;
 
+			m_fullScreen = !m_fullScreen;
+
+			// Issue an event in order to reset view back into either fullscreen or windowed mode.
 			RenderEvent evt;
-			evt.type = fullScreen ? ReSetFullScreen : ReSetWindowed;
+			evt.type = fullScreen ? ReSetWindowed: ReSetFullScreen;
 			m_eventQueue.push_back(evt);
 		}
 	}
+
+	m_context->getLock().release();
 }
 
 void RenderViewDx11::pushMarker(const char* const marker)

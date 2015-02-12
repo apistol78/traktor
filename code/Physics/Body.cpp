@@ -9,12 +9,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.Body", Body, Object)
 
-Body::Body()
-:	m_userObject(0)
-,	m_clusterId(~0U)
-{
-}
-
 void Body::destroy()
 {
 	removeAllCollisionListeners();
@@ -42,6 +36,13 @@ void Body::notifyCollisionListeners(const CollisionInfo& collisionInfo)
 {
 	for (RefArray< CollisionListener >::iterator i = m_collisionListeners.begin(); i != m_collisionListeners.end(); ++i)
 		(*i)->notify(collisionInfo);
+}
+
+Body::Body(const wchar_t* const tag)
+:	m_tag(tag ? tag : L"")
+,	m_userObject(0)
+,	m_clusterId(~0U)
+{
 }
 
 	}

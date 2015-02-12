@@ -238,7 +238,6 @@ bool AccShape::updateRenderable(
 					const FlashBitmap* bitmap = dictionary.getBitmap(style.getFillBitmap());
 					if (bitmap)
 					{
-						T_ASSERT_M (!texture, L"Cannot combine gradients and bitmaps");
 						T_ASSERT (textureCache);
 						texture = textureCache->getBitmapTexture(*bitmap);
 						textureMatrix =

@@ -229,6 +229,11 @@ struct ClosestRayExcludeResultCallback : public btCollisionWorld::RayResultCallb
 	{
 	}
 
+	virtual bool needsCollision(btBroadphaseProxy* proxy0) const
+	{
+		return true;
+	}
+
 	virtual	btScalar addSingleResult(btCollisionWorld::LocalRayResult& rayResult, bool normalInWorldSpace)
 	{
 		T_ASSERT (rayResult.m_hitFraction <= m_closestHitFraction);
@@ -284,6 +289,11 @@ struct ClosestRayExcludeAndCullResultCallback : public btCollisionWorld::RayResu
 	{
 	}
 
+	virtual bool needsCollision(btBroadphaseProxy* proxy0) const
+	{
+		return true;
+	}
+
 	virtual	btScalar addSingleResult(btCollisionWorld::LocalRayResult& rayResult, bool normalInWorldSpace)
 	{
 		T_ASSERT (rayResult.m_hitFraction <= m_closestHitFraction);
@@ -330,6 +340,11 @@ struct ConvexExcludeResultCallback : public btCollisionWorld::ConvexResultCallba
 	{
 	}
 
+	virtual bool needsCollision(btBroadphaseProxy* proxy0) const
+	{
+		return true;
+	}
+
 	virtual	btScalar addSingleResult(btCollisionWorld::LocalConvexResult& convexResult, bool normalInWorldSpace)
 	{
 		BodyBullet* bodyBullet = reinterpret_cast< BodyBullet* >(convexResult.m_hitCollisionObject->getUserPointer());
@@ -367,6 +382,11 @@ struct ContactResultCallback : public btCollisionWorld::ContactResultCallback
 	:	m_colObj(colObj)
 	,	m_outResult(outResult)
 	{
+	}
+
+	virtual bool needsCollision(btBroadphaseProxy* proxy0) const
+	{
+		return true;
 	}
 
 #if 0
@@ -746,6 +766,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 
 		// Create our wrapper.
 		Ref< BodyBullet > staticBody = new BodyBullet(
+			tag,
 			this,
 			m_dynamicsWorld,
 			m_timeScale,
@@ -793,6 +814,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 
 		// Create our wrapper.
 		Ref< BodyBullet > dynamicBody = new BodyBullet(
+			tag,
 			this,
 			m_dynamicsWorld,
 			m_timeScale,
