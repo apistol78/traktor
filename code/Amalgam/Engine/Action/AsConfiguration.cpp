@@ -48,8 +48,29 @@ Ref< AsConfiguration > AsConfiguration::getCurrent(amalgam::IEnvironment* enviro
 	Ref< AsConfiguration > current = new AsConfiguration();
 	current->m_settings = settings;
 
-	current->m_displayModeWidth = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Width", 1280);
-	current->m_displayModeHeight = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Height", 720);
+	// Get configured display mode; if no set then get current display mode.
+	current->m_displayModeWidth = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Width", 0);
+	current->m_displayModeHeight = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Height", 0);
+
+	if (current->m_displayModeWidth == 0 || current->m_displayModeHeight == 0)
+	{
+		render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
+		T_ASSERT (renderSystem);
+
+		render::DisplayMode dm = renderSystem->getCurrentDisplayMode();
+		if (dm.width != 0 && dm.height != 0)
+		{
+			current->m_displayModeWidth = dm.width;
+			current->m_displayModeHeight = dm.height;
+		}
+		else
+		{
+			current->m_displayModeWidth = 1280;
+			current->m_displayModeHeight = 720;
+		}
+	}
+
+	// Get other current settings.
 	current->m_fullscreen = settings->getProperty< PropertyBoolean >(L"Render.FullScreen", false);
 	current->m_waitVBlank = settings->getProperty< PropertyBoolean >(L"Render.WaitVBlank", true);
 	current->m_multiSample = settings->getProperty< PropertyInteger >(L"Render.MultiSample", 0);

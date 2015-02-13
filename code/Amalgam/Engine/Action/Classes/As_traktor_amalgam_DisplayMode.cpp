@@ -14,6 +14,7 @@ As_traktor_amalgam_DisplayMode::As_traktor_amalgam_DisplayMode(flash::ActionCont
 ,	m_environment(environment)
 {
 	addProperty("availableModes", createNativeFunction(context, this, &As_traktor_amalgam_DisplayMode::DisplayMode_get_availableModes), 0);
+	addProperty("currentMode", createNativeFunction(context, this, &As_traktor_amalgam_DisplayMode::DisplayMode_get_currentMode), 0);
 
 	Ref< flash::ActionObject > prototype = new flash::ActionObject(context);
 
@@ -68,6 +69,15 @@ void As_traktor_amalgam_DisplayMode::DisplayMode_get_availableModes(flash::CallA
 	}
 
 	ca.ret = flash::ActionValue(displayModeArr->getAsObject(getContext()));
+}
+
+void As_traktor_amalgam_DisplayMode::DisplayMode_get_currentMode(flash::CallArgs& ca)
+{
+	Ref< AsDisplayMode > displayMode = AsDisplayMode::getCurrentMode(m_environment);
+	if (displayMode)
+		ca.ret = flash::ActionValue(displayMode->getAsObject(getContext()));
+	else
+		ca.ret = flash::ActionValue();
 }
 
 uint32_t As_traktor_amalgam_DisplayMode::DisplayMode_get_width(const AsDisplayMode* self) const

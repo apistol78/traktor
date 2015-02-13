@@ -40,5 +40,13 @@ RefArray< AsDisplayMode > AsDisplayMode::getAvailableModes(amalgam::IEnvironment
 	return displayModes;
 }
 
+Ref< AsDisplayMode > AsDisplayMode::getCurrentMode(amalgam::IEnvironment* environment)
+{
+	render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
+	T_ASSERT (renderSystem);
+
+	return new AsDisplayMode(renderSystem->getCurrentDisplayMode());
+}
+
 	}
 }
