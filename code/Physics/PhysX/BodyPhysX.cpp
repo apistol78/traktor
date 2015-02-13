@@ -32,8 +32,7 @@ BodyPhysX::BodyPhysX(
 	const Vector4& centerOfGravity,
 	uint32_t collisionGroup,
 	uint32_t collisionMask,
-	int32_t material,
-	const wchar_t* const tag
+	int32_t material
 )
 :	Body(tag)
 ,	m_callback(callback)
@@ -45,12 +44,7 @@ BodyPhysX::BodyPhysX(
 ,	m_material(material)
 ,	m_enabled(false)
 {
-	if (tag)
-		m_tag = wstombs(tag);
-	else
-		m_tag = "";
-
-	actor->setName(m_tag.c_str());
+	//actor->setName(m_tag.c_str());
 }
 
 void BodyPhysX::destroy()

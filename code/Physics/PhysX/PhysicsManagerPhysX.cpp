@@ -551,8 +551,7 @@ Ref< Body > PhysicsManagerPhysX::createBody(resource::IResourceManager* resource
 				centerOfGravity,
 				shapeDesc->getCollisionGroup(),
 				shapeDesc->getCollisionMask(),
-				shapeDesc->getMaterial(),
-				tag
+				shapeDesc->getMaterial()
 			);
 
 			// Setup filter data; pack pointer to our body wrapper into last two words.
@@ -595,8 +594,7 @@ Ref< Body > PhysicsManagerPhysX::createBody(resource::IResourceManager* resource
 				centerOfGravity,
 				shapeDesc->getCollisionGroup(),
 				shapeDesc->getCollisionMask(),
-				shapeDesc->getMaterial(),
-				tag
+				shapeDesc->getMaterial()
 			);
 
 			// Setup filter data; pack pointer to our body wrapper into last two words.
@@ -645,8 +643,7 @@ Ref< Body > PhysicsManagerPhysX::createBody(resource::IResourceManager* resource
 			centerOfGravity,
 			shapeDesc->getCollisionGroup(),
 			shapeDesc->getCollisionMask(),
-			shapeDesc->getMaterial(),
-			tag
+			shapeDesc->getMaterial()
 		);
 
 		// Setup filter data; pack pointer to our body wrapper into last two words.

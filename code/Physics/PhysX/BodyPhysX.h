@@ -115,7 +115,6 @@ private:
 	uint32_t m_collisionGroup;
 	uint32_t m_collisionMask;
 	int32_t m_material;
-	std::string m_tag;
 	bool m_enabled;
 };
 
