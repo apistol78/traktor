@@ -35,8 +35,7 @@ public:
 		const Vector4& centerOfGravity,
 		uint32_t collisionGroup,
 		uint32_t collisionMask,
-		int32_t material,
-		const wchar_t* const tag
+		int32_t material
 	);
 
 	virtual void destroy();
