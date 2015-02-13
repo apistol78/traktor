@@ -28,6 +28,8 @@ public:
 
 	static RefArray< AsDisplayMode > getAvailableModes(amalgam::IEnvironment* environment);
 
+	static Ref< AsDisplayMode > getCurrentMode(amalgam::IEnvironment* environment);
+
 	const render::DisplayMode& getDisplayMode() const { return m_displayMode; }
 
 private:

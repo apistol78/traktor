@@ -39,6 +39,8 @@ private:
 
 	void DisplayMode_get_availableModes(flash::CallArgs& ca);
 
+	void DisplayMode_get_currentMode(flash::CallArgs& ca);
+
 	uint32_t DisplayMode_get_width(const AsDisplayMode* self) const;
 
 	uint32_t DisplayMode_get_height(const AsDisplayMode* self) const;
