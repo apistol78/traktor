@@ -104,8 +104,6 @@ public:
 
 	int32_t getMaterial() const { return m_material; }
 
-	const std::string& getTag() const { return m_tag; }
-
 private:
 	IWorldCallback* m_callback;
 	physx::PxScene* m_scene;
