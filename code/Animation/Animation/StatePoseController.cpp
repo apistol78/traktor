@@ -212,8 +212,8 @@ bool StatePoseController::evaluate(
 			// Is condition satisfied?
 			bool value = false;
 
-			std::wstring condition = (*i)->getCondition();
-			if (condition[0] == L'!')
+			const std::wstring& condition = (*i)->getCondition();
+			if (!condition.empty() && condition[0] == L'!')
 			{
 				std::pair< bool, bool >& cv = m_conditions[condition.substr(1)];
 				value = !cv.first;
