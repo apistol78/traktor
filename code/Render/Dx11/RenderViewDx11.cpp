@@ -405,12 +405,20 @@ bool RenderViewDx11::isFullScreen() const
 
 void RenderViewDx11::showCursor()
 {
-	m_cursorVisible = true;
+	if (!m_cursorVisible)
+	{
+		SetCursor(LoadCursor(NULL, IDC_ARROW));
+		m_cursorVisible = true;
+	}
 }
 
 void RenderViewDx11::hideCursor()
 {
-	m_cursorVisible = false;
+	if (m_cursorVisible)
+	{
+		SetCursor(NULL);
+		m_cursorVisible = false;
+	}
 }
 
 bool RenderViewDx11::isCursorVisible() const
