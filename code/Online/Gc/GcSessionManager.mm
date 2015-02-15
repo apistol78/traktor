@@ -281,5 +281,10 @@ IVideoSharingProvider* GcSessionManager::getVideoSharing() const
 	return m_videoSharing;
 }
 
+ IVoiceChatProvider* GcSessionManager::getVoiceChat() const
+ {
+ 	return 0;
+ }
+
 	}
 }

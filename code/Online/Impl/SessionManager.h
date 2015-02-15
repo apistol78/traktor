@@ -29,6 +29,7 @@ class TaskQueue;
 class TaskUpdateSessionManager;
 class UserCache;
 class VideoSharing;
+class VoiceChat;
 
 class T_DLLCLASS SessionManager : public ISessionManager
 {
@@ -79,6 +80,8 @@ public:
 
 	virtual IVideoSharing* getVideoSharing() const;
 
+	virtual IVoiceChat* getVoiceChat() const;
+
 private:
 	Ref< ISessionManagerProvider > m_provider;
 	Ref< TaskQueue > m_taskQueues[2];
@@ -89,6 +92,7 @@ private:
 	Ref< Statistics > m_statistics;
 	Ref< IUser > m_user;
 	Ref< VideoSharing > m_videoSharing;
+	Ref< VoiceChat > m_voiceChat;
 	Ref< UserCache > m_userCache;
 	Ref< TaskUpdateSessionManager > m_updateTask;
 	bool m_downloadableContent;

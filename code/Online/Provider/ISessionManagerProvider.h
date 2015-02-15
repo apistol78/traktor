@@ -31,6 +31,7 @@ class ISaveDataProvider;
 class IStatisticsProvider;
 class IUserProvider;
 class IVideoSharingProvider;
+class IVoiceChatProvider;
 
 class T_DLLCLASS ISessionManagerProvider : public Object
 {
@@ -80,6 +81,8 @@ public:
 	virtual IUserProvider* getUser() const = 0;
 
 	virtual IVideoSharingProvider* getVideoSharing() const = 0;
+
+	virtual IVoiceChatProvider* getVoiceChat() const = 0;
 };
 
 	}

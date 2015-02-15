@@ -12,6 +12,7 @@
 #include "Online/Impl/User.h"
 #include "Online/Impl/UserCache.h"
 #include "Online/Impl/VideoSharing.h"
+#include "Online/Impl/VoiceChat.h"
 #include "Online/Impl/Tasks/TaskUpdateSessionManager.h"
 #include "Online/Provider/ISessionManagerProvider.h"
 
@@ -75,6 +76,7 @@ bool SessionManager::create(ISessionManagerProvider* provider, const IGameConfig
 	IStatisticsProvider* statisticsProvider = m_provider->getStatistics();
 	IUserProvider* userProvider = m_provider->getUser();
 	IVideoSharingProvider* videoSharingProvider = m_provider->getVideoSharing();
+	IVoiceChatProvider* voiceChatProvider = m_provider->getVoiceChat();
 
 	if (userProvider)
 	{
@@ -99,6 +101,9 @@ bool SessionManager::create(ISessionManagerProvider* provider, const IGameConfig
 
 	if (videoSharingProvider)
 		m_videoSharing = new VideoSharing(videoSharingProvider);
+
+	if (voiceChatProvider)
+		m_voiceChat = new VoiceChat(voiceChatProvider, m_userCache);
 
 	m_downloadableContent = downloadableContent;
 	m_connected = m_provider->isConnected();
@@ -290,6 +295,11 @@ IUser* SessionManager::getUser() const
 IVideoSharing* SessionManager::getVideoSharing() const
 {
 	return m_videoSharing;
+}
+
+IVoiceChat* SessionManager::getVoiceChat() const
+{
+	return m_voiceChat;
 }
 
 	}

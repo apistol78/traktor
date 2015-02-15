@@ -18,6 +18,8 @@ class Database;
 	namespace amalgam
 	{
 
+class IAudioServer;
+
 class OnlineServer : public IOnlineServer
 {
 	T_RTTI_CLASS;
@@ -26,6 +28,8 @@ public:
 	bool create(const PropertyGroup* defaultSettings, const PropertyGroup* settings, db::Database* db);
 
 	void destroy();
+
+	void setupVoice(IAudioServer* audioServer);
 
 	int32_t reconfigure(const PropertyGroup* settings);
 

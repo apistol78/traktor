@@ -3616,6 +3616,11 @@
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[24]"/>
 				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[18]/dependencies/item[7]/project"/>
+				</item>
 			</dependencies>
 		</item>
 		<item type="Project" version="1">

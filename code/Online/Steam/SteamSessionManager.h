@@ -26,6 +26,7 @@ class SteamMatchMaking;
 class SteamSaveData;
 class SteamStatistics;
 class SteamUser;
+class SteamVoiceChat;
 
 class T_DLLCLASS SteamSessionManager : public ISessionManagerProvider
 {
@@ -78,6 +79,8 @@ public:
 
 	virtual IVideoSharingProvider* getVideoSharing() const;
 
+	virtual IVoiceChatProvider* getVoiceChat() const;
+
 	bool waitForStats();
 
 	bool storeStats();
@@ -89,6 +92,7 @@ private:
 	Ref< ISaveDataProvider > m_saveData;
 	Ref< SteamStatistics > m_statistics;
 	Ref< SteamUser > m_user;
+	Ref< SteamVoiceChat > m_voiceChat;
 	std::map< std::wstring, uint32_t > m_dlcIds;
 	bool m_requireUserAttention;
 	bool m_requestedStats;

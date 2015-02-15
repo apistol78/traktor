@@ -264,6 +264,10 @@ bool Application::create(
 		m_physicsServer->createEntityFactories(m_environment);
 	m_worldServer->createEntityFactories(m_environment);
 
+	// Setup voice chat feature.
+	if (m_onlineServer && m_audioServer)
+		m_onlineServer->setupVoice(m_audioServer);
+
 	// Create plugins.
 	T_DEBUG(L"Creating plugins...");
 
