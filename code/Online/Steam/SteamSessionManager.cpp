@@ -18,6 +18,7 @@
 #include "Online/Steam/SteamSessionManager.h"
 #include "Online/Steam/SteamStatistics.h"
 #include "Online/Steam/SteamUser.h"
+#include "Online/Steam/SteamVoiceChat.h"
 
 namespace traktor
 {
@@ -159,6 +160,7 @@ bool SteamSessionManager::create(const IGameConfiguration* configuration)
 
 	m_statistics = new SteamStatistics(this, gc->m_statsIds);
 	m_user = new SteamUser();
+	m_voiceChat = new SteamVoiceChat(this);
 
 	return true;
 }
@@ -211,6 +213,9 @@ bool SteamSessionManager::update()
 		m_callbackGameCount.Set(call, this, &SteamSessionManager::OnCurrentGameCount);
 		m_updateGameCountTicks = 120;
 	}
+
+	if (m_voiceChat)
+		m_voiceChat->update();
 
 	SteamAPI_RunCallbacks();
 	return true;
@@ -392,6 +397,11 @@ IUserProvider* SteamSessionManager::getUser() const
 IVideoSharingProvider* SteamSessionManager::getVideoSharing() const
 {
 	return 0;
+}
+
+IVoiceChatProvider* SteamSessionManager::getVoiceChat() const
+{
+	return m_voiceChat;
 }
 
 bool SteamSessionManager::waitForStats()

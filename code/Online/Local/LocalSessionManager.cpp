@@ -264,5 +264,10 @@ IVideoSharingProvider* LocalSessionManager::getVideoSharing() const
 	return m_videoSharing;
 }
 
+IVoiceChatProvider* LocalSessionManager::getVoiceChat() const
+{
+	return 0;
+}
+
 	}
 }

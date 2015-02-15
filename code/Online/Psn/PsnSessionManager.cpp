@@ -258,6 +258,16 @@ IUserProvider* PsnSessionManager::getUser() const
 	return 0;
 }
 
+IVideoSharingProvider* PsnSessionManager::getVideoSharing() const
+{
+	return 0;
+}
+
+IVoiceChatProvider* PsnSessionManager::getVoiceChat() const
+{
+	return 0;
+}
+
 void PsnSessionManager::systemCallback(uint64_t status, uint64_t param)
 {
 	if (status == CELL_SYSUTIL_SYSTEM_MENU_OPEN)

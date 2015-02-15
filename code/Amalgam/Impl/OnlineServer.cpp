@@ -1,3 +1,4 @@
+#include "Amalgam/IAudioServer.h"
 #include "Amalgam/Types.h"
 #include "Amalgam/Impl/LibraryHelper.h"
 #include "Amalgam/Impl/OnlineServer.h"
@@ -8,6 +9,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
 #include "Online/IGameConfiguration.h"
+#include "Online/IVoiceChat.h"
 #include "Online/Impl/SessionManager.h"
 #include "Online/Provider/ISessionManagerProvider.h"
 
@@ -59,6 +61,12 @@ bool OnlineServer::create(const PropertyGroup* defaultSettings, const PropertyGr
 void OnlineServer::destroy()
 {
 	safeDestroy(m_sessionManager);
+}
+
+void OnlineServer::setupVoice(IAudioServer* audioServer)
+{
+	if (m_sessionManager->getVoiceChat())
+		m_sessionManager->getVoiceChat()->attachSoundPlayer(audioServer->getSoundPlayer());
 }
 
 int32_t OnlineServer::reconfigure(const PropertyGroup* settings)

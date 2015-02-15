@@ -14,12 +14,14 @@
 #include "Online/IStatistics.h"
 #include "Online/IUser.h"
 #include "Online/IVideoSharing.h"
+#include "Online/IVoiceChat.h"
 #include "Online/LobbyFilter.h"
 #include "Online/OnlinePeer2PeerProvider.h"
 #include "Online/Score.h"
 #include "Script/AutoScriptClass.h"
 #include "Script/Boxes.h"
 #include "Script/IScriptManager.h"
+#include "Sound/Player/ISoundPlayer.h"
 
 namespace traktor
 {
@@ -378,6 +380,7 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 	classISessionManager->addMethod("getStatistics", &online::ISessionManager::getStatistics);
 	classISessionManager->addMethod("getUser", &online::ISessionManager::getUser);
 	classISessionManager->addMethod("getVideoSharing", &online::ISessionManager::getVideoSharing);
+	classISessionManager->addMethod("getVoiceChat", &online::ISessionManager::getVoiceChat);
 	scriptManager->registerClass(classISessionManager);
 
 	Ref< script::AutoScriptClass< online::IStatistics > > classIStatistics = new script::AutoScriptClass< online::IStatistics >();
@@ -407,6 +410,14 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 	classIVideoSharing->addMethod("isCapturing", &online::IVideoSharing::isCapturing);
 	classIVideoSharing->addMethod("showShareUI", &online::IVideoSharing::showShareUI);
 	scriptManager->registerClass(classIVideoSharing);
+
+	Ref< script::AutoScriptClass< online::IVoiceChat > > classIVoiceChat = new script::AutoScriptClass< online::IVoiceChat >();
+	classIVoiceChat->addMethod("attachSoundPlayer", &online::IVoiceChat::attachSoundPlayer);
+	classIVoiceChat->addMethod("beginTransmission", &online::IVoiceChat::beginTransmission);
+	classIVoiceChat->addMethod("endTransmission", &online::IVoiceChat::endTransmission);
+	classIVoiceChat->addMethod("mute", &online::IVoiceChat::mute);
+	classIVoiceChat->addMethod("isTransmitting", &online::IVoiceChat::isTransmitting);
+	scriptManager->registerClass(classIVoiceChat);
 
 	Ref< script::AutoScriptClass< online::OnlinePeer2PeerProvider > > classOnlinePeer2PeerProvider = new script::AutoScriptClass< online::OnlinePeer2PeerProvider >();
 	classOnlinePeer2PeerProvider->addConstructor< online::ISessionManager*, online::ILobby*, bool, bool >();

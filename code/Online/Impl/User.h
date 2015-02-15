@@ -43,6 +43,7 @@ private:
 	friend class Lobby;
 	friend class Party;
 	friend class UserCache;
+	friend class VoiceChat;
 
 	Ref< IUserProvider > m_userProvider;
 	uint64_t m_handle;

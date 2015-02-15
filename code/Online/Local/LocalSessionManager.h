@@ -80,6 +80,8 @@ public:
 
 	virtual IVideoSharingProvider* getVideoSharing() const;
 
+	virtual IVoiceChatProvider* getVoiceChat() const;
+
 private:
 	Ref< sql::IConnection > m_db;
 	Ref< LocalAchievements > m_achievements;

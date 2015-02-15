@@ -60,6 +60,10 @@ public:
 
 	virtual IUserProvider* getUser() const;
 
+	virtual IVideoSharingProvider* getVideoSharing() const;
+
+	virtual IVoiceChatProvider* getVoiceChat() const;
+
 private:
 	SceNpTrophyContext m_trophyContext;
 	SceNpTrophyHandle m_trophyHandle;

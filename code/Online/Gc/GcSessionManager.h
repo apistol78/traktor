@@ -74,6 +74,8 @@ public:
 
 	virtual IVideoSharingProvider* getVideoSharing() const;
 
+	virtual IVoiceChatProvider* getVoiceChat() const;
+
 private:
 	Ref< GcAchievements > m_achievements;
 	Ref< GcLeaderboards > m_leaderboards;
