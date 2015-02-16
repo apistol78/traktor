@@ -83,6 +83,28 @@ strip_whitespace:
 		goto strip_whitespace;
 	}
 
+	// Parse hexadecimal number.
+	if (ch == '0' && peekChar() == L'x')
+	{
+		StringOutputStream ss;
+		ss << L"0x";
+
+		readChar();
+		for (;;)
+		{
+			ss << ch;
+			ch = peekChar();
+			chtype = characterType(ch);
+			if ((chtype & CtDigit) != 0 || (std::tolower(ch) >= L'a' && std::tolower(ch) <= L'f'))
+				readChar();
+			else
+				break;
+		}
+
+		m_number = parseString< int32_t >(ss.str());
+		return LtNumber;
+	}
+
 	// Parse number.
 	if (
 		(ch == '-' && (characterType(peekChar()) & CtDigit) != 0) ||
@@ -91,15 +113,16 @@ strip_whitespace:
 	{
 		StringOutputStream ss;
 
-		do
+		for (;;)
 		{
 			ss << ch;
 			ch = peekChar();
 			chtype = characterType(ch);
 			if ((chtype & CtDigit) != 0)
 				readChar();
+			else
+				break;
 		}
-		while ((chtype & CtDigit) != 0);
 
 		if (peekChar() == L'.')
 		{
