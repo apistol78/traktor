@@ -2,6 +2,66 @@
 <object type="traktor.i18n.Dictionary">
   <map>
     <item>
+      <first>AMALGAM_LANGUAGE</first>
+      <second>Language</second>
+    </item>
+    <item>
+      <first>AMALGAM_LANGUAGE_DEFAULT</first>
+      <second>(Default)</second>
+    </item>
+    <item>
+      <first>AMALGAM_LANGUAGE_ENGLISH</first>
+      <second>English</second>
+    </item>
+    <item>
+      <first>AMALGAM_LANGUAGE_FRENCH</first>
+      <second>French</second>
+    </item>
+    <item>
+      <first>AMALGAM_LANGUAGE_GERMAN</first>
+      <second>German</second>
+    </item>
+    <item>
+      <first>AMALGAM_LANGUAGE_ITALIAN</first>
+      <second>Italian</second>
+    </item>
+    <item>
+      <first>AMALGAM_LANGUAGE_JAPANESE</first>
+      <second>Japanese</second>
+    </item>
+    <item>
+      <first>AMALGAM_LANGUAGE_KOREANA</first>
+      <second>Koreana</second>
+    </item>
+    <item>
+      <first>AMALGAM_LANGUAGE_SPANISH</first>
+      <second>Spanish</second>
+    </item>
+    <item>
+      <first>AMALGAM_LANGUAGE_RUSSIAN</first>
+      <second>Russian</second>
+    </item>
+    <item>
+      <first>AMALGAM_LANGUAGE_POLISH</first>
+      <second>Polish</second>
+    </item>
+    <item>
+      <first>AMALGAM_LANGUAGE_PORTUGUESE</first>
+      <second>Portuguese</second>
+    </item>
+    <item>
+      <first>AMALGAM_LANGUAGE_CHINESE</first>
+      <second>Chinese</second>
+    </item>
+    <item>
+      <first>AMALGAM_LANGUAGE_SWEDISH</first>
+      <second>Swedish</second>
+    </item>
+    <item>
+      <first>AMALGAM_LANGUAGE_ROMANIAN</first>
+      <second>Romanian</second>
+    </item>
+    <item>
       <first>AMALGAM_TARGETS</first>
       <second>Targets</second>
     </item>

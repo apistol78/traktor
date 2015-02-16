@@ -53,7 +53,11 @@ SessionManager::SessionManager()
 {
 }
 
-bool SessionManager::create(ISessionManagerProvider* provider, const IGameConfiguration* configuration, bool downloadableContent)
+bool SessionManager::create(
+	ISessionManagerProvider* provider,
+	const IGameConfiguration* configuration,
+	bool downloadableContent,
+	const std::wstring& overrideLanguageCode)
 {
 	if (!(m_provider = provider))
 		return false;
@@ -105,6 +109,7 @@ bool SessionManager::create(ISessionManagerProvider* provider, const IGameConfig
 	if (voiceChatProvider)
 		m_voiceChat = new VoiceChat(voiceChatProvider, m_userCache);
 
+	m_overrideLanguageCode = overrideLanguageCode;
 	m_downloadableContent = downloadableContent;
 	m_connected = m_provider->isConnected();
 
@@ -178,7 +183,10 @@ bool SessionManager::update()
 
 std::wstring SessionManager::getLanguageCode() const
 {
-	return m_provider ? m_provider->getLanguageCode() : L"";
+	if (m_overrideLanguageCode.empty())
+		return m_provider ? m_provider->getLanguageCode() : L"";
+	else
+		return m_overrideLanguageCode;
 }
 
 bool SessionManager::isConnected() const

@@ -45,10 +45,11 @@ bool OnlineServer::create(const PropertyGroup* defaultSettings, const PropertyGr
 		return false;
 	}
 
+	std::wstring overrideLanguageCode = defaultSettings->getProperty< PropertyString >(L"Online.OverrideLanguageCode", L"");
 	bool downloadableContent = defaultSettings->getProperty< PropertyBoolean >(L"Online.DownloadableContent", true);
 
 	Ref< online::SessionManager > sessionManager = new online::SessionManager();
-	if (!sessionManager->create(sessionManagerProvider, gameConfiguration, downloadableContent))
+	if (!sessionManager->create(sessionManagerProvider, gameConfiguration, downloadableContent, overrideLanguageCode))
 	{
 		log::error << L"Online server failed; unable to create session manager" << Endl;
 		return false;

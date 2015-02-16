@@ -71,6 +71,23 @@ namespace traktor
 
 const uint16_t c_targetConnectionPort = 36000;
 
+const struct { const wchar_t* human; const wchar_t* code; } c_languageCodes[] =
+{
+	{ L"AMALGAM_LANGUAGE_ENGLISH", L"en" },
+	{ L"AMALGAM_LANGUAGE_FRENCH", L"fr" },
+	{ L"AMALGAM_LANGUAGE_GERMAN", L"de" },
+	{ L"AMALGAM_LANGUAGE_ITALIAN", L"it" },
+	{ L"AMALGAM_LANGUAGE_JAPANESE", L"jp" },
+	{ L"AMALGAM_LANGUAGE_KOREANA", L"kr" },
+	{ L"AMALGAM_LANGUAGE_SPANISH", L"es" },
+	{ L"AMALGAM_LANGUAGE_RUSSIAN", L"ru" },
+	{ L"AMALGAM_LANGUAGE_POLISH", L"pl" },
+	{ L"AMALGAM_LANGUAGE_PORTUGUESE", L"pt" },
+	{ L"AMALGAM_LANGUAGE_CHINESE", L"ch" },
+	{ L"AMALGAM_LANGUAGE_SWEDISH", L"sv" },
+	{ L"AMALGAM_LANGUAGE_ROMANIAN", L"ro" }
+};
+
 class TargetInstanceProgressListener : public RefCountImpl< ITargetAction::IProgressListener >
 {
 public:
@@ -195,6 +212,13 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_toolTweaks->add(createTweakMenuItem(L"Disable All DLC", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Disable Adaptive Updates", false));
 	m_toolBar->addItem(m_toolTweaks);
+
+	m_toolLanguage = new ui::custom::ToolBarDropDown(ui::Command(L"Amalgam.Language"), 85, i18n::Text(L"AMALGAM_LANGUAGE"));
+	m_toolLanguage->add(i18n::Text(L"AMALGAM_LANGUAGE_DEFAULT"));
+	for (uint32_t i = 0; i < sizeof_array(c_languageCodes); ++i)
+		m_toolLanguage->add(i18n::Text(c_languageCodes[i].human));
+	m_toolLanguage->select(0);
+	m_toolBar->addItem(m_toolLanguage);
 
 	// Create target configuration list control.
 	m_targetList = new TargetListControl();
@@ -525,6 +549,10 @@ void EditorPlugin::eventTargetListPlay(TargetPlayEvent* event)
 				tweakSettings->setProperty< PropertyBoolean >(L"Online.DownloadableContent", false);
 			if (m_toolTweaks->get(9)->isChecked())
 				tweakSettings->setProperty< PropertyInteger >(L"Amalgam.MaxSimulationUpdates", 1);
+
+			int32_t language = m_toolLanguage->getSelected();
+			if (language > 0)
+				tweakSettings->setProperty< PropertyString >(L"Online.OverrideLanguageCode", c_languageCodes[language - 1].code);
 
 			// Add deploy and launch actions.
 			action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsDeploying);
