@@ -66,7 +66,7 @@ void OnlineServer::destroy()
 void OnlineServer::setupVoice(IAudioServer* audioServer)
 {
 	if (m_sessionManager->getVoiceChat())
-		m_sessionManager->getVoiceChat()->attachSoundPlayer(audioServer->getSoundPlayer());
+		m_sessionManager->getVoiceChat()->setSoundPlayer(audioServer->getSoundPlayer());
 }
 
 int32_t OnlineServer::reconfigure(const PropertyGroup* settings)

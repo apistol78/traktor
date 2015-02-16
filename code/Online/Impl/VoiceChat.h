@@ -27,13 +27,17 @@ class VoiceChat
 	T_RTTI_CLASS;
 
 public:
-	virtual void attachSoundPlayer(sound::ISoundPlayer* soundPlayer);
+	void destroy();
 
-	virtual void beginTransmission(const RefArray< IUser >& audience);
+	virtual void setSoundPlayer(sound::ISoundPlayer* soundPlayer);
+
+	virtual void setAudience(const RefArray< IUser >& audience);
+
+	virtual void beginTransmission();
 
 	virtual void endTransmission();
 
-	virtual void mute();
+	virtual void setMute(bool mute);
 
 	virtual bool isTransmitting(IUser* user);
 
@@ -51,6 +55,8 @@ private:
 	Ref< IVoiceChatProvider > m_provider;
 	Ref< UserCache > m_userCache;
 	Ref< sound::ISoundPlayer > m_soundPlayer;
+	uint32_t m_category;
+	bool m_muted;
 	std::list< Transmission > m_transmissions;
 
 	VoiceChat(IVoiceChatProvider* provider, UserCache* userCache);

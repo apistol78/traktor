@@ -58,6 +58,8 @@ public:
 
 	virtual std::wstring getPeerName(int32_t index) const;
 
+	virtual Object* getPeerUser(int32_t index) const;
+
 	virtual bool setPrimaryPeerHandle(net::net_handle_t node);
 
 	virtual net::net_handle_t getPrimaryPeerHandle() const;

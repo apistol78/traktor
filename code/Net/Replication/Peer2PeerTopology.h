@@ -32,6 +32,7 @@ public:
 		net_handle_t handle;
 		net_handle_t send;
 		std::wstring name;
+		Ref< Object > user;
 		bool established;
 		uint8_t sequence;
 		std::vector< net_handle_t > connections;
@@ -66,6 +67,8 @@ public:
 	virtual net_handle_t getNodeHandle(int32_t index) const;
 
 	virtual std::wstring getNodeName(int32_t index) const;
+
+	virtual Object* getNodeUser(int32_t index) const;
 
 	virtual bool isNodeRelayed(int32_t index) const;
 

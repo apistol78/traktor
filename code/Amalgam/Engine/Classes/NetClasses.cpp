@@ -164,6 +164,7 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	Ref< script::AutoScriptClass< net::ReplicatorProxy > > classReplicatorProxy = new script::AutoScriptClass< net::ReplicatorProxy >();
 	classReplicatorProxy->addMethod("getHandle", &net::ReplicatorProxy::getHandle);
 	classReplicatorProxy->addMethod("getName", &net::ReplicatorProxy::getName);
+	classReplicatorProxy->addMethod("getUser", &net::ReplicatorProxy::getUser);
 	classReplicatorProxy->addMethod("getStatus", &net::ReplicatorProxy::getStatus);
 	classReplicatorProxy->addMethod("isLatencyReliable", &net::ReplicatorProxy::isLatencyReliable);
 	classReplicatorProxy->addMethod("getLatency", &net::ReplicatorProxy::getLatency);

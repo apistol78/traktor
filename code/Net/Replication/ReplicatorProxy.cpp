@@ -34,6 +34,11 @@ const std::wstring& ReplicatorProxy::getName() const
 	return m_name;
 }
 
+Object* ReplicatorProxy::getUser() const
+{
+	return m_user;
+}
+
 uint8_t ReplicatorProxy::getStatus() const
 {
 	return m_status;
@@ -367,6 +372,7 @@ void ReplicatorProxy::disconnect()
 {
 	m_replicator = 0;
 	m_handle = 0;
+	m_user = 0;
 	m_status = 0;
 	m_object = 0;
 	m_distance = 0.0f;
@@ -382,10 +388,11 @@ void ReplicatorProxy::disconnect()
 	m_lastEvents.clear();
 }
 
-ReplicatorProxy::ReplicatorProxy(Replicator* replicator, net_handle_t handle, const std::wstring& name)
+ReplicatorProxy::ReplicatorProxy(Replicator* replicator, net_handle_t handle, const std::wstring& name, Object* user)
 :	m_replicator(replicator)
 ,	m_handle(handle)
 ,	m_name(name)
+,	m_user(user)
 ,	m_status(0)
 ,	m_origin(Transform::identity())
 ,	m_distance(0.0f)

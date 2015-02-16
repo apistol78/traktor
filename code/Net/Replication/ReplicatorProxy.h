@@ -43,6 +43,10 @@ public:
 
 	/*! \brief
 	 */
+	Object* getUser() const;
+
+	/*! \brief
+	 */
 	uint8_t getStatus() const;
 
 	/*! \brief
@@ -147,6 +151,7 @@ private:
 	//@{
 
 	std::wstring m_name;
+	Ref< Object > m_user;
 	uint8_t m_status;
 	Ref< Object > m_object;
 	Transform m_origin;
@@ -205,7 +210,7 @@ private:
 
 	void disconnect();
 
-	ReplicatorProxy(Replicator* replicator, net_handle_t handle, const std::wstring& name);
+	ReplicatorProxy(Replicator* replicator, net_handle_t handle, const std::wstring& name, Object* user);
 };
 
 	}
