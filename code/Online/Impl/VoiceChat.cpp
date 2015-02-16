@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Containers/CircularVector.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/AutoPtr.h"
