@@ -38,7 +38,12 @@ class T_DLLCLASS SessionManager : public ISessionManager
 public:
 	SessionManager();
 
-	bool create(ISessionManagerProvider* provider, const IGameConfiguration* configuration, bool downloadableContent);
+	bool create(
+		ISessionManagerProvider* provider,
+		const IGameConfiguration* configuration,
+		bool downloadableContent,
+		const std::wstring& overrideLanguageCode
+	);
 
 	virtual void destroy();
 
@@ -95,6 +100,7 @@ private:
 	Ref< VoiceChat > m_voiceChat;
 	Ref< UserCache > m_userCache;
 	Ref< TaskUpdateSessionManager > m_updateTask;
+	std::wstring m_overrideLanguageCode;
 	bool m_downloadableContent;
 	bool m_connected;
 };

@@ -106,6 +106,7 @@ private:
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::ToolBarDropDown > m_toolTargets;
 	Ref< ui::custom::ToolBarDropMenu > m_toolTweaks;
+	Ref< ui::custom::ToolBarDropDown > m_toolLanguage;
 	Ref< TargetListControl > m_targetList;
 	// \}
 
