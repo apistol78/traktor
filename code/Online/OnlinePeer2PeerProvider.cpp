@@ -1,8 +1,9 @@
 #include <cstring>
+#include "Core/Functor/Functor.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Thread/Thread.h"
-#include "Core/Thread/ThreadManager.h"
+#include "Core/Thread/ThreadPool.h"
 #include "Core/Timer/Measure.h"
 #include "Online/ILobby.h"
 #include "Online/ISessionManager.h"
@@ -72,8 +73,7 @@ OnlinePeer2PeerProvider::OnlinePeer2PeerProvider(ISessionManager* sessionManager
 	// Create transmission thread.
 	if (asyncTx || asyncRx)
 	{
-		m_thread = ThreadManager::getInstance().create(makeFunctor(this, &OnlinePeer2PeerProvider::transmissionThread), L"Online P2P");
-		if (!m_thread->start())
+		if (!ThreadPool::getInstance().spawn(makeFunctor(this, &OnlinePeer2PeerProvider::transmissionThread), m_thread))
 		{
 			m_thread = 0;
 			m_asyncTx =
@@ -88,8 +88,8 @@ OnlinePeer2PeerProvider::~OnlinePeer2PeerProvider()
 {
 	if (m_thread)
 	{
-		m_thread->stop();
-		ThreadManager::getInstance().destroy(m_thread);
+		ThreadPool::getInstance().stop(m_thread);
+		m_thread = 0;
 	}
 }
 
@@ -164,6 +164,14 @@ std::wstring OnlinePeer2PeerProvider::getPeerName(int32_t index) const
 	else
 		T_MEASURE_STATEMENT(m_users[index - 1].user->getName(name), 0.001)
 	return name;
+}
+
+Object* OnlinePeer2PeerProvider::getPeerUser(int32_t index) const
+{
+	if (index <= 0)
+		return m_sessionManager->getUser();
+	else
+		return m_users[index - 1].user;
 }
 
 bool OnlinePeer2PeerProvider::setPrimaryPeerHandle(net::net_handle_t node)

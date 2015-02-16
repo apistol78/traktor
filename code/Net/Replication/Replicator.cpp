@@ -674,19 +674,21 @@ std::wstring Replicator::getLogPrefix() const
 bool Replicator::nodeConnected(INetworkTopology* topology, net_handle_t node)
 {
 	std::wstring name;
+	Ref< Object > user;
 
 	for (int32_t i = 0; i < topology->getNodeCount(); ++i)
 	{
 		if (topology->getNodeHandle(i) == node)
 		{
 			name = topology->getNodeName(i);
+			user = topology->getNodeUser(i);
 			break;
 		}
 	}
 
 	if (node != m_topology->getLocalHandle())
 	{
-		Ref< ReplicatorProxy > proxy = new ReplicatorProxy(this, node, name);
+		Ref< ReplicatorProxy > proxy = new ReplicatorProxy(this, node, name, user);
 		m_proxies.push_back(proxy);
 
 		log::info << getLogPrefix() << L"Proxy for node " << node << L" (" << name << L") created." << Endl;

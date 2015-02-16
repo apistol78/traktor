@@ -31,13 +31,15 @@ class T_DLLCLASS IVoiceChat : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual void attachSoundPlayer(sound::ISoundPlayer* soundPlayer) = 0;
+	virtual void setSoundPlayer(sound::ISoundPlayer* soundPlayer) = 0;
 
-	virtual void beginTransmission(const RefArray< IUser >& audience) = 0;
+	virtual void setAudience(const RefArray< IUser >& audience) = 0;
+
+	virtual void beginTransmission() = 0;
 
 	virtual void endTransmission() = 0;
 
-	virtual void mute() = 0;
+	virtual void setMute(bool mute) = 0;
 
 	virtual bool isTransmitting(IUser* user) = 0;
 };

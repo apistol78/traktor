@@ -128,6 +128,12 @@ std::wstring Peer2PeerTopology::getNodeName(int32_t index) const
 	return m_peers[peerIndex].name;
 }
 
+Object* Peer2PeerTopology::getNodeUser(int32_t index) const
+{
+	int32_t peerIndex = m_nodes[index];
+	return m_peers[peerIndex].user;
+}
+
 bool Peer2PeerTopology::isNodeRelayed(int32_t index) const
 {
 	int32_t peerIndex = m_nodes[index];
@@ -221,6 +227,7 @@ bool Peer2PeerTopology::update(double dT)
 			Peer peer;
 			peer.handle = m_providerPeers[i];
 			peer.name = m_provider->getPeerName(i);
+			peer.user = m_provider->getPeerUser(i);
 			m_peers.push_back(peer);
 			updateRouting = 1;
 		}

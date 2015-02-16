@@ -127,7 +127,10 @@ bool SessionManager::create(ISessionManagerProvider* provider, const IGameConfig
 
 void SessionManager::destroy()
 {
+	safeDestroy(m_voiceChat);
+
 	m_userCache = 0;
+	m_voiceChat = 0;
 	m_videoSharing = 0;
 	m_user = 0;
 	m_statistics = 0;

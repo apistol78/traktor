@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Online/Steam/SteamVoiceChat.h"
 
 namespace traktor
@@ -29,14 +30,18 @@ void SteamVoiceChat::setCallback(IVoiceChatCallback* callback)
 	m_callback = callback;
 }
 
-void SteamVoiceChat::beginTransmission(const std::vector< uint64_t >& audienceHandles)
+void SteamVoiceChat::setAudience(const std::vector< uint64_t >& audienceHandles)
+{
+	m_audienceHandles = audienceHandles;
+}
+
+void SteamVoiceChat::beginTransmission()
 {
 	if (!m_transmitting)
 	{
 		SteamUser()->StartVoiceRecording();
 		SteamFriends()->SetInGameVoiceSpeaking(SteamUser()->GetSteamID(), true);
 		m_transmitting = true;
-		m_audienceHandles = audienceHandles;
 	}
 }
 
@@ -70,6 +75,8 @@ void SteamVoiceChat::update()
 		);
 		if (result == k_EVoiceResultOK && voiceBufferRead > 0)
 		{
+			T_DEBUG(L"Sending voice to " << int32_t(m_audienceHandles.size()) << L" user(s)");
+
 			// Transmit recorded data to all listening users.
 			for (std::vector< uint64_t >::const_iterator i = m_audienceHandles.begin(); i != m_audienceHandles.end(); ++i)
 			{

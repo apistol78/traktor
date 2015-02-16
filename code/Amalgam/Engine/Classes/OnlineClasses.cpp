@@ -412,10 +412,11 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 	scriptManager->registerClass(classIVideoSharing);
 
 	Ref< script::AutoScriptClass< online::IVoiceChat > > classIVoiceChat = new script::AutoScriptClass< online::IVoiceChat >();
-	classIVoiceChat->addMethod("attachSoundPlayer", &online::IVoiceChat::attachSoundPlayer);
+	classIVoiceChat->addMethod("setSoundPlayer", &online::IVoiceChat::setSoundPlayer);
+	classIVoiceChat->addMethod("setAudience", &online::IVoiceChat::setAudience);
 	classIVoiceChat->addMethod("beginTransmission", &online::IVoiceChat::beginTransmission);
 	classIVoiceChat->addMethod("endTransmission", &online::IVoiceChat::endTransmission);
-	classIVoiceChat->addMethod("mute", &online::IVoiceChat::mute);
+	classIVoiceChat->addMethod("setMute", &online::IVoiceChat::setMute);
 	classIVoiceChat->addMethod("isTransmitting", &online::IVoiceChat::isTransmitting);
 	scriptManager->registerClass(classIVoiceChat);
 

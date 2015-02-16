@@ -28,7 +28,9 @@ public:
 
 	virtual void setCallback(IVoiceChatCallback* callback) = 0;
 
-	virtual void beginTransmission(const std::vector< uint64_t >& audienceHandles) = 0;
+	virtual void setAudience(const std::vector< uint64_t >& audienceHandles) = 0;
+
+	virtual void beginTransmission() = 0;
 
 	virtual void endTransmission() = 0;
 };

@@ -76,10 +76,10 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 	if (!sound)
 		return 0;
 
-	float time = float(m_timer.getElapsedTime());
-
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+		float time = float(m_timer.getElapsedTime());
 
 		// First check if this sound already has been recently played.
 		for (AlignedVector< Channel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
