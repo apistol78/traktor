@@ -7,6 +7,7 @@
 #include "Model/Editor/ModelToolDialog.h"
 #include "Model/Operations/Boolean.h"
 #include "Model/Operations/CalculateConvexHull.h"
+#include "Model/Operations/CalculateOccluder.h"
 #include "Model/Operations/CleanDegenerate.h"
 #include "Model/Operations/CleanDuplicates.h"
 #include "Model/Operations/Quantize.h"
@@ -77,6 +78,7 @@ bool ModelToolDialog::create(ui::Widget* parent)
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Convex Hull", ui::Command(L"ModelTool.ConvexHull"), ui::custom::ToolBarButton::BsText));
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Triangulate", ui::Command(L"ModelTool.Triangulate"), ui::custom::ToolBarButton::BsText));
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Union", ui::Command(L"ModelTool.Union"), ui::custom::ToolBarButton::BsText));
+	toolBar->addItem(new ui::custom::ToolBarButton(L"Occluder", ui::Command(L"ModelTool.Occluder"), ui::custom::ToolBarButton::BsText));
 	toolBar->addItem(new ui::custom::ToolBarSeparator());
 
 	m_toolSolid = new ui::custom::ToolBarButton(L"Solid", ui::Command(L"ModelTool.ToggleSolid"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggled);
@@ -297,6 +299,12 @@ void ModelToolDialog::eventToolBarClick(ui::custom::ToolBarButtonClickEvent* eve
 				m_modelList->update();
 			}
 		}
+	}
+	else if (cmd == L"ModelTool.Occluder")
+	{
+		Ref< IModelOperation > operation = new CalculateOccluder();
+		applyOperation(operation);
+
 	}
 
 	m_renderWidget->update();

@@ -173,6 +173,9 @@ bool MeshPipeline::buildDependencies(
 
 	pipelineDepends->addDependency(Path(m_assetPath), asset->getFileName().getOriginal());
 
+	if (asset->getGenerateOccluder() && !asset->getOccluderModel().empty())
+		pipelineDepends->addDependency(Path(m_assetPath), asset->getOccluderModel().getOriginal());
+
 	// Determine vertex shader guid.
 	Guid vertexShaderGuid = getVertexShaderGuid(asset->getMeshType());
 	if (!vertexShaderGuid.isValid())
@@ -554,13 +557,38 @@ bool MeshPipeline::buildOutput(
 	Ref< model::Model > occluderModel;
 	if (asset->getGenerateOccluder())
 	{
-		log::info << L"Creating occluder model..." << Endl;
-
-		occluderModel = new model::Model(*models[0]);
-		if (!model::CalculateOccluder().apply(*occluderModel))
+		if (asset->getOccluderModel().empty())
 		{
-			log::error << L"Mesh pipeline failed; unable to generate occluder" << Endl;
-			return false;
+			log::info << L"Generating occluder model..." << Endl;
+
+			occluderModel = new model::Model(*models[0]);
+			if (!model::CalculateOccluder().apply(*occluderModel))
+			{
+				log::error << L"Mesh pipeline failed; unable to generate occluder" << Endl;
+				return false;
+			}
+		}
+		else
+		{
+			Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), asset->getOccluderModel().getOriginal());
+			if (!file)
+			{
+				log::error << L"Mesh pipeline failed; unable to open source occluder model (" << asset->getOccluderModel().getOriginal() << L")" << Endl;
+				return false;
+			}
+
+			occluderModel = model::ModelFormat::readAny(
+				file,
+				asset->getOccluderModel().getExtension(),
+				model::ModelFormat::IfMeshPositions | model::ModelFormat::IfMeshVertices | model::ModelFormat::IfMeshPolygons
+			);
+			if (!occluderModel)
+			{
+				log::error << L"Mesh pipeline failed; unable to read source occluder model (" << asset->getOccluderModel().getOriginal() << L")" << Endl;
+				return false;
+			}
+
+			file->close();
 		}
 	}
 
