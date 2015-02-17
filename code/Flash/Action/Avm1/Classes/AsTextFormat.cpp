@@ -46,7 +46,7 @@ void AsTextFormat::initialize(ActionObject* self)
 
 void AsTextFormat::construct(ActionObject* self, const ActionValueArray& args)
 {
-	self->setRelay(new FlashTextFormat(0.0f));
+	self->setRelay(new FlashTextFormat(0.0f, 0.0f));
 }
 
 ActionValue AsTextFormat::xplicit(const ActionValueArray& args)
@@ -174,11 +174,12 @@ void AsTextFormat::TextFormat_set_rightMargin(FlashTextFormat* self, avm_number_
 
 avm_number_t AsTextFormat::TextFormat_get_size(FlashTextFormat* self) const
 {
-	return avm_number_t(0);
+	return self->getSize();
 }
 
 void AsTextFormat::TextFormat_set_size(FlashTextFormat* self, avm_number_t value) const
 {
+	self->setSize(value);
 }
 
 ActionValue AsTextFormat::TextFormat_get_tabStops(FlashTextFormat* self) const

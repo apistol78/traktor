@@ -7,9 +7,10 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashTextFormat", FlashTextFormat, ActionObjectRelay)
 
-FlashTextFormat::FlashTextFormat(float letterSpacing)
+FlashTextFormat::FlashTextFormat(float letterSpacing, float size)
 :	ActionObjectRelay("TextFormat")
 ,	m_letterSpacing(letterSpacing)
+,	m_size(size)
 {
 }
 

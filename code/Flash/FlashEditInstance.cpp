@@ -131,6 +131,7 @@ FlashEditInstance::FlashEditInstance(ActionContext* context, FlashCharacterInsta
 ,	m_edit(edit)
 ,	m_textColor(edit->getTextColor())
 ,	m_letterSpacing(0.0f)
+,	m_fontHeight(edit->getFontHeight())
 ,	m_html(false)
 ,	m_caret(0)
 ,	m_scroll(0)
@@ -213,23 +214,25 @@ void FlashEditInstance::setLetterSpacing(float letterSpacing)
 
 Ref< FlashTextFormat > FlashEditInstance::getTextFormat() const
 {
-	return new FlashTextFormat(m_letterSpacing);
+	return new FlashTextFormat(m_letterSpacing, m_fontHeight);
 }
 
 Ref< FlashTextFormat > FlashEditInstance::getTextFormat(int32_t beginIndex, int32_t endIndex) const
 {
-	return new FlashTextFormat(m_letterSpacing);
+	return new FlashTextFormat(m_letterSpacing, m_fontHeight);
 }
 
 void FlashEditInstance::setTextFormat(const FlashTextFormat* textFormat)
 {
 	m_letterSpacing = textFormat->getLetterSpacing();
+	m_fontHeight = textFormat->getSize();
 	updateLayout();
 }
 
 void FlashEditInstance::setTextFormat(const FlashTextFormat* textFormat, int32_t beginIndex, int32_t endIndex)
 {
 	m_letterSpacing = textFormat->getLetterSpacing();
+	m_fontHeight = textFormat->getSize();
 	updateLayout();
 }
 
@@ -355,7 +358,7 @@ bool FlashEditInstance::internalParseText(const std::wstring& text)
 	m_layout->setBounds(adjustForGutter(m_edit->getTextBounds()));
 	m_layout->setLeading(m_edit->getLeading());
 	m_layout->setLetterSpacing(m_letterSpacing);
-	m_layout->setFontHeight(m_edit->getFontHeight());
+	m_layout->setFontHeight(m_fontHeight);
 	m_layout->setWordWrap(m_edit->wordWrap());
 	m_layout->setAlignment((TextLayout::Align)m_edit->getAlign());
 	m_layout->setAttribute(font, m_textColor);
@@ -400,7 +403,7 @@ bool FlashEditInstance::internalParseHtml(const std::wstring& html)
 	m_layout->setBounds(adjustForGutter(m_edit->getTextBounds()));
 	m_layout->setLeading(m_edit->getLeading());
 	m_layout->setLetterSpacing(m_letterSpacing);
-	m_layout->setFontHeight(m_edit->getFontHeight());
+	m_layout->setFontHeight(m_fontHeight);
 	m_layout->setWordWrap(m_edit->wordWrap());
 	m_layout->setAlignment((TextLayout::Align)m_edit->getAlign());
 	m_layout->setAttribute(font, m_textColor);
