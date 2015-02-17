@@ -67,6 +67,10 @@ public:
 
 	bool getGenerateOccluder() const { return m_generateOccluder; }
 
+	void setOccluderModel(const Path& occluderModel) { m_occluderModel = occluderModel; }
+
+	const Path& getOccluderModel() const { return m_occluderModel; }
+
 	void setAutoDetailLevel(float autoDetailLevel) { m_autoDetailLevel = autoDetailLevel; }
 
 	float getAutoDetailLevel() const { return m_autoDetailLevel; }
@@ -79,6 +83,7 @@ private:
 	bool m_bakeOcclusion;
 	bool m_cullDistantFaces;
 	bool m_generateOccluder;
+	Path m_occluderModel;
 	float m_autoDetailLevel;
 };
 
