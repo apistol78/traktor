@@ -276,6 +276,12 @@ void Stage::postReconfigured()
 {
 	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 		(*i)->postReconfigured();
+
+	if (m_scriptContext && m_initialized)
+	{
+		if (m_scriptContext->haveFunction("reconfigured"))
+			m_scriptContext->executeFunction("reconfigured");
+	}
 }
 
 void Stage::suspend()
