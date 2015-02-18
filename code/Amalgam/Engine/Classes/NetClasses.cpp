@@ -248,6 +248,10 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	classReplicator->addMethod("resetAllLatencies", &net::Replicator::resetAllLatencies);
 	classReplicator->addMethod("getAverageLatency", &net::Replicator::getAverageLatency);
 	classReplicator->addMethod("getAverageReverseLatency", &net::Replicator::getAverageReverseLatency);
+	classReplicator->addMethod("getBestLatency", &net::Replicator::getBestLatency);
+	classReplicator->addMethod("getBestReverseLatency", &net::Replicator::getBestReverseLatency);
+	classReplicator->addMethod("getWorstLatency", &net::Replicator::getWorstLatency);
+	classReplicator->addMethod("getWorstReverseLatency", &net::Replicator::getWorstReverseLatency);
 	classReplicator->addMethod("broadcastEvent", &net::Replicator::broadcastEvent);
 	classReplicator->addMethod("sendEventToPrimary", &net::Replicator::sendEventToPrimary);
 	classReplicator->addMethod("getTime", &net::Replicator::getTime);

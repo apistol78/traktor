@@ -614,6 +614,76 @@ double Replicator::getAverageReverseLatency() const
 	return latency;
 }
 
+double Replicator::getBestLatency() const
+{
+	double latency = 0.0;
+	if (!m_proxies.empty())
+	{
+		int32_t reliableCount = 0;
+		latency = std::numeric_limits< double >::max();
+		for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+		{
+			if ((*i)->isLatencyReliable())
+			{
+				latency = std::min(latency, (*i)->getLatency());
+				reliableCount++;
+			}
+		}
+		if (!reliableCount > 0)
+			latency = 0.0;
+	}
+	return latency;
+}
+
+double Replicator::getBestReverseLatency() const
+	{
+	double latency = 0.0;
+	if (!m_proxies.empty())
+	{
+		int32_t reliableCount = 0;
+		latency = std::numeric_limits< double >::max();
+		for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+		{
+			if ((*i)->isLatencyReliable())
+			{
+				latency = std::min(latency, (*i)->getReverseLatency());
+				reliableCount++;
+			}
+		}
+		if (!reliableCount > 0)
+			latency = 0.0;
+	}
+	return latency;
+}
+
+double Replicator::getWorstLatency() const
+{
+	double latency = 0.0;
+	if (!m_proxies.empty())
+	{
+		for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+		{
+			if ((*i)->isLatencyReliable())
+				latency = std::max(latency, (*i)->getLatency());
+		}
+	}
+	return latency;
+}
+
+double Replicator::getWorstReverseLatency() const
+{
+	double latency = 0.0;
+	if (!m_proxies.empty())
+	{
+		for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+		{
+			if ((*i)->isLatencyReliable())
+				latency = std::max(latency, (*i)->getReverseLatency());
+		}
+	}
+	return latency;
+}
+
 bool Replicator::sendEventToPrimary(const ISerializable* eventObject)
 {
 	if (!isPrimary())
