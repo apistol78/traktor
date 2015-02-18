@@ -219,6 +219,22 @@ public:
 	 */
 	double getAverageReverseLatency() const;
 
+	/*! \
+	 */
+	double getBestLatency() const;
+
+	/*! \
+	 */
+	double getBestReverseLatency() const;
+
+	/*! \
+	 */
+	double getWorstLatency() const;
+
+	/*! \
+	 */
+	double getWorstReverseLatency() const;
+
 	/*! \brief Broadcast high priority event to all peers.
 	 */
 	bool broadcastEvent(const ISerializable* eventObject);
