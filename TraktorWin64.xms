@@ -18190,6 +18190,219 @@
 		<item ref="/object/projects/item[14]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[4]/project"/>
 		<item ref="/object/projects/item[14]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[4]/project/dependencies/item[1]/project"/>
 		<item ref="/object/projects/item[52]/dependencies/item[2]/project"/>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Render.Ps3</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Render/Ps3</sourcePath>
+			<configurations>
+				<item type="Configuration" version="1">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(SCE_PS3_ROOT)\host-common\include</item>
+						<item>$(SCE_PS3_ROOT)\host-win32\Cg\include</item>
+						<item>$(SCE_PS3_ROOT)\target\common\include</item>
+					</includePaths>
+					<definitions>
+						<item>T_RENDER_PS3_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(SCE_PS3_ROOT)\host-win32\lib</item>
+						<item>$(SCE_PS3_ROOT)\host-win32\Cg\lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>libgcm_tool_x64.lib</item>
+						<item>libcgc_x64.lib</item>
+						<item>libcgutil_x64.lib</item>
+						<item>SCEShaderPerf_x64.lib</item>
+					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(SCE_PS3_ROOT)\host-common\include</item>
+						<item>$(SCE_PS3_ROOT)\host-win32\Cg\include</item>
+						<item>$(SCE_PS3_ROOT)\target\common\include</item>
+					</includePaths>
+					<definitions>
+						<item>T_RENDER_PS3_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(SCE_PS3_ROOT)\host-win32\lib</item>
+						<item>$(SCE_PS3_ROOT)\host-win32\Cg\lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>libgcm_tool_x64.lib</item>
+						<item>libcgc_x64.lib</item>
+						<item>libcgutil_x64.lib</item>
+						<item>SCEShaderPerf_x64.lib</item>
+					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(SCE_PS3_ROOT)\host-common\include</item>
+						<item>$(SCE_PS3_ROOT)\host-win32\Cg\include</item>
+						<item>$(SCE_PS3_ROOT)\target\common\include</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(SCE_PS3_ROOT)\host-win32\lib</item>
+						<item>$(SCE_PS3_ROOT)\host-win32\Cg\lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>libgcm_tool_x64.lib</item>
+						<item>libcgc_x64.lib</item>
+						<item>libcgutil_x64.lib</item>
+						<item>SCEShaderPerf_x64.lib</item>
+					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(SCE_PS3_ROOT)\host-common\include</item>
+						<item>$(SCE_PS3_ROOT)\host-win32\Cg\include</item>
+						<item>$(SCE_PS3_ROOT)\target\common\include</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(SCE_PS3_ROOT)\host-win32\lib</item>
+						<item>$(SCE_PS3_ROOT)\host-win32\Cg\lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>libgcm_tool_x64.lib</item>
+						<item>libcgc_x64.lib</item>
+						<item>libcgutil_x64.lib</item>
+						<item>SCEShaderPerf_x64.lib</item>
+					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>Cg.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>Cg.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>CgContext.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>CgContext.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>CgEmitter.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>CgEmitter.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>CgProgram.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>CgProgram.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>CgShader.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>CgShader.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>CgType.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>CgType.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>CgVariable.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>CgVariable.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>PlatformPs3.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>ProgramCompilerPs3.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>ProgramCompilerPs3.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>ProgramResourcePs3.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>ProgramResourcePs3.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>Blob.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>Blob.h</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[13]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+			</dependencies>
+		</item>
 	</projects>
 	<aggregations/>
 </object>

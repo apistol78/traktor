@@ -158,8 +158,8 @@ uint32_t CgShader::addUniform(const std::wstring& uniform, CgType type, uint32_t
 			toIndex = (m_shaderType == StVertex ? 256 : 224) - elementCount;
 			if (toIndex < fromIndex)
 			{
-				log::error << L"Indexed array out-of-range; too many elements " << elementCount << Endl;
-				T_FATAL_ERROR;
+				log::error << L"Indexed array out-of-range; Cannot allocate \"" << uniform << L"\", " << elementCount << L" element(s)" << Endl;
+				return ~0U;
 			}
 		}
 

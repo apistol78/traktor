@@ -16,9 +16,9 @@ class Blob
 public:
 	Blob();
 
-	Blob(size_t size);
+	Blob(uint32_t size);
 
-	Blob(size_t size, const void* data);
+	Blob(uint32_t size, const void* data);
 
 	Blob(const Blob& blob);
 
@@ -26,14 +26,14 @@ public:
 
 	void* getData() const;
 
-	size_t getSize() const;
+	uint32_t getSize() const;
 
 	bool serialize(ISerializer& s);
 
 	Blob& operator = (const Blob& blob);
 
 private:
-	size_t m_size;
+	uint32_t m_size;
 	uint8_t* m_data;
 };
 

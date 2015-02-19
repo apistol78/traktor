@@ -20,13 +20,13 @@ Blob::Blob(const Blob& blob)
 	std::memcpy(m_data, blob.m_data, m_size);
 }
 
-Blob::Blob(size_t size)
+Blob::Blob(uint32_t size)
 :	m_size(size)
 ,	m_data(new uint8_t [size])
 {
 }
 
-Blob::Blob(size_t size, const void* data)
+Blob::Blob(uint32_t size, const void* data)
 :	m_size(size)
 ,	m_data(new uint8_t [size])
 {
@@ -43,7 +43,7 @@ void* Blob::getData() const
 	return m_data;
 }
 
-size_t Blob::getSize() const
+uint32_t Blob::getSize() const
 {
 	return m_size;
 }

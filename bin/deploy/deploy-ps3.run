@@ -62,7 +62,7 @@ function deploy(args)
 	end	
 
 	-- Build link command line.
-	local ld = "$(SCE_PS3_ROOT)/host-$(DEPLOY_HOST_OS)/sn/bin/ps3ppuld --library-path=" .. libraryPathPPU .. " --library-path=" .. libraryPathSPU
+	local ld = "$(SCE_PS3_ROOT)/host-win32/sn/bin/ps3ppuld --library-path=" .. libraryPathPPU .. " --library-path=" .. libraryPathSPU
 
 	if #modulesLocal > 0 then
 		ld = ld .. " --whole-archive"
@@ -83,11 +83,12 @@ function deploy(args)
 	local result = run:execute(ld)
 	if result ~= 0 then
 		stderr:printLn("Failed to link PS3 executable.")
+		stderr:printLn(ld)
 		return 1
 	end
 
 	-- Sign executable product.
-	local result = run:execute("$(SCE_PS3_ROOT)/host-$(DEPLOY_HOST_OS)/bin/make_fself " .. executable .. ".elf " .. executable .. ".self")
+	local result = run:execute("$(SCE_PS3_ROOT)/host-win32/bin/make_fself " .. executable .. ".elf " .. executable .. ".self")
 	if result ~= 0 then
 		stderr:printLn("Failed to sign PS3 executable.")
 		return 1

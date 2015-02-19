@@ -372,6 +372,9 @@ bool emitIndexedUniform(CgContext& cx, IndexedUniform* node)
 	if (uniforms.find(node->getParameterName()) == uniforms.end())
 	{
 		uint32_t registerIndex = cx.getShader().addUniform(node->getParameterName(), out->getType(), node->getLength());
+		if (registerIndex == ~0U)
+			return false;
+
 		StringOutputStream& fu = cx.getShader().getOutputStream(CgShader::BtUniform);
 		fu << L"uniform " << cg_type_name(out->getType()) << L" " << node->getParameterName() << L"[" << node->getLength() << L"] : register(c" << registerIndex << L");" << Endl;
 	}
@@ -391,6 +394,9 @@ bool emitInstance(CgContext& cx, Instance* node)
 	if (uniforms.find(L"__private__instanceID") == uniforms.end())
 	{
 		uint32_t registerIndex = cx.getShader().addUniform(L"__private__instanceID", CtFloat, 1);
+		if (registerIndex == ~0U)
+			return false;
+
 		StringOutputStream& fu = cx.getShader().getOutputStream(CgShader::BtUniform);
 		fu << L"uniform float __private__instanceID : register(c" << registerIndex << L");" << Endl;
 	}
@@ -1033,6 +1039,83 @@ bool emitReflect(CgContext& cx, Reflect* node)
 	return true;
 }
 
+bool emitRepeat(CgContext& cx, Repeat* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	std::wstring inputName;
+
+	// Create iterator variable.
+	CgVariable* N = cx.emitOutput(node, L"N", CtFloat);
+	T_ASSERT (N);
+
+	// Create void output variable; change type later when we know
+	// the type of the input branch.
+	CgVariable* out = cx.emitOutput(node, L"Output", CtVoid);
+	T_ASSERT (out);
+
+	// Find non-dependent, external, output pins from input branch;
+	// we emit those first in order to have them evaluated
+	// outside of iteration.
+	std::vector< const OutputPin* > outputPins;
+	std::vector< const OutputPin* > dependentOutputPins(2);
+	dependentOutputPins[0] = node->findOutputPin(L"N");
+	dependentOutputPins[1] = node->findOutputPin(L"Output");
+	cx.findNonDependentOutputs(node, L"Input", dependentOutputPins, outputPins);
+	for (std::vector< const OutputPin* >::const_iterator i = outputPins.begin(); i != outputPins.end(); ++i)
+		cx.emit((*i)->getNode());
+
+	// Write input branch in a temporary output stream.
+	StringOutputStream fs;
+	cx.getShader().pushOutputStream(CgShader::BtBody, &fs);
+	cx.getShader().pushScope();
+
+	{
+		// Emit pre-condition, break iteration if condition is false.
+		CgVariable* condition = cx.emitInput(node, L"Condition");
+		if (condition)
+		{
+			fs << L"if (!(bool)" << condition->cast(CtFloat) << L")" << Endl;
+			fs << L"\tbreak;" << Endl;
+		}
+
+		CgVariable* input = cx.emitInput(node, L"Input");
+		if (!input)
+			return false;
+
+		inputName = input->getName();
+
+		// Modify output variable; need to have input variable ready as it
+		// will determine output type.
+		out->setType(input->getType());
+	}
+
+	cx.getShader().popScope();
+	cx.getShader().popOutputStream(CgShader::BtBody);
+
+	// As we now know the type of output variable we can safely
+	// initialize it.
+	CgVariable* initial = cx.emitInput(node, L"Initial");
+	if (initial)
+		assign(f, out) << initial->cast(out->getType()) << L";" << Endl;
+	else
+		assign(f, out) << L"0;" << Endl;
+
+	// Write outer for-loop statement.
+	f << L"for (float " << N->getName() << L" = 0.0f;; ++" << N->getName() << L")" << Endl;
+	f << L"{" << Endl;
+	f << IncreaseIndent;
+
+	// Insert input branch here; it's already been generated in a temporary
+	// output stream.
+	f << fs.str();
+	f << out->getName() << L" = " << inputName << L";" << Endl;
+
+	f << DecreaseIndent;
+	f << L"}" << Endl;	
+
+	return true;
+}
+
 bool emitRound(CgContext& cx, Round* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
@@ -1578,6 +1661,9 @@ bool emitTextureSize(CgContext& cx, TextureSize* node)
 	if (uniforms.find(uniformName) == uniforms.end())
 	{
 		uint32_t registerIndex = cx.getShader().addUniform(uniformName, CtFloat3, 1);
+		if (registerIndex == ~0U)
+			return false;
+
 		StringOutputStream& fu = cx.getShader().getOutputStream(CgShader::BtUniform);
 		fu << L"uniform float3 " << uniformName << L" : register(c" << registerIndex << L");" << Endl;
 	}
@@ -1633,6 +1719,9 @@ bool emitUniform(CgContext& cx, Uniform* node)
 		if (uniforms.find(node->getParameterName()) == uniforms.end())
 		{
 			uint32_t registerIndex = cx.getShader().addUniform(node->getParameterName(), out->getType(), 1);
+			if (registerIndex == ~0U)
+				return false;
+
 			StringOutputStream& fu = cx.getShader().getOutputStream(CgShader::BtUniform);
 			fu << L"uniform " << cg_type_name(out->getType()) << L" " << node->getParameterName() << L" : register(c" << registerIndex << L");" << Endl;
 		}
@@ -1836,6 +1925,7 @@ CgEmitter::CgEmitter()
 	m_emitters[&type_of< PixelOutput >()] = new EmitterCast< PixelOutput >(emitPixelOutput);
 	m_emitters[&type_of< RecipSqrt >()] = new EmitterCast< RecipSqrt >(emitRecipSqrt);
 	m_emitters[&type_of< Reflect >()] = new EmitterCast< Reflect >(emitReflect);
+	m_emitters[&type_of< Repeat >()] = new EmitterCast< Repeat >(emitRepeat);
 	m_emitters[&type_of< Round >()] = new EmitterCast< Round >(emitRound);
 	m_emitters[&type_of< Sampler >()] = new EmitterCast< Sampler >(emitSampler);
 	m_emitters[&type_of< Script >()] = new EmitterCast< Script >(emitScript);

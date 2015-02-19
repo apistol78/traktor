@@ -212,6 +212,11 @@ ISimpleTexture* RenderTargetSetPs3::getColorTexture(int index) const
 	return m_renderTargets[index];
 }
 
+ISimpleTexture* RenderTargetSetPs3::getDepthTexture() const
+{
+	return 0;
+}
+
 void RenderTargetSetPs3::swap(int index1, int index2)
 {
 	Ref< RenderTargetPs3 > rt1 = m_renderTargets[index1];

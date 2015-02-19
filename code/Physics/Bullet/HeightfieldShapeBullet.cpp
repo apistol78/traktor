@@ -26,6 +26,8 @@ inline float quantizeMax(float v)
 	return ceilf(v);
 }
 
+#if !defined(_PS3)
+
 template < typename Visitor >
 void line_dda(float x0, float y0, float x1, float y1, Visitor& visitor)
 {
@@ -204,6 +206,8 @@ struct ProcessRaycastAllTrianglesNoCutsVisitor
 		callback->processTriangle(triangles, 0, 1);
 	}
 };
+
+#endif
 
 		}
 
