@@ -129,6 +129,10 @@ FlashLayer::FlashLayer(
 ,	m_visible(true)
 ,	m_offset(0.0f, 0.0f)
 ,	m_scale(1.0f)
+,	m_lastUpValue(false)
+,	m_lastDownValue(false)
+,	m_lastConfirmValue(false)
+,	m_lastEscapeValue(false)
 ,	m_lastMouseX(-1)
 ,	m_lastMouseY(-1)
 {
@@ -279,6 +283,74 @@ void FlashLayer::update(const amalgam::IUpdateInfo& info)
 							m_moviePlayer->postKeyUp(keyCode);
 					}
 				}
+			}
+		}
+
+		// Propagate joystick input to movie; synthesized as keyboard events.
+		int32_t joystickDeviceCount = inputSystem->getDeviceCount(input::CtJoystick, true);
+		for (int32_t i = 0; i < joystickDeviceCount; ++i)
+		{
+			input::IInputDevice* joystickDevice = inputSystem->getDevice(input::CtJoystick, i, true);
+			T_ASSERT (joystickDevice);
+
+			int32_t up = -1, down = -1;
+			joystickDevice->getDefaultControl(input::DtUp, false, up);
+			joystickDevice->getDefaultControl(input::DtDown, false, down);
+
+			if (up != -1)
+			{
+				bool upValue = bool(joystickDevice->getControlValue(up) > 0.5f);
+				if (upValue != m_lastUpValue)
+				{
+					if (upValue)
+						m_moviePlayer->postKeyDown(flash::AsKey::AkUp);
+					else
+						m_moviePlayer->postKeyUp(flash::AsKey::AkUp);
+				}
+				m_lastUpValue = upValue;
+			}
+
+			if (down != -1)
+			{
+				bool downValue = bool(joystickDevice->getControlValue(down) > 0.5f);
+				if (downValue != m_lastDownValue)
+				{
+					if (downValue)
+						m_moviePlayer->postKeyDown(flash::AsKey::AkDown);
+					else
+						m_moviePlayer->postKeyUp(flash::AsKey::AkDown);
+				}
+				m_lastDownValue = downValue;
+			}
+
+			int32_t buttonConfirm = -1, buttonEscape = -1;
+			joystickDevice->getDefaultControl(input::DtButton1, false, buttonConfirm);
+			joystickDevice->getDefaultControl(input::DtButton2, false, buttonEscape);
+
+			if (buttonConfirm != -1)
+			{
+				bool confirmValue = bool(joystickDevice->getControlValue(buttonConfirm) > 0.5f);
+				if (confirmValue != m_lastConfirmValue)
+				{
+					if (confirmValue)
+						m_moviePlayer->postKeyDown(flash::AsKey::AkEnter);
+					else
+						m_moviePlayer->postKeyUp(flash::AsKey::AkEnter);
+				}
+				m_lastConfirmValue = confirmValue;
+			}
+
+			if (buttonEscape != -1)
+			{
+				bool escapeValue = bool(joystickDevice->getControlValue(buttonEscape) > 0.5f);
+				if (escapeValue != m_lastEscapeValue)
+				{
+					if (escapeValue)
+						m_moviePlayer->postKeyDown(flash::AsKey::AkEscape);
+					else
+						m_moviePlayer->postKeyUp(flash::AsKey::AkEscape);
+				}
+				m_lastEscapeValue = escapeValue;
 			}
 		}
 

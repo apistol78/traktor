@@ -207,6 +207,10 @@ private:
 	bool m_visible;
 	Vector2 m_offset;
 	float m_scale;
+	bool m_lastUpValue;
+	bool m_lastDownValue;
+	bool m_lastConfirmValue;
+	bool m_lastEscapeValue;
 	LastMouseState m_lastMouse[8];
 	int32_t m_lastMouseX;
 	int32_t m_lastMouseY;
