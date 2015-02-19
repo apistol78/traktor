@@ -149,7 +149,6 @@ void RubbleLayer::render(
 	extraParameters->setFloatParameter(s_handleMaxDistance, m_spreadDistance + m_clusterSize);
 	extraParameters->endParameters(renderContext);
 
-	uint32_t plantCount = 0;
 	for (AlignedVector< Cluster >::const_iterator i = m_clusters.begin(); i != m_clusters.end(); ++i)
 	{
 		if (!i->visible)

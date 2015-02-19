@@ -27,6 +27,12 @@ namespace traktor
 		namespace
 		{
 
+#if !defined(__PS3__)
+const int32_t c_maxInstanceCount = 180;
+#else
+const int32_t c_maxInstanceCount = 20;
+#endif
+
 #pragma pack(1)
 struct Vertex
 {
@@ -228,9 +234,8 @@ void UndergrowthLayer::render(
 
 	render::RenderContext* renderContext = worldContext.getRenderContext();
 
-	Vector4 instanceData1[/*InstanceCount*/120];
-	Vector4 instanceData2[/*InstanceCount*/120];
-	uint32_t plantCount = 0;
+	Vector4 instanceData1[c_maxInstanceCount];
+	Vector4 instanceData2[c_maxInstanceCount];
 
 	for (AlignedVector< Cluster >::const_iterator i = m_clusters.begin(); i != m_clusters.end(); ++i)
 	{
@@ -240,7 +245,7 @@ void UndergrowthLayer::render(
 		int32_t count = i->to - i->from;
 		for (int32_t j = 0; j < count; )
 		{
-			int32_t batch = std::min(count - j, /*InstanceCount*/120);
+			int32_t batch = std::min(count - j, c_maxInstanceCount);
 
 			for (int32_t k = 0; k < batch; ++k, ++j)
 			{

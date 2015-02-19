@@ -28,7 +28,7 @@ public:
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
 		const TerrainEntity& terrainEntity
-	) const override;
+	) const T_OVERRIDE;
 
 	virtual void serialize(ISerializer& s);
 

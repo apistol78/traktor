@@ -57,6 +57,8 @@ class T_DLLCLASS InstanceMesh : public IMesh
 public:
 #if defined(__IOS__) || T_USE_LEGACY_INSTANCING
 	enum { MaxInstanceCount = 4 };		// ES doesn't support 32-bit indices thus we cannot batch enough instances.
+#elif defined(__PS3__)
+	enum { MaxInstanceCount = 20 };
 #else
 	enum { MaxInstanceCount = 60 };
 #endif

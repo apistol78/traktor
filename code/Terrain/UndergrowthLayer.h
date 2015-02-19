@@ -43,16 +43,16 @@ public:
 		const TerrainEntity& terrainEntity
 	);
 
-	virtual void update(const world::UpdateParams& update) override;
+	virtual void update(const world::UpdateParams& update) T_OVERRIDE;
 
 	virtual void render(
 		TerrainEntity& terrainEntity,
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
 		world::IWorldRenderPass& worldRenderPass
-	) override;
+	) T_OVERRIDE;
 
-	virtual void updatePatches(const TerrainEntity& terrainEntity) override;
+	virtual void updatePatches(const TerrainEntity& terrainEntity) T_OVERRIDE;
 
 private:
 	struct Cluster
