@@ -29,7 +29,11 @@ class T_DLLCLASS IInputFilter : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	virtual void evaluate(InputValueSet& valueSet) const = 0;
+	struct Instance : public IRefCount {};
+
+	virtual Ref< Instance > createInstance() const = 0;
+
+	virtual void evaluate(Instance* instance, InputValueSet& valueSet) const = 0;
 };
 
 	}

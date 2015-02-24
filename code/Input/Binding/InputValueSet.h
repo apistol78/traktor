@@ -1,8 +1,9 @@
 #ifndef traktor_input_InputValueSet_H
 #define traktor_input_InputValueSet_H
 
-#include <map>
 #include "Core/Object.h"
+#include "Core/Containers/SmallMap.h"
+#include "Input/InputTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -25,12 +26,12 @@ class T_DLLCLASS InputValueSet : public Object
 	T_RTTI_CLASS;
 
 public:
-	void set(const std::wstring& valueId, float value);
+	void set(handle_t valueId, float value);
 	
-	float get(const std::wstring& valueId) const;
+	float get(handle_t valueId) const;
 	
 private:
-	std::map< std::wstring, float > m_valueMap;
+	SmallMap< handle_t, float > m_valueMap;
 };
 	
 	}

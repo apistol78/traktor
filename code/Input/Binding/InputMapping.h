@@ -3,6 +3,8 @@
 
 #include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Core/Containers/SmallMap.h"
+#include "Input/InputTypes.h"
 #include "Input/Binding/InputValueSet.h"
 
 // import/export mechanism.
@@ -59,48 +61,79 @@ public:
 
 	void reset();
 
-	void reset(const std::wstring& id);
+	void reset(handle_t id);
 
-	void setValue(const std::wstring& id, float value);
+	void setValue(handle_t id, float value);
 
-	float getValue(const std::wstring& id) const;
+	float getValue(handle_t id) const;
 
-	IInputSource* getSource(const std::wstring& id) const;
+	IInputSource* getSource(handle_t id) const;
 
-	const std::map< std::wstring, Ref< IInputSource > >& getSources() const;
+	const SmallMap< handle_t, Ref< IInputSource > >& getSources() const;
 	
-	InputState* getState(const std::wstring& id) const;
+	InputState* getState(handle_t id) const;
 	
-	const std::map< std::wstring, Ref< InputState > >& getStates() const;
+	const SmallMap< handle_t, Ref< InputState > >& getStates() const;
 
 	/*! \name Helpers */
 	// \{
 
-	float getStateValue(const std::wstring& id) const;
+	float getStateValue(handle_t id) const;
 
-	float getStatePreviousValue(const std::wstring& id) const;
+	float getStatePreviousValue(handle_t id) const;
 
-	float getStateDeltaValue(const std::wstring& id) const;
+	float getStateDeltaValue(handle_t id) const;
 
-	bool isStateDown(const std::wstring& id) const;
+	bool isStateDown(handle_t id) const;
 
-	bool isStateUp(const std::wstring& id) const;
+	bool isStateUp(handle_t id) const;
 
-	bool isStatePressed(const std::wstring& id) const;
+	bool isStatePressed(handle_t id) const;
 
-	bool isStateReleased(const std::wstring& id) const;
+	bool isStateReleased(handle_t id) const;
 
-	bool hasStateChanged(const std::wstring& id) const;
+	bool hasStateChanged(handle_t id) const;
 
 	// \}
 
 	float getIdleDuration() const;
+
+	/*! \name Access by string handle. */
+	// \{
+
+	void reset(const std::wstring& id) { reset(getParameterHandle(id)); }
+
+	void setValue(const std::wstring& id, float value) { setValue(getParameterHandle(id), value); }
+
+	float getValue(const std::wstring& id) const { return getValue(getParameterHandle(id)); }
+
+	IInputSource* getSource(const std::wstring& id) { return getSource(getParameterHandle(id)); }
+
+	InputState* getState(const std::wstring& id) const { return getState(getParameterHandle(id)); }
+
+	float getStateValue(const std::wstring& id) const { return getStateValue(getParameterHandle(id)); }
+
+	float getStatePreviousValue(const std::wstring& id) const { return getStatePreviousValue(getParameterHandle(id)); }
+
+	float getStateDeltaValue(const std::wstring& id) const { return getStateDeltaValue(getParameterHandle(id)); }
+
+	bool isStateDown(const std::wstring& id) const { return isStateDown(getParameterHandle(id)); }
+
+	bool isStateUp(const std::wstring& id) const { return isStateUp(getParameterHandle(id)); }
+
+	bool isStatePressed(const std::wstring& id) const { return isStatePressed(getParameterHandle(id)); }
+
+	bool isStateReleased(const std::wstring& id) const { return isStateReleased(getParameterHandle(id)); }
+
+	bool hasStateChanged(const std::wstring& id) const { return hasStateChanged(getParameterHandle(id)); }
+
+	// \}
 	
 private:
 	Ref< DeviceControlManager > m_deviceControlManager;
-	std::map< std::wstring, Ref< IInputSource > > m_sources;
+	SmallMap< handle_t, Ref< IInputSource > > m_sources;
 	RefArray< IInputFilter > m_filters;
-	std::map< std::wstring, Ref< InputState > > m_states;
+	SmallMap< handle_t, Ref< InputState > > m_states;
 	InputValueSet m_valueSet;
 	float m_idleTimer;
 	float m_T;

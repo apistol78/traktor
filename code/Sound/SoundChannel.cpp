@@ -114,9 +114,8 @@ ISoundBufferCursor* SoundChannel::getCursor() const
 
 void SoundChannel::setParameter(handle_t id, float parameter)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	if (m_state.cursor)
-		m_state.cursor->setParameter(id, parameter);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_parameterQueueLock);
+	m_parameterQueue.push_back(ParameterQueue(id, parameter));
 }
 
 void SoundChannel::disableRepeat()
@@ -183,6 +182,15 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 
 	if (!m_state.buffer || !m_state.cursor)
 		return false;
+
+	// Push parameters from queue.
+	if (!m_parameterQueue.empty())
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_parameterQueueLock);
+		for (uint32_t i = 0; i < m_parameterQueue.size(); ++i)
+			m_state.cursor->setParameter(m_parameterQueue[i].id, m_parameterQueue[i].parameter);
+		m_parameterQueue.clear();
+	}
 
 	const ISoundBuffer* soundBuffer = m_state.buffer;
 	T_ASSERT (soundBuffer);

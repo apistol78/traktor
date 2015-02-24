@@ -110,7 +110,7 @@ XMLNode* XMLNode::getPreviousSibling() const
 	return m_previousSibling;
 }
 
-void XMLNode::trace(const IVisitor& visitor) const
+void XMLNode::trace(visitor_t visitor) const
 {
 	ActionObjectRelay::trace(visitor);
 

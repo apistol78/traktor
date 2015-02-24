@@ -104,7 +104,7 @@ ActionValue ActionSuper::call(ActionObject* self, ActionObject* super, const Act
 	return m_superClass->call(self, getSuper(), args);
 }
 
-void ActionSuper::trace(const IVisitor& visitor) const
+void ActionSuper::trace(visitor_t visitor) const
 {
 	visitor(m_superClass);
 	visitor(m_superPrototype);

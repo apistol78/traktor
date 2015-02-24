@@ -79,7 +79,7 @@ public:
 	XMLNode* getPreviousSibling() const;
 
 protected:
-	virtual void trace(const IVisitor& visitor) const;
+	virtual void trace(visitor_t visitor) const;
 
 	virtual void dereference();
 

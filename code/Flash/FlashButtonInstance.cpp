@@ -167,7 +167,7 @@ Aabb2 FlashButtonInstance::getBounds() const
 	return bounds;
 }
 
-void FlashButtonInstance::trace(const IVisitor& visitor) const
+void FlashButtonInstance::trace(visitor_t visitor) const
 {
 	for (std::map< uint16_t, Ref< FlashCharacterInstance > >::const_iterator i = m_characterInstances.begin(); i != m_characterInstances.end(); ++i)
 		visitor(i->second);

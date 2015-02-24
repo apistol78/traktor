@@ -372,7 +372,7 @@ bool ActionObject::getPropertySet(const std::string& propertyName, Ref< ActionFu
 	return getPropertySet(m_context->getString(propertyName), outPropertySet);
 }
 
-void ActionObject::trace(const IVisitor& visitor) const
+void ActionObject::trace(visitor_t visitor) const
 {
 	for (member_map_t::const_iterator i = m_members.begin(); i != m_members.end(); ++i)
 	{

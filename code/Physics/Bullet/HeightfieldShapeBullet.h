@@ -35,11 +35,7 @@ public:
 
 	virtual void processAllTriangles(btTriangleCallback* callback, const btVector3& aabbMin, const btVector3& aabbMax) const;
 
-#if !defined(_PS3)
-
 	virtual void processRaycastAllTriangles(btTriangleRaycastCallback *callback, const btVector3 &raySource, const btVector3 &rayTarget);
-
-#endif
 
 	virtual void calculateLocalInertia(btScalar mass, btVector3& inertia) const;
 

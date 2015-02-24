@@ -17,7 +17,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionFunction2", ActionFunction2, Action
 
 ActionFunction2::ActionFunction2(
 	ActionContext* context,
-	const std::string& name,
+	const char* name,
 	const IActionVMImage* image,
 	uint8_t registerCount,
 	uint16_t flags,
@@ -142,7 +142,7 @@ ActionValue ActionFunction2::call(ActionObject* self, ActionObject* super, const
 	return callStack.top();
 }
 
-void ActionFunction2::trace(const IVisitor& visitor) const
+void ActionFunction2::trace(visitor_t visitor) const
 {
 	for (SmallMap< uint32_t, ActionValue >::const_iterator i = m_variables.begin(); i != m_variables.end(); ++i)
 	{

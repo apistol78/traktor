@@ -59,6 +59,7 @@ private:
 	std::wstring m_assetPath;
 	bool m_generateMips;
 	bool m_useTextureCompression;
+	int32_t m_textureSizeDenom;
 };
 
 	}

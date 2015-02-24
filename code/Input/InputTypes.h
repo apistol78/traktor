@@ -1,6 +1,16 @@
 #ifndef traktor_input_InputTypes_H
 #define traktor_input_InputTypes_H
 
+#include "Core/Config.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_INPUT_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
 	namespace input
@@ -232,6 +242,16 @@ struct InputRumble
 	float lowFrequencyRumble;
 	float highFrequencyRumble;
 };
+
+/*! \brief Shader parameter handle. */
+typedef uint32_t handle_t;
+
+/*! \brief Return handle from parameter name.
+ *
+ * \param name Parameter name.
+ * \return Parameter handle.
+ */
+handle_t T_DLLCLASS getParameterHandle(const std::wstring& name);
 
 	}
 }

@@ -28,7 +28,7 @@ class T_DLLCLASS ActionFunction1 : public ActionFunction
 public:
 	ActionFunction1(
 		ActionContext* context,
-		const std::string& name,
+		const char* name,
 		const IActionVMImage* image,
 		uint16_t argumentCount,
 		const std::vector< std::string >& argumentsIntoVariables,
@@ -39,7 +39,7 @@ public:
 	virtual ActionValue call(ActionObject* self, ActionObject* super, const ActionValueArray& args);
 
 protected:
-	virtual void trace(const IVisitor& visitor) const;
+	virtual void trace(visitor_t visitor) const;
 
 	virtual void dereference();
 

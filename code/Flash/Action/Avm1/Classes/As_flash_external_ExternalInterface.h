@@ -30,7 +30,7 @@ public:
 	ActionValue dispatchCallback(const std::string& methodName, int32_t argc, const ActionValue* argv);
 
 protected:
-	virtual void trace(const IVisitor& visitor) const;
+	virtual void trace(visitor_t visitor) const;
 
 	virtual void dereference();
 

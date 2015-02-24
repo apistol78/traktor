@@ -7,6 +7,15 @@ namespace traktor
 {
 	namespace input
 	{
+		namespace
+		{
+
+struct InReadValueInstance : public RefCountImpl< IInputNode::Instance >
+{
+	handle_t valueId;
+};
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InReadValue", 0, InReadValue, IInputNode)
 
@@ -21,7 +30,9 @@ InReadValue::InReadValue(const std::wstring& valueId)
 
 Ref< IInputNode::Instance > InReadValue::createInstance() const
 {
-	return 0;
+	Ref< InReadValueInstance > instance = new InReadValueInstance();
+	instance->valueId = getParameterHandle(m_valueId);
+	return instance;
 }
 
 float InReadValue::evaluate(
@@ -31,7 +42,8 @@ float InReadValue::evaluate(
 	float dT
 ) const
 {
-	return valueSet.get(m_valueId);
+	const InReadValueInstance* rvi = static_cast< const InReadValueInstance* >(instance);
+	return valueSet.get(rvi->valueId);
 }
 
 void InReadValue::serialize(ISerializer& s)

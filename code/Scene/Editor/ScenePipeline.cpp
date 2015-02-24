@@ -22,6 +22,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", 11, ScenePipeline
 
 ScenePipeline::ScenePipeline()
 :	m_targetEditor(false)
+,	m_suppressShadows(false)
 ,	m_suppressLinearLighting(false)
 ,	m_suppressDepthPass(false)
 ,	m_suppressPostProcess(false)
@@ -33,6 +34,7 @@ ScenePipeline::ScenePipeline()
 bool ScenePipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_targetEditor = settings->getProperty< PropertyBoolean >(L"Pipeline.TargetEditor");
+	m_suppressShadows = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressShadows");
 	m_suppressLinearLighting = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressLinearLighting");
 	m_suppressDepthPass = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressDepthPass");
 	m_suppressPostProcess = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressPostProcess");
@@ -79,10 +81,13 @@ bool ScenePipeline::buildDependencies(
 	if (wrs)
 	{
 		pipelineDepends->addDependency(wrs->reflectionMap, editor::PdfBuild | editor::PdfResource);
-		for (int32_t i = 0; i < sizeof_array(wrs->shadowSettings); ++i)
+		if (!m_suppressShadows)
 		{
-			pipelineDepends->addDependency(wrs->shadowSettings[i].maskProject, editor::PdfBuild | editor::PdfResource);
-			pipelineDepends->addDependency(wrs->shadowSettings[i].maskFilter, editor::PdfBuild | editor::PdfResource);
+			for (int32_t i = 0; i < sizeof_array(wrs->shadowSettings); ++i)
+			{
+				pipelineDepends->addDependency(wrs->shadowSettings[i].maskProject, editor::PdfBuild | editor::PdfResource);
+				pipelineDepends->addDependency(wrs->shadowSettings[i].maskFilter, editor::PdfBuild | editor::PdfResource);
+			}
 		}
 	}
 
@@ -161,9 +166,17 @@ bool ScenePipeline::buildOutput(
 	for (uint32_t i = 0; i < world::QuLast; ++i)
 	{
 		world::WorldRenderSettings::ShadowSettings& shadowSetting = sceneResource->getWorldRenderSettings()->shadowSettings[i];
-		shadowSetting.resolution /= m_shadowMapSizeDenom;
-		if (m_shadowMapMaxSlices > 0)
-			shadowSetting.cascadingSlices = std::min(shadowSetting.cascadingSlices, m_shadowMapMaxSlices);
+		if (!m_suppressShadows)
+		{
+			shadowSetting.resolution /= m_shadowMapSizeDenom;
+			if (m_shadowMapMaxSlices > 0)
+				shadowSetting.cascadingSlices = std::min(shadowSetting.cascadingSlices, m_shadowMapMaxSlices);
+		}
+		else
+		{
+			shadowSetting.maskProject = resource::Id< world::PostProcessSettings >();
+			shadowSetting.maskFilter = resource::Id< world::PostProcessSettings >();
+		}
 	}
 
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);

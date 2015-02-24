@@ -434,8 +434,8 @@ bool InputServer::isIdle() const
 	if (!m_inputMapping)
 		return false;
 
-	const std::map< std::wstring, Ref< input::InputState > >& states = m_inputMapping->getStates();
-	for (std::map< std::wstring, Ref< input::InputState > >::const_iterator i = states.begin(); i != states.end(); ++i)
+	const SmallMap< input::handle_t, Ref< input::InputState > >& states = m_inputMapping->getStates();
+	for (SmallMap< input::handle_t, Ref< input::InputState > >::const_iterator i = states.begin(); i != states.end(); ++i)
 	{
 		float dV = i->second->getValue() - i->second->getPreviousValue();
 		if (std::abs(dV) > FUZZY_EPSILON)

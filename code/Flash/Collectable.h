@@ -53,7 +53,9 @@ public:
 	static int32_t getInstanceCount();
 
 protected:
-	virtual void trace(const IVisitor& visitor) const = 0;
+	typedef void (*visitor_t)(Collectable* memberObject);
+
+	virtual void trace(/*const IVisitor& visitor*/ visitor_t visitor) const = 0;
 
 	virtual void dereference() = 0;
 
@@ -69,20 +71,20 @@ private:
 		TcWhite = 3
 	};
 
-	struct MarkGrayVisitor : public IVisitor
-	{
-		virtual void operator () (Collectable* memberObject) const;
-	};
+	//struct MarkGrayVisitor : public IVisitor
+	//{
+	//	virtual void operator () (Collectable* memberObject) const;
+	//};
 
-	struct ScanVisitor : public IVisitor
-	{
-		virtual void operator () (Collectable* memberObject) const;
-	};
+	//struct ScanVisitor : public IVisitor
+	//{
+	//	virtual void operator () (Collectable* memberObject) const;
+	//};
 
-	struct ScanBlackVisitor : public IVisitor
-	{
-		virtual void operator () (Collectable* memberObject) const;
-	};
+	//struct ScanBlackVisitor : public IVisitor
+	//{
+	//	virtual void operator () (Collectable* memberObject) const;
+	//};
 
 	static int32_t ms_instanceCount;
 	Collectable* m_prev;	//!< Intrusive list chain members.
@@ -99,6 +101,12 @@ private:
 	void traceScanBlack();
 
 	void traceCollectWhite();
+
+	static void visitorMarkGray(Collectable* memberObject);
+
+	static void visitorScan(Collectable* memberObject);
+
+	static void visitorScanBlack(Collectable* memberObject);
 };
 
 	}

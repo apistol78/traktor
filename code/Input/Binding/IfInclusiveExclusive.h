@@ -30,8 +30,10 @@ public:
 		PrInclusive,
 		PrExclusive
 	};
+
+	virtual Ref< Instance > createInstance() const;
 	
-	virtual void evaluate(InputValueSet& valueSet) const;
+	virtual void evaluate(Instance* instance, InputValueSet& valueSet) const;
 	
 	virtual void serialize(ISerializer& s);
 	

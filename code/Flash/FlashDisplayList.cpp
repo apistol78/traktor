@@ -134,6 +134,7 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 						&placeObject.events
 					);
 					T_ASSERT (layer.instance);
+
 					layer.instance->setTransform(transform);
 				}
 #if defined(_DEBUG)
@@ -163,7 +164,11 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 			if (placeObject.has(FlashFrame::PfHasClipDepth))
 				layer.clipDepth = placeObject.clipDepth + c_depthOffset;
 
-			layer.name = m_context->getString(layer.instance->getName());
+			if (!layer.instance->getName().empty())
+				layer.name = m_context->getString(layer.instance->getName());
+			else
+				layer.name = ActionContext::IdEmpty;
+
 			layer.immutable = false;
 			layer.collect = false;
 		}

@@ -37,7 +37,7 @@ namespace traktor
 const uint32_t c_maxCacheSize = 64;
 const uint32_t c_maxUnusedCount = 40;
 #endif
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IPHONE || defined(__PS3__)
 const uint32_t c_cacheGlyphSize = 64;
 #else
 const uint32_t c_cacheGlyphSize = 128;
@@ -233,6 +233,7 @@ void AccDisplayRenderer::destroy()
 
 void AccDisplayRenderer::precache(const FlashDictionary& dictionary)
 {
+#if !defined(__PS3__)
 	const wchar_t* c_precacheGlyphs = L"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.,:-+!?";
 
 	const SmallMap< uint16_t, Ref< FlashBitmap > >& bitmaps = dictionary.getBitmaps();
@@ -286,6 +287,7 @@ void AccDisplayRenderer::precache(const FlashDictionary& dictionary)
 			}
 		}
 	}
+#endif
 }
 
 void AccDisplayRenderer::build(uint32_t frame)

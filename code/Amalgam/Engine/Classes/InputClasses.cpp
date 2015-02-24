@@ -115,17 +115,17 @@ void registerInputClasses(script::IScriptManager* scriptManager)
 	Ref< script::AutoScriptClass< input::InputMapping > > classInputMapping = new script::AutoScriptClass< input::InputMapping >();
 	classInputMapping->addMethod("reset", &input_InputMapping_reset_0);
 	classInputMapping->addMethod("reset", &input_InputMapping_reset_1);
-	classInputMapping->addMethod("setValue", &input::InputMapping::setValue);
-	classInputMapping->addMethod("getValue", &input::InputMapping::getValue);
-	classInputMapping->addMethod("getSource", &input::InputMapping::getSource);
-	classInputMapping->addMethod("getState", &input::InputMapping::getState);
-	classInputMapping->addMethod("getStateValue", &input::InputMapping::getStateValue);
-	classInputMapping->addMethod("getStatePreviousValue", &input::InputMapping::getStatePreviousValue);
-	classInputMapping->addMethod("isStateDown", &input::InputMapping::isStateDown);
-	classInputMapping->addMethod("isStateUp", &input::InputMapping::isStateUp);
-	classInputMapping->addMethod("isStatePressed", &input::InputMapping::isStatePressed);
-	classInputMapping->addMethod("isStateReleased", &input::InputMapping::isStateReleased);
-	classInputMapping->addMethod("hasStateChanged", &input::InputMapping::hasStateChanged);
+	classInputMapping->addMethod< void, const std::wstring&, float >("setValue", &input::InputMapping::setValue);
+	classInputMapping->addMethod< float, const std::wstring& >("getValue", &input::InputMapping::getValue);
+	classInputMapping->addMethod< input::IInputSource*, const std::wstring& >("getSource", &input::InputMapping::getSource);
+	classInputMapping->addMethod< input::InputState*, const std::wstring& >("getState", &input::InputMapping::getState);
+	classInputMapping->addMethod< float, const std::wstring& >("getStateValue", &input::InputMapping::getStateValue);
+	classInputMapping->addMethod< float, const std::wstring& >("getStatePreviousValue", &input::InputMapping::getStatePreviousValue);
+	classInputMapping->addMethod< bool, const std::wstring& >("isStateDown", &input::InputMapping::isStateDown);
+	classInputMapping->addMethod< bool, const std::wstring& >("isStateUp", &input::InputMapping::isStateUp);
+	classInputMapping->addMethod< bool, const std::wstring& >("isStatePressed", &input::InputMapping::isStatePressed);
+	classInputMapping->addMethod< bool, const std::wstring& >("isStateReleased", &input::InputMapping::isStateReleased);
+	classInputMapping->addMethod< bool, const std::wstring& >("hasStateChanged", &input::InputMapping::hasStateChanged);
 	classInputMapping->addMethod("getIdleDuration", &input::InputMapping::getIdleDuration);
 	scriptManager->registerClass(classInputMapping);
 

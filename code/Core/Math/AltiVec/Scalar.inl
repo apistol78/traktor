@@ -30,7 +30,7 @@ T_MATH_INLINE Scalar::Scalar(const Scalar& value)
 
 T_MATH_INLINE Scalar::Scalar(float value)
 {
-	m_data = (vec_float4){ value, value, value, value };
+	m_data = vec_splats(value);
 }
 
 T_MATH_INLINE Scalar::Scalar(vec_float4 value)

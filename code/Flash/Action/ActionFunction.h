@@ -29,7 +29,7 @@ class T_DLLCLASS ActionFunction : public ActionObject
 	T_RTTI_CLASS;
 
 public:
-	ActionFunction(ActionContext* context, const std::string& name);
+	ActionFunction(ActionContext* context, const char* name);
 
 	virtual ActionValue call(ActionObject* self, ActionObject* super, const ActionValueArray& args) = 0;
 
@@ -49,12 +49,16 @@ public:
 
 	ActionValue call(ActionFrame* callerFrame);
 
-	void setName(const std::string& name) { m_name = name; }
+#if defined(_DEBUG)
+	void setName(const wchar_t* name) { m_name = name; }
 
 	const std::string& getName() const { return m_name; }
+#endif
 
 private:
+#if defined(_DEBUG)
 	std::string m_name;
+#endif
 };
 
 	}

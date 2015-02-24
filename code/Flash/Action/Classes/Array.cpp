@@ -170,7 +170,7 @@ void Array::removeAll()
 	m_values.clear();
 }
 
-void Array::trace(const IVisitor& visitor) const
+void Array::trace(visitor_t visitor) const
 {
 	for (AlignedVector< ActionValue >::const_iterator i = m_values.begin(); i != m_values.end(); ++i)
 	{

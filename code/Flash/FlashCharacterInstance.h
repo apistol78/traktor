@@ -199,7 +199,7 @@ protected:
 
 	bool executeScriptEvent(uint32_t eventName, const ActionValue& arg);
 
-	virtual void trace(const IVisitor& visitor) const;
+	virtual void trace(visitor_t visitor) const;
 
 	virtual void dereference();
 

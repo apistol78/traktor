@@ -39,7 +39,7 @@ bool ActionObjectRelay::getMember(ActionContext* context, uint32_t memberName, A
 	return false;
 }
 
-void ActionObjectRelay::trace(const IVisitor& visitor) const
+void ActionObjectRelay::trace(visitor_t visitor) const
 {
 	visitor(m_asObject);
 }
