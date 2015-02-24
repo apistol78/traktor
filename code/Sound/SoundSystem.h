@@ -130,9 +130,9 @@ private:
 	SmallMap< handle_t, float > m_categoryVolumes;
 	Thread* m_threadMixer;
 	Thread* m_threadSubmit;
-	Event m_channelFinishEvent;
 	RefArray< SoundChannel > m_channels;
 	AlignedVector< SoundBlock > m_requestBlocks;
+	AlignedVector< SoundBlockMeta > m_requestBlockMeta;
 
 	// \name Submission queue
 	// \{

@@ -38,8 +38,8 @@ void SoundHandle::setVolume(float volume)
 
 void SoundHandle::setPitch(float pitch)
 {
-	if (m_channel)
-		m_channel->setPitch(pitch);
+	//if (m_channel)
+	//	m_channel->setPitch(pitch);
 }
 
 void SoundHandle::setPosition(const Vector4& position)

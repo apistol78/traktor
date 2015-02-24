@@ -33,7 +33,6 @@ void registerSoundClasses(script::IScriptManager* scriptManager)
 	Ref< script::AutoScriptClass< sound::SoundChannel > > classSoundChannel = new script::AutoScriptClass< sound::SoundChannel >();
 	classSoundChannel->addMethod("setVolume", &sound::SoundChannel::setVolume);
 	classSoundChannel->addMethod("setFilter", &sound::SoundChannel::setFilter);
-	classSoundChannel->addMethod("getFilter", &sound::SoundChannel::getFilter);
 	classSoundChannel->addMethod("isPlaying", &sound::SoundChannel::isPlaying);
 	classSoundChannel->addMethod("stop", &sound::SoundChannel::stop);
 	scriptManager->registerClass(classSoundChannel);

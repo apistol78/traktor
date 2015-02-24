@@ -6,7 +6,6 @@
 #include "Core/Math/Vector4.h"
 #include "Core/Memory/Alloc.h"
 #include "Core/Misc/Align.h"
-#include "Core/Thread/Acquire.h"
 #include "Sound/IFilter.h"
 #include "Sound/ISoundBuffer.h"
 #include "Sound/ISoundMixer.h"
@@ -53,76 +52,80 @@ SoundChannel::~SoundChannel()
 	Alloc::freeAlign(m_outputSamples[0]);
 }
 
-handle_t SoundChannel::getCategory() const
-{
-	return m_state.category;
-}
-
 void SoundChannel::setVolume(float volume)
 {
 	m_volume = clamp(volume, 0.0f, 1.0f);
 }
 
-void SoundChannel::setFilter(const IFilter* filter)
+float SoundChannel::getVolume() const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	if (m_state.filter != filter)
-	{
-		if ((m_state.filter = filter) != 0)
-			m_state.filterInstance = filter->createInstance();
-		else
-			m_state.filterInstance = 0;
-	}
-}
-
-const IFilter* SoundChannel::getFilter() const
-{
-	return m_state.filter;
+	return m_volume;
 }
 
 void SoundChannel::setPitch(float pitch)
 {
-	m_state.pitch = pitch;
+	m_pitch = pitch;
 }
 
 float SoundChannel::getPitch() const
 {
-	return m_state.pitch;
+	return m_pitch;
+}
+
+void SoundChannel::setFilter(const IFilter* filter)
+{
+	StateFilter& sf = m_stateFilter.beginWrite();
+	if (filter != 0)
+	{
+		sf.filter = filter;
+		sf.filterInstance = filter->createInstance();
+	}
+	else
+	{
+		sf.filter = 0;
+		sf.filterInstance = 0;
+	}
+	m_stateFilter.endWrite();
 }
 
 bool SoundChannel::isPlaying() const
 {
-	return bool(m_state.buffer != 0);
+	return m_playing;
 }
 
 void SoundChannel::stop()
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	
-	m_state.buffer = 0;
-	m_state.cursor = 0;
-	m_state.filter = 0;
-	m_state.filterInstance = 0;
+	StateSound& ss = m_stateSound.beginWrite();
 
-	m_eventFinish.broadcast();
+	ss.buffer = 0;
+	ss.cursor = 0;
+	ss.category = 0;
+	ss.volume = 0.0f;
+	ss.presence = 0.0f;
+	ss.presenceRate = 0.0f;
+	ss.repeat = 0;
+
+	m_playing = false;
+	m_allowRepeat = false;
+
+	m_stateSound.endWrite();
 }
 
-ISoundBufferCursor* SoundChannel::getCursor() const
+ISoundBufferCursor* SoundChannel::getCursor()
 {
-	return m_state.cursor;
+	return m_stateSound.read().cursor;
 }
 
 void SoundChannel::setParameter(handle_t id, float parameter)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_parameterQueueLock);
-	m_parameterQueue.push_back(ParameterQueue(id, parameter));
+	StateParameter& sp = m_stateParameters.beginWrite();
+	sp.set.push_back(std::make_pair(id, parameter));
+	m_stateParameters.endWrite();
 }
 
 void SoundChannel::disableRepeat()
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	if (m_state.cursor)
-		m_state.cursor->disableRepeat();
+	m_allowRepeat = false;
 }
 
 bool SoundChannel::play(
@@ -141,29 +144,32 @@ bool SoundChannel::play(
 	if (!cursor)
 		return false;
 
-	// Queue state; activated next time channel is polled for another
-	// sound block.
-	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		m_state.buffer = buffer;
-		m_state.cursor = cursor;
-		m_state.category = category;
-		m_state.volume = volume;
-		m_state.pitch = 1.0f;
-		m_state.presence = presence;
-		m_state.presenceRate = presenceRate;
-		m_state.repeat = max< uint32_t >(repeat, 1);
-	}
+	StateSound& ss = m_stateSound.beginWrite();
+
+	ss.buffer = buffer;
+	ss.cursor = cursor;
+	ss.category = category;
+	ss.volume = volume;
+	ss.presence = presence;
+	ss.presenceRate = presenceRate;
+	ss.repeat = max< uint32_t >(repeat, 1);
+
+	m_allowRepeat = true;
+	m_playing = true;
+
+	m_stateSound.endWrite();
 
 	return true;
 }
 
-SoundChannel::SoundChannel(uint32_t id, Event& eventFinish, uint32_t hwSampleRate, uint32_t hwFrameSamples)
+SoundChannel::SoundChannel(uint32_t id, uint32_t hwSampleRate, uint32_t hwFrameSamples)
 :	m_id(id)
-,	m_eventFinish(eventFinish)
 ,	m_hwSampleRate(hwSampleRate)
 ,	m_hwFrameSamples(hwFrameSamples)
 ,	m_volume(1.0f)
+,	m_pitch(1.0f)
+,	m_playing(false)
+,	m_allowRepeat(false)
 ,	m_outputSamplesIn(0)
 {
 	const uint32_t outputSamplesCount = hwFrameSamples * c_outputSamplesBlockCount;
@@ -176,23 +182,28 @@ SoundChannel::SoundChannel(uint32_t id, Event& eventFinish, uint32_t hwSampleRat
 		m_outputSamples[i] = m_outputSamples[0] + outputSamplesCount * i;
 }
 
-bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& outBlock)
+bool SoundChannel::getBlock(
+	const ISoundMixer* mixer,
+	double time,
+	SoundBlock& outBlock,
+	SoundBlockMeta& outBlockMeta
+)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	StateSound& ss = m_stateSound.read();
 
-	if (!m_state.buffer || !m_state.cursor)
+	if (!ss.buffer || !ss.cursor)
 		return false;
 
-	// Push parameters from queue.
-	if (!m_parameterQueue.empty())
-	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_parameterQueueLock);
-		for (uint32_t i = 0; i < m_parameterQueue.size(); ++i)
-			m_state.cursor->setParameter(m_parameterQueue[i].id, m_parameterQueue[i].parameter);
-		m_parameterQueue.clear();
-	}
+	if (!m_allowRepeat)
+		ss.cursor->disableRepeat();
 
-	const ISoundBuffer* soundBuffer = m_state.buffer;
+	// Push pending parameters.
+	StateParameter& sp = m_stateParameters.read();
+	for (uint32_t i = 0; i < sp.set.size(); ++i)
+		ss.cursor->setParameter(sp.set[i].first, sp.set[i].second);
+	sp.set.clear();
+
+	const ISoundBuffer* soundBuffer = ss.buffer;
 	T_ASSERT (soundBuffer);
 
 	// Remove old output samples.
@@ -214,29 +225,25 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 	{
 		// Request sound block from buffer.
 		SoundBlock soundBlock = { { 0 }, m_hwFrameSamples, 0, 0 };
-		if (!soundBuffer->getBlock(m_state.cursor, mixer, soundBlock))
+		if (!soundBuffer->getBlock(ss.cursor, mixer, soundBlock))
 		{
 			// No more blocks from sound buffer.
-			if (--m_state.repeat > 0)
+			if (m_allowRepeat && --ss.repeat > 0)
 			{
-				m_state.cursor->reset();
-				if (!soundBuffer->getBlock(m_state.cursor, mixer, soundBlock))
+				ss.cursor->reset();
+				if (!soundBuffer->getBlock(ss.cursor, mixer, soundBlock))
 				{
-					m_state.buffer = 0;
-					m_state.cursor = 0;
-					m_state.buffer = 0;
-					m_state.cursor = 0;
-					m_eventFinish.broadcast();
+					ss.buffer = 0;
+					ss.cursor = 0;
+					m_playing = false;
 					return false;
 				}
 			}
 			else
 			{
-				m_state.buffer = 0;
-				m_state.cursor = 0;
-				m_state.buffer = 0;
-				m_state.cursor = 0;
-				m_eventFinish.broadcast();
+				ss.buffer = 0;
+				ss.cursor = 0;
+				m_playing = false;
 				return false;
 			}
 		}
@@ -248,13 +255,14 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 		T_ASSERT (soundBlock.samplesCount <= m_hwFrameSamples);
 
 		// Apply filter on sound block.
-		if (m_state.filter)
+		StateFilter& sf = m_stateFilter.read();
+		if (sf.filter)
 		{
-			m_state.filter->apply(m_state.filterInstance, soundBlock);
+			sf.filter->apply(sf.filterInstance, soundBlock);
 			T_ASSERT (soundBlock.samplesCount <= m_hwFrameSamples);
 		}
 
-		uint32_t sampleRate = uint32_t(m_state.pitch * soundBlock.sampleRate);
+		uint32_t sampleRate = uint32_t(m_pitch * soundBlock.sampleRate);
 
 		// Convert sound block into hardware required sample rate.
 		if (sampleRate != m_hwSampleRate)
@@ -279,7 +287,7 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 						outputSamplesCount,
 						inputSamples,
 						soundBlock.samplesCount,
-						m_volume * m_state.volume
+						m_volume * ss.volume
 					);
 				else
 					mixer->mute(outputSamples, outputSamplesCount);
@@ -300,7 +308,7 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 						outputSamples,
 						inputSamples,
 						soundBlock.samplesCount,
-						m_volume * m_state.volume
+						m_volume * ss.volume
 					);
 				else
 					mixer->mute(outputSamples, soundBlock.samplesCount);
@@ -315,6 +323,14 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 	outBlock.maxChannel = SbcMaxChannelCount;
 	for (uint32_t i = 0; i < SbcMaxChannelCount; ++i)
 		outBlock.samples[i] = m_outputSamples[i];
+
+	outBlockMeta.category = ss.category;
+	outBlockMeta.presence = ss.presence;
+	outBlockMeta.presenceRate = ss.presenceRate;
+
+	// Only return presence once; sound system manage duck recovery automatically.
+	ss.presence = 0.0f;
+	ss.presenceRate = 0.0f;
 
 	return true;
 }

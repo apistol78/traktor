@@ -66,6 +66,9 @@ enum SoundBlockChannel
 #endif
 };
 
+/*! \brief Parameter handle. */
+typedef uint32_t handle_t;
+
 /*! \brief Sound driver create description. */
 struct SoundDriverCreateDesc
 {
@@ -112,8 +115,13 @@ struct SoundBlock
 	uint32_t maxChannel;				//!< Last channel used, everyone above is considered mute.
 };
 
-/*! \brief Parameter handle. */
-typedef uint32_t handle_t;
+/*! \brief Block meta. */
+struct SoundBlockMeta
+{
+	handle_t category;
+	float presence;
+	float presenceRate;
+};
 
 /*! \brief Return handle from parameter name.
  *
