@@ -39,7 +39,7 @@ void threadEntry(uint64_t data)
 
 bool Thread::start(Priority priority)
 {
-	const uint32_t c_stackSize = 128 * 1024;
+	const uint32_t c_stackSize = 256 * 1024;
 	int res;
 
 	Internal* in = new Internal();

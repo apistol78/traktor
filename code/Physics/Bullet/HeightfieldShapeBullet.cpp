@@ -26,8 +26,6 @@ inline float quantizeMax(float v)
 	return ceilf(v);
 }
 
-#if !defined(_PS3)
-
 template < typename Visitor >
 void line_dda(float x0, float y0, float x1, float y1, Visitor& visitor)
 {
@@ -207,8 +205,6 @@ struct ProcessRaycastAllTrianglesNoCutsVisitor
 	}
 };
 
-#endif
-
 		}
 
 HeightfieldShapeBullet::HeightfieldShapeBullet(const resource::Proxy< hf::Heightfield >& heightfield)
@@ -355,8 +351,6 @@ void HeightfieldShapeBullet::processAllTriangles(btTriangleCallback* callback, c
 	}
 }
 
-#if !defined(_PS3)
-
 void HeightfieldShapeBullet::processRaycastAllTriangles(btTriangleRaycastCallback *callback, const btVector3 &raySource, const btVector3 &rayTarget)
 {
 	float x0, z0;
@@ -396,8 +390,6 @@ void HeightfieldShapeBullet::processRaycastAllTriangles(btTriangleRaycastCallbac
 		line_dda(x0, z0, x1, z1, prt);
 	}
 }
-
-#endif
 
 void HeightfieldShapeBullet::calculateLocalInertia(btScalar mass, btVector3& inertia) const
 {

@@ -26,9 +26,9 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_cbSize = 64 * 1024;
+const uint32_t c_cbSize = 256 * 1024;
 const uint32_t c_hostSize = 1 * 1024 * 1024;
-const uint32_t c_mainSize = 16 * 1024 * 1024;	//< RSX mapped main memory; used for dynamic index- and vertexbuffers.
+const uint32_t c_mainSize = 64 * 1024 * 1024;	//< RSX mapped main memory; used for dynamic index- and vertexbuffers.
 
 		}
 
@@ -71,7 +71,7 @@ bool RenderSystemPs3::create(const RenderSystemDesc& desc)
 	m_memoryHeapLocal = new MemoryHeap(
 		config.localAddress,
 		config.localSize,
-		64 * 1024 * 1024,
+		0/*64 * 1024 * 1024*/,
 		CELL_GCM_LOCATION_LOCAL
 	);
 
@@ -312,6 +312,8 @@ Ref< RenderTargetSet > RenderSystemPs3::createRenderTargetSet(const RenderTarget
 
 Ref< IProgram > RenderSystemPs3::createProgram(const ProgramResource* programResource, const wchar_t* const tag)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	Ref< const ProgramResourcePs3 > resource = dynamic_type_cast< const ProgramResourcePs3* >(programResource);
 	if (!resource)
 		return 0;

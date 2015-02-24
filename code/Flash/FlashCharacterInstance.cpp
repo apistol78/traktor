@@ -362,7 +362,7 @@ bool FlashCharacterInstance::executeScriptEvent(uint32_t eventName, const Action
 	return true;
 }
 
-void FlashCharacterInstance::trace(const IVisitor& visitor) const
+void FlashCharacterInstance::trace(visitor_t visitor) const
 {
 	visitor(m_context);
 	ActionObjectRelay::trace(visitor);

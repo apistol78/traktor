@@ -52,7 +52,7 @@ public:
 	ActionObject* getObject() { return m_object; }
 
 protected:
-	virtual void trace(const IVisitor& visitor) const;
+	virtual void trace(visitor_t visitor) const;
 
 	virtual void dereference();
 

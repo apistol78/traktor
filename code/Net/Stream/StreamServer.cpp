@@ -158,6 +158,7 @@ void StreamServer::threadClient(Ref< TcpSocket > clientSocket)
 		switch (command)
 		{
 		case 0x01:	// Acquire stream.
+		case 0x81:	// Acquire stream (no preload).
 			{
 				net::recvBatch< uint32_t >(clientSocket, streamId);
 
@@ -181,7 +182,7 @@ void StreamServer::threadClient(Ref< TcpSocket > clientSocket)
 						status |= 0x04;
 
 					int32_t avail = 0;
-					if ((status & 0x03) == 0x01)
+					if (command == 0x01 && (status & 0x03) == 0x01)
 					{
 						int32_t streamAvail = stream->available();
 						if (streamAvail <= c_preloadSmallStreamSize)

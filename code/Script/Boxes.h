@@ -114,13 +114,13 @@ public:
 
 	float y() const { return m_value.y; }
 
-	Vector2 add(const Vector2& v) const { return m_value + v; }
+	Vector2 add(const BoxedVector2* v) const { return m_value + v->m_value; }
 
-	Vector2 sub(const Vector2& v) const { return m_value - v; }
+	Vector2 sub(const BoxedVector2* v) const { return m_value - v->m_value; }
 
-	Vector2 mul(const Vector2& v) const { return m_value * v; }
+	Vector2 mul(const BoxedVector2* v) const { return m_value * v->m_value; }
 
-	Vector2 div(const Vector2& v) const { return m_value / v; }
+	Vector2 div(const BoxedVector2* v) const { return m_value / v->m_value; }
 
 	Vector2 add(float v) const { return m_value + v; }
 
@@ -130,7 +130,7 @@ public:
 
 	Vector2 div(float v) const { return m_value / v; }
 
-	float dot(const Vector2& v) const { return traktor::dot(m_value, v); }
+	float dot(const BoxedVector2* v) const { return traktor::dot(m_value, v->m_value); }
 
 	float length() const { return m_value.length(); }
 
@@ -142,9 +142,9 @@ public:
 
 	static Vector2 zero() { return Vector2::zero(); }
 
-	static Vector2 lerp(const Vector2& a, const Vector2& b, float c) { return traktor::lerp(a, b, c); }
+	static Vector2 lerp(const BoxedVector2* a, const BoxedVector2* b, float c) { return traktor::lerp(a->m_value, b->m_value, c); }
 
-	static float distance(const Vector2& a, const Vector2& b) { return (b - a).length(); }
+	static float distance(const BoxedVector2* a, const BoxedVector2* b) { return (b->m_value - a->m_value).length(); }
 
 	const Vector2& unbox() const { return m_value; }
 
@@ -185,13 +185,13 @@ public:
 
 	Vector4 xyz1() const { return m_value.xyz1(); }
 
-	Vector4 add(const Vector4& v) const { return m_value + v; }
+	Vector4 add(const BoxedVector4* v) const { return m_value + v->m_value; }
 
-	Vector4 sub(const Vector4& v) const { return m_value - v; }
+	Vector4 sub(const BoxedVector4* v) const { return m_value - v->m_value; }
 
-	Vector4 mul(const Vector4& v) const { return m_value * v; }
+	Vector4 mul(const BoxedVector4* v) const { return m_value * v->m_value; }
 
-	Vector4 div(const Vector4& v) const { return m_value / v; }
+	Vector4 div(const BoxedVector4* v) const { return m_value / v->m_value; }
 
 	Vector4 add(float v) const { return m_value + Scalar(v); }
 
@@ -201,9 +201,9 @@ public:
 
 	Vector4 div(float v) const { return m_value / Scalar(v); }
 
-	float dot(const Vector4& v) const { return traktor::dot3(m_value, v); }
+	float dot(const BoxedVector4* v) const { return traktor::dot3(m_value, v->m_value); }
 
-	Vector4 cross(const Vector4& v) const { return traktor::cross(m_value, v); }
+	Vector4 cross(const BoxedVector4* v) const { return traktor::cross(m_value, v->m_value); }
 
 	float length() const { return m_value.length(); }
 
@@ -215,11 +215,11 @@ public:
 
 	static Vector4 origo() { return Vector4::origo(); }
 
-	static Vector4 lerp(const Vector4& a, const Vector4& b, float c) { return traktor::lerp(a, b, Scalar(c)); }
+	static Vector4 lerp(const BoxedVector4* a, const BoxedVector4* b, float c) { return traktor::lerp(a->m_value, b->m_value, Scalar(c)); }
 	
-	static float distance3(const Vector4& a, const Vector4& b) { return (b - a).xyz0().length(); }
+	static float distance3(const BoxedVector4* a, const BoxedVector4* b) { return (b->m_value - a->m_value).xyz0().length(); }
 
-	static float distance4(const Vector4& a, const Vector4& b) { return (b - a).length(); }
+	static float distance4(const BoxedVector4* a, const BoxedVector4* b) { return (b->m_value - a->m_value).length(); }
 
 	const Vector4& unbox() const { return m_value; }
 
@@ -244,13 +244,13 @@ public:
 	
 	explicit BoxedQuaternion(float x, float y, float z, float w);
 
-	explicit BoxedQuaternion(const Vector4& axis, float angle);
+	explicit BoxedQuaternion(const BoxedVector4* axis, float angle);
 
 	explicit BoxedQuaternion(float head, float pitch, float bank);
 
-	explicit BoxedQuaternion(const Vector4& from, const Vector4& to);
+	explicit BoxedQuaternion(const BoxedVector4* from, const BoxedVector4* to);
 
-	explicit BoxedQuaternion(const Matrix44& m);
+	explicit BoxedQuaternion(const class BoxedMatrix44* m);
 	
 	float x() const { return m_value.e.x(); }
 	
@@ -264,9 +264,9 @@ public:
 
 	Quaternion inverse() const;
 
-	Quaternion concat(const Quaternion& q) const;
+	Quaternion concat(const BoxedQuaternion* q) const;
 
-	Vector4 transform(const Vector4& v) const;
+	Vector4 transform(const BoxedVector4* v) const;
 
 	Vector4 getEulerAngles() const;
 
@@ -276,11 +276,11 @@ public:
 
 	static Quaternion fromEulerAngles(float head, float pitch, float bank);
 
-	static Quaternion fromAxisAngle(const Vector4& axisAngle);
+	static Quaternion fromAxisAngle(const BoxedVector4* axisAngle);
 
-	static Quaternion lerp(const Quaternion& a, const Quaternion& b, float c) { return traktor::lerp(a, b, c); }
+	static Quaternion lerp(const BoxedQuaternion* a, const BoxedQuaternion* b, float c) { return traktor::lerp(a->m_value, b->m_value, c); }
 
-	static Quaternion slerp(const Quaternion& a, const Quaternion& b, float c) { return traktor::slerp(a, b, c); }
+	static Quaternion slerp(const BoxedQuaternion* a, const BoxedQuaternion* b, float c) { return traktor::slerp(a->m_value, b->m_value, c); }
 
 	const Quaternion& unbox() const { return m_value; }
 
@@ -344,9 +344,9 @@ public:
 	
 	explicit BoxedTransform(const Transform& value);
 	
-	explicit BoxedTransform(const Vector4& translation, const Quaternion& rotation);
+	explicit BoxedTransform(const BoxedVector4* translation, const BoxedQuaternion* rotation);
 
-	explicit BoxedTransform(const Matrix44& m);
+	explicit BoxedTransform(const BoxedMatrix44* m);
 	
 	const Vector4& translation() const;
 	
@@ -368,13 +368,13 @@ public:
 
 	Matrix44 toMatrix44() const;
 
-	Transform concat(const Transform& t) const;
+	Transform concat(const BoxedTransform* t) const;
 
-	Vector4 transform(const Vector4& v) const;
+	Vector4 transform(const BoxedVector4* v) const;
 	
 	static Transform identity() { return Transform::identity(); }
 
-	static Transform lerp(const Transform& a, const Transform& b, float c) { return traktor::lerp(a, b, Scalar(c)); }
+	static Transform lerp(const BoxedTransform* a, const BoxedTransform* b, float c) { return traktor::lerp(a->m_value, b->m_value, Scalar(c)); }
 
 	const Transform& unbox() const { return m_value; }
 
@@ -397,11 +397,11 @@ public:
 
 	explicit BoxedAabb2(const Aabb2& value);
 
-	explicit BoxedAabb2(const Vector2& min, const Vector2& max);
+	explicit BoxedAabb2(const BoxedVector2* min, const BoxedVector2* max);
 
-	bool inside(const Vector2& pt) const { return m_value.inside(pt); }
+	bool inside(const BoxedVector2* pt) const { return m_value.inside(pt->unbox()); }
 
-	void contain(const Vector2& pt) { m_value.contain(pt); }
+	void contain(const BoxedVector2* pt) { m_value.contain(pt->unbox()); }
 
 	Vector2 getCenter() const { return m_value.getCenter(); }
 
@@ -430,13 +430,13 @@ public:
 
 	explicit BoxedAabb3(const Aabb3& value);
 
-	explicit BoxedAabb3(const Vector4& min, const Vector4& max);
+	explicit BoxedAabb3(const BoxedVector4* min, const BoxedVector4* max);
 
-	bool inside(const Vector4& pt) const { return m_value.inside(pt); }
+	bool inside(const BoxedVector4* pt) const { return m_value.inside(pt->unbox()); }
 
-	Aabb3 transform(const Transform& tf) const { return m_value.transform(tf); }
+	Aabb3 transform(const BoxedTransform* tf) const { return m_value.transform(tf->unbox()); }
 
-	void contain(const Vector4& pt) { m_value.contain(pt); }
+	void contain(const BoxedVector4* pt) { m_value.contain(pt->unbox()); }
 
 	Aabb3 scale(const Scalar& factor) const { return m_value.scale(factor); }
 
@@ -452,9 +452,9 @@ public:
 
 	bool empty() const { return m_value.empty(); }
 
-	bool overlap(const Aabb3& aabb) const { return m_value.overlap(aabb); }
+	bool overlap(const BoxedAabb3* aabb) const { return m_value.overlap(aabb->unbox()); }
 
-	Any intersectRay(const Vector4& origin, const Vector4& direction) const;
+	Any intersectRay(const BoxedVector4* origin, const BoxedVector4* direction) const;
 
 	const Aabb3& unbox() const { return m_value; }
 
@@ -489,11 +489,11 @@ public:
 
 	float getFarZ() const;
 
-	bool insidePoint(const Vector4& point) const;
+	bool insidePoint(const BoxedVector4* point) const;
 
-	int32_t insideSphere(const Vector4& center, float radius) const;
+	int32_t insideSphere(const BoxedVector4* center, float radius) const;
 
-	int32_t insideAabb(const Aabb3& aabb) const;
+	int32_t insideAabb(const BoxedAabb3* aabb) const;
 
 	const Plane& getPlane(int32_t index) const;
 
@@ -522,7 +522,7 @@ public:
 
 	explicit BoxedMatrix44(const Matrix44& value);
 
-	explicit BoxedMatrix44(const Vector4& axisX, const Vector4& axisY, const Vector4& axisZ, const Vector4& translation);
+	explicit BoxedMatrix44(const BoxedVector4* axisX, const BoxedVector4* axisY, const BoxedVector4* axisZ, const BoxedVector4* translation);
 
 	Vector4 axisX() const;
 
@@ -548,11 +548,11 @@ public:
 
 	Matrix44 inverse() const;
 
-	void setColumn(int c, const Vector4& v);
+	void setColumn(int c, const BoxedVector4* v);
 
 	Vector4 getColumn(int c);
 
-	void setRow(int r, const Vector4& v);
+	void setRow(int r, const BoxedVector4* v);
 
 	Vector4 getRow(int r);
 
@@ -560,9 +560,9 @@ public:
 
 	float get(int r, int c) const;
 
-	Matrix44 concat(const Matrix44& t) const;
+	Matrix44 concat(const BoxedMatrix44* t) const;
 
-	Vector4 transform(const Vector4& v) const;
+	Vector4 transform(const BoxedVector4* v) const;
 
 	static Matrix44 zero() { return Matrix44::zero(); }
 
@@ -708,7 +708,7 @@ public:
 
 	Vector4 nextUnit() { return m_value.nextUnit(); }
 
-	Vector4 nextHemi(const Vector4& direction) { return m_value.nextHemi(direction); }
+	Vector4 nextHemi(const BoxedVector4* direction) { return m_value.nextHemi(direction->unbox()); }
 
 	const RandomGeometry& unbox() const { return m_value; }
 

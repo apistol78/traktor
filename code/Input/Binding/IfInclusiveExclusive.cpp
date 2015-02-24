@@ -9,17 +9,38 @@ namespace traktor
 {
 	namespace input
 	{
+		namespace
+		{
+
+struct IfInclusiveExclusiveInstance : public RefCountImpl< IInputFilter::Instance >
+{
+	std::vector< handle_t > inclusive;
+	std::vector< handle_t > exclusive;
+};
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.IfInclusiveExclusive", 0, IfInclusiveExclusive, IInputFilter)
 
-void IfInclusiveExclusive::evaluate(InputValueSet& valueSet) const
+Ref< IInputFilter::Instance > IfInclusiveExclusive::createInstance() const
 {
+	Ref< IfInclusiveExclusiveInstance > instance = new IfInclusiveExclusiveInstance();
+	for (std::list< std::wstring >::const_iterator i = m_inclusive.begin(); i != m_inclusive.end(); ++i)
+		instance->inclusive.push_back(getParameterHandle(*i));
+	for (std::list< std::wstring >::const_iterator i = m_exclusive.begin(); i != m_exclusive.end(); ++i)
+		instance->exclusive.push_back(getParameterHandle(*i));
+	return instance;
+}
+
+void IfInclusiveExclusive::evaluate(Instance* instance, InputValueSet& valueSet) const
+{
+	const IfInclusiveExclusiveInstance* iei = static_cast< const IfInclusiveExclusiveInstance* >(instance);
 	if (m_priority == PrInclusive)
 	{
 		bool resetExclusive = false;
 	
 		// Check if any inclusive value is active.
-		for (std::list< std::wstring >::const_iterator i = m_inclusive.begin(); i != m_inclusive.end(); ++i)
+		for (std::vector< handle_t >::const_iterator i = iei->inclusive.begin(); i != iei->inclusive.end(); ++i)
 		{
 			float value = valueSet.get(*i);
 			if (asBoolean(value))
@@ -33,7 +54,7 @@ void IfInclusiveExclusive::evaluate(InputValueSet& valueSet) const
 		if (!resetExclusive)
 		{
 			uint32_t exclusiveCount = 0;
-			for (std::list< std::wstring >::const_iterator i = m_exclusive.begin(); i != m_exclusive.end(); ++i)
+			for (std::vector< handle_t >::const_iterator i = iei->exclusive.begin(); i != iei->exclusive.end(); ++i)
 			{
 				float value = valueSet.get(*i);
 				if (asBoolean(value))
@@ -47,14 +68,14 @@ void IfInclusiveExclusive::evaluate(InputValueSet& valueSet) const
 	
 		if (resetExclusive)
 		{
-			for (std::list< std::wstring >::const_iterator i = m_exclusive.begin(); i != m_exclusive.end(); ++i)
+			for (std::vector< handle_t >::const_iterator i = iei->exclusive.begin(); i != iei->exclusive.end(); ++i)
 				valueSet.set(*i, asFloat(false));
 		}
 	}
 	else if (m_priority == PrExclusive)
 	{
 		uint32_t exclusiveCount = 0;
-		for (std::list< std::wstring >::const_iterator i = m_exclusive.begin(); i != m_exclusive.end(); ++i)
+		for (std::vector< handle_t >::const_iterator i = iei->exclusive.begin(); i != iei->exclusive.end(); ++i)
 		{
 			float value = valueSet.get(*i);
 			if (asBoolean(value))
@@ -64,13 +85,13 @@ void IfInclusiveExclusive::evaluate(InputValueSet& valueSet) const
 		if (exclusiveCount == 1)
 		{
 			// Reset inclusive values.
-			for (std::list< std::wstring >::const_iterator i = m_inclusive.begin(); i != m_inclusive.end(); ++i)
+			for (std::vector< handle_t >::const_iterator i = iei->inclusive.begin(); i != iei->inclusive.end(); ++i)
 				valueSet.set(*i, asFloat(false));
 		}
 		else if (exclusiveCount > 1)
 		{
 			// Reset exclusive values.
-			for (std::list< std::wstring >::const_iterator i = m_exclusive.begin(); i != m_exclusive.end(); ++i)
+			for (std::vector< handle_t >::const_iterator i = iei->exclusive.begin(); i != iei->exclusive.end(); ++i)
 				valueSet.set(*i, asFloat(false));
 		}
 	}

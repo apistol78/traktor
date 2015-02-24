@@ -50,10 +50,17 @@ std::wstring describeValue(const ActionValue& v)
 			ActionFunction* fn = dynamic_type_cast< ActionFunction* >(object);
 			if (fn)
 			{
+#if defined(_DEBUG)
 				if (is_a< ActionSuper >(fn))
 					ss << L"[type Super] (function @" << getObjectId(fn) << L" \"" << mbstows(fn->getName()) << L"\"";
 				else
 					ss << L"[type Function] (function @" << getObjectId(fn) << L" \"" << mbstows(fn->getName()) << L"\"";
+#else
+				if (is_a< ActionSuper >(fn))
+					ss << L"[type Super] (function @" << getObjectId(fn);
+				else
+					ss << L"[type Function] (function @" << getObjectId(fn);
+#endif
 			}
 			else
 				ss << L"[object Object] (object @" << getObjectId(object);
@@ -79,6 +86,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionVMTrace1", ActionVMTrace1, Object)
 
 ActionVMTrace1::ActionVMTrace1()
 {
+	g_objectIds.clear();
+	g_nextObjectId = 1;
 }
 
 ActionVMTrace1::~ActionVMTrace1()

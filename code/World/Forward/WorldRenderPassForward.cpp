@@ -94,6 +94,8 @@ WorldRenderPassForward::WorldRenderPassForward(
 ,	m_shadowMask(shadowMask)
 {
 	initializeHandles();
+
+	m_viewInverse = m_worldRenderView.getView().inverse();
 }
 
 WorldRenderPassForward::WorldRenderPassForward(
@@ -115,6 +117,8 @@ WorldRenderPassForward::WorldRenderPassForward(
 ,	m_shadowMask(0)
 {
 	initializeHandles();
+
+	m_viewInverse = m_worldRenderView.getView().inverse();
 }
 
 render::handle_t WorldRenderPassForward::getTechnique() const
@@ -223,7 +227,7 @@ void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* pro
 void WorldRenderPassForward::setWorldProgramParameters(render::ProgramParameters* programParams, const Matrix44& world) const
 {
 	programParams->setMatrixParameter(s_handleView, m_worldRenderView.getView());
-	programParams->setMatrixParameter(s_handleViewInverse, m_worldRenderView.getView().inverse());
+	programParams->setMatrixParameter(s_handleViewInverse, m_viewInverse);
 	programParams->setMatrixParameter(s_handleWorld, world);
 	programParams->setMatrixParameter(s_handleWorldView, m_worldRenderView.getView() * world);
 }

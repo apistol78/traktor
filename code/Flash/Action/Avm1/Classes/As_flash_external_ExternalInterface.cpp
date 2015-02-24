@@ -43,7 +43,7 @@ ActionValue As_flash_external_ExternalInterface::dispatchCallback(const std::str
 		return ActionValue();
 }
 
-void As_flash_external_ExternalInterface::trace(const IVisitor& visitor) const
+void As_flash_external_ExternalInterface::trace(visitor_t visitor) const
 {
 	for (std::map< std::string, Callback >::const_iterator i = m_callbacks.begin(); i != m_callbacks.end(); ++i)
 	{

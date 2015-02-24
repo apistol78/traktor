@@ -23,7 +23,7 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_commandBufferSize = 512 * 1024;
+const uint32_t c_commandBufferSize = 2 * 1024 * 1024;
 const uint32_t c_reportZCullStats0 = 100;
 const uint32_t c_reportZCullStats1 = 101;
 const uint32_t c_reportTimeStamp0 = 102;
@@ -247,6 +247,7 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 			m_colorAddr[i] = (uint8_t*)m_colorObject->getPointer() + (i * colorSize);
 			m_colorOffset[i] = m_colorObject->getOffset() + (i * colorSize);
 
+#if defined(T_RENDER_PS3_USE_TILES)
 			// Only put color buffers in tiled memory if we're not multisampling.
 			if (desc.multiSample <= 0)
 			{
@@ -270,6 +271,7 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 						log::error << L"Unable to bind tile (" << lookupGcmError(err) << L")" << Endl;
 				}
 			}
+#endif
 
 			err = cellGcmSetDisplayBuffer(
 				i,
@@ -342,6 +344,7 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 				return false;
 			}
 
+#if defined(T_RENDER_PS3_USE_TILES)
 			if (m_tileArea.alloc(targetColorSize / 0x10000, 1, m_targetTileInfo))
 			{
 				err = cellGcmSetTileInfo(
@@ -361,6 +364,7 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 				if (err != CELL_OK)
 					log::error << L"Unable to bind tile (" << lookupGcmError(err) << L")" << Endl;
 			}
+#endif
 
 			m_targetSurfaceAntialias = CELL_GCM_SURFACE_DIAGONAL_CENTERED_2;
 		}
@@ -391,6 +395,7 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 			m_depthAddr = m_depthObject->getPointer();
 			m_depthTexture.offset = m_depthObject->getOffset();
 
+#if defined(T_RENDER_PS3_USE_TILES)
 			// Allocate tile area for depth buffer.
 			if (m_tileArea.alloc(depthSize / 0x10000, 1, m_depthTile))
 			{
@@ -413,6 +418,7 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 				if (err != CELL_OK)
 					log::error << L"Unable to bind tile (" << lookupGcmError(err) << L")" << Endl;
 			}
+#endif
 
 #if defined(T_RENDER_PS3_USE_ZCULL)
 			// Setup Z-cull binding.
@@ -457,6 +463,7 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 			m_colorAddr[i] = (uint8_t*)m_colorObject->getPointer() + (i * colorSize);
 			m_colorOffset[i] = m_colorObject->getOffset() + (i * colorSize);
 
+#if defined(T_RENDER_PS3_USE_TILES)
 			if (m_tileArea.alloc(colorSize / 0x10000, 1, m_colorTile[i]))
 			{
 				err = cellGcmSetTileInfo(
@@ -476,6 +483,7 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 				if (err != CELL_OK)
 					log::error << L"Unable to bind tile (" << lookupGcmError(err) << L")" << Endl;
 			}
+#endif
 
 			err = cellGcmSetDisplayBuffer(
 				i,
@@ -511,6 +519,7 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 			m_depthAddr = m_depthObject->getPointer();
 			m_depthTexture.offset = m_depthObject->getOffset();
 
+#if defined(T_RENDER_PS3_USE_TILES)
 			// Allocate tile area for depth buffer.
 			if (m_tileArea.alloc(depthSize / 0x10000, 1, m_depthTile))
 			{
@@ -531,6 +540,7 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 				if (err != CELL_OK)
 					log::error << L"Unable to bind tile (" << lookupGcmError(err) << L")" << Endl;
 			}
+#endif
 
 #if defined(T_RENDER_PS3_USE_ZCULL)
 			// Setup Z-cull binding.

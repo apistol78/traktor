@@ -464,30 +464,31 @@ void FlashSpriteInstance::eventFrame()
 	// Execute frame scripts.
 	if (m_lastExecutedFrame != m_currentFrame)
 	{
-		ActionObject* self = getAsObject(context);
-		T_ASSERT (self);
-
-		Ref< ActionObject > super = self->getSuper();
-
 		const RefArray< const IActionVMImage >& scripts = frame->getActionScripts();
-		for (RefArray< const IActionVMImage >::const_iterator i = scripts.begin(); i != scripts.end(); ++i)
+		if (!scripts.empty())
 		{
-			ActionFrame callFrame(
-				context,
-				self,
-				*i,
-				4,
-				0,
-				0
-			);
+			ActionObject* self = getAsObject(context);
+			T_ASSERT (self);
 
-			callFrame.setVariable(ActionContext::IdThis, ActionValue(self));
-			callFrame.setVariable(ActionContext::IdSuper, ActionValue(super));
-			callFrame.setVariable(ActionContext::IdGlobal, ActionValue(context->getGlobal()));
+			Ref< ActionObject > super = self->getSuper();
+			for (RefArray< const IActionVMImage >::const_iterator i = scripts.begin(); i != scripts.end(); ++i)
+			{
+				ActionFrame callFrame(
+					context,
+					self,
+					*i,
+					4,
+					0,
+					0
+				);
 
-			context->getVM()->execute(&callFrame);
+				callFrame.setVariable(ActionContext::IdThis, ActionValue(self));
+				callFrame.setVariable(ActionContext::IdSuper, ActionValue(super));
+				callFrame.setVariable(ActionContext::IdGlobal, ActionValue(context->getGlobal()));
+
+				context->getVM()->execute(&callFrame);
+			}
 		}
-
 		m_lastExecutedFrame = m_currentFrame;
 	}
 
@@ -715,7 +716,7 @@ Aabb2 FlashSpriteInstance::getBounds() const
 	return bounds;
 }
 
-void FlashSpriteInstance::trace(const IVisitor& visitor) const
+void FlashSpriteInstance::trace(visitor_t visitor) const
 {
 	visitor(m_mask);
 

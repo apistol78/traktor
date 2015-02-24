@@ -1,3 +1,4 @@
+#include <sys/process.h>
 #include <sysutil/sysutil_common.h>
 #include "Amalgam/Impl/Application.h"
 #include "Core/Io/FileSystem.h"
@@ -8,6 +9,8 @@
 #include "Core/Serialization/DeepClone.h"
 #include "Core/System/Ps3/SystemCallback.h"
 #include "Xml/XmlDeserializer.h"
+
+SYS_PROCESS_PARAM(1001, 0x40000)
 
 using namespace traktor;
 

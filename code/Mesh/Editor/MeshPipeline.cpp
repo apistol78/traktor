@@ -136,6 +136,8 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 25, MeshPipeline, e
 
 MeshPipeline::MeshPipeline()
 :	m_promoteHalf(false)
+,	m_enableCustomShaders(true)
+,	m_enableCustomTemplates(true)
 ,	m_enableBakeOcclusion(true)
 {
 }
@@ -144,6 +146,8 @@ bool MeshPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
 	m_promoteHalf = settings->getProperty< PropertyBoolean >(L"MeshPipeline.PromoteHalf", false);
+	m_enableCustomShaders = settings->getProperty< PropertyBoolean >(L"MeshPipeline.EnableCustomShaders", true);
+	m_enableCustomTemplates = settings->getProperty< PropertyBoolean >(L"MeshPipeline.EnableCustomTemplates", true);
 	m_enableBakeOcclusion = settings->getProperty< PropertyBoolean >(L"MeshPipeline.BakeOcclusion", true);
 	m_includeOnlyTechniques = settings->getProperty< PropertyStringSet >(L"ShaderPipeline.IncludeOnlyTechniques");
 	return true;
@@ -187,14 +191,20 @@ bool MeshPipeline::buildDependencies(
 	pipelineDepends->addDependency(vertexShaderGuid, editor::PdfUse);
 	
 	// Add dependencies to material templates.
-	const std::map< std::wstring, Guid >& materialTemplates = asset->getMaterialTemplates();
-	for (std::map< std::wstring, Guid >::const_iterator i = materialTemplates.begin(); i != materialTemplates.end(); ++i)
-		pipelineDepends->addDependency(i->second, editor::PdfUse);
+	if (m_enableCustomTemplates)
+	{
+		const std::map< std::wstring, Guid >& materialTemplates = asset->getMaterialTemplates();
+		for (std::map< std::wstring, Guid >::const_iterator i = materialTemplates.begin(); i != materialTemplates.end(); ++i)
+			pipelineDepends->addDependency(i->second, editor::PdfUse);
+	}
 
 	// Add dependencies to "fixed" material shaders.
-	const std::map< std::wstring, Guid >& materialShaders = asset->getMaterialShaders();
-	for (std::map< std::wstring, Guid >::const_iterator i = materialShaders.begin(); i != materialShaders.end(); ++i)
-		pipelineDepends->addDependency(i->second, editor::PdfUse);
+	if (m_enableCustomShaders)
+	{
+		const std::map< std::wstring, Guid >& materialShaders = asset->getMaterialShaders();
+		for (std::map< std::wstring, Guid >::const_iterator i = materialShaders.begin(); i != materialShaders.end(); ++i)
+			pipelineDepends->addDependency(i->second, editor::PdfUse);
+	}
 
 	// Add dependencies to material textures.
 	const std::map< std::wstring, Guid >& materialTextures = asset->getMaterialTextures();
@@ -338,7 +348,10 @@ bool MeshPipeline::buildOutput(
 		Ref< const render::ShaderGraph > materialShaderGraph;
 
 		std::map< std::wstring, Guid >::const_iterator it = materialShaders.find(i->first);
-		if (it != materialShaders.end())
+		if (
+			m_enableCustomShaders &&
+			it != materialShaders.end()
+		)
 		{
 			if (it->second.isNull())
 			{
@@ -357,9 +370,12 @@ bool MeshPipeline::buildOutput(
 		{
 			Guid materialTemplate;
 
-			std::map< std::wstring, Guid >::const_iterator it = materialTemplates.find(i->first);
-			if (it != materialTemplates.end())
-				materialTemplate = it->second;
+			if (m_enableCustomTemplates)
+			{
+				std::map< std::wstring, Guid >::const_iterator it = materialTemplates.find(i->first);
+				if (it != materialTemplates.end())
+					materialTemplate = it->second;
+			}
 
 			materialShaderGraph = generator.generate(
 				pipelineBuilder->getSourceDatabase(),

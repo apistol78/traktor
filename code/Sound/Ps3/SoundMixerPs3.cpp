@@ -9,7 +9,7 @@
 #include "Sound/Ps3/SoundMixerPs3.h"
 #include "Sound/Ps3/Spu/JobMC.h"
 
-#define T_USE_PPU_MIXER	1
+#define T_USE_PPU_MIXER	0
 #define T_SPU_SYNCHRONIZED 0
 
 #if !T_USE_PPU_MIXER

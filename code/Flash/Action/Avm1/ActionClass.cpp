@@ -8,7 +8,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionClass", ActionClass, ActionFunction)
 
-ActionClass::ActionClass(ActionContext* context, const std::string& className)
+ActionClass::ActionClass(ActionContext* context, const char* className)
 :	ActionFunction(context, className)
 {
 }

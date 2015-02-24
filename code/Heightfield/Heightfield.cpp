@@ -21,6 +21,7 @@ Heightfield::Heightfield(
 	m_heights.reset(new height_t [m_size * m_size]);
 	m_cuts.reset(new uint8_t [(m_size * m_size) / 8]);
 	m_material.reset(new uint8_t [m_size * m_size]);
+	m_worldExtent.storeUnaligned(m_worldExtentFloats);
 }
 
 void Heightfield::setGridHeight(int32_t gridX, int32_t gridZ, float unitY)
@@ -111,7 +112,7 @@ float Heightfield::getWorldHeight(float worldX, float worldZ) const
 	float gridX, gridZ;
 	worldToGrid(worldX, worldZ, gridX, gridZ);
 	float gridY = getGridHeightBilinear(gridX, gridZ);
-	return -m_worldExtent.y() * 0.5f + gridY * m_worldExtent.y();
+	return -m_worldExtentFloats[1] * 0.5f + gridY * m_worldExtentFloats[1];
 }
 
 bool Heightfield::getGridCut(int32_t gridX, int32_t gridZ) const
@@ -167,8 +168,8 @@ void Heightfield::gridToWorld(int32_t gridX, int32_t gridZ, float& outWorldX, fl
 
 void Heightfield::gridToWorld(float gridX, float gridZ, float& outWorldX, float& outWorldZ) const
 {
-	outWorldX = m_worldExtent.x() * (gridX / m_size - 0.5f);
-	outWorldZ = m_worldExtent.z() * (gridZ / m_size - 0.5f);
+	outWorldX = m_worldExtentFloats[0] * (gridX / m_size - 0.5f);
+	outWorldZ = m_worldExtentFloats[2] * (gridZ / m_size - 0.5f);
 }
 
 void Heightfield::worldToGrid(float worldX, float worldZ, int32_t& outGridX, int32_t& outGridZ) const
@@ -181,18 +182,20 @@ void Heightfield::worldToGrid(float worldX, float worldZ, int32_t& outGridX, int
 
 void Heightfield::worldToGrid(float worldX, float worldZ, float& outGridX, float& outGridZ) const
 {
-	outGridX = m_size * (worldX + m_worldExtent.x() * 0.5f) / m_worldExtent.x()/* - 0.5f*/;
-	outGridZ = m_size * (worldZ + m_worldExtent.z() * 0.5f) / m_worldExtent.z()/* - 0.5f*/;
+	outGridX = m_size * (worldX + m_worldExtentFloats[0] * 0.5f) / m_worldExtentFloats[0]/* - 0.5f*/;
+	outGridZ = m_size * (worldZ + m_worldExtentFloats[2] * 0.5f) / m_worldExtentFloats[2]/* - 0.5f*/;
 }
 
 float Heightfield::unitToWorld(float unitY) const
 {
-	return -m_worldExtent.y() * 0.5f + unitY * m_worldExtent.y();
+	float wexy = m_worldExtentFloats[1];
+	return -wexy * 0.5f + unitY * wexy;
 }
 
 float Heightfield::worldToUnit(float worldY) const
 {
-	return (worldY + m_worldExtent.y() * 0.5f) / m_worldExtent.y();
+	float wexy = m_worldExtentFloats[1];
+	return (worldY + wexy * 0.5f) / wexy;
 }
 
 bool Heightfield::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection, Scalar& outDistance) const

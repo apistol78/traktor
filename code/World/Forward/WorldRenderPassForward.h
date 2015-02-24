@@ -69,6 +69,7 @@ public:
 private:
 	render::handle_t m_technique;
 	const WorldRenderView& m_worldRenderView;
+	Matrix44 m_viewInverse;
 	bool m_fogEnabled;
 	float m_fogDistanceY;
 	float m_fogDistanceZ;

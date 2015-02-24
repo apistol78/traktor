@@ -84,7 +84,7 @@ void Collectable::traceMarkGray()
 	{
 		m_traceColor = TcGray;
 		m_traceRefCount = getReferenceCount();
-		trace(MarkGrayVisitor());
+		trace(&visitorMarkGray);
 	}
 }
 
@@ -97,7 +97,7 @@ void Collectable::traceScan()
 		else
 		{
 			m_traceColor = TcWhite;
-			trace(ScanVisitor());
+			trace(&visitorScan);
 		}
 	}
 }
@@ -105,7 +105,7 @@ void Collectable::traceScan()
 void Collectable::traceScanBlack()
 {
 	m_traceColor = TcBlack;
-	trace(ScanBlackVisitor());
+	trace(&visitorScanBlack);
 }
 
 void Collectable::traceCollectWhite()
@@ -123,7 +123,7 @@ void Collectable::traceCollectWhite()
 	}
 }
 
-void Collectable::MarkGrayVisitor::operator () (Collectable* memberObject) const
+void Collectable::visitorMarkGray(Collectable* memberObject)
 {
 	if (memberObject)
 	{
@@ -132,13 +132,13 @@ void Collectable::MarkGrayVisitor::operator () (Collectable* memberObject) const
 	}
 }
 
-void Collectable::ScanVisitor::operator () (Collectable* memberObject) const
+void Collectable::visitorScan(Collectable* memberObject)
 {
 	if (memberObject)
 		memberObject->traceScan();
 }
 
-void Collectable::ScanBlackVisitor::operator () (Collectable* memberObject) const
+void Collectable::visitorScanBlack(Collectable* memberObject)
 {
 	if (memberObject)
 	{

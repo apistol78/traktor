@@ -118,19 +118,19 @@ bool Mesh::read(IStream* stream)
 
 	m_vertices.resize(vertexCount);
 	if (vertexCount > 0)
-		rd.read(&m_vertices[0], vertexCount, sizeof(Vector4));
+		rd.read(&m_vertices[0], vertexCount * 4, sizeof(float));
 
 	m_normals.resize(normalCount);
 	if (normalCount > 0)
-		rd.read(&m_normals[0], normalCount, sizeof(Vector4));
+		rd.read(&m_normals[0], normalCount * 4, sizeof(float));
 
 	m_shapeTriangles.resize(shapeTriangleCount);
 	if (shapeTriangleCount > 0)
-		rd.read(&m_shapeTriangles[0], shapeTriangleCount, sizeof(Triangle));
+		rd.read(&m_shapeTriangles[0], shapeTriangleCount * 3, sizeof(uint32_t));
 
 	m_hullTriangles.resize(hullTriangleCount);
 	if (hullTriangleCount > 0)
-		rd.read(&m_hullTriangles[0], hullTriangleCount, sizeof(Triangle));
+		rd.read(&m_hullTriangles[0], hullTriangleCount * 3, sizeof(uint32_t));
 
 	m_hullIndices.resize(hullIndexCount);
 	if (hullIndexCount > 0)
@@ -159,16 +159,16 @@ bool Mesh::write(IStream* stream)
 	wr << uint32_t(m_hullIndices.size());
 
 	if (!m_vertices.empty())
-		wr.write(&m_vertices[0], int(m_vertices.size()), sizeof(Vector4));
+		wr.write(&m_vertices[0], int(m_vertices.size() * 4), sizeof(float));
 
 	if (!m_normals.empty())
-		wr.write(&m_normals[0], int(m_normals.size()), sizeof(Vector4));
+		wr.write(&m_normals[0], int(m_normals.size() * 4), sizeof(float));
 
 	if (!m_shapeTriangles.empty())
-		wr.write(&m_shapeTriangles[0], int(m_shapeTriangles.size()), sizeof(Triangle));
+		wr.write(&m_shapeTriangles[0], int(m_shapeTriangles.size() * 3), sizeof(uint32_t));
 
 	if (!m_hullTriangles.empty())
-		wr.write(&m_hullTriangles[0], int(m_hullTriangles.size()), sizeof(Triangle));
+		wr.write(&m_hullTriangles[0], int(m_hullTriangles.size() * 3), sizeof(uint32_t));
 
 	if (!m_hullIndices.empty())
 		wr.write(&m_hullIndices[0], int(m_hullIndices.size()), sizeof(uint32_t));

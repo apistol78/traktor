@@ -3764,12 +3764,7 @@
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/src</item>
-						<item>$(SCE_PS3_ROOT)\target\ppu\include\vectormath\cpp</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
@@ -3784,12 +3779,7 @@
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/src</item>
-						<item>$(SCE_PS3_ROOT)\target\ppu\include\vectormath\cpp</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
@@ -3825,10 +3815,15 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
+					<project ref="/object/projects/item[18]/dependencies/item[6]/project"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
 					<project type="Project" version="1">
 						<enable>true</enable>
-						<name>Extern.bullet-2.80</name>
-						<sourcePath>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531</sourcePath>
+						<name>Extern.bullet</name>
+						<sourcePath>$(BULLET_SDK)</sourcePath>
 						<configurations>
 							<item type="Configuration" version="1">
 								<name>DebugStatic</name>
@@ -3836,8 +3831,8 @@
 								<targetProfile>TpDebug</targetProfile>
 								<precompiledHeader/>
 								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/src</item>
+									<item>$(BULLET_SDK)/include</item>
+									<item>$(BULLET_SDK)/src</item>
 								</includePaths>
 								<definitions>
 									<item>_DEBUG</item>
@@ -3854,12 +3849,11 @@
 								<targetProfile>TpRelease</targetProfile>
 								<precompiledHeader/>
 								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/src</item>
+									<item>$(BULLET_SDK)/include</item>
+									<item>$(BULLET_SDK)/src</item>
 								</includePaths>
 								<definitions>
 									<item>NDEBUG</item>
-									<item>_CRT_SECURE_NO_WARNINGS</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -3993,11 +3987,6 @@
 						</items>
 						<dependencies/>
 					</project>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[18]/dependencies/item[6]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -5642,7 +5631,6 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[27]/dependencies/item[3]/project"/>
 		<item ref="/object/projects/item[18]/dependencies/item[7]/project/dependencies/item[4]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
@@ -5821,7 +5809,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[57]"/>
+					<project ref="/object/projects/item[56]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -6020,12 +6008,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[61]"/>
+					<project ref="/object/projects/item[60]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[60]"/>
+					<project ref="/object/projects/item[59]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -6089,15 +6077,16 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[61]"/>
+					<project ref="/object/projects/item[60]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[62]"/>
+					<project ref="/object/projects/item[61]"/>
 				</item>
 			</dependencies>
 		</item>
+		<item ref="/object/projects/item[27]/dependencies/item[4]/project"/>
 	</projects>
 	<aggregations/>
 </object>

@@ -76,8 +76,13 @@ private:
 BoxedAllocator< BoxedUInt64, 16 > s_allocBoxedUInt64;
 BoxedAllocator< BoxedGuid, 512 > s_allocBoxedGuid;
 BoxedAllocator< BoxedVector2, 1024 > s_allocBoxedVector2;
+#if !defined(__PS3__)
 BoxedAllocator< BoxedVector4, 32768 > s_allocBoxedVector4;
 BoxedAllocator< BoxedQuaternion, 4096 > s_allocBoxedQuaternion;
+#else
+BoxedAllocator< BoxedVector4, 1024 > s_allocBoxedVector4;
+BoxedAllocator< BoxedQuaternion, 256 > s_allocBoxedQuaternion;
+#endif
 BoxedAllocator< BoxedPlane, 256 > s_allocBoxedPlane;
 BoxedAllocator< BoxedTransform, 8192 > s_allocBoxedTransform;
 BoxedAllocator< BoxedAabb2, 64 > s_allocBoxedAabb2;
@@ -254,9 +259,9 @@ BoxedQuaternion::BoxedQuaternion(float x, float y, float z, float w)
 {
 }
 
-BoxedQuaternion::BoxedQuaternion(const Vector4& axis, float angle)
+BoxedQuaternion::BoxedQuaternion(const BoxedVector4* axis, float angle)
 {
-	m_value = Quaternion::fromAxisAngle(axis, Scalar(angle));
+	m_value = Quaternion::fromAxisAngle(axis->unbox(), Scalar(angle));
 }
 
 BoxedQuaternion::BoxedQuaternion(float head, float pitch, float bank)
@@ -264,13 +269,13 @@ BoxedQuaternion::BoxedQuaternion(float head, float pitch, float bank)
 	m_value = Quaternion::fromEulerAngles(head, pitch, bank);
 }
 
-BoxedQuaternion::BoxedQuaternion(const Vector4& from, const Vector4& to)
-:	m_value(from, to)
+BoxedQuaternion::BoxedQuaternion(const BoxedVector4* from, const BoxedVector4* to)
+:	m_value(from->unbox(), to->unbox())
 {
 }
 
-BoxedQuaternion::BoxedQuaternion(const Matrix44& m)
-:	m_value(m)
+BoxedQuaternion::BoxedQuaternion(const BoxedMatrix44* m)
+:	m_value(m->unbox())
 {
 }
 
@@ -284,14 +289,14 @@ Quaternion BoxedQuaternion::inverse() const
 	return m_value.inverse();
 }
 
-Quaternion BoxedQuaternion::concat(const Quaternion& q) const
+Quaternion BoxedQuaternion::concat(const BoxedQuaternion* q) const
 {
-	return m_value * q;
+	return m_value * q->m_value;
 }
 
-Vector4 BoxedQuaternion::transform(const Vector4& v) const
+Vector4 BoxedQuaternion::transform(const BoxedVector4* v) const
 {
-	return m_value * v;
+	return m_value * v->unbox();
 }
 
 Vector4 BoxedQuaternion::getEulerAngles() const
@@ -309,9 +314,9 @@ Quaternion BoxedQuaternion::fromEulerAngles(float head, float pitch, float bank)
 	return Quaternion::fromEulerAngles(head, pitch, bank);
 }
 
-Quaternion BoxedQuaternion::fromAxisAngle(const Vector4& axisAngle)
+Quaternion BoxedQuaternion::fromAxisAngle(const BoxedVector4* axisAngle)
 {
-	return Quaternion::fromAxisAngle(axisAngle);
+	return Quaternion::fromAxisAngle(axisAngle->unbox());
 }
 
 std::wstring BoxedQuaternion::toString() const
@@ -392,13 +397,13 @@ BoxedTransform::BoxedTransform(const Transform& value)
 {
 }
 
-BoxedTransform::BoxedTransform(const Vector4& translation, const Quaternion& rotation)
-:	m_value(translation, rotation)
+BoxedTransform::BoxedTransform(const BoxedVector4* translation, const BoxedQuaternion* rotation)
+:	m_value(translation->unbox(), rotation->unbox())
 {
 }
 
-BoxedTransform::BoxedTransform(const Matrix44& m)
-:	m_value(m)
+BoxedTransform::BoxedTransform(const BoxedMatrix44* m)
+:	m_value(m->unbox())
 {
 }
 
@@ -452,14 +457,14 @@ Matrix44 BoxedTransform::toMatrix44() const
 	return m_value.toMatrix44();
 }
 
-Transform BoxedTransform::concat(const Transform& t) const
+Transform BoxedTransform::concat(const BoxedTransform* t) const
 {
-	return m_value * t;
+	return m_value * t->m_value;
 }
 
-Vector4 BoxedTransform::transform(const Vector4& v) const
+Vector4 BoxedTransform::transform(const BoxedVector4* v) const
 {
-	return m_value * v;
+	return m_value * v->unbox();
 }
 
 std::wstring BoxedTransform::toString() const
@@ -489,8 +494,8 @@ BoxedAabb2::BoxedAabb2(const Aabb2& value)
 {
 }
 
-BoxedAabb2::BoxedAabb2(const Vector2& min, const Vector2& max)
-:	m_value(min, max)
+BoxedAabb2::BoxedAabb2(const BoxedVector2* min, const BoxedVector2* max)
+:	m_value(min->unbox(), max->unbox())
 {
 }
 
@@ -521,15 +526,15 @@ BoxedAabb3::BoxedAabb3(const Aabb3& value)
 {
 }
 
-BoxedAabb3::BoxedAabb3(const Vector4& min, const Vector4& max)
-:	m_value(min, max)
+BoxedAabb3::BoxedAabb3(const BoxedVector4* min, const BoxedVector4* max)
+:	m_value(min->unbox(), max->unbox())
 {
 }
 
-Any BoxedAabb3::intersectRay(const Vector4& origin, const Vector4& direction) const
+Any BoxedAabb3::intersectRay(const BoxedVector4* origin, const BoxedVector4* direction) const
 {
 	Scalar distanceEnter, distanceExit;
-	if (m_value.intersectRay(origin, direction, distanceEnter, distanceExit))
+	if (m_value.intersectRay(origin->unbox(), direction->unbox(), distanceEnter, distanceExit))
 		return Any::fromFloat(distanceEnter);
 	else
 		return Any();
@@ -592,19 +597,19 @@ float BoxedFrustum::getFarZ() const
 	return m_value.getFarZ();
 }
 
-bool BoxedFrustum::insidePoint(const Vector4& point) const
+bool BoxedFrustum::insidePoint(const BoxedVector4* point) const
 {
-	return m_value.inside(point) != Frustum::IrOutside;
+	return m_value.inside(point->unbox()) != Frustum::IrOutside;
 }
 
-int32_t BoxedFrustum::insideSphere(const Vector4& center, float radius) const
+int32_t BoxedFrustum::insideSphere(const BoxedVector4* center, float radius) const
 {
-	return m_value.inside(center, Scalar(radius));
+	return m_value.inside(center->unbox(), Scalar(radius));
 }
 
-int32_t BoxedFrustum::insideAabb(const Aabb3& aabb) const
+int32_t BoxedFrustum::insideAabb(const BoxedAabb3* aabb) const
 {
-	return m_value.inside(aabb);
+	return m_value.inside(aabb->unbox());
 }
 
 const Plane& BoxedFrustum::getPlane(int32_t index) const
@@ -649,8 +654,8 @@ BoxedMatrix44::BoxedMatrix44(const Matrix44& value)
 {
 }
 
-BoxedMatrix44::BoxedMatrix44(const Vector4& axisX, const Vector4& axisY, const Vector4& axisZ, const Vector4& translation)
-:	m_value(axisX, axisY, axisZ, translation)
+BoxedMatrix44::BoxedMatrix44(const BoxedVector4* axisX, const BoxedVector4* axisY, const BoxedVector4* axisZ, const BoxedVector4* translation)
+:	m_value(axisX->unbox(), axisY->unbox(), axisZ->unbox(), translation->unbox())
 {
 }
 
@@ -714,9 +719,9 @@ Matrix44 BoxedMatrix44::inverse() const
 	return m_value.inverse();
 }
 
-void BoxedMatrix44::setColumn(int c, const Vector4& v)
+void BoxedMatrix44::setColumn(int c, const BoxedVector4* v)
 {
-	m_value.set(c, v);
+	m_value.set(c, v->unbox());
 }
 
 Vector4 BoxedMatrix44::getColumn(int c)
@@ -724,12 +729,13 @@ Vector4 BoxedMatrix44::getColumn(int c)
 	return m_value.get(c);
 }
 
-void BoxedMatrix44::setRow(int r, const Vector4& v)
+void BoxedMatrix44::setRow(int r, const BoxedVector4* v)
 {
-	m_value.set(r, 0, v.x());
-	m_value.set(r, 1, v.x());
-	m_value.set(r, 2, v.x());
-	m_value.set(r, 3, v.x());
+	const Vector4& vv = v->unbox();
+	m_value.set(r, 0, vv.x());
+	m_value.set(r, 1, vv.x());
+	m_value.set(r, 2, vv.x());
+	m_value.set(r, 3, vv.x());
 }
 
 Vector4 BoxedMatrix44::getRow(int r)
@@ -752,14 +758,14 @@ float BoxedMatrix44::get(int r, int c) const
 	return m_value.get(r, c);
 }
 
-Matrix44 BoxedMatrix44::concat(const Matrix44& t) const
+Matrix44 BoxedMatrix44::concat(const BoxedMatrix44* t) const
 {
-	return m_value * t;
+	return m_value * t->m_value;
 }
 
-Vector4 BoxedMatrix44::transform(const Vector4& v) const
+Vector4 BoxedMatrix44::transform(const BoxedVector4* v) const
 {
-	return m_value * v;
+	return m_value * v->unbox();
 }
 
 std::wstring BoxedMatrix44::toString() const
@@ -1125,10 +1131,10 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedVector2->addMethod("set", &BoxedVector2::set);
 	classBoxedVector2->addMethod("x", &BoxedVector2::x);
 	classBoxedVector2->addMethod("y", &BoxedVector2::y);
-	classBoxedVector2->addMethod< Vector2, const Vector2& >("add", &BoxedVector2::add);
-	classBoxedVector2->addMethod< Vector2, const Vector2& >("sub", &BoxedVector2::sub);
-	classBoxedVector2->addMethod< Vector2, const Vector2& >("mul", &BoxedVector2::mul);
-	classBoxedVector2->addMethod< Vector2, const Vector2& >("div", &BoxedVector2::div);
+	classBoxedVector2->addMethod< Vector2, const BoxedVector2* >("add", &BoxedVector2::add);
+	classBoxedVector2->addMethod< Vector2, const BoxedVector2* >("sub", &BoxedVector2::sub);
+	classBoxedVector2->addMethod< Vector2, const BoxedVector2* >("mul", &BoxedVector2::mul);
+	classBoxedVector2->addMethod< Vector2, const BoxedVector2* >("div", &BoxedVector2::div);
 	classBoxedVector2->addMethod< Vector2, float >("addf", &BoxedVector2::add);
 	classBoxedVector2->addMethod< Vector2, float >("subf", &BoxedVector2::sub);
 	classBoxedVector2->addMethod< Vector2, float >("mulf", &BoxedVector2::mul);
@@ -1141,13 +1147,13 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedVector2->addStaticMethod("zero", &BoxedVector2::zero);
 	classBoxedVector2->addStaticMethod("lerp", &BoxedVector2::lerp);
 	classBoxedVector2->addStaticMethod("distance", &BoxedVector2::distance);
-	classBoxedVector2->addOperator< Vector2, const Vector2& >('+', &BoxedVector2::add);
+	classBoxedVector2->addOperator< Vector2, const BoxedVector2* >('+', &BoxedVector2::add);
 	classBoxedVector2->addOperator< Vector2, float >('+', &BoxedVector2::add);
-	classBoxedVector2->addOperator< Vector2, const Vector2& >('-', &BoxedVector2::sub);
+	classBoxedVector2->addOperator< Vector2, const BoxedVector2* >('-', &BoxedVector2::sub);
 	classBoxedVector2->addOperator< Vector2, float >('-', &BoxedVector2::sub);
-	classBoxedVector2->addOperator< Vector2, const Vector2& >('*', &BoxedVector2::mul);
+	classBoxedVector2->addOperator< Vector2, const BoxedVector2* >('*', &BoxedVector2::mul);
 	classBoxedVector2->addOperator< Vector2, float >('*', &BoxedVector2::mul);
-	classBoxedVector2->addOperator< Vector2, const Vector2& >('/', &BoxedVector2::div);
+	classBoxedVector2->addOperator< Vector2, const BoxedVector2* >('/', &BoxedVector2::div);
 	classBoxedVector2->addOperator< Vector2, float >('/', &BoxedVector2::div);
 	scriptManager->registerClass(classBoxedVector2);
 
@@ -1162,10 +1168,10 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedVector4->addMethod("w", &BoxedVector4::w);
 	classBoxedVector4->addMethod("xyz0", &BoxedVector4::xyz0);
 	classBoxedVector4->addMethod("xyz1", &BoxedVector4::xyz1);
-	classBoxedVector4->addMethod< Vector4, const Vector4& >("add", &BoxedVector4::add);
-	classBoxedVector4->addMethod< Vector4, const Vector4& >("sub", &BoxedVector4::sub);
-	classBoxedVector4->addMethod< Vector4, const Vector4& >("mul", &BoxedVector4::mul);
-	classBoxedVector4->addMethod< Vector4, const Vector4& >("div", &BoxedVector4::div);
+	classBoxedVector4->addMethod< Vector4, const BoxedVector4* >("add", &BoxedVector4::add);
+	classBoxedVector4->addMethod< Vector4, const BoxedVector4* >("sub", &BoxedVector4::sub);
+	classBoxedVector4->addMethod< Vector4, const BoxedVector4* >("mul", &BoxedVector4::mul);
+	classBoxedVector4->addMethod< Vector4, const BoxedVector4* >("div", &BoxedVector4::div);
 	classBoxedVector4->addMethod< Vector4, float >("addf", &BoxedVector4::add);
 	classBoxedVector4->addMethod< Vector4, float >("subf", &BoxedVector4::sub);
 	classBoxedVector4->addMethod< Vector4, float >("mulf", &BoxedVector4::mul);
@@ -1180,23 +1186,23 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedVector4->addStaticMethod("lerp", &BoxedVector4::lerp);
 	classBoxedVector4->addStaticMethod("distance3", &BoxedVector4::distance3);
 	classBoxedVector4->addStaticMethod("distance4", &BoxedVector4::distance4);
-	classBoxedVector4->addOperator< Vector4, const Vector4& >('+', &BoxedVector4::add);
+	classBoxedVector4->addOperator< Vector4, const BoxedVector4* >('+', &BoxedVector4::add);
 	classBoxedVector4->addOperator< Vector4, float >('+', &BoxedVector4::add);
-	classBoxedVector4->addOperator< Vector4, const Vector4& >('-', &BoxedVector4::sub);
+	classBoxedVector4->addOperator< Vector4, const BoxedVector4* >('-', &BoxedVector4::sub);
 	classBoxedVector4->addOperator< Vector4, float >('-', &BoxedVector4::sub);
-	classBoxedVector4->addOperator< Vector4, const Vector4& >('*', &BoxedVector4::mul);
+	classBoxedVector4->addOperator< Vector4, const BoxedVector4* >('*', &BoxedVector4::mul);
 	classBoxedVector4->addOperator< Vector4, float >('*', &BoxedVector4::mul);
-	classBoxedVector4->addOperator< Vector4, const Vector4& >('/', &BoxedVector4::div);
+	classBoxedVector4->addOperator< Vector4, const BoxedVector4* >('/', &BoxedVector4::div);
 	classBoxedVector4->addOperator< Vector4, float >('/', &BoxedVector4::div);
 	scriptManager->registerClass(classBoxedVector4);
 
 	Ref< AutoScriptClass< BoxedQuaternion > > classBoxedQuaternion = new AutoScriptClass< BoxedQuaternion >();
 	classBoxedQuaternion->addConstructor();
 	classBoxedQuaternion->addConstructor< float, float, float, float >();
-	classBoxedQuaternion->addConstructor< const Vector4&, float >();
+	classBoxedQuaternion->addConstructor< const BoxedVector4*, float >();
 	classBoxedQuaternion->addConstructor< float, float, float >();
-	classBoxedQuaternion->addConstructor< const Vector4&, const Vector4& >();
-	classBoxedQuaternion->addConstructor< const Matrix44& >();
+	classBoxedQuaternion->addConstructor< const BoxedVector4*, const BoxedVector4* >();
+	classBoxedQuaternion->addConstructor< const BoxedMatrix44* >();
 	classBoxedQuaternion->addMethod("x", &BoxedQuaternion::x);
 	classBoxedQuaternion->addMethod("y", &BoxedQuaternion::y);
 	classBoxedQuaternion->addMethod("z", &BoxedQuaternion::z);
@@ -1212,8 +1218,8 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedQuaternion->addStaticMethod("fromAxisAngle", &BoxedQuaternion::fromAxisAngle);
 	classBoxedQuaternion->addStaticMethod("lerp", &BoxedQuaternion::lerp);
 	classBoxedQuaternion->addStaticMethod("slerp", &BoxedQuaternion::slerp);
-	classBoxedQuaternion->addOperator< Vector4, const Vector4& >('*', &BoxedQuaternion::transform);
-	classBoxedQuaternion->addOperator< Quaternion, const Quaternion& >('*', &BoxedQuaternion::concat);
+	classBoxedQuaternion->addOperator< Vector4, const BoxedVector4* >('*', &BoxedQuaternion::transform);
+	classBoxedQuaternion->addOperator< Quaternion, const BoxedQuaternion* >('*', &BoxedQuaternion::concat);
 	scriptManager->registerClass(classBoxedQuaternion);
 
 	Ref< AutoScriptClass< BoxedPlane > > classBoxedPlane = new AutoScriptClass< BoxedPlane >();
@@ -1233,8 +1239,8 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	
 	Ref< AutoScriptClass< BoxedTransform > > classBoxedTransform = new AutoScriptClass< BoxedTransform >();
 	classBoxedTransform->addConstructor();
-	classBoxedTransform->addConstructor< const Vector4&, const Quaternion& >();
-	classBoxedTransform->addConstructor< const Matrix44& >();
+	classBoxedTransform->addConstructor< const BoxedVector4*, const BoxedQuaternion* >();
+	classBoxedTransform->addConstructor< const BoxedMatrix44* >();
 	classBoxedTransform->addMethod("translation", &BoxedTransform::translation);
 	classBoxedTransform->addMethod("rotation", &BoxedTransform::rotation);
 	classBoxedTransform->addMethod("axisX", &BoxedTransform::axisX);
@@ -1249,13 +1255,13 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedTransform->addMethod("transform", &BoxedTransform::transform);
 	classBoxedTransform->addStaticMethod("identity", &BoxedTransform::identity);
 	classBoxedTransform->addStaticMethod("lerp", &BoxedTransform::lerp);
-	classBoxedTransform->addOperator< Vector4, const Vector4& >('*', &BoxedTransform::transform);
-	classBoxedTransform->addOperator< Transform, const Transform& >('*', &BoxedTransform::concat);
+	classBoxedTransform->addOperator< Vector4, const BoxedVector4* >('*', &BoxedTransform::transform);
+	classBoxedTransform->addOperator< Transform, const BoxedTransform* >('*', &BoxedTransform::concat);
 	scriptManager->registerClass(classBoxedTransform);
 
 	Ref< AutoScriptClass< BoxedAabb2 > > classBoxedAabb2 = new AutoScriptClass< BoxedAabb2 >();
 	classBoxedAabb2->addConstructor();
-	classBoxedAabb2->addConstructor< const Vector2&, const Vector2& >();
+	classBoxedAabb2->addConstructor< const BoxedVector2*, const BoxedVector2* >();
 	classBoxedAabb2->addMethod("inside", &BoxedAabb2::inside);
 	classBoxedAabb2->addMethod("contain", &BoxedAabb2::contain);
 	classBoxedAabb2->addMethod("getCenter", &BoxedAabb2::getCenter);
@@ -1265,7 +1271,7 @@ void registerBoxClasses(IScriptManager* scriptManager)
 
 	Ref< AutoScriptClass< BoxedAabb3 > > classBoxedAabb3 = new AutoScriptClass< BoxedAabb3 >();
 	classBoxedAabb3->addConstructor();
-	classBoxedAabb3->addConstructor< const Vector4&, const Vector4& >();
+	classBoxedAabb3->addConstructor< const BoxedVector4*, const BoxedVector4* >();
 	classBoxedAabb3->addMethod("inside", &BoxedAabb3::inside);
 	classBoxedAabb3->addMethod("contain", &BoxedAabb3::contain);
 	classBoxedAabb3->addMethod("scale", &BoxedAabb3::scale);
@@ -1298,7 +1304,7 @@ void registerBoxClasses(IScriptManager* scriptManager)
 
 	Ref< AutoScriptClass< BoxedMatrix44 > > classBoxedMatrix44 = new AutoScriptClass< BoxedMatrix44 >();
 	classBoxedMatrix44->addConstructor();
-	classBoxedMatrix44->addConstructor< const Vector4&, const Vector4&, const Vector4&, const Vector4& >();
+	classBoxedMatrix44->addConstructor< const BoxedVector4*, const BoxedVector4*, const BoxedVector4*, const BoxedVector4* >();
 	classBoxedMatrix44->addMethod("axisX", &BoxedMatrix44::axisX);
 	classBoxedMatrix44->addMethod("axisY", &BoxedMatrix44::axisY);
 	classBoxedMatrix44->addMethod("axisZ", &BoxedMatrix44::axisZ);
@@ -1321,8 +1327,8 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedMatrix44->addMethod("transform", &BoxedMatrix44::transform);
 	classBoxedMatrix44->addStaticMethod("zero", &BoxedMatrix44::zero);
 	classBoxedMatrix44->addStaticMethod("identity", &BoxedMatrix44::identity);
-	classBoxedMatrix44->addOperator< Vector4, const Vector4& >('*', &BoxedMatrix44::transform);
-	classBoxedMatrix44->addOperator< Matrix44, const Matrix44& >('*', &BoxedMatrix44::concat);
+	classBoxedMatrix44->addOperator< Vector4, const BoxedVector4* >('*', &BoxedMatrix44::transform);
+	classBoxedMatrix44->addOperator< Matrix44, const BoxedMatrix44* >('*', &BoxedMatrix44::concat);
 	scriptManager->registerClass(classBoxedMatrix44);
 
 	Ref< AutoScriptClass< BoxedColor4f > > classBoxedColor4f = new AutoScriptClass< BoxedColor4f >();

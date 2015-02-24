@@ -151,7 +151,7 @@ std::string ActionContext::getString(uint32_t id)
 	return m_strings[id];
 }
 
-void ActionContext::trace(const IVisitor& visitor) const
+void ActionContext::trace(visitor_t visitor) const
 {
 	T_ASSERT (m_pool.offset() == 0);
 

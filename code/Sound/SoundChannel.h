@@ -2,6 +2,7 @@
 #define traktor_sound_SoundChannel_H
 
 #include "Core/Object.h"
+#include "Core/Containers/CircularVector.h"
 #include "Core/Thread/Event.h"
 #include "Core/Thread/Semaphore.h"
 #include "Sound/Types.h"
@@ -120,11 +121,29 @@ private:
 		}
 	};
 
+	struct ParameterQueue
+	{
+		handle_t id;
+		float parameter;
+
+		ParameterQueue()
+		{
+		}
+
+		ParameterQueue(handle_t id_, float parameter_)
+		:	id(id_)
+		,	parameter(parameter_)
+		{
+		}
+	};
+
 	uint32_t m_id;
 	Event& m_eventFinish;
 	uint32_t m_hwSampleRate;	//< Hardware sample rate.
 	uint32_t m_hwFrameSamples;	//< Hardware frame size in samples.
 	Semaphore m_lock;
+	Semaphore m_parameterQueueLock;
+	CircularVector< ParameterQueue, 4 > m_parameterQueue;
 	float m_volume;
 	State m_state;
 	float* m_outputSamples[SbcMaxChannelCount];

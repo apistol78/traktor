@@ -72,7 +72,7 @@ public:
 	const ActionValue& operator [] (int32_t index) const { return m_values[index]; }
 
 protected:
-	virtual void trace(const IVisitor& visitor) const;
+	virtual void trace(visitor_t visitor) const;
 
 	virtual void dereference();
 

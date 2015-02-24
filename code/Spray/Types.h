@@ -29,6 +29,8 @@ class IEntityEventManager;
  */
 struct VirtualSourceCallback
 {
+	virtual ~VirtualSourceCallback() {}
+
 	virtual void virtualSourceEmit(
 		const class VirtualSource* source,
 		struct Context& context,

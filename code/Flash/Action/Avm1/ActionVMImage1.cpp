@@ -48,9 +48,6 @@ void ActionVMImage1::prepare()
 	{
 		const uint8_t op = *state.pc;
 
-		if (op == AopEnd || op == AopReturn)
-			break;
-
 		state.npc = state.pc + 1;
 		state.data = 0;
 

@@ -32,14 +32,21 @@ struct UCodeCacheEntry
 Semaphore g_ucodeCacheLock;
 std::map< uint32_t, UCodeCacheEntry > g_ucodeCache;
 
-void acquireProgramUCode(MemoryHeap* memoryHeap, CGprogram program, MemoryHeapObject*& outUCode)
+bool acquireProgramUCode(MemoryHeap* memoryHeap, CGprogram program, MemoryHeapObject*& outUCode)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(g_ucodeCacheLock);
-	uint32_t ucodeSize;
-	void* ucode;
+
+	if (!program)
+		return false;
+
+	uint32_t ucodeSize = 0;
+	void* ucode = 0;
 
 	cellGcmCgInitProgram(program);
 	cellGcmCgGetUCode(program, &ucode, &ucodeSize);
+
+	if (!ucode || !ucodeSize)
+		return false;
 
 	Adler32 a32; a32.begin(); a32.feed(ucode, ucodeSize); a32.end();
 	uint32_t hash = a32.get();
@@ -48,6 +55,9 @@ void acquireProgramUCode(MemoryHeap* memoryHeap, CGprogram program, MemoryHeapOb
 	if (i == g_ucodeCache.end())
 	{
 		outUCode = memoryHeap->alloc(ucodeSize, 64, false);
+		if (!outUCode || !outUCode->getPointer())
+			return false;
+
 		std::memcpy(outUCode->getPointer(), ucode, ucodeSize);
 
 		UCodeCacheEntry entry;
@@ -60,6 +70,8 @@ void acquireProgramUCode(MemoryHeap* memoryHeap, CGprogram program, MemoryHeapOb
 		outUCode = i->second.ucode;
 		i->second.count++;
 	}
+
+	return true;
 }
 
 void releaseProgramUCode(MemoryHeapObject* ucode)
@@ -130,8 +142,17 @@ bool ProgramPs3::create(MemoryHeap* memoryHeapLocal, MemoryHeap* memoryHeapMain,
 	m_vertexProgram = (CGprogram)(resource->m_vertexShaderBin.getData());
 	m_pixelProgram = (CGprogram)(resource->m_pixelShaderBin.getData());
 
-	acquireProgramUCode(memoryHeapMain, m_vertexProgram, m_vertexShaderUCode);
-	acquireProgramUCode(memoryHeapLocal, m_pixelProgram, m_pixelShaderUCode);
+	if (!acquireProgramUCode(memoryHeapMain, m_vertexProgram, m_vertexShaderUCode))
+	{
+		log::error << L"Unable to create program; failed to acquire vertex ucode, possibly out-of-memory!" << Endl;
+		return false;
+	}
+
+	if (!acquireProgramUCode(memoryHeapLocal, m_pixelProgram, m_pixelShaderUCode))
+	{
+		log::error << L"Unable to create program; failed to acquire pixel ucode, possibly out-of-memory!" << Endl;
+		return false;
+	}
 
 	m_vertexScalars = resource->m_vertexScalars;
 	m_pixelScalars = resource->m_pixelScalars;
@@ -184,6 +205,11 @@ bool ProgramPs3::create(MemoryHeap* memoryHeapLocal, MemoryHeap* memoryHeapMain,
 			for (uint32_t j = 0; j < 2; ++j)
 			{
 				m_patchPixelShaderUCode[i][j] = m_memoryHeapLocal->alloc(m_pixelShaderUCode->getSize(), m_pixelShaderUCode->getAlignment(), false);
+				if (!m_patchPixelShaderUCode[i][j] || !m_patchPixelShaderUCode[i][j]->getPointer())
+				{
+					log::error << L"Unable to create program; failed to allocate pixel ucode patch image!" << Endl;
+					return false;
+				}
 				std::memcpy(
 					m_patchPixelShaderUCode[i][j]->getPointer(),
 					m_pixelShaderUCode->getPointer(),

@@ -42,7 +42,7 @@ public:
 
 	ActionFunction2(
 		ActionContext* context,
-		const std::string& name,
+		const char* name,
 		const IActionVMImage* image,
 		uint8_t registerCount,
 		uint16_t flags,
@@ -54,7 +54,7 @@ public:
 	virtual ActionValue call(ActionObject* self, ActionObject* super, const ActionValueArray& args);
 
 protected:
-	virtual void trace(const IVisitor& visitor) const;
+	virtual void trace(visitor_t visitor) const;
 
 	virtual void dereference();
 

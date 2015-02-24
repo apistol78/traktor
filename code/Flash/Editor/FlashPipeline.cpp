@@ -5,6 +5,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
@@ -80,6 +81,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", 35, FlashPipeline
 FlashPipeline::FlashPipeline()
 :	m_generateMips(false)
 ,	m_useTextureCompression(true)
+,	m_textureSizeDenom(1)
 {
 }
 
@@ -88,6 +90,7 @@ bool FlashPipeline::create(const editor::IPipelineSettings* settings)
 	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
 	m_generateMips = settings->getProperty< PropertyBoolean >(L"FlashPipeline.GenerateMips", false);
 	m_useTextureCompression = settings->getProperty< PropertyBoolean >(L"FlashPipeline.UseTextureCompression", true);
+	m_textureSizeDenom = settings->getProperty< PropertyInteger >(L"FlashPipeline.TextureSizeDenom", 1);
 	return true;
 }
 
@@ -341,6 +344,13 @@ bool FlashPipeline::buildOutput(
 			output->m_sharpenRadius = 0;
 			output->m_systemTexture = true;
 
+			if (m_textureSizeDenom > 1)
+			{
+				output->m_scaleImage = true;
+				output->m_scaleWidth = atlasImage->getWidth() / m_textureSizeDenom;
+				output->m_scaleHeight = atlasImage->getHeight() / m_textureSizeDenom;
+			}
+
 			std::wstring bitmapOutputPath = Path(outputPath).getPathOnly() + L"/Textures/" + bitmapOutputGuid.format();
 			if (!pipelineBuilder->buildOutput(
 				output,
@@ -417,6 +427,13 @@ bool FlashPipeline::buildOutput(
 		output->m_alphaCoverageReference = 0.0f;
 		output->m_sharpenRadius = 0;
 		output->m_systemTexture = true;
+
+		if (m_textureSizeDenom > 1)
+		{
+			output->m_scaleImage = true;
+			output->m_scaleWidth = bitmapImage->getWidth() / m_textureSizeDenom;
+			output->m_scaleHeight = bitmapImage->getHeight() / m_textureSizeDenom;
+		}
 
 		std::wstring bitmapOutputPath = Path(outputPath).getPathOnly() + L"/Textures/" + bitmapOutputGuid.format();
 		if (!pipelineBuilder->buildOutput(

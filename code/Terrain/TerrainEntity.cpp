@@ -165,7 +165,7 @@ void TerrainEntity::render(
 	if (!coarseProgram || !detailProgram)
 		return;
 
-#if !defined(TARGET_OS_IPHONE)
+#if !defined(__IOS__) && !defined(__PS3__)
 	// \fixme Assume depth pass enabled; need some information about first pass from camera POV.
 	bool updateCache = bool(
 		worldRenderPass.getTechnique() == render::getParameterHandle(L"World_DepthWrite") ||
@@ -180,6 +180,7 @@ void TerrainEntity::render(
 	const Vector4& worldExtent = m_heightfield->getWorldExtent();
 
 	Matrix44 viewInv = worldRenderView.getView().inverse();
+	Matrix44 viewProj = worldRenderView.getProjection() * worldRenderView.getView();
 	Vector4 eyePosition = worldRenderView.getEyePosition();
 	Vector4 eyeDirection = worldRenderView.getEyeDirection();
 
@@ -217,7 +218,6 @@ void TerrainEntity::render(
 
 			if (worldCullFrustum.inside(patchAabb) != Frustum::IrOutside)
 			{
-				Matrix44 viewProj = worldRenderView.getProjection() * worldRenderView.getView();
 				Scalar lodDistance = (patchCenterWorld - eyePosition).xyz0().length();
 
 				CullPatch cp;

@@ -82,6 +82,7 @@ public:
 private:
 	int32_t m_size;
 	Vector4 m_worldExtent;
+	float m_worldExtentFloats[4];
 	AutoArrayPtr< height_t > m_heights;
 	AutoArrayPtr< uint8_t > m_cuts;
 	AutoArrayPtr< uint8_t > m_material;

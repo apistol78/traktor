@@ -60,7 +60,7 @@
 			<platform>{14814B5B-2FF1-2F4B-BE92-08CAB3D0D544}</platform>
 			<executableFile/>
 			<deployFiles>
-				<item>Extern.bullet-2.80.lib</item>
+				<item>Extern.bullet.lib</item>
 				<item>Traktor.Core.lib</item>
 				<item>Traktor.Database.lib</item>
 				<item>Traktor.Heightfield.lib</item>

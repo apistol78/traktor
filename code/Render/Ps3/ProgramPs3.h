@@ -75,7 +75,7 @@ private:
 	enum
 	{
 		PatchQueues = 2,
-		MaxPatchInQueue = 64
+		MaxPatchInQueue = 8
 	};
 
 	Ref< MemoryHeap > m_memoryHeapLocal;

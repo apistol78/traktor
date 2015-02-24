@@ -58,6 +58,7 @@ MemoryHeapObject* MemoryHeap::alloc(size_t size, size_t align, bool immutable)
 
 		if (alignedPtrEnd > m_heap + m_heapSize)
 		{
+			log::error << L"Out of mutable RSX heap memory; heap size " << m_heapSize << Endl;
 			T_FATAL_ERROR;
 			return 0;
 		}
@@ -72,7 +73,12 @@ MemoryHeapObject* MemoryHeap::alloc(size_t size, size_t align, bool immutable)
 		object->m_location = m_location;
 
 		int err = cellGcmAddressToOffset(object->m_pointer, &object->m_offset);
-		T_FATAL_ASSERT (err == CELL_OK);
+		if (err != CELL_OK)
+		{
+			log::error << L"cellGcmAddressToOffset failed, err " << err << Endl;
+			T_FATAL_ERROR;
+			return 0;
+		}
 
 		m_objects.push_back(object);
 	}
@@ -98,6 +104,7 @@ MemoryHeapObject* MemoryHeap::alloc(size_t size, size_t align, bool immutable)
 
 			if (immPtrEnd > m_heap + m_heapSize)
 			{
+				log::error << L"Out of immutable RSX heap memory; heap size " << m_heapSize << Endl;
 				T_FATAL_ERROR;
 				return 0;
 			}
@@ -124,7 +131,7 @@ MemoryHeapObject* MemoryHeap::alloc(size_t size, size_t align, bool immutable)
 						return 0;
 					}
 
-					log::debug << L"Moving immutable block from " << uint32_t(ptr1 - m_heap) << L" to " << uint32_t(ptr2 - m_heap) << (m_location == CELL_GCM_LOCATION_LOCAL ? L" (local)" : L" (main)") << Endl;
+					log::info << L"Moving mutable block from " << uint32_t(ptr1 - m_heap) << L" to " << uint32_t(ptr2 - m_heap) << (m_location == CELL_GCM_LOCATION_LOCAL ? L" (local)" : L" (main)") << Endl;
 
 					__builtin_memcpy(
 						ptr2,
@@ -134,7 +141,12 @@ MemoryHeapObject* MemoryHeap::alloc(size_t size, size_t align, bool immutable)
 
 					mutObject->m_pointer = ptr2;
 					int err = cellGcmAddressToOffset(mutObject->m_pointer, &mutObject->m_offset);
-					T_FATAL_ASSERT (err == CELL_OK);
+					if (err != CELL_OK)
+					{
+						log::error << L"cellGcmAddressToOffset failed, err " << err << Endl;
+						T_FATAL_ERROR;
+						return 0;
+					}
 
 					mutPtrEnd = ptr2 + mutObject->m_size;
 
@@ -154,7 +166,12 @@ MemoryHeapObject* MemoryHeap::alloc(size_t size, size_t align, bool immutable)
 			object->m_location = m_location;
 
 			int err = cellGcmAddressToOffset(object->m_pointer, &object->m_offset);
-			T_FATAL_ASSERT (err == CELL_OK);
+			if (err != CELL_OK)
+			{
+				log::error << L"cellGcmAddressToOffset failed, err " << err << Endl;
+				T_FATAL_ERROR;
+				return 0;
+			}
 
 			m_objects.insert(m_objects.begin() + (last + 1), object);
 		}
@@ -170,7 +187,12 @@ MemoryHeapObject* MemoryHeap::alloc(size_t size, size_t align, bool immutable)
 			object->m_location = m_location;
 
 			int err = cellGcmAddressToOffset(object->m_pointer, &object->m_offset);
-			T_FATAL_ASSERT (err == CELL_OK);
+			if (err != CELL_OK)
+			{
+				log::error << L"cellGcmAddressToOffset failed, err " << err << Endl;
+				T_FATAL_ERROR;
+				return 0;
+			}
 
 			m_objects.push_back(object);
 		}
@@ -183,6 +205,10 @@ void MemoryHeap::free(MemoryHeapObject* object)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ASSERT (object->m_heap == this);
+
+	// Ensure GPU is idle, i.e. not using any of our resources.
+	cellGcmFinish(gCellGcmCurrentContext, m_waitLabel);
+	m_waitLabel = incrementLabel(m_waitLabel);
 
 	std::vector< MemoryHeapObject* >::iterator i = std::find(m_objects.begin(), m_objects.end(), object);
 	T_ASSERT (i != m_objects.end());
@@ -227,6 +253,10 @@ void MemoryHeap::compact()
 	uint32_t count = uint32_t(m_objects.size());
 	if (!count)
 		return;
+
+	// Ensure GPU is idle, i.e. not using any of our resources.
+	cellGcmFinish(gCellGcmCurrentContext, m_waitLabel);
+	m_waitLabel = incrementLabel(m_waitLabel);
 
 	uint32_t i = 0;
 

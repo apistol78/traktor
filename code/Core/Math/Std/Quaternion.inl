@@ -6,6 +6,12 @@
 
 namespace traktor
 {
+	namespace
+	{
+
+const static Vector4 c_pppn(1.0f, 1.0f, 1.0f, -1.0f);
+
+	}
 
 T_MATH_INLINE Quaternion::Quaternion()
 {
@@ -295,8 +301,6 @@ T_MATH_INLINE Quaternion operator * (const Quaternion& l, float r)
 
 T_MATH_INLINE Quaternion operator * (const Quaternion& l, const Quaternion& r)
 {
-	const static Vector4 pppn(1.0f, 1.0f, 1.0f, -1.0f);
-
 	Vector4 l_wwww = l.e.shuffle< 3, 3, 3, 3 >();
 	Vector4 r_wwwx = r.e.shuffle< 3, 3, 3, 0 >();
 	Vector4 l_xyzx = l.e.shuffle< 0, 1, 2, 0 >();
@@ -307,8 +311,8 @@ T_MATH_INLINE Quaternion operator * (const Quaternion& l, const Quaternion& r)
 
 	return Quaternion(
 		l_wwww * r.e +
-		l_xyzx * r_wwwx * pppn +
-		l_yzxy * r_zxyy * pppn -
+		l_xyzx * r_wwwx * c_pppn +
+		l_yzxy * r_zxyy * c_pppn -
 		l_zxyz * r_yzxz
 	);
 }

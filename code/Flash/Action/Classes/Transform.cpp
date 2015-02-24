@@ -25,7 +25,7 @@ void Transform::setColorTransform(const ColorTransform* colorTransform)
 	m_instance->setColorTransform(colorTransform->getTransform());
 }
 
-void Transform::trace(const IVisitor& visitor) const
+void Transform::trace(visitor_t visitor) const
 {
 	visitor(m_instance);
 	ActionObjectRelay::trace(visitor);

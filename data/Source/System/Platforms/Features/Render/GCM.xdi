@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="4">
+<object type="traktor.amalgam.Feature" version="5">
 	<description>PS3 GCM</description>
 	<priority>0</priority>
 	<platforms>
 		<item>
 			<platform>{14814B5B-2FF1-2F4B-BE92-08CAB3D0D544}</platform>
+			<executableFile/>
 			<deployFiles>
 				<item>libsysutil_avconf_ext_stub.a</item>
 				<item>libgcm_cmd.a</item>
@@ -43,17 +44,17 @@
 				</second>
 			</item>
 			<item>
+				<first>ShaderPipeline.FrequentUniformsAsLinear</first>
+				<second type="traktor.PropertyBoolean">
+					<value>true</value>
+				</second>
+			</item>
+			<item>
 				<first>ShaderPipeline.IncludeOnlyTechniques</first>
 				<second type="traktor.PropertyStringSet">
 					<value>
 						<item>Default</item>
 					</value>
-				</second>
-			</item>
-			<item>
-				<first>ShaderPipeline.FrequentUniformsAsLinear</first>
-				<second type="traktor.PropertyBoolean">
-					<value>true</value>
 				</second>
 			</item>
 			<item>

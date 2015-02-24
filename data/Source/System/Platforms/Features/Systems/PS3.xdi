@@ -36,7 +36,25 @@
 				</second>
 			</item>
 			<item>
+				<first>FlashPipeline.TextureSizeDenom</first>
+				<second type="traktor.PropertyInteger">
+					<value>1</value>
+				</second>
+			</item>
+			<item>
 				<first>HeightfieldTexturePipeline.Use32bitHeightFormat</first>
+				<second type="traktor.PropertyBoolean">
+					<value>true</value>
+				</second>
+			</item>
+			<item>
+				<first>MeshPipeline.EnableCustomShaders</first>
+				<second type="traktor.PropertyBoolean">
+					<value>true</value>
+				</second>
+			</item>
+			<item>
+				<first>MeshPipeline.EnableCustomTemplates</first>
 				<second type="traktor.PropertyBoolean">
 					<value>true</value>
 				</second>
@@ -67,6 +85,12 @@
 			</item>
 			<item>
 				<first>ScenePipeline.SuppressPostProcess</first>
+				<second type="traktor.PropertyBoolean">
+					<value>true</value>
+				</second>
+			</item>
+			<item>
+				<first>ScenePipeline.SuppressShadows</first>
 				<second type="traktor.PropertyBoolean">
 					<value>true</value>
 				</second>
