@@ -47,12 +47,9 @@ IndexBufferDynamicDx11::~IndexBufferDynamicDx11()
 
 void IndexBufferDynamicDx11::destroy()
 {
-	if (!m_context)
-		return;
-
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_context->getLock());
 	m_context->releaseComRef(m_d3dBuffer);
 	m_context->releaseComRef(m_d3dDeferredContext);
-	m_context = 0;
 }
 
 void* IndexBufferDynamicDx11::lock()

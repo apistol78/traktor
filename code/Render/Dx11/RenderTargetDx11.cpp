@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Thread/Acquire.h"
 #include "Render/Types.h"
 #include "Render/Dx11/Platform.h"
 #include "Render/Dx11/RenderTargetDx11.h"
@@ -93,8 +94,7 @@ bool RenderTargetDx11::create(const RenderTargetSetCreateDesc& setDesc, const Re
 
 void RenderTargetDx11::destroy()
 {
-	if (!m_context)
-		return;
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_context->getLock());
 	m_context->releaseComRef(m_d3dTexture);
 	m_context->releaseComRef(m_d3dRenderTargetView);
 	m_context->releaseComRef(m_d3dTextureResourceView);

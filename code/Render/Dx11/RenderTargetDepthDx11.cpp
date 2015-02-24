@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Thread/Acquire.h"
 #include "Render/Types.h"
 #include "Render/Dx11/Platform.h"
 #include "Render/Dx11/RenderTargetDepthDx11.h"
@@ -128,8 +129,7 @@ bool RenderTargetDepthDx11::create(const RenderTargetSetCreateDesc& setDesc)
 
 void RenderTargetDepthDx11::destroy()
 {
-	if (!m_context)
-		return;
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_context->getLock());
 	m_context->releaseComRef(m_d3dTexture);
 	m_context->releaseComRef(m_d3dDepthTextureView);
 	m_context->releaseComRef(m_d3dTextureResourceView);

@@ -2,6 +2,7 @@
 #include "Core/Math/Const.h"
 #include "Core/Misc/Align.h"
 #include "Core/Misc/TString.h"
+#include "Core/Thread/Acquire.h"
 #include "Render/Dx11/Platform.h"
 #include "Render/Dx11/ContextDx11.h"
 #include "Render/Dx11/CubeTextureDx11.h"
@@ -200,6 +201,7 @@ bool ProgramDx11::create(
 		pm.name = resource->m_parameters[i].name;
 #endif
 		pm.offset = resource->m_parameters[i].offset;
+		pm.count = resource->m_parameters[i].count;
 	}
 
 	m_parameterFloatArray.resize(resource->m_parameterScalarSize);
@@ -216,8 +218,7 @@ bool ProgramDx11::create(
 
 void ProgramDx11::destroy()
 {
-	if (!m_context)
-		return;
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_context->getLock());
 
 	m_context->releaseComRef(m_d3dRasterizerState);
 	m_context->releaseComRef(m_d3dDepthStencilState);
@@ -230,7 +231,7 @@ void ProgramDx11::destroy()
 	for (uint32_t i = 0; i < sizeof_array(m_pixelState.cbuffer); ++i)
 		m_context->releaseComRef(m_pixelState.cbuffer[i].d3dBuffer);
 	m_context->releaseComRef(m_pixelState.d3dSamplerStates);
-	
+
 	m_d3dVertexShaderBlob = 0;
 
 	m_parameterMap.clear();
@@ -248,21 +249,13 @@ void ProgramDx11::setFloatArrayParameter(handle_t handle, const float* param, in
 	SmallMap< handle_t, ParameterMap >::iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
+		T_FATAL_ASSERT (length <= i->second.count);
 		if (storeIfNotEqual(param, length, &m_parameterFloatArray[i->second.offset]))
 		{
 			if (i->second.cbuffer[0])
 				i->second.cbuffer[0]->dirty = true;
 			if (i->second.cbuffer[1])
 				i->second.cbuffer[1]->dirty = true;
-#if defined(_DEBUG)
-			if (m_bindCount >= 1)
-			{
-				if (i->second.cbuffer[0] && i->second.cbuffer[0]->name == L"cbOnce")
-					T_DEBUG(L"cbOnce modified vertex " << i->second.name);
-				if (i->second.cbuffer[1] && i->second.cbuffer[1]->name == L"cbOnce")
-					T_DEBUG(L"cbOnce modified pixel " << i->second.name);
-			}
-#endif
 		}
 	}
 }
@@ -277,22 +270,13 @@ void ProgramDx11::setVectorArrayParameter(handle_t handle, const Vector4* param,
 	SmallMap< handle_t, ParameterMap >::iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
+		T_FATAL_ASSERT (length * 4 <= i->second.count);
 		if (storeIfNotEqual(param, length, &m_parameterFloatArray[i->second.offset]))
 		{
 			if (i->second.cbuffer[0])
 				i->second.cbuffer[0]->dirty = true;
 			if (i->second.cbuffer[1])
 				i->second.cbuffer[1]->dirty = true;
-
-#if defined(_DEBUG)
-			if (m_bindCount >= 1)
-			{
-				if (i->second.cbuffer[0] && i->second.cbuffer[0]->name == L"cbOnce")
-					T_DEBUG(L"cbOnce modified vertex " << i->second.name);
-				if (i->second.cbuffer[1] && i->second.cbuffer[1]->name == L"cbOnce")
-					T_DEBUG(L"cbOnce modified pixel " << i->second.name);
-			}
-#endif
 		}
 	}
 }
@@ -307,15 +291,6 @@ void ProgramDx11::setMatrixParameter(handle_t handle, const Matrix44& param)
 			i->second.cbuffer[0]->dirty = true;
 		if (i->second.cbuffer[1])
 			i->second.cbuffer[1]->dirty = true;
-#if defined(_DEBUG)
-		if (m_bindCount >= 1)
-		{
-			if (i->second.cbuffer[0] && i->second.cbuffer[0]->name == L"cbOnce")
-				T_DEBUG(L"cbOnce modified vertex " << i->second.name);
-			if (i->second.cbuffer[1] && i->second.cbuffer[1]->name == L"cbOnce")
-				T_DEBUG(L"cbOnce modified pixel " << i->second.name);
-		}
-#endif
 	}
 }
 
@@ -324,21 +299,13 @@ void ProgramDx11::setMatrixArrayParameter(handle_t handle, const Matrix44* param
 	SmallMap< handle_t, ParameterMap >::iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
+		T_FATAL_ASSERT (length * 16 <= i->second.count);
 		for (int j = 0; j < length; ++j)
 			param[j].storeAligned(&m_parameterFloatArray[i->second.offset + j * 16]);
 		if (i->second.cbuffer[0])
 			i->second.cbuffer[0]->dirty = true;
 		if (i->second.cbuffer[1])
 			i->second.cbuffer[1]->dirty = true;
-#if defined(_DEBUG)
-		if (m_bindCount >= 1)
-		{
-			if (i->second.cbuffer[0] && i->second.cbuffer[0]->name == L"cbOnce")
-				T_DEBUG(L"cbOnce modified vertex " << i->second.name);
-			if (i->second.cbuffer[1] && i->second.cbuffer[1]->name == L"cbOnce")
-				T_DEBUG(L"cbOnce modified pixel " << i->second.name);
-		}
-#endif
 	}
 }
 

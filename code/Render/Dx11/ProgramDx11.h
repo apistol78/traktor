@@ -106,6 +106,7 @@ private:
 		std::wstring name;
 #endif
 		uint32_t offset;
+		uint32_t count;
 		CBuffer* cbuffer[2];
 
 		ParameterMap()

@@ -1,5 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
+#include "Core/Thread/Acquire.h"
 #include "Render/Dx11/ContextDx11.h"
 #include "Render/Dx11/Platform.h"
 #include "Render/Dx11/TypesDx11.h"
@@ -70,15 +71,15 @@ VertexBufferStaticDx11::~VertexBufferStaticDx11()
 
 void VertexBufferStaticDx11::destroy()
 {
-	if (m_bufferHeap)
-	{
-		m_bufferHeap->free(m_bufferChunk);
-		m_bufferHeap = 0;
-	}
 	if (m_context)
 	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_context->getLock());
+		if (m_bufferHeap)
+		{
+			m_bufferHeap->free(m_bufferChunk);
+			m_bufferHeap = 0;
+		}
 		m_context->releaseComRef(m_d3dBuffer);
-		m_context = 0;
 	}
 }
 
