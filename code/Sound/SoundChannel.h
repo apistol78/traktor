@@ -3,8 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/Containers/CircularVector.h"
-#include "Core/Thread/Event.h"
-#include "Core/Thread/Semaphore.h"
+#include "Core/Thread/DoubleBuffer.h"
 #include "Sound/Types.h"
 
 // import/export mechanism.
@@ -42,23 +41,20 @@ class T_DLLCLASS SoundChannel : public Object
 public:
 	virtual ~SoundChannel();
 
-	/*! \brief Get category. */
-	handle_t getCategory() const;
-
 	/*! \brief Set channel volume. */
 	void setVolume(float volume);
 
-	/*! \brief Associate filter in channel. */
-	void setFilter(const IFilter* filter);
-
-	/*! \brief Get currently associated filter. */
-	const IFilter* getFilter() const;
+	/*! \brief Get channel volume. */
+	float getVolume() const;
 
 	/*! \brief Set pitch. */
 	void setPitch(float pitch);
 
 	/*! \brief Get current pitch. */
 	float getPitch() const;
+
+	/*! \brief Associate filter in channel. */
+	void setFilter(const IFilter* filter);
 
 	/*! \brief Set cursor parameter. */
 	void setParameter(handle_t id, float parameter);
@@ -73,7 +69,7 @@ public:
 	 * \param volume Sound volume.
 	 * \param presence Sound presence.
 	 * \param presenceRate Sound presence recover rate.
-	 * \param repeat Number of times to repreat sound.
+	 * \param repeat Number of times to repeat sound.
 	 * \return True if sound is playing successfully.
 	 */
 	bool play(
@@ -92,28 +88,30 @@ public:
 	void stop();
 
 	/*! \brief Return current playing sound's cursor. */
-	ISoundBufferCursor* getCursor() const;
+	ISoundBufferCursor* getCursor();
 
 private:
 	friend class SoundSystem;
 
-	struct State
+	struct StateFilter
+	{
+		Ref< const IFilter > filter;
+		Ref< IFilterInstance > filterInstance;
+	};
+
+	struct StateSound
 	{
 		Ref< const ISoundBuffer > buffer;
 		Ref< ISoundBufferCursor > cursor;
-		Ref< const IFilter > filter;
-		Ref< IFilterInstance > filterInstance;
 		handle_t category;
 		float volume;
-		float pitch;
 		float presence;
 		float presenceRate;
 		uint32_t repeat;
 
-		State()
+		StateSound()
 		:	category(0)
 		,	volume(1.0f)
-		,	pitch(1.0f)
 		,	presence(0.0f)
 		,	presenceRate(1.0f)
 		,	repeat(0)
@@ -121,37 +119,32 @@ private:
 		}
 	};
 
-	struct ParameterQueue
+	struct StateParameter
 	{
-		handle_t id;
-		float parameter;
-
-		ParameterQueue()
-		{
-		}
-
-		ParameterQueue(handle_t id_, float parameter_)
-		:	id(id_)
-		,	parameter(parameter_)
-		{
-		}
+		CircularVector< std::pair< handle_t, float >, 4 > set;
 	};
 
 	uint32_t m_id;
-	Event& m_eventFinish;
 	uint32_t m_hwSampleRate;	//< Hardware sample rate.
 	uint32_t m_hwFrameSamples;	//< Hardware frame size in samples.
-	Semaphore m_lock;
-	Semaphore m_parameterQueueLock;
-	CircularVector< ParameterQueue, 4 > m_parameterQueue;
 	float m_volume;
-	State m_state;
+	float m_pitch;
+	bool m_playing;
+	bool m_allowRepeat;
+	DoubleBuffer< StateFilter > m_stateFilter;
+	DoubleBuffer< StateSound > m_stateSound;
+	DoubleBuffer< StateParameter > m_stateParameters;
 	float* m_outputSamples[SbcMaxChannelCount];
 	uint32_t m_outputSamplesIn;
 
-	SoundChannel(uint32_t id, Event& eventFinish, uint32_t hwSampleRate, uint32_t hwFrameSamples);
+	SoundChannel(uint32_t id, uint32_t hwSampleRate, uint32_t hwFrameSamples);
 
-	bool getBlock(const ISoundMixer* mixer, double time, SoundBlock& outBlock);
+	bool getBlock(
+		const ISoundMixer* mixer,
+		double time,
+		SoundBlock& outBlock,
+		SoundBlockMeta& outBlockMeta
+	);
 };
 
 	}
