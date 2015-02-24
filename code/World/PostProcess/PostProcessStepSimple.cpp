@@ -70,6 +70,9 @@ PostProcessStepSimple::InstanceSimple::InstanceSimple(const PostProcessStepSimpl
 
 void PostProcessStepSimple::InstanceSimple::destroy()
 {
+	m_step = 0;
+	m_shader.clear();
+	m_sources.clear();
 }
 
 void PostProcessStepSimple::InstanceSimple::render(

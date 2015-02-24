@@ -2,6 +2,8 @@
 #define traktor_DoubleBuffer_H
 
 #include "Core/Thread/Atomic.h"
+#include "Core/Thread/ThreadManager.h"
+#include "Core/Thread/Thread.h"
 
 namespace traktor
 {
@@ -29,7 +31,8 @@ public:
 
 	Type& beginWrite()
 	{
-		while (Atomic::compareAndSwap(m_lock, 0, 1) != 1);
+		Thread* thread = ThreadManager::getInstance().getCurrentThread();
+		while (Atomic::compareAndSwap(m_lock, 0, 1) != 1) { thread->yield(); }
 		return m_data[m_index];
 	}
 
@@ -43,7 +46,8 @@ public:
 	{
 		if (m_write != m_read)
 		{
-			while (Atomic::compareAndSwap(m_lock, 0, 2) != 2);
+			Thread* thread = ThreadManager::getInstance().getCurrentThread();
+			while (Atomic::compareAndSwap(m_lock, 0, 2) != 2) { thread->yield(); }
 			m_index = 1 - m_index;
 			m_read = m_write;
 			m_lock = 0;

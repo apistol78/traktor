@@ -1,6 +1,7 @@
 #include <xmmintrin.h>
 #include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
+#include "Core/Thread/Acquire.h"
 #include "Render/Dx11/ContextDx11.h"
 #include "Render/Dx11/Platform.h"
 #include "Render/Dx11/TypesDx11.h"
@@ -124,11 +125,11 @@ VertexBufferDynamicDx11::~VertexBufferDynamicDx11()
 
 void VertexBufferDynamicDx11::destroy()
 {
-	if (!m_context)
-		return;
-
-	m_context->releaseComRef(m_d3dBuffer);
-	m_context = 0;
+	if (m_context)
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_context->getLock());
+		m_context->releaseComRef(m_d3dBuffer);
+	}
 }
 
 void* VertexBufferDynamicDx11::lock()

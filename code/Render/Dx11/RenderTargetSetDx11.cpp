@@ -1,5 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Thread/Acquire.h"
 #include "Render/Types.h"
 #include "Render/Dx11/Platform.h"
 #include "Render/Dx11/ContextDx11.h"
@@ -56,6 +57,7 @@ bool RenderTargetSetDx11::create(const RenderTargetSetCreateDesc& setDesc)
 
 void RenderTargetSetDx11::destroy()
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_context->getLock());
 	for (RefArray< RenderTargetDx11 >::iterator i = m_colorTextures.begin(); i != m_colorTextures.end(); ++i)
 	{
 		if (*i)
