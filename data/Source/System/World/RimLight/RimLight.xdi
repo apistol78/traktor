@@ -4,8 +4,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>48</first>
-				<second>315</second>
+				<first>-19</first>
+				<second>195</second>
 			</position>
 			<name>Normal</name>
 			<connectable>true</connectable>
@@ -109,8 +109,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>44</first>
-				<second>227</second>
+				<first>-13</first>
+				<second>109</second>
 			</position>
 			<name>EyeDirection</name>
 			<connectable>true</connectable>
@@ -120,8 +120,8 @@
 		<item type="traktor.render.Dot">
 			<comment/>
 			<position>
-				<first>278</first>
-				<second>252</second>
+				<first>199</first>
+				<second>166</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
@@ -137,6 +137,13 @@
 			<position>
 				<first>599</first>
 				<second>254</second>
+			</position>
+		</item>
+		<item type="traktor.render.Abs">
+			<comment/>
+			<position>
+				<first>422</first>
+				<second>117</second>
 			</position>
 		</item>
 	</nodes>
@@ -223,16 +230,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[13]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[14]"/>
 				<name>Output</name>
 			</source>
@@ -289,6 +286,26 @@
 			<destination>
 				<node ref="/object/nodes/item[6]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[13]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[16]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[16]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Input1</name>
 			</destination>
 		</item>
 	</edges>
