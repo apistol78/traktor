@@ -1,6 +1,7 @@
 #include "Core/Containers/StaticVector.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
+#include "Core/Math/Format.h"
 #include "Core/Misc/String.h"
 #include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
@@ -37,7 +38,8 @@ void convertKeyPose(
 	const BvhJoint* joint,
 	const BvhDocument::cv_t& cv,
 	Animation::KeyPose& kp,
-	int32_t& jointIndex
+	int32_t& jointIndex,
+	const Vector4& modifier
 )
 {
 	const RefArray< BvhJoint >& children = joint->getChildren();
@@ -58,11 +60,11 @@ void convertKeyPose(
 			float c = cv[offset++];
 
 			if (*k == L"Xposition")
-				P += Vector4(c, 0.0f, 0.0f, 0.0f);
+				P += Vector4(c, 0.0f, 0.0f, 0.0f) * modifier;
 			else if (*k == L"Yposition")
-				P += Vector4(0.0f, c, 0.0f, 0.0f);
+				P += Vector4(0.0f, c, 0.0f, 0.0f) * modifier;
 			else if (*k == L"Zposition")
-				P += Vector4(0.0f, 0.0f, c, 0.0f);
+				P += Vector4(0.0f, 0.0f, c, 0.0f) * modifier;
 
 			else if (*k == L"Xrotation")
 				rotations.push_back(Vector4(deg2rad(c), 0.0f, 0.0f, 0.0f));
@@ -100,7 +102,8 @@ void convertKeyPose(
 			childJoint,
 			cv,
 			kp,
-			jointIndex
+			jointIndex,
+			modifier
 		);
 	}
 }
@@ -111,6 +114,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationFormatBvh", AnimationFormatB
 
 Ref< Animation > AnimationFormatBvh::import(IStream* stream, const Vector4& offset, bool invertX, bool invertZ) const
 {
+	const float c_skeletonjointRadius = 0.25f;
 	const Vector4 c_jointModifier(
 		invertX ? -1.0f : 1.0f, 
 		1.0f, 
@@ -118,8 +122,6 @@ Ref< Animation > AnimationFormatBvh::import(IStream* stream, const Vector4& offs
 		1.0f
 	);
 
-	const float c_skeletonjointRadius = 0.25f;
-	
 	Ref< BvhDocument > document = BvhDocument::parse(stream, c_jointModifier);
 	if (!document)
 		return 0;
@@ -148,7 +150,8 @@ Ref< Animation > AnimationFormatBvh::import(IStream* stream, const Vector4& offs
 			document->getRootJoint(),
 			*i,
 			kp,
-			jointIndex
+			jointIndex,
+			c_jointModifier
 		);
 
 		anim->addKeyPose(kp);
@@ -156,40 +159,21 @@ Ref< Animation > AnimationFormatBvh::import(IStream* stream, const Vector4& offs
 		at += document->getFrameTime();
 	}
 
-	// Re-center key poses; assume first key pose are centered and
-	// calculate offset from it.
 	uint32_t poseCount = anim->getKeyPoseCount();
 	if (poseCount > 1)
 	{
 		uint32_t jointCount = skeleton->getJointCount();
 		for (uint32_t i = 0; i < jointCount; ++i)
 		{
-			if (skeleton->getJoint(i)->getParent() < 0)
+			Vector4 offset = anim->getKeyPose(0).pose.getJointOffset(i);
+			for (uint32_t j = 0; j < poseCount; ++j)
 			{
-				Vector4 offset = anim->getKeyPose(0).pose.getJointOffset(i);
-				for (uint32_t j = 0; j < poseCount; ++j)
-				{
-					Vector4 poseOffset = anim->getKeyPose(j).pose.getJointOffset(i);
-					anim->getKeyPose(j).pose.setJointOffset(i, poseOffset - offset);
-				}
-			}
-			else
-			{
-				Vector4 offset = anim->getKeyPose(0).pose.getJointOffset(i);
-				for (uint32_t j = 0; j < poseCount; ++j)
-				{
-					Vector4 poseOffset = anim->getKeyPose(j).pose.getJointOffset(i);
-					anim->getKeyPose(j).pose.setJointOffset(i, poseOffset - offset);
-				}
-
-				// For now we reset child joint offsets as they are expressed
-				// in world space from BVH but in parent space in our animations.
-				//for (uint32_t j = 0; j < poseCount; ++j)
-				//	anim->getKeyPose(j).pose.setJointOffset(i, Vector4::zero());
+				Vector4 poseOffset = anim->getKeyPose(j).pose.getJointOffset(i);
+				anim->getKeyPose(j).pose.setJointOffset(i, poseOffset - offset);
 			}
 		}
 	}
-	
+
 	return anim;
 }
 

@@ -34,14 +34,6 @@ Ref< IPoseController > StatePoseControllerData::createInstance(resource::IResour
 	if (!resourceManager->bind(m_stateGraph, stateGraph))
 		return 0;
 
-	// Ensure state node resources are loaded as well.
-	const RefArray< StateNode >& states = stateGraph->getStates();
-	for (RefArray< StateNode >::const_iterator i = states.begin(); i != states.end(); ++i)
-	{
-		if (!(*i)->bind(resourceManager))
-			return 0;
-	}
-
 	Ref< StatePoseController > poseController = new StatePoseController(stateGraph);
 
 	// Randomize time offset; pre-evaluate controller until offset reached.

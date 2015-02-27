@@ -1,5 +1,6 @@
 #include "Animation/Animation/AnimationFactory.h"
 #include "Animation/Animation/StateGraph.h"
+#include "Animation/Animation/StateNode.h"
 #include "Animation/Animation/Animation.h"
 #include "Animation/Skeleton.h"
 #include "Animation/Pose.h"
@@ -44,7 +45,18 @@ bool AnimationFactory::isCacheable() const
 
 Ref< Object > AnimationFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
 {
-	return m_db->getObjectReadOnly(guid);
+	Ref< Object > object = m_db->getObjectReadOnly(guid);
+	if (StateGraph* stateGraph = dynamic_type_cast< StateGraph* >(object))
+	{
+		// Ensure state node resources are loaded as well.
+		const RefArray< StateNode >& states = stateGraph->getStates();
+		for (RefArray< StateNode >::const_iterator i = states.begin(); i != states.end(); ++i)
+		{
+			if (!(*i)->bind(resourceManager))
+				return 0;
+		}
+	}
+	return object;
 }
 
 	}
