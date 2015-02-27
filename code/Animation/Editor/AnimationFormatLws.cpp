@@ -63,7 +63,7 @@ Quaternion calculateReferenceOrientation(const Skeleton* skeleton, int32_t joint
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationFormatLws", AnimationFormatLws, IAnimationFormat)
 
-Ref< Animation > AnimationFormatLws::import(IStream* stream, const Vector4& offset, bool invertX, bool invertZ) const
+Ref< Animation > AnimationFormatLws::import(IStream* stream, const Vector4& offset, bool invertX, bool invertZ, bool autoCenterKeyPoses) const
 {
 	Ref< LwsDocument > document = LwsDocument::parse(stream);
 	if (!document)

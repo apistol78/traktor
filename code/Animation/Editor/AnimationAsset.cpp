@@ -8,12 +8,13 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.AnimationAsset", 1, AnimationAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.AnimationAsset", 2, AnimationAsset, editor::Asset)
 
 AnimationAsset::AnimationAsset()
 :	m_offset(Vector4::origo())
 ,	m_invertX(false)
 ,	m_invertZ(false)
+,	m_autoCenterKeyPoses(true)
 {
 }
 
@@ -27,6 +28,9 @@ void AnimationAsset::serialize(ISerializer& s)
 		s >> Member< bool >(L"invertX", m_invertX);
 		s >> Member< bool >(L"invertZ", m_invertZ);
 	}
+
+	if (s.getVersion() >= 2)
+		s >> Member< bool >(L"autoCenterKeyPoses", m_autoCenterKeyPoses);
 }
 
 	}
