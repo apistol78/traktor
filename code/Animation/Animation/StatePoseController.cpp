@@ -98,16 +98,24 @@ bool StatePoseController::evaluate(
 	if (!skeleton)
 		return false;
 
+	if (m_stateGraph.changed())
+	{
+		m_currentState = 0;
+		m_stateGraph.consume();
+	}
+
 	// Prepare graph evaluation context.
-	if (m_stateGraph.changed() || !m_currentState)
+	if (!m_currentState)
 	{
 		m_currentState = m_stateGraph->getRootState();
 		if (m_currentState)
-			m_currentState->prepareContext(m_currentStateContext);
+		{
+			if (!m_currentState->prepareContext(m_currentStateContext))
+				return false;
+		}
 		m_nextState = 0;
 		m_blendState = 0.0f;
 		m_blendDuration = 0.0f;
-		m_stateGraph.consume();
 	}
 
 	if (!m_currentState)

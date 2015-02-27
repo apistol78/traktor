@@ -97,7 +97,7 @@ public:
 	 */
 	ResourceType* getResource() const
 	{
-		return checked_type_cast< ResourceType*, true >(m_handle->get());
+		return checked_type_cast< ResourceType*, true >(m_handle ? m_handle->get() : 0);
 	}
 
 	/*! \brief Clear proxy; becoming completely unbound. */
