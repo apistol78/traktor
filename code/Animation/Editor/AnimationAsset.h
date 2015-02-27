@@ -32,10 +32,13 @@ public:
 
 	bool getInvertZ() const { return m_invertZ; }
 
+	bool shouldAutoCenterKeyPoses() const { return m_autoCenterKeyPoses; }
+
 private:
 	Vector4 m_offset;
 	bool m_invertX;
 	bool m_invertZ;
+	bool m_autoCenterKeyPoses;
 };
 
 	}

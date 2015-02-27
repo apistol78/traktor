@@ -112,7 +112,7 @@ void convertKeyPose(
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationFormatBvh", AnimationFormatBvh, IAnimationFormat)
 
-Ref< Animation > AnimationFormatBvh::import(IStream* stream, const Vector4& offset, bool invertX, bool invertZ) const
+Ref< Animation > AnimationFormatBvh::import(IStream* stream, const Vector4& offset, bool invertX, bool invertZ, bool autoCenterKeyPoses) const
 {
 	const float c_skeletonjointRadius = 0.25f;
 	const Vector4 c_jointModifier(
@@ -159,17 +159,20 @@ Ref< Animation > AnimationFormatBvh::import(IStream* stream, const Vector4& offs
 		at += document->getFrameTime();
 	}
 
-	uint32_t poseCount = anim->getKeyPoseCount();
-	if (poseCount > 1)
+	if (autoCenterKeyPoses)
 	{
-		uint32_t jointCount = skeleton->getJointCount();
-		for (uint32_t i = 0; i < jointCount; ++i)
+		uint32_t poseCount = anim->getKeyPoseCount();
+		if (poseCount > 1)
 		{
-			Vector4 offset = anim->getKeyPose(0).pose.getJointOffset(i);
-			for (uint32_t j = 0; j < poseCount; ++j)
+			uint32_t jointCount = skeleton->getJointCount();
+			for (uint32_t i = 0; i < jointCount; ++i)
 			{
-				Vector4 poseOffset = anim->getKeyPose(j).pose.getJointOffset(i);
-				anim->getKeyPose(j).pose.setJointOffset(i, poseOffset - offset);
+				Vector4 offset = anim->getKeyPose(0).pose.getJointOffset(i);
+				for (uint32_t j = 0; j < poseCount; ++j)
+				{
+					Vector4 poseOffset = anim->getKeyPose(j).pose.getJointOffset(i);
+					anim->getKeyPose(j).pose.setJointOffset(i, poseOffset - offset);
+				}
 			}
 		}
 	}

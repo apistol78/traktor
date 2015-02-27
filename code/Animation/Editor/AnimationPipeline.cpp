@@ -92,7 +92,8 @@ bool AnimationPipeline::buildOutput(
 		file, 
 		animationAsset->getOffset(),
 		animationAsset->getInvertX(),
-		animationAsset->getInvertZ()
+		animationAsset->getInvertZ(),
+		animationAsset->shouldAutoCenterKeyPoses()
 	);
 
 	file->close();
