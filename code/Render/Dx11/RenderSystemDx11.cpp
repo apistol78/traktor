@@ -197,8 +197,9 @@ bool RenderSystemDx11::create(const RenderSystemDesc& desc)
 		return false;
 	}
 
-	// Do not allow more than 2 frames of latency.
-	hr = dxgiDevice->SetMaximumFrameLatency(2);
+	// Do not allow more than 1 frames of latency, this will ensure application
+	// only renders after present.
+	hr = dxgiDevice->SetMaximumFrameLatency(1);
 	if (FAILED(hr))
 		log::warning << L"Unable to cap frame latency on DXGI output" << Endl;
 
