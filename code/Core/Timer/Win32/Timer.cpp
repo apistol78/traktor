@@ -3,6 +3,12 @@
 
 namespace traktor
 {
+	namespace
+	{
+
+int64_t s_frequency = 0;
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Timer", Timer, Object)
 
@@ -12,7 +18,10 @@ Timer::Timer()
 ,	m_last(0)
 ,	m_paused(true)
 {
-	QueryPerformanceFrequency(reinterpret_cast <LARGE_INTEGER* >(&m_frequency));
+	if (!s_frequency)
+		QueryPerformanceFrequency(reinterpret_cast <LARGE_INTEGER* >(&s_frequency));
+
+	m_frequency = s_frequency;
 }
 
 void Timer::start()
