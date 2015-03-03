@@ -41,6 +41,7 @@ const wchar_t* c_languages[] =
 	L"Bosnian", L"bs",
 	L"Bulgarian", L"bg",
 	L"Cebuano", L"ceb",
+	L"Czech", L"cs",
 	L"Danish", L"da",
 	L"Dutch", L"nl",
 	L"English", L"en",
