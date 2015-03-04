@@ -51,8 +51,7 @@ ActionValue ActionFunction1::call(ActionObject* self, ActionObject* super, const
 		this
 	);
 
-	for (SmallMap< uint32_t, ActionValue >::const_iterator i = m_variables.begin(); i != m_variables.end(); ++i)
-		callFrame.setScopeVariable(i->first, i->second);
+	callFrame.setScopeVariables(m_variables);
 
 	ActionValueStack& callStack = callFrame.getStack();
 

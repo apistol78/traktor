@@ -16,6 +16,14 @@ namespace traktor
 		namespace
 		{
 
+input::handle_t anyHandle(const script::Any& id)
+{
+	if (script::CastAny< input::handle_t >::accept(id))
+		return script::CastAny< input::handle_t >::get(id);
+	else
+		return input::getParameterHandle(script::CastAny< std::wstring >::get(id));
+}
+
 int32_t input_IInputDevice_getCategory(input::IInputDevice* self)
 {
 	return int32_t(self->getCategory());
@@ -63,14 +71,74 @@ input::IInputDevice* input_InputSystem_getDeviceByCategory(input::InputSystem* s
 	return self->getDevice((input::InputCategory)category, index, connected);
 }
 
+input::handle_t input_InputMapping_getHandle(const std::wstring& id)
+{
+	return input::getParameterHandle(id);
+}
+
 void input_InputMapping_reset_0(input::InputMapping* self)
 {
 	self->reset();
 }
 
-void input_InputMapping_reset_1(input::InputMapping* self, const std::wstring& id)
+void input_InputMapping_reset_1(input::InputMapping* self, const script::Any& id)
 {
-	self->reset(id);
+	self->reset(anyHandle(id));
+}
+
+void input_InputMapping_setValue(input::InputMapping* self, const script::Any& id, float value)
+{
+	self->setValue(anyHandle(id), value);
+}
+
+float input_InputMapping_getValue(input::InputMapping* self, const script::Any& id)
+{
+	return self->getValue(anyHandle(id));
+}
+
+input::IInputSource* input_InputMapping_getSource(input::InputMapping* self, const script::Any& id)
+{
+	return self->getSource(anyHandle(id));
+}
+
+input::InputState* input_InputMapping_getState(input::InputMapping* self, const script::Any& id)
+{
+	return self->getState(anyHandle(id));
+}
+
+float input_InputMapping_getStateValue(input::InputMapping* self, const script::Any& id)
+{
+	return self->getStateValue(anyHandle(id));
+}
+
+float input_InputMapping_getStatePreviousValue(input::InputMapping* self, const script::Any& id)
+{
+	return self->getStatePreviousValue(anyHandle(id));
+}
+
+bool input_InputMapping_isStateDown(input::InputMapping* self, const script::Any& id)
+{
+	return self->isStateDown(anyHandle(id));
+}
+
+bool input_InputMapping_isStateUp(input::InputMapping* self, const script::Any& id)
+{
+	return self->isStateUp(anyHandle(id));
+}
+
+bool input_InputMapping_isStatePressed(input::InputMapping* self, const script::Any& id)
+{
+	return self->isStatePressed(anyHandle(id));
+}
+
+bool input_InputMapping_isStateReleased(input::InputMapping* self, const script::Any& id)
+{
+	return self->isStateReleased(anyHandle(id));
+}
+
+bool input_InputMapping_hasStateChanged(input::InputMapping* self, const script::Any& id)
+{
+	return self->hasStateChanged(anyHandle(id));
 }
 
 		}
@@ -113,19 +181,20 @@ void registerInputClasses(script::IScriptManager* scriptManager)
 	scriptManager->registerClass(classInputSystem);
 
 	Ref< script::AutoScriptClass< input::InputMapping > > classInputMapping = new script::AutoScriptClass< input::InputMapping >();
+	classInputMapping->addStaticMethod("getHandle", &input_InputMapping_getHandle);
 	classInputMapping->addMethod("reset", &input_InputMapping_reset_0);
 	classInputMapping->addMethod("reset", &input_InputMapping_reset_1);
-	classInputMapping->addMethod< void, const std::wstring&, float >("setValue", &input::InputMapping::setValue);
-	classInputMapping->addMethod< float, const std::wstring& >("getValue", &input::InputMapping::getValue);
-	classInputMapping->addMethod< input::IInputSource*, const std::wstring& >("getSource", &input::InputMapping::getSource);
-	classInputMapping->addMethod< input::InputState*, const std::wstring& >("getState", &input::InputMapping::getState);
-	classInputMapping->addMethod< float, const std::wstring& >("getStateValue", &input::InputMapping::getStateValue);
-	classInputMapping->addMethod< float, const std::wstring& >("getStatePreviousValue", &input::InputMapping::getStatePreviousValue);
-	classInputMapping->addMethod< bool, const std::wstring& >("isStateDown", &input::InputMapping::isStateDown);
-	classInputMapping->addMethod< bool, const std::wstring& >("isStateUp", &input::InputMapping::isStateUp);
-	classInputMapping->addMethod< bool, const std::wstring& >("isStatePressed", &input::InputMapping::isStatePressed);
-	classInputMapping->addMethod< bool, const std::wstring& >("isStateReleased", &input::InputMapping::isStateReleased);
-	classInputMapping->addMethod< bool, const std::wstring& >("hasStateChanged", &input::InputMapping::hasStateChanged);
+	classInputMapping->addMethod("setValue", &input_InputMapping_setValue);
+	classInputMapping->addMethod("getValue", &input_InputMapping_getValue);
+	classInputMapping->addMethod("getSource", &input_InputMapping_getSource);
+	classInputMapping->addMethod("getState", &input_InputMapping_getState);
+	classInputMapping->addMethod("getStateValue", &input_InputMapping_getStateValue);
+	classInputMapping->addMethod("getStatePreviousValue", &input_InputMapping_getStatePreviousValue);
+	classInputMapping->addMethod("isStateDown", &input_InputMapping_isStateDown);
+	classInputMapping->addMethod("isStateUp", &input_InputMapping_isStateUp);
+	classInputMapping->addMethod("isStatePressed", &input_InputMapping_isStatePressed);
+	classInputMapping->addMethod("isStateReleased", &input_InputMapping_isStateReleased);
+	classInputMapping->addMethod("hasStateChanged", &input_InputMapping_hasStateChanged);
 	classInputMapping->addMethod("getIdleDuration", &input::InputMapping::getIdleDuration);
 	scriptManager->registerClass(classInputMapping);
 

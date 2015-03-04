@@ -57,6 +57,8 @@ public:
 
 	bool hasScopeVariable(uint32_t variableName) const;
 
+	void setScopeVariables(const SmallMap< uint32_t, ActionValue >& variables);
+
 	void setScopeVariable(uint32_t variableName, const ActionValue& variableValue);
 
 	bool getScopeVariable(uint32_t variableName, ActionValue& outVariableValue) const;

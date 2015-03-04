@@ -201,6 +201,19 @@ ActionValue::~ActionValue()
 	T_EXCEPTION_GUARD_END
 }
 
+void ActionValue::clear()
+{
+	if (m_type == AvtString && m_value.s)
+		refStringDec(m_value.s);
+	else if (m_type == AvtObject)
+		{ T_SAFE_RELEASE (m_value.o); }
+	else if (m_type == AvtObjectWeak)
+		{ T_SAFE_RELEASE_WEAK_REF(m_value.o); }
+
+	m_type = AvtUndefined;
+	m_value.o = 0;
+}
+
 bool ActionValue::getBoolean() const
 {
 	T_VALIDATE(*this);

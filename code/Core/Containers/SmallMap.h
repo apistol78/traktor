@@ -109,6 +109,12 @@ public:
 	{
 		insert(std::make_pair(key, item));
 	}
+
+	void insert(const const_iterator& first, const const_iterator& last)
+	{
+		for (const_iterator i = first; i != last; ++i)
+			insert(*i);
+	}
 	
 	iterator erase(const iterator& it)
 	{

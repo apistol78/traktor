@@ -70,6 +70,11 @@ bool ActionFrame::hasScopeVariable(uint32_t variableName) const
 	return i != m_localVariables.end();
 }
 
+void ActionFrame::setScopeVariables(const SmallMap< uint32_t, ActionValue >& variables)
+{
+	m_scopeVariables.insert(variables.begin(), variables.end());
+}
+
 void ActionFrame::setScopeVariable(uint32_t variableName, const ActionValue& variableValue)
 {
 	m_scopeVariables[variableName] = variableValue;

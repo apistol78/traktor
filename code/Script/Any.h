@@ -87,6 +87,8 @@ public:
 
 	bool isTypeInfo() const { return m_type == AtTypeInfo; }
 
+	bool isNumeric() const { return isInteger() || isFloat(); }
+
 	// \name Unsafe accessors.
 	// \{
 
