@@ -2,6 +2,7 @@
 #define traktor_flash_ActionValuePool_H
 
 #include "Core/Misc/AutoPtr.h"
+#include "Flash/Action/ActionValue.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -36,7 +37,7 @@ public:
 			m_offset = m_pool.offset();
 		}
 
-		virtual ~Scope()
+		~Scope()
 		{
 			m_pool.rewind(m_offset);
 		}
@@ -78,7 +79,7 @@ public:
 	{
 		T_ASSERT (offset <= m_next);
 		for (uint32_t i = offset; i < m_next; ++i)
-			m_top[i] = ActionValue();
+			m_top[i].clear();
 		m_next = offset;
 	}
 

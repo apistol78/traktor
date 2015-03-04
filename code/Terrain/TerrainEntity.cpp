@@ -219,6 +219,8 @@ void TerrainEntity::render(
 			if (worldCullFrustum.inside(patchAabb) != Frustum::IrOutside)
 			{
 				Scalar lodDistance = (patchCenterWorld - eyePosition).xyz0().length();
+				Vector4 patchCenterWorld_x0zw = patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f);
+				Vector4 eyePosition_0y00 = Vector4(0.0f, eyePosition.y(), 0.0f, 0.0f);
 
 				CullPatch cp;
 
@@ -227,8 +229,8 @@ void TerrainEntity::render(
 				{
 					Vector4 Pworld[2] =
 					{
-						patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f) + Vector4(0.0f, eyePosition.y(), 0.0f, 0.0f),
-						patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f) + Vector4(0.0f, eyePosition.y() + patch.error[i], 0.0f, 0.0f)
+						patchCenterWorld_x0zw + eyePosition_0y00,
+						patchCenterWorld_x0zw + eyePosition_0y00 + Vector4(0.0f, patch.error[i], 0.0f, 0.0f)
 					};
 
 					Vector4 Pview[2] =
@@ -254,8 +256,10 @@ void TerrainEntity::render(
 					Pclip[0] /= Pclip[0].w();
 					Pclip[1] /= Pclip[1].w();
 
-					float dx = Pclip[1].x() - Pclip[0].x();
-					float dy = Pclip[1].y() - Pclip[0].y();
+					Vector4 d = Pclip[1] - Pclip[0];
+
+					float dx = d.x();
+					float dy = d.y();
 
 					cp.error[i] = std::sqrt(dx * dx + dy * dy) * 100.0f;
 				}

@@ -70,6 +70,9 @@ public:
 
 	virtual ~ActionValue();
 
+	/*! \brief Clear value. */
+	void clear();
+
 	/*! \brief Cast to boolean. */
 	ActionValue toBoolean() const { return ActionValue(getBoolean()); }
 

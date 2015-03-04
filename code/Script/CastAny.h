@@ -73,7 +73,7 @@ template < >
 struct CastAny < int8_t, false >
 {
 	static bool accept(const Any& value) {
-		return value.isInteger();
+		return value.isNumeric();
 	}
 	static Any set(int8_t value) {
 		return Any::fromInteger(value);
@@ -87,7 +87,7 @@ template < >
 struct CastAny < uint8_t, false >
 {
 	static bool accept(const Any& value) {
-		return value.isInteger();
+		return value.isNumeric();
 	}
 	static Any set(uint8_t value) {
 		return Any::fromInteger(uint8_t(value));
@@ -101,7 +101,7 @@ template < >
 struct CastAny < int16_t, false >
 {
 	static bool accept(const Any& value) {
-		return value.isInteger();
+		return value.isNumeric();
 	}
 	static Any set(int16_t value) {
 		return Any::fromInteger(value);
@@ -115,7 +115,7 @@ template < >
 struct CastAny < uint16_t, false >
 {
 	static bool accept(const Any& value) {
-		return value.isInteger();
+		return value.isNumeric();
 	}
 	static Any set(uint16_t value) {
 		return Any::fromInteger(uint16_t(value));
@@ -129,7 +129,7 @@ template < >
 struct CastAny < int32_t, false >
 {
 	static bool accept(const Any& value) {
-		return value.isInteger();
+		return value.isNumeric();
 	}
 	static Any set(int32_t value) {
 		return Any::fromInteger(value);
@@ -143,7 +143,7 @@ template < >
 struct CastAny < uint32_t, false >
 {
 	static bool accept(const Any& value) {
-		return value.isInteger();
+		return value.isNumeric();
 	}
 	static Any set(uint32_t value) {
 		return Any::fromInteger(int32_t(value));
