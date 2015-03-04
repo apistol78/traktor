@@ -403,6 +403,26 @@
               <name>WarningLevel</name>
               <value>Level3</value>
             </item>
+            <item>
+              <name>OptimizationLevel</name>
+              <value>Level2</value>
+            </item>
+            <item>
+              <name>FastMath</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>Branchless</name>
+              <value>Branchless1</value>
+            </item>
+            <item>
+              <name>AssumeCorrectAlignment</name>
+              <value>Yes</value>
+            </item>
+            <item>
+              <name>CppLanguageStd</name>
+              <value>Cpp11</value>
+            </item>
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -469,6 +489,26 @@
             <item>
               <name>WarningLevel</name>
               <value>Level3</value>
+            </item>
+            <item>
+              <name>OptimizationLevel</name>
+              <value>Level2</value>
+            </item>
+            <item>
+              <name>FastMath</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>Branchless</name>
+              <value>Branchless1</value>
+            </item>
+            <item>
+              <name>AssumeCorrectAlignment</name>
+              <value>Yes</value>
+            </item>
+            <item>
+              <name>CppLanguageStd</name>
+              <value>Cpp11</value>
             </item>
           </options>
         </item>
@@ -585,6 +625,26 @@
               <name>WarningLevel</name>
               <value>Level3</value>
             </item>
+            <item>
+              <name>OptimizationLevel</name>
+              <value>Level2</value>
+            </item>
+            <item>
+              <name>FastMath</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>Branchless</name>
+              <value>Branchless1</value>
+            </item>
+            <item>
+              <name>AssumeCorrectAlignment</name>
+              <value>Yes</value>
+            </item>
+            <item>
+              <name>CppLanguageStd</name>
+              <value>Cpp11</value>
+            </item>
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -695,6 +755,26 @@
             <item>
               <name>WarningLevel</name>
               <value>Level3</value>
+            </item>
+            <item>
+              <name>OptimizationLevel</name>
+              <value>Level2</value>
+            </item>
+            <item>
+              <name>FastMath</name>
+              <value>true</value>
+            </item>
+            <item>
+              <name>Branchless</name>
+              <value>Branchless1</value>
+            </item>
+            <item>
+              <name>AssumeCorrectAlignment</name>
+              <value>Yes</value>
+            </item>
+            <item>
+              <name>CppLanguageStd</name>
+              <value>Cpp11</value>
             </item>
           </options>
         </item>
