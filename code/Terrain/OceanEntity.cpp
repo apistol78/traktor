@@ -54,6 +54,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.OceanEntity", OceanEntity, world::Entit
 OceanEntity::OceanEntity()
 :	m_transform(Transform::identity())
 ,	m_opacity(0.0f)
+,	m_maxAmplitude(0.0f)
 ,	m_allowSSReflections(true)
 {
 	s_handleReflectionMap = render::getParameterHandle(L"ReflectionMap");
@@ -154,12 +155,14 @@ bool OceanEntity::create(resource::IResourceManager* resourceManager, render::IR
 	m_reflectionTint = data.m_reflectionTint;
 	m_deepColor = data.m_deepColor;
 	m_opacity = data.m_opacity;
+	m_maxAmplitude = 0.0f;
 	m_allowSSReflections = data.m_allowSSReflections;
 
 	for (int32_t i = 0; i < sizeof_array(m_wavesA); ++i)
 	{
 		m_wavesA[i] = Vector4(data.m_waves[i].center.x, data.m_waves[i].center.y, data.m_waves[i].rate, 0.0f);
 		m_wavesB[i] = Vector4(data.m_waves[i].amplitude, data.m_waves[i].frequency, data.m_waves[i].phase, data.m_waves[i].pinch);
+		m_maxAmplitude += std::abs(data.m_waves[i].amplitude);
 	}
 
 	return true;
