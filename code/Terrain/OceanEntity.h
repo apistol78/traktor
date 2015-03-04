@@ -80,6 +80,24 @@ public:
 
 	virtual void update(const world::UpdateParams& update);
 
+	void setShallowTint(const Color4f& shallowTint) { m_shallowTint = shallowTint; }
+
+	const Color4f& getShallowTint() const { return m_shallowTint; }
+
+	void setReflectionTint(const Color4f& reflectionTint) { m_reflectionTint = reflectionTint; }
+
+	const Color4f& getReflectionTint() const { return m_reflectionTint; }
+
+	void setDeepColor(const Color4f& deepColor) { m_deepColor = deepColor; }
+
+	const Color4f& getDeepColor() const { return m_deepColor; }
+
+	void setOpacity(float opacity) { m_opacity = opacity; }
+
+	float getOpacity() const { return m_opacity; }
+
+	float getMaxAmplitude() const { return m_maxAmplitude; }
+
 private:
 	resource::Proxy< render::Shader > m_shader;
 	resource::Proxy< render::ITexture > m_reflectionMap;
@@ -91,6 +109,7 @@ private:
 	Color4f m_reflectionTint;
 	Color4f m_deepColor;
 	float m_opacity;
+	float m_maxAmplitude;
 	bool m_allowSSReflections;
 	Vector4 m_wavesA[4];
 	Vector4 m_wavesB[4];
