@@ -80,6 +80,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", 35, FlashPipeline
 
 FlashPipeline::FlashPipeline()
 :	m_generateMips(false)
+,	m_sharpenStrength(0.0f)
 ,	m_useTextureCompression(true)
 ,	m_textureSizeDenom(1)
 {
@@ -89,6 +90,7 @@ bool FlashPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
 	m_generateMips = settings->getProperty< PropertyBoolean >(L"FlashPipeline.GenerateMips", false);
+	m_sharpenStrength = settings->getProperty< PropertyBoolean >(L"FlashPipeline.SharpenStrength", false);
 	m_useTextureCompression = settings->getProperty< PropertyBoolean >(L"FlashPipeline.UseTextureCompression", true);
 	m_textureSizeDenom = settings->getProperty< PropertyInteger >(L"FlashPipeline.TextureSizeDenom", 1);
 	return true;
@@ -341,7 +343,8 @@ bool FlashPipeline::buildOutput(
 			output->m_generateSphereMap = false;
 			output->m_preserveAlphaCoverage = false;
 			output->m_alphaCoverageReference = 0.0f;
-			output->m_sharpenRadius = 0;
+			output->m_sharpenRadius = m_sharpenStrength > 0.0f ? 5 : 0;
+			output->m_sharpenStrength = m_sharpenStrength;
 			output->m_systemTexture = true;
 
 			if (m_textureSizeDenom > 1)
@@ -425,7 +428,8 @@ bool FlashPipeline::buildOutput(
 		output->m_generateSphereMap = false;
 		output->m_preserveAlphaCoverage = false;
 		output->m_alphaCoverageReference = 0.0f;
-		output->m_sharpenRadius = 0;
+		output->m_sharpenRadius = m_sharpenStrength > 0.0f ? 5 : 0;
+		output->m_sharpenStrength = m_sharpenStrength;
 		output->m_systemTexture = true;
 
 		if (m_textureSizeDenom > 1)
