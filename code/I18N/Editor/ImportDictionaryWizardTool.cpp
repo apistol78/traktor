@@ -1,12 +1,8 @@
-#include "Core/Io/FileSystem.h"
-#include "Core/Io/IStream.h"
-#include "Core/Io/StringReader.h"
-#include "Core/Io/Utf8Encoding.h"
-#include "Core/Misc/Split.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "I18N/Dictionary.h"
 #include "I18N/Text.h"
+#include "I18N/Editor/IDictionaryFormat.h"
 #include "I18N/Editor/ImportDictionaryWizardTool.h"
 #include "Ui/FileDialog.h"
 
@@ -33,39 +29,19 @@ bool ImportDictionaryWizardTool::launch(ui::Widget* parent, editor::IEditor* edi
 
 	ui::FileDialog fileDialog;
 	if (!fileDialog.create(parent, Text(L"IMPORT_DICTIONARY_WIZARDTOOL_FILE_TITLE"), L"All files;*.*"))
-		return 0;
+		return false;
 
 	Path fileName;
 	if (fileDialog.showModal(fileName) != ui::DrOk)
 	{
 		fileDialog.destroy();
-		return true;
+		return false;
 	}
 	fileDialog.destroy();
 
-	// Assume CSV format.
-	Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
-	if (!file)
+	Ref< Dictionary > dictionary = IDictionaryFormat::readAny(fileName, 0, 1);
+	if (!dictionary)
 		return false;
-
-	Ref< Dictionary > dictionary = new Dictionary();
-
-	StringReader sr(file, new Utf8Encoding());
-	while (sr.readLine(line) >= 0)
-	{
-		std::vector< std::wstring > columns;
-		Split< std::wstring >::any(line, L",", columns, true);
-		if (columns.size() >= 2 && !columns[0].empty())
-		{
-			dictionary->set(
-				columns[0],
-				columns[1]
-			);
-		}
-	}
-
-	file->close();
-	file = 0;
 
 	// Create dictionary instance.
 	Ref< db::Instance > dictionaryInstance = group->createInstance(

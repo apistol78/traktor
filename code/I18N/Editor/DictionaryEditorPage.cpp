@@ -1,13 +1,7 @@
-#include "Core/Io/IStream.h"
-#include "Core/Io/FileOutputStream.h"
-#include "Core/Io/FileSystem.h"
-#include "Core/Io/StringReader.h"
-#include "Core/Io/Utf8Encoding.h"
-#include "Core/Misc/Split.h"
-#include "Core/Misc/String.h"
 #include "Editor/IDocument.h"
 #include "I18N/Dictionary.h"
 #include "I18N/Editor/DictionaryEditorPage.h"
+#include "I18N/Editor/IDictionaryFormat.h"
 #include "I18N/Editor/Translator.h"
 #include "Ui/Container.h"
 #include "Ui/FileDialog.h"
@@ -197,55 +191,13 @@ void DictionaryEditorPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* e
 		}
 		fileDialog.destroy();
 
-		// Assume CSV format.
-		Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
-		if (!file)
+		Ref< Dictionary > dictionary = IDictionaryFormat::readAny(fileName, 0, 1);
+		if (!dictionary)
 			return;
 
-		StringReader sr(file, new Utf8Encoding());
-		while (sr.readLine(line) >= 0)
-		{
-			std::vector< std::wstring > columns;
-
-			uint32_t i0 = 0;
-			bool quote = false;
-
-			for (uint32_t i = 0; i < line.length(); ++i)
-			{
-				if (line[i] == L',' && quote == false)
-				{
-					std::wstring tmp = trim(line.substr(i0, i - i0));
-					if (tmp.length() >= 2 && tmp[0] == L'\"' && tmp[tmp.length() - 1] == L'\"')
-						tmp = tmp.substr(1, tmp.length() - 2);
-					columns.push_back(tmp);
-					i0 = i + 1;
-				}
-				if (line[i] == L'\"')
-				{
-					quote = !quote;
-				}
-			}
-
-			if (!quote)
-			{
-				std::wstring tmp = trim(line.substr(i0));
-				if (tmp.length() >= 2 && tmp[0] == L'\"' && tmp[tmp.length() - 1] == L'\"')
-					tmp = tmp.substr(1, tmp.length() - 2);
-				columns.push_back(tmp);
-			}
-
-			Split< std::wstring >::any(line, L",", columns, true);
-			if (columns.size() >= 2 && !columns[0].empty())
-			{
-				m_dictionary->set(
-					columns[0],
-					columns[1]
-				);
-			}
-		}
-
-		file->close();
-		file = 0;
+		const std::map< std::wstring, std::wstring >& kv = dictionary->get();
+		for (std::map< std::wstring, std::wstring >::const_iterator i = kv.begin(); i != kv.end(); ++i)
+			m_dictionary->set(i->first, i->second);
 
 		m_gridDictionary->removeAllRows();
 
@@ -273,18 +225,7 @@ void DictionaryEditorPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* e
 		}
 		fileDialog.destroy();
 
-		// Assume CSV format.
-		Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmWrite);
-		if (!file)
-			return;
-
-		FileOutputStream fos(file, new Utf8Encoding());
-
-		const std::map< std::wstring, std::wstring >& map = m_dictionary->get();
-		for (std::map< std::wstring, std::wstring >::const_iterator i = map.begin(); i != map.end(); ++i)
-			fos << i->first << L"," << i->second << Endl;
-
-		fos.close();
+		IDictionaryFormat::writeAny(fileName, m_dictionary);
 	}
 	else if (cmd == L"I18N.Editor.Translate")
 	{
