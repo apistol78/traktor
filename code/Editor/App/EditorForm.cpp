@@ -1884,7 +1884,8 @@ void EditorForm::saveAllDocuments()
 		T_ASSERT (tabPage);
 
 		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
-		T_ASSERT (editorPage);
+		if (!editorPage)
+			continue;
 
 		Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
 		T_ASSERT (document);

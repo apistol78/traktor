@@ -103,6 +103,8 @@ void InputSystem::setExclusive(bool exclusive)
 {
 	for (RefArray< IInputDevice >::iterator i = m_devices.begin(); i != m_devices.end(); ++i)
 		(*i)->setExclusive(exclusive);
+	for (std::list< PendingDevice >::iterator i = m_pendingDevices.begin(); i != m_pendingDevices.end(); ++i)
+		i->device->setExclusive(exclusive);
 }
 
 bool InputSystem::update(float deltaTime, bool enable)
@@ -158,7 +160,7 @@ bool InputSystem::update(float deltaTime, bool enable)
 	else
 	{
 		// Ensure all devices are put in pending list; need to be re-configured when
-		// application becomes enabled again.
+		// application becomes active again.
 		for (RefArray< IInputDevice >::iterator i = m_devices.begin(); i != m_devices.end(); ++i)
 		{
 			PendingDevice pd;
