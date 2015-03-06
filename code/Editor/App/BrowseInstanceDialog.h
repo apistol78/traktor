@@ -69,7 +69,7 @@ private:
 	ThreadsafeFifo< Ref< Functor > > m_previewTasks;
 	Event m_previewTaskEvent;
 
-	void buildGroupItems(ui::TreeView* treeView, ui::TreeViewItem* parent, db::Group* group, const IBrowseFilter* filter);
+	ui::TreeViewItem* buildGroupItems(ui::TreeView* treeView, ui::TreeViewItem* parent, db::Group* group, const IBrowseFilter* filter);
 
 	void eventTreeItemSelected(ui::SelectionChangeEvent* event);
 

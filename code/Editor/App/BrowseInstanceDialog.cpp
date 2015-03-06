@@ -133,12 +133,30 @@ bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, co
 	);
 
 	// Traverse database and filter out items.
-	buildGroupItems(
+	ui::TreeViewItem* groupRoot = buildGroupItems(
 		m_treeDatabase,
 		0,
 		database->getRootGroup(),
 		filter
 	);
+
+	if (groupRoot)
+		groupRoot->sort(true);
+
+	// Expand all groups until a group with multiple children is found.
+	ui::TreeViewItem* expandGroup = groupRoot;
+	while (expandGroup)
+	{
+		expandGroup->expand();
+
+		RefArray< ui::TreeViewItem > children;
+		expandGroup->getChildren(children);
+
+		if (children.size() == 1)
+			expandGroup = children[0];
+		else
+			break;
+	}
 
 	// Restore last state.
 	Ref< ui::HierarchicalState > state = dynamic_type_cast< ui::HierarchicalState* >(m_settings->getProperty< PropertyObject >(L"Editor.BrowseInstanceTreeState"));
@@ -172,10 +190,10 @@ Ref< db::Instance > BrowseInstanceDialog::getInstance()
 	return m_instance;
 }
 
-void BrowseInstanceDialog::buildGroupItems(ui::TreeView* treeView, ui::TreeViewItem* parent, db::Group* group, const IBrowseFilter* filter)
+ui::TreeViewItem* BrowseInstanceDialog::buildGroupItems(ui::TreeView* treeView, ui::TreeViewItem* parent, db::Group* group, const IBrowseFilter* filter)
 {
 	if (filter && !recursiveIncludeGroup(group, filter))
-		return;
+		return 0;
 
 	RefArray< db::Group > childGroups;
 	group->getChildGroups(childGroups);
@@ -199,6 +217,7 @@ void BrowseInstanceDialog::buildGroupItems(ui::TreeView* treeView, ui::TreeViewI
 	}
 
 	groupItem->setData(L"INSTANCE_ITEMS", instanceItems);
+	return groupItem;
 }
 
 void BrowseInstanceDialog::eventTreeItemSelected(ui::SelectionChangeEvent* event)

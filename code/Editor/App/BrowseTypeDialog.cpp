@@ -144,7 +144,21 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfo* base, bool onl
 	}
 
 	groupRoot->sort(true);
-	groupRoot->expand();
+
+	// Expand all groups until a group with multiple children is found.
+	ui::TreeViewItem* expandGroup = groupRoot;
+	while (expandGroup)
+	{
+		expandGroup->expand();
+
+		RefArray< ui::TreeViewItem > children;
+		expandGroup->getChildren(children);
+
+		if (children.size() == 1)
+			expandGroup = children[0];
+		else
+			break;
+	}
 
 	m_categoryTree->update();
 
