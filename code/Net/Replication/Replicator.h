@@ -151,6 +151,10 @@ public:
 	 */
 	bool update();
 
+	/*! \brief
+	 */
+	void flush();
+
 	/*! \brief Get our name.
 	 */
 	const std::wstring& getName() const;
