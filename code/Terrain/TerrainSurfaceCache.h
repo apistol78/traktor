@@ -104,6 +104,7 @@ private:
 	std::vector< Entry > m_entries;
 	bool m_clearCache;
 	uint32_t m_updateCount;
+	uint32_t m_size;
 	render::handle_t m_handleHeightfield;
 	render::handle_t m_handleColorMap;
 	render::handle_t m_handleSplatMap;

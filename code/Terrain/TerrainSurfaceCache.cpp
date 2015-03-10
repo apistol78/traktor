@@ -19,6 +19,7 @@ namespace traktor
 		{
 
 const uint32_t c_maxUpdatePerFrame = 1;
+const int32_t c_margin = 1;
 
 struct TerrainSurfaceRenderBlock : public render::RenderBlock
 {
@@ -62,13 +63,13 @@ struct TerrainSurfaceRenderBlock : public render::RenderBlock
 	}
 };
 
-Vector4 offsetFromTile(const TerrainSurfaceAlloc::Tile& tile)
+Vector4 offsetFromTile(const TerrainSurfaceAlloc::Tile& tile, uint32_t size)
 {
 	return Vector4(
-		(tile.x + 1) / 4096.0f,
-		(tile.y + 1) / 4096.0f,
-		(tile.dim - 2) / 4096.0f,
-		(tile.dim - 2) / 4096.0f
+		tile.x / 4096.0f + float(c_margin) / size,
+		tile.y / 4096.0f + float(c_margin) / size,
+		tile.dim / 4096.0f - float(2.0f * c_margin) / size,
+		tile.dim / 4096.0f - float(2.0f * c_margin) / size
 	);
 }
 
@@ -79,6 +80,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainSurfaceCache", TerrainSurfaceCac
 TerrainSurfaceCache::TerrainSurfaceCache()
 :	m_clearCache(true)
 ,	m_updateCount(0)
+,	m_size(0)
 ,	m_handleHeightfield(render::getParameterHandle(L"Heightfield"))
 ,	m_handleColorMap(render::getParameterHandle(L"ColorMap"))
 ,	m_handleSplatMap(render::getParameterHandle(L"SplatMap"))
@@ -132,6 +134,7 @@ bool TerrainSurfaceCache::create(resource::IResourceManager* resourceManager, re
 
 	m_clearCache = true;
 	m_updateCount = 0;
+	m_size = size;
 
 	return true;
 }
@@ -249,7 +252,7 @@ void TerrainSurfaceCache::get(
 	{
 		if (m_updateCount >= c_maxUpdatePerFrame || (m_entries[patchId].lod == surfaceLod && m_entries[patchId].tile.dim > 0))
 		{
-			outTextureOffset = offsetFromTile(m_entries[patchId].tile);
+			outTextureOffset = offsetFromTile(m_entries[patchId].tile, m_size);
 			return;
 		}
 	
@@ -279,10 +282,18 @@ void TerrainSurfaceCache::get(
 		return;
 	}
 
+	Vector4 worldOriginM = worldOrigin;
+	Vector4 worldExtentM = worldExtent;
+
+	// Number of patch units per texel.
+	float dpx = patchExtent.x() / (m_size * (tile.dim / 4096.0f));
+	float dpz = patchExtent.z() / (m_size * (tile.dim / 4096.0f));
+
 	Vector4 patchOriginM = patchOrigin;
-	patchOriginM -= Vector4(1.0f / 4096.0f, 0.0f, 1.0f / 4096.0f, 0.0f) * Scalar(10.0f);
 	Vector4 patchExtentM = patchExtent;
-	patchExtentM += Vector4(2.0f / 4096.0f, 0.0f, 2.0f / 4096.0f, 0.0f) * Scalar(10.0f);
+
+	patchOriginM -= Vector4(dpx, 0.0f, dpz, 0.0f) * Scalar(c_margin);
+	patchExtentM += Vector4(dpx, 0.0f, dpz, 0.0f) * Scalar(2.0f * c_margin);
 
 	render::Shader* shader = terrain->getSurfaceShader();
 	if (!shader)
@@ -308,15 +319,15 @@ void TerrainSurfaceCache::get(
 	renderBlock->programParams->setTextureParameter(m_handleHeightfield, heightMap);
 	renderBlock->programParams->setTextureParameter(m_handleColorMap, colorMap);
 	renderBlock->programParams->setTextureParameter(m_handleSplatMap, splatMap);
-	renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, worldOrigin);
-	renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
+	renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, worldOriginM);
+	renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtentM);
 	renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, patchOriginM);
 	renderBlock->programParams->setVectorParameter(m_handlePatchExtent, patchExtentM);
 
 	Vector4 textureOffset(
-		2.0f * tile.x / 4096.0f - 1.0f,
-		1.0f - 2.0f * tile.y / 4096.0f,
-		2.0f * tile.dim / 4096.0f,
+		-1.0f + 2.0f * tile.x / 4096.0f,
+		 1.0f - 2.0f * tile.y / 4096.0f,
+		 2.0f * tile.dim / 4096.0f,
 		-2.0f * tile.dim / 4096.0f
 	);
 	renderBlock->programParams->setVectorParameter(m_handleTextureOffset, textureOffset);
@@ -341,7 +352,7 @@ void TerrainSurfaceCache::get(
 	m_entries[patchId].lod = surfaceLod;
 	m_entries[patchId].tile = tile;
 
-	outTextureOffset = offsetFromTile(tile);
+	outTextureOffset = offsetFromTile(tile, m_size);
 	outRenderBlock = renderBlock;
 }
 
