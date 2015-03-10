@@ -6,6 +6,8 @@
 #include "Core/Misc/TString.h"
 #include "Core/Serialization/CompactSerializer.h"
 #include "Core/Serialization/DeepHash.h"
+#include "Core/Thread/ThreadManager.h"
+#include "Core/Thread/Thread.h"
 #include "Core/Timer/Measure.h"
 #include "Net/Replication/Replicator.h"
 #include "Net/Replication/ReplicatorProxy.h"
@@ -477,6 +479,31 @@ bool Replicator::update()
 	return true;
 }
 
+void Replicator::flush()
+{
+	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
+	for (;;)
+	{
+		// Check if any proxy has pending, unacknowledged events pending.
+		bool pendingEvents = false;
+		for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+		{
+			if ((*i)->updateEventQueue())
+				pendingEvents = true;
+		}
+
+		// If no pending events then all queues are empty thus we're flushed.
+		if (!pendingEvents)
+			break;
+
+		// Update system.
+		update();
+
+		// Yield a bit of processor.
+		currentThread->sleep(30);
+	}
+}
+
 const std::wstring& Replicator::getName() const
 {
 	return m_name;
@@ -629,7 +656,7 @@ double Replicator::getBestLatency() const
 				reliableCount++;
 			}
 		}
-		if (!reliableCount > 0)
+		if (reliableCount <= 0)
 			latency = 0.0;
 	}
 	return latency;
@@ -650,7 +677,7 @@ double Replicator::getBestReverseLatency() const
 				reliableCount++;
 			}
 		}
-		if (!reliableCount > 0)
+		if (reliableCount <= 0)
 			latency = 0.0;
 	}
 	return latency;

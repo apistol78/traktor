@@ -18,7 +18,7 @@ namespace traktor
 		{
 
 const double c_resendTimeThreshold = 0.5;
-const int32_t c_maxSendEventsPerUpdate = 4;
+const int32_t c_resendCountThreshold = 8;
 
 		}
 
@@ -244,21 +244,22 @@ void ReplicatorProxy::sendEvent(const ISerializable* eventObject)
 
 bool ReplicatorProxy::updateEventQueue()
 {
-	int32_t sentCount = 0;
-	for (std::list< Event >::iterator i = m_unacknowledgedEvents.begin(); i != m_unacknowledgedEvents.end(); ++i)
+	for (std::list< Event >::iterator i = m_unacknowledgedEvents.begin(); i != m_unacknowledgedEvents.end(); )
 	{
 		if (m_replicator->m_time0 - i->time > c_resendTimeThreshold)
 		{
 			m_replicator->m_topology->send(m_handle, &i->msg, RmiEvent_NetSize(i->size));
-
 			i->time = m_replicator->m_time0;
-			i->count++;
 
-			if (++sentCount >= c_maxSendEventsPerUpdate)
-				break;
+			if (++i->count >= c_resendCountThreshold)
+			{
+				i = m_unacknowledgedEvents.erase(i);
+				continue;
+			}
 		}
+		++i;
 	}
-	return true;
+	return !m_unacknowledgedEvents.empty();
 }
 
 bool ReplicatorProxy::receivedEventAcknowledge(const ReplicatorProxy* from, uint8_t sequence)

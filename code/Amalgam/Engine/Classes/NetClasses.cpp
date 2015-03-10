@@ -233,6 +233,7 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	classReplicator->addMethod("removeEventListener", &net::Replicator::removeEventListener);
 	classReplicator->addMethod("removeAllEventListeners", &net::Replicator::removeAllEventListeners);
 	classReplicator->addMethod("update", &net::Replicator::update);
+	classReplicator->addMethod("flush", &net::Replicator::flush);
 	classReplicator->addMethod("getName", &net::Replicator::getName);
 	classReplicator->addMethod("setStatus", &net::Replicator::setStatus);
 	classReplicator->addMethod("getStatus", &net::Replicator::getStatus);
