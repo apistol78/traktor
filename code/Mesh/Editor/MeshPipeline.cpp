@@ -23,6 +23,7 @@
 #include "Mesh/Editor/Blend/BlendMeshConverter.h"
 #include "Mesh/Editor/Indoor/IndoorMeshConverter.h"
 #include "Mesh/Editor/Instance/InstanceMeshConverter.h"
+#include "Mesh/Editor/Lod/AutoLodMeshConverter.h"
 #include "Mesh/Editor/Partition/PartitionMeshConverter.h"
 #include "Mesh/Editor/Skinned/SkinnedMeshConverter.h"
 #include "Mesh/Editor/Static/StaticMeshConverter.h"
@@ -32,7 +33,6 @@
 #include "Model/Operations/BakeVertexOcclusion.h"
 #include "Model/Operations/CalculateOccluder.h"
 #include "Model/Operations/CullDistantFaces.h"
-#include "Model/Operations/Reduce.h"
 #include "Render/Shader/External.h"
 #include "Render/Shader/Nodes.h"
 #include "Render/Shader/ShaderGraph.h"
@@ -95,6 +95,9 @@ Guid getVertexShaderGuid(MeshAsset::MeshType meshType)
 
 	case MeshAsset::MtInstance:
 		return Guid(L"{A714A83F-8442-6F48-A2A7-6EFA95EB75F3}");
+
+	case MeshAsset::MtLod:
+		return Guid(L"{14AE48E1-723D-0944-821C-4B73AC942437}");
 
 	case MeshAsset::MtPartition:
 		return Guid(L"{14AE48E1-723D-0944-821C-4B73AC942437}");
@@ -303,12 +306,6 @@ bool MeshPipeline::buildOutput(
 			log::info << L"Culling distant faces..." << Endl;
 			const Aabb3 viewerRegion(Vector4(-40.0f, -40.0f, -40.0f), Vector4(40.0f, 40.0f, 40.0f));
 			model::CullDistantFaces(viewerRegion).apply(*model);
-		}
-
-		if (asset->getAutoDetailLevel() < 1.0f - FUZZY_EPSILON)
-		{
-			log::info << L"Generating reduced detail mesh..." << Endl;
-			model::Reduce(asset->getAutoDetailLevel()).apply(*model);
 		}
 
 		const std::vector< model::Material >& modelMaterials = model->getMaterials();
@@ -624,6 +621,10 @@ bool MeshPipeline::buildOutput(
 		converter = new InstanceMeshConverter();
 		break;
 
+	case MeshAsset::MtLod:
+		converter = new AutoLodMeshConverter();
+		break;
+
 	case MeshAsset::MtPartition:
 		converter = new PartitionMeshConverter();
 		break;
@@ -677,6 +678,7 @@ bool MeshPipeline::buildOutput(
 
 	// Convert mesh asset.
 	if (!converter->convert(
+		asset,
 		models,
 		occluderModel,
 		materialGuid,

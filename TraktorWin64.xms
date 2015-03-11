@@ -7899,6 +7899,7 @@
 								<definitions>
 									<item>T_MESH_EDITOR_EXPORT</item>
 									<item>_DEBUG</item>
+									<item>T_USE_SIMPLYGON_SDK</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -7914,6 +7915,7 @@
 								<definitions>
 									<item>T_MESH_EDITOR_EXPORT</item>
 									<item>NDEBUG</item>
+									<item>T_USE_SIMPLYGON_SDK</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -7929,6 +7931,7 @@
 								<definitions>
 									<item>T_STATIC</item>
 									<item>_DEBUG</item>
+									<item>T_USE_SIMPLYGON_SDK</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -7944,6 +7947,7 @@
 								<definitions>
 									<item>T_STATIC</item>
 									<item>NDEBUG</item>
+									<item>T_USE_SIMPLYGON_SDK</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -8028,6 +8032,15 @@
 									</item>
 								</items>
 							</item>
+							<item type="Filter">
+								<name>Lod</name>
+								<items>
+									<item type="File">
+										<fileName>Lod/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency" version="3">
@@ -8070,12 +8083,14 @@
 											<precompiledHeader/>
 											<includePaths>
 												<item>$(FBX_SDK)/include</item>
+												<item>$(SIMPLYGON_SDK)</item>
 											</includePaths>
 											<definitions>
 												<item>T_MODEL_EXPORT</item>
 												<item>_DEBUG</item>
 												<item>FBXSDK_NEW_API</item>
 												<item>FBXSDK_SHARED</item>
+												<item>T_USE_SIMPLYGON_SDK</item>
 											</definitions>
 											<libraryPaths>
 												<item>$(FBX_SDK)/lib/vs2008/x64</item>
@@ -8093,12 +8108,14 @@
 											<precompiledHeader/>
 											<includePaths>
 												<item>$(FBX_SDK)/include</item>
+												<item>$(SIMPLYGON_SDK)</item>
 											</includePaths>
 											<definitions>
 												<item>T_MODEL_EXPORT</item>
 												<item>NDEBUG</item>
 												<item>FBXSDK_NEW_API</item>
 												<item>FBXSDK_SHARED</item>
+												<item>T_USE_SIMPLYGON_SDK</item>
 											</definitions>
 											<libraryPaths>
 												<item>$(FBX_SDK)/lib/vs2008/x64</item>
@@ -8116,12 +8133,14 @@
 											<precompiledHeader/>
 											<includePaths>
 												<item>$(FBX_SDK)/include</item>
+												<item>$(SIMPLYGON_SDK)</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
 												<item>_DEBUG</item>
 												<item>FBXSDK_NEW_API</item>
 												<item>FBXSDK_SHARED</item>
+												<item>T_USE_SIMPLYGON_SDK</item>
 											</definitions>
 											<libraryPaths>
 												<item>$(FBX_SDK)/lib/vs2008/x64</item>
@@ -8139,12 +8158,14 @@
 											<precompiledHeader/>
 											<includePaths>
 												<item>$(FBX_SDK)/include</item>
+												<item>$(SIMPLYGON_SDK)</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
 												<item>NDEBUG</item>
 												<item>FBXSDK_NEW_API</item>
 												<item>FBXSDK_SHARED</item>
+												<item>T_USE_SIMPLYGON_SDK</item>
 											</definitions>
 											<libraryPaths>
 												<item>$(FBX_SDK)/lib/vs2008/x64</item>
@@ -8178,6 +8199,10 @@
 													<items/>
 												</item>
 											</items>
+										</item>
+										<item type="File">
+											<fileName>$(SIMPLYGON_SDK)/SimplygonSDKLoader.cpp</fileName>
+											<items/>
 										</item>
 									</items>
 									<dependencies>

@@ -12,6 +12,7 @@
 #include "Model/Operations/CleanDuplicates.h"
 #include "Model/Operations/Quantize.h"
 #include "Model/Operations/Reduce.h"
+#include "Model/Operations/ReduceSimplygon.h"
 #include "Model/Operations/Transform.h"
 #include "Model/Operations/Triangulate.h"
 #include "Model/Operations/MergeCoplanarAdjacents.h"
@@ -74,6 +75,9 @@ bool ModelToolDialog::create(ui::Widget* parent)
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Clean Duplicates", ui::Command(L"ModelTool.CleanDuplicates"), ui::custom::ToolBarButton::BsText));
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Quantize", ui::Command(L"ModelTool.Quantize"), ui::custom::ToolBarButton::BsText));
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Reduce", ui::Command(L"ModelTool.Reduce"), ui::custom::ToolBarButton::BsText));
+#if defined(T_USE_SIMPLYGON_SDK)
+	toolBar->addItem(new ui::custom::ToolBarButton(L"Reduce (Simplygon)", ui::Command(L"ModelTool.ReduceSimplygon"), ui::custom::ToolBarButton::BsText));
+#endif
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Merge Coplanar", ui::Command(L"ModelTool.MergeCoplanar"), ui::custom::ToolBarButton::BsText));
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Convex Hull", ui::Command(L"ModelTool.ConvexHull"), ui::custom::ToolBarButton::BsText));
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Triangulate", ui::Command(L"ModelTool.Triangulate"), ui::custom::ToolBarButton::BsText));
@@ -268,6 +272,13 @@ void ModelToolDialog::eventToolBarClick(ui::custom::ToolBarButtonClickEvent* eve
 		Ref< IModelOperation > operation = new Reduce(0.5f);
 		applyOperation(operation);
 	}
+#if defined(T_USE_SIMPLYGON_SDK)
+	else if (cmd == L"ModelTool.ReduceSimplygon")
+	{
+		Ref< IModelOperation > operation = new ReduceSimplygon(0.5f);
+		applyOperation(operation);
+	}
+#endif
 	else if (cmd == L"ModelTool.MergeCoplanar")
 	{
 		Ref< IModelOperation > operation = new MergeCoplanarAdjacents(true);

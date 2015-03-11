@@ -29,6 +29,8 @@ class CheckBox;
 class DropDown;
 class Edit;
 class ListView;
+class Slider;
+class Static;
 
 		namespace custom
 		{
@@ -78,7 +80,12 @@ private:
 	Ref< ui::Container > m_containerMaterials;
 	Ref< ui::DropDown > m_dropMeshType;
 	Ref< ui::CheckBox > m_checkBakeOcclusion;
+	Ref< ui::CheckBox > m_checkCullDistantFaces;
 	Ref< ui::CheckBox > m_checkGenerateOccluder;
+	Ref< ui::Static > m_staticLodSteps;
+	Ref< ui::Slider > m_sliderLodSteps;
+	Ref< ui::Edit > m_editLodMaxDistance;
+	Ref< ui::Edit > m_editLodCullDistance;
 	Ref< ui::ListView > m_materialShaderList;
 	Ref< ui::ListView > m_materialTextureList;
 	std::wstring m_assetPath;
@@ -104,6 +111,10 @@ private:
 	void browseMaterialTexture();
 
 	void removeMaterialTexture();
+
+	void eventMeshTypeChange(ui::SelectionChangeEvent* event);
+
+	void eventLodStepsChange(ui::ContentChangeEvent* event);
 
 	void eventBrowseClick(ui::ButtonClickEvent* event);
 

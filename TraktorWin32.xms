@@ -7481,6 +7481,15 @@
 									</item>
 								</items>
 							</item>
+							<item type="Filter">
+								<name>Lod</name>
+								<items>
+									<item type="File">
+										<fileName>Lod/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency" version="3">

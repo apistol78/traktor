@@ -1377,6 +1377,22 @@
       <second>Generate culling occluder</second>
     </item>
     <item>
+      <first>MESHASSET_EDITOR_CULL_DISTANT_FACES</first>
+      <second>Cull distant faces</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_LOD_STEPS</first>
+      <second>LOD steps ({0})</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_LOD_MAX_DISTANCE</first>
+      <second>Max LOD distance</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_LOD_CULL_DISTANCE</first>
+      <second>Cull LOD distance</second>
+    </item>
+    <item>
       <first>MESHASSET_EDITOR_MESH_TYPE</first>
       <second>Mesh type</second>
     </item>
@@ -1391,6 +1407,10 @@
     <item>
       <first>MESHASSET_EDITOR_MESH_TYPE_INSTANCE</first>
       <second>Instance</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_MESH_TYPE_LOD</first>
+      <second>LOD</second>
     </item>
     <item>
       <first>MESHASSET_EDITOR_MESH_TYPE_PARTITION</first>

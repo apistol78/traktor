@@ -7,6 +7,8 @@
 #include "Mesh/Indoor/IndoorMeshEntity.h"
 #include "Mesh/Instance/InstanceMesh.h"
 #include "Mesh/Instance/InstanceMeshEntity.h"
+#include "Mesh/Lod/AutoLodMesh.h"
+#include "Mesh/Lod/AutoLodMeshEntity.h"
 #include "Mesh/Partition/PartitionMesh.h"
 #include "Mesh/Partition/PartitionMeshEntity.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
@@ -54,6 +56,8 @@ Ref< MeshEntity > MeshEntityData::createEntity(resource::IResourceManager* resou
 		meshEntity = new IndoorMeshEntity(getTransform(), m_screenSpaceCulling, resource::Proxy< IndoorMesh >(mesh.getHandle()));
 	else if (is_a< InstanceMesh >(mesh.getResource()))
 		meshEntity = new InstanceMeshEntity(getTransform(), m_screenSpaceCulling, resource::Proxy< InstanceMesh >(mesh.getHandle()));
+	else if (is_a< AutoLodMesh >(mesh.getResource()))
+		meshEntity = new AutoLodMeshEntity(getTransform(), m_screenSpaceCulling, resource::Proxy< AutoLodMesh >(mesh.getHandle()));
 	else if (is_a< PartitionMesh >(mesh.getResource()))
 		meshEntity = new PartitionMeshEntity(getTransform(), m_screenSpaceCulling, resource::Proxy< PartitionMesh >(mesh.getHandle()));
 	else if (is_a< SkinnedMesh >(mesh.getResource()))
