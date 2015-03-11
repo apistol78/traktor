@@ -31,6 +31,7 @@ Ref< IMeshResource > StreamMeshConverter::createResource() const
 }
 
 bool StreamMeshConverter::convert(
+	const MeshAsset* meshAsset,
 	const RefArray< model::Model >& models,
 	const model::Model* occluderModel,
 	const Guid& materialGuid,

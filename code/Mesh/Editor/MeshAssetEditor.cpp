@@ -1,11 +1,13 @@
 #include <algorithm>
 #include "Core/Io/FileSystem.h"
+#include "Core/Misc/String.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Database/Group.h"
 #include "Editor/IEditor.h"
+#include "I18N/Format.h"
 #include "I18N/Text.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshAssetEditor.h"
@@ -21,8 +23,10 @@
 #include "Ui/ListView.h"
 #include "Ui/ListViewItems.h"
 #include "Ui/ListViewItem.h"
+#include "Ui/NumericEditValidator.h"
 #include "Ui/Edit.h"
 #include "Ui/FileDialog.h"
+#include "Ui/Slider.h"
 #include "Ui/Static.h"
 #include "Ui/Custom/InputDialog.h"
 #include "Ui/Custom/MiniButton.h"
@@ -119,24 +123,56 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	m_dropMeshType->add(i18n::Text(L"MESHASSET_EDITOR_MESH_TYPE_BLEND"));
 	m_dropMeshType->add(i18n::Text(L"MESHASSET_EDITOR_MESH_TYPE_INDOOR"));
 	m_dropMeshType->add(i18n::Text(L"MESHASSET_EDITOR_MESH_TYPE_INSTANCE"));
+	m_dropMeshType->add(i18n::Text(L"MESHASSET_EDITOR_MESH_TYPE_LOD"));
 	m_dropMeshType->add(i18n::Text(L"MESHASSET_EDITOR_MESH_TYPE_PARTITION"));
 	m_dropMeshType->add(i18n::Text(L"MESHASSET_EDITOR_MESH_TYPE_SKINNED"));
 	m_dropMeshType->add(i18n::Text(L"MESHASSET_EDITOR_MESH_TYPE_STATIC"));
 	m_dropMeshType->add(i18n::Text(L"MESHASSET_EDITOR_MESH_TYPE_STREAM"));
-	
+	m_dropMeshType->addEventHandler< ui::SelectionChangeEvent >(this, &MeshAssetEditor::eventMeshTypeChange);
+
 	Ref< ui::Static > staticDummy = new ui::Static();
 	staticDummy->create(containerFile, L"");
+
+	Ref< ui::Container > containerOptions = new ui::Container();
+	containerOptions->create(containerFile, ui::WsNone, new ui::TableLayout(L"50%,50%", L"*", 0, 0));
+
+	Ref< ui::Container > containerLeft = new ui::Container();
+	containerLeft->create(containerOptions, ui::WsNone, new ui::TableLayout(L"*", L"*", 0, 4));
 	
 	m_checkBakeOcclusion = new ui::CheckBox();
-	if (!m_checkBakeOcclusion->create(containerFile, i18n::Text(L"MESHASSET_EDITOR_BAKE_OCCLUSION")))
+	if (!m_checkBakeOcclusion->create(containerLeft, i18n::Text(L"MESHASSET_EDITOR_BAKE_OCCLUSION")))
 		return false;
 
-	Ref< ui::Static > staticDummy2 = new ui::Static();
-	staticDummy2->create(containerFile, L"");
+	m_checkCullDistantFaces = new ui::CheckBox();
+	if (!m_checkCullDistantFaces->create(containerLeft, i18n::Text(L"MESHASSET_EDITOR_CULL_DISTANT_FACES")))
+		return false;
 
 	m_checkGenerateOccluder = new ui::CheckBox();
-	if (!m_checkGenerateOccluder->create(containerFile, i18n::Text(L"MESHASSET_EDITOR_GENERATE_OCCLUDER")))
+	if (!m_checkGenerateOccluder->create(containerLeft, i18n::Text(L"MESHASSET_EDITOR_GENERATE_OCCLUDER")))
 		return false;
+
+	Ref< ui::Container > containerRight = new ui::Container();
+	containerRight->create(containerOptions, ui::WsNone, new ui::TableLayout(L"*,*", L"*", 0, 4));
+
+	m_staticLodSteps = new ui::Static();
+	m_staticLodSteps->create(containerRight, i18n::Format(L"MESHASSET_EDITOR_LOD_STEPS", 1));
+
+	m_sliderLodSteps = new ui::Slider();
+	m_sliderLodSteps->create(containerRight);
+	m_sliderLodSteps->setRange(1, 64);
+	m_sliderLodSteps->addEventHandler< ui::ContentChangeEvent >(this, &MeshAssetEditor::eventLodStepsChange);
+
+	Ref< ui::Static > staticLodMaxDistance = new ui::Static();
+	staticLodMaxDistance->create(containerRight, i18n::Text(L"MESHASSET_EDITOR_LOD_MAX_DISTANCE"));
+
+	m_editLodMaxDistance = new ui::Edit();
+	m_editLodMaxDistance->create(containerRight, L"", ui::WsClientBorder, new ui::NumericEditValidator(true, 0.0f, 10000.0f, 2));
+
+	Ref< ui::Static > staticLodCullDistance = new ui::Static();
+	staticLodCullDistance->create(containerRight, i18n::Text(L"MESHASSET_EDITOR_LOD_CULL_DISTANCE"));
+
+	m_editLodCullDistance = new ui::Edit();
+	m_editLodCullDistance->create(containerRight, L"", ui::WsClientBorder, new ui::NumericEditValidator(true, 0.0f, 10000.0f, 2));
 
 	m_containerMaterials = new ui::Container();
 	if (!m_containerMaterials->create(container, ui::WsClientBorder, new ui::TableLayout(L"100%", L"*,100%,*,100%", 0, 0)))
@@ -195,7 +231,11 @@ void MeshAssetEditor::apply()
 	m_asset->setFileName(m_editFileName->getText());
 	m_asset->setMeshType(MeshAsset::MeshType(m_dropMeshType->getSelected() + 1));
 	m_asset->setBakeOcclusion(m_checkBakeOcclusion->isChecked());
+	m_asset->setCullDistantFaces(m_checkCullDistantFaces->isChecked());
 	m_asset->setGenerateOccluder(m_checkGenerateOccluder->isChecked());
+	m_asset->setLodSteps(m_sliderLodSteps->getValue());
+	m_asset->setLodMaxDistance(parseString< float >(m_editLodMaxDistance->getText()));
+	m_asset->setLodCullDistance(parseString< float >(m_editLodCullDistance->getText()));
 
 	Ref< ui::ListViewItems > shaderItems = m_materialShaderList->getItems();
 
@@ -276,7 +316,19 @@ void MeshAssetEditor::updateFile()
 	m_editFileName->setText(assetRelPath.getPathName());
 	m_dropMeshType->select(m_asset->getMeshType() - 1);
 	m_checkBakeOcclusion->setChecked(m_asset->getBakeOcclusion());
+	m_checkCullDistantFaces->setChecked(m_asset->getCullDistantFaces());
 	m_checkGenerateOccluder->setChecked(m_asset->getGenerateOccluder());
+	
+	m_staticLodSteps->setText(i18n::Format(L"MESHASSET_EDITOR_LOD_STEPS", m_asset->getLodSteps()));
+
+	m_sliderLodSteps->setEnable(m_asset->getMeshType() == MeshAsset::MtLod);
+	m_sliderLodSteps->setValue(m_asset->getLodSteps());
+	
+	m_editLodMaxDistance->setEnable(m_asset->getMeshType() == MeshAsset::MtLod);
+	m_editLodMaxDistance->setText(toString(m_asset->getLodMaxDistance()));
+	
+	m_editLodCullDistance->setEnable(m_asset->getMeshType() == MeshAsset::MtLod);
+	m_editLodCullDistance->setText(toString(m_asset->getLodCullDistance()));
 }
 
 void MeshAssetEditor::updateMaterialList()
@@ -546,6 +598,16 @@ void MeshAssetEditor::removeMaterialTexture()
 	selectedItem->setData(L"INSTANCE", 0);
 
 	m_materialTextureList->setItems(m_materialTextureList->getItems());
+}
+
+void MeshAssetEditor::eventMeshTypeChange(ui::SelectionChangeEvent* event)
+{
+	updateFile();
+}
+
+void MeshAssetEditor::eventLodStepsChange(ui::ContentChangeEvent* event)
+{
+	m_staticLodSteps->setText(i18n::Format(L"MESHASSET_EDITOR_LOD_STEPS", m_sliderLodSteps->getValue()));
 }
 
 void MeshAssetEditor::eventBrowseClick(ui::ButtonClickEvent* event)

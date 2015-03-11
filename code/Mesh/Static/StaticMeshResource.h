@@ -1,6 +1,8 @@
 #ifndef traktor_mesh_StaticMeshResource_H
 #define traktor_mesh_StaticMeshResource_H
 
+#include <list>
+#include <map>
 #include "Core/Guid.h"
 #include "Mesh/IMeshResource.h"
 #include "Resource/Id.h"

@@ -24,6 +24,7 @@ class Model;
 	{
 
 class IMeshResource;
+class MeshAsset;
 
 class IMeshConverter : public Object
 {
@@ -31,6 +32,7 @@ public:
 	virtual Ref< IMeshResource > createResource() const = 0;
 
 	virtual bool convert(
+		const MeshAsset* meshAsset,
 		const RefArray< model::Model >& models,
 		const model::Model* occluder,
 		const Guid& materialGuid,

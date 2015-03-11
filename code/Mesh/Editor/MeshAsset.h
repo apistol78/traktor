@@ -29,6 +29,7 @@ public:
 		MtBlend,
 		MtIndoor,
 		MtInstance,
+		MtLod,
 		MtPartition,
 		MtSkinned,
 		MtStatic,
@@ -67,13 +68,21 @@ public:
 
 	bool getGenerateOccluder() const { return m_generateOccluder; }
 
+	void setLodSteps(int32_t lodSteps) { m_lodSteps = lodSteps; }
+
+	int32_t getLodSteps() const { return m_lodSteps; }
+
+	void setLodMaxDistance(float lodMaxDistance) { m_lodMaxDistance = lodMaxDistance; }
+
+	float getLodMaxDistance() const { return m_lodMaxDistance; }
+
+	void setLodCullDistance(float lodCullDistance) { m_lodCullDistance = lodCullDistance; }
+
+	float getLodCullDistance() const { return m_lodCullDistance; }
+
 	void setOccluderModel(const Path& occluderModel) { m_occluderModel = occluderModel; }
 
 	const Path& getOccluderModel() const { return m_occluderModel; }
-
-	void setAutoDetailLevel(float autoDetailLevel) { m_autoDetailLevel = autoDetailLevel; }
-
-	float getAutoDetailLevel() const { return m_autoDetailLevel; }
 
 private:
 	MeshType m_meshType;
@@ -83,8 +92,10 @@ private:
 	bool m_bakeOcclusion;
 	bool m_cullDistantFaces;
 	bool m_generateOccluder;
+	int32_t m_lodSteps;
+	float m_lodMaxDistance;
+	float m_lodCullDistance;
 	Path m_occluderModel;
-	float m_autoDetailLevel;
 };
 
 	}

@@ -1,5 +1,5 @@
-#ifndef traktor_mesh_IndoorMeshConverter_H
-#define traktor_mesh_IndoorMeshConverter_H
+#ifndef traktor_mesh_AutoLodMeshConverter_H
+#define traktor_mesh_AutoLodMeshConverter_H
 
 #include "Mesh/Editor/IMeshConverter.h"
 
@@ -8,7 +8,7 @@ namespace traktor
 	namespace mesh
 	{
 
-class IndoorMeshConverter : public IMeshConverter
+class AutoLodMeshConverter : public IMeshConverter
 {
 public:
 	virtual Ref< IMeshResource > createResource() const;
@@ -28,4 +28,4 @@ public:
 	}
 }
 
-#endif	// traktor_mesh_IndoorMeshConverter_H
+#endif	// traktor_mesh_AutoLodMeshConverter_H
