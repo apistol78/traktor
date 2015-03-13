@@ -119,6 +119,12 @@ public:
 
 	Ref< Edge > getEdgeAt(const Point& p) const;
 
+	Ref< Pin > getPinAt(const Point& p) const;
+
+	void showProbe(const Point& p, const std::wstring& text);
+
+	void hideProbe();
+
 	void setPaintSettings(PaintSettings* paintSettings);
 
 	Ref< PaintSettings > getPaintSettings() const;
@@ -140,6 +146,8 @@ private:
 	Point m_cursor;
 	Point m_moveOrigin;
 	Point m_edgeOrigin;
+	Point m_probeAt;
+	std::wstring m_probeText;
 	int m_mode;
 	bool m_moveAll;
 	bool m_moveSelected;
