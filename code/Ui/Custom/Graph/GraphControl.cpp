@@ -237,6 +237,33 @@ Ref< Edge > GraphControl::getEdgeAt(const Point& p) const
 	return 0;
 }
 
+Ref< Pin > GraphControl::getPinAt(const Point& p) const
+{
+	for (RefArray< Node >::const_iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
+	{
+		Ref< Pin > pin = (*i)->getPinAt(p - m_offset);
+		if (pin)
+			return pin;
+	}
+	return 0;
+}
+
+void GraphControl::showProbe(const Point& p, const std::wstring& text)
+{
+	m_probeAt = p;
+	m_probeText = text;
+	update();
+}
+
+void GraphControl::hideProbe()
+{
+	if (!m_probeText.empty())
+	{
+		m_probeText.clear();
+		update();
+	}
+}
+
 void GraphControl::setPaintSettings(PaintSettings* paintSettings)
 {
 	m_paintSettings = paintSettings;
@@ -735,6 +762,7 @@ void GraphControl::eventMouseMove(MouseMoveEvent* event)
 		m_edgeOrigin += delta;
 		m_moveOrigin = event->getPosition();
 		update();
+		event->consume();
 	}
 	else if (m_moveSelected)
 	{
@@ -750,6 +778,7 @@ void GraphControl::eventMouseMove(MouseMoveEvent* event)
 
 		m_moveOrigin = event->getPosition();
 		update();
+		event->consume();
 	}
 	else if (m_mode == MdConnectEdge || m_mode == MdDrawEdge || m_mode == MdDrawSelectionRectangle)
 	{
@@ -762,9 +791,8 @@ void GraphControl::eventMouseMove(MouseMoveEvent* event)
 		updateRect = updateRect.getUnified().contain(m_cursor).inflate(4, 4);
 
 		update(&updateRect);
+		event->consume();
 	}
-
-	event->consume();
 }
 
 void GraphControl::eventDoubleClick(MouseDoubleClickEvent* event)
@@ -893,6 +921,15 @@ void GraphControl::eventPaint(PaintEvent* event)
 	{
 		if ((*i)->isSelected())
 			(*i)->paint(m_paintSettings, &canvas, m_offset);
+	}
+
+	// Draw probe.
+	if (!m_probeText.empty())
+	{
+		canvas.setForeground(Color4ub(64, 255, 64, 200));
+		canvas.setFont(m_paintSettings->getFontProbe());
+		canvas.drawText(m_probeAt, m_probeText);
+
 	}
 
 	// Edge cursor.
