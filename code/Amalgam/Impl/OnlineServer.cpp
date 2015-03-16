@@ -45,7 +45,7 @@ bool OnlineServer::create(const PropertyGroup* defaultSettings, const PropertyGr
 		return false;
 	}
 
-	std::wstring overrideLanguageCode = defaultSettings->getProperty< PropertyString >(L"Online.OverrideLanguageCode", L"");
+	std::wstring overrideLanguageCode = settings->getProperty< PropertyString >(L"Online.OverrideLanguageCode", L"");
 	bool downloadableContent = defaultSettings->getProperty< PropertyBoolean >(L"Online.DownloadableContent", true);
 
 	Ref< online::SessionManager > sessionManager = new online::SessionManager();

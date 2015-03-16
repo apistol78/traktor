@@ -542,6 +542,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 			return 1;
 		}
 
+		// Override settings from command line.
+		if (cmdLine.hasOption(L"force-render-device"))
+		{
+			int32_t renderDevice = cmdLine.getOption(L"force-render-device").getInteger();
+			if (renderDevice >= 0)
+				settings->setProperty< PropertyInteger >(L"Render.Adapter", renderDevice);
+		}
+		if (cmdLine.hasOption(L"force-language-code"))
+		{
+			std::wstring languageCode = cmdLine.getOption(L"force-language-code").getString();
+			if (!languageCode.empty())
+				settings->setProperty< PropertyString >(L"Online.OverrideLanguageCode", languageCode);
+		}
+
 		// Create amalgam application.
 		application = new amalgam::Application();
 		if (application->create(

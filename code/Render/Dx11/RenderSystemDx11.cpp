@@ -60,17 +60,13 @@ bool RenderSystemDx11::create(const RenderSystemDesc& desc)
 	{
 		if (desc.adapter < 0)
 		{
+			SIZE_T dedicatedMemory = 0;
+
 			// Prefer AMD or NVidia adapters; if none is found fallback on all others.
 			for (int32_t i = 0; dxgiFactory->EnumAdapters1(i, &dxgiAdapterEnum.getAssign()) != DXGI_ERROR_NOT_FOUND; ++i)
 			{
-				// Ensure the adapter have a connected output.
-				hr = dxgiAdapterEnum->EnumOutputs(0, &dxgiOutput.getAssign());
-				if (FAILED(hr))
-					continue;
-
 				// Get adapter description.
 				DXGI_ADAPTER_DESC1 dad;
-
 				hr = dxgiAdapterEnum->GetDesc1(&dad);
 				if (FAILED(hr))
 					continue;
@@ -78,10 +74,19 @@ bool RenderSystemDx11::create(const RenderSystemDesc& desc)
 				if (desc.verbose)
 					log::info << L"Adapter " << i << L" \"" << dad.Description << L"\" (" << dad.DeviceId << L")" << Endl;
 
-				if (dad.VendorId == 4098)	// AMD/ATI
-					dxgiAdapter = dxgiAdapterEnum;
-				if (dad.VendorId == 4318)	// NVidia
-					dxgiAdapter = dxgiAdapterEnum;
+				// Ensure the adapter have a connected output.
+				hr = dxgiAdapterEnum->EnumOutputs(0, &dxgiOutput.getAssign());
+				if (FAILED(hr))
+					continue;
+
+				// If multiple adapters installed; select one with most dedicated memory.
+				if (dedicatedMemory == 0 || dad.DedicatedVideoMemory > dedicatedMemory)
+				{
+					if (dad.VendorId == 4098)	// AMD/ATI
+						dxgiAdapter = dxgiAdapterEnum;
+					if (dad.VendorId == 4318)	// NVidia
+						dxgiAdapter = dxgiAdapterEnum;
+				}
 			}
 		}
 		else
