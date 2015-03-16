@@ -37,10 +37,6 @@ void* trampoline(void* data)
 	in->finished = true;
 
 	pthread_cond_signal(&in->signal);
-
-#if !defined(__IOS__)
-	pthread_exit(0);
-#endif
 	return 0;
 }
 
@@ -85,10 +81,8 @@ bool Thread::start(Priority priority)
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 	pthread_attr_setinheritsched(&attr, PTHREAD_EXPLICIT_SCHED);
 
-#if defined(__IOS__)
-	// By default iOS allocate only 512kb for secondary threads.
+	// By default OSX/iOS allocate only 512kb for secondary threads.
 	pthread_attr_setstacksize(&attr, 2 * 1024 * 1024);
-#endif
 
 	std::memset(&param, 0, sizeof(param));
 	switch (priority)
@@ -162,11 +156,7 @@ bool Thread::wait(int timeout)
 	
 	rc = pthread_join(
 		in->thread,
-#if defined(__IOS__)
 		0
-#else		
-		(void**)&status
-#endif
 	);
 	
 	return bool(rc == 0); 
