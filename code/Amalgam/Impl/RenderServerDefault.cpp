@@ -503,20 +503,6 @@ RenderServer::UpdateResult RenderServerDefault::update(PropertyGroup* settings)
 
 	return UrSuccess;
 
-#else
-
-	// Reflect gamma real-time as we need to preview gamma changes before
-	// they are applied.
-	if (m_renderView)
-	{
-		float gamma = settings->getProperty< PropertyFloat >(L"Render.Gamma", 1.0f);
-
-		// \fixme gamma Inverted and from 0.5 to 1.5 range.
-		m_renderView->setGamma(lerp(1.2f, 0.8f, gamma - 0.5f));
-	}
-
-	return UrSuccess;
-
 #endif
 }
 

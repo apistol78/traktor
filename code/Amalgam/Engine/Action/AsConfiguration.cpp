@@ -23,7 +23,6 @@ AsConfiguration::AsConfiguration()
 ,	m_fullscreen(false)
 ,	m_waitVBlank(true)
 ,	m_multiSample(0)
-,	m_gamma(2.0f)
 ,	m_stereoscopic(false)
 ,	m_textureQuality(QtMedium)
 ,	m_shadowQuality(QtMedium)
@@ -33,6 +32,7 @@ AsConfiguration::AsConfiguration()
 ,	m_terrainQuality(QtMedium)
 ,	m_oceanQuality(QtMedium)
 ,	m_postProcessQuality(QtHigh)
+,	m_gamma(2.0f)
 ,	m_mouseSensitivity(0.5f)
 ,	m_rumbleEnable(true)
 ,	m_masterVolume(1.0f)
@@ -74,7 +74,6 @@ Ref< AsConfiguration > AsConfiguration::getCurrent(amalgam::IEnvironment* enviro
 	current->m_fullscreen = settings->getProperty< PropertyBoolean >(L"Render.FullScreen", false);
 	current->m_waitVBlank = settings->getProperty< PropertyBoolean >(L"Render.WaitVBlank", true);
 	current->m_multiSample = settings->getProperty< PropertyInteger >(L"Render.MultiSample", 0);
-	current->m_gamma = settings->getProperty< PropertyFloat >(L"Render.Gamma", 2.0f);
 	current->m_stereoscopic = settings->getProperty< PropertyBoolean >(L"Render.Stereoscopic", false);
 	current->m_textureQuality = (Quality)settings->getProperty< PropertyInteger >(L"Render.TextureQuality", QtMedium);
 	current->m_shadowQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.ShadowQuality", QtMedium);
@@ -84,6 +83,7 @@ Ref< AsConfiguration > AsConfiguration::getCurrent(amalgam::IEnvironment* enviro
 	current->m_terrainQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.TerrainQuality", QtMedium);
 	current->m_oceanQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.OceanQuality", QtMedium);
 	current->m_postProcessQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.PostProcessQuality", QtHigh);
+	current->m_gamma = settings->getProperty< PropertyFloat >(L"World.Gamma", 2.2f);
 	current->m_mouseSensitivity = settings->getProperty< PropertyFloat >(L"Input.MouseSensitivity", 0.5f);
 	current->m_rumbleEnable = settings->getProperty< PropertyBoolean >(L"Input.Rumble", true);
 	current->m_soundDriver = settings->getProperty< PropertyString >(L"Audio.Type");
@@ -373,7 +373,6 @@ bool AsConfiguration::apply(amalgam::IEnvironment* environment)
 	settings->setProperty< PropertyBoolean >(L"Render.FullScreen", m_fullscreen);
 	settings->setProperty< PropertyBoolean >(L"Render.WaitVBlank", m_waitVBlank);
 	settings->setProperty< PropertyInteger >(L"Render.MultiSample", m_multiSample);
-	settings->setProperty< PropertyFloat >(L"Render.Gamma", m_gamma);
 	settings->setProperty< PropertyBoolean >(L"Render.Stereoscopic", m_stereoscopic);
 	settings->setProperty< PropertyInteger >(L"Render.TextureQuality", m_textureQuality);
 	settings->setProperty< PropertyInteger >(L"World.ShadowQuality", m_shadowQuality);
@@ -383,6 +382,7 @@ bool AsConfiguration::apply(amalgam::IEnvironment* environment)
 	settings->setProperty< PropertyInteger >(L"World.TerrainQuality", m_terrainQuality);
 	settings->setProperty< PropertyInteger >(L"World.OceanQuality", m_oceanQuality);
 	settings->setProperty< PropertyInteger >(L"World.PostProcessQuality", m_postProcessQuality);
+	settings->setProperty< PropertyFloat >(L"World.Gamma", m_gamma);
 	settings->setProperty< PropertyFloat >(L"Input.MouseSensitivity", m_mouseSensitivity);
 	settings->setProperty< PropertyBoolean >(L"Input.Rumble", m_rumbleEnable);
 	settings->setProperty< PropertyString >(L"Audio.Type", m_soundDriver);

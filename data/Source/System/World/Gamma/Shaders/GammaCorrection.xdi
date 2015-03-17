@@ -4,14 +4,14 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>306</first>
-				<second>421</second>
+				<first>193</first>
+				<second>418</second>
 			</position>
 			<parameterName>Source</parameterName>
 			<type>PtTexture2D</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.Sampler" version="3">
+		<item type="traktor.render.Sampler" version="4">
 			<comment/>
 			<position>
 				<first>467</first>
@@ -23,6 +23,7 @@
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
+			<compare>CmNo</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
@@ -30,8 +31,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>237</first>
-				<second>456</second>
+				<first>205</first>
+				<second>496</second>
 			</position>
 			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
 			<inputPins/>
@@ -48,8 +49,8 @@
 		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
 			<position>
-				<first>864</first>
-				<second>407</second>
+				<first>877</first>
+				<second>400</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -88,35 +89,12 @@
 			<stencilMask>4294967295</stencilMask>
 			<registerCount>0</registerCount>
 		</item>
-		<item type="traktor.render.Div">
-			<comment/>
-			<position>
-				<first>383</first>
-				<second>326</second>
-			</position>
-		</item>
-		<item type="traktor.render.Scalar">
-			<comment/>
-			<position>
-				<first>279</first>
-				<second>330</second>
-			</position>
-			<value>1</value>
-		</item>
 		<item type="traktor.render.Pow">
 			<comment/>
 			<position>
 				<first>664</first>
 				<second>400</second>
 			</position>
-		</item>
-		<item type="traktor.render.Scalar">
-			<comment/>
-			<position>
-				<first>267</first>
-				<second>366</second>
-			</position>
-			<value>2.2</value>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -125,6 +103,16 @@
 				<second>374</second>
 			</position>
 			<swizzle>xxx1</swizzle>
+		</item>
+		<item type="traktor.render.Uniform" version="1">
+			<comment/>
+			<position>
+				<first>246</first>
+				<second>304</second>
+			</position>
+			<parameterName>World_GammaInverse</parameterName>
+			<type>PtScalar</type>
+			<frequency>UfOnce</frequency>
 		</item>
 	</nodes>
 	<edges>
@@ -150,42 +138,12 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Exponent</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[5]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Input</name>
+				<name>Exponent</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -194,7 +152,17 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[6]"/>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -204,7 +172,7 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<name>Input</name>
 			</destination>
 		</item>

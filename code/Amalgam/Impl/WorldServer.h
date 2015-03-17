@@ -87,6 +87,7 @@ private:
 	world::Quality m_particleQuality;
 	world::Quality m_terrainQuality;
 	world::Quality m_oceanQuality;
+	float m_gamma;
 	int32_t m_superSample;
 };
 
