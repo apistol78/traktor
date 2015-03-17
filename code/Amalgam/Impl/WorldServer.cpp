@@ -101,6 +101,7 @@ WorldServer::WorldServer()
 ,	m_particleQuality(world::QuMedium)
 ,	m_terrainQuality(world::QuMedium)
 ,	m_oceanQuality(world::QuMedium)
+,	m_gamma(2.2f)
 ,	m_superSample(0)
 {
 }
@@ -122,6 +123,7 @@ bool WorldServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 	m_particleQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.ParticleQuality", world::QuMedium);
 	m_terrainQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.TerrainQuality", world::QuMedium);
 	m_oceanQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.OceanQuality", world::QuMedium);
+	m_gamma = settings->getProperty< PropertyFloat >(L"World.Gamma", 2.2f);
 	m_superSample = settings->getProperty< PropertyInteger >(L"World.SuperSample", 0);
 
 	m_renderServer = renderServer;
@@ -213,6 +215,7 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 	world::Quality particleQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.ParticleQuality", world::QuMedium);
 	world::Quality terrainQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.TerrainQuality", world::QuMedium);
 	world::Quality oceanQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.OceanQuality", world::QuMedium);
+	float gamma = settings->getProperty< PropertyFloat >(L"World.Gamma", 2.2f);
 	int32_t superSample = settings->getProperty< PropertyInteger >(L"World.SuperSample", 0);
 
 	// Check if we need to be reconfigured.
@@ -223,6 +226,7 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 		particleQuality == m_particleQuality &&
 		terrainQuality == m_terrainQuality &&
 		oceanQuality == m_oceanQuality &&
+		gamma == m_gamma &&
 		superSample == m_superSample
 	)
 		return CrUnaffected;
@@ -243,6 +247,7 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 	m_antiAliasQuality = antiAliasQuality;
 	m_terrainQuality = terrainQuality;
 	m_oceanQuality = oceanQuality;
+	m_gamma = gamma;
 	m_superSample = superSample;
 
 	return CrAccepted;
@@ -304,6 +309,7 @@ Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(
 	wcd.multiSample = m_renderServer->getMultiSample();
 	wcd.superSample = m_superSample;
 	wcd.frameCount = getFrameCount();
+	wcd.gamma = m_gamma;
 
 	Ref< world::IWorldRenderer > worldRenderer = dynamic_type_cast< world::IWorldRenderer* >(m_worldType->createInstance());
 	if (!worldRenderer)

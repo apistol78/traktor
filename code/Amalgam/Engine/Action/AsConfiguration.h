@@ -51,10 +51,6 @@ public:
 
 	void setMultiSample(int32_t multiSample);
 
-	float getGamma() const;
-
-	void setGamma(float gamma);
-
 	bool getStereoscopic() const;
 
 	void setStereoscopic(bool stereoscopic);
@@ -90,6 +86,10 @@ public:
 	Quality getPostProcessQuality() const;
 
 	void setPostProcessQuality(Quality postProcessQuality);
+
+	float getGamma() const;
+
+	void setGamma(float gamma);
 
 	float getMouseSensitivity() const;
 
@@ -136,7 +136,6 @@ private:
 	bool m_fullscreen;
 	bool m_waitVBlank;
 	int32_t m_multiSample;
-	float m_gamma;
 	bool m_stereoscopic;
 	Quality m_textureQuality;
 	Quality m_shadowQuality;
@@ -146,6 +145,7 @@ private:
 	Quality m_terrainQuality;
 	Quality m_oceanQuality;
 	Quality m_postProcessQuality;
+	float m_gamma;
 	float m_mouseSensitivity;
 	bool m_rumbleEnable;
 	std::wstring m_soundDriver;

@@ -32,7 +32,6 @@ As_traktor_amalgam_Configuration::As_traktor_amalgam_Configuration(flash::Action
 	prototype->addProperty("fullscreen", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_fullscreen), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_fullscreen));
 	prototype->addProperty("waitVBlank", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_waitVBlank), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_waitVBlank));
 	prototype->addProperty("multisample", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_multisample), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_multisample));
-	prototype->addProperty("gamma", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_gamma), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_gamma));
 	prototype->addProperty("stereoscopic", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_stereoscopic), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_stereoscopic));
 
 	// Quality
@@ -44,6 +43,7 @@ As_traktor_amalgam_Configuration::As_traktor_amalgam_Configuration(flash::Action
 	prototype->addProperty("particleQuality", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_particleQuality), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_particleQuality));
 	prototype->addProperty("oceanQuality", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_oceanQuality), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_oceanQuality));
 	prototype->addProperty("postProcessQuality", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_postProcessQuality), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_postProcessQuality));
+	prototype->addProperty("gamma", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_gamma), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_gamma));
 
 	// Input
 	prototype->addProperty("mouseSensitivity", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_mouseSensitivity), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_mouseSensitivity));
@@ -131,16 +131,6 @@ int32_t As_traktor_amalgam_Configuration::Configuration_get_multisample(const As
 void As_traktor_amalgam_Configuration::Configuration_set_multisample(AsConfiguration* self, int32_t multisample) const
 {
 	self->setMultiSample(multisample);
-}
-
-float As_traktor_amalgam_Configuration::Configuration_get_gamma(const AsConfiguration* self) const
-{
-	return self->getGamma();
-}
-
-void As_traktor_amalgam_Configuration::Configuration_set_gamma(AsConfiguration* self, float gamma) const
-{
-	self->setGamma(gamma);
 }
 
 bool As_traktor_amalgam_Configuration::Configuration_get_stereoscopic(const AsConfiguration* self) const
@@ -231,6 +221,16 @@ int32_t As_traktor_amalgam_Configuration::Configuration_get_postProcessQuality(c
 void As_traktor_amalgam_Configuration::Configuration_set_postProcessQuality(AsConfiguration* self, int32_t postProcessQuality) const
 {
 	self->setPostProcessQuality((AsConfiguration::Quality)postProcessQuality);
+}
+
+float As_traktor_amalgam_Configuration::Configuration_get_gamma(const AsConfiguration* self) const
+{
+	return self->getGamma();
+}
+
+void As_traktor_amalgam_Configuration::Configuration_set_gamma(AsConfiguration* self, float gamma) const
+{
+	self->setGamma(gamma);
 }
 
 float As_traktor_amalgam_Configuration::Configuration_get_mouseSensitivity(const AsConfiguration* self) const

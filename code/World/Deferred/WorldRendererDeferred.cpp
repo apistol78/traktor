@@ -490,7 +490,7 @@ bool WorldRendererDeferred::create(
 		if (gammaCorrection)
 		{
 			m_gammaCorrectionPostProcess = new PostProcess();
-			if (!m_gammaCorrectionPostProcess->create(
+			if (m_gammaCorrectionPostProcess->create(
 				gammaCorrection,
 				postProcessTargetPool,
 				resourceManager,
@@ -499,6 +499,11 @@ bool WorldRendererDeferred::create(
 				height,
 				desc.allTargetsPersistent
 			))
+			{
+				m_gammaCorrectionPostProcess->setFloatParameter(render::getParameterHandle(L"World_Gamma"), desc.gamma);
+				m_gammaCorrectionPostProcess->setFloatParameter(render::getParameterHandle(L"World_GammaInverse"), 1.0f / desc.gamma);
+			}
+			else
 			{
 				log::warning << L"Unable to create gamma correction process; gamma correction disabled" << Endl;
 				m_gammaCorrectionPostProcess = 0;

@@ -51,10 +51,6 @@ private:
 
 	void Configuration_set_multisample(AsConfiguration* self, int32_t multisample) const;
 
-	float Configuration_get_gamma(const AsConfiguration* self) const;
-
-	void Configuration_set_gamma(AsConfiguration* self, float gamma) const;
-
 	bool Configuration_get_stereoscopic(const AsConfiguration* self) const;
 
 	void Configuration_set_stereoscopic(AsConfiguration* self, bool stereoscopic) const;
@@ -90,6 +86,10 @@ private:
 	int32_t Configuration_get_postProcessQuality(const AsConfiguration* self) const;
 
 	void Configuration_set_postProcessQuality(AsConfiguration* self, int32_t postProcessQuality) const;
+
+	float Configuration_get_gamma(const AsConfiguration* self) const;
+
+	void Configuration_set_gamma(AsConfiguration* self, float gamma) const;
 
 	float Configuration_get_mouseSensitivity(const AsConfiguration* self) const;
 
