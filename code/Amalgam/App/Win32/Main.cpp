@@ -164,7 +164,7 @@ void logSystemInfo()
 
 	__cpuid(cpuInfo, 0);
 	int nIds = cpuInfo[0];
-	memset(CPUString, 0, sizeof(CPUString));
+	std::memset(CPUString, 0, sizeof(CPUString));
 	*((int*)CPUString) = cpuInfo[1];
 	*((int*)(CPUString+4)) = cpuInfo[3];
 	*((int*)(CPUString+8)) = cpuInfo[2];
@@ -182,8 +182,10 @@ void logSystemInfo()
 	{
 		// Get number of cores
 		__cpuidex(cpuInfo, 0x4, 0);
-		log::info << L"\tCores " << ((cpuInfo[0] >> 26) + 1) << Endl;
+		log::info << L"\tCores (cpuinfo) " << ((cpuInfo[0] >> 26) + 1) << Endl;
 	}
+
+	log::info << L"\tCores (Win API) " << OS::getInstance().getCPUCoreCount() << Endl;
 
 	// Calling __cpuid with 0x80000000 as the function_id argument
 	// gets the number of valid extended IDs.
@@ -191,7 +193,7 @@ void logSystemInfo()
 	int nExIds = cpuInfo[0];
 
 	char CPUBrandString[0x40];
-	memset(CPUBrandString, 0, sizeof(CPUBrandString));
+	std::memset(CPUBrandString, 0, sizeof(CPUBrandString));
 	for (int i=0x80000000; i<=nExIds; ++i)
 	{
 		__cpuid(cpuInfo, i);
@@ -221,7 +223,7 @@ void logSystemInfo()
 	osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
 	GetVersionEx((OSVERSIONINFO *) &osvi);
 	log::info << L"Operating System" << Endl;
-	if (osvi.wProductType == VER_NT_WORKSTATION ) 
+	if (osvi.wProductType == VER_NT_WORKSTATION) 
 	{
 		if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 3)
 			log::info << L"\tWindows 8.1";
@@ -230,7 +232,7 @@ void logSystemInfo()
 		else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 1)
 			log::info << L"\tWindows 7";
 		else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 0)
-			log::info << L"\tWindows Vista";		
+			log::info << L"\tWindows Vista";
 	}
 	else
 	{
@@ -382,7 +384,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 	FileSystem::getInstance().makeAllDirectories(writablePath);
 
 #if !defined(_DEBUG)
-	//if (!IsDebuggerPresent())
+	if (!IsDebuggerPresent())
 	{
 		RefArray< File > logs;
 		FileSystem::getInstance().find(L"Application_*.log", logs);
