@@ -75,8 +75,39 @@ bool RenderSystemDx11::create(const RenderSystemDesc& desc)
 					log::info << L"Adapter " << i << L" \"" << dad.Description << L"\" (" << dad.DeviceId << L")" << Endl;
 
 				// Ensure the adapter have a connected output.
-				hr = dxgiAdapterEnum->EnumOutputs(0, &dxgiOutput.getAssign());
-				if (FAILED(hr))
+				int32_t outputs = 0;
+				for (;;)
+				{
+					hr = dxgiAdapterEnum->EnumOutputs(outputs, &dxgiOutput.getAssign());
+					if (FAILED(hr))
+						break;
+
+					if (desc.verbose)
+					{
+						DXGI_OUTPUT_DESC dod;
+						hr = dxgiOutput->GetDesc(&dod);
+						if (SUCCEEDED(hr))
+						{
+							uint32_t width = dod.DesktopCoordinates.right - dod.DesktopCoordinates.left;
+							uint32_t height = dod.DesktopCoordinates.bottom - dod.DesktopCoordinates.top;
+
+							const wchar_t* c_orientation[] =
+							{
+								L"Unspecified",
+								L"Identity",
+								L"Rotate90",
+								L"Rotate180",
+								L"Rotate270"
+							};
+							log::info << L"\tDisplay " << outputs << L" \"" << dod.DeviceName << L"\", " << width << L"x" << height << L", " << c_orientation[dod.Rotation] << Endl;
+						}
+						else
+							log::info << L"\tDisplay " << outputs << L" -No description-" << Endl;
+					}
+
+					outputs++;
+				}
+				if (outputs <= 0)
 					continue;
 
 				// If multiple adapters installed; select one with most dedicated memory.
@@ -88,6 +119,8 @@ bool RenderSystemDx11::create(const RenderSystemDesc& desc)
 						dxgiAdapter = dxgiAdapterEnum;
 				}
 			}
+
+			dxgiOutput.release();			
 		}
 		else
 		{
