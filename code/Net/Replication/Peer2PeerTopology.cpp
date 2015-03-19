@@ -184,18 +184,33 @@ bool Peer2PeerTopology::send(net_handle_t node, const void* data, int32_t size)
 
 int32_t Peer2PeerTopology::recv(void* data, int32_t size, net_handle_t& outNode)
 {
-	if (m_recvQueue.empty())
-		return 0;
+	while (!m_recvQueue.empty())
+	{
+		const Recv& r = m_recvQueue.front();
 
-	const Recv& r = m_recvQueue.front();
+		// Only permit receive from established peers; all
+		// other messages are discarded.
+		int32_t peerIndex = indexOf(r.from);
+		if (peerIndex >= 0)
+		{
+			Peer& peer = m_peers[peerIndex];
+			if (peer.established)
+			{
+				size = std::min(size, r.size);
+				std::memcpy(data, r.data, size);
+				outNode = r.from;
+				m_recvQueue.pop_front();
+				return size;
+			}
+			else
+				log::warning << getLogPrefix() << L"Received data from non-established peer " << r.from << Endl;
+		}
+		else
+			log::warning << getLogPrefix() << L"Received data from unknown peer " << r.from << Endl;
 
-	size = std::min(size, r.size);
-	std::memcpy(data, r.data, size);
-
-	outNode = r.from;
-
-	m_recvQueue.pop_front();
-	return size;
+		m_recvQueue.pop_front();
+	}
+	return 0;
 }
 
 bool Peer2PeerTopology::update(double dT)

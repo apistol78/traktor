@@ -109,6 +109,7 @@ bool OnlinePeer2PeerProvider::update()
 				p2pu.user = *i;
 				p2pu.timeout = 0;
 				m_users.push_back(p2pu);
+				log::info << L"[Online P2P] Peer " << (*i)->getGlobalId() << L" added." << Endl;
 			}
 		}
 
@@ -129,6 +130,8 @@ bool OnlinePeer2PeerProvider::update()
 
 		// Remove users which have a timeout greater than limit.
 		std::vector< P2PUser >::iterator i = std::remove_if(m_users.begin(), m_users.end(), P2PUserTimeoutPred(4));
+		for (std::vector< P2PUser >::iterator j = i; j != m_users.end(); ++j)
+			log::info << L"[Online P2P] Peer " << j->user->getGlobalId() << L" removed." << Endl;
 		m_users.erase(i, m_users.end());
 
 		// Cache primary handle.
