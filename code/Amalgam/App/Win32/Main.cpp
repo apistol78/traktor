@@ -156,6 +156,35 @@ bool checkPreconditions()
 	return true;
 }
 
+bool isWindows64bit(bool& out64bit)
+{
+	out64bit = false;
+#if _WIN64
+    out64bit =  true;
+    return true;
+#elif _WIN32
+	typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
+    LPFN_ISWOW64PROCESS fnIsWow64Process = (LPFN_ISWOW64PROCESS)GetProcAddress(GetModuleHandle(TEXT("kernel32")),"IsWow64Process");
+    if(fnIsWow64Process)
+    {
+		BOOL isWow64 = FALSE;
+        if (!fnIsWow64Process(GetCurrentProcess(), &isWow64))
+            return false;
+
+        if(isWow64)
+            out64bit = true;
+        else
+            out64bit = false;
+
+        return true;
+    }
+    else
+        return false;
+#else
+    return false;
+#endif
+}
+
 void logSystemInfo()
 {
 	// Log CPU info
@@ -245,6 +274,11 @@ void logSystemInfo()
 		else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 0)
 			log::info << L"\tWindows Server 2008";		
 	}
+
+	bool is64bit = false;
+	if (isWindows64bit(is64bit))
+		log::info << L" (" << (is64bit ? L"64-bit" : L"32-bit") << L")";
+
 	if (osvi.szCSDVersion)
 		log::info << L" " << osvi.szCSDVersion << Endl;
 	else 
