@@ -1,5 +1,6 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/String.h"
 #include "Core/Reflection/Reflection.h"
 #include "Core/Reflection/RfpMemberName.h"
 #include "Core/Serialization/DeepClone.h"
@@ -18,8 +19,10 @@
 #include "Resource/ResourceManager.h"
 #include "Sound/SoundFactory.h"
 #include "Sound/SoundSystem.h"
+#include "Spray/Effect.h"
 #include "Spray/EffectData.h"
 #include "Spray/EffectFactory.h"
+#include "Spray/EffectLayer.h"
 #include "Spray/EffectLayerData.h"
 #include "Spray/EmitterData.h"
 #include "Spray/SequenceData.h"
@@ -304,7 +307,7 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 			{
 				for (RefArray< ui::custom::SequenceItem >::iterator i = selectedItems.begin(); i != selectedItems.end(); ++i)
 				{
-					Ref< EffectLayerData > layer = (*i)->getData< EffectLayerData >(L"LAYER");
+					Ref< EffectLayerData > layer = (*i)->getData< EffectLayerData >(L"LAYERDATA");
 					
 					EmitterData* emitter = layer->getEmitter();
 					if (!emitter)
@@ -357,7 +360,7 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 			Ref< ClipboardData > clipboardData = new ClipboardData();
 			for (RefArray< ui::custom::SequenceItem >::iterator i = selectedItems.begin(); i != selectedItems.end(); ++i)
 			{
-				Ref< EffectLayerData > layer = (*i)->getData< EffectLayerData >(L"LAYER");
+				Ref< EffectLayerData > layer = (*i)->getData< EffectLayerData >(L"LAYERDATA");
 				T_ASSERT (layer);
 
 				clipboardData->addLayer(layer);
@@ -420,28 +423,38 @@ void EffectEditorPage::updateEffectPreview()
 {
 	if (m_resourceManager)
 	{
-		RefArray< EffectLayerData > layersData;
+		RefArray< EffectLayer > effectLayers;
 
+		// Create effect layers.
 		RefArray< ui::custom::SequenceItem > layers;
 		m_sequencer->getSequenceItems(layers, ui::custom::SequencerControl::GfDefault);
 
 		for (RefArray< ui::custom::SequenceItem >::const_iterator i = layers.begin(); i != layers.end(); ++i)
 		{
-			const ui::custom::Sequence* layerItem = checked_type_cast< ui::custom::Sequence*, false >(*i);
-			if (layerItem->getButtonState(0))
-				continue;
+			ui::custom::Sequence* layerItem = checked_type_cast< ui::custom::Sequence*, false >(*i);
+			if (!layerItem->getButtonState(0))
+			{
+				EffectLayerData* effectLayerData = layerItem->getData< EffectLayerData >(L"LAYERDATA");
+				T_ASSERT (effectLayerData);
 
-			layersData.push_back(layerItem->getData< EffectLayerData >(L"LAYER"));
+				Ref< EffectLayer > effectLayer = effectLayerData->createEffectLayer(m_resourceManager, 0);
+				if (effectLayer)
+					effectLayers.push_back(effectLayer);
+
+				layerItem->setData(L"LAYER", effectLayer);
+			}
+			else
+				layerItem->setData(L"LAYER", 0);
 		}
 
-		Ref< EffectData > effectData = new EffectData(
+		// Create effect.
+		Ref< Effect > effect = new Effect(
 			m_effectData->getDuration(),
 			m_effectData->getLoopStart(),
 			m_effectData->getLoopEnd(),
-			layersData
+			effectLayers
 		);
 
-		Ref< Effect > effect = effectData->createEffect(m_resourceManager, 0);
 		m_previewControl->setEffect(effect);
 
 		float time = m_sequencer->getCursor() / 1000.0f;
@@ -471,7 +484,7 @@ void EffectEditorPage::updateSequencer()
 	{
 		Ref< ui::custom::Sequence > layerItem = new ui::custom::Sequence((*i)->getName());
 		layerItem->addButton(layerVisible, layerHidden, ui::Command(L"Effect.Editor.ToggleLayerVisible"));
-		layerItem->setData(L"LAYER", *i);
+		layerItem->setData(L"LAYERDATA", *i);
 		
 		float start = (*i)->getTime();
 		if ((*i)->getDuration() > 0.0f)
@@ -482,13 +495,13 @@ void EffectEditorPage::updateSequencer()
 				int32_t(end * 1000.0f),
 				true
 			);
-			layerRange->setData(L"LAYER", *i);
+			layerRange->setData(L"LAYERDATA", *i);
 			layerItem->addKey(layerRange);
 		}
 		else
 		{
 			Ref< ui::custom::Tick > layerTick = new ui::custom::Tick(int32_t(start * 1000.0f), true);
-			layerTick->setData(L"LAYER", *i);
+			layerTick->setData(L"LAYERDATA", *i);
 			layerItem->addKey(layerTick);
 		}
 
@@ -501,7 +514,7 @@ void EffectEditorPage::updateSequencer()
 			{
 				Ref< ui::custom::Marker > sequenceMarker = new ui::custom::Marker(int32_t(keys[j].T * 1000.0f), true);
 				sequenceMarker->setData(L"SEQUENCE", new SequenceDataKey(sequence, j));
-				sequenceMarker->setData(L"LAYER", *i);
+				sequenceMarker->setData(L"LAYERDATA", *i);
 				layerItem->addKey(sequenceMarker);
 			}
 		}
@@ -511,6 +524,27 @@ void EffectEditorPage::updateSequencer()
 
 	m_sequencer->setEnable(true);
 	m_sequencer->setLength(int(m_effectData->getDuration() * 1000.0f));
+	m_sequencer->update();
+}
+
+void EffectEditorPage::updateProfile()
+{
+	RefArray< ui::custom::SequenceItem > items;
+	m_sequencer->getSequenceItems(items, ui::custom::SequencerControl::GfDefault);
+
+	for (RefArray< ui::custom::SequenceItem >::const_iterator i = items.begin(); i != items.end(); ++i)
+	{
+		ui::custom::Sequence* sequence = checked_type_cast< ui::custom::Sequence*, false >(*i);
+		Ref< EffectLayer > layer = sequence->getData< EffectLayer >(L"LAYER");
+		if (layer)
+		{
+			uint32_t npoints = m_previewControl->getEffectLayerPoints(layer);
+			sequence->setDescription(toString(npoints));
+		}
+		else
+			sequence->setDescription(L"");
+	}
+
 	m_sequencer->update();
 }
 
@@ -527,7 +561,7 @@ void EffectEditorPage::eventSequencerLayerSelect(ui::SelectionChangeEvent* event
 	{
 		ui::custom::Sequence* selectedSequence = checked_type_cast< ui::custom::Sequence*, false >(selectedItems.front());
 
-		Ref< EffectLayerData > layer = selectedSequence->getData< EffectLayerData >(L"LAYER");
+		Ref< EffectLayerData > layer = selectedSequence->getData< EffectLayerData >(L"LAYERDATA");
 		T_ASSERT (layer);
 
 		ui::custom::Marker* selectedMarker = dynamic_type_cast< ui::custom::Marker* >(selectedSequence->getSelectedKey());
@@ -551,11 +585,12 @@ void EffectEditorPage::eventSequencerTimeCursorMove(ui::custom::CursorMoveEvent*
 	m_previewControl->setTimeScale(0.0f);
 	m_previewControl->setTotalTime(time);
 	m_previewControl->syncEffect();
+	updateProfile();
 }
 
 void EffectEditorPage::eventSequencerLayerRearranged(ui::custom::SequenceMovedEvent* event)
 {
-	Ref< EffectLayerData > movedLayer = event->getItem()->getData< EffectLayerData >(L"LAYER");
+	Ref< EffectLayerData > movedLayer = event->getItem()->getData< EffectLayerData >(L"LAYERDATA");
 	T_ASSERT (movedLayer);
 
 	RefArray< EffectLayerData > layers = m_effectData->getLayers();
@@ -572,7 +607,7 @@ void EffectEditorPage::eventSequencerKeyMove(ui::custom::KeyMoveEvent* event)
 	ui::custom::Range* movedRange = dynamic_type_cast< ui::custom::Range* >(event->getKey());
 	if (movedRange)
 	{
-		Ref< EffectLayerData > layer = movedRange->getData< EffectLayerData >(L"LAYER");
+		Ref< EffectLayerData > layer = movedRange->getData< EffectLayerData >(L"LAYERDATA");
 		T_ASSERT (layer);
 
 		float start = movedRange->getStart() / 1000.0f;
@@ -586,7 +621,7 @@ void EffectEditorPage::eventSequencerKeyMove(ui::custom::KeyMoveEvent* event)
 	ui::custom::Tick* movedTick = dynamic_type_cast< ui::custom::Tick* >(event->getKey());
 	if (movedTick)
 	{
-		Ref< EffectLayerData > layer = movedTick->getData< EffectLayerData >(L"LAYER");
+		Ref< EffectLayerData > layer = movedTick->getData< EffectLayerData >(L"LAYERDATA");
 		T_ASSERT (layer);
 
 		float start = movedTick->getTime() / 1000.0f;
@@ -598,7 +633,7 @@ void EffectEditorPage::eventSequencerKeyMove(ui::custom::KeyMoveEvent* event)
 	ui::custom::Marker* movedMarker = dynamic_type_cast< ui::custom::Marker* >(event->getKey());
 	if (movedMarker)
 	{
-		Ref< EffectLayerData > layer = movedMarker->getData< EffectLayerData >(L"LAYER");
+		Ref< EffectLayerData > layer = movedMarker->getData< EffectLayerData >(L"LAYERDATA");
 		T_ASSERT (layer);
 
 		Ref< SequenceDataKey > sequenceDataKey = movedMarker->getData< SequenceDataKey >(L"SEQUENCE");

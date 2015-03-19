@@ -62,6 +62,8 @@ public:
 
 	const Aabb3& getBoundingBox() const { return m_boundingBox; }
 
+	const RefArray< EffectLayerInstance >& getLayerInstances() const { return m_layerInstances; }
+
 private:
 	friend class Effect;
 

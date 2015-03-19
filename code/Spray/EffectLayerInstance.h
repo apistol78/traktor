@@ -67,6 +67,14 @@ public:
 
 	Aabb3 getBoundingBox() const;
 
+	const EmitterInstance* getEmitterInstance() const { return m_emitterInstance; }
+
+	const TrailInstance* getTrailInstance() const { return m_trailInstance; }
+
+	const SequenceInstance* getSequenceInstance() const { return m_sequenceInstance; }
+
+	const EffectLayer* getLayer() const { return m_layer; }
+
 private:
 	Ref< const EffectLayer > m_layer;
 	Ref< EmitterInstance > m_emitterInstance;

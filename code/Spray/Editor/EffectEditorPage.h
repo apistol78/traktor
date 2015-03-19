@@ -107,6 +107,8 @@ private:
 
 	void updateSequencer();
 
+	void updateProfile();
+
 	void eventToolClick(ui::custom::ToolBarButtonClickEvent* event);
 
 	void eventSequencerLayerSelect(ui::SelectionChangeEvent* event);
