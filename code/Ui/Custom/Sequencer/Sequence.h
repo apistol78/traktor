@@ -37,6 +37,10 @@ class T_DLLCLASS Sequence : public SequenceItem
 public:
 	Sequence(const std::wstring& name);
 
+	void setDescription(const std::wstring& description);
+
+	const std::wstring& getDescription() const;
+
 	int32_t addButton(Bitmap* imageUp, Bitmap* imageDown, const Command& command);
 
 	bool getButtonState(int32_t buttonIndex) const;
@@ -75,6 +79,7 @@ private:
 		Rect rc;
 	};
 
+	std::wstring m_description;
 	RefArray< Key > m_keys;
 	std::vector< Button > m_buttons;
 	Ref< Key > m_selectedKey;

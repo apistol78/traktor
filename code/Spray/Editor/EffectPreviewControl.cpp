@@ -16,9 +16,11 @@
 #include "Sound/SoundSystem.h"
 #include "Sound/Player/SoundPlayer.h"
 #include "Spray/Effect.h"
-#include "Spray/EffectLayer.h"
 #include "Spray/EffectInstance.h"
+#include "Spray/EffectLayer.h"
+#include "Spray/EffectLayerInstance.h"
 #include "Spray/Emitter.h"
+#include "Spray/EmitterInstance.h"
 #include "Spray/MeshRenderer.h"
 #include "Spray/PointRenderer.h"
 #include "Spray/TrailRenderer.h"
@@ -200,6 +202,26 @@ void EffectPreviewControl::setEffect(Effect* effect)
 		m_effectInstance = m_effect->createInstance();
 	else
 		m_effectInstance = 0;
+}
+
+uint32_t EffectPreviewControl::getEffectLayerPoints(const EffectLayer* effectLayer) const
+{
+	if (m_effectInstance)
+	{
+		const RefArray< EffectLayerInstance >& layerInstances = m_effectInstance->getLayerInstances();
+		for (RefArray< EffectLayerInstance >::const_iterator i = layerInstances.begin(); i != layerInstances.end(); ++i)
+		{
+			if ((*i)->getLayer() == effectLayer)
+			{
+				const EmitterInstance* emitterInstance = (*i)->getEmitterInstance();
+				if (emitterInstance)
+					return emitterInstance->getPoints().size();
+				else
+					return 0;
+			}
+		}
+	}
+	return 0;
 }
 
 void EffectPreviewControl::setTimeScale(float timeScale)

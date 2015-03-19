@@ -65,6 +65,7 @@ class PostProcessSettings;
 
 class Effect;
 class EffectInstance;
+class EffectLayer;
 class MeshRenderer;
 class PointRenderer;
 class SourceRenderer;
@@ -88,6 +89,8 @@ public:
 	void destroy();
 
 	void setEffect(Effect* effect);
+
+	uint32_t getEffectLayerPoints(const EffectLayer* effectLayer) const;
 
 	void setTimeScale(float timeScale);
 

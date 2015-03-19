@@ -29,6 +29,16 @@ Sequence::Sequence(const std::wstring& name)
 {
 }
 
+void Sequence::setDescription(const std::wstring& description)
+{
+	m_description = description;
+}
+
+const std::wstring& Sequence::getDescription() const
+{
+	return m_description;
+}
+
 int32_t Sequence::addButton(Bitmap* imageUp, Bitmap* imageDown, const Command& command)
 {
 	Button btn;
@@ -207,9 +217,17 @@ void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc
 	canvas.drawText(
 		Point(
 			rc.left + 32 + getDepth() * 16,
-			rc.top + (rc.getHeight() - ext.cy) / 2
+			rc.top + rc.getHeight() / 2 - ext.cy
 		),
 		getName()
+	);
+	canvas.setForeground(Color4ub(0, 100, 0));
+	canvas.drawText(
+		Point(
+			rc.left + 48 + getDepth() * 16,
+			rc.top + rc.getHeight() / 2
+		),
+		m_description
 	);
 
 	// Draw sequence buttons.
