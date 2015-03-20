@@ -301,7 +301,7 @@ void BlendMesh::render(
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->indexBuffer = instance->mesh->getIndexBuffer();
 		renderBlock->vertexBuffer = instance->mesh->getVertexBuffer();
-		renderBlock->primitives = &meshParts[i->meshPart].primitives;
+		renderBlock->primitives = meshParts[i->meshPart].primitives;
 
 		renderBlock->programParams->beginParameters(renderContext);
 		worldRenderPass.setProgramParameters(

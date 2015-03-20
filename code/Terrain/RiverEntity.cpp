@@ -180,7 +180,7 @@ void RiverEntity::render(
 	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 	renderBlock->indexBuffer = m_indexBuffer;
 	renderBlock->vertexBuffer = m_vertexBuffer;
-	renderBlock->primitives = &m_primitives;
+	renderBlock->primitives = m_primitives;
 
 	renderBlock->programParams->beginParameters(renderContext);
 	

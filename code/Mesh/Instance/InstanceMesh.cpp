@@ -160,7 +160,7 @@ void InstanceMesh::render(
 			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 			renderBlock->indexBuffer = m_renderMesh->getIndexBuffer();
 			renderBlock->vertexBuffer = m_renderMesh->getVertexBuffer();
-			renderBlock->primitives = &meshParts[i->meshPart].primitives;
+			renderBlock->primitives = meshParts[i->meshPart].primitives;
 			renderBlock->count = batchCount;
 
 #else
@@ -244,7 +244,7 @@ void InstanceMesh::render(
 				renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 				renderBlock->indexBuffer = m_renderMesh->getIndexBuffer();
 				renderBlock->vertexBuffer = m_renderMesh->getVertexBuffer();
-				renderBlock->primitives = &meshParts[i->meshPart].primitives;
+				renderBlock->primitives = meshParts[i->meshPart].primitives;
 				renderBlock->count = batchCount;
 
 #else

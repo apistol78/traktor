@@ -35,7 +35,7 @@ public:
 	const char* name;
 #endif
 	float distance;
-	IProgram* program;
+	Ref< IProgram > program;
 	ProgramParameters* programParams;
 
 	RenderBlock()
@@ -73,16 +73,9 @@ public:
 class T_DLLCLASS SimpleRenderBlock : public RenderBlock
 {
 public:
-	IndexBuffer* indexBuffer;
-	VertexBuffer* vertexBuffer;
-	const Primitives* primitives;
-
-	SimpleRenderBlock()
-	:	indexBuffer(0)
-	,	vertexBuffer(0)
-	,	primitives(0)
-	{
-	}
+	Ref< IndexBuffer > indexBuffer;
+	Ref< VertexBuffer > vertexBuffer;
+	Primitives primitives;
 
 	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const;
 };
@@ -93,16 +86,13 @@ public:
 class T_DLLCLASS InstancingRenderBlock : public RenderBlock
 {
 public:
-	IndexBuffer* indexBuffer;
-	VertexBuffer* vertexBuffer;
-	const Primitives* primitives;
+	Ref< IndexBuffer > indexBuffer;
+	Ref< VertexBuffer > vertexBuffer;
+	Primitives primitives;
 	uint32_t count;
 
 	InstancingRenderBlock()
-	:	indexBuffer(0)
-	,	vertexBuffer(0)
-	,	primitives(0)
-	,	count(0)
+	:	count(0)
 	{
 	}
 
@@ -115,8 +105,8 @@ public:
 class T_DLLCLASS IndexedInstancingRenderBlock : public RenderBlock
 {
 public:
-	IndexBuffer* indexBuffer;
-	VertexBuffer* vertexBuffer;
+	Ref< IndexBuffer > indexBuffer;
+	Ref< VertexBuffer > vertexBuffer;
 	PrimitiveType primitive;
 	uint32_t offset;
 	uint32_t count;
@@ -145,7 +135,7 @@ public:
 class T_DLLCLASS NonIndexedRenderBlock : public RenderBlock
 {
 public:
-	VertexBuffer* vertexBuffer;
+	Ref< VertexBuffer > vertexBuffer;
 	PrimitiveType primitive;
 	uint32_t offset;
 	uint32_t count;
@@ -167,8 +157,8 @@ public:
 class T_DLLCLASS IndexedRenderBlock : public RenderBlock
 {
 public:
-	IndexBuffer* indexBuffer;
-	VertexBuffer* vertexBuffer;
+	Ref< IndexBuffer > indexBuffer;
+	Ref< VertexBuffer > vertexBuffer;
 	PrimitiveType primitive;
 	uint32_t offset;
 	uint32_t count;
@@ -195,7 +185,7 @@ public:
 class T_DLLCLASS TargetBeginRenderBlock : public RenderBlock
 {
 public:
-	RenderTargetSet* renderTargetSet;
+	Ref< RenderTargetSet > renderTargetSet;
 	int32_t renderTargetIndex;
 
 	TargetBeginRenderBlock()

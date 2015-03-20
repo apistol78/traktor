@@ -77,7 +77,7 @@ void SkinnedMesh::render(
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->indexBuffer = m_mesh->getIndexBuffer();
 		renderBlock->vertexBuffer = m_mesh->getVertexBuffer();
-		renderBlock->primitives = &meshParts[i->meshPart].primitives;
+		renderBlock->primitives = meshParts[i->meshPart].primitives;
 
 		renderBlock->programParams->beginParameters(renderContext);
 		worldRenderPass.setProgramParameters(
