@@ -205,7 +205,7 @@ void OceanEntity::render(
 	renderBlock->program = program;
 	renderBlock->indexBuffer = m_indexBuffer;
 	renderBlock->vertexBuffer = m_vertexBuffer;
-	renderBlock->primitives = &m_primitives;
+	renderBlock->primitives = m_primitives;
 
 	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 	renderBlock->programParams->beginParameters(renderContext);

@@ -127,11 +127,11 @@ void TerrainEntity::render(
 		m_heightfield.changed()
 	)
 	{
-		if (!createPatches())
-			return;
-
 		m_heightfield.consume();
 		m_terrain.consume();
+
+		if (!createPatches())
+			return;
 	}
 
 	if (!m_surfaceCache || cacheSize != m_cacheSize)
@@ -514,7 +514,7 @@ void TerrainEntity::render(
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->indexBuffer = m_indexBuffer;
 		renderBlock->vertexBuffer = patch.vertexBuffer;
-		renderBlock->primitives = &m_primitives[patch.lastPatchLod];
+		renderBlock->primitives = m_primitives[patch.lastPatchLod];
 
 		//renderBlock->programParams->attachParameters(renderBlock->programParams);
 		renderBlock->programParams->beginParameters(renderContext);

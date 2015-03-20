@@ -112,7 +112,7 @@ void IndoorMesh::render(
 			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 			renderBlock->indexBuffer = m_mesh->getIndexBuffer();
 			renderBlock->vertexBuffer = m_mesh->getVertexBuffer();
-			renderBlock->primitives = &meshParts[j->meshPart].primitives;
+			renderBlock->primitives = meshParts[j->meshPart].primitives;
 
 			renderBlock->programParams->beginParameters(renderContext);
 			worldRenderPass.setProgramParameters(

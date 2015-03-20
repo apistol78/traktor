@@ -40,7 +40,7 @@ void SimpleRenderBlock::render(IRenderView* renderView, const ProgramParameters*
 		vertexBuffer,
 		indexBuffer,
 		program,
-		*primitives
+		primitives
 	);
 
 	T_CONTEXT_POP_MARKER(renderView);
@@ -59,7 +59,7 @@ void InstancingRenderBlock::render(IRenderView* renderView, const ProgramParamet
 		vertexBuffer,
 		indexBuffer,
 		program,
-		*primitives,
+		primitives,
 		count
 	);
 

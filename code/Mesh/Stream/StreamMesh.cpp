@@ -111,7 +111,7 @@ void StreamMesh::render(
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->indexBuffer = instance->mesh[0]->getIndexBuffer();
 		renderBlock->vertexBuffer = instance->mesh[0]->getVertexBuffer();
-		renderBlock->primitives = &j->primitives;
+		renderBlock->primitives = j->primitives;
 
 		renderBlock->programParams->beginParameters(renderContext);
 		worldRenderPass.setProgramParameters(

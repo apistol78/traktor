@@ -139,7 +139,13 @@ void RenderContext::flush()
 {
 	// Reset queues and heap.
 	for (int32_t i = 0; i < sizeof_array(m_renderQueue); ++i)
+	{
+		// As blocks are allocated from a fixed pool we need to manually call destructors.
+		for (AlignedVector< RenderBlock* >::const_iterator j = m_renderQueue[i].begin(); j != m_renderQueue[i].end(); ++j)
+			(*j)->~RenderBlock();
+
 		m_renderQueue[i].resize(0);
+	}
 
 	m_heapPtr = m_heap.ptr();
 }
