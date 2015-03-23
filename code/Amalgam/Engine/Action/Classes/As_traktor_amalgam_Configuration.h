@@ -91,10 +91,6 @@ private:
 
 	void Configuration_set_gamma(AsConfiguration* self, float gamma) const;
 
-	float Configuration_get_mouseSensitivity(const AsConfiguration* self) const;
-
-	void Configuration_set_mouseSensitivity(AsConfiguration* self, float mouseSensitivity) const;
-
 	bool Configuration_get_rumbleEnable(const AsConfiguration* self) const;
 
 	void Configuration_set_rumbleEnable(AsConfiguration* self, bool rumbleEnable) const;

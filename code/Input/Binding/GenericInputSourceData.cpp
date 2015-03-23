@@ -10,13 +10,12 @@ namespace traktor
 	namespace input
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.GenericInputSourceData", 2, GenericInputSourceData, IInputSourceData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.GenericInputSourceData", 3, GenericInputSourceData, IInputSourceData)
 
 GenericInputSourceData::GenericInputSourceData()
 :	m_category(CtUnknown)
 ,	m_controlType(DtInvalid)
 ,	m_analogue(false)
-,	m_inverted(false)
 ,	m_normalize(false)
 ,	m_index(-1)
 {
@@ -26,13 +25,11 @@ GenericInputSourceData::GenericInputSourceData(
 	InputCategory category,
 	InputDefaultControlType controlType,
 	bool analogue,
-	bool inverted,
 	bool normalize
 )
 :	m_category(category)
 ,	m_controlType(controlType)
 ,	m_analogue(analogue)
-,	m_inverted(inverted)
 ,	m_normalize(normalize)
 ,	m_index(-1)
 {
@@ -43,13 +40,11 @@ GenericInputSourceData::GenericInputSourceData(
 	int32_t index,
 	InputDefaultControlType controlType,
 	bool analogue,
-	bool inverted,
 	bool normalize
 )
 :	m_category(category)
 ,	m_controlType(controlType)
 ,	m_analogue(analogue)
-,	m_inverted(inverted)
 ,	m_normalize(normalize)
 ,	m_index(index)
 {
@@ -90,16 +85,6 @@ void GenericInputSourceData::setIndex(int32_t index)
 	m_index = index;
 }
 
-void GenericInputSourceData::setInverted(bool inverted)
-{
-	m_inverted = inverted;
-}
-
-bool GenericInputSourceData::isInverted() const
-{
-	return m_inverted;
-}
-
 void GenericInputSourceData::setNormalize(bool normalize)
 {
 	m_normalize = normalize;
@@ -126,8 +111,11 @@ void GenericInputSourceData::serialize(ISerializer& s)
 	s >> MemberEnum< InputDefaultControlType >(L"controlType", m_controlType, g_InputDefaultControlType_Keys);
 	s >> Member< bool >(L"analogue", m_analogue);
 
-	if (s.getVersion() >= 1)
-		s >> Member< bool >(L"inverted", m_inverted);
+	if (s.getVersion() >= 1 && s.getVersion() <= 2)
+	{
+		bool inverted = false;
+		s >> Member< bool >(L"inverted", inverted);
+	}
 
 	if (s.getVersion() >= 2)
 		s >> Member< bool >(L"normalize", m_normalize);

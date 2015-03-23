@@ -82,20 +82,11 @@ Ref< IInputSourceData > InputSourceFabricator::update()
 					{
 						// Analogue control cannot be combined, thus create generic
 						// source and finish.
-						
-						bool inverted = false;
-						if (m_category == CtMouse || m_category == CtJoystick)
-						{
-							if (dV < 0.0f)
-								inverted = true;
-						}
-
 						m_outputData = new GenericInputSourceData(
 							m_category,
 							std::distance(m_deviceStates.begin(), i),
 							controlType,
 							m_analogue,
-							inverted,
 							false		//<! \fixme
 						);
 
@@ -129,7 +120,6 @@ Ref< IInputSourceData > InputSourceFabricator::update()
 								std::distance(m_deviceStates.begin(), i),
 								controlType,
 								m_analogue,
-								false,
 								false		//<! \fixme
 							));
 						}
