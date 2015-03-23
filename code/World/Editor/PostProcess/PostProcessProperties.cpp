@@ -11,43 +11,43 @@
 #include "Ui/Custom/PropertyList/PropertyCommandEvent.h"
 #include "Ui/Custom/PropertyList/PropertyContentChangeEvent.h"
 #include "World/PostProcess/PostProcessStep.h"
-#include "World/Editor/PostProcess/PostProcessStepProperties.h"
+#include "World/Editor/PostProcess/PostProcessProperties.h"
 
 namespace traktor
 {
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.world.PostProcessStepProperties", PostProcessStepProperties, ui::EventSubject)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.PostProcessProperties", PostProcessProperties, ui::EventSubject)
 
-PostProcessStepProperties::PostProcessStepProperties(editor::IEditor* editor)
+PostProcessProperties::PostProcessProperties(editor::IEditor* editor)
 :	m_editor(editor)
 {
 }
 
-bool PostProcessStepProperties::create(ui::Widget* parent)
+bool PostProcessProperties::create(ui::Widget* parent)
 {
 	m_propertyList = new ui::custom::AutoPropertyList();
 	m_propertyList->create(parent, ui::WsDoubleBuffer | ui::custom::AutoPropertyList::WsColumnHeader, this);
-	m_propertyList->addEventHandler< ui::custom::PropertyCommandEvent >(this, &PostProcessStepProperties::eventPropertyCommand);
-	m_propertyList->addEventHandler< ui::custom::PropertyContentChangeEvent >(this, &PostProcessStepProperties::eventPropertyChange);
+	m_propertyList->addEventHandler< ui::custom::PropertyCommandEvent >(this, &PostProcessProperties::eventPropertyCommand);
+	m_propertyList->addEventHandler< ui::custom::PropertyContentChangeEvent >(this, &PostProcessProperties::eventPropertyChange);
 	m_propertyList->setSeparator(200);
 	m_propertyList->setColumnName(0, i18n::Text(L"PROPERTY_COLUMN_NAME"));
 	m_propertyList->setColumnName(1, i18n::Text(L"PROPERTY_COLUMN_VALUE"));
 	return true;
 }
 
-void PostProcessStepProperties::destroy()
+void PostProcessProperties::destroy()
 {
 	safeDestroy(m_propertyList);
 }
 
-void PostProcessStepProperties::set(PostProcessStep* step)
+void PostProcessProperties::set(ISerializable* object)
 {
-	m_propertyList->bind(step);
+	m_propertyList->bind(object);
 }
 
-bool PostProcessStepProperties::resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const
+bool PostProcessProperties::resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const
 {
 	Ref< db::Instance > instance = m_editor->getSourceDatabase()->getInstance(guid);
 	if (!instance)
@@ -57,7 +57,7 @@ bool PostProcessStepProperties::resolvePropertyGuid(const Guid& guid, std::wstri
 	return true;
 }
 
-void PostProcessStepProperties::eventPropertyCommand(ui::custom::PropertyCommandEvent* event)
+void PostProcessProperties::eventPropertyCommand(ui::custom::PropertyCommandEvent* event)
 {
 	const ui::Command& cmd = event->getCommand();
 
@@ -184,7 +184,7 @@ void PostProcessStepProperties::eventPropertyCommand(ui::custom::PropertyCommand
 	m_propertyList->update();
 }
 
-void PostProcessStepProperties::eventPropertyChange(ui::custom::PropertyContentChangeEvent* event)
+void PostProcessProperties::eventPropertyChange(ui::custom::PropertyContentChangeEvent* event)
 {
 	m_propertyList->apply();
 

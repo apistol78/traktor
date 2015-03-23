@@ -199,6 +199,24 @@ GridRow* GridView::getSelectedRow() const
 		return 0;
 }
 
+void GridView::selectAll()
+{
+	RefArray< GridRow > rows;
+	getRows(rows, GfDescendants);
+	for (RefArray< GridRow >::const_iterator i = rows.begin(); i != rows.end(); ++i)
+		(*i)->setState((*i)->getState() | GridRow::RsSelected);
+	requestUpdate();
+}
+
+void GridView::deselectAll()
+{
+	RefArray< GridRow > rows;
+	getRows(rows, GfDescendants);
+	for (RefArray< GridRow >::const_iterator i = rows.begin(); i != rows.end(); ++i)
+		(*i)->setState((*i)->getState() & ~GridRow::RsSelected);
+	requestUpdate();
+}
+
 void GridView::layoutCells(const Rect& rc)
 {
 	Rect rcLayout = rc;

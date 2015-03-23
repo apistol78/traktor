@@ -451,8 +451,8 @@ void InputMappingEditor::eventButtonDown(ui::MouseButtonDownEvent* event)
 
 			InputMappingAsset::Position position =
 			{
-				event->getPosition().x,
-				event->getPosition().y
+				event->getPosition().x - m_graph->getOffset().cx,
+				event->getPosition().y - m_graph->getOffset().cy
 			};
 
 			m_mappingAsset->addInputNode(node);
@@ -467,8 +467,8 @@ void InputMappingEditor::eventButtonDown(ui::MouseButtonDownEvent* event)
 
 			InputMappingAsset::Position position =
 			{
-				event->getPosition().x,
-				event->getPosition().y
+				event->getPosition().x - m_graph->getOffset().cx,
+				event->getPosition().y - m_graph->getOffset().cy
 			};
 
 			m_mappingAsset->setPosition(sd, position);

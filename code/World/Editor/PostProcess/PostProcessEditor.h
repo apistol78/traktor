@@ -23,17 +23,27 @@ class IEditor;
 
 	}
 
+	namespace ui
+	{
+		namespace custom
+		{
+
+class GridRow;
+class GridView;
+class ToolBar;
+class ToolBarButtonClickEvent;
+
+		}
+	}
+
 	namespace world
 	{
 
 class IPostProcessDefineFacade;
 class IPostProcessStepFacade;
-class PostProcessDefineView;
 class PostProcessSettings;
 class PostProcessStep;
-class PostProcessStepItem;
-class PostProcessStepProperties;
-class PostProcessView;
+class PostProcessProperties;
 
 class T_DLLCLASS PostProcessEditor : public editor::IObjectEditor
 {
@@ -58,17 +68,25 @@ private:
 	editor::IEditor* m_editor;
 	Ref< db::Instance > m_instance;
 	Ref< PostProcessSettings > m_asset;
-	Ref< PostProcessView > m_postProcessView;
-	Ref< PostProcessDefineView > m_postProcessDefineView;
-	Ref< PostProcessStepProperties > m_postProcessProperties;
+	Ref< ui::custom::ToolBar > m_toolBarSteps;
+	Ref< ui::custom::GridView > m_gridSteps;
+	Ref< ui::custom::ToolBar > m_toolBarDefinitions;
+	Ref< ui::custom::GridView > m_gridDefinitions;
+	Ref< PostProcessProperties > m_properties;
 	std::map< const TypeInfo*, Ref< IPostProcessDefineFacade > > m_postProcessDefineFacades;
 	std::map< const TypeInfo*, Ref< IPostProcessStepFacade > > m_postProcessStepFacades;
 
-	void updateStepView(PostProcessStepItem* parent, const RefArray< PostProcessStep >& steps);
+	void updateStepView(ui::custom::GridRow* parentStepRow, const RefArray< PostProcessStep >& steps, int32_t& inoutOrder);
 
 	void updateViews();
 
-	void eventStepSelect(ui::SelectionChangeEvent* event);
+	void eventStepToolClick(ui::custom::ToolBarButtonClickEvent* event);
+
+	void eventGridStepSelect(ui::SelectionChangeEvent* event);
+
+	void eventDefinitionToolClick(ui::custom::ToolBarButtonClickEvent* event);
+
+	void eventGridDefinitionSelect(ui::SelectionChangeEvent* event);
 
 	void eventStepPropertiesChange(ui::ContentChangeEvent* event);
 };
