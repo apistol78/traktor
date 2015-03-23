@@ -46,7 +46,6 @@ As_traktor_amalgam_Configuration::As_traktor_amalgam_Configuration(flash::Action
 	prototype->addProperty("gamma", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_gamma), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_gamma));
 
 	// Input
-	prototype->addProperty("mouseSensitivity", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_mouseSensitivity), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_mouseSensitivity));
 	prototype->addProperty("rumbleEnable", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_rumbleEnable), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_rumbleEnable));
 
 	// Audio
@@ -231,16 +230,6 @@ float As_traktor_amalgam_Configuration::Configuration_get_gamma(const AsConfigur
 void As_traktor_amalgam_Configuration::Configuration_set_gamma(AsConfiguration* self, float gamma) const
 {
 	self->setGamma(gamma);
-}
-
-float As_traktor_amalgam_Configuration::Configuration_get_mouseSensitivity(const AsConfiguration* self) const
-{
-	return self->getMouseSensitivity();
-}
-
-void As_traktor_amalgam_Configuration::Configuration_set_mouseSensitivity(AsConfiguration* self, float mouseSensitivity) const
-{
-	self->setMouseSensitivity(mouseSensitivity);
 }
 
 bool As_traktor_amalgam_Configuration::Configuration_get_rumbleEnable(const AsConfiguration* self) const

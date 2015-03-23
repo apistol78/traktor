@@ -78,6 +78,7 @@ private:
 	Ref< const input::InputMappingSourceData > m_inputMappingDefaultSourceData;
 	Ref< input::InputMappingSourceData > m_inputMappingSourceData;
 	Ref< const input::InputMappingStateData > m_inputMappingStateData;
+	uint32_t m_inputConstantsHash;
 	Ref< input::InputSourceFabricator > m_inputSourceFabricator;
 	std::wstring m_inputSourceFabricatorId;
 	Ref< input::IInputDevice > m_inputFabricatorAbortDevice;
@@ -85,7 +86,6 @@ private:
 	bool m_inputFabricatorAbortUnbind;
 	bool m_inputFabricatorAborted;
 	bool m_inputActive;
-	float m_mouseSensitivity;
 	Ref< input::RumbleEffectPlayer > m_rumbleEffectPlayer;
 };
 

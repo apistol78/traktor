@@ -31,7 +31,6 @@ public:
 		InputCategory category,
 		InputDefaultControlType controlType,
 		bool analogue,
-		bool inverted,
 		bool normalize
 	);
 
@@ -40,7 +39,6 @@ public:
 		int32_t index,
 		InputDefaultControlType controlType,
 		bool analogue,
-		bool inverted,
 		bool normalize
 	);
 	
@@ -55,10 +53,6 @@ public:
 	void setAnalogue(bool analogue);
 
 	bool isAnalogue() const;
-
-	void setInverted(bool inverted);
-
-	bool isInverted() const;
 
 	void setNormalize(bool normalize);
 
@@ -76,7 +70,6 @@ private:
 	InputCategory m_category;
 	InputDefaultControlType m_controlType;
 	bool m_analogue;
-	bool m_inverted;
 	bool m_normalize;
 	int32_t m_index;
 };

@@ -250,16 +250,6 @@ void AsConfiguration::setPostProcessQuality(Quality postProcessQuality)
 	m_postProcessQuality = postProcessQuality;
 }
 
-float AsConfiguration::getMouseSensitivity() const
-{
-	return m_mouseSensitivity;
-}
-
-void AsConfiguration::setMouseSensitivity(float mouseSensitivity)
-{
-	m_mouseSensitivity = mouseSensitivity;
-}
-
 bool AsConfiguration::getRumbleEnable() const
 {
 	return m_rumbleEnable;
@@ -383,7 +373,6 @@ bool AsConfiguration::apply(amalgam::IEnvironment* environment)
 	settings->setProperty< PropertyInteger >(L"World.OceanQuality", m_oceanQuality);
 	settings->setProperty< PropertyInteger >(L"World.PostProcessQuality", m_postProcessQuality);
 	settings->setProperty< PropertyFloat >(L"World.Gamma", m_gamma);
-	settings->setProperty< PropertyFloat >(L"Input.MouseSensitivity", m_mouseSensitivity);
 	settings->setProperty< PropertyBoolean >(L"Input.Rumble", m_rumbleEnable);
 	settings->setProperty< PropertyString >(L"Audio.Type", m_soundDriver);
 	settings->setProperty< PropertyFloat >(L"Audio.MasterVolume", m_masterVolume);

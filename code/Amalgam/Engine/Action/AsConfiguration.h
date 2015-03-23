@@ -91,10 +91,6 @@ public:
 
 	void setGamma(float gamma);
 
-	float getMouseSensitivity() const;
-
-	void setMouseSensitivity(float mouseSensitivity);
-
 	bool getRumbleEnable() const;
 
 	void setRumbleEnable(bool rumbleEnable);
