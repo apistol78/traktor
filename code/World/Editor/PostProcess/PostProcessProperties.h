@@ -1,5 +1,5 @@
-#ifndef traktor_world_PostProcessStepProperties_H
-#define traktor_world_PostProcessStepProperties_H
+#ifndef traktor_world_PostProcessProperties_H
+#define traktor_world_PostProcessProperties_H
 
 #include "Core/Object.h"
 #include "Ui/Custom/PropertyList/AutoPropertyList.h"
@@ -27,20 +27,20 @@ class PropertyContentChangeEvent;
 	namespace world
 	{
 
-class PostProcessStepProperties
+class PostProcessProperties
 :	public ui::EventSubject
 ,	public ui::custom::PropertyList::IPropertyGuidResolver
 {
 	T_RTTI_CLASS;
 
 public:
-	PostProcessStepProperties(editor::IEditor* editor);
+	PostProcessProperties(editor::IEditor* editor);
 
 	bool create(ui::Widget* parent);
 
 	void destroy();
 
-	void set(PostProcessStep* step);
+	void set(ISerializable* object);
 
 private:
 	editor::IEditor* m_editor;
@@ -56,4 +56,4 @@ private:
 	}
 }
 
-#endif	// traktor_world_PostProcessStepProperties_H
+#endif	// traktor_world_PostProcessProperties_H

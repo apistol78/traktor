@@ -32,7 +32,10 @@ bool AutoPropertyList::bind(ISerializable* object)
 {
 	removeAllPropertyItems();
 	if (!(m_object = object))
+	{
+		update();
 		return true;
+	}
 
 	int32_t version = type_of(m_object).getVersion();
 

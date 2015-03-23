@@ -72,6 +72,10 @@ public:
 
 	GridRow* getSelectedRow() const;
 
+	void selectAll();
+
+	void deselectAll();
+
 private:
 	Ref< GridHeaderCell > m_headerCell;
 	RefArray< GridColumn > m_columns;

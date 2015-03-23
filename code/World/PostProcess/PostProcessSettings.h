@@ -32,6 +32,8 @@ public:
 
 	bool requireHighRange() const;
 
+	void setDefinitions(const RefArray< PostProcessDefine >& definitions);
+
 	const RefArray< PostProcessDefine >& getDefinitions() const;
 
 	void setSteps(const RefArray< PostProcessStep >& steps);

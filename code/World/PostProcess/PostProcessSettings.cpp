@@ -21,6 +21,11 @@ bool PostProcessSettings::requireHighRange() const
 	return m_requireHighRange;
 }
 
+void PostProcessSettings::setDefinitions(const RefArray< PostProcessDefine >& definitions)
+{
+	m_definitions = definitions;
+}
+
 const RefArray< PostProcessDefine >& PostProcessSettings::getDefinitions() const
 {
 	return m_definitions;
