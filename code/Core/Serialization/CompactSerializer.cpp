@@ -449,6 +449,7 @@ void CompactSerializer::operator >> (const Member< uint16_t >& m)
 
 void CompactSerializer::operator >> (const Member< int32_t >& m)
 {
+	T_CHECK_STATUS;
 	if (m_direction == SdRead)
 		read_int32(m_reader, m);
 	else
