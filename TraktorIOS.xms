@@ -7023,7 +7023,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/lua-5.2.3/src</item>
+						<item>$(LUA_SDK)/src</item>
 					</includePaths>
 					<definitions>
 						<item>__IOS__</item>
@@ -7043,7 +7043,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/lua-5.2.3/src</item>
+						<item>$(LUA_SDK)/src</item>
 					</includePaths>
 					<definitions>
 						<item>__IOS__</item>
@@ -7063,7 +7063,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/lua-5.2.3/src</item>
+						<item>$(LUA_SDK)/src</item>
 					</includePaths>
 					<definitions>
 						<item>__IOS__</item>
@@ -7083,7 +7083,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/lua-5.2.3/src</item>
+						<item>$(LUA_SDK)/src</item>
 					</includePaths>
 					<definitions>
 						<item>__IOS__</item>
@@ -7119,8 +7119,8 @@
 					<link>LnkYes</link>
 					<project type="Project" version="1">
 						<enable>true</enable>
-						<name>Extern.lua-5.2.3</name>
-						<sourcePath>$(TRAKTOR_HOME)/3rdp/lua-5.2.3/src</sourcePath>
+						<name>Extern.lua</name>
+						<sourcePath>$(LUA_SDK)/src</sourcePath>
 						<configurations>
 							<item type="Configuration" version="1">
 								<name>DebugShared</name>
@@ -7128,7 +7128,7 @@
 								<targetProfile>TpDebug</targetProfile>
 								<precompiledHeader/>
 								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/lua-5.2.3/src</item>
+									<item>$(LUA_SDK)/src</item>
 								</includePaths>
 								<definitions>
 									<item>_DEBUG</item>
@@ -7144,7 +7144,7 @@
 								<targetProfile>TpRelease</targetProfile>
 								<precompiledHeader/>
 								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/lua-5.2.3/src</item>
+									<item>$(LUA_SDK)/src</item>
 								</includePaths>
 								<definitions>
 									<item>NDEBUG</item>
@@ -7160,7 +7160,7 @@
 								<targetProfile>TpDebug</targetProfile>
 								<precompiledHeader/>
 								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/lua-5.2.3/src</item>
+									<item>$(LUA_SDK)/src</item>
 								</includePaths>
 								<definitions>
 									<item>_DEBUG</item>
@@ -7176,7 +7176,7 @@
 								<targetProfile>TpRelease</targetProfile>
 								<precompiledHeader/>
 								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/lua-5.2.3/src</item>
+									<item>$(LUA_SDK)/src</item>
 								</includePaths>
 								<definitions>
 									<item>NDEBUG</item>
