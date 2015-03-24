@@ -7,7 +7,7 @@
 			<platform>{13FF3E12-076E-274E-B347-8F323ECD53A7}</platform>
 			<executableFile/>
 			<deployFiles>
-				<item>libExtern.lua-5.2.3.a</item>
+				<item>libExtern.lua.a</item>
 				<item>libTraktor.Core.a</item>
 				<item>libTraktor.Script.a</item>
 				<item>libTraktor.Script.Lua.a</item>
@@ -44,7 +44,7 @@
 			<platform>{14814B5B-2FF1-2F4B-BE92-08CAB3D0D544}</platform>
 			<executableFile/>
 			<deployFiles>
-				<item>Extern.lua-5.2.3.lib</item>
+				<item>Extern.lua.lib</item>
 				<item>Traktor.Core.lib</item>
 				<item>Traktor.Script.lib</item>
 				<item>Traktor.Script.Lua.lib</item>
@@ -72,7 +72,7 @@
 			<platform>{D6FF12FC-9FEF-394D-B898-F563786A8789}</platform>
 			<executableFile/>
 			<deployFiles>
-				<item>Extern.lua-5.2.3.lib</item>
+				<item>Extern.lua.lib</item>
 				<item>Traktor.Core.lib</item>
 				<item>Traktor.Script.lib</item>
 				<item>Traktor.Script.Lua.lib</item>
@@ -82,7 +82,7 @@
 			<platform>{1C5EBC43-2395-9549-8FF7-BA51A6C30B7B}</platform>
 			<executableFile/>
 			<deployFiles>
-				<item>libExtern.lua-5.2.3.a</item>
+				<item>libExtern.lua.a</item>
 				<item>libTraktor.Core.a</item>
 				<item>libTraktor.Script.a</item>
 				<item>libTraktor.Script.Lua.a</item>
@@ -92,7 +92,7 @@
 			<platform>{947FBCA7-FECE-7248-AEC4-046EB01E9A31}</platform>
 			<executableFile/>
 			<deployFiles>
-				<item>libExtern.lua-5.2.3.a</item>
+				<item>libExtern.lua.a</item>
 				<item>libTraktor.Core.a</item>
 				<item>libTraktor.Script.a</item>
 				<item>libTraktor.Script.Lua.a</item>
@@ -102,7 +102,7 @@
 			<platform>{CAE489CE-1592-234F-ADB9-A7D75646B53D}</platform>
 			<executableFile/>
 			<deployFiles>
-				<item>libExtern.lua-5.2.3.a</item>
+				<item>libExtern.lua.a</item>
 				<item>libTraktor.Core.a</item>
 				<item>libTraktor.Script.a</item>
 				<item>libTraktor.Script.Lua.a</item>
