@@ -50,7 +50,7 @@ public:
 	ActionValue call(ActionFrame* callerFrame);
 
 #if defined(_DEBUG)
-	void setName(const wchar_t* name) { m_name = name; }
+	void setName(const char* name) { m_name = name; }
 
 	const std::string& getName() const { return m_name; }
 #endif

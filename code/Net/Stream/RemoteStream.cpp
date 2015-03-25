@@ -78,7 +78,7 @@ public:
 protected:
 	virtual void destroy()
 	{
-		T_ASSERT (s_instance == this);
+		T_ASSERT (ms_instance == this);
 		delete ms_instance, ms_instance = 0;
 	}
 

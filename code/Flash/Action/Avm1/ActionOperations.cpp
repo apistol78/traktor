@@ -950,7 +950,7 @@ void opx_defineLocal(ExecutionState& state)
 #if defined(_DEBUG)
 	ActionFunction* variableFunction = variableValue.getObject< ActionFunction >();
 	if (variableFunction && variableFunction->getName().empty())
-		variableFunction->setName(variableName);
+		variableFunction->setName(variableName.c_str());
 #endif
 
 	uint32_t variableNameId = state.context->getString(variableName);
@@ -1385,7 +1385,7 @@ void opx_setMember(ExecutionState& state)
 #if defined(_DEBUG)
 	ActionFunction* memberFunction = memberValue.getObject< ActionFunction >();
 	if (memberFunction && memberFunction->getName().empty())
-		memberFunction->setName(memberName);
+		memberFunction->setName(memberName.c_str());
 #endif
 }
 
