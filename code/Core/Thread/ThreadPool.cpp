@@ -146,8 +146,8 @@ void ThreadPool::destroy()
 	for (uint32_t i = 0; i < m_workerThreads.size(); ++i)
 	{
 		Worker& worker = m_workerThreads[i];
-		worker.threadWorker->stop();
 		worker.alive = 0;
+		worker.threadWorker->stop();
 		ThreadManager::getInstance().destroy(worker.threadWorker);
 	}
 	m_workerThreads.clear();
