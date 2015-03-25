@@ -45,10 +45,6 @@ Ref< IMesh > AutoLodMeshResource::createMesh(
 			meshFactory
 		));
 	}
-	
-#if defined(_DEBUG)
-	lodMesh->m_name = wstombs(name);
-#endif
 
 	return lodMesh;
 }
