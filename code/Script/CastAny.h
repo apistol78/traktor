@@ -7,11 +7,7 @@
 #include "Core/Misc/TString.h"
 #include "Script/Any.h"
 
-#if defined(_DEBUG)
-#	define T_CAST_ASSERT(x) T_ASSERT((x))
-#else
-#	define T_CAST_ASSERT(x)
-#endif
+#define T_CAST_ASSERT(x) T_FATAL_ASSERT((x))
 
 namespace traktor
 {

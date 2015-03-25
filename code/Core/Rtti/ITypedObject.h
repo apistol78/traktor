@@ -213,8 +213,8 @@ bool is_a(const ITypedObject* obj)
 /*! \brief Dynamic cast object.
  *
  * \param T Cast to type.
- * \param o Object.
- * \return Casted value, null if object isn't of correct type.
+ * \param obj Object
+ * \return Casted object, null if object isn't of correct type.
  */
 template < typename T, typename T0 >
 T dynamic_type_cast(T0* obj)
@@ -225,8 +225,8 @@ T dynamic_type_cast(T0* obj)
 /*! \brief Dynamic cast object.
  *
  * \param T Cast to type.
- * \param o Object.
- * \return Casted value, null if object isn't of correct type.
+ * \param obj Object
+ * \return Casted object, null if object isn't of correct type.
  */
 template < typename T, typename T0 >
 T dynamic_type_cast(const T0* obj)
@@ -239,8 +239,8 @@ T dynamic_type_cast(const T0* obj)
  * The cast will assert if object is of incorrect type.
  *
  * \param T Cast to type.
- * \param o Object.
- * \return Casted value.
+ * \param obj Object
+ * \return Casted object.
  */
 template < typename T, typename T0 >
 T checked_type_cast(T0* obj)
@@ -255,8 +255,8 @@ T checked_type_cast(T0* obj)
  *
  * \param T Cast to type.
  * \param AllowNull If object is allowed to be null.
- * \param o Object.
- * \return Casted value.
+ * \param obj Object
+ * \return Casted object.
  */
 template < typename T, bool AllowNull, typename T0 >
 T checked_type_cast(T0* obj)
@@ -270,8 +270,8 @@ T checked_type_cast(T0* obj)
  * The cast will assert if object is of incorrect type.
  *
  * \param T Cast to type.
- * \param o Object.
- * \return Casted value.
+ * \param obj Object
+ * \return Casted object.
  */
 template < typename T, typename T0 >
 T checked_type_cast(const T0* obj)
@@ -286,13 +286,45 @@ T checked_type_cast(const T0* obj)
  *
  * \param T Cast to type.
  * \param AllowNull If object is allowed to be null.
- * \param o Object.
- * \return Casted value.
+ * \param obj Object
+ * \return Casted object.
  */
 template < typename T, bool AllowNull, typename T0 >
 T checked_type_cast(const T0* obj)
 {
 	T_ASSERT ((AllowNull || obj) && is_a< T >(obj));
+	return static_cast< T >(obj);
+}
+
+/*! \brief Safe cast object.
+ *
+ * The cast will cause system error if object is null or
+ * of incorrect type.
+ *
+ * \param T Cast to type.
+ * \param obj Object
+ * \return Casted object.
+ */
+template < typename T, typename T0 >
+T mandatory_non_null_type_cast(T0* obj)
+{
+	T_FATAL_ASSERT (obj && is_a< T >(obj));
+	return static_cast< T >(obj);
+}
+
+/*! \brief Safe cast object.
+ *
+ * The cast will cause system error if object is null or
+ * of incorrect type.
+ *
+ * \param T Cast to type.
+ * \param obj Object
+ * \return Casted object.
+ */
+template < typename T, typename T0 >
+T mandatory_non_null_type_cast(const T0* obj)
+{
+	T_FATAL_ASSERT (obj && is_a< T >(obj));
 	return static_cast< T >(obj);
 }
 

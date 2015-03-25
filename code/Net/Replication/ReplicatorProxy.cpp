@@ -236,7 +236,7 @@ void ReplicatorProxy::sendEvent(const ISerializable* eventObject)
 	cs.flush();
 
 	e.size = ms.tell();
-	e.time = -c_resendTimeThreshold;
+	e.time = 0.0;
 	e.count = 0;
 
 	m_unacknowledgedEvents.push_back(e);
@@ -244,6 +244,18 @@ void ReplicatorProxy::sendEvent(const ISerializable* eventObject)
 
 bool ReplicatorProxy::updateEventQueue()
 {
+	// First send is prioritized over re-sends.
+	for (std::list< Event >::iterator i = m_unacknowledgedEvents.begin(); i != m_unacknowledgedEvents.end(); ++i)
+	{
+		if (i->count <= 0)
+		{
+			m_replicator->m_topology->send(m_handle, &i->msg, RmiEvent_NetSize(i->size));
+			i->time = m_replicator->m_time0;
+			i->count = 1;
+		}
+	}
+
+	// Re-send events if no ack has been received within threshold.
 	for (std::list< Event >::iterator i = m_unacknowledgedEvents.begin(); i != m_unacknowledgedEvents.end(); )
 	{
 		if (m_replicator->m_time0 - i->time > c_resendTimeThreshold)
@@ -259,6 +271,7 @@ bool ReplicatorProxy::updateEventQueue()
 		}
 		++i;
 	}
+
 	return !m_unacknowledgedEvents.empty();
 }
 

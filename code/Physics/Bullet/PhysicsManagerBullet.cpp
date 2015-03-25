@@ -1698,6 +1698,7 @@ void PhysicsManagerBullet::destroyBody(BodyBullet* body, btRigidBody* rigidBody,
 	T_ASSERT (i != m_bodies.end());
 	m_bodies.erase(i);
 
+	delete rigidBody->getMotionState();
 	delete rigidBody;
 	deleteShape(shape);
 }
