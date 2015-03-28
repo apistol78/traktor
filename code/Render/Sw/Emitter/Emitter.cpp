@@ -82,6 +82,7 @@ bool emitAbs(EmitterContext& cx, Abs* node)
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
 	EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
 	cx.emitInstruction(OpAbs, out, in);
+	cx.releaseInput(node, L"Input");
 	return true;
 }
 
@@ -99,6 +100,9 @@ bool emitAdd(EmitterContext& cx, Add* node)
 
 	collapseTypes(cx, in1, xin1);
 	collapseTypes(cx, in2, xin2);
+
+	cx.releaseInput(node, L"Input2");
+	cx.releaseInput(node, L"Input1");
 	return true;
 }
 
@@ -107,6 +111,7 @@ bool emitArcusCos(EmitterContext& cx, ArcusCos* node)
 	EMIT_MANDATORY_IN(theta, cx, node, L"Theta");
 	EmitterVariable* out = cx.emitOutput(node, L"Output", VtFloat);
 	cx.emitInstruction(OpAcos, out, theta);
+	cx.releaseInput(node, L"Theta");
 	return true;
 }
 
@@ -115,6 +120,7 @@ bool emitArcusTan(EmitterContext& cx, ArcusTan* node)
 	EMIT_MANDATORY_IN(xy, cx, node, L"XY");
 	EmitterVariable* out = cx.emitOutput(node, L"Output", VtFloat);
 	cx.emitInstruction(OpAtan, out, xy);
+	cx.releaseInput(node, L"XY");
 	return true;
 }
 
@@ -125,6 +131,7 @@ bool emitClamp(EmitterContext& cx, Clamp* node)
 	EmitterVariable* min = cx.emitConstant(node->getMin());
 	EmitterVariable* max = cx.emitConstant(node->getMax());
 	cx.emitInstruction(OpClamp, out, in, min, max);
+	cx.releaseInput(node, L"Input");
 	return true;
 }
 
@@ -139,12 +146,12 @@ bool emitColor(EmitterContext& cx, Color* node)
 
 bool emitConditional(EmitterContext& cx, Conditional* node)
 {
-	// Find common input pins from both sides of branch;
-	// emit those before condition in order to have them evaluated outside of conditional.
-	std::vector< const InputPin* > inputPins;
-	cx.findCommonInputs(node, L"CaseTrue", L"CaseFalse", inputPins);
-	for (std::vector< const InputPin* >::const_iterator i = inputPins.begin(); i != inputPins.end(); ++i)
-		cx.emitInput(*i);
+	//// Find common input pins from both sides of branch;
+	//// emit those before condition in order to have them evaluated outside of conditional.
+	//std::vector< const InputPin* > inputPins;
+	//cx.findCommonInputs(node, L"CaseTrue", L"CaseFalse", inputPins);
+	//for (std::vector< const InputPin* >::const_iterator i = inputPins.begin(); i != inputPins.end(); ++i)
+	//	cx.emitInput(*i);
 
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
 	EMIT_MANDATORY_IN(ref, cx, node, L"Reference");
@@ -192,6 +199,7 @@ bool emitConditional(EmitterContext& cx, Conditional* node)
 		T_ASSERT (ct);
 
 		cx.emitInstruction(OpMove, out, ct);
+		cx.releaseInput(node, L"CaseTrue");
 	}
 
 	Instruction is2(OpJump, 0, 0, 0, 0, 0);
@@ -203,6 +211,7 @@ bool emitConditional(EmitterContext& cx, Conditional* node)
 		T_ASSERT (cf);
 
 		cx.emitInstruction(OpMove, out, cf);
+		cx.releaseInput(node, L"CaseFalse");
 	}
 
 	uint32_t offsetEnd = cx.getCurrentAddress();
@@ -212,6 +221,10 @@ bool emitConditional(EmitterContext& cx, Conditional* node)
 
 	is2.offset = getRelativeOffset(offsetFalseBegin, offsetEnd);
 	cx.emitInstruction(offsetJump, is2);
+
+	cx.releaseInput(node, L"Input");
+	cx.releaseInput(node, L"Reference");
+
 	return true;
 }
 
@@ -220,6 +233,7 @@ bool emitCos(EmitterContext& cx, Cos* node)
 	EMIT_MANDATORY_IN(theta, cx, node, L"Theta");
 	EmitterVariable* out = cx.emitOutput(node, L"Output", VtFloat);
 	cx.emitInstruction(OpCos, out, theta);
+	cx.releaseInput(node, L"Theta");
 	return true;
 }
 
@@ -237,6 +251,9 @@ bool emitCross(EmitterContext& cx, Cross* node)
 
 	collapseTypes(cx, in1, xin1);
 	collapseTypes(cx, in2, xin2);
+
+	cx.releaseInput(node, L"Input2");
+	cx.releaseInput(node, L"Input1");
 	return true;
 }
 
@@ -296,6 +313,10 @@ bool emitDiscard(EmitterContext& cx, Discard* node)
 	EmitterVariable* pass = cx.emitInput(node, L"Pass");
 	EmitterVariable* out = cx.emitOutput(node, L"Output", pass->type);
 	cx.emitInstruction(OpMove, out, pass);
+
+	cx.releaseInput(node, L"Pass");
+	cx.releaseInput(node, L"Reference");
+	cx.releaseInput(node, L"Input");
 	return true;
 }
 
@@ -313,6 +334,9 @@ bool emitDiv(EmitterContext& cx, Div* node)
 
 	collapseTypes(cx, in1, xin1);
 	collapseTypes(cx, in2, xin2);
+
+	cx.releaseInput(node, L"Input2");
+	cx.releaseInput(node, L"Input1");
 	return true;
 }
 
@@ -335,6 +359,9 @@ bool emitDot(EmitterContext& cx, Dot* node)
 
 	collapseTypes(cx, in1, xin1);
 	collapseTypes(cx, in2, xin2);
+
+	cx.releaseInput(node, L"Input2");
+	cx.releaseInput(node, L"Input1");
 	return true;
 }
 
@@ -343,6 +370,7 @@ bool emitExp(EmitterContext& cx, Exp* node)
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
 	EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
 	cx.emitInstruction(OpExp, out, in);
+	cx.releaseInput(node, L"Input");
 	return true;
 }
 
@@ -351,6 +379,7 @@ bool emitFraction(EmitterContext& cx, Fraction* node)
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
 	EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
 	cx.emitInstruction(OpFraction, out, in);
+	cx.releaseInput(node, L"Input");
 	return true;
 }
 
@@ -368,6 +397,7 @@ bool emitInterpolator(EmitterContext& cx, Interpolator* node)
 		EMIT_MANDATORY_IN(in, cx, node, L"Input");
 		EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
 		cx.emitInstruction(OpMove, out, in);
+		cx.releaseInput(node, L"Input");
 		return true;
 	}
 
@@ -381,6 +411,7 @@ bool emitInterpolator(EmitterContext& cx, Interpolator* node)
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
 	EmitterVariable* vo = cx.emitVarying(varyingOffset);
 	cx.emitInstruction(OpStoreVarying, vo, in);
+	cx.releaseInput(node, L"Input");
 
 	cx.enterPixel();
 	EmitterVariable* pi = cx.emitVarying(varyingOffset);
@@ -405,7 +436,7 @@ bool emitIterate(EmitterContext& cx, Iterate* node)
 		log::error << L"Too many iterations in Iterate node" << Endl;
 
 	// Setup counter, load with initial value.
-	EmitterVariable* N = cx.emitOutput(node, L"N", VtFloat, true);
+	EmitterVariable* N = cx.emitOutput(node, L"N", VtFloat);
 	cx.emitInstruction(OpFetchConstant, N, cx.emitConstant(float(from)));
 
 	EmitterVariable* tmp1 = cx.allocTemporary(VtFloat);
@@ -434,10 +465,11 @@ bool emitIterate(EmitterContext& cx, Iterate* node)
 
 	// Check condition.
 	EmitterVariable* cond = cx.emitInput(node, L"Condition");
+	uint32_t condOffset = 0;
 	if (cond)
 	{
-		// \fixme
-		T_FATAL_ASSERT_M(false, L"Iterate condition not implemented");
+		Instruction inst(OpJumpIfZero, 0, 0);
+		condOffset = cx.emitInstruction(inst);
 	}
 
 	// Increment counter, repeat loop if not at target.
@@ -448,6 +480,13 @@ bool emitIterate(EmitterContext& cx, Iterate* node)
 
 	Instruction inst(OpJumpIfZero, tmp2->reg, getRelativeOffset(cx.getCurrentAddress(), address));
 	cx.emitInstruction(inst);
+
+	// Patch up condition jump address.
+	if (cond)
+	{
+		Instruction inst(OpJumpIfZero, cond->reg, getRelativeOffset(condOffset, cx.getCurrentAddress()));
+		cx.emitInstruction(condOffset, inst);
+	}
 
 	cx.freeTemporary(tmp2);
 	cx.freeTemporary(tmp1);
@@ -485,6 +524,7 @@ bool emitIndexedUniform(EmitterContext& cx, IndexedUniform* node)
 	EmitterVariable* in = cx.emitUniform(node->getParameterName(), variableType, node->getLength());
 	EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
 	cx.emitInstruction(OpFetchIndexedUniform, out, in, index);
+	cx.releaseInput(node, L"Index");
 	return true;
 }
 
@@ -493,6 +533,7 @@ bool emitLength(EmitterContext& cx, Length* node)
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
 	EmitterVariable* out = cx.emitOutput(node, L"Output", VtFloat);
 	cx.emitInstruction(OpLength, out, in);
+	cx.releaseInput(node, L"Input");
 	return true;
 }
 
@@ -503,6 +544,9 @@ bool emitLerp(EmitterContext& cx, Lerp* node)
 	EMIT_MANDATORY_IN(blend, cx, node, L"Blend");
 	EmitterVariable* out = cx.emitOutput(node, L"Output", in1->type);
 	cx.emitInstruction(OpLerp, out, blend, in1, in2);
+	cx.releaseInput(node, L"Blend");
+	cx.releaseInput(node, L"Input2");
+	cx.releaseInput(node, L"Input1");
 	return true;
 }
 
@@ -522,6 +566,7 @@ bool emitLog(EmitterContext& cx, Log* node)
 		cx.emitInstruction(OpLog, out, in);
 		break;
 	}
+	cx.releaseInput(node, L"Input");
 	return true;
 }
 
@@ -597,6 +642,11 @@ bool emitMatrixIn(EmitterContext& cx, MatrixIn* node)
 	// Matrices are column major thus we need to transpose it to become valid.
 	cx.emitInstruction(OpTranspose, out, tmp);
 	cx.freeTemporary(tmp);
+
+	cx.releaseInput(node, L"Translate");
+	cx.releaseInput(node, L"ZAxis");
+	cx.releaseInput(node, L"YAxis");
+	cx.releaseInput(node, L"XAxis");
 	return true;
 }
 
@@ -633,6 +683,7 @@ bool emitMatrixOut(EmitterContext& cx, MatrixOut* node)
 		cx.emitInstruction(is);
 	}
 
+	cx.releaseInput(node, L"Input");
 	return true;
 }
 
@@ -650,6 +701,9 @@ bool emitMax(EmitterContext& cx, Max* node)
 
 	collapseTypes(cx, in1, xin1);
 	collapseTypes(cx, in2, xin2);
+
+	cx.releaseInput(node, L"Input2");
+	cx.releaseInput(node, L"Input1");
 	return true;
 }
 
@@ -667,6 +721,9 @@ bool emitMin(EmitterContext& cx, Min* node)
 
 	collapseTypes(cx, in1, xin1);
 	collapseTypes(cx, in2, xin2);
+
+	cx.releaseInput(node, L"Input2");
+	cx.releaseInput(node, L"Input1");
 	return true;
 }
 
@@ -696,6 +753,11 @@ bool emitMixIn(EmitterContext& cx, MixIn* node)
 		Instruction is0(OpSet, out->reg, 0, s0, 0, 0);
 		cx.emitInstruction(is0); 
 	}
+
+	cx.releaseInput(node, L"W");
+	cx.releaseInput(node, L"Z");
+	cx.releaseInput(node, L"Y");
+	cx.releaseInput(node, L"X");
 	return true;
 }
 
@@ -729,6 +791,7 @@ bool emitMixOut(EmitterContext& cx, MixOut* node)
 		cx.emitInstruction(inst);
 	}
 
+	cx.releaseInput(node, L"Input");
 	return true;
 }
 
@@ -746,6 +809,9 @@ bool emitMul(EmitterContext& cx, Mul* node)
 
 	collapseTypes(cx, in1, xin1);
 	collapseTypes(cx, in2, xin2);
+
+	cx.releaseInput(node, L"Input2");
+	cx.releaseInput(node, L"Input1");
 	return true;
 }
 
@@ -767,6 +833,10 @@ bool emitMulAdd(EmitterContext& cx, MulAdd* node)
 	collapseTypes(cx, in1, xin1);
 	collapseTypes(cx, in2, xin2);
 	collapseTypes(cx, in3, xin3);
+
+	cx.releaseInput(node, L"Input3");
+	cx.releaseInput(node, L"Input2");
+	cx.releaseInput(node, L"Input1");
 	return true;
 }
 
@@ -775,6 +845,7 @@ bool emitNeg(EmitterContext& cx, Neg* node)
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
 	EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
 	cx.emitInstruction(OpNeg, out, in);
+	cx.releaseInput(node, L"Input");
 	return true;
 }
 
@@ -783,6 +854,7 @@ bool emitNormalize(EmitterContext& cx, Normalize* node)
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
 	EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
 	cx.emitInstruction(OpNormalize, out, in);
+	cx.releaseInput(node, L"Input");
 	return true;
 }
 
@@ -793,6 +865,7 @@ bool emitPixelOutput(EmitterContext& cx, PixelOutput* node)
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
 	EmitterVariable* out = cx.emitVarying(0);
 	cx.emitInstruction(OpStoreVarying, out, in);
+	cx.releaseInput(node, L"Input");
 
 	RenderState rs = node->getRenderState();
 
@@ -831,6 +904,9 @@ bool emitReflect(EmitterContext& cx, Reflect* node)
 	collapseTypes(cx, tmp2, xtmp2);
 
 	cx.emitInstruction(OpSub, out, tmp3, direction);
+
+	cx.releaseInput(node, L"Direction");
+	cx.releaseInput(node, L"Normal");
 	return true;
 }
 
@@ -839,6 +915,60 @@ bool emitRecipSqrt(EmitterContext& cx, RecipSqrt* node)
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
 	EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
 	cx.emitInstruction(OpRecipSqrt, out, in);
+	cx.releaseInput(node, L"Input");
+	return true;
+}
+
+bool emitRepeat(EmitterContext& cx, Repeat* node)
+{
+	// Setup counter, load with initial value.
+	EmitterVariable* N = cx.emitOutput(node, L"N", VtFloat);
+	cx.emitInstruction(OpFetchConstant, N, cx.emitConstant(0.0f));
+
+	// Initialize output accumulator.
+	EmitterVariable* out = cx.emitOutput(node, L"Output", VtFloat4);
+	EmitterVariable* initial = cx.emitInput(node, L"Initial");
+	if (initial)
+	{
+		Instruction is0(OpMove, out->reg, initial->reg, 0, 0, 0);
+		cx.emitInstruction(is0);
+	}
+	else
+	{
+		Instruction is0(OpSet, out->reg, 0, 0xff, 0, 0);
+		cx.emitInstruction(is0);
+	}
+
+	uint32_t address = cx.getCurrentAddress();
+
+	EMIT_MANDATORY_IN(in, cx, node, L"Input");
+	EmitterVariable* xin = expandTypes(cx, in, VtFloat4);
+	cx.emitInstruction(OpMove, out, xin);
+	collapseTypes(cx, in, xin);
+
+	// Check condition.
+	EmitterVariable* cond = cx.emitInput(node, L"Condition");
+	uint32_t condOffset = 0;
+	if (cond)
+	{
+		Instruction inst(OpJumpIfZero, 0, 0);
+		condOffset = cx.emitInstruction(inst);
+	}
+
+	// Increment counter, repeat loop if not at target.
+	cx.emitInstruction(OpIncrement, N);
+
+	Instruction inst(OpJump, 0, getRelativeOffset(cx.getCurrentAddress(), address));
+	cx.emitInstruction(inst);
+
+	// Patch up condition jump address.
+	if (cond)
+	{
+		Instruction inst(OpJumpIfZero, cond->reg, getRelativeOffset(condOffset, cx.getCurrentAddress()));
+		cx.emitInstruction(condOffset, inst);
+		cx.releaseInput(node, L"Condition");
+	}
+
 	return true;
 }
 
@@ -847,59 +977,20 @@ bool emitRound(EmitterContext& cx, Round* node)
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
 	EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
 	cx.emitInstruction(OpRound, out, in);
+	cx.releaseInput(node, L"Input");
 	return true;
 }
 
 bool emitPow(EmitterContext& cx, Pow* node)
 {
-	float exponent = 0.0f;
-	if (cx.evaluateConstant(node, L"Exponent", exponent))
-	{
-		EMIT_MANDATORY_IN(in, cx, node, L"Input");
+	EMIT_MANDATORY_IN(exp, cx, node, L"Exponent");
+	EMIT_MANDATORY_IN(in, cx, node, L"Input");
 
-		EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
-		switch (int(exponent))
-		{
-		case 0:
-			{
-				Instruction is0(OpSet, out->reg, 1|2|4|8, 0, 0, 0);
-				cx.emitInstruction(is0);
-			}
-			break;
-		case 1:
-			cx.emitInstruction(OpMove, out, in);
-			break;
-		case 2:
-			cx.emitInstruction(OpMove, out, in);
-			cx.emitInstruction(OpMul, out, out, in);
-			break;
-		case 3:
-			cx.emitInstruction(OpMove, out, in);
-			cx.emitInstruction(OpMul, out, out, in);
-			cx.emitInstruction(OpMul, out, out, in);
-			break;
-		case 4:
-			cx.emitInstruction(OpMove, out, in);
-			cx.emitInstruction(OpMul, out, out, in);
-			cx.emitInstruction(OpMul, out, out, in);
-			cx.emitInstruction(OpMul, out, out, in);
-			break;
-		default:
-			{
-				EmitterVariable* exp = cx.emitConstant(exponent);
-				cx.emitInstruction(OpPow, out, in, exp);
-			}
-			break;
-		}
-	}
-	else
-	{
-		EMIT_MANDATORY_IN(exp, cx, node, L"Exponent");
-		EMIT_MANDATORY_IN(in, cx, node, L"Input");
+	EmitterVariable* out = cx.emitOutput(node, L"Output", std::max(in->type, exp->type));
+	cx.emitInstruction(OpPow, out, in, exp);
 
-		EmitterVariable* out = cx.emitOutput(node, L"Output", std::max(in->type, exp->type));
-		cx.emitInstruction(OpPow, out, in, exp);
-	}
+	cx.releaseInput(node, L"Input");
+	cx.releaseInput(node, L"Exponent");
 	return true;
 }
 
@@ -911,6 +1002,9 @@ bool emitSampler(EmitterContext& cx, Sampler* node)
 	EmitterVariable* out = cx.emitOutput(node, L"Output", VtFloat4);
 	Instruction inst(OpSampler, out->reg, texCoord->reg, texture->reg, 0, 0);
 	cx.emitInstruction(inst);
+
+	cx.releaseInput(node, L"TexCoord");
+	cx.releaseInput(node, L"Texture");
 	return true;
 }
 
@@ -927,6 +1021,7 @@ bool emitSign(EmitterContext& cx, Sign* node)
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
 	EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
 	cx.emitInstruction(OpSign, out, in);
+	cx.releaseInput(node, L"Input");
 	return true;
 }
 
@@ -935,6 +1030,7 @@ bool emitSin(EmitterContext& cx, Sin* node)
 	EMIT_MANDATORY_IN(theta, cx, node, L"Theta");
 	EmitterVariable* out = cx.emitOutput(node, L"Output", VtFloat);
 	cx.emitInstruction(OpSin, out, theta);
+	cx.releaseInput(node, L"Theta");
 	return true;
 }
 
@@ -943,6 +1039,27 @@ bool emitSqrt(EmitterContext& cx, Sqrt* node)
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
 	EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
 	cx.emitInstruction(OpSqrt, out, in);
+	cx.releaseInput(node, L"Input");
+	return true;
+}
+
+bool emitStep(EmitterContext& cx, Step* node)
+{
+	EMIT_MANDATORY_IN(x, cx, node, L"X");
+	EMIT_MANDATORY_IN(y, cx, node, L"Y");
+
+	EmitterVariable* out = cx.emitOutput(node, L"Output", std::max(x->type, y->type));
+
+	EmitterVariable* xx = expandTypes(cx, x, out->type);
+	EmitterVariable* xy = expandTypes(cx, y, out->type);
+
+	cx.emitInstruction(OpStep, out, xx, xy);
+
+	collapseTypes(cx, x, xx);
+	collapseTypes(cx, y, xy);
+
+	cx.releaseInput(node, L"Y");
+	cx.releaseInput(node, L"X");
 	return true;
 }
 
@@ -959,6 +1076,9 @@ bool emitSub(EmitterContext& cx, Sub* node)
 
 	collapseTypes(cx, in1, xin1);
 	collapseTypes(cx, in2, xin2);
+
+	cx.releaseInput(node, L"Input2");
+	cx.releaseInput(node, L"Input1");
 	return true;
 }
 
@@ -974,7 +1094,7 @@ bool emitSum(EmitterContext& cx, Sum* node)
 	}
 
 	// Setup counter, load with initial value.
-	EmitterVariable* N = cx.emitOutput(node, L"N", VtFloat, true);
+	EmitterVariable* N = cx.emitOutput(node, L"N", VtFloat);
 	cx.emitInstruction(OpFetchConstant, N, cx.emitConstant(float(from)));
 
 	EmitterVariable* tmp1 = cx.allocTemporary(VtFloat);
@@ -1060,6 +1180,15 @@ bool emitSwitch(EmitterContext& cx, Switch* node)
 		cx.emitInstruction(*i, inst);
 	}
 
+	cx.releaseInput(node, L"Default");
+	for (uint32_t i = 0; i < uint32_t(cases.size()); ++i)
+	{
+		const InputPin* caseInputPin = node->getInputPin(i + 2);
+		T_ASSERT (caseInputPin);
+
+		cx.releaseInput(caseInputPin);
+	}
+	cx.releaseInput(node, L"Select");
 	return true;
 }
 
@@ -1111,6 +1240,7 @@ bool emitSwizzle(EmitterContext& cx, Swizzle* node)
 		cx.emitInstruction(is0); 
 	}
 
+	cx.releaseInput(node, L"Input");
 	return true;
 }
 
@@ -1126,6 +1256,7 @@ bool emitTan(EmitterContext& cx, Tan* node)
 	EMIT_MANDATORY_IN(theta, cx, node, L"Theta");
 	EmitterVariable* out = cx.emitOutput(node, L"Output", VtFloat);
 	cx.emitInstruction(OpTan, out, theta);
+	cx.releaseInput(node, L"Theta");
 	return true;
 }
 
@@ -1135,6 +1266,7 @@ bool emitTextureSize(EmitterContext& cx, TextureSize* node)
 	EmitterVariable* out = cx.emitOutput(node, L"Output", VtFloat4);
 	Instruction inst(OpFetchTextureSize, out->reg, texture->reg, 0, 0, 0);
 	cx.emitInstruction(inst);
+	cx.releaseInput(node, L"Input");
 	return true;
 }
 
@@ -1144,6 +1276,8 @@ bool emitTransform(EmitterContext& cx, Transform* node)
 	EMIT_MANDATORY_IN(transform, cx, node, L"Transform");
 	EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
 	cx.emitInstruction(OpTransform, out, in, transform);
+	cx.releaseInput(node, L"Transform");
+	cx.releaseInput(node, L"Input");
 	return true;
 }
 
@@ -1152,6 +1286,7 @@ bool emitTranspose(EmitterContext& cx, Transpose* node)
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
 	EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
 	cx.emitInstruction(OpTranspose, out, in);
+	cx.releaseInput(node, L"Input");
 	return true;
 }
 
@@ -1160,6 +1295,7 @@ bool emitTruncate(EmitterContext& cx, Truncate* node)
 	EMIT_MANDATORY_IN(in, cx, node, L"Input");
 	EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
 	cx.emitInstruction(OpTrunc, out, in);
+	cx.releaseInput(node, L"Input");
 	return true;
 }
 
@@ -1304,6 +1440,7 @@ bool emitVertexOutput(EmitterContext& cx, VertexOutput* node)
 		cx.emitInstruction(OpStoreVarying, out, in);
 	}
 
+	cx.releaseInput(node, L"Input");
 	return true;
 }
 
@@ -1371,14 +1508,16 @@ Emitter::Emitter()
 	m_emitters[&type_of< Normalize >()] = new EmitterCast< Normalize >(emitNormalize);
 	m_emitters[&type_of< Pow >()] = new EmitterCast< Pow >(emitPow);
 	m_emitters[&type_of< PixelOutput >()] = new EmitterCast< PixelOutput >(emitPixelOutput);
-	m_emitters[&type_of< Reflect >()] = new EmitterCast< Reflect >(emitReflect);
 	m_emitters[&type_of< RecipSqrt >() ] = new EmitterCast< RecipSqrt >(emitRecipSqrt);
+	m_emitters[&type_of< Reflect >()] = new EmitterCast< Reflect >(emitReflect);
+	m_emitters[&type_of< Repeat >()] = new EmitterCast< Repeat >(emitRepeat);
 	m_emitters[&type_of< Round >()] = new EmitterCast< Round >(emitRound);
 	m_emitters[&type_of< Sampler >()] = new EmitterCast< Sampler >(emitSampler);
 	m_emitters[&type_of< Scalar >()] = new EmitterCast< Scalar >(emitScalar);
 	m_emitters[&type_of< Sign >()] = new EmitterCast< Sign >(emitSign);
 	m_emitters[&type_of< Sin >()] = new EmitterCast< Sin >(emitSin);
 	m_emitters[&type_of< Sqrt >()] = new EmitterCast< Sqrt >(emitSqrt);
+	m_emitters[&type_of< Step >()] = new EmitterCast< Step >(emitStep);
 	m_emitters[&type_of< Sub >()] = new EmitterCast< Sub >(emitSub);
 	m_emitters[&type_of< Sum >()] = new EmitterCast< Sum >(emitSum);
 	m_emitters[&type_of< Switch >()] = new EmitterCast< Switch >(emitSwitch);
@@ -1404,10 +1543,23 @@ Emitter::~Emitter()
 bool Emitter::emit(EmitterContext& c, Node* node)
 {
 	std::map< const TypeInfo*, EmitterImpl* >::iterator i = m_emitters.find(&type_of(node));
-	T_FATAL_ASSERT_M (i != m_emitters.end(), L"No emitter for node");
+	if (i == m_emitters.end())
+	{
+		log::error << L"No emitter for node type \"" << type_name(node) << L"\"" << Endl;
+		return false;
+	}
+
 	T_FATAL_ASSERT (i->second);
 	if (i->second)
-		return i->second->emit(c, node);
+	{
+		if (i->second->emit(c, node))
+			return true;
+		else
+		{
+			log::error << L"Failed to emit \"" << type_name(node) << L"\"" << Endl;
+			return false;
+		}
+	}
 	else
 		return false;
 }

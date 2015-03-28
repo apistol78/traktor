@@ -2,7 +2,6 @@
 #define traktor_render_IntrProgram_H
 
 #include <map>
-#include <vector>
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Serialization/ISerializable.h"
@@ -43,18 +42,18 @@ public:
 
 	void setConstant(uint32_t index, const Vector4& value);
 
-	inline const std::vector< Instruction >& getInstructions() const { return m_instructions; }
+	const AlignedVector< Instruction >& getInstructions() const { return m_instructions; }
 
-	inline const AlignedVector< Vector4 >& getConstants() const { return m_constants; }
+	const AlignedVector< Vector4 >& getConstants() const { return m_constants; }
 
-	inline const Vector4& getConstant(uint32_t index) const { T_ASSERT (index < uint32_t(m_constants.size())); return m_constants[index]; }
+	const Vector4& getConstant(uint32_t index) const { T_ASSERT (index < uint32_t(m_constants.size())); return m_constants[index]; }
 
 	void dump(OutputStream& os, const std::map< std::wstring, EmitterVariable* >& uniforms) const;
 
 	virtual void serialize(ISerializer& s);
 
 private:
-	std::vector< Instruction > m_instructions;
+	AlignedVector< Instruction > m_instructions;
 	AlignedVector< Vector4 > m_constants;
 };
 

@@ -15,8 +15,8 @@ namespace traktor
 
 struct InternalImage
 {
-	std::vector< Instruction > instructions;
-	std::vector< Fix4 > constants;
+	AlignedVector< Instruction > instructions;
+	AlignedVector< Fix4 > constants;
 };
 
 inline fp32_t clamp(fp32_t v, fp32_t min, fp32_t max)
@@ -83,8 +83,8 @@ bool InterpreterFixed::execute(
 
 	Fix4 R[256];
 
-	const std::vector< Instruction >& instructions = img->instructions;
-	for (std::vector< Instruction >::const_iterator i = instructions.begin(); i != instructions.end(); ++i)
+	const AlignedVector< Instruction >& instructions = img->instructions;
+	for (AlignedVector< Instruction >::const_iterator i = instructions.begin(); i != instructions.end(); ++i)
 	{
 		Fix4& dest = R[i->dest];
 		switch (i->op)
@@ -367,6 +367,16 @@ bool InterpreterFixed::execute(
 			dest.y = std::max(R[i->src[0]].y, R[i->src[1]].y);
 			dest.z = std::max(R[i->src[0]].z, R[i->src[1]].z);
 			dest.w = std::max(R[i->src[0]].w, R[i->src[1]].w);
+			break;
+
+		case OpStep:
+			{
+				fp32_t x = R[i->src[0]].x >= R[i->src[1]].x ? toFixed(1.0f) : toFixed(0.0f);
+				fp32_t y = R[i->src[0]].y >= R[i->src[1]].y ? toFixed(1.0f) : toFixed(0.0f);
+				fp32_t z = R[i->src[0]].z >= R[i->src[1]].z ? toFixed(1.0f) : toFixed(0.0f);
+				fp32_t w = R[i->src[0]].w >= R[i->src[1]].w ? toFixed(1.0f) : toFixed(0.0f);
+				dest.set(x, y, z, w);
+			}
 			break;
 
 		case OpSign:
