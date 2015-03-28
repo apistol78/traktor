@@ -48,31 +48,15 @@ EmitterContext::EmitterContext(const ShaderGraph* shaderGraph, Parameters& param
 
 EmitterContext::~EmitterContext()
 {
-	for (std::map< const OutputPin*, TransientInput >::iterator i = m_states[0].inputs.begin(); i != m_states[0].inputs.end(); ++i)
+	for (std::map< const OutputPin*, OutputVariable >::iterator i = m_states[0].inputs.begin(); i != m_states[0].inputs.end(); ++i)
 		freeTemporary(i->second.var);
-	for (std::map< const OutputPin*, TransientInput >::iterator i = m_states[1].inputs.begin(); i != m_states[1].inputs.end(); ++i)
+	for (std::map< const OutputPin*, OutputVariable >::iterator i = m_states[1].inputs.begin(); i != m_states[1].inputs.end(); ++i)
 		freeTemporary(i->second.var);
 }
 
 void EmitterContext::emit(Node* node)
 {
-	Scope scope;
-	scope.node = node;
-	m_scope.push_back(scope);
-
 	m_emitter.emit(*this, node);
-	
-	const Scope& back = m_scope.back();
-	for (std::vector< const OutputPin* >::const_iterator i = back.usedRefs.begin(); i != back.usedRefs.end(); ++i)
-	{
-		std::map< const OutputPin*, TransientInput >::iterator j = m_currentState->inputs.find(*i);
-		T_FATAL_ASSERT(j != m_currentState->inputs.end());
-		j->second.count--;
-	}
-	
-	collectInputs(m_currentState->inputs);
-
-	m_scope.pop_back();
 }
 
 EmitterVariable* EmitterContext::emitInput(const InputPin* inputPin)
@@ -81,16 +65,18 @@ EmitterVariable* EmitterContext::emitInput(const InputPin* inputPin)
 	if (!sourcePin)
 		return 0;
 
-	// Emit source pin if not visited already.
-	std::map< const OutputPin*, TransientInput >::iterator i = m_currentState->inputs.find(sourcePin);
-	if (i == m_currentState->inputs.end() || i->second.count == 0)
+	std::map< const OutputPin*, OutputVariable >::iterator i = m_currentState->inputs.find(sourcePin);
+	if (i == m_currentState->inputs.end())
 	{
-		emit(sourcePin->getNode());
+		m_emitter.emit(*this, sourcePin->getNode());
+
 		i = m_currentState->inputs.find(sourcePin);
 		T_FATAL_ASSERT (i != m_currentState->inputs.end());
+		//T_FATAL_ASSERT (i->second.count > 0);
+		T_FATAL_ASSERT (std::find(i->second.pins.begin(), i->second.pins.end(), inputPin) != i->second.pins.end());
+		T_FATAL_ASSERT (std::find(i->second.released.begin(), i->second.released.end(), inputPin) == i->second.released.end());
 	}
 
-	m_scope.back().usedRefs.push_back(i->first);
 	return i->second.var;
 }
 
@@ -102,41 +88,48 @@ EmitterVariable* EmitterContext::emitInput(Node* node, const std::wstring& input
 	return emitInput(inputPin);
 }
 
-EmitterVariable* EmitterContext::emitOutput(Node* node, const std::wstring& outputPinName, EmitterVariableType type, bool force)
+void EmitterContext::releaseInput(const InputPin* inputPin)
 {
-	const OutputPin* outputPin = node->findOutputPin(outputPinName);
-	T_ASSERT_M (outputPin, L"Unable to find output pin");
+	const OutputPin* sourcePin = m_shaderGraph->findSourcePin(inputPin);
+	if (!sourcePin)
+		return;
 
-	uint32_t count = m_shaderGraph->getDestinationCount(outputPin);
-	if (count == 0 && !force)
-		return 0;
+	std::map< const OutputPin*, OutputVariable >::iterator i = m_currentState->inputs.find(sourcePin);
+	T_FATAL_ASSERT (i != m_currentState->inputs.end());
+	//T_FATAL_ASSERT (i->second.count > 0);
 
-	EmitterVariable* var = allocTemporary(type);
-	T_FATAL_ASSERT (var);
+	T_FATAL_ASSERT (std::find(i->second.pins.begin(), i->second.pins.end(), inputPin) != i->second.pins.end());
+	T_FATAL_ASSERT (std::find(i->second.released.begin(), i->second.released.end(), inputPin) == i->second.released.end());
+	i->second.released.push_back(inputPin);
 
-	TransientInput& input = m_currentState->inputs[outputPin];
-	input.var = var;
-	input.count = count;
-	input.forced = force;
-
-	return var;
+	if (--i->second.count <= 0)
+		freeTemporary(i->second.var);
 }
 
-bool EmitterContext::evaluateConstant(Node* node, const std::wstring& inputPinName, float& outValue)
+void EmitterContext::releaseInput(Node* node, const std::wstring& inputPinName)
 {
 	const InputPin* inputPin = node->findInputPin(inputPinName);
 	T_ASSERT_M (inputPin, L"Unable to find input pin");
 
-	const OutputPin* sourcePin = m_shaderGraph->findSourcePin(inputPin);
-	if (!sourcePin)
-		return false;
+	return releaseInput(inputPin);
+}
 
-	Ref< const Scalar > scalarNode = dynamic_type_cast< const Scalar* >(sourcePin->getNode());
-	if (!scalarNode)
-		return false;
+EmitterVariable* EmitterContext::emitOutput(Node* node, const std::wstring& outputPinName, EmitterVariableType type)
+{
+	const OutputPin* outputPin = node->findOutputPin(outputPinName);
+	T_ASSERT_M (outputPin, L"Unable to find output pin");
 
-	outValue = scalarNode->get();
-	return true;
+	EmitterVariable* var = allocTemporary(type);
+	T_FATAL_ASSERT (var);
+
+	OutputVariable& o = m_currentState->inputs[outputPin];
+	o.var = var;
+	o.count = m_shaderGraph->getDestinationCount(outputPin);
+	T_FATAL_ASSERT (o.count >= 0);
+
+	m_shaderGraph->findDestinationPins(outputPin, o.pins);
+
+	return o.var;
 }
 
 uint32_t EmitterContext::getCurrentAddress() const
@@ -446,28 +439,6 @@ const RenderStateDesc& EmitterContext::getRenderState() const
 uint32_t EmitterContext::getInterpolatorCount() const
 {
 	return m_interpolatorCount;
-}
-
-void EmitterContext::collectInputs(std::map< const OutputPin*, TransientInput >& inputs)
-{
-	for (std::map< const OutputPin*, TransientInput >::iterator i = inputs.begin(); i != inputs.end(); ++i)
-	{
-		if (i->second.count > 0)
-			continue;
-
-		bool inScope = false;
-		for (std::vector< Scope >::iterator j = m_scope.begin(); j != m_scope.end(); ++j)
-		{
-			if (j->node == i->first->getNode())
-			{
-				inScope = true;
-				break;
-			}
-		}
-
-		if (!inScope)
-			freeTemporary(i->second.var);
-	}
 }
 
 	}

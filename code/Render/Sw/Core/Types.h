@@ -60,9 +60,10 @@ enum Opcode
 	OpMixIn,
 	OpMin,
 	OpMax,
+	OpStep,
 	OpSign,
 	OpSampler,
-	OpSwizzle,				// 49
+	OpSwizzle,				// 50
 	OpSet,
 	OpExpandWithZero,
 	OpCompareGreaterEqual,
@@ -72,7 +73,7 @@ enum Opcode
 	OpJumpIfZero,
 	OpJump,
 	OpDiscard,
-	OpTrace					// 60
+	OpTrace					// 61
 };
 
 static const wchar_t* c_opcodeText[] =
@@ -124,6 +125,7 @@ static const wchar_t* c_opcodeText[] =
 	L"OpMixIn",
 	L"OpMin",
 	L"OpMax",
+	L"OpStep",
 	L"OpSign",
 	L"OpSampler",
 	L"OpSwizzle",

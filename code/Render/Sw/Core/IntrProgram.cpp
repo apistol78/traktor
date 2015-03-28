@@ -450,7 +450,7 @@ void IntrProgram::dump(OutputStream& os, const std::map< std::wstring, EmitterVa
 	os << Endl;
 
 	os << L"# Instructions" << Endl;
-	for (std::vector< Instruction >::const_iterator i = m_instructions.begin(); i != m_instructions.end(); ++i)
+	for (AlignedVector< Instruction >::const_iterator i = m_instructions.begin(); i != m_instructions.end(); ++i)
 	{
 		T_ASSERT (i->op < sizeof_array(c_opcodeText));
 
@@ -476,7 +476,7 @@ void IntrProgram::dump(OutputStream& os, const std::map< std::wstring, EmitterVa
 
 void IntrProgram::serialize(ISerializer& s)
 {
-	s >> MemberStlVector< Instruction, MemberInstruction >(L"instructions", m_instructions);
+	s >> MemberAlignedVector< Instruction, MemberInstruction >(L"instructions", m_instructions);
 	s >> MemberAlignedVector< Vector4 >(L"constants", m_constants);
 }
 

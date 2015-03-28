@@ -2,6 +2,7 @@
 #define traktor_render_EmitterContext_H
 
 #include <bitset>
+#include <list>
 #include <map>
 #include <stack>
 #include "Core/Math/Vector4.h"
@@ -52,14 +53,11 @@ public:
 
 	EmitterVariable* emitInput(Node* node, const std::wstring& inputPinName);
 
-	EmitterVariable* emitOutput(Node* node, const std::wstring& outputPinName, EmitterVariableType type, bool force = false);
+	void releaseInput(const InputPin* inputPin);
 
-	//@}
+	void releaseInput(Node* node, const std::wstring& inputPinName);
 
-	/*! \name Constant branch evaluation */
-	//@{
-
-	bool evaluateConstant(Node* node, const std::wstring& inputPinName, float& outValue);
+	EmitterVariable* emitOutput(Node* node, const std::wstring& outputPinName, EmitterVariableType type);
 
 	//@}
 
@@ -124,17 +122,19 @@ public:
 	uint32_t getInterpolatorCount() const;
 
 private:
-	struct Scope
-	{
-		Node* node;
-		std::vector< const OutputPin* > usedRefs;
-	};
-
-	struct TransientInput
+	struct OutputVariable
 	{
 		EmitterVariable* var;
 		int32_t count;
-		bool forced;
+
+		std::vector< const InputPin* > pins;
+		std::vector< const InputPin* > released;
+
+		OutputVariable()
+		:	var(0)
+		,	count(0)
+		{
+		}
 	};
 
 	struct State
@@ -142,7 +142,7 @@ private:
 		IntrProgram program;
 		std::bitset< 256 > free;
 		std::set< EmitterVariable* > vars;
-		std::map< const OutputPin*, TransientInput > inputs;
+		std::map< const OutputPin*, OutputVariable > inputs;
 	};
 
 	Emitter m_emitter;
@@ -150,12 +150,9 @@ private:
 	Parameters& m_parameters;
 	State m_states[2];
 	State* m_currentState;
-	std::vector< Scope > m_scope;
 	uint32_t m_interpolatorCount;
 	uint32_t m_samplerCount;
 	RenderStateDesc m_renderState;
-
-	void collectInputs(std::map< const OutputPin*, TransientInput >& inputs);
 };
 
 	}

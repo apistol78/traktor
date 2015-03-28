@@ -8,7 +8,9 @@
 #	define DRAWING_INCLUDE_PNG
 #	define DRAWING_INCLUDE_JPEG
 #	define DRAWING_INCLUDE_GIF
-#	define DRAWING_INCLUDE_EXR
+#	if !defined(WINCE)
+#		define DRAWING_INCLUDE_EXR
+#	endif
 #elif defined(__APPLE__)
 #	define DRAWING_INCLUDE_PNG
 #	define DRAWING_INCLUDE_JPEG

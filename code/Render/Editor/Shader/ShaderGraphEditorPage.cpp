@@ -1060,10 +1060,10 @@ void ShaderGraphEditorPage::eventMouseMove(ui::MouseMoveEvent* event)
 		if (!shaderOutputPin)
 			return;
 
-		Constant value = ShaderGraphEvaluator(m_shaderGraph).evaluate(shaderOutputPin);
-
 		StringOutputStream ss;
+		ss << L"[" << m_shaderGraph->getDestinationCount(shaderOutputPin) << L"] ";
 
+		Constant value = ShaderGraphEvaluator(m_shaderGraph).evaluate(shaderOutputPin);
 		switch (value.getType())
 		{
 		case PntVoid:

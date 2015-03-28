@@ -82,11 +82,11 @@ bool Interpreter::execute(
 	Vector4 registers[256];
 	#define R(i) registers[(i)]
 
-	const std::vector< Instruction >& instructions = img->program.getInstructions();
+	const AlignedVector< Instruction >& instructions = img->program.getInstructions();
 	uint32_t executed = 0;
 
 	for (
-		std::vector< Instruction >::const_iterator i = instructions.begin();
+		AlignedVector< Instruction >::const_iterator i = instructions.begin();
 		i != instructions.end() && executed < 500;
 		++i, ++executed
 	)
@@ -507,6 +507,17 @@ bool Interpreter::execute(
 		case OpMax:
 			dest = max(R(i->src[0]), R(i->src[1]));
 			CHECK(dest);
+			break;
+
+		case OpStep:
+			{
+				float x = R(i->src[0]).x() >= R(i->src[1]).x() ? 1.0f : 0.0f;
+				float y = R(i->src[0]).y() >= R(i->src[1]).y() ? 1.0f : 0.0f;
+				float z = R(i->src[0]).z() >= R(i->src[1]).z() ? 1.0f : 0.0f;
+				float w = R(i->src[0]).w() >= R(i->src[1]).w() ? 1.0f : 0.0f;
+				dest.set(x, y, z, w);
+				CHECK(dest);
+			}
 			break;
 
 		case OpSign:
