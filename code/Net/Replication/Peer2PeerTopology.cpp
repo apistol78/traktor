@@ -473,20 +473,23 @@ bool Peer2PeerTopology::update(double dT)
 				if (peerIndex >= 0)
 				{
 					Peer& peer = m_peers[peerIndex];
-				
-					peer.sentIAm = 0;
-
-					std::vector< net_handle_t >::iterator it = std::find(myPeer.connections.begin(), myPeer.connections.end(), from);
-					if (it == myPeer.connections.end())
+					if (peer.sentIAm > 0)
 					{
-						myPeer.connections.push_back(from);
-						std::sort(myPeer.connections.begin(), myPeer.connections.end());
+						peer.sentIAm = 0;
+						std::vector< net_handle_t >::iterator it = std::find(myPeer.connections.begin(), myPeer.connections.end(), from);
+						if (it == myPeer.connections.end())
+						{
+							myPeer.connections.push_back(from);
+							std::sort(myPeer.connections.begin(), myPeer.connections.end());
 
-						myPeer.whenPropagate = m_time;
-						myPeer.sequence++;
+							myPeer.whenPropagate = m_time;
+							myPeer.sequence++;
 
-						updateRouting = 7;
+							updateRouting = 7;
+						}
 					}
+					else
+						log::warning << getLogPrefix() << L"Received \"I am\" response from " << from << L" but none sent, ignored." << Endl;
 				}
 			}
 			else if (msg.id == MsgCMask)
@@ -588,7 +591,7 @@ bool Peer2PeerTopology::update(double dT)
 
 				if (!m_peers[i].established)
 				{
-					log::info << getLogPrefix() << L"Peer " << m_peers[i].handle << L" connected." << Endl;
+					log::info << getLogPrefix() << L"Peer " << m_peers[i].handle << L" connected (found route) [" << updateRouting << L"]." << Endl;
 
 					if (m_callback)
 						T_MEASURE_STATEMENT(m_callback->nodeConnected(this, m_peers[i].handle), 0.001);
@@ -600,7 +603,7 @@ bool Peer2PeerTopology::update(double dT)
 			{
 				if (m_peers[i].established)
 				{
-					log::info << getLogPrefix() << L"Peer " << m_peers[i].handle << L" disconnected (no route)." << Endl;
+					log::info << getLogPrefix() << L"Peer " << m_peers[i].handle << L" disconnected (no route) [" << updateRouting << L"]." << Endl;
 
 					if (m_callback)
 						T_MEASURE_STATEMENT(m_callback->nodeDisconnected(this, m_peers[i].handle), 0.001);
@@ -616,7 +619,7 @@ bool Peer2PeerTopology::update(double dT)
 
 			if (!m_peers[i].established)
 			{
-				log::info << getLogPrefix() << L"Peer " << m_peers[i].handle << L" connected." << Endl;
+				log::info << getLogPrefix() << L"Peer " << m_peers[i].handle << L" connected (local)." << Endl;
 
 				if (m_callback)
 					T_MEASURE_STATEMENT(m_callback->nodeConnected(this, m_peers[i].handle), 0.001);
