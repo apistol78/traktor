@@ -268,7 +268,7 @@ Processor::image_t JitX86::compile(const IntrProgram& program) const
 
 	initializeRegisterAllocator();
 
-	const std::vector< Instruction >& instructions = program.getInstructions();
+	const AlignedVector< Instruction >& instructions = program.getInstructions();
 	for (uint32_t offset = 0; offset < uint32_t(instructions.size()); ++offset)
 	{
 		const Instruction& i = instructions[offset];
