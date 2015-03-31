@@ -110,7 +110,7 @@ Ref< IResourceHandle > ResourceManager::bind(const TypeInfo& type, const Guid& g
 
 	if (guid.isNull() || !guid.isValid())
 	{
-		if (!guid.isValid())
+		if (!guid.isNull())
 			log::error << L"Unable to create " << type.getName() << L" resource; invalid id" << Endl;
 		return 0;
 	}
