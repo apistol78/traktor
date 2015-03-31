@@ -28,11 +28,14 @@ struct BlendGrainCursor : public RefCountImpl< ISoundBufferCursor >
 	,	m_parameter(0.0f)
 	,	m_lastP(0.0f)
 	{
+		for (uint32_t i = 0; i < SbcMaxChannelCount; ++i)
+			m_outputSamples[i] = 0;
 	}
 
 	virtual ~BlendGrainCursor()
 	{
-		Alloc::freeAlign(m_outputSamples[0]);
+		if (m_outputSamples[0])
+			Alloc::freeAlign(m_outputSamples[0]);
 	}
 
 	virtual void setParameter(handle_t id, float parameter)
@@ -77,10 +80,16 @@ Ref< ISoundBufferCursor > BlendGrain::createCursor() const
 	cursor->m_cursors[0] = m_grains[0]->createCursor();
 	cursor->m_cursors[1] = m_grains[1]->createCursor();
 
+	if (!cursor->m_cursors[0] || !cursor->m_cursors[1])
+		return 0;
+
 	const uint32_t outputSamplesCount = 1024/*hwFrameSamples*/ * c_outputSamplesBlockCount;
 	const uint32_t outputSamplesSize = SbcMaxChannelCount * outputSamplesCount * sizeof(float);
 
 	cursor->m_outputSamples[0] = static_cast< float* >(Alloc::acquireAlign(outputSamplesSize, 16, T_FILE_LINE));
+	if (!cursor->m_outputSamples[0])
+		return 0;
+
 	std::memset(cursor->m_outputSamples[0], 0, outputSamplesSize);
 
 	for (uint32_t i = 1; i < SbcMaxChannelCount; ++i)
