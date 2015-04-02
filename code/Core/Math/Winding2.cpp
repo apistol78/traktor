@@ -64,7 +64,9 @@ bool Winding2::inside(const Vector2& pnt) const
 	bool c = false;
 	for (int32_t i = 0, j = int32_t(points.size()) - 1; i < int32_t(points.size()); j = i++)
 	{
-		if ((((points[i].y <= pnt.y) && (pnt.y < points[j].y)) || ((points[j].y <= pnt.y) && (pnt.y < points[i].y))) && (pnt.x < (points[j].x - points[i].x) * (pnt.y - points[i].y) / (points[j].y - points[i].y) + points[i].x))
+		const Vector2& pi = points[i];
+		const Vector2& pj = points[j];
+		if ((((pnt.y >= pi.y) && (pnt.y < pj.y)) || ((pnt.y >= pj.y) && (pnt.y < pi.y))) && (pnt.x < (pj.x - pi.x) * (pnt.y - pi.y) / (pj.y - pi.y) + pi.x))
 			c = !c;
 	}
 	return c;

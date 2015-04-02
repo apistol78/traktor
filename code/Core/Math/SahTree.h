@@ -40,6 +40,7 @@ public:
 		int32_t index;
 		Scalar distance;
 		Vector4 position;
+		Vector4 normal;
 
 		QueryResult()
 		:	index(-1)
@@ -90,10 +91,30 @@ public:
 	 *
 	 * \param origin Ray origin.
 	 * \param direction Ray direction.
+	 * \param ignore Ignore intersection with winding.
 	 * \param outResult Intersection result.
 	 * \return True if any intersection found.
 	 */
-	bool queryClosestIntersection(const Vector4& origin, const Vector4& direction, QueryResult& outResult, QueryCache& inoutCache) const;
+	bool queryClosestIntersection(const Vector4& origin, const Vector4& direction, int32_t ignore, QueryResult& outResult, QueryCache& inoutCache) const;
+
+		/*! \brief Query for closest intersection.
+	 *
+	 * \param origin Ray origin.
+	 * \param direction Ray direction.
+	 * \param outResult Intersection result.
+	 * \return True if any intersection found.
+	 */
+	bool queryClosestIntersection(const Vector4& origin, const Vector4& direction, QueryResult& outResult, QueryCache& inoutCache) const { return queryClosestIntersection(origin, direction, -1, outResult, inoutCache); }
+
+	/*! \brief Query for any intersection.
+	 *
+	 * \param origin Ray origin.
+	 * \param direction Ray direction.
+	 * \param maxDistance Intersection must occur prior to this distance from origin, 0 distance is infinite.
+	 * \param ignore Ignore intersection with winding.
+	 * \return True if any intersection found.
+	 */
+	bool queryAnyIntersection(const Vector4& origin, const Vector4& direction, float maxDistance, int32_t ignore, QueryCache& inoutCache) const;
 
 	/*! \brief Query for any intersection.
 	 *
@@ -102,7 +123,15 @@ public:
 	 * \param maxDistance Intersection must occur prior to this distance from origin, 0 distance is infinite.
 	 * \return True if any intersection found.
 	 */
-	bool queryAnyIntersection(const Vector4& origin, const Vector4& direction, float maxDistance, QueryCache& inoutCache) const;
+	bool queryAnyIntersection(const Vector4& origin, const Vector4& direction, float maxDistance, QueryCache& inoutCache) const { return queryAnyIntersection(origin, direction, maxDistance, -1, inoutCache); }
+
+	/*! \brief Check if point is within winding.
+	 *
+	 * \param index Index of winding.
+	 * \param position Position of point.
+	 * \return True if point is within winding.
+	 */
+	bool checkPoint(int32_t index, const Vector4& position) const;
 
 	/*! \brief Get polygons. */
 	const AlignedVector< Winding3 >& getPolygons() const { return m_polygons; }

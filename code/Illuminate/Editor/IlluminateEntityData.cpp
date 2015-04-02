@@ -1,3 +1,4 @@
+#include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Illuminate/Editor/IlluminateEntityData.h"
@@ -15,11 +16,16 @@ IlluminateEntityData::IlluminateEntityData()
 ,	m_lumelsPerUnit(10.0f)
 ,	m_directLighting(true)
 ,	m_indirectLighting(true)
+,	m_pointLightRadius(0.02f)
+,	m_shadowSamples(64)
+,	m_directConvolveIterations(1)
 ,	m_indirectTraceSamples(64)
 ,	m_indirectTraceIterations(1)
 ,	m_indirectConvolveIterations(1)
 ,	m_highDynamicRange(false)
 ,	m_compressLightMap(true)
+,	m_skyProbeSamples(256)
+,	m_skyProbeStrength(1.0f)
 {
 }
 
@@ -60,11 +66,17 @@ void IlluminateEntityData::serialize(ISerializer& s)
 	s >> Member< float >(L"lumelsPerUnit", m_lumelsPerUnit);
 	s >> Member< bool >(L"directLighting", m_directLighting);
 	s >> Member< bool >(L"indirectLighting", m_indirectLighting);
-	s >> Member< int32_t >(L"indirectTraceSamples", m_indirectTraceSamples);
-	s >> Member< int32_t >(L"indirectTraceIterations", m_indirectTraceIterations);
-	s >> Member< int32_t >(L"indirectConvolveIterations", m_indirectConvolveIterations);
+	s >> Member< float >(L"pointLightRadius", m_pointLightRadius);
+	s >> Member< int32_t >(L"shadowSamples", m_shadowSamples, AttributeRange(1));
+	s >> Member< int32_t >(L"directConvolveIterations", m_directConvolveIterations, AttributeRange(0));
+	s >> Member< int32_t >(L"indirectTraceSamples", m_indirectTraceSamples, AttributeRange(1));
+	s >> Member< int32_t >(L"indirectTraceIterations", m_indirectTraceIterations, AttributeRange(1));
+	s >> Member< int32_t >(L"indirectConvolveIterations", m_indirectConvolveIterations, AttributeRange(0));
 	s >> Member< bool >(L"highDynamicRange", m_highDynamicRange);
 	s >> Member< bool >(L"compressLightMap", m_compressLightMap);
+	s >> Member< Path >(L"skyProbe", m_skyProbe);
+	s >> Member< int32_t >(L"skyProbeSamples", m_skyProbeSamples, AttributeRange(0));
+	s >> Member< float >(L"skyProbeStrength", m_skyProbeStrength, AttributeRange(0.0f));
 	s >> MemberRefArray< world::EntityData >(L"entityData", m_entityData);
 }
 

@@ -46,11 +46,19 @@ namespace traktor
 		namespace
 		{
 
-const Scalar c_traceRayOffset(0.025f);
 const int32_t c_outputWidth = 2048;
 const int32_t c_outputHeight = 2048;
 const int32_t c_jobTileWidth = 128;
 const int32_t c_jobTileHeight = 128;
+const Scalar c_maxIndirectDistance(200.0f);
+const Scalar c_traceOffset(0.001f);
+const int32_t c_biasDelta[][2] =
+{
+	{ -1, 0 },
+	{  1, 0 },
+	{ 0, -1 },
+	{ 0,  1 }
+};
 
 struct Surface
 {
@@ -96,95 +104,6 @@ struct GBuffer
 	Vector4 normal;
 };
 
-template < typename Visitor >
-void line(int32_t x1, int32_t y1, int32_t x2, int32_t y2, Visitor& visitor)
-{
-	const bool steep = (traktor::abs< int32_t >(y2 - y1) > traktor::abs< int32_t >(x2 - x1));
-	if (steep)
-	{
-		std::swap(x1, y1);
-		std::swap(x2, y2);
-	}
-
-	const bool inverted = (x1 > x2);
-	if (inverted)
-	{
-		std::swap(x1, x2);
-		std::swap(y1, y2);
-	}
-
-	const int32_t dx = x2 - x1;
-	const int32_t dy = traktor::abs< int32_t >(y2 - y1);
-
-	float error = dx / 2.0f;
-	const int ystep = (y1 < y2) ? 1 : -1;
-	
-	int y = y1;
-	for(int x = x1; x < x2; x++)
-	{
-		float f = float(x - x1) / (x2 - x1);
-		if (!inverted)
-			f = 1.0f - f;
-
-		if (steep)
-			visitor(y, x, f);
-		else
-			visitor(x, y, f);
-
-		error -= dy;
-		if(error < 0)
-		{
-			y += ystep;
-			error += dx;
-		}
-	}
-}
-
-class GBufferLineVisitor
-{
-public:
-	GBufferLineVisitor(
-		int32_t surface,
-		const Vector4 P[2],
-		const Vector4 N[2],
-		AlignedVector< GBuffer >& outGBuffer
-	)
-	:	m_surface(surface)
-	,	m_outGBuffer(outGBuffer)
-	{
-		for (int i = 0; i < 2; ++i)
-		{
-			m_P[i] = P[i];
-			m_N[i] = N[i];
-		}
-	}
-
-	void operator () (int32_t x, int32_t y, float alpha)
-	{
-		if (x >= 1 && y >= 1 && x < c_outputWidth - 1 && y < c_outputHeight - 1)
-		{
-			Vector4 position = (m_P[0] * Scalar(alpha) + m_P[1] * Scalar(1.0f - alpha)).xyz1();
-			Vector4 normal = (m_N[0] * Scalar(alpha) + m_N[1] * Scalar(1.0f - alpha)).xyz0();
-			
-			for (int32_t dy = -1; dy <= 1; ++dy)
-			{
-				for (int32_t dx = -1; dx <= 1; ++dx)
-				{
-					m_outGBuffer[(x + dx) + (y + dy) * c_outputWidth].surface = m_surface;
-					m_outGBuffer[(x + dx) + (y + dy) * c_outputWidth].position = position;
-					m_outGBuffer[(x + dx) + (y + dy) * c_outputWidth].normal = normal.normalized();
-				}
-			}
-		}
-	}
-
-private:
-	int32_t m_surface;
-	Vector4 m_P[2];
-	Vector4 m_N[2];
-	AlignedVector< GBuffer >& m_outGBuffer;
-};
-
 class GBufferVisitor
 {
 public:
@@ -227,20 +146,24 @@ class JobTraceDirect
 {
 public:
 	JobTraceDirect(
+		const IlluminateEntityData& entityData,
 		int32_t tileX,
 		int32_t tileY,
 		const SahTree& sah,
 		const AlignedVector< GBuffer >& gbuffer,
 		const AlignedVector< Surface >& surfaces,
 		const AlignedVector< Light >& lights,
+		const drawing::Image* skyProbe,
 		drawing::Image* outputImageDirect
 	)
-	:	m_tileX(tileX)
+	:	m_entityData(entityData)
+	,	m_tileX(tileX)
 	,	m_tileY(tileY)
 	,	m_sah(sah)
 	,	m_gbuffer(gbuffer)
 	,	m_surfaces(surfaces)
 	,	m_lights(lights)
+	,	m_skyProbe(skyProbe)
 	,	m_outputImageDirect(outputImageDirect)
 	{
 	}
@@ -251,16 +174,6 @@ public:
 		SahTree::QueryCache cache;
 		SahTree::QueryResult result;
 		Color4f tmp;
-
-		const int32_t c_shadowSamples = 64;
-		const Scalar c_shadowSampleRadius(4.0f);
-		const int32_t c_shadowDelta[][2] =
-		{
-			{ -1, 0 },
-			{  1, 0 },
-			{ 0, -1 },
-			{ 0,  1 }
-		};
 
 		for (int32_t y = m_tileY; y < m_tileY + c_jobTileHeight; ++y)
 		{
@@ -274,33 +187,42 @@ public:
 				if (position.w() < FUZZY_EPSILON)
 					continue;
 
-				Vector4 shadowPositions[sizeof_array(c_shadowDelta)];
-				for (int32_t i = 0; i < sizeof_array(c_shadowDelta); ++i)
-				{
-					const int32_t dx = c_shadowDelta[i][0];
-					const int32_t dy = c_shadowDelta[i][1];
-					if (x + dx >= 0 && x + dx < c_outputWidth && y + dy >= 0 && y + dy < c_outputHeight)
-					{
-						shadowPositions[i] = m_gbuffer[(x + dx) + (y + dy) * c_outputWidth].position;
-						if (shadowPositions[i].w() < FUZZY_EPSILON)
-							shadowPositions[i] = position;
-					}
-					else
-						shadowPositions[i] = position;
-				}
-
-				Vector4 shadowU = (shadowPositions[1] - shadowPositions[0]) * c_shadowSampleRadius;
-				Vector4 shadowV = (shadowPositions[3] - shadowPositions[2]) * c_shadowSampleRadius;
-				Vector4 shadowOrigin = position - (shadowU + shadowV) * Scalar(0.5f);
+				if (!m_sah.checkPoint(surfaceId, position))
+					continue;
 
 				const Vector4& normal = m_gbuffer[x + y * c_outputWidth].normal;
-				Vector4 rayOrigin = (position + normal * c_traceRayOffset).xyz1();
 
 				Color4f direct(0.0f, 0.0f, 0.0f, 1.0f);
 
 				const Surface& surface = m_surfaces[surfaceId];
 				if (surface.emissive > FUZZY_EPSILON)
 					direct += Color4f(1.0f, 1.0f, 1.0f, 0.0f) * surface.color * surface.emissive;
+
+				if (m_skyProbe)
+				{
+					int32_t skyTraceSamples = m_entityData.getSkyProbeSamples();
+					Scalar skyStrength(m_entityData.getSkyProbeStrength());
+					Color4f skyAccum(0.0f, 0.0f, 0.0f, 0.0f);
+
+					for (int32_t i = 0; i < skyTraceSamples; ++i)
+					{
+						Vector4 skyTraceDir = random.nextHemi(normal);
+						if (m_sah.queryAnyIntersection(position - normal * c_traceOffset, skyTraceDir, 1e3f, surfaceId, cache))
+							continue;
+
+						float phi = std::atan2(skyTraceDir.z(), skyTraceDir.x());
+						float omega = std::acos(skyTraceDir.y());
+
+						int32_t x = int32_t(m_skyProbe->getWidth() * ((phi + PI) / TWO_PI));
+						int32_t y = int32_t(m_skyProbe->getHeight() * (omega / PI));
+
+						Color4f skySample;
+						if (m_skyProbe->getPixel(x, y, skySample))
+							skyAccum += skySample * skyStrength * dot3(normal, skyTraceDir);
+					}
+
+					direct += Color4f(1.0f, 1.0f, 1.0f, 0.0f) * (skyAccum / Scalar(skyTraceSamples));
+				}
 
 				for (AlignedVector< Light >::const_iterator i = m_lights.begin(); i != m_lights.end(); ++i)
 				{
@@ -309,15 +231,15 @@ public:
 						Scalar phi = dot3(-i->direction, normal);
 						if (phi > 0.0f)
 						{
-							int32_t shadowCount = 0;
-							for (int32_t j = 0; j < c_shadowSamples; ++j)
-							{
-								Vector4 shadowPosition = shadowOrigin + shadowU * Scalar(random.nextFloat()) + shadowV * Scalar(random.nextFloat());
-								Vector4 shadowOrigin = (shadowPosition + normal * c_traceRayOffset).xyz1();
-								if (m_sah.queryAnyIntersection(shadowOrigin, -i->direction, 1e3f, cache))
-									shadowCount++;
-							}
-							phi *= Scalar(1.0f - float(shadowCount) / c_shadowSamples);
+							//int32_t shadowCount = 0;
+							//for (int32_t j = 0; j < c_shadowSamples; ++j)
+							//{
+							//	Vector4 shadowPosition = position + shadowU * Scalar(c_shadowSampleRadius * (random.nextFloat() * 2.0f - 1.0f)) + shadowV * Scalar(c_shadowSampleRadius * (random.nextFloat() * 2.0f - 1.0f));
+							//	Vector4 shadowOrigin = (shadowPosition + normal * c_traceRayOffset).xyz1();
+							//	if (m_sah.queryAnyIntersection(shadowOrigin, -i->direction, 1e3f, surfaceId, cache))
+							//		shadowCount++;
+							//}
+							//phi *= Scalar(1.0f - float(shadowCount) / c_shadowSamples);
 
 							Scalar k1 = clamp(phi * Scalar(2.0f), Scalar(0.0f), Scalar(1.0f));
 							Color4f c1 = i->shadowColor * (Scalar(1.0f) - k1) + i->baseColor * k1;
@@ -332,7 +254,7 @@ public:
 					}
 					else if (i->type == 1)
 					{
-						Vector4 lightDirection = (i->position - rayOrigin).xyz0();
+						Vector4 lightDirection = (i->position - position).xyz0();
 						Scalar lightDistance = lightDirection.normalize();
 						if (lightDistance >= i->range)
 							continue;
@@ -341,16 +263,29 @@ public:
 						if (phi <= 0.0f)
 							continue;
 
+						Vector4 u, v;
+						orthogonalFrame(lightDirection, u, v);
+
+						float pointLightRadius = m_entityData.getPointLightRadius();
+
+						int32_t shadowSamples = m_entityData.getShadowSamples();
 						int32_t shadowCount = 0;
-						for (int32_t j = 0; j < c_shadowSamples; ++j)
+						for (int32_t j = 0; j < shadowSamples; ++j)
 						{
-							Vector4 shadowPosition = shadowOrigin + shadowU * Scalar(random.nextFloat()) + shadowV * Scalar(random.nextFloat());
-							Vector4 shadowOrigin = (shadowPosition + normal * c_traceRayOffset).xyz1();
-							Vector4 shadowDirection = (i->position - shadowOrigin).xyz0();
-							if (m_sah.queryAnyIntersection(shadowOrigin, shadowDirection.normalized(), lightDistance - FUZZY_EPSILON, cache))
+							float a, b;
+							do
+							{
+								a = random.nextFloat() * 2.0f - 1.0f;
+								b = random.nextFloat() * 2.0f - 1.0f;
+							}
+							while ((a * a) + (b * b) > 1.0f);
+
+							Vector4 shadowDirection = (i->position + u * Scalar(a * pointLightRadius) + v * Scalar(b * pointLightRadius) - position).xyz0();
+
+							if (m_sah.queryAnyIntersection(position - normal * c_traceOffset, shadowDirection.normalized(), lightDistance - FUZZY_EPSILON, surfaceId, cache))
 								shadowCount++;
 						}
-						phi *= Scalar(1.0f - float(shadowCount) / c_shadowSamples);
+						phi *= Scalar(1.0f - float(shadowCount) / shadowSamples);
 
 						Scalar attenuate = Scalar(1.0f) - lightDistance / i->range;
 						direct += Color4f(phi, phi, phi, 0.0f) * i->sunColor * attenuate;
@@ -373,7 +308,7 @@ public:
 								Scalar fu = Scalar(float(iu) / (c_steps - 1));
 								Vector4 lightPosition = (emissiveSurface.points[0] + u * fu + v * fv).xyz1();
 
-								Vector4 lightDirection = (lightPosition - rayOrigin).xyz0();
+								Vector4 lightDirection = (lightPosition - position).xyz0();
 								Scalar lightDistance = lightDirection.normalize();
 								if (lightDistance >= i->range)
 									continue;
@@ -382,7 +317,7 @@ public:
 								if (phi <= 0.0f)
 									continue;
 
-								if (m_sah.queryAnyIntersection(rayOrigin, lightDirection, lightDistance - FUZZY_EPSILON, cache))
+								if (m_sah.queryAnyIntersection(position - normal * c_traceOffset, lightDirection, lightDistance - FUZZY_EPSILON, cache))
 									continue;
 
 								Scalar attenuate = Scalar(1.0f) - lightDistance / i->range;
@@ -400,12 +335,14 @@ public:
 	}
 
 private:
+	const IlluminateEntityData& m_entityData;
 	int32_t m_tileX;
 	int32_t m_tileY;
 	const SahTree& m_sah;
 	const AlignedVector< GBuffer >& m_gbuffer;
 	const AlignedVector< Surface >& m_surfaces;
 	const AlignedVector< Light >& m_lights;
+	const drawing::Image* m_skyProbe;
 	drawing::Image* m_outputImageDirect;
 };
 
@@ -440,19 +377,22 @@ public:
 		SahTree::QueryResult result;
 		Color4f tmp;
 
-		const Scalar c_maxIndirectDistance(200.0f);
-
 		for (int32_t y = m_tileY; y < m_tileY + c_jobTileHeight; ++y)
 		{
 			for (int32_t x = m_tileX; x < m_tileX + c_jobTileWidth; ++x)
 			{
+				int32_t surfaceId = m_gbuffer[x + y * c_outputWidth].surface;
+				if (surfaceId < 0)
+					continue;
+
 				const Vector4& position = m_gbuffer[x + y * c_outputWidth].position;
 				if (position.w() < FUZZY_EPSILON)
 					continue;
 
-				const Vector4& normal = m_gbuffer[x + y * c_outputWidth].normal;
+				if (!m_sah.checkPoint(surfaceId, position))
+					continue;
 
-				Vector4 rayOrigin = (position + normal * c_traceRayOffset).xyz1();
+				Vector4 normal = m_gbuffer[x + y * c_outputWidth].normal;
 				Color4f indirect(0.0f, 0.0f, 0.0f, 0.0f);
 
 				for (int32_t i = 0; i < m_indirectTraceSamples; )
@@ -462,13 +402,22 @@ public:
 					if (phi <= 0.2f)
 						continue;
 
-					if (m_sah.queryClosestIntersection(rayOrigin, rayDirection, result, cache))
+					if (m_sah.queryClosestIntersection(position - normal * c_traceOffset, rayDirection, surfaceId, result, cache))
 					{
+						if (dot3(rayDirection, result.normal) >= 0.0f)
+						{
+							++i;
+							continue;
+						}
+
 						const Vector4& P = result.position;
 
 						Scalar distance = (P - position).xyz0().length();
 						if (distance >= c_maxIndirectDistance)
+						{
+							++i;
 							continue;
+						}
 
 						Scalar attenuate = Scalar(1.0f) - distance / c_maxIndirectDistance;
 
@@ -742,6 +691,19 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 			lights.push_back(light);
 		}
 
+		// Load sky probe.
+		Ref< drawing::Image > skyProbe;
+		const Path& skyProbePath = illumEntityData->getSkyProbe();
+		if (!skyProbePath.empty())
+		{
+			skyProbe = drawing::Image::load(skyProbePath);
+			if (!skyProbe)
+			{
+				log::error << L"Unable to load sky probe image" << Endl;
+				return false;
+			}
+		}
+
 		Ref< model::Model > mergedModel = new model::Model();
 		std::map< std::wstring, Guid > meshMaterialTextures;
 
@@ -770,7 +732,7 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 				continue;
 			}
 
-			if (!model::MergeModel(*model, (*i)->getTransform(), 0.1f).apply(*mergedModel))
+			if (!model::MergeModel(*model, (*i)->getTransform(), 0.01f).apply(*mergedModel))
 				return false;
 
 			meshMaterialTextures.insert(
@@ -880,43 +842,6 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		// Trace first, direct illumination, pass.
 		log::info << L"Generating g-buffer..." << Endl;
 
-		// First draw triangle poly-line to draw a big gutter around triangle.
-		for (uint32_t j = 0; j < surfaces.size(); ++j)
-		{
-			const Surface& s = surfaces[j];
-
-			AlignedVector< Vector2 > texCoords(s.count);
-			for (int32_t k = 0; k < s.count; ++k)
-				texCoords[k] = s.texCoords[k] * dim;
-
-			std::vector< Triangulator::Triangle > triangles;
-			Triangulator().freeze(
-				texCoords,
-				triangles
-			);
-
-			for (std::vector< Triangulator::Triangle >::const_iterator k = triangles.begin(); k != triangles.end(); ++k)
-			{
-				for (int32_t ii = 0; ii < 3; ++ii)
-				{
-					size_t i0 = k->indices[ii];
-					size_t i1 = k->indices[(ii + 1) % 3];
-
-					uv[0] = texCoords[i0];
-					uv[1] = texCoords[i1];
-
-					P[0] = s.points[i0];
-					P[1] = s.points[i1];
-
-					N[0] = s.normals[i0];
-					N[1] = s.normals[i1];
-
-					GBufferLineVisitor visitor(j, P, N, gbuffer);
-					line(uv[0].x, uv[0].y, uv[1].x, uv[1].y, visitor);
-				}
-			}
-		}
-
 		// Then draw solid triangles to fill with correct data.
 		for (uint32_t j = 0; j < surfaces.size(); ++j)
 		{
@@ -975,12 +900,14 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 			for (int32_t x = 0; x < c_outputWidth; x += c_jobTileWidth)
 			{
 				JobTraceDirect* trace = new JobTraceDirect(
+					*sourceIlluminateEntityData,
 					x,
 					y,
 					sah,
 					gbuffer,
 					surfaces,
 					lights,
+					skyProbe,
 					outputImageDirect
 				);
 
@@ -1005,6 +932,10 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		log::info << L"Dilating direct light map..." << Endl;
 		drawing::DilateFilter dilateFilter(4);
 		outputImageDirect->apply(&dilateFilter);
+
+		log::info << L"Convolving direct lighting..." << Endl;
+		for (int32_t j = 0; j < illumEntityData->getDirectConvolveIterations(); ++j)
+			outputImageDirect->apply(drawing::ConvolutionFilter::createGaussianBlur5());
 
 		if (illumEntityData->traceIndirectLighting())
 		{
