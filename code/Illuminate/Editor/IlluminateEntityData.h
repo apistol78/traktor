@@ -3,6 +3,7 @@
 
 #include "Core/Guid.h"
 #include "Core/RefArray.h"
+#include "Core/Io/Path.h"
 #include "World/EntityData.h"
 
 // import/export mechanism.
@@ -43,6 +44,12 @@ public:
 
 	bool traceIndirectLighting() const { return m_indirectLighting; }
 
+	float getPointLightRadius() const { return m_pointLightRadius; }
+
+	int32_t getShadowSamples() const { return m_shadowSamples; }
+
+	int32_t getDirectConvolveIterations() const { return m_directConvolveIterations; }
+
 	int32_t getIndirectTraceSamples() const { return m_indirectTraceSamples; }
 
 	int32_t getIndirectTraceIterations() const { return m_indirectTraceIterations; }
@@ -53,6 +60,12 @@ public:
 
 	bool compressLightMap() const { return m_compressLightMap; }
 
+	const Path& getSkyProbe() const { return m_skyProbe; }
+
+	int32_t getSkyProbeSamples() const { return m_skyProbeSamples; }
+
+	float getSkyProbeStrength() const { return m_skyProbeStrength; }
+
 	const RefArray< world::EntityData >& getEntityData() const { return m_entityData; }
 
 private:
@@ -60,11 +73,17 @@ private:
 	float m_lumelsPerUnit;
 	bool m_directLighting;
 	bool m_indirectLighting;
+	float m_pointLightRadius;
+	int32_t m_shadowSamples;
+	int32_t m_directConvolveIterations;
 	int32_t m_indirectTraceSamples;
 	int32_t m_indirectTraceIterations;
 	int32_t m_indirectConvolveIterations;
 	bool m_highDynamicRange;
 	bool m_compressLightMap;
+	Path m_skyProbe;
+	int32_t m_skyProbeSamples;
+	float m_skyProbeStrength;
 	RefArray< world::EntityData > m_entityData;
 };
 

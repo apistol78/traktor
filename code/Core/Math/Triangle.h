@@ -100,10 +100,14 @@ void triangle(
 		{
 			if(CX1 > 0 && CX2 > 0 && CX3 > 0)
 			{
+				// Centroid coordinates.
+				float xx = x + 0.5f;
+				float yy = y + 0.5f;
+
 				// Calculate barycentric coordinates.
-				float alpha = ((v1.y - v2.y) * x + (v2.x - v1.x) * y + baryOffset0) * baryDenom0;
-				float beta = ((v2.y - v0.y) * x + (v0.x - v2.x) * y + baryOffset1) * baryDenom1;
-				float gamma = ((v0.y - v1.y) * x + (v1.x - v0.x) * y + baryOffset2) * baryDenom2;
+				float alpha = ((v1.y - v2.y) * xx + (v2.x - v1.x) * yy + baryOffset0) * baryDenom0;
+				float beta = ((v2.y - v0.y) * xx + (v0.x - v2.x) * yy + baryOffset1) * baryDenom1;
+				float gamma = ((v0.y - v1.y) * xx + (v1.x - v0.x) * yy + baryOffset2) * baryDenom2;
 
 				visitor(x, y, alpha, beta, gamma);
 			}

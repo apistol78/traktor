@@ -64,7 +64,7 @@ void SahTree::build(const AlignedVector< Winding3 >& polygons)
 	buildNode(m_root, 0);
 }
 
-bool SahTree::queryClosestIntersection(const Vector4& origin, const Vector4& direction, QueryResult& outResult, QueryCache& inoutCache) const
+bool SahTree::queryClosestIntersection(const Vector4& origin, const Vector4& direction, int32_t ignore, QueryResult& outResult, QueryCache& inoutCache) const
 {
 	#define IS_LEAF(node) ((node)->leftChild == 0)
 
@@ -85,6 +85,9 @@ bool SahTree::queryClosestIntersection(const Vector4& origin, const Vector4& dir
 
 	BitVector& tags = inoutCache.tags;
 	tags.assign(m_polygons.size(), false);
+
+	if (ignore >= 0)
+		tags.set(ignore);
 
 	AlignedVector< QueryStack >& stack = inoutCache.stack;
 	stack.reserve(64);
@@ -118,6 +121,7 @@ bool SahTree::queryClosestIntersection(const Vector4& origin, const Vector4& dir
 						outResult.index = *i;
 						outResult.distance = T;
 						outResult.position = origin + direction * T;
+						outResult.normal = plane.normal();
 						result = true;
 					}
 				}
@@ -130,9 +134,10 @@ bool SahTree::queryClosestIntersection(const Vector4& origin, const Vector4& dir
 			Vector4 O = origin + direction * nearT;
 			Scalar e = O[N->axis];
 
-			if (e <= N->split + F)
+			T = nearT + (N->split - e) / direction[N->axis];
+
+			if (e <= N->split)
 			{
-				T = nearT + (N->split - e) / direction[N->axis];
 				if (T >= nearT && T <= farT)
 				{
 					stack.push_back(QueryStack(N->leftChild, nearT, T));
@@ -141,9 +146,8 @@ bool SahTree::queryClosestIntersection(const Vector4& origin, const Vector4& dir
 				else
 					stack.push_back(QueryStack(N->leftChild, nearT, farT));
 			}
-			else if (e >= N->split - F)
+			else
 			{
-				T = nearT + (N->split - e) / direction[N->axis];
 				if (T >= nearT  && T <= farT)
 				{
 					stack.push_back(QueryStack(N->rightChild, nearT, T));
@@ -158,7 +162,7 @@ bool SahTree::queryClosestIntersection(const Vector4& origin, const Vector4& dir
 	return result;
 }
 
-bool SahTree::queryAnyIntersection(const Vector4& origin, const Vector4& direction, float maxDistance, QueryCache& inoutCache) const
+bool SahTree::queryAnyIntersection(const Vector4& origin, const Vector4& direction, float maxDistance, int32_t ignore, QueryCache& inoutCache) const
 {
 	#define IS_LEAF(node) ((node)->leftChild == 0)
 
@@ -176,6 +180,9 @@ bool SahTree::queryAnyIntersection(const Vector4& origin, const Vector4& directi
 
 	BitVector& tags = inoutCache.tags;
 	tags.assign(m_polygons.size(), false);
+
+	if (ignore >= 0)
+		tags.set(ignore);
 
 	AlignedVector< QueryStack >& stack = inoutCache.stack;
 	stack.reserve(64);
@@ -216,9 +223,10 @@ bool SahTree::queryAnyIntersection(const Vector4& origin, const Vector4& directi
 			Vector4 O = origin + direction * nearT;
 			Scalar e = O[N->axis];
 
-			if (e <= N->split + F)
+			T = nearT + (N->split - e) / direction[N->axis];
+
+			if (e <= N->split)
 			{
-				T = nearT + (N->split - e) / direction[N->axis];
 				if (T >= nearT && T <= farT)
 				{
 					stack.push_back(QueryStack(N->leftChild, nearT, T));
@@ -227,9 +235,8 @@ bool SahTree::queryAnyIntersection(const Vector4& origin, const Vector4& directi
 				else
 					stack.push_back(QueryStack(N->leftChild, nearT, farT));
 			}
-			else if (e >= N->split - F)
+			else
 			{
-				T = nearT + (N->split - e) / direction[N->axis];
 				if (T >= nearT  && T <= farT)
 				{
 					stack.push_back(QueryStack(N->rightChild, nearT, T));
@@ -242,6 +249,15 @@ bool SahTree::queryAnyIntersection(const Vector4& origin, const Vector4& directi
 	}
 
 	return false;
+}
+
+bool SahTree::checkPoint(int32_t index, const Vector4& position) const
+{
+	Vector2 pnt(
+		dot3(m_projectedU[index], position),
+		dot3(m_projectedV[index], position)
+	);
+	return m_projected[index].inside(pnt);
 }
 
 void SahTree::buildNode(Node* node, int32_t depth)

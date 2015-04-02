@@ -186,6 +186,8 @@ T_MATH_INLINE T_DLLCLASS Vector4 reflect(const Vector4& v, const Vector4& at);
 
 T_MATH_INLINE T_DLLCLASS int majorAxis3(const Vector4& v);
 
+T_MATH_INLINE T_DLLCLASS void orthogonalFrame(const Vector4& d, Vector4& outU, Vector4& outV);
+
 T_MATH_INLINE T_DLLCLASS Vector4 min(const Vector4& l, const Vector4& r);
 
 T_MATH_INLINE T_DLLCLASS Vector4 max(const Vector4& l, const Vector4& r);

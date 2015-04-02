@@ -433,6 +433,19 @@ T_MATH_INLINE int majorAxis3(const Vector4& v)
 	}
 }
 
+T_MATH_INLINE void orthogonalFrame(const Vector4& d, Vector4& outU, Vector4& outV)
+{
+	const static Vector4 c_axises[] =
+	{
+		Vector4(0.0f, 1.0f, 0.0f, 0.0f),
+		Vector4(0.0f, 0.0f, 1.0f, 0.0f),
+		Vector4(1.0f, 0.0f, 0.0f, 0.0f)
+	};
+	int m = majorAxis3(d);
+	outU = cross(d, c_axises[m]).normalized();
+	outV = cross(outU, d).normalized();
+}
+
 T_MATH_INLINE Vector4 min(const Vector4& l, const Vector4& r)
 {
 	return Vector4(vminq_f32(l.m_data, r.m_data));
