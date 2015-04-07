@@ -486,9 +486,12 @@ bool Peer2PeerTopology::update(double dT)
 
 							updateRouting = 7;
 						}
+						peer.sentIAm = 0;
 					}
+#if defined(_DEBUG)
 					else
 						log::warning << getLogPrefix() << L"Received \"I am\" response from " << from << L" but none sent, ignored." << Endl;
+#endif
 				}
 			}
 			else if (msg.id == MsgCMask)
