@@ -475,7 +475,6 @@ bool Peer2PeerTopology::update(double dT)
 					Peer& peer = m_peers[peerIndex];
 					if (peer.sentIAm > 0)
 					{
-						peer.sentIAm = 0;
 						std::vector< net_handle_t >::iterator it = std::find(myPeer.connections.begin(), myPeer.connections.end(), from);
 						if (it == myPeer.connections.end())
 						{
