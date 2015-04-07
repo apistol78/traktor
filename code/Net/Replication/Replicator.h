@@ -282,6 +282,7 @@ private:
 	RefArray< ReplicatorProxy > m_proxies;
 	bool m_sendState;
 	bool m_timeSynchronized;
+	uint32_t m_exceededDeltaTimeLimit;
 
 	std::wstring getLogPrefix() const;
 
