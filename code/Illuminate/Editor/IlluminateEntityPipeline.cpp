@@ -210,8 +210,11 @@ public:
 						if (m_sah.queryAnyIntersection(position - normal * c_traceOffset, skyTraceDir, 1e3f, surfaceId, cache))
 							continue;
 
-						float phi = std::atan2(skyTraceDir.z(), skyTraceDir.x());
-						float omega = std::acos(skyTraceDir.y());
+						float T_MATH_ALIGN16 e[4];
+						skyTraceDir.storeAligned(e);
+
+						float phi = std::atan2(e[2], e[0]);
+						float omega = std::acos(e[1]);
 
 						int32_t x = int32_t(m_skyProbe->getWidth() * ((phi + PI) / TWO_PI));
 						int32_t y = int32_t(m_skyProbe->getHeight() * (omega / PI));
