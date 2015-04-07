@@ -604,7 +604,7 @@ bool Peer2PeerTopology::update(double dT)
 					m_peers[i].established = true;
 				}
 			}
-			else
+			else if (updateRouting)
 			{
 				if (m_peers[i].established)
 				{
