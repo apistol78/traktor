@@ -157,6 +157,7 @@ private:
 	Transform m_origin;
 	float m_distance;
 	bool m_sendState;
+	bool m_issueStateListeners;
 
 	//@}
 
@@ -206,7 +207,7 @@ private:
 
 	void updateLatency(double roundTrip, double latencyReverse, double latencyReverseSpread);
 
-	bool receivedState(double stateTime, const void* stateData, uint32_t stateDataSize);
+	bool receivedState(double localTime, double stateTime, const void* stateData, uint32_t stateDataSize);
 
 	void disconnect();
 

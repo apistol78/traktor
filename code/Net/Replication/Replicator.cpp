@@ -122,7 +122,7 @@ Replicator::IEventListener* Replicator::addEventListener(const TypeInfo& eventTy
 
 void Replicator::removeEventListener(IEventListener* eventListener)
 {
-	for (std::map< const TypeInfo*, RefArray< IEventListener > >::iterator i = m_eventListeners.begin(); i != m_eventListeners.end(); ++i)
+	for (SmallMap< const TypeInfo*, RefArray< IEventListener > >::iterator i = m_eventListeners.begin(); i != m_eventListeners.end(); ++i)
 		i->second.remove(eventListener);
 }
 
@@ -201,8 +201,6 @@ bool Replicator::update()
 
 	double timeOffset = 0.0;
 	bool timeOffsetReceived = false;
-	uint32_t stateIssued = 0;
-	uint32_t eventsIssued = 0;
 
 	// Receive messages.
 	for (;;)
@@ -276,36 +274,12 @@ bool Replicator::update()
 			if (fromProxy->m_stateTemplate)
 			{
 				bool received;
-				T_MEASURE_STATEMENT(received = fromProxy->receivedState(net2time(msg.time), msg.state.data, RmiState_StateSize(nrecv)), 0.001);
+				T_MEASURE_STATEMENT(received = fromProxy->receivedState(m_time, net2time(msg.time), msg.state.data, RmiState_StateSize(nrecv)), 0.001);
 				if (received)
-				{
-					for (RefArray< IListener >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
-					{
-						T_MEASURE_STATEMENT((*i)->notify(
-							this,
-							float(net2time(msg.time)),
-							IListener::ReState,
-							fromProxy,
-							fromProxy->m_state0
-						), 0.001);
-					}
-					++stateIssued;
-				}
+					fromProxy->m_issueStateListeners = true;
 			}
 			else
-			{
 				log::info << getLogPrefix() << L"Received state from " << from << L" but no state template registered; state ignored." << Endl;
-				for (RefArray< IListener >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
-				{
-					T_MEASURE_STATEMENT((*i)->notify(
-						this,
-						float(net2time(msg.time)),
-						IListener::ReStateError,
-						fromProxy,
-						0
-					), 0.001);
-				}
-			}
 		}
 		else if (msg.id == RmiEvent)
 		{
@@ -326,7 +300,7 @@ bool Replicator::update()
 				T_MEASURE_STATEMENT(accept = fromProxy->acceptEvent(msg.event.sequence, eventObject), 0.001);
 				if (accept)
 				{
-					std::map< const TypeInfo*, RefArray< IEventListener > >::const_iterator it = m_eventListeners.find(&type_of(eventObject));
+					SmallMap< const TypeInfo*, RefArray< IEventListener > >::const_iterator it = m_eventListeners.find(&type_of(eventObject));
 					if (it != m_eventListeners.end())
 					{
 						for (RefArray< IEventListener >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
@@ -338,7 +312,6 @@ bool Replicator::update()
 								eventObject
 							), 0.001);
 						}
-						++eventsIssued;
 					}
 				}
 			}
@@ -353,6 +326,28 @@ bool Replicator::update()
 	}
 
 	T_MEASURE_UNTIL(0.004);
+
+	/*
+	// \note Disabled for now as it's not used by GU.
+	// Invoke listeners for each new state.
+	for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
+	{
+		if ((*i)->m_issueStateListeners)
+		{
+			for (RefArray< IListener >::const_iterator j = m_listeners.begin(); j != m_listeners.end(); ++j)
+			{
+				T_MEASURE_STATEMENT((*j)->notify(
+					this,
+					0.0f,
+					IListener::ReState,
+					(*i),
+					(*i)->m_state0
+				), 0.001);
+			}
+			(*i)->m_issueStateListeners = false;
+		}
+	}
+	*/
 
 	// Update proxy queues.
 	for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
@@ -722,7 +717,7 @@ bool Replicator::sendEventToPrimary(const ISerializable* eventObject)
 	else
 	{
 		// We are primary peer; dispatch event directly.
-		std::map< const TypeInfo*, RefArray< IEventListener > >::const_iterator it = m_eventListeners.find(&type_of(eventObject));
+		SmallMap< const TypeInfo*, RefArray< IEventListener > >::const_iterator it = m_eventListeners.find(&type_of(eventObject));
 		if (it != m_eventListeners.end())
 		{
 			for (RefArray< IEventListener >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)

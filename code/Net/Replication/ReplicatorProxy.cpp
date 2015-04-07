@@ -335,22 +335,22 @@ void ReplicatorProxy::updateLatency(double roundTrip, double latencyReverse, dou
 	m_latencyReverseStandardDeviation = latencyReverseSpread;
 }
 
-bool ReplicatorProxy::receivedState(double stateTime, const void* stateData, uint32_t stateDataSize)
+bool ReplicatorProxy::receivedState(double localTime, double stateTime, const void* stateData, uint32_t stateDataSize)
 {
 	if (!m_stateTemplate)
 	{
-		log::info << m_replicator->getLogPrefix() << L"Received state from " << m_handle << L" but no state template registered; state ignored." << Endl;
+		log::info << m_replicator->getLogPrefix() << L"Received state (" << stateDataSize << L" byte(s)) from " << m_handle << L" but no state template registered; state ignored." << Endl;
 		return false;
 	}
 
 	Ref< const State > state = m_stateTemplate->unpack(stateData, stateDataSize);
 	if (!state)
 	{
-		log::info << m_replicator->getLogPrefix() << L"Failed to unpack state from " << m_handle << L"; state ignored." << Endl;
+		log::info << m_replicator->getLogPrefix() << L"Failed to unpack state (" << stateDataSize << L" byte(s)) from " << m_handle << L"; state ignored." << Endl;
 		return false;
 	}
 
-	m_stateReceivedTime = m_replicator->getTime();
+	m_stateReceivedTime = localTime;
 
 	if (stateTime >= m_stateTime0)
 	{
@@ -391,6 +391,7 @@ void ReplicatorProxy::disconnect()
 	m_object = 0;
 	m_distance = 0.0f;
 	m_sendState = false;
+	m_issueStateListeners = false;
 	m_sequence = 0;
 	m_timeUntilTxPing = 0.0;
 	m_timeUntilTxState = 0.0;
@@ -411,6 +412,7 @@ ReplicatorProxy::ReplicatorProxy(Replicator* replicator, net_handle_t handle, co
 ,	m_origin(Transform::identity())
 ,	m_distance(0.0f)
 ,	m_sendState(false)
+,	m_issueStateListeners(false)
 ,	m_stateTimeN2(0.0)
 ,	m_stateTimeN1(0.0)
 ,	m_stateTime0(0.0)
