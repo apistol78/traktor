@@ -84,8 +84,8 @@ private:
 	struct Recv
 	{
 		net_handle_t from;
-		uint8_t data[MaxDataSize];
 		int32_t size;
+		uint8_t data[MaxDataSize];
 	};
 
 	Ref< IPeer2PeerProvider > m_provider;
@@ -95,7 +95,7 @@ private:
 	double m_time;
 	std::vector< Peer > m_peers;
 	std::vector< int32_t > m_nodes;
-	CircularVector< Recv, 128 > m_recvQueue;
+	CircularVector< Recv, 512 > m_recvQueue;
 
 	bool findOptimalRoute(net_handle_t from, net_handle_t to, net_handle_t& outNext) const;
 

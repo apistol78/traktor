@@ -23,6 +23,7 @@ namespace traktor
 		{
 
 const double c_maxDeltaTime = 0.1;
+const uint32_t c_maxDeltaTimeCount = 10;
 
 bool lowestLatencyPred(const ReplicatorProxy* l, const ReplicatorProxy* r)
 {
@@ -47,6 +48,7 @@ Replicator::Replicator()
 ,	m_origin(Transform::identity())
 ,	m_sendState(false)
 ,	m_timeSynchronized(false)
+,	m_exceededDeltaTimeLimit(0)
 {
 }
 
@@ -433,8 +435,14 @@ bool Replicator::update()
 		// Time is considered to be sync if I'm primary.
 		m_timeSynchronized = true;
 
+		// Count number of exceeded dT; should migrate primary if we're running poorly.
+		if (dT > c_maxDeltaTime)
+			m_exceededDeltaTimeLimit++;
+		else
+			m_exceededDeltaTimeLimit = 0;
+
 		m_proxies.sort(lowestLatencyPred);
-		if ((m_status & 0x80) == 0x00)
+		if ((m_status & 0x80) == 0x00 || m_exceededDeltaTimeLimit > c_maxDeltaTimeCount)
 		{
 			// Not "in session"; migrate primary if anyone else is.
 			for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
@@ -448,23 +456,6 @@ bool Replicator::update()
 					}
 					else
 						log::info << getLogPrefix() << L"Unable migrate primary token to peer " << (*i)->getHandle() << L" (1)." << Endl;
-				}
-			}
-		}
-		else if (dT > c_maxDeltaTime)
-		{
-			// Running poorly; migrate primary to else anyone.
-			for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
-			{
-				if (((*i)->getStatus() & 0x80) == 0x80)
-				{
-					if ((*i)->setPrimary())
-					{
-						log::info << getLogPrefix() << L"Migrated primary token to peer " << (*i)->getHandle() << L" (2)." << Endl;
-						break;
-					}
-					else
-						log::info << getLogPrefix() << L"Unable migrate primary token to peer " << (*i)->getHandle() << L" (2)." << Endl;
 				}
 			}
 		}

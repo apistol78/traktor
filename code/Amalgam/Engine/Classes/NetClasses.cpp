@@ -3,6 +3,7 @@
 #include "Online/ISessionManager.h"
 #include "Net/Replication/INetworkTopology.h"
 #include "Net/Replication/IPeer2PeerProvider.h"
+#include "Net/Replication/MeasureP2PProvider.h"
 #include "Net/Replication/Peer2PeerTopology.h"
 #include "Net/Replication/Replicator.h"
 #include "Net/Replication/ReplicatorProxy.h"
@@ -156,6 +157,12 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 
 	Ref< script::AutoScriptClass< net::IPeer2PeerProvider > > classIPeer2PeerProvider = new script::AutoScriptClass< net::IPeer2PeerProvider >();
 	scriptManager->registerClass(classIPeer2PeerProvider);
+
+	Ref< script::AutoScriptClass< net::MeasureP2PProvider > > classMeasureP2PProvider = new script::AutoScriptClass< net::MeasureP2PProvider >();
+	classMeasureP2PProvider->addConstructor< net::IPeer2PeerProvider* >();
+	classMeasureP2PProvider->addMethod("getSendBitsPerSecond", &net::MeasureP2PProvider::getSendBitsPerSecond);
+	classMeasureP2PProvider->addMethod("getRecvBitsPerSecond", &net::MeasureP2PProvider::getRecvBitsPerSecond);
+	scriptManager->registerClass(classMeasureP2PProvider);
 
 	Ref< script::AutoScriptClass< net::Peer2PeerTopology > > classPeer2PeerTopology = new script::AutoScriptClass< net::Peer2PeerTopology >();
 	classPeer2PeerTopology->addConstructor< net::IPeer2PeerProvider* >();

@@ -531,20 +531,26 @@ bool Peer2PeerTopology::update(double dT)
 			else if (msg.id == MsgDirect)
 			{
 				// Received a direct message to myself.
+				if (m_recvQueue.full())
+					log::warning << L"Receive queue full; oldest message discarded (1)." << Endl;
+
 				Recv& r = m_recvQueue.push_back();
 				r.from = from;
-				std::memcpy(r.data, msg.direct.data, MsgDirect_DataSize(nrecv));
 				r.size = MsgDirect_DataSize(nrecv);
+				std::memcpy(r.data, msg.direct.data, MsgDirect_DataSize(nrecv));
 			}
 			else if (msg.id == MsgRelay)
 			{
 				if (msg.relay.target == myPeer.handle)
 				{
 					// Received a relayed message to myself.
+					if (m_recvQueue.full())
+						log::warning << L"Receive queue full; oldest message discarded (2)." << Endl;
+
 					Recv& r = m_recvQueue.push_back();
 					r.from = msg.relay.from;
-					std::memcpy(r.data, msg.relay.data, MsgRelay_DataSize(nrecv));
 					r.size = MsgRelay_DataSize(nrecv);
+					std::memcpy(r.data, msg.relay.data, MsgRelay_DataSize(nrecv));
 				}
 				else
 				{
