@@ -1,10 +1,10 @@
 #ifndef traktor_net_Replicator_H
 #define traktor_net_Replicator_H
 
-#include <map>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Containers/CircularVector.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Math/Transform.h"
 #include "Core/Timer/Timer.h"
 #include "Net/Replication/INetworkTopology.h"
@@ -46,9 +46,7 @@ public:
 		{
 			ReConnected = 1,
 			ReDisconnected = 2,
-			ReState = 3,
-			ReStateError = 4,
-			ReTimeAdjust = 5
+			ReState = 3
 		};
 
 		virtual void notify(
@@ -266,7 +264,7 @@ private:
 	Configuration m_configuration;
 	std::vector< const TypeInfo* > m_eventTypes;
 	RefArray< IListener > m_listeners;
-	std::map< const TypeInfo*, RefArray< IEventListener > > m_eventListeners;
+	SmallMap< const TypeInfo*, RefArray< IEventListener > > m_eventListeners;
 	std::wstring m_name;
 	Timer m_timer;
 	double m_time0;								/*!< Local time. */
