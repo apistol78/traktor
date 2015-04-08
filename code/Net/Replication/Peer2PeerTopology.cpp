@@ -71,8 +71,8 @@ struct P2PMessage
 };
 #pragma pack()
 
-const double c_IAmInterval = 1.0;
-const uint32_t c_maxPendingIAm = 16;
+const double c_IAmInterval = 2.0;
+const uint32_t c_maxPendingIAm = 32;
 const double c_propagateInterval = 4.0;
 const double c_timeRandomFlux = 0.5;
 const int32_t c_maxReceiveMessages = 128;
@@ -296,30 +296,8 @@ bool Peer2PeerTopology::update(double dT)
 			continue;
 
 		Peer& peer = m_peers[i];
-
 		if (m_time < peer.whenIAm)
 			continue;
-
-		// Check if peer doesn't respond to "I am" messages first.
-		if (peer.sentIAm >= c_maxPendingIAm)
-		{
-			std::vector< net_handle_t >::iterator it = std::find(myPeer.connections.begin(), myPeer.connections.end(), peer.handle);
-			if (it != myPeer.connections.end())
-			{
-				log::info << getLogPrefix() << L"Peer " << peer.handle << L" no longer respond to \"I am\" messages." << Endl;
-
-				myPeer.connections.erase(it);
-				myPeer.whenPropagate = m_time;
-				myPeer.sequence++;
-
-				peer.sequence = 0;
-				peer.connections.clear();
-				peer.whenIAm = 0.0;
-				peer.sentIAm = 0;
-
-				updateRouting = 3;
-			}
-		}
 
 		// Keep sending "I am" messages as long as peer exist from provider; ie is in lobby.
 		msg.id = MsgIAm_0;
@@ -350,6 +328,41 @@ bool Peer2PeerTopology::update(double dT)
 		}
 
 		peer.whenIAm = m_time + c_IAmInterval + m_random.nextDouble() * c_timeRandomFlux;
+
+		// Only send one "I am" per update.
+		break;
+	}
+
+	T_MEASURE_UNTIL(0.001);
+
+	// Check if any peer doesn't respond to "I am".
+	for (int32_t i = 0; i < int32_t(m_peers.size()); ++i)
+	{
+		if (i == myIndex)
+			continue;
+
+		Peer& peer = m_peers[i];
+
+		// Check if peer doesn't respond to "I am" messages first.
+		if (peer.sentIAm >= c_maxPendingIAm)
+		{
+			std::vector< net_handle_t >::iterator it = std::find(myPeer.connections.begin(), myPeer.connections.end(), peer.handle);
+			if (it != myPeer.connections.end())
+			{
+				log::info << getLogPrefix() << L"Peer " << peer.handle << L" no longer respond to \"I am\" messages." << Endl;
+
+				myPeer.connections.erase(it);
+				myPeer.whenPropagate = m_time;
+				myPeer.sequence++;
+
+				peer.sequence = 0;
+				peer.connections.clear();
+				peer.whenIAm = 0.0;
+				peer.sentIAm = 0;
+
+				updateRouting = 3;
+			}
+		}
 	}
 
 	T_MEASURE_UNTIL(0.001);
@@ -457,9 +470,13 @@ bool Peer2PeerTopology::update(double dT)
 
 		for (i = 0; i < c_maxReceiveMessages; ++i)
 		{
+			from = 0;
+
 			T_MEASURE_STATEMENT(nrecv = m_provider->recv(&msg, MaxDataSize, from), 0.001);
 			if (nrecv <= 0)
 				break;
+			if (from == 0)
+				continue;
 
 			if (msg.id == MsgIAm_0)
 			{
@@ -607,7 +624,7 @@ bool Peer2PeerTopology::update(double dT)
 					m_peers[i].established = true;
 				}
 			}
-			else if (updateRouting)
+			else
 			{
 				if (m_peers[i].established)
 				{

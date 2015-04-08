@@ -232,6 +232,8 @@ int32_t OnlinePeer2PeerProvider::recv(void* data, int32_t size, net::net_handle_
 {
 	int32_t nrecv = 0;
 
+	outNode = 0;
+
 	if (m_asyncRx)
 	{
 		T_ASSERT (m_thread);
@@ -262,16 +264,13 @@ int32_t OnlinePeer2PeerProvider::recv(void* data, int32_t size, net::net_handle_
 		{
 			Ref< IUser > fromUser;
 			nrecv = m_sessionManager->receiveP2PData(data, size, fromUser);
-			if (nrecv > 0 && fromUser != 0)
-			{
-				if (std::find_if(m_users.begin(), m_users.end(), P2PUserFindPred(fromUser)) != m_users.end())
-					outNode = net::net_handle_t(fromUser->getGlobalId());
-			}
+			if (nrecv <= 0)
+				return nrecv;
+
+			if (fromUser != 0 && std::find_if(m_users.begin(), m_users.end(), P2PUserFindPred(fromUser)) != m_users.end())
+				outNode = net::net_handle_t(fromUser->getGlobalId());
 			else
-			{
 				nrecv = 0;
-				fromUser = 0;
-			}
 		}
 	}
 
