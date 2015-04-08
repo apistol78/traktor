@@ -62,6 +62,10 @@
       <second>Romanian</second>
     </item>
     <item>
+      <first>AMALGAM_LANGUAGE_CZECH</first>
+      <second>Czech</second>
+    </item>    
+    <item>
       <first>AMALGAM_TARGETS</first>
       <second>Targets</second>
     </item>
