@@ -83,6 +83,11 @@ bool FlashFont::create(
 	return true;
 }
 
+const RefArray< FlashShape >& FlashFont::getShapes() const
+{
+	return m_shapes;
+}
+
 const FlashShape* FlashFont::getShape(uint16_t index) const
 {
 	return index < m_shapes.size() ? m_shapes[index] : 0;

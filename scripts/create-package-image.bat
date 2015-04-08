@@ -27,9 +27,9 @@ xcopy /C /I /R /Y /E "%TRAKTOR_HOME%\bin\latest\win64\releaseshared\*.exe" "pack
 :: MISC
 ::
 
-xcopy /C /I /R /Y "%TRAKTOR_HOME%\bin\deploy\*.*" "package-image\bin\deploy\"
-xcopy /C /I /R /Y "%TRAKTOR_HOME%\bin\template\*.*" "package-image\bin\template\"
-xcopy /C /I /R /Y "%TRAKTOR_HOME%\bin\win32\*.*" "package-image\bin\win32\"
+xcopy /C /I /R /Y /E "%TRAKTOR_HOME%\bin\deploy\*.*" "package-image\bin\deploy\"
+xcopy /C /I /R /Y /E "%TRAKTOR_HOME%\bin\template\*.*" "package-image\bin\template\"
+xcopy /C /I /R /Y /E "%TRAKTOR_HOME%\bin\win32\*.*" "package-image\bin\win32\"
 
 ::
 :: SYSTEM DATA
@@ -44,6 +44,7 @@ xcopy /C /I /R /Y /E "%TRAKTOR_HOME%\data\Source\*.*" "package-image\data\Source
 
 xcopy /C /I /R /Y "%TRAKTOR_HOME%\res\English.xml" "package-image\res\"
 xcopy /C /I /R /Y "%TRAKTOR_HOME%\res\Help.xml" "package-image\res\"
+xcopy /C /I /R /Y /E "%TRAKTOR_HOME%\res\templates\*.*" "package-image\res\templates\"
 
 ::
 :: (root)
