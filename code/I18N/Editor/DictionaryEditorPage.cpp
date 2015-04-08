@@ -1,8 +1,12 @@
+#include "Core/Io/StringOutputStream.h"
+#include "Core/Log/Log.h"
 #include "Editor/IDocument.h"
 #include "I18N/Dictionary.h"
 #include "I18N/Editor/DictionaryEditorPage.h"
 #include "I18N/Editor/IDictionaryFormat.h"
 #include "I18N/Editor/Translator.h"
+#include "Ui/Application.h"
+#include "Ui/Clipboard.h"
 #include "Ui/Container.h"
 #include "Ui/FileDialog.h"
 #include "Ui/TableLayout.h"
@@ -123,6 +127,7 @@ bool DictionaryEditorPage::create(ui::Container* parent)
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Import...", ui::Command(L"I18N.Editor.Import")));
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Export...", ui::Command(L"I18N.Editor.Export")));
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Translate...", ui::Command(L"I18N.Editor.Translate")));
+	toolBar->addItem(new ui::custom::ToolBarButton(L"Copy unique characters...", ui::Command(L"I18N.Editor.CopyUniqueChars")));
 	toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &DictionaryEditorPage::eventToolClick);
 
 	m_gridDictionary = new ui::custom::GridView();
@@ -280,6 +285,24 @@ void DictionaryEditorPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* e
 			m_gridDictionary->update();
 		}
 		inputDialog.destroy();
+	}
+	else if (cmd == L"I18N.Editor.CopyUniqueChars")
+	{
+		std::set< wchar_t > uc;
+
+		const std::map< std::wstring, std::wstring >& wm = m_dictionary->get();
+		for (std::map< std::wstring, std::wstring >::const_iterator i = wm.begin(); i != wm.end(); ++i)
+			uc.insert(i->second.begin(), i->second.end());
+
+		StringOutputStream ss;
+		for (std::set< wchar_t >::const_iterator i = uc.begin(); i != uc.end(); ++i)
+			ss << *i;
+
+		Ref< ui::Clipboard > clipboard = ui::Application::getInstance()->getClipboard();
+		if (clipboard)
+			clipboard->setText(ss.str());
+
+		log::info << uc.size() << L" unique character(s) copied into clipboard" << Endl;
 	}
 }
 
