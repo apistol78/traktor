@@ -85,7 +85,8 @@ const struct { const wchar_t* human; const wchar_t* code; } c_languageCodes[] =
 	{ L"AMALGAM_LANGUAGE_PORTUGUESE", L"pt" },
 	{ L"AMALGAM_LANGUAGE_CHINESE", L"ch" },
 	{ L"AMALGAM_LANGUAGE_SWEDISH", L"sv" },
-	{ L"AMALGAM_LANGUAGE_ROMANIAN", L"ro" }
+	{ L"AMALGAM_LANGUAGE_ROMANIAN", L"ro" },
+	{ L"AMALGAM_LANGUAGE_CZECH", L"cs" }
 };
 
 class TargetInstanceProgressListener : public RefCountImpl< ITargetAction::IProgressListener >
