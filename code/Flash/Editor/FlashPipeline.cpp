@@ -15,6 +15,7 @@
 #include "Editor/IPipelineSettings.h"
 #include "Flash/FlashBitmapData.h"
 #include "Flash/FlashBitmapResource.h"
+#include "Flash/FlashFont.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashMovieFactory.h"
 #include "Flash/SwfReader.h"
@@ -181,6 +182,23 @@ bool FlashPipeline::buildOutput(
 
 	sourceStream->close();
 	sourceStream = 0;
+
+	// Show some information about the Flash.
+	log::info << L"SWF successfully loaded," << Endl;
+	log::info << IncreaseIndent;
+	
+	const SmallMap< uint16_t, Ref< FlashFont > >& fonts = movie->getFonts();
+	log::info << fonts.size() << L" font(s)" << Endl;
+	log::info << IncreaseIndent;
+	for (SmallMap< uint16_t, Ref< FlashFont > >::const_iterator i = fonts.begin(); i != fonts.end(); ++i)
+		log::info << i->first << L". " << i->second->getShapes().size() << L" glyph(s)" << Endl;
+	log::info << DecreaseIndent;
+
+	log::info << movie->getBitmaps().size() << L" bitmap(s)" << Endl;
+	log::info << movie->getSounds().size() << L" sound(s)" << Endl;
+	log::info << movie->getCharacters().size() << L" character(s)" << Endl;
+
+	log::info << DecreaseIndent;
 
 	// Replace all bitmaps with resource references to textures.
 	SmallMap< uint16_t, Ref< FlashBitmap > > bitmaps = movie->getBitmaps();

@@ -77,6 +77,10 @@ public:
 
 	OutputStream& operator << (const std::wstring& s);
 
+#if defined(__APPLE__)
+	OutputStream& operator << (size_t n) { return *this << (uint32_t)n; }
+#endif
+
 	void put(wchar_t ch);
 
 	void puts(const wchar_t* s);

@@ -51,6 +51,8 @@ public:
 		CoordinateType coordinateType
 	);
 
+	const RefArray< FlashShape >& getShapes() const;
+
 	const FlashShape* getShape(uint16_t index) const;
 
 	int16_t getAscent() const;
