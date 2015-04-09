@@ -658,6 +658,10 @@ public:
 
 	const Color4ub& unbox() const { return m_value; }
 
+	std::wstring formatRGB() const;
+
+	std::wstring formatARGB() const;
+
 	virtual std::wstring toString() const;
 
 	void* operator new (size_t size);

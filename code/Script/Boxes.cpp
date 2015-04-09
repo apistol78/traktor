@@ -846,6 +846,25 @@ BoxedColor4ub::BoxedColor4ub(uint8_t red, uint8_t green, uint8_t blue, uint8_t a
 {
 }
 
+std::wstring BoxedColor4ub::formatRGB() const
+{
+	StringOutputStream ss;
+	FormatHex(ss, m_value.r, 2);
+	FormatHex(ss, m_value.g, 2);
+	FormatHex(ss, m_value.b, 2);
+	return ss.str();
+}
+
+std::wstring BoxedColor4ub::formatARGB() const
+{
+	StringOutputStream ss;
+	FormatHex(ss, m_value.r, 2);
+	FormatHex(ss, m_value.g, 2);
+	FormatHex(ss, m_value.b, 2);
+	FormatHex(ss, m_value.a, 2);
+	return ss.str();
+}
+
 std::wstring BoxedColor4ub::toString() const
 {
 	StringOutputStream ss;
@@ -1360,6 +1379,8 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedColor4ub->addMethod("setGreen", &BoxedColor4ub::setGreen);
 	classBoxedColor4ub->addMethod("setBlue", &BoxedColor4ub::setBlue);
 	classBoxedColor4ub->addMethod("setAlpha", &BoxedColor4ub::setAlpha);
+	classBoxedColor4ub->addMethod("formatRGB", &BoxedColor4ub::formatRGB);
+	classBoxedColor4ub->addMethod("formatARGB", &BoxedColor4ub::formatARGB);
 	scriptManager->registerClass(classBoxedColor4ub);
 
 	Ref< AutoScriptClass< BoxedRandom > > classBoxedRandom = new AutoScriptClass< BoxedRandom >();
