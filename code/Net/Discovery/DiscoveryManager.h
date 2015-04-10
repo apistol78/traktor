@@ -55,6 +55,8 @@ public:
 
 	void addService(IService* service);
 
+	void replaceService(IService* oldService, IService* newService);
+
 	void removeService(IService* service);
 
 	void removeAllServices();
@@ -92,7 +94,7 @@ private:
 
 	void threadMulticastListener();
 
-	bool sendMessage(UdpSocket* socket, const SocketAddressIPv4& address, const IDiscoveryMessage* message);
+	int32_t sendMessage(UdpSocket* socket, const SocketAddressIPv4& address, const IDiscoveryMessage* message);
 
 	Ref< IDiscoveryMessage > recvMessage(UdpSocket* socket, SocketAddressIPv4* fromAddress, int32_t timeout);
 };

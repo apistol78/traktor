@@ -108,6 +108,19 @@ void DiscoveryManager::addService(IService* service)
 	m_localServices.push_back(ls);
 }
 
+void DiscoveryManager::replaceService(IService* oldService, IService* newService)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_localServicesLock);
+	for (std::list< LocalService >::iterator i = m_localServices.begin(); i != m_localServices.end(); ++i)
+	{
+		if (i->service == oldService)
+		{
+			i->service = newService;
+			break;
+		}
+	}
+}
+
 void DiscoveryManager::removeService(IService* service)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_localServicesLock);
@@ -144,6 +157,7 @@ void DiscoveryManager::threadMulticastListener()
 	SocketAddressIPv4 address(c_discoveryMulticastGroup, c_discoveryMulticastPort);
 	SocketAddressIPv4 fromAddress;
 	Timer timer;
+	int32_t res;
 
 	timer.start();
 	double beacon = timer.getElapsedTime() + 1.0;
@@ -156,10 +170,10 @@ void DiscoveryManager::threadMulticastListener()
 		)
 		{
 			DmFindServices msgFindServices(m_managerGuid);
-			if (!sendMessage(m_multicastSendSocket, address, &msgFindServices))
+			if ((res = sendMessage(m_multicastSendSocket, address, &msgFindServices)) != 0)
 			{
 				if ((m_mode & MdVerbose) != 0)
-					log::info << L"Discovery manager: Unable to send \"find services\" message" << Endl;
+					log::info << L"Discovery manager: Unable to send \"find services\" message (" << res << L")" << Endl;
 			}
 			beacon = timer.getElapsedTime() + 1.0;
 		}
@@ -196,8 +210,8 @@ void DiscoveryManager::threadMulticastListener()
 				for (std::list< LocalService >::const_iterator i = m_localServices.begin(); i != m_localServices.end(); ++i)
 				{
 					DmServiceInfo serviceInfo(requestingManagerGuid, i->serviceGuid, i->service);
-					if (!sendMessage(m_multicastSendSocket, address, &serviceInfo))
-						log::error << L"Unable to reply service to requesting manager" << Endl;
+					if ((res = sendMessage(m_multicastSendSocket, address, &serviceInfo)) != 0)
+						log::error << L"Unable to reply service to requesting manager (" << res << L")" << Endl;
 					else if ((m_mode & MdVerbose) != 0)
 						log::info << L"Discovery manager: Reply sent to " << address << Endl;
 				}
@@ -230,17 +244,20 @@ void DiscoveryManager::threadMulticastListener()
 	}
 }
 
-bool DiscoveryManager::sendMessage(UdpSocket* socket, const SocketAddressIPv4& address, const IDiscoveryMessage* message)
+int32_t DiscoveryManager::sendMessage(UdpSocket* socket, const SocketAddressIPv4& address, const IDiscoveryMessage* message)
 {
 	Ref< DynamicMemoryStream > dms = new DynamicMemoryStream(false, true, T_FILE_LINE);
 	if (!BinarySerializer(dms).writeObject(message))
-		return false;
+		return 1;
 
 	const std::vector< uint8_t >& buffer = dms->getBuffer();
 	if (buffer.size() >= 1024)
-        return false;
+        return 2;
 
-	return socket->sendTo(address, &buffer[0], uint32_t(buffer.size())) == buffer.size();
+	if (socket->sendTo(address, &buffer[0], uint32_t(buffer.size())) != buffer.size())
+		return 3;
+
+	return 0;
 }
 
 Ref< IDiscoveryMessage > DiscoveryManager::recvMessage(UdpSocket* socket, SocketAddressIPv4* fromAddress, int32_t timeout)
