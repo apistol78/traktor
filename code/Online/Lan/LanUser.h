@@ -6,6 +6,14 @@
 
 namespace traktor
 {
+	namespace net
+	{
+
+class DiscoveryManager;
+class UdpSocket;
+
+	}
+
 	namespace online
 	{
 
@@ -14,7 +22,7 @@ class LanUser : public IUserProvider
 	T_RTTI_CLASS;
 
 public:
-	LanUser();
+	LanUser(net::DiscoveryManager* discoveryManager, net::UdpSocket* socket);
 
 	virtual bool getName(uint64_t userHandle, std::wstring& outName);
 
@@ -39,8 +47,8 @@ public:
 	virtual bool sendP2PData(uint64_t userHandle, const void* data, size_t size, bool reliable);
 
 private:
-	std::map< uint64_t, std::wstring > m_nameCache;
-	uint32_t m_nameIndex;
+	Ref< net::DiscoveryManager > m_discoveryManager;
+	Ref< net::UdpSocket > m_socket;
 };
 
 	}

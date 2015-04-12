@@ -1,26 +1,37 @@
 #include "Core/Misc/String.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyInteger.h"
+#include "Net/SocketAddressIPv4.h"
+#include "Net/UdpSocket.h"
+#include "Net/Discovery/DiscoveryManager.h"
+#include "Net/Discovery/NetworkService.h"
 #include "Online/Lan/LanUser.h"
 
 namespace traktor
 {
 	namespace online
 	{
+		namespace
+		{
+
+const wchar_t* c_keyServiceTypeUser = L"U";
+const wchar_t* c_keyUserHandle = L"UH";
+const wchar_t* c_keyUserAddr = L"UA";
+const wchar_t* c_keyUserPort = L"UP";
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.LocalUser", LanUser, IUserProvider)
 
-LanUser::LanUser()
-:	m_nameIndex(0)
+LanUser::LanUser(net::DiscoveryManager* discoveryManager, net::UdpSocket* socket)
+:	m_discoveryManager(discoveryManager)
+,	m_socket(socket)
 {
 }
 
 bool LanUser::getName(uint64_t userHandle, std::wstring& outName)
 {
-	outName = m_nameCache[userHandle];
-	if (outName.empty())
-	{
-		outName = std::wstring(L"User_") + toString(++m_nameIndex);
-		m_nameCache[userHandle] = outName;
-	}
+	outName = std::wstring(L"User_") + toString(int32_t(userHandle));
 	return true;
 }
 
@@ -71,6 +82,31 @@ bool LanUser::isP2PRelayed(uint64_t userHandle) const
 
 bool LanUser::sendP2PData(uint64_t userHandle, const void* data, size_t size, bool reliable)
 {
+	RefArray< net::NetworkService > userServices;
+	m_discoveryManager->findServices< net::NetworkService >(userServices);
+
+	for (RefArray< net::NetworkService >::const_iterator i = userServices.begin(); i != userServices.end(); ++i)
+	{
+		if ((*i)->getType() != c_keyServiceTypeUser)
+			continue;
+
+		const PropertyGroup* propertyGroup = (*i)->getProperties();
+		T_ASSERT (propertyGroup);
+
+		if (propertyGroup->getProperty< PropertyInteger >(c_keyUserHandle) != userHandle)
+			continue;
+
+		uint32_t addr = propertyGroup->getProperty< PropertyInteger >(c_keyUserAddr);
+		uint16_t port = propertyGroup->getProperty< PropertyInteger >(c_keyUserPort);
+
+		int32_t result = m_socket->sendTo(
+			net::SocketAddressIPv4(addr, port),
+			data,
+			int(size)
+		);
+		return bool(result == int32_t(size));
+	}
+
 	return false;
 }
 

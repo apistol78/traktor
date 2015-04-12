@@ -16,6 +16,7 @@ namespace traktor
 	namespace net
 	{
 	
+class SocketAddress;
 class SocketAddressIPv4;
 class SocketAddressIPv6;
 
@@ -42,6 +43,9 @@ public:
 
 	/*! \brief Connect to remote host. */
 	bool connect(const SocketAddressIPv6& socketAddress);
+
+	/*! \brief Get local socket address. */
+	Ref< SocketAddress > getLocalAddress();
 
 	/*! \brief Send data directly to address. */
 	int sendTo(const SocketAddressIPv4& socketAddress, const void* data, int length);

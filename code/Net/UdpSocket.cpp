@@ -124,6 +124,17 @@ bool UdpSocket::connect(const SocketAddressIPv6& socketAddress)
 #endif
 }
 
+Ref< SocketAddress > UdpSocket::getLocalAddress()
+{
+	struct sockaddr_in in;
+
+	socklen_t len = sizeof(in);
+	if (getsockname(m_socket, (struct sockaddr*)&in, &len) != 0)
+		return 0;
+
+	return new SocketAddressIPv4(in);
+}
+
 int UdpSocket::sendTo(const SocketAddressIPv4& socketAddress, const void* data, int length)
 {
 	struct sockaddr_in to = socketAddress.getSockAddr();
