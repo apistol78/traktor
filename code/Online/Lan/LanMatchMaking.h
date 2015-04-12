@@ -22,7 +22,7 @@ class LanMatchMaking : public IMatchMakingProvider
 	T_RTTI_CLASS;
 
 public:
-	LanMatchMaking(net::DiscoveryManager* discoveryManager, uint64_t userHandle);
+	LanMatchMaking(net::DiscoveryManager* discoveryManager, int32_t userHandle);
 
 	void update();
 
@@ -88,12 +88,12 @@ private:
 	mutable Semaphore m_lock;
 
 	Ref< net::DiscoveryManager > m_discoveryManager;
-	Ref< net::NetworkService > m_userInLobbyService;
+	mutable Ref< net::NetworkService > m_userInLobbyService;
 
-	uint64_t m_userHandle;
-	uint64_t m_lobbyHandle;
+	int32_t m_userHandle;
+	int32_t m_lobbyHandle;
 
-	std::vector< uint64_t > m_lobbyUsers;
+	std::vector< int32_t > m_lobbyUsers;
 	uint64_t m_primaryLobbyUser;
 };
 

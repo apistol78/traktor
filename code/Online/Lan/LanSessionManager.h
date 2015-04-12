@@ -17,6 +17,7 @@ namespace traktor
 	{
 
 class DiscoveryManager;
+class UdpSocket;
 
 	}
 
@@ -29,6 +30,7 @@ class LanMatchMaking;
 class LanSaveData;
 class LanStatistics;
 class LanUser;
+class LanVoiceChat;
 
 class T_DLLCLASS LanSessionManager : public ISessionManagerProvider
 {
@@ -84,14 +86,18 @@ public:
 	virtual IVoiceChatProvider* getVoiceChat() const;
 
 private:
-	uint64_t m_userHandle;
+	int32_t m_userHandle;
 	Ref< net::DiscoveryManager > m_discoveryManager;
+	Ref< net::UdpSocket > m_socket;
+	uint16_t m_port;
+
 	Ref< LanAchievements > m_achievements;
 	Ref< LanLeaderboards > m_leaderboards;
 	Ref< LanMatchMaking > m_matchMaking;
 	Ref< LanSaveData > m_saveData;
 	Ref< LanStatistics > m_statistics;
 	Ref< LanUser > m_user;
+	Ref< LanVoiceChat > m_voiceChat;
 };
 
 	}
