@@ -18,7 +18,7 @@ namespace traktor
 		{
 
 const double c_resendTimeThreshold = 0.5;
-const int32_t c_resendCountThreshold = 8;
+const int32_t c_resendCountThreshold = 16;
 
 		}
 
