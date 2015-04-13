@@ -653,8 +653,10 @@ void AsMovieClip::MovieClip_gotoAndPlay(FlashSpriteInstance* self, const ActionV
 		int32_t frame = self->getSprite()->findFrame(arg0.getString());
 		if (frame >= 0)
 			self->gotoFrame(frame);
+#if defined(_DEBUG)
 		else
 			log::warning << L"No such frame, \"" << arg0.getWideString() << L"\"" << Endl;
+#endif
 	}
 	self->setPlaying(true);
 }
@@ -671,8 +673,10 @@ void AsMovieClip::MovieClip_gotoAndStop(FlashSpriteInstance* self, const ActionV
 		int32_t frame = self->getSprite()->findFrame(arg0.getString());
 		if (frame >= 0)
 			self->gotoFrame(frame);
+#if defined(_DEBUG)
 		else
 			log::warning << L"No such frame, \"" << arg0.getWideString() << L"\"" << Endl;
+#endif
 	}
 	self->setPlaying(false);
 }
