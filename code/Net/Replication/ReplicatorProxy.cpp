@@ -242,8 +242,10 @@ void ReplicatorProxy::sendEvent(const ISerializable* eventObject)
 	m_unacknowledgedEvents.push_back(e);
 }
 
-bool ReplicatorProxy::updateEventQueue()
+int32_t ReplicatorProxy::updateEventQueue()
 {
+	int32_t discarded = 0;
+
 	// First send is prioritized over re-sends.
 	for (std::list< Event >::iterator i = m_unacknowledgedEvents.begin(); i != m_unacknowledgedEvents.end(); ++i)
 	{
@@ -266,13 +268,14 @@ bool ReplicatorProxy::updateEventQueue()
 			if (++i->count >= c_resendCountThreshold)
 			{
 				i = m_unacknowledgedEvents.erase(i);
+				++discarded;
 				continue;
 			}
 		}
 		++i;
 	}
 
-	return !m_unacknowledgedEvents.empty();
+	return discarded;
 }
 
 bool ReplicatorProxy::receivedEventAcknowledge(const ReplicatorProxy* from, uint8_t sequence)
@@ -281,30 +284,21 @@ bool ReplicatorProxy::receivedEventAcknowledge(const ReplicatorProxy* from, uint
 	{
 		if (i->msg.event.sequence == sequence)
 		{
-#if defined(_DEBUG)
-			m_acknowledgeHistory.push_back(sequence);
-#endif
 			m_unacknowledgedEvents.erase(i);
 			return true;
 		}
 	}
-
-#if defined(_DEBUG)
-	if (m_acknowledgeHistory.find(sequence) < 0)
-		log::info << m_replicator->getLogPrefix() << L"Received acknowledge of unsent event from " << from->m_handle << L", sequence " << int32_t(sequence) << Endl;
-#endif
-
 	return false;
 }
 
-bool ReplicatorProxy::acceptEvent(uint8_t sequence, const ISerializable* eventObject)
+bool ReplicatorProxy::acceptEvent(uint32_t time, uint8_t sequence, const ISerializable* eventObject)
 {
 	for (uint32_t i = 0; i < m_lastEvents.size(); ++i)
 	{
-		if (m_lastEvents[i].first == sequence)
+		if (m_lastEvents[i].first == time && m_lastEvents[i].second == sequence)
 			return false;
 	}
-	m_lastEvents.push_back(std::make_pair(sequence, 0));
+	m_lastEvents.push_back(std::make_pair(time, sequence));
 	return true;
 }
 

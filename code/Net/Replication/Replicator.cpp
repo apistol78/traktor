@@ -297,7 +297,7 @@ bool Replicator::update()
 			{
 				// Prevent resent events from being issued into game.
 				bool accept;
-				T_MEASURE_STATEMENT(accept = fromProxy->acceptEvent(msg.event.sequence, eventObject), 0.001);
+				T_MEASURE_STATEMENT(accept = fromProxy->acceptEvent(msg.time, msg.event.sequence, eventObject), 0.001);
 				if (accept)
 				{
 					SmallMap< const TypeInfo*, RefArray< IEventListener > >::const_iterator it = m_eventListeners.find(&type_of(eventObject));
@@ -350,8 +350,11 @@ bool Replicator::update()
 	*/
 
 	// Update proxy queues.
+	int32_t discarded = 0;
 	for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
-		(*i)->updateEventQueue();
+		discarded += (*i)->updateEventQueue();
+	if (discarded > 0)
+		return false;
 
 	T_MEASURE_UNTIL(0.001);
 
