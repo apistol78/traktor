@@ -180,10 +180,7 @@ private:
 
 	uint8_t m_sequence;
 	std::list< Event > m_unacknowledgedEvents;
-	CircularVector< std::pair< uint8_t, uint32_t >, 128 > m_lastEvents;
-#if defined(_DEBUG)
-	CircularVector< uint8_t, 32 > m_acknowledgeHistory;
-#endif
+	CircularVector< std::pair< uint32_t, uint8_t >, 128 > m_lastEvents;
 
 	//@}
 
@@ -199,11 +196,11 @@ private:
 	double m_latencyReverseStandardDeviation;
 	// @}
 
-	bool updateEventQueue();
+	int32_t updateEventQueue();
 
 	bool receivedEventAcknowledge(const ReplicatorProxy* from, uint8_t sequence);
 
-	bool acceptEvent(uint8_t sequence, const ISerializable* eventObject);
+	bool acceptEvent(uint32_t time, uint8_t sequence, const ISerializable* eventObject);
 
 	void updateLatency(double roundTrip, double latencyReverse, double latencyReverseSpread);
 
