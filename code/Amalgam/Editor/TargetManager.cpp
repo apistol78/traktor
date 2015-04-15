@@ -3,6 +3,7 @@
 #include "Amalgam/Editor/TargetManager.h"
 #include "Amalgam/Impl/TargetID.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Editor/IEditor.h"
 #include "Net/BidirectionalObjectTransport.h"
@@ -133,7 +134,20 @@ bool TargetManager::update()
 
 				if (instance)
 				{
-					Ref< ILogTarget > targetLog = m_editor->createLogTarget(targetId->getName());
+					// Determine log name; if multiple running instances with same name then add number.
+					int32_t running = 0;
+					const RefArray< TargetConnection >& connections = instance->getConnections();
+					for (RefArray< TargetConnection >::const_iterator i = connections.begin(); i != connections.end(); ++i)
+					{
+						if ((*i)->getName() == targetId->getName())
+							++running;
+					}
+
+					std::wstring logName = targetId->getName();
+					if (running > 0)
+						logName += L" (" + toString(running) + L")";
+
+					Ref< ILogTarget > targetLog = m_editor->createLogTarget(logName);
 
 					// Create connection object and add to instance.
 					instance->addConnection(new TargetConnection(targetId->getName(), transport, targetLog, m_targetDebuggerSessions));
