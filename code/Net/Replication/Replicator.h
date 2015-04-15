@@ -26,6 +26,8 @@ class ISerializable;
 	namespace net
 	{
 
+class IReplicatorEventListener;
+class IReplicatorStateListener;
 class ReplicatorProxy;
 class State;
 class StateTemplate;
@@ -37,40 +39,6 @@ class T_DLLCLASS Replicator
 	T_RTTI_CLASS;
 
 public:
-	class T_DLLCLASS IListener : public Object
-	{
-		T_RTTI_CLASS;
-
-	public:
-		enum
-		{
-			ReConnected = 1,
-			ReDisconnected = 2,
-			ReState = 3
-		};
-
-		virtual void notify(
-			Replicator* replicator,
-			float eventTime,
-			uint32_t eventId,
-			ReplicatorProxy* proxy,
-			const Object* eventObject
-		) = 0;
-	};
-
-	class T_DLLCLASS IEventListener : public Object
-	{
-		T_RTTI_CLASS;
-
-	public:
-		virtual void notify(
-			Replicator* replicator,
-			float eventTime,
-			ReplicatorProxy* fromProxy,
-			const Object* eventObject
-		) = 0;
-	};
-
 	struct Configuration
 	{
 		float nearDistance;
@@ -121,11 +89,11 @@ public:
 
 	/*! \brief
 	 */
-	IListener* addListener(IListener* listener);
+	IReplicatorStateListener* addListener(IReplicatorStateListener* listener);
 
 	/*! \brief
 	 */
-	void removeListener(IListener* listener);
+	void removeListener(IReplicatorStateListener* listener);
 
 	/*! \brief
 	 */
@@ -133,11 +101,11 @@ public:
 
 	/*! \brief
 	 */
-	IEventListener* addEventListener(const TypeInfo& eventType, IEventListener* eventListener);
+	IReplicatorEventListener* addEventListener(const TypeInfo& eventType, IReplicatorEventListener* eventListener);
 
 	/*! \brief
 	 */
-	void removeEventListener(IEventListener* eventListener);
+	void removeEventListener(IReplicatorEventListener* eventListener);
 
 	/*! \brief
 	 */
@@ -263,8 +231,8 @@ private:
 	Ref< INetworkTopology > m_topology;
 	Configuration m_configuration;
 	std::vector< const TypeInfo* > m_eventTypes;
-	RefArray< IListener > m_listeners;
-	SmallMap< const TypeInfo*, RefArray< IEventListener > > m_eventListeners;
+	RefArray< IReplicatorStateListener > m_listeners;
+	SmallMap< const TypeInfo*, RefArray< IReplicatorEventListener > > m_eventListeners;
 	std::wstring m_name;
 	Timer m_timer;
 	double m_time0;								/*!< Local time. */

@@ -24,7 +24,9 @@ class ISerializable;
 	namespace net
 	{
 
+class IEventListener;
 class INetworkTopology;
+class IReplicatorEventListener;
 class State;
 class StateTemplate;
 
@@ -144,6 +146,12 @@ private:
 		RMessage msg;
 	};
 
+	struct EventSlot
+	{
+		uint32_t time;
+		Ref< const ISerializable > eventObject;
+	};
+
 	Replicator* m_replicator;
 	net_handle_t m_handle;
 
@@ -181,6 +189,8 @@ private:
 	uint8_t m_sequence;
 	std::list< Event > m_unacknowledgedEvents;
 	CircularVector< std::pair< uint32_t, uint8_t >, 128 > m_lastEvents;
+	uint8_t m_dispatchEvent;
+	EventSlot m_eventSlots[256];
 
 	//@}
 
@@ -200,7 +210,9 @@ private:
 
 	bool receivedEventAcknowledge(const ReplicatorProxy* from, uint8_t sequence);
 
-	bool acceptEvent(uint32_t time, uint8_t sequence, const ISerializable* eventObject);
+	bool enqueueEvent(uint32_t time, uint8_t sequence, const ISerializable* eventObject);
+
+	bool dispatchEvents(const SmallMap< const TypeInfo*, RefArray< IReplicatorEventListener > >& eventListeners);
 
 	void updateLatency(double roundTrip, double latencyReverse, double latencyReverseSpread);
 

@@ -9,6 +9,8 @@
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Timer/Measure.h"
+#include "Net/Replication/IReplicatorEventListener.h"
+#include "Net/Replication/IReplicatorStateListener.h"
 #include "Net/Replication/Replicator.h"
 #include "Net/Replication/ReplicatorProxy.h"
 #include "Net/Replication/ReplicatorTypes.h"
@@ -33,10 +35,6 @@ bool lowestLatencyPred(const ReplicatorProxy* l, const ReplicatorProxy* r)
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.Replicator", Replicator, Object)
-
-T_IMPLEMENT_RTTI_CLASS(L"traktor.net.Replicator.IListener", Replicator::IListener, Object)
-
-T_IMPLEMENT_RTTI_CLASS(L"traktor.net.Replicator.IEventListener", Replicator::IEventListener, Object)
 
 Replicator::Replicator()
 :	m_time0(0.0)
@@ -98,13 +96,13 @@ void Replicator::removeAllEventTypes()
 	m_eventTypes.resize(0);
 }
 
-Replicator::IListener* Replicator::addListener(IListener* listener)
+IReplicatorStateListener* Replicator::addListener(IReplicatorStateListener* listener)
 {
 	m_listeners.push_back(listener);
 	return listener;
 }
 
-void Replicator::removeListener(IListener* listener)
+void Replicator::removeListener(IReplicatorStateListener* listener)
 {
 	m_listeners.remove(listener);
 }
@@ -114,15 +112,15 @@ void Replicator::removeAllListeners()
 	m_listeners.clear();
 }
 
-Replicator::IEventListener* Replicator::addEventListener(const TypeInfo& eventType, IEventListener* eventListener)
+IReplicatorEventListener* Replicator::addEventListener(const TypeInfo& eventType, IReplicatorEventListener* eventListener)
 {
 	m_eventListeners[&eventType].push_back(eventListener);
 	return eventListener;
 }
 
-void Replicator::removeEventListener(IEventListener* eventListener)
+void Replicator::removeEventListener(IReplicatorEventListener* eventListener)
 {
-	for (SmallMap< const TypeInfo*, RefArray< IEventListener > >::iterator i = m_eventListeners.begin(); i != m_eventListeners.end(); ++i)
+	for (SmallMap< const TypeInfo*, RefArray< IReplicatorEventListener > >::iterator i = m_eventListeners.begin(); i != m_eventListeners.end(); ++i)
 		i->second.remove(eventListener);
 }
 
@@ -295,24 +293,10 @@ bool Replicator::update()
 			T_MEASURE_STATEMENT(eventObject = CompactSerializer(&ms, &m_eventTypes[0], uint32_t(m_eventTypes.size())).readObject< ISerializable >(), 0.001);
 			if (eventObject)
 			{
-				// Prevent resent events from being issued into game.
-				bool accept;
-				T_MEASURE_STATEMENT(accept = fromProxy->acceptEvent(msg.time, msg.event.sequence, eventObject), 0.001);
-				if (accept)
+				if (!fromProxy->enqueueEvent(msg.time, msg.event.sequence, eventObject))
 				{
-					SmallMap< const TypeInfo*, RefArray< IEventListener > >::const_iterator it = m_eventListeners.find(&type_of(eventObject));
-					if (it != m_eventListeners.end())
-					{
-						for (RefArray< IEventListener >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
-						{
-							T_MEASURE_STATEMENT((*i)->notify(
-								this,
-								float(net2time(msg.time)),
-								fromProxy,
-								eventObject
-							), 0.001);
-						}
-					}
+					log::error << getLogPrefix() << L"Unable to enqueue event object" << Endl;
+					return false;
 				}
 			}
 			else if (!m_eventTypes.empty())
@@ -350,10 +334,15 @@ bool Replicator::update()
 	*/
 
 	// Update proxy queues.
-	int32_t discarded = 0;
+	bool succeded = true;
 	for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
-		discarded += (*i)->updateEventQueue();
-	if (discarded > 0)
+	{
+		if ((*i)->updateEventQueue() > 0)
+			succeded = false;
+		if (!(*i)->dispatchEvents(m_eventListeners))
+			succeded = false;
+	}
+	if (!succeded)
 		return false;
 
 	T_MEASURE_UNTIL(0.001);
@@ -720,10 +709,10 @@ bool Replicator::sendEventToPrimary(const ISerializable* eventObject)
 	else
 	{
 		// We are primary peer; dispatch event directly.
-		SmallMap< const TypeInfo*, RefArray< IEventListener > >::const_iterator it = m_eventListeners.find(&type_of(eventObject));
+		SmallMap< const TypeInfo*, RefArray< IReplicatorEventListener > >::const_iterator it = m_eventListeners.find(&type_of(eventObject));
 		if (it != m_eventListeners.end())
 		{
-			for (RefArray< IEventListener >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
+			for (RefArray< IReplicatorEventListener >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
 			{
 				(*i)->notify(
 					this,
@@ -779,12 +768,12 @@ bool Replicator::nodeConnected(INetworkTopology* topology, net_handle_t node)
 
 		log::info << getLogPrefix() << L"Proxy for node " << node << L" (" << name << L") created." << Endl;
 
-		for (RefArray< IListener >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
+		for (RefArray< IReplicatorStateListener >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
 		{
 			(*i)->notify(
 				this,
 				float(m_time),
-				IListener::ReConnected,
+				IReplicatorStateListener::ReConnected,
 				proxy,
 				0
 			);
@@ -806,12 +795,12 @@ bool Replicator::nodeDisconnected(INetworkTopology* topology, net_handle_t node)
 		{
 			log::info << getLogPrefix() << L"Proxy for node " << node << L" (" << (*i)->getName() << L") destroyed." << Endl;
 			
-			for (RefArray< IListener >::const_iterator j = m_listeners.begin(); j != m_listeners.end(); ++j)
+			for (RefArray< IReplicatorStateListener >::const_iterator j = m_listeners.begin(); j != m_listeners.end(); ++j)
 			{
 				(*j)->notify(
 					this,
 					float(m_time),
-					IListener::ReDisconnected,
+					IReplicatorStateListener::ReDisconnected,
 					*i,
 					0
 				);

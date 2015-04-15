@@ -4,6 +4,7 @@
 #include "Core/Serialization/CompactSerializer.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Net/Replication/INetworkTopology.h"
+#include "Net/Replication/IReplicatorEventListener.h"
 #include "Net/Replication/Replicator.h"
 #include "Net/Replication/ReplicatorProxy.h"
 #include "Net/Replication/ReplicatorTypes.h"
@@ -291,14 +292,50 @@ bool ReplicatorProxy::receivedEventAcknowledge(const ReplicatorProxy* from, uint
 	return false;
 }
 
-bool ReplicatorProxy::acceptEvent(uint32_t time, uint8_t sequence, const ISerializable* eventObject)
+bool ReplicatorProxy::enqueueEvent(uint32_t time, uint8_t sequence, const ISerializable* eventObject)
 {
+	// Start dispatching from first encountered event.
+	if (m_lastEvents.empty())
+		m_dispatchEvent = sequence;
+
+	// Discard event if already received.
 	for (uint32_t i = 0; i < m_lastEvents.size(); ++i)
 	{
 		if (m_lastEvents[i].first == time && m_lastEvents[i].second == sequence)
-			return false;
+			return true;
 	}
 	m_lastEvents.push_back(std::make_pair(time, sequence));
+
+	// If events collide then there is a serious network problem
+	// thus we need to disconnect.
+	if (m_eventSlots[sequence].eventObject)
+		return false;
+
+	m_eventSlots[sequence].time = time;
+	m_eventSlots[sequence].eventObject = eventObject;
+	return true;
+}
+
+bool ReplicatorProxy::dispatchEvents(const SmallMap< const TypeInfo*, RefArray< IReplicatorEventListener > >& eventListeners)
+{
+	while (m_eventSlots[m_dispatchEvent].eventObject)
+	{
+		SmallMap< const TypeInfo*, RefArray< IReplicatorEventListener > >::const_iterator it = eventListeners.find(&type_of(m_eventSlots[m_dispatchEvent].eventObject));
+		if (it != eventListeners.end())
+		{
+			for (RefArray< IReplicatorEventListener >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
+			{
+				(*i)->notify(
+					m_replicator,
+					net2time(m_eventSlots[m_dispatchEvent].time),
+					this,
+					m_eventSlots[m_dispatchEvent].eventObject
+				);
+			}
+		}
+		m_eventSlots[m_dispatchEvent].eventObject = 0;
+		++m_dispatchEvent;
+	}
 	return true;
 }
 

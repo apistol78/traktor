@@ -3,6 +3,8 @@
 #include "Online/ISessionManager.h"
 #include "Net/Replication/INetworkTopology.h"
 #include "Net/Replication/IPeer2PeerProvider.h"
+#include "Net/Replication/IReplicatorEventListener.h"
+#include "Net/Replication/IReplicatorStateListener.h"
 #include "Net/Replication/MeasureP2PProvider.h"
 #include "Net/Replication/Peer2PeerTopology.h"
 #include "Net/Replication/Replicator.h"
@@ -67,7 +69,7 @@ private:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ReplicatorConfiguration", ReplicatorConfiguration, Object)
 
-class ReplicatorListener : public net::Replicator::IListener
+class ReplicatorListener : public net::IReplicatorStateListener
 {
 	T_RTTI_CLASS;
 
@@ -95,7 +97,7 @@ private:
 	Ref< script::IScriptDelegate > m_delegate;
 };
 
-class ReplicatorEventListener : public net::Replicator::IEventListener
+class ReplicatorEventListener : public net::IReplicatorEventListener
 {
 	T_RTTI_CLASS;
 
@@ -122,9 +124,9 @@ private:
 	Ref< script::IScriptDelegate > m_delegate;
 };
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ReplicatorListener", ReplicatorListener, net::Replicator::IListener)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ReplicatorListener", ReplicatorListener, net::IReplicatorStateListener)
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ReplicatorEventListener", ReplicatorEventListener, net::Replicator::IEventListener)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ReplicatorEventListener", ReplicatorEventListener, net::IReplicatorEventListener)
 
 bool net_Replicator_create(net::Replicator* self, net::INetworkTopology* topology, const ReplicatorConfiguration* configuration)
 {
@@ -195,11 +197,11 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	classReplicatorProxy->addMethod("sendEvent", &net::ReplicatorProxy::sendEvent);
 	scriptManager->registerClass(classReplicatorProxy);
 
-	Ref< script::AutoScriptClass< net::Replicator::IListener > > classReplicatorIListener = new script::AutoScriptClass< net::Replicator::IListener >();
-	scriptManager->registerClass(classReplicatorIListener);
+	Ref< script::AutoScriptClass< net::IReplicatorStateListener > > classIReplicatorStateListener = new script::AutoScriptClass< net::IReplicatorStateListener >();
+	scriptManager->registerClass(classIReplicatorStateListener);
 
-	Ref< script::AutoScriptClass< net::Replicator::IEventListener > > classReplicatorIEventListener = new script::AutoScriptClass< net::Replicator::IEventListener >();
-	scriptManager->registerClass(classReplicatorIEventListener);
+	Ref< script::AutoScriptClass< net::IReplicatorEventListener > > classIReplicatorEventListener = new script::AutoScriptClass< net::IReplicatorEventListener >();
+	scriptManager->registerClass(classIReplicatorEventListener);
 
 	Ref< script::AutoScriptClass< ReplicatorConfiguration > > classReplicatorConfiguration = new script::AutoScriptClass< ReplicatorConfiguration >();
 	classReplicatorConfiguration->addConstructor();
