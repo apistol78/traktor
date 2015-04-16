@@ -130,12 +130,11 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 						m_context,
 						ownerInstance,
 						placeObject.has(FlashFrame::PfHasName) ? placeObject.name : "",
+						placeObject.has(FlashFrame::PfHasMatrix) ? placeObject.matrix : transform,
 						0,
 						&placeObject.events
 					);
 					T_ASSERT (layer.instance);
-
-					layer.instance->setTransform(transform);
 				}
 #if defined(_DEBUG)
 				else

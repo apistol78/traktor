@@ -74,6 +74,7 @@ Ref< FlashCharacterInstance > FlashSprite::createInstance(
 	ActionContext* context,
 	FlashCharacterInstance* parent,
 	const std::string& name,
+	const Matrix33& transform,
 	const ActionObject* initObject,
 	const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
 ) const
@@ -85,6 +86,8 @@ Ref< FlashCharacterInstance > FlashSprite::createInstance(
 
 	if (events)
 		spriteInstance->setEvents(*events);
+
+	spriteInstance->setTransform(transform);
 
 	if (initObject)
 	{

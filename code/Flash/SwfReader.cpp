@@ -51,7 +51,7 @@ SwfHeader* SwfReader::readHeader()
 		log::error << L"Unknown signature; invalid SWF" << Endl;
 		return 0;
 	}
-	if (header->version > 11)
+	if (header->version > 15)
 	{
 		log::error << L"Unsupported version (" << int32_t(header->version) << L")" << Endl;
 		return 0;
