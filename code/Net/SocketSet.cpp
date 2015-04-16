@@ -38,6 +38,11 @@ Ref< Socket > SocketSet::get(int index) const
 	return m_sockets[index];
 }
 
+bool SocketSet::contain(Socket* socket) const
+{
+	return std::find(m_sockets.begin(), m_sockets.end(), socket) != m_sockets.end();
+}
+
 int SocketSet::select(bool read, bool write, bool except, int timeout, SocketSet& outResultSet)
 {
 #if !defined(_WIN32) && !defined(_PS3)

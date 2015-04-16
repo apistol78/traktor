@@ -35,9 +35,11 @@ public:
 
 	void remove(Socket* socket);
 
-	int count() const;
+	int32_t count() const;
 
-	Ref< Socket > get(int index) const;
+	Ref< Socket > get(int32_t index) const;
+
+	bool contain(Socket* socket) const;
 
 	int select(bool read, bool write, bool except, int timeout, SocketSet& outResultSet);
 

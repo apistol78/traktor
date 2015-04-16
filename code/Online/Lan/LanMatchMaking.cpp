@@ -341,6 +341,7 @@ bool LanMatchMaking::getLobbyParticipants(uint64_t lobbyHandle, std::vector< uin
 	outUserHandles.resize(m_lobbyUsers.size());
 	for (size_t i = 0; i < m_lobbyUsers.size(); ++i)
 		outUserHandles[i] = m_lobbyUsers[i];
+	std::sort(outUserHandles.begin(), outUserHandles.end());
 	return true;
 }
 

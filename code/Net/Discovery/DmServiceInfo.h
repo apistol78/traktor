@@ -17,12 +17,9 @@ class DmServiceInfo : public IDiscoveryMessage
 
 public:
 	DmServiceInfo(
-		const Guid& managerGuid = Guid(),
 		const Guid& serviceGuid = Guid(),
 		IService* service = 0
 	);
-
-	const Guid& getManagerGuid() const { return m_managerGuid; }
 
 	const Guid& getServiceGuid() const { return m_serviceGuid; }
 
@@ -31,7 +28,6 @@ public:
 	virtual void serialize(ISerializer& s);
 
 private:
-	Guid m_managerGuid;
 	Guid m_serviceGuid;
 	Ref< IService > m_service;
 };
