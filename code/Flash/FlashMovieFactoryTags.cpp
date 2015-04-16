@@ -400,7 +400,7 @@ bool FlashTagDefineEditText::read(SwfReader* swf, ReadContext& context)
 		textColor,
 		maxLength,
 		initialText,
-		(FlashEdit::Align)align,
+		(SwfTextAlignType)align,
 		leftMargin,
 		rightMargin,
 		indent,
