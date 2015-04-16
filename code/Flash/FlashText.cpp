@@ -68,6 +68,7 @@ Ref< FlashCharacterInstance > FlashText::createInstance(
 	ActionContext* context,
 	FlashCharacterInstance* parent,
 	const std::string& name,
+	const Matrix33& transform,
 	const ActionObject* initObject,
 	const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
 ) const

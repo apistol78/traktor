@@ -248,6 +248,7 @@ Ref< FlashSpriteInstance > FlashSpriteInstance::clone() const
 		getContext(),
 		getParent(),
 		"",
+		getTransform(),
 		0,
 		&events
 	));

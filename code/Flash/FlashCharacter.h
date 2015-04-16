@@ -2,6 +2,7 @@
 #define traktor_flash_FlashCharacter_H
 
 #include "Core/Containers/SmallMap.h"
+#include "Core/Math/Matrix33.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Flash/SwfTypes.h"
 
@@ -55,6 +56,7 @@ public:
 	 * \param context ActionScript execution context.
 	 * \param parent Parent instance.
 	 * \param name Character name.
+	 * \param transform Character transform.
 	 * \param initObject Initialization object.
 	 * \return Character instance.
 	 */
@@ -62,6 +64,7 @@ public:
 		ActionContext* context,
 		FlashCharacterInstance* parent,
 		const std::string& name,
+		const Matrix33& transform,
 		const ActionObject* initObject,
 		const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
 	) const = 0;
