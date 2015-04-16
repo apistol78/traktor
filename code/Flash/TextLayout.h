@@ -17,14 +17,6 @@ class TextLayout : public Object
 	T_RTTI_CLASS;
 
 public:
-	enum Align
-	{
-		AnLeft = 0x00,
-		AnRight = 0x01,
-		AnCenter = 0x02,
-		AnJustify = 0x03
-	};
-
 	struct Attribute
 	{
 		const FlashFont* font;
@@ -66,7 +58,7 @@ public:
 
 	void setWordWrap(bool wordWrap);
 
-	void setAlignment(Align alignment);
+	void setAlignment(SwfTextAlignType alignment);
 
 	void setAttribute(const FlashFont* font, const SwfColor& textColor);
 
@@ -86,7 +78,7 @@ public:
 
 	float getFontHeight() const { return m_fontHeight; }
 
-	Align getAlignment() const { return m_alignment; }
+	SwfTextAlignType getAlignment() const { return m_alignment; }
 
 	float getWidth() const { return m_width / 20.0f; }
 
@@ -101,7 +93,7 @@ private:
 	float m_letterSpacing;
 	float m_fontHeight;
 	bool m_wordWrap;
-	Align m_alignment;
+	SwfTextAlignType m_alignment;
 	float m_cursorX;
 	float m_cursorY;
 	float m_width;

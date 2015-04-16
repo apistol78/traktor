@@ -31,7 +31,7 @@ TextLayout::TextLayout()
 ,	m_leading(40.0f)
 ,	m_fontHeight(0.0f)
 ,	m_wordWrap(false)
-,	m_alignment(AnLeft)
+,	m_alignment(StaLeft)
 ,	m_cursorX(0.0f)
 ,	m_cursorY(0.0f)
 ,	m_width(0.0f)
@@ -78,7 +78,7 @@ void TextLayout::setWordWrap(bool wordWrap)
 	m_wordWrap = wordWrap;
 }
 
-void TextLayout::setAlignment(Align alignment)
+void TextLayout::setAlignment(SwfTextAlignType alignment)
 {
 	m_alignment = alignment;
 }
@@ -250,11 +250,11 @@ void TextLayout::end()
 		i->x = m_bounds.mn.x;
 		i->y += m_fontHeight;
 
-		if (m_alignment == AnRight || m_alignment == AnCenter)
+		if (m_alignment == StaRight || m_alignment == StaCenter)
 		{
 			float offset = boundsWidth - i->width;
 
-			if (m_alignment == AnCenter)
+			if (m_alignment == StaCenter)
 				offset /= 2.0f;
 
 			i->x = m_bounds.mn.x + offset;

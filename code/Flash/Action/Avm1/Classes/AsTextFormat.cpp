@@ -1,3 +1,4 @@
+#include "Core/Misc/String.h"
 #include "Flash/FlashTextFormat.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/AsTextFormat.h"
@@ -46,7 +47,7 @@ void AsTextFormat::initialize(ActionObject* self)
 
 void AsTextFormat::construct(ActionObject* self, const ActionValueArray& args)
 {
-	self->setRelay(new FlashTextFormat(0.0f, 0.0f));
+	self->setRelay(new FlashTextFormat(0.0f, StaLeft, 0.0f));
 }
 
 ActionValue AsTextFormat::xplicit(const ActionValueArray& args)
@@ -56,11 +57,31 @@ ActionValue AsTextFormat::xplicit(const ActionValueArray& args)
 
 std::string AsTextFormat::TextFormat_get_align(FlashTextFormat* self) const
 {
-	return "";
+	switch (self->getAlign())
+	{
+	case StaLeft:
+		return "left";
+	case StaRight:
+		return "right";
+	case StaCenter:
+		return "center";
+	case StaJustify:
+		return "justify";
+	default:
+		return "";
+	}
 }
 
 void AsTextFormat::TextFormat_set_align(FlashTextFormat* self, const std::string& value) const
 {
+	if (compareIgnoreCase< std::string >(value, "left") == 0)
+		self->setAlign(StaLeft);
+	else if (compareIgnoreCase< std::string >(value, "right") == 0)
+		self->setAlign(StaRight);
+	else if (compareIgnoreCase< std::string >(value, "center") == 0)
+		self->setAlign(StaCenter);
+	else if (compareIgnoreCase< std::string >(value, "justify") == 0)
+		self->setAlign(StaJustify);
 }
 
 avm_number_t AsTextFormat::TextFormat_get_blockIndent(FlashTextFormat* self) const

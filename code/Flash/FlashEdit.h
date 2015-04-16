@@ -25,14 +25,6 @@ class T_DLLCLASS FlashEdit : public FlashCharacter
 	T_RTTI_CLASS;
 
 public:
-	enum Align
-	{
-		AnLeft = 0x00,
-		AnRight = 0x01,
-		AnCenter = 0x02,
-		AnJustify = 0x03
-	};
-
 	FlashEdit();
 
 	FlashEdit(
@@ -43,7 +35,7 @@ public:
 		const SwfColor& textColor,
 		uint16_t maxLength,
 		const std::wstring& initialText,
-		Align align,
+		SwfTextAlignType align,
 		uint16_t leftMargin,
 		uint16_t rightMargin,
 		int16_t indent,
@@ -103,7 +95,7 @@ public:
 	 *
 	 * \return Alignment.
 	 */
-	Align getAlign() const;
+	SwfTextAlignType getAlign() const;
 
 	/*! \brief Get left margin.
 	 *
@@ -162,7 +154,7 @@ private:
 	SwfColor m_textColor;
 	std::wstring m_initialText;
 	uint16_t m_maxLength;
-	Align m_align;
+	SwfTextAlignType m_align;
 	uint16_t m_leftMargin;
 	uint16_t m_rightMargin;
 	int16_t m_indent;

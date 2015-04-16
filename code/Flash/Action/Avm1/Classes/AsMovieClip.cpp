@@ -470,7 +470,7 @@ Ref< FlashEditInstance > AsMovieClip::MovieClip_createTextField(
 		color,
 		std::numeric_limits< uint16_t >::max(),
 		L"",
-		FlashEdit::AnLeft,
+		StaLeft,
 		0,
 		0,
 		0,

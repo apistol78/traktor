@@ -282,7 +282,7 @@ void FlashMovieRenderer::renderCharacter(
 		float textOffsetY = -(layout->getFontHeight() + layout->getLeading()) * editInstance->getScroll();
 
 		// Calculate edit offset; ie scroll text to left while editing.
-		if (haveFocus && lines.size() == 1 && layout->getAlignment() == TextLayout::AnLeft)
+		if (haveFocus && lines.size() == 1 && layout->getAlignment() == StaLeft)
 		{
 			const Aabb2& clipBounds = layout->getBounds();
 			float clipWidth = clipBounds.mx.x - clipBounds.mn.x;

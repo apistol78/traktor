@@ -79,6 +79,7 @@ private:
 	Ref< const FlashEdit > m_edit;
 	SwfColor m_textColor;
 	float m_letterSpacing;
+	SwfTextAlignType m_align;
 	float m_fontHeight;
 	std::wstring m_text;
 	std::wstring m_htmlText;

@@ -441,6 +441,14 @@ enum SwfAlignType
 	SaRight = 2
 };
 
+enum SwfTextAlignType
+{
+	StaLeft = 0,
+	StaRight = 1,
+	StaCenter = 2,
+	StaJustify = 3
+};
+
 enum SwfScaleModeType
 {
 	SmShowAll = 0,

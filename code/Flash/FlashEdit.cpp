@@ -17,7 +17,7 @@ FlashEdit::FlashEdit()
 :	m_fontId(0)
 ,	m_fontHeight(0)
 ,	m_maxLength(std::numeric_limits< uint16_t >::max())
-,	m_align(AnLeft)
+,	m_align(StaLeft)
 ,	m_leftMargin(0)
 ,	m_rightMargin(0)
 ,	m_indent(0)
@@ -41,7 +41,7 @@ FlashEdit::FlashEdit(
 	const SwfColor& textColor,
 	uint16_t maxLength,
 	const std::wstring& initialText,
-	Align align,
+	SwfTextAlignType align,
 	uint16_t leftMargin,
 	uint16_t rightMargin,
 	int16_t indent,
@@ -112,7 +112,7 @@ const std::wstring& FlashEdit::getInitialText() const
 	return m_initialText;
 }
 
-FlashEdit::Align FlashEdit::getAlign() const
+SwfTextAlignType FlashEdit::getAlign() const
 {
 	return m_align;
 }
@@ -159,12 +159,12 @@ bool FlashEdit::renderHtml() const
 
 void FlashEdit::serialize(ISerializer& s)
 {
-	const MemberEnum< Align >::Key kAlign[] =
+	const MemberEnum< SwfTextAlignType >::Key kAlign[] =
 	{
-		{ L"AnLeft", AnLeft },
-		{ L"AnRight", AnRight },
-		{ L"AnCenter", AnCenter },
-		{ L"AnJustify", AnJustify },
+		{ L"StaLeft", StaLeft },
+		{ L"StaRight", StaRight },
+		{ L"StaCenter", StaCenter },
+		{ L"StaJustify", StaJustify },
 		{ 0, 0 }
 	};
 
@@ -176,7 +176,7 @@ void FlashEdit::serialize(ISerializer& s)
 	s >> MemberSwfColor(L"textColor", m_textColor);
 	s >> Member< uint16_t >(L"maxLength", m_maxLength);
 	s >> Member< std::wstring >(L"initialText", m_initialText);
-	s >> MemberEnum< Align >(L"align", m_align, kAlign);
+	s >> MemberEnum< SwfTextAlignType >(L"align", m_align, kAlign);
 	s >> Member< uint16_t >(L"leftMargin", m_leftMargin);
 	s >> Member< uint16_t >(L"rightMargin", m_rightMargin);
 	s >> Member< int16_t >(L"indent", m_indent);
