@@ -9,6 +9,7 @@
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
+#include "Net/SocketAddressIPv4.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -84,6 +85,10 @@ private:
 
 	Ref< UdpSocket > m_multicastSendSocket;
 	Ref< MulticastUdpSocket > m_multicastRecvSocket;
+	Ref< UdpSocket > m_directSocket;
+
+	SocketAddressIPv4 m_replyToAddress;
+
 	Thread* m_threadMulticastListener;
 	Guid m_managerGuid;
 	uint32_t m_mode;
@@ -96,7 +101,7 @@ private:
 
 	int32_t sendMessage(UdpSocket* socket, const SocketAddressIPv4& address, const IDiscoveryMessage* message);
 
-	Ref< IDiscoveryMessage > recvMessage(UdpSocket* socket, SocketAddressIPv4* fromAddress, int32_t timeout);
+	Ref< IDiscoveryMessage > recvMessage(UdpSocket* socket, SocketAddressIPv4* fromAddress);
 };
 
 	}

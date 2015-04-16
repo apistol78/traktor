@@ -1,11 +1,13 @@
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/MemoryStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Timer/Timer.h"
 #include "Net/MulticastUdpSocket.h"
 #include "Net/SocketAddressIPv4.h"
+#include "Net/SocketSet.h"
 #include "Net/UdpSocket.h"
 #include "Net/Discovery/DiscoveryManager.h"
 #include "Net/Discovery/DmFindServices.h"
@@ -20,8 +22,8 @@ namespace traktor
 		{
 
 const wchar_t* c_discoveryMulticastGroup = L"225.0.0.37";
-const uint16_t c_discoveryMulticastPort = 40000;
-const int32_t c_maxServiceTickCount = 20;
+const uint16_t c_discoveryMulticastPort = 41100;
+const int32_t c_maxServiceTickCount = 40;
 
 OutputStream& operator << (OutputStream& os, const net::SocketAddressIPv4& addr)
 {
@@ -40,6 +42,7 @@ DiscoveryManager::DiscoveryManager()
 
 bool DiscoveryManager::create(uint32_t mode)
 {
+	// Create multicast sockets.
 	m_multicastSendSocket = new UdpSocket();
 	if (!m_multicastSendSocket->bind(SocketAddressIPv4(c_discoveryMulticastPort)))
 	{
@@ -60,9 +63,29 @@ bool DiscoveryManager::create(uint32_t mode)
 		return false;
 	}
 
-	if (!m_multicastRecvSocket->setTTL(10))
+	if (!m_multicastRecvSocket->setTTL(32))
 		log::warning << L"Unable to set multicast time-to-live option" << Endl;
 
+	// Create direct communication socket.
+	net::SocketAddressIPv4::Interface itf;
+	if (!net::SocketAddressIPv4::getBestInterface(itf))
+	{
+		log::error << L"Discovery setup failed; unable to enumerate interfaces" << Endl;
+		return false;
+	}
+
+	m_directSocket = new UdpSocket();
+	if (!m_directSocket->bind(SocketAddressIPv4(itf.addr->getAddr(), 0)))
+	{
+		log::error << L"Discovery setup failed; unable to bind receive socket" << Endl;
+		return false;
+	}
+
+	m_replyToAddress = *dynamic_type_cast< net::SocketAddressIPv4* >(m_directSocket->getLocalAddress());
+	if ((mode & MdVerbose) != 0)
+		log::info << L"Discovery manager: receive address " << m_replyToAddress << Endl;
+
+	// Create communication thread.
 	m_threadMulticastListener = ThreadManager::getInstance().create(makeFunctor(this, &DiscoveryManager::threadMulticastListener), L"Discovery listener");
 	if (!m_threadMulticastListener)
 	{
@@ -73,7 +96,7 @@ bool DiscoveryManager::create(uint32_t mode)
 	m_managerGuid = Guid::create();
 	m_mode = mode;
 	
-	m_threadMulticastListener->start(Thread::Below);
+	m_threadMulticastListener->start();
 	return true;
 }
 
@@ -86,17 +109,9 @@ void DiscoveryManager::destroy()
 		m_threadMulticastListener = 0;
 	}
 
-	if (m_multicastRecvSocket)
-	{
-		m_multicastRecvSocket->close();
-		m_multicastRecvSocket = 0;
-	}
-
-	if (m_multicastSendSocket)
-	{
-		m_multicastSendSocket->close();
-		m_multicastSendSocket = 0;
-	}
+	safeClose(m_directSocket);
+	safeClose(m_multicastRecvSocket);
+	safeClose(m_multicastSendSocket);
 }
 
 void DiscoveryManager::addService(IService* service)
@@ -164,13 +179,19 @@ void DiscoveryManager::threadMulticastListener()
 
 	while (!m_threadMulticastListener->stopped())
 	{
+		// Broadcast "find service" message to all multicast listeners.
 		if (
 			((m_mode & MdFindServices) != 0) &&
 			timer.getElapsedTime() > beacon
 		)
 		{
-			DmFindServices msgFindServices(m_managerGuid);
-			if ((res = sendMessage(m_multicastSendSocket, address, &msgFindServices)) != 0)
+			DmFindServices msgFindServices(m_managerGuid, m_replyToAddress);
+			if ((res = sendMessage(m_multicastSendSocket, address, &msgFindServices)) == 0)
+			{
+				if ((m_mode & MdVerbose) != 0)
+					log::info << L"Discovery manager: \"find services\" broadcasted successfully" << Endl;
+			}
+			else
 			{
 				if ((m_mode & MdVerbose) != 0)
 					log::info << L"Discovery manager: Unable to send \"find services\" message (" << res << L")" << Endl;
@@ -178,69 +199,78 @@ void DiscoveryManager::threadMulticastListener()
 			beacon = timer.getElapsedTime() + 1.0;
 		}
 
-		Ref< IDiscoveryMessage > message = recvMessage(m_multicastRecvSocket, &fromAddress, 500);
-		if (!message)
-		{
-			// Increment tick count of already found services; remove too old services.
-			for (std::map< Guid, ExternalService >::iterator i = m_externalServices.begin(); i != m_externalServices.end(); )
-			{
-				if (++i->second.tick >= c_maxServiceTickCount)
-					m_externalServices.erase(i++);
-				else
-					++i;
-			}
+		// Wait for any received data on any socket.
+		SocketSet waitSet;
+		SocketSet resultSet;
+		waitSet.add(m_multicastRecvSocket);
+		waitSet.add(m_directSocket);
+		if (waitSet.select(true, false, false, 500, resultSet) <= 0)
 			continue;
-		}
 
-		if (DmFindServices* findServices = dynamic_type_cast< DmFindServices* >(message))
+		// Did we receive any multicast message?
+		if (resultSet.contain(m_multicastRecvSocket))
 		{
-			if ((m_mode & MdPublishServices) == 0)
-				continue;
-
-			// Do not respond to our self.
-			Guid requestingManagerGuid = findServices->getManagerGuid();
-			if (requestingManagerGuid == m_managerGuid)
-				continue;
-
 			if ((m_mode & MdVerbose) != 0)
-				log::info << L"Discovery manager: Got \"find services\" request from " << fromAddress << Endl;
+				log::info << L"Discovery manager: received multicast message" << Endl;
 
+			Ref< IDiscoveryMessage > message = recvMessage(m_multicastRecvSocket, &fromAddress);
+			if (DmFindServices* findServices = dynamic_type_cast< DmFindServices* >(message))
 			{
-				T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_localServicesLock);
-				for (std::list< LocalService >::const_iterator i = m_localServices.begin(); i != m_localServices.end(); ++i)
+				if ((m_mode & MdPublishServices) == 0)
+					continue;
+
+				// Do not respond to ourself.
+				Guid requestingManagerGuid = findServices->getManagerGuid();
+				if (requestingManagerGuid == m_managerGuid)
+					continue;
+
+				if ((m_mode & MdVerbose) != 0)
+					log::info << L"Discovery manager: Got \"find services\" request from " << fromAddress << L", reply to " << findServices->getReplyTo() << Endl;
+
 				{
-					DmServiceInfo serviceInfo(requestingManagerGuid, i->serviceGuid, i->service);
-					if ((res = sendMessage(m_multicastSendSocket, address, &serviceInfo)) != 0)
-						log::error << L"Unable to reply service to requesting manager (" << res << L")" << Endl;
-					else if ((m_mode & MdVerbose) != 0)
-						log::info << L"Discovery manager: Reply sent to " << address << Endl;
+					T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_localServicesLock);
+					for (std::list< LocalService >::const_iterator i = m_localServices.begin(); i != m_localServices.end(); ++i)
+					{
+						DmServiceInfo serviceInfo(i->serviceGuid, i->service);
+						if ((res = sendMessage(
+							m_directSocket,
+							findServices->getReplyTo(),
+							&serviceInfo
+						)) != 0)
+							log::error << L"Unable to reply service to requesting manager (" << res << L")" << Endl;
+						else if ((m_mode & MdVerbose) != 0)
+							log::info << L"Discovery manager: Reply sent to " << address << Endl;
+					}
 				}
 			}
 		}
-		else if (DmServiceInfo* serviceInfo = dynamic_type_cast< DmServiceInfo* >(message))
+
+		// Did we receive a direct message?
+		if (resultSet.contain(m_directSocket))
 		{
-			// Response to an query issued from me?
-			if (serviceInfo->getManagerGuid() != m_managerGuid)
-				continue;
+			if ((m_mode & MdVerbose) != 0)
+				log::info << L"Discovery manager: received direct message" << Endl;
 
-			if (serviceInfo->getService())
+			Ref< IDiscoveryMessage > message = recvMessage(m_directSocket, &fromAddress);
+			if (DmServiceInfo* serviceInfo = dynamic_type_cast< DmServiceInfo* >(message))
 			{
-				T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_externalServicesLock);
+				if (serviceInfo->getService())
+				{
+					T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_externalServicesLock);
 
-				if ((m_mode & MdVerbose) != 0)
-					log::info << L"Discovery manager: Got \"service info\" from " << fromAddress << Endl;
+					if ((m_mode & MdVerbose) != 0)
+						log::info << L"Discovery manager: Got \"service info\" from " << fromAddress << Endl;
 
-				m_externalServices[serviceInfo->getServiceGuid()].tick = 0;
-				m_externalServices[serviceInfo->getServiceGuid()].service = serviceInfo->getService();
-			}
-			else
-			{
-				if ((m_mode & MdVerbose) != 0)
-					log::warning << L"Discovery manager: Got invalid \"service info\" from " << fromAddress << Endl;
+					m_externalServices[serviceInfo->getServiceGuid()].tick = 0;
+					m_externalServices[serviceInfo->getServiceGuid()].service = serviceInfo->getService();
+				}
+				else
+				{
+					if ((m_mode & MdVerbose) != 0)
+						log::warning << L"Discovery manager: Got invalid \"service info\" from " << fromAddress << Endl;
+				}
 			}
 		}
-		else
-			log::error << L"Got unknown discovery message" << Endl;
 	}
 }
 
@@ -260,12 +290,9 @@ int32_t DiscoveryManager::sendMessage(UdpSocket* socket, const SocketAddressIPv4
 	return 0;
 }
 
-Ref< IDiscoveryMessage > DiscoveryManager::recvMessage(UdpSocket* socket, SocketAddressIPv4* fromAddress, int32_t timeout)
+Ref< IDiscoveryMessage > DiscoveryManager::recvMessage(UdpSocket* socket, SocketAddressIPv4* fromAddress)
 {
 	uint8_t buffer[1024];
-
-	if (socket->select(true, false, false, timeout) <= 0)
-		return 0;
 
 	int32_t nrecv = socket->recvFrom(buffer, sizeof(buffer), fromAddress);
 	if (nrecv <= 0)
