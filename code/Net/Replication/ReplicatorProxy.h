@@ -77,6 +77,10 @@ public:
 
 	/*! \brief
 	 */
+	double getTimeRate() const;
+
+	/*! \brief
+	 */
 	bool isConnected() const;
 
 	/*! \brief
@@ -199,7 +203,9 @@ private:
 
 	double m_timeUntilTxPing;
 	double m_timeUntilTxState;
+	CircularVector< std::pair< double, double >, 33 > m_remoteTimes;
 	CircularVector< double, 33 > m_roundTrips;
+	double m_timeRate;
 	double m_latency;
 	double m_latencyStandardDeviation;
 	double m_latencyReverse;
@@ -214,7 +220,7 @@ private:
 
 	bool dispatchEvents(const SmallMap< const TypeInfo*, RefArray< IReplicatorEventListener > >& eventListeners);
 
-	void updateLatency(double roundTrip, double latencyReverse, double latencyReverseSpread);
+	void updateLatency(double localTime, double remoteTime, double roundTrip, double latencyReverse, double latencyReverseSpread);
 
 	bool receivedState(double localTime, double stateTime, const void* stateData, uint32_t stateDataSize);
 

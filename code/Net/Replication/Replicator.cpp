@@ -253,6 +253,7 @@ bool Replicator::update()
 			reply.id = RmiPong;
 			reply.time = time2net(m_time);
 			reply.pong.time0 = msg.ping.time0;
+			reply.pong.rtime0 = time2net(m_time0);
 			reply.pong.latency = time2net(fromProxy->getLatency());
 			reply.pong.latencySpread = time2net(fromProxy->getLatencySpread());
 
@@ -265,7 +266,7 @@ bool Replicator::update()
 			double latencyReverse = net2time(msg.pong.latency);
 			double latencyReverseSpread = net2time(msg.pong.latencySpread);
 
-			T_MEASURE_STATEMENT(fromProxy->updateLatency(roundTrip, latencyReverse, latencyReverseSpread), 0.001);
+			T_MEASURE_STATEMENT(fromProxy->updateLatency(m_time0, net2time(msg.pong.rtime0), roundTrip, latencyReverse, latencyReverseSpread), 0.001);
 		}
 		else if (msg.id == RmiState)
 		{

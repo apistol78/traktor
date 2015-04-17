@@ -72,11 +72,17 @@ double ReplicatorProxy::getReverseLatencySpread() const
 
 void ReplicatorProxy::resetLatencies()
 {
+	m_remoteTimes.clear();
 	m_roundTrips.clear();
 	m_latency = 0.0;
 	m_latencyStandardDeviation = 0.0;
 	m_latencyReverse = 0.0;
 	m_latencyReverseStandardDeviation = 0.0;
+}
+
+double ReplicatorProxy::getTimeRate() const
+{
+	return m_timeRate;
 }
 
 bool ReplicatorProxy::isConnected() const
@@ -339,8 +345,23 @@ bool ReplicatorProxy::dispatchEvents(const SmallMap< const TypeInfo*, RefArray< 
 	return true;
 }
 
-void ReplicatorProxy::updateLatency(double roundTrip, double latencyReverse, double latencyReverseSpread)
+void ReplicatorProxy::updateLatency(double localTime, double remoteTime, double roundTrip, double latencyReverse, double latencyReverseSpread)
 {
+	// Keep buffer of remote times, also calculate "rate of time" of remote proxy.
+	if (m_remoteTimes.empty() || localTime - m_remoteTimes.back().first > FUZZY_EPSILON)
+		m_remoteTimes.push_back(std::make_pair(localTime, remoteTime));
+	if (m_remoteTimes.size() >= 16)
+	{
+		m_timeRate = 0.0;
+		for (uint32_t i = 0; i < m_remoteTimes.size() - 1; ++i)
+		{
+			double dLocalT = m_remoteTimes[i + 1].first - m_remoteTimes[i].first;
+			double dRemoteT = m_remoteTimes[i + 1].second - m_remoteTimes[i].second;
+			m_timeRate += dRemoteT / dLocalT;
+		}
+		m_timeRate /= double(m_remoteTimes.size() - 1);
+	}
+
 	// Keep circular buffer of latest round trips.
 	m_roundTrips.push_back(roundTrip);
 
@@ -451,6 +472,7 @@ ReplicatorProxy::ReplicatorProxy(Replicator* replicator, net_handle_t handle, co
 ,	m_sequence(0)
 ,	m_timeUntilTxPing(0.0)
 ,	m_timeUntilTxState(0.0)
+,	m_timeRate(0.0)
 ,	m_latency(0.0)
 ,	m_latencyStandardDeviation(0.0)
 ,	m_latencyReverse(0.0)
