@@ -482,13 +482,16 @@ bool ProgramDx11::updateStateConstants(ID3D11DeviceContext* d3dDeviceContext, St
 			return false;
 
 		uint8_t* mapped = (uint8_t*)dm.pData;
-		for (AlignedVector< ParameterOffset >::const_iterator j = state.cbuffer[i].parameterOffsets.begin(); j != state.cbuffer[i].parameterOffsets.end(); ++j)
+		if (mapped)
 		{
-			std::memcpy(
-				&mapped[j->constant],
-				&m_parameterFloatArray[j->offset],
-				j->count * sizeof(float)
-			);
+			for (AlignedVector< ParameterOffset >::const_iterator j = state.cbuffer[i].parameterOffsets.begin(); j != state.cbuffer[i].parameterOffsets.end(); ++j)
+			{
+				std::memcpy(
+					&mapped[j->constant],
+					&m_parameterFloatArray[j->offset],
+					j->count * sizeof(float)
+				);
+			}
 		}
 
 		d3dDeviceContext->Unmap(state.cbuffer[i].d3dBuffer, 0);
