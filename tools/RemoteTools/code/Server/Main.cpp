@@ -298,7 +298,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 
 	T_FORCE_LINK_REF(PropertyInteger);
 
-	traktor::log::info << L"Traktor RemoteServer 1.9" << Endl;
+	traktor::log::info << L"Traktor RemoteServer 1.91" << Endl;
 
 	if (cmdLine.getCount() <= 0)
 	{
@@ -321,7 +321,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	Ref< ui::Bitmap > imageIdle = ui::Bitmap::load(c_ResourceNotificationIdle, sizeof(c_ResourceNotificationIdle), L"png");
 
 	g_notificationIcon = new ui::NotificationIcon();
-	g_notificationIcon->create(L"Traktor RemoteServer 1.9 (" + g_scratchPath + L")", imageIdle);
+	g_notificationIcon->create(L"Traktor RemoteServer 1.91 (" + g_scratchPath + L")", imageIdle);
 	g_notificationIcon->addEventHandler< ui::MouseButtonDownEvent >(&eventNotificationButtonDown);
 #endif
 
