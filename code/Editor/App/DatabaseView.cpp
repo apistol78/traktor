@@ -60,6 +60,22 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.DatabaseView.Filter", DatabaseView::Filt
 		namespace
 		{
 
+struct GroupByNamePred
+{
+	bool operator () (const db::Group* a, const db::Group* b) const
+	{
+		return compareIgnoreCase(a->getName(), b->getName()) < 0;
+	}
+};
+
+struct InstanceByNamePred
+{
+	bool operator () (const db::Instance* a, const db::Instance* b) const
+	{
+		return compareIgnoreCase(a->getName(), b->getName()) < 0;
+	}
+};
+
 class DefaultFilter : public DatabaseView::Filter
 {
 	T_RTTI_CLASS;
@@ -291,7 +307,7 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_treeDatabase->addEventHandler< ui::TreeViewContentChangeEvent >(this, &DatabaseView::eventInstanceRenamed);
 	m_treeDatabase->addEventHandler< ui::TreeViewDragEvent >(this, &DatabaseView::eventInstanceDrag);
 	m_treeDatabase->setEnable(false);
-		
+
 	m_menuGroup[0] = new ui::PopupMenu();
 	m_menuGroup[1] = new ui::PopupMenu();
 	if (!m_menuGroup[0]->create() || !m_menuGroup[1]->create())
@@ -912,6 +928,7 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::
 
 	RefArray< db::Group > childGroups;
 	group->getChildGroups(childGroups);
+	childGroups.sort(GroupByNamePred());
 
 	for (RefArray< db::Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
 		buildTreeItem(treeView, groupItem, *i);
@@ -922,6 +939,7 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::
 
 	RefArray< db::Instance > childInstances;
 	group->getChildInstances(childInstances);
+	childInstances.sort(InstanceByNamePred());
 
 	for (RefArray< db::Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
 	{
@@ -962,7 +980,7 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::
 
 		if (m_rootInstances.find((*i)->getGuid()) != m_rootInstances.end())
 			instanceItem->setBold(true);
-		
+
 		instanceItem->setData(L"GROUP", group);
 		instanceItem->setData(L"INSTANCE", (*i));
 	}
@@ -1076,7 +1094,7 @@ void DatabaseView::eventToolSelectionClicked(ui::custom::ToolBarButtonClickEvent
 		if (!m_toolFilterAssets->isToggled())
 			m_filter = new DefaultFilter();
 	}
-	
+
 	updateView();
 }
 
