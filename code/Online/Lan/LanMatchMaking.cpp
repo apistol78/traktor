@@ -1,4 +1,5 @@
 #include <ctime>
+#include <limits>
 #include "Core/Log/Log.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyGroup.h"
