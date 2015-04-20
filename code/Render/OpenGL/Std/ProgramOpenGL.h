@@ -59,6 +59,15 @@ private:
 		uint32_t offset;
 		uint32_t length;
 		bool dirty;
+
+		Uniform()
+		:	location(0)
+		,	type(0)
+		,	offset(0)
+		,	length(0)
+		,	dirty(false)
+		{
+		}
 	};
 
 	struct Sampler
@@ -67,12 +76,26 @@ private:
 		uint32_t texture;
 		uint32_t stage;
 		GLuint object;
+
+		Sampler()
+		:	location(0)
+		,	texture(0)
+		,	stage(0)
+		,	object(0)
+		{
+		}
 	};
 
 	struct TextureSize
 	{
 		GLint location;
 		uint32_t texture;
+
+		TextureSize()
+		:	location(0)
+		,	texture(0)
+		{
+		}
 	};
 
 	Ref< ContextOpenGL > m_resourceContext;

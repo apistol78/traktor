@@ -75,10 +75,10 @@ void RenderTargetOpenGL::unlock(int level)
 {
 }
 
-void RenderTargetOpenGL::bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject)
+void RenderTargetOpenGL::bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage)
 {
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_colorTexture));
-	renderContext->bindSamplerStateObject(GL_TEXTURE_2D, samplerObject, false, 0.0f);
+	renderContext->bindSamplerStateObject(GL_TEXTURE_2D, samplerObject, stage, false);
 }
 
 void RenderTargetOpenGL::bindSize(GLint locationSize)

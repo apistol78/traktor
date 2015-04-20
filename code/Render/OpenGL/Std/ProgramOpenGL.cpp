@@ -411,7 +411,7 @@ bool ProgramOpenGL::activate(ContextOpenGL* renderContext, float targetSize[2])
 			ITextureBinding* tb = getTextureBinding(resolved);
 			T_FATAL_ASSERT (tb);
 
-			tb->bindTexture(renderContext, sampler.object);
+			tb->bindTexture(renderContext, sampler.object, sampler.stage);
 			T_OGL_SAFE(glUniform1i(sampler.location, sampler.stage));
 		}
 

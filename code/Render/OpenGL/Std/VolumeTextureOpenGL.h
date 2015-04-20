@@ -11,8 +11,6 @@ namespace traktor
 	namespace render
 	{
 		
-class IContext;
-
 /*!
  * \ingroup OGL
  */
@@ -23,7 +21,7 @@ class VolumeTextureOpenGL
 	T_RTTI_CLASS;
 	
 public:
-	VolumeTextureOpenGL(IContext* resourceContext);
+	VolumeTextureOpenGL(ContextOpenGL* resourceContext);
 
 	virtual ~VolumeTextureOpenGL();
 
@@ -39,12 +37,12 @@ public:
 	
 	virtual int getDepth() const;
 
-	virtual void bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject);
+	virtual void bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage);
 
 	virtual void bindSize(GLint locationSize);
 
 private:
-	Ref< IContext > m_resourceContext;
+	Ref< ContextOpenGL > m_resourceContext;
 	GLuint m_textureName;
 	int m_width;
 	int m_height;

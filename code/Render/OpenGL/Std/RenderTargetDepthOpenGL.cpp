@@ -75,10 +75,10 @@ void RenderTargetDepthOpenGL::unlock(int level)
 {
 }
 
-void RenderTargetDepthOpenGL::bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject)
+void RenderTargetDepthOpenGL::bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage)
 {
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_depthTexture));
-	renderContext->bindSamplerStateObject(GL_TEXTURE_2D, samplerObject, false, 0.0f);
+	renderContext->bindSamplerStateObject(GL_TEXTURE_2D, samplerObject, stage, false);
 }
 
 void RenderTargetDepthOpenGL::bindSize(GLint locationSize)

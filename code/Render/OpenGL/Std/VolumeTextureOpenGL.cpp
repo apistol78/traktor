@@ -30,7 +30,7 @@ struct DeleteTextureCallback : public IContext::IDeleteCallback
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VolumeTextureOpenGL", VolumeTextureOpenGL, IVolumeTexture)
 
-VolumeTextureOpenGL::VolumeTextureOpenGL(IContext* resourceContext)
+VolumeTextureOpenGL::VolumeTextureOpenGL(ContextOpenGL* resourceContext)
 :	m_resourceContext(resourceContext)
 ,	m_textureName(0)
 ,	m_width(0)
@@ -136,10 +136,10 @@ int VolumeTextureOpenGL::getDepth() const
 	return m_depth;
 }
 
-void VolumeTextureOpenGL::bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject)
+void VolumeTextureOpenGL::bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage)
 {
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_3D, m_textureName));
-	renderContext->bindSamplerStateObject(GL_TEXTURE_3D, samplerObject, false, 0.0f);
+	renderContext->bindSamplerStateObject(GL_TEXTURE_3D, samplerObject, stage, false);
 }
 
 void VolumeTextureOpenGL::bindSize(GLint locationSize)

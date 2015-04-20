@@ -53,7 +53,7 @@ struct DeleteTextureCallback : public IContext::IDeleteCallback
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CubeTextureOpenGL", CubeTextureOpenGL, ICubeTexture)
 
-CubeTextureOpenGL::CubeTextureOpenGL(IContext* resourceContext)
+CubeTextureOpenGL::CubeTextureOpenGL(ContextOpenGL* resourceContext)
 :	m_resourceContext(resourceContext)
 ,	m_textureName(0)
 ,	m_side(0)
@@ -175,10 +175,10 @@ void CubeTextureOpenGL::unlock(int side, int level)
 {
 }
 
-void CubeTextureOpenGL::bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject)
+void CubeTextureOpenGL::bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage)
 {
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_CUBE_MAP, m_textureName));
-	renderContext->bindSamplerStateObject(GL_TEXTURE_CUBE_MAP, samplerObject, m_mipCount > 1, 0.0f);
+	renderContext->bindSamplerStateObject(GL_TEXTURE_CUBE_MAP, samplerObject, stage, m_mipCount > 1);
 }
 
 void CubeTextureOpenGL::bindSize(GLint locationSize)

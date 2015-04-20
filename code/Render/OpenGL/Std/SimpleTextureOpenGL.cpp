@@ -33,7 +33,7 @@ struct DeleteTextureCallback : public IContext::IDeleteCallback
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTextureOpenGL", SimpleTextureOpenGL, ISimpleTexture)
 
-SimpleTextureOpenGL::SimpleTextureOpenGL(IContext* resourceContext)
+SimpleTextureOpenGL::SimpleTextureOpenGL(ContextOpenGL* resourceContext)
 :	m_resourceContext(resourceContext)
 ,	m_textureName(0)
 ,	m_width(0)
@@ -49,11 +49,10 @@ SimpleTextureOpenGL::~SimpleTextureOpenGL()
 	destroy();
 }
 
-bool SimpleTextureOpenGL::create(const SimpleTextureCreateDesc& desc, GLfloat maxAnisotropy)
+bool SimpleTextureOpenGL::create(const SimpleTextureCreateDesc& desc)
 {
 	m_width = desc.width;
 	m_height = desc.height;
-	m_maxAnisotropy = maxAnisotropy;
 
 	if (desc.sRGB)
 	{
@@ -173,10 +172,10 @@ void SimpleTextureOpenGL::unlock(int level)
 	));
 }
 
-void SimpleTextureOpenGL::bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject)
+void SimpleTextureOpenGL::bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage)
 {
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_textureName));
-	renderContext->bindSamplerStateObject(GL_TEXTURE_2D, samplerObject, m_mipCount > 1, m_maxAnisotropy);
+	renderContext->bindSamplerStateObject(GL_TEXTURE_2D, samplerObject, stage, m_mipCount > 1);
 }
 
 void SimpleTextureOpenGL::bindSize(GLint locationSize)

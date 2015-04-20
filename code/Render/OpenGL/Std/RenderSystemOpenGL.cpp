@@ -36,12 +36,8 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemOpenGL", 0, RenderSy
 RenderSystemOpenGL::RenderSystemOpenGL()
 #if defined(__APPLE__)
 :	m_windowHandle(0)
-,	m_maxAnisotrophy(1.0f)
 #elif defined(__LINUX__)
 :	m_display(0)
-,	m_maxAnisotrophy(1.0f)
-#else
-:	m_maxAnisotrophy(1.0f)
 #endif
 {
 }
@@ -243,7 +239,7 @@ bool RenderSystemOpenGL::create(const RenderSystemDesc& desc)
 #endif
 
 	m_resourceContext->leave();
-	m_maxAnisotrophy = (GLfloat)desc.maxAnisotropy;
+	m_resourceContext->setMaxAnisotropy((GLfloat)desc.maxAnisotropy);
 	return true;
 }
 
@@ -282,7 +278,7 @@ void RenderSystemOpenGL::destroy()
 
 bool RenderSystemOpenGL::reset(const RenderSystemDesc& desc)
 {
-	m_maxAnisotrophy = (GLfloat)desc.maxAnisotropy;
+	m_resourceContext->setMaxAnisotropy((GLfloat)desc.maxAnisotropy);
 	return true;
 }
 
@@ -437,10 +433,11 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 	m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - OpenGL Renderer");
 
 	if (desc.fullscreen)
-		m_window->setFullScreenStyle(desc.displayMode.width, desc.displayMode.height);
+		m_window->setFullScreenStyle();
 	else
 		m_window->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
 
+#	if 0
 	if (desc.fullscreen)
 	{
 		DEVMODE dmgl;
@@ -471,6 +468,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 			}
 		}
 	}
+#	endif
 
 	PIXELFORMATDESCRIPTOR pfd =
 	{
@@ -808,7 +806,7 @@ Ref< ISimpleTexture > RenderSystemOpenGL::createSimpleTexture(const SimpleTextur
 	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
 
 	Ref< SimpleTextureOpenGL > texture = new SimpleTextureOpenGL(m_resourceContext);
-	if (!texture->create(desc, m_maxAnisotrophy))
+	if (!texture->create(desc))
 		return 0;
 
 	return texture;

@@ -12,8 +12,6 @@ namespace traktor
 	namespace render
 	{
 
-class IContext;
-
 /*!
  * \ingroup OGL
  */
@@ -24,11 +22,11 @@ class SimpleTextureOpenGL
 	T_RTTI_CLASS;
 
 public:
-	SimpleTextureOpenGL(IContext* resourceContext);
+	SimpleTextureOpenGL(ContextOpenGL* resourceContext);
 
 	virtual ~SimpleTextureOpenGL();
 	
-	bool create(const SimpleTextureCreateDesc& desc, GLfloat maxAnisotropy);
+	bool create(const SimpleTextureCreateDesc& desc);
 
 	virtual void destroy();
 
@@ -42,12 +40,12 @@ public:
 
 	virtual void unlock(int level);
 
-	virtual void bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject);
+	virtual void bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage);
 
 	virtual void bindSize(GLint locationSize);
 
 private:
-	Ref< IContext > m_resourceContext;
+	Ref< ContextOpenGL > m_resourceContext;
 	GLuint m_textureName;
 	int m_width;
 	int m_height;
@@ -56,7 +54,6 @@ private:
 	GLenum m_format;
 	GLenum m_type;
 	uint32_t m_mipCount;
-	GLfloat m_maxAnisotropy;
 	uint32_t m_dataSize;
 	AutoArrayPtr< uint8_t > m_data;
 };

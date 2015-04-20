@@ -199,7 +199,7 @@ bool RenderViewOpenGL::reset(const RenderViewDefaultDesc& desc)
 #if defined(_WIN32)
 		m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - OpenGL Renderer");
 		if (desc.fullscreen)
-			m_window->setFullScreenStyle(desc.displayMode.width, desc.displayMode.height);
+			m_window->setFullScreenStyle();
 		else
 			m_window->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
 #elif defined(__APPLE__)
@@ -303,6 +303,11 @@ bool RenderViewOpenGL::isActive() const
 	return m_windowHandle ? cglwIsActive(m_windowHandle) : false;
 #elif defined(__LINUX__)
 	return m_window->isActive();
+#elif defined(_WIN32)
+	if (m_window)
+		return GetForegroundWindow() == *m_window;
+	else
+		return true;
 #else
 	return true;
 #endif
