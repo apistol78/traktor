@@ -463,8 +463,11 @@ bool Application::update()
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
 
 		// Emit action in current state as we're about to reconfigured servers.
+		// Also ensure state are flushed before reconfiguring.
 		if ((currentState = m_stateManager->getCurrent()) != 0)
 		{
+			currentState->flush();
+
 			ReconfigureEvent configureEvent(false, 0);
 			currentState->take(&configureEvent);
 		}

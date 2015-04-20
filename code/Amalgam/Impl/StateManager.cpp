@@ -16,6 +16,7 @@ void StateManager::destroy()
 	
 	if (m_current)
 	{
+		m_current->flush();
 		m_current->leave();
 		m_current = 0;
 	}
@@ -47,6 +48,7 @@ void StateManager::leaveCurrent()
 
 	if (m_current)
 	{
+		m_current->flush();
 		m_current->leave();
 		m_current = 0;
 	}
