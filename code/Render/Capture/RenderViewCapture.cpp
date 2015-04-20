@@ -198,13 +198,13 @@ void RenderViewCapture::end()
 
 void RenderViewCapture::present()
 {
-	m_renderView->present();
 	for (std::vector< ProfileCapture >::const_iterator i = m_timeStamps.begin(); i != m_timeStamps.end(); ++i)
 	{
 		uint64_t timeBegin = m_timeQuery->get(i->begin);
 		uint64_t timeEnd = m_timeQuery->get(i->end);
 		log::info << i->name << L" -> " << (timeEnd - timeBegin) / 1000.0f << L" ms" << Endl;
 	}
+	m_renderView->present();
 }
 
 void RenderViewCapture::pushMarker(const char* const marker)
