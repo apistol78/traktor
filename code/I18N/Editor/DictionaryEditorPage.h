@@ -68,6 +68,9 @@ private:
 	editor::IDocument* m_document;
 	Ref< ui::custom::GridView > m_gridDictionary;
 	Ref< Dictionary > m_dictionary;
+	Ref< Dictionary > m_referenceDictionary;
+
+	void updateGrid();
 
 	void eventToolClick(ui::custom::ToolBarButtonClickEvent* event);
 
