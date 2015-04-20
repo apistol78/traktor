@@ -14,6 +14,7 @@
 #include "Render/OpenGL/Std/RenderTargetSetOpenGL.h"
 #include "Render/OpenGL/Std/RenderViewOpenGL.h"
 #include "Render/OpenGL/Std/SimpleTextureOpenGL.h"
+#include "Render/OpenGL/Std/TimeQueryOpenGL.h"
 #include "Render/OpenGL/Std/VertexBufferVAR.h"
 #include "Render/OpenGL/Std/VertexBufferDynamicVBO.h"
 #include "Render/OpenGL/Std/VertexBufferStaticVBO.h"
@@ -858,7 +859,8 @@ Ref< IProgramCompiler > RenderSystemOpenGL::createProgramCompiler() const
 
 Ref< ITimeQuery > RenderSystemOpenGL::createTimeQuery() const
 {
-	return 0;
+	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
+	return TimeQueryOpenGL::create();
 }
 
 void RenderSystemOpenGL::purge()
