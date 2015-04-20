@@ -1,6 +1,8 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
+#include "Database/Instance.h"
 #include "Editor/IDocument.h"
+#include "Editor/IEditor.h"
 #include "I18N/Dictionary.h"
 #include "I18N/Editor/DictionaryEditorPage.h"
 #include "I18N/Editor/IDictionaryFormat.h"
@@ -128,24 +130,17 @@ bool DictionaryEditorPage::create(ui::Container* parent)
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Export...", ui::Command(L"I18N.Editor.Export")));
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Translate...", ui::Command(L"I18N.Editor.Translate")));
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Copy unique characters...", ui::Command(L"I18N.Editor.CopyUniqueChars")));
+	toolBar->addItem(new ui::custom::ToolBarButton(L"Select reference dictionary...", ui::Command(L"I18N.Editor.SelectReferenceDictionary")));
 	toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &DictionaryEditorPage::eventToolClick);
 
 	m_gridDictionary = new ui::custom::GridView();
 	m_gridDictionary->create(container, ui::custom::GridView::WsColumnHeader | ui::WsDoubleBuffer);
 	m_gridDictionary->addColumn(new ui::custom::GridColumn(L"Id", 300));
-	m_gridDictionary->addColumn(new ui::custom::GridColumn(L"Text", 800));
+	m_gridDictionary->addColumn(new ui::custom::GridColumn(L"Text", 600));
+	m_gridDictionary->addColumn(new ui::custom::GridColumn(L"Reference", 600));
 	m_gridDictionary->addEventHandler< ui::MouseDoubleClickEvent >(this, &DictionaryEditorPage::eventGridDoubleClick);
 
-	const std::map< std::wstring, std::wstring >& map = m_dictionary->get();
-	for (std::map< std::wstring, std::wstring >::const_iterator i = map.begin(); i != map.end(); ++i)
-	{
-		Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
-		row->add(new ui::custom::GridItem(i->first));
-		row->add(new ui::custom::GridItem(i->second));
-		m_gridDictionary->addRow(row);
-	}
-	m_gridDictionary->update();
-
+	updateGrid();
 	return true;
 }
 
@@ -176,6 +171,32 @@ void DictionaryEditorPage::handleDatabaseEvent(db::Database* database, const Gui
 {
 }
 
+void DictionaryEditorPage::updateGrid()
+{
+	m_gridDictionary->removeAllRows();
+
+	if (m_dictionary)
+	{
+		const std::map< std::wstring, std::wstring >& map = m_dictionary->get();
+		for (std::map< std::wstring, std::wstring >::const_iterator i = map.begin(); i != map.end(); ++i)
+		{
+			Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
+			row->add(new ui::custom::GridItem(i->first));
+			row->add(new ui::custom::GridItem(i->second));
+
+			if (m_referenceDictionary)
+			{
+				std::wstring referenceText;
+				if (m_referenceDictionary->get(i->first, referenceText))
+					row->add(new ui::custom::GridItem(referenceText));
+			}
+
+			m_gridDictionary->addRow(row);
+		}
+		m_gridDictionary->update();
+	}
+}
+
 void DictionaryEditorPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* event)
 {
 	const ui::Command& cmd = event->getCommand();
@@ -204,17 +225,7 @@ void DictionaryEditorPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* e
 		for (std::map< std::wstring, std::wstring >::const_iterator i = kv.begin(); i != kv.end(); ++i)
 			m_dictionary->set(i->first, i->second);
 
-		m_gridDictionary->removeAllRows();
-
-		const std::map< std::wstring, std::wstring >& map = m_dictionary->get();
-		for (std::map< std::wstring, std::wstring >::const_iterator i = map.begin(); i != map.end(); ++i)
-		{
-			Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
-			row->add(new ui::custom::GridItem(i->first));
-			row->add(new ui::custom::GridItem(i->second));
-			m_gridDictionary->addRow(row);
-		}
-		m_gridDictionary->update();
+		updateGrid();
 	}
 	else if (cmd == L"I18N.Editor.Export")
 	{
@@ -303,6 +314,15 @@ void DictionaryEditorPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* e
 			clipboard->setText(ss.str());
 
 		log::info << uc.size() << L" unique character(s) copied into clipboard" << Endl;
+	}
+	else if (cmd == L"I18N.Editor.SelectReferenceDictionary")
+	{
+		Ref< db::Instance > referenceInstance = m_editor->browseInstance(type_of< Dictionary >());
+		if (referenceInstance)
+		{
+			m_referenceDictionary = referenceInstance->getObject< Dictionary >();
+			updateGrid();
+		}
 	}
 }
 
