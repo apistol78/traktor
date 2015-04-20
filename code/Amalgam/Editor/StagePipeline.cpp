@@ -32,6 +32,15 @@ Ref< StageData > flattenInheritance(editor::IPipelineBuilder* pipelineBuilder, c
 		if (!downStageData)
 			return 0;
 
+		// Append layers.
+		RefArray< LayerData > downStageLayers = downStageDataFlatten->getLayers();
+		if (!downStageLayers.empty())
+		{
+			RefArray< LayerData > layers = stageDataOut->getLayers();
+			layers.insert(layers.end(), downStageLayers.begin(), downStageLayers.end());
+			stageDataOut->setLayers(layers);
+		}
+
 		// Replace script.
 		if (stageDataOut->getScript().isNull())
 			stageDataOut->setScript(downStageDataFlatten->getScript());
@@ -54,7 +63,7 @@ Ref< StageData > flattenInheritance(editor::IPipelineBuilder* pipelineBuilder, c
 		
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.StagePipeline", 3, StagePipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.StagePipeline", 4, StagePipeline, editor::DefaultPipeline)
 
 TypeInfoSet StagePipeline::getAssetTypes() const
 {

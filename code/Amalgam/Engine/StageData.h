@@ -57,6 +57,8 @@ public:
 
 	const Guid& getInherit() const { return m_inherit; }
 
+	void setLayers(const RefArray< LayerData >& layers) { m_layers = layers; }
+
 	const RefArray< LayerData >& getLayers() const { return m_layers; }
 
 	void setScript(const resource::Id< script::IScriptContext >& script) { m_script = script; }
