@@ -53,7 +53,9 @@ public:
 
 	void bindRenderStateObject(uint32_t renderStateObject);
 
-	void bindSamplerStateObject(GLenum textureTarget, uint32_t samplerStateObject, bool haveMips, GLfloat maxAnisotropy);
+	void bindSamplerStateObject(GLenum textureTarget, uint32_t samplerStateObject, uint32_t stage, bool haveMips);
+
+	void setMaxAnisotropy(GLfloat maxAnisotropy);
 
 	void setPermitDepth(bool permitDepth);
 
@@ -91,16 +93,31 @@ private:
 	GLXContext m_context;
 #endif
 
+	struct SamplerStateObject
+	{
+		union
+		{
+			struct
+			{
+				GLuint withMips;
+				GLuint noMips;
+			};
+			GLuint samplers[2];
+		};
+	};
+
 	static ThreadLocal ms_contextStack;
 	Semaphore m_lock;
 	std::map< uint32_t, GLuint > m_shaderObjects;
 	std::map< uint32_t, uint32_t > m_renderStateListCache;
-	std::map< uint32_t, uint32_t > m_samplerStateListCache;
+	//std::map< uint32_t, uint32_t > m_samplerStateListCache;
+	std::map< uint32_t, SamplerStateObject > m_samplerStateObjects;
 	std::vector< RenderStateOpenGL > m_renderStateList;
-	std::vector< SamplerStateOpenGL > m_samplerStateList;
+	//std::vector< SamplerStateOpenGL > m_samplerStateList;
 	std::vector< IDeleteCallback* > m_deleteResources;
 	int32_t m_width;
 	int32_t m_height;
+	GLfloat m_maxAnisotropy;
 	bool m_permitDepth;
 	uint32_t m_currentRenderStateList;
 };

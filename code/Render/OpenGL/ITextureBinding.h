@@ -14,7 +14,7 @@ class ITextureBinding
 {
 public:
 #if defined(T_OPENGL_STD)
-	virtual void bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject) = 0;
+	virtual void bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage) = 0;
 #else
 	virtual void bindSampler(GLuint unit, const SamplerStateOpenGL& samplerState, GLint locationTexture) = 0;
 #endif

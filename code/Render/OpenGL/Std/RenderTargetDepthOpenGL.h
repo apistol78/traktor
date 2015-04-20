@@ -39,7 +39,7 @@ public:
 
 	virtual void unlock(int level);
 
-	virtual void bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject);
+	virtual void bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage);
 
 	virtual void bindSize(GLint locationSize);
 	

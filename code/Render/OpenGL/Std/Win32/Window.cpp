@@ -1,5 +1,5 @@
 #include <algorithm>
-#include "Render/Dx11/Window.h"
+#include "Render/OpenGL/Std/Win32/Window.h"
 
 namespace traktor
 {
@@ -102,7 +102,7 @@ void Window::setWindowedStyle(int32_t width, int32_t height)
 	m_fullScreen = false;
 }
 
-void Window::setFullScreenStyle(int32_t width, int32_t height)
+void Window::setFullScreenStyle()
 {
 	if (!m_fullScreen)
 	{
@@ -116,9 +116,7 @@ void Window::setFullScreenStyle(int32_t width, int32_t height)
 		SetWindowPos(m_hWnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 	}
 
-	SetWindowPos(m_hWnd, NULL, 0, 0, width, height, SWP_NOZORDER);
 	ShowWindow(m_hWnd, SW_MAXIMIZE);
-
 	m_fullScreen = true;
 }
 
