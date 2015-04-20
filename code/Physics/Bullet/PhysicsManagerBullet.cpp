@@ -1126,7 +1126,6 @@ void PhysicsManagerBullet::update(float simulationDeltaTime, bool issueCollision
 	// Step simulation.
 	m_dynamicsWorld->stepSimulation(simulationDeltaTime * m_timeScale, 0);
 
-	/*
 	// Issue collision events.
 	if (issueCollisionEvents)
 	{
@@ -1197,7 +1196,6 @@ void PhysicsManagerBullet::update(float simulationDeltaTime, bool issueCollision
 			manifold->m_fresh = false;
 		}
 	}
-	*/
 
 	m_queryCountLast = m_queryCount;
 	m_queryCount = 0;
