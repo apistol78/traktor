@@ -1,5 +1,6 @@
 #include "Core/Io/MemoryStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/CompactSerializer.h"
 #include "Core/Serialization/DeepHash.h"
