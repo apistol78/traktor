@@ -42,16 +42,10 @@ Ref< ArticulatedEntity > ArticulatedEntityData::createEntity(
 	{
 		Ref< Body > body1, body2;
 
-		if (m_constraints[i].entityIndex1 >= 0)
-		{
-			T_ASSERT_M (m_constraints[i].entityIndex1 < int32_t(entities.size()), L"Entity index 1 out of range");
+		if (m_constraints[i].entityIndex1 >= 0 && m_constraints[i].entityIndex1 < int32_t(entities.size()))
 			body1 = entities[m_constraints[i].entityIndex1]->getBody();
-		}
-		if (m_constraints[i].entityIndex2 >= 0)
-		{
-			T_ASSERT_M (m_constraints[i].entityIndex2 < int32_t(entities.size()), L"Entity index 2 out of range");
+		if (m_constraints[i].entityIndex2 >= 0 && m_constraints[i].entityIndex2 < int32_t(entities.size()))
 			body2 = entities[m_constraints[i].entityIndex2]->getBody();
-		}
 
 		if (body1)
 		{
