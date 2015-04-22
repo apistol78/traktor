@@ -155,6 +155,8 @@ public:
 
 	bool getPhysicsEnable() const;
 
+	void resetPhysics();
+
 	//@}
 
 	/*! \name Camera control. */

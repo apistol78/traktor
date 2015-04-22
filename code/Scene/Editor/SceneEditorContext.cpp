@@ -5,6 +5,8 @@
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Timer/Timer.h"
+#include "Physics/Body.h"
+#include "Physics/PhysicsManager.h"
 #include "Render/ITexture.h"
 #include "Resource/IResourceManager.h"
 #include "Scene/ISceneController.h"
@@ -191,6 +193,13 @@ bool SceneEditorContext::getPhysicsEnable() const
 	return m_physicsEnable;
 }
 
+void SceneEditorContext::resetPhysics()
+{
+	RefArray< physics::Body > bodies = m_physicsManager->getBodies();
+	for (RefArray< physics::Body >::const_iterator i = bodies.begin(); i != bodies.end(); ++i)
+		(*i)->reset();
+}
+
 Camera* SceneEditorContext::getCamera(int index) const
 {
 	T_ASSERT (index >= 0)
@@ -279,6 +288,10 @@ void SceneEditorContext::setSceneAsset(SceneAsset* sceneAsset)
 void SceneEditorContext::buildEntities()
 {
 	double T[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+
+	// Reset physics before creating entities in case
+	// a new body is created with an initial velocity etc.
+	resetPhysics();
 
 	Timer timer;
 	timer.start();
