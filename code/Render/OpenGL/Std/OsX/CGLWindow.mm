@@ -21,7 +21,9 @@ struct WindowData
 	NSMenu* menu;
 	DisplayMode displayMode;
 	bool fullscreen;
+#if 0
 	CFDictionaryRef originalMode;
+#endif
 	NSString* title;
 };
 
@@ -82,7 +84,7 @@ void setWindowRect(NSWindow* window, int32_t x, int32_t y, int32_t width, int32_
 
 CFArrayRef getValidDisplayModes()
 {
-	CFArrayRef availModes = CGDisplayAvailableModes(kCGDirectMainDisplay);
+	CFArrayRef availModes = CGDisplayCopyAllDisplayModes(kCGDirectMainDisplay, NULL);
 	if (!availModes)
 		return 0;
 
@@ -94,19 +96,10 @@ CFArrayRef getValidDisplayModes()
 
 	for (int32_t i = 0; i < availModesCount; ++i)
 	{
-		CFDictionaryRef mode = (CFDictionaryRef)CFArrayGetValueAtIndex(availModes, i);
+		CGDisplayModeRef mode = (CGDisplayModeRef)CFArrayGetValueAtIndex(availModes, i);
 		if (!mode)
 			continue;
 			
-		int32_t bitsPerPixel = getDictionaryLong(mode, kCGDisplayBitsPerPixel);
-		if (bitsPerPixel < 24)
-			continue;
-			
-		if (!CFDictionaryContainsKey(mode, kCGDisplayModeIsSafeForHardware))
-			continue;
-		if (CFDictionaryContainsKey(mode, kCGDisplayModeIsStretched))
-			continue;
-		
 		CFArrayAppendValue(validModes, mode);
 	}
 	
@@ -133,22 +126,23 @@ bool cglwGetDisplayMode(uint32_t index, DisplayMode& outDisplayMode)
 	if (!displayModes)
 		return false;
 	
-	CFDictionaryRef mode = (CFDictionaryRef)CFArrayGetValueAtIndex(displayModes, index);
+	CGDisplayModeRef mode = (CGDisplayModeRef)CFArrayGetValueAtIndex(displayModes, index);
 	if (!mode)
 	{
 		CFRelease(displayModes);
 		return false;
 	}
 		
-	outDisplayMode.width = getDictionaryLong(mode, kCGDisplayWidth);
-	outDisplayMode.height = getDictionaryLong(mode, kCGDisplayHeight);
-	outDisplayMode.refreshRate = getDictionaryLong(mode, kCGDisplayRefreshRate);
-	outDisplayMode.colorBits = getDictionaryLong(mode, kCGDisplayBitsPerPixel);
+	outDisplayMode.width = CGDisplayModeGetWidth(mode);
+	outDisplayMode.height = CGDisplayModeGetHeight(mode);
+	outDisplayMode.refreshRate = CGDisplayModeGetRefreshRate(mode);
+	outDisplayMode.colorBits = 32;
 	
 	CFRelease(displayModes);
 	return true;
 }
 
+#if 0
 bool cglwSetDisplayMode(const DisplayMode& displayMode)
 {
 	CFArrayRef displayModes = getValidDisplayModes();
@@ -160,12 +154,11 @@ bool cglwSetDisplayMode(const DisplayMode& displayMode)
 
 	for (uint32_t i = 0; i < displayModesCount; ++i)
 	{
-		CFDictionaryRef mode = (CFDictionaryRef)CFArrayGetValueAtIndex(displayModes, i);
+		CGDisplayModeRef mode = (CGDisplayModeRef)CFArrayGetValueAtIndex(displayModes, i);
 		if (
-			getDictionaryLong(mode, kCGDisplayWidth) == displayMode.width &&
-			getDictionaryLong(mode, kCGDisplayHeight) == displayMode.height &&
-			getDictionaryLong(mode, kCGDisplayRefreshRate) == displayMode.refreshRate &&
-			getDictionaryLong(mode, kCGDisplayBitsPerPixel) == displayMode.colorBits
+			CGDisplayModeGetWidth(mode) == displayMode.width &&
+			CGDisplayModeGetHeight(mode) == displayMode.height &&
+			CGDisplayModeGetRefreshRate(mode) == displayMode.refreshRate
 		)
 		{
 			bestMatch = mode;
@@ -185,17 +178,18 @@ bool cglwSetDisplayMode(const DisplayMode& displayMode)
 	
 	return true;
 }
+#endif
 
 bool cglwGetCurrentDisplayMode(DisplayMode& outDisplayMode)
 {
-	CFDictionaryRef mode = CGDisplayCurrentMode(kCGDirectMainDisplay);
+	CGDisplayModeRef mode = CGDisplayCopyDisplayMode(kCGDirectMainDisplay);
 	if (!mode)
 		return false;
 	
-	outDisplayMode.width = getDictionaryLong(mode, kCGDisplayWidth);
-	outDisplayMode.height = getDictionaryLong(mode, kCGDisplayHeight);
-	outDisplayMode.refreshRate = getDictionaryLong(mode, kCGDisplayRefreshRate);
-	outDisplayMode.colorBits = getDictionaryLong(mode, kCGDisplayBitsPerPixel);
+	outDisplayMode.width = CGDisplayModeGetWidth(mode);
+	outDisplayMode.height = CGDisplayModeGetHeight(mode);
+	outDisplayMode.refreshRate = CGDisplayModeGetRefreshRate(mode);
+	outDisplayMode.colorBits = 32;
 
 	return true;
 }
@@ -216,19 +210,21 @@ void* cglwCreateWindow(const std::wstring& title, const DisplayMode& displayMode
 	windowData->menu = 0;
 	windowData->displayMode = displayMode;
 	windowData->fullscreen = fullscreen;
+#if 0
 	windowData->originalMode = CGDisplayCurrentMode(kCGDirectMainDisplay);
+#endif
 	windowData->title = makeNSString(title);
 	
 	// Create window.
-	NSRect frame = NSMakeRect(0, 0, displayMode.width, displayMode.height);
-	
 	if (fullscreen)
 	{
-		CGDisplayCapture(kCGDirectMainDisplay);
+		NSRect frame = [[NSScreen mainScreen] frame];
 
+		CGDisplayCapture(kCGDirectMainDisplay);
+#if 0
 		if (!cglwSetDisplayMode(displayMode))
 			return 0;
-	
+#endif
 		NSInteger windowLevel = CGShieldingWindowLevel();
 
 		windowData->window = [[CGLCustomWindow alloc]
@@ -245,6 +241,7 @@ void* cglwCreateWindow(const std::wstring& title, const DisplayMode& displayMode
 	}
 	else
 	{
+		NSRect frame = NSMakeRect(0, 0, displayMode.width, displayMode.height);
 		windowData->window = [[CGLCustomWindow alloc]
 			initWithContentRect: frame
 			styleMask: NSTitledWindowMask | NSResizableWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask
@@ -319,11 +316,13 @@ bool cglwModifyWindow(void* windowHandle, const DisplayMode& displayMode, bool f
 	{
 		if (fullscreen)
 		{
-			CGDisplayCapture(kCGDirectMainDisplay);
+			NSRect frame = [[NSScreen mainScreen] frame];
 
+			CGDisplayCapture(kCGDirectMainDisplay);
+#if 0
 			if (!cglwSetDisplayMode(displayMode))
 				return false;
-
+#endif
 			NSInteger windowLevel = CGShieldingWindowLevel();
 
 			[windowData->window setStyleMask: NSBorderlessWindowMask];
@@ -334,14 +333,16 @@ bool cglwModifyWindow(void* windowHandle, const DisplayMode& displayMode, bool f
 				windowData->window,
 				0,
 				0,
-				displayMode.width,
-				displayMode.height
+				frame.size.width,
+				frame.size.height
 			);
 			[windowData->delegate resizedSinceLast];
 		}
 		else
 		{
+#if 0
 			CGDisplaySwitchToMode(kCGDirectMainDisplay, windowData->originalMode);
+#endif
 			CGDisplayRelease(kCGDirectMainDisplay);
 		
 			[windowData->window setStyleMask: NSTitledWindowMask | NSResizableWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask];
@@ -365,15 +366,17 @@ bool cglwModifyWindow(void* windowHandle, const DisplayMode& displayMode, bool f
 	{
 		if (fullscreen)
 		{
+			NSRect frame = [[NSScreen mainScreen] frame];
+#if 0
 			if (!cglwSetDisplayMode(displayMode))
 				return false;
-
+#endif
 			setWindowRect(
 				windowData->window,
 				0,
 				0,
-				displayMode.width,
-				displayMode.height
+				frame.size.width,
+				frame.size.height
 			);
 			[windowData->delegate resizedSinceLast];
 		}
@@ -389,7 +392,6 @@ bool cglwModifyWindow(void* windowHandle, const DisplayMode& displayMode, bool f
 	}
 
 	windowData->displayMode = displayMode;
-
 	return true;
 }
 
