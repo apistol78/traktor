@@ -3,8 +3,10 @@
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyString.h"
 #include "I18N/Text.h"
 #include "Scene/Editor/SceneEditorSettingsPage.h"
+#include "Ui/DropDown.h"
 #include "Ui/CheckBox.h"
 #include "Ui/Container.h"
 #include "Ui/Slider.h"
@@ -34,6 +36,15 @@ bool SceneEditorSettingsPage::create(ui::Container* parent, PropertyGroup* setti
 
 	Ref< ui::Container > containerSliders = new ui::Container();
 	containerSliders->create(container, ui::WsNone, new ui::TableLayout(L"*,300,*", L"*", 0, 4));
+
+	Ref< ui::Static > staticWorldRenderer = new ui::Static();
+	staticWorldRenderer->create(containerSliders, i18n::Text(L"SCENE_EDITOR_SETTINGS_WORLD_RENDERER"));
+
+	m_dropWorldRenderer = new ui::DropDown();
+	m_dropWorldRenderer->create(containerSliders, L"");
+
+	Ref< ui::Static > staticDummy = new ui::Static();
+	staticDummy->create(containerSliders, L"");
 
 	Ref< ui::Static > staticFov = new ui::Static();
 	staticFov->create(containerSliders, i18n::Text(L"SCENE_EDITOR_SETTINGS_FOV"));
@@ -73,6 +84,19 @@ bool SceneEditorSettingsPage::create(ui::Container* parent, PropertyGroup* setti
 
 	parent->setText(i18n::Text(L"SCENE_EDITOR_SETTINGS"));
 
+	std::wstring worldRendererTypeName = settings->getProperty< PropertyString >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
+
+	TypeInfoSet worldRendererTypes;
+	type_of< world::IWorldRenderer >().findAllOf(worldRendererTypes, false);
+
+	for (TypeInfoSet::const_iterator i = worldRendererTypes.begin(); i != worldRendererTypes.end(); ++i)
+	{
+		std::wstring name = (*i)->getName();
+		int32_t index = m_dropWorldRenderer->add(name);
+		if (name == worldRendererTypeName)
+			m_dropWorldRenderer->select(index);
+	}
+
 	updateValues();
 	return true;
 }
@@ -83,6 +107,7 @@ void SceneEditorSettingsPage::destroy()
 
 bool SceneEditorSettingsPage::apply(PropertyGroup* settings)
 {
+	settings->setProperty< PropertyString >(L"SceneEditor.WorldRendererType", m_dropWorldRenderer->getSelectedItem());
 	settings->setProperty< PropertyFloat >(L"SceneEditor.FieldOfView", float(m_sliderFov->getValue()));
 	settings->setProperty< PropertyFloat >(L"SceneEditor.MouseWheelRate", float(m_sliderMouseWheelRate->getValue()));
 	settings->setProperty< PropertyBoolean >(L"SceneEditor.InvertMouseWheel", m_checkInvertMouseWheel->isChecked());

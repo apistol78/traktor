@@ -1921,6 +1921,10 @@
       <second>Auto-build entity when drag'n'drop</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_SETTINGS_WORLD_RENDERER</first>
+      <second>World renderer</second>
+    </item>
+    <item>
       <first>SCRIPT_EDITOR_DEBUG_FUNCTION</first>
       <second>Function</second>
     </item>

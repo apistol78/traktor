@@ -38,13 +38,11 @@
 #include "Ui/Itf/IWidget.h"
 #include "World/Entity.h"
 #include "World/IEntityEventManager.h"
+#include "World/IWorldRenderer.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
 #include "World/WorldRenderView.h"
-#include "World/Deferred/WorldRendererDeferred.h"
-#include "World/Forward/WorldRendererForward.h"
 #include "World/PostProcess/PostProcess.h"
-#include "World/PreLit/WorldRendererPreLit.h"
 
 namespace traktor
 {
@@ -189,15 +187,16 @@ void PerspectiveRenderControl::updateWorldRenderer()
 		}
 	}
 
-	// Create world renderer.
-	//Ref< world::IWorldRenderer > worldRenderer;
-	//if (m_worldRenderSettings.renderType == world::WorldRenderSettings::RtForward)
-	//	worldRenderer = new world::WorldRendererForward();
-	//else if (m_worldRenderSettings.renderType == world::WorldRenderSettings::RtPreLit)
-	//	worldRenderer = new world::WorldRendererPreLit();
+	const PropertyGroup* settings = m_context->getEditor()->getSettings();
+	T_ASSERT (settings);
 
-	//Ref< world::IWorldRenderer > worldRenderer = new world::WorldRendererPreLit();
-	Ref< world::IWorldRenderer > worldRenderer = new world::WorldRendererDeferred();
+	std::wstring worldRendererTypeName = settings->getProperty< PropertyString >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
+	
+	const TypeInfo* worldRendererType = TypeInfo::find(worldRendererTypeName);
+	if (!worldRendererType)
+		return;
+
+	Ref< world::IWorldRenderer > worldRenderer = dynamic_type_cast< world::IWorldRenderer* >(worldRendererType->createInstance());
 	if (!worldRenderer)
 		return;
 

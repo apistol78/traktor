@@ -16,6 +16,7 @@ namespace traktor
 	namespace ui
 	{
 
+class DropDown;
 class CheckBox;
 class ContentChangeEvent;
 class Slider;
@@ -41,6 +42,7 @@ public:
 	virtual bool apply(PropertyGroup* settings);
 
 private:
+	Ref< ui::DropDown > m_dropWorldRenderer;
 	Ref< ui::Slider > m_sliderFov;
 	Ref< ui::Slider > m_sliderMouseWheelRate;
 	Ref< ui::Static > m_staticFovValue;
