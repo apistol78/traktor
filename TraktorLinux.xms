@@ -4106,6 +4106,15 @@
 									</item>
 								</items>
 							</item>
+							<item type="Filter">
+								<name>Class</name>
+								<items>
+									<item type="File">
+										<fileName>Class/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies/>
 					</project>
@@ -13458,15 +13467,6 @@
 									<item type="File">
 										<fileName>Engine/*.*</fileName>
 										<items/>
-									</item>
-									<item type="Filter">
-										<name>Classes</name>
-										<items>
-											<item type="File">
-												<fileName>Engine/Classes/*.*</fileName>
-												<items/>
-											</item>
-										</items>
 									</item>
 									<item type="Filter">
 										<name>Action</name>

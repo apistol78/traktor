@@ -27,7 +27,6 @@ namespace traktor
 	namespace script
 	{
 
-class Any;
 class ScriptContextLua;
 class ScriptDebuggerLua;
 class ScriptProfilerLua;
@@ -46,7 +45,7 @@ public:
 
 	virtual void destroy();
 	
-	virtual void registerClass(IScriptClass* scriptClass);
+	virtual void registerClass(IRuntimeClass* runtimeClass);
 
 	virtual Ref< IScriptResource > compile(const std::wstring& fileName, const std::wstring& script, const source_map_t* map, IErrorCallback* errorCallback) const;
 
@@ -68,7 +67,7 @@ private:
 
 	struct RegisteredClass
 	{
-		Ref< IScriptClass > scriptClass;
+		Ref< IRuntimeClass > runtimeClass;
 		int32_t metaTableRef;
 	};
 

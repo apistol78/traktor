@@ -14,7 +14,7 @@ int32_t s_delegateCount = 0;
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptDelegateLua", ScriptDelegateLua, IScriptDelegate)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptDelegateLua", ScriptDelegateLua, IRuntimeDelegate)
 
 ScriptDelegateLua::ScriptDelegateLua(ScriptContextLua* context, lua_State*& luaState)
 :	m_context(context)

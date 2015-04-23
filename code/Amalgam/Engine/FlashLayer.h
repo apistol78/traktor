@@ -2,11 +2,11 @@
 #define traktor_amalgam_FlashLayer_H
 
 #include "Amalgam/Engine/Layer.h"
+#include "Core/Class/Any.h"
 #include "Core/Math/Vector2.h"
 #include "Flash/Action/Avm1/Classes/As_flash_external_ExternalInterface.h"
 #include "Resource/Id.h"
 #include "Resource/Proxy.h"
-#include "Script/Any.h"
 #include "Spray/Feedback/IFeedbackListener.h"
 
 // import/export mechanism.
@@ -142,7 +142,7 @@ public:
 	 * \param argv Arguments.
 	 * \return ActionScript object.
 	 */
-	Ref< flash::ActionObject > createObject(uint32_t argc, const script::Any* argv) const;
+	Ref< flash::ActionObject > createObject(uint32_t argc, const Any* argv) const;
 
 	/*! \brief Create Flash bitmap object from image.
 	 *
@@ -158,7 +158,7 @@ public:
 	 * \param argv Arguments.
 	 * \return Return value from call.
 	 */
-	script::Any externalCall(const std::string& methodName, uint32_t argc, const script::Any* argv);
+	Any externalCall(const std::string& methodName, uint32_t argc, const Any* argv);
 
 	/*! \brief Get "safe" string which only contain glyphs which are valid with loaded fonts.
 	 *

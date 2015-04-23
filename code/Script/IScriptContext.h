@@ -4,7 +4,7 @@
 #include <vector>
 #include "Core/Object.h"
 #include "Core/Guid.h"
-#include "Script/Any.h"
+#include "Core/Class/Any.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,8 +18,6 @@ namespace traktor
 {
 	namespace script
 	{
-
-//class IScriptResource;
 
 /*! \brief Script context.
  * \ingroup Script

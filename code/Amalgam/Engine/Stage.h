@@ -4,9 +4,9 @@
 #include <map>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Core/Class/Any.h"
 #include "Render/Types.h"
 #include "Resource/Proxy.h"
-#include "Script/Any.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -100,7 +100,7 @@ public:
 	 * \param argv Arguments.
 	 * \return Return value from script function.
 	 */
-	script::Any invokeScript(const std::string& fn, uint32_t argc, const script::Any* argv);
+	Any invokeScript(const std::string& fn, uint32_t argc, const Any* argv);
 
 	/*! \brief Load next stage.
 	 *
@@ -179,8 +179,6 @@ private:
 	float m_fade;
 
 	bool validateScriptContext();
-
-	script::Any invokeScriptUpdate(IUpdateControl& control, const IUpdateInfo& info);
 };
 
 	}
