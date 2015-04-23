@@ -146,8 +146,13 @@ bool WorldRendererPreLit::create(
 		rtscd.createDepthStencil = false;
 		rtscd.usingPrimaryDepthStencil = true;
 		rtscd.preferTiled = true;
+#if !defined(__PS3__)
 		rtscd.targets[0].format = render::TfR16F;		// Depth
 		rtscd.targets[1].format = render::TfR8G8B8A8;	// Normals
+#else
+		rtscd.targets[0].format = render::TfR8G8B8A8;	// Encoded depth
+		rtscd.targets[1].format = render::TfR8G8B8A8;	// Normals
+#endif
 
 		// Cannot use primary depth when supersampling.
 		if (superSample > 1)
@@ -498,7 +503,7 @@ bool WorldRendererPreLit::create(
 		if (gammaCorrection)
 		{
 			m_gammaCorrectionPostProcess = new PostProcess();
-			if (!m_gammaCorrectionPostProcess->create(
+			if (m_gammaCorrectionPostProcess->create(
 				gammaCorrection,
 				postProcessTargetPool,
 				resourceManager,
@@ -507,6 +512,11 @@ bool WorldRendererPreLit::create(
 				height,
 				desc.allTargetsPersistent
 			))
+			{
+				m_gammaCorrectionPostProcess->setFloatParameter(render::getParameterHandle(L"World_Gamma"), desc.gamma);
+				m_gammaCorrectionPostProcess->setFloatParameter(render::getParameterHandle(L"World_GammaInverse"), 1.0f / desc.gamma);
+			}
+			else
 			{
 				log::warning << L"Unable to create gamma correction process; gamma correction disabled" << Endl;
 				m_gammaCorrectionPostProcess = 0;
