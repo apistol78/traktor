@@ -48,6 +48,14 @@ Ref< Local > describeLocal(const std::wstring& name, lua_State* L, int32_t index
 	{
 		RefArray< Local > values;
 
+		if (lua_getmetatable(L, index) != 0)
+		{
+			Ref< Local > metaLocal = describeLocal(L"(meta)", L, -1, depth + 1);
+			if (metaLocal)
+				values.push_back(metaLocal);
+			lua_pop(L, 1);
+		}
+
 		lua_pushnil(L);
 		while (lua_next(L, index - 1))
 		{
@@ -78,6 +86,9 @@ Ref< Local > describeLocal(const std::wstring& name, lua_State* L, int32_t index
 
 		if (lua_isstring(L, index))
 			return new LocalSimple(name, mbstows(lua_tostring(L, index)));
+
+		if (lua_isfunction(L, index))
+			return new LocalSimple(name, L"(function)");
 
 		if (lua_isuserdata(L, index))
 		{
