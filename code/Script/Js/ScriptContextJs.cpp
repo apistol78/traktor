@@ -1,6 +1,6 @@
 #include "Script/Js/ScriptContextJs.h"
 #include "Script/Js/ScriptResourceJs.h"
-#include "Script/IScriptClass.h"
+#include "Core/Class/IRuntimeClass.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Split.h"
 #include "Core/Misc/TString.h"
@@ -15,13 +15,13 @@ namespace traktor
 struct ConstructorData
 {
 	Ref< ScriptContextJs > scriptContext;
-	Ref< IScriptClass > scriptClass;
+	Ref< IRuntimeClass > runtimeClass;
 };
 
 struct FunctionData
 {
 	Ref< ScriptContextJs > scriptContext;
-	Ref< IScriptClass > scriptClass;
+	Ref< IRuntimeClass > runtimeClass;
 	uint32_t methodId;
 };
 
@@ -55,7 +55,7 @@ ScriptContextJs::~ScriptContextJs()
 	destroy();
 }
 
-bool ScriptContextJs::create(const RefArray< IScriptClass >& registeredClasses, const IScriptResource* scriptResource)
+bool ScriptContextJs::create(const RefArray< IRuntimeClass >& registeredClasses, const IScriptResource* scriptResource)
 {
 	v8::HandleScope handleScope;
 
@@ -70,20 +70,20 @@ bool ScriptContextJs::create(const RefArray< IScriptClass >& registeredClasses, 
 	v8::Context::Scope contextScope(m_context);
 
 	// Setup all registered classes.
-	for (RefArray< IScriptClass >::const_iterator i = registeredClasses.begin(); i != registeredClasses.end(); ++i)
+	for (RefArray< IRuntimeClass >::const_iterator i = registeredClasses.begin(); i != registeredClasses.end(); ++i)
 	{
-		IScriptClass* scriptClass = *i;
-		T_ASSERT (scriptClass);
+		IRuntimeClass* runtimeClass = *i;
+		T_ASSERT (runtimeClass);
 
 		// Split class type name into an array.
-		const TypeInfo& exportType = scriptClass->getExportType();
+		const TypeInfo& exportType = runtimeClass->getExportType();
 		std::vector< std::wstring > exportPath;
 		Split< std::wstring >::any(exportType.getName(), L".", exportPath);
 
 		// Create function template for class.
 		ConstructorData* constructorData = new ConstructorData();
 		constructorData->scriptContext = this;
-		constructorData->scriptClass = scriptClass;
+		constructorData->runtimeClass = runtimeClass;
 
 		v8::Local< v8::FunctionTemplate > classTemplate = v8::FunctionTemplate::New(
 			&ScriptContextJs::invokeConstructor,
@@ -94,11 +94,11 @@ bool ScriptContextJs::create(const RefArray< IScriptClass >& registeredClasses, 
 		));
 
 		// Create function for each script method.
-		for (uint32_t j = 0; j < scriptClass->getMethodCount(); ++j)
+		for (uint32_t j = 0; j < runtimeClass->getMethodCount(); ++j)
 		{
 			FunctionData* functionData = new FunctionData();
 			functionData->scriptContext = this;
-			functionData->scriptClass = scriptClass;
+			functionData->runtimeClass = runtimeClass;
 			functionData->methodId = j;
 
 			v8::Local< v8::FunctionTemplate > methodTemplate = v8::FunctionTemplate::New(
@@ -107,18 +107,18 @@ bool ScriptContextJs::create(const RefArray< IScriptClass >& registeredClasses, 
 			);
 
 			classTemplate->PrototypeTemplate()->Set(
-				createString(scriptClass->getMethodName(j)),
+				createString(runtimeClass->getMethodName(j)),
 				methodTemplate
 			);
 		}
 
 		// Setup inheritance.
-		const TypeInfo* superType = scriptClass->getExportType().getSuper();
+		const TypeInfo* superType = runtimeClass->getExportType().getSuper();
 		T_ASSERT (superType);
 
 		for (std::vector< RegisteredClass >::const_iterator j = m_classRegistry.begin(); j != m_classRegistry.end(); ++j)
 		{
-			if (superType == &j->scriptClass->getExportType())
+			if (superType == &j->runtimeClass->getExportType())
 			{
 				classTemplate->Inherit(j->functionTemplate);
 				break;
@@ -152,7 +152,7 @@ bool ScriptContextJs::create(const RefArray< IScriptClass >& registeredClasses, 
 		// Save script class in registry.
 		RegisteredClass registeredClass =
 		{ 
-			scriptClass,
+			runtimeClass,
 			v8::Persistent< v8::FunctionTemplate >::New(classTemplate),
 			v8::Persistent< v8::Function >::New(classTemplate->GetFunction())
 		};
@@ -314,17 +314,17 @@ v8::Handle< v8::Value > ScriptContextJs::invokeConstructor(const v8::Arguments& 
 	}
 	else
 	{
-		if (!constructorData->scriptClass->haveConstructor())
+		if (!constructorData->runtimeClass->haveConstructor())
 			return v8::Undefined();
 
 		Any argv[16];
 		for (int i = 0; i < arguments.Length(); ++i)
 			argv[i] = constructorData->scriptContext->fromValue(arguments[i]);
 
-		IScriptClass::InvokeParam param;
+		IRuntimeClass::InvokeParam param;
 		param.object = 0;
 
-		Ref< ITypedObject > object = constructorData->scriptClass->construct(param, arguments.Length(), argv);
+		Ref< ITypedObject > object = constructorData->runtimeClass->construct(param, arguments.Length(), argv);
 		if (!object)
 			return v8::Undefined();
 
@@ -354,10 +354,10 @@ v8::Handle< v8::Value > ScriptContextJs::invokeMethod(const v8::Arguments& argum
 	for (int i = 0; i < arguments.Length(); ++i)
 		argv[i] = functionData->scriptContext->fromValue(arguments[i]);
 
-	IScriptClass::InvokeParam param;
+	IRuntimeClass::InvokeParam param;
 	param.object = object;
 
-	Any result = functionData->scriptClass->invoke(
+	Any result = functionData->runtimeClass->invoke(
 		param,
 		functionData->methodId,
 		arguments.Length(),
@@ -398,11 +398,11 @@ v8::Handle< v8::Value > ScriptContextJs::createObject(ITypedObject* object, bool
 
 	for (std::vector< RegisteredClass >::const_iterator i = m_classRegistry.begin(); i != m_classRegistry.end(); ++i)
 	{
-		uint32_t scriptClassDiff = type_difference(i->scriptClass->getExportType(), *objectType);
-		if (scriptClassDiff < minScriptClassDiff)
+		uint32_t runtimeClassDiff = type_difference(i->runtimeClass->getExportType(), *objectType);
+		if (runtimeClassDiff < minScriptClassDiff)
 		{
 			minFunction = i->function;
-			minScriptClassDiff = scriptClassDiff;
+			minScriptClassDiff = runtimeClassDiff;
 		}
 	}
 
