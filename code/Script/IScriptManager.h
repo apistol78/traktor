@@ -2,6 +2,7 @@
 #define traktor_script_IScriptManager_H
 
 #include "Core/Object.h"
+#include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Script/Types.h"
 
 // import/export mechanism.
@@ -14,10 +15,12 @@
 
 namespace traktor
 {
+
+class IRuntimeClass;
+
 	namespace script
 	{
 
-class IScriptClass;
 class IScriptContext;
 class IScriptDebugger;
 class IScriptProfiler;
@@ -54,7 +57,9 @@ struct ScriptStatistics
  * Each context should have at least the classes
  * registered up until the time of creation accessible.
  */
-class T_DLLCLASS IScriptManager : public Object
+class T_DLLCLASS IScriptManager
+:	public Object
+,	public IRuntimeClassRegistrar
 {
 	T_RTTI_CLASS;
 
@@ -66,7 +71,7 @@ public:
 	 *
 	 * \param scriptClass Script class interface.
 	 */
-	virtual void registerClass(IScriptClass* scriptClass) = 0;
+	virtual void registerClass(IRuntimeClass* runtimeClass) = 0;
 
 	/*! \brief Compile script.
 	 *

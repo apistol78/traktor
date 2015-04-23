@@ -1,7 +1,7 @@
 #ifndef traktor_script_ScriptDelegateLua_H
 #define traktor_script_ScriptDelegateLua_H
 
-#include "Script/IScriptDelegate.h"
+#include "Core/Class/IRuntimeDelegate.h"
 
 struct lua_State;
 
@@ -12,7 +12,7 @@ namespace traktor
 
 class ScriptContextLua;
 
-class ScriptDelegateLua : public IScriptDelegate
+class ScriptDelegateLua : public IRuntimeDelegate
 {
 	T_RTTI_CLASS;
 

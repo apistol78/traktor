@@ -1,7 +1,6 @@
 #include "Amalgam/FrameProfiler.h"
 #include "Amalgam/IEnvironment.h"
 #include "Amalgam/IUpdateInfo.h"
-#include "Amalgam/Engine/FlashCast.h"
 #include "Amalgam/Engine/FlashLayer.h"
 #include "Amalgam/Engine/Stage.h"
 #include "Amalgam/Engine/Action/Classes/As_traktor_amalgam_Configuration.h"
@@ -9,9 +8,11 @@
 #include "Amalgam/Engine/Action/Classes/As_traktor_amalgam_I18N.h"
 #include "Amalgam/Engine/Action/Classes/As_traktor_amalgam_InputFabricator.h"
 #include "Amalgam/Engine/Action/Classes/As_traktor_amalgam_SoundDriver.h"
+#include "Core/Class/Any.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Flash/FlashCast.h"
 #include "Flash/FlashFont.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashMovieLoader.h"
@@ -30,7 +31,6 @@
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/RenderTargetSet.h"
-#include "Script/Any.h"
 #include "Spray/Feedback/IFeedbackManager.h"
 #include "World/PostProcess/PostProcess.h"
 #include "World/PostProcess/PostProcessSettings.h"
@@ -444,9 +444,9 @@ void FlashLayer::update(const amalgam::IUpdateInfo& info)
 	// Dispatch "fscommand"s to script.
 	while (m_moviePlayer->getFsCommand(command, args))
 	{
-		script::Any argv[] =
+		Any argv[] =
 		{
-			script::Any::fromString(args)
+			Any::fromString(args)
 		};
 		getStage()->invokeScript(command, sizeof_array(argv), argv);
 	}
@@ -602,7 +602,7 @@ Ref< flash::ActionObject > FlashLayer::createObject() const
 	return new flash::ActionObject(cx);
 }
 
-Ref< flash::ActionObject > FlashLayer::createObject(uint32_t argc, const script::Any* argv) const
+Ref< flash::ActionObject > FlashLayer::createObject(uint32_t argc, const Any* argv) const
 {
 	if (!m_moviePlayer)
 	{
@@ -646,7 +646,7 @@ Ref< flash::ActionObject > FlashLayer::createObject(uint32_t argc, const script:
 
 	flash::ActionValueArray args(cx->getPool(), argc - 1);
 	for (uint32_t i = 0; i < argc - 1; ++i)
-		args[i] = script::CastAny< flash::ActionValue >::get(argv[i + 1]);
+		args[i] = CastAny< flash::ActionValue >::get(argv[i + 1]);
 
 	classFunction->call(self, args);
 
@@ -671,20 +671,20 @@ Ref< flash::ActionObject > FlashLayer::createBitmap(drawing::Image* image) const
 	return bitmap->getAsObject(cx);
 }
 
-script::Any FlashLayer::externalCall(const std::string& methodName, uint32_t argc, const script::Any* argv)
+Any FlashLayer::externalCall(const std::string& methodName, uint32_t argc, const Any* argv)
 {
 	if (!m_moviePlayer)
-		return script::Any();
+		return Any();
 
 	flash::ActionValue av[16];
 	T_ASSERT (argc < sizeof_array(av));
 
 	for (uint32_t i = 0; i < argc; ++i)
-		av[i] = script::CastAny< flash::ActionValue >::get(argv[i]);
+		av[i] = CastAny< flash::ActionValue >::get(argv[i]);
 
 	flash::ActionValue ret = m_moviePlayer->dispatchCallback(methodName, argc, av);
 
-	return script::CastAny< flash::ActionValue >::set(ret);
+	return CastAny< flash::ActionValue >::set(ret);
 }
 
 std::wstring FlashLayer::getPrintableString(const std::wstring& text, const std::wstring& empty) const
@@ -820,19 +820,19 @@ void FlashLayer::createMoviePlayer()
 
 flash::ActionValue FlashLayer::dispatchExternalCall(const std::string& methodName, int32_t argc, const flash::ActionValue* argv)
 {
-	script::Any av[16];
+	Any av[16];
 	T_ASSERT (argc < sizeof_array(av));
 
 	for (int32_t i = 0; i < argc; ++i)
-		av[i] = script::CastAny< flash::ActionValue >::set(argv[i]);
+		av[i] = CastAny< flash::ActionValue >::set(argv[i]);
 
-	script::Any ret = getStage()->invokeScript(
+	Any ret = getStage()->invokeScript(
 		methodName,
 		argc,
 		av
 	);
 
-	return script::CastAny< flash::ActionValue >::get(ret);
+	return CastAny< flash::ActionValue >::get(ret);
 }
 
 void FlashLayer::feedbackValues(spray::FeedbackType type, const float* values, int32_t count)

@@ -1,4 +1,6 @@
 #include <cstring>
+#include "Core/Class/Boxes.h"
+#include "Core/Class/IRuntimeClass.h"
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Save.h"
@@ -8,8 +10,6 @@
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Timer/Timer.h"
-#include "Script/Boxes.h"
-#include "Script/IScriptClass.h"
 #include "Script/Lua/ScriptContextLua.h"
 #include "Script/Lua/ScriptDebuggerLua.h"
 #include "Script/Lua/ScriptDelegateLua.h"
@@ -114,8 +114,6 @@ ScriptManagerLua::ScriptManagerLua()
 
 	lua_register(m_luaState, "print", luaPrint);
 
-	registerBoxClasses(this);
-
 	// Create table containing weak references to C++ object wrappers.
 	{
 		CHECK_LUA_STACK(m_luaState, 0);
@@ -161,13 +159,13 @@ void ScriptManagerLua::destroy()
 	m_luaState = 0;
 }
 
-void ScriptManagerLua::registerClass(IScriptClass* scriptClass)
+void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 {
 	CHECK_LUA_STACK(m_luaState, 0);
 
 	RegisteredClass rc;
 
-	rc.scriptClass = scriptClass;
+	rc.runtimeClass = runtimeClass;
 
 	lua_newtable(m_luaState);										// +1	-> 1
 	rc.metaTableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);		// -1	-> 0
@@ -180,56 +178,56 @@ void ScriptManagerLua::registerClass(IScriptClass* scriptClass)
 	lua_setfield(m_luaState, -2, "__index");						// -1	-> 1
 
 	lua_pushlightuserdata(m_luaState, (void*)this);
-	lua_pushlightuserdata(m_luaState, (void*)scriptClass);
+	lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
 	lua_pushcclosure(m_luaState, classEqualMethod, 2);
 	lua_setfield(m_luaState, -2, "__eq");
 
 	lua_pushlightuserdata(m_luaState, (void*)this);
-	lua_pushlightuserdata(m_luaState, (void*)scriptClass);
+	lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
 	lua_pushcclosure(m_luaState, classAddMethod, 2);
 	lua_setfield(m_luaState, -2, "__add");
 
 	lua_pushlightuserdata(m_luaState, (void*)this);
-	lua_pushlightuserdata(m_luaState, (void*)scriptClass);
+	lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
 	lua_pushcclosure(m_luaState, classSubtractMethod, 2);
 	lua_setfield(m_luaState, -2, "__sub");
 
 	lua_pushlightuserdata(m_luaState, (void*)this);
-	lua_pushlightuserdata(m_luaState, (void*)scriptClass);
+	lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
 	lua_pushcclosure(m_luaState, classMultiplyMethod, 2);
 	lua_setfield(m_luaState, -2, "__mul");
 
 	lua_pushlightuserdata(m_luaState, (void*)this);
-	lua_pushlightuserdata(m_luaState, (void*)scriptClass);
+	lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
 	lua_pushcclosure(m_luaState, classDivideMethod, 2);
 	lua_setfield(m_luaState, -2, "__div");
 
-	lua_pushlightuserdata(m_luaState, (void*)scriptClass);			// +1	-> 2
+	lua_pushlightuserdata(m_luaState, (void*)runtimeClass);			// +1	-> 2
 	lua_rawseti(m_luaState, -2, c_tableKey_class);					// -1	-> 1
 
-	uint32_t staticMethodCount = scriptClass->getStaticMethodCount();
+	uint32_t staticMethodCount = runtimeClass->getStaticMethodCount();
 	for (uint32_t i = 0; i < staticMethodCount; ++i)
 	{
-		std::string methodName = scriptClass->getStaticMethodName(i);
+		std::string methodName = runtimeClass->getStaticMethodName(i);
 		lua_pushinteger(m_luaState, i);
 		lua_pushlightuserdata(m_luaState, (void*)this);
-		lua_pushlightuserdata(m_luaState, (void*)scriptClass);
+		lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
 		lua_pushcclosure(m_luaState, classCallStaticMethod, 3);
 		lua_setfield(m_luaState, -2, methodName.c_str());
 	}
 
-	uint32_t methodCount = scriptClass->getMethodCount();
+	uint32_t methodCount = runtimeClass->getMethodCount();
 	for (uint32_t i = 0; i < methodCount; ++i)
 	{
-		std::string methodName = scriptClass->getMethodName(i);
+		std::string methodName = runtimeClass->getMethodName(i);
 		lua_pushinteger(m_luaState, i);
 		lua_pushlightuserdata(m_luaState, (void*)this);
-		lua_pushlightuserdata(m_luaState, (void*)scriptClass);
+		lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
 		lua_pushcclosure(m_luaState, classCallMethod, 3);
 		lua_setfield(m_luaState, -2, methodName.c_str());
 	}
 
-	const TypeInfo& exportType = scriptClass->getExportType();
+	const TypeInfo& exportType = runtimeClass->getExportType();
 	const TypeInfo* superType = exportType.getSuper();
 
 	lua_newtable(m_luaState);
@@ -237,7 +235,7 @@ void ScriptManagerLua::registerClass(IScriptClass* scriptClass)
 	bool exportedAsRoot = true;
 	for (std::vector< RegisteredClass >::iterator i = m_classRegistry.begin(); i != m_classRegistry.end(); ++i)
 	{
-		if (superType == &i->scriptClass->getExportType())
+		if (superType == &i->runtimeClass->getExportType())
 		{
 			lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, i->metaTableRef);	// +1	-> 2
 			lua_setmetatable(m_luaState, -2);								// -1	-> 1
@@ -246,10 +244,10 @@ void ScriptManagerLua::registerClass(IScriptClass* scriptClass)
 		}
 	}
 
-	if (/*exportedAsRoot && */scriptClass->haveUnknown())
+	if (/*exportedAsRoot && */runtimeClass->haveUnknown())
 	{
 		lua_pushlightuserdata(m_luaState, (void*)this);
-		lua_pushlightuserdata(m_luaState, (void*)scriptClass);
+		lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
 		lua_pushcclosure(m_luaState, classIndexLookup, 2);
 		lua_setfield(m_luaState, -2, "__index");
 	}
@@ -259,10 +257,10 @@ void ScriptManagerLua::registerClass(IScriptClass* scriptClass)
 		lua_setfield(m_luaState, -2, "__index");						// -1	-> 1
 	}
 
-	if (scriptClass->haveConstructor())
+	if (runtimeClass->haveConstructor())
 	{
 		lua_pushlightuserdata(m_luaState, (void*)this);				// +1	-> 2
-		lua_pushlightuserdata(m_luaState, (void*)scriptClass);		// +1	-> 3
+		lua_pushlightuserdata(m_luaState, (void*)runtimeClass);		// +1	-> 3
 		lua_pushcclosure(m_luaState, classCallConstructor, 2);		// -1	-> 2
 		lua_setfield(m_luaState, -2, "__call");						// -1	-> 1
 	}
@@ -280,7 +278,7 @@ void ScriptManagerLua::registerClass(IScriptClass* scriptClass)
 	m_classRegistry.push_back(rc);
 
 	// Add entries to lookup table; flatten with all specialized types in order
-	// to reduce lookups required whe resolving script class.
+	// to reduce lookups required when resolving script class.
 	TypeInfoSet derivedTypes;
 	exportType.findAllOf(derivedTypes);
 
@@ -290,7 +288,7 @@ void ScriptManagerLua::registerClass(IScriptClass* scriptClass)
 		if (j != m_classRegistryLookup.end())
 		{
 			const RegisteredClass& rc2 = m_classRegistry[j->second];
-			const TypeInfo& exportType2 = rc2.scriptClass->getExportType();
+			const TypeInfo& exportType2 = rc2.runtimeClass->getExportType();
 			if (is_type_of(exportType, exportType2))
 				continue;
 		}
@@ -777,10 +775,10 @@ Any ScriptManagerLua::toAny(int32_t index)
 		lua_rawgeti(m_luaState, index, c_tableKey_class);
 		if (lua_isuserdata(m_luaState, -1))
 		{
-			const IScriptClass* scriptClass = reinterpret_cast< const IScriptClass* >(lua_touserdata(m_luaState, -1));
+			const IRuntimeClass* runtimeClass = reinterpret_cast< const IRuntimeClass* >(lua_touserdata(m_luaState, -1));
 			lua_pop(m_luaState, 1);
-			if (scriptClass)
-				return Any::fromTypeInfo(&scriptClass->getExportType());
+			if (runtimeClass)
+				return Any::fromTypeInfo(&runtimeClass->getExportType());
 		}
 		lua_pop(m_luaState, 1);
 
@@ -830,11 +828,11 @@ void ScriptManagerLua::toAny(int32_t base, int32_t count, Any* outAnys)
 			lua_rawgeti(m_luaState, index, c_tableKey_class);
 			if (lua_isuserdata(m_luaState, -1))
 			{
-				const IScriptClass* scriptClass = reinterpret_cast< const IScriptClass* >(lua_touserdata(m_luaState, -1));
+				const IRuntimeClass* runtimeClass = reinterpret_cast< const IRuntimeClass* >(lua_touserdata(m_luaState, -1));
 				lua_pop(m_luaState, 1);
-				if (scriptClass)
+				if (runtimeClass)
 				{
-					outAnys[i] = Any::fromTypeInfo(&scriptClass->getExportType());
+					outAnys[i] = Any::fromTypeInfo(&runtimeClass->getExportType());
 					continue;
 				}
 			}
@@ -975,8 +973,8 @@ int ScriptManagerLua::classIndexLookup(lua_State* luaState)
 	T_ASSERT (manager);
 
 	// Get script class from closure.
-	const IScriptClass* scriptClass = reinterpret_cast< IScriptClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
-	if (!scriptClass)
+	const IRuntimeClass* runtimeClass = reinterpret_cast< IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
+	if (!runtimeClass)
 		return 0;
 
 	// Get index key.
@@ -986,7 +984,7 @@ int ScriptManagerLua::classIndexLookup(lua_State* luaState)
 	// Create unknown method closure.
 	lua_pushstring(luaState, key);
 	lua_pushlightuserdata(luaState, (void*)manager);
-	lua_pushlightuserdata(luaState, (void*)scriptClass);
+	lua_pushlightuserdata(luaState, (void*)runtimeClass);
 	lua_pushcclosure(luaState, classCallUnknownMethod, 3);
 
 	return 1;
@@ -997,8 +995,8 @@ int ScriptManagerLua::classCallConstructor(lua_State* luaState)
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
 	T_ASSERT (manager);
 
-	const IScriptClass* scriptClass = reinterpret_cast< IScriptClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
-	T_ASSERT (scriptClass);
+	const IRuntimeClass* runtimeClass = reinterpret_cast< IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
+	T_ASSERT (runtimeClass);
 
 	int32_t top = lua_gettop(luaState);
 	if (top < 1)
@@ -1007,10 +1005,10 @@ int ScriptManagerLua::classCallConstructor(lua_State* luaState)
 	Any argv[8];
 	manager->toAny(2, top - 1, argv);
 
-	IScriptClass::InvokeParam param;
+	IRuntimeClass::InvokeParam param;
 	param.object = 0;
 
-	Any returnValue = Any::fromObject(scriptClass->construct(param, top - 1, argv));
+	Any returnValue = Any::fromObject(runtimeClass->construct(param, top - 1, argv));
 	manager->pushAny(returnValue);
 
 	return 1;
@@ -1021,8 +1019,8 @@ int ScriptManagerLua::classCallMethod(lua_State* luaState)
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(2)));
 	T_ASSERT (manager);
 
-	const IScriptClass* scriptClass = reinterpret_cast< IScriptClass* >(lua_touserdata(luaState, lua_upvalueindex(3)));
-	T_ASSERT (scriptClass);
+	const IRuntimeClass* runtimeClass = reinterpret_cast< IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(3)));
+	T_ASSERT (runtimeClass);
 
 	int32_t methodId = (int32_t)lua_tonumber(luaState, lua_upvalueindex(1));
 
@@ -1047,10 +1045,10 @@ int ScriptManagerLua::classCallMethod(lua_State* luaState)
 	Any argv[10];
 	manager->toAny(2, top - 1, argv);
 
-	IScriptClass::InvokeParam param;
+	IRuntimeClass::InvokeParam param;
 	param.object = object;
 
-	Any returnValue = scriptClass->invoke(param, methodId, top - 1, argv);
+	Any returnValue = runtimeClass->invoke(param, methodId, top - 1, argv);
 
 	manager->pushAny(returnValue);
 
@@ -1062,8 +1060,8 @@ int ScriptManagerLua::classCallStaticMethod(lua_State* luaState)
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(2)));
 	T_ASSERT (manager);
 
-	const IScriptClass* scriptClass = reinterpret_cast< IScriptClass* >(lua_touserdata(luaState, lua_upvalueindex(3)));
-	T_ASSERT (scriptClass);
+	const IRuntimeClass* runtimeClass = reinterpret_cast< IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(3)));
+	T_ASSERT (runtimeClass);
 
 	int32_t methodId = (int32_t)lua_tonumber(luaState, lua_upvalueindex(1));
 
@@ -1074,7 +1072,7 @@ int ScriptManagerLua::classCallStaticMethod(lua_State* luaState)
 	Any argv[10];
 	manager->toAny(1, top, argv);
 
-	Any returnValue = scriptClass->invokeStatic(methodId, top, argv);
+	Any returnValue = runtimeClass->invokeStatic(methodId, top, argv);
 
 	manager->pushAny(returnValue);
 	return 1;
@@ -1085,8 +1083,8 @@ int ScriptManagerLua::classCallUnknownMethod(lua_State* luaState)
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(2)));
 	T_ASSERT (manager);
 
-	const IScriptClass* scriptClass = reinterpret_cast< IScriptClass* >(lua_touserdata(luaState, lua_upvalueindex(3)));
-	T_ASSERT (scriptClass);
+	const IRuntimeClass* runtimeClass = reinterpret_cast< IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(3)));
+	T_ASSERT (runtimeClass);
 
 	const char* methodName = lua_tostring(luaState, lua_upvalueindex(1));
 	T_ASSERT (methodName);
@@ -1102,10 +1100,10 @@ int ScriptManagerLua::classCallUnknownMethod(lua_State* luaState)
 	Any argv[8];
 	manager->toAny(2, top - 1, argv);
 
-	IScriptClass::InvokeParam param;
+	IRuntimeClass::InvokeParam param;
 	param.object = object;
 
-	Any returnValue = scriptClass->invokeUnknown(param, methodName, top - 1, argv);
+	Any returnValue = runtimeClass->invokeUnknown(param, methodName, top - 1, argv);
 
 	manager->pushAny(returnValue);
 	return 1;
@@ -1143,8 +1141,8 @@ int ScriptManagerLua::classAddMethod(lua_State* luaState)
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
 	T_ASSERT (manager);
 
-	const IScriptClass* scriptClass = reinterpret_cast< IScriptClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
-	T_ASSERT (scriptClass);
+	const IRuntimeClass* runtimeClass = reinterpret_cast< IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
+	T_ASSERT (runtimeClass);
 
 	int32_t top = lua_gettop(luaState);
 	if (top < 1)
@@ -1177,10 +1175,10 @@ int ScriptManagerLua::classAddMethod(lua_State* luaState)
 		return 0;
 	}
 
-	IScriptClass::InvokeParam param;
+	IRuntimeClass::InvokeParam param;
 	param.object = object;
 
-	Any returnValue = scriptClass->invokeOperator(param, 0, arg);
+	Any returnValue = runtimeClass->invokeOperator(param, 0, arg);
 
 	manager->pushAny(returnValue);
 	return 1;
@@ -1191,8 +1189,8 @@ int ScriptManagerLua::classSubtractMethod(lua_State* luaState)
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
 	T_ASSERT (manager);
 
-	const IScriptClass* scriptClass = reinterpret_cast< IScriptClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
-	T_ASSERT (scriptClass);
+	const IRuntimeClass* runtimeClass = reinterpret_cast< IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
+	T_ASSERT (runtimeClass);
 
 	int32_t top = lua_gettop(luaState);
 	if (top < 1)
@@ -1214,10 +1212,10 @@ int ScriptManagerLua::classSubtractMethod(lua_State* luaState)
 
 	Any arg = manager->toAny(2);
 
-	IScriptClass::InvokeParam param;
+	IRuntimeClass::InvokeParam param;
 	param.object = object;
 
-	Any returnValue = scriptClass->invokeOperator(param, 1, arg);
+	Any returnValue = runtimeClass->invokeOperator(param, 1, arg);
 
 	manager->pushAny(returnValue);
 	return 1;
@@ -1228,8 +1226,8 @@ int ScriptManagerLua::classMultiplyMethod(lua_State* luaState)
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
 	T_ASSERT (manager);
 
-	const IScriptClass* scriptClass = reinterpret_cast< IScriptClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
-	T_ASSERT (scriptClass);
+	const IRuntimeClass* runtimeClass = reinterpret_cast< IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
+	T_ASSERT (runtimeClass);
 
 	int32_t top = lua_gettop(luaState);
 	if (top < 1)
@@ -1262,10 +1260,10 @@ int ScriptManagerLua::classMultiplyMethod(lua_State* luaState)
 		return 0;
 	}
 
-	IScriptClass::InvokeParam param;
+	IRuntimeClass::InvokeParam param;
 	param.object = object;
 
-	Any returnValue = scriptClass->invokeOperator(param, 2, arg);
+	Any returnValue = runtimeClass->invokeOperator(param, 2, arg);
 
 	manager->pushAny(returnValue);
 	return 1;
@@ -1276,8 +1274,8 @@ int ScriptManagerLua::classDivideMethod(lua_State* luaState)
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
 	T_ASSERT (manager);
 
-	const IScriptClass* scriptClass = reinterpret_cast< IScriptClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
-	T_ASSERT (scriptClass);
+	const IRuntimeClass* runtimeClass = reinterpret_cast< IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
+	T_ASSERT (runtimeClass);
 
 	int32_t top = lua_gettop(luaState);
 	if (top < 1)
@@ -1299,10 +1297,10 @@ int ScriptManagerLua::classDivideMethod(lua_State* luaState)
 
 	Any arg = manager->toAny(2);
 
-	IScriptClass::InvokeParam param;
+	IRuntimeClass::InvokeParam param;
 	param.object = object;
 
-	Any returnValue = scriptClass->invokeOperator(param, 3, arg);
+	Any returnValue = runtimeClass->invokeOperator(param, 3, arg);
 
 	manager->pushAny(returnValue);
 	return 1;

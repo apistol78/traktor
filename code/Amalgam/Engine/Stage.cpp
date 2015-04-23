@@ -62,20 +62,20 @@ void Stage::destroy()
 		if (m_initialized && m_scriptContext->haveFunction("finalize"))
 		{
 			// Call script fini.
-			script::Any argv[] =
+			Any argv[] =
 			{
-				script::Any::fromObject(const_cast< Object* >(m_params.c_ptr()))
+				Any::fromObject(const_cast< Object* >(m_params.c_ptr()))
 			};
 			m_scriptContext->executeMethod(this, "finalize", sizeof_array(argv), argv);
 		}
 
-		m_scriptContext->setGlobal("stage", script::Any());
-		m_scriptContext->setGlobal("environment", script::Any());
+		m_scriptContext->setGlobal("stage", Any());
+		m_scriptContext->setGlobal("environment", Any());
 
 		for (RefArray< Layer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 		{
 			if (!(*i)->getName().empty())
-				m_scriptContext->setGlobal(wstombs((*i)->getName()), script::Any());
+				m_scriptContext->setGlobal(wstombs((*i)->getName()), Any());
 		}
 
 		m_scriptContext->destroy();
@@ -121,12 +121,12 @@ void Stage::terminate()
 	m_running = false;
 }
 
-script::Any Stage::invokeScript(const std::string& fn, uint32_t argc, const script::Any* argv)
+Any Stage::invokeScript(const std::string& fn, uint32_t argc, const Any* argv)
 {
 	if (validateScriptContext() && m_scriptContext->haveFunction(fn))
 		return m_scriptContext->executeFunction(fn, argc, argv);
 	else
-		return script::Any();
+		return Any();
 }
 
 Ref< Stage > Stage::loadStage(const std::wstring& name, const Object* params)
@@ -184,9 +184,9 @@ bool Stage::update(IStateManager* stateManager, const IUpdateInfo& info)
 		{
 			info.getProfiler()->beginScope(FptScript);
 
-			script::Any argv[] =
+			Any argv[] =
 			{
-				script::Any::fromObject(const_cast< IUpdateInfo* >(&info))
+				Any::fromObject(const_cast< IUpdateInfo* >(&info))
 			};
 			T_MEASURE_STATEMENT(m_scriptContext->executeFunction("update", sizeof_array(argv), argv), 1.0 / 60.0);
 
@@ -318,13 +318,13 @@ bool Stage::validateScriptContext()
 	if (!m_initialized)
 	{
 		// Expose commonly used globals.
-		T_MEASURE_STATEMENT(m_scriptContext->setGlobal("stage", script::Any::fromObject(this)), 1.0 / 60.0);
-		T_MEASURE_STATEMENT(m_scriptContext->setGlobal("environment", script::Any::fromObject(m_environment)), 1.0 / 60.0);
+		T_MEASURE_STATEMENT(m_scriptContext->setGlobal("stage", Any::fromObject(this)), 1.0 / 60.0);
+		T_MEASURE_STATEMENT(m_scriptContext->setGlobal("environment", Any::fromObject(m_environment)), 1.0 / 60.0);
 
 		for (RefArray< Layer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 		{
 			if (!(*i)->getName().empty())
-				T_MEASURE_STATEMENT(m_scriptContext->setGlobal(wstombs((*i)->getName()), script::Any::fromObject(*i)), 1.0 / 60.0);
+				T_MEASURE_STATEMENT(m_scriptContext->setGlobal(wstombs((*i)->getName()), Any::fromObject(*i)), 1.0 / 60.0);
 		}
 
 		// Call script init; do this everytime we re-validate script.
@@ -332,9 +332,9 @@ bool Stage::validateScriptContext()
 		T_MEASURE_STATEMENT(haveInitialize = m_scriptContext->haveFunction("initialize"), 1.0 / 60.0);
 		if (haveInitialize)
 		{
-			script::Any argv[] =
+			Any argv[] =
 			{
-				script::Any::fromObject(const_cast< Object* >(m_params.c_ptr()))
+				Any::fromObject(const_cast< Object* >(m_params.c_ptr()))
 			};
 			T_MEASURE_STATEMENT(m_scriptContext->executeMethod(this, "initialize", sizeof_array(argv), argv), 1.0 / 60.0);
 		}
