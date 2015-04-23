@@ -18,10 +18,12 @@ struct lua_State;
 
 namespace traktor
 {
+
+class IRuntimeClass;
+
 	namespace script
 	{
 
-class IScriptClass;
 class IScriptResource;
 
 /*! \brief JavaScript scripting context.
@@ -36,7 +38,7 @@ public:
 
 	virtual ~ScriptContextJs();
 
-	bool create(const RefArray< IScriptClass >& registeredClasses, const IScriptResource* scriptResource);
+	bool create(const RefArray< IRuntimeClass >& registeredClasses, const IScriptResource* scriptResource);
 
 	virtual void destroy();
 
@@ -53,7 +55,7 @@ public:
 private:
 	struct RegisteredClass
 	{
-		Ref< IScriptClass > scriptClass;
+		Ref< IRuntimeClass > runtimeClass;
 		v8::Persistent< v8::FunctionTemplate > functionTemplate;
 		v8::Persistent< v8::Function > function;
 	};

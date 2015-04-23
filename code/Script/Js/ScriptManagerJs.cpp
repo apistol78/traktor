@@ -1,8 +1,8 @@
 #include <v8.h>
 #define T_HAVE_TYPES
+#include "Core/Class/Boxes.h"
+#include "Core/Class/IRuntimeClass.h"
 #include "Core/Serialization/ISerializable.h"
-#include "Script/Boxes.h"
-#include "Script/IScriptClass.h"
 #include "Script/Js/ScriptContextJs.h"
 #include "Script/Js/ScriptManagerJs.h"
 #include "Script/Js/ScriptResourceJs.h"
@@ -16,16 +16,15 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptManagerJs", 0, ScriptManag
 
 ScriptManagerJs::ScriptManagerJs()
 {
-	registerBoxClasses(this);
 }
 
 void ScriptManagerJs::destroy()
 {
 }
 
-void ScriptManagerJs::registerClass(IScriptClass* scriptClass)
+void ScriptManagerJs::registerClass(IRuntimeClass* runtimeClass)
 {
-	m_registeredClasses.push_back(scriptClass);
+	m_registeredClasses.push_back(runtimeClass);
 }
 
 Ref< IScriptResource > ScriptManagerJs::compile(const std::wstring& fileName, const std::wstring& script, const source_map_t* map, IErrorCallback* errorCallback) const

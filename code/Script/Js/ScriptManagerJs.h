@@ -29,7 +29,7 @@ public:
 
 	virtual void destroy();
 	
-	virtual void registerClass(IScriptClass* scriptClass);
+	virtual void registerClass(IRuntimeClass* runtimeClass);
 
 	virtual Ref< IScriptResource > compile(const std::wstring& fileName, const std::wstring& script, const source_map_t* map, IErrorCallback* errorCallback) const;
 
@@ -44,7 +44,7 @@ public:
 	virtual void getStatistics(ScriptStatistics& outStatistics) const;
 
 private:
-	RefArray< IScriptClass > m_registeredClasses;
+	RefArray< IRuntimeClass > m_registeredClasses;
 };
 
 	}
