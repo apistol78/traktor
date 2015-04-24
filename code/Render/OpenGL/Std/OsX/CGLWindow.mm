@@ -253,7 +253,6 @@ void* cglwCreateWindow(const std::wstring& title, const DisplayMode& displayMode
 	[windowData->window init];
 
 	[windowData->window setBackgroundColor: [NSColor blackColor]];
-	[windowData->window setAcceptsMouseMovedEvents: YES];
 	[windowData->window setTitle: windowData->title];
 	
 	NSSize minSize = { 320, 200 };
@@ -427,53 +426,13 @@ void cglwSetCursorVisible(void* windowHandle, bool visible)
 bool cglwUpdateWindow(void* windowHandle, RenderEvent& outEvent)
 {
 	WindowData* windowData = static_cast< WindowData* >(windowHandle);
-	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-	
-	// Handle system events.
-	for (;;)
+
+	if ([windowData->window toggledSinceLast] == YES)
 	{
-		// Pop event from queue.
-		NSEvent* event = [NSApp nextEventMatchingMask: NSAnyEventMask untilDate: nil inMode: NSDefaultRunLoopMode dequeue: YES];
-		if (event == nil)
-			break;
-
-		NSEventType eventType = [event type];		
-		if (eventType == NSKeyDown)
-		{
-			uint32_t modifierFlags = [event modifierFlags];
-			int32_t keyCode = [event keyCode];
-			
-			// Toggle fullscreen with Cmd+M or Cmd+Return key combinations.
-			if (
-				(modifierFlags & kCGEventFlagMaskCommand) != 0 &&
-				(keyCode == 0x2e || keyCode == 0x24)
-			)
-			{
-				outEvent.type = ReToggleFullScreen;
-				return true;
-			}
-			
-			// Close application with Cmd+Q combination.
-			if (
-				(modifierFlags & kCGEventFlagMaskCommand) != 0 &&
-				(keyCode == 0x0c)
-			)
-			{
-				outEvent.type = ReClose;
-				return true;
-			}
-			
-			continue;
-		}
-		else if (eventType == NSKeyUp)
-			continue;
-
-		// Process event. 
-		[NSApp sendEvent: event];
+		outEvent.type = ReToggleFullScreen;
+		return true;
 	}
-	
-	[pool release];
-	
+
 	if ([windowData->window closedSinceLast] == YES)
 	{
 		outEvent.type = ReClose;

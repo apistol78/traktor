@@ -8,11 +8,11 @@ namespace traktor
 
 bool isInputAllowed();
 
-bool getMouseRange(float& outMaxX, float& outMaxY);
+bool getMouseRange(NSSize& outRange);
         
-bool getMousePosition(float& outX, float& outY);
+bool getMousePosition(NSPoint& outMousePositionGlobal, NSPoint& outMousePositionLocal);
 
-bool getMouseCenterPosition(float& outX, float& outY);
+bool getMouseCenterPosition(NSPoint& outCenterPosition);
 
 	}
 }

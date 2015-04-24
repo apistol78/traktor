@@ -1,7 +1,7 @@
 #ifndef traktor_input_InputDeviceMouseOsX_H
 #define traktor_input_InputDeviceMouseOsX_H
 
-#include <IOKit/hid/IOHIDLib.h>
+#import <Cocoa/Cocoa.h>
 #include "Input/IInputDevice.h"
 
 namespace traktor
@@ -14,7 +14,7 @@ class InputDeviceMouseOsX : public IInputDevice
 	T_RTTI_CLASS;
 	
 public:
-	InputDeviceMouseOsX(IOHIDDeviceRef deviceRef);
+	InputDeviceMouseOsX();
 
 	virtual std::wstring getName() const;
 
@@ -48,15 +48,15 @@ public:
 	
 	virtual void setExclusive(bool exclusive);
 	
+	void consumeEvent(NSEvent* event);
+
 private:
-	IOHIDDeviceRef m_deviceRef;
 	bool m_button[4];
 	int32_t m_axis[5];
 	uint64_t m_timeStamps[3];
 	bool m_exclusive;
 	bool m_lastMouseValid;
-	
-	static void callbackRemoval(void* context, IOReturn result, void* sender);
+	float m_scrollAccum;
 };
 	
 	}

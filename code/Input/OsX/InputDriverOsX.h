@@ -19,6 +19,8 @@ namespace traktor
 	{
 	
 class IInputDevice;
+class InputDeviceKeyboardOsX;
+class InputDeviceMouseOsX;
 
 class T_DLLCLASS InputDriverOsX : public IInputDriver
 {
@@ -34,11 +36,13 @@ public:
 	virtual Ref< IInputDevice > getDevice(int index);
 	
 	virtual UpdateResult update();
-	
+
 private:
 	bool m_devicesChanged;
 	RefArray< IInputDevice > m_devices;
-	
+	Ref< InputDeviceKeyboardOsX > m_keyboardDevice;
+	Ref< InputDeviceMouseOsX > m_mouseDevice;
+
 	static void callbackDeviceMatch(void* inContext, IOReturn inResult, void* inSender, IOHIDDeviceRef inIOHIDDeviceRef);
 };
 
