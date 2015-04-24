@@ -403,6 +403,8 @@ SystemWindow RenderViewOpenGL::getSystemWindow()
 	SystemWindow sw;
 #if defined(_WIN32)
 	sw.hWnd = *m_window;
+#elif defined(__APPLE__)
+	sw.view = cglwGetWindowView(m_windowHandle);
 #elif defined(__LINUX__)
 	sw.display = m_window->getDisplay();
 	sw.window = m_window->getWindow();

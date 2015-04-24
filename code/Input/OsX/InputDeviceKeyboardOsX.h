@@ -1,7 +1,8 @@
 #ifndef traktor_input_InputDeviceKeyboardOsX_H
 #define traktor_input_InputDeviceKeyboardOsX_H
 
-#include <IOKit/hid/IOHIDLib.h>
+#import <Cocoa/Cocoa.h>
+#include "Core/Containers/CircularVector.h"
 #include "Input/IInputDevice.h"
 
 namespace traktor
@@ -14,7 +15,7 @@ class InputDeviceKeyboardOsX : public IInputDevice
 	T_RTTI_CLASS;
 	
 public:
-	InputDeviceKeyboardOsX(IOHIDDeviceRef deviceRef);
+	InputDeviceKeyboardOsX();
 
 	virtual std::wstring getName() const;
 
@@ -48,13 +49,11 @@ public:
 	
 	virtual void setExclusive(bool exclusive);
 	
+	void consumeEvent(NSEvent* event);
+
 private:
-	IOHIDDeviceRef m_deviceRef;
 	uint8_t m_data[256];
-	
-	static void callbackRemoval(void* context, IOReturn result, void* sender);
-	
-	static void callbackValue(void* context, IOReturn result, void* sender, IOHIDValueRef value);
+	CircularVector< KeyEvent, 16 > m_keyEvents;
 };
 	
 	}

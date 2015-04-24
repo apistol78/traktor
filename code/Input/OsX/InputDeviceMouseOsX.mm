@@ -1,4 +1,3 @@
-#import <ApplicationServices/ApplicationServices.h>
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Input/OsX/InputDeviceMouseOsX.h"
@@ -32,54 +31,22 @@ c_mouseControlMap[] =
 	{ DtPositionY, -5, true, false, L"Axis Y" }
 };
 
-int32_t getElementValue(IOHIDDeviceRef deviceRef, IOHIDElementRef elementRef)
-{
-	IOHIDValueRef valueRef = 0;
-	IOHIDDeviceGetValue(deviceRef, elementRef, &valueRef);
-	if (!valueRef)
-		return 0;
-		
-	int32_t value = (int32_t)IOHIDValueGetIntegerValue(valueRef);
-	return value;
-}
-
-int32_t getElementValue(IOHIDDeviceRef deviceRef, IOHIDElementRef elementRef, uint64_t& lastTimeStamp)
-{
-	IOHIDValueRef valueRef = 0;
-	IOHIDDeviceGetValue(deviceRef, elementRef, &valueRef);
-	if (!valueRef)
-		return 0;
-		
-	uint64_t timeStamp = IOHIDValueGetTimeStamp(valueRef);
-	if (timeStamp == lastTimeStamp)
-		return 0;
-		
-	int32_t value = (int32_t)IOHIDValueGetIntegerValue(valueRef);
-	lastTimeStamp = timeStamp;
-	
-	return value;
-}
-
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDeviceMouseOsX", InputDeviceMouseOsX, IInputDevice)
 
-InputDeviceMouseOsX::InputDeviceMouseOsX(IOHIDDeviceRef deviceRef)
-:	m_deviceRef(deviceRef)
-,	m_exclusive(false)
+InputDeviceMouseOsX::InputDeviceMouseOsX()
+:	m_exclusive(false)
 ,	m_lastMouseValid(false)
+,	m_scrollAccum(0.0f)
 {
-	if (m_deviceRef)
-		IOHIDDeviceRegisterRemovalCallback(m_deviceRef, &callbackRemoval, this);
-		
 	std::memset(m_timeStamps, 0, sizeof(m_timeStamps));
-
 	resetState();
 }
 
 std::wstring InputDeviceMouseOsX::getName() const
 {
-	return L"HID Mouse";
+	return L"Mouse";
 }
 
 InputCategory InputDeviceMouseOsX::getCategory() const
@@ -89,7 +56,7 @@ InputCategory InputDeviceMouseOsX::getCategory() const
 
 bool InputDeviceMouseOsX::isConnected() const
 {
-	return m_deviceRef != 0;
+	return true;
 }
 
 int32_t InputDeviceMouseOsX::getControlCount()
@@ -134,17 +101,20 @@ float InputDeviceMouseOsX::getControlValue(int32_t control)
 bool InputDeviceMouseOsX::getControlRange(int32_t control, float& outMin, float& outMax) const
 {
 	int32_t index = c_mouseControlMap[control].index;
-	float dummy;
+	NSSize range;
+
+	if (!getMouseRange(range))
+		return false;
 	
 	if (index == -4)
 	{
 		outMin = 0.0f;
-		return getMouseRange(outMax, dummy);
+		outMax = range.width;
 	}
 	else if (index == -5)
 	{
 		outMin = 0.0f;
-		return getMouseRange(dummy, outMax);
+		outMax = range.height;
 	}
 	else
 		return false;
@@ -180,87 +150,34 @@ void InputDeviceMouseOsX::resetState()
 void InputDeviceMouseOsX::readState()
 {
 	resetState();
-	
-	if (!m_deviceRef)
-		return;
 
 	bool mouseValid = isInputAllowed();
-		
-	CFArrayRef elements = IOHIDDeviceCopyMatchingElements(m_deviceRef, NULL, kIOHIDOptionsTypeNone);
 
-	CFIndex elementCount = CFArrayGetCount(elements);
-	for (CFIndex i = 0; i < elementCount; ++i)
-	{
-		IOHIDElementRef e = (IOHIDElementRef)CFArrayGetValueAtIndex(elements, i);
-		if (!e)
-			continue;
+	// Capture mouse if exclusive mode.
+	if (CGAssociateMouseAndMouseCursorPosition(!m_exclusive) != kCGErrorSuccess)
+		return;
 
-		uint32_t usage = (uint32_t)IOHIDElementGetUsage(e);
-		if (usage == uint32_t(~0UL))
-			continue;
-			
-		uint32_t page = (uint32_t)IOHIDElementGetUsagePage(e);
-		
-		if (page == kHIDPage_GenericDesktop)
-		{
-			if (usage == kHIDUsage_GD_X)
-				m_axis[0] = getElementValue(m_deviceRef, e, m_timeStamps[0]) * 2.0f;
-			else if (usage == kHIDUsage_GD_Y)
-				m_axis[1] = getElementValue(m_deviceRef, e, m_timeStamps[1]) * 2.0f;
-			else if (usage == kHIDUsage_GD_Wheel)
-				m_axis[2] = getElementValue(m_deviceRef, e, m_timeStamps[2]);
-		}
-		else if (page == kHIDPage_Button)
-		{
-			if (usage == kHIDUsage_Button_1)
-			{
-				int32_t value = getElementValue(m_deviceRef, e);
-				m_button[0] |= bool(value != 0);
-			}
-			else if (usage == kHIDUsage_Button_2)
-			{
-				int32_t value = getElementValue(m_deviceRef, e);
-				m_button[1] |= bool(value != 0);
-			}
-			else if (usage == kHIDUsage_Button_3)
-			{
-				int32_t value = getElementValue(m_deviceRef, e);
-				m_button[2] |= bool(value != 0);
-			}
-			else if (usage == kHIDUsage_Button_4)
-			{
-				int32_t value = getElementValue(m_deviceRef, e);
-				m_button[3] |= bool(value != 0);
-			}
-		}
-	}
-	
-	CFRelease(elements);
-    
-    // Get position of mouse relative to key window.
-    float mouseX, mouseY;
-    if (getMousePosition(mouseX, mouseY))
-    {
-        m_axis[3] = int32_t(mouseX);
-        m_axis[4] = int32_t(mouseY);
-    }
-    else
-    {
-        m_axis[3] =
-        m_axis[4] = 0;
-    }
-	
-	// If mouse capture is exclusive then move cursor to center of key window.
-	if (m_exclusive)
-	{
-		float centerX, centerY;
-		if (getMouseCenterPosition(centerX, centerY))
-        {
-            CGRect bounds = CGDisplayBounds(kCGDirectMainDisplay);
-			CGWarpMouseCursorPosition(CGPointMake(centerX, bounds.size.height - centerY));
-        }
-	}
-	
+	NSPoint centerPosition;
+	if (!getMouseCenterPosition(centerPosition))
+		return;
+
+	NSPoint mousePositionGlobal, mousePositionLocal;
+	if (!getMousePosition(mousePositionGlobal, mousePositionLocal))
+		return;
+
+	int32_t deltaX = 0, deltaY = 0;
+	CGGetLastMouseDelta(&deltaX, &deltaY);
+	m_axis[0] = float(deltaX);
+	m_axis[1] = float(deltaY);
+	m_axis[2] = m_scrollAccum; m_scrollAccum = 0.0f;
+
+	uint32_t buttons = [NSEvent pressedMouseButtons];
+	for (uint32_t i = 0; i < 4; ++i)
+		m_button[i] = bool((buttons & (1 << i)) != 0);
+
+	m_axis[3] = int32_t(mousePositionLocal.x);
+	m_axis[4] = int32_t(mousePositionLocal.y);
+
 	// As long as user keps mouse button pressed we cannot
 	// leave invalid state.
 	if (mouseValid && !m_lastMouseValid)
@@ -274,6 +191,7 @@ void InputDeviceMouseOsX::readState()
 	if (!mouseValid)
 		resetState();
 	
+	//m_lastMousePosition = mousePositionGlobal;
 	m_lastMouseValid = mouseValid;
 }
 
@@ -291,10 +209,10 @@ void InputDeviceMouseOsX::setExclusive(bool exclusive)
 	m_exclusive = exclusive;
 }
 
-void InputDeviceMouseOsX::callbackRemoval(void* context, IOReturn result, void* sender)
+void InputDeviceMouseOsX::consumeEvent(NSEvent* event)
 {
-	InputDeviceMouseOsX* this_ = static_cast< InputDeviceMouseOsX* >(context);
-	this_->m_deviceRef = 0;
+	if ([event type] == NSScrollWheel)
+		m_scrollAccum += [event scrollingDeltaY] / 120.0f;
 }
 
 	}
