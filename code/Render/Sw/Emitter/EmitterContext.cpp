@@ -63,12 +63,19 @@ EmitterVariable* EmitterContext::emitInput(const InputPin* inputPin)
 {
 	const OutputPin* sourcePin = m_shaderGraph->findSourcePin(inputPin);
 	if (!sourcePin)
+	{
+		log::error << L"Failed to emit input \"" << inputPin->getName() << L"\"; not connected" << Endl;
 		return 0;
+	}
 
 	std::map< const OutputPin*, OutputVariable >::iterator i = m_currentState->inputs.find(sourcePin);
 	if (i == m_currentState->inputs.end())
 	{
-		m_emitter.emit(*this, sourcePin->getNode());
+		if (!m_emitter.emit(*this, sourcePin->getNode()))
+		{
+			log::error << L"Failed to emit node \"" << type_name(sourcePin->getNode()) << L"\"" << Endl;
+			return 0;
+		}
 
 		i = m_currentState->inputs.find(sourcePin);
 		T_FATAL_ASSERT (i != m_currentState->inputs.end());

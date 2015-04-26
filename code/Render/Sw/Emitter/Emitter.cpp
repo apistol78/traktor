@@ -495,6 +495,7 @@ bool emitIterate(EmitterContext& cx, Iterate* node)
 
 bool emitIterate2d(EmitterContext& cx, Iterate2d* node)
 {
+	log::error << L"Iterate2D not implemented" << Endl;
 	return false;
 }
 
