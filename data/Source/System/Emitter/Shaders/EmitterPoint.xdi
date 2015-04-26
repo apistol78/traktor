@@ -149,8 +149,8 @@ Alpha
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1556</first>
-				<second>678</second>
+				<first>1936</first>
+				<second>694</second>
 			</position>
 			<name>Depth</name>
 		</item>
@@ -196,8 +196,8 @@ Alpha
 		<item type="traktor.render.Sub">
 			<comment/>
 			<position>
-				<first>960</first>
-				<second>595</second>
+				<first>1064</first>
+				<second>598</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
@@ -211,15 +211,15 @@ Alpha
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>1131</first>
-				<second>627</second>
+				<first>1278</first>
+				<second>629</second>
 			</position>
 		</item>
 		<item type="traktor.render.Clamp">
 			<comment/>
 			<position>
-				<first>1284</first>
-				<second>647</second>
+				<first>1503</first>
+				<second>646</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
@@ -235,16 +235,16 @@ Alpha
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>1296</first>
-				<second>747</second>
+				<first>1515</first>
+				<second>746</second>
 			</position>
 			<value>1</value>
 		</item>
 		<item type="traktor.render.Branch">
 			<comment/>
 			<position>
-				<first>1432</first>
-				<second>666</second>
+				<first>1715</first>
+				<second>667</second>
 			</position>
 			<parameterName>DepthEnable</parameterName>
 		</item>
@@ -373,8 +373,8 @@ Age
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>923</first>
-				<second>691</second>
+				<first>1027</first>
+				<second>694</second>
 			</position>
 			<name>DepthFade</name>
 			<connectable>true</connectable>
@@ -408,6 +408,13 @@ Age
 			<position>
 				<first>-11</first>
 				<second>331</second>
+			</position>
+		</item>
+		<item type="traktor.render.Interpolator">
+			<comment/>
+			<position>
+				<first>951</first>
+				<second>634</second>
 			</position>
 		</item>
 	</nodes>
@@ -644,16 +651,6 @@ Age
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[19]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[18]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[3]"/>
 				<name>Output</name>
 			</source>
@@ -819,6 +816,26 @@ Age
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[7]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[19]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[41]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[41]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
