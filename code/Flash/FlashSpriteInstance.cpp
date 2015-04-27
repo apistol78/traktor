@@ -574,7 +574,7 @@ void FlashSpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 	executeScriptEvent(ActionContext::IdOnMouseDown, ActionValue());
 
 	// Check if we're inside then issue press events.
-	if (!context->getPressed())
+	if (!context->getPressed() && isEnabled())
 	{
 		Aabb2 bounds = getVisibleLocalBounds();
 		bool inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
@@ -617,7 +617,7 @@ void FlashSpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 	executeScriptEvent(ActionContext::IdOnMouseUp, ActionValue());
 
 	// Check if we're inside then issue press events.
-	if (context->getPressed() == this)
+	if (context->getPressed() == this && isEnabled())
 	{
 		Aabb2 bounds = getVisibleLocalBounds();
 		bool inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
