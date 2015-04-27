@@ -495,8 +495,92 @@ bool emitIterate(EmitterContext& cx, Iterate* node)
 
 bool emitIterate2d(EmitterContext& cx, Iterate2d* node)
 {
-	log::error << L"Iterate2D not implemented" << Endl;
-	return false;
+	int fromX = node->getFromX();
+	int toX = node->getToX();
+	int fromY = node->getFromY();
+	int toY = node->getToY();
+
+	int countX = toX - fromX;
+	int countY = toY - fromY;
+	if (countX < 0 || countX >= 256 || countY < 0 || countY >= 256)
+		log::error << L"Too many iterations in Iterate node" << Endl;
+
+	// Initialize output accumulator.
+	EmitterVariable* out = cx.emitOutput(node, L"Output", VtFloat4);
+	EmitterVariable* initial = cx.emitInput(node, L"Initial");
+	if (initial)
+	{
+		Instruction is0(OpMove, out->reg, initial->reg, 0, 0, 0);
+		cx.emitInstruction(is0);
+	}
+	else
+	{
+		Instruction is0(OpSet, out->reg, 0, 0xff, 0, 0);
+		cx.emitInstruction(is0);
+	}
+
+	// Setup outer counter, load with initial value.
+	EmitterVariable* Y = cx.emitOutput(node, L"Y", VtFloat);
+	cx.emitInstruction(OpFetchConstant, Y, cx.emitConstant(float(fromY)));
+
+	EmitterVariable* tmpY1 = cx.allocTemporary(VtFloat);
+	cx.emitInstruction(OpFetchConstant, tmpY1, cx.emitConstant(float(toY)));
+
+	uint32_t addressY = cx.getCurrentAddress();
+
+	// Setup inner counter, load with initial value.
+	EmitterVariable* X = cx.emitOutput(node, L"X", VtFloat);
+	cx.emitInstruction(OpFetchConstant, X, cx.emitConstant(float(fromX)));
+
+	EmitterVariable* tmpX1 = cx.allocTemporary(VtFloat);
+	cx.emitInstruction(OpFetchConstant, tmpX1, cx.emitConstant(float(toX)));
+
+	uint32_t addressX = cx.getCurrentAddress();
+
+	EMIT_MANDATORY_IN(in, cx, node, L"Input");
+	EmitterVariable* xin = expandTypes(cx, in, VtFloat4);
+	cx.emitInstruction(OpMove, out, xin);
+	collapseTypes(cx, in, xin);
+
+	// Check condition.
+	EmitterVariable* cond = cx.emitInput(node, L"Condition");
+	uint32_t condOffset = 0;
+	if (cond)
+	{
+		Instruction inst(OpJumpIfZero, 0, 0);
+		condOffset = cx.emitInstruction(inst);
+	}
+
+	// Increment inner counter, repeat loop if not at target.
+	cx.emitInstruction(OpIncrement, X);
+
+	EmitterVariable* tmpX2 = cx.allocTemporary(VtFloat);
+	cx.emitInstruction(OpCompareGreater, tmpX2, X, tmpX1);
+
+	Instruction instX(OpJumpIfZero, tmpX2->reg, getRelativeOffset(cx.getCurrentAddress(), addressX));
+	cx.emitInstruction(instX);
+
+	// Increment counter, repeat loop if not at target.
+	cx.emitInstruction(OpIncrement, Y);
+
+	EmitterVariable* tmpY2 = cx.allocTemporary(VtFloat);
+	cx.emitInstruction(OpCompareGreater, tmpY2, Y, tmpY1);
+
+	Instruction instY(OpJumpIfZero, tmpY2->reg, getRelativeOffset(cx.getCurrentAddress(), addressY));
+	cx.emitInstruction(instY);
+
+	// Patch up condition jump address.
+	if (cond)
+	{
+		Instruction inst(OpJumpIfZero, cond->reg, getRelativeOffset(condOffset, cx.getCurrentAddress()));
+		cx.emitInstruction(condOffset, inst);
+	}
+
+	cx.freeTemporary(tmpY2);
+	cx.freeTemporary(tmpX2);
+	cx.freeTemporary(tmpY1);
+	cx.freeTemporary(tmpX1);
+	return true;
 }
 
 bool emitIndexedUniform(EmitterContext& cx, IndexedUniform* node)

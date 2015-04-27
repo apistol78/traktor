@@ -25,6 +25,7 @@ struct EmitterVariable
 	EmitterVariableType type;
 	int reg;		//< Index to first register allocated for this variable.
 	int size;		//< Number of registers allocated for this variable.
+	bool temporary;
 };
 
 //@}
