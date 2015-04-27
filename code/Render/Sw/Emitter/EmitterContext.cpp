@@ -63,10 +63,7 @@ EmitterVariable* EmitterContext::emitInput(const InputPin* inputPin)
 {
 	const OutputPin* sourcePin = m_shaderGraph->findSourcePin(inputPin);
 	if (!sourcePin)
-	{
-		log::error << L"Failed to emit input \"" << inputPin->getName() << L"\"; not connected" << Endl;
 		return 0;
-	}
 
 	std::map< const OutputPin*, OutputVariable >::iterator i = m_currentState->inputs.find(sourcePin);
 	if (i == m_currentState->inputs.end())
@@ -79,9 +76,13 @@ EmitterVariable* EmitterContext::emitInput(const InputPin* inputPin)
 
 		i = m_currentState->inputs.find(sourcePin);
 		T_FATAL_ASSERT (i != m_currentState->inputs.end());
-		//T_FATAL_ASSERT (i->second.count > 0);
 		T_FATAL_ASSERT (std::find(i->second.pins.begin(), i->second.pins.end(), inputPin) != i->second.pins.end());
-		T_FATAL_ASSERT (std::find(i->second.released.begin(), i->second.released.end(), inputPin) == i->second.released.end());
+
+		if (std::find(i->second.released.begin(), i->second.released.end(), inputPin) != i->second.released.end())
+		{
+			log::error << L"Input pin \"" << inputPin->getName() << L"\" of node \"" << type_name(inputPin->getNode()) << L"\" (connected to node \"" << type_name(sourcePin->getNode()) << L"\") released; internal error." << Endl;
+			return 0;
+		}
 	}
 
 	return i->second.var;
@@ -205,6 +206,7 @@ EmitterVariable* EmitterContext::emitConstant(float scalar)
 	var->type = VtFloat;
 	var->reg = m_currentState->program.addConstant(Vector4(scalar, scalar, scalar, scalar));
 	var->size = 1;
+	var->temporary = false;
 
 	return var;
 }
@@ -216,6 +218,7 @@ EmitterVariable* EmitterContext::emitConstant(const Vector4& vector)
 	var->type = VtFloat4;
 	var->reg = m_currentState->program.addConstant(vector);
 	var->size = 1;
+	var->temporary = false;
 
 	return var;
 }
@@ -231,6 +234,7 @@ EmitterVariable* EmitterContext::emitUniform(const std::wstring& parameterName, 
 	var->type = variableType;
 	var->reg = m_parameters.nextUniformIndex;
 	var->size = getVariableTypeSize(variableType) * length;
+	var->temporary = false;
 
 	m_parameters.uniforms[parameterName] = var;
 	m_parameters.nextUniformIndex += var->size;
@@ -245,6 +249,7 @@ EmitterVariable* EmitterContext::emitVarying(int index)
 	var->type = VtFloat4;
 	var->reg = index;
 	var->size = 1;
+	var->temporary = false;
 
 	return var;
 }
@@ -291,6 +296,7 @@ EmitterVariable* EmitterContext::allocTemporary(EmitterVariableType variableType
 	var->type = variableType;
 	var->reg = reg;
 	var->size = size;
+	var->temporary = true;
 
 	m_currentState->vars.insert(var);
 
@@ -301,6 +307,8 @@ void EmitterContext::freeTemporary(EmitterVariable*& var)
 {
 	if (!var)
 		return;
+
+	T_FATAL_ASSERT(var->temporary);
 
 	for (int i = 0; i < sizeof_array(m_states); ++i)
 	{
