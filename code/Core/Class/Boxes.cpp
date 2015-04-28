@@ -366,6 +366,47 @@ BoxedPlane::BoxedPlane(float a, float b, float c, float d)
 {
 }
 
+Ref< BoxedVector4 > BoxedPlane::rayIntersection(
+	const Vector4& origin,
+	const Vector4& direction
+) const
+{
+	Vector4 result;
+	Scalar k;
+	
+	if (m_value.rayIntersection(origin, direction, k, &result))
+		return new BoxedVector4(result);
+	else
+		return 0;
+}
+
+Ref< BoxedVector4 > BoxedPlane::segmentIntersection(
+	const Vector4& a,
+	const Vector4& b
+) const
+{
+	Vector4 result;
+	Scalar k;
+	
+	if (m_value.segmentIntersection(a, b, k, &result))
+		return new BoxedVector4(result);
+	else
+		return 0;
+}
+
+Ref< BoxedVector4 > BoxedPlane::uniqueIntersectionPoint(
+	const Plane& a,
+	const Plane& b,
+	const Plane& c
+)
+{
+	Vector4 result;
+	if (Plane::uniqueIntersectionPoint(a, b, c, result))
+		return new BoxedVector4(result);
+	else
+		return 0;
+}
+
 std::wstring BoxedPlane::toString() const
 {
 	StringOutputStream ss;
@@ -1253,6 +1294,9 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedPlane->addMethod("distance", &BoxedPlane::distance);
 	classBoxedPlane->addMethod("distanceToPoint", &BoxedPlane::distanceToPoint);
 	classBoxedPlane->addMethod("project", &BoxedPlane::project);
+	classBoxedPlane->addMethod("rayIntersection", &BoxedPlane::rayIntersection);
+	classBoxedPlane->addMethod("segmentIntersection", &BoxedPlane::segmentIntersection);
+	classBoxedPlane->addStaticMethod("uniqueIntersectionPoint", &BoxedPlane::uniqueIntersectionPoint);
 	registrar->registerClass(classBoxedPlane);
 
 	Ref< AutoRuntimeClass< BoxedTransform > > classBoxedTransform = new AutoRuntimeClass< BoxedTransform >();
