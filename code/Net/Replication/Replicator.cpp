@@ -335,16 +335,11 @@ bool Replicator::update()
 	*/
 
 	// Update proxy queues.
-	bool succeded = true;
 	for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
 	{
-		if ((*i)->updateEventQueue() > 0)
-			succeded = false;
-		if (!(*i)->dispatchEvents(m_eventListeners))
-			succeded = false;
+		(*i)->updateEventQueue();
+		(*i)->dispatchEvents(m_eventListeners);
 	}
-	if (!succeded)
-		return false;
 
 	T_MEASURE_UNTIL(0.001);
 
