@@ -154,6 +154,8 @@ private:
 	{
 		uint32_t time;
 		Ref< const ISerializable > eventObject;
+		uint32_t eventObjectHash;
+		bool dispatched;
 	};
 
 	Replicator* m_replicator;
@@ -192,8 +194,6 @@ private:
 
 	uint8_t m_sequence;
 	std::list< Event > m_unacknowledgedEvents;
-	CircularVector< std::pair< uint32_t, uint8_t >, 128 > m_lastEvents;
-	uint8_t m_dispatchEvent;
 	EventSlot m_eventSlots[256];
 
 	//@}
