@@ -322,6 +322,22 @@ public:
 
 	Vector4 project(const Vector4& v) const { return m_value.project(v); }
 
+	Ref< BoxedVector4 > rayIntersection(
+		const Vector4& origin,
+		const Vector4& direction
+	) const;
+
+	Ref< BoxedVector4 > segmentIntersection(
+		const Vector4& a,
+		const Vector4& b
+	) const;
+
+	static Ref< BoxedVector4 > uniqueIntersectionPoint(
+		const Plane& a,
+		const Plane& b,
+		const Plane& c
+	);
+
 	const Plane& unbox() const { return m_value; }
 
 	virtual std::wstring toString() const;
