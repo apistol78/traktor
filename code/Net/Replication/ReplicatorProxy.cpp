@@ -301,53 +301,47 @@ bool ReplicatorProxy::receivedEventAcknowledge(const ReplicatorProxy* from, uint
 
 bool ReplicatorProxy::enqueueEvent(uint32_t time, uint8_t sequence, const ISerializable* eventObject)
 {
-	// Start dispatching from first encountered event.
-	if (m_lastEvents.empty())
-		m_dispatchEvent = sequence;
+	uint32_t eventObjectHash = DeepHash(eventObject).get();
 
-	// Discard event if already received.
-	for (uint32_t i = 0; i < m_lastEvents.size(); ++i)
-	{
-		if (m_lastEvents[i].first == time && m_lastEvents[i].second == sequence)
-			return true;
-	}
-	m_lastEvents.push_back(std::make_pair(time, sequence));
-
-	// If events collide then there is a serious network problem
-	// thus we need to disconnect.
 	if (m_eventSlots[sequence].eventObject)
 	{
-		uint32_t newHash = DeepHash(eventObject).get();
-		uint32_t oldHash = DeepHash(m_eventSlots[sequence].eventObject).get();
-		log::error << m_replicator->getLogPrefix() << L"Received event with sequence number already enqueued:" << Endl;
-		log::error << L"\tOld hash " << oldHash << L" at " << m_eventSlots[sequence].time << Endl;
-		log::error << L"\tNew hash " << newHash << L" at " << time << Endl;
+		if (DeepHash(m_eventSlots[sequence].eventObject) == eventObjectHash)
+			return true;
+		
+		if (!m_eventSlots[sequence].dispatched)
+			log::error << m_replicator->getLogPrefix() << L"Event \"" << type_name(eventObject) << L" received while enqueued event \"" << type_name(m_eventSlots[sequence].eventObject) << L"\" hasn't been dispatched yet." << Endl;
 	}
 
 	m_eventSlots[sequence].time = time;
 	m_eventSlots[sequence].eventObject = eventObject;
+	m_eventSlots[sequence].eventObjectHash = eventObjectHash;
+	m_eventSlots[sequence].dispatched = false;
+
 	return true;
 }
 
 bool ReplicatorProxy::dispatchEvents(const SmallMap< const TypeInfo*, RefArray< IReplicatorEventListener > >& eventListeners)
 {
-	while (m_eventSlots[m_dispatchEvent].eventObject)
+	for (uint32_t i = 0; i < sizeof_array(m_eventSlots); ++i)
 	{
-		SmallMap< const TypeInfo*, RefArray< IReplicatorEventListener > >::const_iterator it = eventListeners.find(&type_of(m_eventSlots[m_dispatchEvent].eventObject));
+		if (!m_eventSlots[i].eventObject || m_eventSlots[i].dispatched)
+			continue;
+
+		SmallMap< const TypeInfo*, RefArray< IReplicatorEventListener > >::const_iterator it = eventListeners.find(&type_of(m_eventSlots[i].eventObject));
 		if (it != eventListeners.end())
 		{
-			for (RefArray< IReplicatorEventListener >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
+			for (RefArray< IReplicatorEventListener >::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2)
 			{
-				(*i)->notify(
+				(*it2)->notify(
 					m_replicator,
-					net2time(m_eventSlots[m_dispatchEvent].time),
+					net2time(m_eventSlots[i].time),
 					this,
-					m_eventSlots[m_dispatchEvent].eventObject
+					m_eventSlots[i].eventObject
 				);
 			}
 		}
-		m_eventSlots[m_dispatchEvent].eventObject = 0;
-		++m_dispatchEvent;
+
+		m_eventSlots[i].dispatched = true;
 	}
 	return true;
 }
@@ -459,12 +453,13 @@ void ReplicatorProxy::disconnect()
 	m_latencyReverse = 0.0;
 	m_latencyReverseStandardDeviation = 0.0;
 	m_unacknowledgedEvents.clear();
-	m_lastEvents.clear();
-	m_dispatchEvent = 0;
+	//m_lastEvents.clear();
+	//m_dispatchEvent = 0;
 	for (uint32_t i = 0; i < sizeof_array(m_eventSlots); ++i)
 	{
 		m_eventSlots[i].time = 0;
 		m_eventSlots[i].eventObject = 0;
+		m_eventSlots[i].dispatched = false;
 	}
 }
 
@@ -491,6 +486,12 @@ ReplicatorProxy::ReplicatorProxy(Replicator* replicator, net_handle_t handle, co
 ,	m_latencyReverse(0.0)
 ,	m_latencyReverseStandardDeviation(0.0)
 {
+	for (uint32_t i = 0; i < sizeof_array(m_eventSlots); ++i)
+	{
+		m_eventSlots[i].time = 0;
+		m_eventSlots[i].eventObject = 0;
+		m_eventSlots[i].dispatched = false;
+	}
 }
 
 	}
