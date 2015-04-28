@@ -30,7 +30,7 @@ bool SteamStatistics::enumerate(std::map< std::wstring, int32_t >& outStats)
 			if (!SteamUserStats()->GetStat(wstombs(*i).c_str(), &value))
 			{
 				log::error << L"Unable to enumerate statistics; Statistic \"" << *i << L"\" not available" << Endl;
-				return false;
+				continue;
 			}
 		}
 		outStats.insert(std::make_pair(

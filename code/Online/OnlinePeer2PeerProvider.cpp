@@ -183,11 +183,15 @@ bool OnlinePeer2PeerProvider::setPrimaryPeerHandle(net::net_handle_t node)
 	{
 		if (i->user->getGlobalId() == node)
 		{
+#if defined(_DEBUG)
 			log::info << L"[Online P2P] Migrating primary token to peer " << node << L"..." << Endl;
+#endif
 			return m_lobby->setOwner(i->user);
 		}
 	}
+#if defined(_DEBUG)
 	log::error << L"[Online P2P] Failed to migrate primary token to peer " << node << L"." << Endl;
+#endif
 	return false;
 }
 

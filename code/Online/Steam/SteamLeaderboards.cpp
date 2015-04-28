@@ -141,7 +141,7 @@ bool SteamLeaderboards::enumerate(std::map< std::wstring, LeaderboardData >& out
 		if (!call)
 		{
 			log::error << L"Unable to enumerate leaderboards; Leaderboard \"" << *i << L"\" not available" << Endl;
-			return false;
+			continue;
 		}
 		calls.push_back(call);
 	}
