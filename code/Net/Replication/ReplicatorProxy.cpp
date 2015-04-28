@@ -316,7 +316,13 @@ bool ReplicatorProxy::enqueueEvent(uint32_t time, uint8_t sequence, const ISeria
 	// If events collide then there is a serious network problem
 	// thus we need to disconnect.
 	if (m_eventSlots[sequence].eventObject)
-		return false;
+	{
+		uint32_t newHash = DeepHash(eventObject).get();
+		uint32_t oldHash = DeepHash(m_eventSlots[sequence].eventObject).get();
+		log::error << m_replicator->getLogPrefix() << L"Received event with sequence number already enqueued:" << Endl;
+		log::error << L"\tOld hash " << oldHash << L" at " << m_eventSlots[sequence].time << Endl;
+		log::error << L"\tNew hash " << newHash << L" at " << time << Endl;
+	}
 
 	m_eventSlots[sequence].time = time;
 	m_eventSlots[sequence].eventObject = eventObject;
@@ -454,6 +460,12 @@ void ReplicatorProxy::disconnect()
 	m_latencyReverseStandardDeviation = 0.0;
 	m_unacknowledgedEvents.clear();
 	m_lastEvents.clear();
+	m_dispatchEvent = 0;
+	for (uint32_t i = 0; i < sizeof_array(m_eventSlots); ++i)
+	{
+		m_eventSlots[i].time = 0;
+		m_eventSlots[i].eventObject = 0;
+	}
 }
 
 ReplicatorProxy::ReplicatorProxy(Replicator* replicator, net_handle_t handle, const std::wstring& name, Object* user)

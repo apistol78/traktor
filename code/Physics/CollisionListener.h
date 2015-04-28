@@ -42,8 +42,6 @@ struct CollisionInfo
 
 class T_DLLCLASS CollisionListener : public Object
 {
-	T_RTTI_CLASS;
-
 public:
 	virtual void notify(const CollisionInfo& collisionInfo) = 0;
 };
