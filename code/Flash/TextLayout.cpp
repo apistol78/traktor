@@ -193,6 +193,9 @@ void TextLayout::setAttribute(const FlashFont* font, const SwfColor& textColor)
 
 void TextLayout::insertText(const std::wstring& text)
 {
+	if (text.empty())
+		return;
+
 	const Attribute& attrib = m_attribs[m_currentAttrib];
 
 	float coordScale = attrib.font->getCoordinateType() == FlashFont::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
