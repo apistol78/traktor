@@ -28,7 +28,7 @@ bool SteamAchievements::enumerate(std::map< std::wstring, bool >& outAchievement
 			if (!SteamUserStats()->GetAchievement(wstombs(*i).c_str(), &achieved))
 			{
 				log::error << L"Unable to enumerate achievements; Achievement \"" << *i << L"\" not available" << Endl;
-				return false;
+				continue;
 			}
 		}
 		outAchievements.insert(std::make_pair(

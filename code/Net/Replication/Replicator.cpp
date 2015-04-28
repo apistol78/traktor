@@ -439,11 +439,15 @@ bool Replicator::update()
 				{
 					if ((*i)->setPrimary())
 					{
-						log::info << getLogPrefix() << L"Migrated primary token to peer " << (*i)->getHandle() << L" (1)." << Endl;
+#if defined(_DEBUG)
+						log::info << getLogPrefix() << L"Migrated primary token to peer " << (*i)->getHandle() << L"." << Endl;
+#endif
 						break;
 					}
+#if defined(_DEBUG)
 					else
-						log::info << getLogPrefix() << L"Unable migrate primary token to peer " << (*i)->getHandle() << L" (1)." << Endl;
+						log::info << getLogPrefix() << L"Unable migrate primary token to peer " << (*i)->getHandle() << L"." << Endl;
+#endif
 				}
 			}
 		}
