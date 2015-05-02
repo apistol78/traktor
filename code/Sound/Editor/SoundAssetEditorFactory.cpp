@@ -16,7 +16,7 @@ const TypeInfoSet SoundAssetEditorFactory::getEditableTypes() const
 	return typeSet;
 }
 
-bool SoundAssetEditorFactory::needOutputResources(const TypeInfo& typeInfo) const
+bool SoundAssetEditorFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const
 {
 	return true;
 }

@@ -1,5 +1,6 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -123,7 +124,9 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 
 	m_splitCount = settings->getProperty< PropertyInteger >(L"SceneEditor.SplitCount", 4);
 
-	updateRenderControls();
+	if (!updateRenderControls())
+		return false;
+
 	updateEditState();
 
 	m_idleEventHandler = ui::Application::getInstance()->addEventHandler< ui::IdleEvent >(this, &ScenePreviewControl::eventIdle);
@@ -148,7 +151,10 @@ void ScenePreviewControl::destroy()
 
 	// Destroy render controls.
 	for (RefArray< ISceneRenderControl >::iterator i = m_renderControls.begin(); i != m_renderControls.end(); ++i)
-		(*i)->destroy();
+	{
+		if (*i)
+			(*i)->destroy();
+	}
 	m_renderControls.resize(0);
 
 	// Destroy widgets.
@@ -324,31 +330,28 @@ ui::Size ScenePreviewControl::getPreferedSize() const
 	return ui::Size(256, 256);
 }
 
-void ScenePreviewControl::updateRenderControls()
+bool ScenePreviewControl::updateRenderControls()
 {
 	for (RefArray< ISceneRenderControl >::iterator i = m_renderControls.begin(); i != m_renderControls.end(); ++i)
 		(*i)->destroy();
 
 	m_renderControls.resize(0);
 
-	if (m_splitterRenderControls)
-	{
-		m_splitterRenderControls->destroy();
-		m_splitterRenderControls = 0;
-	}
+	safeDestroy(m_splitterRenderControls);
 
 	if (m_splitCount == StSingle)
 	{
-		m_renderControls.resize(1);
-
 		Ref< DefaultRenderControl > renderControl = new DefaultRenderControl();
-		if (renderControl->create(
+		if (!renderControl->create(
 			this,
 			m_context,
 			0,
 			0
 		))
-			m_renderControls[0] = renderControl;
+			return false;
+
+		m_renderControls.resize(1);
+		m_renderControls[0] = renderControl;
 	}
 	else if (m_splitCount == StDouble)
 	{
@@ -359,13 +362,15 @@ void ScenePreviewControl::updateRenderControls()
 		for (int i = 0; i < 2; ++i)
 		{
 			Ref< DefaultRenderControl > renderControl = new DefaultRenderControl();
-			if (renderControl->create(
+			if (!renderControl->create(
 				doubleSplitter,
 				m_context,
 				i,
 				1 + i
 			))
-				m_renderControls[i] = renderControl;
+				return false;
+
+			m_renderControls[i] = renderControl;
 		}
 
 		m_splitterRenderControls = doubleSplitter;
@@ -379,13 +384,15 @@ void ScenePreviewControl::updateRenderControls()
 		for (int i = 0; i < 4; ++i)
 		{
 			Ref< DefaultRenderControl > renderControl = new DefaultRenderControl();
-			if (renderControl->create(
+			if (!renderControl->create(
 				quadSplitter,
 				m_context,
 				i,
 				3 + i
 			))
-				m_renderControls[i] = renderControl;
+				return false;
+
+			m_renderControls[i] = renderControl;
 		}
 
 		m_splitterRenderControls = quadSplitter;
@@ -393,6 +400,8 @@ void ScenePreviewControl::updateRenderControls()
 
 	update();
 	updateWorldRenderer();
+
+	return true;
 }
 
 void ScenePreviewControl::updateEditState()

@@ -15,7 +15,7 @@ class DefaultObjectEditorFactory : public IObjectEditorFactory
 public:
 	virtual const TypeInfoSet getEditableTypes() const;
 
-	virtual bool needOutputResources(const TypeInfo& typeInfo) const;
+	virtual bool needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const;
 
 	virtual Ref< IObjectEditor > createObjectEditor(IEditor* editor) const;
 

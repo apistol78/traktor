@@ -598,6 +598,14 @@
       <second>Wizards</second>
     </item>
     <item>
+      <first>EDITOR_WAIT_BUILDING_TITLE</first>
+      <second>Building resources</second>
+    </item>
+    <item>
+      <first>EDITOR_WAIT_BUILDING_MESSAGE</first>
+      <second>Building editor resources...</second>
+    </item>
+    <item>
       <first>EDITOR_ABOUT_TITLE</first>
       <second>About</second>
     </item>

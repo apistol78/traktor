@@ -228,6 +228,8 @@ private:
 
 	void buildCancel();
 
+	void buildWaitUntilFinished();
+
 	void updateMRU();
 
 	void updateTitle();

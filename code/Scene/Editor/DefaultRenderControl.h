@@ -76,7 +76,7 @@ private:
 	Ref< ui::custom::ToolBarDropDown > m_toolAA;
 	Ref< ISceneRenderControl > m_renderControl;
 
-	void createRenderControl(int32_t type);
+	bool createRenderControl(int32_t type);
 
 	void eventToolClick(ui::custom::ToolBarButtonClickEvent* event);
 };

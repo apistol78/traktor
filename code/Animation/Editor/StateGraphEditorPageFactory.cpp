@@ -17,7 +17,7 @@ const TypeInfoSet StateGraphEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
-bool StateGraphEditorPageFactory::needOutputResources(const TypeInfo& typeInfo) const
+bool StateGraphEditorPageFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const
 {
 	return false;
 }

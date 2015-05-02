@@ -16,7 +16,7 @@ const TypeInfoSet DictionaryEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
-bool DictionaryEditorPageFactory::needOutputResources(const TypeInfo& typeInfo) const
+bool DictionaryEditorPageFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const
 {
 	return false;
 }
