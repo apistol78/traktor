@@ -2975,7 +2975,7 @@ public:
 		return m_unknown != 0;
 	}
 
-	virtual Ref< ITypedObject > construct(const InvokeParam& param, uint32_t argc, const Any* argv) const
+	virtual Ref< ITypedObject > construct(uint32_t argc, const Any* argv) const
 	{
 		if (argc < m_constructors.size() && m_constructors[argc] != 0)
 			return m_constructors[argc]->construct(argc, argv);
@@ -2993,14 +2993,14 @@ public:
 		return m_methods[methodId].name;
 	}
 
-	virtual Any invoke(const InvokeParam& param, uint32_t methodId, uint32_t argc, const Any* argv) const T_FINAL
+	virtual Any invoke(ITypedObject* object, uint32_t methodId, uint32_t argc, const Any* argv) const T_FINAL
 	{
 		const MethodInfo& info = m_methods[methodId];
 		const std::vector< IMethod* >& methods = info.methods;
 		if (argc < methods.size() && methods[argc] != 0)
-			return methods[argc]->invoke(param.object, argc, argv);
+			return methods[argc]->invoke(object, argc, argv);
 		else if (info.variadic)
-			return info.variadic->invoke(param.object, argc, argv);
+			return info.variadic->invoke(object, argc, argv);
 		else
 		{
 			T_FATAL_ASSERT_M(false, L"No such method");
@@ -3033,10 +3033,10 @@ public:
 		}
 	}
 
-	virtual Any invokeUnknown(const InvokeParam& param, const std::string& methodName, uint32_t argc, const Any* argv) const T_FINAL
+	virtual Any invokeUnknown(ITypedObject* object, const std::string& methodName, uint32_t argc, const Any* argv) const T_FINAL
 	{
 		if (m_unknown)
-			return (checked_type_cast< ClassType* >(param.object)->*m_unknown)(methodName, argc, argv);
+			return (checked_type_cast< ClassType* >(object)->*m_unknown)(methodName, argc, argv);
 		else
 		{
 			T_FATAL_ASSERT_M(false, L"No such method");
@@ -3044,7 +3044,7 @@ public:
 		}
 	}
 
-	virtual Any invokeOperator(const InvokeParam& param, uint8_t operation, const Any& arg) const T_FINAL
+	virtual Any invokeOperator(ITypedObject* object, uint8_t operation, const Any& arg) const T_FINAL
 	{
 		Any result;
 
@@ -3053,7 +3053,7 @@ public:
 		const std::vector< IOperator* >& handlers = m_operators[operation];
 		for (std::vector< IOperator* >::const_iterator i = handlers.begin(); i != handlers.end(); ++i)
 		{
-			if ((*i)->tryPerform(param.object, arg, result))
+			if ((*i)->tryPerform(object, arg, result))
 				break;
 		}
 
