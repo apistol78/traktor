@@ -25,13 +25,13 @@ public:
 
 	virtual bool haveUnknown() const;
 
-	virtual Ref< ITypedObject > construct(const InvokeParam& param, uint32_t argc, const Any* argv) const;
+	virtual Ref< ITypedObject > construct(uint32_t argc, const Any* argv) const;
 
 	virtual uint32_t getMethodCount() const;
 
 	virtual std::string getMethodName(uint32_t methodId) const;
 
-	virtual Any invoke(const InvokeParam& param, uint32_t methodId, uint32_t argc, const Any* argv) const;
+	virtual Any invoke(ITypedObject* object, uint32_t methodId, uint32_t argc, const Any* argv) const;
 
 	virtual uint32_t getStaticMethodCount() const;
 
@@ -39,9 +39,9 @@ public:
 
 	virtual Any invokeStatic(uint32_t methodId, uint32_t argc, const Any* argv) const;
 
-	virtual Any invokeUnknown(const InvokeParam& param, const std::string& methodName, uint32_t argc, const Any* argv) const;
+	virtual Any invokeUnknown(ITypedObject* object, const std::string& methodName, uint32_t argc, const Any* argv) const;
 
-	virtual Any invokeOperator(const InvokeParam& param, uint8_t operation, const Any& arg) const;
+	virtual Any invokeOperator(ITypedObject* object, uint8_t operation, const Any& arg) const;
 };
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionObjectClass", ActionObjectClass, IRuntimeClass)
@@ -61,7 +61,7 @@ bool ActionObjectClass::haveUnknown() const
 	return true;
 }
 
-Ref< ITypedObject > ActionObjectClass::construct(const InvokeParam& param, uint32_t argc, const Any* argv) const
+Ref< ITypedObject > ActionObjectClass::construct(uint32_t argc, const Any* argv) const
 {
 	return 0;
 }
@@ -90,15 +90,15 @@ std::string ActionObjectClass::getMethodName(uint32_t methodId) const
 	}
 }
 
-Any ActionObjectClass::invoke(const InvokeParam& param, uint32_t methodId, uint32_t argc, const Any* argv) const
+Any ActionObjectClass::invoke(ITypedObject* object, uint32_t methodId, uint32_t argc, const Any* argv) const
 {
-	ActionObject* object = checked_type_cast< ActionObject*, false >(param.object);
+	ActionObject* actionObject = checked_type_cast< ActionObject*, false >(object);
 	switch (methodId)
 	{
 	case 0:
 		{
 			ActionValue memberValue;
-			if (object->getMember(argv[0].getString(), memberValue))
+			if (actionObject->getMember(argv[0].getString(), memberValue))
 				return CastAny< ActionValue >::set(memberValue);
 		}
 		break;
@@ -106,7 +106,7 @@ Any ActionObjectClass::invoke(const InvokeParam& param, uint32_t methodId, uint3
 	case 1:
 		{
 			ActionValue memberValue;
-			if (object->getMemberByQName(argv[0].getString(), memberValue))
+			if (actionObject->getMemberByQName(argv[0].getString(), memberValue))
 				return CastAny< ActionValue >::set(memberValue);
 		}
 		break;
@@ -114,16 +114,16 @@ Any ActionObjectClass::invoke(const InvokeParam& param, uint32_t methodId, uint3
 	case 2:
 		{
 			ActionValue memberValue = CastAny< ActionValue >::get(argv[1]);
-			object->setMember(argv[0].getString(), memberValue);
+			actionObject->setMember(argv[0].getString(), memberValue);
 		}
 		break;
 
 	case 3:
 		{
 			Ref< ActionFunction > propertyGetFn;
-			if (object->getPropertyGet(argv[0].getString(), propertyGetFn))
+			if (actionObject->getPropertyGet(argv[0].getString(), propertyGetFn))
 			{
-				ActionValue propertyValue = propertyGetFn->call(object);
+				ActionValue propertyValue = propertyGetFn->call(actionObject);
 				return CastAny< ActionValue >::set(propertyValue);
 			}
 		}
@@ -132,11 +132,11 @@ Any ActionObjectClass::invoke(const InvokeParam& param, uint32_t methodId, uint3
 	case 4:
 		{
 			Ref< ActionFunction > propertySetFn;
-			if (object->getPropertySet(argv[0].getString(), propertySetFn))
+			if (actionObject->getPropertySet(argv[0].getString(), propertySetFn))
 			{
-				ActionValueArray callArgv(object->getContext()->getPool(), 1);
+				ActionValueArray callArgv(actionObject->getContext()->getPool(), 1);
 				callArgv[0] = CastAny< ActionValue >::get(argv[1]);
-				propertySetFn->call(object, callArgv);
+				propertySetFn->call(actionObject, callArgv);
 			}
 		}
 		break;
@@ -162,12 +162,12 @@ Any ActionObjectClass::invokeStatic(uint32_t methodId, uint32_t argc, const Any*
 	return Any();
 }
 
-Any ActionObjectClass::invokeUnknown(const InvokeParam& param, const std::string& methodName, uint32_t argc, const Any* argv) const
+Any ActionObjectClass::invokeUnknown(ITypedObject* object, const std::string& methodName, uint32_t argc, const Any* argv) const
 {
-	ActionObject* object = checked_type_cast< ActionObject*, false >(param.object);
+	ActionObject* actionObject = checked_type_cast< ActionObject*, false >(object);
 	T_ASSERT (object);
 
-	ActionValuePool& pool = object->getContext()->getPool();
+	ActionValuePool& pool = actionObject->getContext()->getPool();
 	T_ANONYMOUS_VAR(ActionValuePool::Scope)(pool);
 
 	ActionValueArray args(pool, argc);
@@ -175,19 +175,19 @@ Any ActionObjectClass::invokeUnknown(const InvokeParam& param, const std::string
 		args[i] = CastAny< ActionValue >::get(argv[i]);
 
 	ActionValue functionValue;
-	object->getMember(methodName, functionValue);
+	actionObject->getMember(methodName, functionValue);
 
 	ActionFunction* fn = functionValue.getObject< ActionFunction >();
 	if (fn)
 	{
-		ActionValue ret = fn->call(object, args);
+		ActionValue ret = fn->call(actionObject, args);
 		return CastAny< ActionValue >::set(ret);
 	}
 
 	return Any();
 }
 
-Any ActionObjectClass::invokeOperator(const InvokeParam& param, uint8_t operation, const Any& arg) const
+Any ActionObjectClass::invokeOperator(ITypedObject* object, uint8_t operation, const Any& arg) const
 {
 	return Any();
 }
@@ -203,7 +203,7 @@ public:
 
 	virtual std::string getMethodName(uint32_t methodId) const;
 
-	virtual Any invoke(const InvokeParam& param, uint32_t methodId, uint32_t argc, const Any* argv) const;
+	virtual Any invoke(ITypedObject* object, uint32_t methodId, uint32_t argc, const Any* argv) const;
 };
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ActionFunctionClass", ActionFunctionClass, ActionObjectClass)
@@ -239,15 +239,15 @@ std::string ActionFunctionClass::getMethodName(uint32_t methodId) const
 	}
 }
 
-Any ActionFunctionClass::invoke(const InvokeParam& param, uint32_t methodId, uint32_t argc, const Any* argv) const
+Any ActionFunctionClass::invoke(ITypedObject* object, uint32_t methodId, uint32_t argc, const Any* argv) const
 {
-	ActionFunction* object = checked_type_cast< ActionFunction*, false >(param.object);
+	ActionFunction* actionObject = checked_type_cast< ActionFunction*, false >(object);
 	switch (methodId)
 	{
 	case 0:
 		{
 			ActionValue memberValue;
-			if (object->getMember(argv[0].getString(), memberValue))
+			if (actionObject->getMember(argv[0].getString(), memberValue))
 				return CastAny< ActionValue >::set(memberValue);
 		}
 		break;
@@ -255,7 +255,7 @@ Any ActionFunctionClass::invoke(const InvokeParam& param, uint32_t methodId, uin
 	case 1:
 		{
 			ActionValue memberValue;
-			if (object->getMemberByQName(argv[0].getString(), memberValue))
+			if (actionObject->getMemberByQName(argv[0].getString(), memberValue))
 				return CastAny< ActionValue >::set(memberValue);
 		}
 		break;
@@ -263,16 +263,16 @@ Any ActionFunctionClass::invoke(const InvokeParam& param, uint32_t methodId, uin
 	case 2:
 		{
 			ActionValue memberValue = CastAny< ActionValue >::get(argv[1]);
-			object->setMember(argv[0].getString(), memberValue);
+			actionObject->setMember(argv[0].getString(), memberValue);
 		}
 		break;
 
 	case 3:
 		{
 			Ref< ActionFunction > propertyGetFn;
-			if (object->getPropertyGet(argv[0].getString(), propertyGetFn))
+			if (actionObject->getPropertyGet(argv[0].getString(), propertyGetFn))
 			{
-				ActionValue propertyValue = propertyGetFn->call(object);
+				ActionValue propertyValue = propertyGetFn->call(actionObject);
 				return CastAny< ActionValue >::set(propertyValue);
 			}
 		}
@@ -281,25 +281,25 @@ Any ActionFunctionClass::invoke(const InvokeParam& param, uint32_t methodId, uin
 	case 4:
 		{
 			Ref< ActionFunction > propertySetFn;
-			if (object->getPropertySet(argv[0].getString(), propertySetFn))
+			if (actionObject->getPropertySet(argv[0].getString(), propertySetFn))
 			{
-				ActionValueArray callArgv(object->getContext()->getPool(), 1);
+				ActionValueArray callArgv(actionObject->getContext()->getPool(), 1);
 				callArgv[0] = CastAny< ActionValue >::get(argv[1]);
-				propertySetFn->call(object, callArgv);
+				propertySetFn->call(actionObject, callArgv);
 			}
 		}
 		break;
 
 	case 5:
 		{
-			ActionValuePool& pool = object->getContext()->getPool();
+			ActionValuePool& pool = actionObject->getContext()->getPool();
 			T_ANONYMOUS_VAR(ActionValuePool::Scope)(pool);
 
 			ActionValueArray args(pool, argc - 1);
 			for (uint32_t i = 0; i < argc - 1; ++i)
 				args[i] = CastAny< ActionValue >::get(argv[i + 1]);
 
-			ActionValue ret = object->call(
+			ActionValue ret = actionObject->call(
 				checked_type_cast< ActionObject*, true >(argv[0].getObject()),
 				args
 			);

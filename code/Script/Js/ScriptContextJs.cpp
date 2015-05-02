@@ -321,10 +321,7 @@ v8::Handle< v8::Value > ScriptContextJs::invokeConstructor(const v8::Arguments& 
 		for (int i = 0; i < arguments.Length(); ++i)
 			argv[i] = constructorData->scriptContext->fromValue(arguments[i]);
 
-		IRuntimeClass::InvokeParam param;
-		param.object = 0;
-
-		Ref< ITypedObject > object = constructorData->runtimeClass->construct(param, arguments.Length(), argv);
+		Ref< ITypedObject > object = constructorData->runtimeClass->construct(arguments.Length(), argv);
 		if (!object)
 			return v8::Undefined();
 
@@ -354,11 +351,8 @@ v8::Handle< v8::Value > ScriptContextJs::invokeMethod(const v8::Arguments& argum
 	for (int i = 0; i < arguments.Length(); ++i)
 		argv[i] = functionData->scriptContext->fromValue(arguments[i]);
 
-	IRuntimeClass::InvokeParam param;
-	param.object = object;
-
 	Any result = functionData->runtimeClass->invoke(
-		param,
+		object,
 		functionData->methodId,
 		arguments.Length(),
 		argv

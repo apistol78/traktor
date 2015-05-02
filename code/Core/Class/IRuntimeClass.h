@@ -23,11 +23,6 @@ class T_DLLCLASS IRuntimeClass : public Object
 	T_RTTI_CLASS;
 
 public:
-	struct InvokeParam
-	{
-		ITypedObject* object; //< Current object.
-	};
-
 	/*! \brief Get exported native type. */
 	virtual const TypeInfo& getExportType() const = 0;
 
@@ -38,7 +33,7 @@ public:
 	virtual bool haveUnknown() const = 0;
 
 	/*! \brief Construct new object. */
-	virtual Ref< ITypedObject > construct(const InvokeParam& param, uint32_t argc, const Any* argv) const = 0;
+	virtual Ref< ITypedObject > construct(uint32_t argc, const Any* argv) const = 0;
 
 	/*! \brief Get exported method count. */
 	virtual uint32_t getMethodCount() const = 0;
@@ -47,7 +42,7 @@ public:
 	virtual std::string getMethodName(uint32_t methodId) const = 0;
 
 	/*! \brief Invoke exported method. */
-	virtual Any invoke(const InvokeParam& param, uint32_t methodId, uint32_t argc, const Any* argv) const = 0;
+	virtual Any invoke(ITypedObject* object, uint32_t methodId, uint32_t argc, const Any* argv) const = 0;
 
 	/*! \brief Get exported method count. */
 	virtual uint32_t getStaticMethodCount() const = 0;
@@ -59,10 +54,10 @@ public:
 	virtual Any invokeStatic(uint32_t methodId, uint32_t argc, const Any* argv) const = 0;
 
 	/*! \brief Invoke unknown method. */
-	virtual Any invokeUnknown(const InvokeParam& param, const std::string& methodName, uint32_t argc, const Any* argv) const = 0;
+	virtual Any invokeUnknown(ITypedObject* object, const std::string& methodName, uint32_t argc, const Any* argv) const = 0;
 
 	/*! \brief Invoke math operator. */
-	virtual Any invokeOperator(const InvokeParam& param, uint8_t operation, const Any& arg) const = 0;
+	virtual Any invokeOperator(ITypedObject* object, uint8_t operation, const Any& arg) const = 0;
 };
 
 }

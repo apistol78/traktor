@@ -1005,10 +1005,7 @@ int ScriptManagerLua::classCallConstructor(lua_State* luaState)
 	Any argv[8];
 	manager->toAny(2, top - 1, argv);
 
-	IRuntimeClass::InvokeParam param;
-	param.object = 0;
-
-	Any returnValue = Any::fromObject(runtimeClass->construct(param, top - 1, argv));
+	Any returnValue = Any::fromObject(runtimeClass->construct(top - 1, argv));
 	manager->pushAny(returnValue);
 
 	return 1;
@@ -1045,11 +1042,7 @@ int ScriptManagerLua::classCallMethod(lua_State* luaState)
 	Any argv[10];
 	manager->toAny(2, top - 1, argv);
 
-	IRuntimeClass::InvokeParam param;
-	param.object = object;
-
-	Any returnValue = runtimeClass->invoke(param, methodId, top - 1, argv);
-
+	Any returnValue = runtimeClass->invoke(object, methodId, top - 1, argv);
 	manager->pushAny(returnValue);
 
 	return 1;
@@ -1073,8 +1066,8 @@ int ScriptManagerLua::classCallStaticMethod(lua_State* luaState)
 	manager->toAny(1, top, argv);
 
 	Any returnValue = runtimeClass->invokeStatic(methodId, top, argv);
-
 	manager->pushAny(returnValue);
+
 	return 1;
 }
 
@@ -1100,12 +1093,9 @@ int ScriptManagerLua::classCallUnknownMethod(lua_State* luaState)
 	Any argv[8];
 	manager->toAny(2, top - 1, argv);
 
-	IRuntimeClass::InvokeParam param;
-	param.object = object;
-
-	Any returnValue = runtimeClass->invokeUnknown(param, methodName, top - 1, argv);
-
+	Any returnValue = runtimeClass->invokeUnknown(object, methodName, top - 1, argv);
 	manager->pushAny(returnValue);
+
 	return 1;
 }
 
@@ -1175,12 +1165,9 @@ int ScriptManagerLua::classAddMethod(lua_State* luaState)
 		return 0;
 	}
 
-	IRuntimeClass::InvokeParam param;
-	param.object = object;
-
-	Any returnValue = runtimeClass->invokeOperator(param, 0, arg);
-
+	Any returnValue = runtimeClass->invokeOperator(object, 0, arg);
 	manager->pushAny(returnValue);
+
 	return 1;
 }
 
@@ -1212,12 +1199,9 @@ int ScriptManagerLua::classSubtractMethod(lua_State* luaState)
 
 	Any arg = manager->toAny(2);
 
-	IRuntimeClass::InvokeParam param;
-	param.object = object;
-
-	Any returnValue = runtimeClass->invokeOperator(param, 1, arg);
-
+	Any returnValue = runtimeClass->invokeOperator(object, 1, arg);
 	manager->pushAny(returnValue);
+
 	return 1;
 }
 
@@ -1260,12 +1244,9 @@ int ScriptManagerLua::classMultiplyMethod(lua_State* luaState)
 		return 0;
 	}
 
-	IRuntimeClass::InvokeParam param;
-	param.object = object;
-
-	Any returnValue = runtimeClass->invokeOperator(param, 2, arg);
-
+	Any returnValue = runtimeClass->invokeOperator(object, 2, arg);
 	manager->pushAny(returnValue);
+
 	return 1;
 }
 
@@ -1297,12 +1278,9 @@ int ScriptManagerLua::classDivideMethod(lua_State* luaState)
 
 	Any arg = manager->toAny(2);
 
-	IRuntimeClass::InvokeParam param;
-	param.object = object;
-
-	Any returnValue = runtimeClass->invokeOperator(param, 3, arg);
-
+	Any returnValue = runtimeClass->invokeOperator(object, 3, arg);
 	manager->pushAny(returnValue);
+
 	return 1;
 }
 
