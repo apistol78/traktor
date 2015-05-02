@@ -16,7 +16,7 @@ const TypeInfoSet MeshAssetEditorFactory::getEditableTypes() const
 	return typeSet;
 }
 
-bool MeshAssetEditorFactory::needOutputResources(const TypeInfo& typeInfo) const
+bool MeshAssetEditorFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const
 {
 	return false;
 }

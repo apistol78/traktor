@@ -16,7 +16,7 @@ const TypeInfoSet BankAssetEditorFactory::getEditableTypes() const
 	return typeSet;
 }
 
-bool BankAssetEditorFactory::needOutputResources(const TypeInfo& typeInfo) const
+bool BankAssetEditorFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const
 {
 	return true;
 }

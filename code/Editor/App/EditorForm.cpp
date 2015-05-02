@@ -89,6 +89,7 @@
 #include "Ui/MenuItem.h"
 #include "Ui/Tab.h"
 #include "Ui/TabPage.h"
+#include "Ui/Custom/BackgroundWorkerDialog.h"
 #include "Ui/Custom/StatusBar/StatusBar.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
@@ -999,9 +1000,18 @@ bool EditorForm::openEditor(db::Instance* instance)
 	// Create new editor page.
 	if (editorPageFactory)
 	{
+		std::set< Guid > dependencies;
+		bool needOutputResources;
+
 		// Issue a build if resources need to be up-to-date.
-		if (editorPageFactory->needOutputResources(type_of(object)))
-			buildAsset(instance->getGuid(), false);
+		needOutputResources = editorPageFactory->needOutputResources(type_of(object), dependencies);
+		if (!dependencies.empty())
+		{
+			if (needOutputResources)
+				dependencies.insert(instance->getGuid());
+			buildAssets(std::vector< Guid >(dependencies.begin(), dependencies.end()), false);
+			buildWaitUntilFinished();
+		}
 
 		Ref< Document > document = new Document();
 		document->editInstance(instance, object);
@@ -1054,7 +1064,7 @@ bool EditorForm::openEditor(db::Instance* instance)
 		tabPage->update();
 
 		// Save references to editor in tab page's user data.
-		tabPage->setData(L"NEEDOUTPUTRESOURCES", new PropertyBoolean(editorPageFactory->needOutputResources(type_of(object))));
+		tabPage->setData(L"NEEDOUTPUTRESOURCES", new PropertyBoolean(needOutputResources));
 		tabPage->setData(L"EDITORPAGESITE", site);
 		tabPage->setData(L"EDITORPAGE", editorPage);
 		tabPage->setData(L"DOCUMENT", document);
@@ -1065,9 +1075,18 @@ bool EditorForm::openEditor(db::Instance* instance)
 	}
 	else if (objectEditorFactory)
 	{
+		std::set< Guid > dependencies;
+		bool needOutputResources;
+
 		// Issue a build if resources need to be up-to-date.
-		if (objectEditorFactory->needOutputResources(type_of(object)))
-			buildAsset(instance->getGuid(), false);
+		needOutputResources = objectEditorFactory->needOutputResources(type_of(object), dependencies);
+		if (!dependencies.empty())
+		{
+			if (needOutputResources)
+				dependencies.insert(instance->getGuid());
+			buildAssets(std::vector< Guid >(dependencies.begin(), dependencies.end()), false);
+			buildWaitUntilFinished();
+		}
 
 		// Create object editor dialog.
 		Ref< ObjectEditorDialog > objectEditorDialog = new ObjectEditorDialog(m_mergedSettings, objectEditorFactory);
@@ -1649,12 +1668,32 @@ void EditorForm::buildCancel()
 {
 	if (m_threadBuild)
 	{
-		if (!m_threadBuild->finished())
-		{
-			if (!m_threadBuild->stop())
-				log::error << L"Unable to stop build thread" << Endl;
-		}
+		m_threadBuild->stop(0);
 
+		// Keep processing UI events until build has finished.
+		setEnable(false);
+		while (!m_threadBuild->wait(10))
+		{
+			ui::Application::getInstance()->process();
+		}
+		setEnable(true);
+
+		ThreadManager::getInstance().destroy(m_threadBuild);
+		m_threadBuild = 0;
+	}
+}
+
+void EditorForm::buildWaitUntilFinished()
+{
+	if (m_threadBuild)
+	{
+		// Show a dialog if processing seems to take more than N second(s).
+		ui::custom::BackgroundWorkerDialog dialog;
+		dialog.create(this, i18n::Text(L"EDITOR_WAIT_BUILDING_TITLE"), i18n::Text(L"EDITOR_WAIT_BUILDING_MESSAGE"));
+		dialog.execute(m_threadBuild, 0);
+		dialog.destroy();
+
+		// As build thread is no longer in use we can safely release it's resources.
 		ThreadManager::getInstance().destroy(m_threadBuild);
 		m_threadBuild = 0;
 	}

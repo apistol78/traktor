@@ -81,7 +81,7 @@ private:
 	float m_lastTime;
 	float m_lastPhysicsTime;
 
-	void updateRenderControls();
+	bool updateRenderControls();
 
 	void updateEditState();
 

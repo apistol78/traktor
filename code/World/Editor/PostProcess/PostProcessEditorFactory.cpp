@@ -16,7 +16,7 @@ const TypeInfoSet PostProcessEditorFactory::getEditableTypes() const
 	return typeSet;
 }
 
-bool PostProcessEditorFactory::needOutputResources(const TypeInfo& typeInfo) const
+bool PostProcessEditorFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const
 {
 	return false;
 }

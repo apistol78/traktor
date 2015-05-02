@@ -186,7 +186,11 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_editPanel->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, 0));
 
 	m_editControl = new ScenePreviewControl();
-	m_editControl->create(m_editPanel, m_context);
+	if (!m_editControl->create(m_editPanel, m_context))
+	{
+		log::error << L"Unable to create scene editor; failed to scene preview." << Endl;
+		return false;
+	}
 
 	m_statusBar = new ui::custom::StatusBar();
 	m_statusBar->create(m_editPanel);

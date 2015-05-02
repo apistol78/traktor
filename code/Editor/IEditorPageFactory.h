@@ -2,7 +2,9 @@
 #define traktor_editor_IEditorPageFactory_H
 
 #include <list>
+#include <set>
 #include "Core/Object.h"
+#include "Core/Guid.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -39,7 +41,7 @@ class T_DLLCLASS IEditorPageFactory : public Object
 public:
 	virtual const TypeInfoSet getEditableTypes() const = 0;
 
-	virtual bool needOutputResources(const TypeInfo& typeInfo) const = 0;
+	virtual bool needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const = 0;
 
 	virtual Ref< IEditorPage > createEditorPage(IEditor* editor, IEditorPageSite* site, IDocument* document) const = 0;
 

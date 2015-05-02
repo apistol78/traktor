@@ -17,7 +17,7 @@ const TypeInfoSet ScriptEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
-bool ScriptEditorPageFactory::needOutputResources(const TypeInfo& typeInfo) const
+bool ScriptEditorPageFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const
 {
 	return false;
 }

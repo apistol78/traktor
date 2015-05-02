@@ -17,7 +17,7 @@ const TypeInfoSet ShaderGraphEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
-bool ShaderGraphEditorPageFactory::needOutputResources(const TypeInfo& typeInfo) const
+bool ShaderGraphEditorPageFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const
 {
 	return false;
 }

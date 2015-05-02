@@ -1,3 +1,4 @@
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -161,7 +162,8 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolBar->addItem(m_toolAA);
 	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &DefaultRenderControl::eventToolClick);
 
-	createRenderControl(viewType);
+	if (!createRenderControl(viewType))
+		return false;
 
 	Ref< Camera > camera = m_context->getCamera(m_cameraId);
 	camera->setFollowEntity(0);
@@ -258,77 +260,81 @@ void DefaultRenderControl::showSelectionRectangle(const ui::Rect& rect)
 		m_renderControl->showSelectionRectangle(rect);
 }
 
-void DefaultRenderControl::createRenderControl(int32_t type)
+bool DefaultRenderControl::createRenderControl(int32_t type)
 {
-	if (m_renderControl)
-	{
-		m_renderControl->destroy();
-		m_renderControl = 0;
-	}
+	safeDestroy(m_renderControl);
 
 	switch (type)
 	{
 	case 0:
 		{
 			Ref< PerspectiveRenderControl > renderControl = new PerspectiveRenderControl();
-			if (renderControl->create(m_container, m_context, m_cameraId))
-				m_renderControl = renderControl;
+			if (!renderControl->create(m_container, m_context, m_cameraId))
+				return false;
+			m_renderControl = renderControl;
 		}
 		break;
 
 	case 1:	// Front
 		{
 			Ref< OrthogonalRenderControl > renderControl = new OrthogonalRenderControl();
-			if (renderControl->create(m_container, m_context, OrthogonalRenderControl::PositiveZ, m_cameraId))
-				m_renderControl = renderControl;
+			if (!renderControl->create(m_container, m_context, OrthogonalRenderControl::PositiveZ, m_cameraId))
+				return false;
+			m_renderControl = renderControl;
 		}
 		break;
 
 	case 2:	// Back
 		{
 			Ref< OrthogonalRenderControl > renderControl = new OrthogonalRenderControl();
-			if (renderControl->create(m_container, m_context, OrthogonalRenderControl::NegativeZ, m_cameraId))
-				m_renderControl = renderControl;
+			if (!renderControl->create(m_container, m_context, OrthogonalRenderControl::NegativeZ, m_cameraId))
+				return false;
+			m_renderControl = renderControl;
 		}
 		break;
 
 	case 3:	// Top
 		{
 			Ref< OrthogonalRenderControl > renderControl = new OrthogonalRenderControl();
-			if (renderControl->create(m_container, m_context, OrthogonalRenderControl::PositiveY, m_cameraId))
-				m_renderControl = renderControl;
+			if (!renderControl->create(m_container, m_context, OrthogonalRenderControl::PositiveY, m_cameraId))
+				return false;
+			m_renderControl = renderControl;
 		}
 		break;
 
 	case 4:	// Bottom
 		{
 			Ref< OrthogonalRenderControl > renderControl = new OrthogonalRenderControl();
-			if (renderControl->create(m_container, m_context, OrthogonalRenderControl::NegativeY, m_cameraId))
-				m_renderControl = renderControl;
+			if (!renderControl->create(m_container, m_context, OrthogonalRenderControl::NegativeY, m_cameraId))
+				return false;
+			m_renderControl = renderControl;
 		}
 		break;
 
 	case 5:	// Left
 		{
 			Ref< OrthogonalRenderControl > renderControl = new OrthogonalRenderControl();
-			if (renderControl->create(m_container, m_context, OrthogonalRenderControl::PositiveX, m_cameraId))
-				m_renderControl = renderControl;
+			if (!renderControl->create(m_container, m_context, OrthogonalRenderControl::PositiveX, m_cameraId))
+				return false;
+			m_renderControl = renderControl;
 		}
 		break;
 
 	case 6:	// Right
 		{
 			Ref< OrthogonalRenderControl > renderControl = new OrthogonalRenderControl();
-			if (renderControl->create(m_container, m_context, OrthogonalRenderControl::NegativeX, m_cameraId))
-				m_renderControl = renderControl;
+			if (!renderControl->create(m_container, m_context, OrthogonalRenderControl::NegativeX, m_cameraId))
+				return false;
+			m_renderControl = renderControl;
 		}
 		break;
 
 	case 7:	// Debug
 		{
 			Ref< DebugRenderControl > renderControl = new DebugRenderControl();
-			if (renderControl->create(m_container, m_context))
-				m_renderControl = renderControl;
+			if (!renderControl->create(m_container, m_context))
+				return false;
+			m_renderControl = renderControl;
 		}
 		break;
 	}
@@ -354,6 +360,7 @@ void DefaultRenderControl::createRenderControl(int32_t type)
 	settings->setProperty< PropertyInteger >(L"SceneEditor.View" + toString(m_viewId), type);
 
 	m_context->getEditor()->commitGlobalSettings();
+	return true;
 }
 
 void DefaultRenderControl::eventToolClick(ui::custom::ToolBarButtonClickEvent* event)

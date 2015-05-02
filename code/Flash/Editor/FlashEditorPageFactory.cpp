@@ -17,9 +17,10 @@ const TypeInfoSet FlashEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
-bool FlashEditorPageFactory::needOutputResources(const TypeInfo& typeInfo) const
+bool FlashEditorPageFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const
 {
-	return false;
+	outDependencies.insert(Guid(L"{666412C3-5A4E-1B47-87D3-BC0165D2DC26}"));	// System/SystemAssets
+	return true;
 }
 
 Ref< editor::IEditorPage > FlashEditorPageFactory::createEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document) const

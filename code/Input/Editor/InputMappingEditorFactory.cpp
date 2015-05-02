@@ -16,7 +16,7 @@ const TypeInfoSet InputMappingEditorFactory::getEditableTypes() const
 	return typeSet;
 }
 
-bool InputMappingEditorFactory::needOutputResources(const TypeInfo& typeInfo) const
+bool InputMappingEditorFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const
 {
 	return false;
 }

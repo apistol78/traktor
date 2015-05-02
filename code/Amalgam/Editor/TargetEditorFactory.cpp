@@ -16,7 +16,7 @@ const TypeInfoSet TargetEditorFactory::getEditableTypes() const
 	return typeSet;
 }
 
-bool TargetEditorFactory::needOutputResources(const TypeInfo& typeInfo) const
+bool TargetEditorFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const
 {
 	return false;
 }
