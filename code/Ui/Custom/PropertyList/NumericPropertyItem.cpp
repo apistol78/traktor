@@ -166,7 +166,7 @@ void NumericPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 	else
 		ss << value;
 	
-	canvas.drawText(rc.inflate(-2, -2), ss.str(), AnLeft, AnCenter);
+	canvas.drawText(rc.inflate(-2, 0), ss.str(), AnLeft, AnCenter);
 
 	int h = rc.getHeight() / 2;
 	int b = h - 2;

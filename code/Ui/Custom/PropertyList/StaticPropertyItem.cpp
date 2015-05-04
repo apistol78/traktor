@@ -28,7 +28,7 @@ const std::wstring& StaticPropertyItem::getValue() const
 
 void StaticPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 {
-	canvas.drawText(rc.inflate(-2, -2), m_value, AnLeft, AnCenter);
+	canvas.drawText(rc.inflate(-2, 0), m_value, AnLeft, AnCenter);
 }
 
 		}

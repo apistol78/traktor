@@ -99,7 +99,7 @@ void ObjectPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 {
 	StringOutputStream ss;
 	ss << L"{ " << type_name(m_object) << L" }";
-	canvas.drawText(rc.inflate(-2, -2), ss.str(), AnLeft, AnCenter);
+	canvas.drawText(rc.inflate(-2, 0), ss.str(), AnLeft, AnCenter);
 }
 
 bool ObjectPropertyItem::copy()

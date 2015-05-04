@@ -162,7 +162,7 @@ void ListPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Widget
 void ListPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 {
 	std::wstring value = getSelectedItem();
-	canvas.drawText(rc.inflate(-2, -2), value, AnLeft, AnCenter);
+	canvas.drawText(rc.inflate(-2, 0), value, AnLeft, AnCenter);
 }
 
 void ListPropertyItem::eventDropClick(ButtonClickEvent* event)

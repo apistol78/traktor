@@ -122,7 +122,7 @@ void VectorPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 		);
 
 		canvas.drawText(
-			rcSub.inflate(-2, -2),
+			rcSub.inflate(-2, 0),
 			toString(m_value[i], 3),
 			AnLeft,
 			AnCenter

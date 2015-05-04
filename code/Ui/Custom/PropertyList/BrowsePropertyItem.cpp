@@ -134,7 +134,7 @@ void BrowsePropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 	if (!resolved)
 		canvas.setForeground(Color4ub(255, 0, 0));
 
-	canvas.drawText(rc.inflate(-2, -2), text, AnLeft, AnCenter);
+	canvas.drawText(rc.inflate(-2, 0), text, AnLeft, AnCenter);
 
 	if (!resolved)
 		canvas.setForeground(currentColor);
