@@ -79,7 +79,7 @@ void ArrayPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 	uint32_t elementCount = uint32_t(getChildItems().size());
 	ss << L"{ " << elementCount << L" element(s) }";
 
-	canvas.drawText(rc.inflate(-2, -2), ss.str(), AnLeft, AnCenter);
+	canvas.drawText(rc.inflate(-2, 0), ss.str(), AnLeft, AnCenter);
 }
 
 void ArrayPropertyItem::eventClick(ButtonClickEvent* event)

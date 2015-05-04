@@ -342,9 +342,6 @@ void TranslateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 		Color4ub(0, 0, 255, 255)
 	);
 
-	primitiveRenderer->popDepthState();
-	primitiveRenderer->pushDepthState(true, true, false);
-
 	// Guide arrows.
 	primitiveRenderer->drawArrowHead(
 		Vector4(axisLength, 0.0f, 0.0f, 1.0f),

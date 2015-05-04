@@ -40,7 +40,7 @@ void ColorPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 	// Format color as string.
 	std::wstringstream ss;
 	ss << m_value.r << L", " << m_value.g << L", " << m_value.b << L", " << m_value.a;
-	canvas.drawText(rc.inflate(-2, -2).offset(22, 0), ss.str(), AnLeft, AnCenter);
+	canvas.drawText(rc.inflate(-2, 0).offset(22, 0), ss.str(), AnLeft, AnCenter);
 
 	// Ignore alpha when drawing color preview.
 	Color4ub previewColor = m_value;

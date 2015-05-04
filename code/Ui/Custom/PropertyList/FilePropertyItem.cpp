@@ -100,7 +100,7 @@ void FilePropertyItem::mouseButtonDown(MouseButtonDownEvent* event)
 
 void FilePropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 {
-	canvas.drawText(rc.inflate(-2, -2), m_path.getOriginal(), AnLeft, AnCenter);
+	canvas.drawText(rc.inflate(-2, 0), m_path.getOriginal(), AnLeft, AnCenter);
 }
 
 void FilePropertyItem::eventEditFocus(FocusEvent* event)
