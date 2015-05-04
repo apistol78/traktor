@@ -2,6 +2,8 @@
 #include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
 #include "World/IEntityBuilder.h"
+#include "World/Entity/CameraEntity.h"
+#include "World/Entity/CameraEntityData.h"
 #include "World/Entity/DecalEntity.h"
 #include "World/Entity/DecalEntityData.h"
 #include "World/Entity/DecalEvent.h"
@@ -44,6 +46,7 @@ const TypeInfoSet WorldEntityFactory::getEntityTypes() const
 	typeSet.insert(&type_of< ExternalEntityData >());
 	typeSet.insert(&type_of< GodRayEntityData >());
 	typeSet.insert(&type_of< GroupEntityData >());
+	typeSet.insert(&type_of< CameraEntityData >());
 	typeSet.insert(&type_of< DecalEntityData >());
 	typeSet.insert(&type_of< DirectionalLightEntityData >());
 	typeSet.insert(&type_of< NullEntityData >());
@@ -104,6 +107,11 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 		}
 
 		return groupEntity;
+	}
+
+	if (const CameraEntityData* cameraData = dynamic_type_cast< const CameraEntityData* >(&entityData))
+	{
+		return new CameraEntity(cameraData);
 	}
 
 	if (const DecalEntityData* decalData = dynamic_type_cast< const DecalEntityData* >(&entityData))

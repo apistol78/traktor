@@ -34,6 +34,10 @@ class T_DLLCLASS WorldRenderView : public Object
 public:
 	WorldRenderView();
 
+	void setOrthogonal(float width, float height, float nearZ, float farZ);
+
+	void setPerspective(float width, float height, float aspect, float fov, float nearZ, float farZ);
+
 	void setViewFrustum(const Frustum& viewFrustum);
 
 	void setCullFrustum(const Frustum& cullFrustum);

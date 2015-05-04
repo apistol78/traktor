@@ -80,39 +80,39 @@ struct WorldCreateDesc
 	}
 };
 
-/*! \brief Perspective view port.
- * \ingroup World
- */
-struct WorldViewPerspective
-{
-	int32_t width;
-	int32_t height;
-	float aspect;
-	float fov;
-
-	WorldViewPerspective()
-	:	width(0)
-	,	height(0)
-	,	aspect(1.0f)
-	,	fov(deg2rad(65.0f))
-	{
-	}
-};
-
-/*! \brief Orthogonal view port.
- * \ingroup World
- */
-struct WorldViewOrtho
-{
-	float width;
-	float height;
-
-	WorldViewOrtho()
-	:	width(0.0f)
-	,	height(0.0f)
-	{
-	}
-};
+///*! \brief Perspective view port.
+// * \ingroup World
+// */
+//struct WorldViewPerspective
+//{
+//	int32_t width;
+//	int32_t height;
+//	float aspect;
+//	float fov;
+//
+//	WorldViewPerspective()
+//	:	width(0)
+//	,	height(0)
+//	,	aspect(1.0f)
+//	,	fov(deg2rad(65.0f))
+//	{
+//	}
+//};
+//
+///*! \brief Orthogonal view port.
+// * \ingroup World
+// */
+//struct WorldViewOrtho
+//{
+//	float width;
+//	float height;
+//
+//	WorldViewOrtho()
+//	:	width(0.0f)
+//	,	height(0.0f)
+//	{
+//	}
+//};
 
 /*! \brief World render flags.
  * \ingroup World
@@ -152,20 +152,6 @@ public:
 
 	/*! \brief Destroy world renderer. */
 	virtual void destroy() = 0;
-
-	/*! \brief Create a world render view.
-	 *
-	 * \param worldView World view.
-	 * \param outRenderView Initialized world render view.
-	 */
-	virtual void createRenderView(const WorldViewPerspective& worldView, WorldRenderView& outRenderView) const = 0;
-
-	/*! \brief Create a world render view.
-	 *
-	 * \param worldView World view.
-	 * \param outRenderView Initialized world render view.
-	 */
-	virtual void createRenderView(const WorldViewOrtho& worldView, WorldRenderView& outRenderView) const = 0;
 
 	/*! \name Build steps. */
 	//@{

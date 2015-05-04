@@ -38,6 +38,12 @@ enum Quality
 	QuLast = 5
 };
 
+enum CameraType
+{
+	CtOrthographic = 0,
+	CtPerspective = 1
+};
+
 enum LightType
 {
 	LtDisabled = 0,

@@ -525,6 +525,63 @@ uint32_t SceneEditorContext::getEntities(RefArray< EntityAdapter >& outEntityAda
 	return uint32_t(outEntityAdapters.size());
 }
 
+uint32_t SceneEditorContext::findAdaptersOfType(const TypeInfo& entityType, RefArray< EntityAdapter >& outEntityAdapters, uint32_t flags) const
+{
+	typedef std::pair< RefArray< EntityAdapter >::const_iterator, RefArray< EntityAdapter >::const_iterator > range_t;
+
+	outEntityAdapters.resize(0);
+
+	if (m_layerEntityAdapters.empty())
+		return 0;
+
+	outEntityAdapters.reserve(4096);
+
+	std::stack< range_t > stack;
+	stack.push(std::make_pair(m_layerEntityAdapters.begin(), m_layerEntityAdapters.end()));
+	while (!stack.empty())
+	{
+		range_t& r = stack.top();
+		if (r.first != r.second)
+		{
+			EntityAdapter* entityAdapter = *r.first++;
+
+			if (is_type_of(entityType, type_of(entityAdapter->getEntity())))
+			{
+				bool include = true;
+
+				if (flags & GfSelectedOnly)
+					include &= entityAdapter->isSelected();
+				if (flags & GfNoSelected)
+					include &= !entityAdapter->isSelected();
+
+				if (flags & GfExternalOnly)
+					include &= entityAdapter->isExternal();
+				if (flags & GfNoExternal)
+					include &= !entityAdapter->isExternal();
+
+				if (flags & GfExternalChildOnly)
+					include &= entityAdapter->isChildOfExternal();
+				if (flags & GfNoExternalChild)
+					include &= !entityAdapter->isChildOfExternal();
+
+				if (include)
+					outEntityAdapters.push_back(entityAdapter);
+			}
+
+			if (flags & GfDescendants)
+			{
+				const RefArray< EntityAdapter >& children = entityAdapter->getChildren();
+				if (!children.empty())
+					stack.push(std::make_pair(children.begin(), children.end()));
+			}
+		}
+		else
+			stack.pop();
+	}
+
+	return uint32_t(outEntityAdapters.size());
+}
+
 EntityAdapter* SceneEditorContext::findAdapterFromEntity(const world::Entity* entity) const
 {
 	SmallMap< const world::Entity*, EntityAdapter* >::const_iterator i = m_entityAdapterMap.find(entity);

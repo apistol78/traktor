@@ -23,6 +23,7 @@
 #include "World/IEntityBuilder.h"
 #include "World/IEntitySchema.h"
 #include "World/IEntityEventManager.h"
+#include "World/Entity/CameraEntity.h"
 #include "World/Entity/GroupEntity.h"
 #include "World/Entity/NullEntity.h"
 #include "World/Entity/TransientEntity.h"
@@ -224,11 +225,54 @@ void WorldLayer::build(const amalgam::IUpdateInfo& info, uint32_t frame)
 	if (!m_worldRenderer || !m_scene)
 		return;
 
+	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
+	T_ASSERT (renderView);
+
+	// Get render view dimensions.
+	int32_t width = renderView->getWidth();
+	int32_t height = renderView->getHeight();
+
+	// Update world view.
+	m_worldRenderView.setPerspective(
+		width,
+		height,
+		m_environment->getRender()->getAspectRatio(),
+		deg2rad(m_fieldOfView),
+		m_scene->getWorldRenderSettings()->viewNearZ,
+		m_scene->getWorldRenderSettings()->viewFarZ
+	);
+
 	// Get camera entity and extract view transform.
 	if (m_cameraEntity)
 	{
 		Transform cameraTransform;
-		if (const world::NullEntity* nullCameraEntity = dynamic_type_cast< const world::NullEntity* >(m_cameraEntity))
+
+		if (const world::CameraEntity* cameraEntity = dynamic_type_cast< const world::CameraEntity* >(m_cameraEntity))
+		{
+			if (cameraEntity->getCameraType() == world::CtOrthographic)
+			{
+				m_worldRenderView.setOrthogonal(
+					cameraEntity->getWidth(),
+					cameraEntity->getHeight(),
+					m_scene->getWorldRenderSettings()->viewNearZ,
+					m_scene->getWorldRenderSettings()->viewFarZ
+				);
+			}
+			else // CtPerspective
+			{
+				m_worldRenderView.setPerspective(
+					width,
+					height,
+					m_environment->getRender()->getAspectRatio(),
+					cameraEntity->getFieldOfView(),
+					m_scene->getWorldRenderSettings()->viewNearZ,
+					m_scene->getWorldRenderSettings()->viewFarZ
+				);
+			}
+
+			cameraTransform = cameraEntity->getTransform(info.getInterval());
+		}
+		else if (const world::NullEntity* nullCameraEntity = dynamic_type_cast< const world::NullEntity* >(m_cameraEntity))
 			cameraTransform = nullCameraEntity->getTransform(info.getInterval());
 		else
 			m_cameraEntity->getTransform(cameraTransform);
@@ -479,27 +523,7 @@ bool WorldLayer::viewToScreen(const Vector4& viewPosition, Vector2& outScreenPos
 
 void WorldLayer::setFieldOfView(float fieldOfView)
 {
-	if (fieldOfView != m_fieldOfView)
-	{
-		render::IRenderView* renderView = m_environment->getRender()->getRenderView();
-		T_ASSERT (renderView);
-
-		// Get render view dimensions.
-		int32_t width = renderView->getWidth();
-		int32_t height = renderView->getHeight();
-
-		// Create world view.
-		world::WorldViewPerspective worldViewPort;
-		worldViewPort.width = width;
-		worldViewPort.height = height;
-		worldViewPort.aspect = m_environment->getRender()->getAspectRatio();
-		worldViewPort.fov = deg2rad(fieldOfView);
-		m_worldRenderer->createRenderView(worldViewPort, m_worldRenderView);
-
-		// Save field of view value as we must be able to re-create
-		// world view if view port dimensions change.
-		m_fieldOfView = fieldOfView;
-	}
+	m_fieldOfView = fieldOfView;
 }
 
 float WorldLayer::getFieldOfView() const
@@ -587,14 +611,6 @@ void WorldLayer::createWorldRenderer()
 		log::error << L"Unable to create world renderer; world layer disabled" << Endl;
 		return;
 	}
-
-	// Create world render view.
-	world::WorldViewPerspective worldViewPort;
-	worldViewPort.width = width;
-	worldViewPort.height = height;
-	worldViewPort.aspect = m_environment->getRender()->getAspectRatio();
-	worldViewPort.fov = deg2rad(m_fieldOfView);
-	m_worldRenderer->createRenderView(worldViewPort, m_worldRenderView);
 }
 
 	}

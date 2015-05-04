@@ -49,7 +49,12 @@ public:
 		m_programParameters->setVectorParameter(name, param);
 	}
 
-	void setTextureParameter(const std::wstring& name,render:: ITexture* texture)
+	void setVectorArrayParameter(const std::wstring& name, const AlignedVector< Vector4 >& param)
+	{
+		m_programParameters->setVectorArrayParameter(name, param.c_ptr(), param.size());
+	}
+
+	void setTextureParameter(const std::wstring& name, render::ITexture* texture)
 	{
 		m_programParameters->setTextureParameter(name, texture);
 	}
@@ -109,6 +114,7 @@ void MeshClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	Ref< AutoRuntimeClass< BoxedProgramParameters > > classBoxedProgramParameters = new AutoRuntimeClass< BoxedProgramParameters >();
 	classBoxedProgramParameters->addMethod("setFloatParameter", &BoxedProgramParameters::setFloatParameter);
 	classBoxedProgramParameters->addMethod("setVectorParameter", &BoxedProgramParameters::setVectorParameter);
+	classBoxedProgramParameters->addMethod("setVectorArrayParameter", &BoxedProgramParameters::setVectorArrayParameter);
 	classBoxedProgramParameters->addMethod("setTextureParameter", &BoxedProgramParameters::setTextureParameter);
 	classBoxedProgramParameters->addMethod("setStencilReference", &BoxedProgramParameters::setStencilReference);
 	registrar->registerClass(classBoxedProgramParameters);

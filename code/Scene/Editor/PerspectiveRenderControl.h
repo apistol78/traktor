@@ -105,8 +105,6 @@ private:
 
 	void updateSettings();
 
-	void updateWorldRenderView();
-
 	Matrix44 getProjectionTransform() const;
 
 	Matrix44 getViewTransform() const;

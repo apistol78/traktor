@@ -32,6 +32,28 @@ WorldRenderView::WorldRenderView()
 	}
 }
 
+void WorldRenderView::setOrthogonal(float width, float height, float nearZ, float farZ)
+{
+	Frustum viewFrustum;
+	viewFrustum.buildOrtho(width, height, -farZ, farZ);
+
+	setViewSize(Vector2(width, height));
+	setViewFrustum(viewFrustum);
+	setCullFrustum(viewFrustum);
+	setProjection(orthoLh(width, height, -farZ, farZ));
+}
+
+void WorldRenderView::setPerspective(float width, float height, float aspect, float fov, float nearZ, float farZ)
+{
+	Frustum viewFrustum;
+	viewFrustum.buildPerspective(fov, aspect, nearZ, farZ);
+
+	setViewSize(Vector2(width, height));
+	setViewFrustum(viewFrustum);
+	setCullFrustum(viewFrustum);
+	setProjection(perspectiveLh(fov, aspect, nearZ, farZ));
+}
+
 void WorldRenderView::setViewFrustum(const Frustum& viewFrustum)
 {
 	m_viewFrustum = viewFrustum;
