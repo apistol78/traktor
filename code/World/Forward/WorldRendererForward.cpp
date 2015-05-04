@@ -529,33 +529,6 @@ void WorldRendererForward::destroy()
 	m_renderView = 0;
 }
 
-void WorldRendererForward::createRenderView(const WorldViewPerspective& worldView, WorldRenderView& outRenderView) const
-{
-	float viewNearZ = m_settings.viewNearZ;
-	float viewFarZ = m_settings.viewFarZ;
-
-	Frustum viewFrustum;
-	viewFrustum.buildPerspective(worldView.fov, worldView.aspect, viewNearZ, viewFarZ);
-
-	outRenderView.setViewSize(Vector2(float(worldView.width), float(worldView.height)));
-	outRenderView.setViewFrustum(viewFrustum);
-	outRenderView.setCullFrustum(viewFrustum);
-	outRenderView.setProjection(perspectiveLh(worldView.fov, worldView.aspect, viewNearZ, viewFarZ));
-}
-
-void WorldRendererForward::createRenderView(const WorldViewOrtho& worldView, WorldRenderView& outRenderView) const
-{
-	float viewFarZ = m_settings.viewFarZ;
-
-	Frustum viewFrustum;
-	viewFrustum.buildOrtho(worldView.width, worldView.height, -viewFarZ, viewFarZ);
-
-	outRenderView.setViewSize(Vector2(worldView.width, worldView.height));
-	outRenderView.setViewFrustum(viewFrustum);
-	outRenderView.setCullFrustum(viewFrustum);
-	outRenderView.setProjection(orthoLh(worldView.width, worldView.height, -viewFarZ, viewFarZ));
-}
-
 bool WorldRendererForward::beginBuild()
 {
 	m_buildEntities.clear();

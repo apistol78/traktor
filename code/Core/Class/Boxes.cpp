@@ -76,9 +76,11 @@ BoxedAllocator< BoxedGuid, 512 > s_allocBoxedGuid;
 BoxedAllocator< BoxedVector2, 1024 > s_allocBoxedVector2;
 #if !defined(__PS3__)
 BoxedAllocator< BoxedVector4, 32768 > s_allocBoxedVector4;
+BoxedAllocator< BoxedVector4Array, 16 > s_allocBoxedVector4Array;
 BoxedAllocator< BoxedQuaternion, 4096 > s_allocBoxedQuaternion;
 #else
 BoxedAllocator< BoxedVector4, 1024 > s_allocBoxedVector4;
+BoxedAllocator< BoxedVector4Array, 16 > s_allocBoxedVector4Array;
 BoxedAllocator< BoxedQuaternion, 256 > s_allocBoxedQuaternion;
 #endif
 BoxedAllocator< BoxedPlane, 256 > s_allocBoxedPlane;
@@ -237,6 +239,79 @@ void* BoxedVector4::operator new (size_t size)
 void BoxedVector4::operator delete (void* ptr)
 {
 	s_allocBoxedVector4.free(ptr);
+}
+
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Vector4Array", BoxedVector4Array, Boxed)
+
+void BoxedVector4Array::reserve(uint32_t capacity)
+{
+	m_arr.reserve(capacity);
+}
+
+void BoxedVector4Array::resize(uint32_t size)
+{
+	m_arr.resize(size);
+}
+
+void BoxedVector4Array::clear()
+{
+	m_arr.clear();
+}
+
+int32_t BoxedVector4Array::size() const
+{
+	return int32_t(m_arr.size());
+}
+
+bool BoxedVector4Array::empty() const
+{
+	return m_arr.empty();
+}
+
+void BoxedVector4Array::push_back(const BoxedVector4* value)
+{
+	m_arr.push_back(value->unbox());
+}
+
+void BoxedVector4Array::pop_back()
+{
+	m_arr.pop_back();
+}
+
+Vector4 BoxedVector4Array::front()
+{
+	return m_arr.front();
+}
+
+Vector4 BoxedVector4Array::back()
+{
+	return m_arr.back();
+}
+
+void BoxedVector4Array::set(int32_t index, const BoxedVector4* value)
+{
+	m_arr[index] = value->unbox();
+}
+
+Vector4 BoxedVector4Array::get(int32_t index)
+{
+	return m_arr[index];
+}
+
+std::wstring BoxedVector4Array::toString() const
+{
+	return L"(Vector4 array)";
+}
+
+void* BoxedVector4Array::operator new (size_t size)
+{
+	return s_allocBoxedVector4Array.alloc();
+}
+
+void BoxedVector4Array::operator delete (void* ptr)
+{
+	s_allocBoxedVector4Array.free(ptr);
 }
 
 
@@ -1011,12 +1086,12 @@ Object* BoxedRefArray::get(int32_t index)
 		return 0;
 }
 
-void BoxedRefArray::pushBack(Object* object)
+void BoxedRefArray::push_back(Object* object)
 {
 	m_arr.push_back(object);
 }
 
-void BoxedRefArray::popBack()
+void BoxedRefArray::pop_back()
 {
 	m_arr.pop_back();
 }
@@ -1255,6 +1330,21 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedVector4->addOperator< Vector4, float >('/', &BoxedVector4::div);
 	registrar->registerClass(classBoxedVector4);
 
+	Ref< AutoRuntimeClass< BoxedVector4Array > > classBoxedVector4Array = new AutoRuntimeClass< BoxedVector4Array >();
+	classBoxedVector4Array->addConstructor();
+	classBoxedVector4Array->addConstructor< uint32_t >();
+	classBoxedVector4Array->addMethod("reserve", &BoxedVector4Array::reserve);
+	classBoxedVector4Array->addMethod("resize", &BoxedVector4Array::resize);
+	classBoxedVector4Array->addMethod("clear", &BoxedVector4Array::clear);
+	classBoxedVector4Array->addMethod("size", &BoxedVector4Array::size);
+	classBoxedVector4Array->addMethod("push_back", &BoxedVector4Array::push_back);
+	classBoxedVector4Array->addMethod("pop_back", &BoxedVector4Array::pop_back);
+	classBoxedVector4Array->addMethod("front", &BoxedVector4Array::front);
+	classBoxedVector4Array->addMethod("back", &BoxedVector4Array::back);
+	classBoxedVector4Array->addMethod("set", &BoxedVector4Array::set);
+	classBoxedVector4Array->addMethod("get", &BoxedVector4Array::get);
+	registrar->registerClass(classBoxedVector4Array);
+
 	Ref< AutoRuntimeClass< BoxedQuaternion > > classBoxedQuaternion = new AutoRuntimeClass< BoxedQuaternion >();
 	classBoxedQuaternion->addConstructor();
 	classBoxedQuaternion->addConstructor< float, float, float, float >();
@@ -1452,10 +1542,12 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedRefArray->addMethod("size", &BoxedRefArray::size);
 	classBoxedRefArray->addMethod("set", &BoxedRefArray::set);
 	classBoxedRefArray->addMethod("get", &BoxedRefArray::get);
-	classBoxedRefArray->addMethod("pushBack", &BoxedRefArray::pushBack);
-	classBoxedRefArray->addMethod("popBack", &BoxedRefArray::popBack);
+	classBoxedRefArray->addMethod("push_back", &BoxedRefArray::push_back);
+	classBoxedRefArray->addMethod("pop_back", &BoxedRefArray::pop_back);
 	classBoxedRefArray->addMethod("front", &BoxedRefArray::front);
 	classBoxedRefArray->addMethod("back", &BoxedRefArray::back);
+	classBoxedRefArray->addMethod("pushBack", &BoxedRefArray::push_back);	// \deprecated
+	classBoxedRefArray->addMethod("popBack", &BoxedRefArray::pop_back);		// \deprecated
 	registrar->registerClass(classBoxedRefArray);
 
 	Ref< AutoRuntimeClass< BoxedStdVector > > classBoxedStdVector = new AutoRuntimeClass< BoxedStdVector >();

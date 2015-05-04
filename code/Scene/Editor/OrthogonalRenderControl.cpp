@@ -362,13 +362,8 @@ Matrix44 OrthogonalRenderControl::getProjectionTransform() const
 		ui::Rect innerRect = m_renderWidget->getInnerRect();
 		float ratio = float(innerRect.getWidth()) / innerRect.getHeight();
 
-		world::WorldViewOrtho worldView;
-		worldView.width = m_magnification;
-		worldView.height = m_magnification / ratio;
-
 		world::WorldRenderView worldRenderView;
-		m_worldRenderer->createRenderView(worldView, worldRenderView);
-
+		worldRenderView.setOrthogonal(m_magnification, m_magnification / ratio, 0.0f, 0.0f);
 		return worldRenderView.getProjection();
 	}
 	else
@@ -450,10 +445,12 @@ void OrthogonalRenderControl::eventSize(ui::SizeEvent* event)
 
 void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 {
+	Ref< scene::Scene > sceneInstance = m_context->getScene();
+
 	float deltaTime = float(m_timer.getDeltaTime());
 	float scaledTime = m_context->getTime();
 
-	if (!m_renderView || !m_primitiveRenderer)
+	if (!sceneInstance || !m_renderView || !m_primitiveRenderer)
 		return;
 
 	// Lazy create world renderer.
@@ -467,17 +464,22 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 	// Render world.
 	if (m_renderView->begin(render::EtCyclop))
 	{
+		const world::WorldRenderSettings* worldRenderSettings = sceneInstance->getWorldRenderSettings();
+
 		float tmp[4];
 		m_colorClear.getRGBA32F(tmp);
 
 		float ratio = float(m_dirtySize.cx) / m_dirtySize.cy;
-
-		world::WorldViewOrtho worldView;
-		worldView.width = m_magnification;
-		worldView.height = m_magnification / ratio;
+		float width = m_magnification;
+		float height = m_magnification / ratio;
 
 		world::WorldRenderView worldRenderView;
-		m_worldRenderer->createRenderView(worldView, worldRenderView);
+		worldRenderView.setOrthogonal(
+			width,
+			height,
+			worldRenderSettings->viewNearZ,
+			worldRenderSettings->viewFarZ
+		);
 
 		Matrix44 view = getViewTransform();
 
@@ -517,8 +519,8 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 		{
 			Vector4 cameraPosition = -(m_camera->getOrientation().inverse() * m_camera->getPosition().xyz1());
 
-			float hx = worldView.width * 0.5f;
-			float hy = worldView.height * 0.5f;
+			float hx = width * 0.5f;
+			float hy = height * 0.5f;
 
 			Vector2 cp(cameraPosition.x(), cameraPosition.y());
 			Vector2 vtl(-hx, -hy), vbr(hx, hy);

@@ -1717,10 +1717,6 @@
       <second>Find in database</second>
     </item>
     <item>
-      <first>SCENE_EDITOR_FOLLOW_ENTITY</first>
-      <second>Follow entity</second>
-    </item>
-    <item>
       <first>SCENE_EDITOR_FRAME_TIME</first>
       <second>Total time {0} ms, FPS {1}</second>
     </item>
@@ -1739,10 +1735,6 @@
     <item>
       <first>SCENE_EDITOR_LOADING_TITLE</first>
       <second>Loading</second>
-    </item>
-    <item>
-      <first>SCENE_EDITOR_LOOK_AT_ENTITY</first>
-      <second>Look at entity</second>
     </item>
     <item>
       <first>SCENE_EDITOR_LOADING</first>
@@ -1838,7 +1830,23 @@
     </item>
     <item>
       <first>SCENE_EDITOR_TOGGLE_POSTPROCESS</first>
-      <second>Toggle postprocessing</second>
+      <second>Toggle post processing</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_POST_PROCESS</first>
+      <second>Post Process</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_SHADOWS</first>
+      <second>Shadows</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_AO</first>
+      <second>Ambient occlusion</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_AA</first>
+      <second>Antialias</second>
     </item>
     <item>
       <first>SCENE_EDITOR_TRANSLATE</first>
@@ -1848,6 +1856,10 @@
       <first>SCENE_EDITOR_UNNAMED_ENTITY</first>
       <second>Unnamed</second>
     </item>
+    <item>
+      <first>SCENE_EDITOR_VIEW_CAMERA</first>
+      <second>Camera</second>
+    </item>    
     <item>
       <first>SCENE_EDITOR_VIEW_MODE</first>
       <second>View mode</second>
@@ -2581,6 +2593,10 @@
       <second>Symmetry vertical</second>
     </item>
     <item>
+      <first>TERRAIN_EDITOR_SHARP_IMAGE</first>
+      <second>Sharp image</second>
+    </item>    
+    <item>
       <first>TERRAIN_EDITOR_MATERIAL_BRUSH</first>
       <second>Material brush</second>
     </item>
@@ -2588,6 +2604,10 @@
       <first>TERRAIN_EDITOR_MATERIAL</first>
       <second>Material</second>
     </item>
+    <item>
+      <first>TERRAIN_EDITOR_VISUALIZE</first>
+      <second>Visualize channel</second>
+    </item>    
     <item>
       <first>TERRAIN_EDITOR_EMISSIVE_BRUSH</first>
       <second>Emissive brush</second>
@@ -2600,6 +2620,10 @@
       <first>TERRAIN_EDITOR_COLOR_BRUSH</first>
       <second>Color brush</second>
     </item>
+    <item>
+      <first>TERRAIN_EDITOR_SPLAT_BRUSH</first>
+      <second>Splat brush</second>
+    </item>    
     <item>
       <first>TERRAIN_EDITOR_CUT_BRUSH</first>
       <second>Cut brush</second>

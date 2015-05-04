@@ -7,6 +7,7 @@
 #include "Core/Class/Any.h"
 #include "Core/Class/CastAny.h"
 #include "Core/Class/IRuntimeClassFactory.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Aabb2.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Math/Color4f.h"
@@ -230,6 +231,62 @@ public:
 
 private:
 	Vector4 m_value;
+};
+
+class T_DLLCLASS BoxedVector4Array : public Boxed
+{
+	T_RTTI_CLASS;
+
+public:
+	BoxedVector4Array()
+	{
+	}
+
+	explicit BoxedVector4Array(uint32_t size)
+	:	m_arr(size)
+	{
+	}
+
+	explicit BoxedVector4Array(const AlignedVector< Vector4 >& arr)
+	:	m_arr(arr)
+	{
+	}
+
+	void reserve(uint32_t capacity);
+
+	void resize(uint32_t size);
+
+	void clear();
+
+	int32_t size() const;
+
+	bool empty() const;
+
+	void push_back(const BoxedVector4* value);
+
+	void pop_back();
+
+	Vector4 front();
+
+	Vector4 back();
+
+	void set(int32_t index, const BoxedVector4* value);
+
+	Vector4 get(int32_t index);
+
+	virtual std::wstring toString() const;
+
+	const AlignedVector< Vector4 >& unbox() const
+	{
+		return m_arr;
+	}
+
+	void* operator new (size_t size);
+
+	void operator delete (void* ptr);
+
+private:
+	AlignedVector< Vector4 > m_arr;
 };
 
 class T_DLLCLASS BoxedQuaternion : public Boxed
@@ -762,9 +819,9 @@ public:
 
 	Object* get(int32_t index);
 
-	void pushBack(Object* object);
+	void push_back(Object* object);
 
-	void popBack();
+	void pop_back();
 
 	Object* front();
 
@@ -995,6 +1052,34 @@ struct CastAny < const Vector4&, false >
     static const Vector4& get(const Any& value) {
         return mandatory_non_null_type_cast< BoxedVector4* >(value.getObject())->unbox();
     }
+};
+
+template < >
+struct CastAny < AlignedVector< Vector4 >, false >
+{
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedVector4Array >(value.getObjectUnsafe());
+	}
+	static Any set(const AlignedVector< Vector4 >& value) {
+		return Any::fromObject(new BoxedVector4Array(value));
+	}
+	static const AlignedVector< Vector4 >& get(const Any& value) {
+		return mandatory_non_null_type_cast< BoxedVector4Array* >(value.getObject())->unbox();
+	}
+};
+
+template < >
+struct CastAny < const AlignedVector< Vector4 >&, false >
+{
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedVector4Array >(value.getObjectUnsafe());
+	}
+	static Any set(const AlignedVector< Vector4 >& value) {
+		return Any::fromObject(new BoxedVector4Array(value));
+	}
+	static const AlignedVector< Vector4 >& get(const Any& value) {
+		return mandatory_non_null_type_cast< BoxedVector4Array* >(value.getObject())->unbox();
+	}
 };
 
 template < >

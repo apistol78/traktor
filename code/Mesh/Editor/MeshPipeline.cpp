@@ -40,6 +40,7 @@
 #include "Render/Editor/Shader/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/ShaderGraphStatic.h"
 #include "Render/Editor/Shader/ShaderGraphTechniques.h"
+#include "Render/Editor/Shader/ShaderGraphValidator.h"
 #include "Render/Resource/FragmentLinker.h"
 
 namespace traktor
@@ -62,10 +63,24 @@ public:
 
 	virtual Ref< const render::ShaderGraph > read(const Guid& fragmentGuid) const
 	{
+		Ref< const render::ShaderGraph > shaderGraph;
+		
 		if (fragmentGuid == c_guidVertexInterfaceGuid)
-			return m_pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(m_vertexFragmentGuid);
+			shaderGraph = m_pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(m_vertexFragmentGuid);
 		else
-			return m_pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentGuid);
+			shaderGraph = m_pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentGuid);
+
+		if (!shaderGraph)
+			return 0;
+
+		shaderGraph = render::ShaderGraphStatic(shaderGraph).getVariableResolved();
+		if (!shaderGraph)
+			return 0;
+
+		if (render::ShaderGraphValidator(shaderGraph).validateIntegrity())
+			return shaderGraph;
+		else
+			return 0;
 	}
 
 private:

@@ -219,7 +219,6 @@ void PerspectiveRenderControl::updateWorldRenderer()
 	))
 	{
 		m_worldRenderer = worldRenderer;
-		updateWorldRenderView();
 	}
 }
 
@@ -375,22 +374,6 @@ void PerspectiveRenderControl::updateSettings()
 	m_invertPanY = settings->getProperty< PropertyBoolean >(L"SceneEditor.InvertPanY");
 	m_fieldOfView = settings->getProperty< PropertyFloat >(L"SceneEditor.FieldOfView", c_defaultFieldOfView);
 	m_mouseWheelRate = settings->getProperty< PropertyFloat >(L"SceneEditor.MouseWheelRate", c_defaultMouseWheelRate);
-
-	updateWorldRenderView();
-}
-
-void PerspectiveRenderControl::updateWorldRenderView()
-{
-	ui::Size sz = m_renderWidget->getInnerRect().getSize();
-
-	world::WorldViewPerspective worldView;
-	worldView.width = sz.cx;
-	worldView.height = sz.cy;
-	worldView.aspect = float(sz.cx) / sz.cy;
-	worldView.fov = deg2rad(m_fieldOfView);
-
-	if (m_worldRenderer)
-		m_worldRenderer->createRenderView(worldView, m_worldRenderView);
 }
 
 Matrix44 PerspectiveRenderControl::getProjectionTransform() const
@@ -467,14 +450,19 @@ void PerspectiveRenderControl::eventSize(ui::SizeEvent* event)
 
 void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 {
+	Ref< scene::Scene > sceneInstance = m_context->getScene();
+
 	float colorClear[4];
 	float deltaTime = float(m_timer.getDeltaTime());
 	float scaledTime = m_context->getTime();
 
 	m_colorClear.getRGBA32F(colorClear);
 
-	if (!m_renderView || !m_primitiveRenderer)
+	if (!sceneInstance || !m_renderView || !m_primitiveRenderer)
 		return;
+
+	const world::WorldRenderSettings* worldRenderSettings = sceneInstance->getWorldRenderSettings();
+	ui::Size sz = m_renderWidget->getInnerRect().getSize();
 
 	// Lazy create world renderer.
 	if (!m_worldRenderer)
@@ -483,6 +471,16 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 		if (!m_worldRenderer)
 			return;
 	}
+
+	// Update world render view.
+	m_worldRenderView.setPerspective(
+		sz.cx,
+		sz.cy,
+		float(sz.cx) / sz.cy,
+		deg2rad(m_fieldOfView),
+		worldRenderSettings->viewNearZ,
+		worldRenderSettings->viewFarZ
+	);
 
 	// Get current transformations.
 	Matrix44 projection = getProjectionTransform();

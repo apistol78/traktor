@@ -1,5 +1,5 @@
-#ifndef traktor_scene_OrthogonalRenderControl_H
-#define traktor_scene_OrthogonalRenderControl_H
+#ifndef traktor_scene_CameraRenderControl_H
+#define traktor_scene_CameraRenderControl_H
 
 #include "Core/RefArray.h"
 #include "Core/Math/Color4ub.h"
@@ -8,13 +8,15 @@
 #include "Scene/Editor/ISceneRenderControl.h"
 #include "Scene/Editor/RenderControlModel.h"
 #include "Ui/Rect.h"
-#include "Ui/Events/AllEvents.h"
+#include "World/WorldRenderSettings.h"
+#include "World/WorldRenderView.h"
 
 namespace traktor
 {
 	namespace ui
 	{
 
+class Container;
 class Widget;
 
 	}
@@ -23,6 +25,7 @@ class Widget;
 	{
 
 class IRenderView;
+class RenderTargetSet;
 class PrimitiveRenderer;
 
 	}
@@ -31,35 +34,25 @@ class PrimitiveRenderer;
 	{
 
 class IWorldRenderer;
+class Entity;
 
 	}
 
 	namespace scene
 	{
 
-class Camera;
 class SceneEditorContext;
 
-class OrthogonalRenderControl : public ISceneRenderControl
+class CameraRenderControl : public ISceneRenderControl
 {
 	T_RTTI_CLASS;
 
 public:
-	enum ViewPlane
-	{
-		PositiveX = 0,
-		NegativeX = 1,
-		PositiveY = 2,
-		NegativeY = 3,
-		PositiveZ = 4,
-		NegativeZ = 5
-	};
+	CameraRenderControl();
 
-	OrthogonalRenderControl();
+	bool create(ui::Widget* parent, SceneEditorContext* context);
 
-	bool create(ui::Widget* parent, SceneEditorContext* context, ViewPlane viewPlane, int32_t cameraId);
-
-	void destroy();
+	virtual void destroy();
 
 	virtual void updateWorldRenderer();
 
@@ -83,10 +76,14 @@ public:
 
 private:
 	Ref< SceneEditorContext > m_context;
+	Ref< ui::Container > m_containerAspect;
 	Ref< ui::Widget > m_renderWidget;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< world::IWorldRenderer > m_worldRenderer;
+	world::WorldRenderView m_worldRenderView;
+	world::WorldRenderSettings m_worldRenderSettings;
+	world::Quality m_postProcessQuality;
 	world::Quality m_shadowQuality;
 	world::Quality m_ambientOcclusionQuality;
 	world::Quality m_antiAliasQuality;
@@ -96,31 +93,14 @@ private:
 	Color4ub m_colorClear;
 	Color4ub m_colorGrid;
 	Color4ub m_colorRef;
-	Color4ub m_colorCamera;
 	int32_t m_multiSample;
+	bool m_invertPanY;
+	RefArray< EntityAdapter > m_cameraEntities;
 	Timer m_timer;
-	ViewPlane m_viewPlane;
-	float m_viewFarZ;
-	float m_magnification;
-	Ref< Camera > m_camera;
 	ui::Rect m_selectionRectangle;
 	ui::Size m_dirtySize;
 
 	void updateSettings();
-
-	Matrix44 getProjectionTransform() const;
-
-	Matrix44 getViewTransform() const;
-
-	void eventButtonDown(ui::MouseButtonDownEvent* event);
-
-	void eventButtonUp(ui::MouseButtonUpEvent* event);
-
-	void eventDoubleClick(ui::MouseDoubleClickEvent* event);
-
-	void eventMouseMove(ui::MouseMoveEvent* event);
-
-	void eventMouseWheel(ui::MouseWheelEvent* event);
 
 	void eventSize(ui::SizeEvent* event);
 
@@ -130,4 +110,4 @@ private:
 	}
 }
 
-#endif	// traktor_scene_OrthogonalRenderControl_H
+#endif	// traktor_scene_CameraRenderControl_H

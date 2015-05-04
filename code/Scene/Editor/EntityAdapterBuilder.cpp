@@ -265,8 +265,9 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 
 	entityAdapter->setEntityData(const_cast< world::EntityData* >(entityData));
 	entityAdapter->setEntity(entity);
-	entityAdapter->setTransform(entityData->getTransform());
 	entityAdapter->setHash(hash);
+
+	entity->setTransform(entityData->getTransform());
 
 	if (!entityAdapter->getEntityEditor())
 	{

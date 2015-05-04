@@ -36,10 +36,6 @@ public:
 
 	void rotate(float dy, float dx);
 
-	void setFollowEntity(EntityAdapter* followEntity);
-
-	void setLookAtEntity(EntityAdapter* lookAtEntity);
-
 	Matrix44 getWorld() const;
 
 	Matrix44 getView() const;
@@ -56,8 +52,6 @@ private:
 	bool m_enable;
 	Vector4 m_position;
 	Quaternion m_orientation;
-	Ref< EntityAdapter > m_followEntity;
-	Ref< EntityAdapter > m_lookAtEntity;
 };
 
 	}

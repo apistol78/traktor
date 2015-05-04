@@ -219,15 +219,14 @@ void AnimationPreviewControl::updateWorldRenderer()
 void AnimationPreviewControl::updateWorldRenderView()
 {
 	ui::Size sz = getInnerRect().getSize();
-
-	world::WorldViewPerspective worldView;
-	worldView.width = sz.cx;
-	worldView.height = sz.cy;
-	worldView.aspect = float(sz.cx) / sz.cy;
-	worldView.fov = deg2rad(65.0f);
-
-	if (m_worldRenderer)
-		m_worldRenderer->createRenderView(worldView, m_worldRenderView);
+	m_worldRenderView.setPerspective(
+		sz.cx,
+		sz.cy,
+		float(sz.cy) / sz.cy,
+		deg2rad(65.0f),
+		0.1f,
+		1000.0f
+	);
 }
 
 void AnimationPreviewControl::eventButtonDown(ui::MouseButtonDownEvent* event)

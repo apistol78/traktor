@@ -67,10 +67,6 @@ public:
 
 	virtual void destroy();
 
-	virtual void createRenderView(const WorldViewPerspective& worldView, WorldRenderView& outRenderView) const;
-
-	virtual void createRenderView(const WorldViewOrtho& worldView, WorldRenderView& outRenderView) const;
-
 	virtual bool beginBuild();
 
 	virtual void build(Entity* entity);

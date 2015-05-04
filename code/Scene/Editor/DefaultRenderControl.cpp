@@ -6,6 +6,7 @@
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
 #include "Scene/Editor/Camera.h"
+#include "Scene/Editor/CameraRenderControl.h"
 #include "Scene/Editor/DebugRenderControl.h"
 #include "Scene/Editor/DefaultRenderControl.h"
 #include "Scene/Editor/OrthogonalRenderControl.h"
@@ -74,6 +75,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_LEFT"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_RIGHT"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_DEBUG"));
+	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_CAMERA"));
 	m_toolView->select(viewType);
 
 	m_toolToggleGrid = new ui::custom::ToolBarButton(
@@ -88,20 +90,6 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 		5,
 		ui::Command(1, L"Scene.Editor.ToggleGuide"),
 		guideEnable ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle
-	);
-
-	m_toolToggleFollowEntity = new ui::custom::ToolBarButton(
-		i18n::Text(L"SCENE_EDITOR_FOLLOW_ENTITY"),
-		17 + 4,
-		ui::Command(L"Scene.Editor.ToggleFollowEntity"),
-		ui::custom::ToolBarButton::BsDefaultToggle
-	);
-
-	m_toolToggleLookAtEntity = new ui::custom::ToolBarButton(
-		i18n::Text(L"SCENE_EDITOR_LOOK_AT_ENTITY"),
-		17 + 3,
-		ui::Command(L"Scene.Editor.ToggleLookAtEntity"),
-		ui::custom::ToolBarButton::BsDefaultToggle
 	);
 
 	m_toolAspect = new ui::custom::ToolBarDropDown(ui::Command(1, L"Scene.Editor.Aspect"), 60, i18n::Text(L"SCENE_EDITOR_ASPECT"));
@@ -151,8 +139,6 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolBar->addItem(m_toolView);
 	m_toolBar->addItem(m_toolToggleGrid);
 	m_toolBar->addItem(m_toolToggleGuide);
-	m_toolBar->addItem(m_toolToggleFollowEntity);
-	m_toolBar->addItem(m_toolToggleLookAtEntity);
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBar->addItem(m_toolAspect);
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
@@ -164,10 +150,6 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 
 	if (!createRenderControl(viewType))
 		return false;
-
-	Ref< Camera > camera = m_context->getCamera(m_cameraId);
-	camera->setFollowEntity(0);
-	camera->setLookAtEntity(0);
 
 	return true;
 }
@@ -337,6 +319,15 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 			m_renderControl = renderControl;
 		}
 		break;
+
+	case 8:	// Camera
+		{
+			Ref< CameraRenderControl > renderControl = new CameraRenderControl();
+			if (!renderControl->create(m_container, m_context))
+				return false;
+			m_renderControl = renderControl;
+		}
+		break;
 	}
 
 	T_ASSERT (m_renderControl);
@@ -384,30 +375,6 @@ void DefaultRenderControl::eventToolClick(ui::custom::ToolBarButtonClickEvent* e
 			m_renderControl->handleCommand(ui::Command(L"Scene.Editor.EnableGuide"));
 		else
 			m_renderControl->handleCommand(ui::Command(L"Scene.Editor.DisableGuide"));
-	}
-	else if (event->getCommand() == L"Scene.Editor.ToggleFollowEntity")
-	{
-		Ref< Camera > camera = m_context->getCamera(m_cameraId);
-		if (m_toolToggleFollowEntity->isToggled())
-		{
-			RefArray< EntityAdapter > selectedEntities;
-			if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) == 1)
-				camera->setFollowEntity(selectedEntities[0]);
-		}
-		else
-			camera->setFollowEntity(0);
-	}
-	else if (event->getCommand() == L"Scene.Editor.ToggleLookAtEntity")
-	{
-		Ref< Camera > camera = m_context->getCamera(m_cameraId);
-		if (m_toolToggleFollowEntity->isToggled())
-		{
-			RefArray< EntityAdapter > selectedEntities;
-			if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) == 1)
-				camera->setLookAtEntity(selectedEntities[0]);
-		}
-		else
-			camera->setLookAtEntity(0);
 	}
 	else if (event->getCommand() == L"Scene.Editor.Aspect")
 	{
