@@ -525,7 +525,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	paneLog->dock(m_tabOutput, true);
 
 	m_tab = new ui::Tab();
-	m_tab->create(m_dock);
+	m_tab->create(m_dock, ui::Tab::WsLine | ui::Tab::WsCloseButton);
 	m_tab->addImage(ui::Bitmap::load(c_ResourceTypes, sizeof(c_ResourceTypes), L"png"), 23);
 	m_tab->addEventHandler< ui::MouseButtonDownEvent >(this, &EditorForm::eventTabButtonDown);
 	m_tab->addEventHandler< ui::TabSelectionChangeEvent >(this, &EditorForm::eventTabSelChange);

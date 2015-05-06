@@ -496,7 +496,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 	// Initialize native UI.
 	ui::Application::getInstance()->initialize(
 		new ui::EventLoopWin32(),
-		new ui::WidgetFactoryWin32()
+		new ui::WidgetFactoryWin32(),
+		0
 	);
 
 	// Adjust timer resolution; Windows default at 15 ms which is a frame.

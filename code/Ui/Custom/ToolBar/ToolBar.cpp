@@ -3,6 +3,7 @@
 #include "Drawing/Filters/GrayscaleFilter.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarItem.h"
 #include "Ui/Custom/ToolTip.h"
@@ -225,17 +226,18 @@ void ToolBar::eventPaint(PaintEvent* event)
 	Canvas& canvas = event->getCanvas();
 	Rect rc = getInnerRect();
 
-	Color4ub c1 = getSystemColor(ScMenuBackground);
-	Color4ub c0 = lerp(c1, Color4ub(255, 255, 255), 0.5f);
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 
-	canvas.setBackground(c0);
+	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(Rect(rc.left, rc.top, rc.right, rc.bottom));
 
+	/*
 	if (m_style & WsUnderline)
 	{
 		canvas.setForeground(getSystemColor(ScButtonShadow));
 		canvas.drawLine(rc.left, rc.bottom - 1, rc.right, rc.bottom - 1);
 	}
+	*/
 
 	int x = rc.left + c_marginWidth;
 	int y = rc.top + c_marginHeight;

@@ -3,6 +3,7 @@
 #include "Ui/Application.h"
 #include "Ui/HierarchicalState.h"
 #include "Ui/ScrollBar.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Custom/PropertyList/PropertyItem.h"
 #include "Ui/Custom/PropertyList/PropertyList.h"
 #include "Ui/Custom/PropertyList/PropertySelectionChangeEvent.h"
@@ -554,12 +555,14 @@ void PropertyList::eventPaint(PaintEvent* event)
 	Canvas& canvas = event->getCanvas();
 	Rect rcInner = getInnerRect();
 
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+
 	int32_t scrollBarOffset = m_scrollBar->getPosition() * c_propertyItemHeight;
 	int32_t scrollBarWidth = m_scrollBar->isVisible(false) ? m_scrollBar->getPreferedSize().cx : 0;
 	int32_t top = m_columnHeader ? c_columnsHeight : 0;
 
 	// Clear widget background.
-	canvas.setBackground(getSystemColor(ScButtonFace));
+	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(rcInner);
 
 	// Draw columns.

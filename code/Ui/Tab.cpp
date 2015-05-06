@@ -1,9 +1,12 @@
 #include <algorithm>
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Tab.h"
 #include "Ui/TabPage.h"
 #include "Ui/Font.h"
+
+#include "Resources/Close.h"
 
 namespace traktor
 {
@@ -25,7 +28,6 @@ Tab::Tab()
 ,	m_drawBorder(false)
 ,	m_drawLine(false)
 ,	m_bottom(false)
-,	m_closeHighlight(false)
 {
 }
 
@@ -47,7 +49,9 @@ bool Tab::create(Widget* parent, int32_t style)
 	m_drawLine = bool((style & WsLine) == WsLine);
 	m_bottom = bool((style & WsBottom) == WsBottom);
 	
-	m_closeHighlight = false;
+	m_bitmapClose = Bitmap::load(c_ResourceClose, sizeof(c_ResourceClose), L"png");
+	T_FATAL_ASSERT (m_bitmapClose);
+
 	return true;
 }
 
@@ -61,21 +65,21 @@ int32_t Tab::addImage(Bitmap* image, int32_t imageCount)
 	uint32_t width = 0, height = 0;
 	
 	// Resize existing image.
-	if (m_image)
+	if (m_bitmapImages)
 	{
-		width = m_image->getSize().cx + image->getSize().cx;
-		height = std::max(m_image->getSize().cy, image->getSize().cy);
+		width = m_bitmapImages->getSize().cx + image->getSize().cx;
+		height = std::max(m_bitmapImages->getSize().cy, image->getSize().cy);
 
 		Ref< ui::Bitmap > newImage = new ui::Bitmap(width, height);
-		newImage->copyImage(m_image->getImage());
-		newImage->copySubImage(image->getImage(), Rect(Point(0, 0), image->getSize()), Point(m_image->getSize().cx, 0));
-		m_image = newImage;
+		newImage->copyImage(m_bitmapImages->getImage());
+		newImage->copySubImage(image->getImage(), Rect(Point(0, 0), image->getSize()), Point(m_bitmapImages->getSize().cx, 0));
+		m_bitmapImages = newImage;
 	}
 	else
 	{
-		m_image = image;
-		m_imageWidth = std::max< uint32_t >(m_imageWidth, m_image->getSize().cx / imageCount);
-		m_imageHeight = std::max< uint32_t >(m_imageHeight, m_image->getSize().cy);
+		m_bitmapImages = image;
+		m_imageWidth = std::max< uint32_t >(m_imageWidth, m_bitmapImages->getSize().cx / imageCount);
+		m_imageHeight = std::max< uint32_t >(m_imageHeight, m_bitmapImages->getSize().cy);
 	}
 
 	return 0;
@@ -297,24 +301,24 @@ void Tab::eventMouseMove(MouseMoveEvent* event)
 
 	if (inner.inside(pnt) && pnt.y >= y0 && pnt.y <= y1)
 	{
-		if (m_closeButton && m_selectedPage && pnt.x > inner.right - 20)
+		setCapture();
+
+		Ref< TabPage > hoverPage = getPageAt(pnt);
+		if (hoverPage != m_hoverPage)
 		{
-			if (!m_closeHighlight)
-			{
-				m_closeHighlight = true;
-				update();
-			}
-			setCapture();
-			return;
+			m_hoverPage = hoverPage;
+			update();
 		}
 	}
-
-	if (m_closeHighlight)
+	else
 	{
-		m_closeHighlight = false;
-		Rect rc(inner.right, inner.top, inner.right, inner.bottom);
-		update();
 		releaseCapture();
+
+		if (m_hoverPage)
+		{
+			m_hoverPage = 0;
+			update();
+		}
 	}
 }
 
@@ -337,60 +341,60 @@ void Tab::eventButtonDown(MouseButtonDownEvent* event)
 
 	if (pnt.y >= y0 && pnt.y <= y1)
 	{
-		if (m_closeButton && m_selectedPage && pnt.x > inner.right - 16)
+		PageState* selectedPageState = 0;
+
+		for (page_state_vector_t::iterator i = m_pages.begin(); i != m_pages.end(); ++i)
 		{
-			TabCloseEvent closeEvent(this, m_selectedPage);
-			raiseEvent(&closeEvent);
+			if (pnt.x <= i->right)
+			{
+				selectedPageState = &(*i);
+				break;
+			}
 		}
-		else
+
+		bool closed = false;
+		if (m_closeButton && selectedPageState)
 		{
-			Ref< TabPage > selectPage;
-			for (page_state_vector_t::iterator i = m_pages.begin(); i != m_pages.end(); ++i)
+			if (pnt.x >= selectedPageState->right - 16 && pnt.x < selectedPageState->right)
 			{
-				if (pnt.x <= i->right)
-				{
-					selectPage = i->page;
-					break;
-				}
+				TabCloseEvent closeEvent(this, selectedPageState->page);
+				raiseEvent(&closeEvent);
+				closed = true;
 			}
-			if (selectPage && selectPage != m_selectedPage)
-			{
+		}
+
+		if (!closed && selectedPageState && selectedPageState->page != m_selectedPage)
+		{
 #if defined(_DEBUG)
-				checkPageStates();
+			checkPageStates();
 #endif
 
-				if (m_selectedPage)
+			if (m_selectedPage)
+			{
+				PageState* state = findPageState(m_selectedPage);
+				T_ASSERT (state);
+				T_ASSERT (state->depth == 0);
+
+				m_selectedPage->setVisible(false);
+			}
+
+			TabSelectionChangeEvent selectionChangeEvent(this, selectedPageState->page);
+			raiseEvent(&selectionChangeEvent);
+
+			if ((m_selectedPage = selectedPageState->page) != 0)
+			{
+				for (page_state_vector_t::iterator i = m_pages.begin(); i != m_pages.end(); ++i)
 				{
-					PageState* state = findPageState(m_selectedPage);
-					T_ASSERT (state);
-					T_ASSERT (state->depth == 0);
-
-					m_selectedPage->setVisible(false);
+					if (i->depth < selectedPageState->depth)
+						i->depth++;
 				}
-
-				TabSelectionChangeEvent selectionChangeEvent(this, selectPage);
-				raiseEvent(&selectionChangeEvent);
-
-				if ((m_selectedPage = selectPage) != 0)
-				{
-					PageState* state = findPageState(selectPage);
-					T_ASSERT (state);
-
-					for (page_state_vector_t::iterator i = m_pages.begin(); i != m_pages.end(); ++i)
-					{
-						if (i->depth < state->depth)
-							i->depth++;
-					}
-
-					state->depth = 0;
-
-					m_selectedPage->setVisible(true);
-				}
+				selectedPageState->depth = 0;
+				m_selectedPage->setVisible(true);
+			}
 
 #if defined(_DEBUG)
-				checkPageStates();
+			checkPageStates();
 #endif
-			}
 		}
 
 		setFocus();
@@ -422,7 +426,9 @@ void Tab::eventPaint(PaintEvent* event)
 	Canvas& canvas = event->getCanvas();
 	Rect rcPaint = event->getUpdateRect();
 	Rect rcInner = Widget::getInnerRect();
-	
+
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+
 	int32_t y0, y1;
 	if (!m_bottom)
 	{
@@ -435,44 +441,38 @@ void Tab::eventPaint(PaintEvent* event)
 		y1 = rcInner.bottom;
 	}
 
-	// Fill tab background.
 	Rect rcTabs(rcInner.left, y0, rcInner.right, y1);
-	if (!m_bottom)
-	{
-		canvas.setForeground(Color4ub(255, 255, 255));
-		canvas.setBackground(getSystemColor(ScButtonFace));
-	}
-	else
-	{
-		canvas.setBackground(Color4ub(255, 255, 255));
-		canvas.setForeground(getSystemColor(ScButtonFace));
-	}
-	canvas.fillGradientRect(rcTabs);
+
+	// Fill tab background.
+	canvas.setBackground(ss->getColor(this, L"background-color"));
+	canvas.fillRect(rcTabs);
 	
-	// Draw close button.
-	if (m_closeButton && m_pages.size())
-		drawClose(canvas, rcInner.right - 16, (y0 + y1 - 6) / 2);
-	
+	/*
 	// White separator.
 	canvas.setForeground(Color4ub(255, 255, 255));
 	canvas.setBackground(getSystemColor(ScButtonFace));
 	canvas.drawLine(Point(rcTabs.left, rcTabs.bottom), Point(rcTabs.right, rcTabs.bottom));
+	*/
 	
 	// Draw tab pages.
 	if (!m_pages.empty())
 	{
-		int32_t left = rcTabs.left + 4;
+		int32_t left = rcTabs.left;
 		for (page_state_vector_t::iterator i = m_pages.begin(); i != m_pages.end(); ++i)
 		{
-			Ref< TabPage >& page = i->page;
-			std::wstring text = page->getText();
+			const TabPage* page = i->page;
+			const std::wstring text = page->getText();
 
-			// Calculate extent.
-			canvas.setFont(page == m_selectedPage ? m_fontBold : getFont());
 			Size sizText = canvas.getTextExtent(text);
+
+			int32_t tabWidthNoMargin = sizText.cx;
+			if (m_closeButton)
+				tabWidthNoMargin += 10 + 4;
+
+			int32_t tabWidth = tabWidthNoMargin + 4 * 2;
 						
 			// Save right separator position in vector.
-			i->right = left + m_imageWidth + sizText.cx + 16;
+			i->right = left + tabWidth;
 
 			// Draw only those tabs that are visible.
 			if (i->right < rcTabs.right)
@@ -480,63 +480,67 @@ void Tab::eventPaint(PaintEvent* event)
 				// Calculate tab item rectangle.
 				Rect rcTab(
 					left,
-					m_bottom ? rcTabs.top : rcTabs.top + 3,
-					left + m_imageWidth + sizText.cx + 16,
-					m_bottom ? rcTabs.bottom - 2 : rcTabs.bottom
+					rcTabs.top,
+					left + tabWidth,
+					rcTabs.bottom 
 				);
-				
-				// Draw separator.
-				canvas.setForeground(Color4ub(128, 128, 128));
-				canvas.drawLine(Point(rcTab.right, rcTab.top + 1), Point(rcTab.right, rcTab.bottom - 1));
+				if (m_drawLine)
+				{
+					if (!m_bottom)
+						rcTab.bottom -= 2;
+					else
+						rcTab.top += 2;
+				}
 				
 				// Highlight selected tab.
 				if (page == m_selectedPage)
 				{
+					canvas.setBackground(ss->getColor(this, L"tab-background-color"));
 					canvas.fillRect(rcTab);
-					
-					canvas.setForeground(Color4ub(128, 128, 128));
-					canvas.drawLine(Point(rcTab.left, rcTab.bottom - 1), Point(rcTab.left, rcTab.top));
-					if (!m_bottom)
-						canvas.drawLine(Point(rcTab.left, rcTab.top), Point(rcTab.right, rcTab.top));
-					
-					canvas.setForeground(Color4ub(0, 0, 0));
-					canvas.drawLine(Point(rcTab.right, rcTab.top), Point(rcTab.right, rcTab.bottom - 1));
-					if (m_bottom)
-						canvas.drawLine(Point(rcTab.left + 1, rcTab.bottom - 1), Point(rcTab.right, rcTab.bottom - 1));
+				}
+				else if (page == m_hoverPage)
+				{
+					canvas.setBackground(ss->getColor(this, L"tab-background-color-hover"));
+					canvas.fillRect(rcTab);
 				}
 
-				// Draw image.
-				if (m_image)
+				// Draw close button.
+				if (m_closeButton && (page == m_selectedPage || page == m_hoverPage))
 				{
 					canvas.drawBitmap(
-						rcTab.getTopLeft() + Size(1, 1),
-						Point(page->getImageIndex() * m_imageWidth, 0),
-						Size(m_imageWidth, m_imageHeight),
-						m_image,
+						Point(rcTab.right - 10 - 4, rcTab.top + 6),
+						Point(10, 0),
+						Size(10, 8),
+						m_bitmapClose,
 						BmAlpha
 					);
-					rcTab.left += m_imageWidth;
 				}
-				
+			
 				// Draw text.
+				Rect rcTabText(
+					left + 4,
+					rcTab.top,
+					left + 4 + sizText.cx,
+					rcTab.bottom
+				);
 				if (isEnable())
 				{
-					canvas.setForeground((page == m_selectedPage) ? Color4ub(0, 0, 0) : Color4ub(128, 128, 128));
-					canvas.drawText(rcTab, text, AnCenter, AnCenter);
+					canvas.setForeground(ss->getColor(this, (page == m_selectedPage || page == m_hoverPage) ? L"tab-color-active" : L"tab-color-inactive"));
+					canvas.drawText(rcTabText, text, AnLeft, AnCenter);
 				}
 				else
 				{
 					canvas.setForeground(Color4ub(250, 250, 250));
-					canvas.drawText(rcTab, text, AnCenter, AnCenter);
+					canvas.drawText(rcTabText, text, AnLeft, AnCenter);
 					
-					rcTab.left -= 1;
-					rcTab.top -= 1;
+					rcTabText.left -= 1;
+					rcTabText.top -= 1;
 					canvas.setForeground(Color4ub(120, 120, 120));
-					canvas.drawText(rcTab, text, AnCenter, AnCenter);
+					canvas.drawText(rcTabText, text, AnLeft, AnCenter);
 				}
 			}
 
-			left += m_imageWidth + sizText.cx + 16;
+			left += tabWidth;
 		}
 	}
 	else
@@ -548,24 +552,30 @@ void Tab::eventPaint(PaintEvent* event)
 			rcInner.right,
 			m_bottom ? rcInner.bottom - c_tabHeight - 1 : rcInner.bottom
 		);
-		canvas.setBackground(getSystemColor(ScButtonFace));
+		canvas.setBackground(ss->getColor(this, L"background-color"));
 		canvas.fillRect(rcTabItem);
 	}
 
 	// Draw line.
 	if (m_drawLine)
 	{
-		canvas.setForeground(Color4ub(128, 128, 128));
+		canvas.setForeground(ss->getColor(this, L"tab-line-color"));
 		if (!m_bottom)
-			canvas.drawLine(rcInner.left, rcInner.top + c_tabHeight - 1, rcInner.right, rcInner.top + c_tabHeight - 1);
+		{
+			canvas.drawLine(rcTabs.left, rcTabs.bottom - 2, rcTabs.right, rcTabs.bottom - 2);
+			canvas.drawLine(rcTabs.left, rcTabs.bottom - 1, rcTabs.right, rcTabs.bottom - 1);
+		}
 		else
-			canvas.drawLine(rcInner.left, rcInner.bottom - c_tabHeight, rcInner.right, rcInner.bottom - c_tabHeight);
+		{
+			canvas.drawLine(rcTabs.left, rcTabs.top, rcTabs.right, rcTabs.top);
+			canvas.drawLine(rcTabs.left, rcTabs.top + 1, rcTabs.right, rcTabs.top + 1);
+		}
 	}
 	
 	// Draw surrounding gray border.
 	if (m_drawBorder)
 	{
-		canvas.setForeground(Color4ub(128, 128, 128));
+		canvas.setForeground(ss->getColor(this, L"border-color"));
 		canvas.drawRect(rcInner);
 	}
 
@@ -590,25 +600,6 @@ Tab::PageState* Tab::findPageState(int32_t depth)
 			return &(*i);
 	}
 	return 0;
-}
-
-void Tab::drawClose(Canvas& canvas, int32_t x, int32_t y)
-{
-	canvas.setForeground(Color4ub(128, 128, 128));
-
-	if (m_closeHighlight)
-	{
-		ui::Rect rc(x - 3, y - 3, x + 11, y + 10);
-		canvas.setForeground(Color4ub(128, 128, 144));
-		canvas.setBackground(Color4ub(224, 224, 255));
-		canvas.fillRect(rc);
-		canvas.drawRect(rc);
-	}
-
-	canvas.drawLine(Point(x, y), Point(x + 6, y + 6));
-	canvas.drawLine(Point(x + 1, y), Point(x + 7, y + 6));
-	canvas.drawLine(Point(x + 6, y), Point(x, y + 6));
-	canvas.drawLine(Point(x + 7, y), Point(x + 1, y + 6));
 }
 
 #if defined(_DEBUG)

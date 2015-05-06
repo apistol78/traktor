@@ -1,6 +1,7 @@
 #include "Core/Misc/String.h"
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
+#include "Ui/StyleSheet.h"
 
 namespace traktor
 {
@@ -51,11 +52,12 @@ Application* Application::getInstance()
 	return s_instance;
 }
 
-bool Application::initialize(IEventLoop* eventLoop, IWidgetFactory* widgetFactory)
+bool Application::initialize(IEventLoop* eventLoop, IWidgetFactory* widgetFactory, StyleSheet* styleSheet)
 {
 	m_eventLoop = eventLoop;
 	m_widgetFactory = widgetFactory;
 	m_clipboard = new Clipboard(widgetFactory->createClipboard());
+	m_styleSheet = styleSheet ? styleSheet : new StyleSheet();
 	return true;
 }
 
@@ -99,9 +101,14 @@ IWidgetFactory* Application::getWidgetFactory()
 	return m_widgetFactory;
 }
 
-Ref< Clipboard > Application::getClipboard()
+Clipboard* Application::getClipboard()
 {
 	return m_clipboard;
+}
+
+const StyleSheet* Application::getStyleSheet() const
+{
+	return m_styleSheet;
 }
 
 VirtualKey Application::translateVirtualKey(const std::wstring& keyName) const

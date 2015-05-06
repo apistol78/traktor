@@ -83,24 +83,23 @@ private:
 
 	typedef std::vector< PageState > page_state_vector_t;
 
-	Ref< Bitmap > m_image;
+	Ref< Bitmap > m_bitmapClose;
+	Ref< Bitmap > m_bitmapImages;
 	uint32_t m_imageWidth;
 	uint32_t m_imageHeight;
 	Rect m_innerRect;
 	Font m_fontBold;
 	page_state_vector_t m_pages;
 	Ref< TabPage > m_selectedPage;
+	Ref< TabPage > m_hoverPage;
 	bool m_closeButton;
 	bool m_drawBorder;
 	bool m_drawLine;
 	bool m_bottom;
-	bool m_closeHighlight;
 
 	PageState* findPageState(const TabPage* page);
 
 	PageState* findPageState(int32_t depth);
-
-	void drawClose(Canvas& canvas, int32_t x, int32_t y);
 
 	void eventMouseMove(MouseMoveEvent* event);
 

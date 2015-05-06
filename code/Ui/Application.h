@@ -25,6 +25,7 @@ namespace traktor
 	{
 
 class Clipboard;
+class StyleSheet;
 
 /*! \brief User interface application.
  * \ingroup UI
@@ -50,7 +51,7 @@ public:
 	 * \param widgetFactory System widget factory instance.
 	 * \return True if application initialization succeeded.
 	 */
-	bool initialize(IEventLoop* eventLoop, IWidgetFactory* widgetFactory);
+	bool initialize(IEventLoop* eventLoop, IWidgetFactory* widgetFactory, StyleSheet* styleSheet);
 	
 	/*! \brief Cleanup UI application. */
 	void finalize();
@@ -85,7 +86,10 @@ public:
 	IWidgetFactory* getWidgetFactory();
 
 	/*! \brief Get clipboard. */
-	Ref< Clipboard > getClipboard();
+	Clipboard* getClipboard();
+
+	/*! \brief Get style sheet. */
+	const StyleSheet* getStyleSheet() const;
 
 	/*! \name Virtual key translation. */
 	//@{
@@ -108,6 +112,7 @@ private:
 	IEventLoop* m_eventLoop;
 	IWidgetFactory* m_widgetFactory;
 	Ref< Clipboard > m_clipboard;
+	Ref< StyleSheet > m_styleSheet;
 };
 
 /*! \brief Convenience wrappers. */

@@ -79,7 +79,7 @@ int32_t indexOf(const RefArray< GridRow >& rows, const GridRow* row)
 
 			}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.GridView", GridView, AutoWidget)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.GridView", GridView, AutoWidget)
 
 GridView::GridView()
 :	m_clickColumn(-1)
@@ -93,8 +93,6 @@ bool GridView::create(Widget* parent, uint32_t style)
 {
 	if (!AutoWidget::create(parent, style))
 		return false;
-
-	setBackgroundColor(getSystemColor(ScWindowBackground));
 
 	addEventHandler< MouseButtonDownEvent >(this, &GridView::eventButtonDown);
 	addEventHandler< MouseButtonUpEvent >(this, &GridView::eventButtonUp);

@@ -164,7 +164,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	m_edit->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptEditorPage::eventScriptDoubleClick);
 
 	m_compileStatus = new ui::custom::StatusBar();
-	if (!m_compileStatus->create(containerEdit, ui::WsClientBorder))
+	if (!m_compileStatus->create(containerEdit))
 		return false;
 
 	// Debugger panel.
