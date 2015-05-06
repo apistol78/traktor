@@ -1,6 +1,7 @@
 #include <algorithm>
 #include "Core/Log/Log.h"
 #include "Core/Misc/Align.h"
+#include "Core/Thread/Acquire.h"
 #include "Render/Dx11/ContextDx11.h"
 #include "Render/Dx11/SharedBufferHeapDx11.h"
 
@@ -19,6 +20,7 @@ SharedBufferHeapDx11::SharedBufferHeapDx11(ContextDx11* context, const D3D11_BUF
 
 void SharedBufferHeapDx11::destroy()
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	for (std::map< uint32_t, std::list< Chain > >::iterator i = m_chains.begin(); i != m_chains.end(); ++i)
 	{
 		for (std::list< Chain >::iterator j = i->second.begin(); j != i->second.end(); ++j)
@@ -29,6 +31,7 @@ void SharedBufferHeapDx11::destroy()
 
 bool SharedBufferHeapDx11::alloc(uint32_t bufferSize, uint32_t vertexStride, Chunk& outChunk)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	Chain chain;
 	HRESULT hr;
 
@@ -93,6 +96,7 @@ bool SharedBufferHeapDx11::alloc(uint32_t bufferSize, uint32_t vertexStride, Chu
 
 void SharedBufferHeapDx11::free(const Chunk& chunk)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	for (std::map< uint32_t, std::list< Chain > >::iterator i = m_chains.begin(); i != m_chains.end(); ++i)
 	{
 		for (std::list< Chain >::iterator j = i->second.begin(); j != i->second.end(); ++j)
