@@ -4,6 +4,7 @@
 #include <list>
 #include <map>
 #include "Core/Misc/ComRef.h"
+#include "Core/Thread/Semaphore.h"
 #include "Render/Dx11/IBufferHeapDx11.h"
 #include "Render/Dx11/Platform.h"
 
@@ -51,6 +52,7 @@ private:
 		std::vector< FreeList > freeList;
 	};
 
+	Semaphore m_lock;
 	ContextDx11* m_context;
 	D3D11_BUFFER_DESC m_dbd;
 	std::map< uint32_t, std::list< Chain > > m_chains;
