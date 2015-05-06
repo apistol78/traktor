@@ -1,5 +1,6 @@
 #include "Ui/Custom/StatusBar/StatusBar.h"
 #include "Ui/Application.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Form.h"
 
 namespace traktor
@@ -69,14 +70,15 @@ void StatusBar::eventSize(SizeEvent* event)
 void StatusBar::eventPaint(PaintEvent* event)
 {
 	Canvas& canvas = event->getCanvas();
-
 	Rect rc = getInnerRect();
 
-	canvas.setBackground(getSystemColor(ScButtonFace));
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+
+	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(rc);
 
 	std::wstring text = getText();
-	canvas.setForeground(getSystemColor(ScMenuText));
+	canvas.setForeground(ss->getColor(this, L"color"));
 	canvas.drawText(rc.inflate(-8, 0), text, AnLeft, AnCenter);
 
 	// Draw scale grip if parent is a form and isn't maximized.

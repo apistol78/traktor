@@ -42,7 +42,7 @@ public:
 
 	ToolBar();
 
-	bool create(Widget* parent, int style = WsUnderline);
+	bool create(Widget* parent, int style = WsNone);
 
 	void destroy();
 

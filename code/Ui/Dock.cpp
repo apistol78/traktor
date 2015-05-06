@@ -1,6 +1,8 @@
 #include "Core/Math/MathUtils.h"
+#include "Ui/Application.h"
 #include "Ui/Dock.h"
 #include "Ui/DockPane.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/ToolForm.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/Bitmap.h"
@@ -242,6 +244,9 @@ void Dock::eventPaint(PaintEvent* event)
 	Canvas& canvas = event->getCanvas();
 	Rect innerRect = getInnerRect();
 
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+
+	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(innerRect);
 
 	m_pane->draw(canvas);

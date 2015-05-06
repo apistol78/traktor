@@ -1,7 +1,12 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
 #include "Ui/Application.h"
+#include "Ui/Bitmap.h"
 #include "Ui/DockPane.h"
+#include "Ui/StyleSheet.h"
+
+#include "Resources/Close.h"
+#include "Resources/DockGripper.h"
 
 namespace traktor
 {
@@ -11,20 +16,8 @@ namespace traktor
 		{
 
 const int c_splitterDim = 4;
-#if !defined(__LINUX__)
-const int c_gripperDim = 16;
-#else
-const int c_gripperDim = 22;
-#endif
+const int c_gripperDim = 21;
 const int c_minimumSplit = c_gripperDim + 64;
-
-void drawClose(Canvas& canvas, int x, int y)
-{
-	canvas.drawLine(Point(x, y), Point(x + 6, y + 6));
-	canvas.drawLine(Point(x + 1, y), Point(x + 7, y + 6));
-	canvas.drawLine(Point(x + 6, y), Point(x, y + 6));
-	canvas.drawLine(Point(x + 7, y), Point(x + 1, y + 6));
-}
 
 template < typename EventType >
 void addEventHandlers(Widget* widget, ui::EventSubject::IEventHandler* eventHandler)
@@ -66,6 +59,12 @@ DockPane::DockPane(Widget* owner, DockPane* parent)
 ,	m_split(0)
 ,	m_focus(false)
 {
+	m_bitmapClose = Bitmap::load(c_ResourceClose, sizeof(c_ResourceClose), L"png");
+	T_FATAL_ASSERT (m_bitmapClose);
+
+	m_bitmapGripper = Bitmap::load(c_ResourceDockGripper, sizeof(c_ResourceDockGripper), L"png");
+	T_FATAL_ASSERT (m_bitmapGripper);
+
 	m_focusEventHandler = new EventSubject::MethodEventHandler< DockPane, FocusEvent >(this, &DockPane::eventFocus);
 }
 
@@ -306,10 +305,7 @@ void DockPane::update(const Rect& rect, std::vector< WidgetRect >& outWidgetRect
 	{
 		Rect widgetRect = rect;
 		if (m_detachable)
-		{
-			widgetRect.top += c_gripperDim - 1;
-			widgetRect = widgetRect.inflate(-1, -1);
-		}
+			widgetRect.top += c_gripperDim;
 		if (m_widget)
 			outWidgetRects.push_back(WidgetRect(m_widget, widgetRect));
 	}
@@ -351,20 +347,22 @@ void DockPane::draw(Canvas& canvas)
 	if (!isVisible())
 		return;
 
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+
 	if (m_widget && m_detachable)
 	{
 		Rect captionRect = m_rect;
 		captionRect.bottom = captionRect.top + c_gripperDim;
 
-		canvas.setBackground(getSystemColor(m_focus ? ScActiveCaption : ScInactiveCaption));
-		canvas.fillRect(captionRect);
+		if (m_focus)
+		{
+			canvas.setBackground(ss->getColor(m_owner, L"caption-background-color"));
+			canvas.fillRect(captionRect);
+		}
 
-		canvas.setForeground(getSystemColor(ScButtonShadow));
-		canvas.drawRect(m_rect);
+		canvas.setForeground(ss->getColor(m_owner, m_focus ? L"caption-color-focus" : L"caption-color-no-focus"));
 
-		canvas.setForeground(getSystemColor(m_focus ? ScActiveCaptionText : ScInactiveCaptionText));
-
-		Rect titleRect = captionRect;
+		Rect titleRect = captionRect.offset(0, -1);
 		titleRect.left += 4;
 		titleRect.right -= 16;
 
@@ -383,7 +381,24 @@ void DockPane::draw(Canvas& canvas)
 
 		canvas.drawText(titleRect, title, AnLeft, AnCenter);
 
-		drawClose(canvas, captionRect.right - 12, captionRect.top + 5);
+		for (int32_t x = titleRect.left + titleExtent.cx + 4; x < captionRect.right - 16 - 4; x += 4)
+		{
+			canvas.drawBitmap(
+				Point(x, captionRect.top + 6 + 2),
+				Point(m_focus ? 4 : 0, 0),
+				Size(4, 5),
+				m_bitmapGripper,
+				BmAlpha
+			);
+		}
+
+		canvas.drawBitmap(
+			Point(captionRect.right - 16, captionRect.top + 6),
+			Point(m_focus ? 10 : 0, 0),
+			Size(10, 8),
+			m_bitmapClose,
+			BmAlpha
+		);
 	}
 
 	if (m_child[0])

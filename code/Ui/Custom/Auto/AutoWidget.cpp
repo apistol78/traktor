@@ -1,6 +1,7 @@
 #include <limits>
 #include "Ui/Application.h"
 #include "Ui/ScrollBar.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Custom/Auto/AutoWidget.h"
 #include "Ui/Custom/Auto/AutoWidgetCell.h"
 
@@ -43,15 +44,8 @@ bool AutoWidget::create(ui::Widget* parent, int32_t style)
 	m_scrollBarH->addEventHandler< ScrollEvent >(this, &AutoWidget::eventScroll);
 	m_scrollBarV->addEventHandler< ScrollEvent >(this, &AutoWidget::eventScroll);
 
-	m_backgroundColor = getSystemColor(ScButtonFace);
-
 	startTimer(100);
 	return true;
-}
-
-void AutoWidget::setBackgroundColor(const Color4ub& color)
-{
-	m_backgroundColor = color;
 }
 
 void AutoWidget::setFocusCell(AutoWidgetCell* focusCell)
@@ -229,9 +223,11 @@ void AutoWidget::eventMouseWheel(MouseWheelEvent* event)
 void AutoWidget::eventPaint(PaintEvent* event)
 {
 	Canvas& canvas = event->getCanvas();
-
 	Rect innerRect = getInnerRect();
-	canvas.setBackground(m_backgroundColor);
+
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+
+	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(innerRect);
 
 	for (std::vector< CellInstance >::iterator i = m_cells.begin(); i != m_cells.end(); ++i)

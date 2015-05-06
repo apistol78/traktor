@@ -56,7 +56,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	bool guideEnable = settings->getProperty< PropertyBoolean >(L"Scene.Editor.GuideEnable" + toString(m_viewId), true);
 
 	m_container = new ui::Container();
-	if (!m_container->create(parent, ui::WsClientBorder, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
+	if (!m_container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
 
 	m_toolBar = new ui::custom::ToolBar();

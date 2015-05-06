@@ -10,6 +10,7 @@
 #include "Ui/Bitmap.h"
 #include "Ui/Clipboard.h"
 #include "Ui/ScrollBar.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Custom/LogList/LogList.h"
 
 // Resources
@@ -165,6 +166,8 @@ void LogList::eventPaint(PaintEvent* event)
 {
 	Canvas& canvas = event->getCanvas();
 
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+
 	const Color4ub c_levelColors[] = { Color4ub(255, 255, 255), Color4ub(255, 255, 200), Color4ub(255, 200, 200) };
 	const Color4ub c_threadColors[] = { Color4ub(255, 255, 255), Color4ub(255, 255, 230), Color4ub(240, 240, 255), Color4ub(230, 255, 255) };
 
@@ -173,7 +176,7 @@ void LogList::eventPaint(PaintEvent* event)
 	if (m_scrollBar->isVisible(false))
 		inner.right -= m_scrollBar->getPreferedSize().cx;
 
-	canvas.setBackground(getSystemColor(ScWindowBackground));
+	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(inner);
 
 	int scrollOffset = m_scrollBar->getPosition();

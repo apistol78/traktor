@@ -14,7 +14,6 @@ bool BankControl::create(ui::Widget* parent)
 	if (!ui::custom::AutoWidget::create(parent, ui::WsDoubleBuffer))
 		return false;
 
-	setBackgroundColor(ui::getSystemColor(ui::ScButtonShadow));
 	return true;
 }
 
