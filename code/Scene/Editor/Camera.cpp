@@ -1,3 +1,4 @@
+#include "Core/Math/Const.h"
 #include "Scene/Editor/Camera.h"
 
 namespace traktor
