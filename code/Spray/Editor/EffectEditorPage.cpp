@@ -166,23 +166,23 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_BROWSE_POSTPROCESS"), 11, ui::Command(L"Effect.Editor.BrowsePostProcess")));
 	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &EffectEditorPage::eventToolClick);
 
-	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
-	splitter->create(container, false, -220, false);
-
 	m_previewControl = new EffectPreviewControl(m_editor);
-	m_previewControl->create(splitter, ui::WsClientBorder, m_resourceManager, renderSystem, m_soundSystem);
+	m_previewControl->create(container, ui::WsNone, m_resourceManager, renderSystem, m_soundSystem);
 	m_previewControl->showGuide(m_guideVisible);
 	m_previewControl->setMoveEmitter(m_moveEmitter);
 	m_previewControl->setGroundClip(m_groundClip);
 
 	m_sequencer = new ui::custom::SequencerControl();
-	m_sequencer->create(splitter, ui::WsDoubleBuffer | ui::WsClientBorder);
+	m_sequencer->create(parent, ui::WsDoubleBuffer);
+	m_sequencer->setText(i18n::Text(L"EFFECT_EDITOR_SEQUENCER"));
 	m_sequencer->addEventHandler< ui::SelectionChangeEvent >(this, &EffectEditorPage::eventSequencerLayerSelect);
 	m_sequencer->addEventHandler< ui::custom::CursorMoveEvent >(this, &EffectEditorPage::eventSequencerTimeCursorMove);
 	m_sequencer->addEventHandler< ui::custom::SequenceMovedEvent >(this, &EffectEditorPage::eventSequencerLayerRearranged);
 	m_sequencer->addEventHandler< ui::custom::KeyMoveEvent >(this, &EffectEditorPage::eventSequencerKeyMove);
 	m_sequencer->addEventHandler< ui::custom::SequenceButtonClickEvent >(this, &EffectEditorPage::eventSequencerLayerClick);
 	m_sequencer->addEventHandler< ui::MouseButtonDownEvent >(this, &EffectEditorPage::eventSequencerButtonDown);
+
+	m_site->createAdditionalPanel(m_sequencer, 140, true);
 
 	m_popupMenu = new ui::PopupMenu();
 	m_popupMenu->create();
@@ -208,7 +208,12 @@ void EffectEditorPage::destroy()
 	m_editor->commitGlobalSettings();
 	m_soundSystem = 0;
 
+	// Destroy panels.
+	m_site->destroyAdditionalPanel(m_sequencer);
+
+	// Destroy widgets.
 	safeDestroy(m_popupMenu);
+	safeDestroy(m_sequencer);
 	safeDestroy(m_previewControl);
 	safeDestroy(m_resourceManager);
 }

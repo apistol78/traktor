@@ -41,7 +41,8 @@ bool WebBrowserPage::create(ui::Widget* parent)
 	toolbar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &WebBrowserPage::eventToolClick);
 
 	m_browser = new ui::WebBrowser();
-	m_browser->create(this, url);
+	if (!m_browser->create(this, url))
+		return false;
 
 	return true;
 }

@@ -50,7 +50,7 @@ bool TextureAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISer
 	m_imageTexture->create(imageContainer, 0, ui::Image::WsTransparent | ui::WsDoubleBuffer);
 
 	m_propertyList = new ui::custom::AutoPropertyList();
-	m_propertyList->create(container, ui::WsClientBorder | ui::WsDoubleBuffer | ui::custom::AutoPropertyList::WsColumnHeader, this);
+	m_propertyList->create(container, ui::WsDoubleBuffer | ui::custom::AutoPropertyList::WsColumnHeader, this);
 	m_propertyList->addEventHandler< ui::custom::PropertyCommandEvent >(this, &TextureAssetEditor::eventPropertyCommand);
 	m_propertyList->setSeparator(200);
 	m_propertyList->setColumnName(0, i18n::Text(L"PROPERTY_COLUMN_NAME"));

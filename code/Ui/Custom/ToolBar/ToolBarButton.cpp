@@ -1,5 +1,7 @@
 #include "Core/Math/MathUtils.h"
+#include "Ui/Application.h"
 #include "Ui/Canvas.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
@@ -98,28 +100,24 @@ Size ToolBarButton::getSize(const ToolBar* toolBar, int imageWidth, int imageHei
 
 void ToolBarButton::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, Bitmap* images, int imageWidth, int imageHeight)
 {
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+
 	Size size = getSize(toolBar, imageWidth, imageHeight);
 
-	if ((m_state & (BstPushed | BstHover | BstToggled)) != 0)
+	if ((m_state & (BstPushed | BstHover)) != 0)
 	{
 		if ((m_state & BstPushed) != 0)
-		{
-			canvas.setForeground(Color4ub(128, 128, 140));
-			canvas.setBackground(Color4ub(192, 192, 208));
-		}
-		else if ((m_state & (BstHover | BstToggled)) != 0)
-		{
-			canvas.setForeground(Color4ub(128, 128, 140));
-			canvas.setBackground(Color4ub(224, 224, 240));
-		}
-		canvas.fillRect(Rect(
-			at,
-			size
-		));
-		canvas.drawRect(Rect(
-			at,
-			size
-		));
+			canvas.setBackground(ss->getColor(toolBar, L"item-background-color-pushed"));
+		else if ((m_state & BstHover) != 0)
+			canvas.setBackground(ss->getColor(toolBar, L"item-background-color-hover"));
+
+		canvas.fillRect(Rect(at, size));
+	}
+
+	if ((m_state & BstToggled) != 0)
+	{
+		canvas.setForeground(ss->getColor(toolBar, L"item-color-toggled"));
+		canvas.drawRect(Rect(at, size));
 	}
 
 	int centerOffsetX = 4;
@@ -139,7 +137,7 @@ void ToolBarButton::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, Bit
 	{
 		Size textExtent = toolBar->getTextExtent(m_text);
 		int centerOffsetY = (size.cy - textExtent.cy) / 2;
-		canvas.setForeground(Color4ub(64, 64, 70));
+		canvas.setForeground(ss->getColor(toolBar, L"color") /*Color4ub(64, 64, 70)*/);
 		canvas.drawText(
 			at + Size(centerOffsetX, centerOffsetY),
 			m_text

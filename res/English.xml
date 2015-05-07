@@ -957,6 +957,10 @@
       <second>Replace emitter source...</second>
     </item>
     <item>
+      <first>EFFECT_EDITOR_SEQUENCER</first>
+      <second>Timeline</second>
+    </item>
+    <item>
       <first>EFFECT_EDITOR_TOGGLE_GUIDE</first>
       <second>Show guide lines</second>
     </item>
