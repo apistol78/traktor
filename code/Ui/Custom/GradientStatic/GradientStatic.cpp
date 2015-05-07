@@ -1,3 +1,5 @@
+#include "Ui/Application.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Custom/GradientStatic/GradientStatic.h"
 
 namespace traktor
@@ -9,19 +11,14 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.GradientStatic", GradientStatic, Widget)
 
-bool GradientStatic::create(Widget* parent, const Color4ub& colorLeft, const Color4ub& colorRight, const Color4ub& colorText, const std::wstring& text, int style)
+bool GradientStatic::create(Widget* parent, const std::wstring& text, int style)
 {
 	if (!Widget::create(parent, style))
 		return false;
 
-	m_colorLeft = colorLeft;
-	m_colorRight = colorRight;
-	m_colorText = colorText;
-
 	setText(text);
 
 	addEventHandler< PaintEvent >(this, &GradientStatic::eventPaint);
-
 	return true;
 }
 
@@ -30,32 +27,18 @@ Size GradientStatic::getPreferedSize() const
 	return getTextExtent(getText());
 }
 
-void GradientStatic::setColorLeft(const Color4ub& colorLeft)
-{
-	m_colorLeft = colorLeft;
-}
-
-void GradientStatic::setColorRight(const Color4ub& colorRight)
-{
-	m_colorRight = colorRight;
-}
-
-void GradientStatic::setColorText(const Color4ub& colorText)
-{
-	m_colorText = colorText;
-}
-
 void GradientStatic::eventPaint(PaintEvent* event)
 {
 	Canvas& canvas = event->getCanvas();
-
 	Rect innerRect = getInnerRect();
 
-	canvas.setForeground(m_colorLeft);
-	canvas.setBackground(m_colorRight);
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+
+	canvas.setForeground(ss->getColor(this, L"background-color-left"));
+	canvas.setBackground(ss->getColor(this, L"background-color-right"));
 	canvas.fillGradientRect(innerRect, true);
 
-	canvas.setForeground(m_colorText);
+	canvas.setForeground(ss->getColor(this, L"color"));
 	canvas.drawText(innerRect.inflate(-4, -4), getText(), AnLeft, AnTop);
 
 	event->consume();

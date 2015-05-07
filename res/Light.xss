@@ -77,6 +77,18 @@
 			<element>background-color</element>
 			<color>80, 80, 80, 255</color>
 		</item>
+
+		<item>
+			<type>traktor.ui.custom.GradientStatic</type>
+			<element>background-color-left</element>
+			<color>239, 239, 242, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.GradientStatic</type>
+			<element>background-color-right</element>
+			<color>239, 239, 242, 255</color>
+		</item>
+
 		<item>
 			<type>traktor.ui.custom.GridView</type>
 			<element>background-color</element>
@@ -86,6 +98,26 @@
 			<type>traktor.ui.custom.LogList</type>
 			<element>background-color</element>
 			<color>255, 255, 255, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.ProfileControl</type>
+			<element>background-color</element>
+			<color>120, 120, 120, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.ProfileControl</type>
+			<element>grid-color</element>
+			<color>128, 128, 128, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.StatusBar</type>
+			<element>color</element>
+			<color>255, 255, 255, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.StatusBar</type>
+			<element>background-color</element>
+			<color>202, 81, 0, 255</color>
 		</item>
 		<item>
 			<type>traktor.sound.BankControl</type>

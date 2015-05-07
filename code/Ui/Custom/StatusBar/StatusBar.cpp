@@ -12,7 +12,7 @@ namespace traktor
 			namespace
 			{
 
-const int32_t c_preferedHeight = 18;
+const int32_t c_preferedHeight = 23;
 
 			}
 

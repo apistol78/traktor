@@ -59,11 +59,11 @@ bool TextureBatchDialog::create(ui::Widget* parent)
 	textureListTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &TextureBatchDialog::eventTextureListToolClick);
 
 	m_textureList = new ui::ListBox();
-	m_textureList->create(textureListContainer, L"", ui::WsClientBorder | ui::ListBox::WsExtended);
+	m_textureList->create(textureListContainer, L"", ui::ListBox::WsExtended);
 	m_textureList->addEventHandler< ui::SelectionChangeEvent >(this, &TextureBatchDialog::eventTextureListSelect);
 
 	m_texturePropertyList = new ui::custom::AutoPropertyList();
-	m_texturePropertyList->create(splitter, ui::WsClientBorder | ui::WsDoubleBuffer | ui::custom::AutoPropertyList::WsColumnHeader);
+	m_texturePropertyList->create(splitter, ui::WsDoubleBuffer | ui::custom::AutoPropertyList::WsColumnHeader);
 	m_texturePropertyList->setSeparator(200);
 	m_texturePropertyList->setColumnName(0, i18n::Text(L"PROPERTY_COLUMN_NAME"));
 	m_texturePropertyList->setColumnName(1, i18n::Text(L"PROPERTY_COLUMN_VALUE"));
