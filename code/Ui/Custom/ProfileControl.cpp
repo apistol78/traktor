@@ -1,5 +1,7 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Timer/Timer.h"
+#include "Ui/Application.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Custom/ProfileControl.h"
 
 namespace traktor
@@ -65,10 +67,12 @@ void ProfileControl::eventPaint(PaintEvent* event)
 	Canvas& canvas = event->getCanvas();
 	Rect rc = getInnerRect();
 
-	canvas.setBackground(Color4ub(80, 80, 80));
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+
+	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(rc);
 
-	canvas.setForeground(Color4ub(120, 120, 100));
+	canvas.setForeground(ss->getColor(this, L"grid-color"));
 	for (int x = rc.left; x < rc.right; x += 16)
 		canvas.drawLine(x, rc.top, x, rc.bottom);
 	for (int y = rc.top; y < rc.bottom; y += 16)

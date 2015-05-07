@@ -59,11 +59,11 @@ bool SoundBatchDialog::create(ui::Widget* parent)
 	soundListTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &SoundBatchDialog::eventSoundListToolClick);
 
 	m_soundList = new ui::ListBox();
-	m_soundList->create(soundListContainer, L"", ui::WsClientBorder | ui::ListBox::WsExtended);
+	m_soundList->create(soundListContainer, L"", ui::ListBox::WsExtended);
 	m_soundList->addEventHandler< ui::SelectionChangeEvent >(this, &SoundBatchDialog::eventSoundListSelect);
 
 	m_soundPropertyList = new ui::custom::AutoPropertyList();
-	m_soundPropertyList->create(splitter, ui::WsClientBorder | ui::WsDoubleBuffer | ui::custom::AutoPropertyList::WsColumnHeader);
+	m_soundPropertyList->create(splitter, ui::WsDoubleBuffer | ui::custom::AutoPropertyList::WsColumnHeader);
 	m_soundPropertyList->setSeparator(200);
 	m_soundPropertyList->setColumnName(0, i18n::Text(L"PROPERTY_COLUMN_NAME"));
 	m_soundPropertyList->setColumnName(1, i18n::Text(L"PROPERTY_COLUMN_VALUE"));
