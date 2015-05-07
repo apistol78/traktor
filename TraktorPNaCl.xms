@@ -6653,6 +6653,14 @@
 							<fileName>../../res/DockTop.png</fileName>
 							<items/>
 						</item>
+						<item type="File">
+							<fileName>../../res/DockGripper.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../res/Close.png</fileName>
+							<items/>
+						</item>
 					</items>
 				</item>
 				<item type="Filter">
