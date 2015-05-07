@@ -126,10 +126,10 @@ bool FlashEditorPage::create(ui::Container* parent)
 	m_treeMovie->addEventHandler< ui::SelectionChangeEvent >(this, &FlashEditorPage::eventTreeMovieSelect);
 
 	m_profileMovie = new ui::custom::ProfileControl();
-	m_profileMovie->create(splitterV, 2, 10, 0, 10000, ui::WsClientBorder | ui::WsDoubleBuffer, this);
+	m_profileMovie->create(splitterV, 2, 10, 0, 10000, ui::WsDoubleBuffer, this);
 
 	m_previewControl = new FlashPreviewControl();
-	m_previewControl->create(splitter, ui::WsClientBorder, database, m_resourceManager, renderSystem, m_soundSystem);
+	m_previewControl->create(splitter, ui::WsNone, database, m_resourceManager, renderSystem, m_soundSystem);
 	m_previewControl->setMovie(m_movie);
 	m_previewControl->update();
 
