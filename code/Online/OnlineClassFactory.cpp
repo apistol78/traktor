@@ -402,7 +402,9 @@ void OnlineClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classIUser->addMethod("invite", &IUser::invite);
 	classIUser->addMethod("setPresenceValue", &IUser::setPresenceValue);
 	classIUser->addMethod("getPresenceValue", &IUser_getPresenceValue);
+	classIUser->addMethod("setP2PEnable", &IUser::setP2PEnable);
 	classIUser->addMethod("isP2PAllowed", &IUser::isP2PAllowed);
+	classIUser->addMethod("isP2PRelayed", &IUser::isP2PRelayed);
 	registrar->registerClass(classIUser);
 
 	Ref< AutoRuntimeClass< IVideoSharing > > classIVideoSharing = new AutoRuntimeClass< IVideoSharing >();

@@ -33,6 +33,8 @@ public:
 
 	virtual bool getPresenceValue(const std::wstring& key, std::wstring& outValue) const;
 
+	virtual void setP2PEnable(bool enable);
+
 	virtual bool isP2PAllowed() const;
 
 	virtual bool isP2PRelayed() const;

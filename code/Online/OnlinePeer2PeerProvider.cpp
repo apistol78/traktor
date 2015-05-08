@@ -86,6 +86,11 @@ OnlinePeer2PeerProvider::OnlinePeer2PeerProvider(ISessionManager* sessionManager
 
 OnlinePeer2PeerProvider::~OnlinePeer2PeerProvider()
 {
+	// Disable P2P with all connected users.
+	for (std::vector< P2PUser >::iterator i = m_users.begin(); i != m_users.end(); ++i)
+		i->user->setP2PEnable(false);
+
+	// Terminate transmission thread.
 	if (m_thread)
 	{
 		ThreadPool::getInstance().stop(m_thread);
@@ -105,10 +110,13 @@ bool OnlinePeer2PeerProvider::update()
 		{
 			if (std::find_if(m_users.begin(), m_users.end(), P2PUserFindPred(*i)) == m_users.end())
 			{
+				(*i)->setP2PEnable(true);
+
 				P2PUser p2pu;
 				p2pu.user = *i;
 				p2pu.timeout = 0;
 				m_users.push_back(p2pu);
+
 				log::info << L"[Online P2P] Peer " << (*i)->getGlobalId() << L" added." << Endl;
 			}
 		}
@@ -131,7 +139,10 @@ bool OnlinePeer2PeerProvider::update()
 		// Remove users which have a timeout greater than limit.
 		std::vector< P2PUser >::iterator i = std::remove_if(m_users.begin(), m_users.end(), P2PUserTimeoutPred(4));
 		for (std::vector< P2PUser >::iterator j = i; j != m_users.end(); ++j)
+		{
+			j->user->setP2PEnable(false);
 			log::info << L"[Online P2P] Peer " << j->user->getGlobalId() << L" removed." << Endl;
+		}
 		m_users.erase(i, m_users.end());
 
 		// Cache primary handle.

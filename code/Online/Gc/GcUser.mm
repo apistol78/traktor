@@ -47,6 +47,10 @@ bool GcUser::getPresenceValue(uint64_t userHandle, const std::wstring& key, std:
 	return false;
 }
 
+void GcUser::setP2PEnable(uint64_t userHandle, bool enable)
+{
+}
+
 bool GcUser::isP2PAllowed(uint64_t userHandle) const
 {
 	return false;

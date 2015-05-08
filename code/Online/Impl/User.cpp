@@ -53,6 +53,11 @@ bool User::getPresenceValue(const std::wstring& key, std::wstring& outValue) con
 	return m_userProvider->getPresenceValue(m_handle, key, outValue);
 }
 
+void User::setP2PEnable(bool enable)
+{
+	m_userProvider->setP2PEnable(m_handle, enable);
+}
+
 bool User::isP2PAllowed() const
 {
 	return m_userProvider->isP2PAllowed(m_handle);
