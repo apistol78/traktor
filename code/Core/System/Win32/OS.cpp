@@ -487,7 +487,7 @@ bool OS::setOwnProcessPriorityBias(int32_t priorityBias)
 
 OS::OS()
 {
-	CoInitializeEx(NULL, COINIT_MULTITHREADED);
+	CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
 
 #if !defined(WINCE)
 	// Load IEFrame library; only available on Vista.
