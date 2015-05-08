@@ -381,6 +381,21 @@ void DockPane::draw(Canvas& canvas)
 
 		canvas.drawText(titleRect, title, AnLeft, AnCenter);
 
+		int32_t gx = titleRect.left + titleExtent.cx + 4;
+		int32_t gx1 = captionRect.right - 16 - 4 - 256;
+		while (gx < gx1)
+		{
+			int32_t w = min(256, gx1 - gx);
+			canvas.drawBitmap(
+				Point(gx, captionRect.top + 6 + 2),
+				Point(0, m_focus ? 5 : 0),
+				Size(w, 5),
+				m_bitmapGripper,
+				BmAlpha
+			);
+			gx += 256;
+		}
+
 		for (int32_t x = titleRect.left + titleExtent.cx + 4; x < captionRect.right - 16 - 4; x += 4)
 		{
 			canvas.drawBitmap(
