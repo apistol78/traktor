@@ -100,6 +100,12 @@ bool SteamUser::getPresenceValue(uint64_t userHandle, const std::wstring& key, s
 	return true;
 }
 
+void SteamUser::setP2PEnable(uint64_t userHandle, bool enable)
+{
+	if (!enable)
+		SteamNetworking()->CloseP2PSessionWithUser(uint64(userHandle));
+}
+
 bool SteamUser::isP2PAllowed(uint64_t userHandle) const
 {
 	return true;

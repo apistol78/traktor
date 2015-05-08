@@ -49,6 +49,10 @@ bool LocalUser::getPresenceValue(uint64_t userHandle, const std::wstring& key, s
 	return false;
 }
 
+void LocalUser::setP2PEnable(uint64_t userHandle, bool enable)
+{
+}
+
 bool LocalUser::isP2PAllowed(uint64_t userHandle) const
 {
 	return false;

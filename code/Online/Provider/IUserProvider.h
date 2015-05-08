@@ -44,6 +44,8 @@ public:
 
 	virtual bool getPresenceValue(uint64_t userHandle, const std::wstring& key, std::wstring& outValue) = 0;
 
+	virtual void setP2PEnable(uint64_t userHandle, bool enable) = 0;
+
 	virtual bool isP2PAllowed(uint64_t userHandle) const = 0;
 
 	virtual bool isP2PRelayed(uint64_t userHandle) const = 0;

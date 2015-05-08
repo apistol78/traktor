@@ -70,6 +70,10 @@ bool LanUser::getPresenceValue(uint64_t userHandle, const std::wstring& key, std
 	return false;
 }
 
+void LanUser::setP2PEnable(uint64_t userHandle, bool enable)
+{
+}
+
 bool LanUser::isP2PAllowed(uint64_t userHandle) const
 {
 	return true;
