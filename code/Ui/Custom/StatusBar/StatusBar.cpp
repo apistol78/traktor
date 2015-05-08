@@ -19,6 +19,7 @@ const int32_t c_preferedHeight = 23;
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.StatusBar", StatusBar, Widget)
 
 StatusBar::StatusBar()
+:	m_alert(false)
 {
 }
 
@@ -31,6 +32,15 @@ bool StatusBar::create(Widget* parent, int style)
 	addEventHandler< PaintEvent >(this, &StatusBar::eventPaint);
 
 	return true;
+}
+
+void StatusBar::setAlert(bool alert)
+{
+	if (alert != m_alert)
+	{
+		m_alert = alert;
+		update();
+	}
 }
 
 void StatusBar::setText(const std::wstring& text)
@@ -74,7 +84,7 @@ void StatusBar::eventPaint(PaintEvent* event)
 
 	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 
-	canvas.setBackground(ss->getColor(this, L"background-color"));
+	canvas.setBackground(ss->getColor(this, m_alert ? L"background-color-alert" : L"background-color"));
 	canvas.fillRect(rc);
 
 	std::wstring text = getText();

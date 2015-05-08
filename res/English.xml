@@ -1949,6 +1949,38 @@
       <second>World renderer</second>
     </item>
     <item>
+      <first>SCRIPT_EDITOR_EXPLORER</first>
+      <second>Explorer</second>
+    </item>
+    <item>
+      <first>SCRIPT_EDITOR_OUTLINE</first>
+      <second>Outline</second>
+    </item>
+    <item>
+      <first>SCRIPT_EDITOR_DEPENDENCIES</first>
+      <second>Dependencies</second>
+    </item>
+    <item>
+      <first>SCRIPT_EDITOR_DEPENDENTS</first>
+      <second>Dependents</second>
+    </item>
+    <item>
+      <first>SCRIPT_EDITOR_DEBUGGER</first>
+      <second>Debugger</second>
+    </item>
+    <item>
+      <first>SCRIPT_EDITOR_STATUS_READY</first>
+      <second>Ready</second>
+    </item>
+    <item>
+      <first>SCRIPT_EDITOR_STATUS_SYNTAX_ERROR</first>
+      <second>Syntax error ({0}): {1}</second>
+    </item>
+    <item>
+      <first>SCRIPT_EDITOR_STATUS_OTHER_ERROR</first>
+      <second>Error: {0}</second>
+    </item>
+    <item>
       <first>SCRIPT_EDITOR_DEBUG_FUNCTION</first>
       <second>Function</second>
     </item>

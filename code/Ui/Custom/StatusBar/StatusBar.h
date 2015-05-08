@@ -30,11 +30,15 @@ public:
 
 	bool create(Widget* parent, int style = WsNone);
 
+	void setAlert(bool alert);
+
 	virtual void setText(const std::wstring& text);
 
 	virtual Size getPreferedSize() const;
 
 private:
+	bool m_alert;
+
 	void eventSize(SizeEvent* event);
 
 	void eventPaint(PaintEvent* event);

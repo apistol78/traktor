@@ -1,3 +1,5 @@
+#pragma optimize( "", off )
+
 #if !defined(WINCE)
 
 #include "Core/Io/FileSystem.h"
@@ -182,7 +184,6 @@ public:
 		return S_OK;
 	}
 
-
     virtual HRESULT STDMETHODCALLTYPE GetBorder(LPRECT lprectBorder)
 	{
 		return E_NOTIMPL;
@@ -205,7 +206,6 @@ public:
 	{
 		return S_OK;
 	}
-
 
 	virtual HRESULT STDMETHODCALLTYPE InsertMenus( 
 		HMENU hmenuShared,
@@ -446,13 +446,16 @@ bool WebBrowserWin32::create(IWidget* parent, const std::wstring& url)
 		dwStyleEx,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
-		0,
-		0
+		32,
+		32
 	))
 		return false;
 
 	if (!WidgetWin32Impl::create(0))
 		return false;
+
+	RECT rcInner;
+	GetClientRect(m_hWnd, &rcInner);
 
 	m_hWnd.registerMessageHandler(WM_SIZE, new MethodMessageHandler< WebBrowserWin32 >(this, &WebBrowserWin32::eventSize));
 

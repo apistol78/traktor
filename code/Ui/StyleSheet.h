@@ -28,6 +28,8 @@ class T_DLLCLASS StyleSheet : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	static Ref< StyleSheet > createDefault();
+
 	Color4ub getColor(const Widget* widget, const wchar_t* const element) const;
 
 	virtual void serialize(ISerializer& s);
@@ -43,6 +45,8 @@ private:
 	};
 
 	std::vector< Group > m_groups;
+
+	void setColor(const wchar_t* const type, const wchar_t* const element, const Color4ub& color);
 };
 
 	}
