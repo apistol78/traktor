@@ -158,7 +158,8 @@ int main(int argc, const char** argv)
 	// Initialize native UI.
 	ui::Application::getInstance()->initialize(
 		new ui::EventLoopCocoa(),
-		new ui::WidgetFactoryCocoa()
+		new ui::WidgetFactoryCocoa(),
+		0
 	);
 
 	Path settingsPath = L"$(BUNDLE_PATH)/Contents/Resources/Application.config";

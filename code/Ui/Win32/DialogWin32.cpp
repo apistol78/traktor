@@ -28,7 +28,7 @@ bool DialogWin32::create(IWidget* parent, const std::wstring& text, int width, i
 
 	if (style & WsResizable)
 		nativeStyle |= WS_THICKFRAME;
-	else
+	else if (style & WsCaption)
 		nativeStyle |= WS_DLGFRAME;
 
 	if (style & WsSystemBox)

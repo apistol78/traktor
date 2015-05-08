@@ -48,7 +48,7 @@ public:
 
 	BackgroundWorkerDialog();
 
-	bool create(Widget* parent, const std::wstring& title, const std::wstring& message, int style = WsDefaultFixed);
+	bool create(Widget* parent, const std::wstring& title, const std::wstring& message, bool abortButton);
 
 	bool execute(IWaitable* waitable, IWorkerStatus* status);
 
@@ -65,6 +65,8 @@ private:
 	void eventAbortClick(ButtonClickEvent* event);
 
 	void eventTimer(TimerEvent* event);
+
+	void eventPaint(PaintEvent* event);
 };
 
 		}

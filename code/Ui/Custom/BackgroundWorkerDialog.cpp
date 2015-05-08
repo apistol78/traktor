@@ -1,6 +1,8 @@
 #include "Core/Thread/IWaitable.h"
+#include "Ui/Application.h"
 #include "Ui/Button.h"
 #include "Ui/Static.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/BackgroundWorkerDialog.h"
 #include "Ui/Custom/ProgressBar.h"
@@ -18,12 +20,13 @@ BackgroundWorkerDialog::BackgroundWorkerDialog()
 {
 }
 
-bool BackgroundWorkerDialog::create(ui::Widget* parent, const std::wstring& title, const std::wstring& message, int style)
+bool BackgroundWorkerDialog::create(ui::Widget* parent, const std::wstring& title, const std::wstring& message, bool abortButton)
 {
-	if (!ui::Dialog::create(parent, title, 300, 150, style, new ui::TableLayout(L"300", L"*,*,*", 4, 4)))
+	if (!ui::Dialog::create(parent, title, 300, 150, WsCenterParent, new ui::TableLayout(L"300", L"*,*,*", 4, 4)))
 		return false;
 
 	addEventHandler< TimerEvent >(this, &BackgroundWorkerDialog::eventTimer);
+	addEventHandler< PaintEvent >(this, &BackgroundWorkerDialog::eventPaint);
 
 	m_labelMessage = new Static();
 	m_labelMessage->create(this, message);
@@ -34,7 +37,7 @@ bool BackgroundWorkerDialog::create(ui::Widget* parent, const std::wstring& titl
 	m_progressBar = new ProgressBar();
 	m_progressBar->create(this);
 
-	if (style & WsAbortButton)
+	if (abortButton)
 	{
 		m_buttonAbort = new Button();
 		m_buttonAbort->create(this, L"Abort");
@@ -122,6 +125,22 @@ void BackgroundWorkerDialog::eventTimer(TimerEvent* event)
 	// End dialog if all job threads are finished.
 	if (finished)
 		endModal(DrOk);
+}
+
+void BackgroundWorkerDialog::eventPaint(PaintEvent* event)
+{
+	Canvas& canvas = event->getCanvas();
+	Rect rcInner = Widget::getInnerRect();
+
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+
+	canvas.setBackground(ss->getColor(this, L"background-color"));
+	canvas.fillRect(rcInner);
+
+	canvas.setForeground(ss->getColor(this, L"border-color"));
+	canvas.drawRect(rcInner);
+
+	event->consume();
 }
 
 		}

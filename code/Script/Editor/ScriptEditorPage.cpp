@@ -12,6 +12,7 @@
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
 #include "Editor/TypeBrowseFilter.h"
+#include "I18N/Format.h"
 #include "I18N/Text.h"
 #include "Script/CallStack.h"
 #include "Script/IScriptProfiler.h"
@@ -78,14 +79,14 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	// Explorer panel container.
 	m_containerExplorer = new ui::Container();
 	m_containerExplorer->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0, 0));
-	m_containerExplorer->setText(L"Script Explorer");
+	m_containerExplorer->setText(i18n::Text(L"SCRIPT_EDITOR_EXPLORER"));
 
 	Ref< ui::Tab > tab = new ui::Tab();
 	if (!tab->create(m_containerExplorer, ui::WsNone))
 		return false;
 
 	Ref< ui::TabPage > tabOutline = new ui::TabPage();
-	if (!tabOutline->create(tab, L"Outline", new ui::TableLayout(L"100%", L"100%", 0, 0)))
+	if (!tabOutline->create(tab, i18n::Text(L"SCRIPT_EDITOR_OUTLINE"), new ui::TableLayout(L"100%", L"100%", 0, 0)))
 		return false;
 
 	m_outlineGrid = new ui::custom::GridView();
@@ -97,7 +98,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	m_outlineGrid->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptEditorPage::eventOutlineDoubleClick);
 
 	Ref< ui::TabPage > tabDependencies = new ui::TabPage();
-	if (!tabDependencies->create(tab, L"Dependencies", new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
+	if (!tabDependencies->create(tab, i18n::Text(L"SCRIPT_EDITOR_DEPENDENCIES"), new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
 
 	Ref< ui::custom::ToolBar > dependencyTools = new ui::custom::ToolBar();
@@ -119,7 +120,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	m_dependencyList->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptEditorPage::eventDependencyListDoubleClick);
 
 	Ref< ui::TabPage > tabDependents = new ui::TabPage();
-	if (!tabDependents->create(tab, L"Dependents", new ui::TableLayout(L"100%", L"100%", 0, 0)))
+	if (!tabDependents->create(tab, i18n::Text(L"SCRIPT_EDITOR_DEPENDENTS"), new ui::TableLayout(L"100%", L"100%", 0, 0)))
 		return false;
 
 	m_dependentList = new ui::ListBox();
@@ -170,7 +171,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	// Debugger panel.
 	m_containerDebugger = new ui::Container();
 	m_containerDebugger->create(parent, ui::WsNone, new ui::FloodLayout());
-	m_containerDebugger->setText(L"Debugger");
+	m_containerDebugger->setText(i18n::Text(L"SCRIPT_EDITOR_DEBUGGER"));
 
 	m_tabSessions = new ui::Tab();
 	m_tabSessions->create(m_containerDebugger, ui::WsNone);
@@ -428,18 +429,16 @@ void ScriptEditorPage::handleDatabaseEvent(db::Database* database, const Guid& e
 
 void ScriptEditorPage::syntaxError(const std::wstring& name, uint32_t line, const std::wstring& message)
 {
-	StringOutputStream ss;
-	ss << L"Syntax error (" << line << L") : " << message;
-	m_compileStatus->setText(ss.str());
+	m_compileStatus->setText(i18n::Format(L"SCRIPT_EDITOR_STATUS_SYNTAX_ERROR", int32_t(line), message));
+	m_compileStatus->setAlert(true);
 	if (line > 0)
 		m_edit->setErrorHighlight(line - 1);
 }
 
 void ScriptEditorPage::otherError(const std::wstring& message)
 {
-	StringOutputStream ss;
-	ss << L"Error : " << message;
-	m_compileStatus->setText(ss.str());
+	m_compileStatus->setText(i18n::Format(L"SCRIPT_EDITOR_STATUS_OTHER_ERROR", message));
+	m_compileStatus->setAlert(true);
 }
 
 void ScriptEditorPage::notifyBeginSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler)
@@ -702,7 +701,8 @@ void ScriptEditorPage::eventScriptChange(ui::ContentChangeEvent* event)
 	m_script->setText(m_edit->getText());
 
 	m_compileCountDown = 10;
-	m_compileStatus->setText(L"");
+	m_compileStatus->setText(i18n::Text(L"SCRIPT_EDITOR_STATUS_READY"));
+	m_compileStatus->setAlert(false);
 }
 
 void ScriptEditorPage::eventScriptDoubleClick(ui::MouseDoubleClickEvent* event)
@@ -739,7 +739,8 @@ void ScriptEditorPage::eventTimer(ui::TimerEvent* event)
 			if (m_scriptManager->compile(L"", script, 0, this))
 			{
 				// Reset error status.
-				m_compileStatus->setText(L"");
+				m_compileStatus->setText(i18n::Text(L"SCRIPT_EDITOR_STATUS_READY"));
+				m_compileStatus->setAlert(false);
 				m_edit->setErrorHighlight(-1);
 
 				if (m_scriptOutline)

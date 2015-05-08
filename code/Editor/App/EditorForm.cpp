@@ -1689,7 +1689,7 @@ void EditorForm::buildWaitUntilFinished()
 	{
 		// Show a dialog if processing seems to take more than N second(s).
 		ui::custom::BackgroundWorkerDialog dialog;
-		dialog.create(this, i18n::Text(L"EDITOR_WAIT_BUILDING_TITLE"), i18n::Text(L"EDITOR_WAIT_BUILDING_MESSAGE"));
+		dialog.create(this, i18n::Text(L"EDITOR_WAIT_BUILDING_TITLE"), i18n::Text(L"EDITOR_WAIT_BUILDING_MESSAGE"), false);
 		dialog.execute(m_threadBuild, 0);
 		dialog.destroy();
 
