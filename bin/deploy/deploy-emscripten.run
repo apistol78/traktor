@@ -74,7 +74,7 @@ function deploy(args)
 
 		-- Append "_d" to each file; indicating a debug build.
 		if debug then
-			f = f:sub(1, string.len(f) - 2) .. "_d.a"
+			f = f:sub(1, string.len(f) - 3) .. "_d.bc"
 		end
 
 		if f:starts("libExtern") then
@@ -85,7 +85,7 @@ function deploy(args)
 	end
 
 	-- Link files into an executable product.
-	local cmd = emcc .. " -Wl,--whole-archive " .. wholeLinkFiles .. "-Wl,--no-whole-archive " .. externalLinkFiles  .. " -o $(DEPLOY_EXECUTABLE).html --embed-file Application.config"
+	local cmd = "\"" .. emcc .. "\" -Wl,--whole-archive " .. wholeLinkFiles .. "-Wl,--no-whole-archive " .. externalLinkFiles  .. " -o $(DEPLOY_EXECUTABLE).html --embed-file Application.config"
 	local result = run:execute(cmd)
 	if result ~= 0 then
 		stderr:printLn("Unable to build executable product.")
@@ -167,7 +167,8 @@ function migrate(args)
 	end
 
 	-- Link files into an executable product.
-	local cmd = emcc .. " -Wl,--whole-archive " .. wholeLinkFiles .. "-Wl,--no-whole-archive " .. externalLinkFiles  .. " -o $(DEPLOY_EXECUTABLE).html --embed-file Application.config --embed-file Content.compact"
+	local totalMemory = 32 * 1024 * 1024
+	local cmd = "\"" .. emcc .. "\" -s TOTAL_MEMORY=" .. totalMemory .. " -Wl,--whole-archive " .. wholeLinkFiles .. "-Wl,--no-whole-archive " .. externalLinkFiles  .. " -o $(DEPLOY_EXECUTABLE).html --embed-file Application.config --embed-file Content.compact"
 	local result = run:execute(cmd)
 	if result ~= 0 then
 		stderr:printLn("Unable to build executable product.")

@@ -68,10 +68,10 @@
 		<item>
 			<platform>{1C5EBC43-2395-9549-8FF7-BA51A6C30B7B}</platform>
 			<deployFiles>
-				<item>libExtern.detour.a</item>
-				<item>libExtern.recast.a</item>
-				<item>libTraktor.Core.a</item>
-				<item>libTraktor.Ai.a</item>
+				<item>libExtern.detour.bc</item>
+				<item>libExtern.recast.bc</item>
+				<item>libTraktor.Core.bc</item>
+				<item>libTraktor.Ai.bc</item>
 			</deployFiles>
 		</item>
 		<item>

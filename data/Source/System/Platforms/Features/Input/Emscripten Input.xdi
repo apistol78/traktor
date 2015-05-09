@@ -5,7 +5,9 @@
 	<platforms>
 		<item>
 			<platform>{1C5EBC43-2395-9549-8FF7-BA51A6C30B7B}</platform>
-			<deployFiles/>
+			<deployFiles>
+				<item>libTraktor.Input.bc</item>
+			</deployFiles>
 		</item>
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">

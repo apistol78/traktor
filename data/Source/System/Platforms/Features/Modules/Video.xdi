@@ -84,12 +84,12 @@
 		<item>
 			<platform>{1C5EBC43-2395-9549-8FF7-BA51A6C30B7B}</platform>
 			<deployFiles>
-				<item>libExtern.libogg-1.3.0.a</item>
-				<item>libExtern.libtheora-1.1.1.a</item>
-				<item>libTraktor.Core.a</item>
-				<item>libTraktor.Render.a</item>
-				<item>libTraktor.Resource.a</item>
-				<item>libTraktor.Video.a</item>
+				<item>libExtern.libogg-1.3.0.bc</item>
+				<item>libExtern.libtheora-1.1.1.bc</item>
+				<item>libTraktor.Core.bc</item>
+				<item>libTraktor.Render.bc</item>
+				<item>libTraktor.Resource.bc</item>
+				<item>libTraktor.Video.bc</item>
 			</deployFiles>
 		</item>
 		<item>

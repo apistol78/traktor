@@ -1328,8 +1328,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.lua-5.1.4</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</sourcePath>
+			<name>Extern.lua</name>
+			<sourcePath>$(LUA_SDK)/src</sourcePath>
 			<configurations>
 				<item type="Configuration" version="1">
 					<name>DebugStatic</name>
@@ -1337,7 +1337,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
+						<item>$(LUA_SDK)/src</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -1354,7 +1354,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
+						<item>$(LUA_SDK)/src</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -1368,211 +1368,11 @@
 			</configurations>
 			<items>
 				<item type="File">
-					<fileName>lapi.c</fileName>
+					<fileName>*.c</fileName>
 					<items/>
 				</item>
 				<item type="File">
-					<fileName>lapi.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lauxlib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lauxlib.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lbaselib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lcode.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lcode.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ldblib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ldebug.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ldebug.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ldo.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ldo.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ldump.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lfunc.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lfunc.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lgc.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lgc.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>linit.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>liolib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>llex.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>llex.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>llimits.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lmathlib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lmem.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lmem.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>loadlib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lobject.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lobject.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lopcodes.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lopcodes.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>loslib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lparser.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lparser.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lstate.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lstate.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lstring.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lstring.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lstrlib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ltable.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ltable.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ltablib.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ltm.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>ltm.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>luaconf.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lualib.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lundump.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lundump.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lvm.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lvm.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lzio.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>lzio.h</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>print.c</fileName>
+					<fileName>*.h</fileName>
 					<items/>
 				</item>
 			</items>
@@ -2463,7 +2263,7 @@
 														<project type="Project" version="1">
 															<enable>true</enable>
 															<name>Extern.minilzo-2.05</name>
-															<sourcePath>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</sourcePath>
+															<sourcePath>$(LUA_SDK)/src</sourcePath>
 															<configurations>
 																<item type="Configuration" version="1">
 																	<name>DebugStatic</name>
@@ -4634,11 +4434,11 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
+						<item>T_LUA_5_2</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -4652,11 +4452,11 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
+						<item>T_LUA_5_2</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>

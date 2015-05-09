@@ -18,12 +18,15 @@
 namespace traktor
 {
 
+T_IMPLEMENT_RTTI_CLASS(L"traktor.OS", OS, Object)
+
 OS& OS::getInstance()
 {
 	static OS* s_instance = 0;
 	if (!s_instance)
 	{
 		s_instance = new OS();
+		s_instance->addRef(0);
 		SingletonManager::getInstance().add(s_instance);
 	}
 	return *s_instance;
@@ -32,6 +35,11 @@ OS& OS::getInstance()
 uint32_t OS::getCPUCoreCount() const
 {
 	return 1;
+}
+
+Path OS::getExecutable() const
+{
+	return Path();
 }
 
 std::wstring OS::getCommandLine() const
@@ -141,7 +149,7 @@ OS::~OS()
 
 void OS::destroy()
 {
-	delete this;
+	T_SAFE_RELEASE(this);
 }
 
 }

@@ -70,9 +70,9 @@
 		<item>
 			<platform>{1C5EBC43-2395-9549-8FF7-BA51A6C30B7B}</platform>
 			<deployFiles>
-				<item>libTraktor.Core.a</item>
-				<item>libTraktor.Resource.a</item>
-				<item>libTraktor.Heightfield.a</item>
+				<item>libTraktor.Core.bc</item>
+				<item>libTraktor.Resource.bc</item>
+				<item>libTraktor.Heightfield.bc</item>
 			</deployFiles>
 		</item>
 		<item>

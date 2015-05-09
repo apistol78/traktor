@@ -80,11 +80,11 @@
 		<item>
 			<platform>{1C5EBC43-2395-9549-8FF7-BA51A6C30B7B}</platform>
 			<deployFiles>
-				<item>libTraktor.Core.a</item>
-				<item>libTraktor.Net.a</item>
-				<item>libTraktor.Xml.a</item>
-				<item>libTraktor.Database.a</item>
-				<item>libTraktor.Database.Local.a</item>
+				<item>libTraktor.Core.bc</item>
+				<item>libTraktor.Net.bc</item>
+				<item>libTraktor.Xml.bc</item>
+				<item>libTraktor.Database.bc</item>
+				<item>libTraktor.Database.Local.bc</item>
 			</deployFiles>
 		</item>
 		<item>

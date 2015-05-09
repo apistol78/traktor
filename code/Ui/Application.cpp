@@ -57,7 +57,12 @@ bool Application::initialize(IEventLoop* eventLoop, IWidgetFactory* widgetFactor
 	m_eventLoop = eventLoop;
 	m_widgetFactory = widgetFactory;
 	m_clipboard = new Clipboard(widgetFactory->createClipboard());
-	m_styleSheet = styleSheet ? styleSheet : StyleSheet::createDefault();
+	
+	if (styleSheet)
+		m_styleSheet = styleSheet;
+	else
+		m_styleSheet = StyleSheet::createDefault();
+
 	return true;
 }
 
