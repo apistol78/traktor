@@ -38,11 +38,8 @@ Ref< PropertyGroup > loadSettings(const Path& settingsFile)
 
 }
 
-static int32_t g_counter = 0;
-
 void mainLoop()
 {
-	traktor::log::info << L"Tick-tack " << g_counter++ << Endl;
 	if (g_application)
 	{
 		if (!g_application->update())
@@ -83,6 +80,6 @@ int main(int argc, const char** argv)
 		return 0;
 
 	// Ok, everything seems to be setup fine, give main loop back to Emscripten.
-	emscripten_set_main_loop(&mainLoop, 60, 0);
+	emscripten_set_main_loop(&mainLoop, 0, 0);
 	return 0;
 }

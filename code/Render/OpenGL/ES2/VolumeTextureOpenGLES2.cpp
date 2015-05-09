@@ -144,7 +144,7 @@ bool VolumeTextureOpenGLES2::create(const VolumeTextureCreateDesc& desc)
 
 	convertTextureFormat(desc.format, m_pixelSize, m_components, m_format, m_type);
 
-#if !defined(T_OFFLINE_ONLY) && !defined(__IOS__) && !defined(__PNACL__)
+#if !defined(T_OFFLINE_ONLY) && !defined(__IOS__) && !defined(__PNACL__) && !defined(__EMSCRIPTEN__)
 
 	T_OGL_SAFE(glGenTextures(1, &m_textureName));
 

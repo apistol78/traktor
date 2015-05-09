@@ -98,8 +98,10 @@ private:
 	Ref< StateManager > m_stateManager;
 	RefArray< IRuntimePlugin > m_plugins;
 	Semaphore m_lockUpdate;
+#if !defined(__EMSCRIPTEN__)
 	Thread* m_threadDatabase;
 	Thread* m_threadRender;
+#endif
 	Timer m_timer;
 	FrameProfiler m_frameProfiler;
 	int32_t m_maxSimulationUpdates;
@@ -126,9 +128,15 @@ private:
 
 	bool updateInputDevices();
 
+	void pollDatabase();
+
+#if !defined(__EMSCRIPTEN__)
+
 	void threadDatabase();
 
 	void threadRender();
+
+#endif
 };
 
 	}

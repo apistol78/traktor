@@ -106,13 +106,13 @@
 			<platform>{1C5EBC43-2395-9549-8FF7-BA51A6C30B7B}</platform>
 			<executableFile/>
 			<deployFiles>
-				<item>libExtern.sqlite.a</item>
-				<item>libTraktor.Core.a</item>
-				<item>libTraktor.Net.a</item>
-				<item>libTraktor.Sql.a</item>
-				<item>libTraktor.Sql.Sqlite3.a</item>
-				<item>libTraktor.Online.a</item>
-				<item>libTraktor.Online.Local.a</item>
+				<item>libExtern.sqlite.bc</item>
+				<item>libTraktor.Core.bc</item>
+				<item>libTraktor.Net.bc</item>
+				<item>libTraktor.Sql.bc</item>
+				<item>libTraktor.Sql.Sqlite3.bc</item>
+				<item>libTraktor.Online.bc</item>
+				<item>libTraktor.Online.Local.bc</item>
 			</deployFiles>
 		</item>
 		<item>

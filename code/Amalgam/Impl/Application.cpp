@@ -63,9 +63,13 @@ const float c_deltaTimeFilterCoeff = 0.99f;
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.Application", Application, IApplication)
 
 Application::Application()
+#if !defined(__EMSCRIPTEN__)
 :	m_threadDatabase(0)
 ,	m_threadRender(0)
 ,	m_maxSimulationUpdates(1)
+#else
+:	m_maxSimulationUpdates(1)
+#endif
 ,	m_deltaTimeError(0)
 ,	m_renderViewActive(true)
 ,	m_backgroundColor(0.0f, 0.0f, 0.0f, 0.0f)
@@ -334,6 +338,8 @@ bool Application::create(
 		}
 	}
 
+#if !defined(__EMSCRIPTEN__)
+
 	// Database monitoring thread.
 	if (settings->getProperty< PropertyBoolean >(L"Amalgam.DatabaseThread", false))
 	{
@@ -342,6 +348,8 @@ bool Application::create(
 		if (m_threadDatabase)
 			m_threadDatabase->start(Thread::Highest);
 	}
+
+#endif
 
 	// Initial, startup, state.
 	T_DEBUG(L"Creating initial state...");
@@ -366,6 +374,8 @@ bool Application::create(
 
 	log::info << L"Initial state ready; enter main loop..." << Endl;
 
+#if !defined(__EMSCRIPTEN__)
+
 	// Create render thread if enabled and we're running on a multi core system.
 	if (
 		OS::getInstance().getCPUCoreCount() >= 2 &&
@@ -385,6 +395,8 @@ bool Application::create(
 	else
 		log::info << L"Using single threaded rendering" << Endl;
 
+#endif
+
 	m_settings = settings;
 	return true;
 }
@@ -395,6 +407,8 @@ void Application::destroy()
 		(*i)->shutdown(m_environment);
 
 	m_plugins.resize(0);
+
+#if !defined(__EMSCRIPTEN__)
 
 	if (m_threadRender)
 	{
@@ -409,6 +423,8 @@ void Application::destroy()
 		ThreadManager::getInstance().destroy(m_threadDatabase);
 		m_threadDatabase = 0;
 	}
+
+#endif
 
 	JobManager::getInstance().stop();
 
@@ -445,6 +461,11 @@ bool Application::update()
 		log::warning << L"Connection to target manager lost; terminating application..." << Endl;
 		return false;
 	}
+
+#if defined(__EMSCRIPTEN__)
+	// As Emscripten cannot do threads we need to poll database "manually" in main thread.
+	pollDatabase();
+#endif
 
 	m_updateInfo.m_frameProfiler = &m_frameProfiler;
 	m_frameProfiler.beginFrame();
@@ -506,11 +527,13 @@ bool Application::update()
 		// Transition begun; need to synchronize rendering thread as
 		// it require current state.
 
+#if !defined(__EMSCRIPTEN__)
 		if (m_threadRender && !m_signalRenderFinish.wait(1000))
 		{
 			log::error << L"Unable to synchronize render thread; render thread seems to be stuck." << Endl;
 			return false;
 		}
+#endif
 
 		// Ensure state transition is safe.
 		{
@@ -649,6 +672,7 @@ bool Application::update()
 				// If we're doing multiple updates per frame then we're rendering bound; so in order
 				// to keep input updating periodically we need to make sure we wait a bit, as long
 				// as we don't collide with end-of-rendering.
+#if !defined(__EMSCRIPTEN__)
 				if (m_threadRender && i > 0 && !renderCollision)
 				{
 					// Recalculate interval for each sub-step as some updates might spike.
@@ -664,6 +688,7 @@ bool Application::update()
 						++m_renderCollisions;
 					}
 				}
+#endif
 
 				// Update input.
 				double inputTimeStart = m_timer.getElapsedTime();
@@ -698,8 +723,10 @@ bool Application::update()
 				if (result == IState::UrExit || result == IState::UrFailed)
 				{
 					// Ensure render thread is finished before we leave.
+#if !defined(__EMSCRIPTEN__)
 					if (m_threadRender)
 						m_signalRenderFinish.wait(1000);
+#endif
 					return false;
 				}
 
@@ -740,8 +767,10 @@ bool Application::update()
 			if (updateResult == IState::UrExit || updateResult == IState::UrFailed)
 			{
 				// Ensure render thread is finished before we leave.
+#if !defined(__EMSCRIPTEN__)
 				if (m_threadRender)
 					m_signalRenderFinish.wait(1000);
+#endif
 				return false;
 			}
 
@@ -779,6 +808,7 @@ bool Application::update()
 
 		if (buildResult == IState::BrOk || buildResult == IState::BrNothing)
 		{
+#if !defined(__EMSCRIPTEN__)
 			if (m_threadRender)
 			{
 				// Synchronize with render thread and issue another rendering.
@@ -801,6 +831,7 @@ bool Application::update()
 				}
 			}
 			else
+#endif
 			{
 				double renderBegin = m_timer.getElapsedTime();
 
@@ -990,42 +1021,48 @@ Ref< IStateManager > Application::getStateManager()
 	return m_stateManager;
 }
 
-void Application::threadDatabase()
+void Application::pollDatabase()
 {
 	std::vector< Guid > eventIds;
 	Ref< const db::IEvent > event;
 	bool remote;
 
+	while (m_database->getEvent(event, remote))
+	{
+		if (const db::EvtInstanceCommitted* committed = dynamic_type_cast< const db::EvtInstanceCommitted* >(event))
+			eventIds.push_back(committed->getInstanceGuid());
+	}
+
+	if (!eventIds.empty())
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockUpdate);
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
+
+		if (m_stateManager->getCurrent() != 0)
+			m_stateManager->getCurrent()->flush();
+
+		Ref< resource::IResourceManager > resourceManager = m_resourceServer->getResourceManager();
+		if (resourceManager)
+		{
+			for (std::vector< Guid >::iterator i = eventIds.begin(); i != eventIds.end(); ++i)
+			{
+				log::info << L"Data modified; reloading resource \"" << i->format() << L"\"..." << Endl;
+				resourceManager->reload(*i, false);
+			}
+		}
+	}
+}
+
+#if !defined(__EMSCRIPTEN__)
+
+void Application::threadDatabase()
+{
 	while (!m_threadDatabase->stopped())
 	{
 		for (uint32_t i = 0; i < c_databasePollInterval && !m_threadDatabase->stopped(); ++i)
 			m_threadDatabase->sleep(100);
 
-		eventIds.resize(0);
-		while (m_database->getEvent(event, remote))
-		{
-			if (const db::EvtInstanceCommitted* committed = dynamic_type_cast< const db::EvtInstanceCommitted* >(event))
-				eventIds.push_back(committed->getInstanceGuid());
-		}
-
-		if (!eventIds.empty())
-		{
-			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockUpdate);
-			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
-
-			if (m_stateManager->getCurrent() != 0)
-				m_stateManager->getCurrent()->flush();
-
-			Ref< resource::IResourceManager > resourceManager = m_resourceServer->getResourceManager();
-			if (resourceManager)
-			{
-				for (std::vector< Guid >::iterator i = eventIds.begin(); i != eventIds.end(); ++i)
-				{
-					log::info << L"Data modified; reloading resource \"" << i->format() << L"\"..." << Endl;
-					resourceManager->reload(*i, false);
-				}
-			}
-		}
+		pollDatabase();
 	}
 }
 
@@ -1125,6 +1162,8 @@ void Application::threadRender()
 		m_signalRenderFinish.set();
 	}
 }
+
+#endif
 
 	}
 }

@@ -74,7 +74,7 @@ private:
 BoxedAllocator< BoxedUInt64, 16 > s_allocBoxedUInt64;
 BoxedAllocator< BoxedGuid, 512 > s_allocBoxedGuid;
 BoxedAllocator< BoxedVector2, 1024 > s_allocBoxedVector2;
-#if !defined(__PS3__)
+#if !defined(__PS3__) && !defined(__EMSCRIPTEN__)
 BoxedAllocator< BoxedVector4, 32768 > s_allocBoxedVector4;
 BoxedAllocator< BoxedVector4Array, 16 > s_allocBoxedVector4Array;
 BoxedAllocator< BoxedQuaternion, 4096 > s_allocBoxedQuaternion;

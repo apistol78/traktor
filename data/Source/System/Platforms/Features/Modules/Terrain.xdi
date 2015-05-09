@@ -94,12 +94,12 @@
 		<item>
 			<platform>{1C5EBC43-2395-9549-8FF7-BA51A6C30B7B}</platform>
 			<deployFiles>
-				<item>libTraktor.Core.a</item>
-				<item>libTraktor.Heightfield.a</item>
-				<item>libTraktor.Render.a</item>
-				<item>libTraktor.Resource.a</item>
-				<item>libTraktor.World.a</item>
-				<item>libTraktor.Terrain.a</item>
+				<item>libTraktor.Core.bc</item>
+				<item>libTraktor.Heightfield.bc</item>
+				<item>libTraktor.Render.bc</item>
+				<item>libTraktor.Resource.bc</item>
+				<item>libTraktor.World.bc</item>
+				<item>libTraktor.Terrain.bc</item>
 			</deployFiles>
 		</item>
 		<item>

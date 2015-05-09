@@ -2,15 +2,15 @@
 <object type="SolutionBuilderMsvcSettings">
   <slnVersion>11.00</slnVersion>
   <vsVersion>10</vsVersion>
-  <project type="SolutionBuilderMsvcVCXProj" version="2">
+  <project type="SolutionBuilderMsvcVCXProj" version="3">
     <platform>Emscripten</platform>
     <keyword>Win32Proj</keyword>
     <toolset/>
     <targetPrefixes>
-      <item/>
-      <item/>
-      <item/>
-      <item/>
+      <item>lib</item>
+      <item>lib</item>
+      <item>lib</item>
+      <item>lib</item>
     </targetPrefixes>
     <targetExts>
       <item>.bc</item>
@@ -18,7 +18,155 @@
       <item>.bc</item>
       <item>.bc</item>
     </targetExts>
-      <buildDefinitionsDebug>
+    <configurationDefinitionsDebug>
+      <staticLibrary>
+        <item>
+          <first>CharacterSet</first>
+          <second>MultiByte</second>
+        </item>
+        <item>
+          <first>ConfigurationType</first>
+          <second>StaticLibrary</second>
+        </item>
+        <item>
+          <first>PlatformToolset</first>
+          <second>emcc</second>
+        </item>
+        <item>
+          <first>WholeProgramOptimization</first>
+          <second>false</second>
+        </item>
+      </staticLibrary>
+      <sharedLibrary>
+        <item>
+          <first>CharacterSet</first>
+          <second>MultiByte</second>
+        </item>
+        <item>
+          <first>ConfigurationType</first>
+          <second>DynamicLibrary</second>
+        </item>
+        <item>
+          <first>PlatformToolset</first>
+          <second>emcc</second>
+        </item>
+        <item>
+          <first>WholeProgramOptimization</first>
+          <second>false</second>
+        </item>
+      </sharedLibrary>
+      <executable>
+        <item>
+          <first>CharacterSet</first>
+          <second>MultiByte</second>
+        </item>
+        <item>
+          <first>ConfigurationType</first>
+          <second>Executable</second>
+        </item>
+        <item>
+          <first>PlatformToolset</first>
+          <second>emcc</second>
+        </item>
+        <item>
+          <first>WholeProgramOptimization</first>
+          <second>false</second>
+        </item>
+      </executable>
+      <executableConsole>
+        <item>
+          <first>CharacterSet</first>
+          <second>MultiByte</second>
+        </item>
+        <item>
+          <first>ConfigurationType</first>
+          <second>Executable</second>
+        </item>
+        <item>
+          <first>PlatformToolset</first>
+          <second>emcc</second>
+        </item>
+        <item>
+          <first>WholeProgramOptimization</first>
+          <second>false</second>
+        </item>
+      </executableConsole>
+    </configurationDefinitionsDebug>
+    <configurationDefinitionsRelease>
+      <staticLibrary>
+        <item>
+          <first>CharacterSet</first>
+          <second>MultiByte</second>
+        </item>
+        <item>
+          <first>ConfigurationType</first>
+          <second>StaticLibrary</second>
+        </item>
+        <item>
+          <first>PlatformToolset</first>
+          <second>emcc</second>
+        </item>
+        <item>
+          <first>WholeProgramOptimization</first>
+          <second>false</second>
+        </item>
+      </staticLibrary>
+      <sharedLibrary>
+        <item>
+          <first>CharacterSet</first>
+          <second>MultiByte</second>
+        </item>
+        <item>
+          <first>ConfigurationType</first>
+          <second>DynamicLibrary</second>
+        </item>
+        <item>
+          <first>PlatformToolset</first>
+          <second>emcc</second>
+        </item>
+        <item>
+          <first>WholeProgramOptimization</first>
+          <second>false</second>
+        </item>
+      </sharedLibrary>
+      <executable>
+        <item>
+          <first>CharacterSet</first>
+          <second>MultiByte</second>
+        </item>
+        <item>
+          <first>ConfigurationType</first>
+          <second>Executable</second>
+        </item>
+        <item>
+          <first>PlatformToolset</first>
+          <second>emcc</second>
+        </item>
+        <item>
+          <first>WholeProgramOptimization</first>
+          <second>false</second>
+        </item>
+      </executable>
+      <executableConsole>
+        <item>
+          <first>CharacterSet</first>
+          <second>MultiByte</second>
+        </item>
+        <item>
+          <first>ConfigurationType</first>
+          <second>Executable</second>
+        </item>
+        <item>
+          <first>PlatformToolset</first>
+          <second>emcc</second>
+        </item>
+        <item>
+          <first>WholeProgramOptimization</first>
+          <second>false</second>
+        </item>
+      </executableConsole>
+    </configurationDefinitionsRelease>
+    <buildDefinitionsDebug>
       <!-- Static library -->
       <item>
         <item type="SolutionBuilderMsvcVCXDefinition">
