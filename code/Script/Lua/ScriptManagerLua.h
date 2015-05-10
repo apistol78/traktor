@@ -129,6 +129,8 @@ private:
 
 	void breakDebugger(lua_State* luaState);
 
+	static int exportRuntimeClass(lua_State* luaState);
+
 	static int classIndexLookup(lua_State* luaState);
 
 	static int classCallConstructor(lua_State* luaState);

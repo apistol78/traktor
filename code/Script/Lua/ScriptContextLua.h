@@ -13,6 +13,7 @@ namespace traktor
 
 class IScriptClass;
 class ScriptManagerLua;
+class ScriptObjectLua;
 
 /*! \brief LUA scripting context.
  * \ingroup LUA Script
@@ -37,6 +38,8 @@ public:
 	virtual Any executeMethod(Object* self, const std::string& methodName, uint32_t argc, const Any* argv);
 
 	Any executeDelegate(int32_t functionRef, uint32_t argc, const Any* argv);
+
+	Any executeMethod(ScriptObjectLua* self, int32_t methodRef, uint32_t argc, const Any* argv);
 
 private:
 	friend class ScriptDebuggerLua;

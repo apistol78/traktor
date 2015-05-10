@@ -10,10 +10,12 @@
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Timer/Timer.h"
+#include "Script/Lua/ScriptClassLua.h"
 #include "Script/Lua/ScriptContextLua.h"
 #include "Script/Lua/ScriptDebuggerLua.h"
 #include "Script/Lua/ScriptDelegateLua.h"
 #include "Script/Lua/ScriptManagerLua.h"
+#include "Script/Lua/ScriptObjectLua.h"
 #include "Script/Lua/ScriptProfilerLua.h"
 #include "Script/Lua/ScriptResourceLua.h"
 #include "Script/Lua/ScriptUtilitiesLua.h"
@@ -32,35 +34,7 @@ namespace traktor
 Timer s_timer;
 
 const int32_t c_tableKey_class = -1;
-
-class TableContainerLua : public Object
-{
-	T_RTTI_CLASS;
-
-public:
-	TableContainerLua(lua_State* luaState)
-	:	m_luaState(luaState)
-	{
-		m_tableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
-	}
-
-	virtual ~TableContainerLua()
-	{
-		luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_tableRef);
-	}
-
-	void push()
-	{
-		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_tableRef);
-		T_ASSERT (lua_istable(m_luaState, -1));
-	}
-
-private:
-	lua_State* m_luaState;
-	int32_t m_tableRef;
-};
-
-T_IMPLEMENT_RTTI_CLASS(L"traktor.script.TableContainerLua", TableContainerLua, Object)
+const int32_t c_scriptClassKey = -2;
 
 		}
 
@@ -113,6 +87,11 @@ ScriptManagerLua::ScriptManagerLua()
 #endif
 
 	lua_register(m_luaState, "print", luaPrint);
+
+	// Add runtime class registrar function.
+	lua_pushlightuserdata(m_luaState, (void*)this);
+	lua_pushcclosure(m_luaState, exportRuntimeClass, 1);
+	lua_setglobal(m_luaState, "exportRuntimeClass");
 
 	// Create table containing weak references to C++ object wrappers.
 	{
@@ -640,11 +619,11 @@ void ScriptManagerLua::pushObject(ITypedObject* object)
 		return;
 	}
 
-	// If this is a wrapped LUA table or function then unwrap and push as is.
-	if (&type_of(object) == &type_of< TableContainerLua >())
+	// If this is a wrapped LUA object or function then unwrap and push as is.
+	if (&type_of(object) == &type_of< ScriptObjectLua >())
 	{
-		TableContainerLua* tableContainer = checked_type_cast< TableContainerLua*, false >(object);
-		tableContainer->push();
+		ScriptObjectLua* scriptObject = checked_type_cast< ScriptObjectLua*, false >(object);
+		scriptObject->push();
 		return;
 	}
 	else if (&type_of(object) == &type_of< ScriptDelegateLua >())
@@ -782,9 +761,20 @@ Any ScriptManagerLua::toAny(int32_t index)
 		}
 		lua_pop(m_luaState, 1);
 
-		// Box LUA table into C++ container.
+		// Box LUA object into C++ container.
 		lua_pushvalue(m_luaState, index);
-		return Any::fromObject(new TableContainerLua(m_luaState));
+		int32_t tableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+
+		const ScriptClassLua* scriptClass = 0;
+		if (lua_getmetatable(m_luaState, index) != 0)
+		{
+			lua_getfield(m_luaState, -1, "__index");
+			lua_rawgeti(m_luaState, -1, c_scriptClassKey);
+			if (lua_islightuserdata(m_luaState, -1))
+				scriptClass = reinterpret_cast< ScriptClassLua* >(lua_touserdata(m_luaState, -1));
+		}
+
+		return Any::fromObject(new ScriptObjectLua(m_luaState, tableRef, scriptClass));
 	}
 	else if (lua_isfunction(m_luaState, index))
 	{
@@ -838,9 +828,20 @@ void ScriptManagerLua::toAny(int32_t base, int32_t count, Any* outAnys)
 			}
 			lua_pop(m_luaState, 1);
 
-			// Box LUA table into C++ container.
+			// Box LUA object into C++ container.
 			lua_pushvalue(m_luaState, index);
-			outAnys[i] = Any::fromObject(new TableContainerLua(m_luaState));
+			int32_t tableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+
+			const ScriptClassLua* scriptClass = 0;
+			if (lua_getmetatable(m_luaState, index) != 0)
+			{
+				lua_getfield(m_luaState, -1, "__index");
+				lua_rawgeti(m_luaState, -1, c_scriptClassKey);
+				if (lua_islightuserdata(m_luaState, -1))
+					scriptClass = reinterpret_cast< ScriptClassLua* >(lua_touserdata(m_luaState, -1));
+			}
+
+			outAnys[i] = Any::fromObject(new ScriptObjectLua(m_luaState, tableRef, scriptClass));
 		}
 	}
 }
@@ -965,6 +966,41 @@ void ScriptManagerLua::breakDebugger(lua_State* luaState)
 
 	m_debugger->actionBreak();
 	m_debugger->analyzeState(luaState, &ar);
+}
+
+int ScriptManagerLua::exportRuntimeClass(lua_State* luaState)
+{
+	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
+	T_ASSERT (manager);
+
+	const char* className = lua_tostring(luaState, -1);
+	T_ASSERT (className);
+
+	Ref< ScriptClassLua > scriptClass = new ScriptClassLua(manager->m_lockContext, manager->m_luaState, className);
+
+	// Gather all methods of script class.
+	lua_pushnil(luaState);
+	while (lua_next(luaState, -3))
+	{
+		if (lua_isfunction(luaState, -1))
+		{
+			const char* functionName = lua_tostring(luaState, -2);
+			T_ASSERT (functionName);
+
+			lua_pushvalue(luaState, -1);
+			int32_t functionRef = luaL_ref(luaState, LUA_REGISTRYINDEX);
+
+			scriptClass->addMethod(functionName, functionRef);
+		}
+		lua_pop(luaState, 1);
+	}
+
+	// Attach native runtime class to script class table.
+	lua_pushlightuserdata(luaState, scriptClass.ptr());
+	T_SAFE_ANONYMOUS_ADDREF(scriptClass);
+	lua_rawseti(luaState, -3, c_scriptClassKey);
+
+	return 0;
 }
 
 int ScriptManagerLua::classIndexLookup(lua_State* luaState)
