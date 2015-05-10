@@ -4,6 +4,7 @@
 #include "Core/Misc/WildCompare.h"
 #include "Script/Lua/ScriptContextLua.h"
 #include "Script/Lua/ScriptManagerLua.h"
+#include "Script/Lua/ScriptObjectLua.h"
 #include "Script/Lua/ScriptResourceLua.h"
 #include "Script/Lua/ScriptUtilitiesLua.h"
 
@@ -288,7 +289,58 @@ Any ScriptContextLua::executeDelegate(int32_t functionRef, uint32_t argc, const 
 	}
 	m_scriptManager->unlock();
 	return returnValue;
+}
 
+Any ScriptContextLua::executeMethod(ScriptObjectLua* self, int32_t methodRef, uint32_t argc, const Any* argv)
+{
+	Any returnValue;
+	m_scriptManager->lock(this);
+	{
+		CHECK_LUA_STACK(m_luaState, 0);
+
+		// Push error function.
+		lua_pushlightuserdata(m_luaState, (void*)this);
+		lua_pushcclosure(m_luaState, runtimeError, 1);
+		int32_t errfunc = lua_gettop(m_luaState);
+
+		// Push wrapped LUA object.
+		self->push();
+
+		// Push LUA function to call.
+		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, methodRef);
+
+		// Push arguments.
+		{
+			CHECK_LUA_STACK(m_luaState, argc);
+			for (int32_t i = 0; i < argc; ++i)
+			{
+				const Any& any = argv[i];
+				if (any.isVoid())
+					lua_pushnil(m_luaState);
+				else if (any.isBoolean())
+					lua_pushboolean(m_luaState, any.getBooleanUnsafe() ? 1 : 0);
+				else if (any.isInteger())
+					lua_pushinteger(m_luaState, any.getIntegerUnsafe());
+				else if (any.isFloat())
+					lua_pushnumber(m_luaState, any.getFloatUnsafe());
+				else if (any.isString())
+					lua_pushstring(m_luaState, any.getStringUnsafe().c_str());
+				else if (any.isObject())
+					m_scriptManager->pushObject(any.getObjectUnsafe());
+				else
+					lua_pushnil(m_luaState);
+			}
+		}
+		
+		// Call script function.
+		int32_t err = lua_pcall(m_luaState, argc, 1, errfunc);
+		if (err == 0)
+			returnValue = m_scriptManager->toAny(-1);
+
+		lua_pop(m_luaState, 3);
+	}
+	m_scriptManager->unlock();
+	return returnValue;
 }
 
 ScriptContextLua::ScriptContextLua(ScriptManagerLua* scriptManager, lua_State* luaState, int32_t environmentRef, const source_map_t& map)
