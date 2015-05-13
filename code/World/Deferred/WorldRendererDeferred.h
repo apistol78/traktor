@@ -85,6 +85,8 @@ private:
 		Ref< WorldContext > gbuffer;
 		Ref< WorldContext > visual;
 		float time;
+		float A;
+		float B;
 		Matrix44 projection;
 		Matrix44 view;
 		Frustum viewFrustum;
@@ -96,6 +98,8 @@ private:
 
 		Frame()
 		:	time(0.0f)
+		,	A(0.0f)
+		,	B(0.0f)
 		,	lightCount(0)
 		,	haveGBuffer(false)
 		{
@@ -151,6 +155,9 @@ private:
 	uint32_t m_count;
 	Vector4 m_fogDistanceAndDensity;
 	Vector4 m_fogColor;
+
+
+	void buildGBuffer(WorldRenderView& worldRenderView, int frame);
 
 	void buildLightWithShadows(WorldRenderView& worldRenderView, int frame);
 

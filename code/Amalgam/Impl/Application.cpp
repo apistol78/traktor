@@ -1088,7 +1088,7 @@ void Application::threadRender()
 			render::IRenderView* renderView = m_renderServer->getRenderView();
 			if (renderView)
 			{
-				if (!m_renderServer->getStereoscopic())
+				if (!m_renderServer->getStereoscopic() && !m_renderServer->getVR())
 				{
 					if (renderView->begin(render::EtCyclop))
 					{
@@ -1108,7 +1108,41 @@ void Application::threadRender()
 						renderView->present();
 					}
 				}
-				else
+				else if (m_renderServer->getVR())
+				{
+					if (renderView->begin(render::EtCyclop))
+					{
+						if (m_stateRender)
+						{
+							renderView->setViewport(render::Viewport(
+								0, 0,
+								renderView->getWidth() / 2, renderView->getHeight(),
+								0.0f, 1.0f
+							));
+							m_stateRender->render(m_frameRender, render::EtLeft, m_updateInfoRender);
+
+							renderView->setViewport(render::Viewport(
+								renderView->getWidth() / 2, 0,
+								renderView->getWidth() / 2, renderView->getHeight(),
+								0.0f, 1.0f
+							));
+							m_stateRender->render(m_frameRender, render::EtRight, m_updateInfoRender);
+						}
+						else
+						{
+							renderView->clear(
+								render::CfColor | render::CfDepth | render::CfStencil,
+								&m_backgroundColor,
+								1.0f,
+								0
+							);
+						}
+
+						renderView->end();
+						renderView->present();
+					}
+				}
+				else if (m_renderServer->getStereoscopic())
 				{
 					if (renderView->begin(render::EtLeft))
 					{

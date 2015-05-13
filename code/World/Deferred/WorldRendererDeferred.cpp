@@ -1,10 +1,13 @@
 #include <limits>
+#include "Core/Functor/Functor.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Log2.h"
 #include "Core/Math/Random.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/Format.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Thread/Job.h"
+#include "Core/Thread/JobManager.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/RenderTargetSet.h"
@@ -27,6 +30,8 @@
 #include "World/SMProj/TrapezoidShadowProjection.h"
 #include "World/SMProj/UniformShadowProjection.h"
 #include "World/SwHiZ/WorldCullingSwRaster.h"
+
+//#define T_USE_BUILD_JOBS
 
 namespace traktor
 {
@@ -140,9 +145,15 @@ bool WorldRendererDeferred::create(
 		rtscd.createDepthStencil = false;
 		rtscd.usingPrimaryDepthStencil = true;
 		rtscd.preferTiled = true;
+#if !defined(__PS3__)
 		rtscd.targets[0].format = render::TfR16F;			// Depth (R)
 		rtscd.targets[1].format = render::TfR8G8B8A8;		// Normals (RGB), Specular roughness (A)
 		rtscd.targets[2].format = render::TfR16G16B16A16F;	// Surface color (RGB), Specular term & Reflectivity (A 8:8)
+#else
+		rtscd.targets[0].format = render::TfR8G8B8A8;		// Encoded depth
+		rtscd.targets[1].format = render::TfR8G8B8A8;		// Normals (RGB), Specular roughness (A)
+		rtscd.targets[2].format = render::TfR8G8B8A8;		// Surface color (RGB), Specular term & Reflectivity (A 8:8)
+#endif
 
 		m_gbufferTargetSet = renderSystem->createRenderTargetSet(rtscd);
 
@@ -670,21 +681,37 @@ void WorldRendererDeferred::endBuild(WorldRenderView& worldRenderView, int frame
 		f.culling->endPrecull();
 	}
 
+#if defined(T_USE_BUILD_JOBS)
+
+	Ref< Job > jobBuildGBuffer = JobManager::getInstance().add(makeFunctor< WorldRendererDeferred, WorldRenderView&, int >(
+		this,
+		&WorldRendererDeferred::buildGBuffer,
+		worldRenderView,
+		frame
+	));
+
+	Ref< Job > jobBuildLight = JobManager::getInstance().add(makeFunctor< WorldRendererDeferred, WorldRenderView&, int >(
+		this,
+		(m_shadowsQuality > QuDisabled) ? &WorldRendererDeferred::buildLightWithShadows : &WorldRendererDeferred::buildLightWithNoShadows,
+		worldRenderView,
+		frame
+	));
+
+	Ref< Job > jobBuildVisual = JobManager::getInstance().add(makeFunctor< WorldRendererDeferred, WorldRenderView&, int >(
+		this,
+		&WorldRendererDeferred::buildVisual,
+		worldRenderView,
+		frame
+	));
+
+	jobBuildGBuffer->wait();
+	jobBuildLight->wait();
+	jobBuildVisual->wait();
+
+#else
+
 	// Build gbuffer context.
-	{
-		WorldRenderView gbufferRenderView = worldRenderView;
-		gbufferRenderView.resetLights();
-
-		WorldRenderPassDeferred gbufferPass(
-			ms_techniqueDeferredGBufferWrite,
-			gbufferRenderView
-		);
-		for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
-			f.gbuffer->build(gbufferRenderView, gbufferPass, *i);
-		f.gbuffer->flush(gbufferRenderView, gbufferPass);
-
-		f.haveGBuffer = true;
-	}
+	buildGBuffer(worldRenderView, frame);
 
 	// Build shadow contexts.
 	if (m_shadowsQuality > QuDisabled)
@@ -695,6 +722,13 @@ void WorldRendererDeferred::endBuild(WorldRenderView& worldRenderView, int frame
 	// Build visual context.
 	worldRenderView.resetLights();
 	buildVisual(worldRenderView, frame);
+
+#endif
+
+	// Prepare stereoscopic projection.
+	float screenWidth = float(m_renderView->getWidth());
+	f.A = std::abs((worldRenderView.getDistortionValue() * worldRenderView.getInterocularDistance()) / screenWidth);
+	f.B = std::abs(f.A * worldRenderView.getScreenPlaneDistance() * (1.0f / f.projection(1, 1)));
 
 	m_buildEntities.resize(0);
 	m_count++;
@@ -712,7 +746,25 @@ bool WorldRendererDeferred::beginRender(int frame, render::EyeType eye, const Co
 void WorldRendererDeferred::render(uint32_t flags, int frame, render::EyeType eye)
 {
 	Frame& f = m_frames[frame];
-	Matrix44 projection = f.projection;
+	Matrix44 projection;
+
+	// Calculate stereoscopic projection.
+	if (eye != render::EtCyclop)
+	{
+		float A = f.A;
+		float B = f.B;
+
+		if (eye == render::EtLeft)
+			A = -A;
+		else
+			B = -B;
+
+		projection = translate(A, 0.0f, 0.0f) * f.projection * translate(B, 0.0f, 0.0f);
+	}
+	else
+	{
+		projection = f.projection;
+	}
 
 	// Render gbuffer.
 	if ((flags & (WrfDepthMap | WrfNormalMap | WrfVisualOpaque)) != 0)
@@ -759,61 +811,64 @@ void WorldRendererDeferred::render(uint32_t flags, int frame, render::EyeType ey
 				if (!f.haveShadows[i])
 					continue;
 
-				// Combine all shadow slices into a screen shadow mask.
-				for (int32_t j = 0; j < m_shadowSettings.cascadingSlices; ++j)
+				if (eye == render::EtCyclop || eye == render::EtLeft)
 				{
-					render::ProgramParameters shadowProgramParams;
-					shadowProgramParams.beginParameters(m_globalContext);
-					shadowProgramParams.setFloatParameter(ms_handleTime, f.time);
-					shadowProgramParams.setMatrixParameter(ms_handleView, f.slice[j].shadowLightView[i]);
-					shadowProgramParams.setMatrixParameter(ms_handleViewInverse, f.slice[j].shadowLightView[i].inverse());
-					shadowProgramParams.setMatrixParameter(ms_handleProjection, f.slice[j].shadowLightProjection[i]);
-					shadowProgramParams.endParameters(m_globalContext);
-
-					T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map");
-					if (m_renderView->begin(m_shadowTargetSet))
+					// Combine all shadow slices into a screen shadow mask.
+					for (int32_t j = 0; j < m_shadowSettings.cascadingSlices; ++j)
 					{
-						m_renderView->clear(render::CfDepth, 0, 1.0f, 0);
-						f.slice[j].shadow[i]->getRenderContext()->render(m_renderView, render::RpOpaque, &shadowProgramParams);
-						m_renderView->end();
-					}
-					T_RENDER_POP_MARKER(m_renderView);
+						render::ProgramParameters shadowProgramParams;
+						shadowProgramParams.beginParameters(m_globalContext);
+						shadowProgramParams.setFloatParameter(ms_handleTime, f.time);
+						shadowProgramParams.setMatrixParameter(ms_handleView, f.slice[j].shadowLightView[i]);
+						shadowProgramParams.setMatrixParameter(ms_handleViewInverse, f.slice[j].shadowLightView[i].inverse());
+						shadowProgramParams.setMatrixParameter(ms_handleProjection, f.slice[j].shadowLightProjection[i]);
+						shadowProgramParams.endParameters(m_globalContext);
 
-					T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow mask project");
-					if (m_renderView->begin(m_shadowMaskProjectTargetSet, 0))
-					{
-						if (j == 0)
+						T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map");
+						if (m_renderView->begin(m_shadowTargetSet))
 						{
-							const Color4f maskClear(1.0f, 1.0f, 1.0f, 1.0f);
-							m_renderView->clear(render::CfColor, &maskClear, 0.0f, 0);
+							m_renderView->clear(render::CfDepth, 0, 1.0f, 0);
+							f.slice[j].shadow[i]->getRenderContext()->render(m_renderView, render::RpOpaque, &shadowProgramParams);
+							m_renderView->end();
 						}
+						T_RENDER_POP_MARKER(m_renderView);
 
-						Scalar zn(max(m_slicePositions[j], m_settings.viewNearZ));
-						Scalar zf(min(m_slicePositions[j + 1], m_shadowSettings.farZ));
+						T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow mask project");
+						if (m_renderView->begin(m_shadowMaskProjectTargetSet, 0))
+						{
+							if (j == 0)
+							{
+								const Color4f maskClear(1.0f, 1.0f, 1.0f, 1.0f);
+								m_renderView->clear(render::CfColor, &maskClear, 0.0f, 0);
+							}
 
-						PostProcessStep::Instance::RenderParams params;
-						params.viewFrustum = f.viewFrustum;
-						params.viewToLight = f.slice[j].viewToLightSpace[i];
-						params.projection = projection;
-						params.sliceCount = m_shadowSettings.cascadingSlices;
-						params.sliceIndex = j;
-						params.sliceNearZ = zn;
-						params.sliceFarZ = zf;
-						params.shadowFarZ = m_shadowSettings.farZ;
-						params.shadowMapBias = m_shadowSettings.bias + i * m_shadowSettings.biasCoeff;
-						params.deltaTime = 0.0f;
+							Scalar zn(max(m_slicePositions[j], m_settings.viewNearZ));
+							Scalar zf(min(m_slicePositions[j + 1], m_shadowSettings.farZ));
 
-						m_shadowMaskProject->render(
-							m_renderView,
-							m_shadowTargetSet,
-							m_gbufferTargetSet,
-							0,
-							params
-						);
+							PostProcessStep::Instance::RenderParams params;
+							params.viewFrustum = f.viewFrustum;
+							params.viewToLight = f.slice[j].viewToLightSpace[i];
+							params.projection = projection;
+							params.sliceCount = m_shadowSettings.cascadingSlices;
+							params.sliceIndex = j;
+							params.sliceNearZ = zn;
+							params.sliceFarZ = zf;
+							params.shadowFarZ = m_shadowSettings.farZ;
+							params.shadowMapBias = m_shadowSettings.bias + i * m_shadowSettings.biasCoeff;
+							params.deltaTime = 0.0f;
 
-						m_renderView->end();
+							m_shadowMaskProject->render(
+								m_renderView,
+								m_shadowTargetSet,
+								m_gbufferTargetSet,
+								0,
+								params
+							);
+
+							m_renderView->end();
+						}
+						T_RENDER_POP_MARKER(m_renderView);
 					}
-					T_RENDER_POP_MARKER(m_renderView);
 				}
 
 				if (m_shadowMaskFilterTargetSet)
@@ -1204,6 +1259,24 @@ void WorldRendererDeferred::getDebugTargets(std::vector< DebugTarget >& outTarge
 
 	if (m_gammaCorrectionPostProcess)
 		m_gammaCorrectionPostProcess->getDebugTargets(outTargets);
+}
+
+void WorldRendererDeferred::buildGBuffer(WorldRenderView& worldRenderView, int frame)
+{
+	Frame& f = m_frames[frame];
+
+	WorldRenderView gbufferRenderView = worldRenderView;
+	gbufferRenderView.resetLights();
+
+	WorldRenderPassDeferred gbufferPass(
+		ms_techniqueDeferredGBufferWrite,
+		gbufferRenderView
+	);
+	for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
+		f.gbuffer->build(gbufferRenderView, gbufferPass, *i);
+	f.gbuffer->flush(gbufferRenderView, gbufferPass);
+
+	f.haveGBuffer = true;
 }
 
 void WorldRendererDeferred::buildLightWithShadows(WorldRenderView& worldRenderView, int frame)

@@ -55,6 +55,8 @@ public:
 
 	virtual bool getStereoscopic() const = 0;
 
+	virtual bool getVR() const = 0;
+
 	virtual int32_t getMultiSample() const = 0;
 
 	virtual int32_t getFrameRate() const = 0;
