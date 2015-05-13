@@ -37,6 +37,8 @@ public:
 
 	virtual bool getStereoscopic() const;
 
+	virtual bool getVR() const;
+
 	virtual int32_t getMultiSample() const;
 
 private:

@@ -144,6 +144,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.RenderServerDefault", RenderServerDefau
 RenderServerDefault::RenderServerDefault(net::BidirectionalObjectTransport* transport)
 :	RenderServer(transport)
 ,	m_screenAspectRatio(1.0f)
+,	m_vr(false)
 {
 }
 
@@ -258,6 +259,8 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 	m_renderViewDesc.displayMode.stereoscopic = settings->getProperty< PropertyBoolean >(L"Render.Stereoscopic", false);
 	m_renderViewDesc.displayMode.colorBits = 24;
 
+	m_vr = settings->getProperty< PropertyBoolean >(L"Render.VR", false);
+
 #endif
 
 	// Ensure no invalid multi-sample configuration is entered.
@@ -292,6 +295,7 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 #endif
 
 	settings->setProperty< PropertyBoolean >(L"Render.Stereoscopic", m_renderViewDesc.displayMode.stereoscopic);
+	settings->setProperty< PropertyBoolean >(L"Render.VR", m_vr);
 
 	m_renderSystem = renderSystem;
 	m_renderView = renderView;
@@ -535,6 +539,11 @@ float RenderServerDefault::getAspectRatio() const
 bool RenderServerDefault::getStereoscopic() const
 {
 	return m_renderViewDesc.displayMode.stereoscopic;
+}
+
+bool RenderServerDefault::getVR() const
+{
+	return m_vr;
 }
 
 int32_t RenderServerDefault::getMultiSample() const

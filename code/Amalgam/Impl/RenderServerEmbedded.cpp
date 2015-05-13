@@ -247,6 +247,11 @@ bool RenderServerEmbedded::getStereoscopic() const
 	return m_renderViewDesc.stereoscopic;
 }
 
+bool RenderServerEmbedded::getVR() const
+{
+	return false;
+}
+
 int32_t RenderServerEmbedded::getMultiSample() const
 {
 	return m_renderViewDesc.multiSample;

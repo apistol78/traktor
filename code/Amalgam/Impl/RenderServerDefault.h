@@ -37,12 +37,15 @@ public:
 
 	virtual bool getStereoscopic() const;
 
+	virtual bool getVR() const;
+
 	virtual int32_t getMultiSample() const;
 
 private:
 	render::DisplayMode m_originalDisplayMode;
 	render::RenderViewDefaultDesc m_renderViewDesc;
 	float m_screenAspectRatio;
+	bool m_vr;
 };
 
 	}

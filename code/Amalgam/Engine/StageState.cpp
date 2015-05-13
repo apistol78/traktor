@@ -55,8 +55,11 @@ bool StageState::render(uint32_t frame, render::EyeType eye, const IUpdateInfo& 
 {
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
 
-	const Color4f clearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	renderView->clear(render::CfColor | render::CfDepth | render::CfStencil, &clearColor, 1.0f, 0);
+	if (eye == render::EtCyclop || eye == render::EtLeft)
+	{
+		const Color4f clearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		renderView->clear(render::CfColor | render::CfDepth | render::CfStencil, &clearColor, 1.0f, 0);
+	}
 
 	m_stage->render(eye, frame);
 
