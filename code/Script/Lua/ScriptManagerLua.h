@@ -68,7 +68,9 @@ private:
 	struct RegisteredClass
 	{
 		Ref< IRuntimeClass > runtimeClass;
-		int32_t metaTableRef;
+		int32_t classTableRef;
+		int32_t classMetaTableRef;
+		int32_t instanceMetaTableRef;
 	};
 
 	static ScriptManagerLua* ms_instance;
@@ -128,8 +130,6 @@ private:
 	void collectGarbagePartial();
 
 	void breakDebugger(lua_State* luaState);
-
-	static int exportRuntimeClass(lua_State* luaState);
 
 	static int classIndexLookup(lua_State* luaState);
 

@@ -17,6 +17,15 @@ ScriptClassLua::ScriptClassLua(ScriptContextLua* context, lua_State*& luaState, 
 {
 }
 
+ScriptClassLua::~ScriptClassLua()
+{
+	for (std::vector< Method >::iterator i = m_methods.begin(); i != m_methods.end(); ++i)
+	{
+		if (m_luaState)
+			luaL_unref(m_luaState, LUA_REGISTRYINDEX, i->ref);
+	}
+}
+
 void ScriptClassLua::addMethod(const std::string& name, int32_t ref)
 {
 	Method m;
@@ -42,6 +51,19 @@ bool ScriptClassLua::haveUnknown() const
 
 Ref< ITypedObject > ScriptClassLua::construct(uint32_t argc, const Any* argv) const
 {
+	for (std::vector< Method >::const_iterator i = m_methods.begin(); i != m_methods.end(); ++i)
+	{
+		if (i->name == "new")
+		{
+			Any ret = m_context->executeMethod(
+				0,
+				i->ref,
+				argc,
+				argv
+			);
+			return ret.getObject();
+		}
+	}
 	return 0;
 }
 
@@ -88,6 +110,11 @@ Any ScriptClassLua::invokeUnknown(ITypedObject* object, const std::string& metho
 Any ScriptClassLua::invokeOperator(ITypedObject* object, uint8_t operation, const Any& arg) const
 {
 	return Any();
+}
+
+bool ScriptClassLua::getMember(ITypedObject* object, const std::string& memberName, Any& outValue) const
+{
+	return false;
 }
 
 	}

@@ -90,7 +90,7 @@ Ref< Local > describeLocal(const std::wstring& name, lua_State* L, int32_t index
 		if (lua_isfunction(L, index))
 			return new LocalSimple(name, L"(function)");
 
-		if (lua_isuserdata(L, index))
+		if (lua_isuserdata(L, index) && !lua_islightuserdata(L, index))
 		{
 			ITypedObject* object = *reinterpret_cast< ITypedObject** >(lua_touserdata(L, index));
 			if (object)

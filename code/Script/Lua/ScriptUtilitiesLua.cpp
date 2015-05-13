@@ -29,6 +29,16 @@ void dumpStack(lua_State* luaState, OutputStream& os, int32_t base)
 			os << i << L".\tnumber: " << lua_tonumber(luaState, i) << Endl;
 			break;
 
+		case LUA_TTABLE:
+			os << i << L".\ttable" << Endl;
+
+			lua_getfield(luaState, i, "__name");
+			if (lua_isstring(luaState, -1))
+				os << i << L"\t\t__name \"" << mbstows(lua_tostring(luaState, -1)) << L"\"" << Endl;
+			lua_pop(luaState, 1);
+
+			break;
+
 		default:  /* other values */
 			os << i << L".\tother: " << mbstows(lua_typename(luaState, t)) << Endl;
 			break;

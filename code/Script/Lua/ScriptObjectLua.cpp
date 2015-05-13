@@ -14,7 +14,6 @@ ScriptObjectLua::ScriptObjectLua(lua_State*& luaState, int32_t tableRef, const S
 ,	m_tableRef(tableRef)
 ,	m_scriptClass(scriptClass)
 {
-	//m_tableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
 }
 
 ScriptObjectLua::~ScriptObjectLua()

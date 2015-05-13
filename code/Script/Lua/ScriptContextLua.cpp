@@ -2,7 +2,9 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/WildCompare.h"
+#include "Script/Lua/ScriptClassLua.h"
 #include "Script/Lua/ScriptContextLua.h"
+#include "Script/Lua/ScriptDelegateLua.h"
 #include "Script/Lua/ScriptManagerLua.h"
 #include "Script/Lua/ScriptObjectLua.h"
 #include "Script/Lua/ScriptResourceLua.h"
@@ -100,14 +102,50 @@ Any ScriptContextLua::getGlobal(const std::string& globalName)
 	m_scriptManager->lock(this);
 	{
 		CHECK_LUA_STACK(m_luaState, 0);
-
 		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
 		lua_getfield(m_luaState, -1, globalName.c_str());
-
 		value = m_scriptManager->toAny(-1);
 	}
 	m_scriptManager->unlock();
 	return value;
+}
+
+Ref< const IRuntimeClass > ScriptContextLua::findClass(const std::string& className)
+{
+	Ref< ScriptClassLua > scriptClass;
+
+	m_scriptManager->lock(this);
+	{
+		CHECK_LUA_STACK(m_luaState, 0);
+
+		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
+		lua_getfield(m_luaState, -1, className.c_str());
+		if (lua_istable(m_luaState, -1))
+		{
+			scriptClass = new ScriptClassLua(this, m_luaState, className);
+
+			// Gather all methods of script class.
+			lua_pushnil(m_luaState);
+			while (lua_next(m_luaState, -2))
+			{
+				if (lua_isfunction(m_luaState, -1))
+				{
+					const char* functionName = lua_tostring(m_luaState, -2);
+					T_ASSERT (functionName);
+
+					lua_pushvalue(m_luaState, -1);
+					int32_t functionRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+
+					scriptClass->addMethod(functionName, functionRef);
+				}
+				lua_pop(m_luaState, 1);
+			}
+		}
+		lua_pop(m_luaState, 2);
+	}
+	m_scriptManager->unlock();
+
+	return scriptClass;
 }
 
 bool ScriptContextLua::haveFunction(const std::string& functionName) const
@@ -180,7 +218,7 @@ Any ScriptContextLua::executeFunction(const std::string& functionName, uint32_t 
 	return returnValue;
 }
 
-Any ScriptContextLua::executeMethod(Object* self, const std::string& methodName, uint32_t argc, const Any* argv)
+Any ScriptContextLua::executeDelegate(ScriptDelegateLua* delegate, uint32_t argc, const Any* argv)
 {
 	Any returnValue;
 	m_scriptManager->lock(this);
@@ -192,71 +230,7 @@ Any ScriptContextLua::executeMethod(Object* self, const std::string& methodName,
 		lua_pushcclosure(m_luaState, runtimeError, 1);
 		int32_t errfunc = lua_gettop(m_luaState);
 
-		// Get method from environment.
-		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
-		lua_getfield(m_luaState, -1, methodName.c_str());
-
-		if (lua_isfunction(m_luaState, -1))
-		{
-			// Set "self" variable in environment.
-			if (m_lastSelf != self)
-			{
-				m_scriptManager->pushAny(Any::fromObject(self));
-				lua_setfield(m_luaState, -3, "self");
-				m_lastSelf = self;
-			}
-
-			// Push arguments.
-			{
-				CHECK_LUA_STACK(m_luaState, argc);
-				for (int32_t i = 0; i < argc; ++i)
-				{
-					const Any& any = argv[i];
-					if (any.isVoid())
-						lua_pushnil(m_luaState);
-					else if (any.isBoolean())
-						lua_pushboolean(m_luaState, any.getBooleanUnsafe() ? 1 : 0);
-					else if (any.isInteger())
-						lua_pushinteger(m_luaState, any.getIntegerUnsafe());
-					else if (any.isFloat())
-						lua_pushnumber(m_luaState, any.getFloatUnsafe());
-					else if (any.isString())
-						lua_pushstring(m_luaState, any.getStringUnsafe().c_str());
-					else if (any.isObject())
-						m_scriptManager->pushObject(any.getObjectUnsafe());
-					else
-						lua_pushnil(m_luaState);
-				}
-			}
-		
-			// Call script function.
-			int32_t err = lua_pcall(m_luaState, argc, 1, errfunc);
-			if (err == 0)
-				returnValue = m_scriptManager->toAny(-1);
-		}
-		else
-			log::error << L"Unable to call " << mbstows(methodName) << L"; no such method" << Endl;
-
-		lua_pop(m_luaState, 3);
-	}
-	m_scriptManager->unlock();
-	return returnValue;
-}
-
-Any ScriptContextLua::executeDelegate(int32_t functionRef, uint32_t argc, const Any* argv)
-{
-	Any returnValue;
-	m_scriptManager->lock(this);
-	{
-		CHECK_LUA_STACK(m_luaState, 0);
-
-		// Push error function.
-		lua_pushlightuserdata(m_luaState, (void*)this);
-		lua_pushcclosure(m_luaState, runtimeError, 1);
-		int32_t errfunc = lua_gettop(m_luaState);
-
-		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, functionRef);
-		T_ASSERT (lua_isfunction(m_luaState, -1));
+		delegate->push();
 
 		// Push arguments.
 		{
@@ -303,11 +277,12 @@ Any ScriptContextLua::executeMethod(ScriptObjectLua* self, int32_t methodRef, ui
 		lua_pushcclosure(m_luaState, runtimeError, 1);
 		int32_t errfunc = lua_gettop(m_luaState);
 
-		// Push wrapped LUA object.
-		self->push();
-
 		// Push LUA function to call.
 		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, methodRef);
+
+		// Push wrapped LUA object.
+		if (self)
+			self->push();
 
 		// Push arguments.
 		{
@@ -333,11 +308,11 @@ Any ScriptContextLua::executeMethod(ScriptObjectLua* self, int32_t methodRef, ui
 		}
 		
 		// Call script function.
-		int32_t err = lua_pcall(m_luaState, argc, 1, errfunc);
+		int32_t err = lua_pcall(m_luaState, argc + (self ? 1 : 0), 1, errfunc);
 		if (err == 0)
 			returnValue = m_scriptManager->toAny(-1);
 
-		lua_pop(m_luaState, 3);
+		lua_pop(m_luaState, 2);
 	}
 	m_scriptManager->unlock();
 	return returnValue;

@@ -12,6 +12,7 @@ namespace traktor
 	{
 
 class IScriptClass;
+class ScriptDelegateLua;
 class ScriptManagerLua;
 class ScriptObjectLua;
 
@@ -31,13 +32,13 @@ public:
 
 	virtual Any getGlobal(const std::string& globalName);
 
+	virtual Ref< const IRuntimeClass > findClass(const std::string& className);
+
 	virtual bool haveFunction(const std::string& functionName) const;
 
 	virtual Any executeFunction(const std::string& functionName, uint32_t argc, const Any* argv);
 
-	virtual Any executeMethod(Object* self, const std::string& methodName, uint32_t argc, const Any* argv);
-
-	Any executeDelegate(int32_t functionRef, uint32_t argc, const Any* argv);
+	Any executeDelegate(ScriptDelegateLua* delegate, uint32_t argc, const Any* argv);
 
 	Any executeMethod(ScriptObjectLua* self, int32_t methodRef, uint32_t argc, const Any* argv);
 

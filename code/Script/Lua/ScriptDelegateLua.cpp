@@ -43,7 +43,7 @@ void ScriptDelegateLua::push()
 
 Any ScriptDelegateLua::call(int32_t argc, const Any* argv)
 {
-	return m_context->executeDelegate(m_functionRef, argc, argv);
+	return m_context->executeDelegate(this, argc, argv);
 }
 
 	}
