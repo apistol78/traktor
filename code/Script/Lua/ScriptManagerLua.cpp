@@ -34,7 +34,6 @@ namespace traktor
 Timer s_timer;
 
 const int32_t c_tableKey_class = -1;
-const int32_t c_scriptClassKey = -2;
 
 		}
 
@@ -70,28 +69,20 @@ ScriptManagerLua::ScriptManagerLua()
 
 	lua_atpanic(m_luaState, luaPanic);
 
+#if defined(T_LUA_5_2)
+	luaL_openlibs(m_luaState);
+#else
 	luaopen_base(m_luaState);
 	luaopen_table(m_luaState);
 	luaopen_string(m_luaState);
 	luaopen_math(m_luaState);
 	luaopen_os(m_luaState);
-
-#if defined(T_LUA_5_2)
-	luaopen_bit32(m_luaState);
-#elif defined(LUA_BITLIBNAME)
+#	if defined(LUA_BITLIBNAME)
 	luaopen_bit(m_luaState);
-#endif
-
-#if defined(T_LUA_5_2)
-	luaL_openlibs(m_luaState);
+#	endif
 #endif
 
 	lua_register(m_luaState, "print", luaPrint);
-
-	// Add runtime class registrar function.
-	lua_pushlightuserdata(m_luaState, (void*)this);
-	lua_pushcclosure(m_luaState, exportRuntimeClass, 1);
-	lua_setglobal(m_luaState, "exportRuntimeClass");
 
 	// Create table containing weak references to C++ object wrappers.
 	{
@@ -142,19 +133,130 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 {
 	CHECK_LUA_STACK(m_luaState, 0);
 
-	RegisteredClass rc;
+	const TypeInfo& exportType = runtimeClass->getExportType();
 
+	RegisteredClass rc;
 	rc.runtimeClass = runtimeClass;
 
+	// Create "class" meta table.
+	lua_newtable(m_luaState);
+#if defined(_DEBUG)
+	lua_pushstring(m_luaState, "class meta");
+	lua_setfield(m_luaState, -2, "__name");
+#endif
+
+	lua_pushlightuserdata(m_luaState, (void*)runtimeClass);			// +1	-> 2
+	lua_rawseti(m_luaState, -2, c_tableKey_class);					// -1	-> 1
+
+	if (runtimeClass->haveUnknown())
+	{
+		lua_pushlightuserdata(m_luaState, (void*)this);
+		lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
+		lua_pushcclosure(m_luaState, classIndexLookup, 2);
+		lua_setfield(m_luaState, -2, "__index");
+	}
+
+	if (runtimeClass->haveConstructor())
+	{
+		lua_pushlightuserdata(m_luaState, (void*)this);
+		lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
+		lua_pushcclosure(m_luaState, classCallConstructor, 2);
+		lua_setfield(m_luaState, -2, "__call");
+	}
+
+	rc.classMetaTableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+
+	// Create class table.
 	lua_newtable(m_luaState);										// +1	-> 1
-	rc.metaTableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);		// -1	-> 0
-	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.metaTableRef);	// +1	-> 1
+#if defined(_DEBUG)
+	lua_pushstring(m_luaState, "class");
+	lua_setfield(m_luaState, -2, "__name");
+#endif
 
-	lua_pushcfunction(m_luaState, classGcMethod);
-	lua_setfield(m_luaState, -2, "__gc");
+	lua_pushlightuserdata(m_luaState, (void*)runtimeClass);			// +1	-> 2
+	lua_rawseti(m_luaState, -2, c_tableKey_class);					// -1	-> 1
 
-	lua_pushvalue(m_luaState, -1);									// +1	-> 2
+	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.classMetaTableRef);
+	lua_setmetatable(m_luaState, -2);
+
+	// Add methods from base classes first.
+	std::vector< const TypeInfo* > superTypes;
+	for (const TypeInfo* superType = exportType.getSuper(); superType; superType = superType->getSuper())
+		superTypes.push_back(superType);
+
+	for (std::vector< const TypeInfo* >::const_reverse_iterator i = superTypes.rbegin(); i != superTypes.rend(); ++i)
+	{
+		for (std::vector< RegisteredClass >::iterator j = m_classRegistry.begin(); j != m_classRegistry.end(); ++j)
+		{
+			if (*i == &j->runtimeClass->getExportType())
+			{
+				uint32_t staticMethodCount = j->runtimeClass->getStaticMethodCount();
+				for (uint32_t i = 0; i < staticMethodCount; ++i)
+				{
+					std::string methodName = j->runtimeClass->getStaticMethodName(i);
+					lua_pushinteger(m_luaState, i);
+					lua_pushlightuserdata(m_luaState, (void*)this);
+					lua_pushlightuserdata(m_luaState, (void*)j->runtimeClass);
+					lua_pushcclosure(m_luaState, classCallStaticMethod, 3);
+					lua_setfield(m_luaState, -2, methodName.c_str());
+				}
+
+				uint32_t methodCount = j->runtimeClass->getMethodCount();
+				for (uint32_t i = 0; i < methodCount; ++i)
+				{
+					std::string methodName = j->runtimeClass->getMethodName(i);
+					lua_pushinteger(m_luaState, i);
+					lua_pushlightuserdata(m_luaState, (void*)this);
+					lua_pushlightuserdata(m_luaState, (void*)j->runtimeClass);
+					lua_pushcclosure(m_luaState, classCallMethod, 3);
+					lua_setfield(m_luaState, -2, methodName.c_str());
+				}
+
+				break;
+			}
+		}
+	}
+
+	// Add this class's methods.
+	uint32_t staticMethodCount = runtimeClass->getStaticMethodCount();
+	for (uint32_t i = 0; i < staticMethodCount; ++i)
+	{
+		std::string methodName = runtimeClass->getStaticMethodName(i);
+		lua_pushinteger(m_luaState, i);
+		lua_pushlightuserdata(m_luaState, (void*)this);
+		lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
+		lua_pushcclosure(m_luaState, classCallStaticMethod, 3);
+		lua_setfield(m_luaState, -2, methodName.c_str());
+	}
+
+	uint32_t methodCount = runtimeClass->getMethodCount();
+	for (uint32_t i = 0; i < methodCount; ++i)
+	{
+		std::string methodName = runtimeClass->getMethodName(i);
+		lua_pushinteger(m_luaState, i);
+		lua_pushlightuserdata(m_luaState, (void*)this);
+		lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
+		lua_pushcclosure(m_luaState, classCallMethod, 3);
+		lua_setfield(m_luaState, -2, methodName.c_str());
+	}
+
+	rc.classTableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+
+	// Create "instance" meta table.
+	lua_newtable(m_luaState);
+#if defined(_DEBUG)
+	lua_pushstring(m_luaState, "instance meta");
+	lua_setfield(m_luaState, -2, "__name");
+#endif
+
+	lua_pushlightuserdata(m_luaState, (void*)runtimeClass);			// +1	-> 2
+	lua_rawseti(m_luaState, -2, c_tableKey_class);					// -1	-> 1
+
+	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.classTableRef);
 	lua_setfield(m_luaState, -2, "__index");						// -1	-> 1
+
+	lua_pushcfunction(m_luaState, classGcMethod);					// +1	-> 2
+	lua_setfield(m_luaState, -2, "__gc");							// -1	-> 1
 
 	lua_pushlightuserdata(m_luaState, (void*)this);
 	lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
@@ -181,75 +283,13 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 	lua_pushcclosure(m_luaState, classDivideMethod, 2);
 	lua_setfield(m_luaState, -2, "__div");
 
-	lua_pushlightuserdata(m_luaState, (void*)runtimeClass);			// +1	-> 2
-	lua_rawseti(m_luaState, -2, c_tableKey_class);					// -1	-> 1
-
-	uint32_t staticMethodCount = runtimeClass->getStaticMethodCount();
-	for (uint32_t i = 0; i < staticMethodCount; ++i)
-	{
-		std::string methodName = runtimeClass->getStaticMethodName(i);
-		lua_pushinteger(m_luaState, i);
-		lua_pushlightuserdata(m_luaState, (void*)this);
-		lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
-		lua_pushcclosure(m_luaState, classCallStaticMethod, 3);
-		lua_setfield(m_luaState, -2, methodName.c_str());
-	}
-
-	uint32_t methodCount = runtimeClass->getMethodCount();
-	for (uint32_t i = 0; i < methodCount; ++i)
-	{
-		std::string methodName = runtimeClass->getMethodName(i);
-		lua_pushinteger(m_luaState, i);
-		lua_pushlightuserdata(m_luaState, (void*)this);
-		lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
-		lua_pushcclosure(m_luaState, classCallMethod, 3);
-		lua_setfield(m_luaState, -2, methodName.c_str());
-	}
-
-	const TypeInfo& exportType = runtimeClass->getExportType();
-	const TypeInfo* superType = exportType.getSuper();
-
-	lua_newtable(m_luaState);
-
-	bool exportedAsRoot = true;
-	for (std::vector< RegisteredClass >::iterator i = m_classRegistry.begin(); i != m_classRegistry.end(); ++i)
-	{
-		if (superType == &i->runtimeClass->getExportType())
-		{
-			lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, i->metaTableRef);	// +1	-> 2
-			lua_setmetatable(m_luaState, -2);								// -1	-> 1
-			exportedAsRoot = false;
-			break;
-		}
-	}
-
-	if (/*exportedAsRoot && */runtimeClass->haveUnknown())
-	{
-		lua_pushlightuserdata(m_luaState, (void*)this);
-		lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
-		lua_pushcclosure(m_luaState, classIndexLookup, 2);
-		lua_setfield(m_luaState, -2, "__index");
-	}
-	else if (!exportedAsRoot)
-	{
-		lua_pushvalue(m_luaState, -1);									// +1	-> 2
-		lua_setfield(m_luaState, -2, "__index");						// -1	-> 1
-	}
-
-	if (runtimeClass->haveConstructor())
-	{
-		lua_pushlightuserdata(m_luaState, (void*)this);				// +1	-> 2
-		lua_pushlightuserdata(m_luaState, (void*)runtimeClass);		// +1	-> 3
-		lua_pushcclosure(m_luaState, classCallConstructor, 2);		// -1	-> 2
-		lua_setfield(m_luaState, -2, "__call");						// -1	-> 1
-	}
-
-	lua_setmetatable(m_luaState, -2);
+	rc.instanceMetaTableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
 
 	// Export class in global scope.
 	std::wstring exportName = exportType.getName();
 	std::vector< std::wstring > exportPath;
 	Split< std::wstring >::any(exportName, L".", exportPath);
+	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.classTableRef);
 	lua_setglobal(m_luaState, wstombs(exportPath.back()).c_str());
 
 	// Add class to registry.
@@ -677,7 +717,7 @@ void ScriptManagerLua::pushObject(ITypedObject* object)
 	*objectRef = object;
 	T_SAFE_ADDREF(*objectRef);
 
-	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.metaTableRef);
+	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.instanceMetaTableRef);
 	lua_setmetatable(m_luaState, -2);
 
 	// Store object in weak table.
@@ -764,17 +804,7 @@ Any ScriptManagerLua::toAny(int32_t index)
 		// Box LUA object into C++ container.
 		lua_pushvalue(m_luaState, index);
 		int32_t tableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
-
-		const ScriptClassLua* scriptClass = 0;
-		if (lua_getmetatable(m_luaState, index) != 0)
-		{
-			lua_getfield(m_luaState, -1, "__index");
-			lua_rawgeti(m_luaState, -1, c_scriptClassKey);
-			if (lua_islightuserdata(m_luaState, -1))
-				scriptClass = reinterpret_cast< ScriptClassLua* >(lua_touserdata(m_luaState, -1));
-		}
-
-		return Any::fromObject(new ScriptObjectLua(m_luaState, tableRef, scriptClass));
+		return Any::fromObject(new ScriptObjectLua(m_luaState, tableRef, 0));
 	}
 	else if (lua_isfunction(m_luaState, index))
 	{
@@ -831,17 +861,7 @@ void ScriptManagerLua::toAny(int32_t base, int32_t count, Any* outAnys)
 			// Box LUA object into C++ container.
 			lua_pushvalue(m_luaState, index);
 			int32_t tableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
-
-			const ScriptClassLua* scriptClass = 0;
-			if (lua_getmetatable(m_luaState, index) != 0)
-			{
-				lua_getfield(m_luaState, -1, "__index");
-				lua_rawgeti(m_luaState, -1, c_scriptClassKey);
-				if (lua_islightuserdata(m_luaState, -1))
-					scriptClass = reinterpret_cast< ScriptClassLua* >(lua_touserdata(m_luaState, -1));
-			}
-
-			outAnys[i] = Any::fromObject(new ScriptObjectLua(m_luaState, tableRef, scriptClass));
+			outAnys[i] = Any::fromObject(new ScriptObjectLua(m_luaState, tableRef, 0));
 		}
 	}
 }
@@ -968,41 +988,6 @@ void ScriptManagerLua::breakDebugger(lua_State* luaState)
 	m_debugger->analyzeState(luaState, &ar);
 }
 
-int ScriptManagerLua::exportRuntimeClass(lua_State* luaState)
-{
-	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
-	T_ASSERT (manager);
-
-	const char* className = lua_tostring(luaState, -1);
-	T_ASSERT (className);
-
-	Ref< ScriptClassLua > scriptClass = new ScriptClassLua(manager->m_lockContext, manager->m_luaState, className);
-
-	// Gather all methods of script class.
-	lua_pushnil(luaState);
-	while (lua_next(luaState, -3))
-	{
-		if (lua_isfunction(luaState, -1))
-		{
-			const char* functionName = lua_tostring(luaState, -2);
-			T_ASSERT (functionName);
-
-			lua_pushvalue(luaState, -1);
-			int32_t functionRef = luaL_ref(luaState, LUA_REGISTRYINDEX);
-
-			scriptClass->addMethod(functionName, functionRef);
-		}
-		lua_pop(luaState, 1);
-	}
-
-	// Attach native runtime class to script class table.
-	lua_pushlightuserdata(luaState, scriptClass.ptr());
-	T_SAFE_ANONYMOUS_ADDREF(scriptClass);
-	lua_rawseti(luaState, -3, c_scriptClassKey);
-
-	return 0;
-}
-
 int ScriptManagerLua::classIndexLookup(lua_State* luaState)
 {
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
@@ -1017,7 +1002,7 @@ int ScriptManagerLua::classIndexLookup(lua_State* luaState)
 	const char* key = lua_tostring(luaState, 2);
 	T_ASSERT (key);
 
-	// Create unknown method closure.
+	// Not a member, create "unknown method" closure.
 	lua_pushstring(luaState, key);
 	lua_pushlightuserdata(luaState, (void*)manager);
 	lua_pushlightuserdata(luaState, (void*)runtimeClass);
@@ -1122,7 +1107,7 @@ int ScriptManagerLua::classCallUnknownMethod(lua_State* luaState)
 	if (top < 1)
 		return 0;
 
-	Object* object = *reinterpret_cast< Object** >(lua_touserdata(luaState, 1));
+	ITypedObject* object = *reinterpret_cast< ITypedObject** >(lua_touserdata(luaState, 1));
 	if (!object)
 		return 0;
 

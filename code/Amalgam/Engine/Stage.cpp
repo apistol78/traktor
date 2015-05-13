@@ -66,7 +66,7 @@ void Stage::destroy()
 			{
 				Any::fromObject(const_cast< Object* >(m_params.c_ptr()))
 			};
-			m_scriptContext->executeMethod(this, "finalize", sizeof_array(argv), argv);
+			m_scriptContext->executeFunction("finalize", sizeof_array(argv), argv);
 		}
 
 		m_scriptContext->setGlobal("stage", Any());
@@ -336,7 +336,7 @@ bool Stage::validateScriptContext()
 			{
 				Any::fromObject(const_cast< Object* >(m_params.c_ptr()))
 			};
-			T_MEASURE_STATEMENT(m_scriptContext->executeMethod(this, "initialize", sizeof_array(argv), argv), 1.0 / 60.0);
+			T_MEASURE_STATEMENT(m_scriptContext->executeFunction("initialize", sizeof_array(argv), argv), 1.0 / 60.0);
 		}
 		m_initialized = true;
 	}

@@ -21,7 +21,7 @@ public:
 
 	virtual ~ScriptObjectLua();
 
-	virtual const IRuntimeClass* getRuntimeClass() const;
+	virtual const IRuntimeClass* getRuntimeClass() const T_FINAL;
 
 	void push();
 

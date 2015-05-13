@@ -16,6 +16,9 @@
 
 namespace traktor
 {
+
+class IRuntimeClass;
+
 	namespace script
 	{
 
@@ -50,6 +53,13 @@ public:
 	 */
 	virtual Any getGlobal(const std::string& globalName) = 0;
 
+	/*! \brief Get class defined in script environment.
+	 *
+	 * \param className Name of class.
+	 * \return Runtime class declaration.
+	 */
+	virtual Ref< const IRuntimeClass > findClass(const std::string& className) = 0;
+
 	/*! \brief Return true if context contains function (or method).
 	 *
 	 * \param functionName Name of function of interest.
@@ -65,16 +75,6 @@ public:
 	 * \return Return value from function.
 	 */
 	virtual Any executeFunction(const std::string& functionName, uint32_t argc = 0, const Any* argv = 0) = 0;
-
-	/*! \brief Execute method.
-	*
-	* \param self This object.
-	* \param methodName Name of method to execute.
-	* \param argc Number of arguments.
-	* \param argv Argument vector.
-	* \return Return value from function.
-	*/
-	virtual Any executeMethod(Object* self, const std::string& methodName, uint32_t argc = 0, const Any* argv = 0) = 0;
 };
 
 	}

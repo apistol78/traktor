@@ -78,7 +78,7 @@ bool ScriptClassWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, 
 		ss << className << L" = inherit(" << inheritClassName << L")" << Endl;
 	ss << className << L"_meta = { __index = " << className << L" }" << Endl;
 	ss << Endl;
-	ss << L"function " << className << L":new()" << Endl;
+	ss << L"function " << className << L".new()" << Endl;
 	ss << L"\tlocal o = {}" << Endl;
 	ss << L"\tsetmetatable(o, " << className << L"_meta)" << Endl;
 	ss << Endl;
