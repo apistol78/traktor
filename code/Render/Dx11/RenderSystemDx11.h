@@ -85,6 +85,7 @@ private:
 	Ref< IBufferHeapDx11 > m_indexBufferStaticHeap;
 	Ref< Window > m_window;
 	Ref< ResourceCache > m_resourceCache;
+	bool m_resourceCreateLock;
 	float m_displayAspect;
 };
 
