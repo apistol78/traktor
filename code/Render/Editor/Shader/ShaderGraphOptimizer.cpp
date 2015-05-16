@@ -316,11 +316,15 @@ void ShaderGraphOptimizer::insertInterpolators(ShaderGraph* shaderGraph, Node* n
 		Ref< Node > sourceNode = sourceOutputPin->getNode();
 		T_ASSERT (sourceNode);
 
+		bool isSwizzle = is_a< Swizzle >(sourceNode);
 		bool vertexMandatory = is_a< VertexInput >(sourceNode);
-		bool cycle = insideCycle(shaderGraph, sourceOutputPin);
-		PinOrderType inputOrder = ShaderGraphOrderEvaluator(shaderGraph, m_frequentUniformsAsLinear).evaluate(sourceOutputPin);
+		bool inCycle = insideCycle(shaderGraph, sourceOutputPin);
 
-		if (vertexMandatory || (!cycle && inputOrder <= PotLinear))
+		PinOrderType inputOrder = PotConstant;
+		if (!vertexMandatory)
+			inputOrder = ShaderGraphOrderEvaluator(shaderGraph, m_frequentUniformsAsLinear).evaluate(sourceOutputPin);
+
+		if (vertexMandatory || (!isSwizzle && !inCycle && inputOrder <= PotLinear))
 		{
 			// We've reached low enough order; insert interpolator if linear and stop.
 			if (vertexMandatory || inputOrder == PotLinear)
