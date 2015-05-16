@@ -23,21 +23,43 @@
 #include "Render/Dx11/VolumeTextureDx11.h"
 #include "Render/Dx11/Window.h"
 
-#if 0
-#	define T_RESOURCE_LOCK_ACQUIRE	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_context->getLock());
-#else
-#	define T_RESOURCE_LOCK_ACQUIRE
-#endif
-
 namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+template < typename T >
+class ConditionalAcquire
+{
+public:
+	T_FORCE_INLINE ConditionalAcquire< T >(T& lock, bool cond)
+	:	m_lock(lock)
+	,	m_cond(cond)
+	{
+		if (m_cond)
+			m_lock.wait();
+	}
+	
+	T_FORCE_INLINE ~ConditionalAcquire< T >()
+	{
+		if (m_cond)
+			m_lock.release();
+	}
+
+private:
+	T& m_lock;
+	bool m_cond;
+};
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemDx11", 0, RenderSystemDx11, IRenderSystem)
 
 RenderSystemDx11::RenderSystemDx11()
 :	m_displayAspect(0.0f)
+,	m_resourceCreateLock(false)
 {
 }
 
@@ -286,6 +308,17 @@ bool RenderSystemDx11::create(const RenderSystemDesc& desc)
 
 	m_resourceCache = new ResourceCache(d3dDevice, desc.mipBias, clamp(desc.maxAnisotropy, 1, 16));
 
+	// Check if lock is mandatory when creating resources.
+	D3D11_FEATURE_DATA_THREADING d3dfdt;
+	std::memset(&d3dfdt, 0, sizeof(d3dfdt));
+	if (SUCCEEDED(d3dDevice->CheckFeatureSupport(D3D11_FEATURE_THREADING, &d3dfdt, sizeof(d3dfdt))))
+		m_resourceCreateLock = (d3dfdt.DriverConcurrentCreates == FALSE);
+	else
+		m_resourceCreateLock = true;
+
+	if (m_resourceCreateLock)
+		log::warning << L"D3D11 driver doesn't support concurrent resource creation; render stalls might occur" << Endl;
+
 	return true;
 }
 
@@ -458,7 +491,7 @@ Ref< IRenderView > RenderSystemDx11::createRenderView(const RenderViewEmbeddedDe
 
 Ref< VertexBuffer > RenderSystemDx11::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
-	T_RESOURCE_LOCK_ACQUIRE
+	T_ANONYMOUS_VAR(ConditionalAcquire< Semaphore >)(m_context->getLock(), m_resourceCreateLock);
 	if (!dynamic)
 		return VertexBufferStaticDx11::create(m_context, m_vertexBufferStaticHeap, bufferSize, vertexElements);
 	else
@@ -467,7 +500,7 @@ Ref< VertexBuffer > RenderSystemDx11::createVertexBuffer(const std::vector< Vert
 
 Ref< IndexBuffer > RenderSystemDx11::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
-	T_RESOURCE_LOCK_ACQUIRE
+	T_ANONYMOUS_VAR(ConditionalAcquire< Semaphore >)(m_context->getLock(), m_resourceCreateLock);
 	if (!dynamic)
 		return IndexBufferStaticDx11::create(m_context, m_indexBufferStaticHeap, indexType, bufferSize);
 	else
@@ -476,7 +509,7 @@ Ref< IndexBuffer > RenderSystemDx11::createIndexBuffer(IndexType indexType, uint
 
 Ref< ISimpleTexture > RenderSystemDx11::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
-	T_RESOURCE_LOCK_ACQUIRE
+	T_ANONYMOUS_VAR(ConditionalAcquire< Semaphore >)(m_context->getLock(), m_resourceCreateLock);
 	Ref< SimpleTextureDx11 > texture = new SimpleTextureDx11(m_context);
 	if (texture->create(desc))
 		return texture;
@@ -486,7 +519,7 @@ Ref< ISimpleTexture > RenderSystemDx11::createSimpleTexture(const SimpleTextureC
 
 Ref< ICubeTexture > RenderSystemDx11::createCubeTexture(const CubeTextureCreateDesc& desc)
 {
-	T_RESOURCE_LOCK_ACQUIRE
+	T_ANONYMOUS_VAR(ConditionalAcquire< Semaphore >)(m_context->getLock(), m_resourceCreateLock);
 	Ref< CubeTextureDx11 > texture = new CubeTextureDx11(m_context);
 	if (texture->create(desc))
 		return texture;
@@ -496,7 +529,7 @@ Ref< ICubeTexture > RenderSystemDx11::createCubeTexture(const CubeTextureCreateD
 
 Ref< IVolumeTexture > RenderSystemDx11::createVolumeTexture(const VolumeTextureCreateDesc& desc)
 {
-	T_RESOURCE_LOCK_ACQUIRE
+	T_ANONYMOUS_VAR(ConditionalAcquire< Semaphore >)(m_context->getLock(), m_resourceCreateLock);
 	Ref< VolumeTextureDx11 > texture = new VolumeTextureDx11(m_context);
 	if (texture->create(desc))
 		return texture;
@@ -506,7 +539,7 @@ Ref< IVolumeTexture > RenderSystemDx11::createVolumeTexture(const VolumeTextureC
 
 Ref< RenderTargetSet > RenderSystemDx11::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_context->getLock());
+	T_ANONYMOUS_VAR(ConditionalAcquire< Semaphore >)(m_context->getLock(), m_resourceCreateLock);
 	Ref< RenderTargetSetDx11 > renderTargetSet = new RenderTargetSetDx11(m_context);
 	if (renderTargetSet->create(desc))
 		return renderTargetSet;
@@ -516,7 +549,7 @@ Ref< RenderTargetSet > RenderSystemDx11::createRenderTargetSet(const RenderTarge
 
 Ref< IProgram > RenderSystemDx11::createProgram(const ProgramResource* programResource, const wchar_t* const tag)
 {
-	T_RESOURCE_LOCK_ACQUIRE
+	T_ANONYMOUS_VAR(ConditionalAcquire< Semaphore >)(m_context->getLock(), m_resourceCreateLock);
 
 	Ref< const ProgramResourceDx11 > resource = dynamic_type_cast< const ProgramResourceDx11* >(programResource);
 	if (!resource)
@@ -536,7 +569,7 @@ Ref< IProgramCompiler > RenderSystemDx11::createProgramCompiler() const
 
 Ref< ITimeQuery > RenderSystemDx11::createTimeQuery() const
 {
-	T_RESOURCE_LOCK_ACQUIRE
+	T_ANONYMOUS_VAR(ConditionalAcquire< Semaphore >)(m_context->getLock(), m_resourceCreateLock);
 	Ref< TimeQueryDx11 > timeQuery = new TimeQueryDx11(m_context);
 	if (timeQuery->create())
 		return timeQuery;
@@ -546,7 +579,7 @@ Ref< ITimeQuery > RenderSystemDx11::createTimeQuery() const
 
 void RenderSystemDx11::purge()
 {
-	T_RESOURCE_LOCK_ACQUIRE
+	T_ANONYMOUS_VAR(ConditionalAcquire< Semaphore >)(m_context->getLock(), m_resourceCreateLock);
 	m_context->deleteResources();
 }
 
