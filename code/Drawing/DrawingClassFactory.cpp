@@ -5,6 +5,7 @@
 #include "Drawing/DrawingClassFactory.h"
 #include "Drawing/IImageFilter.h"
 #include "Drawing/Image.h"
+#include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/BrightnessContrastFilter.h"
 #include "Drawing/Filters/ChainFilter.h"
 #include "Drawing/Filters/ConvolutionFilter.h"
@@ -30,6 +31,82 @@ namespace traktor
 	{
 		namespace
 		{
+
+class BoxedPixelFormat : public Object
+{
+	T_RTTI_CLASS;
+
+public:
+	BoxedPixelFormat(const PixelFormat& pf) : m_pf(pf) {}
+
+	const PixelFormat& unbox() const { return m_pf; }
+
+	static Ref< BoxedPixelFormat > getP4() { return new BoxedPixelFormat(PixelFormat::getP4()); }
+
+	static Ref< BoxedPixelFormat > getP8() { return new BoxedPixelFormat(PixelFormat::getP8()); }
+
+	static Ref< BoxedPixelFormat > getA8() { return new BoxedPixelFormat(PixelFormat::getA8()); }
+
+	static Ref< BoxedPixelFormat > getR8() { return new BoxedPixelFormat(PixelFormat::getR8()); }
+
+	static Ref< BoxedPixelFormat > getR16() { return new BoxedPixelFormat(PixelFormat::getR16()); }
+
+	static Ref< BoxedPixelFormat > getR5G5B5() { return new BoxedPixelFormat(PixelFormat::getR5G5B5()); }
+
+	static Ref< BoxedPixelFormat > getR5G6B5() { return new BoxedPixelFormat(PixelFormat::getR5G6B5()); }
+
+	static Ref< BoxedPixelFormat > getR5G5B5A1() { return new BoxedPixelFormat(PixelFormat::getR5G5B5A1()); }
+
+	static Ref< BoxedPixelFormat > getR4G4B4A4() { return new BoxedPixelFormat(PixelFormat::getR4G4B4A4()); }
+
+	static Ref< BoxedPixelFormat > getR8G8B8() { return new BoxedPixelFormat(PixelFormat::getR8G8B8()); }
+
+	static Ref< BoxedPixelFormat > getB8G8R8() { return new BoxedPixelFormat(PixelFormat::getB8G8R8()); }
+
+	static Ref< BoxedPixelFormat > getA1R5G5B5() { return new BoxedPixelFormat(PixelFormat::getA1R5G5B5()); }
+
+	static Ref< BoxedPixelFormat > getX8R8G8B8() { return new BoxedPixelFormat(PixelFormat::getX8R8G8B8()); }
+
+	static Ref< BoxedPixelFormat > getX8B8G8R8() { return new BoxedPixelFormat(PixelFormat::getX8B8G8R8()); }
+
+	static Ref< BoxedPixelFormat > getR8G8B8X8() { return new BoxedPixelFormat(PixelFormat::getR8G8B8X8()); }
+
+	static Ref< BoxedPixelFormat > getB8G8R8X8() { return new BoxedPixelFormat(PixelFormat::getB8G8R8X8()); }
+
+	static Ref< BoxedPixelFormat > getA8R8G8B8() { return new BoxedPixelFormat(PixelFormat::getA8R8G8B8()); }
+
+	static Ref< BoxedPixelFormat > getA8B8G8R8() { return new BoxedPixelFormat(PixelFormat::getA8B8G8R8()); }
+
+	static Ref< BoxedPixelFormat > getR8G8B8A8() { return new BoxedPixelFormat(PixelFormat::getR8G8B8A8()); }
+
+	static Ref< BoxedPixelFormat > getB8G8R8A8() { return new BoxedPixelFormat(PixelFormat::getB8G8R8A8()); }
+
+	static Ref< BoxedPixelFormat > getR16F() { return new BoxedPixelFormat(PixelFormat::getR16F()); }
+
+	static Ref< BoxedPixelFormat > getR32F() { return new BoxedPixelFormat(PixelFormat::getR32F()); }
+
+	static Ref< BoxedPixelFormat > getARGBF16() { return new BoxedPixelFormat(PixelFormat::getARGBF16()); }
+
+	static Ref< BoxedPixelFormat > getARGBF32() { return new BoxedPixelFormat(PixelFormat::getARGBF32()); }
+
+	static Ref< BoxedPixelFormat > getRGBAF16() { return new BoxedPixelFormat(PixelFormat::getRGBAF16()); }
+
+	static Ref< BoxedPixelFormat > getRGBAF32() { return new BoxedPixelFormat(PixelFormat::getRGBAF32()); }
+
+	static Ref< BoxedPixelFormat > getABGRF16() { return new BoxedPixelFormat(PixelFormat::getABGRF16()); }
+
+	static Ref< BoxedPixelFormat > getABGRF32() { return new BoxedPixelFormat(PixelFormat::getABGRF32()); }
+
+private:
+	const PixelFormat& m_pf;
+};
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.PixelFormat", BoxedPixelFormat, Object)
+
+Ref< Image > Image_constructor_3(const BoxedPixelFormat* pixelFormat, uint32_t width, uint32_t height)
+{
+	return new Image(pixelFormat->unbox(), width, height);
+}
 
 Ref< CropFilter > CropFilter_constructor(int32_t anchorX, int32_t anchorY, int32_t width, int32_t height)
 {
@@ -79,11 +156,43 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.drawing.DrawingClassFactory", 0, Drawin
 
 void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
+	Ref< AutoRuntimeClass< BoxedPixelFormat > > classBoxedPixelFormat = new AutoRuntimeClass< BoxedPixelFormat >();
+	classBoxedPixelFormat->addStaticMethod("getP4", &BoxedPixelFormat::getP4);
+	classBoxedPixelFormat->addStaticMethod("getP8", &BoxedPixelFormat::getP8);
+	classBoxedPixelFormat->addStaticMethod("getA8", &BoxedPixelFormat::getA8);
+	classBoxedPixelFormat->addStaticMethod("getR8", &BoxedPixelFormat::getR8);
+	classBoxedPixelFormat->addStaticMethod("getR16", &BoxedPixelFormat::getR16);
+	classBoxedPixelFormat->addStaticMethod("getR5G5B5", &BoxedPixelFormat::getR5G5B5);
+	classBoxedPixelFormat->addStaticMethod("getR5G6B5", &BoxedPixelFormat::getR5G6B5);
+	classBoxedPixelFormat->addStaticMethod("getR5G5B5A1", &BoxedPixelFormat::getR5G5B5A1);
+	classBoxedPixelFormat->addStaticMethod("getR4G4B4A4", &BoxedPixelFormat::getR4G4B4A4);
+	classBoxedPixelFormat->addStaticMethod("getR8G8B8", &BoxedPixelFormat::getR8G8B8);
+	classBoxedPixelFormat->addStaticMethod("getB8G8R8", &BoxedPixelFormat::getB8G8R8);
+	classBoxedPixelFormat->addStaticMethod("getA1R5G5B5", &BoxedPixelFormat::getA1R5G5B5);
+	classBoxedPixelFormat->addStaticMethod("getX8R8G8B8", &BoxedPixelFormat::getX8R8G8B8);
+	classBoxedPixelFormat->addStaticMethod("getX8B8G8R8", &BoxedPixelFormat::getX8B8G8R8);
+	classBoxedPixelFormat->addStaticMethod("getR8G8B8X8", &BoxedPixelFormat::getR8G8B8X8);
+	classBoxedPixelFormat->addStaticMethod("getB8G8R8X8", &BoxedPixelFormat::getB8G8R8X8);
+	classBoxedPixelFormat->addStaticMethod("getA8R8G8B8", &BoxedPixelFormat::getA8R8G8B8);
+	classBoxedPixelFormat->addStaticMethod("getA8B8G8R8", &BoxedPixelFormat::getA8B8G8R8);
+	classBoxedPixelFormat->addStaticMethod("getR8G8B8A8", &BoxedPixelFormat::getR8G8B8A8);
+	classBoxedPixelFormat->addStaticMethod("getB8G8R8A8", &BoxedPixelFormat::getB8G8R8A8);
+	classBoxedPixelFormat->addStaticMethod("getR16F", &BoxedPixelFormat::getR16F);
+	classBoxedPixelFormat->addStaticMethod("getR32F", &BoxedPixelFormat::getR32F);
+	classBoxedPixelFormat->addStaticMethod("getARGBF16", &BoxedPixelFormat::getARGBF16);
+	classBoxedPixelFormat->addStaticMethod("getARGBF32", &BoxedPixelFormat::getARGBF32);
+	classBoxedPixelFormat->addStaticMethod("getRGBAF16", &BoxedPixelFormat::getRGBAF16);
+	classBoxedPixelFormat->addStaticMethod("getRGBAF32", &BoxedPixelFormat::getRGBAF32);
+	classBoxedPixelFormat->addStaticMethod("getABGRF16", &BoxedPixelFormat::getABGRF16);
+	classBoxedPixelFormat->addStaticMethod("getABGRF32", &BoxedPixelFormat::getABGRF32);
+	registrar->registerClass(classBoxedPixelFormat);
+
 	Ref< AutoRuntimeClass< IImageFilter > > classIImageFilter = new AutoRuntimeClass< IImageFilter >();
 	registrar->registerClass(classIImageFilter);
 
 	Ref< AutoRuntimeClass< Image > > classImage = new AutoRuntimeClass< Image >();
 	classImage->addConstructor();
+	classImage->addConstructor< const BoxedPixelFormat*, uint32_t, uint32_t >(&Image_constructor_3);
 	classImage->addMethod("clone", &Image::clone);
 	classImage->addMethod("copy", &Image_copy_1);
 	classImage->addMethod("copy", &Image_copy_2);
