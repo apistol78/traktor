@@ -528,7 +528,14 @@ bool Application::update()
 		// it require current state.
 
 #if !defined(__EMSCRIPTEN__)
-		if (m_threadRender && !m_signalRenderFinish.wait(1000))
+		if (
+			m_threadRender &&
+#	if !defined(_DEBUG)
+			!m_signalRenderFinish.wait(1000)
+#	else
+			!m_signalRenderFinish.wait()
+#	endif
+		)
 		{
 			log::error << L"Unable to synchronize render thread; render thread seems to be stuck." << Endl;
 			return false;

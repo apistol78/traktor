@@ -9,6 +9,8 @@ namespace traktor
 	namespace render
 	{
 		
+class AbstractSampler;
+
 /*!
  * \ingroup SW
  */
@@ -35,13 +37,15 @@ public:
 
 	virtual void unlock(int level);
 
-	inline const uint32_t* getData() const { return m_data; }
+	Ref< AbstractSampler > createSampler() const;
+
+	inline const uint8_t* getData() const { return m_data; }
 
 private:
 	int m_width;
 	int m_height;
 	TextureFormat m_format;
-	uint32_t* m_data;
+	uint8_t* m_data;
 	uint8_t* m_lock;
 };
 		

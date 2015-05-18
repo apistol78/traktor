@@ -75,7 +75,12 @@ EmitterVariable* EmitterContext::emitInput(const InputPin* inputPin)
 		}
 
 		i = m_currentState->inputs.find(sourcePin);
-		T_FATAL_ASSERT (i != m_currentState->inputs.end());
+		if (i == m_currentState->inputs.end())
+		{
+			log::error << L"Emitter of node \"" << type_name(sourcePin->getNode()) << L"\" did not emit required output \"" << sourcePin->getName() << L"\"; internal error." << Endl;
+			return 0;
+		}
+
 		T_FATAL_ASSERT (std::find(i->second.pins.begin(), i->second.pins.end(), inputPin) != i->second.pins.end());
 
 		if (std::find(i->second.released.begin(), i->second.released.end(), inputPin) != i->second.released.end())
@@ -103,14 +108,17 @@ void EmitterContext::releaseInput(const InputPin* inputPin)
 		return;
 
 	std::map< const OutputPin*, OutputVariable >::iterator i = m_currentState->inputs.find(sourcePin);
-	T_FATAL_ASSERT (i != m_currentState->inputs.end());
-	//T_FATAL_ASSERT (i->second.count > 0);
+	if (i == m_currentState->inputs.end())
+	{
+		T_FATAL_ASSERT(inputPin->isOptional());
+		return;
+	}
 
 	T_FATAL_ASSERT (std::find(i->second.pins.begin(), i->second.pins.end(), inputPin) != i->second.pins.end());
 	T_FATAL_ASSERT (std::find(i->second.released.begin(), i->second.released.end(), inputPin) == i->second.released.end());
 	i->second.released.push_back(inputPin);
 
-	if (--i->second.count <= 0)
+	if (!i->second.resident && --i->second.count <= 0)
 		freeTemporary(i->second.var);
 }
 
@@ -122,7 +130,7 @@ void EmitterContext::releaseInput(Node* node, const std::wstring& inputPinName)
 	return releaseInput(inputPin);
 }
 
-EmitterVariable* EmitterContext::emitOutput(Node* node, const std::wstring& outputPinName, EmitterVariableType type)
+EmitterVariable* EmitterContext::emitOutput(Node* node, const std::wstring& outputPinName, EmitterVariableType type, bool resident)
 {
 	const OutputPin* outputPin = node->findOutputPin(outputPinName);
 	T_ASSERT_M (outputPin, L"Unable to find output pin");
@@ -133,11 +141,24 @@ EmitterVariable* EmitterContext::emitOutput(Node* node, const std::wstring& outp
 	OutputVariable& o = m_currentState->inputs[outputPin];
 	o.var = var;
 	o.count = m_shaderGraph->getDestinationCount(outputPin);
+	o.resident = resident;
 	T_FATAL_ASSERT (o.count >= 0);
 
 	m_shaderGraph->findDestinationPins(outputPin, o.pins);
 
 	return o.var;
+}
+
+void EmitterContext::releaseOutput(Node* node, const std::wstring& outputPinName)
+{
+	const OutputPin* outputPin = node->findOutputPin(outputPinName);
+	T_ASSERT_M (outputPin, L"Unable to find output pin");
+
+	std::map< const OutputPin*, OutputVariable >::iterator i = m_currentState->inputs.find(outputPin);
+	T_FATAL_ASSERT (i != m_currentState->inputs.end());
+	T_FATAL_ASSERT (i->second.resident);
+
+	freeTemporary(i->second.var);
 }
 
 uint32_t EmitterContext::getCurrentAddress() const

@@ -9,19 +9,16 @@
 #include "Render/Sw/ProgramSw.h"
 #include "Render/Sw/Line.h"
 #include "Render/Sw/Triangle.h"
+#include "Render/Sw/TypesSw.h"
 #include "Render/VertexElement.h"
 #include "Graphics/IGraphicsSystem.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
+#include "Core/Misc/String.h"
 #include "Core/Timer/Timer.h"
 #include "Core/Log/Log.h"
-
-#if defined(max)
-#	undef max
-#endif
-#if defined(min)
-#	undef min
-#endif
+#include "Drawing/Image.h"
+#include "Drawing/PixelFormat.h"
 
 namespace traktor
 {
@@ -30,45 +27,13 @@ namespace traktor
 		namespace
 		{
 
-const int32_t c_targetScale = 1;
-
 typedef traktor::Scalar scalar_t;
-
-inline float clamp(float v, float mn, float mx)
-{
-	return min(max(v, mn), mx);
-}
-
-inline uint16_t to565(float r, float g, float b)
-{
-	return
-		(int32_t(r * ((1 << 5) - 1)) << 11) |
-		(int32_t(g * ((1 << 6) - 1)) << 5) |
-		(int32_t(b * ((1 << 5) - 1)));
-}
-
-inline uint16_t to565(const Vector4& rgb)
-{
-	return to565(rgb.x(), rgb.y(), rgb.z());
-}
-
-inline Vector4 from565(uint16_t rgb)
-{
-	uint32_t r = (rgb & 0xf800) >> 8;
-	uint32_t g = (rgb & 0x07e0) >> 3;
-	uint32_t b = (rgb & 0x001f) << 3;
-	return Vector4(
-		r / 255.0f,
-		g / 255.0f,
-		b / 255.0f
-	);
-}
 
 struct AxisX { static float get(const Vector2& v) { return v.x; } };
 struct AxisY { static float get(const Vector2& v) { return v.y; } };
 
 template < typename Axis, typename Pred >
-inline int clip(
+int clip(
 	const Vector2* in,
 	int inCount,
 	float v,
@@ -115,6 +80,8 @@ RenderViewSw::RenderViewSw(RenderSystemSw* renderSystem, graphics::IGraphicsSyst
 ,	m_processor(processor)
 ,	m_viewPort(0, 0, 0, 0, 0, 0)
 ,	m_instance(0)
+,	m_drawCalls(0)
+,	m_primitiveCount(0)
 {
 	m_frameBufferSurface = m_graphicsSystem->getSecondarySurface();
 	m_frameBufferSurface->getSurfaceDesc(m_frameBufferSurfaceDesc);
@@ -188,7 +155,7 @@ bool RenderViewSw::reset(const RenderViewDefaultDesc& desc)
 
 bool RenderViewSw::reset(int32_t width, int32_t height)
 {
-	bool result = m_graphicsSystem->resize(width / c_targetScale, height / c_targetScale);
+	bool result = m_graphicsSystem->resize(width, height);
 	T_ASSERT (result);
 
 	m_frameBufferSurface = m_graphicsSystem->getSecondarySurface();
@@ -208,8 +175,8 @@ bool RenderViewSw::reset(int32_t width, int32_t height)
 	m_primaryTarget = new RenderTargetSetSw();
 	m_primaryTarget->create(desc);
 
-	m_viewPort.width = width / c_targetScale;
-	m_viewPort.height = height / c_targetScale;
+	m_viewPort.width = width;
+	m_viewPort.height = height;
 
 	m_targetSize.set(
 		float(width),
@@ -261,10 +228,10 @@ bool RenderViewSw::setGamma(float gamma)
 
 void RenderViewSw::setViewport(const Viewport& viewport)
 {
-	m_viewPort.left = viewport.left / c_targetScale;
-	m_viewPort.top = viewport.top / c_targetScale;
-	m_viewPort.width = viewport.width / c_targetScale;
-	m_viewPort.height = viewport.height / c_targetScale;
+	m_viewPort.left = viewport.left;
+	m_viewPort.top = viewport.top;
+	m_viewPort.width = viewport.width;
+	m_viewPort.height = viewport.height;
 	m_viewPort.nearZ = viewport.nearZ;
 	m_viewPort.farZ = viewport.farZ;
 }
@@ -283,7 +250,7 @@ bool RenderViewSw::begin(EyeType eye)
 {
 	T_ASSERT (m_renderStateStack.empty());
 
-	uint16_t* frameBuffer = static_cast< uint16_t* >(m_frameBufferSurface->lock(m_frameBufferSurfaceDesc));
+	uint32_t* frameBuffer = static_cast< uint32_t* >(m_frameBufferSurface->lock(m_frameBufferSurfaceDesc));
 
 	RenderState rs =
 	{
@@ -299,6 +266,9 @@ bool RenderViewSw::begin(EyeType eye)
 	};
 
 	m_renderStateStack.push_back(rs);
+
+	m_drawCalls = 0;
+	m_primitiveCount = 0;
 	return true;
 }
 
@@ -320,7 +290,7 @@ bool RenderViewSw::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 		rts->getWidth(),
 		rts->getHeight(),
 		rt->getColorSurface(),
-		rt->getWidth() * sizeof(uint16_t),
+		rt->getWidth() * sizeof(uint32_t),
 		rts->getDepthSurface(),
 		rt->getWidth() * sizeof(float),
 		rts->getStencilSurface(),
@@ -346,15 +316,15 @@ void RenderViewSw::clear(uint32_t clearMask, const Color4f* colors, float depth,
 	RenderState& rs = m_renderStateStack.back();
 	if (clearMask & CfColor)
 	{
-		uint16_t* colorTarget = rs.colorTarget;
+		uint32_t* colorTarget = rs.colorTarget;
 		if (colorTarget)
 		{
-			uint16_t clearColor = to565(colors[0].getRed(), colors[0].getGreen(), colors[0].getBlue());
+			uint32_t clearColor = toARGB(colors[0]);
 			for (int32_t y = 0; y < rs.height; ++y)
 			{
 				for (int32_t x = 0; x < rs.width; ++x)
 					colorTarget[x] = clearColor;
-				colorTarget += rs.colorTargetPitch / sizeof(uint16_t);
+				colorTarget += rs.colorTargetPitch / sizeof(uint32_t);
 			}
 		}
 	}
@@ -385,6 +355,9 @@ void RenderViewSw::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 		drawIndexed(primitives);
 	else
 		drawNonIndexed(primitives);
+
+	m_drawCalls++;
+	m_primitiveCount += primitives.count;
 }
 
 void RenderViewSw::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
@@ -403,11 +376,39 @@ void RenderViewSw::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 		for (m_instance = 0; m_instance < instanceCount; ++m_instance)
 			drawNonIndexed(primitives);
 	}
+
+	m_drawCalls++;
+	m_primitiveCount += primitives.count * instanceCount;
 }
 
 void RenderViewSw::end()
 {
 	T_ASSERT (!m_renderStateStack.empty());
+
+#if 0
+	{
+		RenderState& rs = m_renderStateStack.back();
+
+		Ref< drawing::Image > image = new drawing::Image(
+			drawing::PixelFormat::getR8G8B8A8(),
+			rs.width,
+			rs.height
+		);
+
+		for (int32_t y = 0; y < rs.height; ++y)
+		{
+			for (int32_t x = 0; x < rs.width; ++x)
+			{
+				uint32_t c = *(rs.colorTarget + y * (rs.colorTargetPitch / 4) + x);
+				Vector4 v = fromARGB(c);
+				image->setPixelUnsafe(x, y, Color4f(v));
+			}
+		}
+
+		static int32_t s_counter = 0;
+		image->save(std::wstring(L"RS_") + toString(s_counter++) + L".png");
+	}
+#endif
 
 	m_renderStateStack.pop_back();
 	if (m_renderStateStack.empty())
@@ -431,6 +432,8 @@ void RenderViewSw::popMarker()
 
 void RenderViewSw::getStatistics(RenderViewStatistics& outStatistics) const
 {
+	outStatistics.drawCalls = m_drawCalls;
+	outStatistics.primitiveCount = m_primitiveCount;
 }
 
 bool RenderViewSw::getBackBufferContent(void* buffer) const
@@ -866,7 +869,7 @@ void RenderViewSw::triangleShadeOpaque(const FragmentContext& context, int x1, i
 	const Ref< AbstractSampler >* samplers = m_currentProgram->getSamplers();
 	uint32_t icount = m_currentProgram->getInterpolatorCount();
 
-	uint32_t colorTargetOffset = x1 + y * rs.colorTargetPitch / sizeof(uint16_t);
+	uint32_t colorTargetOffset = x1 + y * rs.colorTargetPitch / sizeof(uint32_t);
 	uint32_t depthTargetOffset = x1 + y * rs.depthTargetPitch / sizeof(float);
 
 	// Calculate barycentric coordinates.
@@ -929,9 +932,11 @@ void RenderViewSw::triangleShadeOpaque(const FragmentContext& context, int x1, i
 			{
 				// Write color to current target.
 				Vector4& color = fragmentVaryings[0];
-				color = max(color, Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-				color = min(color, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-				rs.colorTarget[colorTargetOffset] = to565(color);
+
+				color = max(color, Vector4::zero());
+				color = min(color, Vector4::one());
+
+				rs.colorTarget[colorTargetOffset] = toARGB(color);
 
 				if (context.depthWriteEnable)
 					rs.depthTarget[depthTargetOffset] = z;
@@ -949,7 +954,7 @@ void RenderViewSw::triangleShadeBlend(const FragmentContext& context, int x1, in
 	const Ref< AbstractSampler >* samplers = m_currentProgram->getSamplers();
 	uint32_t icount = m_currentProgram->getInterpolatorCount();
 
-	uint32_t colorTargetOffset = x1 + y * rs.colorTargetPitch / sizeof(uint16_t);
+	uint32_t colorTargetOffset = x1 + y * rs.colorTargetPitch / sizeof(uint32_t);
 	uint32_t depthTargetOffset = x1 + y * rs.depthTargetPitch / sizeof(float);
 
 	// Calculate barycentric coordinates.
@@ -1013,7 +1018,7 @@ void RenderViewSw::triangleShadeBlend(const FragmentContext& context, int x1, in
 			{
 				// Write color to current target.
 				Vector4& color = fragmentVaryings[0];
-				Vector4 destination = from565(rs.colorTarget[colorTargetOffset]);
+				Vector4 destination = fromARGB(rs.colorTarget[colorTargetOffset]);
 
 				switch (m_currentProgram->getRenderState().blendSource)
 				{
@@ -1117,7 +1122,7 @@ void RenderViewSw::triangleShadeBlend(const FragmentContext& context, int x1, in
 				color = max(color, Vector4::zero());
 				color = min(color, Vector4::one());
 
-				rs.colorTarget[colorTargetOffset] = to565(color);
+				rs.colorTarget[colorTargetOffset] = toARGB(color);
 
 				if (context.depthWriteEnable)
 					rs.depthTarget[depthTargetOffset] = z;
