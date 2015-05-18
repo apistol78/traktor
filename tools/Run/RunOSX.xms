@@ -130,7 +130,7 @@
 				<item type="ExternalDependency" version="2">
 					<link>LnkYes</link>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorOSX.xms</solutionFileName>
-					<projectName>Extern.lua-5.2.3</projectName>
+					<projectName>Extern.lua</projectName>
 				</item>
 				<item type="ExternalDependency" version="2">
 					<link>LnkYes</link>

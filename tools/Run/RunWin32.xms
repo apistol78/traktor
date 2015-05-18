@@ -146,7 +146,7 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin32.xms</solutionFileName>
-					<projectName>Extern.lua-5.2.3</projectName>
+					<projectName>Extern.lua</projectName>
 				</item>
 				<item type="ExternalDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
