@@ -178,7 +178,8 @@ struct Instruction
 
 inline int32_t getRelativeOffset(uint32_t jumpFrom, uint32_t jumpTo)
 {
-	return int32_t(jumpTo - jumpFrom);
+	int32_t delta = int32_t(jumpTo - jumpFrom);
+	return delta > 0 ? delta + 1 : delta;
 }
 
 //@}

@@ -64,7 +64,7 @@
 			<item>
 				<first>ScenePipeline.SuppressDepthPass</first>
 				<second type="traktor.PropertyBoolean">
-					<value>true</value>
+					<value>false</value>
 				</second>
 			</item>
 			<item>
@@ -76,7 +76,7 @@
 			<item>
 				<first>ScenePipeline.SuppressPostProcess</first>
 				<second type="traktor.PropertyBoolean">
-					<value>true</value>
+					<value>false</value>
 				</second>
 			</item>
 			<item>

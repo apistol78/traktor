@@ -1,10 +1,210 @@
-#include <squish.h>
+#include <cstring>
+#include "Core/Math/Half.h"
+#include "Render/Sw/Samplers.h"
 #include "Render/Sw/SimpleTextureSw.h"
 
 namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+template <
+	typename AddressU,
+	typename AddressV
+>
+class SimpleTextureSampler_TfR8 : public AbstractSampler
+{
+public:
+	SimpleTextureSampler_TfR8(const SimpleTextureSw* texture, const uint8_t* data)
+	:	m_texture(texture)
+	,	m_data(data)
+	,	m_width(m_texture->getWidth())
+	,	m_height(m_texture->getHeight())
+	{
+	}
+
+	inline Vector4 getNearest(int x, int y) const
+	{
+		float sample = m_data[x + y * m_width] / 255.0f;
+		return Vector4(sample, sample, sample, sample);
+	}
+
+	virtual Vector4 getSize() const
+	{
+		return Vector4(float(m_width), float(m_height), 0.0f, 0.0f);
+	}
+
+	virtual Vector4 get(const Vector4& texCoord) const
+	{
+		float tx = texCoord.x();
+		float ty = texCoord.y();
+
+		tx *= m_width;
+		ty *= m_height;
+
+		int ix = int(tx);
+		int iy = int(ty);
+
+		int ix1 = AddressU::eval(m_width, ix);
+		int iy1 = AddressV::eval(m_height, iy);
+		int ix2 = AddressU::eval(m_width, ix + 1);
+		int iy2 = AddressV::eval(m_height, iy + 1);
+
+		float fx = tx - ix;
+		float fy = ty - iy;
+
+		Vector4 tl = getNearest(ix1, iy1);
+		Vector4 tr = getNearest(ix2, iy1);
+		Vector4 bl = getNearest(ix1, iy2);
+		Vector4 br = getNearest(ix2, iy2);
+
+		Vector4 l = lerp(tl, bl, traktor::Scalar(fy));
+		Vector4 r = lerp(tr, br, traktor::Scalar(fy));
+
+		return lerp(l, r, traktor::Scalar(fx));
+	}
+
+private:
+	Ref< const SimpleTextureSw > m_texture;
+	const uint8_t* m_data;
+	int m_width;
+	int m_height;
+};
+
+template <
+	typename AddressU,
+	typename AddressV
+>
+class SimpleTextureSampler_TfR8G8B8A8 : public AbstractSampler
+{
+public:
+	SimpleTextureSampler_TfR8G8B8A8(const SimpleTextureSw* texture, const uint8_t* data)
+	:	m_texture(texture)
+	,	m_data(data)
+	,	m_width(m_texture->getWidth())
+	,	m_height(m_texture->getHeight())
+	{
+	}
+
+	inline Vector4 getNearest(int x, int y) const
+	{
+		const uint8_t* data = m_data + (x + y * m_width) * 4;
+		return Vector4(
+			data[0] / 255.0f,
+			data[1] / 255.0f,
+			data[2] / 255.0f,
+			data[3] / 255.0f
+		);
+	}
+
+	virtual Vector4 getSize() const
+	{
+		return Vector4(float(m_width), float(m_height), 0.0f, 0.0f);
+	}
+
+	virtual Vector4 get(const Vector4& texCoord) const
+	{
+		float tx = texCoord.x();
+		float ty = texCoord.y();
+
+		tx *= m_width;
+		ty *= m_height;
+
+		int ix = int(tx);
+		int iy = int(ty);
+
+		int ix1 = AddressU::eval(m_width, ix);
+		int iy1 = AddressV::eval(m_height, iy);
+		int ix2 = AddressU::eval(m_width, ix + 1);
+		int iy2 = AddressV::eval(m_height, iy + 1);
+
+		float fx = tx - ix;
+		float fy = ty - iy;
+
+		Vector4 tl = getNearest(ix1, iy1);
+		Vector4 tr = getNearest(ix2, iy1);
+		Vector4 bl = getNearest(ix1, iy2);
+		Vector4 br = getNearest(ix2, iy2);
+
+		Vector4 l = lerp(tl, bl, traktor::Scalar(fy));
+		Vector4 r = lerp(tr, br, traktor::Scalar(fy));
+
+		return lerp(l, r, traktor::Scalar(fx));
+	}
+
+private:
+	Ref< const SimpleTextureSw > m_texture;
+	const uint8_t* m_data;
+	int m_width;
+	int m_height;
+};
+
+template <
+	typename AddressU,
+	typename AddressV
+>
+class SimpleTextureSampler_TfR16F : public AbstractSampler
+{
+public:
+	SimpleTextureSampler_TfR16F(const SimpleTextureSw* texture, const half_t* data)
+	:	m_texture(texture)
+	,	m_data(data)
+	,	m_width(m_texture->getWidth())
+	,	m_height(m_texture->getHeight())
+	{
+	}
+
+	inline Vector4 getNearest(int x, int y) const
+	{
+		float sample = halfToFloat(m_data[x + y * m_width]);
+		return Vector4(sample, sample, sample, sample);
+	}
+
+	virtual Vector4 getSize() const
+	{
+		return Vector4(float(m_width), float(m_height), 0.0f, 0.0f);
+	}
+
+	virtual Vector4 get(const Vector4& texCoord) const
+	{
+		float tx = texCoord.x();
+		float ty = texCoord.y();
+
+		tx *= m_width;
+		ty *= m_height;
+
+		int ix = int(tx);
+		int iy = int(ty);
+
+		int ix1 = AddressU::eval(m_width, ix);
+		int iy1 = AddressV::eval(m_height, iy);
+		int ix2 = AddressU::eval(m_width, ix + 1);
+		int iy2 = AddressV::eval(m_height, iy + 1);
+
+		float fx = tx - ix;
+		float fy = ty - iy;
+
+		Vector4 tl = getNearest(ix1, iy1);
+		Vector4 tr = getNearest(ix2, iy1);
+		Vector4 bl = getNearest(ix1, iy2);
+		Vector4 br = getNearest(ix2, iy2);
+
+		Vector4 l = lerp(tl, bl, traktor::Scalar(fy));
+		Vector4 r = lerp(tr, br, traktor::Scalar(fy));
+
+		return lerp(l, r, traktor::Scalar(fx));
+	}
+
+private:
+	Ref< const SimpleTextureSw > m_texture;
+	const half_t* m_data;
+	int m_width;
+	int m_height;
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTextureSw", SimpleTextureSw, ISimpleTexture)
 
@@ -23,57 +223,24 @@ SimpleTextureSw::~SimpleTextureSw()
 
 bool SimpleTextureSw::create(const SimpleTextureCreateDesc& desc)
 {
+	if (desc.format >= TfDXT1)
+		return false;
+
+	uint32_t blockSize = getTextureBlockSize(desc.format);
+
 	m_width = desc.width;
 	m_height = desc.height;
 	m_format = desc.format;
-
-	m_data = new uint32_t [m_width * m_height];
+	m_data = new uint8_t [m_width * m_height * blockSize];
 	T_ASSERT (m_data);
 
-	// Copy immutable data into texture.
 	if (desc.immutable)
 	{
-		if (desc.format < TfDXT1)
-		{
-			const uint8_t* src = static_cast< const uint8_t* >(desc.initialData[0].data);
-			uint32_t* dst = m_data;
-
-			for (uint32_t i = 0; i < uint32_t(desc.width * desc.height); ++i)
-			{
-				switch (desc.format)
-				{
-				case TfR8:
-					*dst = (src[0] << 24) | (src[0] << 16) | (src[0] << 8) | src[0];
-					break;
-
-				case TfR8G8B8A8:
-					*dst = (src[3] << 24) | (src[2] << 16) | (src[1] << 8) | src[0];
-					break;
-
-				case TfR16G16B16A16F:
-				case TfR32G32B32A32F:
-				case TfR16G16F:
-				case TfR32G32F:
-				case TfR16F:
-				case TfR32F:
-					T_BREAKPOINT;
-					break;
-				}
-
-				dst += 1;
-				src += getTextureBlockSize(desc.format);
-			}
-		}
-		else	// Compressed texture.
-		{
-			squish::DecompressImage(
-				reinterpret_cast< squish::u8* >(m_data),
-				desc.width,
-				desc.height,
-				desc.initialData[0].data,
-				desc.format == TfDXT1 ? squish::kDxt1 : squish::kDxt3
-			);
-		}
+		std::memcpy(
+			m_data,
+			desc.initialData[0].data,
+			m_width * m_height * blockSize
+		);
 	}
 
 	return true;
@@ -122,13 +289,31 @@ void SimpleTextureSw::unlock(int level)
 	if (level == 0)
 	{
 		if (getTextureBlockSize(m_format) == 4)
-			memcpy(m_data, m_lock, m_width * m_height * sizeof(uint32_t));
+			std::memcpy(m_data, m_lock, m_width * m_height * sizeof(uint32_t));
 		else
 			T_BREAKPOINT;
 	}
 
 	delete[] m_lock;
 	m_lock = 0;
+}
+
+Ref< AbstractSampler > SimpleTextureSw::createSampler() const
+{
+	switch (m_format)
+	{
+	case TfR8:
+		return new SimpleTextureSampler_TfR8< AddressWrap, AddressWrap >(this, m_data);
+
+	case TfR8G8B8A8:
+		return new SimpleTextureSampler_TfR8G8B8A8< AddressWrap, AddressWrap >(this, m_data);
+
+	case TfR16F:
+		return new SimpleTextureSampler_TfR16F< AddressWrap, AddressWrap >(this, (const half_t*)m_data);
+
+	default:
+		return 0;
+	}
 }
 
 	}

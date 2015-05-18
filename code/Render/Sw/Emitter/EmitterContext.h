@@ -57,7 +57,9 @@ public:
 
 	void releaseInput(Node* node, const std::wstring& inputPinName);
 
-	EmitterVariable* emitOutput(Node* node, const std::wstring& outputPinName, EmitterVariableType type);
+	EmitterVariable* emitOutput(Node* node, const std::wstring& outputPinName, EmitterVariableType type, bool resident = false);
+
+	void releaseOutput(Node* node, const std::wstring& outputPinName);
 
 	//@}
 
@@ -126,6 +128,7 @@ private:
 	{
 		EmitterVariable* var;
 		int32_t count;
+		bool resident;
 
 		std::vector< const InputPin* > pins;
 		std::vector< const InputPin* > released;

@@ -44,74 +44,6 @@ struct AddressWrap
 	}
 };
 
-class SimpleTextureSw;
-
-template <
-	typename AddressU,
-	typename AddressV
->
-class SimpleTextureSampler : public AbstractSampler
-{
-public:
-	SimpleTextureSampler(SimpleTextureSw* texture)
-	:	m_texture(texture)
-	,	m_width(m_texture->getWidth())
-	,	m_height(m_texture->getHeight())
-	{
-	}
-
-	inline Vector4 getNearest(int x, int y) const
-	{
-		const uint32_t* data = m_texture->getData() + x + y * m_width;
-		return Vector4(
-			((*data & 0x000000ff)      ) / 255.0f,
-			((*data & 0x0000ff00) >>  8) / 255.0f,
-			((*data & 0x00ff0000) >> 16) / 255.0f,
-			((*data & 0xff000000) >> 24) / 255.0f
-		);
-	}
-
-	virtual Vector4 getSize() const
-	{
-		return Vector4(float(m_width), float(m_height), 0.0f, 0.0f);
-	}
-
-	virtual Vector4 get(const Vector4& texCoord) const
-	{
-		float tx = !isNan(texCoord.x()) ? texCoord.x() : 0.0f;
-		float ty = !isNan(texCoord.y()) ? texCoord.y() : 0.0f;
-
-		tx *= m_width;
-		ty *= m_height;
-
-		int ix = int(tx);
-		int iy = int(ty);
-
-		int ix1 = AddressU::eval(m_width, ix);
-		int iy1 = AddressV::eval(m_height, iy);
-		int ix2 = AddressU::eval(m_width, ix + 1);
-		int iy2 = AddressV::eval(m_height, iy + 1);
-
-		float fx = tx - ix;
-		float fy = ty - iy;
-
-		Vector4 tl = getNearest(ix1, iy1);
-		Vector4 tr = getNearest(ix2, iy1);
-		Vector4 bl = getNearest(ix1, iy2);
-		Vector4 br = getNearest(ix2, iy2);
-
-		Vector4 l = lerp(tl, bl, traktor::Scalar(fy));
-		Vector4 r = lerp(tr, br, traktor::Scalar(fy));
-
-		return lerp(l, r, traktor::Scalar(fx));
-	}
-
-private:
-	Ref< SimpleTextureSw > m_texture;
-	int m_width;
-	int m_height;
-};
-
 class CubeTextureSw;
 
 template <
@@ -182,47 +114,80 @@ private:
 	int m_side;
 };
 
+class VolumeTextureSw;
+
 template <
 	typename AddressU,
-	typename AddressV
+	typename AddressV,
+	typename AddressW
 >
-class RenderTargetSampler : public AbstractSampler
+class VolumeTextureSampler : public AbstractSampler
 {
 public:
-	RenderTargetSampler(RenderTargetSw* renderTarget)
-	:	m_renderTarget(renderTarget)
-	,	m_width(renderTarget->getWidth())
-	,	m_height(renderTarget->getHeight())
+	VolumeTextureSampler(VolumeTextureSw* texture)
+	:	m_texture(texture)
+	,	m_width(m_texture->getWidth())
+	,	m_height(m_texture->getHeight())
+	,	m_depth(m_texture->getDepth())
 	{
+	}
+
+	inline Vector4 getNearest(int x, int y, int z) const
+	{
+		const uint32_t* data = m_texture->getData() + x + y * m_width + z * m_width * m_height;
+		return Vector4(
+			((*data & 0x000000ff)      ) / 255.0f,
+			((*data & 0x0000ff00) >>  8) / 255.0f,
+			((*data & 0x00ff0000) >> 16) / 255.0f,
+			((*data & 0xff000000) >> 24) / 255.0f
+		);
 	}
 
 	virtual Vector4 getSize() const
 	{
-		return Vector4(float(m_width), float(m_height), 0.0f, 0.0f);
+		return Vector4(float(m_width), float(m_height), float(m_depth), 0.0f);
 	}
 
 	virtual Vector4 get(const Vector4& texCoord) const
 	{
-		int x = int(m_width * texCoord.x() + 0.5f);
-		int y = int(m_height * texCoord.y() + 0.5f);
+		float tx = !isNan(texCoord.x()) ? texCoord.x() : 0.0f;
+		float ty = !isNan(texCoord.y()) ? texCoord.y() : 0.0f;
+		float tz = !isNan(texCoord.z()) ? texCoord.z() : 0.0f;
 
-		x = AddressU::eval(m_width, x);
-		y = AddressV::eval(m_height, y);
+		tx *= m_width;
+		ty *= m_height;
+		tz *= m_depth;
 
-		const uint16_t* data = m_renderTarget->getColorSurface() + x + y * m_width;
+		int ix = int(tx);
+		int iy = int(ty);
+		int iz = int(tz);
 
-		return Vector4(
-			((*data & 0xf800) >> 11) / float((1 << 5) - 1),
-			((*data & 0x07e0) >> 5) / float((1 << 6) - 1),
-			 (*data & 0x001f) / float((1 << 5) - 1),
-			0.0f
-		);
+		int ix1 = AddressU::eval(m_width, ix);
+		int iy1 = AddressV::eval(m_height, iy);
+		int iz1 = AddressW::eval(m_depth, iz);
+		int ix2 = AddressU::eval(m_width, ix + 1);
+		int iy2 = AddressV::eval(m_height, iy + 1);
+		int iz2 = AddressW::eval(m_depth, iz + 1);
+
+		float fx = tx - ix;
+		float fy = ty - iy;
+
+		Vector4 tl = getNearest(ix1, iy1, iz1);
+		Vector4 tr = getNearest(ix2, iy1, iz1);
+		Vector4 bl = getNearest(ix1, iy2, iz1);
+		Vector4 br = getNearest(ix2, iy2, iz1);
+
+		Vector4 l = lerp(tl, bl, traktor::Scalar(fy));
+		Vector4 r = lerp(tr, br, traktor::Scalar(fy));
+
+		return lerp(l, r, traktor::Scalar(fx));
 	}
 
 private:
-	Ref< RenderTargetSw > m_renderTarget;
+	Ref< VolumeTextureSw > m_texture;
 	int m_width;
 	int m_height;
+	int m_depth;
 };
 
 //@}

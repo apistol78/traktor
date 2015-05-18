@@ -157,8 +157,6 @@ bool emitConditional(EmitterContext& cx, Conditional* node)
 	EMIT_MANDATORY_IN(ref, cx, node, L"Reference");
 	T_ASSERT (in->type == ref->type);
 
-	EmitterVariable* out = cx.emitOutput(node, L"Output", in->type);
-
 	EmitterVariable* tmp = cx.allocTemporary(in->type);
 
 	switch (node->getOperator())
@@ -194,27 +192,34 @@ bool emitConditional(EmitterContext& cx, Conditional* node)
 	cx.freeTemporary(tmp);
 
 	uint32_t offsetTrueBegin = cx.getCurrentAddress();
-	{
-		EmitterVariable* ct = cx.emitInput(node, L"CaseTrue");
-		T_ASSERT (ct);
 
-		cx.emitInstruction(OpMove, out, ct);
-		cx.releaseInput(node, L"CaseTrue");
-	}
+	EmitterVariable* ct = cx.emitInput(node, L"CaseTrue");
+	T_ASSERT (ct);
+
+	Instruction instMoveTrue(OpMove, 0, ct->reg, 0, 0, 0);
+	uint32_t offsetMoveTrue = cx.emitInstruction(instMoveTrue);
 
 	Instruction is2(OpJump, 0, 0, 0, 0, 0);
 	uint32_t offsetJump = cx.emitInstruction(is2);
 
 	uint32_t offsetFalseBegin = cx.getCurrentAddress();
-	{
-		EmitterVariable* cf = cx.emitInput(node, L"CaseFalse");
-		T_ASSERT (cf);
 
-		cx.emitInstruction(OpMove, out, cf);
-		cx.releaseInput(node, L"CaseFalse");
-	}
+	EmitterVariable* cf = cx.emitInput(node, L"CaseFalse");
+	T_ASSERT (cf);
+
+	Instruction instMoveFalse(OpMove, 0, cf->reg, 0, 0, 0);
+	uint32_t offsetMoveFalse = cx.emitInstruction(instMoveFalse);
 
 	uint32_t offsetEnd = cx.getCurrentAddress();
+
+	EmitterVariable* out = cx.emitOutput(node, L"Output", max(ct->type, cf->type));
+	instMoveTrue.dest = out->reg;
+	instMoveFalse.dest = out->reg;
+	cx.emitInstruction(offsetMoveTrue, instMoveTrue);
+	cx.emitInstruction(offsetMoveFalse, instMoveFalse);
+
+	cx.releaseInput(node, L"CaseTrue");
+	cx.releaseInput(node, L"CaseFalse");
 
 	is1.offset = getRelativeOffset(offsetTrueBegin, offsetFalseBegin);
 	cx.emitInstruction(offsetJumpFalse, is1);
@@ -355,7 +360,43 @@ bool emitDot(EmitterContext& cx, Dot* node)
 	if (type > VtFloat3)
 		cx.emitInstruction(OpDot4, out, xin1, xin2);
 	else
+	{
+		switch (in1->type)
+		{
+		case VtFloat:
+			{
+				Instruction is0(OpSet, xin1->reg, 0, 2|4|8, 0, 0);
+				cx.emitInstruction(is0);
+			}
+			break;
+
+		case VtFloat2:
+			{
+				Instruction is0(OpSet, xin1->reg, 0, 4|8, 0, 0);
+				cx.emitInstruction(is0);
+			}
+			break;
+		}
+
+		switch (in2->type)
+		{
+		case VtFloat:
+			{
+				Instruction is0(OpSet, xin2->reg, 0, 2|4|8, 0, 0);
+				cx.emitInstruction(is0);
+			}
+			break;
+
+		case VtFloat2:
+			{
+				Instruction is0(OpSet, xin2->reg, 0, 4|8, 0, 0);
+				cx.emitInstruction(is0);
+			}
+			break;
+		}
+
 		cx.emitInstruction(OpDot3, out, xin1, xin2);
+	}
 
 	collapseTypes(cx, in1, xin1);
 	collapseTypes(cx, in2, xin2);
@@ -436,7 +477,7 @@ bool emitIterate(EmitterContext& cx, Iterate* node)
 		log::error << L"Too many iterations in Iterate node" << Endl;
 
 	// Setup counter, load with initial value.
-	EmitterVariable* N = cx.emitOutput(node, L"N", VtFloat);
+	EmitterVariable* N = cx.emitOutput(node, L"N", VtFloat, true);
 	cx.emitInstruction(OpFetchConstant, N, cx.emitConstant(float(from)));
 
 	EmitterVariable* tmp1 = cx.allocTemporary(VtFloat);
@@ -488,6 +529,8 @@ bool emitIterate(EmitterContext& cx, Iterate* node)
 		cx.emitInstruction(condOffset, inst);
 	}
 
+	cx.releaseOutput(node, L"N");
+
 	cx.freeTemporary(tmp2);
 	cx.freeTemporary(tmp1);
 	return true;
@@ -520,7 +563,7 @@ bool emitIterate2d(EmitterContext& cx, Iterate2d* node)
 	}
 
 	// Setup outer counter, load with initial value.
-	EmitterVariable* Y = cx.emitOutput(node, L"Y", VtFloat);
+	EmitterVariable* Y = cx.emitOutput(node, L"Y", VtFloat, true);
 	cx.emitInstruction(OpFetchConstant, Y, cx.emitConstant(float(fromY)));
 
 	EmitterVariable* tmpY1 = cx.allocTemporary(VtFloat);
@@ -529,7 +572,7 @@ bool emitIterate2d(EmitterContext& cx, Iterate2d* node)
 	uint32_t addressY = cx.getCurrentAddress();
 
 	// Setup inner counter, load with initial value.
-	EmitterVariable* X = cx.emitOutput(node, L"X", VtFloat);
+	EmitterVariable* X = cx.emitOutput(node, L"X", VtFloat, true);
 	cx.emitInstruction(OpFetchConstant, X, cx.emitConstant(float(fromX)));
 
 	EmitterVariable* tmpX1 = cx.allocTemporary(VtFloat);
@@ -575,6 +618,9 @@ bool emitIterate2d(EmitterContext& cx, Iterate2d* node)
 		Instruction inst(OpJumpIfZero, cond->reg, getRelativeOffset(condOffset, cx.getCurrentAddress()));
 		cx.emitInstruction(condOffset, inst);
 	}
+
+	cx.releaseOutput(node, L"X");
+	cx.releaseOutput(node, L"Y");
 
 	cx.freeTemporary(tmpY2);
 	cx.freeTemporary(tmpX2);
@@ -839,10 +885,14 @@ bool emitMixIn(EmitterContext& cx, MixIn* node)
 		cx.emitInstruction(is0); 
 	}
 
-	cx.releaseInput(node, L"W");
-	cx.releaseInput(node, L"Z");
-	cx.releaseInput(node, L"Y");
-	cx.releaseInput(node, L"X");
+	if (w)
+		cx.releaseInput(node, L"W");
+	if (z)
+		cx.releaseInput(node, L"Z");
+	if (y)
+		cx.releaseInput(node, L"Y");
+	if (x)
+		cx.releaseInput(node, L"X");
 	return true;
 }
 
@@ -1179,7 +1229,7 @@ bool emitSum(EmitterContext& cx, Sum* node)
 	}
 
 	// Setup counter, load with initial value.
-	EmitterVariable* N = cx.emitOutput(node, L"N", VtFloat);
+	EmitterVariable* N = cx.emitOutput(node, L"N", VtFloat, true);
 	cx.emitInstruction(OpFetchConstant, N, cx.emitConstant(float(from)));
 
 	EmitterVariable* tmp1 = cx.allocTemporary(VtFloat);
@@ -1207,6 +1257,8 @@ bool emitSum(EmitterContext& cx, Sum* node)
 
 	Instruction inst(OpJumpIfZero, tmp2->reg, getRelativeOffset(cx.getCurrentAddress(), address));
 	cx.emitInstruction(inst);
+
+	cx.releaseOutput(node, L"N");
 
 	cx.freeTemporary(tmp2);
 	cx.freeTemporary(tmp1);

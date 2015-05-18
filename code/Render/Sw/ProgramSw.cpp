@@ -6,6 +6,7 @@
 #include "Render/Sw/RenderTargetSw.h"
 #include "Render/Sw/Samplers.h"
 #include "Render/Sw/SimpleTextureSw.h"
+#include "Render/Sw/VolumeTextureSw.h"
 
 namespace traktor
 {
@@ -163,11 +164,13 @@ void ProgramSw::setTextureParameter(handle_t handle, ITexture* texture)
 			return;
 
 		if (is_a< SimpleTextureSw >(resolved))
-			m_samplers[i->second] = new SimpleTextureSampler< AddressWrap, AddressWrap >(static_cast< SimpleTextureSw* >(resolved.ptr()));
+			m_samplers[i->second] = static_cast< SimpleTextureSw* >(resolved.ptr())->createSampler();
 		else if (is_a< CubeTextureSw >(resolved))
 			m_samplers[i->second] = new CubeTextureSampler< AddressWrap, AddressWrap, AddressWrap >(static_cast< CubeTextureSw* >(resolved.ptr()));
 		else if (is_a< RenderTargetSw >(resolved))
-			m_samplers[i->second] = new RenderTargetSampler< AddressWrap, AddressWrap >(static_cast< RenderTargetSw* >(resolved.ptr()));
+			m_samplers[i->second] = static_cast< RenderTargetSw* >(resolved.ptr())->createSampler();
+		else if (is_a< VolumeTextureSw >(resolved))
+			m_samplers[i->second] = new VolumeTextureSampler< AddressWrap, AddressWrap, AddressWrap >(static_cast< VolumeTextureSw* >(resolved.ptr()));
 	}
 }
 

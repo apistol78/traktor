@@ -98,7 +98,7 @@ private:
 		Viewport viewPort;
 		uint32_t width;
 		uint32_t height;
-		uint16_t* colorTarget;
+		uint32_t* colorTarget;
 		uint32_t colorTargetPitch;		//< Color target pitch in bytes.
 		float* depthTarget;
 		uint32_t depthTargetPitch;		//< Depth target pitch in bytes.
@@ -152,6 +152,8 @@ private:
 	Viewport m_viewPort;
 	Vector4 m_targetSize;
 	int32_t m_instance;
+	uint32_t m_drawCalls;
+	uint32_t m_primitiveCount;
 
 	void fetchVertex(uint32_t index, varying_data_t& outVertexVarying) const;
 

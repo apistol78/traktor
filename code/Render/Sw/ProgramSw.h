@@ -82,7 +82,7 @@ private:
 	std::map< handle_t, std::pair< int, int > > m_parameterMap;
 	std::map< handle_t, int > m_samplerMap;
 	Vector4* m_parameters;
-	Ref< AbstractSampler > m_samplers[8];
+	Ref< AbstractSampler > m_samplers[16];
 };
 
 	}

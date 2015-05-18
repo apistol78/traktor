@@ -13,6 +13,7 @@
 #include "Render/Sw/ProgramSw.h"
 #include "Render/Sw/ProgramCompilerSw.h"
 #include "Render/Sw/ProgramResourceSw.h"
+#include "Render/Sw/VolumeTextureSw.h"
 
 #if defined(_WIN32)
 #	if !defined(WINCE)
@@ -199,7 +200,7 @@ Ref< IRenderView > RenderSystemSw::createRenderView(const RenderViewDefaultDesc&
 	graphicsDesc.displayMode.width = desc.displayMode.width;
 	graphicsDesc.displayMode.height = desc.displayMode.height;
 	graphicsDesc.displayMode.bits = desc.displayMode.colorBits;
-	graphicsDesc.pixelFormat = graphics::PfeR5G6B5;
+	graphicsDesc.pixelFormat = graphics::PfeA8R8G8B8;
 
 	if (!m_graphicsSystem->create(graphicsDesc))
 		return 0;
@@ -217,7 +218,7 @@ Ref< IRenderView > RenderSystemSw::createRenderView(const RenderViewEmbeddedDesc
 	graphicsDesc.displayMode.width = 16;
 	graphicsDesc.displayMode.height = 16;
 	graphicsDesc.displayMode.bits = 16;
-	graphicsDesc.pixelFormat = graphics::PfeR5G6B5;
+	graphicsDesc.pixelFormat = graphics::PfeA8R8G8B8;
 
 #if defined(_WIN32)
 #	if !defined(WINCE)
@@ -269,7 +270,11 @@ Ref< ICubeTexture > RenderSystemSw::createCubeTexture(const CubeTextureCreateDes
 
 Ref< IVolumeTexture > RenderSystemSw::createVolumeTexture(const VolumeTextureCreateDesc& desc)
 {
-	return 0;
+	Ref< VolumeTextureSw > texture = new VolumeTextureSw();
+	if (texture->create(desc))
+		return texture;
+	else
+		return 0;
 }
 
 Ref< RenderTargetSet > RenderSystemSw::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)

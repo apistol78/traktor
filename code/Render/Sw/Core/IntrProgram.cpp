@@ -1,5 +1,6 @@
 #include <algorithm>
 #include "Core/Io/OutputStream.h"
+#include "Core/Math/Format.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComplex.h"
@@ -43,7 +44,7 @@ private:
 DEF_DUMP_FN(OpFetchConstant)
 {
 	const Vector4& constant = constants[inst.src[0]];
-	os << offset << L": OpFetchConstant       R" << int32_t(inst.dest) << L" = " << constant.x() << L" " << constant.y() << L" " << constant.z() << L" " << constant.w() << Endl;
+	os << offset << L": OpFetchConstant       R" << int32_t(inst.dest) << L" = " << constant << Endl;
 }
 
 DEF_DUMP_FN(OpFetchTargetSize)
@@ -231,7 +232,9 @@ DEF_DUMP_FN(OpTranspose)
 
 DEF_DUMP_FN(OpClamp)
 {
-	os << offset << L": OpClamp               R" << int32_t(inst.dest) << L" = clamp(R" << int32_t(inst.src[0]) << L", min R" << int32_t(inst.src[1]) << L", max R" << int32_t(inst.src[2]) << L")" << Endl;
+	const Vector4& mn = constants[inst.src[1]];
+	const Vector4& mx = constants[inst.src[2]];
+	os << offset << L": OpClamp               R" << int32_t(inst.dest) << L" = clamp(R" << int32_t(inst.src[0]) << L", min " << mn << L", max " << mx << L")" << Endl;
 }
 
 DEF_DUMP_FN(OpLerp)
@@ -446,7 +449,7 @@ void IntrProgram::dump(OutputStream& os, const std::map< std::wstring, EmitterVa
 
 	os << L"# Constants" << Endl;
 	for (AlignedVector< Vector4 >::const_iterator i = m_constants.begin(); i != m_constants.end(); ++i)
-		os << uint32_t(std::distance(m_constants.begin(), i)) << L" : " << i->x() << L" " << i->y() << L" " << i->z() << L" " << i->w() << Endl;
+		os << uint32_t(std::distance(m_constants.begin(), i)) << L" : " << *i << Endl;
 	os << Endl;
 
 	os << L"# Instructions" << Endl;

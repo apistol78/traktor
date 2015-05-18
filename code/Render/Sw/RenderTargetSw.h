@@ -9,8 +9,10 @@ namespace traktor
 	namespace render
 	{
 
-struct RenderTargetSetCreateDesc;
+class AbstractSampler;
+
 struct RenderTargetCreateDesc;
+struct RenderTargetSetCreateDesc;
 
 /*!
  * \ingroup SW
@@ -36,10 +38,12 @@ public:
 
 	virtual void unlock(int level);
 
-	uint16_t* getColorSurface();
+	uint32_t* getColorSurface();
+
+	Ref< AbstractSampler > createSampler() const;
 
 private:
-	AutoArrayPtr< uint16_t > m_color;
+	AutoArrayPtr< uint32_t > m_color;
 	int m_width;
 	int m_height;
 };

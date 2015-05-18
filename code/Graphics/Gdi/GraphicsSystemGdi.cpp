@@ -166,6 +166,23 @@ void GraphicsSystemGdi::flip(HDC hDC)
 			sm += secondarySurfaceDesc.pitch / 2;
 		}
 	}
+	else if (secondarySurfaceDesc.pixelFormat == PfeA8R8G8B8)
+	{
+		uint32_t* pm = static_cast< uint32_t* >(primaryMemory);
+		uint32_t* sm = static_cast< uint32_t* >(secondaryMemory);
+
+		for (uint32_t y = 0; y < primarySurfaceDesc.height; ++y)
+		{
+			for (uint32_t x = 0; x < primarySurfaceDesc.width; ++x)
+			{
+				uint32_t c = sm[x];
+				pm[x] = 0xff000000 | c;
+			}
+
+			pm += primarySurfaceDesc.pitch / 4;
+			sm += secondarySurfaceDesc.pitch / 4;
+		}
+	}
 
 	// Blit primary bits.
 	RECT rc;
