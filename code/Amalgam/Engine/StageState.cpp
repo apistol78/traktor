@@ -3,6 +3,7 @@
 #include "Amalgam/Engine/StageState.h"
 #include "Amalgam/Events/ActiveEvent.h"
 #include "Amalgam/Events/ReconfigureEvent.h"
+#include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/IRenderView.h"
 
@@ -24,6 +25,10 @@ StageState::StageState(
 
 void StageState::enter()
 {
+	log::info << Endl;
+	log::info << L"-----------------------------------------------------------------------------" << Endl;
+	log::info << L"Enter \"" << m_stage->getName() << L"\"" << Endl;
+	log::info << L"-----------------------------------------------------------------------------" << Endl;
 }
 
 void StageState::leave()

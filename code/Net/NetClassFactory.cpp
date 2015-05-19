@@ -437,6 +437,7 @@ void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classReplicator->addMethod("getWorstReverseLatency", &Replicator::getWorstReverseLatency);
 	classReplicator->addMethod("broadcastEvent", &Replicator::broadcastEvent);
 	classReplicator->addMethod("sendEventToPrimary", &Replicator::sendEventToPrimary);
+	classReplicator->addMethod("setTimeSynchronization", &Replicator::setTimeSynchronization);
 	classReplicator->addMethod("getTime", &Replicator::getTime);
 	classReplicator->addMethod("getTimeVariance", &Replicator::getTimeVariance);
 	classReplicator->addMethod("isTimeSynchronized", &Replicator::isTimeSynchronized);

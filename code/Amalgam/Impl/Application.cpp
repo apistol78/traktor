@@ -549,11 +549,11 @@ bool Application::update()
 
 			// Leave current state.
 			T_ASSERT_M (m_stateManager->getCurrent() == 0 || m_stateManager->getCurrent()->getReferenceCount() == 1, L"Current state must have one reference only");
-			log::info << L"Leaving state \"" << type_name(m_stateManager->getCurrent()) << L"\"..." << Endl;
+			log::debug << L"Leaving state \"" << type_name(m_stateManager->getCurrent()) << L"\"..." << Endl;
 			m_stateManager->leaveCurrent();
 
 			// Cleanup script garbage.
-			log::info << L"Performing full garbage collect cycle..." << Endl;
+			log::debug << L"Performing full garbage collect cycle..." << Endl;
 			if (m_scriptServer)
 				m_scriptServer->cleanup(true);
 
@@ -562,7 +562,7 @@ bool Application::update()
 				m_worldServer->getEntityEventManager()->cancelAll(world::CtImmediate);
 
 			// Cleanup resources used by former state.
-			log::info << L"Cleaning resident resources..." << Endl;
+			log::debug << L"Cleaning resident resources..." << Endl;
 			m_resourceServer->performCleanup();
 
 			// Reset time data.
@@ -572,12 +572,12 @@ bool Application::update()
 
 			// Enter new state.
 			T_ASSERT_M (m_stateManager->getNext() && m_stateManager->getNext()->getReferenceCount() == 1, L"Next state must exist and have one reference only");
-			log::info << L"Enter state \"" << type_name(m_stateManager->getNext()) << L"\"..." << Endl;
+			log::debug << L"Enter state \"" << type_name(m_stateManager->getNext()) << L"\"..." << Endl;
 			m_stateManager->enterNext();
 
 			// Assume state's active from start.
 			m_renderViewActive = true;
-			log::info << L"State transition complete." << Endl;
+			log::debug << L"State transition complete." << Endl;
 
 			// Reset timer's delta time as this will be very high
 			// after a state change.

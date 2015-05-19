@@ -24,7 +24,7 @@ namespace traktor
 	namespace amalgam
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.amalgam.StageData", 6, StageData, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.amalgam.StageData", 7, StageData, ISerializable)
 
 StageData::StageData()
 :	m_fadeRate(1.5f)
@@ -74,7 +74,7 @@ Ref< Stage > StageData::createInstance(amalgam::IEnvironment* environment, const
 		return 0;
 
 	// Create layers.
-	Ref< Stage > stage = new Stage(environment, script, shaderFade, m_fadeRate, m_transitions, params);
+	Ref< Stage > stage = new Stage(m_name, environment, script, shaderFade, m_fadeRate, m_transitions, params);
 	for (RefArray< LayerData >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 	{
 		Ref< Layer > layer = (*i)->createInstance(stage, environment);
@@ -89,6 +89,9 @@ Ref< Stage > StageData::createInstance(amalgam::IEnvironment* environment, const
 
 void StageData::serialize(ISerializer& s)
 {
+	if (s.getVersion() >= 7)
+		s >> Member< std::wstring >(L"name", m_name);
+
 	if (s.getVersion() >= 6)
 		s >> Member< Guid >(L"inherit", m_inherit, AttributeType(type_of< StageData >()));
 

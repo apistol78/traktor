@@ -63,7 +63,7 @@ Ref< StageData > flattenInheritance(editor::IPipelineBuilder* pipelineBuilder, c
 		
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.StagePipeline", 4, StagePipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.StagePipeline", 5, StagePipeline, editor::DefaultPipeline)
 
 TypeInfoSet StagePipeline::getAssetTypes() const
 {
@@ -133,6 +133,9 @@ bool StagePipeline::buildOutput(
 	Ref< StageData > stageData = flattenInheritance(pipelineBuilder, checked_type_cast< const StageData*, false >(sourceAsset));
 	if (!stageData)
 		return false;
+
+	if (stageData->m_name.empty())
+		stageData->m_name = sourceInstance->getName();
 	
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);
 	if (!outputInstance)
