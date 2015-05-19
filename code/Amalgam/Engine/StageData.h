@@ -55,6 +55,8 @@ public:
 
 	virtual void serialize(ISerializer& s);
 
+	const std::wstring& getName() const { return m_name; }
+
 	const Guid& getInherit() const { return m_inherit; }
 
 	void setLayers(const RefArray< LayerData >& layers) { m_layers = layers; }
@@ -80,6 +82,7 @@ public:
 private:
 	friend class StagePipeline;
 
+	std::wstring m_name;
 	Guid m_inherit;
 	RefArray< LayerData > m_layers;
 	resource::Id< script::IScriptContext > m_script;

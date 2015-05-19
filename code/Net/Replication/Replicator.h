@@ -213,6 +213,10 @@ public:
 	 */
 	bool sendEventToPrimary(const ISerializable* eventObject);
 
+	/*! \brief Set if time is automatically synchronized.
+	 */
+	void setTimeSynchronization(bool timeSynchronization);
+
 	/*! \brief Get network time.
 	 */
 	double getTime() const;
@@ -247,6 +251,7 @@ private:
 	Ref< const State > m_state;
 	RefArray< ReplicatorProxy > m_proxies;
 	bool m_sendState;
+	bool m_timeSynchronization;
 	bool m_timeSynchronized;
 	uint32_t m_exceededDeltaTimeLimit;
 

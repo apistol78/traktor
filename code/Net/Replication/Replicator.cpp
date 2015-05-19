@@ -45,6 +45,7 @@ Replicator::Replicator()
 ,	m_allowPrimaryRequests(true)
 ,	m_origin(Transform::identity())
 ,	m_sendState(false)
+,	m_timeSynchronization(true)
 ,	m_timeSynchronized(false)
 ,	m_exceededDeltaTimeLimit(0)
 {
@@ -248,7 +249,20 @@ bool Replicator::update()
 
 		if (msg.id == RmiPing)
 		{
-			fromProxy->m_status = msg.ping.status;
+			if (msg.ping.status != fromProxy->m_status)
+			{
+				fromProxy->m_status = msg.ping.status;
+				for (RefArray< IReplicatorStateListener >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
+				{
+					(*i)->notify(
+						this,
+						float(m_time),
+						IReplicatorStateListener::ReStatus,
+						fromProxy,
+						0
+					);
+				}
+			}
 
 			reply.id = RmiPong;
 			reply.time = time2net(m_time);
@@ -343,7 +357,7 @@ bool Replicator::update()
 
 	T_MEASURE_UNTIL(0.001);
 
-	if (timeOffsetReceived)
+	if (m_timeSynchronization && timeOffsetReceived)
 	{
 		if (abs(timeOffset) >= 1.0)
 		{
@@ -724,6 +738,11 @@ bool Replicator::sendEventToPrimary(const ISerializable* eventObject)
 		}
 		return true;
 	}
+}
+
+void Replicator::setTimeSynchronization(bool timeSynchronization)
+{
+	m_timeSynchronization = timeSynchronization;
 }
 
 double Replicator::getTime() const

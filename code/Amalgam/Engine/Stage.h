@@ -56,6 +56,7 @@ class T_DLLCLASS Stage : public Object
 
 public:
 	Stage(
+		const std::wstring& name,
 		IEnvironment* environment,
 		const resource::Proxy< script::IScriptContext >& scriptContext,
 		const resource::Proxy< render::Shader >& shaderFade,
@@ -157,6 +158,8 @@ public:
 
 	void resume();
 
+	const std::wstring& getName() const { return m_name; }
+
 	IEnvironment* getEnvironment() { return m_environment; }
 
 	const RefArray< Layer >& getLayers() const { return m_layers; }
@@ -164,6 +167,7 @@ public:
 	const Object* getParams() const { return m_params; }
 
 private:
+	std::wstring m_name;
 	Ref< IEnvironment > m_environment;
 	resource::Proxy< script::IScriptContext > m_scriptContext;
 	Ref< render::ScreenRenderer > m_screenRenderer;

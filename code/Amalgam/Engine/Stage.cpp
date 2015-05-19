@@ -27,6 +27,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.Stage", Stage, Object)
 
 Stage::Stage(
+	const std::wstring& name,
 	IEnvironment* environment,
 	const resource::Proxy< script::IScriptContext >& scriptContext,
 	const resource::Proxy< render::Shader >& shaderFade,
@@ -34,7 +35,8 @@ Stage::Stage(
 	const std::map< std::wstring, Guid >& transitions,
 	const Object* params
 )
-:	m_environment(environment)
+:	m_name(name)
+,	m_environment(environment)
 ,	m_scriptContext(scriptContext)
 ,	m_shaderFade(shaderFade)
 ,	m_fadeRate(fadeRate)
