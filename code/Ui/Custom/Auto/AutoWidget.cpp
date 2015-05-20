@@ -146,6 +146,8 @@ void AutoWidget::updateLayout()
 		m_scrollBarV->isVisible(false) != scrollBarVisibleV
 	)
 	{
+		placeScrollBars();
+
 		Rect innerRect = getInnerRect();
 
 		if (m_scrollBarH->isVisible(false))
@@ -161,6 +163,31 @@ void AutoWidget::updateLayout()
 		m_scrollOffset.cx = 0;
 	if (!m_scrollBarV->isVisible(false))
 		m_scrollOffset.cy = 0;
+}
+
+void AutoWidget::placeScrollBars()
+{
+	int32_t width = m_scrollBarV->getPreferedSize().cx;
+	int32_t height = m_scrollBarH->getPreferedSize().cy;
+
+	Rect innerRect = getInnerRect();
+
+	int32_t widthH = innerRect.getWidth();
+	if (m_scrollBarV->isVisible(false))
+		widthH -= width;
+
+	int32_t heightV = innerRect.getHeight();
+	if (m_scrollBarH->isVisible(false))
+		heightV -= height;
+
+	m_scrollBarH->setRect(Rect(
+		Point(0, innerRect.getHeight() - height),
+		Size(widthH, height)
+	));
+	m_scrollBarV->setRect(Rect(
+		Point(innerRect.getWidth() - width, 0),
+		Size(width, heightV)
+	));
 }
 
 void AutoWidget::eventButtonDown(MouseButtonDownEvent* event)
@@ -243,29 +270,7 @@ void AutoWidget::eventPaint(PaintEvent* event)
 void AutoWidget::eventSize(SizeEvent* event)
 {
 	updateLayout();
-
-	int32_t width = m_scrollBarV->getPreferedSize().cx;
-	int32_t height = m_scrollBarH->getPreferedSize().cy;
-
-	Rect innerRect = getInnerRect();
-
-	int32_t widthH = innerRect.getWidth();
-	if (m_scrollBarV->isVisible(false))
-		widthH -= width;
-
-	int32_t heightV = innerRect.getHeight();
-	if (m_scrollBarH->isVisible(false))
-		heightV -= height;
-
-	m_scrollBarH->setRect(Rect(
-		Point(0, innerRect.getHeight() - height),
-		Size(widthH, height)
-	));
-	m_scrollBarV->setRect(Rect(
-		Point(innerRect.getWidth() - width, 0),
-		Size(width, heightV)
-	));
-
+	placeScrollBars();
 	update();
 }
 

@@ -69,6 +69,8 @@ private:
 
 	void updateLayout();
 
+	void placeScrollBars();
+
 	void eventButtonDown(MouseButtonDownEvent* event);
 
 	void eventButtonUp(MouseButtonUpEvent* event);
