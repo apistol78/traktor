@@ -32,6 +32,11 @@
 			<color>30, 30, 30, 255</color>
 		</item>
 		<item>
+			<type>traktor.ui.Dock</type>
+			<element>splitter-color</element>
+			<color>204, 200, 219, 255</color>
+		</item>		
+		<item>
 			<type>traktor.ui.Tab</type>
 			<element>tab-background-color</element>
 			<color>0, 122, 204, 255</color>
