@@ -15,7 +15,7 @@ namespace traktor
 		namespace
 		{
 
-const int c_splitterDim = 4;
+const int c_splitterDim = 6;
 const int c_gripperDim = 21;
 const int c_minimumSplit = c_gripperDim + 64;
 
@@ -348,6 +348,37 @@ void DockPane::draw(Canvas& canvas)
 		return;
 
 	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+
+	if (isSplitter() && m_child[0]->isVisible() && m_child[1]->isVisible())
+	{
+		Rect splitterRect = m_rect;
+		if (m_vertical)
+		{
+			int split = calculateRealSplit(m_rect, m_split, true);
+			splitterRect.left += 2;
+			splitterRect.right -= 2;
+			splitterRect.top = split - c_splitterDim / 2;
+			splitterRect.bottom = split + c_splitterDim / 2;
+			canvas.setBackground(ss->getColor(m_owner, L"splitter-color"));
+			canvas.fillRect(splitterRect);
+		}
+		else
+		{
+			int split = calculateRealSplit(m_rect, m_split, false);
+			splitterRect.left = split - 1;
+			splitterRect.right = split + 1;
+			splitterRect.top += 2;
+			splitterRect.bottom -= 2;
+
+			canvas.setForeground(ss->getColor(m_owner, L"background-color"));
+			canvas.setBackground(ss->getColor(m_owner, L"splitter-color"));
+			canvas.fillGradientRect(Rect(splitterRect.left, splitterRect.top, splitterRect.right, splitterRect.getCenter().y));
+
+			canvas.setForeground(ss->getColor(m_owner, L"splitter-color"));
+			canvas.setBackground(ss->getColor(m_owner, L"background-color"));
+			canvas.fillGradientRect(Rect(splitterRect.left,splitterRect.getCenter().y, splitterRect.right, splitterRect.bottom));
+		}
+	}
 
 	if (m_widget && m_detachable)
 	{
