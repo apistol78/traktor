@@ -15,7 +15,7 @@ namespace traktor
 		{
 
 GdiplusStartupInput s_si;
-ULONG_PTR s_token;
+ULONG_PTR s_token = 0;
 
 		}
 
@@ -62,18 +62,14 @@ bool CanvasGdiPlusWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 		}
 		else
 		{
-			RECT rcInner;
-			GetClientRect(hWnd, &rcInner);
+			uint32_t width = m_ps.rcPaint.right - m_ps.rcPaint.left;
+			uint32_t height = m_ps.rcPaint.bottom - m_ps.rcPaint.top;
 
-			uint32_t width = uint32_t(rcInner.right - rcInner.left);
-			uint32_t height = uint32_t(rcInner.bottom - rcInner.top);
-
-			if (m_offScreenBitmap.ptr() == 0 || m_offScreenBitmapWidth != width || m_offScreenBitmapHeight != height)
+			if (m_offScreenBitmap.ptr() == 0 || m_offScreenBitmapWidth < width || m_offScreenBitmapHeight < height)
 			{
-				m_offScreenBitmap.reset(new Bitmap(width, height));
-
-				m_offScreenBitmapWidth = width;
-				m_offScreenBitmapHeight = height;
+				m_offScreenBitmapWidth = max(m_offScreenBitmapWidth, width);
+				m_offScreenBitmapHeight = max(m_offScreenBitmapHeight, height);
+				m_offScreenBitmap.reset(new Bitmap(m_offScreenBitmapWidth, m_offScreenBitmapHeight));
 			}
 
 			m_graphics.reset(new Graphics(m_offScreenBitmap.ptr()));
@@ -113,10 +109,21 @@ void CanvasGdiPlusWin32::endPaint(Window& hWnd)
 
 	if (m_doubleBuffer)
 	{
-		T_ASSERT (m_offScreenBitmap.ptr());
+		Gdiplus::Graphics graphics(m_hDC);
 
-		Graphics graphics(m_hDC);
-		graphics.DrawImage(m_offScreenBitmap.ptr(), 0, 0);
+		uint32_t width = m_ps.rcPaint.right - m_ps.rcPaint.left;
+		uint32_t height = m_ps.rcPaint.bottom - m_ps.rcPaint.top;
+
+		graphics.DrawImage(
+			m_offScreenBitmap.ptr(),
+			m_ps.rcPaint.left,
+			m_ps.rcPaint.top,
+			0,
+			0,
+			width,
+			height,
+			Gdiplus::UnitPixel
+		);
 	}
 
 	if (m_ownDC)
