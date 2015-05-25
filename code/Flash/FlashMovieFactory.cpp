@@ -66,6 +66,7 @@ FlashMovieFactory::FlashMovieFactory()
 	m_tagReaders[TiSoundStreamHead] = new FlashTagUnsupported(TiSoundStreamHead);
 	m_tagReaders[TiSoundStreamBlock] = new FlashTagUnsupported(TiSoundStreamBlock);
 	m_tagReaders[TiSoundStreamHead2] = new FlashTagUnsupported(TiSoundStreamHead2);
+	m_tagReaders[TiDebugID] = new FlashTagUnsupported(TiDebugID);
 	m_tagReaders[TiFileAttributes] = new FlashTagUnsupported(TiFileAttributes);
 	m_tagReaders[TiMetadata] = new FlashTagUnsupported(TiMetadata);
 	m_tagReaders[TiDefineFontAlignZones] = new FlashTagUnsupported(TiDefineFontAlignZones);

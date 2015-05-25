@@ -803,9 +803,9 @@ bool FlashTagDefineSprite::read(SwfReader* swf, ReadContext& context)
 	BitReader& bs = swf->getBitReader();
 
 	uint16_t spriteId = bs.readUInt16();
-	uint16_t frameCount = bs.readUInt16();
+	uint16_t frameRate = bs.readUInt16();
 
-	Ref< FlashSprite > sprite = new FlashSprite(spriteId, frameCount);
+	Ref< FlashSprite > sprite = new FlashSprite(spriteId, frameRate);
 
 	// Setup readers for supported sprite tags.
 	std::map< uint16_t, Ref< FlashTag > > tagReaders;
@@ -821,11 +821,12 @@ bool FlashTagDefineSprite::read(SwfReader* swf, ReadContext& context)
 	tagReaders[TiFrameLabel] = new FlashTagFrameLabel();
 
 	// Define readers for tags which isn't planed to be implemented.
-	tagReaders[13] = new FlashTagUnsupported(13);
-	tagReaders[14] = new FlashTagUnsupported(14);
-	tagReaders[18] = new FlashTagUnsupported(18);
-	tagReaders[19] = new FlashTagUnsupported(19);
-	tagReaders[45] = new FlashTagUnsupported(45);
+	tagReaders[TiDefineFontInfo] = new FlashTagUnsupported(TiDefineFontInfo);
+	tagReaders[TiDefineSound] = new FlashTagUnsupported(TiDefineSound);
+	tagReaders[TiSoundStreamHead] = new FlashTagUnsupported(TiSoundStreamHead);
+	tagReaders[TiSoundStreamBlock] = new FlashTagUnsupported(TiSoundStreamBlock);
+	tagReaders[TiSoundStreamHead2] = new FlashTagUnsupported(TiSoundStreamHead2);
+	tagReaders[TiDebugID] = new FlashTagUnsupported(TiDebugID);
 
 	// Decode tags.
 	FlashTag::ReadContext spriteContext;
@@ -870,6 +871,9 @@ bool FlashTagDefineSprite::read(SwfReader* swf, ReadContext& context)
 
 		swf->leaveScope();
 	}
+
+	if (sprite->getFrameCount() == 0)
+		sprite->addFrame(new FlashFrame());
 
 	context.movie->defineCharacter(spriteId, sprite);
 	return true;
