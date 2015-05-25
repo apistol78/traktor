@@ -96,6 +96,7 @@ enum SwfTagIds
 	TiDefineVideoStream				= 60,
 	TiVideoFrame					= 61,
 	TiDefineFontInfo2				= 62,
+	TiDebugID						= 63,
 	TiEnableDebugger2				= 64,
 	TiScriptLimits					= 65,
 	TiSetTabIndex					= 66,
