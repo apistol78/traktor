@@ -284,15 +284,10 @@ bool Replicator::update()
 		}
 		else if (msg.id == RmiState)
 		{
-			if (fromProxy->m_stateTemplate)
-			{
-				bool received;
-				T_MEASURE_STATEMENT(received = fromProxy->receivedState(m_time, net2time(msg.time), msg.state.data, RmiState_StateSize(nrecv)), 0.001);
-				if (received)
-					fromProxy->m_issueStateListeners = true;
-			}
-			else
-				log::info << getLogPrefix() << L"Received state from " << from << L" but no state template registered; state ignored." << Endl;
+			bool received;
+			T_MEASURE_STATEMENT(received = fromProxy->receivedState(m_time, net2time(msg.time), msg.state.data, RmiState_StateSize(nrecv)), 0.001);
+			if (received)
+				fromProxy->m_issueStateListeners = true;
 		}
 		else if (msg.id == RmiEvent)
 		{

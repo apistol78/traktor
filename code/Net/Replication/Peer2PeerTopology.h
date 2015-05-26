@@ -31,6 +31,7 @@ public:
 	{
 		net_handle_t handle;
 		net_handle_t send;
+		net_handle_t reverseSend;
 		std::wstring name;
 		Ref< Object > user;
 		bool established;
@@ -43,6 +44,7 @@ public:
 		Peer()
 		:	handle(0)
 		,	send(0)
+		,	reverseSend(0)
 		,	established(false)
 		,	sequence(0)
 		,	whenIAm(0.0)

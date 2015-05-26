@@ -604,13 +604,14 @@ bool Peer2PeerTopology::update(double dT)
 		{
 			if (updateRouting)
 			{
-				bool result = false;
-				T_MEASURE_STATEMENT(result = findOptimalRoute(myPeer.handle, m_peers[i].handle, m_peers[i].send), 0.001);
-				if (!result)
+				if (!findOptimalRoute(myPeer.handle, m_peers[i].handle, m_peers[i].send))
 					m_peers[i].send = 0;
+
+				if (!findOptimalRoute(m_peers[i].handle, myPeer.handle, m_peers[i].reverseSend))
+					m_peers[i].reverseSend = 0;
 			}
 
-			if (m_peers[i].send != 0)
+			if (m_peers[i].send != 0 && m_peers[i].reverseSend != 0)
 			{
 				m_nodes.push_back(i);
 

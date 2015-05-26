@@ -392,14 +392,14 @@ bool ReplicatorProxy::receivedState(double localTime, double stateTime, const vo
 {
 	if (!m_stateTemplate)
 	{
-		log::info << m_replicator->getLogPrefix() << L"Received state (" << stateDataSize << L" byte(s)) from " << m_handle << L" but no state template registered; state ignored." << Endl;
+		log::info << m_replicator->getLogPrefix() << L"Received state (" << stateDataSize << L" byte(s)) from " << getLogIdentifier() << L" but no state template registered; state ignored." << Endl;
 		return false;
 	}
 
 	Ref< const State > state = m_stateTemplate->unpack(stateData, stateDataSize);
 	if (!state)
 	{
-		log::info << m_replicator->getLogPrefix() << L"Failed to unpack state (" << stateDataSize << L" byte(s)) from " << m_handle << L"; state ignored." << Endl;
+		log::info << m_replicator->getLogPrefix() << L"Failed to unpack state (" << stateDataSize << L" byte(s)) from " << getLogIdentifier() << L"; state ignored." << Endl;
 		return false;
 	}
 
@@ -428,7 +428,7 @@ bool ReplicatorProxy::receivedState(double localTime, double stateTime, const vo
 	}
 	else
 	{
-		log::info << m_replicator->getLogPrefix() << L"Received old state (" << int32_t((m_stateTimeN2 - stateTime) * 1000.0) << L" ms) from " << m_handle << L"; state ignored." << Endl;
+		log::info << m_replicator->getLogPrefix() << L"Received old state (" << int32_t((m_stateTimeN2 - stateTime) * 1000.0) << L" ms) from " << getLogIdentifier() << L"; state ignored." << Endl;
 		return false;
 	}
 
@@ -453,14 +453,17 @@ void ReplicatorProxy::disconnect()
 	m_latencyReverse = 0.0;
 	m_latencyReverseStandardDeviation = 0.0;
 	m_unacknowledgedEvents.clear();
-	//m_lastEvents.clear();
-	//m_dispatchEvent = 0;
 	for (uint32_t i = 0; i < sizeof_array(m_eventSlots); ++i)
 	{
 		m_eventSlots[i].time = 0;
 		m_eventSlots[i].eventObject = 0;
 		m_eventSlots[i].dispatched = false;
 	}
+}
+
+std::wstring ReplicatorProxy::getLogIdentifier() const
+{
+	return L"[" + toString(m_handle) + (isRelayed() ? L" (relayed)]" : L"]");
 }
 
 ReplicatorProxy::ReplicatorProxy(Replicator* replicator, net_handle_t handle, const std::wstring& name, Object* user)
