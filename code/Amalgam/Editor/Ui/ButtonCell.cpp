@@ -26,13 +26,13 @@ void ButtonCell::setEnable(bool enable)
 	m_enable = enable;
 }
 
-void ButtonCell::mouseDown(const ui::Point& position)
+void ButtonCell::mouseDown(ui::MouseButtonDownEvent* event, const ui::Point& position)
 {
 	if (m_enable)
 		m_down = true;
 }
 
-void ButtonCell::mouseUp(const ui::Point& position)
+void ButtonCell::mouseUp(ui::MouseButtonUpEvent* event, const ui::Point& position)
 {
 	if (m_enable)
 	{

@@ -10,8 +10,6 @@ namespace traktor
 	{
 
 class Edit;
-class TreeView;
-class TreeViewItem;
 class HierarchicalState;
 class PopupMenu;
 
@@ -22,6 +20,11 @@ class ToolBar;
 class ToolBarButton;
 class ToolBarButtonClickEvent;
 class ToolBarDropDown;
+class TreeView;
+class TreeViewContentChangeEvent;
+class TreeViewDragEvent;
+class TreeViewItem;
+class TreeViewItemActivateEvent;
 
 		}
 	}
@@ -81,7 +84,7 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolFavoritesShow;
 	Ref< ui::custom::ToolBarDropDown > m_toolViewMode;
 	Ref< ui::Edit > m_editFilter;
-	Ref< ui::TreeView > m_treeDatabase;
+	Ref< ui::custom::TreeView > m_treeDatabase;
 	Ref< ui::HierarchicalState > m_treeState;
 	Ref< ui::PopupMenu > m_menuGroup[2];
 	Ref< ui::PopupMenu > m_menuInstance;
@@ -95,7 +98,7 @@ private:
 
 	int32_t getIconIndex(const TypeInfo* instanceType) const;
 
-	Ref< ui::TreeViewItem > buildTreeItem(ui::TreeView* treeView, ui::TreeViewItem* parentItem, db::Group* group);
+	Ref< ui::custom::TreeViewItem > buildTreeItem(ui::custom::TreeView* treeView, ui::custom::TreeViewItem* parentItem, db::Group* group);
 
 	void filterType(db::Instance* instance);
 
@@ -107,13 +110,13 @@ private:
 
 	void eventTimer(ui::TimerEvent* event);
 
-	void eventInstanceActivate(ui::TreeViewItemActivateEvent* event);
+	void eventInstanceActivate(ui::custom::TreeViewItemActivateEvent* event);
 
 	void eventInstanceButtonDown(ui::MouseButtonDownEvent* event);
 
-	void eventInstanceRenamed(ui::TreeViewContentChangeEvent* event);
+	void eventInstanceRenamed(ui::custom::TreeViewContentChangeEvent* event);
 
-	void eventInstanceDrag(ui::TreeViewDragEvent* event);
+	void eventInstanceDrag(ui::custom::TreeViewDragEvent* event);
 };
 
 	}

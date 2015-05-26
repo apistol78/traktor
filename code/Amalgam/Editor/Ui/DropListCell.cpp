@@ -19,7 +19,7 @@ DropListCell::DropListCell(HostEnumerator* hostEnumerator, TargetInstance* insta
 {
 }
 
-void DropListCell::mouseDown(const ui::Point& position)
+void DropListCell::mouseDown(ui::MouseButtonDownEvent* event, const ui::Point& position)
 {
 	ui::PopupMenu menu;
 	if (menu.create())

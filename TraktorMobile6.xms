@@ -7042,6 +7042,10 @@
 							<fileName>../../../res/graph/External.png</fileName>
 							<items/>
 						</item>
+						<item type="File">
+							<fileName>../../../res/TviState.png</fileName>
+							<items/>
+						</item>
 					</items>
 				</item>
 				<item type="Filter">
@@ -7085,6 +7089,15 @@
 					<items>
 						<item type="File">
 							<fileName>RichEdit/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>TreeView</name>
+					<items>
+						<item type="File">
+							<fileName>TreeView/*.*</fileName>
 							<items/>
 						</item>
 					</items>

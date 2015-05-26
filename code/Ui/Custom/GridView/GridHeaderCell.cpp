@@ -18,7 +18,7 @@ void GridHeaderCell::setColumns(const RefArray< GridColumn >& columns)
 	m_columns = columns;
 }
 
-void GridHeaderCell::mouseDown(const Point& position)
+void GridHeaderCell::mouseDown(MouseButtonDownEvent* event, const Point& position)
 {
 	if (m_columns.size() < 2)
 		return;
@@ -39,12 +39,12 @@ void GridHeaderCell::mouseDown(const Point& position)
 	}
 }
 
-void GridHeaderCell::mouseUp(const Point& position)
+void GridHeaderCell::mouseUp(MouseButtonUpEvent* event, const Point& position)
 {
 	m_resizeColumn = 0;
 }
 
-void GridHeaderCell::mouseMove(const Point& position)
+void GridHeaderCell::mouseMove(MouseMoveEvent* event, const Point& position)
 {
 	if (!m_resizeColumn)
 		return;

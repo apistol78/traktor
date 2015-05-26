@@ -1,6 +1,7 @@
 #ifndef traktor_ui_custom_AutoWidget_H
 #define traktor_ui_custom_AutoWidget_H
 
+#include <list>
 #include "Ui/Widget.h"
 
 // import/export mechanism.
@@ -48,7 +49,17 @@ public:
 
 	void requestUpdate();
 
+	void requestInterval(AutoWidgetCell* cell, int32_t duration);
+
 	void placeCell(AutoWidgetCell* cell, const Rect& rc);
+
+	Rect getCellRect(const AutoWidgetCell* cell) const;
+
+	Rect getCellClientRect(const AutoWidgetCell* cell) const;
+
+	bool setCapturedCell(AutoWidgetCell* cell);
+
+	void releaseCapturedCell();
 
 	virtual void layoutCells(const Rect& rc) = 0;
 
@@ -58,7 +69,15 @@ private:
 		Ref< AutoWidgetCell > cell;
 		Rect rc;
 	};
+
+	struct CellInterval
+	{
+		Ref< AutoWidgetCell > cell;
+		int32_t duration;
+	};
+
 	std::vector< CellInstance > m_cells;
+	std::list< CellInterval > m_intervals;
 	Ref< AutoWidgetCell > m_focusCell;
 	Ref< AutoWidgetCell > m_captureCell;
 	Ref< ScrollBar > m_scrollBarH;
@@ -74,6 +93,8 @@ private:
 	void eventButtonDown(MouseButtonDownEvent* event);
 
 	void eventButtonUp(MouseButtonUpEvent* event);
+
+	void eventDoubleClick(MouseDoubleClickEvent* event);
 
 	void eventMouseMove(MouseMoveEvent* event);
 

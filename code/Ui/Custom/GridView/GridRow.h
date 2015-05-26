@@ -75,15 +75,15 @@ public:
 
 	const RefArray< GridRow >& getChildren() const { return m_children; }
 
-	virtual void placeCells(AutoWidget* widget, const Rect& rect);
+	virtual void placeCells(AutoWidget* widget, const Rect& rect) T_FINAL;
 
-	virtual void mouseDown(const Point& position);
+	virtual void mouseDown(MouseButtonDownEvent* event, const Point& position) T_FINAL;
 
-	virtual void paint(Canvas& canvas, const Rect& rect);
+	virtual void paint(Canvas& canvas, const Rect& rect) T_FINAL;
 
-	virtual int32_t getHeight() const;
+	virtual int32_t getHeight() const T_FINAL;
 
-	virtual std::wstring getText() const;
+	virtual std::wstring getText() const T_FINAL;
 
 private:
 	friend class GridView;
