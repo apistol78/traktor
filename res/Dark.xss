@@ -4,17 +4,17 @@
 		<item>
 			<type>traktor.ui.Widget</type>
 			<element>color</element>
-			<color>30, 30, 30, 255</color>
+			<color>255, 255, 255, 255</color>
 		</item>
 		<item>
 			<type>traktor.ui.Widget</type>
 			<element>color-disabled</element>
-			<color>60, 60, 60, 255</color>
-		</item>	
+			<color>200, 200, 200, 255</color>
+		</item>		
 		<item>
 			<type>traktor.ui.Widget</type>
 			<element>background-color</element>
-			<color>239, 239, 242, 255</color>
+			<color>45, 45, 45, 255</color>
 		</item>
 		<item>
 			<type>traktor.ui.Widget</type>
@@ -34,12 +34,12 @@
 		<item>
 			<type>traktor.ui.Dock</type>
 			<element>caption-color-no-focus</element>
-			<color>30, 30, 30, 255</color>
+			<color>208, 208, 208, 255</color>
 		</item>
 		<item>
 			<type>traktor.ui.Dock</type>
 			<element>splitter-color</element>
-			<color>204, 200, 219, 255</color>
+			<color>63, 63, 70, 255</color>
 		</item>		
 		<item>
 			<type>traktor.ui.Tab</type>
@@ -64,7 +64,7 @@
 		<item>
 			<type>traktor.ui.Tab</type>
 			<element>tab-color-inactive</element>
-			<color>30, 30, 30, 255</color>
+			<color>255, 255, 255, 255</color>
 		</item>
 		<item>
 			<type>traktor.ui.custom.BackgroundWorkerDialog</type>
@@ -89,7 +89,7 @@
 		<item>
 			<type>traktor.ui.custom.TreeView</type>
 			<element>background-color</element>
-			<color>246, 246, 246, 255</color>
+			<color>37, 37, 38, 255</color>
 		</item>
 		<item>
 			<type>traktor.ui.custom.TreeView</type>
@@ -109,22 +109,22 @@
 		<item>
 			<type>traktor.ui.custom.GradientStatic</type>
 			<element>background-color-left</element>
-			<color>239, 239, 242, 255</color>
+			<color>45, 45, 45, 255</color>
 		</item>
 		<item>
 			<type>traktor.ui.custom.GradientStatic</type>
 			<element>background-color-right</element>
-			<color>239, 239, 242, 255</color>
+			<color>45, 45, 45, 255</color>
 		</item>
 		<item>
 			<type>traktor.ui.custom.GridView</type>
 			<element>background-color</element>
-			<color>255, 255, 255, 255</color>
+			<color>37, 37, 38, 255</color>
 		</item>
 		<item>
 			<type>traktor.ui.custom.GridView</type>
 			<element>header-background-color</element>
-			<color>239, 239, 242, 255</color>
+			<color>60, 60, 62, 255</color>
 		</item>
 		<item>
 			<type>traktor.ui.custom.GridView</type>
@@ -134,12 +134,12 @@
 		<item>
 			<type>traktor.ui.custom.GridView</type>
 			<element>line-color</element>
-			<color>239, 239, 242, 255</color>
+			<color>40, 40, 41, 255</color>
 		</item>
 		<item>
 			<type>traktor.ui.custom.LogList</type>
 			<element>background-color</element>
-			<color>255, 255, 255, 255</color>
+			<color>37, 37, 38, 255</color>
 		</item>
 		<item>
 			<type>traktor.ui.custom.ProfileControl</type>

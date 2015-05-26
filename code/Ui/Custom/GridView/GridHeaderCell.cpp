@@ -1,5 +1,6 @@
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Custom/Auto/AutoWidget.h"
 #include "Ui/Custom/GridView/GridHeaderCell.h"
 #include "Ui/Custom/GridView/GridColumn.h"
@@ -59,10 +60,9 @@ void GridHeaderCell::mouseMove(MouseMoveEvent* event, const Point& position)
 
 void GridHeaderCell::paint(Canvas& canvas, const Rect& rect)
 {
-	Color4ub c1 = getSystemColor(ScMenuBackground);
-	Color4ub c0 = lerp(c1, Color4ub(255, 255, 255), 0.5f);
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 
-	canvas.setBackground(c0);
+	canvas.setBackground(ss->getColor(getWidget(), L"header-background-color"));
 	canvas.fillRect(Rect(0, rect.top, rect.getWidth(), rect.bottom));
 
 	int32_t left = rect.left;
@@ -74,12 +74,12 @@ void GridHeaderCell::paint(Canvas& canvas, const Rect& rect)
 		if (m_columns.size() == 1)
 			width = rect.getWidth();
 
-		canvas.setForeground(getWidget()->isEnable() ? getSystemColor(ScWindowText) : getSystemColor(ScDisabledText));
+		canvas.setForeground(ss->getColor(getWidget(), getWidget()->isEnable() ? L"color" : L"color-disabled"));
 		canvas.drawText(Rect(left + 2, rect.top, left + width - 2, rect.bottom), column->getTitle(), AnLeft, AnCenter);
 
 		if (i > 0)
 		{
-			canvas.setForeground(Color4ub(208, 208, 208));
+			canvas.setForeground(ss->getColor(getWidget(), L"line-color"));
 			canvas.drawLine(left, rect.top + 4, left, rect.bottom - 4);
 		}
 

@@ -2,6 +2,7 @@
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Event.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Custom/Auto/AutoWidget.h"
 #include "Ui/Custom/GridView/GridColumn.h"
 #include "Ui/Custom/GridView/GridRow.h"
@@ -161,7 +162,10 @@ void GridRow::mouseDown(MouseButtonDownEvent* event, const Point& position)
 
 void GridRow::paint(Canvas& canvas, const Rect& rect)
 {
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+
 	GridView* gridView = checked_type_cast< GridView*, false >(getWidget());
+
 	const RefArray< GridColumn >& columns = gridView->getColumns();
 	Rect rowRect(0, rect.top, rect.getWidth(), rect.bottom);
 
@@ -175,7 +179,7 @@ void GridRow::paint(Canvas& canvas, const Rect& rect)
 	// Paint selection background.
 	if (m_state & GridRow::RsSelected)
 	{
-		canvas.setBackground(Color4ub(230, 230, 230, 180));
+		canvas.setBackground(ss->getColor(gridView, L"item-background-color-selected"));
 		canvas.fillRect(rowRect);
 	}
 
@@ -192,7 +196,7 @@ void GridRow::paint(Canvas& canvas, const Rect& rect)
 		);
 	}
 
-	canvas.setForeground(Color4ub(190, 190, 200));
+	canvas.setForeground(ss->getColor(gridView, L"line-color"));
 
 	if (columns.size() >= 2)
 	{
