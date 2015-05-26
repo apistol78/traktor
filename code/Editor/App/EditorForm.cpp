@@ -858,7 +858,7 @@ const TypeInfo* EditorForm::browseType(const TypeInfo* base)
 	const TypeInfo* type = 0;
 
 	BrowseTypeDialog dlgBrowse(m_mergedSettings);
-	if (dlgBrowse.create(this, base, false, true))
+	if (dlgBrowse.create(this, base, false, false))
 	{
 		if (dlgBrowse.showModal() == ui::DrOk)
 			type = dlgBrowse.getSelectedType();
