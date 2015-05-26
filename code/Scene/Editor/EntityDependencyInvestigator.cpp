@@ -15,8 +15,9 @@
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Bitmap.h"
 #include "Ui/TableLayout.h"
-#include "Ui/TreeView.h"
-#include "Ui/TreeViewItem.h"
+#include "Ui/Custom/TreeView/TreeView.h"
+#include "Ui/Custom/TreeView/TreeViewItem.h"
+#include "Ui/Custom/TreeView/TreeViewItemActivateEvent.h"
 #include "World/EntityData.h"
 
 // Resources
@@ -60,11 +61,11 @@ bool EntityDependencyInvestigator::create(ui::Widget* parent)
 
 	setText(i18n::Text(L"SCENE_EDITOR_DEPENDENCY_INVESTIGATOR"));
 
-	m_dependencyTree = new ui::TreeView();
-	m_dependencyTree->create(this, ui::TreeView::WsDefault & ~ui::WsClientBorder);
+	m_dependencyTree = new ui::custom::TreeView();
+	m_dependencyTree->create(this, (ui::custom::TreeView::WsDefault & ~ui::WsClientBorder) | ui::WsDoubleBuffer);
 	m_dependencyTree->addImage(ui::Bitmap::load(c_ResourceTypes, sizeof(c_ResourceTypes), L"png"), 30);
 	m_dependencyTree->addImage(ui::Bitmap::load(c_ResourceEntityTypes, sizeof(c_ResourceEntityTypes), L"png"), 4);
-	m_dependencyTree->addEventHandler< ui::TreeViewItemActivateEvent >(this, &EntityDependencyInvestigator::eventDependencyActivate);
+	m_dependencyTree->addEventHandler< ui::custom::TreeViewItemActivateEvent >(this, &EntityDependencyInvestigator::eventDependencyActivate);
 
 	m_context->addEventHandler< ui::SelectionChangeEvent >(this, &EntityDependencyInvestigator::eventContextSelect);
 	return true;
@@ -82,10 +83,7 @@ void EntityDependencyInvestigator::setEntityAdapter(EntityAdapter* entityAdapter
 		Ref< editor::IPipelineDependencySet > dependencySet = m_context->getEditor()->buildAssetDependencies(entityAdapter->getEntityData(), 1);
 		T_ASSERT (dependencySet);
 
-		Ref< ui::TreeViewItem > entityRootItem = m_dependencyTree->createItem(0, entityAdapter->getName(), 15);
-		entityRootItem->expand();
-
-		std::map< const TypeInfo*, Ref< ui::TreeViewItem > > typeGroups;
+		std::map< const TypeInfo*, Ref< ui::custom::TreeViewItem > > typeGroups;
 		std::set< Path > externalFiles;
 
 		for (uint32_t i = 0; i < dependencySet->size(); ++i)
@@ -96,14 +94,14 @@ void EntityDependencyInvestigator::setEntityAdapter(EntityAdapter* entityAdapter
 			const TypeInfo* assetType = &type_of(dependency->sourceAsset);
 			T_ASSERT (assetType);
 
-			Ref< ui::TreeViewItem > typeGroup = typeGroups[assetType];
+			Ref< ui::custom::TreeViewItem > typeGroup = typeGroups[assetType];
 			if (!typeGroup)
 			{
-				typeGroup = m_dependencyTree->createItem(entityRootItem, getCategoryText(assetType), 0, 1);
+				typeGroup = m_dependencyTree->createItem(0, getCategoryText(assetType), 0, 1);
 				typeGroups[assetType] = typeGroup;
 			}
 
-			Ref< ui::TreeViewItem > dependencyItem = m_dependencyTree->createItem(typeGroup, dependency->outputPath, 2);
+			Ref< ui::custom::TreeViewItem > dependencyItem = m_dependencyTree->createItem(typeGroup, dependency->outputPath, 2);
 			dependencyItem->setData(L"DEPENDENCY", dependency);
 
 			for (std::vector< editor::PipelineDependency::ExternalFile >::const_iterator j = dependency->files.begin(); j != dependency->files.end(); ++j)
@@ -112,19 +110,19 @@ void EntityDependencyInvestigator::setEntityAdapter(EntityAdapter* entityAdapter
 
 		if (!externalFiles.empty())
 		{
-			Ref< ui::TreeViewItem > filesGroup = m_dependencyTree->createItem(entityRootItem, i18n::Text(L"SCENE_EDITOR_DEPENDENCY_FILES"), 0, 1);
+			Ref< ui::custom::TreeViewItem > filesGroup = m_dependencyTree->createItem(0, i18n::Text(L"SCENE_EDITOR_DEPENDENCY_FILES"), 0, 1);
 			for (std::set< Path >::iterator i = externalFiles.begin(); i != externalFiles.end(); ++i)
 			{
-				Ref< ui::TreeViewItem > fileItem = m_dependencyTree->createItem(filesGroup, i->getFileName(), 2);
+				Ref< ui::custom::TreeViewItem > fileItem = m_dependencyTree->createItem(filesGroup, i->getFileName(), 2);
 				fileItem->setData(L"FILE", new Path(*i));
 			}
 		}
 	}
 }
 
-void EntityDependencyInvestigator::eventDependencyActivate(ui::TreeViewItemActivateEvent* event)
+void EntityDependencyInvestigator::eventDependencyActivate(ui::custom::TreeViewItemActivateEvent* event)
 {
-	Ref< ui::TreeViewItem > item = event->getItem();
+	Ref< ui::custom::TreeViewItem > item = event->getItem();
 
 	Ref< editor::PipelineDependency > dependency = item->getData< editor::PipelineDependency >(L"DEPENDENCY");
 	if (dependency)

@@ -1,6 +1,7 @@
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Canvas.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Custom/Auto/AutoWidget.h"
 #include "Ui/Custom/GridView/GridItem.h"
 
@@ -71,7 +72,7 @@ Bitmap* GridItem::getImage() const
 
 int32_t GridItem::getHeight() const
 {
-	int32_t height = 18;
+	int32_t height = 19;
 
 	if (m_font)
 		height = std::max(height, m_font->getSize() + 10);
@@ -90,6 +91,8 @@ AutoWidgetCell* GridItem::hitTest(const Point& position)
 
 void GridItem::paint(Canvas& canvas, const Rect& rect)
 {
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+
 	Rect rcText(rect.left + 2, rect.top, rect.right, rect.bottom);
 
 	if (m_image)
@@ -119,7 +122,7 @@ void GridItem::paint(Canvas& canvas, const Rect& rect)
 		if (m_font)
 			canvas.setFont(*m_font);
 
-		canvas.setForeground(getWidget()->isEnable() ? getSystemColor(ScWindowText) : getSystemColor(ScDisabledText));
+		canvas.setForeground(ss->getColor(getWidget(), getWidget()->isEnable() ? L"color" : L"color-disabled"));
 		canvas.drawText(rcText, m_text, AnLeft, AnCenter);
 
 		if (m_font)

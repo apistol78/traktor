@@ -7,9 +7,13 @@ namespace traktor
 {
 	namespace ui
 	{
+		namespace custom
+		{
 
 class TreeView;
+class TreeViewItemActivateEvent;
 
+		}
 	}
 
 	namespace scene
@@ -34,10 +38,10 @@ public:
 
 private:
 	Ref< SceneEditorContext > m_context;
-	Ref< ui::TreeView > m_dependencyTree;
+	Ref< ui::custom::TreeView > m_dependencyTree;
 	Ref< EntityAdapter > m_currentEntityAdapter;
 
-	void eventDependencyActivate(ui::TreeViewItemActivateEvent* event);
+	void eventDependencyActivate(ui::custom::TreeViewItemActivateEvent* event);
 
 	void eventContextSelect(ui::SelectionChangeEvent* event);
 };
