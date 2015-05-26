@@ -48,7 +48,7 @@ void BankControlGrain::setActive(bool active)
 	m_active = active;
 }
 
-void BankControlGrain::mouseDown(const ui::Point& position)
+void BankControlGrain::mouseDown(ui::MouseButtonDownEvent* event, const ui::Point& position)
 {
 	ui::SelectionChangeEvent selectionChange(getWidget(), this);
 	getWidget()->raiseEvent(&selectionChange);

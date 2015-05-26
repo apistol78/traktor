@@ -19,6 +19,10 @@ namespace traktor
 	{
 
 class Canvas;
+class MouseButtonDownEvent;
+class MouseButtonUpEvent;
+class MouseDoubleClickEvent;
+class MouseMoveEvent;
 
 		namespace custom
 		{
@@ -45,11 +49,15 @@ public:
 
 	virtual void endCapture();
 
-	virtual void mouseDown(const Point& position);
+	virtual void interval();
 
-	virtual void mouseUp(const Point& position);
+	virtual void mouseDown(MouseButtonDownEvent* event, const Point& position);
 
-	virtual void mouseMove(const Point& position);
+	virtual void mouseUp(MouseButtonUpEvent* event, const Point& position);
+
+	virtual void mouseDoubleClick(MouseDoubleClickEvent* event, const Point& position);
+
+	virtual void mouseMove(MouseMoveEvent* event, const Point& position);
 
 	virtual void paint(Canvas& canvas, const Rect& rect);
 

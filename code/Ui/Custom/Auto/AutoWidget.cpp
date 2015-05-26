@@ -27,6 +27,7 @@ bool AutoWidget::create(ui::Widget* parent, int32_t style)
 
 	addEventHandler< MouseButtonDownEvent >(this, &AutoWidget::eventButtonDown);
 	addEventHandler< MouseButtonUpEvent >(this, &AutoWidget::eventButtonUp);
+	addEventHandler< MouseDoubleClickEvent >(this, &AutoWidget::eventDoubleClick);
 	addEventHandler< MouseMoveEvent >(this, &AutoWidget::eventMouseMove);
 	addEventHandler< MouseWheelEvent >(this, &AutoWidget::eventMouseWheel);
 	addEventHandler< PaintEvent >(this, &AutoWidget::eventPaint);
@@ -80,6 +81,25 @@ void AutoWidget::requestUpdate()
 	m_deferredUpdate = true;
 }
 
+void AutoWidget::requestInterval(AutoWidgetCell* cell, int32_t duration)
+{
+	// Update already enqueued interval first.
+	for (std::list< CellInterval >::iterator i = m_intervals.begin(); i != m_intervals.end(); ++i)
+	{
+		if (i->cell == cell)
+		{
+			i->duration = duration;
+			return;
+		}
+	}
+
+	// Not queued, then add new entry.
+	CellInterval ci;
+	ci.cell = cell;
+	ci.duration = duration;
+	m_intervals.push_back(ci);
+}
+
 void AutoWidget::placeCell(AutoWidgetCell* cell, const Rect& rect)
 {
 	T_ASSERT (cell);
@@ -90,6 +110,49 @@ void AutoWidget::placeCell(AutoWidgetCell* cell, const Rect& rect)
 
 	// Notify cell to place sub-cells.
 	cell->placeCells(this, rect);
+}
+
+Rect AutoWidget::getCellRect(const AutoWidgetCell* cell) const
+{
+	for (std::vector< CellInstance >::const_iterator i = m_cells.begin(); i != m_cells.end(); ++i)
+	{
+		if (i->cell == cell)
+			return i->rc;
+	}
+	return Rect();
+}
+
+Rect AutoWidget::getCellClientRect(const AutoWidgetCell* cell) const
+{
+	for (std::vector< CellInstance >::const_iterator i = m_cells.begin(); i != m_cells.end(); ++i)
+	{
+		if (i->cell == cell)
+			return i->rc.offset(m_scrollOffset);
+	}
+	return Rect();
+}
+
+bool AutoWidget::setCapturedCell(AutoWidgetCell* cell)
+{
+	releaseCapturedCell();
+
+	if (!cell->beginCapture())
+		return false;
+
+	setCapture();
+
+	m_captureCell = cell;
+	return true;
+}
+
+void AutoWidget::releaseCapturedCell()
+{
+	if (m_captureCell)
+	{
+		m_captureCell->endCapture();
+		releaseCapture();
+	}
+	m_captureCell = 0;
 }
 
 void AutoWidget::updateLayout()
@@ -199,12 +262,10 @@ void AutoWidget::eventButtonDown(MouseButtonDownEvent* event)
 	if (hitItem)
 	{
 		m_focusCell = hitItem;
-		if (hitItem->beginCapture())
+		if (setCapturedCell(hitItem))
 		{
 			Point clientPosition = event->getPosition() - m_scrollOffset;
-			m_captureCell = hitItem;
-			m_captureCell->mouseDown(clientPosition);
-			setCapture();
+			m_captureCell->mouseDown(event, clientPosition);
 		}
 	}
 	else
@@ -221,10 +282,20 @@ void AutoWidget::eventButtonUp(MouseButtonUpEvent* event)
 	if (m_captureCell)
 	{
 		Point clientPosition = event->getPosition() - m_scrollOffset;
-		m_captureCell->mouseUp(clientPosition);
-		m_captureCell->endCapture();
-		releaseCapture();
-		update();
+		m_captureCell->mouseUp(event, clientPosition);
+	}
+
+	releaseCapturedCell();
+	update();
+}
+
+void AutoWidget::eventDoubleClick(MouseDoubleClickEvent* event)
+{
+	Ref< AutoWidgetCell > hitItem = hitTest(event->getPosition());
+	if (hitItem)
+	{
+		Point clientPosition = event->getPosition() - m_scrollOffset;
+		hitItem->mouseDoubleClick(event, clientPosition);
 	}
 }
 
@@ -233,7 +304,7 @@ void AutoWidget::eventMouseMove(MouseMoveEvent* event)
 	if (m_captureCell)
 	{
 		Point clientPosition = event->getPosition() - m_scrollOffset;
-		m_captureCell->mouseMove(clientPosition);
+		m_captureCell->mouseMove(event, clientPosition);
 		update();
 	}
 }
@@ -276,6 +347,17 @@ void AutoWidget::eventSize(SizeEvent* event)
 
 void AutoWidget::eventTimer(TimerEvent* event)
 {
+	for (std::list< CellInterval >::iterator i = m_intervals.begin(); i != m_intervals.end(); )
+	{
+		if ((i->duration -= 100) <= 0)
+		{
+			i->cell->interval();
+			i = m_intervals.erase(i);
+		}
+		else
+			++i;
+	}
+
 	if (!isVisible(false))
 		return;
 

@@ -82,6 +82,21 @@
 			<color>51, 153, 255, 255</color>
 		</item>
 		<item>
+			<type>traktor.ui.custom.TreeView</type>
+			<element>background-color</element>
+			<color>246, 246, 246, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.TreeView</type>
+			<element>item-color-selected</element>
+			<color>255, 255, 255, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.TreeView</type>
+			<element>item-background-color-selected</element>
+			<color>51, 153, 255, 255</color>
+		</item>
+		<item>
 			<type>traktor.ui.custom.PreviewList</type>
 			<element>background-color</element>
 			<color>80, 80, 80, 255</color>

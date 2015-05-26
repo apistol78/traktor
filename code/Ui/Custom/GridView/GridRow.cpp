@@ -138,7 +138,7 @@ void GridRow::placeCells(AutoWidget* widget, const Rect& rect)
 	AutoWidgetCell::placeCells(widget, rect);
 }
 
-void GridRow::mouseDown(const Point& position)
+void GridRow::mouseDown(MouseButtonDownEvent* event, const Point& position)
 {
 	// Handle expand/collapse.
 	if (!m_children.empty())

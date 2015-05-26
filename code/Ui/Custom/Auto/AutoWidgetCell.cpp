@@ -33,15 +33,23 @@ void AutoWidgetCell::endCapture()
 {
 }
 
-void AutoWidgetCell::mouseDown(const Point& position)
+void AutoWidgetCell::interval()
 {
 }
 
-void AutoWidgetCell::mouseUp(const Point& position)
+void AutoWidgetCell::mouseDown(MouseButtonDownEvent* event, const Point& position)
 {
 }
 
-void AutoWidgetCell::mouseMove(const Point& position)
+void AutoWidgetCell::mouseUp(MouseButtonUpEvent* event, const Point& position)
+{
+}
+
+void AutoWidgetCell::mouseDoubleClick(MouseDoubleClickEvent* event, const Point& position)
+{
+}
+
+void AutoWidgetCell::mouseMove(MouseMoveEvent* event, const Point& position)
 {
 }
 
