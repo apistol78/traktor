@@ -226,6 +226,8 @@ private:
 
 	void disconnect();
 
+	std::wstring getLogIdentifier() const;
+
 	ReplicatorProxy(Replicator* replicator, net_handle_t handle, const std::wstring& name, Object* user);
 };
 
