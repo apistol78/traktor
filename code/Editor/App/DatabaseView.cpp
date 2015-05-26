@@ -135,7 +135,17 @@ public:
 
 	virtual bool acceptInstance(const db::Instance* instance) const
 	{
-		return m_typeSet.find(instance->getPrimaryType()) != m_typeSet.end();
+		const TypeInfo* instanceType = instance->getPrimaryType();
+		if (!instanceType)
+			return false;
+
+		for (TypeInfoSet::const_iterator i = m_typeSet.begin(); i != m_typeSet.end(); ++i)
+		{
+			if (is_type_of(**i, *instanceType))
+				return true;
+		}
+
+		return false;
 	}
 
 	virtual bool acceptEmptyGroups() const
