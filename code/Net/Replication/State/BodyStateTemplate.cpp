@@ -156,7 +156,7 @@ Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 	for (uint32_t i = 0; i < 3; ++i)
 	{
 		f[i] = GenericFixedPoint< 13, 11 >(reader.readSigned(13+11));
-		T_FATAL_ASSERT(!isNanOrInfinite(f[i]));
+		T_ASSERT(!isNanOrInfinite(f[i]));
 	}
 
 	u = reader.readUnsigned(16);

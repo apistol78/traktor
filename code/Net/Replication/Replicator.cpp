@@ -1,3 +1,5 @@
+//#define T_ENABLE_MEASURE
+
 #include <cstring>
 #include "Core/Io/MemoryStream.h"
 #include "Core/Log/Log.h"
@@ -289,33 +291,28 @@ bool Replicator::update()
 			if (received)
 				fromProxy->m_issueStateListeners = true;
 		}
-		else if (msg.id == RmiEvent)
+		else if (msg.id == RmiEvent0 || msg.id == RmiEvent1)
 		{
-			// Send back event acknowledge.
-			reply.id = RmiEventAck;
-			reply.time = time2net(m_time);
-			reply.eventAck.sequence = msg.event.sequence;
-			T_MEASURE_STATEMENT(m_topology->send(fromProxy->m_handle, &reply, RmiEventAck_NetSize()), 0.001);
-
 			// Unwrap event object.
 			MemoryStream ms(msg.event.data, RmiEvent_EventSize(nrecv), true, false);
 			Ref< ISerializable > eventObject;
 			T_MEASURE_STATEMENT(eventObject = CompactSerializer(&ms, &m_eventTypes[0], uint32_t(m_eventTypes.size())).readObject< ISerializable >(), 0.001);
-			if (eventObject)
+
+			if (fromProxy->receivedRxEvent(msg.time, msg.event.sequence, eventObject, msg.id == RmiEvent1))
 			{
-				if (!fromProxy->enqueueEvent(msg.time, msg.event.sequence, eventObject))
-				{
-					log::error << getLogPrefix() << L"Unable to enqueue event object" << Endl;
-					return false;
-				}
+				// Send back event acknowledge.
+				reply.id = (msg.id == RmiEvent0) ? RmiEvent0Ack : RmiEvent1Ack;
+				reply.time = time2net(m_time);
+				reply.eventAck.sequence = msg.event.sequence;
+				T_MEASURE_STATEMENT(m_topology->send(fromProxy->m_handle, &reply, RmiEventAck_NetSize()), 0.001);
 			}
-			else if (!m_eventTypes.empty())
-				log::error << getLogPrefix() << L"Unable to unwrap event object; size = " << RmiEvent_EventSize(nrecv) << Endl;
+			else
+				log::error << getLogPrefix() << L"Unable to enqueue event object" << Endl;
 		}
-		else if (msg.id == RmiEventAck)
+		else if (msg.id == RmiEvent0Ack || msg.id == RmiEvent1Ack)
 		{
 			// Received an event acknowledge; discard event from queue.
-			T_MEASURE_STATEMENT(fromProxy->receivedEventAcknowledge(fromProxy, msg.eventAck.sequence), 0.001);
+			T_MEASURE_STATEMENT(fromProxy->receivedTxEventAcknowledge(fromProxy, msg.eventAck.sequence, msg.id == RmiEvent1Ack), 0.001);
 		}
 	}
 
@@ -346,8 +343,8 @@ bool Replicator::update()
 	// Update proxy queues.
 	for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
 	{
-		(*i)->updateEventQueue();
-		(*i)->dispatchEvents(m_eventListeners);
+		T_MEASURE_STATEMENT((*i)->updateTxEventQueue(), 0.001);
+		T_MEASURE_STATEMENT((*i)->dispatchRxEvents(m_eventListeners), 0.001);
 	}
 
 	T_MEASURE_UNTIL(0.001);
@@ -358,7 +355,9 @@ bool Replicator::update()
 		{
 			if (m_timeSynchronized)
 			{
+#if defined(_DEBUG)
 				log::warning << getLogPrefix() << L"Time synchronization lost (1)." << Endl;
+#endif
 				m_timeErrors.clear();
 				m_timeSynchronized = false;
 			}
@@ -370,7 +369,9 @@ bool Replicator::update()
 			{
 				if (m_timeSynchronized)
 				{
+#if defined(_DEBUG)
 					log::warning << getLogPrefix() << L"Time synchronization lost (2)." << Endl;
+#endif
 					m_timeErrors.clear();
 					m_timeSynchronized = false;
 				}
@@ -404,7 +405,9 @@ bool Replicator::update()
 		{
 			if (!m_timeSynchronized)
 			{
+#if defined(_DEBUG)
 				log::info << getLogPrefix() << L"Time synchronized (" << (m_timeContinuousSync - m_time) * 1000.0 << L" ms)" << Endl;
+#endif
 
 				for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
 				{
@@ -475,7 +478,7 @@ void Replicator::flush()
 		bool pendingEvents = false;
 		for (RefArray< ReplicatorProxy >::iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
 		{
-			if ((*i)->updateEventQueue())
+			if ((*i)->updateTxEventQueue())
 				pendingEvents = true;
 		}
 
@@ -565,10 +568,10 @@ ReplicatorProxy* Replicator::getProxy(uint32_t index) const
 	return m_proxies[index];
 }
 
-bool Replicator::broadcastEvent(const ISerializable* eventObject)
+bool Replicator::broadcastEvent(const ISerializable* eventObject, bool inOrder)
 {
 	for (RefArray< ReplicatorProxy >::const_iterator i = m_proxies.begin(); i != m_proxies.end(); ++i)
-		(*i)->sendEvent(eventObject);
+		(*i)->sendEvent(eventObject, inOrder);
 	return true;
 }
 
@@ -698,7 +701,7 @@ double Replicator::getWorstReverseLatency() const
 	return latency;
 }
 
-bool Replicator::sendEventToPrimary(const ISerializable* eventObject)
+bool Replicator::sendEventToPrimary(const ISerializable* eventObject, bool inOrder)
 {
 	if (!isPrimary())
 	{
@@ -706,7 +709,7 @@ bool Replicator::sendEventToPrimary(const ISerializable* eventObject)
 		ReplicatorProxy* primaryProxy = getPrimaryProxy();
 		if (primaryProxy)
 		{
-			primaryProxy->sendEvent(eventObject);
+			primaryProxy->sendEvent(eventObject, inOrder);
 			return true;
 		}
 		else
@@ -717,13 +720,15 @@ bool Replicator::sendEventToPrimary(const ISerializable* eventObject)
 	}
 	else
 	{
+		bool processed = false;
+
 		// We are primary peer; dispatch event directly.
 		SmallMap< const TypeInfo*, RefArray< IReplicatorEventListener > >::const_iterator it = m_eventListeners.find(&type_of(eventObject));
 		if (it != m_eventListeners.end())
 		{
 			for (RefArray< IReplicatorEventListener >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
 			{
-				(*i)->notify(
+				processed |= (*i)->notify(
 					this,
 					float(m_time),
 					0,
@@ -731,6 +736,10 @@ bool Replicator::sendEventToPrimary(const ISerializable* eventObject)
 				);
 			}
 		}
+
+		if (!processed)
+			log::warning << getLogPrefix() << L"Event " << type_name(eventObject) << L" to local not processed (1); event discarded." << Endl;
+
 		return true;
 	}
 }
