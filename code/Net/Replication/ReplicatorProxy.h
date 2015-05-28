@@ -137,12 +137,12 @@ public:
 
 	/*! \brief Send high priority event to this ghost.
 	 */
-	void sendEvent(const ISerializable* eventObject);
+	void sendEvent(const ISerializable* eventObject, bool inOrder);
 
 private:
 	friend class Replicator;
 
-	struct Event
+	struct TxEvent
 	{
 		double time;
 		uint32_t size;
@@ -150,12 +150,11 @@ private:
 		RMessage msg;
 	};
 
-	struct EventSlot
+	struct RxEvent
 	{
 		uint32_t time;
+		uint8_t sequence;
 		Ref< const ISerializable > eventObject;
-		uint32_t eventObjectHash;
-		bool dispatched;
 	};
 
 	Replicator* m_replicator;
@@ -192,9 +191,14 @@ private:
 	/*! \group Event management. */
 	//@{
 
-	uint8_t m_sequence;
-	std::list< Event > m_unacknowledgedEvents;
-	EventSlot m_eventSlots[256];
+	uint8_t m_txSequence;
+	uint8_t m_txSequenceInOrder;
+	std::list< TxEvent > m_txEvents;
+
+	RxEvent m_rxEventsInOrderQueue[256];
+	uint8_t m_rxEventsInOrderSequence;
+	std::list< RxEvent > m_rxEvents;
+	CircularVector< uint8_t, 64 > m_rxEventSequences[2];
 
 	//@}
 
@@ -212,13 +216,13 @@ private:
 	double m_latencyReverseStandardDeviation;
 	// @}
 
-	int32_t updateEventQueue();
+	int32_t updateTxEventQueue();
 
-	bool receivedEventAcknowledge(const ReplicatorProxy* from, uint8_t sequence);
+	bool receivedTxEventAcknowledge(const ReplicatorProxy* from, uint8_t sequence, bool inOrder);
 
-	bool enqueueEvent(uint32_t time, uint8_t sequence, const ISerializable* eventObject);
+	bool receivedRxEvent(uint32_t time, uint8_t sequence, const ISerializable* eventObject, bool inOrder);
 
-	bool dispatchEvents(const SmallMap< const TypeInfo*, RefArray< IReplicatorEventListener > >& eventListeners);
+	bool dispatchRxEvents(const SmallMap< const TypeInfo*, RefArray< IReplicatorEventListener > >& eventListeners);
 
 	void updateLatency(double localTime, double remoteTime, double roundTrip, double latencyReverse, double latencyReverseSpread);
 

@@ -468,6 +468,17 @@ void WorldLayer::removeEntity(world::Entity* entity)
 		m_dynamicEntities->removeEntity(entity);
 }
 
+bool WorldLayer::isEntityAdded(const world::Entity* entity) const
+{
+	if (m_dynamicEntities)
+	{
+		const RefArray< world::Entity >& entities = m_dynamicEntities->getEntities();
+		return std::find(entities.begin(), entities.end(), entity) != entities.end();
+	}
+	else
+		return false;
+}
+
 world::IEntitySchema* WorldLayer::getEntitySchema() const
 {
 	return m_scene->getEntitySchema();

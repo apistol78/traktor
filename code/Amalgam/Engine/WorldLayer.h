@@ -111,6 +111,8 @@ public:
 
 	void removeEntity(world::Entity* entity);
 
+	bool isEntityAdded(const world::Entity* entity) const;
+
 	world::IEntitySchema* getEntitySchema() const;
 
 	void setControllerEnable(bool controllerEnable);

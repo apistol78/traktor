@@ -24,7 +24,7 @@ class T_DLLCLASS IReplicatorEventListener : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual void notify(
+	virtual bool notify(
 		Replicator* replicator,
 		float eventTime,
 		ReplicatorProxy* fromProxy,

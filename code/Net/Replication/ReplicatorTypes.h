@@ -13,8 +13,10 @@ enum RMessageId
 	RmiPing	= 0xa0,
 	RmiPong = 0xa1,
 	RmiState = 0xb0,
-	RmiEvent = 0xc0,
-	RmiEventAck = 0xc1
+	RmiEvent0 = 0xc0,
+	RmiEvent0Ack = 0xc1,
+	RmiEvent1 = 0xd0,
+	RmiEvent1Ack = 0xd1
 };
 
 #pragma pack(1)

@@ -95,6 +95,9 @@ bool LanSessionManager::update()
 	if (m_matchMaking)
 		m_matchMaking->update();
 
+	if (m_user)
+		m_user->update();
+
 	return true;
 }
 

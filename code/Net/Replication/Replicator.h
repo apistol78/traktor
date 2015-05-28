@@ -207,11 +207,11 @@ public:
 
 	/*! \brief Broadcast high priority event to all peers.
 	 */
-	bool broadcastEvent(const ISerializable* eventObject);
+	bool broadcastEvent(const ISerializable* eventObject, bool inOrder);
 
 	/*! \brief Send high priority event to primary peer.
 	 */
-	bool sendEventToPrimary(const ISerializable* eventObject);
+	bool sendEventToPrimary(const ISerializable* eventObject, bool inOrder);
 
 	/*! \brief Set if time is automatically synchronized.
 	 */

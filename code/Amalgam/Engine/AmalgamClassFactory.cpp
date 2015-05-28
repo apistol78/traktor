@@ -300,6 +300,7 @@ void AmalgamClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classWorldLayer->addMethod("addEntity", &WorldLayer::addEntity);
 	classWorldLayer->addMethod("addTransientEntity", &WorldLayer::addTransientEntity);
 	classWorldLayer->addMethod("removeEntity", &WorldLayer::removeEntity);
+	classWorldLayer->addMethod("isEntityAdded", &WorldLayer::isEntityAdded);
 	classWorldLayer->addMethod("getEntitySchema", &WorldLayer::getEntitySchema);
 	classWorldLayer->addMethod("setControllerEnable", &WorldLayer::setControllerEnable);
 	classWorldLayer->addMethod("resetController", &WorldLayer::resetController);

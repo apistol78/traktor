@@ -154,7 +154,7 @@ public:
 	{
 	}
 
-	virtual void notify(Replicator* replicator, float eventTime, uint32_t eventId, ReplicatorProxy* proxy, const Object* eventObject)
+	virtual void notify(Replicator* replicator, float eventTime, uint32_t eventId, ReplicatorProxy* proxy, const Object* eventObject) T_FINAL
 	{
 		Any argv[] =
 		{
@@ -182,7 +182,7 @@ public:
 	{
 	}
 
-	virtual void notify(Replicator* replicator, float eventTime, ReplicatorProxy* fromProxy, const Object* eventObject)
+	virtual bool notify(Replicator* replicator, float eventTime, ReplicatorProxy* fromProxy, const Object* eventObject) T_FINAL
 	{
 		Any argv[] =
 		{
@@ -192,7 +192,9 @@ public:
 			CastAny< Object* >::set((Object*)eventObject)
 		};
 		if (m_delegate)
-			m_delegate->call(sizeof_array(argv), argv);
+			return m_delegate->call(sizeof_array(argv), argv).getBoolean();
+		else
+			return false;
 	}
 
 private:

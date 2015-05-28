@@ -226,13 +226,13 @@ void ReplicatorProxy::setSendState(bool sendState)
 	m_sendState = sendState;
 }
 
-void ReplicatorProxy::sendEvent(const ISerializable* eventObject)
+void ReplicatorProxy::sendEvent(const ISerializable* eventObject, bool inOrder)
 {
-	Event e;
-
-	e.msg.id = RmiEvent;
+	// Pack event structure.
+	TxEvent e;
+	e.msg.id = inOrder ? RmiEvent1 : RmiEvent0;
 	e.msg.time = time2net(m_replicator->m_time);
-	e.msg.event.sequence = m_sequence++;
+	e.msg.event.sequence = inOrder ? m_txSequenceInOrder++ : m_txSequence++;
 
 	MemoryStream ms(e.msg.event.data, RmiEvent_MaxEventSize(), false, true);
 	CompactSerializer cs(&ms, &m_replicator->m_eventTypes[0], m_replicator->m_eventTypes.size());
@@ -247,15 +247,16 @@ void ReplicatorProxy::sendEvent(const ISerializable* eventObject)
 	e.time = 0.0;
 	e.count = 0;
 
-	m_unacknowledgedEvents.push_back(e);
+	// Put event into outgoing queue.
+	m_txEvents.push_back(e);
 }
 
-int32_t ReplicatorProxy::updateEventQueue()
+int32_t ReplicatorProxy::updateTxEventQueue()
 {
 	int32_t discarded = 0;
 
 	// First send is prioritized over re-sends.
-	for (std::list< Event >::iterator i = m_unacknowledgedEvents.begin(); i != m_unacknowledgedEvents.end(); ++i)
+	for (std::list< TxEvent >::iterator i = m_txEvents.begin(); i != m_txEvents.end(); ++i)
 	{
 		if (i->count <= 0)
 		{
@@ -266,16 +267,22 @@ int32_t ReplicatorProxy::updateEventQueue()
 	}
 
 	// Re-send events if no ack has been received within threshold.
-	for (std::list< Event >::iterator i = m_unacknowledgedEvents.begin(); i != m_unacknowledgedEvents.end(); )
+	for (std::list< TxEvent >::iterator i = m_txEvents.begin(); i != m_txEvents.end(); )
 	{
 		if (m_replicator->m_time0 - i->time > c_resendTimeThreshold)
 		{
-			m_replicator->m_topology->send(m_handle, &i->msg, RmiEvent_NetSize(i->size));
-			i->time = m_replicator->m_time0;
+			T_DEBUG(L"No ack received, resending event " << int32_t(i->msg.event.sequence) << L"...");
 
-			if (++i->count >= c_resendCountThreshold)
+			m_replicator->m_topology->send(m_handle, &i->msg, RmiEvent_NetSize(i->size));
+
+			i->time = m_replicator->m_time0;
+			i->count++;
+
+			// Only permitted to discard events which are NOT in order, other
+			// events must keep on resending until acknowledged or connection terminates.
+			if (i->msg.id == RmiEvent0 && i->count >= c_resendCountThreshold)
 			{
-				i = m_unacknowledgedEvents.erase(i);
+				i = m_txEvents.erase(i);
 				++discarded;
 				continue;
 			}
@@ -286,63 +293,90 @@ int32_t ReplicatorProxy::updateEventQueue()
 	return discarded;
 }
 
-bool ReplicatorProxy::receivedEventAcknowledge(const ReplicatorProxy* from, uint8_t sequence)
+bool ReplicatorProxy::receivedTxEventAcknowledge(const ReplicatorProxy* from, uint8_t sequence, bool inOrder)
 {
-	for (std::list< Event >::iterator i = m_unacknowledgedEvents.begin(); i != m_unacknowledgedEvents.end(); ++i)
+	for (std::list< TxEvent >::iterator i = m_txEvents.begin(); i != m_txEvents.end(); ++i)
 	{
-		if (i->msg.event.sequence == sequence)
+		if (
+			((inOrder && i->msg.id == RmiEvent1) || (!inOrder && i->msg.id == RmiEvent0)) &&
+			i->msg.event.sequence == sequence
+		)
 		{
-			m_unacknowledgedEvents.erase(i);
+			if (i->count >= 2)
+				T_DEBUG(L"Resent event " << int32_t(i->msg.event.sequence) << L" acknowledged");
+			m_txEvents.erase(i);
 			return true;
 		}
 	}
 	return false;
 }
 
-bool ReplicatorProxy::enqueueEvent(uint32_t time, uint8_t sequence, const ISerializable* eventObject)
+bool ReplicatorProxy::receivedRxEvent(uint32_t time, uint8_t sequence, const ISerializable* eventObject, bool inOrder)
 {
-	uint32_t eventObjectHash = DeepHash(eventObject).get();
+	if (!eventObject)
+		return false;
 
-	if (m_eventSlots[sequence].eventObject)
+	// Discard duplicated events.
+	CircularVector< uint8_t, 64 >& rxEventSequences = inOrder ? m_rxEventSequences[1] : m_rxEventSequences[0];
+	if (rxEventSequences.find(sequence) >= 0)
 	{
-		if (DeepHash(m_eventSlots[sequence].eventObject) == eventObjectHash)
-			return true;
-		
-		if (!m_eventSlots[sequence].dispatched)
-			log::error << m_replicator->getLogPrefix() << L"Event \"" << type_name(eventObject) << L" received while enqueued event \"" << type_name(m_eventSlots[sequence].eventObject) << L"\" hasn't been dispatched yet." << Endl;
+		T_DEBUG(L"Discarded event " << int32_t(sequence) << L", already received");
+		return true;
 	}
+	rxEventSequences.push_back(sequence);
 
-	m_eventSlots[sequence].time = time;
-	m_eventSlots[sequence].eventObject = eventObject;
-	m_eventSlots[sequence].eventObjectHash = eventObjectHash;
-	m_eventSlots[sequence].dispatched = false;
+	// Enqueue events, special care taken for in-order events.
+	RxEvent e;
+	e.time = time;
+	e.sequence = sequence;
+	e.eventObject = eventObject;
+
+	if (inOrder)
+	{
+		T_DEBUG(L"Received in-order event " << int32_t(sequence) << L", waiting for " << int32_t(m_rxEventsInOrderSequence));
+		m_rxEventsInOrderQueue[sequence] = e;
+	}
+	else
+		m_rxEvents.push_back(e);
 
 	return true;
 }
 
-bool ReplicatorProxy::dispatchEvents(const SmallMap< const TypeInfo*, RefArray< IReplicatorEventListener > >& eventListeners)
+bool ReplicatorProxy::dispatchRxEvents(const SmallMap< const TypeInfo*, RefArray< IReplicatorEventListener > >& eventListeners)
 {
-	for (uint32_t i = 0; i < sizeof_array(m_eventSlots); ++i)
+	// Move as many "in order" events into dispatch queue as possible.
+	while (m_rxEventsInOrderQueue[m_rxEventsInOrderSequence].eventObject)
 	{
-		if (!m_eventSlots[i].eventObject || m_eventSlots[i].dispatched)
-			continue;
+		T_DEBUG(L"In-order event consumed " << int32_t(m_rxEventsInOrderSequence));
+		m_rxEvents.push_back(m_rxEventsInOrderQueue[m_rxEventsInOrderSequence]);
+		m_rxEventsInOrderQueue[m_rxEventsInOrderSequence].eventObject = 0;
+		m_rxEventsInOrderSequence++;
+	}
 
-		SmallMap< const TypeInfo*, RefArray< IReplicatorEventListener > >::const_iterator it = eventListeners.find(&type_of(m_eventSlots[i].eventObject));
+	// Dispatch received events.
+	for (std::list< RxEvent >::const_iterator i = m_rxEvents.begin(); i != m_rxEvents.end(); ++i)
+	{
+		bool processed = false;
+
+		SmallMap< const TypeInfo*, RefArray< IReplicatorEventListener > >::const_iterator it = eventListeners.find(&type_of(i->eventObject));
 		if (it != eventListeners.end())
 		{
 			for (RefArray< IReplicatorEventListener >::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2)
 			{
-				(*it2)->notify(
+				processed |= (*it2)->notify(
 					m_replicator,
-					net2time(m_eventSlots[i].time),
+					net2time(i->time),
 					this,
-					m_eventSlots[i].eventObject
+					i->eventObject
 				);
 			}
 		}
 
-		m_eventSlots[i].dispatched = true;
+		if (!processed)
+			log::warning << m_replicator->getLogPrefix() << L"Event " << type_name(i->eventObject) << L" from " << getLogIdentifier() << L" not processed (2); event discarded." << Endl;
 	}
+
+	m_rxEvents.clear();
 	return true;
 }
 
@@ -445,20 +479,24 @@ void ReplicatorProxy::disconnect()
 	m_distance = 0.0f;
 	m_sendState = false;
 	m_issueStateListeners = false;
-	m_sequence = 0;
 	m_timeUntilTxPing = 0.0;
 	m_timeUntilTxState = 0.0;
 	m_latency = 0.0;
 	m_latencyStandardDeviation = 0.0;
 	m_latencyReverse = 0.0;
 	m_latencyReverseStandardDeviation = 0.0;
-	m_unacknowledgedEvents.clear();
-	for (uint32_t i = 0; i < sizeof_array(m_eventSlots); ++i)
+
+	m_txSequence = 0;
+	m_txSequenceInOrder = 0;
+	m_txEvents.clear();
+
+	for (uint32_t i = 0; i < sizeof_array(m_rxEventsInOrderQueue); ++i)
 	{
-		m_eventSlots[i].time = 0;
-		m_eventSlots[i].eventObject = 0;
-		m_eventSlots[i].dispatched = false;
+		m_rxEventsInOrderQueue[i].time = 0;
+		m_rxEventsInOrderQueue[i].eventObject = 0;
 	}
+	m_rxEventsInOrderSequence = 0;
+	m_rxEvents.clear();
 }
 
 std::wstring ReplicatorProxy::getLogIdentifier() const
@@ -480,7 +518,9 @@ ReplicatorProxy::ReplicatorProxy(Replicator* replicator, net_handle_t handle, co
 ,	m_stateTimeN1(0.0)
 ,	m_stateTime0(0.0)
 ,	m_stateReceivedTime(0.0)
-,	m_sequence(0)
+,	m_txSequence(0)
+,	m_txSequenceInOrder(0)
+,	m_rxEventsInOrderSequence(0)
 ,	m_timeUntilTxPing(0.0)
 ,	m_timeUntilTxState(0.0)
 ,	m_timeRate(0.0)
@@ -489,11 +529,10 @@ ReplicatorProxy::ReplicatorProxy(Replicator* replicator, net_handle_t handle, co
 ,	m_latencyReverse(0.0)
 ,	m_latencyReverseStandardDeviation(0.0)
 {
-	for (uint32_t i = 0; i < sizeof_array(m_eventSlots); ++i)
+	for (uint32_t i = 0; i < sizeof_array(m_rxEventsInOrderQueue); ++i)
 	{
-		m_eventSlots[i].time = 0;
-		m_eventSlots[i].eventObject = 0;
-		m_eventSlots[i].dispatched = false;
+		m_rxEventsInOrderQueue[i].time = 0;
+		m_rxEventsInOrderQueue[i].eventObject = 0;
 	}
 }
 

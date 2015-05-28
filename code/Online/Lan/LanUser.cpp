@@ -1,6 +1,8 @@
+#include "Core/Math/Random.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
+#include "Core/Timer/Timer.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/UdpSocket.h"
 #include "Net/Discovery/DiscoveryManager.h"
@@ -13,6 +15,11 @@ namespace traktor
 	{
 		namespace
 		{
+
+#if defined(T_INTERNET_SIMULATION)
+Random s_random;
+Timer s_timer;
+#endif
 
 const wchar_t* c_keyServiceTypeUser = L"U";
 const wchar_t* c_keyUserHandle = L"UH";
@@ -86,6 +93,23 @@ bool LanUser::isP2PRelayed(uint64_t userHandle) const
 
 bool LanUser::sendP2PData(uint64_t userHandle, const void* data, size_t size, bool reliable)
 {
+#if defined(T_INTERNET_SIMULATION)
+	// Drop random packets of data.
+	if ((s_random.next() % 10) == 0)
+		return true;
+
+	// Enqueue packets, at slight random to shuffle packets out of order.
+	Packet p;
+	p.sendAt = s_timer.getElapsedTime() + s_random.nextDouble() * 0.2;
+	p.userHandle = userHandle;
+	p.data = new uint8_t [size];
+	p.size = size;
+
+	std::memcpy(p.data, data, size);
+
+	m_packets.push_back(p);
+	return true;
+#else
 	RefArray< net::NetworkService > userServices;
 	m_discoveryManager->findServices< net::NetworkService >(userServices);
 
@@ -112,6 +136,48 @@ bool LanUser::sendP2PData(uint64_t userHandle, const void* data, size_t size, bo
 	}
 
 	return false;
+#endif
+}
+
+void LanUser::update()
+{
+#if defined(T_INTERNET_SIMULATION)
+	RefArray< net::NetworkService > userServices;
+	m_discoveryManager->findServices< net::NetworkService >(userServices);
+
+	double T = s_timer.getElapsedTime();
+	for (std::list< Packet >::iterator i = m_packets.begin(); i != m_packets.end(); )
+	{
+		if (T >= i->sendAt)
+		{
+			for (RefArray< net::NetworkService >::const_iterator j = userServices.begin(); j != userServices.end(); ++j)
+			{
+				if ((*j)->getType() != c_keyServiceTypeUser)
+					continue;
+
+				const PropertyGroup* propertyGroup = (*j)->getProperties();
+				T_ASSERT (propertyGroup);
+
+				if (propertyGroup->getProperty< PropertyInteger >(c_keyUserHandle) != i->userHandle)
+					continue;
+
+				uint32_t addr = propertyGroup->getProperty< PropertyInteger >(c_keyUserAddr);
+				uint16_t port = propertyGroup->getProperty< PropertyInteger >(c_keyUserPort);
+
+				int32_t result = m_socket->sendTo(
+					net::SocketAddressIPv4(addr, port),
+					i->data,
+					int(i->size)
+				);
+			}
+
+			delete[] i->data;
+			i = m_packets.erase(i);
+		}
+		else
+			++i;
+	}
+#endif
 }
 
 	}

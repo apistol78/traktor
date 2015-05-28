@@ -4,6 +4,8 @@
 #include <map>
 #include "Online/Provider/IUserProvider.h"
 
+#define T_INTERNET_SIMULATION
+
 namespace traktor
 {
 	namespace net
@@ -48,9 +50,23 @@ public:
 
 	virtual bool sendP2PData(uint64_t userHandle, const void* data, size_t size, bool reliable);
 
+	void update();
+
 private:
 	Ref< net::DiscoveryManager > m_discoveryManager;
 	Ref< net::UdpSocket > m_socket;
+
+#if defined(T_INTERNET_SIMULATION)
+	struct Packet
+	{
+		double sendAt;
+		uint64_t userHandle;
+		uint8_t* data;
+		size_t size;
+	};
+
+	std::list< Packet > m_packets;
+#endif
 };
 
 	}
