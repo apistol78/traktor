@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Math/Random.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyGroup.h"
