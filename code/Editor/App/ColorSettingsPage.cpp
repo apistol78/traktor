@@ -46,7 +46,7 @@ bool ColorSettingsPage::create(ui::Container* parent, PropertyGroup* settings, c
 		return false;
 
 	m_colorList = new ui::custom::PropertyList();
-	if (!m_colorList->create(container, ui::WsClientBorder | ui::WsDoubleBuffer))
+	if (!m_colorList->create(container, ui::WsDoubleBuffer))
 		return false;
 
 	m_colorList->addEventHandler< ui::custom::PropertyCommandEvent >(this, &ColorSettingsPage::eventPropertyCommand);

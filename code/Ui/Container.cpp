@@ -1,7 +1,8 @@
 #include "Core/Log/Log.h"
-#include "Ui/Container.h"
 #include "Ui/Application.h"
+#include "Ui/Container.h"
 #include "Ui/Layout.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Itf/IContainer.h"
 
 namespace traktor
@@ -34,6 +35,7 @@ bool Container::create(Widget* parent, int style, Layout* layout)
 	}
 
 	addEventHandler< SizeEvent >(this, &Container::eventSize);
+	addEventHandler< PaintEvent >(this, &Container::eventPaint);
 	
 	return Widget::create(parent);
 }
@@ -114,6 +116,16 @@ void Container::setLayout(Layout* layout)
 void Container::eventSize(SizeEvent* event)
 {
 	update(0, false);
+}
+
+void Container::eventPaint(PaintEvent* event)
+{
+	Canvas& canvas = event->getCanvas();
+
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+
+	canvas.setBackground(ss->getColor(this, L"background-color"));
+	canvas.fillRect(event->getUpdateRect());
 }
 
 	}

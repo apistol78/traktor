@@ -23,7 +23,7 @@ bool SettingsDialog::create(ui::Widget* parent, PropertyGroup* settings, const s
 
 	// Create page container.
 	Ref< ui::Tab > tab = new ui::Tab();
-	tab->create(this, ui::WsBorder | ui::WsTabStop);
+	tab->create(this, ui::WsTabStop);
 
 	// Create setting pages.
 	TypeInfoSet settingPageTypes;

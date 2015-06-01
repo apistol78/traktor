@@ -124,7 +124,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 		return false;
 
 	m_dependentList = new ui::ListBox();
-	if (!m_dependentList->create(tabDependents))
+	if (!m_dependentList->create(tabDependents, L"", ui::ListBox::WsSingle))
 		return false;
 
 	m_dependentList->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptEditorPage::eventDependentListDoubleClick);

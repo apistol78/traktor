@@ -1,5 +1,8 @@
 #include <algorithm>
 #include "Core/Math/MathUtils.h"
+#include "Ui/Application.h"
+#include "Ui/Canvas.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Custom/QuadSplitter.h"
 
 namespace traktor
@@ -48,6 +51,7 @@ bool QuadSplitter::create(Widget* parent, const Point& position, bool relative, 
 	addEventHandler< MouseButtonDownEvent >(this, &QuadSplitter::eventButtonDown);
 	addEventHandler< MouseButtonUpEvent >(this, &QuadSplitter::eventButtonUp);
 	addEventHandler< SizeEvent >(this, &QuadSplitter::eventSize);
+	addEventHandler< PaintEvent >(this, &QuadSplitter::eventPaint);
 
 	return true;
 }
@@ -339,6 +343,18 @@ void QuadSplitter::eventButtonUp(MouseButtonUpEvent* event)
 void QuadSplitter::eventSize(SizeEvent* event)
 {
 	update();
+}
+
+void QuadSplitter::eventPaint(PaintEvent* event)
+{
+	Canvas& canvas = event->getCanvas();
+
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+
+	canvas.setBackground(ss->getColor(this, L"background-color"));
+	canvas.fillRect(event->getUpdateRect());
+
+	event->consume();
 }
 
 		}

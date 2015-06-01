@@ -71,6 +71,8 @@ private:
 	void eventButtonUp(MouseButtonUpEvent* event);
 	
 	void eventSize(SizeEvent* event);
+
+	void eventPaint(PaintEvent* event);
 };
 
 		}

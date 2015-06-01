@@ -1,4 +1,7 @@
 #include <algorithm>
+#include "Ui/Application.h"
+#include "Ui/Canvas.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Custom/Splitter.h"
 
 namespace traktor
@@ -28,6 +31,7 @@ bool Splitter::create(Widget* parent, bool vertical, int position, bool relative
 	addEventHandler< MouseButtonDownEvent >(this, &Splitter::eventButtonDown);
 	addEventHandler< MouseButtonUpEvent >(this, &Splitter::eventButtonUp);
 	addEventHandler< SizeEvent >(this, &Splitter::eventSize);
+	addEventHandler< PaintEvent >(this, &Splitter::eventPaint);
 
 	return true;
 }
@@ -303,6 +307,18 @@ void Splitter::eventButtonUp(MouseButtonUpEvent* event)
 void Splitter::eventSize(SizeEvent* event)
 {
 	update();
+}
+
+void Splitter::eventPaint(PaintEvent* event)
+{
+	Canvas& canvas = event->getCanvas();
+
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+
+	canvas.setBackground(ss->getColor(this, L"background-color"));
+	canvas.fillRect(event->getUpdateRect());
+
+	event->consume();
 }
 
 		}

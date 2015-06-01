@@ -78,7 +78,7 @@ bool DeploySettingsPage::create(ui::Container* parent, PropertyGroup* settings, 
 	staticEnvironment->create(containerEnvironment, L"Environment");
 
 	Ref< ui::custom::GridView > gridEnvironment = new ui::custom::GridView();
-	gridEnvironment->create(containerEnvironment, ui::WsClientBorder | ui::WsDoubleBuffer);
+	gridEnvironment->create(containerEnvironment, ui::WsDoubleBuffer);
 	gridEnvironment->addColumn(new ui::custom::GridColumn(L"Name", 200));
 	gridEnvironment->addColumn(new ui::custom::GridColumn(L"Value", 400));
 

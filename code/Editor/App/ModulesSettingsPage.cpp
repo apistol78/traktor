@@ -23,7 +23,7 @@ bool ModulesSettingsPage::create(ui::Container* parent, PropertyGroup* settings,
 		return false;
 
 	m_listModules = new ui::ListBox();
-	m_listModules->create(container, i18n::Text(L"EDITOR_SETTINGS_DEPENDENT_MODULES"), ui::ListBox::WsDefault | ui::ListBox::WsSort);
+	m_listModules->create(container, i18n::Text(L"EDITOR_SETTINGS_DEPENDENT_MODULES"), ui::ListBox::WsSingle | ui::ListBox::WsSort);
 
 	Ref< ui::Container > containerModulesTools = new ui::Container();
 	containerModulesTools->create(container, ui::WsNone, new ui::TableLayout(L"*,*", L"100%", 0, 4));

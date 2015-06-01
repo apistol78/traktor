@@ -27,13 +27,13 @@ bool ShortcutsSettingsPage::create(ui::Container* parent, PropertyGroup* setting
 		return false;
 
 	m_gridShortcuts = new ui::custom::GridView();
-	m_gridShortcuts->create(container, ui::custom::GridView::WsColumnHeader | ui::WsClientBorder | ui::WsDoubleBuffer);
+	m_gridShortcuts->create(container, ui::custom::GridView::WsColumnHeader | ui::WsDoubleBuffer);
 	m_gridShortcuts->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SETTINGS_COMMAND"), 200));
 	m_gridShortcuts->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SETTINGS_SHORTCUT"), 200));
 	m_gridShortcuts->addEventHandler< ui::SelectionChangeEvent >(this, &ShortcutsSettingsPage::eventShortcutSelect);
 
 	m_editShortcut = new ui::custom::ShortcutEdit();
-	m_editShortcut->create(container, 0, ui::VkNull, ui::WsClientBorder);
+	m_editShortcut->create(container, 0, ui::VkNull);
 	m_editShortcut->addEventHandler< ui::ContentChangeEvent >(this, &ShortcutsSettingsPage::eventShortcutModified);
 
 	Ref< const PropertyGroup > shortcutGroup = checked_type_cast< const PropertyGroup* >(settings->getProperty(L"Editor.Shortcuts"));
