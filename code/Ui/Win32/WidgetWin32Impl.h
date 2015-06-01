@@ -733,13 +733,16 @@ protected:
 	{
 		if (m_owner->hasEventHandler< PaintEvent >() && m_canvasImpl)
 		{
+			RECT rcUpdate = { 0 };
+			GetUpdateRect(m_hWnd, &rcUpdate, FALSE);
+
 			if (m_canvasImpl->beginPaint(m_hWnd, m_doubleBuffer, NULL))
 			{
 				Canvas canvas(m_canvasImpl);
 				PaintEvent p(
 					m_owner,
 					canvas,
-					Rect()
+					Rect(rcUpdate.left, rcUpdate.top, rcUpdate.right, rcUpdate.bottom)
 				);
 				m_owner->raiseEvent(&p);
 				m_canvasImpl->endPaint(m_hWnd);

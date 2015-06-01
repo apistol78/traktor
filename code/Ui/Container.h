@@ -47,6 +47,8 @@ private:
 	Ref< Layout > m_layout;
 	
 	void eventSize(SizeEvent* event);
+
+	void eventPaint(PaintEvent* event);
 };
 	
 	}

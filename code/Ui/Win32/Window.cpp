@@ -150,11 +150,7 @@ void Window::registerDefaultClass()
 	wc.cbClsExtra    = 0;
 	wc.cbWndExtra    = sizeof(void*);
 	wc.hInstance     = g_hInstance;
-#if !defined(WINCE)
-	wc.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1);
-#else
-	wc.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
-#endif
+	wc.hbrBackground = NULL;
 	wc.hIcon         = LoadIcon(g_hInstance, _T("DEFAULTICON"));
 	wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
 	wc.lpszMenuName  = NULL;
@@ -179,11 +175,7 @@ void Window::registerDialogClass()
 	wc.cbClsExtra    = 0;
 	wc.cbWndExtra    = DLGWINDOWEXTRA + sizeof(void*);
 	wc.hInstance     = g_hInstance;
-#if !defined(WINCE)
-	wc.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1);
-#else
-	wc.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
-#endif
+	wc.hbrBackground = NULL;
 	wc.hIcon         = LoadIcon(g_hInstance, _T("DEFAULTICON"));
 	wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
 	wc.lpszMenuName  = NULL;

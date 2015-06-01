@@ -548,9 +548,9 @@ void Tab::eventPaint(PaintEvent* event)
 		// No tab pages, fill solid background.
 		Rect rcTabItem(
 			rcInner.left,
-			m_bottom ? rcInner.top : rcInner.top + c_tabHeight + 1,
+			m_bottom ? rcInner.top : rcInner.top + c_tabHeight,
 			rcInner.right,
-			m_bottom ? rcInner.bottom - c_tabHeight - 1 : rcInner.bottom
+			m_bottom ? rcInner.bottom - c_tabHeight : rcInner.bottom
 		);
 		canvas.setBackground(ss->getColor(this, L"background-color"));
 		canvas.fillRect(rcTabItem);
