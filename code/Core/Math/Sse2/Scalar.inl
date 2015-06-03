@@ -149,4 +149,14 @@ T_MATH_INLINE Scalar lerp(const Scalar& a, const Scalar& b, const Scalar& c)
 	return a * (Scalar(1.0f) - c) + b * c;
 }
 
+T_MATH_INLINE Scalar clamp(const Scalar& value, const Scalar& minLimit, const Scalar& maxLimit)
+{
+	if (value < minLimit)
+		return minLimit;
+	else if (value > maxLimit)
+		return maxLimit;
+	else
+		return value;
+}
+
 }

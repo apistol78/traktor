@@ -128,15 +128,6 @@ inline Type clamp(Type value, Type minLimit, Type maxLimit)
 	return max(min(value, maxLimit), minLimit);
 }
 
-#if defined(_MSC_VER)
-
-inline Scalar clamp(const Scalar& value, const Scalar& minLimit, const Scalar& maxLimit)
-{
-	return max(min(value, maxLimit), minLimit);
-}
-
-#endif
-
 #if defined(_MSC_VER) || defined(_PS3)
 
 inline float sinf(float rad)

@@ -456,6 +456,11 @@ T_MATH_INLINE Vector4 max(const Vector4& l, const Vector4& r)
 	return Vector4(vmaxq_f32(l.m_data, r.m_data));
 }
 
+T_MATH_INLINE Vector4 clamp(const Vector4& value, const Vector4& minLimit, const Vector4& maxLimit)
+{
+	return min(max(value, minLimit), maxLimit);
+}
+
 T_MATH_INLINE Vector4 select(const Vector4& condition, const Vector4& negative, const Vector4& positive)
 {
 	const float32x4_t zero = { 0.0f, 0.0f, 0.0f, 0.0f };
