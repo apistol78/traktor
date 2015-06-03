@@ -244,7 +244,8 @@ Rect TreeViewItem::calculateLabelRect() const
 void TreeViewItem::interval()
 {
 	// Cancel pending edit.
-	m_editMode = 0;
+	if (m_editMode != 0)
+		m_editMode = 0;
 }
 
 void TreeViewItem::mouseDown(MouseButtonDownEvent* event, const Point& position)
@@ -286,7 +287,6 @@ void TreeViewItem::mouseDown(MouseButtonDownEvent* event, const Point& position)
 					m_editMode = 2;
 				}
 			}
-
 			m_dragMode = 1;
 		}
 	}
@@ -300,16 +300,14 @@ void TreeViewItem::mouseUp(MouseButtonUpEvent* event, const Point& position)
 	{
 		T_ASSERT (m_editable);
 		m_view->beginEdit(this);
+		m_editMode = 0;
 	}
-
-	if (m_dragMode == 2)
+	else if (m_dragMode == 2)
 	{
 		Point position = m_view->clientToScreen(event->getPosition());
 		TreeViewDragEvent dragEvent(m_view, this, TreeViewDragEvent::DmDrop, position);
 		m_view->raiseEvent(&dragEvent);
 	}
-
-	m_editMode = 0;
 	m_dragMode = 0;
 }
 
