@@ -73,6 +73,7 @@ bool CanvasGdiPlusWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 			}
 
 			m_graphics.reset(new Graphics(m_offScreenBitmap.ptr()));
+			m_graphics->TranslateTransform(-m_ps.rcPaint.left, -m_ps.rcPaint.top);
 
 			Gdiplus::Rect rcClip(
 				m_ps.rcPaint.left,

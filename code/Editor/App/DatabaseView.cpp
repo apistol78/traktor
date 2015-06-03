@@ -926,6 +926,7 @@ int32_t DatabaseView::getIconIndex(const TypeInfo* instanceType) const
 Ref< ui::custom::TreeViewItem > DatabaseView::buildTreeItem(ui::custom::TreeView* treeView, ui::custom::TreeViewItem* parentItem, db::Group* group)
 {
 	Ref< ui::custom::TreeViewItem > groupItem = treeView->createItem(parentItem, group->getName(), 0, 1);
+	groupItem->setEditable(true);
 	groupItem->setData(L"GROUP", group);
 
 	RefArray< db::Group > childGroups;
@@ -983,6 +984,7 @@ Ref< ui::custom::TreeViewItem > DatabaseView::buildTreeItem(ui::custom::TreeView
 		if (m_rootInstances.find((*i)->getGuid()) != m_rootInstances.end())
 			instanceItem->setBold(true);
 
+		instanceItem->setEditable(true);
 		instanceItem->setData(L"GROUP", group);
 		instanceItem->setData(L"INSTANCE", (*i));
 	}
