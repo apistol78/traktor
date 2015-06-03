@@ -20,9 +20,6 @@
 #include "Ui/CheckBox.h"
 #include "Ui/Container.h"
 #include "Ui/DropDown.h"
-#include "Ui/ListView.h"
-#include "Ui/ListViewItems.h"
-#include "Ui/ListViewItem.h"
 #include "Ui/NumericEditValidator.h"
 #include "Ui/Edit.h"
 #include "Ui/FileDialog.h"
@@ -30,6 +27,10 @@
 #include "Ui/Static.h"
 #include "Ui/Custom/InputDialog.h"
 #include "Ui/Custom/MiniButton.h"
+#include "Ui/Custom/GridView/GridColumn.h"
+#include "Ui/Custom/GridView/GridItem.h"
+#include "Ui/Custom/GridView/GridRow.h"
+#include "Ui/Custom/GridView/GridView.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
@@ -175,7 +176,7 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	m_editLodCullDistance->create(containerRight, L"", ui::WsClientBorder, new ui::NumericEditValidator(true, 0.0f, 10000.0f, 2));
 
 	m_containerMaterials = new ui::Container();
-	if (!m_containerMaterials->create(container, ui::WsClientBorder, new ui::TableLayout(L"100%", L"*,100%,*,100%", 0, 0)))
+	if (!m_containerMaterials->create(container, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%,*,100%", 0, 0)))
 		return false;
 
 	// Material shaders.
@@ -183,18 +184,20 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	if (!materialShaderTools->create(m_containerMaterials))
 		return false;
 
+	materialShaderTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"MESHASSET_EDITOR_BROWSE_TEMPLATE"), ui::Command(L"MeshAssetEditor.BrowseTemplate")));
+	materialShaderTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"MESHASSET_EDITOR_REMOVE_TEMPLATE"), ui::Command(L"MeshAssetEditor.RemoveTemplate")));
 	materialShaderTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"MESHASSET_EDITOR_CREATE_SHADER"), ui::Command(L"MeshAssetEditor.CreateShader")));
 	materialShaderTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"MESHASSET_EDITOR_BROWSE_SHADER"), ui::Command(L"MeshAssetEditor.BrowseShader")));
 	materialShaderTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"MESHASSET_EDITOR_REMOVE_SHADER"), ui::Command(L"MeshAssetEditor.RemoveShader")));
 	materialShaderTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &MeshAssetEditor::eventMaterialShaderToolClick);
 
-	m_materialShaderList = new ui::ListView();
-	if (!m_materialShaderList->create(m_containerMaterials, ui::ListView::WsReport))
+	m_materialShaderList = new ui::custom::GridView();
+	if (!m_materialShaderList->create(m_containerMaterials, ui::custom::GridView::WsColumnHeader | ui::WsDoubleBuffer))
 		return false;
 
-	m_materialShaderList->addColumn(i18n::Text(L"MESHASSET_EDITOR_MATERIAL"), 180);
-	m_materialShaderList->addColumn(i18n::Text(L"MESHASSET_EDITOR_TEMPLATE"), 180);
-	m_materialShaderList->addColumn(i18n::Text(L"MESHASSET_EDITOR_SHADER"), 300);
+	m_materialShaderList->addColumn(new ui::custom::GridColumn(i18n::Text(L"MESHASSET_EDITOR_MATERIAL"), 180));
+	m_materialShaderList->addColumn(new ui::custom::GridColumn(i18n::Text(L"MESHASSET_EDITOR_TEMPLATE"), 180));
+	m_materialShaderList->addColumn(new ui::custom::GridColumn(i18n::Text(L"MESHASSET_EDITOR_SHADER"), 300));
 	m_materialShaderList->addEventHandler< ui::MouseDoubleClickEvent >(this, &MeshAssetEditor::eventMaterialShaderListDoubleClick);
 
 	// Material textures.
@@ -207,12 +210,12 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	materialTextureTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"MESHASSET_EDITOR_REMOVE_TEXTURE"), ui::Command(L"MeshAssetEditor.RemoveTexture")));
 	materialTextureTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &MeshAssetEditor::eventMaterialTextureToolClick);
 
-	m_materialTextureList = new ui::ListView();
-	if (!m_materialTextureList->create(m_containerMaterials, ui::ListView::WsReport))
+	m_materialTextureList = new ui::custom::GridView();
+	if (!m_materialTextureList->create(m_containerMaterials, ui::custom::GridView::WsColumnHeader | ui::WsDoubleBuffer))
 		return false;
 
-	m_materialTextureList->addColumn(i18n::Text(L"MESHASSET_EDITOR_TEXTURE_NAME"), 180);
-	m_materialTextureList->addColumn(i18n::Text(L"MESHASSET_EDITOR_TEXTURE_ASSET"), 300);
+	m_materialTextureList->addColumn(new ui::custom::GridColumn(i18n::Text(L"MESHASSET_EDITOR_TEXTURE_NAME"), 180));
+	m_materialTextureList->addColumn(new ui::custom::GridColumn(i18n::Text(L"MESHASSET_EDITOR_TEXTURE_ASSET"), 300));
 	m_materialTextureList->addEventHandler< ui::MouseDoubleClickEvent >(this, &MeshAssetEditor::eventMaterialTextureListDoubleClick);
 
 	updateModel();
@@ -237,46 +240,43 @@ void MeshAssetEditor::apply()
 	m_asset->setLodMaxDistance(parseString< float >(m_editLodMaxDistance->getText()));
 	m_asset->setLodCullDistance(parseString< float >(m_editLodCullDistance->getText()));
 
-	Ref< ui::ListViewItems > shaderItems = m_materialShaderList->getItems();
-
 	std::map< std::wstring, Guid > materialTemplates;
 	std::map< std::wstring, Guid > materialShaders;
-	if (shaderItems)
+
+	const RefArray< ui::custom::GridRow >& shaderItems = m_materialShaderList->getRows();
+	for (RefArray< ui::custom::GridRow >::const_iterator i = shaderItems.begin(); i != shaderItems.end(); ++i)
 	{
-		for (int i = 0; i < shaderItems->count(); ++i)
-		{
-			Ref< ui::ListViewItem > shaderItem = shaderItems->get(i);
-			T_ASSERT (shaderItem);
+		Ref< ui::custom::GridRow > shaderItem = *i;
+		T_ASSERT (shaderItem);
 
-			std::wstring materialName = shaderItem->getText(0);
-			Ref< db::Instance > materialTemplateInstance = shaderItem->getData< db::Instance >(L"TEMPLATE");
-			Ref< db::Instance > materialShaderInstance = shaderItem->getData< db::Instance >(L"INSTANCE");
+		std::wstring materialName = shaderItem->get(0)->getText();
+		Ref< db::Instance > materialTemplateInstance = shaderItem->getData< db::Instance >(L"TEMPLATE");
+		Ref< db::Instance > materialShaderInstance = shaderItem->getData< db::Instance >(L"INSTANCE");
 
-			if (materialTemplateInstance)
-				materialTemplates.insert(std::make_pair(materialName, materialTemplateInstance->getGuid()));
-			if (materialShaderInstance)
-				materialShaders.insert(std::make_pair(materialName, materialShaderInstance->getGuid()));
-		}
+		if (materialTemplateInstance)
+			materialTemplates.insert(std::make_pair(materialName, materialTemplateInstance->getGuid()));
+		if (materialShaderInstance)
+			materialShaders.insert(std::make_pair(materialName, materialShaderInstance->getGuid()));
 	}
+
 	m_asset->setMaterialTemplates(materialTemplates);
 	m_asset->setMaterialShaders(materialShaders);
 
 	std::map< std::wstring, Guid > materialTextures;
-	Ref< ui::ListViewItems > textureItems = m_materialTextureList->getItems();
-	if (textureItems)
+
+	const RefArray< ui::custom::GridRow >& textureItems = m_materialTextureList->getRows();
+	for (RefArray< ui::custom::GridRow >::const_iterator i = textureItems.begin(); i != textureItems.end(); ++i)
 	{
-		for (int i = 0; i < textureItems->count(); ++i)
-		{
-			Ref< ui::ListViewItem > textureItem = textureItems->get(i);
-			T_ASSERT (textureItem);
+		Ref< ui::custom::GridRow > textureItem = *i;
+		T_ASSERT (textureItem);
 
-			std::wstring textureName = textureItem->getText(0);
-			Ref< db::Instance > materialTextureInstance = textureItem->getData< db::Instance >(L"INSTANCE");
+		std::wstring textureName = textureItem->get(0)->getText();
+		Ref< db::Instance > materialTextureInstance = textureItem->getData< db::Instance >(L"INSTANCE");
 
-			if (materialTextureInstance)
-				materialTextures.insert(std::make_pair(textureName, materialTextureInstance->getGuid()));
-		}
+		if (materialTextureInstance)
+			materialTextures.insert(std::make_pair(textureName, materialTextureInstance->getGuid()));
 	}
+
 	m_asset->setMaterialTextures(materialTextures);
 
 	m_instance->setObject(m_asset);
@@ -333,22 +333,20 @@ void MeshAssetEditor::updateFile()
 
 void MeshAssetEditor::updateMaterialList()
 {
-	Ref< ui::ListViewItems > shaderItems;
-	Ref< ui::ListViewItems > textureItems;
+	m_materialShaderList->removeAllRows();
+	m_materialTextureList->removeAllRows();
 
 	if (m_model)
 	{
 		const std::vector< model::Material >& materials = m_model->getMaterials();
-
-		shaderItems = new ui::ListViewItems();
 
 		const std::map< std::wstring, Guid >& materialTemplates = m_asset->getMaterialTemplates();
 		const std::map< std::wstring, Guid >& materialShaders = m_asset->getMaterialShaders();
 
 		for (std::vector< model::Material >::const_iterator i = materials.begin(); i != materials.end(); ++i)
 		{
-			Ref< ui::ListViewItem > shaderItem = new ui::ListViewItem();
-			shaderItem->setText(0, i->getName());
+			Ref< ui::custom::GridRow > shaderItem = new ui::custom::GridRow();
+			shaderItem->add(new ui::custom::GridItem(i->getName()));
 
 			std::wstring materialTemplate = i18n::Text(L"MESHASSET_EDITOR_TEMPLATE_NOT_ASSIGNED");
 			std::wstring materialShader = i18n::Text(L"MESHASSET_EDITOR_SHADER_NOT_ASSIGNED");
@@ -385,13 +383,11 @@ void MeshAssetEditor::updateMaterialList()
 					materialShader = i18n::Text(L"MESHASSET_EDITOR_DISABLED");
 			}
 
-			shaderItem->setText(1, materialTemplate);
-			shaderItem->setText(2, materialShader);
+			shaderItem->add(new ui::custom::GridItem(materialTemplate));
+			shaderItem->add(new ui::custom::GridItem(materialShader));
 
-			shaderItems->add(shaderItem);
+			m_materialShaderList->addRow(shaderItem);
 		}
-
-		textureItems = new ui::ListViewItems();
 
 		std::set< std::wstring > textureNames;
 		const std::map< std::wstring, Guid >& materialTextures = m_asset->getMaterialTextures();
@@ -425,11 +421,11 @@ void MeshAssetEditor::updateMaterialList()
 						materialTexture = materialTextureInstance->getName();
 				}
 
-				Ref< ui::ListViewItem > textureItem = new ui::ListViewItem();
-				textureItem->setText(0, modelTextures[j]);
-				textureItem->setText(1, materialTexture);
+				Ref< ui::custom::GridRow > textureItem = new ui::custom::GridRow();
+				textureItem->add(new ui::custom::GridItem(modelTextures[j]));
+				textureItem->add(new ui::custom::GridItem(materialTexture));
 				textureItem->setData(L"INSTANCE", materialTextureInstance);
-				textureItems->add(textureItem);
+				m_materialTextureList->addRow(textureItem);
 			}
 		}
 
@@ -437,46 +433,41 @@ void MeshAssetEditor::updateMaterialList()
 	}
 	else
 		m_containerMaterials->setEnable(false);
-
-	m_materialShaderList->setItems(shaderItems);
-	m_materialTextureList->setItems(textureItems);
 }
 
 void MeshAssetEditor::browseMaterialTemplate()
 {
-	Ref< ui::ListViewItem > selectedItem = m_materialShaderList->getSelectedItem();
+	Ref< ui::custom::GridRow > selectedItem = m_materialShaderList->getSelectedRow();
 	if (!selectedItem)
 		return;
 
 	Ref< db::Instance > materialTemplateInstance = m_editor->browseInstance(type_of< render::ShaderGraph >());
 	if (materialTemplateInstance)
 	{
-		selectedItem->setText(1, materialTemplateInstance->getName());
+		selectedItem->set(1, new ui::custom::GridItem(materialTemplateInstance->getName()));
 		selectedItem->setData(L"TEMPLATE", materialTemplateInstance);
-
-		m_materialShaderList->setItems(m_materialShaderList->getItems());
+		m_materialShaderList->requestUpdate();
 	}
 }
 
 void MeshAssetEditor::removeMaterialTemplate()
 {
-	Ref< ui::ListViewItem > selectedItem = m_materialShaderList->getSelectedItem();
+	Ref< ui::custom::GridRow > selectedItem = m_materialShaderList->getSelectedRow();
 	if (!selectedItem)
 		return;
 
-	selectedItem->setText(1, i18n::Text(L"MESHASSET_EDITOR_TEMPLATE_NOT_ASSIGNED"));
+	selectedItem->set(1, new ui::custom::GridItem(i18n::Text(L"MESHASSET_EDITOR_TEMPLATE_NOT_ASSIGNED")));
 	selectedItem->setData(L"TEMPLATE", 0);
-
-	m_materialShaderList->setItems(m_materialShaderList->getItems());
+	m_materialShaderList->requestUpdate();
 }
 
 void MeshAssetEditor::createMaterialShader()
 {
-	Ref< ui::ListViewItem > selectedItem = m_materialShaderList->getSelectedItem();
+	Ref< ui::custom::GridRow > selectedItem = m_materialShaderList->getSelectedRow();
 	if (!selectedItem)
 		return;
 
-	std::wstring materialName = selectedItem->getText(0);
+	std::wstring materialName = selectedItem->get(0)->getText();
 
 	// Find model material to associate shader with.
 	const std::vector< model::Material >& materials = m_model->getMaterials();
@@ -529,11 +520,9 @@ void MeshAssetEditor::createMaterialShader()
 			materialShaderInstance->setObject(materialShader);
 			if (materialShaderInstance->commit())
 			{
-				selectedItem->setText(2, materialShaderInstance->getName());
+				selectedItem->set(2, new ui::custom::GridItem(materialShaderInstance->getName()));
 				selectedItem->setData(L"INSTANCE", materialShaderInstance);
-
-				m_materialShaderList->setItems(m_materialShaderList->getItems());
-
+				m_materialShaderList->requestUpdate();
 				m_editor->updateDatabaseView();
 			}
 		}
@@ -542,30 +531,28 @@ void MeshAssetEditor::createMaterialShader()
 
 void MeshAssetEditor::browseMaterialShader()
 {
-	Ref< ui::ListViewItem > selectedItem = m_materialShaderList->getSelectedItem();
+	Ref< ui::custom::GridRow > selectedItem = m_materialShaderList->getSelectedRow();
 	if (!selectedItem)
 		return;
 
 	Ref< db::Instance > materialShaderInstance = m_editor->browseInstance(type_of< render::ShaderGraph >());
 	if (materialShaderInstance)
 	{
-		selectedItem->setText(2, materialShaderInstance->getName());
+		selectedItem->set(2, new ui::custom::GridItem(materialShaderInstance->getName()));
 		selectedItem->setData(L"INSTANCE", materialShaderInstance);
-
-		m_materialShaderList->setItems(m_materialShaderList->getItems());
+		m_materialShaderList->requestUpdate();
 	}
 }
 
 void MeshAssetEditor::removeMaterialShader()
 {
-	Ref< ui::ListViewItem > selectedItem = m_materialShaderList->getSelectedItem();
+	Ref< ui::custom::GridRow > selectedItem = m_materialShaderList->getSelectedRow();
 	if (!selectedItem)
 		return;
 
-	selectedItem->setText(2, i18n::Text(L"MESHASSET_EDITOR_SHADER_NOT_ASSIGNED"));
+	selectedItem->set(2, new ui::custom::GridItem(i18n::Text(L"MESHASSET_EDITOR_SHADER_NOT_ASSIGNED")));
 	selectedItem->setData(L"INSTANCE", 0);
-
-	m_materialShaderList->setItems(m_materialShaderList->getItems());
+	m_materialShaderList->requestUpdate();
 }
 
 void MeshAssetEditor::createMaterialTexture()
@@ -574,30 +561,28 @@ void MeshAssetEditor::createMaterialTexture()
 
 void MeshAssetEditor::browseMaterialTexture()
 {
-	Ref< ui::ListViewItem > selectedItem = m_materialTextureList->getSelectedItem();
+	Ref< ui::custom::GridRow > selectedItem = m_materialTextureList->getSelectedRow();
 	if (!selectedItem)
 		return;
 
 	Ref< db::Instance > materialTextureInstance = m_editor->browseInstance(type_of< render::ITexture >());
 	if (materialTextureInstance)
 	{
-		selectedItem->setText(1, materialTextureInstance->getName());
+		selectedItem->set(1, new ui::custom::GridItem(materialTextureInstance->getName()));
 		selectedItem->setData(L"INSTANCE", materialTextureInstance);
-
-		m_materialTextureList->setItems(m_materialTextureList->getItems());
+		m_materialTextureList->requestUpdate();
 	}
 }
 
 void MeshAssetEditor::removeMaterialTexture()
 {
-	Ref< ui::ListViewItem > selectedItem = m_materialTextureList->getSelectedItem();
+	Ref< ui::custom::GridRow > selectedItem = m_materialTextureList->getSelectedRow();
 	if (!selectedItem)
 		return;
 
-	selectedItem->setText(1, i18n::Text(L"MESHASSET_EDITOR_TEXTURE_NOT_ASSIGNED"));
+	selectedItem->set(1, new ui::custom::GridItem(i18n::Text(L"MESHASSET_EDITOR_TEXTURE_NOT_ASSIGNED")));
 	selectedItem->setData(L"INSTANCE", 0);
-
-	m_materialTextureList->setItems(m_materialTextureList->getItems());
+	m_materialTextureList->requestUpdate();
 }
 
 void MeshAssetEditor::eventMeshTypeChange(ui::SelectionChangeEvent* event)
@@ -633,7 +618,11 @@ void MeshAssetEditor::eventBrowseClick(ui::ButtonClickEvent* event)
 void MeshAssetEditor::eventMaterialShaderToolClick(ui::custom::ToolBarButtonClickEvent* event)
 {
 	const ui::Command& command = event->getCommand();
-	if (command == L"MeshAssetEditor.CreateShader")
+	if (command == L"MeshAssetEditor.BrowseTemplate")
+		browseMaterialTemplate();
+	else if (command == L"MeshAssetEditor.RemoveTemplate")
+		removeMaterialTemplate();
+	else if (command == L"MeshAssetEditor.CreateShader")
 		createMaterialShader();
 	else if (command == L"MeshAssetEditor.BrowseShader")
 		browseMaterialShader();
@@ -643,16 +632,14 @@ void MeshAssetEditor::eventMaterialShaderToolClick(ui::custom::ToolBarButtonClic
 
 void MeshAssetEditor::eventMaterialShaderListDoubleClick(ui::MouseDoubleClickEvent* event)
 {
-	ui::Point mousePosition = event->getPosition();
-
-	Ref< ui::ListViewItem > selectedItem = m_materialShaderList->getSelectedItem();
+	Ref< ui::custom::GridRow > selectedItem = m_materialShaderList->getSelectedRow();
 	if (!selectedItem)
 		return;
 
-	int32_t w0 = m_materialShaderList->getColumnWidth(0);
-	int32_t w1 = m_materialShaderList->getColumnWidth(1);
+	ui::Point mousePosition = event->getPosition();
 
-	if (mousePosition.x <= w0 + w1)
+	int32_t column = m_materialShaderList->getColumnIndex(mousePosition.x);
+	if (column == 1)
 	{
 		// Template
 		Ref< db::Instance > materialTemplateInstance = selectedItem->getData< db::Instance >(L"TEMPLATE");
@@ -661,7 +648,7 @@ void MeshAssetEditor::eventMaterialShaderListDoubleClick(ui::MouseDoubleClickEve
 		else
 			m_editor->openEditor(materialTemplateInstance);
 	}
-	else if (mousePosition.x > w0 + w1)
+	else if (column == 2)
 	{
 		// Shader
 		Ref< db::Instance > materialShaderInstance = selectedItem->getData< db::Instance >(L"INSTANCE");
@@ -685,15 +672,21 @@ void MeshAssetEditor::eventMaterialTextureToolClick(ui::custom::ToolBarButtonCli
 
 void MeshAssetEditor::eventMaterialTextureListDoubleClick(ui::MouseDoubleClickEvent* event)
 {
-	Ref< ui::ListViewItem > selectedItem = m_materialShaderList->getSelectedItem();
+	Ref< ui::custom::GridRow > selectedItem = m_materialTextureList->getSelectedRow();
 	if (!selectedItem)
 		return;
 
-	Ref< db::Instance > materialTextureInstance = selectedItem->getData< db::Instance >(L"INSTANCE");
-	if (!materialTextureInstance)
-		browseMaterialTexture();
-	else
-		m_editor->openEditor(materialTextureInstance);
+	ui::Point mousePosition = event->getPosition();
+
+	int32_t column = m_materialTextureList->getColumnIndex(mousePosition.x);
+	if (column == 1)
+	{
+		Ref< db::Instance > materialTextureInstance = selectedItem->getData< db::Instance >(L"INSTANCE");
+		if (!materialTextureInstance)
+			browseMaterialTexture();
+		else
+			m_editor->openEditor(materialTextureInstance);
+	}
 }
 
 	}

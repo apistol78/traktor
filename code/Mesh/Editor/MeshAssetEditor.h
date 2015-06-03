@@ -28,13 +28,13 @@ class Container;
 class CheckBox;
 class DropDown;
 class Edit;
-class ListView;
 class Slider;
 class Static;
 
 		namespace custom
 		{
 
+class GridView;
 class ToolBarButtonClickEvent;
 
 		}
@@ -86,8 +86,8 @@ private:
 	Ref< ui::Slider > m_sliderLodSteps;
 	Ref< ui::Edit > m_editLodMaxDistance;
 	Ref< ui::Edit > m_editLodCullDistance;
-	Ref< ui::ListView > m_materialShaderList;
-	Ref< ui::ListView > m_materialTextureList;
+	Ref< ui::custom::GridView > m_materialShaderList;
+	Ref< ui::custom::GridView > m_materialTextureList;
 	std::wstring m_assetPath;
 
 	void updateModel();
