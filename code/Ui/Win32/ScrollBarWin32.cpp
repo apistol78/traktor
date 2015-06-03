@@ -68,7 +68,7 @@ void ScrollBarWin32::setPage(int page)
 	si.cbSize = sizeof(si);
 	si.fMask = SIF_PAGE;
 	si.nPage = page;
-	SetScrollInfo(m_hWnd, SB_CTL, &si, FALSE);
+	SetScrollInfo(m_hWnd, SB_CTL, &si, TRUE);
 }
 
 int ScrollBarWin32::getPage() const
@@ -88,7 +88,7 @@ void ScrollBarWin32::setPosition(int position)
 	si.cbSize = sizeof(si);
 	si.fMask = SIF_POS;
 	si.nPos = position;
-	SetScrollInfo(m_hWnd, SB_CTL, &si, FALSE);
+	SetScrollInfo(m_hWnd, SB_CTL, &si, TRUE);
 }
 
 int ScrollBarWin32::getPosition() const
