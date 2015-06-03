@@ -84,6 +84,8 @@ T_MATH_INLINE T_DLLCLASS Scalar reciprocalSquareRoot(const Scalar& s);
 
 T_MATH_INLINE T_DLLCLASS Scalar lerp(const Scalar& a, const Scalar& b, const Scalar& c);
 
+T_MATH_INLINE T_DLLCLASS Scalar clamp(const Scalar& value, const Scalar& minLimit, const Scalar& maxLimit);
+
 }
 
 #if defined(T_MATH_USE_INLINE)

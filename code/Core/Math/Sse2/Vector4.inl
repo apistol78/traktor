@@ -416,6 +416,11 @@ T_MATH_INLINE Vector4 max(const Vector4& l, const Vector4& r)
 	return Vector4(_mm_max_ps(l.m_data, r.m_data));
 }
 
+T_MATH_INLINE Vector4 clamp(const Vector4& value, const Vector4& minLimit, const Vector4& maxLimit)
+{
+	return min(max(value, minLimit), maxLimit);
+}
+
 T_MATH_INLINE Vector4 select(const Vector4& condition, const Vector4& negative, const Vector4& positive)
 {
 	__m128 mask = _mm_cmpge_ps(condition.m_data, _mm_setzero_ps());

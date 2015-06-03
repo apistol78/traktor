@@ -192,6 +192,8 @@ T_MATH_INLINE T_DLLCLASS Vector4 min(const Vector4& l, const Vector4& r);
 
 T_MATH_INLINE T_DLLCLASS Vector4 max(const Vector4& l, const Vector4& r);
 
+T_MATH_INLINE T_DLLCLASS Vector4 clamp(const Vector4& value, const Vector4& minLimit, const Vector4& maxLimit);
+
 T_MATH_INLINE T_DLLCLASS Vector4 select(const Vector4& condition, const Vector4& negative, const Vector4& positive);
 
 T_MATH_INLINE T_DLLCLASS bool compareAllGreaterEqual(const Vector4& l, const Vector4& r);
