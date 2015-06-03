@@ -1457,6 +1457,14 @@
       <second>Remove shader</second>
     </item>
     <item>
+      <first>MESHASSET_EDITOR_BROWSE_TEMPLATE</first>
+      <second>Browse template</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_REMOVE_TEMPLATE</first>
+      <second>Remove template</second>
+    </item>
+    <item>
       <first>MESHASSET_EDITOR_MATERIAL</first>
       <second>Material</second>
     </item>
