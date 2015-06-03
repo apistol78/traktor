@@ -52,9 +52,52 @@ void buildEffectDependencies(editor::IPipelineDepends* pipelineDepends, const Ef
 	}
 }
 
+bool effectLayerPred(EffectLayerData* layerData)
+{
+	if (!layerData)
+		return true;
+
+	bool haveEmitter = false;
+	if (layerData->getEmitter() != 0)
+	{
+		if (
+			layerData->getEmitter()->getSource() != 0 &&
+			(
+				layerData->getEmitter()->getShader() ||
+				layerData->getEmitter()->getMesh() ||
+				layerData->getEmitter()->getEffect()
+			)
+		)
+			haveEmitter = true;
+	}
+
+	bool haveTrail = false;
+	if (layerData->getTrail() != 0)
+	{
+		if (layerData->getTrail()->getShader())
+			haveTrail = true;
+	}
+
+	bool haveSequence = false;
+	if (layerData->getSequence() != 0)
+	{
+		if (!layerData->getSequence()->getKeys().empty())
+			haveSequence = true;
+	}
+
+	bool haveTrigger = false;
+	if (layerData->getTriggerEnable() != 0 || layerData->getTriggerDisable() != 0)
+		haveTrigger = true;
+
+	if (haveEmitter || haveTrail || haveSequence || haveTrigger)
+		return false;
+
+	return true;
+}
+
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectPipeline", 2, EffectPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectPipeline", 4, EffectPipeline, editor::IPipeline)
 
 bool EffectPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -101,7 +144,8 @@ bool EffectPipeline::buildOutput(
 	const EffectData* effectData = checked_type_cast< const EffectData* >(sourceAsset);
 
 	RefArray< EffectLayerData > effectLayers = effectData->getLayers();
-	RefArray< EffectLayerData >::iterator i = std::remove(effectLayers.begin(), effectLayers.end(), (EffectLayerData*)0);
+	
+	RefArray< EffectLayerData >::iterator i = std::remove_if(effectLayers.begin(), effectLayers.end(), effectLayerPred);
 	effectLayers.erase(i, effectLayers.end());
 
 	Ref< EffectData > outEffectData = new EffectData(
