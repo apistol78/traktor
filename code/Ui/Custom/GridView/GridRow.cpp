@@ -10,8 +10,7 @@
 #include "Ui/Custom/GridView/GridView.h"
 
 // Resources
-#include "Resources/Expand.h"
-#include "Resources/Collapse.h"
+#include "Resources/TviState.h"
 
 namespace traktor
 {
@@ -28,8 +27,13 @@ GridRow::GridRow(uint32_t initialState)
 ,	m_minimumHeight(0)
 ,	m_parent(0)
 {
-	m_expand[0] = Bitmap::load(c_ResourceExpand, sizeof(c_ResourceExpand), L"png");
-	m_expand[1] = Bitmap::load(c_ResourceCollapse, sizeof(c_ResourceCollapse), L"png");
+	m_expand = Bitmap::load(c_ResourceTviState, sizeof(c_ResourceTviState), L"png");
+}
+
+GridRow::~GridRow()
+{
+	for (RefArray< GridCell >::iterator i = m_items.begin(); i != m_items.end(); ++i)
+		(*i)->m_row = 0;
 }
 
 void GridRow::setState(uint32_t state)
@@ -49,6 +53,8 @@ void GridRow::setMinimumHeight(int32_t minimumHeight)
 
 uint32_t GridRow::add(GridCell* item)
 {
+	T_ASSERT (item->m_row == 0);
+	item->m_row = this;
 	m_items.push_back(item);
 	return uint32_t(m_items.size() - 1);
 }
@@ -56,7 +62,16 @@ uint32_t GridRow::add(GridCell* item)
 void GridRow::set(uint32_t index, GridCell* item)
 {
 	if (index < m_items.size())
+	{
+		if (m_items[index])
+		{
+			T_ASSERT (m_items[index]->m_row == this);
+			m_items[index]->m_row = 0;
+		}
+		T_ASSERT (item->m_row == 0);
+		item->m_row = this;
 		m_items[index] = item;
+	}
 }
 
 Ref< GridCell > GridRow::get(uint32_t index) const
@@ -186,13 +201,12 @@ void GridRow::paint(Canvas& canvas, const Rect& rect)
 	if (!m_children.empty())
 	{
 		int32_t depth = getDepth();
-
-		Bitmap* expand = m_expand[(m_state & GridRow::RsExpanded) ? 1 : 0];
 		canvas.drawBitmap(
-			Point(rect.left + 2 + depth * 16, rect.top + (rect.getHeight() - expand->getSize().cy) / 2),
-			Point(0, 0),
-			expand->getSize(),
-			expand
+			Point(rect.left + 2 + depth * 16, rect.top + (rect.getHeight() - 16) / 2),
+			Point((m_state & GridRow::RsExpanded) ? 16 : 0, (m_state & GridRow::RsSelected) ? 16 : 0),
+			Size(16, 16),
+			m_expand,
+			BmAlpha
 		);
 	}
 

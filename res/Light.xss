@@ -128,6 +128,11 @@
 		</item>
 		<item>
 			<type>traktor.ui.custom.GridView</type>
+			<element>item-color-selected</element>
+			<color>255, 255, 255, 255</color>
+		</item>		
+		<item>
+			<type>traktor.ui.custom.GridView</type>
 			<element>item-background-color-selected</element>
 			<color>51, 153, 255, 255</color>
 		</item>

@@ -18,14 +18,25 @@ namespace traktor
 		namespace custom
 		{
 
+class GridRow;
+
 class T_DLLCLASS GridCell : public AutoWidgetCell
 {
 	T_RTTI_CLASS;
 
 public:
+	GridCell();
+
 	virtual int32_t getHeight() const = 0;
 
 	virtual std::wstring getText() const = 0;
+
+	GridRow* getRow() const { return m_row; }
+
+private:
+	friend class GridRow;
+
+	GridRow* m_row;
 };
 
 		}

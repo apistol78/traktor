@@ -9,6 +9,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.GridCell", GridCell, AutoWidgetCell)
 
+GridCell::GridCell()
+:	m_row(0)
+{
+}
+
 		}
 	}
 }
