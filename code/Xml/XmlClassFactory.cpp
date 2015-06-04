@@ -112,6 +112,7 @@ void XmlClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classDocument->addMethod("saveAsFile", &xml::Document::saveAsFile);
 	classDocument->addMethod("saveIntoStream", &xml::Document::saveIntoStream);
 	classDocument->addMethod("get", &xml_Document_get);
+	classDocument->addMethod("getSingle", &xml::Document::getSingle);
 	classDocument->addMethod("setDocumentElement", &xml::Document::setDocumentElement);
 	classDocument->addMethod("getDocumentElement", &xml::Document::getDocumentElement);
 	classDocument->addMethod("clone", &xml::Document::clone);
