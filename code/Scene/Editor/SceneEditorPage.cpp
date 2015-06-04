@@ -1058,17 +1058,20 @@ void SceneEditorPage::eventEntityToolClick(ui::custom::ToolBarButtonClickEvent* 
 
 void SceneEditorPage::eventGuideClick(ui::custom::GridColumnClickEvent* event)
 {
-	ui::custom::GridRow* row = event->getRow();
-	std::wstring id = checked_type_cast< const ui::custom::GridItem*, false >(row->get(0))->getText();
+	if (event->getColumn() == 1)
+	{
+		ui::custom::GridRow* row = event->getRow();
+		std::wstring id = checked_type_cast< const ui::custom::GridItem*, false >(row->get(0))->getText();
 
-	bool shouldDraw = !m_context->shouldDrawGuide(id);
-	m_context->setDrawGuide(id, shouldDraw);
+		bool shouldDraw = !m_context->shouldDrawGuide(id);
+		m_context->setDrawGuide(id, shouldDraw);
 
-	row->set(1, new ui::custom::GridItem(shouldDraw ? m_imageVisible : m_imageHidden));
-	m_gridGuides->requestUpdate();
+		row->set(1, new ui::custom::GridItem(shouldDraw ? m_imageVisible : m_imageHidden));
+		m_gridGuides->requestUpdate();
 
-	m_editor->checkoutGlobalSettings()->setProperty< PropertyBoolean >(L"SceneEditor.Guides/" + id, shouldDraw);
-	m_editor->commitGlobalSettings();
+		m_editor->checkoutGlobalSettings()->setProperty< PropertyBoolean >(L"SceneEditor.Guides/" + id, shouldDraw);
+		m_editor->commitGlobalSettings();
+	}
 }
 
 void SceneEditorPage::eventInstanceSelect(ui::SelectionChangeEvent* event)

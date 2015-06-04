@@ -4,6 +4,7 @@
 #include "Ui/StyleSheet.h"
 #include "Ui/Custom/Auto/AutoWidget.h"
 #include "Ui/Custom/GridView/GridItem.h"
+#include "Ui/Custom/GridView/GridRow.h"
 
 namespace traktor
 {
@@ -122,7 +123,11 @@ void GridItem::paint(Canvas& canvas, const Rect& rect)
 		if (m_font)
 			canvas.setFont(*m_font);
 
-		canvas.setForeground(ss->getColor(getWidget(), getWidget()->isEnable() ? L"color" : L"color-disabled"));
+		if (getWidget()->isEnable())
+			canvas.setForeground(ss->getColor(getWidget(), (getRow()->getState() & GridRow::RsSelected) ? L"item-color-selected" : L"color"));
+		else
+			canvas.setForeground(ss->getColor(getWidget(), L"color-disabled"));
+
 		canvas.drawText(rcText, m_text, AnLeft, AnCenter);
 
 		if (m_font)

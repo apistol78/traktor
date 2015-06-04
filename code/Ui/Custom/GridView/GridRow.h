@@ -41,6 +41,8 @@ public:
 
 	GridRow(uint32_t initialState = RsExpanded);
 
+	virtual ~GridRow();
+
 	void setState(uint32_t state);
 
 	uint32_t getState() const { return m_state; }
@@ -91,7 +93,7 @@ private:
 	uint32_t m_state;
 	Color4ub m_background;
 	int32_t m_minimumHeight;
-	Ref< Bitmap > m_expand[2];
+	Ref< Bitmap > m_expand;
 	RefArray< GridCell > m_items;
 	GridRow* m_parent;
 	RefArray< GridRow > m_children;
