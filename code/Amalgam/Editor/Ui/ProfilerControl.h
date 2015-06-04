@@ -1,7 +1,7 @@
 #ifndef traktor_amalgam_ProfilerControl_H
 #define traktor_amalgam_ProfilerControl_H
 
-#include "Amalgam/Impl/TargetPerformance.h"
+#include "Amalgam/TargetPerformance.h"
 #include "Core/Containers/CircularVector.h"
 #include "Ui/Widget.h"
 

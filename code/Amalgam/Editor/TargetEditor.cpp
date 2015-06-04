@@ -335,29 +335,49 @@ void TargetEditor::updateRoots()
 	TargetConfiguration* targetConfiguration = m_listBoxTargetConfigurations->getSelectedData< TargetConfiguration >();
 	if (targetConfiguration)
 	{
-		Ref< db::Instance > rootInstance = m_editor->getSourceDatabase()->getInstance(targetConfiguration->getRoot());
-		if (rootInstance)
-			m_editBuildRootInstance->setText(rootInstance->getPath());
+		if (targetConfiguration->getRoot().isNotNull())
+		{
+			Ref< db::Instance > rootInstance = m_editor->getSourceDatabase()->getInstance(targetConfiguration->getRoot());
+			if (rootInstance)
+				m_editBuildRootInstance->setText(rootInstance->getPath());
+			else
+				m_editBuildRootInstance->setText(targetConfiguration->getRoot().format());
+		}
 		else
-			m_editBuildRootInstance->setText(targetConfiguration->getRoot().format());
+			m_editBuildRootInstance->setText(L"");
 
-		Ref< db::Instance > startupInstance = m_editor->getSourceDatabase()->getInstance(targetConfiguration->getStartup());
-		if (startupInstance)
-			m_editStartupInstance->setText(startupInstance->getPath());
+		if (targetConfiguration->getStartup().isNotNull())
+		{
+			Ref< db::Instance > startupInstance = m_editor->getSourceDatabase()->getInstance(targetConfiguration->getStartup());
+			if (startupInstance)
+				m_editStartupInstance->setText(startupInstance->getPath());
+			else
+				m_editStartupInstance->setText(targetConfiguration->getStartup().format());
+		}
 		else
-			m_editStartupInstance->setText(targetConfiguration->getStartup().format());
+			m_editStartupInstance->setText(L"");
 
-		Ref< db::Instance > defaultInputInstance = m_editor->getSourceDatabase()->getInstance(targetConfiguration->getDefaultInput());
-		if (defaultInputInstance)
-			m_editDefaultInputInstance->setText(defaultInputInstance->getPath());
+		if (targetConfiguration->getDefaultInput().isNotNull())
+		{
+			Ref< db::Instance > defaultInputInstance = m_editor->getSourceDatabase()->getInstance(targetConfiguration->getDefaultInput());
+			if (defaultInputInstance)
+				m_editDefaultInputInstance->setText(defaultInputInstance->getPath());
+			else
+				m_editDefaultInputInstance->setText(targetConfiguration->getDefaultInput().format());
+		}
 		else
-			m_editDefaultInputInstance->setText(targetConfiguration->getDefaultInput().format());
+			m_editDefaultInputInstance->setText(L"");
 
-		Ref< db::Instance > onlineConfigInstance = m_editor->getSourceDatabase()->getInstance(targetConfiguration->getOnlineConfig());
-		if (onlineConfigInstance)
-			m_editOnlineConfigInstance->setText(onlineConfigInstance->getPath());
+		if (targetConfiguration->getOnlineConfig().isNotNull())
+		{
+			Ref< db::Instance > onlineConfigInstance = m_editor->getSourceDatabase()->getInstance(targetConfiguration->getOnlineConfig());
+			if (onlineConfigInstance)
+				m_editOnlineConfigInstance->setText(onlineConfigInstance->getPath());
+			else
+				m_editOnlineConfigInstance->setText(targetConfiguration->getOnlineConfig().format());
+		}
 		else
-			m_editOnlineConfigInstance->setText(targetConfiguration->getOnlineConfig().format());
+			m_editOnlineConfigInstance->setText(L"");
 	}
 	else
 	{
