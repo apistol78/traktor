@@ -1,7 +1,7 @@
+#include "Amalgam/TargetID.h"
 #include "Amalgam/Editor/TargetConnection.h"
 #include "Amalgam/Editor/TargetInstance.h"
 #include "Amalgam/Editor/TargetManager.h"
-#include "Amalgam/Impl/TargetID.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/BinarySerializer.h"

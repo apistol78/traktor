@@ -1,4 +1,6 @@
 #include <cstring>
+#include "Amalgam/CaptureScreenShot.h"
+#include "Amalgam/CapturedScreenShot.h"
 #include "Amalgam/Editor/EditorPlugin.h"
 #include "Amalgam/Editor/HostEnumerator.h"
 #include "Amalgam/Editor/Platform.h"
@@ -18,8 +20,6 @@
 #include "Amalgam/Editor/Ui/TargetListControl.h"
 #include "Amalgam/Editor/Ui/TargetPlayEvent.h"
 #include "Amalgam/Editor/Ui/TargetStopEvent.h"
-#include "Amalgam/Impl/CaptureScreenShot.h"
-#include "Amalgam/Impl/CapturedScreenShot.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"

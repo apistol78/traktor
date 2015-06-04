@@ -1,11 +1,11 @@
 #ifndef traktor_amalgam_TargetInstance_H
 #define traktor_amalgam_TargetInstance_H
 
+#include "Amalgam/TargetPerformance.h"
 #include "Core/Guid.h"
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Thread/Semaphore.h"
-#include "Amalgam/Impl/TargetPerformance.h"
 
 namespace traktor
 {

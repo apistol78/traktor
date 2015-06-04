@@ -1,7 +1,0 @@
-LIBRARY	"Traktor.Amalgam.Np.dll"
-
-EXPORTS
-	NP_GetEntryPoints		PRIVATE
-	NP_Initialize			PRIVATE
-	NP_Shutdown				PRIVATE
-	NP_GetMIMEDescription	PRIVATE

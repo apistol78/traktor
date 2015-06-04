@@ -1,7 +1,7 @@
 #ifndef traktor_amalgam_TargetConnection_H
 #define traktor_amalgam_TargetConnection_H
 
-#include "Amalgam/Impl/TargetPerformance.h"
+#include "Amalgam/TargetPerformance.h"
 #include "Core/Object.h"
 #include "Core/Thread/Semaphore.h"
 

@@ -1,6 +1,6 @@
 #include "Amalgam/Editor/SceneEditorProfile.h"
-#include "Amalgam/Engine/GameEntityFactory.h"
-#include "Amalgam/Engine/GameEntityRenderer.h"
+#include "Amalgam/Game/Engine/GameEntityFactory.h"
+#include "Amalgam/Game/Engine/GameEntityRenderer.h"
 #include "Scene/Editor/SceneEditorContext.h"
 
 namespace traktor

@@ -184,7 +184,7 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 	for (const TypeInfo* superType = exportType.getSuper(); superType; superType = superType->getSuper())
 		superTypes.push_back(superType);
 
-	for (std::vector< const TypeInfo* >::const_reverse_iterator i = superTypes.rbegin(); i != superTypes.rend(); ++i)
+	for (std::vector< const TypeInfo* >::reverse_iterator i = superTypes.rbegin(); i != superTypes.rend(); ++i)
 	{
 		for (std::vector< RegisteredClass >::iterator j = m_classRegistry.begin(); j != m_classRegistry.end(); ++j)
 		{
