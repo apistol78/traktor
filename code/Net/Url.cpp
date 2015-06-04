@@ -89,8 +89,18 @@ bool Url::set(const std::wstring& spec)
 		}
 		else
 		{
-			m_host = specific;
 			m_path = L"/";
+
+			// Extract host and port.
+			if ((j = specific.find(L':')) != std::wstring::npos)
+			{
+				m_host = specific.substr(0, j);
+				m_port = parseString< uint16_t >(specific.substr(j + 1));
+			}
+			else
+			{
+				m_host = specific;
+			}
 		}
 	}
 	else
