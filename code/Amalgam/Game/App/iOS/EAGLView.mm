@@ -1,9 +1,9 @@
 #include <algorithm>
 #include <dispatch/dispatch.h>
 
-#import "Amalgam/App/iOS/EAGLView.h"
+#import "Amalgam/Game/App/iOS/EAGLView.h"
 
-#include "Amalgam/Impl/Application.h"
+#include "Amalgam/Game/Impl/Application.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"

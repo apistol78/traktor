@@ -1,4 +1,4 @@
-#include "Amalgam/App/MacOSX/ErrorDialog.h"
+#include "Amalgam/Game/App/MacOSX/ErrorDialog.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Button.h"
 #include "Ui/Container.h"

@@ -1,5 +1,5 @@
 #import <UIKit/UIKit.h>
-#import "Amalgam/App/iOS/LaunchAppDelegate.h"
+#import "Amalgam/Game/App/iOS/LaunchAppDelegate.h"
 
 int main(int argc, char* argv[])
 {

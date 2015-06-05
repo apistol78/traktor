@@ -1,4 +1,4 @@
-#include "Amalgam/Impl/Application.h"
+#include "Amalgam/Game/Impl/Application.h"
 #include "Core/Io/FileOutputStreamBuffer.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
