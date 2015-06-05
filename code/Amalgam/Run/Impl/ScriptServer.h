@@ -20,6 +20,13 @@ class BidirectionalObjectTransport;
 
 	}
 
+	namespace script
+	{
+
+class IScriptContext;
+
+	}
+
 	namespace amalgam
 	{
 
@@ -39,7 +46,9 @@ public:
 
 	void destroy();
 
-	void cleanup(bool full);
+	bool execute(IEnvironment* environment);
+
+	bool update();
 
 	virtual script::IScriptManager* getScriptManager();
 
@@ -59,12 +68,16 @@ private:
 	};
 
 	Ref< script::IScriptManager > m_scriptManager;
+	Ref< script::IScriptContext > m_scriptContext;
 	Ref< script::IScriptDebugger > m_scriptDebugger;
 	Ref< script::IScriptProfiler > m_scriptProfiler;
 	Ref< net::BidirectionalObjectTransport > m_transport;
 	std::map< std::pair< Guid, std::wstring >, CallSample > m_callSamples[3];
 	int32_t m_callSamplesIndex;
+	Thread* m_executionThread;
 	Thread* m_scriptDebuggerThread;
+
+	void threadExecution();
 
 	void threadDebugger();
 

@@ -5,6 +5,7 @@
 #include "Amalgam/Run/IEnvironment.h"
 #include "Amalgam/Run/Impl/LibraryHelper.h"
 #include "Amalgam/Run/Impl/ScriptServer.h"
+#include "Core/Class/CastAny.h"
 #include "Core/Class/IRuntimeClassFactory.h"
 #include "Core/Class/OrderedClassRegistrar.h"
 #include "Core/Log/Log.h"
@@ -13,9 +14,12 @@
 #include "Core/Settings/PropertyString.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/ThreadManager.h"
+#include "Database/Database.h"
 #include "Net/BidirectionalObjectTransport.h"
 #include "Resource/IResourceManager.h"
+#include "Script/IScriptContext.h"
 #include "Script/IScriptManager.h"
+#include "Script/IScriptResource.h"
 
 namespace traktor
 {
@@ -26,6 +30,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ScriptServer", ScriptServer, IScriptSer
 
 ScriptServer::ScriptServer()
 :	m_callSamplesIndex(0)
+,	m_executionThread(0)
 ,	m_scriptDebuggerThread(0)
 {
 }
@@ -98,6 +103,13 @@ bool ScriptServer::create(const PropertyGroup* defaultSettings, const PropertyGr
 
 void ScriptServer::destroy()
 {
+	if (m_executionThread)
+	{
+		m_executionThread->stop();
+		ThreadManager::getInstance().destroy(m_executionThread);
+		m_executionThread = 0;
+	}
+
 	if (m_scriptDebuggerThread)
 	{
 		m_scriptDebuggerThread->stop();
@@ -117,18 +129,58 @@ void ScriptServer::destroy()
 		m_scriptProfiler = 0;
 	}
 
+	safeDestroy(m_scriptContext);
 	safeDestroy(m_scriptManager);
 }
 
-void ScriptServer::cleanup(bool full)
+bool ScriptServer::execute(IEnvironment* environment)
 {
-	T_ASSERT (m_scriptManager);
-	m_scriptManager->collectGarbage(full);
+	// Create script context.
+	Guid startupGuid(environment->getSettings()->getProperty< PropertyString >(L"Amalgam.Startup"));
+
+	Ref< script::IScriptResource > scriptResource = environment->getDatabase()->getObjectReadOnly< script::IScriptResource >(startupGuid);
+	if (!scriptResource)
+	{
+		log::error << L"Unable to load script resource" << Endl;
+		return false;
+	}
+
+	m_scriptContext = m_scriptManager->createContext(scriptResource, 0);
+	if (!m_scriptContext)
+	{
+		log::error << L"Unable to create script execution context" << Endl;
+		return false;
+	}
+
+	m_scriptContext->setGlobal("environment", Any::fromObject(environment));
+
+	// Create execution thread.
+	m_executionThread = ThreadManager::getInstance().create(makeFunctor(this, &ScriptServer::threadExecution), L"Script execution thread");
+	if (!m_executionThread)
+		return false;
+
+	m_executionThread->start();
+	return true;
+}
+
+bool ScriptServer::update()
+{
+	if (m_executionThread)
+	{
+		if (!m_executionThread->wait(100))
+			return true;
+	}
+	return false;
 }
 
 script::IScriptManager* ScriptServer::getScriptManager()
 {
 	return m_scriptManager;
+}
+
+void ScriptServer::threadExecution()
+{
+	m_scriptContext->executeFunction("main");
 }
 
 void ScriptServer::threadDebugger()

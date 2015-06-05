@@ -41,19 +41,11 @@ class T_DLLCLASS IEnvironment : public Object
 public:
 	virtual db::Database* getDatabase() = 0;
 
-	/*! \name Server accessors. */
-	/*! \{ */
-
 	virtual IScriptServer* getScript() = 0;
-
-	/*! \} */
-
-	/*! \name Settings. */
-	/*! \{ */
 
 	virtual PropertyGroup* getSettings() = 0;
 
-	/*! \} */
+	virtual bool alive() const = 0;
 };
 
 	}

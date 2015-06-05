@@ -16,6 +16,7 @@ Environment::Environment(
 :	m_settings(settings)
 ,	m_database(database)
 ,	m_scriptServer(scriptServer)
+,	m_alive(true)
 {
 }
 
@@ -32,6 +33,11 @@ IScriptServer* Environment::getScript()
 PropertyGroup* Environment::getSettings()
 {
 	return m_settings;
+}
+
+bool Environment::alive() const
+{
+	return m_alive;
 }
 
 	}

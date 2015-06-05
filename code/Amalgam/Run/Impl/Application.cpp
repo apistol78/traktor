@@ -12,9 +12,6 @@
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/PropertyStringSet.h"
 #include "Database/Database.h"
-#include "Script/IScriptContext.h"
-#include "Script/IScriptManager.h"
-#include "Script/IScriptResource.h"
 
 namespace traktor
 {
@@ -98,30 +95,14 @@ bool Application::create(
 		m_scriptServer
 	);
 
-	// Create script context.
-	Guid startupGuid(settings->getProperty< PropertyString >(L"Amalgam.Startup"));
-
-	Ref< script::IScriptResource > scriptResource = m_database->getObjectReadOnly< script::IScriptResource >(startupGuid);
-	if (!scriptResource)
-	{
-		log::error << L"Application failed; no such script." << Endl;
-		return false;
-	}
-
-	m_scriptContext = m_scriptServer->getScriptManager()->createContext(scriptResource, 0);
-	if (!m_scriptContext)
-	{
-		log::error << L"Application failed; failed to create script context." << Endl;
-		return false;
-	}
-
 	m_settings = settings;
 	return true;
 }
 
 void Application::destroy()
 {
-	safeDestroy(m_scriptContext);
+	m_environment->m_alive = false;
+
 	safeDestroy(m_scriptServer);
 
 	m_environment = 0;
@@ -138,14 +119,22 @@ void Application::destroy()
 
 bool Application::execute()
 {
-	//// Update target manager connection.
-	//if (m_targetManagerConnection && !m_targetManagerConnection->update())
-	//{
-	//	log::warning << L"Connection to target manager lost; terminating application..." << Endl;
-	//	return false;
-	//}
+	if (!m_scriptServer->execute(m_environment))
+		return false;
 
-	m_scriptContext->executeFunction("main");
+	for (;;)
+	{
+		// Update target manager connection.
+		if (m_targetManagerConnection && !m_targetManagerConnection->update())
+		{
+			log::warning << L"Connection to target manager lost; terminating application..." << Endl;
+			return false;
+		}
+
+		// Update script execution.
+		if (!m_scriptServer->update())
+			break;
+	}
 
 	return true;
 }

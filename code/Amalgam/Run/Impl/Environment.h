@@ -27,10 +27,15 @@ public:
 
 	virtual PropertyGroup* getSettings();
 
+	virtual bool alive() const;
+
 private:
+	friend class Application;
+
 	Ref< PropertyGroup > m_settings;
 	Ref< db::Database > m_database;
 	Ref< ScriptServer > m_scriptServer;
+	bool m_alive;
 };
 
 	}

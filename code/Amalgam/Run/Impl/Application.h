@@ -25,13 +25,6 @@ class Database;
 
 	}
 
-	namespace script
-	{
-
-class IScriptContext;
-
-	}
-
 	namespace amalgam
 	{
 
@@ -65,7 +58,6 @@ private:
 	Ref< db::Database > m_database;
 	Ref< ScriptServer > m_scriptServer;
 	Ref< Environment > m_environment;
-	Ref< script::IScriptContext > m_scriptContext;
 };
 
 	}
