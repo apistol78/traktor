@@ -29,14 +29,14 @@ class IEditorPageSite;
 
 class Container;
 class SelectionChangeEvent;
-class TreeView;
-class TreeViewItem;
 
 		namespace custom
 		{
 
 class ToolBar;
 class ToolBarButtonClickEvent;
+class TreeView;
+class TreeViewItem;
 
 		}
 	}
@@ -94,7 +94,7 @@ private:
 	editor::IEditor* m_editor;
 	editor::IEditorPageSite* m_site;
 	editor::IDocument* m_document;
-	Ref< ui::TreeView > m_treeMovie;
+	Ref< ui::custom::TreeView > m_treeMovie;
 	Ref< ui::custom::ProfileControl > m_profileMovie;
 	Ref< FlashPreviewControl > m_previewControl;
 	Ref< ui::custom::ToolBar > m_toolBarPlay;
@@ -104,9 +104,9 @@ private:
 	Ref< FlashCharacterInstance > m_selectedCharacterInstance;
 	SwfCxTransform m_selectedCharacterInstanceCxForm;
 
-	void updateTreeObject(ui::TreeViewItem* parentItem, const ActionObject* asObject, std::set< const ActionObject* >& objectStack, std::map< const void*, uint32_t >& pointerHash, uint32_t& nextPointerHash);
+	void updateTreeObject(ui::custom::TreeViewItem* parentItem, const ActionObject* asObject, std::set< const ActionObject* >& objectStack, std::map< const void*, uint32_t >& pointerHash, uint32_t& nextPointerHash);
 
-	void updateTreeCharacter(ui::TreeViewItem* parentItem, FlashCharacterInstance* characterInstance, std::map< const void*, uint32_t >& pointerHash, uint32_t& nextPointerHash);
+	void updateTreeCharacter(ui::custom::TreeViewItem* parentItem, FlashCharacterInstance* characterInstance, std::map< const void*, uint32_t >& pointerHash, uint32_t& nextPointerHash);
 
 	void updateTreeMovie();
 
