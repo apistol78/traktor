@@ -9,6 +9,7 @@
 			<deployFiles>
 				<item>libExtern.lua.a</item>
 				<item>libTraktor.Core.a</item>
+				<item>libTraktor.Resource.a</item>
 				<item>libTraktor.Script.a</item>
 				<item>libTraktor.Script.Lua.a</item>
 			</deployFiles>
@@ -18,6 +19,7 @@
 			<executableFile/>
 			<deployFiles>
 				<item>libTraktor.Core.so</item>
+				<item>libTraktor.Resource.so</item>
 				<item>libTraktor.Script.so</item>
 				<item>libTraktor.Script.Lua.so</item>
 			</deployFiles>
@@ -27,6 +29,7 @@
 			<executableFile/>
 			<deployFiles>
 				<item>Traktor.Core.dll</item>
+				<item>Traktor.Resource.dll</item>
 				<item>Traktor.Script.dll</item>
 				<item>Traktor.Script.Lua.dll</item>
 			</deployFiles>
@@ -36,6 +39,7 @@
 			<executableFile/>
 			<deployFiles>
 				<item>libTraktor.Core.dylib</item>
+				<item>libTraktor.Resource.dylib</item>
 				<item>libTraktor.Script.dylib</item>
 				<item>libTraktor.Script.Lua.dylib</item>
 			</deployFiles>
@@ -46,6 +50,7 @@
 			<deployFiles>
 				<item>Extern.lua.lib</item>
 				<item>Traktor.Core.lib</item>
+				<item>Traktor.Resource.lib</item>
 				<item>Traktor.Script.lib</item>
 				<item>Traktor.Script.Lua.lib</item>
 			</deployFiles>
@@ -55,6 +60,7 @@
 			<executableFile/>
 			<deployFiles>
 				<item>Traktor.Core.dll</item>
+				<item>Traktor.Resource.dll</item>
 				<item>Traktor.Script.dll</item>
 				<item>Traktor.Script.Lua.dll</item>
 			</deployFiles>
@@ -64,6 +70,7 @@
 			<executableFile/>
 			<deployFiles>
 				<item>Traktor.Core.dll</item>
+				<item>Traktor.Resource.dll</item>
 				<item>Traktor.Script.dll</item>
 				<item>Traktor.Script.Lua.dll</item>
 			</deployFiles>
@@ -74,6 +81,7 @@
 			<deployFiles>
 				<item>Extern.lua.lib</item>
 				<item>Traktor.Core.lib</item>
+				<item>Traktor.Resource.lib</item>
 				<item>Traktor.Script.lib</item>
 				<item>Traktor.Script.Lua.lib</item>
 			</deployFiles>
@@ -84,6 +92,7 @@
 			<deployFiles>
 				<item>libExtern.lua.bc</item>
 				<item>libTraktor.Core.bc</item>
+				<item>libTraktor.Resource.bc</item>
 				<item>libTraktor.Script.bc</item>
 				<item>libTraktor.Script.Lua.bc</item>
 			</deployFiles>
@@ -94,6 +103,7 @@
 			<deployFiles>
 				<item>libExtern.lua.a</item>
 				<item>libTraktor.Core.a</item>
+				<item>libTraktor.Resource.a</item>
 				<item>libTraktor.Script.a</item>
 				<item>libTraktor.Script.Lua.a</item>
 			</deployFiles>
@@ -104,6 +114,7 @@
 			<deployFiles>
 				<item>libExtern.lua.a</item>
 				<item>libTraktor.Core.a</item>
+				<item>libTraktor.Resource.a</item>
 				<item>libTraktor.Script.a</item>
 				<item>libTraktor.Script.Lua.a</item>
 			</deployFiles>
