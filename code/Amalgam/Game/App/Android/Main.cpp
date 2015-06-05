@@ -4,9 +4,9 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <errno.h>
-#include "Amalgam/IOnlineServer.h"
-#include "Amalgam/Impl/Application.h"
-#include "Amalgam/Impl/Environment.h"
+#include "Amalgam/Game/IOnlineServer.h"
+#include "Amalgam/Game/Impl/Application.h"
+#include "Amalgam/Game/Impl/Environment.h"
 #include "Core/Io/FileOutputStreamBuffer.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"

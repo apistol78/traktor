@@ -10,7 +10,7 @@
 #include <nacl_io/nacl_io.h>
 
 // Traktor
-#include "Amalgam/Impl/Application.h"
+#include "Amalgam/Game/Impl/Application.h"
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
