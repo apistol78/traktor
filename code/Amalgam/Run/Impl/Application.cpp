@@ -101,7 +101,8 @@ bool Application::create(
 
 void Application::destroy()
 {
-	m_environment->m_alive = false;
+	if (m_environment)
+		m_environment->m_alive = false;
 
 	safeDestroy(m_scriptServer);
 

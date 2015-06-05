@@ -85,8 +85,44 @@ end
 
 
 function migrate(args)
+	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
+
 	stdout:printLn("Migrating Win32...")
-	return run:execute("$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Database.Migrate.App -p -s=Migrate")
+
+	-- Build content database.
+	run:execute("$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Database.Migrate.App -p -s=Migrate")
+	if run:exitCode() ~= 0 then return run:exitCode() end
+
+	-- Determine source binary path.
+	local sourcePath
+	if not debug then
+		stdout:printLn("Deploying binaries to target host...")
+		sourcePath = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/win32/releaseshared/"
+	else
+		stdout:printLn("Deploying *DEBUG* binaries to target host...")
+		sourcePath = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/win32/debugshared/"
+	end
+
+	-- Copy binaries into "bin".
+	run:mkdir("bin32")
+	local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
+	for _, f in ipairs(files) do
+		if debug then
+			local debugFile = f
+			if string.endswith(f, ".dll") then
+				debugFile = f:sub(1, string.len(f) - 4) .. "_d.dll"
+			elseif string.endswith(f, ".exe") then
+				debugFile = f:sub(1, string.len(f) - 4) .. "_d.exe"
+			end
+			if fileSystem:exist(Path(sourcePath .. debugFile)) then
+				f = debugFile
+			end
+		end
+		if not run:replace(sourcePath .. f, "bin32/" .. f) then
+			stderr:printLn("Unable to copy file \"" .. f .. "\" to binary folder")
+			return 1
+		end
+	end
 end
 
 
