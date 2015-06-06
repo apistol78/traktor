@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cmath>
 #include "Core/Math/Const.h"
 #include "Render/Editor/Shader/Constant.h"

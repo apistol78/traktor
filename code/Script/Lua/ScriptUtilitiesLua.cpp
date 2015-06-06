@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstring>
 #include "Core/Io/OutputStream.h"
 #include "Core/Memory/IAllocator.h"

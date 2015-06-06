@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Core/Math/Const.h"
 #include "Render/Shader/Nodes.h"
 #include "Render/Editor/Shader/Traits/MathNodeTraits.h"

@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Math/Log2.h"

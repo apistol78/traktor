@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <limits>
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
