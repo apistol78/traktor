@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Render/Shader/Nodes.h"
 #include "Render/Editor/Shader/Traits/IterativeNodeTraits.h"
 

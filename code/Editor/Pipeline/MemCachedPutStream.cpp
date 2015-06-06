@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstring>
 #include <sstream>
 #include "Editor/Pipeline/MemCachedPutStream.h"
