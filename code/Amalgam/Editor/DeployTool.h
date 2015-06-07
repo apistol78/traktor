@@ -17,6 +17,9 @@ namespace traktor
 	namespace amalgam
 	{
 
+/*! \brief Deployment tool description.
+ * \ingroup Amalgam
+ */
 class T_DLLCLASS DeployTool : public ISerializable
 {
 	T_RTTI_CLASS;

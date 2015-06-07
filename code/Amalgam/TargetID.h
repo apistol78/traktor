@@ -17,6 +17,9 @@ namespace traktor
 	namespace amalgam
 	{
 
+/*! \brief Running target identification.
+ * \ingroup Amalgam
+ */
 class T_DLLCLASS TargetID : public ISerializable
 {
 	T_RTTI_CLASS;

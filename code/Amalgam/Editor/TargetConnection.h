@@ -24,6 +24,9 @@ class TargetScriptDebugger;
 class TargetScriptDebuggerSessions;
 class TargetScriptProfiler;
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class TargetConnection : public Object
 {
 	T_RTTI_CLASS;

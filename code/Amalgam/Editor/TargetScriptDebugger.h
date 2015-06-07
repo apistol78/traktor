@@ -16,6 +16,9 @@ class BidirectionalObjectTransport;
 	namespace amalgam
 	{
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class TargetScriptDebugger : public script::IScriptDebugger
 {
 	T_RTTI_CLASS;

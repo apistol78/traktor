@@ -14,6 +14,9 @@ namespace traktor
 class TargetScriptDebugger;
 class TargetScriptProfiler;
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class TargetScriptDebuggerSessions : public script::IScriptDebuggerSessions
 {
 	T_RTTI_CLASS;

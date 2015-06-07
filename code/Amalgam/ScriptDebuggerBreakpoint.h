@@ -17,6 +17,9 @@ namespace traktor
 	namespace amalgam
 	{
 
+/*! \brief Add or remove script breakpoint on running target.
+ * \ingroup Amalgam
+ */
 class T_DLLCLASS ScriptDebuggerBreakpoint : public ISerializable
 {
 	T_RTTI_CLASS;

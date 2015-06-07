@@ -19,6 +19,9 @@ class DiscoveryManager;
 	namespace amalgam
 	{
 
+/*! \brief Enumerator of hosts able to communicate with editor.
+ * \ingroup Amalgam
+ */
 class HostEnumerator : public Object
 {
 	T_RTTI_CLASS;

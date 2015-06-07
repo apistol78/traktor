@@ -17,6 +17,9 @@ namespace traktor
 	namespace amalgam
 	{
 
+/*! \brief Script profiler measurement from running target.
+ * \ingroup Amalgam
+ */
 class T_DLLCLASS ScriptProfilerCallMeasured : public ISerializable
 {
 	T_RTTI_CLASS;

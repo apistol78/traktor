@@ -19,6 +19,9 @@ class IEditor;
 class TargetInstance;
 class TargetScriptDebuggerSessions;
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class TargetManager : public Object
 {
 	T_RTTI_CLASS;

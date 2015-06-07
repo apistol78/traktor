@@ -16,6 +16,9 @@ namespace traktor
 	namespace amalgam
 	{
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class T_DLLCLASS StagePipeline : public editor::DefaultPipeline
 {
 	T_RTTI_CLASS;

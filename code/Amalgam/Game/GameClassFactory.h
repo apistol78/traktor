@@ -1,5 +1,5 @@
-#ifndef traktor_amalgam_AmalgamClassFactory_H
-#define traktor_amalgam_AmalgamClassFactory_H
+#ifndef traktor_amalgam_GameClassFactory_H
+#define traktor_amalgam_GameClassFactory_H
 
 #include "Core/Class/IRuntimeClassFactory.h"
 
@@ -16,7 +16,7 @@ namespace traktor
 	namespace amalgam
 	{
 
-class T_DLLCLASS AmalgamClassFactory : public IRuntimeClassFactory
+class T_DLLCLASS GameClassFactory : public IRuntimeClassFactory
 {
 	T_RTTI_CLASS;
 
@@ -27,4 +27,4 @@ public:
 	}
 }
 
-#endif	// traktor_amalgam_AmalgamClassFactory_H
+#endif	// traktor_amalgam_GameClassFactory_H

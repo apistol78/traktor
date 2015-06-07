@@ -1,9 +1,9 @@
+#include "Amalgam/Game/GameClassFactory.h"
 #include "Amalgam/Game/IEnvironment.h"
 #include "Amalgam/Game/IInputServer.h"
 #include "Amalgam/Game/IRenderServer.h"
 #include "Amalgam/Game/IUpdateControl.h"
 #include "Amalgam/Game/IUpdateInfo.h"
-#include "Amalgam/Game/Engine/AmalgamClassFactory.h"
 #include "Amalgam/Game/Engine/AudioLayer.h"
 #include "Amalgam/Game/Engine/StageData.h"
 #include "Amalgam/Game/Engine/FlashLayer.h"
@@ -136,9 +136,9 @@ world::IEntityEventInstance* GameEntity_raiseEvent_2(GameEntity* self, const std
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.AmalgamClassFactory", 0, AmalgamClassFactory, IRuntimeClassFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.GameClassFactory", 0, GameClassFactory, IRuntimeClassFactory)
 
-void AmalgamClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
+void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
 	Ref< AutoRuntimeClass< amalgam::IEnvironment > > classEnvironment = new AutoRuntimeClass< amalgam::IEnvironment >();
 	classEnvironment->addMethod("getDatabase", &amalgam::IEnvironment::getDatabase);

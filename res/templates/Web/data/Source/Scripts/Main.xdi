@@ -7,7 +7,7 @@ function initialize(params)
 end
 
 
-function update(control, info)
+function update(info)
 	local cubeEntity = world:getEntity("Cube")
 	cubeEntity:setTransform(Transform(
 		Vector4(0, 0, 0, 1),

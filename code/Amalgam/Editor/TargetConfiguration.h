@@ -10,6 +10,9 @@ namespace traktor
 	namespace amalgam
 	{
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class TargetConfiguration : public ISerializable
 {
 	T_RTTI_CLASS;

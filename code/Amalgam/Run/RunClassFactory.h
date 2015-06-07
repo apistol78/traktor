@@ -16,6 +16,9 @@ namespace traktor
 	namespace amalgam
 	{
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class T_DLLCLASS RunClassFactory : public IRuntimeClassFactory
 {
 	T_RTTI_CLASS;

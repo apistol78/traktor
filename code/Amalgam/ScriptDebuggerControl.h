@@ -16,6 +16,9 @@ namespace traktor
 	namespace amalgam
 	{
 
+/*! \brief Control debugger on running target.
+ * \ingroup Amalgam
+ */
 class T_DLLCLASS ScriptDebuggerControl : public ISerializable
 {
 	T_RTTI_CLASS;

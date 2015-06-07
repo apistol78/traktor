@@ -50,6 +50,9 @@ class Platform;
 class Target;
 class TargetConfiguration;
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class TargetEditor : public editor::IObjectEditor
 {
 	T_RTTI_CLASS;

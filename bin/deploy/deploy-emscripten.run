@@ -85,7 +85,7 @@ function deploy(args)
 	end
 
 	-- Link files into an executable product.
-	local cmd = "\"" .. emcc .. "\" -Wl,--whole-archive " .. wholeLinkFiles .. "-Wl,--no-whole-archive " .. externalLinkFiles  .. " -o $(DEPLOY_EXECUTABLE).html --embed-file Application.config"
+	local cmd = "\"" .. emcc .. "\" -s USE_PTHREADS=1 -Wl,--whole-archive " .. wholeLinkFiles .. "-Wl,--no-whole-archive " .. externalLinkFiles  .. " -o $(DEPLOY_EXECUTABLE).html --embed-file Application.config"
 	local result = run:execute(cmd)
 	if result ~= 0 then
 		stderr:printLn("Unable to build executable product.")
@@ -121,6 +121,8 @@ function migrate(args)
 		stderr:printLn("EMSCRIPTEN not set; ensure Emscripten SDK is properly installed and try again.")
 		return 1
 	end
+
+	stdout:printLn("Using Emscripten SDK at \"" .. emscripten .. "\"")
 
 	-- Get toolchain binaries.
 	local emcc = emscripten .. "/emcc" 
@@ -168,7 +170,7 @@ function migrate(args)
 
 	-- Link files into an executable product.
 	local totalMemory = 32 * 1024 * 1024
-	local cmd = "\"" .. emcc .. "\" -s TOTAL_MEMORY=" .. totalMemory .. " -Wl,--whole-archive " .. wholeLinkFiles .. "-Wl,--no-whole-archive " .. externalLinkFiles  .. " -o $(DEPLOY_EXECUTABLE).html --embed-file Application.config --embed-file Content.compact"
+	local cmd = "\"" .. emcc .. "\" -s USE_PTHREADS=1 -s TOTAL_MEMORY=" .. totalMemory .. " -Wl,--whole-archive " .. wholeLinkFiles .. "-Wl,--no-whole-archive " .. externalLinkFiles  .. " -o $(DEPLOY_EXECUTABLE).html --embed-file Application.config --embed-file Content.compact"
 	local result = run:execute(cmd)
 	if result ~= 0 then
 		stderr:printLn("Unable to build executable product.")

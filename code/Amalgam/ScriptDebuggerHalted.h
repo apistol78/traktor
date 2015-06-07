@@ -17,6 +17,9 @@ namespace traktor
 	namespace amalgam
 	{
 
+/*! \brief Response from running target when debugger has been halted.
+ * \ingroup Amalgam
+ */
 class T_DLLCLASS ScriptDebuggerHalted : public ISerializable
 {
 	T_RTTI_CLASS;

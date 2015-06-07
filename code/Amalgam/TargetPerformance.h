@@ -17,6 +17,9 @@ namespace traktor
 	namespace amalgam
 	{
 
+/*! \brief Target performance event from running target.
+ * \ingroup Amalgam
+ */
 class T_DLLCLASS TargetPerformance : public ISerializable
 {
 	T_RTTI_CLASS;

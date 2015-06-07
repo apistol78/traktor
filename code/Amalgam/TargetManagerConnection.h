@@ -24,6 +24,9 @@ class BidirectionalObjectTransport;
 	namespace amalgam
 	{
 
+/*! \brief Application target manager connection.
+ * \ingroup Amalgam
+ */
 class T_DLLCLASS TargetManagerConnection : public Object
 {
 	T_RTTI_CLASS;
