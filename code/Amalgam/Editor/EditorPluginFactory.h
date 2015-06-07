@@ -16,6 +16,9 @@ namespace traktor
 	namespace amalgam
 	{
 
+/*! \brief Amalgam editor plugin factory.
+ * \ingroup Amalgam
+ */
 class T_DLLCLASS EditorPluginFactory : public editor::IEditorPluginFactory
 {
 	T_RTTI_CLASS;

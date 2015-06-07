@@ -18,6 +18,9 @@ namespace traktor
 	namespace amalgam
 	{
 
+/*! \brief Deployment editor settings page.
+ * \ingroup Amalgam
+ */
 class T_DLLCLASS DeploySettingsPage : public editor::ISettingsPage
 {
 	T_RTTI_CLASS;

@@ -19,6 +19,9 @@ namespace traktor
 
 class TargetConfiguration;
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class T_DLLCLASS Target : public ISerializable
 {
 	T_RTTI_CLASS;

@@ -56,6 +56,9 @@ class TargetPlayEvent;
 class TargetStopEvent;
 class TargetScriptDebuggerSessions;
 
+/*! \brief Amalgam editor plugin.
+ * \ingroup Amalgam
+ */
 class EditorPlugin : public editor::IEditorPlugin
 {
 	T_RTTI_CLASS;

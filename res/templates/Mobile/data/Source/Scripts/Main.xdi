@@ -11,7 +11,7 @@ function initialize(params)
 end
 
 
-function update(control, info)
+function update(info)
 	local inputMapping = environment:getInput():getInputMapping()
 
 	-- Read input state values.

@@ -16,6 +16,9 @@ namespace traktor
 	namespace amalgam
 	{
 
+/*! \brief Log statement from running target.
+ * \ingroup Amalgam
+ */
 class T_DLLCLASS TargetLog : public ISerializable
 {
 	T_RTTI_CLASS;

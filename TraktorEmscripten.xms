@@ -2263,7 +2263,7 @@
 														<project type="Project" version="1">
 															<enable>true</enable>
 															<name>Extern.minilzo-2.05</name>
-															<sourcePath>$(LUA_SDK)/src</sourcePath>
+															<sourcePath>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</sourcePath>
 															<configurations>
 																<item type="Configuration" version="1">
 																	<name>DebugStatic</name>

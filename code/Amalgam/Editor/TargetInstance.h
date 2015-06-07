@@ -24,6 +24,9 @@ class Target;
 class TargetConfiguration;
 class TargetConnection;
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 enum TargetState
 {
 	TsIdle,
@@ -34,6 +37,9 @@ enum TargetState
 	TsPending
 };
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class TargetInstance : public Object
 {
 	T_RTTI_CLASS;

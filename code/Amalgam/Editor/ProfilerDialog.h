@@ -11,7 +11,7 @@ namespace traktor
 class ProfilerControl;
 class TargetConnection;
 
-/*! \brief
+/*! \brief Visual profiler dialog.
  * \ingroup Amalgam
  */
 class ProfilerDialog : public ui::Dialog

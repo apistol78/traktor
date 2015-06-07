@@ -16,6 +16,9 @@ class BidirectionalObjectTransport;
 	namespace amalgam
 	{
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class TargetScriptProfiler : public script::IScriptProfiler
 {
 	T_RTTI_CLASS;

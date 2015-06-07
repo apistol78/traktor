@@ -15,6 +15,9 @@ class PropertyGroup;
 	namespace amalgam
 	{
 
+/*! \brief Target feature description.
+ * \ingroup Amalgam
+ */
 class Feature : public ISerializable
 {
 	T_RTTI_CLASS;

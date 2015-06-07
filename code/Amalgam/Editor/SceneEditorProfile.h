@@ -16,6 +16,9 @@ namespace traktor
 	namespace amalgam
 	{
 
+/*! \brief
+ * \ingroup Amalgam
+ */
 class T_DLLCLASS SceneEditorProfile : public scene::ISceneEditorProfile
 {
 	T_RTTI_CLASS;

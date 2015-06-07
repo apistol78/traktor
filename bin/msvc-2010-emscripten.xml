@@ -181,6 +181,10 @@
               <name>PreprocessorDefinitions</name>
               <value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__EMSCRIPTEN__;%(PreprocessorDefinitions)</value>
             </item>
+            <item>
+              <name>AdditionalOptions</name>
+              <value>-s USE_PTHREADS=1 %(AdditionalOptions)</value>
+            </item>
           </options>
         </item>
       </item>
@@ -198,6 +202,10 @@
               <name>PreprocessorDefinitions</name>
               <value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__EMSCRIPTEN__;%(PreprocessorDefinitions)</value>
             </item>
+            <item>
+              <name>AdditionalOptions</name>
+              <value>-s USE_PTHREADS=1 %(AdditionalOptions)</value>
+            </item>
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -211,6 +219,10 @@
             <item>
               <name>AdditionalLibraryDirectories</name>
               <value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+            </item>
+            <item>
+              <name>AdditionalOptions</name>
+              <value>-s USE_PTHREADS=1 %(AdditionalOptions)</value>
             </item>
           </options>
         </item>
@@ -229,6 +241,10 @@
               <name>PreprocessorDefinitions</name>
               <value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__EMSCRIPTEN__;%(PreprocessorDefinitions)</value>
             </item>
+            <item>
+              <name>AdditionalOptions</name>
+              <value>-s USE_PTHREADS=1 %(AdditionalOptions)</value>
+            </item>
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -242,6 +258,10 @@
             <item>
               <name>AdditionalLibraryDirectories</name>
               <value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+            </item>
+            <item>
+              <name>AdditionalOptions</name>
+              <value>-s USE_PTHREADS=1 %(AdditionalOptions)</value>
             </item>
           </options>
         </item>
@@ -260,6 +280,10 @@
               <name>PreprocessorDefinitions</name>
               <value>%(PROJECT_DEFINITIONS);_CONSOLE;UNICODE;_UNICODE;__EMSCRIPTEN__;%(PreprocessorDefinitions)</value>
             </item>
+            <item>
+              <name>AdditionalOptions</name>
+              <value>-s USE_PTHREADS=1 %(AdditionalOptions)</value>
+            </item>
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -273,6 +297,10 @@
             <item>
               <name>AdditionalLibraryDirectories</name>
               <value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+            </item>
+            <item>
+              <name>AdditionalOptions</name>
+              <value>-s USE_PTHREADS=1 %(AdditionalOptions)</value>
             </item>
           </options>
         </item>
@@ -293,6 +321,10 @@
               <name>PreprocessorDefinitions</name>
               <value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__EMSCRIPTEN__;%(PreprocessorDefinitions)</value>
             </item>
+            <item>
+              <name>AdditionalOptions</name>
+              <value>-s USE_PTHREADS=1 %(AdditionalOptions)</value>
+            </item>
           </options>
         </item>
       </item>
@@ -310,6 +342,10 @@
               <name>PreprocessorDefinitions</name>
               <value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__EMSCRIPTEN__;%(PreprocessorDefinitions)</value>
             </item>
+            <item>
+              <name>AdditionalOptions</name>
+              <value>-s USE_PTHREADS=1 %(AdditionalOptions)</value>
+            </item>
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -323,6 +359,10 @@
             <item>
               <name>AdditionalLibraryDirectories</name>
               <value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+            </item>
+            <item>
+              <name>AdditionalOptions</name>
+              <value>-s USE_PTHREADS=1 %(AdditionalOptions)</value>
             </item>
           </options>
         </item>
@@ -341,6 +381,10 @@
               <name>PreprocessorDefinitions</name>
               <value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__EMSCRIPTEN__;%(PreprocessorDefinitions)</value>
             </item>
+            <item>
+              <name>AdditionalOptions</name>
+              <value>-s USE_PTHREADS=1 %(AdditionalOptions)</value>
+            </item>
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -354,6 +398,10 @@
             <item>
               <name>AdditionalLibraryDirectories</name>
               <value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+            </item>
+            <item>
+              <name>AdditionalOptions</name>
+              <value>-s USE_PTHREADS=1 %(AdditionalOptions)</value>
             </item>
           </options>
         </item>
@@ -372,6 +420,10 @@
               <name>PreprocessorDefinitions</name>
               <value>%(PROJECT_DEFINITIONS);_CONSOLE;UNICODE;_UNICODE;__EMSCRIPTEN__;%(PreprocessorDefinitions)</value>
             </item>
+            <item>
+              <name>AdditionalOptions</name>
+              <value>-s USE_PTHREADS=1 %(AdditionalOptions)</value>
+            </item>
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -385,6 +437,10 @@
             <item>
               <name>AdditionalLibraryDirectories</name>
               <value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
+            </item>
+            <item>
+              <name>AdditionalOptions</name>
+              <value>-s USE_PTHREADS=1 %(AdditionalOptions)</value>
             </item>
           </options>
         </item>

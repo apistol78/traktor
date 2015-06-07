@@ -17,6 +17,9 @@ namespace traktor
 	namespace amalgam
 	{
 
+/*! \brief Captured screenshot response from running target.
+ * \ingroup Amalgam
+ */
 class T_DLLCLASS CapturedScreenShot : public ISerializable
 {
 	T_RTTI_CLASS;
