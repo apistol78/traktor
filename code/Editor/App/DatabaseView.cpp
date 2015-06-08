@@ -651,6 +651,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			}
 
 			Ref< ui::custom::TreeViewItem > treeCloneItem = m_treeDatabase->createItem(treeItem->getParent(), instanceClone->getName(), treeItem->getImage());
+			treeCloneItem->setEditable(true);
 			treeCloneItem->setData(L"GROUP", group);
 			treeCloneItem->setData(L"INSTANCE", instanceClone);
 
