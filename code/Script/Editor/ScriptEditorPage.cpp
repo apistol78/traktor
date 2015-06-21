@@ -325,6 +325,10 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 				}
 			}
 		}
+		else
+			log::info << L"\"" << fields[0].value << L"\" not found." << Endl;
+
+		m_edit->setFocus();
 	}
 	else if (command == L"Editor.FindNext")
 	{
@@ -360,6 +364,7 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 				}
 			}
 		}
+		m_edit->setFocus();
 	}
 	else if (command == L"Editor.Replace")
 	{
@@ -374,6 +379,8 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 		if (dialogReplace->showModal() == ui::DrOk)
 		{
 		}
+
+		m_edit->setFocus();
 	}
 	else if (command == L"Editor.ReplaceAll")
 	{
@@ -399,6 +406,8 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 				}
 			}
 		}
+
+		m_edit->setFocus();
 	}
 	else if (command == L"Script.Editor.GotoLine")
 	{
