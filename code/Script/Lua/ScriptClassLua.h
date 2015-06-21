@@ -31,6 +31,12 @@ public:
 
 	virtual Ref< ITypedObject > construct(uint32_t argc, const Any* argv) const T_FINAL;
 
+	virtual uint32_t getConstantCount() const T_FINAL;
+
+	virtual std::string getConstantName(uint32_t constId) const T_FINAL;
+
+	virtual Any getConstantValue(uint32_t constId) const T_FINAL;
+
 	virtual uint32_t getMethodCount() const T_FINAL;
 
 	virtual std::string getMethodName(uint32_t methodId) const T_FINAL;

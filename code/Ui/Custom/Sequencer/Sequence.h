@@ -43,6 +43,8 @@ public:
 
 	int32_t addButton(Bitmap* imageUp, Bitmap* imageDown, const Command& command);
 
+	void setButtonState(int32_t buttonIndex, bool state);
+
 	bool getButtonState(int32_t buttonIndex) const;
 
 	void addKey(Key* key);

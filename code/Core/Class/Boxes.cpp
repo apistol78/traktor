@@ -1262,6 +1262,7 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	Ref< AutoRuntimeClass< BoxedVector2 > > classBoxedVector2 = new AutoRuntimeClass< BoxedVector2 >();
 	classBoxedVector2->addConstructor();
 	classBoxedVector2->addConstructor< float, float >();
+	classBoxedVector2->addConstant("zero", CastAny< Vector2 >::set(Vector2::zero()));
 	classBoxedVector2->addMethod("set", &BoxedVector2::set);
 	classBoxedVector2->addMethod("x", &BoxedVector2::x);
 	classBoxedVector2->addMethod("y", &BoxedVector2::y);
@@ -1278,7 +1279,6 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedVector2->addMethod("normalized", &BoxedVector2::normalized);
 	classBoxedVector2->addMethod("neg", &BoxedVector2::neg);
 	classBoxedVector2->addMethod("perpendicular", &BoxedVector2::perpendicular);
-	classBoxedVector2->addStaticMethod("zero", &BoxedVector2::zero);
 	classBoxedVector2->addStaticMethod("lerp", &BoxedVector2::lerp);
 	classBoxedVector2->addStaticMethod("distance", &BoxedVector2::distance);
 	classBoxedVector2->addOperator< Vector2, const BoxedVector2* >('+', &BoxedVector2::add);
@@ -1295,6 +1295,8 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedVector4->addConstructor();
 	classBoxedVector4->addConstructor< float, float, float >();
 	classBoxedVector4->addConstructor< float, float, float, float >();
+	classBoxedVector4->addConstant("zero", CastAny< Vector4 >::set(Vector4::zero()));
+	classBoxedVector4->addConstant("origo", CastAny< Vector4 >::set(Vector4::origo()));
 	classBoxedVector4->addMethod("set", &BoxedVector4::set);
 	classBoxedVector4->addMethod("x", &BoxedVector4::x);
 	classBoxedVector4->addMethod("y", &BoxedVector4::y);
@@ -1315,8 +1317,6 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedVector4->addMethod("length", &BoxedVector4::length);
 	classBoxedVector4->addMethod("normalized", &BoxedVector4::normalized);
 	classBoxedVector4->addMethod("neg", &BoxedVector4::neg);
-	classBoxedVector4->addStaticMethod("zero", &BoxedVector4::zero);
-	classBoxedVector4->addStaticMethod("origo", &BoxedVector4::origo);
 	classBoxedVector4->addStaticMethod("lerp", &BoxedVector4::lerp);
 	classBoxedVector4->addStaticMethod("distance3", &BoxedVector4::distance3);
 	classBoxedVector4->addStaticMethod("distance4", &BoxedVector4::distance4);
@@ -1352,6 +1352,7 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedQuaternion->addConstructor< float, float, float >();
 	classBoxedQuaternion->addConstructor< const BoxedVector4*, const BoxedVector4* >();
 	classBoxedQuaternion->addConstructor< const BoxedMatrix44* >();
+	classBoxedQuaternion->addConstant("identity", CastAny< Quaternion >::set(Quaternion::identity()));
 	classBoxedQuaternion->addMethod("x", &BoxedQuaternion::x);
 	classBoxedQuaternion->addMethod("y", &BoxedQuaternion::y);
 	classBoxedQuaternion->addMethod("z", &BoxedQuaternion::z);
@@ -1362,7 +1363,6 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedQuaternion->addMethod("transform", &BoxedQuaternion::transform);
 	classBoxedQuaternion->addMethod("getEulerAngles", &BoxedQuaternion::getEulerAngles);
 	classBoxedQuaternion->addMethod("getAxisAngle", &BoxedQuaternion::getAxisAngle);
-	classBoxedQuaternion->addStaticMethod("identity", &BoxedQuaternion::identity);
 	classBoxedQuaternion->addStaticMethod("fromEulerAngles", &BoxedQuaternion::fromEulerAngles);
 	classBoxedQuaternion->addStaticMethod("fromAxisAngle", &BoxedQuaternion::fromAxisAngle);
 	classBoxedQuaternion->addStaticMethod("lerp", &BoxedQuaternion::lerp);
@@ -1393,6 +1393,7 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedTransform->addConstructor();
 	classBoxedTransform->addConstructor< const BoxedVector4*, const BoxedQuaternion* >();
 	classBoxedTransform->addConstructor< const BoxedMatrix44* >();
+	classBoxedTransform->addConstant("identity", CastAny< Transform >::set(Transform::identity()));
 	classBoxedTransform->addMethod("translation", &BoxedTransform::translation);
 	classBoxedTransform->addMethod("rotation", &BoxedTransform::rotation);
 	classBoxedTransform->addMethod("axisX", &BoxedTransform::axisX);
@@ -1405,7 +1406,6 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedTransform->addMethod("toMatrix44", &BoxedTransform::toMatrix44);
 	classBoxedTransform->addMethod("concat", &BoxedTransform::concat);
 	classBoxedTransform->addMethod("transform", &BoxedTransform::transform);
-	classBoxedTransform->addStaticMethod("identity", &BoxedTransform::identity);
 	classBoxedTransform->addStaticMethod("lerp", &BoxedTransform::lerp);
 	classBoxedTransform->addOperator< Vector4, const BoxedVector4* >('*', &BoxedTransform::transform);
 	classBoxedTransform->addOperator< Transform, const BoxedTransform* >('*', &BoxedTransform::concat);
@@ -1457,6 +1457,8 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	Ref< AutoRuntimeClass< BoxedMatrix44 > > classBoxedMatrix44 = new AutoRuntimeClass< BoxedMatrix44 >();
 	classBoxedMatrix44->addConstructor();
 	classBoxedMatrix44->addConstructor< const BoxedVector4*, const BoxedVector4*, const BoxedVector4*, const BoxedVector4* >();
+	classBoxedMatrix44->addConstant("zero", CastAny< Matrix44 >::set(Matrix44::zero()));
+	classBoxedMatrix44->addConstant("identity", CastAny< Matrix44 >::set(Matrix44::identity()));
 	classBoxedMatrix44->addMethod("axisX", &BoxedMatrix44::axisX);
 	classBoxedMatrix44->addMethod("axisY", &BoxedMatrix44::axisY);
 	classBoxedMatrix44->addMethod("axisZ", &BoxedMatrix44::axisZ);
@@ -1477,8 +1479,6 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedMatrix44->addMethod("get", &BoxedMatrix44::get);
 	classBoxedMatrix44->addMethod("concat", &BoxedMatrix44::concat);
 	classBoxedMatrix44->addMethod("transform", &BoxedMatrix44::transform);
-	classBoxedMatrix44->addStaticMethod("zero", &BoxedMatrix44::zero);
-	classBoxedMatrix44->addStaticMethod("identity", &BoxedMatrix44::identity);
 	classBoxedMatrix44->addOperator< Vector4, const BoxedVector4* >('*', &BoxedMatrix44::transform);
 	classBoxedMatrix44->addOperator< Matrix44, const BoxedMatrix44* >('*', &BoxedMatrix44::concat);
 	registrar->registerClass(classBoxedMatrix44);

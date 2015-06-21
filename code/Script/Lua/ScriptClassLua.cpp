@@ -67,6 +67,21 @@ Ref< ITypedObject > ScriptClassLua::construct(uint32_t argc, const Any* argv) co
 	return 0;
 }
 
+uint32_t ScriptClassLua::getConstantCount() const
+{
+	return 0;
+}
+
+std::string ScriptClassLua::getConstantName(uint32_t constId) const
+{
+	return "";
+}
+
+Any ScriptClassLua::getConstantValue(uint32_t constId) const
+{
+	return Any();
+}
+
 uint32_t ScriptClassLua::getMethodCount() const
 {
 	return uint32_t(m_methods.size());

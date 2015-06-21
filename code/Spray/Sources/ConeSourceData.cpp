@@ -11,7 +11,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.ConeSourceData", 0, ConeSourceData, SourceData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.ConeSourceData", 1, ConeSourceData, SourceData)
 
 ConeSourceData::ConeSourceData()
 :	SourceData()
@@ -20,6 +20,7 @@ ConeSourceData::ConeSourceData()
 ,	m_angle1(PI)
 ,	m_angle2(PI)
 ,	m_velocity(0.0f, 0.0f)
+,	m_inheritVelocity(0.0f, 0.0f)
 ,	m_orientation(0.0f, 2.0f * PI)
 ,	m_angularVelocity(0.0f, 0.0f)
 ,	m_age(1.0f, 1.0f)
@@ -38,6 +39,7 @@ Ref< const Source > ConeSourceData::createSource(resource::IResourceManager* res
 		m_angle1,
 		m_angle2,
 		m_velocity,
+		m_inheritVelocity,
 		m_orientation,
 		m_angularVelocity,
 		m_age,
@@ -55,6 +57,10 @@ void ConeSourceData::serialize(ISerializer& s)
 	s >> Member< float >(L"angle1", m_angle1);
 	s >> Member< float >(L"angle2", m_angle2);
 	s >> MemberComposite< Range< float > >(L"velocity", m_velocity);
+
+	if (s.getVersion() >= 1)
+		s >> MemberComposite< Range< float > >(L"inheritVelocity", m_inheritVelocity);
+
 	s >> MemberComposite< Range< float > >(L"orientation", m_orientation);
 	s >> MemberComposite< Range< float > >(L"angularVelocity", m_angularVelocity);
 	s >> MemberComposite< Range< float > >(L"age", m_age);

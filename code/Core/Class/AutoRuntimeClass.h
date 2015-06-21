@@ -2470,6 +2470,19 @@ public:
 
 	/*! \} */
 
+	/*! \name Constants */
+	/*! \{ */
+
+	void addConstant(const std::string& name, const Any& value)
+	{
+		ConstInfo ci;
+		ci.name = name;
+		ci.value = value;
+		m_consts.push_back(ci);
+	}
+
+	/*! \} */
+
 	/*! \name Methods */
 	/*! \{ */
 
@@ -2983,6 +2996,21 @@ public:
 			return 0;
 	}
 
+	virtual uint32_t getConstantCount() const
+	{
+		return uint32_t(m_consts.size());
+	}
+
+	virtual std::string getConstantName(uint32_t constId) const
+	{
+		return m_consts[constId].name;
+	}
+
+	virtual Any getConstantValue(uint32_t constId) const
+	{
+		return m_consts[constId].value;
+	}
+
 	virtual uint32_t getMethodCount() const
 	{
 		return uint32_t(m_methods.size());
@@ -3061,6 +3089,12 @@ public:
 	}
 
 private:
+	struct ConstInfo
+	{
+		std::string name;
+		Any value;
+	};
+
 	struct MethodInfo
 	{
 		std::string name;
@@ -3076,6 +3110,7 @@ private:
 	};
 
 	std::vector< IConstructor* > m_constructors;
+	std::vector< ConstInfo > m_consts;
 	std::vector< MethodInfo > m_methods;
 	std::vector< StaticMethodInfo > m_staticMethods;
 	std::vector< IOperator* > m_operators[4];

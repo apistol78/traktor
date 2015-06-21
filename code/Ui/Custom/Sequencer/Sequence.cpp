@@ -50,6 +50,11 @@ int32_t Sequence::addButton(Bitmap* imageUp, Bitmap* imageDown, const Command& c
 	return int32_t(m_buttons.size() - 1);
 }
 
+void Sequence::setButtonState(int32_t buttonIndex, bool state)
+{
+	m_buttons[buttonIndex].state = state;
+}
+
 bool Sequence::getButtonState(int32_t buttonIndex) const
 {
 	return m_buttons[buttonIndex].state;

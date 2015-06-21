@@ -35,6 +35,15 @@ public:
 	/*! \brief Construct new object. */
 	virtual Ref< ITypedObject > construct(uint32_t argc, const Any* argv) const = 0;
 
+	/*! \brief Get number of constants. */
+	virtual uint32_t getConstantCount() const = 0;
+
+	/*! \brief Get constant. */
+	virtual std::string getConstantName(uint32_t constId) const = 0;
+
+	/*! \brief Get constant value. */
+	virtual Any getConstantValue(uint32_t constId) const = 0;
+
 	/*! \brief Get exported method count. */
 	virtual uint32_t getMethodCount() const = 0;
 

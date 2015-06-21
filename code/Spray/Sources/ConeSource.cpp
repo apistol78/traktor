@@ -17,6 +17,7 @@ ConeSource::ConeSource(
 	float angle1,
 	float angle2,
 	const Range< float >& velocity,
+	const Range< float >& inheritVelocity,
 	const Range< float >& orientation,
 	const Range< float >& angularVelocity,
 	const Range< float >& age,
@@ -29,6 +30,7 @@ ConeSource::ConeSource(
 ,	m_angle1s(sinf(angle1))
 ,	m_angle2s(sinf(angle2))
 ,	m_velocity(velocity)
+,	m_inheritVelocity(inheritVelocity)
 ,	m_orientation(orientation)
 ,	m_angularVelocity(angularVelocity)
 ,	m_age(age)
@@ -48,9 +50,10 @@ void ConeSource::emit(
 	Vector4 position = transform * m_position;
 	Vector4 normal = transform * m_normal;
 	Scalar dT(context.deltaTime);
-	
-	Point* point = emitterInstance.addPoints(emitCount);
 
+	Vector4 deltaVelocity = -deltaMotion / dT;
+
+	Point* point = emitterInstance.addPoints(emitCount);
 	while (emitCount-- > 0)
 	{
 		float phi = context.random.nextFloat() * 2.0f * PI;
@@ -63,7 +66,7 @@ void ConeSource::emit(
 		Vector4 extent = transform.axisX() * m_angle1s * x + transform.axisZ() * m_angle2s * z;
 		Vector4 direction = (normal + extent * gamma).normalized();
 
-		point->velocity = direction * Scalar(m_velocity.random(context.random));
+		point->velocity = direction * Scalar(m_velocity.random(context.random)) + deltaVelocity * Scalar(m_inheritVelocity.random(context.random));
 		point->position = position + point->velocity * beta;
 		point->orientation = m_orientation.random(context.random);
 		point->angularVelocity = m_angularVelocity.random(context.random);

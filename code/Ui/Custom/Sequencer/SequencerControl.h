@@ -65,6 +65,10 @@ public:
 
 	int32_t getCursor() const;
 
+	void setScrollOffset(const Point& scrollOffset);
+
+	Point getScrollOffset() const;
+
 	void addSequenceItem(SequenceItem* sequenceItem);
 
 	void addSequenceItemBefore(SequenceItem* beforeItem, SequenceItem* sequenceItem);

@@ -408,6 +408,20 @@ bool createMesh(const lwObject* lwo, Model* outModel, std::vector< std::string >
 							)));
 						}
 
+						for (int32_t k = 0; k < pol->v[j].nvmaps; ++k)
+						{
+							const lwVMapPt* ppt = &pol->v[j].vm[k];
+							uint32_t channel = uvChannel(inoutChannels, ppt->vmap->name);
+
+							float u = ppt->vmap->val[ppt->index][0];
+							float v = ppt->vmap->val[ppt->index][1];
+
+							vertex.setTexCoord(channel, outModel->addUniqueTexCoord(Vector2(
+								u,
+								1.0f - v
+							)));
+						}
+
 						// Convert weight maps into bones and influences.
 						if (importFlags & ModelFormat::IfMeshBlendWeights)
 						{

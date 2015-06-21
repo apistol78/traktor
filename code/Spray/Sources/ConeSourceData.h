@@ -36,6 +36,7 @@ private:
 	float m_angle1;
 	float m_angle2;
 	Range< float > m_velocity;
+	Range< float > m_inheritVelocity;
 	Range< float > m_orientation;
 	Range< float > m_angularVelocity;
 	Range< float > m_age;
