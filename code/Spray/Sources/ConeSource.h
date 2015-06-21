@@ -34,6 +34,7 @@ public:
 		float angle1,
 		float angle2,
 		const Range< float >& velocity,
+		const Range< float >& inheritVelocity,
 		const Range< float >& orientation,
 		const Range< float >& angularVelocity,
 		const Range< float >& age,
@@ -63,6 +64,7 @@ private:
 	Scalar m_angle1s;
 	Scalar m_angle2s;
 	Range< float > m_velocity;
+	Range< float > m_inheritVelocity;
 	Range< float > m_orientation;
 	Range< float > m_angularVelocity;
 	Range< float > m_age;

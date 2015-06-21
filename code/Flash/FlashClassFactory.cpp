@@ -27,6 +27,12 @@ public:
 
 	virtual Ref< ITypedObject > construct(uint32_t argc, const Any* argv) const;
 
+	virtual uint32_t getConstantCount() const;
+
+	virtual std::string getConstantName(uint32_t constId) const;
+
+	virtual Any getConstantValue(uint32_t constId) const;
+
 	virtual uint32_t getMethodCount() const;
 
 	virtual std::string getMethodName(uint32_t methodId) const;
@@ -64,6 +70,21 @@ bool ActionObjectClass::haveUnknown() const
 Ref< ITypedObject > ActionObjectClass::construct(uint32_t argc, const Any* argv) const
 {
 	return 0;
+}
+
+uint32_t ActionObjectClass::getConstantCount() const
+{
+	return 0;
+}
+
+std::string ActionObjectClass::getConstantName(uint32_t constId) const
+{
+	return "";
+}
+
+Any ActionObjectClass::getConstantValue(uint32_t constId) const
+{
+	return Any();
 }
 
 uint32_t ActionObjectClass::getMethodCount() const

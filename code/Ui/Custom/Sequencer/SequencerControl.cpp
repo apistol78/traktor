@@ -109,6 +109,20 @@ int32_t SequencerControl::getCursor() const
 	return m_cursor;
 }
 
+void SequencerControl::setScrollOffset(const Point& scrollOffset)
+{
+	m_scrollBarH->setPosition(scrollOffset.x);
+	m_scrollBarV->setPosition(scrollOffset.y);
+}
+
+Point SequencerControl::getScrollOffset() const
+{
+	return Point(
+		m_scrollBarH->getPosition(),
+		m_scrollBarV->getPosition()
+	);
+}
+
 void SequencerControl::addSequenceItem(SequenceItem* sequenceItem)
 {
 	m_sequenceItems.push_back(sequenceItem);

@@ -140,8 +140,6 @@ public:
 
 	Vector2 perpendicular() const { return m_value.perpendicular(); }
 
-	static Vector2 zero() { return Vector2::zero(); }
-
 	static Vector2 lerp(const BoxedVector2* a, const BoxedVector2* b, float c) { return traktor::lerp(a->m_value, b->m_value, c); }
 
 	static float distance(const BoxedVector2* a, const BoxedVector2* b) { return (b->m_value - a->m_value).length(); }
@@ -210,10 +208,6 @@ public:
 	Vector4 normalized() const { return m_value.normalized(); }
 
 	Vector4 neg() const { return -m_value; }
-
-	static Vector4 zero() { return Vector4::zero(); }
-
-	static Vector4 origo() { return Vector4::origo(); }
 
 	static Vector4 lerp(const BoxedVector4* a, const BoxedVector4* b, float c) { return traktor::lerp(a->m_value, b->m_value, Scalar(c)); }
 	
@@ -327,8 +321,6 @@ public:
 	Vector4 getEulerAngles() const;
 
 	Vector4 getAxisAngle() const;
-
-	static Quaternion identity() { return Quaternion::identity(); }
 
 	static Quaternion fromEulerAngles(float head, float pitch, float bank);
 
@@ -444,8 +436,6 @@ public:
 
 	Vector4 transform(const BoxedVector4* v) const;
 	
-	static Transform identity() { return Transform::identity(); }
-
 	static Transform lerp(const BoxedTransform* a, const BoxedTransform* b, float c) { return traktor::lerp(a->m_value, b->m_value, Scalar(c)); }
 
 	const Transform& unbox() const { return m_value; }
@@ -635,10 +625,6 @@ public:
 	Matrix44 concat(const BoxedMatrix44* t) const;
 
 	Vector4 transform(const BoxedVector4* v) const;
-
-	static Matrix44 zero() { return Matrix44::zero(); }
-
-	static Matrix44 identity() { return Matrix44::identity(); }
 
 	const Matrix44& unbox() const { return m_value; }
 

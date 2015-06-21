@@ -431,10 +431,9 @@ void EffectEditorPage::updateEffectPreview()
 		RefArray< EffectLayer > effectLayers;
 
 		// Create effect layers.
-		RefArray< ui::custom::SequenceItem > layers;
-		m_sequencer->getSequenceItems(layers, ui::custom::SequencerControl::GfDefault);
-
-		for (RefArray< ui::custom::SequenceItem >::const_iterator i = layers.begin(); i != layers.end(); ++i)
+		RefArray< ui::custom::SequenceItem > sequencerLayers;
+		m_sequencer->getSequenceItems(sequencerLayers, ui::custom::SequencerControl::GfDefault);
+		for (RefArray< ui::custom::SequenceItem >::const_iterator i = sequencerLayers.begin(); i != sequencerLayers.end(); ++i)
 		{
 			ui::custom::Sequence* layerItem = checked_type_cast< ui::custom::Sequence*, false >(*i);
 			if (!layerItem->getButtonState(0))
@@ -472,6 +471,25 @@ void EffectEditorPage::updateEffectPreview()
 
 void EffectEditorPage::updateSequencer()
 {
+	// Get map of layer visibility.
+	std::map< const EffectLayerData*, bool > visibleStates;
+
+	RefArray< ui::custom::SequenceItem > sequencerLayers;
+	m_sequencer->getSequenceItems(sequencerLayers, ui::custom::SequencerControl::GfDefault);
+	for (RefArray< ui::custom::SequenceItem >::const_iterator i = sequencerLayers.begin(); i != sequencerLayers.end(); ++i)
+	{
+		ui::custom::Sequence* layerItem = mandatory_non_null_type_cast< ui::custom::Sequence* >(*i);
+
+		EffectLayerData* effectLayerData = layerItem->getData< EffectLayerData >(L"LAYERDATA");
+		T_ASSERT (effectLayerData);
+
+		visibleStates[effectLayerData] = layerItem->getButtonState(0);
+	}
+
+	// Remember scroll offset.
+	ui::Point scrollOffset = m_sequencer->getScrollOffset();
+
+	// Remove all layers, re-created below.
 	m_sequencer->removeAllSequenceItems();
 
 	if (!m_effectData)
@@ -481,6 +499,7 @@ void EffectEditorPage::updateSequencer()
 		return;
 	}
 
+	// Add each effect layers to sequencer.
 	Ref< ui::Bitmap > layerVisible = ui::Bitmap::load(c_ResourceLayerVisible, sizeof(c_ResourceLayerVisible), L"png");
 	Ref< ui::Bitmap > layerHidden = ui::Bitmap::load(c_ResourceLayerHidden, sizeof(c_ResourceLayerHidden), L"png");
 
@@ -489,6 +508,7 @@ void EffectEditorPage::updateSequencer()
 	{
 		Ref< ui::custom::Sequence > layerItem = new ui::custom::Sequence((*i)->getName());
 		layerItem->addButton(layerVisible, layerHidden, ui::Command(L"Effect.Editor.ToggleLayerVisible"));
+		layerItem->setButtonState(0, visibleStates[*i]);
 		layerItem->setData(L"LAYERDATA", *i);
 		
 		float start = (*i)->getTime();
@@ -529,6 +549,7 @@ void EffectEditorPage::updateSequencer()
 
 	m_sequencer->setEnable(true);
 	m_sequencer->setLength(int(m_effectData->getDuration() * 1000.0f));
+	m_sequencer->setScrollOffset(scrollOffset);
 	m_sequencer->update();
 }
 

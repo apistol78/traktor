@@ -1,11 +1,14 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Drawing/Image.h"
+#include "Drawing/PixelFormat.h"
 #include "Model/Model.h"
 #include "Model/ModelAdjacency.h"
 #include "Model/ModelFormat.h"
 #include "Model/Editor/ModelToolDialog.h"
 #include "Model/Operations/Boolean.h"
+#include "Model/Operations/BakePixelOcclusion.h"
 #include "Model/Operations/CalculateConvexHull.h"
 #include "Model/Operations/CalculateOccluder.h"
 #include "Model/Operations/CleanDegenerate.h"
@@ -83,6 +86,7 @@ bool ModelToolDialog::create(ui::Widget* parent)
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Triangulate", ui::Command(L"ModelTool.Triangulate"), ui::custom::ToolBarButton::BsText));
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Union", ui::Command(L"ModelTool.Union"), ui::custom::ToolBarButton::BsText));
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Occluder", ui::Command(L"ModelTool.Occluder"), ui::custom::ToolBarButton::BsText));
+	toolBar->addItem(new ui::custom::ToolBarButton(L"Bake Occlusion", ui::Command(L"ModelTool.BakeOcclusion"), ui::custom::ToolBarButton::BsText));
 	toolBar->addItem(new ui::custom::ToolBarSeparator());
 
 	m_toolSolid = new ui::custom::ToolBarButton(L"Solid", ui::Command(L"ModelTool.ToggleSolid"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggled);
@@ -315,7 +319,29 @@ void ModelToolDialog::eventToolBarClick(ui::custom::ToolBarButtonClickEvent* eve
 	{
 		Ref< IModelOperation > operation = new CalculateOccluder();
 		applyOperation(operation);
-
+	}
+	else if (cmd == L"ModelTool.BakeOcclusion")
+	{
+		Ref< drawing::Image > imageOcclusion = new drawing::Image(
+			drawing::PixelFormat::getA8R8G8B8(),
+			1024,
+			1024
+		);
+		Ref< IModelOperation > operation = new BakePixelOcclusion(
+			imageOcclusion,
+			1024,
+			0.75f,
+			0.05f
+		);
+		if (operation->apply(*m_model))
+		{
+			if (imageOcclusion->save(L"Occlusion.png"))
+				log::info << L"Occlusion.png saved successfully!" << Endl;
+			else
+				log::error << L"Unable to save Occlusion.png" << Endl;
+		}
+		else
+			log::error << L"Unable to bake occlusion" << Endl;
 	}
 
 	m_renderWidget->update();

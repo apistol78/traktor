@@ -3,6 +3,8 @@
 #include "Core/Math/Triangle.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
+#include "Drawing/Filters/ConvolutionFilter.h"
+#include "Drawing/Filters/DilateFilter.h"
 #include "Model/Model.h"
 #include "Model/Operations/BakePixelOcclusion.h"
 
@@ -17,6 +19,9 @@ struct BakePixelVisitor
 {
 	RandomGeometry& random;
 	const SahTree& sah;
+	uint32_t rayCount;
+	Scalar raySpread;
+	Scalar rayBias;
 	Vector4 P[3];
 	Vector4 N[3];
 	drawing::Image& outImage;
@@ -25,12 +30,18 @@ struct BakePixelVisitor
 	BakePixelVisitor(
 		RandomGeometry& _random,
 		const SahTree& _sah,
+		uint32_t _rayCount,
+		float _raySpread,
+		float _rayBias,
 		const Vector4 _P[3],
 		const Vector4 _N[3],
 		drawing::Image& _outImage
 	)
 	:	random(_random)
 	,	sah(_sah)
+	,	rayCount(_rayCount)
+	,	raySpread(_raySpread)
+	,	rayBias(_rayBias)
 	,	outImage(_outImage)
 	{
 		for (int i = 0; i < 3; ++i)
@@ -42,24 +53,20 @@ struct BakePixelVisitor
 
 	void operator () (int32_t x, int32_t y, float alpha, float beta, float gamma)
 	{
-		const uint32_t c_occlusionRayCount = 64;
-		const Scalar c_occlusionRaySpread(0.75f);
-		const static Scalar c_occlusionRayBias(0.1f);
-
 		Vector4 position = (P[0] * Scalar(alpha) + P[1] * Scalar(beta) + P[2] * Scalar(gamma)).xyz1();
 		Vector4 normal = (N[0] * Scalar(alpha) + N[1] * Scalar(beta) + N[2] * Scalar(gamma)).xyz0();
 
 		uint32_t occluded = 0;
-		for (uint32_t j = 0; j < c_occlusionRayCount; ++j)
+		for (uint32_t j = 0; j < rayCount; ++j)
 		{
-			Vector4 rayDirection = lerp(normal, random.nextHemi(normal), c_occlusionRaySpread).normalized().xyz0();
-			Vector4 rayOrigin = (position + normal * c_occlusionRayBias).xyz1();
-			if (sah.queryAnyIntersection(rayOrigin, rayDirection, 0.0f, cache))
+			Vector4 rayDirection = lerp(normal, random.nextHemi(normal), raySpread).normalized().xyz0();
+			Vector4 rayOrigin = (position + normal * rayBias).xyz1();
+			if (sah.queryAnyIntersection(rayOrigin, rayDirection, 100.0f, cache))
 				occluded++;
 		}
 
-		float occf = 1.0f - float(occluded) / c_occlusionRayCount;
-		outImage.setPixel(x, y, Color4f(occf, occf, occf, occf));
+		float occf = 1.0f - float(occluded) / rayCount;
+		outImage.setPixel(x, y, Color4f(occf, occf, occf, 1.0f));
 	}
 };
 
@@ -108,7 +115,7 @@ bool BakePixelOcclusion::apply(Model& model) const
 	sah.build(windings);
 
 	// Create occlusion image.
-	m_occlusionImage->clear(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
+	m_occlusionImage->clear(Color4f(1.0f, 1.0f, 1.0f, 0.0f));
 
 	// Trace each polygon in UV space.
 	Vector2 dim(float(m_occlusionImage->getWidth()), float(m_occlusionImage->getHeight()));
@@ -147,10 +154,25 @@ bool BakePixelOcclusion::apply(Model& model) const
 		N[1] = model.getNormal(n1);
 		N[2] = model.getNormal(n2);
 
-		BakePixelVisitor visitor(rnd, sah, P, N, *m_occlusionImage);
-		triangle(uv[0], uv[1], uv[2], visitor);
+		{
+			BakePixelVisitor visitor(rnd, sah, m_rayCount, m_raySpread, m_rayBias, P, N, *m_occlusionImage);
+			triangle(uv[0], uv[1], uv[2], visitor);
+		}
+
+		std::swap(uv[0], uv[2]);
+		std::swap(P[0], P[2]);
+		std::swap(N[0], N[2]);
+
+		{
+			BakePixelVisitor visitor(rnd, sah, m_rayCount, m_raySpread, m_rayBias, P, N, *m_occlusionImage);
+			triangle(uv[0], uv[1], uv[2], visitor);
+		}
 	}
 
+	drawing::DilateFilter dilateFilter(4);
+	m_occlusionImage->apply(&dilateFilter);
+	m_occlusionImage->apply(drawing::ConvolutionFilter::createGaussianBlur5());
+	
 	return true;
 }
 

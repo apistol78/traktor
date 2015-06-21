@@ -319,6 +319,15 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 		m_classIdBoxedVector4 = classRegistryIndex;
 	else if (is_type_a< BoxedTransform >(exportType))
 		m_classIdBoxedTransform = classRegistryIndex;
+
+	// Add constants last as constants might be instances of this class.
+	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.classTableRef);
+	for (uint32_t i = 0; i < runtimeClass->getConstantCount(); ++i)
+	{
+		pushAny(runtimeClass->getConstantValue(i));
+		lua_setfield(m_luaState, -2, runtimeClass->getConstantName(i).c_str());
+	}
+	lua_pop(m_luaState, 1);
 }
 
 Ref< IScriptResource > ScriptManagerLua::compile(const std::wstring& fileName, const std::wstring& script, const source_map_t* map, IErrorCallback* errorCallback) const
