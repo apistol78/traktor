@@ -223,10 +223,10 @@ void GridView::layoutCells(const Rect& rc)
 	{
 		m_headerCell->setColumns(m_columns);
 
-		Rect rcHeader(rcLayout.left, rcLayout.top, rcLayout.right, rcLayout.top + c_headerSize);
+		Rect rcHeader(rcLayout.left, rcLayout.top, rcLayout.right, rcLayout.top + scaleBySystemDPI(c_headerSize));
 		placeCell(m_headerCell, rcHeader);
 
-		rcLayout.top += c_headerSize;
+		rcLayout.top += scaleBySystemDPI(c_headerSize);
 	}
 
 	RefArray< GridRow > rows;

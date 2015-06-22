@@ -305,7 +305,7 @@ void DockPane::update(const Rect& rect, std::vector< WidgetRect >& outWidgetRect
 	{
 		Rect widgetRect = rect;
 		if (m_detachable)
-			widgetRect.top += c_gripperDim;
+			widgetRect.top += scaleBySystemDPI(c_gripperDim);
 		if (m_widget)
 			outWidgetRects.push_back(WidgetRect(m_widget, widgetRect));
 	}
@@ -383,7 +383,7 @@ void DockPane::draw(Canvas& canvas)
 	if (m_widget && m_detachable)
 	{
 		Rect captionRect = m_rect;
-		captionRect.bottom = captionRect.top + c_gripperDim;
+		captionRect.bottom = captionRect.top + scaleBySystemDPI(c_gripperDim);
 
 		if (m_focus)
 		{
@@ -413,12 +413,12 @@ void DockPane::draw(Canvas& canvas)
 		canvas.drawText(titleRect, title, AnLeft, AnCenter);
 
 		int32_t gx = titleRect.left + titleExtent.cx + 4;
-		int32_t gx1 = captionRect.right - 16 - 4 - 256;
-		while (gx < gx1)
+		int32_t gx1 = captionRect.right - 16 - 4;
+		while (gx < gx1 - 256)
 		{
 			int32_t w = min(256, gx1 - gx);
 			canvas.drawBitmap(
-				Point(gx, captionRect.top + 6 + 2),
+				Point(gx, captionRect.getCenter().y - 3),
 				Point(0, m_focus ? 5 : 0),
 				Size(w, 5),
 				m_bitmapGripper,
@@ -427,19 +427,20 @@ void DockPane::draw(Canvas& canvas)
 			gx += 256;
 		}
 
-		for (int32_t x = titleRect.left + titleExtent.cx + 4; x < captionRect.right - 16 - 4; x += 4)
+		while (gx < gx1)
 		{
 			canvas.drawBitmap(
-				Point(x, captionRect.top + 6 + 2),
-				Point(m_focus ? 4 : 0, 0),
+				Point(gx, captionRect.getCenter().y - 3),
+				Point(0, m_focus ? 5 : 0),
 				Size(4, 5),
 				m_bitmapGripper,
 				BmAlpha
 			);
+			gx += 4;
 		}
 
 		canvas.drawBitmap(
-			Point(captionRect.right - 16, captionRect.top + 6),
+			Point(captionRect.right - 16, captionRect.getCenter().y - 3),
 			Point(m_focus ? 10 : 0, 0),
 			Size(10, 8),
 			m_bitmapClose,
@@ -520,7 +521,7 @@ bool DockPane::hitGripper(const Point& position) const
 	if (isSplitter() || (m_widget && !m_widget->isVisible(false)))
 		return false;
 
-	return position.y >= m_rect.top && position.y <= m_rect.top + c_gripperDim;
+	return position.y >= m_rect.top && position.y <= m_rect.top + scaleBySystemDPI(c_gripperDim);
 }
 
 bool DockPane::hitGripperClose(const Point& position) const

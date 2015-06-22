@@ -13,7 +13,7 @@ namespace traktor
 		namespace custom
 		{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.GridItem", GridItem, AutoWidgetCell)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.GridItem", GridItem, GridCell)
 
 GridItem::GridItem()
 {
@@ -73,12 +73,12 @@ Bitmap* GridItem::getImage() const
 
 int32_t GridItem::getHeight() const
 {
-	int32_t height = 19;
+	int32_t height = scaleBySystemDPI(19);
 
 	if (m_font)
-		height = std::max(height, m_font->getSize() + 10);
+		height = std::max(height, m_font->getHeight() + scaleBySystemDPI(10));
 	if (m_image)
-		height = std::max(height, m_image->getSize().cy + 4);
+		height = std::max(height, m_image->getSize().cy + scaleBySystemDPI(4));
 
 	return height;
 }

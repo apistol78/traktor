@@ -174,6 +174,11 @@ IClipboard* WidgetFactoryWx::createClipboard()
 	return 0;
 }
 
+int32_t WidgetFactoryWx::getSystemDPI() const
+{
+	return 96;
+}
+
 bool WidgetFactoryWx::getSystemColor(SystemColor systemColor, Color4ub& outColor)
 {
 	const wxSystemColour c_systemColors[] =

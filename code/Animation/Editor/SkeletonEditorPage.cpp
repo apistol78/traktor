@@ -19,6 +19,7 @@
 #include "Render/Resource/TextureFactory.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Resource/ResourceManager.h"
+#include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
 #include "Ui/TableLayout.h"
@@ -102,7 +103,7 @@ bool SkeletonEditorPage::create(ui::Container* parent)
 	m_treeSkeleton->addEventHandler< ui::SelectionChangeEvent >(this, &SkeletonEditorPage::eventTreeSelect);
 	m_treeSkeleton->addEventHandler< ui::TreeViewContentChangeEvent >(this, &SkeletonEditorPage::eventTreeEdited);
 
-	m_site->createAdditionalPanel(m_skeletonPanel, 250, false);
+	m_site->createAdditionalPanel(m_skeletonPanel, ui::scaleBySystemDPI(250), false);
 
 	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 16;

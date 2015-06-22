@@ -22,6 +22,7 @@
 #include "Script/Editor/ScriptBreakpointEvent.h"
 #include "Script/Editor/ScriptDebuggerView.h"
 #include "Script/Editor/ScriptEditorPage.h"
+#include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
 #include "Ui/FloodLayout.h"
@@ -134,7 +135,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	tab->addPage(tabDependents);
 	tab->setActivePage(tabOutline);
 
-	m_site->createAdditionalPanel(m_containerExplorer, 300, false);
+	m_site->createAdditionalPanel(m_containerExplorer, ui::scaleBySystemDPI(300), false);
 
 	// Edit area panel.
 	Ref< ui::Container > containerEdit = new ui::Container();
@@ -159,7 +160,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 #elif defined(__LINUX__)
 	m_edit->setFont(ui::Font(L"Monospace", 11));
 #else
-	m_edit->setFont(ui::Font(L"Consolas", 14));
+	m_edit->setFont(ui::Font(L"Consolas", ui::scaleBySystemDPI(14)));
 #endif
 	m_edit->addEventHandler< ui::ContentChangeEvent >(this, &ScriptEditorPage::eventScriptChange);
 	m_edit->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptEditorPage::eventScriptDoubleClick);
@@ -176,7 +177,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	m_tabSessions = new ui::Tab();
 	m_tabSessions->create(m_containerDebugger, ui::WsNone);
 
-	m_site->createAdditionalPanel(m_containerDebugger, 180, true);
+	m_site->createAdditionalPanel(m_containerDebugger, ui::scaleBySystemDPI(180), true);
 
 	// Create language specific implementations.
 	{

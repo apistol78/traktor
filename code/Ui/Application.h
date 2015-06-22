@@ -116,12 +116,26 @@ private:
 };
 
 /*! \brief Convenience wrappers. */
+//@{
+
+inline int32_t getSystemDPI()
+{
+	return Application::getInstance()->getWidgetFactory()->getSystemDPI();
+}
+
+inline int32_t scaleBySystemDPI(int32_t referenceMeasure)
+{
+	return (getSystemDPI() * referenceMeasure) / 96;
+}
+
 inline Color4ub getSystemColor(SystemColor systemColor)
 {
 	Color4ub color;
 	Application::getInstance()->getWidgetFactory()->getSystemColor(systemColor, color);
 	return color;
 }
+
+//@}
 
 	}
 }

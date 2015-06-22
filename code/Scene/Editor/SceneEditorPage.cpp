@@ -244,7 +244,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_instanceGridFontHuge = new ui::Font(m_instanceGrid->getFont());
 	m_instanceGridFontHuge->setSize(12);
 
-	m_site->createAdditionalPanel(m_entityPanel, 300, false);
+	m_site->createAdditionalPanel(m_entityPanel, ui::scaleBySystemDPI(300), false);
 
 	m_tabMisc = new ui::Tab();
 	m_tabMisc->create(parent, ui::Tab::WsLine);
@@ -284,14 +284,14 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_tabMisc->addPage(tabPageGuides);
 	m_tabMisc->setActivePage(tabPageDependencies);
 
-	m_site->createAdditionalPanel(m_tabMisc, 300, false);
+	m_site->createAdditionalPanel(m_tabMisc, ui::scaleBySystemDPI(300), false);
 
 	// Create controller panel.
 	m_controllerPanel = new ui::Container();
 	m_controllerPanel->create(parent, ui::WsNone, new ui::FloodLayout());
 	m_controllerPanel->setText(i18n::Text(L"SCENE_EDITOR_CONTROLLER"));
 
-	m_site->createAdditionalPanel(m_controllerPanel, 120, true);
+	m_site->createAdditionalPanel(m_controllerPanel, ui::scaleBySystemDPI(120), true);
 
 	// Context event handlers.
 	m_context->addEventHandler< PostBuildEvent >(this, &SceneEditorPage::eventContextPostBuild);

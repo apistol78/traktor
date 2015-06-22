@@ -123,7 +123,7 @@ Ref< TabPage > Tab::getPage(int32_t index) const
 
 Ref< TabPage > Tab::getPageAt(const Point& position) const
 {
-	if (position.y >= c_tabHeight)
+	if (position.y >= scaleBySystemDPI(c_tabHeight))
 		return 0;
 
 	for (page_state_vector_t::const_iterator i = m_pages.begin(); i != m_pages.end(); ++i)
@@ -291,11 +291,11 @@ void Tab::eventMouseMove(MouseMoveEvent* event)
 	if (!m_bottom)
 	{
 		y0 = inner.top;
-		y1 = inner.top + c_tabHeight;
+		y1 = inner.top + scaleBySystemDPI(c_tabHeight);
 	}
 	else
 	{
-		y0 = inner.bottom - c_tabHeight;
+		y0 = inner.bottom - scaleBySystemDPI(c_tabHeight);
 		y1 = inner.bottom;
 	}
 
@@ -331,11 +331,11 @@ void Tab::eventButtonDown(MouseButtonDownEvent* event)
 	if (!m_bottom)
 	{
 		y0 = inner.top;
-		y1 = inner.top + c_tabHeight;
+		y1 = inner.top + scaleBySystemDPI(c_tabHeight);
 	}
 	else
 	{
-		y0 = inner.bottom - c_tabHeight;
+		y0 = inner.bottom - scaleBySystemDPI(c_tabHeight);
 		y1 = inner.bottom;
 	}
 
@@ -406,9 +406,9 @@ void Tab::eventSize(SizeEvent* event)
 {
 	m_innerRect = Widget::getInnerRect();
 	if (!m_bottom)
-		m_innerRect.top += c_tabHeight;
+		m_innerRect.top += scaleBySystemDPI(c_tabHeight);
 	else
-		m_innerRect.bottom -= c_tabHeight;
+		m_innerRect.bottom -= scaleBySystemDPI(c_tabHeight);
 
 	if (m_drawBorder)
 		m_innerRect = m_innerRect.inflate(-1, -1);
@@ -433,11 +433,11 @@ void Tab::eventPaint(PaintEvent* event)
 	if (!m_bottom)
 	{
 		y0 = rcInner.top;
-		y1 = rcInner.top + c_tabHeight;
+		y1 = rcInner.top + scaleBySystemDPI(c_tabHeight);
 	}
 	else
 	{
-		y0 = rcInner.bottom - c_tabHeight;
+		y0 = rcInner.bottom - scaleBySystemDPI(c_tabHeight);
 		y1 = rcInner.bottom;
 	}
 
@@ -467,9 +467,9 @@ void Tab::eventPaint(PaintEvent* event)
 
 			int32_t tabWidthNoMargin = sizText.cx;
 			if (m_closeButton)
-				tabWidthNoMargin += 10 + 4;
+				tabWidthNoMargin += 10 + scaleBySystemDPI(4);
 
-			int32_t tabWidth = tabWidthNoMargin + 4 * 2;
+			int32_t tabWidth = tabWidthNoMargin + scaleBySystemDPI(4 * 2);
 						
 			// Save right separator position in vector.
 			i->right = left + tabWidth;
@@ -508,7 +508,7 @@ void Tab::eventPaint(PaintEvent* event)
 				if (m_closeButton && (page == m_selectedPage || page == m_hoverPage))
 				{
 					canvas.drawBitmap(
-						Point(rcTab.right - 10 - 4, rcTab.top + 6),
+						Point(rcTab.right - 10 - scaleBySystemDPI(4), rcTab.getCenter().y - 4),
 						Point(10, 0),
 						Size(10, 8),
 						m_bitmapClose,
@@ -518,9 +518,9 @@ void Tab::eventPaint(PaintEvent* event)
 			
 				// Draw text.
 				Rect rcTabText(
-					left + 4,
+					left + scaleBySystemDPI(4),
 					rcTab.top,
-					left + 4 + sizText.cx,
+					left + scaleBySystemDPI(4) + sizText.cx,
 					rcTab.bottom
 				);
 				if (isEnable())
@@ -548,9 +548,9 @@ void Tab::eventPaint(PaintEvent* event)
 		// No tab pages, fill solid background.
 		Rect rcTabItem(
 			rcInner.left,
-			m_bottom ? rcInner.top : rcInner.top + c_tabHeight,
+			m_bottom ? rcInner.top : rcInner.top + scaleBySystemDPI(c_tabHeight),
 			rcInner.right,
-			m_bottom ? rcInner.bottom - c_tabHeight : rcInner.bottom
+			m_bottom ? rcInner.bottom - scaleBySystemDPI(c_tabHeight) : rcInner.bottom
 		);
 		canvas.setBackground(ss->getColor(this, L"background-color"));
 		canvas.fillRect(rcTabItem);

@@ -103,7 +103,14 @@ int ScrollBarWin32::getPosition() const
 
 Size ScrollBarWin32::getPreferedSize() const
 {
-	return Size(16, 16);
+	int32_t dpi = 96;
+	HDC hDC = GetDC(m_hWnd);
+	if (hDC != NULL)
+	{
+		dpi = GetDeviceCaps(hDC, LOGPIXELSX);
+		ReleaseDC(m_hWnd, hDC);
+	}
+	return Size((16 * dpi) / 96, (16 * dpi) / 96);
 }
 
 LRESULT ScrollBarWin32::eventScroll(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass)

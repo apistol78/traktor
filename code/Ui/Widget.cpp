@@ -389,22 +389,22 @@ Widget* Widget::getParent() const
 	return m_parent;
 }
 
-Ref< Widget > Widget::getPreviousSibling() const
+Widget* Widget::getPreviousSibling() const
 {
 	return m_previousSibling;
 }
 
-Ref< Widget > Widget::getNextSibling() const
+Widget* Widget::getNextSibling() const
 {
 	return m_nextSibling;
 }
 
-Ref< Widget > Widget::getFirstChild() const
+Widget* Widget::getFirstChild() const
 {
 	return m_firstChild;
 }
 
-Ref< Widget > Widget::getLastChild() const
+Widget* Widget::getLastChild() const
 {
 	return m_lastChild;
 }

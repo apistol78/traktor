@@ -103,7 +103,7 @@ TargetInstanceListItem::TargetInstanceListItem(HostEnumerator* hostEnumerator, T
 ui::Size TargetInstanceListItem::getSize() const
 {
 	RefArray< TargetConnection > connections = m_instance->getConnections();
-	return ui::Size(128, 28 + connections.size() * c_performanceHeight);
+	return ui::Size(128, ui::scaleBySystemDPI(28 + connections.size() * c_performanceHeight));
 }
 
 void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui::Rect& rect)
@@ -111,7 +111,7 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 	RefArray< TargetConnection > connections = m_instance->getConnections();
 
 	ui::Rect controlRect = rect;
-	controlRect.bottom = rect.top + 28;
+	controlRect.bottom = rect.top + ui::scaleBySystemDPI(28);
 
 	if (m_instance->getState() == TsIdle)
 	{
@@ -201,14 +201,14 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	const TargetConfiguration* targetConfiguration = m_instance->getTargetConfiguration();
 	RefArray< TargetConnection > connections = m_instance->getConnections();
 
-	ui::Rect controlRect = rect; controlRect.bottom = rect.top + 28;
+	ui::Rect controlRect = rect; controlRect.bottom = rect.top + ui::scaleBySystemDPI(28);
 
 	canvas.setBackground(Color4ub(255, 255, 255));
 	canvas.fillRect(controlRect);
 
 	ui::Rect performanceRect = rect;
-	performanceRect.top = rect.top + 28;
-	performanceRect.bottom = performanceRect.top + c_performanceHeight;
+	performanceRect.top = rect.top + ui::scaleBySystemDPI(28);
+	performanceRect.bottom = performanceRect.top + ui::scaleBySystemDPI(c_performanceHeight);
 	for (uint32_t i = 0; i < connections.size(); ++i)
 	{
 		canvas.setBackground(Color4ub(220, 220, 220));
@@ -244,7 +244,7 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		m_progressCell->setProgress(-1);
 
 	canvas.drawBitmap(
-		ui::Point(controlRect.left + 2, controlRect.top + 2),
+		ui::Point(controlRect.left + 2, controlRect.getCenter().y - 12),
 		ui::Point(platform->getIconIndex() * 24, 0),
 		ui::Size(24, 24),
 		s_bitmapPlatforms,
@@ -265,7 +265,7 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 
 	performanceRect = rect;
 	performanceRect.right -= 34;
-	performanceRect.top = rect.top + 28;
+	performanceRect.top = rect.top + ui::scaleBySystemDPI(28);
 	performanceRect.bottom = performanceRect.top + c_performanceHeight;
 
 	for (uint32_t i = 0; i < connections.size(); ++i)
@@ -275,7 +275,7 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		canvas.setClipRect(performanceRect);
 
 		ui::Rect nameRect = performanceRect;
-		nameRect.bottom = nameRect.top + c_performanceLineHeight;
+		nameRect.bottom = nameRect.top + ui::scaleBySystemDPI(c_performanceLineHeight);
 
 		nameRect.left += 6;
 		canvas.setFont(performanceBoldFont);
@@ -283,8 +283,8 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		canvas.setFont(performanceFont);
 
 		ui::Rect topRect = performanceRect;
-		topRect.top = performanceRect.top + c_performanceLineHeight;
-		topRect.bottom = topRect.top + c_performanceLineHeight;
+		topRect.top = performanceRect.top + ui::scaleBySystemDPI(c_performanceLineHeight);
+		topRect.bottom = topRect.top + ui::scaleBySystemDPI(c_performanceLineHeight);
 
 		topRect.left += 6;
 		canvas.drawText(topRect, toString(int32_t(performance.fps)), ui::AnLeft, ui::AnCenter);
@@ -302,8 +302,8 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		canvas.drawText(topRect, L"GC: " + formatPerformanceTime(performance.garbageCollect), ui::AnLeft, ui::AnCenter);
 
 		ui::Rect middleRect = performanceRect;
-		middleRect.top = performanceRect.top + c_performanceLineHeight * 2;
-		middleRect.bottom = middleRect.top + c_performanceLineHeight;
+		middleRect.top = performanceRect.top + ui::scaleBySystemDPI(c_performanceLineHeight) * 2;
+		middleRect.bottom = middleRect.top + ui::scaleBySystemDPI(c_performanceLineHeight);
 
 		middleRect.left += 26;
 		canvas.drawText(middleRect, L"P: " + formatPerformanceTime(performance.physics), ui::AnLeft, ui::AnCenter);
@@ -315,8 +315,8 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		canvas.drawText(middleRect, L"Sim: " + toString(int32_t(performance.steps)) + L", " + formatPerformanceTime(performance.interval) + L", " + toString(performance.collisions), ui::AnLeft, ui::AnCenter);
 
 		ui::Rect middleRect2 = performanceRect;
-		middleRect2.top = performanceRect.top + c_performanceLineHeight * 3;
-		middleRect2.bottom = middleRect2.top + c_performanceLineHeight;
+		middleRect2.top = performanceRect.top + ui::scaleBySystemDPI(c_performanceLineHeight) * 3;
+		middleRect2.bottom = middleRect2.top + ui::scaleBySystemDPI(c_performanceLineHeight);
 
 		middleRect2.left += 26;
 		canvas.drawText(middleRect2, L"Draw: " + toString(performance.drawCalls), ui::AnLeft, ui::AnCenter);
@@ -331,8 +331,8 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		canvas.drawText(middleRect2, L"Snd: " + toString(performance.activeSoundChannels), ui::AnLeft, ui::AnCenter);
 
 		ui::Rect bottomRect = performanceRect;
-		bottomRect.top = performanceRect.top + c_performanceLineHeight * 4;
-		bottomRect.bottom = bottomRect.top + c_performanceLineHeight;
+		bottomRect.top = performanceRect.top + ui::scaleBySystemDPI(c_performanceLineHeight) * 4;
+		bottomRect.bottom = bottomRect.top + ui::scaleBySystemDPI(c_performanceLineHeight);
 
 		bottomRect.left += 26;
 		canvas.drawText(bottomRect, L"Mem: " + toString(performance.memInUse / 1024) + L" KiB", ui::AnLeft, ui::AnCenter);
@@ -350,8 +350,8 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		{
 			ui::Rect graphRect = performanceRect;
 			graphRect.left += 26;
-			graphRect.top = performanceRect.top + c_performanceLineHeight * 5;
-			graphRect.bottom = graphRect.top + c_performanceLineHeight + c_performanceLineHeight / 2;
+			graphRect.top = performanceRect.top + ui::scaleBySystemDPI(c_performanceLineHeight) * 5;
+			graphRect.bottom = graphRect.top + ui::scaleBySystemDPI(c_performanceLineHeight) + ui::scaleBySystemDPI(c_performanceLineHeight) / 2;
 
 			int32_t w = graphRect.getWidth();
 
@@ -389,7 +389,7 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 			}
 		}
 
-		performanceRect = performanceRect.offset(0, c_performanceHeight);
+		performanceRect = performanceRect.offset(0, ui::scaleBySystemDPI(c_performanceHeight));
 	}
 
 	canvas.resetClipRect();

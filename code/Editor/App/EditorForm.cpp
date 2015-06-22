@@ -472,10 +472,10 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	Ref< ui::DockPane > pane = m_dock->getPane();
 	Ref< ui::DockPane > paneCenter, paneLog;
 
-	pane->split(false, 340, m_paneWest, paneCenter);
-	paneCenter->split(false, -250, paneCenter, m_paneEast);
-	paneCenter->split(true, -200, paneCenter, paneLog);
-	paneCenter->split(true, -200, paneCenter, m_paneSouth);
+	pane->split(false, ui::scaleBySystemDPI(340), m_paneWest, paneCenter);
+	paneCenter->split(false, ui::scaleBySystemDPI(-250), paneCenter, m_paneEast);
+	paneCenter->split(true, ui::scaleBySystemDPI(-200), paneCenter, paneLog);
+	paneCenter->split(true, ui::scaleBySystemDPI(-200), paneCenter, m_paneSouth);
 
 	// Create panes.
 	m_dataBaseView = new DatabaseView(this);
@@ -492,7 +492,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	if (!m_mergedSettings->getProperty< PropertyBoolean >(L"Editor.PropertiesVisible"))
 		m_propertiesView->hide();
 
-	m_paneWest->dock(m_propertiesView, true, ui::DockPane::DrSouth, 300);
+	m_paneWest->dock(m_propertiesView, true, ui::DockPane::DrSouth, ui::scaleBySystemDPI(300));
 
 	// Create output panel.
 	m_tabOutput = new ui::Tab();
