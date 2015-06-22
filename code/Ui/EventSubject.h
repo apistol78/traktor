@@ -84,6 +84,8 @@ public:
 
 	void raiseEvent(Event* event);
 
+	void addEventHandler(const TypeInfo& eventType, IEventHandler* eventHandler);
+
 	template < typename EventType >
 	void addEventHandler(IEventHandler* eventHandler)
 	{
@@ -106,11 +108,15 @@ public:
 		return eventHandler;
 	}
 
+	void removeEventHandler(const TypeInfo& eventType, IEventHandler* eventHandler);
+
 	template < typename EventType >
 	void removeEventHandler(IEventHandler* eventHandler)
 	{
 		removeEventHandler(type_of< EventType >(), eventHandler);
 	}
+
+	bool hasEventHandler(const TypeInfo& eventType);
 
 	template < typename EventType >
 	bool hasEventHandler()
@@ -124,12 +130,6 @@ protected:
 private:
 	typedef RefArray< IEventHandler > EventHandlers;
 	std::map< const TypeInfo*, std::vector< EventHandlers > > m_eventHandlers;
-
-	void addEventHandler(const TypeInfo& eventType, IEventHandler* eventHandler);
-
-	void removeEventHandler(const TypeInfo& eventType, IEventHandler* eventHandler);
-
-	bool hasEventHandler(const TypeInfo& eventType);
 };
 
 	}

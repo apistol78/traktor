@@ -22,6 +22,8 @@ namespace traktor
 class T_DLLCLASS WidgetFactoryWin32 : public IWidgetFactory
 {
 public:
+	WidgetFactoryWin32();
+
 	virtual IButton* createButton(EventSubject* owner);
 
 	virtual ICheckBox* createCheckBox(EventSubject* owner);
@@ -80,7 +82,12 @@ public:
 
 	virtual IClipboard* createClipboard();
 
+	virtual int32_t getSystemDPI() const;
+
 	virtual bool getSystemColor(SystemColor systemColor, Color4ub& outColor);
+
+private:
+	int32_t m_systemDPI;
 };
 
 	}

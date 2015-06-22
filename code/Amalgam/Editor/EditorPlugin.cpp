@@ -228,7 +228,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_targetList->addEventHandler< TargetStopEvent >(this, &EditorPlugin::eventTargetListStop);
 	m_targetList->addEventHandler< TargetCaptureEvent >(this, &EditorPlugin::eventTargetListCapture);
 
-	m_site->createAdditionalPanel(container, 200, false);
+	m_site->createAdditionalPanel(container, ui::scaleBySystemDPI(200), false);
 
 	// Create threads.
 	m_threadHostEnumerator = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadHostEnumerator), L"Host enumerator");

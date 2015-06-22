@@ -167,6 +167,11 @@ IClipboard* WidgetFactoryGtk::createClipboard()
 	return 0;
 }
 
+int32_t WidgetFactoryGtk::getSystemDPI() const
+{
+	return 96;
+}
+
 bool WidgetFactoryGtk::getSystemColor(SystemColor systemColor, Color4ub& outColor)
 {
 	return false;

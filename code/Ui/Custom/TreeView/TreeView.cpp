@@ -176,14 +176,16 @@ void TreeView::applyState(const HierarchicalState* state)
 
 void TreeView::layoutCells(const Rect& rc)
 {
+	int32_t height = getFont().getHeight() + scaleBySystemDPI(4);
+
 	RefArray< TreeViewItem > items;
 	getItems(items, GfDescendants | GfExpandedOnly);
 
-	Rect rcRow(rc.left, rc.top, rc.right, rc.top + 19);
+	Rect rcRow(rc.left, rc.top, rc.right, rc.top + height);
 	for (RefArray< TreeViewItem >::iterator i = items.begin(); i != items.end(); ++i)
 	{
 		placeCell(*i, rcRow);
-		rcRow = rcRow.offset(0, 19);
+		rcRow = rcRow.offset(0, height);
 	}
 }
 

@@ -14,6 +14,7 @@
 #include "Editor/IEditorPageSite.h"
 #include "I18N/Text.h"
 #include "Mesh/Editor/MeshAsset.h"
+#include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
 #include "Ui/PopupMenu.h"
@@ -106,7 +107,7 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 	m_previewControl->create(m_containerPreview);
 	m_previewControl->setPoseController(new StatePoseController(resource::Proxy< StateGraph >(m_stateGraph)));
 
-	m_site->createAdditionalPanel(m_containerPreview, 450, false);
+	m_site->createAdditionalPanel(m_containerPreview, ui::scaleBySystemDPI(450), false);
 
 	createEditorNodes(
 		m_stateGraph->getStates(),

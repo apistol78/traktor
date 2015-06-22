@@ -152,6 +152,11 @@ IClipboard* WidgetFactoryUnite::createClipboard()
 	return m_nativeFactory->createClipboard();
 }
 
+ int32_t WidgetFactoryUnite::getSystemDPI() const
+ {
+ 	return 96;
+ }
+
 bool WidgetFactoryUnite::getSystemColor(SystemColor systemColor, Color4ub& outColor)
 {
 	switch (systemColor)

@@ -172,6 +172,11 @@ IClipboard* WidgetFactoryCocoa::createClipboard()
 	return new ClipboardCocoa();
 }
 
+ int32_t WidgetFactoryCocoa::getSystemDPI() const
+ {
+ 	return 96;
+ }
+
 bool WidgetFactoryCocoa::getSystemColor(SystemColor systemColor, Color4ub& outColor)
 {
 	NSColor* color;

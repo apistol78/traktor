@@ -77,6 +77,8 @@ public:
 
 	virtual IClipboard* createClipboard();
 
+	virtual int32_t getSystemDPI() const;
+
 	virtual bool getSystemColor(SystemColor systemColor, Color4ub& outColor);
 };
 

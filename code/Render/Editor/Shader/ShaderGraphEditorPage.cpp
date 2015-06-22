@@ -167,13 +167,13 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_dependencyPane = new ShaderDependencyPane(m_editor, m_document->getInstance(0)->getGuid());
 	m_dependencyPane->create(parent);
 	m_dependencyPane->setVisible(m_editor->getSettings()->getProperty< PropertyBoolean >(L"ShaderEditor.ShaderDependencyPaneVisible", true));
-	m_site->createAdditionalPanel(m_dependencyPane, 400, false);
+	m_site->createAdditionalPanel(m_dependencyPane, ui::scaleBySystemDPI(400), false);
 
 	// Create shader graph output view.
 	m_shaderViewer = new ShaderViewer(m_editor);
 	m_shaderViewer->create(parent);
 	m_shaderViewer->setVisible(m_editor->getSettings()->getProperty< PropertyBoolean >(L"ShaderEditor.ShaderViewVisible", true));
-	m_site->createAdditionalPanel(m_shaderViewer, 400, false);
+	m_site->createAdditionalPanel(m_shaderViewer, ui::scaleBySystemDPI(400), false);
 
 	// Modify graph control settings.
 	Ref< ui::custom::PaintSettings > paintSettings = m_editorGraph->getPaintSettings();

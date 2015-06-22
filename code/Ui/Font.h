@@ -39,6 +39,8 @@ public:
 
 	int getSize() const;
 
+	int getHeight() const;
+
 	void setBold(bool bold);
 
 	bool isBold() const;

@@ -54,6 +54,14 @@ int Font::getSize() const
 	return m_params.size;
 }
 
+int Font::getHeight() const
+{
+	if (m_params.size > 0)
+		return int((m_params.size / 96.0f) * 72.0f);
+	else
+		return -m_params.size;
+}
+
 void Font::setBold(bool bold)
 {
 	m_params.bold = bold;

@@ -34,6 +34,17 @@ namespace traktor
 	namespace ui
 	{
 
+WidgetFactoryWin32::WidgetFactoryWin32()
+:	m_systemDPI(96)
+{
+	HDC hDC = GetDC(NULL);
+	if (hDC != NULL)
+	{
+		m_systemDPI = GetDeviceCaps(hDC, LOGPIXELSX);
+		ReleaseDC(NULL, hDC);
+	}
+}
+
 IButton* WidgetFactoryWin32::createButton(EventSubject* owner)
 {
 	return new ButtonWin32(owner);
@@ -181,6 +192,11 @@ IBitmap* WidgetFactoryWin32::createBitmap()
 IClipboard* WidgetFactoryWin32::createClipboard()
 {
 	return new ClipboardWin32();
+}
+
+int32_t WidgetFactoryWin32::getSystemDPI() const
+{
+	return m_systemDPI;
 }
 
 bool WidgetFactoryWin32::getSystemColor(SystemColor systemColor, Color4ub& outColor)

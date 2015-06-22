@@ -182,7 +182,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_sequencer->addEventHandler< ui::custom::SequenceButtonClickEvent >(this, &EffectEditorPage::eventSequencerLayerClick);
 	m_sequencer->addEventHandler< ui::MouseButtonDownEvent >(this, &EffectEditorPage::eventSequencerButtonDown);
 
-	m_site->createAdditionalPanel(m_sequencer, 140, true);
+	m_site->createAdditionalPanel(m_sequencer, ui::scaleBySystemDPI(140), true);
 
 	m_popupMenu = new ui::PopupMenu();
 	m_popupMenu->create();

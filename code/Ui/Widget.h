@@ -158,13 +158,13 @@ public:
 	
 	Widget* getParent() const;
 	
-	Ref< Widget > getPreviousSibling() const;
+	Widget* getPreviousSibling() const;
 	
-	Ref< Widget > getNextSibling() const;
+	Widget* getNextSibling() const;
 	
-	Ref< Widget > getFirstChild() const;
+	Widget* getFirstChild() const;
 	
-	Ref< Widget > getLastChild() const;
+	Widget* getLastChild() const;
 
 	/*! \brief Get internal widget.
 	 *
