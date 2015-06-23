@@ -18,7 +18,7 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_maxUpdatePerFrame = 1;
+//const uint32_t c_maxUpdatePerFrame = 1;
 const int32_t c_margin = 1;
 
 struct TerrainSurfaceRenderBlock : public render::RenderBlock
@@ -250,7 +250,7 @@ void TerrainSurfaceCache::get(
 	// If the cache is already valid we just reuse it.
 	if (patchId < m_entries.size())
 	{
-		if (m_updateCount >= c_maxUpdatePerFrame || (m_entries[patchId].lod == surfaceLod && m_entries[patchId].tile.dim > 0))
+		if (/*m_updateCount >= c_maxUpdatePerFrame ||*/ (m_entries[patchId].lod == surfaceLod && m_entries[patchId].tile.dim > 0))
 		{
 			outTextureOffset = offsetFromTile(m_entries[patchId].tile, m_size);
 			return;
