@@ -14,16 +14,14 @@ class Thread;
 
 	namespace ui
 	{
-
-class TreeView;
-class TreeViewItem;
-
 		namespace custom
 		{
 
 class PreviewItem;
 class PreviewList;
 class PreviewSelectionChangeEvent;
+class TreeView;
+class TreeViewItem;
 
 		}
 	}
@@ -60,7 +58,7 @@ public:
 private:
 	const IEditor* m_editor;
 	Ref< PropertyGroup > m_settings;
-	Ref< ui::TreeView > m_treeDatabase;
+	Ref< ui::custom::TreeView > m_treeDatabase;
 	Ref< ui::custom::PreviewList > m_listInstances;
 	RefArray< const IBrowsePreview > m_browsePreview;
 	Ref< db::Instance > m_instance;
@@ -69,7 +67,7 @@ private:
 	ThreadsafeFifo< Ref< Functor > > m_previewTasks;
 	Event m_previewTaskEvent;
 
-	ui::TreeViewItem* buildGroupItems(ui::TreeView* treeView, ui::TreeViewItem* parent, db::Group* group, const IBrowseFilter* filter);
+	ui::custom::TreeViewItem* buildGroupItems(ui::custom::TreeView* treeView, ui::custom::TreeViewItem* parent, db::Group* group, const IBrowseFilter* filter);
 
 	void eventTreeItemSelected(ui::SelectionChangeEvent* event);
 

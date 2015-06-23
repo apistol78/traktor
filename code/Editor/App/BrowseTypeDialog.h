@@ -10,14 +10,12 @@ class PropertyGroup;
 
 	namespace ui
 	{
-
-class TreeView;
-class TreeViewItem;
-
 		namespace custom
 		{
 
 class PreviewList;
+class TreeView;
+class TreeViewItem;
 
 		}
 	}
@@ -40,7 +38,7 @@ public:
 
 private:
 	Ref< PropertyGroup > m_settings;
-	Ref< ui::TreeView > m_categoryTree;
+	Ref< ui::custom::TreeView > m_categoryTree;
 	Ref< ui::custom::PreviewList > m_typeList;
 	const TypeInfo* m_type;
 

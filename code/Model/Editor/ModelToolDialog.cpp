@@ -23,6 +23,7 @@
 #include "Render/IRenderView.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Resource/IResourceManager.h"
+#include "Ui/Application.h"
 #include "Ui/FileDialog.h"
 #include "Ui/ListBox.h"
 #include "Ui/TableLayout.h"
@@ -62,7 +63,7 @@ ModelToolDialog::ModelToolDialog(
 
 bool ModelToolDialog::create(ui::Widget* parent)
 {
-	if (!ui::Dialog::create(parent, L"Model Tool", 800, 600, ui::Dialog::WsDefaultResizable, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
+	if (!ui::Dialog::create(parent, L"Model Tool", ui::scaleBySystemDPI(800), ui::scaleBySystemDPI(600), ui::Dialog::WsDefaultResizable, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
 
 	addEventHandler< ui::CloseEvent >(this, &ModelToolDialog::eventDialogClose);
@@ -107,10 +108,13 @@ bool ModelToolDialog::create(ui::Widget* parent)
 	m_toolNonSharedEdges = new ui::custom::ToolBarButton(L"Non-shared Edges", ui::Command(L"ModelTool.ToggleNonSharedEdges"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggle);
 	toolBar->addItem(m_toolNonSharedEdges);
 
+	m_toolUV = new ui::custom::ToolBarButton(L"UV", ui::Command(L"ModelTool.ToggleUV"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggle);
+	toolBar->addItem(m_toolUV);
+
 	toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ModelToolDialog::eventToolBarClick);
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
-	splitter->create(this, true, 200, false);
+	splitter->create(this, true, ui::scaleBySystemDPI(200), false);
 
 	m_modelList = new ui::ListBox();
 	m_modelList->create(splitter, L"", ui::ListBox::WsMultiple | ui::WsClientBorder);
@@ -543,6 +547,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 			const std::vector< Polygon >& polygons = m_model->getPolygons();
 			const AlignedVector< Vector4 >& positions = m_model->getPositions();
 			const AlignedVector< Vector4 >& normals = m_model->getNormals();
+			const AlignedVector< Vector2 >& texCoords = m_model->getTexCoords();
 
 			// Render wire-frame.
 			if (m_toolWire->isToggled())
@@ -616,6 +621,40 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 				{
 					m_primitiveRenderer->drawSolidPoint(*i, 3.0f, Color4ub(255, 255, 0, 200));
 				}
+				m_primitiveRenderer->popDepthState();
+			}
+
+			if (m_toolUV->isToggled())
+			{
+				m_primitiveRenderer->setProjection(orthoLh(-2.0f, 2.0f, 2.0f, -2.0f, 0.0f, 1.0f));
+				m_primitiveRenderer->pushView(Matrix44::identity());
+				m_primitiveRenderer->pushDepthState(false, false, false);
+
+				for (uint32_t i = 0; i < polygons.size(); ++i)
+				{
+					const Polygon& polygon = polygons[i];
+					const std::vector< uint32_t >& indices = polygon.getVertices();
+
+					for (uint32_t j = 0; j < indices.size(); ++j)
+					{
+						const Vertex& vx0 = vertices[indices[j]];
+						const Vertex& vx1 = vertices[indices[(j + 1) % indices.size()]];
+
+						if (vx0.getTexCoord(0) != c_InvalidIndex && vx1.getTexCoord(0) != c_InvalidIndex)
+						{
+							const Vector2& uv0 = texCoords[vx0.getTexCoord(0)];
+							const Vector2& uv1 = texCoords[vx1.getTexCoord(0)];
+
+							m_primitiveRenderer->drawLine(
+								Vector4(uv0.x, uv0.y, 0.5f, 1.0f),
+								Vector4(uv1.x, uv1.y, 0.5f, 1.0f),
+								Color4ub(255, 255, 255, 200)
+							);
+						}
+					}
+				}
+
+				m_primitiveRenderer->popView();
 				m_primitiveRenderer->popDepthState();
 			}
 		}

@@ -125,6 +125,18 @@ HFONT Window::getFont() const
 	return m_hFont.getHandle();
 }
 
+int32_t Window::getSystemDPI() const
+{
+	int32_t dpi = 96;
+	HDC hDC = GetDC(m_hWnd);
+	if (hDC != NULL)
+	{
+		dpi = GetDeviceCaps(hDC, LOGPIXELSX);
+		ReleaseDC(m_hWnd, hDC);
+	}
+	return dpi;
+}
+
 LRESULT Window::sendMessage(UINT message, WPARAM wParam, LPARAM lParam) const
 {
 	return SendMessage(m_hWnd, message, wParam, lParam);

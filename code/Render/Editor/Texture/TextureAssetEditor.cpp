@@ -11,6 +11,7 @@
 #include "I18N/Text.h"
 #include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Editor/Texture/TextureAssetEditor.h"
+#include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
 #include "Ui/FileDialog.h"
@@ -52,7 +53,7 @@ bool TextureAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISer
 	m_propertyList = new ui::custom::AutoPropertyList();
 	m_propertyList->create(container, ui::WsDoubleBuffer | ui::custom::AutoPropertyList::WsColumnHeader, this);
 	m_propertyList->addEventHandler< ui::custom::PropertyCommandEvent >(this, &TextureAssetEditor::eventPropertyCommand);
-	m_propertyList->setSeparator(200);
+	m_propertyList->setSeparator(ui::scaleBySystemDPI(200));
 	m_propertyList->setColumnName(0, i18n::Text(L"PROPERTY_COLUMN_NAME"));
 	m_propertyList->setColumnName(1, i18n::Text(L"PROPERTY_COLUMN_VALUE"));
 	m_propertyList->bind(m_asset);
@@ -86,7 +87,10 @@ void TextureAssetEditor::handleDatabaseEvent(db::Database* database, const Guid&
 
 ui::Size TextureAssetEditor::getPreferredSize() const
 {
-	return ui::Size(850, 550);
+	return ui::Size(
+		ui::scaleBySystemDPI(850),
+		ui::scaleBySystemDPI(550)
+	);
 }
 
 void TextureAssetEditor::updatePreview()

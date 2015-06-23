@@ -5,17 +5,18 @@
 #include "Core/Settings/PropertyObject.h"
 #include "Editor/App/NewInstanceDialog.h"
 #include "I18N/Text.h"
+#include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Edit.h"
 #include "Ui/HierarchicalState.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
-#include "Ui/TreeView.h"
-#include "Ui/TreeViewItem.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/PreviewList/PreviewItem.h"
 #include "Ui/Custom/PreviewList/PreviewItems.h"
 #include "Ui/Custom/PreviewList/PreviewList.h"
+#include "Ui/Custom/TreeView/TreeView.h"
+#include "Ui/Custom/TreeView/TreeViewItem.h"
 
 // Resources
 #include "Resources/Files.h"
@@ -60,8 +61,8 @@ bool NewInstanceDialog::create(ui::Widget* parent)
 	if (!ui::ConfigDialog::create(
 		parent,
 		i18n::Text(L"NEW_INSTANCE_TITLE"),
-		640,
-		500,
+		ui::scaleBySystemDPI(640),
+		ui::scaleBySystemDPI(500),
 		ui::ConfigDialog::WsDefaultResizable,
 		new ui::TableLayout(L"100%", L"100%,*", 4, 4)
 	))
@@ -70,27 +71,27 @@ bool NewInstanceDialog::create(ui::Widget* parent)
 	addEventHandler< ui::ButtonClickEvent >(this, &NewInstanceDialog::eventDialogClick);
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
-	splitter->create(this, true, 200);
+	splitter->create(this, true, ui::scaleBySystemDPI(200));
 
 	Ref< ui::Container > left = new ui::Container();
-	left->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"22,100%", 0, 0));
+	left->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
 
 	Ref< ui::Static > treeLabel = new ui::Static();
 	treeLabel->create(left, i18n::Text(L"NEW_INSTANCE_CATEGORY"));
 
-	m_categoryTree = new ui::TreeView();
-	m_categoryTree->create(left);
+	m_categoryTree = new ui::custom::TreeView();
+	m_categoryTree->create(left, ui::WsDoubleBuffer);
 	m_categoryTree->addImage(ui::Bitmap::load(c_ResourceFiles, sizeof(c_ResourceFiles), L"png"), 4);
 	m_categoryTree->addEventHandler< ui::SelectionChangeEvent >(this, &NewInstanceDialog::eventTreeItemSelected);
 
 	Ref< ui::Container > right = new ui::Container();
-	right->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"22,100%", 0, 0));
+	right->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
 
 	Ref< ui::Static > listLabel = new ui::Static();
 	listLabel->create(right, i18n::Text(L"NEW_INSTANCE_TYPES"));
 
 	m_typeList = new ui::custom::PreviewList();
-	if (!m_typeList->create(right, ui::WsClientBorder | ui::WsDoubleBuffer | ui::WsTabStop))
+	if (!m_typeList->create(right, ui::WsDoubleBuffer | ui::WsTabStop))
 		return false;
 
 	Ref< ui::Container > bottom = new ui::Container();
@@ -102,7 +103,7 @@ bool NewInstanceDialog::create(ui::Widget* parent)
 	m_editInstanceName = new ui::Edit();
 	m_editInstanceName->create(bottom, i18n::Text(L"NEW_INSTANCE_DEFAULT_NAME"));
 
-	Ref< ui::TreeViewItem > groupRoot = m_categoryTree->createItem(0, i18n::Text(L"NEW_INSTANCE_GLOBAL"), 2, 3);
+	Ref< ui::custom::TreeViewItem > groupRoot = m_categoryTree->createItem(0, i18n::Text(L"NEW_INSTANCE_GLOBAL"), 2, 3);
 	for (TypeInfoSet::iterator i = types.begin(); i != types.end(); ++i)
 	{
 		const TypeInfo* type = *i;
@@ -117,10 +118,10 @@ bool NewInstanceDialog::create(ui::Widget* parent)
 
 		std::wstring className = parts.back(); parts.pop_back();
 
-		Ref< ui::TreeViewItem > group = groupRoot;
+		Ref< ui::custom::TreeViewItem > group = groupRoot;
 		for (std::vector< std::wstring >::iterator j = parts.begin(); j != parts.end(); ++j)
 		{
-			Ref< ui::TreeViewItem > child = group->findChild(*j);
+			Ref< ui::custom::TreeViewItem > child = group->findChild(*j);
 			if (!child)
 			{
 				child = m_categoryTree->createItem(group, *j, 2, 3);
@@ -145,14 +146,12 @@ bool NewInstanceDialog::create(ui::Widget* parent)
 	groupRoot->sort(true);
 
 	// Expand all groups until a group with multiple children is found.
-	ui::TreeViewItem* expandGroup = groupRoot;
+	ui::custom::TreeViewItem* expandGroup = groupRoot;
 	while (expandGroup)
 	{
 		expandGroup->expand();
 
-		RefArray< ui::TreeViewItem > children;
-		expandGroup->getChildren(children);
-
+		const RefArray< ui::custom::TreeViewItem >& children = expandGroup->getChildren();
 		if (children.size() == 1)
 			expandGroup = children[0];
 		else
@@ -207,11 +206,13 @@ void NewInstanceDialog::eventDialogClick(ui::ButtonClickEvent* event)
 
 void NewInstanceDialog::eventTreeItemSelected(ui::SelectionChangeEvent* event)
 {
-	Ref< ui::TreeViewItem > item = m_categoryTree->getSelectedItem();
-	if (item)
+	RefArray< ui::custom::TreeViewItem > items;
+	
+	m_categoryTree->getItems(items, ui::custom::TreeView::GfDescendants | ui::custom::TreeView::GfSelectedOnly);
+	if (!items.empty())
 	{
-		Ref< ui::custom::PreviewItems > items = item->getData< ui::custom::PreviewItems >(L"ITEMS");
-		m_typeList->setItems(items);
+		Ref< ui::custom::PreviewItems > previewItems = items[0]->getData< ui::custom::PreviewItems >(L"ITEMS");
+		m_typeList->setItems(previewItems);
 	}
 	else
 		m_typeList->setItems(0);

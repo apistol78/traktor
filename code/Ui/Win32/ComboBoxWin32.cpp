@@ -83,7 +83,11 @@ void ComboBoxWin32::setRect(const Rect& rect)
 
 Size ComboBoxWin32::getPreferedSize() const
 {
-	return Size(128, 24);
+	int32_t dpi = m_hWnd.getSystemDPI();
+	return Size(
+		(128 * dpi) / 96,
+		(24 * dpi) / 96
+	);
 }
 
 LRESULT ComboBoxWin32::eventCommand(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass)

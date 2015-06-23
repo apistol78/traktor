@@ -2,6 +2,7 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Editor/App/ColorSettingsPage.h"
 #include "I18N/Text.h"
+#include "Ui/Application.h"
 #include "Ui/Container.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/ColorPicker/ColorDialog.h"
@@ -50,7 +51,7 @@ bool ColorSettingsPage::create(ui::Container* parent, PropertyGroup* settings, c
 		return false;
 
 	m_colorList->addEventHandler< ui::custom::PropertyCommandEvent >(this, &ColorSettingsPage::eventPropertyCommand);
-	m_colorList->setSeparator(200);
+	m_colorList->setSeparator(ui::scaleBySystemDPI(200));
 
 	Ref< PropertyGroup > colorGroup = settings->getProperty< PropertyGroup >(L"Editor.Colors");
 	T_ASSERT (colorGroup);

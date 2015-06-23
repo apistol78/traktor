@@ -94,8 +94,8 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	if (!m_outlineGrid->create(tabOutline, ui::custom::GridView::WsColumnHeader |ui::WsDoubleBuffer))
 		return false;
 	m_outlineGrid->addColumn(new ui::custom::GridColumn(L"", 30));
-	m_outlineGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_OUTLINE_NAME"), 165));
-	m_outlineGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_OUTLINE_LINE"), 45));
+	m_outlineGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_OUTLINE_NAME"), ui::scaleBySystemDPI(165)));
+	m_outlineGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_OUTLINE_LINE"), ui::scaleBySystemDPI(45)));
 	m_outlineGrid->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptEditorPage::eventOutlineDoubleClick);
 
 	Ref< ui::TabPage > tabDependencies = new ui::TabPage();

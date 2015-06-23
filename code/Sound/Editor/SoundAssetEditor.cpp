@@ -18,6 +18,7 @@
 #include "Sound/StreamSoundBuffer.h"
 #include "Sound/Editor/SoundAsset.h"
 #include "Sound/Editor/SoundAssetEditor.h"
+#include "Ui/Application.h"
 #include "Ui/Container.h"
 #include "Ui/FileDialog.h"
 #include "Ui/TableLayout.h"
@@ -110,7 +111,10 @@ void SoundAssetEditor::handleDatabaseEvent(db::Database* database, const Guid& e
 
 ui::Size SoundAssetEditor::getPreferredSize() const
 {
-	return ui::Size(500, 400);
+	return ui::Size(
+		ui::scaleBySystemDPI(500),
+		ui::scaleBySystemDPI(400)
+	);
 }
 
 void SoundAssetEditor::eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event)

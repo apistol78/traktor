@@ -66,7 +66,10 @@ std::wstring ShortcutEdit::getText() const
 
 Size ShortcutEdit::getPreferedSize() const
 {
-	return Size(c_preferedWidth, c_preferedHeight);
+	return Size(
+		ui::scaleBySystemDPI(c_preferedWidth),
+		ui::scaleBySystemDPI(c_preferedHeight)
+	);
 }
 
 void ShortcutEdit::set(int32_t keyState, VirtualKey virtualKey)

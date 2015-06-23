@@ -58,7 +58,11 @@ int SliderWin32::getValue() const
 
 Size SliderWin32::getPreferedSize() const
 {
-	return Size(200, 32);
+	int32_t dpi = m_hWnd.getSystemDPI();
+	return Size(
+		(200 * dpi) / 96,
+		(32 * dpi) / 96
+	);
 }
 
 LRESULT SliderWin32::eventScroll(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip)

@@ -278,11 +278,11 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_editFilter = new ui::Edit();
 	m_editFilter->create(m_toolSelection, L"", ui::WsNone);
 	m_editFilter->addEventHandler< ui::KeyUpEvent >(this, &DatabaseView::eventFilterKey);
-	m_toolSelection->addItem(new ui::custom::ToolBarEmbed(m_editFilter, 100));
+	m_toolSelection->addItem(new ui::custom::ToolBarEmbed(m_editFilter, ui::scaleBySystemDPI(100)));
 
 	m_toolSelection->addItem(new ui::custom::ToolBarSeparator());
 
-	m_toolViewMode = new ui::custom::ToolBarDropDown(ui::Command(L"Editor.ViewModes"), 80, i18n::Text(L"DATABASE_VIEW_MODE"));
+	m_toolViewMode = new ui::custom::ToolBarDropDown(ui::Command(L"Editor.ViewModes"), ui::scaleBySystemDPI(80), i18n::Text(L"DATABASE_VIEW_MODE"));
 	m_toolViewMode->add(i18n::Text(L"DATABASE_VIEW_MODE_HIERARCHY"));
 	m_toolViewMode->add(i18n::Text(L"DATABASE_VIEW_MODE_CATEGORY"));
 	m_toolViewMode->select(0);

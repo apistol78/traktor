@@ -17,6 +17,7 @@
 #include "Terrain/Editor/SplatBrush.h"
 #include "Terrain/Editor/TerrainEditorPlugin.h"
 #include "Terrain/Editor/TerrainEditModifier.h"
+#include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
 #include "Ui/FileDialog.h"
@@ -85,7 +86,7 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::custom::ToolBar* toolBa
 	m_staticStrength = new ui::Static();
 	m_staticStrength->create(containerStrength, L"50%");
 
-	m_toolStrength = new ui::custom::ToolBarEmbed(containerStrength, 135);
+	m_toolStrength = new ui::custom::ToolBarEmbed(containerStrength, ui::scaleBySystemDPI(135));
 
 	m_colorControl = new ui::custom::ColorControl();
 	m_colorControl->create(toolBar, ui::WsBorder);
@@ -94,14 +95,14 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::custom::ToolBar* toolBa
 
 	m_toolColor = new ui::custom::ToolBarEmbed(m_colorControl, 32);
 
-	m_toolMaterial = new ui::custom::ToolBarDropDown(ui::Command(L"Terrain.Editor.SelectMaterial"), 80, i18n::Text(L"TERRAIN_EDITOR_MATERIAL"));
+	m_toolMaterial = new ui::custom::ToolBarDropDown(ui::Command(L"Terrain.Editor.SelectMaterial"), ui::scaleBySystemDPI(80), i18n::Text(L"TERRAIN_EDITOR_MATERIAL"));
 	m_toolMaterial->add(L"Material 1");
 	m_toolMaterial->add(L"Material 2");
 	m_toolMaterial->add(L"Material 3");
 	m_toolMaterial->add(L"Material 4");
 	m_toolMaterial->select(0);
 
-	m_toolVisualize = new ui::custom::ToolBarDropDown(ui::Command(L"Terrain.Editor.SelectVisualize"), 100, i18n::Text(L"TERRAIN_EDITOR_VISUALIZE"));
+	m_toolVisualize = new ui::custom::ToolBarDropDown(ui::Command(L"Terrain.Editor.SelectVisualize"), ui::scaleBySystemDPI(100), i18n::Text(L"TERRAIN_EDITOR_VISUALIZE"));
 	m_toolVisualize->add(L"Default");
 	m_toolVisualize->add(L"Surface LOD");
 	m_toolVisualize->add(L"Patch LOD");

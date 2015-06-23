@@ -89,6 +89,9 @@ bool CanvasDirect2DWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 
 	T_ASSERT (m_d2dRenderTarget);
 
+	// Force DPI to be 96 as DPI handling is performed outside of Canvas.
+	m_d2dRenderTarget->SetDpi(96, 96);
+
 	m_d2dRenderTarget->BeginDraw();
 	m_d2dRenderTarget->Clear(D2D1::ColorF(D2D1::ColorF::Yellow));
 
