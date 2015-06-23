@@ -772,6 +772,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 						int32_t iconIndex = getIconIndex(type);
 
 						Ref< ui::custom::TreeViewItem > instanceItem = m_treeDatabase->createItem(treeItem, instanceName, iconIndex);
+						instanceItem->setEditable(true);
 						instanceItem->setData(L"GROUP", group);
 						instanceItem->setData(L"INSTANCE", instance);
 
@@ -788,6 +789,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			if (newGroup)
 			{
 				Ref< ui::custom::TreeViewItem > groupItem = m_treeDatabase->createItem(treeItem, i18n::Text(L"DATABASE_NEW_GROUP_UNNAMED"), 0, 1);
+				groupItem->setEditable(true);
 				groupItem->setData(L"GROUP", newGroup);
 
 				m_treeDatabase->update();
@@ -844,6 +846,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			int32_t iconIndex = getIconIndex(&type_of(instanceClipboardData->getObject()));
 
 			Ref< ui::custom::TreeViewItem > treeCloneItem = m_treeDatabase->createItem(treeItem, instanceCopy->getName(), iconIndex);
+			treeCloneItem->setEditable(true);
 			treeCloneItem->setData(L"GROUP", group);
 			treeCloneItem->setData(L"INSTANCE", instanceCopy);
 
