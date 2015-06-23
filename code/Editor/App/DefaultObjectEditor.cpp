@@ -6,6 +6,7 @@
 #include "Editor/IEditor.h"
 #include "Editor/App/DefaultObjectEditor.h"
 #include "I18N/Text.h"
+#include "Ui/Application.h"
 #include "Ui/Event.h"
 #include "Ui/FileDialog.h"
 #include "Ui/Custom/ColorPicker/ColorDialog.h"
@@ -36,7 +37,7 @@ bool DefaultObjectEditor::create(ui::Widget* parent, db::Instance* instance, ISe
 	m_propertyList = new ui::custom::AutoPropertyList();
 	m_propertyList->create(parent, ui::WsDoubleBuffer | ui::WsTabStop | ui::custom::AutoPropertyList::WsColumnHeader, this);
 	m_propertyList->addEventHandler< ui::custom::PropertyCommandEvent >(this, &DefaultObjectEditor::eventPropertyCommand);
-	m_propertyList->setSeparator(200);
+	m_propertyList->setSeparator(ui::scaleBySystemDPI(200));
 	m_propertyList->setColumnName(0, i18n::Text(L"PROPERTY_COLUMN_NAME"));
 	m_propertyList->setColumnName(1, i18n::Text(L"PROPERTY_COLUMN_VALUE"));
 	m_propertyList->bind(m_object);
@@ -81,7 +82,7 @@ void DefaultObjectEditor::handleDatabaseEvent(db::Database* database, const Guid
 
 ui::Size DefaultObjectEditor::getPreferredSize() const
 {
-	return ui::Size(600, 500);
+	return ui::Size(ui::scaleBySystemDPI(600), ui::scaleBySystemDPI(500));
 }
 
 bool DefaultObjectEditor::resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const

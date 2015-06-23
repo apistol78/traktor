@@ -91,13 +91,17 @@ void DropDownWin32::setRect(const Rect& rect)
 
 Size DropDownWin32::getPreferedSize() const
 {
-	Size sz(128, 24);
+	int32_t dpi = m_hWnd.getSystemDPI();
+	Size sz(
+		(128 * dpi) / 96,
+		(24 * dpi) / 96
+	);
 
 	int32_t c = count();
 	for (int32_t i = 0; i < c; ++i)
 	{
 		std::wstring s = get(i);
-		sz.cx = std::max< int32_t >(getTextExtent(s).cx + 32, sz.cx);
+		sz.cx = std::max< int32_t >(getTextExtent(s).cx + (32 * dpi) / 96, sz.cx);
 	}
 
 	return sz;

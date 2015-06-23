@@ -70,6 +70,7 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolVertices;
 	Ref< ui::custom::ToolBarButton > m_toolCull;
 	Ref< ui::custom::ToolBarButton > m_toolNonSharedEdges;
+	Ref< ui::custom::ToolBarButton > m_toolUV;
 	Ref< ui::ListBox > m_modelList;
 	Ref< ui::Widget > m_renderWidget;
 	Ref< Model > m_model;

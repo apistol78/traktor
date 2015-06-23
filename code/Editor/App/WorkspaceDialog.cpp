@@ -2,6 +2,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Editor/App/WorkspaceDialog.h"
 #include "I18N/Text.h"
+#include "Ui/Application.h"
 #include "Ui/Edit.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/Static.h"
@@ -16,7 +17,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.WorkspaceDialog", WorkspaceDialog, ui::C
 
 bool WorkspaceDialog::create(ui::Widget* parent, PropertyGroup* settings)
 {
-	if (!ui::ConfigDialog::create(parent, i18n::Text(L"EDITOR_WORKSPACE_TITLE"), 500, 200, ui::ConfigDialog::WsDefaultResizable, new ui::FloodLayout()))
+	if (!ui::ConfigDialog::create(parent, i18n::Text(L"EDITOR_WORKSPACE_TITLE"), ui::scaleBySystemDPI(500), ui::scaleBySystemDPI(200), ui::ConfigDialog::WsDefaultResizable, new ui::FloodLayout()))
 		return false;
 
 	addEventHandler< ui::ButtonClickEvent >(this, &WorkspaceDialog::eventDialogClick);

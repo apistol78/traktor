@@ -119,9 +119,9 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 			m_hostsCell,
 			ui::Rect(
 				controlRect.getCenter().x,
-				controlRect.getCenter().y - 10,
+				controlRect.getCenter().y - ui::scaleBySystemDPI(10),
 				controlRect.right - 24 * 1 - 12,
-				controlRect.getCenter().y + 10
+				controlRect.getCenter().y + ui::scaleBySystemDPI(10)
 			)
 		);
 	}
@@ -132,9 +132,9 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 			m_progressCell,
 			ui::Rect(
 				controlRect.left + 30,
-				controlRect.getCenter().y - 8,
+				controlRect.getCenter().y - ui::scaleBySystemDPI(8),
 				controlRect.right - 24 * 1 - 8,
-				controlRect.getCenter().y + 8
+				controlRect.getCenter().y + ui::scaleBySystemDPI(8)
 			)
 		);
 	}
@@ -286,70 +286,70 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		topRect.top = performanceRect.top + ui::scaleBySystemDPI(c_performanceLineHeight);
 		topRect.bottom = topRect.top + ui::scaleBySystemDPI(c_performanceLineHeight);
 
-		topRect.left += 6;
+		topRect.left += ui::scaleBySystemDPI(6);
 		canvas.drawText(topRect, toString(int32_t(performance.fps)), ui::AnLeft, ui::AnCenter);
 
-		topRect.left += 20;
+		topRect.left += ui::scaleBySystemDPI(20);
 		canvas.drawText(topRect, L"U: " + formatPerformanceTime(performance.update), ui::AnLeft, ui::AnCenter);
 
-		topRect.left += 80;
+		topRect.left += ui::scaleBySystemDPI(80);
 		canvas.drawText(topRect, L"B: " + formatPerformanceTime(performance.build), ui::AnLeft, ui::AnCenter);
 
-		topRect.left += 80;
+		topRect.left += ui::scaleBySystemDPI(80);
 		canvas.drawText(topRect, L"R: " + formatPerformanceTime(performance.render), ui::AnLeft, ui::AnCenter);
 
-		topRect.left += 80;
+		topRect.left += ui::scaleBySystemDPI(80);
 		canvas.drawText(topRect, L"GC: " + formatPerformanceTime(performance.garbageCollect), ui::AnLeft, ui::AnCenter);
 
 		ui::Rect middleRect = performanceRect;
 		middleRect.top = performanceRect.top + ui::scaleBySystemDPI(c_performanceLineHeight) * 2;
 		middleRect.bottom = middleRect.top + ui::scaleBySystemDPI(c_performanceLineHeight);
 
-		middleRect.left += 26;
+		middleRect.left += ui::scaleBySystemDPI(26);
 		canvas.drawText(middleRect, L"P: " + formatPerformanceTime(performance.physics), ui::AnLeft, ui::AnCenter);
 
-		middleRect.left += 80;
+		middleRect.left += ui::scaleBySystemDPI(80);
 		canvas.drawText(middleRect, L"I: " + formatPerformanceTime(performance.input), ui::AnLeft, ui::AnCenter);
 
-		middleRect.left += 80;
+		middleRect.left += ui::scaleBySystemDPI(80);
 		canvas.drawText(middleRect, L"Sim: " + toString(int32_t(performance.steps)) + L", " + formatPerformanceTime(performance.interval) + L", " + toString(performance.collisions), ui::AnLeft, ui::AnCenter);
 
 		ui::Rect middleRect2 = performanceRect;
 		middleRect2.top = performanceRect.top + ui::scaleBySystemDPI(c_performanceLineHeight) * 3;
 		middleRect2.bottom = middleRect2.top + ui::scaleBySystemDPI(c_performanceLineHeight);
 
-		middleRect2.left += 26;
+		middleRect2.left += ui::scaleBySystemDPI(26);
 		canvas.drawText(middleRect2, L"Draw: " + toString(performance.drawCalls), ui::AnLeft, ui::AnCenter);
 
-		middleRect2.left += 100;
+		middleRect2.left += ui::scaleBySystemDPI(100);
 		canvas.drawText(middleRect2, L"Prim: " + toString(performance.primitiveCount), ui::AnLeft, ui::AnCenter);
 
-		middleRect2.left += 100;
+		middleRect2.left += ui::scaleBySystemDPI(100);
 		canvas.drawText(middleRect2, L"Phys: " + toString(performance.activeBodyCount) + L"/" + toString(performance.bodyCount) + L", M: " + toString(performance.manifoldCount) + L", Q: " + toString(performance.queryCount), ui::AnLeft, ui::AnCenter);
 
-		middleRect2.left += 150;
+		middleRect2.left += ui::scaleBySystemDPI(150);
 		canvas.drawText(middleRect2, L"Snd: " + toString(performance.activeSoundChannels), ui::AnLeft, ui::AnCenter);
 
 		ui::Rect bottomRect = performanceRect;
 		bottomRect.top = performanceRect.top + ui::scaleBySystemDPI(c_performanceLineHeight) * 4;
 		bottomRect.bottom = bottomRect.top + ui::scaleBySystemDPI(c_performanceLineHeight);
 
-		bottomRect.left += 26;
+		bottomRect.left += ui::scaleBySystemDPI(26);
 		canvas.drawText(bottomRect, L"Mem: " + toString(performance.memInUse / 1024) + L" KiB", ui::AnLeft, ui::AnCenter);
 
-		bottomRect.left += 100;
+		bottomRect.left += ui::scaleBySystemDPI(100);
 		canvas.drawText(bottomRect, L"Obj: " + toString(performance.heapObjects), ui::AnLeft, ui::AnCenter);
 
-		bottomRect.left += 100;
+		bottomRect.left += ui::scaleBySystemDPI(100);
 		canvas.drawText(bottomRect, L"Smem: " + toString(performance.memInUseScript / 1024) + L" KiB", ui::AnLeft, ui::AnCenter);
 
-		bottomRect.left += 100;
+		bottomRect.left += ui::scaleBySystemDPI(100);
 		canvas.drawText(bottomRect, L"Res: " + toString(performance.residentResourcesCount) + L", " + toString(performance.exclusiveResourcesCount), ui::AnLeft, ui::AnCenter);
 
 		if (performance.frameMarkers.size() >= 1)
 		{
 			ui::Rect graphRect = performanceRect;
-			graphRect.left += 26;
+			graphRect.left += ui::scaleBySystemDPI(26);
 			graphRect.top = performanceRect.top + ui::scaleBySystemDPI(c_performanceLineHeight) * 5;
 			graphRect.bottom = graphRect.top + ui::scaleBySystemDPI(c_performanceLineHeight) + ui::scaleBySystemDPI(c_performanceLineHeight) / 2;
 

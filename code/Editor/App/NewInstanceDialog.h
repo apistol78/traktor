@@ -11,7 +11,6 @@ class PropertyGroup;
 	namespace ui
 	{
 
-class TreeView;
 class ListView;
 class Edit;
 
@@ -19,7 +18,7 @@ class Edit;
 		{
 
 class PreviewList;
-
+class TreeView;
 		}
 	}
 
@@ -43,7 +42,7 @@ public:
 
 private:
 	Ref< PropertyGroup > m_settings;
-	Ref< ui::TreeView > m_categoryTree;
+	Ref< ui::custom::TreeView > m_categoryTree;
 	Ref< ui::custom::PreviewList > m_typeList;
 	Ref< ui::Edit > m_editInstanceName;
 	const TypeInfo* m_type;

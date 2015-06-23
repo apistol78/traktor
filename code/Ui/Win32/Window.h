@@ -89,6 +89,8 @@ public:
 
 	HFONT getFont() const;
 
+	int32_t getSystemDPI() const;
+
 	LRESULT sendMessage(UINT message, WPARAM wParam, LPARAM lParam) const;
 
 	operator HWND () const;

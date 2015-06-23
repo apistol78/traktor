@@ -66,9 +66,9 @@ void EditWin32::selectAll()
 
 Size EditWin32::getPreferedSize() const
 {
-	Font currentFont = getFont();
-	int32_t currentFontHeight = abs(currentFont.getSize() * 72) / 96;
-	return Size(128, currentFontHeight + c_heightMargin);
+	int32_t dpi = m_hWnd.getSystemDPI();
+	int32_t currentFontHeight = getFont().getHeight();
+	return Size((128 * dpi) / 96, currentFontHeight + c_heightMargin);
 }
 
 LRESULT EditWin32::eventCommand(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip)

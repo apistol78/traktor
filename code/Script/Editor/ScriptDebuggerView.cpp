@@ -10,6 +10,7 @@
 #include "Script/LocalSimple.h"
 #include "Script/Editor/ScriptBreakpointEvent.h"
 #include "Script/Editor/ScriptDebuggerView.h"
+#include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/Splitter.h"
@@ -51,7 +52,7 @@ bool ScriptDebuggerView::create(ui::Widget* parent)
 	if (!m_debuggerTools->create(this))
 		return false;
 
-	m_debuggerTools->addImage(ui::Bitmap::load(c_ResourceDebug, sizeof(c_ResourceDebug), L"png"), 4);
+	m_debuggerTools->addImage(ui::Bitmap::load(c_ResourceDebug, sizeof(c_ResourceDebug), L"png"), 5);
 	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_CONTINUE"), 1, ui::Command(L"Script.Editor.Continue")));
 	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_BREAK"), 0, ui::Command(L"Script.Editor.Break")));
 	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_STEP_INTO"), 2, ui::Command(L"Script.Editor.StepInto")));
@@ -63,16 +64,16 @@ bool ScriptDebuggerView::create(ui::Widget* parent)
 
 	m_callStackGrid = new ui::custom::GridView();
 	m_callStackGrid->create(splitter, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader);
-	m_callStackGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_FUNCTION"), 180));
-	m_callStackGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_LINE"), 100));
-	m_callStackGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_SCRIPT"), 200));
+	m_callStackGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_FUNCTION"), ui::scaleBySystemDPI(180)));
+	m_callStackGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_LINE"), ui::scaleBySystemDPI(100)));
+	m_callStackGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_SCRIPT"), ui::scaleBySystemDPI(200)));
 	m_callStackGrid->setEnable(false);
 	m_callStackGrid->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptDebuggerView::eventCallStackGridDoubleClick);
 
 	m_localsGrid = new ui::custom::GridView();
 	m_localsGrid->create(splitter, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader);
-	m_localsGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_LOCAL_NAME"), 120));
-	m_localsGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_LOCAL_VALUE"), 300));
+	m_localsGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_LOCAL_NAME"), ui::scaleBySystemDPI(120)));
+	m_localsGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_LOCAL_VALUE"), ui::scaleBySystemDPI(300)));
 	m_localsGrid->setEnable(false);
 
 	m_scriptDebugger->addListener(this);

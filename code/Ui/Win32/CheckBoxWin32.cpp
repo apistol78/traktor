@@ -51,7 +51,11 @@ bool CheckBoxWin32::isChecked() const
 
 Size CheckBoxWin32::getPreferedSize() const
 {
-	return Size(getTextExtent(getText()).cx + 16, 16);
+	int32_t dpi = m_hWnd.getSystemDPI();
+	return Size(
+		getTextExtent(getText()).cx + (16 * dpi) / 96,
+		(16 * dpi) / 96
+	);
 }
 
 LRESULT CheckBoxWin32::eventCommand(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip)

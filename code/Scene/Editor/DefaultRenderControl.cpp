@@ -12,6 +12,7 @@
 #include "Scene/Editor/OrthogonalRenderControl.h"
 #include "Scene/Editor/PerspectiveRenderControl.h"
 #include "Scene/Editor/SceneEditorContext.h"
+#include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
 #include "Ui/MenuItem.h"
@@ -66,7 +67,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolBar->addImage(ui::Bitmap::load(c_ResourceSceneEdit, sizeof(c_ResourceSceneEdit), L"png"), 17);
 	m_toolBar->addImage(ui::Bitmap::load(c_ResourceEntityEdit, sizeof(c_ResourceEntityEdit), L"png"), 5);
 
-	m_toolView = new ui::custom::ToolBarDropDown(ui::Command(L"Scene.Editor.View"), 100, i18n::Text(L"SCENE_EDITOR_VIEW_MODE"));
+	m_toolView = new ui::custom::ToolBarDropDown(ui::Command(L"Scene.Editor.View"), ui::scaleBySystemDPI(100), i18n::Text(L"SCENE_EDITOR_VIEW_MODE"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_PERSPECTIVE"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_FRONT"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_BACK"));
@@ -92,7 +93,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 		guideEnable ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle
 	);
 
-	m_toolAspect = new ui::custom::ToolBarDropDown(ui::Command(1, L"Scene.Editor.Aspect"), 60, i18n::Text(L"SCENE_EDITOR_ASPECT"));
+	m_toolAspect = new ui::custom::ToolBarDropDown(ui::Command(1, L"Scene.Editor.Aspect"), ui::scaleBySystemDPI(60), i18n::Text(L"SCENE_EDITOR_ASPECT"));
 	m_toolAspect->add(L"Full");
 	m_toolAspect->add(L"1:1");
 	m_toolAspect->add(L"4:3");
@@ -104,7 +105,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolAspect->add(L"9:16");
 	m_toolAspect->select(0);
 
-	m_toolPostProcess = new ui::custom::ToolBarDropDown(ui::Command(1, L"Scene.Editor.PostProcessQuality"), 80, i18n::Text(L"SCENE_EDITOR_POST_PROCESS"));
+	m_toolPostProcess = new ui::custom::ToolBarDropDown(ui::Command(1, L"Scene.Editor.PostProcessQuality"), ui::scaleBySystemDPI(80), i18n::Text(L"SCENE_EDITOR_POST_PROCESS"));
 	m_toolPostProcess->add(L"Disabled");
 	m_toolPostProcess->add(L"Low");
 	m_toolPostProcess->add(L"Medium");
@@ -112,7 +113,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolPostProcess->add(L"Ultra");
 	m_toolPostProcess->select(0);
 
-	m_toolShadows = new ui::custom::ToolBarDropDown(ui::Command(1, L"Scene.Editor.ShadowQuality"), 80, i18n::Text(L"SCENE_EDITOR_SHADOWS"));
+	m_toolShadows = new ui::custom::ToolBarDropDown(ui::Command(1, L"Scene.Editor.ShadowQuality"), ui::scaleBySystemDPI(80), i18n::Text(L"SCENE_EDITOR_SHADOWS"));
 	m_toolShadows->add(L"Disabled");
 	m_toolShadows->add(L"Low");
 	m_toolShadows->add(L"Medium");
@@ -120,7 +121,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolShadows->add(L"Ultra");
 	m_toolShadows->select(0);
 
-	m_toolAO = new ui::custom::ToolBarDropDown(ui::Command(1, L"Scene.Editor.AmbientOcclusionQuality"), 80, i18n::Text(L"SCENE_EDITOR_AO"));
+	m_toolAO = new ui::custom::ToolBarDropDown(ui::Command(1, L"Scene.Editor.AmbientOcclusionQuality"), ui::scaleBySystemDPI(80), i18n::Text(L"SCENE_EDITOR_AO"));
 	m_toolAO->add(L"Disabled");
 	m_toolAO->add(L"Low");
 	m_toolAO->add(L"Medium");
@@ -128,7 +129,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolAO->add(L"Ultra");
 	m_toolAO->select(0);
 
-	m_toolAA = new ui::custom::ToolBarDropDown(ui::Command(1, L"Scene.Editor.AntiAliasQuality"), 80, i18n::Text(L"SCENE_EDITOR_AA"));
+	m_toolAA = new ui::custom::ToolBarDropDown(ui::Command(1, L"Scene.Editor.AntiAliasQuality"), ui::scaleBySystemDPI(80), i18n::Text(L"SCENE_EDITOR_AA"));
 	m_toolAA->add(L"Disabled");
 	m_toolAA->add(L"Low");
 	m_toolAA->add(L"Medium");

@@ -16,6 +16,7 @@
 #include "Model/ModelFormat.h"
 #include "Render/ITexture.h"
 #include "Render/Shader/ShaderGraph.h"
+#include "Ui/Application.h"
 #include "Ui/TableLayout.h"
 #include "Ui/CheckBox.h"
 #include "Ui/Container.h"
@@ -195,9 +196,9 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	if (!m_materialShaderList->create(m_containerMaterials, ui::custom::GridView::WsColumnHeader | ui::WsDoubleBuffer))
 		return false;
 
-	m_materialShaderList->addColumn(new ui::custom::GridColumn(i18n::Text(L"MESHASSET_EDITOR_MATERIAL"), 180));
-	m_materialShaderList->addColumn(new ui::custom::GridColumn(i18n::Text(L"MESHASSET_EDITOR_TEMPLATE"), 180));
-	m_materialShaderList->addColumn(new ui::custom::GridColumn(i18n::Text(L"MESHASSET_EDITOR_SHADER"), 300));
+	m_materialShaderList->addColumn(new ui::custom::GridColumn(i18n::Text(L"MESHASSET_EDITOR_MATERIAL"), ui::scaleBySystemDPI(180)));
+	m_materialShaderList->addColumn(new ui::custom::GridColumn(i18n::Text(L"MESHASSET_EDITOR_TEMPLATE"), ui::scaleBySystemDPI(180)));
+	m_materialShaderList->addColumn(new ui::custom::GridColumn(i18n::Text(L"MESHASSET_EDITOR_SHADER"), ui::scaleBySystemDPI(300)));
 	m_materialShaderList->addEventHandler< ui::MouseDoubleClickEvent >(this, &MeshAssetEditor::eventMaterialShaderListDoubleClick);
 
 	// Material textures.
@@ -214,8 +215,8 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	if (!m_materialTextureList->create(m_containerMaterials, ui::custom::GridView::WsColumnHeader | ui::WsDoubleBuffer))
 		return false;
 
-	m_materialTextureList->addColumn(new ui::custom::GridColumn(i18n::Text(L"MESHASSET_EDITOR_TEXTURE_NAME"), 180));
-	m_materialTextureList->addColumn(new ui::custom::GridColumn(i18n::Text(L"MESHASSET_EDITOR_TEXTURE_ASSET"), 300));
+	m_materialTextureList->addColumn(new ui::custom::GridColumn(i18n::Text(L"MESHASSET_EDITOR_TEXTURE_NAME"), ui::scaleBySystemDPI(180)));
+	m_materialTextureList->addColumn(new ui::custom::GridColumn(i18n::Text(L"MESHASSET_EDITOR_TEXTURE_ASSET"), ui::scaleBySystemDPI(300)));
 	m_materialTextureList->addEventHandler< ui::MouseDoubleClickEvent >(this, &MeshAssetEditor::eventMaterialTextureListDoubleClick);
 
 	updateModel();
@@ -293,7 +294,10 @@ void MeshAssetEditor::handleDatabaseEvent(db::Database* database, const Guid& ev
 
 ui::Size MeshAssetEditor::getPreferredSize() const
 {
-	return ui::Size(800, 600);
+	return ui::Size(
+		ui::scaleBySystemDPI(800),
+		ui::scaleBySystemDPI(600)
+	);
 }
 
 void MeshAssetEditor::updateModel()

@@ -5,6 +5,7 @@
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
 #include "Script/Editor/ScriptProfilerView.h"
+#include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/GridView/GridColumn.h"
@@ -46,19 +47,19 @@ bool ScriptProfilerView::create(ui::Widget* parent)
 	if (!m_profilerTools->create(this))
 		return false;
 
-	m_profilerTools->addImage(ui::Bitmap::load(c_ResourceDebug, sizeof(c_ResourceDebug), L"png"), 4);
-	m_profilerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_PROFILER_CLEAR_SAMPLES"), 1, ui::Command(L"Script.Editor.ClearProfile")));
+	m_profilerTools->addImage(ui::Bitmap::load(c_ResourceDebug, sizeof(c_ResourceDebug), L"png"), 5);
+	m_profilerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_PROFILER_CLEAR_SAMPLES"), 4, ui::Command(L"Script.Editor.ClearProfile")));
 	m_profilerTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ScriptProfilerView::eventProfilerToolClick);
 
 	m_profileGrid = new ui::custom::GridView();
 	m_profileGrid->create(this, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader);
-	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_FUNCTION"), 160));
-	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_SCRIPT"), 180));
-	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_INCLUSIVE_TIME"), 100));
-	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_EXCLUSIVE_TIME"), 100));
-	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_INCLUSIVE_PERCENT"), 80));
-	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_EXCLUSIVE_PERCENT"), 80));
-	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_COUNT"), 100));
+	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_FUNCTION"), ui::scaleBySystemDPI(160)));
+	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_SCRIPT"), ui::scaleBySystemDPI(180)));
+	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_INCLUSIVE_TIME"), ui::scaleBySystemDPI(100)));
+	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_EXCLUSIVE_TIME"), ui::scaleBySystemDPI(100)));
+	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_INCLUSIVE_PERCENT"), ui::scaleBySystemDPI(80)));
+	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_EXCLUSIVE_PERCENT"), ui::scaleBySystemDPI(80)));
+	m_profileGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_COUNT"), ui::scaleBySystemDPI(100)));
 
 	return true;
 }

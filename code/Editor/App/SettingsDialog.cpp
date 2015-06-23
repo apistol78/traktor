@@ -1,6 +1,7 @@
 #include "Editor/App/SettingsDialog.h"
 #include "Editor/ISettingsPage.h"
 #include "I18N/Text.h"
+#include "Ui/Application.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/Tab.h"
 #include "Ui/TabPage.h"
@@ -16,7 +17,7 @@ bool SettingsDialog::create(ui::Widget* parent, PropertyGroup* settings, const s
 {
 	Ref< ui::Container > container;
 
-	if (!ui::ConfigDialog::create(parent, i18n::Text(L"EDITOR_SETTINGS_TITLE"), 700, 600, ui::ConfigDialog::WsDefaultResizable, new ui::FloodLayout()))
+	if (!ui::ConfigDialog::create(parent, i18n::Text(L"EDITOR_SETTINGS_TITLE"), ui::scaleBySystemDPI(700), ui::scaleBySystemDPI(600), ui::ConfigDialog::WsDefaultResizable, new ui::FloodLayout()))
 		return false;
 
 	addEventHandler< ui::ButtonClickEvent >(this, &SettingsDialog::eventDialogClick);

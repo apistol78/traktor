@@ -103,13 +103,7 @@ int ScrollBarWin32::getPosition() const
 
 Size ScrollBarWin32::getPreferedSize() const
 {
-	int32_t dpi = 96;
-	HDC hDC = GetDC(m_hWnd);
-	if (hDC != NULL)
-	{
-		dpi = GetDeviceCaps(hDC, LOGPIXELSX);
-		ReleaseDC(m_hWnd, hDC);
-	}
+	int32_t dpi = m_hWnd.getSystemDPI();
 	return Size((16 * dpi) / 96, (16 * dpi) / 96);
 }
 

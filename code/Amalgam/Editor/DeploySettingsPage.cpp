@@ -4,6 +4,7 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
+#include "Ui/Application.h"
 #include "Ui/Container.h"
 #include "Ui/NumericEditValidator.h"
 #include "Ui/Static.h"
@@ -79,8 +80,8 @@ bool DeploySettingsPage::create(ui::Container* parent, PropertyGroup* settings, 
 
 	Ref< ui::custom::GridView > gridEnvironment = new ui::custom::GridView();
 	gridEnvironment->create(containerEnvironment, ui::WsDoubleBuffer);
-	gridEnvironment->addColumn(new ui::custom::GridColumn(L"Name", 200));
-	gridEnvironment->addColumn(new ui::custom::GridColumn(L"Value", 400));
+	gridEnvironment->addColumn(new ui::custom::GridColumn(L"Name", ui::scaleBySystemDPI(200)));
+	gridEnvironment->addColumn(new ui::custom::GridColumn(L"Value", ui::scaleBySystemDPI(400)));
 
 	Ref< PropertyGroup > settingsEnvironment = settings->getProperty< PropertyGroup >(L"Amalgam.Environment");
 	if (settingsEnvironment)

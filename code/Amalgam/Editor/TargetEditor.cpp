@@ -16,6 +16,7 @@
 #include "Drawing/Image.h"
 #include "Drawing/Filters/ScaleFilter.h"
 #include "Editor/IEditor.h"
+#include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Button.h"
 #include "Ui/Container.h"
@@ -58,7 +59,7 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	m_containerOuter->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 4, 4));
 
 	Ref< ui::custom::Splitter > splitterInner = new ui::custom::Splitter();
-	splitterInner->create(m_containerOuter, true, 200, false, 100);
+	splitterInner->create(m_containerOuter, true, ui::scaleBySystemDPI(200), false, ui::scaleBySystemDPI(100));
 
 	Ref< ui::Container > containerTargetConfigurations = new ui::Container();
 	containerTargetConfigurations->create(splitterInner, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, 4));
@@ -260,7 +261,10 @@ void TargetEditor::handleDatabaseEvent(db::Database* database, const Guid& event
 
 ui::Size TargetEditor::getPreferredSize() const
 {
-	return ui::Size(1000, 600);
+	return ui::Size(
+		ui::scaleBySystemDPI(1000),
+		ui::scaleBySystemDPI(600)
+	);
 }
 
 void TargetEditor::updateTargetConfigurations()
