@@ -4,7 +4,7 @@
 #include "Core/Settings/PropertyObject.h"
 #include "Editor/App/BrowseTypeDialog.h"
 #include "I18N/Text.h"
-#include "UI/Application.h"
+#include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/HierarchicalState.h"
 #include "Ui/Static.h"
