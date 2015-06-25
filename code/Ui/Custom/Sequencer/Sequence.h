@@ -41,7 +41,7 @@ public:
 
 	const std::wstring& getDescription() const;
 
-	int32_t addButton(Bitmap* imageUp, Bitmap* imageDown, const Command& command);
+	int32_t addButton(Bitmap* imageUp, Bitmap* imageDown, const Command& command, bool toggle = false);
 
 	void setButtonState(int32_t buttonIndex, bool state);
 
@@ -77,6 +77,7 @@ private:
 		Ref< Bitmap > imageUp;
 		Ref< Bitmap > imageDown;
 		Command command;
+		bool toggle;
 		bool state;
 		Rect rc;
 	};

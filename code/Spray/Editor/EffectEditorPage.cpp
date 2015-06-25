@@ -58,6 +58,7 @@
 // Resources
 #include "Resources/Playback.h"
 #include "Resources/EffectEdit.h"
+#include "Resources/LayerDelete.h"
 #include "Resources/LayerVisible.h"
 #include "Resources/LayerHidden.h"
 
@@ -500,6 +501,7 @@ void EffectEditorPage::updateSequencer()
 	}
 
 	// Add each effect layers to sequencer.
+	Ref< ui::Bitmap > layerDelete = ui::Bitmap::load(c_ResourceLayerDelete, sizeof(c_ResourceLayerDelete), L"png");
 	Ref< ui::Bitmap > layerVisible = ui::Bitmap::load(c_ResourceLayerVisible, sizeof(c_ResourceLayerVisible), L"png");
 	Ref< ui::Bitmap > layerHidden = ui::Bitmap::load(c_ResourceLayerHidden, sizeof(c_ResourceLayerHidden), L"png");
 
@@ -507,7 +509,8 @@ void EffectEditorPage::updateSequencer()
 	for (RefArray< EffectLayerData >::const_iterator i = layers.begin(); i != layers.end(); ++i)
 	{
 		Ref< ui::custom::Sequence > layerItem = new ui::custom::Sequence((*i)->getName());
-		layerItem->addButton(layerVisible, layerHidden, ui::Command(L"Effect.Editor.ToggleLayerVisible"));
+		layerItem->addButton(layerDelete, layerDelete, ui::Command(L"Effect.Editor.DeleteLayer"));
+		layerItem->addButton(layerVisible, layerHidden, ui::Command(L"Effect.Editor.ToggleLayerVisible"), true);
 		layerItem->setButtonState(0, visibleStates[*i]);
 		layerItem->setData(L"LAYERDATA", *i);
 		
@@ -681,7 +684,17 @@ void EffectEditorPage::eventSequencerKeyMove(ui::custom::KeyMoveEvent* event)
 
 void EffectEditorPage::eventSequencerLayerClick(ui::custom::SequenceButtonClickEvent* event)
 {
-	updateEffectPreview();
+	if (event->getCommand() == L"Effect.Editor.DeleteLayer")
+	{
+		m_document->push();
+		RefArray< EffectLayerData > layers = m_effectData->getLayers();
+		layers.remove(event->getSequence()->getData< EffectLayerData >(L"LAYERDATA"));
+		m_effectData->setLayers(layers);
+		updateSequencer();
+		updateEffectPreview();
+	}
+	else if (event->getCommand() == L"Effect.Editor.ToggleLayerVisible")
+		updateEffectPreview();
 }
 
 void EffectEditorPage::eventSequencerButtonDown(ui::MouseButtonDownEvent* event)

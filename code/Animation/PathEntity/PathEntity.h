@@ -47,7 +47,7 @@ public:
 		virtual void notifyPathFinished(PathEntity* entity) = 0;
 	};
 
-	PathEntity(const Transform& transform, const TransformPath& path, TimeMode timeMode, world::Entity* entity);
+	PathEntity(const Transform& transform, const TransformPath& path, TimeMode timeMode, float timeOffset, world::Entity* entity);
 
 	virtual ~PathEntity();
 
