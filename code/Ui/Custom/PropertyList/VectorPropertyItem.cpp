@@ -1,6 +1,10 @@
 #include <cstring>
 #include <limits>
+#include "Core/Io/StringOutputStream.h"
+#include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
+#include "Ui/Application.h"
+#include "Ui/Clipboard.h"
 #include "Ui/Edit.h"
 #include "Ui/NumericEditValidator.h"
 #include "Ui/Custom/PropertyList/VectorPropertyItem.h"
@@ -128,6 +132,42 @@ void VectorPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 			AnCenter
 		);
 	}
+}
+
+bool VectorPropertyItem::copy()
+{
+	Clipboard* clipboard = Application::getInstance()->getClipboard();
+	if (clipboard)
+	{
+		StringOutputStream ss;
+		for (int i = 0; i < m_dimension; ++i)
+		{
+			if (i > 0)
+				ss << L",";
+			ss << m_value[i];
+		}
+		return clipboard->setText(ss.str());
+	}
+	else
+		return false;
+}
+
+bool VectorPropertyItem::paste()
+{
+	Clipboard* clipboard = Application::getInstance()->getClipboard();
+	if (!clipboard)
+		return false;
+
+	std::vector< float > values;
+	Split< std::wstring, float >::any(clipboard->getText(), L",", values, true);
+	if (values.size() >= m_dimension)
+	{
+		for (int i = 0; i < m_dimension; ++i)
+			m_value[i] = values[i];
+		return true;
+	}
+	else
+		return false;
 }
 
 void VectorPropertyItem::eventEditFocus(FocusEvent* event)
