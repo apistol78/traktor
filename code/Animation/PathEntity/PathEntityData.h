@@ -44,11 +44,14 @@ public:
 
 	const PathEntity::TimeMode getTimeMode() const { return m_timeMode; }
 
+	float getTimeOffset() const { return m_timeOffset; }
+
 	world::EntityData* getEntityData() const { return m_entityData; }
 
 private:
 	TransformPath m_path;
 	PathEntity::TimeMode m_timeMode;
+	float m_timeOffset;
 	Ref< world::EntityData > m_entityData;
 };
 

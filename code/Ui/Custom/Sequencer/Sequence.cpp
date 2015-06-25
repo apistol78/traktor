@@ -39,12 +39,13 @@ const std::wstring& Sequence::getDescription() const
 	return m_description;
 }
 
-int32_t Sequence::addButton(Bitmap* imageUp, Bitmap* imageDown, const Command& command)
+int32_t Sequence::addButton(Bitmap* imageUp, Bitmap* imageDown, const Command& command, bool toggle)
 {
 	Button btn;
 	btn.imageUp = imageUp;
 	btn.imageDown = imageDown;
 	btn.command = command;
+	btn.toggle = toggle;
 	btn.state = false;
 	m_buttons.push_back(btn);
 	return int32_t(m_buttons.size() - 1);
@@ -108,13 +109,15 @@ void Sequence::mouseDown(SequencerControl* sequencer, const Point& at, const Rec
 		{
 			if (m_buttons[i].rc.inside(Point(at.x + rc.left, at.y + rc.top)))
 			{
-				// Toggle button state.
-				m_buttons[i].state = !m_buttons[i].state;
+				if (m_buttons[i].toggle)
+				{
+					// Toggle button state.
+					m_buttons[i].state = !m_buttons[i].state;
+				}
 
 				// Notify button listeners.
 				SequenceButtonClickEvent clickEvent(sequencer, this, m_buttons[i].command);
 				sequencer->raiseEvent(&clickEvent);
-
 				break;
 			}
 		}

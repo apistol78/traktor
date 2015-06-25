@@ -8,14 +8,14 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.PathEntity", PathEntity, world::Entity)
 
-PathEntity::PathEntity(const Transform& transform, const TransformPath& path, TimeMode timeMode, world::Entity* entity)
+PathEntity::PathEntity(const Transform& transform, const TransformPath& path, TimeMode timeMode, float timeOffset, world::Entity* entity)
 :	m_transform(transform)
 ,	m_path(path)
 ,	m_timeMode(timeMode)
 ,	m_entity(entity)
 ,	m_timeScale(1.0f)
 ,	m_timeDeltaSign(1.0f)
-,	m_time(0.0f)
+,	m_time(timeOffset)
 {
 }
 

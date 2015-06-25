@@ -1,6 +1,7 @@
 #ifndef traktor_spray_SpawnEffectEvent_H
 #define traktor_spray_SpawnEffectEvent_H
 
+#include "Core/Math/Transform.h"
 #include "Resource/Proxy.h"
 #include "World/IEntityEvent.h"
 
@@ -29,6 +30,7 @@ public:
 	SpawnEffectEvent(
 		sound::ISoundPlayer* soundPlayer,
 		const resource::Proxy< Effect >& effect,
+		Transform transform,
 		bool follow,
 		bool useRotation
 	);
@@ -40,6 +42,7 @@ private:
 
 	Ref< sound::ISoundPlayer > m_soundPlayer;
 	resource::Proxy< Effect > m_effect;
+	Transform m_transform;
 	bool m_follow;
 	bool m_useRotation;
 };

@@ -83,6 +83,7 @@ Ref< world::IEntityEvent > EffectEntityFactory::createEntityEvent(const world::I
 		return new SpawnEffectEvent(
 			m_soundPlayer,
 			effect,
+			spawnEventData->getTransform(),
 			spawnEventData->getFollow(),
 			spawnEventData->getUseRotation()
 		);

@@ -1,6 +1,7 @@
 #ifndef traktor_spray_SpawnEffectEventData_H
 #define traktor_spray_SpawnEffectEventData_H
 
+#include "Core/Math/Transform.h"
 #include "Resource/Id.h"
 #include "World/IEntityEventData.h"
 
@@ -33,12 +34,15 @@ public:
 
 	const resource::Id< Effect >& getEffect() const { return m_effect; }
 
+	const Transform& getTransform() const { return m_transform; }
+
 	bool getFollow() const { return m_follow; }
 
 	bool getUseRotation() const { return m_useRotation; }
 
 private:
 	resource::Id< Effect > m_effect;
+	Transform m_transform;
 	bool m_follow;
 	bool m_useRotation;
 };

@@ -11804,6 +11804,10 @@
 							<fileName>../../../res/LayerVisible.png</fileName>
 							<items/>
 						</item>
+						<item type="File">
+							<fileName>../../../res/LayerDelete.png</fileName>
+							<items/>
+						</item>
 					</items>
 				</item>
 			</items>
