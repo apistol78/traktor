@@ -50,6 +50,10 @@ protected:
 
 	virtual void paintValue(Canvas& canvas, const Rect& rc);
 
+	virtual bool copy();
+
+	virtual bool paste();
+
 private:
 	Ref< Edit > m_editors[MaxDimension];
 	vector_t m_value;
