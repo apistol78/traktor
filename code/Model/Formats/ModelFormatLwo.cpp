@@ -86,7 +86,7 @@ uint32_t uvChannel(std::vector< std::string >& inoutChannels, const std::string 
 {
 	std::vector< std::string >::iterator i = std::find(inoutChannels.begin(), inoutChannels.end(), vmap);
 	if (i != inoutChannels.end())
-		return std::distance(inoutChannels.begin(), i);
+		return uint32_t(std::distance(inoutChannels.begin(), i));
 
 	uint32_t channel = uint32_t(inoutChannels.size());
 	inoutChannels.push_back(vmap);

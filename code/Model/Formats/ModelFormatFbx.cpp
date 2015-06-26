@@ -216,7 +216,7 @@ uint32_t uvChannel(std::vector< std::string >& inoutChannels, const std::string 
 {
 	std::vector< std::string >::iterator i = std::find(inoutChannels.begin(), inoutChannels.end(), uvSet);
 	if (i != inoutChannels.end())
-		return std::distance(inoutChannels.begin(), i);
+		return uint32_t(std::distance(inoutChannels.begin(), i));
 
 	uint32_t channel = uint32_t(inoutChannels.size());
 	inoutChannels.push_back(uvSet);
@@ -243,7 +243,7 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 	int32_t materialCount = 0;
 	if (importFlags & ModelFormat::IfMaterials)
 	{
-		materialBase = outModel.getMaterials().size();
+		materialBase = uint32_t(outModel.getMaterials().size());
 		materialCount = meshNode->GetMaterialCount();
 		for (int32_t i = 0; i < materialCount; ++i)
 		{
@@ -417,7 +417,7 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 		if (!controlPoints)
 			return false;
 
-		positionBase = outModel.getPositions().size();
+		positionBase = uint32_t(outModel.getPositions().size());
 
 		int32_t controlPointsCount = mesh->GetControlPointsCount();
 		for (int32_t i = 0; i < controlPointsCount; ++i)

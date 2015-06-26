@@ -136,7 +136,7 @@ uint8_t* parseA2V(Model& model, uint8_t* ptr, ModelBase& base)
 	std::vector< Vertex > vertices = model.getVertices();
 	if (base.vertexBase == c_InvalidIndex)
 	{
-		base.vertexBase = vertices.size();
+		base.vertexBase = uint32_t(vertices.size());
 		vertices.resize(vertices.size() + count);
 	}
 
@@ -373,7 +373,7 @@ Ref< Model > ModelFormatNmb::read(IStream* stream, uint32_t importFlags) const
 	NmbGeometryHeader* header = reinterpret_cast< NmbGeometryHeader* >(ptr);
 	ptr += sizeof(NmbGeometryHeader);
 
-	for (int32_t i = 0; i < header->nchunks; ++i)
+	for (uint32_t i = 0; i < header->nchunks; ++i)
 	{
 		ptr = parseChunk(*model, ptr);
 		if (!ptr)

@@ -177,7 +177,7 @@ public:
 	
 	uint32_t getPositionAttrCount() const { return m_vertexDataInfo.first->getCount(); }
 
-	uint32_t getPolygonCount() const { return m_vertexCounts.size(); }
+	uint32_t getPolygonCount() const { return uint32_t(m_vertexCounts.size()); }
 
 	uint32_t getVertexCount(int polygonIndex) const { return m_vertexCounts[polygonIndex]; }
 

@@ -115,7 +115,7 @@ public:
 		m_values = values;
 		m_indices.clear();
 
-		for (size_t i = 0; i < m_values.size(); ++i)
+		for (uint32_t i = 0; i < uint32_t(m_values.size()); ++i)
 		{
 			Vector2 p = PositionAccessor::get(m_values[i]) / m_cellSize;
 
