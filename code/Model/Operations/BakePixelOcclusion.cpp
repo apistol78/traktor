@@ -17,39 +17,15 @@ namespace traktor
 
 struct BakePixelVisitor
 {
-	RandomGeometry& random;
-	const SahTree& sah;
+	RandomGeometry random;
+	SahTree sah;
 	uint32_t rayCount;
 	Scalar raySpread;
 	Scalar rayBias;
 	Vector4 P[3];
 	Vector4 N[3];
-	drawing::Image& outImage;
+	drawing::Image* outImage;
 	SahTree::QueryCache cache;
-
-	BakePixelVisitor(
-		RandomGeometry& _random,
-		const SahTree& _sah,
-		uint32_t _rayCount,
-		float _raySpread,
-		float _rayBias,
-		const Vector4 _P[3],
-		const Vector4 _N[3],
-		drawing::Image& _outImage
-	)
-	:	random(_random)
-	,	sah(_sah)
-	,	rayCount(_rayCount)
-	,	raySpread(_raySpread)
-	,	rayBias(_rayBias)
-	,	outImage(_outImage)
-	{
-		for (int i = 0; i < 3; ++i)
-		{
-			P[i] = _P[i];
-			N[i] = _N[i];
-		}
-	}
 
 	void operator () (int32_t x, int32_t y, float alpha, float beta, float gamma)
 	{
@@ -59,14 +35,14 @@ struct BakePixelVisitor
 		uint32_t occluded = 0;
 		for (uint32_t j = 0; j < rayCount; ++j)
 		{
-			Vector4 rayDirection = lerp(normal, random.nextHemi(normal), raySpread).normalized().xyz0();
-			Vector4 rayOrigin = (position + normal * rayBias).xyz1();
+			Vector4 rayDirection = lerp(normal, random.nextHemi(normal), raySpread).normalized();
+			Vector4 rayOrigin = position + normal * rayBias;
 			if (sah.queryAnyIntersection(rayOrigin, rayDirection, 100.0f, cache))
 				occluded++;
 		}
 
 		float occf = 1.0f - float(occluded) / rayCount;
-		outImage.setPixel(x, y, Color4f(occf, occf, occf, 1.0f));
+		outImage->setPixel(x, y, Color4f(occf, occf, occf, 1.0f));
 	}
 };
 
@@ -89,8 +65,6 @@ BakePixelOcclusion::BakePixelOcclusion(
 
 bool BakePixelOcclusion::apply(Model& model) const
 {
-	RandomGeometry rnd;
-
 	const std::vector< Polygon >& polygons = model.getPolygons();
 	std::vector< Vertex > vertices = model.getVertices();
 
@@ -110,9 +84,14 @@ bool BakePixelOcclusion::apply(Model& model) const
 		}
 	}
 
+	BakePixelVisitor visitor;
+	visitor.rayCount = m_rayCount;
+	visitor.raySpread = Scalar(m_raySpread);
+	visitor.rayBias = Scalar(m_rayBias);
+	visitor.outImage = m_occlusionImage;
+
 	// Build acceleration tree.
-	SahTree sah;
-	sah.build(windings);
+	visitor.sah.build(windings);
 
 	// Create occlusion image.
 	m_occlusionImage->clear(Color4f(1.0f, 1.0f, 1.0f, 0.0f));
@@ -120,7 +99,6 @@ bool BakePixelOcclusion::apply(Model& model) const
 	// Trace each polygon in UV space.
 	Vector2 dim(float(m_occlusionImage->getWidth()), float(m_occlusionImage->getHeight()));
 	Vector2 uv[3];
-	Vector4 P[3], N[3];
 
 	for (uint32_t i = 0; i < polygons.size(); ++i)
 	{
@@ -139,9 +117,9 @@ bool BakePixelOcclusion::apply(Model& model) const
 		uv[1] = model.getTexCoord(tc1) * dim;
 		uv[2] = model.getTexCoord(tc2) * dim;
 
-		P[0] = model.getPosition(v0.getPosition());
-		P[1] = model.getPosition(v1.getPosition());
-		P[2] = model.getPosition(v2.getPosition());
+		visitor.P[0] = model.getPosition(v0.getPosition());
+		visitor.P[1] = model.getPosition(v1.getPosition());
+		visitor.P[2] = model.getPosition(v2.getPosition());
 
 		int32_t n0 = v0.getNormal();
 		int32_t n1 = v1.getNormal();
@@ -150,23 +128,20 @@ bool BakePixelOcclusion::apply(Model& model) const
 		if (n0 == c_InvalidIndex || n1 == c_InvalidIndex || n2 == c_InvalidIndex)
 			continue;
 
-		N[0] = model.getNormal(n0);
-		N[1] = model.getNormal(n1);
-		N[2] = model.getNormal(n2);
+		visitor.N[0] = model.getNormal(n0);
+		visitor.N[1] = model.getNormal(n1);
+		visitor.N[2] = model.getNormal(n2);
 
+		Vector2 l = uv[1] - uv[0];
+		Vector2 r = uv[2] - uv[0];
+		if (l.x * r.y - r.x * l.y > 0.0f)
 		{
-			BakePixelVisitor visitor(rnd, sah, m_rayCount, m_raySpread, m_rayBias, P, N, *m_occlusionImage);
-			triangle(uv[0], uv[1], uv[2], visitor);
+			std::swap(uv[0], uv[2]);
+			std::swap(visitor.P[0], visitor.P[2]);
+			std::swap(visitor.N[0], visitor.N[2]);
 		}
 
-		std::swap(uv[0], uv[2]);
-		std::swap(P[0], P[2]);
-		std::swap(N[0], N[2]);
-
-		{
-			BakePixelVisitor visitor(rnd, sah, m_rayCount, m_raySpread, m_rayBias, P, N, *m_occlusionImage);
-			triangle(uv[0], uv[1], uv[2], visitor);
-		}
+		triangle(uv[0], uv[1], uv[2], visitor);
 	}
 
 	drawing::DilateFilter dilateFilter(4);

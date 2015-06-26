@@ -70,7 +70,7 @@ public:
 
 	const points_t& getPoints() const { return m_points; }
 
-	uint32_t size() const { return m_points.size(); }
+	uint32_t size() const { return uint32_t(m_points.size()); }
 
 	bool empty() const { return m_points.empty(); }
 

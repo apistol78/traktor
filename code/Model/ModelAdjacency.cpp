@@ -34,12 +34,12 @@ void ModelAdjacency::add(uint32_t polygon)
 		e.index = i;
 		m_edges.push_back(e);
 
-		uint32_t edge = m_edges.size() - 1;
+		uint32_t edge = uint32_t(m_edges.size()) - 1;
 
 		uint32_t leftIndex0, leftIndex1;
 		getEdgeIndices(edge, leftIndex0, leftIndex1);
 
-		for (uint32_t j = 0; j < m_edges.size(); ++j)
+		for (uint32_t j = 0; j < uint32_t(m_edges.size()); ++j)
 		{
 			if (edge == j)
 				continue;
@@ -178,7 +178,7 @@ void ModelAdjacency::getSharedEdges(uint32_t polygon, uint32_t polygonEdge, std:
 
 uint32_t ModelAdjacency::getSharedEdgeCount(uint32_t edge) const
 {
-	return m_edges[edge].share.size();
+	return uint32_t(m_edges[edge].share.size());
 }
 
 uint32_t ModelAdjacency::getSharedEdgeCount(uint32_t polygon, uint32_t polygonEdge) const
@@ -186,7 +186,7 @@ uint32_t ModelAdjacency::getSharedEdgeCount(uint32_t polygon, uint32_t polygonEd
 	for (std::vector< Edge >::const_iterator i = m_edges.begin(); i != m_edges.end(); ++i)
 	{
 		if (i->polygon == polygon && i->index == polygonEdge)
-			return i->share.size();
+			return uint32_t(i->share.size());
 	}
 	return 0;
 }
@@ -203,7 +203,7 @@ uint32_t ModelAdjacency::getPolygonEdge(uint32_t edge) const
 
 uint32_t ModelAdjacency::getEdgeCount() const
 {
-	return m_edges.size();
+	return uint32_t(m_edges.size());
 }
 
 void ModelAdjacency::getEdgeIndices(uint32_t edge, uint32_t& outIndex0, uint32_t& outIndex1) const

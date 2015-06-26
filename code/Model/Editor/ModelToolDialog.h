@@ -26,13 +26,15 @@ class IResourceManager;
 	namespace ui
 	{
 
-class ListBox;
+class PopupMenu;
 
 		namespace custom
 		{
 
 class ToolBarButton;
 class ToolBarButtonClickEvent;
+class TreeView;
+class TreeViewItem;
 
 		}
 	}
@@ -71,12 +73,13 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolCull;
 	Ref< ui::custom::ToolBarButton > m_toolNonSharedEdges;
 	Ref< ui::custom::ToolBarButton > m_toolUV;
-	Ref< ui::ListBox > m_modelList;
+	Ref< ui::custom::TreeView > m_modelTree;
+	Ref< ui::PopupMenu > m_modelRootPopup;
+	Ref< ui::PopupMenu > m_modelChildPopup;
 	Ref< ui::Widget > m_renderWidget;
 	Ref< Model > m_model;
 	Ref< Model > m_modelTris;
 	Ref< ModelAdjacency > m_modelAdjacency;
-	std::wstring m_modelName;
 	float m_cameraHead;
 	float m_cameraPitch;
 	float m_cameraZ;
@@ -85,17 +88,19 @@ private:
 
 	bool loadModel();
 
-	bool saveModel();
+	bool saveModel(Model* model);
 
-	bool removeModel();
+	void bakeOcclusion(Model* model);
 
-	bool applyOperation(const IModelOperation* operation);
+	void updateOperations(ui::custom::TreeViewItem* itemModel);
 
 	void eventDialogClose(ui::CloseEvent* event);
 
 	void eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event);
 
-	void eventModelListSelect(ui::SelectionChangeEvent* event);
+	void eventModelTreeButtonDown(ui::MouseButtonDownEvent* event);
+
+	void eventModelTreeSelect(ui::SelectionChangeEvent* event);
 
 	void eventMouseDown(ui::MouseButtonDownEvent* event);
 

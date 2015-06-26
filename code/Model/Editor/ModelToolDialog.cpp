@@ -7,7 +7,6 @@
 #include "Model/ModelAdjacency.h"
 #include "Model/ModelFormat.h"
 #include "Model/Editor/ModelToolDialog.h"
-#include "Model/Operations/Boolean.h"
 #include "Model/Operations/BakePixelOcclusion.h"
 #include "Model/Operations/CalculateConvexHull.h"
 #include "Model/Operations/CalculateOccluder.h"
@@ -25,13 +24,16 @@
 #include "Resource/IResourceManager.h"
 #include "Ui/Application.h"
 #include "Ui/FileDialog.h"
-#include "Ui/ListBox.h"
+#include "Ui/MenuItem.h"
+#include "Ui/PopupMenu.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
+#include "Ui/Custom/TreeView/TreeView.h"
+#include "Ui/Custom/TreeView/TreeViewItem.h"
 #include "Ui/Itf/IWidget.h"
 
 namespace traktor
@@ -63,7 +65,7 @@ ModelToolDialog::ModelToolDialog(
 
 bool ModelToolDialog::create(ui::Widget* parent)
 {
-	if (!ui::Dialog::create(parent, L"Model Tool", ui::scaleBySystemDPI(800), ui::scaleBySystemDPI(600), ui::Dialog::WsDefaultResizable, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
+	if (!ui::Dialog::create(parent, L"Model Tool", ui::scaleBySystemDPI(1000), ui::scaleBySystemDPI(800), ui::Dialog::WsDefaultResizable, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
 
 	addEventHandler< ui::CloseEvent >(this, &ModelToolDialog::eventDialogClose);
@@ -71,23 +73,6 @@ bool ModelToolDialog::create(ui::Widget* parent)
 	Ref< ui::custom::ToolBar > toolBar = new ui::custom::ToolBar();
 	toolBar->create(this);
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Load...", ui::Command(L"ModelTool.Load"), ui::custom::ToolBarButton::BsText));
-	toolBar->addItem(new ui::custom::ToolBarButton(L"Save", ui::Command(L"ModelTool.Save"), ui::custom::ToolBarButton::BsText));
-	toolBar->addItem(new ui::custom::ToolBarButton(L"Save As...", ui::Command(L"ModelTool.SaveAs"), ui::custom::ToolBarButton::BsText));
-	toolBar->addItem(new ui::custom::ToolBarButton(L"Remove", ui::Command(L"ModelTool.Remove"), ui::custom::ToolBarButton::BsText));
-	toolBar->addItem(new ui::custom::ToolBarSeparator());
-	toolBar->addItem(new ui::custom::ToolBarButton(L"Clean Degenerate", ui::Command(L"ModelTool.CleanDegenerate"), ui::custom::ToolBarButton::BsText));
-	toolBar->addItem(new ui::custom::ToolBarButton(L"Clean Duplicates", ui::Command(L"ModelTool.CleanDuplicates"), ui::custom::ToolBarButton::BsText));
-	toolBar->addItem(new ui::custom::ToolBarButton(L"Quantize", ui::Command(L"ModelTool.Quantize"), ui::custom::ToolBarButton::BsText));
-	toolBar->addItem(new ui::custom::ToolBarButton(L"Reduce", ui::Command(L"ModelTool.Reduce"), ui::custom::ToolBarButton::BsText));
-#if defined(T_USE_SIMPLYGON_SDK)
-	toolBar->addItem(new ui::custom::ToolBarButton(L"Reduce (Simplygon)", ui::Command(L"ModelTool.ReduceSimplygon"), ui::custom::ToolBarButton::BsText));
-#endif
-	toolBar->addItem(new ui::custom::ToolBarButton(L"Merge Coplanar", ui::Command(L"ModelTool.MergeCoplanar"), ui::custom::ToolBarButton::BsText));
-	toolBar->addItem(new ui::custom::ToolBarButton(L"Convex Hull", ui::Command(L"ModelTool.ConvexHull"), ui::custom::ToolBarButton::BsText));
-	toolBar->addItem(new ui::custom::ToolBarButton(L"Triangulate", ui::Command(L"ModelTool.Triangulate"), ui::custom::ToolBarButton::BsText));
-	toolBar->addItem(new ui::custom::ToolBarButton(L"Union", ui::Command(L"ModelTool.Union"), ui::custom::ToolBarButton::BsText));
-	toolBar->addItem(new ui::custom::ToolBarButton(L"Occluder", ui::Command(L"ModelTool.Occluder"), ui::custom::ToolBarButton::BsText));
-	toolBar->addItem(new ui::custom::ToolBarButton(L"Bake Occlusion", ui::Command(L"ModelTool.BakeOcclusion"), ui::custom::ToolBarButton::BsText));
 	toolBar->addItem(new ui::custom::ToolBarSeparator());
 
 	m_toolSolid = new ui::custom::ToolBarButton(L"Solid", ui::Command(L"ModelTool.ToggleSolid"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggled);
@@ -114,14 +99,48 @@ bool ModelToolDialog::create(ui::Widget* parent)
 	toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ModelToolDialog::eventToolBarClick);
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
-	splitter->create(this, true, ui::scaleBySystemDPI(200), false);
+	splitter->create(this, true, ui::scaleBySystemDPI(300), false);
 
-	m_modelList = new ui::ListBox();
-	m_modelList->create(splitter, L"", ui::ListBox::WsMultiple | ui::WsClientBorder);
-	m_modelList->addEventHandler< ui::SelectionChangeEvent >(this, &ModelToolDialog::eventModelListSelect);
+	m_modelTree = new ui::custom::TreeView();
+	m_modelTree->create(splitter, ui::WsDoubleBuffer);
+	m_modelTree->addEventHandler< ui::MouseButtonDownEvent >(this, &ModelToolDialog::eventModelTreeButtonDown);
+	m_modelTree->addEventHandler< ui::SelectionChangeEvent >(this, &ModelToolDialog::eventModelTreeSelect);
+
+	m_modelRootPopup = new ui::PopupMenu();
+	m_modelRootPopup->create();
+
+	Ref< ui::MenuItem > modelRootPopupAdd = new ui::MenuItem(L"Add Operation...");
+	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.CleanDegenerate"), L"Clean Degenerate"));
+	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.CleanDuplicates"), L"Clean Duplicates"));
+	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.ConvexHull"), L"Convex Hull"));
+	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.MergeCoplanar"), L"Merge Coplanar"));
+	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.Occluder"), L"Occluder"));
+	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.Quantize"), L"Quantize"));
+	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.Reduce"), L"Reduce"));
+	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.Triangulate"), L"Triangulate"));
+	m_modelRootPopup->add(modelRootPopupAdd);
+
+	Ref< ui::MenuItem > modelRootPopupPerform = new ui::MenuItem(L"Perform Operation...");
+	modelRootPopupPerform->add(new ui::MenuItem(ui::Command(L"ModelTool.BakeOcclusion"), L"Bake Occlusion..."));
+	m_modelRootPopup->add(modelRootPopupPerform);
+
+	m_modelRootPopup->add(new ui::MenuItem(L"-"));
+	m_modelRootPopup->add(new ui::MenuItem(ui::Command(L"ModelTool.SaveAs"), L"Save As..."));
+	m_modelRootPopup->add(new ui::MenuItem(ui::Command(L"ModelTool.Remove"), L"Remove"));
+
+	m_modelChildPopup = new ui::PopupMenu();
+	m_modelChildPopup->create();
+
+	Ref< ui::MenuItem > modelChildPopupPerform = new ui::MenuItem(L"Perform Operation...");
+	modelChildPopupPerform->add(new ui::MenuItem(ui::Command(L"ModelTool.BakeOcclusion"), L"Bake Occlusion..."));
+	m_modelChildPopup->add(modelChildPopupPerform);
+
+	m_modelChildPopup->add(new ui::MenuItem(L"-"));
+	m_modelChildPopup->add(new ui::MenuItem(ui::Command(L"ModelTool.SaveAs"), L"Save As..."));
+	m_modelChildPopup->add(new ui::MenuItem(ui::Command(L"ModelTool.Remove"), L"Remove"));
 
 	m_renderWidget = new ui::Widget();
-	m_renderWidget->create(splitter, ui::WsClientBorder);
+	m_renderWidget->create(splitter, ui::WsNone);
 	m_renderWidget->addEventHandler< ui::MouseButtonDownEvent >(this, &ModelToolDialog::eventMouseDown);
 	m_renderWidget->addEventHandler< ui::MouseButtonUpEvent >(this, &ModelToolDialog::eventMouseUp);
 	m_renderWidget->addEventHandler< ui::MouseMoveEvent >(this, &ModelToolDialog::eventMouseMove);
@@ -180,20 +199,18 @@ bool ModelToolDialog::loadModel()
 		Aabb3 boundingBox = model->getBoundingBox();
 		Transform(translate(-boundingBox.getCenter())).apply(*model);
 
-		m_modelList->add(i->getFileName(), model);
+		Ref< ui::custom::TreeViewItem > item = m_modelTree->createItem(0, i->getFileName());
+		item->setData(L"MODEL", model);
 	}
 
-	m_modelList->update();
+	m_modelTree->update();
 	return true;
 }
 
-bool ModelToolDialog::saveModel()
+bool ModelToolDialog::saveModel(Model* model)
 {
-	if (!m_model)
-		return false;
-
 	ui::FileDialog fileDialog;
-	if (!fileDialog.create(this, L"Load model(s)...", L"All files;*.*", true))
+	if (!fileDialog.create(this, L"Save model as...", L"All files;*.*", true))
 		return false;
 
 	Path fileName;
@@ -204,43 +221,62 @@ bool ModelToolDialog::saveModel()
 	}
 	fileDialog.destroy();
 
-	return ModelFormat::writeAny(fileName, m_model);
+	return ModelFormat::writeAny(fileName, model);
 }
 
-bool ModelToolDialog::removeModel()
+void ModelToolDialog::bakeOcclusion(Model* model)
 {
-	int32_t selected = m_modelList->getSelected();
-	if (selected >= 0)
+	ui::FileDialog fileDialog;
+	if (!fileDialog.create(this, L"Save occlusion image as...", L"All files;*.*", true))
+		return;
+
+	Path fileName;
+	if (fileDialog.showModal(fileName) != ui::DrOk)
 	{
-		m_modelList->remove(selected);
-		m_modelList->update();
-
-		m_model = 0;
-		m_modelTris = 0;
-		m_modelName = L"";
-		return true;
+		fileDialog.destroy();
+		return;
 	}
-	else
-		return false;
-}
+	fileDialog.destroy();
 
-bool ModelToolDialog::applyOperation(const IModelOperation* operation)
-{
-	Ref< Model > model = new Model(*m_model);
+	Ref< drawing::Image > imageOcclusion = new drawing::Image(
+		drawing::PixelFormat::getA8R8G8B8(),
+		1024,
+		1024
+	);
+	Ref< IModelOperation > operation = new BakePixelOcclusion(
+		imageOcclusion,
+		1024,
+		0.75f,
+		0.05f
+	);
 	if (operation->apply(*model))
 	{
-		m_modelList->add(m_modelName + L" " + type_name(operation), model);
-		m_modelList->update();
-
-		log::info << L"Operation finished; result (\"from\" > \"to\") :" << Endl;
-		log::info << L"\t" << m_model->getVertexCount() << L" > " << model->getVertexCount() << L" vertex(es)" << Endl;
-		log::info << L"\t" << m_model->getPolygonCount() << L" > " << model->getPolygonCount() << L" polygon(s)" << Endl;
-		log::info << L"\t" << m_model->getPositionCount() << L" > " << model->getPositionCount() << L" position(s)" << Endl;
-
-		return true;
+		if (imageOcclusion->save(fileName))
+			log::info << L"Occlusion.png saved successfully!" << Endl;
+		else
+			log::error << L"Unable to save " << fileName.getPathName() << Endl;
 	}
 	else
-		return false;
+		log::error << L"Unable to bake occlusion" << Endl;
+}
+
+void ModelToolDialog::updateOperations(ui::custom::TreeViewItem* itemModel)
+{
+	T_ASSERT (itemModel->getParent() == 0);
+
+	Ref< Model > model = itemModel->getData< Model >(L"MODEL");
+
+	const RefArray< ui::custom::TreeViewItem >& children = itemModel->getChildren();
+	for (RefArray< ui::custom::TreeViewItem >::const_iterator i = children.begin(); i != children.end(); ++i)
+	{
+		const IModelOperation* operation = (*i)->getData< IModelOperation >(L"OPERATION");
+		T_ASSERT (operation != 0);
+
+		model = new Model(*model);
+		operation->apply(*model);
+
+		(*i)->setData(L"MODEL", model);
+	}
 }
 
 void ModelToolDialog::eventDialogClose(ui::CloseEvent* event)
@@ -250,110 +286,133 @@ void ModelToolDialog::eventDialogClose(ui::CloseEvent* event)
 
 void ModelToolDialog::eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event)
 {
-	const ui::Command& cmd = event->getCommand();
-
-	if (cmd == L"ModelTool.Load")
+	const ui::Command& command = event->getCommand();
+	if (command == L"ModelTool.Load")
 		loadModel();
-	else if (cmd == L"ModelTool.Save")
-		saveModel();
-	else if (cmd == L"ModelTool.SaveAs")
-		saveModel();
-	else if (cmd == L"ModelTool.Remove")
-		removeModel();
-	else if (cmd == L"ModelTool.CleanDegenerate")
-	{
-		Ref< IModelOperation > operation = new CleanDegenerate();
-		applyOperation(operation);
-	}
-	else if (cmd == L"ModelTool.CleanDuplicates")
-	{
-		Ref< IModelOperation > operation = new CleanDuplicates(0.1f);
-		applyOperation(operation);
-	}
-	else if (cmd == L"ModelTool.Quantize")
-	{
-		Ref< IModelOperation > operation = new Quantize(0.5f);
-		applyOperation(operation);
-	}
-	else if (cmd == L"ModelTool.Reduce")
-	{
-		Ref< IModelOperation > operation = new Reduce(0.5f);
-		applyOperation(operation);
-	}
-#if defined(T_USE_SIMPLYGON_SDK)
-	else if (cmd == L"ModelTool.ReduceSimplygon")
-	{
-		Ref< IModelOperation > operation = new ReduceSimplygon(0.5f);
-		applyOperation(operation);
-	}
-#endif
-	else if (cmd == L"ModelTool.MergeCoplanar")
-	{
-		Ref< IModelOperation > operation = new MergeCoplanarAdjacents(true);
-		applyOperation(operation);
-	}
-	else if (cmd == L"ModelTool.ConvexHull")
-	{
-		Ref< IModelOperation > operation = new CalculateConvexHull();
-		applyOperation(operation);
-	}
-	else if (cmd == L"ModelTool.Triangulate")
-	{
-		Ref< IModelOperation > operation = new Triangulate();
-		applyOperation(operation);
-	}
-	else if (cmd == L"ModelTool.Union")
-	{
-		std::vector< int32_t > selected;
-		m_modelList->getSelected(selected);
-		if (selected.size() == 2)
-		{
-			Ref< Model > model1 = m_modelList->getData< model::Model >(selected[0]);
-			Ref< Model > model2 = m_modelList->getData< model::Model >(selected[1]);
-
-			Ref< Model > model = new Model();
-			if (Boolean(*model1, traktor::Transform::identity(), *model2, traktor::Transform::identity()).apply(*model))
-			{
-				m_modelList->add(m_modelName + L" Boolean", model);
-				m_modelList->update();
-			}
-		}
-	}
-	else if (cmd == L"ModelTool.Occluder")
-	{
-		Ref< IModelOperation > operation = new CalculateOccluder();
-		applyOperation(operation);
-	}
-	else if (cmd == L"ModelTool.BakeOcclusion")
-	{
-		Ref< drawing::Image > imageOcclusion = new drawing::Image(
-			drawing::PixelFormat::getA8R8G8B8(),
-			1024,
-			1024
-		);
-		Ref< IModelOperation > operation = new BakePixelOcclusion(
-			imageOcclusion,
-			1024,
-			0.75f,
-			0.05f
-		);
-		if (operation->apply(*m_model))
-		{
-			if (imageOcclusion->save(L"Occlusion.png"))
-				log::info << L"Occlusion.png saved successfully!" << Endl;
-			else
-				log::error << L"Unable to save Occlusion.png" << Endl;
-		}
-		else
-			log::error << L"Unable to bake occlusion" << Endl;
-	}
 
 	m_renderWidget->update();
 }
 
-void ModelToolDialog::eventModelListSelect(ui::SelectionChangeEvent* event)
+void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 {
-	m_model = m_modelList->getSelectedData< model::Model >();
+	if (event->getButton() != ui::MbtRight)
+		return;
+
+	RefArray< ui::custom::TreeViewItem > items;
+	if (m_modelTree->getItems(items, ui::custom::TreeView::GfDescendants | ui::custom::TreeView::GfSelectedOnly) != 1)
+		return;
+
+	T_ASSERT (items.front());
+	if (items.front()->getParent() == 0)
+	{
+		Ref< ui::custom::TreeViewItem > itemModel = items.front();
+		Ref< ui::MenuItem > selected = m_modelRootPopup->show(m_modelTree, event->getPosition());
+		if (selected)
+		{
+			const ui::Command& command = selected->getCommand();
+			if (command == L"ModelTool.CleanDegenerate")
+			{
+				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Clean Degenerate");
+				itemOperation->setData(L"OPERATION", new CleanDegenerate());
+				updateOperations(itemModel);
+			}
+			else if (command == L"ModelTool.CleanDuplicates")
+			{
+				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Clean Duplicates");
+				itemOperation->setData(L"OPERATION", new CleanDuplicates(0.1f));
+				updateOperations(itemModel);
+			}
+			else if (command == L"ModelTool.Quantize")
+			{
+				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Quantize");
+				itemOperation->setData(L"OPERATION", new Quantize(0.5f));
+				updateOperations(itemModel);
+			}
+			else if (command == L"ModelTool.Reduce")
+			{
+				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Reduce");
+				itemOperation->setData(L"OPERATION", new Reduce(0.5f));
+				updateOperations(itemModel);
+			}
+			else if (command == L"ModelTool.MergeCoplanar")
+			{
+				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Merge Coplanar");
+				itemOperation->setData(L"OPERATION", new MergeCoplanarAdjacents(true));
+				updateOperations(itemModel);
+			}
+			else if (command == L"ModelTool.ConvexHull")
+			{
+				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Convex Hull");
+				itemOperation->setData(L"OPERATION", new CalculateConvexHull());
+				updateOperations(itemModel);
+			}
+			else if (command == L"ModelTool.Triangulate")
+			{
+				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Triangulate");
+				itemOperation->setData(L"OPERATION", new Triangulate());
+				updateOperations(itemModel);
+			}
+			else if (command == L"ModelTool.BakeOcclusion")
+			{
+				bakeOcclusion(itemModel->getData< Model >(L"MODEL"));
+			}
+			else if (command == L"ModelTool.Save")
+			{
+				saveModel(itemModel->getData< Model >(L"MODEL"));
+			}
+			else if (command == L"ModelTool.Remove")
+			{
+				m_modelTree->removeItem(itemModel);
+				m_model = 0;
+				m_modelTris = 0;
+				m_modelAdjacency = 0;
+				m_renderWidget->update();
+			}
+		}
+	}
+	else
+	{
+		Ref< ui::custom::TreeViewItem > itemOperation = items.front();
+		Ref< ui::custom::TreeViewItem > itemModel = itemOperation->getParent();
+		Ref< ui::MenuItem > selected = m_modelChildPopup->show(m_modelTree, event->getPosition());
+		if (selected)
+		{
+			const ui::Command& command = selected->getCommand();
+			if (command == L"ModelTool.BakeOcclusion")
+			{
+				bakeOcclusion(itemOperation->getData< Model >(L"MODEL"));
+			}
+			else if (command == L"ModelTool.Save")
+			{
+				saveModel(itemModel->getData< Model >(L"MODEL"));
+			}
+			else if (command == L"ModelTool.Remove")
+			{
+				m_modelTree->removeItem(itemOperation);
+				updateOperations(itemModel);
+				m_model = 0;
+				m_modelTris = 0;
+				m_modelAdjacency = 0;
+				m_renderWidget->update();
+			}
+		}
+	}
+}
+
+void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
+{
+	RefArray< ui::custom::TreeViewItem > items;
+	m_modelTree->getItems(items, ui::custom::TreeView::GfDescendants | ui::custom::TreeView::GfSelectedOnly);
+
+	if (items.size() == 1)
+		m_model = items[0]->getData< Model >(L"MODEL");
+	else
+	{
+		m_model = 0;
+		m_modelTris = 0;
+		m_modelAdjacency = 0;
+	}
+
 	if (m_model)
 	{
 		m_modelTris = new Model(*m_model);
@@ -366,16 +425,6 @@ void ModelToolDialog::eventModelListSelect(ui::SelectionChangeEvent* event)
 		float maxExtent = extent[majorAxis3(extent)];
 		
 		m_normalScale = maxExtent / 10.0f;
-		m_modelName = m_modelList->getSelectedItem();
-
-		log::info << L"\t" << m_model->getVertexCount() << L" vertex(es)" << Endl;
-		log::info << L"\t" << m_model->getPolygonCount() << L" polygon(s)" << Endl;
-		log::info << L"\t" << m_model->getPositionCount() << L" position(s)" << Endl;
-	}
-	else
-	{
-		m_modelTris = 0;
-		m_modelName = L"";
 	}
 
 	m_renderWidget->update();
