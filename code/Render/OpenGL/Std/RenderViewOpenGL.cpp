@@ -263,8 +263,8 @@ bool RenderViewOpenGL::reset(int32_t width, int32_t height)
 		// Update render context to ensure dimensions are set.
 		m_renderContext->update(
 #if defined(__LINUX__)
-			m_window->getWidth(),
-			m_window->getHeight()
+			m_window ? m_window->getWidth() : width,
+			m_window ? m_window->getHeight() : height
 #endif
 		);
 

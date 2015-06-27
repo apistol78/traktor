@@ -9110,7 +9110,9 @@
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>X11</item>
+					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 				</item>
@@ -9127,7 +9129,9 @@
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>X11</item>
+					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 				</item>
@@ -9144,7 +9148,9 @@
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>X11</item>
+					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 				</item>
@@ -9161,7 +9167,9 @@
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>X11</item>
+					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 				</item>

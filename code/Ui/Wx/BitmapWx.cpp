@@ -28,28 +28,6 @@ void BitmapWx::destroy()
 
 void BitmapWx::copySubImage(drawing::Image* image, const Rect& srcRect, const Point& destPos)
 {
-	//Ref< drawing::Image > color = image->clone();
-	//color->convert(drawing::PixelFormat::getB8G8R8());
-
-	//std::memcpy(
-	//	m_image->GetData(),
-	//	color->getData(),
-	//	color->getWidth() * color->getHeight() * 3
-	//);
-
-	//if (image->getPixelFormat().getAlphaBits())
-	//{
-	//	Ref< drawing::Image > alpha = image->clone();
-	//	alpha->convert(drawing::PixelFormat::getA8());
-
-	//	m_image->SetAlpha();
-	//	std::memcpy(
-	//		m_image->GetAlpha(),
-	//		alpha->getData(),
-	//		alpha->getWidth() * alpha->getHeight()
-	//	);
-	//}
-
 	if (srcRect.left >= int(image->getWidth()) || srcRect.top >= int(image->getHeight()))
 		return;
 	if (srcRect.right < 0 || srcRect.bottom < 0)
@@ -76,91 +54,59 @@ void BitmapWx::copySubImage(drawing::Image* image, const Rect& srcRect, const Po
 	if (rc.getHeight() > height)
 		rc.bottom = rc.top + height;
 
+	if (image->getPixelFormat().getAlphaBits())
+	{
+		if (!m_image->HasAlpha())
+			m_image->InitAlpha();
+	}
+
 	Ref< drawing::Image > color = image->clone();
 	color->convert(drawing::PixelFormat::getA8B8G8R8());
 
 	const uint8_t* src = reinterpret_cast< const uint8_t* >(color->getData());
-	uint8_t* dstColor = reinterpret_cast< uint8_t* >(m_image->GetData());
-	uint8_t* dstAlpha = 0;
-	
-	if (image->getPixelFormat().getAlphaBits())
-	{
-		m_image->SetAlpha();
-		dstAlpha = reinterpret_cast< uint8_t* >(m_image->GetAlpha());
-	}
-
 	for (int y = rc.top; y < rc.bottom; ++y)
 	{
 		for (int x = rc.left; x < rc.right; ++x)
 		{
 			uint32_t srcOffset = x + y * color->getWidth();
-			uint32_t dstOffset = destPos.x + (x - rc.left) + (destPos.y + (y - rc.top)) * m_image->GetWidth();
-
 			const uint8_t* s = &src[srcOffset * 4];
 
-			uint8_t* dc = &dstColor[dstOffset * 3];
-			dc[0] = s[0];
-			dc[1] = s[1];
-			dc[2] = s[2];
+			m_image->SetRGB(
+				destPos.x + (x - rc.left),
+				destPos.y + (y - rc.top),
+				s[0],
+				s[1],
+				s[2]
+			);
 
-			if (dstAlpha)
-			{
-				uint8_t* da = &dstAlpha[dstOffset];
-				da[0] = s[3];
-			}
+			if (m_image->HasAlpha())
+				m_image->SetAlpha(
+					destPos.x + (x - rc.left),
+					destPos.y + (y - rc.top),
+					s[3]
+				);
 		}
 	}
 }
 
 Ref< drawing::Image > BitmapWx::getImage() const
 {
-	const uint8_t* srcC = reinterpret_cast< const uint8_t* >(m_image->GetData());
-	const uint8_t* srcA = reinterpret_cast< const uint8_t* >(m_image->GetAlpha());
+	Ref< drawing::Image > image = new drawing::Image(
+		drawing::PixelFormat::getR8G8B8A8(),
+		m_image->GetWidth(),
+		m_image->GetHeight()
+	);
 
-	if (!srcC)
-		return 0;
-
-	Ref< drawing::Image > image;
-
-	if (!srcA)
+	uint32_t* dst = reinterpret_cast< uint32_t* >(image->getData());
+	for (int32_t y = 0; y < image->getHeight(); ++y)
 	{
-		image = new drawing::Image(
-			drawing::PixelFormat::getB8G8R8(),
-			m_image->GetWidth(),
-			m_image->GetHeight()
-		);
-
-		uint8_t* dst = reinterpret_cast< uint8_t* >(image->getData());
-
-		std::memcpy(
-			dst,
-			srcC,
-			m_image->GetWidth() * m_image->GetHeight() * 3
-		);
-	}
-	else
-	{
-		image = new drawing::Image(
-			drawing::PixelFormat::getR8G8B8A8(),
-			m_image->GetWidth(),
-			m_image->GetHeight()
-		);
-
-		uint32_t* dst = reinterpret_cast< uint32_t* >(image->getData());
-
-		for (int32_t y = 0; y < image->getHeight(); ++y)
+		for (int32_t x = 0; x < image->getWidth(); ++x)
 		{
-			for (int32_t x = 0; x < image->getWidth(); ++x)
-			{
-				int32_t offset = x + y * image->getWidth();
-
-				uint32_t r = srcC[offset * 3 + 0];
-				uint32_t g = srcC[offset * 3 + 1];
-				uint32_t b = srcC[offset * 3 + 2];
-				uint32_t a = srcA[offset];
-
-				dst[offset] = (r << 24) | (g << 16) | (b << 8) | a;
-			}
+			uint32_t r = m_image->GetRed(x, y);
+			uint32_t g = m_image->GetGreen(x, y);
+			uint32_t b = m_image->GetBlue(x, y);
+			uint32_t a = m_image->HasAlpha() ? m_image->GetAlpha(x, y) : 255;
+			*dst++ = (r << 24) | (g << 16) | (b << 8) | a;
 		}
 	}
 
