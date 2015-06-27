@@ -10,14 +10,20 @@
 #include "Model/Operations/BakePixelOcclusion.h"
 #include "Model/Operations/CalculateConvexHull.h"
 #include "Model/Operations/CalculateOccluder.h"
+#include "Model/Operations/CalculateTangents.h"
 #include "Model/Operations/CleanDegenerate.h"
 #include "Model/Operations/CleanDuplicates.h"
+#include "Model/Operations/CullDistantFaces.h"
+#include "Model/Operations/FlattenDoubleSided.h"
 #include "Model/Operations/Quantize.h"
 #include "Model/Operations/Reduce.h"
 #include "Model/Operations/ReduceSimplygon.h"
+#include "Model/Operations/ScaleAlongNormal.h"
 #include "Model/Operations/Transform.h"
 #include "Model/Operations/Triangulate.h"
 #include "Model/Operations/MergeCoplanarAdjacents.h"
+#include "Model/Operations/UnwrapUV.h"
+#include "Model/Operations/WeldHoles.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/PrimitiveRenderer.h"
@@ -110,14 +116,20 @@ bool ModelToolDialog::create(ui::Widget* parent)
 	m_modelRootPopup->create();
 
 	Ref< ui::MenuItem > modelRootPopupAdd = new ui::MenuItem(L"Add Operation...");
+	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.CalculateTangents"), L"Calculate Tangents"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.CleanDegenerate"), L"Clean Degenerate"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.CleanDuplicates"), L"Clean Duplicates"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.ConvexHull"), L"Convex Hull"));
+	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.CullDistantFaces"), L"Cull Distant Faces"));
+	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.FlattenDoubleSided"), L"Flatten Double Sided"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.MergeCoplanar"), L"Merge Coplanar"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.Occluder"), L"Occluder"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.Quantize"), L"Quantize"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.Reduce"), L"Reduce"));
+	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.ScaleAlongNormal"), L"Scale Along Normal"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.Triangulate"), L"Triangulate"));
+	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.UnwrapUV"), L"Unwrap UV"));
+	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.WeldHoles"), L"Weld Holes"));
 	m_modelRootPopup->add(modelRootPopupAdd);
 
 	Ref< ui::MenuItem > modelRootPopupPerform = new ui::MenuItem(L"Perform Operation...");
@@ -310,7 +322,13 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 		if (selected)
 		{
 			const ui::Command& command = selected->getCommand();
-			if (command == L"ModelTool.CleanDegenerate")
+			if (command == L"ModelTool.CalculateTangents")
+			{
+				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Calculate Tangents");
+				itemOperation->setData(L"OPERATION", new CalculateTangents());
+				updateOperations(itemModel);
+			}
+			else if (command == L"ModelTool.CleanDegenerate")
 			{
 				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Clean Degenerate");
 				itemOperation->setData(L"OPERATION", new CleanDegenerate());
@@ -320,6 +338,36 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 			{
 				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Clean Duplicates");
 				itemOperation->setData(L"OPERATION", new CleanDuplicates(0.1f));
+				updateOperations(itemModel);
+			}
+			else if (command == L"ModelTool.ConvexHull")
+			{
+				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Convex Hull");
+				itemOperation->setData(L"OPERATION", new CalculateConvexHull());
+				updateOperations(itemModel);
+			}
+			else if (command == L"ModelTool.CullDistantFaces")
+			{
+				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Cull Distant Faces");
+				itemOperation->setData(L"OPERATION", new CullDistantFaces(Aabb3()));
+				updateOperations(itemModel);
+			}
+			else if (command == L"ModelTool.FlattenDoubleSided")
+			{
+				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Flatten Double Sided");
+				itemOperation->setData(L"OPERATION", new FlattenDoubleSided());
+				updateOperations(itemModel);
+			}
+			else if (command == L"ModelTool.MergeCoplanar")
+			{
+				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Merge Coplanar");
+				itemOperation->setData(L"OPERATION", new MergeCoplanarAdjacents(true));
+				updateOperations(itemModel);
+			}
+			else if (command == L"ModelTool.Occluder")
+			{
+				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Occluder");
+				itemOperation->setData(L"OPERATION", new CalculateOccluder());
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.Quantize")
@@ -334,22 +382,28 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 				itemOperation->setData(L"OPERATION", new Reduce(0.5f));
 				updateOperations(itemModel);
 			}
-			else if (command == L"ModelTool.MergeCoplanar")
+			else if (command == L"ModelTool.ScaleAlongNormal")
 			{
-				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Merge Coplanar");
-				itemOperation->setData(L"OPERATION", new MergeCoplanarAdjacents(true));
-				updateOperations(itemModel);
-			}
-			else if (command == L"ModelTool.ConvexHull")
-			{
-				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Convex Hull");
-				itemOperation->setData(L"OPERATION", new CalculateConvexHull());
+				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Scale Along Normal");
+				itemOperation->setData(L"OPERATION", new ScaleAlongNormal(1.0f));
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.Triangulate")
 			{
 				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Triangulate");
 				itemOperation->setData(L"OPERATION", new Triangulate());
+				updateOperations(itemModel);
+			}
+			else if (command == L"ModelTool.UnwrapUV")
+			{
+				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Unwrap UV");
+				itemOperation->setData(L"OPERATION", new UnwrapUV(0, 0.01f));
+				updateOperations(itemModel);
+			}
+			else if (command == L"ModelTool.WeldHoles")
+			{
+				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Weld Holes");
+				itemOperation->setData(L"OPERATION", new WeldHoles());
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.BakeOcclusion")
