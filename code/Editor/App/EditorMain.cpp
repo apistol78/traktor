@@ -40,6 +40,10 @@ typedef traktor::ui::EventLoopWx EventLoopImpl;
 typedef traktor::ui::WidgetFactoryWx WidgetFactoryImpl;
 #endif
 
+#if defined(__LINUX__)
+#	include <X11/Xlib.h>
+#endif
+
 using namespace traktor;
 
 namespace
@@ -67,6 +71,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	GetModuleFileName(NULL, file, sizeof_array(file));
 
 	CommandLine cmdLine(file, mbstows(szCmdLine));
+#endif
+
+#if defined(__LINUX__)
+	// Initialize X11 thread primitives; thus must be performed very early.
+	XInitThreads();
 #endif
 
 #if 0

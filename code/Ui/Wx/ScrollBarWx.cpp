@@ -1,6 +1,7 @@
-#include "Ui/Wx/ScrollBarWx.h"
+#include "Core/Math/MathUtils.h"
 #include "Ui/ScrollBar.h"
 #include "Ui/Events/ScrollEvent.h"
+#include "Ui/Wx/ScrollBarWx.h"
 
 namespace traktor
 {
@@ -46,7 +47,7 @@ bool ScrollBarWx::create(IWidget* parent, int style)
 	T_CONNECT(m_window, wxEVT_SCROLL_PAGEUP,     wxScrollEvent, ScrollBarWx, &ScrollBarWx::onScroll);
 	T_CONNECT(m_window, wxEVT_SCROLL_PAGEDOWN,   wxScrollEvent, ScrollBarWx, &ScrollBarWx::onScroll);
 	T_CONNECT(m_window, wxEVT_SCROLL_THUMBTRACK, wxScrollEvent, ScrollBarWx, &ScrollBarWx::onScroll);
-	
+
 	return true;
 }
 
@@ -62,7 +63,7 @@ int ScrollBarWx::getRange() const
 
 void ScrollBarWx::setPage(int page)
 {
-	m_window->SetThumbPosition(page * m_window->GetPageSize());
+	setPosition(page * m_window->GetPageSize());
 }
 
 int ScrollBarWx::getPage() const
@@ -72,7 +73,7 @@ int ScrollBarWx::getPage() const
 
 void ScrollBarWx::setPosition(int position)
 {
-	m_window->SetThumbPosition(position);
+	m_window->SetThumbPosition(clamp(position, 0, getRange()));
 }
 
 int ScrollBarWx::getPosition() const

@@ -32,7 +32,7 @@ void Socket::close()
 	{
 #if defined(_WIN32)
 		::shutdown(m_socket, SD_BOTH);
-#else
+#else !defined(__LINUX__)
 		::send(m_socket, 0, 0, 0);
 #endif
 		CLOSE_SOCKET(m_socket);
