@@ -27,6 +27,7 @@ struct NamedUniformType
 
 struct SamplerBindingOpenGL
 {
+	std::wstring name;
 	GLuint stage;
 	GLenum target;
 	int32_t texture;

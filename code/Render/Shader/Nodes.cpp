@@ -130,6 +130,63 @@ private:
 	RenderState& m_ref;
 };
 
+class MemberSamplerState : public MemberComplex
+{
+public:
+	MemberSamplerState(SamplerState& ref)
+	:	MemberComplex(L"", false)
+	,	m_ref(ref)
+	{
+	}
+
+	virtual void serialize(ISerializer& s) const
+	{
+		const MemberEnum< Filter >::Key kFilter[] =
+		{
+			{ L"FtPoint", FtPoint },
+			{ L"FtLinear", FtLinear },
+			{ 0, 0 }
+		};
+
+		const MemberEnum< Address >::Key kAddress[] =
+		{
+			{ L"AdWrap", AdWrap },
+			{ L"AdMirror", AdMirror },
+			{ L"AdClamp", AdClamp },
+			{ L"AdBorder", AdBorder },
+			{ 0, 0 }
+		};
+
+		const MemberEnum< CompareFunction >::Key kCompareFunctions[] =
+		{
+			{ L"CfAlways", CfAlways },
+			{ L"CfNever", CfNever },
+			{ L"CfLess", CfLess },
+			{ L"CfLessEqual", CfLessEqual },
+			{ L"CfGreater", CfGreater },
+			{ L"CfGreaterEqual", CfGreaterEqual },
+			{ L"CfEqual", CfEqual },
+			{ L"CfNotEqual", CfNotEqual },
+			{ L"CfNone", CfNone },
+			{ 0, 0 }
+		};
+
+		s >> MemberEnum< Filter >(L"minFilter", m_ref.minFilter, kFilter);
+		s >> MemberEnum< Filter >(L"mipFilter", m_ref.mipFilter, kFilter);
+		s >> MemberEnum< Filter >(L"magFilter", m_ref.magFilter, kFilter);
+		s >> MemberEnum< Address >(L"addressU", m_ref.addressU, kAddress);
+		s >> MemberEnum< Address >(L"addressV", m_ref.addressV, kAddress);
+		s >> MemberEnum< Address >(L"addressW", m_ref.addressW, kAddress);
+		s >> MemberEnum< CompareFunction >(L"compare", m_ref.compare, kCompareFunctions);
+		s >> Member< float >(L"mipBias", m_ref.mipBias);
+		s >> Member< bool >(L"ignoreMips", m_ref.ignoreMips);
+		s >> Member< bool >(L"useAnisotropic", m_ref.useAnisotropic);
+	}
+
+private:
+	SamplerState& m_ref;
+};
+
 		}
 
 /*---------------------------------------------------------------------------*/
@@ -1290,186 +1347,89 @@ Round::Round()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Sampler", 4, Sampler, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Sampler", 5, Sampler, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Sampler_i[] = { { L"Texture", false }, { L"TexCoord", false }, { L"Mip", true }, 0 };
 const ImmutableNode::OutputPinDesc c_Sampler_o[] = { L"Output", 0 };
 
-Sampler::Sampler(
-	Filter minFilter,
-	Filter mipFilter,
-	Filter magFilter,
-	Address addressU,
-	Address addressV,
-	Address addressW,
-	Compare compare
-)
+Sampler::Sampler()
 :	ImmutableNode(c_Sampler_i, c_Sampler_o)
-,	m_minFilter(minFilter)
-,	m_mipFilter(mipFilter)
-,	m_magFilter(magFilter)
-,	m_addressU(addressU)
-,	m_addressV(addressV)
-,	m_addressW(addressW)
-,	m_compare(compare)
-,	m_mipBias(0.0f)
-,	m_ignoreMips(false)
-,	m_useAnisotropic(false)
 {
 }
 
-void Sampler::setMinFilter(Filter minFilter)
+Sampler::Sampler(const SamplerState& state)
+:	ImmutableNode(c_Sampler_i, c_Sampler_o)
+,	m_state(state)
 {
-	m_minFilter = minFilter;
 }
 
-Sampler::Filter Sampler::getMinFilter() const
+void Sampler::setSamplerState(const SamplerState& state)
 {
-	return m_minFilter;
+	m_state = state;
 }
 
-void Sampler::setMipFilter(Filter mipFilter)
+const SamplerState& Sampler::getSamplerState() const
 {
-	m_mipFilter = mipFilter;
-}
-
-Sampler::Filter Sampler::getMipFilter() const
-{
-	return m_mipFilter;
-}
-
-void Sampler::setMagFilter(Filter magFilter)
-{
-	m_magFilter = magFilter;
-}
-
-Sampler::Filter Sampler::getMagFilter() const
-{
-	return m_magFilter;
-}
-
-void Sampler::setAddressU(Address addressU)
-{
-	m_addressU = addressU;
-}
-
-Sampler::Address Sampler::getAddressU() const
-{
-	return m_addressU;
-}
-
-void Sampler::setAddressV(Address addressV)
-{
-	m_addressV = addressV;
-}
-
-Sampler::Address Sampler::getAddressV() const
-{
-	return m_addressV;
-}
-
-void Sampler::setAddressW(Address addressW)
-{
-	m_addressW = addressW;
-}
-
-Sampler::Address Sampler::getAddressW() const
-{
-	return m_addressW;
-}
-
-void Sampler::setCompare(Compare compare)
-{
-	m_compare = compare;
-}
-
-Sampler::Compare Sampler::getCompare() const
-{
-	return m_compare;
-}
-
-void Sampler::setMipBias(float mipBias)
-{
-	m_mipBias = mipBias;
-}
-
-float Sampler::getMipBias() const
-{
-	return m_mipBias;
-}
-
-void Sampler::setIgnoreMips(bool ignoreMips)
-{
-	m_ignoreMips = ignoreMips;
-}
-
-bool Sampler::getIgnoreMips() const
-{
-	return m_ignoreMips;
-}
-
-void Sampler::setUseAnisotropic(bool useAnisotropic)
-{
-	m_useAnisotropic = useAnisotropic;
-}
-
-bool Sampler::getUseAnisotropic() const
-{
-	return m_useAnisotropic;
+	return m_state;
 }
 
 void Sampler::serialize(ISerializer& s)
 {
-	const MemberEnum< Filter >::Key kFilter[] =
-	{
-		{ L"FtPoint", FtPoint },
-		{ L"FtLinear", FtLinear },
-		{ 0, 0 }
-	};
-
-	const MemberEnum< Address >::Key kAddress[] =
-	{
-		{ L"AdWrap", AdWrap },
-		{ L"AdMirror", AdMirror },
-		{ L"AdClamp", AdClamp },
-		{ L"AdBorder", AdBorder },
-		{ 0, 0 }
-	};
-
-	const MemberEnum< Compare >::Key kCompare[] =
-	{
-		{ L"CmNo", CmNo },
-		{ L"CmAlways", CmAlways },
-		{ L"CmNever", CmNever },
-		{ L"CmLess", CmLess },
-		{ L"CmLessEqual", CmLessEqual },
-		{ L"CmGreater", CmGreater },
-		{ L"CmGreaterEqual", CmGreaterEqual },
-		{ L"CmEqual", CmEqual },
-		{ L"CmNotEqual", CmNotEqual },
-		{ 0, 0 }
-	};
-
 	Node::serialize(s);
 
-	s >> MemberEnum< Filter >(L"minFilter", m_minFilter, kFilter);
-	s >> MemberEnum< Filter >(L"mipFilter", m_mipFilter, kFilter);
-	s >> MemberEnum< Filter >(L"magFilter", m_magFilter, kFilter);
-	s >> MemberEnum< Address >(L"addressU", m_addressU, kAddress);
-	s >> MemberEnum< Address >(L"addressV", m_addressV, kAddress);
-	s >> MemberEnum< Address >(L"addressW", m_addressW, kAddress);
+	if (s.getVersion() >= 5)
+		s >> MemberSamplerState(m_state);
+	else
+	{
+		const MemberEnum< Filter >::Key kFilter[] =
+		{
+			{ L"FtPoint", FtPoint },
+			{ L"FtLinear", FtLinear },
+			{ 0, 0 }
+		};
 
-	if (s.getVersion() >= 4)
-		s >> MemberEnum< Compare >(L"compare", m_compare, kCompare);
+		const MemberEnum< Address >::Key kAddress[] =
+		{
+			{ L"AdWrap", AdWrap },
+			{ L"AdMirror", AdMirror },
+			{ L"AdClamp", AdClamp },
+			{ L"AdBorder", AdBorder },
+			{ 0, 0 }
+		};
 
-	if (s.getVersion() >= 1)
-		s >> Member< float >(L"mipBias", m_mipBias);
+		const MemberEnum< CompareFunction >::Key kCompare[] =
+		{
+			{ L"CmNo", CfNone },
+			{ L"CmAlways", CfAlways },
+			{ L"CmNever", CfNever },
+			{ L"CmLess", CfLess },
+			{ L"CmLessEqual", CfLessEqual },
+			{ L"CmGreater", CfGreater },
+			{ L"CmGreaterEqual", CfGreaterEqual },
+			{ L"CmEqual", CfEqual },
+			{ L"CmNotEqual", CfNotEqual },
+			{ 0, 0 }
+		};
 
-	if (s.getVersion() >= 3)
-		s >> Member< bool >(L"ignoreMips", m_ignoreMips);
+		s >> MemberEnum< Filter >(L"minFilter", m_state.minFilter, kFilter);
+		s >> MemberEnum< Filter >(L"mipFilter", m_state.mipFilter, kFilter);
+		s >> MemberEnum< Filter >(L"magFilter", m_state.magFilter, kFilter);
+		s >> MemberEnum< Address >(L"addressU", m_state.addressU, kAddress);
+		s >> MemberEnum< Address >(L"addressV", m_state.addressV, kAddress);
+		s >> MemberEnum< Address >(L"addressW", m_state.addressW, kAddress);
 
-	if (s.getVersion() >= 2)
-		s >> Member< bool >(L"useAnisotropic", m_useAnisotropic);
+		if (s.getVersion() >= 4)
+			s >> MemberEnum< CompareFunction >(L"compare", m_state.compare, kCompare);
+
+		if (s.getVersion() >= 1)
+			s >> Member< float >(L"mipBias", m_state.mipBias);
+
+		if (s.getVersion() >= 3)
+			s >> Member< bool >(L"ignoreMips", m_state.ignoreMips);
+
+		if (s.getVersion() >= 2)
+			s >> Member< bool >(L"useAnisotropic", m_state.useAnisotropic);
+	}
 }
 
 /*---------------------------------------------------------------------------*/

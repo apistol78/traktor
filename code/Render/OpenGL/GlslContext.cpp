@@ -247,7 +247,7 @@ bool GlslContext::defineUniform(const std::wstring& name, GLenum type, GLuint le
 	return true;
 }
 
-bool GlslContext::defineSampler(uint32_t stateHash, GLenum target, const std::wstring& texture, int32_t& outStage)
+bool GlslContext::defineSampler(const std::wstring& name, uint32_t stateHash, GLenum target, const std::wstring& texture, int32_t& outStage)
 {
 	std::vector< std::wstring >::iterator i = std::find(m_textures.begin(), m_textures.end(), texture);
 	T_ASSERT (i != m_textures.end());
@@ -267,6 +267,7 @@ bool GlslContext::defineSampler(uint32_t stateHash, GLenum target, const std::ws
 	outStage = m_nextStage++;
 
 	SamplerBindingOpenGL sb;
+	sb.name = name;
 	sb.stage = outStage;
 	sb.target = target;
 	sb.texture = textureId;

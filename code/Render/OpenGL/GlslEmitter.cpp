@@ -1299,7 +1299,6 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 
 	const GLenum c_glCompare[] =
 	{
-		GL_INVALID_ENUM,
 		GL_ALWAYS,
 		GL_NEVER,
 		GL_LESS,
@@ -1307,7 +1306,8 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 		GL_GREATER,
 		GL_GEQUAL,
 		GL_EQUAL,
-		GL_NOTEQUAL
+		GL_NOTEQUAL,
+		GL_INVALID_ENUM
 	};
 
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
@@ -1320,7 +1320,9 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 	if (!texCoord)
 		return false;
 
-	GlslVariable* out = cx.emitOutput(node, L"Output", (node->getCompare() == Sampler::CmNo) ? GtFloat4 : GtFloat);
+	const SamplerState& samplerState = node->getSamplerState();
+
+	GlslVariable* out = cx.emitOutput(node, L"Output", (samplerState.compare == CfNone) ? GtFloat4 : GtFloat);
 
 	bool needAddressW = bool(texture->getType() > GtTexture2D);
 	GLenum target = GL_INVALID_ENUM;
@@ -1346,29 +1348,29 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 	// Calculate sampler hash.
 	Adler32 samplerHash;
 	samplerHash.feed(texture->getName());
-	samplerHash.feed(node->getMinFilter());
-	samplerHash.feed(node->getMipFilter());
-	samplerHash.feed(node->getMagFilter());
-	samplerHash.feed(node->getAddressU());
-	samplerHash.feed(node->getAddressV());
+	samplerHash.feed(samplerState.minFilter);
+	samplerHash.feed(samplerState.mipFilter);
+	samplerHash.feed(samplerState.magFilter);
+	samplerHash.feed(samplerState.addressU);
+	samplerHash.feed(samplerState.addressV);
 	if (needAddressW)
-		samplerHash.feed(node->getAddressW());
-	samplerHash.feed(node->getCompare());
+		samplerHash.feed(samplerState.addressW);
+	samplerHash.feed(samplerState.compare);
 
     // Use same stage index for both vertex and fragment shader.
     // Sampler name is defined by which stage it's associated with.
 	int32_t stage;
 
 	// Define sampler.
-    bool defineStates = cx.defineSampler(samplerHash.get(), target, texture->getName(), stage);
-	std::wstring samplerName = L"_gl_sampler_" + texture->getName() + L"_" + toString(stage);
+	std::wstring samplerName = L"_gl_sampler_" + texture->getName();
+    bool defineStates = cx.defineSampler(samplerName, samplerHash.get(), target, texture->getName(), stage);
 
 	if (defineStates)
 	{
 		RenderStateOpenGL& rs = cx.getRenderState();
 
-		bool minLinear = node->getMinFilter() != Sampler::FtPoint;
-		bool mipLinear = node->getMipFilter() != Sampler::FtPoint;
+		bool minLinear = samplerState.minFilter != FtPoint;
+		bool mipLinear = samplerState.mipFilter != FtPoint;
 
 		if (!minLinear && !mipLinear)
 			rs.samplerStates[stage].minFilter = GL_NEAREST;
@@ -1379,20 +1381,20 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 		else
 			rs.samplerStates[stage].minFilter = GL_LINEAR_MIPMAP_LINEAR;
 
-		rs.samplerStates[stage].magFilter = c_glFilter[node->getMagFilter()];
-		rs.samplerStates[stage].wrapS = c_glWrap[node->getAddressU()];
-		rs.samplerStates[stage].wrapT = c_glWrap[node->getAddressV()];
+		rs.samplerStates[stage].magFilter = c_glFilter[samplerState.magFilter];
+		rs.samplerStates[stage].wrapS = c_glWrap[samplerState.addressU];
+		rs.samplerStates[stage].wrapT = c_glWrap[samplerState.addressV];
 
 		if (needAddressW)
-			rs.samplerStates[stage].wrapR = c_glWrap[node->getAddressW()];
+			rs.samplerStates[stage].wrapR = c_glWrap[samplerState.addressW];
 
-		rs.samplerStates[stage].compare = c_glCompare[node->getCompare()];
+		rs.samplerStates[stage].compare = c_glCompare[samplerState.compare];
 	}
 
 	if (cx.getShader().getUniforms().find(samplerName) == cx.getShader().getUniforms().end())
 	{
 		StringOutputStream& fu = cx.getShader().getOutputStream(GlslShader::BtUniform);
-		if (node->getCompare() == Sampler::CmNo)
+		if (samplerState.compare == CfNone)
 		{
 			switch (texture->getType())
 			{
@@ -1448,12 +1450,12 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 
 	if (cx.inFragment())
 	{
-		if (node->getCompare() == Sampler::CmNo)
+		if (samplerState.compare == CfNone)
 		{
 #if defined(T_OPENGL_STD)
-			if (!node->getIgnoreMips())
+			if (!samplerState.ignoreMips)
 			{
-				float bias = node->getMipBias();
+				float bias = samplerState.mipBias;
 				switch (texture->getType())
 				{
 				case GtTexture2D:
@@ -1512,7 +1514,7 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 		else
 		{
 #if defined(T_OPENGL_STD)
-			if (!node->getIgnoreMips())
+			if (!samplerState.ignoreMips)
 			{
 				switch (texture->getType())
 				{
@@ -1641,6 +1643,8 @@ bool emitScript(GlslContext& cx, Script* node)
 	int32_t inputPinCount = node->getInputPinCount();
 	int32_t outputPinCount = node->getOutputPinCount();
 
+	const std::map< std::wstring, SamplerState >& samplers = node->getSamplers();
+
 	RefArray< GlslVariable > in(inputPinCount);
 	RefArray< GlslVariable > out(outputPinCount);
 
@@ -1661,6 +1665,110 @@ bool emitScript(GlslContext& cx, Script* node)
 		in[i] = cx.emitInput(node->getInputPin(i));
 		if (!in[i])
 			return false;
+
+		if (node->getInputPinType(i) >= PtTexture2D)
+		{
+			std::wstring samplerId = node->getInputPinSamplerId(i);
+			if (samplerId.empty())
+				return false;
+
+			std::map< std::wstring, SamplerState >::const_iterator it = samplers.find(samplerId);
+			if (it == samplers.end())
+				return false;
+
+			const SamplerState& samplerState = it->second;
+
+			const GLenum c_glFilter[] =
+			{
+				GL_NEAREST,
+				GL_LINEAR
+			};
+
+			const GLenum c_glWrap[] =
+			{
+				GL_REPEAT,
+				GL_REPEAT,
+				GL_CLAMP_TO_EDGE,
+				GL_CLAMP_TO_EDGE
+			};
+
+			const GLenum c_glCompare[] =
+			{
+				GL_INVALID_ENUM,
+				GL_ALWAYS,
+				GL_NEVER,
+				GL_LESS,
+				GL_LEQUAL,
+				GL_GREATER,
+				GL_GEQUAL,
+				GL_EQUAL,
+				GL_NOTEQUAL
+			};
+
+			Adler32 samplerHash;
+			samplerHash.feed(node->getInputPin(i)->getName());
+			samplerHash.feed(samplerState.minFilter);
+			samplerHash.feed(samplerState.mipFilter);
+			samplerHash.feed(samplerState.magFilter);
+			samplerHash.feed(samplerState.addressU);
+			samplerHash.feed(samplerState.addressV);
+			samplerHash.feed(samplerState.addressW);
+			samplerHash.feed(samplerState.compare);
+
+			// Use same stage index for both vertex and fragment shader.
+			// Sampler name is defined by which stage it's associated with.
+			int32_t stage;
+
+			// Define sampler.
+			bool defineStates = cx.defineSampler(samplerId, samplerHash.get(), GL_TEXTURE_2D, node->getInputPin(i)->getName(), stage);
+			if (defineStates)
+			{
+				RenderStateOpenGL& rs = cx.getRenderState();
+
+				bool minLinear = samplerState.minFilter != FtPoint;
+				bool mipLinear = samplerState.mipFilter != FtPoint;
+
+				if (!minLinear && !mipLinear)
+					rs.samplerStates[stage].minFilter = GL_NEAREST;
+				else if (!minLinear && mipLinear)
+					rs.samplerStates[stage].minFilter = GL_NEAREST_MIPMAP_LINEAR;
+				else if (minLinear && !mipLinear)
+					rs.samplerStates[stage].minFilter = GL_LINEAR_MIPMAP_NEAREST;
+				else
+					rs.samplerStates[stage].minFilter = GL_LINEAR_MIPMAP_LINEAR;
+
+				rs.samplerStates[stage].magFilter = c_glFilter[samplerState.magFilter];
+				rs.samplerStates[stage].wrapS = c_glWrap[samplerState.addressU];
+				rs.samplerStates[stage].wrapT = c_glWrap[samplerState.addressV];
+				rs.samplerStates[stage].wrapR = c_glWrap[samplerState.addressW];
+				rs.samplerStates[stage].compare = c_glCompare[samplerState.compare];
+			}
+
+			if (cx.getShader().getUniforms().find(samplerId) == cx.getShader().getUniforms().end())
+			{
+				StringOutputStream& fu = cx.getShader().getOutputStream(GlslShader::BtUniform);
+				if (samplerState.compare == CfNone)
+				{
+#if defined(T_OPENGL_STD)
+					fu << L"uniform sampler2D " << samplerId << L";" << Endl;
+#elif defined(T_OPENGL_ES2)
+					fu << L"uniform lowp sampler2D " << samplerId << L";" << Endl;
+#endif
+				}
+				else
+				{
+					if (!cx.inFragment())
+						return false;
+
+	#if defined(T_OPENGL_STD)
+					fu << L"uniform sampler2DShadow " << samplerId << L";" << Endl;
+	#elif defined(T_OPENGL_ES2)
+					fu << L"uniform lowp sampler2DShadow " << samplerId << L";" << Endl;
+	#endif
+				}
+				cx.getShader().addUniform(samplerId);
+			}
+		}
 	}
 
 	// Define script instance.
@@ -1670,10 +1778,15 @@ bool emitScript(GlslContext& cx, Script* node)
 
 		fs << L"void " << node->getName() << L"(";
 
+		int32_t ii = 0;
 		for (int32_t i = 0; i < inputPinCount; ++i)
 		{
-			if (i > 0)
+			if (in[i]->getType() >= GtTexture2D)
+				continue;
+
+			if (ii++ > 0)
 				fs << L", ";
+
 			fs << glsl_type_name(in[i]->getType()) << L" " << node->getInputPin(i)->getName();
 		}
 
@@ -1702,14 +1815,19 @@ bool emitScript(GlslContext& cx, Script* node)
 
 	f << node->getName() << L"(";
 
+	int32_t ii = 0;
 	for (RefArray< GlslVariable >::const_iterator i = in.begin(); i != in.end(); ++i)
 	{
-		if (i != in.begin())
+		if ((*i)->getType() >= GtTexture2D)
+			continue;
+
+		if (ii++ > 0)
 			f << L", ";
+
 		f << (*i)->getName();
 	}
 
-	if (!in.empty())
+	if (ii > 0)
 		f << L", ";
 
 	for (RefArray< GlslVariable >::const_iterator i = out.begin(); i != out.end(); ++i)

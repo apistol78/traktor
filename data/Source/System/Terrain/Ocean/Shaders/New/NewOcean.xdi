@@ -249,15 +249,15 @@
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>3509</first>
-				<second>33</second>
+				<first>3528</first>
+				<second>31</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>3291</first>
-				<second>21</second>
+				<first>3290</first>
+				<second>-29</second>
 			</position>
 			<parameterName>ReflectionTint</parameterName>
 			<type>PtVector</type>
@@ -266,8 +266,8 @@
 		<item type="traktor.render.Branch">
 			<comment/>
 			<position>
-				<first>3315</first>
-				<second>71</second>
+				<first>3297</first>
+				<second>102</second>
 			</position>
 			<parameterName>ReflectionEnable</parameterName>
 		</item>
@@ -281,8 +281,8 @@
 		<item type="traktor.render.Lerp">
 			<comment/>
 			<position>
-				<first>2814</first>
-				<second>154</second>
+				<first>2825</first>
+				<second>165</second>
 			</position>
 		</item>
 		<item type="traktor.render.Lerp">
@@ -358,8 +358,8 @@
 		<item type="traktor.render.Neg">
 			<comment/>
 			<position>
-				<first>1409</first>
-				<second>243</second>
+				<first>1448</first>
+				<second>265</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div">
@@ -711,8 +711,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>2179</first>
-				<second>-427</second>
+				<first>2175</first>
+				<second>-458</second>
 			</position>
 			<parameterName>ShallowTint</parameterName>
 			<type>PtVector</type>
@@ -744,103 +744,40 @@
 				<second>-30</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1">
-			<comment/>
-			<position>
-				<first>3660</first>
-				<second>555</second>
-			</position>
-			<fragmentGuid>{645D00CF-9F76-0F49-9451-04C9945D5E8A}</fragmentGuid>
-			<inputPins>
-				<item>
-					<name>ColorUV</name>
-					<optional>false</optional>
-				</item>
-			</inputPins>
-			<outputPins>
-				<item>
-					<name>Output</name>
-				</item>
-			</outputPins>
-			<values/>
-		</item>
 		<item type="traktor.render.MulAdd">
 			<comment/>
 			<position>
-				<first>3485</first>
-				<second>587</second>
+				<first>3558</first>
+				<second>745</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div">
 			<comment/>
 			<position>
-				<first>3139</first>
-				<second>576</second>
+				<first>3170</first>
+				<second>787</second>
 			</position>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment/>
 			<position>
-				<first>2857</first>
-				<second>589</second>
+				<first>2932</first>
+				<second>779</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>2697</first>
-				<second>587</second>
+				<first>2779</first>
+				<second>765</second>
 			</position>
 			<swizzle>xyz1</swizzle>
-		</item>
-		<item type="traktor.render.External" version="1">
-			<comment/>
-			<position>
-				<first>2353</first>
-				<second>531</second>
-			</position>
-			<fragmentGuid>{79FD2C76-8242-214C-B3A5-4A5B5CD34F0C}</fragmentGuid>
-			<inputPins>
-				<item>
-					<name>ViewOrigin</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<name>ViewStepDirection</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<name>Distance</name>
-					<optional>true</optional>
-				</item>
-			</inputPins>
-			<outputPins>
-				<item>
-					<name>Output</name>
-				</item>
-				<item>
-					<name>Valid</name>
-				</item>
-			</outputPins>
-			<values>
-				<item>
-					<first>Distance</first>
-					<second>40</second>
-				</item>
-			</values>
-		</item>
-		<item type="traktor.render.Reflect">
-			<comment/>
-			<position>
-				<first>2179</first>
-				<second>581</second>
-			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>2636</first>
-				<second>650</second>
+				<first>2710</first>
+				<second>798</second>
 			</position>
 			<parameterName>Projection</parameterName>
 			<type>PtMatrix</type>
@@ -849,32 +786,32 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>3031</first>
-				<second>652</second>
+				<first>3105</first>
+				<second>800</second>
 			</position>
 			<swizzle>w</swizzle>
 		</item>
 		<item type="traktor.render.Vector">
 			<comment/>
 			<position>
-				<first>3268</first>
-				<second>636</second>
+				<first>3342</first>
+				<second>784</second>
 			</position>
 			<value>0.5, -0.5, 0, 0</value>
 		</item>
 		<item type="traktor.render.Vector">
 			<comment/>
 			<position>
-				<first>3272</first>
-				<second>663</second>
+				<first>3346</first>
+				<second>811</second>
 			</position>
 			<value>0.5, 0.5, 0, 0</value>
 		</item>
 		<item type="traktor.render.Lerp">
 			<comment/>
 			<position>
-				<first>2603</first>
-				<second>129</second>
+				<first>2628</first>
+				<second>103</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
@@ -896,15 +833,15 @@
 		<item type="traktor.render.Abs">
 			<comment/>
 			<position>
-				<first>2484</first>
+				<first>2447</first>
 				<second>179</second>
 			</position>
 		</item>
 		<item type="traktor.render.Dot">
 			<comment/>
 			<position>
-				<first>2310</first>
-				<second>151</second>
+				<first>2223</first>
+				<second>170</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="1">
@@ -999,8 +936,8 @@ read-back color buffer.
 			]]>
 			</comment>
 			<position>
-				<first>3980</first>
-				<second>106</second>
+				<first>4411</first>
+				<second>84</second>
 			</position>
 			<priority>
 				<setup>false</setup>
@@ -1040,8 +977,8 @@ read-back color buffer.
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>4519</first>
-				<second>8</second>
+				<first>4564</first>
+				<second>-10</second>
 			</position>
 			<fragmentGuid>{CBB01418-3E3B-2947-9CA1-B75CEFF77C4E}</fragmentGuid>
 			<inputPins>
@@ -1076,6 +1013,65 @@ read-back color buffer.
 				<second>-201</second>
 			</position>
 			<color>0, 137, 255, 185</color>
+		</item>
+		<item type="traktor.render.External" version="1">
+			<comment/>
+			<position>
+				<first>2275</first>
+				<second>595</second>
+			</position>
+			<fragmentGuid>{7964F957-8E93-A84B-B0E5-2881AF1A8F30}</fragmentGuid>
+			<inputPins>
+				<item>
+					<name>Normal</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>Origin</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>ViewDirection</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<name>HitPosition</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.Swizzle">
+			<comment/>
+			<position>
+				<first>2702</first>
+				<second>478</second>
+			</position>
+			<swizzle>w</swizzle>
+		</item>
+		<item type="traktor.render.Swizzle">
+			<comment/>
+			<position>
+				<first>3060</first>
+				<second>531</second>
+			</position>
+			<swizzle>w</swizzle>
+		</item>
+		<item type="traktor.render.Lerp">
+			<comment/>
+			<position>
+				<first>3263</first>
+				<second>344</second>
+			</position>
+		</item>
+		<item type="traktor.render.Color">
+			<comment/>
+			<position>
+				<first>3103</first>
+				<second>360</second>
+			</position>
+			<color>255, 0, 0, 255</color>
 		</item>
 	</nodes>
 	<edges>
@@ -1321,32 +1317,12 @@ read-back color buffer.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[26]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[24]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[27]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[26]"/>
 				<name>True</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[28]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[27]"/>
-				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -2021,102 +1997,72 @@ read-back color buffer.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[77]"/>
+				<node ref="/object/nodes/item[78]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[28]"/>
+				<node ref="/object/nodes/item[77]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[79]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[78]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[80]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[79]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[81]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[79]"/>
+				<name>Transform</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[82]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[78]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[78]"/>
+				<node ref="/object/nodes/item[79]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[82]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[83]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[77]"/>
-				<name>ColorUV</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[79]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[78]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[80]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[79]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[81]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[80]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[82]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[81]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[39]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[82]"/>
-				<name>ViewOrigin</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[83]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[82]"/>
-				<name>ViewStepDirection</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[43]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[83]"/>
-				<name>Normal</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[38]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[83]"/>
-				<name>Direction</name>
+				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -2125,8 +2071,8 @@ read-back color buffer.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[80]"/>
-				<name>Transform</name>
+				<node ref="/object/nodes/item[77]"/>
+				<name>Input3</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -2135,18 +2081,8 @@ read-back color buffer.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[79]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[80]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[85]"/>
-				<name>Input</name>
+				<node ref="/object/nodes/item[28]"/>
+				<name>Blend</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -2155,8 +2091,8 @@ read-back color buffer.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[78]"/>
-				<name>Input2</name>
+				<node ref="/object/nodes/item[85]"/>
+				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -2165,8 +2101,8 @@ read-back color buffer.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[78]"/>
-				<name>Input3</name>
+				<node ref="/object/nodes/item[85]"/>
+				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -2175,7 +2111,7 @@ read-back color buffer.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[28]"/>
+				<node ref="/object/nodes/item[85]"/>
 				<name>Blend</name>
 			</destination>
 		</item>
@@ -2186,36 +2122,6 @@ read-back color buffer.
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[88]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[90]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[88]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[91]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[88]"/>
-				<name>Blend</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[92]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[91]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -2225,7 +2131,7 @@ read-back color buffer.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[92]"/>
+				<node ref="/object/nodes/item[89]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
@@ -2235,17 +2141,7 @@ read-back color buffer.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[92]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[93]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[27]"/>
+				<node ref="/object/nodes/item[89]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
@@ -2255,7 +2151,7 @@ read-back color buffer.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[93]"/>
+				<node ref="/object/nodes/item[90]"/>
 				<name>EyeDirection</name>
 			</destination>
 		</item>
@@ -2265,7 +2161,7 @@ read-back color buffer.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[93]"/>
+				<node ref="/object/nodes/item[90]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -2275,33 +2171,23 @@ read-back color buffer.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[93]"/>
+				<node ref="/object/nodes/item[90]"/>
 				<name>Normal</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[88]"/>
+				<node ref="/object/nodes/item[85]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[93]"/>
+				<node ref="/object/nodes/item[90]"/>
 				<name>Amount</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[82]"/>
-				<name>Valid</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[27]"/>
-				<name>Blend</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[93]"/>
+				<node ref="/object/nodes/item[90]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -2311,7 +2197,7 @@ read-back color buffer.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[94]"/>
+				<node ref="/object/nodes/item[91]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -2321,11 +2207,11 @@ read-back color buffer.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[95]"/>
+				<node ref="/object/nodes/item[92]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[94]"/>
+				<node ref="/object/nodes/item[91]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -2335,17 +2221,17 @@ read-back color buffer.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[95]"/>
+				<node ref="/object/nodes/item[92]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[96]"/>
+				<node ref="/object/nodes/item[93]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[95]"/>
+				<node ref="/object/nodes/item[92]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
@@ -2355,17 +2241,17 @@ read-back color buffer.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[96]"/>
+				<node ref="/object/nodes/item[93]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[97]"/>
+				<node ref="/object/nodes/item[94]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[96]"/>
+				<node ref="/object/nodes/item[93]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
@@ -2381,32 +2267,102 @@ read-back color buffer.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[98]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[99]"/>
-				<name>State</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[18]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[100]"/>
+				<node ref="/object/nodes/item[97]"/>
 				<name>Other</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[100]"/>
+				<node ref="/object/nodes/item[98]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[97]"/>
+				<name>GCM</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[39]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[99]"/>
+				<name>Origin</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[99]"/>
+				<name>HitPosition</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[100]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[100]"/>
 				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[27]"/>
+				<name>Blend</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[95]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[96]"/>
+				<name>State</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[43]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[99]"/>
+				<name>Normal</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[38]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[99]"/>
+				<name>ViewDirection</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[99]"/>
+				<name>HitPosition</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[28]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[99]"/>
+				<name>HitPosition</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[101]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -2415,8 +2371,58 @@ read-back color buffer.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[100]"/>
-				<name>GCM</name>
+				<node ref="/object/nodes/item[102]"/>
+				<name>Blend</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[103]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[102]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[90]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[27]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[26]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[24]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[97]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[96]"/>
+				<name>Output</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[99]"/>
+				<name>HitPosition</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[27]"/>
+				<name>Input2</name>
 			</destination>
 		</item>
 	</edges>

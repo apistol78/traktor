@@ -1288,7 +1288,6 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 
 	const D3D11_COMPARISON_FUNC c_d3dComparison[] =
 	{
-		D3D11_COMPARISON_NEVER,
 		D3D11_COMPARISON_ALWAYS,
 		D3D11_COMPARISON_NEVER,
 		D3D11_COMPARISON_LESS,
@@ -1296,24 +1295,25 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 		D3D11_COMPARISON_GREATER,
 		D3D11_COMPARISON_GREATER_EQUAL,
 		D3D11_COMPARISON_EQUAL,
-		D3D11_COMPARISON_NOT_EQUAL
+		D3D11_COMPARISON_NOT_EQUAL,
+		D3D11_COMPARISON_NEVER
 	};
+
+	const SamplerState& samplerState = node->getSamplerState();
 
 	D3D11_SAMPLER_DESC dsd;
 	std::memset(&dsd, 0, sizeof(dsd));
 
 	dsd.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
-
-	dsd.AddressU = c_d3dAddress[node->getAddressU()];
-	dsd.AddressV = c_d3dAddress[node->getAddressV()];
+	dsd.AddressU = c_d3dAddress[samplerState.addressU];
+	dsd.AddressV = c_d3dAddress[samplerState.addressV];
 	if (texture->getType() > HtTexture2D)
-		dsd.AddressW = c_d3dAddress[node->getAddressW()];
+		dsd.AddressW = c_d3dAddress[samplerState.addressW];
 	else
 		dsd.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-
-	dsd.MipLODBias = node->getMipBias();
+	dsd.MipLODBias = samplerState.mipBias;
 	dsd.MaxAnisotropy = 1;
-	dsd.ComparisonFunc = c_d3dComparison[node->getCompare()];
+	dsd.ComparisonFunc = c_d3dComparison[samplerState.compare];
 	dsd.BorderColor[0] =
 	dsd.BorderColor[1] =
 	dsd.BorderColor[2] =
@@ -1321,37 +1321,37 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 	dsd.MinLOD = -D3D11_FLOAT32_MAX;
 	dsd.MaxLOD =  D3D11_FLOAT32_MAX;
 
-	switch (node->getMipFilter())
+	switch (samplerState.mipFilter)
 	{
-	case Sampler::FtPoint:
+	case FtPoint:
 		break;
-	case Sampler::FtLinear:
+	case FtLinear:
 		(UINT&)dsd.Filter |= 0x1;
 		break;
 	}
 
-	switch (node->getMagFilter())
+	switch (samplerState.magFilter)
 	{
-	case Sampler::FtPoint:
+	case FtPoint:
 		break;
-	case Sampler::FtLinear:
+	case FtLinear:
 		(UINT&)dsd.Filter |= 0x4;
 		break;
 	}
 
-	switch (node->getMinFilter())
+	switch (samplerState.minFilter)
 	{
-	case Sampler::FtPoint:
+	case FtPoint:
 		break;
-	case Sampler::FtLinear:
+	case FtLinear:
 		(UINT&)dsd.Filter |= 0x10;
 		break;
 	}
 
-	if (node->getCompare() == Sampler::CmNo)
+	if (samplerState.compare == CfNone)
 	{
 		if (
-			node->getUseAnisotropic() &&
+			samplerState.useAnisotropic &&
 			dsd.Filter == (0x10 | 0x4 | 0x1)
 		)
 			dsd.Filter = D3D11_FILTER_ANISOTROPIC;
@@ -1372,7 +1372,7 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 	{
 		StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtSamplers);
 
-		if (node->getCompare() == Sampler::CmNo)
+		if (samplerState.compare == CfNone)
 			fu << L"SamplerState " << samplerName << L";" << Endl;
 		else
 			fu << L"SamplerComparisonState " << samplerName << L";" << Endl;
@@ -1380,11 +1380,11 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 		cx.getShader().addSampler(samplerName, dsd);
 	}
 
-	HlslVariable* out = cx.emitOutput(node, L"Output", (node->getCompare() == Sampler::CmNo) ? HtFloat4 : HtFloat);
+	HlslVariable* out = cx.emitOutput(node, L"Output", (samplerState.compare == CfNone) ? HtFloat4 : HtFloat);
 
-	if (!mip && cx.inPixel() && !node->getIgnoreMips())
+	if (!mip && cx.inPixel() && !samplerState.ignoreMips)
 	{
-		if (node->getCompare() == Sampler::CmNo)
+		if (samplerState.compare == CfNone)
 		{
 			switch (texture->getType())
 			{
@@ -1399,7 +1399,7 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 		}
 		else
 		{
-			if (!node->getIgnoreMips())
+			if (!samplerState.ignoreMips)
 			{
 				switch (texture->getType())
 				{
@@ -1429,7 +1429,7 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 	}
 	else
 	{
-		if (node->getCompare() == Sampler::CmNo)
+		if (samplerState.compare == CfNone)
 		{
 			switch (texture->getType())
 			{
@@ -1472,8 +1472,7 @@ bool emitScript(HlslContext& cx, Script* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
 
-	// Get platform specific script from node.
-	std::wstring script = node->getScript();
+	const std::wstring& script = node->getScript();
 	if (script.empty())
 		return false;
 
@@ -1501,6 +1500,109 @@ bool emitScript(HlslContext& cx, Script* node)
 		in[i] = cx.emitInput(node->getInputPin(i));
 		if (!in[i])
 			return false;
+	}
+
+	// Define samplers.
+	const std::map< std::wstring, SamplerState >& samplers = node->getSamplers();
+	for (std::map< std::wstring, SamplerState >::const_iterator i = samplers.begin(); i != samplers.end(); ++i)
+	{
+		const D3D11_TEXTURE_ADDRESS_MODE c_d3dAddress[] =
+		{
+			D3D11_TEXTURE_ADDRESS_WRAP,
+			D3D11_TEXTURE_ADDRESS_MIRROR,
+			D3D11_TEXTURE_ADDRESS_CLAMP,
+			D3D11_TEXTURE_ADDRESS_BORDER
+		};
+
+		const D3D11_COMPARISON_FUNC c_d3dComparison[] =
+		{
+			D3D11_COMPARISON_NEVER,
+			D3D11_COMPARISON_ALWAYS,
+			D3D11_COMPARISON_NEVER,
+			D3D11_COMPARISON_LESS,
+			D3D11_COMPARISON_LESS_EQUAL,
+			D3D11_COMPARISON_GREATER,
+			D3D11_COMPARISON_GREATER_EQUAL,
+			D3D11_COMPARISON_EQUAL,
+			D3D11_COMPARISON_NOT_EQUAL
+		};
+
+		const SamplerState& samplerState = i->second;
+
+		D3D11_SAMPLER_DESC dsd;
+		std::memset(&dsd, 0, sizeof(dsd));
+
+		dsd.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+		dsd.AddressU = c_d3dAddress[samplerState.addressU];
+		dsd.AddressV = c_d3dAddress[samplerState.addressV];
+		dsd.AddressW = c_d3dAddress[samplerState.addressW];
+		dsd.MipLODBias = samplerState.mipBias;
+		dsd.MaxAnisotropy = 1;
+		dsd.ComparisonFunc = c_d3dComparison[samplerState.compare];
+		dsd.BorderColor[0] =
+		dsd.BorderColor[1] =
+		dsd.BorderColor[2] =
+		dsd.BorderColor[3] = 1.0f;
+		dsd.MinLOD = -D3D11_FLOAT32_MAX;
+		dsd.MaxLOD =  D3D11_FLOAT32_MAX;
+
+		switch (samplerState.mipFilter)
+		{
+		case FtPoint:
+			break;
+		case FtLinear:
+			(UINT&)dsd.Filter |= 0x1;
+			break;
+		}
+
+		switch (samplerState.magFilter)
+		{
+		case FtPoint:
+			break;
+		case FtLinear:
+			(UINT&)dsd.Filter |= 0x4;
+			break;
+		}
+
+		switch (samplerState.minFilter)
+		{
+		case FtPoint:
+			break;
+		case FtLinear:
+			(UINT&)dsd.Filter |= 0x10;
+			break;
+		}
+
+		if (samplerState.compare == CfNone)
+		{
+			if (
+				samplerState.useAnisotropic &&
+				dsd.Filter == (0x10 | 0x4 | 0x1)
+			)
+				dsd.Filter = D3D11_FILTER_ANISOTROPIC;
+		}
+		else
+			(UINT&)dsd.Filter |= 0x80;
+
+		Adler32 samplerHash;
+		samplerHash.begin();
+		samplerHash.feed(&dsd, sizeof(dsd));
+		samplerHash.end();
+
+		std::wstring samplerName = i->first;
+
+		const std::map< std::wstring, D3D11_SAMPLER_DESC >& samplers = cx.getShader().getSamplers();
+		if (samplers.find(samplerName) == samplers.end())
+		{
+			StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtSamplers);
+
+			if (samplerState.compare == CfNone)
+				fu << L"SamplerState " << samplerName << L";" << Endl;
+			else
+				fu << L"SamplerComparisonState " << samplerName << L";" << Endl;
+
+			cx.getShader().addSampler(samplerName, dsd);
+		}
 	}
 
 	// Define script instance.

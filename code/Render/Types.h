@@ -79,7 +79,8 @@ enum CompareFunction
 	CfGreater,
 	CfGreaterEqual,
 	CfEqual,
-	CfNotEqual
+	CfNotEqual,
+	CfNone
 };
 
 enum StencilOperation
@@ -92,6 +93,20 @@ enum StencilOperation
 	SoInvert,
 	SoIncrement,
 	SoDecrement
+};
+
+enum Filter
+{
+	FtPoint,
+	FtLinear
+};
+
+enum Address
+{
+	AdWrap,
+	AdMirror,
+	AdClamp,
+	AdBorder
 };
 
 /*! \brief Render state. */
@@ -141,6 +156,35 @@ struct RenderState
 	,	stencilFunction(CfAlways)
 	,	stencilReference(0x00000000)
 	,	stencilMask(0xffffffff)
+	{
+	}
+};
+
+/*! \brief Sampler state. */
+struct SamplerState
+{
+	Filter minFilter;
+	Filter mipFilter;
+	Filter magFilter;
+	Address addressU;
+	Address addressV;
+	Address addressW;
+	CompareFunction compare;
+	float mipBias;
+	bool ignoreMips;
+	bool useAnisotropic;
+
+	SamplerState()
+	:	minFilter(FtLinear)
+	,	mipFilter(FtLinear)
+	,	magFilter(FtLinear)
+	,	addressU(AdWrap)
+	,	addressV(AdWrap)
+	,	addressW(AdWrap)
+	,	compare(CfNone)
+	,	mipBias(0.0f)
+	,	ignoreMips(false)
+	,	useAnisotropic(false)
 	{
 	}
 };

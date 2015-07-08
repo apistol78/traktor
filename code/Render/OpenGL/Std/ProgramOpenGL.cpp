@@ -499,7 +499,7 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLuint program, con
 			m_textures.push_back(0);
 		}
 
-		std::wstring samplerName = L"_gl_sampler_" + texture + L"_" + toString(i->stage);
+		std::wstring samplerName = i->name; // L"_gl_sampler_" + texture + L"_" + toString(i->stage);
 
 		Sampler sampler;
 		sampler.location = glGetUniformLocation(m_program, wstombs(samplerName).c_str());

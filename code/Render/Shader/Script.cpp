@@ -2,7 +2,7 @@
 #include "Core/Serialization/AttributeMultiLine.h"
 #include "Core/Serialization/AttributeReadOnly.h"
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberComplex.h"
+#include "Core/Serialization/MemberStl.h"
 #include "Render/Shader/Script.h"
 
 namespace traktor
@@ -58,17 +58,21 @@ public:
 		{
 			std::wstring name = m_pin->getName();
 			ParameterType type = m_pin->getType();
+			std::wstring samplerId = m_pin->getSamplerId();
 
 			s >> Member< std::wstring >(L"name", name);
 			s >> MemberEnum< ParameterType >(L"type", type, c_ParameterType_Keys);
+			s >> Member< std::wstring >(L"samplerId", samplerId);
 		}
 		else	// SdRead
 		{
 			std::wstring name = L"";
 			ParameterType type;
+			std::wstring samplerId = L"";
 
 			s >> Member< std::wstring >(L"name", name);
 			s >> MemberEnum< ParameterType >(L"type", type, c_ParameterType_Keys);
+			s >> Member< std::wstring >(L"samplerId", samplerId);
 
 			if (m_pin)
 			{
@@ -76,7 +80,8 @@ public:
 					s.getCurrentObject< Node >(),
 					name,
 					false,
-					type
+					type,
+					samplerId
 				);
 			}
 			else
@@ -85,7 +90,8 @@ public:
 					s.getCurrentObject< Node >(),
 					name,
 					false,
-					type
+					type,
+					samplerId
 				);
 			}
 		}
@@ -206,6 +212,63 @@ private:
 	mutable size_t m_index;
 };
 
+class MemberSamplerState : public MemberComplex
+{
+public:
+	MemberSamplerState(const wchar_t* const name, SamplerState& ref)
+	:	MemberComplex(name, true)
+	,	m_ref(ref)
+	{
+	}
+
+	virtual void serialize(ISerializer& s) const
+	{
+		const MemberEnum< Filter >::Key kFilter[] =
+		{
+			{ L"FtPoint", FtPoint },
+			{ L"FtLinear", FtLinear },
+			{ 0, 0 }
+		};
+
+		const MemberEnum< Address >::Key kAddress[] =
+		{
+			{ L"AdWrap", AdWrap },
+			{ L"AdMirror", AdMirror },
+			{ L"AdClamp", AdClamp },
+			{ L"AdBorder", AdBorder },
+			{ 0, 0 }
+		};
+
+		const MemberEnum< CompareFunction >::Key kCompareFunctions[] =
+		{
+			{ L"CfAlways", CfAlways },
+			{ L"CfNever", CfNever },
+			{ L"CfLess", CfLess },
+			{ L"CfLessEqual", CfLessEqual },
+			{ L"CfGreater", CfGreater },
+			{ L"CfGreaterEqual", CfGreaterEqual },
+			{ L"CfEqual", CfEqual },
+			{ L"CfNotEqual", CfNotEqual },
+			{ L"CfNone", CfNone },
+			{ 0, 0 }
+		};
+
+		s >> MemberEnum< Filter >(L"minFilter", m_ref.minFilter, kFilter);
+		s >> MemberEnum< Filter >(L"mipFilter", m_ref.mipFilter, kFilter);
+		s >> MemberEnum< Filter >(L"magFilter", m_ref.magFilter, kFilter);
+		s >> MemberEnum< Address >(L"addressU", m_ref.addressU, kAddress);
+		s >> MemberEnum< Address >(L"addressV", m_ref.addressV, kAddress);
+		s >> MemberEnum< Address >(L"addressW", m_ref.addressW, kAddress);
+		s >> MemberEnum< CompareFunction >(L"compare", m_ref.compare, kCompareFunctions);
+		s >> Member< float >(L"mipBias", m_ref.mipBias);
+		s >> Member< bool >(L"ignoreMips", m_ref.ignoreMips);
+		s >> Member< bool >(L"useAnisotropic", m_ref.useAnisotropic);
+	}
+
+private:
+	SamplerState& m_ref;
+};
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Script", 0, Script, Node)
@@ -267,6 +330,24 @@ void Script::removeOutputPin(const std::wstring& name)
 	}
 }
 
+ParameterType Script::getInputPinType(int index) const
+{
+	T_ASSERT (index >= 0 && index < int(m_inputPins.size()));
+	return m_inputPins[index]->getType();
+}
+
+std::wstring Script::getInputPinSamplerId(int index) const
+{
+	T_ASSERT (index >= 0 && index < int(m_inputPins.size()));
+	return m_inputPins[index]->getSamplerId();
+}
+
+ParameterType Script::getOutputPinType(int index) const
+{
+	T_ASSERT (index >= 0 && index < int(m_outputPins.size()));
+	return m_outputPins[index]->getType();
+}
+
 int Script::getInputPinCount() const
 {
 	return int(m_inputPins.size());
@@ -289,6 +370,11 @@ const OutputPin* Script::getOutputPin(int index) const
 	return m_outputPins[index];
 }
 
+const std::map< std::wstring, SamplerState >& Script::getSamplers() const
+{
+	return m_samplers;
+}
+
 void Script::serialize(ISerializer& s)
 {
 	Node::serialize(s);
@@ -296,6 +382,16 @@ void Script::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> MemberPinArray< MemberTypedInputPin >(L"inputPins", m_inputPins);
 	s >> MemberPinArray< MemberTypedOutputPin >(L"outputPins", m_outputPins);
+	s >> MemberStlMap<
+		std::wstring,
+		SamplerState,
+		MemberStlPair<
+			std::wstring,
+			SamplerState,
+			Member< std::wstring >,
+			MemberSamplerState
+		>
+	>(L"samplers", m_samplers);
 	s >> Member< std::wstring >(L"script", m_script, AttributeMultiLine());
 }
 

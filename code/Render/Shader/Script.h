@@ -48,6 +48,12 @@ public:
 
 	void removeOutputPin(const std::wstring& name);
 
+	ParameterType getInputPinType(int index) const;
+
+	std::wstring getInputPinSamplerId(int index) const;
+
+	ParameterType getOutputPinType(int index) const;
+
 	virtual int getInputPinCount() const;
 
 	virtual const InputPin* getInputPin(int index) const;
@@ -56,12 +62,15 @@ public:
 
 	virtual const OutputPin* getOutputPin(int index) const;
 
+	const std::map< std::wstring, SamplerState >& getSamplers() const;
+
 	virtual void serialize(ISerializer& s);
 
 private:
 	std::wstring m_name;
 	std::vector< TypedInputPin* > m_inputPins;
 	std::vector< TypedOutputPin* > m_outputPins;
+	std::map< std::wstring, SamplerState > m_samplers;
 	std::wstring m_script;
 };
 
