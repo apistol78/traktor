@@ -1152,18 +1152,19 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 
 	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat4);
 
+	const SamplerState& samplerState = node->getSamplerState();
 	bool needAddressW = bool(texture->getType() > HtTexture2D);
 
 	// Calculate sampler hash.
 	Adler32 samplerHash;
 	samplerHash.feed(texture->getName());
-	samplerHash.feed(node->getMinFilter());
-	samplerHash.feed(node->getMipFilter());
-	samplerHash.feed(node->getMagFilter());
-	samplerHash.feed(node->getAddressU());
-	samplerHash.feed(node->getAddressV());
+	samplerHash.feed(samplerState.minFilter);
+	samplerHash.feed(samplerState.mipFilter);
+	samplerHash.feed(samplerState.magFilter);
+	samplerHash.feed(samplerState.addressU);
+	samplerHash.feed(samplerState.addressV);
 	if (needAddressW)
-		samplerHash.feed(node->getAddressW());
+		samplerHash.feed(samplerState.addressW);
 
 	// Register sampler, return stage index of sampler.
 	int32_t stage;
@@ -1195,25 +1196,25 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 		if (cx.inPixel())
 		{
 			StateBlockDx9& state = cx.getState();
-			state.setPixelSamplerState(stage, D3DSAMP_MINFILTER, d3dMinMagFilter[node->getMinFilter()]);
-			state.setPixelSamplerState(stage, D3DSAMP_MIPFILTER, d3dMipFilter[node->getMipFilter()]);
-			state.setPixelSamplerState(stage, D3DSAMP_MAGFILTER, d3dMinMagFilter[node->getMagFilter()]);
-			state.setPixelSamplerState(stage, D3DSAMP_ADDRESSU, d3dAddress[node->getAddressU()]);
-			state.setPixelSamplerState(stage, D3DSAMP_ADDRESSV, d3dAddress[node->getAddressV()]);
+			state.setPixelSamplerState(stage, D3DSAMP_MINFILTER, d3dMinMagFilter[samplerState.minFilter]);
+			state.setPixelSamplerState(stage, D3DSAMP_MIPFILTER, d3dMipFilter[samplerState.mipFilter]);
+			state.setPixelSamplerState(stage, D3DSAMP_MAGFILTER, d3dMinMagFilter[samplerState.magFilter]);
+			state.setPixelSamplerState(stage, D3DSAMP_ADDRESSU, d3dAddress[samplerState.addressU]);
+			state.setPixelSamplerState(stage, D3DSAMP_ADDRESSV, d3dAddress[samplerState.addressV]);
 			if (needAddressW)
-				state.setPixelSamplerState(stage, D3DSAMP_ADDRESSW, d3dAddress[node->getAddressW()]);
+				state.setPixelSamplerState(stage, D3DSAMP_ADDRESSW, d3dAddress[samplerState.addressW]);
 			state.setPixelSamplerState(stage, D3DSAMP_BORDERCOLOR, 0xffffffff);
 		}
 		else
 		{
 			StateBlockDx9& state = cx.getState();
-			state.setVertexSamplerState(stage, D3DSAMP_MINFILTER, d3dMinMagFilter[node->getMinFilter()]);
-			state.setVertexSamplerState(stage, D3DSAMP_MIPFILTER, d3dMipFilter[node->getMipFilter()]);
-			state.setVertexSamplerState(stage, D3DSAMP_MAGFILTER, d3dMinMagFilter[node->getMagFilter()]);
-			state.setVertexSamplerState(stage, D3DSAMP_ADDRESSU, d3dAddress[node->getAddressU()]);
-			state.setVertexSamplerState(stage, D3DSAMP_ADDRESSV, d3dAddress[node->getAddressV()]);
+			state.setVertexSamplerState(stage, D3DSAMP_MINFILTER, d3dMinMagFilter[samplerState.minFilter]);
+			state.setVertexSamplerState(stage, D3DSAMP_MIPFILTER, d3dMipFilter[samplerState.mipFilter]);
+			state.setVertexSamplerState(stage, D3DSAMP_MAGFILTER, d3dMinMagFilter[samplerState.magFilter]);
+			state.setVertexSamplerState(stage, D3DSAMP_ADDRESSU, d3dAddress[samplerState.addressU]);
+			state.setVertexSamplerState(stage, D3DSAMP_ADDRESSV, d3dAddress[samplerState.addressV]);
 			if (needAddressW)
-				state.setVertexSamplerState(stage, D3DSAMP_ADDRESSW, d3dAddress[node->getAddressW()]);
+				state.setVertexSamplerState(stage, D3DSAMP_ADDRESSW, d3dAddress[samplerState.addressW]);
 			state.setVertexSamplerState(stage, D3DSAMP_BORDERCOLOR, 0xffffffff);
 		}
 	}

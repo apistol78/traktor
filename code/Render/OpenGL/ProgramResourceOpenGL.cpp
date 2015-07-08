@@ -42,6 +42,7 @@ public:
 
 	virtual void serialize(ISerializer& s) const
 	{
+		s >> Member< std::wstring >(L"name", m_ref.name);
 		s >> Member< GLuint >(L"stage", m_ref.stage);
 		s >> Member< GLenum >(L"target", m_ref.target);
 		s >> Member< int32_t >(L"texture", m_ref.texture);
@@ -113,7 +114,7 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceOpenGL", 9, ProgramResourceOpenGL, ProgramResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceOpenGL", 10, ProgramResourceOpenGL, ProgramResource)
 
 ProgramResourceOpenGL::ProgramResourceOpenGL()
 :	m_hash(0)
@@ -140,7 +141,7 @@ ProgramResourceOpenGL::ProgramResourceOpenGL(
 
 void ProgramResourceOpenGL::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion() >= 9);
+	T_ASSERT (s.getVersion() >= 10);
 
 	s >> Member< std::string >(L"vertexShader", m_vertexShader);
 	s >> Member< std::string >(L"fragmentShader", m_fragmentShader);

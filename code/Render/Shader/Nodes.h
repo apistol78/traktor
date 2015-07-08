@@ -719,96 +719,18 @@ class T_DLLCLASS Sampler : public ImmutableNode
 	T_RTTI_CLASS;
 
 public:
-	enum Filter
-	{
-		FtPoint,
-		FtLinear
-	};
+	Sampler();
 
-	enum Address
-	{
-		AdWrap,
-		AdMirror,
-		AdClamp,
-		AdBorder
-	};
+	Sampler(const SamplerState& state);
 
-	enum Compare
-	{
-		CmNo,
-		CmAlways,
-		CmNever,
-		CmLess,
-		CmLessEqual,
-		CmGreater,
-		CmGreaterEqual,
-		CmEqual,
-		CmNotEqual
-	};
+	void setSamplerState(const SamplerState& state);
 
-	Sampler(
-		Filter minFilter = FtLinear,
-		Filter mipFilter = FtLinear,
-		Filter magFilter = FtLinear,
-		Address addressU = AdWrap,
-		Address addressV = AdWrap,
-		Address addressW = AdWrap,
-		Compare compare = CmNo
-	);
-
-	void setMinFilter(Filter minFilter);
-
-	Filter getMinFilter() const;
-
-	void setMipFilter(Filter mipFilter);
-
-	Filter getMipFilter() const;
-
-	void setMagFilter(Filter magFilter);
-
-	Filter getMagFilter() const;
-
-	void setAddressU(Address addressU);
-
-	Address getAddressU() const;
-
-	void setAddressV(Address addressV);
-
-	Address getAddressV() const;
-
-	void setAddressW(Address addressW);
-
-	Address getAddressW() const;
-
-	void setCompare(Compare compare);
-
-	Compare getCompare() const;
-
-	void setMipBias(float mipBias);
-
-	float getMipBias() const;
-
-	void setIgnoreMips(bool ignoreMips);
-
-	bool getIgnoreMips() const;
-
-	void setUseAnisotropic(bool useAnisotropic);
-
-	bool getUseAnisotropic() const;
+	const SamplerState& getSamplerState() const;
 
 	virtual void serialize(ISerializer& s);
 
 private:
-	Filter m_minFilter;
-	Filter m_mipFilter;
-	Filter m_magFilter;
-	Address m_addressU;
-	Address m_addressV;
-	Address m_addressW;
-	Compare m_compare;
-	float m_mipBias;
-	bool m_ignoreMips;
-	bool m_useAnisotropic;
+	SamplerState m_state;
 };
 
 /*! \brief Scalar constant. */

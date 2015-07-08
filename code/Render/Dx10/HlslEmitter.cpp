@@ -1032,12 +1032,14 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 			D3D10_TEXTURE_ADDRESS_BORDER
 		};
 
+		const SamplerState& samplerState = node->getSamplerState();
+
 		D3D10_SAMPLER_DESC dsd;
 		dsd.Filter = D3D10_FILTER_MIN_MAG_MIP_POINT;
-		dsd.AddressU = c_d3dAddress[node->getAddressU()];
-		dsd.AddressV = c_d3dAddress[node->getAddressV()];
-		dsd.AddressW = c_d3dAddress[node->getAddressW()];
-		dsd.MipLODBias = 0.0f;
+		dsd.AddressU = c_d3dAddress[samplerState.addressU];
+		dsd.AddressV = c_d3dAddress[samplerState.addressV];
+		dsd.AddressW = c_d3dAddress[samplerState.addressW];
+		dsd.MipLODBias = samplerState.mipBias;
 		dsd.MaxAnisotropy = 1;
 		dsd.ComparisonFunc = D3D10_COMPARISON_NEVER;
 		dsd.BorderColor[0] =
@@ -1047,29 +1049,29 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 		dsd.MinLOD = -D3D10_FLOAT32_MAX;
 		dsd.MaxLOD =  D3D10_FLOAT32_MAX;
 
-		switch (node->getMipFilter())
+		switch (samplerState.mipFilter)
 		{
-		case Sampler::FtPoint:
+		case FtPoint:
 			break;
-		case Sampler::FtLinear:
+		case FtLinear:
 			(UINT&)dsd.Filter |= 0x1;
 			break;
 		}
 
-		switch (node->getMagFilter())
+		switch (samplerState.magFilter)
 		{
-		case Sampler::FtPoint:
+		case FtPoint:
 			break;
-		case Sampler::FtLinear:
+		case FtLinear:
 			(UINT&)dsd.Filter |= 0x4;
 			break;
 		}
 
-		switch (node->getMinFilter())
+		switch (samplerState.minFilter)
 		{
-		case Sampler::FtPoint:
+		case FtPoint:
 			break;
-		case Sampler::FtLinear:
+		case FtLinear:
 			(UINT&)dsd.Filter |= 0x10;
 			break;
 		}

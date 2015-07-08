@@ -28,6 +28,7 @@ render::handle_t s_handleTime;
 render::handle_t s_handleShadowEnable;
 render::handle_t s_handleCloudShadowEnable;
 render::handle_t s_handleExtent;
+render::handle_t s_handleProjection;
 render::handle_t s_handleViewInverse;
 render::handle_t s_handleMagicCoeffs;
 render::handle_t s_handleReflectionMap;
@@ -64,6 +65,7 @@ LightRendererDeferred::LightRendererDeferred()
 	s_handleShadowEnable = render::getParameterHandle(L"ShadowEnable");
 	s_handleCloudShadowEnable = render::getParameterHandle(L"CloudShadowEnable");
 	s_handleExtent = render::getParameterHandle(L"Extent");
+	s_handleProjection = render::getParameterHandle(L"Projection");
 	s_handleViewInverse = render::getParameterHandle(L"ViewInverse");
 	s_handleMagicCoeffs = render::getParameterHandle(L"MagicCoeffs");
 	s_handleReflectionMap = render::getParameterHandle(L"ReflectionMap");
@@ -339,6 +341,7 @@ void LightRendererDeferred::renderFinal(
 	Scalar p11 = projection.get(0, 0);
 	Scalar p22 = projection.get(1, 1);
 
+	m_finalShader->setMatrixParameter(s_handleProjection, projection);
 	m_finalShader->setMatrixParameter(s_handleViewInverse, view.inverse());
 	m_finalShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 	m_finalShader->setVectorParameter(s_handleFogDistanceAndDensity, fogDistanceAndDensity);

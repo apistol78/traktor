@@ -80,7 +80,7 @@ public:
 
 	bool defineUniform(const std::wstring& name, GLenum type, GLuint length);
 
-	bool defineSampler(uint32_t stateHash, GLenum target, const std::wstring& texture, int32_t& outStage);
+	bool defineSampler(const std::wstring& name, uint32_t stateHash, GLenum target, const std::wstring& texture, int32_t& outStage);
 
 	const std::vector< std::wstring >& getTextures() const;
 

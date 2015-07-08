@@ -90,7 +90,11 @@ void propagateAnisotropic(render::ShaderGraph* shaderGraph, render::Texture* tex
 	{
 		render::Sampler* samplerNode = dynamic_type_cast< render::Sampler* >((*i)->getNode());
 		if (samplerNode)
-			samplerNode->setUseAnisotropic(anisotropic);
+		{
+			render::SamplerState samplerState = samplerNode->getSamplerState();
+			samplerState.useAnisotropic = anisotropic;
+			samplerNode->setSamplerState(samplerState);
+		}
 	}
 }
 
