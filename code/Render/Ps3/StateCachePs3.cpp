@@ -102,6 +102,10 @@ void StateCachePs3::setRenderState(const RenderStateGCM& rs)
 	{
 		T_GCM_CALL(cellGcmSetColorMask)(gCellGcmCurrentContext, rs.colorMask);
 		m_renderState.colorMask = rs.colorMask;
+
+		T_GCM_CALL(cellGcmSetColorMaskMrt)(gCellGcmCurrentContext, CELL_GCM_COLOR_MASK_MRT1_R | CELL_GCM_COLOR_MASK_MRT1_G | CELL_GCM_COLOR_MASK_MRT1_B | CELL_GCM_COLOR_MASK_MRT1_A);
+		//T_GCM_CALL(cellGcmSetColorMaskMrt)(gCellGcmCurrentContext, CELL_GCM_COLOR_MASK_MRT2_R | CELL_GCM_COLOR_MASK_MRT2_G | CELL_GCM_COLOR_MASK_MRT2_B | CELL_GCM_COLOR_MASK_MRT2_A);
+		//T_GCM_CALL(cellGcmSetColorMaskMrt)(gCellGcmCurrentContext, CELL_GCM_COLOR_MASK_MRT3_R | CELL_GCM_COLOR_MASK_MRT3_G | CELL_GCM_COLOR_MASK_MRT3_B | CELL_GCM_COLOR_MASK_MRT3_A);
 	}
 
 	if (rs.depthMask != m_renderState.depthMask)

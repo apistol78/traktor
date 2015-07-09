@@ -106,15 +106,19 @@ private:
 		Viewport viewport;
 		uint32_t width;
 		uint32_t height;
+
 		uint8_t antialias;
 		uint8_t colorFormat;
-		uint32_t colorOffset;
-		uint32_t colorPitch;
+
+		uint32_t colorOffset[4];
+		uint32_t colorPitch[4];
+
 		uint32_t depthFormat;
 		uint32_t depthOffset;
 		uint32_t depthPitch;
 		uint32_t windowOffset;
-		RenderTargetPs3* renderTarget;
+
+		RenderTargetSetPs3* rts;
 		bool zcull;
 
 		// Deferred clear.

@@ -265,7 +265,8 @@ void RenderTargetPs3::beginRender()
 
 void RenderTargetPs3::finishRender(StateCachePs3& stateCache, Resolve2xMSAA& resolve)
 {
-	T_ASSERT (m_inRender == true);
+	if (!m_inRender)
+		return;
 
 	if (m_targetData)
 	{

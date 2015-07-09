@@ -926,15 +926,26 @@ bool emitPixelOutput(CgContext& cx, PixelOutput* node)
 
 	cx.enterPixel();
 
-	CgVariable* in = cx.emitInput(node, L"Input");
-	if (!in)
+	const wchar_t* inputs[] = { L"Input", L"Input1", L"Input2", L"Input3" };
+	CgVariable* in[4] = { 0 };
+
+	for (int32_t i = 0; i < sizeof_array(in); ++i)
+		in[i] = cx.emitInput(node, inputs[i]);
+
+	if (!in[0])
 		return false;
 
-	StringOutputStream& fpo = cx.getPixelShader().getOutputStream(CgShader::BtOutput);
-	fpo << L"float4 Color0 : COLOR0;" << Endl;
+	for (int32_t i = 0; i < sizeof_array(in); ++i)
+	{
+		if (!in[i])
+			continue;
 
-	StringOutputStream& fpb = cx.getPixelShader().getOutputStream(CgShader::BtBody);
-	fpb << L"o.Color0" << L" = " << in->cast(CtFloat4) << L";" << Endl;
+		StringOutputStream& fpo = cx.getPixelShader().getOutputStream(CgShader::BtOutput);
+		fpo << L"float4 Color" << i << L" : COLOR" << i << L";" << Endl;
+
+		StringOutputStream& fpb = cx.getPixelShader().getOutputStream(CgShader::BtBody);
+		fpb << L"o.Color" << i << L" = " << in[i]->cast(CtFloat4) << L";" << Endl;
+	}
 
 	const RenderState& rs = node->getRenderState();
 	RenderStateGCM& rsgcm = cx.getRenderState();
@@ -1167,8 +1178,10 @@ bool emitSampler(CgContext& cx, Sampler* node)
 		RenderStateGCM& rs = cx.getRenderState();
 		SamplerStateGCM& ss = rs.samplerStates[stage];
 
-		bool minLinear = node->getMinFilter() != Sampler::FtPoint;
-		bool mipLinear = node->getMipFilter() != Sampler::FtPoint;
+		const SamplerState& samplerState = node->getSamplerState();
+
+		bool minLinear = samplerState.minFilter != FtPoint;
+		bool mipLinear = samplerState.mipFilter != FtPoint;
 
 		if (!minLinear && !mipLinear)
 			ss.minFilter = CELL_GCM_TEXTURE_NEAREST;
@@ -1179,10 +1192,10 @@ bool emitSampler(CgContext& cx, Sampler* node)
 		else
 			ss.minFilter = CELL_GCM_TEXTURE_LINEAR_LINEAR;
 
-		ss.magFilter = gcmFilter[node->getMagFilter()];
-		ss.wrapU = gcmAddress[node->getAddressU()];
-		ss.wrapV = gcmAddress[node->getAddressV()];
-		ss.wrapW = gcmAddress[node->getAddressW()];
+		ss.magFilter = gcmFilter[samplerState.magFilter];
+		ss.wrapU = gcmAddress[samplerState.addressU];
+		ss.wrapV = gcmAddress[samplerState.addressV];
+		ss.wrapW = gcmAddress[samplerState.addressW];
 	}
 
 	if (cx.inPixel())

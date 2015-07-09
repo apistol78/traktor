@@ -68,6 +68,8 @@ public:
 	bool getGcmZCull() const { return false; }
 #endif
 
+	uint32_t getRenderTargetCount() const { return m_renderTargets.size(); }
+
 	RenderTargetPs3* getRenderTarget(int index) { return m_renderTargets[index]; }
 
 	bool usingPrimaryDepthStencil() const { return m_usingPrimaryDepthStencil; }

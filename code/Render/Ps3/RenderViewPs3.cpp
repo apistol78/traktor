@@ -690,14 +690,17 @@ bool RenderViewPs3::begin(EyeType eye)
 			m_height,
 			CELL_GCM_SURFACE_CENTER_1,
 			CELL_GCM_SURFACE_A8R8G8B8,
-			m_colorOffset[frameIndex] + eyeOffset,
-			m_colorPitch,
+			{ m_colorOffset[frameIndex] + eyeOffset, 0, 0, 0 },
+			{ m_colorPitch, 64, 64, 64 },
 			CELL_GCM_SURFACE_Z24S8,
 			m_depthTexture.offset,
 			m_depthTexture.pitch,
 			eyeWindowOffset,
 			0,
 			true,
+			0,
+			{ 0.0f, 0.0f, 0.0f, 0.0f },
+			0.0f,
 			0
 		};
 
@@ -715,14 +718,17 @@ bool RenderViewPs3::begin(EyeType eye)
 			m_height,
 			m_targetSurfaceAntialias,
 			CELL_GCM_SURFACE_A8R8G8B8,
-			m_targetTexture.offset,
-			m_targetTexture.pitch,
+			{ m_targetTexture.offset, 0, 0, 0 },
+			{ m_targetTexture.pitch, 64, 64, 64 },
 			CELL_GCM_SURFACE_Z24S8,
 			m_depthTexture.offset,
 			m_depthTexture.pitch,
 			0,
 			0,
 			true,
+			0,
+			{ 0.0f, 0.0f, 0.0f, 0.0f },
+			0.0f,
 			0
 		};
 
@@ -762,7 +768,70 @@ bool RenderViewPs3::begin(EyeType eye)
 
 bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet)
 {
-	return false;
+	T_ASSERT (!m_renderTargetStack.empty());
+
+	RenderTargetSetPs3* rts = checked_type_cast< RenderTargetSetPs3* >(renderTargetSet);
+
+	RenderState rs =
+	{
+		Viewport(0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f),
+		rts->getWidth(),
+		rts->getHeight(),
+		CELL_GCM_SURFACE_CENTER_1,
+		CELL_GCM_SURFACE_A8B8G8R8,
+		{ 0, 0, 0, 0 },
+		{ 64, 64, 64, 64 },
+		rts->getGcmDepthSurfaceFormat(),
+		rts->getGcmDepthTexture().offset,
+		rts->getGcmDepthTexture().pitch,
+		0,
+		rts,
+		rts->getGcmZCull(),
+		0,
+		{ 0.0f, 0.0f, 0.0f, 0.0f },
+		0.0f,
+		0
+	};
+
+	uint32_t rtc = rts->getRenderTargetCount();
+	T_ASSERT (rtc <= 4);
+
+	for (uint32_t i = 0; i < rtc; ++i)
+	{
+		RenderTargetPs3* rt = rts->getRenderTarget(i);
+		T_ASSERT (rt);
+
+		T_ASSERT (i == 0 || rt->getGcmSurfaceAntialias() == rs.antialias);
+		T_ASSERT (i == 0 || rt->getGcmSurfaceColorFormat() == rs.colorFormat);
+
+		rt->beginRender();
+
+		rs.antialias = rt->getGcmSurfaceAntialias();
+		rs.colorFormat = rt->getGcmSurfaceColorFormat();
+		rs.colorOffset[i] = rt->getGcmTargetTexture().offset;
+		rs.colorPitch[i] = rt->getGcmTargetTexture().pitch;
+	}
+
+	if (rts->usingPrimaryDepthStencil())
+	{
+		T_ASSERT_M (rt->getWidth() == m_width && rt->getHeight() == m_height, L"Target dimension mismatch");
+		T_ASSERT_M (rt->getGcmSurfaceAntialias() == m_targetSurfaceAntialias, L"Target multisampling mismatch");
+		rs.depthFormat = CELL_GCM_SURFACE_Z24S8;
+		rs.depthOffset = m_depthTexture.offset;
+		rs.depthPitch = m_depthTexture.pitch;
+#if defined(T_RENDER_PS3_USE_ZCULL)
+		rs.zcull = true;
+#else
+		rs.zcull = false;
+#endif
+	}
+
+	m_renderTargetStack.push_back(rs);
+	m_renderTargetDirty = true;
+
+	rts->setContentValid(true);
+
+	return true;
 }
 
 bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet, int renderTarget)
@@ -777,19 +846,22 @@ bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 
 	RenderState rs =
 	{
-		Viewport(0, 0, rt->getWidth(), rt->getHeight(), 0.0f, 1.0f),
-		rt->getWidth(),
-		rt->getHeight(),
+		Viewport(0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f),
+		rts->getWidth(),
+		rts->getHeight(),
 		rt->getGcmSurfaceAntialias(),
 		rt->getGcmSurfaceColorFormat(),
-		rt->getGcmTargetTexture().offset,
-		rt->getGcmTargetTexture().pitch,
+		{ rt->getGcmTargetTexture().offset, 0, 0, 0 },
+		{ rt->getGcmTargetTexture().pitch, 64, 64, 64 },
 		rts->getGcmDepthSurfaceFormat(),
 		rts->getGcmDepthTexture().offset,
 		rts->getGcmDepthTexture().pitch,
 		0,
-		rt,
+		rts,
 		rts->getGcmZCull(),
+		0,
+		{ 0.0f, 0.0f, 0.0f, 0.0f },
+		0.0f,
 		0
 	};
 
@@ -934,14 +1006,17 @@ void RenderViewPs3::end()
 	T_ASSERT (!m_renderTargetStack.empty());
 
 	RenderState& rs = m_renderTargetStack.back();
-	RenderTargetPs3* rt = rs.renderTarget;
-	
+	RenderTargetSetPs3* rts = rs.rts;
+
 	m_renderTargetStack.pop_back();
 
 	if (!m_renderTargetStack.empty())
 	{
-		T_ASSERT (rt);
-		rt->finishRender(m_stateCache, m_resolve2x);
+		for (uint32_t i = 0; i < 4; ++i)
+		{
+			if (rts->getRenderTarget(i))
+				rts->getRenderTarget(i)->finishRender(m_stateCache, m_resolve2x);
+		}
 		m_renderTargetDirty = true;
 	}
 #if defined(T_RENDER_PS3_USE_ZCULL)
@@ -1057,19 +1132,19 @@ void RenderViewPs3::setCurrentRenderState()
 	sf.type = CELL_GCM_SURFACE_PITCH;
 	sf.antialias = rs.antialias;
 	sf.colorFormat = rs.colorFormat;
-	sf.colorTarget= CELL_GCM_SURFACE_TARGET_0;
+	sf.colorTarget= CELL_GCM_SURFACE_TARGET_NONE;
 	sf.colorLocation[0]	= CELL_GCM_LOCATION_LOCAL;
-	sf.colorOffset[0] = rs.colorOffset;
-	sf.colorPitch[0] = rs.colorPitch;
+	sf.colorOffset[0] = rs.colorOffset[0];
+	sf.colorPitch[0] = rs.colorPitch[0];
 	sf.colorLocation[1]	= CELL_GCM_LOCATION_LOCAL;
-	sf.colorOffset[1] = 0;
-	sf.colorPitch[1] = 64;
+	sf.colorOffset[1] = rs.colorOffset[1];
+	sf.colorPitch[1] = rs.colorPitch[1];
 	sf.colorLocation[2]	= CELL_GCM_LOCATION_LOCAL;
-	sf.colorOffset[2] = 0;
-	sf.colorPitch[2] = 64;
+	sf.colorOffset[2] = rs.colorOffset[2];
+	sf.colorPitch[2] = rs.colorPitch[2];
 	sf.colorLocation[3]	= CELL_GCM_LOCATION_LOCAL;
-	sf.colorOffset[3] = 0;
-	sf.colorPitch[3] = 64;
+	sf.colorOffset[3] = rs.colorOffset[3];
+	sf.colorPitch[3] = rs.colorPitch[3];
 	sf.depthFormat = rs.depthFormat;
 	sf.depthLocation = CELL_GCM_LOCATION_LOCAL;
 	sf.depthOffset = rs.depthOffset;
@@ -1078,6 +1153,24 @@ void RenderViewPs3::setCurrentRenderState()
 	sf.height = rs.height;
 	sf.x = 0;
 	sf.y = rs.windowOffset;
+
+	if (sf.colorOffset[0])
+	{
+		if (sf.colorOffset[1])
+		{
+			if (sf.colorOffset[2])
+			{
+				if (sf.colorOffset[3])
+					sf.colorTarget = CELL_GCM_SURFACE_TARGET_MRT3;	// 0,1,2,3
+				else
+					sf.colorTarget = CELL_GCM_SURFACE_TARGET_MRT2;	// 0,1,2
+			}
+			else
+				sf.colorTarget = CELL_GCM_SURFACE_TARGET_MRT1;	// 0,1
+		}
+		else
+			sf.colorTarget = CELL_GCM_SURFACE_TARGET_0;	// 0
+	}
 
 	T_GCM_CALL(cellGcmSetSurfaceWindow)(
 		gCellGcmCurrentContext,
