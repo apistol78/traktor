@@ -30,7 +30,7 @@ public:
 	SpawnEffectEvent(
 		sound::ISoundPlayer* soundPlayer,
 		const resource::Proxy< Effect >& effect,
-		Transform transform,
+		const Transform& transform,
 		bool follow,
 		bool useRotation
 	);
