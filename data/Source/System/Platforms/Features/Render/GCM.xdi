@@ -274,6 +274,12 @@
 					<value>true</value>
 				</second>
 			</item>
+			<item>
+				<first>World.AmbientOcclusionQuality</first>
+				<second type="traktor.PropertyInteger">
+					<value>0</value>
+				</second>
+			</item>
 		</value>
 	</runtimeProperties>
 </object>
