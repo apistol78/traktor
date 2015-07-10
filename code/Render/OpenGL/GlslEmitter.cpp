@@ -1694,7 +1694,6 @@ bool emitScript(GlslContext& cx, Script* node)
 
 			const GLenum c_glCompare[] =
 			{
-				GL_INVALID_ENUM,
 				GL_ALWAYS,
 				GL_NEVER,
 				GL_LESS,
@@ -1702,7 +1701,8 @@ bool emitScript(GlslContext& cx, Script* node)
 				GL_GREATER,
 				GL_GEQUAL,
 				GL_EQUAL,
-				GL_NOTEQUAL
+				GL_NOTEQUAL,
+				GL_INVALID_ENUM
 			};
 
 			Adler32 samplerHash;
