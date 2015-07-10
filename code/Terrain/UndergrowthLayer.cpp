@@ -66,7 +66,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.UndergrowthLayer", UndergrowthLayer, IT
 
 UndergrowthLayer::UndergrowthLayer()
 :	m_clusterSize(0.0f)
-,	m_eye(Vector4::zero())
+,	m_count(0)
 {
 	s_handleNormals = render::getParameterHandle(L"Normals");
 	s_handleHeightfield = render::getParameterHandle(L"Heightfield");
@@ -174,55 +174,57 @@ void UndergrowthLayer::render(
 	);
 
 	const Matrix44& view = worldRenderView.getView();
-	Vector4 eye = view.inverse().translation();
+	
+	Matrix44 viewInv = view.inverse();
+	Vector4 eye = viewInv.translation();
 
 	if (updateClusters)
 	{
 		Frustum viewFrustum = worldRenderView.getViewFrustum();
 		viewFrustum.setFarZ(Scalar(m_layerData.m_spreadDistance + m_clusterSize));
 
-		// Only perform "replanting" when moved more than one unit.
-		if ((eye - m_eye).length() >= m_clusterSize / 2.0f)
+		// Only perform "replanting" half of clusters each frame.
+		const Scalar clusterSize(m_clusterSize);
+		for (uint32_t i = m_count % 2; i < m_clusters.size(); i += 2)
 		{
-			m_eye = eye;
+			Cluster& cluster = m_clusters[i];
 
-			for (AlignedVector< Cluster >::iterator i = m_clusters.begin(); i != m_clusters.end(); ++i)
+			cluster.distance = (cluster.center - eye).length();
+
+			bool visible = cluster.visible;
+
+			cluster.visible = (viewFrustum.inside(view * cluster.center, clusterSize) != Frustum::IrOutside);
+			if (!cluster.visible)
+				continue;
+
+			if (cluster.visible && visible)
+				continue;
+
+			RandomGeometry random(int32_t(cluster.center.x() * 919.0f + cluster.center.z() * 463.0f));
+			for (int32_t j = cluster.from; j < cluster.to; ++j)
 			{
-				i->distance = (i->center - eye).length();
+				float dx = (random.nextFloat() * 2.0f - 1.0f) * m_clusterSize;
+				float dz = (random.nextFloat() * 2.0f - 1.0f) * m_clusterSize;
 
-				bool visible = i->visible;
+				float px = cluster.center.x() + dx;
+				float pz = cluster.center.z() + dz;
 
-				i->visible = (viewFrustum.inside(view * i->center, Scalar(m_clusterSize)) != Frustum::IrOutside);
-				if (!i->visible)
-					continue;
-
-				if (i->visible && visible)
-					continue;
-
-				RandomGeometry random(int32_t(i->center.x() * 919.0f + i->center.z() * 463.0f));
-				for (int32_t j = i->from; j < i->to; ++j)
-				{
-					float dx = (random.nextFloat() * 2.0f - 1.0f) * m_clusterSize;
-					float dz = (random.nextFloat() * 2.0f - 1.0f) * m_clusterSize;
-
-					float px = i->center.x() + dx;
-					float pz = i->center.z() + dz;
-
-					m_plants[j * 2 + 0] = Vector4(
-						px,
-						pz,
-						float(i->plant),
-						0.0f
-					);
-					m_plants[j * 2 + 1] = Vector4(
-						i->plantScale * (random.nextFloat() * 0.5f + 0.5f),
-						random.nextFloat(),
-						0.0f,
-						0.0f
-					);
-				}
+				m_plants[j * 2 + 0] = Vector4(
+					px,
+					pz,
+					float(cluster.plant),
+					0.0f
+				);
+				m_plants[j * 2 + 1] = Vector4(
+					cluster.plantScale * (random.nextFloat() * 0.5f + 0.5f),
+					random.nextFloat(),
+					0.0f,
+					0.0f
+				);
 			}
 		}
+
+		m_count++;
 	}
 
 	worldRenderPass.setShaderTechnique(m_shader);

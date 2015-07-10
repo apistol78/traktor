@@ -1516,7 +1516,6 @@ bool emitScript(HlslContext& cx, Script* node)
 
 		const D3D11_COMPARISON_FUNC c_d3dComparison[] =
 		{
-			D3D11_COMPARISON_NEVER,
 			D3D11_COMPARISON_ALWAYS,
 			D3D11_COMPARISON_NEVER,
 			D3D11_COMPARISON_LESS,
@@ -1524,7 +1523,8 @@ bool emitScript(HlslContext& cx, Script* node)
 			D3D11_COMPARISON_GREATER,
 			D3D11_COMPARISON_GREATER_EQUAL,
 			D3D11_COMPARISON_EQUAL,
-			D3D11_COMPARISON_NOT_EQUAL
+			D3D11_COMPARISON_NOT_EQUAL,
+			D3D11_COMPARISON_NEVER
 		};
 
 		const SamplerState& samplerState = i->second;
