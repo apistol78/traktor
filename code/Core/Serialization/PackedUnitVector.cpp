@@ -1,12 +1,10 @@
 #include "Core/Math/Const.h"
-#include "Net/Replication/State/Pack.h"
+#include "Core/Serialization/PackedUnitVector.h"
 
 namespace traktor
 {
-	namespace net
+	namespace
 	{
-		namespace
-		{
 
 #define SIGN_MASK  0xe000	// upper 3 bits
 #define XSIGN_MASK 0x8000
@@ -156,5 +154,4 @@ Vector4 PackedUnitVector::unpack() const
 	return Vector4::loadAligned(e);
 }
 
-	}
 }

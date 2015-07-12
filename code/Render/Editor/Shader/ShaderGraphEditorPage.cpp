@@ -298,6 +298,10 @@ bool ShaderGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point
 	// Create an external node in case of ShaderGraph.
 	else if (is_type_of< ShaderGraph >(*primaryType))
 	{
+		// Prevent dropping itself thus creating cyclic dependencies.
+		if (m_document->containInstance(instance))
+			return false;
+
 		Ref< ShaderGraph > fragmentGraph = instance->getObject< ShaderGraph >();
 		T_ASSERT (fragmentGraph);
 
