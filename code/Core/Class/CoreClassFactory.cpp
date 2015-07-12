@@ -195,6 +195,8 @@ void PropertyGroup_setProperty(PropertyGroup* self, const std::wstring& property
 		self->setProperty< PropertyFloat >(propertyName, value.getFloat());
 	else if (value.isString())
 		self->setProperty< PropertyString >(propertyName, value.getWideString());
+	else if (is_a< IPropertyValue >(value.getObject()))
+		self->setProperty(propertyName, static_cast< IPropertyValue* >(value.getObjectUnsafe()));
 }
 
 Any PropertyGroup_getProperty(PropertyGroup* self, const std::wstring& propertyName)
@@ -208,6 +210,15 @@ Any PropertyGroup_getProperty(PropertyGroup* self, const std::wstring& propertyN
 		return Any::fromFloat(*propertyFloat);
 	else if (const PropertyString* propertyString = dynamic_type_cast< const PropertyString* >(property))
 		return Any::fromString(*propertyString);
+	else
+		return Any();
+}
+
+Any PropertyGroup_getPropertyRaw(PropertyGroup* self, const std::wstring& propertyName)
+{
+	IPropertyValue* property = self->getProperty(propertyName);
+	if (property)
+		return Any::fromObject(property);
 	else
 		return Any();
 }
@@ -461,6 +472,7 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classPropertyGroup->addConstructor();
 	classPropertyGroup->addMethod("setProperty", &PropertyGroup_setProperty);
 	classPropertyGroup->addMethod("getProperty", &PropertyGroup_getProperty);
+	classPropertyGroup->addMethod("getPropertyRaw", &PropertyGroup_getPropertyRaw);
 	registrar->registerClass(classPropertyGroup);
 
 	Ref< AutoRuntimeClass< PropertyInteger > > classPropertyInteger = new AutoRuntimeClass< PropertyInteger >();
