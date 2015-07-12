@@ -5,9 +5,9 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/MathUtils.h"
+#include "Core/Serialization/PackedUnitVector.h"
 #include "Net/Replication/State/BodyStateValue.h"
 #include "Net/Replication/State/BodyStateTemplate.h"
-#include "Net/Replication/State/Pack.h"
 
 namespace traktor
 {

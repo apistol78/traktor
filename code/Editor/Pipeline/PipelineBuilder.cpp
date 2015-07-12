@@ -89,6 +89,9 @@ void calculateGlobalHash(
 		const PipelineDependency* childDependency = dependencySet->get(*i);
 		T_ASSERT (childDependency);
 
+		if (childDependency == dependency)
+			continue;
+
 		if ((childDependency->flags & PdfUse) != 0)
 			calculateGlobalHash(
 				dependencySet,

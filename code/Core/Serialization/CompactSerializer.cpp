@@ -12,6 +12,7 @@
 #include "Core/Serialization/AttributePrecision.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/CompactSerializer.h"
+#include "Core/Serialization/PackedUnitVector.h"
 
 namespace traktor
 {
@@ -310,7 +311,7 @@ bool write_string(BitWriter& w, const std::string& str)
 	std::wstring ws = mbstows(str);
 	return write_string(w, ws);
 }
-
+/*
 Vector4 unpackUnit(const uint8_t u[3])
 {
 	Vector4 v(
@@ -367,7 +368,7 @@ void packUnit(const Vector4& u, uint8_t out[3])
 		}
 	}
 }
-
+*/
 template < typename AttributeType, typename MemberType >
 const AttributeType* findAttribute(const MemberType& m)
 {
@@ -653,29 +654,18 @@ void CompactSerializer::operator >> (const Member< Vector4 >& m)
 	const AttributeDirection* attrDirection = findAttribute< AttributeDirection >(m);
 	if (attrDirection)
 	{
-		// If unit direction then serialize in packed 24-bit form.
+		// If unit direction then serialize in packed form.
 		if (attrDirection->getUnit())
 		{
 			if (m_direction == SdRead)
 			{
-				uint8_t u[3];
-
-				read_uint8(m_reader, u[0]);
-				read_uint8(m_reader, u[1]);
-				read_uint8(m_reader, u[2]);
-
-				(*m) = unpackUnit(u);
+				uint16_t u = m_reader.readUnsigned(16);
+				(*m) = PackedUnitVector(u).unpack();
 				return;
 			}
 			else
 			{
-				uint8_t u[3];
-				packUnit(*m, u);
-
-				write_uint8(m_writer, u[0]);
-				write_uint8(m_writer, u[1]);
-				write_uint8(m_writer, u[2]);
-
+				m_writer.writeUnsigned(16, PackedUnitVector(*m).raw());
 				return;
 			}
 		}
@@ -711,11 +701,11 @@ void CompactSerializer::operator >> (const Member< Vector4 >& m)
 				e[i] = halfToFloat(he);
 			}
 		}
-		(*m) = Vector4::loadUnaligned(e);
+		(*m) = Vector4::loadAligned(e);
 	}
 	else
 	{
-		(*m).storeUnaligned(e);
+		(*m).storeAligned(e);
 		if (precision == AttributePrecision::AtFull)
 		{
 			for (uint32_t i = 0; i < count; ++i)

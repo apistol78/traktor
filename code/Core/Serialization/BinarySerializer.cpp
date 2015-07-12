@@ -1,4 +1,8 @@
+#if defined(_PS3)
+#	include <alloca.h>
+#endif
 #include <algorithm>
+#include <cstdlib>
 #include <cstring>
 #include <limits>
 #include <sstream>
@@ -252,13 +256,13 @@ bool write_string(const Ref< IStream >& stream, const std::wstring& str)
 	uint32_t length = uint32_t(str.length());
 	if (length > 0)
 	{
-		AutoArrayPtr< uint8_t > buf(new uint8_t [length * 6]);
-		if (!buf.ptr())
+		uint8_t* buf = (uint8_t*)alloca(length * 6);
+		if (!buf)
 			return false;
 
-		std::memset(buf.ptr(), 0, length * 6);
+		std::memset(buf, 0, length * 6);
 
-		uint8_t* u8str = (uint8_t*)buf.ptr();
+		uint8_t* u8str = (uint8_t*)buf;
 		uint32_t u8len;
 		
 		Utf8Encoding utf8enc;
