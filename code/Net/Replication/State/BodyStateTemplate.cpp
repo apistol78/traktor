@@ -29,36 +29,7 @@ float safeDeltaTime(float v)
 
 physics::BodyState interpolate(const physics::BodyState& bs0, float T0, const physics::BodyState& bs1, float T1, float T)
 {
-	Scalar dT_0_1 = Scalar(safeDeltaTime(T1 - T0));
-
-#if 0
-
-	physics::BodyState state;
-
-	state.setTransform(lerp(bs0.getTransform(), bs1.getTransform(), Scalar(T - T0) / dT_0_1));
-	state.setLinearVelocity(
-		(bs1.getTransform().translation() - bs0.getTransform().translation()) / dT_0_1
-	);
-
-	Quaternion Qv0 = bs0.getTransform().rotation();
-	Quaternion Qv1 = Qv0.nearest(bs1.getTransform().rotation());
-	Quaternion Qdiff = Qv1 * Qv0.inverse();
-
-	Vector4 Vdiff = Qdiff.toAxisAngle();
-	Scalar angleDiff = Vdiff.length();
-
-	if (angleDiff > FUZZY_EPSILON)
-		state.setAngularVelocity(Vdiff / dT_0_1);
-	else
-		state.setAngularVelocity(Vector4::zero());
-
-	return state;
-
-#else
-
-	return bs0.interpolate(bs1, Scalar(T - T0) / dT_0_1);
-
-#endif
+	return bs0.interpolate(bs1, Scalar((T - T0) / safeDeltaTime(T1 - T0)));
 }
 
 template < int32_t IntBits, int32_t FractBits >
@@ -158,13 +129,14 @@ Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 		f[i] = GenericFixedPoint< 13, 11 >(reader.readSigned(13+11));
 		T_ASSERT(!isNanOrInfinite(f[i]));
 	}
+	f[3] = 1.0f;
 
 	u = reader.readUnsigned(16);
 	Vector4 R = PackedUnitVector(u).unpack();
 	float Ra = GenericFixedPoint< 4, 11 >(reader.readSigned(4+11));
 
 	T = Transform(
-		Vector4(f[0], f[1], f[2], 1.0f),
+		Vector4::loadAligned(f),
 		(abs(Ra) > FUZZY_EPSILON && R.length() > FUZZY_EPSILON) ? 
 			Quaternion::fromAxisAngle(R, Ra).normalized() :
 			Quaternion::identity()

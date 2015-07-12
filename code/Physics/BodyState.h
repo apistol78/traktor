@@ -70,21 +70,6 @@ struct BodyState
 		else
 			state.m_angularVelocity = Vector4::zero();
 
-		//Quaternion Qv0 = Quaternion::fromAxisAngle(m_angularVelocity);
-		//Quaternion Qv1 = Qv0.nearest(Quaternion::fromAxisAngle(stateTarget.m_angularVelocity));
-		//Quaternion Qdiff = Qv1 * Qv0.inverse();
-
-		//Vector4 Vdiff = Qdiff.toAxisAngle();
-		//Scalar angleDiff = Vdiff.length();
-
-		//if (angleDiff > FUZZY_EPSILON)
-		//{
-		//	Quaternion QdiffLerp = Quaternion::fromAxisAngle(Vdiff / angleDiff, angleDiff * interpolate);
-		//	state.m_angularVelocity = (QdiffLerp * Qv0).normalized().toAxisAngle();
-		//}
-		//else
-		//	state.m_angularVelocity = m_angularVelocity;
-
 		return state;
 	}
 

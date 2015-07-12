@@ -449,6 +449,28 @@ public:
 		return iterator(&m_items[offset], this);
 	}
 
+	/*! \brief Insert elements at specified location. */
+	iterator insert(iterator at, const_iterator first, const_iterator last)
+	{
+		size_type size = m_size;
+		size_type offset = size_type(at.m_item - m_items);
+		size_type count = size_type(last.m_item - first.m_item);
+
+		grow(count);
+
+		size_t move = std::min< size_t >(size, count);
+		for (size_t i = offset; i < offset + move; ++i)
+			m_items[i + count] = m_items[i];
+
+		for (size_t i = 0; i < count; ++i)
+		{
+			T_SAFE_ADDREF(first.m_item[i]);
+			m_items[i + offset] = first.m_item[i];
+		}
+
+		return iterator(&m_items[offset], this);
+	}
+
 	/*! \brief Erase element from array. */
 	iterator erase(iterator iter)
 	{

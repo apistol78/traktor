@@ -17,6 +17,7 @@
 #include "Core/Io/Path.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
+#include "Core/Settings/PropertyArray.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyFloat.h"
@@ -177,6 +178,11 @@ std::wstring OS_getEnvironment_1(OS* self, const std::wstring& key)
 Ref< IProcess > OS_execute(OS* self, const std::wstring& commandLine, const std::wstring& workingDirectory, const Environment* environment, bool redirect, bool mute, bool detach)
 {
 	return self->execute(commandLine, workingDirectory, environment ? &environment->envmap() : 0, redirect, mute, detach);
+}
+
+IPropertyValue* PropertyArray_getProperty(PropertyArray* self, uint32_t index)
+{
+	return self->getProperty(index);
 }
 
 void PropertyGroup_setProperty(PropertyGroup* self, const std::wstring& propertyName, const Any& value)
@@ -425,6 +431,15 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	Ref< AutoRuntimeClass< IPropertyValue > > classIPropertyValue = new AutoRuntimeClass< IPropertyValue >();
 	registrar->registerClass(classIPropertyValue);
+
+	Ref< AutoRuntimeClass< PropertyArray > > classPropertyArray = new AutoRuntimeClass< PropertyArray >();
+	classPropertyArray->addConstructor();
+	classPropertyArray->addConstructor< const RefArray< IPropertyValue >& >();
+	classPropertyArray->addMethod("addProperty", &PropertyArray::addProperty);
+	classPropertyArray->addMethod("removeProperty", &PropertyArray::removeProperty);
+	classPropertyArray->addMethod("getPropertyCount", &PropertyArray::getPropertyCount);
+	classPropertyArray->addMethod("getProperty", &PropertyArray_getProperty);
+	registrar->registerClass(classPropertyArray);
 
 	Ref< AutoRuntimeClass< PropertyBoolean > > classPropertyBoolean = new AutoRuntimeClass< PropertyBoolean >();
 	classPropertyBoolean->addConstructor();
