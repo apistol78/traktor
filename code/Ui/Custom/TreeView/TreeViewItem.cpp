@@ -284,6 +284,7 @@ void TreeViewItem::mouseDown(MouseButtonDownEvent* event, const Point& position)
 				else if (m_editMode == 1)
 				{
 					// Double tap detected; begin edit after mouse is released.
+					m_view->requestInterval(this, 1000);
 					m_editMode = 2;
 				}
 			}
@@ -302,7 +303,7 @@ void TreeViewItem::mouseUp(MouseButtonUpEvent* event, const Point& position)
 		m_view->beginEdit(this);
 		m_editMode = 0;
 	}
-	else if (m_dragMode == 2)
+	if (m_dragMode == 2)
 	{
 		Point position = m_view->clientToScreen(event->getPosition());
 		TreeViewDragEvent dragEvent(m_view, this, TreeViewDragEvent::DmDrop, position);
@@ -323,6 +324,9 @@ void TreeViewItem::mouseDoubleClick(MouseDoubleClickEvent* event, const Point& p
 
 void TreeViewItem::mouseMove(MouseMoveEvent* event, const Point& position)
 {
+	// Ensure edit isn't triggered if mouse moved during edit state tracking.
+	m_editMode = 0;
+
 	if (m_dragMode == 1)
 	{
 		TreeViewDragEvent dragEvent(m_view, this, TreeViewDragEvent::DmDrag);
