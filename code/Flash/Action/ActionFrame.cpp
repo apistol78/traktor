@@ -26,17 +26,6 @@ ActionFrame::ActionFrame(
 {
 }
 
-void ActionFrame::setRegister(uint16_t index, const ActionValue& value)
-{
-	m_localRegisters[index] = value;
-}
-
-ActionValue ActionFrame::getRegister(uint16_t index) const
-{
-	T_ASSERT (index < m_localRegisters.size());
-	return m_localRegisters[index];
-}
-
 bool ActionFrame::hasVariable(uint32_t variableName) const
 {
 	SmallMap< uint32_t, ActionValue >::const_iterator i = m_localVariables.find(variableName);

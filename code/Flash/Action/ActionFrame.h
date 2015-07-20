@@ -43,9 +43,9 @@ public:
 		ActionFunction* callee
 	);
 
-	void setRegister(uint16_t index, const ActionValue& value);
+	void setRegister(uint16_t index, const ActionValue& value) { m_localRegisters[index] = value; }
 
-	ActionValue getRegister(uint16_t index) const;
+	const ActionValue& getRegister(uint16_t index) const { return m_localRegisters[index]; }
 
 	bool hasVariable(uint32_t variableName) const;
 
