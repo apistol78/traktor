@@ -311,64 +311,7 @@ bool write_string(BitWriter& w, const std::string& str)
 	std::wstring ws = mbstows(str);
 	return write_string(w, ws);
 }
-/*
-Vector4 unpackUnit(const uint8_t u[3])
-{
-	Vector4 v(
-		u[0] / 127.0f - 1.0f,
-		u[1] / 127.0f - 1.0f,
-		u[2] / 127.0f - 1.0f
-	);
 
-	Scalar ln = v.length();
-	if (ln > FUZZY_EPSILON)
-		return v / ln;
-	else
-		return Vector4::zero();
-}
-
-void packUnit(const Vector4& u, uint8_t out[3])
-{
-	Scalar ln = u.length();
-	Vector4 un = (ln > FUZZY_EPSILON) ? (u / ln) : Vector4::zero();
-
-	float x = 0.0f, y = 0.0f, z = 0.0f;
-	float dx = un.x() / 128.0f;
-	float dy = un.y() / 128.0f;
-	float dz = un.z() / 128.0f;
-
-	float md = std::numeric_limits< float >::max();
-	for (int32_t i = 0; i < 128; ++i)
-	{
-		x += dx;
-		y += dy;
-		z += dz;
-
-		int32_t ix = int32_t((x * 0.5f + 0.5f) * 255.0f);
-		int32_t iy = int32_t((y * 0.5f + 0.5f) * 255.0f);
-		int32_t iz = int32_t((z * 0.5f + 0.5f) * 255.0f);
-
-		T_ASSERT (ix >= 0 && ix <= 255);
-		T_ASSERT (iy >= 0 && iy <= 255);
-		T_ASSERT (iz >= 0 && iz <= 255);
-
-		Vector4 v(
-			ix / 127.0f - 1.0f,
-			iy / 127.0f - 1.0f,
-			iz / 127.0f - 1.0f
-		);
-
-		float D = (un * v.length() - v).length();
-		if (D < md)
-		{
-			out[0] = ix;
-			out[1] = iy;
-			out[2] = iz;
-			md = D;
-		}
-	}
-}
-*/
 template < typename AttributeType, typename MemberType >
 const AttributeType* findAttribute(const MemberType& m)
 {
