@@ -40,7 +40,7 @@ void StageState::leave()
 	}
 }
 
-StageState::UpdateResult StageState::update(IStateManager* stateManager, const IUpdateInfo& info)
+StageState::UpdateResult StageState::update(IStateManager* stateManager, const UpdateInfo& info)
 {
 	if (m_stage->update(stateManager, info))
 		return UrOk;
@@ -48,7 +48,7 @@ StageState::UpdateResult StageState::update(IStateManager* stateManager, const I
 		return UrExit;
 }
 
-StageState::BuildResult StageState::build(uint32_t frame, const IUpdateInfo& info)
+StageState::BuildResult StageState::build(uint32_t frame, const UpdateInfo& info)
 {
 	if (m_stage->build(info, frame))
 		return BrOk;
@@ -56,7 +56,7 @@ StageState::BuildResult StageState::build(uint32_t frame, const IUpdateInfo& inf
 		return BrFailed;
 }
 
-bool StageState::render(uint32_t frame, render::EyeType eye, const IUpdateInfo& info)
+bool StageState::render(uint32_t frame, render::EyeType eye, const UpdateInfo& info)
 {
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
 

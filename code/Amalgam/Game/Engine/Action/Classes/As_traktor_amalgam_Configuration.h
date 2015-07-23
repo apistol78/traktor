@@ -22,7 +22,7 @@ class As_traktor_amalgam_Configuration : public flash::ActionClass
 	T_RTTI_CLASS;
 
 public:
-	As_traktor_amalgam_Configuration(flash::ActionContext* context, amalgam::IEnvironment* environment);
+	As_traktor_amalgam_Configuration(flash::ActionContext* context, IEnvironment* environment);
 
 	virtual void initialize(flash::ActionObject* self);
 
@@ -31,7 +31,7 @@ public:
 	virtual flash::ActionValue xplicit(const flash::ActionValueArray& args);
 
 private:
-	amalgam::IEnvironment* m_environment;
+	IEnvironment* m_environment;
 
 	void Configuration_get_current(flash::CallArgs& ca);
 

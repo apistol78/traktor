@@ -9,7 +9,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.AsInputFabricator", AsInputFabricator, flash::ActionObjectRelay)
 
-AsInputFabricator::AsInputFabricator(amalgam::IEnvironment* environment)
+AsInputFabricator::AsInputFabricator(IEnvironment* environment)
 :	flash::ActionObjectRelay("traktor.amalgam.InputFabricator")
 ,	m_environment(environment)
 {

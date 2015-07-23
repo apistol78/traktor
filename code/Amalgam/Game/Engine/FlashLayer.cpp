@@ -1,5 +1,6 @@
+#include "Amalgam/Game/FrameProfiler.h"
 #include "Amalgam/Game/IEnvironment.h"
-#include "Amalgam/Game/IUpdateInfo.h"
+#include "Amalgam/Game/UpdateInfo.h"
 #include "Amalgam/Game/Engine/FlashLayer.h"
 #include "Amalgam/Game/Engine/Stage.h"
 #include "Amalgam/Game/Engine/Action/Classes/As_traktor_amalgam_Configuration.h"
@@ -7,7 +8,6 @@
 #include "Amalgam/Game/Engine/Action/Classes/As_traktor_amalgam_I18N.h"
 #include "Amalgam/Game/Engine/Action/Classes/As_traktor_amalgam_InputFabricator.h"
 #include "Amalgam/Game/Engine/Action/Classes/As_traktor_amalgam_SoundDriver.h"
-#include "Amalgam/Game/Impl/FrameProfiler.h"
 #include "Core/Class/Any.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
@@ -112,7 +112,7 @@ FlashLayer::FlashLayer(
 	Stage* stage,
 	const std::wstring& name,
 	bool permitTransition,
-	amalgam::IEnvironment* environment,
+	IEnvironment* environment,
 	const resource::Proxy< flash::FlashMovie >& movie,
 	const std::map< std::wstring, resource::Proxy< flash::FlashMovie > >& externalMovies,
 	const resource::Proxy< world::PostProcessSettings >& postProcessSettings,
@@ -252,7 +252,7 @@ void FlashLayer::prepare()
 	}
 }
 
-void FlashLayer::update(const amalgam::IUpdateInfo& info)
+void FlashLayer::update(const UpdateInfo& info)
 {
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
 	input::InputSystem* inputSystem = m_environment->getInput()->getInputSystem();
@@ -454,7 +454,7 @@ void FlashLayer::update(const amalgam::IUpdateInfo& info)
 	info.getProfiler()->endScope();
 }
 
-void FlashLayer::build(const amalgam::IUpdateInfo& info, uint32_t frame)
+void FlashLayer::build(const UpdateInfo& info, uint32_t frame)
 {
 	if (!m_displayRenderer || !m_moviePlayer || !m_visible)
 		return;

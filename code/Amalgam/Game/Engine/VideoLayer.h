@@ -49,7 +49,7 @@ public:
 		Stage* stage,
 		const std::wstring& name,
 		bool permitTransition,
-		amalgam::IEnvironment* environment,
+		IEnvironment* environment,
 		const resource::Proxy< video::Video >& video,
 		const resource::Proxy< render::Shader >& shader,
 		const Aabb2& screenBounds,
@@ -88,9 +88,9 @@ public:
 
 	virtual void prepare();
 
-	virtual void update(const amalgam::IUpdateInfo& info);
+	virtual void update(const UpdateInfo& info);
 
-	virtual void build(const amalgam::IUpdateInfo& info, uint32_t frame);
+	virtual void build(const UpdateInfo& info, uint32_t frame);
 
 	virtual void render(render::EyeType eye, uint32_t frame);
 
@@ -105,7 +105,7 @@ public:
 	virtual void resume();
 
 private:
-	Ref< amalgam::IEnvironment > m_environment;
+	Ref< IEnvironment > m_environment;
 	resource::Proxy< video::Video > m_video;
 	resource::Proxy< render::Shader > m_shader;
 	Ref< render::ScreenRenderer > m_screenRenderer;

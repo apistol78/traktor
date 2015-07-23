@@ -40,7 +40,7 @@ AsConfiguration::AsConfiguration()
 {
 }
 
-Ref< AsConfiguration > AsConfiguration::getCurrent(amalgam::IEnvironment* environment)
+Ref< AsConfiguration > AsConfiguration::getCurrent(IEnvironment* environment)
 {
 	const PropertyGroup* settings = environment->getSettings();
 	T_ASSERT (settings);
@@ -353,7 +353,7 @@ void AsConfiguration::setFloat(const std::wstring& name, float value)
 	m_user[name] = new PropertyFloat(value);
 }
 
-bool AsConfiguration::apply(amalgam::IEnvironment* environment)
+bool AsConfiguration::apply(IEnvironment* environment)
 {
 	PropertyGroup* settings = environment->getSettings();
 	T_ASSERT (settings);

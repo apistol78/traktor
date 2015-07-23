@@ -2,8 +2,8 @@
 #include "Amalgam/Game/IEnvironment.h"
 #include "Amalgam/Game/IInputServer.h"
 #include "Amalgam/Game/IRenderServer.h"
-#include "Amalgam/Game/IUpdateControl.h"
-#include "Amalgam/Game/IUpdateInfo.h"
+#include "Amalgam/Game/UpdateControl.h"
+#include "Amalgam/Game/UpdateInfo.h"
 #include "Amalgam/Game/Engine/AudioLayer.h"
 #include "Amalgam/Game/Engine/StageData.h"
 #include "Amalgam/Game/Engine/FlashLayer.h"
@@ -140,90 +140,90 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.GameClassFactory", 0, GameClass
 
 void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
-	Ref< AutoRuntimeClass< amalgam::IEnvironment > > classEnvironment = new AutoRuntimeClass< amalgam::IEnvironment >();
-	classEnvironment->addMethod("getDatabase", &amalgam::IEnvironment::getDatabase);
-	classEnvironment->addMethod("getControl", &amalgam::IEnvironment::getControl);
-	classEnvironment->addMethod("getAudio", &amalgam::IEnvironment::getAudio);
-	classEnvironment->addMethod("getInput", &amalgam::IEnvironment::getInput);
-	classEnvironment->addMethod("getOnline", &amalgam::IEnvironment::getOnline);
-	classEnvironment->addMethod("getPhysics", &amalgam::IEnvironment::getPhysics);
-	classEnvironment->addMethod("getRender", &amalgam::IEnvironment::getRender);
-	classEnvironment->addMethod("getResource", &amalgam::IEnvironment::getResource);
-	classEnvironment->addMethod("getScript", &amalgam::IEnvironment::getScript);
-	classEnvironment->addMethod("getWorld", &amalgam::IEnvironment::getWorld);
-	classEnvironment->addMethod("getSettings", &amalgam::IEnvironment::getSettings);
-	classEnvironment->addMethod("reconfigure", &amalgam::IEnvironment::reconfigure);
+	Ref< AutoRuntimeClass< IEnvironment > > classEnvironment = new AutoRuntimeClass< IEnvironment >();
+	classEnvironment->addMethod("getDatabase", &IEnvironment::getDatabase);
+	classEnvironment->addMethod("getControl", &IEnvironment::getControl);
+	classEnvironment->addMethod("getAudio", &IEnvironment::getAudio);
+	classEnvironment->addMethod("getInput", &IEnvironment::getInput);
+	classEnvironment->addMethod("getOnline", &IEnvironment::getOnline);
+	classEnvironment->addMethod("getPhysics", &IEnvironment::getPhysics);
+	classEnvironment->addMethod("getRender", &IEnvironment::getRender);
+	classEnvironment->addMethod("getResource", &IEnvironment::getResource);
+	classEnvironment->addMethod("getScript", &IEnvironment::getScript);
+	classEnvironment->addMethod("getWorld", &IEnvironment::getWorld);
+	classEnvironment->addMethod("getSettings", &IEnvironment::getSettings);
+	classEnvironment->addMethod("reconfigure", &IEnvironment::reconfigure);
 	registrar->registerClass(classEnvironment);
 
-	Ref< AutoRuntimeClass< amalgam::IAudioServer > > classAudioServer = new AutoRuntimeClass< amalgam::IAudioServer >();
-	classAudioServer->addMethod("getSoundSystem", &amalgam::IAudioServer::getSoundSystem);
-	classAudioServer->addMethod("getSoundPlayer", &amalgam::IAudioServer::getSoundPlayer);
-	classAudioServer->addMethod("getSurroundEnvironment", &amalgam::IAudioServer::getSurroundEnvironment);
+	Ref< AutoRuntimeClass< IAudioServer > > classAudioServer = new AutoRuntimeClass< IAudioServer >();
+	classAudioServer->addMethod("getSoundSystem", &IAudioServer::getSoundSystem);
+	classAudioServer->addMethod("getSoundPlayer", &IAudioServer::getSoundPlayer);
+	classAudioServer->addMethod("getSurroundEnvironment", &IAudioServer::getSurroundEnvironment);
 	registrar->registerClass(classAudioServer);
 
-	Ref< AutoRuntimeClass< amalgam::IInputServer > > classInputServer = new AutoRuntimeClass< amalgam::IInputServer >();
-	classInputServer->addMethod("isFabricating", &amalgam::IInputServer::isFabricating);
-	classInputServer->addMethod("abortedFabricating", &amalgam::IInputServer::abortedFabricating);
-	classInputServer->addMethod("resetInputSource", &amalgam::IInputServer::resetInputSource);
-	classInputServer->addMethod("isIdle", &amalgam::IInputServer::isIdle);
-	classInputServer->addMethod("getInputSystem", &amalgam::IInputServer::getInputSystem);
-	classInputServer->addMethod("getInputMapping", &amalgam::IInputServer::getInputMapping);
-	classInputServer->addMethod("getRumbleEffectPlayer", &amalgam::IInputServer::getRumbleEffectPlayer);
+	Ref< AutoRuntimeClass< IInputServer > > classInputServer = new AutoRuntimeClass< IInputServer >();
+	classInputServer->addMethod("isFabricating", &IInputServer::isFabricating);
+	classInputServer->addMethod("abortedFabricating", &IInputServer::abortedFabricating);
+	classInputServer->addMethod("resetInputSource", &IInputServer::resetInputSource);
+	classInputServer->addMethod("isIdle", &IInputServer::isIdle);
+	classInputServer->addMethod("getInputSystem", &IInputServer::getInputSystem);
+	classInputServer->addMethod("getInputMapping", &IInputServer::getInputMapping);
+	classInputServer->addMethod("getRumbleEffectPlayer", &IInputServer::getRumbleEffectPlayer);
 	registrar->registerClass(classInputServer);
 
-	Ref< AutoRuntimeClass< amalgam::IOnlineServer > > classOnlineServer = new AutoRuntimeClass< amalgam::IOnlineServer >();
-	classOnlineServer->addMethod("getSessionManager", &amalgam::IOnlineServer::getSessionManager);
+	Ref< AutoRuntimeClass< IOnlineServer > > classOnlineServer = new AutoRuntimeClass< IOnlineServer >();
+	classOnlineServer->addMethod("getSessionManager", &IOnlineServer::getSessionManager);
 	registrar->registerClass(classOnlineServer);
 
-	Ref< AutoRuntimeClass< amalgam::IPhysicsServer > > classPhysicsServer = new AutoRuntimeClass< amalgam::IPhysicsServer >();
-	classPhysicsServer->addMethod("getPhysicsManager", &amalgam::IPhysicsServer::getPhysicsManager);
+	Ref< AutoRuntimeClass< IPhysicsServer > > classPhysicsServer = new AutoRuntimeClass< IPhysicsServer >();
+	classPhysicsServer->addMethod("getPhysicsManager", &IPhysicsServer::getPhysicsManager);
 	registrar->registerClass(classPhysicsServer);
 
-	Ref< AutoRuntimeClass< amalgam::IRenderServer > > classRenderServer = new AutoRuntimeClass< amalgam::IRenderServer >();
-	classRenderServer->addMethod("getRenderSystem", &amalgam::IRenderServer::getRenderSystem);
-	classRenderServer->addMethod("getRenderView", &amalgam::IRenderServer::getRenderView);
-	classRenderServer->addMethod("getScreenAspectRatio", &amalgam::IRenderServer::getScreenAspectRatio);
-	classRenderServer->addMethod("getViewAspectRatio", &amalgam::IRenderServer::getViewAspectRatio);
-	classRenderServer->addMethod("getAspectRatio", &amalgam::IRenderServer::getAspectRatio);
-	classRenderServer->addMethod("getStereoscopic", &amalgam::IRenderServer::getStereoscopic);
-	classRenderServer->addMethod("getMultiSample", &amalgam::IRenderServer::getMultiSample);
-	classRenderServer->addMethod("getFrameRate", &amalgam::IRenderServer::getFrameRate);
+	Ref< AutoRuntimeClass< IRenderServer > > classRenderServer = new AutoRuntimeClass< IRenderServer >();
+	classRenderServer->addMethod("getRenderSystem", &IRenderServer::getRenderSystem);
+	classRenderServer->addMethod("getRenderView", &IRenderServer::getRenderView);
+	classRenderServer->addMethod("getScreenAspectRatio", &IRenderServer::getScreenAspectRatio);
+	classRenderServer->addMethod("getViewAspectRatio", &IRenderServer::getViewAspectRatio);
+	classRenderServer->addMethod("getAspectRatio", &IRenderServer::getAspectRatio);
+	classRenderServer->addMethod("getStereoscopic", &IRenderServer::getStereoscopic);
+	classRenderServer->addMethod("getMultiSample", &IRenderServer::getMultiSample);
+	classRenderServer->addMethod("getFrameRate", &IRenderServer::getFrameRate);
 	registrar->registerClass(classRenderServer);
 
-	Ref< AutoRuntimeClass< amalgam::IResourceServer > > classResourceServer = new AutoRuntimeClass< amalgam::IResourceServer >();
-	classResourceServer->addMethod("getResourceManager", &amalgam::IResourceServer::getResourceManager);
+	Ref< AutoRuntimeClass< IResourceServer > > classResourceServer = new AutoRuntimeClass< IResourceServer >();
+	classResourceServer->addMethod("getResourceManager", &IResourceServer::getResourceManager);
 	registrar->registerClass(classResourceServer);
 
-	Ref< AutoRuntimeClass< amalgam::IWorldServer > > classWorldServer = new AutoRuntimeClass< amalgam::IWorldServer >();
-	classWorldServer->addMethod("addEntityFactory", &amalgam::IWorldServer::addEntityFactory);
-	classWorldServer->addMethod("removeEntityFactory", &amalgam::IWorldServer::removeEntityFactory);
-	classWorldServer->addMethod("addEntityRenderer", &amalgam::IWorldServer::addEntityRenderer);
-	classWorldServer->addMethod("removeEntityRenderer", &amalgam::IWorldServer::removeEntityRenderer);
-	classWorldServer->addMethod("getEntityBuilder", &amalgam::IWorldServer::getEntityBuilder);
-	classWorldServer->addMethod("getEntityRenderers", &amalgam::IWorldServer::getEntityRenderers);
-	classWorldServer->addMethod("getEntityEventManager", &amalgam::IWorldServer::getEntityEventManager);
-	classWorldServer->addMethod("getFrameCount", &amalgam::IWorldServer::getFrameCount);
+	Ref< AutoRuntimeClass< IWorldServer > > classWorldServer = new AutoRuntimeClass< IWorldServer >();
+	classWorldServer->addMethod("addEntityFactory", &IWorldServer::addEntityFactory);
+	classWorldServer->addMethod("removeEntityFactory", &IWorldServer::removeEntityFactory);
+	classWorldServer->addMethod("addEntityRenderer", &IWorldServer::addEntityRenderer);
+	classWorldServer->addMethod("removeEntityRenderer", &IWorldServer::removeEntityRenderer);
+	classWorldServer->addMethod("getEntityBuilder", &IWorldServer::getEntityBuilder);
+	classWorldServer->addMethod("getEntityRenderers", &IWorldServer::getEntityRenderers);
+	classWorldServer->addMethod("getEntityEventManager", &IWorldServer::getEntityEventManager);
+	classWorldServer->addMethod("getFrameCount", &IWorldServer::getFrameCount);
 	registrar->registerClass(classWorldServer);
 
-	Ref< AutoRuntimeClass< amalgam::IUpdateControl > > classIUpdateControl = new AutoRuntimeClass< amalgam::IUpdateControl >();
-	classIUpdateControl->addMethod("setPause", &amalgam::IUpdateControl::setPause);
-	classIUpdateControl->addMethod("getPause", &amalgam::IUpdateControl::getPause);
-	classIUpdateControl->addMethod("setTimeScale", &amalgam::IUpdateControl::setTimeScale);
-	classIUpdateControl->addMethod("getTimeScale", &amalgam::IUpdateControl::getTimeScale);
-	classIUpdateControl->addMethod("setSimulationFrequency", &amalgam::IUpdateControl::setSimulationFrequency);
-	classIUpdateControl->addMethod("getSimulationFrequency", &amalgam::IUpdateControl::getSimulationFrequency);
-	registrar->registerClass(classIUpdateControl);
+	Ref< AutoRuntimeClass< UpdateControl > > classUpdateControl = new AutoRuntimeClass< UpdateControl >();
+	classUpdateControl->addMethod("setPause", &UpdateControl::setPause);
+	classUpdateControl->addMethod("getPause", &UpdateControl::getPause);
+	classUpdateControl->addMethod("setTimeScale", &UpdateControl::setTimeScale);
+	classUpdateControl->addMethod("getTimeScale", &UpdateControl::getTimeScale);
+	classUpdateControl->addMethod("setSimulationFrequency", &UpdateControl::setSimulationFrequency);
+	classUpdateControl->addMethod("getSimulationFrequency", &UpdateControl::getSimulationFrequency);
+	registrar->registerClass(classUpdateControl);
 
-	Ref< AutoRuntimeClass< amalgam::IUpdateInfo > > classIUpdateInfo = new AutoRuntimeClass< amalgam::IUpdateInfo >();
-	classIUpdateInfo->addMethod("getTotalTime", &amalgam::IUpdateInfo::getTotalTime);
-	classIUpdateInfo->addMethod("getStateTime", &amalgam::IUpdateInfo::getStateTime);
-	classIUpdateInfo->addMethod("getSimulationTime", &amalgam::IUpdateInfo::getSimulationTime);
-	classIUpdateInfo->addMethod("getSimulationDeltaTime", &amalgam::IUpdateInfo::getSimulationDeltaTime);
-	classIUpdateInfo->addMethod("getSimulationFrequency", &amalgam::IUpdateInfo::getSimulationFrequency);
-	classIUpdateInfo->addMethod("getFrameDeltaTime", &amalgam::IUpdateInfo::getFrameDeltaTime);
-	classIUpdateInfo->addMethod("getInterval", &amalgam::IUpdateInfo::getInterval);
-	classIUpdateInfo->addMethod("isRunningSlow", &amalgam::IUpdateInfo::isRunningSlow);
-	registrar->registerClass(classIUpdateInfo);
+	Ref< AutoRuntimeClass< UpdateInfo > > classUpdateInfo = new AutoRuntimeClass< UpdateInfo >();
+	classUpdateInfo->addMethod("getTotalTime", &UpdateInfo::getTotalTime);
+	classUpdateInfo->addMethod("getStateTime", &UpdateInfo::getStateTime);
+	classUpdateInfo->addMethod("getSimulationTime", &UpdateInfo::getSimulationTime);
+	classUpdateInfo->addMethod("getSimulationDeltaTime", &UpdateInfo::getSimulationDeltaTime);
+	classUpdateInfo->addMethod("getSimulationFrequency", &UpdateInfo::getSimulationFrequency);
+	classUpdateInfo->addMethod("getFrameDeltaTime", &UpdateInfo::getFrameDeltaTime);
+	classUpdateInfo->addMethod("getInterval", &UpdateInfo::getInterval);
+	classUpdateInfo->addMethod("isRunningSlow", &UpdateInfo::isRunningSlow);
+	registrar->registerClass(classUpdateInfo);
 
 	Ref< AutoRuntimeClass< BoxedTransition > > classBoxedTransition = new AutoRuntimeClass< BoxedTransition >();
 	classBoxedTransition->addMethod("getId", &BoxedTransition::getId);

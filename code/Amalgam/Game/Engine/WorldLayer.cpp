@@ -1,8 +1,8 @@
+#include "Amalgam/Game/FrameProfiler.h"
 #include "Amalgam/Game/IAudioServer.h"
 #include "Amalgam/Game/IEnvironment.h"
-#include "Amalgam/Game/IUpdateInfo.h"
+#include "Amalgam/Game/UpdateInfo.h"
 #include "Amalgam/Game/Engine/WorldLayer.h"
-#include "Amalgam/Game/Impl/FrameProfiler.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Format.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -47,7 +47,7 @@ WorldLayer::WorldLayer(
 	Stage* stage,
 	const std::wstring& name,
 	bool permitTransition,
-	amalgam::IEnvironment* environment,
+	IEnvironment* environment,
 	const resource::Proxy< scene::Scene >& scene,
 	const std::map< std::wstring, resource::Proxy< world::EntityData > >& entities
 )
@@ -173,7 +173,7 @@ void WorldLayer::prepare()
 	}
 }
 
-void WorldLayer::update(const amalgam::IUpdateInfo& info)
+void WorldLayer::update(const UpdateInfo& info)
 {
 	if (!m_worldRenderer)
 		return;
@@ -220,7 +220,7 @@ void WorldLayer::update(const amalgam::IUpdateInfo& info)
 	info.getProfiler()->endScope();
 }
 
-void WorldLayer::build(const amalgam::IUpdateInfo& info, uint32_t frame)
+void WorldLayer::build(const UpdateInfo& info, uint32_t frame)
 {
 	if (!m_worldRenderer || !m_scene)
 		return;
@@ -281,14 +281,20 @@ void WorldLayer::build(const amalgam::IUpdateInfo& info, uint32_t frame)
 	}
 
 	// Update sound listener transform.
-	if (m_listenerEntity && m_environment->getAudio())
+	if (m_environment->getAudio())
 	{
-		Transform listenerTransform;
-		m_listenerEntity->getTransform(listenerTransform);
-
 		sound::SurroundEnvironment* surroundEnvironment = m_environment->getAudio()->getSurroundEnvironment();
-		if (surroundEnvironment)
+		if (surroundEnvironment && (m_listenerEntity || m_cameraEntity))
+		{
+			Transform listenerTransform;
+
+			if (m_listenerEntity)
+				m_listenerEntity->getTransform(listenerTransform);
+			else
+				m_cameraEntity->getTransform(listenerTransform);
+
 			surroundEnvironment->setListenerTransform(listenerTransform);
+		}
 	}
 
 	// Build frame through world renderer.

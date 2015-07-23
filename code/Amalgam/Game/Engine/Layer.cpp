@@ -1,6 +1,6 @@
 #include "Amalgam/Game/IEnvironment.h"
-#include "Amalgam/Game/IUpdateControl.h"
-#include "Amalgam/Game/IUpdateInfo.h"
+#include "Amalgam/Game/UpdateControl.h"
+#include "Amalgam/Game/UpdateInfo.h"
 #include "Amalgam/Game/Engine/Layer.h"
 #include "Amalgam/Game/Engine/Stage.h"
 

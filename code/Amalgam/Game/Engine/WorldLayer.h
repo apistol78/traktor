@@ -58,7 +58,7 @@ public:
 		Stage* stage,
 		const std::wstring& name,
 		bool permitTransition,
-		amalgam::IEnvironment* environment,
+		IEnvironment* environment,
 		const resource::Proxy< scene::Scene >& scene,
 		const std::map< std::wstring, resource::Proxy< world::EntityData > >& entities
 	);
@@ -71,9 +71,9 @@ public:
 
 	virtual void prepare();
 
-	virtual void update(const amalgam::IUpdateInfo& info);
+	virtual void update(const UpdateInfo& info);
 
-	virtual void build(const amalgam::IUpdateInfo& info, uint32_t frame);
+	virtual void build(const UpdateInfo& info, uint32_t frame);
 
 	virtual void render(render::EyeType eye, uint32_t frame);
 
@@ -155,7 +155,7 @@ protected:
 	virtual void feedbackValues(spray::FeedbackType type, const float* values, int32_t count);
 
 private:
-	Ref< amalgam::IEnvironment > m_environment;
+	Ref< IEnvironment > m_environment;
 	resource::Proxy< scene::Scene > m_scene;
 	std::map< std::wstring, resource::Proxy< world::EntityData > > m_entities;
 	Ref< world::IWorldRenderer > m_worldRenderer;

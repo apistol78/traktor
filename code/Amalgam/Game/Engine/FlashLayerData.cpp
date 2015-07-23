@@ -21,7 +21,7 @@ FlashLayerData::FlashLayerData()
 {
 }
 
-Ref< Layer > FlashLayerData::createInstance(Stage* stage, amalgam::IEnvironment* environment) const
+Ref< Layer > FlashLayerData::createInstance(Stage* stage, IEnvironment* environment) const
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 	resource::Proxy< flash::FlashMovie > movie;

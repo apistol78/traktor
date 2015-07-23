@@ -45,9 +45,9 @@ private:
 	Ref< Stage > m_stage;
 	Ref< Job > m_job;
 
-	static Ref< StageLoader > createAsync(amalgam::IEnvironment* environment, const Guid& stageGuid, const Object* params);
+	static Ref< StageLoader > createAsync(IEnvironment* environment, const Guid& stageGuid, const Object* params);
 
-	static Ref< StageLoader > create(amalgam::IEnvironment* environment, const Guid& stageGuid, const Object* params);
+	static Ref< StageLoader > create(IEnvironment* environment, const Guid& stageGuid, const Object* params);
 };
 
 	}

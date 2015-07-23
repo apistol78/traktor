@@ -40,7 +40,7 @@ public:
 		Stage* stage,
 		const std::wstring& name,
 		bool permitTransition,
-		amalgam::IEnvironment* environment,
+		IEnvironment* environment,
 		const resource::Proxy< sound::Sound >& sound,
 		bool autoPlay,
 		bool repeat
@@ -79,9 +79,9 @@ public:
 
 	virtual void prepare();
 
-	virtual void update(const amalgam::IUpdateInfo& info);
+	virtual void update(const UpdateInfo& info);
 
-	virtual void build(const amalgam::IUpdateInfo& info, uint32_t frame);
+	virtual void build(const UpdateInfo& info, uint32_t frame);
 
 	virtual void render(render::EyeType eye, uint32_t frame);
 
@@ -105,7 +105,7 @@ private:
 		float time;
 	};
 
-	Ref< amalgam::IEnvironment > m_environment;
+	Ref< IEnvironment > m_environment;
 	resource::Proxy< sound::Sound > m_sound;
 	Ref< sound::ISoundHandle > m_handle;
 	bool m_autoPlay;

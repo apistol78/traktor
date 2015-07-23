@@ -16,14 +16,14 @@ namespace traktor
 	namespace amalgam
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.RuntimePlugin", 0, RuntimePlugin, amalgam::IRuntimePlugin)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.RuntimePlugin", 0, RuntimePlugin, IRuntimePlugin)
 
 bool RuntimePlugin::getDependencies(TypeInfoSet& outDependencies) const
 {
 	return true;
 }
 
-bool RuntimePlugin::startup(amalgam::IEnvironment* environment)
+bool RuntimePlugin::startup(IEnvironment* environment)
 {
 	// Add GameEntity to world renderer.
 	environment->getWorld()->addEntityFactory(new GameEntityFactory(
@@ -33,12 +33,12 @@ bool RuntimePlugin::startup(amalgam::IEnvironment* environment)
 	return true;
 }
 
-bool RuntimePlugin::shutdown(amalgam::IEnvironment* environment)
+bool RuntimePlugin::shutdown(IEnvironment* environment)
 {
 	return true;
 }
 
-Ref< amalgam::IState > RuntimePlugin::createInitialState(amalgam::IEnvironment* environment) const
+Ref< IState > RuntimePlugin::createInitialState(IEnvironment* environment) const
 {
 	Guid startupGuid(environment->getSettings()->getProperty< PropertyString >(L"Amalgam.Startup"));
 

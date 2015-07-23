@@ -33,7 +33,7 @@ public:
 
 	AsConfiguration();
 
-	static Ref< AsConfiguration > getCurrent(amalgam::IEnvironment* environment);
+	static Ref< AsConfiguration > getCurrent(IEnvironment* environment);
 
 	Ref< AsDisplayMode > getDisplayMode() const;
 
@@ -123,7 +123,7 @@ public:
 
 	void setFloat(const std::wstring& name, float value);
 
-	bool apply(amalgam::IEnvironment* environment);
+	bool apply(IEnvironment* environment);
 
 private:
 	Ref< const PropertyGroup > m_settings;

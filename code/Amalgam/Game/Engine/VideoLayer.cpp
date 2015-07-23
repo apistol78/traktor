@@ -1,8 +1,8 @@
+#include "Amalgam/Game/FrameProfiler.h"
 #include "Amalgam/Game/IEnvironment.h"
-#include "Amalgam/Game/IUpdateInfo.h"
+#include "Amalgam/Game/UpdateInfo.h"
 #include "Amalgam/Game/Engine/Stage.h"
 #include "Amalgam/Game/Engine/VideoLayer.h"
-#include "Amalgam/Game/Impl/FrameProfiler.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/IRenderView.h"
@@ -22,7 +22,7 @@ VideoLayer::VideoLayer(
 	Stage* stage,
 	const std::wstring& name,
 	bool permitTransition,
-	amalgam::IEnvironment* environment,
+	IEnvironment* environment,
 	const resource::Proxy< video::Video >& video,
 	const resource::Proxy< render::Shader >& shader,
 	const Aabb2& screenBounds,
@@ -115,7 +115,7 @@ void VideoLayer::prepare()
 {
 }
 
-void VideoLayer::update(const amalgam::IUpdateInfo& info)
+void VideoLayer::update(const UpdateInfo& info)
 {
 	info.getProfiler()->beginScope(FptVideoLayer);
 
@@ -138,7 +138,7 @@ void VideoLayer::update(const amalgam::IUpdateInfo& info)
 	info.getProfiler()->endScope();
 }
 
-void VideoLayer::build(const amalgam::IUpdateInfo& info, uint32_t frame)
+void VideoLayer::build(const UpdateInfo& info, uint32_t frame)
 {
 }
 

@@ -16,18 +16,18 @@ namespace traktor
 	namespace amalgam
 	{
 
-class T_DLLCLASS RuntimePlugin : public amalgam::IRuntimePlugin
+class T_DLLCLASS RuntimePlugin : public IRuntimePlugin
 {
 	T_RTTI_CLASS;
 
 public:
 	virtual bool getDependencies(TypeInfoSet& outDependencies) const;
 
-	virtual bool startup(amalgam::IEnvironment* environment);
+	virtual bool startup(IEnvironment* environment);
 
-	virtual bool shutdown(amalgam::IEnvironment* environment);
+	virtual bool shutdown(IEnvironment* environment);
 
-	virtual Ref< amalgam::IState > createInitialState(amalgam::IEnvironment* environment) const;
+	virtual Ref< IState > createInitialState(IEnvironment* environment) const;
 };
 
 	}

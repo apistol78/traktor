@@ -18,7 +18,7 @@ class As_traktor_amalgam_InputFabricator : public flash::ActionClass
 	T_RTTI_CLASS;
 
 public:
-	As_traktor_amalgam_InputFabricator(flash::ActionContext* context, amalgam::IEnvironment* environment);
+	As_traktor_amalgam_InputFabricator(flash::ActionContext* context, IEnvironment* environment);
 
 	virtual void initialize(flash::ActionObject* self);
 
@@ -27,7 +27,7 @@ public:
 	virtual flash::ActionValue xplicit(const flash::ActionValueArray& args);
 
 private:
-	amalgam::IEnvironment* m_environment;
+	IEnvironment* m_environment;
 
 	void InputFabricator_fabricateSource(flash::CallArgs& ca);
 };

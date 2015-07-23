@@ -42,7 +42,7 @@ public:
 
 	virtual db::Database* getDatabase();
 
-	virtual IUpdateControl* getControl();
+	virtual UpdateControl* getControl();
 
 	virtual IAudioServer* getAudio();
 

@@ -20,7 +20,7 @@ AsDisplayMode::AsDisplayMode(const render::DisplayMode& displayMode)
 {
 }
 
-RefArray< AsDisplayMode > AsDisplayMode::getAvailableModes(amalgam::IEnvironment* environment)
+RefArray< AsDisplayMode > AsDisplayMode::getAvailableModes(IEnvironment* environment)
 {
 	render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
 	T_ASSERT (renderSystem);
@@ -40,7 +40,7 @@ RefArray< AsDisplayMode > AsDisplayMode::getAvailableModes(amalgam::IEnvironment
 	return displayModes;
 }
 
-Ref< AsDisplayMode > AsDisplayMode::getCurrentMode(amalgam::IEnvironment* environment)
+Ref< AsDisplayMode > AsDisplayMode::getCurrentMode(IEnvironment* environment)
 {
 	render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
 	T_ASSERT (renderSystem);

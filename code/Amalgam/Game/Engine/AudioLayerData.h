@@ -34,7 +34,7 @@ class T_DLLCLASS AudioLayerData : public LayerData
 public:
 	AudioLayerData();
 
-	virtual Ref< Layer > createInstance(Stage* stage, amalgam::IEnvironment* environment) const;
+	virtual Ref< Layer > createInstance(Stage* stage, IEnvironment* environment) const;
 
 	virtual void serialize(ISerializer& s);
 

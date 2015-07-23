@@ -14,7 +14,7 @@ class AsInputFabricator : public flash::ActionObjectRelay
 	T_RTTI_CLASS;
 
 public:
-	AsInputFabricator(amalgam::IEnvironment* environment);
+	AsInputFabricator(IEnvironment* environment);
 
 	std::wstring getSourceDescription(const std::wstring& sourceId);
 
@@ -31,7 +31,7 @@ public:
 	void revert();
 
 private:
-	amalgam::IEnvironment* m_environment;
+	IEnvironment* m_environment;
 };
 
 	}
