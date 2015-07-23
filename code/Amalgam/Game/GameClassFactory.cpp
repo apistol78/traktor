@@ -238,7 +238,7 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classStage->addMethod("addLayer", &Stage::addLayer);
 	classStage->addMethod("removeLayer", &Stage::removeLayer);
 	classStage->addMethod("removeAllLayers", &Stage::removeAllLayers);
-	classStage->addMethod("findLayer", &Stage::findLayer);
+	classStage->addMethod("getLayer", &Stage::getLayer);
 	classStage->addMethod("terminate", &Stage::terminate);
 	classStage->addMethod("loadStage", &Stage::loadStage);
 	classStage->addMethod("loadStageAsync", &Stage::loadStageAsync);
