@@ -6,7 +6,7 @@
 #include "Amalgam/Game/Impl/RenderServer.h"
 #include "Amalgam/Game/Impl/ResourceServer.h"
 #include "Amalgam/Game/Impl/ScriptServer.h"
-#include "Amalgam/Game/Impl/UpdateControl.h"
+#include "Amalgam/Game/UpdateControl.h"
 #include "Amalgam/Game/Impl/WorldServer.h"
 
 namespace traktor
@@ -49,7 +49,7 @@ db::Database* Environment::getDatabase()
 	return m_database;
 }
 
-IUpdateControl* Environment::getControl()
+UpdateControl* Environment::getControl()
 {
 	return m_control;
 }

@@ -33,11 +33,11 @@ public:
 
 	virtual void leave();
 
-	virtual UpdateResult update(IStateManager* stateManager, const IUpdateInfo& info);
+	virtual UpdateResult update(IStateManager* stateManager, const UpdateInfo& info);
 
-	virtual BuildResult build(uint32_t frame, const IUpdateInfo& info);
+	virtual BuildResult build(uint32_t frame, const UpdateInfo& info);
 
-	virtual bool render(uint32_t frame, render::EyeType eye, const IUpdateInfo& info);
+	virtual bool render(uint32_t frame, render::EyeType eye, const UpdateInfo& info);
 
 	virtual void flush();
 

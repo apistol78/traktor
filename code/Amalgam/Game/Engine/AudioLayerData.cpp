@@ -17,7 +17,7 @@ AudioLayerData::AudioLayerData()
 {
 }
 
-Ref< Layer > AudioLayerData::createInstance(Stage* stage, amalgam::IEnvironment* environment) const
+Ref< Layer > AudioLayerData::createInstance(Stage* stage, IEnvironment* environment) const
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 	resource::Proxy< sound::Sound > sound;

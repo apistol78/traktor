@@ -13,7 +13,7 @@ namespace traktor
 		namespace
 		{
 
-void jobLoader(amalgam::IEnvironment* environment, const Guid& stageGuid, Ref< const Object > params, Ref< StageLoader > stageLoader, Ref< Stage >& outStage)
+void jobLoader(IEnvironment* environment, const Guid& stageGuid, Ref< const Object > params, Ref< StageLoader > stageLoader, Ref< Stage >& outStage)
 {
 	Ref< StageData > stageData = environment->getDatabase()->getObjectReadOnly< StageData >(stageGuid);
 	if (!stageData)
@@ -60,11 +60,11 @@ Ref< Stage > StageLoader::get()
 	return m_stage;
 }
 
-Ref< StageLoader > StageLoader::createAsync(amalgam::IEnvironment* environment, const Guid& stageGuid, const Object* params)
+Ref< StageLoader > StageLoader::createAsync(IEnvironment* environment, const Guid& stageGuid, const Object* params)
 {
 #if !defined(__EMSCRIPTEN__)
 	Ref< StageLoader > stageLoader = new StageLoader();
-	stageLoader->m_job = JobManager::getInstance().add(makeStaticFunctor< amalgam::IEnvironment*, const Guid&, Ref< const Object >, Ref< StageLoader >, Ref< Stage >& >(&jobLoader, environment, stageGuid, params, stageLoader, stageLoader->m_stage));
+	stageLoader->m_job = JobManager::getInstance().add(makeStaticFunctor< IEnvironment*, const Guid&, Ref< const Object >, Ref< StageLoader >, Ref< Stage >& >(&jobLoader, environment, stageGuid, params, stageLoader, stageLoader->m_stage));
 	if (stageLoader->m_job)
 		return stageLoader;
 	else
@@ -74,7 +74,7 @@ Ref< StageLoader > StageLoader::createAsync(amalgam::IEnvironment* environment, 
 #endif
 }
 
-Ref< StageLoader > StageLoader::create(amalgam::IEnvironment* environment, const Guid& stageGuid, const Object* params)
+Ref< StageLoader > StageLoader::create(IEnvironment* environment, const Guid& stageGuid, const Object* params)
 {
 	Ref< StageLoader > stageLoader = new StageLoader();
 	jobLoader(environment, stageGuid, params, stageLoader, stageLoader->m_stage);

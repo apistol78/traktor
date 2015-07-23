@@ -38,10 +38,10 @@ class IScriptContext;
 
 class IEnvironment;
 class IStateManager;
-class IUpdateControl;
-class IUpdateInfo;
 class Layer;
 class StageLoader;
+class UpdateControl;
+class UpdateInfo;
 
 /*! \brief Stage class.
  * \ingroup Amalgam
@@ -140,9 +140,9 @@ public:
 	 * \param info Engine update information.
 	 * \return True if this update succeeded.
 	 */
-	bool update(IStateManager* stateManager, const IUpdateInfo& info);
+	bool update(IStateManager* stateManager, const UpdateInfo& info);
 
-	bool build(const IUpdateInfo& info, uint32_t frame);
+	bool build(const UpdateInfo& info, uint32_t frame);
 
 	void render(render::EyeType eye, uint32_t frame);
 

@@ -1,7 +1,8 @@
-#ifndef traktor_amalgam_IUpdateInfo_H
-#define traktor_amalgam_IUpdateInfo_H
+#ifndef traktor_amalgam_UpdateInfo_H
+#define traktor_amalgam_UpdateInfo_H
 
 #include "Core/Object.h"
+#include "Core/Math/MathUtils.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -24,22 +25,24 @@ class FrameProfiler;
  * Update information provide time measurements
  * to user applications.
  */
-class T_DLLCLASS IUpdateInfo : public Object
+class T_DLLCLASS UpdateInfo : public Object
 {
 	T_RTTI_CLASS;
 
 public:
+	UpdateInfo();
+
 	/*! \brief Get total application time.
 	 *
 	 * \return Time in seconds.
 	 */
-	virtual float getTotalTime() const = 0;
+	float getTotalTime() const { return m_totalTime; }
 
 	/*! \brief Get real time in current state.
 	 *
 	 * \return Time in seconds.
 	 */
-	virtual float getStateTime() const = 0;
+	float getStateTime() const { return m_stateTime; }
 
 	/*! \brief Get simulation time in current state.
 	 *
@@ -50,7 +53,7 @@ public:
 	 *
 	 * \return Time in seconds.
 	 */
-	virtual float getSimulationTime() const = 0;
+	float getSimulationTime() const { return m_simulationTime; }
 
 	/*! \brief Get simulation delta time.
 	 *
@@ -59,13 +62,13 @@ public:
 	 *
 	 * \return Delta time in seconds.
 	 */
-	virtual float getSimulationDeltaTime() const = 0;
+	float getSimulationDeltaTime() const { return m_simulationDeltaTime; }
 
 	/*! \brief Get simulation frequency.
 	 *
 	 * \return Frequency in hertz.
 	 */
-	virtual int32_t getSimulationFrequency() const = 0;
+	int32_t getSimulationFrequency() const { return m_simulationFrequency; }
 
 	/*! \brief Get frame delta time.
 	 *
@@ -74,13 +77,13 @@ public:
 	 *
 	 * \return Delta time in seconds.
 	 */
-	virtual float getFrameDeltaTime() const = 0;
+	float getFrameDeltaTime() const { return m_frameDeltaTime; }
 
 	/*! \brief Get frame count.
 	 *
 	 * \return Frame count since beginning of application.
 	 */
-	virtual uint64_t getFrame() const = 0;
+	uint64_t getFrame() const { return m_frame; }
 
 	/*! \brief Get interval fraction.
 	 *
@@ -88,20 +91,33 @@ public:
 	 *
 	 * \return Interval fraction.
 	 */
-	virtual float getInterval() const = 0;
+	float getInterval() const { return clamp((m_stateTime - m_simulationTime) / m_simulationDeltaTime, 0.0f, 1.0f); }
 
 	/*! \brief If system is detected as being too slow.
 	 *
 	 * \return True if system incapable of sustaining a stable frame rate.
 	 */
-	virtual bool isRunningSlow() const = 0;
+	bool isRunningSlow() const { return m_runningSlow; }
 
 	/*! \brief Access the frame profiler.
 	 */
-	virtual FrameProfiler* getProfiler() const = 0;
+	FrameProfiler* getProfiler() const { return m_frameProfiler; }
+
+private:
+	friend class Application;
+
+	float m_totalTime;
+	float m_stateTime;
+	float m_simulationTime;
+	float m_simulationDeltaTime;
+	int32_t m_simulationFrequency;
+	float m_frameDeltaTime;
+	uint64_t m_frame;
+	bool m_runningSlow;
+	FrameProfiler* m_frameProfiler;
 };
 
 	}
 }
 
-#endif	// traktor_amalgam_IUpdateInfo_H
+#endif	// traktor_amalgam_UpdateInfo_H

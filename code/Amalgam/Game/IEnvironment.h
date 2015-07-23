@@ -9,9 +9,9 @@
 #include "Amalgam/Game/IRenderServer.h"
 #include "Amalgam/Game/IResourceServer.h"
 #include "Amalgam/Game/IScriptServer.h"
-#include "Amalgam/Game/IUpdateControl.h"
 #include "Amalgam/Game/IWorldServer.h"
 #include "Amalgam/Game/Types.h"
+#include "Amalgam/Game/UpdateControl.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -50,7 +50,7 @@ class T_DLLCLASS IEnvironment : public Object
 public:
 	virtual db::Database* getDatabase() = 0;
 
-	virtual IUpdateControl* getControl() = 0;
+	virtual UpdateControl* getControl() = 0;
 
 	/*! \name Server accessors. */
 	/*! \{ */

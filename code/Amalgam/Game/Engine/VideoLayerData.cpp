@@ -25,7 +25,7 @@ VideoLayerData::VideoLayerData()
 {
 }
 
-Ref< Layer > VideoLayerData::createInstance(Stage* stage, amalgam::IEnvironment* environment) const
+Ref< Layer > VideoLayerData::createInstance(Stage* stage, IEnvironment* environment) const
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 	resource::Proxy< video::Video > video;

@@ -12,7 +12,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.As_dea_amalgam_Configuration", As_traktor_amalgam_Configuration, flash::ActionClass)
 
-As_traktor_amalgam_Configuration::As_traktor_amalgam_Configuration(flash::ActionContext* context, amalgam::IEnvironment* environment)
+As_traktor_amalgam_Configuration::As_traktor_amalgam_Configuration(flash::ActionContext* context, IEnvironment* environment)
 :	flash::ActionClass(context, "traktor.amalgam.Configuration")
 ,	m_environment(environment)
 {

@@ -17,15 +17,9 @@ namespace traktor
 	namespace amalgam
 	{
 
-class IUpdateControl;
-class IUpdateInfo;
-
-	}
-
-	namespace amalgam
-	{
-
 class Stage;
+class UpdateControl;
+class UpdateInfo;
 
 /*! \brief Abstract stage layer.
  * \ingroup Amalgam
@@ -61,14 +55,14 @@ public:
 	 *
 	 * info Engine update information.
 	 */
-	virtual void update(const amalgam::IUpdateInfo& info) = 0;
+	virtual void update(const UpdateInfo& info) = 0;
 
 	/*! \brief Build renderable context.
 	 *
 	 * \param info Engine update information.
 	 * \param frame Render frame.
 	 */
-	virtual void build(const amalgam::IUpdateInfo& info, uint32_t frame) = 0;
+	virtual void build(const UpdateInfo& info, uint32_t frame) = 0;
 
 	/*! \brief Render previously build context.
 	 *

@@ -51,7 +51,7 @@ class T_DLLCLASS StageData : public ISerializable
 public:
 	StageData();
 
-	virtual Ref< Stage > createInstance(amalgam::IEnvironment* environment, const Object* params) const;
+	virtual Ref< Stage > createInstance(IEnvironment* environment, const Object* params) const;
 
 	virtual void serialize(ISerializer& s);
 

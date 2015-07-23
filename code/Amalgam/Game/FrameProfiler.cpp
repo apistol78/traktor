@@ -1,4 +1,4 @@
-#include "Amalgam/Game/Impl/FrameProfiler.h"
+#include "Amalgam/Game/FrameProfiler.h"
 
 namespace traktor
 {

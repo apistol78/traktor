@@ -19,7 +19,7 @@ namespace traktor
 
 class IEvent;
 class IStateManager;
-class IUpdateInfo;
+class UpdateInfo;
 
 /*! \brief Runtime state.
  * \ingroup Amalgam
@@ -63,7 +63,7 @@ public:
 	 * \param info Update information.
 	 * \return Update result.
 	 */
-	virtual UpdateResult update(IStateManager* stateManager, const IUpdateInfo& info) = 0;
+	virtual UpdateResult update(IStateManager* stateManager, const UpdateInfo& info) = 0;
 
 	/*! \brief Build frame.
 	 *
@@ -71,7 +71,7 @@ public:
 	 * \param info Update information.
 	 * \return Render result.
 	 */
-	virtual BuildResult build(uint32_t frame, const IUpdateInfo& info) = 0;
+	virtual BuildResult build(uint32_t frame, const UpdateInfo& info) = 0;
 
 	/*! \brief Render state.
 	 *
@@ -80,7 +80,7 @@ public:
 	 * \param info Update information.
 	 * \return True if rendered successfully.
 	 */
-	virtual bool render(uint32_t frame, render::EyeType eye, const IUpdateInfo& info) = 0;
+	virtual bool render(uint32_t frame, render::EyeType eye, const UpdateInfo& info) = 0;
 
 	/*! \brief Flush built frames.
 	 */

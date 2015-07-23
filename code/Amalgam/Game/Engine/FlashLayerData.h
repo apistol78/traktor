@@ -41,7 +41,7 @@ class T_DLLCLASS FlashLayerData : public LayerData
 public:
 	FlashLayerData();
 
-	virtual Ref< Layer > createInstance(Stage* stage, amalgam::IEnvironment* environment) const;
+	virtual Ref< Layer > createInstance(Stage* stage, IEnvironment* environment) const;
 
 	virtual void serialize(ISerializer& s);
 

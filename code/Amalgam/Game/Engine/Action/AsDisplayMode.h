@@ -26,9 +26,9 @@ public:
 
 	AsDisplayMode(const render::DisplayMode& displayMode);
 
-	static RefArray< AsDisplayMode > getAvailableModes(amalgam::IEnvironment* environment);
+	static RefArray< AsDisplayMode > getAvailableModes(IEnvironment* environment);
 
-	static Ref< AsDisplayMode > getCurrentMode(amalgam::IEnvironment* environment);
+	static Ref< AsDisplayMode > getCurrentMode(IEnvironment* environment);
 
 	const render::DisplayMode& getDisplayMode() const { return m_displayMode; }
 

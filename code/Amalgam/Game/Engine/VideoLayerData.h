@@ -39,7 +39,7 @@ class T_DLLCLASS VideoLayerData : public LayerData
 public:
 	VideoLayerData();
 
-	virtual Ref< Layer > createInstance(Stage* stage, amalgam::IEnvironment* environment) const;
+	virtual Ref< Layer > createInstance(Stage* stage, IEnvironment* environment) const;
 
 	virtual void serialize(ISerializer& s);
 

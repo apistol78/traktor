@@ -31,7 +31,7 @@ StageData::StageData()
 {
 }
 
-Ref< Stage > StageData::createInstance(amalgam::IEnvironment* environment, const Object* params) const
+Ref< Stage > StageData::createInstance(IEnvironment* environment, const Object* params) const
 {
 	render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();

@@ -35,7 +35,7 @@ public:
 
 	LayerData();
 
-	virtual Ref< Layer > createInstance(Stage* stage, amalgam::IEnvironment* environment) const = 0;
+	virtual Ref< Layer > createInstance(Stage* stage, IEnvironment* environment) const = 0;
 
 	virtual void serialize(ISerializer& s);
 

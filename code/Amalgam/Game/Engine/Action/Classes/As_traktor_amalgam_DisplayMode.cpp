@@ -9,7 +9,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.As_traktor_amalgam_DisplayMode", As_traktor_amalgam_DisplayMode, flash::ActionClass)
 
-As_traktor_amalgam_DisplayMode::As_traktor_amalgam_DisplayMode(flash::ActionContext* context, amalgam::IEnvironment* environment)
+As_traktor_amalgam_DisplayMode::As_traktor_amalgam_DisplayMode(flash::ActionContext* context, IEnvironment* environment)
 :	flash::ActionClass(context, "traktor.amalgam.DisplayMode")
 ,	m_environment(environment)
 {

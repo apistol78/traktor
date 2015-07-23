@@ -1,12 +1,12 @@
+#include "Amalgam/Game/FrameProfiler.h"
 #include "Amalgam/Game/IEnvironment.h"
 #include "Amalgam/Game/IStateManager.h"
-#include "Amalgam/Game/IUpdateControl.h"
-#include "Amalgam/Game/IUpdateInfo.h"
+#include "Amalgam/Game/UpdateControl.h"
+#include "Amalgam/Game/UpdateInfo.h"
 #include "Amalgam/Game/Engine/Layer.h"
 #include "Amalgam/Game/Engine/Stage.h"
 #include "Amalgam/Game/Engine/StageLoader.h"
 #include "Amalgam/Game/Engine/StageState.h"
-#include "Amalgam/Game/Impl/FrameProfiler.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -168,7 +168,7 @@ bool Stage::gotoStage(Stage* stage)
 	return true;
 }
 
-bool Stage::update(IStateManager* stateManager, const IUpdateInfo& info)
+bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 {
 	T_MEASURE_BEGIN()
 
@@ -188,7 +188,7 @@ bool Stage::update(IStateManager* stateManager, const IUpdateInfo& info)
 
 			Any argv[] =
 			{
-				Any::fromObject(const_cast< IUpdateInfo* >(&info))
+				Any::fromObject(const_cast< UpdateInfo* >(&info))
 			};
 			T_MEASURE_STATEMENT(m_scriptContext->executeFunction("update", sizeof_array(argv), argv), 1.0 / 60.0);
 
@@ -215,7 +215,7 @@ bool Stage::update(IStateManager* stateManager, const IUpdateInfo& info)
 	return true;
 }
 
-bool Stage::build(const IUpdateInfo& info, uint32_t frame)
+bool Stage::build(const UpdateInfo& info, uint32_t frame)
 {
 	T_MEASURE_BEGIN()
 

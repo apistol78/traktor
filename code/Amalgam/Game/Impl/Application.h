@@ -1,10 +1,10 @@
 #ifndef traktor_amalgam_Application_H
 #define traktor_amalgam_Application_H
 
+#include "Amalgam/Game/FrameProfiler.h"
 #include "Amalgam/Game/IApplication.h"
-#include "Amalgam/Game/Impl/FrameProfiler.h"
-#include "Amalgam/Game/Impl/UpdateControl.h"
-#include "Amalgam/Game/Impl/UpdateInfo.h"
+#include "Amalgam/Game/UpdateControl.h"
+#include "Amalgam/Game/UpdateInfo.h"
 #include "Core/RefArray.h"
 #include "Core/Library/Library.h"
 #include "Core/Math/Color4f.h"

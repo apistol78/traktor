@@ -1,6 +1,6 @@
-#include "Amalgam/Game/IUpdateInfo.h"
+#include "Amalgam/Game/FrameProfiler.h"
+#include "Amalgam/Game/UpdateInfo.h"
 #include "Amalgam/Game/Engine/AudioLayer.h"
-#include "Amalgam/Game/Impl/FrameProfiler.h"
 #include "Core/Math/Float.h"
 #include "Sound/Sound.h"
 #include "Sound/Player/ISoundHandle.h"
@@ -17,7 +17,7 @@ AudioLayer::AudioLayer(
 	Stage* stage,
 	const std::wstring& name,
 	bool permitTransition,
-	amalgam::IEnvironment* environment,
+	IEnvironment* environment,
 	const resource::Proxy< sound::Sound >& sound,
 	bool autoPlay,
 	bool repeat
@@ -115,7 +115,7 @@ void AudioLayer::prepare()
 {
 }
 
-void AudioLayer::update(const amalgam::IUpdateInfo& info)
+void AudioLayer::update(const UpdateInfo& info)
 {
 	info.getProfiler()->beginScope(FptAudioLayer);
 
@@ -154,7 +154,7 @@ void AudioLayer::update(const amalgam::IUpdateInfo& info)
 	info.getProfiler()->endScope();
 }
 
-void AudioLayer::build(const amalgam::IUpdateInfo& info, uint32_t frame)
+void AudioLayer::build(const UpdateInfo& info, uint32_t frame)
 {
 }
 
