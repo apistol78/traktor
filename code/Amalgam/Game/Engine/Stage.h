@@ -84,12 +84,12 @@ public:
 	/*! \brief Remove all layers from stage. */
 	void removeAllLayers();
 
-	/*! \brief Find layer by name.
+	/*! \brief Get layer by name.
 	 *
 	 * \param name Name of layer ot find.
 	 * \return Layer object if found; null if not found.
 	 */
-	Layer* findLayer(const std::wstring& name) const;
+	Layer* getLayer(const std::wstring& name) const;
 
 	/*! \brief Signal that the application should terminate. */
 	void terminate();

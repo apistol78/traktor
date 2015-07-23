@@ -108,7 +108,7 @@ void Stage::removeAllLayers()
 	m_layers.resize(0);
 }
 
-Layer* Stage::findLayer(const std::wstring& name) const
+Layer* Stage::getLayer(const std::wstring& name) const
 {
 	for (RefArray< Layer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 	{
@@ -260,7 +260,7 @@ void Stage::transition()
 		if (layerName.empty())
 			continue;
 
-		Layer* currentLayer = findLayer(layerName);
+		Layer* currentLayer = getLayer(layerName);
 		if (currentLayer != 0 && &type_of(currentLayer) == &type_of(*i))
 			(*i)->transition(currentLayer);
 	}
