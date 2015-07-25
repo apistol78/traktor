@@ -285,12 +285,46 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 
 	rc.instanceMetaTableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
 
-	// Export class in global scope.
+	//// Export class in global scope.
 	std::wstring exportName = exportType.getName();
+
 	std::vector< std::wstring > exportPath;
 	Split< std::wstring >::any(exportName, L".", exportPath);
+
+#if defined(T_LUA_5_2)
+
+	lua_pushglobaltable(m_luaState);
+
+	if (exportPath.size() > 1)
+	{
+		for (size_t i = 0; i < exportPath.size() - 1; ++i)
+		{
+			lua_getfield(m_luaState, -1, wstombs(exportPath[i]).c_str());
+			if (!lua_istable(m_luaState, -1))
+			{
+				lua_pop(m_luaState, 1);
+				lua_newtable(m_luaState);
+				lua_setfield(m_luaState, -2, wstombs(exportPath[i]).c_str());
+				lua_getfield(m_luaState, -1, wstombs(exportPath[i]).c_str());
+				T_ASSERT (lua_istable(m_luaState, -1));
+			}
+			else
+				lua_replace(m_luaState, -2);
+		}
+	}
+
+	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.classTableRef);
+	lua_setfield(m_luaState, -2, wstombs(exportPath.back()).c_str());
+
+	lua_pop(m_luaState, 1);
+
+#else
+	// \fixme!
+
 	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.classTableRef);
 	lua_setglobal(m_luaState, wstombs(exportPath.back()).c_str());
+
+#endif
 
 	// Add class to registry.
 	uint32_t classRegistryIndex = m_classRegistry.size();

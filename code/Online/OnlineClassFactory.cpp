@@ -1,6 +1,7 @@
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
+#include "Core/Class/IRuntimeDelegate.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Drawing/Image.h"
@@ -29,24 +30,54 @@ namespace traktor
 		namespace
 		{
 
+class ResultDeferred : public Result::IDeferred
+{
+public:
+	ResultDeferred(IRuntimeDelegate* delegate)
+	:	m_delegate(delegate)
+	{
+	}
+
+	virtual void dispatch(const Result& result) const
+	{
+		const Any argv[] =
+		{
+			Any::fromObject(const_cast< Result* >(&result))
+		};
+		m_delegate->call(sizeof_array(argv), argv);
+	}
+
+private:
+	Ref< IRuntimeDelegate > m_delegate;
+};
+
+void Result_defer(Result* self, IRuntimeDelegate* delegate)
+{
+	self->defer(new ResultDeferred(delegate));
+}
+
 bool translateComparison(const std::wstring& comparison, LobbyFilter::ComparisonType& outComparison)
 {
-	if (compareIgnoreCase< std::wstring >(comparison, L"Equal") == 0)
-		outComparison = LobbyFilter::CtEqual;
-	else if (compareIgnoreCase< std::wstring >(comparison, L"NotEqual") == 0)
-		outComparison = LobbyFilter::CtNotEqual;
-	else if (compareIgnoreCase< std::wstring >(comparison, L"Less") == 0)
-		outComparison = LobbyFilter::CtLess;
-	else if (compareIgnoreCase< std::wstring >(comparison, L"LessEqual") == 0)
-		outComparison = LobbyFilter::CtLessEqual;
-	else if (compareIgnoreCase< std::wstring >(comparison, L"Greater") == 0)
-		outComparison = LobbyFilter::CtGreater;
-	else if (compareIgnoreCase< std::wstring >(comparison, L"GreaterEqual") == 0)
-		outComparison = LobbyFilter::CtGreaterEqual;
-	else
-		return false;
+	const struct { const wchar_t* id; LobbyFilter::ComparisonType value; } c_comparisons[] =
+	{
+		{ L"Equal", LobbyFilter::CtEqual },
+		{ L"NotEqual", LobbyFilter::CtNotEqual },
+		{ L"Less", LobbyFilter::CtLess },
+		{ L"LessEqual", LobbyFilter::CtLessEqual },
+		{ L"Greater", LobbyFilter::CtGreater },
+		{ L"GreaterEqual", LobbyFilter::CtGreaterEqual }
+	};
 
-	return true;
+	for (uint32_t i = 0; i < sizeof_array(c_comparisons); ++i)
+	{
+		if (compareIgnoreCase< std::wstring >(comparison, c_comparisons[i].id) == 0)
+		{
+			outComparison = c_comparisons[i].value;
+			return true;
+		}
+	}
+
+	return false;
 }
 
 bool LobbyFilter_addStringComparison(LobbyFilter* self, const std::wstring& key, const std::wstring& value, const std::wstring& comparison)
@@ -251,6 +282,7 @@ void OnlineClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classResult->addMethod("fail", &Result::fail);
 	classResult->addMethod("ready", &Result::ready);
 	classResult->addMethod("succeeded", &Result::succeeded);
+	classResult->addMethod("defer", &Result_defer);
 	registrar->registerClass(classResult);
 
 	Ref< AutoRuntimeClass< AttachmentResult > > classAttachmentResult = new AutoRuntimeClass< AttachmentResult >();

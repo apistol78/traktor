@@ -1,9 +1,13 @@
 #include <cstring>
 #include "Core/Guid.h"
 #include "Core/Class/Boxes.h"
+#include "Core/Math/Format.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Reflection/Reflection.h"
+#include "Core/Reflection/RfmEnum.h"
+#include "Core/Reflection/RfmObject.h"
+#include "Core/Reflection/RfmPrimitive.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
@@ -40,6 +44,87 @@ std::wstring describeValue(lua_State* L, int32_t index)
 	}
 	else
 		return L"";
+}
+
+Ref< Local > describeCompound(const std::wstring& name, const RfmCompound* compound)
+{
+	RefArray< Local > memberValues;
+	for (uint32_t i = 0; i < compound->getMemberCount(); ++i)
+	{
+		const ReflectionMember* member = compound->getMember(i);
+		T_ASSERT (member);
+
+		if (const RfmObject* memberObject = dynamic_type_cast< const RfmObject* >(member))
+		{
+			Ref< Reflection > reflection = Reflection::create(memberObject->get());
+			if (reflection)
+				memberValues.push_back(describeCompound(member->getName(), reflection));
+			else
+				memberValues.push_back(new LocalSimple(member->getName(), L"(null)"));
+		}
+		else if (const RfmCompound* memberCompound = dynamic_type_cast< const RfmCompound* >(member))
+			memberValues.push_back(describeCompound(member->getName(), memberCompound));
+		else if (const RfmPrimitiveBoolean* memberBoolean = dynamic_type_cast< const RfmPrimitiveBoolean* >(member))
+			memberValues.push_back(new LocalSimple(member->getName(), toString(memberBoolean->get())));
+		else if (const RfmPrimitiveInt8* memberInt8 = dynamic_type_cast< const RfmPrimitiveInt8* >(member))
+			memberValues.push_back(new LocalSimple(member->getName(), toString< int32_t >(memberInt8->get())));
+		else if (const RfmPrimitiveUInt8* memberUInt8 = dynamic_type_cast< const RfmPrimitiveUInt8* >(member))
+			memberValues.push_back(new LocalSimple(member->getName(), toString< uint32_t >(memberUInt8->get())));
+		else if (const RfmPrimitiveInt16* memberInt16 = dynamic_type_cast< const RfmPrimitiveInt16* >(member))
+			memberValues.push_back(new LocalSimple(member->getName(), toString< int32_t >(memberInt16->get())));
+		else if (const RfmPrimitiveUInt16* memberUInt16 = dynamic_type_cast< const RfmPrimitiveUInt16* >(member))
+			memberValues.push_back(new LocalSimple(member->getName(), toString< uint32_t >(memberUInt16->get())));
+		else if (const RfmPrimitiveInt32* memberInt32 = dynamic_type_cast< const RfmPrimitiveInt32* >(member))
+			memberValues.push_back(new LocalSimple(member->getName(), toString< int32_t >(memberInt32->get())));
+		else if (const RfmPrimitiveUInt32* memberUInt32 = dynamic_type_cast< const RfmPrimitiveUInt32* >(member))
+			memberValues.push_back(new LocalSimple(member->getName(), toString< uint32_t >(memberUInt32->get())));
+		else if (const RfmPrimitiveInt64* memberInt64 = dynamic_type_cast< const RfmPrimitiveInt64* >(member))
+			memberValues.push_back(new LocalSimple(member->getName(), toString(memberInt64->get())));
+		else if (const RfmPrimitiveUInt64* memberUInt64 = dynamic_type_cast< const RfmPrimitiveUInt64* >(member))
+			memberValues.push_back(new LocalSimple(member->getName(), toString(memberUInt64->get())));
+		else if (const RfmPrimitiveFloat* memberFloat = dynamic_type_cast< const RfmPrimitiveFloat* >(member))
+			memberValues.push_back(new LocalSimple(member->getName(), toString(memberFloat->get())));
+		else if (const RfmPrimitiveDouble* memberDouble = dynamic_type_cast< const RfmPrimitiveDouble* >(member))
+			memberValues.push_back(new LocalSimple(member->getName(), toString(memberDouble->get())));
+		else if (const RfmPrimitiveString* memberString = dynamic_type_cast< const RfmPrimitiveString* >(member))
+			memberValues.push_back(new LocalSimple(member->getName(), mbstows(memberString->get())));
+		else if (const RfmPrimitiveWideString* memberWideString = dynamic_type_cast< const RfmPrimitiveWideString* >(member))
+			memberValues.push_back(new LocalSimple(member->getName(), memberWideString->get()));
+		else if (const RfmPrimitiveGuid* memberGuid = dynamic_type_cast< const RfmPrimitiveGuid* >(member))
+			memberValues.push_back(new LocalSimple(member->getName(), memberGuid->get().format()));
+		else if (const RfmPrimitivePath* memberPath = dynamic_type_cast< const RfmPrimitivePath* >(member))
+			memberValues.push_back(new LocalSimple(member->getName(), memberPath->get().getPathName()));
+		else if (const RfmPrimitiveColor4ub* memberColor4ub = dynamic_type_cast< const RfmPrimitiveColor4ub* >(member))
+			memberValues.push_back(new LocalSimple(member->getName(), L"(color)"));
+		else if (const RfmPrimitiveColor4f* memberColor4f = dynamic_type_cast< const RfmPrimitiveColor4f* >(member))
+			memberValues.push_back(new LocalSimple(member->getName(), L"(color)"));
+		else if (const RfmPrimitiveScalar* memberScalar = dynamic_type_cast< const RfmPrimitiveScalar* >(member))
+			memberValues.push_back(new LocalSimple(member->getName(), toString(memberScalar->get())));
+		else if (const RfmPrimitiveVector2* memberVector2 = dynamic_type_cast< const RfmPrimitiveVector2* >(member))
+			memberValues.push_back(new LocalSimple(member->getName(), toString(memberVector2->get())));
+		else if (const RfmPrimitiveVector4* memberVector4 = dynamic_type_cast< const RfmPrimitiveVector4* >(member))
+			memberValues.push_back(new LocalSimple(member->getName(), toString(memberVector4->get())));
+		else if (const RfmPrimitiveMatrix33* memberMatrix33 = dynamic_type_cast< const RfmPrimitiveMatrix33* >(member))
+			memberValues.push_back(new LocalSimple(member->getName(), L"(matrix33)"));
+		else if (const RfmPrimitiveMatrix44* memberMatrix44 = dynamic_type_cast< const RfmPrimitiveMatrix44* >(member))
+			memberValues.push_back(new LocalSimple(member->getName(), L"(matrix44)"));
+		else if (const RfmPrimitiveQuaternion* memberQuaternion = dynamic_type_cast< const RfmPrimitiveQuaternion* >(member))
+			memberValues.push_back(new LocalSimple(member->getName(), toString(memberQuaternion->get())));
+		else if (const RfmEnum* memberEnum = dynamic_type_cast< const RfmEnum* >(member))
+			memberValues.push_back(new LocalSimple(member->getName(), memberEnum->get()));
+		else
+			memberValues.push_back(new LocalSimple(member->getName(), L"(...)"));
+	}
+	return new LocalComposite(name, memberValues);
+}
+
+Ref< Local > describeSerializable(const std::wstring& name, const ISerializable* s)
+{
+	Ref< Reflection > reflection = Reflection::create(s);
+	if (reflection)
+		return describeCompound(name, reflection);
+	else
+		return new LocalSimple(name, L"(...)");
 }
 
 Ref< Local > describeLocal(const std::wstring& name, lua_State* L, int32_t index, int depth)
@@ -99,23 +184,7 @@ Ref< Local > describeLocal(const std::wstring& name, lua_State* L, int32_t index
 					return new LocalSimple(name, box->toString());
 
 				if (const ISerializable* s = dynamic_type_cast< const ISerializable* >(object))
-				{
-					RefArray< Local > memberValues;
-
-					Ref< Reflection > reflection = Reflection::create(s);
-					if (reflection)
-					{
-						for (uint32_t i = 0; i < reflection->getMemberCount(); ++i)
-						{
-							const ReflectionMember* member = reflection->getMember(i);
-							T_ASSERT (member);
-
-							memberValues.push_back(new LocalSimple(member->getName(), L"(...)"));
-						}
-					}
-
-					return new LocalComposite(name, memberValues);
-				}
+					return describeSerializable(name, s);
 
 				return new LocalSimple(name, std::wstring(L"(") + type_name(object) + std::wstring(L")"));
 			}

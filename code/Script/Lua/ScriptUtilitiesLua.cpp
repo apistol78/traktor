@@ -82,7 +82,7 @@ void* luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize)
 	return 0;
 }
 
-int luaPrint(lua_State *L)
+int luaPrint(lua_State* L)
 {
 	int n = lua_gettop(L);
 	int i;
