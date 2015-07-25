@@ -72,7 +72,7 @@ public:
 	}
 };
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.I18N", I18NWrapper, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.i18n.I18N", I18NWrapper, Object)
 
 		}
 

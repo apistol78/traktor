@@ -142,7 +142,7 @@ private:
 	Replicator::Configuration m_configuration;
 };
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ReplicatorConfiguration", ReplicatorConfiguration, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.net.ReplicatorConfiguration", ReplicatorConfiguration, Object)
 
 class ReplicatorListener : public IReplicatorStateListener
 {

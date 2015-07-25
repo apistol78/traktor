@@ -9,6 +9,9 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.Reflection", Reflection, RfmCompound)
 
 Ref< Reflection > Reflection::create(const ISerializable* object)
 {
+	if (!object)
+		return 0;
+
 	Ref< Reflection > r = new Reflection(type_of(object));
 
 	ReflectionInspectSerializer s(r);

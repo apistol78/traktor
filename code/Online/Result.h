@@ -47,7 +47,7 @@ class T_DLLCLASS Result : public Object
 {
 	T_RTTI_CLASS;
 
-private:
+public:
 	struct IDeferred : public Object
 	{
 		virtual void dispatch(const Result& result) const = 0;
@@ -75,7 +75,6 @@ private:
 		method_t m_method;
 	};
 
-public:
 	Result();
 
 	Result(bool succeed);
@@ -88,11 +87,16 @@ public:
 
 	bool succeeded() const;
 
+	void defer(IDeferred* deferred_)
+	{
+		m_deferred = deferred_;
+		deferred();
+	}
+
 	template < typename ClassType >
 	void defer(ClassType* object, typename DeferredMethod< ClassType >::method_t method)
 	{
-		m_deferred = new DeferredMethod< ClassType >(object, method);
-		deferred();
+		defer(new DeferredMethod< ClassType >(object, method));
 	}
 
 protected:
