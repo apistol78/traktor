@@ -99,7 +99,7 @@ Ref< Local > describeCompound(const std::wstring& name, const RfmCompound* compo
 		else if (const RfmPrimitiveColor4f* memberColor4f = dynamic_type_cast< const RfmPrimitiveColor4f* >(member))
 			memberValues.push_back(new LocalSimple(member->getName(), L"(color)"));
 		else if (const RfmPrimitiveScalar* memberScalar = dynamic_type_cast< const RfmPrimitiveScalar* >(member))
-			memberValues.push_back(new LocalSimple(member->getName(), toString(memberScalar->get())));
+			memberValues.push_back(new LocalSimple(member->getName(), toString< float >(memberScalar->get())));
 		else if (const RfmPrimitiveVector2* memberVector2 = dynamic_type_cast< const RfmPrimitiveVector2* >(member))
 			memberValues.push_back(new LocalSimple(member->getName(), toString(memberVector2->get())));
 		else if (const RfmPrimitiveVector4* memberVector4 = dynamic_type_cast< const RfmPrimitiveVector4* >(member))
