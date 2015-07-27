@@ -376,13 +376,14 @@ void TerrainEditModifier::selectionChanged()
 		for (int32_t u = 0; u < size; ++u)
 		{
 			Vector4 normal = normalAt(m_heightfield, u, v) * Vector4(0.5f, 0.5f, 0.5f, 0.0f) + Vector4(0.5f, 0.5f, 0.5f, 0.0f);
-			uint8_t nx = uint8_t(255 - normal.x() * 255);
+			uint8_t nx = uint8_t(normal.x() * 255);
 			uint8_t ny = uint8_t(normal.y() * 255);
+			uint8_t nz = uint8_t(normal.z() * 255);
 			uint8_t* ptr = &m_normalData[(u + v * size) * 4];
-			ptr[0] = 0;
+			ptr[0] = nx;
 			ptr[1] = ny;
-			ptr[2] = 0;
-			ptr[3] = nx;
+			ptr[2] = nz;
+			ptr[3] = 0;
 		}
 	}
 
@@ -638,13 +639,14 @@ void TerrainEditModifier::apply(
 			for (int32_t u = mnx; u <= mxx; ++u)
 			{
 				Vector4 normal = normalAt(m_heightfield, u, v) * Vector4(0.5f, 0.5f, 0.5f, 0.0f) + Vector4(0.5f, 0.5f, 0.5f, 0.0f);
-				uint8_t nx = uint8_t(255 - normal.x() * 255);
+				uint8_t nx = uint8_t(normal.x() * 255);
 				uint8_t ny = uint8_t(normal.y() * 255);
+				uint8_t nz = uint8_t(normal.z() * 255);
 				uint8_t* ptr = &m_normalData[(u + v * size) * 4];
-				ptr[0] = 0;
+				ptr[0] = nx;
 				ptr[1] = ny;
-				ptr[2] = 0;
-				ptr[3] = nx;
+				ptr[2] = nz;
+				ptr[3] = 0;
 			}
 		}
 
@@ -655,6 +657,9 @@ void TerrainEditModifier::apply(
 			std::memcpy(nl.bits, m_normalData.c_ptr(), size * size * 4);
 			m_normalMap->unlock(0);
 		}
+
+		// Replace normal map in resource with our texture.
+		m_entity->m_terrain->m_normalMap = resource::Proxy< render::ISimpleTexture >(m_normalMap);
 	}
 
 	// Update cuts.
@@ -675,6 +680,9 @@ void TerrainEditModifier::apply(
 			std::memcpy(cl.bits, m_cutData.c_ptr(), size * size);
 			m_cutMap->unlock(0);
 		}
+
+		// Replace cut map in resource with our texture.
+		m_entity->m_terrain->m_cutMap = resource::Proxy< render::ISimpleTexture >(m_cutMap);
 	}
 
 	// Update material mask.
@@ -695,6 +703,9 @@ void TerrainEditModifier::apply(
 			std::memcpy(cl.bits, m_materialData.c_ptr(), size * size);
 			m_materialMap->unlock(0);
 		}
+
+		// Replace material mask map in resource with our texture.
+		m_entity->m_terrain->m_materialMap = resource::Proxy< render::ISimpleTexture >(m_materialMap);
 	}
 }
 
