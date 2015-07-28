@@ -1033,6 +1033,22 @@
       <second>Create new heightfield...</second>
     </item>
     <item>
+      <first>NEW_HEIGHTFIELD_TITLE</first>
+      <second>New heightfield</second>
+    </item>
+    <item>
+      <first>NEW_HEIGHTFIELD_GRID_SIZE</first>
+      <second>Grid size (heights)</second>
+    </item>
+    <item>
+      <first>NEW_HEIGHTFIELD_EXTENT</first>
+      <second>World extent (X, Y, Z)</second>
+    </item>
+    <item>
+      <first>NEW_HEIGHTFIELD_PLANE</first>
+      <second>Plane (XY angle, ZY angle, elevation)</second>
+    </item>
+    <item>
       <first>FIND_IN_DATABASE</first>
       <second>Find in database</second>
     </item>

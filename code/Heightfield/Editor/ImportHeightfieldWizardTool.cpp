@@ -1,6 +1,7 @@
 #include <cstring>
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
+#include "Core/Misc/String.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
@@ -41,6 +42,21 @@ Ref< drawing::Image > readRawTerrain(IStream* stream)
 	return image;
 }
 
+std::wstring getUniqueInstanceName(const std::wstring& baseName, db::Group* group)
+{
+	if (!group->getInstance(baseName))
+		return baseName;
+
+	for (int32_t i = 2;; ++i)
+	{
+		std::wstring sequenceName = baseName + L" (" + toString(i) + L")";
+		if (!group->getInstance(sequenceName))
+			return sequenceName;
+	}
+
+	return L"";
+}
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.ImportHeightfieldWizardTool", 0, ImportHeightfieldWizardTool, editor::IWizardTool)
@@ -60,15 +76,20 @@ bool ImportHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* ed
 	// Select source heightfield.
 	ui::FileDialog fileDialog;
 	if (!fileDialog.create(parent, i18n::Text(L"IMPORT_HEIGHTFIELD_WIZARDTOOL_FILE_TITLE"), L"All files;*.*"))
-		return 0;
+		return false;
 
 	Path fileName;
 	if (fileDialog.showModal(fileName) != ui::DrOk)
 	{
 		fileDialog.destroy();
-		return true;
+		return false;
 	}
 	fileDialog.destroy();
+
+	// Determine unique instance name.
+	std::wstring instanceName = getUniqueInstanceName(fileName.getFileNameNoExtension(), group);
+	if (instanceName.empty())
+		return false;
 
 	// Read source heightfield as image.
 	Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
@@ -131,8 +152,7 @@ bool ImportHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* ed
 	Ref< HeightfieldAsset > heightfieldAsset = new HeightfieldAsset(heightfield->getWorldExtent());
 
 	// Create heightfield instance.
-	Ref< db::Instance > heightfieldInstance = group->createInstance(fileName.getFileNameNoExtension());
-
+	Ref< db::Instance > heightfieldInstance = group->createInstance(instanceName);
 	heightfieldInstance->setObject(heightfieldAsset);
 
 	Ref< IStream > data = heightfieldInstance->writeData(L"Data");
@@ -145,7 +165,6 @@ bool ImportHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* ed
 	HeightfieldFormat().write(data, heightfield);
 
 	heightfieldInstance->commit();
-
 	return true;
 }
 
