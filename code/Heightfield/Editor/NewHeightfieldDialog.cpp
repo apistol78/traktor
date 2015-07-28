@@ -60,7 +60,7 @@ bool NewHeightfieldDialog::create(ui::Widget* parent)
 	m_editPlane[1]->create(containerPlane, L"0", ui::WsClientBorder, new ui::NumericEditValidator(true, -45.0f, 45.0f));
 
 	m_editPlane[2] = new ui::Edit();
-	m_editPlane[2]->create(containerPlane, L"0.5", ui::WsClientBorder, new ui::NumericEditValidator(true));
+	m_editPlane[2]->create(containerPlane, L"0", ui::WsClientBorder, new ui::NumericEditValidator(true));
 
 	return true;
 }

@@ -1,8 +1,9 @@
 #ifndef traktor_db_ActionSetName_H
 #define traktor_db_ActionSetName_H
 
-#include "Database/Local/Action.h"
+#include <map>
 #include "Core/Io/Path.h"
+#include "Database/Local/Action.h"
 
 namespace traktor
 {
@@ -32,6 +33,7 @@ private:
 	Path m_instancePathNew;
 	bool m_removedMeta;
 	bool m_removedObject;
+	std::map< std::wstring, bool > m_removedData;
 };
 
 	}
