@@ -116,7 +116,10 @@ void TextPropertyItem::mouseButtonDown(MouseButtonDownEvent* event)
 
 void TextPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 {
-	canvas.drawText(rc.inflate(-2, 0), m_value, AnLeft, AnCenter);
+	if (!m_multiLine)
+		canvas.drawText(rc.inflate(-2, 0), m_value, AnLeft, AnCenter);
+	else
+		canvas.drawText(rc.inflate(-2, 0), m_value.empty() ? L"" : L"...", AnLeft, AnCenter);
 }
 
 bool TextPropertyItem::copy()
