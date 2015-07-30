@@ -249,14 +249,14 @@ void ShaderGraphEditorPage::destroy()
 {
 	if (m_shaderViewer)
 	{
-		m_editor->checkoutGlobalSettings()->setProperty< PropertyBoolean >(L"ShaderEditor.ShaderViewVisible", m_shaderViewer->isVisible(true));
+		m_editor->checkoutGlobalSettings()->setProperty< PropertyBoolean >(L"ShaderEditor.ShaderViewVisible", m_shaderViewer->isVisible(false));
 		m_editor->commitGlobalSettings();
 		m_site->destroyAdditionalPanel(m_shaderViewer);
 	}
 
 	if (m_dependencyPane)
 	{
-		m_editor->checkoutGlobalSettings()->setProperty< PropertyBoolean >(L"ShaderEditor.ShaderDependencyPaneVisible", m_dependencyPane->isVisible(true));
+		m_editor->checkoutGlobalSettings()->setProperty< PropertyBoolean >(L"ShaderEditor.ShaderDependencyPaneVisible", m_dependencyPane->isVisible(false));
 		m_editor->commitGlobalSettings();
 		m_site->destroyAdditionalPanel(m_dependencyPane);
 	}
@@ -264,6 +264,7 @@ void ShaderGraphEditorPage::destroy()
 	m_nodeFacades.clear();
 	safeDestroy(m_editorGraph);
 	safeDestroy(m_shaderViewer);
+	safeDestroy(m_dependencyPane);
 	safeDestroy(m_menuPopup);
 	safeDestroy(m_menuQuick);
 }
