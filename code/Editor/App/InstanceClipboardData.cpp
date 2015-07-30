@@ -1,6 +1,8 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberRef.h"
+#include "Core/Serialization/MemberStl.h"
 #include "Editor/App/InstanceClipboardData.h"
 
 namespace traktor
@@ -14,26 +16,26 @@ InstanceClipboardData::InstanceClipboardData()
 {
 }
 
-InstanceClipboardData::InstanceClipboardData(const std::wstring& name, ISerializable* object)
-:	m_name(name)
-,	m_object(object)
+void InstanceClipboardData::addInstance(const std::wstring& name, ISerializable* object, const Guid& id)
 {
-}
-
-const std::wstring& InstanceClipboardData::getName() const
-{
-	return m_name;
-}
-
-ISerializable* InstanceClipboardData::getObject() const
-{
-	return m_object;
+	Instance instance;
+	instance.name = name;
+	instance.object = object;
+	instance.originalId = id;
+	m_instances.push_back(instance);
 }
 
 void InstanceClipboardData::serialize(ISerializer& s)
 {
-	s >> Member< std::wstring >(L"name", m_name);
-	s >> MemberRef< ISerializable >(L"object", m_object);
+	s >> MemberStlList< Instance, MemberComposite< Instance > >(L"instances", m_instances);
+}
+
+void InstanceClipboardData::Instance::serialize(ISerializer& s)
+{
+	s >> Member< std::wstring >(L"name", name);
+	s >> MemberRef< ISerializable >(L"object", object);
+	s >> Member< Guid >(L"originalId", originalId);
+	s >> Member< Guid >(L"pasteId", pasteId);
 }
 
 	}

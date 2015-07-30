@@ -466,6 +466,10 @@
       <second>Copy</second>
     </item>
     <item>
+      <first>DATABASE_COPY_ALL</first>
+      <second>Copy all</second>
+    </item>
+    <item>
       <first>DATABASE_PASTE</first>
       <second>Paste</second>
     </item>

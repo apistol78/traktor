@@ -3,6 +3,10 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/WildCompare.h"
+#include "Core/Reflection/Reflection.h"
+#include "Core/Reflection/RfmObject.h"
+#include "Core/Reflection/RfmPrimitive.h"
+#include "Core/Reflection/RfpMemberType.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
@@ -223,6 +227,65 @@ std::wstring getCategoryText(const TypeInfo* categoryType)
 	return i18n::Text(id, categoryType->getName());
 }
 
+std::wstring getUniqueInstanceName(const std::wstring& baseName, db::Group* group)
+{
+	if (!group->getInstance(baseName))
+		return baseName;
+
+	for (int32_t i = 2;; ++i)
+	{
+		std::wstring sequenceName = baseName + L" (" + toString(i) + L")";
+		if (!group->getInstance(sequenceName))
+			return sequenceName;
+	}
+
+	return L"";
+}
+
+bool replaceIdentifiers(RfmCompound* reflection, const std::list< InstanceClipboardData::Instance >& instances)
+{
+	bool modified = false;
+
+	for (uint32_t i = 0; i < reflection->getMemberCount(); ++i)
+	{
+		ReflectionMember* member = reflection->getMember(i);
+		T_ASSERT (member);
+
+		if (RfmPrimitiveGuid* idMember = dynamic_type_cast< RfmPrimitiveGuid* >(member))
+		{
+			if (idMember->get().isNotNull())
+			{
+				for (std::list< InstanceClipboardData::Instance >::const_iterator k = instances.begin(); k != instances.end(); ++k)
+				{
+					if (idMember->get() == k->originalId)
+					{
+						idMember->set(k->pasteId);
+						modified = true;
+					}
+				}
+			}
+		}
+		else if (RfmObject* objectMember = dynamic_type_cast< RfmObject* >(member))
+		{
+			Ref< Reflection > objectReflection = Reflection::create(objectMember->get());
+			if (objectReflection)
+			{
+				if (replaceIdentifiers(objectReflection, instances))
+				{
+					objectReflection->apply(objectMember->get());
+					modified = true;
+				}
+			}
+		}
+		else if (RfmCompound* compoundMember = dynamic_type_cast< RfmCompound* >(member))
+		{
+			modified |= replaceIdentifiers(compoundMember, instances);
+		}
+	}
+
+	return modified;
+}
+
 		}
 
 DatabaseView::DatabaseView(IEditor* editor)
@@ -333,6 +396,7 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.DefaultEditInstance"), i18n::Text(L"DATABASE_DEFAULT_EDIT_INSTANCE")));
 	m_menuInstance->add(new ui::MenuItem(L"-"));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Copy"), i18n::Text(L"DATABASE_COPY")));
+	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.CopyAll"), i18n::Text(L"DATABASE_COPY_ALL")));
 	m_menuInstance->add(new ui::MenuItem(L"-"));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.FilterInstanceType"), i18n::Text(L"DATABASE_FILTER_TYPE")));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.FilterInstanceDepends"), i18n::Text(L"DATABASE_FILTER_DEPENDENCIES")));
@@ -666,7 +730,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			Ref< ISerializable > object = instance->getObject< ISerializable >();
 			if (!object)
 			{
-				log::error << L"Unable to checkout instance" << Endl;
+				log::error << L"Unable to read instance object" << Endl;
 				return false;
 			}
 
@@ -677,7 +741,66 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 				return false;
 			}
 
-			Ref< InstanceClipboardData > instanceClipboardData = new InstanceClipboardData(instance->getName(), object);
+			Ref< InstanceClipboardData > instanceClipboardData = new InstanceClipboardData();
+			instanceClipboardData->addInstance(instance->getName(), object);
+
+			ui::Application::getInstance()->getClipboard()->setObject(instanceClipboardData);
+		}
+		else if (command == L"Editor.CopyAll")	// Copy instance, including all dependencies.
+		{
+			Ref< ISerializable > object = instance->getObject< ISerializable >();
+			if (!object)
+			{
+				log::error << L"Unable to read instance object" << Endl;
+				return false;
+			}
+
+			object = DeepClone(object).create();
+			if (!object)
+			{
+				log::error << L"Unable to create clone" << Endl;
+				return false;
+			}
+
+			Ref< IPipelineDependencySet > dependencySet = m_editor->buildAssetDependencies(object, ~0U);
+			if (!dependencySet)
+				return false;
+
+			Ref< InstanceClipboardData > instanceClipboardData = new InstanceClipboardData();
+			instanceClipboardData->addInstance(instance->getName(), object);
+
+			bool rootIsPrivate = isInstanceInPrivate(instance);
+
+			for (uint32_t i = 0; i < dependencySet->size(); ++i)
+			{
+				const PipelineDependency* dependency = dependencySet->get(i);
+				T_ASSERT (dependency);
+
+				Ref< db::Instance > dependentInstance = m_db->getInstance(dependency->outputGuid);
+				if (dependentInstance && (rootIsPrivate || !isInstanceInPrivate(dependentInstance)))
+				{
+					Ref< ISerializable > dependentObject = dependentInstance->getObject();
+					if (!dependentObject)
+					{
+						log::error << L"Unable to read instance object" << Endl;
+						return false;
+					}
+
+					dependentObject = DeepClone(dependentObject).create();
+					if (!dependentObject)
+					{
+						log::error << L"Unable to create clone" << Endl;
+						return false;
+					}
+
+					instanceClipboardData->addInstance(
+						dependentInstance->getName(),
+						dependentObject,
+						dependentInstance->getGuid()
+					);
+				}
+			}
+
 			ui::Application::getInstance()->getClipboard()->setObject(instanceClipboardData);
 		}
 		else if (command == L"Editor.Database.FilterInstanceType")	// Filter on type.
@@ -819,36 +942,52 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			Ref< InstanceClipboardData > instanceClipboardData = dynamic_type_cast< InstanceClipboardData* >(
 				ui::Application::getInstance()->getClipboard()->getObject()
 			);
-			if (!instanceClipboardData || !instanceClipboardData->getObject())
+			if (!instanceClipboardData)
 				return false;
 
-			if (group->getInstance(instanceClipboardData->getName()) != 0)
+			std::list< InstanceClipboardData::Instance > pasteInstances = instanceClipboardData->getInstances();
+
+			// Create unique identifiers for each pasted instance.
+			for (std::list< InstanceClipboardData::Instance >::iterator i = pasteInstances.begin(); i != pasteInstances.end(); ++i)
+				i->pasteId = Guid::create();
+
+			// Replace all occurances of original identifiers with new identifiers.
+			for (std::list< InstanceClipboardData::Instance >::iterator i = pasteInstances.begin(); i != pasteInstances.end(); ++i)
 			{
-				log::error << L"Instance named \"" << instanceClipboardData->getName() << L"\" already exist in selected group" << Endl;
-				return false;
+				Ref< Reflection > reflection = Reflection::create(i->object);
+				if (!reflection)
+					return false;
+
+				if (replaceIdentifiers(reflection, pasteInstances))
+					reflection->apply(i->object);
 			}
 
-			Ref< db::Instance > instanceCopy = group->createInstance(instanceClipboardData->getName());
-			if (!instanceCopy)
+			for (std::list< InstanceClipboardData::Instance >::const_iterator i = pasteInstances.begin(); i != pasteInstances.end(); ++i)
 			{
-				log::error << L"Unable to create instance copy" << Endl;
-				return false;
+				std::wstring pasteName = getUniqueInstanceName(i->name, group);
+
+				Ref< db::Instance > instanceCopy = group->createInstance(pasteName, db::CifDefault, &i->pasteId);
+				if (!instanceCopy)
+				{
+					log::error << L"Unable to create instance copy" << Endl;
+					return false;
+				}
+
+				instanceCopy->setObject(i->object);
+
+				if (!instanceCopy->commit())
+				{
+					log::error << L"Unable to commit instance copy" << Endl;
+					return false;
+				}
+
+				int32_t iconIndex = getIconIndex(&type_of(i->object));
+
+				Ref< ui::custom::TreeViewItem > treeCloneItem = m_treeDatabase->createItem(treeItem, pasteName, iconIndex);
+				treeCloneItem->setEditable(true);
+				treeCloneItem->setData(L"GROUP", group);
+				treeCloneItem->setData(L"INSTANCE", instanceCopy);
 			}
-
-			instanceCopy->setObject(instanceClipboardData->getObject());
-
-			if (!instanceCopy->commit())
-			{
-				log::error << L"Unable to commit instance copy" << Endl;
-				return false;
-			}
-
-			int32_t iconIndex = getIconIndex(&type_of(instanceClipboardData->getObject()));
-
-			Ref< ui::custom::TreeViewItem > treeCloneItem = m_treeDatabase->createItem(treeItem, instanceCopy->getName(), iconIndex);
-			treeCloneItem->setEditable(true);
-			treeCloneItem->setData(L"GROUP", group);
-			treeCloneItem->setData(L"INSTANCE", instanceCopy);
 
 			m_treeDatabase->update();
 		}
@@ -1023,6 +1162,7 @@ void DatabaseView::filterDependencies(db::Instance* instance)
 	if (!dependencySet)
 		return;
 
+	// Create set of all dependency guids, include root guid as well.
 	std::set< Guid > guidSet;
 	guidSet.insert(instance->getGuid());
 
