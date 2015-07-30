@@ -1,6 +1,7 @@
 #ifndef traktor_editor_InstanceClipboardData_H
 #define traktor_editor_InstanceClipboardData_H
 
+#include <list>
 #include "Core/Ref.h"
 #include "Core/Serialization/ISerializable.h"
 
@@ -14,19 +15,26 @@ class InstanceClipboardData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	struct Instance
+	{
+		std::wstring name;
+		Ref< ISerializable > object;
+		Guid originalId;
+		Guid pasteId;
+
+		void serialize(ISerializer& s);
+	};
+
 	InstanceClipboardData();
 
-	InstanceClipboardData(const std::wstring& name, ISerializable* object);
-
-	const std::wstring& getName() const;
-
-	ISerializable* getObject() const;
+	void addInstance(const std::wstring& name, ISerializable* object, const Guid& id = Guid());
 
 	virtual void serialize(ISerializer& s);
 
+	const std::list< Instance >& getInstances() const { return m_instances; }
+
 private:
-	std::wstring m_name;
-	Ref< ISerializable > m_object;
+	std::list< Instance > m_instances;
 };
 
 	}
