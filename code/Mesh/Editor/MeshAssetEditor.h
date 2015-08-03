@@ -86,6 +86,7 @@ private:
 	Ref< ui::Slider > m_sliderLodSteps;
 	Ref< ui::Edit > m_editLodMaxDistance;
 	Ref< ui::Edit > m_editLodCullDistance;
+	Ref< ui::Edit > m_editScaleFactor;
 	Ref< ui::custom::GridView > m_materialShaderList;
 	Ref< ui::custom::GridView > m_materialTextureList;
 	std::wstring m_assetPath;

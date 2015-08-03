@@ -9,10 +9,11 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 10, MeshAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 11, MeshAsset, editor::Asset)
 
 MeshAsset::MeshAsset()
 :	m_meshType(MtInvalid)
+,	m_scaleFactor(1.0f)
 ,	m_bakeOcclusion(false)
 ,	m_cullDistantFaces(false)
 ,	m_generateOccluder(false)
@@ -50,6 +51,9 @@ void MeshAsset::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 4)
 		s >> MemberStlMap< std::wstring, Guid >(L"materialTextures", m_materialTextures);
+
+	if (s.getVersion() >= 11)
+		s >> Member< float >(L"scaleFactor", m_scaleFactor);
 
 	if (s.getVersion() >= 2)
 		s >> Member< bool >(L"bakeOcclusion", m_bakeOcclusion);

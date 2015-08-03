@@ -58,7 +58,7 @@ bool FlashSoundBuffer::getBlock(sound::ISoundBufferCursor* cursor, const sound::
 
 	// Have we reached the end?
 	int32_t position = fsbc->m_position;
-	if (position >= m_sound->getSamplesCount())
+	if (position >= int32_t(m_sound->getSamplesCount()))
 		return false;
 
 	// Calculate number of samples to convert for this block.

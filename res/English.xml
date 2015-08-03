@@ -1389,6 +1389,10 @@
       <second>Properties</second>
     </item>
     <item>
+    	<first>MESHASSET_EDITOR_SCALE_FACTOR</first>
+    	<second>Scale factor</second>
+    </item>
+    <item>
       <first>MESHASSET_EDITOR_TEMPLATE</first>
       <second>Template</second>
     </item>
