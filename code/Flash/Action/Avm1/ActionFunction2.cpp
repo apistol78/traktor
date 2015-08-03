@@ -117,7 +117,7 @@ ActionValue ActionFunction2::call(ActionObject* self, ActionObject* super, const
 		callFrame.setRegister(preloadRegister++, ActionValue(cx->getGlobal()));
 
 	// Pass arguments into registers.
-	size_t argumentPassed = 0;
+	uint32_t argumentPassed = 0;
 	for (
 		std::vector< std::pair< uint32_t, uint8_t > >::const_iterator i = m_argumentsIntoRegisters.begin();
 		argumentPassed < args.size() && i != m_argumentsIntoRegisters.end();

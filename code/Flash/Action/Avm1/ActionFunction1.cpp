@@ -56,16 +56,16 @@ ActionValue ActionFunction1::call(ActionObject* self, ActionObject* super, const
 	ActionValueStack& callStack = callFrame.getStack();
 
 	Ref< Array > argumentArray = new Array(args.size());
-	for (size_t i = 0; i < args.size(); ++i)
+	for (uint32_t i = 0; i < args.size(); ++i)
 	{
 		argumentArray->push(args[i]);
 		callStack.push(args[i]);
 	}
 
-	for (size_t i = args.size(); i < m_argumentCount; ++i)
+	for (uint32_t i = args.size(); i < m_argumentCount; ++i)
 		callStack.push(ActionValue());
 
-	for (size_t i = 0; i < args.size(); ++i)
+	for (uint32_t i = 0; i < args.size(); ++i)
 	{
 		if (i >= m_argumentsIntoVariables.size())
 			break;

@@ -176,6 +176,12 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	m_editLodCullDistance = new ui::Edit();
 	m_editLodCullDistance->create(containerRight, L"", ui::WsClientBorder, new ui::NumericEditValidator(true, 0.0f, 10000.0f, 2));
 
+	Ref< ui::Static > staticScaleFactor = new ui::Static();
+	staticScaleFactor->create(containerRight, i18n::Text(L"MESHASSET_EDITOR_SCALE_FACTOR"));
+
+	m_editScaleFactor = new ui::Edit();
+	m_editScaleFactor->create(containerRight, L"", ui::WsClientBorder, new ui::NumericEditValidator(true, 0.0f, 10000.0f, 2));
+
 	m_containerMaterials = new ui::Container();
 	if (!m_containerMaterials->create(container, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%,*,100%", 0, 0)))
 		return false;
@@ -240,6 +246,7 @@ void MeshAssetEditor::apply()
 	m_asset->setLodSteps(m_sliderLodSteps->getValue());
 	m_asset->setLodMaxDistance(parseString< float >(m_editLodMaxDistance->getText()));
 	m_asset->setLodCullDistance(parseString< float >(m_editLodCullDistance->getText()));
+	m_asset->setScaleFactor(parseString< float >(m_editScaleFactor->getText()));
 
 	std::map< std::wstring, Guid > materialTemplates;
 	std::map< std::wstring, Guid > materialShaders;
@@ -333,6 +340,8 @@ void MeshAssetEditor::updateFile()
 	
 	m_editLodCullDistance->setEnable(m_asset->getMeshType() == MeshAsset::MtLod);
 	m_editLodCullDistance->setText(toString(m_asset->getLodCullDistance()));
+
+	m_editScaleFactor->setText(toString(m_asset->getScaleFactor()));
 }
 
 void MeshAssetEditor::updateMaterialList()

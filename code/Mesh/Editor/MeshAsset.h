@@ -55,6 +55,10 @@ public:
 	void setMaterialTextures(const std::map< std::wstring, Guid >& materialTextures) { m_materialTextures = materialTextures; }
 
 	const std::map< std::wstring, Guid >& getMaterialTextures() const { return m_materialTextures; }
+
+	void setScaleFactor(float scaleFactor) { m_scaleFactor = scaleFactor; }
+
+	float getScaleFactor() const { return m_scaleFactor; }
 	
 	void setBakeOcclusion(bool bakeOcclusion) { m_bakeOcclusion = bakeOcclusion; }
 	
@@ -89,6 +93,7 @@ private:
 	std::map< std::wstring, Guid > m_materialTemplates;
 	std::map< std::wstring, Guid > m_materialShaders;
 	std::map< std::wstring, Guid > m_materialTextures;
+	float m_scaleFactor;
 	bool m_bakeOcclusion;
 	bool m_cullDistantFaces;
 	bool m_generateOccluder;

@@ -190,7 +190,7 @@ inline std::wstring trim(const std::wstring& a)
  * \ingroup Core
  */
 template < typename ValueType >
-std::wstring toString(ValueType value)
+std::wstring toString(const ValueType& value)
 {
 	StringOutputStream ss; ss << value;
 	return ss.str();

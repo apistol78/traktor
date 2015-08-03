@@ -33,6 +33,7 @@
 #include "Model/Operations/BakeVertexOcclusion.h"
 #include "Model/Operations/CalculateOccluder.h"
 #include "Model/Operations/CullDistantFaces.h"
+#include "Model/Operations/Transform.h"
 #include "Render/Shader/External.h"
 #include "Render/Shader/Nodes.h"
 #include "Render/Shader/ShaderGraph.h"
@@ -309,6 +310,9 @@ bool MeshPipeline::buildOutput(
 	for (RefArray< model::Model >::const_iterator i = models.begin(); i != models.end(); ++i)
 	{
 		Ref< model::Model > model = *i;
+
+		// Scale model according to scale factor in asset.
+		model::Transform(scale(asset->getScaleFactor(), asset->getScaleFactor(), asset->getScaleFactor())).apply(*model);
 
 		if (m_enableBakeOcclusion && asset->getBakeOcclusion())
 		{
