@@ -33,15 +33,20 @@ public:
 
 	void setTitle(const std::wstring& title);
 	
-	const std::wstring& getTitle() const { return m_title; }
+	const std::wstring& getTitle() const;
 
 	void setWidth(uint32_t width);
 
-	uint32_t getWidth() const { return m_width; }
+	uint32_t getWidth() const;
+
+	void setEditable(bool editable);
+
+	bool isEditable() const;
 
 private:
 	std::wstring m_title;
 	uint32_t m_width;
+	bool m_editable;
 };
 
 		}

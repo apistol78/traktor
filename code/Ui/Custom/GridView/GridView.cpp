@@ -1,11 +1,14 @@
 #include <stack>
 #include "Core/Misc/String.h"
 #include "Ui/Application.h"
+#include "Ui/Edit.h"
 #include "Ui/Custom/GridView/GridCell.h"
+#include "Ui/Custom/GridView/GridCellContentChangeEvent.h"
 #include "Ui/Custom/GridView/GridColumn.h"
 #include "Ui/Custom/GridView/GridColumnClickEvent.h"
 #include "Ui/Custom/GridView/GridHeaderCell.h"
 #include "Ui/Custom/GridView/GridRow.h"
+#include "Ui/Custom/GridView/GridRowDoubleClickEvent.h"
 #include "Ui/Custom/GridView/GridView.h"
 
 namespace traktor
@@ -96,6 +99,12 @@ bool GridView::create(Widget* parent, uint32_t style)
 
 	addEventHandler< MouseButtonDownEvent >(this, &GridView::eventButtonDown);
 	addEventHandler< MouseButtonUpEvent >(this, &GridView::eventButtonUp);
+	addEventHandler< MouseDoubleClickEvent >(this, &GridView::eventDoubleClick);
+
+	m_itemEditor = new Edit();
+	m_itemEditor->create(this, L"", WsBorder);
+	m_itemEditor->hide();
+	m_itemEditor->addEventHandler< FocusEvent >(this, &GridView::eventEditFocus);
 
 	m_headerCell = new GridHeaderCell();
 	return true;
@@ -260,6 +269,38 @@ void GridView::layoutCells(const Rect& rc)
 	}
 }
 
+void GridView::beginEdit(GridCell* item)
+{
+	releaseCapturedCell();
+
+	m_itemEditor->setRect(getCellClientRect(item));
+	m_itemEditor->setText(item->getText());
+	m_itemEditor->selectAll();
+	m_itemEditor->show();
+	m_itemEditor->setFocus();
+
+	m_editItem = item;
+}
+
+void GridView::eventEditFocus(FocusEvent* event)
+{
+	if (event->lostFocus())
+	{
+		std::wstring originalText = m_editItem->getText();
+		std::wstring newText = m_itemEditor->getText();
+
+		m_itemEditor->hide();
+
+		m_editItem->setText(newText);
+
+		GridCellContentChangeEvent changeEvent(this, m_editItem);
+		raiseEvent(&changeEvent);
+
+		if (!changeEvent.consumed())
+			m_editItem->setText(originalText);
+	}
+}
+
 void GridView::eventButtonDown(MouseButtonDownEvent* event)
 {
 	const Point& position = event->getPosition();
@@ -354,6 +395,26 @@ void GridView::eventButtonUp(MouseButtonUpEvent* event)
 			GridColumnClickEvent columnClickEvent(this, m_clickRow, m_clickColumn);
 			raiseEvent(&columnClickEvent);
 		}
+	}
+}
+
+void GridView::eventDoubleClick(MouseDoubleClickEvent* event)
+{
+	const Point& position = event->getPosition();
+
+	// Only allow click with left mouse button.
+	if (event->getButton() != MbtLeft)
+		return;
+
+	AutoWidgetCell* cell = hitTest(position);
+	if (cell != 0 && is_a< GridRow >(cell))
+	{
+		GridRowDoubleClickEvent rowDoubleClick(
+			this,
+			checked_type_cast< GridRow* >(cell),
+			getColumnIndex(position.x)
+		);
+		raiseEvent(&rowDoubleClick);
 	}
 }
 

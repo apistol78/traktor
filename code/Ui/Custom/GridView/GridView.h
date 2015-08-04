@@ -16,9 +16,13 @@ namespace traktor
 {
 	namespace ui
 	{
+
+class Edit;
+
 		namespace custom
 		{
 
+class GridCell;
 class GridColumn;
 class GridHeaderCell;
 class GridRow;
@@ -77,6 +81,8 @@ public:
 	void deselectAll();
 
 private:
+	friend class GridItem;
+
 	Ref< GridHeaderCell > m_headerCell;
 	RefArray< GridColumn > m_columns;
 	RefArray< GridRow > m_rows;
@@ -85,12 +91,20 @@ private:
 	int32_t m_sortColumnIndex;
 	bool m_sortAscending;
 	SortMode m_sortMode;
+	Ref< Edit > m_itemEditor;
+	Ref< GridCell > m_editItem;
 
 	virtual void layoutCells(const Rect& rc);
+
+	void beginEdit(GridCell* item);
+
+	void eventEditFocus(FocusEvent* event);
 
 	void eventButtonDown(MouseButtonDownEvent* event);
 
 	void eventButtonUp(MouseButtonUpEvent* event);
+
+	void eventDoubleClick(MouseDoubleClickEvent* event);
 };
 
 		}

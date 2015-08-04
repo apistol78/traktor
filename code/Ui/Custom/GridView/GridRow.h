@@ -85,7 +85,11 @@ public:
 
 	virtual int32_t getHeight() const T_FINAL;
 
+	virtual void setText(const std::wstring& text) T_FINAL;
+
 	virtual std::wstring getText() const T_FINAL;
+
+	virtual bool edit() T_FINAL;
 
 private:
 	friend class GridView;

@@ -245,6 +245,22 @@ typename IsPointer< T >::base_t* checked_type_cast(const Ref< T0 >& obj)
 	return checked_type_cast< typename IsPointer< T >::base_t* >(obj.ptr());
 }
 
+/*! \brief Safe cast object.
+ *
+ * The cast will cause system error if object is null or
+ * of incorrect type.
+ *
+ * \param T Cast to type.
+ * \param obj Object
+ * \return Casted object.
+ */
+template < typename T, typename T0 >
+typename IsPointer< T >::base_t* mandatory_non_null_type_cast(const Ref< T0 >& obj)
+{
+	T_FATAL_ASSERT (obj && is_a< T >(obj.ptr()));
+	return static_cast< T >(obj.ptr());
+}
+
 }
 
 #endif	// traktor_Ref_H

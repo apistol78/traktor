@@ -233,9 +233,18 @@ int32_t GridRow::getHeight() const
 	return rowHeight;
 }
 
+void GridRow::setText(const std::wstring& text)
+{
+}
+
 std::wstring GridRow::getText() const
 {
 	return L"";
+}
+
+bool GridRow::edit()
+{
+	return false;
 }
 
 int32_t GridRow::getDepth() const

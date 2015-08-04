@@ -14,6 +14,7 @@ class ButtonClickEvent;
 		namespace custom
 		{
 
+class GridRowDoubleClickEvent;
 class GridView;
 class SyntaxRichEdit;
 
@@ -41,6 +42,10 @@ private:
 	Ref< ui::custom::SyntaxRichEdit > m_edit;
 	
 	void eventClick(ui::ButtonClickEvent* event);
+
+	void eventInputPinRowDoubleClick(ui::custom::GridRowDoubleClickEvent* event);
+
+	void eventOutputPinRowDoubleClick(ui::custom::GridRowDoubleClickEvent* event);
 };
 
 	}
