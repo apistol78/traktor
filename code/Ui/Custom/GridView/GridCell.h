@@ -29,7 +29,11 @@ public:
 
 	virtual int32_t getHeight() const = 0;
 
+	virtual void setText(const std::wstring& text) = 0;
+
 	virtual std::wstring getText() const = 0;
+
+	virtual bool edit() = 0;
 
 	GridRow* getRow() const { return m_row; }
 

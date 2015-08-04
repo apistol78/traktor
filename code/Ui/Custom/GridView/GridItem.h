@@ -40,9 +40,11 @@ public:
 
 	explicit GridItem(Bitmap* image);
 
-	void setText(const std::wstring& text);
+	virtual void setText(const std::wstring& text) T_FINAL;
 
-	virtual std::wstring getText() const;
+	virtual std::wstring getText() const T_FINAL;
+
+	virtual bool edit();
 
 	void setFont(Font* font);
 
@@ -57,11 +59,11 @@ private:
 	Ref< Font > m_font;
 	Ref< Bitmap > m_image;
 
-	virtual int32_t getHeight() const;
+	virtual int32_t getHeight() const T_FINAL;
 
-	virtual AutoWidgetCell* hitTest(const Point& position);
+	virtual AutoWidgetCell* hitTest(const Point& position) T_FINAL;
 
-	virtual void paint(Canvas& canvas, const Rect& rect);
+	virtual void paint(Canvas& canvas, const Rect& rect) T_FINAL;
 };
 
 		}

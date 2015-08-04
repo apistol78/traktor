@@ -5,6 +5,7 @@
 #include "Ui/Custom/Auto/AutoWidget.h"
 #include "Ui/Custom/GridView/GridItem.h"
 #include "Ui/Custom/GridView/GridRow.h"
+#include "Ui/Custom/GridView/GridView.h"
 
 namespace traktor
 {
@@ -49,6 +50,13 @@ void GridItem::setText(const std::wstring& text)
 std::wstring GridItem::getText() const
 {
 	return m_text;
+}
+
+bool GridItem::edit()
+{
+	GridView* gridView = checked_type_cast< GridView*, false >(getWidget());
+	gridView->beginEdit(this);
+	return true;
 }
 
 void GridItem::setFont(Font* font)
