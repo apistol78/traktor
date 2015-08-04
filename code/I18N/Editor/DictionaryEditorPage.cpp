@@ -13,9 +13,11 @@
 #include "Ui/FileDialog.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/InputDialog.h"
+#include "Ui/Custom/GridView/GridCellContentChangeEvent.h"
 #include "Ui/Custom/GridView/GridColumn.h"
 #include "Ui/Custom/GridView/GridItem.h"
 #include "Ui/Custom/GridView/GridRow.h"
+#include "Ui/Custom/GridView/GridRowDoubleClickEvent.h"
 #include "Ui/Custom/GridView/GridView.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
@@ -138,7 +140,8 @@ bool DictionaryEditorPage::create(ui::Container* parent)
 	m_gridDictionary->addColumn(new ui::custom::GridColumn(L"Id", 300));
 	m_gridDictionary->addColumn(new ui::custom::GridColumn(L"Text", 600));
 	m_gridDictionary->addColumn(new ui::custom::GridColumn(L"Reference", 600));
-	m_gridDictionary->addEventHandler< ui::MouseDoubleClickEvent >(this, &DictionaryEditorPage::eventGridDoubleClick);
+	m_gridDictionary->addEventHandler< ui::custom::GridRowDoubleClickEvent >(this, &DictionaryEditorPage::eventGridRowDoubleClick);
+	m_gridDictionary->addEventHandler< ui::custom::GridCellContentChangeEvent >(this, &DictionaryEditorPage::eventGridCellChange);
 
 	updateGrid();
 	return true;
@@ -326,55 +329,32 @@ void DictionaryEditorPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* e
 	}
 }
 
-void DictionaryEditorPage::eventGridDoubleClick(ui::MouseDoubleClickEvent* event)
+void DictionaryEditorPage::eventGridRowDoubleClick(ui::custom::GridRowDoubleClickEvent* event)
 {
-	RefArray< ui::custom::GridRow > selectedRows;
-	m_gridDictionary->getRows(selectedRows, ui::custom::GridView::GfSelectedOnly);
+	if (event->getColumnIndex() != 1)
+		return;
 
-	if (selectedRows.size() > 0)
-	{
-		ui::custom::InputDialog::Field fields[] =
-		{
-			{
-				L"Localized text",
-				checked_type_cast< ui::custom::GridItem*, false >(selectedRows[0]->get(1))->getText(),
-				0,
-				0
-			}
-		};
+	ui::custom::GridRow* row = event->getRow();
+	T_ASSERT (row);
 
-		ui::custom::InputDialog inputDialog;
-		inputDialog.create(
-			m_gridDictionary,
-			L"Enter localization",
-			L"Enter localization string",
-			fields,
-			sizeof_array(fields)
-		);
-		if (inputDialog.showModal() == ui::DrOk)
-		{
-			m_document->push();
-			m_dictionary->set(
-				checked_type_cast< ui::custom::GridItem*, false >(selectedRows[0]->get(0))->getText(),
-				fields->value
-			);
+	ui::custom::GridCell* cell = row->get(event->getColumnIndex());
+	T_ASSERT (cell);
 
-			checked_type_cast< ui::custom::GridItem*, false >(selectedRows[0]->get(1))->setText(fields->value);
-			m_gridDictionary->update();
-		}
-		inputDialog.destroy();
-	}
-	else
-	{
-		m_document->push();
-		m_dictionary->set(L"", L"");
+	cell->edit();
+}
 
-		Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
-		row->add(new ui::custom::GridItem(L""));
-		row->add(new ui::custom::GridItem(L""));
-		m_gridDictionary->addRow(row);
-		m_gridDictionary->update();
-	}
+void DictionaryEditorPage::eventGridCellChange(ui::custom::GridCellContentChangeEvent* event)
+{
+	ui::custom::GridRow* row = event->getItem()->getRow();
+	T_ASSERT (row);
+
+	m_document->push();
+	m_dictionary->set(
+		mandatory_non_null_type_cast< ui::custom::GridItem* >(row->get(0))->getText(),
+		mandatory_non_null_type_cast< ui::custom::GridItem* >(row->get(1))->getText()
+	);
+
+	event->consume();
 }
 
 	}
