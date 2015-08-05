@@ -4,6 +4,7 @@
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "I18N/Dictionary.h"
+#include "I18N/Text.h"
 #include "I18N/Editor/DictionaryEditorPage.h"
 #include "I18N/Editor/IDictionaryFormat.h"
 #include "I18N/Editor/Translator.h"
@@ -128,18 +129,18 @@ bool DictionaryEditorPage::create(ui::Container* parent)
 
 	Ref< ui::custom::ToolBar > toolBar = new ui::custom::ToolBar();
 	toolBar->create(container);
-	toolBar->addItem(new ui::custom::ToolBarButton(L"Import...", ui::Command(L"I18N.Editor.Import")));
-	toolBar->addItem(new ui::custom::ToolBarButton(L"Export...", ui::Command(L"I18N.Editor.Export")));
-	toolBar->addItem(new ui::custom::ToolBarButton(L"Translate...", ui::Command(L"I18N.Editor.Translate")));
-	toolBar->addItem(new ui::custom::ToolBarButton(L"Copy unique characters...", ui::Command(L"I18N.Editor.CopyUniqueChars")));
-	toolBar->addItem(new ui::custom::ToolBarButton(L"Select reference dictionary...", ui::Command(L"I18N.Editor.SelectReferenceDictionary")));
+	toolBar->addItem(new ui::custom::ToolBarButton(Text(L"DICTIONARY_EDITOR_IMPORT"), ui::Command(L"I18N.Editor.Import")));
+	toolBar->addItem(new ui::custom::ToolBarButton(Text(L"DICTIONARY_EDITOR_EXPORT"), ui::Command(L"I18N.Editor.Export")));
+	toolBar->addItem(new ui::custom::ToolBarButton(Text(L"DICTIONARY_EDITOR_TRANSLATE"), ui::Command(L"I18N.Editor.Translate")));
+	toolBar->addItem(new ui::custom::ToolBarButton(Text(L"DICTIONARY_EDITOR_COPY_UNIQUE_CHARS"), ui::Command(L"I18N.Editor.CopyUniqueChars")));
+	toolBar->addItem(new ui::custom::ToolBarButton(Text(L"DICTIONARY_EDITOR_SELECT_REFERENCE_DICTIONARY"), ui::Command(L"I18N.Editor.SelectReferenceDictionary")));
 	toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &DictionaryEditorPage::eventToolClick);
 
 	m_gridDictionary = new ui::custom::GridView();
 	m_gridDictionary->create(container, ui::custom::GridView::WsColumnHeader | ui::WsDoubleBuffer);
-	m_gridDictionary->addColumn(new ui::custom::GridColumn(L"Id", 300));
-	m_gridDictionary->addColumn(new ui::custom::GridColumn(L"Text", 600));
-	m_gridDictionary->addColumn(new ui::custom::GridColumn(L"Reference", 600));
+	m_gridDictionary->addColumn(new ui::custom::GridColumn(Text(L"DICTIONARY_EDITOR_COLUMN_ID"), ui::scaleBySystemDPI(300)));
+	m_gridDictionary->addColumn(new ui::custom::GridColumn(Text(L"DICTIONARY_EDITOR_COLUMN_TEXT"), ui::scaleBySystemDPI(600)));
+	m_gridDictionary->addColumn(new ui::custom::GridColumn(Text(L"DICTIONARY_EDITOR_COLUMN_REFERENCE"), ui::scaleBySystemDPI(600)));
 	m_gridDictionary->addEventHandler< ui::custom::GridRowDoubleClickEvent >(this, &DictionaryEditorPage::eventGridRowDoubleClick);
 	m_gridDictionary->addEventHandler< ui::custom::GridCellContentChangeEvent >(this, &DictionaryEditorPage::eventGridCellChange);
 
@@ -167,7 +168,23 @@ bool DictionaryEditorPage::dropInstance(db::Instance* instance, const ui::Point&
 
 bool DictionaryEditorPage::handleCommand(const ui::Command& command)
 {
-	return false;
+	if (command == L"Editor.Delete")
+	{
+		RefArray< ui::custom::GridRow > selectedRows;
+		if (m_gridDictionary->getRows(selectedRows, ui::custom::GridView::GfSelectedOnly) > 0)
+		{
+			m_document->push();
+			for (RefArray< ui::custom::GridRow >::iterator i = selectedRows.begin(); i != selectedRows.end(); ++i)
+			{
+				m_dictionary->remove((*i)->get(0)->getText());
+				m_gridDictionary->removeRow(*i);
+			}
+		}
+	}
+	else
+		return false;
+
+	return true;
 }
 
 void DictionaryEditorPage::handleDatabaseEvent(db::Database* database, const Guid& eventId)
@@ -201,7 +218,7 @@ void DictionaryEditorPage::updateGrid()
 
 	// Add last empty row; double click on this and a new entry is added.
 	Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
-	row->add(new ui::custom::GridItem(L"(Add...)"));
+	row->add(new ui::custom::GridItem(Text(L"DICTIONARY_EDITOR_COLUMN_ADD")));
 	row->add(new ui::custom::GridItem(L""));
 	m_gridDictionary->addRow(row);
 
@@ -217,7 +234,7 @@ void DictionaryEditorPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* e
 		std::wstring line;
 
 		ui::FileDialog fileDialog;
-		if (!fileDialog.create(m_gridDictionary, L"Import dictionary...", L"All files;*.*"))
+		if (!fileDialog.create(m_gridDictionary, Text(L"DICTIONARY_EDITOR_IMPORT_DICTIONARY_DIALOG"), L"All files;*.*"))
 			return;
 
 		Path fileName;
@@ -241,7 +258,7 @@ void DictionaryEditorPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* e
 	else if (cmd == L"I18N.Editor.Export")
 	{
 		ui::FileDialog fileDialog;
-		if (!fileDialog.create(m_gridDictionary, L"Export dictionary...", L"All files;*.*", true))
+		if (!fileDialog.create(m_gridDictionary, Text(L"DICTIONARY_EDITOR_EXPORT_DICTIONARY_DIALOG"), L"All files;*.*", true))
 			return;
 
 		Path fileName;
@@ -259,13 +276,13 @@ void DictionaryEditorPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* e
 		ui::custom::InputDialog::Field fields[] =
 		{
 			{
-				L"From language",
+				Text(L"DICTIONARY_EDITOR_FROM_LANGUAGE"),
 				L"",
 				0,
 				c_languages
 			},
 			{
-				L"To language",
+				Text(L"DICTIONARY_EDITOR_TO_LANGUAGE"),
 				L"",
 				0,
 				c_languages
@@ -275,8 +292,8 @@ void DictionaryEditorPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* e
 		ui::custom::InputDialog inputDialog;
 		inputDialog.create(
 			m_gridDictionary,
-			L"Translate",
-			L"Automatic translate word(s)",
+			Text(L"DICTIONARY_EDITOR_TRANSLATE"),
+			Text(L"DICTIONARY_EDITOR_AUTO_TRANSLATE_WORDS"),
 			fields,
 			sizeof_array(fields)
 		);
@@ -291,16 +308,16 @@ void DictionaryEditorPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* e
 
 			for (RefArray< ui::custom::GridRow >::iterator i = selectedRows.begin(); i != selectedRows.end(); ++i)
 			{
-				std::wstring source = checked_type_cast< ui::custom::GridItem*, false >((*i)->get(1))->getText();
+				std::wstring source = (*i)->get(1)->getText();
 				std::wstring out;
 
 				if (translator.translate(source, out))
 				{
 					m_dictionary->set(
-						checked_type_cast< ui::custom::GridItem*, false >((*i)->get(0))->getText(),
+						(*i)->get(0)->getText(),
 						out
 					);
-					checked_type_cast< ui::custom::GridItem*, false >((*i)->get(1))->setText(out);
+					(*i)->get(1)->setText(out);
 				}
 			}
 
@@ -324,7 +341,7 @@ void DictionaryEditorPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* e
 		if (clipboard)
 			clipboard->setText(ss.str());
 
-		log::info << uc.size() << L" unique character(s) copied into clipboard" << Endl;
+		log::debug << uc.size() << L" unique character(s) copied into clipboard" << Endl;
 	}
 	else if (cmd == L"I18N.Editor.SelectReferenceDictionary")
 	{
@@ -356,7 +373,7 @@ void DictionaryEditorPage::eventGridRowDoubleClick(ui::custom::GridRowDoubleClic
 	{
 		// Add new last empty row; double click on this and a new entry is added.
 		Ref< ui::custom::GridRow > lastRow = new ui::custom::GridRow();
-		lastRow->add(new ui::custom::GridItem(L"(Add...)"));
+		lastRow->add(new ui::custom::GridItem(Text(L"DICTIONARY_EDITOR_COLUMN_ADD")));
 		lastRow->add(new ui::custom::GridItem(L""));
 		m_gridDictionary->addRow(lastRow);
 
@@ -373,8 +390,8 @@ void DictionaryEditorPage::eventGridCellChange(ui::custom::GridCellContentChange
 
 	m_document->push();
 	m_dictionary->set(
-		mandatory_non_null_type_cast< ui::custom::GridItem* >(row->get(0))->getText(),
-		mandatory_non_null_type_cast< ui::custom::GridItem* >(row->get(1))->getText()
+		row->get(0)->getText(),
+		row->get(1)->getText()
 	);
 
 	event->consume();

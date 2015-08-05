@@ -147,6 +147,12 @@ void GridView::addRow(GridRow* row)
 	requestUpdate();
 }
 
+void GridView::removeRow(GridRow* row)
+{
+	m_rows.remove(row);
+	requestUpdate();
+}
+
 void GridView::removeAllRows()
 {
 	m_rows.resize(0);

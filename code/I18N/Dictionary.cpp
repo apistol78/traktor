@@ -19,6 +19,11 @@ void Dictionary::set(const std::wstring& id, const std::wstring& text)
 	m_map[id] = text;
 }
 
+void Dictionary::remove(const std::wstring& id)
+{
+	m_map.erase(id);
+}
+
 bool Dictionary::get(const std::wstring& id, std::wstring& outText) const
 {
 	std::map< std::wstring, std::wstring >::const_iterator it = m_map.find(id);
