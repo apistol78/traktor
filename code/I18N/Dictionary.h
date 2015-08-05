@@ -30,6 +30,8 @@ public:
 
 	void set(const std::wstring& id, const std::wstring& text);
 
+	void remove(const std::wstring& id);
+
 	bool get(const std::wstring& id, std::wstring& outText) const;
 
 	const std::map< std::wstring, std::wstring >& get() const;

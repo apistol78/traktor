@@ -2,6 +2,66 @@
 <object type="traktor.i18n.Dictionary">
   <map>
     <item>
+      <first>DICTIONARY_EDITOR_IMPORT</first>
+      <second>Import...</second>
+    </item>
+    <item>
+      <first>DICTIONARY_EDITOR_EXPORT</first>
+      <second>Export...</second>
+    </item>
+    <item>
+      <first>DICTIONARY_EDITOR_TRANSLATE</first>
+      <second>Translate...</second>
+    </item>
+    <item>
+      <first>DICTIONARY_EDITOR_COPY_UNIQUE_CHARS</first>
+      <second>Copy unique characters...</second>
+    </item>
+    <item>
+      <first>DICTIONARY_EDITOR_SELECT_REFERENCE_DICTIONARY</first>
+      <second>Select reference dictionary...</second>
+    </item>
+    <item>
+      <first>DICTIONARY_EDITOR_COLUMN_ID</first>
+      <second>Id</second>
+    </item>
+    <item>
+      <first>DICTIONARY_EDITOR_COLUMN_TEXT</first>
+      <second>Text</second>
+    </item>
+    <item>
+      <first>DICTIONARY_EDITOR_COLUMN_REFERENCE</first>
+      <second>Reference</second>
+    </item>
+    <item>
+      <first>DICTIONARY_EDITOR_COLUMN_ADD</first>
+      <second>(Add...)</second>
+    </item>
+    <item>
+      <first>DICTIONARY_EDITOR_IMPORT_DICTIONARY_DIALOG</first>
+      <second>Import dictionary...</second>
+    </item>
+    <item>
+      <first>DICTIONARY_EDITOR_EXPORT_DICTIONARY_DIALOG</first>
+      <second>Export dictionary...</second>
+    </item>
+    <item>
+      <first>DICTIONARY_EDITOR_FROM_LANGUAGE</first>
+      <second>From language</second>
+    </item>
+    <item>
+      <first>DICTIONARY_EDITOR_TO_LANGUAGE</first>
+      <second>To language</second>
+    </item>
+    <item>
+      <first>DICTIONARY_EDITOR_TRANSLATE</first>
+      <second>Translate</second>
+    </item>
+    <item>
+      <first>DICTIONARY_EDITOR_AUTO_TRANSLATE_WORDS</first>
+      <second>Automatic translate word(s)</second>
+    </item>
+    <item>
       <first>AMALGAM_LANGUAGE</first>
       <second>Language</second>
     </item>

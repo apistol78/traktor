@@ -68,6 +68,8 @@ public:
 
 	void addRow(GridRow* row);
 
+	void removeRow(GridRow* row);
+
 	void removeAllRows();
 
 	const RefArray< GridRow >& getRows() const;
