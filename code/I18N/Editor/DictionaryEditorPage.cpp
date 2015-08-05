@@ -178,6 +178,7 @@ void DictionaryEditorPage::updateGrid()
 {
 	m_gridDictionary->removeAllRows();
 
+	// Add all entries from dictionary.
 	if (m_dictionary)
 	{
 		const std::map< std::wstring, std::wstring >& map = m_dictionary->get();
@@ -196,8 +197,15 @@ void DictionaryEditorPage::updateGrid()
 
 			m_gridDictionary->addRow(row);
 		}
-		m_gridDictionary->update();
 	}
+
+	// Add last empty row; double click on this and a new entry is added.
+	Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
+	row->add(new ui::custom::GridItem(L"(Add...)"));
+	row->add(new ui::custom::GridItem(L""));
+	m_gridDictionary->addRow(row);
+
+	m_gridDictionary->update();
 }
 
 void DictionaryEditorPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* event)
@@ -331,16 +339,31 @@ void DictionaryEditorPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* e
 
 void DictionaryEditorPage::eventGridRowDoubleClick(ui::custom::GridRowDoubleClickEvent* event)
 {
-	if (event->getColumnIndex() != 1)
-		return;
-
 	ui::custom::GridRow* row = event->getRow();
 	T_ASSERT (row);
 
-	ui::custom::GridCell* cell = row->get(event->getColumnIndex());
-	T_ASSERT (cell);
+	if (row != m_gridDictionary->getRows().back())
+	{
+		if (event->getColumnIndex() != 1)
+			return;
 
-	cell->edit();
+		ui::custom::GridCell* cell = row->get(event->getColumnIndex());
+		T_ASSERT (cell);
+
+		cell->edit();
+	}
+	else
+	{
+		// Add new last empty row; double click on this and a new entry is added.
+		Ref< ui::custom::GridRow > lastRow = new ui::custom::GridRow();
+		lastRow->add(new ui::custom::GridItem(L"(Add...)"));
+		lastRow->add(new ui::custom::GridItem(L""));
+		m_gridDictionary->addRow(lastRow);
+
+		// Modify former last row into being a new row, begin edit id.
+		row->get(0)->setText(L"ID_");
+		row->get(0)->edit();
+	}
 }
 
 void DictionaryEditorPage::eventGridCellChange(ui::custom::GridCellContentChangeEvent* event)
