@@ -59,6 +59,8 @@ public:
 
 	virtual bool getLastModifyDate(DateTime& outModifyDate) const;
 
+	virtual uint32_t getFlags() const;
+
 	virtual std::wstring getPrimaryTypeName() const;
 
 	virtual const TypeInfo* getPrimaryType() const;

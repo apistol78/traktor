@@ -1,3 +1,4 @@
+#include "Database/Types.h"
 #include "Database/Remote/Client/RemoteInstance.h"
 #include "Database/Remote/Client/RemoteConnection.h"
 #include "Database/Remote/Messages/CnmReleaseObject.h"
@@ -94,6 +95,11 @@ bool RemoteInstance::setGuid(const Guid& guid)
 bool RemoteInstance::getLastModifyDate(DateTime& outModifyDate) const
 {
 	return false;
+}
+
+uint32_t RemoteInstance::getFlags() const
+{
+	return IfNormal;
 }
 
 bool RemoteInstance::remove()

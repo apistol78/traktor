@@ -85,6 +85,13 @@ bool Instance::getLastModifyDate(DateTime& outModifyDate) const
 	return m_providerInstance->getLastModifyDate(outModifyDate);
 }
 
+uint32_t Instance::getFlags() const
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ASSERT (m_providerInstance);
+	return m_providerInstance->getFlags();
+}
+
 std::wstring Instance::getPrimaryTypeName() const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);

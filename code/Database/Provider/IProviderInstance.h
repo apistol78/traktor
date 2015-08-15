@@ -92,6 +92,12 @@ public:
 	 */
 	virtual bool getLastModifyDate(DateTime& outModifyDate) const = 0;
 
+	/*! \brief Get flags from instance storage.
+	 *
+	 * \param Instance storage flags.
+	 */
+	virtual uint32_t getFlags() const = 0;
+
 	/*! \brief Remove instance.
 	 *
 	 * \note

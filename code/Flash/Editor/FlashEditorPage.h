@@ -34,6 +34,7 @@ class SelectionChangeEvent;
 		{
 
 class ToolBar;
+class ToolBarButton;
 class ToolBarButtonClickEvent;
 class TreeView;
 class TreeViewItem;
@@ -98,6 +99,7 @@ private:
 	Ref< ui::custom::ProfileControl > m_profileMovie;
 	Ref< FlashPreviewControl > m_previewControl;
 	Ref< ui::custom::ToolBar > m_toolBarPlay;
+	Ref< ui::custom::ToolBarButton > m_toolWireframe;
 	Ref< sound::SoundSystem > m_soundSystem;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< FlashMovie > m_movie;

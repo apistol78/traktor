@@ -80,6 +80,8 @@ public:
 
 	void flushCaches();
 
+	void setWireframe(bool wireFrame);
+
 	// \name IDisplayRenderer
 	// \{
 	

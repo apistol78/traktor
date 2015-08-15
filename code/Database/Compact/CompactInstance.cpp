@@ -1,9 +1,10 @@
-#include "Database/Compact/CompactInstance.h"
-#include "Database/Compact/CompactContext.h"
-#include "Database/Compact/CompactRegistry.h"
-#include "Database/Compact/BlockFile.h"
-#include "Core/Serialization/BinarySerializer.h"
 #include "Core/Io/IStream.h"
+#include "Core/Serialization/BinarySerializer.h"
+#include "Database/Types.h"
+#include "Database/Compact/BlockFile.h"
+#include "Database/Compact/CompactContext.h"
+#include "Database/Compact/CompactInstance.h"
+#include "Database/Compact/CompactRegistry.h"
 
 namespace traktor
 {
@@ -76,6 +77,11 @@ bool CompactInstance::setGuid(const Guid& guid)
 bool CompactInstance::getLastModifyDate(DateTime& outModifyDate) const
 {
 	return false;
+}
+
+uint32_t CompactInstance::getFlags() const
+{
+	return IfNormal;
 }
 
 bool CompactInstance::remove()

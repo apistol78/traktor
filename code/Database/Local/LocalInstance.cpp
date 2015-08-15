@@ -5,7 +5,9 @@
 #include "Core/Io/MemoryStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Serialization/BinarySerializer.h"
+#include "Database/Types.h"
 #include "Database/Local/Context.h"
+#include "Database/Local/IFileStore.h"
 #include "Database/Local/LocalInstance.h"
 #include "Database/Local/LocalInstanceMeta.h"
 #include "Database/Local/Transaction.h"
@@ -152,6 +154,14 @@ bool LocalInstance::getLastModifyDate(DateTime& outModifyDate) const
 	}
 	else
 		return false;
+}
+
+uint32_t LocalInstance::getFlags() const
+{
+	if (m_context->getFileStore()->pending(getInstanceObjectPath(m_instancePath)))
+		return IfModified;
+	else
+		return IfNormal;
 }
 
 bool LocalInstance::remove()

@@ -40,7 +40,7 @@
 
 // Resources
 #include "Resources/Playback.h"
-#include "Resources/Aspect.h"
+#include "Resources/Flash.h"
 
 namespace traktor
 {
@@ -108,11 +108,15 @@ bool FlashEditorPage::create(ui::Container* parent)
 	m_toolBarPlay = new ui::custom::ToolBar();
 	m_toolBarPlay->create(container);
 	m_toolBarPlay->addImage(ui::Bitmap::load(c_ResourcePlayback, sizeof(c_ResourcePlayback), L"png"), 6);
-	m_toolBarPlay->addImage(ui::Bitmap::load(c_ResourceAspect, sizeof(c_ResourceAspect), L"png"), 2);
+	m_toolBarPlay->addImage(ui::Bitmap::load(c_ResourceFlash, sizeof(c_ResourceFlash), L"png"), 6);
 	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Rewind", 0, ui::Command(L"Flash.Editor.Rewind")));
 	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Play", 1, ui::Command(L"Flash.Editor.Play")));
 	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Stop", 2, ui::Command(L"Flash.Editor.Stop")));
 	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Forward", 3, ui::Command(L"Flash.Editor.Forward")));
+	
+	m_toolWireframe = new ui::custom::ToolBarButton(L"Wireframe", 6, ui::Command(L"Flash.Editor.Wireframe"), ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolBarPlay->addItem(m_toolWireframe);
+
 	m_toolBarPlay->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &FlashEditorPage::eventToolClick);
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
@@ -140,7 +144,7 @@ void FlashEditorPage::destroy()
 {
 	safeDestroy(m_previewControl);
 	m_soundSystem = 0;
-	log::info << FlashCharacterInstance::getInstanceCount() << L" leaked character(s)" << Endl;
+	log::debug << FlashCharacterInstance::getInstanceCount() << L" leaked character(s)" << Endl;
 }
 
 void FlashEditorPage::activate()
@@ -179,6 +183,11 @@ bool FlashEditorPage::handleCommand(const ui::Command& command)
 	{
 		m_previewControl->forward();
 		updateTreeMovie();
+	}
+	else if (command == L"Flash.Editor.Wireframe")
+	{
+		m_previewControl->setWireFrame(m_toolWireframe->isToggled());
+		m_previewControl->update();
 	}
 	else
 		result = false;
@@ -378,7 +387,7 @@ void FlashEditorPage::updateTreeMovie()
 				std::set< const ActionObject* > objectStack;
 				updateTreeObject(memberItemGlobal, global, objectStack, pointerHash, nextPointerHash);
 
-				log::info << L"Last object index @" << nextPointerHash << Endl;
+				log::debug << L"Last object index @" << nextPointerHash << Endl;
 			}
 		}
 	}

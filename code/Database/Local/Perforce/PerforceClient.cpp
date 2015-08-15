@@ -223,6 +223,8 @@ public:
 			m_outAction = AtEdit;
 		else if (*action == "delete")
 			m_outAction = AtDelete;
+		else
+			m_outAction = AtNotOpened;
 	}
 
 private:
