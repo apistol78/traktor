@@ -82,6 +82,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.FlashPreviewControl", FlashPreviewControl
 
 FlashPreviewControl::FlashPreviewControl()
 :	m_playing(false)
+,	m_wireframe(false)
 {
 }
 
@@ -243,6 +244,15 @@ bool FlashPreviewControl::playing() const
 	return m_playing;
 }
 
+void FlashPreviewControl::setWireFrame(bool wireframe)
+{
+	if (wireframe != m_wireframe)
+	{
+		m_wireframe = wireframe;
+		m_displayRenderer->flushCaches();
+	}
+}
+
 ui::Size FlashPreviewControl::getPreferedSize() const
 {
 	if (!m_movie)
@@ -298,6 +308,8 @@ void FlashPreviewControl::eventPaint(ui::PaintEvent* event)
 
 	if (m_renderView->begin(render::EtCyclop))
 	{
+		m_displayRenderer->setWireframe(m_wireframe);
+
 		// Build render context.
 		if (m_movie)
 		{

@@ -8,6 +8,7 @@
 #include "Ui/Custom/TreeView/TreeViewDragEvent.h"
 #include "Ui/Custom/TreeView/TreeViewItem.h"
 #include "Ui/Custom/TreeView/TreeViewItemActivateEvent.h"
+#include "Ui/Custom/TreeView/TreeViewItemStateChangeEvent.h"
 
 namespace traktor
 {
@@ -22,6 +23,7 @@ TreeViewItem::TreeViewItem(TreeView* view, TreeViewItem* parent, const std::wstr
 :	m_view(view)
 ,	m_parent(parent)
 ,	m_text(text)
+,	m_outlineColor(0, 0, 0, 0)
 ,	m_image(image)
 ,	m_expandedImage(expandedImage)
 ,	m_expanded(false)
@@ -51,6 +53,16 @@ bool TreeViewItem::isBold() const
 	return false;
 }
 
+void TreeViewItem::setTextOutlineColor(const Color4ub& outlineColor)
+{
+	m_outlineColor = outlineColor;
+}
+
+const Color4ub& TreeViewItem::getTextOutlineColor() const
+{
+	return m_outlineColor;
+}
+
 void TreeViewItem::setImage(int32_t image)
 {
 	m_image = image;
@@ -78,7 +90,13 @@ bool TreeViewItem::isExpanded() const
 
 void TreeViewItem::expand()
 {
-	m_expanded = true;
+	if (!m_expanded)
+	{
+		m_expanded = true;
+
+		TreeViewItemStateChangeEvent stateChangeEvent(m_view, this);
+		m_view->raiseEvent(&stateChangeEvent);
+	}
 }
 
 bool TreeViewItem::isCollapsed() const
@@ -88,7 +106,13 @@ bool TreeViewItem::isCollapsed() const
 
 void TreeViewItem::collapse()
 {
-	m_expanded = false;
+	if (m_expanded)
+	{
+		m_expanded = false;
+
+		TreeViewItemStateChangeEvent stateChangeEvent(m_view, this);
+		m_view->raiseEvent(&stateChangeEvent);
+	}
 }
 
 bool TreeViewItem::isSelected() const
@@ -252,7 +276,10 @@ void TreeViewItem::mouseDown(MouseButtonDownEvent* event, const Point& position)
 {
 	if (hasChildren() && calculateExpandRect().inside(event->getPosition()))
 	{
-		m_expanded = !m_expanded;
+		if (m_expanded)
+			collapse();
+		else
+			expand();
 	}
 	else
 	{
@@ -376,6 +403,21 @@ void TreeViewItem::paint(Canvas& canvas, const Rect& rect)
 	if (!m_text.empty())
 	{
 		Rect rcLabel = calculateLabelRect();
+
+		if (m_outlineColor.a != 0)
+		{
+			canvas.setForeground(m_outlineColor);
+			for (int32_t dy = -1; dy <= 1; ++dy)
+			{
+				for (int32_t dx = -1; dx <= 1; ++dx)
+				{
+					if (dx == 0 && dy == 0)
+						continue;
+					canvas.drawText(rcLabel.offset(dx, dy), m_text, AnLeft, AnCenter);
+				}
+			}
+		}
+
 		canvas.setForeground(ss->getColor(m_view, m_selected ? L"item-color-selected" : L"color"));
 		canvas.drawText(rcLabel, m_text, AnLeft, AnCenter);
 	}

@@ -31,6 +31,8 @@ public:
 
 	virtual void destroy();
 
+	virtual bool pending(const Path& filePath);
+
 	virtual bool add(const Path& filePath);
 
 	virtual bool remove(const Path& filePath);

@@ -1,6 +1,7 @@
 #ifndef traktor_ui_custom_TreeViewItem_H
 #define traktor_ui_custom_TreeViewItem_H
 
+#include "Core/Math/Color4ub.h"
 #include "Ui/Custom/Auto/AutoWidgetCell.h"
 
 // import/export mechanism.
@@ -37,6 +38,10 @@ public:
 	void setBold(bool bold);
 
 	bool isBold() const;
+
+	void setTextOutlineColor(const Color4ub& outlineColor);
+
+	const Color4ub& getTextOutlineColor() const;
 
 	void setImage(int32_t image);
 
@@ -92,6 +97,7 @@ private:
 	TreeView* m_view;
 	TreeViewItem* m_parent;
 	std::wstring m_text;
+	Color4ub m_outlineColor;
 	int32_t m_image;
 	int32_t m_expandedImage;
 	bool m_expanded;

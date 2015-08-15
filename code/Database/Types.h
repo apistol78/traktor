@@ -22,6 +22,13 @@ enum CommitInstanceFlags
 	CfKeepCheckedOut = 1	//!< Keep transaction opened after commit.
 };
 
+enum InstanceFlags
+{
+	IfNormal = 0,
+	IfReadOnly = 1 << 0,
+	IfModified = 1 << 1
+};
+
 //@}
 
 	}

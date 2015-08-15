@@ -4,16 +4,16 @@
 		<item type="traktor.render.VertexOutput" version="1">
 			<comment/>
 			<position>
-				<first>560</first>
-				<second>19</second>
+				<first>503</first>
+				<second>-24</second>
 			</position>
 			<technique>Default</technique>
 		</item>
 		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
 			<position>
-				<first>1527</first>
-				<second>54</second>
+				<first>1667</first>
+				<second>155</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -55,15 +55,15 @@
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>580</first>
-				<second>82</second>
+				<first>528</first>
+				<second>80</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>329</first>
-				<second>23</second>
+				<first>272</first>
+				<second>-20</second>
 			</position>
 			<fragmentGuid>{46AAC087-9D83-3047-93E2-36B77218D3C7}</fragmentGuid>
 			<inputPins/>
@@ -80,8 +80,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>525</first>
-				<second>180</second>
+				<first>445</first>
+				<second>207</second>
 			</position>
 			<parameterName>Flash_CxFormMul</parameterName>
 			<type>PtVector</type>
@@ -90,8 +90,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>525</first>
-				<second>222</second>
+				<first>444</first>
+				<second>277</second>
 			</position>
 			<parameterName>Flash_CxFormAdd</parameterName>
 			<type>PtVector</type>
@@ -107,15 +107,15 @@
 		<item type="traktor.render.Interpolator">
 			<comment/>
 			<position>
-				<first>296</first>
-				<second>188</second>
+				<first>196</first>
+				<second>139</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>383</first>
-				<second>130</second>
+				<first>299</first>
+				<second>108</second>
 			</position>
 			<fragmentGuid>{5C7DF289-D6CE-384F-A65C-B10EF915438E}</fragmentGuid>
 			<inputPins>
@@ -134,14 +134,14 @@
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>1329</first>
-				<second>105</second>
+				<first>1433</first>
+				<second>131</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>1042</first>
+				<first>1053</first>
 				<second>186</second>
 			</position>
 			<swizzle>xyz0</swizzle>
@@ -149,7 +149,7 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>1033</first>
+				<first>1053</first>
 				<second>228</second>
 			</position>
 			<swizzle>w</swizzle>
@@ -172,8 +172,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>533</first>
-				<second>354</second>
+				<first>444</first>
+				<second>442</second>
 			</position>
 			<parameterName>Flash_CxFormAdd</parameterName>
 			<type>PtVector</type>
@@ -182,8 +182,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>533</first>
-				<second>312</second>
+				<first>445</first>
+				<second>363</second>
 			</position>
 			<parameterName>Flash_CxFormMul</parameterName>
 			<type>PtVector</type>
@@ -199,8 +199,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>83</first>
-				<second>195</second>
+				<first>-64</first>
+				<second>140</second>
 			</position>
 			<fragmentGuid>{0A178604-7E5C-5B42-9C01-C488DBF3A453}</fragmentGuid>
 			<inputPins/>
@@ -210,6 +210,96 @@
 				</item>
 			</outputPins>
 			<values/>
+		</item>
+		<item type="traktor.render.Branch">
+			<comment/>
+			<position>
+				<first>1437</first>
+				<second>314</second>
+			</position>
+			<parameterName>Wireframe</parameterName>
+		</item>
+		<item type="traktor.render.State" version="5">
+			<comment/>
+			<position>
+				<first>1234</first>
+				<second>316</second>
+			</position>
+			<priority>
+				<setup>false</setup>
+				<opaque>false</opaque>
+				<postOpaque>false</postOpaque>
+				<alphaBlend>false</alphaBlend>
+				<postAlphaBlend>false</postAlphaBlend>
+				<overlay>false</overlay>
+			</priority>
+			<cullMode>CmNever</cullMode>
+			<blendEnable>false</blendEnable>
+			<blendOperation>BoAdd</blendOperation>
+			<blendSource>BfSourceAlpha</blendSource>
+			<blendDestination>BfOneMinusSourceAlpha</blendDestination>
+			<colorWriteMask>
+				<red>true</red>
+				<green>true</green>
+				<blue>true</blue>
+				<alpha>true</alpha>
+			</colorWriteMask>
+			<depthEnable>false</depthEnable>
+			<depthWriteEnable>false</depthWriteEnable>
+			<depthFunction>CfLessEqual</depthFunction>
+			<alphaTestEnable>false</alphaTestEnable>
+			<alphaTestFunction>CfLess</alphaTestFunction>
+			<alphaTestReference>128</alphaTestReference>
+			<alphaToCoverageEnable>false</alphaToCoverageEnable>
+			<wireframe>true</wireframe>
+			<stencilEnable>true</stencilEnable>
+			<stencilFail>SoKeep</stencilFail>
+			<stencilZFail>SoKeep</stencilZFail>
+			<stencilPass>SoKeep</stencilPass>
+			<stencilFunction>CfEqual</stencilFunction>
+			<stencilReference>0</stencilReference>
+			<stencilMask>2147483648</stencilMask>
+		</item>
+		<item type="traktor.render.State" version="5">
+			<comment/>
+			<position>
+				<first>1234</first>
+				<second>352</second>
+			</position>
+			<priority>
+				<setup>false</setup>
+				<opaque>false</opaque>
+				<postOpaque>false</postOpaque>
+				<alphaBlend>false</alphaBlend>
+				<postAlphaBlend>false</postAlphaBlend>
+				<overlay>false</overlay>
+			</priority>
+			<cullMode>CmNever</cullMode>
+			<blendEnable>true</blendEnable>
+			<blendOperation>BoAdd</blendOperation>
+			<blendSource>BfSourceAlpha</blendSource>
+			<blendDestination>BfOneMinusSourceAlpha</blendDestination>
+			<colorWriteMask>
+				<red>true</red>
+				<green>true</green>
+				<blue>true</blue>
+				<alpha>true</alpha>
+			</colorWriteMask>
+			<depthEnable>false</depthEnable>
+			<depthWriteEnable>false</depthWriteEnable>
+			<depthFunction>CfLessEqual</depthFunction>
+			<alphaTestEnable>false</alphaTestEnable>
+			<alphaTestFunction>CfLess</alphaTestFunction>
+			<alphaTestReference>128</alphaTestReference>
+			<alphaToCoverageEnable>false</alphaToCoverageEnable>
+			<wireframe>false</wireframe>
+			<stencilEnable>true</stencilEnable>
+			<stencilFail>SoKeep</stencilFail>
+			<stencilZFail>SoKeep</stencilZFail>
+			<stencilPass>SoKeep</stencilPass>
+			<stencilFunction>CfEqual</stencilFunction>
+			<stencilReference>0</stencilReference>
+			<stencilMask>2147483648</stencilMask>
 		</item>
 	</nodes>
 	<edges>
@@ -401,6 +491,36 @@
 			<destination>
 				<node ref="/object/nodes/item[7]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[20]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
+				<name>False</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[19]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
+				<name>True</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>State</name>
 			</destination>
 		</item>
 	</edges>

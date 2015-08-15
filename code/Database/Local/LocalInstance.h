@@ -43,6 +43,8 @@ public:
 
 	virtual bool getLastModifyDate(DateTime& outModifyDate) const;
 
+	virtual uint32_t getFlags() const;
+
 	virtual bool remove();
 
 	virtual Ref< IStream > readObject(const TypeInfo*& outSerializerType) const;

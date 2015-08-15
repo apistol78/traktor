@@ -17,6 +17,11 @@ void DefaultFileStore::destroy()
 {
 }
 
+bool DefaultFileStore::pending(const Path& filePath)
+{
+	return false;
+}
+
 bool DefaultFileStore::add(const Path& filePath)
 {
 	if (FileSystem::getInstance().exist(filePath))

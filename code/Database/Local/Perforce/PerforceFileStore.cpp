@@ -61,6 +61,13 @@ void PerforceFileStore::destroy()
 	m_p4client = 0;
 }
 
+bool PerforceFileStore::pending(const Path& filePath)
+{
+	PerforceAction action;
+	m_p4client->isOpened(filePath.getPathName(), action);
+	return action != AtNotOpened;
+}
+
 bool PerforceFileStore::add(const Path& filePath)
 {
 	return m_p4client->addFile(m_p4changeList, filePath.getPathName());

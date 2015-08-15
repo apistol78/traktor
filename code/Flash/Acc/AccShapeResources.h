@@ -27,6 +27,7 @@ public:
 	void destroy();
 
 private:
+	friend class AccDisplayRenderer;
 	friend class AccQuad;
 	friend class AccShape;
 
