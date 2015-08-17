@@ -23,21 +23,21 @@ ConnectionManager::ConnectionManager(net::StreamServer* streamServer)
 {
 }
 
-bool ConnectionManager::create(uint16_t listenPort)
+bool ConnectionManager::create()
 {
 	m_listenSocket = new net::TcpSocket();
-	if (!m_listenSocket->bind(net::SocketAddressIPv4(listenPort)))
+	if (!m_listenSocket->bind(net::SocketAddressIPv4(0)))
 	{
-		log::error << L"Failed to create remote database connection manager; unable to bind server socket to port " << listenPort << Endl;
+		log::error << L"Failed to create remote database connection manager; unable to bind server socket." << Endl;
 		return false;
 	}
 	if (!m_listenSocket->listen())
 	{
-		log::error << L"Failed to create remote database connection manager; unable to listenen to port " << listenPort << Endl;
+		log::error << L"Failed to create remote database connection manager; unable to listenen." << Endl;
 		return false;
 	}
 
-	m_listenPort = listenPort;
+	m_listenPort = dynamic_type_cast< net::SocketAddressIPv4* >(m_listenSocket->getLocalAddress())->getPort();
 
 	ThreadPool::getInstance().spawn(
 		makeFunctor(this, &ConnectionManager::threadServer),
@@ -46,7 +46,7 @@ bool ConnectionManager::create(uint16_t listenPort)
 	if (!m_serverThread)
 		return false;
 
-	log::info << L"Remote database connection manager @" << listenPort << L" created" << Endl;
+	log::info << L"Remote database connection manager @" << m_listenPort << L" created" << Endl;
 	return true;
 }
 

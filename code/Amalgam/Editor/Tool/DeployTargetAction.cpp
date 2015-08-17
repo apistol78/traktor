@@ -29,9 +29,6 @@ namespace traktor
 		namespace
 		{
 
-const uint16_t c_remoteDatabasePort = 35000;
-const uint16_t c_targetConnectionPort = 36000;
-
 struct FeaturePriorityPred
 {
 	bool operator () (const Feature* l, const Feature* r) const
@@ -51,7 +48,9 @@ DeployTargetAction::DeployTargetAction(
 	const Target* target,
 	const TargetConfiguration* targetConfiguration,
 	const std::wstring& deployHost,
+	uint16_t databasePort,
 	const std::wstring& databaseName,
+	uint16_t targetManagerPort,
 	const Guid& targetManagerId,
 	const std::wstring& outputPath,
 	const PropertyGroup* tweakSettings
@@ -62,7 +61,9 @@ DeployTargetAction::DeployTargetAction(
 ,	m_target(target)
 ,	m_targetConfiguration(targetConfiguration)
 ,	m_deployHost(deployHost)
+,	m_databasePort(databasePort)
 ,	m_databaseName(databaseName)
+,	m_targetManagerPort(targetManagerPort)
 ,	m_targetManagerId(targetManagerId)
 ,	m_outputPath(outputPath)
 ,	m_tweakSettings(tweakSettings)
@@ -126,8 +127,6 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 			log::warning << L"Feature \"" << feature->getDescription() << L"\" doesn't support selected platform." << Endl;
 	}
 
-	int32_t targetManagerPort = m_globalSettings->getProperty< PropertyInteger >(L"Amalgam.TargetManagerPort", c_targetConnectionPort);
-
 	// Determine our interface address; we let applications know where to find data.
 	net::SocketAddressIPv4::Interface itf;
 	if (!net::SocketAddressIPv4::getBestInterface(itf))
@@ -141,14 +140,14 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 	// Modify configuration to connect to embedded database server.
 	db::ConnectionString remoteCs;
 	remoteCs.set(L"provider", L"traktor.db.RemoteDatabase");
-	remoteCs.set(L"host", host + L":" + toString(c_remoteDatabasePort));
+	remoteCs.set(L"host", host + L":" + toString(m_databasePort));
 	remoteCs.set(L"database", m_databaseName);
 	applicationConfiguration->setProperty< PropertyString >(L"Amalgam.Database", remoteCs.format());
 	applicationConfiguration->setProperty< PropertyBoolean >(L"Amalgam.DatabaseThread", true);
 	
 	// Modify configuration to connect to embedded target manager.
 	applicationConfiguration->setProperty< PropertyString >(L"Amalgam.TargetManager/Host", host);
-	applicationConfiguration->setProperty< PropertyInteger >(L"Amalgam.TargetManager/Port", targetManagerPort);
+	applicationConfiguration->setProperty< PropertyInteger >(L"Amalgam.TargetManager/Port", m_targetManagerPort);
 	applicationConfiguration->setProperty< PropertyString >(L"Amalgam.TargetManager/Id", m_targetManagerId.format());
 
 	// Append target guid;s to application configuration.

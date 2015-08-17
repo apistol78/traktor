@@ -20,16 +20,17 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.TargetManager", TargetManager, Object)
 TargetManager::TargetManager(editor::IEditor* editor, TargetScriptDebuggerSessions* targetDebuggerSessions)
 :	m_editor(editor)
 ,	m_targetDebuggerSessions(targetDebuggerSessions)
+,	m_port(0)
 {
 }
 
-bool TargetManager::create(uint16_t port)
+bool TargetManager::create()
 {
 	// Create our server socket.
 	m_listenSocket = new net::TcpSocket();
-	if (!m_listenSocket->bind(net::SocketAddressIPv4(port)))
+	if (!m_listenSocket->bind(net::SocketAddressIPv4(0)))
 	{
-		log::error << L"Failed to create target manager; Unable to bind socket to port " << port << L"." << Endl;
+		log::error << L"Failed to create target manager; Unable to bind socket." << Endl;
 		return false;
 	}
 
@@ -39,7 +40,9 @@ bool TargetManager::create(uint16_t port)
 		return false;
 	}
 
-	log::info << L"Target manager @" << port << L" created" << Endl;
+	m_port = dynamic_type_cast< net::SocketAddressIPv4* >(m_listenSocket->getLocalAddress())->getPort();
+
+	log::info << L"Target manager @" << m_port << L" created" << Endl;
 	return true;
 }
 

@@ -18,12 +18,6 @@ namespace traktor
 {
 	namespace amalgam
 	{
-		namespace
-		{
-
-const uint16_t c_targetConnectionPort = 36000;
-
-		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.DeploySettingsPage", 0, DeploySettingsPage, editor::ISettingsPage)
 
@@ -35,15 +29,6 @@ bool DeploySettingsPage::create(ui::Container* parent, PropertyGroup* settings, 
 
 	Ref< ui::Container > containerInner = new ui::Container();
 	containerInner->create(container, ui::WsNone, new ui::TableLayout(L"*,100%", L"*,*,*", 0, 4));
-
-	Ref< ui::Static > staticTargetManagerPort = new ui::Static();
-	staticTargetManagerPort->create(containerInner, L"Target manager port");
-
-	m_editTargetManagerPort = new ui::Edit();
-	m_editTargetManagerPort->create(containerInner, toString(c_targetConnectionPort), ui::WsClientBorder, new ui::NumericEditValidator(false, 0, 65535, 0));
-
-	int32_t targetManagerPort = settings->getProperty< PropertyInteger >(L"Amalgam.TargetManagerPort", c_targetConnectionPort);
-	m_editTargetManagerPort->setText(toString(targetManagerPort));
 
 	Ref< ui::Static > staticCertificate = new ui::Static();
 	staticCertificate->create(containerInner, L"Certificate");
@@ -110,9 +95,6 @@ void DeploySettingsPage::destroy()
 
 bool DeploySettingsPage::apply(PropertyGroup* settings)
 {
-	int32_t targetManagerPort = parseString< int32_t >(m_editTargetManagerPort->getText());
-	settings->setProperty< PropertyInteger >(L"Amalgam.TargetManagerPort", targetManagerPort);
-
 	std::wstring certificate = m_editCertificate->getText();
 	settings->setProperty< PropertyString >(L"Amalgam.Certificate", certificate);
 

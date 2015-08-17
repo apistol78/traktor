@@ -1283,11 +1283,11 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 
 	// Create stream server.
 	m_streamServer = new net::StreamServer();
-	m_streamServer->create(34000);
+	m_streamServer->create();
 
 	// Create remote database server.
 	m_dbConnectionManager = new db::ConnectionManager(m_streamServer);
-	m_dbConnectionManager->create(35000);
+	m_dbConnectionManager->create();
 
 	// Create pipeline agent manager.
 	m_agentsManager = new PipelineAgentsManager(m_discoveryManager, m_streamServer, m_dbConnectionManager);
