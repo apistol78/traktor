@@ -83,7 +83,7 @@ int WinMain(HINSTANCE, HINSTANCE, LPTSTR cmdLine, int showCmd)
 
 	// Create stream server.
 	Ref< net::StreamServer > streamServer = new net::StreamServer();
-	streamServer->create(34000);
+	streamServer->create();
 
 	// Initialize database connection manager.
 	Ref< db::ConnectionManager > connectionManager = new db::ConnectionManager(streamServer);

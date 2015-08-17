@@ -35,15 +35,15 @@ StreamServer::StreamServer()
 {
 }
 
-bool StreamServer::create(uint16_t listenPort)
+bool StreamServer::create()
 {
 	m_listenSocket = new TcpSocket();
-	if (!m_listenSocket->bind(SocketAddressIPv4(listenPort)))
+	if (!m_listenSocket->bind(SocketAddressIPv4()))
 		return false;
 	if (!m_listenSocket->listen())
 		return false;
 
-	m_listenPort = listenPort;
+	m_listenPort = dynamic_type_cast< net::SocketAddressIPv4* >(m_listenSocket->getLocalAddress())->getPort();
 
 	m_serverThread = ThreadManager::getInstance().create(
 		makeFunctor(this, &StreamServer::threadServer),
@@ -54,7 +54,7 @@ bool StreamServer::create(uint16_t listenPort)
 
 	m_serverThread->start();
 
-	log::info << L"Stream server @" << listenPort << L" created" << Endl;
+	log::info << L"Stream server @" << m_listenPort << L" created" << Endl;
 	return true;
 }
 

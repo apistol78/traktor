@@ -42,7 +42,7 @@ class T_DLLCLASS ConnectionManager : public Object
 public:
 	ConnectionManager(net::StreamServer* streamServer);
 
-	bool create(uint16_t listenPort);
+	bool create();
 
 	void destroy();
 

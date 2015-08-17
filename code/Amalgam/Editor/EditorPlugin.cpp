@@ -69,8 +69,6 @@ namespace traktor
 		namespace
 		{
 
-const uint16_t c_targetConnectionPort = 36000;
-
 const struct { const wchar_t* human; const wchar_t* code; } c_languageCodes[] =
 {
 	{ L"AMALGAM_LANGUAGE_ENGLISH", L"en" },
@@ -315,9 +313,7 @@ void EditorPlugin::handleWorkspaceOpened()
 
 	// Create target manager.
 	m_targetManager = new TargetManager(m_editor, m_targetDebuggerSessions);
-	if (!m_targetManager->create(
-		m_editor->getSettings()->getProperty< PropertyInteger >(L"Amalgam.TargetManagerPort", c_targetConnectionPort)
-	))
+	if (!m_targetManager->create())
 	{
 		log::error << L"Unable to create target manager; target manager disabled" << Endl;
 		m_targetManager = 0;
@@ -564,7 +560,9 @@ void EditorPlugin::eventTargetListPlay(TargetPlayEvent* event)
 				targetInstance->getTarget(),
 				targetInstance->getTargetConfiguration(),
 				deployHost,
+				m_connectionManager->getListenPort(),
 				targetInstance->getDatabaseName(),
+				m_targetManager->getPort(),
 				targetInstance->getId(),
 				outputPath,
 				tweakSettings

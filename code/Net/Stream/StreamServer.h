@@ -35,7 +35,7 @@ class T_DLLCLASS StreamServer : public Object
 public:
 	StreamServer();
 
-	bool create(uint16_t listenPort);
+	bool create();
 
 	void destroy();
 

@@ -34,7 +34,9 @@ public:
 		const Target* target,
 		const TargetConfiguration* targetConfiguration,
 		const std::wstring& deployHost,
+		uint16_t databasePort,
 		const std::wstring& databaseName,
+		uint16_t targetManagerPort,
 		const Guid& targetManagerId,
 		const std::wstring& outputPath,
 		const PropertyGroup* tweakSettings
@@ -49,7 +51,9 @@ private:
 	Ref< const Target > m_target;
 	Ref< const TargetConfiguration > m_targetConfiguration;
 	std::wstring m_deployHost;
+	uint16_t m_databasePort;
 	std::wstring m_databaseName;
+	uint16_t m_targetManagerPort;
 	Guid m_targetManagerId;
 	std::wstring m_outputPath;
 	Ref< const PropertyGroup > m_tweakSettings;

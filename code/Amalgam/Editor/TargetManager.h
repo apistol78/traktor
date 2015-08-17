@@ -29,7 +29,7 @@ class TargetManager : public Object
 public:
 	TargetManager(editor::IEditor* editor, TargetScriptDebuggerSessions* targetDebuggerSessions);
 
-	bool create(uint16_t port);
+	bool create();
 
 	void destroy();
 
@@ -41,11 +41,14 @@ public:
 
 	bool update();
 
+	uint16_t getPort() const { return m_port; }
+
 private:
 	editor::IEditor* m_editor;
 	Ref< TargetScriptDebuggerSessions > m_targetDebuggerSessions;
 	Ref< net::TcpSocket > m_listenSocket;
 	RefArray< TargetInstance > m_instances;
+	uint16_t m_port;
 };
 
 	}
