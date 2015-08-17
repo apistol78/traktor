@@ -9,6 +9,13 @@ function inherit(baseClass)
 	setmetatable(newClass, { __index = baseClass })
 	return newClass
 end
+
+-- Check if instance is of a class type.
+function isa(instance, class)
+	return instance ~= nil and getmetatable(instance).__index == class
+end
+
+
 	]]>
 	</text>
 </object>
