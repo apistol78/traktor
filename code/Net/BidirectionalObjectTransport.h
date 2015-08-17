@@ -59,7 +59,15 @@ public:
 	template < typename ObjectType >
 	Result recv(int32_t timeout, Ref< ObjectType >& outObject)
 	{
-		return recv(type_of< ObjectType >(), timeout, (Ref< ISerializable >&)outObject);
+		Ref< ISerializable > obj;
+		Result result;
+		
+		result = recv(type_of< ObjectType >(), timeout, obj);
+		if (result != RtSuccess)
+			return result;
+
+		outObject = dynamic_type_cast< ObjectType* >(obj);
+		return RtSuccess;
 	}
 
 	template < typename ObjectType >

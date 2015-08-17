@@ -168,7 +168,7 @@ void PipelineAgentsManager::threadUpdate()
 		m_discoveryManager->findServices< net::NetworkService >(services);
 		for (RefArray< net::NetworkService >::const_iterator i = services.begin(); i != services.end(); ++i)
 		{
-			if ((*i)->getType() != L"Pipeline/Agent")
+			if ((*i)->getType() != L"Pipeline/Agent2")
 				continue;
 
 			std::wstring description = (*i)->getProperties()->getProperty< PropertyString >(L"Description", L"");

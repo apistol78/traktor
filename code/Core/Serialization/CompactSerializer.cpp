@@ -83,6 +83,18 @@ bool read_uint32(BitReader& r, uint32_t& value)
 	return true;
 }
 
+bool read_int64(BitReader& r, int64_t& value)
+{
+	value = r.readSigned(64);
+	return true;
+}
+
+bool read_uint64(BitReader& r, uint64_t& value)
+{
+	value = r.readUnsigned(64);
+	return true;
+}
+
 bool read_half(BitReader& r, half_t& value)
 {
 	value = r.readUnsigned(16);
@@ -198,6 +210,18 @@ bool write_uint32(BitWriter& w, uint32_t v)
 		w.writeBit(false);
 		w.writeUnsigned(16, v);
 	}
+	return true;
+}
+
+bool write_int64(BitWriter& w, int64_t v)
+{
+	w.writeSigned(64, v);
+	return true;
+}
+
+bool write_uint64(BitWriter& w, uint64_t v)
+{
+	w.writeUnsigned(64, v);
 	return true;
 }
 
@@ -411,12 +435,20 @@ void CompactSerializer::operator >> (const Member< uint32_t >& m)
 
 void CompactSerializer::operator >> (const Member< int64_t >& m)
 {
-	T_FATAL_ERROR;
+	T_CHECK_STATUS;
+	if (m_direction == SdRead)
+		read_int64(m_reader, m);
+	else
+		write_int64(m_writer, m);
 }
 
 void CompactSerializer::operator >> (const Member< uint64_t >& m)
 {
-	T_FATAL_ERROR;
+	T_CHECK_STATUS;
+	if (m_direction == SdRead)
+		read_uint64(m_reader, m);
+	else
+		write_uint64(m_writer, m);
 }
 
 void CompactSerializer::operator >> (const Member< float >& m)
@@ -452,6 +484,7 @@ void CompactSerializer::operator >> (const Member< float >& m)
 
 void CompactSerializer::operator >> (const Member< double >& m)
 {
+	T_CHECK_STATUS;
 	if (m_direction == SdRead)
 		read_double(m_reader, m);
 	else
@@ -514,7 +547,18 @@ void CompactSerializer::operator >> (const Member< Guid >& m)
 
 void CompactSerializer::operator >> (const Member< Path >& m)
 {
-	T_FATAL_ERROR;
+	T_CHECK_STATUS;
+	if (m_direction == SdRead)
+	{
+		std::wstring path;
+		read_string(m_reader, path);
+		*m = Path(path);
+	}
+	else
+	{
+		std::wstring path = m->getOriginal();
+		write_string(m_writer, path);
+	}
 }
 
 void CompactSerializer::operator >> (const Member< Color4ub >& m)
@@ -573,7 +617,6 @@ void CompactSerializer::operator >> (const Member< Scalar >& m)
 void CompactSerializer::operator >> (const Member< Vector2 >& m)
 {
 	T_CHECK_STATUS;
-
 	if (m_direction == SdRead)
 	{
 		read_float(m_reader, m->x);
@@ -725,7 +768,6 @@ void CompactSerializer::operator >> (const Member< ISerializable* >& m)
 	if (m_direction == SdRead)
 	{
 		ISerializable* object = 0;
-
 		uint8_t typeId = m_reader.readUnsigned(5);
 
 		// Index into type table.
@@ -746,7 +788,6 @@ void CompactSerializer::operator >> (const Member< ISerializable* >& m)
 
 			serialize(object, type->getVersion());
 		}
-
 		// Explicit type name.
 		else if (typeId == 0x1f)
 		{
