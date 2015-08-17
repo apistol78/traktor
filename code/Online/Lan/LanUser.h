@@ -4,7 +4,7 @@
 #include <map>
 #include "Online/Provider/IUserProvider.h"
 
-#define T_INTERNET_SIMULATION
+//#define T_INTERNET_SIMULATION
 
 namespace traktor
 {
