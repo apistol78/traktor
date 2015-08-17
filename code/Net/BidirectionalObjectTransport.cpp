@@ -1,7 +1,7 @@
 #include "Core/Io/MemoryStream.h"
 #include "Core/Misc/Endian.h"
 #include "Core/Misc/SafeDestroy.h"
-#include "Core/Serialization/CompactSerializer.h"
+#include "Core/Serialization/BinarySerializer.h"
 #include "Core/Thread/Acquire.h"
 #include "Net/BidirectionalObjectTransport.h"
 #include "Net/TcpSocket.h"
@@ -64,7 +64,7 @@ bool BidirectionalObjectTransport::send(const ISerializable* object)
 	}
 
 	MemoryStream dms(buffer + 4, c_maxObjectSize, false, true);
-	if (!CompactSerializer(&dms, 0, 0).writeObject(object))
+	if (!BinarySerializer(&dms).writeObject(object))
 		return false;
 
 	uint32_t objectSize = dms.tell();
@@ -173,7 +173,7 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 		}
 
 		MemoryStream ms(buffer, objectSize, true, false);
-		CompactSerializer s(&ms, 0, 0);
+		BinarySerializer s(&ms);
 
 		Ref< ISerializable > object = s.readObject();
 		if (object)

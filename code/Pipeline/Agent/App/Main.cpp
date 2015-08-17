@@ -29,7 +29,6 @@
 
 using namespace traktor;
 
-const uint16_t c_defaultAgentPort = 39000;
 const int32_t c_defaultAgentCount = 4;
 
 void threadProcessClient(
@@ -216,9 +215,9 @@ int main(int argc, const char** argv)
 	net::Network::initialize();
 
 	Ref< net::TcpSocket > serverSocket = new net::TcpSocket();
-	if (!serverSocket->bind(net::SocketAddressIPv4(c_defaultAgentPort)))
+	if (!serverSocket->bind(net::SocketAddressIPv4(0)))
 	{
-		traktor::log::error << L"Unable to bind server socket to port " << c_defaultAgentPort << Endl;
+		traktor::log::error << L"Unable to bind server socket to port" << Endl;
 		return 1;
 	}
 
@@ -227,6 +226,8 @@ int main(int argc, const char** argv)
 		traktor::log::error << L"Unable to listen on server socket" << Endl;
 		return 2;
 	}
+
+	uint16_t listenPort = dynamic_type_cast< net::SocketAddressIPv4* >(serverSocket->getLocalAddress())->getPort();
 
 	Ref< net::DiscoveryManager > discoveryManager = new net::DiscoveryManager();
 	if (!discoveryManager->create(net::MdPublishServices))
@@ -245,7 +246,7 @@ int main(int argc, const char** argv)
 	Ref< PropertyGroup > properties = new PropertyGroup();
 	properties->setProperty< PropertyString >(L"Description", OS::getInstance().getComputerName());
 	properties->setProperty< PropertyString >(L"Host", itf.addr->getHostName());
-	properties->setProperty< PropertyInteger >(L"Port", c_defaultAgentPort);
+	properties->setProperty< PropertyInteger >(L"Port", listenPort);
 	properties->setProperty< PropertyInteger >(L"Agents", agentCount);
 
 	std::set< std::wstring > types;
@@ -259,9 +260,9 @@ int main(int argc, const char** argv)
 	properties->setProperty< PropertyStringSet >(L"PipelineTypes", types);
 	*/
 
-	discoveryManager->addService(new net::NetworkService(L"Pipeline/Agent", properties));
+	discoveryManager->addService(new net::NetworkService(L"Pipeline/Agent2", properties));
 
-	traktor::log::info << L"Discoverable as \"Pipeline/Agent\", host \"" << itf.addr->getHostName() << L"\"" << Endl;
+	traktor::log::info << L"Discoverable as \"Pipeline/Agent2\", host \"" << itf.addr->getHostName() << L"\" on port " << listenPort << Endl;
 	traktor::log::info << L"Waiting for client(s)..." << Endl;
 
 	std::map< std::wstring, Ref< db::Database > > databases;
