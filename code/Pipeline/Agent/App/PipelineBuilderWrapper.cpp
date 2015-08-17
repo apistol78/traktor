@@ -1,3 +1,4 @@
+#include "Core/Io/BufferedStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
@@ -228,10 +229,14 @@ Ref< IStream > PipelineBuilderWrapper::openFile(const Path& basePath, const std:
 	if (m_transport->recv< editor::AgentStream >(60000, agentStream) <= 0)
 		return 0;
 
-	return net::RemoteStream::connect(
+	Ref< IStream > stream = net::RemoteStream::connect(
 		net::SocketAddressIPv4(m_host, m_streamServerPort),
 		agentStream->getPublicId()
 	);
+	if (!stream)
+		return 0;
+
+	return new BufferedStream(stream);
 }
 
 Ref< IStream > PipelineBuilderWrapper::createTemporaryFile(const std::wstring& fileName)

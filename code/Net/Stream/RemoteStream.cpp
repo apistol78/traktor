@@ -109,15 +109,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.net.RemoteStream", RemoteStream, IStream)
 
 Ref< IStream > RemoteStream::connect(const SocketAddressIPv4& addr, uint32_t id)
 {
-	//Ref< TcpSocket > socket = new TcpSocket();
-	//if (!socket->connect(addr))
-	//{
-	//	log::error << L"RemoteStream; unable to connect to stream server" << Endl;
-	//	return 0;
-	//}
-
-	//socket->setNoDelay(true);
-
 	Ref< TcpSocket > socket = ConnectionPool::getInstance().connect(addr);
 	if (!socket)
 	{
@@ -186,10 +177,7 @@ RemoteStream::~RemoteStream()
 	if (m_socket)
 	{
 		net::sendBatch< uint8_t >(m_socket, 0x02);
-
-		//m_socket->close();
 		ConnectionPool::getInstance().disconnect(m_socket);
-
 		m_socket = 0;
 	}
 }
