@@ -29,8 +29,6 @@
 
 using namespace traktor;
 
-const int32_t c_defaultAgentCount = 4;
-
 void threadProcessClient(
 	Ref< editor::AgentConnect > agentConnect,
 	Ref< net::BidirectionalObjectTransport > transport,
@@ -189,7 +187,7 @@ int main(int argc, const char** argv)
 		return 1;
 	}
 
-	int32_t agentCount = c_defaultAgentCount;
+	int32_t agentCount = OS::getInstance().getCPUCoreCount();
 	if (cmdLine.hasOption('n', L"agents"))
 	{
 		agentCount = cmdLine.getOption('n', L"agents").getInteger();
