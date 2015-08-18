@@ -2,8 +2,8 @@
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionFunctionNative.h"
-#include "Flash/Action/Avm1/ActionSuper.h"
-#include "Flash/Action/Avm1/Classes/AsFunction.h"
+#include "Flash/Action/ActionSuper.h"
+#include "Flash/Action/Common/Classes/AsFunction.h"
 
 namespace traktor
 {

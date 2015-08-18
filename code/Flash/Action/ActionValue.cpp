@@ -7,9 +7,9 @@
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Flash/Action/ActionValue.h"
-#include "Flash/Action/Classes/Boolean.h"
-#include "Flash/Action/Classes/Number.h"
-#include "Flash/Action/Classes/String.h"
+#include "Flash/Action/Common/Boolean.h"
+#include "Flash/Action/Common/Number.h"
+#include "Flash/Action/Common/String.h"
 
 namespace traktor
 {

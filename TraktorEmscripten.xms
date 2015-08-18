@@ -3409,15 +3409,6 @@
 									<fileName>Action/Avm1/*.*</fileName>
 									<items/>
 								</item>
-								<item type="Filter">
-									<name>Classes</name>
-									<items>
-										<item type="File">
-											<fileName>Action/Avm1/Classes/*.*</fileName>
-											<items/>
-										</item>
-									</items>
-								</item>
 							</items>
 						</item>
 						<item type="Filter">
@@ -3427,22 +3418,22 @@
 									<fileName>Action/Avm2/*.*</fileName>
 									<items/>
 								</item>
+							</items>
+						</item>
+						<item type="Filter">
+							<name>Common</name>
+							<items>
 								<item type="Filter">
 									<name>Classes</name>
 									<items>
 										<item type="File">
-											<fileName>Action/Avm2/Classes/*.*</fileName>
+											<fileName>Action/Common/Classes/*.*</fileName>
 											<items/>
 										</item>
 									</items>
 								</item>
-							</items>
-						</item>
-						<item type="Filter">
-							<name>Classes</name>
-							<items>
 								<item type="File">
-									<fileName>Action/Classes/*.*</fileName>
+									<fileName>Action/Common/*.*</fileName>
 									<items/>
 								</item>
 							</items>
