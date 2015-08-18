@@ -4,8 +4,8 @@
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionFunction.h"
 #include "Flash/Action/ActionObjectRelay.h"
+#include "Flash/Action/ActionSuper.h"
 #include "Flash/Action/Avm1/ActionOperations.h"
-#include "Flash/Action/Avm1/ActionSuper.h"
 #include "Flash/Action/Avm1/ActionVMTrace1.h"
 
 namespace traktor

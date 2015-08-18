@@ -2,13 +2,13 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/StringSplit.h"
 #include "Core/Thread/Acquire.h"
+#include "Flash/Action/ActionClass.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunction.h"
 #include "Flash/Action/ActionObject.h"
-#include "Flash/Action/ActionValueArray.h"
 #include "Flash/Action/ActionObjectRelay.h"
-#include "Flash/Action/Avm1/ActionClass.h"	// \fixme Move headers.
-#include "Flash/Action/Avm1/ActionSuper.h"
+#include "Flash/Action/ActionSuper.h"
+#include "Flash/Action/ActionValueArray.h"
 
 namespace traktor
 {

@@ -8186,15 +8186,6 @@
 						<item type="Filter">
 							<name>Avm1</name>
 							<items>
-								<item type="Filter">
-									<name>Classes</name>
-									<items>
-										<item type="File">
-											<fileName>Action/Avm1/Classes/*.*</fileName>
-											<items/>
-										</item>
-									</items>
-								</item>
 								<item type="File">
 									<fileName>Action/Avm1/*.*</fileName>
 									<items/>
@@ -8204,15 +8195,6 @@
 						<item type="Filter">
 							<name>Avm2</name>
 							<items>
-								<item type="Filter">
-									<name>Classes</name>
-									<items>
-										<item type="File">
-											<fileName>Action/Avm2/Classes/*.*</fileName>
-											<items/>
-										</item>
-									</items>
-								</item>
 								<item type="File">
 									<fileName>Action/Avm2/*.*</fileName>
 									<items/>
@@ -8220,10 +8202,19 @@
 							</items>
 						</item>
 						<item type="Filter">
-							<name>Classes</name>
+							<name>Common</name>
 							<items>
+								<item type="Filter">
+									<name>Classes</name>
+									<items>
+										<item type="File">
+											<fileName>Action/Common/Classes/*.*</fileName>
+											<items/>
+										</item>
+									</items>
+								</item>
 								<item type="File">
-									<fileName>Action/Classes/*.*</fileName>
+									<fileName>Action/Common/*.*</fileName>
 									<items/>
 								</item>
 							</items>

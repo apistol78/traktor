@@ -13,7 +13,7 @@
 #include "Flash/SwfMembers.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/IActionVM.h"
-#include "Flash/Action/Avm1/ActionGlobal.h"
+#include "Flash/Action/ActionGlobal.h"
 
 namespace traktor
 {

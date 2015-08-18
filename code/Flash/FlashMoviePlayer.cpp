@@ -15,11 +15,11 @@
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionFunctionNative.h"
-#include "Flash/Action/Avm1/Classes/AsKey.h"
-#include "Flash/Action/Avm1/Classes/AsMouse.h"
-#include "Flash/Action/Avm1/Classes/AsSound.h"
-#include "Flash/Action/Avm1/Classes/AsStage.h"
-#include "Flash/Action/Avm1/Classes/As_flash_external_ExternalInterface.h"
+#include "Flash/Action/Common/Classes/AsKey.h"
+#include "Flash/Action/Common/Classes/AsMouse.h"
+#include "Flash/Action/Common/Classes/AsSound.h"
+#include "Flash/Action/Common/Classes/AsStage.h"
+#include "Flash/Action/Common/Classes/As_flash_external_ExternalInterface.h"
 
 namespace traktor
 {

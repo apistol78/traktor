@@ -11,16 +11,16 @@
 #include "Flash/Action/ActionDictionary.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionFunction.h"
+#include "Flash/Action/ActionSuper.h"
 #include "Flash/Action/Avm1/ActionFunction1.h"
 #include "Flash/Action/Avm1/ActionFunction2.h"
 #include "Flash/Action/Avm1/ActionOperations.h"
-#include "Flash/Action/Avm1/ActionSuper.h"
 #include "Flash/Action/Avm1/ActionVMImage1.h"
-#include "Flash/Action/Classes/Array.h"
-#include "Flash/Action/Avm1/Classes/AsObject.h"
-#include "Flash/Action/Avm1/Classes/AsArray.h"
-#include "Flash/Action/Avm1/Classes/AsFunction.h"
-#include "Flash/Action/Avm1/Classes/AsMovieClip.h"
+#include "Flash/Action/Common/Array.h"
+#include "Flash/Action/Common/Classes/AsObject.h"
+#include "Flash/Action/Common/Classes/AsArray.h"
+#include "Flash/Action/Common/Classes/AsFunction.h"
+#include "Flash/Action/Common/Classes/AsMovieClip.h"
 
 namespace traktor
 {
