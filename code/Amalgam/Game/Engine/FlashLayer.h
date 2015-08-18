@@ -4,7 +4,7 @@
 #include "Amalgam/Game/Engine/Layer.h"
 #include "Core/Class/Any.h"
 #include "Core/Math/Vector2.h"
-#include "Flash/Action/Avm1/Classes/As_flash_external_ExternalInterface.h"
+#include "Flash/Action/Common/Classes/As_flash_external_ExternalInterface.h"
 #include "Resource/Id.h"
 #include "Resource/Proxy.h"
 #include "Spray/Feedback/IFeedbackListener.h"

@@ -1,8 +1,8 @@
 #ifndef traktor_amalgam_As_traktor_amalgam_SoundDriver_h
 #define traktor_amalgam_As_traktor_amalgam_SoundDriver_h
 
+#include "Flash/Action/ActionClass.h"
 #include "Flash/Action/ActionFunctionNative.h"
-#include "Flash/Action/Avm1/ActionClass.h"
 
 namespace traktor
 {

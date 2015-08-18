@@ -4,7 +4,7 @@
 #include <map>
 #include "Amalgam/Game/IEnvironment.h"
 #include "Flash/Action/ActionObjectRelay.h"
-#include "Flash/Action/Classes/Array.h"
+#include "Flash/Action/Common/Array.h"
 
 namespace traktor
 {

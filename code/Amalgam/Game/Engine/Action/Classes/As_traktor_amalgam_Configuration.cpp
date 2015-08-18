@@ -2,7 +2,7 @@
 #include "Amalgam/Game/Engine/Action/AsDisplayMode.h"
 #include "Amalgam/Game/Engine/Action/AsSoundDriver.h"
 #include "Amalgam/Game/Engine/Action/Classes/As_traktor_amalgam_Configuration.h"
-#include "Flash/Action/Classes/Array.h"
+#include "Flash/Action/Common/Array.h"
 #include "Render/IRenderSystem.h"
 
 namespace traktor

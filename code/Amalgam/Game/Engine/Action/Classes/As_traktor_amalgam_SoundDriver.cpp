@@ -1,6 +1,6 @@
 #include "Amalgam/Game/Engine/Action/AsSoundDriver.h"
 #include "Amalgam/Game/Engine/Action/Classes/As_traktor_amalgam_SoundDriver.h"
-#include "Flash/Action/Classes/Array.h"
+#include "Flash/Action/Common/Array.h"
 
 namespace traktor
 {

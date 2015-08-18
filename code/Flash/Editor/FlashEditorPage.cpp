@@ -17,7 +17,7 @@
 #include "Flash/SwfReader.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionObject.h"
-#include "Flash/Action/Classes/Array.h"
+#include "Flash/Action/Common/Array.h"
 #include "Flash/Editor/FlashEditorPage.h"
 #include "Flash/Editor/FlashMovieAsset.h"
 #include "Flash/Editor/FlashPreviewControl.h"
