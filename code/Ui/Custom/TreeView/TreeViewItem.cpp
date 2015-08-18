@@ -28,7 +28,7 @@ TreeViewItem::TreeViewItem(TreeView* view, TreeViewItem* parent, const std::wstr
 ,	m_expandedImage(expandedImage)
 ,	m_expanded(false)
 ,	m_selected(false)
-,	m_editable(false)
+,	m_editable(true)
 ,	m_editMode(0)
 ,	m_dragMode(0)
 {
@@ -327,7 +327,8 @@ void TreeViewItem::mouseUp(MouseButtonUpEvent* event, const Point& position)
 	if (m_editMode == 2)
 	{
 		T_ASSERT (m_editable);
-		m_view->beginEdit(this);
+		if (m_view->m_autoEdit)
+			m_view->beginEdit(this);
 		m_editMode = 0;
 	}
 	if (m_dragMode == 2)
@@ -388,6 +389,9 @@ void TreeViewItem::paint(Canvas& canvas, const Rect& rect)
 	}
 
 	int32_t image = (hasChildren() && isExpanded()) ? m_expandedImage : m_image;
+	if (image < 0)
+		image = m_image;
+
 	if (m_view->m_image && image >= 0)
 	{
 		Rect rcImage = calculateImageRect();

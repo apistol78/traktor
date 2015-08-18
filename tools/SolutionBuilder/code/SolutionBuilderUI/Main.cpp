@@ -40,22 +40,26 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 #if defined(_WIN32)
 	ui::Application::getInstance()->initialize(
 		new ui::EventLoopWin32(),
-		new ui::WidgetFactoryWin32()
+		new ui::WidgetFactoryWin32(),
+		0
 	);
 #elif defined(__APPLE__)
 	ui::Application::getInstance()->initialize(
 		new ui::EventLoopCocoa(),
-		new ui::WidgetFactoryCocoa()
+		new ui::WidgetFactoryCocoa(),
+		0
 	);
 #elif defined(__LINUX__)
 	ui::Application::getInstance()->initialize(
 		new ui::EventLoopGtk(),
-		new ui::WidgetFactoryGtk()
+		new ui::WidgetFactoryGtk(),
+		0
 	);
 #else
 	ui::Application::getInstance()->initialize(
 		new ui::EventLoopWx(),
-		new ui::WidgetFactoryWx()
+		new ui::WidgetFactoryWx(),
+		0
 	);
 #endif
 

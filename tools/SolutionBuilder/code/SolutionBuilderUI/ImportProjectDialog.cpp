@@ -1,3 +1,4 @@
+#include <Ui/Application.h>
 #include <Ui/TableLayout.h>
 #include "SolutionBuilderLIB/Solution.h"
 #include "SolutionBuilderLIB/Project.h"
@@ -10,8 +11,8 @@ bool ImportProjectDialog::create(ui::Widget* parent, const std::wstring& title, 
 	if (!ui::ConfigDialog::create(
 		parent,
 		title,
-		500,
-		400,
+		ui::scaleBySystemDPI(500),
+		ui::scaleBySystemDPI(400),
 		ui::ConfigDialog::WsDefaultResizable,
 		new ui::TableLayout(L"100%", L"100%", 4, 4)
 	))

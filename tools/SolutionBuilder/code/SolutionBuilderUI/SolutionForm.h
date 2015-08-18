@@ -7,9 +7,11 @@
 #include <Ui/ShortcutTable.h>
 #include <Ui/MenuBar.h>
 #include <Ui/MenuItem.h>
-#include <Ui/TreeView.h>
-#include <Ui/TreeViewItem.h>
 #include <Ui/PopupMenu.h>
+#include <Ui/Custom/TreeView/TreeView.h>
+#include <Ui/Custom/TreeView/TreeViewContentChangeEvent.h>
+#include <Ui/Custom/TreeView/TreeViewEditEvent.h>
+#include <Ui/Custom/TreeView/TreeViewItem.h>
 
 class AggregationItemPropertyPage;
 class AggregationPropertyPage;
@@ -40,7 +42,7 @@ private:
 	traktor::Ref< traktor::ui::ShortcutTable > m_shortcutTable;
 	traktor::Ref< traktor::ui::MenuBar > m_menuBar;
 	traktor::Ref< traktor::ui::MenuItem > m_menuItemMRU;
-	traktor::Ref< traktor::ui::TreeView > m_treeSolution;
+	traktor::Ref< traktor::ui::custom::TreeView > m_treeSolution;
 	traktor::Ref< traktor::ui::PopupMenu > m_menuSolution;
 	traktor::Ref< traktor::ui::PopupMenu > m_menuProject;
 	traktor::Ref< traktor::ui::PopupMenu > m_menuAggregation;
@@ -66,17 +68,17 @@ private:
 
 	bool isModified() const;
 
-	traktor::ui::TreeViewItem* createTreeProjectItem(traktor::ui::TreeViewItem* parentItem, Project* project);
+	traktor::ui::custom::TreeViewItem* createTreeProjectItem(traktor::ui::custom::TreeViewItem* parentItem, Project* project);
 
-	traktor::ui::TreeViewItem* createTreeAggregationItem(traktor::ui::TreeViewItem* parentItem, Aggregation* aggregation);
+	traktor::ui::custom::TreeViewItem* createTreeAggregationItem(traktor::ui::custom::TreeViewItem* parentItem, Aggregation* aggregation);
 
-	traktor::ui::TreeViewItem* createTreeConfigurationItem(traktor::ui::TreeViewItem* parentItem, Project* project, Configuration* configuration);
+	traktor::ui::custom::TreeViewItem* createTreeConfigurationItem(traktor::ui::custom::TreeViewItem* parentItem, Project* project, Configuration* configuration);
 
-	traktor::ui::TreeViewItem* createTreeFilterItem(traktor::ui::TreeViewItem* parentItem, Project* project, Filter* filter);
+	traktor::ui::custom::TreeViewItem* createTreeFilterItem(traktor::ui::custom::TreeViewItem* parentItem, Project* project, Filter* filter);
 
-	traktor::ui::TreeViewItem* createTreeFileItem(traktor::ui::TreeViewItem* parentItem, Project* project, File* file);
+	traktor::ui::custom::TreeViewItem* createTreeFileItem(traktor::ui::custom::TreeViewItem* parentItem, Project* project, File* file);
 
-	traktor::ui::TreeViewItem* createTreeAggregationItemItem(traktor::ui::TreeViewItem* parentItem, Aggregation* aggregation, AggregationItem* item);
+	traktor::ui::custom::TreeViewItem* createTreeAggregationItemItem(traktor::ui::custom::TreeViewItem* parentItem, Aggregation* aggregation, AggregationItem* item);
 
 	bool loadSolution(const traktor::Path& fileName);
 
@@ -100,9 +102,9 @@ private:
 
 	void eventTreeSelect(traktor::ui::SelectionChangeEvent*);
 
-	void eventTreeEdit(traktor::ui::TreeViewEditEvent*);
+	void eventTreeEdit(traktor::ui::custom::TreeViewEditEvent*);
 
-	void eventTreeChange(traktor::ui::TreeViewContentChangeEvent*);
+	void eventTreeChange(traktor::ui::custom::TreeViewContentChangeEvent*);
 
 	void eventPropertyPageChange(traktor::ui::ContentChangeEvent*);
 };

@@ -14,18 +14,27 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ui.StyleSheet", 0, StyleSheet, ISeriali
 Ref< StyleSheet > StyleSheet::createDefault()
 {
 	Ref< StyleSheet > ss = new StyleSheet();
-
 	ss->setColor(L"traktor.ui.Widget", L"color", Color4ub(30, 30, 30));
+	ss->setColor(L"traktor.ui.Widget", L"color-disabled", Color4ub(60, 60, 60));
 	ss->setColor(L"traktor.ui.Widget", L"background-color", Color4ub(239, 239, 242));
 	ss->setColor(L"traktor.ui.Widget", L"border-color", Color4ub(160, 160, 160));
 	ss->setColor(L"traktor.ui.Dock", L"caption-background-color", Color4ub(0, 122, 204));
 	ss->setColor(L"traktor.ui.Dock", L"caption-color-focus", Color4ub(255, 255, 255));
+	ss->setColor(L"traktor.ui.Dock", L"caption-color-no-focus", Color4ub(30, 30, 30));
+	ss->setColor(L"traktor.ui.Dock", L"splitter-color", Color4ub(204, 200, 219));
 	ss->setColor(L"traktor.ui.Tab", L"tab-background-color", Color4ub(0, 122, 204));
 	ss->setColor(L"traktor.ui.Tab", L"tab-background-color-hover", Color4ub(28, 151, 234));
 	ss->setColor(L"traktor.ui.Tab", L"tab-line-color", Color4ub(0, 122, 204));
 	ss->setColor(L"traktor.ui.Tab", L"tab-color-active", Color4ub(255, 255, 255));
 	ss->setColor(L"traktor.ui.Tab", L"tab-color-inactive", Color4ub(30, 30, 30));
-
+	ss->setColor(L"traktor.ui.custom.TreeView", L"background-color", Color4ub(246, 246, 246));
+	ss->setColor(L"traktor.ui.custom.TreeView", L"item-color-selected", Color4ub(255, 255, 255));
+	ss->setColor(L"traktor.ui.custom.TreeView", L"item-background-color-selected", Color4ub(51, 153, 255));
+	ss->setColor(L"traktor.ui.custom.GridView", L"background-color", Color4ub(255, 255, 255));
+	ss->setColor(L"traktor.ui.custom.GridView", L"header-background-color", Color4ub(239, 239, 242));
+	ss->setColor(L"traktor.ui.custom.GridView", L"item-color-selected", Color4ub(255, 255, 255));
+	ss->setColor(L"traktor.ui.custom.GridView", L"item-background-color-selected", Color4ub(51, 153, 255));
+	ss->setColor(L"traktor.ui.custom.GridView", L"line-color", Color4ub(239, 239, 242));
 	return ss;
 }
 

@@ -41,7 +41,7 @@
 
 using namespace traktor;
 
-#define TITLE L"SolutionBuilder v2.7"
+#define TITLE L"SolutionBuilder v2.8"
 
 T_IMPLEMENT_RTTI_CLASS(L"SolutionForm", SolutionForm, ui::Form)
 
@@ -70,8 +70,8 @@ bool SolutionForm::create(const traktor::CommandLine& cmdLine)
 {
 	if (!ui::Form::create(
 		TITLE,
-		900,
-		600,
+		ui::scaleBySystemDPI(1000),
+		ui::scaleBySystemDPI(800),
 		ui::Form::WsDefault,
 		new ui::FloodLayout()
 	))
@@ -116,21 +116,21 @@ bool SolutionForm::create(const traktor::CommandLine& cmdLine)
 	m_menuBar->add(menuTools);
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
-	splitter->create(this, true, 300);
+	splitter->create(this, true, ui::scaleBySystemDPI(300));
 
-	m_treeSolution = new ui::TreeView();
+	m_treeSolution = new ui::custom::TreeView();
 	m_treeSolution->create(
 		splitter,
-		ui::WsClientBorder |
-		ui::TreeView::WsAutoEdit |
-		ui::TreeView::WsTreeButtons |
-		ui::TreeView::WsTreeLines
+		ui::WsDoubleBuffer |
+		ui::custom::TreeView::WsAutoEdit |
+		ui::custom::TreeView::WsTreeButtons |
+		ui::custom::TreeView::WsTreeLines
 	);
 	m_treeSolution->addImage(ui::Bitmap::load(c_ResourceSolution, sizeof(c_ResourceSolution), L"png"), 8);
 	m_treeSolution->addEventHandler< ui::MouseButtonDownEvent >(this, &SolutionForm::eventTreeButtonDown);
 	m_treeSolution->addEventHandler< ui::SelectionChangeEvent >(this, &SolutionForm::eventTreeSelect);
-	m_treeSolution->addEventHandler< ui::TreeViewEditEvent >(this, &SolutionForm::eventTreeEdit);
-	m_treeSolution->addEventHandler< ui::TreeViewContentChangeEvent >(this, &SolutionForm::eventTreeChange);
+	m_treeSolution->addEventHandler< ui::custom::TreeViewEditEvent >(this, &SolutionForm::eventTreeEdit);
+	m_treeSolution->addEventHandler< ui::custom::TreeViewContentChangeEvent >(this, &SolutionForm::eventTreeChange);
 
 	m_menuSolution = new ui::PopupMenu();
 	m_menuSolution->create();
@@ -264,7 +264,7 @@ void SolutionForm::updateSolutionTree()
 
 	m_treeSolution->removeAllItems();
 
-	Ref< ui::TreeViewItem > treeSolution = m_treeSolution->createItem(0, m_solution->getName(), 0);
+	Ref< ui::custom::TreeViewItem > treeSolution = m_treeSolution->createItem(0, m_solution->getName(), 0);
 	treeSolution->setData(L"PRIMARY", m_solution);
 	treeSolution->setData(L"SOLUTION", m_solution);
 	
@@ -304,13 +304,13 @@ bool SolutionForm::isModified() const
 	return m_solution && DeepHash(m_solution).get() != m_solutionHash;
 }
 
-ui::TreeViewItem* SolutionForm::createTreeProjectItem(ui::TreeViewItem* parentItem, Project* project)
+ui::custom::TreeViewItem* SolutionForm::createTreeProjectItem(ui::custom::TreeViewItem* parentItem, Project* project)
 {
-	Ref< ui::TreeViewItem > treeProject = m_treeSolution->createItem(parentItem, project->getName(), 1);
+	Ref< ui::custom::TreeViewItem > treeProject = m_treeSolution->createItem(parentItem, project->getName(), 1);
 	treeProject->setData(L"PRIMARY", project);
 	treeProject->setData(L"PROJECT", project);
 
-	Ref< ui::TreeViewItem > treeConfigurations = m_treeSolution->createItem(treeProject, L"Configurations", 2, 3);
+	Ref< ui::custom::TreeViewItem > treeConfigurations = m_treeSolution->createItem(treeProject, L"Configurations", 2, 3);
 
 	const RefArray< Configuration >& configurations = project->getConfigurations();
 	for (RefArray< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
@@ -331,9 +331,9 @@ ui::TreeViewItem* SolutionForm::createTreeProjectItem(ui::TreeViewItem* parentIt
 	return treeProject;
 }
 
-ui::TreeViewItem* SolutionForm::createTreeAggregationItem(ui::TreeViewItem* parentItem, Aggregation* aggregation)
+ui::custom::TreeViewItem* SolutionForm::createTreeAggregationItem(ui::custom::TreeViewItem* parentItem, Aggregation* aggregation)
 {
-	Ref< ui::TreeViewItem > treeAggregation = m_treeSolution->createItem(parentItem, aggregation->getName(), 6);
+	Ref< ui::custom::TreeViewItem > treeAggregation = m_treeSolution->createItem(parentItem, aggregation->getName(), 6);
 	treeAggregation->setData(L"PRIMARY", aggregation);
 	treeAggregation->setData(L"AGGREGATION", aggregation);
 
@@ -344,18 +344,18 @@ ui::TreeViewItem* SolutionForm::createTreeAggregationItem(ui::TreeViewItem* pare
 	return treeAggregation;
 }
 
-ui::TreeViewItem* SolutionForm::createTreeConfigurationItem(ui::TreeViewItem* parentItem, Project* project, Configuration* configuration)
+ui::custom::TreeViewItem* SolutionForm::createTreeConfigurationItem(ui::custom::TreeViewItem* parentItem, Project* project, Configuration* configuration)
 {
-	Ref< ui::TreeViewItem > treeConfiguration = m_treeSolution->createItem(parentItem, configuration->getName(), 5);
+	Ref< ui::custom::TreeViewItem > treeConfiguration = m_treeSolution->createItem(parentItem, configuration->getName(), 5);
 	treeConfiguration->setData(L"PRIMARY", configuration);
 	treeConfiguration->setData(L"PROJECT", project);
 	treeConfiguration->setData(L"CONFIGURATION", configuration);
 	return treeConfiguration;
 }
 
-ui::TreeViewItem* SolutionForm::createTreeFilterItem(ui::TreeViewItem* parentItem, Project* project, Filter* filter)
+ui::custom::TreeViewItem* SolutionForm::createTreeFilterItem(ui::custom::TreeViewItem* parentItem, Project* project, Filter* filter)
 {
-	Ref< ui::TreeViewItem > treeFilter = m_treeSolution->createItem(parentItem, filter->getName(), 2, 3);
+	Ref< ui::custom::TreeViewItem > treeFilter = m_treeSolution->createItem(parentItem, filter->getName(), 2, 3);
 	treeFilter->setData(L"PRIMARY", filter);
 	treeFilter->setData(L"PROJECT", project);
 	treeFilter->setData(L"FILTER", filter);
@@ -375,18 +375,18 @@ ui::TreeViewItem* SolutionForm::createTreeFilterItem(ui::TreeViewItem* parentIte
 	return treeFilter;
 }
 
-ui::TreeViewItem* SolutionForm::createTreeFileItem(ui::TreeViewItem* parentItem, Project* project, ::File* file)
+ui::custom::TreeViewItem* SolutionForm::createTreeFileItem(ui::custom::TreeViewItem* parentItem, Project* project, ::File* file)
 {
-	Ref< ui::TreeViewItem > treeFile = m_treeSolution->createItem(parentItem, file->getFileName(), 4);
+	Ref< ui::custom::TreeViewItem > treeFile = m_treeSolution->createItem(parentItem, file->getFileName(), 4);
 	treeFile->setData(L"PRIMARY", file);
 	treeFile->setData(L"PROJECT", project);
 	treeFile->setData(L"FILE", file);
 	return treeFile;
 }
 
-ui::TreeViewItem* SolutionForm::createTreeAggregationItemItem(ui::TreeViewItem* parentItem, Aggregation* aggregation, AggregationItem* item)
+ui::custom::TreeViewItem* SolutionForm::createTreeAggregationItemItem(ui::custom::TreeViewItem* parentItem, Aggregation* aggregation, AggregationItem* item)
 {
-	Ref< ui::TreeViewItem > treeItem = m_treeSolution->createItem(parentItem, item->getSourceFile() + L" => " + item->getTargetPath(), 7);
+	Ref< ui::custom::TreeViewItem > treeItem = m_treeSolution->createItem(parentItem, item->getSourceFile() + L" => " + item->getTargetPath(), 7);
 	treeItem->setData(L"PRIMARY", item);
 	treeItem->setData(L"AGGREGATION", aggregation);
 	return treeItem;
@@ -616,7 +616,12 @@ void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 	if (event->getButton() != ui::MbtRight)
 		return;
 
-	Ref< ui::TreeViewItem > selectedItem = m_treeSolution->getSelectedItem();
+	RefArray< ui::custom::TreeViewItem > selectedItems;
+	m_treeSolution->getItems(selectedItems, ui::custom::TreeView::GfDescendants | ui::custom::TreeView::GfSelectedOnly);
+	if (selectedItems.size() != 1)
+		return;
+
+	Ref< ui::custom::TreeViewItem > selectedItem = selectedItems.front();
 	if (!selectedItem)
 		return;
 
@@ -861,7 +866,7 @@ void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 			}
 			else if (command == L"Filter.Remove")
 			{
-				Ref< ui::TreeViewItem > parentItem = selectedItem->getParent();
+				Ref< ui::custom::TreeViewItem > parentItem = selectedItem->getParent();
 				if (parentItem)
 				{
 					Ref< Filter > parentFilter = parentItem->getData< Filter >(L"PRIMARY");
@@ -888,7 +893,7 @@ void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 			if (command == L"File.Flatten")
 			{
 				Ref< Project > project = selectedItem->getData< Project >(L"PROJECT");
-				Ref< ui::TreeViewItem > parentItem = selectedItem->getParent();
+				Ref< ui::custom::TreeViewItem > parentItem = selectedItem->getParent();
 				if (project && parentItem)
 				{
 					Ref< Filter > parentFilter = parentItem->getData< Filter >(L"PRIMARY");
@@ -928,7 +933,7 @@ void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 			}
 			else if (command == L"File.Remove")
 			{
-				Ref< ui::TreeViewItem > parentItem = selectedItem->getParent();
+				Ref< ui::custom::TreeViewItem > parentItem = selectedItem->getParent();
 				if (parentItem)
 				{
 					Ref< Filter > parentFilter = parentItem->getData< Filter >(L"PRIMARY");
@@ -954,7 +959,7 @@ void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 			const ui::Command& command = menuItem->getCommand();
 			if (command == L"AggregationItem.Remove")
 			{
-				Ref< ui::TreeViewItem > parentItem = selectedItem->getParent();
+				Ref< ui::custom::TreeViewItem > parentItem = selectedItem->getParent();
 				if (parentItem)
 				{
 					Ref< Aggregation > parentAggregation = parentItem->getData< Aggregation >(L"PRIMARY");
@@ -972,7 +977,12 @@ void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 
 void SolutionForm::eventTreeSelect(ui::SelectionChangeEvent* event)
 {
-	Ref< ui::TreeViewItem > treeItem = m_treeSolution->getSelectedItem();
+	RefArray< ui::custom::TreeViewItem > selectedItems;
+	m_treeSolution->getItems(selectedItems, ui::custom::TreeView::GfDescendants | ui::custom::TreeView::GfSelectedOnly);
+	if (selectedItems.size() != 1)
+		return;
+
+	Ref< ui::custom::TreeViewItem > treeItem = selectedItems.front();
 
 	m_treeSolution->setFocus();
 
@@ -1023,17 +1033,17 @@ void SolutionForm::eventTreeSelect(ui::SelectionChangeEvent* event)
 	update();
 }
 
-void SolutionForm::eventTreeEdit(ui::TreeViewEditEvent* event)
+void SolutionForm::eventTreeEdit(ui::custom::TreeViewEditEvent* event)
 {
-	Ref< ui::TreeViewItem > treeItem = event->getItem();
+	Ref< ui::custom::TreeViewItem > treeItem = event->getItem();
 	Ref< AggregationItem > aggregationItem = treeItem->getData< AggregationItem >(L"PRIMARY");
 	if (aggregationItem)
 		treeItem->setText(aggregationItem->getSourceFile());
 }
 
-void SolutionForm::eventTreeChange(ui::TreeViewContentChangeEvent* event)
+void SolutionForm::eventTreeChange(ui::custom::TreeViewContentChangeEvent* event)
 {
-	Ref< ui::TreeViewItem > treeItem = event->getItem();
+	Ref< ui::custom::TreeViewItem > treeItem = event->getItem();
 
 	Ref< Solution > solution = treeItem->getData< Solution >(L"PRIMARY");
 	if (solution)

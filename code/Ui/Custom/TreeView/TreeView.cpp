@@ -7,6 +7,7 @@
 #include "Ui/HierarchicalState.h"
 #include "Ui/Custom/TreeView/TreeView.h"
 #include "Ui/Custom/TreeView/TreeViewContentChangeEvent.h"
+#include "Ui/Custom/TreeView/TreeViewEditEvent.h"
 #include "Ui/Custom/TreeView/TreeViewItem.h"
 
 #include "Resources/TviState.h"
@@ -24,6 +25,7 @@ TreeView::TreeView()
 :	m_imageWidth(0)
 ,	m_imageHeight(0)
 ,	m_imageCount(0)
+,	m_autoEdit(false)
 {
 }
 
@@ -31,6 +33,8 @@ bool TreeView::create(Widget* parent, int style)
 {
 	if (!AutoWidget::create(parent, style))
 		return false;
+
+	m_autoEdit = bool((style & WsAutoEdit) == WsAutoEdit);
 
 	m_itemEditor = new Edit();
 	m_itemEditor->create(this, L"", WsBorder);
@@ -191,6 +195,11 @@ void TreeView::layoutCells(const Rect& rc)
 
 void TreeView::beginEdit(TreeViewItem* item)
 {
+	TreeViewEditEvent editEvent(this, item);
+	raiseEvent(&editEvent);
+	if (editEvent.consumed() && editEvent.cancelled())
+		return;
+
 	releaseCapturedCell();
 
 	m_itemEditor->setRect(item->calculateLabelRect());
