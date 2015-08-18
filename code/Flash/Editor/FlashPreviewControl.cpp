@@ -8,7 +8,7 @@
 #include "Flash/FlashFrame.h"
 #include "Flash/FlashSprite.h"
 #include "Flash/Acc/AccDisplayRenderer.h"
-#include "Flash/Action/Avm1/Classes/AsKey.h"
+#include "Flash/Action/Common/Classes/AsKey.h"
 #include "Flash/Sound/SoundRenderer.h"
 #include "Flash/Sw/SwDisplayRenderer.h"
 #include "Sound/Player/SoundPlayer.h"
