@@ -85,20 +85,15 @@ Ref< FlashMovie > FlashMovieFactory::createMovie(SwfReader* swf)
 
 	T_DEBUG(L"SWF movie version " << int32_t(header->version));
 
-	// Create ActionScript virtual machine.
-	Ref< IActionVM > vm;
-	if (1)
-		vm = new ActionVM1();
-	else
-		vm = new ActionVM2();
-
 	// Create new movie.
 	Ref< FlashSprite > movieClip = new FlashSprite(0, header->frameRate >> 8);
-	Ref< FlashMovie > movie = new FlashMovie(vm, header->frameRect, movieClip);
+	Ref< FlashMovie > movie = new FlashMovie(header->frameRect, movieClip);
 
 	// Decode tags.
 	FlashTag::ReadContext context;
 	context.version = header->version;
+	context.avm1 = new ActionVM1();
+	context.avm2 = new ActionVM2();
 	context.movie = movie;
 	context.sprite = movieClip;
 	context.frame = new FlashFrame();

@@ -512,7 +512,7 @@ bool FlashTagDefineButton::read(SwfReader* swf, ReadContext& context)
 
 			condition.mask |= bs.readBit() ? FlashButton::CmOverDownToIdle : 0;
 
-			condition.script = context.movie->getVM()->load(bs);
+			condition.script = context.avm1->load(bs);
 			bs.alignByte();
 
 			button->addButtonCondition(condition);
@@ -831,6 +831,8 @@ bool FlashTagDefineSprite::read(SwfReader* swf, ReadContext& context)
 	// Decode tags.
 	FlashTag::ReadContext spriteContext;
 	spriteContext.version = context.version;
+	spriteContext.avm1 = context.avm1;
+	spriteContext.avm2 = context.avm2;
 	spriteContext.movie = context.movie;
 	spriteContext.sprite = sprite;
 	spriteContext.frame = new FlashFrame();
@@ -1024,7 +1026,7 @@ bool FlashTagPlaceObject::read(SwfReader* swf, ReadContext& context)
 					T_DEBUG(L"PlaceObject, unused keycode in EvtKeyPress");
 				}
 
-				Ref< const IActionVMImage > image = context.movie->getVM()->load(bs);
+				Ref< const IActionVMImage > image = context.avm1->load(bs);
 				bs.alignByte();
 
 				placeObject.events.insert(std::make_pair(eventMask, image));
@@ -1081,7 +1083,7 @@ bool FlashTagDoAction::read(SwfReader* swf, ReadContext& context)
 {
 	BitReader& bs = swf->getBitReader();
 
-	Ref< const IActionVMImage > image = context.movie->getVM()->load(bs);
+	Ref< const IActionVMImage > image = context.avm1->load(bs);
 	if (image)
 		context.frame->addActionScript(image);
 
@@ -1147,7 +1149,7 @@ bool FlashTagInitAction::read(SwfReader* swf, ReadContext& context)
 
 	/*uint16_t spriteId = */bs.readUInt16();
 
-	Ref< const IActionVMImage > image = context.movie->getVM()->load(bs);
+	Ref< const IActionVMImage > image = context.avm1->load(bs);
 	bs.alignByte();
 
 	context.sprite->addInitActionScript(image);
@@ -1187,7 +1189,7 @@ bool FlashTagDoABC::read(SwfReader* swf, ReadContext& context)
 {
 	BitReader& bs = swf->getBitReader();
 
-	Ref< const IActionVMImage > image = context.movie->getVM()->load(bs);
+	Ref< const IActionVMImage > image = context.avm2->load(bs);
 	if (!image)
 		return false;
 

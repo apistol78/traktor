@@ -23,7 +23,6 @@ class FlashCharacterInstance;
 class FlashDictionary;
 class FlashMovie;
 class FlashSpriteInstance;
-class IActionVM;
 class IFlashMovieLoader;
 
 /*! \brief ActionScript execution context.
@@ -73,7 +72,7 @@ public:
 		IdOnScroller = 33
 	};
 
-	ActionContext(const IActionVM* vm, const FlashMovie* movie, const IFlashMovieLoader* movieLoader, FlashDictionary* dictionary);
+	ActionContext(const FlashMovie* movie, const IFlashMovieLoader* movieLoader, FlashDictionary* dictionary);
 
 	void setGlobal(ActionObject* global);
 
@@ -94,8 +93,6 @@ public:
 	uint32_t getString(const std::string& str);
 
 	std::string getString(uint32_t id);
-
-	const IActionVM* getVM() const { return m_vm; }
 
 	const FlashMovie* getMovie() const { return m_movie; }
 
@@ -125,7 +122,6 @@ private:
 		Ref< ActionFunction > listenerFunction;
 	};
 
-	const IActionVM* m_vm;
 	const FlashMovie* m_movie;
 	Ref< const IFlashMovieLoader > m_movieLoader;
 	Ref< FlashDictionary > m_dictionary;

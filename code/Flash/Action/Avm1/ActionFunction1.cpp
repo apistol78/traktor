@@ -2,7 +2,7 @@
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionSuper.h"
-#include "Flash/Action/IActionVM.h"
+#include "Flash/Action/IActionVMImage.h"
 #include "Flash/Action/Avm1/ActionFunction1.h"
 #include "Flash/Action/Common/Array.h"
 #include "Flash/Action/Common/Classes/AsFunction.h"
@@ -45,7 +45,6 @@ ActionValue ActionFunction1::call(ActionObject* self, ActionObject* super, const
 	ActionFrame callFrame(
 		getContext(),
 		self,
-		m_image,
 		4,
 		m_dictionary,
 		this
@@ -85,7 +84,7 @@ ActionValue ActionFunction1::call(ActionObject* self, ActionObject* super, const
 	callFrame.setVariable(ActionContext::IdGlobal, ActionValue(getContext()->getGlobal()));
 	callFrame.setVariable(ActionContext::IdArguments, ActionValue(argumentArray->getAsObject(getContext())));
 
-	getContext()->getVM()->execute(&callFrame);
+	m_image->execute(&callFrame);
 
 	return callStack.top();
 }

@@ -24,7 +24,6 @@ class FlashFont;
 class FlashSound;
 class FlashSprite;
 class FlashSpriteInstance;
-class IActionVM;
 class IFlashMovieLoader;
 
 /*! \brief Flash movie.
@@ -37,7 +36,7 @@ class T_DLLCLASS FlashMovie : public ISerializable
 public:
 	FlashMovie();
 
-	FlashMovie(const IActionVM* vm, const Aabb2& frameBounds, FlashSprite* movieClip);
+	FlashMovie(const Aabb2& frameBounds, FlashSprite* movieClip);
 
 	void defineFont(uint16_t fontId, FlashFont* font);
 
@@ -52,8 +51,6 @@ public:
 	Ref< FlashSpriteInstance > createMovieClipInstance(const IFlashMovieLoader* movieLoader) const;
 
 	Ref< FlashSpriteInstance > createExternalMovieClipInstance(FlashSpriteInstance* containerInstance) const;
-
-	const IActionVM* getVM() const { return m_vm; }
 
 	const Aabb2& getFrameBounds() const { return m_frameBounds; }
 
@@ -72,7 +69,6 @@ public:
 	virtual void serialize(ISerializer& s);
 
 private:
-	Ref< const IActionVM > m_vm;
 	Aabb2 m_frameBounds;
 	Ref< FlashSprite > m_movieClip;
 	SmallMap< uint16_t, Ref< FlashFont > > m_fonts;

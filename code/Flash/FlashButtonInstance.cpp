@@ -6,7 +6,7 @@
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionFunction.h"
-#include "Flash/Action/IActionVM.h"
+#include "Flash/Action/IActionVMImage.h"
 
 namespace traktor
 {
@@ -199,7 +199,6 @@ void FlashButtonInstance::executeCondition(uint32_t conditionMask)
 		ActionFrame callFrame(
 			context,
 			self,
-			i->script,
 			4,
 			0,
 			0
@@ -209,7 +208,7 @@ void FlashButtonInstance::executeCondition(uint32_t conditionMask)
 		callFrame.setVariable(ActionContext::IdSuper, ActionValue(super));
 		callFrame.setVariable(ActionContext::IdGlobal, ActionValue(context->getGlobal()));
 
-		context->getVM()->execute(&callFrame);
+		i->script->execute(&callFrame);
 	}
 }
 

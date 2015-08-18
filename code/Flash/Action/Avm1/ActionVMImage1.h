@@ -25,6 +25,8 @@ public:
 
 	const ActionValue& getConstData(uint16_t index) const { return m_constData[index]; }
 
+	virtual void execute(ActionFrame* frame) const;
+
 	virtual void serialize(ISerializer& s);
 
 private:
@@ -33,6 +35,8 @@ private:
 	AlignedVector< uint8_t > m_byteCode;
 	AlignedVector< ActionValue > m_constData;
 	bool m_prepared;
+
+	void nonConstExecute(ActionFrame* frame);
 };
 
 	}

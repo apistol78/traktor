@@ -24,7 +24,6 @@ class ActionContext;
 class ActionObject;
 class ActionDictionary;
 class ActionFunction;
-class IActionVMImage;
 
 /*! \brief ActionScript execution stack frame.
  * \ingroup Flash
@@ -37,7 +36,6 @@ public:
 	ActionFrame(
 		ActionContext* context,
 		ActionObject* self,
-		const IActionVMImage* image,
 		uint16_t localRegisters,
 		const ActionDictionary* dictionary,
 		ActionFunction* callee
@@ -71,8 +69,6 @@ public:
 
 	ActionObject* getSelf() const { return m_self; }
 
-	const IActionVMImage* getImage() const { return m_image; }
-
 	const ActionValueArray& getRegisters() const { return m_localRegisters; }
 
 	const SmallMap< uint32_t, ActionValue >& getVariables() const { return m_localVariables; }
@@ -88,7 +84,6 @@ public:
 private:
 	ActionContext* m_context;
 	Ref< ActionObject > m_self;
-	Ref< const IActionVMImage > m_image;
 	ActionValueArray m_localRegisters;
 	SmallMap< uint32_t, ActionValue > m_localVariables;
 	SmallMap< uint32_t, ActionValue > m_scopeVariables;

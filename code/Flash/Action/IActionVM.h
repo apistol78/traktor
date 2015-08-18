@@ -1,7 +1,7 @@
 #ifndef traktor_flash_IActionVM_H
 #define traktor_flash_IActionVM_H
 
-#include "Core/Serialization/ISerializable.h"
+#include "Core/Object.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,22 +19,18 @@ class BitReader;
 	namespace flash
 	{
 
-class ActionFrame;
 class IActionVMImage;
 
 /*! \brief ActionScript virtual machine interface.
  * \ingroup Flash
  */
-class T_DLLCLASS IActionVM : public ISerializable
+class T_DLLCLASS IActionVM : public Object
 {
 	T_RTTI_CLASS;
 
 public:
 	/*! \brief Load executable image from binary representation of bytecode. */
 	virtual Ref< const IActionVMImage > load(BitReader& br) const = 0;
-
-	/*! \brief Execute image. */
-	virtual void execute(ActionFrame* frame) const = 0;
 };
 
 	}
