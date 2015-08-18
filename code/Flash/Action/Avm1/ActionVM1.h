@@ -1,7 +1,6 @@
 #ifndef traktor_flash_ActionVM1_H
 #define traktor_flash_ActionVM1_H
 
-#include "Core/Timer/Timer.h"
 #include "Flash/Action/IActionVM.h"
 
 // import/export mechanism.
@@ -17,8 +16,6 @@ namespace traktor
 	namespace flash
 	{
 
-class ActionVMTrace1;
-
 /*! \brief ActionScript virtual machine.
  * \ingroup Flash
  *
@@ -30,17 +27,7 @@ class T_DLLCLASS ActionVM1 : public IActionVM
 	T_RTTI_CLASS;
 
 public:
-	ActionVM1();
-
 	virtual Ref< const IActionVMImage > load(BitReader& br) const;
-
-	virtual void execute(ActionFrame* frame) const;
-
-	virtual void serialize(ISerializer& s);
-
-private:
-	Timer m_timer;
-	Ref< ActionVMTrace1 > m_trace;
 };
 
 	}

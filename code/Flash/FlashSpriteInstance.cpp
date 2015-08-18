@@ -10,7 +10,7 @@
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionFunction.h"
-#include "Flash/Action/IActionVM.h"
+#include "Flash/Action/IActionVMImage.h"
 
 namespace traktor
 {
@@ -401,7 +401,6 @@ void FlashSpriteInstance::eventInit()
 		ActionFrame callFrame(
 			context,
 			self,
-			*i,
 			4,
 			0,
 			0
@@ -411,7 +410,7 @@ void FlashSpriteInstance::eventInit()
 		callFrame.setVariable(ActionContext::IdSuper, ActionValue(super));
 		callFrame.setVariable(ActionContext::IdGlobal, ActionValue(context->getGlobal()));
 
-		context->getVM()->execute(&callFrame);
+		(*i)->execute(&callFrame);
 	}
 
 	FlashCharacterInstance::eventInit();
@@ -477,7 +476,6 @@ void FlashSpriteInstance::eventFrame()
 				ActionFrame callFrame(
 					context,
 					self,
-					*i,
 					4,
 					0,
 					0
@@ -487,7 +485,7 @@ void FlashSpriteInstance::eventFrame()
 				callFrame.setVariable(ActionContext::IdSuper, ActionValue(super));
 				callFrame.setVariable(ActionContext::IdGlobal, ActionValue(context->getGlobal()));
 
-				context->getVM()->execute(&callFrame);
+				(*i)->execute(&callFrame);
 			}
 		}
 		m_lastExecutedFrame = m_currentFrame;

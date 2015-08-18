@@ -3,7 +3,7 @@
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionSuper.h"
-#include "Flash/Action/IActionVM.h"
+#include "Flash/Action/IActionVMImage.h"
 #include "Flash/Action/Avm1/ActionFunction2.h"
 #include "Flash/Action/Common/Array.h"
 #include "Flash/Action/Common/Classes/AsFunction.h"
@@ -52,7 +52,6 @@ ActionValue ActionFunction2::call(ActionObject* self, ActionObject* super, const
 	ActionFrame callFrame(
 		cx,
 		self,
-		m_image,
 		m_registerCount,
 		m_dictionary,
 		this
@@ -136,7 +135,7 @@ ActionValue ActionFunction2::call(ActionObject* self, ActionObject* super, const
 	while (argumentPassed < args.size())
 		callStack.push(args[argumentPassed++]);
 
-	cx->getVM()->execute(&callFrame);
+	m_image->execute(&callFrame);
 
 	return callStack.top();
 }

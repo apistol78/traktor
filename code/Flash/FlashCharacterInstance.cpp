@@ -2,7 +2,7 @@
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionFunction.h"
-#include "Flash/Action/IActionVM.h"
+#include "Flash/Action/IActionVMImage.h"
 
 namespace traktor
 {
@@ -183,7 +183,6 @@ void FlashCharacterInstance::eventInit()
 		ActionFrame callFrame(
 			m_context,
 			self,
-			i->second,
 			4,
 			0,
 			0
@@ -193,7 +192,7 @@ void FlashCharacterInstance::eventInit()
 		callFrame.setVariable(ActionContext::IdSuper, ActionValue(super));
 		callFrame.setVariable(ActionContext::IdGlobal, ActionValue(m_context->getGlobal()));
 
-		m_context->getVM()->execute(&callFrame);
+		i->second->execute(&callFrame);
 	}
 }
 
@@ -208,7 +207,6 @@ void FlashCharacterInstance::eventConstruct()
 		ActionFrame callFrame(
 			m_context,
 			self,
-			i->second,
 			4,
 			0,
 			0
@@ -218,7 +216,7 @@ void FlashCharacterInstance::eventConstruct()
 		callFrame.setVariable(ActionContext::IdSuper, ActionValue(super));
 		callFrame.setVariable(ActionContext::IdGlobal, ActionValue(m_context->getGlobal()));
 
-		m_context->getVM()->execute(&callFrame);
+		i->second->execute(&callFrame);
 	}
 }
 
@@ -233,7 +231,6 @@ void FlashCharacterInstance::eventLoad()
 		ActionFrame callFrame(
 			m_context,
 			self,
-			i->second,
 			4,
 			0,
 			0
@@ -243,7 +240,7 @@ void FlashCharacterInstance::eventLoad()
 		callFrame.setVariable(ActionContext::IdSuper, ActionValue(super));
 		callFrame.setVariable(ActionContext::IdGlobal, ActionValue(m_context->getGlobal()));
 
-		m_context->getVM()->execute(&callFrame);
+		i->second->execute(&callFrame);
 	}
 }
 
@@ -258,7 +255,6 @@ void FlashCharacterInstance::eventFrame()
 		ActionFrame callFrame(
 			m_context,
 			self,
-			i->second,
 			4,
 			0,
 			0
@@ -268,7 +264,7 @@ void FlashCharacterInstance::eventFrame()
 		callFrame.setVariable(ActionContext::IdSuper, ActionValue(super));
 		callFrame.setVariable(ActionContext::IdGlobal, ActionValue(m_context->getGlobal()));
 
-		m_context->getVM()->execute(&callFrame);
+		i->second->execute(&callFrame);
 	}
 }
 

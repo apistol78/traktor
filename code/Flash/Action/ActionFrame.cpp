@@ -11,14 +11,12 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionFrame", ActionFrame, Object)
 ActionFrame::ActionFrame(
 	ActionContext* context,
 	ActionObject* self,
-	const IActionVMImage* image,
 	uint16_t localRegisters,
 	const ActionDictionary* dictionary,
 	ActionFunction* callee
 )
 :	m_context(context)
 ,	m_self(self)
-,	m_image(image)
 ,	m_localRegisters(context->getPool(), localRegisters)
 ,	m_dictionary(dictionary)
 ,	m_callee(callee)

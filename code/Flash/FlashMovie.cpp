@@ -12,7 +12,6 @@
 #include "Flash/FlashSpriteInstance.h"
 #include "Flash/SwfMembers.h"
 #include "Flash/Action/ActionContext.h"
-#include "Flash/Action/IActionVM.h"
 #include "Flash/Action/ActionGlobal.h"
 
 namespace traktor
@@ -26,9 +25,8 @@ FlashMovie::FlashMovie()
 {
 }
 
-FlashMovie::FlashMovie(const IActionVM* vm, const Aabb2& frameBounds, FlashSprite* movieClip)
-:	m_vm(vm)
-,	m_frameBounds(frameBounds)
+FlashMovie::FlashMovie(const Aabb2& frameBounds, FlashSprite* movieClip)
+:	m_frameBounds(frameBounds)
 ,	m_movieClip(movieClip)
 {
 }
@@ -67,7 +65,7 @@ Ref< FlashSpriteInstance > FlashMovie::createMovieClipInstance(const IFlashMovie
 	dictionary->m_characters = m_characters;
 	dictionary->m_exports = m_exports;
 
-	Ref< ActionContext > context = new ActionContext(m_vm, this, movieLoader, dictionary);
+	Ref< ActionContext > context = new ActionContext(this, movieLoader, dictionary);
 
 	Ref< ActionGlobal > global = new ActionGlobal(context);
 	context->setGlobal(global);
@@ -94,7 +92,7 @@ Ref< FlashSpriteInstance > FlashMovie::createExternalMovieClipInstance(FlashSpri
 	// Create context; share VM and global.
 	Ref< ActionContext > outerContext = containerInstance->getContext();
 
-	Ref< ActionContext > context = new ActionContext(outerContext->getVM(), this, outerContext->getMovieLoader(), dictionary);
+	Ref< ActionContext > context = new ActionContext(this, outerContext->getMovieLoader(), dictionary);
 	context->setGlobal(outerContext->getGlobal());
 
 	// Create instance of external movie.
@@ -116,7 +114,6 @@ Ref< FlashSpriteInstance > FlashMovie::createExternalMovieClipInstance(FlashSpri
 
 void FlashMovie::serialize(ISerializer& s)
 {
-	s >> MemberRef< const IActionVM >(L"vm", m_vm);
 	s >> MemberAabb2(L"frameBounds", m_frameBounds);
 	s >> MemberRef< FlashSprite >(L"movieClip", m_movieClip);
 	s >> MemberSmallMap< uint16_t, Ref< FlashFont >, Member< uint16_t >, MemberRef< FlashFont > >(L"fonts", m_fonts);
