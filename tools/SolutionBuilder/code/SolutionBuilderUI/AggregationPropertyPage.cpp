@@ -1,3 +1,4 @@
+#include <Ui/Application.h>
 #include <Ui/TableLayout.h>
 #include <Ui/Static.h>
 #include <Ui/Button.h>
@@ -57,9 +58,9 @@ bool AggregationPropertyPage::create(ui::Widget* parent)
 
 	m_listDependencies = new ui::ListView();
 	m_listDependencies->create(container, ui::WsClientBorder | ui::ListView::WsReport);
-	m_listDependencies->addColumn(L"Dependency", 130);
-	m_listDependencies->addColumn(L"Location", 270);
-	m_listDependencies->addColumn(L"Link", 50);
+	m_listDependencies->addColumn(L"Dependency", ui::scaleBySystemDPI(130));
+	m_listDependencies->addColumn(L"Location", ui::scaleBySystemDPI(270));
+	m_listDependencies->addColumn(L"Link", ui::scaleBySystemDPI(50));
 	m_listDependencies->addEventHandler< ui::MouseDoubleClickEvent >(this, &AggregationPropertyPage::eventDependencyDoubleClick);
 
 	Ref< ui::Static > staticAvailable = new ui::Static();

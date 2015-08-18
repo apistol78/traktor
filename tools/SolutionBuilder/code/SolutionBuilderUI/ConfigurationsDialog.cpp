@@ -1,3 +1,4 @@
+#include <Ui/Application.h>
 #include <Ui/TableLayout.h>
 #include <Ui/Container.h>
 #include <Ui/Button.h>
@@ -14,8 +15,8 @@ bool ConfigurationsDialog::create(ui::Widget* parent, Solution* solution)
 	if (!ui::ConfigDialog::create(
 		parent,
 		L"Edit configurations",
-		400,
-		300,
+		ui::scaleBySystemDPI(400),
+		ui::scaleBySystemDPI(300),
 		ui::ConfigDialog::WsDefaultResizable,
 		new ui::TableLayout(L"100%", L"100%,*", 4, 4)
 	))

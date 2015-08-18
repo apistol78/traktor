@@ -1,10 +1,10 @@
+#include <Core/Class/AutoRuntimeClass.h>
+#include <Core/Class/Boxes.h>
 #include <Core/Io/BufferedStream.h>
 #include <Core/Io/FileSystem.h>
 #include <Core/Io/StringOutputStream.h>
 #include <Core/Io/StringReader.h>
 #include <Core/Misc/SafeDestroy.h>
-#include <Script/AutoScriptClass.h>
-#include <Script/Boxes.h>
 #include <Script/IScriptContext.h>
 #include <Script/Lua/ScriptManagerLua.h>
 #include "SolutionBuilderLIB/Configuration.h"
@@ -145,13 +145,13 @@ bool ScriptProcessor::create()
 {
 	m_scriptManager = new script::ScriptManagerLua();
 
-	Ref< script::AutoScriptClass< Output > > classOutput = new script::AutoScriptClass< Output >();
+	Ref< AutoRuntimeClass< Output > > classOutput = new AutoRuntimeClass< Output >();
 	classOutput->addMethod("print", &Output::print);
 	classOutput->addMethod("printLn", &Output::printLn);
 	classOutput->addMethod("printSection", &Output::printSection);
 	m_scriptManager->registerClass(classOutput);
 
-	Ref< script::AutoScriptClass< Path > > classPath = new script::AutoScriptClass< Path >();
+	Ref< AutoRuntimeClass< Path > > classPath = new AutoRuntimeClass< Path >();
 	classPath->addConstructor();
 	classPath->addConstructor< const std::wstring& >();
 	classPath->addMethod("getOriginal", &Path::getOriginal);
@@ -169,7 +169,7 @@ bool ScriptProcessor::create()
 	classPath->addMethod("normalized", &Path::normalized);
 	m_scriptManager->registerClass(classPath);
 
-	Ref< script::AutoScriptClass< FileSystem > > classFileSystem = new script::AutoScriptClass< FileSystem >();
+	Ref< AutoRuntimeClass< FileSystem > > classFileSystem = new AutoRuntimeClass< FileSystem >();
 	classFileSystem->addMethod("exist", &FileSystem::exist);
 	classFileSystem->addMethod("remove", &FileSystem::remove);
 	classFileSystem->addMethod("makeDirectory", &FileSystem::makeDirectory);
@@ -181,14 +181,14 @@ bool ScriptProcessor::create()
 	classFileSystem->addMethod("getRelativePath", &FileSystem_getRelativePath);
 	m_scriptManager->registerClass(classFileSystem);
 
-	Ref< script::AutoScriptClass< Solution > > classSolution = new script::AutoScriptClass< Solution >();
+	Ref< AutoRuntimeClass< Solution > > classSolution = new AutoRuntimeClass< Solution >();
 	classSolution->addMethod("getName", &Solution::getName);
 	classSolution->addMethod("getRootPath", &Solution::getRootPath);
 	classSolution->addMethod("getDefinitions", &Solution::getDefinitions);
 	classSolution->addMethod("getProjects", &Solution::getProjects);
 	m_scriptManager->registerClass(classSolution);
 
-	Ref< script::AutoScriptClass< Project > > classProject = new script::AutoScriptClass< Project >();
+	Ref< AutoRuntimeClass< Project > > classProject = new AutoRuntimeClass< Project >();
 	classProject->addMethod("getEnable", &Project::getEnable);
 	classProject->addMethod("getName", &Project::getName);
 	classProject->addMethod("getSourcePath", &Project::getSourcePath);
@@ -198,7 +198,7 @@ bool ScriptProcessor::create()
 	classProject->addMethod("getDependencies", &Project::getDependencies);
 	m_scriptManager->registerClass(classProject);
 
-	Ref< script::AutoScriptClass< Configuration > > classConfiguration = new script::AutoScriptClass< Configuration >();
+	Ref< AutoRuntimeClass< Configuration > > classConfiguration = new AutoRuntimeClass< Configuration >();
 	classConfiguration->addMethod("getName", &Configuration::getName);
 	classConfiguration->addMethod("getTargetFormat", &Configuration_getTargetFormat);
 	classConfiguration->addMethod("getTargetProfile", &Configuration_getTargetProfile);
@@ -211,32 +211,32 @@ bool ScriptProcessor::create()
 	classConfiguration->addMethod("getAdditionalLinkerOptions", &Configuration::getAdditionalLinkerOptions);
 	m_scriptManager->registerClass(classConfiguration);
 
-	Ref< script::AutoScriptClass< ProjectItem > > classProjectItem = new script::AutoScriptClass< ProjectItem >();
+	Ref< AutoRuntimeClass< ProjectItem > > classProjectItem = new AutoRuntimeClass< ProjectItem >();
 	classProjectItem->addMethod("getItems", &ProjectItem::getItems);
 	m_scriptManager->registerClass(classProjectItem);
 
-	Ref< script::AutoScriptClass< ::File > > classFile = new script::AutoScriptClass< ::File >();
+	Ref< AutoRuntimeClass< ::File > > classFile = new AutoRuntimeClass< ::File >();
 	classFile->addMethod("getFileName", &::File::getFileName);
 	classFile->addMethod("getSystemFiles", &File_getSystemFiles);
 	m_scriptManager->registerClass(classFile);
 
-	Ref< script::AutoScriptClass< Filter > > classFilter = new script::AutoScriptClass< Filter >();
+	Ref< AutoRuntimeClass< Filter > > classFilter = new AutoRuntimeClass< Filter >();
 	classFilter->addMethod("getName", &Filter::getName);
 	m_scriptManager->registerClass(classFilter);
 
-	Ref< script::AutoScriptClass< Dependency > > classDependency = new script::AutoScriptClass< Dependency >();
+	Ref< AutoRuntimeClass< Dependency > > classDependency = new AutoRuntimeClass< Dependency >();
 	classDependency->addMethod("getLink", &Dependency_getLink);
 	classDependency->addMethod("getName", &Dependency::getName);
 	classDependency->addMethod("getLocation", &Dependency::getLocation);
 	m_scriptManager->registerClass(classDependency);
 
-	Ref< script::AutoScriptClass< ExternalDependency > > classExternalDependency = new script::AutoScriptClass< ExternalDependency >();
+	Ref< AutoRuntimeClass< ExternalDependency > > classExternalDependency = new AutoRuntimeClass< ExternalDependency >();
 	classExternalDependency->addMethod("getSolutionFileName", &ExternalDependency::getSolutionFileName);
 	classExternalDependency->addMethod("getSolution", &ExternalDependency::getSolution);
 	classExternalDependency->addMethod("getProject", &ExternalDependency::getProject);
 	m_scriptManager->registerClass(classExternalDependency);
 
-	Ref< script::AutoScriptClass< ProjectDependency > > classProjectDependency = new script::AutoScriptClass< ProjectDependency >();
+	Ref< AutoRuntimeClass< ProjectDependency > > classProjectDependency = new AutoRuntimeClass< ProjectDependency >();
 	classProjectDependency->addMethod("getProject", &ProjectDependency::getProject);
 	m_scriptManager->registerClass(classProjectDependency);
 
@@ -306,11 +306,11 @@ bool ScriptProcessor::generateFromSource(const Solution* solution, const Project
 	if (!scriptContext)
 		return false;
 
-	scriptContext->setGlobal("output", script::Any::fromObject(o));
-	scriptContext->setGlobal("solution", script::Any::fromObject(const_cast< Solution* >(solution)));
-	scriptContext->setGlobal("project", script::Any::fromObject(const_cast< Project* >(project)));
-	scriptContext->setGlobal("projectPath", script::Any::fromObject(new Path(projectPath)));
-	scriptContext->setGlobal("fileSystem", script::Any::fromObject(&FileSystem::getInstance()));
+	scriptContext->setGlobal("output", Any::fromObject(o));
+	scriptContext->setGlobal("solution", Any::fromObject(const_cast< Solution* >(solution)));
+	scriptContext->setGlobal("project", Any::fromObject(const_cast< Project* >(project)));
+	scriptContext->setGlobal("projectPath", Any::fromObject(new Path(projectPath)));
+	scriptContext->setGlobal("fileSystem", Any::fromObject(&FileSystem::getInstance()));
 	scriptContext->executeFunction("__main__");
 
 	output = o->getProduct();

@@ -79,6 +79,7 @@ private:
 	int32_t m_imageCount;
 	Ref< Edit > m_itemEditor;
 	Ref< TreeViewItem > m_editItem;
+	bool m_autoEdit;
 
 	virtual void layoutCells(const Rect& rc);
 
