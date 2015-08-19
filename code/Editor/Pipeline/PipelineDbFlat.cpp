@@ -92,9 +92,13 @@ bool PipelineDbFlat::open(const std::wstring& connectionString)
 
 	m_file = cs[L"fileName"];
 
+	// If flat database file doesn't exist we assume this is the first run; ie. don't fail.
+	if (!FileSystem::getInstance().exist(m_file))
+		return true;
+
 	Ref< IStream > f = FileSystem::getInstance().open(m_file, File::FmRead);
 	if (!f)
-		return true;
+		return false;
 
 	BinarySerializer s(f);
 
