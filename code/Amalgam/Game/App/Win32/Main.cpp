@@ -254,7 +254,9 @@ void logSystemInfo()
 	log::info << L"Operating System" << Endl;
 	if (osvi.wProductType == VER_NT_WORKSTATION) 
 	{
-		if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 3)
+		if (osvi.dwMajorVersion == 10 && osvi.dwMinorVersion == 0)
+			log::info << L"\tWindows 10";
+		else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 3)
 			log::info << L"\tWindows 8.1";
 		else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 2)
 			log::info << L"\tWindows 8";
