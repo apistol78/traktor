@@ -184,7 +184,6 @@ if (deltaDepth < 0.0f && deltaDepth > -MaxDeltaDepth)
 }
 else
 	Hit = float4(0.0f, 0.0f, 0.0f, 0.0f);
-
 			]]>
 			</script>
 		</item>
@@ -308,7 +307,7 @@ for (int i = 0; i < MaxSteps; ++i)
 	projCoord.xy /= projCoord.w;
 	projCoord.xy = projCoord.xy * vec2(0.5, -0.5) + vec2(0.5, 0.5);
 
-	hitDepth = texture2D(DepthMap_Sampler, projCoord.xy).x;
+	hitDepth = texture(DepthMap_Sampler, projCoord.xy).x;
 	deltaDepth = hitDepth - hitCoord.z;
 	if (deltaDepth < 0.0 && deltaDepth > -MaxDeltaDepth)
 		break;
@@ -326,7 +325,7 @@ if (/*hitDepth >= Origin.z &&*/ deltaDepth < 0.0 && deltaDepth > -MaxDeltaDepth)
 	float normFactor = pow(clamp(Direction.z, 0.0, 1.0), 0.2);
 	float distFactor = 1.0 - pow(length(Origin.xyz - vec3(hitCoord.xy, hitDepth)) / (MaxSteps * StepLength), 2);
 
-	vec3 color = texture2D(ColorMap_Sampler, colorCoord).xyz;
+	vec3 color = texture(ColorMap_Sampler, colorCoord).xyz;
 	Hit = vec4(color, edgeFactor * normFactor * distFactor);
 }
 else
