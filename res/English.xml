@@ -82,6 +82,10 @@
       <second>German</second>
     </item>
     <item>
+      <first>AMALGAM_LANGUAGE_DUTCH</first>
+      <second>Dutch</second>
+    </item>
+    <item>
       <first>AMALGAM_LANGUAGE_ITALIAN</first>
       <second>Italian</second>
     </item>
@@ -91,7 +95,7 @@
     </item>
     <item>
       <first>AMALGAM_LANGUAGE_KOREANA</first>
-      <second>Koreana</second>
+      <second>Korean</second>
     </item>
     <item>
       <first>AMALGAM_LANGUAGE_SPANISH</first>

@@ -64,6 +64,7 @@ const struct { const wchar_t* steam; const wchar_t* code; } c_languageCodes[] =
 {
 	{ L"english", L"en" },
 	{ L"czech", L"cs" },
+	{ L"dutch", L"nl" },
 	{ L"french", L"fr" },
 	{ L"german", L"de" },
 	{ L"italian", L"it" },
