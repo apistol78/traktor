@@ -1,8 +1,11 @@
+#pragma optimize( "", off )
+
+#include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/Avm2/ActionOpcodes.h"
 #include "Flash/Action/Avm2/ActionVMImage2.h"
 
-#define VM_TRACE_ENABLE 0
+#define VM_TRACE_ENABLE 1
 
 #if VM_TRACE_ENABLE
 #	define T_WIDEN_X(x) L ## x
@@ -10,7 +13,7 @@
 #	define VM_BEGIN(op) \
 	case op : \
 		{ \
-		log::debug << T_WIDEN( #op ) << L" (stack " << stack.depth() << L")" << Endl << IncreaseIndent;
+		log::debug << T_WIDEN( #op ) << L" (scope stack " << scopeStack.depth() << L", op stack " << operationStack.depth() << L")" << Endl << IncreaseIndent;
 #	define VM_END() \
 	log::debug << DecreaseIndent; \
 		} \
@@ -35,36 +38,65 @@ namespace traktor
 {
 	namespace flash
 	{
+		namespace
+		{
+
+uint32_t decodeU30(const uint8_t T_UNALIGNED *& pc)
+{
+	uint32_t out = 0;
+	for (uint32_t i = 0; i < 5; ++i)
+	{
+		uint8_t v = *pc++;
+		out |= (v & 0x7f) << (i * 7);
+		if ((v & 0x80) == 0x00)
+			break;
+	}
+	return out;
+}
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.ActionVMImage2", 0, ActionVMImage2, IActionVMImage)
 
 void ActionVMImage2::execute(ActionFrame* frame) const
 {
-	const uint8_t T_UNALIGNED * abcFile = 0; //frame->getCode();
+	// Last script is the first to be executed of ABC.
+	const ScriptInfo& script = m_abcFile.scripts[m_abcFile.scriptsCount - 1];
 
-	uint16_t minorVersion = *(const uint16_t*)abcFile;
-	uint16_t majorVersion = *(const uint16_t*)(abcFile + 2);
+	// Find initialization method body.
+	const MethodBodyInfo* methodBody = 0;
+	for (uint32_t i = 0; i < m_abcFile.methodBodyCount; ++i)
+	{
+		if (m_abcFile.methodBodies[i].method == script.init)
+		{
+			methodBody = &m_abcFile.methodBodies[i];
+			break;
+		}
+	}
+	if (!methodBody)
+		return;
 
-	const uint8_t T_UNALIGNED * pc = abcFile;
-	T_ASSERT (pc);
+	ActionValueStack operationStack(frame->getContext()->getPool());
+	ActionValueStack& scopeStack = frame->getStack();
 
-	ActionValueStack& stack = frame->getStack();
-
+	// Interprete bytecode.
+	const uint8_t T_UNALIGNED * pc = methodBody->code.c_ptr();
 	for (;;)
 	{
 		uint8_t op = *pc++;
 		switch (op)
 		{
 		VM_BEGIN(Avm2OpAdd)
-			ActionValue value2 = stack.pop();
-			ActionValue value1 = stack.pop();
+			ActionValue value2 = operationStack.pop();
+			ActionValue value1 = operationStack.pop();
+			operationStack.push(value1 + value2);
 		VM_END()
 
 		VM_BEGIN(Avm2OpAdd_i)
-			ActionValue value2 = stack.pop();
-			ActionValue value1 = stack.pop();
+			ActionValue value2 = operationStack.pop();
+			ActionValue value1 = operationStack.pop();
 			avm_number_t result = value1.getNumber() + value2.getNumber();
-			stack.push(ActionValue(result));
+			operationStack.push(ActionValue(result));
 		VM_END()
 
 		VM_BEGIN(Avm2OpAsType)
@@ -209,27 +241,37 @@ void ActionVMImage2::execute(ActionFrame* frame) const
 		VM_END()
 
 		VM_BEGIN(Avm2OpGetLex)
+			uint32_t index = decodeU30(pc);
+			const MultinameInfo& mn = m_abcFile.cpool.multinames[index];
 		VM_END()
 
 		VM_BEGIN(Avm2OpGetLocal)
+			uint32_t index = decodeU30(pc);
+		operationStack.push(frame->getRegister(index));
 		VM_END()
 
 		VM_BEGIN(Avm2OpGetLocal_0)
+			operationStack.push(frame->getRegister(0));
 		VM_END()
 
 		VM_BEGIN(Avm2OpGetLocal_1)
+			operationStack.push(frame->getRegister(1));
 		VM_END()
 
 		VM_BEGIN(Avm2OpGetLocal_2)
+			operationStack.push(frame->getRegister(2));
 		VM_END()
 
 		VM_BEGIN(Avm2OpGetLocal_3)
+			operationStack.push(frame->getRegister(3));
 		VM_END()
 
 		VM_BEGIN(Avm2OpGetProperty)
 		VM_END()
 
 		VM_BEGIN(Avm2OpGetScopeObject)
+			int32_t offset = *pc++;
+			operationStack.push(scopeStack.top(scopeStack.depth() - offset - 1));
 		VM_END()
 
 		VM_BEGIN(Avm2OpGetSlot)
@@ -344,15 +386,32 @@ void ActionVMImage2::execute(ActionFrame* frame) const
 		VM_END()
 
 		VM_BEGIN(Avm2OpMultiply)
+			ActionValue value2 = operationStack.pop();
+			ActionValue value1 = operationStack.pop();
+			operationStack.push(value1 * value2);
 		VM_END()
 
 		VM_BEGIN(Avm2OpMultiply_i)
+			ActionValue value2 = operationStack.pop();
+			ActionValue value1 = operationStack.pop();
+			avm_number_t result = value1.getNumber() * value2.getNumber();
+			operationStack.push(ActionValue(result));
 		VM_END()
 
 		VM_BEGIN(Avm2OpNegate)
+			ActionValue& top = operationStack.top();
+			if (top.isNumeric())
+				top = ActionValue(-top.getNumber());
+			else
+				top = ActionValue();
 		VM_END()
 
 		VM_BEGIN(Avm2OpNegate_i)
+			ActionValue& top = operationStack.top();
+			if (top.isNumeric())
+				top = ActionValue(-top.getNumber());
+			else
+				top = ActionValue();
 		VM_END()
 
 		VM_BEGIN(Avm2OpNewActivation)
@@ -386,75 +445,103 @@ void ActionVMImage2::execute(ActionFrame* frame) const
 		VM_END()
 
 		VM_BEGIN(Avm2OpPop)
+			operationStack.pop();
 		VM_END()
 
 		VM_BEGIN(Avm2OpPopScope)
+			scopeStack.pop();
 		VM_END()
 
 		VM_BEGIN(Avm2OpPushByte)
+			int32_t value = *pc++;
+			operationStack.push(ActionValue(avm_number_t(value)));
 		VM_END()
 
 		VM_BEGIN(Avm2OpPushDouble)
+			uint32_t index = decodeU30(pc);
+			operationStack.push(ActionValue(avm_number_t(m_abcFile.cpool.doubles[index])));
 		VM_END()
 
 		VM_BEGIN(Avm2OpPushFalse)
+			operationStack.push(ActionValue(false));
 		VM_END()
 
 		VM_BEGIN(Avm2OpPushInt)
+			uint32_t index = decodeU30(pc);
+			operationStack.push(ActionValue(avm_number_t(m_abcFile.cpool.s32[index])));
 		VM_END()
 
 		VM_BEGIN(Avm2OpPushNamespace)
 		VM_END()
 
 		VM_BEGIN(Avm2OpPushNan)
+			operationStack.push(ActionValue(avm_number_t(0)));
 		VM_END()
 
 		VM_BEGIN(Avm2OpPushNull)
+			operationStack.push(ActionValue());
 		VM_END()
 
 		VM_BEGIN(Avm2OpPushScope)
+			scopeStack.push(operationStack.pop());
 		VM_END()
 
 		VM_BEGIN(Avm2OpPushShort)
+			uint32_t value = decodeU30(pc);
+			operationStack.push(ActionValue(avm_number_t(value)));
 		VM_END()
 
 		VM_BEGIN(Avm2OpPushString)
+			uint32_t index = decodeU30(pc);
+			operationStack.push(ActionValue(m_abcFile.cpool.strings[index]));
 		VM_END()
 
 		VM_BEGIN(Avm2OpPushTrue)
+			operationStack.push(ActionValue(true));
 		VM_END()
 
 		VM_BEGIN(Avm2OpPushUInt)
+			uint32_t index = decodeU30(pc);
+			operationStack.push(ActionValue(avm_number_t(m_abcFile.cpool.u32[index])));
 		VM_END()
 
 		VM_BEGIN(Avm2OpPushUndefined)
+			operationStack.push(ActionValue());
 		VM_END()
 
 		VM_BEGIN(Avm2OpPushWith)
 		VM_END()
 
 		VM_BEGIN(Avm2OpReturnValue)
+			goto __exit_loop;
 		VM_END()
 
 		VM_BEGIN(Avm2OpReturnVoid)
+			goto __exit_loop;
 		VM_END()
 
 		VM_BEGIN(Avm2OpRShift)
 		VM_END()
 
 		VM_BEGIN(Avm2OpSetLocal)
+			uint32_t index = decodeU30(pc);
+			frame->setRegister(index, operationStack.pop());
 		VM_END()
 
 		VM_BEGIN(Avm2OpSetLocal_0)
+			frame->setRegister(0, operationStack.pop());
 		VM_END()
 
 		VM_BEGIN(Avm2OpSetLocal_1)
+			frame->setRegister(1, operationStack.pop());
 		VM_END()
 
 		VM_BEGIN(Avm2OpSetLocal_2)
+			frame->setRegister(2, operationStack.pop());
 		VM_END()
 
 		VM_BEGIN(Avm2OpSetLocal_3)
+			frame->setRegister(3, operationStack.pop());
 		VM_END()
 
 		VM_BEGIN(Avm2OpSetGlobalSlot)
@@ -473,9 +560,16 @@ void ActionVMImage2::execute(ActionFrame* frame) const
 		VM_END()
 
 		VM_BEGIN(Avm2OpSubtract)
+			ActionValue value2 = operationStack.pop();
+			ActionValue value1 = operationStack.pop();
+			operationStack.push(value1 - value2);
 		VM_END()
 
 		VM_BEGIN(Avm2OpSubtract_i)
+			ActionValue value2 = operationStack.pop();
+			ActionValue value1 = operationStack.pop();
+			avm_number_t result = value1.getNumber() - value2.getNumber();
+			operationStack.push(ActionValue(result));
 		VM_END()
 
 		VM_BEGIN(Avm2OpSwap)
@@ -491,6 +585,7 @@ void ActionVMImage2::execute(ActionFrame* frame) const
 		VM_END()
 		}
 	}
+__exit_loop:;
 }
 
 void ActionVMImage2::serialize(ISerializer& s)

@@ -1,3 +1,5 @@
+#pragma optimize( "", off )
+
 #include <cstring>
 #include <limits>
 #include "Compress/Zip/InflateStreamZip.h"
@@ -1188,6 +1190,9 @@ bool FlashTagFrameLabel::read(SwfReader* swf, ReadContext& context)
 bool FlashTagDoABC::read(SwfReader* swf, ReadContext& context)
 {
 	BitReader& bs = swf->getBitReader();
+
+	uint32_t flags = bs.readUInt32();
+	std::string name = swf->readString();
 
 	Ref< const IActionVMImage > image = context.avm2->load(bs);
 	if (!image)
