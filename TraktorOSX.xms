@@ -14648,7 +14648,7 @@
 				</item>
 				<item type="Configuration" version="1">
 					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
@@ -14665,7 +14665,7 @@
 				</item>
 				<item type="Configuration" version="1">
 					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
@@ -14699,7 +14699,7 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
-							<fileName>../../../res/Amalgam/Error.png</fileName>
+							<fileName>../../../../res/Amalgam/Error.png</fileName>
 							<items/>
 						</item>
 					</items>
