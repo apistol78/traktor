@@ -74,6 +74,7 @@ const struct { const wchar_t* human; const wchar_t* code; } c_languageCodes[] =
 	{ L"AMALGAM_LANGUAGE_ENGLISH", L"en" },
 	{ L"AMALGAM_LANGUAGE_FRENCH", L"fr" },
 	{ L"AMALGAM_LANGUAGE_GERMAN", L"de" },
+	{ L"AMALGAM_LANGUAGE_DUTCH", L"nl" },
 	{ L"AMALGAM_LANGUAGE_ITALIAN", L"it" },
 	{ L"AMALGAM_LANGUAGE_JAPANESE", L"jp" },
 	{ L"AMALGAM_LANGUAGE_KOREANA", L"kr" },
