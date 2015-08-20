@@ -1,3 +1,5 @@
+#pragma optimize( "", off )
+
 #include <string>
 #include "Net/Http/HttpResponse.h"
 #include "Core/Io/IStream.h"
@@ -110,9 +112,10 @@ void HttpResponse::set(const std::wstring& name, const std::wstring& value)
 	m_values[name] = value;
 }
 
-std::wstring HttpResponse::get(const std::wstring& name)
+std::wstring HttpResponse::get(const std::wstring& name) const
 {
-	return m_values[name];
+	std::map< std::wstring, std::wstring >::const_iterator i = m_values.find(name);
+	return i != m_values.end() ? i->second : L"";
 }
 
 	}

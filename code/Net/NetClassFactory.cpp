@@ -12,6 +12,8 @@
 #include "Net/TcpSocket.h"
 #include "Net/UdpSocket.h"
 #include "Net/UrlConnection.h"
+#include "Net/Http/HttpClient.h"
+#include "Net/Http/HttpResponse.h"
 #include "Net/Http/HttpRequest.h"
 #include "Net/Http/HttpServer.h"
 #include "Net/Replication/INetworkTopology.h"
@@ -32,39 +34,39 @@ namespace traktor
 		namespace
 		{
 
-std::wstring net_HttpRequest_getMethod(net::HttpRequest* self)
+std::wstring net_HttpRequest_getMethod(HttpRequest* self)
 {
 	switch (self->getMethod())
 	{
-	case net::HttpRequest::MtGet:
+	case HttpRequest::MtGet:
 		return L"GET";
-	case net::HttpRequest::MtHead:
+	case HttpRequest::MtHead:
 		return L"HEAD";
-	case net::HttpRequest::MtPost:
+	case HttpRequest::MtPost:
 		return L"POST";
-	case net::HttpRequest::MtPut:
+	case HttpRequest::MtPut:
 		return L"PUT";
-	case net::HttpRequest::MtDelete:
+	case HttpRequest::MtDelete:
 		return L"DELETE";
-	case net::HttpRequest::MtTrace:
+	case HttpRequest::MtTrace:
 		return L"TRACE";
-	case net::HttpRequest::MtOptions:
+	case HttpRequest::MtOptions:
 		return L"OPTIONS";
-	case net::HttpRequest::MtConnect:
+	case HttpRequest::MtConnect:
 		return L"CONNECT";
-	case net::HttpRequest::MtPatch:
+	case HttpRequest::MtPatch:
 		return L"PATCH";
 	default:
 		return L"";
 	}
 }
 
-bool net_HttpServer_create(net::HttpServer* self, int32_t port)
+bool net_HttpServer_create(HttpServer* self, int32_t port)
 {
-	return self->create(net::SocketAddressIPv4(port));
+	return self->create(SocketAddressIPv4(port));
 }
 
-class HttpServerListenerDelegate : public net::HttpServer::IRequestListener
+class HttpServerListenerDelegate : public HttpServer::IRequestListener
 {
 public:
 	HttpServerListenerDelegate(IRuntimeDelegate* delegateListener)
@@ -72,12 +74,12 @@ public:
 	{
 	}
 
-	virtual int32_t httpClientRequest(net::HttpServer* server, const net::HttpRequest* request, OutputStream& os, Ref< traktor::IStream >& outStream)
+	virtual int32_t httpClientRequest(HttpServer* server, const HttpRequest* request, OutputStream& os, Ref< traktor::IStream >& outStream)
 	{
 		Any argv[] =
 		{
-			CastAny< net::HttpServer* >::set(server),
-			CastAny< const net::HttpRequest* >::set(request)
+			CastAny< HttpServer* >::set(server),
+			CastAny< const HttpRequest* >::set(request)
 		};
 		Any ret = m_delegateListener->call(sizeof_array(argv), argv);
 		if (ret.isString())
@@ -93,7 +95,7 @@ private:
 	Ref< IRuntimeDelegate > m_delegateListener;
 };
 
-void net_HttpServer_setRequestListener(net::HttpServer* self, IRuntimeDelegate* delegateListener)
+void net_HttpServer_setRequestListener(HttpServer* self, IRuntimeDelegate* delegateListener)
 {
 	self->setRequestListener(new HttpServerListenerDelegate(delegateListener));
 }
@@ -226,99 +228,113 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.net.NetClassFactory", 0, NetClassFactor
 
 void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
-	Ref< AutoRuntimeClass< net::Socket > > classSocket = new AutoRuntimeClass< net::Socket >();
-	classSocket->addMethod("close", &net::Socket::close);
-	classSocket->addMethod("select", &net::Socket::select);
-	//classSocket->addMethod("send", &net::Socket::send);
-	//classSocket->addMethod("recv", &net::Socket::recv);
-	//classSocket->addMethod("send", &net::Socket::send);
-	//classSocket->addMethod("recv", &net::Socket::recv);
+	Ref< AutoRuntimeClass< Socket > > classSocket = new AutoRuntimeClass< Socket >();
+	classSocket->addMethod("close", &Socket::close);
+	classSocket->addMethod("select", &Socket::select);
+	//classSocket->addMethod("send", &Socket::send);
+	//classSocket->addMethod("recv", &Socket::recv);
+	//classSocket->addMethod("send", &Socket::send);
+	//classSocket->addMethod("recv", &Socket::recv);
 	registrar->registerClass(classSocket);
 
-	Ref< AutoRuntimeClass< net::TcpSocket > > classTcpSocket = new AutoRuntimeClass< net::TcpSocket >();
+	Ref< AutoRuntimeClass< TcpSocket > > classTcpSocket = new AutoRuntimeClass< TcpSocket >();
 	classTcpSocket->addConstructor();
-	//classTcpSocket->addMethod("bind", &net::TcpSocket::bind);
-	//classTcpSocket->addMethod("bind", &net::TcpSocket::bind);
-	//classTcpSocket->addMethod("connect", &net::TcpSocket::connect);
-	//classTcpSocket->addMethod("connect", &net::TcpSocket::connect);
-	classTcpSocket->addMethod("listen", &net::TcpSocket::listen);
-	classTcpSocket->addMethod("accept", &net::TcpSocket::accept);
-	classTcpSocket->addMethod("getLocalAddress", &net::TcpSocket::getLocalAddress);
-	classTcpSocket->addMethod("getRemoteAddress", &net::TcpSocket::getRemoteAddress);
-	classTcpSocket->addMethod("setNoDelay", &net::TcpSocket::setNoDelay);
+	//classTcpSocket->addMethod("bind", &TcpSocket::bind);
+	//classTcpSocket->addMethod("bind", &TcpSocket::bind);
+	//classTcpSocket->addMethod("connect", &TcpSocket::connect);
+	//classTcpSocket->addMethod("connect", &TcpSocket::connect);
+	classTcpSocket->addMethod("listen", &TcpSocket::listen);
+	classTcpSocket->addMethod("accept", &TcpSocket::accept);
+	classTcpSocket->addMethod("getLocalAddress", &TcpSocket::getLocalAddress);
+	classTcpSocket->addMethod("getRemoteAddress", &TcpSocket::getRemoteAddress);
+	classTcpSocket->addMethod("setNoDelay", &TcpSocket::setNoDelay);
 	registrar->registerClass(classTcpSocket);
 
-	Ref< AutoRuntimeClass< net::UdpSocket > > classUdpSocket = new AutoRuntimeClass< net::UdpSocket >();
+	Ref< AutoRuntimeClass< UdpSocket > > classUdpSocket = new AutoRuntimeClass< UdpSocket >();
 	classUdpSocket->addConstructor();
-	//classUdpSocket->addMethod("bind", &net::UdpSocket::bind);
-	//classUdpSocket->addMethod("bind", &net::UdpSocket::bind);
-	//classUdpSocket->addMethod("connect", &net::UdpSocket::connect);
-	//classUdpSocket->addMethod("connect", &net::UdpSocket::connect);
-	//classUdpSocket->addMethod("sendTo", &net::UdpSocket::send);
-	//classUdpSocket->addMethod("recvFrom", &net::UdpSocket::recv);
+	//classUdpSocket->addMethod("bind", &UdpSocket::bind);
+	//classUdpSocket->addMethod("bind", &UdpSocket::bind);
+	//classUdpSocket->addMethod("connect", &UdpSocket::connect);
+	//classUdpSocket->addMethod("connect", &UdpSocket::connect);
+	//classUdpSocket->addMethod("sendTo", &UdpSocket::send);
+	//classUdpSocket->addMethod("recvFrom", &UdpSocket::recv);
 	registrar->registerClass(classUdpSocket);
 
-	Ref< AutoRuntimeClass< net::MulticastUdpSocket > > classMulticastUdpSocket = new AutoRuntimeClass< net::MulticastUdpSocket >();
+	Ref< AutoRuntimeClass< MulticastUdpSocket > > classMulticastUdpSocket = new AutoRuntimeClass< MulticastUdpSocket >();
 	registrar->registerClass(classMulticastUdpSocket);
 
-	Ref< AutoRuntimeClass< net::SocketAddress > > classSocketAddress = new AutoRuntimeClass< net::SocketAddress >();
+	Ref< AutoRuntimeClass< SocketAddress > > classSocketAddress = new AutoRuntimeClass< SocketAddress >();
 	registrar->registerClass(classSocketAddress);
 
-	Ref< AutoRuntimeClass< net::SocketAddressIPv4 > > classSocketAddressIPv4 = new AutoRuntimeClass< net::SocketAddressIPv4 >();
+	Ref< AutoRuntimeClass< SocketAddressIPv4 > > classSocketAddressIPv4 = new AutoRuntimeClass< SocketAddressIPv4 >();
 	registrar->registerClass(classSocketAddressIPv4);
 
-	Ref< AutoRuntimeClass< net::SocketAddressIPv6 > > classSocketAddressIPv6 = new AutoRuntimeClass< net::SocketAddressIPv6 >();
+	Ref< AutoRuntimeClass< SocketAddressIPv6 > > classSocketAddressIPv6 = new AutoRuntimeClass< SocketAddressIPv6 >();
 	registrar->registerClass(classSocketAddressIPv6);
 
-	Ref< AutoRuntimeClass< net::SocketSet > > classSocketSet = new AutoRuntimeClass< net::SocketSet >();
+	Ref< AutoRuntimeClass< SocketSet > > classSocketSet = new AutoRuntimeClass< SocketSet >();
 	registrar->registerClass(classSocketSet);
 
-	Ref< AutoRuntimeClass< net::Url > > classUrl = new AutoRuntimeClass< net::Url >();
+	Ref< AutoRuntimeClass< Url > > classUrl = new AutoRuntimeClass< Url >();
 	classUrl->addConstructor();
 	classUrl->addConstructor< const std::wstring& >();
-	classUrl->addMethod("set", &net::Url::set);
-	classUrl->addMethod("valid", &net::Url::valid);
-	classUrl->addMethod("getDefaultPort", &net::Url::getDefaultPort);
-	classUrl->addMethod("getFile", &net::Url::getFile);
-	classUrl->addMethod("getHost", &net::Url::getHost);
-	classUrl->addMethod("getPath", &net::Url::getPath);
-	classUrl->addMethod("getPort", &net::Url::getPort);
-	classUrl->addMethod("getProtocol", &net::Url::getProtocol);
-	classUrl->addMethod("getQuery", &net::Url::getQuery);
-	classUrl->addMethod("getRef", &net::Url::getRef);
-	classUrl->addMethod("getUserInfo", &net::Url::getUserInfo);
-	classUrl->addMethod("getString", &net::Url::getString);
-	//classUrl->addStaticMethod("encode", &net::Url::encode);
-	//classUrl->addStaticMethod("encode", &net::Url::encode);
-	//classUrl->addStaticMethod("decode", &net::Url::decode);
+	classUrl->addMethod("set", &Url::set);
+	classUrl->addMethod("valid", &Url::valid);
+	classUrl->addMethod("getDefaultPort", &Url::getDefaultPort);
+	classUrl->addMethod("getFile", &Url::getFile);
+	classUrl->addMethod("getHost", &Url::getHost);
+	classUrl->addMethod("getPath", &Url::getPath);
+	classUrl->addMethod("getPort", &Url::getPort);
+	classUrl->addMethod("getProtocol", &Url::getProtocol);
+	classUrl->addMethod("getQuery", &Url::getQuery);
+	classUrl->addMethod("getRef", &Url::getRef);
+	classUrl->addMethod("getUserInfo", &Url::getUserInfo);
+	classUrl->addMethod("getString", &Url::getString);
+	//classUrl->addStaticMethod("encode", &Url::encode);
+	//classUrl->addStaticMethod("encode", &Url::encode);
+	//classUrl->addStaticMethod("decode", &Url::decode);
 	registrar->registerClass(classUrl);
 
-	Ref< AutoRuntimeClass< net::UrlConnection > > classUrlConnection = new AutoRuntimeClass< net::UrlConnection >();
-	classUrlConnection->addStaticMethod("open", &net::UrlConnection::open);
-	classUrlConnection->addMethod("getUrl", &net::UrlConnection::getUrl);
-	classUrlConnection->addMethod("getStream", &net::UrlConnection::getStream);
+	Ref< AutoRuntimeClass< UrlConnection > > classUrlConnection = new AutoRuntimeClass< UrlConnection >();
+	classUrlConnection->addStaticMethod("open", &UrlConnection::open);
+	classUrlConnection->addMethod("getUrl", &UrlConnection::getUrl);
+	classUrlConnection->addMethod("getStream", &UrlConnection::getStream);
 	registrar->registerClass(classUrlConnection);
 
-	Ref< AutoRuntimeClass< net::HttpRequest > > classHttpRequest = new AutoRuntimeClass< net::HttpRequest >();
+	Ref< AutoRuntimeClass< HttpClient > > classHttpClient = new AutoRuntimeClass< HttpClient >();
+	classHttpClient->addConstructor();
+	classHttpClient->addMethod("get", &HttpClient::get);
+	classHttpClient->addMethod("put", &HttpClient::put);
+	registrar->registerClass(classHttpClient);
+
+	Ref< AutoRuntimeClass< HttpResponse > > classHttpResponse = new AutoRuntimeClass< HttpResponse >();
+	classHttpResponse->addConstructor();
+	classHttpResponse->addMethod("parse", &HttpResponse::parse);
+	classHttpResponse->addMethod("getStatusCode", &HttpResponse::getStatusCode);
+	classHttpResponse->addMethod("getStatusMessage", &HttpResponse::getStatusMessage);
+	classHttpResponse->addMethod("set", &HttpResponse::set);
+	classHttpResponse->addMethod("get", &HttpResponse::get);
+	registrar->registerClass(classHttpResponse);
+
+	Ref< AutoRuntimeClass< HttpRequest > > classHttpRequest = new AutoRuntimeClass< HttpRequest >();
 	classHttpRequest->addMethod("getMethod", &net_HttpRequest_getMethod);
-	classHttpRequest->addMethod("getResource", &net::HttpRequest::getResource);
-	classHttpRequest->addMethod("hasValue", &net::HttpRequest::hasValue);
-	classHttpRequest->addMethod("setValue", &net::HttpRequest::setValue);
-	classHttpRequest->addMethod("getValue", &net::HttpRequest::getValue);
-	classHttpRequest->addStaticMethod("parse", &net::HttpRequest::parse);
+	classHttpRequest->addMethod("getResource", &HttpRequest::getResource);
+	classHttpRequest->addMethod("hasValue", &HttpRequest::hasValue);
+	classHttpRequest->addMethod("setValue", &HttpRequest::setValue);
+	classHttpRequest->addMethod("getValue", &HttpRequest::getValue);
+	classHttpRequest->addStaticMethod("parse", &HttpRequest::parse);
 	registrar->registerClass(classHttpRequest);
 
-	Ref< AutoRuntimeClass< net::HttpServer::IRequestListener > > classHttpServer_IRequestListener = new AutoRuntimeClass< net::HttpServer::IRequestListener >();
+	Ref< AutoRuntimeClass< HttpServer::IRequestListener > > classHttpServer_IRequestListener = new AutoRuntimeClass< HttpServer::IRequestListener >();
 	registrar->registerClass(classHttpServer_IRequestListener);
 
-	Ref< AutoRuntimeClass< net::HttpServer > > classHttpServer = new AutoRuntimeClass< net::HttpServer >();
+	Ref< AutoRuntimeClass< HttpServer > > classHttpServer = new AutoRuntimeClass< HttpServer >();
 	classHttpServer->addConstructor();
 	classHttpServer->addMethod("create", &net_HttpServer_create);
-	classHttpServer->addMethod("destroy", &net::HttpServer::destroy);
+	classHttpServer->addMethod("destroy", &HttpServer::destroy);
 	classHttpServer->addMethod("setRequestListener", &net_HttpServer_setRequestListener);
-	classHttpServer->addMethod("update", &net::HttpServer::update);
+	classHttpServer->addMethod("update", &HttpServer::update);
 	registrar->registerClass(classHttpServer);
-
 
 	Ref< AutoRuntimeClass< State > > classState = new AutoRuntimeClass< State >();
 	registrar->registerClass(classState);

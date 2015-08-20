@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_NET_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -20,6 +20,9 @@ class IStream;
 	namespace net
 	{
 
+/*! \brief
+ * \ingroup Net
+ */
 class T_DLLCLASS HttpResponse : public Object
 {
 	T_RTTI_CLASS;
@@ -35,7 +38,7 @@ public:
 
 	void set(const std::wstring& name, const std::wstring& value);
 	
-	std::wstring get(const std::wstring& name);
+	std::wstring get(const std::wstring& name) const;
 	
 private:
 	int32_t m_statusCode;
