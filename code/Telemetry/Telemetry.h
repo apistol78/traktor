@@ -1,8 +1,9 @@
-#ifndef traktor_telemetry_TelemetryClient_H
-#define traktor_telemetry_TelemetryClient_H
+#ifndef traktor_telemetry_Telemetry_H
+#define traktor_telemetry_Telemetry_H
 
 #include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Core/Singleton/ISingleton.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/Signal.h"
 #include "Core/Thread/Thread.h"
@@ -25,16 +26,18 @@ class ITask;
 /*! \brief
  * \ingroup Telemetry
  */
-class T_DLLCLASS TelemetryClient : public Object
+class T_DLLCLASS Telemetry
+:	public Object
+,	public ISingleton
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual ~TelemetryClient();
+	Telemetry();
 
-	static Ref< TelemetryClient > create(const std::wstring& serverHost, const std::wstring& client);
+	static Telemetry& getInstance();
 
-	void destroy();
+	bool create(const std::wstring& serverHost, const std::wstring& client);
 
 	void set(const std::wstring& id, int32_t value);
 
@@ -43,7 +46,7 @@ public:
 	void flush();
 
 protected:
-	TelemetryClient();
+	virtual void destroy();
 
 private:
 	Semaphore m_lock;
@@ -59,4 +62,4 @@ private:
 	}
 }
 
-#endif	// traktor_telemetry_TelemetryClient_H
+#endif	// traktor_telemetry_Telemetry_H
