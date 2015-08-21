@@ -3,6 +3,7 @@
 
 All values:
 		<table border="1">
+		<tr><td>Client</td><td>Symbol</td><td>Value</td><td>Client time</td><td>Server time</td></tr>
 <?php
 	require("Config.php");
 
@@ -13,7 +14,7 @@ All values:
 
 	// Query all clients.
 	$result = $db->query(
-		"SELECT tbl_clients.client, tbl_symbols.symbol, tbl_values.value, tbl_values.timeStamp FROM tbl_values " .
+		"SELECT tbl_clients.client, tbl_symbols.symbol, tbl_values.value, tbl_values.clientTimeStamp, tbl_values.serverTimeStamp FROM tbl_values " .
 		"INNER JOIN tbl_clients ON tbl_values.clientId=tbl_clients.id " .
 		"INNER JOIN tbl_symbols ON tbl_values.symbolId=tbl_symbols.id "
 	);
@@ -27,7 +28,8 @@ All values:
 			echo("<td>" . $row["client"] . "</td>\n");
 			echo("<td>" . $row["symbol"] . "</td>\n");
 			echo("<td>" . $row["value"] . "</td>\n");
-			echo("<td>" . date("c", $row["timeStamp"]) . "</td>\n");
+			echo("<td>" . date("c", $row["clientTimeStamp"]) . "</td>\n");
+			echo("<td>" . date("c", $row["serverTimeStamp"]) . "</td>\n");
 			echo("</tr>\n");
 		}
 	}

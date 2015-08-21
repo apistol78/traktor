@@ -22,8 +22,11 @@
 	$client = $xml->client;
 	$symbol = $xml->symbol;
 	$value = $xml->value;
-	$timeStamp = $xml->timeStamp;
-	if ($client == null || $symbol == null || $value == null || $timeStamp == null)
+	$clientTimeStamp = $xml->timeStamp;
+	$serverTimeStamp = time();
+
+	// Mandatory check.
+	if ($client == null || $symbol == null || $value == null || $clientTimeStamp == null || $serverTimeStamp == null)
 	{
 		header("HTTP/1.1 400 Invalid update");
 		exit;
@@ -71,12 +74,13 @@
 
 	// Update value in database.
 	if ($db->query(
-		"INSERT INTO tbl_values (clientId, symbolId, value, timeStamp) VALUES (" . $clientId . ", " . $symbolId . ", " . $value . ", " . $timeStamp . ") " .
+		"INSERT INTO tbl_values (clientId, symbolId, value, serverTimeStamp, clientTimeStamp) VALUES (" . $clientId . ", " . $symbolId . ", " . $value . ", " . $serverTimeStamp . ", " . $clientTimeStamp . ") " .
 		"ON DUPLICATE KEY UPDATE " .
 		"clientId = " . $clientId . ", " .
 		"symbolId = " . $symbolId . ", " .
 		"value = " . $value . ", " .
-		"timeStamp = " . $timeStamp
+		"serverTimeStamp = " . $serverTimeStamp . ", " .
+		"clientTimeStamp = " . $clientTimeStamp
 	) !== true)
 		die("Unable to update value: " . $db->error);
 
