@@ -3,7 +3,7 @@
 
 Unique clients:
 		<table border="1">
-		<tr><td>Id</td><td>Client</td></tr>
+		<tr><td>Id</td><td>Client</td><td>Created</td></tr>
 <?php
 	require("Config.php");
 
@@ -23,6 +23,7 @@ Unique clients:
 			echo("<tr>\n");
 			echo("<td>" . $row["id"] . "</td>\n");
 			echo("<td>" . $row["client"] . "</td>\n");
+			echo("<td>" . date("c", $row["serverTimeStamp"]) . "</td>\n");
 			echo("</tr>\n");
 		}
 	}
