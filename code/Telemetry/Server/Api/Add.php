@@ -1,5 +1,6 @@
 <?php
 	require("../Config.php");
+	require("../Common.php");
 
 	// Extract XML data from request content.
 	$xmldata = file_get_contents('php://input');
@@ -40,37 +41,9 @@
 		exit;
 	}
 
-	// Resolve db client index.
-	$result = $db->query("SELECT * FROM tbl_clients WHERE client='" . $client . "'");
-	if ($result->num_rows <= 0)
-	{
-		// No such client, add new record.
-		if ($db->query("INSERT INTO tbl_clients (client) VALUES ('" . $client . "')") !== true)
-			die("Unable to add client: " . $db->error);
-
-		$result = $db->query("SELECT * FROM tbl_clients WHERE client='" . $client . "'");
-	}
-	if ($result->num_rows <= 0)
-		die("Unexpected error");
-
-	$row = $result->fetch_assoc();
-	$clientId = $row["id"];
-
-	// Resolve db symbol index.
-	$result = $db->query("SELECT * FROM tbl_symbols WHERE symbol='" . $symbol . "'");
-	if ($result->num_rows <= 0)
-	{
-		// No such symbol, add new record.
-		if ($db->query("INSERT INTO tbl_symbols (symbol) VALUES ('" . $symbol . "')") !== true)
-			die("Unable to add symbol: " . $db->error);
-
-		$result = $db->query("SELECT * FROM tbl_symbols WHERE symbol='" . $symbol . "'");
-	}
-	if ($result->num_rows <= 0)
-		die("Unexpected error");
-
-	$row = $result->fetch_assoc();
-	$symbolId = $row["id"];
+	// Resolve indices.
+	$clientId = getClientId($db, $client);
+	$symbolId = getSymbolId($db, $symbol);
 
 	// Update value in database.
 	if ($db->query(
