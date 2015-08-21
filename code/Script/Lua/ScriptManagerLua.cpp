@@ -819,19 +819,26 @@ Any ScriptManagerLua::toAny(int32_t index)
 {
 	CHECK_LUA_STACK(m_luaState, 0);
 
-	if (lua_isnumber(m_luaState, index))
+	int32_t type = lua_type(m_luaState, index);
+	if (type == LUA_TNUMBER)
 		return Any::fromFloat(float(lua_tonumber(m_luaState, index)));
-	else if (lua_isboolean(m_luaState, index))
+	else if (type == LUA_TBOOLEAN)
 		return Any::fromBoolean(bool(lua_toboolean(m_luaState, index) != 0));
-	else if (lua_isstring(m_luaState, index))
+	else if (type == LUA_TSTRING)
 		return Any::fromString(lua_tostring(m_luaState, index));
-	else if (lua_isuserdata(m_luaState, index))
+	else if (type == LUA_TUSERDATA)
 	{
 		Object* object = *reinterpret_cast< Object** >(lua_touserdata(m_luaState, index));
 		if (object)
 			return Any::fromObject(object);
 	}
-	else if (lua_istable(m_luaState, index))
+	else if (type == LUA_TFUNCTION)
+	{
+		// Box LUA function into C++ container.
+		lua_pushvalue(m_luaState, index);
+		return Any::fromObject(new ScriptDelegateLua(m_lockContext, m_luaState));
+	}
+	else if (type == LUA_TTABLE)
 	{
 		// Unbox wrapped native type.
 		lua_rawgeti(m_luaState, index, c_tableKey_class);
@@ -849,12 +856,6 @@ Any ScriptManagerLua::toAny(int32_t index)
 		int32_t tableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
 		return Any::fromObject(new ScriptObjectLua(m_luaState, tableRef, 0));
 	}
-	else if (lua_isfunction(m_luaState, index))
-	{
-		// Box LUA function into C++ container.
-		lua_pushvalue(m_luaState, index);
-		return Any::fromObject(new ScriptDelegateLua(m_lockContext, m_luaState));
-	}
 
 	return Any();
 }
@@ -866,26 +867,27 @@ void ScriptManagerLua::toAny(int32_t base, int32_t count, Any* outAnys)
 	for (int32_t i = 0; i < count; ++i)
 	{
 		int32_t index = base + i;
+		int32_t type = lua_type(m_luaState, index);
 
-		if (lua_isnumber(m_luaState, index))
+		if (type == LUA_TNUMBER)
 			outAnys[i] = Any::fromFloat(float(lua_tonumber(m_luaState, index)));
-		else if (lua_isboolean(m_luaState, index))
+		else if (type == LUA_TBOOLEAN)
 			outAnys[i] = Any::fromBoolean(bool(lua_toboolean(m_luaState, index) != 0));
-		else if (lua_isstring(m_luaState, index))
+		else if (type == LUA_TSTRING)
 			outAnys[i] = Any::fromString(lua_tostring(m_luaState, index));
-		else if (lua_isuserdata(m_luaState, index))
+		else if (type == LUA_TUSERDATA)
 		{
 			Object* object = *reinterpret_cast< Object** >(lua_touserdata(m_luaState, index));
 			if (object)
 				outAnys[i] = Any::fromObject(object);
 		}
-		else if (lua_isfunction(m_luaState, index))
+		else if (type == LUA_TFUNCTION)
 		{
 			// Box LUA function into C++ container.
 			lua_pushvalue(m_luaState, index);
 			outAnys[i] = Any::fromObject(new ScriptDelegateLua(m_lockContext, m_luaState));
 		}
-		else if (lua_istable(m_luaState, index))
+		else if (type == LUA_TTABLE)
 		{
 			// Unbox wrapped native type.
 			lua_rawgeti(m_luaState, index, c_tableKey_class);
