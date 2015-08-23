@@ -56,6 +56,10 @@ Ref< StageData > flattenInheritance(editor::IPipelineBuilder* pipelineBuilder, c
 		std::map< std::wstring, Guid > transitions = downStageDataFlatten->getTransitions();
 		transitions.insert(stageDataOut->getTransitions().begin(), stageDataOut->getTransitions().end());
 		stageDataOut->setTransitions(transitions);
+
+		// Replace resource bundle.
+		if (stageDataOut->getResourceBundle().isNull())
+			stageDataOut->setResourceBundle(downStageDataFlatten->getResourceBundle());
 	}
 
 	return stageDataOut;
@@ -63,7 +67,7 @@ Ref< StageData > flattenInheritance(editor::IPipelineBuilder* pipelineBuilder, c
 		
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.StagePipeline", 5, StagePipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.StagePipeline", 6, StagePipeline, editor::DefaultPipeline)
 
 TypeInfoSet StagePipeline::getAssetTypes() const
 {
