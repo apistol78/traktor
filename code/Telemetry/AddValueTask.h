@@ -18,7 +18,7 @@ class AddValueTask : public ITask
 public:
 	AddValueTask(const std::wstring& serverHost, const std::wstring& client, const std::wstring& symbol, int32_t delta);
 
-	virtual bool execute();
+	virtual TaskResult execute();
 
 private:
 	std::wstring m_serverHost;

@@ -22,7 +22,7 @@ SetValueTask::SetValueTask(const std::wstring& serverHost, const std::wstring& c
 {
 }
 
-bool SetValueTask::execute()
+ITask::TaskResult SetValueTask::execute()
 {
 	StringOutputStream ss;
 	ss << L"<?xml version=\"1.0\"?>";
@@ -41,16 +41,16 @@ bool SetValueTask::execute()
 	if (!response)
 	{
 		log::error << L"Unable to set value; no response from server." << Endl;
-		return false;
+		return TrRetryAgainLater;
 	}
 
 	if (response->getStatusCode() != 200)
 	{
 		log::error << L"Unable to set value; error response from server \"" << response->getStatusMessage() << L"\" (" << response->getStatusCode() << L")." << Endl;
-		return false;
+		return TrFailure;
 	}
 
-	return true;
+	return TrSuccess;
 }
 
 	}

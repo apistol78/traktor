@@ -53,6 +53,7 @@ private:
 	Thread* m_thread;
 	RefArray< ITask > m_queue;
 	Signal m_queueSignal;
+	int32_t m_queueError;
 	std::wstring m_serverHost;
 	std::wstring m_client;
 

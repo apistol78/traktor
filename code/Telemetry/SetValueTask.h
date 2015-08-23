@@ -18,7 +18,7 @@ class SetValueTask : public ITask
 public:
 	SetValueTask(const std::wstring& serverHost, const std::wstring& client, const std::wstring& symbol, int32_t value);
 
-	virtual bool execute();
+	virtual TaskResult execute();
 
 private:
 	std::wstring m_serverHost;

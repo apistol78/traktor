@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include <cstring>
 #include <limits>
 #include "Compress/Zip/InflateStreamZip.h"
