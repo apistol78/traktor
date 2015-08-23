@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #if !defined(WINCE)
 
 #include "Core/Io/FileSystem.h"

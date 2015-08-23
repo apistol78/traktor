@@ -16,7 +16,14 @@ class ITask : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual bool execute() = 0;
+	enum TaskResult
+	{
+		TrSuccess = 0,
+		TrRetryAgainLater = 1,
+		TrFailure = 2
+	};
+
+	virtual TaskResult execute() = 0;
 };
 
 	}

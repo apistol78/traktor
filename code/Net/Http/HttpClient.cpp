@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/Utf8Encoding.h"

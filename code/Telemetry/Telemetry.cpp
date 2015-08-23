@@ -10,11 +10,18 @@ namespace traktor
 {
 	namespace telemetry
 	{
+		namespace
+		{
+
+const int32_t c_queueErrorLimit = 50;
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.telemetry.Telemetry", Telemetry, Object)
 
 Telemetry::Telemetry()
 :	m_thread(0)
+,	m_queueError(0)
 {
 }
 
@@ -96,7 +103,7 @@ void Telemetry::threadProcessQueue()
 		if (!m_queueSignal.wait(200))
 			continue;
 
-		// Get task from queue.
+		// Get top task from queue.
 		{
 			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 			if (m_queue.empty())
@@ -106,19 +113,30 @@ void Telemetry::threadProcessQueue()
 		}
 
 		// Execute task.
-		if (task->execute())
+		ITask::TaskResult result = task->execute();
+		if (result == ITask::TrRetryAgainLater)
 		{
-			// Successful, discard from queue.
-			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-			T_FATAL_ASSERT (!m_queue.empty());
-			m_queue.pop_front();
-			if (m_queue.empty())
-				m_queueSignal.reset();
+			// Failed, keep in queue for later.
+			if (++m_queueError >= c_queueErrorLimit)
+			{
+				T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+				m_queueError = 0;
+				m_queue.pop_front();
+				if (m_queue.empty())
+					m_queueSignal.reset();
+			}
+			else
+				m_thread->sleep(200);
 		}
 		else
 		{
-			// Task failed, keep in queue and retry a bit later.
-			m_thread->sleep(200);
+			// Success or catastrophic failure, discard from queue.
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+			T_FATAL_ASSERT (!m_queue.empty());
+			m_queueError = 0;
+			m_queue.pop_front();
+			if (m_queue.empty())
+				m_queueSignal.reset();
 		}
 	}
 }
