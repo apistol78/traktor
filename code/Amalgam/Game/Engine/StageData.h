@@ -79,6 +79,10 @@ public:
 
 	const std::map< std::wstring, Guid >& getTransitions() const { return m_transitions; }
 
+	void setResourceBundle(const Guid& resourceBundle) { m_resourceBundle = resourceBundle; }
+
+	const Guid& getResourceBundle() const { return m_resourceBundle; }
+
 private:
 	friend class StagePipeline;
 
