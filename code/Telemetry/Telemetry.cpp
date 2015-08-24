@@ -3,6 +3,7 @@
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Telemetry/AddValueTask.h"
+#include "Telemetry/EventTask.h"
 #include "Telemetry/SetValueTask.h"
 #include "Telemetry/Telemetry.h"
 
@@ -53,6 +54,13 @@ bool Telemetry::create(const std::wstring& serverHost, const std::wstring& clien
 	}
 
 	return true;
+}
+
+void Telemetry::event(const std::wstring& symbol)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	m_queue.push_back(new EventTask(m_serverHost, m_client, symbol));
+	m_queueSignal.set();
 }
 
 void Telemetry::set(const std::wstring& symbol, int32_t value)

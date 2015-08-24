@@ -24,6 +24,7 @@ void TelemetryClassFactory::createClasses(IRuntimeClassRegistrar* registrar) con
 	Ref< AutoRuntimeClass< Telemetry > > classTelemetry = new AutoRuntimeClass< Telemetry >();
 	classTelemetry->addStaticMethod("getInstance", &Telemetry_getInstance);
 	classTelemetry->addMethod("create", &Telemetry::create);
+	classTelemetry->addMethod("event", &Telemetry::event);
 	classTelemetry->addMethod("set", &Telemetry::set);
 	classTelemetry->addMethod("add", &Telemetry::add);
 	classTelemetry->addMethod("flush", &Telemetry::flush);

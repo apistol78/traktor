@@ -39,6 +39,8 @@ public:
 
 	bool create(const std::wstring& serverHost, const std::wstring& client);
 
+	void event(const std::wstring& symbol);
+
 	void set(const std::wstring& id, int32_t value);
 
 	void add(const std::wstring& id, int32_t value);
