@@ -5,7 +5,7 @@ Unique clients:
 		<table border="1">
 		<tr><td>Id</td><td>Client</td><td>Created</td></tr>
 <?php
-	require("Config.php");
+	require("../Config.php");
 
 	// Connect to database.
 	$db = new mysqli($DB_SERVER, $DB_USER, $DB_PASSWORD, $DB_NAME);

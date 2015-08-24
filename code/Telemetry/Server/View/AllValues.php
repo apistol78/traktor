@@ -5,7 +5,7 @@ All values:
 		<table border="1">
 		<tr><td>Client</td><td>Symbol</td><td>Value</td><td>Client time</td><td>Server time</td></tr>
 <?php
-	require("Config.php");
+	require("../Config.php");
 
 	// Connect to database.
 	$db = new mysqli($DB_SERVER, $DB_USER, $DB_PASSWORD, $DB_NAME);
