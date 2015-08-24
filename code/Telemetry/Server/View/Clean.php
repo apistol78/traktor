@@ -2,7 +2,7 @@
 	<body>
 
 <?php
-	require("Config.php");
+	require("../Config.php");
 
 	// Connect to database.
 	$db = new mysqli($DB_SERVER, $DB_USER, $DB_PASSWORD, $DB_NAME);
