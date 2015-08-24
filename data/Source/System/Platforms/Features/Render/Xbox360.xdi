@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="4">
-	<description>DirectX 9.0 Xbox360</description>
+<object type="traktor.amalgam.Feature" version="5">
+	<description>Render - DirectX 9.0 Xbox360</description>
 	<priority>0</priority>
 	<platforms>
 		<item>
 			<platform>{D6FF12FC-9FEF-394D-B898-F563786A8789}</platform>
+			<executableFile/>
 			<deployFiles>
 				<item>Traktor.Core.lib</item>
 				<item>Traktor.Compress.lib</item>

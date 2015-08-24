@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="4">
-	<description>LuaJIT</description>
+<object type="traktor.amalgam.Feature" version="5">
+	<description>Script - LuaJIT</description>
 	<priority>0</priority>
 	<platforms>
 		<item>
 			<platform>{C5B672D1-E72D-AC47-97D4-ABAA41F2F6BD}</platform>
+			<executableFile/>
 			<deployFiles>
 				<item>libTraktor.Core.so</item>
 				<item>libTraktor.Resource.so</item>
@@ -14,6 +15,7 @@
 		</item>
 		<item>
 			<platform>{9105E00C-D6AA-9140-B4D6-0CFD5B2FD76A}</platform>
+			<executableFile/>
 			<deployFiles>
 				<item>libTraktor.Core.dylib</item>
 				<item>libTraktor.Resource.dylib</item>
@@ -23,6 +25,7 @@
 		</item>
 		<item>
 			<platform>{7D0F1280-E37A-2541-8892-723B3C81569C}</platform>
+			<executableFile/>
 			<deployFiles>
 				<item>Traktor.Core.dll</item>
 				<item>Traktor.Resource.dll</item>
@@ -32,6 +35,7 @@
 		</item>
 		<item>
 			<platform>{DC125AEC-2E6B-AF4D-A852-35731A782340}</platform>
+			<executableFile/>
 			<deployFiles>
 				<item>Traktor.Core.dll</item>
 				<item>Traktor.Resource.dll</item>

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="4">
-	<description>Apple OSX</description>
+<object type="traktor.amalgam.Feature" version="5">
+	<description>System - Apple OSX</description>
 	<priority>0</priority>
 	<platforms>
 		<item>
 			<platform>{9105E00C-D6AA-9140-B4D6-0CFD5B2FD76A}</platform>
+			<executableFile/>
 			<deployFiles/>
 		</item>
 	</platforms>
@@ -16,8 +17,8 @@
 					<value>
 						<item>Traktor.Database</item>
 						<item>Traktor.Database.Local</item>
-						<item>Traktor.Resource.Editor</item>
 						<item>Traktor.Illuminate.Editor</item>
+						<item>Traktor.Resource.Editor</item>
 					</value>
 				</second>
 			</item>

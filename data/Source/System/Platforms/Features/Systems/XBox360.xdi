@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="4">
-	<description>Microsoft XBox360</description>
+<object type="traktor.amalgam.Feature" version="5">
+	<description>System - Microsoft XBox360</description>
 	<priority>0</priority>
 	<platforms>
 		<item>
 			<platform>{D6FF12FC-9FEF-394D-B898-F563786A8789}</platform>
+			<executableFile/>
 			<deployFiles/>
 		</item>
 	</platforms>
@@ -16,8 +17,8 @@
 					<value>
 						<item>Traktor.Database</item>
 						<item>Traktor.Database.Local</item>
-						<item>Traktor.Resource.Editor</item>
 						<item>Traktor.Illuminate.Editor</item>
+						<item>Traktor.Resource.Editor</item>
 					</value>
 				</second>
 			</item>

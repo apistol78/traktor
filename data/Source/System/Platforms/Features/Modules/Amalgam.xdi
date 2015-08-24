@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.amalgam.Feature" version="5">
-	<description>Amalgam GAME - Application Framework</description>
+	<description>Module - Amalgam GAME - Application Framework</description>
 	<priority>0</priority>
 	<platforms>
 		<item>
@@ -450,8 +450,8 @@
 				<second type="traktor.PropertyStringSet">
 					<value>
 						<item>Traktor.Amalgam</item>
-						<item>Traktor.Amalgam.Game</item>
 						<item>Traktor.Amalgam.Editor</item>
+						<item>Traktor.Amalgam.Game</item>
 					</value>
 				</second>
 			</item>
