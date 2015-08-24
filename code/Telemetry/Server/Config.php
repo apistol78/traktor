@@ -14,7 +14,7 @@
 	$DB_NAME = "playgear_telemetry";
 
 	// Event timestamp limit.
-	$EVENT_LIMIT = (60 * 60 * 24);
+	$EVENT_LIMIT = 60 * 24 * 60 * 60;	// 60 days
 
 	// Common metrics symbols.
 	$SYMBOL_LAUNCH_EVENT = "ID_LAUNCH";
