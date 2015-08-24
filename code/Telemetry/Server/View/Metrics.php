@@ -61,6 +61,41 @@ body {
 	$row = $result->fetch_assoc();
 	$DS = $row["ds"];
 
+	// Calculate retentions.
+	function retention($db, $daysAfter)
+	{
+		$count = 0;
+		$value = 0;
+
+		$result = $db->query("SELECT * FROM tbl_clients WHERE tbl_clients.serverTimeStamp <= " . (time() - $daysAfter * 60 * 60 * 24));
+		while ($row = $result->fetch_assoc())
+		{
+			$clientId = $row["id"];
+			$firstLaunchTimeStamp = (int)$row["serverTimeStamp"];
+			$activeAfterTimeStamp = $firstLaunchTimeStamp + $daysAfter * 60 * 60 * 24;
+			$result2 = $db->query(
+				"SELECT COUNT(*) AS value FROM tbl_events " .
+				"WHERE tbl_events.clientId=" . $clientId . " AND tbl_events.symbolId=(SELECT id FROM tbl_symbols WHERE symbol='" . $SYMBOL_LAUNCH_EVENT . "') AND tbl_events.serverTimeStamp >= " . $activeAfterTimeStamp
+			);
+			$row2 = $result2->fetch_assoc();
+			$value += $row2["value"];
+			$count += 1;
+		}
+
+		if ($count > 0)
+			$value /= $count;
+
+		return array(
+			"value" => $value,
+			"count" => $count
+		);
+	}
+
+	$D1 = retention($db, 1);
+	$D3 = retention($db, 3);
+	$D7 = retention($db, 7);
+	$D30 = retention($db, 30);
+
 	// Close connection.
 	$db->close();
 ?>
@@ -86,6 +121,18 @@ body {
 				</tr>
 				<tr>
 					<td>DAU/MAU</td><td><?php echo(round(100 * $DAU/$MAU, 2) . "%"); ?></td>
+				</tr>
+				<tr>
+					<td>Retention D1</td><td><?php echo(round(100 * $D1["value"], 2) . "% of " . $D1["count"] . " client(s)"); ?></td>
+				</tr>
+				<tr>
+					<td>Retention D3</td><td><?php echo(round(100 * $D3["value"], 2) . "% of " . $D3["count"] . " client(s)"); ?></td>
+				</tr>
+				<tr>
+					<td>Retention D7</td><td><?php echo(round(100 * $D7["value"], 2) . "% of " . $D7["count"] . " client(s)"); ?></td>
+				</tr>
+				<tr>
+					<td>Retention D30</td><td><?php echo(round(100 * $D30["value"], 2) . "% of " . $D30["count"] . " client(s)"); ?></td>
 				</tr>
 			</table>
 		</center>
