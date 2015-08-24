@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="4">
-	<description>Havok Physics</description>
+<object type="traktor.amalgam.Feature" version="5">
+	<description>Physics - Havok</description>
 	<priority>0</priority>
 	<platforms>
 		<item>
 			<platform>{7D0F1280-E37A-2541-8892-723B3C81569C}</platform>
+			<executableFile/>
 			<deployFiles>
 				<item>Traktor.Core.dll</item>
 				<item>Traktor.Database.dll</item>

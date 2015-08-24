@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.amalgam.Feature" version="5">
-	<description>Android Input</description>
+	<description>Input - Android</description>
 	<priority>0</priority>
 	<platforms>
 		<item>

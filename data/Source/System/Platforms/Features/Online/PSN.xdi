@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="4">
-	<description>PlayStation Network</description>
+<object type="traktor.amalgam.Feature" version="5">
+	<description>Online - PlayStation Network</description>
 	<priority>0</priority>
 	<platforms>
 		<item>
 			<platform>{14814B5B-2FF1-2F4B-BE92-08CAB3D0D544}</platform>
+			<executableFile/>
 			<deployFiles>
 				<item>libsysutil_np_stub.a</item>
 				<item>libsysutil_np_trophy_stub.a</item>

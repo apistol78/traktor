@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="4">
-	<description>Advanced Linux Sound Architecture</description>
+<object type="traktor.amalgam.Feature" version="5">
+	<description>Audio - Advanced Linux Sound Architecture</description>
 	<priority>0</priority>
 	<platforms>
 		<item>
 			<platform>{C5B672D1-E72D-AC47-97D4-ABAA41F2F6BD}</platform>
+			<executableFile/>
 			<deployFiles>
 				<item>libTraktor.Core.so</item>
 				<item>libTraktor.Sound.so</item>

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="4">
-	<description>iOS Touch Input</description>
+<object type="traktor.amalgam.Feature" version="5">
+	<description>Input - iOS Touch</description>
 	<priority>0</priority>
 	<platforms>
 		<item>
 			<platform>{13FF3E12-076E-274E-B347-8F323ECD53A7}</platform>
+			<executableFile/>
 			<deployFiles>
 				<item>libTraktor.Core.a</item>
 				<item>libTraktor.Input.a</item>

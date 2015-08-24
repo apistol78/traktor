@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="4">
-	<description>XInput</description>
+<object type="traktor.amalgam.Feature" version="5">
+	<description>Input - XInput</description>
 	<priority>0</priority>
 	<platforms>
 		<item>
 			<platform>{7D0F1280-E37A-2541-8892-723B3C81569C}</platform>
+			<executableFile/>
 			<deployFiles>
 				<item>Traktor.Core.dll</item>
 				<item>Traktor.Input.dll</item>
@@ -13,6 +14,7 @@
 		</item>
 		<item>
 			<platform>{DC125AEC-2E6B-AF4D-A852-35731A782340}</platform>
+			<executableFile/>
 			<deployFiles>
 				<item>Traktor.Core.dll</item>
 				<item>Traktor.Input.dll</item>
@@ -21,6 +23,7 @@
 		</item>
 		<item>
 			<platform>{D6FF12FC-9FEF-394D-B898-F563786A8789}</platform>
+			<executableFile/>
 			<deployFiles/>
 		</item>
 	</platforms>
