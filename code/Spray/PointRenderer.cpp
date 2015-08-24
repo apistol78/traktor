@@ -249,9 +249,7 @@ void PointRenderer::flush(
 
 		for (AlignedVector< Batch >::const_iterator i = m_batches.begin(); i != m_batches.end(); ++i)
 		{
-			T_ASSERT (i->shader);
-
-			if (!i->count)
+			if (!i->count || !i->shader)
 				continue;
 
 			worldRenderPass.setShaderTechnique(i->shader);

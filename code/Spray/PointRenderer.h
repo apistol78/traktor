@@ -90,7 +90,7 @@ private:
 	{
 		uint32_t count;
 		float distance;
-		render::Shader* shader;
+		Ref< render::Shader > shader;
 		uint32_t offset;
 
 		Batch()
