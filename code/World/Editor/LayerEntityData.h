@@ -16,6 +16,8 @@ namespace traktor
 	namespace world
 	{
 
+class ILayerAttribute;
+
 /*! \brief Layer entity data.
  * \ingroup World
  *
@@ -47,11 +49,22 @@ public:
 
 	bool isDynamic() const { return m_dynamic; }
 
+	void setAttribute(const ILayerAttribute* attribute);
+
+	const ILayerAttribute* getAttribute(const TypeInfo& attributeType) const;
+
+	template < typename AttributeType >
+	const AttributeType* getAttribute() const
+	{
+		return checked_type_cast< const AttributeType*, true >(getAttribute(type_of< AttributeType >()));
+	}
+
 private:
 	bool m_visible;
 	bool m_locked;
 	bool m_include;
 	bool m_dynamic;
+	RefArray< const ILayerAttribute > m_attributes;
 };
 
 	}

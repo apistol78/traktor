@@ -24,6 +24,8 @@ class T_DLLCLASS OcclusionTextureAsset : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	OcclusionTextureAsset();
+
 	virtual void serialize(ISerializer& s);
 
 private:
@@ -31,6 +33,8 @@ private:
 
 	resource::Id< Heightfield > m_heightfield;
 	resource::Id< ISerializable > m_occluderData;
+	uint32_t m_size;
+	float m_traceDistance;
 };
 
 	}
