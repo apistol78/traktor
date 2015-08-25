@@ -305,6 +305,7 @@ void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classHttpClient->addConstructor();
 	classHttpClient->addMethod("get", &HttpClient::get);
 	classHttpClient->addMethod("put", &HttpClient::put);
+	classHttpClient->addMethod("post", &HttpClient::post);
 	registrar->registerClass(classHttpClient);
 
 	Ref< AutoRuntimeClass< HttpResponse > > classHttpResponse = new AutoRuntimeClass< HttpResponse >();

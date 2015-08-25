@@ -30,6 +30,8 @@ public:
 	Ref< HttpResponse > get(const net::Url& url, const std::wstring& content);
 
 	Ref< HttpResponse > put(const net::Url& url, const std::wstring& content);
+
+	Ref< HttpResponse > post(const net::Url& url, const std::wstring& content);
 };
 
 	}
