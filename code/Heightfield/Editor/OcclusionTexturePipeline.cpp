@@ -21,6 +21,7 @@
 #include "Heightfield/Heightfield.h"
 #include "Heightfield/HeightfieldFormat.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
+#include "Heightfield/Editor/OcclusionLayerAttribute.h"
 #include "Heightfield/Editor/OcclusionTextureAsset.h"
 #include "Heightfield/Editor/OcclusionTexturePipeline.h"
 #include "Mesh/MeshEntityData.h"
@@ -95,7 +96,8 @@ void collectMeshEntities(const ISerializable* object, const Transform& transform
 		}
 		else if (world::LayerEntityData* layerEntityData = dynamic_type_cast< world::LayerEntityData* >(objectMember->get()))
 		{
-			if (layerEntityData->isDynamic())
+			const OcclusionLayerAttribute* attr = layerEntityData->getAttribute< OcclusionLayerAttribute >();
+			if (attr && !attr->trace())
 				continue;
 
 			collectMeshEntities(
@@ -113,6 +115,57 @@ void collectMeshEntities(const ISerializable* object, const Transform& transform
 			);
 		}
 	}
+}
+
+Vector4 normalAt(const Heightfield* heightfield, int32_t u, int32_t v)
+{
+	const float c_distance = 0.5f;
+	const float directions[][2] =
+	{
+		{ -c_distance, -c_distance },
+		{        0.0f, -c_distance },
+		{  c_distance, -c_distance },
+		{  c_distance,        0.0f },
+		{  c_distance,  c_distance },
+		{        0.0f,        0.0f },
+		{ -c_distance,  c_distance },
+		{ -c_distance,        0.0f }
+	};
+
+	float h0 = heightfield->getGridHeightNearest(u, v);
+
+	float h[sizeof_array(directions)];
+	for (uint32_t i = 0; i < sizeof_array(directions); ++i)
+		h[i] = heightfield->getGridHeightBilinear(u + directions[i][0], v + directions[i][1]);
+
+	const Vector4& worldExtent = heightfield->getWorldExtent();
+	float sx = worldExtent.x() / heightfield->getSize();
+	float sy = worldExtent.y();
+	float sz = worldExtent.z() / heightfield->getSize();
+
+	Vector4 N = Vector4::zero();
+
+	for (uint32_t i = 0; i < sizeof_array(directions); ++i)
+	{
+		uint32_t j = (i + 1) % sizeof_array(directions);
+
+		float dx1 = directions[i][0] * sx;
+		float dy1 = (h[i] - h0) * sy;
+		float dz1 = directions[i][1] * sz;
+
+		float dx2 = directions[j][0] * sx;
+		float dy2 = (h[j] - h0) * sy;
+		float dz2 = directions[j][1] * sz;
+
+		Vector4 n = cross(
+			Vector4(dx2, dy2, dz2),
+			Vector4(dx1, dy1, dz1)
+		);
+
+		N += n;
+	}
+
+	return N.normalized();
 }
 
 struct TraceTask : public Object
@@ -177,7 +230,7 @@ struct TraceTask : public Object
 				heightfield->gridToWorld(gx, gz, wx, wz);
 
 				Vector4 origin = Tinv * Vector4(wx, wy, wz, 1.0f);
-				Vector4 direction = Tinv * Vector4(0.0f, 1.0f, 0.0f, 0.0f);
+				Vector4 direction = Tinv * normalAt(heightfield, gx, gz);
 				Vector4 directionHalf = direction * Scalar(0.5f);
 
 				int32_t occluded = 0;
@@ -189,7 +242,7 @@ struct TraceTask : public Object
 
 				float o = 1.0f - occluded / float(rayCount);
 
-				Color4f c(0.4f + o * 0.6f, 0.0f, 0.0f, 1.0f);
+				Color4f c(o, o, o, 1.0f);
 				occlusion->setPixel(ix - (mnx - c_margin), iz - (mnz - c_margin), c);
 			}
 		}
@@ -293,14 +346,8 @@ bool OcclusionTexturePipeline::buildOutput(
 	log::info << L"Found " << int32_t(meshEntityData.size()) << L" mesh(es)" << Endl;
 
 	// Trace occlusion onto heightfield.
-	Ref< drawing::Image > image = new drawing::Image(drawing::PixelFormat::getA8R8G8B8(), 1024, 1024);
-	image->clear(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
-
 	std::map< std::wstring, Ref< SahTree > > treeCache;
 	RandomGeometry rnd;
-
-	float maxTraceDistance = c_margin * heightfieldAsset->getWorldExtent().x() / image->getWidth();
-	log::info << L"Tracing, max distance = " << maxTraceDistance << L" unit(s)" << Endl;
 
 	RefArray< TraceTask > tasks;
 	RefArray< Job > jobs;
@@ -368,15 +415,15 @@ bool OcclusionTexturePipeline::buildOutput(
 		}
 
 		Ref< TraceTask > task = new TraceTask();
-		task->resolution = image->getWidth();
-		task->maxTraceDistance = maxTraceDistance;
+		task->resolution = asset->m_size;
+		task->maxTraceDistance = asset->m_traceDistance;
 		task->worldExtent = heightfieldAsset->getWorldExtent();
 		task->transform = (*i)->getTransform();
 		task->heightfield = heightfield;
 		task->tree = tree;
 		task->x = 0;
 		task->y = 0;
-		task->rayCount = m_editor ? 16 : 64;
+		task->rayCount = m_editor ? 16 : 128;
 
 		Ref< Job > job = JobManager::getInstance().add(makeFunctor(task.ptr(), &TraceTask::execute));
 		T_ASSERT (job);
@@ -386,6 +433,9 @@ bool OcclusionTexturePipeline::buildOutput(
 	}
 
 	log::info << L"Collecting task(s)..." << Endl;
+
+	Ref< drawing::Image > image = new drawing::Image(drawing::PixelFormat::getA8R8G8B8(), asset->m_size, asset->m_size);
+	image->clear(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
 
 	for (size_t i = 0; i < jobs.size(); ++i)
 	{
@@ -411,13 +461,9 @@ bool OcclusionTexturePipeline::buildOutput(
 	jobs.clear();
 	tasks.clear();
 
-	log::info << L"Blurring occlusion mask..." << Endl;
-
-	Ref< drawing::ConvolutionFilter > blurFilter = drawing::ConvolutionFilter::createGaussianBlur3();
+	Ref< drawing::ConvolutionFilter > blurFilter = drawing::ConvolutionFilter::createGaussianBlur5();
 	image->apply(blurFilter);
-
-	drawing::MirrorFilter mirrorFilter(false, true);
-	image->apply(&mirrorFilter);
+	image->apply(blurFilter);
 
 	Ref< render::TextureOutput > output = new render::TextureOutput();
 	output->m_hasAlpha = false;
