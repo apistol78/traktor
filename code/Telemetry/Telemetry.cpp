@@ -43,6 +43,7 @@ bool Telemetry::create(const std::wstring& serverHost, const std::wstring& clien
 	m_serverHost = serverHost;
 	m_client = client;
 
+	// Create queue processing thread.
 	m_thread = ThreadManager::getInstance().create(
 		makeFunctor(this, &Telemetry::threadProcessQueue),
 		L"Telemetry"
@@ -58,23 +59,32 @@ bool Telemetry::create(const std::wstring& serverHost, const std::wstring& clien
 
 void Telemetry::event(const std::wstring& symbol)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	m_queue.push_back(new EventTask(m_serverHost, m_client, symbol));
-	m_queueSignal.set();
+	if (m_thread)
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		m_queue.push_back(new EventTask(m_serverHost, m_client, symbol));
+		m_queueSignal.set();
+	}
 }
 
 void Telemetry::set(const std::wstring& symbol, int32_t value)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	m_queue.push_back(new SetValueTask(m_serverHost, m_client, symbol, value));
-	m_queueSignal.set();
+	if (m_thread)
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		m_queue.push_back(new SetValueTask(m_serverHost, m_client, symbol, value));
+		m_queueSignal.set();
+	}
 }
 
 void Telemetry::add(const std::wstring& symbol, int32_t value)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	m_queue.push_back(new AddValueTask(m_serverHost, m_client, symbol, value));
-	m_queueSignal.set();
+	if (m_thread)
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		m_queue.push_back(new AddValueTask(m_serverHost, m_client, symbol, value));
+		m_queueSignal.set();
+	}
 }
 
 void Telemetry::flush()
