@@ -162,6 +162,7 @@ bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, co
 	if (state)
 		m_treeDatabase->applyState(state);
 
+	updatePreviewList();
 	return true;
 }
 
@@ -219,7 +220,7 @@ ui::custom::TreeViewItem* BrowseInstanceDialog::buildGroupItems(ui::custom::Tree
 	return groupItem;
 }
 
-void BrowseInstanceDialog::eventTreeItemSelected(ui::SelectionChangeEvent* event)
+void BrowseInstanceDialog::updatePreviewList()
 {
 	RefArray< ui::custom::TreeViewItem > items;
 	m_treeDatabase->getItems(items, ui::custom::TreeView::GfDescendants | ui::custom::TreeView::GfSelectedOnly);
@@ -248,6 +249,11 @@ void BrowseInstanceDialog::eventTreeItemSelected(ui::SelectionChangeEvent* event
 	}
 	else
 		m_listInstances->setItems(0);
+}
+
+void BrowseInstanceDialog::eventTreeItemSelected(ui::SelectionChangeEvent* event)
+{
+	updatePreviewList();
 }
 
 void BrowseInstanceDialog::eventListItemSelected(ui::custom::PreviewSelectionChangeEvent* event)

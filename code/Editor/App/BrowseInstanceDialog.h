@@ -69,6 +69,8 @@ private:
 
 	ui::custom::TreeViewItem* buildGroupItems(ui::custom::TreeView* treeView, ui::custom::TreeViewItem* parent, db::Group* group, const IBrowseFilter* filter);
 
+	void updatePreviewList();
+
 	void eventTreeItemSelected(ui::SelectionChangeEvent* event);
 
 	void eventListItemSelected(ui::custom::PreviewSelectionChangeEvent* event);

@@ -42,6 +42,8 @@ private:
 	Ref< ui::custom::PreviewList > m_typeList;
 	const TypeInfo* m_type;
 
+	void updatePreviewList();
+
 	void eventDialogClick(ui::ButtonClickEvent* event);
 
 	void eventTreeItemSelected(ui::SelectionChangeEvent* event);
