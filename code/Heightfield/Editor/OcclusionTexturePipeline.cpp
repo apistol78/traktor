@@ -96,6 +96,9 @@ void collectMeshEntities(const ISerializable* object, const Transform& transform
 		}
 		else if (world::LayerEntityData* layerEntityData = dynamic_type_cast< world::LayerEntityData* >(objectMember->get()))
 		{
+			if (!layerEntityData->isInclude())
+				continue;
+
 			const OcclusionLayerAttribute* attr = layerEntityData->getAttribute< OcclusionLayerAttribute >();
 			if (attr && !attr->trace())
 				continue;
