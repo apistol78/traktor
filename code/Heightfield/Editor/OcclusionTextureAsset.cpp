@@ -1,3 +1,4 @@
+#include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Heightfield/Heightfield.h"
 #include "Heightfield/Editor/OcclusionTextureAsset.h"
@@ -8,11 +9,12 @@ namespace traktor
 	namespace hf
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.hf.OcclusionTextureAsset", 1, OcclusionTextureAsset, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.hf.OcclusionTextureAsset", 2, OcclusionTextureAsset, ISerializable)
 
 OcclusionTextureAsset::OcclusionTextureAsset()
 :	m_size(1024)
 ,	m_traceDistance(16.0f)
+,	m_blurRadius(0)
 {
 }
 
@@ -23,9 +25,12 @@ void OcclusionTextureAsset::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 1)
 	{
-		s >> Member< uint32_t >(L"size", m_size);
-		s >> Member< float >(L"traceDistance", m_traceDistance);
+		s >> Member< uint32_t >(L"size", m_size, AttributeRange(16));
+		s >> Member< float >(L"traceDistance", m_traceDistance, AttributeRange(0.0f));
 	}
+
+	if (s.getVersion() >= 2)
+		s >> Member< int32_t >(L"blurRadius", m_blurRadius, AttributeRange(0));
 }
 
 	}

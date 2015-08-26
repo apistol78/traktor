@@ -35,6 +35,7 @@ private:
 	resource::Id< ISerializable > m_occluderData;
 	uint32_t m_size;
 	float m_traceDistance;
+	int32_t m_blurRadius;
 };
 
 	}
