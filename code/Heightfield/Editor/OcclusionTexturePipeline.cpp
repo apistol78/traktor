@@ -453,7 +453,12 @@ bool OcclusionTexturePipeline::buildOutput(
 			{
 				tasks[i]->occlusion->getPixel(x, y, cs);
 				image->getPixel(x + tasks[i]->x, y + tasks[i]->y, cd);
-				image->setPixel(x + tasks[i]->x, y + tasks[i]->y, cd * cs);
+
+				float os = cs.getRed();
+				float od = cd.getRed();
+				float o = std::min(os, od);
+
+				image->setPixel(x + tasks[i]->x, y + tasks[i]->y, Color4f(o, o, o, 1.0f));
 			}
 		}
 	}
@@ -461,9 +466,11 @@ bool OcclusionTexturePipeline::buildOutput(
 	jobs.clear();
 	tasks.clear();
 
-	Ref< drawing::ConvolutionFilter > blurFilter = drawing::ConvolutionFilter::createGaussianBlur5();
-	image->apply(blurFilter);
-	image->apply(blurFilter);
+	if (asset->m_blurRadius > 0)
+	{
+		Ref< drawing::ConvolutionFilter > blurFilter = drawing::ConvolutionFilter::createGaussianBlur(asset->m_blurRadius);
+		image->apply(blurFilter);
+	}
 
 	Ref< render::TextureOutput > output = new render::TextureOutput();
 	output->m_hasAlpha = false;

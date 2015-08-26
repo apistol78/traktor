@@ -25,11 +25,15 @@ class T_DLLCLASS ConvolutionFilter : public IImageFilter
 	T_RTTI_CLASS;
 
 public:
-	ConvolutionFilter(const float* matrix, int32_t size);
+	explicit ConvolutionFilter(int32_t size);
+
+	explicit ConvolutionFilter(const float* matrix, int32_t size);
 
 	static Ref< ConvolutionFilter > createGaussianBlur3();
 
 	static Ref< ConvolutionFilter > createGaussianBlur5();
+
+	static Ref< ConvolutionFilter > createGaussianBlur(int32_t radius);
 
 	static Ref< ConvolutionFilter > createEmboss();
 

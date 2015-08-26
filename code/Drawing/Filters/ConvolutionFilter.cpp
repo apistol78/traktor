@@ -1,3 +1,4 @@
+#include <cmath>
 #include <cstring>
 #include "Drawing/Image.h"
 #include "Drawing/Filters/ConvolutionFilter.h"
@@ -8,6 +9,12 @@ namespace traktor
 	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ConvolutionFilter", ConvolutionFilter, IImageFilter)
+
+ConvolutionFilter::ConvolutionFilter(int32_t size)
+:	m_size(size)
+{
+	m_matrix.resize(size * size, 0.0f);
+}
 
 ConvolutionFilter::ConvolutionFilter(const float* matrix, int32_t size)
 :	m_size(size)
@@ -38,6 +45,21 @@ Ref< ConvolutionFilter > ConvolutionFilter::createGaussianBlur5()
 		2,  4,  5,  4, 2
 	};
 	return new ConvolutionFilter(c_kernel, 5);
+}
+
+Ref< ConvolutionFilter > ConvolutionFilter::createGaussianBlur(int32_t radius)
+{
+	Ref< ConvolutionFilter > filter = new ConvolutionFilter(radius * 2 + 1);
+	const float sigma = (radius + 1.0f) * (radius + 1.0f);
+	for (int32_t x = -radius; x <= radius; ++x)
+	{
+		for (int32_t y = -radius; y <= radius; ++y)
+		{
+			float g = std::exp(-(x * x + y * y) / (2.0f * sigma * sigma)) / (2.0f * PI * sigma * sigma);
+			filter->m_matrix[(x + radius) + (y + radius) * filter->m_size] = g;
+		}
+	}
+	return filter;
 }
 
 Ref< ConvolutionFilter > ConvolutionFilter::createEmboss()
