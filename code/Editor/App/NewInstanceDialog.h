@@ -48,6 +48,8 @@ private:
 	const TypeInfo* m_type;
 	std::wstring m_instanceName;
 
+	void updatePreviewList();
+
 	void eventDialogClick(ui::ButtonClickEvent* event);
 
 	void eventTreeItemSelected(ui::SelectionChangeEvent* event);

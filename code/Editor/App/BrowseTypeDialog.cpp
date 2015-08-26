@@ -166,6 +166,7 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfo* base, bool onl
 	if (state)
 		m_categoryTree->applyState(state);
 
+	updatePreviewList();
 	return true;
 }
 
@@ -185,6 +186,19 @@ const TypeInfo* BrowseTypeDialog::getSelectedType() const
 	return m_type;
 }
 
+void BrowseTypeDialog::updatePreviewList()
+{
+	RefArray< ui::custom::TreeViewItem > items;
+	m_categoryTree->getItems(items, ui::custom::TreeView::GfDescendants | ui::custom::TreeView::GfSelectedOnly);
+	if (!items.empty())
+	{
+		Ref< ui::custom::PreviewItems > previewItems = items[0]->getData< ui::custom::PreviewItems >(L"ITEMS");
+		m_typeList->setItems(previewItems);
+	}
+	else
+		m_typeList->setItems(0);
+}
+
 void BrowseTypeDialog::eventDialogClick(ui::ButtonClickEvent* event)
 {
 	Ref< ui::custom::PreviewItem > item = m_typeList->getSelectedItem();
@@ -200,15 +214,7 @@ void BrowseTypeDialog::eventDialogClick(ui::ButtonClickEvent* event)
 
 void BrowseTypeDialog::eventTreeItemSelected(ui::SelectionChangeEvent* event)
 {
-	RefArray< ui::custom::TreeViewItem > items;
-	m_categoryTree->getItems(items, ui::custom::TreeView::GfDescendants | ui::custom::TreeView::GfSelectedOnly);
-	if (!items.empty())
-	{
-		Ref< ui::custom::PreviewItems > previewItems = items[0]->getData< ui::custom::PreviewItems >(L"ITEMS");
-		m_typeList->setItems(previewItems);
-	}
-	else
-		m_typeList->setItems(0);
+	updatePreviewList();
 }
 
 void BrowseTypeDialog::eventListDoubleClick(ui::MouseDoubleClickEvent* event)
