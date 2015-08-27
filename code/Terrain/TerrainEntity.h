@@ -174,6 +174,8 @@ private:
 	render::handle_t m_handleDetailDistance;
 	render::handle_t m_handleDebugPatchColor;
 	render::handle_t m_handleDebugMap;
+	render::handle_t m_handleCutEnable;
+	render::handle_t m_handleColorEnable;
 
 	bool updatePatches();
 

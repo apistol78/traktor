@@ -396,6 +396,11 @@ world::Entity* WorldLayer::getEntity(const std::wstring& name) const
 	return m_scene->getEntitySchema()->getEntity(name);
 }
 
+world::Entity* WorldLayer::getEntity(const std::wstring& name, int32_t index) const
+{
+	return m_scene->getEntitySchema()->getEntity(name, index);
+}
+
 RefArray< world::Entity > WorldLayer::getEntities(const std::wstring& name) const
 {
 	RefArray< world::Entity > entities;

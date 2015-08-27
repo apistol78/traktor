@@ -81,6 +81,7 @@ TerrainSurfaceCache::TerrainSurfaceCache()
 :	m_clearCache(true)
 ,	m_updateCount(0)
 ,	m_size(0)
+,	m_handleColorEnable(render::getParameterHandle(L"ColorEnable"))
 ,	m_handleHeightfield(render::getParameterHandle(L"Heightfield"))
 ,	m_handleColorMap(render::getParameterHandle(L"ColorMap"))
 ,	m_handleSplatMap(render::getParameterHandle(L"SplatMap"))
@@ -303,7 +304,7 @@ void TerrainSurfaceCache::get(
 	render::ISimpleTexture* colorMap = terrain->getColorMap();
 	render::ISimpleTexture* splatMap = terrain->getSplatMap();
 
-	shader->setCombination(L"ColorEnable", colorMap != 0);
+	shader->setCombination(m_handleColorEnable, colorMap != 0);
 
 	if (!shader->getCurrentProgram())
 		return;
