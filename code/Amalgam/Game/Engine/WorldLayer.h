@@ -91,6 +91,8 @@ public:
 
 	world::Entity* getEntity(const std::wstring& name) const;
 
+	world::Entity* getEntity(const std::wstring& name, int32_t index) const;
+
 	RefArray< world::Entity > getEntities(const std::wstring& name) const;
 
 	RefArray< world::Entity > getEntitiesOf(const TypeInfo& entityType) const;

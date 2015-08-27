@@ -82,6 +82,8 @@ TerrainEntity::TerrainEntity(resource::IResourceManager* resourceManager, render
 ,	m_handleDetailDistance(render::getParameterHandle(L"DetailDistance"))
 ,	m_handleDebugPatchColor(render::getParameterHandle(L"DebugPatchColor"))
 ,	m_handleDebugMap(render::getParameterHandle(L"DebugMap"))
+,	m_handleCutEnable(render::getParameterHandle(L"CutEnable"))
+,	m_handleColorEnable(render::getParameterHandle(L"ColorEnable"))
 {
 }
 
@@ -153,11 +155,11 @@ void TerrainEntity::render(
 	worldRenderPass.setShaderTechnique(detailShader);
 	worldRenderPass.setShaderCombination(detailShader);
 
-	coarseShader->setCombination(L"CutEnable", m_terrain->getCutMap());
-	detailShader->setCombination(L"CutEnable", m_terrain->getCutMap());
+	coarseShader->setCombination(m_handleCutEnable, m_terrain->getCutMap());
+	detailShader->setCombination(m_handleCutEnable, m_terrain->getCutMap());
 
-	coarseShader->setCombination(L"ColorEnable", m_terrain->getColorMap());
-	detailShader->setCombination(L"ColorEnable", m_terrain->getColorMap());
+	coarseShader->setCombination(m_handleColorEnable, m_terrain->getColorMap());
+	detailShader->setCombination(m_handleColorEnable, m_terrain->getColorMap());
 
 	render::IProgram* coarseProgram = coarseShader->getCurrentProgram();
 	render::IProgram* detailProgram = detailShader->getCurrentProgram();
@@ -424,7 +426,7 @@ void TerrainEntity::render(
 		renderBlock->programParams = worldContext.getRenderContext()->alloc< render::ProgramParameters >();
 		renderBlock->indexBuffer = m_indexBuffer;
 		renderBlock->vertexBuffer = m_vertexBuffer;
-		renderBlock->primitives = &m_primitives[patch.lastPatchLod];
+		renderBlock->primitives = m_primitives[patch.lastPatchLod];
 
 		renderBlock->programParams->beginParameters(worldContext.getRenderContext());
 		worldRenderPass.setProgramParameters(renderBlock->programParams, render::RpOpaque);

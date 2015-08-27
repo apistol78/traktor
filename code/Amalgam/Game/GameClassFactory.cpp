@@ -78,6 +78,16 @@ Ref< flash::ActionObject > FlashLayer_createObject_1(FlashLayer* self, uint32_t 
 	return self->createObject(argc, argv);
 }
 
+world::Entity* WorldLayer_getEntity_1(WorldLayer* self, const std::wstring& name)
+{
+	return self->getEntity(name);
+}
+
+world::Entity* WorldLayer_getEntity_2(WorldLayer* self, const std::wstring& name, int32_t index)
+{
+	return self->getEntity(name, index);
+}
+
 Ref< world::Entity > WorldLayer_createEntity1(WorldLayer* self, const std::wstring& name, world::IEntitySchema* entitySchema)
 {
 	return self->createEntity(name, entitySchema);
@@ -288,7 +298,8 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	Ref< AutoRuntimeClass< WorldLayer > > classWorldLayer = new AutoRuntimeClass< WorldLayer >();
 	classWorldLayer->addMethod("getEntityData", &WorldLayer::getEntityData);
-	classWorldLayer->addMethod("getEntity", &WorldLayer::getEntity);
+	classWorldLayer->addMethod("getEntity", &WorldLayer_getEntity_1);
+	classWorldLayer->addMethod("getEntity", &WorldLayer_getEntity_2);
 	classWorldLayer->addMethod("getEntities", &WorldLayer::getEntities);
 	classWorldLayer->addMethod("getEntitiesOf", &WorldLayer::getEntitiesOf);
 	classWorldLayer->addMethod("createEntity", &WorldLayer_createEntity1);
