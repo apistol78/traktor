@@ -1,5 +1,6 @@
 #include <cmath>
 #include <cstring>
+#include "Core/Math/Const.h"
 #include "Drawing/Image.h"
 #include "Drawing/Filters/ConvolutionFilter.h"
 
