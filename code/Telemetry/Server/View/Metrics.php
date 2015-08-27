@@ -96,7 +96,7 @@ body {
 			);
 
 			$row2 = $result2->fetch_assoc();
-			$value += $row2["value"];
+			$value += ($row2["value"] > 0 ? 1 : 0);
 			$count += 1;
 		}
 
