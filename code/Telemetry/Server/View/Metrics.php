@@ -19,8 +19,13 @@ body {
 		die($db->connect_error);
 
 	$timeStampTo = time();
-	$timeStampFrom = $timeStampTo - (60 * 60 * 24);
-	$timeStampFromMonth = $timeStampTo - 28 * (60 * 60 * 24);
+	$timeStampFrom = $timeStampTo - $SECS_PER_DAY;
+	$timeStampFromMonth = $timeStampTo - 28 * $SECS_PER_DAY;
+
+	// Get launch symbol identifier.
+	$result = $db->query("SELECT id FROM tbl_symbols WHERE symbol='" . $SYMBOL_LAUNCH_EVENT . "'");
+	$row = $result->fetch_assoc();
+	$launchSymbolId = $row["id"];
 
 	// Calculate "Total User Count".
 	$result = $db->query(
@@ -32,7 +37,7 @@ body {
 	// Calculate "Daily Active Users".
 	$result = $db->query(
 		"SELECT COUNT(DISTINCT clientId) AS dau FROM tbl_events " .
-		"WHERE tbl_events.symbolId=(SELECT id FROM tbl_symbols WHERE symbol='" . $SYMBOL_LAUNCH_EVENT . "') AND tbl_events.serverTimeStamp >= " . $timeStampFrom . " AND tbl_events.serverTimeStamp <= " . $timeStampTo
+		"WHERE tbl_events.symbolId=" . $launchSymbolId . " AND tbl_events.serverTimeStamp >= " . $timeStampFrom . " AND tbl_events.serverTimeStamp <= " . $timeStampTo
 	);
 	$row = $result->fetch_assoc();
 	$DAU = $row["dau"];
@@ -40,7 +45,7 @@ body {
 	// Calculate "Monthly Active Users".
 	$result = $db->query(
 		"SELECT COUNT(DISTINCT clientId) AS mau FROM tbl_events " .
-		"WHERE tbl_events.symbolId=(SELECT id FROM tbl_symbols WHERE symbol='" . $SYMBOL_LAUNCH_EVENT . "') AND tbl_events.serverTimeStamp >= " . $timeStampFromMonth . " AND tbl_events.serverTimeStamp <= " . $timeStampTo
+		"WHERE tbl_events.symbolId=" . $launchSymbolId . " AND tbl_events.serverTimeStamp >= " . $timeStampFromMonth . " AND tbl_events.serverTimeStamp <= " . $timeStampTo
 	);
 	$row = $result->fetch_assoc();
 	$MAU = $row["mau"];
@@ -56,27 +61,40 @@ body {
 	// Calculate "Daily Sessions".
 	$result = $db->query(
 		"SELECT COUNT(*) AS ds FROM tbl_events " .
-		"WHERE tbl_events.symbolId=(SELECT id FROM tbl_symbols WHERE symbol='" . $SYMBOL_LAUNCH_EVENT . "') AND tbl_events.serverTimeStamp >= " . $timeStampFrom . " AND tbl_events.serverTimeStamp <= " . $timeStampTo
+		"WHERE tbl_events.symbolId=" . $launchSymbolId . " AND tbl_events.serverTimeStamp >= " . $timeStampFrom . " AND tbl_events.serverTimeStamp <= " . $timeStampTo
 	);
 	$row = $result->fetch_assoc();
 	$DS = $row["ds"];
 
 	// Calculate retentions.
-	function retention($db, $daysAfter)
+	function retention($db, $launchSymbolId, $daysSinceInstall)
 	{
+		require("../Config.php");
+
 		$count = 0;
 		$value = 0;
 
-		$result = $db->query("SELECT * FROM tbl_clients WHERE tbl_clients.serverTimeStamp <= " . (time() - $daysAfter * 60 * 60 * 24));
+		$T = time();
+
+		$clientsFromTimeStamp = $T - ($daysSinceInstall + 1) * $SECS_PER_DAY;
+		$clientsToTimeStamp = $T - $daysSinceInstall * $SECS_PER_DAY;
+		// $activeFromTimeStamp = $T - $daysSinceInstall * $SECS_PER_DAY;
+		$activeFromTimeStamp = $T - $SECS_PER_DAY;
+		$activeToTimeStamp = $T;
+
+		$result = $db->query("SELECT * FROM tbl_clients WHERE tbl_clients.serverTimeStamp >= " . $clientsFromTimeStamp . " AND tbl_clients.serverTimeStamp <= " . $clientsToTimeStamp);
 		while ($row = $result->fetch_assoc())
 		{
 			$clientId = $row["id"];
-			$firstLaunchTimeStamp = (int)$row["serverTimeStamp"];
-			$activeAfterTimeStamp = $firstLaunchTimeStamp + $daysAfter * 60 * 60 * 24;
+
 			$result2 = $db->query(
 				"SELECT COUNT(*) AS value FROM tbl_events " .
-				"WHERE tbl_events.clientId=" . $clientId . " AND tbl_events.symbolId=(SELECT id FROM tbl_symbols WHERE symbol='" . $SYMBOL_LAUNCH_EVENT . "') AND tbl_events.serverTimeStamp >= " . $activeAfterTimeStamp
+				"WHERE tbl_events.clientId=" . $clientId . " AND " .
+				"tbl_events.symbolId=" . $launchSymbolId . " AND " .
+				"tbl_events.serverTimeStamp >= " . $activeFromTimeStamp . " AND " .
+				"tbl_events.serverTimeStamp <= " . $activeToTimeStamp
 			);
+
 			$row2 = $result2->fetch_assoc();
 			$value += $row2["value"];
 			$count += 1;
@@ -91,10 +109,10 @@ body {
 		);
 	}
 
-	$D1 = retention($db, 1);
-	$D3 = retention($db, 3);
-	$D7 = retention($db, 7);
-	$D30 = retention($db, 30);
+	$D1 = retention($db, $launchSymbolId, 1);
+	$D3 = retention($db, $launchSymbolId, 3);
+	$D7 = retention($db, $launchSymbolId, 7);
+	$D30 = retention($db, $launchSymbolId, 30);
 
 	// Close connection.
 	$db->close();
