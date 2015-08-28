@@ -210,8 +210,31 @@ bool MathNodeTraits::evaluatePartial(
 		}
 		return true;
 	}
-	//else if (is_a< Exp >(node))
-	//else if (is_a< Fraction >(node))
+	else if (is_a< Exp >(node))
+	{
+		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
+		{
+			if (inputConstants[0].isConst(i))
+				outputConstant.setValue(i, std::exp(inputConstants[0].getValue(i)));
+			else
+				outputConstant.setVariant(i);
+		}
+		return true;
+	}
+	else if (is_a< Fraction >(node))
+	{
+		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
+		{
+			if (inputConstants[0].isConst(i))
+			{
+				float v = inputConstants[0].getValue(i);
+				outputConstant.setValue(i, v - std::floor(v));
+			}
+			else
+				outputConstant.setVariant(i);
+		}
+		return true;
+	}
 	else if (is_a< Interpolator >(node))
 	{
 		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)

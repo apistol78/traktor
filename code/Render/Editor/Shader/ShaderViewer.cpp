@@ -17,6 +17,7 @@
 #include "Render/Resource/FragmentLinker.h"
 #include "Render/Shader/Nodes.h"
 #include "Render/Shader/ShaderGraph.h"
+#include "Ui/Application.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/SyntaxRichEdit/SyntaxLanguageHlsl.h"
 #include "Ui/Custom/SyntaxRichEdit/SyntaxRichEdit.h"
@@ -116,7 +117,7 @@ bool ShaderViewer::create(ui::Widget* parent)
 #elif defined(__LINUX__)
 	m_shaderEdit->setFont(ui::Font(L"Courier New", 14));
 #else
-	m_shaderEdit->setFont(ui::Font(L"Consolas", 14));
+	m_shaderEdit->setFont(ui::Font(L"Consolas", ui::scaleBySystemDPI(14)));
 #endif
 
 	// Create reflector thread.
