@@ -20,6 +20,7 @@ namespace traktor
 
 const int32_t c_lineMarginMin = 40;
 const int32_t c_iconSize = 16;
+const int32_t c_scrollHSteps = 10;
 
 #if defined(__APPLE__)
 const int32_t c_fontHeightMargin = 4;
@@ -48,10 +49,12 @@ RichEdit::RichEdit()
 :	m_imageWidth(0)
 ,	m_imageHeight(0)
 ,	m_imageCount(0)
+,	m_charWidth(0)
 ,	m_caret(0)
 ,	m_selectionStart(-1)
 ,	m_selectionStop(-1)
 ,	m_lineMargin(c_lineMarginMin)
+,	m_lineOffsetH(0)
 {
 }
 
@@ -435,14 +438,34 @@ void RichEdit::updateScrollBars()
 	uint32_t lineHeight = font.getSize() + c_fontHeightMargin;
 	uint32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
 
+	uint32_t lineWidth = 0;
+	for (std::vector< Line >::const_iterator i = m_lines.begin(); i != m_lines.end(); ++i)
+	{
+		uint32_t x = 0;
+		for (int32_t j = i->start; j < i->stop; ++j)
+		{
+			if (m_text[j] != '\t')
+				x += m_charWidth;
+			else
+				x = alignUp(x + 4 * 8, 4 * 8);
+		}
+		lineWidth = std::max< uint32_t >(lineWidth, x);
+	}
+
 	m_scrollBarV->setRange(lineCount + pageLines);
 	m_scrollBarV->setPage(pageLines);
 	m_scrollBarV->setVisible(lineCount > pageLines);
 	m_scrollBarV->update();
 
-	m_scrollBarH->setRange(100);
-	m_scrollBarH->setPage(10);
-	m_scrollBarH->setVisible(true);
+	if (lineWidth >= rc.getWidth() - m_lineMargin)
+	{
+		m_scrollBarH->setRange(lineWidth / c_scrollHSteps);
+		m_scrollBarH->setPage(c_scrollHSteps);
+		m_scrollBarH->setVisible(true);
+	}
+	else
+		m_scrollBarH->setVisible(false);
+
 	m_scrollBarH->update();
 }
 
@@ -646,9 +669,7 @@ int32_t RichEdit::getCharacterStops(const std::wstring& text, std::vector< int32
 	{
 		outStops.push_back(x);
 		if (*i != '\t')
-		{
-			x = x0 + getTextExtent(std::wstring(i0, i + 1)).cx;
-		}
+			x = x0 + m_charWidth;
 		else
 		{
 			x = alignUp(x + 4 * 8, 4 * 8);
@@ -942,7 +963,7 @@ void RichEdit::eventButtonDown(MouseButtonDownEvent* event)
 	std::vector< int32_t > stops;
 	int32_t lineWidth = getCharacterStops(text, stops);
 
-	int32_t linePosition = mousePosition.x - m_lineMargin;
+	int32_t linePosition = mousePosition.x - m_lineMargin + m_lineOffsetH;
 	if (linePosition < lineWidth)
 	{
 		for (int32_t i = stops.size() - 1; i >= 0; --i)
@@ -983,6 +1004,15 @@ void RichEdit::eventPaint(PaintEvent* event)
 	Font font = getFont();
 	Rect rc = getInnerRect();
 
+	// Cache font character width.
+	int32_t charWidth = canvas.getTextExtent(L" ").cx;
+	if (charWidth != m_charWidth)
+	{
+		m_charWidth = charWidth;
+		updateScrollBars();
+	}
+
+	// Clear entire background.
 	canvas.setBackground(Color4ub(255, 255, 255));
 	canvas.fillRect(rc);
 
@@ -999,6 +1029,7 @@ void RichEdit::eventPaint(PaintEvent* event)
 
 	// Calculate margin width from highest visible line number.
 	m_lineMargin = c_iconSize + canvas.getTextExtent(toString(lineOffset + pageLines)).cx + 2;
+	m_lineOffsetH = m_scrollBarH->getPosition() * c_scrollHSteps;
 
 	// Background
 	{
@@ -1033,6 +1064,13 @@ void RichEdit::eventPaint(PaintEvent* event)
 
 	// Formatted text.
 	{
+		canvas.setClipRect(Rect(
+			rc.left + m_lineMargin,
+			rc.top,
+			rc.right,
+			rc.bottom
+		));
+
 		Rect lineRc(rc.left, rc.top, rc.right, rc.top + lineHeight);
 		uint32_t lineOffsetEnd = std::min(lineOffset + pageLines, lineCount);
 		for (uint32_t i = lineOffset; i < lineOffsetEnd; ++i)
@@ -1049,7 +1087,7 @@ void RichEdit::eventPaint(PaintEvent* event)
 
 				if (m_caret == j)
 				{
-					textRc.left = m_lineMargin + 2 + x - 1;
+					textRc.left = m_lineMargin + 2 + x - 1 - m_lineOffsetH;
 					textRc.right = textRc.left + 1;
 
 					canvas.setBackground(Color4ub(0, 0, 0));
@@ -1072,25 +1110,24 @@ void RichEdit::eventPaint(PaintEvent* event)
 
 				if (m_text[j] != '\t')
 				{
-					std::wstring ch(&m_text[j], &m_text[j + 1]);
-					int32_t chw = canvas.getTextExtent(ch).cx;
-
-					textRc.left = m_lineMargin + 2 + x;
-					textRc.right = textRc.left + chw;
+					textRc.left = m_lineMargin + 2 + x - m_lineOffsetH;
+					textRc.right = textRc.left + m_charWidth;
 
 					if (solidBackground)
 						canvas.fillRect(textRc);
+
+					std::wstring ch(&m_text[j], &m_text[j + 1]);
 					canvas.drawText(textRc, ch, AnLeft, AnCenter);
 
-					x += chw;
+					x += m_charWidth;
 				}
 				else
 				{
 					// Adjust offset to nearest tab-stop.
 					int32_t nx = alignUp(x + 4 * 8, 4 * 8);
 
-					textRc.left = m_lineMargin + 2 + x;
-					textRc.right = m_lineMargin + 2 + nx;
+					textRc.left = m_lineMargin + 2 + x - m_lineOffsetH;
+					textRc.right = m_lineMargin + 2 + nx - m_lineOffsetH;
 
 					if (solidBackground)
 						canvas.fillRect(textRc);

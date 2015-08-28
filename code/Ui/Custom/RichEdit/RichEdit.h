@@ -148,10 +148,12 @@ private:
 	std::vector< Line > m_lines;
 	std::vector< wchar_t > m_text;
 	std::vector< uint16_t > m_meta;
+	int32_t m_charWidth;
 	int32_t m_caret;
 	int32_t m_selectionStart;
 	int32_t m_selectionStop;
 	int32_t m_lineMargin;
+	int32_t m_lineOffsetH;
 
 #if defined(_DEBUG)
 	std::vector< Line > m_linesLastGood;
