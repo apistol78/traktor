@@ -72,6 +72,11 @@ bool TranslateModifier::cursorMoved(
 	TransformChain tc = transformChain;
 	tc.pushWorld(translate(m_center));
 
+	Vector4 viewDirection = m_center - tc.getView().inverse().translation();
+	float sx = viewDirection.x() < 0.0f ? 1.0f : -1.0f;
+	float sy = viewDirection.y() < 0.0f ? 1.0f : -1.0f;
+	float sz = viewDirection.z() < 0.0f ? 1.0f : -1.0f;
+
 	Vector2 center, axis0[3], axis1[3], square[6];
 	tc.objectToScreen(Vector4(0.0f, 0.0f, 0.0f, 1.0f), center);
 	tc.objectToScreen(Vector4(-axisLength, 0.0f, 0.0f, 1.0f), axis0[0]);
@@ -80,12 +85,12 @@ bool TranslateModifier::cursorMoved(
 	tc.objectToScreen(Vector4(axisLength + arrowLength, 0.0f, 0.0f, 1.0f), axis1[0]);
 	tc.objectToScreen(Vector4(0.0f, axisLength + arrowLength, 0.0f, 1.0f), axis1[1]);
 	tc.objectToScreen(Vector4(0.0f, 0.0f, axisLength + arrowLength, 1.0f), axis1[2]);
-	tc.objectToScreen(Vector4(squareLength, 0.0f, 0.0f, 1.0f), square[0]);
-	tc.objectToScreen(Vector4(0.0f, squareLength, 0.0f, 1.0f), square[1]);
-	tc.objectToScreen(Vector4(0.0f, 0.0f, squareLength, 1.0f), square[2]);
-	tc.objectToScreen(Vector4(squareLength, squareLength, 0.0f, 1.0f), square[3]);
-	tc.objectToScreen(Vector4(squareLength, 0.0f, squareLength, 1.0f), square[4]);
-	tc.objectToScreen(Vector4(0.0f, squareLength, squareLength, 1.0f), square[5]);
+	tc.objectToScreen(Vector4(sx * squareLength, 0.0f, 0.0f, 1.0f), square[0]);
+	tc.objectToScreen(Vector4(0.0f, sy * squareLength, 0.0f, 1.0f), square[1]);
+	tc.objectToScreen(Vector4(0.0f, 0.0f, sz * squareLength, 1.0f), square[2]);
+	tc.objectToScreen(Vector4(sx * squareLength, sy * squareLength, 0.0f, 1.0f), square[3]);
+	tc.objectToScreen(Vector4(sx * squareLength, 0.0f, sz * squareLength, 1.0f), square[4]);
+	tc.objectToScreen(Vector4(0.0f, sy * squareLength, sz * squareLength, 1.0f), square[5]);
 
 	tc.popWorld();
 
@@ -138,12 +143,15 @@ hit:;
 	}
 
 	// Check each line.
-	if (Line2(axis0[0], axis1[0]).classify(cursorPosition, c_guideThickness))
-		m_axisHot |= 1;
-	if (Line2(axis0[1], axis1[1]).classify(cursorPosition, c_guideThickness))
-		m_axisHot |= 2;
-	if (Line2(axis0[2], axis1[2]).classify(cursorPosition, c_guideThickness))
-		m_axisHot |= 4;
+	if (m_axisHot == 0)
+	{
+		if (Line2(axis0[0], axis1[0]).classify(cursorPosition, c_guideThickness))
+			m_axisHot |= 1;
+		if (Line2(axis0[1], axis1[1]).classify(cursorPosition, c_guideThickness))
+			m_axisHot |= 2;
+		if (Line2(axis0[2], axis1[2]).classify(cursorPosition, c_guideThickness))
+			m_axisHot |= 4;
+	}
 
 	return m_axisHot != 0;
 }
@@ -285,42 +293,49 @@ void TranslateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 		Color4ub(0, 0, 255, 255)
 	);
 
+	Vector4 viewDirection = m_center - primitiveRenderer->getView().inverse().translation();
+	float sx = viewDirection.x() < 0.0f ? 1.0f : -1.0f;
+	float sy = viewDirection.y() < 0.0f ? 1.0f : -1.0f;
+	float sz = viewDirection.z() < 0.0f ? 1.0f : -1.0f;
+
 	// Guide fill squares.
 	// XY
 	primitiveRenderer->drawSolidQuad(
 		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
-		Vector4(squareLength, 0.0f, 0.0f, 1.0f),
-		Vector4(squareLength, squareLength, 0.0f, 1.0f),
-		Vector4(0.0f, squareLength, 0.0f, 1.0f),
-		Color4ub(255, 255, 0, 70)
+		Vector4(sx * squareLength, 0.0f, 0.0f, 1.0f),
+		Vector4(sx * squareLength, sy * squareLength, 0.0f, 1.0f),
+		Vector4(0.0f, sy * squareLength, 0.0f, 1.0f),
+		Color4ub(255, 255, 0, m_axisHot == (1 | 2) ? 90 : 70)
 	);
 	// XZ
 	primitiveRenderer->drawSolidQuad(
 		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
-		Vector4(squareLength, 0.0f, 0.0f, 1.0f),
-		Vector4(squareLength, 0.0f, squareLength, 1.0f),
-		Vector4(0.0f, 0.0f, squareLength, 1.0f),
-		Color4ub(255, 255, 0, 70)
+		Vector4(sx * squareLength, 0.0f, 0.0f, 1.0f),
+		Vector4(sx * squareLength, 0.0f, sz * squareLength, 1.0f),
+		Vector4(0.0f, 0.0f, sz * squareLength, 1.0f),
+		Color4ub(255, 255, 0, m_axisHot == (1 | 4) ? 90 : 70)
 	);
 	// YZ
 	primitiveRenderer->drawSolidQuad(
 		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
-		Vector4(0.0f, squareLength, 0.0f, 1.0f),
-		Vector4(0.0f, squareLength, squareLength, 1.0f),
-		Vector4(0.0f, 0.0f, squareLength, 1.0f),
-		Color4ub(255, 255, 0, 70)
+		Vector4(0.0f, sy * squareLength, 0.0f, 1.0f),
+		Vector4(0.0f, sy * squareLength, sz * squareLength, 1.0f),
+		Vector4(0.0f, 0.0f, sz * squareLength, 1.0f),
+		Color4ub(255, 255, 0, m_axisHot == (2 | 4) ? 90 : 70)
 	);
 
 	// Guide square lines.
 	// XY
-	primitiveRenderer->drawLine(Vector4(squareLength, 0.0f, 0.0f, 1.0f), Vector4(squareLength, squareLength, 0.0f, 1.0f), ((m_axisHot & (1 | 2)) == (1 | 2)) ? 3.0f : 1.0f, Color4ub(255, 0, 0, 255));
-	primitiveRenderer->drawLine(Vector4(squareLength, 0.0f, 0.0f, 1.0f), Vector4(squareLength, 0.0f, squareLength, 1.0f), ((m_axisHot & (1 | 4)) == (1 | 4)) ? 3.0f : 1.0f, Color4ub(255, 0, 0, 255));
+	primitiveRenderer->drawLine(Vector4(sx * squareLength, 0.0f, 0.0f, 1.0f), Vector4(sx * squareLength, sy * squareLength, 0.0f, 1.0f), ((m_axisHot & (1 | 2)) == (1 | 2)) ? 3.0f : 1.0f, Color4ub(255, 0, 0, 255));
+	primitiveRenderer->drawLine(Vector4(0.0f, sy * squareLength, 0.0f, 1.0f), Vector4(sx * squareLength, sy * squareLength, 0.0f, 1.0f), ((m_axisHot & (1 | 2)) == (1 | 2)) ? 3.0f : 1.0f, Color4ub(0, 255, 0, 255));
+
 	// XZ
-	primitiveRenderer->drawLine(Vector4(0.0f, squareLength, 0.0f, 1.0f), Vector4(squareLength, squareLength, 0.0f, 1.0f), ((m_axisHot & (1 | 2)) == (1 | 2)) ? 3.0f : 1.0f, Color4ub(0, 255, 0, 255));
-	primitiveRenderer->drawLine(Vector4(0.0f, squareLength, 0.0f, 1.0f), Vector4(0.0f, squareLength, squareLength, 1.0f), ((m_axisHot & (2 | 4)) == (2 | 4)) ? 3.0f : 1.0f, Color4ub(0, 255, 0, 255));
+	primitiveRenderer->drawLine(Vector4(sx * squareLength, 0.0f, 0.0f, 1.0f), Vector4(sx * squareLength, 0.0f, sz * squareLength, 1.0f), ((m_axisHot & (1 | 4)) == (1 | 4)) ? 3.0f : 1.0f, Color4ub(255, 0, 0, 255));
+	primitiveRenderer->drawLine(Vector4(0.0f, 0.0f, sz * squareLength, 1.0f), Vector4(sx * squareLength, 0.0f, sz * squareLength, 1.0f), ((m_axisHot & (1 | 4)) == (1 | 4)) ? 3.0f : 1.0f, Color4ub(0, 0, 255, 255));
+
 	// YZ
-	primitiveRenderer->drawLine(Vector4(0.0f, 0.0f, squareLength, 1.0f), Vector4(squareLength, 0.0f, squareLength, 1.0f), ((m_axisHot & (1 | 4)) == (1 | 4)) ? 3.0f : 1.0f, Color4ub(0, 0, 255, 255));
-	primitiveRenderer->drawLine(Vector4(0.0f, 0.0f, squareLength, 1.0f), Vector4(0.0f, squareLength, squareLength, 1.0f), ((m_axisHot & (2 | 4)) == (2 | 4)) ? 3.0f : 1.0f, Color4ub(0, 0, 255, 255));
+	primitiveRenderer->drawLine(Vector4(0.0f, sy * squareLength, 0.0f, 1.0f), Vector4(0.0f, sy * squareLength, sz * squareLength, 1.0f), ((m_axisHot & (2 | 4)) == (2 | 4)) ? 3.0f : 1.0f, Color4ub(0, 255, 0, 255));
+	primitiveRenderer->drawLine(Vector4(0.0f, 0.0f, sz * squareLength, 1.0f), Vector4(0.0f, sy * squareLength, sz * squareLength, 1.0f), ((m_axisHot & (2 | 4)) == (2 | 4)) ? 3.0f : 1.0f, Color4ub(0, 0, 255, 255));
 
 	// Guide axis lines.
 	primitiveRenderer->drawLine(

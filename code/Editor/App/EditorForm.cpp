@@ -387,7 +387,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	// Load recently used files dictionary.
 	m_mru = loadRecent(OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB/Traktor.Editor.mru");
 
-	if (!ui::Form::create(c_title, 800, 600, ui::Form::WsDefault, new ui::TableLayout(L"100%", L"*,100%,*", 0, 0)))
+	if (!ui::Form::create(c_title, ui::scaleBySystemDPI(1280), ui::scaleBySystemDPI(900), ui::Form::WsDefault, new ui::TableLayout(L"100%", L"*,100%,*", 0, 0)))
 		return false;
 
 	setIcon(ui::Bitmap::load(c_ResourceTraktorSmall, sizeof(c_ResourceTraktorSmall), L"png"));
@@ -695,8 +695,8 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	// Restore last used form settings.
 	int x = m_mergedSettings->getProperty< PropertyInteger >(L"Editor.PositionX");
 	int y = m_mergedSettings->getProperty< PropertyInteger >(L"Editor.PositionY");
-	int width = m_mergedSettings->getProperty< PropertyInteger >(L"Editor.SizeWidth");
-	int height = m_mergedSettings->getProperty< PropertyInteger >(L"Editor.SizeHeight");
+	int width = m_mergedSettings->getProperty< PropertyInteger >(L"Editor.SizeWidth", ui::scaleBySystemDPI(1280));
+	int height = m_mergedSettings->getProperty< PropertyInteger >(L"Editor.SizeHeight", ui::scaleBySystemDPI(900));
 	setRect(ui::Rect(x, y, x + width, y + height));
 
 	if (m_mergedSettings->getProperty< PropertyBoolean >(L"Editor.Maximized"))
@@ -2128,7 +2128,7 @@ void EditorForm::loadHelpDictionary()
 	Ref< IStream > file = FileSystem::getInstance().open(helpFile, File::FmRead);
 	if (!file)
 	{
-		log::warning << L"Unable to open dictionary \"Help.xml\"; file missing." << Endl;
+		log::warning << L"Unable to open dictionary \"" << helpFile << L"\"; file missing." << Endl;
 		return;
 	}
 

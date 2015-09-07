@@ -568,11 +568,10 @@ void PropertyList::eventPaint(PaintEvent* event)
 	// Draw columns.
 	if (m_columnHeader)
 	{
-		canvas.setForeground(Color4ub(255, 255, 255));
-		canvas.setBackground(getSystemColor(ScButtonFace));
-		canvas.fillGradientRect(Rect(rcInner.left, rcInner.top, rcInner.right, rcInner.top + ui::scaleBySystemDPI(c_columnsHeight)));
+		canvas.setBackground(ss->getColor(this, L"header-background-color"));
+		canvas.fillRect(Rect(rcInner.left, rcInner.top, rcInner.right, rcInner.top + ui::scaleBySystemDPI(c_columnsHeight)));
 
-		canvas.setForeground(getSystemColor(ScWindowText));
+		canvas.setForeground(ss->getColor(this, this->isEnable() ? L"color" : L"color-disabled"));
 		canvas.drawText(
 			Rect(
 				rcInner.left + 2, rcInner.top,
@@ -583,13 +582,7 @@ void PropertyList::eventPaint(PaintEvent* event)
 			AnCenter
 		);
 
-		canvas.setForeground(Color4ub(208, 208, 208));
-		canvas.drawLine(
-			rcInner.left + m_separator, rcInner.top + 4,
-			rcInner.left + m_separator, rcInner.top + ui::scaleBySystemDPI(c_columnsHeight) - 4
-		);
-
-		canvas.setForeground(getSystemColor(ScWindowText));
+		canvas.setForeground(ss->getColor(this, this->isEnable() ? L"color" : L"color-disabled"));
 		canvas.drawText(
 			Rect(
 				rcInner.left + m_separator + 2, rcInner.top,
@@ -622,23 +615,23 @@ void PropertyList::eventPaint(PaintEvent* event)
 		Rect rcValue(rcItem.left + m_separator + 1, rcItem.top, rcItem.right, rcItem.bottom);
 		
 		// Draw item background.
-		canvas.setForeground(Color4ub(0, 0, 0));
+		canvas.setForeground(ss->getColor(this, (*i)->isSelected() ? L"item-color-selected" : L"color"));
 		(*i)->paintBackground(canvas, rcItem);
 
 		// Draw item text and possible expand image.
 		canvas.setClipRect(rcText);
-		canvas.setForeground(Color4ub(0, 0, 0));
+		canvas.setForeground(ss->getColor(this, (*i)->isSelected() ? L"item-color-selected" : L"color"));
 		(*i)->paintText(canvas, rcText);
 		canvas.resetClipRect();
 
 		// Draw item value.
 		canvas.setClipRect(rcValue);
-		canvas.setForeground(Color4ub(0, 0, 0));
+		canvas.setForeground(ss->getColor(this, (*i)->isSelected() ? L"item-color-selected" : L"color"));
 		(*i)->paintValue(canvas, rcValue);
 		canvas.resetClipRect();
 
 		// Draw horizontal item separator.
-		canvas.setForeground(Color4ub(190, 190, 200));
+		canvas.setForeground(ss->getColor(this, L"line-color"));
 		canvas.drawLine(Point(rcItem.left, rcItem.bottom), Point(rcItem.right, rcItem.bottom));
 
 		// Draw vertical item separator.

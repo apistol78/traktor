@@ -1,6 +1,8 @@
 #include "Core/Math/MathUtils.h"
 #include "Drawing/Image.h"
+#include "Ui/Application.h"
 #include "Ui/Bitmap.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Custom/PropertyList/PropertyCommandEvent.h"
 #include "Ui/Custom/PropertyList/PropertyContentChangeEvent.h"
 #include "Ui/Custom/PropertyList/PropertyItem.h"
@@ -192,26 +194,15 @@ void PropertyItem::mouseMove(MouseMoveEvent* event)
 
 void PropertyItem::paintBackground(Canvas& canvas, const Rect& rc)
 {
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	if (m_selected)
 	{
-		canvas.setForeground(Color4ub(240, 240, 250));
-		canvas.setBackground(Color4ub(220, 220, 230));
-		canvas.fillGradientRect(rc);
+		canvas.setBackground(ss->getColor(m_propertyList, L"item-background-color-selected"));
+		canvas.fillRect(rc);
 	}
 	else
 	{
-		int depth = getDepth();
-
-		if (!m_childItems.empty())
-			++depth;
-
-		Color4ub color = lerp(
-			Color4ub(255, 255, 255),
-			Color4ub(80, 80, 80),
-			clamp(depth / 10.0f, 0.0f, 1.0f)
-		);
-
-		canvas.setBackground(color);
+		canvas.setBackground(ss->getColor(m_propertyList, L"background-color"));
 		canvas.fillRect(rc);
 	}
 }

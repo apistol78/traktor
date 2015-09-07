@@ -3000,5 +3000,45 @@
       <first>SCRIPT_CLASS_WIZARDTOOL_INHERIT_CLASS_NAME</first>
       <second>Inherit from class</second>
     </item>
+    <item>
+      <first>POSTPROCESS_EDITOR_ADD_STEP</first>
+      <second>Add step</second>
+    </item>
+    <item>
+      <first>POSTPROCESS_EDITOR_REMOVE_STEP</first>
+      <second>Remove step</second>
+    </item>
+    <item>
+      <first>POSTPROCESS_EDITOR_MOVE_UP</first>
+      <second>Move up</second>
+    </item>
+    <item>
+      <first>POSTPROCESS_EDITOR_MOVE_DOWN</first>
+      <second>Move down</second>
+    </item>
+    <item>
+      <first>POSTPROCESS_EDITOR_ORDER</first>
+      <second>Order</second>
+    </item>
+    <item>
+      <first>POSTPROCESS_EDITOR_DESCRIPTION</first>
+      <second>Description</second>
+    </item>
+    <item>
+      <first>POSTPROCESS_EDITOR_ADD_TARGET_DEFINITION</first>
+      <second>Add target</second>
+    </item>
+    <item>
+      <first>POSTPROCESS_EDITOR_ADD_TEXTURE_DEFINITION</first>
+      <second>Add texture</second>
+    </item>
+    <item>
+      <first>POSTPROCESS_EDITOR_REMOVE_DEFINITION</first>
+      <second>Remove</second>
+    </item>
+    <item>
+      <first>POSTPROCESS_EDITOR_ID</first>
+      <second>Id</second>
+    </item>
   </map>
 </object>

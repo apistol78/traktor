@@ -1,5 +1,6 @@
 #pragma optimize( "", off )
 
+#include "Core/RefArray.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/Avm2/ActionOpcodes.h"
@@ -13,7 +14,7 @@
 #	define VM_BEGIN(op) \
 	case op : \
 		{ \
-		log::debug << T_WIDEN( #op ) << L" (scope stack " << scopeStack.depth() << L", op stack " << operationStack.depth() << L")" << Endl << IncreaseIndent;
+		log::debug << T_WIDEN( #op ) << L" (scope stack " << int32_t(scopeStack.size()) << L", op stack " << operationStack.depth() << L")" << Endl << IncreaseIndent;
 #	define VM_END() \
 	log::debug << DecreaseIndent; \
 		} \
@@ -76,8 +77,8 @@ void ActionVMImage2::execute(ActionFrame* frame) const
 	if (!methodBody)
 		return;
 
-	ActionValueStack operationStack(frame->getContext()->getPool());
-	ActionValueStack& scopeStack = frame->getStack();
+	ActionValueStack& operationStack = frame->getStack();
+	RefArray< ActionObject > scopeStack;
 
 	// Interprete bytecode.
 	const uint8_t T_UNALIGNED * pc = methodBody->code.c_ptr();
@@ -247,7 +248,7 @@ void ActionVMImage2::execute(ActionFrame* frame) const
 
 		VM_BEGIN(Avm2OpGetLocal)
 			uint32_t index = decodeU30(pc);
-		operationStack.push(frame->getRegister(index));
+			operationStack.push(frame->getRegister(index));
 		VM_END()
 
 		VM_BEGIN(Avm2OpGetLocal_0)
@@ -271,7 +272,7 @@ void ActionVMImage2::execute(ActionFrame* frame) const
 
 		VM_BEGIN(Avm2OpGetScopeObject)
 			int32_t offset = *pc++;
-			operationStack.push(scopeStack.top(scopeStack.depth() - offset - 1));
+			operationStack.push(ActionValue(scopeStack.front() + offset));
 		VM_END()
 
 		VM_BEGIN(Avm2OpGetSlot)
@@ -449,7 +450,7 @@ void ActionVMImage2::execute(ActionFrame* frame) const
 		VM_END()
 
 		VM_BEGIN(Avm2OpPopScope)
-			scopeStack.pop();
+			scopeStack.pop_back();
 		VM_END()
 
 		VM_BEGIN(Avm2OpPushByte)
@@ -483,7 +484,8 @@ void ActionVMImage2::execute(ActionFrame* frame) const
 		VM_END()
 
 		VM_BEGIN(Avm2OpPushScope)
-			scopeStack.push(operationStack.pop());
+			const ActionValue& v = operationStack.pop();
+			scopeStack.push_back(v.getObjectAlways(frame->getContext()));
 		VM_END()
 
 		VM_BEGIN(Avm2OpPushShort)

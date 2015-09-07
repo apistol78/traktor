@@ -263,8 +263,8 @@ bool SceneEditorPage::create(ui::Container* parent)
 
 	m_gridGuides = new ui::custom::GridView();
 	m_gridGuides->create(tabPageGuides, ui::WsDoubleBuffer | ui::WsTabStop);
-	m_gridGuides->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCENE_EDITOR_GUIDES_NAME"), 150));
-	m_gridGuides->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCENE_EDITOR_GUIDES_VISIBLE"), 50));
+	m_gridGuides->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCENE_EDITOR_GUIDES_NAME"), ui::scaleBySystemDPI(150)));
+	m_gridGuides->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCENE_EDITOR_GUIDES_VISIBLE"), ui::scaleBySystemDPI(50)));
 
 	for (std::set< std::wstring >::const_iterator i = guideIds.begin(); i != guideIds.end(); ++i)
 	{
