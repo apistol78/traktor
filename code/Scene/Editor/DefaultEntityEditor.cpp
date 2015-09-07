@@ -216,6 +216,8 @@ void DefaultEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 			Vector4 lightX = transform.axisX();
 			Vector4 lightZ = transform.axisZ();
 
+			primitiveRenderer->pushDepthState(true, true, false);
+
 			primitiveRenderer->drawLine(
 				lightPosition - lightDirection * Scalar(0.5f),
 				lightPosition + lightDirection * Scalar(0.5f),
@@ -228,6 +230,8 @@ void DefaultEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 				0.5f,
 				Color4ub(255, 255, 0)
 			);
+
+			primitiveRenderer->popDepthState();
 
 			primitiveRenderer->pushWorld(transform.toMatrix44());
 			primitiveRenderer->drawWireAabb(Aabb3(Vector4(-0.25f, -0.25f, -0.25f, 1.0f), Vector4(0.25f, 0.25f, 0.25f, 1.0f)), m_colorBoundingBox);

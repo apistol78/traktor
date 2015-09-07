@@ -1,6 +1,8 @@
 #include "Core/Misc/String.h"
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
+#include "I18N/Text.h"
+#include "Ui/Application.h"
 #include "Ui/Container.h"
 #include "Ui/Event.h"
 #include "Ui/FloodLayout.h"
@@ -68,46 +70,46 @@ bool PostProcessEditor::create(ui::Widget* parent, db::Instance* instance, ISeri
 		return false;
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
-	splitter->create(parent, true, 400, false);
+	splitter->create(parent, true, ui::scaleBySystemDPI(400), false);
 
 	Ref< ui::custom::Splitter > splitterView = new ui::custom::Splitter();
 	splitterView->create(splitter, false, 60, true);
 
 	Ref< ui::Container > containerSteps = new ui::Container();
-	containerSteps->create(splitterView, ui::WsClientBorder, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+	containerSteps->create(splitterView, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
 
 	m_toolBarSteps = new ui::custom::ToolBar();
 	m_toolBarSteps->create(containerSteps);
-	m_toolBarSteps->addItem(new ui::custom::ToolBarButton(L"Add step...", 0, ui::Command(L"World.PostProcess.AddStep"), ui::custom::ToolBarButton::BsText));
-	m_toolBarSteps->addItem(new ui::custom::ToolBarButton(L"Remove step", 0, ui::Command(L"World.PostProcess.RemoveStep"), ui::custom::ToolBarButton::BsText));
-	m_toolBarSteps->addItem(new ui::custom::ToolBarButton(L"Move up", 0, ui::Command(L"World.PostProcess.MoveUp"), ui::custom::ToolBarButton::BsText));
-	m_toolBarSteps->addItem(new ui::custom::ToolBarButton(L"Move down", 0, ui::Command(L"World.PostProcess.MoveDown"), ui::custom::ToolBarButton::BsText));
+	m_toolBarSteps->addItem(new ui::custom::ToolBarButton(i18n::Text(L"POSTPROCESS_EDITOR_ADD_STEP"), 0, ui::Command(L"World.PostProcess.AddStep"), ui::custom::ToolBarButton::BsText));
+	m_toolBarSteps->addItem(new ui::custom::ToolBarButton(i18n::Text(L"POSTPROCESS_EDITOR_REMOVE_STEP"), 0, ui::Command(L"World.PostProcess.RemoveStep"), ui::custom::ToolBarButton::BsText));
+	m_toolBarSteps->addItem(new ui::custom::ToolBarButton(i18n::Text(L"POSTPROCESS_EDITOR_MOVE_UP"), 0, ui::Command(L"World.PostProcess.MoveUp"), ui::custom::ToolBarButton::BsText));
+	m_toolBarSteps->addItem(new ui::custom::ToolBarButton(i18n::Text(L"POSTPROCESS_EDITOR_MOVE_DOWN"), 0, ui::Command(L"World.PostProcess.MoveDown"), ui::custom::ToolBarButton::BsText));
 	m_toolBarSteps->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &PostProcessEditor::eventStepToolClick);
 
 	m_gridSteps = new ui::custom::GridView();
 	m_gridSteps->create(containerSteps, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader);
-	m_gridSteps->addColumn(new ui::custom::GridColumn(L"Order", 60));
-	m_gridSteps->addColumn(new ui::custom::GridColumn(L"Description", 300));
+	m_gridSteps->addColumn(new ui::custom::GridColumn(i18n::Text(L"POSTPROCESS_EDITOR_ORDER"), ui::scaleBySystemDPI(60)));
+	m_gridSteps->addColumn(new ui::custom::GridColumn(i18n::Text(L"POSTPROCESS_EDITOR_DESCRIPTION"), ui::scaleBySystemDPI(300)));
 	m_gridSteps->addEventHandler< ui::SelectionChangeEvent >(this, &PostProcessEditor::eventGridStepSelect);
 
 	Ref< ui::Container > containerDefinitions = new ui::Container();
-	containerDefinitions->create(splitterView, ui::WsClientBorder, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+	containerDefinitions->create(splitterView, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
 
 	m_toolBarDefinitions = new ui::custom::ToolBar();
 	m_toolBarDefinitions->create(containerDefinitions);
-	m_toolBarDefinitions->addItem(new ui::custom::ToolBarButton(L"Add target", 0, ui::Command(L"World.PostProcess.AddTargetDefinition"), ui::custom::ToolBarButton::BsText));
-	m_toolBarDefinitions->addItem(new ui::custom::ToolBarButton(L"Add texture", 0, ui::Command(L"World.PostProcess.AddTextureDefinition"), ui::custom::ToolBarButton::BsText));
-	m_toolBarDefinitions->addItem(new ui::custom::ToolBarButton(L"Remove definition", 0, ui::Command(L"World.PostProcess.RemoveDefinition"), ui::custom::ToolBarButton::BsText));
+	m_toolBarDefinitions->addItem(new ui::custom::ToolBarButton(i18n::Text(L"POSTPROCESS_EDITOR_ADD_TARGET_DEFINITION"), 0, ui::Command(L"World.PostProcess.AddTargetDefinition"), ui::custom::ToolBarButton::BsText));
+	m_toolBarDefinitions->addItem(new ui::custom::ToolBarButton(i18n::Text(L"POSTPROCESS_EDITOR_ADD_TEXTURE_DEFINITION"), 0, ui::Command(L"World.PostProcess.AddTextureDefinition"), ui::custom::ToolBarButton::BsText));
+	m_toolBarDefinitions->addItem(new ui::custom::ToolBarButton(i18n::Text(L"POSTPROCESS_EDITOR_REMOVE_DEFINITION"), 0, ui::Command(L"World.PostProcess.RemoveDefinition"), ui::custom::ToolBarButton::BsText));
 	m_toolBarDefinitions->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &PostProcessEditor::eventDefinitionToolClick);
 
 	m_gridDefinitions = new ui::custom::GridView();
 	m_gridDefinitions->create(containerDefinitions, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader);
-	m_gridDefinitions->addColumn(new ui::custom::GridColumn(L"Id", 60));
-	m_gridDefinitions->addColumn(new ui::custom::GridColumn(L"Description", 300));
+	m_gridDefinitions->addColumn(new ui::custom::GridColumn(i18n::Text(L"POSTPROCESS_EDITOR_ID"), ui::scaleBySystemDPI(60)));
+	m_gridDefinitions->addColumn(new ui::custom::GridColumn(i18n::Text(L"POSTPROCESS_EDITOR_DESCRIPTION"), ui::scaleBySystemDPI(300)));
 	m_gridDefinitions->addEventHandler< ui::SelectionChangeEvent >(this, &PostProcessEditor::eventGridDefinitionSelect);
 
 	Ref< ui::Container > container = new ui::Container();
-	container->create(splitter, ui::WsClientBorder, new ui::FloodLayout());
+	container->create(splitter, ui::WsNone, new ui::FloodLayout());
 
 	m_properties = new PostProcessProperties(m_editor);
 	m_properties->create(container);
@@ -146,7 +148,7 @@ void PostProcessEditor::apply()
 
 ui::Size PostProcessEditor::getPreferredSize() const
 {
-	return ui::Size(900, 600);
+	return ui::Size(ui::scaleBySystemDPI(900), ui::scaleBySystemDPI(600));
 }
 
 bool PostProcessEditor::handleCommand(const ui::Command& command)

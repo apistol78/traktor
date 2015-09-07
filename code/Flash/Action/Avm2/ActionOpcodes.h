@@ -1,6 +1,8 @@
 #ifndef traktor_flash_ActionOpcodes_H
 #define traktor_flash_ActionOpcodes_H
 
+#include "Core/Config.h"
+
 namespace traktor
 {
 	namespace flash
@@ -155,6 +157,17 @@ enum Avm2OpCodes
 	Avm2OpTypeOf			= 0x95,
 	Avm2OpURShift			= 0xa7
 };
+
+struct Avm2OpCodeInfo
+{
+	Avm2OpCodes op;
+	const wchar_t* name;
+	uint32_t width;
+};
+
+extern const Avm2OpCodeInfo c_avm2OpCodeInfo[];
+
+const Avm2OpCodeInfo* findOpCodeInfo(uint8_t op);
 
 	}
 }

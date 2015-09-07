@@ -6,6 +6,7 @@
 #include "Core/Misc/Endian.h"
 #include "Core/Misc/TString.h"
 #include "Flash/Action/Avm2/AbcFile.h"
+#include "Flash/Action/Avm2/ActionOpcodes.h"
 
 namespace traktor
 {
@@ -676,6 +677,21 @@ void MethodBodyInfo::dump(const ConstantPool& cpool) const
 	log::info << L"initScopeDepth = " << initScopeDepth << Endl;
 	log::info << L"maxScopeDepth = " << maxScopeDepth << Endl;
 	log::info << L"codeLength = " << codeLength << Endl;
+
+	const uint8_t T_UNALIGNED * pc = code.c_ptr();
+	for (uint32_t i = 0; i < codeLength; ++i)
+	{
+		uint8_t op = *pc++;
+		const Avm2OpCodeInfo* opInfo = findOpCodeInfo(op);
+		if (opInfo)
+		{
+			log::info << i << L": " << opInfo->name << Endl;
+			pc += opInfo->width;
+		}
+		else
+			log::info << i << L": INVALID" << Endl;
+	}
+
 	log::info << L"exceptionCount = " << exceptionCount << Endl;
 	for (uint32_t i = 0; i < exceptionCount; ++i)
 	{
