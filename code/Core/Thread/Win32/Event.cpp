@@ -73,8 +73,11 @@ bool Event::wait(int timeout)
 	bool result = false;
 
 	Internal* in = reinterpret_cast< Internal* >(m_handle);
-
 	InterlockedIncrement((LPLONG)&in->listeners);
+
+#if !defined(WINCE) && !defined(_XBOX)
+	MMRESULT mmresult = timeBeginPeriod(1);
+#endif
 
 	for (;;)
 	{
@@ -104,8 +107,12 @@ bool Event::wait(int timeout)
 		LeaveCriticalSection(&in->lock);
 	}
 
-	InterlockedDecrement((LPLONG)&in->listeners);
+#if !defined(WINCE) && !defined(_XBOX)
+	if (mmresult == TIMERR_NOERROR)
+		timeEndPeriod(1);
+#endif
 
+	InterlockedDecrement((LPLONG)&in->listeners);
 	return result;
 }
 

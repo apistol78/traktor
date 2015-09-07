@@ -122,7 +122,18 @@ bool Thread::resume()
 
 void Thread::sleep(int duration)
 {
+#if !defined(WINCE) && !defined(_XBOX)
+	MMRESULT result = TIMERR_NOCANDO;
+	if (duration <= 10)
+		result = timeBeginPeriod(1);
+#endif
+
 	Sleep(duration);
+
+#if !defined(WINCE) && !defined(_XBOX)
+	if (result == TIMERR_NOERROR)
+		timeEndPeriod(1);
+#endif
 }
 
 void Thread::yield()
