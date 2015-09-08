@@ -1,5 +1,7 @@
 #pragma optimize( "", off )
 
+#include <list>
+
 #include "Core/Log/Log.h"
 #include "Core/Math/Aabb2.h"
 #include "Core/Math/Format.h"
@@ -47,11 +49,11 @@ public:
 		if (style->getFillEnable())
 		{
 			// Create triangles from possibly complex shapes.
-			Triangulator().freeze(shape, m_triangles);
+			Triangulator().freeze(shape, m_triangles, Triangulator::TfSorted | Triangulator::TsCheckWinding);
 			if (!m_triangles.empty())
 			{
 				// Batch triangles by style.
-				Batch& batch = m_batches[style];
+				Batch batch;
 
 				uint32_t vertexBase = uint32_t(batch.vertices.size());
 				batch.vertices.insert(batch.vertices.end(), shape.begin(), shape.end());
@@ -64,15 +66,17 @@ public:
 				}
 
 				m_triangles.resize(0);
+
+				m_batches.push_back(std::make_pair(style, batch));
 			}
 		}
 	}
 
-	const std::map< const Style*, Batch >& getBatches() const { return m_batches; }
+	const std::list< std::pair< const Style*, Batch > >& getBatches() const { return m_batches; }
 
 private:
 	std::vector< Triangulator::Triangle > m_triangles;
-	std::map< const Style*, Batch > m_batches;
+	std::list< std::pair< const Style*, Batch > > m_batches;
 };
 
 		}
@@ -186,13 +190,13 @@ bool ShapePipeline::buildOutput(
 	}
 
 	// Create render mesh from triangles and write to data stream.
-	const std::map< const Style*, TriangleProducer::Batch >& batches = triangleProducer.getBatches();
+	const std::list< std::pair< const Style*, TriangleProducer::Batch > >& batches = triangleProducer.getBatches();
 
 	// Count number of vertices and indices.
 	uint32_t vertexCount = 0;
 	uint32_t indexCount = 0;
 
-	for (std::map< const Style*, TriangleProducer::Batch >::const_iterator i = batches.begin(); i != batches.end(); ++i)
+	for (std::list< std::pair< const Style*, TriangleProducer::Batch > >::const_iterator i = batches.begin(); i != batches.end(); ++i)
 	{
 		vertexCount += uint32_t(i->second.vertices.size());
 		indexCount += uint32_t(i->second.triangles.size() * 3);
@@ -200,7 +204,7 @@ bool ShapePipeline::buildOutput(
 
 	// Measure shape bounds.
 	Aabb2 boundingBox;
-	for (std::map< const Style*, TriangleProducer::Batch >::const_iterator i = batches.begin(); i != batches.end(); ++i)
+	for (std::list< std::pair< const Style*, TriangleProducer::Batch > >::const_iterator i = batches.begin(); i != batches.end(); ++i)
 	{
 		for (AlignedVector< Vector2 >::const_iterator j = i->second.vertices.begin(); j != i->second.vertices.end(); ++j)
 		{
@@ -213,6 +217,7 @@ bool ShapePipeline::buildOutput(
 	// Define shape render vertex.
 	std::vector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, 0));
+	vertexElements.push_back(render::VertexElement(render::DuColor, render::DtFloat4, 2 * sizeof(float)));
 
 	Ref< render::Mesh > renderMesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
@@ -223,7 +228,7 @@ bool ShapePipeline::buildOutput(
 
 	// Fill vertices.
 	float* vertex = static_cast< float* >(renderMesh->getVertexBuffer()->lock());
-	for (std::map< const Style*, TriangleProducer::Batch >::const_iterator i = batches.begin(); i != batches.end(); ++i)
+	for (std::list< std::pair< const Style*, TriangleProducer::Batch > >::const_iterator i = batches.begin(); i != batches.end(); ++i)
 	{
 		for (AlignedVector< Vector2 >::const_iterator j = i->second.vertices.begin(); j != i->second.vertices.end(); ++j)
 		{
@@ -231,16 +236,24 @@ bool ShapePipeline::buildOutput(
 			T_FATAL_ASSERT(!isNanOrInfinite(j->y));
 			*vertex++ = j->x - boundingBox.getCenter().x;
 			*vertex++ = j->y - boundingBox.getCenter().y;
+
+			*vertex++ = i->first->getFill().r / 255.0f;
+			*vertex++ = i->first->getFill().g / 255.0f;
+			*vertex++ = i->first->getFill().b / 255.0f;
+			*vertex++ = i->first->getFill().a / 255.0f;
 		}
 	}
 	renderMesh->getVertexBuffer()->unlock();
 
 	// Fill indices.
 	uint16_t* index = static_cast< uint16_t* >(renderMesh->getIndexBuffer()->lock());
-	for (std::map< const Style*, TriangleProducer::Batch >::const_iterator i = batches.begin(); i != batches.end(); ++i)
+
+	uint32_t vertexOffset = 0;
+	for (std::list< std::pair< const Style*, TriangleProducer::Batch > >::const_iterator i = batches.begin(); i != batches.end(); ++i)
 	{
 		for (AlignedVector< uint32_t >::const_iterator j = i->second.triangles.begin(); j != i->second.triangles.end(); ++j)
-			*index++ = *j;
+			*index++ = vertexOffset + *j;
+		vertexOffset += uint32_t(i->second.vertices.size());
 	}
 	renderMesh->getIndexBuffer()->unlock();
 
@@ -248,7 +261,7 @@ bool ShapePipeline::buildOutput(
 	std::vector< render::Mesh::Part > meshParts;
 
 	uint32_t indexOffset = 0;
-	for (std::map< const Style*, TriangleProducer::Batch >::const_iterator i = batches.begin(); i != batches.end(); ++i)
+	for (std::list< std::pair< const Style*, TriangleProducer::Batch > >::const_iterator i = batches.begin(); i != batches.end(); ++i)
 	{
 		render::Mesh::Part part;
 		part.name = L"";
@@ -262,7 +275,6 @@ bool ShapePipeline::buildOutput(
 		meshParts.push_back(part);
 		indexOffset += uint32_t(i->second.triangles.size() * 3);
 	}
-
 	renderMesh->setParts(meshParts);
 
 	// No bounding box used.

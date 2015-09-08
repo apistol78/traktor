@@ -17,7 +17,7 @@ Gradient::GradientType Gradient::getGradientType() const
 	return m_gradientType;
 }
 
-void Gradient::addStop(float offset, unsigned long color)
+void Gradient::addStop(float offset, const Color4ub& color)
 {
 	Stop stop = { offset, color };
 	m_stops.push_back(stop);
