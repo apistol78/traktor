@@ -78,7 +78,7 @@ int32_t translateVirtualKey(ui::VirtualKey vk)
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.FlashPreviewControl", FlashPreviewControl, ui::Widget)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashPreviewControl", FlashPreviewControl, ui::Widget)
 
 FlashPreviewControl::FlashPreviewControl()
 :	m_playing(false)
