@@ -9,10 +9,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.Style", Style, Object)
 	
 Style::Style()
 :	m_fillEnable(false)
-,	m_fill(0xffffff)
+,	m_fill(255, 255, 255, 255)
 ,	m_strokeEnable(false)
 ,	m_strokeWidth(1.0f)
-,	m_stroke(0x000000)
+,	m_stroke(0, 0, 0, 255)
 {
 }
 
@@ -36,12 +36,12 @@ Gradient* Style::getFillGradient() const
 	return m_fillGradient;
 }
 
-void Style::setFill(color_t fill)
+void Style::setFill(const Color4ub& fill)
 {
 	m_fill = fill;
 }
 
-Style::color_t Style::getFill() const
+const Color4ub& Style::getFill() const
 {
 	return m_fill;
 }
@@ -76,12 +76,12 @@ float Style::getStrokeWidth() const
 	return m_strokeWidth;
 }
 
-void Style::setStroke(color_t stroke)
+void Style::setStroke(const Color4ub& stroke)
 {
 	m_stroke = stroke;
 }
 
-Style::color_t Style::getStroke() const
+const Color4ub& Style::getStroke() const
 {
 	return m_stroke;
 }

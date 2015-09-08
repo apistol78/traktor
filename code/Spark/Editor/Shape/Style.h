@@ -3,6 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/Ref.h"
+#include "Core/Math/Color4ub.h"
 
 namespace traktor
 {
@@ -16,8 +17,6 @@ class Style : public Object
 	T_RTTI_CLASS;
 
 public:
-	typedef unsigned long color_t;
-
 	Style();
 
 	void setFillEnable(bool fillEnable);
@@ -28,9 +27,9 @@ public:
 	
 	Gradient* getFillGradient() const;
 
-	void setFill(color_t fill);
+	void setFill(const Color4ub& fill);
 
-	color_t getFill() const;
+	const Color4ub& getFill() const;
 
 	void setStrokeEnable(bool strokeEnable);
 
@@ -44,18 +43,18 @@ public:
 
 	float getStrokeWidth() const;
 
-	void setStroke(color_t stroke);
+	void setStroke(const Color4ub& stroke);
 
-	color_t getStroke() const;
+	const Color4ub& getStroke() const;
 
 private:
 	bool m_fillEnable;
 	Ref< Gradient > m_fillGradient;
-	color_t m_fill;
+	Color4ub m_fill;
 	bool m_strokeEnable;
 	Ref< Gradient > m_strokeGradient;
 	float m_strokeWidth;
-	color_t m_stroke;
+	Color4ub m_stroke;
 };
 	
 	}

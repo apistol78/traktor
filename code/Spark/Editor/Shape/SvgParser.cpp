@@ -20,31 +20,31 @@ namespace traktor
 		namespace
 		{
 		
-const struct { const wchar_t* name; Style::color_t color; } c_colorTable[] =
+const struct { const wchar_t* name; Color4ub color; } c_colorTable[] =
 {
-	L"black",	0x000000,
-	L"red",		0xff0000,
-	L"green",	0x00ff00,
-	L"blue",	0x0000ff,
-	L"yellow",	0xffff00,
-	L"white",	0xffffff,
-	L"lime",	0x4080ff
+	L"black",	Color4ub(0, 0, 0, 255),
+	L"red",		Color4ub(255, 0, 0, 255),
+	L"green",	Color4ub(0, 255, 0, 255),
+	L"blue",	Color4ub(0, 0, 255, 255),
+	L"yellow",	Color4ub(255, 255, 0, 255),
+	L"white",	Color4ub(255, 255, 255, 255),
+	L"lime",	Color4ub(0x40, 0x80, 0xff, 255)
 };
 
-bool parseColor(const std::wstring& color, Style::color_t& outColor)
+bool parseColor(const std::wstring& color, Color4ub& outColor)
 {
 	if (startsWith< std::wstring >(color, L"#"))
 	{
 		int red, green, blue;
 		swscanf(color.c_str(), L"#%02x%02x%02x", &red, &green, &blue);
-		outColor = (unsigned char)(red) << 16 | (unsigned char)(green) << 8 | (unsigned char)(blue);
+		outColor = Color4ub(red, green, blue, 255);
 		return true;
 	}
 	else if (startsWith< std::wstring >(color, L"rgb"))
 	{
 		int red, green, blue;
 		swscanf(color.c_str(), L"rgb(%d,%d,%d)", &red, &green, &blue);
-		outColor = (unsigned char)(red) << 16 | (unsigned char)(green) << 8 | (unsigned char)(blue);
+		outColor = Color4ub(red, green, blue, 255);
 		return true;
 	}
 	else if (toLower(color) == L"none")
@@ -427,7 +427,7 @@ void SvgParser::parseDefs(xml::Element* elm)
 					float offset;
 					std::wstringstream(stop->getAttribute(L"offset")->getValue()) >> offset;
 					
-					unsigned long color;
+					Color4ub color;
 					parseColor(stop->getAttribute(L"stop-color")->getValue(), color);
 					
 					gradient->addStop(offset, color);
@@ -452,7 +452,7 @@ void SvgParser::parseDefs(xml::Element* elm)
 					float offset;
 					std::wstringstream(stop->getAttribute(L"offset")->getValue()) >> offset;
 					
-					unsigned long color;
+					Color4ub color;
 					parseColor(stop->getAttribute(L"stop-color")->getValue(), color);
 					
 					gradient->addStop(offset, color);
@@ -471,7 +471,7 @@ Ref< Style > SvgParser::parseStyle(xml::Element* elm)
 		return 0;
 
 	Ref< Style > style;
-	Style::color_t color;
+	Color4ub color;
 
 	if (elm->hasAttribute(L"fill"))
 	{

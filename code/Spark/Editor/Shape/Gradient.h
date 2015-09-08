@@ -2,6 +2,7 @@
 #define traktor_spark_Gradient_H
 
 #include "Core/Object.h"
+#include "Core/Math/Color4ub.h"
 
 namespace traktor
 {
@@ -23,13 +24,13 @@ public:
 	
 	GradientType getGradientType() const;
 	
-	void addStop(float offset, unsigned long color);
+	void addStop(float offset, const Color4ub& color);
 	
 private:
 	struct Stop
 	{
 		float offset;
-		unsigned long color;
+		Color4ub color;
 	};
 	
 	GradientType m_gradientType;
