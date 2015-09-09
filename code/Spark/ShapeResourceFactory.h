@@ -1,5 +1,5 @@
-#ifndef traktor_spark_CharacterResourceFactory_H
-#define traktor_spark_CharacterResourceFactory_H
+#ifndef traktor_spark_ShapeResourceFactory_H
+#define traktor_spark_ShapeResourceFactory_H
 
 #include "Resource/IResourceFactory.h"
 
@@ -30,12 +30,12 @@ class IRenderSystem;
 	namespace spark
 	{
 
-class T_DLLCLASS CharacterResourceFactory : public resource::IResourceFactory
+class T_DLLCLASS ShapeResourceFactory : public resource::IResourceFactory
 {
 	T_RTTI_CLASS;
 
 public:
-	CharacterResourceFactory(db::Database* db, render::IRenderSystem* renderSystem);
+	ShapeResourceFactory(db::Database* db, render::IRenderSystem* renderSystem);
 
 	virtual const TypeInfoSet getResourceTypes() const T_FINAL;
 
@@ -53,4 +53,4 @@ private:
 	}
 }
 
-#endif	// traktor_spark_CharacterResourceFactory_H
+#endif	// traktor_spark_ShapeResourceFactory_H

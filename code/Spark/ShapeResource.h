@@ -1,8 +1,8 @@
 #ifndef traktor_spark_ShapeResource_H
 #define traktor_spark_ShapeResource_H
 
+#include "Core/Serialization/ISerializable.h"
 #include "Resource/Id.h"
-#include "Spark/ICharacterResource.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -17,19 +17,29 @@ namespace traktor
 	namespace render
 	{
 
+class IRenderSystem;
 class Shader;
+
+	}
+
+	namespace resource
+	{
+
+class IResourceManager;
 
 	}
 
 	namespace spark
 	{
 
-class T_DLLCLASS ShapeResource : public ICharacterResource
+class Shape;
+
+class T_DLLCLASS ShapeResource : public ISerializable
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< Character > create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, db::Instance* resourceInstance) const;
+	Ref< Shape > create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, db::Instance* resourceInstance) const;
 
 	virtual void serialize(ISerializer& s);
 

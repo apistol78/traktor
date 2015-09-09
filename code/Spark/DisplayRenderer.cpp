@@ -19,11 +19,14 @@ bool DisplayRenderer::create(uint32_t frameCount)
 	for (uint32_t i = 0; i < frameCount; ++i)
 		m_renderContexts[i] = new render::RenderContext(2 * 1024 * 1024);
 
+	// Create global render context.
+	m_globalContext = new render::RenderContext(4096);
 	return true;
 }
 
 void DisplayRenderer::destroy()
 {
+	m_globalContext = 0;
 	m_renderContexts.clear();
 }
 
@@ -39,12 +42,19 @@ void DisplayRenderer::build(const DisplayList* displayList, uint32_t frame)
 	}
 }
 
-void DisplayRenderer::render(render::IRenderView* renderView, uint32_t frame)
+void DisplayRenderer::render(render::IRenderView* renderView, const Vector2& viewOffset, const Vector2& viewSize, uint32_t frame)
 {
-	m_renderContexts[frame]->render(
-		renderView, render::RpOverlay,
-		0
-	);
+	render::ProgramParameters programParams;
+	programParams.beginParameters(m_globalContext);
+
+	Vector4 viewOffsetSize(viewOffset.x, viewOffset.y, viewSize.x, viewSize.y);
+	programParams.setVectorParameter(L"Spark_ViewOffsetSize", viewOffsetSize);
+
+	programParams.endParameters(m_globalContext);
+
+	m_renderContexts[frame]->render(renderView, render::RpOverlay, &programParams);
+
+	m_globalContext->flush();
 }
 
 	}

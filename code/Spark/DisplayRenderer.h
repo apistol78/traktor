@@ -3,6 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Core/Math/Vector2.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -48,10 +49,11 @@ public:
 
 	void build(const DisplayList* displayList, uint32_t frame);
 
-	void render(render::IRenderView* renderView, uint32_t frame);
+	void render(render::IRenderView* renderView, const Vector2& viewOffset, const Vector2& viewSize, uint32_t frame);
 
 private:
 	RefArray< render::RenderContext > m_renderContexts;
+	Ref< render::RenderContext > m_globalContext;
 };
 
 	}

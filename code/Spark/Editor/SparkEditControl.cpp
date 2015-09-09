@@ -37,7 +37,7 @@ bool SparkEditControl::create(
 	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 16;
 	desc.stencilBits = 8;
-	desc.multiSample = 0;
+	desc.multiSample = 4;
 	desc.waitVBlank = false;
 	desc.nativeWindowHandle = getIWidget()->getSystemHandle();
 
@@ -58,6 +58,8 @@ bool SparkEditControl::create(
 	m_idleEventHandler = ui::Application::getInstance()->addEventHandler< ui::IdleEvent >(this, &SparkEditControl::eventIdle);
 
 	m_database = database;
+	m_resourceManager = resourceManager;
+
 	return true;
 }
 
@@ -70,7 +72,7 @@ void SparkEditControl::destroy()
 	Widget::destroy();
 }
 
-void SparkEditControl::setRootCharacter(const resource::Proxy< Character >& character)
+void SparkEditControl::setRootCharacter(Character* character)
 {
 	m_character = character;
 }
@@ -90,6 +92,8 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 	if (!m_renderView)
 		return;
 
+	ui::Size sz = getInnerRect().getSize();
+
 	if (m_renderView->begin(render::EtCyclop))
 	{
 		const static Color4f clearColor(1.0f, 1.0f, 1.0f, 0.0);
@@ -100,18 +104,24 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 			0
 		);
 
-		//if (m_primitiveRenderer->begin(m_renderView, Matrix44::identity()))
+		//Matrix44 projection = orthoLh(sz.cx, sz.cy, 0.0f, 1.0f);
+
+		//if (m_primitiveRenderer->begin(m_renderView, projection))
 		//{
 		//	m_primitiveRenderer->pushDepthState(false, false, false);
 
-		//	for (int32_t y = 0; y < 10; ++y)
+		//	for (int32_t i = -10; i < 10; ++i)
 		//	{
-		//		float fy = y / 10.0f;
-
+		//		float f = i / 10.0f;
 		//		m_primitiveRenderer->drawLine(
-		//			Vector4(-1.0f, fy, 1.0f, 1.0f),
-		//			Vector4( 1.0f, fy, 1.0f, 1.0f),
-		//			Color4ub(0, 0, 0, 255)
+		//			Vector4(-1.0f, f, 1.0f, 1.0f),
+		//			Vector4( 1.0f, f, 1.0f, 1.0f),
+		//			Color4ub(220, 220, 220, 255)
+		//		);
+		//		m_primitiveRenderer->drawLine(
+		//			Vector4(f, -1.0f, 1.0f, 1.0f),
+		//			Vector4(f,  1.0f, 1.0f, 1.0f),
+		//			Color4ub(220, 220, 220, 255)
 		//		);
 		//	}
 
@@ -123,13 +133,20 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 
 		if (m_character)
 		{
-			Ref< CharacterInstance > characterInstance = m_character->createInstance();
+			Ref< CharacterInstance > characterInstance = m_character->createInstance(0, m_resourceManager);
+			if (characterInstance)
+			{
+				DisplayList displayList;
+				displayList.place(0, characterInstance);
 
-			DisplayList displayList;
-			displayList.place(0, characterInstance);
-
-			m_displayRenderer->build(&displayList, 0);
-			m_displayRenderer->render(m_renderView, 0);
+				m_displayRenderer->build(&displayList, 0);
+				m_displayRenderer->render(
+					m_renderView,
+					Vector2(0.0f, 0.0f),
+					Vector2(sz.cx, sz.cy),
+					0
+				);
+			}
 		}
 
 

@@ -1,8 +1,9 @@
 #ifndef traktor_spark_Shape_H
 #define traktor_spark_Shape_H
 
+#include "Core/Object.h"
+#include "Core/Math/Matrix33.h"
 #include "Resource/Proxy.h"
-#include "Spark/Character.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,6 +19,7 @@ namespace traktor
 	{
 
 class Mesh;
+class RenderContext;
 class Shader;
 
 	}
@@ -28,18 +30,16 @@ class Shader;
 /*! \brief
  * \ingroup Spark
  */
-class T_DLLCLASS Shape : public Character
+class T_DLLCLASS Shape : public Object
 {
 	T_RTTI_CLASS;
 
 public:
 	Shape(render::Mesh* mesh, const resource::Proxy< render::Shader >& shader);
 
-	virtual Ref< CharacterInstance > createInstance() const;
+	void render(render::RenderContext* renderContext, const Matrix33& transform) const;
 
 private:
-	friend class ShapeInstance;
-
 	Ref< render::Mesh > m_mesh;
 	resource::Proxy< render::Shader > m_shader;
 };
