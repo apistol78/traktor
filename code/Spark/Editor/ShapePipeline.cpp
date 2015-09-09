@@ -5,7 +5,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Aabb2.h"
 #include "Core/Math/Format.h"
-#include "Core/Math/Triangulator.h"
+//#include "Core/Math/Triangulator.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
@@ -19,10 +19,12 @@
 #include "Spark/ShapeResource.h"
 #include "Spark/Editor/ShapeAsset.h"
 #include "Spark/Editor/ShapePipeline.h"
+#include "Spark/Editor/Shape/PathShape.h"
 #include "Spark/Editor/Shape/Shape.h"
+#include "Spark/Editor/Shape/ShapeVisitor.h"
 #include "Spark/Editor/Shape/Style.h"
 #include "Spark/Editor/Shape/SvgParser.h"
-#include "Spark/Editor/Shape/TesselatorVisitor.h"
+#include "Spark/Editor/Shape/Triangulator.h"
 #include "Xml/Document.h"
 
 namespace traktor
@@ -32,50 +34,112 @@ namespace traktor
 		namespace
 		{
 
-class TriangleProducer : public TesselatorVisitor::Listener
+class TriangleProducer : public ShapeVisitor
 {
 public:
+	Ref< const Style > m_style;
+
 	struct Batch
 	{
 		AlignedVector< Vector2 > vertices;
 		AlignedVector< uint32_t > triangles;
 	};
 
-	virtual void drawShape(
-		const Style* style,
-		const AlignedVector< Vector2 >& shape
-	) T_FINAL
+	virtual void enter(Shape* shape)
 	{
-		if (style->getFillEnable())
+		if (shape->getStyle())
+			m_style = shape->getStyle();
+
+		if (!m_style || !m_style->getFillEnable())
+			return;
+
+		PathShape* pathShape = dynamic_type_cast< PathShape* >(shape);
+		if (pathShape)
 		{
-			// Create triangles from possibly complex shapes.
-			Triangulator().freeze(shape, m_triangles, Triangulator::TfSorted | Triangulator::TsCheckWinding);
-			if (!m_triangles.empty())
+			AlignedVector< Triangulator::Segment > segments;
+
+			const std::vector< SubPath >& subPaths = pathShape->getPath().getSubPaths();
+			for (std::vector< SubPath >::const_iterator i = subPaths.begin(); i != subPaths.end(); ++i)
 			{
-				// Batch triangles by style.
-				Batch batch;
-
-				uint32_t vertexBase = uint32_t(batch.vertices.size());
-				batch.vertices.insert(batch.vertices.end(), shape.begin(), shape.end());
-
-				for (std::vector< Triangulator::Triangle >::const_iterator i = m_triangles.begin(); i != m_triangles.end(); ++i)
+				switch (i->type)
 				{
-					batch.triangles.push_back(vertexBase + uint32_t(i->indices[0]));
-					batch.triangles.push_back(vertexBase + uint32_t(i->indices[1]));
-					batch.triangles.push_back(vertexBase + uint32_t(i->indices[2]));
+				case SptLinear:
+					{
+						for (uint32_t j = 0; j < i->points.size() - 1; ++j)
+						{
+							Triangulator::Segment s;
+							s.curve = false;
+							s.v[0] = i->points[j];
+							s.v[1] = i->points[j + 1];
+							segments.push_back(s);
+						}
+						if (i->closed)
+						{
+							Triangulator::Segment s;
+							s.curve = false;
+							s.v[0] = i->points.back();
+							s.v[1] = i->points.front();
+							segments.push_back(s);
+						}
+					}
+					break;
+
+				case SptCubic:
+					{
+					}
+					break;
+
+				case SptQuadric:
+					{
+						for (uint32_t j = 0; j < i->points.size() - 1; j += 2)
+						{
+							Triangulator::Segment s;
+							s.curve = true;
+							s.v[0] = i->points[j];
+							s.v[1] = i->points[j + 1];
+							s.c = i->points[j + 2];
+							segments.push_back(s);
+						}
+					}
+					break;
 				}
+			}
 
-				m_triangles.resize(0);
+			if (!segments.empty())
+			{
+				AlignedVector< Triangulator::Triangle > triangles;
+				Triangulator().triangulate(segments, triangles);
 
-				m_batches.push_back(std::make_pair(style, batch));
+				if (!triangles.empty())
+				{
+					Batch batch;
+
+					for (AlignedVector< Triangulator::Triangle >::const_iterator i = triangles.begin(); i != triangles.end(); ++i)
+					{
+						uint32_t indexBase = batch.vertices.size();
+
+						batch.vertices.push_back(i->v[0]);
+						batch.vertices.push_back(i->v[1]);
+						batch.vertices.push_back(i->v[2]);
+
+						batch.triangles.push_back(indexBase + 0);
+						batch.triangles.push_back(indexBase + 1);
+						batch.triangles.push_back(indexBase + 2);
+					}
+
+					m_batches.push_back(std::make_pair(m_style, batch));
+				}
 			}
 		}
+	}
+
+	virtual void leave(Shape* shape)
+	{
 	}
 
 	const std::list< std::pair< const Style*, Batch > >& getBatches() const { return m_batches; }
 
 private:
-	std::vector< Triangulator::Triangle > m_triangles;
 	std::list< std::pair< const Style*, Batch > > m_batches;
 };
 
@@ -162,8 +226,7 @@ bool ShapePipeline::buildOutput(
 
 	// Convert intermediate shape into a set of triangles.
 	TriangleProducer triangleProducer;
-	TesselatorVisitor visitor(triangleProducer);
-	shape->visit(&visitor);
+	shape->visit(&triangleProducer);
 
 	// Create shape output resource.
 	Ref< ShapeResource > outputShapeResource = new ShapeResource();

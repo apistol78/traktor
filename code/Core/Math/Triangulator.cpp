@@ -1,8 +1,8 @@
 #include <algorithm>
 #include <cmath>
 #include "Core/Log/Log.h"
-#include "Core/Math/Triangulator.h"
 #include "Core/Math/Const.h"
+#include "Core/Math/Triangulator.h"
 
 namespace traktor
 {
@@ -89,32 +89,17 @@ struct SortInternalAngle
 	const AlignedVector< Vector2 >& m_points;
 };
 
-bool polygonClockwise(const AlignedVector< Vector2 >& points)
+bool isClockWise(const AlignedVector< Vector2 >& points)
 {
-	float convexSum = 0.0f;
-	for (size_t i = 0; i < points.size(); ++i)
-	{
-		const Vector2& c  = points[i];
-		const Vector2& n  = points[(i + 1) % points.size()];
-		const Vector2& nn = points[(i + 2) % points.size()];
-	
-		float aa = (nn.x - c.x) * (nn.x - c.x) + (-nn.y + c.y) * (-nn.y + c.y);
-		float bb = ( n.x - c.x) * ( n.x - c.x) + ( -n.y + c.y) * ( -n.y + c.y);
-		float cc = (nn.x - n.x) * (nn.x - n.x) + (-nn.y + n.y) * (-nn.y + n.y);
+	if (points.size() <= 2)
+		return false;
 
-		T_ASSERT (bb >= 0.0f);
-		T_ASSERT (cc >= 0.0f);
-		
-		float B = sqrtf(bb);
-		float C = sqrtf(cc);
-		float theta = acosf((bb + cc - aa) / (2.0f * B * C));
-		
-		if (triangleArea(c, n, nn) < 0.0f)
-			convexSum += PI - theta;
-		else
-			convexSum -= PI - theta;
-	}
-	return bool(convexSum >= 2.0f * PI);
+	float area = 0.0f;
+	for (uint32_t i = 0; i < points.size() - 1; ++i)
+		area += points[i].x * points[i + 1].y - points[i + 1].x * points[i].y;
+
+	area += points.back().x * points.front().y - points.front().x * points.back().y;
+	return area < 0.0f;
 }
 
 	}
@@ -125,14 +110,26 @@ void Triangulator::freeze(
 	uint32_t flags
 )
 {
-	bool cw = true;
-	if (flags & TsCheckWinding)
-		cw = polygonClockwise(points);
-	
-	AlignedVector< Vector2 > uncut = points;
-	std::vector< int32_t > indices(uncut.size());
-	for (int32_t i = 0; i < int(uncut.size()); ++i)
-		indices[i] = i;
+	AlignedVector< Vector2 > uncut(points.size());
+	std::vector< int32_t > indices(points.size());
+
+	// Ensure correct winding.
+	if (!isClockWise(points))
+	{
+		for (uint32_t i = 0; i < points.size(); ++i)
+		{
+			uncut[i] = points[i];
+			indices[i] = i;
+		}
+	}
+	else
+	{
+		for (uint32_t i = 0; i < points.size(); ++i)
+		{
+			uncut[i] = points[points.size() - i - 1];
+			indices[i] = points.size() - i - 1;
+		}
+	}
 
 	std::vector< int32_t > ears;
 	while (uncut.size() >= 3)
@@ -142,7 +139,7 @@ void Triangulator::freeze(
 		// Collect polygon ears.
 		for (int32_t i = 0; i < int32_t(uncut.size()); ++i)
 		{
-			bool convex = isConvex(uncut, i) ^ !cw;
+			bool convex = isConvex(uncut, i);
 			if (!convex)
 				continue;
 
@@ -155,7 +152,7 @@ void Triangulator::freeze(
 				if (j == prev || j == i || j == next)
 					continue;
 
-				bool convex2 = isConvex(uncut, j) ^ !cw;
+				bool convex2 = isConvex(uncut, j);
 				if (convex2)
 					continue;
 

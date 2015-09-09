@@ -15,9 +15,9 @@ namespace traktor
 	namespace spark
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.ShapeResource", 0, ShapeResource, ICharacterResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.ShapeResource", 0, ShapeResource, ISerializable)
 
-Ref< Character > ShapeResource::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, db::Instance* resourceInstance) const
+Ref< Shape > ShapeResource::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, db::Instance* resourceInstance) const
 {
 	// Open stream to resource's mesh data.
 	Ref< IStream > dataStream = resourceInstance->readData(L"Data");

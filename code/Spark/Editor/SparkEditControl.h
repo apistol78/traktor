@@ -1,7 +1,6 @@
 #ifndef traktor_spark_SparkEditControl_H
 #define traktor_spark_SparkEditControl_H
 
-#include "Resource/Proxy.h"
 #include "Ui/Widget.h"
 
 namespace traktor
@@ -54,15 +53,16 @@ public:
 
 	void destroy();
 
-	void setRootCharacter(const resource::Proxy< Character >& character);
+	void setRootCharacter(Character* character);
 
 private:
 	Ref< ui::EventSubject::IEventHandler > m_idleEventHandler;
 	Ref< db::Database > m_database;
+	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< DisplayRenderer > m_displayRenderer;
-	resource::Proxy< Character > m_character;
+	Ref< Character > m_character;
 
 	void eventSize(ui::SizeEvent* event);
 

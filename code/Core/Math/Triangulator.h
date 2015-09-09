@@ -26,9 +26,8 @@ class T_DLLCLASS Triangulator
 public:
 	enum TriangulatorFlags
 	{
-		TfSequential	= 0,
-		TfSorted	= 1,
-		TsCheckWinding	= 2
+		TfSequential = 0,
+		TfSorted = 1
 	};
 
 	struct Triangle

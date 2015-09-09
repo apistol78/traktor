@@ -24,11 +24,13 @@ class CharacterInstance : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual void render(render::RenderContext* renderContext) const = 0;
+	CharacterInstance();
 
 	void setTransform(const Matrix33& transform);
 
 	const Matrix33& getTransform() const;
+
+	virtual void render(render::RenderContext* renderContext) const = 0;
 
 private:
 	Matrix33 m_transform;

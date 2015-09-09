@@ -4,11 +4,12 @@
 #include "Database/Instance.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
+#include "Editor/IEditorPageSite.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Resource/ResourceManager.h"
 #include "Spark/Character.h"
-#include "Spark/CharacterResourceFactory.h"
+#include "Spark/ShapeResourceFactory.h"
 #include "Spark/Editor/SparkEditControl.h"
 #include "Spark/Editor/SparkEditorPage.h"
 #include "Ui/Container.h"
@@ -37,24 +38,16 @@ bool SparkEditorPage::create(ui::Container* parent)
 
 	m_resourceManager = new resource::ResourceManager(true);
 	m_resourceManager->addFactory(new render::ShaderFactory(database, renderSystem));
-	m_resourceManager->addFactory(new CharacterResourceFactory(database, renderSystem));
+	m_resourceManager->addFactory(new ShapeResourceFactory(database, renderSystem));
 
 	m_editControl = new SparkEditControl();
 	m_editControl->create(parent, ui::WsNone, database, m_resourceManager, renderSystem);
 	m_editControl->update();
 
-
-	Ref< db::Instance > assetInstance = m_document->getInstance(0);
-	if (!assetInstance)
-		return false;
-
-
-	resource::Proxy< Character > character;
-	m_resourceManager->bind(resource::Id< Character >(assetInstance->getGuid()), character);
-
+	Ref< Character > character = m_document->getObject< Character >(0);
 	m_editControl->setRootCharacter(character);
 
-
+	m_site->setPropertyObject(character);
 	return true;
 }
 
@@ -83,6 +76,8 @@ bool SparkEditorPage::handleCommand(const ui::Command& command)
 
 void SparkEditorPage::handleDatabaseEvent(db::Database* database, const Guid& eventId)
 {
+	if (m_resourceManager)
+		m_resourceManager->reload(eventId, false);
 }
 
 	}

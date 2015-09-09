@@ -77,9 +77,13 @@ void Path::quadricTo(float x1, float y1, float x, float y, bool relative)
 	}
 
 	if (relative)
+	{
+		getAbsolute(x1, y1);
 		getAbsolute(x, y);
+	}
 
-	m_current->points.push_back(Vector2(x, y));
+	m_current->points.push_back(Vector2(x1, y1));
+	m_current->points.push_back(Vector2(x , y ));
 	m_cursor.set(x, y);
 }
 
