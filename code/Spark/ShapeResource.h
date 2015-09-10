@@ -47,6 +47,7 @@ private:
 	friend class ShapePipeline;
 
 	resource::Id< render::Shader > m_shader;
+	std::vector< uint8_t > m_parts;
 };
 
 	}

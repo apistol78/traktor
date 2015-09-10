@@ -1,5 +1,6 @@
 #include <cmath>
 #include "Core/Math/Bezier2nd.h"
+#include "Core/Math/Bezier3rd.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
 
@@ -11,16 +12,25 @@ Bezier2nd::Bezier2nd()
 }
 
 Bezier2nd::Bezier2nd(const Vector2& cp0_, const Vector2& cp1_, const Vector2& cp2_)
+:	cp0(cp0_)
+,	cp1(cp1_)
+,	cp2(cp2_)
 {
-	cp0 = cp0_;
-	cp1 = cp1_;
-	cp2 = cp2_;
 }
 
 Vector2 Bezier2nd::evaluate(float t) const
 {
-	float it = 1.0f - t;
-	return (it * it) * cp0 + (2.0f * it * t) * cp1 + (t * t) * cp2;
+	const Vector2 C = cp0;
+	const Vector2 B = 2.0f * cp1 - 2.0f * cp0;
+	const Vector2 A = cp2 - 2.0f * cp1 + cp0;
+	return (t * t) * A + t * B + C;
+}
+
+Vector2 Bezier2nd::tangent(float t) const
+{
+	const Vector2 B = 2.0f * cp1 - 2.0f * cp0;
+	const Vector2 A = cp2 - 2.0f * cp1 + cp0;
+	return (2.0f * t) * A + B;
 }
 
 float Bezier2nd::getLocalMinMaxY() const
@@ -90,6 +100,17 @@ void Bezier2nd::split(float t, Bezier2nd& outLeft, Bezier2nd& outRight) const
 	outRight = Bezier2nd(
 		p,
 		lerp(cp1, cp2, t),
+		cp2
+	);
+}
+
+void Bezier2nd::toBezier3rd(Bezier3rd& out3rd) const
+{
+	const float twoThird = 2.0f / 3.0f;
+	out3rd = Bezier3rd(
+		cp0,
+		cp0 + twoThird * (cp1 - cp0),
+		cp2 + twoThird * (cp1 - cp2),
 		cp2
 	);
 }

@@ -1,5 +1,5 @@
-#pragma optimize( "", off )
-
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberStl.h"
 #include "Core/Log/Log.h"
 #include "Database/Instance.h"
 #include "Render/Shader.h"
@@ -44,12 +44,13 @@ Ref< Shape > ShapeResource::create(resource::IResourceManager* resourceManager, 
 		return 0;
 	}
 
-	return new Shape(mesh, shader);
+	return new Shape(mesh, shader, m_parts);
 }
 
 void ShapeResource::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
+	s >> MemberStlVector< uint8_t >(L"parts", m_parts);
 }
 
 	}

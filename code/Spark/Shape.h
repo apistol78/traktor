@@ -18,6 +18,7 @@ namespace traktor
 	namespace render
 	{
 
+class IProgram;
 class Mesh;
 class RenderContext;
 class Shader;
@@ -35,13 +36,14 @@ class T_DLLCLASS Shape : public Object
 	T_RTTI_CLASS;
 
 public:
-	Shape(render::Mesh* mesh, const resource::Proxy< render::Shader >& shader);
+	Shape(render::Mesh* mesh, const resource::Proxy< render::Shader >& shader, const std::vector< uint8_t >& parts);
 
 	void render(render::RenderContext* renderContext, const Matrix33& transform) const;
 
 private:
 	Ref< render::Mesh > m_mesh;
-	resource::Proxy< render::Shader > m_shader;
+	mutable resource::Proxy< render::Shader > m_shader;
+	std::vector< uint8_t > m_parts;
 };
 
 	}

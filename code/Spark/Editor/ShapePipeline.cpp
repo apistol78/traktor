@@ -4,8 +4,9 @@
 
 #include "Core/Log/Log.h"
 #include "Core/Math/Aabb2.h"
+#include "Core/Math/Bezier2nd.h"
+#include "Core/Math/Bezier3rd.h"
 #include "Core/Math/Format.h"
-//#include "Core/Math/Triangulator.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
@@ -34,6 +35,22 @@ namespace traktor
 		namespace
 		{
 
+const float c_controlPoints[3][2] =
+{
+	{ 0.0f, 0.0f },
+	{ 0.5f, 0.0f },
+	{ 1.0f, 1.0f }
+};
+
+#pragma pack(1)
+struct Vertex
+{
+	float position[2];
+	float controlPoints[2];
+	float color[4];
+};
+#pragma pack()
+
 class TriangleProducer : public ShapeVisitor
 {
 public:
@@ -42,7 +59,9 @@ public:
 	struct Batch
 	{
 		AlignedVector< Vector2 > vertices;
-		AlignedVector< uint32_t > triangles;
+		AlignedVector< uint32_t > trianglesFill;
+		AlignedVector< uint32_t > trianglesIn;
+		AlignedVector< uint32_t > trianglesOut;
 	};
 
 	virtual void enter(Shape* shape)
@@ -86,6 +105,30 @@ public:
 
 				case SptCubic:
 					{
+					{
+						for (uint32_t j = 0; j < i->points.size() - 1; j += 3)
+						{
+							Bezier3rd b(
+								i->points[j],
+								i->points[j + 1],
+								i->points[j + 2],
+								i->points[j + 3]
+							);
+
+							AlignedVector< Bezier2nd > a;
+							b.approximate(a);
+
+							for (AlignedVector< Bezier2nd >::const_iterator k = a.begin(); k != a.end(); ++k)
+							{
+								Triangulator::Segment s;
+								s.curve = true;
+								s.v[0] = k->cp0;
+								s.v[1] = k->cp2;
+								s.c = k->cp1;
+								segments.push_back(s);
+							}
+						}
+					}
 					}
 					break;
 
@@ -96,8 +139,8 @@ public:
 							Triangulator::Segment s;
 							s.curve = true;
 							s.v[0] = i->points[j];
-							s.v[1] = i->points[j + 1];
-							s.c = i->points[j + 2];
+							s.v[1] = i->points[j + 2];
+							s.c = i->points[j + 1];
 							segments.push_back(s);
 						}
 					}
@@ -122,9 +165,24 @@ public:
 						batch.vertices.push_back(i->v[1]);
 						batch.vertices.push_back(i->v[2]);
 
-						batch.triangles.push_back(indexBase + 0);
-						batch.triangles.push_back(indexBase + 1);
-						batch.triangles.push_back(indexBase + 2);
+						if (i->type == Triangulator::TcFill)
+						{
+							batch.trianglesFill.push_back(indexBase + 0);
+							batch.trianglesFill.push_back(indexBase + 1);
+							batch.trianglesFill.push_back(indexBase + 2);
+						}
+						else if (i->type == Triangulator::TcIn)
+						{
+							batch.trianglesIn.push_back(indexBase + 0);
+							batch.trianglesIn.push_back(indexBase + 1);
+							batch.trianglesIn.push_back(indexBase + 2);
+						}
+						else if (i->type == Triangulator::TcOut)
+						{
+							batch.trianglesOut.push_back(indexBase + 0);
+							batch.trianglesOut.push_back(indexBase + 1);
+							batch.trianglesOut.push_back(indexBase + 2);
+						}
 					}
 
 					m_batches.push_back(std::make_pair(m_style, batch));
@@ -255,14 +313,13 @@ bool ShapePipeline::buildOutput(
 	// Create render mesh from triangles and write to data stream.
 	const std::list< std::pair< const Style*, TriangleProducer::Batch > >& batches = triangleProducer.getBatches();
 
-	// Count number of vertices and indices.
-	uint32_t vertexCount = 0;
-	uint32_t indexCount = 0;
-
+	// Count total number of triangles.
+	uint32_t triangleCount = 0;
 	for (std::list< std::pair< const Style*, TriangleProducer::Batch > >::const_iterator i = batches.begin(); i != batches.end(); ++i)
 	{
-		vertexCount += uint32_t(i->second.vertices.size());
-		indexCount += uint32_t(i->second.triangles.size() * 3);
+		triangleCount += uint32_t(i->second.trianglesFill.size() / 3);
+		triangleCount += uint32_t(i->second.trianglesIn.size() / 3);
+		triangleCount += uint32_t(i->second.trianglesOut.size() / 3);
 	}
 
 	// Measure shape bounds.
@@ -279,65 +336,116 @@ bool ShapePipeline::buildOutput(
 
 	// Define shape render vertex.
 	std::vector< render::VertexElement > vertexElements;
-	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, 0));
-	vertexElements.push_back(render::VertexElement(render::DuColor, render::DtFloat4, 2 * sizeof(float)));
+	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(Vertex, position)));
+	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat2, offsetof(Vertex, controlPoints)));
+	vertexElements.push_back(render::VertexElement(render::DuColor, render::DtFloat4, offsetof(Vertex, color)));
 
 	Ref< render::Mesh > renderMesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
-		vertexCount * render::getVertexSize(vertexElements),
+		triangleCount * 3 * render::getVertexSize(vertexElements),
 		render::ItUInt16,
-		indexCount * sizeof(uint16_t)
+		0
 	);
 
-	// Fill vertices.
-	float* vertex = static_cast< float* >(renderMesh->getVertexBuffer()->lock());
+	Vertex* vertex = static_cast< Vertex* >(renderMesh->getVertexBuffer()->lock());
+	uint32_t vertexOffset = 0;
+
+	std::vector< render::Mesh::Part > meshParts;
+
 	for (std::list< std::pair< const Style*, TriangleProducer::Batch > >::const_iterator i = batches.begin(); i != batches.end(); ++i)
 	{
-		for (AlignedVector< Vector2 >::const_iterator j = i->second.vertices.begin(); j != i->second.vertices.end(); ++j)
+		// Fill
 		{
-			T_FATAL_ASSERT(!isNanOrInfinite(j->x));
-			T_FATAL_ASSERT(!isNanOrInfinite(j->y));
-			*vertex++ = j->x - boundingBox.getCenter().x;
-			*vertex++ = j->y - boundingBox.getCenter().y;
+			for (uint32_t j = 0; j < i->second.trianglesFill.size(); ++j)
+			{
+				const Vector2& v = i->second.vertices[i->second.trianglesFill[j]];
 
-			*vertex++ = i->first->getFill().r / 255.0f;
-			*vertex++ = i->first->getFill().g / 255.0f;
-			*vertex++ = i->first->getFill().b / 255.0f;
-			*vertex++ = i->first->getFill().a / 255.0f;
+				vertex->position[0] = v.x - boundingBox.getCenter().x;
+				vertex->position[1] = v.y - boundingBox.getCenter().y;
+				vertex->controlPoints[0] = c_controlPoints[j % 3][0];
+				vertex->controlPoints[1] = c_controlPoints[j % 3][1];
+				vertex->color[0] = i->first->getFill().r / 255.0f;
+				vertex->color[1] = i->first->getFill().g / 255.0f;
+				vertex->color[2] = i->first->getFill().b / 255.0f;
+				vertex->color[3] = i->first->getFill().a / 255.0f;
+
+				vertex++;
+			}
+
+			render::Mesh::Part part;
+			part.primitives.setNonIndexed(
+				render::PtTriangles,
+				vertexOffset,
+				uint32_t(i->second.trianglesFill.size() / 3)
+			);
+			meshParts.push_back(part);
+			outputShapeResource->m_parts.push_back(0);
+
+			vertexOffset += i->second.trianglesFill.size();
+		}
+
+		// In
+		{
+			for (uint32_t j = 0; j < i->second.trianglesIn.size(); ++j)
+			{
+				const Vector2& v = i->second.vertices[i->second.trianglesIn[j]];
+
+				vertex->position[0] = v.x - boundingBox.getCenter().x;
+				vertex->position[1] = v.y - boundingBox.getCenter().y;
+				vertex->controlPoints[0] = c_controlPoints[j % 3][0];
+				vertex->controlPoints[1] = c_controlPoints[j % 3][1];
+				vertex->color[0] = i->first->getFill().r / 255.0f;
+				vertex->color[1] = i->first->getFill().g / 255.0f;
+				vertex->color[2] = i->first->getFill().b / 255.0f;
+				vertex->color[3] = i->first->getFill().a / 255.0f;
+
+				vertex++;
+			}
+
+			render::Mesh::Part part;
+			part.primitives.setNonIndexed(
+				render::PtTriangles,
+				vertexOffset,
+				uint32_t(i->second.trianglesIn.size() / 3)
+			);
+			meshParts.push_back(part);
+			outputShapeResource->m_parts.push_back(1);
+
+			vertexOffset += i->second.trianglesIn.size();
+		}
+
+		// Out
+		{
+			for (uint32_t j = 0; j < i->second.trianglesOut.size(); ++j)
+			{
+				const Vector2& v = i->second.vertices[i->second.trianglesOut[j]];
+
+				vertex->position[0] = v.x - boundingBox.getCenter().x;
+				vertex->position[1] = v.y - boundingBox.getCenter().y;
+				vertex->controlPoints[0] = c_controlPoints[j % 3][0];
+				vertex->controlPoints[1] = c_controlPoints[j % 3][1];
+				vertex->color[0] = i->first->getFill().r / 255.0f;
+				vertex->color[1] = i->first->getFill().g / 255.0f;
+				vertex->color[2] = i->first->getFill().b / 255.0f;
+				vertex->color[3] = i->first->getFill().a / 255.0f;
+
+				vertex++;
+			}
+
+			render::Mesh::Part part;
+			part.primitives.setNonIndexed(
+				render::PtTriangles,
+				vertexOffset,
+				uint32_t(i->second.trianglesOut.size() / 3)
+			);
+			meshParts.push_back(part);
+			outputShapeResource->m_parts.push_back(2);
+
+			vertexOffset += i->second.trianglesOut.size();
 		}
 	}
 	renderMesh->getVertexBuffer()->unlock();
 
-	// Fill indices.
-	uint16_t* index = static_cast< uint16_t* >(renderMesh->getIndexBuffer()->lock());
-
-	uint32_t vertexOffset = 0;
-	for (std::list< std::pair< const Style*, TriangleProducer::Batch > >::const_iterator i = batches.begin(); i != batches.end(); ++i)
-	{
-		for (AlignedVector< uint32_t >::const_iterator j = i->second.triangles.begin(); j != i->second.triangles.end(); ++j)
-			*index++ = vertexOffset + *j;
-		vertexOffset += uint32_t(i->second.vertices.size());
-	}
-	renderMesh->getIndexBuffer()->unlock();
-
-	// Setup mesh parts.
-	std::vector< render::Mesh::Part > meshParts;
-
-	uint32_t indexOffset = 0;
-	for (std::list< std::pair< const Style*, TriangleProducer::Batch > >::const_iterator i = batches.begin(); i != batches.end(); ++i)
-	{
-		render::Mesh::Part part;
-		part.name = L"";
-		part.primitives.setIndexed(
-			render::PtTriangles,
-			indexOffset,
-			uint32_t(i->second.triangles.size()),
-			0,
-			vertexCount - 1
-		);
-		meshParts.push_back(part);
-		indexOffset += uint32_t(i->second.triangles.size() * 3);
-	}
 	renderMesh->setParts(meshParts);
 
 	// No bounding box used.
