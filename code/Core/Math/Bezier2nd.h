@@ -14,6 +14,8 @@
 namespace traktor
 {
 
+class Bezier3rd;
+
 /*! \brief Quadratic bezier curve.
  * \ingroup Core
  */
@@ -30,6 +32,8 @@ public:
 
 	Vector2 evaluate(float t) const;
 
+	Vector2 tangent(float t) const;
+
 	float getLocalMinMaxY() const;
 
 	float getLocalMinMaxX() const;
@@ -39,6 +43,8 @@ public:
 	void intersectY(float x, float& outT0, float& outT1) const;
 
 	void split(float t, Bezier2nd& outLeft, Bezier2nd& outRight) const;
+
+	void toBezier3rd(Bezier3rd& out3rd) const;
 };
 
 }
