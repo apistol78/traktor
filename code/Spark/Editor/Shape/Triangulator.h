@@ -3,7 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
-#include "Core/Math/Vector2.h"
+#include "Core/Math/Vector2i.h"
 
 namespace traktor
 {
@@ -21,8 +21,8 @@ public:
 	struct Segment
 	{
 		bool curve;
-		Vector2 v[2];
-		Vector2 c;
+		Vector2i v[2];
+		Vector2i c;
 	};
 
 	enum TriangleType
@@ -35,7 +35,7 @@ public:
 	struct Triangle
 	{
 		TriangleType type;
-		Vector2 v[3];
+		Vector2i v[3];
 	};
 
 	void triangulate(const AlignedVector< Segment >& segments, AlignedVector< Triangle >& outTriangles);

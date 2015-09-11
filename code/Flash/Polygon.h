@@ -1,7 +1,7 @@
 #ifndef traktor_flash_Polygon_H
 #define traktor_flash_Polygon_H
 
-#include "Flash/Vector2i.h"
+#include "Core/Math/Vector2i.h"
 
 namespace traktor
 {

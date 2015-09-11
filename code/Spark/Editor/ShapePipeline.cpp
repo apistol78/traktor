@@ -1,12 +1,12 @@
 #pragma optimize( "", off )
 
 #include <list>
-
 #include "Core/Log/Log.h"
 #include "Core/Math/Aabb2.h"
 #include "Core/Math/Bezier2nd.h"
 #include "Core/Math/Bezier3rd.h"
 #include "Core/Math/Format.h"
+#include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
@@ -35,6 +35,8 @@ namespace traktor
 		namespace
 		{
 
+const float c_pointScale = 100.0f;
+
 const float c_controlPoints[3][2] =
 {
 	{ 0.0f, 0.0f },
@@ -54,8 +56,6 @@ struct Vertex
 class TriangleProducer : public ShapeVisitor
 {
 public:
-	Ref< const Style > m_style;
-
 	struct Batch
 	{
 		AlignedVector< Vector2 > vertices;
@@ -64,8 +64,18 @@ public:
 		AlignedVector< uint32_t > trianglesOut;
 	};
 
+	TriangleProducer(float cubicApproximationError)
+	:	m_cubicApproximationError(cubicApproximationError)
+	{
+		m_transformStack.push_back(Matrix33::identity());
+	}
+
 	virtual void enter(Shape* shape)
 	{
+		m_transformStack.push_back(m_transformStack.back() * shape->getTransform());
+
+		const Matrix33& T = m_transformStack.back();
+
 		if (shape->getStyle())
 			m_style = shape->getStyle();
 
@@ -88,16 +98,16 @@ public:
 						{
 							Triangulator::Segment s;
 							s.curve = false;
-							s.v[0] = i->points[j];
-							s.v[1] = i->points[j + 1];
+							s.v[0] = Vector2i::fromVector2((T * i->points[j]) * c_pointScale);
+							s.v[1] = Vector2i::fromVector2((T * i->points[j + 1]) * c_pointScale);
 							segments.push_back(s);
 						}
 						if (i->closed)
 						{
 							Triangulator::Segment s;
 							s.curve = false;
-							s.v[0] = i->points.back();
-							s.v[1] = i->points.front();
+							s.v[0] = Vector2i::fromVector2((T * i->points.back()) * c_pointScale);
+							s.v[1] = Vector2i::fromVector2((T * i->points.front()) * c_pointScale);
 							segments.push_back(s);
 						}
 					}
@@ -105,30 +115,36 @@ public:
 
 				case SptCubic:
 					{
-					{
 						for (uint32_t j = 0; j < i->points.size() - 1; j += 3)
 						{
 							Bezier3rd b(
-								i->points[j],
-								i->points[j + 1],
-								i->points[j + 2],
-								i->points[j + 3]
+								T * i->points[j],
+								T * i->points[j + 1],
+								T * i->points[j + 2],
+								T * i->points[j + 3]
 							);
 
 							AlignedVector< Bezier2nd > a;
-							b.approximate(a);
+							b.approximate(m_cubicApproximationError, a);
 
 							for (AlignedVector< Bezier2nd >::const_iterator k = a.begin(); k != a.end(); ++k)
 							{
 								Triangulator::Segment s;
 								s.curve = true;
-								s.v[0] = k->cp0;
-								s.v[1] = k->cp2;
-								s.c = k->cp1;
+								s.v[0] = Vector2i::fromVector2(k->cp0 * c_pointScale);
+								s.v[1] = Vector2i::fromVector2(k->cp2 * c_pointScale);
+								s.c = Vector2i::fromVector2(k->cp1 * c_pointScale);
 								segments.push_back(s);
 							}
 						}
-					}
+						if (i->closed)
+						{
+							Triangulator::Segment s;
+							s.curve = false;
+							s.v[0] = Vector2i::fromVector2((T * i->points.back()) * c_pointScale);
+							s.v[1] = Vector2i::fromVector2((T * i->points.front()) * c_pointScale);
+							segments.push_back(s);
+						}
 					}
 					break;
 
@@ -138,9 +154,17 @@ public:
 						{
 							Triangulator::Segment s;
 							s.curve = true;
-							s.v[0] = i->points[j];
-							s.v[1] = i->points[j + 2];
-							s.c = i->points[j + 1];
+							s.v[0] = Vector2i::fromVector2((T * i->points[j]) * c_pointScale);
+							s.v[1] = Vector2i::fromVector2((T * i->points[j + 2]) * c_pointScale);
+							s.c = Vector2i::fromVector2((T * i->points[j + 1]) * c_pointScale);
+							segments.push_back(s);
+						}
+						if (i->closed)
+						{
+							Triangulator::Segment s;
+							s.curve = false;
+							s.v[0] = Vector2i::fromVector2((T * i->points.back()) * c_pointScale);
+							s.v[1] = Vector2i::fromVector2((T * i->points.front()) * c_pointScale);
 							segments.push_back(s);
 						}
 					}
@@ -161,9 +185,9 @@ public:
 					{
 						uint32_t indexBase = batch.vertices.size();
 
-						batch.vertices.push_back(i->v[0]);
-						batch.vertices.push_back(i->v[1]);
-						batch.vertices.push_back(i->v[2]);
+						batch.vertices.push_back(i->v[0].toVector2() / c_pointScale);
+						batch.vertices.push_back(i->v[1].toVector2() / c_pointScale);
+						batch.vertices.push_back(i->v[2].toVector2() / c_pointScale);
 
 						if (i->type == Triangulator::TcFill)
 						{
@@ -193,12 +217,18 @@ public:
 
 	virtual void leave(Shape* shape)
 	{
+		m_transformStack.pop_back();
 	}
 
 	const std::list< std::pair< const Style*, Batch > >& getBatches() const { return m_batches; }
 
 private:
+	float m_cubicApproximationError;
 	std::list< std::pair< const Style*, Batch > > m_batches;
+	Ref< const Style > m_style;
+
+	AlignedVector< Matrix33 > m_transformStack;
+	Matrix33 m_currentTransform;
 };
 
 		}
@@ -283,7 +313,7 @@ bool ShapePipeline::buildOutput(
 	}
 
 	// Convert intermediate shape into a set of triangles.
-	TriangleProducer triangleProducer;
+	TriangleProducer triangleProducer(shapeAsset->m_cubicApproximationError);
 	shape->visit(&triangleProducer);
 
 	// Create shape output resource.
@@ -320,6 +350,12 @@ bool ShapePipeline::buildOutput(
 		triangleCount += uint32_t(i->second.trianglesFill.size() / 3);
 		triangleCount += uint32_t(i->second.trianglesIn.size() / 3);
 		triangleCount += uint32_t(i->second.trianglesOut.size() / 3);
+	}
+	if (!triangleCount)
+	{
+		log::error << L"Shape pipeline failed; no geometry" << Endl;
+		outputInstance->revert();
+		return false;
 	}
 
 	// Measure shape bounds.

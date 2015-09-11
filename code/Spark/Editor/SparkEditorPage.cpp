@@ -40,7 +40,7 @@ bool SparkEditorPage::create(ui::Container* parent)
 	m_resourceManager->addFactory(new render::ShaderFactory(database, renderSystem));
 	m_resourceManager->addFactory(new ShapeResourceFactory(database, renderSystem));
 
-	m_editControl = new SparkEditControl();
+	m_editControl = new SparkEditControl(m_editor);
 	m_editControl->create(parent, ui::WsNone, database, m_resourceManager, renderSystem);
 	m_editControl->update();
 
@@ -78,6 +78,8 @@ void SparkEditorPage::handleDatabaseEvent(db::Database* database, const Guid& ev
 {
 	if (m_resourceManager)
 		m_resourceManager->reload(eventId, false);
+
+	m_editControl->update();
 }
 
 	}
