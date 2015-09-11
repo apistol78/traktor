@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include "Core/Misc/SafeDestroy.h"
 #include "Database/Instance.h"
 #include "Editor/IDocument.h"
@@ -8,7 +6,9 @@
 #include "Render/IRenderSystem.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Resource/ResourceManager.h"
-#include "Spark/Character.h"
+#include "Script/ScriptContextFactory.h"
+#include "Script/Lua/ScriptManagerLua.h"
+#include "Spark/Stage.h"
 #include "Spark/ShapeResourceFactory.h"
 #include "Spark/Editor/SparkEditControl.h"
 #include "Spark/Editor/SparkEditorPage.h"
@@ -36,7 +36,10 @@ bool SparkEditorPage::create(ui::Container* parent)
 
 	Ref< db::Database > database = m_editor->getOutputDatabase();
 
+	m_scriptManager = new script::ScriptManagerLua();
+
 	m_resourceManager = new resource::ResourceManager(true);
+	m_resourceManager->addFactory(new script::ScriptContextFactory(database, m_scriptManager));
 	m_resourceManager->addFactory(new render::ShaderFactory(database, renderSystem));
 	m_resourceManager->addFactory(new ShapeResourceFactory(database, renderSystem));
 
@@ -44,16 +47,18 @@ bool SparkEditorPage::create(ui::Container* parent)
 	m_editControl->create(parent, ui::WsNone, database, m_resourceManager, renderSystem);
 	m_editControl->update();
 
-	Ref< Character > character = m_document->getObject< Character >(0);
-	m_editControl->setRootCharacter(character);
+	Ref< Stage > stage = m_document->getObject< Stage >(0);
+	m_editControl->setStage(stage);
 
-	m_site->setPropertyObject(character);
+	m_site->setPropertyObject(stage);
 	return true;
 }
 
 void SparkEditorPage::destroy()
 {
 	safeDestroy(m_editControl);
+	safeDestroy(m_resourceManager);
+	safeDestroy(m_scriptManager);
 }
 
 void SparkEditorPage::activate()

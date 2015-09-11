@@ -2,6 +2,7 @@
 #include "Core/Serialization/MemberRefArray.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
+#include "Spark/IComponent.h"
 #include "Spark/Shape.h"
 #include "Spark/Sprite.h"
 #include "Spark/SpriteInstance.h"
@@ -13,7 +14,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spark.Sprite", 0, Sprite, Character)
 
-Ref< CharacterInstance > Sprite::createInstance(const CharacterInstance* parent, resource::IResourceManager* resourceManager) const
+Ref< CharacterInstance > Sprite::createInstance(StageInstance* stage, const CharacterInstance* parent, resource::IResourceManager* resourceManager) const
 {
 	Ref< SpriteInstance > instance = new SpriteInstance();
 
@@ -23,12 +24,22 @@ Ref< CharacterInstance > Sprite::createInstance(const CharacterInstance* parent,
 			return 0;
 	}
 
-	instance->m_children.resize(m_children.size());
 	for (size_t i = 0; i < m_children.size(); ++i)
 	{
-		instance->m_children[i] = m_children[i]->createInstance(instance, resourceManager);
-		if (!instance->m_children[i])
+		Ref< CharacterInstance > childInstance = m_children[i]->createInstance(stage, instance, resourceManager);
+		if (!childInstance)
 			return 0;
+
+		instance->addChild(childInstance);
+	}
+
+	for (size_t i = 0; i < m_components.size(); ++i)
+	{
+		Ref< IComponentInstance > componentInstance = m_components[i]->createInstance(stage, instance, resourceManager);
+		if (!componentInstance)
+			return 0;
+
+		instance->addComponent(componentInstance);
 	}
 
 	return instance;

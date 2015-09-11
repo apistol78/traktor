@@ -24,6 +24,9 @@ struct lua_State;
 
 namespace traktor
 {
+
+class Any;
+
 	namespace script
 	{
 

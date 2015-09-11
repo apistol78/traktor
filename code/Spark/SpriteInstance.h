@@ -23,6 +23,12 @@ class SpriteInstance : public CharacterInstance
 public:
 	SpriteInstance();
 
+	void addChild(CharacterInstance* child);
+
+	const RefArray< CharacterInstance >& getChildren() const;
+
+	virtual void update() T_FINAL;
+
 	virtual void render(render::RenderContext* renderContext) const T_FINAL;
 
 private:

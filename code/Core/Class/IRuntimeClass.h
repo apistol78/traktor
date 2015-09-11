@@ -69,6 +69,11 @@ public:
 	virtual Any invokeOperator(ITypedObject* object, uint8_t operation, const Any& arg) const = 0;
 };
 
+/*! \brief
+ * \ingroup Core
+ */
+uint32_t T_DLLCLASS findRuntimeClassMethodId(const IRuntimeClass* runtimeClass, const std::string& methodName);
+
 }
 
 #endif	// traktor_IRuntimeClass_H
