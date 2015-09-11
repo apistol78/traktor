@@ -41,8 +41,9 @@ class Shader;
 	namespace spark
 	{
 
-class Character;
 class DisplayRenderer;
+class Stage;
+class StageInstance;
 
 class SparkEditControl : public ui::Widget
 {
@@ -61,7 +62,7 @@ public:
 
 	void destroy();
 
-	void setRootCharacter(Character* character);
+	void setStage(const Stage* stage);
 
 private:
 	editor::IEditor* m_editor;
@@ -70,7 +71,8 @@ private:
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< DisplayRenderer > m_displayRenderer;
-	Ref< Character > m_character;
+	Ref< const Stage > m_stage;
+	Ref< StageInstance > m_stageInstance;
 	ui::Point m_lastMousePosition;
 	Vector2 m_viewOffset;
 	float m_viewScale;

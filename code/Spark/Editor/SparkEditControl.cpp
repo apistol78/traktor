@@ -1,13 +1,12 @@
-#pragma optimize( "", off )
-
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Editor/IEditor.h"
-#include "Spark/Character.h"
 #include "Spark/DisplayList.h"
 #include "Spark/DisplayRenderer.h"
+#include "Spark/Stage.h"
+#include "Spark/StageInstance.h"
 #include "Spark/Editor/SparkEditControl.h"
 #include "Ui/Itf/IWidget.h"
 #include "Ui/Application.h"
@@ -79,9 +78,10 @@ void SparkEditControl::destroy()
 	Widget::destroy();
 }
 
-void SparkEditControl::setRootCharacter(Character* character)
+void SparkEditControl::setStage(const Stage* stage)
 {
-	m_character = character;
+	m_stage = stage;
+	m_stageInstance = stage->createInstance(m_resourceManager);
 	update();
 }
 
@@ -183,22 +183,17 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 		//}
 
 
-		if (m_character)
+		if (m_stageInstance)
 		{
-			Ref< CharacterInstance > characterInstance = m_character->createInstance(0, m_resourceManager);
-			if (characterInstance)
-			{
-				DisplayList displayList;
-				displayList.place(0, characterInstance);
+			m_stageInstance->update();
+			m_stageInstance->build(m_displayRenderer, 0);
 
-				m_displayRenderer->build(&displayList, 0);
-				m_displayRenderer->render(
-					m_renderView,
-					m_viewOffset,
-					Vector2(sz.cx / m_viewScale, sz.cy / m_viewScale),
-					0
-				);
-			}
+			m_displayRenderer->render(
+				m_renderView,
+				m_viewOffset,
+				Vector2(sz.cx / m_viewScale, sz.cy / m_viewScale),
+				0
+			);
 		}
 
 

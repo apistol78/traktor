@@ -1,4 +1,5 @@
 #include "Spark/CharacterInstance.h"
+#include "Spark/IComponentInstance.h"
 
 namespace traktor
 {
@@ -12,6 +13,12 @@ CharacterInstance::CharacterInstance()
 {
 }
 
+void CharacterInstance::update()
+{
+	for (RefArray< IComponentInstance >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
+		(*i)->update();
+}
+
 void CharacterInstance::setTransform(const Matrix33& transform)
 {
 	m_transform = transform;
@@ -20,6 +27,16 @@ void CharacterInstance::setTransform(const Matrix33& transform)
 const Matrix33& CharacterInstance::getTransform() const
 {
 	return m_transform;
+}
+
+void CharacterInstance::addComponent(IComponentInstance* component)
+{
+	m_components.push_back(component);
+}
+
+const RefArray< IComponentInstance >& CharacterInstance::getComponents() const
+{
+	return m_components;
 }
 
 	}

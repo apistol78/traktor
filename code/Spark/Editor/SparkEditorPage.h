@@ -29,6 +29,13 @@ class IResourceManager;
 
 	}
 
+	namespace script
+	{
+
+class IScriptManager;
+
+	}
+
 	namespace spark
 	{
 
@@ -59,6 +66,7 @@ private:
 	editor::IEditor* m_editor;
 	editor::IEditorPageSite* m_site;
 	editor::IDocument* m_document;
+	Ref< script::IScriptManager > m_scriptManager;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< SparkEditControl > m_editControl;
 };

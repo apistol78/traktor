@@ -5,4 +5,15 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.IRuntimeClass", IRuntimeClass, Object)
 
+uint32_t findRuntimeClassMethodId(const IRuntimeClass* runtimeClass, const std::string& methodName)
+{
+	uint32_t methodCount = runtimeClass->getMethodCount();
+	for (uint32_t i = 0; i < methodCount; ++i)
+	{
+		if (runtimeClass->getMethodName(i) == methodName)
+			return i;
+	}
+	return ~0U;
+}
+
 }

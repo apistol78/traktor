@@ -1,6 +1,8 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberRefArray.h"
 #include "Spark/Character.h"
+#include "Spark/IComponent.h"
 
 namespace traktor
 {
@@ -13,6 +15,7 @@ void Character::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> Member< Matrix33 >(L"transform", m_transform);
+	s >> MemberRefArray< IComponent >(L"components", m_components);
 }
 
 	}

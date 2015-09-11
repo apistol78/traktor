@@ -28,7 +28,7 @@ class T_DLLCLASS Sprite : public Character
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< CharacterInstance > createInstance(const CharacterInstance* parent, resource::IResourceManager* resourceManager) const;
+	virtual Ref< CharacterInstance > createInstance(StageInstance* stage, const CharacterInstance* parent, resource::IResourceManager* resourceManager) const;
 
 	virtual void serialize(ISerializer& s);
 
