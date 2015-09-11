@@ -2,6 +2,9 @@
 
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyColor.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Editor/IEditor.h"
 #include "Spark/Character.h"
 #include "Spark/DisplayList.h"
 #include "Spark/DisplayRenderer.h"
@@ -19,7 +22,10 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.SparkEditControl", SparkEditControl, ui::Widget)
 
-SparkEditControl::SparkEditControl()
+SparkEditControl::SparkEditControl(editor::IEditor* editor)
+:	m_editor(editor)
+,	m_viewOffset(0.0f, 0.0f)
+,	m_viewScale(1.0f)
 {
 }
 
@@ -52,10 +58,12 @@ bool SparkEditControl::create(
 	m_displayRenderer = new DisplayRenderer();
 	m_displayRenderer->create(1);
 
+	addEventHandler< ui::MouseButtonDownEvent >(this, &SparkEditControl::eventMouseButtonDown);
+	addEventHandler< ui::MouseButtonUpEvent >(this, &SparkEditControl::eventMouseButtonUp);
+	addEventHandler< ui::MouseMoveEvent >(this, &SparkEditControl::eventMouseMove);
+	addEventHandler< ui::MouseWheelEvent >(this, &SparkEditControl::eventMouseWheel);
 	addEventHandler< ui::SizeEvent >(this, &SparkEditControl::eventSize);
 	addEventHandler< ui::PaintEvent >(this, &SparkEditControl::eventPaint);
-
-	m_idleEventHandler = ui::Application::getInstance()->addEventHandler< ui::IdleEvent >(this, &SparkEditControl::eventIdle);
 
 	m_database = database;
 	m_resourceManager = resourceManager;
@@ -65,7 +73,6 @@ bool SparkEditControl::create(
 
 void SparkEditControl::destroy()
 {
-	ui::Application::getInstance()->removeEventHandler< ui::IdleEvent >(m_idleEventHandler);
 	safeDestroy(m_displayRenderer);
 	safeDestroy(m_primitiveRenderer);
 	safeClose(m_renderView);
@@ -75,6 +82,42 @@ void SparkEditControl::destroy()
 void SparkEditControl::setRootCharacter(Character* character)
 {
 	m_character = character;
+	update();
+}
+
+void SparkEditControl::eventMouseButtonDown(ui::MouseButtonDownEvent* event)
+{
+	m_lastMousePosition = event->getPosition();
+	setCapture();
+}
+
+void SparkEditControl::eventMouseButtonUp(ui::MouseButtonUpEvent* event)
+{
+	releaseCapture();
+}
+
+void SparkEditControl::eventMouseMove(ui::MouseMoveEvent* event)
+{
+	if (!hasCapture())
+		return;
+
+	ui::Point mousePosition = event->getPosition();
+
+	Vector2 deltaMove(
+		 (mousePosition.x - m_lastMousePosition.x),
+		-(mousePosition.y - m_lastMousePosition.y)
+	);
+	m_viewOffset += deltaMove / m_viewScale;
+
+	m_lastMousePosition = mousePosition;
+	update();
+}
+
+void SparkEditControl::eventMouseWheel(ui::MouseWheelEvent* event)
+{
+	m_viewScale += event->getRotation() * 0.1f;
+	m_viewScale = clamp(m_viewScale, 0.1f, 1000.0f);
+	update();
 }
 
 void SparkEditControl::eventSize(ui::SizeEvent* event)
@@ -85,6 +128,7 @@ void SparkEditControl::eventSize(ui::SizeEvent* event)
 		m_renderView->reset(sz.cx, sz.cy);
 		m_renderView->setViewport(render::Viewport(0, 0, sz.cx, sz.cy, 0, 1));
 	}
+	update();
 }
 
 void SparkEditControl::eventPaint(ui::PaintEvent* event)
@@ -96,10 +140,18 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 
 	if (m_renderView->begin(render::EtCyclop))
 	{
-		const static Color4f clearColor(1.0f, 1.0f, 1.0f, 0.0);
+		const PropertyGroup* settings = m_editor->getSettings();
+		T_ASSERT (settings);
+
+		Color4ub clearColor = settings->getProperty< PropertyColor >(L"Editor.Colors/Background");
+
+		float c[4];
+		clearColor.getRGBA32F(c);
+		const Color4f cc(c);
+
 		m_renderView->clear(
 			render::CfColor | render::CfDepth | render::CfStencil,
-			&clearColor,
+			&cc,
 			1.0f,
 			0
 		);
@@ -142,8 +194,8 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 				m_displayRenderer->build(&displayList, 0);
 				m_displayRenderer->render(
 					m_renderView,
-					Vector2(0.0f, 0.0f),
-					Vector2(sz.cx, sz.cy),
+					m_viewOffset,
+					Vector2(sz.cx / m_viewScale, sz.cy / m_viewScale),
 					0
 				);
 			}
@@ -155,15 +207,6 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 	}
 
 	event->consume();
-}
-
-void SparkEditControl::eventIdle(ui::IdleEvent* event)
-{
-	if (isVisible(true))
-	{
-		update();
-		event->requestMore();
-	}
 }
 
 	}

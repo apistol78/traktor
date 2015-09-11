@@ -5,7 +5,7 @@
 #include <list>
 #include "Core/Config.h"
 #include "Core/Math/Aabb2.h"
-#include "Flash/Vector2i.h"
+#include "Core/Math/Vector2i.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

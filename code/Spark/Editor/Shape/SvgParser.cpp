@@ -1,3 +1,5 @@
+#pragma optimize( "", off )
+
 #include <sstream>
 #include "Core/Log/Log.h"
 #include "Core/Misc/Split.h"
@@ -70,7 +72,12 @@ bool isWhiteSpace(wchar_t ch)
 
 bool isNumeric(wchar_t ch)
 {
-	return bool(std::wstring(L"+-0123456789.").find(ch) != std::wstring::npos);
+	return bool(std::wstring(L"+-0123456789.e").find(ch) != std::wstring::npos);
+}
+
+bool isCommand(wchar_t ch)
+{
+	return bool(std::wstring(L"MLVHQTCSAZ").find(std::toupper(ch)) != std::wstring::npos);
 }
 
 void skipUntil(std::wstring::iterator& i, std::wstring::iterator end, bool (*isProc)(wchar_t))
@@ -82,6 +89,19 @@ void skipUntilNot(std::wstring::iterator& i, std::wstring::iterator end, bool (*
 {
 	while (i != end && isProc(*i))
 		++i;
+}
+
+float parsePathNumber(std::wstring::iterator& i, std::wstring::iterator end)
+{
+	skipUntilNot(i, end, isWhiteSpace);
+
+	std::wstring::iterator j = i;
+	skipUntilNot(i, end, isNumeric);
+
+	float number = 0.0f;
+	std::wstringstream(std::wstring(j, i)) >> number;
+
+	return number;
 }
 
 		}
@@ -98,36 +118,20 @@ Ref< Shape > SvgParser::traverse(xml::Element* elm)
 	Ref< Shape > shape;
 
 	std::wstring name = elm->getName();
-
-	// Shapes
 	if (name == L"svg" || name == L"g")
-	{
 		shape = parseGroup(elm);
-	}
 	else if (name == L"rect")
-	{
 		shape = parseRect(elm);
-	}
 	else if (name == L"polygon")
-	{
 		shape = parsePolygon(elm);
-	}
 	else if (name == L"polyline")
-	{
 		shape = parsePolyLine(elm);
-	}
 	else if (name == L"path")
-	{
 		shape = parsePath(elm);
-	}
-	
-	// Other
 	else if (name == L"defs")
-	{
 		parseDefs(elm);
-	}
 	else
-		log::warning << L"Unknown SVG element \"" << name << L"\"" << Endl;
+		log::debug << L"Unknown SVG element \"" << name << L"\"" << Endl;
 
 	if (shape)
 	{
@@ -203,6 +207,8 @@ Ref< Shape > SvgParser::parsePolygon(xml::Element* elm)
 	while (i != points.end())
 	{
 		skipUntilNot(i, points.end(), isWhiteSpace);
+		if (i == points.end())
+			break;
 
 		std::wstring::iterator j = i;
 		skipUntilNot(i, points.end(), isNumeric);
@@ -270,24 +276,6 @@ Ref< Shape > SvgParser::parsePolyLine(xml::Element* elm)
 	return new PathShape(path);
 }
 
-namespace
-{
-
-	float parsePathNumber(std::wstring::iterator& i, std::wstring::iterator end)
-	{
-		skipUntilNot(i, end, isWhiteSpace);
-
-		std::wstring::iterator j = i;
-		skipUntilNot(i, end, isNumeric);
-
-		float number = 0.0f;
-		std::wstringstream(std::wstring(j, i)) >> number;
-
-		return number;
-	}
-
-}
-
 Ref< Shape > SvgParser::parsePath(xml::Element* elm)
 {
 	if (!elm || !elm->hasAttribute(L"d"))
@@ -295,6 +283,7 @@ Ref< Shape > SvgParser::parsePath(xml::Element* elm)
 
 	std::wstring def = elm->getAttribute(L"d")->getValue();
 	std::wstring::iterator i = def.begin();
+	wchar_t cmdLead = 0;
 
 	Path path;
 	while (i != def.end())
@@ -303,9 +292,24 @@ Ref< Shape > SvgParser::parsePath(xml::Element* elm)
 		if (i == def.end())
 			break;
 
-		wchar_t cmd = *i++;
-		bool relative = (cmd != toupper(cmd));
+		wchar_t cmd = *i;
+		if (!isCommand(cmd))
+		{
+			// No command; assume shorthand expressions.
+			if (std::toupper(cmdLead) == L'M')
+				cmd = std::isupper(cmdLead) ? L'L' : L'l';
+			else if (std::toupper(cmdLead) == L'C')
+				cmd = std::isupper(cmdLead) ? L'C' : L'c';
+			else
+				return 0;
+		}
+		else
+		{
+			cmdLead = cmd;
+			++i;
+		}
 
+		bool relative = (cmd != toupper(cmd));
 		switch (toupper(cmd))
 		{
 		case L'M':	// Move to
@@ -512,6 +516,10 @@ Ref< Style > SvgParser::parseStyle(xml::Element* elm)
 				else
 					style->setFillEnable(false);
 			}
+			else if (key == L"fill-rule")
+				;
+			else if (key == L"fill-opacity")
+				;
 			else if (key == L"stroke")
 			{
 				if (parseColor(value, color))
@@ -528,6 +536,16 @@ Ref< Style > SvgParser::parseStyle(xml::Element* elm)
 				std::wstringstream(value) >> strokeWidth;
 				style->setStrokeWidth(strokeWidth);
 			}
+			else if (key == L"stroke-dasharray")
+				;
+			else if (key == L"stroke-opacity")
+				;
+			else if (key == L"stroke-linecap")
+				;
+			else if (key == L"stroke-linejoin")
+				;
+			else if (key == L"stroke-miterlimit")
+				;
 			else
 				log::error << L"Unknown CSS style \"" << key << L"\"" << Endl;
 		}

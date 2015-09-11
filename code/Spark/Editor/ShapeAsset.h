@@ -29,12 +29,15 @@ class T_DLLCLASS ShapeAsset : public editor::Asset
 	T_RTTI_CLASS;
 
 public:
+	ShapeAsset();
+
 	virtual void serialize(ISerializer& s);
 
 private:
 	friend class ShapePipeline;
 
 	resource::Id< render::Shader > m_shader;
+	float m_cubicApproximationError;
 };
 
 	}

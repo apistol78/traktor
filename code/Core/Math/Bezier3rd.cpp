@@ -59,26 +59,64 @@ void Bezier3rd::split(float t, Bezier3rd& outLeft, Bezier3rd& outRight) const
 	);
 }
 
-void Bezier3rd::approximate(AlignedVector< Bezier2nd >& outQuadratic) const
+namespace
 {
-	const int32_t steps = 4;
-	for (int32_t i = 0; i < steps; ++i)
+
+	float triangleArea(
+		const Vector2& a,
+		const Vector2& b,
+		const Vector2& c
+	)
 	{
-		float f0 = float(i) / steps;
-		float f1 = float(i + 1) / steps;
-
-		Vector2 p_0 = evaluate(f0);
-		Vector2 p_1 = evaluate(f1);
-		Vector2 p_m = evaluate((f0 + f1) / 2.0f);
-
-		Vector2 cp = 2.0f * p_m - 0.5f * (p_0 + p_1);
-
-		outQuadratic.push_back(Bezier2nd(
-			p_0,
-			cp,
-			p_1
-		));
+		return
+			a.x * (c.y - b.y) +
+			b.x * (a.y - c.y) +
+			c.x * (b.y - a.y);
 	}
+
+	void approximateSubdivide(const Bezier3rd& b, float f0, float f1, float errorThreshold, AlignedVector< Bezier2nd >& outQuadratic)
+	{
+		Vector2 p_0 = b.evaluate(f0);
+		Vector2 p_1 = b.evaluate(f1);
+		Vector2 p_m = b.evaluate((f0 + f1) / 2.0f);
+		Vector2 cp = 2.0f * p_m - 0.5f * (p_0 + p_1);
+		
+		Bezier2nd b2(p_0, cp, p_1);
+
+		float maxError = 0.0f;
+		const int32_t errorSteps = 10;
+		for (int32_t i = 1; i < errorSteps - 1; ++i)
+		{
+			float f = float(i) / (errorSteps - 1);
+
+			Vector2 ps = b.evaluate(f0 + f * (f1 - f0));
+			Vector2 pe = b2.evaluate(f);
+
+			float error = (pe - ps).length();
+			maxError = max(error, maxError);
+		}
+
+		if (maxError <= errorThreshold)
+		{
+			outQuadratic.push_back(b2);
+			return;
+		}
+		else
+		{
+			AlignedVector< Bezier2nd > ql, qr;
+			approximateSubdivide(b, f0, (f0 + f1) * 0.5f, errorThreshold, ql);
+			approximateSubdivide(b, (f0 + f1) * 0.5f, f1, errorThreshold, qr);
+			outQuadratic.insert(outQuadratic.end(), ql.begin(), ql.end());
+			outQuadratic.insert(outQuadratic.end(), qr.begin(), qr.end());
+		}
+	}
+
+}
+
+void Bezier3rd::approximate(float errorThreshold, AlignedVector< Bezier2nd >& outQuadratic) const
+{
+	outQuadratic.resize(0);
+	approximateSubdivide(*this, 0.0f, 1.0f, errorThreshold, outQuadratic);
 }
 
 }
