@@ -18,6 +18,7 @@ public:
 	virtual void serialize(ISerializer& s);
 
 private:
+	friend class ScriptContextLua;
 	friend class ScriptManagerLua;
 
 	std::string m_fileName;

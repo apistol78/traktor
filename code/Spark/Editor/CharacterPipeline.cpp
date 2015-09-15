@@ -50,7 +50,7 @@ bool CharacterPipeline::buildDependencies(
 	{
 		if (const ScriptComponent* scriptComponent = dynamic_type_cast< const ScriptComponent* >(*i))
 		{
-			pipelineDepends->addDependency(scriptComponent->m_script, editor::PdfBuild | editor::PdfResource);
+			pipelineDepends->addDependency(scriptComponent->m_class, editor::PdfBuild | editor::PdfResource);
 		}
 	}
 

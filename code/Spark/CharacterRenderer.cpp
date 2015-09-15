@@ -15,7 +15,7 @@ bool CharacterRenderer::create(uint32_t frameCount)
 	// Create render context for each queued frame.
 	m_renderContexts.resize(frameCount);
 	for (uint32_t i = 0; i < frameCount; ++i)
-		m_renderContexts[i] = new render::RenderContext(2 * 1024 * 1024);
+		m_renderContexts[i] = new render::RenderContext(4 * 1024 * 1024);
 
 	// Create global render context.
 	m_globalContext = new render::RenderContext(4096);

@@ -5,6 +5,7 @@
 #include "Spark/SparkClassFactory.h"
 #include "Spark/Sprite.h"
 #include "Spark/SpriteInstance.h"
+#include "Spark/Tween.h"
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
@@ -48,6 +49,13 @@ void SparkClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classSpriteInstance->addMethod("place", &SpriteInstance::place);
 	classSpriteInstance->addMethod("remove", &SpriteInstance::remove);
 	registrar->registerClass(classSpriteInstance);
+
+	Ref< AutoRuntimeClass< Tween::IListener > > classTweenIListener = new AutoRuntimeClass< Tween::IListener >();
+	registrar->registerClass(classTweenIListener);
+
+	Ref< AutoRuntimeClass< Tween > > classTween = new AutoRuntimeClass< Tween >();
+	classTween->addConstructor< float, float, float, Tween::IListener* >();
+	registrar->registerClass(classTween);
 }
 
 	}

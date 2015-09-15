@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include <string>
 #include "Net/Http/HttpResponse.h"
 #include "Core/Io/IStream.h"

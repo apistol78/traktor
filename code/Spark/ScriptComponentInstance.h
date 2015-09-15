@@ -15,12 +15,8 @@
 
 namespace traktor
 {
-	namespace script
-	{
 
-class IScriptContext;
-
-	}
+class IRuntimeClass;
 
 	namespace spark
 	{
@@ -35,15 +31,15 @@ class T_DLLCLASS ScriptComponentInstance : public IComponentInstance
 	T_RTTI_CLASS;
 
 public:
-	ScriptComponentInstance(CharacterInstance* owner);
+	ScriptComponentInstance(CharacterInstance* owner, const resource::Proxy< IRuntimeClass >& clazz);
 
 	virtual void update();
 
 private:
-	friend class ScriptComponent;
-
 	CharacterInstance* m_owner;
-	resource::Proxy< script::IScriptContext > m_script;
+	resource::Proxy< IRuntimeClass > m_class;
+	Ref< ITypedObject > m_object;
+	uint32_t m_methodUpdate;
 };
 
 	}

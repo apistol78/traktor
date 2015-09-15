@@ -83,6 +83,43 @@ void ScriptContextLua::destroy()
 	}
 }
 
+bool ScriptContextLua::loadResource(const IScriptResource* scriptResource)
+{
+	m_scriptManager->lock(this);
+	{
+		CHECK_LUA_STACK(m_luaState, 0);
+
+		const ScriptResourceLua* scriptResourceLua = checked_type_cast< const ScriptResourceLua* >(scriptResource);
+		T_FATAL_ASSERT (scriptResourceLua != 0);
+
+		std::string fileName = "@" + scriptResourceLua->m_fileName;
+		int32_t result = luaL_loadbuffer(
+			m_luaState,
+			(const char*)scriptResourceLua->m_script.c_str(),
+			scriptResourceLua->m_script.length(),
+			fileName.c_str()
+		);
+		if (result != 0)
+		{
+			log::error << L"Script context load resource failed; \"" << mbstows(lua_tostring(m_luaState, -1)) << L"\"" << Endl;
+			lua_pop(m_luaState, 1);
+			m_scriptManager->unlock();
+			return false;
+		}
+
+		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
+#if defined(T_LUA_5_2)
+		lua_setupvalue(m_luaState, -2, 1);
+		lua_call(m_luaState, 0, 0);
+#else
+		lua_setfenv(m_luaState, -2);
+		lua_call(m_luaState, 0, 0);
+#endif
+	}
+	m_scriptManager->unlock();
+	return true;
+}
+
 void ScriptContextLua::setGlobal(const std::string& globalName, const Any& globalValue)
 {
 	m_scriptManager->lock(this);
@@ -318,11 +355,10 @@ Any ScriptContextLua::executeMethod(ScriptObjectLua* self, int32_t methodRef, ui
 	return returnValue;
 }
 
-ScriptContextLua::ScriptContextLua(ScriptManagerLua* scriptManager, lua_State* luaState, int32_t environmentRef, const source_map_t& map)
+ScriptContextLua::ScriptContextLua(ScriptManagerLua* scriptManager, lua_State* luaState, int32_t environmentRef)
 :	m_scriptManager(scriptManager)
 ,	m_luaState(luaState)
 ,	m_environmentRef(environmentRef)
-,	m_map(map)
 ,	m_lastSelf(0)
 {
 }
