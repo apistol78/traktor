@@ -11,13 +11,14 @@ namespace traktor
 	{
 
 class ScriptContextLua;
+class ScriptManagerLua;
 
 class ScriptClassLua : public IRuntimeClass
 {
 	T_RTTI_CLASS;
 
 public:
-	ScriptClassLua(ScriptContextLua* context, lua_State*& luaState, const std::string& className);
+	ScriptClassLua(ScriptManagerLua* scriptManager, ScriptContextLua* scriptContext, lua_State*& luaState, const std::string& className);
 
 	virtual ~ScriptClassLua();
 
@@ -29,7 +30,7 @@ public:
 
 	virtual bool haveUnknown() const T_FINAL;
 
-	virtual Ref< ITypedObject > construct(uint32_t argc, const Any* argv) const T_FINAL;
+	virtual Ref< ITypedObject > construct(ITypedObject* self, uint32_t argc, const Any* argv) const T_FINAL;
 
 	virtual uint32_t getConstantCount() const T_FINAL;
 
@@ -62,7 +63,8 @@ private:
 		int32_t ref;
 	};
 
-	ScriptContextLua* m_context;
+	ScriptManagerLua* m_scriptManager;
+	ScriptContextLua* m_scriptContext;
 	lua_State*& m_luaState;
 	std::string m_className;
 	std::vector< Method > m_methods;

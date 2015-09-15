@@ -2,7 +2,6 @@
 #define traktor_spark_Shape_H
 
 #include "Core/Object.h"
-#include "Core/Math/Matrix33.h"
 #include "Resource/Proxy.h"
 
 // import/export mechanism.
@@ -15,10 +14,12 @@
 
 namespace traktor
 {
+
+class Matrix33;
+
 	namespace render
 	{
 
-class IProgram;
 class Mesh;
 class RenderContext;
 class Shader;
@@ -28,7 +29,7 @@ class Shader;
 	namespace spark
 	{
 
-/*! \brief
+/*! \brief Pre-triangulated renderable shape.
  * \ingroup Spark
  */
 class T_DLLCLASS Shape : public Object

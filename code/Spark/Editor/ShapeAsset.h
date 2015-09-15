@@ -24,6 +24,9 @@ class Shader;
 	namespace spark
 	{
 
+/*! \brief
+ * \ingroup Spark
+ */
 class T_DLLCLASS ShapeAsset : public editor::Asset
 {
 	T_RTTI_CLASS;

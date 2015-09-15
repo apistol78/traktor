@@ -63,6 +63,7 @@ public:
 	virtual void getStatistics(ScriptStatistics& outStatistics) const;
 
 private:
+	friend class ScriptClassLua;
 	friend class ScriptContextLua;
 	friend class ScriptDebuggerLua;
 	friend class ScriptDelegateLua;

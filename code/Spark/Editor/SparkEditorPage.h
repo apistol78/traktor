@@ -41,6 +41,9 @@ class IScriptManager;
 
 class SparkEditControl;
 
+/*! \brief
+ * \ingroup Spark
+ */
 class T_DLLCLASS SparkEditorPage : public editor::IEditorPage
 {
 	T_RTTI_CLASS;

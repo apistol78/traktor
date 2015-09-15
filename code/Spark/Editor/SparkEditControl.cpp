@@ -3,10 +3,9 @@
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Editor/IEditor.h"
-#include "Spark/DisplayList.h"
-#include "Spark/DisplayRenderer.h"
-#include "Spark/Stage.h"
-#include "Spark/StageInstance.h"
+#include "Spark/CharacterRenderer.h"
+#include "Spark/Sprite.h"
+#include "Spark/SpriteInstance.h"
 #include "Spark/Editor/SparkEditControl.h"
 #include "Ui/Itf/IWidget.h"
 #include "Ui/Application.h"
@@ -54,8 +53,8 @@ bool SparkEditControl::create(
 	if (!m_primitiveRenderer->create(resourceManager, renderSystem))
 		return false;
 
-	m_displayRenderer = new DisplayRenderer();
-	m_displayRenderer->create(1);
+	m_characterRenderer = new CharacterRenderer();
+	m_characterRenderer->create(1);
 
 	addEventHandler< ui::MouseButtonDownEvent >(this, &SparkEditControl::eventMouseButtonDown);
 	addEventHandler< ui::MouseButtonUpEvent >(this, &SparkEditControl::eventMouseButtonUp);
@@ -67,21 +66,23 @@ bool SparkEditControl::create(
 	m_database = database;
 	m_resourceManager = resourceManager;
 
+	m_idleEventHandler = ui::Application::getInstance()->addEventHandler< ui::IdleEvent >(this, &SparkEditControl::eventIdle);
 	return true;
 }
 
 void SparkEditControl::destroy()
 {
-	safeDestroy(m_displayRenderer);
+	ui::Application::getInstance()->removeEventHandler< ui::IdleEvent >(m_idleEventHandler);
+	safeDestroy(m_characterRenderer);
 	safeDestroy(m_primitiveRenderer);
 	safeClose(m_renderView);
 	Widget::destroy();
 }
 
-void SparkEditControl::setStage(const Stage* stage)
+void SparkEditControl::setSprite(const Sprite* sprite)
 {
-	m_stage = stage;
-	m_stageInstance = stage->createInstance(m_resourceManager);
+	m_sprite = sprite;
+	m_spriteInstance = checked_type_cast< SpriteInstance* >(sprite->createInstance(0, m_resourceManager));
 	update();
 }
 
@@ -156,39 +157,33 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 			0
 		);
 
-		//Matrix44 projection = orthoLh(sz.cx, sz.cy, 0.0f, 1.0f);
-
-		//if (m_primitiveRenderer->begin(m_renderView, projection))
-		//{
-		//	m_primitiveRenderer->pushDepthState(false, false, false);
-
-		//	for (int32_t i = -10; i < 10; ++i)
-		//	{
-		//		float f = i / 10.0f;
-		//		m_primitiveRenderer->drawLine(
-		//			Vector4(-1.0f, f, 1.0f, 1.0f),
-		//			Vector4( 1.0f, f, 1.0f, 1.0f),
-		//			Color4ub(220, 220, 220, 255)
-		//		);
-		//		m_primitiveRenderer->drawLine(
-		//			Vector4(f, -1.0f, 1.0f, 1.0f),
-		//			Vector4(f,  1.0f, 1.0f, 1.0f),
-		//			Color4ub(220, 220, 220, 255)
-		//		);
-		//	}
-
-		//	m_primitiveRenderer->popDepthState();
-
-		//	m_primitiveRenderer->end();
-		//}
-
-
-		if (m_stageInstance)
+		if (m_primitiveRenderer->begin(m_renderView, Matrix44::identity()))
 		{
-			m_stageInstance->update();
-			m_stageInstance->build(m_displayRenderer, 0);
+			m_primitiveRenderer->pushDepthState(false, false, false);
+			for (int32_t i = -10; i < 10; ++i)
+			{
+				float f = i / 10.0f;
+				m_primitiveRenderer->drawLine(
+					Vector4(-1.0f, f, 1.0f, 1.0f),
+					Vector4( 1.0f, f, 1.0f, 1.0f),
+					Color4ub(0, 0, 0, 40)
+				);
+				m_primitiveRenderer->drawLine(
+					Vector4(f, -1.0f, 1.0f, 1.0f),
+					Vector4(f,  1.0f, 1.0f, 1.0f),
+					Color4ub(0, 0, 0, 40)
+				);
+			}
+			m_primitiveRenderer->popDepthState();
+			m_primitiveRenderer->end();
+		}
 
-			m_displayRenderer->render(
+		if (m_spriteInstance)
+		{
+			m_spriteInstance->update();
+
+			m_characterRenderer->build(m_spriteInstance, 0);
+			m_characterRenderer->render(
 				m_renderView,
 				m_viewOffset,
 				Vector2(sz.cx / m_viewScale, sz.cy / m_viewScale),
@@ -196,12 +191,20 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 			);
 		}
 
-
 		m_renderView->end();
 		m_renderView->present();
 	}
 
 	event->consume();
+}
+
+void SparkEditControl::eventIdle(ui::IdleEvent* event)
+{
+	if (isVisible(true))
+	{
+		update();
+		event->requestMore();
+	}
 }
 
 	}

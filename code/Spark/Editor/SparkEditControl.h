@@ -41,10 +41,13 @@ class Shader;
 	namespace spark
 	{
 
-class DisplayRenderer;
-class Stage;
-class StageInstance;
+class CharacterRenderer;
+class Sprite;
+class SpriteInstance;
 
+/*! \brief
+ * \ingroup Spark
+ */
 class SparkEditControl : public ui::Widget
 {
 	T_RTTI_CLASS;
@@ -62,7 +65,7 @@ public:
 
 	void destroy();
 
-	void setStage(const Stage* stage);
+	void setSprite(const Sprite* sprite);
 
 private:
 	editor::IEditor* m_editor;
@@ -70,9 +73,10 @@ private:
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
-	Ref< DisplayRenderer > m_displayRenderer;
-	Ref< const Stage > m_stage;
-	Ref< StageInstance > m_stageInstance;
+	Ref< CharacterRenderer > m_characterRenderer;
+	Ref< const Sprite > m_sprite;
+	Ref< SpriteInstance > m_spriteInstance;
+	Ref< ui::EventSubject::IEventHandler > m_idleEventHandler;
 	ui::Point m_lastMousePosition;
 	Vector2 m_viewOffset;
 	float m_viewScale;
@@ -88,6 +92,8 @@ private:
 	void eventSize(ui::SizeEvent* event);
 
 	void eventPaint(ui::PaintEvent* event);
+
+	void eventIdle(ui::IdleEvent* event);
 };
 
 	}

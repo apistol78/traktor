@@ -12,6 +12,9 @@ namespace traktor
 
 class Gradient;
 
+/*! \brief
+ * \ingroup Spark
+ */
 class Style : public Object
 {
 	T_RTTI_CLASS;

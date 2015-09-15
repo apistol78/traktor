@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include <list>
 #include "Core/Log/Log.h"
 #include "Core/Math/Aabb2.h"
@@ -17,9 +15,11 @@
 #include "Render/Mesh/Mesh.h"
 #include "Render/Mesh/MeshWriter.h"
 #include "Render/Mesh/SystemMeshFactory.h"
+#include "Render/Shader/ShaderGraph.h"
 #include "Spark/ShapeResource.h"
 #include "Spark/Editor/ShapeAsset.h"
 #include "Spark/Editor/ShapePipeline.h"
+#include "Spark/Editor/ShapeShaderGenerator.h"
 #include "Spark/Editor/Shape/PathShape.h"
 #include "Spark/Editor/Shape/Shape.h"
 #include "Spark/Editor/Shape/ShapeVisitor.h"
@@ -231,6 +231,15 @@ private:
 	Matrix33 m_currentTransform;
 };
 
+Guid incrementGuid(const Guid& g)
+{
+	uint8_t d[16];
+	for (int i = 0; i < 16; ++i)
+		d[i] = g[i];
+	reinterpret_cast< uint32_t& >(d[12])++;
+	return Guid(d);
+}
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.ShapePipeline", 0, ShapePipeline, editor::IPipeline)
@@ -266,7 +275,8 @@ bool ShapePipeline::buildDependencies(
 {
 	const ShapeAsset* shapeAsset = checked_type_cast< const ShapeAsset* >(sourceAsset);
 	pipelineDepends->addDependency(traktor::Path(m_assetPath), shapeAsset->getFileName().getOriginal());
-	pipelineDepends->addDependency(shapeAsset->m_shader, editor::PdfBuild | editor::PdfResource);
+	pipelineDepends->addDependency(shapeAsset->m_shader, editor::PdfUse);
+	ShapeShaderGenerator().addDependencies(pipelineDepends);
 	return true;
 }
 
@@ -316,10 +326,32 @@ bool ShapePipeline::buildOutput(
 	TriangleProducer triangleProducer(shapeAsset->m_cubicApproximationError);
 	shape->visit(&triangleProducer);
 
+	// Create shape shader.
+	ShapeShaderGenerator shaderGenerator;
+	Ref< render::ShaderGraph > outputShapeShader = shaderGenerator.generate(pipelineBuilder->getSourceDatabase(), shapeAsset->m_shader);
+	if (!outputShapeShader)
+	{
+		log::error << L"Shape pipeline failed; unable to generate shader" << Endl;
+		return false;
+	}
+
+	// Build shape shader.
+	Guid outputShaderGuid = incrementGuid(outputGuid);
+	std::wstring outputShaderPath = traktor::Path(outputPath).getPathOnly() + L"/" + outputGuid.format() + L"/Shader";
+	if (!pipelineBuilder->buildOutput(
+		outputShapeShader,
+		outputShaderPath,
+		outputShaderGuid
+	))
+	{
+		log::error << L"Shape pipeline failed; unable to build shader" << Endl;
+		return false;
+	}
+
 	// Create shape output resource.
 	Ref< ShapeResource > outputShapeResource = new ShapeResource();
-	outputShapeResource->m_shader = shapeAsset->m_shader;
-	
+	outputShapeResource->m_shader = resource::Id< render::Shader >(outputShaderGuid);
+
 	// Create output instance.
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(
 		outputPath,

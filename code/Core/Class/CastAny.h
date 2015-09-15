@@ -355,35 +355,6 @@ struct CastAny < Type, true >
 	}
 };
 
-template < >
-struct CastAny < const TypeInfo&, false >
-{
-	static bool accept(const Any& value) {
-		return value.isTypeInfo();
-	}
-	static Any set(const TypeInfo& value) {
-		return Any::fromTypeInfo(&value);
-	}
-	static const TypeInfo& get(const Any& value) {
-		T_CAST_ASSERT (value.getTypeInfo() != 0);
-		return *value.getTypeInfo();
-	}
-};
-
-template < >
-struct CastAny < const TypeInfo, true >
-{
-	static bool accept(const Any& value) {
-		return value.isTypeInfo();
-	}
-	static Any set(const TypeInfo* value) {
-		return Any::fromTypeInfo(value);
-	}
-	static const TypeInfo* get(const Any& value) {
-		return value.getTypeInfo();
-	}
-};
-
 /*! \} */
 
 }

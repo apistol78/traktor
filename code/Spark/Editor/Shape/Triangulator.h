@@ -11,7 +11,7 @@ namespace traktor
 	{
 
 /*! \brief Trapezoid triangulation.
- * \ingroup Flash
+ * \ingroup Spark
  */
 class Triangulator : public Object
 {

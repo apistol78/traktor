@@ -1,5 +1,5 @@
-#ifndef traktor_spark_ShapePipeline_H
-#define traktor_spark_ShapePipeline_H
+#ifndef traktor_spark_CharacterPipeline_H
+#define traktor_spark_CharacterPipeline_H
 
 #include "Editor/IPipeline.h"
 
@@ -19,12 +19,12 @@ namespace traktor
 /*! \brief
  * \ingroup Spark
  */
-class T_DLLCLASS ShapePipeline : public editor::IPipeline
+class T_DLLCLASS CharacterPipeline : public editor::IPipeline
 {
 	T_RTTI_CLASS;
 
 public:
-	ShapePipeline();
+	CharacterPipeline();
 
 	virtual bool create(const editor::IPipelineSettings* settings);
 
@@ -57,12 +57,9 @@ public:
 		editor::IPipelineBuilder* pipelineBuilder,
 		const ISerializable* sourceAsset
 	) const;
-
-private:
-	std::wstring m_assetPath;
 };
 
 	}
 }
 
-#endif	// traktor_spark_ShapePipeline_H
+#endif	// traktor_spark_CharacterPipeline_H

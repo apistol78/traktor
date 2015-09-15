@@ -2,6 +2,7 @@
 #define traktor_spark_DisplayList_H
 
 #include "Core/Object.h"
+#include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 
 // import/export mechanism.
@@ -19,7 +20,7 @@ namespace traktor
 
 class CharacterInstance;
 
-/*! \brief
+/*! \brief Display list.
  * \ingroup Spark
  */
 class T_DLLCLASS DisplayList : public Object
@@ -29,14 +30,16 @@ class T_DLLCLASS DisplayList : public Object
 public:
 	struct Layer
 	{
-		Ref< const CharacterInstance > instance;
+		Ref< CharacterInstance > instance;
 	};
 
-	void place(int32_t depth, const CharacterInstance* instance);
+	void place(int32_t depth, CharacterInstance* instance);
 
 	void remove(int32_t depth);
 
 	const SmallMap< int32_t, Layer >& getLayers() const;
+
+	void getCharacters(RefArray< CharacterInstance >& outCharacters) const;
 
 private:
 	SmallMap< int32_t, Layer > m_layers;

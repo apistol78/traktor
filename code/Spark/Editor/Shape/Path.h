@@ -30,6 +30,9 @@ struct SubPath
 	{}
 };
 
+/*! \brief
+ * \ingroup Spark
+ */
 class Path : public Object
 {
 	T_RTTI_CLASS;

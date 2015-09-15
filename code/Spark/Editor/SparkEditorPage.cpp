@@ -5,10 +5,12 @@
 #include "Editor/IEditorPageSite.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Resource/ShaderFactory.h"
+#include "Render/Resource/TextureFactory.h"
 #include "Resource/ResourceManager.h"
 #include "Script/ScriptContextFactory.h"
 #include "Script/Lua/ScriptManagerLua.h"
-#include "Spark/Stage.h"
+#include "Spark/CharacterResourceFactory.h"
+#include "Spark/Sprite.h"
 #include "Spark/ShapeResourceFactory.h"
 #include "Spark/Editor/SparkEditControl.h"
 #include "Spark/Editor/SparkEditorPage.h"
@@ -41,16 +43,18 @@ bool SparkEditorPage::create(ui::Container* parent)
 	m_resourceManager = new resource::ResourceManager(true);
 	m_resourceManager->addFactory(new script::ScriptContextFactory(database, m_scriptManager));
 	m_resourceManager->addFactory(new render::ShaderFactory(database, renderSystem));
+	m_resourceManager->addFactory(new render::TextureFactory(database, renderSystem, 0));
+	m_resourceManager->addFactory(new CharacterResourceFactory(database));
 	m_resourceManager->addFactory(new ShapeResourceFactory(database, renderSystem));
 
 	m_editControl = new SparkEditControl(m_editor);
 	m_editControl->create(parent, ui::WsNone, database, m_resourceManager, renderSystem);
 	m_editControl->update();
 
-	Ref< Stage > stage = m_document->getObject< Stage >(0);
-	m_editControl->setStage(stage);
+	Ref< Sprite > sprite = m_document->getObject< Sprite >(0);
+	m_editControl->setSprite(sprite);
 
-	m_site->setPropertyObject(stage);
+	m_site->setPropertyObject(sprite);
 	return true;
 }
 

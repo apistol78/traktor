@@ -23,6 +23,9 @@ class Shape;
 class Style;
 class Gradient;
 
+/*! \brief
+ * \ingroup Spark
+ */
 class SvgParser : public Object
 {
 	T_RTTI_CLASS;

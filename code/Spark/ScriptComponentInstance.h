@@ -2,6 +2,7 @@
 #define traktor_spark_ScriptComponentInstance_H
 
 #include "Core/Ref.h"
+#include "Resource/Proxy.h"
 #include "Spark/IComponentInstance.h"
 
 // import/export mechanism.
@@ -14,9 +15,6 @@
 
 namespace traktor
 {
-
-class IRuntimeClass;
-
 	namespace script
 	{
 
@@ -29,20 +27,23 @@ class IScriptContext;
 
 class CharacterInstance;
 
+/*! \brief Script component instance.
+ * \ingroup Spark
+ */
 class T_DLLCLASS ScriptComponentInstance : public IComponentInstance
 {
 	T_RTTI_CLASS;
 
 public:
-	ScriptComponentInstance(CharacterInstance* owner, const IRuntimeClass* scriptClass, ITypedObject* scriptObject);
+	ScriptComponentInstance(CharacterInstance* owner);
 
 	virtual void update();
 
 private:
+	friend class ScriptComponent;
+
 	CharacterInstance* m_owner;
-	Ref< const IRuntimeClass > m_scriptClass;
-	Ref< ITypedObject > m_scriptObject;
-	uint32_t m_methodIdUpdate;
+	resource::Proxy< script::IScriptContext > m_script;
 };
 
 	}

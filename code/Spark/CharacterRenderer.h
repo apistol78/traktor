@@ -1,5 +1,5 @@
-#ifndef traktor_spark_DisplayRenderer_H
-#define traktor_spark_DisplayRenderer_H
+#ifndef traktor_spark_CharacterRenderer_H
+#define traktor_spark_CharacterRenderer_H
 
 #include "Core/Object.h"
 #include "Core/RefArray.h"
@@ -26,9 +26,11 @@ class RenderContext;
 	namespace spark
 	{
 
-class DisplayList;
+class CharacterInstance;
 
-/*!
+/*! \brief Character renderer.
+ * \ingroup Spark
+ *
  * Thread 1:
  *		- build 1
  *		- build 2
@@ -38,7 +40,7 @@ class DisplayList;
  *		- render 2
  *		- ...
  */
-class T_DLLCLASS DisplayRenderer : public Object
+class T_DLLCLASS CharacterRenderer : public Object
 {
 	T_RTTI_CLASS;
 
@@ -47,7 +49,7 @@ public:
 
 	void destroy();
 
-	void build(const DisplayList* displayList, uint32_t frame);
+	void build(const CharacterInstance* character, uint32_t frame);
 
 	void render(render::IRenderView* renderView, const Vector2& viewOffset, const Vector2& viewSize, uint32_t frame);
 
@@ -59,4 +61,4 @@ private:
 	}
 }
 
-#endif	// traktor_spark_DisplayRenderer_H
+#endif	// traktor_spark_CharacterRenderer_H
