@@ -39,6 +39,27 @@ public:
 	virtual std::wstring toString() const = 0;
 };
 
+class T_DLLCLASS BoxedTypeInfo : public Boxed
+{
+	T_RTTI_CLASS;
+
+public:
+	BoxedTypeInfo();
+
+	explicit BoxedTypeInfo(const TypeInfo& value);
+
+	const TypeInfo& unbox() const { return m_value; }
+
+	virtual std::wstring toString() const;
+
+	void* operator new (size_t size);
+
+	void operator delete (void* ptr);
+
+private:
+	const TypeInfo& m_value;
+};
+
 class T_DLLCLASS BoxedUInt64 : public Boxed
 {
 	T_RTTI_CLASS;
@@ -926,6 +947,34 @@ public:
 
 private:
 	std::vector< Any > m_arr;
+};
+
+template < >
+struct CastAny< TypeInfo, false >
+{
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedTypeInfo >(value.getObjectUnsafe());
+	}
+	static Any set(const TypeInfo& value) {
+		return Any::fromObject(new BoxedTypeInfo(value));
+	}
+	static const TypeInfo& get(const Any& value) {
+		return mandatory_non_null_type_cast< BoxedTypeInfo* >(value.getObject())->unbox();
+	}
+};
+
+template < >
+struct CastAny< const TypeInfo&, false >
+{
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedTypeInfo >(value.getObjectUnsafe());
+	}
+	static Any set(const TypeInfo& value) {
+		return Any::fromObject(new BoxedTypeInfo(value));
+	}
+	static const TypeInfo& get(const Any& value) {
+		return mandatory_non_null_type_cast< BoxedTypeInfo* >(value.getObject())->unbox();
+	}
 };
 
 template < >

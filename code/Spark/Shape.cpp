@@ -1,3 +1,4 @@
+#include "Core/Math/Matrix33.h"
 #include "Render/Shader.h"
 #include "Render/Context/RenderBlock.h"
 #include "Render/Context/RenderContext.h"
@@ -31,6 +32,13 @@ Shape::Shape(render::Mesh* mesh, const resource::Proxy< render::Shader >& shader
 
 void Shape::render(render::RenderContext* renderContext, const Matrix33& transform) const
 {
+	const Matrix44 T(
+		transform.e11, transform.e12, transform.e13, 0.0f,
+		transform.e21, transform.e22, transform.e23, 0.0f,
+		transform.e31, transform.e32, transform.e33, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	);
+
 	const std::vector< render::Mesh::Part >& parts = m_mesh->getParts();
 	T_ASSERT (parts.size() == m_parts.size());
 
@@ -47,7 +55,7 @@ void Shape::render(render::RenderContext* renderContext, const Matrix33& transfo
 		renderBlock->primitives = parts[i].primitives;
 
 		renderBlock->programParams->beginParameters(renderContext);
-		renderBlock->programParams->setMatrixParameter(L"Spark_Transform", Matrix44::identity());
+		renderBlock->programParams->setMatrixParameter(L"Spark_Transform", T);
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(

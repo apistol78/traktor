@@ -27,9 +27,8 @@ class IResourceManager;
 
 class CharacterInstance;
 class IComponent;
-class StageInstance;
 
-/*! \brief
+/*! \brief Character base class.
  * \ingroup Spark
  */
 class T_DLLCLASS Character : public ISerializable
@@ -37,12 +36,13 @@ class T_DLLCLASS Character : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< CharacterInstance > createInstance(StageInstance* stage, const CharacterInstance* parent, resource::IResourceManager* resourceManager) const = 0;
+	virtual Ref< CharacterInstance > createInstance(const CharacterInstance* parent, resource::IResourceManager* resourceManager) const = 0;
 
 	virtual void serialize(ISerializer& s);
 
 protected:
-	std::wstring m_name;
+	friend class CharacterPipeline;
+
 	Matrix33 m_transform;
 	RefArray< IComponent > m_components;
 };

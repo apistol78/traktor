@@ -157,14 +157,6 @@ Any Any::fromObject(ITypedObject* value)
 	return any;
 }
 
-Any Any::fromTypeInfo(const TypeInfo* value)
-{
-	Any any;
-	any.m_type = AtTypeInfo;
-	any.m_data.m_typeInfo = value;
-	return any;
-}
-
 bool Any::getBoolean() const
 {
 	switch (m_type)
@@ -179,8 +171,6 @@ bool Any::getBoolean() const
 		return parseString< int32_t >(m_data.m_string) != 0;
 	case AtObject:
 		return m_data.m_object != 0;
-	case AtTypeInfo:
-		return m_data.m_typeInfo != 0;
 	default:
 		break;
 	}
@@ -235,8 +225,6 @@ std::string Any::getString() const
 		return wstombs(Utf8Encoding(), toString(m_data.m_float));
 	case AtString:
 		return m_data.m_string;
-	case AtTypeInfo:
-		return wstombs(Utf8Encoding(), m_data.m_typeInfo->getName());
 	default:
 		break;
 	}
@@ -255,8 +243,6 @@ std::wstring Any::getWideString() const
 		return toString(m_data.m_float);
 	case AtString:
 		return mbstows(Utf8Encoding(), m_data.m_string);
-	case AtTypeInfo:
-		return m_data.m_typeInfo->getName();
 	default:
 		break;
 	}

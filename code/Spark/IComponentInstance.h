@@ -16,7 +16,7 @@ namespace traktor
 	namespace spark
 	{
 
-/*! \brief
+/*! \brief Character component instance.
  * \ingroup Spark
  */
 class T_DLLCLASS IComponentInstance : public Object

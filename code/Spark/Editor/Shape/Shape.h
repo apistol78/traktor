@@ -13,6 +13,9 @@ namespace traktor
 class ShapeVisitor;
 class Style;
 
+/*! \brief
+ * \ingroup Spark
+ */
 class Shape : public Object
 {
 	T_RTTI_CLASS;

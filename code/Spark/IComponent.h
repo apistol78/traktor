@@ -25,9 +25,8 @@ class IResourceManager;
 
 class CharacterInstance;
 class IComponentInstance;
-class StageInstance;
 
-/*! \brief
+/*! \brief Character component interface.
  * \ingroup Spark
  */
 class T_DLLCLASS IComponent : public ISerializable
@@ -35,7 +34,7 @@ class T_DLLCLASS IComponent : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< IComponentInstance > createInstance(StageInstance* stage, CharacterInstance* owner, resource::IResourceManager* resourceManager) const = 0;
+	virtual Ref< IComponentInstance > createInstance(CharacterInstance* owner, resource::IResourceManager* resourceManager) const = 0;
 };
 
 	}

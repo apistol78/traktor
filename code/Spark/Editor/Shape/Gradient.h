@@ -9,6 +9,9 @@ namespace traktor
 	namespace spark
 	{
 
+/*! \brief
+ * \ingroup Spark
+ */
 class Gradient : public Object
 {
 	T_RTTI_CLASS;

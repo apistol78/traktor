@@ -33,7 +33,7 @@ public:
 	virtual bool haveUnknown() const = 0;
 
 	/*! \brief Construct new object. */
-	virtual Ref< ITypedObject > construct(uint32_t argc, const Any* argv) const = 0;
+	virtual Ref< ITypedObject > construct(ITypedObject* self, uint32_t argc, const Any* argv) const = 0;
 
 	/*! \brief Get number of constants. */
 	virtual uint32_t getConstantCount() const = 0;

@@ -10,6 +10,9 @@ namespace traktor
 
 class Shape;
 
+/*! \brief
+ * \ingroup Spark
+ */
 class ShapeVisitor : public Object
 {
 	T_RTTI_CLASS;

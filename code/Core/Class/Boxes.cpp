@@ -72,6 +72,7 @@ private:
 };
 
 BoxedAllocator< BoxedUInt64, 16 > s_allocBoxedUInt64;
+BoxedAllocator< BoxedTypeInfo, 16 > s_allocBoxedTypeInfo;
 BoxedAllocator< BoxedGuid, 512 > s_allocBoxedGuid;
 BoxedAllocator< BoxedVector2, 1024 > s_allocBoxedVector2;
 #if !defined(__PS3__) && !defined(__EMSCRIPTEN__)
@@ -101,6 +102,34 @@ BoxedAllocator< BoxedStdVector, 16 > s_allocBoxedStdVector;
 
 
 T_IMPLEMENT_RTTI_CLASS_ROOT(L"traktor.Boxed", Boxed)
+
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.TypeInfo", BoxedTypeInfo, Boxed)
+
+BoxedTypeInfo::BoxedTypeInfo()
+:	m_value(*TypeInfo::find(L"traktor.Object"))
+{
+}
+
+BoxedTypeInfo::BoxedTypeInfo(const TypeInfo& value)
+:	m_value(value)
+{
+}
+
+std::wstring BoxedTypeInfo::toString() const
+{
+	return m_value.getName();
+}
+
+void* BoxedTypeInfo::operator new (size_t size)
+{
+	return s_allocBoxedTypeInfo.alloc();
+}
+
+void BoxedTypeInfo::operator delete (void* ptr)
+{
+	s_allocBoxedTypeInfo.free(ptr);
+}
 
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.UInt64", BoxedUInt64, Boxed)

@@ -122,7 +122,7 @@ Ref< const IRuntimeClass > ScriptContextLua::findClass(const std::string& classN
 		lua_getfield(m_luaState, -1, className.c_str());
 		if (lua_istable(m_luaState, -1))
 		{
-			scriptClass = new ScriptClassLua(this, m_luaState, className);
+			scriptClass = new ScriptClassLua(m_scriptManager, this, m_luaState, className);
 
 			// Gather all methods of script class.
 			lua_pushnil(m_luaState);

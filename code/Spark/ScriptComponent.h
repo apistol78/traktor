@@ -24,17 +24,22 @@ class IScriptContext;
 	namespace spark
 	{
 
+/*! \brief Script component.
+ * \ingroup Spark
+ */
 class T_DLLCLASS ScriptComponent : public IComponent
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< IComponentInstance > createInstance(StageInstance* stage, CharacterInstance* owner, resource::IResourceManager* resourceManager) const;
+	virtual Ref< IComponentInstance > createInstance(CharacterInstance* owner, resource::IResourceManager* resourceManager) const;
 
 	virtual void serialize(ISerializer& s);
 
 private:
-	std::string m_class;
+	friend class CharacterPipeline;
+
+	resource::Id< script::IScriptContext > m_script;
 };
 
 	}

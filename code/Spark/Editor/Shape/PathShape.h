@@ -9,6 +9,9 @@ namespace traktor
 	namespace spark
 	{
 
+/*! \brief
+ * \ingroup Spark
+ */
 class PathShape : public Shape
 {
 	T_RTTI_CLASS;

@@ -54,8 +54,6 @@ public:
 
 	static Any fromObject(ITypedObject* value);
 
-	static Any fromTypeInfo(const TypeInfo* value);
-
 	bool getBoolean() const;
 
 	int32_t getInteger() const;
@@ -68,8 +66,6 @@ public:
 
 	ITypedObject* getObject() const { return m_type == AtObject ? m_data.m_object : 0; }
 
-	const TypeInfo* getTypeInfo() const { return m_type == AtTypeInfo ? m_data.m_typeInfo : 0; }
-
 	bool isVoid() const { return m_type == AtVoid; }
 
 	bool isBoolean() const { return m_type == AtBoolean; }
@@ -81,8 +77,6 @@ public:
 	bool isString() const { return m_type == AtString; }
 
 	bool isObject() const { return m_type == AtObject; }
-
-	bool isTypeInfo() const { return m_type == AtTypeInfo; }
 
 	bool isNumeric() const { return isInteger() || isFloat(); }
 
@@ -98,8 +92,6 @@ public:
 	std::string getStringUnsafe() const { T_ASSERT (m_type == AtString); return m_data.m_string; }
 
 	ITypedObject* getObjectUnsafe() const { T_ASSERT (m_type == AtObject); return m_data.m_object; }
-
-	const TypeInfo* getTypeInfoUnsafe() const { T_ASSERT (m_type == AtTypeInfo); return m_data.m_typeInfo; }
 
 	// \}
 
@@ -117,8 +109,7 @@ private:
 		AtInteger,
 		AtFloat,
 		AtString,
-		AtObject,
-		AtTypeInfo
+		AtObject
 	};
 
 	union AnyData
@@ -128,7 +119,6 @@ private:
 		float m_float;
 		char* m_string;
 		ITypedObject* m_object;
-		const TypeInfo* m_typeInfo;
 	};
 
 	AnyType m_type;

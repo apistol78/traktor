@@ -1,6 +1,7 @@
 #include <cstring>
 #include "Core/Class/Boxes.h"
 #include "Core/Class/IRuntimeClass.h"
+#include "Core/Class/OrderedClassRegistrar.h"
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Save.h"
@@ -99,6 +100,19 @@ ScriptManagerLua::ScriptManagerLua()
 
 		lua_pop(m_luaState, 1);
 	}
+
+	// Register all runtime classes, first collect all classes
+	// and then register them in class dependency order.
+	OrderedClassRegistrar registrar;
+	std::set< const TypeInfo* > runtimeClassFactoryTypes;
+	type_of< IRuntimeClassFactory >().findAllOf(runtimeClassFactoryTypes, false);
+	for (std::set< const TypeInfo* >::const_iterator i = runtimeClassFactoryTypes.begin(); i != runtimeClassFactoryTypes.end(); ++i)
+	{
+		Ref< IRuntimeClassFactory > runtimeClassFactory = dynamic_type_cast< IRuntimeClassFactory* >((*i)->createInstance());
+		if (runtimeClassFactory)
+			runtimeClassFactory->createClasses(&registrar);
+	}
+	registrar.registerClassesInOrder(this);
 
 	s_timer.start();
 }
@@ -844,10 +858,10 @@ Any ScriptManagerLua::toAny(int32_t index)
 		lua_rawgeti(m_luaState, index, c_tableKey_class);
 		if (lua_isuserdata(m_luaState, -1))
 		{
-			const IRuntimeClass* runtimeClass = reinterpret_cast< const IRuntimeClass* >(lua_touserdata(m_luaState, -1));
+			IRuntimeClass* runtimeClass = reinterpret_cast< IRuntimeClass* >(lua_touserdata(m_luaState, -1));
 			lua_pop(m_luaState, 1);
 			if (runtimeClass)
-				return Any::fromTypeInfo(&runtimeClass->getExportType());
+				return Any::fromObject(new BoxedTypeInfo(runtimeClass->getExportType()));
 		}
 		lua_pop(m_luaState, 1);
 
@@ -893,11 +907,11 @@ void ScriptManagerLua::toAny(int32_t base, int32_t count, Any* outAnys)
 			lua_rawgeti(m_luaState, index, c_tableKey_class);
 			if (lua_isuserdata(m_luaState, -1))
 			{
-				const IRuntimeClass* runtimeClass = reinterpret_cast< const IRuntimeClass* >(lua_touserdata(m_luaState, -1));
+				IRuntimeClass* runtimeClass = reinterpret_cast< IRuntimeClass* >(lua_touserdata(m_luaState, -1));
 				lua_pop(m_luaState, 1);
 				if (runtimeClass)
 				{
-					outAnys[i] = Any::fromTypeInfo(&runtimeClass->getExportType());
+					outAnys[i] = Any::fromObject(new BoxedTypeInfo(runtimeClass->getExportType()));
 					continue;
 				}
 			}
@@ -1071,7 +1085,7 @@ int ScriptManagerLua::classCallConstructor(lua_State* luaState)
 	Any argv[8];
 	manager->toAny(2, top - 1, argv);
 
-	Any returnValue = Any::fromObject(runtimeClass->construct(top - 1, argv));
+	Any returnValue = Any::fromObject(runtimeClass->construct(0, top - 1, argv));
 	manager->pushAny(returnValue);
 
 	return 1;

@@ -5,11 +5,42 @@ namespace traktor
 {
 	namespace spark
 	{
+		namespace
+		{
+
+void decomposeTransform(const Matrix33& transform, Vector2* outTranslate, Vector2* outScale, float* outRotation)
+{
+	if (outTranslate)
+	{
+		outTranslate->x = transform.e13;
+		outTranslate->y = transform.e23;
+	}
+
+	if (outScale)
+	{
+		outScale->x = Vector2(transform.e11, transform.e12).length();
+		outScale->y = Vector2(transform.e21, transform.e22).length();
+	}
+
+	if (outRotation)
+		*outRotation = -std::atan2(transform.e12, transform.e11);
+}
+
+Matrix33 composeTransform(const Vector2& translate_, const Vector2& scale_, float rotate_)
+{
+	return
+		translate(translate_.x, translate_.y) *
+		scale(scale_.x, scale_.y) *
+		rotate(rotate_);
+}
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.CharacterInstance", CharacterInstance, Object)
 
-CharacterInstance::CharacterInstance()
-:	m_transform(Matrix33::identity())
+CharacterInstance::CharacterInstance(const CharacterInstance* parent)
+:	m_parent(parent)
+,	m_transform(Matrix33::identity())
 {
 }
 
@@ -27,6 +58,59 @@ void CharacterInstance::setTransform(const Matrix33& transform)
 const Matrix33& CharacterInstance::getTransform() const
 {
 	return m_transform;
+}
+
+Matrix33 CharacterInstance::getFullTransform() const
+{
+	Matrix33 T = m_transform;
+	for (const CharacterInstance* parent = m_parent; parent; parent = parent->m_parent)
+		T = T * parent->getTransform();
+	return T;
+}
+
+void CharacterInstance::setPosition(const Vector2& position)
+{
+	Vector2 scale;
+	float rotation;
+	decomposeTransform(m_transform, 0, &scale, &rotation);
+	m_transform = composeTransform(position, scale, rotation);
+}
+
+Vector2 CharacterInstance::getPosition() const
+{
+	Vector2 position;
+	decomposeTransform(m_transform, &position, 0, 0);
+	return position;
+}
+
+void CharacterInstance::setScale(const Vector2& scale)
+{
+	Vector2 position;
+	float rotation;
+	decomposeTransform(m_transform, &position, 0, &rotation);
+	m_transform = composeTransform(position, scale, rotation);
+}
+
+Vector2 CharacterInstance::getScale() const
+{
+	Vector2 scale;
+	decomposeTransform(m_transform, 0, &scale, 0);
+	return scale;
+}
+
+void CharacterInstance::setRotation(float rotation)
+{
+	Vector2 position;
+	Vector2 scale;
+	decomposeTransform(m_transform, &position, &scale, 0);
+	m_transform = composeTransform(position, scale, rotation);
+}
+
+float CharacterInstance::getRotation() const
+{
+	float rotation;
+	decomposeTransform(m_transform, 0, 0, &rotation);
+	return rotation;
 }
 
 void CharacterInstance::addComponent(IComponentInstance* component)

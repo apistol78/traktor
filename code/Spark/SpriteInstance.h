@@ -4,16 +4,24 @@
 #include "Core/RefArray.h"
 #include "Resource/Proxy.h"
 #include "Spark/CharacterInstance.h"
+#include "Spark/DisplayList.h"
 
 namespace traktor
 {
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace spark
 	{
 
 class Shape;
 class Sprite;
 
-/*! \brief
+/*! \brief Sprite character instance.
  * \ingroup Spark
  */
 class SpriteInstance : public CharacterInstance
@@ -21,11 +29,13 @@ class SpriteInstance : public CharacterInstance
 	T_RTTI_CLASS;
 
 public:
-	SpriteInstance();
+	SpriteInstance(const Sprite* sprite, const CharacterInstance* parent, resource::IResourceManager* resourceManager);
 
-	void addChild(CharacterInstance* child);
+	Ref< CharacterInstance > create(const std::wstring& id) const;
 
-	const RefArray< CharacterInstance >& getChildren() const;
+	void place(int32_t depth, CharacterInstance* instance);
+
+	void remove(int32_t depth);
 
 	virtual void update() T_FINAL;
 
@@ -35,9 +45,9 @@ private:
 	friend class Sprite;
 
 	Ref< const Sprite > m_sprite;
-	const CharacterInstance* m_parent;
+	Ref< resource::IResourceManager > m_resourceManager;
 	resource::Proxy< Shape > m_shape;
-	RefArray< CharacterInstance > m_children;
+	DisplayList m_displayList;
 };
 
 	}

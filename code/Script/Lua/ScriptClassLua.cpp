@@ -1,5 +1,6 @@
 #include "Script/Lua/ScriptClassLua.h"
 #include "Script/Lua/ScriptContextLua.h"
+#include "Script/Lua/ScriptManagerLua.h"
 #include "Script/Lua/ScriptObjectLua.h"
 #include "Script/Lua/ScriptUtilitiesLua.h"
 
@@ -10,8 +11,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptClassLua", ScriptClassLua, IRuntimeClass)
 
-ScriptClassLua::ScriptClassLua(ScriptContextLua* context, lua_State*& luaState, const std::string& className)
-:	m_context(context)
+ScriptClassLua::ScriptClassLua(ScriptManagerLua* scriptManager, ScriptContextLua* scriptContext, lua_State*& luaState, const std::string& className)
+:	m_scriptManager(scriptManager)
+,	m_scriptContext(scriptContext)
 ,	m_luaState(luaState)
 ,	m_className(className)
 {
@@ -49,22 +51,39 @@ bool ScriptClassLua::haveUnknown() const
 	return false;
 }
 
-Ref< ITypedObject > ScriptClassLua::construct(uint32_t argc, const Any* argv) const
+Ref< ITypedObject > ScriptClassLua::construct(ITypedObject* self, uint32_t argc, const Any* argv) const
 {
+	Any argv2[32];
+
+	// Create a script object box for "self".
+	m_scriptManager->lock(m_scriptContext);
+	m_scriptManager->pushObject(self);
+	int32_t tableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+	Ref< ScriptObjectLua > scriptSelf = new ScriptObjectLua(m_luaState, tableRef, this);
+	m_scriptManager->unlock();
+
+	// Prepend "self" object first in arguments.
+	argv2[0] = Any::fromObject(scriptSelf);
+	for (uint32_t i = 0; i < argc; ++i)
+		argv2[i + 1] = argv[i];
+
+	// Call constructor method in script land.
 	for (std::vector< Method >::const_iterator i = m_methods.begin(); i != m_methods.end(); ++i)
 	{
 		if (i->name == "new")
 		{
-			Any ret = m_context->executeMethod(
+			/*Any ret = */m_scriptContext->executeMethod(
 				0,
 				i->ref,
-				argc,
-				argv
+				argc + 1,
+				argv2
 			);
-			return ret.getObject();
+			//return ret.getObject();
+			break;
 		}
 	}
-	return 0;
+
+	return scriptSelf;
 }
 
 uint32_t ScriptClassLua::getConstantCount() const
@@ -94,7 +113,7 @@ std::string ScriptClassLua::getMethodName(uint32_t methodId) const
 
 Any ScriptClassLua::invoke(ITypedObject* object, uint32_t methodId, uint32_t argc, const Any* argv) const
 {
-	return m_context->executeMethod(
+	return m_scriptContext->executeMethod(
 		mandatory_non_null_type_cast< ScriptObjectLua* >(object),
 		m_methods[methodId].ref,
 		argc,

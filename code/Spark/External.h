@@ -1,8 +1,6 @@
-#ifndef traktor_spark_Sprite_H
-#define traktor_spark_Sprite_H
+#ifndef traktor_spark_External_H
+#define traktor_spark_External_H
 
-#include <map>
-#include "Core/RefArray.h"
 #include "Resource/Id.h"
 #include "Spark/Character.h"
 
@@ -19,18 +17,14 @@ namespace traktor
 	namespace spark
 	{
 
-class Shape;
-
-/*! \brief Sprite character.
+/*! \brief External reference to character.
  * \ingroup Spark
  */
-class T_DLLCLASS Sprite : public Character
+class T_DLLCLASS External : public Character
 {
 	T_RTTI_CLASS;
 
 public:
-	const Character* getCharacter(const std::wstring& id) const;
-
 	virtual Ref< CharacterInstance > createInstance(const CharacterInstance* parent, resource::IResourceManager* resourceManager) const;
 
 	virtual void serialize(ISerializer& s);
@@ -38,11 +32,10 @@ public:
 private:
 	friend class CharacterPipeline;
 
-	resource::Id< Shape > m_shape;
-	std::map< std::wstring, Ref< Character > > m_characters;
+	resource::Id< Character > m_reference;
 };
 
 	}
 }
 
-#endif	// traktor_spark_Sprite_H
+#endif	// traktor_spark_External_H

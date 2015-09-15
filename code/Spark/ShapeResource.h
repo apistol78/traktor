@@ -34,6 +34,9 @@ class IResourceManager;
 
 class Shape;
 
+/*! \brief Physical shape resource.
+ * \ingroup Spark
+ */
 class T_DLLCLASS ShapeResource : public ISerializable
 {
 	T_RTTI_CLASS;

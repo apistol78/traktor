@@ -1,4 +1,5 @@
 #include "Spark/Shape.h"
+#include "Spark/Sprite.h"
 #include "Spark/SpriteInstance.h"
 
 namespace traktor
@@ -8,34 +9,54 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.SpriteInstance", SpriteInstance, CharacterInstance)
 
-SpriteInstance::SpriteInstance()
-:	m_parent(0)
+SpriteInstance::SpriteInstance(const Sprite* sprite, const CharacterInstance* parent, resource::IResourceManager* resourceManager)
+:	CharacterInstance(parent)
+,	m_sprite(sprite)
+,	m_resourceManager(resourceManager)
 {
 }
 
-void SpriteInstance::addChild(CharacterInstance* child)
+Ref< CharacterInstance > SpriteInstance::create(const std::wstring& id) const
 {
-	m_children.push_back(child);
+	const Character* character = m_sprite->getCharacter(id);
+	if (character)
+		return character->createInstance(this, m_resourceManager);
+	else
+		return 0;
 }
 
-const RefArray< CharacterInstance >& SpriteInstance::getChildren() const
+void SpriteInstance::place(int32_t depth, CharacterInstance* instance)
 {
-	return m_children;
+	m_displayList.place(depth, instance);
+}
+
+void SpriteInstance::remove(int32_t depth)
+{
+	m_displayList.remove(depth);
 }
 
 void SpriteInstance::update()
 {
 	CharacterInstance::update();
-	for (RefArray< CharacterInstance >::const_iterator i = m_children.begin(); i != m_children.end(); ++i)
+
+	// Update all characters visible in display list.
+	RefArray< CharacterInstance > characters;
+	m_displayList.getCharacters(characters);
+	for (RefArray< CharacterInstance >::const_iterator i = characters.begin(); i != characters.end(); ++i)
 		(*i)->update();
 }
 
 void SpriteInstance::render(render::RenderContext* renderContext) const
 {
-	if (m_shape)
-		m_shape->render(renderContext, getTransform());
-	for (RefArray< CharacterInstance >::const_iterator i = m_children.begin(); i != m_children.end(); ++i)
+	// Render all child characters visible in display list first.
+	RefArray< CharacterInstance > characters;
+	m_displayList.getCharacters(characters);
+	for (RefArray< CharacterInstance >::const_iterator i = characters.begin(); i != characters.end(); ++i)
 		(*i)->render(renderContext);
+
+	// Render this sprite's shape.
+	if (m_shape)
+		m_shape->render(renderContext, getFullTransform());
 }
 
 	}

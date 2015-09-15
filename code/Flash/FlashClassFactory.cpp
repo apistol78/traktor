@@ -25,7 +25,7 @@ public:
 
 	virtual bool haveUnknown() const;
 
-	virtual Ref< ITypedObject > construct(uint32_t argc, const Any* argv) const;
+	virtual Ref< ITypedObject > construct(ITypedObject* self, uint32_t argc, const Any* argv) const;
 
 	virtual uint32_t getConstantCount() const;
 
@@ -67,7 +67,7 @@ bool ActionObjectClass::haveUnknown() const
 	return true;
 }
 
-Ref< ITypedObject > ActionObjectClass::construct(uint32_t argc, const Any* argv) const
+Ref< ITypedObject > ActionObjectClass::construct(ITypedObject* self, uint32_t argc, const Any* argv) const
 {
 	return 0;
 }

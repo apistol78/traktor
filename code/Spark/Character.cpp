@@ -13,7 +13,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.Character", Character, ISerializable)
 
 void Character::serialize(ISerializer& s)
 {
-	s >> Member< std::wstring >(L"name", m_name);
 	s >> Member< Matrix33 >(L"transform", m_transform);
 	s >> MemberRefArray< IComponent >(L"components", m_components);
 }
