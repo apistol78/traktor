@@ -130,13 +130,14 @@ bool ScriptServer::execute(IEnvironment* environment)
 		return false;
 	}
 
-	m_scriptContext = m_scriptManager->createContext(scriptResource, 0);
+	m_scriptContext = m_scriptManager->createContext();
 	if (!m_scriptContext)
 	{
 		log::error << L"Unable to create script execution context" << Endl;
 		return false;
 	}
 
+	m_scriptContext->loadResource(scriptResource);
 	m_scriptContext->setGlobal("environment", Any::fromObject(environment));
 
 	// Create execution thread.

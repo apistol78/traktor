@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include <algorithm>
 #include <cfloat>
 #include "Core/Log/Log.h"

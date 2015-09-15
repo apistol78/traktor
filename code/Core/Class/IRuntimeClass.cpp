@@ -3,7 +3,7 @@
 namespace traktor
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.script.IRuntimeClass", IRuntimeClass, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.IRuntimeClass", IRuntimeClass, Object)
 
 uint32_t findRuntimeClassMethodId(const IRuntimeClass* runtimeClass, const std::string& methodName)
 {

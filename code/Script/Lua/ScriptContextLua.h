@@ -28,6 +28,8 @@ public:
 
 	virtual void destroy();
 
+	virtual bool loadResource(const IScriptResource* scriptResource);
+
 	virtual void setGlobal(const std::string& globalName, const Any& globalValue);
 
 	virtual Any getGlobal(const std::string& globalName);
@@ -53,7 +55,7 @@ private:
 	source_map_t m_map;
 	const Object* m_lastSelf;
 
-	ScriptContextLua(ScriptManagerLua* scriptManager, lua_State* luaState, int32_t environmentRef, const source_map_t& map);
+	ScriptContextLua(ScriptManagerLua* scriptManager, lua_State* luaState, int32_t environmentRef);
 
 	static int32_t runtimeError(lua_State* luaState);
 };

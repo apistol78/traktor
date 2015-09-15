@@ -72,13 +72,12 @@ Ref< ITypedObject > ScriptClassLua::construct(ITypedObject* self, uint32_t argc,
 	{
 		if (i->name == "new")
 		{
-			/*Any ret = */m_scriptContext->executeMethod(
+			m_scriptContext->executeMethod(
 				0,
 				i->ref,
 				argc + 1,
 				argv2
 			);
-			//return ret.getObject();
 			break;
 		}
 	}

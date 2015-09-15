@@ -14,12 +14,8 @@
 
 namespace traktor
 {
-	namespace script
-	{
 
-class IScriptContext;
-
-	}
+class IRuntimeClass;
 
 	namespace spark
 	{
@@ -39,7 +35,7 @@ public:
 private:
 	friend class CharacterPipeline;
 
-	resource::Id< script::IScriptContext > m_script;
+	resource::Id< IRuntimeClass > m_class;
 };
 
 	}

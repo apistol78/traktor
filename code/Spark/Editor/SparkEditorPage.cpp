@@ -7,7 +7,8 @@
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/TextureFactory.h"
 #include "Resource/ResourceManager.h"
-#include "Script/ScriptContextFactory.h"
+#include "Script/ScriptClassFactory.h"
+#include "Script/ScriptModuleFactory.h"
 #include "Script/Lua/ScriptManagerLua.h"
 #include "Spark/CharacterResourceFactory.h"
 #include "Spark/Sprite.h"
@@ -41,7 +42,8 @@ bool SparkEditorPage::create(ui::Container* parent)
 	m_scriptManager = new script::ScriptManagerLua();
 
 	m_resourceManager = new resource::ResourceManager(true);
-	m_resourceManager->addFactory(new script::ScriptContextFactory(database, m_scriptManager));
+	m_resourceManager->addFactory(new script::ScriptClassFactory(database, m_scriptManager->createContext()));
+	m_resourceManager->addFactory(new script::ScriptModuleFactory(database, m_scriptManager));
 	m_resourceManager->addFactory(new render::ShaderFactory(database, renderSystem));
 	m_resourceManager->addFactory(new render::TextureFactory(database, renderSystem, 0));
 	m_resourceManager->addFactory(new CharacterResourceFactory(database));

@@ -14,7 +14,8 @@
 #include "Net/BidirectionalObjectTransport.h"
 #include "Resource/IResourceManager.h"
 #include "Script/IScriptManager.h"
-#include "Script/ScriptContextFactory.h"
+#include "Script/ScriptClassFactory.h"
+#include "Script/ScriptModuleFactory.h"
 
 namespace traktor
 {
@@ -111,7 +112,8 @@ void ScriptServer::createResourceFactories(IEnvironment* environment)
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 	db::Database* database = environment->getDatabase();
 
-	resourceManager->addFactory(new script::ScriptContextFactory(database, m_scriptManager));
+	resourceManager->addFactory(new script::ScriptClassFactory(database, m_scriptManager->createContext()));
+	resourceManager->addFactory(new script::ScriptModuleFactory(database, m_scriptManager));
 }
 
 int32_t ScriptServer::reconfigure(const PropertyGroup* settings)

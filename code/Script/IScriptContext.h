@@ -22,6 +22,8 @@ class IRuntimeClass;
 	namespace script
 	{
 
+class IScriptResource;
+
 /*! \brief Script context.
  * \ingroup Script
  *
@@ -38,6 +40,13 @@ class T_DLLCLASS IScriptContext : public Object
 public:
 	/*! \brief Explicit destroy context. */
 	virtual void destroy() = 0;
+
+	/*! \brief Load script resource into context.
+	 *
+	 * \param scriptResource Script resource.
+	 * \return True if resource loaded successfully.
+	 */
+	virtual bool loadResource(const IScriptResource* scriptResource) = 0;
 
 	/*! \brief Set global variable value.
 	 *

@@ -1,5 +1,5 @@
-#ifndef traktor_script_ScriptContextFactory_H
-#define traktor_script_ScriptContextFactory_H
+#ifndef traktor_script_ScriptModuleFactory_H
+#define traktor_script_ScriptModuleFactory_H
 
 #include "Resource/IResourceFactory.h"
 
@@ -25,15 +25,15 @@ class Database;
 
 class IScriptManager;
 
-/*! \brief Script context factory.
+/*! \brief Script module factory.
  * \ingroup Script
  */
-class T_DLLCLASS ScriptContextFactory : public resource::IResourceFactory
+class T_DLLCLASS ScriptModuleFactory : public resource::IResourceFactory
 {
 	T_RTTI_CLASS;
 
 public:
-	ScriptContextFactory(db::Database* database, IScriptManager* scriptManager);
+	ScriptModuleFactory(db::Database* database, IScriptManager* scriptManager);
 
 	virtual const TypeInfoSet getResourceTypes() const;
 
@@ -51,4 +51,4 @@ private:
 	}
 }
 
-#endif	// traktor_script_ScriptContextFactory_H
+#endif	// traktor_script_ScriptModuleFactory_H

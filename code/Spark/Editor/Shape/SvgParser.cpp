@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include <sstream>
 #include "Core/Log/Log.h"
 #include "Core/Misc/Split.h"

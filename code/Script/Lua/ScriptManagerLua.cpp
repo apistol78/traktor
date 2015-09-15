@@ -35,6 +35,27 @@ namespace traktor
 Timer s_timer;
 
 const int32_t c_tableKey_class = -1;
+const int32_t c_tableKey_instance = -2;
+
+ITypedObject* toTypedObject(lua_State* luaState, int32_t index)
+{
+	lua_rawgeti(luaState, index, c_tableKey_instance);
+	if (!lua_islightuserdata(luaState, -1))
+	{
+		lua_pop(luaState, 1);
+		return 0;
+	}
+
+	ITypedObject* object = reinterpret_cast< ITypedObject* >(lua_touserdata(luaState, -1));
+	if (!object)
+	{
+		lua_pop(luaState, 1);
+		return 0;
+	}
+
+	lua_pop(luaState, 1);
+	return object;
+}
 
 		}
 
@@ -445,14 +466,12 @@ Ref< IScriptResource > ScriptManagerLua::compile(const std::wstring& fileName, c
 	return resource;
 }
 
-Ref< IScriptContext > ScriptManagerLua::createContext(const IScriptResource* scriptResource, const IScriptContext* contextPrototype)
+Ref< IScriptContext > ScriptManagerLua::createContext()
 {
 #if defined(T_SCRIPT_LUA_USE_MT_LOCK)
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 #endif
 	CHECK_LUA_STACK(m_luaState, 0);
-
-	const ScriptResourceLua* scriptResourceLua = checked_type_cast< const ScriptResourceLua* >(scriptResource);
 
 	// Create local environment table and add to registry.
 	lua_newtable(m_luaState);
@@ -468,194 +487,8 @@ Ref< IScriptContext > ScriptManagerLua::createContext(const IScriptResource* scr
 	lua_setmetatable(m_luaState, -2);
 	lua_pop(m_luaState, 1);
 
-	// Load script into environment.
-	Ref< ScriptContextLua > context;
-	if (scriptResourceLua)
-	{
-		std::string fileName = "@" + scriptResourceLua->m_fileName;
-		int32_t result;
-
-		result = luaL_loadbuffer(
-			m_luaState,
-			(const char*)scriptResourceLua->m_script.c_str(),
-			scriptResourceLua->m_script.length(),
-			fileName.c_str()
-		);
-
-		if (result != 0)
-		{
-			log::error << L"LUA load error \"" << mbstows(lua_tostring(m_luaState, -1)) << L"\"" << Endl;
-			lua_pop(m_luaState, 1);
-			return 0;
-		}
-
-		context = new ScriptContextLua(
-			this,
-			m_luaState,
-			environmentRef,
-			scriptResourceLua->m_map
-		);
-	}
-	else
-	{
-		context = new ScriptContextLua(
-			this,
-			m_luaState,
-			environmentRef,
-			source_map_t()
-		);
-	}
-
-	// Copy values from prototype; First attempt to have globals ready when calling script.
-	if (contextPrototype)
-	{
-		const ScriptContextLua* sourceContext = checked_type_cast< const ScriptContextLua*, false >(contextPrototype);
-
-		// Copy globals.
-		int32_t top = lua_gettop(m_luaState) + 1;
-
-		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, sourceContext->m_environmentRef);
-		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, environmentRef);
-		lua_pushnil(m_luaState);
-
-		// -3 = sourceContext->m_environmentRef
-		// -2 = environmentRef
-		// -1 = nil
-		while (lua_next(m_luaState, -3))
-		{
-			// -4 = sourceContext->m_environmentRef
-			// -3 = environmentRef
-			// -2 = key
-			// -1 = value
-			if (lua_isfunction(m_luaState, -1))
-			{
-				lua_pop(m_luaState, 1);
-
-				// -3 = sourceContext->m_environmentRef
-				// -2 = environmentRef
-				// -1 = key
-				continue;
-			}
-
-			// -4 = sourceContext->m_environmentRef
-			// -3 = environmentRef
-			// -2 = key
-			// -1 = value
-			lua_pop(m_luaState, 1);
-
-			// -3 = sourceContext->m_environmentRef
-			// -2 = environmentRef
-			// -1 = key
-			lua_pushvalue(m_luaState, -1);
-			lua_pushvalue(m_luaState, -1);
-
-			// -5 = sourceContext->m_environmentRef
-			// -4 = environmentRef
-			// -3 = key
-			// -2 = key
-			// -1 = key
-			lua_rawget(m_luaState, -5);
-
-			// -5 = sourceContext->m_environmentRef
-			// -4 = environmentRef
-			// -3 = key
-			// -2 = key
-			// -1 = prototype value
-			lua_rawset(m_luaState, -4);
-
-			// -3 = sourceContext->m_environmentRef
-			// -2 = environmentRef
-			// -1 = key
-		}
-
-		// -2 = sourceContext->m_environmentRef
-		// -1 = environmentRef
-		lua_pop(m_luaState, 2);
-	}
-
-	// Call script.
-	if (scriptResourceLua)
-	{
-		T_ANONYMOUS_VAR(Save< ScriptContextLua* >)(m_lockContext, context);
-
-		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, environmentRef);
-#if defined(T_LUA_5_2)
-		lua_setupvalue(m_luaState, -2, 1);
-		lua_call(m_luaState, 0, 0);
-#else
-		lua_setfenv(m_luaState, -2);
-		lua_call(m_luaState, 0, 0);
-#endif
-
-		// Copy values from prototype again in case they we're overwritten
-		// when calling script.
-		if (contextPrototype)
-		{
-			const ScriptContextLua* sourceContext = checked_type_cast< const ScriptContextLua*, false >(contextPrototype);
-
-			// Copy globals.
-			int32_t top = lua_gettop(m_luaState) + 1;
-
-			lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, sourceContext->m_environmentRef);
-			lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, environmentRef);
-			lua_pushnil(m_luaState);
-
-			// -3 = sourceContext->m_environmentRef
-			// -2 = environmentRef
-			// -1 = nil
-			while (lua_next(m_luaState, -3))
-			{
-				// -4 = sourceContext->m_environmentRef
-				// -3 = environmentRef
-				// -2 = key
-				// -1 = value
-				if (lua_isfunction(m_luaState, -1))
-				{
-					lua_pop(m_luaState, 1);
-
-					// -3 = sourceContext->m_environmentRef
-					// -2 = environmentRef
-					// -1 = key
-					continue;
-				}
-
-				// -4 = sourceContext->m_environmentRef
-				// -3 = environmentRef
-				// -2 = key
-				// -1 = value
-				lua_pop(m_luaState, 1);
-
-				// -3 = sourceContext->m_environmentRef
-				// -2 = environmentRef
-				// -1 = key
-				lua_pushvalue(m_luaState, -1);
-				lua_pushvalue(m_luaState, -1);
-
-				// -5 = sourceContext->m_environmentRef
-				// -4 = environmentRef
-				// -3 = key
-				// -2 = key
-				// -1 = key
-				lua_rawget(m_luaState, -5);
-
-				// -5 = sourceContext->m_environmentRef
-				// -4 = environmentRef
-				// -3 = key
-				// -2 = key
-				// -1 = prototype value
-				lua_rawset(m_luaState, -4);
-
-				// -3 = sourceContext->m_environmentRef
-				// -2 = environmentRef
-				// -1 = key
-			}
-
-			// -2 = sourceContext->m_environmentRef
-			// -1 = environmentRef
-			lua_pop(m_luaState, 2);
-		}
-	}
-
+	// Create context.
+	Ref< ScriptContextLua > context = new ScriptContextLua(this, m_luaState, environmentRef);
 	m_contexts.push_back(context);
 	return context;
 }
@@ -670,7 +503,6 @@ Ref< IScriptDebugger > ScriptManagerLua::createDebugger()
 		m_debugger = new ScriptDebuggerLua(this, m_luaState);
 
 	lua_sethook(m_luaState, &ScriptManagerLua::hookCallback, LUA_MASKLINE, 0);
-
 	return m_debugger;
 }
 
@@ -684,7 +516,6 @@ Ref< IScriptProfiler > ScriptManagerLua::createProfiler()
 		m_profiler = new ScriptProfilerLua(this, m_luaState);
 
 	lua_sethook(m_luaState, &ScriptManagerLua::hookCallback, LUA_MASKLINE | LUA_MASKCALL | LUA_MASKRET, 0);
-
 	return m_profiler;
 }
 
@@ -733,7 +564,7 @@ void ScriptManagerLua::pushObject(ITypedObject* object)
 	// Have we already pushed this object before and it's still alive in script-land then reuse it.
 	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_objectTableRef);
 	lua_rawgeti(m_luaState, -1, int32_t(uint64_t(object)));
-	if (lua_isuserdata(m_luaState, -1))
+	if (lua_istable(m_luaState, -1))
 	{
 		lua_remove(m_luaState, -2);
 		return;
@@ -770,14 +601,17 @@ void ScriptManagerLua::pushObject(ITypedObject* object)
 
 	const RegisteredClass& rc = m_classRegistry[classId];
 
-	ITypedObject** objectRef = reinterpret_cast< ITypedObject** >(lua_newuserdata(m_luaState, sizeof(ITypedObject*)));
-	*objectRef = object;
-	T_SAFE_ADDREF(*objectRef);
-
+	// Create table to act as object instance in script-land.
+	lua_newtable(m_luaState);
 	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.instanceMetaTableRef);
-	lua_setmetatable(m_luaState, -2);
+	lua_setmetatable(m_luaState, -1);
 
-	// Store object in weak table.
+	// Attach native object as light user value of table.
+	lua_pushlightuserdata(m_luaState, (void*)object);
+	lua_rawseti(m_luaState, -2, c_tableKey_instance);
+	T_SAFE_ADDREF(object);
+
+	// Store object instance in weak table.
 	lua_rawseti(m_luaState, -2, int32_t(uint64_t(object)));
 	lua_rawgeti(m_luaState, -1, int32_t(uint64_t(object)));
 
@@ -840,12 +674,6 @@ Any ScriptManagerLua::toAny(int32_t index)
 		return Any::fromBoolean(bool(lua_toboolean(m_luaState, index) != 0));
 	else if (type == LUA_TSTRING)
 		return Any::fromString(lua_tostring(m_luaState, index));
-	else if (type == LUA_TUSERDATA)
-	{
-		Object* object = *reinterpret_cast< Object** >(lua_touserdata(m_luaState, index));
-		if (object)
-			return Any::fromObject(object);
-	}
 	else if (type == LUA_TFUNCTION)
 	{
 		// Box LUA function into C++ container.
@@ -854,9 +682,19 @@ Any ScriptManagerLua::toAny(int32_t index)
 	}
 	else if (type == LUA_TTABLE)
 	{
+		// Get associated native object.
+		lua_rawgeti(m_luaState, index, c_tableKey_instance);
+		if (lua_islightuserdata(m_luaState, -1))
+		{
+			Object* object = reinterpret_cast< Object* >(lua_touserdata(m_luaState, -1));
+			lua_pop(m_luaState, 1);
+			return Any::fromObject(object);
+		}
+		lua_pop(m_luaState, 1);
+
 		// Unbox wrapped native type.
 		lua_rawgeti(m_luaState, index, c_tableKey_class);
-		if (lua_isuserdata(m_luaState, -1))
+		if (lua_islightuserdata(m_luaState, -1))
 		{
 			IRuntimeClass* runtimeClass = reinterpret_cast< IRuntimeClass* >(lua_touserdata(m_luaState, -1));
 			lua_pop(m_luaState, 1);
@@ -889,12 +727,6 @@ void ScriptManagerLua::toAny(int32_t base, int32_t count, Any* outAnys)
 			outAnys[i] = Any::fromBoolean(bool(lua_toboolean(m_luaState, index) != 0));
 		else if (type == LUA_TSTRING)
 			outAnys[i] = Any::fromString(lua_tostring(m_luaState, index));
-		else if (type == LUA_TUSERDATA)
-		{
-			Object* object = *reinterpret_cast< Object** >(lua_touserdata(m_luaState, index));
-			if (object)
-				outAnys[i] = Any::fromObject(object);
-		}
 		else if (type == LUA_TFUNCTION)
 		{
 			// Box LUA function into C++ container.
@@ -903,9 +735,20 @@ void ScriptManagerLua::toAny(int32_t base, int32_t count, Any* outAnys)
 		}
 		else if (type == LUA_TTABLE)
 		{
+			// Get associated native object.
+			lua_rawgeti(m_luaState, index, c_tableKey_instance);
+			if (lua_islightuserdata(m_luaState, -1))
+			{
+				Object* object = reinterpret_cast< Object* >(lua_touserdata(m_luaState, -1));
+				lua_pop(m_luaState, 1);
+				outAnys[i] = Any::fromObject(object);
+				continue;
+			}
+			lua_pop(m_luaState, 1);
+
 			// Unbox wrapped native type.
 			lua_rawgeti(m_luaState, index, c_tableKey_class);
-			if (lua_isuserdata(m_luaState, -1))
+			if (lua_islightuserdata(m_luaState, -1))
 			{
 				IRuntimeClass* runtimeClass = reinterpret_cast< IRuntimeClass* >(lua_touserdata(m_luaState, -1));
 				lua_pop(m_luaState, 1);
@@ -1066,7 +909,6 @@ int ScriptManagerLua::classIndexLookup(lua_State* luaState)
 	lua_pushlightuserdata(luaState, (void*)manager);
 	lua_pushlightuserdata(luaState, (void*)runtimeClass);
 	lua_pushcclosure(luaState, classCallUnknownMethod, 3);
-
 	return 1;
 }
 
@@ -1087,7 +929,6 @@ int ScriptManagerLua::classCallConstructor(lua_State* luaState)
 
 	Any returnValue = Any::fromObject(runtimeClass->construct(0, top - 1, argv));
 	manager->pushAny(returnValue);
-
 	return 1;
 }
 
@@ -1105,14 +946,7 @@ int ScriptManagerLua::classCallMethod(lua_State* luaState)
 	if (top < 1)
 		return 0;
 
-	Object** objectPtr = reinterpret_cast< Object** >(lua_touserdata(luaState, 1));
-	if (!objectPtr)
-	{
-		log::error << L"Unable to call method; not an object" << Endl;
-		return 0;
-	}
-
-	Object* object = *objectPtr;
+	ITypedObject* object = toTypedObject(luaState, 1);
 	if (!object)
 	{
 		log::error << L"Unable to call method; null object" << Endl;
@@ -1124,7 +958,6 @@ int ScriptManagerLua::classCallMethod(lua_State* luaState)
 
 	Any returnValue = runtimeClass->invoke(object, methodId, top - 1, argv);
 	manager->pushAny(returnValue);
-
 	return 1;
 }
 
@@ -1147,7 +980,6 @@ int ScriptManagerLua::classCallStaticMethod(lua_State* luaState)
 
 	Any returnValue = runtimeClass->invokeStatic(methodId, top, argv);
 	manager->pushAny(returnValue);
-
 	return 1;
 }
 
@@ -1166,25 +998,27 @@ int ScriptManagerLua::classCallUnknownMethod(lua_State* luaState)
 	if (top < 1)
 		return 0;
 
-	ITypedObject* object = *reinterpret_cast< ITypedObject** >(lua_touserdata(luaState, 1));
+	ITypedObject* object = toTypedObject(luaState, 1);
 	if (!object)
+	{
+		log::error << L"Unable to call method; null object" << Endl;
 		return 0;
+	}
 
 	Any argv[8];
 	manager->toAny(2, top - 1, argv);
 
 	Any returnValue = runtimeClass->invokeUnknown(object, methodName, top - 1, argv);
 	manager->pushAny(returnValue);
-
 	return 1;
 }
 
 int ScriptManagerLua::classGcMethod(lua_State* luaState)
 {
-	Object** object = reinterpret_cast< Object** >(lua_touserdata(luaState, 1));
+	ITypedObject* object = toTypedObject(luaState, 1);
 	if (object)
 	{
-		T_SAFE_ANONYMOUS_RELEASE(*object);
+		T_SAFE_ANONYMOUS_RELEASE(object);
 	}
 	return 0;
 }
