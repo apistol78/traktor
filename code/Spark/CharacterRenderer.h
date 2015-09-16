@@ -3,7 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/RefArray.h"
-#include "Core/Math/Vector2.h"
+#include "Core/Math/Matrix44.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -51,7 +51,7 @@ public:
 
 	void build(const CharacterInstance* character, uint32_t frame);
 
-	void render(render::IRenderView* renderView, const Vector2& viewOffset, const Vector2& viewSize, uint32_t frame);
+	void render(render::IRenderView* renderView, const Matrix44& projection, uint32_t frame);
 
 private:
 	RefArray< render::RenderContext > m_renderContexts;

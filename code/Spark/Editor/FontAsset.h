@@ -1,5 +1,5 @@
-#ifndef traktor_spark_ShapeAsset_H
-#define traktor_spark_ShapeAsset_H
+#ifndef traktor_spark_FontAsset_H
+#define traktor_spark_FontAsset_H
 
 #include "Editor/Asset.h"
 #include "Resource/Id.h"
@@ -27,24 +27,21 @@ class Shader;
 /*! \brief
  * \ingroup Spark
  */
-class T_DLLCLASS ShapeAsset : public editor::Asset
+class T_DLLCLASS FontAsset : public editor::Asset
 {
 	T_RTTI_CLASS;
 
 public:
-	ShapeAsset();
-
 	virtual void serialize(ISerializer& s);
 
 private:
-	friend class ShapePipeline;
+	friend class FontPipeline;
 
 	resource::Id< render::Shader > m_shader;
-	float m_cubicApproximationError;
-	bool m_center;
+	std::wstring m_includeCharacters;
 };
 
 	}
 }
 
-#endif	// traktor_spark_ShapeAsset_H
+#endif	// traktor_spark_FontAsset_H

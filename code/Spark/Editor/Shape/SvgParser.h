@@ -40,6 +40,8 @@ private:
 
 	Ref< Shape > parseGroup(xml::Element* elm);
 
+	Ref< Shape > parseCircle(xml::Element* elm);
+
 	Ref< Shape > parseRect(xml::Element* elm);
 
 	Ref< Shape > parsePolygon(xml::Element* elm);

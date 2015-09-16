@@ -11,6 +11,7 @@
 #include "Script/ScriptModuleFactory.h"
 #include "Script/Lua/ScriptManagerLua.h"
 #include "Spark/CharacterResourceFactory.h"
+#include "Spark/FontResourceFactory.h"
 #include "Spark/Sprite.h"
 #include "Spark/ShapeResourceFactory.h"
 #include "Spark/Editor/SparkEditControl.h"
@@ -47,6 +48,7 @@ bool SparkEditorPage::create(ui::Container* parent)
 	m_resourceManager->addFactory(new render::ShaderFactory(database, renderSystem));
 	m_resourceManager->addFactory(new render::TextureFactory(database, renderSystem, 0));
 	m_resourceManager->addFactory(new CharacterResourceFactory(database));
+	m_resourceManager->addFactory(new FontResourceFactory(database, renderSystem));
 	m_resourceManager->addFactory(new ShapeResourceFactory(database, renderSystem));
 
 	m_editControl = new SparkEditControl(m_editor);
