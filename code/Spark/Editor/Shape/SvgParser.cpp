@@ -118,6 +118,8 @@ Ref< Shape > SvgParser::traverse(xml::Element* elm)
 	std::wstring name = elm->getName();
 	if (name == L"svg" || name == L"g")
 		shape = parseGroup(elm);
+	else if (name == L"circle")
+		shape = parseCircle(elm);
 	else if (name == L"rect")
 		shape = parseRect(elm);
 	else if (name == L"polygon")
@@ -158,6 +160,43 @@ Ref< Shape > SvgParser::traverse(xml::Element* elm)
 Ref< Shape > SvgParser::parseGroup(xml::Element* elm)
 {
 	return new Shape();
+}
+
+Ref< Shape > SvgParser::parseCircle(xml::Element* elm)
+{
+	const float c_circleMagic = 0.5522847498f;
+
+	float cx = parseAttr(elm, L"cx");
+	float cy = parseAttr(elm, L"cy");
+	float r = parseAttr(elm, L"r");
+	float rk = r * c_circleMagic;
+
+	Path path;
+
+	path.moveTo(cx, cy + r);
+	path.cubicTo(
+		cx + rk, cy + r,
+		cx + r, cy + rk,
+		cx + r, cy
+	);
+	path.cubicTo(
+		cx + r, cy - rk,
+		cx + rk, cy - r,
+		cx, cy - r
+	);
+	path.cubicTo(
+		cx - rk, cy - r,
+		cx - r, cy - rk,
+		cx - r, cy
+	);
+	path.cubicTo(
+		cx - r, cy + rk,
+		cx - rk, cy + r,
+		cx, cy + r
+	);
+	path.close();
+
+	return new PathShape(path);
 }
 
 Ref< Shape > SvgParser::parseRect(xml::Element* elm)

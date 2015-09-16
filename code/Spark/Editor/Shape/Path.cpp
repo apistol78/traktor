@@ -38,6 +38,33 @@ void Path::lineTo(float x, float y, bool relative)
 	m_cursor.set(x, y);
 }
 
+void Path::quadricTo(float x1, float y1, float x, float y, bool relative)
+{
+	if (!m_current || m_current->type != SptQuadric)
+	{
+		m_subPaths.push_back(SubPath(SptQuadric));
+		m_current = &m_subPaths.back();
+		m_current->points.push_back(m_cursor);
+	}
+
+	if (relative)
+	{
+		getAbsolute(x1, y1);
+		getAbsolute(x, y);
+	}
+
+	m_current->points.push_back(Vector2(x1, y1));
+	m_current->points.push_back(Vector2(x , y ));
+	m_cursor.set(x, y);
+}
+
+void Path::quadricTo(float x, float y, bool relative)
+{
+	float x1 = 0.0f;
+	float y1 = 0.0f;
+	quadricTo(x1, y1, x, y, relative);
+}
+
 void Path::cubicTo(float x1, float y1, float x2, float y2, float x, float y, bool relative)
 {
 	if (!m_current || m_current->type != SptCubic)
@@ -65,33 +92,6 @@ void Path::cubicTo(float x2, float y2, float x, float y, bool relative)
 	float x1 = (relative ? 0.0f : m_cursor.x) - (x2 - x);
 	float y1 = (relative ? 0.0f : m_cursor.y) - (y2 - y);
 	cubicTo(x1, y1, x2, y2, x, y, relative);
-}
-
-void Path::quadricTo(float x1, float y1, float x, float y, bool relative)
-{
-	if (!m_current || m_current->type != SptQuadric)
-	{
-		m_subPaths.push_back(SubPath(SptQuadric));
-		m_current = &m_subPaths.back();
-		m_current->points.push_back(m_cursor);
-	}
-
-	if (relative)
-	{
-		getAbsolute(x1, y1);
-		getAbsolute(x, y);
-	}
-
-	m_current->points.push_back(Vector2(x1, y1));
-	m_current->points.push_back(Vector2(x , y ));
-	m_cursor.set(x, y);
-}
-
-void Path::quadricTo(float x, float y, bool relative)
-{
-	float x1 = 0.0f;
-	float y1 = 0.0f;
-	quadricTo(x1, y1, x, y, relative);
 }
 
 void Path::close()

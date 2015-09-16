@@ -94,6 +94,7 @@ public:
 				{
 				case SptLinear:
 					{
+						//log::info << L"SptLinear; " << int32_t(i->points.size()) << L" point(s), (" << (i->closed ? L"closed" : L"open") << L")" << Endl;
 						for (uint32_t j = 0; j < i->points.size() - 1; ++j)
 						{
 							Triangulator::Segment s;
@@ -102,19 +103,43 @@ public:
 							s.v[1] = Vector2i::fromVector2((T * i->points[j + 1]) * c_pointScale);
 							segments.push_back(s);
 						}
-						if (i->closed)
+						//if (i->closed)
+						//{
+						//	Triangulator::Segment s;
+						//	s.curve = false;
+						//	s.v[0] = Vector2i::fromVector2((T * i->points.back()) * c_pointScale);
+						//	s.v[1] = Vector2i::fromVector2((T * i->points.front()) * c_pointScale);
+						//	segments.push_back(s);
+						//}
+					}
+					break;
+
+				case SptQuadric:
+					{
+						//log::info << L"SptQuadric; " << int32_t(i->points.size()) << L" point(s), (" << (i->closed ? L"closed" : L"open") << L")" << Endl;
+						for (uint32_t j = 0; j < i->points.size() - 1; j += 2)
 						{
 							Triangulator::Segment s;
-							s.curve = false;
-							s.v[0] = Vector2i::fromVector2((T * i->points.back()) * c_pointScale);
-							s.v[1] = Vector2i::fromVector2((T * i->points.front()) * c_pointScale);
+							s.curve = true;
+							s.v[0] = Vector2i::fromVector2((T * i->points[j]) * c_pointScale);
+							s.v[1] = Vector2i::fromVector2((T * i->points[j + 2]) * c_pointScale);
+							s.c = Vector2i::fromVector2((T * i->points[j + 1]) * c_pointScale);
 							segments.push_back(s);
 						}
+						//if (i->closed)
+						//{
+						//	Triangulator::Segment s;
+						//	s.curve = false;
+						//	s.v[0] = Vector2i::fromVector2((T * i->points.back()) * c_pointScale);
+						//	s.v[1] = Vector2i::fromVector2((T * i->points.front()) * c_pointScale);
+						//	segments.push_back(s);
+						//}
 					}
 					break;
 
 				case SptCubic:
 					{
+						//log::info << L"SptCubic; " << int32_t(i->points.size()) << L" point(s), (" << (i->closed ? L"closed" : L"open") << L")" << Endl;
 						for (uint32_t j = 0; j < i->points.size() - 1; j += 3)
 						{
 							Bezier3rd b(
@@ -137,36 +162,14 @@ public:
 								segments.push_back(s);
 							}
 						}
-						if (i->closed)
-						{
-							Triangulator::Segment s;
-							s.curve = false;
-							s.v[0] = Vector2i::fromVector2((T * i->points.back()) * c_pointScale);
-							s.v[1] = Vector2i::fromVector2((T * i->points.front()) * c_pointScale);
-							segments.push_back(s);
-						}
-					}
-					break;
-
-				case SptQuadric:
-					{
-						for (uint32_t j = 0; j < i->points.size() - 1; j += 2)
-						{
-							Triangulator::Segment s;
-							s.curve = true;
-							s.v[0] = Vector2i::fromVector2((T * i->points[j]) * c_pointScale);
-							s.v[1] = Vector2i::fromVector2((T * i->points[j + 2]) * c_pointScale);
-							s.c = Vector2i::fromVector2((T * i->points[j + 1]) * c_pointScale);
-							segments.push_back(s);
-						}
-						if (i->closed)
-						{
-							Triangulator::Segment s;
-							s.curve = false;
-							s.v[0] = Vector2i::fromVector2((T * i->points.back()) * c_pointScale);
-							s.v[1] = Vector2i::fromVector2((T * i->points.front()) * c_pointScale);
-							segments.push_back(s);
-						}
+						//if (i->closed)
+						//{
+						//	Triangulator::Segment s;
+						//	s.curve = false;
+						//	s.v[0] = Vector2i::fromVector2((T * i->points.back()) * c_pointScale);
+						//	s.v[1] = Vector2i::fromVector2((T * i->points.front()) * c_pointScale);
+						//	segments.push_back(s);
+						//}
 					}
 					break;
 				}
@@ -428,8 +431,17 @@ bool ShapePipeline::buildOutput(
 			{
 				const Vector2& v = i->second.vertices[i->second.trianglesFill[j]];
 
-				vertex->position[0] = v.x - boundingBox.getCenter().x;
-				vertex->position[1] = v.y - boundingBox.getCenter().y;
+				if (shapeAsset->m_center)
+				{
+					vertex->position[0] = v.x - boundingBox.getCenter().x;
+					vertex->position[1] = v.y - boundingBox.getCenter().y;
+				}
+				else
+				{
+					vertex->position[0] = v.x;
+					vertex->position[1] = v.y;
+				}
+
 				vertex->controlPoints[0] = c_controlPoints[j % 3][0];
 				vertex->controlPoints[1] = c_controlPoints[j % 3][1];
 				vertex->color[0] = i->first->getFill().r / 255.0f;
@@ -458,8 +470,17 @@ bool ShapePipeline::buildOutput(
 			{
 				const Vector2& v = i->second.vertices[i->second.trianglesIn[j]];
 
-				vertex->position[0] = v.x - boundingBox.getCenter().x;
-				vertex->position[1] = v.y - boundingBox.getCenter().y;
+				if (shapeAsset->m_center)
+				{
+					vertex->position[0] = v.x - boundingBox.getCenter().x;
+					vertex->position[1] = v.y - boundingBox.getCenter().y;
+				}
+				else
+				{
+					vertex->position[0] = v.x;
+					vertex->position[1] = v.y;
+				}
+
 				vertex->controlPoints[0] = c_controlPoints[j % 3][0];
 				vertex->controlPoints[1] = c_controlPoints[j % 3][1];
 				vertex->color[0] = i->first->getFill().r / 255.0f;
@@ -488,8 +509,17 @@ bool ShapePipeline::buildOutput(
 			{
 				const Vector2& v = i->second.vertices[i->second.trianglesOut[j]];
 
-				vertex->position[0] = v.x - boundingBox.getCenter().x;
-				vertex->position[1] = v.y - boundingBox.getCenter().y;
+				if (shapeAsset->m_center)
+				{
+					vertex->position[0] = v.x - boundingBox.getCenter().x;
+					vertex->position[1] = v.y - boundingBox.getCenter().y;
+				}
+				else
+				{
+					vertex->position[0] = v.x;
+					vertex->position[1] = v.y;
+				}
+
 				vertex->controlPoints[0] = c_controlPoints[j % 3][0];
 				vertex->controlPoints[1] = c_controlPoints[j % 3][1];
 				vertex->color[0] = i->first->getFill().r / 255.0f;

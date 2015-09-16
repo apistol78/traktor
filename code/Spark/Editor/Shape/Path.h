@@ -14,8 +14,8 @@ enum SubPathType
 {
 	SptUndefined,
 	SptLinear,
-	SptCubic,
-	SptQuadric
+	SptQuadric,
+	SptCubic
 };
 
 struct SubPath
@@ -44,13 +44,13 @@ public:
 
 	void lineTo(float x, float y, bool relative = false);
 
-	void cubicTo(float x1, float y1, float x2, float y2, float x, float y, bool relative = false);
-
-	void cubicTo(float x2, float y2, float x, float y, bool relative = false);
-
 	void quadricTo(float x1, float y1, float x, float y, bool relative = false);
 
 	void quadricTo(float x, float y, bool relative = false);
+
+	void cubicTo(float x1, float y1, float x2, float y2, float x, float y, bool relative = false);
+
+	void cubicTo(float x2, float y2, float x, float y, bool relative = false);
 
 	void close();
 

@@ -89,6 +89,7 @@ BoxedAllocator< BoxedTransform, 8192 > s_allocBoxedTransform;
 BoxedAllocator< BoxedAabb2, 64 > s_allocBoxedAabb2;
 BoxedAllocator< BoxedAabb3, 64 > s_allocBoxedAabb3;
 BoxedAllocator< BoxedFrustum, 16 > s_allocBoxedFrustum;
+BoxedAllocator< BoxedMatrix33, 16 > s_allocBoxedMatrix33;
 BoxedAllocator< BoxedMatrix44, 16 > s_allocBoxedMatrix44;
 BoxedAllocator< BoxedColor4f, 16 > s_allocBoxedColor4f;
 BoxedAllocator< BoxedColor4ub, 16 > s_allocBoxedColor4ub;
@@ -783,6 +784,73 @@ void* BoxedFrustum::operator new (size_t size)
 void BoxedFrustum::operator delete (void* ptr)
 {
 	s_allocBoxedFrustum.free(ptr);
+}
+
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Matrix33", BoxedMatrix33, Boxed)
+
+BoxedMatrix33::BoxedMatrix33()
+{
+}
+
+BoxedMatrix33::BoxedMatrix33(const Matrix33& value)
+:	m_value(value)
+{
+}
+
+Vector4 BoxedMatrix33::diagonal() const
+{
+	return m_value.diagonal();
+}
+
+float BoxedMatrix33::determinant() const
+{
+	return m_value.determinant();
+}
+
+Matrix33 BoxedMatrix33::transpose() const
+{
+	return m_value.transpose();
+}
+
+Matrix33 BoxedMatrix33::inverse() const
+{
+	return m_value.inverse();
+}
+
+void BoxedMatrix33::set(int r, int c, float v)
+{
+	m_value.e[r][c] = v;
+}
+
+float BoxedMatrix33::get(int r, int c) const
+{
+	return m_value.e[r][c];
+}
+
+Matrix33 BoxedMatrix33::concat(const BoxedMatrix33* t) const
+{
+	return m_value * t->unbox();
+}
+
+Vector2 BoxedMatrix33::transform(const BoxedVector2* v) const
+{
+	return m_value * v->unbox();
+}
+
+std::wstring BoxedMatrix33::toString() const
+{
+	return L"(matrix33)";
+}
+
+void* BoxedMatrix33::operator new (size_t size)
+{
+	return s_allocBoxedMatrix33.alloc();
+}
+
+void BoxedMatrix33::operator delete (void* ptr)
+{
+	return s_allocBoxedMatrix33.free(ptr);
 }
 
 
@@ -1482,6 +1550,22 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedFrustum->addMethod("getCorner", &BoxedFrustum::getCorner);
 	classBoxedFrustum->addMethod("getCenter", &BoxedFrustum::getCenter);
 	registrar->registerClass(classBoxedFrustum);
+
+	Ref< AutoRuntimeClass< BoxedMatrix33 > > classBoxedMatrix33 = new AutoRuntimeClass< BoxedMatrix33 >();
+	classBoxedMatrix33->addConstructor();
+	classBoxedMatrix33->addConstant("zero", CastAny< Matrix33 >::set(Matrix33::zero()));
+	classBoxedMatrix33->addConstant("identity", CastAny< Matrix33 >::set(Matrix33::identity()));
+	classBoxedMatrix33->addMethod("diagonal", &BoxedMatrix33::diagonal);
+	classBoxedMatrix33->addMethod("determinant", &BoxedMatrix33::determinant);
+	classBoxedMatrix33->addMethod("transpose", &BoxedMatrix33::transpose);
+	classBoxedMatrix33->addMethod("inverse", &BoxedMatrix33::inverse);
+	classBoxedMatrix33->addMethod("set", &BoxedMatrix33::set);
+	classBoxedMatrix33->addMethod("get", &BoxedMatrix33::get);
+	classBoxedMatrix33->addMethod("concat", &BoxedMatrix33::concat);
+	classBoxedMatrix33->addMethod("transform", &BoxedMatrix33::transform);
+	classBoxedMatrix33->addOperator< Vector2, const BoxedVector2* >('*', &BoxedMatrix33::transform);
+	classBoxedMatrix33->addOperator< Matrix33, const BoxedMatrix33* >('*', &BoxedMatrix33::concat);
+	registrar->registerClass(classBoxedMatrix33);
 
 	Ref< AutoRuntimeClass< BoxedMatrix44 > > classBoxedMatrix44 = new AutoRuntimeClass< BoxedMatrix44 >();
 	classBoxedMatrix44->addConstructor();

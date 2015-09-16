@@ -64,7 +64,7 @@ Matrix33 CharacterInstance::getFullTransform() const
 {
 	Matrix33 T = m_transform;
 	for (const CharacterInstance* parent = m_parent; parent; parent = parent->m_parent)
-		T = T * parent->getTransform();
+		T = parent->getTransform() * T;
 	return T;
 }
 

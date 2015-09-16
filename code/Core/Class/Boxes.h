@@ -13,6 +13,7 @@
 #include "Core/Math/Color4f.h"
 #include "Core/Math/Color4ub.h"
 #include "Core/Math/Frustum.h"
+#include "Core/Math/Matrix33.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Quaternion.h"
 #include "Core/Math/RandomGeometry.h"
@@ -594,6 +595,43 @@ public:
 
 private:
 	Frustum m_value;
+};
+
+class T_DLLCLASS BoxedMatrix33 : public Boxed
+{
+	T_RTTI_CLASS;
+
+public:
+	BoxedMatrix33();
+
+	explicit BoxedMatrix33(const Matrix33& value);
+
+	Vector4 diagonal() const;
+
+	float determinant() const;
+
+	Matrix33 transpose() const;
+
+	Matrix33 inverse() const;
+
+	void set(int r, int c, float v);
+
+	float get(int r, int c) const;
+
+	Matrix33 concat(const BoxedMatrix33* t) const;
+
+	Vector2 transform(const BoxedVector2* v) const;
+
+	const Matrix33& unbox() const { return m_value; }
+
+	virtual std::wstring toString() const;
+
+	void* operator new (size_t size);
+
+	void operator delete (void* ptr);
+
+private:
+	Matrix33 m_value;
 };
 
 class T_DLLCLASS BoxedMatrix44 : public Boxed
@@ -1282,6 +1320,34 @@ struct CastAny < const Frustum&, false >
 	}	
 	static const Frustum& get(const Any& value) {
 		return mandatory_non_null_type_cast< BoxedFrustum* >(value.getObject())->unbox();
+	}
+};
+
+template < >
+struct CastAny < Matrix33, false >
+{
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedMatrix33 >(value.getObjectUnsafe());
+	}
+	static Any set(const Matrix33& value) {
+		return Any::fromObject(new BoxedMatrix33(value));
+	}	
+	static const Matrix33& get(const Any& value) {
+		return mandatory_non_null_type_cast< BoxedMatrix33* >(value.getObject())->unbox();
+	}
+};
+
+template < >
+struct CastAny < const Matrix33&, false >
+{
+	static bool accept(const Any& value) {
+		return value.isObject() && is_a< BoxedMatrix33 >(value.getObjectUnsafe());
+	}
+	static Any set(const Matrix33& value) {
+		return Any::fromObject(new BoxedMatrix33(value));
+	}	
+	static const Matrix33& get(const Any& value) {
+		return mandatory_non_null_type_cast< BoxedMatrix33* >(value.getObject())->unbox();
 	}
 };
 

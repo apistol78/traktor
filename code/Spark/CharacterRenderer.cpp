@@ -34,14 +34,11 @@ void CharacterRenderer::build(const CharacterInstance* character, uint32_t frame
 	character->render(m_renderContexts[frame]);
 }
 
-void CharacterRenderer::render(render::IRenderView* renderView, const Vector2& viewOffset, const Vector2& viewSize, uint32_t frame)
+void CharacterRenderer::render(render::IRenderView* renderView, const Matrix44& projection, uint32_t frame)
 {
 	render::ProgramParameters programParams;
 	programParams.beginParameters(m_globalContext);
-
-	Vector4 viewOffsetSize(viewOffset.x, viewOffset.y, viewSize.x, viewSize.y);
-	programParams.setVectorParameter(L"Spark_ViewOffsetSize", viewOffsetSize);
-
+	programParams.setMatrixParameter(L"Spark_Projection", projection);
 	programParams.endParameters(m_globalContext);
 
 	m_renderContexts[frame]->render(renderView, render::RpOverlay, &programParams);

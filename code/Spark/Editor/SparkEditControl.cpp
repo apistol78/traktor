@@ -105,7 +105,7 @@ void SparkEditControl::eventMouseMove(ui::MouseMoveEvent* event)
 	ui::Point mousePosition = event->getPosition();
 
 	Vector2 deltaMove(
-		 (mousePosition.x - m_lastMousePosition.x),
+		-(mousePosition.x - m_lastMousePosition.x),
 		-(mousePosition.y - m_lastMousePosition.y)
 	);
 	m_viewOffset += deltaMove / m_viewScale;
@@ -157,23 +157,48 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 			0
 		);
 
-		if (m_primitiveRenderer->begin(m_renderView, Matrix44::identity()))
+		const int32_t stageWidth = 1080;
+		const int32_t stageHeight = 1920;
+
+		float viewWidth = sz.cx / m_viewScale;
+		float viewHeight = sz.cy / m_viewScale;
+
+		float viewX = m_viewOffset.x / viewWidth;
+		float viewY = m_viewOffset.y / viewHeight;
+
+		Matrix44 projection(
+			2.0f / viewWidth, 0.0f, 0.0f, -viewX,
+			0.0f, -2.0f / viewHeight, 0.0f, viewY,
+			0.0f, 0.0f, 1.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f
+		);
+
+		if (m_primitiveRenderer->begin(m_renderView, projection))
 		{
 			m_primitiveRenderer->pushDepthState(false, false, false);
-			for (int32_t i = -10; i < 10; ++i)
+
+			for (int32_t x = 0; x < stageWidth; x += 40)
 			{
-				float f = i / 10.0f;
 				m_primitiveRenderer->drawLine(
-					Vector4(-1.0f, f, 1.0f, 1.0f),
-					Vector4( 1.0f, f, 1.0f, 1.0f),
-					Color4ub(0, 0, 0, 40)
-				);
-				m_primitiveRenderer->drawLine(
-					Vector4(f, -1.0f, 1.0f, 1.0f),
-					Vector4(f,  1.0f, 1.0f, 1.0f),
+					Vector4(x, 0.0f, 1.0f, 1.0f),
+					Vector4(x, stageHeight, 1.0f, 1.0f),
 					Color4ub(0, 0, 0, 40)
 				);
 			}
+			for (int32_t y = 0; y < stageHeight; y += 40)
+			{
+				m_primitiveRenderer->drawLine(
+					Vector4(0.0f, y, 1.0f, 1.0f),
+					Vector4(stageWidth, y, 1.0f, 1.0f),
+					Color4ub(0, 0, 0, 40)
+				);
+			}
+
+			m_primitiveRenderer->drawLine(Vector4(0.0f, 0.0f, 1.0f, 1.0f), Vector4(stageWidth, 0.0f, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
+			m_primitiveRenderer->drawLine(Vector4(stageWidth, 0.0f, 1.0f, 1.0f), Vector4(stageWidth, stageHeight, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
+			m_primitiveRenderer->drawLine(Vector4(stageWidth, stageHeight, 1.0f, 1.0f), Vector4(0.0f, stageHeight, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
+			m_primitiveRenderer->drawLine(Vector4(0.0f, stageHeight, 1.0f, 1.0f), Vector4(0.0f, 0.0f, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
+
 			m_primitiveRenderer->popDepthState();
 			m_primitiveRenderer->end();
 		}
@@ -185,8 +210,7 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 			m_characterRenderer->build(m_spriteInstance, 0);
 			m_characterRenderer->render(
 				m_renderView,
-				m_viewOffset,
-				Vector2(sz.cx / m_viewScale, sz.cy / m_viewScale),
+				projection,
 				0
 			);
 		}

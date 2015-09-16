@@ -5,6 +5,8 @@
 #include "Spark/SparkClassFactory.h"
 #include "Spark/Sprite.h"
 #include "Spark/SpriteInstance.h"
+#include "Spark/Text.h"
+#include "Spark/TextInstance.h"
 #include "Spark/Tween.h"
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes.h"
@@ -29,8 +31,8 @@ void SparkClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classCharacter);
 
 	Ref< AutoRuntimeClass< CharacterInstance > > classCharacterInstance = new AutoRuntimeClass< CharacterInstance >();
-	//classCharacterInstance->addMethod("setTransform", &CharacterInstance::setTransform);
-	//classCharacterInstance->addMethod("getTransform", &CharacterInstance::getTransform);
+	classCharacterInstance->addMethod("setTransform", &CharacterInstance::setTransform);
+	classCharacterInstance->addMethod("getTransform", &CharacterInstance::getTransform);
 	classCharacterInstance->addMethod("setPosition", &CharacterInstance::setPosition);
 	classCharacterInstance->addMethod("getPosition", &CharacterInstance::getPosition);
 	classCharacterInstance->addMethod("setScale", &CharacterInstance::setScale);
@@ -49,6 +51,16 @@ void SparkClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classSpriteInstance->addMethod("place", &SpriteInstance::place);
 	classSpriteInstance->addMethod("remove", &SpriteInstance::remove);
 	registrar->registerClass(classSpriteInstance);
+
+	Ref< AutoRuntimeClass< Text > > classText = new AutoRuntimeClass< Text >();
+	registrar->registerClass(classText);
+
+	Ref< AutoRuntimeClass< TextInstance > > classTextInstance = new AutoRuntimeClass< TextInstance >();
+	classTextInstance->addMethod("setText", &TextInstance::setText);
+	classTextInstance->addMethod("getText", &TextInstance::getText);
+	classTextInstance->addMethod("setHeight", &TextInstance::setHeight);
+	classTextInstance->addMethod("getHeight", &TextInstance::getHeight);
+	registrar->registerClass(classTextInstance);
 
 	Ref< AutoRuntimeClass< Tween::IListener > > classTweenIListener = new AutoRuntimeClass< Tween::IListener >();
 	registrar->registerClass(classTweenIListener);

@@ -604,7 +604,7 @@ void ScriptManagerLua::pushObject(ITypedObject* object)
 	// Create table to act as object instance in script-land.
 	lua_newtable(m_luaState);
 	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.instanceMetaTableRef);
-	lua_setmetatable(m_luaState, -1);
+	lua_setmetatable(m_luaState, -2);
 
 	// Attach native object as light user value of table.
 	lua_pushlightuserdata(m_luaState, (void*)object);
