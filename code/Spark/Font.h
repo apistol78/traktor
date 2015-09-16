@@ -22,7 +22,7 @@ class Matrix33;
 	namespace render
 	{
 
-class ITexture;
+class ISimpleTexture;
 class RenderContext;
 class Shader;
 class VertexBuffer;
@@ -47,10 +47,11 @@ public:
 private:
 	friend class FontResource;
 
-	mutable resource::Proxy< render::ITexture > m_texture;
+	mutable resource::Proxy< render::ISimpleTexture > m_texture;
 	mutable resource::Proxy< render::Shader > m_shader;
 	Ref< render::VertexBuffer > m_vertexBuffer;
 	SmallMap< uint32_t, Vector4 > m_glyphRects;
+	SmallMap< uint32_t, float > m_glyphAdvances;
 };
 
 	}

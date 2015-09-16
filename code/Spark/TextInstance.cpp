@@ -38,15 +38,14 @@ float TextInstance::getHeight() const
 void TextInstance::render(render::RenderContext* renderContext) const
 {
 	Matrix33 T = getFullTransform();
-
 	for (uint32_t i = 0; i < m_text.length(); ++i)
 	{
 		wchar_t ch = m_text[i];
-
 		if (m_font)
+		{
 			m_font->render(renderContext, T, ch, m_height);
-
-		T = translate(m_height, 0.0f) * T;
+			T = translate(m_font->advance(ch) * m_height, 0.0f) * T;
+		}
 	}
 }
 

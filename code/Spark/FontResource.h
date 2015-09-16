@@ -19,7 +19,7 @@ namespace traktor
 	{
 
 class IRenderSystem;
-class ITexture;
+class ISimpleTexture;
 class Shader;
 
 	}
@@ -48,6 +48,7 @@ public:
 	{
 		uint32_t ch;
 		uint32_t rect[4];
+		float advance;
 
 		Glyph();
 
@@ -61,7 +62,7 @@ public:
 private:
 	friend class FontPipeline;
 
-	resource::Id< render::ITexture > m_texture;
+	resource::Id< render::ISimpleTexture > m_texture;
 	resource::Id< render::Shader > m_shader;
 	std::vector< Glyph > m_glyphs;
 	
