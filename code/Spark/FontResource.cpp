@@ -4,7 +4,7 @@
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Log/Log.h"
 #include "Render/IRenderSystem.h"
-#include "Render/ITexture.h"
+#include "Render/ISimpleTexture.h"
 #include "Render/Shader.h"
 #include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
@@ -70,15 +70,19 @@ Ref< Font > FontResource::create(resource::IResourceManager* resourceManager, re
 
 	font->m_vertexBuffer->unlock();
 
-	// Setup glyph to texture mapping.
+	// Convert mappings.
+	int32_t width = font->m_texture->getWidth();
+	int32_t height = font->m_texture->getHeight();
+
 	for (std::vector< Glyph >::const_iterator i = m_glyphs.begin(); i != m_glyphs.end(); ++i)
 	{
 		font->m_glyphRects[i->ch] = Vector4(
-			i->rect[0] / 1024.0f,
-			i->rect[1] / 1024.0f,
-			i->rect[2] / 1024.0f,
-			i->rect[3] / 1024.0f
+			i->rect[0] / float(width),
+			i->rect[1] / float(height),
+			i->rect[2] / float(width),
+			i->rect[3] / float(height)
 		);
+		font->m_glyphAdvances[i->ch] = i->advance;
 	}
 
 	return font;
@@ -86,13 +90,14 @@ Ref< Font > FontResource::create(resource::IResourceManager* resourceManager, re
 
 void FontResource::serialize(ISerializer& s)
 {
-	s >> resource::Member< render::ITexture >(L"texture", m_texture);
+	s >> resource::Member< render::ISimpleTexture >(L"texture", m_texture);
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberStlVector< Glyph, MemberComposite< Glyph > >(L"glyphs", m_glyphs);
 }
 
 FontResource::Glyph::Glyph()
 :	ch(0)
+,	advance(0.0f)
 {
 	rect[0] =
 	rect[1] =
@@ -104,6 +109,7 @@ void FontResource::Glyph::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"ch", ch);
 	s >> MemberStaticArray< uint32_t, 4 >(L"rect", rect);
+	s >> Member< float >(L"advance", advance);
 }
 
 	}

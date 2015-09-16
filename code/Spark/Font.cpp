@@ -1,5 +1,5 @@
 #include "Core/Math/Matrix33.h"
-#include "Render/ITexture.h"
+#include "Render/ISimpleTexture.h"
 #include "Render/Shader.h"
 #include "Render/Context/RenderBlock.h"
 #include "Render/Context/RenderContext.h"
@@ -14,7 +14,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.Font", Font, Object)
 
 float Font::advance(uint32_t character) const
 {
-	return 1.0f;
+	SmallMap< uint32_t, float >::const_iterator it = m_glyphAdvances.find(character);
+	if (it != m_glyphAdvances.end())
+		return it->second;
+	else
+		return 0.0f;
 }
 
 void Font::render(render::RenderContext* renderContext, const Matrix33& transform, uint32_t character, float height) const
