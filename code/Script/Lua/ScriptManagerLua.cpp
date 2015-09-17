@@ -1052,27 +1052,20 @@ int ScriptManagerLua::classAddMethod(lua_State* luaState)
 	if (top < 1)
 		return 0;
 
-	Object** objectPtr = 0;
+	ITypedObject* object = 0;
 	Any arg;
 
-	if (lua_isuserdata(luaState, 1))
+	if (lua_istable(luaState, 1))
 	{
-		objectPtr = reinterpret_cast< Object** >(lua_touserdata(luaState, 1));
+		object = toTypedObject(luaState, 1);
 		arg = manager->toAny(2);
 	}
 	else if (lua_isuserdata(luaState, 2))
 	{
-		objectPtr = reinterpret_cast< Object** >(lua_touserdata(luaState, 2));
+		object = toTypedObject(luaState, 2);
 		arg = manager->toAny(1);
 	}
 
-	if (!objectPtr)
-	{
-		log::error << L"Unable to call method; not an object" << Endl;
-		return 0;
-	}
-
-	Object* object = *objectPtr;
 	if (!object)
 	{
 		log::error << L"Unable to call method; null object" << Endl;
@@ -1097,14 +1090,7 @@ int ScriptManagerLua::classSubtractMethod(lua_State* luaState)
 	if (top < 1)
 		return 0;
 
-	Object** objectPtr = reinterpret_cast< Object** >(lua_touserdata(luaState, 1));
-	if (!objectPtr)
-	{
-		log::error << L"Unable to call method; not an object" << Endl;
-		return 0;
-	}
-
-	Object* object = *objectPtr;
+	ITypedObject* object = toTypedObject(luaState, 1);
 	if (!object)
 	{
 		log::error << L"Unable to call method; null object" << Endl;
@@ -1131,27 +1117,20 @@ int ScriptManagerLua::classMultiplyMethod(lua_State* luaState)
 	if (top < 1)
 		return 0;
 
-	Object** objectPtr = 0;
+	ITypedObject* object = 0;
 	Any arg;
 
-	if (lua_isuserdata(luaState, 1))
+	if (lua_istable(luaState, 1))
 	{
-		objectPtr = reinterpret_cast< Object** >(lua_touserdata(luaState, 1));
+		object = toTypedObject(luaState, 1);
 		arg = manager->toAny(2);
 	}
 	else if (lua_isuserdata(luaState, 2))
 	{
-		objectPtr = reinterpret_cast< Object** >(lua_touserdata(luaState, 2));
+		object = toTypedObject(luaState, 2);
 		arg = manager->toAny(1);
 	}
 
-	if (!objectPtr)
-	{
-		log::error << L"Unable to call method; not an object" << Endl;
-		return 0;
-	}
-
-	Object* object = *objectPtr;
 	if (!object)
 	{
 		log::error << L"Unable to call method; null object" << Endl;
@@ -1176,14 +1155,7 @@ int ScriptManagerLua::classDivideMethod(lua_State* luaState)
 	if (top < 1)
 		return 0;
 
-	Object** objectPtr = reinterpret_cast< Object** >(lua_touserdata(luaState, 1));
-	if (!objectPtr)
-	{
-		log::error << L"Unable to call method; not an object" << Endl;
-		return 0;
-	}
-
-	Object* object = *objectPtr;
+	ITypedObject* object = toTypedObject(luaState, 1);
 	if (!object)
 	{
 		log::error << L"Unable to call method; null object" << Endl;

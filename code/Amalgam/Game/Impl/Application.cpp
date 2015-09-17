@@ -216,9 +216,12 @@ bool Application::create(
 
 	// World
 	T_DEBUG(L"Creating world server...");
-	m_worldServer = new WorldServer();
-	if (!m_worldServer->create(defaultSettings, settings, m_renderServer, m_resourceServer))
-		return false;
+	if (settings->getProperty(L"World.Type"))
+	{
+		m_worldServer = new WorldServer();
+		if (!m_worldServer->create(defaultSettings, settings, m_renderServer, m_resourceServer))
+			return false;
+	}
 
 	// Audio
 	T_DEBUG(L"Creating audio server...");
@@ -266,7 +269,8 @@ bool Application::create(
 	T_DEBUG(L"Creating entity factories...");
 	if (m_physicsServer)
 		m_physicsServer->createEntityFactories(m_environment);
-	m_worldServer->createEntityFactories(m_environment);
+	if (m_worldServer)
+		m_worldServer->createEntityFactories(m_environment);
 
 	// Setup voice chat feature.
 	if (m_onlineServer && m_audioServer)
@@ -831,7 +835,7 @@ bool Application::update()
 						m_frameRender = m_frameBuild;
 						m_stateRender = currentState;
 						m_updateInfoRender = m_updateInfo;
-						m_frameBuild = (m_frameBuild + 1) % m_worldServer->getFrameCount();
+						m_frameBuild = (m_frameBuild + 1) % m_renderServer->getThreadFrameQueueCount();
 					}
 
 					m_signalRenderBegin.set();

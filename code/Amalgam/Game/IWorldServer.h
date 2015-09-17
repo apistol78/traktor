@@ -67,8 +67,6 @@ public:
 		const world::WorldRenderSettings* worldRenderSettings,
 		const world::PostProcessSettings* postProcessSettings
 	) = 0;
-
-	virtual int32_t getFrameCount() const = 0;
 };
 
 	}

@@ -3,7 +3,16 @@
 
 #include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Core/Math/Aabb2.h"
 #include "Core/Math/Matrix33.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_SPARK_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
 
 namespace traktor
 {
@@ -22,7 +31,7 @@ class IComponentInstance;
 /*! \brief Character instance base class.
  * \ingroup Spark
  */
-class CharacterInstance : public Object
+class T_DLLCLASS CharacterInstance : public Object
 {
 	T_RTTI_CLASS;
 
@@ -72,6 +81,10 @@ public:
 	/*! \brief Get active components.
 	 */
 	const RefArray< IComponentInstance >& getComponents() const;
+
+	/*! \brief Get bounds.
+	 */
+	virtual Aabb2 getBounds() const = 0;
 
 	/*! \brief Update character instance.
 	 */

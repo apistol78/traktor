@@ -135,6 +135,16 @@
 					</value>
 				</second>
 			</item>
+			<item>
+				<first>ShaderPipeline.IncludeOnlyTechniques</first>
+				<second type="traktor.PropertyStringSet">
+					<value>
+						<item>Solid</item>
+						<item>In</item>
+						<item>Out</item>
+					</value>
+				</second>
+			</item>
 		</value>
 	</pipelineProperties>
 	<migrateProperties type="traktor.PropertyGroup">

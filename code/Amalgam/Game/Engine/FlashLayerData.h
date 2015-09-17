@@ -1,6 +1,7 @@
 #ifndef traktor_amalgam_FlashLayerData_H
 #define traktor_amalgam_FlashLayerData_H
 
+#include <map>
 #include "Amalgam/Game/Engine/LayerData.h"
 #include "Resource/Id.h"
 

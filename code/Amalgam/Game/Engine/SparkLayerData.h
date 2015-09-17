@@ -1,0 +1,48 @@
+#ifndef traktor_amalgam_SparkLayerData_H
+#define traktor_amalgam_SparkLayerData_H
+
+#include "Amalgam/Game/Engine/LayerData.h"
+#include "Resource/Id.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_AMALGAM_GAME_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+	namespace spark
+	{
+
+class Sprite;
+
+	}
+
+	namespace amalgam
+	{
+
+/*! \brief Stage Spark layer persistent data.
+ * \ingroup Amalgam
+ */
+class T_DLLCLASS SparkLayerData : public LayerData
+{
+	T_RTTI_CLASS;
+
+public:
+	virtual Ref< Layer > createInstance(Stage* stage, IEnvironment* environment) const;
+
+	virtual void serialize(ISerializer& s);
+
+private:
+	friend class StagePipeline;
+
+	resource::Id< spark::Sprite > m_sprite;
+};
+
+	}
+}
+
+#endif	// traktor_amalgam_SparkLayerData_H

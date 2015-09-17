@@ -6,6 +6,14 @@
 #include "Spark/CharacterInstance.h"
 #include "Spark/DisplayList.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_SPARK_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
 	namespace resource
@@ -24,7 +32,7 @@ class Sprite;
 /*! \brief Sprite character instance.
  * \ingroup Spark
  */
-class SpriteInstance : public CharacterInstance
+class T_DLLCLASS SpriteInstance : public CharacterInstance
 {
 	T_RTTI_CLASS;
 
@@ -36,6 +44,10 @@ public:
 	void place(int32_t depth, CharacterInstance* instance);
 
 	void remove(int32_t depth);
+
+	void getCharacters(RefArray< CharacterInstance >& outCharacters) const;
+
+	virtual Aabb2 getBounds() const;
 
 	virtual void update() T_FINAL;
 

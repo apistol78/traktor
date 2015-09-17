@@ -3,6 +3,15 @@
 
 #include "Resource/Proxy.h"
 #include "Spark/CharacterInstance.h"
+#include "Spark/Types.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_SPARK_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
 
 namespace traktor
 {
@@ -22,7 +31,7 @@ class Text;
 /*! \brief Text character instance.
  * \ingroup Spark
  */
-class TextInstance : public CharacterInstance
+class T_DLLCLASS TextInstance : public CharacterInstance
 {
 	T_RTTI_CLASS;
 
@@ -37,6 +46,18 @@ public:
 
 	float getHeight() const;
 
+	void setBounds(const Aabb2& bounds);
+
+	void setHorizontalAlign(Align horizontalAlign);
+
+	Align getHorizontalAlign() const;
+
+	void setVerticalAlign(Align verticalAlign);
+
+	Align getVerticalAlign() const;
+
+	virtual Aabb2 getBounds() const;
+
 	virtual void render(render::RenderContext* renderContext) const T_FINAL;
 
 private:
@@ -45,6 +66,9 @@ private:
 	resource::Proxy< Font > m_font;
 	std::wstring m_text;
 	float m_height;
+	Aabb2 m_bounds;
+	Align m_horizontalAlign;
+	Align m_verticalAlign;
 };
 
 	}

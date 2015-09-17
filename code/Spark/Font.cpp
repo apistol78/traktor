@@ -14,9 +14,9 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.Font", Font, Object)
 
 float Font::advance(uint32_t character) const
 {
-	SmallMap< uint32_t, float >::const_iterator it = m_glyphAdvances.find(character);
-	if (it != m_glyphAdvances.end())
-		return it->second;
+	SmallMap< uint32_t, Glyph >::const_iterator it = m_glyphs.find(character);
+	if (it != m_glyphs.end())
+		return it->second.advance;
 	else
 		return 0.0f;
 }
@@ -30,9 +30,11 @@ void Font::render(render::RenderContext* renderContext, const Matrix33& transfor
 		0.0f, 0.0f, 0.0f, 1.0f
 	);
 
-	SmallMap< uint32_t, Vector4 >::const_iterator it = m_glyphRects.find(character);
-	if (it != m_glyphRects.end())
+	SmallMap< uint32_t, Glyph >::const_iterator it = m_glyphs.find(character);
+	if (it != m_glyphs.end())
 	{
+		T_FATAL_ASSERT (m_shader->getCurrentProgram());
+
 		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("Glyph");
 
 		renderBlock->distance = 0.0f;
@@ -44,7 +46,8 @@ void Font::render(render::RenderContext* renderContext, const Matrix33& transfor
 		renderBlock->programParams->beginParameters(renderContext);
 		renderBlock->programParams->setMatrixParameter(L"Spark_Transform", T);
 		renderBlock->programParams->setTextureParameter(L"Spark_GlyphMap", m_texture);
-		renderBlock->programParams->setVectorParameter(L"Spark_GlyphRect", it->second);
+		renderBlock->programParams->setVectorParameter(L"Spark_GlyphRect", it->second.rect);
+		renderBlock->programParams->setVectorParameter(L"Spark_GlyphUnit", it->second.unit);
 		renderBlock->programParams->setFloatParameter(L"Spark_GlyphHeight", height);
 		renderBlock->programParams->endParameters(renderContext);
 

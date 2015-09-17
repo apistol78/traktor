@@ -69,8 +69,6 @@ public:
 		const world::PostProcessSettings* postProcessSettings
 	);
 
-	virtual int32_t getFrameCount() const;
-
 private:
 	Ref< world::IEntityBuilder > m_entityBuilder;
 	Ref< world::WorldEntityRenderers > m_entityRenderers;

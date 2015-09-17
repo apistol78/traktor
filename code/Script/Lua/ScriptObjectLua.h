@@ -1,7 +1,7 @@
 #ifndef traktor_script_ScriptObjectLua_H
 #define traktor_script_ScriptObjectLua_H
 
-#include "Core/Class/IRuntimeObject.h"
+#include "Core/Object.h"
 
 struct lua_State;
 
@@ -12,7 +12,7 @@ namespace traktor
 
 class ScriptClassLua;
 
-class ScriptObjectLua : public IRuntimeObject
+class ScriptObjectLua : public Object
 {
 	T_RTTI_CLASS;
 
@@ -20,8 +20,6 @@ public:
 	ScriptObjectLua(lua_State*& luaState, int32_t tableRef, const ScriptClassLua* scriptClass);
 
 	virtual ~ScriptObjectLua();
-
-	virtual const IRuntimeClass* getRuntimeClass() const T_FINAL;
 
 	void push();
 

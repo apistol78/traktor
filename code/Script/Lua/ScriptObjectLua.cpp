@@ -7,7 +7,7 @@ namespace traktor
 	namespace script
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptObjectLua", ScriptObjectLua, IRuntimeObject)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptObjectLua", ScriptObjectLua, Object)
 
 ScriptObjectLua::ScriptObjectLua(lua_State*& luaState, int32_t tableRef, const ScriptClassLua* scriptClass)
 :	m_luaState(luaState)
@@ -19,11 +19,6 @@ ScriptObjectLua::ScriptObjectLua(lua_State*& luaState, int32_t tableRef, const S
 ScriptObjectLua::~ScriptObjectLua()
 {
 	luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_tableRef);
-}
-
-const IRuntimeClass* ScriptObjectLua::getRuntimeClass() const
-{
-	return m_scriptClass;
 }
 
 void ScriptObjectLua::push()

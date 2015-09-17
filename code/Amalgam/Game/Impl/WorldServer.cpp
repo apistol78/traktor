@@ -308,7 +308,7 @@ Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(
 	wcd.antiAliasQuality = m_antiAliasQuality;
 	wcd.multiSample = m_renderServer->getMultiSample();
 	wcd.superSample = m_superSample;
-	wcd.frameCount = getFrameCount();
+	wcd.frameCount = m_renderServer->getThreadFrameQueueCount();
 	wcd.gamma = m_gamma;
 
 	Ref< world::IWorldRenderer > worldRenderer = dynamic_type_cast< world::IWorldRenderer* >(m_worldType->createInstance());
@@ -324,11 +324,6 @@ Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(
 		return 0;
 
 	return worldRenderer;
-}
-
-int32_t WorldServer::getFrameCount() const
-{
-	return 2;
 }
 
 	}

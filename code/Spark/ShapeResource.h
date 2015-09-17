@@ -1,6 +1,7 @@
 #ifndef traktor_spark_ShapeResource_H
 #define traktor_spark_ShapeResource_H
 
+#include "Core/Math/Aabb2.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Resource/Id.h"
 
@@ -51,6 +52,7 @@ private:
 
 	resource::Id< render::Shader > m_shader;
 	std::vector< uint8_t > m_parts;
+	Aabb2 m_bounds;
 };
 
 	}

@@ -9,6 +9,7 @@
 #include "Amalgam/Game/Engine/FlashLayer.h"
 #include "Amalgam/Game/Engine/GameEntity.h"
 #include "Amalgam/Game/Engine/GameEntityData.h"
+#include "Amalgam/Game/Engine/SparkLayer.h"
 #include "Amalgam/Game/Engine/Stage.h"
 #include "Amalgam/Game/Engine/StageData.h"
 #include "Amalgam/Game/Engine/StageLoader.h"
@@ -212,7 +213,6 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classWorldServer->addMethod("getEntityBuilder", &IWorldServer::getEntityBuilder);
 	classWorldServer->addMethod("getEntityRenderers", &IWorldServer::getEntityRenderers);
 	classWorldServer->addMethod("getEntityEventManager", &IWorldServer::getEntityEventManager);
-	classWorldServer->addMethod("getFrameCount", &IWorldServer::getFrameCount);
 	registrar->registerClass(classWorldServer);
 
 	Ref< AutoRuntimeClass< UpdateControl > > classUpdateControl = new AutoRuntimeClass< UpdateControl >();
@@ -281,6 +281,10 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFlashLayer->addMethod("getPrintableString", &FlashLayer::getPrintableString);
 	classFlashLayer->setUnknownMethod(&FlashLayer::externalCall);
 	registrar->registerClass(classFlashLayer);
+
+	Ref< AutoRuntimeClass< SparkLayer > > classSparkLayer = new AutoRuntimeClass< SparkLayer >();
+	classSparkLayer->addMethod("getSprite", &SparkLayer::getSprite);
+	registrar->registerClass(classSparkLayer);
 
 	Ref< AutoRuntimeClass< VideoLayer > > classVideoLayer = new AutoRuntimeClass< VideoLayer >();
 	classVideoLayer->addMethod("play", &VideoLayer::play);

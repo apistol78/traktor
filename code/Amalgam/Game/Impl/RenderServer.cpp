@@ -50,5 +50,10 @@ void RenderServer::setFrameRate(int32_t frameRate)
 	Atomic::exchange(m_frameRate, frameRate);
 }
 
+int32_t RenderServer::getThreadFrameQueueCount() const
+{
+	return 2;
+}
+
 	}
 }

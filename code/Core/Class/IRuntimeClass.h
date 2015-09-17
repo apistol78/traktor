@@ -1,6 +1,7 @@
 #ifndef traktor_IRuntimeClass_H
 #define traktor_IRuntimeClass_H
 
+#include <map>
 #include "Core/Object.h"
 #include "Core/Class/Any.h"
 
@@ -23,6 +24,8 @@ class T_DLLCLASS IRuntimeClass : public Object
 	T_RTTI_CLASS;
 
 public:
+	typedef std::map< std::string, Any > prototype_t;
+
 	/*! \brief Get exported native type. */
 	virtual const TypeInfo& getExportType() const = 0;
 
@@ -33,7 +36,7 @@ public:
 	virtual bool haveUnknown() const = 0;
 
 	/*! \brief Construct new object. */
-	virtual Ref< ITypedObject > construct(ITypedObject* self, uint32_t argc, const Any* argv) const = 0;
+	virtual Ref< ITypedObject > construct(ITypedObject* self, uint32_t argc, const Any* argv, const prototype_t& proto = prototype_t()) const = 0;
 
 	/*! \brief Get number of constants. */
 	virtual uint32_t getConstantCount() const = 0;
