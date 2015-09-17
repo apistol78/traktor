@@ -1,7 +1,8 @@
 #include "Amalgam/Editor/StagePipeline.h"
 #include "Amalgam/Game/Engine/AudioLayerData.h"
-#include "Amalgam/Game/Engine/StageData.h"
 #include "Amalgam/Game/Engine/FlashLayerData.h"
+#include "Amalgam/Game/Engine/SparkLayerData.h"
+#include "Amalgam/Game/Engine/StageData.h"
 #include "Amalgam/Game/Engine/VideoLayerData.h"
 #include "Amalgam/Game/Engine/WorldLayerData.h"
 #include "Core/Serialization/DeepClone.h"
@@ -42,8 +43,8 @@ Ref< StageData > flattenInheritance(editor::IPipelineBuilder* pipelineBuilder, c
 		}
 
 		// Replace script.
-		if (stageDataOut->getScript().isNull())
-			stageDataOut->setScript(downStageDataFlatten->getScript());
+		if (stageDataOut->getClass().isNull())
+			stageDataOut->setClass(downStageDataFlatten->getClass());
 
 		// Replace shader fade.
 		if (stageDataOut->getShaderFade().isNull())
@@ -87,7 +88,7 @@ bool StagePipeline::buildDependencies(
 	const StageData* stageData = checked_type_cast< const StageData*, false >(sourceAsset);
 
 	pipelineDepends->addDependency(stageData->m_inherit, editor::PdfBuild);
-	pipelineDepends->addDependency(stageData->m_script, editor::PdfBuild);
+	pipelineDepends->addDependency(stageData->m_class, editor::PdfBuild);
 	pipelineDepends->addDependency(stageData->m_shaderFade, editor::PdfBuild | editor::PdfResource);
 
 	for (std::map< std::wstring, Guid >::const_iterator i = stageData->m_transitions.begin(); i != stageData->m_transitions.end(); ++i)
@@ -104,6 +105,8 @@ bool StagePipeline::buildDependencies(
 				pipelineDepends->addDependency(i->second, editor::PdfBuild);
 			pipelineDepends->addDependency(flashLayer->m_postProcess, editor::PdfBuild);
 		}
+		else if (const SparkLayerData* sparkLayer = dynamic_type_cast< const SparkLayerData* >(*i))
+			pipelineDepends->addDependency(sparkLayer->m_sprite, editor::PdfBuild);
 		else if (const VideoLayerData* videoLayer = dynamic_type_cast< const VideoLayerData* >(*i))
 		{
 			pipelineDepends->addDependency(videoLayer->m_video, editor::PdfBuild);

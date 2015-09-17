@@ -17,6 +17,73 @@ namespace traktor
 {
 	namespace spark
 	{
+		namespace
+		{
+
+void drawBound(CharacterInstance* character, render::PrimitiveRenderer* primitiveRenderer)
+{
+	if (!character)
+		return;
+
+	Aabb2 bounds = character->getBounds();
+
+	Matrix33 T = character->getFullTransform();
+
+	Vector2 e[] =
+	{
+		T * bounds.mn,
+		T * Vector2(bounds.mx.x, bounds.mn.y),
+		T * bounds.mx,
+		T * Vector2(bounds.mn.x, bounds.mx.y)
+	};
+
+	float cx = T.e13;
+	float cy = T.e23;
+	float r = 20.0f;
+
+	primitiveRenderer->drawLine(
+		Vector4(cx - r, cy, 1.0f, 1.0f),
+		Vector4(cx + r, cy, 1.0f, 1.0f),
+		Color4ub(0, 255, 0, 255)
+	);
+	primitiveRenderer->drawLine(
+		Vector4(cx, cy - r, 1.0f, 1.0f),
+		Vector4(cx, cy + r, 1.0f, 1.0f),
+		Color4ub(0, 255, 0, 255)
+	);
+
+	primitiveRenderer->drawLine(
+		Vector4(e[0].x, e[0].y, 1.0f, 1.0f),
+		Vector4(e[1].x, e[1].y, 1.0f, 1.0f),
+		Color4ub(255, 255, 0, 255)
+	);
+	primitiveRenderer->drawLine(
+		Vector4(e[1].x, e[1].y, 1.0f, 1.0f),
+		Vector4(e[2].x, e[2].y, 1.0f, 1.0f),
+		Color4ub(255, 255, 0, 255)
+	);
+	primitiveRenderer->drawLine(
+		Vector4(e[2].x, e[2].y, 1.0f, 1.0f),
+		Vector4(e[3].x, e[3].y, 1.0f, 1.0f),
+		Color4ub(255, 255, 0, 255)
+	);
+	primitiveRenderer->drawLine(
+		Vector4(e[3].x, e[3].y, 1.0f, 1.0f),
+		Vector4(e[0].x, e[0].y, 1.0f, 1.0f),
+		Color4ub(255, 255, 0, 255)
+	);
+
+	if (SpriteInstance* sprite = dynamic_type_cast< SpriteInstance* >(character))
+	{
+		RefArray< CharacterInstance > children;
+		sprite->getCharacters(children);
+
+		for (RefArray< CharacterInstance >::const_iterator i = children.begin(); i != children.end(); ++i)
+			drawBound(*i, primitiveRenderer);
+	}
+}
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.SparkEditControl", SparkEditControl, ui::Widget)
 
@@ -213,6 +280,16 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 				projection,
 				0
 			);
+
+			if (m_primitiveRenderer->begin(m_renderView, projection))
+			{
+				m_primitiveRenderer->pushDepthState(false, false, false);
+
+				drawBound(m_spriteInstance, m_primitiveRenderer);
+
+				m_primitiveRenderer->popDepthState();
+				m_primitiveRenderer->end();
+			}
 		}
 
 		m_renderView->end();

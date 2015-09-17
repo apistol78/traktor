@@ -1,4 +1,5 @@
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberAabb.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Log/Log.h"
 #include "Database/Instance.h"
@@ -14,6 +15,9 @@ namespace traktor
 {
 	namespace spark
 	{
+		namespace
+		{
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.ShapeResource", 0, ShapeResource, ISerializable)
 
@@ -44,13 +48,14 @@ Ref< Shape > ShapeResource::create(resource::IResourceManager* resourceManager, 
 		return 0;
 	}
 
-	return new Shape(mesh, shader, m_parts);
+	return new Shape(mesh, shader, m_parts, m_bounds);
 }
 
 void ShapeResource::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberStlVector< uint8_t >(L"parts", m_parts);
+	s >> MemberAabb2(L"bounds", m_bounds);
 }
 
 	}

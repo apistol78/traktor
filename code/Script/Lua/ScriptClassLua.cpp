@@ -51,18 +51,27 @@ bool ScriptClassLua::haveUnknown() const
 	return false;
 }
 
-Ref< ITypedObject > ScriptClassLua::construct(ITypedObject* self, uint32_t argc, const Any* argv) const
+Ref< ITypedObject > ScriptClassLua::construct(ITypedObject* self, uint32_t argc, const Any* argv, const prototype_t& proto) const
 {
-	Any argv2[32];
+	m_scriptManager->lock(m_scriptContext);
 
 	// Create a script object box for "self".
-	m_scriptManager->lock(m_scriptContext);
 	m_scriptManager->pushObject(self);
 	int32_t tableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
 	Ref< ScriptObjectLua > scriptSelf = new ScriptObjectLua(m_luaState, tableRef, this);
+
+	// Initialize prototype members before calling constructor.
+	for (prototype_t::const_iterator i = proto.begin(); i != proto.end(); ++i)
+	{
+		scriptSelf->push();
+		m_scriptManager->pushAny(i->second);
+		lua_setfield(m_luaState, -2, i->first.c_str());
+	}
+
 	m_scriptManager->unlock();
 
-	// Prepend "self" object first in arguments.
+	// Prepend "self" object as first in arguments.
+	Any argv2[16];
 	argv2[0] = Any::fromObject(scriptSelf);
 	for (uint32_t i = 0; i < argc; ++i)
 		argv2[i + 1] = argv[i];

@@ -1,3 +1,5 @@
+#pragma optimize( "", off )
+
 #include <sstream>
 #include "Core/Log/Log.h"
 #include "Core/Misc/Split.h"
@@ -337,6 +339,8 @@ Ref< Shape > SvgParser::parsePath(xml::Element* elm)
 				cmd = std::isupper(cmdLead) ? L'L' : L'l';
 			else if (std::toupper(cmdLead) == L'C')
 				cmd = std::isupper(cmdLead) ? L'C' : L'c';
+			else if (std::toupper(cmdLead) == L'L')
+				cmd = std::isupper(cmdLead) ? L'L' : L'l';
 			else
 				return 0;
 		}
@@ -403,8 +407,8 @@ Ref< Shape > SvgParser::parsePath(xml::Element* elm)
 				float y1 = parsePathNumber(i, def.end());
 				float x2 = parsePathNumber(i, def.end());
 				float y2 = parsePathNumber(i, def.end());
-				float x  = parsePathNumber(i, def.end());
-				float y  = parsePathNumber(i, def.end());
+				float x = parsePathNumber(i, def.end());
+				float y = parsePathNumber(i, def.end());
 				path.cubicTo(x1, y1, x2, y2, x, y, relative);
 			}
 			break;
@@ -419,7 +423,17 @@ Ref< Shape > SvgParser::parsePath(xml::Element* elm)
 			}
 			break;
 
-		case L'A':	// Unknown
+		case L'A':	// Elliptic arc
+			{
+				float rx = parsePathNumber(i, def.end());
+				float ry = parsePathNumber(i, def.end());
+				float rotation = parsePathNumber(i, def.end());
+				float la = parsePathNumber(i, def.end());
+				float sf = parsePathNumber(i, def.end());
+				float x = parsePathNumber(i, def.end());
+				float y = parsePathNumber(i, def.end());
+				path.lineTo(x, y, relative);
+			}
 			break;
 
 		case L'Z':	// Close sub path

@@ -17,15 +17,14 @@ CharacterResourceFactory::CharacterResourceFactory(db::Database* db)
 const TypeInfoSet CharacterResourceFactory::getResourceTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Character >());
+	type_of< Character >().findAllOf(typeSet);
 	return typeSet;
-
 }
 
 const TypeInfoSet CharacterResourceFactory::getProductTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Character >());
+	type_of< Character >().findAllOf(typeSet);
 	return typeSet;
 }
 

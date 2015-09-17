@@ -8,6 +8,9 @@
 #include "Flash/FlashMovieResourceFactory.h"
 #include "Heightfield/HeightfieldFactory.h"
 #include "Mesh/MeshFactory.h"
+#include "Spark/CharacterResourceFactory.h"
+#include "Spark/FontResourceFactory.h"
+#include "Spark/ShapeResourceFactory.h"
 #include "Spray/EffectFactory.h"
 #include "Video/VideoFactory.h"
 #include "Weather/Clouds/CloudMaskFactory.h"
@@ -34,17 +37,24 @@ void ResourceServer::destroy()
 void ResourceServer::createResourceFactories(IEnvironment* environment)
 {
 	render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
-	const world::IEntityBuilder* entityBuilder = environment->getWorld()->getEntityBuilder();
 	db::Database* database = environment->getDatabase();
 
 	m_resourceManager->addFactory(new ai::NavMeshFactory(database));
 	m_resourceManager->addFactory(new animation::AnimationFactory(database));
 	m_resourceManager->addFactory(new mesh::MeshFactory(database, renderSystem));
-	m_resourceManager->addFactory(new spray::EffectFactory(database, entityBuilder));
+	m_resourceManager->addFactory(new spark::CharacterResourceFactory(database));
+	m_resourceManager->addFactory(new spark::FontResourceFactory(database, renderSystem));
+	m_resourceManager->addFactory(new spark::ShapeResourceFactory(database, renderSystem));
 	m_resourceManager->addFactory(new flash::FlashMovieResourceFactory(database));
 	m_resourceManager->addFactory(new hf::HeightfieldFactory(database));
 	m_resourceManager->addFactory(new video::VideoFactory(database, renderSystem));
 	m_resourceManager->addFactory(new weather::CloudMaskFactory(database));
+
+	if (environment->getWorld())
+	{
+		const world::IEntityBuilder* entityBuilder = environment->getWorld()->getEntityBuilder();
+		m_resourceManager->addFactory(new spray::EffectFactory(database, entityBuilder));
+	}
 }
 
 int32_t ResourceServer::reconfigure(const PropertyGroup* settings)

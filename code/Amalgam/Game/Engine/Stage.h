@@ -18,18 +18,14 @@
 
 namespace traktor
 {
+
+class IRuntimeClass;
+
 	namespace render
 	{
 
 class ScreenRenderer;
 class Shader;
-
-	}
-
-	namespace script
-	{
-
-class IScriptContext;
 
 	}
 
@@ -58,7 +54,7 @@ public:
 	Stage(
 		const std::wstring& name,
 		IEnvironment* environment,
-		const resource::Proxy< script::IScriptContext >& scriptContext,
+		const resource::Proxy< IRuntimeClass >& clazz,
 		const resource::Proxy< render::Shader >& shaderFade,
 		float fadeRate,
 		const std::map< std::wstring, Guid >& transitions,
@@ -169,7 +165,8 @@ public:
 private:
 	std::wstring m_name;
 	Ref< IEnvironment > m_environment;
-	resource::Proxy< script::IScriptContext > m_scriptContext;
+	resource::Proxy< IRuntimeClass > m_class;
+	Ref< ITypedObject > m_object;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	resource::Proxy< render::Shader > m_shaderFade;
 	float m_fadeRate;

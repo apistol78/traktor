@@ -122,10 +122,14 @@ bool FontPipeline::buildOutput(
 	);
 
 	// Rasterize all glyphs.
+	struct GlyphRect { int32_t x; int32_t y; int32_t width; int32_t height; };
+
 	Ref< FontResource > fontResource = new FontResource();
 	fontResource->m_glyphs.resize(fontAsset->m_includeCharacters.length());
 
 	RefArray< drawing::Image > glyphImages(fontAsset->m_includeCharacters.length());
+	std::vector< GlyphRect > glyphRects(fontAsset->m_includeCharacters.length());
+
 	for (uint32_t i = 0; i < fontAsset->m_includeCharacters.length(); ++i)
 	{
 		wchar_t ch = fontAsset->m_includeCharacters[i];
@@ -161,11 +165,7 @@ bool FontPipeline::buildOutput(
 		}
 
 		fontResource->m_glyphs[i].ch = ch;
-		fontResource->m_glyphs[i].rect[0] = 0;
-		fontResource->m_glyphs[i].rect[1] = 0;
-		fontResource->m_glyphs[i].rect[2] = 0;
-		fontResource->m_glyphs[i].rect[3] = 0;
-		fontResource->m_glyphs[i].advance = float(slot->advance.x >> 6) / c_glyphPixelSize;
+		fontResource->m_glyphs[i].advance = (float(slot->advance.x) / c_glyphPixelSize) / float(1 << 6);
 	}
 
 	// Calculate an estimate size of atlas.
@@ -181,6 +181,9 @@ bool FontPipeline::buildOutput(
 
 	for (uint32_t i = 0; i < glyphImages.size(); )
 	{
+		if (!glyphImages[i])
+			continue;
+
 		int32_t width = glyphImages[i]->getWidth();
 		int32_t height = glyphImages[i]->getHeight();
 		int32_t packSize = std::max(width, height) + 2;
@@ -195,10 +198,10 @@ bool FontPipeline::buildOutput(
 			continue;
 		}
 
-		fontResource->m_glyphs[i].rect[0] = packedRect.x + 1;
-		fontResource->m_glyphs[i].rect[1] = packedRect.y + 1;
-		fontResource->m_glyphs[i].rect[2] = width;
-		fontResource->m_glyphs[i].rect[3] = height;
+		glyphRects[i].x = packedRect.x + 1;
+		glyphRects[i].y = packedRect.y + 1;
+		glyphRects[i].width = width;
+		glyphRects[i].height = height;
 
 		++i;
 	}
@@ -213,15 +216,25 @@ bool FontPipeline::buildOutput(
 
 	for (uint32_t i = 0; i < glyphImages.size(); ++i)
 	{
+		if (!glyphImages[i])
+			continue;
+
 		fontImage.copy(
 			glyphImages[i],
-			fontResource->m_glyphs[i].rect[0],
-			fontResource->m_glyphs[i].rect[1],
+			glyphRects[i].x,
+			glyphRects[i].y,
 			0,
 			0,
-			fontResource->m_glyphs[i].rect[2],
-			fontResource->m_glyphs[i].rect[3]
+			glyphRects[i].width,
+			glyphRects[i].height
 		);
+
+		fontResource->m_glyphs[i].rect[0] = float(glyphRects[i].x) / size;
+		fontResource->m_glyphs[i].rect[1] = float(glyphRects[i].y) / size;
+		fontResource->m_glyphs[i].rect[2] = float(glyphRects[i].width) / size;
+		fontResource->m_glyphs[i].rect[3] = float(glyphRects[i].height) / size;
+		fontResource->m_glyphs[i].unit[0] = float(glyphRects[i].width) / c_glyphPixelSize;
+		fontResource->m_glyphs[i].unit[1] = float(glyphRects[i].height) / c_glyphPixelSize;
 	}
 
 	fontImage.save(L"FontImage.png");

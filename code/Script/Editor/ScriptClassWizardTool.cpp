@@ -31,6 +31,7 @@ bool ScriptClassWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, 
 	classNameValidator.addRange(L'A', L'Z');
 	classNameValidator.addRange(L'0', L'9');
 	classNameValidator.add(L'_');
+	classNameValidator.add(L'.');
 
 	ui::custom::InputDialog inputDialog;
 	ui::custom::InputDialog::Field fields[] =

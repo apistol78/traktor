@@ -35,6 +35,21 @@ void SpriteInstance::remove(int32_t depth)
 	m_displayList.remove(depth);
 }
 
+void SpriteInstance::getCharacters(RefArray< CharacterInstance >& outCharacters) const
+{
+	m_displayList.getCharacters(outCharacters);
+}
+
+Aabb2 SpriteInstance::getBounds() const
+{
+	Aabb2 bounds;
+
+	if (m_shape)
+		bounds = m_shape->getBounds();
+
+	return bounds;
+}
+
 void SpriteInstance::update()
 {
 	CharacterInstance::update();

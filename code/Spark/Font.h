@@ -47,11 +47,17 @@ public:
 private:
 	friend class FontResource;
 
+	struct Glyph
+	{
+		Vector4 rect;
+		Vector4 unit;
+		float advance;
+	};
+
 	mutable resource::Proxy< render::ISimpleTexture > m_texture;
 	mutable resource::Proxy< render::Shader > m_shader;
 	Ref< render::VertexBuffer > m_vertexBuffer;
-	SmallMap< uint32_t, Vector4 > m_glyphRects;
-	SmallMap< uint32_t, float > m_glyphAdvances;
+	SmallMap< uint32_t, Glyph > m_glyphs;
 };
 
 	}

@@ -732,7 +732,7 @@ void FlashLayer::createMoviePlayer()
 		if (!displayRenderer->create(
 			m_environment->getResource()->getResourceManager(),
 			m_environment->getRender()->getRenderSystem(),
-			m_environment->getWorld()->getFrameCount(),
+			m_environment->getRender()->getThreadFrameQueueCount(),
 			m_clearBackground,
 			0.006f
 		))

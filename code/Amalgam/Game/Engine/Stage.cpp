@@ -7,6 +7,7 @@
 #include "Amalgam/Game/Engine/Stage.h"
 #include "Amalgam/Game/Engine/StageLoader.h"
 #include "Amalgam/Game/Engine/StageState.h"
+#include "Core/Class/IRuntimeClass.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -14,7 +15,6 @@
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
-#include "Script/IScriptContext.h"
 
 //#define T_ENABLE_MEASURE
 #include "Core/Timer/Measure.h"
@@ -29,7 +29,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.Stage", Stage, Object)
 Stage::Stage(
 	const std::wstring& name,
 	IEnvironment* environment,
-	const resource::Proxy< script::IScriptContext >& scriptContext,
+	const resource::Proxy< IRuntimeClass >& clazz,
 	const resource::Proxy< render::Shader >& shaderFade,
 	float fadeRate,
 	const std::map< std::wstring, Guid >& transitions,
@@ -37,7 +37,7 @@ Stage::Stage(
 )
 :	m_name(name)
 ,	m_environment(environment)
-,	m_scriptContext(scriptContext)
+,	m_class(clazz)
 ,	m_shaderFade(shaderFade)
 ,	m_fadeRate(fadeRate)
 ,	m_transitions(transitions)
@@ -59,29 +59,19 @@ void Stage::destroy()
 {
 	m_environment = 0;
 
-	if (m_scriptContext)
+	if (m_object)
 	{
-		if (m_initialized && m_scriptContext->haveFunction("finalize"))
+		uint32_t methodIdFinalize = findRuntimeClassMethodId(m_class, "finalize");
+		if (m_initialized && methodIdFinalize != ~0U)
 		{
-			// Call script fini.
 			Any argv[] =
 			{
 				Any::fromObject(const_cast< Object* >(m_params.c_ptr()))
 			};
-			m_scriptContext->executeFunction("finalize", sizeof_array(argv), argv);
+			m_class->invoke(m_object, methodIdFinalize, sizeof_array(argv), argv);
 		}
-
-		m_scriptContext->setGlobal("stage", Any());
-		m_scriptContext->setGlobal("environment", Any());
-
-		for (RefArray< Layer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-		{
-			if (!(*i)->getName().empty())
-				m_scriptContext->setGlobal(wstombs((*i)->getName()), Any());
-		}
-
-		m_scriptContext->destroy();
-		m_scriptContext.clear();
+		m_object = 0;
+		m_class.clear();
 	}
 
 	safeDestroy(m_screenRenderer);
@@ -125,10 +115,13 @@ void Stage::terminate()
 
 Any Stage::invokeScript(const std::string& fn, uint32_t argc, const Any* argv)
 {
-	if (validateScriptContext() && m_scriptContext->haveFunction(fn))
-		return m_scriptContext->executeFunction(fn, argc, argv);
-	else
-		return Any();
+	if (m_object)
+	{
+		uint32_t methodId = findRuntimeClassMethodId(m_class, fn);
+		if (methodId != ~0U)
+			m_class->invoke(m_object, methodId, argc, argv);
+	}
+	return Any();
 }
 
 Ref< Stage > Stage::loadStage(const std::wstring& name, const Object* params)
@@ -180,19 +173,21 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 		for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 			T_MEASURE_STATEMENT_M((*i)->prepare(), 1.0 / 60.0, type_name(*i));
 
-		bool validScriptContext = false;
-		T_MEASURE_STATEMENT(validScriptContext = validateScriptContext(), 1.0 / 60.0);
-		if (validScriptContext)
+		if (validateScriptContext())
 		{
-			info.getProfiler()->beginScope(FptScript);
-
-			Any argv[] =
+			uint32_t methodIdUpdate = findRuntimeClassMethodId(m_class, "update");
+			if (methodIdUpdate != ~0U)
 			{
-				Any::fromObject(const_cast< UpdateInfo* >(&info))
-			};
-			T_MEASURE_STATEMENT(m_scriptContext->executeFunction("update", sizeof_array(argv), argv), 1.0 / 60.0);
+				info.getProfiler()->beginScope(FptScript);
 
-			info.getProfiler()->endScope();
+				Any argv[] =
+				{
+					Any::fromObject(const_cast< UpdateInfo* >(&info))
+				};
+				T_MEASURE_STATEMENT(m_class->invoke(m_object, methodIdUpdate, sizeof_array(argv), argv), 1.0 / 60.0);
+
+				info.getProfiler()->endScope();
+			}
 		}
 
 		for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
@@ -279,19 +274,21 @@ void Stage::postReconfigured()
 	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 		(*i)->postReconfigured();
 
-	if (m_scriptContext && m_initialized)
+	if (m_object && m_initialized)
 	{
-		if (m_scriptContext->haveFunction("reconfigured"))
-			m_scriptContext->executeFunction("reconfigured");
+		uint32_t methodIdReconfigured = findRuntimeClassMethodId(m_class, "reconfigured");
+		if (methodIdReconfigured != ~0U)
+			m_class->invoke(m_object, methodIdReconfigured, 0, 0);
 	}
 }
 
 void Stage::suspend()
 {
-	if (m_scriptContext && m_initialized)
+	if (m_object && m_initialized)
 	{
-		if (m_scriptContext->haveFunction("suspend"))
-			m_scriptContext->executeFunction("suspend");
+		uint32_t methodIdSuspend = findRuntimeClassMethodId(m_class, "suspend");
+		if (methodIdSuspend != ~0U)
+			m_class->invoke(m_object, methodIdSuspend, 0, 0);
 	}
 
 	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
@@ -303,10 +300,11 @@ void Stage::resume()
 	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 		(*i)->resume();
 
-	if (m_scriptContext && m_initialized)
+	if (m_object && m_initialized)
 	{
-		if (m_scriptContext->haveFunction("resume"))
-			m_scriptContext->executeFunction("resume");
+		uint32_t methodIdResume = findRuntimeClassMethodId(m_class, "resume");
+		if (methodIdResume != ~0U)
+			m_class->invoke(m_object, methodIdResume, 0, 0);
 	}
 }
 
@@ -314,32 +312,22 @@ bool Stage::validateScriptContext()
 {
 	T_MEASURE_BEGIN()
 
-	if (!m_scriptContext)
+	if (!m_class)
 		return false;
 
 	if (!m_initialized)
 	{
-		// Expose commonly used globals.
-		T_MEASURE_STATEMENT(m_scriptContext->setGlobal("stage", Any::fromObject(this)), 1.0 / 60.0);
-		T_MEASURE_STATEMENT(m_scriptContext->setGlobal("environment", Any::fromObject(m_environment)), 1.0 / 60.0);
-
+		// Define members, do this as a prototype as we possibly want to access those in the constructor.
+		IRuntimeClass::prototype_t proto;
+		proto["environment"] = Any::fromObject(m_environment);
 		for (RefArray< Layer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 		{
 			if (!(*i)->getName().empty())
-				T_MEASURE_STATEMENT(m_scriptContext->setGlobal(wstombs((*i)->getName()), Any::fromObject(*i)), 1.0 / 60.0);
+				proto[wstombs((*i)->getName())] = Any::fromObject(*i);
 		}
 
-		// Call script init; do this everytime we re-validate script.
-		bool haveInitialize = false;
-		T_MEASURE_STATEMENT(haveInitialize = m_scriptContext->haveFunction("initialize"), 1.0 / 60.0);
-		if (haveInitialize)
-		{
-			Any argv[] =
-			{
-				Any::fromObject(const_cast< Object* >(m_params.c_ptr()))
-			};
-			T_MEASURE_STATEMENT(m_scriptContext->executeFunction("initialize", sizeof_array(argv), argv), 1.0 / 60.0);
-		}
+		// Call script constructor.
+		m_object = m_class->construct(this, 0, 0, proto);
 		m_initialized = true;
 	}
 

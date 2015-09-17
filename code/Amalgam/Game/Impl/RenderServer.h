@@ -51,6 +51,8 @@ public:
 
 	virtual int32_t getFrameRate() const;
 
+	virtual int32_t getThreadFrameQueueCount() const;
+
 	void setFrameRate(int32_t frameRate);
 
 protected:

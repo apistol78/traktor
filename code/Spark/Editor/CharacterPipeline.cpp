@@ -6,6 +6,7 @@
 #include "Spark/External.h"
 #include "Spark/ScriptComponent.h"
 #include "Spark/Sprite.h"
+#include "Spark/Text.h"
 #include "Spark/Editor/CharacterPipeline.h"
 
 namespace traktor
@@ -60,6 +61,10 @@ bool CharacterPipeline::buildDependencies(
 		pipelineDepends->addDependency(sprite->m_shape, editor::PdfBuild | editor::PdfResource);
 		for (std::map< std::wstring, Ref< Character > >::const_iterator i = sprite->m_characters.begin(); i != sprite->m_characters.end(); ++i)
 			pipelineDepends->addDependency(i->second);
+	}
+	else if (const Text* text = dynamic_type_cast< const Text* >(character))
+	{
+		pipelineDepends->addDependency(text->m_font, editor::PdfBuild | editor::PdfResource);
 	}
 	else if (const External* xternal = dynamic_type_cast< const External* >(character))
 	{

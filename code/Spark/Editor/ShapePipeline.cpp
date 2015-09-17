@@ -1,3 +1,5 @@
+#pragma optimize( "", off )
+
 #include <list>
 #include "Core/Log/Log.h"
 #include "Core/Math/Aabb2.h"
@@ -103,14 +105,14 @@ public:
 							s.v[1] = Vector2i::fromVector2((T * i->points[j + 1]) * c_pointScale);
 							segments.push_back(s);
 						}
-						//if (i->closed)
-						//{
-						//	Triangulator::Segment s;
-						//	s.curve = false;
-						//	s.v[0] = Vector2i::fromVector2((T * i->points.back()) * c_pointScale);
-						//	s.v[1] = Vector2i::fromVector2((T * i->points.front()) * c_pointScale);
-						//	segments.push_back(s);
-						//}
+						if (i->closed)
+						{
+							Triangulator::Segment s;
+							s.curve = false;
+							s.v[0] = Vector2i::fromVector2((T * i->points.back()) * c_pointScale);
+							s.v[1] = Vector2i::fromVector2((T * i->points.front()) * c_pointScale);
+							segments.push_back(s);
+						}
 					}
 					break;
 
@@ -394,16 +396,17 @@ bool ShapePipeline::buildOutput(
 	}
 
 	// Measure shape bounds.
-	Aabb2 boundingBox;
+	Aabb2 bounds;
 	for (std::list< std::pair< const Style*, TriangleProducer::Batch > >::const_iterator i = batches.begin(); i != batches.end(); ++i)
 	{
 		for (AlignedVector< Vector2 >::const_iterator j = i->second.vertices.begin(); j != i->second.vertices.end(); ++j)
 		{
 			T_FATAL_ASSERT(!isNanOrInfinite(j->x));
 			T_FATAL_ASSERT(!isNanOrInfinite(j->y));
-			boundingBox.contain(*j);
+			bounds.contain(*j);
 		}
 	}
+	outputShapeResource->m_bounds = bounds;
 
 	// Define shape render vertex.
 	std::vector< render::VertexElement > vertexElements;
@@ -433,8 +436,8 @@ bool ShapePipeline::buildOutput(
 
 				if (shapeAsset->m_center)
 				{
-					vertex->position[0] = v.x - boundingBox.getCenter().x;
-					vertex->position[1] = v.y - boundingBox.getCenter().y;
+					vertex->position[0] = v.x - bounds.getCenter().x;
+					vertex->position[1] = v.y - bounds.getCenter().y;
 				}
 				else
 				{
@@ -472,8 +475,8 @@ bool ShapePipeline::buildOutput(
 
 				if (shapeAsset->m_center)
 				{
-					vertex->position[0] = v.x - boundingBox.getCenter().x;
-					vertex->position[1] = v.y - boundingBox.getCenter().y;
+					vertex->position[0] = v.x - bounds.getCenter().x;
+					vertex->position[1] = v.y - bounds.getCenter().y;
 				}
 				else
 				{
@@ -511,8 +514,8 @@ bool ShapePipeline::buildOutput(
 
 				if (shapeAsset->m_center)
 				{
-					vertex->position[0] = v.x - boundingBox.getCenter().x;
-					vertex->position[1] = v.y - boundingBox.getCenter().y;
+					vertex->position[0] = v.x - bounds.getCenter().x;
+					vertex->position[1] = v.y - bounds.getCenter().y;
 				}
 				else
 				{

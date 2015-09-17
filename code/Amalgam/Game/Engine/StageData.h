@@ -17,6 +17,9 @@
 
 namespace traktor
 {
+
+class IRuntimeClass;
+
 	namespace amalgam
 	{
 
@@ -28,13 +31,6 @@ class IEnvironment;
 	{
 
 class Shader;
-
-	}
-
-	namespace script
-	{
-
-class IScriptContext;
 
 	}
 
@@ -63,9 +59,9 @@ public:
 
 	const RefArray< LayerData >& getLayers() const { return m_layers; }
 
-	void setScript(const resource::Id< script::IScriptContext >& script) { m_script = script; }
+	void setClass(const resource::Id< IRuntimeClass >& clazz) { m_class = clazz; }
 
-	const resource::Id< script::IScriptContext >& getScript() const { return m_script; }
+	const resource::Id< IRuntimeClass >& getClass() const { return m_class; }
 
 	void setShaderFade(const resource::Id< render::Shader >& shaderFade) { m_shaderFade = shaderFade; }
 
@@ -89,7 +85,7 @@ private:
 	std::wstring m_name;
 	Guid m_inherit;
 	RefArray< LayerData > m_layers;
-	resource::Id< script::IScriptContext > m_script;
+	resource::Id< IRuntimeClass > m_class;
 	resource::Id< render::Shader > m_shaderFade;
 	float m_fadeRate;
 	std::map< std::wstring, Guid > m_transitions;

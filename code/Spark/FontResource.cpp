@@ -71,18 +71,11 @@ Ref< Font > FontResource::create(resource::IResourceManager* resourceManager, re
 	font->m_vertexBuffer->unlock();
 
 	// Convert mappings.
-	int32_t width = font->m_texture->getWidth();
-	int32_t height = font->m_texture->getHeight();
-
 	for (std::vector< Glyph >::const_iterator i = m_glyphs.begin(); i != m_glyphs.end(); ++i)
 	{
-		font->m_glyphRects[i->ch] = Vector4(
-			i->rect[0] / float(width),
-			i->rect[1] / float(height),
-			i->rect[2] / float(width),
-			i->rect[3] / float(height)
-		);
-		font->m_glyphAdvances[i->ch] = i->advance;
+		font->m_glyphs[i->ch].rect = Vector4::loadUnaligned(i->rect);
+		font->m_glyphs[i->ch].unit = Vector4(i->unit[0], i->unit[1], 1.0f - i->unit[0], 1.0f - i->unit[1]);
+		font->m_glyphs[i->ch].advance = i->advance;
 	}
 
 	return font;
@@ -102,13 +95,17 @@ FontResource::Glyph::Glyph()
 	rect[0] =
 	rect[1] =
 	rect[2] =
-	rect[3] = 0;
+	rect[3] = 0.0f;
+
+	unit[0] =
+	unit[1] = 0.0f;
 }
 
 void FontResource::Glyph::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"ch", ch);
-	s >> MemberStaticArray< uint32_t, 4 >(L"rect", rect);
+	s >> MemberStaticArray< float, 4 >(L"rect", rect);
+	s >> MemberStaticArray< float, 2 >(L"unit", unit);
 	s >> Member< float >(L"advance", advance);
 }
 

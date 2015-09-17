@@ -3,6 +3,7 @@
 
 #include "Resource/Id.h"
 #include "Spark/Character.h"
+#include "Spark/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -39,6 +40,10 @@ private:
 	resource::Id< Font > m_font;
 	std::wstring m_text;
 	float m_height;
+	Vector2 m_origin;
+	Vector2 m_size;
+	Align m_horizontalAlign;
+	Align m_verticalAlign;
 };
 
 	}
