@@ -18,6 +18,7 @@
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 #include "Resource/ResourceBundle.h"
+#include "Script/IScriptContext.h"
 
 namespace traktor
 {
@@ -36,6 +37,7 @@ Ref< Stage > StageData::createInstance(IEnvironment* environment, const Object* 
 	render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 	resource::Proxy< IRuntimeClass > clazz;
+	resource::Proxy< script::IScriptContext > script;
 	resource::Proxy< render::Shader > shaderFade;
 
 #if !defined(_DEBUG)
@@ -70,11 +72,13 @@ Ref< Stage > StageData::createInstance(IEnvironment* environment, const Object* 
 	// Bind proxies to resource manager.
 	if (m_class && !resourceManager->bind(m_class, clazz))
 		return 0;
+	if (m_script && !resourceManager->bind(m_script, script))
+		return 0;
 	if (m_shaderFade && !resourceManager->bind(m_shaderFade, shaderFade))
 		return 0;
 
 	// Create layers.
-	Ref< Stage > stage = new Stage(m_name, environment, clazz, shaderFade, m_fadeRate, m_transitions, params);
+	Ref< Stage > stage = new Stage(m_name, environment, clazz, script, shaderFade, m_fadeRate, m_transitions, params);
 	for (RefArray< LayerData >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 	{
 		Ref< Layer > layer = (*i)->createInstance(stage, environment);
@@ -89,16 +93,40 @@ Ref< Stage > StageData::createInstance(IEnvironment* environment, const Object* 
 
 void StageData::serialize(ISerializer& s)
 {
-	T_FATAL_ASSERT (s.getVersion() >= 8);
+	if (s.getVersion() >= 7)
+		s >> Member< std::wstring >(L"name", m_name);
 
-	s >> Member< std::wstring >(L"name", m_name);
-	s >> Member< Guid >(L"inherit", m_inherit, AttributeType(type_of< StageData >()));
+	if (s.getVersion() >= 6)
+		s >> Member< Guid >(L"inherit", m_inherit, AttributeType(type_of< StageData >()));
+
 	s >> MemberRefArray< LayerData >(L"layers", m_layers);
-	s >> resource::Member< IRuntimeClass >(L"class", m_class);
-	s >> resource::Member< render::Shader >(L"shaderFade", m_shaderFade);
-	s >> Member< float >(L"fadeRate", m_fadeRate, AttributeRange(0.1f));
+
+	if (s.getVersion() >= 8)
+		s >> resource::Member< IRuntimeClass >(L"class", m_class);
+
+	s >> resource::Member< script::IScriptContext >(L"script", m_script);
+
+	if (s.getVersion() >= 4)
+		s >> resource::Member< render::Shader >(L"shaderFade", m_shaderFade);
+	else
+	{
+		const resource::Id< render::Shader > c_shaderFade(Guid(L"{DC104971-11AE-5743-9AB1-53B830F74391}"));
+		m_shaderFade = c_shaderFade;
+	}
+
+	if (s.getVersion() >= 5)
+		s >> Member< float >(L"fadeRate", m_fadeRate, AttributeRange(0.1f));
+
 	s >> MemberStlMap< std::wstring, Guid >(L"transitions", m_transitions);
-	s >> Member< Guid >(L"resourceBundle", m_resourceBundle, AttributeType(type_of< resource::ResourceBundle >()));
+
+	if (s.getVersion() >= 1)
+		s >> Member< Guid >(L"resourceBundle", m_resourceBundle, AttributeType(type_of< resource::ResourceBundle >()));
+
+	if (s.getVersion() == 2)
+	{
+		Guid dummy;
+		s >> Member< Guid >(L"localizationDictionary", dummy);
+	}
 }
 
 	}
