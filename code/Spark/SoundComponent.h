@@ -1,5 +1,5 @@
-#ifndef traktor_spark_ScriptComponent_H
-#define traktor_spark_ScriptComponent_H
+#ifndef traktor_spark_SoundComponent_H
+#define traktor_spark_SoundComponent_H
 
 #include "Resource/Id.h"
 #include "Spark/IComponent.h"
@@ -14,16 +14,20 @@
 
 namespace traktor
 {
+	namespace sound
+	{
 
-class IRuntimeClass;
+class Sound;
+
+	}
 
 	namespace spark
 	{
 
-/*! \brief Script component.
+/*! \brief Sound component.
  * \ingroup Spark
  */
-class T_DLLCLASS ScriptComponent : public IComponent
+class T_DLLCLASS SoundComponent : public IComponent
 {
 	T_RTTI_CLASS;
 
@@ -35,10 +39,10 @@ public:
 private:
 	friend class CharacterPipeline;
 
-	resource::Id< IRuntimeClass > m_class;
+	resource::Id< sound::Sound > m_sound;
 };
 
 	}
 }
 
-#endif	// traktor_spark_ScriptComponent_H
+#endif	// traktor_spark_SoundComponent_H

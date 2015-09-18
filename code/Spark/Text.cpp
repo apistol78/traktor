@@ -23,7 +23,7 @@ Text::Text()
 {
 }
 
-Ref< CharacterInstance > Text::createInstance(const CharacterInstance* parent, resource::IResourceManager* resourceManager) const
+Ref< CharacterInstance > Text::createInstance(const CharacterInstance* parent, resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer) const
 {
 	Ref< TextInstance > instance = new TextInstance(parent);
 	if (m_font)
@@ -56,10 +56,9 @@ void Text::serialize(ISerializer& s)
 		{ 0 }
 	};
 
-	Character::serialize(s);
-
 	s >> resource::Member< Font >(L"font", m_font);
 	s >> Member< std::wstring >(L"text", m_text);
+	s >> Member< float >(L"height", m_height);
 	s >> Member< Vector2 >(L"origin", m_origin);
 	s >> Member< Vector2 >(L"size", m_size);
 	s >> MemberEnum< Align >(L"horizontalAlign", m_horizontalAlign, c_horizontalAlign_Keys);

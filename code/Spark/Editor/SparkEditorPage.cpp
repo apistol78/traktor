@@ -10,6 +10,8 @@
 #include "Script/ScriptClassFactory.h"
 #include "Script/ScriptModuleFactory.h"
 #include "Script/Lua/ScriptManagerLua.h"
+#include "Sound/SoundFactory.h"
+#include "Sound/Player/ISoundPlayer.h"
 #include "Spark/CharacterResourceFactory.h"
 #include "Spark/FontResourceFactory.h"
 #include "Spark/Sprite.h"
@@ -38,6 +40,8 @@ bool SparkEditorPage::create(ui::Container* parent)
 	if (!renderSystem)
 		return false;
 
+	Ref< sound::ISoundPlayer > soundPlayer = m_editor->getStoreObject< sound::ISoundPlayer >(L"SoundPlayer");
+
 	Ref< db::Database > database = m_editor->getOutputDatabase();
 
 	m_scriptManager = new script::ScriptManagerLua();
@@ -47,12 +51,13 @@ bool SparkEditorPage::create(ui::Container* parent)
 	m_resourceManager->addFactory(new script::ScriptModuleFactory(database, m_scriptManager));
 	m_resourceManager->addFactory(new render::ShaderFactory(database, renderSystem));
 	m_resourceManager->addFactory(new render::TextureFactory(database, renderSystem, 0));
+	m_resourceManager->addFactory(new sound::SoundFactory(database));
 	m_resourceManager->addFactory(new CharacterResourceFactory(database));
 	m_resourceManager->addFactory(new FontResourceFactory(database, renderSystem));
 	m_resourceManager->addFactory(new ShapeResourceFactory(database, renderSystem));
 
 	m_editControl = new SparkEditControl(m_editor);
-	m_editControl->create(parent, ui::WsNone, database, m_resourceManager, renderSystem);
+	m_editControl->create(parent, ui::WsNone, database, m_resourceManager, renderSystem, soundPlayer);
 	m_editControl->update();
 
 	Ref< Sprite > sprite = m_document->getObject< Sprite >(0);
@@ -84,15 +89,18 @@ bool SparkEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 
 bool SparkEditorPage::handleCommand(const ui::Command& command)
 {
-	return false;
+	if (command == L"Editor.PropertiesChanged")
+		m_editControl->refresh();
+	else
+		return false;
+
+	return true;
 }
 
 void SparkEditorPage::handleDatabaseEvent(db::Database* database, const Guid& eventId)
 {
 	if (m_resourceManager)
 		m_resourceManager->reload(eventId, false);
-
-	m_editControl->update();
 }
 
 	}

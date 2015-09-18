@@ -1,3 +1,4 @@
+#include "Spark/IComponentInstance.h"
 #include "Spark/Shape.h"
 #include "Spark/Sprite.h"
 #include "Spark/SpriteInstance.h"
@@ -9,10 +10,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.SpriteInstance", SpriteInstance, CharacterInstance)
 
-SpriteInstance::SpriteInstance(const Sprite* sprite, const CharacterInstance* parent, resource::IResourceManager* resourceManager)
+SpriteInstance::SpriteInstance(const Sprite* sprite, const CharacterInstance* parent, resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer)
 :	CharacterInstance(parent)
 ,	m_sprite(sprite)
 ,	m_resourceManager(resourceManager)
+,	m_soundPlayer(soundPlayer)
 {
 }
 
@@ -20,7 +22,7 @@ Ref< CharacterInstance > SpriteInstance::create(const std::wstring& id) const
 {
 	const Character* character = m_sprite->getCharacter(id);
 	if (character)
-		return character->createInstance(this, m_resourceManager);
+		return character->createInstance(this, m_resourceManager, m_soundPlayer);
 	else
 		return 0;
 }
@@ -40,6 +42,17 @@ void SpriteInstance::getCharacters(RefArray< CharacterInstance >& outCharacters)
 	m_displayList.getCharacters(outCharacters);
 }
 
+void SpriteInstance::setComponent(const TypeInfo& componentType, IComponentInstance* component)
+{
+	m_components[&componentType] = component;
+}
+
+IComponentInstance* SpriteInstance::getComponent(const TypeInfo& componentType) const
+{
+	SmallMap< const TypeInfo*, Ref< IComponentInstance > >::const_iterator i = m_components.find(&componentType);
+	return i != m_components.end() ? i->second : 0;
+}
+
 Aabb2 SpriteInstance::getBounds() const
 {
 	Aabb2 bounds;
@@ -52,7 +65,9 @@ Aabb2 SpriteInstance::getBounds() const
 
 void SpriteInstance::update()
 {
-	CharacterInstance::update();
+	// Update all components.
+	for (SmallMap< const TypeInfo*, Ref< IComponentInstance > >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
+		i->second->update();
 
 	// Update all characters visible in display list.
 	RefArray< CharacterInstance > characters;

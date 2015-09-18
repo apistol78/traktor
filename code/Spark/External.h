@@ -25,7 +25,7 @@ class T_DLLCLASS External : public Character
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< CharacterInstance > createInstance(const CharacterInstance* parent, resource::IResourceManager* resourceManager) const;
+	virtual Ref< CharacterInstance > createInstance(const CharacterInstance* parent, resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer) const;
 
 	virtual void serialize(ISerializer& s);
 

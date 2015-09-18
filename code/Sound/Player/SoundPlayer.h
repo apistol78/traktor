@@ -23,6 +23,7 @@ class EchoFilter;
 class LowPassFilter;
 class SoundChannel;
 class SoundHandle;
+class SoundSystem;
 class SurroundEnvironment;
 class SurroundFilter;
 

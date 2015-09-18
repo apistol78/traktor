@@ -20,10 +20,17 @@ class IResourceManager;
 
 	}
 
+	namespace sound
+	{
+
+class ISoundPlayer;
+
+	}
+
 	namespace spark
 	{
 
-class CharacterInstance;
+class SpriteInstance;
 class IComponentInstance;
 
 /*! \brief Character component interface.
@@ -34,7 +41,7 @@ class T_DLLCLASS IComponent : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< IComponentInstance > createInstance(CharacterInstance* owner, resource::IResourceManager* resourceManager) const = 0;
+	virtual Ref< IComponentInstance > createInstance(SpriteInstance* owner, resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer) const = 0;
 };
 
 	}

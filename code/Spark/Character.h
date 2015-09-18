@@ -22,11 +22,17 @@ class IResourceManager;
 
 	}
 
+	namespace sound
+	{
+
+class ISoundPlayer;
+
+	}
+
 	namespace spark
 	{
 
 class CharacterInstance;
-class IComponent;
 
 /*! \brief Character base class.
  * \ingroup Spark
@@ -36,15 +42,7 @@ class T_DLLCLASS Character : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< CharacterInstance > createInstance(const CharacterInstance* parent, resource::IResourceManager* resourceManager) const = 0;
-
-	virtual void serialize(ISerializer& s);
-
-protected:
-	friend class CharacterPipeline;
-
-	Matrix33 m_transform;
-	RefArray< IComponent > m_components;
+	virtual Ref< CharacterInstance > createInstance(const CharacterInstance* parent, resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer) const = 0;
 };
 
 	}

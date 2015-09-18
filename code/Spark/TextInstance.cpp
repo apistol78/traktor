@@ -67,6 +67,10 @@ Align TextInstance::getVerticalAlign() const
 	return m_verticalAlign;
 }
 
+void TextInstance::update()
+{
+}
+
 void TextInstance::render(render::RenderContext* renderContext) const
 {
 	if (!m_font)

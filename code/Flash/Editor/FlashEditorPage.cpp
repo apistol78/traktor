@@ -24,7 +24,7 @@
 #include "Render/IRenderSystem.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Resource/ResourceManager.h"
-#include "Sound/SoundSystem.h"
+#include "Sound/Player/ISoundPlayer.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
 #include "Ui/TableLayout.h"
@@ -62,7 +62,7 @@ bool FlashEditorPage::create(ui::Container* parent)
 	if (!renderSystem)
 		return false;
 
-	m_soundSystem = m_editor->getStoreObject< sound::SoundSystem >(L"SoundSystem");
+	Ref< sound::ISoundPlayer > soundPlayer = m_editor->getStoreObject< sound::ISoundPlayer >(L"SoundPlayer");
 
 	Ref< FlashMovieAsset > asset = m_document->getObject< FlashMovieAsset >(0);
 	if (!asset)
@@ -98,9 +98,7 @@ bool FlashEditorPage::create(ui::Container* parent)
 	Ref< db::Database > database = m_editor->getOutputDatabase();
 
 	m_resourceManager = new resource::ResourceManager(true);
-	m_resourceManager->addFactory(
-		new render::ShaderFactory(database, renderSystem)
-	);
+	m_resourceManager->addFactory(new render::ShaderFactory(database, renderSystem));
 
 	Ref< ui::Container > container = new ui::Container();
 	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
@@ -133,7 +131,7 @@ bool FlashEditorPage::create(ui::Container* parent)
 	m_profileMovie->create(splitterV, 2, 10, 0, 10000, ui::WsDoubleBuffer, this);
 
 	m_previewControl = new FlashPreviewControl();
-	m_previewControl->create(splitter, ui::WsNone, database, m_resourceManager, renderSystem, m_soundSystem);
+	m_previewControl->create(splitter, ui::WsNone, database, m_resourceManager, renderSystem, soundPlayer);
 	m_previewControl->setMovie(m_movie);
 	m_previewControl->update();
 
@@ -143,7 +141,6 @@ bool FlashEditorPage::create(ui::Container* parent)
 void FlashEditorPage::destroy()
 {
 	safeDestroy(m_previewControl);
-	m_soundSystem = 0;
 	log::debug << FlashCharacterInstance::getInstanceCount() << L" leaked character(s)" << Endl;
 }
 

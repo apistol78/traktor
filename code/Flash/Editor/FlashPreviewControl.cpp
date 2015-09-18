@@ -92,7 +92,7 @@ bool FlashPreviewControl::create(
 	db::Database* database,
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
-	sound::SoundSystem* soundSystem
+	sound::ISoundPlayer* soundPlayer
 )
 {
 	if (!Widget::create(parent, style))
@@ -140,11 +140,8 @@ bool FlashPreviewControl::create(
 	m_displayRenderer = new SwDisplayRenderer();
 #endif
 
-	if (soundSystem)
+	if (soundPlayer)
 	{
-		Ref< sound::SoundPlayer > soundPlayer = new sound::SoundPlayer();
-		soundPlayer->create(soundSystem, 0);
-
 		m_soundRenderer = new SoundRenderer();
 		m_soundRenderer->create(soundPlayer);
 	}

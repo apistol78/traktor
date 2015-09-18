@@ -56,7 +56,9 @@ public:
 
 	Align getVerticalAlign() const;
 
-	virtual Aabb2 getBounds() const;
+	virtual Aabb2 getBounds() const T_FINAL;
+
+	virtual void update() T_FINAL;
 
 	virtual void render(render::RenderContext* renderContext) const T_FINAL;
 

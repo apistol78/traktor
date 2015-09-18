@@ -2,6 +2,7 @@
 #define traktor_spark_SpriteInstance_H
 
 #include "Core/RefArray.h"
+#include "Core/Containers/SmallMap.h"
 #include "Resource/Proxy.h"
 #include "Spark/CharacterInstance.h"
 #include "Spark/DisplayList.h"
@@ -23,9 +24,17 @@ class IResourceManager;
 
 	}
 
+	namespace sound
+	{
+
+class ISoundPlayer;
+
+	}
+
 	namespace spark
 	{
 
+class IComponentInstance;
 class Shape;
 class Sprite;
 
@@ -37,7 +46,7 @@ class T_DLLCLASS SpriteInstance : public CharacterInstance
 	T_RTTI_CLASS;
 
 public:
-	SpriteInstance(const Sprite* sprite, const CharacterInstance* parent, resource::IResourceManager* resourceManager);
+	SpriteInstance(const Sprite* sprite, const CharacterInstance* parent, resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer);
 
 	Ref< CharacterInstance > create(const std::wstring& id) const;
 
@@ -46,6 +55,14 @@ public:
 	void remove(int32_t depth);
 
 	void getCharacters(RefArray< CharacterInstance >& outCharacters) const;
+
+	/*! \brief Set component in character instance.
+	 */
+	void setComponent(const TypeInfo& componentType, IComponentInstance* component);
+
+	/*! \brief Get component of type.
+	 */
+	IComponentInstance* getComponent(const TypeInfo& componentType) const;
 
 	virtual Aabb2 getBounds() const;
 
@@ -58,8 +75,10 @@ private:
 
 	Ref< const Sprite > m_sprite;
 	Ref< resource::IResourceManager > m_resourceManager;
+	Ref< sound::ISoundPlayer > m_soundPlayer;
 	resource::Proxy< Shape > m_shape;
 	DisplayList m_displayList;
+	SmallMap< const TypeInfo*, Ref< IComponentInstance > > m_components;
 };
 
 	}

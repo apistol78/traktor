@@ -30,7 +30,7 @@ class T_DLLCLASS Text : public Character
 public:
 	Text();
 
-	virtual Ref< CharacterInstance > createInstance(const CharacterInstance* parent, resource::IResourceManager* resourceManager) const;
+	virtual Ref< CharacterInstance > createInstance(const CharacterInstance* parent, resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer) const;
 
 	virtual void serialize(ISerializer& s);
 

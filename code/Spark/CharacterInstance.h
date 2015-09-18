@@ -2,7 +2,6 @@
 #define traktor_spark_CharacterInstance_H
 
 #include "Core/Object.h"
-#include "Core/RefArray.h"
 #include "Core/Math/Aabb2.h"
 #include "Core/Math/Matrix33.h"
 
@@ -26,8 +25,6 @@ class RenderContext;
 	namespace spark
 	{
 
-class IComponentInstance;
-
 /*! \brief Character instance base class.
  * \ingroup Spark
  */
@@ -37,6 +34,14 @@ class T_DLLCLASS CharacterInstance : public Object
 
 public:
 	CharacterInstance(const CharacterInstance* parent);
+
+	/*! \brief
+	 */
+	void setName(const std::wstring& name);
+
+	/*! \brief
+	 */
+	const std::wstring& getName() const;
 
 	/*! \brief Set local transform.
 	 */
@@ -74,21 +79,13 @@ public:
 	 */
 	float getRotation() const;
 
-	/*! \brief Add component to character instance.
-	 */
-	void addComponent(IComponentInstance* component);
-
-	/*! \brief Get active components.
-	 */
-	const RefArray< IComponentInstance >& getComponents() const;
-
 	/*! \brief Get bounds.
 	 */
 	virtual Aabb2 getBounds() const = 0;
 
 	/*! \brief Update character instance.
 	 */
-	virtual void update();
+	virtual void update() = 0;
 
 	/*! \brief Render character instance.
 	 */
@@ -96,8 +93,8 @@ public:
 
 private:
 	const CharacterInstance* m_parent;
+	std::wstring m_name;
 	Matrix33 m_transform;
-	RefArray< IComponentInstance > m_components;
 };
 
 	}

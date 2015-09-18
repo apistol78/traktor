@@ -44,10 +44,14 @@ CharacterInstance::CharacterInstance(const CharacterInstance* parent)
 {
 }
 
-void CharacterInstance::update()
+void CharacterInstance::setName(const std::wstring& name)
 {
-	for (RefArray< IComponentInstance >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
-		(*i)->update();
+	m_name = name;
+}
+
+const std::wstring& CharacterInstance::getName() const
+{
+	return m_name;
 }
 
 void CharacterInstance::setTransform(const Matrix33& transform)
@@ -111,16 +115,6 @@ float CharacterInstance::getRotation() const
 	float rotation;
 	decomposeTransform(m_transform, 0, 0, &rotation);
 	return rotation;
-}
-
-void CharacterInstance::addComponent(IComponentInstance* component)
-{
-	m_components.push_back(component);
-}
-
-const RefArray< IComponentInstance >& CharacterInstance::getComponents() const
-{
-	return m_components;
 }
 
 	}

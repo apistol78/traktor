@@ -9,7 +9,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.DisplayList", DisplayList, Object)
 
 void DisplayList::place(int32_t depth, CharacterInstance* instance)
 {
-	m_layers[depth].instance = instance;
+	if (instance)
+		m_layers[depth].instance = instance;
+	else
+		remove(depth);
 }
 
 void DisplayList::remove(int32_t depth)

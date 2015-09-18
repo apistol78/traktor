@@ -5,6 +5,7 @@
 #include "Editor/IEditor.h"
 #include "Sound/ISoundDriver.h"
 #include "Sound/SoundSystem.h"
+#include "Sound/Player/SoundPlayer.h"
 #include "Sound/Editor/SoundEditorPlugin.h"
 
 namespace traktor
@@ -65,8 +66,15 @@ void SoundEditorPlugin::handleWorkspaceOpened()
 	desc.driverDesc.mixerFrames = settings->getProperty< PropertyInteger >(L"Editor.SoundMixerFrames", 3);
 
 	Ref< SoundSystem > soundSystem = new SoundSystem(soundDriver);
-	if (soundSystem->create(desc))
-		m_editor->setStoreObject(L"SoundSystem", soundSystem);
+	if (!soundSystem->create(desc))
+		return;
+
+	Ref< SoundPlayer > soundPlayer = new SoundPlayer();
+	if (!soundPlayer->create(soundSystem, 0))
+		return;
+
+	m_editor->setStoreObject(L"SoundSystem", soundSystem);
+	m_editor->setStoreObject(L"SoundPlayer", soundPlayer);
 }
 
 void SoundEditorPlugin::handleWorkspaceClosed()

@@ -38,6 +38,13 @@ class Shader;
 
 	}
 
+	namespace sound
+	{
+
+class ISoundPlayer;
+
+	}
+
 	namespace spark
 	{
 
@@ -60,24 +67,35 @@ public:
 		int style,
 		db::Database* database,
 		resource::IResourceManager* resourceManager,
-		render::IRenderSystem* renderSystem
+		render::IRenderSystem* renderSystem,
+		sound::ISoundPlayer* soundPlayer
 	);
 
 	void destroy();
 
 	void setSprite(const Sprite* sprite);
 
+	void refresh();
+
 private:
+	enum EditMode
+	{
+		EmIdle,
+		EmPanView
+	};
+
 	editor::IEditor* m_editor;
 	Ref< db::Database > m_database;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
+	Ref< sound::ISoundPlayer > m_soundPlayer;
 	Ref< CharacterRenderer > m_characterRenderer;
 	Ref< const Sprite > m_sprite;
 	Ref< SpriteInstance > m_spriteInstance;
 	Ref< ui::EventSubject::IEventHandler > m_idleEventHandler;
 	ui::Point m_lastMousePosition;
+	EditMode m_editMode;
 	Vector2 m_viewOffset;
 	float m_viewScale;
 

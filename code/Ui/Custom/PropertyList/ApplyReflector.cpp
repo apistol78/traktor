@@ -171,10 +171,43 @@ void ApplyReflector::operator >> (const Member< Vector4 >& m)
 
 void ApplyReflector::operator >> (const Member< Matrix33 >& m)
 {
+	PropertyItem* propertyItem = *m_propertyItemIterator++;
+
+	VectorPropertyItem* propertyItemRow1 = checked_type_cast< VectorPropertyItem*, false >(*m_propertyItemIterator++);
+	VectorPropertyItem* propertyItemRow2 = checked_type_cast< VectorPropertyItem*, false >(*m_propertyItemIterator++);
+	VectorPropertyItem* propertyItemRow3 = checked_type_cast< VectorPropertyItem*, false >(*m_propertyItemIterator++);
+
+	const VectorPropertyItem::vector_t& r1 = propertyItemRow1->getValue();
+	const VectorPropertyItem::vector_t& r2 = propertyItemRow2->getValue();
+	const VectorPropertyItem::vector_t& r3 = propertyItemRow3->getValue();
+
+	m = Matrix33(
+		r1[0], r1[1], r1[2],
+		r2[0], r2[1], r2[2],
+		r3[0], r3[1], r3[2]
+	);
 }
 
 void ApplyReflector::operator >> (const Member< Matrix44 >& m)
 {
+	PropertyItem* propertyItem = *m_propertyItemIterator++;
+
+	VectorPropertyItem* propertyItemRow1 = checked_type_cast< VectorPropertyItem*, false >(*m_propertyItemIterator++);
+	VectorPropertyItem* propertyItemRow2 = checked_type_cast< VectorPropertyItem*, false >(*m_propertyItemIterator++);
+	VectorPropertyItem* propertyItemRow3 = checked_type_cast< VectorPropertyItem*, false >(*m_propertyItemIterator++);
+	VectorPropertyItem* propertyItemRow4 = checked_type_cast< VectorPropertyItem*, false >(*m_propertyItemIterator++);
+
+	const VectorPropertyItem::vector_t& r1 = propertyItemRow1->getValue();
+	const VectorPropertyItem::vector_t& r2 = propertyItemRow2->getValue();
+	const VectorPropertyItem::vector_t& r3 = propertyItemRow3->getValue();
+	const VectorPropertyItem::vector_t& r4 = propertyItemRow3->getValue();
+
+	m = Matrix44(
+		r1[0], r1[1], r1[2], r1[3],
+		r2[0], r2[1], r2[2], r2[3],
+		r3[0], r3[1], r3[2], r3[3],
+		r4[0], r4[1], r4[2], r4[3]
+	);
 }
 
 void ApplyReflector::operator >> (const Member< Quaternion >& m)
