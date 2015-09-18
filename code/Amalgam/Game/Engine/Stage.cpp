@@ -15,6 +15,7 @@
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
+#include "Script/IScriptContext.h"
 
 //#define T_ENABLE_MEASURE
 #include "Core/Timer/Measure.h"
@@ -30,6 +31,7 @@ Stage::Stage(
 	const std::wstring& name,
 	IEnvironment* environment,
 	const resource::Proxy< IRuntimeClass >& clazz,
+	const resource::Proxy< script::IScriptContext >& scriptContext,
 	const resource::Proxy< render::Shader >& shaderFade,
 	float fadeRate,
 	const std::map< std::wstring, Guid >& transitions,
@@ -38,6 +40,7 @@ Stage::Stage(
 :	m_name(name)
 ,	m_environment(environment)
 ,	m_class(clazz)
+,	m_scriptContext(scriptContext)
 ,	m_shaderFade(shaderFade)
 ,	m_fadeRate(fadeRate)
 ,	m_transitions(transitions)
@@ -72,6 +75,31 @@ void Stage::destroy()
 		}
 		m_object = 0;
 		m_class.clear();
+	}
+
+	if (m_scriptContext)
+	{
+		if (m_initialized && m_scriptContext->haveFunction("finalize"))
+		{
+			// Call script fini.
+			Any argv[] =
+			{
+				Any::fromObject(const_cast< Object* >(m_params.c_ptr()))
+			};
+			m_scriptContext->executeFunction("finalize", sizeof_array(argv), argv);
+		}
+
+		m_scriptContext->setGlobal("stage", Any());
+		m_scriptContext->setGlobal("environment", Any());
+
+		for (RefArray< Layer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+		{
+			if (!(*i)->getName().empty())
+				m_scriptContext->setGlobal(wstombs((*i)->getName()), Any());
+		}
+
+		m_scriptContext->destroy();
+		m_scriptContext.clear();
 	}
 
 	safeDestroy(m_screenRenderer);
@@ -119,8 +147,12 @@ Any Stage::invokeScript(const std::string& fn, uint32_t argc, const Any* argv)
 	{
 		uint32_t methodId = findRuntimeClassMethodId(m_class, fn);
 		if (methodId != ~0U)
-			m_class->invoke(m_object, methodId, argc, argv);
+			return m_class->invoke(m_object, methodId, argc, argv);
 	}
+	
+	if (validateScriptContext() && m_scriptContext->haveFunction(fn))
+		return m_scriptContext->executeFunction(fn, argc, argv);
+
 	return Any();
 }
 
@@ -175,19 +207,28 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 
 		if (validateScriptContext())
 		{
-			uint32_t methodIdUpdate = findRuntimeClassMethodId(m_class, "update");
-			if (methodIdUpdate != ~0U)
+			info.getProfiler()->beginScope(FptScript);
+
+			Any argv[] =
 			{
-				info.getProfiler()->beginScope(FptScript);
+				Any::fromObject(const_cast< UpdateInfo* >(&info))
+			};
 
-				Any argv[] =
+			if (m_object)
+			{
+				uint32_t methodIdUpdate = findRuntimeClassMethodId(m_class, "update");
+				if (methodIdUpdate != ~0U)
 				{
-					Any::fromObject(const_cast< UpdateInfo* >(&info))
-				};
-				T_MEASURE_STATEMENT(m_class->invoke(m_object, methodIdUpdate, sizeof_array(argv), argv), 1.0 / 60.0);
-
-				info.getProfiler()->endScope();
+					T_MEASURE_STATEMENT(m_class->invoke(m_object, methodIdUpdate, sizeof_array(argv), argv), 1.0 / 60.0);
+				}
 			}
+
+			if (m_scriptContext)
+			{
+				T_MEASURE_STATEMENT(m_scriptContext->executeFunction("update", sizeof_array(argv), argv), 1.0 / 60.0);
+			}
+
+			info.getProfiler()->endScope();
 		}
 
 		for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
@@ -280,6 +321,12 @@ void Stage::postReconfigured()
 		if (methodIdReconfigured != ~0U)
 			m_class->invoke(m_object, methodIdReconfigured, 0, 0);
 	}
+
+	if (m_scriptContext && m_initialized)
+	{
+		if (m_scriptContext->haveFunction("reconfigured"))
+			m_scriptContext->executeFunction("reconfigured");
+	}
 }
 
 void Stage::suspend()
@@ -289,6 +336,12 @@ void Stage::suspend()
 		uint32_t methodIdSuspend = findRuntimeClassMethodId(m_class, "suspend");
 		if (methodIdSuspend != ~0U)
 			m_class->invoke(m_object, methodIdSuspend, 0, 0);
+	}
+
+	if (m_scriptContext && m_initialized)
+	{
+		if (m_scriptContext->haveFunction("suspend"))
+			m_scriptContext->executeFunction("suspend");
 	}
 
 	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
@@ -306,28 +359,61 @@ void Stage::resume()
 		if (methodIdResume != ~0U)
 			m_class->invoke(m_object, methodIdResume, 0, 0);
 	}
+
+	if (m_scriptContext && m_initialized)
+	{
+		if (m_scriptContext->haveFunction("resume"))
+			m_scriptContext->executeFunction("resume");
+	}
 }
 
 bool Stage::validateScriptContext()
 {
 	T_MEASURE_BEGIN()
 
-	if (!m_class)
+	if (!m_class && !m_scriptContext)
 		return false;
 
 	if (!m_initialized)
 	{
-		// Define members, do this as a prototype as we possibly want to access those in the constructor.
-		IRuntimeClass::prototype_t proto;
-		proto["environment"] = Any::fromObject(m_environment);
-		for (RefArray< Layer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+		if (m_class)
 		{
-			if (!(*i)->getName().empty())
-				proto[wstombs((*i)->getName())] = Any::fromObject(*i);
+			// Define members, do this as a prototype as we possibly want to access those in the constructor.
+			IRuntimeClass::prototype_t proto;
+			proto["environment"] = Any::fromObject(m_environment);
+			for (RefArray< Layer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+			{
+				if (!(*i)->getName().empty())
+					proto[wstombs((*i)->getName())] = Any::fromObject(*i);
+			}
+
+			// Call script constructor.
+			m_object = m_class->construct(this, 0, 0, proto);
 		}
 
-		// Call script constructor.
-		m_object = m_class->construct(this, 0, 0, proto);
+		if (m_scriptContext)
+		{
+			// Expose commonly used globals.
+			m_scriptContext->setGlobal("stage", Any::fromObject(this));
+			m_scriptContext->setGlobal("environment", Any::fromObject(m_environment));
+
+			for (RefArray< Layer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+			{
+				if (!(*i)->getName().empty())
+					m_scriptContext->setGlobal(wstombs((*i)->getName()), Any::fromObject(*i));
+			}
+
+			// Call script init; do this everytime we re-validate script.
+			if (m_scriptContext->haveFunction("initialize"))
+			{
+				Any argv[] =
+				{
+					Any::fromObject(const_cast< Object* >(m_params.c_ptr()))
+				};
+				m_scriptContext->executeFunction("initialize", sizeof_array(argv), argv);
+			}
+		}
+
 		m_initialized = true;
 	}
 

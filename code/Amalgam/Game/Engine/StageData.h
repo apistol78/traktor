@@ -34,6 +34,13 @@ class Shader;
 
 	}
 
+	namespace script
+	{
+
+class IScriptContext;
+
+	}
+
 	namespace amalgam
 	{
 
@@ -63,6 +70,10 @@ public:
 
 	const resource::Id< IRuntimeClass >& getClass() const { return m_class; }
 
+	void setScript(const resource::Id< script::IScriptContext >& script) { m_script = script; }
+
+	const resource::Id< script::IScriptContext >& getScript() const { return m_script; }
+
 	void setShaderFade(const resource::Id< render::Shader >& shaderFade) { m_shaderFade = shaderFade; }
 
 	const resource::Id< render::Shader >& getShaderFade() const { return m_shaderFade; }
@@ -86,6 +97,7 @@ private:
 	Guid m_inherit;
 	RefArray< LayerData > m_layers;
 	resource::Id< IRuntimeClass > m_class;
+	resource::Id< script::IScriptContext > m_script;
 	resource::Id< render::Shader > m_shaderFade;
 	float m_fadeRate;
 	std::map< std::wstring, Guid > m_transitions;

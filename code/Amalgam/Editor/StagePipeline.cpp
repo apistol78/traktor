@@ -45,6 +45,8 @@ Ref< StageData > flattenInheritance(editor::IPipelineBuilder* pipelineBuilder, c
 		// Replace script.
 		if (stageDataOut->getClass().isNull())
 			stageDataOut->setClass(downStageDataFlatten->getClass());
+		if (stageDataOut->getScript().isNull())
+			stageDataOut->setScript(downStageDataFlatten->getScript());
 
 		// Replace shader fade.
 		if (stageDataOut->getShaderFade().isNull())
