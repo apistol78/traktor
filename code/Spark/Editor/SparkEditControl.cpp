@@ -89,6 +89,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.SparkEditControl", SparkEditControl, ui::
 
 SparkEditControl::SparkEditControl(editor::IEditor* editor)
 :	m_editor(editor)
+,	m_editMode(EmIdle)
 ,	m_viewOffset(0.0f, 0.0f)
 ,	m_viewScale(1.0f)
 {
@@ -99,7 +100,8 @@ bool SparkEditControl::create(
 	int style,
 	db::Database* database,
 	resource::IResourceManager* resourceManager,
-	render::IRenderSystem* renderSystem
+	render::IRenderSystem* renderSystem,
+	sound::ISoundPlayer* soundPlayer
 )
 {
 	if (!Widget::create(parent, style))
@@ -132,6 +134,7 @@ bool SparkEditControl::create(
 
 	m_database = database;
 	m_resourceManager = resourceManager;
+	m_soundPlayer = soundPlayer;
 
 	m_idleEventHandler = ui::Application::getInstance()->addEventHandler< ui::IdleEvent >(this, &SparkEditControl::eventIdle);
 	return true;
@@ -149,18 +152,34 @@ void SparkEditControl::destroy()
 void SparkEditControl::setSprite(const Sprite* sprite)
 {
 	m_sprite = sprite;
-	m_spriteInstance = checked_type_cast< SpriteInstance* >(sprite->createInstance(0, m_resourceManager));
+	refresh();
+}
+
+void SparkEditControl::refresh()
+{
+	if (m_sprite)
+		m_spriteInstance = checked_type_cast< SpriteInstance* >(m_sprite->createInstance(0, m_resourceManager, m_soundPlayer));
+	else
+		m_spriteInstance = 0;
+
 	update();
 }
 
 void SparkEditControl::eventMouseButtonDown(ui::MouseButtonDownEvent* event)
 {
 	m_lastMousePosition = event->getPosition();
+
+	if (event->getButton() == ui::MbtLeft && (event->getKeyState() & ui::KsMenu) != 0)
+		m_editMode = EmPanView;
+	else
+		m_editMode = EmIdle;
+
 	setCapture();
 }
 
 void SparkEditControl::eventMouseButtonUp(ui::MouseButtonUpEvent* event)
 {
+	m_editMode = EmIdle;
 	releaseCapture();
 }
 
@@ -171,11 +190,14 @@ void SparkEditControl::eventMouseMove(ui::MouseMoveEvent* event)
 
 	ui::Point mousePosition = event->getPosition();
 
-	Vector2 deltaMove(
-		-(mousePosition.x - m_lastMousePosition.x),
-		-(mousePosition.y - m_lastMousePosition.y)
-	);
-	m_viewOffset += deltaMove / m_viewScale;
+	if (m_editMode == EmPanView)
+	{
+		Vector2 deltaMove(
+			-(mousePosition.x - m_lastMousePosition.x),
+			-(mousePosition.y - m_lastMousePosition.y)
+		);
+		m_viewOffset += deltaMove / m_viewScale;
+	}
 
 	m_lastMousePosition = mousePosition;
 	update();
@@ -272,7 +294,7 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 
 		if (m_spriteInstance)
 		{
-			m_spriteInstance->update();
+			//m_spriteInstance->update();
 
 			m_characterRenderer->build(m_spriteInstance, 0);
 			m_characterRenderer->render(

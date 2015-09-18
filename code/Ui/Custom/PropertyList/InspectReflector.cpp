@@ -422,10 +422,39 @@ void InspectReflector::operator >> (const Member< Vector4 >& m)
 
 void InspectReflector::operator >> (const Member< Matrix33 >& m)
 {
+	Ref< PropertyItem > propertyItem = new PropertyItem(
+		stylizeMemberName(m.getName())
+	);
+	addPropertyItem(propertyItem);
+
+	VectorPropertyItem::vector_t row1 = { m->e[0][0], m->e[0][1], m->e[0][2] };
+	m_propertyList->addPropertyItem(propertyItem, new VectorPropertyItem(L"[0]", row1, 3));
+
+	VectorPropertyItem::vector_t row2 = { m->e[1][0], m->e[1][1], m->e[1][2] };
+	m_propertyList->addPropertyItem(propertyItem, new VectorPropertyItem(L"[1]", row2, 3));
+
+	VectorPropertyItem::vector_t row3 = { m->e[2][0], m->e[2][1], m->e[2][2] };
+	m_propertyList->addPropertyItem(propertyItem, new VectorPropertyItem(L"[2]", row3, 3));
 }
 
 void InspectReflector::operator >> (const Member< Matrix44 >& m)
 {
+	Ref< PropertyItem > propertyItem = new PropertyItem(
+		stylizeMemberName(m.getName())
+	);
+	addPropertyItem(propertyItem);
+
+	VectorPropertyItem::vector_t row1 = { m->get(0, 0), m->get(0, 1), m->get(0, 2), m->get(0, 3) };
+	m_propertyList->addPropertyItem(propertyItem, new VectorPropertyItem(L"[0]", row1, 4));
+
+	VectorPropertyItem::vector_t row2 = { m->get(1, 0), m->get(1, 1), m->get(1, 2), m->get(1, 3) };
+	m_propertyList->addPropertyItem(propertyItem, new VectorPropertyItem(L"[1]", row2, 4));
+
+	VectorPropertyItem::vector_t row3 = { m->get(2, 0), m->get(2, 1), m->get(2, 2), m->get(2, 3) };
+	m_propertyList->addPropertyItem(propertyItem, new VectorPropertyItem(L"[2]", row3, 4));
+
+	VectorPropertyItem::vector_t row4 = { m->get(3, 0), m->get(3, 1), m->get(3, 2), m->get(3, 3) };
+	m_propertyList->addPropertyItem(propertyItem, new VectorPropertyItem(L"[3]", row4, 4));
 }
 
 void InspectReflector::operator >> (const Member< Quaternion >& m)

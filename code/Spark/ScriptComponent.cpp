@@ -12,7 +12,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spark.ScriptComponent", 0, ScriptComponent, IComponent)
 
-Ref< IComponentInstance > ScriptComponent::createInstance(CharacterInstance* owner, resource::IResourceManager* resourceManager) const
+Ref< IComponentInstance > ScriptComponent::createInstance(SpriteInstance* owner, resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer) const
 {
 	resource::Proxy< IRuntimeClass > clazz;
 	if (!resourceManager->bind(m_class, clazz))

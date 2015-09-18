@@ -1,7 +1,12 @@
+#include "Sound/Player/ISoundHandle.h"
 #include "Spark/Character.h"
 #include "Spark/CharacterInstance.h"
 #include "Spark/IComponent.h"
 #include "Spark/IComponentInstance.h"
+#include "Spark/ScriptComponent.h"
+#include "Spark/ScriptComponentInstance.h"
+#include "Spark/SoundComponent.h"
+#include "Spark/SoundComponentInstance.h"
 #include "Spark/SparkClassFactory.h"
 #include "Spark/Sprite.h"
 #include "Spark/SpriteInstance.h"
@@ -27,6 +32,19 @@ void SparkClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	Ref< AutoRuntimeClass< IComponentInstance > > classComponentInstance = new AutoRuntimeClass< IComponentInstance >();
 	registrar->registerClass(classComponentInstance);
 
+	Ref< AutoRuntimeClass< ScriptComponent > > classScriptComponent = new AutoRuntimeClass< ScriptComponent >();
+	registrar->registerClass(classScriptComponent);
+
+	Ref< AutoRuntimeClass< ScriptComponentInstance > > classScriptComponentInstance = new AutoRuntimeClass< ScriptComponentInstance >();
+	registrar->registerClass(classScriptComponentInstance);
+
+	Ref< AutoRuntimeClass< SoundComponent > > classSoundComponent = new AutoRuntimeClass< SoundComponent >();
+	registrar->registerClass(classSoundComponent);
+
+	Ref< AutoRuntimeClass< SoundComponentInstance > > classSoundComponentInstance = new AutoRuntimeClass< SoundComponentInstance >();
+	classSoundComponentInstance->addMethod("play", &SoundComponentInstance::play);
+	registrar->registerClass(classSoundComponentInstance);
+
 	Ref< AutoRuntimeClass< Character > > classCharacter = new AutoRuntimeClass< Character >();
 	registrar->registerClass(classCharacter);
 
@@ -39,8 +57,6 @@ void SparkClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classCharacterInstance->addMethod("getScale", &CharacterInstance::getScale);
 	classCharacterInstance->addMethod("setRotation", &CharacterInstance::setRotation);
 	classCharacterInstance->addMethod("getRotation", &CharacterInstance::getRotation);
-	classCharacterInstance->addMethod("addComponent", &CharacterInstance::addComponent);
-	classCharacterInstance->addMethod("getComponents", &CharacterInstance::getComponents);
 	registrar->registerClass(classCharacterInstance);
 
 	Ref< AutoRuntimeClass< Sprite > > classSprite = new AutoRuntimeClass< Sprite >();
@@ -50,6 +66,8 @@ void SparkClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classSpriteInstance->addMethod("create", &SpriteInstance::create);
 	classSpriteInstance->addMethod("place", &SpriteInstance::place);
 	classSpriteInstance->addMethod("remove", &SpriteInstance::remove);
+	classSpriteInstance->addMethod("setComponent", &SpriteInstance::setComponent);
+	classSpriteInstance->addMethod("getComponent", &SpriteInstance::getComponent);
 	registrar->registerClass(classSpriteInstance);
 
 	Ref< AutoRuntimeClass< Text > > classText = new AutoRuntimeClass< Text >();

@@ -10,11 +10,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spark.External", 0, External, Character)
 
-Ref< CharacterInstance > External::createInstance(const CharacterInstance* parent, resource::IResourceManager* resourceManager) const
+Ref< CharacterInstance > External::createInstance(const CharacterInstance* parent, resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer) const
 {
 	resource::Proxy< Character > character;
 	if (resourceManager->bind(m_reference, character))
-		return character->createInstance(parent, resourceManager);
+		return character->createInstance(parent, resourceManager, soundPlayer);
 	else
 		return 0;
 }

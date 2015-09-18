@@ -49,13 +49,6 @@ class IResourceManager;
 
 	}
 
-	namespace sound
-	{
-
-class SoundSystem;
-
-	}
-
 	namespace flash
 	{
 
@@ -100,7 +93,6 @@ private:
 	Ref< FlashPreviewControl > m_previewControl;
 	Ref< ui::custom::ToolBar > m_toolBarPlay;
 	Ref< ui::custom::ToolBarButton > m_toolWireframe;
-	Ref< sound::SoundSystem > m_soundSystem;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< FlashMovie > m_movie;
 	Ref< FlashCharacterInstance > m_selectedCharacterInstance;

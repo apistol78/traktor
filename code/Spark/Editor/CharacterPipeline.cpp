@@ -5,6 +5,7 @@
 #include "Editor/IPipelineSettings.h"
 #include "Spark/External.h"
 #include "Spark/ScriptComponent.h"
+#include "Spark/SoundComponent.h"
 #include "Spark/Sprite.h"
 #include "Spark/Text.h"
 #include "Spark/Editor/CharacterPipeline.h"
@@ -46,19 +47,21 @@ bool CharacterPipeline::buildDependencies(
 {
 	const Character* character = mandatory_non_null_type_cast< const Character* >(sourceAsset);
 
-	// Add component resource dependencies.
-	for (RefArray< IComponent >::const_iterator i = character->m_components.begin(); i != character->m_components.end(); ++i)
-	{
-		if (const ScriptComponent* scriptComponent = dynamic_type_cast< const ScriptComponent* >(*i))
-		{
-			pipelineDepends->addDependency(scriptComponent->m_class, editor::PdfBuild | editor::PdfResource);
-		}
-	}
-
-	// Add specific character type dependencies.
 	if (const Sprite* sprite = dynamic_type_cast< const Sprite* >(character))
 	{
 		pipelineDepends->addDependency(sprite->m_shape, editor::PdfBuild | editor::PdfResource);
+
+		for (RefArray< IComponent >::const_iterator i = sprite->m_components.begin(); i != sprite->m_components.end(); ++i)
+		{
+			if (const ScriptComponent* scriptComponent = dynamic_type_cast< const ScriptComponent* >(*i))
+				pipelineDepends->addDependency(scriptComponent->m_class, editor::PdfBuild);
+			else if (const SoundComponent* soundComponent = dynamic_type_cast< const SoundComponent* >(*i))
+				pipelineDepends->addDependency(soundComponent->m_sound, editor::PdfBuild | editor::PdfResource);
+		}
+
+		for (std::list< Sprite::Place >::const_iterator i = sprite->m_place.begin(); i != sprite->m_place.end(); ++i)
+			pipelineDepends->addDependency(i->character);
+
 		for (std::map< std::wstring, Ref< Character > >::const_iterator i = sprite->m_characters.begin(); i != sprite->m_characters.end(); ++i)
 			pipelineDepends->addDependency(i->second);
 	}

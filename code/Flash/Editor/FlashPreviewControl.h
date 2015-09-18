@@ -43,7 +43,7 @@ class Shader;
 	namespace sound
 	{
 
-class SoundSystem;
+class ISoundPlayer;
 
 	}
 
@@ -76,7 +76,7 @@ public:
 		db::Database* database,
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
-		sound::SoundSystem* soundSystem
+		sound::ISoundPlayer* soundPlayer
 	);
 
 	void destroy();

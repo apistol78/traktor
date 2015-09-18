@@ -50,7 +50,11 @@ void SparkLayer::prepare()
 	}
 
 	if (!m_spriteInstance)
-		m_spriteInstance = checked_type_cast< spark::SpriteInstance* >(m_sprite->createInstance(0, m_environment->getResource()->getResourceManager()));
+		m_spriteInstance = checked_type_cast< spark::SpriteInstance* >(m_sprite->createInstance(
+			0,
+			m_environment->getResource()->getResourceManager(),
+			m_environment->getAudio() ? m_environment->getAudio()->getSoundPlayer() : 0
+		));
 }
 
 void SparkLayer::update(const UpdateInfo& info)

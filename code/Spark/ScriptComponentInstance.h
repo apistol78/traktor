@@ -21,7 +21,7 @@ class IRuntimeClass;
 	namespace spark
 	{
 
-class CharacterInstance;
+class SpriteInstance;
 
 /*! \brief Script component instance.
  * \ingroup Spark
@@ -31,12 +31,12 @@ class T_DLLCLASS ScriptComponentInstance : public IComponentInstance
 	T_RTTI_CLASS;
 
 public:
-	ScriptComponentInstance(CharacterInstance* owner, const resource::Proxy< IRuntimeClass >& clazz);
+	ScriptComponentInstance(SpriteInstance* owner, const resource::Proxy< IRuntimeClass >& clazz);
 
 	virtual void update();
 
 private:
-	CharacterInstance* m_owner;
+	SpriteInstance* m_owner;
 	resource::Proxy< IRuntimeClass > m_class;
 	Ref< ITypedObject > m_object;
 	uint32_t m_methodUpdate;
