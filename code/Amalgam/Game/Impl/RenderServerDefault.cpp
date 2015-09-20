@@ -1,7 +1,6 @@
 #include <cmath>
 #include <limits>
 #include "Amalgam/Game/IEnvironment.h"
-#include "Amalgam/Game/Impl/LibraryHelper.h"
 #include "Amalgam/Game/Impl/RenderServerDefault.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
@@ -153,14 +152,14 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 	std::wstring renderType = defaultSettings->getProperty< PropertyString >(L"Render.Type");
 	std::wstring captureRenderType = settings->getProperty< PropertyString >(L"Render.CaptureType");
 
-	Ref< render::IRenderSystem > renderSystem = loadAndInstantiate< render::IRenderSystem >(renderType);
+	Ref< render::IRenderSystem > renderSystem = dynamic_type_cast< render::IRenderSystem* >(TypeInfo::createInstance(renderType));
 	if (!renderSystem)
 		return false;
 
 	Ref< render::IRenderSystem > captureRenderSystem;
 	if (!captureRenderType.empty())
 	{
-		captureRenderSystem = loadAndInstantiate< render::IRenderSystem >(captureRenderType);
+		captureRenderSystem = dynamic_type_cast< render::IRenderSystem* >(TypeInfo::createInstance(captureRenderType));
 		if (!captureRenderSystem)
 			return false;
 

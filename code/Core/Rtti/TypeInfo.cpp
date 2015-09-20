@@ -215,6 +215,12 @@ void TypeInfo::findAllOf(std::set< const TypeInfo* >& outTypes, bool inclusive) 
 	}
 }
 
+ITypedObject* TypeInfo::createInstance(const std::wstring& name, void* memory)
+{
+	const TypeInfo* type = TypeInfo::find(name);
+	return type ? type->createInstance(memory) : 0;
+}
+
 void __forceLinkReference(const TypeInfo& type)
 {
 #if !defined(__EMSCRIPTEN__) && !defined(_XBOX)

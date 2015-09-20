@@ -3,7 +3,6 @@
 #include "Amalgam/ScriptDebuggerHalted.h"
 #include "Amalgam/ScriptProfilerCallMeasured.h"
 #include "Amalgam/Game/IEnvironment.h"
-#include "Amalgam/Game/Impl/LibraryHelper.h"
 #include "Amalgam/Game/Impl/ScriptServer.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -34,7 +33,7 @@ bool ScriptServer::create(const PropertyGroup* defaultSettings, const PropertyGr
 {
 	std::wstring scriptType = defaultSettings->getProperty< PropertyString >(L"Script.Type");
 
-	m_scriptManager = loadAndInstantiate< script::IScriptManager >(scriptType);
+	m_scriptManager = dynamic_type_cast< script::IScriptManager* >(TypeInfo::createInstance(scriptType));
 	if (!m_scriptManager)
 		return false;
 

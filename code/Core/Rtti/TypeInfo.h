@@ -128,6 +128,14 @@ public:
 	 */
 	void findAllOf(std::set< const TypeInfo* >& outTypes, bool inclusive = true) const;
 
+	/*! \brief Create instance from type name.
+	 *
+	 * \param name Type name.
+	 * \param memory Optional pointer to memory location.
+	 * \return New instance.
+	 */
+	static ITypedObject* createInstance(const std::wstring& name, void* memory = 0);
+
 private:
 	const wchar_t* m_name;
 	size_t m_size;

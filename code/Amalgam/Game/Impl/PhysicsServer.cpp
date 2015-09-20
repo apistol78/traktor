@@ -1,5 +1,4 @@
 #include "Amalgam/Game/IEnvironment.h"
-#include "Amalgam/Game/Impl/LibraryHelper.h"
 #include "Amalgam/Game/Impl/PhysicsServer.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -30,7 +29,7 @@ bool PhysicsServer::create(const PropertyGroup* defaultSettings, const PropertyG
 {
 	std::wstring physicsType = defaultSettings->getProperty< PropertyString >(L"Physics.Type");
 
-	Ref< physics::PhysicsManager > physicsManager = loadAndInstantiate< physics::PhysicsManager >(physicsType);
+	Ref< physics::PhysicsManager > physicsManager = dynamic_type_cast< physics::PhysicsManager* >(TypeInfo::createInstance(physicsType));
 	if (!physicsManager)
 		return false;
 
