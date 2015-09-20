@@ -21,6 +21,20 @@ namespace traktor
 {
 	namespace spark
 	{
+		namespace
+		{
+
+void CharacterInstance_setPosition(CharacterInstance* self, float x, float y)
+{
+	self->setPosition(Vector2(x, y));
+}
+
+void CharacterInstance_setScale(CharacterInstance* self, float x, float y)
+{
+	self->setScale(Vector2(x, y));
+}
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.SparkClassFactory", 0, SparkClassFactory, IRuntimeClassFactory)
 
@@ -52,8 +66,10 @@ void SparkClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classCharacterInstance->addMethod("setTransform", &CharacterInstance::setTransform);
 	classCharacterInstance->addMethod("getTransform", &CharacterInstance::getTransform);
 	classCharacterInstance->addMethod("setPosition", &CharacterInstance::setPosition);
+	classCharacterInstance->addMethod("setPosition", &CharacterInstance_setPosition);
 	classCharacterInstance->addMethod("getPosition", &CharacterInstance::getPosition);
 	classCharacterInstance->addMethod("setScale", &CharacterInstance::setScale);
+	classCharacterInstance->addMethod("setScale", &CharacterInstance_setScale);
 	classCharacterInstance->addMethod("getScale", &CharacterInstance::getScale);
 	classCharacterInstance->addMethod("setRotation", &CharacterInstance::setRotation);
 	classCharacterInstance->addMethod("getRotation", &CharacterInstance::getRotation);
