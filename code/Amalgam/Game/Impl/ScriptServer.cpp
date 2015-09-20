@@ -4,6 +4,8 @@
 #include "Amalgam/ScriptProfilerCallMeasured.h"
 #include "Amalgam/Game/IEnvironment.h"
 #include "Amalgam/Game/Impl/ScriptServer.h"
+#include "Core/Class/IRuntimeClassFactory.h"
+#include "Core/Class/OrderedClassRegistrar.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -36,6 +38,19 @@ bool ScriptServer::create(const PropertyGroup* defaultSettings, const PropertyGr
 	m_scriptManager = dynamic_type_cast< script::IScriptManager* >(TypeInfo::createInstance(scriptType));
 	if (!m_scriptManager)
 		return false;
+
+	// Register all runtime classes, first collect all classes
+	// and then register them in class dependency order.
+	OrderedClassRegistrar registrar;
+	std::set< const TypeInfo* > runtimeClassFactoryTypes;
+	type_of< IRuntimeClassFactory >().findAllOf(runtimeClassFactoryTypes, false);
+	for (std::set< const TypeInfo* >::const_iterator i = runtimeClassFactoryTypes.begin(); i != runtimeClassFactoryTypes.end(); ++i)
+	{
+		Ref< IRuntimeClassFactory > runtimeClassFactory = dynamic_type_cast< IRuntimeClassFactory* >((*i)->createInstance());
+		if (runtimeClassFactory)
+			runtimeClassFactory->createClasses(&registrar);
+	}
+	registrar.registerClassesInOrder(m_scriptManager);
 
 	// Create and attach debugger.
 	if (debugger)

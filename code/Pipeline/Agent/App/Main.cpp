@@ -167,6 +167,8 @@ int main(int argc, const char** argv)
 {
 	CommandLine cmdLine(argc, argv);
 
+	traktor::log::info << L"Pipeline Agent; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
+
 	if (cmdLine.hasOption('h', L"help"))
 	{
 		traktor::log::info << L"Usage: Traktor.Pipeline.Agent.App (-options)" << Endl;

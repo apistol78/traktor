@@ -1018,6 +1018,8 @@ int main(int argc, const char** argv)
 {
 	int32_t result = 1;
 
+	traktor::log::info << L"Pipeline; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
+
 	net::Network::initialize();
 
 #if !defined(_DEBUG)
