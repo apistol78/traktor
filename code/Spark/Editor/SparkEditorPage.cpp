@@ -1,3 +1,5 @@
+#include "Core/Class/IRuntimeClassFactory.h"
+#include "Core/Class/OrderedClassRegistrar.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Database/Instance.h"
 #include "Editor/IDocument.h"
@@ -45,6 +47,19 @@ bool SparkEditorPage::create(ui::Container* parent)
 	Ref< db::Database > database = m_editor->getOutputDatabase();
 
 	m_scriptManager = new script::ScriptManagerLua();
+
+	// Register all runtime classes, first collect all classes
+	// and then register them in class dependency order.
+	OrderedClassRegistrar registrar;
+	std::set< const TypeInfo* > runtimeClassFactoryTypes;
+	type_of< IRuntimeClassFactory >().findAllOf(runtimeClassFactoryTypes, false);
+	for (std::set< const TypeInfo* >::const_iterator i = runtimeClassFactoryTypes.begin(); i != runtimeClassFactoryTypes.end(); ++i)
+	{
+		Ref< IRuntimeClassFactory > runtimeClassFactory = dynamic_type_cast< IRuntimeClassFactory* >((*i)->createInstance());
+		if (runtimeClassFactory)
+			runtimeClassFactory->createClasses(&registrar);
+	}
+	registrar.registerClassesInOrder(m_scriptManager);
 
 	m_resourceManager = new resource::ResourceManager(true);
 	m_resourceManager->addFactory(new script::ScriptClassFactory(database, m_scriptManager->createContext()));

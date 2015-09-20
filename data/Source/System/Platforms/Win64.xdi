@@ -2,7 +2,7 @@
 <object type="traktor.amalgam.Platform" version="2">
 	<iconIndex>1</iconIndex>
 	<deployToolWin32>
-		<executable>$(TRAKTOR_HOME)/bin/win32/Run $(TRAKTOR_HOME)/bin/deploy/deploy-win64.run</executable>
+		<executable>$(TRAKTOR_HOME)/bin/latest/win32/releaseshared/Traktor.Run.App $(TRAKTOR_HOME)/bin/deploy/deploy-win64.run</executable>
 		<environment>
 			<item>
 				<first>DEPLOY_HOST_OS</first>
@@ -11,7 +11,7 @@
 		</environment>
 	</deployToolWin32>
 	<deployToolWin64>
-		<executable>$(TRAKTOR_HOME)/bin/win32/Run $(TRAKTOR_HOME)/bin/deploy/deploy-win64.run</executable>
+		<executable>$(TRAKTOR_HOME)/bin/latest/win64/releaseshared/Traktor.Run.App $(TRAKTOR_HOME)/bin/deploy/deploy-win64.run</executable>
 		<environment>
 			<item>
 				<first>DEPLOY_HOST_OS</first>
@@ -20,7 +20,7 @@
 		</environment>
 	</deployToolWin64>
 	<deployToolOsX>
-		<executable>$(TRAKTOR_HOME)/bin/osx/Run $(TRAKTOR_HOME)/bin/deploy/deploy-win64.run</executable>
+		<executable>$(TRAKTOR_HOME)/bin/latest/osx/releaseshared/Traktor.Run.App $(TRAKTOR_HOME)/bin/deploy/deploy-win64.run</executable>
 		<environment>
 			<item>
 				<first>DEPLOY_HOST_OS</first>
@@ -29,7 +29,7 @@
 		</environment>
 	</deployToolOsX>
 	<deployToolLinux>
-		<executable>$(TRAKTOR_HOME)/bin/linux/Run $(TRAKTOR_HOME)/bin/deploy/deploy-win64.run</executable>
+		<executable>$(TRAKTOR_HOME)/bin/latest/linux/releaseshared/Traktor.Run.App $(TRAKTOR_HOME)/bin/deploy/deploy-win64.run</executable>
 		<environment>
 			<item>
 				<first>DEPLOY_HOST_OS</first>
