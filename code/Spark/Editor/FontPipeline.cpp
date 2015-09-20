@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
@@ -110,6 +108,13 @@ bool FontPipeline::buildOutput(
 	if (error)
 	{
 		log::error << L"Font pipeline failed; unable to load font \"" << fontFile.getPathName() << L"\"." << Endl;
+		return false;
+	}
+
+	error = FT_Select_Charmap(face, FT_ENCODING_UNICODE);
+	if (error)
+	{
+		log::error << L"Font pipeline failed; unable to select unicode char map." << Endl;
 		return false;
 	}
 
