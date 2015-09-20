@@ -1,6 +1,5 @@
 #include "Amalgam/Game/IAudioServer.h"
 #include "Amalgam/Game/Types.h"
-#include "Amalgam/Game/Impl/LibraryHelper.h"
 #include "Amalgam/Game/Impl/OnlineServer.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -38,7 +37,7 @@ bool OnlineServer::create(const PropertyGroup* defaultSettings, const PropertyGr
 
 	std::wstring providerType = defaultSettings->getProperty< PropertyString >(L"Online.Type");
 
-	Ref< online::ISessionManagerProvider > sessionManagerProvider = loadAndInstantiate< online::ISessionManagerProvider >(providerType);
+	Ref< online::ISessionManagerProvider > sessionManagerProvider = dynamic_type_cast< online::ISessionManagerProvider* >(TypeInfo::createInstance(providerType));
 	if (!sessionManagerProvider)
 	{
 		log::error << L"Online server failed; no such type \"" << providerType << L"\"" << Endl;

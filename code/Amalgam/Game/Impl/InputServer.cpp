@@ -1,7 +1,6 @@
 #include <cmath>
 #include "Amalgam/Game/IEnvironment.h"
 #include "Amalgam/Game/Impl/InputServer.h"
-#include "Amalgam/Game/Impl/LibraryHelper.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Serialization/DeepClone.h"
@@ -77,7 +76,7 @@ bool InputServer::create(const PropertyGroup* defaultSettings, PropertyGroup* se
 	std::set< std::wstring > driverTypes = settings->getProperty< PropertyStringSet >(L"Input.DriverTypes");
 	for (std::set< std::wstring >::const_iterator i = driverTypes.begin(); i != driverTypes.end(); ++i)
 	{
-		Ref< input::IInputDriver > driver = loadAndInstantiate< input::IInputDriver >(*i);
+		Ref< input::IInputDriver > driver = dynamic_type_cast< input::IInputDriver* >(TypeInfo::createInstance(*i));
 		if (!driver)
 		{
 			log::error << L"Input server failed; unable to instantiate driver \"" << *i << L"\"" << Endl;

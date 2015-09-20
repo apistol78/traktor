@@ -1,6 +1,5 @@
 #include "Amalgam/Game/IEnvironment.h"
 #include "Amalgam/Game/Impl/AudioServer.h"
-#include "Amalgam/Game/Impl/LibraryHelper.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyBoolean.h"
@@ -37,7 +36,7 @@ bool AudioServer::create(const PropertyGroup* settings, void* nativeHandle)
 	m_audioType = settings->getProperty< PropertyString >(L"Audio.Type");
 
 	// Create sound driver.
-	Ref< sound::ISoundDriver > soundDriver = loadAndInstantiate< sound::ISoundDriver >(m_audioType);
+	Ref< sound::ISoundDriver > soundDriver = dynamic_type_cast< sound::ISoundDriver* >(TypeInfo::createInstance(m_audioType));
 	if (!soundDriver)
 		return false;
 
@@ -214,7 +213,7 @@ int32_t AudioServer::reconfigure(const PropertyGroup* settings)
 	std::wstring audioType = settings->getProperty< PropertyString >(L"Audio.Type");
 	if (audioType != m_audioType)
 	{
-		Ref< sound::ISoundDriver > soundDriver = loadAndInstantiate< sound::ISoundDriver >(audioType);
+		Ref< sound::ISoundDriver > soundDriver = dynamic_type_cast< sound::ISoundDriver* >(TypeInfo::createInstance(audioType));
 		if (soundDriver && m_soundSystem->reset(soundDriver))
 			m_audioType = audioType;
 		else
