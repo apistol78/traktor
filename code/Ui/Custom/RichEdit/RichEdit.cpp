@@ -439,17 +439,20 @@ void RichEdit::updateScrollBars()
 	uint32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
 
 	uint32_t lineWidth = 0;
-	for (std::vector< Line >::const_iterator i = m_lines.begin(); i != m_lines.end(); ++i)
+	if (m_charWidth > 0)
 	{
-		uint32_t x = 0;
-		for (int32_t j = i->start; j < i->stop; ++j)
+		for (std::vector< Line >::const_iterator i = m_lines.begin(); i != m_lines.end(); ++i)
 		{
-			if (m_text[j] != '\t')
-				x += m_charWidth;
-			else
-				x = alignUp(x + 4 * 8, 4 * 8);
+			uint32_t x = 0;
+			for (int32_t j = i->start; j < i->stop; ++j)
+			{
+				if (m_text[j] != '\t')
+					x += m_charWidth;
+				else
+					x = alignUp(x + 4 * m_charWidth, 4 * m_charWidth);
+			}
+			lineWidth = std::max< uint32_t >(lineWidth, x);
 		}
-		lineWidth = std::max< uint32_t >(lineWidth, x);
 	}
 
 	m_scrollBarV->setRange(lineCount + pageLines);
@@ -659,7 +662,7 @@ void RichEdit::scrollToCaret()
 
 int32_t RichEdit::getCharacterStops(const std::wstring& text, std::vector< int32_t >& outStops) const
 {
-	int32_t x = 0, x0 = 0;
+	int32_t x = 0;
 
 	outStops.resize(0);
 	outStops.reserve(text.length());
@@ -669,13 +672,9 @@ int32_t RichEdit::getCharacterStops(const std::wstring& text, std::vector< int32
 	{
 		outStops.push_back(x);
 		if (*i != '\t')
-			x = x0 + m_charWidth;
+			x += m_charWidth;
 		else
-		{
-			x = alignUp(x + 4 * 8, 4 * 8);
-			x0 = x;
-			i0 = i + 1;
-		}
+			x = alignUp(x + 4 * m_charWidth, 4 * m_charWidth);
 	}
 
 	return x;
@@ -1124,7 +1123,7 @@ void RichEdit::eventPaint(PaintEvent* event)
 				else
 				{
 					// Adjust offset to nearest tab-stop.
-					int32_t nx = alignUp(x + 4 * 8, 4 * 8);
+					int32_t nx = alignUp(x + 4 * m_charWidth, 4 * m_charWidth);
 
 					textRc.left = m_lineMargin + 2 + x - m_lineOffsetH;
 					textRc.right = m_lineMargin + 2 + nx - m_lineOffsetH;
