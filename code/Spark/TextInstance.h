@@ -36,7 +36,7 @@ class T_DLLCLASS TextInstance : public CharacterInstance
 	T_RTTI_CLASS;
 
 public:
-	TextInstance(const CharacterInstance* parent);
+	TextInstance(const CharacterInstance* parent, const resource::Proxy< Font >& font);
 
 	void setText(const std::wstring& text);
 

@@ -270,7 +270,9 @@ bool FontPipeline::buildOutput(
 		fontResource->m_glyphs[i].unit[1] = float(glyphRects[i].height) / c_glyphPixelSize;
 	}
 
+#if defined(_DEBUG)
 	fontImage.save(L"FontImage.png");
+#endif
 
 	Ref< render::TextureOutput > fontOutput = new render::TextureOutput();
 	fontOutput->m_textureFormat = render::TfR8;

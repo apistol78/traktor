@@ -1,3 +1,6 @@
+import(traktor)
+import(traktor.drawing)
+import(traktor.run)
 
 
 -- Application icon definitions.
