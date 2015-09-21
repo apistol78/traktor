@@ -8,7 +8,8 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.Path", Path, Object)
 
 Path::Path()
-:	m_cursor(0.0f, 0.0f)
+:	m_origin(0.0f, 0.0f)
+,	m_cursor(0.0f, 0.0f)
 ,	m_current(0)
 {
 }
@@ -18,6 +19,7 @@ void Path::moveTo(float x, float y, bool relative)
 	if (relative)
 		getAbsolute(x, y);
 
+	m_origin.set(x, y);
 	m_cursor.set(x, y);
 	m_current = 0;
 }
@@ -26,7 +28,7 @@ void Path::lineTo(float x, float y, bool relative)
 {
 	if (!m_current || m_current->type != SptLinear)
 	{
-		m_subPaths.push_back(SubPath(SptLinear));
+		m_subPaths.push_back(SubPath(SptLinear, m_origin));
 		m_current = &m_subPaths.back();
 		m_current->points.push_back(m_cursor);
 	}
@@ -42,7 +44,7 @@ void Path::quadricTo(float x1, float y1, float x, float y, bool relative)
 {
 	if (!m_current || m_current->type != SptQuadric)
 	{
-		m_subPaths.push_back(SubPath(SptQuadric));
+		m_subPaths.push_back(SubPath(SptQuadric, m_origin));
 		m_current = &m_subPaths.back();
 		m_current->points.push_back(m_cursor);
 	}
@@ -69,7 +71,7 @@ void Path::cubicTo(float x1, float y1, float x2, float y2, float x, float y, boo
 {
 	if (!m_current || m_current->type != SptCubic)
 	{
-		m_subPaths.push_back(SubPath(SptCubic));
+		m_subPaths.push_back(SubPath(SptCubic, m_origin));
 		m_current = &m_subPaths.back();
 		m_current->points.push_back(m_cursor);
 	}
@@ -96,9 +98,10 @@ void Path::cubicTo(float x2, float y2, float x, float y, bool relative)
 
 void Path::close()
 {
-	if (m_current && !m_current->points.empty())
+	if (m_current)
 	{
-		m_cursor = m_current->points.front();
+		m_cursor = m_current->origin;
+		m_origin = m_current->origin;
 		m_current->closed = true;
 		m_current = 0;
 	}

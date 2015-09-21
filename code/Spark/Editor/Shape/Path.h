@@ -10,6 +10,9 @@ namespace traktor
 	namespace spark
 	{
 
+/*! \brief
+ * \ingroup Spark
+ */
 enum SubPathType
 {
 	SptUndefined,
@@ -18,16 +21,22 @@ enum SubPathType
 	SptCubic
 };
 
+/*! \brief
+ * \ingroup Spark
+ */
 struct SubPath
 {
 	SubPathType type;
 	bool closed;
+	Vector2 origin;
 	std::vector< Vector2 > points;
 
-	SubPath(SubPathType type_)
+	SubPath(SubPathType type_, const Vector2& origin_)
 	:	type(type_)
 	,	closed(false)
-	{}
+	,	origin(origin_)
+	{
+	}
 };
 
 /*! \brief
@@ -60,6 +69,7 @@ public:
 
 private:
 	std::vector< SubPath > m_subPaths;
+	Vector2 m_origin;
 	Vector2 m_cursor;
 	SubPath* m_current;
 

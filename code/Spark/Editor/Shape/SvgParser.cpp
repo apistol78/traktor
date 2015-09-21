@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include <sstream>
 #include "Core/Log/Log.h"
 #include "Core/Misc/Split.h"
@@ -70,9 +68,9 @@ bool isWhiteSpace(wchar_t ch)
 	return bool(ch == L' ' || ch == L'\t' || ch == L'\r' || ch == L'\n' || ch == L',');
 }
 
-bool isNumeric(wchar_t ch)
+bool isDigit(wchar_t ch)
 {
-	return bool(std::wstring(L"+-0123456789.e").find(ch) != std::wstring::npos);
+	return bool(std::wstring(L"0123456789").find(ch) != std::wstring::npos);
 }
 
 bool isCommand(wchar_t ch)
@@ -91,12 +89,29 @@ void skipUntilNot(std::wstring::iterator& i, std::wstring::iterator end, bool (*
 		++i;
 }
 
-float parsePathNumber(std::wstring::iterator& i, std::wstring::iterator end)
+float parseDecimalNumber(std::wstring::iterator& i, std::wstring::iterator end)
 {
 	skipUntilNot(i, end, isWhiteSpace);
 
 	std::wstring::iterator j = i;
-	skipUntilNot(i, end, isNumeric);
+	
+	if (*i == L'-' || *i == L'+')
+		++i;
+
+	skipUntilNot(i, end, isDigit);
+
+	if (*i == L'.' && isDigit(*(i+1)))
+	{
+		++i;
+		skipUntilNot(i, end, isDigit);
+	}
+	else if (*i == L'e' && ( *(i+1) == L'-' || *(i+1) == L'+' || isDigit(*(i+1)) ))
+	{
+		++i;
+		if (*i == L'-' || *i == L'+')
+			++i;
+		skipUntilNot(i, end, isDigit);
+	}
 
 	float number = 0.0f;
 	std::wstringstream(std::wstring(j, i)) >> number;
@@ -245,23 +260,8 @@ Ref< Shape > SvgParser::parsePolygon(xml::Element* elm)
 	std::wstring::iterator i = points.begin();
 	while (i != points.end())
 	{
-		skipUntilNot(i, points.end(), isWhiteSpace);
-		if (i == points.end())
-			break;
-
-		std::wstring::iterator j = i;
-		skipUntilNot(i, points.end(), isNumeric);
-
-		float x = 0.0f;
-		std::wstringstream(std::wstring(j, i)) >> x;
-
-		skipUntil(i, points.end(), isNumeric);
-
-		j = i;
-		skipUntilNot(i, points.end(), isNumeric);
-
-		float y = 0.0f;
-		std::wstringstream(std::wstring(j, i)) >> y;
+		float x = parseDecimalNumber(i, points.end());
+		float y = parseDecimalNumber(i, points.end());
 
 		if (first)
 			path.moveTo(x, y);
@@ -288,21 +288,8 @@ Ref< Shape > SvgParser::parsePolyLine(xml::Element* elm)
 	std::wstring::iterator i = points.begin();
 	while (i != points.end())
 	{
-		skipUntilNot(i, points.end(), isWhiteSpace);
-
-		std::wstring::iterator j = i;
-		skipUntilNot(i, points.end(), isNumeric);
-
-		float x = 0.0f;
-		std::wstringstream(std::wstring(j, i)) >> x;
-
-		skipUntil(i, points.end(), isNumeric);
-
-		j = i;
-		skipUntilNot(i, points.end(), isNumeric);
-
-		float y = 0.0f;
-		std::wstringstream(std::wstring(j, i)) >> y;
+		float x = parseDecimalNumber(i, points.end());
+		float y = parseDecimalNumber(i, points.end());
 
 		if (first)
 			path.moveTo(x, y);
@@ -355,83 +342,83 @@ Ref< Shape > SvgParser::parsePath(xml::Element* elm)
 		{
 		case L'M':	// Move to
 			{
-				float x = parsePathNumber(i, def.end());
-				float y = parsePathNumber(i, def.end());
+				float x = parseDecimalNumber(i, def.end());
+				float y = parseDecimalNumber(i, def.end());
 				path.moveTo(x, y, relative);
 			}
 			break;
 
 		case L'L':	// Line to
 			{
-				float x = parsePathNumber(i, def.end());
-				float y = parsePathNumber(i, def.end());
+				float x = parseDecimalNumber(i, def.end());
+				float y = parseDecimalNumber(i, def.end());
 				path.lineTo(x, y, relative);
 			}
 			break;
 
 		case L'V':	// Vertical line to
 			{
-				float x = parsePathNumber(i, def.end());
+				float x = parseDecimalNumber(i, def.end());
 				path.lineTo(x, path.getCursor().y, relative);
 			}
 			break;
 
 		case L'H':	// Horizontal line to
 			{
-				float y = parsePathNumber(i, def.end());
+				float y = parseDecimalNumber(i, def.end());
 				path.lineTo(path.getCursor().x, y, relative);
 			}
 			break;
 
 		case L'Q':	// Quadric to
 			{
-				float x1 = parsePathNumber(i, def.end());
-				float y1 = parsePathNumber(i, def.end());
-				float x2 = parsePathNumber(i, def.end());
-				float y2 = parsePathNumber(i, def.end());
+				float x1 = parseDecimalNumber(i, def.end());
+				float y1 = parseDecimalNumber(i, def.end());
+				float x2 = parseDecimalNumber(i, def.end());
+				float y2 = parseDecimalNumber(i, def.end());
 				path.quadricTo(x1, y1, x2, y2, relative);
 			}
 			break;
 
 		case L'T':	// Quadric to (shorthand/smooth)
 			{
-				float x = parsePathNumber(i, def.end());
-				float y = parsePathNumber(i, def.end());
+				float x = parseDecimalNumber(i, def.end());
+				float y = parseDecimalNumber(i, def.end());
 				path.quadricTo(x, y, relative);
 			}
 			break;
 
 		case L'C':	// Cubic to
 			{
-				float x1 = parsePathNumber(i, def.end());
-				float y1 = parsePathNumber(i, def.end());
-				float x2 = parsePathNumber(i, def.end());
-				float y2 = parsePathNumber(i, def.end());
-				float x = parsePathNumber(i, def.end());
-				float y = parsePathNumber(i, def.end());
+				float x1 = parseDecimalNumber(i, def.end());
+				float y1 = parseDecimalNumber(i, def.end());
+				float x2 = parseDecimalNumber(i, def.end());
+				float y2 = parseDecimalNumber(i, def.end());
+				float x = parseDecimalNumber(i, def.end());
+				float y = parseDecimalNumber(i, def.end());
 				path.cubicTo(x1, y1, x2, y2, x, y, relative);
 			}
 			break;
 
 		case L'S':	// Cubic to (shorthand/smooth)
 			{
-				float x1 = parsePathNumber(i, def.end());
-				float y1 = parsePathNumber(i, def.end());
-				float x2 = parsePathNumber(i, def.end());
-				float y2 = parsePathNumber(i, def.end());
+				float x1 = parseDecimalNumber(i, def.end());
+				float y1 = parseDecimalNumber(i, def.end());
+				float x2 = parseDecimalNumber(i, def.end());
+				float y2 = parseDecimalNumber(i, def.end());
 				path.cubicTo(x1, y1, x2, y2, relative);
 			}
 			break;
 
 		case L'A':	// Elliptic arc
 			{
-				float rx = parsePathNumber(i, def.end());
-				float ry = parsePathNumber(i, def.end());
-				float rotation = parsePathNumber(i, def.end());
-				float la = parsePathNumber(i, def.end());
-				float sf = parsePathNumber(i, def.end());
-				float x = parsePathNumber(i, def.end());
-				float y = parsePathNumber(i, def.end());
+				float rx = parseDecimalNumber(i, def.end());
+				float ry = parseDecimalNumber(i, def.end());
+				float rotation = parseDecimalNumber(i, def.end());
+				float la = parseDecimalNumber(i, def.end());
+				float sf = parseDecimalNumber(i, def.end());
+				float x = parseDecimalNumber(i, def.end());
+				float y = parseDecimalNumber(i, def.end());
 				path.lineTo(x, y, relative);
 			}
 			break;
