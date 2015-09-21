@@ -79,6 +79,14 @@ public:
 	 */
 	float getRotation() const;
 
+	/*! \brief Set visibility.
+	 */
+	void setVisible(bool visible);
+
+	/*! \brief Get visibility.
+	 */
+	bool getVisible() const;
+
 	/*! \brief Get bounds.
 	 */
 	virtual Aabb2 getBounds() const = 0;
@@ -91,10 +99,11 @@ public:
 	 */
 	virtual void render(render::RenderContext* renderContext) const = 0;
 
-private:
+protected:
 	const CharacterInstance* m_parent;
 	std::wstring m_name;
 	Matrix33 m_transform;
+	bool m_visible;
 };
 
 	}

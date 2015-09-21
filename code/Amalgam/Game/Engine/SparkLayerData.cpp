@@ -13,6 +13,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.SparkLayerData", LayerData::Version, SparkLayerData, LayerData)
 
+SparkLayerData::SparkLayerData()
+:	m_background(0, 0, 0, 0)
+{
+}
+
 Ref< Layer > SparkLayerData::createInstance(Stage* stage, IEnvironment* environment) const
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
@@ -28,7 +33,8 @@ Ref< Layer > SparkLayerData::createInstance(Stage* stage, IEnvironment* environm
 		m_name,
 		m_permitTransition,
 		environment,
-		sprite
+		sprite,
+		m_background
 	);
 }
 
@@ -36,6 +42,7 @@ void SparkLayerData::serialize(ISerializer& s)
 {
 	LayerData::serialize(s);
 	s >> resource::Member< spark::Sprite >(L"sprite", m_sprite);
+	s >> Member< Color4ub >(L"background", m_background);
 }
 
 	}

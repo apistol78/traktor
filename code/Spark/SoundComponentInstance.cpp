@@ -10,15 +10,19 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.SoundComponentInstance", SoundComponentInstance, IComponentInstance)
 
-SoundComponentInstance::SoundComponentInstance(sound::ISoundPlayer* soundPlayer, const resource::Proxy< sound::Sound >& sound)
+SoundComponentInstance::SoundComponentInstance(sound::ISoundPlayer* soundPlayer, const SmallMap< std::wstring, resource::Proxy< sound::Sound > >& sounds)
 :	m_soundPlayer(soundPlayer)
-,	m_sound(sound)
+,	m_sounds(sounds)
 {
 }
 
-Ref< sound::ISoundHandle > SoundComponentInstance::play()
+Ref< sound::ISoundHandle > SoundComponentInstance::play(const std::wstring& id)
 {
-	return m_soundPlayer->play(m_sound, 0);
+	SmallMap< std::wstring, resource::Proxy< sound::Sound > >::const_iterator i = m_sounds.find(id);
+	if (i != m_sounds.end())
+		return m_soundPlayer->play(i->second, 0);
+	else
+		return 0;
 }
 
 void SoundComponentInstance::update()

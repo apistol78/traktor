@@ -18,11 +18,13 @@ SparkLayer::SparkLayer(
 	const std::wstring& name,
 	bool permitTransition,
 	IEnvironment* environment,
-	const resource::Proxy< spark::Sprite >& sprite
+	const resource::Proxy< spark::Sprite >& sprite,
+	const Color4ub& background
 )
 :	Layer(stage, name, permitTransition)
 ,	m_environment(environment)
 ,	m_sprite(sprite)
+,	m_background(background)
 {
 }
 
@@ -80,6 +82,21 @@ void SparkLayer::render(render::EyeType eye, uint32_t frame)
 
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
 	T_ASSERT (renderView);
+
+	if (m_background.a != 0)
+	{
+		Color4f clearColor(
+			m_background.r / 255.0f,
+			m_background.g / 255.0f,
+			m_background.b / 255.0f
+		);
+		renderView->clear(
+			render::CfColor,
+			&clearColor,
+			0.0f,
+			0
+		);
+	}
 
 	const int32_t stageWidth = 1080;
 	const int32_t stageHeight = 1920;

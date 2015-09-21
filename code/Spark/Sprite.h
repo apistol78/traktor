@@ -1,9 +1,9 @@
 #ifndef traktor_spark_Sprite_H
 #define traktor_spark_Sprite_H
 
-#include <list>
-#include <map>
 #include "Core/RefArray.h"
+#include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/SmallMap.h"
 #include "Resource/Id.h"
 #include "Spark/Character.h"
 
@@ -53,8 +53,8 @@ private:
 
 	RefArray< IComponent > m_components;
 	resource::Id< Shape > m_shape;
-	std::map< std::wstring, Ref< Character > > m_characters;
-	std::list< Place > m_place;
+	SmallMap< std::wstring, Ref< Character > > m_characters;
+	AlignedVector< Place > m_place;
 };
 
 	}

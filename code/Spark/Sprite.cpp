@@ -1,8 +1,9 @@
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberRefArray.h"
-#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/MemberSmallMap.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 #include "Spark/IComponent.h"
@@ -19,7 +20,7 @@ T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spark.Sprite", 0, Sprite, Character)
 
 const Character* Sprite::getCharacter(const std::wstring& id) const
 {
-	std::map< std::wstring, Ref< Character > >::const_iterator i = m_characters.find(id);
+	SmallMap< std::wstring, Ref< Character > >::const_iterator i = m_characters.find(id);
 	return i != m_characters.end() ? i->second : 0;
 }
 
@@ -36,7 +37,7 @@ Ref< CharacterInstance > Sprite::createInstance(const CharacterInstance* parent,
 
 	// Create child characters.
 	int32_t depth = -100000;
-	for (std::list< Place >::const_iterator i = m_place.begin(); i != m_place.end(); ++i)
+	for (AlignedVector< Place >::const_iterator i = m_place.begin(); i != m_place.end(); ++i)
 	{
 		if (!i->character)
 			continue;
@@ -72,8 +73,8 @@ void Sprite::serialize(ISerializer& s)
 {
 	s >> MemberRefArray< IComponent >(L"components", m_components);
 	s >> resource::Member< Shape >(L"shape", m_shape);
-	s >> MemberStlMap< std::wstring, Ref< Character >, MemberStlPair< std::wstring, Ref< Character >, Member< std::wstring >, MemberRef< Character > > >(L"characters", m_characters);
-	s >> MemberStlList< Place, MemberComposite< Place > >(L"place", m_place);
+	s >> MemberSmallMap< std::wstring, Ref< Character >, Member< std::wstring >, MemberRef< Character > >(L"characters", m_characters);
+	s >> MemberAlignedVector< Place, MemberComposite< Place > >(L"place", m_place);
 }
 
 Sprite::Place::Place()

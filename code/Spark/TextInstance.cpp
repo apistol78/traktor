@@ -73,7 +73,7 @@ void TextInstance::update()
 
 void TextInstance::render(render::RenderContext* renderContext) const
 {
-	if (!m_font)
+	if (!m_font || !m_visible)
 		return;
 
 	// Measure text extent.

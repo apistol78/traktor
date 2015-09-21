@@ -2,6 +2,7 @@
 #define traktor_spark_SoundComponentInstance_H
 
 #include "Core/Ref.h"
+#include "Core/Containers/SmallMap.h"
 #include "Resource/Proxy.h"
 #include "Spark/IComponentInstance.h"
 
@@ -35,15 +36,15 @@ class T_DLLCLASS SoundComponentInstance : public IComponentInstance
 	T_RTTI_CLASS;
 
 public:
-	SoundComponentInstance(sound::ISoundPlayer* soundPlayer, const resource::Proxy< sound::Sound >& sound);
+	SoundComponentInstance(sound::ISoundPlayer* soundPlayer, const SmallMap< std::wstring, resource::Proxy< sound::Sound > >& sounds);
 
-	Ref< sound::ISoundHandle > play();
+	Ref< sound::ISoundHandle > play(const std::wstring& id);
 
 	virtual void update();
 
 private:
 	Ref< sound::ISoundPlayer > m_soundPlayer;
-	resource::Proxy< sound::Sound > m_sound;
+	SmallMap< std::wstring, resource::Proxy< sound::Sound > > m_sounds;
 };
 
 	}

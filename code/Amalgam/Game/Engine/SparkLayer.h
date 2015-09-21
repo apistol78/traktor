@@ -2,6 +2,7 @@
 #define traktor_amalgam_SparkLayer_H
 
 #include "Amalgam/Game/Engine/Layer.h"
+#include "Core/Math/Color4ub.h"
 #include "Resource/Proxy.h"
 
 // import/export mechanism.
@@ -46,7 +47,8 @@ public:
 		const std::wstring& name,
 		bool permitTransition,
 		IEnvironment* environment,
-		const resource::Proxy< spark::Sprite >& sprite
+		const resource::Proxy< spark::Sprite >& sprite,
+		const Color4ub& background
 	);
 
 	virtual ~SparkLayer();
@@ -80,6 +82,7 @@ private:
 	resource::Proxy< spark::Sprite > m_sprite;
 	Ref< spark::SpriteInstance > m_spriteInstance;
 	Ref< spark::CharacterRenderer > m_characterRenderer;
+	Color4ub m_background;
 };
 
 	}
