@@ -138,7 +138,6 @@ bool FontPipeline::buildOutput(
 	for (uint32_t i = 0; i < fontAsset->m_includeCharacters.length(); ++i)
 	{
 		wchar_t ch = fontAsset->m_includeCharacters[i];
-
 		FT_UInt glyphIndex = FT_Get_Char_Index(face, ch);
 
 		error = FT_Load_Glyph(face, glyphIndex, FT_LOAD_DEFAULT);
@@ -157,20 +156,49 @@ bool FontPipeline::buildOutput(
 
 		FT_GlyphSlot slot = face->glyph;
 
-		glyphImages[i] = new drawing::Image(drawing::PixelFormat::getR8(), slot->bitmap.width, slot->bitmap.rows);
+		int32_t width = slot->bitmap.width + slot->bitmap_left;
+		int32_t height = slot->bitmap.rows;
+
+		glyphImages[i] = new drawing::Image(drawing::PixelFormat::getR8(), width, height);
 		glyphImages[i]->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
-		for (int32_t y = 0; y < slot->bitmap.rows; ++y)
+		for (int32_t y = 0; y < height; ++y)
 		{
-			for (int32_t x = 0; x < slot->bitmap.width; ++x)
+			for (int32_t x = 0; x < width; ++x)
 			{
 				float f = slot->bitmap.buffer[x + y * slot->bitmap.width] / 255.0f;
-				glyphImages[i]->setPixel(x, y, Color4f(f, f, f, f));
+				glyphImages[i]->setPixel(x + slot->bitmap_left, y, Color4f(f, f, f, f));
 			}
 		}
 
 		fontResource->m_glyphs[i].ch = ch;
 		fontResource->m_glyphs[i].advance = (float(slot->advance.x) / c_glyphPixelSize) / float(1 << 6);
+
+		/*
+		// Transform kerning for this glyph compared to all other characters.
+		for (uint32_t j = 0; j < fontAsset->m_includeCharacters.length(); ++j)
+		{
+			if (i == j)
+				continue;
+
+			wchar_t rightCh = fontAsset->m_includeCharacters[j];
+			FT_UInt rightGlyphIndex = FT_Get_Char_Index(face, rightCh);
+
+			FT_Vector kerning;
+			error = FT_Get_Kerning(face, glyphIndex, rightGlyphIndex, FT_KERNING_DEFAULT, &kerning);
+			if (error)
+			{
+				log::warning << L"Unable to get kerning for glyph '" << ch << L"'" << Endl;
+				continue;
+			}
+
+			if (kerning.x == 0)
+				continue;
+
+			float kf = (float(slot->advance.x) / c_glyphPixelSize) / float(1 << 6);
+			log::info << L"Kerning of '" << ch << L"' to '" << rightCh << L"' is " << kf << L" fractions" << Endl;
+		}
+		*/
 	}
 
 	// Calculate an estimate size of atlas.

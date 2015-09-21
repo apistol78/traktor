@@ -1,6 +1,7 @@
 #ifndef traktor_spark_SoundComponent_H
 #define traktor_spark_SoundComponent_H
 
+#include "Core/Containers/SmallMap.h"
 #include "Resource/Id.h"
 #include "Spark/IComponent.h"
 
@@ -39,7 +40,7 @@ public:
 private:
 	friend class CharacterPipeline;
 
-	resource::Id< sound::Sound > m_sound;
+	SmallMap< std::wstring, resource::Id< sound::Sound > > m_sounds;
 };
 
 	}

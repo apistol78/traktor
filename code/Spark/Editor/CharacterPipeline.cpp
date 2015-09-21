@@ -56,13 +56,16 @@ bool CharacterPipeline::buildDependencies(
 			if (const ScriptComponent* scriptComponent = dynamic_type_cast< const ScriptComponent* >(*i))
 				pipelineDepends->addDependency(scriptComponent->m_class, editor::PdfBuild);
 			else if (const SoundComponent* soundComponent = dynamic_type_cast< const SoundComponent* >(*i))
-				pipelineDepends->addDependency(soundComponent->m_sound, editor::PdfBuild | editor::PdfResource);
+			{
+				for (SmallMap< std::wstring, resource::Id< sound::Sound > >::const_iterator j = soundComponent->m_sounds.begin(); j != soundComponent->m_sounds.end(); ++j)
+					pipelineDepends->addDependency(j->second, editor::PdfBuild | editor::PdfResource);
+			}
 		}
 
-		for (std::list< Sprite::Place >::const_iterator i = sprite->m_place.begin(); i != sprite->m_place.end(); ++i)
+		for (AlignedVector< Sprite::Place >::const_iterator i = sprite->m_place.begin(); i != sprite->m_place.end(); ++i)
 			pipelineDepends->addDependency(i->character);
 
-		for (std::map< std::wstring, Ref< Character > >::const_iterator i = sprite->m_characters.begin(); i != sprite->m_characters.end(); ++i)
+		for (SmallMap< std::wstring, Ref< Character > >::const_iterator i = sprite->m_characters.begin(); i != sprite->m_characters.end(); ++i)
 			pipelineDepends->addDependency(i->second);
 	}
 	else if (const Text* text = dynamic_type_cast< const Text* >(character))

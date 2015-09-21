@@ -78,6 +78,9 @@ void SpriteInstance::update()
 
 void SpriteInstance::render(render::RenderContext* renderContext) const
 {
+	if (!m_visible)
+		return;
+
 	// Render all child characters visible in display list first.
 	RefArray< CharacterInstance > characters;
 	m_displayList.getCharacters(characters);

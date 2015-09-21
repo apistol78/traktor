@@ -41,6 +41,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.CharacterInstance", CharacterInstance, Ob
 CharacterInstance::CharacterInstance(const CharacterInstance* parent)
 :	m_parent(parent)
 ,	m_transform(Matrix33::identity())
+,	m_visible(true)
 {
 }
 
@@ -115,6 +116,16 @@ float CharacterInstance::getRotation() const
 	float rotation;
 	decomposeTransform(m_transform, 0, 0, &rotation);
 	return rotation;
+}
+
+void CharacterInstance::setVisible(bool visible)
+{
+	m_visible = visible;
+}
+
+bool CharacterInstance::getVisible() const
+{
+	return m_visible;
 }
 
 	}

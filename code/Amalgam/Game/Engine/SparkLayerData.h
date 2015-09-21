@@ -2,6 +2,7 @@
 #define traktor_amalgam_SparkLayerData_H
 
 #include "Amalgam/Game/Engine/LayerData.h"
+#include "Core/Math/Color4ub.h"
 #include "Resource/Id.h"
 
 // import/export mechanism.
@@ -32,6 +33,8 @@ class T_DLLCLASS SparkLayerData : public LayerData
 	T_RTTI_CLASS;
 
 public:
+	SparkLayerData();
+
 	virtual Ref< Layer > createInstance(Stage* stage, IEnvironment* environment) const;
 
 	virtual void serialize(ISerializer& s);
@@ -40,6 +43,7 @@ private:
 	friend class StagePipeline;
 
 	resource::Id< spark::Sprite > m_sprite;
+	Color4ub m_background;
 };
 
 	}
