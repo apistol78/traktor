@@ -56,6 +56,28 @@ ITypedObject* toTypedObject(lua_State* luaState, int32_t index)
 	return object;
 }
 
+const char c_initScript[] =
+{
+	"-- Import scope into global namespace.\n"
+	"function import(scope)\n"
+	"	for n,v in pairs(scope) do\n"
+	"		_G[n] = v\n"
+	"	end\n"
+	"end\n"
+
+	"-- Setup simple inheritance\n"
+	"function inherit(baseClass)\n"
+	"	local newClass = {}\n"
+	"	setmetatable(newClass, { __index = baseClass })\n"
+	"	return newClass\n"
+	"end\n"
+
+	"-- Check if instance is of a class type.\n"
+	"function isa(instance, class)\n"
+	"	return instance ~= nil and getmetatable(instance).__index == class\n"
+	"end\n"
+};
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptManagerLua", 0, ScriptManagerLua, IScriptManager)
@@ -104,6 +126,15 @@ ScriptManagerLua::ScriptManagerLua()
 #endif
 
 	lua_register(m_luaState, "print", luaPrint);
+
+	// Load default initialization script.
+	int32_t result = luaL_loadbuffer(
+		m_luaState,
+		c_initScript,
+		strlen(c_initScript),
+		"init"
+	);
+	lua_pcall(m_luaState, 0, 0, 0);
 
 	// Create table containing weak references to C++ object wrappers.
 	{
@@ -306,7 +337,7 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 
 	rc.instanceMetaTableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
 
-	//// Export class in global scope.
+	// Export class in global scope.
 	std::wstring exportName = exportType.getName();
 
 	std::vector< std::wstring > exportPath;
