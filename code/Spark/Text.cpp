@@ -25,12 +25,13 @@ Text::Text()
 
 Ref< CharacterInstance > Text::createInstance(const CharacterInstance* parent, resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer) const
 {
-	Ref< TextInstance > instance = new TextInstance(parent);
+	resource::Proxy< Font > font;
 	if (m_font)
 	{
-		if (!resourceManager->bind(m_font, instance->m_font))
+		if (!resourceManager->bind(m_font, font))
 			return 0;
 	}
+	Ref< TextInstance > instance = new TextInstance(parent, font);
 	instance->setText(m_text);
 	instance->setHeight(m_height);
 	instance->setBounds(Aabb2(-m_origin, -m_origin + m_size));

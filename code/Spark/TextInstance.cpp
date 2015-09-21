@@ -9,8 +9,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.TextInstance", TextInstance, CharacterInstance)
 
-TextInstance::TextInstance(const CharacterInstance* parent)
+TextInstance::TextInstance(const CharacterInstance* parent, const resource::Proxy< Font >& font)
 :	CharacterInstance(parent)
+,	m_font(font)
 ,	m_height(0.0f)
 ,	m_horizontalAlign(AnLeft)
 ,	m_verticalAlign(AnTop)

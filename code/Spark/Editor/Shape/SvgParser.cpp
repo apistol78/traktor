@@ -557,7 +557,9 @@ Ref< Style > SvgParser::parseStyle(xml::Element* elm)
 			std::wstring key = trim(i->substr(0, j));
 			std::wstring value = trim(i->substr(j + 1));
 
-			if (key == L"fill")
+			if (key == L"display")
+				;
+			else if (key == L"fill")
 			{
 				if (parseColor(value, color))
 				{
