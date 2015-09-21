@@ -196,7 +196,7 @@ void SparkEditControl::eventMouseMove(ui::MouseMoveEvent* event)
 			-(mousePosition.x - m_lastMousePosition.x),
 			-(mousePosition.y - m_lastMousePosition.y)
 		);
-		m_viewOffset += deltaMove / m_viewScale;
+		m_viewOffset += 2.0f * deltaMove / m_viewScale;
 	}
 
 	m_lastMousePosition = mousePosition;
