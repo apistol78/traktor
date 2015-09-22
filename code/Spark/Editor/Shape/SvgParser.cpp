@@ -576,6 +576,12 @@ Ref< Style > SvgParser::parseStyle(xml::Element* elm)
 
 			if (key == L"display")
 				;
+			else if (key == L"opacity")
+			{
+				float opacity;
+				std::wstringstream(value) >> opacity;
+				style->setOpacity(opacity);
+			}
 			else if (key == L"fill")
 			{
 				if (parseColor(value, color))

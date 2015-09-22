@@ -13,6 +13,7 @@ Style::Style()
 ,	m_strokeEnable(false)
 ,	m_strokeWidth(1.0f)
 ,	m_stroke(0, 0, 0, 255)
+,	m_opacity(1.0f)
 {
 }
 
@@ -86,7 +87,15 @@ const Color4ub& Style::getStroke() const
 	return m_stroke;
 }
 
-	}
+void Style::setOpacity(float opacity)
+{
+	m_opacity = opacity;
 }
 
+float Style::getOpacity() const
+{
+	return m_opacity;
+}
 
+	}
+}

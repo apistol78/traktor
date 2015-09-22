@@ -472,7 +472,7 @@ bool ShapePipeline::buildOutput(
 				vertex->color[0] = i->first->getFill().r / 255.0f;
 				vertex->color[1] = i->first->getFill().g / 255.0f;
 				vertex->color[2] = i->first->getFill().b / 255.0f;
-				vertex->color[3] = i->first->getFill().a / 255.0f;
+				vertex->color[3] = i->first->getOpacity();
 
 				vertex++;
 			}
@@ -502,7 +502,7 @@ bool ShapePipeline::buildOutput(
 				vertex->color[0] = i->first->getFill().r / 255.0f;
 				vertex->color[1] = i->first->getFill().g / 255.0f;
 				vertex->color[2] = i->first->getFill().b / 255.0f;
-				vertex->color[3] = i->first->getFill().a / 255.0f;
+				vertex->color[3] = i->first->getOpacity();
 
 				vertex++;
 			}
@@ -532,7 +532,7 @@ bool ShapePipeline::buildOutput(
 				vertex->color[0] = i->first->getFill().r / 255.0f;
 				vertex->color[1] = i->first->getFill().g / 255.0f;
 				vertex->color[2] = i->first->getFill().b / 255.0f;
-				vertex->color[3] = i->first->getFill().a / 255.0f;
+				vertex->color[3] = i->first->getOpacity();
 
 				vertex++;
 			}

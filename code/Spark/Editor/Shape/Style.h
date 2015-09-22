@@ -50,6 +50,10 @@ public:
 
 	const Color4ub& getStroke() const;
 
+	void setOpacity(float opacity);
+
+	float getOpacity() const;
+
 private:
 	bool m_fillEnable;
 	Ref< Gradient > m_fillGradient;
@@ -58,6 +62,7 @@ private:
 	Ref< Gradient > m_strokeGradient;
 	float m_strokeWidth;
 	Color4ub m_stroke;
+	float m_opacity;
 };
 	
 	}
