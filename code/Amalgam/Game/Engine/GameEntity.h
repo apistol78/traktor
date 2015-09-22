@@ -1,6 +1,7 @@
 #ifndef traktor_amalgam_GameEntity_H
 #define traktor_amalgam_GameEntity_H
 
+#include "Resource/Proxy.h"
 #include "World/Entity.h"
 
 // import/export mechanism.
@@ -13,6 +14,9 @@
 
 namespace traktor
 {
+
+class IRuntimeClass;
+
 	namespace world
 	{
 
@@ -47,7 +51,8 @@ public:
 		Object* object,
 		world::Entity* entity,
 		world::EntityEventSet* eventSet,
-		world::IEntityEventManager* eventManager
+		world::IEntityEventManager* eventManager,
+		const resource::Proxy< IRuntimeClass >& clazz
 	);
 
 	virtual void destroy();
@@ -132,6 +137,8 @@ private:
 	Ref< world::Entity > m_entity;
 	Ref< world::EntityEventSet > m_eventSet;
 	Ref< world::IEntityEventManager > m_eventManager;
+	resource::Proxy< IRuntimeClass > m_class;
+	Ref< ITypedObject > m_classObject;
 	bool m_visible;
 };
 

@@ -1,7 +1,9 @@
 #include "Amalgam/Game/Engine/GameEntity.h"
 #include "Amalgam/Game/Engine/GameEntityData.h"
 #include "Amalgam/Game/Engine/GameEntityFactory.h"
+#include "Core/Class/IRuntimeClass.h"
 #include "Core/Serialization/DeepClone.h"
+#include "Resource/IResourceManager.h"
 #include "World/EntityEventSetData.h"
 #include "World/IEntityBuilder.h"
 
@@ -12,8 +14,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.GameEntityFactory", GameEntityFactory, world::IEntityFactory)
 
-GameEntityFactory::GameEntityFactory(world::IEntityEventManager* eventManager)
-:	m_eventManager(eventManager)
+GameEntityFactory::GameEntityFactory(resource::IResourceManager* resourceManager, world::IEntityEventManager* eventManager)
+:	m_resourceManager(resourceManager)
+,	m_eventManager(eventManager)
 {
 }
 
@@ -59,12 +62,20 @@ Ref< world::Entity > GameEntityFactory::createEntity(
 			return 0;
 	}
 
+	resource::Proxy< IRuntimeClass > clazz;
+	if (gameEntityData->m_class)
+	{
+		if (!m_resourceManager->bind(gameEntityData->m_class, clazz))
+			return 0;
+	}
+
 	return new GameEntity(
 		gameEntityData->m_tag,
 		object,
 		entity,
 		eventSet,
-		m_eventManager
+		m_eventManager,
+		clazz
 	);
 }
 

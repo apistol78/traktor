@@ -1,4 +1,5 @@
 #include "Amalgam/Game/Engine/GameEntity.h"
+#include "Core/Class/IRuntimeClass.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "World/IEntityEventManager.h"
 
@@ -14,15 +15,19 @@ GameEntity::GameEntity(
 	Object* object,
 	world::Entity* entity,
 	world::EntityEventSet* eventSet,
-	world::IEntityEventManager* eventManager
+	world::IEntityEventManager* eventManager,
+	const resource::Proxy< IRuntimeClass >& clazz
 )
 :	m_tag(tag)
 ,	m_object(object)
 ,	m_entity(entity)
 ,	m_eventSet(eventSet)
 ,	m_eventManager(eventManager)
+,	m_class(clazz)
 ,	m_visible(true)
 {
+	if (m_class)
+		m_classObject = m_class->construct(this, 0, 0);
 }
 
 void GameEntity::destroy()
@@ -31,6 +36,8 @@ void GameEntity::destroy()
 	m_object = 0;
 	m_eventSet = 0;
 	m_eventManager = 0;
+	m_classObject = 0;
+	m_class.clear();
 }
 
 void GameEntity::setTransform(const Transform& transform)
@@ -57,6 +64,17 @@ Aabb3 GameEntity::getBoundingBox() const
 
 void GameEntity::update(const world::UpdateParams& update)
 {
+	if (m_classObject)
+	{
+		T_ASSERT (m_class);
+		m_class->invoke(
+			m_classObject,
+			findRuntimeClassMethodId(m_class, "update"),
+			0,
+			0
+		);
+	}
+
 	if (m_entity)
 		m_entity->update(update);
 }

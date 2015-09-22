@@ -1,6 +1,7 @@
 #ifndef traktor_amalgam_GameEntityData_H
 #define traktor_amalgam_GameEntityData_H
 
+#include "Resource/Id.h"
 #include "World/EntityData.h"
 
 // import/export mechanism.
@@ -13,6 +14,9 @@
 
 namespace traktor
 {
+
+class IRuntimeClass;
+
 	namespace world
 	{
 
@@ -40,6 +44,7 @@ private:
 	Ref< ISerializable > m_object;
 	Ref< world::EntityData > m_entityData;
 	Ref< world::EntityEventSetData > m_eventSetData;
+	resource::Id< IRuntimeClass > m_class;
 };
 
 	}
