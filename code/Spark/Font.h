@@ -32,6 +32,8 @@ class VertexBuffer;
 	namespace spark
 	{
 
+class ColorTransform;
+
 /*! \brief
  * \ingroup Spark
  */
@@ -42,7 +44,7 @@ class T_DLLCLASS Font : public Object
 public:
 	float advance(uint32_t character) const;
 
-	void render(render::RenderContext* renderContext, const Matrix33& transform, uint32_t character, float height) const;
+	void render(render::RenderContext* renderContext, const Matrix33& transform, uint32_t character, float height, const ColorTransform& colorTransform) const;
 
 private:
 	friend class FontResource;

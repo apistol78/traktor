@@ -98,6 +98,8 @@ void SparkClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classTextInstance->addMethod("getText", &TextInstance::getText);
 	classTextInstance->addMethod("setHeight", &TextInstance::setHeight);
 	classTextInstance->addMethod("getHeight", &TextInstance::getHeight);
+	classTextInstance->addMethod("setAlpha", &TextInstance::setAlpha);
+	classTextInstance->addMethod("getAlpha", &TextInstance::getAlpha);
 	registrar->registerClass(classTextInstance);
 
 	Ref< AutoRuntimeClass< Tween::IListener > > classTweenIListener = new AutoRuntimeClass< Tween::IListener >();
