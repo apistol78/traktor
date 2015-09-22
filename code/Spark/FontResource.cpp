@@ -75,6 +75,7 @@ Ref< Font > FontResource::create(resource::IResourceManager* resourceManager, re
 	{
 		font->m_glyphs[i->ch].rect = Vector4::loadUnaligned(i->rect);
 		font->m_glyphs[i->ch].unit = Vector4(i->unit[0], i->unit[1], 1.0f - i->unit[0], 1.0f - i->unit[1]);
+		font->m_glyphs[i->ch].offset = Vector4(i->offset[0], i->offset[1], i->unit[0] - i->offset[0], i->unit[1] - i->offset[1]);
 		font->m_glyphs[i->ch].advance = i->advance;
 	}
 
@@ -99,6 +100,9 @@ FontResource::Glyph::Glyph()
 
 	unit[0] =
 	unit[1] = 0.0f;
+
+	offset[0] =
+	offset[1] = 0.0f;
 }
 
 void FontResource::Glyph::serialize(ISerializer& s)
@@ -106,6 +110,7 @@ void FontResource::Glyph::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"ch", ch);
 	s >> MemberStaticArray< float, 4 >(L"rect", rect);
 	s >> MemberStaticArray< float, 2 >(L"unit", unit);
+	s >> MemberStaticArray< float, 2 >(L"offset", offset);
 	s >> Member< float >(L"advance", advance);
 }
 

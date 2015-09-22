@@ -47,9 +47,10 @@ public:
 	struct T_DLLCLASS Glyph
 	{
 		uint32_t ch;
-		float rect[4];	//!< Coordinates in texture for glyph.
-		float unit[2];	//!< Unit dimensions of glyph.
-		float advance;	//!< Percentage of height for horizontal advancement.
+		float rect[4];		//!< Coordinates in texture for glyph.
+		float unit[2];		//!< Unit dimensions of glyph.
+		float offset[2];	//!< Offset of glyph relative pen position.
+		float advance;		//!< Percentage of height for horizontal advancement.
 
 		Glyph();
 
