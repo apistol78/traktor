@@ -37,6 +37,16 @@ void SpriteInstance::remove(int32_t depth)
 	m_displayList.remove(depth);
 }
 
+void SpriteInstance::setAlpha(float alpha)
+{
+	m_colorTransform.alpha[0] = alpha;
+}
+
+float SpriteInstance::getAlpha() const
+{
+	return m_colorTransform.alpha[0];
+}
+
 void SpriteInstance::getCharacters(RefArray< CharacterInstance >& outCharacters) const
 {
 	m_displayList.getCharacters(outCharacters);
@@ -89,7 +99,7 @@ void SpriteInstance::render(render::RenderContext* renderContext) const
 
 	// Render this sprite's shape.
 	if (m_shape)
-		m_shape->render(renderContext, getFullTransform());
+		m_shape->render(renderContext, getFullTransform(), m_colorTransform);
 }
 
 	}

@@ -75,8 +75,8 @@
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>621</first>
-				<second>894</second>
+				<first>-960</first>
+				<second>775</second>
 			</position>
 			<name>Color</name>
 			<usage>DuColor</usage>
@@ -249,7 +249,7 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>557</first>
+				<first>493</first>
 				<second>1004</second>
 			</position>
 			<fragmentGuid>{831B422E-5A1D-1E41-BDB4-2D29E6CD7866}</fragmentGuid>
@@ -278,7 +278,7 @@
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>180</first>
+				<first>116</first>
 				<second>1031</second>
 			</position>
 			<name>ControlPoints</name>
@@ -289,7 +289,7 @@
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>280</first>
+				<first>216</first>
 				<second>1067</second>
 			</position>
 			<value>1</value>
@@ -383,7 +383,7 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>557</first>
+				<first>493</first>
 				<second>1150</second>
 			</position>
 			<fragmentGuid>{831B422E-5A1D-1E41-BDB4-2D29E6CD7866}</fragmentGuid>
@@ -412,10 +412,57 @@
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>280</first>
+				<first>216</first>
 				<second>1103</second>
 			</position>
 			<value>-1</value>
+		</item>
+		<item type="traktor.render.External" version="1">
+			<comment/>
+			<position>
+				<first>-682</first>
+				<second>755</second>
+			</position>
+			<fragmentGuid>{0F359947-AADA-6748-B492-44CE56038205}</fragmentGuid>
+			<inputPins>
+				<item>
+					<name>Input</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<name>Output</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.Uniform" version="1">
+			<comment/>
+			<position>
+				<first>-718</first>
+				<second>843</second>
+			</position>
+			<parameterName>Spark_ColorTransform_Mul</parameterName>
+			<type>PtVector</type>
+			<frequency>UfDraw</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="1">
+			<comment/>
+			<position>
+				<first>-718</first>
+				<second>941</second>
+			</position>
+			<parameterName>Spark_ColorTransform_Add</parameterName>
+			<type>PtVector</type>
+			<frequency>UfDraw</frequency>
+		</item>
+		<item type="traktor.render.MulAdd">
+			<comment/>
+			<position>
+				<first>-214</first>
+				<second>874</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -427,16 +474,6 @@
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<name>T_Color</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -561,16 +598,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[14]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[15]"/>
 				<name>Output</name>
 			</source>
@@ -651,16 +678,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[21]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[22]"/>
 				<name>Output</name>
 			</source>
@@ -717,6 +734,76 @@
 			<destination>
 				<node ref="/object/nodes/item[20]"/>
 				<name>T_ViewPosition</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[25]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[26]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[28]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[27]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[28]"/>
+				<name>Input3</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[25]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[28]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[28]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>T_Color</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[28]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[14]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[28]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[21]"/>
+				<name>Input1</name>
 			</destination>
 		</item>
 	</edges>

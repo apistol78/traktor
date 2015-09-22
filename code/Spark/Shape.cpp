@@ -3,6 +3,7 @@
 #include "Render/Context/RenderBlock.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Mesh/Mesh.h"
+#include "Spark/ColorTransform.h"
 #include "Spark/Shape.h"
 
 namespace traktor
@@ -36,7 +37,7 @@ Shape::Shape(
 {
 }
 
-void Shape::render(render::RenderContext* renderContext, const Matrix33& transform) const
+void Shape::render(render::RenderContext* renderContext, const Matrix33& transform, const ColorTransform& colorTransform) const
 {
 	const Matrix44 T(
 		transform.e11, transform.e12, transform.e13, 0.0f,
@@ -63,6 +64,18 @@ void Shape::render(render::RenderContext* renderContext, const Matrix33& transfo
 
 		renderBlock->programParams->beginParameters(renderContext);
 		renderBlock->programParams->setMatrixParameter(L"Spark_Transform", T);
+		renderBlock->programParams->setVectorParameter(L"Spark_ColorTransform_Mul", Vector4(
+			colorTransform.red[0],
+			colorTransform.green[0],
+			colorTransform.blue[0],
+			colorTransform.alpha[0]
+		));
+		renderBlock->programParams->setVectorParameter(L"Spark_ColorTransform_Add", Vector4(
+			colorTransform.red[1],
+			colorTransform.green[1],
+			colorTransform.blue[1],
+			colorTransform.alpha[1]
+		));
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(

@@ -38,6 +38,8 @@ private:
 
 	Ref< Shape > traverse(xml::Element* elm);
 
+	Ref< Shape > parseDocument(xml::Element* elm);
+
 	Ref< Shape > parseGroup(xml::Element* elm);
 
 	Ref< Shape > parseCircle(xml::Element* elm);

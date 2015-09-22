@@ -32,6 +32,13 @@ class T_DLLCLASS ShapeAsset : public editor::Asset
 	T_RTTI_CLASS;
 
 public:
+	enum PivotType
+	{
+		PtViewTopLeft,
+		PtViewCenter,
+		PtShapeCenter
+	};
+
 	ShapeAsset();
 
 	virtual void serialize(ISerializer& s);
@@ -41,7 +48,7 @@ private:
 
 	resource::Id< render::Shader > m_shader;
 	float m_cubicApproximationError;
-	bool m_center;
+	PivotType m_pivot;
 };
 
 	}

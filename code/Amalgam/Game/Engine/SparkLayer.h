@@ -48,7 +48,9 @@ public:
 		bool permitTransition,
 		IEnvironment* environment,
 		const resource::Proxy< spark::Sprite >& sprite,
-		const Color4ub& background
+		const Color4ub& background,
+		int32_t width,
+		int32_t height
 	);
 
 	virtual ~SparkLayer();
@@ -83,6 +85,8 @@ private:
 	Ref< spark::SpriteInstance > m_spriteInstance;
 	Ref< spark::CharacterRenderer > m_characterRenderer;
 	Color4ub m_background;
+	int32_t m_width;
+	int32_t m_height;
 };
 
 	}
