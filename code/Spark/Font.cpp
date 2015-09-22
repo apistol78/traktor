@@ -49,6 +49,7 @@ void Font::render(render::RenderContext* renderContext, const Matrix33& transfor
 		renderBlock->programParams->setTextureParameter(L"Spark_GlyphMap", m_texture);
 		renderBlock->programParams->setVectorParameter(L"Spark_GlyphRect", it->second.rect);
 		renderBlock->programParams->setVectorParameter(L"Spark_GlyphUnit", it->second.unit);
+		renderBlock->programParams->setVectorParameter(L"Spark_GlyphOffset", it->second.offset);
 		renderBlock->programParams->setFloatParameter(L"Spark_GlyphHeight", height);
 		renderBlock->programParams->setVectorParameter(L"Spark_ColorTransform_Mul", Vector4(
 			colorTransform.red[0],

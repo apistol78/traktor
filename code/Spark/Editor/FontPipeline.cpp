@@ -156,7 +156,7 @@ bool FontPipeline::buildOutput(
 
 		FT_GlyphSlot slot = face->glyph;
 
-		int32_t width = slot->bitmap.width + slot->bitmap_left;
+		int32_t width = slot->bitmap.width;
 		int32_t height = slot->bitmap.rows;
 
 		glyphImages[i] = new drawing::Image(drawing::PixelFormat::getR8(), width, height);
@@ -167,11 +167,13 @@ bool FontPipeline::buildOutput(
 			for (int32_t x = 0; x < width; ++x)
 			{
 				float f = slot->bitmap.buffer[x + y * slot->bitmap.width] / 255.0f;
-				glyphImages[i]->setPixel(x + slot->bitmap_left, y, Color4f(f, f, f, f));
+				glyphImages[i]->setPixel(x, y, Color4f(f, f, f, f));
 			}
 		}
 
 		fontResource->m_glyphs[i].ch = ch;
+		fontResource->m_glyphs[i].offset[0] = float(slot->bitmap_left) / c_glyphPixelSize;
+		fontResource->m_glyphs[i].offset[1] = float(slot->bitmap_top) / c_glyphPixelSize;
 		fontResource->m_glyphs[i].advance = (float(slot->advance.x) / c_glyphPixelSize) / float(1 << 6);
 
 		/*

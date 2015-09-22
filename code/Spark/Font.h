@@ -53,6 +53,7 @@ private:
 	{
 		Vector4 rect;
 		Vector4 unit;
+		Vector4 offset;
 		float advance;
 	};
 
