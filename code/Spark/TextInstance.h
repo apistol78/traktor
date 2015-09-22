@@ -3,6 +3,7 @@
 
 #include "Resource/Proxy.h"
 #include "Spark/CharacterInstance.h"
+#include "Spark/ColorTransform.h"
 #include "Spark/Types.h"
 
 // import/export mechanism.
@@ -56,6 +57,10 @@ public:
 
 	Align getVerticalAlign() const;
 
+	void setAlpha(float alpha);
+
+	float getAlpha() const;
+
 	virtual Aabb2 getBounds() const T_FINAL;
 
 	virtual void update() T_FINAL;
@@ -71,6 +76,7 @@ private:
 	Aabb2 m_bounds;
 	Align m_horizontalAlign;
 	Align m_verticalAlign;
+	ColorTransform m_colorTransform;
 };
 
 	}

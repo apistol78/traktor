@@ -43,11 +43,6 @@ void TextInstance::setBounds(const Aabb2& bounds)
 	m_bounds = bounds;
 }
 
-Aabb2 TextInstance::getBounds() const
-{
-	return m_bounds;
-}
-
 void TextInstance::setHorizontalAlign(Align horizontalAlign)
 {
 	m_horizontalAlign = horizontalAlign;
@@ -66,6 +61,21 @@ void TextInstance::setVerticalAlign(Align verticalAlign)
 Align TextInstance::getVerticalAlign() const
 {
 	return m_verticalAlign;
+}
+
+void TextInstance::setAlpha(float alpha)
+{
+	m_colorTransform.alpha[0] = alpha;
+}
+
+float TextInstance::getAlpha() const
+{
+	return m_colorTransform.alpha[0];
+}
+
+Aabb2 TextInstance::getBounds() const
+{
+	return m_bounds;
 }
 
 void TextInstance::update()
@@ -129,7 +139,7 @@ void TextInstance::render(render::RenderContext* renderContext) const
 	for (uint32_t i = 0; i < m_text.length(); ++i)
 	{
 		wchar_t ch = m_text[i];
-		m_font->render(renderContext, T, ch, m_height);
+		m_font->render(renderContext, T, ch, m_height, m_colorTransform);
 		T = T * translate(m_font->advance(ch) * m_height, 0.0f);
 	}
 }
