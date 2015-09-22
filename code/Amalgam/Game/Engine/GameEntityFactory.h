@@ -13,6 +13,13 @@
 
 namespace traktor
 {
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace world
 	{
 
@@ -31,7 +38,7 @@ class T_DLLCLASS GameEntityFactory : public world::IEntityFactory
 	T_RTTI_CLASS;
 
 public:
-	GameEntityFactory(world::IEntityEventManager* eventManager);
+	GameEntityFactory(resource::IResourceManager* resourceManager, world::IEntityEventManager* eventManager);
 
 	virtual const TypeInfoSet getEntityTypes() const;
 
@@ -48,6 +55,7 @@ public:
 	) const;
 
 private:
+	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< world::IEntityEventManager > m_eventManager;
 };
 
