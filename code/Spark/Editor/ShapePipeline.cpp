@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include <list>
 #include "Core/Log/Log.h"
 #include "Core/Math/Aabb2.h"
@@ -22,6 +20,7 @@
 #include "Spark/Editor/ShapeAsset.h"
 #include "Spark/Editor/ShapePipeline.h"
 #include "Spark/Editor/ShapeShaderGenerator.h"
+#include "Spark/Editor/Shape/Document.h"
 #include "Spark/Editor/Shape/PathShape.h"
 #include "Spark/Editor/Shape/Shape.h"
 #include "Spark/Editor/Shape/ShapeVisitor.h"
@@ -68,6 +67,8 @@ public:
 
 	TriangleProducer(float cubicApproximationError)
 	:	m_cubicApproximationError(cubicApproximationError)
+	,	m_viewBox(Vector2(0.0f, 0.0f), Vector2(100.0f, 100.0f))
+	,	m_size(100.0f, 100.0f)
 	{
 		m_transformStack.push_back(Matrix33::identity());
 	}
@@ -75,34 +76,49 @@ public:
 	virtual void enter(Shape* shape)
 	{
 		m_transformStack.push_back(m_transformStack.back() * shape->getTransform());
-
 		const Matrix33& T = m_transformStack.back();
 
-		if (shape->getStyle())
-			m_style = shape->getStyle();
+		Document* document = dynamic_type_cast< Document* >(shape);
+		if (document)
+		{
+			m_viewBox = document->getViewBox();
+			m_size = document->getSize();
+		}
 
-		if (!m_style || !m_style->getFillEnable())
-			return;
+		if (shape->getStyle())
+			m_styleStack.push_back(shape->getStyle());
 
 		PathShape* pathShape = dynamic_type_cast< PathShape* >(shape);
 		if (pathShape)
 		{
 			AlignedVector< Triangulator::Segment > segments;
 
+			if (m_styleStack.empty() || !m_styleStack.back()->getFillEnable())
+				return;
+
 			const std::vector< SubPath >& subPaths = pathShape->getPath().getSubPaths();
 			for (std::vector< SubPath >::const_iterator i = subPaths.begin(); i != subPaths.end(); ++i)
 			{
+				// Transform points into view.
+				AlignedVector< Vector2 > points(i->points.size());
+				for (uint32_t j = 0; j < i->points.size(); ++j)
+					points[j] = m_size * (T * i->points[j] + m_viewBox.mn) / (m_viewBox.mx - m_viewBox.mn);
+
+				// Transform origin into view.
+				Vector2 origin = m_size * (T * i->origin + m_viewBox.mn) / (m_viewBox.mx - m_viewBox.mn);
+
+				// Create triangulator segments.
 				bool lastSubPath = bool(i == subPaths.end() - 1);
 				switch (i->type)
 				{
 				case SptLinear:
 					{
-						for (uint32_t j = 0; j < i->points.size() - 1; ++j)
+						for (uint32_t j = 0; j < points.size() - 1; ++j)
 						{
 							Triangulator::Segment s;
 							s.curve = false;
-							s.v[0] = Vector2i::fromVector2((T * i->points[j]) * c_pointScale);
-							s.v[1] = Vector2i::fromVector2((T * i->points[j + 1]) * c_pointScale);
+							s.v[0] = Vector2i::fromVector2(points[j] * c_pointScale);
+							s.v[1] = Vector2i::fromVector2(points[j + 1] * c_pointScale);
 							segments.push_back(s);
 						}
 					}
@@ -110,13 +126,13 @@ public:
 
 				case SptQuadric:
 					{
-						for (uint32_t j = 0; j < i->points.size() - 1; j += 2)
+						for (uint32_t j = 0; j < points.size() - 1; j += 2)
 						{
 							Triangulator::Segment s;
 							s.curve = true;
-							s.v[0] = Vector2i::fromVector2((T * i->points[j]) * c_pointScale);
-							s.v[1] = Vector2i::fromVector2((T * i->points[j + 2]) * c_pointScale);
-							s.c = Vector2i::fromVector2((T * i->points[j + 1]) * c_pointScale);
+							s.v[0] = Vector2i::fromVector2(points[j] * c_pointScale);
+							s.v[1] = Vector2i::fromVector2(points[j + 2] * c_pointScale);
+							s.c = Vector2i::fromVector2(points[j + 1] * c_pointScale);
 							segments.push_back(s);
 						}
 					}
@@ -124,13 +140,13 @@ public:
 
 				case SptCubic:
 					{
-						for (uint32_t j = 0; j < i->points.size() - 1; j += 3)
+						for (uint32_t j = 0; j < points.size() - 1; j += 3)
 						{
 							Bezier3rd b(
-								T * i->points[j],
-								T * i->points[j + 1],
-								T * i->points[j + 2],
-								T * i->points[j + 3]
+								points[j],
+								points[j + 1],
+								points[j + 2],
+								points[j + 3]
 							);
 
 							AlignedVector< Bezier2nd > a;
@@ -154,8 +170,8 @@ public:
 				{
 					Triangulator::Segment s;
 					s.curve = false;
-					s.v[0] = Vector2i::fromVector2((T * i->points.back()) * c_pointScale);
-					s.v[1] = Vector2i::fromVector2((T * i->origin) * c_pointScale);
+					s.v[0] = Vector2i::fromVector2(points.back() * c_pointScale);
+					s.v[1] = Vector2i::fromVector2(origin * c_pointScale);
 					segments.push_back(s);
 				}
 			}
@@ -197,7 +213,10 @@ public:
 						}
 					}
 
-					m_batches.push_back(std::make_pair(m_style, batch));
+					m_batches.push_back(std::make_pair(
+						m_styleStack.back(),
+						batch
+					));
 				}
 			}
 		}
@@ -206,15 +225,20 @@ public:
 	virtual void leave(Shape* shape)
 	{
 		m_transformStack.pop_back();
+		if (shape->getStyle())
+			m_styleStack.pop_back();
 	}
+
+	const Aabb2& getViewBox() const { return m_viewBox; }
 
 	const std::list< std::pair< const Style*, Batch > >& getBatches() const { return m_batches; }
 
 private:
 	float m_cubicApproximationError;
 	std::list< std::pair< const Style*, Batch > > m_batches;
-	Ref< const Style > m_style;
-
+	Aabb2 m_viewBox;
+	Vector2 m_size;
+	RefArray< const Style > m_styleStack;
 	AlignedVector< Matrix33 > m_transformStack;
 	Matrix33 m_currentTransform;
 };
@@ -361,6 +385,7 @@ bool ShapePipeline::buildOutput(
 	}
 
 	// Create render mesh from triangles and write to data stream.
+	const Aabb2& viewBox = triangleProducer.getViewBox();
 	const std::list< std::pair< const Style*, TriangleProducer::Batch > >& batches = triangleProducer.getBatches();
 
 	// Count total number of triangles.
@@ -378,7 +403,7 @@ bool ShapePipeline::buildOutput(
 		return false;
 	}
 
-	// Measure shape bounds.
+	// Measure initial shape bounds.
 	Aabb2 bounds;
 	for (std::list< std::pair< const Style*, TriangleProducer::Batch > >::const_iterator i = batches.begin(); i != batches.end(); ++i)
 	{
@@ -389,7 +414,30 @@ bool ShapePipeline::buildOutput(
 			bounds.contain(*j);
 		}
 	}
-	outputShapeResource->m_bounds = bounds;
+
+	// Determine offset to place pivot in origo.
+	Vector2 offset = Vector2::zero();
+	switch (shapeAsset->m_pivot)
+	{
+	default:
+	case ShapeAsset::PtViewTopLeft:
+		// Nothing to do.
+		break;
+
+	case ShapeAsset::PtViewCenter:
+		offset = -viewBox.getCenter();
+		break;
+
+	case ShapeAsset::PtShapeCenter:
+		offset = -bounds.getCenter();
+		break;
+	}
+	
+	// Set shape bounding box in output resource.
+	outputShapeResource->m_bounds = Aabb2(
+		bounds.mn + offset,
+		bounds.mx + offset
+	);
 
 	// Define shape render vertex.
 	std::vector< render::VertexElement > vertexElements;
@@ -417,17 +465,8 @@ bool ShapePipeline::buildOutput(
 			{
 				const Vector2& v = i->second.vertices[i->second.trianglesFill[j]];
 
-				if (shapeAsset->m_center)
-				{
-					vertex->position[0] = v.x - bounds.getCenter().x;
-					vertex->position[1] = v.y - bounds.getCenter().y;
-				}
-				else
-				{
-					vertex->position[0] = v.x;
-					vertex->position[1] = v.y;
-				}
-
+				vertex->position[0] = v.x + offset.x;
+				vertex->position[1] = v.y + offset.y;
 				vertex->controlPoints[0] = c_controlPoints[j % 3][0];
 				vertex->controlPoints[1] = c_controlPoints[j % 3][1];
 				vertex->color[0] = i->first->getFill().r / 255.0f;
@@ -456,17 +495,8 @@ bool ShapePipeline::buildOutput(
 			{
 				const Vector2& v = i->second.vertices[i->second.trianglesIn[j]];
 
-				if (shapeAsset->m_center)
-				{
-					vertex->position[0] = v.x - bounds.getCenter().x;
-					vertex->position[1] = v.y - bounds.getCenter().y;
-				}
-				else
-				{
-					vertex->position[0] = v.x;
-					vertex->position[1] = v.y;
-				}
-
+				vertex->position[0] = v.x + offset.x;
+				vertex->position[1] = v.y + offset.y;
 				vertex->controlPoints[0] = c_controlPoints[j % 3][0];
 				vertex->controlPoints[1] = c_controlPoints[j % 3][1];
 				vertex->color[0] = i->first->getFill().r / 255.0f;
@@ -495,17 +525,8 @@ bool ShapePipeline::buildOutput(
 			{
 				const Vector2& v = i->second.vertices[i->second.trianglesOut[j]];
 
-				if (shapeAsset->m_center)
-				{
-					vertex->position[0] = v.x - bounds.getCenter().x;
-					vertex->position[1] = v.y - bounds.getCenter().y;
-				}
-				else
-				{
-					vertex->position[0] = v.x;
-					vertex->position[1] = v.y;
-				}
-
+				vertex->position[0] = v.x + offset.x;
+				vertex->position[1] = v.y + offset.y;
 				vertex->controlPoints[0] = c_controlPoints[j % 3][0];
 				vertex->controlPoints[1] = c_controlPoints[j % 3][1];
 				vertex->color[0] = i->first->getFill().r / 255.0f;

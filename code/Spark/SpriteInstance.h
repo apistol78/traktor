@@ -5,6 +5,7 @@
 #include "Core/Containers/SmallMap.h"
 #include "Resource/Proxy.h"
 #include "Spark/CharacterInstance.h"
+#include "Spark/ColorTransform.h"
 #include "Spark/DisplayList.h"
 
 // import/export mechanism.
@@ -54,6 +55,10 @@ public:
 
 	void remove(int32_t depth);
 
+	void setAlpha(float alpha);
+
+	float getAlpha() const;
+
 	void getCharacters(RefArray< CharacterInstance >& outCharacters) const;
 
 	/*! \brief Set component in character instance.
@@ -78,6 +83,7 @@ private:
 	Ref< sound::ISoundPlayer > m_soundPlayer;
 	resource::Proxy< Shape > m_shape;
 	DisplayList m_displayList;
+	ColorTransform m_colorTransform;
 	SmallMap< const TypeInfo*, Ref< IComponentInstance > > m_components;
 };
 

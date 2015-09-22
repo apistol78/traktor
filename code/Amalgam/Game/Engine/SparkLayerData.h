@@ -44,6 +44,8 @@ private:
 
 	resource::Id< spark::Sprite > m_sprite;
 	Color4ub m_background;
+	int32_t m_width;
+	int32_t m_height;
 };
 
 	}

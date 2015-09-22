@@ -1,5 +1,6 @@
 #include "Amalgam/Game/IEnvironment.h"
 #include "Amalgam/Game/Engine/SparkLayer.h"
+#include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/IRenderView.h"
 #include "Spark/CharacterRenderer.h"
@@ -19,12 +20,16 @@ SparkLayer::SparkLayer(
 	bool permitTransition,
 	IEnvironment* environment,
 	const resource::Proxy< spark::Sprite >& sprite,
-	const Color4ub& background
+	const Color4ub& background,
+	int32_t width,
+	int32_t height
 )
 :	Layer(stage, name, permitTransition)
 ,	m_environment(environment)
 ,	m_sprite(sprite)
 ,	m_background(background)
+,	m_width(width)
+,	m_height(height)
 {
 }
 
@@ -98,15 +103,22 @@ void SparkLayer::render(render::EyeType eye, uint32_t frame)
 		);
 	}
 
-	const int32_t stageWidth = 1080;
-	const int32_t stageHeight = 1920;
+	float viewRatio = m_environment->getRender()->getAspectRatio();
 
-	float viewWidth = stageWidth;
-	float viewHeight = stageHeight;
+	float renderWidth = float(m_width);
+	float renderHeight = renderWidth / viewRatio;
+	if (renderHeight < m_height)
+	{
+		renderHeight = float(m_height);
+		renderWidth = m_height * viewRatio;
+	}
+
+	float offsetX = renderWidth - float(m_width);
+	float offsetY = renderHeight - float(m_height);
 
 	Matrix44 projection(
-		2.0f / viewWidth, 0.0f, 0.0f, -1.0f,
-		0.0f, -2.0f / viewHeight, 0.0f, 1.0f,
+		2.0f / renderWidth, 0.0f, 0.0f, -1.0f + offsetX / renderWidth,
+		0.0f, -2.0f / renderHeight, 0.0f, 1.0f - offsetY / renderHeight,
 		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
 	);

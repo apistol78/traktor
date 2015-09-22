@@ -3,15 +3,16 @@
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
+#include "Spark/Editor/Shape/Document.h"
 #include "Spark/Editor/Shape/Gradient.h"
 #include "Spark/Editor/Shape/Path.h"
 #include "Spark/Editor/Shape/PathShape.h"
 #include "Spark/Editor/Shape/Shape.h"
 #include "Spark/Editor/Shape/Style.h"
 #include "Spark/Editor/Shape/SvgParser.h"
+#include "Xml/Attribute.h"
 #include "Xml/Document.h"
 #include "Xml/Element.h"
-#include "Xml/Attribute.h"
 
 namespace traktor
 {
@@ -133,7 +134,9 @@ Ref< Shape > SvgParser::traverse(xml::Element* elm)
 	Ref< Shape > shape;
 
 	std::wstring name = elm->getName();
-	if (name == L"svg" || name == L"g")
+	if (name == L"svg")
+		shape = parseDocument(elm);
+	else if(name == L"g")
 		shape = parseGroup(elm);
 	else if (name == L"circle")
 		shape = parseCircle(elm);
@@ -172,6 +175,33 @@ Ref< Shape > SvgParser::traverse(xml::Element* elm)
 	}
 
 	return shape;
+}
+
+Ref< Shape > SvgParser::parseDocument(xml::Element* elm)
+{
+	Ref< Document > doc = new Document();
+
+	float width = parseString< float >(elm->getAttribute(L"width", L"0")->getValue());
+	float height = parseString< float >(elm->getAttribute(L"height", L"0")->getValue());
+	doc->setSize(Vector2(width, height));
+
+	if (elm->hasAttribute(L"viewBox"))
+	{
+		std::wstring viewBox = elm->getAttribute(L"viewBox")->getValue();
+		std::wstring::iterator i = viewBox.begin();
+
+		float left = parseDecimalNumber(i, viewBox.end());
+		float top = parseDecimalNumber(i, viewBox.end());
+		float width = parseDecimalNumber(i, viewBox.end());
+		float height = parseDecimalNumber(i, viewBox.end());
+
+		doc->setViewBox(Aabb2(
+			Vector2(left, top),
+			Vector2(left + width, top + height)
+		));
+	}
+
+	return doc;
 }
 
 Ref< Shape > SvgParser::parseGroup(xml::Element* elm)

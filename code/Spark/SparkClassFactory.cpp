@@ -84,6 +84,8 @@ void SparkClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classSpriteInstance->addMethod("create", &SpriteInstance::create);
 	classSpriteInstance->addMethod("place", &SpriteInstance::place);
 	classSpriteInstance->addMethod("remove", &SpriteInstance::remove);
+	classSpriteInstance->addMethod("setAlpha", &SpriteInstance::setAlpha);
+	classSpriteInstance->addMethod("getAlpha", &SpriteInstance::getAlpha);
 	classSpriteInstance->addMethod("setComponent", &SpriteInstance::setComponent);
 	classSpriteInstance->addMethod("getComponent", &SpriteInstance::getComponent);
 	registrar->registerClass(classSpriteInstance);

@@ -30,6 +30,8 @@ class Shader;
 	namespace spark
 	{
 
+class ColorTransform;
+
 /*! \brief Pre-triangulated renderable shape.
  * \ingroup Spark
  */
@@ -47,7 +49,7 @@ public:
 
 	const Aabb2& getBounds() const { return m_bounds; }
 
-	void render(render::RenderContext* renderContext, const Matrix33& transform) const;
+	void render(render::RenderContext* renderContext, const Matrix33& transform, const ColorTransform& colorTransform) const;
 
 private:
 	Ref< render::Mesh > m_mesh;
