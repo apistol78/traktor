@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.amalgam.Feature" version="5">
-	<description>System - Apple iPhone</description>
+	<description>System - Apple iOS</description>
 	<priority>0</priority>
 	<platforms>
 		<item>
@@ -53,7 +53,6 @@
 				<second type="traktor.PropertyStringSet">
 					<value>
 						<item>IOS</item>
-						<item>IPHONE</item>
 					</value>
 				</second>
 			</item>
@@ -106,25 +105,6 @@
 	</migrateProperties>
 	<runtimeProperties type="traktor.PropertyGroup">
 		<value>
-			<item>
-				<first>Render.DisplayMode</first>
-				<second type="traktor.PropertyGroup">
-					<value>
-						<item>
-							<first>Height</first>
-							<second type="traktor.PropertyInteger">
-								<value>480</value>
-							</second>
-						</item>
-						<item>
-							<first>Width</first>
-							<second type="traktor.PropertyInteger">
-								<value>320</value>
-							</second>
-						</item>
-					</value>
-				</second>
-			</item>
 			<item>
 				<first>Render.FullScreen</first>
 				<second type="traktor.PropertyBoolean">
