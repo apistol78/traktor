@@ -63,14 +63,113 @@ IComponentInstance* SpriteInstance::getComponent(const TypeInfo& componentType) 
 	return i != m_components.end() ? i->second : 0;
 }
 
+void SpriteInstance::eventKey(wchar_t unicode)
+{
+	// Propagate event to all components.
+	for (SmallMap< const TypeInfo*, Ref< IComponentInstance > >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
+		i->second->eventKey(unicode);
+
+	// Propagate event to all visible characters.
+	RefArray< CharacterInstance > characters;
+	m_displayList.getCharacters(characters);
+	for (RefArray< CharacterInstance >::const_iterator i = characters.begin(); i != characters.end(); ++i)
+		(*i)->eventKey(unicode);
+}
+
+void SpriteInstance::eventKeyDown(int32_t keyCode)
+{
+	// Propagate event to all components.
+	for (SmallMap< const TypeInfo*, Ref< IComponentInstance > >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
+		i->second->eventKeyDown(keyCode);
+
+	// Propagate event to all visible characters.
+	RefArray< CharacterInstance > characters;
+	m_displayList.getCharacters(characters);
+	for (RefArray< CharacterInstance >::const_iterator i = characters.begin(); i != characters.end(); ++i)
+		(*i)->eventKeyDown(keyCode);
+}
+
+void SpriteInstance::eventKeyUp(int32_t keyCode)
+{
+	// Propagate event to all components.
+	for (SmallMap< const TypeInfo*, Ref< IComponentInstance > >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
+		i->second->eventKeyUp(keyCode);
+
+	// Propagate event to all visible characters.
+	RefArray< CharacterInstance > characters;
+	m_displayList.getCharacters(characters);
+	for (RefArray< CharacterInstance >::const_iterator i = characters.begin(); i != characters.end(); ++i)
+		(*i)->eventKeyUp(keyCode);
+}
+
+void SpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
+{
+	// Propagate event to all components.
+	for (SmallMap< const TypeInfo*, Ref< IComponentInstance > >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
+		i->second->eventMouseDown(x, y, button);
+
+	// Propagate event to all visible characters.
+	RefArray< CharacterInstance > characters;
+	m_displayList.getCharacters(characters);
+	for (RefArray< CharacterInstance >::const_iterator i = characters.begin(); i != characters.end(); ++i)
+		(*i)->eventMouseDown(x, y, button);
+}
+
+void SpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
+{
+	// Propagate event to all components.
+	for (SmallMap< const TypeInfo*, Ref< IComponentInstance > >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
+		i->second->eventMouseUp(x, y, button);
+
+	// Propagate event to all visible characters.
+	RefArray< CharacterInstance > characters;
+	m_displayList.getCharacters(characters);
+	for (RefArray< CharacterInstance >::const_iterator i = characters.begin(); i != characters.end(); ++i)
+		(*i)->eventMouseUp(x, y, button);
+}
+
+void SpriteInstance::eventMouseMove(int32_t x, int32_t y, int32_t button)
+{
+	// Propagate event to all components.
+	for (SmallMap< const TypeInfo*, Ref< IComponentInstance > >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
+		i->second->eventMouseMove(x, y, button);
+
+	// Propagate event to all visible characters.
+	RefArray< CharacterInstance > characters;
+	m_displayList.getCharacters(characters);
+	for (RefArray< CharacterInstance >::const_iterator i = characters.begin(); i != characters.end(); ++i)
+		(*i)->eventMouseMove(x, y, button);
+}
+
+void SpriteInstance::eventMouseWheel(int32_t x, int32_t y, int32_t delta)
+{
+	// Propagate event to all components.
+	for (SmallMap< const TypeInfo*, Ref< IComponentInstance > >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
+		i->second->eventMouseWheel(x, y, delta);
+
+	// Propagate event to all visible characters.
+	RefArray< CharacterInstance > characters;
+	m_displayList.getCharacters(characters);
+	for (RefArray< CharacterInstance >::const_iterator i = characters.begin(); i != characters.end(); ++i)
+		(*i)->eventMouseWheel(x, y, delta);
+}
+
+void SpriteInstance::eventViewResize(int32_t width, int32_t height)
+{
+	// Propagate event to all components.
+	for (SmallMap< const TypeInfo*, Ref< IComponentInstance > >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
+		i->second->eventViewResize(width, height);
+
+	// Propagate event to all visible characters.
+	RefArray< CharacterInstance > characters;
+	m_displayList.getCharacters(characters);
+	for (RefArray< CharacterInstance >::const_iterator i = characters.begin(); i != characters.end(); ++i)
+		(*i)->eventViewResize(width, height);
+}
+
 Aabb2 SpriteInstance::getBounds() const
 {
-	Aabb2 bounds;
-
-	if (m_shape)
-		bounds = m_shape->getBounds();
-
-	return bounds;
+	return m_shape ? m_shape->getBounds() : Aabb2();
 }
 
 void SpriteInstance::update()

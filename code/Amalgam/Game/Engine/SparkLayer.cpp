@@ -3,7 +3,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/IRenderView.h"
-#include "Spark/CharacterRenderer.h"
+#include "Spark/SparkRenderer.h"
 #include "Spark/Sprite.h"
 #include "Spark/SpriteInstance.h"
 
@@ -41,7 +41,7 @@ void SparkLayer::destroy()
 {
 	m_environment = 0;
 	m_sprite.clear();
-	safeDestroy(m_characterRenderer);
+	safeDestroy(m_sparkRenderer);
 }
 
 void SparkLayer::transition(Layer* fromLayer)
@@ -50,10 +50,10 @@ void SparkLayer::transition(Layer* fromLayer)
 
 void SparkLayer::prepare()
 {
-	if (!m_characterRenderer)
+	if (!m_sparkRenderer)
 	{
-		m_characterRenderer = new spark::CharacterRenderer();
-		m_characterRenderer->create(m_environment->getRender()->getThreadFrameQueueCount());
+		m_sparkRenderer = new spark::SparkRenderer();
+		m_sparkRenderer->create(m_environment->getRender()->getThreadFrameQueueCount());
 	}
 
 	if (!m_spriteInstance)
@@ -77,12 +77,12 @@ void SparkLayer::build(const UpdateInfo& info, uint32_t frame)
 	if (!m_spriteInstance)
 		return;
 
-	m_characterRenderer->build(m_spriteInstance, frame);
+	m_sparkRenderer->build(m_spriteInstance, frame);
 }
 
 void SparkLayer::render(render::EyeType eye, uint32_t frame)
 {
-	if (!m_characterRenderer || !m_spriteInstance)
+	if (!m_sparkRenderer || !m_spriteInstance)
 		return;
 
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
@@ -123,7 +123,7 @@ void SparkLayer::render(render::EyeType eye, uint32_t frame)
 		0.0f, 0.0f, 0.0f, 1.0f
 	);
 
-	m_characterRenderer->render(renderView, projection, frame);
+	m_sparkRenderer->render(renderView, projection, frame);
 }
 
 void SparkLayer::flush()

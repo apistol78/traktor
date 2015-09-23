@@ -128,5 +128,37 @@ bool CharacterInstance::getVisible() const
 	return m_visible;
 }
 
+void CharacterInstance::eventKey(wchar_t unicode)
+{
+}
+
+void CharacterInstance::eventKeyDown(int32_t keyCode)
+{
+}
+
+void CharacterInstance::eventKeyUp(int32_t keyCode)
+{
+}
+
+void CharacterInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
+{
+}
+
+void CharacterInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
+{
+}
+
+void CharacterInstance::eventMouseMove(int32_t x, int32_t y, int32_t button)
+{
+}
+
+void CharacterInstance::eventMouseWheel(int32_t x, int32_t y, int32_t delta)
+{
+}
+
+void CharacterInstance::eventViewResize(int32_t width, int32_t height)
+{
+}
+
 	}
 }

@@ -48,7 +48,8 @@ class ISoundPlayer;
 	namespace spark
 	{
 
-class CharacterRenderer;
+class SparkPlayer;
+class SparkRenderer;
 class Sprite;
 class SpriteInstance;
 
@@ -90,7 +91,8 @@ private:
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< sound::ISoundPlayer > m_soundPlayer;
-	Ref< CharacterRenderer > m_characterRenderer;
+	Ref< SparkRenderer > m_sparkRenderer;
+	Ref< SparkPlayer > m_sparkPlayer;
 	Ref< const Sprite > m_sprite;
 	Ref< SpriteInstance > m_spriteInstance;
 	Ref< ui::EventSubject::IEventHandler > m_idleEventHandler;
@@ -99,6 +101,18 @@ private:
 	Vector2 m_viewOffset;
 	float m_viewScale;
 
+	ui::Point clientToView(const ui::Point& point) const;
+
+	void eventSize(ui::SizeEvent* event);
+
+	void eventPaint(ui::PaintEvent* event);
+
+	void eventKey(ui::KeyEvent* event);
+
+	void eventKeyDown(ui::KeyDownEvent* event);
+
+	void eventKeyUp(ui::KeyUpEvent* event);
+
 	void eventMouseButtonDown(ui::MouseButtonDownEvent* event);
 
 	void eventMouseButtonUp(ui::MouseButtonUpEvent* event);
@@ -106,10 +120,6 @@ private:
 	void eventMouseMove(ui::MouseMoveEvent* event);
 
 	void eventMouseWheel(ui::MouseWheelEvent* event);
-
-	void eventSize(ui::SizeEvent* event);
-
-	void eventPaint(ui::PaintEvent* event);
 
 	void eventIdle(ui::IdleEvent* event);
 };

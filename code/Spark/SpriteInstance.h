@@ -69,6 +69,27 @@ public:
 	 */
 	IComponentInstance* getComponent(const TypeInfo& componentType) const;
 
+	/*! \name Events */
+	//@{
+
+	virtual void eventKey(wchar_t unicode) T_FINAL;
+
+	virtual void eventKeyDown(int32_t keyCode) T_FINAL;
+
+	virtual void eventKeyUp(int32_t keyCode) T_FINAL;
+
+	virtual void eventMouseDown(int32_t x, int32_t y, int32_t button) T_FINAL;
+
+	virtual void eventMouseUp(int32_t x, int32_t y, int32_t button) T_FINAL;
+
+	virtual void eventMouseMove(int32_t x, int32_t y, int32_t button) T_FINAL;
+
+	virtual void eventMouseWheel(int32_t x, int32_t y, int32_t delta) T_FINAL;
+
+	virtual void eventViewResize(int32_t width, int32_t height) T_FINAL;
+
+	//@}
+
 	virtual Aabb2 getBounds() const;
 
 	virtual void update() T_FINAL;

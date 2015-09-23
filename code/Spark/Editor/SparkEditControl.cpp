@@ -1,9 +1,11 @@
 #include "Core/Log/Log.h"
+#include "Core/Math/Format.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Editor/IEditor.h"
-#include "Spark/CharacterRenderer.h"
+#include "Spark/SparkPlayer.h"
+#include "Spark/SparkRenderer.h"
 #include "Spark/Sprite.h"
 #include "Spark/SpriteInstance.h"
 #include "Spark/Editor/SparkEditControl.h"
@@ -90,8 +92,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.SparkEditControl", SparkEditControl, ui::
 SparkEditControl::SparkEditControl(editor::IEditor* editor)
 :	m_editor(editor)
 ,	m_editMode(EmIdle)
-,	m_viewOffset(0.0f, 0.0f)
-,	m_viewScale(1.0f)
+,	m_viewOffset(1080.0f, 1920.0f)
+,	m_viewScale(0.3f)
 {
 }
 
@@ -122,15 +124,18 @@ bool SparkEditControl::create(
 	if (!m_primitiveRenderer->create(resourceManager, renderSystem))
 		return false;
 
-	m_characterRenderer = new CharacterRenderer();
-	m_characterRenderer->create(1);
+	m_sparkRenderer = new SparkRenderer();
+	m_sparkRenderer->create(1);
 
+	addEventHandler< ui::SizeEvent >(this, &SparkEditControl::eventSize);
+	addEventHandler< ui::PaintEvent >(this, &SparkEditControl::eventPaint);
+	addEventHandler< ui::KeyEvent >(this, &SparkEditControl::eventKey);
+	addEventHandler< ui::KeyDownEvent >(this, &SparkEditControl::eventKeyDown);
+	addEventHandler< ui::KeyUpEvent >(this, &SparkEditControl::eventKeyUp);
 	addEventHandler< ui::MouseButtonDownEvent >(this, &SparkEditControl::eventMouseButtonDown);
 	addEventHandler< ui::MouseButtonUpEvent >(this, &SparkEditControl::eventMouseButtonUp);
 	addEventHandler< ui::MouseMoveEvent >(this, &SparkEditControl::eventMouseMove);
 	addEventHandler< ui::MouseWheelEvent >(this, &SparkEditControl::eventMouseWheel);
-	addEventHandler< ui::SizeEvent >(this, &SparkEditControl::eventSize);
-	addEventHandler< ui::PaintEvent >(this, &SparkEditControl::eventPaint);
 
 	m_database = database;
 	m_resourceManager = resourceManager;
@@ -143,7 +148,7 @@ bool SparkEditControl::create(
 void SparkEditControl::destroy()
 {
 	ui::Application::getInstance()->removeEventHandler< ui::IdleEvent >(m_idleEventHandler);
-	safeDestroy(m_characterRenderer);
+	safeDestroy(m_sparkRenderer);
 	safeDestroy(m_primitiveRenderer);
 	safeClose(m_renderView);
 	Widget::destroy();
@@ -162,52 +167,47 @@ void SparkEditControl::refresh()
 	else
 		m_spriteInstance = 0;
 
-	update();
-}
-
-void SparkEditControl::eventMouseButtonDown(ui::MouseButtonDownEvent* event)
-{
-	m_lastMousePosition = event->getPosition();
-
-	if (event->getButton() == ui::MbtLeft && (event->getKeyState() & ui::KsMenu) != 0)
-		m_editMode = EmPanView;
+	if (m_spriteInstance)
+		m_sparkPlayer = new SparkPlayer(m_spriteInstance);
 	else
-		m_editMode = EmIdle;
+		m_sparkPlayer = 0;
 
-	setCapture();
-}
-
-void SparkEditControl::eventMouseButtonUp(ui::MouseButtonUpEvent* event)
-{
-	m_editMode = EmIdle;
-	releaseCapture();
-}
-
-void SparkEditControl::eventMouseMove(ui::MouseMoveEvent* event)
-{
-	if (!hasCapture())
-		return;
-
-	ui::Point mousePosition = event->getPosition();
-
-	if (m_editMode == EmPanView)
-	{
-		Vector2 deltaMove(
-			-(mousePosition.x - m_lastMousePosition.x),
-			-(mousePosition.y - m_lastMousePosition.y)
-		);
-		m_viewOffset += 2.0f * deltaMove / m_viewScale;
-	}
-
-	m_lastMousePosition = mousePosition;
 	update();
 }
 
-void SparkEditControl::eventMouseWheel(ui::MouseWheelEvent* event)
+ui::Point SparkEditControl::clientToView(const ui::Point& point) const
 {
-	m_viewScale += event->getRotation() * 0.1f;
-	m_viewScale = clamp(m_viewScale, 0.1f, 1000.0f);
-	update();
+	ui::Size sz = getInnerRect().getSize();
+
+	const int32_t stageWidth = 1080;
+	const int32_t stageHeight = 1920;
+
+	float viewWidth = sz.cx / m_viewScale;
+	float viewHeight = sz.cy / m_viewScale;
+
+	float viewX = m_viewOffset.x / viewWidth;
+	float viewY = m_viewOffset.y / viewHeight;
+
+	Matrix44 projection(
+		2.0f / viewWidth, 0.0f, 0.0f, -viewX,
+		0.0f, -2.0f / viewHeight, 0.0f, viewY,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	);
+
+	Vector4 clientPosition(
+		2.0f * float(point.x) / sz.cx - 1.0f,
+		1.0f - 2.0f * float(point.y) / sz.cy,
+		0.0f,
+		1.0f
+	);
+
+	Vector4 viewPosition = projection.inverse() * clientPosition;
+
+	return ui::Point(
+		int32_t(viewPosition.x()),
+		int32_t(viewPosition.y())
+	);
 }
 
 void SparkEditControl::eventSize(ui::SizeEvent* event)
@@ -292,12 +292,13 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 			m_primitiveRenderer->end();
 		}
 
-		if (m_spriteInstance)
-		{
-			//m_spriteInstance->update();
+		if (m_sparkPlayer)
+			m_sparkPlayer->update();
 
-			m_characterRenderer->build(m_spriteInstance, 0);
-			m_characterRenderer->render(
+		if (m_sparkRenderer && m_spriteInstance)
+		{
+			m_sparkRenderer->build(m_spriteInstance, 0);
+			m_sparkRenderer->render(
 				m_renderView,
 				projection,
 				0
@@ -319,6 +320,104 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 	}
 
 	event->consume();
+}
+
+void SparkEditControl::eventKey(ui::KeyEvent* event)
+{
+	if (m_sparkPlayer)
+		m_sparkPlayer->postKey(event->getCharacter());
+}
+
+void SparkEditControl::eventKeyDown(ui::KeyDownEvent* event)
+{
+	if (m_sparkPlayer)
+		m_sparkPlayer->postKeyDown(event->getVirtualKey());
+}
+
+void SparkEditControl::eventKeyUp(ui::KeyUpEvent* event)
+{
+	if (m_sparkPlayer)
+		m_sparkPlayer->postKeyUp(event->getVirtualKey());
+}
+
+void SparkEditControl::eventMouseButtonDown(ui::MouseButtonDownEvent* event)
+{
+	m_lastMousePosition = event->getPosition();
+
+	if (event->getButton() == ui::MbtLeft && (event->getKeyState() & ui::KsMenu) != 0)
+		m_editMode = EmPanView;
+	else
+	{
+		m_editMode = EmIdle;
+
+		ui::Point mousePosition = clientToView(event->getPosition());
+		m_sparkPlayer->postMouseDown(mousePosition.x, mousePosition.y, event->getButton());
+	}
+
+	setCapture();
+}
+
+void SparkEditControl::eventMouseButtonUp(ui::MouseButtonUpEvent* event)
+{
+	if (!hasCapture())
+		return;
+
+	if (m_editMode == EmIdle)
+	{
+		if (m_sparkPlayer)
+		{
+			ui::Point mousePosition = clientToView(event->getPosition());
+			m_sparkPlayer->postMouseUp(mousePosition.x, mousePosition.y, event->getButton());
+		}
+	}
+	else
+		m_editMode = EmIdle;
+
+	releaseCapture();
+}
+
+void SparkEditControl::eventMouseMove(ui::MouseMoveEvent* event)
+{
+	ui::Point mousePosition = event->getPosition();
+
+	if (m_editMode == EmPanView)
+	{
+		Vector2 deltaMove(
+			-(mousePosition.x - m_lastMousePosition.x),
+			-(mousePosition.y - m_lastMousePosition.y)
+		);
+		m_viewOffset += 2.0f * deltaMove / m_viewScale;
+	}
+	else if (m_editMode == EmIdle)
+	{
+		if (m_sparkPlayer)
+		{
+			ui::Point mousePosition = clientToView(event->getPosition());
+			m_sparkPlayer->postMouseMove(mousePosition.x, mousePosition.y, event->getButton());
+		}
+	}
+
+	m_lastMousePosition = mousePosition;
+	update();
+}
+
+void SparkEditControl::eventMouseWheel(ui::MouseWheelEvent* event)
+{
+	if ((event->getKeyState() & ui::KsMenu) != 0)
+	{
+		m_viewScale += event->getRotation() * 0.1f;
+		m_viewScale = clamp(m_viewScale, 0.1f, 1000.0f);
+	}
+	else
+	{
+		if (m_sparkPlayer)
+		{
+			ui::Point mousePosition = clientToView(event->getPosition());
+			m_sparkPlayer->postMouseWheel(mousePosition.x, mousePosition.y, event->getRotation());
+		}
+	}
+
+	update();
 }
 
 void SparkEditControl::eventIdle(ui::IdleEvent* event)

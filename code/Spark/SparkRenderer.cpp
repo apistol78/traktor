@@ -1,6 +1,6 @@
 #include "Render/Context/RenderContext.h"
 #include "Spark/CharacterInstance.h"
-#include "Spark/CharacterRenderer.h"
+#include "Spark/SparkRenderer.h"
 #include "Spark/DisplayList.h"
 
 namespace traktor
@@ -8,9 +8,9 @@ namespace traktor
 	namespace spark
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.CharacterRenderer", CharacterRenderer, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.SparkRenderer", SparkRenderer, Object)
 
-bool CharacterRenderer::create(uint32_t frameCount)
+bool SparkRenderer::create(uint32_t frameCount)
 {
 	// Create render context for each queued frame.
 	m_renderContexts.resize(frameCount);
@@ -22,19 +22,19 @@ bool CharacterRenderer::create(uint32_t frameCount)
 	return true;
 }
 
-void CharacterRenderer::destroy()
+void SparkRenderer::destroy()
 {
 	m_globalContext = 0;
 	m_renderContexts.clear();
 }
 
-void CharacterRenderer::build(const CharacterInstance* character, uint32_t frame)
+void SparkRenderer::build(const CharacterInstance* character, uint32_t frame)
 {
 	m_renderContexts[frame]->flush();
 	character->render(m_renderContexts[frame]);
 }
 
-void CharacterRenderer::render(render::IRenderView* renderView, const Matrix44& projection, uint32_t frame)
+void SparkRenderer::render(render::IRenderView* renderView, const Matrix44& projection, uint32_t frame)
 {
 	render::ProgramParameters programParams;
 	programParams.beginParameters(m_globalContext);

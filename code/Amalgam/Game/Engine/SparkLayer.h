@@ -25,7 +25,7 @@ class IEnvironment;
 	namespace spark
 	{
 
-class CharacterRenderer;
+class SparkRenderer;
 class Sprite;
 class SpriteInstance;
 
@@ -83,7 +83,7 @@ private:
 	Ref< IEnvironment > m_environment;
 	resource::Proxy< spark::Sprite > m_sprite;
 	Ref< spark::SpriteInstance > m_spriteInstance;
-	Ref< spark::CharacterRenderer > m_characterRenderer;
+	Ref< spark::SparkRenderer > m_sparkRenderer;
 	Color4ub m_background;
 	int32_t m_width;
 	int32_t m_height;
