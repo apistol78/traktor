@@ -66,15 +66,6 @@ struct AtlasBucket
 	std::list< AtlasBitmap > bitmaps;
 };
 
-Guid incrementGuid(const Guid& g, uint32_t steps)
-{
-	uint8_t d[16];
-	for (int i = 0; i < 16; ++i)
-		d[i] = g[i];
-	reinterpret_cast< uint32_t& >(d[12]) += steps;
-	return Guid(d);
-}
-
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", 37, FlashPipeline, editor::IPipeline)
@@ -340,7 +331,7 @@ bool FlashPipeline::buildOutput(
 			atlasImage->save(L"FlashBitmapAtlas" + toString(count) + L".png");
 #endif
 
-			Guid bitmapOutputGuid = incrementGuid(outputGuid, count++);
+			Guid bitmapOutputGuid = outputGuid.permutate(count++);
 
 			Ref< render::TextureOutput > output = new render::TextureOutput();
 			output->m_textureFormat = render::TfInvalid;
@@ -425,7 +416,7 @@ bool FlashPipeline::buildOutput(
 		bitmapImage->save(L"FlashBitmap" + toString(count) + L".png");
 #endif
 
-		Guid bitmapOutputGuid = incrementGuid(outputGuid, count++);
+		Guid bitmapOutputGuid = outputGuid.permutate(count++);
 
 		Ref< render::TextureOutput > output = new render::TextureOutput();
 		output->m_textureFormat = render::TfInvalid;

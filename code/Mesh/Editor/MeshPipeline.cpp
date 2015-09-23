@@ -132,23 +132,6 @@ Guid getVertexShaderGuid(MeshAsset::MeshType meshType)
 	}
 }
 
-Guid combineGuids(const Guid& g1, const Guid& g2)
-{
-	uint8_t d[16];
-	for (int i = 0; i < 16; ++i)
-		d[i] = g1[i] ^ g2[i];
-	return Guid(d);
-}
-
-Guid incrementGuid(const Guid& g)
-{
-	uint8_t d[16];
-	for (int i = 0; i < 16; ++i)
-		d[i] = g[i];
-	reinterpret_cast< uint32_t& >(d[12])++;
-	return Guid(d);
-}
-
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 25, MeshPipeline, editor::IPipeline)
@@ -351,7 +334,7 @@ bool MeshPipeline::buildOutput(
 	Guid vertexShaderGuid = getVertexShaderGuid(asset->getMeshType());
 	T_ASSERT (vertexShaderGuid.isValid());
 
-	Guid materialGuid = combineGuids(vertexShaderGuid, outputGuid);
+	Guid materialGuid = vertexShaderGuid.permutate(outputGuid);
 	T_ASSERT (materialGuid.isValid());
 
 	MaterialShaderGenerator generator;

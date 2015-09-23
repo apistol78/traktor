@@ -2,6 +2,7 @@
 #define traktor_spark_Shape_H
 
 #include "Core/Object.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Aabb2.h"
 #include "Resource/Proxy.h"
 
@@ -40,10 +41,14 @@ class T_DLLCLASS Shape : public Object
 	T_RTTI_CLASS;
 
 public:
+	struct Part
+	{
+		resource::Proxy< render::Shader > shader;
+	};
+
 	Shape(
 		render::Mesh* mesh,
-		const resource::Proxy< render::Shader >& shader,
-		const std::vector< uint8_t >& parts,
+		const AlignedVector< Part >& parts,
 		const Aabb2& bounds
 	);
 
@@ -53,8 +58,7 @@ public:
 
 private:
 	Ref< render::Mesh > m_mesh;
-	mutable resource::Proxy< render::Shader > m_shader;
-	std::vector< uint8_t > m_parts;
+	AlignedVector< Part > m_parts;
 	Aabb2 m_bounds;
 };
 

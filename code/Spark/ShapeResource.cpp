@@ -1,6 +1,7 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAabb.h"
-#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/MemberAlignedVector.h"
+#include "Core/Serialization/MemberComposite.h"
 #include "Core/Log/Log.h"
 #include "Database/Instance.h"
 #include "Render/Shader.h"
@@ -40,22 +41,29 @@ Ref< Shape > ShapeResource::create(resource::IResourceManager* resourceManager, 
 		return 0;
 	}
 
-	// Bind runtime shader.
-	resource::Proxy< render::Shader > shader;
-	if (!resourceManager->bind(m_shader, shader))
+	// Bind shaders.
+	AlignedVector< Shape::Part > parts(m_parts.size());
+	for (size_t i = 0; i < m_parts.size(); ++i)
 	{
-		log::error << L"Shape create failed; unable to bind shader" << Endl;
-		return 0;
+		if (!resourceManager->bind(m_parts[i].shader, parts[i].shader))
+		{
+			log::error << L"Shape create failed; unable to bind shader" << Endl;
+			return 0;
+		}
 	}
 
-	return new Shape(mesh, shader, m_parts, m_bounds);
+	return new Shape(mesh, parts, m_bounds);
 }
 
 void ShapeResource::serialize(ISerializer& s)
 {
-	s >> resource::Member< render::Shader >(L"shader", m_shader);
-	s >> MemberStlVector< uint8_t >(L"parts", m_parts);
+	s >> MemberAlignedVector< Part, MemberComposite< Part > >(L"parts", m_parts);
 	s >> MemberAabb2(L"bounds", m_bounds);
+}
+
+void ShapeResource::Part::serialize(ISerializer& s)
+{
+	s >> resource::Member< render::Shader >(L"shader", shader);
 }
 
 	}

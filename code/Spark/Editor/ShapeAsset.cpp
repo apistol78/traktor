@@ -2,8 +2,6 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberEnum.h"
-#include "Render/Shader.h"
-#include "Resource/Member.h"
 #include "Spark/Editor/ShapeAsset.h"
 
 namespace traktor
@@ -31,7 +29,6 @@ void ShapeAsset::serialize(ISerializer& s)
 
 	editor::Asset::serialize(s);
 
-	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> Member< float >(L"cubicApproximationError", m_cubicApproximationError, AttributeRange(0.0f));
 	s >> MemberEnum< PivotType >(L"pivot", m_pivot, c_pivotTypeKeys);
 }

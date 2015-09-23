@@ -2,6 +2,7 @@
 #define traktor_spark_Gradient_H
 
 #include "Core/Object.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Color4ub.h"
 
 namespace traktor
@@ -22,22 +23,24 @@ public:
 		GtLinear,
 		GtRadial
 	};
-	
-	Gradient(GradientType gradientType);
-	
-	GradientType getGradientType() const;
-	
-	void addStop(float offset, const Color4ub& color);
-	
-private:
+
 	struct Stop
 	{
 		float offset;
 		Color4ub color;
 	};
+
+	Gradient(GradientType gradientType);
 	
+	GradientType getGradientType() const;
+	
+	void addStop(float offset, const Color4ub& color);
+
+	const AlignedVector< Stop >& getStops() const;
+	
+private:
 	GradientType m_gradientType;
-	std::vector< Stop > m_stops;
+	AlignedVector< Stop > m_stops;
 };
 	
 	}

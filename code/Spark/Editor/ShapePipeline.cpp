@@ -12,9 +12,11 @@
 #include "Editor/IPipelineSettings.h"
 #include "Render/IndexBuffer.h"
 #include "Render/VertexBuffer.h"
+#include "Render/Editor/Shader/ShaderGraphTechniques.h"
 #include "Render/Mesh/Mesh.h"
 #include "Render/Mesh/MeshWriter.h"
 #include "Render/Mesh/SystemMeshFactory.h"
+#include "Render/Shader/Nodes.h"
 #include "Render/Shader/ShaderGraph.h"
 #include "Spark/ShapeResource.h"
 #include "Spark/Editor/ShapeAsset.h"
@@ -50,7 +52,6 @@ struct Vertex
 {
 	float position[2];
 	float controlPoints[2];
-	float color[4];
 };
 #pragma pack()
 
@@ -243,13 +244,23 @@ private:
 	Matrix33 m_currentTransform;
 };
 
-Guid incrementGuid(const Guid& g)
+bool setDefaultTechnique(render::ShaderGraph* shaderGraph)
 {
-	uint8_t d[16];
-	for (int i = 0; i < 16; ++i)
-		d[i] = g[i];
-	reinterpret_cast< uint32_t& >(d[12])++;
-	return Guid(d);
+	RefArray< render::VertexOutput > vertexOutputNodes;
+	if (shaderGraph->findNodesOf< render::VertexOutput >(vertexOutputNodes) != 1)
+		return false;
+
+	for (RefArray< render::VertexOutput >::iterator i = vertexOutputNodes.begin(); i != vertexOutputNodes.end(); ++i)
+		(*i)->setTechnique(L"Default");
+
+	RefArray< render::PixelOutput > pixelOutputNodes;
+	if (shaderGraph->findNodesOf< render::PixelOutput >(pixelOutputNodes) != 1)
+		return false;
+
+	for (RefArray< render::PixelOutput >::iterator i = pixelOutputNodes.begin(); i != pixelOutputNodes.end(); ++i)
+		(*i)->setTechnique(L"Default");
+
+	return true;
 }
 
 		}
@@ -287,7 +298,6 @@ bool ShapePipeline::buildDependencies(
 {
 	const ShapeAsset* shapeAsset = checked_type_cast< const ShapeAsset* >(sourceAsset);
 	pipelineDepends->addDependency(traktor::Path(m_assetPath), shapeAsset->getFileName().getOriginal());
-	pipelineDepends->addDependency(shapeAsset->m_shader, editor::PdfUse);
 	ShapeShaderGenerator().addDependencies(pipelineDepends);
 	return true;
 }
@@ -338,31 +348,8 @@ bool ShapePipeline::buildOutput(
 	TriangleProducer triangleProducer(shapeAsset->m_cubicApproximationError);
 	shape->visit(&triangleProducer);
 
-	// Create shape shader.
-	ShapeShaderGenerator shaderGenerator;
-	Ref< render::ShaderGraph > outputShapeShader = shaderGenerator.generate(pipelineBuilder->getSourceDatabase(), shapeAsset->m_shader);
-	if (!outputShapeShader)
-	{
-		log::error << L"Shape pipeline failed; unable to generate shader" << Endl;
-		return false;
-	}
-
-	// Build shape shader.
-	Guid outputShaderGuid = incrementGuid(outputGuid);
-	std::wstring outputShaderPath = traktor::Path(outputPath).getPathOnly() + L"/" + outputGuid.format() + L"/Shader";
-	if (!pipelineBuilder->buildOutput(
-		outputShapeShader,
-		outputShaderPath,
-		outputShaderGuid
-	))
-	{
-		log::error << L"Shape pipeline failed; unable to build shader" << Endl;
-		return false;
-	}
-
 	// Create shape output resource.
 	Ref< ShapeResource > outputShapeResource = new ShapeResource();
-	outputShapeResource->m_shader = resource::Id< render::Shader >(outputShaderGuid);
 
 	// Create output instance.
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(
@@ -443,7 +430,6 @@ bool ShapePipeline::buildOutput(
 	std::vector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(Vertex, position)));
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat2, offsetof(Vertex, controlPoints)));
-	vertexElements.push_back(render::VertexElement(render::DuColor, render::DtFloat4, offsetof(Vertex, color)));
 
 	Ref< render::Mesh > renderMesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
@@ -453,30 +439,53 @@ bool ShapePipeline::buildOutput(
 	);
 
 	Vertex* vertex = static_cast< Vertex* >(renderMesh->getVertexBuffer()->lock());
-	uint32_t vertexOffset = 0;
-
 	std::vector< render::Mesh::Part > meshParts;
+	uint32_t permutateCount = 0;
+	uint32_t vertexOffset = 0;
 
 	for (std::list< std::pair< const Style*, TriangleProducer::Batch > >::const_iterator i = batches.begin(); i != batches.end(); ++i)
 	{
-		// Fill
+		// Create master style shader.
+		ShapeShaderGenerator shaderGenerator;
+		Ref< render::ShaderGraph > masterStyleShader = shaderGenerator.generate(pipelineBuilder->getSourceDatabase(), i->first);
+		if (!masterStyleShader)
 		{
+			log::error << L"Shape pipeline failed; unable to generate shader" << Endl;
+			return false;
+		}
+
+		// Fill
+		if (!i->second.trianglesFill.empty())
+		{
+			// Create "fill" shader.
+			Ref< render::ShaderGraph > fillStyleShader = render::ShaderGraphTechniques(masterStyleShader).generate(L"Fill");
+			setDefaultTechnique(fillStyleShader);
+
+			// Build style shader.
+			Guid outputShaderGuid = outputGuid.permutate(++permutateCount);
+			std::wstring outputShaderPath = traktor::Path(outputPath).getPathOnly() + L"/" + outputGuid.format() + L"/" + outputShaderGuid.format();
+			if (!pipelineBuilder->buildOutput(
+				fillStyleShader,
+				outputShaderPath,
+				outputShaderGuid
+			))
+			{
+				log::error << L"Shape pipeline failed; unable to build shader" << Endl;
+				return false;
+			}
+
+			// Create vertices.
 			for (uint32_t j = 0; j < i->second.trianglesFill.size(); ++j)
 			{
 				const Vector2& v = i->second.vertices[i->second.trianglesFill[j]];
-
 				vertex->position[0] = v.x + offset.x;
 				vertex->position[1] = v.y + offset.y;
 				vertex->controlPoints[0] = c_controlPoints[j % 3][0];
 				vertex->controlPoints[1] = c_controlPoints[j % 3][1];
-				vertex->color[0] = i->first->getFill().r / 255.0f;
-				vertex->color[1] = i->first->getFill().g / 255.0f;
-				vertex->color[2] = i->first->getFill().b / 255.0f;
-				vertex->color[3] = i->first->getOpacity();
-
 				vertex++;
 			}
 
+			// Setup render mesh part.
 			render::Mesh::Part part;
 			part.primitives.setNonIndexed(
 				render::PtTriangles,
@@ -484,29 +493,48 @@ bool ShapePipeline::buildOutput(
 				uint32_t(i->second.trianglesFill.size() / 3)
 			);
 			meshParts.push_back(part);
-			outputShapeResource->m_parts.push_back(0);
 
+			// Setup shape part.
+			ShapeResource::Part shapePart;
+			shapePart.shader = resource::Id< render::Shader >(outputShaderGuid);
+			outputShapeResource->m_parts.push_back(shapePart);
+
+			// Increment vertex buffer offset.
 			vertexOffset += i->second.trianglesFill.size();
 		}
 
 		// In
+		if (!i->second.trianglesIn.empty())
 		{
+			// Create "in" shader.
+			Ref< render::ShaderGraph > inStyleShader = render::ShaderGraphTechniques(masterStyleShader).generate(L"In");
+			setDefaultTechnique(inStyleShader);
+
+			// Build style shader.
+			Guid outputShaderGuid = outputGuid.permutate(++permutateCount);
+			std::wstring outputShaderPath = traktor::Path(outputPath).getPathOnly() + L"/" + outputGuid.format() + L"/" + outputShaderGuid.format();
+			if (!pipelineBuilder->buildOutput(
+				inStyleShader,
+				outputShaderPath,
+				outputShaderGuid
+			))
+			{
+				log::error << L"Shape pipeline failed; unable to build shader" << Endl;
+				return false;
+			}
+
+			// Create vertices.
 			for (uint32_t j = 0; j < i->second.trianglesIn.size(); ++j)
 			{
 				const Vector2& v = i->second.vertices[i->second.trianglesIn[j]];
-
 				vertex->position[0] = v.x + offset.x;
 				vertex->position[1] = v.y + offset.y;
 				vertex->controlPoints[0] = c_controlPoints[j % 3][0];
 				vertex->controlPoints[1] = c_controlPoints[j % 3][1];
-				vertex->color[0] = i->first->getFill().r / 255.0f;
-				vertex->color[1] = i->first->getFill().g / 255.0f;
-				vertex->color[2] = i->first->getFill().b / 255.0f;
-				vertex->color[3] = i->first->getOpacity();
-
 				vertex++;
 			}
 
+			// Setup render mesh part.
 			render::Mesh::Part part;
 			part.primitives.setNonIndexed(
 				render::PtTriangles,
@@ -514,29 +542,48 @@ bool ShapePipeline::buildOutput(
 				uint32_t(i->second.trianglesIn.size() / 3)
 			);
 			meshParts.push_back(part);
-			outputShapeResource->m_parts.push_back(1);
 
+			// Setup shape part.
+			ShapeResource::Part shapePart;
+			shapePart.shader = resource::Id< render::Shader >(outputShaderGuid);
+			outputShapeResource->m_parts.push_back(shapePart);
+
+			// Increment vertex buffer offset.
 			vertexOffset += i->second.trianglesIn.size();
 		}
 
 		// Out
+		if (!i->second.trianglesOut.empty())
 		{
+			// Create "out" shader.
+			Ref< render::ShaderGraph > outStyleShader = render::ShaderGraphTechniques(masterStyleShader).generate(L"Out");
+			setDefaultTechnique(outStyleShader);
+
+			// Build style shader.
+			Guid outputShaderGuid = outputGuid.permutate(++permutateCount);
+			std::wstring outputShaderPath = traktor::Path(outputPath).getPathOnly() + L"/" + outputGuid.format() + L"/" + outputShaderGuid.format();
+			if (!pipelineBuilder->buildOutput(
+				outStyleShader,
+				outputShaderPath,
+				outputShaderGuid
+			))
+			{
+				log::error << L"Shape pipeline failed; unable to build shader" << Endl;
+				return false;
+			}
+
+			// Create vertices.
 			for (uint32_t j = 0; j < i->second.trianglesOut.size(); ++j)
 			{
 				const Vector2& v = i->second.vertices[i->second.trianglesOut[j]];
-
 				vertex->position[0] = v.x + offset.x;
 				vertex->position[1] = v.y + offset.y;
 				vertex->controlPoints[0] = c_controlPoints[j % 3][0];
 				vertex->controlPoints[1] = c_controlPoints[j % 3][1];
-				vertex->color[0] = i->first->getFill().r / 255.0f;
-				vertex->color[1] = i->first->getFill().g / 255.0f;
-				vertex->color[2] = i->first->getFill().b / 255.0f;
-				vertex->color[3] = i->first->getOpacity();
-
 				vertex++;
 			}
 
+			// Setup render mesh part.
 			render::Mesh::Part part;
 			part.primitives.setNonIndexed(
 				render::PtTriangles,
@@ -544,16 +591,19 @@ bool ShapePipeline::buildOutput(
 				uint32_t(i->second.trianglesOut.size() / 3)
 			);
 			meshParts.push_back(part);
-			outputShapeResource->m_parts.push_back(2);
 
+			// Setup shape part.
+			ShapeResource::Part shapePart;
+			shapePart.shader = resource::Id< render::Shader >(outputShaderGuid);
+			outputShapeResource->m_parts.push_back(shapePart);
+
+			// Increment vertex buffer offset.
 			vertexOffset += i->second.trianglesOut.size();
 		}
 	}
 	renderMesh->getVertexBuffer()->unlock();
 
 	renderMesh->setParts(meshParts);
-
-	// No bounding box used.
 	renderMesh->setBoundingBox(Aabb3());
 
 	// Write mesh to data stream.

@@ -24,19 +24,6 @@ namespace traktor
 {
 	namespace spark
 	{
-		namespace
-		{
-
-Guid incrementGuid(const Guid& g)
-{
-	uint8_t d[16];
-	for (int i = 0; i < 16; ++i)
-		d[i] = g[i];
-	reinterpret_cast< uint32_t& >(d[12])++;
-	return Guid(d);
-}
-
-		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.FontPipeline", 0, FontPipeline, editor::IPipeline)
 
@@ -299,7 +286,7 @@ bool FontPipeline::buildOutput(
 	fontOutput->m_sharpenStrength = 0.0f;
 	fontOutput->m_systemTexture = true;
 
-	Guid fontTextureOutputGuid = incrementGuid(outputGuid);
+	Guid fontTextureOutputGuid = outputGuid.permutate(1);
 	std::wstring fontTextureOutputPath = traktor::Path(outputPath).getPathOnly() + L"/" + outputGuid.format() + L"/Texture";
 	if (!pipelineBuilder->buildOutput(
 		fontOutput,

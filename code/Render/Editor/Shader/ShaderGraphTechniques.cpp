@@ -1,4 +1,5 @@
 #include <stack>
+#include "Core/Serialization/DeepClone.h"
 #include "Render/Shader/Edge.h"
 #include "Render/Shader/Nodes.h"
 #include "Render/Shader/ShaderGraph.h"
@@ -105,15 +106,15 @@ ShaderGraphTechniques::ShaderGraphTechniques(const ShaderGraph* shaderGraph)
 std::set< std::wstring > ShaderGraphTechniques::getNames() const
 {
 	std::set< std::wstring > names;
-	for (std::map< std::wstring, Ref< ShaderGraph > >::const_iterator i = m_techniques.begin(); i != m_techniques.end(); ++i)
+	for (std::map< std::wstring, Ref< const ShaderGraph > >::const_iterator i = m_techniques.begin(); i != m_techniques.end(); ++i)
 		names.insert(i->first);
 	return names;
 }
 
 Ref< ShaderGraph > ShaderGraphTechniques::generate(const std::wstring& name) const
 {
-	std::map< std::wstring, Ref< ShaderGraph > >::const_iterator i = m_techniques.find(name);
-	return i != m_techniques.end() ? i->second : 0;
+	std::map< std::wstring, Ref< const ShaderGraph > >::const_iterator i = m_techniques.find(name);
+	return i != m_techniques.end() ? DeepClone(i->second).create< ShaderGraph >() : 0;
 }
 
 	}
