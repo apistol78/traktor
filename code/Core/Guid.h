@@ -62,6 +62,12 @@ public:
 	/*! \brief Check if guid is valid and not null. */
 	bool isNotNull() const;
 
+	/*! \brief Generate a permutation of this guid in N iterations. */
+	Guid permutate(uint32_t iterations) const;
+
+	/*! \brief Generate a permutation of this guid combined with another guid. */
+	Guid permutate(const Guid& seed) const;
+
 	/*! \brief Convert guid into 16 bytes. */
 	operator const uint8_t* () const;
 

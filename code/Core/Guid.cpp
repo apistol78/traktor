@@ -156,6 +156,22 @@ bool Guid::isNotNull() const
 	return isValid() && !isNull();
 }
 
+Guid Guid::permutate(uint32_t iterations) const
+{
+	uint8_t d[16];
+	std::memcpy(d, m_data, 16);
+	reinterpret_cast< uint64_t& >(d[8]) += iterations;
+	return Guid(d);
+}
+
+Guid Guid::permutate(const Guid& seed) const
+{
+	uint8_t d[16];
+	for (int i = 0; i < 16; ++i)
+		d[i] = m_data[i] ^ seed[i];
+	return Guid(d);
+}
+
 Guid::operator const uint8_t* () const
 {
 	return m_data;

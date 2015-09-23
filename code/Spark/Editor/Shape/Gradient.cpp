@@ -22,6 +22,11 @@ void Gradient::addStop(float offset, const Color4ub& color)
 	Stop stop = { offset, color };
 	m_stops.push_back(stop);
 }
-	
+
+const AlignedVector< Gradient::Stop >& Gradient::getStops() const
+{
+	return m_stops;
+}
+
 	}
 }

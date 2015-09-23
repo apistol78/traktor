@@ -29,12 +29,14 @@ class ShaderGraph;
 	namespace spark
 	{
 
+class Style;
+
 class ShapeShaderGenerator : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	Ref< render::ShaderGraph > generate(db::Database* database, const Guid& outputFragment) const;
+	Ref< render::ShaderGraph > generate(db::Database* database, const Style* style) const;
 	
 	void addDependencies(editor::IPipelineDepends* pipelineDepends);
 };

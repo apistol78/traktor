@@ -10,28 +10,15 @@ namespace traktor
 {
 	namespace spark
 	{
-		namespace
-		{
-
-const render::handle_t c_techniques[] =
-{
-	render::getParameterHandle(L"Solid"),
-	render::getParameterHandle(L"In"),
-	render::getParameterHandle(L"Out")
-};
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.Shape", Shape, Object)
 
 Shape::Shape(
 	render::Mesh* mesh,
-	const resource::Proxy< render::Shader >& shader,
-	const std::vector< uint8_t >& parts,
+	const AlignedVector< Part >& parts,
 	const Aabb2& bounds
 )
 :	m_mesh(mesh)
-,	m_shader(shader)
 ,	m_parts(parts)
 ,	m_bounds(bounds)
 {
@@ -51,13 +38,10 @@ void Shape::render(render::RenderContext* renderContext, const Matrix33& transfo
 
 	for (size_t i = 0; i < parts.size(); ++i)
 	{
-		m_shader->setTechnique(c_techniques[m_parts[i]]);
-		T_FATAL_ASSERT (m_shader->getCurrentProgram());
-
 		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("Shape");
 
 		renderBlock->distance = 0.0f;
-		renderBlock->program = m_shader->getCurrentProgram();
+		renderBlock->program = m_parts[i].shader->getCurrentProgram();
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->vertexBuffer = m_mesh->getVertexBuffer();
 		renderBlock->primitives = parts[i].primitives;

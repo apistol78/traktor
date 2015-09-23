@@ -2,7 +2,6 @@
 #define traktor_spark_ShapeAsset_H
 
 #include "Editor/Asset.h"
-#include "Resource/Id.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -14,13 +13,6 @@
 
 namespace traktor
 {
-	namespace render
-	{
-
-class Shader;
-
-	}
-
 	namespace spark
 	{
 
@@ -46,7 +38,6 @@ public:
 private:
 	friend class ShapePipeline;
 
-	resource::Id< render::Shader > m_shader;
 	float m_cubicApproximationError;
 	PivotType m_pivot;
 };
