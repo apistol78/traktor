@@ -42,6 +42,22 @@ public:
 
 	virtual void update();
 
+	virtual void eventKey(wchar_t unicode);
+
+	virtual void eventKeyDown(int32_t keyCode);
+
+	virtual void eventKeyUp(int32_t keyCode);
+
+	virtual void eventMouseDown(int32_t x, int32_t y, int32_t button);
+
+	virtual void eventMouseUp(int32_t x, int32_t y, int32_t button);
+
+	virtual void eventMouseMove(int32_t x, int32_t y, int32_t button);
+
+	virtual void eventMouseWheel(int32_t x, int32_t y, int32_t delta);
+
+	virtual void eventViewResize(int32_t width, int32_t height);
+
 private:
 	Ref< sound::ISoundPlayer > m_soundPlayer;
 	SmallMap< std::wstring, resource::Proxy< sound::Sound > > m_sounds;

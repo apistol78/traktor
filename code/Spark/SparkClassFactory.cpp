@@ -12,7 +12,6 @@
 #include "Spark/SpriteInstance.h"
 #include "Spark/Text.h"
 #include "Spark/TextInstance.h"
-#include "Spark/Tween.h"
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
@@ -101,13 +100,6 @@ void SparkClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classTextInstance->addMethod("setAlpha", &TextInstance::setAlpha);
 	classTextInstance->addMethod("getAlpha", &TextInstance::getAlpha);
 	registrar->registerClass(classTextInstance);
-
-	Ref< AutoRuntimeClass< Tween::IListener > > classTweenIListener = new AutoRuntimeClass< Tween::IListener >();
-	registrar->registerClass(classTweenIListener);
-
-	Ref< AutoRuntimeClass< Tween > > classTween = new AutoRuntimeClass< Tween >();
-	classTween->addConstructor< float, float, float, Tween::IListener* >();
-	registrar->registerClass(classTween);
 }
 
 	}

@@ -87,6 +87,27 @@ public:
 	 */
 	bool getVisible() const;
 
+	/*! \name Events */
+	//@{
+
+	virtual void eventKey(wchar_t unicode);
+
+	virtual void eventKeyDown(int32_t keyCode);
+
+	virtual void eventKeyUp(int32_t keyCode);
+
+	virtual void eventMouseDown(int32_t x, int32_t y, int32_t button);
+
+	virtual void eventMouseUp(int32_t x, int32_t y, int32_t button);
+
+	virtual void eventMouseMove(int32_t x, int32_t y, int32_t button);
+
+	virtual void eventMouseWheel(int32_t x, int32_t y, int32_t delta);
+
+	virtual void eventViewResize(int32_t width, int32_t height);
+
+	//@}
+
 	/*! \brief Get bounds.
 	 */
 	virtual Aabb2 getBounds() const = 0;

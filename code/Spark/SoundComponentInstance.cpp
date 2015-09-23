@@ -29,5 +29,37 @@ void SoundComponentInstance::update()
 {
 }
 
+void SoundComponentInstance::eventKey(wchar_t unicode)
+{
+}
+
+void SoundComponentInstance::eventKeyDown(int32_t keyCode)
+{
+}
+
+void SoundComponentInstance::eventKeyUp(int32_t keyCode)
+{
+}
+
+void SoundComponentInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
+{
+}
+
+void SoundComponentInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
+{
+}
+
+void SoundComponentInstance::eventMouseMove(int32_t x, int32_t y, int32_t button)
+{
+}
+
+void SoundComponentInstance::eventMouseWheel(int32_t x, int32_t y, int32_t delta)
+{
+}
+
+void SoundComponentInstance::eventViewResize(int32_t width, int32_t height)
+{
+}
+
 	}
 }

@@ -1,5 +1,5 @@
-#ifndef traktor_spark_CharacterRenderer_H
-#define traktor_spark_CharacterRenderer_H
+#ifndef traktor_spark_SparkRenderer_H
+#define traktor_spark_SparkRenderer_H
 
 #include "Core/Object.h"
 #include "Core/RefArray.h"
@@ -40,7 +40,7 @@ class CharacterInstance;
  *		- render 2
  *		- ...
  */
-class T_DLLCLASS CharacterRenderer : public Object
+class T_DLLCLASS SparkRenderer : public Object
 {
 	T_RTTI_CLASS;
 
@@ -61,4 +61,4 @@ private:
 	}
 }
 
-#endif	// traktor_spark_CharacterRenderer_H
+#endif	// traktor_spark_SparkRenderer_H
