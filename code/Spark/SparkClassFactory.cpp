@@ -74,6 +74,7 @@ void SparkClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classCharacterInstance->addMethod("getRotation", &CharacterInstance::getRotation);
 	classCharacterInstance->addMethod("setVisible", &CharacterInstance::setVisible);
 	classCharacterInstance->addMethod("getVisible", &CharacterInstance::getVisible);
+	classCharacterInstance->addMethod("getBounds", &CharacterInstance::getBounds);
 	registrar->registerClass(classCharacterInstance);
 
 	Ref< AutoRuntimeClass< Sprite > > classSprite = new AutoRuntimeClass< Sprite >();
@@ -97,6 +98,7 @@ void SparkClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classTextInstance->addMethod("getText", &TextInstance::getText);
 	classTextInstance->addMethod("setHeight", &TextInstance::setHeight);
 	classTextInstance->addMethod("getHeight", &TextInstance::getHeight);
+	classTextInstance->addMethod("setBounds", &TextInstance::setBounds);
 	classTextInstance->addMethod("setAlpha", &TextInstance::setAlpha);
 	classTextInstance->addMethod("getAlpha", &TextInstance::getAlpha);
 	registrar->registerClass(classTextInstance);
