@@ -1,11 +1,8 @@
 #include "Amalgam/Game/Engine/GameEntity.h"
 #include "Amalgam/Game/Engine/GameEntityData.h"
 #include "Amalgam/Game/Engine/GameEntityFactory.h"
-#include "Core/Class/IRuntimeClass.h"
-#include "Core/Serialization/DeepClone.h"
-#include "Resource/IResourceManager.h"
-#include "World/EntityEventSetData.h"
 #include "World/IEntityBuilder.h"
+#include "World/IEntityComponentData.h"
 
 namespace traktor
 {
@@ -14,9 +11,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.GameEntityFactory", GameEntityFactory, world::IEntityFactory)
 
-GameEntityFactory::GameEntityFactory(resource::IResourceManager* resourceManager, world::IEntityEventManager* eventManager)
+GameEntityFactory::GameEntityFactory(resource::IResourceManager* resourceManager)
 :	m_resourceManager(resourceManager)
-,	m_eventManager(eventManager)
 {
 }
 
@@ -37,46 +33,27 @@ Ref< world::Entity > GameEntityFactory::createEntity(
 	const world::EntityData& entityData
 ) const
 {
-	const GameEntityData* gameEntityData = checked_type_cast< const GameEntityData*, false >(&entityData);
+	const GameEntityData* gameEntityData = mandatory_non_null_type_cast< const GameEntityData* >(&entityData);
+	Ref< GameEntity > gameEntity = new GameEntity();
 
-	Ref< Object > object;
-	if (gameEntityData->m_object)
-	{
-		if ((object = DeepClone(gameEntityData->m_object).create()) == 0)
-			return 0;
-	}
-
-	Ref< world::Entity > entity;
+	// Create controlled entity.
 	if (gameEntityData->m_entityData)
 	{
-		if ((entity = builder->create(gameEntityData->m_entityData)) == 0)
+		if ((gameEntity->m_entity = builder->create(gameEntityData->m_entityData)) == 0)
 			return 0;
 
-		entity->setTransform(gameEntityData->getTransform());
+		gameEntity->m_entity->setTransform(gameEntityData->getTransform());
 	}
 
-	Ref< world::EntityEventSet > eventSet;
-	if (gameEntityData->m_eventSetData)
+	// Create components.
+	gameEntity->m_components.resize(gameEntityData->m_components.size());
+	for (uint32_t i = 0; i < gameEntityData->m_components.size(); ++i)
 	{
-		if ((eventSet = gameEntityData->m_eventSetData->create(builder)) == 0)
+		if ((gameEntity->m_components[i] = gameEntityData->m_components[i]->createInstance(gameEntity, m_resourceManager)) == 0)
 			return 0;
 	}
 
-	resource::Proxy< IRuntimeClass > clazz;
-	if (gameEntityData->m_class)
-	{
-		if (!m_resourceManager->bind(gameEntityData->m_class, clazz))
-			return 0;
-	}
-
-	return new GameEntity(
-		gameEntityData->m_tag,
-		object,
-		entity,
-		eventSet,
-		m_eventManager,
-		clazz
-	);
+	return gameEntity;
 }
 
 Ref< world::IEntityEvent > GameEntityFactory::createEntityEvent(

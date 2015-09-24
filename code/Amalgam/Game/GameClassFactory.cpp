@@ -135,16 +135,6 @@ Ref< BoxedVector2 > WorldLayer_viewToScreen(WorldLayer* self, const Vector4& vie
 		return 0;
 }
 
-world::IEntityEventInstance* GameEntity_raiseEvent_1(GameEntity* self, const std::wstring& eventId)
-{
-	return self->raiseEvent(eventId);
-}
-
-world::IEntityEventInstance* GameEntity_raiseEvent_2(GameEntity* self, const std::wstring& eventId, const Transform& Toffset)
-{
-	return self->raiseEvent(eventId, Toffset);
-}
-
 	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.GameClassFactory", 0, GameClassFactory, IRuntimeClassFactory)
@@ -349,12 +339,6 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classGameEntityData);
 
 	Ref< AutoRuntimeClass< GameEntity > > classGameEntity = new AutoRuntimeClass< GameEntity >();
-	classGameEntity->addMethod("raiseEvent", &GameEntity_raiseEvent_1);
-	classGameEntity->addMethod("raiseEvent", &GameEntity_raiseEvent_2);
-	classGameEntity->addMethod("setTag", &GameEntity::setTag);
-	classGameEntity->addMethod("getTag", &GameEntity::getTag);
-	classGameEntity->addMethod("setObject", &GameEntity::setObject);
-	classGameEntity->addMethod("getObject", &GameEntity::getObject);
 	classGameEntity->addMethod("setEntity", &GameEntity::setEntity);
 	classGameEntity->addMethod("getEntity", &GameEntity::getEntity);
 	classGameEntity->addMethod("setVisible", &GameEntity::setVisible);
