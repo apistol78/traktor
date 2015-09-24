@@ -3,6 +3,7 @@
 
 #include "Amalgam/Game/Engine/Layer.h"
 #include "Core/Math/Color4ub.h"
+#include "Core/Math/Matrix44.h"
 #include "Resource/Proxy.h"
 
 // import/export mechanism.
@@ -25,6 +26,7 @@ class IEnvironment;
 	namespace spark
 	{
 
+class SparkPlayer;
 class SparkRenderer;
 class Sprite;
 class SpriteInstance;
@@ -80,13 +82,32 @@ public:
 	spark::SpriteInstance* getSprite() const;
 
 private:
+	struct LastMouseState
+	{
+		int32_t button;
+		int32_t wheel;
+
+		LastMouseState()
+		:	button(0)
+		,	wheel(0)
+		{
+		}
+	};
+
 	Ref< IEnvironment > m_environment;
 	resource::Proxy< spark::Sprite > m_sprite;
-	Ref< spark::SpriteInstance > m_spriteInstance;
 	Ref< spark::SparkRenderer > m_sparkRenderer;
+	Ref< spark::SparkPlayer > m_sparkPlayer;
+	Ref< spark::SpriteInstance > m_spriteInstance;
 	Color4ub m_background;
+	Matrix44 m_projection;
 	int32_t m_width;
 	int32_t m_height;
+	LastMouseState m_lastMouse[8];
+	int32_t m_lastMouseX;
+	int32_t m_lastMouseY;
+
+	void updateProjection();
 };
 
 	}

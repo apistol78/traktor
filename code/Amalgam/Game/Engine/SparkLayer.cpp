@@ -2,7 +2,10 @@
 #include "Amalgam/Game/Engine/SparkLayer.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Input/IInputDevice.h"
+#include "Input/InputSystem.h"
 #include "Render/IRenderView.h"
+#include "Spark/SparkPlayer.h"
 #include "Spark/SparkRenderer.h"
 #include "Spark/Sprite.h"
 #include "Spark/SpriteInstance.h"
@@ -30,6 +33,8 @@ SparkLayer::SparkLayer(
 ,	m_background(background)
 ,	m_width(width)
 ,	m_height(height)
+,	m_lastMouseX(-1)
+,	m_lastMouseY(-1)
 {
 }
 
@@ -57,19 +62,132 @@ void SparkLayer::prepare()
 	}
 
 	if (!m_spriteInstance)
+	{
 		m_spriteInstance = checked_type_cast< spark::SpriteInstance* >(m_sprite->createInstance(
 			0,
 			m_environment->getResource()->getResourceManager(),
 			m_environment->getAudio() ? m_environment->getAudio()->getSoundPlayer() : 0
 		));
+		if (m_spriteInstance)
+			m_sparkPlayer = new spark::SparkPlayer(m_spriteInstance);
+		else
+			m_sparkPlayer = 0;
+	}
+
+	updateProjection();
 }
 
 void SparkLayer::update(const UpdateInfo& info)
 {
-	if (!m_spriteInstance)
+	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
+	input::InputSystem* inputSystem = m_environment->getInput()->getInputSystem();
+
+	if (!m_sparkPlayer)
 		return;
 
-	m_spriteInstance->update();
+	// Do NOT propagate input in case user is fabricating input.
+	if (!m_environment->getInput()->isFabricating())
+	{
+		// Propagate keyboard input to movie.
+		input::IInputDevice* keyboardDevice = inputSystem->getDevice(input::CtKeyboard, 0, true);
+		if (keyboardDevice)
+		{
+			input::IInputDevice::KeyEvent ke;
+			while (keyboardDevice->getKeyEvent(ke))
+			{
+				if (ke.type == input::IInputDevice::KtCharacter)
+					m_sparkPlayer->postKey(ke.character);
+				else
+				{
+					if (ke.type == input::IInputDevice::KtDown)
+						m_sparkPlayer->postKeyDown(ke.keyCode);
+					else if (ke.type == input::IInputDevice::KtUp)
+						m_sparkPlayer->postKeyUp(ke.keyCode);
+				}
+			}
+		}
+
+		// Propagate mouse input to movie; don't send mouse events if mouse cursor isn't visible.
+		if (renderView->isCursorVisible())
+		{
+			int32_t mouseDeviceCount = inputSystem->getDeviceCount(input::CtMouse, true);
+			if (mouseDeviceCount >= sizeof_array(m_lastMouse))
+				mouseDeviceCount = sizeof_array(m_lastMouse);
+
+			for (int32_t i = 0; i < mouseDeviceCount; ++i)
+			{
+				input::IInputDevice* mouseDevice = inputSystem->getDevice(input::CtMouse, i, true);
+				T_ASSERT (mouseDevice);
+
+				LastMouseState& last = m_lastMouse[i];
+
+				int32_t positionX = -1, positionY = -1;
+				mouseDevice->getDefaultControl(input::DtPositionX, true, positionX);
+				mouseDevice->getDefaultControl(input::DtPositionY, true, positionY);
+
+				int32_t button1 = -1, button2 = -1;
+				mouseDevice->getDefaultControl(input::DtButton1, false, button1);
+				mouseDevice->getDefaultControl(input::DtButton2, false, button2);
+
+				int32_t axisZ = -1;
+				mouseDevice->getDefaultControl(input::DtAxisZ, true, axisZ);
+
+				float minX, minY;
+				float maxX, maxY;
+				mouseDevice->getControlRange(positionX, minX, maxX);
+				mouseDevice->getControlRange(positionY, minY, maxY);
+
+				if (maxX > minX && maxY > minY)
+				{
+					float x = mouseDevice->getControlValue(positionX);
+					float y = mouseDevice->getControlValue(positionY);
+
+					x = (x - minX) / (maxX - minX);
+					y = (y - minY) / (maxY - minY);
+
+					Vector4 clientPosition(2.0f * x - 1.0f, 1.0f - 2.0f * y, 0.0f, 1.0f);
+					Vector4 viewPosition = m_projection.inverse() * clientPosition;
+
+					int32_t mx = int32_t(viewPosition.x());
+					int32_t my = int32_t(viewPosition.y());
+
+					int32_t mb =
+						(mouseDevice->getControlValue(button1) > 0.5f ? 1 : 0) |
+						(mouseDevice->getControlValue(button2) > 0.5f ? 2 : 0);
+
+					if (mx != m_lastMouseX || my != m_lastMouseY)
+					{
+						m_sparkPlayer->postMouseMove(mx, my, mb);
+						m_lastMouseX = mx;
+						m_lastMouseY = my;
+					}
+
+					if (mb != last.button)
+					{
+						if (mb)
+							m_sparkPlayer->postMouseDown(mx, my, mb);
+						else
+							m_sparkPlayer->postMouseUp(mx, my, mb);
+
+						last.button = mb;
+					}
+
+					if (axisZ != -1)
+					{
+						int32_t wheel = int32_t(mouseDevice->getControlValue(axisZ) * 3.0f);
+						if (wheel != last.wheel)
+						{
+							m_sparkPlayer->postMouseWheel(mx, my, wheel);
+							last.wheel = wheel;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Update player.
+	m_sparkPlayer->update();
 }
 
 void SparkLayer::build(const UpdateInfo& info, uint32_t frame)
@@ -103,27 +221,7 @@ void SparkLayer::render(render::EyeType eye, uint32_t frame)
 		);
 	}
 
-	float viewRatio = m_environment->getRender()->getAspectRatio();
-
-	float renderWidth = float(m_width);
-	float renderHeight = renderWidth / viewRatio;
-	if (renderHeight < m_height)
-	{
-		renderHeight = float(m_height);
-		renderWidth = m_height * viewRatio;
-	}
-
-	float offsetX = renderWidth - float(m_width);
-	float offsetY = renderHeight - float(m_height);
-
-	Matrix44 projection(
-		2.0f / renderWidth, 0.0f, 0.0f, -1.0f + offsetX / renderWidth,
-		0.0f, -2.0f / renderHeight, 0.0f, 1.0f - offsetY / renderHeight,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
-	);
-
-	m_sparkRenderer->render(renderView, projection, frame);
+	m_sparkRenderer->render(renderView, m_projection, frame);
 }
 
 void SparkLayer::flush()
@@ -136,6 +234,7 @@ void SparkLayer::preReconfigured()
 
 void SparkLayer::postReconfigured()
 {
+	updateProjection();
 }
 
 void SparkLayer::suspend()
@@ -149,6 +248,29 @@ void SparkLayer::resume()
 spark::SpriteInstance* SparkLayer::getSprite() const
 {
 	return m_spriteInstance;
+}
+
+void SparkLayer::updateProjection()
+{
+	float viewRatio = m_environment->getRender()->getAspectRatio();
+
+	float renderWidth = float(m_width);
+	float renderHeight = renderWidth / viewRatio;
+	if (renderHeight < m_height)
+	{
+		renderHeight = float(m_height);
+		renderWidth = m_height * viewRatio;
+	}
+
+	float offsetX = renderWidth - float(m_width);
+	float offsetY = renderHeight - float(m_height);
+
+	m_projection = Matrix44(
+		2.0f / renderWidth, 0.0f, 0.0f, -1.0f + offsetX / renderWidth,
+		0.0f, -2.0f / renderHeight, 0.0f, 1.0f - offsetY / renderHeight,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	);
 }
 
 	}
