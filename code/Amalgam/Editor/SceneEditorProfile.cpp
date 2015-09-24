@@ -41,7 +41,7 @@ void SceneEditorProfile::createEntityFactories(
 	RefArray< const world::IEntityFactory >& outEntityFactories
 ) const
 {
-	outEntityFactories.push_back(new GameEntityFactory(context->getResourceManager(), context->getEntityEventManager()));
+	outEntityFactories.push_back(new GameEntityFactory(context->getResourceManager()));
 }
 
 void SceneEditorProfile::createEntityRenderers(

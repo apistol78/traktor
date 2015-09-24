@@ -91,6 +91,7 @@ bool StagePipeline::buildDependencies(
 
 	pipelineDepends->addDependency(stageData->m_inherit, editor::PdfBuild);
 	pipelineDepends->addDependency(stageData->m_class, editor::PdfBuild);
+	pipelineDepends->addDependency(stageData->m_script, editor::PdfBuild);
 	pipelineDepends->addDependency(stageData->m_shaderFade, editor::PdfBuild | editor::PdfResource);
 
 	for (std::map< std::wstring, Guid >::const_iterator i = stageData->m_transitions.begin(); i != stageData->m_transitions.end(); ++i)

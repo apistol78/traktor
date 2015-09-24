@@ -20,13 +20,6 @@ class IResourceManager;
 
 	}
 
-	namespace world
-	{
-
-class IEntityEventManager;
-
-	}
-
 	namespace amalgam
 	{
 
@@ -38,7 +31,7 @@ class T_DLLCLASS GameEntityFactory : public world::IEntityFactory
 	T_RTTI_CLASS;
 
 public:
-	GameEntityFactory(resource::IResourceManager* resourceManager, world::IEntityEventManager* eventManager);
+	GameEntityFactory(resource::IResourceManager* resourceManager);
 
 	virtual const TypeInfoSet getEntityTypes() const;
 
@@ -56,7 +49,6 @@ public:
 
 private:
 	Ref< resource::IResourceManager > m_resourceManager;
-	Ref< world::IEntityEventManager > m_eventManager;
 };
 
 	}

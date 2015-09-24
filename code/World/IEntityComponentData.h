@@ -1,0 +1,43 @@
+#ifndef traktor_world_IEntityComponentData_H
+#define traktor_world_IEntityComponentData_H
+
+#include "Core/Serialization/ISerializable.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_WORLD_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
+	namespace world
+	{
+
+class Entity;
+class IEntityComponent;
+
+/*! \brief Component data interface.
+ * \ingroup World
+ */
+class T_DLLCLASS IEntityComponentData : public ISerializable
+{
+	T_RTTI_CLASS;
+
+public:
+	virtual Ref< IEntityComponent > createInstance(Entity* owner, resource::IResourceManager* resourceManager) const = 0;
+};
+
+	}
+}
+
+#endif	// traktor_world_IEntityComponentData_H

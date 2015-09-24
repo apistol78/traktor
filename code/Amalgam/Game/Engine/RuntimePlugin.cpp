@@ -28,7 +28,7 @@ bool RuntimePlugin::startup(IEnvironment* environment)
 	// Add GameEntity to world renderer.
 	if (environment->getWorld())
 	{
-		environment->getWorld()->addEntityFactory(new GameEntityFactory(environment->getResource()->getResourceManager(), environment->getWorld()->getEntityEventManager()));
+		environment->getWorld()->addEntityFactory(new GameEntityFactory(environment->getResource()->getResourceManager()));
 		environment->getWorld()->addEntityRenderer(new GameEntityRenderer());
 	}
 	return true;
