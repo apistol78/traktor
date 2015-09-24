@@ -1,3 +1,5 @@
+import(traktor)
+
 -- Create workspace from template.
 --
 -- WIZARD_NAME			Project name
@@ -10,7 +12,7 @@ function main(args)
 	local WIZARD_TEMPLATE_FILE = os:getEnvironment("WIZARD_TEMPLATE_FILE")
 
 	-- Load template document.
-	local doc = Document()
+	local doc = xml.Document()
 	if not doc:loadFromFile(Path(WIZARD_TEMPLATE_FILE)) then
 		stderr:printLn("Unable to read template")
 		return 1

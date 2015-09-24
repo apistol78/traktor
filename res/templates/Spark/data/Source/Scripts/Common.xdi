@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="1">
+	<dependencies/>
+	<text>
+	<![CDATA[
+-- Common functions
+
+function math.angleDifference(a, b)
+	a = math.fmod(a, math.pi * 2)
+	b = math.fmod(b, math.pi * 2)
+	local r0 = b - a
+	local r1 = (a + math.pi * 2) - b
+	if r0 < r1 then
+		return r0
+	else
+		return -r1
+	end
+end
+
+
+	]]>
+	</text>
+</object>
