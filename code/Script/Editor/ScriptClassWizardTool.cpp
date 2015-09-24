@@ -88,10 +88,6 @@ bool ScriptClassWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, 
 
 	Ref< Script > s = new Script(ss.str());
 
-	// Add depdendency to inheritance script.
-	if (!inheritClassName.empty())
-		s->addDependency(Guid(L"{860695D4-7E2C-4E4D-B560-E644E326E9B7}"));
-
 	// Create database instance.
 	Ref< db::Instance > scriptInstance = group->createInstance(
 		className,
