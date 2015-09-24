@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.amalgam.StageData" version="8">
+	<name>ui</name>
+	<inherit>{00000000-0000-0000-0000-000000000000}</inherit>
+	<layers>
+		<item type="traktor.amalgam.SparkLayerData" version="3">
+			<name>spark</name>
+			<permitTransition>true</permitTransition>
+			<sprite>{F8F4440B-F25B-3B42-870B-5DDB022D6E58}</sprite>
+			<background>255, 255, 255, 255</background>
+			<width>1080</width>
+			<height>1920</height>
+		</item>
+	</layers>
+	<class>{973181CA-D7BD-A542-A030-C1DDC341B930}</class>
+	<script>{00000000-0000-0000-0000-000000000000}</script>
+	<shaderFade>{DC104971-11AE-5743-9AB1-53B830F74391}</shaderFade>
+	<fadeRate>1.5</fadeRate>
+	<transitions/>
+	<resourceBundle>{00000000-0000-0000-0000-000000000000}</resourceBundle>
+</object>

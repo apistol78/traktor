@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.spark.ShapeAsset">
+	<fileName>Shapes/LogoShape.svg</fileName>
+	<cubicApproximationError>1</cubicApproximationError>
+	<pivot>PtViewCenter</pivot>
+</object>
