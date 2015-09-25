@@ -746,7 +746,7 @@ void ScriptEditorPage::eventTimer(ui::TimerEvent* event)
 			std::wstring script;
 			m_preprocessor->evaluate(m_edit->getText(), script);
 
-			if (m_scriptManager->compile(L"", script, 0, this))
+			if (m_scriptManager->compile(L"", script, this))
 			{
 				// Reset error status.
 				m_compileStatus->setText(i18n::Text(L"SCRIPT_EDITOR_STATUS_READY"));

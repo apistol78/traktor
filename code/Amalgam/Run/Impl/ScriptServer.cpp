@@ -18,7 +18,7 @@
 #include "Resource/IResourceManager.h"
 #include "Script/IScriptContext.h"
 #include "Script/IScriptManager.h"
-#include "Script/IScriptResource.h"
+#include "Script/ScriptResource.h"
 
 namespace traktor
 {
@@ -137,7 +137,7 @@ bool ScriptServer::execute(IEnvironment* environment)
 	// Create script context.
 	Guid startupGuid(environment->getSettings()->getProperty< PropertyString >(L"Amalgam.Startup"));
 
-	Ref< script::IScriptResource > scriptResource = environment->getDatabase()->getObjectReadOnly< script::IScriptResource >(startupGuid);
+	Ref< script::ScriptResource > scriptResource = environment->getDatabase()->getObjectReadOnly< script::ScriptResource >(startupGuid);
 	if (!scriptResource)
 	{
 		log::error << L"Unable to load script resource" << Endl;
@@ -151,7 +151,7 @@ bool ScriptServer::execute(IEnvironment* environment)
 		return false;
 	}
 
-	m_scriptContext->loadResource(scriptResource);
+	m_scriptContext->load(scriptResource->getBlob());
 	m_scriptContext->setGlobal("environment", Any::fromObject(environment));
 
 	// Create execution thread.

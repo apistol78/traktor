@@ -10,6 +10,7 @@
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Timer/Timer.h"
+#include "Script/Lua/ScriptBlobLua.h"
 #include "Script/Lua/ScriptClassLua.h"
 #include "Script/Lua/ScriptContextLua.h"
 #include "Script/Lua/ScriptDebuggerLua.h"
@@ -17,7 +18,6 @@
 #include "Script/Lua/ScriptManagerLua.h"
 #include "Script/Lua/ScriptObjectLua.h"
 #include "Script/Lua/ScriptProfilerLua.h"
-#include "Script/Lua/ScriptResourceLua.h"
 #include "Script/Lua/ScriptUtilitiesLua.h"
 
 #if defined(T_LUA_5_2) || (!defined(__LP64__) && !defined(_LP64))
@@ -416,7 +416,7 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 	lua_pop(m_luaState, 1);
 }
 
-Ref< IScriptResource > ScriptManagerLua::compile(const std::wstring& fileName, const std::wstring& script, const source_map_t* map, IErrorCallback* errorCallback) const
+Ref< IScriptBlob > ScriptManagerLua::compile(const std::wstring& fileName, const std::wstring& script, IErrorCallback* errorCallback) const
 {
 #if defined(T_SCRIPT_LUA_USE_MT_LOCK)
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
@@ -447,27 +447,10 @@ Ref< IScriptResource > ScriptManagerLua::compile(const std::wstring& fileName, c
 		int32_t line = parseString< int32_t >(error.substr(0, p1));
 		error = trim(error.substr(p1 + 1));
 
-		if (map)
-		{
-			for (source_map_t::const_reverse_iterator i = map->rbegin(); i != map->rend(); ++i)
-			{
-				if (line >= i->line)
-				{
-					if (errorCallback)
-						errorCallback->syntaxError(i->name, line - i->line, error);
-					else
-						log::error << i->name << L" (" << (line - i->line) << L"): " << error << Endl;
-					break;
-				}
-			}
-		}
+		if (errorCallback)
+			errorCallback->syntaxError(fileName, line, error);
 		else
-		{
-			if (errorCallback)
-				errorCallback->syntaxError(fileName, line, error);
-			else
-				log::error << fileName << L" (" << line << L"): " << error << Endl;
-		}
+			log::error << fileName << L" (" << line << L"): " << error << Endl;
 
 		lua_pop(m_luaState, 1);
 		return 0;
@@ -475,12 +458,11 @@ Ref< IScriptResource > ScriptManagerLua::compile(const std::wstring& fileName, c
 
 	lua_pop(m_luaState, 1);
 
-	Ref< ScriptResourceLua > resource = new ScriptResourceLua();
-	resource->m_fileName = wstombs(fileName);
-	resource->m_map = map ? *map : source_map_t();
-	resource->m_script = text;
+	Ref< ScriptBlobLua > blob = new ScriptBlobLua();
+	blob->m_fileName = wstombs(fileName);
+	blob->m_script = text;
 
-	return resource;
+	return blob;
 }
 
 Ref< IScriptContext > ScriptManagerLua::createContext()

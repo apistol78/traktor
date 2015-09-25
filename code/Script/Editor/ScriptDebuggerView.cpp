@@ -2,6 +2,7 @@
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
+#include "Database/Instance.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPage.h"
 #include "I18N/Text.h"
@@ -163,11 +164,13 @@ void ScriptDebuggerView::breakpointReached(IScriptDebugger* scriptDebugger, cons
 	const std::list< script::CallStack::Frame >& frames = m_callStack.getFrames();
 	for (std::list< script::CallStack::Frame >::const_iterator i = frames.begin(); i != frames.end(); ++i)
 	{
+		Ref< db::Instance > scriptInstance = m_editor->getSourceDatabase()->getInstance(i->scriptId);
+
 		Ref< ui::custom::GridRow > row = new ui::custom::GridRow(0);
 
 		row->add(new ui::custom::GridItem(i->functionName));
 		row->add(new ui::custom::GridItem(toString(i->line + 1)));
-		row->add(new ui::custom::GridItem(i->scriptName));
+		row->add(new ui::custom::GridItem(scriptInstance ? scriptInstance->getName() : L"(Unknown script)"));
 		row->setData(L"SCRIPT_ID", new PropertyString(i->scriptId.format()));
 		row->setData(L"SCRIPT_LINE", new PropertyInteger(i->line));
 		row->setData(L"FRAME_DEPTH", new PropertyInteger(depth++));
