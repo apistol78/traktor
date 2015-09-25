@@ -121,6 +121,9 @@ Ref< ui::custom::GridRow > ScriptDebuggerView::createVariableRow(const script::L
 	row->add(new ui::custom::GridItem(local->getName()));
 	if (const script::LocalComposite* composite = dynamic_type_cast< const script::LocalComposite* >(local))
 	{
+		if (!composite->getValue().empty())
+			row->add(new ui::custom::GridItem(composite->getValue()));
+
 		const RefArray< script::Local >& values = composite->getValues();
 		for (RefArray< script::Local >::const_iterator j = values.begin(); j != values.end(); ++j)
 		{
