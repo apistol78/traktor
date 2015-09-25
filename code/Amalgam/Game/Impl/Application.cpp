@@ -149,14 +149,14 @@ bool Application::create(
 	T_DEBUG(L"Creating render server...");
 	if (nativeWindowHandle)
 	{
-		Ref< RenderServerEmbedded > renderServer = new RenderServerEmbedded(m_targetManagerConnection ? m_targetManagerConnection->getTransport() : 0);
+		Ref< RenderServerEmbedded > renderServer = new RenderServerEmbedded();
 		if (!renderServer->create(defaultSettings, settings, nativeHandle, nativeWindowHandle))
 			return false;
 		m_renderServer = renderServer;
 	}
 	else
 	{
-		Ref< RenderServerDefault > renderServer = new RenderServerDefault(m_targetManagerConnection ? m_targetManagerConnection->getTransport() : 0);
+		Ref< RenderServerDefault > renderServer = new RenderServerDefault();
 		if (!renderServer->create(defaultSettings, settings, nativeHandle))
 			return false;
 		m_renderServer = renderServer;

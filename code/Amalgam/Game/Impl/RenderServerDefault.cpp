@@ -140,9 +140,8 @@ bool findDisplayMode(render::IRenderSystem* renderSystem, const render::DisplayM
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.RenderServerDefault", RenderServerDefault, RenderServer)
 
-RenderServerDefault::RenderServerDefault(net::BidirectionalObjectTransport* transport)
-:	RenderServer(transport)
-,	m_screenAspectRatio(1.0f)
+RenderServerDefault::RenderServerDefault()
+:	m_screenAspectRatio(1.0f)
 ,	m_vr(false)
 {
 }

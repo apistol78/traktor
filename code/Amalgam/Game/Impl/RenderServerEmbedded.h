@@ -13,7 +13,7 @@ class RenderServerEmbedded : public RenderServer
 	T_RTTI_CLASS;
 
 public:
-	RenderServerEmbedded(net::BidirectionalObjectTransport* transport);
+	RenderServerEmbedded();
 
 	bool create(const PropertyGroup* defaultSettings, PropertyGroup* settings, void* nativeHandle, void* nativeWindowHandle);
 

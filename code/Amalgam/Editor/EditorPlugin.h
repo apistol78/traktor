@@ -155,7 +155,7 @@ private:
 
 	void eventTargetListStop(TargetStopEvent* event);
 
-	void eventTargetListCapture(TargetCaptureEvent* event);
+	void eventTargetListShowProfiler(TargetCaptureEvent* event);
 
 	void eventTimer(ui::TimerEvent* event);
 

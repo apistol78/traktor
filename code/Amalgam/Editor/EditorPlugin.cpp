@@ -1,6 +1,4 @@
 #include <cstring>
-#include "Amalgam/CaptureScreenShot.h"
-#include "Amalgam/CapturedScreenShot.h"
 #include "Amalgam/Editor/EditorPlugin.h"
 #include "Amalgam/Editor/HostEnumerator.h"
 #include "Amalgam/Editor/Platform.h"
@@ -225,7 +223,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_targetList->create(container);
 	m_targetList->addEventHandler< TargetPlayEvent >(this, &EditorPlugin::eventTargetListPlay);
 	m_targetList->addEventHandler< TargetStopEvent >(this, &EditorPlugin::eventTargetListStop);
-	m_targetList->addEventHandler< TargetCaptureEvent >(this, &EditorPlugin::eventTargetListCapture);
+	m_targetList->addEventHandler< TargetCaptureEvent >(this, &EditorPlugin::eventTargetListShowProfiler);
 
 	m_site->createAdditionalPanel(container, ui::scaleBySystemDPI(200), false);
 
@@ -623,7 +621,7 @@ void EditorPlugin::eventTargetListStop(TargetStopEvent* event)
 	m_targetList->requestUpdate();
 }
 
-void EditorPlugin::eventTargetListCapture(TargetCaptureEvent* event)
+void EditorPlugin::eventTargetListShowProfiler(TargetCaptureEvent* event)
 {
 	TargetInstance* targetInstance = event->getInstance();
 	int32_t connectionId = event->getConnectionIndex();
@@ -637,32 +635,6 @@ void EditorPlugin::eventTargetListCapture(TargetCaptureEvent* event)
 		Ref< ProfilerDialog > profilerDialog = new ProfilerDialog(connection);
 		profilerDialog->create(m_parent);
 		profilerDialog->show();
-
-		/*
-		connection->getTransport()->send(new CaptureScreenShot());
-
-		Ref< CapturedScreenShot > capturedScreenShot;
-		if (connection->getTransport()->recv< CapturedScreenShot >(1000, capturedScreenShot) == net::BidirectionalObjectTransport::RtSuccess)
-		{
-			drawing::Image image(
-				drawing::PixelFormat::getA8B8G8R8(),
-				capturedScreenShot->getWidth(),
-				capturedScreenShot->getHeight()
-			);
-
-			std::memcpy(
-				image.getData(),
-				capturedScreenShot->getData().c_ptr(),
-				image.getDataSize()
-			);
-
-			ui::Application::getInstance()->getClipboard()->setImage(&image);
-
-			log::info << L"Screen capture ready in clipboard" << Endl;
-		}
-		else
-			log::error << L"Timeout while capturing screenshot" << Endl;
-		*/
 	}
 }
 
