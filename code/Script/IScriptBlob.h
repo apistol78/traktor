@@ -1,5 +1,5 @@
-#ifndef traktor_script_IScriptResource_H
-#define traktor_script_IScriptResource_H
+#ifndef traktor_script_IScriptBlob_H
+#define traktor_script_IScriptBlob_H
 
 #include "Core/Serialization/ISerializable.h"
 
@@ -16,10 +16,10 @@ namespace traktor
 	namespace script
 	{
 
-/*! \brief Pre-compiled script resource.
+/*! \brief Pre-compiled script blob.
  * \ingroup Script
  */
-class T_DLLCLASS IScriptResource : public ISerializable
+class T_DLLCLASS IScriptBlob : public ISerializable
 {
 	T_RTTI_CLASS;
 };
@@ -27,4 +27,4 @@ class T_DLLCLASS IScriptResource : public ISerializable
 	}
 }
 
-#endif	// traktor_script_IScriptResource_H
+#endif	// traktor_script_IScriptBlob_H

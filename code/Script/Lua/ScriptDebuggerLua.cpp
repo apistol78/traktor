@@ -281,28 +281,41 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 	if (m_state == StRunning)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
-		Guid currentId;
-		std::wstring currentName;
 		int32_t currentLine = ar->currentline - 1;
+		Guid currentId;
 
-		const source_map_t& map = currentContext->m_map;
-		for (source_map_t::const_reverse_iterator i = map.rbegin(); i != map.rend(); ++i)
+		// Any breakpoint defined with current line number?
+		std::map< int32_t, std::set< Guid > >::const_iterator i = m_breakpoints.find(currentLine);
+		if (i != m_breakpoints.end())
 		{
-			if (currentLine >= i->line)
+			// Get executing script's identifier.
+			lua_getinfo(L, "S", ar);
+			if (currentId.create(mbstows(ar->source)))
 			{
-				currentId = i->id;
-				currentName = i->name;
-				currentLine = currentLine - i->line;
-				break;
+				// If identifier also match then we halt and trigger "breakpoint reached".
+				if (i->second.find(currentId) != i->second.end())
+				{
+					CallStack cs;
+					captureCallStack(L, cs);
+
+					m_state = StHalted;
+					m_lastId = currentId;
+
+					for (std::set< IListener* >::const_iterator j = m_listeners.begin(); j != m_listeners.end(); ++j)
+						(*j)->breakpointReached(this, cs);
+				}
+
 			}
 		}
+	}
+	else if (m_state == StBreak)
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		Guid currentId;
 
-		std::map< int32_t, std::set< Guid > >::const_iterator i = m_breakpoints.find(currentLine);
-		if (
-			i != m_breakpoints.end() &&
-			i->second.find(currentId) != i->second.end()
-		)
+		// Get executing script's identifier.
+		lua_getinfo(L, "S", ar);
+		if (currentId.create(mbstows(ar->source)))
 		{
 			CallStack cs;
 			captureCallStack(L, cs);
@@ -310,89 +323,48 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 			m_state = StHalted;
 			m_lastId = currentId;
 
-			for (std::set< IListener* >::const_iterator j = m_listeners.begin(); j != m_listeners.end(); ++j)
-				(*j)->breakpointReached(this, cs);
+			for (std::set< IListener* >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
+				(*i)->breakpointReached(this, cs);
 		}
-	}
-	else if (m_state == StBreak)
-	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
-		Guid currentId;
-		int32_t currentLine = ar->currentline - 1;
-
-		const source_map_t& map = currentContext->m_map;
-		for (source_map_t::const_reverse_iterator i = map.rbegin(); i != map.rend(); ++i)
-		{
-			if (currentLine >= i->line)
-			{
-				currentId = i->id;
-				break;
-			}
-		}
-
-		CallStack cs;
-		captureCallStack(L, cs);
-
-		m_state = StHalted;
-		m_lastId = currentId;
-
-		for (std::set< IListener* >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
-			(*i)->breakpointReached(this, cs);
 	}
 	else if (m_state == StStepInto)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
 		Guid currentId;
-		int32_t currentLine = ar->currentline - 1;
 
-		const source_map_t& map = currentContext->m_map;
-		for (source_map_t::const_reverse_iterator i = map.rbegin(); i != map.rend(); ++i)
-		{
-			if (currentLine >= i->line)
-			{
-				currentId = i->id;
-				break;
-			}
-		}
-
-		CallStack cs;
-		captureCallStack(L, cs);
-
-		m_state = StHalted;
-		m_lastId = currentId;
-
-		for (std::set< IListener* >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
-			(*i)->breakpointReached(this, cs);
-	}
-	else if (m_state == StStepOver)
-	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
-		Guid currentId;
-		int32_t currentLine = ar->currentline - 1;
-
-		const source_map_t& map = currentContext->m_map;
-		for (source_map_t::const_reverse_iterator i = map.rbegin(); i != map.rend(); ++i)
-		{
-			if (currentLine >= i->line)
-			{
-				currentId = i->id;
-				currentLine = currentLine - i->line;
-				break;
-			}
-		}
-
-		if (currentId == m_lastId)
+		// Get executing script's identifier.
+		lua_getinfo(L, "S", ar);
+		if (currentId.create(mbstows(ar->source)))
 		{
 			CallStack cs;
 			captureCallStack(L, cs);
 
 			m_state = StHalted;
+			m_lastId = currentId;
 
 			for (std::set< IListener* >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
 				(*i)->breakpointReached(this, cs);
+		}
+	}
+	else if (m_state == StStepOver)
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		Guid currentId;
+
+		// Get executing script's identifier.
+		lua_getinfo(L, "S", ar);
+		if (currentId.create(mbstows(ar->source)))
+		{
+			if (currentId == m_lastId)
+			{
+				CallStack cs;
+				captureCallStack(L, cs);
+
+				m_state = StHalted;
+
+				for (std::set< IListener* >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
+					(*i)->breakpointReached(this, cs);
+			}
 		}
 	}
 
@@ -419,30 +391,11 @@ void ScriptDebuggerLua::captureCallStack(lua_State* L, CallStack& outCallStack)
 	{
 		lua_getinfo(L, "Snlu", &ar);
 
-		Guid currentId;
-		std::wstring currentName;
-		int32_t currentLine = 0;
-
-		if (ar.currentline >= 1)
-		{
-			currentLine = ar.currentline - 1;
-
-			const source_map_t& map = currentContext->m_map;
-			for (source_map_t::const_reverse_iterator i = map.rbegin(); i != map.rend(); ++i)
-			{
-				if (currentLine >= i->line)
-				{
-					currentId = i->id;
-					currentName = i->name;
-					currentLine = currentLine - i->line;
-					break;
-				}
-			}
-		}
+		Guid currentId(mbstows(ar.source));
+		int32_t currentLine = ar.currentline - 1;
 
 		CallStack::Frame f;
 		f.scriptId = currentId;
-		f.scriptName = currentName;
 		f.functionName = ar.name ? mbstows(ar.name) : L"(anonymous)";
 		f.line = currentLine;
 

@@ -35,7 +35,6 @@ public:
 
 	public:
 		Guid scriptId;
-		std::wstring scriptName;
 		std::wstring functionName;
 		uint32_t line;
 		RefArray< Local > locals;

@@ -131,9 +131,9 @@ Ref< script::IScriptManager > createScriptManager()
 
 int32_t executeRun(script::IScriptManager* scriptManager, const std::wstring& text, const Path& fileName, const CommandLine& cmdLine)
 {
-	// Compile script into a runnable resource.
-	Ref< script::IScriptResource > scriptResource = scriptManager->compile(fileName.getPathName(), text, 0, 0);
-	if (!scriptResource)
+	// Compile script into a runnable blob.
+	Ref< script::IScriptBlob > scriptBlob = scriptManager->compile(fileName.getPathName(), text, 0);
+	if (!scriptBlob)
 	{
 		log::error << L"Unable to compile script" << Endl;
 		return 1;
@@ -155,7 +155,7 @@ int32_t executeRun(script::IScriptManager* scriptManager, const std::wstring& te
 	scriptContext->setGlobal("stderr", Any::fromObject(new StdOutput(stderr)));
 
 	// Load script into context.
-	scriptContext->loadResource(scriptResource);
+	scriptContext->load(scriptBlob);
 
 	// Execute optional "main" function.
 	Any retval = Any::fromInteger(0);
@@ -206,8 +206,8 @@ int32_t executeTemplate(script::IScriptManager* scriptManager, const std::wstrin
 	int32_t id = o->addSection(text.substr(offset));
 	ss << L"output:printSection(" << id << L")" << Endl;
 
-	Ref< script::IScriptResource > scriptResource = scriptManager->compile(fileName.getPathName(), ss.str(), 0, 0);
-	if (!scriptResource)
+	Ref< script::IScriptBlob > scriptBlob = scriptManager->compile(fileName.getPathName(), ss.str(), 0);
+	if (!scriptBlob)
 	{
 		log::error << L"Unable to compile script" << Endl;
 		return 1;
@@ -233,7 +233,7 @@ int32_t executeTemplate(script::IScriptManager* scriptManager, const std::wstrin
 	scriptContext->setGlobal("output", Any::fromObject(o));
 	scriptContext->setGlobal("args", CastAny< std::vector< std::wstring > >::set(args));
 
-	scriptContext->loadResource(scriptResource);
+	scriptContext->load(scriptBlob);
 
 	safeDestroy(scriptContext);
 

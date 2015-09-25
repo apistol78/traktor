@@ -3,7 +3,6 @@
 
 #include "Core/Object.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
-#include "Script/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -21,10 +20,10 @@ class IRuntimeClass;
 	namespace script
 	{
 
+class IScriptBlob;
 class IScriptContext;
 class IScriptDebugger;
 class IScriptProfiler;
-class IScriptResource;
 
 /*! \brief Script error callback.
 * \ingroup Script
@@ -73,15 +72,15 @@ public:
 	 */
 	virtual void registerClass(IRuntimeClass* runtimeClass) = 0;
 
-	/*! \brief Compile script.
+	/*! \brief Compile script into "consumable" blob.
 	 *
 	 * \param fileName Script file name.
 	 * \param script Script
 	 * \param map Optional source map; used for debugging.
 	 * \param errorCallback Optional callback which is called for each error found during compilation.
-	 * \return Script resource; null if failed to compile.
+	 * \return Script blob; null if failed to compile.
 	 */
-	virtual Ref< IScriptResource > compile(const std::wstring& fileName, const std::wstring& script, const source_map_t* map, IErrorCallback* errorCallback) const = 0;
+	virtual Ref< IScriptBlob > compile(const std::wstring& fileName, const std::wstring& script, IErrorCallback* errorCallback) const = 0;
 
 	/*! \brief Create script context.
 	 *

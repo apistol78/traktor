@@ -15,7 +15,7 @@
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
 #include "Script/IScriptManager.h"
-#include "Script/IScriptResource.h"
+#include "Script/ScriptResource.h"
 #include "Script/Editor/Preprocessor.h"
 #include "Script/Editor/Script.h"
 #include "Script/Editor/ScriptPipeline.h"
@@ -27,16 +27,20 @@ namespace traktor
 		namespace
 		{
 
-struct ResolvedScript
+struct ErrorCallback : public IErrorCallback
 {
-	Guid id;
-	std::wstring name;
-	Ref< const Script > script;
+	virtual void syntaxError(const std::wstring& name, uint32_t line, const std::wstring& message)
+	{
+		log::error << name << L" (" << line << L"): " << message << Endl;
+	}
 
-	bool operator == (const Guid& rh) const { return id == rh; }
+	virtual void otherError(const std::wstring& message)
+	{
+		log::error << message << Endl;
+	}
 };
 
-bool resolveScript(editor::IPipelineBuilder* pipelineBuilder, const Guid& scriptGuid, std::list< ResolvedScript >& outScripts)
+bool flattenDependencies(editor::IPipelineBuilder* pipelineBuilder, const Guid& scriptGuid, std::vector< Guid >& outScripts)
 {
 	Ref< db::Instance > scriptInstance = pipelineBuilder->getSourceDatabase()->getInstance(scriptGuid);
 	if (!scriptInstance)
@@ -52,31 +56,13 @@ bool resolveScript(editor::IPipelineBuilder* pipelineBuilder, const Guid& script
 		if (std::find(outScripts.begin(), outScripts.end(), *i) != outScripts.end())
 			continue;
 
-		if (!resolveScript(pipelineBuilder, *i, outScripts))
+		if (!flattenDependencies(pipelineBuilder, *i, outScripts))
 			return false;
 	}
 
-	ResolvedScript rs;
-	rs.id = scriptGuid;
-	rs.name = scriptInstance->getPath();
-	rs.script = script;
-	outScripts.push_back(rs);
-
+	outScripts.push_back(scriptGuid);
 	return true;
 }
-
-struct ErrorCallback : public IErrorCallback
-{
-	virtual void syntaxError(const std::wstring& name, uint32_t line, const std::wstring& message)
-	{
-		log::error << name << L" (" << line << L"): " << message << Endl;
-	}
-
-	virtual void otherError(const std::wstring& message)
-	{
-		log::error << message << Endl;
-	}
-};
 
 		}
 
@@ -136,7 +122,7 @@ bool ScriptPipeline::buildDependencies(
 
 	const std::vector< Guid >& dependencies = sourceScript->getDependencies();
 	for (std::vector< Guid >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
-		pipelineDepends->addDependency(*i, editor::PdfUse);
+		pipelineDepends->addDependency(*i, editor::PdfBuild);
 
 	return true;
 }
@@ -154,78 +140,46 @@ bool ScriptPipeline::buildOutput(
 	uint32_t reason
 ) const
 {
+	const Script* script = mandatory_non_null_type_cast< const Script* >(sourceAsset);
+
+	// Ensure no double character line breaks.
+	std::wstring source = script->getText();
+	source = replaceAll< std::wstring >(source, L"\r\n", L"\n");
+
+	// Execute preprocessor on script.
+	std::wstring text;
+	if (!m_preprocessor->evaluate(source, text))
+	{
+		log::error << L"Script pipeline failed; unable to preprocess script" << Endl;
+		return false;
+	}
+
 	// Create ordered list of dependent scripts.
-	std::list< ResolvedScript > scripts;
-	if (!resolveScript(pipelineBuilder, outputGuid, scripts))
+	std::vector< Guid > dependencies;
+	if (!flattenDependencies(pipelineBuilder, outputGuid, dependencies))
 	{
 		log::error << L"Script pipeline failed; unable to resolve script dependencies" << Endl;
 		return false;
 	}
 
-	// Concate all scripts into a single script; generate a map with line numbers to corresponding source.
-	source_map_t sm;
-	StringOutputStream ss;
-	int32_t line = 0;
-
-	for (std::list< ResolvedScript >::const_iterator i = scripts.begin(); i != scripts.end(); ++i)
-	{
-		SourceMapping map;
-		map.id = i->id;
-		map.name = i->name;
-		map.line = line;
-		sm.push_back(map);
-
-		// Ensure no double character line breaks.
-		std::wstring source = i->script->getText();
-		source = replaceAll< std::wstring >(source, L"\r\n", L"\n");
-
-		// Execute preprocessor on script.
-		std::wstring text;
-		if (!m_preprocessor->evaluate(source, text))
-		{
-			log::error << L"Script pipeline failed; unable to preprocess script" << Endl;
-			return false;
-		}
-
-		// Count lines.
-		StringSplit< std::wstring > split(text, L"\n");
-		for (StringSplit< std::wstring >::const_iterator j = split.begin(); j != split.end(); ++j)
-			++line;
-
-		// Concatenate scripts.
-		ss << text << Endl;
-	}
-
-	// Output script source into temp folder; this can be useful for debugging.
-	if (!m_scriptOutputPath.empty())
-	{
-		Ref< IStream > scriptFile = FileSystem::getInstance().open(m_scriptOutputPath + L"/" + outputGuid.format() + L".lua", File::FmWrite);
-		if (scriptFile)
-		{
-			FileOutputStream(scriptFile, new Utf8Encoding()) << ss.str() << Endl;
-			scriptFile->close();
-			scriptFile = 0;
-		}
-
-		Ref< IStream > mapFile = FileSystem::getInstance().open(m_scriptOutputPath + L"/" + outputGuid.format() + L".map", File::FmWrite);
-		if (mapFile)
-		{
-			FileOutputStream fs(mapFile, new Utf8Encoding());
-			for (source_map_t::const_iterator i = sm.begin(); i != sm.end(); ++i)
-				fs << i->id.format() << L" " << i->name << L" " << i->line << Endl;
-			mapFile->close();
-			mapFile = 0;
-		}
-	}
+	// Ensure current script isn't part of dependencies.
+	std::vector< Guid >::iterator i = std::find(dependencies.begin(), dependencies.end(), outputGuid);
+	if (i != dependencies.end())
+		dependencies.erase(i);
 
 	// Compile script; save binary blobs if possible.
 	ErrorCallback errorCallback;
-	Ref< IScriptResource > resource = m_scriptManager->compile(outputGuid.format() + L".lua", ss.str(), &sm, &errorCallback);
-	if (!resource)
+	Ref< IScriptBlob > blob = m_scriptManager->compile(outputGuid.format(), text, &errorCallback);
+	if (!blob)
 	{
 		log::error << L"Script pipeline failed; unable to compile script" << Endl;
 		return false;
 	}
+
+	// Create output resource.
+	Ref< ScriptResource > resource = new ScriptResource();
+	resource->m_dependencies = dependencies;
+	resource->m_blob = blob;
 
 	return DefaultPipeline::buildOutput(
 		pipelineBuilder,

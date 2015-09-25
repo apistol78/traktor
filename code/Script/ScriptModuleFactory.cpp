@@ -2,8 +2,8 @@
 #include "Database/Database.h"
 #include "Script/IScriptContext.h"
 #include "Script/IScriptManager.h"
-#include "Script/IScriptResource.h"
 #include "Script/ScriptModuleFactory.h"
+#include "Script/ScriptResource.h"
 
 namespace traktor
 {
@@ -21,7 +21,7 @@ ScriptModuleFactory::ScriptModuleFactory(db::Database* database, IScriptManager*
 const TypeInfoSet ScriptModuleFactory::getResourceTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< IScriptResource >());
+	typeSet.insert(&type_of< ScriptResource >());
 	return typeSet;
 }
 
@@ -39,7 +39,7 @@ bool ScriptModuleFactory::isCacheable() const
 
 Ref< Object > ScriptModuleFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
 {
-	Ref< IScriptResource > scriptResource = m_database->getObjectReadOnly< IScriptResource >(guid);
+	Ref< ScriptResource > scriptResource = m_database->getObjectReadOnly< ScriptResource >(guid);
 	if (!scriptResource)
 	{
 		log::error << L"Unable to create script context; no such instance" << Endl;
@@ -53,7 +53,25 @@ Ref< Object > ScriptModuleFactory::create(resource::IResourceManager* resourceMa
 		return 0;
 	}
 
-	if (!scriptContext->loadResource(scriptResource))
+	// Load all dependencies first.
+	const std::vector< Guid >& dependencies = scriptResource->getDependencies();
+	for (std::vector< Guid >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+	{
+		Ref< ScriptResource > dependentScriptResource = m_database->getObjectReadOnly< ScriptResource >(*i);
+		if (!dependentScriptResource)
+		{
+			log::error << L"Unable to create script context; failed to load dependent script" << Endl;
+			return 0;
+		}
+		if (!scriptContext->load(dependentScriptResource->getBlob()))
+		{
+			log::error << L"Unable to create script context; load dependent resource failed" << Endl;
+			return 0;
+		}
+	}
+
+	// Load this resource's blob last.
+	if (!scriptContext->load(scriptResource->getBlob()))
 	{
 		log::error << L"Unable to create script context; load resource failed" << Endl;
 		return 0;

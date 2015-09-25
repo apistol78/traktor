@@ -79,16 +79,7 @@ void ScriptProfilerLua::hookCallback(lua_State* L, lua_Debug* ar)
 			if (ar->linedefined >= 1)
 			{
 				currentLine = ar->linedefined - 1;
-				const source_map_t& map = currentContext->m_map;
-				for (source_map_t::const_reverse_iterator i = map.rbegin(); i != map.rend(); ++i)
-				{
-					if (currentLine >= i->line)
-					{
-						scriptId = i->id;
-						currentLine = currentLine - i->line;
-						break;
-					}
-				}
+				scriptId.create(mbstows(ar->source));
 			}
 			name += L":" + toString(currentLine);
 		}

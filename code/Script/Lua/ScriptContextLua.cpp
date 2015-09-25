@@ -2,12 +2,12 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/WildCompare.h"
+#include "Script/Lua/ScriptBlobLua.h"
 #include "Script/Lua/ScriptClassLua.h"
 #include "Script/Lua/ScriptContextLua.h"
 #include "Script/Lua/ScriptDelegateLua.h"
 #include "Script/Lua/ScriptManagerLua.h"
 #include "Script/Lua/ScriptObjectLua.h"
-#include "Script/Lua/ScriptResourceLua.h"
 #include "Script/Lua/ScriptUtilitiesLua.h"
 
 namespace traktor
@@ -83,21 +83,18 @@ void ScriptContextLua::destroy()
 	}
 }
 
-bool ScriptContextLua::loadResource(const IScriptResource* scriptResource)
+bool ScriptContextLua::load(const IScriptBlob* scriptBlob)
 {
 	m_scriptManager->lock(this);
 	{
 		CHECK_LUA_STACK(m_luaState, 0);
 
-		const ScriptResourceLua* scriptResourceLua = checked_type_cast< const ScriptResourceLua* >(scriptResource);
-		T_FATAL_ASSERT (scriptResourceLua != 0);
-
-		std::string fileName = "@" + scriptResourceLua->m_fileName;
+		const ScriptBlobLua* scriptBlobLua = mandatory_non_null_type_cast< const ScriptBlobLua* >(scriptBlob);
 		int32_t result = luaL_loadbuffer(
 			m_luaState,
-			(const char*)scriptResourceLua->m_script.c_str(),
-			scriptResourceLua->m_script.length(),
-			fileName.c_str()
+			(const char*)scriptBlobLua->m_script.c_str(),
+			scriptBlobLua->m_script.length(),
+			scriptBlobLua->m_fileName.c_str()
 		);
 		if (result != 0)
 		{
@@ -368,38 +365,11 @@ int32_t ScriptContextLua::runtimeError(lua_State* luaState)
 	ScriptContextLua* this_ = reinterpret_cast< ScriptContextLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
 	T_ASSERT (this_);
 	T_ASSERT (this_->m_scriptManager);
+
 	log::error << L"LUA RUNTIME ERROR; Debugger halted if attached." << Endl;
 
 	std::wstring error = mbstows(lua_tostring(luaState, -1));
-	
-	const SourceMapping* errorMap = 0;
-	std::wstring errorMessage;
-	int32_t errorLine;
-
-	if (error.size() >= 43 && error[0] == L'{' && error[42] == L':')
-	{
-		size_t pos = error.find(L':', 43);
-		if (pos != error.npos)
-		{
-			errorMessage = error.substr(pos + 1);
-			errorLine = parseString< int32_t >(error.substr(43, pos - 43));
-
-			const source_map_t& map = this_->m_map;
-			for (source_map_t::const_reverse_iterator i = map.rbegin(); i != map.rend(); ++i)
-			{
-				if (errorLine >= i->line)
-				{
-					errorMap = &(*i);
-					errorLine = errorLine - i->line;
-					break;
-				}
-			}
-		}
-	}
-
-	if (errorMap)
-		log::error << errorMap->name << L":" << errorLine << L":" << errorMessage << Endl;
-	else
+	if (!error.empty())
 		log::error << error << Endl;
 
 	this_->m_scriptManager->breakDebugger(luaState);

@@ -22,7 +22,7 @@ class IRuntimeClass;
 	namespace script
 	{
 
-class IScriptResource;
+class IScriptBlob;
 
 /*! \brief Script context.
  * \ingroup Script
@@ -41,12 +41,12 @@ public:
 	/*! \brief Explicit destroy context. */
 	virtual void destroy() = 0;
 
-	/*! \brief Load script resource into context.
+	/*! \brief Load script blob into context.
 	 *
-	 * \param scriptResource Script resource.
+	 * \param scriptBlob Pre-compiled script blob.
 	 * \return True if resource loaded successfully.
 	 */
-	virtual bool loadResource(const IScriptResource* scriptResource) = 0;
+	virtual bool load(const IScriptBlob* scriptBlob) = 0;
 
 	/*! \brief Set global variable value.
 	 *

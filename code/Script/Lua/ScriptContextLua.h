@@ -2,7 +2,6 @@
 #define traktor_script_ScriptContextLua_H
 
 #include "Script/IScriptContext.h"
-#include "Script/Types.h"
 
 struct lua_State;
 
@@ -28,7 +27,7 @@ public:
 
 	virtual void destroy();
 
-	virtual bool loadResource(const IScriptResource* scriptResource);
+	virtual bool load(const IScriptBlob* scriptBlob);
 
 	virtual void setGlobal(const std::string& globalName, const Any& globalValue);
 
@@ -52,7 +51,6 @@ private:
 	ScriptManagerLua* m_scriptManager;
 	lua_State* m_luaState;
 	int32_t m_environmentRef;
-	source_map_t m_map;
 	const Object* m_lastSelf;
 
 	ScriptContextLua(ScriptManagerLua* scriptManager, lua_State* luaState, int32_t environmentRef);

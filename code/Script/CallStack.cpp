@@ -50,7 +50,6 @@ CallStack::Frame::Frame()
 void CallStack::Frame::serialize(ISerializer& s)
 {
 	s >> Member< Guid >(L"scriptId", scriptId);
-	s >> Member< std::wstring >(L"scriptName", scriptName);
 	s >> Member< std::wstring >(L"functionName", functionName);
 	s >> Member< uint32_t >(L"line", line);
 	s >> MemberRefArray< Local >(L"locals", locals);
