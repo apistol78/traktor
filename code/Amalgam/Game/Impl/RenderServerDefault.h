@@ -13,7 +13,7 @@ class RenderServerDefault : public RenderServer
 	T_RTTI_CLASS;
 
 public:
-	RenderServerDefault(net::BidirectionalObjectTransport* transport);
+	RenderServerDefault();
 
 	bool create(const PropertyGroup* defaultSettings, PropertyGroup* settings, void* nativeHandle);
 

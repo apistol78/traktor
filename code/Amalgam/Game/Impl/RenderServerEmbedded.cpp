@@ -68,9 +68,8 @@ int32_t maxAnisotropyFromQuality(int32_t quality)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.RenderServerEmbedded", RenderServerEmbedded, RenderServer)
 
-RenderServerEmbedded::RenderServerEmbedded(net::BidirectionalObjectTransport* transport)
-:	RenderServer(transport)
-,	m_screenAspectRatio(1.0f)
+RenderServerEmbedded::RenderServerEmbedded()
+:	m_screenAspectRatio(1.0f)
 {
 }
 

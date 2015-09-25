@@ -8,13 +8,6 @@ namespace traktor
 
 class PropertyGroup;
 
-	namespace net
-	{
-
-class BidirectionalObjectTransport;
-
-	}
-
 	namespace render
 	{
 	
@@ -39,7 +32,7 @@ public:
 		UrReconfigure = 2
 	};
 
-	RenderServer(net::BidirectionalObjectTransport* transport);
+	RenderServer();
 
 	virtual void destroy() = 0;
 
@@ -61,7 +54,6 @@ protected:
 	Ref< render::TextureFactory > m_textureFactory;
 
 private:
-	Ref< net::BidirectionalObjectTransport > m_transport;
 	int32_t m_frameRate;
 };
 
