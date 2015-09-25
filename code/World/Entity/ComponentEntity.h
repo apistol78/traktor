@@ -1,12 +1,12 @@
-#ifndef traktor_amalgam_GameEntity_H
-#define traktor_amalgam_GameEntity_H
+#ifndef traktor_world_ComponentEntity_H
+#define traktor_world_ComponentEntity_H
 
 #include "Core/RefArray.h"
 #include "World/Entity.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_AMALGAM_GAME_EXPORT)
+#if defined(T_WORLD_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
@@ -19,20 +19,15 @@ namespace traktor
 
 class IEntityComponent;
 
-	}
-
-	namespace amalgam
-	{
-
-/*! \brief Simple game entity.
- * \ingroup Amalgam
+/*! \brief
+ * \ingroup World
  */
-class T_DLLCLASS GameEntity : public world::Entity
+class T_DLLCLASS ComponentEntity : public Entity
 {
 	T_RTTI_CLASS;
 
 public:
-	GameEntity();
+	ComponentEntity();
 
 	virtual void destroy();
 
@@ -42,7 +37,7 @@ public:
 
 	virtual Aabb3 getBoundingBox() const;
 
-	virtual void update(const world::UpdateParams& update);
+	virtual void update(const UpdateParams& update);
 
 	/*! \brief Set controlled entity.
 	 *
@@ -51,13 +46,13 @@ public:
 	 *
 	 * \param entity Controlled entity.
 	 */
-	void setEntity(world::Entity* entity) { m_entity = entity; }
+	void setEntity(Entity* entity) { m_entity = entity; }
 
 	/*! \brief Get controlled entity.
 	 *
 	 * \return Controlled entity.
 	 */
-	world::Entity* getEntity() const { return m_entity; }
+	Entity* getEntity() const { return m_entity; }
 
 	/*! \brief Determine if controlled entity should be visible.
 	 *
@@ -72,14 +67,14 @@ public:
 	bool isVisible() const { return m_visible; }
 
 private:
-	friend class GameEntityFactory;
+	friend class WorldEntityFactory;
 
-	RefArray< world::IEntityComponent > m_components;
-	Ref< world::Entity > m_entity;
+	RefArray< IEntityComponent > m_components;
+	Ref< Entity > m_entity;
 	bool m_visible;
 };
 
 	}
 }
 
-#endif	// traktor_amalgam_GameEntity_H
+#endif	// traktor_world_ComponentEntity_H

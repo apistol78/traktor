@@ -1,6 +1,4 @@
 #include "Amalgam/Game/IEnvironment.h"
-#include "Amalgam/Game/Engine/GameEntityFactory.h"
-#include "Amalgam/Game/Engine/GameEntityRenderer.h"
 #include "Amalgam/Game/Engine/Layer.h"
 #include "Amalgam/Game/Engine/RuntimePlugin.h"
 #include "Amalgam/Game/Engine/Stage.h"
@@ -25,12 +23,6 @@ bool RuntimePlugin::getDependencies(TypeInfoSet& outDependencies) const
 
 bool RuntimePlugin::startup(IEnvironment* environment)
 {
-	// Add GameEntity to world renderer.
-	if (environment->getWorld())
-	{
-		environment->getWorld()->addEntityFactory(new GameEntityFactory(environment->getResource()->getResourceManager()));
-		environment->getWorld()->addEntityRenderer(new GameEntityRenderer());
-	}
 	return true;
 }
 

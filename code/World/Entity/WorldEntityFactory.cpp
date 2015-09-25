@@ -2,8 +2,11 @@
 #include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
 #include "World/IEntityBuilder.h"
+#include "World/IEntityComponentData.h"
 #include "World/Entity/CameraEntity.h"
 #include "World/Entity/CameraEntityData.h"
+#include "World/Entity/ComponentEntity.h"
+#include "World/Entity/ComponentEntityData.h"
 #include "World/Entity/DecalEntity.h"
 #include "World/Entity/DecalEntityData.h"
 #include "World/Entity/DecalEvent.h"
@@ -54,6 +57,7 @@ const TypeInfoSet WorldEntityFactory::getEntityTypes() const
 	typeSet.insert(&type_of< SpotLightEntityData >());
 	typeSet.insert(&type_of< SwitchEntityData >());
 	typeSet.insert(&type_of< VolumeEntityData >());
+	typeSet.insert(&type_of< ComponentEntityData >());
 	return typeSet;
 }
 
@@ -200,6 +204,30 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 	if (const VolumeEntityData* volumeData = dynamic_type_cast< const VolumeEntityData* >(&entityData))
 	{
 		return new VolumeEntity(volumeData);
+	}
+
+	if (const ComponentEntityData* componentData = dynamic_type_cast< const ComponentEntityData* >(&entityData))
+	{
+		Ref< ComponentEntity > componentEntity = new ComponentEntity();
+
+		// Create controlled entity.
+		if (componentData->m_entityData)
+		{
+			if ((componentEntity->m_entity = builder->create(componentData->m_entityData)) == 0)
+				return 0;
+
+			componentEntity->m_entity->setTransform(componentData->getTransform());
+		}
+
+		// Create components.
+		componentEntity->m_components.resize(componentData->m_components.size());
+		for (uint32_t i = 0; i < componentData->m_components.size(); ++i)
+		{
+			if ((componentEntity->m_components[i] = componentData->m_components[i]->createInstance(componentEntity, m_resourceManager)) == 0)
+				return 0;
+		}
+
+		return componentEntity;
 	}
 
 	return 0;

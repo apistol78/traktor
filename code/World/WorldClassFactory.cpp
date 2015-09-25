@@ -16,6 +16,8 @@
 #include "World/PostProcess/PostProcess.h"
 #include "World/Entity/CameraEntity.h"
 #include "World/Entity/CameraEntityData.h"
+#include "World/Entity/ComponentEntity.h"
+#include "World/Entity/ComponentEntityData.h"
 #include "World/Entity/DirectionalLightEntity.h"
 #include "World/Entity/GroupEntity.h"
 #include "World/Entity/GroupEntityData.h"
@@ -282,6 +284,16 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	Ref< AutoRuntimeClass< VolumeEntity > > classVolumeEntity = new AutoRuntimeClass< VolumeEntity >();
 	classVolumeEntity->addMethod("inside", &VolumeEntity::inside);
 	registrar->registerClass(classVolumeEntity);
+
+	Ref< AutoRuntimeClass< ComponentEntityData > > classComponentEntityData = new AutoRuntimeClass< ComponentEntityData >();
+	registrar->registerClass(classComponentEntityData);
+
+	Ref< AutoRuntimeClass< ComponentEntity > > classComponentEntity = new AutoRuntimeClass< ComponentEntity >();
+	classComponentEntity->addMethod("setEntity", &ComponentEntity::setEntity);
+	classComponentEntity->addMethod("getEntity", &ComponentEntity::getEntity);
+	classComponentEntity->addMethod("setVisible", &ComponentEntity::setVisible);
+	classComponentEntity->addMethod("isVisible", &ComponentEntity::isVisible);
+	registrar->registerClass(classComponentEntity);
 
 	Ref< AutoRuntimeClass< PostProcess > > classPostProcess = new AutoRuntimeClass< PostProcess >();
 	classPostProcess->addMethod("setCombination", &PostProcess_setCombination);
