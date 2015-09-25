@@ -55,7 +55,7 @@ Ref< Font > FontResource::create(resource::IResourceManager* resourceManager, re
 
 	font->m_vertexBuffer = renderSystem->createVertexBuffer(vertexElements, 6 * sizeof(GlyphVertex), false);
 	if (!font->m_vertexBuffer)
-		return false;
+		return 0;
 
 	GlyphVertex* vertex = reinterpret_cast< GlyphVertex* >(font->m_vertexBuffer->lock());
 	T_ASSERT (vertex);
