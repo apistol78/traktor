@@ -13,10 +13,16 @@ LocalComposite::LocalComposite()
 {
 }
 
-LocalComposite::LocalComposite(const std::wstring& name, const RefArray< Local >& values)
+LocalComposite::LocalComposite(const std::wstring& name, const std::wstring& value, const RefArray< Local >& values)
 :	Local(name)
+,	m_value(value)
 ,	m_values(values)
 {
+}
+
+const std::wstring& LocalComposite::getValue() const
+{
+	return m_value;
 }
 
 const RefArray< Local >& LocalComposite::getValues() const
@@ -27,6 +33,7 @@ const RefArray< Local >& LocalComposite::getValues() const
 void LocalComposite::serialize(ISerializer& s)
 {
 	Local::serialize(s);
+	s >> Member< std::wstring >(L"value", m_value);
 	s >> MemberRefArray< Local >(L"values", m_values);
 }
 

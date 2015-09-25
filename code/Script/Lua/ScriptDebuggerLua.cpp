@@ -26,6 +26,9 @@ namespace traktor
 		namespace
 		{
 
+const int32_t c_tableKey_class = -1;
+const int32_t c_tableKey_instance = -2;
+
 std::wstring describeValue(lua_State* L, int32_t index)
 {
 	if (lua_isnumber(L, index))
@@ -34,14 +37,6 @@ std::wstring describeValue(lua_State* L, int32_t index)
 		return lua_toboolean(L, index) != 0 ? L"true" : L"false";
 	else if (lua_isstring(L, index))
 		return mbstows(lua_tostring(L, index));
-	else if (lua_isuserdata(L, index))
-	{
-		Object* object = *reinterpret_cast< Object** >(lua_touserdata(L, index));
-		if (object)
-			return std::wstring(L"(") + type_name(object) + std::wstring(L")");
-		else
-			return L"(null)";
-	}
 	else
 		return L"";
 }
@@ -115,7 +110,7 @@ Ref< Local > describeCompound(const std::wstring& name, const RfmCompound* compo
 		else
 			memberValues.push_back(new LocalSimple(member->getName(), L"(...)"));
 	}
-	return new LocalComposite(name, memberValues);
+	return new LocalComposite(name, L"", memberValues);
 }
 
 Ref< Local > describeSerializable(const std::wstring& name, const ISerializable* s)
@@ -131,7 +126,29 @@ Ref< Local > describeLocal(const std::wstring& name, lua_State* L, int32_t index
 {
 	if (lua_istable(L, index))
 	{
+		std::wstring nativeTypeName;
 		RefArray< Local > values;
+
+		// Describe native object.
+		lua_rawgeti(L, index, c_tableKey_instance);
+		if (lua_islightuserdata(L, -1))
+		{
+			ITypedObject* object = reinterpret_cast< ITypedObject* >(lua_touserdata(L, -1));
+			lua_pop(L, 1);
+
+			if (object)
+			{
+				if (const Boxed* box = dynamic_type_cast< const Boxed* >(object))
+					values.push_back(new LocalSimple(name, box->toString()));
+
+				if (const ISerializable* s = dynamic_type_cast< const ISerializable* >(object))
+					values.push_back(describeSerializable(name, s));
+
+				nativeTypeName = L"(" + std::wstring(type_name(object)) + L")";
+			}
+		}
+		else
+			lua_pop(L, 1);
 
 		if (lua_getmetatable(L, index) != 0)
 		{
@@ -145,6 +162,17 @@ Ref< Local > describeLocal(const std::wstring& name, lua_State* L, int32_t index
 		while (lua_next(L, index - 1))
 		{
 			std::wstring name = describeValue(L, -2);
+
+			// \hack Hide internal keys from debugger.
+			if (!nativeTypeName.empty())
+			{
+				if (name == L"-1" || name == L"-2")
+				{
+					lua_pop(L, 1);
+					continue;
+				}
+			}
+
 			if (depth < 4)
 			{
 				Ref< Local > value = describeLocal(name, L, -1, depth + 1);
@@ -153,11 +181,13 @@ Ref< Local > describeLocal(const std::wstring& name, lua_State* L, int32_t index
 			}
 			else
 				values.push_back(new LocalSimple(name, L"(...)"));
+
 			lua_pop(L, 1);
 		}
 
 		return new LocalComposite(
 			name,
+			nativeTypeName,
 			values
 		);
 	}
@@ -174,27 +204,12 @@ Ref< Local > describeLocal(const std::wstring& name, lua_State* L, int32_t index
 
 		if (lua_isfunction(L, index))
 			return new LocalSimple(name, L"(function)");
-
-		if (lua_isuserdata(L, index) && !lua_islightuserdata(L, index))
-		{
-			ITypedObject* object = *reinterpret_cast< ITypedObject** >(lua_touserdata(L, index));
-			if (object)
-			{
-				if (const Boxed* box = dynamic_type_cast< const Boxed* >(object))
-					return new LocalSimple(name, box->toString());
-
-				if (const ISerializable* s = dynamic_type_cast< const ISerializable* >(object))
-					return describeSerializable(name, s);
-
-				return new LocalSimple(name, std::wstring(L"(") + type_name(object) + std::wstring(L")"));
-			}
-		}
-
-		return new LocalSimple(
-			name,
-			L""
-		);
 	}
+
+	return new LocalSimple(
+		name,
+		L""
+	);
 }
 
 		}
@@ -391,13 +406,10 @@ void ScriptDebuggerLua::captureCallStack(lua_State* L, CallStack& outCallStack)
 	{
 		lua_getinfo(L, "Snlu", &ar);
 
-		Guid currentId(mbstows(ar.source));
-		int32_t currentLine = ar.currentline - 1;
-
 		CallStack::Frame f;
-		f.scriptId = currentId;
+		f.scriptId = Guid(mbstows(ar.source));
 		f.functionName = ar.name ? mbstows(ar.name) : L"(anonymous)";
-		f.line = currentLine;
+		f.line = max(ar.currentline - 1, 0);
 
 		const char* localName;
 		for (int n = 1; (localName = lua_getlocal(L, &ar, n)) != 0; ++n)

@@ -27,13 +27,16 @@ class T_DLLCLASS LocalComposite : public Local
 public:
 	LocalComposite();
 
-	LocalComposite(const std::wstring& name, const RefArray< Local >& values);
+	LocalComposite(const std::wstring& name, const std::wstring& value, const RefArray< Local >& values);
+
+	const std::wstring& getValue() const;
 
 	const RefArray< Local >& getValues() const;
 
 	virtual void serialize(ISerializer& s);
 
 private:
+	std::wstring m_value;
 	RefArray< Local > m_values;
 };
 
