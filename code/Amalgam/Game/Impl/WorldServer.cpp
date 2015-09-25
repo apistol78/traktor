@@ -37,6 +37,7 @@
 #include "World/EntityEventResourceFactory.h"
 #include "World/EntityResourceFactory.h"
 #include "World/WorldEntityRenderers.h"
+#include "World/Entity/ComponentEntityRenderer.h"
 #include "World/Entity/DecalEntityRenderer.h"
 #include "World/Entity/GroupEntityRenderer.h"
 #include "World/Entity/LightEntityRenderer.h"
@@ -144,6 +145,7 @@ bool WorldServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 	);
 
 	m_entityRenderers = new world::WorldEntityRenderers();
+	m_entityRenderers->add(new world::ComponentEntityRenderer());
 	m_entityRenderers->add(new world::DecalEntityRenderer(m_renderServer->getRenderSystem()));
 	m_entityRenderers->add(new world::GroupEntityRenderer());
 	m_entityRenderers->add(new world::LightEntityRenderer());

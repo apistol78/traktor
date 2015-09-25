@@ -7,8 +7,6 @@
 #include "Amalgam/Game/Engine/AudioLayer.h"
 #include "Amalgam/Game/Engine/StageData.h"
 #include "Amalgam/Game/Engine/FlashLayer.h"
-#include "Amalgam/Game/Engine/GameEntity.h"
-#include "Amalgam/Game/Engine/GameEntityData.h"
 #include "Amalgam/Game/Engine/SparkLayer.h"
 #include "Amalgam/Game/Engine/Stage.h"
 #include "Amalgam/Game/Engine/StageData.h"
@@ -334,16 +332,6 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classStageLoader->addMethod("failed", &StageLoader::failed);
 	classStageLoader->addMethod("get", &StageLoader::get);
 	registrar->registerClass(classStageLoader);
-
-	Ref< AutoRuntimeClass< GameEntityData > > classGameEntityData = new AutoRuntimeClass< GameEntityData >();
-	registrar->registerClass(classGameEntityData);
-
-	Ref< AutoRuntimeClass< GameEntity > > classGameEntity = new AutoRuntimeClass< GameEntity >();
-	classGameEntity->addMethod("setEntity", &GameEntity::setEntity);
-	classGameEntity->addMethod("getEntity", &GameEntity::getEntity);
-	classGameEntity->addMethod("setVisible", &GameEntity::setVisible);
-	classGameEntity->addMethod("isVisible", &GameEntity::isVisible);
-	registrar->registerClass(classGameEntity);
 }
 
 	}
