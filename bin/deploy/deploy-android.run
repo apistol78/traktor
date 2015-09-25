@@ -1,3 +1,5 @@
+import(traktor)
+import(traktor.drawing)
 
 
 function string:trim()
@@ -48,7 +50,7 @@ end
 function deploy(args)
 	stdout:printLn("Deploying...")
 
-	local toolchain = "arm-linux-androideabi-4.8"
+	local toolchain = "arm-linux-androideabi-4.9"
 	local android = "android-19"
 	local architecture = "arch-arm"
 
@@ -217,7 +219,7 @@ end
 function migrate(args)
 	stdout:printLn("Migrating...")
 
-	local toolchain = "arm-linux-androideabi-4.8"
+	local toolchain = "arm-linux-androideabi-4.9"
 	local android = "android-19"
 	local architecture = "arch-arm"
 
