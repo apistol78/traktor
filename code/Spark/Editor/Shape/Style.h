@@ -54,6 +54,8 @@ public:
 
 	float getOpacity() const;
 
+	bool operator == (const Style& other) const;
+
 private:
 	bool m_fillEnable;
 	Ref< Gradient > m_fillGradient;
