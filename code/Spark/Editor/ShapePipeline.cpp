@@ -184,40 +184,46 @@ public:
 
 				if (!triangles.empty())
 				{
-					Batch batch;
+					Batch* batch = 0;
+
+					// Check if we can merge with last batch.
+					if (!m_batches.empty() && *m_batches.back().first == *m_styleStack.back())
+					{
+						batch = &m_batches.back().second;
+					}
+					if (!batch)
+					{
+						m_batches.push_back(std::make_pair(m_styleStack.back(), Batch()));
+						batch = &m_batches.back().second;
+					}
 
 					for (AlignedVector< Triangulator::Triangle >::const_iterator i = triangles.begin(); i != triangles.end(); ++i)
 					{
-						uint32_t indexBase = batch.vertices.size();
+						uint32_t indexBase = batch->vertices.size();
 
-						batch.vertices.push_back(i->v[0].toVector2() / c_pointScale);
-						batch.vertices.push_back(i->v[1].toVector2() / c_pointScale);
-						batch.vertices.push_back(i->v[2].toVector2() / c_pointScale);
+						batch->vertices.push_back(i->v[0].toVector2() / c_pointScale);
+						batch->vertices.push_back(i->v[1].toVector2() / c_pointScale);
+						batch->vertices.push_back(i->v[2].toVector2() / c_pointScale);
 
 						if (i->type == Triangulator::TcFill)
 						{
-							batch.trianglesFill.push_back(indexBase + 0);
-							batch.trianglesFill.push_back(indexBase + 1);
-							batch.trianglesFill.push_back(indexBase + 2);
+							batch->trianglesFill.push_back(indexBase + 0);
+							batch->trianglesFill.push_back(indexBase + 1);
+							batch->trianglesFill.push_back(indexBase + 2);
 						}
 						else if (i->type == Triangulator::TcIn)
 						{
-							batch.trianglesIn.push_back(indexBase + 0);
-							batch.trianglesIn.push_back(indexBase + 1);
-							batch.trianglesIn.push_back(indexBase + 2);
+							batch->trianglesIn.push_back(indexBase + 0);
+							batch->trianglesIn.push_back(indexBase + 1);
+							batch->trianglesIn.push_back(indexBase + 2);
 						}
 						else if (i->type == Triangulator::TcOut)
 						{
-							batch.trianglesOut.push_back(indexBase + 0);
-							batch.trianglesOut.push_back(indexBase + 1);
-							batch.trianglesOut.push_back(indexBase + 2);
+							batch->trianglesOut.push_back(indexBase + 0);
+							batch->trianglesOut.push_back(indexBase + 1);
+							batch->trianglesOut.push_back(indexBase + 2);
 						}
 					}
-
-					m_batches.push_back(std::make_pair(
-						m_styleStack.back(),
-						batch
-					));
 				}
 			}
 		}

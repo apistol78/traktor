@@ -97,5 +97,37 @@ float Style::getOpacity() const
 	return m_opacity;
 }
 
+bool Style::operator == (const Style& other) const
+{
+	if (m_fillEnable != other.m_fillEnable)
+		return false;
+
+	if (m_fillEnable)
+	{
+		if (m_fillGradient != other.m_fillGradient)
+			return false;
+		if (m_fill != other.m_fill)
+			return false;
+	}
+
+	if (m_strokeEnable != other.m_strokeEnable)
+		return false;
+
+	if (m_strokeEnable)
+	{
+		if (m_strokeGradient != other.m_strokeGradient)
+			return false;
+		if (m_strokeWidth != other.m_strokeWidth)
+			return false;
+		if (m_stroke != other.m_stroke)
+			return false;
+	}
+
+	if (m_opacity != other.m_opacity)
+		return false;
+
+	return true;
+}
+
 	}
 }
