@@ -109,7 +109,7 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 			Ref< ProgramResource > programResource;
 			if (ShaderGraph* programShaderGraph = dynamic_type_cast< ShaderGraph* >(j->program))
 			{
-				Ref< render::IProgramCompiler > programCompiler = m_renderSystem->createProgramCompiler();
+				Ref< IProgramCompiler > programCompiler = m_renderSystem->createProgramCompiler();
 				if (!programCompiler)
 					return 0;
 

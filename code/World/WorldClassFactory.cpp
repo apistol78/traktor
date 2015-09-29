@@ -13,7 +13,6 @@
 #include "World/IEntityFactory.h"
 #include "World/IEntityRenderer.h"
 #include "World/WorldClassFactory.h"
-#include "World/PostProcess/PostProcess.h"
 #include "World/Entity/CameraEntity.h"
 #include "World/Entity/CameraEntityData.h"
 #include "World/Entity/ComponentEntity.h"
@@ -116,16 +115,6 @@ RefArray< Entity > GroupEntity_getEntitiesOf(GroupEntity* this_, const TypeInfo&
 Ref< Entity > GroupEntity_getFirstEntityOf(GroupEntity* this_, const TypeInfo& entityType)
 {
 	return this_->getFirstEntityOf(entityType);
-}
-
-void PostProcess_setCombination(PostProcess* this_, const std::wstring& name, bool value)
-{
-	this_->setCombination(render::getParameterHandle(name), value);
-}
-
-void PostProcess_setParameter(PostProcess* this_, const std::wstring& name, float value)
-{
-	this_->setFloatParameter(render::getParameterHandle(name), value);
 }
 
 void Entity_update(Entity* this_, float totalTime, float deltaTime)
@@ -294,12 +283,6 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classComponentEntity->addMethod("setVisible", &ComponentEntity::setVisible);
 	classComponentEntity->addMethod("isVisible", &ComponentEntity::isVisible);
 	registrar->registerClass(classComponentEntity);
-
-	Ref< AutoRuntimeClass< PostProcess > > classPostProcess = new AutoRuntimeClass< PostProcess >();
-	classPostProcess->addMethod("setCombination", &PostProcess_setCombination);
-	classPostProcess->addMethod("setParameter", &PostProcess_setParameter);
-	classPostProcess->addMethod("requireHighRange", &PostProcess::requireHighRange);
-	registrar->registerClass(classPostProcess);
 }
 
 	}

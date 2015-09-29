@@ -42,7 +42,7 @@ As_traktor_amalgam_Configuration::As_traktor_amalgam_Configuration(flash::Action
 	prototype->addProperty("terrainQuality", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_terrainQuality), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_terrainQuality));
 	prototype->addProperty("particleQuality", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_particleQuality), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_particleQuality));
 	prototype->addProperty("oceanQuality", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_oceanQuality), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_oceanQuality));
-	prototype->addProperty("postProcessQuality", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_postProcessQuality), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_postProcessQuality));
+	prototype->addProperty("imageProcessQuality", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_imageProcessQuality), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_imageProcessQuality));
 	prototype->addProperty("gamma", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_gamma), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_gamma));
 
 	// Input
@@ -212,14 +212,14 @@ void As_traktor_amalgam_Configuration::Configuration_set_oceanQuality(AsConfigur
 	self->setOceanQuality((AsConfiguration::Quality)oceanQuality);
 }
 
-int32_t As_traktor_amalgam_Configuration::Configuration_get_postProcessQuality(const AsConfiguration* self) const
+int32_t As_traktor_amalgam_Configuration::Configuration_get_imageProcessQuality(const AsConfiguration* self) const
 {
-	return self->getPostProcessQuality();
+	return self->getImageProcessQuality();
 }
 
-void As_traktor_amalgam_Configuration::Configuration_set_postProcessQuality(AsConfiguration* self, int32_t postProcessQuality) const
+void As_traktor_amalgam_Configuration::Configuration_set_imageProcessQuality(AsConfiguration* self, int32_t imageProcessQuality) const
 {
-	self->setPostProcessQuality((AsConfiguration::Quality)postProcessQuality);
+	self->setImageProcessQuality((AsConfiguration::Quality)imageProcessQuality);
 }
 
 float As_traktor_amalgam_Configuration::Configuration_get_gamma(const AsConfiguration* self) const

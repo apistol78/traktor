@@ -14,6 +14,8 @@
 #include "Mesh/MeshFactory.h"
 #include "Render/IRenderSystem.h"
 #include "Render/ITexture.h"
+#include "Render/ImageProcess/ImageProcessFactory.h"
+#include "Render/ImageProcess/ImageProcessSettings.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/TextureFactory.h"
 #include "Resource/ResourceManager.h"
@@ -52,8 +54,6 @@
 #include "Ui/Custom/Sequencer/Range.h"
 #include "Ui/Custom/Sequencer/Tick.h"
 #include "Ui/Custom/Splitter.h"
-#include "World/PostProcess/PostProcessFactory.h"
-#include "World/PostProcess/PostProcessSettings.h"
 
 // Resources
 #include "Resources/Playback.h"
@@ -122,7 +122,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_resourceManager->addFactory(new render::TextureFactory(database, renderSystem, 0));
 	m_resourceManager->addFactory(new render::ShaderFactory(database, renderSystem));
 	m_resourceManager->addFactory(new sound::SoundFactory(database));
-	m_resourceManager->addFactory(new world::PostProcessFactory(database));
+	m_resourceManager->addFactory(new render::ImageProcessFactory(database));
 	m_resourceManager->addFactory(new EffectFactory(database, 0));
 
 	m_effectData = m_document->getObject< EffectData >(0);
@@ -164,7 +164,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_RANDOMIZE_SEED"), 6, ui::Command(L"Effect.Editor.RandomizeSeed")));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_BROWSE_BACKGROUND"), 10, ui::Command(L"Effect.Editor.BrowseBackground")));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_BROWSE_POSTPROCESS"), 11, ui::Command(L"Effect.Editor.BrowsePostProcess")));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_BROWSE_POSTPROCESS"), 11, ui::Command(L"Effect.Editor.BrowseImageProcess")));
 	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &EffectEditorPage::eventToolClick);
 
 	m_previewControl = new EffectPreviewControl(m_editor);
@@ -294,13 +294,13 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 			m_previewControl->setBackground(resource::Id< render::ISimpleTexture >(textureInstance->getGuid()));
 		}
 	}
-	else if (command == L"Effect.Editor.BrowsePostProcess")
+	else if (command == L"Effect.Editor.BrowseImageProcess")
 	{
-		Ref< db::Instance > postProcessInstance = m_editor->browseInstance(type_of< world::PostProcessSettings >());
+		Ref< db::Instance > postProcessInstance = m_editor->browseInstance(type_of< render::ImageProcessSettings >());
 		if (postProcessInstance)
 		{
 			m_editor->buildAsset(postProcessInstance->getGuid(), false);
-			m_previewControl->setPostProcess(resource::Id< world::PostProcessSettings >(postProcessInstance->getGuid()));
+			m_previewControl->setImageProcess(resource::Id< render::ImageProcessSettings >(postProcessInstance->getGuid()));
 		}
 	}
 	else if (command == L"Effect.Editor.ReplaceEmitterSource")

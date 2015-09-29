@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.world.PostProcessSettings" version="1">
+<object type="traktor.render.ImageProcessSettings" version="1">
 	<requireHighRange>false</requireHighRange>
 	<definitions/>
 	<steps>
-		<item type="traktor.world.PostProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple">
 			<shader>{EBF6634D-CE3A-4C4A-9D27-29B34196F8FD}</shader>
 			<sources>
 				<item>

@@ -20,6 +20,7 @@ namespace traktor
 	namespace render
 	{
 
+class ImageProcessSettings;
 class ITexture;
 
 	}
@@ -28,7 +29,6 @@ class ITexture;
 	{
 
 class LayerEntityData;
-class PostProcessSettings;
 class WorldRenderSettings;
 
 	}
@@ -49,13 +49,13 @@ public:
 
 	Ref< world::WorldRenderSettings > getWorldRenderSettings() const;
 
-	void setPostProcessSettings(world::Quality quality, const resource::Id< world::PostProcessSettings >& postProcess);
+	void setImageProcessSettings(world::Quality quality, const resource::Id< render::ImageProcessSettings >& imageProcessSettings);
 
-	const resource::Id< world::PostProcessSettings >& getPostProcessSettings(world::Quality quality) const;
+	const resource::Id< render::ImageProcessSettings >& getImageProcessSettings(world::Quality quality) const;
 
-	void setPostProcessParams(const SmallMap< std::wstring, resource::Id< render::ITexture > >& postProcessParams);
+	void setImageProcessParams(const SmallMap< std::wstring, resource::Id< render::ITexture > >& imageProcessParams);
 
-	const SmallMap< std::wstring, resource::Id< render::ITexture > >& getPostProcessParams() const;
+	const SmallMap< std::wstring, resource::Id< render::ITexture > >& getImageProcessParams() const;
 
 	void setLayers(const RefArray< world::LayerEntityData >& layers);
 
@@ -69,8 +69,8 @@ public:
 
 private:
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
-	resource::Id< world::PostProcessSettings > m_postProcessSettings[world::QuLast];
-	SmallMap< std::wstring, resource::Id< render::ITexture > > m_postProcessParams;
+	resource::Id< render::ImageProcessSettings > m_imageProcessSettings[world::QuLast];
+	SmallMap< std::wstring, resource::Id< render::ITexture > > m_imageProcessParams;
 	RefArray< world::LayerEntityData > m_layers;
 	Ref< ISceneControllerData > m_controllerData;
 };

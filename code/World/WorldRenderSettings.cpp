@@ -4,9 +4,9 @@
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberStaticArray.h"
 #include "Render/ITexture.h"
+#include "Render/ImageProcess/ImageProcessSettings.h"
 #include "Resource/Member.h"
 #include "World/WorldRenderSettings.h"
-#include "World/PostProcess/PostProcessSettings.h"
 
 namespace traktor
 {
@@ -118,8 +118,8 @@ void WorldRenderSettings::ShadowSettings::serialize(ISerializer& s)
 	s >> Member< float >(L"cascadingLambda", cascadingLambda, AttributeRange(0.0f));
 	s >> Member< bool >(L"quantizeProjection", quantizeProjection);
 	s >> Member< int32_t >(L"maskDenominator", maskDenominator, AttributeRange(1));
-	s >> resource::Member< PostProcessSettings >(L"maskProject", maskProject);
-	s >> resource::Member< PostProcessSettings >(L"maskFilter", maskFilter);
+	s >> resource::Member< render::ImageProcessSettings >(L"maskProject", maskProject);
+	s >> resource::Member< render::ImageProcessSettings >(L"maskFilter", maskFilter);
 }
 
 	}

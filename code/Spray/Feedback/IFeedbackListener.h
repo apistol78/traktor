@@ -20,7 +20,7 @@ enum FeedbackType
 {
 	FbtNone			= 0,
 	FbtCamera		= 1,
-	FbtPostProcess	= 2,
+	FbtImageProcess	= 2,
 	FbtUI			= 3
 };
 

@@ -12,6 +12,8 @@
 #include "Render/PrimitiveRenderer.h"
 #include "Render/RenderTargetSet.h"
 #include "Render/Context/RenderContext.h"
+#include "Render/ImageProcess/ImageProcess.h"
+#include "Render/ImageProcess/ImageProcessSettings.h"
 #include "Resource/IResourceManager.h"
 #include "Sound/SoundSystem.h"
 #include "Sound/Player/SoundPlayer.h"
@@ -47,8 +49,6 @@
 #include "Ui/MenuItem.h"
 #include "World/WorldRenderView.h"
 #include "World/Forward/WorldRenderPassForward.h"
-#include "World/PostProcess/PostProcess.h"
-#include "World/PostProcess/PostProcessSettings.h"
 
 namespace traktor
 {
@@ -240,7 +240,7 @@ void EffectPreviewControl::setBackground(const resource::Id< render::ISimpleText
 	m_resourceManager->bind(background, m_background);
 }
 
-void EffectPreviewControl::setPostProcess(const resource::Id< world::PostProcessSettings >& postProcess)
+void EffectPreviewControl::setImageProcess(const resource::Id< render::ImageProcessSettings >& postProcess)
 {
 	m_resourceManager->bind(postProcess, m_postProcessSettings);
 	updateRenderer();
@@ -354,7 +354,7 @@ void EffectPreviewControl::updateRenderer()
 	// Re-create post processing.
 	if (m_postProcessSettings)
 	{
-		m_postProcess = new world::PostProcess();
+		m_postProcess = new render::ImageProcess();
 		m_postProcess->create(m_postProcessSettings, 0, m_resourceManager, m_renderSystem, sz.cx, sz.cy, false);
 
 		render::RenderTargetSetCreateDesc desc;
@@ -626,7 +626,7 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 	{
 		m_renderView->end();
 
-		world::PostProcessStep::Instance::RenderParams params;
+		render::ImageProcessStep::Instance::RenderParams params;
 		params.view = viewTransform;
 		params.viewToLight = Matrix44::identity();
 		params.projection = projectionTransform;

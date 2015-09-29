@@ -39,7 +39,7 @@ void EffectEditorPageFactory::getCommands(std::list< ui::Command >& outCommands)
 	outCommands.push_back(ui::Command(L"Effect.Editor.ToggleGroundClip"));
 	outCommands.push_back(ui::Command(L"Effect.Editor.RandomizeSeed"));
 	outCommands.push_back(ui::Command(L"Effect.Editor.BrowseBackground"));
-	outCommands.push_back(ui::Command(L"Effect.Editor.BrowsePostProcess"));
+	outCommands.push_back(ui::Command(L"Effect.Editor.BrowseImageProcess"));
 	outCommands.push_back(ui::Command(L"Effect.Editor.ReplaceEmitterSource"));
 }
 

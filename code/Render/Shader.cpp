@@ -57,7 +57,7 @@ void Shader::setTechnique(handle_t handle)
 	updateCurrentProgram();
 }
 
-void Shader::getTechniques(std::set< render::handle_t >& outHandles) const
+void Shader::getTechniques(std::set< handle_t >& outHandles) const
 {
 	for (SmallMap< handle_t, Technique >::const_iterator i = m_techniques.begin(); i != m_techniques.end(); ++i)
 		outHandles.insert(i->first);

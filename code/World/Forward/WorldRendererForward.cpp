@@ -9,6 +9,9 @@
 #include "Render/RenderTargetSet.h"
 #include "Render/ISimpleTexture.h"
 #include "Render/Context/RenderContext.h"
+#include "Render/ImageProcess/ImageProcess.h"
+#include "Render/ImageProcess/ImageProcessSettings.h"
+#include "Render/ImageProcess/ImageProcessTargetPool.h"
 #include "Resource/Id.h"
 #include "Resource/IResourceManager.h"
 #include "World/Entity.h"
@@ -18,9 +21,6 @@
 #include "World/WorldContext.h"
 #include "World/Forward/WorldRendererForward.h"
 #include "World/Forward/WorldRenderPassForward.h"
-#include "World/PostProcess/PostProcess.h"
-#include "World/PostProcess/PostProcessSettings.h"
-#include "World/PostProcess/PostProcessTargetPool.h"
 #include "World/SMProj/BoxShadowProjection.h"
 #include "World/SMProj/LiSPShadowProjection.h"
 #include "World/SMProj/TrapezoidShadowProjection.h"
@@ -33,18 +33,18 @@ namespace traktor
 		namespace
 		{
 
-const resource::Id< PostProcessSettings > c_ambientOcclusionLow(Guid(L"{ED4F221C-BAB1-4645-BD08-84C5B3FA7C20}"));		// SSAO, half size
-const resource::Id< PostProcessSettings > c_ambientOcclusionMedium(Guid(L"{A4249C8A-9A0D-B349-B0ED-E8B354CD7BDF}"));	// SSAO, full size
-const resource::Id< PostProcessSettings > c_ambientOcclusionHigh(Guid(L"{37F82A38-D632-5541-9B29-E77C2F74B0C0}"));		// HBAO, half size
-const resource::Id< PostProcessSettings > c_ambientOcclusionUltra(Guid(L"{C1C9DDCB-2F82-A94C-BF65-653D8E68F628}"));	// HBAO, full size
+const resource::Id< render::ImageProcessSettings > c_ambientOcclusionLow(Guid(L"{ED4F221C-BAB1-4645-BD08-84C5B3FA7C20}"));		// SSAO, half size
+const resource::Id< render::ImageProcessSettings > c_ambientOcclusionMedium(Guid(L"{A4249C8A-9A0D-B349-B0ED-E8B354CD7BDF}"));	// SSAO, full size
+const resource::Id< render::ImageProcessSettings > c_ambientOcclusionHigh(Guid(L"{37F82A38-D632-5541-9B29-E77C2F74B0C0}"));		// HBAO, half size
+const resource::Id< render::ImageProcessSettings > c_ambientOcclusionUltra(Guid(L"{C1C9DDCB-2F82-A94C-BF65-653D8E68F628}"));	// HBAO, full size
 
-const resource::Id< PostProcessSettings > c_antiAliasNone(Guid(L"{960283DC-7AC2-804B-901F-8AD4C205F4E0}"));
-const resource::Id< PostProcessSettings > c_antiAliasLow(Guid(L"{DBF2FBB9-1310-A24E-B443-AF0D018571F7}"));
-const resource::Id< PostProcessSettings > c_antiAliasMedium(Guid(L"{3E1D810B-339A-F742-9345-4ECA00220D57}"));
-const resource::Id< PostProcessSettings > c_antiAliasHigh(Guid(L"{0C288028-7BFD-BE46-A25F-F3910BE50319}"));
-const resource::Id< PostProcessSettings > c_antiAliasUltra(Guid(L"{4750DA97-67F4-E247-A9C2-B4883B1158B2}"));
+const resource::Id< render::ImageProcessSettings > c_antiAliasNone(Guid(L"{960283DC-7AC2-804B-901F-8AD4C205F4E0}"));
+const resource::Id< render::ImageProcessSettings > c_antiAliasLow(Guid(L"{DBF2FBB9-1310-A24E-B443-AF0D018571F7}"));
+const resource::Id< render::ImageProcessSettings > c_antiAliasMedium(Guid(L"{3E1D810B-339A-F742-9345-4ECA00220D57}"));
+const resource::Id< render::ImageProcessSettings > c_antiAliasHigh(Guid(L"{0C288028-7BFD-BE46-A25F-F3910BE50319}"));
+const resource::Id< render::ImageProcessSettings > c_antiAliasUltra(Guid(L"{4750DA97-67F4-E247-A9C2-B4883B1158B2}"));
 
-const resource::Id< PostProcessSettings > c_gammaCorrection(Guid(L"{AB0ABBA7-77BF-0A4E-8E3B-4987B801CE6B}"));
+const resource::Id< render::ImageProcessSettings > c_gammaCorrection(Guid(L"{AB0ABBA7-77BF-0A4E-8E3B-4987B801CE6B}"));
 
 render::handle_t s_techniqueDefault = 0;
 render::handle_t s_techniqueDepth = 0;
@@ -106,7 +106,7 @@ bool WorldRendererForward::create(
 	int32_t height = renderView->getHeight();
 
 	// Create post process target pool to enable sharing of targets between multiple processes.
-	Ref< PostProcessTargetPool > postProcessTargetPool = new PostProcessTargetPool(renderSystem);
+	Ref< render::ImageProcessTargetPool > postProcessTargetPool = new render::ImageProcessTargetPool(renderSystem);
 
 	// Create "depth map" target.
 	if (m_settings.depthPassEnabled || m_shadowsQuality > QuDisabled)
@@ -193,8 +193,8 @@ bool WorldRendererForward::create(
 			m_shadowMaskFilterTargetSet
 		)
 		{
-			resource::Proxy< PostProcessSettings > shadowMaskProject;
-			resource::Proxy< PostProcessSettings > shadowMaskFilter;
+			resource::Proxy< render::ImageProcessSettings > shadowMaskProject;
+			resource::Proxy< render::ImageProcessSettings > shadowMaskFilter;
 
 			if (
 				!resourceManager->bind(m_shadowSettings.maskProject, shadowMaskProject) ||
@@ -207,7 +207,7 @@ bool WorldRendererForward::create(
 
 			if (m_shadowsQuality > QuDisabled)
 			{
-				m_shadowMaskProject = new PostProcess();
+				m_shadowMaskProject = new render::ImageProcess();
 				if (!m_shadowMaskProject->create(
 					shadowMaskProject,
 					postProcessTargetPool,
@@ -222,7 +222,7 @@ bool WorldRendererForward::create(
 					m_shadowsQuality = QuDisabled;
 				}
 
-				m_shadowMaskFilter = new PostProcess();
+				m_shadowMaskFilter = new render::ImageProcess();
 				if (!m_shadowMaskFilter->create(
 					shadowMaskFilter,
 					postProcessTargetPool,
@@ -278,8 +278,8 @@ bool WorldRendererForward::create(
 
 	// Create ambient occlusion processing.
 	{
-		resource::Id< PostProcessSettings > ambientOcclusionId;
-		resource::Proxy< PostProcessSettings > ambientOcclusion;
+		resource::Id< render::ImageProcessSettings > ambientOcclusionId;
+		resource::Proxy< render::ImageProcessSettings > ambientOcclusion;
 
 		switch (m_ambientOcclusionQuality)
 		{
@@ -312,7 +312,7 @@ bool WorldRendererForward::create(
 
 		if (ambientOcclusion)
 		{
-			m_ambientOcclusion = new PostProcess();
+			m_ambientOcclusion = new render::ImageProcess();
 			if (!m_ambientOcclusion->create(
 				ambientOcclusion,
 				postProcessTargetPool,
@@ -331,8 +331,8 @@ bool WorldRendererForward::create(
 
 	// Create antialias processing.
 	{
-		resource::Id< PostProcessSettings > antiAliasId;
-		resource::Proxy< PostProcessSettings > antiAlias;
+		resource::Id< render::ImageProcessSettings > antiAliasId;
+		resource::Proxy< render::ImageProcessSettings > antiAlias;
 
 		switch (m_antiAliasQuality)
 		{
@@ -365,7 +365,7 @@ bool WorldRendererForward::create(
 
 		if (antiAlias)
 		{
-			m_antiAlias = new PostProcess();
+			m_antiAlias = new render::ImageProcess();
 			if (!m_antiAlias->create(
 				antiAlias,
 				postProcessTargetPool,
@@ -383,11 +383,11 @@ bool WorldRendererForward::create(
 	}
 
 	// Create "visual" post processing filter.
-	if (desc.postProcessSettings)
+	if (desc.imageProcessSettings)
 	{
-		m_visualPostProcess = new world::PostProcess();
-		if (!m_visualPostProcess->create(
-			desc.postProcessSettings,
+		m_visualImageProcess = new render::ImageProcess();
+		if (!m_visualImageProcess->create(
+			desc.imageProcessSettings,
 			postProcessTargetPool,
 			resourceManager,
 			renderSystem,
@@ -397,21 +397,21 @@ bool WorldRendererForward::create(
 		))
 		{
 			log::warning << L"Unable to create visual post processing; post processing disabled" << Endl;
-			m_visualPostProcess = 0;
+			m_visualImageProcess = 0;
 		}
 	}
 
 	// Create gamma correction processing.
 	if (m_settings.linearLighting)
 	{
-		resource::Proxy< PostProcessSettings > gammaCorrection;
+		resource::Proxy< render::ImageProcessSettings > gammaCorrection;
 		if (!resourceManager->bind(c_gammaCorrection, gammaCorrection))
 			log::warning << L"Unable to create gamma correction process; gamma correction disabled" << Endl;
 
 		if (gammaCorrection)
 		{
-			m_gammaCorrectionPostProcess = new PostProcess();
-			if (m_gammaCorrectionPostProcess->create(
+			m_gammaCorrectionImageProcess = new render::ImageProcess();
+			if (m_gammaCorrectionImageProcess->create(
 				gammaCorrection,
 				postProcessTargetPool,
 				resourceManager,
@@ -421,13 +421,13 @@ bool WorldRendererForward::create(
 				desc.allTargetsPersistent
 			))
 			{
-				m_gammaCorrectionPostProcess->setFloatParameter(render::getParameterHandle(L"World_Gamma"), desc.gamma);
-				m_gammaCorrectionPostProcess->setFloatParameter(render::getParameterHandle(L"World_GammaInverse"), 1.0f / desc.gamma);
+				m_gammaCorrectionImageProcess->setFloatParameter(render::getParameterHandle(L"World_Gamma"), desc.gamma);
+				m_gammaCorrectionImageProcess->setFloatParameter(render::getParameterHandle(L"World_GammaInverse"), 1.0f / desc.gamma);
 			}
 			else
 			{
 				log::warning << L"Unable to create gamma correction process; gamma correction disabled" << Endl;
-				m_gammaCorrectionPostProcess = 0;
+				m_gammaCorrectionImageProcess = 0;
 			}
 		}
 	}
@@ -440,7 +440,7 @@ bool WorldRendererForward::create(
 	}
 
 	// Create "visual" and "intermediate" target.
-	if (m_antiAlias || m_visualPostProcess || m_gammaCorrectionPostProcess)
+	if (m_antiAlias || m_visualImageProcess || m_gammaCorrectionImageProcess)
 	{
 		render::RenderTargetSetCreateDesc rtscd;
 		
@@ -452,7 +452,7 @@ bool WorldRendererForward::create(
 		rtscd.usingPrimaryDepthStencil = true;
 		rtscd.preferTiled = true;
 
-		if (m_settings.linearLighting || (m_visualPostProcess && m_visualPostProcess->requireHighRange()))
+		if (m_settings.linearLighting || (m_visualImageProcess && m_visualImageProcess->requireHighRange()))
 			rtscd.targets[0].format = render::TfR11G11B10F;
 		else
 			rtscd.targets[0].format = render::TfR8G8B8A8;
@@ -515,8 +515,8 @@ void WorldRendererForward::destroy()
 		i->depth = 0;
 	}
 
-	safeDestroy(m_gammaCorrectionPostProcess);
-	safeDestroy(m_visualPostProcess);
+	safeDestroy(m_gammaCorrectionImageProcess);
+	safeDestroy(m_visualImageProcess);
 	safeDestroy(m_shadowMaskFilter);
 	safeDestroy(m_shadowMaskProject);
 	m_reflectionMap.clear();
@@ -702,7 +702,7 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 					Scalar zn(max(m_slicePositions[i], m_settings.viewNearZ));
 					Scalar zf(min(m_slicePositions[i + 1], m_shadowSettings.farZ));
 
-					PostProcessStep::Instance::RenderParams params;
+					render::ImageProcessStep::Instance::RenderParams params;
 					params.viewFrustum = f.viewFrustum;
 					params.viewToLight = f.slice[i].viewToLightSpace;
 					params.projection = projection;
@@ -730,7 +730,7 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 			T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow mask filter");
 			if (m_renderView->begin(m_shadowMaskFilterTargetSet, 0))
 			{
-				PostProcessStep::Instance::RenderParams params;
+				render::ImageProcessStep::Instance::RenderParams params;
 				params.viewFrustum = f.viewFrustum;
 				params.projection = projection;
 				params.sliceNearZ = 0.0f;
@@ -799,7 +799,7 @@ void WorldRendererForward::endRender(int frame, render::EyeType eye, float delta
 		render::RenderTargetSet* sourceTargetSet = m_visualTargetSet;
 		render::RenderTargetSet* outputTargetSet = m_intermediateTargetSet;
 
-		world::PostProcessStep::Instance::RenderParams params;
+		render::ImageProcessStep::Instance::RenderParams params;
 		params.viewFrustum = f.viewFrustum;
 		params.viewToLight = f.viewToLightSpace;
 		params.view = f.view;
@@ -807,14 +807,14 @@ void WorldRendererForward::endRender(int frame, render::EyeType eye, float delta
 		params.deltaTime = deltaTime;
 
 		// Apply custom post processing filter.
-		if (m_visualPostProcess)
+		if (m_visualImageProcess)
 		{
 			T_RENDER_PUSH_MARKER(m_renderView, "World: Custom PP");
 	
-			if (m_gammaCorrectionPostProcess || m_antiAlias)
+			if (m_gammaCorrectionImageProcess || m_antiAlias)
 				m_renderView->begin(outputTargetSet);
 	
-			m_visualPostProcess->render(
+			m_visualImageProcess->render(
 				m_renderView,
 				sourceTargetSet,
 				m_depthTargetSet,
@@ -822,7 +822,7 @@ void WorldRendererForward::endRender(int frame, render::EyeType eye, float delta
 				params
 			);
 	
-			if (m_gammaCorrectionPostProcess || m_antiAlias)
+			if (m_gammaCorrectionImageProcess || m_antiAlias)
 			{
 				m_renderView->end();
 				std::swap(sourceTargetSet, outputTargetSet);
@@ -832,14 +832,14 @@ void WorldRendererForward::endRender(int frame, render::EyeType eye, float delta
 		}
 	
 		// Apply gamma correction filter.
-		if (m_gammaCorrectionPostProcess)
+		if (m_gammaCorrectionImageProcess)
 		{
 			T_RENDER_PUSH_MARKER(m_renderView, "World: Gamma Correction");
 	
 			if (m_antiAlias)
 				m_renderView->begin(outputTargetSet);
 	
-			m_gammaCorrectionPostProcess->render(
+			m_gammaCorrectionImageProcess->render(
 				m_renderView,
 				sourceTargetSet,
 				m_depthTargetSet,
@@ -874,9 +874,9 @@ void WorldRendererForward::endRender(int frame, render::EyeType eye, float delta
 	}
 }
 
-PostProcess* WorldRendererForward::getVisualPostProcess()
+render::ImageProcess* WorldRendererForward::getVisualImageProcess()
 {
-	return m_visualPostProcess;
+	return m_visualImageProcess;
 }
 
 void WorldRendererForward::getDebugTargets(std::vector< DebugTarget >& outTargets) const

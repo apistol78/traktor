@@ -42,7 +42,7 @@ public:
 
 	virtual void setAspect(float aspect);
 
-	virtual void setQuality(world::Quality postProcessQuality, world::Quality shadowQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality);
+	virtual void setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality);
 
 	virtual bool handleCommand(const ui::Command& command);
 
@@ -68,7 +68,7 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolToggleGuide;
 	Ref< ui::custom::ToolBarDropDown > m_toolView;
 	Ref< ui::custom::ToolBarDropDown > m_toolAspect;
-	Ref< ui::custom::ToolBarDropDown > m_toolPostProcess;
+	Ref< ui::custom::ToolBarDropDown > m_toolImageProcess;
 	Ref< ui::custom::ToolBarDropDown > m_toolShadows;
 	Ref< ui::custom::ToolBarDropDown > m_toolAO;
 	Ref< ui::custom::ToolBarDropDown > m_toolAA;

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.world.PostProcessSettings" version="1">
+<object type="traktor.render.ImageProcessSettings" version="1">
 	<requireHighRange>true</requireHighRange>
 	<definitions>
-		<item type="traktor.world.PostProcessDefineTarget" version="1">
+		<item type="traktor.render.ImageProcessDefineTarget" version="1">
 			<id>HalfColor</id>
 			<width>0</width>
 			<height>0</height>
@@ -12,7 +12,7 @@
 			<preferTiled>true</preferTiled>
 			<multiSample>0</multiSample>
 		</item>
-		<item type="traktor.world.PostProcessDefineTarget" version="1">
+		<item type="traktor.render.ImageProcessDefineTarget" version="1">
 			<id>BlurTemp</id>
 			<width>0</width>
 			<height>0</height>
@@ -22,7 +22,7 @@
 			<preferTiled>true</preferTiled>
 			<multiSample>0</multiSample>
 		</item>
-		<item type="traktor.world.PostProcessDefineTarget" version="1">
+		<item type="traktor.render.ImageProcessDefineTarget" version="1">
 			<id>Blur_0</id>
 			<width>0</width>
 			<height>0</height>
@@ -32,7 +32,7 @@
 			<preferTiled>true</preferTiled>
 			<multiSample>0</multiSample>
 		</item>
-		<item type="traktor.world.PostProcessDefineTarget" version="1">
+		<item type="traktor.render.ImageProcessDefineTarget" version="1">
 			<id>Blur_1</id>
 			<width>0</width>
 			<height>0</height>
@@ -42,7 +42,7 @@
 			<preferTiled>true</preferTiled>
 			<multiSample>0</multiSample>
 		</item>
-		<item type="traktor.world.PostProcessDefineTarget" version="1">
+		<item type="traktor.render.ImageProcessDefineTarget" version="1">
 			<id>OffsetMap</id>
 			<width>0</width>
 			<height>0</height>
@@ -56,10 +56,10 @@
 	<steps>
 	
 		<!-- Downscale frame -->
-		<item type="traktor.world.PostProcessStepSetTarget">
+		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>HalfColor</target>
 		</item>
-		<item type="traktor.world.PostProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple">
 			<shader>{3308413C-5D12-9646-B2E4-E4FC7D90BA52}</shader>
 			<sources>
 				<item>
@@ -71,10 +71,10 @@
 		</item>
 		
 		<!-- Blur frame 0 -->
-		<item type="traktor.world.PostProcessStepSetTarget">
+		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>BlurTemp</target>
 		</item>
-		<item type="traktor.world.PostProcessStepBlur" version="1">
+		<item type="traktor.render.ImageProcessStepBlur" version="1">
 			<shader>{092C9D00-54FF-6A42-8DD6-FE02B8341FCF}</shader>
 			<sources>
 				<item>
@@ -86,10 +86,10 @@
 			<direction>1, 0, 0, 0</direction>
 			<taps>7</taps>
 		</item>
-		<item type="traktor.world.PostProcessStepSetTarget">
+		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Blur_0</target>
 		</item>
-		<item type="traktor.world.PostProcessStepBlur" version="1">
+		<item type="traktor.render.ImageProcessStepBlur" version="1">
 			<shader>{092C9D00-54FF-6A42-8DD6-FE02B8341FCF}</shader>
 			<sources>
 				<item>
@@ -103,10 +103,10 @@
 		</item>
 
 		<!-- Blur frame 1 -->
-		<item type="traktor.world.PostProcessStepSetTarget">
+		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>BlurTemp</target>
 		</item>
-		<item type="traktor.world.PostProcessStepBlur" version="1">
+		<item type="traktor.render.ImageProcessStepBlur" version="1">
 			<shader>{092C9D00-54FF-6A42-8DD6-FE02B8341FCF}</shader>
 			<sources>
 				<item>
@@ -118,10 +118,10 @@
 			<direction>1, 0, 0, 0</direction>
 			<taps>7</taps>
 		</item>
-		<item type="traktor.world.PostProcessStepSetTarget">
+		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Blur_1</target>
 		</item>
-		<item type="traktor.world.PostProcessStepBlur" version="1">
+		<item type="traktor.render.ImageProcessStepBlur" version="1">
 			<shader>{092C9D00-54FF-6A42-8DD6-FE02B8341FCF}</shader>
 			<sources>
 				<item>
@@ -135,10 +135,10 @@
 		</item>
 		
 		<!-- Generate offset map -->
-		<item type="traktor.world.PostProcessStepSetTarget">
+		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>OffsetMap</target>
 		</item>
-		<item type="traktor.world.PostProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple">
 			<shader>{5DB6C85E-85AE-8E4B-A696-DBDF712AB26F}</shader>
 			<sources>
 				<item>
@@ -160,10 +160,10 @@
 		</item>
 		
 		<!-- DOF then blend bokeh -->
-		<item type="traktor.world.PostProcessStepSetTarget">
+		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Output</target>
 		</item>
-		<item type="traktor.world.PostProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple">
 			<shader>{E38CFE8C-35DE-8042-B862-FE19F38BD3E4}</shader>
 			<sources>
 				<item>
@@ -193,7 +193,7 @@
 				</item>
 			</sources>
 		</item>
-		<item type="traktor.world.PostProcessStepBokeh">
+		<item type="traktor.render.ImageProcessStepBokeh">
 			<shader>{750ED636-4EDE-5C40-B2AD-92365FCE659A}</shader>
 			<sources>
 				<item>

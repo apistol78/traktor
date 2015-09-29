@@ -87,7 +87,7 @@ void DebugRenderControl::setAspect(float aspect)
 {
 }
 
-void DebugRenderControl::setQuality(world::Quality postProcessQuality, world::Quality shadowQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality)
+void DebugRenderControl::setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality)
 {
 }
 

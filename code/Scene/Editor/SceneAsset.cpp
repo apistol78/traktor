@@ -6,12 +6,12 @@
 #include "Core/Serialization/MemberStaticArray.h"
 #include "Render/ITexture.h"
 #include "Resource/Member.h"
+#include "Render/ImageProcess/ImageProcessSettings.h"
 #include "Scene/ISceneControllerData.h"
 #include "Scene/Scene.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "World/WorldRenderSettings.h"
 #include "World/Editor/LayerEntityData.h"
-#include "World/PostProcess/PostProcessSettings.h"
 
 namespace traktor
 {
@@ -20,7 +20,7 @@ namespace traktor
 		namespace
 		{
 
-const wchar_t* c_PostProcessSettings_elementNames[] =
+const wchar_t* c_ImageProcessSettings_elementNames[] =
 {
 	L"disabled",
 	L"low",
@@ -48,24 +48,24 @@ Ref< world::WorldRenderSettings > SceneAsset::getWorldRenderSettings() const
 	return m_worldRenderSettings;
 }
 
-void SceneAsset::setPostProcessSettings(world::Quality quality, const resource::Id< world::PostProcessSettings >& postProcessSettings)
+void SceneAsset::setImageProcessSettings(world::Quality quality, const resource::Id< render::ImageProcessSettings >& imageProcessSettings)
 {
-	m_postProcessSettings[int32_t(quality)] = postProcessSettings;
+	m_imageProcessSettings[int32_t(quality)] = imageProcessSettings;
 }
 
-const resource::Id< world::PostProcessSettings >& SceneAsset::getPostProcessSettings(world::Quality quality) const
+const resource::Id< render::ImageProcessSettings >& SceneAsset::getImageProcessSettings(world::Quality quality) const
 {
-	return m_postProcessSettings[int32_t(quality)];
+	return m_imageProcessSettings[int32_t(quality)];
 }
 
-void SceneAsset::setPostProcessParams(const SmallMap< std::wstring, resource::Id< render::ITexture > >& postProcessParams)
+void SceneAsset::setImageProcessParams(const SmallMap< std::wstring, resource::Id< render::ITexture > >& imageProcessParams)
 {
-	m_postProcessParams = postProcessParams;
+	m_imageProcessParams = imageProcessParams;
 }
 
-const SmallMap< std::wstring, resource::Id< render::ITexture > >& SceneAsset::getPostProcessParams() const
+const SmallMap< std::wstring, resource::Id< render::ITexture > >& SceneAsset::getImageProcessParams() const
 {
-	return m_postProcessParams;
+	return m_imageProcessParams;
 }
 
 void SceneAsset::setLayers(const RefArray< world::LayerEntityData >& layers)
@@ -95,17 +95,17 @@ void SceneAsset::serialize(ISerializer& s)
 	s >> MemberRef< world::WorldRenderSettings >(L"worldRenderSettings", m_worldRenderSettings);
 
 	if (s.getVersion() >= 6)
-		s >> MemberStaticArray< resource::Id< world::PostProcessSettings >, sizeof_array(m_postProcessSettings), resource::Member< world::PostProcessSettings > >(L"postProcessSettings", m_postProcessSettings, c_PostProcessSettings_elementNames);
+		s >> MemberStaticArray< resource::Id< render::ImageProcessSettings >, sizeof_array(m_imageProcessSettings), resource::Member< render::ImageProcessSettings > >(L"imageProcessSettings", m_imageProcessSettings, c_ImageProcessSettings_elementNames);
 	else
 	{
-		resource::Id< world::PostProcessSettings > postProcessSettings;
-		s >> resource::Member< world::PostProcessSettings >(L"postProcessSettings", postProcessSettings);
-		for (int32_t i = 0; i < sizeof_array(m_postProcessSettings); ++i)
-			m_postProcessSettings[i] = postProcessSettings;
+		resource::Id< render::ImageProcessSettings > imageProcessSettings;
+		s >> resource::Member< render::ImageProcessSettings >(L"imageProcessSettings", imageProcessSettings);
+		for (int32_t i = 0; i < sizeof_array(m_imageProcessSettings); ++i)
+			m_imageProcessSettings[i] = imageProcessSettings;
 	}
 
 	if (s.getVersion() >= 5)
-		s >> MemberSmallMap< std::wstring, resource::Id< render::ITexture >, Member< std::wstring >, resource::Member< render::ITexture > >(L"postProcessParams", m_postProcessParams);
+		s >> MemberSmallMap< std::wstring, resource::Id< render::ITexture >, Member< std::wstring >, resource::Member< render::ITexture > >(L"imageProcessParams", m_imageProcessParams);
 
 	if (s.getVersion() >= 4)
 		s >> MemberRefArray< world::LayerEntityData >(L"layers", m_layers);

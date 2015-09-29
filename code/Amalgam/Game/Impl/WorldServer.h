@@ -66,7 +66,7 @@ public:
 
 	virtual Ref< world::IWorldRenderer > createWorldRenderer(
 		const world::WorldRenderSettings* worldRenderSettings,
-		const world::PostProcessSettings* postProcessSettings
+		const render::ImageProcessSettings* imageProcessSettings
 	);
 
 private:

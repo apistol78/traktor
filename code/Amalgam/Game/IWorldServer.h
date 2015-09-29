@@ -13,6 +13,13 @@
 
 namespace traktor
 {
+	namespace render
+	{
+
+class ImageProcessSettings;
+
+	}
+
 	namespace spray
 	{
 
@@ -28,7 +35,6 @@ class IEntityEventManager;
 class IEntityFactory;
 class IEntityRenderer;
 class IWorldRenderer;
-class PostProcessSettings;
 class WorldEntityRenderers;
 class WorldRenderSettings;
 
@@ -65,7 +71,7 @@ public:
 
 	virtual Ref< world::IWorldRenderer > createWorldRenderer(
 		const world::WorldRenderSettings* worldRenderSettings,
-		const world::PostProcessSettings* postProcessSettings
+		const render::ImageProcessSettings* imageProcessSettings
 	) = 0;
 };
 

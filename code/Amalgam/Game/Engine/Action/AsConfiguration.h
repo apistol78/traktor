@@ -83,9 +83,9 @@ public:
 
 	void setOceanQuality(Quality oceanQuality);
 
-	Quality getPostProcessQuality() const;
+	Quality getImageProcessQuality() const;
 
-	void setPostProcessQuality(Quality postProcessQuality);
+	void setImageProcessQuality(Quality imageProcessQuality);
 
 	float getGamma() const;
 
@@ -140,7 +140,7 @@ private:
 	Quality m_particleQuality;
 	Quality m_terrainQuality;
 	Quality m_oceanQuality;
-	Quality m_postProcessQuality;
+	Quality m_imageProcessQuality;
 	float m_gamma;
 	float m_mouseSensitivity;
 	bool m_rumbleEnable;

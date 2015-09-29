@@ -25,6 +25,13 @@ class IEnvironment;
 
 	}
 
+	namespace render
+	{
+
+class ImageProcess;
+
+	}
+
 	namespace scene
 	{
 
@@ -40,7 +47,6 @@ class EntityData;
 class GroupEntity;
 class IEntitySchema;
 class IWorldRenderer;
-class PostProcess;
 
 	}
 
@@ -121,7 +127,7 @@ public:
 
 	void resetController();
 
-	world::PostProcess* getPostProcess() const;
+	render::ImageProcess* getImageProcess() const;
 
 	const Frustum& getViewFrustum() const;
 

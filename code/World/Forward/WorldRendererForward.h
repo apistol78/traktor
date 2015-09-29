@@ -19,6 +19,7 @@ namespace traktor
 	namespace render
 	{
 
+class ImageProcess;
 class ISimpleTexture;
 class RenderContext;
 class RenderTargetSet;
@@ -29,7 +30,6 @@ class RenderTargetSet;
 	{
 
 class IWorldShadowProjection;
-class PostProcess;
 class WorldContext;
 class WorldEntityRenderers;
 
@@ -79,7 +79,7 @@ public:
 
 	virtual void endRender(int frame, render::EyeType eye, float deltaTime);
 
-	virtual PostProcess* getVisualPostProcess();
+	virtual render::ImageProcess* getVisualImageProcess();
 
 	virtual void getDebugTargets(std::vector< DebugTarget >& outTargets) const;
 
@@ -133,12 +133,12 @@ private:
 	Ref< render::RenderTargetSet > m_shadowMaskFilterTargetSet;
 	Ref< render::RenderContext > m_globalContext;
 	resource::Proxy< render::ITexture > m_reflectionMap;
-	Ref< PostProcess > m_shadowMaskProject;
-	Ref< PostProcess > m_shadowMaskFilter;
-	Ref< PostProcess > m_ambientOcclusion;
-	Ref< PostProcess > m_antiAlias;
-	Ref< PostProcess > m_visualPostProcess;
-	Ref< PostProcess > m_gammaCorrectionPostProcess;
+	Ref< render::ImageProcess > m_shadowMaskProject;
+	Ref< render::ImageProcess > m_shadowMaskFilter;
+	Ref< render::ImageProcess > m_ambientOcclusion;
+	Ref< render::ImageProcess > m_antiAlias;
+	Ref< render::ImageProcess > m_visualImageProcess;
+	Ref< render::ImageProcess > m_gammaCorrectionImageProcess;
 	RefArray< Entity > m_buildEntities;
 	AlignedVector< Frame > m_frames;
 	float m_slicePositions[MaxSliceCount + 1];

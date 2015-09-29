@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.world.PostProcessSettings" version="1">
+<object type="traktor.render.ImageProcessSettings" version="1">
 	<requireHighRange>false</requireHighRange>
 	<definitions>
-		<item type="traktor.world.PostProcessDefineTarget" version="4">
+		<item type="traktor.render.ImageProcessDefineTarget" version="4">
 			<id>Edges</id>
 			<width>0</width>
 			<height>0</height>
@@ -17,7 +17,7 @@
 			<clearColor>0, 0, 0, 0</clearColor>
 			<persistent>false</persistent>
 		</item>
-		<item type="traktor.world.PostProcessDefineTarget" version="4">
+		<item type="traktor.render.ImageProcessDefineTarget" version="4">
 			<id>Blend</id>
 			<width>0</width>
 			<height>0</height>
@@ -34,14 +34,14 @@
 		</item>
 	</definitions>
 	<steps>
-		<item type="traktor.world.PostProcessStepSetTarget">
+		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Edges</target>
 		</item>
-		<item type="traktor.world.PostProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple">
 			<shader>{074F2B2C-2597-B54F-B0BF-FBFCCD184D86}</shader>
 			<sources/>
 		</item>
-		<item type="traktor.world.PostProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple">
 			<shader>{5AEF4C24-AED0-FB41-A06E-9B047F7CFDDE}</shader>
 			<sources>
 				<item>
@@ -51,14 +51,14 @@
 				</item>
 			</sources>
 		</item>
-		<item type="traktor.world.PostProcessStepSetTarget">
+		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Blend</target>
 		</item>
-		<item type="traktor.world.PostProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple">
 			<shader>{074F2B2C-2597-B54F-B0BF-FBFCCD184D86}</shader>
 			<sources/>
 		</item>
-		<item type="traktor.world.PostProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple">
 			<shader>{B679C168-3995-4948-B108-B4A413040D74}</shader>
 			<sources>
 				<item>
@@ -68,10 +68,10 @@
 				</item>
 			</sources>
 		</item>
-		<item type="traktor.world.PostProcessStepSetTarget">
+		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Output</target>
 		</item>
-		<item type="traktor.world.PostProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple">
 			<shader>{22826F79-6C55-0847-9788-3BF932DC838C}</shader>
 			<sources>
 				<item>

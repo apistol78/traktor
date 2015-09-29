@@ -26,6 +26,7 @@ class IResourceManager;
 	namespace render
 	{
 
+class ImageProcessSettings;
 class IRenderSystem;
 class ITexture;
 
@@ -37,7 +38,6 @@ class ITexture;
 class IEntityBuilder;
 class EntityData;
 class WorldRenderSettings;
-class PostProcessSettings;
 
 	}
 
@@ -67,13 +67,13 @@ public:
 
 	Ref< world::WorldRenderSettings > getWorldRenderSettings() const;
 
-	void setPostProcessSettings(world::Quality quality, const resource::Id< world::PostProcessSettings >& postProcess);
+	void setImageProcessSettings(world::Quality quality, const resource::Id< render::ImageProcessSettings >& imageProcess);
 
-	const resource::Id< world::PostProcessSettings >& getPostProcessSettings(world::Quality quality) const;
+	const resource::Id< render::ImageProcessSettings >& getImageProcessSettings(world::Quality quality) const;
 
-	void setPostProcessParams(const SmallMap< std::wstring, resource::Id< render::ITexture > >& postProcessParams);
+	void setImageProcessParams(const SmallMap< std::wstring, resource::Id< render::ITexture > >& imageProcessParams);
 
-	const SmallMap< std::wstring, resource::Id< render::ITexture > >& getPostProcessParams() const;
+	const SmallMap< std::wstring, resource::Id< render::ITexture > >& getImageProcessParams() const;
 
 	void setEntityData(world::EntityData* entityData);
 
@@ -87,8 +87,8 @@ public:
 
 private:
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
-	resource::Id< world::PostProcessSettings > m_postProcessSettings[world::QuLast];
-	SmallMap< std::wstring, resource::Id< render::ITexture > > m_postProcessParams;
+	resource::Id< render::ImageProcessSettings > m_imageProcessSettings[world::QuLast];
+	SmallMap< std::wstring, resource::Id< render::ITexture > > m_imageProcessParams;
 	Ref< world::EntityData > m_entityData;
 	Ref< ISceneControllerData > m_controllerData;
 };

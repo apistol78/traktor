@@ -105,13 +105,13 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolAspect->add(L"9:16");
 	m_toolAspect->select(0);
 
-	m_toolPostProcess = new ui::custom::ToolBarDropDown(ui::Command(1, L"Scene.Editor.PostProcessQuality"), ui::scaleBySystemDPI(80), i18n::Text(L"SCENE_EDITOR_POST_PROCESS"));
-	m_toolPostProcess->add(L"Disabled");
-	m_toolPostProcess->add(L"Low");
-	m_toolPostProcess->add(L"Medium");
-	m_toolPostProcess->add(L"High");
-	m_toolPostProcess->add(L"Ultra");
-	m_toolPostProcess->select(0);
+	m_toolImageProcess = new ui::custom::ToolBarDropDown(ui::Command(1, L"Scene.Editor.ImageProcessQuality"), ui::scaleBySystemDPI(80), i18n::Text(L"SCENE_EDITOR_POST_PROCESS"));
+	m_toolImageProcess->add(L"Disabled");
+	m_toolImageProcess->add(L"Low");
+	m_toolImageProcess->add(L"Medium");
+	m_toolImageProcess->add(L"High");
+	m_toolImageProcess->add(L"Ultra");
+	m_toolImageProcess->select(0);
 
 	m_toolShadows = new ui::custom::ToolBarDropDown(ui::Command(1, L"Scene.Editor.ShadowQuality"), ui::scaleBySystemDPI(80), i18n::Text(L"SCENE_EDITOR_SHADOWS"));
 	m_toolShadows->add(L"Disabled");
@@ -143,7 +143,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBar->addItem(m_toolAspect);
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBar->addItem(m_toolPostProcess);
+	m_toolBar->addItem(m_toolImageProcess);
 	m_toolBar->addItem(m_toolShadows);
 	m_toolBar->addItem(m_toolAO);
 	m_toolBar->addItem(m_toolAA);
@@ -191,11 +191,11 @@ void DefaultRenderControl::setAspect(float aspect)
 		m_renderControl->setAspect(aspect);
 }
 
-void DefaultRenderControl::setQuality(world::Quality postProcessQuality, world::Quality shadowQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality)
+void DefaultRenderControl::setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality)
 {
 	if (m_renderControl)
 		m_renderControl->setQuality(
-			postProcessQuality,
+			imageProcessQuality,
 			shadowQuality,
 			ambientOcclusionQuality,
 			antiAliasQuality
@@ -394,14 +394,14 @@ void DefaultRenderControl::eventToolClick(ui::custom::ToolBarButtonClickEvent* e
 		m_renderControl->setAspect(c_aspects[m_toolAspect->getSelected()]);
 	}
 	else if (
-		event->getCommand() == L"Scene.Editor.PostProcessQuality" ||
+		event->getCommand() == L"Scene.Editor.ImageProcessQuality" ||
 		event->getCommand() == L"Scene.Editor.ShadowQuality" ||
 		event->getCommand() == L"Scene.Editor.AmbientOcclusionQuality" ||
 		event->getCommand() == L"Scene.Editor.AntiAliasQuality"
 	)
 	{
 		m_renderControl->setQuality(
-			(world::Quality)m_toolPostProcess->getSelected(),
+			(world::Quality)m_toolImageProcess->getSelected(),
 			(world::Quality)m_toolShadows->getSelected(),
 			(world::Quality)m_toolAO->getSelected(),
 			(world::Quality)m_toolAA->getSelected()

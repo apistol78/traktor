@@ -16,6 +16,7 @@
 #include "Render/IRenderView.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Render/Context/RenderContext.h"
+#include "Render/ImageProcess/ImageProcessFactory.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/TextureFactory.h"
 #include "Resource/ResourceManager.h"
@@ -24,7 +25,6 @@
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
 #include "World/Forward/WorldRendererForward.h"
-#include "World/PostProcess/PostProcessFactory.h"
 
 namespace traktor
 {
@@ -67,7 +67,7 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 	m_resourceManager->addFactory(new mesh::MeshFactory(resourceDatabase, m_renderSystem));
 	m_resourceManager->addFactory(new render::ShaderFactory(resourceDatabase, m_renderSystem));
 	m_resourceManager->addFactory(new render::TextureFactory(resourceDatabase, m_renderSystem, 0));
-	m_resourceManager->addFactory(new world::PostProcessFactory(resourceDatabase));
+	m_resourceManager->addFactory(new render::ImageProcessFactory(resourceDatabase));
 
 	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 24;

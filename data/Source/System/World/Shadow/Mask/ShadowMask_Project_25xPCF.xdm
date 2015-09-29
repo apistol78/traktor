@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.db.LocalInstanceMeta">
 	<guid>{76B1745B-418E-DA42-BE70-4CC832B5F832}</guid>
-	<primaryType>traktor.world.PostProcessSettings</primaryType>
+	<primaryType>traktor.render.ImageProcessSettings</primaryType>
 	<blobs/>
 </object>

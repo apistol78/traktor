@@ -324,7 +324,7 @@ private:
 	};
 
 	resource::Proxy< Shader > m_shader;
-	render::IRenderView* m_renderView;
+	IRenderView* m_renderView;
 	Ref< VertexBuffer > m_vertexBuffers[16];
 	int m_currentBuffer;
 	struct Vertex* m_vertexStart;

@@ -23,6 +23,8 @@ class Color4f;
 	namespace render
 	{
 
+class ImageProcess;
+class ImageProcessSettings;
 class IRenderSystem;
 class IRenderView;
 class ITexture;
@@ -41,8 +43,6 @@ class IResourceManager;
 	{
 
 class Entity;
-class PostProcess;
-class PostProcessSettings;
 class WorldEntityRenderers;
 class WorldRenderSettings;
 class WorldRenderView;
@@ -53,7 +53,7 @@ class WorldRenderView;
 struct WorldCreateDesc
 {
 	const WorldRenderSettings* worldRenderSettings;
-	const PostProcessSettings* postProcessSettings;
+	const render::ImageProcessSettings* imageProcessSettings;
 	WorldEntityRenderers* entityRenderers;
 	Quality shadowsQuality;
 	Quality ambientOcclusionQuality;
@@ -66,7 +66,7 @@ struct WorldCreateDesc
 
 	WorldCreateDesc()
 	:	worldRenderSettings(0)
-	,	postProcessSettings(0)
+	,	imageProcessSettings(0)
 	,	entityRenderers(0)
 	,	shadowsQuality(QuDisabled)
 	,	ambientOcclusionQuality(QuDisabled)
@@ -79,40 +79,6 @@ struct WorldCreateDesc
 	{
 	}
 };
-
-///*! \brief Perspective view port.
-// * \ingroup World
-// */
-//struct WorldViewPerspective
-//{
-//	int32_t width;
-//	int32_t height;
-//	float aspect;
-//	float fov;
-//
-//	WorldViewPerspective()
-//	:	width(0)
-//	,	height(0)
-//	,	aspect(1.0f)
-//	,	fov(deg2rad(65.0f))
-//	{
-//	}
-//};
-//
-///*! \brief Orthogonal view port.
-// * \ingroup World
-// */
-//struct WorldViewOrtho
-//{
-//	float width;
-//	float height;
-//
-//	WorldViewOrtho()
-//	:	width(0.0f)
-//	,	height(0.0f)
-//	{
-//	}
-//};
 
 /*! \brief World render flags.
  * \ingroup World
@@ -210,7 +176,7 @@ public:
 	/*! \name Target accessor. */
 	//@{
 
-	virtual PostProcess* getVisualPostProcess() = 0;
+	virtual render::ImageProcess* getVisualImageProcess() = 0;
 
 	virtual void getDebugTargets(std::vector< DebugTarget >& outTargets) const = 0;
 

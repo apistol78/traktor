@@ -2518,15 +2518,6 @@
 								</items>
 							</item>
 							<item type="Filter">
-								<name>PostProcess</name>
-								<items>
-									<item type="File">
-										<fileName>PostProcess/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
 								<name>SMProj</name>
 								<items>
 									<item type="File">
@@ -2705,6 +2696,15 @@
 											<items>
 												<item type="File">
 													<fileName>Shader/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+										<item type="Filter">
+											<name>ImageProcess</name>
+											<items>
+												<item type="File">
+													<fileName>ImageProcess/*.*</fileName>
 													<items/>
 												</item>
 											</items>

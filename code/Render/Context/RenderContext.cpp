@@ -86,7 +86,7 @@ void RenderContext::draw(uint32_t type, RenderBlock* renderBlock)
 		m_renderQueue[5].push_back(renderBlock);
 }
 
-void RenderContext::render(render::IRenderView* renderView, uint32_t priorities, const ProgramParameters* globalParameters) const
+void RenderContext::render(IRenderView* renderView, uint32_t priorities, const ProgramParameters* globalParameters) const
 {
 	// Render setup blocks unsorted.
 	if (priorities & RpSetup)

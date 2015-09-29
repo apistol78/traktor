@@ -13,6 +13,7 @@
 #include "Core/Settings/PropertyInteger.h"
 #include "Render/IRenderView.h"
 #include "Render/RenderTargetSet.h"
+#include "Render/ImageProcess/ImageProcess.h"
 #include "Scene/Scene.h"
 #include "Sound/Filters/SurroundEnvironment.h"
 #include "Spray/Feedback/FeedbackManager.h"
@@ -27,7 +28,6 @@
 #include "World/Entity/GroupEntity.h"
 #include "World/Entity/NullEntity.h"
 #include "World/Entity/TransientEntity.h"
-#include "World/PostProcess/PostProcess.h"
 
 namespace traktor
 {
@@ -71,7 +71,7 @@ WorldLayer::WorldLayer(
 	if (feedbackManager)
 	{
 		feedbackManager->addListener(spray::FbtCamera, this);
-		feedbackManager->addListener(spray::FbtPostProcess, this);
+		feedbackManager->addListener(spray::FbtImageProcess, this);
 	}
 
 	// Get parameter handles.
@@ -89,7 +89,7 @@ void WorldLayer::destroy()
 	spray::IFeedbackManager* feedbackManager = m_environment->getWorld()->getFeedbackManager();
 	if (feedbackManager)
 	{
-		feedbackManager->removeListener(spray::FbtPostProcess, this);
+		feedbackManager->removeListener(spray::FbtImageProcess, this);
 		feedbackManager->removeListener(spray::FbtCamera, this);
 	}
 
@@ -116,10 +116,10 @@ void WorldLayer::transition(Layer* fromLayer)
 	WorldLayer* fromWorldLayer = checked_type_cast< WorldLayer*, false >(fromLayer);
 
 	// Get post process quality from settings.
-	int32_t postProcessQuality = m_environment->getSettings()->getProperty< PropertyInteger >(L"World.PostProcessQuality", world::QuHigh);
+	int32_t imageProcessQuality = m_environment->getSettings()->getProperty< PropertyInteger >(L"World.ImageProcessQuality", world::QuHigh);
 
 	if (
-		m_scene->getPostProcessSettings((world::Quality)postProcessQuality) == fromWorldLayer->m_scene->getPostProcessSettings((world::Quality)postProcessQuality) &&
+		m_scene->getImageProcessSettings((world::Quality)imageProcessQuality) == fromWorldLayer->m_scene->getImageProcessSettings((world::Quality)imageProcessQuality) &&
 		DeepHash(m_scene->getWorldRenderSettings()) == DeepHash(fromWorldLayer->m_scene->getWorldRenderSettings())
 	)
 	{
@@ -328,10 +328,10 @@ void WorldLayer::render(render::EyeType eye, uint32_t frame)
 	if (m_worldRenderer->beginRender(frame, eye, c_clearColor))
 	{
 		// Bind per-scene post processing parameters.
-		world::PostProcess* postProcess = m_worldRenderer->getVisualPostProcess();
+		render::ImageProcess* postProcess = m_worldRenderer->getVisualImageProcess();
 		if (postProcess)
 		{
-			for (SmallMap< render::handle_t, resource::Proxy< render::ITexture > >::const_iterator i = m_scene->getPostProcessParams().begin(); i != m_scene->getPostProcessParams().end(); ++i)
+			for (SmallMap< render::handle_t, resource::Proxy< render::ITexture > >::const_iterator i = m_scene->getImageProcessParams().begin(); i != m_scene->getImageProcessParams().end(); ++i)
 				postProcess->setTextureParameter(i->first, i->second);
 		}
 
@@ -500,9 +500,9 @@ void WorldLayer::setControllerEnable(bool controllerEnable)
 	m_controllerEnable = controllerEnable;
 }
 
-world::PostProcess* WorldLayer::getPostProcess() const
+render::ImageProcess* WorldLayer::getImageProcess() const
 {
-	return m_worldRenderer->getVisualPostProcess();
+	return m_worldRenderer->getVisualImageProcess();
 }
 
 void WorldLayer::resetController()
@@ -603,10 +603,10 @@ void WorldLayer::feedbackValues(spray::FeedbackType type, const float* values, i
 			Quaternion::fromEulerAngles(0.0f, 0.0f, values[3] * m_feedbackScale)
 		);
 	}
-	else if (type == spray::FbtPostProcess)
+	else if (type == spray::FbtImageProcess)
 	{
 		T_ASSERT (count >= 4);
-		world::PostProcess* postProcess = m_worldRenderer->getVisualPostProcess();
+		render::ImageProcess* postProcess = m_worldRenderer->getVisualImageProcess();
 		if (postProcess)
 			postProcess->setVectorParameter(s_handleFeedback, Vector4::loadUnaligned(values));
 	}
@@ -621,12 +621,12 @@ void WorldLayer::createWorldRenderer()
 	int32_t height = renderView->getHeight();
 
 	// Get post process quality from settings.
-	int32_t postProcessQuality = m_environment->getSettings()->getProperty< PropertyInteger >(L"World.PostProcessQuality", world::QuHigh);
+	int32_t imageProcessQuality = m_environment->getSettings()->getProperty< PropertyInteger >(L"World.ImageProcessQuality", world::QuHigh);
 
 	// Create world renderer.
 	m_worldRenderer = m_environment->getWorld()->createWorldRenderer(
 		m_scene->getWorldRenderSettings(),
-		m_scene->getPostProcessSettings((world::Quality)postProcessQuality)
+		m_scene->getImageProcessSettings((world::Quality)imageProcessQuality)
 	);
 	if (!m_worldRenderer)
 	{

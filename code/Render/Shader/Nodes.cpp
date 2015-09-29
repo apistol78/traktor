@@ -1820,7 +1820,7 @@ void Texture::serialize(ISerializer& s)
 		{ 0, 0 }
 	};
 
-	s >> Member< Guid >(L"external", m_external, AttributeType(type_of< render::ITexture >()));
+	s >> Member< Guid >(L"external", m_external, AttributeType(type_of< ITexture >()));
 	s >> MemberEnum< ParameterType >(L"type", m_type, c_ParameterType_Keys);
 }
 
