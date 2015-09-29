@@ -13,6 +13,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
+#include "Render/ImageProcess/ImageProcessFactory.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/TextureFactory.h"
 #include "Resource/IResourceManager.h"
@@ -324,6 +325,7 @@ void RenderServerDefault::createResourceFactories(IEnvironment* environment)
 
 	resourceManager->addFactory(m_textureFactory);
 	resourceManager->addFactory(new render::ShaderFactory(database, m_renderSystem));
+	resourceManager->addFactory(new render::ImageProcessFactory(database));
 }
 
 int32_t RenderServerDefault::reconfigure(IEnvironment* environment, const PropertyGroup* settings)

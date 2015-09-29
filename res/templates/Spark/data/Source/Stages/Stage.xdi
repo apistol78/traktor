@@ -7,6 +7,7 @@
 			<name>spark</name>
 			<permitTransition>true</permitTransition>
 			<sprite>{F8F4440B-F25B-3B42-870B-5DDB022D6E58}</sprite>
+			<imageProcess/>
 			<background>255, 255, 255, 255</background>
 			<width>1080</width>
 			<height>1920</height>
