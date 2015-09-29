@@ -102,56 +102,64 @@ void SpriteInstance::eventKeyUp(int32_t keyCode)
 		(*i)->eventKeyUp(keyCode);
 }
 
-void SpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
+void SpriteInstance::eventMouseDown(const Vector2& position, int32_t button)
 {
+	Vector2 localPosition = getTransform().inverse() * position;
+
 	// Propagate event to all components.
 	for (SmallMap< const TypeInfo*, Ref< IComponentInstance > >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
-		i->second->eventMouseDown(x, y, button);
+		i->second->eventMouseDown(localPosition, button);
 
 	// Propagate event to all visible characters.
 	RefArray< CharacterInstance > characters;
 	m_displayList.getCharacters(characters);
 	for (RefArray< CharacterInstance >::const_iterator i = characters.begin(); i != characters.end(); ++i)
-		(*i)->eventMouseDown(x, y, button);
+		(*i)->eventMouseDown(localPosition, button);
 }
 
-void SpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
+void SpriteInstance::eventMouseUp(const Vector2& position, int32_t button)
 {
+	Vector2 localPosition = getTransform().inverse() * position;
+
 	// Propagate event to all components.
 	for (SmallMap< const TypeInfo*, Ref< IComponentInstance > >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
-		i->second->eventMouseUp(x, y, button);
+		i->second->eventMouseUp(localPosition, button);
 
 	// Propagate event to all visible characters.
 	RefArray< CharacterInstance > characters;
 	m_displayList.getCharacters(characters);
 	for (RefArray< CharacterInstance >::const_iterator i = characters.begin(); i != characters.end(); ++i)
-		(*i)->eventMouseUp(x, y, button);
+		(*i)->eventMouseUp(localPosition, button);
 }
 
-void SpriteInstance::eventMouseMove(int32_t x, int32_t y, int32_t button)
+void SpriteInstance::eventMouseMove(const Vector2& position, int32_t button)
 {
+	Vector2 localPosition = getTransform().inverse() * position;
+
 	// Propagate event to all components.
 	for (SmallMap< const TypeInfo*, Ref< IComponentInstance > >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
-		i->second->eventMouseMove(x, y, button);
+		i->second->eventMouseMove(localPosition, button);
 
 	// Propagate event to all visible characters.
 	RefArray< CharacterInstance > characters;
 	m_displayList.getCharacters(characters);
 	for (RefArray< CharacterInstance >::const_iterator i = characters.begin(); i != characters.end(); ++i)
-		(*i)->eventMouseMove(x, y, button);
+		(*i)->eventMouseMove(localPosition, button);
 }
 
-void SpriteInstance::eventMouseWheel(int32_t x, int32_t y, int32_t delta)
+void SpriteInstance::eventMouseWheel(const Vector2& position, int32_t delta)
 {
+	Vector2 localPosition = getTransform().inverse() * position;
+
 	// Propagate event to all components.
 	for (SmallMap< const TypeInfo*, Ref< IComponentInstance > >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
-		i->second->eventMouseWheel(x, y, delta);
+		i->second->eventMouseWheel(localPosition, delta);
 
 	// Propagate event to all visible characters.
 	RefArray< CharacterInstance > characters;
 	m_displayList.getCharacters(characters);
 	for (RefArray< CharacterInstance >::const_iterator i = characters.begin(); i != characters.end(); ++i)
-		(*i)->eventMouseWheel(x, y, delta);
+		(*i)->eventMouseWheel(localPosition, delta);
 }
 
 void SpriteInstance::eventViewResize(int32_t width, int32_t height)
@@ -169,7 +177,27 @@ void SpriteInstance::eventViewResize(int32_t width, int32_t height)
 
 Aabb2 SpriteInstance::getBounds() const
 {
-	return m_shape ? m_shape->getBounds() : Aabb2();
+	Aabb2 bounds;
+
+	if (m_shape)
+		bounds = m_shape->getBounds();
+
+	RefArray< CharacterInstance > characters;
+	m_displayList.getCharacters(characters);
+
+	for (RefArray< CharacterInstance >::const_iterator i = characters.begin(); i != characters.end(); ++i)
+	{
+		Vector2 childExtents[4];
+		(*i)->getBounds().getExtents(childExtents);
+		
+		Matrix33 childTransform = (*i)->getTransform();
+		bounds.contain(childTransform * childExtents[0]);
+		bounds.contain(childTransform * childExtents[1]);
+		bounds.contain(childTransform * childExtents[2]);
+		bounds.contain(childTransform * childExtents[3]);
+	}
+
+	return bounds;
 }
 
 void SpriteInstance::update()

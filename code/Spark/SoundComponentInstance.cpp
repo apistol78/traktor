@@ -41,19 +41,19 @@ void SoundComponentInstance::eventKeyUp(int32_t keyCode)
 {
 }
 
-void SoundComponentInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
+void SoundComponentInstance::eventMouseDown(const Vector2& position, int32_t button)
 {
 }
 
-void SoundComponentInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
+void SoundComponentInstance::eventMouseUp(const Vector2& position, int32_t button)
 {
 }
 
-void SoundComponentInstance::eventMouseMove(int32_t x, int32_t y, int32_t button)
+void SoundComponentInstance::eventMouseMove(const Vector2& position, int32_t button)
 {
 }
 
-void SoundComponentInstance::eventMouseWheel(int32_t x, int32_t y, int32_t delta)
+void SoundComponentInstance::eventMouseWheel(const Vector2& position, int32_t delta)
 {
 }
 

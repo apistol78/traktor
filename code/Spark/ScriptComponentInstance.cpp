@@ -1,3 +1,4 @@
+#include "Core/Class/Boxes.h"
 #include "Core/Class/IRuntimeClass.h"
 #include "Core/Misc/TString.h"
 #include "Spark/ScriptComponentInstance.h"
@@ -109,56 +110,52 @@ void ScriptComponentInstance::eventKeyUp(int32_t keyCode)
 	}
 }
 
-void ScriptComponentInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
+void ScriptComponentInstance::eventMouseDown(const Vector2& position, int32_t button)
 {
 	if (m_class && m_object && m_methodEventMouseDown != ~0U)
 	{
 		Any argv[] =
 		{
-			Any::fromInteger(x),
-			Any::fromInteger(y),
+			CastAny< Vector2 >::set(position),
 			Any::fromInteger(button)
 		};
 		m_class->invoke(m_object, m_methodEventMouseDown, sizeof_array(argv), argv);
 	}
 }
 
-void ScriptComponentInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
+void ScriptComponentInstance::eventMouseUp(const Vector2& position, int32_t button)
 {
 	if (m_class && m_object && m_methodEventMouseUp != ~0U)
 	{
 		Any argv[] =
 		{
-			Any::fromInteger(x),
-			Any::fromInteger(y),
+			CastAny< Vector2 >::set(position),
 			Any::fromInteger(button)
 		};
 		m_class->invoke(m_object, m_methodEventMouseUp, sizeof_array(argv), argv);
 	}
 }
 
-void ScriptComponentInstance::eventMouseMove(int32_t x, int32_t y, int32_t button)
+void ScriptComponentInstance::eventMouseMove(const Vector2& position, int32_t button)
 {
 	if (m_class && m_object && m_methodEventMouseMove != ~0U)
 	{
 		Any argv[] =
 		{
-			Any::fromInteger(x),
-			Any::fromInteger(y),
+			CastAny< Vector2 >::set(position),
 			Any::fromInteger(button)
 		};
 		m_class->invoke(m_object, m_methodEventMouseMove, sizeof_array(argv), argv);
 	}
 }
 
-void ScriptComponentInstance::eventMouseWheel(int32_t x, int32_t y, int32_t delta)
+void ScriptComponentInstance::eventMouseWheel(const Vector2& position, int32_t delta)
 {
 	if (m_class && m_object && m_methodEventMouseWheel != ~0U)
 	{
 		Any argv[] =
 		{
-			Any::fromInteger(x),
-			Any::fromInteger(y),
+			CastAny< Vector2 >::set(position),
 			Any::fromInteger(delta)
 		};
 		m_class->invoke(m_object, m_methodEventMouseWheel, sizeof_array(argv), argv);

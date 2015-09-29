@@ -195,7 +195,7 @@ void SparkLayer::update(const UpdateInfo& info)
 
 					if (mx != m_lastMouseX || my != m_lastMouseY)
 					{
-						m_sparkPlayer->postMouseMove(mx, my, mb);
+						m_sparkPlayer->postMouseMove(Vector2(mx, my), mb);
 						m_lastMouseX = mx;
 						m_lastMouseY = my;
 					}
@@ -203,9 +203,9 @@ void SparkLayer::update(const UpdateInfo& info)
 					if (mb != last.button)
 					{
 						if (mb)
-							m_sparkPlayer->postMouseDown(mx, my, mb);
+							m_sparkPlayer->postMouseDown(Vector2(mx, my), mb);
 						else
-							m_sparkPlayer->postMouseUp(mx, my, mb);
+							m_sparkPlayer->postMouseUp(Vector2(mx, my), mb);
 
 						last.button = mb;
 					}
@@ -215,7 +215,7 @@ void SparkLayer::update(const UpdateInfo& info)
 						int32_t wheel = int32_t(mouseDevice->getControlValue(axisZ) * 3.0f);
 						if (wheel != last.wheel)
 						{
-							m_sparkPlayer->postMouseWheel(mx, my, wheel);
+							m_sparkPlayer->postMouseWheel(Vector2(mx, my), wheel);
 							last.wheel = wheel;
 						}
 					}

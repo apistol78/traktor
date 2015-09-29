@@ -13,6 +13,9 @@
 
 namespace traktor
 {
+
+class Vector2;
+
 	namespace spark
 	{
 
@@ -35,13 +38,13 @@ public:
 
 	virtual void eventKeyUp(int32_t keyCode) = 0;
 
-	virtual void eventMouseDown(int32_t x, int32_t y, int32_t button) = 0;
+	virtual void eventMouseDown(const Vector2& position, int32_t button) = 0;
 
-	virtual void eventMouseUp(int32_t x, int32_t y, int32_t button) = 0;
+	virtual void eventMouseUp(const Vector2& position, int32_t button) = 0;
 
-	virtual void eventMouseMove(int32_t x, int32_t y, int32_t button) = 0;
+	virtual void eventMouseMove(const Vector2& position, int32_t button) = 0;
 
-	virtual void eventMouseWheel(int32_t x, int32_t y, int32_t delta) = 0;
+	virtual void eventMouseWheel(const Vector2& position, int32_t delta) = 0;
 
 	virtual void eventViewResize(int32_t width, int32_t height) = 0;
 

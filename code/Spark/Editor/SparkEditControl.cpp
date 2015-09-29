@@ -74,15 +74,6 @@ void drawBound(CharacterInstance* character, render::PrimitiveRenderer* primitiv
 		Vector4(e[0].x, e[0].y, 1.0f, 1.0f),
 		Color4ub(255, 255, 0, 255)
 	);
-
-	if (SpriteInstance* sprite = dynamic_type_cast< SpriteInstance* >(character))
-	{
-		RefArray< CharacterInstance > children;
-		sprite->getCharacters(children);
-
-		for (RefArray< CharacterInstance >::const_iterator i = children.begin(); i != children.end(); ++i)
-			drawBound(*i, primitiveRenderer);
-	}
 }
 
 		}
@@ -319,7 +310,11 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 			{
 				m_primitiveRenderer->pushDepthState(false, false, false);
 
-				drawBound(m_spriteInstance, m_primitiveRenderer);
+				// Draw bounding boxes of children to this sprite.
+				RefArray< CharacterInstance > children;
+				m_spriteInstance->getCharacters(children);
+				for (RefArray< CharacterInstance >::const_iterator i = children.begin(); i != children.end(); ++i)
+					drawBound(*i, m_primitiveRenderer);
 
 				m_primitiveRenderer->popDepthState();
 				m_primitiveRenderer->end();
@@ -362,7 +357,7 @@ void SparkEditControl::eventMouseButtonDown(ui::MouseButtonDownEvent* event)
 		m_editMode = EmIdle;
 
 		ui::Point mousePosition = clientToView(event->getPosition());
-		m_sparkPlayer->postMouseDown(mousePosition.x, mousePosition.y, event->getButton());
+		m_sparkPlayer->postMouseDown(Vector2(mousePosition.x, mousePosition.y), event->getButton());
 	}
 
 	setCapture();
@@ -378,7 +373,7 @@ void SparkEditControl::eventMouseButtonUp(ui::MouseButtonUpEvent* event)
 		if (m_sparkPlayer)
 		{
 			ui::Point mousePosition = clientToView(event->getPosition());
-			m_sparkPlayer->postMouseUp(mousePosition.x, mousePosition.y, event->getButton());
+			m_sparkPlayer->postMouseUp(Vector2(mousePosition.x, mousePosition.y), event->getButton());
 		}
 	}
 	else
@@ -404,7 +399,7 @@ void SparkEditControl::eventMouseMove(ui::MouseMoveEvent* event)
 		if (m_sparkPlayer)
 		{
 			ui::Point mousePosition = clientToView(event->getPosition());
-			m_sparkPlayer->postMouseMove(mousePosition.x, mousePosition.y, event->getButton());
+			m_sparkPlayer->postMouseMove(Vector2(mousePosition.x, mousePosition.y), event->getButton());
 		}
 	}
 
@@ -424,7 +419,7 @@ void SparkEditControl::eventMouseWheel(ui::MouseWheelEvent* event)
 		if (m_sparkPlayer)
 		{
 			ui::Point mousePosition = clientToView(event->getPosition());
-			m_sparkPlayer->postMouseWheel(mousePosition.x, mousePosition.y, event->getRotation());
+			m_sparkPlayer->postMouseWheel(Vector2(mousePosition.x, mousePosition.y), event->getRotation());
 		}
 	}
 

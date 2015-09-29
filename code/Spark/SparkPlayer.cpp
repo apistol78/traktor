@@ -33,24 +33,24 @@ void SparkPlayer::postKeyUp(int32_t keyCode)
 	m_character->eventKeyUp(keyCode);
 }
 
-void SparkPlayer::postMouseDown(int32_t x, int32_t y, int32_t button)
+void SparkPlayer::postMouseDown(const Vector2& position, int32_t button)
 {
-	m_character->eventMouseDown(x, y, button);
+	m_character->eventMouseDown(position, button);
 }
 
-void SparkPlayer::postMouseUp(int32_t x, int32_t y, int32_t button)
+void SparkPlayer::postMouseUp(const Vector2& position, int32_t button)
 {
-	m_character->eventMouseUp(x, y, button);
+	m_character->eventMouseUp(position, button);
 }
 
-void SparkPlayer::postMouseMove(int32_t x, int32_t y, int32_t button)
+void SparkPlayer::postMouseMove(const Vector2& position, int32_t button)
 {
-	m_character->eventMouseMove(x, y, button);
+	m_character->eventMouseMove(position, button);
 }
 
-void SparkPlayer::postMouseWheel(int32_t x, int32_t y, int32_t delta)
+void SparkPlayer::postMouseWheel(const Vector2& position, int32_t delta)
 {
-	m_character->eventMouseWheel(x, y, delta);
+	m_character->eventMouseWheel(position, delta);
 }
 
 void SparkPlayer::postViewResize(int32_t width, int32_t height)
