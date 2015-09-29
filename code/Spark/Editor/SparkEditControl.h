@@ -76,6 +76,8 @@ public:
 
 	void setSprite(const Sprite* sprite);
 
+	void setViewSize(int32_t width, int32_t height);
+
 	void refresh();
 
 private:
@@ -98,6 +100,8 @@ private:
 	Ref< ui::EventSubject::IEventHandler > m_idleEventHandler;
 	ui::Point m_lastMousePosition;
 	EditMode m_editMode;
+	int32_t m_viewWidth;
+	int32_t m_viewHeight;
 	Vector2 m_viewOffset;
 	float m_viewScale;
 

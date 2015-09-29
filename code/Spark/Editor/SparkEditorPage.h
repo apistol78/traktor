@@ -36,6 +36,19 @@ class IScriptManager;
 
 	}
 
+	namespace ui
+	{
+		namespace custom
+		{
+
+class ToolBar;
+class ToolBarButton;
+class ToolBarButtonClickEvent;
+class ToolBarDropDown;
+
+		}
+	}
+
 	namespace spark
 	{
 
@@ -71,7 +84,12 @@ private:
 	editor::IDocument* m_document;
 	Ref< script::IScriptManager > m_scriptManager;
 	Ref< resource::IResourceManager > m_resourceManager;
+	Ref< ui::custom::ToolBar > m_toolBar;
+	Ref< ui::custom::ToolBarDropDown > m_toolViewSize;
+	Ref< ui::custom::ToolBarButton > m_toolViewLandscape;
 	Ref< SparkEditControl > m_editControl;
+
+	void eventToolClick(ui::custom::ToolBarButtonClickEvent* event);
 };
 
 	}
