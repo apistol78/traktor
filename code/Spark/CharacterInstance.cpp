@@ -140,19 +140,19 @@ void CharacterInstance::eventKeyUp(int32_t keyCode)
 {
 }
 
-void CharacterInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
+void CharacterInstance::eventMouseDown(const Vector2& position, int32_t button)
 {
 }
 
-void CharacterInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
+void CharacterInstance::eventMouseUp(const Vector2& position, int32_t button)
 {
 }
 
-void CharacterInstance::eventMouseMove(int32_t x, int32_t y, int32_t button)
+void CharacterInstance::eventMouseMove(const Vector2& position, int32_t button)
 {
 }
 
-void CharacterInstance::eventMouseWheel(int32_t x, int32_t y, int32_t delta)
+void CharacterInstance::eventMouseWheel(const Vector2& position, int32_t delta)
 {
 }
 

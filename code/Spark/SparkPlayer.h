@@ -2,6 +2,7 @@
 #define traktor_spark_SparkPlayer_H
 
 #include "Core/Object.h"
+#include "Core/Math/Vector2.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -54,35 +55,31 @@ public:
 
 	/*! \brief Post mouse button down event.
 	 *
-	 * \param x Mouse cursor X coordinate.
-	 * \param y Mouse cursor Y coordinate.
+	 * \param position Mouse coordinate in view space.
 	 * \param button Mouse buttons being held down.
 	 */
-	void postMouseDown(int32_t x, int32_t y, int32_t button);
+	void postMouseDown(const Vector2& position, int32_t button);
 
 	/*! \brief Post mouse button up event.
 	 *
-	 * \param x Mouse cursor X coordinate.
-	 * \param y Mouse cursor Y coordinate.
+	 * \param position Mouse coordinate in view space.
 	 * \param button Mouse buttons being held down.
 	 */
-	void postMouseUp(int32_t x, int32_t y, int32_t button);
+	void postMouseUp(const Vector2& position, int32_t button);
 
 	/*! \brief Post mouse move event.
 	 *
-	 * \param x Mouse cursor X coordinate.
-	 * \param y Mouse cursor Y coordinate.
+	 * \param position Mouse coordinate in view space.
 	 * \param button Mouse buttons being held down.
 	 */
-	void postMouseMove(int32_t x, int32_t y, int32_t button);
+	void postMouseMove(const Vector2& position, int32_t button);
 
 	/*! \brief Post mouse wheel event.
 	 *
-	 * \param x Mouse cursor X coordinate.
-	 * \param y Mouse cursor Y coordinate.
+	 * \param position Mouse coordinate in view space.
 	 * \param delta Wheel delta motion
 	 */
-	void postMouseWheel(int32_t x, int32_t y, int32_t delta);
+	void postMouseWheel(const Vector2& position, int32_t delta);
 
 	/*! \brief Post view resize event.
 	 *
