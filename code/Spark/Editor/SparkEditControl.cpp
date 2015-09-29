@@ -92,7 +92,9 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.SparkEditControl", SparkEditControl, ui::
 SparkEditControl::SparkEditControl(editor::IEditor* editor)
 :	m_editor(editor)
 ,	m_editMode(EmIdle)
-,	m_viewOffset(1080.0f, 1920.0f)
+,	m_viewWidth(1920)
+,	m_viewHeight(1080)
+,	m_viewOffset(1920.0f, 1080.0f)
 ,	m_viewScale(0.3f)
 {
 }
@@ -160,6 +162,18 @@ void SparkEditControl::setSprite(const Sprite* sprite)
 	refresh();
 }
 
+void SparkEditControl::setViewSize(int32_t width, int32_t height)
+{
+	if (width != m_viewWidth || height != m_viewHeight)
+	{
+		m_viewWidth = width;
+		m_viewHeight = height;
+		if (m_sparkPlayer)
+			m_sparkPlayer->postViewResize(width, height);
+		update();
+	}
+}
+
 void SparkEditControl::refresh()
 {
 	if (m_sprite)
@@ -168,7 +182,10 @@ void SparkEditControl::refresh()
 		m_spriteInstance = 0;
 
 	if (m_spriteInstance)
+	{
 		m_sparkPlayer = new SparkPlayer(m_spriteInstance);
+		m_sparkPlayer->postViewResize(m_viewWidth, m_viewHeight);
+	}
 	else
 		m_sparkPlayer = 0;
 
@@ -178,9 +195,6 @@ void SparkEditControl::refresh()
 ui::Point SparkEditControl::clientToView(const ui::Point& point) const
 {
 	ui::Size sz = getInnerRect().getSize();
-
-	const int32_t stageWidth = 1080;
-	const int32_t stageHeight = 1920;
 
 	float viewWidth = sz.cx / m_viewScale;
 	float viewHeight = sz.cy / m_viewScale;
@@ -246,9 +260,6 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 			0
 		);
 
-		const int32_t stageWidth = 1080;
-		const int32_t stageHeight = 1920;
-
 		float viewWidth = sz.cx / m_viewScale;
 		float viewHeight = sz.cy / m_viewScale;
 
@@ -266,27 +277,27 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 		{
 			m_primitiveRenderer->pushDepthState(false, false, false);
 
-			for (int32_t x = 0; x < stageWidth; x += 40)
+			for (int32_t x = 0; x < m_viewWidth; x += 40)
 			{
 				m_primitiveRenderer->drawLine(
 					Vector4(x, 0.0f, 1.0f, 1.0f),
-					Vector4(x, stageHeight, 1.0f, 1.0f),
+					Vector4(x, m_viewHeight, 1.0f, 1.0f),
 					Color4ub(0, 0, 0, 40)
 				);
 			}
-			for (int32_t y = 0; y < stageHeight; y += 40)
+			for (int32_t y = 0; y < m_viewHeight; y += 40)
 			{
 				m_primitiveRenderer->drawLine(
 					Vector4(0.0f, y, 1.0f, 1.0f),
-					Vector4(stageWidth, y, 1.0f, 1.0f),
+					Vector4(m_viewWidth, y, 1.0f, 1.0f),
 					Color4ub(0, 0, 0, 40)
 				);
 			}
 
-			m_primitiveRenderer->drawLine(Vector4(0.0f, 0.0f, 1.0f, 1.0f), Vector4(stageWidth, 0.0f, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
-			m_primitiveRenderer->drawLine(Vector4(stageWidth, 0.0f, 1.0f, 1.0f), Vector4(stageWidth, stageHeight, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
-			m_primitiveRenderer->drawLine(Vector4(stageWidth, stageHeight, 1.0f, 1.0f), Vector4(0.0f, stageHeight, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
-			m_primitiveRenderer->drawLine(Vector4(0.0f, stageHeight, 1.0f, 1.0f), Vector4(0.0f, 0.0f, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
+			m_primitiveRenderer->drawLine(Vector4(0.0f, 0.0f, 1.0f, 1.0f), Vector4(m_viewWidth, 0.0f, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
+			m_primitiveRenderer->drawLine(Vector4(m_viewWidth, 0.0f, 1.0f, 1.0f), Vector4(m_viewWidth, m_viewHeight, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
+			m_primitiveRenderer->drawLine(Vector4(m_viewWidth, m_viewHeight, 1.0f, 1.0f), Vector4(0.0f, m_viewHeight, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
+			m_primitiveRenderer->drawLine(Vector4(0.0f, m_viewHeight, 1.0f, 1.0f), Vector4(0.0f, 0.0f, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
 
 			m_primitiveRenderer->popDepthState();
 			m_primitiveRenderer->end();
