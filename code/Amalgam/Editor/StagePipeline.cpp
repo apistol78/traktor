@@ -109,7 +109,10 @@ bool StagePipeline::buildDependencies(
 			pipelineDepends->addDependency(flashLayer->m_imageProcess, editor::PdfBuild);
 		}
 		else if (const SparkLayerData* sparkLayer = dynamic_type_cast< const SparkLayerData* >(*i))
+		{
 			pipelineDepends->addDependency(sparkLayer->m_sprite, editor::PdfBuild);
+			pipelineDepends->addDependency(sparkLayer->m_imageProcess, editor::PdfBuild);
+		}
 		else if (const VideoLayerData* videoLayer = dynamic_type_cast< const VideoLayerData* >(*i))
 		{
 			pipelineDepends->addDependency(videoLayer->m_video, editor::PdfBuild);

@@ -4,7 +4,11 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Input/IInputDevice.h"
 #include "Input/InputSystem.h"
+#include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
+#include "Render/RenderTargetSet.h"
+#include "Render/ImageProcess/ImageProcess.h"
+#include "Render/ImageProcess/ImageProcessSettings.h"
 #include "Spark/SparkPlayer.h"
 #include "Spark/SparkRenderer.h"
 #include "Spark/Sprite.h"
@@ -23,6 +27,7 @@ SparkLayer::SparkLayer(
 	bool permitTransition,
 	IEnvironment* environment,
 	const resource::Proxy< spark::Sprite >& sprite,
+	const resource::Proxy< render::ImageProcessSettings >& imageProcessSettings,
 	const Color4ub& background,
 	int32_t width,
 	int32_t height
@@ -30,6 +35,7 @@ SparkLayer::SparkLayer(
 :	Layer(stage, name, permitTransition)
 ,	m_environment(environment)
 ,	m_sprite(sprite)
+,	m_imageProcessSettings(imageProcessSettings)
 ,	m_background(background)
 ,	m_width(width)
 ,	m_height(height)
@@ -45,8 +51,13 @@ SparkLayer::~SparkLayer()
 void SparkLayer::destroy()
 {
 	m_environment = 0;
+
 	m_sprite.clear();
+	m_imageProcessSettings.clear();
+
 	safeDestroy(m_sparkRenderer);
+	safeDestroy(m_imageTargetSet);
+	safeDestroy(m_imageProcess);
 }
 
 void SparkLayer::transition(Layer* fromLayer)
@@ -72,6 +83,33 @@ void SparkLayer::prepare()
 			m_sparkPlayer = new spark::SparkPlayer(m_spriteInstance);
 		else
 			m_sparkPlayer = 0;
+	}
+
+	if (m_imageProcessSettings && !m_imageProcess)
+	{
+		resource::IResourceManager* resourceManager = m_environment->getResource()->getResourceManager();
+		render::IRenderSystem* renderSystem = m_environment->getRender()->getRenderSystem();
+		render::IRenderView* renderView = m_environment->getRender()->getRenderView();
+
+		int32_t width = renderView->getWidth();
+		int32_t height = renderView->getHeight();
+
+		m_imageProcess = new render::ImageProcess();
+		m_imageProcess->create(m_imageProcessSettings, 0, resourceManager, renderSystem, width, height, false);
+
+		render::RenderTargetSetCreateDesc desc;
+		desc.count = 1;
+		desc.width = width;
+		desc.height = height;
+		desc.multiSample = m_environment->getRender()->getMultiSample();
+		desc.createDepthStencil = false;
+		desc.usingPrimaryDepthStencil = true;
+		desc.preferTiled = false;
+		desc.ignoreStencil = false;
+		desc.generateMips = false;
+		desc.targets[0].format = render::TfR8G8B8A8;
+		desc.targets[0].sRGB = false;
+		m_imageTargetSet = renderSystem->createRenderTargetSet(desc);
 	}
 
 	updateProjection();
@@ -206,6 +244,12 @@ void SparkLayer::render(render::EyeType eye, uint32_t frame)
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
 	T_ASSERT (renderView);
 
+	if (m_imageProcess)
+	{
+		if (!renderView->begin(m_imageTargetSet, 0))
+			return;
+	}
+
 	if (m_background.a != 0)
 	{
 		Color4f clearColor(
@@ -222,6 +266,20 @@ void SparkLayer::render(render::EyeType eye, uint32_t frame)
 	}
 
 	m_sparkRenderer->render(renderView, m_projection, frame);
+
+	if (m_imageProcess)
+	{
+		renderView->end();
+
+		render::ImageProcessStep::Instance::RenderParams params;
+		m_imageProcess->render(
+			renderView,
+			m_imageTargetSet,
+			0,
+			0,
+			params
+		);
+	}
 }
 
 void SparkLayer::flush()
@@ -230,6 +288,8 @@ void SparkLayer::flush()
 
 void SparkLayer::preReconfigured()
 {
+	// Discard post processing; need to be fully re-created if used.
+	m_imageProcess = 0;
 }
 
 void SparkLayer::postReconfigured()

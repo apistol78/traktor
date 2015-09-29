@@ -22,7 +22,6 @@
 #include "Mesh/MeshEntityRenderer.h"
 #include "Mesh/Instance/InstanceMeshEntityRenderer.h"
 #include "Physics/World/EntityRenderer.h"
-#include "Render/ImageProcess/ImageProcessFactory.h"
 #include "Resource/IResourceManager.h"
 #include "Scene/SceneFactory.h"
 #include "Spray/EffectEntityFactory.h"
@@ -185,7 +184,6 @@ void WorldServer::createResourceFactories(IEnvironment* environment)
 
 	resourceManager->addFactory(new scene::SceneFactory(database, renderSystem, m_entityBuilder));
 	resourceManager->addFactory(new terrain::TerrainFactory(database));
-	resourceManager->addFactory(new render::ImageProcessFactory(database));
 	resourceManager->addFactory(new world::EntityEventResourceFactory(database, m_entityBuilder));
 	resourceManager->addFactory(new world::EntityResourceFactory(database));
 }

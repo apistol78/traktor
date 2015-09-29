@@ -2,6 +2,7 @@
 #include "Amalgam/Game/Engine/SparkLayer.h"
 #include "Amalgam/Game/Engine/SparkLayerData.h"
 #include "Core/Serialization/ISerializer.h"
+#include "Render/ImageProcess/ImageProcessSettings.h"
 #include "Spark/Sprite.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
@@ -24,10 +25,18 @@ Ref< Layer > SparkLayerData::createInstance(Stage* stage, IEnvironment* environm
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 	resource::Proxy< spark::Sprite > sprite;
+	resource::Proxy< render::ImageProcessSettings > imageProcess;
 
 	// Bind proxies to resource manager.
 	if (!resourceManager->bind(m_sprite, sprite))
 		return 0;
+
+	// Bind optional post processing.
+	if (m_imageProcess)
+	{
+		if (!resourceManager->bind(m_imageProcess, imageProcess))
+			return 0;
+	}
 
 	// Create layer instance.
 	return new SparkLayer(
@@ -36,6 +45,7 @@ Ref< Layer > SparkLayerData::createInstance(Stage* stage, IEnvironment* environm
 		m_permitTransition,
 		environment,
 		sprite,
+		imageProcess,
 		m_background,
 		m_width,
 		m_height
@@ -46,6 +56,7 @@ void SparkLayerData::serialize(ISerializer& s)
 {
 	LayerData::serialize(s);
 	s >> resource::Member< spark::Sprite >(L"sprite", m_sprite);
+	s >> resource::Member< render::ImageProcessSettings >(L"imageProcess", m_imageProcess);
 	s >> Member< Color4ub >(L"background", m_background);
 	s >> Member< int32_t >(L"width", m_width);
 	s >> Member< int32_t >(L"height", m_height);

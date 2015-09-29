@@ -23,6 +23,15 @@ class IEnvironment;
 
 	}
 
+	namespace render
+	{
+
+class ImageProcess;
+class ImageProcessSettings;
+class RenderTargetSet;		
+
+	}
+
 	namespace spark
 	{
 
@@ -50,6 +59,7 @@ public:
 		bool permitTransition,
 		IEnvironment* environment,
 		const resource::Proxy< spark::Sprite >& sprite,
+		const resource::Proxy< render::ImageProcessSettings >& imageProcessSettings,
 		const Color4ub& background,
 		int32_t width,
 		int32_t height
@@ -99,6 +109,9 @@ private:
 	Ref< spark::SparkRenderer > m_sparkRenderer;
 	Ref< spark::SparkPlayer > m_sparkPlayer;
 	Ref< spark::SpriteInstance > m_spriteInstance;
+	Ref< render::RenderTargetSet > m_imageTargetSet;
+	resource::Proxy< render::ImageProcessSettings > m_imageProcessSettings;
+	Ref< render::ImageProcess > m_imageProcess;
 	Color4ub m_background;
 	Matrix44 m_projection;
 	int32_t m_width;
