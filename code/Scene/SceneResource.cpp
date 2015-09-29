@@ -4,6 +4,7 @@
 #include "Core/Serialization/MemberSmallMap.h"
 #include "Core/Serialization/MemberStaticArray.h"
 #include "Render/ITexture.h"
+#include "Render/ImageProcess/ImageProcessSettings.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 #include "Scene/ISceneControllerData.h"
@@ -14,7 +15,6 @@
 #include "World/EntityBuilderWithSchema.h"
 #include "World/IEntityFactory.h"
 #include "World/WorldRenderSettings.h"
-#include "World/PostProcess/PostProcessSettings.h"
 
 namespace traktor
 {
@@ -34,22 +34,22 @@ Ref< Scene > SceneResource::createScene(
 	world::IEntityBuilder* entityBuilder
 ) const
 {
-	resource::Proxy< world::PostProcessSettings > postProcessSettings[world::QuLast];
-	SmallMap< render::handle_t, resource::Proxy< render::ITexture > > postProcessParams;
+	resource::Proxy< render::ImageProcessSettings > imageProcessSettings[world::QuLast];
+	SmallMap< render::handle_t, resource::Proxy< render::ITexture > > imageProcessParams;
 
 	for (int32_t i = 0; i < world::QuLast; ++i)
 	{
-		if (m_postProcessSettings[i].isNull())
+		if (m_imageProcessSettings[i].isNull())
 			continue;
 
-		if (!resourceManager->bind(m_postProcessSettings[i], postProcessSettings[i]))
-			log::error << L"Unable to bind post processing settings " << i << Endl;
+		if (!resourceManager->bind(m_imageProcessSettings[i], imageProcessSettings[i]))
+			log::error << L"Unable to bind image processing settings " << i << Endl;
 	}
 
-	for (SmallMap< std::wstring, resource::Id< render::ITexture > >::const_iterator i = m_postProcessParams.begin(); i != m_postProcessParams.end(); ++i)
+	for (SmallMap< std::wstring, resource::Id< render::ITexture > >::const_iterator i = m_imageProcessParams.begin(); i != m_imageProcessParams.end(); ++i)
 	{
-		if (!resourceManager->bind(i->second, postProcessParams[render::getParameterHandle(i->first)]))
-			log::error << L"Unable to bind post processing parameter \"" << i->first << L"\"" << Endl;
+		if (!resourceManager->bind(i->second, imageProcessParams[render::getParameterHandle(i->first)]))
+			log::error << L"Unable to bind image processing parameter \"" << i->first << L"\"" << Endl;
 	}
 
 	Ref< world::IEntitySchema > entitySchema = new world::EntitySchema();
@@ -76,8 +76,8 @@ Ref< Scene > SceneResource::createScene(
 		entitySchema,
 		rootEntity,
 		m_worldRenderSettings,
-		postProcessSettings,
-		postProcessParams
+		imageProcessSettings,
+		imageProcessParams
 	);
 }
 
@@ -91,24 +91,24 @@ Ref< world::WorldRenderSettings > SceneResource::getWorldRenderSettings() const
 	return m_worldRenderSettings;
 }
 
-void SceneResource::setPostProcessSettings(world::Quality quality, const resource::Id< world::PostProcessSettings >& postProcessSettings)
+void SceneResource::setImageProcessSettings(world::Quality quality, const resource::Id< render::ImageProcessSettings >& imageProcessSettings)
 {
-	m_postProcessSettings[int32_t(quality)] = postProcessSettings;
+	m_imageProcessSettings[int32_t(quality)] = imageProcessSettings;
 }
 
-const resource::Id< world::PostProcessSettings >& SceneResource::getPostProcessSettings(world::Quality quality) const
+const resource::Id< render::ImageProcessSettings >& SceneResource::getImageProcessSettings(world::Quality quality) const
 {
-	return m_postProcessSettings[int32_t(quality)];
+	return m_imageProcessSettings[int32_t(quality)];
 }
 
-void SceneResource::setPostProcessParams(const SmallMap< std::wstring, resource::Id< render::ITexture > >& postProcessParams)
+void SceneResource::setImageProcessParams(const SmallMap< std::wstring, resource::Id< render::ITexture > >& imageProcessParams)
 {
-	m_postProcessParams = postProcessParams;
+	m_imageProcessParams = imageProcessParams;
 }
 
-const SmallMap< std::wstring, resource::Id< render::ITexture > >& SceneResource::getPostProcessParams() const
+const SmallMap< std::wstring, resource::Id< render::ITexture > >& SceneResource::getImageProcessParams() const
 {
-	return m_postProcessParams;
+	return m_imageProcessParams;
 }
 
 void SceneResource::setEntityData(world::EntityData* entityData)
@@ -134,8 +134,8 @@ Ref< ISceneControllerData > SceneResource::getControllerData() const
 void SceneResource::serialize(ISerializer& s)
 {
 	s >> MemberRef< world::WorldRenderSettings >(L"worldRenderSettings", m_worldRenderSettings);
-	s >> MemberStaticArray< resource::Id< world::PostProcessSettings >, sizeof_array(m_postProcessSettings), resource::Member< world::PostProcessSettings > >(L"postProcessSettings", m_postProcessSettings);
-	s >> MemberSmallMap< std::wstring, resource::Id< render::ITexture >, Member< std::wstring >, resource::Member< render::ITexture > >(L"postProcessParams", m_postProcessParams);
+	s >> MemberStaticArray< resource::Id< render::ImageProcessSettings >, sizeof_array(m_imageProcessSettings), resource::Member< render::ImageProcessSettings > >(L"postProcessSettings", m_imageProcessSettings);
+	s >> MemberSmallMap< std::wstring, resource::Id< render::ITexture >, Member< std::wstring >, resource::Member< render::ITexture > >(L"postProcessParams", m_imageProcessParams);
 	s >> MemberRef< world::EntityData >(L"entityData", m_entityData);
 	s >> MemberRef< ISceneControllerData >(L"controllerData", m_controllerData);
 }

@@ -22,6 +22,7 @@
 #include "Mesh/MeshEntityRenderer.h"
 #include "Mesh/Instance/InstanceMeshEntityRenderer.h"
 #include "Physics/World/EntityRenderer.h"
+#include "Render/ImageProcess/ImageProcessFactory.h"
 #include "Resource/IResourceManager.h"
 #include "Scene/SceneFactory.h"
 #include "Spray/EffectEntityFactory.h"
@@ -45,7 +46,6 @@
 #include "World/Entity/TransientEntityRenderer.h"
 #include "World/Entity/WorldEntityFactory.h"
 #include "World/Forward/WorldRendererForward.h"
-#include "World/PostProcess/PostProcessFactory.h"
 #include "World/PreLit/WorldRendererPreLit.h"
 
 namespace traktor
@@ -185,7 +185,7 @@ void WorldServer::createResourceFactories(IEnvironment* environment)
 
 	resourceManager->addFactory(new scene::SceneFactory(database, renderSystem, m_entityBuilder));
 	resourceManager->addFactory(new terrain::TerrainFactory(database));
-	resourceManager->addFactory(new world::PostProcessFactory(database));
+	resourceManager->addFactory(new render::ImageProcessFactory(database));
 	resourceManager->addFactory(new world::EntityEventResourceFactory(database, m_entityBuilder));
 	resourceManager->addFactory(new world::EntityResourceFactory(database));
 }
@@ -297,13 +297,13 @@ spray::IFeedbackManager* WorldServer::getFeedbackManager()
 
 Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(
 	const world::WorldRenderSettings* worldRenderSettings,
-	const world::PostProcessSettings* postProcessSettings
+	const render::ImageProcessSettings* imageProcessSettings
 )
 {
 	world::WorldCreateDesc wcd;
 
 	wcd.worldRenderSettings = worldRenderSettings;
-	wcd.postProcessSettings = postProcessSettings;
+	wcd.imageProcessSettings = imageProcessSettings;
 	wcd.entityRenderers = m_entityRenderers;
 	wcd.shadowsQuality = m_shadowQuality;
 	wcd.ambientOcclusionQuality = m_ambientOcclusionQuality;

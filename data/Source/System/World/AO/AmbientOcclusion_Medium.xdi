@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.world.PostProcessSettings" version="1">
+<object type="traktor.render.ImageProcessSettings" version="1">
 	<requireHighRange>true</requireHighRange>
 	<definitions>
-		<item type="traktor.world.PostProcessDefineTarget" version="4">
+		<item type="traktor.render.ImageProcessDefineTarget" version="4">
 			<id>SsaoFlip</id>
 			<width>0</width>
 			<height>0</height>
@@ -17,7 +17,7 @@
 			<clearColor>0, 0, 0, 0</clearColor>
 			<persistent>true</persistent>
 		</item>
-		<item type="traktor.world.PostProcessDefineTarget" version="4">
+		<item type="traktor.render.ImageProcessDefineTarget" version="4">
 			<id>SsaoFlop</id>
 			<width>0</width>
 			<height>0</height>
@@ -32,7 +32,7 @@
 			<clearColor>0, 0, 0, 0</clearColor>
 			<persistent>true</persistent>
 		</item>
-		<item type="traktor.world.PostProcessDefineTarget" version="4">
+		<item type="traktor.render.ImageProcessDefineTarget" version="4">
 			<id>SsaoBlur1</id>
 			<width>0</width>
 			<height>0</height>
@@ -47,7 +47,7 @@
 			<clearColor>0, 0, 0, 0</clearColor>
 			<persistent>false</persistent>
 		</item>
-		<item type="traktor.world.PostProcessDefineTarget" version="4">
+		<item type="traktor.render.ImageProcessDefineTarget" version="4">
 			<id>SsaoBlur2</id>
 			<width>0</width>
 			<height>0</height>
@@ -64,10 +64,10 @@
 		</item>
 	</definitions>
 	<steps>
-		<item type="traktor.world.PostProcessStepSetTarget">
+		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>SsaoFlip</target>
 		</item>
-		<item type="traktor.world.PostProcessStepSsao" version="1">
+		<item type="traktor.render.ImageProcessStepSsao" version="1">
 			<shader>{682F3EA4-A7C6-4D44-9079-E0B2DBA32911}</shader>
 			<sources>
 				<item>
@@ -87,7 +87,7 @@
 				</item>
 			</sources>
 		</item>
-		<item type="traktor.world.PostProcessStepTemporal">
+		<item type="traktor.render.ImageProcessStepTemporal">
 			<shader>{417A5E0A-7FEB-7745-B655-7E708F641024}</shader>
 			<sources>
 				<item>
@@ -102,14 +102,14 @@
 				</item>
 			</sources>
 		</item>
-		<item type="traktor.world.PostProcessStepSwapTargets">
+		<item type="traktor.render.ImageProcessStepSwapTargets">
 			<destination>SsaoFlop</destination>
 			<source>SsaoFlip</source>
 		</item>
-		<item type="traktor.world.PostProcessStepSetTarget">
+		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>SsaoBlur1</target>
 		</item>
-		<item type="traktor.world.PostProcessStepBlur" version="2">
+		<item type="traktor.render.ImageProcessStepBlur" version="2">
 			<shader>{FECC6D88-5127-0247-B896-A6EDC6FE87A9}</shader>
 			<sources>
 				<item>
@@ -127,10 +127,10 @@
 			<taps>8</taps>
 			<blurType>BtGaussian</blurType>
 		</item>
-		<item type="traktor.world.PostProcessStepSetTarget">
+		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>SsaoBlur2</target>
 		</item>
-		<item type="traktor.world.PostProcessStepBlur" version="2">
+		<item type="traktor.render.ImageProcessStepBlur" version="2">
 			<shader>{FECC6D88-5127-0247-B896-A6EDC6FE87A9}</shader>
 			<sources>
 				<item>
@@ -148,10 +148,10 @@
 			<taps>8</taps>
 			<blurType>BtGaussian</blurType>
 		</item>
-		<item type="traktor.world.PostProcessStepSetTarget">
+		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Output</target>
 		</item>
-		<item type="traktor.world.PostProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple">
 			<shader>{01AAA8D7-E528-A44D-AF01-78CD5B18F178}</shader>
 			<sources>
 				<item>

@@ -17,6 +17,7 @@
 #include "Render/IRenderView.h"
 #include "Render/RenderTargetSet.h"
 #include "Render/PrimitiveRenderer.h"
+#include "Render/ImageProcess/ImageProcess.h"
 #include "Scene/Scene.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/EntityAdapter.h"
@@ -43,7 +44,6 @@
 #include "World/WorldRenderSettings.h"
 #include "World/WorldRenderView.h"
 #include "World/Entity/CameraEntity.h"
-#include "World/PostProcess/PostProcess.h"
 
 namespace traktor
 {
@@ -59,7 +59,7 @@ const int32_t c_defaultMultiSample = 0;
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CameraRenderControl", CameraRenderControl, ISceneRenderControl)
 
 CameraRenderControl::CameraRenderControl()
-:	m_postProcessQuality(world::QuDisabled)
+:	m_imageProcessQuality(world::QuDisabled)
 ,	m_shadowQuality(world::QuDisabled)
 ,	m_ambientOcclusionQuality(world::QuDisabled)
 ,	m_antiAliasQuality(world::QuDisabled)
@@ -174,7 +174,7 @@ void CameraRenderControl::updateWorldRenderer()
 	wcd.multiSample = m_multiSample;
 	wcd.frameCount = 1;
 	wcd.allTargetsPersistent = true;
-	wcd.postProcessSettings = sceneInstance->getPostProcessSettings(m_postProcessQuality);
+	wcd.imageProcessSettings = sceneInstance->getImageProcessSettings(m_imageProcessQuality);
 
 	if (worldRenderer->create(
 		m_context->getResourceManager(),
@@ -197,9 +197,9 @@ void CameraRenderControl::setAspect(float aspect)
 	m_containerAspect->update();
 }
 
-void CameraRenderControl::setQuality(world::Quality postProcessQuality, world::Quality shadowQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality)
+void CameraRenderControl::setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality)
 {
-	m_postProcessQuality = postProcessQuality;
+	m_imageProcessQuality = imageProcessQuality;
 	m_shadowQuality = shadowQuality;
 	m_ambientOcclusionQuality = ambientOcclusionQuality;
 	m_antiAliasQuality = antiAliasQuality;
@@ -356,10 +356,10 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 			m_worldRenderer->endBuild(m_worldRenderView, 0);
 
 			// Set post process parameters from scene instance.
-			world::PostProcess* postProcess = m_worldRenderer->getVisualPostProcess();
+			render::ImageProcess* postProcess = m_worldRenderer->getVisualImageProcess();
 			if (postProcess)
 			{
-				for (SmallMap< render::handle_t, resource::Proxy< render::ITexture > >::const_iterator i = sceneInstance->getPostProcessParams().begin(); i != sceneInstance->getPostProcessParams().end(); ++i)
+				for (SmallMap< render::handle_t, resource::Proxy< render::ITexture > >::const_iterator i = sceneInstance->getImageProcessParams().begin(); i != sceneInstance->getImageProcessParams().end(); ++i)
 					postProcess->setTextureParameter(i->first, i->second);
 			}
 		}

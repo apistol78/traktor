@@ -6,12 +6,12 @@
 #include "World/Entity/ExternalEntityData.h"
 
 // Resource factories
+#include "Render/ImageProcess/ImageProcessFactory.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/TextureFactory.h"
 #include "Weather/Clouds/CloudMaskFactory.h"
 #include "World/EntityEventResourceFactory.h"
 #include "World/EntityResourceFactory.h"
-#include "World/PostProcess/PostProcessFactory.h"
 
 // Entity factories
 #include "Scene/Editor/LayerEntityFactory.h"
@@ -68,12 +68,12 @@ void DefaultEditorProfile::createResourceFactories(
 	RefArray< const resource::IResourceFactory >& outResourceFactories
 ) const
 {
+	outResourceFactories.push_back(new render::ImageProcessFactory(context->getResourceDatabase()));
 	outResourceFactories.push_back(new render::ShaderFactory(context->getResourceDatabase(), context->getRenderSystem()));
 	outResourceFactories.push_back(new render::TextureFactory(context->getResourceDatabase(), context->getRenderSystem(), 0));
 	outResourceFactories.push_back(new weather::CloudMaskFactory(context->getResourceDatabase()));
 	outResourceFactories.push_back(new world::EntityResourceFactory(context->getResourceDatabase()));
 	//outResourceFactories.push_back(new world::EntityEventResourceFactory(context->getResourceDatabase()));
-	outResourceFactories.push_back(new world::PostProcessFactory(context->getResourceDatabase()));
 }
 
 void DefaultEditorProfile::createEntityFactories(

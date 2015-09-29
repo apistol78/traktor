@@ -8,6 +8,7 @@
 #include "Physics/Body.h"
 #include "Physics/PhysicsManager.h"
 #include "Render/ITexture.h"
+#include "Render/ImageProcess/ImageProcessSettings.h"
 #include "Resource/IResourceManager.h"
 #include "Scene/ISceneController.h"
 #include "Scene/ISceneControllerData.h"
@@ -36,7 +37,6 @@
 #include "World/EntitySchema.h"
 #include "World/Editor/LayerEntityData.h"
 #include "World/Entity/GroupEntity.h"
-#include "World/PostProcess/PostProcessSettings.h"
 
 namespace traktor
 {
@@ -367,13 +367,13 @@ void SceneEditorContext::buildEntities()
 		T[3] = timer.getElapsedTime();
 
 		// Bind post process settings.
-		resource::Proxy< world::PostProcessSettings > postProcessSettings[world::QuLast];
+		resource::Proxy< render::ImageProcessSettings > postProcessSettings[world::QuLast];
 		for (int32_t i = 0; i < world::QuLast; ++i)
-			m_resourceManager->bind(m_sceneAsset->getPostProcessSettings((world::Quality)i), postProcessSettings[i]);
+			m_resourceManager->bind(m_sceneAsset->getImageProcessSettings((world::Quality)i), postProcessSettings[i]);
 
 		// Bind post process parameters.
 		SmallMap< render::handle_t, resource::Proxy< render::ITexture > > postProcessParams;
-		const SmallMap< std::wstring, resource::Id< render::ITexture > >& postProcessParamsAsset = m_sceneAsset->getPostProcessParams();
+		const SmallMap< std::wstring, resource::Id< render::ITexture > >& postProcessParamsAsset = m_sceneAsset->getImageProcessParams();
 		for (SmallMap< std::wstring, resource::Id< render::ITexture > >::const_iterator i = postProcessParamsAsset.begin(); i != postProcessParamsAsset.end(); ++i)
 		{
 			if (!m_resourceManager->bind(i->second, postProcessParams[render::getParameterHandle(i->first)]))

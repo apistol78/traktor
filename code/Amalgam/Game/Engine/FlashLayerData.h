@@ -22,10 +22,10 @@ class FlashMovie;
 
 	}
 
-	namespace world
+	namespace render
 	{
 
-class PostProcessSettings;
+class ImageProcessSettings;
 
 	}
 
@@ -51,7 +51,7 @@ private:
 
 	resource::Id< flash::FlashMovie > m_movie;
 	std::map< std::wstring, resource::Id< flash::FlashMovie > > m_externalMovies;
-	resource::Id< world::PostProcessSettings > m_postProcess;
+	resource::Id< render::ImageProcessSettings > m_imageProcess;
 	bool m_clearBackground;
 	bool m_enableSound;
 };

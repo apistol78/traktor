@@ -25,7 +25,7 @@ ScenePipeline::ScenePipeline()
 ,	m_suppressShadows(false)
 ,	m_suppressLinearLighting(false)
 ,	m_suppressDepthPass(false)
-,	m_suppressPostProcess(false)
+,	m_suppressImageProcess(false)
 ,	m_shadowMapSizeDenom(1)
 ,	m_shadowMapMaxSlices(0)
 {
@@ -37,7 +37,7 @@ bool ScenePipeline::create(const editor::IPipelineSettings* settings)
 	m_suppressShadows = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressShadows");
 	m_suppressLinearLighting = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressLinearLighting");
 	m_suppressDepthPass = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressDepthPass");
-	m_suppressPostProcess = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressPostProcess");
+	m_suppressImageProcess = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressImageProcess");
 	m_shadowMapSizeDenom = settings->getProperty< PropertyInteger >(L"ScenePipeline.ShadowMapSizeDenom", 1);
 	m_shadowMapMaxSlices = settings->getProperty< PropertyInteger >(L"ScenePipeline.ShadowMapMaxSlices", 0);
 	return true;
@@ -65,9 +65,9 @@ bool ScenePipeline::buildDependencies(
 	Ref< const SceneAsset > sceneAsset = checked_type_cast< const SceneAsset* >(sourceAsset);
 
 	for (int32_t quality = 0; quality < world::QuLast; ++quality)
-		pipelineDepends->addDependency(sceneAsset->getPostProcessSettings((world::Quality)quality), editor::PdfBuild | editor::PdfResource);
+		pipelineDepends->addDependency(sceneAsset->getImageProcessSettings((world::Quality)quality), editor::PdfBuild | editor::PdfResource);
 
-	const SmallMap< std::wstring, resource::Id< render::ITexture > >& params = sceneAsset->getPostProcessParams();
+	const SmallMap< std::wstring, resource::Id< render::ITexture > >& params = sceneAsset->getImageProcessParams();
 	for (SmallMap< std::wstring, resource::Id< render::ITexture > >::const_iterator i = params.begin(); i != params.end(); ++i)
 		pipelineDepends->addDependency(i->second, editor::PdfBuild | editor::PdfResource);
 
@@ -140,9 +140,9 @@ bool ScenePipeline::buildOutput(
 	sceneResource->setWorldRenderSettings(sceneAsset->getWorldRenderSettings());
 
 	for (int32_t i = 0; i < world::QuLast; ++i)
-		sceneResource->setPostProcessSettings((world::Quality)i, sceneAsset->getPostProcessSettings((world::Quality)i));
+		sceneResource->setImageProcessSettings((world::Quality)i, sceneAsset->getImageProcessSettings((world::Quality)i));
 
-	sceneResource->setPostProcessParams(sceneAsset->getPostProcessParams());
+	sceneResource->setImageProcessParams(sceneAsset->getImageProcessParams());
 	sceneResource->setEntityData(groupEntityData);
 	sceneResource->setControllerData(controllerData);
 
@@ -156,10 +156,10 @@ bool ScenePipeline::buildOutput(
 		sceneResource->getWorldRenderSettings()->depthPassEnabled = false;
 		log::info << L"Depth pass suppressed" << Endl;
 	}
-	if (m_suppressPostProcess)
+	if (m_suppressImageProcess)
 	{
 		for (int32_t i = 0; i < world::QuLast; ++i)
-			sceneResource->setPostProcessSettings((world::Quality)i, resource::Id< world::PostProcessSettings >());
+			sceneResource->setImageProcessSettings((world::Quality)i, resource::Id< render::ImageProcessSettings >());
 		log::info << L"Post processing suppressed" << Endl;
 	}
 
@@ -174,8 +174,8 @@ bool ScenePipeline::buildOutput(
 		}
 		else
 		{
-			shadowSetting.maskProject = resource::Id< world::PostProcessSettings >();
-			shadowSetting.maskFilter = resource::Id< world::PostProcessSettings >();
+			shadowSetting.maskProject = resource::Id< render::ImageProcessSettings >();
+			shadowSetting.maskFilter = resource::Id< render::ImageProcessSettings >();
 		}
 	}
 

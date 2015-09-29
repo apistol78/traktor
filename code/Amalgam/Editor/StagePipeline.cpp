@@ -106,7 +106,7 @@ bool StagePipeline::buildDependencies(
 			pipelineDepends->addDependency(flashLayer->m_movie, editor::PdfBuild);
 			for (std::map< std::wstring, resource::Id< flash::FlashMovie > >::const_iterator i = flashLayer->m_externalMovies.begin(); i != flashLayer->m_externalMovies.end(); ++i)
 				pipelineDepends->addDependency(i->second, editor::PdfBuild);
-			pipelineDepends->addDependency(flashLayer->m_postProcess, editor::PdfBuild);
+			pipelineDepends->addDependency(flashLayer->m_imageProcess, editor::PdfBuild);
 		}
 		else if (const SparkLayerData* sparkLayer = dynamic_type_cast< const SparkLayerData* >(*i))
 			pipelineDepends->addDependency(sparkLayer->m_sprite, editor::PdfBuild);

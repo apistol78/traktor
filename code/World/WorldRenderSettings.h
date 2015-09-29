@@ -20,14 +20,13 @@ namespace traktor
 	namespace render
 	{
 
+class ImageProcessSettings;
 class ITexture;
 
 	}
 
 	namespace world
 	{
-
-class PostProcessSettings;
 
 /*! \brief World render settings.
  * \ingroup World
@@ -61,8 +60,8 @@ public:
 		float cascadingLambda;
 		bool quantizeProjection;
 		int32_t maskDenominator;
-		resource::Id< PostProcessSettings > maskProject;
-		resource::Id< PostProcessSettings > maskFilter;
+		resource::Id< render::ImageProcessSettings > maskProject;
+		resource::Id< render::ImageProcessSettings > maskFilter;
 
 		ShadowSettings();
 

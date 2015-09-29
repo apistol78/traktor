@@ -307,7 +307,7 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classWorldLayer->addMethod("getEntitySchema", &WorldLayer::getEntitySchema);
 	classWorldLayer->addMethod("setControllerEnable", &WorldLayer::setControllerEnable);
 	classWorldLayer->addMethod("resetController", &WorldLayer::resetController);
-	classWorldLayer->addMethod("getPostProcess", &WorldLayer::getPostProcess);
+	classWorldLayer->addMethod("getImageProcess", &WorldLayer::getImageProcess);
 	classWorldLayer->addMethod("getViewFrustum", &WorldLayer::getViewFrustum);
 	classWorldLayer->addMethod("worldToView", &WorldLayer_worldToView);
 	classWorldLayer->addMethod("viewToWorld", &WorldLayer_viewToWorld);

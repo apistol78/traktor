@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.world.PostProcessSettings" version="1">
+<object type="traktor.render.ImageProcessSettings" version="1">
 	<requireHighRange>true</requireHighRange>
 	<definitions>
-		<item type="traktor.world.PostProcessDefineTarget" version="1">
+		<item type="traktor.render.ImageProcessDefineTarget" version="1">
 			<id>1</id>
 			<width>0</width>
 			<height>0</height>
@@ -12,7 +12,7 @@
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
 		</item>
-		<item type="traktor.world.PostProcessDefineTarget" version="1">
+		<item type="traktor.render.ImageProcessDefineTarget" version="1">
 			<id>2</id>
 			<width>64</width>
 			<height>64</height>
@@ -22,7 +22,7 @@
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
 		</item>
-		<item type="traktor.world.PostProcessDefineTarget" version="1">
+		<item type="traktor.render.ImageProcessDefineTarget" version="1">
 			<id>3</id>
 			<width>16</width>
 			<height>16</height>
@@ -32,7 +32,7 @@
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
 		</item>
-		<item type="traktor.world.PostProcessDefineTarget" version="1">
+		<item type="traktor.render.ImageProcessDefineTarget" version="1">
 			<id>4</id>
 			<width>4</width>
 			<height>4</height>
@@ -42,7 +42,7 @@
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
 		</item>
-		<item type="traktor.world.PostProcessDefineTarget" version="1">
+		<item type="traktor.render.ImageProcessDefineTarget" version="1">
 			<id>5</id>
 			<width>1</width>
 			<height>1</height>
@@ -52,7 +52,7 @@
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
 		</item>
-		<item type="traktor.world.PostProcessDefineTarget" version="1">
+		<item type="traktor.render.ImageProcessDefineTarget" version="1">
 			<id>6</id>
 			<width>1</width>
 			<height>1</height>
@@ -62,7 +62,7 @@
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
 		</item>
-		<item type="traktor.world.PostProcessDefineTarget" version="1">
+		<item type="traktor.render.ImageProcessDefineTarget" version="1">
 			<id>7</id>
 			<width>1</width>
 			<height>1</height>
@@ -72,7 +72,7 @@
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
 		</item>
-		<item type="traktor.world.PostProcessDefineTarget" version="1">
+		<item type="traktor.render.ImageProcessDefineTarget" version="1">
 			<id>8</id>
 			<width>0</width>
 			<height>0</height>
@@ -82,7 +82,7 @@
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
 		</item>
-		<item type="traktor.world.PostProcessDefineTarget" version="1">
+		<item type="traktor.render.ImageProcessDefineTarget" version="1">
 			<id>9</id>
 			<width>0</width>
 			<height>0</height>
@@ -92,7 +92,7 @@
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
 		</item>
-		<item type="traktor.world.PostProcessDefineTarget" version="1">
+		<item type="traktor.render.ImageProcessDefineTarget" version="1">
 			<id>10</id>
 			<width>0</width>
 			<height>0</height>
@@ -104,10 +104,10 @@
 		</item>
 	</definitions>
 	<steps>
-		<item type="traktor.world.PostProcessStepSetTarget">
+		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>1</target>
 		</item>
-		<item type="traktor.world.PostProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple">
 			<shader>{9B02255F-8C06-1540-AE46-C971346D5B35}</shader>
 			<sources>
 				<item>
@@ -117,10 +117,10 @@
 				</item>
 			</sources>
 		</item>
-		<item type="traktor.world.PostProcessStepSetTarget">
+		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>2</target>
 		</item>
-		<item type="traktor.world.PostProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple">
 			<shader>{38EF7615-7D9D-BE43-B302-3F213026EE14}</shader>
 			<sources>
 				<item>
@@ -130,10 +130,10 @@
 				</item>
 			</sources>
 		</item>
-		<item type="traktor.world.PostProcessStepSetTarget">
+		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>3</target>
 		</item>
-		<item type="traktor.world.PostProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple">
 			<shader>{38EF7615-7D9D-BE43-B302-3F213026EE14}</shader>
 			<sources>
 				<item>
@@ -143,10 +143,10 @@
 				</item>
 			</sources>
 		</item>
-		<item type="traktor.world.PostProcessStepSetTarget">
+		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>4</target>
 		</item>
-		<item type="traktor.world.PostProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple">
 			<shader>{38EF7615-7D9D-BE43-B302-3F213026EE14}</shader>
 			<sources>
 				<item>
@@ -156,10 +156,10 @@
 				</item>
 			</sources>
 		</item>
-		<item type="traktor.world.PostProcessStepSetTarget">
+		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>5</target>
 		</item>
-		<item type="traktor.world.PostProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple">
 			<shader>{38EF7615-7D9D-BE43-B302-3F213026EE14}</shader>
 			<sources>
 				<item>
@@ -169,10 +169,10 @@
 				</item>
 			</sources>
 		</item>
-		<item type="traktor.world.PostProcessStepSetTarget">
+		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>7</target>
 		</item>
-		<item type="traktor.world.PostProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple">
 			<shader>{E9D34A63-454C-6B4C-A508-009527334A5B}</shader>
 			<sources>
 				<item>
@@ -187,14 +187,14 @@
 				</item>
 			</sources>
 		</item>
-		<item type="traktor.world.PostProcessStepSwapTargets">
+		<item type="traktor.render.ImageProcessStepSwapTargets">
 			<destination>6</destination>
 			<source>7</source>
 		</item>
-		<item type="traktor.world.PostProcessStepSetTarget">
+		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>8</target>
 		</item>
-		<item type="traktor.world.PostProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple">
 			<shader>{123D8BD7-1A67-DE4D-AE6E-26D40B57C624}</shader>
 			<sources>
 				<item>
@@ -209,10 +209,10 @@
 				</item>
 			</sources>
 		</item>
-		<item type="traktor.world.PostProcessStepSetTarget">
+		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>9</target>
 		</item>
-		<item type="traktor.world.PostProcessStepBlur" version="1">
+		<item type="traktor.render.ImageProcessStepBlur" version="1">
 			<shader>{E119187C-8BF9-6544-934B-44CC29C65A26}</shader>
 			<sources>
 				<item>
@@ -224,10 +224,10 @@
 			<direction>2, 0, 0, 0</direction>
 			<taps>15</taps>
 		</item>
-		<item type="traktor.world.PostProcessStepSetTarget">
+		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>10</target>
 		</item>
-		<item type="traktor.world.PostProcessStepBlur" version="1">
+		<item type="traktor.render.ImageProcessStepBlur" version="1">
 			<shader>{E119187C-8BF9-6544-934B-44CC29C65A26}</shader>
 			<sources>
 				<item>
@@ -239,10 +239,10 @@
 			<direction>0, 2, 0, 0</direction>
 			<taps>15</taps>
 		</item>
-		<item type="traktor.world.PostProcessStepSetTarget">
+		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Output</target>
 		</item>
-		<item type="traktor.world.PostProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple">
 			<shader>{F3963494-CF15-1441-AE32-11A71844B99B}</shader>
 			<sources>
 				<item>

@@ -24,7 +24,7 @@ void EnvelopeFeedbackEventData::serialize(ISerializer& s)
 	{
 		{ L"FbtNone", FbtNone },
 		{ L"FbtCamera", FbtCamera },
-		{ L"FbtPostProcess", FbtPostProcess },
+		{ L"FbtImageProcess", FbtImageProcess },
 		{ L"FbtUI", FbtUI },
 		{ 0 }
 	};

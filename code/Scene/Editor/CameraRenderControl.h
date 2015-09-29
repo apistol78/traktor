@@ -58,7 +58,7 @@ public:
 
 	virtual void setAspect(float aspect);
 
-	virtual void setQuality(world::Quality postProcessQuality, world::Quality shadowQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality);
+	virtual void setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality);
 
 	virtual bool handleCommand(const ui::Command& command);
 
@@ -83,7 +83,7 @@ private:
 	Ref< world::IWorldRenderer > m_worldRenderer;
 	world::WorldRenderView m_worldRenderView;
 	world::WorldRenderSettings m_worldRenderSettings;
-	world::Quality m_postProcessQuality;
+	world::Quality m_imageProcessQuality;
 	world::Quality m_shadowQuality;
 	world::Quality m_ambientOcclusionQuality;
 	world::Quality m_antiAliasQuality;

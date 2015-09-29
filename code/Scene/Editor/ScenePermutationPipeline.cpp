@@ -52,14 +52,14 @@ bool ScenePermutationPipeline::buildDependencies(
 
 	for (int32_t i = 0; i < world::QuLast; ++i)
 	{
-		if (scenePermutationAsset->m_overridePostProcessSettings[i])
-			pipelineDepends->addDependency(scenePermutationAsset->m_overridePostProcessSettings[i], editor::PdfBuild | editor::PdfResource);
+		if (scenePermutationAsset->m_overrideImageProcessSettings[i])
+			pipelineDepends->addDependency(scenePermutationAsset->m_overrideImageProcessSettings[i], editor::PdfBuild | editor::PdfResource);
 	}
 
 	if (scenePermutationAsset->m_overrideWorldRenderSettings)
 		pipelineDepends->addDependency(scenePermutationAsset->m_overrideWorldRenderSettings->reflectionMap, editor::PdfBuild | editor::PdfResource);
 
-	const SmallMap< std::wstring, resource::Id< render::ITexture > >& params = scenePermutationAsset->m_overridePostProcessParams;
+	const SmallMap< std::wstring, resource::Id< render::ITexture > >& params = scenePermutationAsset->m_overrideImageProcessParams;
 	for (SmallMap< std::wstring, resource::Id< render::ITexture > >::const_iterator i = params.begin(); i != params.end(); ++i)
 		pipelineDepends->addDependency(i->second, editor::PdfBuild | editor::PdfResource);
 
@@ -113,17 +113,17 @@ Ref< ISerializable > ScenePermutationPipeline::buildOutput(
 
 	for (int32_t i = 0; i < world::QuLast; ++i)
 	{
-		if (scenePermutationAsset->m_overridePostProcessSettings[i])
-			scenePermutation->setPostProcessSettings((world::Quality)i, scenePermutationAsset->m_overridePostProcessSettings[i]);
+		if (scenePermutationAsset->m_overrideImageProcessSettings[i])
+			scenePermutation->setImageProcessSettings((world::Quality)i, scenePermutationAsset->m_overrideImageProcessSettings[i]);
 	}
 
-	SmallMap< std::wstring, resource::Id< render::ITexture > > params = templateScene->getPostProcessParams();
+	SmallMap< std::wstring, resource::Id< render::ITexture > > params = templateScene->getImageProcessParams();
 
-	const SmallMap< std::wstring, resource::Id< render::ITexture > >& overrideParams = scenePermutationAsset->m_overridePostProcessParams;
+	const SmallMap< std::wstring, resource::Id< render::ITexture > >& overrideParams = scenePermutationAsset->m_overrideImageProcessParams;
 	for (SmallMap< std::wstring, resource::Id< render::ITexture > >::const_iterator i = overrideParams.begin(); i != overrideParams.end(); ++i)
 		params[i->first] = i->second;
 	
-	scenePermutation->setPostProcessParams(params);
+	scenePermutation->setImageProcessParams(params);
 
 	const RefArray< world::LayerEntityData >& layers = scenePermutation->getLayers();
 	for (RefArray< world::LayerEntityData >::const_iterator i = layers.begin(); i != layers.end(); ++i)

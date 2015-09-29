@@ -31,9 +31,9 @@
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/RenderTargetSet.h"
+#include "Render/ImageProcess/ImageProcess.h"
+#include "Render/ImageProcess/ImageProcessSettings.h"
 #include "Spray/Feedback/IFeedbackManager.h"
-#include "World/PostProcess/PostProcess.h"
-#include "World/PostProcess/PostProcessSettings.h"
 
 namespace traktor
 {
@@ -115,7 +115,7 @@ FlashLayer::FlashLayer(
 	IEnvironment* environment,
 	const resource::Proxy< flash::FlashMovie >& movie,
 	const std::map< std::wstring, resource::Proxy< flash::FlashMovie > >& externalMovies,
-	const resource::Proxy< world::PostProcessSettings >& postProcessSettings,
+	const resource::Proxy< render::ImageProcessSettings >& imageProcessSettings,
 	bool clearBackground,
 	bool enableSound
 )
@@ -123,7 +123,7 @@ FlashLayer::FlashLayer(
 ,	m_environment(environment)
 ,	m_movie(movie)
 ,	m_externalMovies(externalMovies)
-,	m_postProcessSettings(postProcessSettings)
+,	m_imageProcessSettings(imageProcessSettings)
 ,	m_clearBackground(clearBackground)
 ,	m_enableSound(enableSound)
 ,	m_visible(true)
@@ -157,13 +157,13 @@ void FlashLayer::destroy()
 	m_environment = 0;
 	m_movie.clear();
 	m_externalMovies.clear();
-	m_postProcessSettings.clear();
+	m_imageProcessSettings.clear();
 
 	safeDestroy(m_moviePlayer);
 	safeDestroy(m_displayRenderer);
 	safeDestroy(m_soundRenderer);
-	safeDestroy(m_postTargetSet);
-	safeDestroy(m_postProcess);
+	safeDestroy(m_imageTargetSet);
+	safeDestroy(m_imageProcess);
 }
 
 void FlashLayer::transition(Layer* fromLayer)
@@ -211,11 +211,11 @@ void FlashLayer::prepare()
 		m_movie.consume();
 	}
 
-	if (m_postProcessSettings.changed())
+	if (m_imageProcessSettings.changed())
 	{
-		m_postProcess = 0;
-		m_postTargetSet = 0;
-		m_postProcessSettings.consume();
+		m_imageProcess = 0;
+		m_imageTargetSet = 0;
+		m_imageProcessSettings.consume();
 	}
 
 	// Re-create if necessary movie player.
@@ -224,7 +224,7 @@ void FlashLayer::prepare()
 		return;
 
 	// Re-create post processing.
-	if (m_postProcessSettings && !m_postProcess)
+	if (m_imageProcessSettings && !m_imageProcess)
 	{
 		resource::IResourceManager* resourceManager = m_environment->getResource()->getResourceManager();
 		render::IRenderSystem* renderSystem = m_environment->getRender()->getRenderSystem();
@@ -233,8 +233,8 @@ void FlashLayer::prepare()
 		int32_t width = renderView->getWidth();
 		int32_t height = renderView->getHeight();
 
-		m_postProcess = new world::PostProcess();
-		m_postProcess->create(m_postProcessSettings, 0, resourceManager, renderSystem, width, height, false);
+		m_imageProcess = new render::ImageProcess();
+		m_imageProcess->create(m_imageProcessSettings, 0, resourceManager, renderSystem, width, height, false);
 
 		render::RenderTargetSetCreateDesc desc;
 		desc.count = 1;
@@ -248,7 +248,7 @@ void FlashLayer::prepare()
 		desc.generateMips = false;
 		desc.targets[0].format = render::TfR8G8B8A8;
 		desc.targets[0].sRGB = false;
-		m_postTargetSet = renderSystem->createRenderTargetSet(desc);
+		m_imageTargetSet = renderSystem->createRenderTargetSet(desc);
 	}
 }
 
@@ -471,9 +471,9 @@ void FlashLayer::render(render::EyeType eye, uint32_t frame)
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
 	T_ASSERT (renderView);
 
-	if (m_postProcess)
+	if (m_imageProcess)
 	{
-		if (renderView->begin(m_postTargetSet, 0))
+		if (renderView->begin(m_imageTargetSet, 0))
 		{
 			const static Color4f clearColor(0.0f, 0.0f, 0.0f, 0.0f);
 			renderView->clear(render::CfColor | render::CfDepth, &clearColor, 1.0f, 0);
@@ -488,10 +488,10 @@ void FlashLayer::render(render::EyeType eye, uint32_t frame)
 
 			renderView->end();
 
-			world::PostProcessStep::Instance::RenderParams params;
-			m_postProcess->render(
+			render::ImageProcessStep::Instance::RenderParams params;
+			m_imageProcess->render(
 				renderView,
-				m_postTargetSet,
+				m_imageTargetSet,
 				0,
 				0,
 				params
@@ -519,7 +519,7 @@ void FlashLayer::flush()
 void FlashLayer::preReconfigured()
 {
 	// Discard post processing; need to be fully re-created if used.
-	m_postProcess = 0;
+	m_imageProcess = 0;
 }
 
 void FlashLayer::postReconfigured()

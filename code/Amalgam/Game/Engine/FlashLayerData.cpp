@@ -4,9 +4,9 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Flash/FlashMovie.h"
+#include "Render/ImageProcess/ImageProcessSettings.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
-#include "World/PostProcess/PostProcessSettings.h"
 
 namespace traktor
 {
@@ -25,7 +25,7 @@ Ref< Layer > FlashLayerData::createInstance(Stage* stage, IEnvironment* environm
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 	resource::Proxy< flash::FlashMovie > movie;
-	resource::Proxy< world::PostProcessSettings > postProcess;
+	resource::Proxy< render::ImageProcessSettings > imageProcess;
 
 	// Bind proxies to resource manager.
 	if (!resourceManager->bind(m_movie, movie))
@@ -40,9 +40,9 @@ Ref< Layer > FlashLayerData::createInstance(Stage* stage, IEnvironment* environm
 	}
 	
 	// Bind optional post processing.
-	if (m_postProcess)
+	if (m_imageProcess)
 	{
-		if (!resourceManager->bind(m_postProcess, postProcess))
+		if (!resourceManager->bind(m_imageProcess, imageProcess))
 			return 0;
 	}
 
@@ -54,7 +54,7 @@ Ref< Layer > FlashLayerData::createInstance(Stage* stage, IEnvironment* environm
 		environment,
 		movie,
 		externalMovies,
-		postProcess,
+		imageProcess,
 		m_clearBackground,
 		m_enableSound
 	);
@@ -79,7 +79,7 @@ void FlashLayerData::serialize(ISerializer& s)
 		>(L"externalMovies", m_externalMovies);
 
 	if (s.getVersion() >= 2)
-		s >> resource::Member< world::PostProcessSettings >(L"postProcess", m_postProcess);
+		s >> resource::Member< render::ImageProcessSettings >(L"imageProcess", m_imageProcess);
 
 	s >> Member< bool >(L"clearBackground", m_clearBackground);
 	s >> Member< bool >(L"enableSound", m_enableSound);

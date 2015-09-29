@@ -51,8 +51,8 @@ public:
 	void draw(IRenderView* renderView, RenderTargetSet* renderTargetSet, int renderTarget, Shader* shader);
 
 private:
-	Ref< render::VertexBuffer > m_vertexBuffer;
-	render::Primitives m_primitives;
+	Ref< VertexBuffer > m_vertexBuffer;
+	Primitives m_primitives;
 };
 
 	}

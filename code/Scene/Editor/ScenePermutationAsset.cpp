@@ -5,11 +5,11 @@
 #include "Core/Serialization/MemberStaticArray.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Render/ITexture.h"
+#include "Render/ImageProcess/ImageProcessSettings.h"
 #include "Resource/Member.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/ScenePermutationAsset.h"
 #include "World/WorldRenderSettings.h"
-#include "World/PostProcess/PostProcessSettings.h"
 
 namespace traktor
 {
@@ -18,7 +18,7 @@ namespace traktor
 		namespace
 		{
 
-const wchar_t* c_PostProcessSettings_elementNames[] =
+const wchar_t* c_ImageProcessSettings_elementNames[] =
 {
 	L"disabled",
 	L"low",
@@ -41,19 +41,19 @@ void ScenePermutationAsset::serialize(ISerializer& s)
 		s >> MemberRef< world::WorldRenderSettings >(L"overrideWorldRenderSettings", m_overrideWorldRenderSettings);
 
 		if (s.getVersion() >= 3)
-			s >> MemberStaticArray< resource::Id< world::PostProcessSettings >, sizeof_array(m_overridePostProcessSettings), resource::Member< world::PostProcessSettings > >(L"overridePostProcessSettings", m_overridePostProcessSettings, c_PostProcessSettings_elementNames);
+			s >> MemberStaticArray< resource::Id< render::ImageProcessSettings >, sizeof_array(m_overrideImageProcessSettings), resource::Member< render::ImageProcessSettings > >(L"overrideImageProcessSettings", m_overrideImageProcessSettings, c_ImageProcessSettings_elementNames);
 		else
 		{
-			resource::Id< world::PostProcessSettings > overridePostProcessSettings;
-			s >> resource::Member< world::PostProcessSettings >(L"overridePostProcessSettings", overridePostProcessSettings);
-			for (int32_t i = 0; i < sizeof_array(m_overridePostProcessSettings); ++i)
-				m_overridePostProcessSettings[i] = overridePostProcessSettings;
+			resource::Id< render::ImageProcessSettings > overrideImageProcessSettings;
+			s >> resource::Member< render::ImageProcessSettings >(L"overrideImageProcessSettings", overrideImageProcessSettings);
+			for (int32_t i = 0; i < sizeof_array(m_overrideImageProcessSettings); ++i)
+				m_overrideImageProcessSettings[i] = overrideImageProcessSettings;
 		}
 	}
 
 	if (s.getVersion() >= 2)
 	{
-		s >> MemberSmallMap< std::wstring, resource::Id< render::ITexture >, Member< std::wstring >, resource::Member< render::ITexture > >(L"overridePostProcessParams", m_overridePostProcessParams);
+		s >> MemberSmallMap< std::wstring, resource::Id< render::ITexture >, Member< std::wstring >, resource::Member< render::ITexture > >(L"overrideImageProcessParams", m_overrideImageProcessParams);
 	}
 }
 

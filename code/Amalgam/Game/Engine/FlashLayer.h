@@ -47,15 +47,9 @@ class ISoundRenderer;
 	namespace render
 	{
 
+class ImageProcess;
+class ImageProcessSettings;
 class RenderTargetSet;		
-
-	}
-
-	namespace world
-	{
-
-class PostProcess;
-class PostProcessSettings;
 
 	}
 
@@ -80,7 +74,7 @@ public:
 		IEnvironment* environment,
 		const resource::Proxy< flash::FlashMovie >& movie,
 		const std::map< std::wstring, resource::Proxy< flash::FlashMovie > >& externalMovies,
-		const resource::Proxy< world::PostProcessSettings >& postProcessSettings,
+		const resource::Proxy< render::ImageProcessSettings >& imageProcessSettings,
 		bool clearBackground,
 		bool enableSound
 	);
@@ -199,9 +193,9 @@ private:
 	Ref< flash::FlashMoviePlayer > m_moviePlayer;
 	Ref< flash::AccDisplayRenderer > m_displayRenderer;
 	Ref< flash::ISoundRenderer > m_soundRenderer;
-	Ref< render::RenderTargetSet > m_postTargetSet;
-	resource::Proxy< world::PostProcessSettings > m_postProcessSettings;
-	Ref< world::PostProcess > m_postProcess;
+	Ref< render::RenderTargetSet > m_imageTargetSet;
+	resource::Proxy< render::ImageProcessSettings > m_imageProcessSettings;
+	Ref< render::ImageProcess > m_imageProcess;
 	bool m_clearBackground;
 	bool m_enableSound;
 	bool m_visible;

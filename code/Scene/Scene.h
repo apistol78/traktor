@@ -4,9 +4,9 @@
 #include "Core/Object.h"
 #include "Core/Containers/SmallMap.h"
 #include "Render/Types.h"
+#include "Render/ImageProcess/ImageProcessSettings.h"
 #include "Resource/Proxy.h"
 #include "World/WorldTypes.h"
-#include "World/PostProcess/PostProcessSettings.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -58,8 +58,8 @@ public:
 		world::IEntitySchema* entitySchema,
 		world::Entity* rootEntity,
 		world::WorldRenderSettings* worldRenderSettings,
-		const resource::Proxy< world::PostProcessSettings > postProcessSettings[world::QuLast],
-		const SmallMap< render::handle_t, resource::Proxy< render::ITexture > >& postProcessParams
+		const resource::Proxy< render::ImageProcessSettings > imageProcessSettings[world::QuLast],
+		const SmallMap< render::handle_t, resource::Proxy< render::ITexture > >& imageProcessParams
 	);
 
 	explicit Scene(ISceneController* controller, Scene* scene);
@@ -78,17 +78,17 @@ public:
 
 	world::WorldRenderSettings* getWorldRenderSettings() const;
 
-	const resource::Proxy< world::PostProcessSettings >& getPostProcessSettings(world::Quality quality) const;
+	const resource::Proxy< render::ImageProcessSettings >& getImageProcessSettings(world::Quality quality) const;
 
-	const SmallMap< render::handle_t, resource::Proxy< render::ITexture > >& getPostProcessParams() const;
+	const SmallMap< render::handle_t, resource::Proxy< render::ITexture > >& getImageProcessParams() const;
 
 private:
 	Ref< world::IEntitySchema > m_entitySchema;
 	Ref< world::Entity > m_rootEntity;
 	Ref< ISceneController > m_controller;
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
-	resource::Proxy< world::PostProcessSettings > m_postProcessSettings[world::QuLast];
-	SmallMap< render::handle_t, resource::Proxy< render::ITexture > > m_postProcessParams;
+	resource::Proxy< render::ImageProcessSettings > m_imageProcessSettings[world::QuLast];
+	SmallMap< render::handle_t, resource::Proxy< render::ITexture > > m_imageProcessParams;
 };
 
 	}

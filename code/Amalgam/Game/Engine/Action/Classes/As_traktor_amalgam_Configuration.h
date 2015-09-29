@@ -83,9 +83,9 @@ private:
 
 	void Configuration_set_oceanQuality(AsConfiguration* self, int32_t oceanQuality) const;
 
-	int32_t Configuration_get_postProcessQuality(const AsConfiguration* self) const;
+	int32_t Configuration_get_imageProcessQuality(const AsConfiguration* self) const;
 
-	void Configuration_set_postProcessQuality(AsConfiguration* self, int32_t postProcessQuality) const;
+	void Configuration_set_imageProcessQuality(AsConfiguration* self, int32_t imageProcessQuality) const;
 
 	float Configuration_get_gamma(const AsConfiguration* self) const;
 
