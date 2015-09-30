@@ -343,17 +343,13 @@ void ContextOpenGLES2::leave()
 	if (!stack->empty())
 		stack->back()->m_context->makeCurrent();
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
-	eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-#	if !defined(__EMSCRIPTEN__)
+	if (!stack->empty())
+		eglMakeCurrent(m_display, stack->back()->m_surface, stack->back()->m_surface, stack->back()->m_context);
+	else
+		eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+#	if !defined(__ANDROID__) && !defined(__EMSCRIPTEN__)
 	eglReleaseThread();
 #	endif
-	if (!stack->empty())
-		eglMakeCurrent(
-			m_display,
-			stack->back()->m_surface,
-			stack->back()->m_surface,
-			stack->back()->m_context
-		);
 #endif
 
 	m_lock.release();

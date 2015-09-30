@@ -106,6 +106,8 @@ private:
 	DisplayList m_displayList;
 	ColorTransform m_colorTransform;
 	SmallMap< const TypeInfo*, Ref< IComponentInstance > > m_components;
+	bool m_mousePressed;
+	bool m_mouseInside;
 };
 
 	}

@@ -52,7 +52,15 @@ public:
 
 	virtual void eventMouseUp(const Vector2& position, int32_t button);
 
+	virtual void eventMousePress(const Vector2& position, int32_t button);
+
+	virtual void eventMouseRelease(const Vector2& position, int32_t button);
+
 	virtual void eventMouseMove(const Vector2& position, int32_t button);
+
+	virtual void eventMouseEnter(const Vector2& position, int32_t button);
+
+	virtual void eventMouseLeave(const Vector2& position, int32_t button);
 
 	virtual void eventMouseWheel(const Vector2& position, int32_t delta);
 

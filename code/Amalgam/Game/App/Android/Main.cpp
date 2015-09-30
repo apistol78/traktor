@@ -59,16 +59,6 @@ bool saveSettings(const PropertyGroup* settings, const Path& settingsFile)
 	return result;
 }
 
-void updateApplicationThread(amalgam::Application* app)
-{
-	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
-	while (!currentThread->stopped())
-	{
-		if (!app->update())
-			break;
-	}
-}
-
 }
 
 class AndroidApplication : public DelegateInstance
@@ -82,11 +72,11 @@ public:
 
 	void destroyApplication();
 
-	//bool updateApplication();
-
 	void startAnimation();
 
 	void stopAnimation();
+
+	bool alive() const;
 
 	virtual void handleCommand(struct android_app* app, int32_t cmd);
 
@@ -96,11 +86,15 @@ private:
 	Ref< PropertyGroup > m_settings;
 	Ref< amalgam::Application > m_application;
 	Thread* m_thread;
+	bool m_alive;
+
+	void updateThread();
 };
 
 AndroidApplication::AndroidApplication(struct android_app* app)
 :	m_app(app)
 ,	m_thread(0)
+,	m_alive(true)
 {
 }
 
@@ -154,7 +148,7 @@ void AndroidApplication::startAnimation()
 	if (!m_thread)
 	{
 		m_thread = ThreadManager::getInstance().create(
-			makeStaticFunctor(updateApplicationThread, m_application.ptr()),
+			makeFunctor(this, &AndroidApplication::updateThread),
 			L"Application update thread"
 		);
 		m_thread->start();
@@ -170,13 +164,10 @@ void AndroidApplication::stopAnimation()
 	}
 }
 
-//bool AndroidApplication::updateApplication()
-//{
-//	if (m_application)
-//		return m_application->update();
-//	else
-//		return true;
-//}
+bool AndroidApplication::alive() const
+{
+	return m_alive;
+}
 
 void AndroidApplication::handleCommand(struct android_app* app, int32_t cmd)
 {
@@ -187,30 +178,36 @@ void AndroidApplication::handleCommand(struct android_app* app, int32_t cmd)
 	case APP_CMD_INIT_WINDOW:
 		if (app->window != 0)
 		{
-			log::info << L"APP_CMD_INIT_WINDOW" << Endl;
 			createApplication();
 			startAnimation();
 		}
 		break;
 
 	case APP_CMD_TERM_WINDOW:
-		log::info << L"APP_CMD_TERM_WINDOW" << Endl;
 		stopAnimation();
 		destroyApplication();
 		break;
 
 	case APP_CMD_GAINED_FOCUS:
-		log::info << L"APP_CMD_GAINED_FOCUS" << Endl;
 		startAnimation();
 		break;
 
 	case APP_CMD_LOST_FOCUS:
-		log::info << L"APP_CMD_LOST_FOCUS" << Endl;
 		stopAnimation();
 		break;
 	}
 
 	DelegateInstance::handleCommand(app, cmd);
+}
+
+void AndroidApplication::updateThread()
+{
+	while (!m_thread->stopped())
+	{
+		if (!m_application->update())
+			break;
+	}
+	m_alive = false;
 }
 
 // Android ============================
@@ -254,20 +251,18 @@ void android_main(struct android_app* state)
 	if (!aa.readSettings())
 		return;
 
-	{
-		struct android_poll_source* source;
-		int ident;
-		int events;
+	struct android_poll_source* source;
+	int ident;
+	int events;
 
-		for (;;)
+	while (aa.alive())
+	{
+		while ((ident = ALooper_pollAll(100, NULL, &events, (void**)&source)) >= 0)
 		{
-			while ((ident = ALooper_pollAll(100, NULL, &events, (void**)&source)) >= 0)
-			{
-				if (source != NULL)
-					source->process(state, source);
-			}
-			//if (!aa.updateApplication())
-			//	break;
+			if (source != NULL)
+				source->process(state, source);
 		}
 	}
+
+	log::info << L"BYE" << Endl;
 }

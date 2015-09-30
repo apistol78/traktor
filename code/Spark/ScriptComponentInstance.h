@@ -45,7 +45,15 @@ public:
 
 	virtual void eventMouseUp(const Vector2& position, int32_t button);
 
+	virtual void eventMousePress(const Vector2& position, int32_t button);
+
+	virtual void eventMouseRelease(const Vector2& position, int32_t button);
+
 	virtual void eventMouseMove(const Vector2& position, int32_t button);
+
+	virtual void eventMouseEnter(const Vector2& position, int32_t button);
+
+	virtual void eventMouseLeave(const Vector2& position, int32_t button);
 
 	virtual void eventMouseWheel(const Vector2& position, int32_t delta);
 
@@ -61,7 +69,11 @@ private:
 	uint32_t m_methodEventKeyUp;
 	uint32_t m_methodEventMouseDown;
 	uint32_t m_methodEventMouseUp;
+	uint32_t m_methodEventMousePress;
+	uint32_t m_methodEventMouseRelease;
 	uint32_t m_methodEventMouseMove;
+	uint32_t m_methodEventMouseEnter;
+	uint32_t m_methodEventMouseLeave;
 	uint32_t m_methodEventMouseWheel;
 	uint32_t m_methodEventViewResize;
 };

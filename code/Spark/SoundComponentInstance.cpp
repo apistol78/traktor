@@ -49,7 +49,23 @@ void SoundComponentInstance::eventMouseUp(const Vector2& position, int32_t butto
 {
 }
 
+void SoundComponentInstance::eventMousePress(const Vector2& position, int32_t button)
+{
+}
+
+void SoundComponentInstance::eventMouseRelease(const Vector2& position, int32_t button)
+{
+}
+
 void SoundComponentInstance::eventMouseMove(const Vector2& position, int32_t button)
+{
+}
+
+void SoundComponentInstance::eventMouseEnter(const Vector2& position, int32_t button)
+{
+}
+
+void SoundComponentInstance::eventMouseLeave(const Vector2& position, int32_t button)
 {
 }
 

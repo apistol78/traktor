@@ -24,7 +24,7 @@
         <values>
           <item>
             <first>NsightTegraProjectRevisionNumber</first>
-            <second>7</second>
+            <second>11</second>
           </item>
         </values>
       </item>
@@ -52,8 +52,24 @@
           <second>android-19</second>
         </item>
         <item>
+          <first>AndroidNativeAPI</first>
+          <second>UseTarget</second>
+        </item>
+        <item>
+          <first>AndroidMinAPI</first>
+          <second>android-19</second>
+        </item>
+        <item>
+          <first>AndroidTargetAPI</first>
+          <second>android-19</second>
+        </item>
+        <item>
           <first>AndroidArch</first>
           <second>armv7-a</second>
+        </item>
+        <item>
+          <first>NdkToolchainVersion</first>
+          <second>gcc-4.8</second>
         </item>
       </staticLibrary>
       <sharedLibrary>
@@ -78,8 +94,24 @@
           <second>android-19</second>
         </item>
         <item>
+          <first>AndroidNativeAPI</first>
+          <second>UseTarget</second>
+        </item>
+        <item>
+          <first>AndroidMinAPI</first>
+          <second>android-19</second>
+        </item>
+        <item>
+          <first>AndroidTargetAPI</first>
+          <second>android-19</second>
+        </item>
+        <item>
           <first>AndroidArch</first>
           <second>armv7-a</second>
+        </item>
+        <item>
+          <first>NdkToolchainVersion</first>
+          <second>gcc-4.8</second>
         </item>
       </sharedLibrary>
       <executable>
@@ -104,8 +136,24 @@
           <second>android-19</second>
         </item>
         <item>
+          <first>AndroidNativeAPI</first>
+          <second>UseTarget</second>
+        </item>
+        <item>
+          <first>AndroidMinAPI</first>
+          <second>android-19</second>
+        </item>
+        <item>
+          <first>AndroidTargetAPI</first>
+          <second>android-19</second>
+        </item>
+        <item>
           <first>AndroidArch</first>
           <second>armv7-a</second>
+        </item>
+        <item>
+          <first>NdkToolchainVersion</first>
+          <second>gcc-4.8</second>
         </item>
       </executable>
       <executableConsole>
@@ -130,8 +178,24 @@
           <second>android-19</second>
         </item>
         <item>
+          <first>AndroidNativeAPI</first>
+          <second>UseTarget</second>
+        </item>
+        <item>
+          <first>AndroidMinAPI</first>
+          <second>android-19</second>
+        </item>
+        <item>
+          <first>AndroidTargetAPI</first>
+          <second>android-19</second>
+        </item>
+        <item>
           <first>AndroidArch</first>
           <second>armv7-a</second>
+        </item>
+        <item>
+          <first>NdkToolchainVersion</first>
+          <second>gcc-4.8</second>
         </item>
       </executableConsole>
     </configurationDefinitionsDebug>
@@ -158,8 +222,24 @@
           <second>android-19</second>
         </item>
         <item>
+          <first>AndroidNativeAPI</first>
+          <second>UseTarget</second>
+        </item>
+        <item>
+          <first>AndroidMinAPI</first>
+          <second>android-19</second>
+        </item>
+        <item>
+          <first>AndroidTargetAPI</first>
+          <second>android-19</second>
+        </item>
+        <item>
           <first>AndroidArch</first>
           <second>armv7-a</second>
+        </item>
+        <item>
+          <first>NdkToolchainVersion</first>
+          <second>gcc-4.8</second>
         </item>
       </staticLibrary>
       <sharedLibrary>
@@ -184,8 +264,24 @@
           <second>android-19</second>
         </item>
         <item>
+          <first>AndroidNativeAPI</first>
+          <second>UseTarget</second>
+        </item>
+        <item>
+          <first>AndroidMinAPI</first>
+          <second>android-19</second>
+        </item>
+        <item>
+          <first>AndroidTargetAPI</first>
+          <second>android-19</second>
+        </item>
+        <item>
           <first>AndroidArch</first>
           <second>armv7-a</second>
+        </item>
+        <item>
+          <first>NdkToolchainVersion</first>
+          <second>gcc-4.8</second>
         </item>
       </sharedLibrary>
       <executable>
@@ -210,8 +306,24 @@
           <second>android-19</second>
         </item>
         <item>
+          <first>AndroidNativeAPI</first>
+          <second>UseTarget</second>
+        </item>
+        <item>
+          <first>AndroidMinAPI</first>
+          <second>android-19</second>
+        </item>
+        <item>
+          <first>AndroidTargetAPI</first>
+          <second>android-19</second>
+        </item>
+        <item>
           <first>AndroidArch</first>
           <second>armv7-a</second>
+        </item>
+        <item>
+          <first>NdkToolchainVersion</first>
+          <second>gcc-4.8</second>
         </item>
       </executable>
       <executableConsole>
@@ -236,8 +348,24 @@
           <second>android-19</second>
         </item>
         <item>
+          <first>AndroidNativeAPI</first>
+          <second>UseTarget</second>
+        </item>
+        <item>
+          <first>AndroidMinAPI</first>
+          <second>android-19</second>
+        </item>
+        <item>
+          <first>AndroidTargetAPI</first>
+          <second>android-19</second>
+        </item>
+        <item>
           <first>AndroidArch</first>
           <second>armv7-a</second>
+        </item>
+        <item>
+          <first>NdkToolchainVersion</first>
+          <second>gcc-4.8</second>
         </item>
       </executableConsole>
     </configurationDefinitionsRelease>
@@ -710,6 +838,14 @@
               <name>WarningLevel</name>
               <value>Level3</value>
             </item>
+            <item>
+              <name>OptimizationLevel</name>
+              <value>O3</value>
+            </item>
+            <item>
+              <name>GenerateDebugInformation</name>
+              <value>false</value>
+            </item>
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -776,6 +912,14 @@
             <item>
               <name>WarningLevel</name>
               <value>Level3</value>
+            </item>
+            <item>
+              <name>OptimizationLevel</name>
+              <value>O3</value>
+            </item>
+            <item>
+              <name>GenerateDebugInformation</name>
+              <value>false</value>
             </item>
           </options>
         </item>
@@ -924,6 +1068,14 @@
               <name>WarningLevel</name>
               <value>Level3</value>
             </item>
+            <item>
+              <name>OptimizationLevel</name>
+              <value>O3</value>
+            </item>
+            <item>
+              <name>GenerateDebugInformation</name>
+              <value>false</value>
+            </item>
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -1062,6 +1214,14 @@
             <item>
               <name>WarningLevel</name>
               <value>Level3</value>
+            </item>
+            <item>
+              <name>OptimizationLevel</name>
+              <value>O3</value>
+            </item>
+            <item>
+              <name>GenerateDebugInformation</name>
+              <value>false</value>
             </item>
           </options>
         </item>

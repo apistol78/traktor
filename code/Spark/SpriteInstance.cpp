@@ -15,6 +15,8 @@ SpriteInstance::SpriteInstance(const Sprite* sprite, const CharacterInstance* pa
 ,	m_sprite(sprite)
 ,	m_resourceManager(resourceManager)
 ,	m_soundPlayer(soundPlayer)
+,	m_mousePressed(false)
+,	m_mouseInside(false)
 {
 }
 
@@ -106,6 +108,18 @@ void SpriteInstance::eventMouseDown(const Vector2& position, int32_t button)
 {
 	Vector2 localPosition = getTransform().inverse() * position;
 
+	// Check if mouse being pressed inside this sprite.
+	if (!m_components.empty() && getBounds().inside(localPosition))
+	{
+		T_ASSERT (!m_mousePressed);
+
+		// Propagate event to all components.
+		for (SmallMap< const TypeInfo*, Ref< IComponentInstance > >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
+			i->second->eventMousePress(localPosition, button);
+
+		m_mousePressed = true;
+	}
+
 	// Propagate event to all components.
 	for (SmallMap< const TypeInfo*, Ref< IComponentInstance > >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
 		i->second->eventMouseDown(localPosition, button);
@@ -130,6 +144,16 @@ void SpriteInstance::eventMouseUp(const Vector2& position, int32_t button)
 	m_displayList.getCharacters(characters);
 	for (RefArray< CharacterInstance >::const_iterator i = characters.begin(); i != characters.end(); ++i)
 		(*i)->eventMouseUp(localPosition, button);
+
+	// Also issue mouse release events if mouse was pressed inside this sprite.
+	if (m_mousePressed)
+	{
+		// Propagate event to all components.
+		for (SmallMap< const TypeInfo*, Ref< IComponentInstance > >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
+			i->second->eventMouseRelease(localPosition, button);
+
+		m_mousePressed = false;
+	}
 }
 
 void SpriteInstance::eventMouseMove(const Vector2& position, int32_t button)
@@ -145,6 +169,27 @@ void SpriteInstance::eventMouseMove(const Vector2& position, int32_t button)
 	m_displayList.getCharacters(characters);
 	for (RefArray< CharacterInstance >::const_iterator i = characters.begin(); i != characters.end(); ++i)
 		(*i)->eventMouseMove(localPosition, button);
+
+	// Check if mouse is entering or leaving this sprite.
+	if (!m_components.empty())
+	{
+		bool inside = getBounds().inside(localPosition);
+		if (m_mouseInside != inside)
+		{
+			// Propagate event to all components.
+			if (inside)
+			{
+				for (SmallMap< const TypeInfo*, Ref< IComponentInstance > >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
+					i->second->eventMouseEnter(localPosition, button);
+			}
+			else
+			{
+				for (SmallMap< const TypeInfo*, Ref< IComponentInstance > >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
+					i->second->eventMouseLeave(localPosition, button);
+			}
+			m_mouseInside = inside;
+		}
+	}
 }
 
 void SpriteInstance::eventMouseWheel(const Vector2& position, int32_t delta)
