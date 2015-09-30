@@ -1,5 +1,6 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Math/MathUtils.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
@@ -74,11 +75,7 @@ void ObjectPropertyItem::createInPlaceControls(Widget* parent)
 
 void ObjectPropertyItem::destroyInPlaceControls()
 {
-	if (m_buttonEdit)
-	{
-		m_buttonEdit->destroy();
-		m_buttonEdit = 0;
-	}
+	safeDestroy(m_buttonEdit);
 }
 
 void ObjectPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< WidgetRect >& outChildRects)
@@ -135,7 +132,7 @@ bool ObjectPropertyItem::paste()
 
 void ObjectPropertyItem::eventClick(ButtonClickEvent* event)
 {
-	notifyCommand(Command(L"Property.Edit"));
+	notifyCommand(Command(L"Property.Browse"));
 }
 
 		}

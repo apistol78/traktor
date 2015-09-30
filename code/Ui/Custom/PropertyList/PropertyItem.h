@@ -26,6 +26,7 @@ class MouseEvent;
 		namespace custom
 		{
 
+class MiniButton;
 class PropertyList;
 
 /*! \brief Property item.
@@ -80,6 +81,8 @@ protected:
 
 	void removeChildItem(PropertyItem* childItem);
 
+	virtual bool needRemoveChildButton() const;
+
 	virtual void createInPlaceControls(Widget* parent);
 
 	virtual void destroyInPlaceControls();
@@ -111,8 +114,11 @@ private:
 	bool m_selected;
 	PropertyItem* m_parent;
 	RefArray< PropertyItem > m_childItems;
+	Ref< MiniButton > m_buttonRemove;
 
 	void updateChildrenInPlaceControls();
+
+	void eventClick(ButtonClickEvent* event);
 };
 
 		}

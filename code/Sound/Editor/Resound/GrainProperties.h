@@ -54,7 +54,7 @@ public:
 
 private:
 	editor::IEditor* m_editor;
-	Ref< ui::custom::AutoPropertyList > m_grainPropertyList;
+	Ref< ui::custom::AutoPropertyList > m_propertyList;
 	Ref< IGrainData > m_grain;
 	std::map< const TypeInfo*, Ref< ui::HierarchicalState > > m_states;
 

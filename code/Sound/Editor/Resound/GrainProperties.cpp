@@ -27,19 +27,19 @@ GrainProperties::GrainProperties(editor::IEditor* editor)
 
 bool GrainProperties::create(ui::Widget* parent)
 {
-	m_grainPropertyList = new ui::custom::AutoPropertyList();
-	m_grainPropertyList->create(parent, ui::WsDoubleBuffer | ui::custom::AutoPropertyList::WsColumnHeader, this);
-	m_grainPropertyList->addEventHandler< ui::custom::PropertyCommandEvent >(this, &GrainProperties::eventPropertyCommand);
-	m_grainPropertyList->addEventHandler< ui::custom::PropertyContentChangeEvent >(this, &GrainProperties::eventPropertyChange);
-	m_grainPropertyList->setSeparator(150);
-	m_grainPropertyList->setColumnName(0, i18n::Text(L"PROPERTY_COLUMN_NAME"));
-	m_grainPropertyList->setColumnName(1, i18n::Text(L"PROPERTY_COLUMN_VALUE"));
+	m_propertyList = new ui::custom::AutoPropertyList();
+	m_propertyList->create(parent, ui::WsDoubleBuffer | ui::custom::AutoPropertyList::WsColumnHeader, this);
+	m_propertyList->addEventHandler< ui::custom::PropertyCommandEvent >(this, &GrainProperties::eventPropertyCommand);
+	m_propertyList->addEventHandler< ui::custom::PropertyContentChangeEvent >(this, &GrainProperties::eventPropertyChange);
+	m_propertyList->setSeparator(150);
+	m_propertyList->setColumnName(0, i18n::Text(L"PROPERTY_COLUMN_NAME"));
+	m_propertyList->setColumnName(1, i18n::Text(L"PROPERTY_COLUMN_VALUE"));
 	return true;
 }
 
 void GrainProperties::destroy()
 {
-	safeDestroy(m_grainPropertyList);
+	safeDestroy(m_propertyList);
 	m_grain = 0;
 }
 
@@ -47,16 +47,16 @@ void GrainProperties::set(IGrainData* grain)
 {
 	// Capture state of current grain.
 	if (m_grain)
-		m_states[&type_of(m_grain)] = m_grainPropertyList->captureState();
+		m_states[&type_of(m_grain)] = m_propertyList->captureState();
 
-	m_grainPropertyList->bind(grain);
+	m_propertyList->bind(grain);
 
 	// Restore state of last property object of same type.
 	if (grain)
 	{
 		std::map< const TypeInfo*, Ref< ui::HierarchicalState > >::iterator i = m_states.find(&type_of(grain));
 		if (i != m_states.end())
-			m_grainPropertyList->applyState(i->second);
+			m_propertyList->applyState(i->second);
 	}
 
 	m_grain = grain;
@@ -70,12 +70,12 @@ void GrainProperties::reset()
 bool GrainProperties::handleCommand(const ui::Command& command)
 {
 	if (command == L"Editor.Copy")
-		return m_grainPropertyList->copy();
+		return m_propertyList->copy();
 	else if (command == L"Editor.Paste")
 	{
-		if (m_grainPropertyList->paste())
+		if (m_propertyList->paste())
 		{
-			m_grainPropertyList->apply();
+			m_propertyList->apply();
 			return true;
 		}
 		else
@@ -98,11 +98,46 @@ bool GrainProperties::resolvePropertyGuid(const Guid& guid, std::wstring& resolv
 void GrainProperties::eventPropertyCommand(ui::custom::PropertyCommandEvent* event)
 {
 	const ui::Command& cmd = event->getCommand();
-
-	Ref< ui::custom::BrowsePropertyItem > browseItem = dynamic_type_cast< ui::custom::BrowsePropertyItem* >(event->getItem());
-	if (browseItem)
+	if (cmd == L"Property.Add")
 	{
-		if (cmd == L"Property.Browse")
+		ui::custom::ArrayPropertyItem* arrayItem = dynamic_type_cast< ui::custom::ArrayPropertyItem* >(event->getItem());
+		if (arrayItem)
+		{
+			if (arrayItem->getElementType())
+			{
+				const TypeInfo* objectType = m_editor->browseType(arrayItem->getElementType());
+				if (objectType)
+				{
+					Ref< ISerializable > object = dynamic_type_cast< ISerializable* >(objectType->createInstance());
+					if (object)
+					{
+						m_propertyList->addObject(arrayItem, object);
+						m_propertyList->apply();
+						m_propertyList->refresh();
+					}
+				}
+			}
+			else	// Non-complex array; just apply and refresh.
+			{
+				m_propertyList->apply();
+				m_propertyList->refresh();
+			}
+		}
+	}
+	else if (cmd == L"Property.Remove")
+	{
+		ui::custom::PropertyItem* removeItem = event->getItem();
+		ui::custom::PropertyItem* parentItem = removeItem->getParentItem();
+		if (parentItem)
+		{
+			m_propertyList->removePropertyItem(parentItem, removeItem);
+			m_propertyList->apply();
+		}
+	}
+	else if (cmd == L"Property.Browse")
+	{
+		ui::custom::BrowsePropertyItem* browseItem = dynamic_type_cast< ui::custom::BrowsePropertyItem* >(event->getItem());
+		if (browseItem)
 		{
 			if (browseItem->getValue().isNull())
 			{
@@ -120,22 +155,73 @@ void GrainProperties::eventPropertyCommand(ui::custom::PropertyCommandEvent* eve
 				if (instance)
 				{
 					browseItem->setValue(instance->getGuid());
-					m_grainPropertyList->apply();
-
-					ui::ContentChangeEvent contentChangeEvent(this);
-					raiseEvent(&contentChangeEvent);
+					m_propertyList->apply();
 				}
 			}
 			else
 			{
 				browseItem->setValue(Guid());
-				m_grainPropertyList->apply();
-
-				ui::ContentChangeEvent contentChangeEvent(this);
-				raiseEvent(&contentChangeEvent);
+				m_propertyList->apply();
 			}
 		}
-		else if (cmd == L"Property.Edit")
+
+		/*
+		ui::custom::FilePropertyItem* fileItem = dynamic_type_cast< ui::custom::FilePropertyItem* >(event->getItem());
+		if (fileItem)
+		{
+			ui::FileDialog fileDialog;
+			if (!fileDialog.create(m_propertyList, i18n::Text(L"EDITOR_BROWSE_FILE"), L"All files (*.*);*.*"))
+				return;
+
+			Path path = fileItem->getPath();
+			if (fileDialog.showModal(path) == ui::DrOk)
+			{
+				fileItem->setPath(path);
+				m_propertyList->apply();
+			}
+
+			fileDialog.destroy();
+		}
+		*/
+
+		ui::custom::ObjectPropertyItem* objectItem = dynamic_type_cast< ui::custom::ObjectPropertyItem* >(event->getItem());
+		if (objectItem)
+		{
+			const TypeInfo* objectType = objectItem->getObjectType();
+			if (!objectType)
+				objectType = &type_of< ISerializable >();
+
+			if (!objectItem->getObject())
+			{
+				objectType = m_editor->browseType(objectType);
+				if (objectType)
+				{
+					Ref< ISerializable > object = dynamic_type_cast< ISerializable* >(objectType->createInstance());
+					if (object)
+					{
+						objectItem->setObject(object);
+
+						m_propertyList->refresh(objectItem, object);
+						m_propertyList->apply();
+					}
+				}
+			}
+			else
+			{
+				if (ui::custom::ArrayPropertyItem* parentArrayItem = dynamic_type_cast< ui::custom::ArrayPropertyItem* >(objectItem->getParentItem()))
+					m_propertyList->removePropertyItem(parentArrayItem, objectItem);
+				else
+					objectItem->setObject(0);
+
+				m_propertyList->refresh(objectItem, 0);
+				m_propertyList->apply();
+			}
+		}
+	}
+	else if (cmd == L"Property.Edit")
+	{
+		ui::custom::BrowsePropertyItem* browseItem = dynamic_type_cast< ui::custom::BrowsePropertyItem* >(event->getItem());
+		if (browseItem)
 		{
 			Guid instanceGuid = browseItem->getValue();
 			if (instanceGuid.isNull() || !instanceGuid.isValid())
@@ -147,84 +233,41 @@ void GrainProperties::eventPropertyCommand(ui::custom::PropertyCommandEvent* eve
 
 			m_editor->openEditor(instance);
 		}
-	}
 
-	Ref< ui::custom::ObjectPropertyItem > objectItem = dynamic_type_cast< ui::custom::ObjectPropertyItem* >(event->getItem());
-	if (objectItem)
-	{
-		const TypeInfo* objectType = objectItem->getObjectType();
-		if (!objectType)
-			objectType = &type_of< ISerializable >();
-
-		if (!objectItem->getObject())
+/*
+		ui::custom::TextPropertyItem* textItem = dynamic_type_cast< ui::custom::TextPropertyItem* >(event->getItem());
+		if (textItem)
 		{
-			objectType = m_editor->browseType(objectType);
-			if (objectType)
+			TextEditorDialog textEditorDialog;
+			textEditorDialog.create(m_propertyList, textItem->getValue());
+			if (textEditorDialog.showModal() == ui::DrOk)
 			{
-				Ref< ISerializable > object = dynamic_type_cast< ISerializable* >(objectType->createInstance());
-				if (object)
-				{
-					objectItem->setObject(object);
-
-					m_grainPropertyList->refresh(objectItem, object);
-					m_grainPropertyList->apply();
-
-					ui::ContentChangeEvent contentChangeEvent(this);
-					raiseEvent(&contentChangeEvent);
-				}
+				textItem->setValue(textEditorDialog.getText());
+				m_propertyList->apply();
 			}
+			textEditorDialog.destroy();
 		}
-		else
+
+		ui::custom::ColorPropertyItem* colorItem = dynamic_type_cast< ui::custom::ColorPropertyItem* >(event->getItem());
+		if (colorItem)
 		{
-			if (ui::custom::ArrayPropertyItem* parentArrayItem = dynamic_type_cast< ui::custom::ArrayPropertyItem* >(objectItem->getParentItem()))
-				m_grainPropertyList->removePropertyItem(parentArrayItem, objectItem);
-			else
-				objectItem->setObject(0);
-
-			m_grainPropertyList->refresh(objectItem, 0);
-			m_grainPropertyList->apply();
-
-			ui::ContentChangeEvent contentChangeEvent(this);
-			raiseEvent(&contentChangeEvent);
-		}
-	}
-
-	Ref< ui::custom::ArrayPropertyItem > arrayItem = dynamic_type_cast< ui::custom::ArrayPropertyItem* >(event->getItem());
-	if (arrayItem)
-	{
-		if (arrayItem->getElementType())
-		{
-			const TypeInfo* objectType = m_editor->browseType(arrayItem->getElementType());
-			if (objectType)
+			ui::custom::ColorDialog colorDialog;
+			colorDialog.create(m_propertyList, i18n::Text(L"COLOR_DIALOG_TEXT"), ui::custom::ColorDialog::WsDefaultFixed | ui::custom::ColorDialog::WsAlpha, colorItem->getValue());
+			if (colorDialog.showModal() == ui::DrOk)
 			{
-				Ref< ISerializable > object = dynamic_type_cast< ISerializable* >(objectType->createInstance());
-				if (object)
-				{
-					m_grainPropertyList->addObject(arrayItem, object);
-					m_grainPropertyList->apply();
-					m_grainPropertyList->refresh();
-
-					ui::ContentChangeEvent contentChangeEvent(this);
-					raiseEvent(&contentChangeEvent);
-				}
+				colorItem->setValue(colorDialog.getColor());
+				m_propertyList->apply();
 			}
+			colorDialog.destroy();
 		}
-		else	// Non-complex array; just apply and refresh.
-		{
-			m_grainPropertyList->apply();
-			m_grainPropertyList->refresh();
-
-			ui::ContentChangeEvent contentChangeEvent(this);
-			raiseEvent(&contentChangeEvent);
-		}
+*/
 	}
-
-	m_grainPropertyList->update();
+	m_propertyList->update();
 }
 
 void GrainProperties::eventPropertyChange(ui::custom::PropertyContentChangeEvent* event)
 {
-	m_grainPropertyList->apply();
+	m_propertyList->apply();
 
 	ui::ContentChangeEvent contentChangeEvent(this);
 	raiseEvent(&contentChangeEvent);

@@ -141,6 +141,12 @@ void PropertyList::addPropertyItem(PropertyItem* parentPropertyItem, PropertyIte
 
 void PropertyList::removePropertyItem(PropertyItem* parentPropertyItem, PropertyItem* propertyItem)
 {
+	// Remove all child items first.
+	RefArray< PropertyItem >& childPropertyItems = propertyItem->getChildItems();
+	while (!childPropertyItems.empty())
+		removePropertyItem(propertyItem, childPropertyItems.front());
+
+	// Remove in-place controls and then remove from parent.
 	propertyItem->destroyInPlaceControls();
 	propertyItem->setPropertyList(0);
 	parentPropertyItem->removeChildItem(propertyItem);
