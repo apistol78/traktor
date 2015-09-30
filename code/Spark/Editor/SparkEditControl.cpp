@@ -3,7 +3,10 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyGroup.h"
+#include "Database/Instance.h"
 #include "Editor/IEditor.h"
+#include "Editor/IEditorPageSite.h"
+#include "Spark/External.h"
 #include "Spark/SparkPlayer.h"
 #include "Spark/SparkRenderer.h"
 #include "Spark/Sprite.h"
@@ -80,8 +83,9 @@ void drawBound(CharacterInstance* character, render::PrimitiveRenderer* primitiv
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.SparkEditControl", SparkEditControl, ui::Widget)
 
-SparkEditControl::SparkEditControl(editor::IEditor* editor)
+SparkEditControl::SparkEditControl(editor::IEditor* editor, editor::IEditorPageSite* site)
 :	m_editor(editor)
+,	m_site(site)
 ,	m_editMode(EmIdle)
 ,	m_viewWidth(1920)
 ,	m_viewHeight(1080)
@@ -147,7 +151,7 @@ void SparkEditControl::destroy()
 	Widget::destroy();
 }
 
-void SparkEditControl::setSprite(const Sprite* sprite)
+void SparkEditControl::setSprite(Sprite* sprite)
 {
 	m_sprite = sprite;
 	refresh();
@@ -180,7 +184,26 @@ void SparkEditControl::refresh()
 	else
 		m_sparkPlayer = 0;
 
+	m_site->setPropertyObject(m_sprite);
+
 	update();
+}
+
+bool SparkEditControl::dropInstance(db::Instance* instance, const ui::Point& position)
+{
+	if (!is_type_of< Character >(*instance->getPrimaryType()))
+		return false;
+
+	ui::Point viewPosition = clientToView(screenToClient(position));
+
+	m_sprite->place(
+		L"",
+		new External(resource::Id< Character >(instance->getGuid())),
+		translate(viewPosition.x, viewPosition.y)
+	);
+
+	refresh();
+	return true;
 }
 
 ui::Point SparkEditControl::clientToView(const ui::Point& point) const
@@ -300,17 +323,13 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 		if (m_sparkRenderer && m_spriteInstance)
 		{
 			m_sparkRenderer->build(m_spriteInstance, 0);
-			m_sparkRenderer->render(
-				m_renderView,
-				projection,
-				0
-			);
+			m_sparkRenderer->render(m_renderView, projection, 0);
 
+			// Draw bounding boxes of children to this sprite.
 			if (m_primitiveRenderer->begin(m_renderView, projection))
 			{
 				m_primitiveRenderer->pushDepthState(false, false, false);
 
-				// Draw bounding boxes of children to this sprite.
 				RefArray< CharacterInstance > children;
 				m_spriteInstance->getCharacters(children);
 				for (RefArray< CharacterInstance >::const_iterator i = children.begin(); i != children.end(); ++i)

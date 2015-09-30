@@ -33,6 +33,8 @@ class T_DLLCLASS Sprite : public Character
 public:
 	const Character* getCharacter(const std::wstring& id) const;
 
+	void place(const std::wstring& name, Character* character, const Matrix33& transform);
+
 	virtual Ref< CharacterInstance > createInstance(const CharacterInstance* parent, resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer) const;
 
 	virtual void serialize(ISerializer& s);

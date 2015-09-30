@@ -10,6 +10,7 @@ namespace traktor
 	{
 
 class Database;
+class Instance;
 
 	}
 
@@ -17,6 +18,7 @@ class Database;
 	{
 
 class IEditor;
+class IEditorPageSite;
 
 	}
 
@@ -61,7 +63,7 @@ class SparkEditControl : public ui::Widget
 	T_RTTI_CLASS;
 
 public:
-	SparkEditControl(editor::IEditor* editor);
+	SparkEditControl(editor::IEditor* editor, editor::IEditorPageSite* site);
 
 	bool create(
 		ui::Widget* parent,
@@ -74,11 +76,13 @@ public:
 
 	void destroy();
 
-	void setSprite(const Sprite* sprite);
+	void setSprite(Sprite* sprite);
 
 	void setViewSize(int32_t width, int32_t height);
 
 	void refresh();
+
+	bool dropInstance(db::Instance* instance, const ui::Point& position);
 
 private:
 	enum EditMode
@@ -88,6 +92,7 @@ private:
 	};
 
 	editor::IEditor* m_editor;
+	editor::IEditorPageSite* m_site;
 	Ref< db::Database > m_database;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderView > m_renderView;
@@ -95,7 +100,7 @@ private:
 	Ref< sound::ISoundPlayer > m_soundPlayer;
 	Ref< SparkRenderer > m_sparkRenderer;
 	Ref< SparkPlayer > m_sparkPlayer;
-	Ref< const Sprite > m_sprite;
+	Ref< Sprite > m_sprite;
 	Ref< SpriteInstance > m_spriteInstance;
 	Ref< ui::EventSubject::IEventHandler > m_idleEventHandler;
 	ui::Point m_lastMousePosition;
