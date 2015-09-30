@@ -2613,7 +2613,13 @@ void EditorForm::eventTimer(ui::TimerEvent* /*event*/)
 			updateView |= remote;
 		}
 		if (anyCommitted && m_mergedSettings->getProperty< PropertyBoolean >(L"Editor.BuildWhenSourceModified"))
+		{
 			buildAssets(false);
+
+			// Notify all plugins of automatic build.
+			for (RefArray< EditorPluginSite >::const_iterator i = m_editorPluginSites.begin(); i != m_editorPluginSites.end(); ++i)
+				(*i)->handleCommand(ui::Command(L"Editor.AutoBuild"), false);
+		}
 	}
 
 	// Gather events from output database; used to notify
@@ -2749,6 +2755,10 @@ void EditorForm::threadAssetMonitor()
 				{
 					log::info << L"Modified source asset(s) detected; building asset(s)..." << Endl;
 					buildAssets(modifiedAssets, false);
+
+					// Notify all plugins of automatic build.
+					for (RefArray< EditorPluginSite >::const_iterator i = m_editorPluginSites.begin(); i != m_editorPluginSites.end(); ++i)
+						(*i)->handleCommand(ui::Command(L"Editor.AutoBuild"), false);
 				}
 			}
 		}
