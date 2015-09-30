@@ -115,7 +115,7 @@ void FilePropertyItem::eventEditFocus(FocusEvent* event)
 
 void FilePropertyItem::eventClick(ButtonClickEvent* event)
 {
-	notifyCommand(Command(L"Property.Edit"));
+	notifyCommand(Command(L"Property.Browse"));
 }
 
 		}

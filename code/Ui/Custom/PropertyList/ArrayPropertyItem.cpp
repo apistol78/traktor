@@ -17,6 +17,13 @@ namespace traktor
 	{
 		namespace custom
 		{
+			namespace
+			{
+
+Ref< Bitmap > s_imageSmallDots;
+Ref< Bitmap > s_imageSmallPlus;
+
+			}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.", ArrayPropertyItem, PropertyItem)
 
@@ -25,6 +32,10 @@ ArrayPropertyItem::ArrayPropertyItem(const std::wstring& text, const TypeInfo* e
 ,	m_elementType(elementType)
 ,	m_readOnly(readOnly)
 {
+	if (!s_imageSmallDots)
+		s_imageSmallDots = ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"png");
+	if (!s_imageSmallPlus)
+		s_imageSmallPlus = ui::Bitmap::load(c_ResourceSmallPlus, sizeof(c_ResourceSmallPlus), L"png");
 }
 
 void ArrayPropertyItem::setElementType(const TypeInfo* elementType)
@@ -37,17 +48,17 @@ const TypeInfo* ArrayPropertyItem::getElementType() const
 	return m_elementType;
 }
 
+bool ArrayPropertyItem::needRemoveChildButton() const
+{
+	return !m_readOnly;
+}
+
 void ArrayPropertyItem::createInPlaceControls(Widget* parent)
 {
 	if (!m_readOnly)
 	{
 		m_buttonEdit = new MiniButton();
-		m_buttonEdit->create(
-			parent,
-			m_elementType ? 
-				ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"png") : 
-				ui::Bitmap::load(c_ResourceSmallPlus, sizeof(c_ResourceSmallPlus), L"png")
-		);
+		m_buttonEdit->create(parent, m_elementType ? s_imageSmallDots : s_imageSmallPlus);
 		m_buttonEdit->addEventHandler< ButtonClickEvent >(this, &ArrayPropertyItem::eventClick);
 	}
 }
@@ -85,13 +96,13 @@ void ArrayPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 void ArrayPropertyItem::eventClick(ButtonClickEvent* event)
 {
 	if (m_elementType)
-		notifyCommand(Command(L"Property.Edit"));
+		notifyCommand(Command(L"Property.Add"));
 	else
 	{
 		// Add dummy item to indicate where we want to add new element;
 		// the ApplyReflector will detect this item and insert the new element.
 		addChildItem(new NullPropertyItem());
-		notifyCommand(Command(L"Property.Edit"));
+		notifyCommand(Command(L"Property.Add"));
 	}
 }
 

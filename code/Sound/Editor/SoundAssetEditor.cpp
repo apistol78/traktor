@@ -169,28 +169,46 @@ void SoundAssetEditor::eventToolBarClick(ui::custom::ToolBarButtonClickEvent* ev
 void SoundAssetEditor::eventPropertyCommand(ui::custom::PropertyCommandEvent* event)
 {
 	const ui::Command& cmd = event->getCommand();
-
-	Ref< ui::custom::FilePropertyItem > fileItem = dynamic_type_cast< ui::custom::FilePropertyItem* >(event->getItem());
-	if (fileItem)
+	if (cmd == L"Property.Add")
 	{
-		ui::FileDialog fileDialog;
-		if (!fileDialog.create(m_propertyList, i18n::Text(L"EDITOR_BROWSE_FILE"), L"All files (*.*);*.*"))
-			return;
-
-		Path path = fileItem->getPath();
-		if (fileDialog.showModal(path) == ui::DrOk)
+		ui::custom::ArrayPropertyItem* arrayItem = dynamic_type_cast< ui::custom::ArrayPropertyItem* >(event->getItem());
+		if (arrayItem)
 		{
-			fileItem->setPath(path);
+			if (arrayItem->getElementType())
+			{
+				const TypeInfo* objectType = m_editor->browseType(arrayItem->getElementType());
+				if (objectType)
+				{
+					Ref< ISerializable > object = dynamic_type_cast< ISerializable* >(objectType->createInstance());
+					if (object)
+					{
+						m_propertyList->addObject(arrayItem, object);
+						m_propertyList->apply();
+						m_propertyList->refresh();
+					}
+				}
+			}
+			else	// Non-complex array; just apply and refresh.
+			{
+				m_propertyList->apply();
+				m_propertyList->refresh();
+			}
+		}
+	}
+	else if (cmd == L"Property.Remove")
+	{
+		ui::custom::PropertyItem* removeItem = event->getItem();
+		ui::custom::PropertyItem* parentItem = removeItem->getParentItem();
+		if (parentItem)
+		{
+			m_propertyList->removePropertyItem(parentItem, removeItem);
 			m_propertyList->apply();
 		}
-
-		fileDialog.destroy();
 	}
-
-	Ref< ui::custom::BrowsePropertyItem > browseItem = dynamic_type_cast< ui::custom::BrowsePropertyItem* >(event->getItem());
-	if (browseItem)
+	else if (cmd == L"Property.Browse")
 	{
-		if (cmd == L"Property.Browse")
+		ui::custom::BrowsePropertyItem* browseItem = dynamic_type_cast< ui::custom::BrowsePropertyItem* >(event->getItem());
+		if (browseItem)
 		{
 			if (browseItem->getValue().isNull())
 			{
@@ -217,7 +235,62 @@ void SoundAssetEditor::eventPropertyCommand(ui::custom::PropertyCommandEvent* ev
 				m_propertyList->apply();
 			}
 		}
-		else if (cmd == L"Property.Edit")
+
+		ui::custom::FilePropertyItem* fileItem = dynamic_type_cast< ui::custom::FilePropertyItem* >(event->getItem());
+		if (fileItem)
+		{
+			ui::FileDialog fileDialog;
+			if (!fileDialog.create(m_propertyList, i18n::Text(L"EDITOR_BROWSE_FILE"), L"All files (*.*);*.*"))
+				return;
+
+			Path path = fileItem->getPath();
+			if (fileDialog.showModal(path) == ui::DrOk)
+			{
+				fileItem->setPath(path);
+				m_propertyList->apply();
+			}
+
+			fileDialog.destroy();
+		}
+
+		ui::custom::ObjectPropertyItem* objectItem = dynamic_type_cast< ui::custom::ObjectPropertyItem* >(event->getItem());
+		if (objectItem)
+		{
+			const TypeInfo* objectType = objectItem->getObjectType();
+			if (!objectType)
+				objectType = &type_of< ISerializable >();
+
+			if (!objectItem->getObject())
+			{
+				objectType = m_editor->browseType(objectType);
+				if (objectType)
+				{
+					Ref< ISerializable > object = dynamic_type_cast< ISerializable* >(objectType->createInstance());
+					if (object)
+					{
+						objectItem->setObject(object);
+
+						m_propertyList->refresh(objectItem, object);
+						m_propertyList->apply();
+					}
+				}
+			}
+			else
+			{
+				if (ui::custom::ArrayPropertyItem* parentArrayItem = dynamic_type_cast< ui::custom::ArrayPropertyItem* >(objectItem->getParentItem()))
+					m_propertyList->removePropertyItem(parentArrayItem, objectItem);
+				else
+					objectItem->setObject(0);
+
+				m_propertyList->refresh(objectItem, 0);
+				m_propertyList->apply();
+			}
+		}
+	}
+	else if (cmd == L"Property.Edit")
+	{
+		ui::custom::BrowsePropertyItem* browseItem = dynamic_type_cast< ui::custom::BrowsePropertyItem* >(event->getItem());
+		if (browseItem)
 		{
 			Guid instanceGuid = browseItem->getValue();
 			if (instanceGuid.isNull() || !instanceGuid.isValid())
@@ -229,66 +302,35 @@ void SoundAssetEditor::eventPropertyCommand(ui::custom::PropertyCommandEvent* ev
 
 			m_editor->openEditor(instance);
 		}
-	}
 
-	Ref< ui::custom::ObjectPropertyItem > objectItem = dynamic_type_cast< ui::custom::ObjectPropertyItem* >(event->getItem());
-	if (objectItem)
-	{
-		const TypeInfo* objectType = objectItem->getObjectType();
-		if (!objectType)
-			objectType = &type_of< ISerializable >();
-
-		if (!objectItem->getObject())
+/*
+		ui::custom::TextPropertyItem* textItem = dynamic_type_cast< ui::custom::TextPropertyItem* >(event->getItem());
+		if (textItem)
 		{
-			objectType = m_editor->browseType(objectType);
-			if (objectType)
+			TextEditorDialog textEditorDialog;
+			textEditorDialog.create(m_propertyList, textItem->getValue());
+			if (textEditorDialog.showModal() == ui::DrOk)
 			{
-				Ref< ISerializable > object = dynamic_type_cast< ISerializable* >(objectType->createInstance());
-				if (object)
-				{
-					objectItem->setObject(object);
-
-					m_propertyList->refresh(objectItem, object);
-					m_propertyList->apply();
-				}
+				textItem->setValue(textEditorDialog.getText());
+				m_propertyList->apply();
 			}
+			textEditorDialog.destroy();
 		}
-		else
-		{
-			if (ui::custom::ArrayPropertyItem* parentArrayItem = dynamic_type_cast< ui::custom::ArrayPropertyItem* >(objectItem->getParentItem()))
-				m_propertyList->removePropertyItem(parentArrayItem, objectItem);
-			else
-				objectItem->setObject(0);
 
-			m_propertyList->refresh(objectItem, 0);
-			m_propertyList->apply();
-		}
-	}
-
-	Ref< ui::custom::ArrayPropertyItem > arrayItem = dynamic_type_cast< ui::custom::ArrayPropertyItem* >(event->getItem());
-	if (arrayItem)
-	{
-		if (arrayItem->getElementType())
+		ui::custom::ColorPropertyItem* colorItem = dynamic_type_cast< ui::custom::ColorPropertyItem* >(event->getItem());
+		if (colorItem)
 		{
-			const TypeInfo* objectType = m_editor->browseType(arrayItem->getElementType());
-			if (objectType)
+			ui::custom::ColorDialog colorDialog;
+			colorDialog.create(m_propertyList, i18n::Text(L"COLOR_DIALOG_TEXT"), ui::custom::ColorDialog::WsDefaultFixed | ui::custom::ColorDialog::WsAlpha, colorItem->getValue());
+			if (colorDialog.showModal() == ui::DrOk)
 			{
-				Ref< ISerializable > object = dynamic_type_cast< ISerializable* >(objectType->createInstance());
-				if (object)
-				{
-					m_propertyList->addObject(arrayItem, object);
-					m_propertyList->apply();
-					m_propertyList->refresh();
-				}
+				colorItem->setValue(colorDialog.getColor());
+				m_propertyList->apply();
 			}
+			colorDialog.destroy();
 		}
-		else	// Non-complex array; just apply and refresh.
-		{
-			m_propertyList->apply();
-			m_propertyList->refresh();
-		}
+*/
 	}
-
 	m_propertyList->update();
 }
 

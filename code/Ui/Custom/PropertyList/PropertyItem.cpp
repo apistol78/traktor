@@ -1,8 +1,10 @@
 #include "Core/Math/MathUtils.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Drawing/Image.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/StyleSheet.h"
+#include "Ui/Custom/MiniButton.h"
 #include "Ui/Custom/PropertyList/PropertyCommandEvent.h"
 #include "Ui/Custom/PropertyList/PropertyContentChangeEvent.h"
 #include "Ui/Custom/PropertyList/PropertyItem.h"
@@ -11,6 +13,7 @@
 // Resources
 #include "Resources/Expand.h"
 #include "Resources/Collapse.h"
+#include "Resources/SmallCross.h"
 
 namespace traktor
 {
@@ -23,6 +26,7 @@ namespace traktor
 
 Ref< Bitmap > s_imageExpand;
 Ref< Bitmap > s_imageCollapse;
+Ref< Bitmap > s_imageCross;
 
 			}
 
@@ -39,6 +43,8 @@ PropertyItem::PropertyItem(const std::wstring& text)
 		s_imageExpand = Bitmap::load(c_ResourceExpand, sizeof(c_ResourceExpand), L"png");
 	if (!s_imageCollapse)
 		s_imageCollapse = Bitmap::load(c_ResourceCollapse, sizeof(c_ResourceCollapse), L"png");
+	if (!s_imageCross)
+		s_imageCross = Bitmap::load(c_ResourceSmallCross, sizeof(c_ResourceSmallCross), L"png");
 }
 
 void PropertyItem::setText(const std::wstring& text)
@@ -164,16 +170,39 @@ void PropertyItem::removeChildItem(PropertyItem* childItem)
 	}
 }
 
+bool PropertyItem::needRemoveChildButton() const
+{
+	return false;
+}
+
 void PropertyItem::createInPlaceControls(Widget* parent)
 {
+	if (m_parent && m_parent->needRemoveChildButton())
+	{
+		m_buttonRemove = new MiniButton();
+		m_buttonRemove->create(parent, L"");
+		m_buttonRemove->addEventHandler< ButtonClickEvent >(this, &PropertyItem::eventClick);
+		m_buttonRemove->setImage(s_imageCross);
+	}
 }
 
 void PropertyItem::destroyInPlaceControls()
 {
+	safeDestroy(m_buttonRemove);
 }
 
 void PropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< WidgetRect >& outChildRects)
 {
+	if (m_buttonRemove)
+		outChildRects.push_back(WidgetRect(
+			m_buttonRemove,
+			Rect(
+				rc.right - rc.getHeight(),
+				rc.top,
+				rc.right,
+				rc.bottom
+			)
+		));
 }
 
 void PropertyItem::mouseButtonDown(MouseButtonDownEvent* event)
@@ -266,6 +295,11 @@ void PropertyItem::updateChildrenInPlaceControls()
 
 		(*i)->updateChildrenInPlaceControls();
 	}
+}
+
+void PropertyItem::eventClick(ButtonClickEvent* event)
+{
+	notifyCommand(Command(L"Property.Remove"));
 }
 
 		}

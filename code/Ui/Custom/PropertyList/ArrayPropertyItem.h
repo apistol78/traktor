@@ -35,6 +35,8 @@ public:
 	const TypeInfo* getElementType() const;
 
 protected:
+	virtual bool needRemoveChildButton() const;
+
 	virtual void createInPlaceControls(Widget* parent);
 
 	virtual void destroyInPlaceControls();
