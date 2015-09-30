@@ -20,7 +20,11 @@ ScriptComponentInstance::ScriptComponentInstance(SpriteInstance* owner, const re
 ,	m_methodEventKeyUp(~0U)
 ,	m_methodEventMouseDown(~0U)
 ,	m_methodEventMouseUp(~0U)
+,	m_methodEventMousePress(~0U)
+,	m_methodEventMouseRelease(~0U)
 ,	m_methodEventMouseMove(~0U)
+,	m_methodEventMouseEnter(~0U)
+,	m_methodEventMouseLeave(~0U)
 ,	m_methodEventMouseWheel(~0U)
 ,	m_methodEventViewResize(~0U)
 {
@@ -44,7 +48,11 @@ ScriptComponentInstance::ScriptComponentInstance(SpriteInstance* owner, const re
 	m_methodEventKeyUp = findRuntimeClassMethodId(m_class, "eventKeyUp");
 	m_methodEventMouseDown = findRuntimeClassMethodId(m_class, "eventMouseDown");
 	m_methodEventMouseUp = findRuntimeClassMethodId(m_class, "eventMouseUp");
+	m_methodEventMousePress = findRuntimeClassMethodId(m_class, "eventMousePress");
+	m_methodEventMouseRelease = findRuntimeClassMethodId(m_class, "eventMouseRelease");
 	m_methodEventMouseMove = findRuntimeClassMethodId(m_class, "eventMouseMove");
+	m_methodEventMouseEnter = findRuntimeClassMethodId(m_class, "eventMouseEnter");
+	m_methodEventMouseLeave = findRuntimeClassMethodId(m_class, "eventMouseLeave");
 	m_methodEventMouseWheel = findRuntimeClassMethodId(m_class, "eventMouseWheel");
 	m_methodEventViewResize = findRuntimeClassMethodId(m_class, "eventViewResize");
 
@@ -136,6 +144,32 @@ void ScriptComponentInstance::eventMouseUp(const Vector2& position, int32_t butt
 	}
 }
 
+void ScriptComponentInstance::eventMousePress(const Vector2& position, int32_t button)
+{
+	if (m_class && m_object && m_methodEventMousePress != ~0U)
+	{
+		Any argv[] =
+		{
+			CastAny< Vector2 >::set(position),
+			Any::fromInteger(button)
+		};
+		m_class->invoke(m_object, m_methodEventMousePress, sizeof_array(argv), argv);
+	}
+}
+
+void ScriptComponentInstance::eventMouseRelease(const Vector2& position, int32_t button)
+{
+	if (m_class && m_object && m_methodEventMouseRelease != ~0U)
+	{
+		Any argv[] =
+		{
+			CastAny< Vector2 >::set(position),
+			Any::fromInteger(button)
+		};
+		m_class->invoke(m_object, m_methodEventMouseRelease, sizeof_array(argv), argv);
+	}
+}
+
 void ScriptComponentInstance::eventMouseMove(const Vector2& position, int32_t button)
 {
 	if (m_class && m_object && m_methodEventMouseMove != ~0U)
@@ -146,6 +180,32 @@ void ScriptComponentInstance::eventMouseMove(const Vector2& position, int32_t bu
 			Any::fromInteger(button)
 		};
 		m_class->invoke(m_object, m_methodEventMouseMove, sizeof_array(argv), argv);
+	}
+}
+
+void ScriptComponentInstance::eventMouseEnter(const Vector2& position, int32_t button)
+{
+	if (m_class && m_object && m_methodEventMouseEnter != ~0U)
+	{
+		Any argv[] =
+		{
+			CastAny< Vector2 >::set(position),
+			Any::fromInteger(button)
+		};
+		m_class->invoke(m_object, m_methodEventMouseEnter, sizeof_array(argv), argv);
+	}
+}
+
+void ScriptComponentInstance::eventMouseLeave(const Vector2& position, int32_t button)
+{
+	if (m_class && m_object && m_methodEventMouseLeave != ~0U)
+	{
+		Any argv[] =
+		{
+			CastAny< Vector2 >::set(position),
+			Any::fromInteger(button)
+		};
+		m_class->invoke(m_object, m_methodEventMouseLeave, sizeof_array(argv), argv);
 	}
 }
 

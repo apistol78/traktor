@@ -40,6 +40,13 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 		outFormat = GL_RED_EXT;
 		outType = GL_UNSIGNED_BYTE;
 		break;
+#elif defined(__ANDROID__)
+	case TfR8:
+		outPixelSize = 1;
+		outComponents = GL_LUMINANCE;
+		outFormat = GL_LUMINANCE;
+		outType = GL_UNSIGNED_BYTE;
+		break;
 #endif
 
 	case TfR8G8B8A8:

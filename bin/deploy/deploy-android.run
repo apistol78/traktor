@@ -205,7 +205,7 @@ function launch(args)
 	end
 
 	stdout:printLn("Launching...")
-	local result = run:execute("$(ANDROID_HOME)/platform-tools/adb -d shell am start -S -n $DEPLOY_PROJECT_IDENTIFIER/android.app.NativeActivity")
+	local result = run:execute("$(ANDROID_HOME)/platform-tools/adb -d shell am start -S -n $(DEPLOY_PROJECT_IDENTIFIER)/android.app.NativeActivity", "(null)")
 	if result ~= 0 then
 		stderr:printLn("Failed to launch package on device; Please ensure device is attached and in developer mode.")
 		return 1
@@ -248,18 +248,18 @@ function migrate(args)
 	local host = os:getEnvironment("DEPLOY_HOST_OS")
 	if host == "win32" or host == "win64" then
 		host = "windows-x86_64"
-		if not fileSystem:exist(ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. host) then
+		if not fileSystem:exist(Path(ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. host)) then
 			host = "windows"
 		end
 	elseif host == "osx" then
 		host = "darwin-x86_64"
-		if not fileSystem:exist(ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. host) then
+		if not fileSystem:exist(Path(ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. host)) then
 			host = "darwin"
 		end		
 	else
 		stderr:printLn("Unsupported host OS.")
 		return 1
-	end	
+	end
 
 	local toolpath = ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. host .. "/bin"
 	local libpath = ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. host .. "/lib/gcc/arm-linux-androideabi/4.8/armv7-a"
