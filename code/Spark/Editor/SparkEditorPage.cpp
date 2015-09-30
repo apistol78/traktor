@@ -116,7 +116,7 @@ bool SparkEditorPage::create(ui::Container* parent)
 	m_toolBar->addItem(m_toolViewLandscape);
 	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &SparkEditorPage::eventToolClick);
 
-	m_editControl = new SparkEditControl(m_editor);
+	m_editControl = new SparkEditControl(m_editor, m_site);
 	m_editControl->create(container, ui::WsNone, database, m_resourceManager, renderSystem, soundPlayer);
 	m_editControl->setViewSize(c_viewSizes[0].width, c_viewSizes[0].height);
 	m_editControl->update();
@@ -145,7 +145,7 @@ void SparkEditorPage::deactivate()
 
 bool SparkEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
 {
-	return false;
+	return m_editControl->dropInstance(instance, position);
 }
 
 bool SparkEditorPage::handleCommand(const ui::Command& command)

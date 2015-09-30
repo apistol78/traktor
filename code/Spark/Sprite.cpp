@@ -24,6 +24,15 @@ const Character* Sprite::getCharacter(const std::wstring& id) const
 	return i != m_characters.end() ? i->second : 0;
 }
 
+void Sprite::place(const std::wstring& name, Character* character, const Matrix33& transform)
+{
+	Place p;
+	p.name = name;
+	p.character = character;
+	p.transform = transform;
+	m_place.push_back(p);
+}
+
 Ref< CharacterInstance > Sprite::createInstance(const CharacterInstance* parent, resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer) const
 {
 	Ref< SpriteInstance > instance = new SpriteInstance(this, parent, resourceManager, soundPlayer);
