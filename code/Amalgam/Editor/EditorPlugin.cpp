@@ -290,7 +290,61 @@ void EditorPlugin::destroy()
 
 bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)
 {
-	return false;
+	if (command == L"Editor.AutoBuild")
+	{
+		for (RefArray< TargetInstance >::const_iterator i = m_targetInstances.begin(); i != m_targetInstances.end(); ++i)
+		{
+			TargetInstance* targetInstance = *i;
+			T_ASSERT (targetInstance);
+
+			// Only build for those who have any running applications.
+			if (targetInstance->getConnections().empty())
+				continue;
+
+			// Resolve absolute output path.
+			std::wstring outputPath = FileSystem::getInstance().getAbsolutePath(targetInstance->getOutputPath()).getPathName();
+
+			// Set target's state to pending as actions can be queued up to be performed much later.
+			targetInstance->setState(TsPending);
+			targetInstance->setBuildProgress(0);
+
+			{
+				T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_targetActionQueueLock);
+
+				ActionChain chain;
+				chain.targetInstance = targetInstance;
+
+				Action action;
+
+				// Expose _DEBUG script definition.
+				Ref< PropertyGroup > pipelineSettings = new PropertyGroup();
+				std::set< std::wstring > scriptPrepDefinitions;
+				scriptPrepDefinitions.insert(L"_DEBUG");
+				pipelineSettings->setProperty< PropertyStringSet >(L"ScriptPipeline.PreprocessorDefinitions", scriptPrepDefinitions);
+
+				// Add build output data action.
+				action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsBuilding);
+				action.action = new BuildTargetAction(
+					m_editor->getSourceDatabase(),
+					m_editor->getSettings(),
+					pipelineSettings,
+					targetInstance->getTarget(),
+					targetInstance->getTargetConfiguration(),
+					outputPath
+				);
+				chain.actions.push_back(action);
+
+				m_targetActionQueue.push_back(chain);
+				m_targetActionQueueSignal.set();
+			}
+		}
+
+		m_targetList->requestUpdate();
+	}
+	else
+		return false;
+
+	return true;
 }
 
 void EditorPlugin::handleDatabaseEvent(db::Database* database, const Guid& eventId)
