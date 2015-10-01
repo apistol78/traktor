@@ -155,9 +155,12 @@ Ref< Shape > SvgParser::traverse(xml::Element* elm)
 
 	if (shape)
 	{
-		shape->setStyle(
-			parseStyle(elm)
-		);
+		if (!shape->getStyle())
+		{
+			shape->setStyle(
+				parseStyle(elm)
+			);
+		}
 		
 		shape->setTransform(
 			parseTransform(elm)
@@ -200,6 +203,11 @@ Ref< Shape > SvgParser::parseDocument(xml::Element* elm)
 			Vector2(left + width, top + height)
 		));
 	}
+
+	Ref< Style > defaultStyle = new Style();
+	defaultStyle->setFillEnable(true);
+	defaultStyle->setFill(Color4ub(0, 0, 0, 255));
+	doc->setStyle(defaultStyle);
 
 	return doc;
 }
@@ -614,6 +622,8 @@ Ref< Style > SvgParser::parseStyle(xml::Element* elm)
 			}
 			else if (key == L"stroke-dasharray")
 				;
+			else if (key == L"stroke-dashoffset")
+				;
 			else if (key == L"stroke-opacity")
 				;
 			else if (key == L"stroke-linecap")
@@ -674,7 +684,7 @@ Matrix33 SvgParser::parseTransform(xml::Element* elm)
 					argv[0], argv[1], 0.0f,
 					argv[2], argv[3], 0.0f,
 					argv[4], argv[5], 1.0f
-				);
+				).transpose();
 		}
 		else if (fnc == L"translate")
 		{

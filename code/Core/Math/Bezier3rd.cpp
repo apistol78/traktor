@@ -74,7 +74,7 @@ namespace
 			c.x * (b.y - a.y);
 	}
 
-	void approximateSubdivide(const Bezier3rd& b, float f0, float f1, float errorThreshold, AlignedVector< Bezier2nd >& outQuadratic)
+	void approximateSubdivide(const Bezier3rd& b, float f0, float f1, float errorThreshold, int maxSubdivisions, AlignedVector< Bezier2nd >& outQuadratic)
 	{
 		Vector2 p_0 = b.evaluate(f0);
 		Vector2 p_1 = b.evaluate(f1);
@@ -96,7 +96,7 @@ namespace
 			maxError = max(error, maxError);
 		}
 
-		if (maxError <= errorThreshold)
+		if (outQuadratic.size() >= maxSubdivisions || maxError <= errorThreshold)
 		{
 			outQuadratic.push_back(b2);
 			return;
@@ -104,8 +104,8 @@ namespace
 		else
 		{
 			AlignedVector< Bezier2nd > ql, qr;
-			approximateSubdivide(b, f0, (f0 + f1) * 0.5f, errorThreshold, ql);
-			approximateSubdivide(b, (f0 + f1) * 0.5f, f1, errorThreshold, qr);
+			approximateSubdivide(b, f0, (f0 + f1) * 0.5f, errorThreshold, maxSubdivisions / 2, ql);
+			approximateSubdivide(b, (f0 + f1) * 0.5f, f1, errorThreshold, maxSubdivisions / 2, qr);
 			outQuadratic.insert(outQuadratic.end(), ql.begin(), ql.end());
 			outQuadratic.insert(outQuadratic.end(), qr.begin(), qr.end());
 		}
@@ -113,10 +113,10 @@ namespace
 
 }
 
-void Bezier3rd::approximate(float errorThreshold, AlignedVector< Bezier2nd >& outQuadratic) const
+void Bezier3rd::approximate(float errorThreshold, int maxSubdivisions, AlignedVector< Bezier2nd >& outQuadratic) const
 {
 	outQuadratic.resize(0);
-	approximateSubdivide(*this, 0.0f, 1.0f, errorThreshold, outQuadratic);
+	approximateSubdivide(*this, 0.0f, 1.0f, errorThreshold, maxSubdivisions, outQuadratic);
 }
 
 }

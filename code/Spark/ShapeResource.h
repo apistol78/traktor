@@ -49,7 +49,8 @@ public:
 	virtual void serialize(ISerializer& s);
 
 private:
-	friend class ShapePipeline;
+	friend class ImageShapePipeline;
+	friend class VectorShapePipeline;
 
 	struct Part
 	{
