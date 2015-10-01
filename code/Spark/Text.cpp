@@ -23,7 +23,7 @@ Text::Text()
 {
 }
 
-Ref< CharacterInstance > Text::createInstance(const CharacterInstance* parent, resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer) const
+Ref< CharacterInstance > Text::createInstance(const CharacterInstance* parent, resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer, bool createComponents) const
 {
 	resource::Proxy< Font > font;
 	if (m_font)

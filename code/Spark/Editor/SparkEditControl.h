@@ -40,17 +40,9 @@ class Shader;
 
 	}
 
-	namespace sound
-	{
-
-class ISoundPlayer;
-
-	}
-
 	namespace spark
 	{
 
-class SparkPlayer;
 class SparkRenderer;
 class Sprite;
 class SpriteInstance;
@@ -70,33 +62,21 @@ public:
 		int style,
 		db::Database* database,
 		resource::IResourceManager* resourceManager,
-		render::IRenderSystem* renderSystem,
-		sound::ISoundPlayer* soundPlayer
+		render::IRenderSystem* renderSystem
 	);
 
 	void destroy();
 
-	void setSprite(Sprite* sprite);
+	void setSprite(Sprite* sprite, SpriteInstance* spriteInstance);
 
 	void setViewSize(int32_t width, int32_t height);
-
-	void refresh();
-
-	bool dropInstance(db::Instance* instance, const ui::Point& position);
-
-	bool play();
-
-	bool stop();
-
-	bool rewind();
-
-	bool isPlaying() const;
 
 private:
 	enum EditMode
 	{
 		EmIdle,
-		EmPanView
+		EmPanView,
+		EmMoveCharacter
 	};
 
 	editor::IEditor* m_editor;
@@ -105,11 +85,10 @@ private:
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
-	Ref< sound::ISoundPlayer > m_soundPlayer;
 	Ref< SparkRenderer > m_sparkRenderer;
-	Ref< SparkPlayer > m_sparkPlayer;
 	Ref< Sprite > m_sprite;
 	Ref< SpriteInstance > m_spriteInstance;
+	Ref< CharacterInstance > m_editCharacter;
 	Ref< ui::EventSubject::IEventHandler > m_idleEventHandler;
 	ui::Point m_lastMousePosition;
 	EditMode m_editMode;
@@ -117,19 +96,14 @@ private:
 	int32_t m_viewHeight;
 	Vector2 m_viewOffset;
 	float m_viewScale;
-	bool m_playing;
 
-	ui::Point clientToView(const ui::Point& point) const;
+	Vector2 clientToView(const ui::Point& point) const;
+
+	CharacterInstance* hitTest(const ui::Point& point) const;
 
 	void eventSize(ui::SizeEvent* event);
 
 	void eventPaint(ui::PaintEvent* event);
-
-	void eventKey(ui::KeyEvent* event);
-
-	void eventKeyDown(ui::KeyDownEvent* event);
-
-	void eventKeyUp(ui::KeyUpEvent* event);
 
 	void eventMouseButtonDown(ui::MouseButtonDownEvent* event);
 

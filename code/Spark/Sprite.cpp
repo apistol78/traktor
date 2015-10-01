@@ -33,7 +33,7 @@ void Sprite::place(const std::wstring& name, Character* character, const Matrix3
 	m_place.push_back(p);
 }
 
-Ref< CharacterInstance > Sprite::createInstance(const CharacterInstance* parent, resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer) const
+Ref< CharacterInstance > Sprite::createInstance(const CharacterInstance* parent, resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer, bool createComponents) const
 {
 	Ref< SpriteInstance > instance = new SpriteInstance(this, parent, resourceManager, soundPlayer);
 
@@ -51,7 +51,7 @@ Ref< CharacterInstance > Sprite::createInstance(const CharacterInstance* parent,
 		if (!i->character)
 			continue;
 
-		Ref< CharacterInstance > placeInstance = i->character->createInstance(instance, resourceManager, soundPlayer);
+		Ref< CharacterInstance > placeInstance = i->character->createInstance(instance, resourceManager, soundPlayer, createComponents);
 		if (!placeInstance)
 			return 0;
 
@@ -63,16 +63,19 @@ Ref< CharacterInstance > Sprite::createInstance(const CharacterInstance* parent,
 	}
 
 	// Create components.
-	for (size_t i = 0; i < m_components.size(); ++i)
+	if (createComponents)
 	{
-		if (!m_components[i])
-			continue;
+		for (size_t i = 0; i < m_components.size(); ++i)
+		{
+			if (!m_components[i])
+				continue;
 
-		Ref< IComponentInstance > componentInstance = m_components[i]->createInstance(instance, resourceManager, soundPlayer);
-		if (!componentInstance)
-			return 0;
+			Ref< IComponentInstance > componentInstance = m_components[i]->createInstance(instance, resourceManager, soundPlayer);
+			if (!componentInstance)
+				return 0;
 
-		instance->setComponent(type_of(m_components[i]), componentInstance);
+			instance->setComponent(type_of(m_components[i]), componentInstance);
+		}
 	}
 
 	return instance;

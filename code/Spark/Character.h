@@ -42,7 +42,7 @@ class T_DLLCLASS Character : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< CharacterInstance > createInstance(const CharacterInstance* parent, resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer) const = 0;
+	virtual Ref< CharacterInstance > createInstance(const CharacterInstance* parent, resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer, bool createComponents) const = 0;
 };
 
 	}

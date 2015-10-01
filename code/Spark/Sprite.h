@@ -31,17 +31,6 @@ class T_DLLCLASS Sprite : public Character
 	T_RTTI_CLASS;
 
 public:
-	const Character* getCharacter(const std::wstring& id) const;
-
-	void place(const std::wstring& name, Character* character, const Matrix33& transform);
-
-	virtual Ref< CharacterInstance > createInstance(const CharacterInstance* parent, resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer) const;
-
-	virtual void serialize(ISerializer& s);
-
-private:
-	friend class CharacterPipeline;
-
 	struct T_DLLCLASS Place
 	{
 		std::wstring name;
@@ -52,6 +41,21 @@ private:
 
 		void serialize(ISerializer& s);
 	};
+
+	const Character* getCharacter(const std::wstring& id) const;
+
+	void place(const std::wstring& name, Character* character, const Matrix33& transform);
+
+	virtual Ref< CharacterInstance > createInstance(const CharacterInstance* parent, resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer, bool createComponents) const;
+
+	virtual void serialize(ISerializer& s);
+
+	const SmallMap< std::wstring, Ref< Character > >& getCharacters() { return m_characters; }
+
+	const AlignedVector< Place >& getPlacements() const { return m_place; }
+
+private:
+	friend class CharacterPipeline;
 
 	RefArray< IComponent > m_components;
 	resource::Id< Shape > m_shape;
