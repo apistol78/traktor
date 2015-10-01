@@ -214,8 +214,18 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 	envmap[L"DEPLOY_FILES"] = implode(deployFiles.begin(), deployFiles.end(), L" ");
 	envmap[L"DEPLOY_DEBUG"] = (m_globalSettings->getProperty< PropertyBoolean >(L"Amalgam.UseDebugBinaries", false) ? L"YES" : L"");
 
+	// Merge tool environment variables.
 	const DeployTool& deployTool = platform->getDeployTool();
 	envmap.insert(deployTool.getEnvironment().begin(), deployTool.getEnvironment().end());
+
+	// Merge all feature environment variables.
+	for (RefArray< const Feature >::const_iterator i = features.begin(); i != features.end(); ++i)
+	{
+		const Feature* feature = *i;
+		T_ASSERT (feature);
+
+		envmap.insert(feature->getEnvironment().begin(), feature->getEnvironment().end());
+	}
 
 	Ref< IProcess > process = OS::getInstance().execute(
 		deployTool.getExecutable() + L" migrate",
