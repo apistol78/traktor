@@ -24,7 +24,7 @@ Ref< CharacterInstance > SpriteInstance::create(const std::wstring& id) const
 {
 	const Character* character = m_sprite->getCharacter(id);
 	if (character)
-		return character->createInstance(this, m_resourceManager, m_soundPlayer);
+		return character->createInstance(this, m_resourceManager, m_soundPlayer, true);
 	else
 		return 0;
 }

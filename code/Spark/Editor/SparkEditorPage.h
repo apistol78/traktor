@@ -29,18 +29,15 @@ class IResourceManager;
 
 	}
 
-	namespace script
-	{
-
-class IScriptManager;
-
-	}
-
 	namespace ui
 	{
+
+class Container;
+
 		namespace custom
 		{
 
+class GridView;
 class ToolBar;
 class ToolBarButton;
 class ToolBarButtonClickEvent;
@@ -53,6 +50,8 @@ class ToolBarDropDown;
 	{
 
 class SparkEditControl;
+class Sprite;
+class SpriteInstance;
 
 /*! \brief
  * \ingroup Spark
@@ -82,13 +81,18 @@ private:
 	editor::IEditor* m_editor;
 	editor::IEditorPageSite* m_site;
 	editor::IDocument* m_document;
-	Ref< script::IScriptManager > m_scriptManager;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::ToolBarDropDown > m_toolViewSize;
 	Ref< ui::custom::ToolBarButton > m_toolViewLandscape;
-	Ref< ui::custom::ToolBarButton > m_toolTogglePlay;
 	Ref< SparkEditControl > m_editControl;
+	Ref< ui::Container > m_panelPlace;
+	Ref< ui::custom::GridView > m_gridPlace;
+	Ref< ui::Container > m_panelLibrary;
+	Ref< ui::custom::GridView > m_gridLibrary;
+
+	Ref< Sprite > m_sprite;
+	Ref< SpriteInstance > m_spriteInstance;
 
 	void eventToolClick(ui::custom::ToolBarButtonClickEvent* event);
 };

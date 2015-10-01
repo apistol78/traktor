@@ -29,7 +29,7 @@ public:
 
 	External(const resource::Id< Character >& reference);
 
-	virtual Ref< CharacterInstance > createInstance(const CharacterInstance* parent, resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer) const;
+	virtual Ref< CharacterInstance > createInstance(const CharacterInstance* parent, resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer, bool createComponents) const;
 
 	virtual void serialize(ISerializer& s);
 
