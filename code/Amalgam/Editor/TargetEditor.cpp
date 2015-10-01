@@ -110,9 +110,9 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	m_editBuildRootInstance->create(container1, L"", ui::WsClientBorder | ui::Edit::WsReadOnly);
 	m_editBuildRootInstance->setText(L"");
 
-	Ref< ui::custom::MiniButton > buttonBuildRootInstance = new ui::custom::MiniButton();
-	buttonBuildRootInstance->create(container1, L"...");
-	buttonBuildRootInstance->addEventHandler< ui::ButtonClickEvent >(this, &TargetEditor::eventBrowseRootButtonClick);
+	m_buttonBuildRootInstance = new ui::custom::MiniButton();
+	m_buttonBuildRootInstance->create(container1, L"...");
+	m_buttonBuildRootInstance->addEventHandler< ui::ButtonClickEvent >(this, &TargetEditor::eventBrowseRootButtonClick);
 
 	Ref< ui::Static > staticStartup = new ui::Static();
 	staticStartup->create(containerLeft, L"Startup");
@@ -124,9 +124,9 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	m_editStartupInstance->create(container2, L"", ui::WsClientBorder | ui::Edit::WsReadOnly);
 	m_editStartupInstance->setText(L"");
 
-	Ref< ui::custom::MiniButton > buttonStartupInstance = new ui::custom::MiniButton();
-	buttonStartupInstance->create(container2, L"...");
-	buttonStartupInstance->addEventHandler< ui::ButtonClickEvent >(this, &TargetEditor::eventBrowseStartupButtonClick);
+	m_buttonStartupInstance = new ui::custom::MiniButton();
+	m_buttonStartupInstance->create(container2, L"...");
+	m_buttonStartupInstance->addEventHandler< ui::ButtonClickEvent >(this, &TargetEditor::eventBrowseStartupButtonClick);
 
 	Ref< ui::Static > staticDefaultInput = new ui::Static();
 	staticDefaultInput->create(containerLeft, L"Default input");
@@ -138,9 +138,9 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	m_editDefaultInputInstance->create(container3, L"", ui::WsClientBorder | ui::Edit::WsReadOnly);
 	m_editDefaultInputInstance->setText(L"");
 
-	Ref< ui::custom::MiniButton > buttonDefaultInputInstance = new ui::custom::MiniButton();
-	buttonDefaultInputInstance->create(container3, L"...");
-	buttonDefaultInputInstance->addEventHandler< ui::ButtonClickEvent >(this, &TargetEditor::eventBrowseDefaultInputButtonClick);
+	m_buttonDefaultInputInstance = new ui::custom::MiniButton();
+	m_buttonDefaultInputInstance->create(container3, L"...");
+	m_buttonDefaultInputInstance->addEventHandler< ui::ButtonClickEvent >(this, &TargetEditor::eventBrowseDefaultInputButtonClick);
 
 	Ref< ui::Static > staticOnlineConfig = new ui::Static();
 	staticOnlineConfig->create(containerLeft, L"Online configuration");
@@ -152,9 +152,9 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	m_editOnlineConfigInstance->create(container4, L"", ui::WsClientBorder | ui::Edit::WsReadOnly);
 	m_editOnlineConfigInstance->setText(L"");
 
-	Ref< ui::custom::MiniButton > buttonOnlineConfigInstance = new ui::custom::MiniButton();
-	buttonOnlineConfigInstance->create(container4, L"...");
-	buttonOnlineConfigInstance->addEventHandler< ui::ButtonClickEvent >(this, &TargetEditor::eventBrowseOnlineConfigButtonClick);
+	m_buttonOnlineConfigInstance = new ui::custom::MiniButton();
+	m_buttonOnlineConfigInstance->create(container4, L"...");
+	m_buttonOnlineConfigInstance->addEventHandler< ui::ButtonClickEvent >(this, &TargetEditor::eventBrowseOnlineConfigButtonClick);
 
 	m_bitmapNoIcon = ui::Bitmap::load(c_ResourceNoIcon, sizeof(c_ResourceNoIcon), L"png");
 	
@@ -237,6 +237,7 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	updateTargetConfigurations();
 	updateAvailableFeatures();
 	updateUsedFeatures();
+	updateRoots();
 
 	return true;
 }
@@ -555,9 +556,14 @@ void TargetEditor::eventBrowseRootButtonClick(ui::ButtonClickEvent* event)
 	if (!targetConfiguration)
 		return;
 
-	Ref< db::Instance > rootInstance = m_editor->browseInstance();
-	if (rootInstance)
-		targetConfiguration->setRoot(rootInstance->getGuid());
+	if (targetConfiguration->getRoot().isNull())
+	{
+		Ref< db::Instance > rootInstance = m_editor->browseInstance();
+		if (rootInstance)
+			targetConfiguration->setRoot(rootInstance->getGuid());
+	}
+	else
+		targetConfiguration->setRoot(Guid());
 
 	updateRoots();
 }
@@ -568,9 +574,14 @@ void TargetEditor::eventBrowseStartupButtonClick(ui::ButtonClickEvent* event)
 	if (!targetConfiguration)
 		return;
 
-	Ref< db::Instance > startupInstance = m_editor->browseInstance();
-	if (startupInstance)
-		targetConfiguration->setStartup(startupInstance->getGuid());
+	if (targetConfiguration->getStartup().isNull())
+	{
+		Ref< db::Instance > startupInstance = m_editor->browseInstance();
+		if (startupInstance)
+			targetConfiguration->setStartup(startupInstance->getGuid());
+	}
+	else
+		targetConfiguration->setStartup(Guid());
 
 	updateRoots();
 }
@@ -581,9 +592,14 @@ void TargetEditor::eventBrowseDefaultInputButtonClick(ui::ButtonClickEvent* even
 	if (!targetConfiguration)
 		return;
 
-	Ref< db::Instance > defaultInputInstance = m_editor->browseInstance();
-	if (defaultInputInstance)
-		targetConfiguration->setDefaultInput(defaultInputInstance->getGuid());
+	if (targetConfiguration->getDefaultInput().isNull())
+	{
+		Ref< db::Instance > defaultInputInstance = m_editor->browseInstance();
+		if (defaultInputInstance)
+			targetConfiguration->setDefaultInput(defaultInputInstance->getGuid());
+	}
+	else
+		targetConfiguration->setDefaultInput(Guid());
 
 	updateRoots();
 }
@@ -594,9 +610,14 @@ void TargetEditor::eventBrowseOnlineConfigButtonClick(ui::ButtonClickEvent* even
 	if (!targetConfiguration)
 		return;
 
-	Ref< db::Instance > onlineConfigInstance = m_editor->browseInstance();
-	if (onlineConfigInstance)
-		targetConfiguration->setOnlineConfig(onlineConfigInstance->getGuid());
+	if (targetConfiguration->getOnlineConfig().isNull())
+	{
+		Ref< db::Instance > onlineConfigInstance = m_editor->browseInstance();
+		if (onlineConfigInstance)
+			targetConfiguration->setOnlineConfig(onlineConfigInstance->getGuid());
+	}
+	else
+		targetConfiguration->setOnlineConfig(Guid());
 
 	updateRoots();
 }

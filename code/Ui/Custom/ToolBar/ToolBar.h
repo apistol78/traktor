@@ -50,6 +50,8 @@ public:
 
 	uint32_t addItem(ToolBarItem* item);
 
+	void setItem(uint32_t id, ToolBarItem* item);
+
 	Ref< ToolBarItem > getItem(uint32_t id);
 
 	Ref< ToolBarItem > getItem(const Point& at);

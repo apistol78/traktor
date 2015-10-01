@@ -38,6 +38,7 @@ class ListBox;
 
 class EditList;
 class EditListEditEvent;
+class MiniButton;
 
 		}
 	}
@@ -91,6 +92,10 @@ private:
 	Ref< ui::custom::EditList > m_listBoxTargetConfigurations;
 	Ref< ui::Image > m_imageIcon;
 	Ref< ui::DropDown > m_dropDownPlatform;
+	Ref< ui::custom::MiniButton > m_buttonBuildRootInstance;
+	Ref< ui::custom::MiniButton > m_buttonStartupInstance;
+	Ref< ui::custom::MiniButton > m_buttonDefaultInputInstance;
+	Ref< ui::custom::MiniButton > m_buttonOnlineConfigInstance;
 	Ref< ui::Edit > m_editBuildRootInstance;
 	Ref< ui::Edit > m_editStartupInstance;
 	Ref< ui::Edit > m_editDefaultInputInstance;

@@ -91,6 +91,7 @@ SparkEditControl::SparkEditControl(editor::IEditor* editor, editor::IEditorPageS
 ,	m_viewHeight(1080)
 ,	m_viewOffset(1920.0f, 1080.0f)
 ,	m_viewScale(0.3f)
+,	m_playing(false)
 {
 }
 
@@ -206,6 +207,30 @@ bool SparkEditControl::dropInstance(db::Instance* instance, const ui::Point& pos
 	return true;
 }
 
+bool SparkEditControl::play()
+{
+	m_playing = true;
+	return true;
+}
+
+bool SparkEditControl::stop()
+{
+	m_playing = false;
+	return true;
+}
+
+bool SparkEditControl::rewind()
+{
+	refresh();
+	stop();
+	return true;
+}
+
+bool SparkEditControl::isPlaying() const
+{
+	return m_playing;
+}
+
 ui::Point SparkEditControl::clientToView(const ui::Point& point) const
 {
 	ui::Size sz = getInnerRect().getSize();
@@ -317,9 +342,14 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 			m_primitiveRenderer->end();
 		}
 
-		if (m_sparkPlayer)
-			m_sparkPlayer->update();
+		// Update player if playing in editor.
+		if (m_playing)
+		{
+			if (m_sparkPlayer)
+				m_sparkPlayer->update();
+		}
 
+		// Draw sprites.
 		if (m_sparkRenderer && m_spriteInstance)
 		{
 			m_sparkRenderer->build(m_spriteInstance, 0);
@@ -349,34 +379,46 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 
 void SparkEditControl::eventKey(ui::KeyEvent* event)
 {
-	if (m_sparkPlayer)
-		m_sparkPlayer->postKey(event->getCharacter());
+	if (m_playing)
+	{
+		if (m_sparkPlayer)
+			m_sparkPlayer->postKey(event->getCharacter());
+	}
 }
 
 void SparkEditControl::eventKeyDown(ui::KeyDownEvent* event)
 {
-	if (m_sparkPlayer)
-		m_sparkPlayer->postKeyDown(event->getVirtualKey());
+	if (m_playing)
+	{
+		if (m_sparkPlayer)
+			m_sparkPlayer->postKeyDown(event->getVirtualKey());
+	}
 }
 
 void SparkEditControl::eventKeyUp(ui::KeyUpEvent* event)
 {
-	if (m_sparkPlayer)
-		m_sparkPlayer->postKeyUp(event->getVirtualKey());
+	if (m_playing)
+	{
+		if (m_sparkPlayer)
+			m_sparkPlayer->postKeyUp(event->getVirtualKey());
+	}
 }
 
 void SparkEditControl::eventMouseButtonDown(ui::MouseButtonDownEvent* event)
 {
 	m_lastMousePosition = event->getPosition();
 
-	if (event->getButton() == ui::MbtLeft && (event->getKeyState() & ui::KsMenu) != 0)
-		m_editMode = EmPanView;
+	if (m_playing)
+	{
+		if (m_sparkPlayer)
+		{
+			ui::Point mousePosition = clientToView(event->getPosition());
+			m_sparkPlayer->postMouseDown(Vector2(mousePosition.x, mousePosition.y), event->getButton());
+		}
+	}
 	else
 	{
-		m_editMode = EmIdle;
-
-		ui::Point mousePosition = clientToView(event->getPosition());
-		m_sparkPlayer->postMouseDown(Vector2(mousePosition.x, mousePosition.y), event->getButton());
+		m_editMode = EmPanView;
 	}
 
 	setCapture();
@@ -387,7 +429,7 @@ void SparkEditControl::eventMouseButtonUp(ui::MouseButtonUpEvent* event)
 	if (!hasCapture())
 		return;
 
-	if (m_editMode == EmIdle)
+	if (m_playing)
 	{
 		if (m_sparkPlayer)
 		{
@@ -396,7 +438,9 @@ void SparkEditControl::eventMouseButtonUp(ui::MouseButtonUpEvent* event)
 		}
 	}
 	else
+	{
 		m_editMode = EmIdle;
+	}
 
 	releaseCapture();
 }
@@ -405,20 +449,23 @@ void SparkEditControl::eventMouseMove(ui::MouseMoveEvent* event)
 {
 	ui::Point mousePosition = event->getPosition();
 
-	if (m_editMode == EmPanView)
-	{
-		Vector2 deltaMove(
-			-(mousePosition.x - m_lastMousePosition.x),
-			-(mousePosition.y - m_lastMousePosition.y)
-		);
-		m_viewOffset += 2.0f * deltaMove / m_viewScale;
-	}
-	else if (m_editMode == EmIdle)
+	if (m_playing)
 	{
 		if (m_sparkPlayer)
 		{
 			ui::Point mousePosition = clientToView(event->getPosition());
 			m_sparkPlayer->postMouseMove(Vector2(mousePosition.x, mousePosition.y), event->getButton());
+		}
+	}
+	else
+	{
+		if (m_editMode == EmPanView)
+		{
+			Vector2 deltaMove(
+				-(mousePosition.x - m_lastMousePosition.x),
+				-(mousePosition.y - m_lastMousePosition.y)
+			);
+			m_viewOffset += 2.0f * deltaMove / m_viewScale;
 		}
 	}
 
@@ -428,18 +475,18 @@ void SparkEditControl::eventMouseMove(ui::MouseMoveEvent* event)
 
 void SparkEditControl::eventMouseWheel(ui::MouseWheelEvent* event)
 {
-	if ((event->getKeyState() & ui::KsMenu) != 0)
-	{
-		m_viewScale += event->getRotation() * 0.1f;
-		m_viewScale = clamp(m_viewScale, 0.1f, 1000.0f);
-	}
-	else
+	if (m_playing)
 	{
 		if (m_sparkPlayer)
 		{
 			ui::Point mousePosition = clientToView(event->getPosition());
 			m_sparkPlayer->postMouseWheel(Vector2(mousePosition.x, mousePosition.y), event->getRotation());
 		}
+	}
+	else
+	{
+		m_viewScale += event->getRotation() * 0.1f;
+		m_viewScale = clamp(m_viewScale, 0.1f, 1000.0f);
 	}
 
 	update();

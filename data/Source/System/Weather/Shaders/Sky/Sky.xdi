@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="4">
+		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
 			<position>
-				<first>1109</first>
-				<second>326</second>
+				<first>1280</first>
+				<second>185</second>
 			</position>
 			<technique>World_PreLitColor</technique>
+			<priority>
+				<setup>false</setup>
+				<opaque>false</opaque>
+				<postOpaque>false</postOpaque>
+				<alphaBlend>false</alphaBlend>
+				<postAlphaBlend>false</postAlphaBlend>
+				<overlay>false</overlay>
+			</priority>
 			<cullMode>CmClockWise</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendOperation>BoAdd</blendOperation>
@@ -39,8 +47,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>7</first>
-				<second>-72</second>
+				<first>45</first>
+				<second>-79</second>
 			</position>
 			<fragmentGuid>{D9D861EF-1A71-9C4F-9D94-47812EF465EF}</fragmentGuid>
 			<inputPins>
@@ -67,8 +75,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-185</first>
-				<second>10</second>
+				<first>-520</first>
+				<second>48</second>
 			</position>
 			<parameterName>SkyDomeRadius</parameterName>
 			<type>PtScalar</type>
@@ -77,8 +85,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>-174</first>
-				<second>-118</second>
+				<first>-306</first>
+				<second>-152</second>
 			</position>
 			<fragmentGuid>{7F401326-4C07-AC4C-9315-B2FCD61B9250}</fragmentGuid>
 			<inputPins>
@@ -104,15 +112,15 @@
 		<item type="traktor.render.MixOut">
 			<comment/>
 			<position>
-				<first>-314</first>
-				<second>-103</second>
+				<first>-530</first>
+				<second>-114</second>
 			</position>
 		</item>
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>-494</first>
-				<second>-62</second>
+				<first>-818</first>
+				<second>-78</second>
 			</position>
 			<name>Position</name>
 			<usage>DuPosition</usage>
@@ -122,23 +130,23 @@
 		<item type="traktor.render.VertexOutput" version="1">
 			<comment/>
 			<position>
-				<first>656</first>
-				<second>-55</second>
+				<first>991</first>
+				<second>-53</second>
 			</position>
 			<technique/>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment/>
 			<position>
-				<first>495</first>
-				<second>-75</second>
+				<first>684</first>
+				<second>-90</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>324</first>
-				<second>-117</second>
+				<first>487</first>
+				<second>-177</second>
 			</position>
 			<parameterName>Projection</parameterName>
 			<type>PtMatrix</type>
@@ -147,35 +155,43 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>375</first>
-				<second>-61</second>
+				<first>564</first>
+				<second>-81</second>
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment/>
 			<position>
-				<first>204</first>
-				<second>-81</second>
+				<first>336</first>
+				<second>-90</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>64</first>
-				<second>-118</second>
+				<first>101</first>
+				<second>-182</second>
 			</position>
 			<parameterName>View</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.PixelOutput" version="4">
+		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
 			<position>
-				<first>1109</first>
-				<second>293</second>
+				<first>1261</first>
+				<second>373</second>
 			</position>
 			<technique>World_ForwardColor</technique>
+			<priority>
+				<setup>false</setup>
+				<opaque>false</opaque>
+				<postOpaque>false</postOpaque>
+				<alphaBlend>false</alphaBlend>
+				<postAlphaBlend>false</postAlphaBlend>
+				<overlay>false</overlay>
+			</priority>
 			<cullMode>CmClockWise</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendOperation>BoAdd</blendOperation>
@@ -214,32 +230,32 @@
 		<item type="traktor.render.Color">
 			<comment/>
 			<position>
-				<first>268</first>
-				<second>318</second>
+				<first>272</first>
+				<second>214</second>
 			</position>
 			<color>4, 60, 90, 255</color>
 		</item>
 		<item type="traktor.render.Color">
 			<comment/>
 			<position>
-				<first>262</first>
-				<second>344</second>
+				<first>263</first>
+				<second>249</second>
 			</position>
 			<color>204, 221, 227, 255</color>
 		</item>
 		<item type="traktor.render.Color">
 			<comment/>
 			<position>
-				<first>254</first>
-				<second>374</second>
+				<first>251</first>
+				<second>293</second>
 			</position>
 			<color>231, 249, 255, 255</color>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>519</first>
-				<second>297</second>
+				<first>580</first>
+				<second>202</second>
 			</position>
 			<fragmentGuid>{3BDB38CE-AE49-4D4D-A158-78E64469DF0A}</fragmentGuid>
 			<inputPins>
@@ -302,8 +318,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>-71</first>
-				<second>218</second>
+				<first>-309</first>
+				<second>297</second>
 			</position>
 			<fragmentGuid>{F452E205-C07B-0A47-9382-A77C70E48EAB}</fragmentGuid>
 			<inputPins>
@@ -332,15 +348,15 @@
 		<item type="traktor.render.Normalize">
 			<comment/>
 			<position>
-				<first>-226</first>
-				<second>191</second>
+				<first>-553</first>
+				<second>275</second>
 			</position>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>951</first>
-				<second>287</second>
+				<first>1003</first>
+				<second>278</second>
 			</position>
 		</item>
 		<item type="traktor.render.Lerp">
@@ -353,20 +369,63 @@
 		<item type="traktor.render.Color">
 			<comment/>
 			<position>
-				<first>480</first>
-				<second>402</second>
+				<first>396</first>
+				<second>397</second>
 			</position>
 			<color>248, 239, 203, 255</color>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-324</first>
-				<second>276</second>
+				<first>-562</first>
+				<second>355</second>
 			</position>
 			<parameterName>SunDirection</parameterName>
 			<type>PtVector</type>
 			<frequency>UfOnce</frequency>
+		</item>
+		<item type="traktor.render.PixelOutput" version="5">
+			<comment/>
+			<position>
+				<first>1311</first>
+				<second>21</second>
+			</position>
+			<technique>World_DeferredColor</technique>
+			<priority>
+				<setup>false</setup>
+				<opaque>false</opaque>
+				<postOpaque>false</postOpaque>
+				<alphaBlend>false</alphaBlend>
+				<postAlphaBlend>false</postAlphaBlend>
+				<overlay>false</overlay>
+			</priority>
+			<cullMode>CmClockWise</cullMode>
+			<blendEnable>false</blendEnable>
+			<blendOperation>BoAdd</blendOperation>
+			<blendSource>BfOne</blendSource>
+			<blendDestination>BfZero</blendDestination>
+			<colorWriteMask>
+				<red>true</red>
+				<green>true</green>
+				<blue>true</blue>
+				<alpha>true</alpha>
+			</colorWriteMask>
+			<depthEnable>true</depthEnable>
+			<depthWriteEnable>false</depthWriteEnable>
+			<depthFunction>CfLessEqual</depthFunction>
+			<alphaTestEnable>false</alphaTestEnable>
+			<alphaTestFunction>CfLess</alphaTestFunction>
+			<alphaTestReference>128</alphaTestReference>
+			<alphaToCoverageEnable>false</alphaToCoverageEnable>
+			<wireframe>false</wireframe>
+			<stencilEnable>false</stencilEnable>
+			<stencilFail>SoKeep</stencilFail>
+			<stencilZFail>SoKeep</stencilZFail>
+			<stencilPass>SoKeep</stencilPass>
+			<stencilFunction>CfAlways</stencilFunction>
+			<stencilReference>0</stencilReference>
+			<stencilMask>2147483648</stencilMask>
+			<registerCount>0</registerCount>
 		</item>
 	</nodes>
 	<edges>
@@ -678,6 +737,16 @@
 			<destination>
 				<node ref="/object/nodes/item[22]"/>
 				<name>SunDirection</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[24]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[28]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>

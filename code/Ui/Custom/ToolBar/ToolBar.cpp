@@ -106,6 +106,12 @@ uint32_t ToolBar::addItem(ToolBarItem* item)
 	return uint32_t(m_items.size() - 1);
 }
 
+void ToolBar::setItem(uint32_t id, ToolBarItem* item)
+{
+	T_ASSERT (id < m_items.size());
+	m_items[id] = item;
+}
+
 Ref< ToolBarItem > ToolBar::getItem(uint32_t id)
 {
 	T_ASSERT (id < m_items.size());

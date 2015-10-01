@@ -84,6 +84,14 @@ public:
 
 	bool dropInstance(db::Instance* instance, const ui::Point& position);
 
+	bool play();
+
+	bool stop();
+
+	bool rewind();
+
+	bool isPlaying() const;
+
 private:
 	enum EditMode
 	{
@@ -109,6 +117,7 @@ private:
 	int32_t m_viewHeight;
 	Vector2 m_viewOffset;
 	float m_viewScale;
+	bool m_playing;
 
 	ui::Point clientToView(const ui::Point& point) const;
 
