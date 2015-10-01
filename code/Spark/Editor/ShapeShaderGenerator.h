@@ -37,6 +37,8 @@ class ShapeShaderGenerator : public Object
 
 public:
 	Ref< render::ShaderGraph > generate(db::Database* database, const Style* style) const;
+
+	Ref< render::ShaderGraph > generate(db::Database* database, const Guid& textureId) const;
 	
 	void addDependencies(editor::IPipelineDepends* pipelineDepends);
 };

@@ -19,9 +19,9 @@
 #include "Render/Shader/Nodes.h"
 #include "Render/Shader/ShaderGraph.h"
 #include "Spark/ShapeResource.h"
-#include "Spark/Editor/ShapeAsset.h"
-#include "Spark/Editor/ShapePipeline.h"
 #include "Spark/Editor/ShapeShaderGenerator.h"
+#include "Spark/Editor/VectorShapeAsset.h"
+#include "Spark/Editor/VectorShapePipeline.h"
 #include "Spark/Editor/Shape/Document.h"
 #include "Spark/Editor/Shape/PathShape.h"
 #include "Spark/Editor/Shape/Shape.h"
@@ -151,7 +151,7 @@ public:
 							);
 
 							AlignedVector< Bezier2nd > a;
-							b.approximate(m_cubicApproximationError, a);
+							b.approximate(m_cubicApproximationError, 4, a);
 
 							for (AlignedVector< Bezier2nd >::const_iterator k = a.begin(); k != a.end(); ++k)
 							{
@@ -271,30 +271,30 @@ bool setDefaultTechnique(render::ShaderGraph* shaderGraph)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.ShapePipeline", 0, ShapePipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.VectorShapePipeline", 0, VectorShapePipeline, editor::IPipeline)
 
-ShapePipeline::ShapePipeline()
+VectorShapePipeline::VectorShapePipeline()
 {
 }
 
-bool ShapePipeline::create(const editor::IPipelineSettings* settings)
+bool VectorShapePipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
 	return true;
 }
 
-void ShapePipeline::destroy()
+void VectorShapePipeline::destroy()
 {
 }
 
-TypeInfoSet ShapePipeline::getAssetTypes() const
+TypeInfoSet VectorShapePipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< ShapeAsset >());
+	typeSet.insert(&type_of< VectorShapeAsset >());
 	return typeSet;
 }
 
-bool ShapePipeline::buildDependencies(
+bool VectorShapePipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
@@ -302,13 +302,13 @@ bool ShapePipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	const ShapeAsset* shapeAsset = checked_type_cast< const ShapeAsset* >(sourceAsset);
+	const VectorShapeAsset* shapeAsset = checked_type_cast< const VectorShapeAsset* >(sourceAsset);
 	pipelineDepends->addDependency(traktor::Path(m_assetPath), shapeAsset->getFileName().getOriginal());
 	ShapeShaderGenerator().addDependencies(pipelineDepends);
 	return true;
 }
 
-bool ShapePipeline::buildOutput(
+bool VectorShapePipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const editor::IPipelineDependencySet* dependencySet,
 	const editor::PipelineDependency* dependency,
@@ -321,7 +321,7 @@ bool ShapePipeline::buildOutput(
 	uint32_t reason
 ) const
 {
-	const ShapeAsset* shapeAsset = checked_type_cast< const ShapeAsset* >(sourceAsset);
+	const VectorShapeAsset* shapeAsset = checked_type_cast< const VectorShapeAsset* >(sourceAsset);
 
 	// Open stream to source file.
 	Ref< IStream > sourceStream = pipelineBuilder->openFile(traktor::Path(m_assetPath), shapeAsset->getFileName().getOriginal());
@@ -413,15 +413,15 @@ bool ShapePipeline::buildOutput(
 	switch (shapeAsset->m_pivot)
 	{
 	default:
-	case ShapeAsset::PtViewTopLeft:
+	case VectorShapeAsset::PtViewTopLeft:
 		// Nothing to do.
 		break;
 
-	case ShapeAsset::PtViewCenter:
+	case VectorShapeAsset::PtViewCenter:
 		offset = -viewBox.getCenter();
 		break;
 
-	case ShapeAsset::PtShapeCenter:
+	case VectorShapeAsset::PtShapeCenter:
 		offset = -bounds.getCenter();
 		break;
 	}
@@ -627,7 +627,7 @@ bool ShapePipeline::buildOutput(
 	return true;
 }
 
-Ref< ISerializable > ShapePipeline::buildOutput(
+Ref< ISerializable > VectorShapePipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const ISerializable* sourceAsset
 ) const

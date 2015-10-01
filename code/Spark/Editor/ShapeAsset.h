@@ -22,24 +22,6 @@ namespace traktor
 class T_DLLCLASS ShapeAsset : public editor::Asset
 {
 	T_RTTI_CLASS;
-
-public:
-	enum PivotType
-	{
-		PtViewTopLeft,
-		PtViewCenter,
-		PtShapeCenter
-	};
-
-	ShapeAsset();
-
-	virtual void serialize(ISerializer& s);
-
-private:
-	friend class ShapePipeline;
-
-	float m_cubicApproximationError;
-	PivotType m_pivot;
 };
 
 	}

@@ -15,7 +15,8 @@ namespace traktor
 		namespace
 		{
 
-const Guid c_materialShader(L"{8D5DD962-4142-A549-B124-F8006F4E4088}");
+const Guid c_vectorMaterialShader(L"{8D5DD962-4142-A549-B124-F8006F4E4088}");
+const Guid c_imageMaterialShader(L"{90E966C9-FAB6-194F-93EC-87D669FA3E78}");
 const Guid c_tplColor(L"{E976CF04-9B52-164F-809D-00C05EFC6195}");
 const Guid c_implSolidColor(L"{1142089D-807C-E344-A9E1-C148AEF2D302}");
 const Guid c_implGradientColor(L"{9A57BCE6-C54E-824B-BD1B-637E720BC321}");
@@ -43,9 +44,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.ShapeShaderGenerator", ShapeShaderGenerat
 
 Ref< render::ShaderGraph > ShapeShaderGenerator::generate(db::Database* database, const Style* style) const
 {
-	Guid templateGuid = c_materialShader;
-
-	Ref< render::ShaderGraph > materialShaderGraph = database->getObjectReadOnly< render::ShaderGraph >(templateGuid);
+	Ref< render::ShaderGraph > materialShaderGraph = database->getObjectReadOnly< render::ShaderGraph >(c_vectorMaterialShader);
 	if (!materialShaderGraph)
 		return 0;
 
@@ -103,9 +102,36 @@ Ref< render::ShaderGraph > ShapeShaderGenerator::generate(db::Database* database
 	return materialShaderGraph;
 }
 
+Ref< render::ShaderGraph > ShapeShaderGenerator::generate(db::Database* database, const Guid& textureId) const
+{
+	Ref< render::ShaderGraph > materialShaderGraph = database->getObjectReadOnly< render::ShaderGraph >(c_imageMaterialShader);
+	if (!materialShaderGraph)
+		return 0;
+
+	RefArray< render::Texture > textureNodes;
+	materialShaderGraph->findNodesOf< render::Texture >(textureNodes);
+
+	for (RefArray< render::Texture >::iterator i = textureNodes.begin(); i != textureNodes.end(); ++i)
+	{
+		if ((*i)->getComment() == L"Tag_Image")
+		{
+			(*i)->setComment(L"");
+			(*i)->setExternal(textureId);
+		}
+	}
+
+	FragmentReaderAdapter fragmentReader(database);
+	materialShaderGraph = render::FragmentLinker(fragmentReader).resolve(materialShaderGraph, false);
+	if (!materialShaderGraph)
+		return 0;
+
+	return materialShaderGraph;
+}
+
 void ShapeShaderGenerator::addDependencies(editor::IPipelineDepends* pipelineDepends)
 {
-	pipelineDepends->addDependency(c_materialShader, editor::PdfUse);
+	pipelineDepends->addDependency(c_vectorMaterialShader, editor::PdfUse);
+	pipelineDepends->addDependency(c_imageMaterialShader, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplColor, editor::PdfUse);
 	pipelineDepends->addDependency(c_implSolidColor, editor::PdfUse);
 	pipelineDepends->addDependency(c_implGradientColor, editor::PdfUse);

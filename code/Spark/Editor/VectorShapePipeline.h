@@ -1,5 +1,5 @@
-#ifndef traktor_spark_ShapePipeline_H
-#define traktor_spark_ShapePipeline_H
+#ifndef traktor_spark_VectorShapePipeline_H
+#define traktor_spark_VectorShapePipeline_H
 
 #include "Editor/IPipeline.h"
 
@@ -19,12 +19,12 @@ namespace traktor
 /*! \brief
  * \ingroup Spark
  */
-class T_DLLCLASS ShapePipeline : public editor::IPipeline
+class T_DLLCLASS VectorShapePipeline : public editor::IPipeline
 {
 	T_RTTI_CLASS;
 
 public:
-	ShapePipeline();
+	VectorShapePipeline();
 
 	virtual bool create(const editor::IPipelineSettings* settings);
 
@@ -65,4 +65,4 @@ private:
 	}
 }
 
-#endif	// traktor_spark_ShapePipeline_H
+#endif	// traktor_spark_VectorShapePipeline_H
