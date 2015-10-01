@@ -84,7 +84,7 @@ bool RenderViewOpenGLES2::nextEvent(RenderEvent& outEvent)
 		DispatchMessage(&msg);
 	}
 
-#elif TARGET_OS_IPHONE
+#elif defined(__IOS__)
 
 	if (m_landscape != m_context->getLandscape())
 	{

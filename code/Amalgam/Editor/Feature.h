@@ -2,6 +2,7 @@
 #define traktor_amalgam_Feature_H
 
 #include <list>
+#include <map>
 #include "Core/Guid.h"
 #include "Core/Ref.h"
 #include "Core/Containers/StaticVector.h"
@@ -46,6 +47,8 @@ public:
 
 	const PropertyGroup* getRuntimeProperties() const { return m_runtimeProperties; }
 
+	const std::map< std::wstring, std::wstring >& getEnvironment() const { return m_environment; }
+
 	virtual void serialize(ISerializer& s);
 
 private:
@@ -55,6 +58,7 @@ private:
 	Ref< PropertyGroup > m_pipelineProperties;
 	Ref< PropertyGroup > m_migrateProperties;
 	Ref< PropertyGroup > m_runtimeProperties;
+	std::map< std::wstring, std::wstring > m_environment;
 };
 
 	}

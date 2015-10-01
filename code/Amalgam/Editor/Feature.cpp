@@ -13,7 +13,7 @@ namespace traktor
 	namespace amalgam
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.amalgam.Feature", 5, Feature, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.amalgam.Feature", 6, Feature, ISerializable)
 
 Feature::Feature()
 :	m_priority(0)
@@ -40,6 +40,9 @@ void Feature::serialize(ISerializer& s)
 	s >> MemberRef< PropertyGroup >(L"pipelineProperties", m_pipelineProperties);
 	s >> MemberRef< PropertyGroup >(L"migrateProperties", m_migrateProperties);
 	s >> MemberRef< PropertyGroup >(L"runtimeProperties", m_runtimeProperties);
+
+	if (s.getVersion() >= 6)
+		s >> MemberStlMap< std::wstring, std::wstring >(L"environment", m_environment);
 }
 
 void Feature::Platform::serialize(ISerializer& s)

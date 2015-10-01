@@ -17,7 +17,19 @@
             android:icon="@drawable/ic_launcher"
             android:configChanges="orientation|screenSize|smallestScreenSize|keyboardHidden"
             android:launchMode="singleInstance"
-            android:screenOrientation="landscape"
+            android:screenOrientation="<!--
+                local landscape = (environment:get("DEPLOY_VIEW_ORIENTATION_LANDSCAPE") == "1")
+                local portrait = (environment:get("DEPLOY_VIEW_ORIENTATION_PORTRAIT") == "1")
+                if landscape and not portrait then
+                    output:print("landscape")
+                elseif not landscape and portrait then
+                    output:print("portrait")
+                elseif landscape and portrait then
+                    output:print("sensor")
+                elseif not landscape and not portrait then
+                    output:pinrt("unspecified")
+                end
+            --!>"
         >
             <meta-data
                 android:name="android.app.lib_name"

@@ -206,6 +206,15 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 	const DeployTool& deployTool = platform->getDeployTool();
 	envmap.insert(deployTool.getEnvironment().begin(), deployTool.getEnvironment().end());
 
+	// Merge all feature environment variables.
+	for (RefArray< const Feature >::const_iterator i = features.begin(); i != features.end(); ++i)
+	{
+		const Feature* feature = *i;
+		T_ASSERT (feature);
+
+		envmap.insert(feature->getEnvironment().begin(), feature->getEnvironment().end());
+	}
+
 	// Merge settings environment variables.
 	Ref< PropertyGroup > settingsEnvironment = m_globalSettings->getProperty< PropertyGroup >(L"Amalgam.Environment");
 	if (settingsEnvironment)
