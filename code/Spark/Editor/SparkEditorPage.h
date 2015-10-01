@@ -87,6 +87,7 @@ private:
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::ToolBarDropDown > m_toolViewSize;
 	Ref< ui::custom::ToolBarButton > m_toolViewLandscape;
+	Ref< ui::custom::ToolBarButton > m_toolTogglePlay;
 	Ref< SparkEditControl > m_editControl;
 
 	void eventToolClick(ui::custom::ToolBarButtonClickEvent* event);

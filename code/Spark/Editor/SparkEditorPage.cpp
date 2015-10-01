@@ -22,12 +22,17 @@
 #include "Spark/Editor/SparkEditControl.h"
 #include "Spark/Editor/SparkEditorPage.h"
 #include "Ui/Application.h"
+#include "Ui/Bitmap.h"
 #include "Ui/Container.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/Custom/ToolBar/ToolBarDropDown.h"
+#include "Ui/Custom/ToolBar/ToolBarSeparator.h"
+
+// Resources
+#include "Resources/Playback.h"
 
 namespace traktor
 {
@@ -104,6 +109,7 @@ bool SparkEditorPage::create(ui::Container* parent)
 
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(container, ui::WsNone);
+	m_toolBar->addImage(ui::Bitmap::load(c_ResourcePlayback, sizeof(c_ResourcePlayback), L"png"), 6);
 
 	m_toolViewSize = new ui::custom::ToolBarDropDown(ui::Command(L"Spark.Editor.ViewSize"), ui::scaleBySystemDPI(220), i18n::Text(L"SPARK_EDITOR_VIEW_SIZE"));
 	for (int32_t i = 0; i < sizeof_array(c_viewSizes); ++i)
@@ -111,9 +117,14 @@ bool SparkEditorPage::create(ui::Container* parent)
 	m_toolViewSize->select(0);
 
 	m_toolViewLandscape = new ui::custom::ToolBarButton(L"Landscape", ui::Command(L"Spark.Editor.ViewSize"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggle);
+	m_toolTogglePlay = new ui::custom::ToolBarButton(L"Toggle Play", 1, ui::Command(L"Spark.Editor.TogglePlay"));
 
 	m_toolBar->addItem(m_toolViewSize);
 	m_toolBar->addItem(m_toolViewLandscape);
+	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
+	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Rewind", 0, ui::Command(L"Spark.Editor.Rewind")));
+	m_toolBar->addItem(m_toolTogglePlay);
+
 	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &SparkEditorPage::eventToolClick);
 
 	m_editControl = new SparkEditControl(m_editor, m_site);
@@ -173,6 +184,28 @@ void SparkEditorPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* event)
 			m_editControl->setViewSize(c_viewSizes[index].width, c_viewSizes[index].height);
 		else
 			m_editControl->setViewSize(c_viewSizes[index].height, c_viewSizes[index].width);
+	}
+	else if (event->getCommand() == L"Spark.Editor.TogglePlay")
+	{
+		if (m_editControl->isPlaying())
+		{
+			if (m_editControl->stop())
+				m_toolTogglePlay->setImage(1);
+		}
+		else
+		{
+			if (m_editControl->play())
+				m_toolTogglePlay->setImage(2);
+		}
+		m_toolBar->update();
+	}
+	else if (event->getCommand() == L"Spark.Editor.Rewind")
+	{
+		if (m_editControl->rewind())
+		{
+			m_toolTogglePlay->setImage(1);
+			m_toolBar->update();
+		}
 	}
 }
 

@@ -25,7 +25,7 @@ namespace traktor
 	namespace spark
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.FontPipeline", 0, FontPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.FontPipeline", 1, FontPipeline, editor::IPipeline)
 
 bool FontPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -105,7 +105,10 @@ bool FontPipeline::buildOutput(
 		return false;
 	}
 
-	const int32_t c_glyphPixelSize = 128;
+	const int32_t c_downScaleFactor = 4;
+	const int32_t c_searchDistance = 32;
+	const int32_t c_glyphPixelSize = 512;
+	const int32_t c_glyphOutputPixelSize = c_glyphPixelSize / c_downScaleFactor;
 
 	FT_Set_Pixel_Sizes(
 		face,
@@ -146,54 +149,85 @@ bool FontPipeline::buildOutput(
 		int32_t width = slot->bitmap.width;
 		int32_t height = slot->bitmap.rows;
 
-		glyphImages[i] = new drawing::Image(drawing::PixelFormat::getR8(), width, height);
-		glyphImages[i]->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+		// Insert the glyph into a source image.
+		Ref< drawing::Image > source = new drawing::Image(drawing::PixelFormat::getR8(), width + c_searchDistance * 2, height + c_searchDistance * 2);
+		source->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
 		for (int32_t y = 0; y < height; ++y)
 		{
 			for (int32_t x = 0; x < width; ++x)
 			{
 				float f = slot->bitmap.buffer[x + y * slot->bitmap.width] / 255.0f;
-				glyphImages[i]->setPixel(x, y, Color4f(f, f, f, f));
+				source->setPixel(x + c_searchDistance, y + c_searchDistance, Color4f(f, f, f, f));
 			}
 		}
+
+		// Create output image.
+		int32_t outputWidth = (width + c_searchDistance * 2) / c_downScaleFactor;
+		int32_t outputHeight = (height + c_searchDistance * 2) / c_downScaleFactor;
+
+		Ref< drawing::Image > output = new drawing::Image(
+			drawing::PixelFormat::getR8(),
+			outputWidth,
+			outputHeight
+		);
+
+		// Calculate signed distance.
+		Color4f p1, p2;
+		for (int32_t y = 0; y < outputHeight; ++y)
+		{
+			int32_t sourceY = y * c_downScaleFactor;
+			int32_t y0 = max(0, sourceY - c_searchDistance);
+			int32_t y1 = min(source->getHeight() - 1, sourceY + c_searchDistance);
+
+			for (int32_t x = 0; x < outputWidth; ++x)
+			{
+				int32_t sourceX = x * c_downScaleFactor;
+				int32_t x0 = max(0, sourceX - c_searchDistance);
+				int32_t x1 = min(source->getWidth() - 1, sourceX + c_searchDistance);
+
+				source->getPixelUnsafe(sourceX, sourceY, p1);
+
+				float D = c_searchDistance;
+				for (int32_t sy = y0; sy <= y1; ++sy)
+				{
+					for (int32_t sx = x0; sx <= x1; ++sx)
+					{
+						source->getPixelUnsafe(sx, sy, p2);
+						if (bool(p1.getRed() >= 0.5f) != bool(p2.getRed() >= 0.5f))
+						{
+							float dx = sx - sourceX;
+							float dy = sy - sourceY;
+							D = min(D, std::sqrt(dx * dx + dy * dy));
+						}
+					}
+				}
+
+				float f = D / float(c_searchDistance);
+				if (p1.getRed() >= 0.5f)
+					f = -f;
+
+				f = 0.5f - f * 0.5f;
+
+				output->setPixelUnsafe(x, y, Color4f(f, f, f, f));
+			}
+		}
+
+		glyphImages[i] = output;
 
 		fontResource->m_glyphs[i].ch = ch;
-		fontResource->m_glyphs[i].offset[0] = float(slot->bitmap_left) / c_glyphPixelSize;
-		fontResource->m_glyphs[i].offset[1] = float(slot->bitmap_top) / c_glyphPixelSize;
+		fontResource->m_glyphs[i].offset[0] = float(slot->bitmap_left + c_searchDistance) / c_glyphPixelSize;
+		fontResource->m_glyphs[i].offset[1] = float(slot->bitmap_top + c_searchDistance) / c_glyphPixelSize;
 		fontResource->m_glyphs[i].advance = (float(slot->advance.x) / c_glyphPixelSize) / float(1 << 6);
-
-		/*
-		// Transform kerning for this glyph compared to all other characters.
-		for (uint32_t j = 0; j < fontAsset->m_includeCharacters.length(); ++j)
-		{
-			if (i == j)
-				continue;
-
-			wchar_t rightCh = fontAsset->m_includeCharacters[j];
-			FT_UInt rightGlyphIndex = FT_Get_Char_Index(face, rightCh);
-
-			FT_Vector kerning;
-			error = FT_Get_Kerning(face, glyphIndex, rightGlyphIndex, FT_KERNING_DEFAULT, &kerning);
-			if (error)
-			{
-				log::warning << L"Unable to get kerning for glyph '" << ch << L"'" << Endl;
-				continue;
-			}
-
-			if (kerning.x == 0)
-				continue;
-
-			float kf = (float(slot->advance.x) / c_glyphPixelSize) / float(1 << 6);
-			log::info << L"Kerning of '" << ch << L"' to '" << rightCh << L"' is " << kf << L" fractions" << Endl;
-		}
-		*/
 	}
 
 	// Calculate an estimate size of atlas.
 	int32_t totalArea = 0;
 	for (RefArray< drawing::Image >::const_iterator i = glyphImages.begin(); i != glyphImages.end(); ++i)
-		totalArea += (*i)->getWidth() * (*i)->getHeight();
+	{
+		if (*i)
+			totalArea += (*i)->getWidth() * (*i)->getHeight();
+	}
 	
 	int32_t size = nearestLog2(std::max(int32_t(std::sqrt(totalArea) / 2.0f), 16));
 
@@ -204,7 +238,10 @@ bool FontPipeline::buildOutput(
 	for (uint32_t i = 0; i < glyphImages.size(); )
 	{
 		if (!glyphImages[i])
+		{
+			++i;
 			continue;
+		}
 
 		int32_t width = glyphImages[i]->getWidth();
 		int32_t height = glyphImages[i]->getHeight();
@@ -255,8 +292,8 @@ bool FontPipeline::buildOutput(
 		fontResource->m_glyphs[i].rect[1] = float(glyphRects[i].y) / size;
 		fontResource->m_glyphs[i].rect[2] = float(glyphRects[i].width) / size;
 		fontResource->m_glyphs[i].rect[3] = float(glyphRects[i].height) / size;
-		fontResource->m_glyphs[i].unit[0] = float(glyphRects[i].width) / c_glyphPixelSize;
-		fontResource->m_glyphs[i].unit[1] = float(glyphRects[i].height) / c_glyphPixelSize;
+		fontResource->m_glyphs[i].unit[0] = float(glyphRects[i].width) / c_glyphOutputPixelSize;
+		fontResource->m_glyphs[i].unit[1] = float(glyphRects[i].height) / c_glyphOutputPixelSize;
 	}
 
 #if defined(_DEBUG)
