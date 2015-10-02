@@ -1,6 +1,7 @@
 #include "Core/Class/IRuntimeClassFactory.h"
 #include "Core/Class/OrderedClassRegistrar.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/String.h"
 #include "Database/Instance.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
@@ -15,6 +16,8 @@
 #include "Spark/Sprite.h"
 #include "Spark/SpriteInstance.h"
 #include "Spark/ShapeResourceFactory.h"
+#include "Spark/Editor/CharacterAdapter.h"
+#include "Spark/Editor/Context.h"
 #include "Spark/Editor/SparkEditControl.h"
 #include "Spark/Editor/SparkEditorPage.h"
 #include "Ui/Application.h"
@@ -74,6 +77,7 @@ bool SparkEditorPage::create(ui::Container* parent)
 
 	Ref< db::Database > database = m_editor->getOutputDatabase();
 
+	// Create resource manager.
 	m_resourceManager = new resource::ResourceManager(true);
 	m_resourceManager->addFactory(new render::ShaderFactory(database, renderSystem));
 	m_resourceManager->addFactory(new render::TextureFactory(database, renderSystem, 0));
@@ -81,6 +85,12 @@ bool SparkEditorPage::create(ui::Container* parent)
 	m_resourceManager->addFactory(new FontResourceFactory(database, renderSystem));
 	m_resourceManager->addFactory(new ShapeResourceFactory(database, renderSystem));
 
+	// Create editor context.
+	m_context = new Context(m_resourceManager);
+	if (!m_context->setSprite(m_document->getObject< Sprite >(0)))
+		return false;
+
+	// Create user interface.
 	Ref< ui::Container > container = new ui::Container();
 	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
 
@@ -99,8 +109,8 @@ bool SparkEditorPage::create(ui::Container* parent)
 
 	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &SparkEditorPage::eventToolClick);
 
-	m_editControl = new SparkEditControl(m_editor, m_site);
-	m_editControl->create(container, ui::WsNone, database, m_resourceManager, renderSystem);
+	m_editControl = new SparkEditControl(m_editor, m_site, m_context);
+	m_editControl->create(container, ui::WsNone, m_resourceManager, renderSystem);
 	m_editControl->setViewSize(c_viewSizes[0].width, c_viewSizes[0].height);
 	m_editControl->update();
 
@@ -127,33 +137,18 @@ bool SparkEditorPage::create(ui::Container* parent)
 
 	m_site->createAdditionalPanel(m_panelLibrary, ui::scaleBySystemDPI(300), false);
 
-
-	m_sprite = m_document->getObject< Sprite >(0);
-	m_spriteInstance = m_sprite ? checked_type_cast< SpriteInstance* >(m_sprite->createInstance(0, m_resourceManager, 0, false)) : 0;
-
-	if (m_sprite)
+	// Update character outline grid.
+	const RefArray< CharacterAdapter >& adapters = m_context->getAdapters();
+	for (RefArray< CharacterAdapter >::const_iterator i = adapters.begin(); i != adapters.end(); ++i)
 	{
-		const AlignedVector< Sprite::Place >& place = m_sprite->getPlacements();
-		for (AlignedVector< Sprite::Place >::const_iterator i = place.begin(); i != place.end(); ++i)
-		{
-			Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
-			row->add(new ui::custom::GridItem(!i->name.empty() ? i->name : i18n::Text(L"SPARK_EDITOR_CHILD_UNNAMED")));
-			m_gridPlace->addRow(row);
-		}
-
-		const SmallMap< std::wstring, Ref< Character > >& characters = m_sprite->getCharacters();
-		for (SmallMap< std::wstring, Ref< Character > >::const_iterator i = characters.begin(); i != characters.end(); ++i)
-		{
-			Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
-			row->add(new ui::custom::GridItem(i->first));
-			m_gridLibrary->addRow(row);
-		}
+		Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
+		row->add(new ui::custom::GridItem(!(*i)->getName().empty() ? (*i)->getName() : L"<< Unnamed >>"));
+		row->add(new ui::custom::GridItem(type_name((*i)->getCharacter())));
+		row->setData(L"ADAPTER", *i);
+		m_gridPlace->addRow(row);
 	}
 
-
-	m_editControl->setSprite(m_sprite, m_spriteInstance);
-	m_site->setPropertyObject(m_sprite);
-
+	m_site->setPropertyObject(m_document->getObject< Sprite >(0));
 	return true;
 }
 
@@ -187,8 +182,8 @@ bool SparkEditorPage::handleCommand(const ui::Command& command)
 {
 	if (command == L"Editor.PropertiesChanged")
 	{
-		m_spriteInstance = m_sprite ? checked_type_cast< SpriteInstance* >(m_sprite->createInstance(0, m_resourceManager, 0, false)) : 0;
-		m_editControl->setSprite(m_sprite, m_spriteInstance);
+		//m_spriteInstance = m_sprite ? checked_type_cast< SpriteInstance* >(m_characterBuilder->create(m_sprite, 0)) : 0;
+		//m_editControl->setSprite(m_sprite, m_spriteInstance);
 	}
 	else
 		return false;

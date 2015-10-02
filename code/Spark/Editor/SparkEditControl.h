@@ -6,14 +6,6 @@
 
 namespace traktor
 {
-	namespace db
-	{
-
-class Database;
-class Instance;
-
-	}
-
 	namespace editor
 	{
 
@@ -43,9 +35,8 @@ class Shader;
 	namespace spark
 	{
 
+class Context;
 class SparkRenderer;
-class Sprite;
-class SpriteInstance;
 
 /*! \brief
  * \ingroup Spark
@@ -55,19 +46,16 @@ class SparkEditControl : public ui::Widget
 	T_RTTI_CLASS;
 
 public:
-	SparkEditControl(editor::IEditor* editor, editor::IEditorPageSite* site);
+	SparkEditControl(editor::IEditor* editor, editor::IEditorPageSite* site, Context* context);
 
 	bool create(
 		ui::Widget* parent,
 		int style,
-		db::Database* database,
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem
 	);
 
 	void destroy();
-
-	void setSprite(Sprite* sprite, SpriteInstance* spriteInstance);
 
 	void setViewSize(int32_t width, int32_t height);
 
@@ -81,17 +69,14 @@ private:
 
 	editor::IEditor* m_editor;
 	editor::IEditorPageSite* m_site;
-	Ref< db::Database > m_database;
-	Ref< resource::IResourceManager > m_resourceManager;
+	Ref< Context > m_context;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< SparkRenderer > m_sparkRenderer;
-	Ref< Sprite > m_sprite;
-	Ref< SpriteInstance > m_spriteInstance;
-	Ref< CharacterInstance > m_editCharacter;
 	Ref< ui::EventSubject::IEventHandler > m_idleEventHandler;
 	ui::Point m_lastMousePosition;
 	EditMode m_editMode;
+	Ref< CharacterAdapter > m_editCharacter;
 	int32_t m_viewWidth;
 	int32_t m_viewHeight;
 	Vector2 m_viewOffset;
@@ -99,7 +84,7 @@ private:
 
 	Vector2 clientToView(const ui::Point& point) const;
 
-	CharacterInstance* hitTest(const ui::Point& point) const;
+	int32_t hitTest(const ui::Point& point) const;
 
 	void eventSize(ui::SizeEvent* event);
 

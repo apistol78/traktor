@@ -1,6 +1,7 @@
 #ifndef traktor_spark_Text_H
 #define traktor_spark_Text_H
 
+#include "Core/Math/Vector2.h"
 #include "Resource/Id.h"
 #include "Spark/Character.h"
 #include "Spark/Types.h"
@@ -30,12 +31,11 @@ class T_DLLCLASS Text : public Character
 public:
 	Text();
 
-	virtual Ref< CharacterInstance > createInstance(const CharacterInstance* parent, resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer, bool createComponents) const;
-
 	virtual void serialize(ISerializer& s);
 
 private:
 	friend class CharacterPipeline;
+	friend class TextFactory;
 
 	resource::Id< Font > m_font;
 	std::wstring m_text;

@@ -29,12 +29,11 @@ public:
 
 	External(const resource::Id< Character >& reference);
 
-	virtual Ref< CharacterInstance > createInstance(const CharacterInstance* parent, resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer, bool createComponents) const;
-
 	virtual void serialize(ISerializer& s);
 
 private:
 	friend class CharacterPipeline;
+	friend class ExternalFactory;
 
 	resource::Id< Character > m_reference;
 };

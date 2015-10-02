@@ -3,7 +3,6 @@
 
 #include "Core/RefArray.h"
 #include "Core/Containers/AlignedVector.h"
-#include "Core/Containers/SmallMap.h"
 #include "Resource/Id.h"
 #include "Spark/Character.h"
 
@@ -31,36 +30,30 @@ class T_DLLCLASS Sprite : public Character
 	T_RTTI_CLASS;
 
 public:
-	struct T_DLLCLASS Place
+	struct NamedCharacter
 	{
 		std::wstring name;
 		Ref< Character > character;
-		Matrix33 transform;
-
-		Place();
-
-		void serialize(ISerializer& s);
 	};
 
 	const Character* getCharacter(const std::wstring& id) const;
 
-	void place(const std::wstring& name, Character* character, const Matrix33& transform);
+	void place(const std::wstring& name, Character* character);
 
-	virtual Ref< CharacterInstance > createInstance(const CharacterInstance* parent, resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer, bool createComponents) const;
+	const AlignedVector< NamedCharacter >& getDictionary() { return m_dictionary; }
+
+	const AlignedVector< NamedCharacter >& getFrame() const { return m_frame; }
 
 	virtual void serialize(ISerializer& s);
 
-	const SmallMap< std::wstring, Ref< Character > >& getCharacters() { return m_characters; }
-
-	const AlignedVector< Place >& getPlacements() const { return m_place; }
-
 private:
 	friend class CharacterPipeline;
+	friend class SpriteFactory;
 
 	RefArray< IComponent > m_components;
 	resource::Id< Shape > m_shape;
-	SmallMap< std::wstring, Ref< Character > > m_characters;
-	AlignedVector< Place > m_place;
+	AlignedVector< NamedCharacter > m_dictionary;
+	AlignedVector< NamedCharacter > m_frame;
 };
 
 	}

@@ -3,13 +3,12 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyGroup.h"
-#include "Database/Instance.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
-#include "Spark/External.h"
+#include "Spark/CharacterInstance.h"
 #include "Spark/SparkRenderer.h"
-#include "Spark/Sprite.h"
-#include "Spark/SpriteInstance.h"
+#include "Spark/Editor/CharacterAdapter.h"
+#include "Spark/Editor/Context.h"
 #include "Spark/Editor/SparkEditControl.h"
 #include "Ui/Itf/IWidget.h"
 #include "Ui/Application.h"
@@ -82,9 +81,10 @@ void drawBound(CharacterInstance* character, render::PrimitiveRenderer* primitiv
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.SparkEditControl", SparkEditControl, ui::Widget)
 
-SparkEditControl::SparkEditControl(editor::IEditor* editor, editor::IEditorPageSite* site)
+SparkEditControl::SparkEditControl(editor::IEditor* editor, editor::IEditorPageSite* site, Context* context)
 :	m_editor(editor)
 ,	m_site(site)
+,	m_context(context)
 ,	m_editMode(EmIdle)
 ,	m_viewWidth(1920)
 ,	m_viewHeight(1080)
@@ -96,7 +96,6 @@ SparkEditControl::SparkEditControl(editor::IEditor* editor, editor::IEditorPageS
 bool SparkEditControl::create(
 	ui::Widget* parent,
 	int style,
-	db::Database* database,
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem
 )
@@ -129,9 +128,6 @@ bool SparkEditControl::create(
 	addEventHandler< ui::MouseMoveEvent >(this, &SparkEditControl::eventMouseMove);
 	addEventHandler< ui::MouseWheelEvent >(this, &SparkEditControl::eventMouseWheel);
 
-	m_database = database;
-	m_resourceManager = resourceManager;
-
 	m_idleEventHandler = ui::Application::getInstance()->addEventHandler< ui::IdleEvent >(this, &SparkEditControl::eventIdle);
 	return true;
 }
@@ -143,13 +139,6 @@ void SparkEditControl::destroy()
 	safeDestroy(m_primitiveRenderer);
 	safeClose(m_renderView);
 	Widget::destroy();
-}
-
-void SparkEditControl::setSprite(Sprite* sprite, SpriteInstance* spriteInstance)
-{
-	m_sprite = sprite;
-	m_spriteInstance = spriteInstance;
-	update();
 }
 
 void SparkEditControl::setViewSize(int32_t width, int32_t height)
@@ -191,23 +180,6 @@ Vector2 SparkEditControl::clientToView(const ui::Point& point) const
 		viewPosition.x(),
 		viewPosition.y()
 	);
-}
-
-CharacterInstance* SparkEditControl::hitTest(const ui::Point& point) const
-{
-	Vector2 position = clientToView(point);
-
-	RefArray< CharacterInstance > characters;
-	m_spriteInstance->getCharacters(characters);
-
-	for (int32_t i = int32_t(characters.size() - 1); i >= 0; --i)
-	{
-		Vector2 localPosition = characters[i]->getTransform().inverse() * position;
-		if (characters[i]->getBounds().inside(localPosition))
-			return characters[i];
-	}
-
-	return 0;
 }
 
 void SparkEditControl::eventSize(ui::SizeEvent* event)
@@ -290,20 +262,19 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 		}
 
 		// Draw sprites.
-		if (m_sparkRenderer && m_spriteInstance)
+		if (m_sparkRenderer && m_context->getRoot())
 		{
-			m_sparkRenderer->build(m_spriteInstance, 0);
+			m_sparkRenderer->build(m_context->getRoot()->getCharacterInstance(), 0);
 			m_sparkRenderer->render(m_renderView, projection, 0);
 
-			// Draw bounding boxes of children to this sprite.
+			// Draw bounding boxes.
 			if (m_primitiveRenderer->begin(m_renderView, projection))
 			{
 				m_primitiveRenderer->pushDepthState(false, false, false);
 
-				RefArray< CharacterInstance > children;
-				m_spriteInstance->getCharacters(children);
-				for (RefArray< CharacterInstance >::const_iterator i = children.begin(); i != children.end(); ++i)
-					drawBound(*i, m_primitiveRenderer);
+				const RefArray< CharacterAdapter >& children = m_context->getRoot()->getChildren();
+				for (RefArray< CharacterAdapter >::const_iterator i = children.begin(); i != children.end(); ++i)
+					drawBound((*i)->getCharacterInstance(), m_primitiveRenderer);
 
 				m_primitiveRenderer->popDepthState();
 				m_primitiveRenderer->end();
@@ -322,7 +293,8 @@ void SparkEditControl::eventMouseButtonDown(ui::MouseButtonDownEvent* event)
 	m_lastMousePosition = event->getPosition();
 	if ((event->getKeyState() & ui::KsMenu) == 0)
 	{
-		if ((m_editCharacter = hitTest(event->getPosition())) != 0)
+		Vector2 viewPosition = clientToView(event->getPosition());
+		if ((m_editCharacter = m_context->hitTest(viewPosition)) != 0)
 		{
 			m_editMode = EmMoveCharacter;
 			setCapture();
@@ -361,8 +333,9 @@ void SparkEditControl::eventMouseMove(ui::MouseMoveEvent* event)
 	{
 		Vector2 from = clientToView(m_lastMousePosition);
 		Vector2 to = clientToView(mousePosition);
-		Vector2 position = m_editCharacter->getPosition();
-		m_editCharacter->setPosition(position + (to - from));
+		Vector2 delta = to - from;
+		Matrix33 T = m_editCharacter->getTransform();
+		m_editCharacter->setTransform(translate(delta.x, delta.y) * T);
 	}
 	m_lastMousePosition = mousePosition;
 	update();

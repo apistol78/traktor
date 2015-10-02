@@ -1,11 +1,9 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberEnum.h"
-#include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 #include "Spark/Font.h"
 #include "Spark/Text.h"
-#include "Spark/TextInstance.h"
 
 namespace traktor
 {
@@ -21,23 +19,6 @@ Text::Text()
 ,	m_horizontalAlign(AnLeft)
 ,	m_verticalAlign(AnTop)
 {
-}
-
-Ref< CharacterInstance > Text::createInstance(const CharacterInstance* parent, resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer, bool createComponents) const
-{
-	resource::Proxy< Font > font;
-	if (m_font)
-	{
-		if (!resourceManager->bind(m_font, font))
-			return 0;
-	}
-	Ref< TextInstance > instance = new TextInstance(parent, font);
-	instance->setText(m_text);
-	instance->setHeight(m_height);
-	instance->setBounds(Aabb2(-m_origin, -m_origin + m_size));
-	instance->setHorizontalAlign(m_horizontalAlign);
-	instance->setVerticalAlign(m_verticalAlign);
-	return instance;
 }
 
 void Text::serialize(ISerializer& s)
@@ -56,6 +37,8 @@ void Text::serialize(ISerializer& s)
 		{ L"AnBottom", AnBottom },
 		{ 0 }
 	};
+
+	Character::serialize(s);
 
 	s >> resource::Member< Font >(L"font", m_font);
 	s >> Member< std::wstring >(L"text", m_text);
