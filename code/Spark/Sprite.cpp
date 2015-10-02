@@ -4,101 +4,80 @@
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Core/Serialization/MemberSmallMap.h"
-#include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 #include "Spark/IComponent.h"
 #include "Spark/Shape.h"
 #include "Spark/Sprite.h"
-#include "Spark/SpriteInstance.h"
 
 namespace traktor
 {
 	namespace spark
 	{
+		namespace
+		{
+
+class MemberNamedCharacter : public MemberComplex
+{
+public:
+	MemberNamedCharacter(const wchar_t* const name, Sprite::NamedCharacter& ref)
+	:	MemberComplex(name, true)
+	,	m_ref(ref)
+	{
+	}
+
+	virtual void serialize(ISerializer& s) const
+	{
+		s >> Member< std::wstring >(L"name", m_ref.name);
+		s >> MemberRef< Character >(L"character", m_ref.character);
+	}
+
+private:
+	Sprite::NamedCharacter& m_ref;
+};
+
+class FindNamedCharacter
+{
+public:
+	FindNamedCharacter(const std::wstring& name)
+	:	m_name(name)
+	{
+	}
+
+	bool operator () (const Sprite::NamedCharacter& nc) const
+	{
+		return nc.name == m_name;
+	}
+
+private:
+	std::wstring m_name;
+};
+
+		}
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spark.Sprite", 0, Sprite, Character)
 
 const Character* Sprite::getCharacter(const std::wstring& id) const
 {
-	SmallMap< std::wstring, Ref< Character > >::const_iterator i = m_characters.find(id);
-	return i != m_characters.end() ? i->second : 0;
+	AlignedVector< NamedCharacter >::const_iterator i = std::find_if(m_dictionary.begin(), m_dictionary.end(), FindNamedCharacter(id));
+	return i != m_dictionary.end() ? i->character : 0;
 }
 
-void Sprite::place(const std::wstring& name, Character* character, const Matrix33& transform)
+void Sprite::place(const std::wstring& name, Character* character)
 {
-	Place p;
-	p.name = name;
-	p.character = character;
-	p.transform = transform;
-	m_place.push_back(p);
-}
-
-Ref< CharacterInstance > Sprite::createInstance(const CharacterInstance* parent, resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer, bool createComponents) const
-{
-	Ref< SpriteInstance > instance = new SpriteInstance(this, parent, resourceManager, soundPlayer);
-
-	// Create this sprite's shape.
-	if (m_shape)
-	{
-		if (!resourceManager->bind(m_shape, instance->m_shape))
-			return 0;
-	}
-
-	// Create child characters.
-	int32_t depth = -100000;
-	for (AlignedVector< Place >::const_iterator i = m_place.begin(); i != m_place.end(); ++i)
-	{
-		if (!i->character)
-			continue;
-
-		Ref< CharacterInstance > placeInstance = i->character->createInstance(instance, resourceManager, soundPlayer, createComponents);
-		if (!placeInstance)
-			return 0;
-
-		placeInstance->setName(i->name);
-		placeInstance->setTransform(i->transform);
-
-		instance->place(depth, placeInstance);
-		++depth;
-	}
-
-	// Create components.
-	if (createComponents)
-	{
-		for (size_t i = 0; i < m_components.size(); ++i)
-		{
-			if (!m_components[i])
-				continue;
-
-			Ref< IComponentInstance > componentInstance = m_components[i]->createInstance(instance, resourceManager, soundPlayer);
-			if (!componentInstance)
-				return 0;
-
-			instance->setComponent(type_of(m_components[i]), componentInstance);
-		}
-	}
-
-	return instance;
+	NamedCharacter nc;
+	nc.name = name;
+	nc.character = character;
+	m_frame.push_back(nc);
 }
 
 void Sprite::serialize(ISerializer& s)
 {
+	Character::serialize(s);
+
 	s >> MemberRefArray< IComponent >(L"components", m_components);
 	s >> resource::Member< Shape >(L"shape", m_shape);
-	s >> MemberSmallMap< std::wstring, Ref< Character >, Member< std::wstring >, MemberRef< Character > >(L"characters", m_characters);
-	s >> MemberAlignedVector< Place, MemberComposite< Place > >(L"place", m_place);
-}
-
-Sprite::Place::Place()
-:	transform(Matrix33::identity())
-{
-}
-
-void Sprite::Place::serialize(ISerializer& s)
-{
-	s >> Member< std::wstring >(L"name", name);
-	s >> MemberRef< Character >(L"character", character);
-	s >> Member< Matrix33 >(L"transform", transform);
+	s >> MemberAlignedVector< NamedCharacter, MemberNamedCharacter >(L"dictionary", m_dictionary);
+	s >> MemberAlignedVector< NamedCharacter, MemberNamedCharacter >(L"frame", m_frame);
 }
 
 	}

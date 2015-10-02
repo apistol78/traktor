@@ -18,23 +18,10 @@
 
 namespace traktor
 {
-	namespace resource
-	{
-
-class IResourceManager;
-
-	}
-
-	namespace sound
-	{
-
-class ISoundPlayer;
-
-	}
-
 	namespace spark
 	{
 
+class ICharacterBuilder;
 class IComponentInstance;
 class Shape;
 class Sprite;
@@ -47,7 +34,7 @@ class T_DLLCLASS SpriteInstance : public CharacterInstance
 	T_RTTI_CLASS;
 
 public:
-	SpriteInstance(const Sprite* sprite, const CharacterInstance* parent, resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer);
+	SpriteInstance(const ICharacterBuilder* builder, const Sprite* sprite, const CharacterInstance* parent);
 
 	Ref< CharacterInstance > create(const std::wstring& id) const;
 
@@ -97,11 +84,10 @@ public:
 	virtual void render(render::RenderContext* renderContext) const T_FINAL;
 
 private:
-	friend class Sprite;
+	friend class SpriteFactory;
 
+	Ref< const ICharacterBuilder > m_builder;
 	Ref< const Sprite > m_sprite;
-	Ref< resource::IResourceManager > m_resourceManager;
-	Ref< sound::ISoundPlayer > m_soundPlayer;
 	resource::Proxy< Shape > m_shape;
 	DisplayList m_displayList;
 	ColorTransform m_colorTransform;

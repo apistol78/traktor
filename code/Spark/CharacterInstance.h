@@ -37,6 +37,10 @@ public:
 
 	/*! \brief
 	 */
+	const CharacterInstance* getParent() const;
+
+	/*! \brief
+	 */
 	void setName(const std::wstring& name);
 
 	/*! \brief

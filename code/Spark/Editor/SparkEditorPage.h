@@ -49,9 +49,8 @@ class ToolBarDropDown;
 	namespace spark
 	{
 
+class Context;
 class SparkEditControl;
-class Sprite;
-class SpriteInstance;
 
 /*! \brief
  * \ingroup Spark
@@ -82,6 +81,7 @@ private:
 	editor::IEditorPageSite* m_site;
 	editor::IDocument* m_document;
 	Ref< resource::IResourceManager > m_resourceManager;
+	Ref< Context > m_context;
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::ToolBarDropDown > m_toolViewSize;
 	Ref< ui::custom::ToolBarButton > m_toolViewLandscape;
@@ -90,9 +90,6 @@ private:
 	Ref< ui::custom::GridView > m_gridPlace;
 	Ref< ui::Container > m_panelLibrary;
 	Ref< ui::custom::GridView > m_gridLibrary;
-
-	Ref< Sprite > m_sprite;
-	Ref< SpriteInstance > m_spriteInstance;
 
 	void eventToolClick(ui::custom::ToolBarButtonClickEvent* event);
 };

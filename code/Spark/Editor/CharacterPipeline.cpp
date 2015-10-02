@@ -62,11 +62,11 @@ bool CharacterPipeline::buildDependencies(
 			}
 		}
 
-		for (AlignedVector< Sprite::Place >::const_iterator i = sprite->m_place.begin(); i != sprite->m_place.end(); ++i)
+		for (AlignedVector< Sprite::NamedCharacter >::const_iterator i = sprite->m_dictionary.begin(); i != sprite->m_dictionary.end(); ++i)
 			pipelineDepends->addDependency(i->character);
 
-		for (SmallMap< std::wstring, Ref< Character > >::const_iterator i = sprite->m_characters.begin(); i != sprite->m_characters.end(); ++i)
-			pipelineDepends->addDependency(i->second);
+		for (AlignedVector< Sprite::NamedCharacter >::const_iterator i = sprite->m_frame.begin(); i != sprite->m_frame.end(); ++i)
+			pipelineDepends->addDependency(i->character);
 	}
 	else if (const Text* text = dynamic_type_cast< const Text* >(character))
 	{

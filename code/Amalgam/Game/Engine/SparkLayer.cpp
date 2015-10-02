@@ -9,10 +9,14 @@
 #include "Render/RenderTargetSet.h"
 #include "Render/ImageProcess/ImageProcess.h"
 #include "Render/ImageProcess/ImageProcessSettings.h"
+#include "Spark/CharacterBuilder.h"
+#include "Spark/ExternalFactory.h"
 #include "Spark/SparkPlayer.h"
 #include "Spark/SparkRenderer.h"
 #include "Spark/Sprite.h"
+#include "Spark/SpriteFactory.h"
 #include "Spark/SpriteInstance.h"
+#include "Spark/TextFactory.h"
 
 namespace traktor
 {
@@ -66,26 +70,33 @@ void SparkLayer::transition(Layer* fromLayer)
 
 void SparkLayer::prepare()
 {
+	// Create character builder.
+	if (!m_characterBuilder)
+	{
+		m_characterBuilder = new spark::CharacterBuilder();
+		m_characterBuilder->addFactory(new spark::ExternalFactory(m_environment->getResource()->getResourceManager()));
+		m_characterBuilder->addFactory(new spark::SpriteFactory(m_environment->getResource()->getResourceManager(), m_environment->getAudio() ? m_environment->getAudio()->getSoundPlayer() : 0, true));
+		m_characterBuilder->addFactory(new spark::TextFactory(m_environment->getResource()->getResourceManager()));
+	}
+
+	// Create renderer.
 	if (!m_sparkRenderer)
 	{
 		m_sparkRenderer = new spark::SparkRenderer();
 		m_sparkRenderer->create(m_environment->getRender()->getThreadFrameQueueCount());
 	}
 
+	// Create instance of root sprite.
 	if (!m_spriteInstance)
 	{
-		m_spriteInstance = checked_type_cast< spark::SpriteInstance* >(m_sprite->createInstance(
-			0,
-			m_environment->getResource()->getResourceManager(),
-			m_environment->getAudio() ? m_environment->getAudio()->getSoundPlayer() : 0,
-			true
-		));
+		m_spriteInstance = checked_type_cast< spark::SpriteInstance* >(m_characterBuilder->create(m_sprite, 0, L""));
 		if (m_spriteInstance)
 			m_sparkPlayer = new spark::SparkPlayer(m_spriteInstance);
 		else
 			m_sparkPlayer = 0;
 	}
 
+	// Create post image processing.
 	if (m_imageProcessSettings && !m_imageProcess)
 	{
 		resource::IResourceManager* resourceManager = m_environment->getResource()->getResourceManager();

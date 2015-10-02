@@ -45,6 +45,11 @@ CharacterInstance::CharacterInstance(const CharacterInstance* parent)
 {
 }
 
+const CharacterInstance* CharacterInstance::getParent() const
+{
+	return m_parent;
+}
+
 void CharacterInstance::setName(const std::wstring& name)
 {
 	m_name = name;
