@@ -296,7 +296,17 @@ void SparkEditControl::eventMouseButtonDown(ui::MouseButtonDownEvent* event)
 		Vector2 viewPosition = clientToView(event->getPosition());
 		if ((m_editCharacter = m_context->hitTest(viewPosition)) != 0)
 		{
-			m_editMode = EmMoveCharacter;
+			if ((event->getKeyState() & ui::KsControl) == 0)
+			{
+				m_editMode = EmMoveCharacter;
+				m_editAxisFactor = Vector2(1.0f, 1.0f);
+			}
+			else
+			{
+				m_editMode = EmMoveCharacterAxis;
+				m_editAxisFactor = Vector2(0.0f, 0.0f);
+			}
+
 			setCapture();
 		}
 	}
@@ -329,11 +339,24 @@ void SparkEditControl::eventMouseMove(ui::MouseMoveEvent* event)
 		);
 		m_viewOffset += 2.0f * deltaMove / m_viewScale;
 	}
-	else if (m_editMode == EmMoveCharacter)
+	else if (m_editMode == EmMoveCharacter || m_editMode == EmMoveCharacterAxis)
 	{
 		Vector2 from = clientToView(m_lastMousePosition);
 		Vector2 to = clientToView(mousePosition);
 		Vector2 delta = to - from;
+
+		if (m_editMode == EmMoveCharacterAxis)
+		{
+			if (abs(delta.x) > abs(delta.y))
+				m_editAxisFactor = Vector2(1.0f, 0.0f);
+			else
+				m_editAxisFactor = Vector2(0.0f, 1.0f);
+
+			m_editMode = EmMoveCharacter;
+		}
+
+		delta *= m_editAxisFactor;
+
 		Matrix33 T = m_editCharacter->getTransform();
 		m_editCharacter->setTransform(translate(delta.x, delta.y) * T);
 	}

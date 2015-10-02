@@ -64,7 +64,8 @@ private:
 	{
 		EmIdle,
 		EmPanView,
-		EmMoveCharacter
+		EmMoveCharacter,
+		EmMoveCharacterAxis
 	};
 
 	editor::IEditor* m_editor;
@@ -76,6 +77,7 @@ private:
 	Ref< ui::EventSubject::IEventHandler > m_idleEventHandler;
 	ui::Point m_lastMousePosition;
 	EditMode m_editMode;
+	Vector2 m_editAxisFactor;
 	Ref< CharacterAdapter > m_editCharacter;
 	int32_t m_viewWidth;
 	int32_t m_viewHeight;
