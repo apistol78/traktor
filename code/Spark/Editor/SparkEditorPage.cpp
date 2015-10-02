@@ -123,6 +123,7 @@ bool SparkEditorPage::create(ui::Container* parent)
 	m_gridPlace->addColumn(new ui::custom::GridColumn(i18n::Text(L"SPARK_EDITOR_PLACE_ITEM_NAME"), 200));
 	m_gridPlace->addColumn(new ui::custom::GridColumn(L"", 30));
 	m_gridPlace->addColumn(new ui::custom::GridColumn(L"", 30));
+	m_gridPlace->addEventHandler< ui::SelectionChangeEvent >(this, &SparkEditorPage::eventGridAdapterSelectionChange);
 
 	m_site->createAdditionalPanel(m_panelPlace, ui::scaleBySystemDPI(300), false);
 
@@ -137,16 +138,7 @@ bool SparkEditorPage::create(ui::Container* parent)
 
 	m_site->createAdditionalPanel(m_panelLibrary, ui::scaleBySystemDPI(300), false);
 
-	// Update character outline grid.
-	const RefArray< CharacterAdapter >& adapters = m_context->getAdapters();
-	for (RefArray< CharacterAdapter >::const_iterator i = adapters.begin(); i != adapters.end(); ++i)
-	{
-		Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
-		row->add(new ui::custom::GridItem(!(*i)->getName().empty() ? (*i)->getName() : L"<< Unnamed >>"));
-		row->add(new ui::custom::GridItem(type_name((*i)->getCharacter())));
-		row->setData(L"ADAPTER", *i);
-		m_gridPlace->addRow(row);
-	}
+	updateAdaptersGrid();
 
 	m_site->setPropertyObject(m_document->getObject< Sprite >(0));
 	return true;
@@ -197,6 +189,33 @@ void SparkEditorPage::handleDatabaseEvent(db::Database* database, const Guid& ev
 		m_resourceManager->reload(eventId, false);
 }
 
+void SparkEditorPage::updateAdaptersGrid(ui::custom::GridRow* parentRow, CharacterAdapter* adapter)
+{
+	const RefArray< CharacterAdapter >& children = adapter->getChildren();
+	for (RefArray< CharacterAdapter >::const_iterator i = children.begin(); i != children.end(); ++i)
+	{
+		Ref< ui::custom::GridRow > row = new ui::custom::GridRow(0);
+		row->add(new ui::custom::GridItem(!(*i)->getName().empty() ? (*i)->getName() : L"Unnamed"));
+		row->add(new ui::custom::GridItem(type_name((*i)->getCharacter())));
+		row->setData(L"ADAPTER", *i);
+
+		if (!(*i)->getChildren().empty())
+			updateAdaptersGrid(row, *i);
+
+		if (parentRow)
+			parentRow->addChild(row);
+		else
+			m_gridPlace->addRow(row);
+	}
+}
+
+void SparkEditorPage::updateAdaptersGrid()
+{
+	m_gridPlace->removeAllRows();
+	updateAdaptersGrid(0, m_context->getRoot());
+	m_gridPlace->update();
+}
+
 void SparkEditorPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* event)
 {
 	if (event->getCommand() == L"Spark.Editor.ViewSize")
@@ -207,6 +226,10 @@ void SparkEditorPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* event)
 		else
 			m_editControl->setViewSize(c_viewSizes[index].height, c_viewSizes[index].width);
 	}
+}
+
+void SparkEditorPage::eventGridAdapterSelectionChange(ui::SelectionChangeEvent* event)
+{
 }
 
 	}

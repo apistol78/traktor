@@ -33,10 +33,12 @@ class IResourceManager;
 	{
 
 class Container;
+class SelectionChangeEvent;
 
 		namespace custom
 		{
 
+class GridRow;
 class GridView;
 class ToolBar;
 class ToolBarButton;
@@ -49,6 +51,7 @@ class ToolBarDropDown;
 	namespace spark
 	{
 
+class CharacterAdapter;
 class Context;
 class SparkEditControl;
 
@@ -91,7 +94,13 @@ private:
 	Ref< ui::Container > m_panelLibrary;
 	Ref< ui::custom::GridView > m_gridLibrary;
 
+	void updateAdaptersGrid(ui::custom::GridRow* parentRow, CharacterAdapter* adapter);
+
+	void updateAdaptersGrid();
+
 	void eventToolClick(ui::custom::ToolBarButtonClickEvent* event);
+
+	void eventGridAdapterSelectionChange(ui::SelectionChangeEvent* event);
 };
 
 	}
