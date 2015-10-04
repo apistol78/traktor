@@ -61,9 +61,7 @@ public:
 		IEnvironment* environment,
 		const resource::Proxy< spark::Sprite >& sprite,
 		const resource::Proxy< render::ImageProcessSettings >& imageProcessSettings,
-		const Color4ub& background,
-		int32_t width,
-		int32_t height
+		const Color4ub& background
 	);
 
 	virtual ~SparkLayer();
@@ -116,8 +114,6 @@ private:
 	Ref< render::ImageProcess > m_imageProcess;
 	Color4ub m_background;
 	Matrix44 m_projection;
-	int32_t m_width;
-	int32_t m_height;
 	LastMouseState m_lastMouse[8];
 	int32_t m_lastMouseX;
 	int32_t m_lastMouseY;

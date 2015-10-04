@@ -31,34 +31,12 @@
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
-#include "Ui/Custom/ToolBar/ToolBarDropDown.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 
 namespace traktor
 {
 	namespace spark
 	{
-		namespace
-		{
-
-const struct ViewSize
-{
-	int32_t width;
-	int32_t height;
-	const wchar_t* description;
-}
-c_viewSizes[] =
-{
-	{ 320, 480, L"320 * 480 (iPhone)" },
-	{ 640, 960, L"640 * 960 (iPhone Retina)" },
-	{ 640, 1136, L"640 * 1136 (iPhone 5)" },
-	{ 750, 1334, L"750 * 1334 (iPhone 6)" },
-	{ 1080, 1920, L"1080 * 1920 (iPhone 6+)" },
-	{ 768, 1024, L"768 * 1024 (iPad)" },
-	{ 1536, 2048, L"1536 * 2048 (iPad Retina)" }
-};
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.SparkEditorPage", SparkEditorPage, editor::IEditorPage)
 
@@ -97,21 +75,10 @@ bool SparkEditorPage::create(ui::Container* parent)
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(container, ui::WsNone);
 
-	m_toolViewSize = new ui::custom::ToolBarDropDown(ui::Command(L"Spark.Editor.ViewSize"), ui::scaleBySystemDPI(220), i18n::Text(L"SPARK_EDITOR_VIEW_SIZE"));
-	for (int32_t i = 0; i < sizeof_array(c_viewSizes); ++i)
-		m_toolViewSize->add(c_viewSizes[i].description);
-	m_toolViewSize->select(0);
-
-	m_toolViewLandscape = new ui::custom::ToolBarButton(L"Landscape", ui::Command(L"Spark.Editor.ViewSize"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggle);
-
-	m_toolBar->addItem(m_toolViewSize);
-	m_toolBar->addItem(m_toolViewLandscape);
-
 	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &SparkEditorPage::eventToolClick);
 
 	m_editControl = new SparkEditControl(m_editor, m_site, m_context);
 	m_editControl->create(container, ui::WsNone, m_resourceManager, renderSystem);
-	m_editControl->setViewSize(c_viewSizes[0].width, c_viewSizes[0].height);
 	m_editControl->update();
 
 	m_panelPlace = new ui::Container();
@@ -218,14 +185,6 @@ void SparkEditorPage::updateAdaptersGrid()
 
 void SparkEditorPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* event)
 {
-	if (event->getCommand() == L"Spark.Editor.ViewSize")
-	{
-		int32_t index = m_toolViewSize->getSelected();
-		if (!m_toolViewLandscape->isToggled())
-			m_editControl->setViewSize(c_viewSizes[index].width, c_viewSizes[index].height);
-		else
-			m_editControl->setViewSize(c_viewSizes[index].height, c_viewSizes[index].width);
-	}
 }
 
 void SparkEditorPage::eventGridAdapterSelectionChange(ui::SelectionChangeEvent* event)

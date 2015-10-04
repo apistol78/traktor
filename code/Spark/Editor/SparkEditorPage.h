@@ -43,7 +43,6 @@ class GridView;
 class ToolBar;
 class ToolBarButton;
 class ToolBarButtonClickEvent;
-class ToolBarDropDown;
 
 		}
 	}
@@ -86,8 +85,6 @@ private:
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< Context > m_context;
 	Ref< ui::custom::ToolBar > m_toolBar;
-	Ref< ui::custom::ToolBarDropDown > m_toolViewSize;
-	Ref< ui::custom::ToolBarButton > m_toolViewLandscape;
 	Ref< SparkEditControl > m_editControl;
 	Ref< ui::Container > m_panelPlace;
 	Ref< ui::custom::GridView > m_gridPlace;

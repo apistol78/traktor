@@ -32,17 +32,13 @@ SparkLayer::SparkLayer(
 	IEnvironment* environment,
 	const resource::Proxy< spark::Sprite >& sprite,
 	const resource::Proxy< render::ImageProcessSettings >& imageProcessSettings,
-	const Color4ub& background,
-	int32_t width,
-	int32_t height
+	const Color4ub& background
 )
 :	Layer(stage, name, permitTransition)
 ,	m_environment(environment)
 ,	m_sprite(sprite)
 ,	m_imageProcessSettings(imageProcessSettings)
 ,	m_background(background)
-,	m_width(width)
-,	m_height(height)
 ,	m_lastMouseX(-1)
 ,	m_lastMouseY(-1)
 {
@@ -325,17 +321,18 @@ spark::SpriteInstance* SparkLayer::getSprite() const
 void SparkLayer::updateProjection()
 {
 	float viewRatio = m_environment->getRender()->getAspectRatio();
+	const Aabb2& bounds = m_sprite->getBounds();
 
-	float renderWidth = float(m_width);
+	float renderWidth = bounds.mx.x - bounds.mn.x;
 	float renderHeight = renderWidth / viewRatio;
-	if (renderHeight < m_height)
+	if (renderHeight < bounds.mx.y - bounds.mn.y)
 	{
-		renderHeight = float(m_height);
-		renderWidth = m_height * viewRatio;
+		renderHeight = bounds.mx.y - bounds.mn.y;
+		renderWidth = renderHeight * viewRatio;
 	}
 
-	float offsetX = renderWidth - float(m_width);
-	float offsetY = renderHeight - float(m_height);
+	float offsetX = renderWidth - bounds.mx.x + bounds.mn.x;
+	float offsetY = renderHeight - bounds.mx.y + bounds.mn.y;
 
 	m_projection = Matrix44(
 		2.0f / renderWidth, 0.0f, 0.0f, -1.0f + offsetX / renderWidth,

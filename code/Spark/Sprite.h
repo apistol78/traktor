@@ -3,6 +3,7 @@
 
 #include "Core/RefArray.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Math/Aabb2.h"
 #include "Resource/Id.h"
 #include "Spark/Character.h"
 
@@ -36,6 +37,8 @@ public:
 		Ref< Character > character;
 	};
 
+	const Aabb2& getBounds() const { return m_bounds; }
+
 	const Character* getCharacter(const std::wstring& id) const;
 
 	void place(const std::wstring& name, Character* character);
@@ -51,6 +54,7 @@ private:
 	friend class SpriteFactory;
 
 	RefArray< IComponent > m_components;
+	Aabb2 m_bounds;
 	resource::Id< Shape > m_shape;
 	AlignedVector< NamedCharacter > m_dictionary;
 	AlignedVector< NamedCharacter > m_frame;

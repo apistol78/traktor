@@ -86,8 +86,6 @@ SparkEditControl::SparkEditControl(editor::IEditor* editor, editor::IEditorPageS
 ,	m_site(site)
 ,	m_context(context)
 ,	m_editMode(EmIdle)
-,	m_viewWidth(1920)
-,	m_viewHeight(1080)
 ,	m_viewOffset(1920.0f, 1080.0f)
 ,	m_viewScale(0.3f)
 {
@@ -139,16 +137,6 @@ void SparkEditControl::destroy()
 	safeDestroy(m_primitiveRenderer);
 	safeClose(m_renderView);
 	Widget::destroy();
-}
-
-void SparkEditControl::setViewSize(int32_t width, int32_t height)
-{
-	if (width != m_viewWidth || height != m_viewHeight)
-	{
-		m_viewWidth = width;
-		m_viewHeight = height;
-		update();
-	}
 }
 
 Vector2 SparkEditControl::clientToView(const ui::Point& point) const
@@ -235,27 +223,29 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 		{
 			m_primitiveRenderer->pushDepthState(false, false, false);
 
-			for (int32_t x = 0; x < m_viewWidth; x += 40)
+			const Aabb2& bounds = m_context->getRoot()->getCharacterInstance()->getBounds();
+
+			for (int32_t x = int32_t(bounds.mn.x); x < int32_t(bounds.mx.x); x += 40)
 			{
 				m_primitiveRenderer->drawLine(
-					Vector4(x, 0.0f, 1.0f, 1.0f),
-					Vector4(x, m_viewHeight, 1.0f, 1.0f),
+					Vector4(x, bounds.mn.y, 1.0f, 1.0f),
+					Vector4(x, bounds.mx.y, 1.0f, 1.0f),
 					Color4ub(0, 0, 0, 40)
 				);
 			}
-			for (int32_t y = 0; y < m_viewHeight; y += 40)
+			for (int32_t y = int32_t(bounds.mn.y); y < int32_t(bounds.mx.y); y += 40)
 			{
 				m_primitiveRenderer->drawLine(
-					Vector4(0.0f, y, 1.0f, 1.0f),
-					Vector4(m_viewWidth, y, 1.0f, 1.0f),
+					Vector4(bounds.mn.x, y, 1.0f, 1.0f),
+					Vector4(bounds.mx.x, y, 1.0f, 1.0f),
 					Color4ub(0, 0, 0, 40)
 				);
 			}
 
-			m_primitiveRenderer->drawLine(Vector4(0.0f, 0.0f, 1.0f, 1.0f), Vector4(m_viewWidth, 0.0f, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
-			m_primitiveRenderer->drawLine(Vector4(m_viewWidth, 0.0f, 1.0f, 1.0f), Vector4(m_viewWidth, m_viewHeight, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
-			m_primitiveRenderer->drawLine(Vector4(m_viewWidth, m_viewHeight, 1.0f, 1.0f), Vector4(0.0f, m_viewHeight, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
-			m_primitiveRenderer->drawLine(Vector4(0.0f, m_viewHeight, 1.0f, 1.0f), Vector4(0.0f, 0.0f, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
+			m_primitiveRenderer->drawLine(Vector4(bounds.mn.x, bounds.mn.y, 1.0f, 1.0f), Vector4(bounds.mx.x, bounds.mn.y, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
+			m_primitiveRenderer->drawLine(Vector4(bounds.mx.x, bounds.mn.y, 1.0f, 1.0f), Vector4(bounds.mx.x, bounds.mx.y, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
+			m_primitiveRenderer->drawLine(Vector4(bounds.mx.x, bounds.mx.y, 1.0f, 1.0f), Vector4(bounds.mn.x, bounds.mx.y, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
+			m_primitiveRenderer->drawLine(Vector4(bounds.mn.x, bounds.mx.y, 1.0f, 1.0f), Vector4(bounds.mn.x, bounds.mn.y, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
 
 			m_primitiveRenderer->popDepthState();
 			m_primitiveRenderer->end();

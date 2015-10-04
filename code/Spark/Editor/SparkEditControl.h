@@ -57,8 +57,6 @@ public:
 
 	void destroy();
 
-	void setViewSize(int32_t width, int32_t height);
-
 private:
 	enum EditMode
 	{
@@ -79,8 +77,6 @@ private:
 	EditMode m_editMode;
 	Vector2 m_editAxisFactor;
 	Ref< CharacterAdapter > m_editCharacter;
-	int32_t m_viewWidth;
-	int32_t m_viewHeight;
 	Vector2 m_viewOffset;
 	float m_viewScale;
 

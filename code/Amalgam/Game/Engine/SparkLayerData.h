@@ -52,8 +52,6 @@ private:
 	resource::Id< spark::Sprite > m_sprite;
 	resource::Id< render::ImageProcessSettings > m_imageProcess;
 	Color4ub m_background;
-	int32_t m_width;
-	int32_t m_height;
 };
 
 	}

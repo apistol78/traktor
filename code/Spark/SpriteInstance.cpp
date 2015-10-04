@@ -222,7 +222,7 @@ void SpriteInstance::eventViewResize(int32_t width, int32_t height)
 
 Aabb2 SpriteInstance::getBounds() const
 {
-	Aabb2 bounds;
+	Aabb2 bounds = m_sprite->getBounds();
 
 	if (m_shape)
 		bounds = m_shape->getBounds();
