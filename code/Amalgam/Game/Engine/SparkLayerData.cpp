@@ -16,8 +16,6 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.SparkLayerData", LayerData::Ver
 
 SparkLayerData::SparkLayerData()
 :	m_background(0, 0, 0, 0)
-,	m_width(0)
-,	m_height(0)
 {
 }
 
@@ -46,9 +44,7 @@ Ref< Layer > SparkLayerData::createInstance(Stage* stage, IEnvironment* environm
 		environment,
 		sprite,
 		imageProcess,
-		m_background,
-		m_width,
-		m_height
+		m_background
 	);
 }
 
@@ -58,8 +54,6 @@ void SparkLayerData::serialize(ISerializer& s)
 	s >> resource::Member< spark::Sprite >(L"sprite", m_sprite);
 	s >> resource::Member< render::ImageProcessSettings >(L"imageProcess", m_imageProcess);
 	s >> Member< Color4ub >(L"background", m_background);
-	s >> Member< int32_t >(L"width", m_width);
-	s >> Member< int32_t >(L"height", m_height);
 }
 
 	}

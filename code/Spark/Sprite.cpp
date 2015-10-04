@@ -1,4 +1,5 @@
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberAabb.h"
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberRef.h"
@@ -75,6 +76,7 @@ void Sprite::serialize(ISerializer& s)
 	Character::serialize(s);
 
 	s >> MemberRefArray< IComponent >(L"components", m_components);
+	s >> MemberAabb2(L"bounds", m_bounds);
 	s >> resource::Member< Shape >(L"shape", m_shape);
 	s >> MemberAlignedVector< NamedCharacter, MemberNamedCharacter >(L"dictionary", m_dictionary);
 	s >> MemberAlignedVector< NamedCharacter, MemberNamedCharacter >(L"frame", m_frame);
