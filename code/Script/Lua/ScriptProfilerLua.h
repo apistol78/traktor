@@ -25,9 +25,9 @@ public:
 
 	virtual ~ScriptProfilerLua();
 
-	virtual void addListener(IListener* listener);
+	virtual void addListener(IListener* listener) T_OVERRIDE T_FINAL;
 
-	virtual void removeListener(IListener* listener);
+	virtual void removeListener(IListener* listener) T_OVERRIDE T_FINAL;
 
 private:
 	friend class ScriptManagerLua;

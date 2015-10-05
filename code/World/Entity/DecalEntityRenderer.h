@@ -44,20 +44,20 @@ public:
 		WorldContext& worldContext,
 		WorldRenderView& worldRenderView,
 		Entity* entity
-	);
+	) T_OVERRIDE T_FINAL;
 
 	virtual void render(
 		WorldContext& worldContext,
 		WorldRenderView& worldRenderView,
 		IWorldRenderPass& worldRenderPass,
 		Entity* entity
-	);
+	) T_OVERRIDE T_FINAL;
 
 	virtual void flush(
 		WorldContext& worldContext,
 		WorldRenderView& worldRenderView,
 		IWorldRenderPass& worldRenderPass
-	);
+	) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< render::VertexBuffer > m_vertexBuffer;

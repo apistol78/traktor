@@ -26,9 +26,9 @@ class T_DLLCLASS StaticSoundResource : public ISoundResource
 public:
 	StaticSoundResource();
 
-	virtual Ref< Sound > createSound(resource::IResourceManager* resourceManager, db::Instance* resourceInstance) const;
+	virtual Ref< Sound > createSound(resource::IResourceManager* resourceManager, db::Instance* resourceInstance) const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 	
 private:
 	friend class SoundPipeline;

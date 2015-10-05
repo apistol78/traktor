@@ -22,15 +22,15 @@ public:
 
 	virtual ~IndexBufferIAR();
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual void* lock();
+	virtual void* lock() T_OVERRIDE T_FINAL;
 	
-	virtual void unlock();
+	virtual void unlock() T_OVERRIDE T_FINAL;
 
-	virtual void bind();
+	virtual void bind() T_OVERRIDE T_FINAL;
 
-	virtual const GLvoid* getIndexData() const;
+	virtual const GLvoid* getIndexData() const T_OVERRIDE T_FINAL;
 	
 private:
 	Ref< IContext > m_resourceContext;

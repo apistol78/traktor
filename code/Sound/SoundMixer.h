@@ -24,17 +24,17 @@ class T_DLLCLASS SoundMixer : public ISoundMixer
 	T_RTTI_CLASS;
 
 public:
-	virtual void mulConst(float* sb, uint32_t count, float factor) const;
+	virtual void mulConst(float* sb, uint32_t count, float factor) const T_OVERRIDE T_FINAL;
 
-	virtual void mulConst(float* lsb, const float* rsb, uint32_t count, float factor) const;
+	virtual void mulConst(float* lsb, const float* rsb, uint32_t count, float factor) const T_OVERRIDE T_FINAL;
 
-	virtual void addMulConst(float* lsb, const float* rsb, uint32_t count, float factor) const;
+	virtual void addMulConst(float* lsb, const float* rsb, uint32_t count, float factor) const T_OVERRIDE T_FINAL;
 
-	virtual void stretch(float* lsb, uint32_t lcount, const float* rsb, uint32_t rcount, float factor) const;
+	virtual void stretch(float* lsb, uint32_t lcount, const float* rsb, uint32_t rcount, float factor) const T_OVERRIDE T_FINAL;
 
-	virtual void mute(float* sb, uint32_t count) const;
+	virtual void mute(float* sb, uint32_t count) const T_OVERRIDE T_FINAL;
 
-	virtual void synchronize() const;
+	virtual void synchronize() const T_OVERRIDE T_FINAL;
 };
 
 	}

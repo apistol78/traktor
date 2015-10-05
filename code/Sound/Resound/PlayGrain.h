@@ -38,15 +38,15 @@ public:
 		bool repeat
 	);
 
-	virtual Ref< ISoundBufferCursor > createCursor() const;
+	virtual Ref< ISoundBufferCursor > createCursor() const T_OVERRIDE T_FINAL;
 
-	virtual void updateCursor(ISoundBufferCursor* cursor) const;
+	virtual void updateCursor(ISoundBufferCursor* cursor) const T_OVERRIDE T_FINAL;
 
-	virtual const IGrain* getCurrentGrain(const ISoundBufferCursor* cursor) const;
+	virtual const IGrain* getCurrentGrain(const ISoundBufferCursor* cursor) const T_OVERRIDE T_FINAL;
 
-	virtual void getActiveGrains(const ISoundBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const;
+	virtual void getActiveGrains(const ISoundBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const T_OVERRIDE T_FINAL;
 
-	virtual bool getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const;
+	virtual bool getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const T_OVERRIDE T_FINAL;
 
 private:
 	resource::Proxy< Sound > m_sound;

@@ -24,9 +24,9 @@ class T_DLLCLASS BlendGrainData : public IGrainData
 public:
 	BlendGrainData();
 
-	virtual Ref< IGrain > createInstance(IGrainFactory* grainFactory) const;
+	virtual Ref< IGrain > createInstance(IGrainFactory* grainFactory) const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	const std::wstring& getId() const { return m_id; }
 

@@ -154,10 +154,5 @@ Any ScriptClassLua::invokeOperator(ITypedObject* object, uint8_t operation, cons
 	return Any();
 }
 
-bool ScriptClassLua::getMember(ITypedObject* object, const std::string& memberName, Any& outValue) const
-{
-	return false;
-}
-
 	}
 }

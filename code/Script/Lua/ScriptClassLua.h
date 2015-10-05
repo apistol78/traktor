@@ -24,37 +24,35 @@ public:
 
 	void addMethod(const std::string& name, int32_t ref);
 
-	virtual const TypeInfo& getExportType() const T_FINAL;
+	virtual const TypeInfo& getExportType() const T_OVERRIDE T_FINAL;
 
-	virtual bool haveConstructor() const T_FINAL;
+	virtual bool haveConstructor() const T_OVERRIDE T_FINAL;
 
-	virtual bool haveUnknown() const T_FINAL;
+	virtual bool haveUnknown() const T_OVERRIDE T_FINAL;
 
-	virtual Ref< ITypedObject > construct(ITypedObject* self, uint32_t argc, const Any* argv, const prototype_t& proto) const T_FINAL;
+	virtual Ref< ITypedObject > construct(ITypedObject* self, uint32_t argc, const Any* argv, const prototype_t& proto) const T_OVERRIDE T_FINAL;
 
-	virtual uint32_t getConstantCount() const T_FINAL;
+	virtual uint32_t getConstantCount() const T_OVERRIDE T_FINAL;
 
-	virtual std::string getConstantName(uint32_t constId) const T_FINAL;
+	virtual std::string getConstantName(uint32_t constId) const T_OVERRIDE T_FINAL;
 
-	virtual Any getConstantValue(uint32_t constId) const T_FINAL;
+	virtual Any getConstantValue(uint32_t constId) const T_OVERRIDE T_FINAL;
 
-	virtual uint32_t getMethodCount() const T_FINAL;
+	virtual uint32_t getMethodCount() const T_OVERRIDE T_FINAL;
 
-	virtual std::string getMethodName(uint32_t methodId) const T_FINAL;
+	virtual std::string getMethodName(uint32_t methodId) const T_OVERRIDE T_FINAL;
 
-	virtual Any invoke(ITypedObject* object, uint32_t methodId, uint32_t argc, const Any* argv) const T_FINAL;
+	virtual Any invoke(ITypedObject* object, uint32_t methodId, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL;
 
-	virtual uint32_t getStaticMethodCount() const T_FINAL;
+	virtual uint32_t getStaticMethodCount() const T_OVERRIDE T_FINAL;
 
-	virtual std::string getStaticMethodName(uint32_t methodId) const T_FINAL;
+	virtual std::string getStaticMethodName(uint32_t methodId) const T_OVERRIDE T_FINAL;
 
-	virtual Any invokeStatic(uint32_t methodId, uint32_t argc, const Any* argv) const T_FINAL;
+	virtual Any invokeStatic(uint32_t methodId, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL;
 
-	virtual Any invokeUnknown(ITypedObject* object, const std::string& methodName, uint32_t argc, const Any* argv) const T_FINAL;
+	virtual Any invokeUnknown(ITypedObject* object, const std::string& methodName, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL;
 
-	virtual Any invokeOperator(ITypedObject* object, uint8_t operation, const Any& arg) const T_FINAL;
-
-	virtual bool getMember(ITypedObject* object, const std::string& memberName, Any& outValue) const T_FINAL;
+	virtual Any invokeOperator(ITypedObject* object, uint8_t operation, const Any& arg) const T_OVERRIDE T_FINAL;
 
 private:
 	struct Method

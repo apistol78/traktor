@@ -30,14 +30,14 @@ public:
 	public:
 		InstanceChain(const RefArray< Instance >& instances);
 
-		virtual void destroy();
+		virtual void destroy() T_OVERRIDE T_FINAL;
 
 		virtual void render(
 			ImageProcess* imageProcess,
 			IRenderView* renderView,
 			ScreenRenderer* screenRenderer,
 			const RenderParams& params
-		);
+		) T_OVERRIDE T_FINAL;
 
 	private:
 		RefArray< Instance > m_instances;
@@ -48,9 +48,9 @@ public:
 		IRenderSystem* renderSystem,
 		uint32_t width,
 		uint32_t height
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	inline const RefArray< ImageProcessStep >& getSteps() const { return m_steps; }
 

@@ -27,7 +27,7 @@ class T_DLLCLASS AxisJointBullet : public JointBullet< AxisJoint, btHingeConstra
 public:
 	AxisJointBullet(IWorldCallback* callback, btHingeConstraint* constraint, BodyBullet* body1, BodyBullet* body2);
 
-	virtual Vector4 getAxis() const;
+	virtual Vector4 getAxis() const T_OVERRIDE T_FINAL;
 };
 
 	}

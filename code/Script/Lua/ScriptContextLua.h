@@ -25,19 +25,19 @@ class ScriptContextLua : public IScriptContext
 public:
 	virtual ~ScriptContextLua();
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual bool load(const IScriptBlob* scriptBlob);
+	virtual bool load(const IScriptBlob* scriptBlob) T_OVERRIDE T_FINAL;
 
-	virtual void setGlobal(const std::string& globalName, const Any& globalValue);
+	virtual void setGlobal(const std::string& globalName, const Any& globalValue) T_OVERRIDE T_FINAL;
 
-	virtual Any getGlobal(const std::string& globalName);
+	virtual Any getGlobal(const std::string& globalName) T_OVERRIDE T_FINAL;
 
-	virtual Ref< const IRuntimeClass > findClass(const std::string& className);
+	virtual Ref< const IRuntimeClass > findClass(const std::string& className) T_OVERRIDE T_FINAL;
 
-	virtual bool haveFunction(const std::string& functionName) const;
+	virtual bool haveFunction(const std::string& functionName) const T_OVERRIDE T_FINAL;
 
-	virtual Any executeFunction(const std::string& functionName, uint32_t argc, const Any* argv);
+	virtual Any executeFunction(const std::string& functionName, uint32_t argc, const Any* argv) T_OVERRIDE T_FINAL;
 
 	Any executeDelegate(ScriptDelegateLua* delegate, uint32_t argc, const Any* argv);
 

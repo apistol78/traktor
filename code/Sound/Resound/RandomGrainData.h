@@ -24,9 +24,9 @@ class T_DLLCLASS RandomGrainData : public IGrainData
 public:
 	RandomGrainData();
 
-	virtual Ref< IGrain > createInstance(IGrainFactory* grainFactory) const;
+	virtual Ref< IGrain > createInstance(IGrainFactory* grainFactory) const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	void addGrain(IGrainData* grain) { m_grains.push_back(grain); }
 

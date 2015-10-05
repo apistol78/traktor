@@ -21,11 +21,11 @@ class SimpleBufferHeapDx11 : public IBufferHeapDx11
 public:
 	SimpleBufferHeapDx11(ContextDx11* context, const D3D11_BUFFER_DESC& dbd);
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual bool alloc(uint32_t bufferSize, uint32_t vertexStride, Chunk& outChunk);
+	virtual bool alloc(uint32_t bufferSize, uint32_t vertexStride, Chunk& outChunk) T_OVERRIDE T_FINAL;
 
-	virtual void free(const Chunk& chunk);
+	virtual void free(const Chunk& chunk) T_OVERRIDE T_FINAL;
 
 private:
 	ContextDx11* m_context;

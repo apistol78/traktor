@@ -26,15 +26,15 @@ class T_DLLCLASS Mp3StreamDecoder : public IStreamDecoder
 	T_RTTI_CLASS;
 
 public:
-	virtual bool create(IStream* stream);
+	virtual bool create(IStream* stream) T_OVERRIDE T_FINAL;
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual double getDuration() const;
+	virtual double getDuration() const T_OVERRIDE T_FINAL;
 
-	virtual bool getBlock(SoundBlock& outSoundBlock);
+	virtual bool getBlock(SoundBlock& outSoundBlock) T_OVERRIDE T_FINAL;
 
-	virtual void rewind();
+	virtual void rewind() T_OVERRIDE T_FINAL;
 
 private:
 	Ref< IStream > m_stream;

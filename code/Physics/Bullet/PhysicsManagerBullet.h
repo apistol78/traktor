@@ -44,31 +44,31 @@ public:
 
 	virtual ~PhysicsManagerBullet();
 
-	virtual bool create(const PhysicsCreateDesc& desc);
+	virtual bool create(const PhysicsCreateDesc& desc) T_OVERRIDE T_FINAL;
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual void setGravity(const Vector4& gravity);
+	virtual void setGravity(const Vector4& gravity) T_OVERRIDE T_FINAL;
 
-	virtual Vector4 getGravity() const;
+	virtual Vector4 getGravity() const T_OVERRIDE T_FINAL;
 
-	virtual Ref< Body > createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc, const wchar_t* const tag);
+	virtual Ref< Body > createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc, const wchar_t* const tag) T_OVERRIDE T_FINAL;
 
-	virtual Ref< Joint > createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2);
+	virtual Ref< Joint > createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2) T_OVERRIDE T_FINAL;
 
-	virtual void update(float simulationDeltaTime, bool issueCollisionEvents);
+	virtual void update(float simulationDeltaTime, bool issueCollisionEvents) T_OVERRIDE T_FINAL;
 
-	virtual void solveConstraints(const RefArray< Body >& bodies, const RefArray< Joint >& joints);
+	virtual void solveConstraints(const RefArray< Body >& bodies, const RefArray< Joint >& joints) T_OVERRIDE T_FINAL;
 
-	virtual RefArray< Body > getBodies() const;
+	virtual RefArray< Body > getBodies() const T_OVERRIDE T_FINAL;
 
-	virtual uint32_t getCollidingPairs(std::vector< CollisionPair >& outCollidingPairs) const;
+	virtual uint32_t getCollidingPairs(std::vector< CollisionPair >& outCollidingPairs) const T_OVERRIDE T_FINAL;
 
 	virtual bool queryPoint(
 		const Vector4& at,
 		float margin,
 		QueryResult& outResult
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 	virtual bool queryRay(
 		const Vector4& at,
@@ -78,7 +78,7 @@ public:
 		uint32_t ignoreClusterId,
 		bool ignoreBackFace,
 		QueryResult& outResult
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 	virtual bool queryShadowRay(
 		const Vector4& at,
@@ -87,7 +87,7 @@ public:
 		uint32_t group,
 		uint32_t queryTypes,
 		uint32_t ignoreClusterId
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 	virtual uint32_t querySphere(
 		const Vector4& at,
@@ -95,7 +95,7 @@ public:
 		uint32_t group,
 		uint32_t queryTypes,
 		RefArray< Body >& outBodies
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 	virtual bool querySweep(
 		const Vector4& at,
@@ -105,7 +105,7 @@ public:
 		uint32_t group,
 		uint32_t ignoreClusterId,
 		QueryResult& outResult
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 	virtual bool querySweep(
 		const Body* body,
@@ -116,7 +116,7 @@ public:
 		uint32_t group,
 		uint32_t ignoreClusterId,
 		QueryResult& outResult
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 	virtual void querySweep(
 		const Vector4& at,
@@ -126,20 +126,20 @@ public:
 		uint32_t group,
 		uint32_t ignoreClusterId,
 		AlignedVector< QueryResult >& outResult
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 	virtual void queryOverlap(
 		const Body* body,
 		RefArray< Body >& outResult
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 	void queryTriangles(
 		const Vector4& center,
 		float radius,
 		AlignedVector< TriangleResult >& outTriangles
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
-	virtual void getStatistics(PhysicsStatistics& outStatistics) const;
+	virtual void getStatistics(PhysicsStatistics& outStatistics) const T_OVERRIDE T_FINAL;
 
 private:
 	float m_timeScale;

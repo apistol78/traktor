@@ -28,23 +28,23 @@ public:
 
 	virtual ~ScriptDebuggerLua();
 
-	virtual bool setBreakpoint(const Guid& scriptId, int32_t lineNumber);
+	virtual bool setBreakpoint(const Guid& scriptId, int32_t lineNumber) T_OVERRIDE T_FINAL;
 
-	virtual bool removeBreakpoint(const Guid& scriptId, int32_t lineNumber);
+	virtual bool removeBreakpoint(const Guid& scriptId, int32_t lineNumber) T_OVERRIDE T_FINAL;
 
-	virtual bool isRunning() const;
+	virtual bool isRunning() const T_OVERRIDE T_FINAL;
 
-	virtual bool actionBreak();
+	virtual bool actionBreak() T_OVERRIDE T_FINAL;
 
-	virtual bool actionContinue();
+	virtual bool actionContinue() T_OVERRIDE T_FINAL;
 
-	virtual bool actionStepInto();
+	virtual bool actionStepInto() T_OVERRIDE T_FINAL;
 
-	virtual bool actionStepOver();
+	virtual bool actionStepOver() T_OVERRIDE T_FINAL;
 
-	virtual void addListener(IListener* listener);
+	virtual void addListener(IListener* listener) T_OVERRIDE T_FINAL;
 
-	virtual void removeListener(IListener* listener);
+	virtual void removeListener(IListener* listener) T_OVERRIDE T_FINAL;
 
 private:
 	friend class ScriptManagerLua;

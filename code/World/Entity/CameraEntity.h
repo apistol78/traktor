@@ -29,13 +29,13 @@ class T_DLLCLASS CameraEntity : public Entity
 public:
 	CameraEntity(const CameraEntityData* cameraData);
 
-	virtual void update(const UpdateParams& update);
+	virtual void update(const UpdateParams& update) T_OVERRIDE T_FINAL;
 
-	virtual void setTransform(const Transform& transform);
+	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
 
-	virtual bool getTransform(Transform& outTransform) const;
+	virtual bool getTransform(Transform& outTransform) const T_OVERRIDE T_FINAL;
 
-	virtual Aabb3 getBoundingBox() const;
+	virtual Aabb3 getBoundingBox() const T_OVERRIDE T_FINAL;
 
 	void setCameraType(CameraType type);
 

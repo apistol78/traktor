@@ -31,7 +31,7 @@ public:
 		const Matrix44& worldView,
 		render::handle_t worldTechnique,
 		std::vector< uint32_t >& outPartIndices
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 private:
 	Ref< OctreeNode > m_node;

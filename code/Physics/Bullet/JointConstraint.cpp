@@ -37,7 +37,7 @@ void JointConstraint::getInfo2(btConstraintInfo2* info)
 {
 }
 
-void JointConstraint::solveConstraintObsolete(btRigidBody& bodyA, btRigidBody& bodyB, btScalar timeStep)
+void JointConstraint::solveConstraintObsolete(btSolverBody& bodyA, btSolverBody& bodyB, btScalar timeStep)
 {
 	if (m_jointSolver)
 		m_jointSolver->update(float(timeStep));

@@ -50,7 +50,7 @@ public:
 		destroy();
 	}
 
-	virtual void destroy()
+	virtual void destroy() T_OVERRIDE
 	{
 		if (m_body1)
 			m_body1->removeConstraint(m_constraint);
@@ -64,17 +64,17 @@ public:
 		m_body2 = 0;
 	}
 
-	virtual Body* getBody1()
+	virtual Body* getBody1() T_OVERRIDE T_FINAL
 	{
 		return m_body1;
 	}
 
-	virtual Body* getBody2()
+	virtual Body* getBody2() T_OVERRIDE T_FINAL
 	{
 		return m_body2;
 	}
 
-	virtual void* getInternal()
+	virtual void* getInternal() T_OVERRIDE T_FINAL
 	{
 		return m_constraint;
 	}

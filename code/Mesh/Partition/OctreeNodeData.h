@@ -22,7 +22,7 @@ class T_DLLCLASS OctreeNodeData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 //private:
 	Aabb3 m_boundingBox;

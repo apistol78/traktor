@@ -22,9 +22,9 @@ class T_DLLCLASS SequenceGrainData : public IGrainData
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< IGrain > createInstance(IGrainFactory* grainFactory) const;
+	virtual Ref< IGrain > createInstance(IGrainFactory* grainFactory) const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	void addGrain(IGrainData* grain) { m_grains.push_back(grain); }
 

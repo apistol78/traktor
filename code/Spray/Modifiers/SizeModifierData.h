@@ -26,9 +26,9 @@ class T_DLLCLASS SizeModifierData : public ModifierData
 public:
 	SizeModifierData();
 
-	virtual Ref< const Modifier > createModifier(resource::IResourceManager* resourceManager) const;
+	virtual Ref< const Modifier > createModifier(resource::IResourceManager* resourceManager) const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	float m_adjustRate;

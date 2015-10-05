@@ -26,11 +26,11 @@ class T_DLLCLASS ExplicitResourceHandle : public IResourceHandle
 public:
 	ExplicitResourceHandle(Object* object);
 
-	virtual void replace(Object* object);
+	virtual void replace(Object* object) T_OVERRIDE T_FINAL;
 
-	virtual Object* get() const;
+	virtual Object* get() const T_OVERRIDE T_FINAL;
 
-	virtual void flush();
+	virtual void flush() T_OVERRIDE T_FINAL;
 
 private:
 	mutable Ref< Object > m_object;

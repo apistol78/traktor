@@ -29,11 +29,11 @@ class T_DLLCLASS ResidentResourceHandle : public IResourceHandle
 public:
 	ResidentResourceHandle(const TypeInfo& type, bool persistent);
 
-	virtual void replace(Object* object);
+	virtual void replace(Object* object) T_OVERRIDE T_FINAL;
 
-	virtual Object* get() const;
+	virtual Object* get() const T_OVERRIDE T_FINAL;
 
-	virtual void flush();
+	virtual void flush() T_OVERRIDE T_FINAL;
 
 	const TypeInfo& getProductType() const { return m_resourceType; }
 

@@ -27,9 +27,9 @@ class T_DLLCLASS BallJointBullet : public JointBullet< BallJoint, btPoint2PointC
 public:
 	BallJointBullet(IWorldCallback* callback, btPoint2PointConstraint* constraint, BodyBullet* body1, BodyBullet* body2);
 
-	virtual void setAnchor(const Vector4& anchor);
+	virtual void setAnchor(const Vector4& anchor) T_OVERRIDE T_FINAL;
 
-	virtual Vector4 getAnchor() const;
+	virtual Vector4 getAnchor() const T_OVERRIDE T_FINAL;
 };
 
 	}

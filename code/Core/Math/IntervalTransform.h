@@ -14,20 +14,24 @@
 namespace traktor
 {
 
+#if !defined(_WIN32)
 class T_MATH_ALIGN16 T_DLLCLASS IntervalTransform
+#else
+class T_MATH_ALIGN16 IntervalTransform
+#endif
 {
 public:
-	IntervalTransform();
+	T_MATH_INLINE IntervalTransform();
 
-	IntervalTransform(const Transform& transform);
+	T_MATH_INLINE IntervalTransform(const Transform& transform);
 
-	void set(const Transform& transform);
+	T_MATH_INLINE void set(const Transform& transform);
 
-	Transform get(float interval) const;
+	T_MATH_INLINE Transform get(float interval) const;
 
-	void step();
+	T_MATH_INLINE void step();
 
-	const Transform& get() const { return m_transform[1]; }
+	T_MATH_INLINE const Transform& get() const;
 
 private:
 	Transform m_transform[2];
@@ -35,5 +39,9 @@ private:
 };
 
 }
+
+#if defined(T_MATH_USE_INLINE)
+#	include "Core/Math/Std/IntervalTransform.inl"
+#endif
 
 #endif	// traktor_IntervalTransform_H

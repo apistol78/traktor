@@ -23,7 +23,7 @@ public:
 
 	void push();
 
-	virtual Any call(int32_t argc, const Any* argv);
+	virtual Any call(int32_t argc, const Any* argv) T_OVERRIDE T_FINAL;
 
 private:
 	ScriptContextLua* m_context;

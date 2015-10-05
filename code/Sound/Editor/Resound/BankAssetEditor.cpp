@@ -85,7 +85,7 @@ public:
 		m_instances.clear();
 	}
 
-	virtual Ref< IGrain > createInstance(const IGrainData* grainData)
+	virtual Ref< IGrain > createInstance(const IGrainData* grainData) T_OVERRIDE
 	{
 		if (!grainData)
 			return 0;

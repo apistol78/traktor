@@ -27,9 +27,9 @@ public:
 
 	void endPrecull();
 
-	virtual void placeOccluder(const OccluderMesh* mesh, const Transform& transform);
+	virtual void placeOccluder(const OccluderMesh* mesh, const Transform& transform) T_OVERRIDE T_FINAL;
 
-	virtual bool queryAabb(const Aabb3& aabb, const Transform& transform) const;
+	virtual bool queryAabb(const Aabb3& aabb, const Transform& transform) const T_OVERRIDE T_FINAL;
 
 private:
 	AutoArrayPtr< uint16_t > m_depth[16];

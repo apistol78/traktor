@@ -30,7 +30,7 @@ public:
 
 	bool persistent() const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	std::vector< std::pair< const TypeInfo*, Guid > > m_resources;

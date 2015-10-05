@@ -26,15 +26,15 @@ public:
 
 	bool create(const VolumeTextureCreateDesc& desc);
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual ITexture* resolve();
+	virtual ITexture* resolve() T_OVERRIDE T_FINAL;
 
-	virtual int getWidth() const;
+	virtual int getWidth() const T_OVERRIDE T_FINAL;
 	
-	virtual int getHeight() const;
+	virtual int getHeight() const T_OVERRIDE T_FINAL;
 	
-	virtual int getDepth() const;
+	virtual int getDepth() const T_OVERRIDE T_FINAL;
 
 	ID3D11ShaderResourceView* getD3D11TextureResourceView() const;
 

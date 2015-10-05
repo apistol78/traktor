@@ -26,11 +26,11 @@ class T_DLLCLASS RingModulationFilter : public IFilter
 public:
 	RingModulationFilter(uint32_t sampleRate = 44100, uint32_t ringFrequency = 2500);
 
-	virtual Ref< IFilterInstance > createInstance() const;
+	virtual Ref< IFilterInstance > createInstance() const T_OVERRIDE T_FINAL;
 
-	virtual void apply(IFilterInstance* instance, SoundBlock& outBlock) const;
+	virtual void apply(IFilterInstance* instance, SoundBlock& outBlock) const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	uint32_t m_sampleRate;
