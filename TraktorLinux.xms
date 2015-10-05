@@ -16443,6 +16443,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/include</item>
 						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
 					</includePaths>
 					<definitions>
 						<item>T_SPARK_EDITOR_EXPORT</item>
@@ -16462,6 +16463,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/include</item>
 						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
 					</includePaths>
 					<definitions>
 						<item>T_SPARK_EDITOR_EXPORT</item>
@@ -16481,6 +16483,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/include</item>
 						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -16500,6 +16503,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/include</item>
 						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
