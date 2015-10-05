@@ -36,10 +36,10 @@ class RenderTargetSet;
 	{
 
 class CharacterBuilder;
+class CharacterInstance;
 class SparkPlayer;
 class SparkRenderer;
 class Sprite;
-class SpriteInstance;
 
 	}
 
@@ -88,7 +88,7 @@ public:
 
 	virtual void resume();
 
-	spark::SpriteInstance* getSprite() const;
+	spark::CharacterInstance* getRoot() const;
 
 private:
 	struct LastMouseState
@@ -108,7 +108,7 @@ private:
 	resource::Proxy< spark::Sprite > m_sprite;
 	Ref< spark::SparkRenderer > m_sparkRenderer;
 	Ref< spark::SparkPlayer > m_sparkPlayer;
-	Ref< spark::SpriteInstance > m_spriteInstance;
+	Ref< spark::CharacterInstance > m_characterInstance;
 	Ref< render::RenderTargetSet > m_imageTargetSet;
 	resource::Proxy< render::ImageProcessSettings > m_imageProcessSettings;
 	Ref< render::ImageProcess > m_imageProcess;
