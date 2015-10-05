@@ -16441,6 +16441,8 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_SPARK_EDITOR_EXPORT</item>
@@ -16458,6 +16460,8 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_SPARK_EDITOR_EXPORT</item>
@@ -16475,6 +16479,8 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -16492,6 +16498,8 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
