@@ -271,7 +271,7 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classFlashLayer);
 
 	Ref< AutoRuntimeClass< SparkLayer > > classSparkLayer = new AutoRuntimeClass< SparkLayer >();
-	classSparkLayer->addMethod("getSprite", &SparkLayer::getSprite);
+	classSparkLayer->addMethod("getRoot", &SparkLayer::getRoot);
 	registrar->registerClass(classSparkLayer);
 
 	Ref< AutoRuntimeClass< VideoLayer > > classVideoLayer = new AutoRuntimeClass< VideoLayer >();

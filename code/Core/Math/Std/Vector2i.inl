@@ -6,18 +6,20 @@ namespace traktor
 
 T_MATH_INLINE Vector2i::Vector2i()
 {
+	x =
+	y = 0;
 }
 
 T_MATH_INLINE Vector2i::Vector2i(const Vector2i& v)
-:	x(v.x)
-,	y(v.y)
 {
+	x = v.x;
+	y = v.y;
 }
 
 T_MATH_INLINE Vector2i::Vector2i(int32_t x_, int32_t y_)
-:	x(x_)
-,	y(y_)
 {
+	this->x = x_;
+	this->y = y_;
 }
 
 T_MATH_INLINE Vector2 Vector2i::toVector2() const

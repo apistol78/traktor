@@ -83,11 +83,11 @@ void SparkLayer::prepare()
 	}
 
 	// Create instance of root sprite.
-	if (!m_spriteInstance)
+	if (!m_characterInstance)
 	{
-		m_spriteInstance = checked_type_cast< spark::SpriteInstance* >(m_characterBuilder->create(m_sprite, 0, L""));
-		if (m_spriteInstance)
-			m_sparkPlayer = new spark::SparkPlayer(m_spriteInstance);
+		m_characterInstance = m_characterBuilder->create(m_sprite, 0, L"");
+		if (m_characterInstance)
+			m_sparkPlayer = new spark::SparkPlayer(m_characterInstance);
 		else
 			m_sparkPlayer = 0;
 	}
@@ -238,15 +238,15 @@ void SparkLayer::update(const UpdateInfo& info)
 
 void SparkLayer::build(const UpdateInfo& info, uint32_t frame)
 {
-	if (!m_spriteInstance)
+	if (!m_characterInstance)
 		return;
 
-	m_sparkRenderer->build(m_spriteInstance, frame);
+	m_sparkRenderer->build(m_characterInstance, frame);
 }
 
 void SparkLayer::render(render::EyeType eye, uint32_t frame)
 {
-	if (!m_sparkRenderer || !m_spriteInstance)
+	if (!m_sparkRenderer || !m_characterInstance)
 		return;
 
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
@@ -313,9 +313,9 @@ void SparkLayer::resume()
 {
 }
 
-spark::SpriteInstance* SparkLayer::getSprite() const
+spark::CharacterInstance* SparkLayer::getRoot() const
 {
-	return m_spriteInstance;
+	return m_characterInstance;
 }
 
 void SparkLayer::updateProjection()
