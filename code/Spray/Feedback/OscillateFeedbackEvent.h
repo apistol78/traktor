@@ -18,7 +18,7 @@ class OscillateFeedbackEvent : public world::IEntityEvent
 public:
 	OscillateFeedbackEvent(const OscillateFeedbackEventData* data, IFeedbackManager* feedbackManager);
 
-	virtual Ref< world::IEntityEventInstance > createInstance(world::IEntityEventManager* eventManager, world::Entity* sender, const Transform& Toffset) const;
+	virtual Ref< world::IEntityEventInstance > createInstance(world::IEntityEventManager* eventManager, world::Entity* sender, const Transform& Toffset) const T_OVERRIDE T_FINAL;
 
 private:
 	Ref< const OscillateFeedbackEventData > m_data;

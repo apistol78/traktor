@@ -27,19 +27,19 @@ public:
 
 	virtual ~HeightfieldShapeBullet();
 
-	virtual void setLocalScaling(const btVector3& scaling);
+	virtual void setLocalScaling(const btVector3& scaling) T_OVERRIDE T_FINAL;
 
-	virtual const btVector3& getLocalScaling() const;
+	virtual const btVector3& getLocalScaling() const T_OVERRIDE T_FINAL;
 
-	virtual void getAabb(const btTransform& t, btVector3& aabbMin, btVector3& aabbMax) const;
+	virtual void getAabb(const btTransform& t, btVector3& aabbMin, btVector3& aabbMax) const T_OVERRIDE T_FINAL;
 
-	virtual void processAllTriangles(btTriangleCallback* callback, const btVector3& aabbMin, const btVector3& aabbMax) const;
+	virtual void processAllTriangles(btTriangleCallback* callback, const btVector3& aabbMin, const btVector3& aabbMax) const T_OVERRIDE T_FINAL;
 
-	virtual void processRaycastAllTriangles(btTriangleRaycastCallback *callback, const btVector3 &raySource, const btVector3 &rayTarget);
+	virtual void processRaycastAllTriangles(btTriangleRaycastCallback *callback, const btVector3 &raySource, const btVector3 &rayTarget) T_OVERRIDE T_FINAL;
 
-	virtual void calculateLocalInertia(btScalar mass, btVector3& inertia) const;
+	virtual void calculateLocalInertia(btScalar mass, btVector3& inertia) const T_OVERRIDE T_FINAL;
 
-	virtual const char*	getName() const;
+	virtual const char*	getName() const T_OVERRIDE T_FINAL;
 
 private:
 	resource::Proxy< hf::Heightfield > m_heightfield;

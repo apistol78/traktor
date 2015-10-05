@@ -46,21 +46,21 @@ public:
 
 	virtual ~ScriptManagerLua();
 
-	virtual void destroy() T_FINAL;
+	virtual void destroy() T_OVERRIDE T_FINAL;
 	
-	virtual void registerClass(IRuntimeClass* runtimeClass) T_FINAL;
+	virtual void registerClass(IRuntimeClass* runtimeClass) T_OVERRIDE T_FINAL;
 
-	virtual Ref< IScriptBlob > compile(const std::wstring& fileName, const std::wstring& script, IErrorCallback* errorCallback) const T_FINAL;
+	virtual Ref< IScriptBlob > compile(const std::wstring& fileName, const std::wstring& script, IErrorCallback* errorCallback) const T_OVERRIDE T_FINAL;
 
-	virtual Ref< IScriptContext > createContext() T_FINAL;
+	virtual Ref< IScriptContext > createContext() T_OVERRIDE T_FINAL;
 
-	virtual Ref< IScriptDebugger > createDebugger() T_FINAL;
+	virtual Ref< IScriptDebugger > createDebugger() T_OVERRIDE T_FINAL;
 
-	virtual Ref< IScriptProfiler > createProfiler() T_FINAL;
+	virtual Ref< IScriptProfiler > createProfiler() T_OVERRIDE T_FINAL;
 
-	virtual void collectGarbage(bool full) T_FINAL;
+	virtual void collectGarbage(bool full) T_OVERRIDE T_FINAL;
 
-	virtual void getStatistics(ScriptStatistics& outStatistics) const T_FINAL;
+	virtual void getStatistics(ScriptStatistics& outStatistics) const T_OVERRIDE T_FINAL;
 
 private:
 	friend class ScriptClassLua;

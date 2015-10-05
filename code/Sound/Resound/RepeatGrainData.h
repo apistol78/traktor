@@ -23,9 +23,9 @@ class T_DLLCLASS RepeatGrainData : public IGrainData
 public:
 	RepeatGrainData();
 
-	virtual Ref< IGrain > createInstance(IGrainFactory* grainFactory) const;
+	virtual Ref< IGrain > createInstance(IGrainFactory* grainFactory) const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	uint32_t getCount() const { return m_count; }
 

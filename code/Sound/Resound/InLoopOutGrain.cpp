@@ -20,7 +20,7 @@ struct InLoopOutGrainCursor : public RefCountImpl< ISoundBufferCursor >
 	Ref< ISoundBufferCursor > m_cursor;
 	Ref< ISoundBufferCursor > m_loopCursor;
 
-	virtual void setParameter(handle_t id, float parameter)
+	virtual void setParameter(handle_t id, float parameter) T_OVERRIDE T_FINAL
 	{
 		if (m_cursor)
 			m_cursor->setParameter(id, parameter);
@@ -29,12 +29,12 @@ struct InLoopOutGrainCursor : public RefCountImpl< ISoundBufferCursor >
 			m_parameter = bool(parameter >= 0.5f);
 	}
 
-	virtual void disableRepeat()
+	virtual void disableRepeat() T_OVERRIDE T_FINAL
 	{
 		m_repeat = false;
 	}
 
-	virtual void reset()
+	virtual void reset() T_OVERRIDE T_FINAL
 	{
 		if (m_cursor)
 			m_cursor->reset();

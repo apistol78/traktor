@@ -34,7 +34,7 @@ class T_DLLCLASS SoundEventData : public world::IEntityEventData
 public:
 	SoundEventData();
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	friend class EffectEntityFactory;

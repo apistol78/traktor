@@ -27,19 +27,19 @@ public:
 
 	bool create(const VolumeTextureCreateDesc& desc);
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual ITexture* resolve();
+	virtual ITexture* resolve() T_OVERRIDE T_FINAL;
 
-	virtual int getWidth() const;
+	virtual int getWidth() const T_OVERRIDE T_FINAL;
 	
-	virtual int getHeight() const;
+	virtual int getHeight() const T_OVERRIDE T_FINAL;
 	
-	virtual int getDepth() const;
+	virtual int getDepth() const T_OVERRIDE T_FINAL;
 
-	virtual void bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage);
+	virtual void bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage) T_OVERRIDE T_FINAL;
 
-	virtual void bindSize(GLint locationSize);
+	virtual void bindSize(GLint locationSize) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< ContextOpenGL > m_resourceContext;

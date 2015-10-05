@@ -43,15 +43,15 @@ public:
 
 	virtual ~RigidEntity();
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual void update(const world::UpdateParams& update);
+	virtual void update(const world::UpdateParams& update) T_OVERRIDE T_FINAL;
 
-	virtual void setTransform(const Transform& transform);
+	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
 
-	virtual bool getTransform(Transform& outTransform) const;
+	virtual bool getTransform(Transform& outTransform) const T_OVERRIDE T_FINAL;
 
-	virtual Aabb3 getBoundingBox() const;
+	virtual Aabb3 getBoundingBox() const T_OVERRIDE T_FINAL;
 
 	Body* getBody() const { return m_body; }
 

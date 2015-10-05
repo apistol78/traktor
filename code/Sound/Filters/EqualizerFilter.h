@@ -26,11 +26,11 @@ class T_DLLCLASS EqualizerFilter : public IFilter
 public:
 	EqualizerFilter(float gain = 0.0f);
 
-	virtual Ref< IFilterInstance > createInstance() const;
+	virtual Ref< IFilterInstance > createInstance() const T_OVERRIDE T_FINAL;
 
-	virtual void apply(IFilterInstance* instance, SoundBlock& outBlock) const;
+	virtual void apply(IFilterInstance* instance, SoundBlock& outBlock) const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	float m_gain;

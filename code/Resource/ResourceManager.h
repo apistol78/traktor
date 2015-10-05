@@ -36,27 +36,27 @@ public:
 
 	virtual ~ResourceManager();
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual void addFactory(const IResourceFactory* factory);
+	virtual void addFactory(const IResourceFactory* factory) T_OVERRIDE T_FINAL;
 
-	virtual void removeFactory(const IResourceFactory* factory);
+	virtual void removeFactory(const IResourceFactory* factory) T_OVERRIDE T_FINAL;
 
-	virtual void removeAllFactories();
+	virtual void removeAllFactories() T_OVERRIDE T_FINAL;
 
-	virtual bool load(const ResourceBundle* bundle);
+	virtual bool load(const ResourceBundle* bundle) T_OVERRIDE T_FINAL;
 	
-	virtual Ref< IResourceHandle > bind(const TypeInfo& type, const Guid& guid);
+	virtual Ref< IResourceHandle > bind(const TypeInfo& type, const Guid& guid) T_OVERRIDE T_FINAL;
 
-	virtual void reload(const Guid& guid, bool flushedOnly);
+	virtual void reload(const Guid& guid, bool flushedOnly) T_OVERRIDE T_FINAL;
 
-	virtual void reload(const TypeInfo& type, bool flushedOnly);
+	virtual void reload(const TypeInfo& type, bool flushedOnly) T_OVERRIDE T_FINAL;
 
-	virtual void unload(const TypeInfo& type);
+	virtual void unload(const TypeInfo& type) T_OVERRIDE T_FINAL;
 
-	virtual void unloadUnusedResident();
+	virtual void unloadUnusedResident() T_OVERRIDE T_FINAL;
 	
-	virtual void getStatistics(ResourceManagerStatistics& outStatistics) const;
+	virtual void getStatistics(ResourceManagerStatistics& outStatistics) const T_OVERRIDE T_FINAL;
 
 private:
 	struct TimeCount

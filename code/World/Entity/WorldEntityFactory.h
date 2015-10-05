@@ -33,13 +33,13 @@ class T_DLLCLASS WorldEntityFactory : public IEntityFactory
 public:
 	WorldEntityFactory(resource::IResourceManager* resourceManager, bool editor);
 
-	virtual const TypeInfoSet getEntityTypes() const;
+	virtual const TypeInfoSet getEntityTypes() const T_OVERRIDE T_FINAL;
 
-	virtual const TypeInfoSet getEntityEventTypes() const;
+	virtual const TypeInfoSet getEntityEventTypes() const T_OVERRIDE T_FINAL;
 
-	virtual Ref< Entity > createEntity(const IEntityBuilder* builder, const EntityData& entityData) const;
+	virtual Ref< Entity > createEntity(const IEntityBuilder* builder, const EntityData& entityData) const T_OVERRIDE T_FINAL;
 
-	virtual Ref< IEntityEvent > createEntityEvent(const IEntityBuilder* builder, const IEntityEventData& entityEventData) const;
+	virtual Ref< IEntityEvent > createEntityEvent(const IEntityBuilder* builder, const IEntityEventData& entityEventData) const T_OVERRIDE T_FINAL;
 
 private:
 	mutable Ref< resource::IResourceManager > m_resourceManager;

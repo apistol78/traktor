@@ -22,13 +22,13 @@ public:
 
 	virtual ~IndexBufferDynamicDx11();
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual void* lock();
+	virtual void* lock() T_OVERRIDE T_FINAL;
 	
-	virtual void unlock();
+	virtual void unlock() T_OVERRIDE T_FINAL;
 
-	virtual void prepare(ID3D11DeviceContext* d3dDeviceContext, StateCache& stateCache);
+	virtual void prepare(ID3D11DeviceContext* d3dDeviceContext, StateCache& stateCache) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< ContextDx11 > m_context;

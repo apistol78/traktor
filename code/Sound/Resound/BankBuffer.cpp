@@ -15,19 +15,19 @@ struct BankBufferCursor : public RefCountImpl< ISoundBufferCursor >
 	int32_t m_grainIndex;
 	Ref< ISoundBufferCursor > m_grainCursor;
 
-	virtual void setParameter(handle_t id, float parameter)
+	virtual void setParameter(handle_t id, float parameter) T_OVERRIDE T_FINAL
 	{
 		if (m_grainCursor)
 			m_grainCursor->setParameter(id, parameter);
 	}
 
-	virtual void disableRepeat()
+	virtual void disableRepeat() T_OVERRIDE T_FINAL
 	{
 		if (m_grainCursor)
 			m_grainCursor->disableRepeat();
 	}
 
-	virtual void reset()
+	virtual void reset() T_OVERRIDE T_FINAL
 	{
 		m_grainIndex = 0;
 		if (m_grainCursor)

@@ -14,11 +14,11 @@ struct MuteGrainCursor : public RefCountImpl< ISoundBufferCursor >
 	Timer m_timer;
 	double m_end;
 
-	virtual void setParameter(handle_t id, float parameter) {}
+	virtual void setParameter(handle_t id, float parameter)  T_OVERRIDE T_FINAL {}
 
-	virtual void disableRepeat() {}
+	virtual void disableRepeat() T_OVERRIDE T_FINAL {}
 
-	virtual void reset() {}
+	virtual void reset() T_OVERRIDE T_FINAL {}
 };
 
 		}

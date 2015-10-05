@@ -29,23 +29,23 @@ public:
 
 	static Ref< ProgramOpenGL > create(ContextOpenGL* resourceContext, const ProgramResource* resource);
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual void setFloatParameter(handle_t handle, float param);
+	virtual void setFloatParameter(handle_t handle, float param) T_OVERRIDE T_FINAL;
 
-	virtual void setFloatArrayParameter(handle_t handle, const float* param, int length);
+	virtual void setFloatArrayParameter(handle_t handle, const float* param, int length) T_OVERRIDE T_FINAL;
 	
-	virtual void setVectorParameter(handle_t handle, const Vector4& param);
+	virtual void setVectorParameter(handle_t handle, const Vector4& param) T_OVERRIDE T_FINAL;
 
-	virtual void setVectorArrayParameter(handle_t handle, const Vector4* param, int length);
+	virtual void setVectorArrayParameter(handle_t handle, const Vector4* param, int length) T_OVERRIDE T_FINAL;
 
-	virtual void setMatrixParameter(handle_t handle, const Matrix44& param);
+	virtual void setMatrixParameter(handle_t handle, const Matrix44& param) T_OVERRIDE T_FINAL;
 
-	virtual void setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length);
+	virtual void setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length) T_OVERRIDE T_FINAL;
 
-	virtual void setTextureParameter(handle_t handle, ITexture* texture);
+	virtual void setTextureParameter(handle_t handle, ITexture* texture) T_OVERRIDE T_FINAL;
 
-	virtual void setStencilReference(uint32_t stencilReference);
+	virtual void setStencilReference(uint32_t stencilReference) T_OVERRIDE T_FINAL;
 
 	bool activate(ContextOpenGL* renderContext, float targetSize[2]);
 

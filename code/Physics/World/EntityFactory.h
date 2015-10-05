@@ -45,13 +45,13 @@ public:
 		PhysicsManager* physicsManager
 	);
 
-	virtual const TypeInfoSet getEntityTypes() const;
+	virtual const TypeInfoSet getEntityTypes() const T_OVERRIDE T_FINAL;
 
-	virtual const TypeInfoSet getEntityEventTypes() const;
+	virtual const TypeInfoSet getEntityEventTypes() const T_OVERRIDE T_FINAL;
 
-	virtual Ref< world::Entity > createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const;
+	virtual Ref< world::Entity > createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const T_OVERRIDE T_FINAL;
 
-	virtual Ref< world::IEntityEvent > createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const;
+	virtual Ref< world::IEntityEvent > createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const T_OVERRIDE T_FINAL;
 
 private:
 	Ref< world::IEntityEventManager > m_eventManager;

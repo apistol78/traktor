@@ -24,19 +24,19 @@ struct SimultaneousGrainCursor : public RefCountImpl< ISoundBufferCursor >
 		Alloc::freeAlign(m_outputSamples[0]);
 	}
 
-	virtual void setParameter(handle_t id, float parameter)
+	virtual void setParameter(handle_t id, float parameter) T_OVERRIDE T_FINAL
 	{
 		for (RefArray< ISoundBufferCursor >::iterator i = m_grainCursors.begin(); i != m_grainCursors.end(); ++i)
 			(*i)->setParameter(id, parameter);
 	}
 
-	virtual void disableRepeat()
+	virtual void disableRepeat() T_OVERRIDE T_FINAL
 	{
 		for (RefArray< ISoundBufferCursor >::iterator i = m_grainCursors.begin(); i != m_grainCursors.end(); ++i)
 			(*i)->disableRepeat();
 	}
 
-	virtual void reset()
+	virtual void reset() T_OVERRIDE T_FINAL
 	{
 		for (RefArray< ISoundBufferCursor >::iterator i = m_grainCursors.begin(); i != m_grainCursors.end(); ++i)
 			(*i)->reset();

@@ -13,19 +13,19 @@ class SoundHandle : public ISoundHandle
 	T_RTTI_CLASS;
 
 public:
-	virtual void stop();
+	virtual void stop() T_OVERRIDE T_FINAL;
 
-	virtual void fadeOff();
+	virtual void fadeOff() T_OVERRIDE T_FINAL;
 
-	virtual bool isPlaying();
+	virtual bool isPlaying() T_OVERRIDE T_FINAL;
 
-	virtual void setVolume(float volume);
+	virtual void setVolume(float volume) T_OVERRIDE T_FINAL;
 
-	virtual void setPitch(float pitch);
+	virtual void setPitch(float pitch) T_OVERRIDE T_FINAL;
 
-	virtual void setPosition(const Vector4& position);
+	virtual void setPosition(const Vector4& position) T_OVERRIDE T_FINAL;
 
-	virtual void setParameter(int32_t id, float parameter);
+	virtual void setParameter(int32_t id, float parameter) T_OVERRIDE T_FINAL;
 
 private:
 	friend class SoundPlayer;

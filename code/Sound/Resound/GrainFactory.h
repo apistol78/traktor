@@ -26,9 +26,9 @@ class T_DLLCLASS GrainFactory : public IGrainFactory
 public:
 	GrainFactory(resource::IResourceManager* resourceManager);
 
-	virtual resource::IResourceManager* getResourceManager();
+	virtual resource::IResourceManager* getResourceManager() T_OVERRIDE T_FINAL;
 
-	virtual Ref< IGrain > createInstance(const IGrainData* grainData);
+	virtual Ref< IGrain > createInstance(const IGrainData* grainData) T_OVERRIDE;
 
 private:
 	Ref< resource::IResourceManager > m_resourceManager;

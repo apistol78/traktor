@@ -23,15 +23,15 @@ public:
 
 	bool create();
 
-	virtual void begin();
+	virtual void begin() T_OVERRIDE T_FINAL;
 
-	virtual int32_t stamp();
+	virtual int32_t stamp() T_OVERRIDE T_FINAL;
 
-	virtual void end();	
+	virtual void end() T_OVERRIDE T_FINAL;	
 
-	virtual bool ready() const;
+	virtual bool ready() const T_OVERRIDE T_FINAL;
 
-	virtual uint64_t get(int32_t index) const;
+	virtual uint64_t get(int32_t index) const T_OVERRIDE T_FINAL;
 
 private:
 	enum

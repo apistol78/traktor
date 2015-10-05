@@ -22,18 +22,18 @@ struct PlayGrainCursor : public RefCountImpl< ISoundBufferCursor >
 	float m_gain;
 	float m_pitch;
 
-	virtual void setParameter(handle_t id, float parameter)
+	virtual void setParameter(handle_t id, float parameter) T_OVERRIDE T_FINAL
 	{
 		if (m_soundCursor)
 			m_soundCursor->setParameter(id, parameter);
 	}
 
-	virtual void disableRepeat()
+	virtual void disableRepeat() T_OVERRIDE T_FINAL
 	{
 		m_repeat = false;
 	}
 
-	virtual void reset()
+	virtual void reset() T_OVERRIDE T_FINAL
 	{
 		if (m_soundCursor)
 			m_soundCursor->reset();

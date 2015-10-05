@@ -27,15 +27,15 @@ class T_DLLCLASS Hinge2JointBullet : public JointBullet< Hinge2Joint, btHinge2Co
 public:
 	Hinge2JointBullet(IWorldCallback* callback, btHinge2Constraint* constraint, BodyBullet* body1, BodyBullet* body2);
 
-	virtual void addTorques(float torqueAxis1, float torqueAxis2);
+	virtual void addTorques(float torqueAxis1, float torqueAxis2) T_OVERRIDE T_FINAL;
 
-	virtual float getAngleAxis1() const;
+	virtual float getAngleAxis1() const T_OVERRIDE T_FINAL;
 
-	virtual void setVelocityAxis1(float velocityAxis1);
+	virtual void setVelocityAxis1(float velocityAxis1) T_OVERRIDE T_FINAL;
 
-	virtual void setVelocityAxis2(float velocityAxis2);
+	virtual void setVelocityAxis2(float velocityAxis2) T_OVERRIDE T_FINAL;
 
-	virtual void getAnchors(Vector4& outAnchor1, Vector4& outAnchor2) const;
+	virtual void getAnchors(Vector4& outAnchor1, Vector4& outAnchor2) const T_OVERRIDE T_FINAL;
 };
 
 	}

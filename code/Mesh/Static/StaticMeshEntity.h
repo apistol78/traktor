@@ -26,21 +26,21 @@ class T_DLLCLASS StaticMeshEntity : public MeshEntity
 public:
 	StaticMeshEntity(const Transform& transform, bool screenSpaceCulling, const resource::Proxy< StaticMesh >& mesh);
 	
-	virtual Aabb3 getBoundingBox() const;
+	virtual Aabb3 getBoundingBox() const T_OVERRIDE T_FINAL;
 
-	virtual bool supportTechnique(render::handle_t technique) const;
+	virtual bool supportTechnique(render::handle_t technique) const T_OVERRIDE T_FINAL;
 
 	virtual void precull(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView
-	);
+	) T_OVERRIDE T_FINAL;
 
 	virtual void render(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
 		world::IWorldRenderPass& worldRenderPass,
 		float distance
-	);
+	) T_OVERRIDE T_FINAL;
 
 private:
 	resource::Proxy< StaticMesh > m_mesh;

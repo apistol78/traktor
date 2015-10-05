@@ -74,25 +74,25 @@ public:
 		render::IRenderSystem* renderSystem,
 		render::IRenderView* renderView,
 		const WorldCreateDesc& desc
-	);
+	) T_OVERRIDE T_FINAL;
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual bool beginBuild();
+	virtual bool beginBuild() T_OVERRIDE T_FINAL;
 
-	virtual void build(Entity* entity);
+	virtual void build(Entity* entity) T_OVERRIDE T_FINAL;
 
-	virtual void endBuild(WorldRenderView& worldRenderView, int frame);
+	virtual void endBuild(WorldRenderView& worldRenderView, int frame) T_OVERRIDE T_FINAL;
 
-	virtual bool beginRender(int frame, render::EyeType eye, const Color4f& clearColor);
+	virtual bool beginRender(int frame, render::EyeType eye, const Color4f& clearColor) T_OVERRIDE T_FINAL;
 
-	virtual void render(uint32_t flags, int frame, render::EyeType eye);
+	virtual void render(uint32_t flags, int frame, render::EyeType eye) T_OVERRIDE T_FINAL;
 
-	virtual void endRender(int frame, render::EyeType eye, float deltaTime);
+	virtual void endRender(int frame, render::EyeType eye, float deltaTime) T_OVERRIDE T_FINAL;
 
-	virtual render::ImageProcess* getVisualImageProcess();
+	virtual render::ImageProcess* getVisualImageProcess() T_OVERRIDE T_FINAL;
 
-	virtual void getDebugTargets(std::vector< DebugTarget >& outTargets) const;
+	virtual void getDebugTargets(std::vector< DebugTarget >& outTargets) const T_OVERRIDE T_FINAL;
 
 private:
 	struct Slice

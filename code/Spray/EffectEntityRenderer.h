@@ -40,26 +40,26 @@ public:
 
 	void setLodDistances(float lod1Distance, float lod2Distance);
 
-	virtual const TypeInfoSet getEntityTypes() const;
+	virtual const TypeInfoSet getEntityTypes() const T_OVERRIDE T_FINAL;
 
 	virtual void precull(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
 		world::Entity* entity
-	);
+	) T_OVERRIDE T_FINAL;
 
 	virtual void render(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
 		world::IWorldRenderPass& worldRenderPass,
 		world::Entity* entity
-	);
+	) T_OVERRIDE T_FINAL;
 
 	virtual void flush(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
 		world::IWorldRenderPass& worldRenderPass
-	);
+	) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< PointRenderer > m_pointRenderer;

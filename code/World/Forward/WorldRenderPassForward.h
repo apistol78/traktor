@@ -54,17 +54,17 @@ public:
 		render::ISimpleTexture* depthMap
 	);
 
-	virtual render::handle_t getTechnique() const;
+	virtual render::handle_t getTechnique() const T_OVERRIDE T_FINAL;
 
-	virtual void setShaderTechnique(render::Shader* shader) const;
+	virtual void setShaderTechnique(render::Shader* shader) const T_OVERRIDE T_FINAL;
 
-	virtual void setShaderCombination(render::Shader* shader) const;
+	virtual void setShaderCombination(render::Shader* shader) const T_OVERRIDE T_FINAL;
 
-	virtual void setShaderCombination(render::Shader* shader, const Matrix44& world, const Aabb3& bounds) const;
+	virtual void setShaderCombination(render::Shader* shader, const Matrix44& world, const Aabb3& bounds) const T_OVERRIDE T_FINAL;
 
-	virtual void setProgramParameters(render::ProgramParameters* programParams, uint32_t priority) const;
+	virtual void setProgramParameters(render::ProgramParameters* programParams, uint32_t priority) const T_OVERRIDE T_FINAL;
 
-	virtual void setProgramParameters(render::ProgramParameters* programParams, uint32_t priority, const Matrix44& world, const Aabb3& bounds) const;
+	virtual void setProgramParameters(render::ProgramParameters* programParams, uint32_t priority, const Matrix44& world, const Aabb3& bounds) const T_OVERRIDE T_FINAL;
 
 private:
 	render::handle_t m_technique;

@@ -27,11 +27,11 @@ class T_DLLCLASS NormalizationFilter : public IFilter
 public:
 	NormalizationFilter(float targetEnergy = 1.0f, float energyThreshold = 0.2f, float attackRate = 0.1f);
 
-	virtual Ref< IFilterInstance > createInstance() const;
+	virtual Ref< IFilterInstance > createInstance() const T_OVERRIDE T_FINAL;
 
-	virtual void apply(IFilterInstance* instance, SoundBlock& outBlock) const;
+	virtual void apply(IFilterInstance* instance, SoundBlock& outBlock) const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	inline float getTargetEnergy() const { return m_targetEnergy; }
 

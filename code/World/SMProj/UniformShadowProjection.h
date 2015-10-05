@@ -27,7 +27,7 @@ public:
 		Matrix44& outLightProjection,
 		Matrix44& outLightSquareProjection,
 		Frustum& outShadowFrustum
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 private:
 	float m_realShadowMapSize;

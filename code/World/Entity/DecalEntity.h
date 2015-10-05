@@ -34,13 +34,13 @@ public:
 		const resource::Proxy< render::Shader >& shader
 	);
 
-	virtual void setTransform(const Transform& transform);
+	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
 
-	virtual bool getTransform(Transform& outTransform) const;
+	virtual bool getTransform(Transform& outTransform) const T_OVERRIDE T_FINAL;
 
-	virtual Aabb3 getBoundingBox() const;
+	virtual Aabb3 getBoundingBox() const T_OVERRIDE T_FINAL;
 
-	virtual void update(const UpdateParams& update);
+	virtual void update(const UpdateParams& update) T_OVERRIDE T_FINAL;
 
 	const Transform& getTransform() const { return m_transform; }
 

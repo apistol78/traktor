@@ -18,11 +18,11 @@ class OscillateFeedbackEventInstance : public world::IEntityEventInstance
 public:
 	OscillateFeedbackEventInstance(const OscillateFeedbackEventData* data, IFeedbackManager* feedbackManager);
 
-	virtual bool update(const world::UpdateParams& update);
+	virtual bool update(const world::UpdateParams& update) T_OVERRIDE T_FINAL;
 
-	virtual void build(world::IWorldRenderer* worldRenderer);
+	virtual void build(world::IWorldRenderer* worldRenderer) T_OVERRIDE T_FINAL;
 
-	virtual void cancel(world::CancelType when);
+	virtual void cancel(world::CancelType when) T_OVERRIDE T_FINAL;
 
 private:
 	const OscillateFeedbackEventData* m_data;
