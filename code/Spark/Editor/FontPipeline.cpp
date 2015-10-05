@@ -24,6 +24,18 @@ namespace traktor
 {
 	namespace spark
 	{
+		namespace
+		{
+
+struct GlyphRect
+{
+	int32_t x;
+	int32_t y;
+	int32_t width;
+	int32_t height;
+};
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.FontPipeline", 1, FontPipeline, editor::IPipeline)
 
@@ -122,8 +134,6 @@ bool FontPipeline::buildOutput(
 	);
 
 	// Rasterize all glyphs.
-	struct GlyphRect { int32_t x; int32_t y; int32_t width; int32_t height; };
-
 	Ref< FontResource > fontResource = new FontResource();
 	fontResource->m_glyphs.resize(fontAsset->m_includeCharacters.length());
 
