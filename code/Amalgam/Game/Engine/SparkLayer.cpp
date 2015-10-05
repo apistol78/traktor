@@ -85,7 +85,7 @@ void SparkLayer::prepare()
 	// Create instance of root sprite.
 	if (!m_characterInstance)
 	{
-		m_characterInstance = m_characterBuilder->create(m_sprite, 0, L"");
+		m_characterInstance = m_characterBuilder->create(m_sprite.getResource(), 0, L"");
 		if (m_characterInstance)
 			m_sparkPlayer = new spark::SparkPlayer(m_characterInstance);
 		else
