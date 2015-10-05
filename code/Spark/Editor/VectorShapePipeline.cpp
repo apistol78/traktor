@@ -401,11 +401,7 @@ bool VectorShapePipeline::buildOutput(
 	for (std::list< std::pair< const Style*, TriangleProducer::Batch > >::const_iterator i = batches.begin(); i != batches.end(); ++i)
 	{
 		for (AlignedVector< Vector2 >::const_iterator j = i->second.vertices.begin(); j != i->second.vertices.end(); ++j)
-		{
-			T_FATAL_ASSERT(!isNanOrInfinite(j->x));
-			T_FATAL_ASSERT(!isNanOrInfinite(j->y));
 			bounds.contain(*j);
-		}
 	}
 
 	// Determine offset to place pivot in origo.

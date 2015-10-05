@@ -86,6 +86,7 @@ bool FontPipeline::buildOutput(
 
 	Path fontFile = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + fontAsset->getFileName());
 
+#if defined(_WIN32)
 	error = FT_New_Face(
 		library,
 		wstombs(fontFile.getPathName()).c_str(),
@@ -97,6 +98,10 @@ bool FontPipeline::buildOutput(
 		log::error << L"Font pipeline failed; unable to load font \"" << fontFile.getPathName() << L"\"." << Endl;
 		return false;
 	}
+#else
+	// FIXME Linker error on clang
+	return false;
+#endif
 
 	error = FT_Select_Charmap(face, FT_ENCODING_UNICODE);
 	if (error)
