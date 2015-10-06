@@ -1,6 +1,7 @@
 #ifndef traktor_spray_GravityModifierData_H
 #define traktor_spray_GravityModifierData_H
 
+#include "Core/Math/Vector4.h"
 #include "Spray/ModifierData.h"
 
 // import/export mechanism.

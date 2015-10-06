@@ -13,6 +13,12 @@ namespace traktor
 	namespace
 	{
 
+// Ensure RTTI registry is initialized early.
+#if defined(_MSC_VER)
+#	pragma warning(disable : 4073)
+#	pragma init_seg(lib)
+#endif
+
 static uint32_t s_typeInfoCount = 0;
 #if T_REGISTRY_SIZE == 0
 static uint32_t s_typeInfoRegistrySize = 0;

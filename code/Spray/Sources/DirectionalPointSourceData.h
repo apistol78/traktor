@@ -1,6 +1,7 @@
 #ifndef traktor_spray_DirectionalPointSourceData_H
 #define traktor_spray_DirectionalPointSourceData_H
 
+#include "Core/Math/Range.h"
 #include "Spray/SourceData.h"
 
 // import/export mechanism.

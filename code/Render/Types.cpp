@@ -14,38 +14,15 @@ namespace traktor
 		namespace
 		{
 
-class HandleRegistry
-{
-public:
-	HandleRegistry()
-	:	m_nextUnusedHandle(1)
-	{
-	}
+// Ensure parameter registry is initialized early.
+#if defined(_MSC_VER)
+#	pragma warning(disable : 4073)
+#	pragma init_seg(lib)
+#endif
 
-	handle_t getHandle(const std::wstring& name)
-	{
-		T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_lock);
-
-		SmallMap< std::wstring, handle_t >::const_iterator i = m_handles.find(name);
-		if (i != m_handles.end())
-		{
-			T_ASSERT (i->second > 0);
-			return i->second;
-		}
-
-		handle_t handle = m_nextUnusedHandle++;
-		m_handles.insert(std::make_pair(name, handle));
-
-		return handle;
-	}
-
-private:
-	CriticalSection m_lock;
-	SmallMap< std::wstring, handle_t > m_handles;
-	handle_t m_nextUnusedHandle;
-};
-
-HandleRegistry s_handleRegistry;
+CriticalSection m_handleLock;
+SmallMap< std::wstring, handle_t > m_handles;
+handle_t m_nextUnusedHandle = 1;
 
 struct TextureFormatInfo
 {
@@ -114,7 +91,19 @@ c_textureFormatInfo[] =
 
 handle_t getParameterHandle(const std::wstring& name)
 {
-	return s_handleRegistry.getHandle(name);
+	T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_handleLock);
+
+	SmallMap< std::wstring, handle_t >::const_iterator i = m_handles.find(name);
+	if (i != m_handles.end())
+	{
+		T_ASSERT (i->second > 0);
+		return i->second;
+	}
+
+	handle_t handle = m_nextUnusedHandle++;
+	m_handles.insert(std::make_pair(name, handle));
+
+	return handle;
 }
 
 std::wstring getParameterNameFromTextureReferenceIndex(int32_t index)
@@ -124,7 +113,7 @@ std::wstring getParameterNameFromTextureReferenceIndex(int32_t index)
 
 handle_t getParameterHandleFromTextureReferenceIndex(int32_t index)
 {
-	return s_handleRegistry.getHandle(getParameterNameFromTextureReferenceIndex(index));
+	return getParameterHandle(getParameterNameFromTextureReferenceIndex(index));
 }
 
 std::wstring getDataUsageName(DataUsage usage)
