@@ -1,51 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="5">
+<object type="traktor.amalgam.Feature" version="7">
 	<description>Online - Steam</description>
 	<priority>0</priority>
 	<platforms>
 		<item>
 			<platform>{C5B672D1-E72D-AC47-97D4-ABAA41F2F6BD}</platform>
 			<executableFile/>
-			<deployFiles>
-				<item>libsteam_api.so</item>
-				<item>libTraktor.Core.so</item>
-				<item>libTraktor.Net.so</item>
-				<item>libTraktor.Online.so</item>
-				<item>libTraktor.Online.Steam.so</item>
-			</deployFiles>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_FILES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>libTraktor.Core.so</item>
+								<item>libTraktor.Net.so</item>
+								<item>libTraktor.Online.Steam.so</item>
+								<item>libTraktor.Online.so</item>
+								<item>libsteam_api.so</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
 		</item>
 		<item>
 			<platform>{9105E00C-D6AA-9140-B4D6-0CFD5B2FD76A}</platform>
 			<executableFile/>
-			<deployFiles>
-				<item>steam_api.dylib</item>
-				<item>libTraktor.Core.dylib</item>
-				<item>libTraktor.Net.dylib</item>
-				<item>libTraktor.Online.dylib</item>
-				<item>libTraktor.Online.Steam.dylib</item>
-			</deployFiles>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_FILES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>libTraktor.Core.dylib</item>
+								<item>libTraktor.Net.dylib</item>
+								<item>libTraktor.Online.Steam.dylib</item>
+								<item>libTraktor.Online.dylib</item>
+								<item>steam_api.dylib</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
 		</item>
 		<item>
 			<platform>{7D0F1280-E37A-2541-8892-723B3C81569C}</platform>
 			<executableFile/>
-			<deployFiles>
-				<item>steam_api.dll</item>
-				<item>Traktor.Core.dll</item>
-				<item>Traktor.Net.dll</item>
-				<item>Traktor.Online.dll</item>
-				<item>Traktor.Online.Steam.dll</item>
-			</deployFiles>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_FILES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core.dll</item>
+								<item>Traktor.Net.dll</item>
+								<item>Traktor.Online.Steam.dll</item>
+								<item>Traktor.Online.dll</item>
+								<item>steam_api.dll</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
 		</item>
 		<item>
 			<platform>{DC125AEC-2E6B-AF4D-A852-35731A782340}</platform>
 			<executableFile/>
-			<deployFiles>
-				<item>steam_api64.dll</item>
-				<item>Traktor.Core.dll</item>
-				<item>Traktor.Net.dll</item>
-				<item>Traktor.Online.dll</item>
-				<item>Traktor.Online.Steam.dll</item>
-			</deployFiles>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_FILES_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core.lib</item>
+								<item>Traktor.Net.lib</item>
+								<item>Traktor.Online.Steam.lib</item>
+								<item>Traktor.Online.lib</item>
+								<item>steam_api64.lib</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_FILES_SHARED</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core.dll</item>
+								<item>Traktor.Net.dll</item>
+								<item>Traktor.Online.Steam.dll</item>
+								<item>Traktor.Online.dll</item>
+								<item>steam_api64.dll</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
 		</item>
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">
@@ -93,4 +141,5 @@
 			</item>
 		</value>
 	</runtimeProperties>
+	<environment/>
 </object>

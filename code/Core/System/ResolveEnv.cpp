@@ -1,11 +1,10 @@
 #include "Core/Misc/String.h"
-#include "Core/System/OS.h"
 #include "Core/System/ResolveEnv.h"
 
 namespace traktor
 {
 
-std::wstring resolveEnv(const std::wstring& s)
+std::wstring resolveEnv(const std::wstring& s, const OS::envmap_t* envmap)
 {
 	std::wstring tmp = s;
 	std::wstring env;
@@ -22,10 +21,23 @@ std::wstring resolveEnv(const std::wstring& s)
 
 		std::wstring name = tmp.substr(s + 2, e - s - 2);
 
+		if (envmap)
+		{
+			OS::envmap_t::const_iterator it = envmap->find(name);
+			if (it != envmap->end())
+			{
+				tmp = tmp.substr(0, s) + replaceAll< std::wstring >(it->second, L'\\', L'/') + tmp.substr(e + 1);
+				continue;
+			}
+		}
+
 		if (OS::getInstance().getEnvironment(name, env))
+		{
 			tmp = tmp.substr(0, s) + replaceAll< std::wstring >(env, L'\\', L'/') + tmp.substr(e + 1);
-		else
-			tmp = tmp.substr(0, s) + tmp.substr(e + 1);
+			continue;
+		}
+
+		tmp = tmp.substr(0, s) + tmp.substr(e + 1);
 	}
 
 	return tmp;

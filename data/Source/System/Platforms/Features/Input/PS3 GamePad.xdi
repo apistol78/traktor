@@ -1,15 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="5">
+<object type="traktor.amalgam.Feature" version="7">
 	<description>Input - PlayStation 3 GamePad</description>
 	<priority>0</priority>
 	<platforms>
 		<item>
 			<platform>{14814B5B-2FF1-2F4B-BE92-08CAB3D0D544}</platform>
 			<executableFile/>
-			<deployFiles>
-				<item>Traktor.Input.lib</item>
-				<item>Traktor.Input.Ps3.lib</item>
-			</deployFiles>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_FILES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Input.Ps3.lib</item>
+								<item>Traktor.Input.lib</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
 		</item>
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">
@@ -64,4 +73,5 @@
 			</item>
 		</value>
 	</runtimeProperties>
+	<environment/>
 </object>

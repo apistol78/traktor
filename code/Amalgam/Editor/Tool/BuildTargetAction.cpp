@@ -14,6 +14,8 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/Settings/PropertyStringArray.h"
+#include "Core/Settings/PropertyStringSet.h"
 #include "Core/System/IProcess.h"
 #include "Core/System/OS.h"
 #include "Core/System/PipeReader.h"
@@ -36,6 +38,24 @@ struct FeaturePriorityPred
 		return l->getPriority() < r->getPriority();
 	}
 };
+
+std::wstring implodePropertyValue(const IPropertyValue* value)
+{
+	if (const PropertyString* valueString = dynamic_type_cast< const PropertyString* >(value))
+		return PropertyString::get(valueString);
+	else if (const PropertyStringArray* valueStringArray = dynamic_type_cast< const PropertyStringArray* >(value))
+	{
+		std::vector< std::wstring > ss = PropertyStringArray::get(valueStringArray);
+		return implode(ss.begin(), ss.end(), L" ");
+	}
+	else if (const PropertyStringSet* valueStringSet = dynamic_type_cast< const PropertyStringSet* >(value))
+	{
+		std::set< std::wstring > ss = PropertyStringSet::get(valueStringSet);
+		return implode(ss.begin(), ss.end(), L" ");
+	}
+	else
+		return L"";
+}
 
 		}
 
@@ -60,7 +80,7 @@ BuildTargetAction::BuildTargetAction(
 
 bool BuildTargetAction::execute(IProgressListener* progressListener)
 {
-	std::set< std::wstring > deployFiles;
+	Ref< PropertyGroup > deploy = new PropertyGroup();
 
 	// Get platform description object from database.
 	Ref< Platform > platform = m_database->getObjectReadOnly< Platform >(m_targetConfiguration->getPlatform());
@@ -103,7 +123,7 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 
 		const Feature::Platform* fp = feature->getPlatform(m_targetConfiguration->getPlatform());
 		if (fp)
-			deployFiles.insert(fp->deployFiles.begin(), fp->deployFiles.end());
+			deploy = deploy->mergeJoin(fp->deploy);
 		else
 			log::warning << L"Feature \"" << feature->getDescription() << L"\" doesn't support selected platform." << Endl;
 
@@ -218,9 +238,13 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 #endif
 	envmap[L"DEPLOY_SYSTEM_ROOT"] = m_globalSettings->getProperty< PropertyString >(L"Amalgam.SystemRoot", L"$(TRAKTOR_HOME)");
 	envmap[L"DEPLOY_OUTPUT_PATH"] = m_outputPath;
-	envmap[L"DEPLOY_CERTIFICATE"] = m_globalSettings->getProperty< PropertyString >(L"Amalgam.Certificate", L"");
-	envmap[L"DEPLOY_FILES"] = implode(deployFiles.begin(), deployFiles.end(), L" ");
 	envmap[L"DEPLOY_DEBUG"] = (m_globalSettings->getProperty< PropertyBoolean >(L"Amalgam.UseDebugBinaries", false) ? L"YES" : L"");
+	envmap[L"DEPLOY_STATIC_LINK"] = (m_globalSettings->getProperty< PropertyBoolean >(L"Amalgam.StaticallyLinked", false) ? L"YES" : L"");
+
+	// Flatten feature deploy variables.
+	const std::map< std::wstring, Ref< IPropertyValue > >& values = deploy->getValues();
+	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = values.begin(); i != values.end(); ++i)
+		envmap[i->first] = implodePropertyValue(i->second);
 
 	// Merge tool environment variables.
 	const DeployTool& deployTool = platform->getDeployTool();

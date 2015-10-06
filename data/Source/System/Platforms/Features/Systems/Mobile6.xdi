@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="5">
+<object type="traktor.amalgam.Feature" version="7">
 	<description>System - Microsoft Windows CE</description>
 	<priority>0</priority>
 	<platforms>
 		<item>
 			<platform>{991B63B2-97FC-AA44-9FAE-466B5B153B4A}</platform>
 			<executableFile/>
-			<deployFiles/>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_FILES</first>
+						<second type="traktor.PropertyStringSet">
+							<value/>
+						</second>
+					</item>
+				</value>
+			</deploy>
 		</item>
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">
@@ -53,4 +62,5 @@
 		</value>
 	</migrateProperties>
 	<runtimeProperties/>
+	<environment/>
 </object>

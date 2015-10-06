@@ -1,6 +1,7 @@
 #include "Amalgam/Editor/Feature.h"
 #include "Amalgam/Editor/Platform.h"
 #include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyStringSet.h"
 #include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
@@ -13,7 +14,7 @@ namespace traktor
 	namespace amalgam
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.amalgam.Feature", 6, Feature, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.amalgam.Feature", 7, Feature, ISerializable)
 
 Feature::Feature()
 :	m_priority(0)
@@ -52,7 +53,16 @@ void Feature::Platform::serialize(ISerializer& s)
 	if (s.getVersion() >= 5)
 		s >> Member< std::wstring >(L"executableFile", executableFile);
 
-	s >> MemberStlList< std::wstring >(L"deployFiles", deployFiles);
+	if (s.getVersion() >= 7)
+		s >> MemberRef< PropertyGroup >(L"deploy", deploy);
+	else
+	{
+		std::list< std::wstring > deployFiles;
+		s >> MemberStlList< std::wstring >(L"deployFiles", deployFiles);
+
+		deploy = new PropertyGroup();
+		deploy->setProperty(L"DEPLOY_FILES", new PropertyStringSet(std::set< std::wstring >(deployFiles.begin(), deployFiles.end())));
+	}
 }
 
 	}

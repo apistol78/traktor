@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="5">
+<object type="traktor.amalgam.Feature" version="7">
 	<description>System - Apple OSX</description>
 	<priority>0</priority>
 	<platforms>
 		<item>
 			<platform>{9105E00C-D6AA-9140-B4D6-0CFD5B2FD76A}</platform>
 			<executableFile/>
-			<deployFiles/>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_FILES</first>
+						<second type="traktor.PropertyStringSet">
+							<value/>
+						</second>
+					</item>
+				</value>
+			</deploy>
 		</item>
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">
@@ -53,4 +62,5 @@
 		</value>
 	</migrateProperties>
 	<runtimeProperties/>
+	<environment/>
 </object>

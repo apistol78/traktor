@@ -1,54 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="5">
+<object type="traktor.amalgam.Feature" version="7">
 	<description>Audio - OpenAL</description>
 	<priority>0</priority>
 	<platforms>
 		<item>
 			<platform>{13FF3E12-076E-274E-B347-8F323ECD53A7}</platform>
 			<executableFile/>
-			<deployFiles>
-				<item>libTraktor.Core.a</item>
-				<item>libTraktor.Sound.a</item>
-				<item>libTraktor.Sound.OpenAL.a</item>
-				<item>OpenAL.framework</item>
-				<item>AudioToolbox.framework</item>
-			</deployFiles>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_FILES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>AudioToolbox.framework</item>
+								<item>OpenAL.framework</item>
+								<item>libTraktor.Core.a</item>
+								<item>libTraktor.Sound.OpenAL.a</item>
+								<item>libTraktor.Sound.a</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
 		</item>
 		<item>
 			<platform>{C5B672D1-E72D-AC47-97D4-ABAA41F2F6BD}</platform>
 			<executableFile/>
-			<deployFiles>
-				<item>libTraktor.Core.so</item>
-				<item>libTraktor.Sound.so</item>
-				<item>libTraktor.Sound.OpenAL.so</item>
-			</deployFiles>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_FILES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>libTraktor.Core.so</item>
+								<item>libTraktor.Sound.OpenAL.so</item>
+								<item>libTraktor.Sound.so</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
 		</item>
 		<item>
 			<platform>{9105E00C-D6AA-9140-B4D6-0CFD5B2FD76A}</platform>
 			<executableFile/>
-			<deployFiles>
-				<item>libTraktor.Core.dylib</item>
-				<item>libTraktor.Sound.dylib</item>
-				<item>libTraktor.Sound.OpenAL.dylib</item>
-			</deployFiles>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_FILES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>libTraktor.Core.dylib</item>
+								<item>libTraktor.Sound.OpenAL.dylib</item>
+								<item>libTraktor.Sound.dylib</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
 		</item>
 		<item>
 			<platform>{7D0F1280-E37A-2541-8892-723B3C81569C}</platform>
 			<executableFile/>
-			<deployFiles>
-				<item>Traktor.Core.dll</item>
-				<item>Traktor.Sound.dll</item>
-				<item>Traktor.Sound.OpenAL.dll</item>
-			</deployFiles>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_FILES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core.dll</item>
+								<item>Traktor.Sound.OpenAL.dll</item>
+								<item>Traktor.Sound.dll</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
 		</item>
 		<item>
 			<platform>{DC125AEC-2E6B-AF4D-A852-35731A782340}</platform>
 			<executableFile/>
-			<deployFiles>
-				<item>Traktor.Core.dll</item>
-				<item>Traktor.Sound.dll</item>
-				<item>Traktor.Sound.OpenAL.dll</item>
-			</deployFiles>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_FILES_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core.lib</item>
+								<item>Traktor.Sound.OpenAL.lib</item>
+								<item>Traktor.Sound.lib</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_FILES_SHARED</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core.dll</item>
+								<item>Traktor.Sound.OpenAL.dll</item>
+								<item>Traktor.Sound.dll</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
 		</item>
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">
@@ -119,4 +174,5 @@
 			</item>
 		</value>
 	</runtimeProperties>
+	<environment/>
 </object>

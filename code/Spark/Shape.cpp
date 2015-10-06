@@ -10,6 +10,14 @@ namespace traktor
 {
 	namespace spark
 	{
+		namespace
+		{
+
+render::handle_t s_handleTransform = render::getParameterHandle(L"Spark_Transform");
+render::handle_t s_handleColorTransform_Mul = render::getParameterHandle(L"Spark_ColorTransform_Mul");
+render::handle_t s_handleColorTransform_Add = render::getParameterHandle(L"Spark_ColorTransform_Add");
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.Shape", Shape, Object)
 
@@ -47,14 +55,14 @@ void Shape::render(render::RenderContext* renderContext, const Matrix33& transfo
 		renderBlock->primitives = parts[i].primitives;
 
 		renderBlock->programParams->beginParameters(renderContext);
-		renderBlock->programParams->setMatrixParameter(L"Spark_Transform", T);
-		renderBlock->programParams->setVectorParameter(L"Spark_ColorTransform_Mul", Vector4(
+		renderBlock->programParams->setMatrixParameter(s_handleTransform, T);
+		renderBlock->programParams->setVectorParameter(s_handleColorTransform_Mul, Vector4(
 			colorTransform.red[0],
 			colorTransform.green[0],
 			colorTransform.blue[0],
 			colorTransform.alpha[0]
 		));
-		renderBlock->programParams->setVectorParameter(L"Spark_ColorTransform_Add", Vector4(
+		renderBlock->programParams->setVectorParameter(s_handleColorTransform_Add, Vector4(
 			colorTransform.red[1],
 			colorTransform.green[1],
 			colorTransform.blue[1],

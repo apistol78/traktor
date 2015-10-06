@@ -1,128 +1,239 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="5">
+<object type="traktor.amalgam.Feature" version="7">
 	<description>Module - Spark 2D</description>
 	<priority>0</priority>
 	<platforms>
 		<item>
 			<platform>{13FF3E12-076E-274E-B347-8F323ECD53A7}</platform>
 			<executableFile/>
-			<deployFiles>
-				<item>libTraktor.Core.a</item>
-				<item>libTraktor.Database.a</item>
-				<item>libTraktor.Render.a</item>
-				<item>libTraktor.Resource.a</item>
-				<item>libTraktor.Spark.a</item>
-			</deployFiles>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_FILES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>libTraktor.Core.a</item>
+								<item>libTraktor.Database.a</item>
+								<item>libTraktor.Render.a</item>
+								<item>libTraktor.Resource.a</item>
+								<item>libTraktor.Spark.a</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
 		</item>
 		<item>
 			<platform>{C5B672D1-E72D-AC47-97D4-ABAA41F2F6BD}</platform>
 			<executableFile/>
-			<deployFiles>
-				<item>libTraktor.Core.so</item>
-				<item>libTraktor.Database.so</item>
-				<item>libTraktor.Render.so</item>
-				<item>libTraktor.Resource.so</item>
-				<item>libTraktor.Spark.so</item>
-			</deployFiles>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_FILES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>libTraktor.Core.so</item>
+								<item>libTraktor.Database.so</item>
+								<item>libTraktor.Render.so</item>
+								<item>libTraktor.Resource.so</item>
+								<item>libTraktor.Spark.so</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
 		</item>
 		<item>
 			<platform>{991B63B2-97FC-AA44-9FAE-466B5B153B4A}</platform>
 			<executableFile/>
-			<deployFiles>
-				<item>Traktor.Core.dll</item>
-				<item>Traktor.Database.dll</item>
-				<item>Traktor.Render.dll</item>
-				<item>Traktor.Resource.dll</item>
-				<item>Traktor.Spark.dll</item>
-			</deployFiles>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_FILES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core.dll</item>
+								<item>Traktor.Database.dll</item>
+								<item>Traktor.Render.dll</item>
+								<item>Traktor.Resource.dll</item>
+								<item>Traktor.Spark.dll</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
 		</item>
 		<item>
 			<platform>{9105E00C-D6AA-9140-B4D6-0CFD5B2FD76A}</platform>
 			<executableFile/>
-			<deployFiles>
-				<item>libTraktor.Core.dylib</item>
-				<item>libTraktor.Database.dylib</item>
-				<item>libTraktor.Render.dylib</item>
-				<item>libTraktor.Resource.dylib</item>
-				<item>libTraktor.Spark.dylib</item>
-			</deployFiles>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_FILES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>libTraktor.Core.dylib</item>
+								<item>libTraktor.Database.dylib</item>
+								<item>libTraktor.Render.dylib</item>
+								<item>libTraktor.Resource.dylib</item>
+								<item>libTraktor.Spark.dylib</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
 		</item>
 		<item>
 			<platform>{14814B5B-2FF1-2F4B-BE92-08CAB3D0D544}</platform>
 			<executableFile/>
-			<deployFiles>
-				<item>Traktor.Core.lib</item>
-				<item>Traktor.Database.lib</item>
-				<item>Traktor.Render.lib</item>
-				<item>Traktor.Resource.lib</item>
-				<item>Traktor.Spark.lib</item>
-			</deployFiles>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_FILES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core.lib</item>
+								<item>Traktor.Database.lib</item>
+								<item>Traktor.Render.lib</item>
+								<item>Traktor.Resource.lib</item>
+								<item>Traktor.Spark.lib</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
 		</item>
 		<item>
 			<platform>{7D0F1280-E37A-2541-8892-723B3C81569C}</platform>
 			<executableFile/>
-			<deployFiles>
-				<item>Traktor.Core.dll</item>
-				<item>Traktor.Database.dll</item>
-				<item>Traktor.Render.dll</item>
-				<item>Traktor.Resource.dll</item>
-				<item>Traktor.Spark.dll</item>
-			</deployFiles>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_FILES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core.dll</item>
+								<item>Traktor.Database.dll</item>
+								<item>Traktor.Render.dll</item>
+								<item>Traktor.Resource.dll</item>
+								<item>Traktor.Spark.dll</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
 		</item>
 		<item>
 			<platform>{DC125AEC-2E6B-AF4D-A852-35731A782340}</platform>
 			<executableFile/>
-			<deployFiles>
-				<item>Traktor.Core.dll</item>
-				<item>Traktor.Database.dll</item>
-				<item>Traktor.Render.dll</item>
-				<item>Traktor.Resource.dll</item>
-				<item>Traktor.Spark.dll</item>
-			</deployFiles>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_FILES_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core.lib</item>
+								<item>Traktor.Database.lib</item>
+								<item>Traktor.Render.lib</item>
+								<item>Traktor.Resource.lib</item>
+								<item>Traktor.Spark.lib</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_FILES_SHARED</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core.dll</item>
+								<item>Traktor.Database.dll</item>
+								<item>Traktor.Render.dll</item>
+								<item>Traktor.Resource.dll</item>
+								<item>Traktor.Spark.dll</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
 		</item>
 		<item>
 			<platform>{D6FF12FC-9FEF-394D-B898-F563786A8789}</platform>
 			<executableFile/>
-			<deployFiles>
-				<item>Traktor.Core.lib</item>
-				<item>Traktor.Database.lib</item>
-				<item>Traktor.Render.lib</item>
-				<item>Traktor.Resource.lib</item>
-				<item>Traktor.Spark.lib</item>
-			</deployFiles>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_FILES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core.lib</item>
+								<item>Traktor.Database.lib</item>
+								<item>Traktor.Render.lib</item>
+								<item>Traktor.Resource.lib</item>
+								<item>Traktor.Spark.lib</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
 		</item>
 		<item>
 			<platform>{1C5EBC43-2395-9549-8FF7-BA51A6C30B7B}</platform>
 			<executableFile/>
-			<deployFiles>
-				<item>libTraktor.Core.bc</item>
-				<item>libTraktor.Database.bc</item>
-				<item>libTraktor.Render.bc</item>
-				<item>libTraktor.Resource.bc</item>
-				<item>libTraktor.Spark.bc</item>
-			</deployFiles>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_FILES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>libTraktor.Core.bc</item>
+								<item>libTraktor.Database.bc</item>
+								<item>libTraktor.Render.bc</item>
+								<item>libTraktor.Resource.bc</item>
+								<item>libTraktor.Spark.bc</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
 		</item>
 		<item>
 			<platform>{947FBCA7-FECE-7248-AEC4-046EB01E9A31}</platform>
 			<executableFile/>
-			<deployFiles>
-				<item>libTraktor.Core.a</item>
-				<item>libTraktor.Database.a</item>
-				<item>libTraktor.Render.a</item>
-				<item>libTraktor.Resource.a</item>
-				<item>libTraktor.Spark.a</item>
-			</deployFiles>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_FILES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>libTraktor.Core.a</item>
+								<item>libTraktor.Database.a</item>
+								<item>libTraktor.Render.a</item>
+								<item>libTraktor.Resource.a</item>
+								<item>libTraktor.Spark.a</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
 		</item>
 		<item>
 			<platform>{CAE489CE-1592-234F-ADB9-A7D75646B53D}</platform>
 			<executableFile/>
-			<deployFiles>
-				<item>libTraktor.Core.a</item>
-				<item>libTraktor.Database.a</item>
-				<item>libTraktor.Render.a</item>
-				<item>libTraktor.Resource.a</item>
-				<item>libTraktor.Spark.a</item>
-			</deployFiles>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_FILES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>libTraktor.Core.a</item>
+								<item>libTraktor.Database.a</item>
+								<item>libTraktor.Render.a</item>
+								<item>libTraktor.Resource.a</item>
+								<item>libTraktor.Spark.a</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
 		</item>
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">
@@ -139,9 +250,9 @@
 				<first>ShaderPipeline.IncludeOnlyTechniques</first>
 				<second type="traktor.PropertyStringSet">
 					<value>
-						<item>Solid</item>
 						<item>In</item>
 						<item>Out</item>
+						<item>Solid</item>
 					</value>
 				</second>
 			</item>
@@ -171,4 +282,5 @@
 			</item>
 		</value>
 	</runtimeProperties>
+	<environment/>
 </object>

@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="5">
+<object type="traktor.amalgam.Feature" version="7">
 	<description>Input - OSX</description>
 	<priority>0</priority>
 	<platforms>
 		<item>
 			<platform>{9105E00C-D6AA-9140-B4D6-0CFD5B2FD76A}</platform>
 			<executableFile/>
-			<deployFiles>
-				<item>libTraktor.Core.dylib</item>
-				<item>libTraktor.Input.dylib</item>
-				<item>libTraktor.Input.OsX.dylib</item>
-			</deployFiles>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_FILES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>libTraktor.Core.dylib</item>
+								<item>libTraktor.Input.OsX.dylib</item>
+								<item>libTraktor.Input.dylib</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
 		</item>
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">
@@ -59,4 +68,5 @@
 			</item>
 		</value>
 	</runtimeProperties>
+	<environment/>
 </object>

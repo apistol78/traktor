@@ -1,21 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="5">
+<object type="traktor.amalgam.Feature" version="7">
 	<description>Audio - PS3 DSP</description>
 	<priority>0</priority>
 	<platforms>
 		<item>
 			<platform>{14814B5B-2FF1-2F4B-BE92-08CAB3D0D544}</platform>
 			<executableFile/>
-			<deployFiles>
-				<item>libsysutil_avconf_ext_stub.a</item>
-				<item>libaudio_stub.a</item>
-				<item>Traktor.Core.lib</item>
-				<item>Traktor.Sound.lib</item>
-				<item>Traktor.Sound.Ps3.lib</item>
-				<item>Traktor.Sound.JobAddMulConst.ppu.o</item>
-				<item>Traktor.Sound.JobMulConst.ppu.o</item>
-				<item>Traktor.Sound.JobStretch.ppu.o</item>
-			</deployFiles>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_FILES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core.lib</item>
+								<item>Traktor.Sound.JobAddMulConst.ppu.o</item>
+								<item>Traktor.Sound.JobMulConst.ppu.o</item>
+								<item>Traktor.Sound.JobStretch.ppu.o</item>
+								<item>Traktor.Sound.Ps3.lib</item>
+								<item>Traktor.Sound.lib</item>
+								<item>libaudio_stub.a</item>
+								<item>libsysutil_avconf_ext_stub.a</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
 		</item>
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">
@@ -87,4 +96,5 @@
 			</item>
 		</value>
 	</runtimeProperties>
+	<environment/>
 </object>
