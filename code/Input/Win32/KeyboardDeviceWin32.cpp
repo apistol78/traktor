@@ -15,10 +15,12 @@ KeyboardDeviceWin32::KeyboardDeviceWin32(HWND hWnd)
 ,	m_pWndProc(0)
 {
 #if !defined(WINCE)
+	T_FATAL_ASSERT (GetWindowLongPtr(m_hWnd, GWLP_USERDATA) == 0);
+
 	// Subclass window to get access to window events.
 	m_pWndProc = (WNDPROC)GetWindowLongPtr(m_hWnd, GWLP_WNDPROC);
-	SetWindowLongPtr(m_hWnd, GWLP_WNDPROC, (LONG)&KeyboardDeviceWin32::wndProc);
-	SetWindowLongPtr(m_hWnd, GWLP_USERDATA, (LONG)this);
+	SetWindowLongPtr(m_hWnd, GWLP_WNDPROC, (LONG_PTR)&KeyboardDeviceWin32::wndProc);
+	SetWindowLongPtr(m_hWnd, GWLP_USERDATA, (LONG_PTR)this);
 #endif
 
 	// Set initally reset.
@@ -29,7 +31,7 @@ KeyboardDeviceWin32::~KeyboardDeviceWin32()
 {
 #if !defined(WINCE)
 	// Restore original window proc.
-	SetWindowLongPtr(m_hWnd, GWLP_WNDPROC, (LONG)m_pWndProc);
+	SetWindowLongPtr(m_hWnd, GWLP_WNDPROC, (LONG_PTR)m_pWndProc);
 	SetWindowLongPtr(m_hWnd, GWLP_USERDATA, 0);
 #endif
 }

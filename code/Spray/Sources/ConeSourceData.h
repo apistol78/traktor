@@ -1,6 +1,7 @@
 #ifndef traktor_spray_ConeSourceData_H
 #define traktor_spray_ConeSourceData_H
 
+#include "Core/Math/Range.h"
 #include "Spray/SourceData.h"
 
 // import/export mechanism.

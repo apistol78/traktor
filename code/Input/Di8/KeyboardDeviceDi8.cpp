@@ -19,8 +19,8 @@ KeyboardDeviceDi8::KeyboardDeviceDi8(HWND hWnd, IDirectInputDevice8* device, con
 {
 	// Subclass window to get access to window events.
 	m_pWndProc = (WNDPROC)GetWindowLongPtr(m_hWnd, GWLP_WNDPROC);
-	SetWindowLongPtr(m_hWnd, GWLP_WNDPROC, (LONG)&KeyboardDeviceDi8::wndProc);
-	SetWindowLongPtr(m_hWnd, GWLP_USERDATA, (LONG)this);
+	SetWindowLongPtr(m_hWnd, GWLP_WNDPROC, (LONG_PTR)&KeyboardDeviceDi8::wndProc);
+	SetWindowLongPtr(m_hWnd, GWLP_USERDATA, (LONG_PTR)this);
 
 	// Setup data format.
 	m_device->SetDataFormat(&c_dfDIKeyboard);

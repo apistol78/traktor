@@ -1,3 +1,4 @@
+import(traktor)
 
 
 function string:split(sep)
@@ -13,6 +14,16 @@ function string:endswith(send)
 end
 
 
+function string:trim()
+	return self:find'^%s*$' and '' or self:match'^%s*(.*%S)'
+end
+
+
+function string:starts(start)
+   return string.sub(self, 1, string.len(start)) == start
+end
+
+
 function build(args)
 	stdout:printLn("Building asset(s)...")
 	local cmdline = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App -p -s=Pipeline"
@@ -23,13 +34,150 @@ function build(args)
 end
 
 
-function deploy(args)
+function deployStatic(args)
 	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
 
-	-- Deploy application configuration to target.
-	stdout:printLn("Deploying resources to target host...")
-	run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) Application.config", "(null)")
+	local vsComnTools = os:getEnvironment("VS110COMNTOOLS")
+	if #vsComnTools <= 0 then
+		stderr:printLn("VS110COMNTOOLS not set; please ensure Visual Studio 2012 is properly installed.")
+		return 1
+	end
+
+	local programFiles = os:getEnvironment("ProgramFiles(x86)")
+	if #programFiles <= 0 then
+		programFiles = os:getEnvironment("ProgramFiles")
+		if #programFiles <= 0 then
+			stderr:printLn("Unable to determine program files folder.")
+			return 1
+		end
+	end
+
+	local vcLibPath = vsComnTools .. "..\\..\\VC\\lib\\amd64"
+	local sdkBinPath = programFiles .. "\\Microsoft SDKs\\Windows\\v7.1A\\Bin"
+	local sdkLibPath = programFiles .. "\\Microsoft SDKs\\Windows\\v7.1A\\Lib\\x64"
+	local dxLibPath = "$(TRAKTOR_HOME)\\3rdp\\DirectX SDK (June 2010)\\Lib\\x64"
+
+	local link = vsComnTools .. "..\\..\\VC\\bin\\amd64\\link.exe"
+	if not fileSystem:exist(Path(link)) then
+		stderr:printLn("Unable to find Visual Studio 2012 C++ linker; please ensure Visual Studio 2012 is properly installed.")
+		return 1
+	end
+
+	local mt = sdkBinPath .. "\\mt.exe"
+	if not fileSystem:exist(Path(mt)) then
+		stderr:printLn("Unable to find Windows SDK manifest tool; please ensure Windows SDK 7.1A is properly installed.")
+		return 1
+	end
+
+	local rc = sdkBinPath .. "\\rc.exe"
+	if not fileSystem:exist(Path(mt)) then
+		stderr:printLn("Unable to find Windows SDK resource tool; please ensure Windows SDK 7.1A is properly installed.")
+		return 1
+	end
+
+	-- Determine path to module libraries.
+	local prepend
+	if not debug then
+	 	prepend = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/win64/releasestatic/"
+	else
+		stdout:printLn("Using *DEBUG* binaries")
+	 	prepend = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/win64/debugstatic/"
+	end
+
+	-- Append system path to files.
+	local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
+	local wholeLinkFiles = ""
+	local externalLinkFiles = ""
+	local linkerIncludes = ""
+	for i = #files, 1, -1 do -- We must link in reverse order to ensure global initializers are executed correctly.
+		local f = files[i]
+		if f:endswith(".dll") or f:endswith(".exe") then
+			f = f:sub(1, string.len(f) - 4) .. ".lib"
+		else
+			f = ""
+		end
+		if f ~= "" then
+			if f:starts("Extern") then
+				externalLinkFiles = externalLinkFiles .. prepend .. f .. " "
+			else
+				wholeLinkFiles = wholeLinkFiles .. prepend .. f .. " "
+				linkerIncludes = linkerIncludes .. "/INCLUDE:__module__" .. f:sub(1, string.len(f) - 4):gsub("%.", "_") .. " "
+			end
+		end
+	end
+
+	externalLinkFiles = externalLinkFiles .. prepend .. "Extern.bullet.lib "
+	externalLinkFiles = externalLinkFiles .. prepend .. "Extern.detour.lib "
+	externalLinkFiles = externalLinkFiles .. prepend .. "Extern.expat-2.1.0.lib "
+	externalLinkFiles = externalLinkFiles .. prepend .. "Extern.ilmbase.lib "
+	externalLinkFiles = externalLinkFiles .. prepend .. "Extern.jpeg-6b.lib "
+	externalLinkFiles = externalLinkFiles .. prepend .. "Extern.libflac-1.2.1.lib "
+	externalLinkFiles = externalLinkFiles .. prepend .. "Extern.liblzf-3.6.lib "
+	externalLinkFiles = externalLinkFiles .. prepend .. "Extern.libmad-0.15.1b.lib "
+	externalLinkFiles = externalLinkFiles .. prepend .. "Extern.libogg-1.3.0.lib "
+	externalLinkFiles = externalLinkFiles .. prepend .. "Extern.libtheora-1.1.1.lib "
+	externalLinkFiles = externalLinkFiles .. prepend .. "Extern.libvorbis-1.3.3.lib "
+	externalLinkFiles = externalLinkFiles .. prepend .. "Extern.lpng128.lib "
+	externalLinkFiles = externalLinkFiles .. prepend .. "Extern.lua.lib "
+	externalLinkFiles = externalLinkFiles .. prepend .. "Extern.minilzo-2.05.lib "
+	externalLinkFiles = externalLinkFiles .. prepend .. "Extern.mpg123-1.13.2.lib "
+	externalLinkFiles = externalLinkFiles .. prepend .. "Extern.OpenEXR.lib "
+	externalLinkFiles = externalLinkFiles .. prepend .. "Extern.recast.lib "
+	externalLinkFiles = externalLinkFiles .. prepend .. "Extern.RectangleBinPack.lib "
+	externalLinkFiles = externalLinkFiles .. prepend .. "Extern.rg_etc1.lib "
+	externalLinkFiles = externalLinkFiles .. prepend .. "Extern.sqlite.lib "
+	externalLinkFiles = externalLinkFiles .. prepend .. "Extern.stb_vorbis.lib "
+	externalLinkFiles = externalLinkFiles .. prepend .. "Extern.zlib-1.2.3.lib "
+
+	-- Compile resources.
+	local cmd = "\"" .. rc .. "\" /fo\"$(DEPLOY_EXECUTABLE).res\" $(TRAKTOR_HOME)/res/Traktor.Amalgam.rc"
+	local result = run:execute(cmd, "(null)")
+	if result ~= 0 then
+		stderr:printLn("Unable to build product resources.")
+		stderr:printLn(cmd)
+		return 1
+	end
+
+	-- Link files into an executable product.
+	local cmd = "\"" .. link .. "\" " .. externalLinkFiles .. " " .. wholeLinkFiles .. " " .. linkerIncludes
+	cmd = cmd .. " msvcrt.lib winmm.lib iphlpapi.lib ws2_32.lib kernel32.lib user32.lib gdi32.lib winspool.lib"
+	cmd = cmd .. " comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib"
+	cmd = cmd .. " comctl32.lib d2d1.lib dwrite.lib gdiplus.lib msimg32.lib d3d11.lib dxgi.lib dinput8.lib dxguid.lib xinput.lib "
+	cmd = cmd .. " $(DEPLOY_EXECUTABLE).res"
+	cmd = cmd .. " /OUT:$(DEPLOY_EXECUTABLE).exe"
+	cmd = cmd .. " /LIBPATH:\"" .. dxLibPath .. "\""
+	cmd = cmd .. " /LIBPATH:\"" .. sdkLibPath .. "\""
+	cmd = cmd .. " /LIBPATH:\"" .. vcLibPath .. "\""
+	cmd = cmd .. " /MACHINE:X64"
+	cmd = cmd .. " /SUBSYSTEM:WINDOWS"
+	cmd = cmd .. " /DEBUG"
+	local result = run:execute(cmd, "(null)")
+	if result ~= 0 then
+		stderr:printLn("Unable to build executable product.")
+		stderr:printLn(cmd)
+		return 1
+	end
+
+	-- Embed manifest in executable product.
+	local cmd = "\"" .. mt .. "\" -manifest $(TRAKTOR_HOME)/res/manifest-win64.xml -outputresource:$(DEPLOY_EXECUTABLE).exe;1"
+	local result = run:execute(cmd, "(null)")
+	if result ~= 0 then
+		stderr:printLn("Unable to embed manifest into executable product.")
+		stderr:printLn(cmd)
+		return 1
+	end
+
+	-- Deploy executable into remote folder.
+	run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) $(DEPLOY_EXECUTABLE).exe", "(null)")
 	if run:exitCode() ~= 0 then return run:exitCode() end
+	run:popd()
+
+	return 0
+end
+
+
+function deployShared(args)
+	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
 
 	-- Deploy binaries to target.
 	if not debug then
@@ -46,9 +194,9 @@ function deploy(args)
 	for _, f in ipairs(files) do
 		if debug then
 			local debugFile = f
-			if string.endswith(f, ".dll") then
+			if f:endswith(".dll") then
 				debugFile = f:sub(1, string.len(f) - 4) .. "_d.dll"
-			elseif string.endswith(f, ".exe") then
+			elseif f:endswith(".exe") then
 				debugFile = f:sub(1, string.len(f) - 4) .. "_d.exe"
 			end
 			if fileSystem:exist(Path(run:cwd() .. "/" .. debugFile)) then
@@ -63,6 +211,22 @@ function deploy(args)
 	run:popd()
 
 	return 0
+end
+
+
+function deploy(args)
+	-- Deploy application configuration to target.
+	stdout:printLn("Deploying resources to target host...")
+	run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) Application.config", "(null)")
+	if run:exitCode() ~= 0 then return run:exitCode() end
+
+	-- Continue with either statically linked product or as a bunch of dynamic libraries.
+	local staticLink = (os:getEnvironment("DEPLOY_STATIC_LINK") ~= "")
+	if staticLink then
+		return deployStatic(args)
+	else
+		return deployShared(args)
+	end
 end
 
 

@@ -2,6 +2,7 @@
 #define traktor_world_WorldRendererDeferred_H
 
 #include "Core/Containers/AlignedVector.h"
+#include "Resource/Proxy.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldRenderSettings.h"
 #include "World/WorldRenderView.h"
