@@ -1,7 +1,7 @@
 #ifndef traktor_ResolveEnv_H
 #define traktor_ResolveEnv_H
 
-#include "Core/Config.h"
+#include "Core/System/OS.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,7 +16,7 @@ namespace traktor
 
 /*! \brief Resolve all environment variable references in input string.
  */
-std::wstring T_DLLCLASS resolveEnv(const std::wstring& s);
+std::wstring T_DLLCLASS resolveEnv(const std::wstring& s, const OS::envmap_t* envmap);
 
 }
 

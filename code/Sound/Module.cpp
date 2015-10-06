@@ -9,7 +9,6 @@
 #	include "Sound/Decoders/OggStreamDecoder.h"
 #	include "Sound/Decoders/WavStreamDecoder.h"
 #	include "Sound/Resound/BankResource.h"
-
 #	include "Sound/Resound/BlendGrainData.h"
 #	include "Sound/Resound/EnvelopeGrainData.h"
 #	include "Sound/Resound/InLoopOutGrainData.h"
@@ -20,7 +19,6 @@
 #	include "Sound/Resound/SequenceGrainData.h"
 #	include "Sound/Resound/SimultaneousGrainData.h"
 #	include "Sound/Resound/TriggerGrainData.h"
-
 
 namespace traktor
 {

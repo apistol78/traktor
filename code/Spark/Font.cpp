@@ -10,6 +10,19 @@ namespace traktor
 {
 	namespace spark
 	{
+		namespace
+		{
+
+render::handle_t s_handleTransform = render::getParameterHandle(L"Spark_Transform");
+render::handle_t s_handleGlyphMap = render::getParameterHandle(L"Spark_GlyphMap");
+render::handle_t s_handleGlyphRect = render::getParameterHandle(L"Spark_GlyphRect");
+render::handle_t s_handleGlyphUnit = render::getParameterHandle(L"Spark_GlyphUnit");
+render::handle_t s_handleGlyphOffset = render::getParameterHandle(L"Spark_GlyphOffset");
+render::handle_t s_handleGlyphHeight = render::getParameterHandle(L"Spark_GlyphHeight");
+render::handle_t s_handleColorTransform_Mul = render::getParameterHandle(L"Spark_ColorTransform_Mul");
+render::handle_t s_handleColorTransform_Add = render::getParameterHandle(L"Spark_ColorTransform_Add");
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.Font", Font, Object)
 
@@ -45,19 +58,19 @@ void Font::render(render::RenderContext* renderContext, const Matrix33& transfor
 		renderBlock->primitives.setNonIndexed(render::PtTriangles, 0, 2);
 
 		renderBlock->programParams->beginParameters(renderContext);
-		renderBlock->programParams->setMatrixParameter(L"Spark_Transform", T);
-		renderBlock->programParams->setTextureParameter(L"Spark_GlyphMap", m_texture);
-		renderBlock->programParams->setVectorParameter(L"Spark_GlyphRect", it->second.rect);
-		renderBlock->programParams->setVectorParameter(L"Spark_GlyphUnit", it->second.unit);
-		renderBlock->programParams->setVectorParameter(L"Spark_GlyphOffset", it->second.offset);
-		renderBlock->programParams->setFloatParameter(L"Spark_GlyphHeight", height);
-		renderBlock->programParams->setVectorParameter(L"Spark_ColorTransform_Mul", Vector4(
+		renderBlock->programParams->setMatrixParameter(s_handleTransform, T);
+		renderBlock->programParams->setTextureParameter(s_handleGlyphMap, m_texture);
+		renderBlock->programParams->setVectorParameter(s_handleGlyphRect, it->second.rect);
+		renderBlock->programParams->setVectorParameter(s_handleGlyphUnit, it->second.unit);
+		renderBlock->programParams->setVectorParameter(s_handleGlyphOffset, it->second.offset);
+		renderBlock->programParams->setFloatParameter(s_handleGlyphHeight, height);
+		renderBlock->programParams->setVectorParameter(s_handleColorTransform_Mul, Vector4(
 			colorTransform.red[0],
 			colorTransform.green[0],
 			colorTransform.blue[0],
 			colorTransform.alpha[0]
 		));
-		renderBlock->programParams->setVectorParameter(L"Spark_ColorTransform_Add", Vector4(
+		renderBlock->programParams->setVectorParameter(s_handleColorTransform_Add, Vector4(
 			colorTransform.red[1],
 			colorTransform.green[1],
 			colorTransform.blue[1],

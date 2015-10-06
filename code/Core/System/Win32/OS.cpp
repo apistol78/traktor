@@ -286,7 +286,7 @@ Ref< IProcess > OS::execute(
 	std::wstring arguments;
 
 	// Resolve entire command line.
-	std::wstring resolvedCommandLine = resolveEnv(commandLine);
+	std::wstring resolvedCommandLine = resolveEnv(commandLine, envmap);
 
 	// Extract executable file from command line.
 	if (resolvedCommandLine.empty())

@@ -27,18 +27,6 @@ bool DeploySettingsPage::create(ui::Container* parent, PropertyGroup* settings, 
 	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,*,*,100%", 0, 4)))
 		return false;
 
-	Ref< ui::Container > containerInner = new ui::Container();
-	containerInner->create(container, ui::WsNone, new ui::TableLayout(L"*,100%", L"*,*,*", 0, 4));
-
-	Ref< ui::Static > staticCertificate = new ui::Static();
-	staticCertificate->create(containerInner, L"Certificate");
-
-	m_editCertificate = new ui::Edit();
-	m_editCertificate->create(containerInner, L"", ui::WsClientBorder);
-
-	std::wstring certificate = settings->getProperty< PropertyString >(L"Amalgam.Certificate");
-	m_editCertificate->setText(certificate);
-
 	m_checkInheritCache = new ui::CheckBox();
 	m_checkInheritCache->create(container, L"Inherit editor cache(s)");
 
@@ -56,6 +44,12 @@ bool DeploySettingsPage::create(ui::Container* parent, PropertyGroup* settings, 
 
 	bool useDebugBinaries = settings->getProperty< PropertyBoolean >(L"Amalgam.UseDebugBinaries", false);
 	m_checkUseDebugBinaries->setChecked(useDebugBinaries);
+
+	m_checkStaticallyLinked = new ui::CheckBox();
+	m_checkStaticallyLinked->create(container, L"Statically link product");
+
+	bool staticallyLinked = settings->getProperty< PropertyBoolean >(L"Amalgam.StaticallyLinked", false);
+	m_checkStaticallyLinked->setChecked(staticallyLinked);
 
 	Ref< ui::Container > containerEnvironment = new ui::Container();
 	containerEnvironment->create(container, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 4));
@@ -95,9 +89,6 @@ void DeploySettingsPage::destroy()
 
 bool DeploySettingsPage::apply(PropertyGroup* settings)
 {
-	std::wstring certificate = m_editCertificate->getText();
-	settings->setProperty< PropertyString >(L"Amalgam.Certificate", certificate);
-
 	bool inheritCache = m_checkInheritCache->isChecked();
 	settings->setProperty< PropertyBoolean >(L"Amalgam.InheritCache", inheritCache);
 
@@ -106,6 +97,9 @@ bool DeploySettingsPage::apply(PropertyGroup* settings)
 
 	bool useDebugBinaries = m_checkUseDebugBinaries->isChecked();
 	settings->setProperty< PropertyBoolean >(L"Amalgam.UseDebugBinaries", useDebugBinaries);
+
+	bool staticallyLinked = m_checkStaticallyLinked->isChecked();
+	settings->setProperty< PropertyBoolean >(L"Amalgam.StaticallyLinked", staticallyLinked);
 
 	return true;
 }

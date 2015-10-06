@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="5">
+<object type="traktor.amalgam.Feature" version="7">
 	<description>Input - iOS Touch</description>
 	<priority>0</priority>
 	<platforms>
 		<item>
 			<platform>{13FF3E12-076E-274E-B347-8F323ECD53A7}</platform>
 			<executableFile/>
-			<deployFiles>
-				<item>libTraktor.Core.a</item>
-				<item>libTraktor.Input.a</item>
-				<item>libTraktor.Input.iOS.a</item>
-			</deployFiles>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_FILES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>libTraktor.Core.a</item>
+								<item>libTraktor.Input.a</item>
+								<item>libTraktor.Input.iOS.a</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
 		</item>
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">
@@ -59,4 +68,5 @@
 			</item>
 		</value>
 	</runtimeProperties>
+	<environment/>
 </object>

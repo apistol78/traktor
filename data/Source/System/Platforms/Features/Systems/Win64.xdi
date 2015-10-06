@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="5">
+<object type="traktor.amalgam.Feature" version="7">
 	<description>System - Microsoft Windows (64-bit)</description>
 	<priority>0</priority>
 	<platforms>
 		<item>
 			<platform>{DC125AEC-2E6B-AF4D-A852-35731A782340}</platform>
 			<executableFile/>
-			<deployFiles/>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_FILES</first>
+						<second type="traktor.PropertyStringSet">
+							<value/>
+						</second>
+					</item>
+				</value>
+			</deploy>
 		</item>
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">
@@ -54,4 +63,5 @@
 		</value>
 	</migrateProperties>
 	<runtimeProperties/>
+	<environment/>
 </object>

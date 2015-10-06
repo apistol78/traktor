@@ -1,25 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="5">
+<object type="traktor.amalgam.Feature" version="7">
 	<description>System - PlayStation 3</description>
 	<priority>0</priority>
 	<platforms>
 		<item>
 			<platform>{14814B5B-2FF1-2F4B-BE92-08CAB3D0D544}</platform>
 			<executableFile/>
-			<deployFiles>
-				<item>libfs_stub.a</item>
-				<item>libio_stub.a</item>
-				<item>libm.a</item>
-				<item>libpthread.a</item>
-				<item>libsysmodule_stub.a</item>
-				<item>libsysutil_stub.a</item>
-				<item>libsysutil_game_stub.a</item>
-				<item>libsysutil_np_stub.a</item>
-				<item>libnet_stub.a</item>
-				<item>libnetctl_stub.a</item>
-				<item>libspurs_stub.a</item>
-				<item>libspurs_jq_stub.a</item>
-			</deployFiles>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_FILES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>libfs_stub.a</item>
+								<item>libio_stub.a</item>
+								<item>libm.a</item>
+								<item>libnet_stub.a</item>
+								<item>libnetctl_stub.a</item>
+								<item>libpthread.a</item>
+								<item>libspurs_jq_stub.a</item>
+								<item>libspurs_stub.a</item>
+								<item>libsysmodule_stub.a</item>
+								<item>libsysutil_game_stub.a</item>
+								<item>libsysutil_np_stub.a</item>
+								<item>libsysutil_stub.a</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
 		</item>
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">
@@ -135,4 +144,5 @@
 			</item>
 		</value>
 	</runtimeProperties>
+	<environment/>
 </object>

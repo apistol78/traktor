@@ -28,7 +28,7 @@ public:
 	{
 		Guid platform;
 		std::wstring executableFile;
-		std::list< std::wstring > deployFiles;
+		Ref< PropertyGroup > deploy;
 
 		void serialize(ISerializer& s);
 	};

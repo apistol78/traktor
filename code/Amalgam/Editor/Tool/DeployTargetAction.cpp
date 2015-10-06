@@ -12,6 +12,7 @@
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyObject.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/Settings/PropertyStringArray.h"
 #include "Core/Settings/PropertyStringSet.h"
 #include "Core/System/IProcess.h"
 #include "Core/System/OS.h"
@@ -36,6 +37,24 @@ struct FeaturePriorityPred
 		return l->getPriority() < r->getPriority();
 	}
 };
+
+std::wstring implodePropertyValue(const IPropertyValue* value)
+{
+	if (const PropertyString* valueString = dynamic_type_cast< const PropertyString* >(value))
+		return PropertyString::get(valueString);
+	else if (const PropertyStringArray* valueStringArray = dynamic_type_cast< const PropertyStringArray* >(value))
+	{
+		std::vector< std::wstring > ss = PropertyStringArray::get(valueStringArray);
+		return implode(ss.begin(), ss.end(), L" ");
+	}
+	else if (const PropertyStringSet* valueStringSet = dynamic_type_cast< const PropertyStringSet* >(value))
+	{
+		std::set< std::wstring > ss = PropertyStringSet::get(valueStringSet);
+		return implode(ss.begin(), ss.end(), L" ");
+	}
+	else
+		return L"";
+}
 
 		}
 
@@ -72,7 +91,7 @@ DeployTargetAction::DeployTargetAction(
 
 bool DeployTargetAction::execute(IProgressListener* progressListener)
 {
-	std::set< std::wstring > deployFiles;
+	Ref< PropertyGroup > deploy = new PropertyGroup();
 	std::wstring executableFile;
 
 	// Get platform description object from database.
@@ -119,7 +138,7 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 		const Feature::Platform* fp = feature->getPlatform(m_targetConfiguration->getPlatform());
 		if (fp)
 		{
-			deployFiles.insert(fp->deployFiles.begin(), fp->deployFiles.end());
+			deploy = deploy->mergeJoin(fp->deploy);
 			if (!fp->executableFile.empty())
 				executableFile = fp->executableFile;
 		}
@@ -198,9 +217,13 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 	envmap[L"DEPLOY_EXECUTABLE"] = executableFile;
 	envmap[L"DEPLOY_MODULES"] = implode(runtimeModules.begin(), runtimeModules.end(), L" ");
 	envmap[L"DEPLOY_OUTPUT_PATH"] = m_outputPath;
-	envmap[L"DEPLOY_CERTIFICATE"] = m_globalSettings->getProperty< PropertyString >(L"Amalgam.Certificate", L"");
-	envmap[L"DEPLOY_FILES"] = implode(deployFiles.begin(), deployFiles.end(), L" ");
 	envmap[L"DEPLOY_DEBUG"] = (m_globalSettings->getProperty< PropertyBoolean >(L"Amalgam.UseDebugBinaries", false) ? L"YES" : L"");
+	envmap[L"DEPLOY_STATIC_LINK"] = (m_globalSettings->getProperty< PropertyBoolean >(L"Amalgam.StaticallyLinked", false) ? L"YES" : L"");
+
+	// Flatten feature deploy variables.
+	const std::map< std::wstring, Ref< IPropertyValue > >& values = deploy->getValues();
+	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = values.begin(); i != values.end(); ++i)
+		envmap[i->first] = implodePropertyValue(i->second);
 
 	// Merge tool environment variables.
 	const DeployTool& deployTool = platform->getDeployTool();

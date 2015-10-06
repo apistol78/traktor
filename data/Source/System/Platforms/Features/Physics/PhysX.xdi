@@ -1,43 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="5">
+<object type="traktor.amalgam.Feature" version="7">
 	<description>Physics - NVidia PhysX</description>
 	<priority>0</priority>
 	<platforms>
 		<item>
 			<platform>{C5B672D1-E72D-AC47-97D4-ABAA41F2F6BD}</platform>
 			<executableFile/>
-			<deployFiles>
-				<item>PhysX3_x86.so</item>
-				<item>PxTask.so</item>
-				<item>PhysX3Extensions.so</item>
-				<item>PhysX3Common_x86.so</item>
-				<item>PhysX3Cooking_x86.so</item>
-				<item>libTraktor.Core.so</item>
-				<item>libTraktor.Database.so</item>
-				<item>libTraktor.Heightfield.so</item>
-				<item>libTraktor.Resource.so</item>
-				<item>libTraktor.World.so</item>
-				<item>libTraktor.Physics.so</item>
-				<item>libTraktor.Physics.PhysX.so</item>
-			</deployFiles>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_FILES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>PhysX3Common_x86.so</item>
+								<item>PhysX3Cooking_x86.so</item>
+								<item>PhysX3Extensions.so</item>
+								<item>PhysX3_x86.so</item>
+								<item>PxTask.so</item>
+								<item>libTraktor.Core.so</item>
+								<item>libTraktor.Database.so</item>
+								<item>libTraktor.Heightfield.so</item>
+								<item>libTraktor.Physics.PhysX.so</item>
+								<item>libTraktor.Physics.so</item>
+								<item>libTraktor.Resource.so</item>
+								<item>libTraktor.World.so</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
 		</item>
 		<item>
 			<platform>{7D0F1280-E37A-2541-8892-723B3C81569C}</platform>
 			<executableFile/>
-			<deployFiles>
-				<item>PhysX3_x86.dll</item>
-				<item>PxTask.dll</item>
-				<item>PhysX3Extensions.dll</item>
-				<item>PhysX3Common_x86.dll</item>
-				<item>PhysX3Cooking_x86.dll</item>
-				<item>Traktor.Core.dll</item>
-				<item>Traktor.Database.dll</item>
-				<item>Traktor.Heightfield.dll</item>
-				<item>Traktor.Resource.dll</item>
-				<item>Traktor.World.dll</item>
-				<item>Traktor.Physics.dll</item>
-				<item>Traktor.Physics.PhysX.dll</item>
-			</deployFiles>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_FILES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>PhysX3Common_x86.dll</item>
+								<item>PhysX3Cooking_x86.dll</item>
+								<item>PhysX3Extensions.dll</item>
+								<item>PhysX3_x86.dll</item>
+								<item>PxTask.dll</item>
+								<item>Traktor.Core.dll</item>
+								<item>Traktor.Database.dll</item>
+								<item>Traktor.Heightfield.dll</item>
+								<item>Traktor.Physics.PhysX.dll</item>
+								<item>Traktor.Physics.dll</item>
+								<item>Traktor.Resource.dll</item>
+								<item>Traktor.World.dll</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
 		</item>
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">
@@ -85,4 +103,5 @@
 			</item>
 		</value>
 	</runtimeProperties>
+	<environment/>
 </object>

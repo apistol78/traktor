@@ -1,20 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="5">
+<object type="traktor.amalgam.Feature" version="7">
 	<description>Physics - Havok</description>
 	<priority>0</priority>
 	<platforms>
 		<item>
 			<platform>{7D0F1280-E37A-2541-8892-723B3C81569C}</platform>
 			<executableFile/>
-			<deployFiles>
-				<item>Traktor.Core.dll</item>
-				<item>Traktor.Database.dll</item>
-				<item>Traktor.Heightfield.dll</item>
-				<item>Traktor.Resource.dll</item>
-				<item>Traktor.World.dll</item>
-				<item>Traktor.Physics.dll</item>
-				<item>Traktor.Physics.Havok.dll</item>
-			</deployFiles>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_FILES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core.dll</item>
+								<item>Traktor.Database.dll</item>
+								<item>Traktor.Heightfield.dll</item>
+								<item>Traktor.Physics.Havok.dll</item>
+								<item>Traktor.Physics.dll</item>
+								<item>Traktor.Resource.dll</item>
+								<item>Traktor.World.dll</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
 		</item>
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">
@@ -62,4 +71,5 @@
 			</item>
 		</value>
 	</runtimeProperties>
+	<environment/>
 </object>

@@ -33,10 +33,10 @@ public:
 	virtual bool apply(PropertyGroup* settings);
 
 private:
-	Ref< ui::Edit > m_editCertificate;
 	Ref< ui::CheckBox > m_checkInheritCache;
 	Ref< ui::CheckBox > m_checkHidePipeline;
 	Ref< ui::CheckBox > m_checkUseDebugBinaries;
+	Ref< ui::CheckBox > m_checkStaticallyLinked;
 };
 
 	}
