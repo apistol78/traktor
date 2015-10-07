@@ -5,6 +5,14 @@
 #include "Core/Guid.h"
 #include "Core/Serialization/ISerializable.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_AMALGAM_DEPLOY_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
 	namespace amalgam
@@ -13,7 +21,7 @@ namespace traktor
 /*! \brief
  * \ingroup Amalgam
  */
-class TargetConfiguration : public ISerializable
+class T_DLLCLASS TargetConfiguration : public ISerializable
 {
 	T_RTTI_CLASS;
 

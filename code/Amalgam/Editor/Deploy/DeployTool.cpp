@@ -1,4 +1,4 @@
-#include "Amalgam/Editor/DeployTool.h"
+#include "Amalgam/Editor/Deploy/DeployTool.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
 

@@ -1,4 +1,4 @@
-#include "Amalgam/Editor/Platform.h"
+#include "Amalgam/Editor/Deploy/Platform.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComposite.h"

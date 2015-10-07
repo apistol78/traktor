@@ -1,4 +1,4 @@
-#include "Amalgam/Editor/Tool/ITargetAction.h"
+#include "Amalgam/Editor/Deploy/ITargetAction.h"
 
 namespace traktor
 {

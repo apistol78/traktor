@@ -3,7 +3,7 @@
 
 #include <list>
 #include <map>
-#include "Amalgam/Editor/Tool/ITargetAction.h"
+#include "Amalgam/Editor/Deploy/ITargetAction.h"
 #include "Core/RefArray.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/Signal.h"

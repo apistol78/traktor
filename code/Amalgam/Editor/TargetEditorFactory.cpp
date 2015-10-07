@@ -1,6 +1,6 @@
-#include "Amalgam/Editor/Target.h"
 #include "Amalgam/Editor/TargetEditor.h"
 #include "Amalgam/Editor/TargetEditorFactory.h"
+#include "Amalgam/Editor/Deploy/Target.h"
 
 namespace traktor
 {

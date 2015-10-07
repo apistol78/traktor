@@ -1,18 +1,18 @@
 #include <cstring>
 #include "Amalgam/Editor/EditorPlugin.h"
 #include "Amalgam/Editor/HostEnumerator.h"
-#include "Amalgam/Editor/Platform.h"
 #include "Amalgam/Editor/ProfilerDialog.h"
-#include "Amalgam/Editor/Target.h"
-#include "Amalgam/Editor/TargetConfiguration.h"
 #include "Amalgam/Editor/TargetConnection.h"
 #include "Amalgam/Editor/TargetInstance.h"
 #include "Amalgam/Editor/TargetManager.h"
 #include "Amalgam/Editor/TargetScriptDebuggerSessions.h"
-#include "Amalgam/Editor/Tool/BuildTargetAction.h"
-#include "Amalgam/Editor/Tool/DeployTargetAction.h"
-#include "Amalgam/Editor/Tool/LaunchTargetAction.h"
-#include "Amalgam/Editor/Tool/MigrateTargetAction.h"
+#include "Amalgam/Editor/Deploy/BuildTargetAction.h"
+#include "Amalgam/Editor/Deploy/DeployTargetAction.h"
+#include "Amalgam/Editor/Deploy/LaunchTargetAction.h"
+#include "Amalgam/Editor/Deploy/MigrateTargetAction.h"
+#include "Amalgam/Editor/Deploy/Platform.h"
+#include "Amalgam/Editor/Deploy/Target.h"
+#include "Amalgam/Editor/Deploy/TargetConfiguration.h"
 #include "Amalgam/Editor/Ui/TargetCaptureEvent.h"
 #include "Amalgam/Editor/Ui/TargetInstanceListItem.h"
 #include "Amalgam/Editor/Ui/TargetListControl.h"
@@ -534,6 +534,12 @@ void EditorPlugin::eventTargetListPlay(TargetPlayEvent* event)
 	if (deployHostId >= 0)
 		m_hostEnumerator->getHost(deployHostId, deployHost);
 
+	// Get our network host.
+	std::wstring editorHost = L"";
+	net::SocketAddressIPv4::Interface itf;
+	if (!net::SocketAddressIPv4::getBestInterface(itf))
+		editorHost = itf.addr->getHostName();
+
 	// Resolve absolute output path.
 	std::wstring outputPath = FileSystem::getInstance().getAbsolutePath(targetInstance->getOutputPath()).getPathName();
 
@@ -612,6 +618,7 @@ void EditorPlugin::eventTargetListPlay(TargetPlayEvent* event)
 				targetInstance->getName(),
 				targetInstance->getTarget(),
 				targetInstance->getTargetConfiguration(),
+				editorHost,
 				deployHost,
 				m_connectionManager->getListenPort(),
 				targetInstance->getDatabaseName(),

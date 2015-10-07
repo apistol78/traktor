@@ -94,7 +94,10 @@ bool PipelineDbFlat::open(const std::wstring& connectionString)
 
 	// If flat database file doesn't exist we assume this is the first run; ie. don't fail.
 	if (!FileSystem::getInstance().exist(m_file))
-		return true;
+	{
+		// But ensure full path is created first.
+		return FileSystem::getInstance().makeAllDirectories(Path(m_file).getPathOnly());
+	}
 
 	Ref< IStream > f = FileSystem::getInstance().open(m_file, File::FmRead);
 	if (!f)

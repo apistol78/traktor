@@ -1,16 +1,17 @@
-#include "Amalgam/Editor/Feature.h"
-#include "Amalgam/Editor/Platform.h"
-#include "Amalgam/Editor/Target.h"
-#include "Amalgam/Editor/TargetConfiguration.h"
-#include "Amalgam/Editor/Tool/DeployTargetAction.h"
+#include <list>
+#include "Amalgam/Editor/Deploy/Feature.h"
+#include "Amalgam/Editor/Deploy/MigrateTargetAction.h"
+#include "Amalgam/Editor/Deploy/Platform.h"
+#include "Amalgam/Editor/Deploy/Target.h"
+#include "Amalgam/Editor/Deploy/TargetConfiguration.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
+#include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
-#include "Core/Settings/PropertyInteger.h"
-#include "Core/Settings/PropertyObject.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/PropertyStringArray.h"
 #include "Core/Settings/PropertyStringSet.h"
@@ -19,7 +20,6 @@
 #include "Core/System/PipeReader.h"
 #include "Database/ConnectionString.h"
 #include "Database/Database.h"
-#include "Net/SocketAddressIPv4.h"
 #include "Xml/XmlDeserializer.h"
 #include "Xml/XmlSerializer.h"
 
@@ -58,21 +58,16 @@ std::wstring implodePropertyValue(const IPropertyValue* value)
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.DeployTargetAction", DeployTargetAction, ITargetAction)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.MigrateTargetAction", MigrateTargetAction, ITargetAction)
 
-DeployTargetAction::DeployTargetAction(
+MigrateTargetAction::MigrateTargetAction(
 	db::Database* database,
 	const PropertyGroup* globalSettings,
 	const std::wstring& targetName,
 	const Target* target,
 	const TargetConfiguration* targetConfiguration,
 	const std::wstring& deployHost,
-	uint16_t databasePort,
-	const std::wstring& databaseName,
-	uint16_t targetManagerPort,
-	const Guid& targetManagerId,
-	const std::wstring& outputPath,
-	const PropertyGroup* tweakSettings
+	const std::wstring& outputPath
 )
 :	m_database(database)
 ,	m_globalSettings(globalSettings)
@@ -80,16 +75,11 @@ DeployTargetAction::DeployTargetAction(
 ,	m_target(target)
 ,	m_targetConfiguration(targetConfiguration)
 ,	m_deployHost(deployHost)
-,	m_databasePort(databasePort)
-,	m_databaseName(databaseName)
-,	m_targetManagerPort(targetManagerPort)
-,	m_targetManagerId(targetManagerId)
 ,	m_outputPath(outputPath)
-,	m_tweakSettings(tweakSettings)
 {
 }
 
-bool DeployTargetAction::execute(IProgressListener* progressListener)
+bool MigrateTargetAction::execute(IProgressListener* progressListener)
 {
 	Ref< PropertyGroup > deploy = new PropertyGroup();
 	std::wstring executableFile;
@@ -103,10 +93,22 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 	}
 
 	if (progressListener)
-		progressListener->notifyTargetActionProgress(1, 2);
+		progressListener->notifyTargetActionProgress(2, 100);
 
-	// Create target application configuration.
-	Ref< PropertyGroup > applicationConfiguration = new PropertyGroup();
+	// Ensure output directory exists.
+	if (!FileSystem::getInstance().makeAllDirectories(m_outputPath))
+	{
+		log::error << L"Unable to create output path \"" << m_outputPath << L"\"" << Endl;
+		return false;
+	}
+
+	// Set database connection strings.
+	db::ConnectionString sourceDatabaseCs(L"provider=traktor.db.LocalDatabase;groupPath=db;binary=true;eventFile=false");
+	db::ConnectionString outputDatabaseCs(L"provider=traktor.db.CompactDatabase;fileName=Content.compact;flushAlways=false");
+	db::ConnectionString applicationDatabaseCs(L"provider=traktor.db.CompactDatabase;fileName=Content.compact;readOnly=true");
+
+	// Create migration configuration.
+	Ref< PropertyGroup > migrateConfiguration = new PropertyGroup();
 
 	// Get features; sorted by priority.
 	const std::list< Guid >& featureIds = m_targetConfiguration->getFeatures();
@@ -125,7 +127,26 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 
 	features.sort(FeaturePriorityPred());
 
-	// Insert target's features into pipeline configuration. Also generate a set of files to deploy.
+	// Insert target's features into migrate configuration.
+	for (RefArray< const Feature >::const_iterator i = features.begin(); i != features.end(); ++i)
+	{
+		const Feature* feature = *i;
+		T_ASSERT (feature);
+
+		Ref< const PropertyGroup > migrateProperties = feature->getMigrateProperties();
+		if (!migrateProperties)
+			continue;
+
+		migrateConfiguration = migrateConfiguration->mergeJoin(migrateProperties);
+	}
+
+	migrateConfiguration->setProperty< PropertyString >(L"Migrate.SourceDatabase", sourceDatabaseCs.format());
+	migrateConfiguration->setProperty< PropertyString >(L"Migrate.OutputDatabase", outputDatabaseCs.format());
+
+	// Create target application configuration.
+	Ref< PropertyGroup > applicationConfiguration = new PropertyGroup();
+
+	// Insert features into runtime configuration. Also get executable file.
 	for (RefArray< const Feature >::const_iterator i = features.begin(); i != features.end(); ++i)
 	{
 		const Feature* feature = *i;
@@ -146,28 +167,8 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 			log::warning << L"Feature \"" << feature->getDescription() << L"\" doesn't support selected platform." << Endl;
 	}
 
-	// Determine our interface address; we let applications know where to find data.
-	net::SocketAddressIPv4::Interface itf;
-	if (!net::SocketAddressIPv4::getBestInterface(itf))
-	{
-		traktor::log::error << L"Unable to get interfaces" << Endl;
-		return false;
-	}
-
-	std::wstring host = itf.addr->getHostName();
-
-	// Modify configuration to connect to embedded database server.
-	db::ConnectionString remoteCs;
-	remoteCs.set(L"provider", L"traktor.db.RemoteDatabase");
-	remoteCs.set(L"host", host + L":" + toString(m_databasePort));
-	remoteCs.set(L"database", m_databaseName);
-	applicationConfiguration->setProperty< PropertyString >(L"Amalgam.Database", remoteCs.format());
-	applicationConfiguration->setProperty< PropertyBoolean >(L"Amalgam.DatabaseThread", true);
-	
-	// Modify configuration to connect to embedded target manager.
-	applicationConfiguration->setProperty< PropertyString >(L"Amalgam.TargetManager/Host", host);
-	applicationConfiguration->setProperty< PropertyInteger >(L"Amalgam.TargetManager/Port", m_targetManagerPort);
-	applicationConfiguration->setProperty< PropertyString >(L"Amalgam.TargetManager/Id", m_targetManagerId.format());
+	// Modify configuration to connect to migrated database.
+	applicationConfiguration->setProperty< PropertyString >(L"Amalgam.Database", applicationDatabaseCs.format());
 
 	// Append target guid;s to application configuration.
 	applicationConfiguration->setProperty< PropertyString >(L"Amalgam.Root", m_targetConfiguration->getRoot().format());
@@ -178,12 +179,23 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 	// Append application title.
 	applicationConfiguration->setProperty< PropertyString >(L"Render.Title", m_targetName);
 
-	// Append tweaks.
-	if (m_tweakSettings)
-		applicationConfiguration = applicationConfiguration->mergeJoin(m_tweakSettings);
-
-	// Write generated application configuration in output directory.
+	// Write generated configurations in output directory.
 	Ref< IStream > file = FileSystem::getInstance().open(
+		m_outputPath + L"/Migrate.config",
+		File::FmWrite
+	);
+	if (file)
+	{
+		xml::XmlSerializer(file).writeObject(migrateConfiguration);
+		file->close();
+	}
+	else
+	{
+		log::error << L"Unable to write migrate configuration" << Endl;
+		return false;
+	}
+
+	file = FileSystem::getInstance().open(
 		m_outputPath + L"/Application.config",
 		File::FmWrite
 	);
@@ -201,7 +213,7 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 	// Get list of used modules from application configuration.
 	std::set< std::wstring > runtimeModules = applicationConfiguration->getProperty< PropertyStringSet >(L"Amalgam.Modules");
 
-	// Launch deploy tool to ensure platform is ready for launch.
+	// Launch migration through deploy tool; set cwd to output directory.
 	Path projectRoot = FileSystem::getInstance().getCurrentVolume()->getCurrentDirectory();
 	OS::envmap_t envmap = OS::getInstance().getEnvironment();
 #if defined(_WIN32)
@@ -238,30 +250,15 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 		envmap.insert(feature->getEnvironment().begin(), feature->getEnvironment().end());
 	}
 
-	// Merge settings environment variables.
-	Ref< PropertyGroup > settingsEnvironment = m_globalSettings->getProperty< PropertyGroup >(L"Amalgam.Environment");
-	if (settingsEnvironment)
-	{
-		const std::map< std::wstring, Ref< IPropertyValue > >& values = settingsEnvironment->getValues();
-		for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = values.begin(); i != values.end(); ++i)
-		{
-			PropertyString* value = dynamic_type_cast< PropertyString* >(i->second);
-			if (value)
-			{
-				envmap.insert(std::make_pair(
-					i->first,
-					PropertyString::get(value)
-				));
-			}
-		}
-	}
-
-	// Launch deploy process.
 	Ref< IProcess > process = OS::getInstance().execute(
-		deployTool.getExecutable() + L" deploy",
+		deployTool.getExecutable() + L" migrate",
 		m_outputPath,
 		&envmap,
+#if defined(_DEBUG)
+		false, false, false
+#else
 		true, true, false
+#endif
 	);
 	if (!process)
 	{
@@ -276,27 +273,58 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 		process->getPipeStream(IProcess::SpStdErr)
 	);
 
+	std::list< std::wstring > errors;
 	std::wstring str;
+
 	for (;;)
 	{
 		PipeReader::Result result1 = stdOutReader.readLine(str, 10);
 		if (result1 == PipeReader::RtOk)
-			log::info << str << Endl;
+		{
+			std::wstring tmp = trim(str);
+			if (!tmp.empty() && tmp[0] == L':')
+			{
+				std::vector< std::wstring > out;
+				if (Split< std::wstring >::any(tmp, L":", out) == 2)
+				{
+					int32_t index = parseString< int32_t >(out[0]);
+					int32_t count = parseString< int32_t >(out[1]);
+					if (count > 0)
+					{
+						if (progressListener)
+							progressListener->notifyTargetActionProgress(2 + (98 * index) / count, 100);
+					}
+				}
+			}
+			else
+				log::info << str << Endl;
+		}
 
 		PipeReader::Result result2 = stdErrReader.readLine(str, 10);
 		if (result2 == PipeReader::RtOk)
-			log::error << str << Endl;
+		{
+			str = trim(str);
+			if (!str.empty())
+			{
+				log::error << str << Endl;
+				errors.push_back(str);
+			}
+		}
 
 		if (result1 == PipeReader::RtEnd && result2 == PipeReader::RtEnd)
 			break;
 	}
 
+	if (!errors.empty())
+	{
+		log::error << L"Unsuccessful migrate, error(s):" << Endl;
+		for (std::list< std::wstring >::const_iterator i = errors.begin(); i != errors.end(); ++i)
+			log::error << L"\t" << *i << Endl;
+	}
+
 	int32_t exitCode = process->exitCode();
 	if (exitCode != 0)
 		log::error << L"Process failed with exit code " << exitCode << Endl;
-
-	if (progressListener)
-		progressListener->notifyTargetActionProgress(2, 2);
 
 	return exitCode == 0;
 }

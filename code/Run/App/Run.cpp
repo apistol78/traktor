@@ -134,6 +134,27 @@ int32_t Run::exitCode() const
 	return m_exitCode;
 }
 
+bool Run::exist(const std::wstring& path)
+{
+	Path sourcePath = FileSystem::getInstance().getAbsolutePath(cwd(), path);
+	return FileSystem::getInstance().exist(sourcePath);
+}
+
+bool Run::rm(const std::wstring& path)
+{
+	Path sourcePath = FileSystem::getInstance().getAbsolutePath(cwd(), path);
+
+	RefArray< File > sourceFiles;
+	FileSystem::getInstance().find(sourcePath, sourceFiles);
+	for (RefArray< File >::const_iterator i = sourceFiles.begin(); i != sourceFiles.end(); ++i)
+	{
+		if (!FileSystem::getInstance().remove((*i)->getPath()))
+			return false;
+	}
+
+	return true;
+}
+
 bool Run::copy(const std::wstring& source, const std::wstring& target)
 {
 	Path sourcePath = FileSystem::getInstance().getAbsolutePath(cwd(), source);

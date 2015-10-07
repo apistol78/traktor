@@ -1,7 +1,5 @@
 #include <iomanip>
 #include "Amalgam/Editor/HostEnumerator.h"
-#include "Amalgam/Editor/Platform.h"
-#include "Amalgam/Editor/TargetConfiguration.h"
 #include "Amalgam/Editor/TargetConnection.h"
 #include "Amalgam/Editor/Ui/ButtonCell.h"
 #include "Amalgam/Editor/Ui/DropListCell.h"
@@ -10,6 +8,8 @@
 #include "Amalgam/Editor/Ui/TargetInstanceListItem.h"
 #include "Amalgam/Editor/Ui/TargetPlayEvent.h"
 #include "Amalgam/Editor/Ui/TargetStopEvent.h"
+#include "Amalgam/Editor/Deploy/Platform.h"
+#include "Amalgam/Editor/Deploy/TargetConfiguration.h"
 #include "Core/Misc/String.h"
 #include "I18N/Text.h"
 #include "Ui/Application.h"

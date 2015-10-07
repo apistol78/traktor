@@ -1,12 +1,12 @@
 #ifndef traktor_amalgam_Platform_H
 #define traktor_amalgam_Platform_H
 
-#include "Amalgam/Editor/DeployTool.h"
+#include "Amalgam/Editor/Deploy/DeployTool.h"
 #include "Core/Guid.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_AMALGAM_EDITOR_EXPORT)
+#if defined(T_AMALGAM_DEPLOY_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT

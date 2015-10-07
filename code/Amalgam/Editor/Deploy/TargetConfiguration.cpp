@@ -1,10 +1,9 @@
 #include <algorithm>
-#include "Amalgam/Editor/TargetConfiguration.h"
+#include "Amalgam/Editor/Deploy/TargetConfiguration.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberStl.h"
-#include "Input/Binding/InputMappingResource.h"
 
 namespace traktor
 {
@@ -131,7 +130,7 @@ void TargetConfiguration::serialize(ISerializer& s)
 	s >> Member< Guid >(L"root", m_root);
 	s >> Member< Guid >(L"startup", m_startup);
 	s >> Member< Guid >(L"onlineConfig", m_onlineConfig);
-	s >> Member< Guid >(L"defaultInput", m_defaultInput, AttributeType(type_of< input::InputMappingResource >()));
+	s >> Member< Guid >(L"defaultInput", m_defaultInput);
 }
 
 	}

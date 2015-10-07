@@ -181,6 +181,11 @@ function deployStatic(args)
 		if run:exitCode() ~= 0 then return run:exitCode() end
 	end
 
+	-- Clean some unwanted files.
+	run:rm("*.exp")
+	run:rm("*.lib")
+	run:rm("*.res")
+
 	return 0
 end
 
@@ -257,14 +262,162 @@ function launch(args)
 end
 
 
-function migrate(args)
+function migrateStatic(args)
 	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
 
-	stdout:printLn("Migrating Win32...")
+	local vsComnTools = os:getEnvironment("VS110COMNTOOLS")
+	if #vsComnTools <= 0 then
+		stderr:printLn("VS110COMNTOOLS not set; please ensure Visual Studio 2012 is properly installed.")
+		return 1
+	end
 
-	-- Build content database.
-	run:execute("$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Database.Migrate.App -p -s=Migrate")
-	if run:exitCode() ~= 0 then return run:exitCode() end
+	local programFiles = os:getEnvironment("ProgramFiles(x86)")
+	if #programFiles <= 0 then
+		programFiles = os:getEnvironment("ProgramFiles")
+		if #programFiles <= 0 then
+			stderr:printLn("Unable to determine program files folder.")
+			return 1
+		end
+	end
+
+	local vcLibPath = vsComnTools .. "..\\..\\VC\\lib"
+	local sdkBinPath = programFiles .. "\\Microsoft SDKs\\Windows\\v7.1A\\Bin"
+	local sdkLibPath = programFiles .. "\\Microsoft SDKs\\Windows\\v7.1A\\Lib"
+	local dxLibPath = "$(TRAKTOR_HOME)\\3rdp\\DirectX SDK (June 2010)\\Lib\\x86"
+
+	local link = vsComnTools .. "..\\..\\VC\\bin\\amd64\\link.exe"
+	if not fileSystem:exist(Path(link)) then
+		stderr:printLn("Unable to find Visual Studio 2012 C++ linker; please ensure Visual Studio 2012 is properly installed.")
+		return 1
+	end
+
+	local mt = sdkBinPath .. "\\mt.exe"
+	if not fileSystem:exist(Path(mt)) then
+		stderr:printLn("Unable to find Windows SDK manifest tool; please ensure Windows SDK 7.1A is properly installed.")
+		return 1
+	end
+
+	local rc = sdkBinPath .. "\\rc.exe"
+	if not fileSystem:exist(Path(mt)) then
+		stderr:printLn("Unable to find Windows SDK resource tool; please ensure Windows SDK 7.1A is properly installed.")
+		return 1
+	end
+
+	-- Determine path to module libraries.
+	local prepend
+	if not debug then
+	 	prepend = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/win32/releasestatic/"
+	else
+		stdout:printLn("Using *DEBUG* binaries")
+	 	prepend = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/win32/debugstatic/"
+	end
+
+	-- Append system path to files.
+	local wholeLinkFiles = ""
+	local externalLinkFiles = ""
+	local externalCopyFiles = ""
+	local linkerIncludes = ""
+
+	local files = os:getEnvironment("DEPLOY_EXTERN_FILES_STATIC"):split(" ")
+	for i = #files, 1, -1 do -- We must link in reverse order to ensure global initializers are executed correctly.
+		local f = files[i]
+		if f ~= "" then
+			if debug then
+				local debugFile = f
+				if f:endswith(".lib") then
+					debugFile = f:sub(1, string.len(f) - 4) .. "_d.lib"
+				elseif f:endswith(".dll") then
+					debugFile = f:sub(1, string.len(f) - 4) .. "_d.dll"
+				end
+				if fileSystem:exist(Path(prepend .. debugFile)) then
+					f = debugFile
+				end
+			end
+			if f:endswith(".lib") then
+				externalLinkFiles = externalLinkFiles .. prepend .. f .. " "
+			else
+				externalCopyFiles = externalCopyFiles .. f .. " "
+			end
+		end
+	end
+
+	local files = os:getEnvironment("DEPLOY_FILES_STATIC"):split(" ")
+	for i = #files, 1, -1 do -- We must link in reverse order to ensure global initializers are executed correctly.
+		local f = files[i]
+		if f ~= "" then
+			linkerIncludes = linkerIncludes .. "/INCLUDE:___module__" .. f:sub(1, string.len(f) - 4):gsub("%.", "_") .. " "
+			if debug then
+				local debugFile = f
+				if f:endswith(".lib") then
+					debugFile = f:sub(1, string.len(f) - 4) .. "_d.lib"
+				elseif f:endswith(".dll") then
+					debugFile = f:sub(1, string.len(f) - 4) .. "_d.dll"
+				end
+				if fileSystem:exist(Path(prepend .. debugFile)) then
+					f = debugFile
+				end
+			end				
+			wholeLinkFiles = wholeLinkFiles .. prepend .. f .. " "
+		end
+	end
+
+	-- Compile resources.
+	local cmd = "\"" .. rc .. "\" /fo\"$(DEPLOY_EXECUTABLE).res\" $(TRAKTOR_HOME)/res/Traktor.Amalgam.rc"
+	local result = run:execute(cmd, "(null)")
+	if result ~= 0 then
+		stderr:printLn("Unable to build product resources.")
+		stderr:printLn(cmd)
+		return 1
+	end
+
+	-- Link files into an executable product.
+	local cmd = "\"" .. link .. "\" " .. externalLinkFiles .. " " .. wholeLinkFiles .. " " .. linkerIncludes
+	cmd = cmd .. " msvcrt.lib winmm.lib iphlpapi.lib ws2_32.lib kernel32.lib user32.lib gdi32.lib winspool.lib"
+	cmd = cmd .. " comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib"
+	cmd = cmd .. " comctl32.lib d2d1.lib dwrite.lib gdiplus.lib msimg32.lib d3d11.lib dxgi.lib dinput8.lib dxguid.lib xinput.lib"
+	cmd = cmd .. " $(DEPLOY_EXECUTABLE).res"
+	cmd = cmd .. " /OUT:$(DEPLOY_EXECUTABLE).exe"
+	cmd = cmd .. " /LIBPATH:\"" .. dxLibPath .. "\""
+	cmd = cmd .. " /LIBPATH:\"" .. sdkLibPath .. "\""
+	cmd = cmd .. " /LIBPATH:\"" .. vcLibPath .. "\""
+	cmd = cmd .. " /MACHINE:X86"
+	cmd = cmd .. " /SUBSYSTEM:WINDOWS"
+	if not debug then
+		cmd = cmd .. " /OPT:REF"
+	else
+		cmd = cmd .. " /DEBUG"
+	end
+	local result = run:execute(cmd, "(null)")
+	if result ~= 0 then
+		stderr:printLn("Unable to build executable product.")
+		stderr:printLn(cmd)
+		return 1
+	end
+
+	-- Embed manifest in executable product.
+	local cmd = "\"" .. mt .. "\" -manifest $(TRAKTOR_HOME)/res/manifest.xml -outputresource:$(DEPLOY_EXECUTABLE).exe;1"
+	local result = run:execute(cmd, "(null)")
+	if result ~= 0 then
+		stderr:printLn("Unable to embed manifest into executable product.")
+		stderr:printLn(cmd)
+		return 1
+	end
+
+	-- Clean some unwanted files.
+	run:rm("*.exp")
+	run:rm("*.lib")
+	run:rm("*.res")
+
+	-- Copy binaries into "bin".
+	run:mkdir("bin32")
+	run:replace("$(DEPLOY_EXECUTABLE).exe", "bin32/$(DEPLOY_EXECUTABLE).exe")
+
+	return 0
+end
+
+
+function migrateShared(args)
+	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
 
 	-- Determine source binary path.
 	local sourcePath
@@ -278,7 +431,7 @@ function migrate(args)
 
 	-- Copy binaries into "bin".
 	run:mkdir("bin32")
-	local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
+	local files = os:getEnvironment("DEPLOY_FILES_SHARED"):split(" ")
 	for _, f in ipairs(files) do
 		if debug then
 			local debugFile = f
@@ -295,6 +448,23 @@ function migrate(args)
 			stderr:printLn("Unable to copy file \"" .. f .. "\" to binary folder")
 			return 1
 		end
+	end	
+end
+
+
+function migrate(args)
+	stdout:printLn("Migrating Win32...")
+
+	-- Build content database.
+	run:execute("$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Database.Migrate.App -p -s=Migrate")
+	if run:exitCode() ~= 0 then return run:exitCode() end
+
+	-- Continue with either statically linked product or as a bunch of dynamic libraries.
+	local staticLink = (os:getEnvironment("DEPLOY_STATIC_LINK") ~= "")
+	if staticLink then
+		return migrateStatic(args)
+	else
+		return migrateShared(args)
 	end
 end
 

@@ -1,5 +1,5 @@
-#include "Amalgam/Editor/Target.h"
-#include "Amalgam/Editor/TargetConfiguration.h"
+#include "Amalgam/Editor/Deploy/Target.h"
+#include "Amalgam/Editor/Deploy/TargetConfiguration.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRefArray.h"

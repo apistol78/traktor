@@ -1,8 +1,16 @@
 #ifndef traktor_amalgam_LaunchTargetAction_H
 #define traktor_amalgam_LaunchTargetAction_H
 
-#include "Amalgam/Editor/Tool/ITargetAction.h"
+#include "Amalgam/Editor/Deploy/ITargetAction.h"
 #include "Core/Ref.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_AMALGAM_DEPLOY_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
 
 namespace traktor
 {
@@ -22,7 +30,7 @@ class Database;
 class Target;
 class TargetConfiguration;
 
-class LaunchTargetAction : public ITargetAction
+class T_DLLCLASS LaunchTargetAction : public ITargetAction
 {
 	T_RTTI_CLASS;
 
