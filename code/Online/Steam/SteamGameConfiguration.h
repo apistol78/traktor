@@ -2,6 +2,7 @@
 #define traktor_online_SteamGameConfiguration_H
 
 #include <list>
+#include <map>
 #include "Online/IGameConfiguration.h"
 
 namespace traktor

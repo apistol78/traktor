@@ -95,11 +95,6 @@ bool ScriptPipeline::create(const editor::IPipelineSettings* settings)
 	for (std::set< std::wstring >::const_iterator i = definitions.begin(); i != definitions.end(); ++i)
 		m_preprocessor->setDefinition(*i);
 
-	// Create debug output directory.
-	m_scriptOutputPath = settings->getProperty< PropertyString >(L"ScriptPipeline.OutputPath", L"");
-	if (!m_scriptOutputPath.empty())
-		FileSystem::getInstance().makeAllDirectories(m_scriptOutputPath);
-
 	return editor::DefaultPipeline::create(settings);
 }
 

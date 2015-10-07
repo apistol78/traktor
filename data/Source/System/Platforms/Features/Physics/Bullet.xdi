@@ -121,7 +121,29 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
-						<first>DEPLOY_FILES</first>
+						<first>DEPLOY_EXTERN_FILES_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Extern.bullet.lib</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_FILES_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core.lib</item>
+								<item>Traktor.Database.lib</item>
+								<item>Traktor.Heightfield.lib</item>
+								<item>Traktor.Physics.Bullet.lib</item>
+								<item>Traktor.Physics.lib</item>
+								<item>Traktor.Resource.lib</item>
+								<item>Traktor.World.lib</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_FILES_SHARED</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>Traktor.Core.dll</item>
@@ -142,6 +164,14 @@
 			<executableFile/>
 			<deploy type="traktor.PropertyGroup">
 				<value>
+					<item>
+						<first>DEPLOY_EXTERN_FILES_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Extern.bullet.lib</item>
+							</value>
+						</second>
+					</item>
 					<item>
 						<first>DEPLOY_FILES_STATIC</first>
 						<second type="traktor.PropertyStringSet">

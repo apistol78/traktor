@@ -261,7 +261,69 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
-						<first>DEPLOY_FILES</first>
+						<first>DEPLOY_EXTERN_FILES_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Extern.detour.lib</item>
+								<item>Extern.expat-2.1.0.lib</item>
+								<item>Extern.jpeg-6b.lib</item>
+								<item>Extern.libflac-1.2.1.lib</item>
+								<item>Extern.liblzf-3.6.lib</item>
+								<item>Extern.libogg-1.3.0.lib</item>
+								<item>Extern.libtheora-1.1.1.lib</item>
+								<item>Extern.libvorbis-1.3.3.lib</item>
+								<item>Extern.lpng128.lib</item>
+								<item>Extern.recast.lib</item>
+								<item>Extern.stb_vorbis.lib</item>
+								<item>Extern.zlib-1.2.3.lib</item>
+								<item>Extern.mpg123-1.13.2.lib</item>
+								<item>Extern.ilmbase.lib</item>
+								<item>Extern.OpenEXR.lib</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_FILES_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Ai.lib</item>
+								<item>Traktor.Amalgam.Game.App.lib</item>
+								<item>Traktor.Amalgam.Game.lib</item>
+								<item>Traktor.Amalgam.lib</item>
+								<item>Traktor.Animation.lib</item>
+								<item>Traktor.Core.lib</item>
+								<item>Traktor.Database.lib</item>
+								<item>Traktor.Drawing.lib</item>
+								<item>Traktor.Flash.lib</item>
+								<item>Traktor.Heightfield.lib</item>
+								<item>Traktor.Html.lib</item>
+								<item>Traktor.I18N.lib</item>
+								<item>Traktor.Input.lib</item>
+								<item>Traktor.Mesh.lib</item>
+								<item>Traktor.Net.lib</item>
+								<item>Traktor.Online.lib</item>
+								<item>Traktor.Physics.lib</item>
+								<item>Traktor.Render.lib</item>
+								<item>Traktor.Resource.lib</item>
+								<item>Traktor.Scene.lib</item>
+								<item>Traktor.Script.lib</item>
+								<item>Traktor.Sound.lib</item>
+								<item>Traktor.Spark.lib</item>
+								<item>Traktor.Spray.lib</item>
+								<item>Traktor.Terrain.lib</item>
+								<item>Traktor.Theater.lib</item>
+								<item>Traktor.Ui.Custom.lib</item>
+								<item>Traktor.Ui.Win32.lib</item>
+								<item>Traktor.Ui.lib</item>
+								<item>Traktor.Video.lib</item>
+								<item>Traktor.Weather.lib</item>
+								<item>Traktor.World.lib</item>
+								<item>Traktor.Xml.lib</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_FILES_SHARED</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>Traktor.Ai.dll</item>
@@ -299,7 +361,7 @@
 								<item>Traktor.Xml.dll</item>
 							</value>
 						</second>
-					</item>
+					</item>					
 				</value>
 			</deploy>
 		</item>

@@ -109,7 +109,19 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
-						<first>DEPLOY_FILES</first>
+						<first>DEPLOY_FILES_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core.lib</item>
+								<item>Traktor.Mesh.lib</item>
+								<item>Traktor.Render.lib</item>
+								<item>Traktor.Resource.lib</item>
+								<item>Traktor.World.lib</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_FILES_SHARED</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>Traktor.Core.dll</item>
