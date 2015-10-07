@@ -34,6 +34,10 @@ public:
 
 	int32_t exitCode() const;
 
+	bool exist(const std::wstring& path);
+
+	bool rm(const std::wstring& path);
+
 	bool copy(const std::wstring& source, const std::wstring& target);
 
 	bool replace(const std::wstring& source, const std::wstring& target);

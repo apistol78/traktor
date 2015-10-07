@@ -117,6 +117,8 @@ Ref< script::IScriptManager > createScriptManager()
 	classRun->addMethod("stdOut", &Run::stdOut);
 	classRun->addMethod("stdErr", &Run::stdErr);
 	classRun->addMethod("exitCode", &Run::exitCode);
+	classRun->addMethod("exist", &Run::exist);
+	classRun->addMethod("rm", &Run::rm);
 	classRun->addMethod("copy", &Run::copy);
 	classRun->addMethod("replace", &Run::replace);
 	classRun->addMethod("mkdir", &Run::mkdir);
@@ -253,7 +255,7 @@ int main(int argc, const char** argv)
 
 	if (cmdLine.getCount() < 1)
 	{
-		log::info << L"Run; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
+		log::info << L"Traktor.Run.App; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
 		log::info << Endl;
 		log::info << L"Usage: Run (option(s)) [<file>.run|<file>.template] (args ...)" << Endl;
 		log::info << Endl;

@@ -1,5 +1,5 @@
-#include "Amalgam/Editor/Feature.h"
-#include "Amalgam/Editor/Platform.h"
+#include "Amalgam/Editor/Deploy/Feature.h"
+#include "Amalgam/Editor/Deploy/Platform.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyStringSet.h"
 #include "Core/Serialization/AttributeType.h"

@@ -36,7 +36,6 @@
 #include "Editor/IObjectEditorFactory.h"
 #include "Editor/IPipeline.h"
 #include "Editor/PipelineDependency.h"
-#include "Editor/PropertyKey.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "Editor/App/AboutDialog.h"
 #include "Editor/App/BrowseInstanceDialog.h"
@@ -55,6 +54,7 @@
 #include "Editor/App/ObjectEditorDialog.h"
 #include "Editor/App/PropertiesView.h"
 #include "Editor/App/SettingsDialog.h"
+#include "Editor/App/Shortcut.h"
 #include "Editor/App/ThumbnailGenerator.h"
 #include "Editor/App/WebBrowserPage.h"
 #include "Editor/App/WorkspaceDialog.h"
@@ -325,7 +325,11 @@ bool findShortcutCommandMapping(const PropertyGroup* settings, const std::wstrin
 	if (!shortcutGroup)
 		return false;
 
-	std::pair< int, ui::VirtualKey > key = shortcutGroup->getProperty< PropertyKey >(command);
+	std::wstring keyDesc = shortcutGroup->getProperty< PropertyString >(command);
+	if (keyDesc.empty())
+		return false;
+
+	std::pair< int, ui::VirtualKey > key = parseShortcut(keyDesc);
 	if (!key.first && key.second == ui::VkNull)
 		return false;
 

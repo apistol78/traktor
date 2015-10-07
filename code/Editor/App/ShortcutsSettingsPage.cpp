@@ -1,6 +1,7 @@
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Settings/PropertyGroup.h"
-#include "Editor/PropertyKey.h"
+#include "Core/Settings/PropertyString.h"
+#include "Editor/App/Shortcut.h"
 #include "Editor/App/ShortcutsSettingsPage.h"
 #include "I18N/Text.h"
 #include "Ui/Application.h"
@@ -41,8 +42,8 @@ bool ShortcutsSettingsPage::create(ui::Container* parent, PropertyGroup* setting
 	{
 		for (std::list< ui::Command >::const_iterator i = shortcutCommands.begin(); i != shortcutCommands.end(); ++i)
 		{
-			Ref< const PropertyKey > constPropertyKey = dynamic_type_cast< const PropertyKey* >(shortcutGroup->getProperty(i->getName()));
-			Ref< PropertyKey > propertyKey = new PropertyKey(PropertyKey::get(constPropertyKey));
+			Ref< const PropertyString > constPropertyKey = dynamic_type_cast< const PropertyString* >(shortcutGroup->getProperty(i->getName()));
+			Ref< PropertyString > propertyKey = new PropertyString(PropertyString::get(constPropertyKey));
 
 			Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
 			row->add(new ui::custom::GridItem(
@@ -74,11 +75,11 @@ bool ShortcutsSettingsPage::apply(PropertyGroup* settings)
 		const RefArray< ui::custom::GridCell >& items = (*i)->get();
 		T_ASSERT (items.size() == 2);
 
-		Ref< PropertyKey > propertyKey = (*i)->getData< PropertyKey >(L"PROPERTYKEY");
+		Ref< PropertyString > propertyKey = (*i)->getData< PropertyString >(L"PROPERTYKEY");
 		T_ASSERT (propertyKey);
 
-		PropertyKey::value_type_t value = PropertyKey::get(propertyKey);
-		if (value.first != 0 || value.second != 0)
+		PropertyString::value_type_t value = PropertyString::get(propertyKey);
+		if (!value.empty())
 			settings->setProperty(
 				L"Editor.Shortcuts/" + checked_type_cast< ui::custom::GridItem*, false >(items[0])->getText(),
 				propertyKey
@@ -95,10 +96,10 @@ void ShortcutsSettingsPage::updateShortcutGrid()
 		const RefArray< ui::custom::GridCell >& items = (*i)->get();
 		T_ASSERT (items.size() == 2);
 
-		Ref< PropertyKey > propertyKey = (*i)->getData< PropertyKey >(L"PROPERTYKEY");
+		Ref< PropertyString > propertyKey = (*i)->getData< PropertyString >(L"PROPERTYKEY");
 		T_ASSERT (propertyKey);
 
-		std::pair< int, ui::VirtualKey > key = PropertyKey::get(propertyKey);
+		std::pair< int, ui::VirtualKey > key = parseShortcut(PropertyString::get(propertyKey));
 		if (key.first || key.second != ui::VkNull)
 		{
 			std::wstring keyDesc = L"";
@@ -136,10 +137,10 @@ void ShortcutsSettingsPage::eventShortcutSelect(ui::SelectionChangeEvent* event)
 
 	if (selectedRows.size() == 1)
 	{
-		Ref< PropertyKey > propertyKey = selectedRows[0]->getData< PropertyKey >(L"PROPERTYKEY");
+		Ref< PropertyString > propertyKey = selectedRows[0]->getData< PropertyString >(L"PROPERTYKEY");
 		if (propertyKey)
 		{
-			std::pair< int, ui::VirtualKey > value = PropertyKey::get(propertyKey);
+			std::pair< int, ui::VirtualKey > value = parseShortcut(PropertyString::get(propertyKey));
 			m_editShortcut->set(value.first, value.second);
 		}
 		else
@@ -163,10 +164,10 @@ void ShortcutsSettingsPage::eventShortcutModified(ui::ContentChangeEvent* event)
 	Ref< ui::custom::GridRow > gridRow = m_editShortcut->getData< ui::custom::GridRow >(L"GRIDROW");
 	if (gridRow)
 	{
-		gridRow->setData(L"PROPERTYKEY", new PropertyKey(std::make_pair(
+		gridRow->setData(L"PROPERTYKEY", new PropertyString(describeShortcut(std::make_pair(
 			m_editShortcut->getKeyState(),
 			m_editShortcut->getVirtualKey()
-		)));
+		))));
 		updateShortcutGrid();
 	}
 }
