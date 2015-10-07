@@ -36,21 +36,49 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
-						<first>DEPLOY_FILES</first>
+						<first>DEPLOY_EXTERN_FILES_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>PhysX3Common_x86.dll</item>
-								<item>PhysX3Cooking_x86.dll</item>
-								<item>PhysX3Extensions.dll</item>
-								<item>PhysX3_x86.dll</item>
-								<item>PxTask.dll</item>
-								<item>Traktor.Core.dll</item>
-								<item>Traktor.Database.dll</item>
-								<item>Traktor.Heightfield.dll</item>
-								<item>Traktor.Physics.PhysX.dll</item>
-								<item>Traktor.Physics.dll</item>
-								<item>Traktor.Resource.dll</item>
-								<item>Traktor.World.dll</item>
+								<item>PhysX3Common_x86.lib</item>
+								<item>PhysX3Cooking_x86.lib</item>
+								<item>PhysX3Extensions.lib</item>
+								<item>PhysX3_x86.lib</item>
+								<item>PxTask.lib</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_FILES_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core.lib</item>
+								<item>Traktor.Database.lib</item>
+								<item>Traktor.Heightfield.lib</item>
+								<item>Traktor.Physics.PhysX.lib</item>
+								<item>Traktor.Physics.lib</item>
+								<item>Traktor.Resource.lib</item>
+								<item>Traktor.World.lib</item>
+							</value>
+						</second>
+					</item>
+				</value>
+				<value>
+					<item>
+						<first>DEPLOY_FILES_SHARED</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>PhysX3Common_x86.lib</item>
+								<item>PhysX3Cooking_x86.lib</item>
+								<item>PhysX3Extensions.lib</item>
+								<item>PhysX3_x86.lib</item>
+								<item>PxTask.lib</item>
+								<item>Traktor.Core.lib</item>
+								<item>Traktor.Database.lib</item>
+								<item>Traktor.Heightfield.lib</item>
+								<item>Traktor.Physics.PhysX.lib</item>
+								<item>Traktor.Physics.lib</item>
+								<item>Traktor.Resource.lib</item>
+								<item>Traktor.World.lib</item>
 							</value>
 						</second>
 					</item>

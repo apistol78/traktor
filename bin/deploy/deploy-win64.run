@@ -87,6 +87,7 @@ function deployStatic(args)
 	-- Append system path to files.
 	local wholeLinkFiles = ""
 	local externalLinkFiles = ""
+	local externalCopyFiles = ""
 	local linkerIncludes = ""
 
 	local files = os:getEnvironment("DEPLOY_EXTERN_FILES_STATIC"):split(" ")
@@ -100,11 +101,15 @@ function deployStatic(args)
 				elseif f:endswith(".dll") then
 					debugFile = f:sub(1, string.len(f) - 4) .. "_d.dll"
 				end
-				if fileSystem:exist(Path(run:cwd() .. "/" .. debugFile)) then
+				if fileSystem:exist(Path(prepend .. debugFile)) then
 					f = debugFile
 				end
-			end			
-			externalLinkFiles = externalLinkFiles .. prepend .. f .. " "
+			end
+			if f:endswith(".lib") then
+				externalLinkFiles = externalLinkFiles .. prepend .. f .. " "
+			else
+				externalCopyFiles = externalCopyFiles .. f .. " "
+			end
 		end
 	end
 
@@ -120,7 +125,7 @@ function deployStatic(args)
 				elseif f:endswith(".dll") then
 					debugFile = f:sub(1, string.len(f) - 4) .. "_d.dll"
 				end
-				if fileSystem:exist(Path(run:cwd() .. "/" .. debugFile)) then
+				if fileSystem:exist(Path(prepend .. debugFile)) then
 					f = debugFile
 				end
 			end				
@@ -141,7 +146,7 @@ function deployStatic(args)
 	local cmd = "\"" .. link .. "\" " .. externalLinkFiles .. " " .. wholeLinkFiles .. " " .. linkerIncludes
 	cmd = cmd .. " msvcrt.lib winmm.lib iphlpapi.lib ws2_32.lib kernel32.lib user32.lib gdi32.lib winspool.lib"
 	cmd = cmd .. " comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib"
-	cmd = cmd .. " comctl32.lib d2d1.lib dwrite.lib gdiplus.lib msimg32.lib d3d11.lib dxgi.lib dinput8.lib dxguid.lib xinput.lib "
+	cmd = cmd .. " comctl32.lib d2d1.lib dwrite.lib gdiplus.lib msimg32.lib d3d11.lib dxgi.lib dinput8.lib dxguid.lib xinput.lib"
 	cmd = cmd .. " $(DEPLOY_EXECUTABLE).res"
 	cmd = cmd .. " /OUT:$(DEPLOY_EXECUTABLE).exe"
 	cmd = cmd .. " /LIBPATH:\"" .. dxLibPath .. "\""
@@ -173,7 +178,18 @@ function deployStatic(args)
 	-- Deploy executable into remote folder.
 	run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) $(DEPLOY_EXECUTABLE).exe", "(null)")
 	if run:exitCode() ~= 0 then return run:exitCode() end
-	run:popd()
+
+	-- Deploy external files into remote folder.
+	if externalCopyFiles ~= "" then
+		if not debug then
+			run:pushd("$(DEPLOY_SYSTEM_ROOT)/bin/latest/win64/releasestatic")
+		else
+			run:pushd("$(DEPLOY_SYSTEM_ROOT)/bin/latest/win64/debugstatic")
+		end
+		run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) " .. externalCopyFiles, "(null)")
+		run:popd()
+		if run:exitCode() ~= 0 then return run:exitCode() end
+	end
 
 	return 0
 end

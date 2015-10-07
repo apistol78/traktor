@@ -106,7 +106,26 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
-						<first>DEPLOY_FILES</first>
+						<first>DEPLOY_EXTERN_FILES_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Extern.lua.lib</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_FILES_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core.lib</item>
+								<item>Traktor.Resource.lib</item>
+								<item>Traktor.Script.Lua.lib</item>
+								<item>Traktor.Script.lib</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_FILES_SHARED</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>Traktor.Core.dll</item>
@@ -254,12 +273,6 @@
 				<first>Editor.ScriptManagerType</first>
 				<second type="traktor.PropertyString">
 					<value>traktor.script.ScriptManagerLua</value>
-				</second>
-			</item>
-			<item>
-				<first>ScriptPipeline.OutputPath</first>
-				<second type="traktor.PropertyString">
-					<value>temp/Script</value>
 				</second>
 			</item>
 		</value>
