@@ -1,3 +1,4 @@
+import(traktor)
 
 
 function string:split(sep)
@@ -83,8 +84,45 @@ end
 
 
 function migrate(args)
+	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
 	stdout:printLn("Migrating Linux...")
-	return run:execute("$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Database.Migrate.App -p -s=Migrate")
+
+	-- Build content database.
+	run:execute("$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Database.Migrate.App -p -s=Migrate")
+	if run:exitCode() ~= 0 then return run:exitCode() end
+
+	-- Determine source binary path.
+	local sourcePath
+	if not debug then
+		stdout:printLn("Deploying binaries to target host...")
+		sourcePath = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/linux/releaseshared/"
+	else
+		stdout:printLn("Deploying *DEBUG* binaries to target host...")
+		sourcePath = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/linux/debugshared/"
+	end
+
+	-- Copy binaries into "bin".
+	run:mkdir("bin")
+	local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
+	for _, f in ipairs(files) do
+		if debug then
+			local debugFile = f
+			if string.endswith(f, ".so") then
+				debugFile = f:sub(1, string.len(f) - 4) .. "_d.so"
+			else
+				debugFile = f .. "_d"
+			end
+			if fileSystem:exist(Path(sourcePath .. debugFile)) then
+				f = debugFile
+			end
+		end
+		if not run:replace(sourcePath .. f, "bin/" .. f) then
+			stderr:printLn("Unable to copy file \"" .. f .. "\" to binary folder")
+			return 1
+		end
+	end		
+
+	return 0
 end
 
 
