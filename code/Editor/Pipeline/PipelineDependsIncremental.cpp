@@ -128,7 +128,6 @@ void PipelineDependsIncremental::addDependency(db::Instance* sourceAssetInstance
 	}
 
 	// Checkout source asset instance.
-	//Ref< ISerializable > sourceAsset = sourceAssetInstance->getObject();
 	Ref< ISerializable > sourceAsset = m_instanceCache->getObjectReadOnly(sourceAssetInstance->getGuid());
 	if (!sourceAsset)
 	{
@@ -180,7 +179,6 @@ void PipelineDependsIncremental::addDependency(const Guid& sourceAssetGuid, uint
 	}
 
 	// Checkout source asset instance.
-	//Ref< ISerializable > sourceAsset = sourceAssetInstance->getObject();
 	Ref< ISerializable > sourceAsset = m_instanceCache->getObjectReadOnly(sourceAssetGuid);
 	if (!sourceAsset)
 	{
@@ -242,6 +240,7 @@ void PipelineDependsIncremental::addDependency(
 
 bool PipelineDependsIncremental::waitUntilFinished()
 {
+#if defined(_DEBUG)
 	log::debug << L"Pipeline performance" << Endl;
 	log::debug << IncreaseIndent;
 
@@ -254,6 +253,7 @@ bool PipelineDependsIncremental::waitUntilFinished()
 
 	log::debug << L"Total : " << int32_t(totalTime * 1000.0) << L" ms" << Endl;
 	log::debug << DecreaseIndent;
+#endif
 	return true;
 }
 
@@ -316,12 +316,12 @@ void PipelineDependsIncremental::addUniqueDependency(
 		Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*dependency->pipelineType);
 		T_ASSERT (pipeline);
 
-//#if defined(_DEBUG)
+#if defined(_DEBUG)
 		if (m_buildDepTimeStack.empty())
 			m_timer.start();
 
 		m_buildDepTimeStack.push_back(m_timer.getElapsedTime());
-//#endif
+#endif
 
 		result = pipeline->buildDependencies(
 			this,
@@ -331,7 +331,7 @@ void PipelineDependsIncremental::addUniqueDependency(
 			outputGuid
 		);
 
-//#if defined(_DEBUG)
+#if defined(_DEBUG)
 		double duration = m_timer.getElapsedTime() - m_buildDepTimeStack.back();
 		m_buildDepTimes[dependency->pipelineType].first++;
 		m_buildDepTimes[dependency->pipelineType].second += duration;
@@ -340,7 +340,7 @@ void PipelineDependsIncremental::addUniqueDependency(
 		// Remove duration from parent build steps; not inclusive times.
 		for (std::vector< double >::iterator i = m_buildDepTimeStack.begin(); i != m_buildDepTimeStack.end(); ++i)
 			*i += duration;
-//#endif
+#endif
 	}
 
 	if (result)

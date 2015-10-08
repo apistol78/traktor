@@ -19,6 +19,7 @@
 #include "Editor/IPipeline.h"
 #include "Editor/IPipelineDb.h"
 #include "Editor/IPipelineDependencySet.h"
+#include "Editor/IPipelineInstanceCache.h"
 #include "Editor/PipelineDependency.h"
 #include "Editor/Pipeline/PipelineDependsParallel.h"
 #include "Editor/Pipeline/PipelineFactory.h"
@@ -35,13 +36,15 @@ PipelineDependsParallel::PipelineDependsParallel(
 	db::Database* sourceDatabase,
 	db::Database* outputDatabase,
 	IPipelineDependencySet* dependencySet,
-	IPipelineDb* pipelineDb
+	IPipelineDb* pipelineDb,
+	IPipelineInstanceCache* instanceCache
 )
 :	m_pipelineFactory(pipelineFactory)
 ,	m_sourceDatabase(sourceDatabase)
 ,	m_outputDatabase(outputDatabase)
 ,	m_dependencySet(dependencySet)
 ,	m_pipelineDb(pipelineDb)
+,	m_instanceCache(instanceCache)
 {
 	m_jobQueue = new JobQueue();
 	m_jobQueue->create(
@@ -169,25 +172,7 @@ Ref< db::Database > PipelineDependsParallel::getOutputDatabase() const
 
 Ref< const ISerializable > PipelineDependsParallel::getObjectReadOnly(const Guid& instanceGuid)
 {
-	Ref< ISerializable > object;
-
-	{
-		T_ANONYMOUS_VAR(ReaderWriterLock::AcquireReader)(m_readCacheLock);
-		std::map< Guid, Ref< ISerializable > >::iterator i = m_readCache.find(instanceGuid);
-		if (i != m_readCache.end())
-			object = i->second;
-	}
-
-	if (!object)
-	{
-		object = m_sourceDatabase->getObjectReadOnly(instanceGuid);
-		{
-			T_ANONYMOUS_VAR(ReaderWriterLock::AcquireWriter)(m_readCacheLock);
-			m_readCache[instanceGuid] = object;
-		}
-	}
-
-	return object;
+	return m_instanceCache->getObjectReadOnly(instanceGuid);
 }
 
 Ref< PipelineDependency > PipelineDependsParallel::findOrCreateDependency(
@@ -388,7 +373,8 @@ void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentD
 		pipeline->buildDependencies(this, 0, sourceAsset, L"", Guid());
 
 		// Merge hash of dependent pipeline with parent's pipeline hash.
-		parentDependency->pipelineHash += pipelineHash;
+		if (parentDependency)
+			parentDependency->pipelineHash += pipelineHash;
 
 		m_currentDependency.set(previousDependency);
 	}
@@ -427,7 +413,7 @@ void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentD
 		return;
 
 	// Read source asset instance.
-	Ref< ISerializable > sourceAsset = sourceAssetInstance->getObject();
+	Ref< ISerializable > sourceAsset = m_instanceCache->getObjectReadOnly(sourceAssetInstance->getGuid());
 	if (!sourceAsset)
 	{
 		log::error << L"Unable to add dependency to \"" << sourceAssetInstance->getName() << L"\"; failed to read instance object" << Endl;
@@ -466,7 +452,7 @@ void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentD
 	}
 
 	// Checkout source asset instance.
-	Ref< ISerializable > sourceAsset = sourceAssetInstance->getObject();
+	Ref< ISerializable > sourceAsset = m_instanceCache->getObjectReadOnly(sourceAssetGuid);
 	if (!sourceAsset)
 	{
 		log::error << L"Unable to add dependency to \"" << sourceAssetInstance->getName() << L"\"; failed to checkout instance" << Endl;

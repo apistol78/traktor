@@ -14,11 +14,7 @@
 namespace traktor
 {
 
-#if !defined(_WIN32)
 class T_MATH_ALIGN16 T_DLLCLASS IntervalTransform
-#else
-class T_MATH_ALIGN16 IntervalTransform
-#endif
 {
 public:
 	T_MATH_INLINE IntervalTransform();

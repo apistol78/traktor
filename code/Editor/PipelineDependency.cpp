@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComposite.h"
@@ -21,6 +22,28 @@ PipelineDependency::PipelineDependency()
 ,	filesHash(0)
 ,	flags(0)
 {
+}
+
+void PipelineDependency::dump() const
+{
+	log::info << L"pipelineType: " << (pipelineType ? pipelineType->getName() : L"(null)") << Endl;
+	log::info << L"sourceInstanceGuid: " << sourceInstanceGuid.format() << Endl;
+	log::info << L"sourceAsset: " << type_name(sourceAsset) << Endl;
+	for (uint32_t i = 0; i < uint32_t(files.size()); ++i)
+	{
+		log::info << L"files[" << i << L"]" << Endl;
+		log::info << L"\t.filePath: " << files[i].filePath.getPathName() << Endl;
+		log::info << L"\t.lastWriteTime: " << files[i].lastWriteTime.getSecondsSinceEpoch() << Endl;
+	}
+	log::info << L"outputPath: " << outputPath << Endl;
+	log::info << L"outputGuid: " << outputGuid.format() << Endl;
+	log::info << L"pipelineHash: " << pipelineHash << Endl;
+	log::info << L"sourceAssetHash: " << sourceAssetHash << Endl;
+	log::info << L"sourceDataHash: " << sourceDataHash << Endl;
+	log::info << L"filesHash: " << filesHash << Endl;
+	log::info << L"flags: " << flags << Endl;
+	for (uint32_t i = 0; i < uint32_t(children.size()); ++i)
+		log::info << L"children[" << i << L"] = " << children[i] << Endl;
 }
 
 void PipelineDependency::serialize(ISerializer& s)

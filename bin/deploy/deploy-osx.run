@@ -67,8 +67,53 @@ end
 
 
 function migrate(args)
+	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
 	stdout:printLn("Migrating OSX...")
-	return run:execute("$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Database.Migrate.App -p -s=Migrate")
+
+	-- Build content database.
+	run:execute("$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Database.Migrate.App -p -s=Migrate")
+	if run:exitCode() ~= 0 then return run:exitCode() end
+
+	-- Create application bundle.
+	run:mkdir(bundle .. "/Contents/MacOS")
+	run:mkdir(bundle .. "/Contents/Resources")
+
+	run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/osx/Info.plist.template", bundle .. "/Contents/Info.plist")
+	run:replace("$(DEPLOY_SYSTEM_ROOT)/res/deploy/osx/Icon.icns", bundle .. "/Contents/Icon.icns")
+	run:replace("Application.config", bundle .. "/Contents/Resources/Application.config")
+	run:replace("Content.compact", bundle .. "/Contents/Resources/Content.compact")
+	
+	-- Determine source binary path.
+	local sourcePath
+	if not debug then
+		stdout:printLn("Deploying binaries to target host...")
+		sourcePath = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/osx/releaseshared/"
+	else
+		stdout:printLn("Deploying *DEBUG* binaries to target host...")
+		sourcePath = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/osx/debugshared/"
+	end
+
+	-- Copy binaries into bundle.
+	local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
+	for _, f in ipairs(files) do
+		if debug then
+			local debugFile = f
+			if f:endswith(f, ".dylib") then
+				debugFile = f:sub(1, string.len(f) - 4) .. "_d.dylib"
+			else
+				debugFile = f .. "_d"
+			end
+			if fileSystem:exist(Path(sourcePath .. debugFile)) then
+				f = debugFile
+			end
+		end
+		if not run:replace(sourcePath .. f, bundle .. "/Contents/MacOS/" .. f) then
+			stderr:printLn("Unable to copy file \"" .. f .. "\" to binary folder")
+			return 1
+		end
+	end
+
+	return 0
 end
 
 

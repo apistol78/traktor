@@ -1,7 +1,6 @@
 #ifndef traktor_editor_PipelineDependsParallel_H
 #define traktor_editor_PipelineDependsParallel_H
 
-#include <map>
 #include "Core/Thread/ReaderWriterLock.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/ThreadLocal.h"
@@ -25,6 +24,7 @@ class JobQueue;
 
 class IPipelineDb;
 class IPipelineDependencySet;
+class IPipelineInstanceCache;
 class PipelineFactory;
 
 /*! \brief Parallel pipeline dependency walker.
@@ -40,7 +40,8 @@ public:
 		db::Database* sourceDatabase,
 		db::Database* outputDatabase,
 		IPipelineDependencySet* dependencySet,
-		IPipelineDb* pipelineDb
+		IPipelineDb* pipelineDb,
+		IPipelineInstanceCache* instanceCache
 	);
 
 	virtual ~PipelineDependsParallel();
@@ -90,10 +91,10 @@ private:
 	Ref< db::Database > m_outputDatabase;
 	Ref< IPipelineDependencySet > m_dependencySet;
 	Ref< IPipelineDb > m_pipelineDb;
+	Ref< IPipelineInstanceCache > m_instanceCache;
 	ThreadLocal m_currentDependency;
 	ReaderWriterLock m_readCacheLock;
 	Semaphore m_dependencySetLock;
-	std::map< Guid, Ref< ISerializable > > m_readCache;
 
 	Ref< PipelineDependency > findOrCreateDependency(
 		const Guid& guid,

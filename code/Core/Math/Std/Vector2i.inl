@@ -1,6 +1,3 @@
-#include <cmath>
-#include "Core/Math/Vector2i.h"
-
 namespace traktor
 {
 

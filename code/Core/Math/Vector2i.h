@@ -1,8 +1,10 @@
 #ifndef traktor_Vector2i_H
 #define traktor_Vector2i_H
 
+#include <cmath>
 #include "Core/Config.h"
 #include "Core/Math/MathConfig.h"
+#include "Core/Math/MathUtils.h"
 #include "Core/Math/Vector2.h"
 
 // import/export mechanism.
@@ -19,11 +21,7 @@ namespace traktor
 /*! \brief 2d vector using 32-bit integers.
  * \ingroup Core
  */
-#if !defined(_WIN32)
 class T_DLLCLASS Vector2i
-#else
-class Vector2i
-#endif
 {
 public:
 	union

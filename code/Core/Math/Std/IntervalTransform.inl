@@ -1,5 +1,3 @@
-#include "Core/Math/IntervalTransform.h"
-
 namespace traktor
 {
 

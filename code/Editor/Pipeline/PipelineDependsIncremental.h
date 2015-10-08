@@ -90,11 +90,11 @@ private:
 	uint32_t m_currentRecursionDepth;
 	Ref< PipelineDependency > m_currentDependency;
 
-//#if defined(_DEBUG)
+#if defined(_DEBUG)
 	Timer m_timer;
 	std::vector< double > m_buildDepTimeStack;
 	std::map< const TypeInfo*, std::pair< int32_t, double > > m_buildDepTimes;
-//#endif
+#endif
 
 	void addUniqueDependency(
 		const db::Instance* sourceInstance,

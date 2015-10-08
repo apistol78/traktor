@@ -61,6 +61,8 @@ public:
 
 	PipelineDependency();
 
+	void dump() const;
+
 	virtual void serialize(ISerializer& s);
 };
 
