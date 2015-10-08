@@ -330,7 +330,8 @@ bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)
 					pipelineSettings,
 					targetInstance->getTarget(),
 					targetInstance->getTargetConfiguration(),
-					outputPath
+					outputPath,
+					false
 				);
 				chain.actions.push_back(action);
 
@@ -535,10 +536,12 @@ void EditorPlugin::eventTargetListPlay(TargetPlayEvent* event)
 		m_hostEnumerator->getHost(deployHostId, deployHost);
 
 	// Get our network host.
-	std::wstring editorHost = L"";
+	std::wstring editorHost = L"localhost";
 	net::SocketAddressIPv4::Interface itf;
-	if (!net::SocketAddressIPv4::getBestInterface(itf))
+	if (net::SocketAddressIPv4::getBestInterface(itf))
 		editorHost = itf.addr->getHostName();
+	else
+		log::warning << L"Unable to determine editor host address; target might not be able to connect to editor database." << Endl;
 
 	// Resolve absolute output path.
 	std::wstring outputPath = FileSystem::getInstance().getAbsolutePath(targetInstance->getOutputPath()).getPathName();
@@ -572,7 +575,8 @@ void EditorPlugin::eventTargetListPlay(TargetPlayEvent* event)
 			pipelineSettings,
 			targetInstance->getTarget(),
 			targetInstance->getTargetConfiguration(),
-			outputPath
+			outputPath,
+			false
 		);
 		chain.actions.push_back(action);
 

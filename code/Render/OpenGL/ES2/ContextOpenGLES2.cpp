@@ -158,10 +158,11 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createResourceContext(void* nativeHand
 
 #endif
 
-	const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
-    if (extensions)
-        log::info << L"GL_EXTENSIONS = " << mbstows(extensions) << Endl;
+//	const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
+//	if (extensions)
+//		log::info << L"GL_EXTENSIONS = " << mbstows(extensions) << Endl;
 
+	log::info << L"OpenGL ES 2.0 resource context created successfully" << Endl;
 	return context;
 }
 
@@ -224,6 +225,7 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(ContextOpenGLES2* resour
 
 #endif
 
+	log::info << L"OpenGL ES 2.0 render context created successfully" << Endl;
 	return context;
 }
 
@@ -285,10 +287,11 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(ContextOpenGLES2* resour
 
 #endif
     
-    const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
-    if (extensions)
-        log::info << L"GL_EXTENSIONS = " << mbstows(extensions) << Endl;
+//	const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
+//	if (extensions)
+//		log::info << L"GL_EXTENSIONS = " << mbstows(extensions) << Endl;
 
+	log::info << L"OpenGL ES 2.0 render context created successfully (embedded)" << Endl;
 	return context;
 }
 
@@ -391,19 +394,26 @@ GLuint ContextOpenGLES2::createShaderObject(const char* shader, GLenum shaderTyp
 		return i->second;
 
 	GLuint shaderObject = glCreateShader(shaderType);
+	if (shaderObject == 0)
+	{
+		log::error << L"Failed to compile GLSL shader; glCreateShader returned 0" << Endl;
+		return 0;
+	}
 
 	T_OGL_SAFE(glShaderSource(shaderObject, 1, &shader, NULL));
 	T_OGL_SAFE(glCompileShader(shaderObject));
+	/*
 	T_OGL_SAFE(glGetShaderiv(shaderObject, GL_COMPILE_STATUS, &status));
 	if (status == 0)
 	{
 		T_OGL_SAFE(glGetShaderInfoLog(shaderObject, sizeof(errorBuf), 0, errorBuf));
-		log::error << L"GLSL fragment shader compile failed :" << Endl;
+		log::error << L"Failed to compile GLSL shader:" << Endl;
 		log::error << mbstows(errorBuf) << Endl;
 		log::error << Endl;
 		FormatMultipleLines(log::error, mbstows(shader));
-		return false;
+		return 0;
 	}
+	*/
 
 	m_shaderObjects.insert(std::make_pair(hash, shaderObject));
 	return shaderObject;

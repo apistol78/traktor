@@ -41,7 +41,8 @@ public:
 		const PropertyGroup* defaultPipelineSettings,
 		const Target* target,
 		const TargetConfiguration* targetConfiguration,
-		const std::wstring& outputPath
+		const std::wstring& outputPath,
+		bool standAlone
 	);
 
 	virtual bool execute(IProgressListener* progressListener);
@@ -53,6 +54,7 @@ private:
 	Ref< const Target > m_target;
 	Ref< const TargetConfiguration > m_targetConfiguration;
 	std::wstring m_outputPath;
+	bool m_standAlone;
 };
 
 	}

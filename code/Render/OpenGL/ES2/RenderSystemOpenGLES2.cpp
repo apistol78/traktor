@@ -146,6 +146,7 @@ Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewEmbed
 		m_nativeHandle,
 		desc
 	);
+m_globalContext = context;
 	return new RenderViewOpenGLES2(m_globalContext, context);
 #else
 	return 0;
