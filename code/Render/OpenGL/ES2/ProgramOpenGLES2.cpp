@@ -130,7 +130,7 @@ Ref< ProgramOpenGLES2 > ProgramOpenGLES2::create(ContextOpenGLES2* resourceConte
 {
 #if !defined(T_OFFLINE_ONLY)
 
-	const ProgramResourceOpenGL* resourceOpenGL = checked_type_cast< const ProgramResourceOpenGL* >(resource);
+	const ProgramResourceOpenGL* resourceOpenGL = mandatory_non_null_type_cast< const ProgramResourceOpenGL* >(resource);
 	char errorBuf[32000];
 	GLsizei errorBufLen;
 	GLint status;

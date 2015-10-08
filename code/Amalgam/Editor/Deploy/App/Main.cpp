@@ -37,25 +37,10 @@ Ref< PropertyGroup > loadSettings(const std::wstring& settingsFile)
 	Ref< PropertyGroup > settings;
 	Ref< traktor::IStream > file;
 
-	size_t n = settingsFile.find_last_of(L".");
-	if (n == settingsFile.npos)
-		return 0;
-
-	std::wstring globalConfig = settingsFile;
-	std::wstring userConfig = settingsFile.substr(0, n) + L"." + OS::getInstance().getCurrentUser() + settingsFile.substr(n);
-
-	if ((file = FileSystem::getInstance().open(userConfig, File::FmRead)) != 0)
+	if ((file = FileSystem::getInstance().open(settingsFile, File::FmRead)) != 0)
 	{
-		settings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
-		file->close();
-	}
-
-	if (settings)
-		return settings;
-
-	if ((file = FileSystem::getInstance().open(globalConfig, File::FmRead)) != 0)
-	{
-		settings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
+		if ((settings = xml::XmlDeserializer(file).readObject< PropertyGroup >()) == 0)
+			log::error << L"File " << settingsFile << L" is corrupt; unable to parse XML." << Endl;
 		file->close();
 	}
 
@@ -76,6 +61,7 @@ int main(int argc, const char** argv)
 		log::info << Endl;
 		log::info << L"  Options:" << Endl;
 		log::info << L"    -s,-settings              Settings file (default \"$(TRAKTOR_HOME)/Traktor.Editor.config\")" << Endl;
+		log::info << L"    -standalone               Build using a standalone pipeline." << Endl;
 		log::info << L"    -debug                    Use debug binaries in deploy or migrate actions." << Endl;
 		log::info << L"    -static-link              Statically link product in deploy or migrate actions." << Endl;
 		return 1;
@@ -112,14 +98,15 @@ int main(int argc, const char** argv)
 	if (cmdLine.hasOption(L"static-link"))
 		settings->setProperty< PropertyBoolean >(L"Amalgam.StaticallyLinked", true);
 
-	std::wstring sourceDatabaseCS = settings->getProperty< PropertyString >(L"Editor.SourceDatabase");
+	db::ConnectionString sourceDatabaseCS = settings->getProperty< PropertyString >(L"Editor.SourceDatabase");
+	sourceDatabaseCS.set(L"fileStore", L"");
 
 	T_FORCE_LINK_REF(db::LocalDatabase);
 
 	Ref< db::Database > sourceDatabase = new db::Database();
 	if (!sourceDatabase->open(sourceDatabaseCS))
 	{
-		traktor::log::error << L"Unable to open database \"" << sourceDatabaseCS << L"\"" << Endl;
+		traktor::log::error << L"Unable to open database \"" << sourceDatabaseCS.format() << L"\"" << Endl;
 		return 1;
 	}
 
@@ -170,7 +157,8 @@ int main(int argc, const char** argv)
 			0,
 			target,
 			targetConfiguration,
-			outputPath
+			outputPath,
+			cmdLine.hasOption(L"standalone")
 		).execute(0);
 	}
 	else if (command == L"deploy")

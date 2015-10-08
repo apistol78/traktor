@@ -49,7 +49,7 @@
         </item>
         <item>
           <first>AndroidAPILevel</first>
-          <second>android-19</second>
+          <second>android-15</second>
         </item>
         <item>
           <first>AndroidNativeAPI</first>
@@ -57,11 +57,11 @@
         </item>
         <item>
           <first>AndroidMinAPI</first>
-          <second>android-19</second>
+          <second>android-15</second>
         </item>
         <item>
           <first>AndroidTargetAPI</first>
-          <second>android-19</second>
+          <second>android-15</second>
         </item>
         <item>
           <first>AndroidArch</first>
@@ -91,7 +91,7 @@
         </item>
         <item>
           <first>AndroidAPILevel</first>
-          <second>android-19</second>
+          <second>android-15</second>
         </item>
         <item>
           <first>AndroidNativeAPI</first>
@@ -99,11 +99,11 @@
         </item>
         <item>
           <first>AndroidMinAPI</first>
-          <second>android-19</second>
+          <second>android-15</second>
         </item>
         <item>
           <first>AndroidTargetAPI</first>
-          <second>android-19</second>
+          <second>android-15</second>
         </item>
         <item>
           <first>AndroidArch</first>
@@ -133,7 +133,7 @@
         </item>
         <item>
           <first>AndroidAPILevel</first>
-          <second>android-19</second>
+          <second>android-15</second>
         </item>
         <item>
           <first>AndroidNativeAPI</first>
@@ -141,11 +141,11 @@
         </item>
         <item>
           <first>AndroidMinAPI</first>
-          <second>android-19</second>
+          <second>android-15</second>
         </item>
         <item>
           <first>AndroidTargetAPI</first>
-          <second>android-19</second>
+          <second>android-15</second>
         </item>
         <item>
           <first>AndroidArch</first>
@@ -175,7 +175,7 @@
         </item>
         <item>
           <first>AndroidAPILevel</first>
-          <second>android-19</second>
+          <second>android-15</second>
         </item>
         <item>
           <first>AndroidNativeAPI</first>
@@ -183,11 +183,11 @@
         </item>
         <item>
           <first>AndroidMinAPI</first>
-          <second>android-19</second>
+          <second>android-15</second>
         </item>
         <item>
           <first>AndroidTargetAPI</first>
-          <second>android-19</second>
+          <second>android-15</second>
         </item>
         <item>
           <first>AndroidArch</first>
@@ -219,7 +219,7 @@
         </item>
         <item>
           <first>AndroidAPILevel</first>
-          <second>android-19</second>
+          <second>android-15</second>
         </item>
         <item>
           <first>AndroidNativeAPI</first>
@@ -227,11 +227,11 @@
         </item>
         <item>
           <first>AndroidMinAPI</first>
-          <second>android-19</second>
+          <second>android-15</second>
         </item>
         <item>
           <first>AndroidTargetAPI</first>
-          <second>android-19</second>
+          <second>android-15</second>
         </item>
         <item>
           <first>AndroidArch</first>
@@ -261,7 +261,7 @@
         </item>
         <item>
           <first>AndroidAPILevel</first>
-          <second>android-19</second>
+          <second>android-15</second>
         </item>
         <item>
           <first>AndroidNativeAPI</first>
@@ -269,11 +269,11 @@
         </item>
         <item>
           <first>AndroidMinAPI</first>
-          <second>android-19</second>
+          <second>android-15</second>
         </item>
         <item>
           <first>AndroidTargetAPI</first>
-          <second>android-19</second>
+          <second>android-15</second>
         </item>
         <item>
           <first>AndroidArch</first>
@@ -303,7 +303,7 @@
         </item>
         <item>
           <first>AndroidAPILevel</first>
-          <second>android-19</second>
+          <second>android-15</second>
         </item>
         <item>
           <first>AndroidNativeAPI</first>
@@ -311,11 +311,11 @@
         </item>
         <item>
           <first>AndroidMinAPI</first>
-          <second>android-19</second>
+          <second>android-15</second>
         </item>
         <item>
           <first>AndroidTargetAPI</first>
-          <second>android-19</second>
+          <second>android-15</second>
         </item>
         <item>
           <first>AndroidArch</first>
@@ -345,7 +345,7 @@
         </item>
         <item>
           <first>AndroidAPILevel</first>
-          <second>android-19</second>
+          <second>android-15</second>
         </item>
         <item>
           <first>AndroidNativeAPI</first>
@@ -353,11 +353,11 @@
         </item>
         <item>
           <first>AndroidMinAPI</first>
-          <second>android-19</second>
+          <second>android-15</second>
         </item>
         <item>
           <first>AndroidTargetAPI</first>
-          <second>android-19</second>
+          <second>android-15</second>
         </item>
         <item>
           <first>AndroidArch</first>

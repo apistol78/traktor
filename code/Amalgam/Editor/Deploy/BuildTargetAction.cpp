@@ -67,7 +67,8 @@ BuildTargetAction::BuildTargetAction(
 	const PropertyGroup* defaultPipelineSettings,
 	const Target* target,
 	const TargetConfiguration* targetConfiguration,
-	const std::wstring& outputPath
+	const std::wstring& outputPath,
+	bool standAlone
 )
 :	m_database(database)
 ,	m_globalSettings(globalSettings)
@@ -75,6 +76,7 @@ BuildTargetAction::BuildTargetAction(
 ,	m_target(target)
 ,	m_targetConfiguration(targetConfiguration)
 ,	m_outputPath(outputPath)
+,	m_standAlone(standAlone)
 {
 }
 
@@ -277,6 +279,9 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	Guid onlineConfig = m_targetConfiguration->getOnlineConfig();
 	if (onlineConfig.isValid() && !onlineConfig.isNull())
 		ss << L" " << onlineConfig.format();
+
+	if (m_standAlone)
+		ss << L" -standalone";
 
 	Ref< IProcess > process = OS::getInstance().execute(
 		ss.str(),
