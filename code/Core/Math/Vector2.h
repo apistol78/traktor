@@ -1,8 +1,10 @@
 #ifndef traktor_Vector2_H
 #define traktor_Vector2_H
 
+#include <cmath>
 #include "Core/Config.h"
 #include "Core/Math/MathConfig.h"
+#include "Core/Math/MathUtils.h"
 
 #if defined(min)
 #	undef min

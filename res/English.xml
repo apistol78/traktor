@@ -829,6 +829,10 @@
       <second>Use distributed build</second>
     </item>
     <item>
+      <first>EDITOR_SETTINGS_PIPELINE_DEPENDS_THREADS</first>
+      <second>Use multiple threads for scanning dependencies</second>
+    </item>    
+    <item>
       <first>EDITOR_SETTINGS_PIPELINE_ENABLE_MEMCACHED</first>
       <second>Use memcached</second>
     </item>

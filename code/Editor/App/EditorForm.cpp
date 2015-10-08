@@ -1575,17 +1575,18 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 
 	// Build dependencies.
 	Ref< IPipelineDepends > pipelineDepends;
-	//if (m_mergedSettings->getProperty< PropertyBoolean >(L"Pipeline.BuildThreads", true))
-	//{
-	//	pipelineDepends = new PipelineDependsParallel(
-	//		&pipelineFactory,
-	//		m_sourceDatabase,
-	//		m_outputDatabase,
-	//		&dependencySet,
-	//		m_pipelineDb
-	//	);
-	//}
-	//else
+	if (m_mergedSettings->getProperty< PropertyBoolean >(L"Pipeline.DependsThreads", true))
+	{
+		pipelineDepends = new PipelineDependsParallel(
+			&pipelineFactory,
+			m_sourceDatabase,
+			m_outputDatabase,
+			&dependencySet,
+			m_pipelineDb,
+			&instanceCache
+		);
+	}
+	else
 	{
 		pipelineDepends = new PipelineDependsIncremental(
 			&pipelineFactory,
@@ -1788,7 +1789,6 @@ Ref< IPipelineDependencySet > EditorForm::buildAssetDependencies(const ISerializ
 		&instanceCache,
 		recursionDepth
 	);
-
 	pipelineDepends.addDependency(asset);
 	pipelineDepends.waitUntilFinished();
 
