@@ -68,9 +68,10 @@ end
 
 function migrate(args)
 	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
-	stdout:printLn("Migrating OSX...")
+	local bundle = os:getEnvironment("DEPLOY_PROJECT_NAME"):gsub("%s", "") .. ".app"
 
 	-- Build content database.
+	stdout:printLn("Migrating OSX...")
 	run:execute("$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Database.Migrate.App -p -s=Migrate")
 	if run:exitCode() ~= 0 then return run:exitCode() end
 
