@@ -2016,10 +2016,6 @@
 					<items/>
 				</item>
 				<item type="File">
-					<fileName>barkmel.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
 					<fileName>bitrate.c</fileName>
 					<items/>
 				</item>

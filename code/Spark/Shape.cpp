@@ -13,9 +13,9 @@ namespace traktor
 		namespace
 		{
 
-render::handle_t s_handleTransform = render::getParameterHandle(L"Spark_Transform");
-render::handle_t s_handleColorTransform_Mul = render::getParameterHandle(L"Spark_ColorTransform_Mul");
-render::handle_t s_handleColorTransform_Add = render::getParameterHandle(L"Spark_ColorTransform_Add");
+render::handle_t s_handleTransform = 0;
+render::handle_t s_handleColorTransform_Mul = 0;
+render::handle_t s_handleColorTransform_Add = 0;
 
 		}
 
@@ -30,6 +30,9 @@ Shape::Shape(
 ,	m_parts(parts)
 ,	m_bounds(bounds)
 {
+	s_handleTransform = render::getParameterHandle(L"Spark_Transform");
+	s_handleColorTransform_Mul = render::getParameterHandle(L"Spark_ColorTransform_Mul");
+	s_handleColorTransform_Add = render::getParameterHandle(L"Spark_ColorTransform_Add");
 }
 
 void Shape::render(render::RenderContext* renderContext, const Matrix33& transform, const ColorTransform& colorTransform) const

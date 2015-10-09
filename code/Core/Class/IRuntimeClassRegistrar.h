@@ -19,6 +19,8 @@ class IRuntimeClass;
 class T_DLLCLASS IRuntimeClassRegistrar
 {
 public:
+	virtual ~IRuntimeClassRegistrar() {}
+
 	virtual void registerClass(IRuntimeClass* runtimeClass) = 0;
 };
 

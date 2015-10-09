@@ -12,7 +12,9 @@ namespace traktor
 		namespace
 		{
 
+#if T_USE_TRANSACTION_LOCK
 const int c_transactionTimeout = 100;
+#endif
 
 		}
 

@@ -44,6 +44,26 @@ private:
 #	define CHECK_LUA_STACK(state, expectedOffset)
 #endif
 
+class UnwindStack
+{
+public:
+	UnwindStack(lua_State* luaState)
+	:	m_luaState(luaState)
+	,	m_top(lua_gettop(luaState))
+	{
+	}
+
+	~UnwindStack()
+	{
+		T_ASSERT (lua_gettop(m_luaState) >= m_top);
+		lua_pop(m_luaState, lua_gettop(m_luaState) - m_top);
+	}
+
+private:
+	lua_State* m_luaState;
+	int32_t m_top;
+};
+
 void dumpStack(lua_State* luaState, OutputStream& os, int32_t base = 1);
 
 #if defined(_DEBUG)

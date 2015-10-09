@@ -505,9 +505,9 @@ RenderServer::UpdateResult RenderServerDefault::update(PropertyGroup* settings)
 		}
 	}
 
-	return UrSuccess;
-
 #endif
+
+	return UrSuccess;
 }
 
 render::IRenderSystem* RenderServerDefault::getRenderSystem()

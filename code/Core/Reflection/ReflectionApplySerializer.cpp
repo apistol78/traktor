@@ -220,7 +220,7 @@ void ReflectionApplySerializer::operator >> (const MemberArray& m)
 
 void ReflectionApplySerializer::operator >> (const MemberComplex& m)
 {
-	uint32_t currentMemberIndex;
+	uint32_t currentMemberIndex = 0;
 	Ref< const RfmCompound > currentCompoundMember;
 
 	if (m.getCompound())

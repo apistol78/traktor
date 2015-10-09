@@ -183,7 +183,7 @@ void ScriptManagerLua::destroy()
 
 void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 {
-	CHECK_LUA_STACK(m_luaState, 0);
+	T_ANONYMOUS_VAR(UnwindStack)(m_luaState);
 
 	const TypeInfo& exportType = runtimeClass->getExportType();
 
@@ -413,7 +413,6 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 		pushAny(runtimeClass->getConstantValue(i));
 		lua_setfield(m_luaState, -2, runtimeClass->getConstantName(i).c_str());
 	}
-	lua_pop(m_luaState, 1);
 }
 
 Ref< IScriptBlob > ScriptManagerLua::compile(const std::wstring& fileName, const std::wstring& script, IErrorCallback* errorCallback) const

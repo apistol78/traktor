@@ -26,7 +26,6 @@ namespace traktor
 		namespace
 		{
 
-const int32_t c_tableKey_class = -1;
 const int32_t c_tableKey_instance = -2;
 
 std::wstring describeValue(lua_State* L, int32_t index)
@@ -396,9 +395,6 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 
 void ScriptDebuggerLua::captureCallStack(lua_State* L, CallStack& outCallStack)
 {
-	ScriptContextLua* currentContext = m_scriptManager->m_lockContext;
-	T_ASSERT (currentContext);
-
 	lua_Debug ar;
 	std::memset(&ar, 0, sizeof(ar));
 

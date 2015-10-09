@@ -151,7 +151,7 @@ void StreamServer::threadClient(Ref< TcpSocket > clientSocket)
 		else if (result < 0)
 			break;
 
-		uint8_t command;
+		uint8_t command = 0x00;
 		if (net::recvBatch< uint8_t >(clientSocket, command) <= 0)
 			break;
 
@@ -268,7 +268,7 @@ void StreamServer::threadClient(Ref< TcpSocket > clientSocket)
 			{
 				if (stream)
 				{
-					int32_t origin, offset;
+					int32_t origin = 0, offset = 0;
 					net::recvBatch< int32_t, int32_t >(clientSocket, origin, offset);
 					int32_t resultSeek = stream->seek((IStream::SeekOriginType)origin, offset);
 					net::sendBatch< int32_t >(clientSocket, resultSeek);

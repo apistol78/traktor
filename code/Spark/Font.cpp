@@ -13,18 +13,30 @@ namespace traktor
 		namespace
 		{
 
-render::handle_t s_handleTransform = render::getParameterHandle(L"Spark_Transform");
-render::handle_t s_handleGlyphMap = render::getParameterHandle(L"Spark_GlyphMap");
-render::handle_t s_handleGlyphRect = render::getParameterHandle(L"Spark_GlyphRect");
-render::handle_t s_handleGlyphUnit = render::getParameterHandle(L"Spark_GlyphUnit");
-render::handle_t s_handleGlyphOffset = render::getParameterHandle(L"Spark_GlyphOffset");
-render::handle_t s_handleGlyphHeight = render::getParameterHandle(L"Spark_GlyphHeight");
-render::handle_t s_handleColorTransform_Mul = render::getParameterHandle(L"Spark_ColorTransform_Mul");
-render::handle_t s_handleColorTransform_Add = render::getParameterHandle(L"Spark_ColorTransform_Add");
+render::handle_t s_handleTransform = 0;
+render::handle_t s_handleGlyphMap = 0;
+render::handle_t s_handleGlyphRect = 0;
+render::handle_t s_handleGlyphUnit = 0;
+render::handle_t s_handleGlyphOffset = 0;
+render::handle_t s_handleGlyphHeight = 0;
+render::handle_t s_handleColorTransform_Mul = 0;
+render::handle_t s_handleColorTransform_Add = 0;
 
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.Font", Font, Object)
+
+Font::Font()
+{
+	s_handleTransform = render::getParameterHandle(L"Spark_Transform");
+	s_handleGlyphMap = render::getParameterHandle(L"Spark_GlyphMap");
+	s_handleGlyphRect = render::getParameterHandle(L"Spark_GlyphRect");
+	s_handleGlyphUnit = render::getParameterHandle(L"Spark_GlyphUnit");
+	s_handleGlyphOffset = render::getParameterHandle(L"Spark_GlyphOffset");
+	s_handleGlyphHeight = render::getParameterHandle(L"Spark_GlyphHeight");
+	s_handleColorTransform_Mul = render::getParameterHandle(L"Spark_ColorTransform_Mul");
+	s_handleColorTransform_Add = render::getParameterHandle(L"Spark_ColorTransform_Add");
+}
 
 float Font::advance(uint32_t character) const
 {

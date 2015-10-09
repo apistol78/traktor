@@ -42,6 +42,8 @@ class T_DLLCLASS Font : public Object
 	T_RTTI_CLASS;
 
 public:
+	Font();
+
 	float advance(uint32_t character) const;
 
 	void render(render::RenderContext* renderContext, const Matrix33& transform, uint32_t character, float height, const ColorTransform& colorTransform) const;

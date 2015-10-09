@@ -23,8 +23,12 @@ class T_DLLCLASS IVoiceChatProvider : public Object
 public:
 	struct IVoiceChatCallback
 	{
+		virtual ~IVoiceChatCallback() {}
+
 		virtual void onVoiceReceived(uint64_t fromUserHandle, const int16_t* samples, uint32_t samplesCount, uint32_t sampleRate) = 0;
 	};
+
+	virtual ~IVoiceChatProvider() {}
 
 	virtual void setCallback(IVoiceChatCallback* callback) = 0;
 

@@ -8,20 +8,6 @@ namespace traktor
 {
 	namespace world
 	{
-		namespace
-		{
-
-Vector4 v2tov4(const Vector2& v)
-{
-	return Vector4(v.x, v.y, 0.0f, 0.0f);
-}
-
-Vector4 v2top4(const Vector2& v)
-{
-	return Vector4(v.x, v.y, 0.0f, 1.0f);
-}
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.TrapezoidShadowProjection", TrapezoidShadowProjection, IWorldShadowProjection)
 

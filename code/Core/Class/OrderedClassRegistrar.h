@@ -21,7 +21,7 @@ namespace traktor
 class T_DLLCLASS OrderedClassRegistrar : public IRuntimeClassRegistrar
 {
 public:
-	virtual void registerClass(IRuntimeClass* runtimeClass);
+	virtual void registerClass(IRuntimeClass* runtimeClass) T_OVERRIDE;
 
 	void registerClassesInOrder(IRuntimeClassRegistrar* registrar);
 
