@@ -437,6 +437,13 @@ function migrateStatic(args)
 	run:mkdir("bin64")
 	run:replace("$(DEPLOY_EXECUTABLE).exe", "bin64/$(DEPLOY_EXECUTABLE).exe")
 
+	-- Copy external files into "bin".
+	if externalCopyFiles ~= "" then
+		for _, f in ipairs(externalCopyFiles:split(" ")) do
+			run:replace(prepend .. f, "bin64/" .. f)
+		end
+	end
+
 	return 0
 end
 
