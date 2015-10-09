@@ -24,42 +24,74 @@ function build(args)
 end
 
 
+function getSystemPaths()
+	if os.getRegistry == nil then
+		stderr:printLn("Unforntunally statically link win64 product is currently only available from a Windows host.")
+		return nil
+	end
+
+	-- Get Windows SDK installation path.
+	local sdkPath = os:getRegistry("HKEY_LOCAL_MACHINE", "SOFTWARE\\Microsoft\\Microsoft SDKs\\Windows\\v7.1A", "InstallationFolder")
+	if sdkPath == nil then
+		sdkPath = os:getRegistry("HKEY_CURRENT_USER", "SOFTWARE\\Microsoft\\Microsoft SDKs\\Windows\\v7.1A", "InstallationFolder")
+	end
+	if sdkPath == nil then
+		sdkPath = os:getRegistry("HKEY_LOCAL_MACHINE", "SOFTWARE\\Wow6432Node\\Microsoft SDKs\\Windows\\v7.1A", "InstallationFolder")
+	end
+	if sdkPath == nil then
+		sdkPath = os:getRegistry("HKEY_CURRENT_USER", "SOFTWARE\\Wow6432Node\\Microsoft SDKs\\Windows\\v7.1A", "InstallationFolder")
+	end
+	if sdkPath == nil then
+		stderr:printLn("Unable to determine Windows SDK install path; please ensure Windows SDK 7.1A is properly installed")
+		return nil
+	end
+
+	-- Get Visual Studio 2012 installation path.
+	local vsPath = os:getRegistry("HKEY_LOCAL_MACHINE", "SOFTWARE\\Microsoft\\VisualStudio\\SxS\\VS7", "11.0")
+	if vsPath == nil then
+		vsPath = os:getRegistry("HKEY_CURRENT_USER", "SOFTWARE\\Microsoft\\VisualStudio\\SxS\\VS7", "InstallationFolder")
+	end
+	if vsPath == nil then
+		vsPath = os:getRegistry("HKEY_LOCAL_MACHINE", "SOFTWARE\\Wow6432Node\\VisualStudio\\SxS\\VS7", "InstallationFolder")
+	end
+	if vsPath == nil then
+		vsPath = os:getRegistry("HKEY_CURRENT_USER", "SOFTWARE\\Wow6432Node\\VisualStudio\\SxS\\VS7", "InstallationFolder")
+	end	
+	if vsPath == nil then
+		stderr:printLn("Unable to determine Visual Studio 2012 install path; please ensure Visual Studio 2012 is properly installed.")
+		return nil
+	end
+
+	local p = {}
+	p.vcBinPath = vsPath .. "VC\\bin\\amd64"
+	p.vcLibPath = vsPath .. "VC\\lib"
+	p.sdkBinPath = sdkPath .. "Bin"
+	p.sdkLibPath = sdkPath .. "Lib"
+	p.dxLibPath = "$(TRAKTOR_HOME)\\3rdp\\DirectX SDK (June 2010)\\Lib\\x86"
+
+	return p
+end
+
+
 function deployStatic(args)
 	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
 
-	local vsComnTools = os:getEnvironment("VS110COMNTOOLS")
-	if #vsComnTools <= 0 then
-		stderr:printLn("VS110COMNTOOLS not set; please ensure Visual Studio 2012 is properly installed.")
-		return 1
-	end
+	local p = getSystemPaths()
+	if p == nil then return 1 end
 
-	local programFiles = os:getEnvironment("ProgramFiles(x86)")
-	if #programFiles <= 0 then
-		programFiles = os:getEnvironment("ProgramFiles")
-		if #programFiles <= 0 then
-			stderr:printLn("Unable to determine program files folder.")
-			return 1
-		end
-	end
-
-	local vcLibPath = vsComnTools .. "..\\..\\VC\\lib"
-	local sdkBinPath = programFiles .. "\\Microsoft SDKs\\Windows\\v7.1A\\Bin"
-	local sdkLibPath = programFiles .. "\\Microsoft SDKs\\Windows\\v7.1A\\Lib"
-	local dxLibPath = "$(TRAKTOR_HOME)\\3rdp\\DirectX SDK (June 2010)\\Lib\\x86"
-
-	local link = vsComnTools .. "..\\..\\VC\\bin\\amd64\\link.exe"
+	local link = p.vcBinPath .. "\\link.exe"
 	if not fileSystem:exist(Path(link)) then
 		stderr:printLn("Unable to find Visual Studio 2012 C++ linker; please ensure Visual Studio 2012 is properly installed.")
 		return 1
 	end
 
-	local mt = sdkBinPath .. "\\mt.exe"
+	local mt = p.sdkBinPath .. "\\mt.exe"
 	if not fileSystem:exist(Path(mt)) then
 		stderr:printLn("Unable to find Windows SDK manifest tool; please ensure Windows SDK 7.1A is properly installed.")
 		return 1
 	end
 
-	local rc = sdkBinPath .. "\\rc.exe"
+	local rc = p.sdkBinPath .. "\\rc.exe"
 	if not fileSystem:exist(Path(mt)) then
 		stderr:printLn("Unable to find Windows SDK resource tool; please ensure Windows SDK 7.1A is properly installed.")
 		return 1
@@ -139,9 +171,9 @@ function deployStatic(args)
 	cmd = cmd .. " comctl32.lib d2d1.lib dwrite.lib gdiplus.lib msimg32.lib d3d11.lib dxgi.lib dinput8.lib dxguid.lib xinput.lib"
 	cmd = cmd .. " $(DEPLOY_EXECUTABLE).res"
 	cmd = cmd .. " /OUT:$(DEPLOY_EXECUTABLE).exe"
-	cmd = cmd .. " /LIBPATH:\"" .. dxLibPath .. "\""
-	cmd = cmd .. " /LIBPATH:\"" .. sdkLibPath .. "\""
-	cmd = cmd .. " /LIBPATH:\"" .. vcLibPath .. "\""
+	cmd = cmd .. " /LIBPATH:\"" .. p.dxLibPath .. "\""
+	cmd = cmd .. " /LIBPATH:\"" .. p.sdkLibPath .. "\""
+	cmd = cmd .. " /LIBPATH:\"" .. p.vcLibPath .. "\""
 	cmd = cmd .. " /MACHINE:X86"
 	cmd = cmd .. " /SUBSYSTEM:WINDOWS"
 	if not debug then
@@ -265,39 +297,22 @@ end
 function migrateStatic(args)
 	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
 
-	local vsComnTools = os:getEnvironment("VS110COMNTOOLS")
-	if #vsComnTools <= 0 then
-		stderr:printLn("VS110COMNTOOLS not set; please ensure Visual Studio 2012 is properly installed.")
-		return 1
-	end
+	local p = getSystemPaths()
+	if p == nil then return 1 end
 
-	local programFiles = os:getEnvironment("ProgramFiles(x86)")
-	if #programFiles <= 0 then
-		programFiles = os:getEnvironment("ProgramFiles")
-		if #programFiles <= 0 then
-			stderr:printLn("Unable to determine program files folder.")
-			return 1
-		end
-	end
-
-	local vcLibPath = vsComnTools .. "..\\..\\VC\\lib"
-	local sdkBinPath = programFiles .. "\\Microsoft SDKs\\Windows\\v7.1A\\Bin"
-	local sdkLibPath = programFiles .. "\\Microsoft SDKs\\Windows\\v7.1A\\Lib"
-	local dxLibPath = "$(TRAKTOR_HOME)\\3rdp\\DirectX SDK (June 2010)\\Lib\\x86"
-
-	local link = vsComnTools .. "..\\..\\VC\\bin\\amd64\\link.exe"
+	local link = p.vcBinPath .. "\\link.exe"
 	if not fileSystem:exist(Path(link)) then
 		stderr:printLn("Unable to find Visual Studio 2012 C++ linker; please ensure Visual Studio 2012 is properly installed.")
 		return 1
 	end
 
-	local mt = sdkBinPath .. "\\mt.exe"
+	local mt = p.sdkBinPath .. "\\mt.exe"
 	if not fileSystem:exist(Path(mt)) then
 		stderr:printLn("Unable to find Windows SDK manifest tool; please ensure Windows SDK 7.1A is properly installed.")
 		return 1
 	end
 
-	local rc = sdkBinPath .. "\\rc.exe"
+	local rc = p.sdkBinPath .. "\\rc.exe"
 	if not fileSystem:exist(Path(mt)) then
 		stderr:printLn("Unable to find Windows SDK resource tool; please ensure Windows SDK 7.1A is properly installed.")
 		return 1
@@ -377,9 +392,9 @@ function migrateStatic(args)
 	cmd = cmd .. " comctl32.lib d2d1.lib dwrite.lib gdiplus.lib msimg32.lib d3d11.lib dxgi.lib dinput8.lib dxguid.lib xinput.lib"
 	cmd = cmd .. " $(DEPLOY_EXECUTABLE).res"
 	cmd = cmd .. " /OUT:$(DEPLOY_EXECUTABLE).exe"
-	cmd = cmd .. " /LIBPATH:\"" .. dxLibPath .. "\""
-	cmd = cmd .. " /LIBPATH:\"" .. sdkLibPath .. "\""
-	cmd = cmd .. " /LIBPATH:\"" .. vcLibPath .. "\""
+	cmd = cmd .. " /LIBPATH:\"" .. p.dxLibPath .. "\""
+	cmd = cmd .. " /LIBPATH:\"" .. p.sdkLibPath .. "\""
+	cmd = cmd .. " /LIBPATH:\"" .. p.vcLibPath .. "\""
 	cmd = cmd .. " /MACHINE:X86"
 	cmd = cmd .. " /SUBSYSTEM:WINDOWS"
 	if not debug then

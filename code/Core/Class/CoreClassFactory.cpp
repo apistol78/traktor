@@ -180,6 +180,17 @@ Ref< IProcess > OS_execute(OS* self, const std::wstring& commandLine, const std:
 	return self->execute(commandLine, workingDirectory, environment ? &environment->envmap() : 0, redirect, mute, detach);
 }
 
+#if defined(_WIN32)
+Any OS_getRegistry(OS* self, const std::wstring& key, const std::wstring& subKey, const std::wstring& valueName)
+{
+	std::wstring value;
+	if (self->getRegistry(key, subKey, valueName, value))
+		return Any::fromString(value);
+	else
+		return Any();
+}
+#endif
+
 IPropertyValue* PropertyArray_getProperty(PropertyArray* self, uint32_t index)
 {
 	return self->getProperty(index);
@@ -428,6 +439,9 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classOS->addMethod("execute", &OS_execute);
 	classOS->addMethod("createSharedMemory", &OS::createSharedMemory);
 	classOS->addMethod("setOwnProcessPriorityBias", &OS::setOwnProcessPriorityBias);
+#if defined(_WIN32)
+	classOS->addMethod("getRegistry", &OS_getRegistry);
+#endif
 	registrar->registerClass(classOS);
 
 	Ref< AutoRuntimeClass< DeepClone > > classDeepClone = new AutoRuntimeClass< DeepClone >();

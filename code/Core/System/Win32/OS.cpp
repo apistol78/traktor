@@ -277,7 +277,7 @@ Ref< IProcess > OS::execute(
 	bool detach
 ) const
 {
-	TCHAR cmd[32768], par[1024], cwd[MAX_PATH];
+	TCHAR cmd[32768], cwd[MAX_PATH];
 	HANDLE hStdInRead = 0, hStdInWrite = 0;
 	HANDLE hStdOutRead = 0, hStdOutWrite = 0;
 	HANDLE hStdErrRead = 0, hStdErrWrite = 0;
@@ -483,6 +483,72 @@ bool OS::setOwnProcessPriorityBias(int32_t priorityBias)
 	}
 #endif
 	return result;
+}
+
+bool OS::getRegistry(const std::wstring& key, const std::wstring& subKey, const std::wstring& valueName, std::wstring& outValue) const
+{
+	HKEY hOpenedKey = NULL;
+	HKEY hKey = NULL;
+
+	if (key == L"HKEY_CLASSES_ROOT")
+		hKey = HKEY_CLASSES_ROOT;
+	else if (key == L"HKEY_CURRENT_USER")
+		hKey = HKEY_CURRENT_USER;
+	else if (key == L"HKEY_LOCAL_MACHINE")
+		hKey = HKEY_LOCAL_MACHINE;
+	else if (key == L"HKEY_USERS")
+		hKey = HKEY_USERS;
+	else if (key == L"HKEY_CURRENT_CONFIG")
+		hKey = HKEY_CURRENT_CONFIG;
+	else
+	{
+		log::error << L"Unknown key \"" << key << L"\"" << Endl;
+		return false;
+	}
+
+	if (RegOpenKeyExW(hKey, !subKey.empty() ? subKey.c_str() : NULL, 0, KEY_READ, &hOpenedKey) != ERROR_SUCCESS)
+	{
+		log::error << L"RegOpenKeyExW failed" << Endl;
+		return false;
+	}
+
+	BYTE data[4097];
+	DWORD dwDataSize = sizeof(data) - 1;
+	DWORD dwType;
+
+	if (RegQueryValueExW(
+		hOpenedKey,
+		!valueName.empty() ? valueName.c_str() : NULL,
+		NULL,
+		&dwType,
+		data,
+		&dwDataSize
+	) != ERROR_SUCCESS)
+	{
+		log::error << L"RegQueryValueExW failed" << Endl;
+		RegCloseKey(hOpenedKey);
+		return false;
+	}
+
+	RegCloseKey(hOpenedKey);
+	data[dwDataSize] = 0;
+
+	switch (dwType)
+	{
+	case REG_DWORD:
+		outValue = toString(*(uint32_t*)data);
+		return true;
+
+	case REG_SZ:
+		outValue = std::wstring((wchar_t*)data);
+		return true;
+
+	default:
+		log::error << L"Unsupported reg value type" << Endl;
+		break;
+	}
+
+	return false;
 }
 
 OS::OS()
