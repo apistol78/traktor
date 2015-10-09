@@ -122,8 +122,8 @@ Ref< IStream > RemoteStream::connect(const SocketAddressIPv4& addr, uint32_t id)
 	net::sendBatch< uint8_t, uint32_t >(socket, 0x81, id);
 #endif
 
-	uint8_t status;
-	int32_t avail;
+	uint8_t status = 0;
+	int32_t avail = 0;
 
 	if (net::recvBatch< uint8_t, int32_t >(socket, status, avail) <= 0)
 	{

@@ -370,13 +370,13 @@ void StateCachePs3::setViewport(const Viewport& viewport)
 void StateCachePs3::setVertexDataArray(uint8_t index, uint8_t stride, uint8_t size, uint8_t type, uint8_t location, uint32_t offset)
 {
 	VertexAttribute& vattr = m_vertexAttributes[index];
-	//if (
-	//	vattr.stride != stride ||
-	//	vattr.size != size ||
-	//	vattr.type != type ||
-	//	vattr.location != location ||
-	//	vattr.offset != offset
-	//)
+	if (
+		vattr.stride != stride ||
+		vattr.size != size ||
+		vattr.type != type ||
+		vattr.location != location ||
+		vattr.offset != offset
+	)
 	{
 		T_GCM_CALL(cellGcmSetVertexDataArray)(
 			gCellGcmCurrentContext,

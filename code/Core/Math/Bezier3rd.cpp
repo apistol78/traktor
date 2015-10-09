@@ -62,18 +62,6 @@ void Bezier3rd::split(float t, Bezier3rd& outLeft, Bezier3rd& outRight) const
 namespace
 {
 
-	float triangleArea(
-		const Vector2& a,
-		const Vector2& b,
-		const Vector2& c
-	)
-	{
-		return
-			a.x * (c.y - b.y) +
-			b.x * (a.y - c.y) +
-			c.x * (b.y - a.y);
-	}
-
 	void approximateSubdivide(const Bezier3rd& b, float f0, float f1, float errorThreshold, int maxSubdivisions, AlignedVector< Bezier2nd >& outQuadratic)
 	{
 		Vector2 p_0 = b.evaluate(f0);

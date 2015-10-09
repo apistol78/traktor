@@ -40,7 +40,7 @@ template < typename String >
 String replaceAll(const String& str, const String& ndl, const String& rep)
 {
 	String cpy = str; size_t p = 0;
-	while ((p = cpy.find(ndl, p)) != -1)
+	while ((p = cpy.find(ndl, p)) != cpy.npos)
 	{
 		cpy = cpy.substr(0, p) + rep + cpy.substr(p + ndl.length());
 		p += rep.length();

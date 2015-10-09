@@ -45,7 +45,9 @@ bool RenderTargetSetPs3::create(
 )
 {
 	bool allowZ16 = true;
+#if defined(T_RENDER_PS3_USE_TILES)
 	int32_t err;
+#endif
 
 	m_width = desc.width;
 	m_height = desc.height;

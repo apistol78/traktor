@@ -148,8 +148,6 @@ float InputDevicePs3::getControlValue(int32_t control)
 		}
 		return adjustDeadZone(thumb);
 	}
-
-	return 0.0f;
 }
 
 bool InputDevicePs3::getControlRange(int32_t control, float& outMin, float& outMax) const

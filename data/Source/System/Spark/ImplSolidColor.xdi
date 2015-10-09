@@ -4,8 +4,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>167</first>
-				<second>313</second>
+				<first>153</first>
+				<second>317</second>
 			</position>
 			<name>T_Position</name>
 			<connectable>true</connectable>
@@ -15,8 +15,8 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>828</first>
-				<second>313</second>
+				<first>1102</first>
+				<second>411</second>
 			</position>
 			<name>T_Output</name>
 		</item>
@@ -27,20 +27,54 @@ Tag_FillColor
 			]]>
 			</comment>
 			<position>
-				<first>421</first>
-				<second>313</second>
+				<first>354</first>
+				<second>316</second>
 			</position>
 			<color>0, 0, 0, 0</color>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>610</first>
-				<second>277</second>
+				<first>543</first>
+				<second>280</second>
 			</position>
 			<parameterName>Spark_FillColor</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
+		</item>
+		<item type="traktor.render.MulAdd">
+			<comment/>
+			<position>
+				<first>851</first>
+				<second>391</second>
+			</position>
+		</item>
+		<item type="traktor.render.Uniform" version="1">
+			<comment/>
+			<position>
+				<first>422</first>
+				<second>472</second>
+			</position>
+			<parameterName>Spark_ColorTransform_Add</parameterName>
+			<type>PtVector</type>
+			<frequency>UfDraw</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="1">
+			<comment/>
+			<position>
+				<first>422</first>
+				<second>374</second>
+			</position>
+			<parameterName>Spark_ColorTransform_Mul</parameterName>
+			<type>PtVector</type>
+			<frequency>UfDraw</frequency>
+		</item>
+		<item type="traktor.render.Interpolator">
+			<comment/>
+			<position>
+				<first>1033</first>
+				<second>411</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -56,7 +90,47 @@ Tag_FillColor
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Input3</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Output</name>
 			</source>
 			<destination>

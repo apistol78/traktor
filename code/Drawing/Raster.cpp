@@ -203,7 +203,7 @@ void Raster::drawPolygon(const Vector2* points, uint32_t npoints, const Color4f&
 			continue;
 		}
 
-		int32_t fillDelta = 1;
+		int8_t fillDelta = 1;
 		if (y1 > y2)
 		{
 			std::swap(x1, x2);

@@ -67,7 +67,7 @@ bool SimpleTexturePs3::create(MemoryHeap* memoryHeap, const SimpleTextureCreateD
 	m_texture.dimension = CELL_GCM_TEXTURE_DIMENSION_2;
 	m_texture.cubemap = CELL_GCM_FALSE;
 
-	if (desc.format >= TfDXT1 && desc.format <= TfDXT5)
+	if (desc.format == TfR8 || (desc.format >= TfDXT1 && desc.format <= TfDXT5))
 	{
 		// GBAR (LE ARGB8)
 		m_texture.remap =

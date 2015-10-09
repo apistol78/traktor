@@ -78,7 +78,10 @@ void line_dda(float x0, float y0, float x1, float y1, Visitor& visitor)
 		tdeltax = stepx * rxr;
 	}
 	else
+	{
 		tmaxx = std::numeric_limits< float >::max();
+		tdeltax = 0;
+	}
 
 	if (std::abs(dy) > FUZZY_EPSILON)
 	{
@@ -87,7 +90,10 @@ void line_dda(float x0, float y0, float x1, float y1, Visitor& visitor)
 		tdeltay = stepy * ryr;
 	}
 	else
+	{
 		tmaxy = std::numeric_limits< float >::max();
+		tdeltay = 0;
+	}
 
 	int32_t ix1 = int32_t(x1);
 	int32_t iy1 = int32_t(y1);

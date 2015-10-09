@@ -52,10 +52,6 @@ const resource::Id< render::ImageProcessSettings > c_antiAliasHigh(Guid(L"{0C288
 const resource::Id< render::ImageProcessSettings > c_antiAliasUltra(Guid(L"{4750DA97-67F4-E247-A9C2-B4883B1158B2}"));
 const resource::Id< render::ImageProcessSettings > c_gammaCorrection(Guid(L"{AB0ABBA7-77BF-0A4E-8E3B-4987B801CE6B}"));
 
-const static float c_interocularDistance = 6.5f;
-const static float c_distortionValue = 0.8f;
-const static float c_screenPlaneDistance = 13.0f;
-
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRendererDeferred", 0, WorldRendererDeferred, IWorldRenderer)

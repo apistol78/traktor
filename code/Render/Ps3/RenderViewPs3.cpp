@@ -24,10 +24,13 @@ namespace traktor
 		{
 
 const uint32_t c_commandBufferSize = 2 * 1024 * 1024;
+
+#if defined(T_RENDER_PS3_USE_ZCULL)
 const uint32_t c_reportZCullStats0 = 100;
 const uint32_t c_reportZCullStats1 = 101;
 const uint32_t c_reportTimeStamp0 = 102;
 const uint32_t c_reportTimeStamp1 = 103;
+#endif
 
 const uint32_t c_labelFlipControl = 64;
 const uint32_t c_labelFlipControlWait = 1;
@@ -691,7 +694,7 @@ bool RenderViewPs3::begin(EyeType eye)
 			CELL_GCM_SURFACE_CENTER_1,
 			CELL_GCM_SURFACE_A8R8G8B8,
 			{ m_colorOffset[frameIndex] + eyeOffset, 0, 0, 0 },
-			{ m_colorPitch, 64, 64, 64 },
+			{ m_colorPitch, 0, 0, 0 },
 			CELL_GCM_SURFACE_Z24S8,
 			m_depthTexture.offset,
 			m_depthTexture.pitch,
@@ -719,7 +722,7 @@ bool RenderViewPs3::begin(EyeType eye)
 			m_targetSurfaceAntialias,
 			CELL_GCM_SURFACE_A8R8G8B8,
 			{ m_targetTexture.offset, 0, 0, 0 },
-			{ m_targetTexture.pitch, 64, 64, 64 },
+			{ m_targetTexture.pitch, 0, 0, 0 },
 			CELL_GCM_SURFACE_Z24S8,
 			m_depthTexture.offset,
 			m_depthTexture.pitch,
@@ -780,7 +783,7 @@ bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet)
 		CELL_GCM_SURFACE_CENTER_1,
 		CELL_GCM_SURFACE_A8B8G8R8,
 		{ 0, 0, 0, 0 },
-		{ 64, 64, 64, 64 },
+		{ 0, 0, 0, 0 },
 		rts->getGcmDepthSurfaceFormat(),
 		rts->getGcmDepthTexture().offset,
 		rts->getGcmDepthTexture().pitch,
@@ -814,8 +817,7 @@ bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet)
 
 	if (rts->usingPrimaryDepthStencil())
 	{
-		T_ASSERT_M (rt->getWidth() == m_width && rt->getHeight() == m_height, L"Target dimension mismatch");
-		T_ASSERT_M (rt->getGcmSurfaceAntialias() == m_targetSurfaceAntialias, L"Target multisampling mismatch");
+		T_ASSERT_M (rts->getWidth() == m_width && rts->getHeight() == m_height, L"Target dimension mismatch");
 		rs.depthFormat = CELL_GCM_SURFACE_Z24S8;
 		rs.depthOffset = m_depthTexture.offset;
 		rs.depthPitch = m_depthTexture.pitch;
@@ -852,7 +854,7 @@ bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 		rt->getGcmSurfaceAntialias(),
 		rt->getGcmSurfaceColorFormat(),
 		{ rt->getGcmTargetTexture().offset, 0, 0, 0 },
-		{ rt->getGcmTargetTexture().pitch, 64, 64, 64 },
+		{ rt->getGcmTargetTexture().pitch, 0, 0, 0 },
 		rts->getGcmDepthSurfaceFormat(),
 		rts->getGcmDepthTexture().offset,
 		rts->getGcmDepthTexture().pitch,
@@ -1135,16 +1137,16 @@ void RenderViewPs3::setCurrentRenderState()
 	sf.colorTarget= CELL_GCM_SURFACE_TARGET_NONE;
 	sf.colorLocation[0]	= CELL_GCM_LOCATION_LOCAL;
 	sf.colorOffset[0] = rs.colorOffset[0];
-	sf.colorPitch[0] = rs.colorPitch[0];
+	sf.colorPitch[0] = rs.colorPitch[0] ? rs.colorPitch[0] : 64;
 	sf.colorLocation[1]	= CELL_GCM_LOCATION_LOCAL;
 	sf.colorOffset[1] = rs.colorOffset[1];
-	sf.colorPitch[1] = rs.colorPitch[1];
+	sf.colorPitch[1] = rs.colorPitch[1] ? rs.colorPitch[1] : 64;
 	sf.colorLocation[2]	= CELL_GCM_LOCATION_LOCAL;
 	sf.colorOffset[2] = rs.colorOffset[2];
-	sf.colorPitch[2] = rs.colorPitch[2];
+	sf.colorPitch[2] = rs.colorPitch[2] ? rs.colorPitch[2] : 64;
 	sf.colorLocation[3]	= CELL_GCM_LOCATION_LOCAL;
 	sf.colorOffset[3] = rs.colorOffset[3];
-	sf.colorPitch[3] = rs.colorPitch[3];
+	sf.colorPitch[3] = rs.colorPitch[3] ? rs.colorPitch[3] : 64;
 	sf.depthFormat = rs.depthFormat;
 	sf.depthLocation = CELL_GCM_LOCATION_LOCAL;
 	sf.depthOffset = rs.depthOffset;
@@ -1154,13 +1156,13 @@ void RenderViewPs3::setCurrentRenderState()
 	sf.x = 0;
 	sf.y = rs.windowOffset;
 
-	if (sf.colorOffset[0])
+	if (rs.colorPitch[0])
 	{
-		if (sf.colorOffset[1])
+		if (rs.colorPitch[1])
 		{
-			if (sf.colorOffset[2])
+			if (rs.colorPitch[2])
 			{
-				if (sf.colorOffset[3])
+				if (rs.colorPitch[3])
 					sf.colorTarget = CELL_GCM_SURFACE_TARGET_MRT3;	// 0,1,2,3
 				else
 					sf.colorTarget = CELL_GCM_SURFACE_TARGET_MRT2;	// 0,1,2

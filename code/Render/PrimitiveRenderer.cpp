@@ -20,7 +20,6 @@ namespace traktor
 const resource::Id< Shader > c_idPrimitiveShader(Guid(L"{5B786C6B-8818-A24A-BD1C-EE113B79BCE2}"));
 const int c_bufferCount = 16 * 1024;
 
-static handle_t s_handles[6];
 static handle_t s_handleProjection;
 static handle_t s_handleDepthTest;
 static handle_t s_handleDepthWrite;
@@ -63,9 +62,6 @@ PrimitiveRenderer::PrimitiveRenderer()
 ,	m_viewWidth(1000.0f)
 ,	m_viewHeight(1000.0f)
 {
-	s_handles[0] = getParameterHandle(L"Wire");
-	s_handles[1] = getParameterHandle(L"Solid");
-	s_handles[2] = getParameterHandle(L"Texture");
 	s_handleProjection = getParameterHandle(L"Projection");
 	s_handleDepthTest = getParameterHandle(L"DepthTest");
 	s_handleDepthWrite = getParameterHandle(L"DepthWrite");
