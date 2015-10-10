@@ -1,7 +1,7 @@
 #ifndef traktor_resource_ResidentResourceHandle_H
 #define traktor_resource_ResidentResourceHandle_H
 
-#include "Resource/IResourceHandle.h"
+#include "Resource/ResourceHandle.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,18 +22,12 @@ namespace traktor
  * Cached resource persist in the resource manager
  * thus are never reloaded unless explicitly flushed.
  */
-class T_DLLCLASS ResidentResourceHandle : public IResourceHandle
+class T_DLLCLASS ResidentResourceHandle : public ResourceHandle
 {
 	T_RTTI_CLASS;
 
 public:
 	ResidentResourceHandle(const TypeInfo& type, bool persistent);
-
-	virtual void replace(Object* object) T_OVERRIDE T_FINAL;
-
-	virtual Object* get() const T_OVERRIDE T_FINAL;
-
-	virtual void flush() T_OVERRIDE T_FINAL;
 
 	const TypeInfo& getProductType() const { return m_resourceType; }
 
@@ -42,7 +36,6 @@ public:
 private:
 	const TypeInfo& m_resourceType;
 	bool m_persistent;
-	mutable Ref< Object > m_object;
 };
 
 	}

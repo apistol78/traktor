@@ -38,7 +38,7 @@ public:
 	virtual void serialize(ISerializer& s) const
 	{
 		Guid id = m_ref.getId();
-		Ref< IResourceHandle > handle = m_ref.getHandle();
+		Ref< ResourceHandle > handle = m_ref.getHandle();
 		s >> traktor::Member< traktor::Guid >(
 			getName(),
 			id,

@@ -45,13 +45,13 @@ public:
 	{
 	}
 
-	explicit IdProxy(IResourceHandle* handle)
+	explicit IdProxy(ResourceHandle* handle)
 	:	m_handle(handle)
 	,	m_tag(0)
 	{
 	}
 
-	explicit IdProxy(IResourceHandle* handle, const Guid& id)
+	explicit IdProxy(ResourceHandle* handle, const Guid& id)
 	:	m_handle(handle)
 	,	m_id(id)
 	,	m_tag(0)
@@ -77,7 +77,7 @@ public:
 	 *
 	 * \return Resource handle.
 	 */
-	IResourceHandle* getHandle() const
+	ResourceHandle* getHandle() const
 	{
 		return m_handle;
 	}
@@ -86,7 +86,7 @@ public:
 	 *
 	 * \param handle New resource handle.
 	 */
-	void replace(IResourceHandle* handle)
+	void replace(ResourceHandle* handle)
 	{
 		m_handle = handle;
 	}
@@ -155,7 +155,7 @@ public:
 
 private:
 	Guid m_id;
-	Ref< IResourceHandle > m_handle;
+	Ref< ResourceHandle > m_handle;
 	intptr_t m_tag;
 };
 

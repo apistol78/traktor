@@ -1,5 +1,5 @@
-#ifndef traktor_resource_IResourceHandle_H
-#define traktor_resource_IResourceHandle_H
+#ifndef traktor_resource_ResourceHandle_H
+#define traktor_resource_ResourceHandle_H
 
 #include "Core/Object.h"
 
@@ -16,10 +16,10 @@ namespace traktor
 	namespace resource
 	{
 
-/*! \brief Resource handle interface.
+/*! \brief Resource handle base class.
  * \ingroup Resource
  */
-class T_DLLCLASS IResourceHandle : public Object
+class T_DLLCLASS ResourceHandle : public Object
 {
 	T_RTTI_CLASS;
 
@@ -28,19 +28,23 @@ public:
 	 *
 	 * \param object New resource object.
 	 */
-	virtual void replace(Object* object) = 0;
+	void replace(Object* object) { m_object = object; }
 
 	/*! \brief Get resource object.
 	 *
 	 * \return Resource object.
 	 */
-	virtual Object* get() const = 0;
+	Object* get() const { return m_object; }
 
-	/*! \brief Flush resource object. */
-	virtual void flush() = 0;
+	/*! \brief Flush resource object.
+	 */
+	void flush() { m_object = 0; }
+
+protected:
+	mutable Ref< Object > m_object;
 };
 
 	}
 }
 
-#endif	// traktor_resource_IResourceHandle_H
+#endif	// traktor_resource_ResourceHandle_H

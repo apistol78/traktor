@@ -1,7 +1,7 @@
 #ifndef traktor_resource_ExplicitResourceHandle_H
 #define traktor_resource_ExplicitResourceHandle_H
 
-#include "Resource/IResourceHandle.h"
+#include "Resource/ResourceHandle.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,21 +19,12 @@ namespace traktor
 /*! \brief Explicit resource handle.
  * \ingroup Resource
  */
-class T_DLLCLASS ExplicitResourceHandle : public IResourceHandle
+class T_DLLCLASS ExplicitResourceHandle : public ResourceHandle
 {
 	T_RTTI_CLASS;
 
 public:
 	ExplicitResourceHandle(Object* object);
-
-	virtual void replace(Object* object) T_OVERRIDE T_FINAL;
-
-	virtual Object* get() const T_OVERRIDE T_FINAL;
-
-	virtual void flush() T_OVERRIDE T_FINAL;
-
-private:
-	mutable Ref< Object > m_object;
 };
 
 	}

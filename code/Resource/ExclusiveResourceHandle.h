@@ -1,7 +1,7 @@
 #ifndef traktor_resource_ExclusiveResourceHandle_H
 #define traktor_resource_ExclusiveResourceHandle_H
 
-#include "Resource/IResourceHandle.h"
+#include "Resource/ResourceHandle.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -23,7 +23,7 @@ namespace traktor
  * release contained object when last
  * external reference is released.
  */
-class T_DLLCLASS ExclusiveResourceHandle : public IResourceHandle
+class T_DLLCLASS ExclusiveResourceHandle : public ResourceHandle
 {
 	T_RTTI_CLASS;
 
@@ -32,17 +32,10 @@ public:
 
 	virtual void release(void* owner) const T_OVERRIDE T_FINAL;
 
-	virtual void replace(Object* object) T_OVERRIDE T_FINAL;
-
-	virtual Object* get() const T_OVERRIDE T_FINAL;
-
-	virtual void flush() T_OVERRIDE T_FINAL;
-
 	const TypeInfo& getProductType() const { return m_resourceType; }
 
 private:
 	const TypeInfo& m_resourceType;
-	mutable Ref< Object > m_object;
 };
 
 	}

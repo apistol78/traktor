@@ -31,7 +31,7 @@ public:
 	{
 	}
 
-	explicit Proxy< ResourceType >(IResourceHandle* handle)
+	explicit Proxy< ResourceType >(ResourceHandle* handle)
 	:	m_handle(handle)
 	,	m_tag(0)
 	{
@@ -47,7 +47,7 @@ public:
 	 *
 	 * \return Resource handle.
 	 */
-	IResourceHandle* getHandle() const
+	ResourceHandle* getHandle() const
 	{
 		return m_handle;
 	}
@@ -56,7 +56,7 @@ public:
 	 *
 	 * \param handle New resource handle.
 	 */
-	void replace(IResourceHandle* handle)
+	void replace(ResourceHandle* handle)
 	{
 		m_handle = handle;
 	}
@@ -124,7 +124,7 @@ public:
 	}
 
 private:
-	Ref< IResourceHandle > m_handle;
+	Ref< ResourceHandle > m_handle;
 	mutable intptr_t m_tag;
 };
 

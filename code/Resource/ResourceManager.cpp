@@ -104,9 +104,9 @@ bool ResourceManager::load(const ResourceBundle* bundle)
 	return true;
 }
 
-Ref< IResourceHandle > ResourceManager::bind(const TypeInfo& type, const Guid& guid)
+Ref< ResourceHandle > ResourceManager::bind(const TypeInfo& type, const Guid& guid)
 {
-	Ref< IResourceHandle > handle;
+	Ref< ResourceHandle > handle;
 
 	if (guid.isNull() || !guid.isValid())
 	{
@@ -320,7 +320,7 @@ const IResourceFactory* ResourceManager::findFactoryFromProductType(const TypeIn
 	return i != m_productToFactory.end() ? i->second : 0;
 }
 
-void ResourceManager::load(const Guid& guid, const IResourceFactory* factory, const TypeInfo& resourceType, IResourceHandle* handle)
+void ResourceManager::load(const Guid& guid, const IResourceFactory* factory, const TypeInfo& resourceType, ResourceHandle* handle)
 {
 	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
 

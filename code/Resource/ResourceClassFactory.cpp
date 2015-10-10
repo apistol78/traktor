@@ -17,10 +17,10 @@ void ResourceClassFactory::createClasses(IRuntimeClassRegistrar* registrar) cons
 	classIResourceFactory->addMethod("isCacheable", &IResourceFactory::isCacheable);
 	registrar->registerClass(classIResourceFactory);
 
-	Ref< AutoRuntimeClass< IResourceHandle > > classIResourceHandle = new AutoRuntimeClass< IResourceHandle >();
-	classIResourceHandle->addMethod("replace", &IResourceHandle::replace);
-	classIResourceHandle->addMethod("get", &IResourceHandle::get);
-	classIResourceHandle->addMethod("flush", &IResourceHandle::flush);
+	Ref< AutoRuntimeClass< ResourceHandle > > classIResourceHandle = new AutoRuntimeClass< ResourceHandle >();
+	classIResourceHandle->addMethod("replace", &ResourceHandle::replace);
+	classIResourceHandle->addMethod("get", &ResourceHandle::get);
+	classIResourceHandle->addMethod("flush", &ResourceHandle::flush);
 	registrar->registerClass(classIResourceHandle);
 
 	Ref< AutoRuntimeClass< IResourceManager > > classIResourceManager = new AutoRuntimeClass< IResourceManager >();

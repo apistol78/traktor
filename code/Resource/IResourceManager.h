@@ -21,8 +21,8 @@ namespace traktor
 	{
 
 class IResourceFactory;
-class IResourceHandle;
 class ResourceBundle;
+class ResourceHandle;
 
 /*! \brief Resource manager statistics.
  * \ingroup Resource
@@ -77,7 +77,7 @@ public:
 	 * \param guid Resource identifier.
 	 * \return Resource handle.
 	 */
-	virtual Ref< IResourceHandle > bind(const TypeInfo& type, const Guid& guid) = 0;
+	virtual Ref< ResourceHandle > bind(const TypeInfo& type, const Guid& guid) = 0;
 
 	/*! \brief Reload resource.
 	 *
@@ -120,7 +120,7 @@ public:
 	>
 	bool bind(const Id< ResourceType >& id, Proxy< ProductType >& outProxy)
 	{
-		Ref< IResourceHandle > handle = bind(type_of< ProductType >(), id);
+		Ref< ResourceHandle > handle = bind(type_of< ProductType >(), id);
 		if (!handle)
 			return false;
 
@@ -137,7 +137,7 @@ public:
 	>
 	bool bind(IdProxy< ResourceType >& outProxy)
 	{
-		Ref< IResourceHandle > handle = bind(type_of< ResourceType >(), outProxy.getId());
+		Ref< ResourceHandle > handle = bind(type_of< ResourceType >(), outProxy.getId());
 		if (!handle)
 			return false;
 
