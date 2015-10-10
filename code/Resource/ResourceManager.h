@@ -46,7 +46,7 @@ public:
 
 	virtual bool load(const ResourceBundle* bundle) T_OVERRIDE T_FINAL;
 	
-	virtual Ref< IResourceHandle > bind(const TypeInfo& type, const Guid& guid) T_OVERRIDE T_FINAL;
+	virtual Ref< ResourceHandle > bind(const TypeInfo& type, const Guid& guid) T_OVERRIDE T_FINAL;
 
 	virtual void reload(const Guid& guid, bool flushedOnly) T_OVERRIDE T_FINAL;
 
@@ -84,7 +84,7 @@ private:
 
 	const IResourceFactory* findFactoryFromProductType(const TypeInfo& type);
 
-	void load(const Guid& guid, const IResourceFactory* factory, const TypeInfo& resourceType, IResourceHandle* handle);
+	void load(const Guid& guid, const IResourceFactory* factory, const TypeInfo& resourceType, ResourceHandle* handle);
 };
 	
 	}

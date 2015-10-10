@@ -5,7 +5,7 @@ namespace traktor
 	namespace resource
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.resource.ExclusiveResourceHandle", ExclusiveResourceHandle, IResourceHandle)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.resource.ExclusiveResourceHandle", ExclusiveResourceHandle, ResourceHandle)
 
 ExclusiveResourceHandle::ExclusiveResourceHandle(const TypeInfo& resourceType)
 :	m_resourceType(resourceType)
@@ -20,21 +20,6 @@ void ExclusiveResourceHandle::release(void* owner) const
 		m_object = 0;
 
 	Object::release(owner);
-}
-
-void ExclusiveResourceHandle::replace(Object* object)
-{
-	m_object = object;
-}
-
-Object* ExclusiveResourceHandle::get() const
-{
-	return m_object;
-}
-
-void ExclusiveResourceHandle::flush()
-{
-	m_object = 0;
 }
 
 	}
