@@ -424,6 +424,10 @@
               <value>StreamingSIMDExtensions2</value>
             </item>
             <item>
+              <name>WholeProgramOptimization</name>
+              <value>true</value>
+            </item>
+            <item>
               <name>AdditionalOptions</name>
               <value>%(PROJECT_ADDITIONAL_COMPILER_OPTIONS)%(AdditionalOptions)</value>
             </item>

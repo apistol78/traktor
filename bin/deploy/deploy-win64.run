@@ -187,7 +187,7 @@ function deployStatic(args)
 	cmd = cmd .. " /MACHINE:X64"
 	cmd = cmd .. " /SUBSYSTEM:WINDOWS"
 	if not debug then
-		cmd = cmd .. " /OPT:REF"
+		cmd = cmd .. " /LTCG /OPT:REF"
 	else
 		cmd = cmd .. " /DEBUG"
 	end
@@ -408,7 +408,7 @@ function migrateStatic(args)
 	cmd = cmd .. " /MACHINE:X64"
 	cmd = cmd .. " /SUBSYSTEM:WINDOWS"
 	if not debug then
-		cmd = cmd .. " /OPT:REF"
+		cmd = cmd .. " /LTCG /OPT:REF"
 	else
 		cmd = cmd .. " /DEBUG"
 	end
