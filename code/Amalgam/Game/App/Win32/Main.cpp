@@ -504,15 +504,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 
 	Ref< amalgam::Application > application;
 
-#if !defined(_DEBUG) && !defined(T_STATIC)
+#if !defined(_DEBUG)
 	try
 #endif
 	{
-#if !defined(_DEBUG) && !defined(T_STATIC)
+#if !defined(_DEBUG)
 		SetErrorMode(SEM_NOGPFAULTERRORBOX);
 		PVOID eh = AddVectoredExceptionHandler(1, exceptionVectoredHandler);
-		_set_purecall_handler(pureVirtualCallHandler);
 #endif
+		_set_purecall_handler(pureVirtualCallHandler);
 
 		Path currentPath = FileSystem::getInstance().getAbsolutePath(L".");
 		log::info << L"Working directory: " <<currentPath.getPathName() << Endl;
@@ -625,11 +625,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 			showErrorDialog(logTail->m_tail);
 		}
 
-#if !defined(_DEBUG) && !defined(T_STATIC)
+#if !defined(_DEBUG)
 		RemoveVectoredExceptionHandler(eh);
 #endif
 	}
-#if !defined(_DEBUG) && !defined(T_STATIC)
+#if !defined(_DEBUG)
 	catch (...)
 	{
 		HMODULE hCrashModule;

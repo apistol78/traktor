@@ -1,4 +1,5 @@
 #include "Amalgam/Game/App/Win32/ErrorDialog.h"
+#include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Button.h"
 #include "Ui/Container.h"
@@ -22,8 +23,8 @@ bool ErrorDialog::create()
 	if (!ui::Dialog::create(
 		0,
 		L"Error",
-		500,
-		300,
+		ui::scaleBySystemDPI(500),
+		ui::scaleBySystemDPI(300),
 		ui::Dialog::WsDefaultResizable,
 		new ui::TableLayout(L"*,100%", L"100%", 0, 0)
 	))
