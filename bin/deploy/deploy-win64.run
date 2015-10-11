@@ -1,4 +1,5 @@
 import(traktor)
+import(traktor.drawing)
 
 
 function string:split(sep)
@@ -24,13 +25,20 @@ function string:starts(start)
 end
 
 
-function build(args)
-	stdout:printLn("Building asset(s)...")
-	local cmdline = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App -p -s=Pipeline"
-	for i = 1, args:size() - 1 do
-		cmdline = cmdline .. " " .. args:get(i)
+function createIcon()
+	local iconFile = os:getEnvironment("DEPLOY_PROJECT_ICON")
+	if #iconFile <= 0 then
+		iconFile = "$(DEPLOY_SYSTEM_ROOT)/res/deploy/DefaultIcon.png"
 	end
-	return run:execute(cmdline)
+
+	local iconImage = Image.loadFromFile(iconFile)
+	if iconImage == nil then 
+		print("Unable to load image " .. iconFile)
+		return false
+	end
+
+	iconImage:apply(ScaleFilter(256, 256))
+	return iconImage:save("Icon.ico")
 end
 
 
@@ -80,6 +88,16 @@ function getSystemPaths()
 	p.dxLibPath = "$(TRAKTOR_HOME)\\3rdp\\DirectX SDK (June 2010)\\Lib\\x64"
 
 	return p
+end
+
+
+function build(args)
+	stdout:printLn("Building asset(s)...")
+	local cmdline = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App -p -s=Pipeline"
+	for i = 1, args:size() - 1 do
+		cmdline = cmdline .. " " .. args:get(i)
+	end
+	return run:execute(cmdline)
 end
 
 
@@ -165,6 +183,12 @@ function deployStatic(args)
 		end
 	end
 
+	-- Create icon resource.
+	if not createIcon()	then
+		stderr:printLn("Unable to create product icon.")
+		return 1
+	end
+
 	-- Compile resources.
 	local cmd = "\"" .. rc .. "\" /fo\"$(DEPLOY_EXECUTABLE).res\" $(TRAKTOR_HOME)/res/Traktor.Amalgam.rc"
 	local result = run:execute(cmd, "(null)")
@@ -244,6 +268,7 @@ function deployShared(args)
 		run:pushd("$(DEPLOY_SYSTEM_ROOT)/bin/latest/win64/debugshared")
 	end
 
+	-- Collect files to deploy.
 	local files = os:getEnvironment("DEPLOY_FILES_SHARED"):split(" ")
 	local deployFiles = ""
 
@@ -262,6 +287,13 @@ function deployShared(args)
 		deployFiles = deployFiles .. " " .. f	
 	end
 
+	-- Create icon resource.
+	if not createIcon()	then
+		stderr:printLn("Unable to create product icon.")
+		return 1
+	end
+
+	-- Transfer files to deploy target.
 	run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) " .. deployFiles, "(null)")
 	if run:exitCode() ~= 0 then return run:exitCode() end
 	run:popd()
@@ -386,6 +418,12 @@ function migrateStatic(args)
 		end
 	end
 
+	-- Create icon resource.
+	if not createIcon()	then
+		stderr:printLn("Unable to create product icon.")
+		return 1
+	end
+
 	-- Compile resources.
 	local cmd = "\"" .. rc .. "\" /fo\"$(DEPLOY_EXECUTABLE).res\" $(TRAKTOR_HOME)/res/Traktor.Amalgam.rc"
 	local result = run:execute(cmd, "(null)")
@@ -459,6 +497,12 @@ function migrateShared(args)
 	else
 		stdout:printLn("Deploying *DEBUG* binaries to target host...")
 		sourcePath = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/win64/debugshared/"
+	end
+
+	-- Create icon resource.
+	if not createIcon()	then
+		stderr:printLn("Unable to create product icon.")
+		return 1
 	end
 
 	-- Copy binaries into "bin".
