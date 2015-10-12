@@ -31,7 +31,7 @@ class T_DLLCLASS StreamCopy : public Object
 public:
 	StreamCopy(IStream* target, IStream* source);
 
-	bool execute(int32_t copyBytes = std::numeric_limits< int32_t >::max());
+	bool execute(uint64_t copyBytes = std::numeric_limits< uint64_t >::max());
 
 private:
 	Ref< IStream > m_target;

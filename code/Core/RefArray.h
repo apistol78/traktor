@@ -280,7 +280,7 @@ public:
 	}
 
 	/*! \brief Copy array. */
-	RefArray(const RefArray< ClassType >& s)
+	RefArray(const RefArray& s)
 	{
 		m_items = new value_type [s.m_size];
 		m_size = s.m_size;

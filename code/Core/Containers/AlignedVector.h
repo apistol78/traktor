@@ -77,6 +77,11 @@ public:
 		{
 		}
 
+		const_iterator(const const_iterator& r)
+		:	m_ptr(r.m_ptr)
+		{
+		}
+
 		reference operator * () const
 		{
 			return *m_ptr;

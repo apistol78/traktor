@@ -18,6 +18,16 @@ function string:split(sep)
 end
 
 
+function string:startswith(st)
+	return self:sub(1, #st) == st
+end
+
+
+function string:endswith(send)
+	return #self >= #send and self:find(send, #self - #send + 1, true) and true or false
+end
+
+
 function build(args)
 	stdout:printLn("Building asset(s)...")
 	local cmdline = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App -p -s=Pipeline"
@@ -66,27 +76,42 @@ function deploy(args)
 	 	prepend = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/emscripten/debugstatic/"
 	end
 
-	-- Append system path to files.
+	-- Collect libraries to link.
+	local linkerLibraries = {}
+	local linkerIncludes = {}
+
 	local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
-	local wholeLinkFiles = ""
-	local externalLinkFiles = ""
 	for _, f in ipairs(files) do
-
-		-- Append "_d" to each file; indicating a debug build.
-		if debug then
-			f = f:sub(1, string.len(f) - 3) .. "_d.bc"
-		end
-
-		if f:starts("libExtern") then
-			externalLinkFiles = externalLinkFiles .. prepend .. f .. " "
+		if f:endswith(".bc") then
+			if debug then
+				f = f:sub(1, f:len() - 3) .. "_d.bc"
+			end
+			if not f:startswith("libExtern") then
+				table.insert(linkerLibraries, f)
+				table.insert(linkerIncludes, "__module__" .. f:sub(4, #f - 3):gsub("%.", "_"))
+			else
+				table.insert(linkerLibraries, 1, f)
+			end
+		elseif f:endswith(".a") or f:endswith(".o") then
+			table.insert(linkerLibraries, f)
 		else
-			wholeLinkFiles = wholeLinkFiles .. prepend .. f .. " "
+			stderr:printLn("Unknown deploy file \"" .. f .. "\"")
 		end
 	end
 
+	-- Build linker command line.
+	local totalMemory = 32 * 1024 * 1024
+	local cmd = "\"" .. emcc .. "\" -s USE_PTHREADS=0 -s TOTAL_MEMORY=" .. totalMemory
+	for _, sym in ipairs(linkerIncludes) do
+		cmd = cmd .. " -Wl,-u," .. sym
+	end	
+	for _, m in ipairs(linkerLibraries) do
+		cmd = cmd .. " " .. prepend .. m
+	end
+	cmd = cmd .. " -o $(DEPLOY_EXECUTABLE).html --embed-file Application.config --embed-file Content.compact"
+
 	-- Link files into an executable product.
-	local cmd = "\"" .. emcc .. "\" -s USE_PTHREADS=1 -Wl,--whole-archive " .. wholeLinkFiles .. "-Wl,--no-whole-archive " .. externalLinkFiles  .. " -o $(DEPLOY_EXECUTABLE).html --embed-file Application.config"
-	local result = run:execute(cmd)
+	local result = run:execute(cmd, nil)
 	if result ~= 0 then
 		stderr:printLn("Unable to build executable product.")
 		stderr:printLn(cmd)
@@ -121,7 +146,6 @@ function migrate(args)
 		stderr:printLn("EMSCRIPTEN not set; ensure Emscripten SDK is properly installed and try again.")
 		return 1
 	end
-
 	stdout:printLn("Using Emscripten SDK at \"" .. emscripten .. "\"")
 
 	-- Get toolchain binaries.
@@ -150,34 +174,57 @@ function migrate(args)
 	 	prepend = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/emscripten/debugstatic/"
 	end
 
-	-- Append system path to files.
+	-- Collect libraries to link.
+	local linkerLibraries = {}
+	local linkerExternLibraries = {}
+	local linkerIncludes = {}
+
 	local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
-	local wholeLinkFiles = ""
-	local externalLinkFiles = ""
 	for _, f in ipairs(files) do
-
-		-- Append "_d" to each file; indicating a debug build.
-		if debug then
-			f = f:sub(1, string.len(f) - 2) .. "_d.a"
-		end
-
-		if f:starts("libExtern") then
-			externalLinkFiles = externalLinkFiles .. prepend .. f .. " "
+		if f:endswith(".bc") then
+			if debug then
+				f = f:sub(1, f:len() - 3) .. "_d.bc"
+			end
+			if not f:startswith("libExtern") then
+				table.insert(linkerLibraries, f)
+				table.insert(linkerIncludes, "__module__" .. f:sub(4, #f - 3):gsub("%.", "_"))
+			else
+				table.insert(linkerExternLibraries, f)
+			end
+		elseif f:endswith(".a") or f:endswith(".o") then
+			table.insert(linkerLibraries, f)
 		else
-			wholeLinkFiles = wholeLinkFiles .. prepend .. f .. " "
+			stderr:printLn("Unknown deploy file \"" .. f .. "\"")
 		end
 	end
 
-	-- Link files into an executable product.
+	-- Build linker command line.
 	local totalMemory = 32 * 1024 * 1024
-	local cmd = "\"" .. emcc .. "\" -s USE_PTHREADS=1 -s TOTAL_MEMORY=" .. totalMemory .. " -Wl,--whole-archive " .. wholeLinkFiles .. "-Wl,--no-whole-archive " .. externalLinkFiles  .. " -o $(DEPLOY_EXECUTABLE).html --embed-file Application.config --embed-file Content.compact"
-	local result = run:execute(cmd)
+	local cmd = "\"" .. emcc .. "\" -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s USE_PTHREADS=0 -s TOTAL_MEMORY=" .. totalMemory
+	cmd = cmd .. " -Wl,-s,ERROR_ON_UNDEFINED_SYMBOLS=0 "
+	for _, sym in ipairs(linkerIncludes) do
+		cmd = cmd .. " -Wl,-u," .. sym
+	end	
+	-- cmd = cmd .. " -Wl,--whole-archive"
+	for _, m in ipairs(linkerLibraries) do
+		cmd = cmd .. " " .. prepend .. m
+	end
+	-- cmd = cmd .. " -Wl,--no-whole-archive"
+	for _, m in ipairs(linkerExternLibraries) do
+		cmd = cmd .. " " .. prepend .. m
+	end
+	cmd = cmd .. " -o $(DEPLOY_EXECUTABLE).html --embed-file Application.config --embed-file Content.compact"
+	-- stdout:printLn(cmd)
+
+	-- Link files into an executable product.
+	local result = run:execute(cmd) --, nil)
 	if result ~= 0 then
 		stderr:printLn("Unable to build executable product.")
 		stderr:printLn(cmd)
 		return 1
 	end
 
+	stdout:printLn("Done")
 	return 0
 end
 

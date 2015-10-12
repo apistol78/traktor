@@ -184,10 +184,10 @@ function deployStatic(args)
 	end
 
 	-- Create icon resource.
-	if not createIcon()	then
-		stderr:printLn("Unable to create product icon.")
-		return 1
-	end
+--	if not createIcon()	then
+--		stderr:printLn("Unable to create product icon.")
+--		return 1
+--	end
 
 	-- Compile resources.
 	local cmd = "\"" .. rc .. "\" /fo\"$(DEPLOY_EXECUTABLE).res\" $(TRAKTOR_HOME)/res/Traktor.Amalgam.rc"
@@ -291,10 +291,10 @@ function deployShared(args)
 	end
 
 	-- Create icon resource.
-	if not createIcon()	then
-		stderr:printLn("Unable to create product icon.")
-		return 1
-	end
+--	if not createIcon()	then
+--		stderr:printLn("Unable to create product icon.")
+--		return 1
+--	end
 
 	-- Transfer files to deploy target.
 	run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) " .. deployFiles, nil)
@@ -422,10 +422,10 @@ function migrateStatic(args)
 	end
 
 	-- Create icon resource.
-	if not createIcon()	then
-		stderr:printLn("Unable to create product icon.")
-		return 1
-	end
+--	if not createIcon()	then
+--		stderr:printLn("Unable to create product icon.")
+--		return 1
+--	end
 
 	-- Compile resources.
 	local cmd = "\"" .. rc .. "\" /fo\"$(DEPLOY_EXECUTABLE).res\" $(TRAKTOR_HOME)/res/Traktor.Amalgam.rc"
@@ -506,10 +506,10 @@ function migrateShared(args)
 	end
 
 	-- Create icon resource.
-	if not createIcon()	then
-		stderr:printLn("Unable to create product icon.")
-		return 1
-	end
+--	if not createIcon()	then
+--		stderr:printLn("Unable to create product icon.")
+--		return 1
+--	end
 
 	-- Copy binaries into "bin".
 	run:mkdir("bin64")

@@ -64,7 +64,7 @@ public:
 			if (!clientSocket)
 				continue;
 
-			SocketStream clientStream(clientSocket, true, true, 100);
+			SocketStream clientStream(clientSocket, true, true, 10000);
 			StringReader clientReader(&clientStream, new Utf8Encoding());
 
 			StringOutputStream ss;
@@ -107,7 +107,10 @@ public:
 				os << Endl;
 
 				if (ds)
-					StreamCopy(&clientStream, ds).execute();
+				{
+					if (!StreamCopy(&clientStream, ds).execute())
+						log::error << L"Unable to transfer entire stream to client; partially transmitted data." << Endl;
+				}
 				else
 					os << ssr.str();
 			}
