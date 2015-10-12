@@ -63,7 +63,8 @@ function getSystemPaths()
 	end
 
 	local p = {}
-	p.vcBinPath = vsPath .. "VC\\bin\\amd64"
+	p.vcBinPath = vsPath .. "VC\\bin"
+	p.vcCommonPath = vsPath .. "Common7\\IDE"
 	p.vcLibPath = vsPath .. "VC\\lib"
 	p.sdkBinPath = sdkPath .. "Bin"
 	p.sdkLibPath = sdkPath .. "Lib"
@@ -157,10 +158,11 @@ function deployStatic(args)
 
 	-- Compile resources.
 	local cmd = "\"" .. rc .. "\" /fo\"$(DEPLOY_EXECUTABLE).res\" $(TRAKTOR_HOME)/res/Traktor.Amalgam.rc"
-	local result = run:execute(cmd, "(null)")
+	local result = run:execute(cmd, nil)
 	if result ~= 0 then
 		stderr:printLn("Unable to build product resources.")
 		stderr:printLn(cmd)
+		stderr:printLn(run:stdOut())
 		return 1
 	end
 
@@ -181,24 +183,28 @@ function deployStatic(args)
 	else
 		cmd = cmd .. " /DEBUG"
 	end
-	local result = run:execute(cmd, "(null)")
+	local env = os:getEnvironment()
+	env:set("PATH", env:get("PATH") .. ";" .. p.vcCommonPath)
+	local result = run:execute(cmd, nil, env)
 	if result ~= 0 then
 		stderr:printLn("Unable to build executable product.")
 		stderr:printLn(cmd)
+		stderr:printLn(run:stdOut())
 		return 1
 	end
 
 	-- Embed manifest in executable product.
 	local cmd = "\"" .. mt .. "\" -manifest $(TRAKTOR_HOME)/res/manifest.xml -outputresource:$(DEPLOY_EXECUTABLE).exe;1"
-	local result = run:execute(cmd, "(null)")
+	local result = run:execute(cmd, nil)
 	if result ~= 0 then
 		stderr:printLn("Unable to embed manifest into executable product.")
 		stderr:printLn(cmd)
+		stderr:printLn(run:stdOut())
 		return 1
 	end
 
 	-- Deploy executable into remote folder.
-	run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) $(DEPLOY_EXECUTABLE).exe", "(null)")
+	run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) $(DEPLOY_EXECUTABLE).exe", nil)
 	if run:exitCode() ~= 0 then return run:exitCode() end
 
 	-- Deploy external files into remote folder.
@@ -208,7 +214,7 @@ function deployStatic(args)
 		else
 			run:pushd("$(DEPLOY_SYSTEM_ROOT)/bin/latest/win32/debugstatic")
 		end
-		run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) " .. externalCopyFiles, "(null)")
+		run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) " .. externalCopyFiles, nil)
 		run:popd()
 		if run:exitCode() ~= 0 then return run:exitCode() end
 	end
@@ -252,7 +258,7 @@ function deployShared(args)
 		deployFiles = deployFiles .. " " .. f	
 	end
 
-	run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) " .. deployFiles, "(null)")
+	run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) " .. deployFiles, nil)
 	if run:exitCode() ~= 0 then return run:exitCode() end
 	run:popd()
 
@@ -263,7 +269,7 @@ end
 function deploy(args)
 	-- Deploy application configuration to target.
 	stdout:printLn("Deploying resources to target host...")
-	run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) Application.config", "(null)")
+	run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteDeploy $(DEPLOY_TARGET_HOST) Application.config", nil)
 	if run:exitCode() ~= 0 then return run:exitCode() end
 
 	-- Continue with either statically linked product or as a bunch of dynamic libraries.
@@ -290,7 +296,7 @@ function launch(args)
 		end
 	end
 
-	return run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteLaunch $(DEPLOY_TARGET_HOST) " .. executable .. " \\-s Application.config", "(null)")
+	return run:execute("$(TRAKTOR_HOME)/bin/win32/RemoteLaunch $(DEPLOY_TARGET_HOST) " .. executable .. " \\-s Application.config", nil)
 end
 
 
@@ -378,10 +384,11 @@ function migrateStatic(args)
 
 	-- Compile resources.
 	local cmd = "\"" .. rc .. "\" /fo\"$(DEPLOY_EXECUTABLE).res\" $(TRAKTOR_HOME)/res/Traktor.Amalgam.rc"
-	local result = run:execute(cmd, "(null)")
+	local result = run:execute(cmd, nil)
 	if result ~= 0 then
 		stderr:printLn("Unable to build product resources.")
 		stderr:printLn(cmd)
+		stderr:printLn(run:stdOut())
 		return 1
 	end
 
@@ -402,19 +409,23 @@ function migrateStatic(args)
 	else
 		cmd = cmd .. " /DEBUG"
 	end
-	local result = run:execute(cmd, "(null)")
+	local env = os:getEnvironment()
+	env:set("PATH", env:get("PATH") .. ";" .. p.vcCommonPath)
+	local result = run:execute(cmd, nil, env)
 	if result ~= 0 then
 		stderr:printLn("Unable to build executable product.")
 		stderr:printLn(cmd)
+		stderr:printLn(run:stdOut())
 		return 1
 	end
 
 	-- Embed manifest in executable product.
 	local cmd = "\"" .. mt .. "\" -manifest $(TRAKTOR_HOME)/res/manifest.xml -outputresource:$(DEPLOY_EXECUTABLE).exe;1"
-	local result = run:execute(cmd, "(null)")
+	local result = run:execute(cmd, nil)
 	if result ~= 0 then
 		stderr:printLn("Unable to embed manifest into executable product.")
 		stderr:printLn(cmd)
+		stderr:printLn(run:stdOut())
 		return 1
 	end
 

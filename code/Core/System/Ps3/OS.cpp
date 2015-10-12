@@ -5,6 +5,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Core/Singleton/SingletonManager.h"
+#include "Core/System/Environment.h"
 #include "Core/System/OS.h"
 
 namespace traktor
@@ -95,13 +96,13 @@ bool OS::exploreFile(const std::wstring& file) const
 	return false;
 }
 
-OS::envmap_t OS::getEnvironment() const
+Ref< Environment > OS::getEnvironment() const
 {
 	OSData* data = static_cast< OSData* >(m_handle);
 
-	envmap_t env;
-	env[L"CONTENT_PATH"] = data->contentPath;
-	env[L"USRDIR_PATH"] = data->usrdirPath;
+	Ref< Environment > env = new Environment();
+	env->set(L"CONTENT_PATH", data->contentPath);
+	env->set(L"USRDIR_PATH", data->usrdirPath);
 
 	return env;
 }
@@ -127,7 +128,7 @@ bool OS::getEnvironment(const std::wstring& name, std::wstring& outValue) const
 Ref< IProcess > OS::execute(
 	const std::wstring& commandLine,
 	const Path& workingDirectory,
-	const envmap_t* envmap,
+	const Environment* env,
 	bool redirect,
 	bool mute,
 	bool detach

@@ -1,7 +1,6 @@
 #ifndef traktor_OS_H
 #define traktor_OS_H
 
-#include <map>
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/Io/Path.h"
@@ -18,6 +17,7 @@
 namespace traktor
 {
 
+class Environment;
 class IProcess;
 class ISharedMemory;
 
@@ -31,8 +31,6 @@ class T_DLLCLASS OS
 	T_RTTI_CLASS;
 
 public:
-	typedef std::map< std::wstring, std::wstring > envmap_t;
-
 	static OS& getInstance();
 
 	/*! \brief Get number of CPU cores.
@@ -108,7 +106,7 @@ public:
 	 *
 	 * \return Environment variables.
 	 */
-	envmap_t getEnvironment() const;
+	Ref< Environment > getEnvironment() const;
 
 	/*! \brief Get environment variable value.
 	 *
@@ -122,7 +120,7 @@ public:
 	 *
 	 * \param commandLine Execute command line.
 	 * \param workingDirectory Process's initial working directory.
-	 * \param envmap Optional environment variables.
+	 * \param env Optional environment.
 	 * \param redirect Redirect standard IO.
 	 * \param mute Mute spawn process's output.
 	 * \param detach Detach process from calling process.
@@ -131,7 +129,7 @@ public:
 	Ref< IProcess > execute(
 		const std::wstring& commandLine,
 		const Path& workingDirectory,
-		const envmap_t* envmap,
+		const Environment* env,
 		bool redirect,
 		bool mute,
 		bool detach

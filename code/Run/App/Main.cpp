@@ -7,10 +7,11 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/System/Environment.h"
+#include "Core/System/OS.h"
 #include "Drawing/DrawingClassFactory.h"
 #include "Net/NetClassFactory.h"
 #include "Net/Network.h"
-#include "Run/App/Environment.h"
 #include "Run/App/ProduceOutput.h"
 #include "Run/App/Run.h"
 #include "Run/App/StdOutput.h"
@@ -32,9 +33,14 @@ int32_t Run_run_1(Run* self, const std::wstring& command)
 	return self->run(command);
 }
 
-int32_t Run_run_2(Run* self, const std::wstring& command, const std::wstring& saveOutputAs)
+int32_t Run_run_2(Run* self, const std::wstring& command, const Any& saveOutputAs)
 {
-	return self->run(command, saveOutputAs);
+	return self->run(command, saveOutputAs.isString() ? saveOutputAs.getWideString() : L"(null)");
+}
+
+int32_t Run_run_3(Run* self, const std::wstring& command, const Any& saveOutputAs, const Environment* env)
+{
+	return self->run(command, saveOutputAs.isString() ? saveOutputAs.getWideString() : L"(null)", env);
 }
 
 int32_t Run_execute_1(Run* self, const std::wstring& command)
@@ -42,9 +48,14 @@ int32_t Run_execute_1(Run* self, const std::wstring& command)
 	return self->execute(command);
 }
 
-int32_t Run_execute_2(Run* self, const std::wstring& command, const std::wstring& saveOutputAs)
+int32_t Run_execute_2(Run* self, const std::wstring& command, const Any& saveOutputAs)
 {
-	return self->execute(command, saveOutputAs);
+	return self->execute(command, saveOutputAs.isString() ? saveOutputAs.getWideString() : L"(null)");
+}
+
+int32_t Run_execute_3(Run* self, const std::wstring& command, const Any& saveOutputAs, const Environment* env)
+{
+	return self->execute(command, saveOutputAs.isString() ? saveOutputAs.getWideString() : L"(null)", env);
 }
 
 Ref< script::IScriptManager > createScriptManager()
@@ -96,13 +107,6 @@ Ref< script::IScriptManager > createScriptManager()
 	classStreamInput->addConstructor< traktor::IStream*, IEncoding* >();
 	registrar.registerClass(classStreamInput);
 
-	// Environment
-	Ref< AutoRuntimeClass< Environment > > classEnvironment = new AutoRuntimeClass< Environment >();
-	classEnvironment->addConstructor();
-	classEnvironment->addMethod("set", &Environment::set);
-	classEnvironment->addMethod("get", &Environment::get);
-	registrar.registerClass(classEnvironment);
-
 	// Run
 	Ref< AutoRuntimeClass< Run > > classRun = new AutoRuntimeClass< Run >();
 	classRun->addConstructor();
@@ -112,8 +116,10 @@ Ref< script::IScriptManager > createScriptManager()
 	classRun->addMethod("cwd", &Run::cwd);
 	classRun->addMethod("run", &Run_run_1);
 	classRun->addMethod("run", &Run_run_2);
+	classRun->addMethod("run", &Run_run_3);
 	classRun->addMethod("execute", &Run_execute_1);
 	classRun->addMethod("execute", &Run_execute_2);
+	classRun->addMethod("execute", &Run_execute_3);
 	classRun->addMethod("stdOut", &Run::stdOut);
 	classRun->addMethod("stdErr", &Run::stdErr);
 	classRun->addMethod("exitCode", &Run::exitCode);
@@ -147,7 +153,7 @@ int32_t executeRun(script::IScriptManager* scriptManager, const std::wstring& te
 		return 1;
 
 	// Setup globals in script context.
-	Ref< Environment > environment = new Environment(OS::getInstance().getEnvironment());
+	Ref< Environment > environment = OS::getInstance().getEnvironment();
 	environment->set(L"RUN_SCRIPT", fileName.getPathName());
 	scriptContext->setGlobal("environment", Any::fromObject(environment));
 	scriptContext->setGlobal("run", Any::fromObject(new Run()));
@@ -224,7 +230,7 @@ int32_t executeTemplate(script::IScriptManager* scriptManager, const std::wstrin
 	if (!scriptContext)
 		return 1;
 
-	Ref< Environment > environment = new Environment(OS::getInstance().getEnvironment());
+	Ref< Environment > environment = OS::getInstance().getEnvironment();
 	environment->set(L"RUN_SCRIPT", fileName.getPathName());
 	scriptContext->setGlobal("environment", Any::fromObject(environment));
 	scriptContext->setGlobal("run", Any::fromObject(new Run()));

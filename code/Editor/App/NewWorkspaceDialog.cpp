@@ -1,5 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/System/Environment.h"
 #include "Core/System/IProcess.h"
 #include "Core/System/OS.h"
 #include "Drawing/Image.h"
@@ -123,10 +124,10 @@ void NewWorkspaceDialog::eventDialogClick(ui::ButtonClickEvent* event)
 			std::wstring name = m_editName->getText();
 			std::wstring outputPath = Path(m_editPath->getText() + L"/" + name).normalized().getPathName();
 
-			OS::envmap_t env;
-			env[L"WIZARD_NAME"] = name;
-			env[L"WIZARD_OUTPUT_PATH"] = outputPath;
-			env[L"WIZARD_TEMPLATE_FILE"] = file->getPath().getPathName();
+			Ref< Environment > env = OS::getInstance().getEnvironment();
+			env->set(L"WIZARD_NAME", name);
+			env->set(L"WIZARD_OUTPUT_PATH", outputPath);
+			env->set(L"WIZARD_TEMPLATE_FILE", file->getPath().getPathName());
 
 			Ref< IProcess > process = OS::getInstance().execute(
 #if defined(_WIN64)
@@ -139,7 +140,7 @@ void NewWorkspaceDialog::eventDialogClick(ui::ButtonClickEvent* event)
 				L"$(TRAKTOR_HOME)/bin/latest/linux/releaseshared/Traktor.Run.App $(TRAKTOR_HOME)/bin/template/create-workspace.run",
 #endif
 				file->getPath().getPathOnly(),
-				&env,
+				env,
 				false,
 				true,
 				false
