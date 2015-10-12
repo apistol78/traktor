@@ -14,7 +14,7 @@ StreamCopy::StreamCopy(IStream* target, IStream* source)
 {
 }
 
-bool StreamCopy::execute(int32_t copyBytes)
+bool StreamCopy::execute(uint64_t copyBytes)
 {
 	if (!m_target || !m_target->canWrite())
 		return false;
@@ -27,9 +27,9 @@ bool StreamCopy::execute(int32_t copyBytes)
 
 	while (copyBytes > 0)
 	{
-		int32_t nget = std::min< int32_t >(copyBytes, 4096);
+		uint64_t nget = std::min< uint64_t >(copyBytes, 4096);
 
-		int32_t nread = m_source->read(buffer.ptr(), nget);
+		int32_t nread = m_source->read(buffer.ptr(), int32_t(nget));
 		if (nread < 0)
 			return false;
 

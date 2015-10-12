@@ -40,6 +40,7 @@ Ref< PropertyGroup > loadSettings(const Path& settingsFile)
 
 void mainLoop()
 {
+	traktor::log::info << L"PING..." << Endl;
 	if (g_application)
 	{
 		if (!g_application->update())
@@ -64,11 +65,15 @@ int main(int argc, const char** argv)
 		return 0;
 	}
 
+	traktor::log::info << L"Settings loaded successfully." << Endl;
+
 	Path workingDirectory = FileSystem::getInstance().getAbsolutePath(settingsPath).getPathOnly();
 	FileSystem::getInstance().setCurrentVolumeAndDirectory(workingDirectory);
 
 	Ref< PropertyGroup > settings = DeepClone(defaultSettings).create< PropertyGroup >();
 	T_FATAL_ASSERT (settings);
+
+	traktor::log::info << L"Creating application..." << Endl;
 
 	g_application = new amalgam::Application();
 	if (!g_application->create(
@@ -78,6 +83,8 @@ int main(int argc, const char** argv)
 		0
 	))
 		return 0;
+
+	traktor::log::info << L"Application created successfully." << Endl;
 
 	// Ok, everything seems to be setup fine, give main loop back to Emscripten.
 	emscripten_set_main_loop(&mainLoop, 0, 0);

@@ -110,13 +110,14 @@ void Triangulator::freeze(
 	uint32_t flags
 )
 {
-	AlignedVector< Vector2 > uncut(points.size());
-	std::vector< int32_t > indices(points.size());
+	size_t npoints = points.size();
+	AlignedVector< Vector2 > uncut(npoints);
+	std::vector< int32_t > indices(npoints);
 
 	// Ensure correct winding.
 	if (!isClockWise(points))
 	{
-		for (uint32_t i = 0; i < points.size(); ++i)
+		for (uint32_t i = 0; i < npoints; ++i)
 		{
 			uncut[i] = points[i];
 			indices[i] = i;
@@ -124,10 +125,10 @@ void Triangulator::freeze(
 	}
 	else
 	{
-		for (uint32_t i = 0; i < points.size(); ++i)
+		for (uint32_t i = 0; i < npoints; ++i)
 		{
-			uncut[i] = points[points.size() - i - 1];
-			indices[i] = points.size() - i - 1;
+			uncut[i] = points[npoints - i - 1];
+			indices[i] = int32_t(npoints - i - 1);
 		}
 	}
 

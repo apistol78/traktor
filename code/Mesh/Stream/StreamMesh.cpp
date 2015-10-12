@@ -70,7 +70,7 @@ void StreamMesh::render(
 )
 {
 	// Load mesh frame if different from instance's cached frame.
-	if (instance->frame != frame || !instance->mesh)
+	if (instance->frame != frame || !instance->mesh[0] || !instance->mesh[1])
 	{
 		m_stream->seek(IStream::SeekSet, m_frameOffsets[frame]);
 		instance->mesh[1] = instance->mesh[0];

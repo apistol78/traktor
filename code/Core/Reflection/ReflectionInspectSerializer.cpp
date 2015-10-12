@@ -1,3 +1,4 @@
+#include "Core/Misc/Save.h"
 #include "Core/Reflection/ReflectionInspectSerializer.h"
 #include "Core/Reflection/RfmArray.h"
 #include "Core/Reflection/RfmEnum.h"
@@ -148,15 +149,11 @@ void ReflectionInspectSerializer::operator >> (const Member< void* >& m)
 void ReflectionInspectSerializer::operator >> (const MemberArray& m)
 {
 	Ref< RfmArray > arrayMember = new RfmArray(m.getName());
-
-	Ref< RfmCompound > currentCompoundMember = m_compoundMember;
-	m_compoundMember = arrayMember;
-
-	for (size_t i = 0; i < m.size(); ++i)
-		m.write(*this);
-
-	m_compoundMember = currentCompoundMember;
-
+	{
+		T_ANONYMOUS_VAR(Save< Ref< RfmCompound > >)(m_compoundMember, arrayMember);
+		for (size_t i = 0; i < m.size(); ++i)
+			m.write(*this);
+	}
 	addMember(arrayMember);
 }
 

@@ -109,7 +109,7 @@ bool Vertex::operator == (const Vertex& r) const
 		return false;
 	if (m_binormal != r.m_binormal)
 		return false;
-	if (m_texCoords.size() != m_texCoords.size())
+	if (m_texCoords.size() != r.m_texCoords.size())
 		return false;
 	if (m_jointInfluences.size() != r.m_jointInfluences.size())
 		return false;

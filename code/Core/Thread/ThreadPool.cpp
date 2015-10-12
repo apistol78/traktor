@@ -16,7 +16,7 @@ void threadPoolDispatcher(
 	Event& eventAttachWork,
 	Event& eventFinishedWork,
 	Ref< Functor >& functorWork,
-	int32_t& alive,
+	const int32_t& alive,
 	int32_t& busy
 )
 {
@@ -77,7 +77,7 @@ bool ThreadPool::spawn(Functor* functor, Thread*& outThread)
 	worker.busy = 1;
 	worker.functorWork = functor;
 	worker.threadWorker = ThreadManager::getInstance().create(
-		makeStaticFunctor< Event&, Event&, Ref< Functor >&, int32_t&, int32_t& >(
+		makeStaticFunctor< Event&, Event&, Ref< Functor >&, const int32_t&, int32_t& >(
 			&threadPoolDispatcher,
 			worker.eventAttachWork,
 			worker.eventFinishedWork,
