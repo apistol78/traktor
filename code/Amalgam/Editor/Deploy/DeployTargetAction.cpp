@@ -14,6 +14,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/PropertyStringArray.h"
 #include "Core/Settings/PropertyStringSet.h"
+#include "Core/System/Environment.h"
 #include "Core/System/IProcess.h"
 #include "Core/System/OS.h"
 #include "Core/System/PipeReader.h"
@@ -194,31 +195,31 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 
 	// Launch deploy tool to ensure platform is ready for launch.
 	Path projectRoot = FileSystem::getInstance().getCurrentVolume()->getCurrentDirectory();
-	OS::envmap_t envmap = OS::getInstance().getEnvironment();
+	Ref< Environment > env = OS::getInstance().getEnvironment();
 #if defined(_WIN32)
-	envmap[L"DEPLOY_PROJECT_ROOT"] = projectRoot.getPathName();
+	env->set(L"DEPLOY_PROJECT_ROOT", projectRoot.getPathName());
 #else
-	envmap[L"DEPLOY_PROJECT_ROOT"] = projectRoot.getPathNameNoVolume();
+	env->set(L"DEPLOY_PROJECT_ROOT", projectRoot.getPathNameNoVolume());
 #endif
-	envmap[L"DEPLOY_PROJECT_NAME"] = m_targetName;
-	envmap[L"DEPLOY_PROJECT_IDENTIFIER"] = m_target->getIdentifier();
-	envmap[L"DEPLOY_PROJECT_ICON"] = m_targetConfiguration->getIcon();
-	envmap[L"DEPLOY_SYSTEM_ROOT"] = m_globalSettings->getProperty< PropertyString >(L"Amalgam.SystemRoot", L"$(TRAKTOR_HOME)");
-	envmap[L"DEPLOY_TARGET_HOST"] = m_deployHost;
-	envmap[L"DEPLOY_EXECUTABLE"] = executableFile;
-	envmap[L"DEPLOY_MODULES"] = implode(runtimeModules.begin(), runtimeModules.end(), L" ");
-	envmap[L"DEPLOY_OUTPUT_PATH"] = m_outputPath;
-	envmap[L"DEPLOY_DEBUG"] = (m_globalSettings->getProperty< PropertyBoolean >(L"Amalgam.UseDebugBinaries", false) ? L"YES" : L"");
-	envmap[L"DEPLOY_STATIC_LINK"] = (m_globalSettings->getProperty< PropertyBoolean >(L"Amalgam.StaticallyLinked", false) ? L"YES" : L"");
+	env->set(L"DEPLOY_PROJECT_NAME", m_targetName);
+	env->set(L"DEPLOY_PROJECT_IDENTIFIER", m_target->getIdentifier());
+	env->set(L"DEPLOY_PROJECT_ICON", m_targetConfiguration->getIcon());
+	env->set(L"DEPLOY_SYSTEM_ROOT", m_globalSettings->getProperty< PropertyString >(L"Amalgam.SystemRoot", L"$(TRAKTOR_HOME)"));
+	env->set(L"DEPLOY_TARGET_HOST", m_deployHost);
+	env->set(L"DEPLOY_EXECUTABLE", executableFile);
+	env->set(L"DEPLOY_MODULES", implode(runtimeModules.begin(), runtimeModules.end(), L" "));
+	env->set(L"DEPLOY_OUTPUT_PATH", m_outputPath);
+	env->set(L"DEPLOY_DEBUG", m_globalSettings->getProperty< PropertyBoolean >(L"Amalgam.UseDebugBinaries", false) ? L"YES" : L"");
+	env->set(L"DEPLOY_STATIC_LINK", m_globalSettings->getProperty< PropertyBoolean >(L"Amalgam.StaticallyLinked", false) ? L"YES" : L"");
 
 	// Flatten feature deploy variables.
 	const std::map< std::wstring, Ref< IPropertyValue > >& values = deploy->getValues();
 	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = values.begin(); i != values.end(); ++i)
-		envmap[i->first] = implodePropertyValue(i->second);
+		env->set(i->first, implodePropertyValue(i->second));
 
 	// Merge tool environment variables.
 	const DeployTool& deployTool = platform->getDeployTool();
-	envmap.insert(deployTool.getEnvironment().begin(), deployTool.getEnvironment().end());
+	env->insert(deployTool.getEnvironment());
 
 	// Merge all feature environment variables.
 	for (RefArray< const Feature >::const_iterator i = features.begin(); i != features.end(); ++i)
@@ -226,7 +227,7 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 		const Feature* feature = *i;
 		T_ASSERT (feature);
 
-		envmap.insert(feature->getEnvironment().begin(), feature->getEnvironment().end());
+		env->insert(feature->getEnvironment());
 	}
 
 	// Merge settings environment variables.
@@ -239,10 +240,10 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 			PropertyString* value = dynamic_type_cast< PropertyString* >(i->second);
 			if (value)
 			{
-				envmap.insert(std::make_pair(
+				env->set(
 					i->first,
 					PropertyString::get(value)
-				));
+				);
 			}
 		}
 	}
@@ -251,7 +252,7 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 	Ref< IProcess > process = OS::getInstance().execute(
 		deployTool.getExecutable() + L" deploy",
 		m_outputPath,
-		&envmap,
+		env,
 		true, true, false
 	);
 	if (!process)

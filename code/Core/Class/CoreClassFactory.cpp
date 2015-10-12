@@ -27,6 +27,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/PropertyStringArray.h"
 #include "Core/Settings/PropertyStringSet.h"
+#include "Core/System/Environment.h"
 #include "Core/System/IProcess.h"
 #include "Core/System/ISharedMemory.h"
 #include "Core/System/OS.h"
@@ -36,52 +37,6 @@ namespace traktor
 {
 	namespace
 	{
-
-class Environment : public traktor::Object
-{
-	T_RTTI_CLASS;
-
-public:
-	Environment();
-
-	Environment(const traktor::OS::envmap_t& env);
-
-	void set(const std::wstring& key, const std::wstring& value);
-
-	std::wstring get(const std::wstring& key) const;
-
-	const traktor::OS::envmap_t& envmap() const;
-
-private:
-	traktor::OS::envmap_t m_env;
-};
-
-T_IMPLEMENT_RTTI_CLASS(L"traktor.Environment", Environment, Object)
-
-Environment::Environment()
-{
-}
-
-Environment::Environment(const OS::envmap_t& env)
-:	m_env(env)
-{
-}
-
-void Environment::set(const std::wstring& key, const std::wstring& value)
-{
-	m_env[key] = value;
-}
-
-std::wstring Environment::get(const std::wstring& key) const
-{
-	OS::envmap_t::const_iterator i = m_env.find(key);
-	return i != m_env.end() ? i->second : L"";
-}
-
-const OS::envmap_t& Environment::envmap() const
-{
-	return m_env;
-}
 
 RefArray< File > IVolume_find(IVolume* self, const std::wstring& mask)
 {
@@ -136,6 +91,11 @@ Any StringReader_readLine(StringReader* self)
 		return Any();
 }
 
+std::wstring Environment_get(Environment* self, const std::wstring& name)
+{
+	return self->get(name);
+}
+
 Ref< traktor::IStream > IProcess_getStdOut(IProcess* self)
 {
 	return self->getPipeStream(IProcess::SpStdOut);
@@ -163,7 +123,7 @@ OS* OS_getInstance()
 
 Ref< Environment > OS_getEnvironment_0(OS* self)
 {
-	return new Environment(self->getEnvironment());
+	return self->getEnvironment();
 }
 
 std::wstring OS_getEnvironment_1(OS* self, const std::wstring& key)
@@ -177,7 +137,7 @@ std::wstring OS_getEnvironment_1(OS* self, const std::wstring& key)
 
 Ref< IProcess > OS_execute(OS* self, const std::wstring& commandLine, const std::wstring& workingDirectory, const Environment* environment, bool redirect, bool mute, bool detach)
 {
-	return self->execute(commandLine, workingDirectory, environment ? &environment->envmap() : 0, redirect, mute, detach);
+	return self->execute(commandLine, workingDirectory, environment, redirect, mute, detach);
 }
 
 #if defined(_WIN32)
@@ -265,12 +225,6 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.CoreClassFactory", 0, CoreClassFactory,
 
 void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
-	Ref< AutoRuntimeClass< Environment > > classEnvironment = new AutoRuntimeClass< Environment >();
-	classEnvironment->addConstructor();
-	classEnvironment->addMethod("set", &Environment::set);
-	classEnvironment->addMethod("get", &Environment::get);
-	registrar->registerClass(classEnvironment);
-
 	Ref< AutoRuntimeClass< DateTime > > classDateTime = new AutoRuntimeClass< DateTime >();
 	classDateTime->addConstructor();
 	classDateTime->addConstructor< uint64_t >();
@@ -407,6 +361,13 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classStreamCopy->addConstructor< traktor::IStream*, traktor::IStream* >();
 	classStreamCopy->addMethod("execute", &StreamCopy::execute);
 	registrar->registerClass(classStreamCopy);
+
+	Ref< AutoRuntimeClass< Environment > > classEnvironment = new AutoRuntimeClass< Environment >();
+	classEnvironment->addConstructor();
+	classEnvironment->addMethod("set", &Environment::set);
+	classEnvironment->addMethod("has", &Environment::has);
+	classEnvironment->addMethod("get", &Environment_get);
+	registrar->registerClass(classEnvironment);
 
 	Ref< AutoRuntimeClass< IProcess > > classIProcess = new AutoRuntimeClass< IProcess >();
 	classIProcess->addMethod("getStdOut", &IProcess_getStdOut);

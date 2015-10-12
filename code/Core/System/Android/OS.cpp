@@ -11,12 +11,14 @@
 #include "Core/Misc/StringSplit.h"
 #include "Core/Misc/TString.h"
 #include "Core/Singleton/SingletonManager.h"
+#include "Core/System/Environment.h"
 #include "Core/System/OS.h"
 
 namespace traktor
 {
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.OS", OS, Object)
+
 OS& OS::getInstance()
 {
 	static OS* s_instance = 0;
@@ -34,7 +36,8 @@ uint32_t OS::getCPUCoreCount() const
 	return 4;
 }
 
-Path OS::getExecutable() const{
+Path OS::getExecutable() const
+{
 	return L"";
 }
 
@@ -115,22 +118,22 @@ bool OS::exploreFile(const std::wstring& file) const
 	return false;
 }
 
-OS::envmap_t OS::getEnvironment() const
+Ref< Environment > OS::getEnvironment() const
 {
-	envmap_t envmap;
+	Ref< Environment > env = new Environment();
 	for (char** e = environ; *e; ++e)
 	{
 		char* sep = strchr(*e, '=');
 		if (sep)
 		{
 			char* val = sep + 1;
-			envmap.insert(std::make_pair(
+			env->set(
 				mbstows(std::string(*e, sep)),
 				mbstows(val)
-			));
+			);
 		}
 	}
-	return envmap;
+	return env;
 }
 
 bool OS::getEnvironment(const std::wstring& name, std::wstring& outValue) const
@@ -148,7 +151,7 @@ bool OS::getEnvironment(const std::wstring& name, std::wstring& outValue) const
 Ref< IProcess > OS::execute(
 	const std::wstring& commandLine,
 	const Path& workingDirectory,
-	const envmap_t* envmap,
+	const Environment* env,
 	bool redirect,
 	bool mute,
 	bool detach

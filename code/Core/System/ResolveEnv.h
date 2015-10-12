@@ -14,9 +14,11 @@
 namespace traktor
 {
 
+class Environment;
+
 /*! \brief Resolve all environment variable references in input string.
  */
-std::wstring T_DLLCLASS resolveEnv(const std::wstring& s, const OS::envmap_t* envmap);
+std::wstring T_DLLCLASS resolveEnv(const std::wstring& s, const Environment* env);
 
 }
 

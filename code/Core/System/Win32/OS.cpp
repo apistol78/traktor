@@ -11,6 +11,7 @@
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Singleton/SingletonManager.h"
+#include "Core/System/Environment.h"
 #include "Core/System/OS.h"
 #include "Core/System/ResolveEnv.h"
 #include "Core/System/Win32/ProcessWin32.h"
@@ -221,9 +222,9 @@ bool OS::exploreFile(const std::wstring& file) const
 #endif
 }
 
-OS::envmap_t OS::getEnvironment() const
+Ref< Environment > OS::getEnvironment() const
 {
-	envmap_t envmap;
+	Ref< Environment > env = new Environment();
 
 #if !defined(WINCE)
 	LPTCH lpEnv = GetEnvironmentStrings();
@@ -240,10 +241,10 @@ OS::envmap_t OS::getEnvironment() const
 
 			if (key < sep)
 			{
-				envmap.insert(std::make_pair(
+				env->set(
 					tstows(tstring(key, sep)),
 					tstows(val)
-				));
+				);
 			}
 
 			p = val + _tcslen(val) + 1;
@@ -251,7 +252,7 @@ OS::envmap_t OS::getEnvironment() const
 	}
 #endif
 
-	return envmap;
+	return env;
 }
 
 bool OS::getEnvironment(const std::wstring& name, std::wstring& outValue) const
@@ -271,7 +272,7 @@ bool OS::getEnvironment(const std::wstring& name, std::wstring& outValue) const
 Ref< IProcess > OS::execute(
 	const std::wstring& commandLine,
 	const Path& workingDirectory,
-	const envmap_t* envmap,
+	const Environment* env,
 	bool redirect,
 	bool mute,
 	bool detach
@@ -286,7 +287,7 @@ Ref< IProcess > OS::execute(
 	std::wstring arguments;
 
 	// Resolve entire command line.
-	std::wstring resolvedCommandLine = resolveEnv(commandLine, envmap);
+	std::wstring resolvedCommandLine = resolveEnv(commandLine, env);
 
 	// Extract executable file from command line.
 	if (resolvedCommandLine.empty())
@@ -318,18 +319,20 @@ Ref< IProcess > OS::execute(
 	Path workingDirectoryAbs = FileSystem::getInstance().getAbsolutePath(workingDirectory);
 
 	// Create environment variables.
-	if (envmap)
+	if (env)
 	{
+		const std::map< std::wstring, std::wstring >& e = env->get();
+
 		// Calculate how much space we need to allocate.
 		uint32_t size = 0;
-		for (envmap_t::const_iterator i = envmap->begin(); i != envmap->end(); ++i)
+		for (std::map< std::wstring, std::wstring >::const_iterator i = e.begin(); i != e.end(); ++i)
 			size += i->first.length() + 1 + i->second.length() + 1;
 		size += 1;
 
 		environment.reset(new wchar_t [size]);
 
 		wchar_t* p = environment.ptr(); *p = 0;
-		for (envmap_t::const_iterator i = envmap->begin(); i != envmap->end(); ++i)
+		for (std::map< std::wstring, std::wstring >::const_iterator i = e.begin(); i != e.end(); ++i)
 		{
 			wcscpy(p, i->first.c_str());
 			wcscat(p, L"=");

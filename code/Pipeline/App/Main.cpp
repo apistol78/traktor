@@ -853,7 +853,7 @@ int master(const CommandLine& cmdLine)
 		Ref< IProcess > slaveProcess = OS::getInstance().execute(
 			tstows(szFileName) + L" -slave",
 			L"",
-			&OS::getInstance().getEnvironment(),
+			OS::getInstance().getEnvironment(),
 			false,
 			false,
 			true

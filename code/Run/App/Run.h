@@ -6,6 +6,9 @@
 
 namespace traktor
 {
+
+class Environment;
+
 	namespace run
 	{
 
@@ -24,9 +27,9 @@ public:
 
 	std::wstring cwd() const;
 
-	int32_t run(const std::wstring& command, const std::wstring& saveOutputAs = L"");
+	int32_t run(const std::wstring& command, const std::wstring& saveOutputAs = L"", const Environment* env = 0);
 
-	int32_t execute(const std::wstring& command, const std::wstring& saveOutputAs = L"");
+	int32_t execute(const std::wstring& command, const std::wstring& saveOutputAs = L"", const Environment* env = 0);
 
 	const std::wstring& stdOut() const;
 

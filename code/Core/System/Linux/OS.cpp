@@ -14,6 +14,7 @@
 #include "Core/Misc/StringSplit.h"
 #include "Core/Misc/TString.h"
 #include "Core/Singleton/SingletonManager.h"
+#include "Core/System/Environment.h"
 #include "Core/System/OS.h"
 #include "Core/System/ResolveEnv.h"
 #include "Core/System/Linux/ProcessLinux.h"
@@ -121,22 +122,22 @@ bool OS::exploreFile(const std::wstring& file) const
 	return false;
 }
 
-OS::envmap_t OS::getEnvironment() const
+Ref< Environment > OS::getEnvironment() const
 {
-	envmap_t envmap;
+	Ref< Environment > env = new Environment();
 	for (char** e = environ; *e; ++e)
 	{
 		char* sep = strchr(*e, '=');
 		if (sep)
 		{
 			char* val = sep + 1;
-			envmap.insert(std::make_pair(
+			env->set(
 				mbstows(std::string(*e, sep)),
 				mbstows(val)
-			));
+			);
 		}
 	}
-	return envmap;
+	return env;
 }
 
 bool OS::getEnvironment(const std::wstring& name, std::wstring& outValue) const
@@ -154,7 +155,7 @@ bool OS::getEnvironment(const std::wstring& name, std::wstring& outValue) const
 Ref< IProcess > OS::execute(
 	const std::wstring& commandLine,
 	const Path& workingDirectory,
-	const envmap_t* envmap,
+	const Environment* env,
 	bool redirect,
 	bool mute,
 	bool detach
@@ -174,7 +175,7 @@ Ref< IProcess > OS::execute(
 	std::wstring arguments;
 
 	// Resolve entire command line.
-	std::wstring resolvedCommandLine = resolveEnv(commandLine, envmap);
+	std::wstring resolvedCommandLine = resolveEnv(commandLine, env);
 
 	// Extract executable file from command line.
 	if (resolvedCommandLine.empty())
@@ -243,15 +244,17 @@ Ref< IProcess > OS::execute(
 
 	// Convert environment variables; don't pass "DYLIB_LIBRARY_PATH" along as we
 	// don't want child process searching our products by default.
-	if (envmap)
+	if (env)
 	{
-		for (envmap_t::const_iterator i = envmap->begin(); i != envmap->end(); ++i)
+		const std::map< std::wstring, std::wstring >& v = env->get();
+		for (std::map< std::wstring, std::wstring >::const_iterator i = v.begin(); i != v.end(); ++i)
 			envv[envc++] = strdup(wstombs(i->first + L"=" + i->second).c_str());
 	}
 	else
 	{
-		envmap_t own = getEnvironment();
-		for (envmap_t::const_iterator i = own.begin(); i != own.end(); ++i)
+		Ref< Environment > env2 = getEnvironment();
+		const std::map< std::wstring, std::wstring >& v = env2->get();
+		for (std::map< std::wstring, std::wstring >::const_iterator i = v.begin(); i != v.end(); ++i)
 			envv[envc++] = strdup(wstombs(i->first + L"=" + i->second).c_str());
 	}
 
