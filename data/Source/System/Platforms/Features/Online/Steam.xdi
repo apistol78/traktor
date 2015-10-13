@@ -36,7 +36,7 @@
 								<item>libTraktor.Net.dylib</item>
 								<item>libTraktor.Online.Steam.dylib</item>
 								<item>libTraktor.Online.dylib</item>
-								<item>steam_api.dylib</item>
+								<item>libsteam_api.dylib</item>
 							</value>
 						</second>
 					</item>
