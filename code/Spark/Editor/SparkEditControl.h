@@ -58,14 +58,6 @@ public:
 	void destroy();
 
 private:
-	enum EditMode
-	{
-		EmIdle,
-		EmPanView,
-		EmMoveCharacter,
-		EmMoveCharacterAxis
-	};
-
 	editor::IEditor* m_editor;
 	editor::IEditorPageSite* m_site;
 	Ref< Context > m_context;
@@ -73,12 +65,10 @@ private:
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< SparkRenderer > m_sparkRenderer;
 	Ref< ui::EventSubject::IEventHandler > m_idleEventHandler;
-	ui::Point m_lastMousePosition;
-	EditMode m_editMode;
-	Vector2 m_editAxisFactor;
-	Ref< CharacterAdapter > m_editCharacter;
 	Vector2 m_viewOffset;
 	float m_viewScale;
+	bool m_panView;
+	ui::Point m_lastMousePosition;
 
 	Vector2 clientToView(const ui::Point& point) const;
 

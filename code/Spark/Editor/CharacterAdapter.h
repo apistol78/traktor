@@ -9,11 +9,26 @@ namespace traktor
 
 class Matrix33;
 
+	namespace render
+	{
+
+class PrimitiveRenderer;
+
+	}
+
+	namespace ui
+	{
+
+class Widget;
+
+	}
+
 	namespace spark
 	{
 
 class Character;
 class CharacterInstance;
+class IGizmo;
 
 class CharacterAdapter : public Object
 {
@@ -36,6 +51,18 @@ public:
 
 	const RefArray< CharacterAdapter >& getChildren();
 
+	void attachGizmo(IGizmo* gizmo);
+
+	void detachGizmo();
+
+	void mouseDown(ui::Widget* widget, const Vector2& position);
+	
+	void mouseUp(ui::Widget* widget, const Vector2& position);
+
+	void mouseMove(ui::Widget* widget, const Vector2& position);
+
+	void paint(render::PrimitiveRenderer* primitiveRenderer);
+
 	void select();
 
 	void deselect();
@@ -52,6 +79,7 @@ private:
 	Ref< CharacterInstance > m_characterInstance;
 	CharacterAdapter* m_parent;
 	RefArray< CharacterAdapter > m_children;
+	Ref< IGizmo > m_gizmo;
 	bool m_selected;
 };
 

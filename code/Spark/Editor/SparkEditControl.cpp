@@ -5,6 +5,7 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
+#include "Spark/Sprite.h"
 #include "Spark/CharacterInstance.h"
 #include "Spark/SparkRenderer.h"
 #include "Spark/Editor/CharacterAdapter.h"
@@ -23,58 +24,9 @@ namespace traktor
 		namespace
 		{
 
-void drawBound(CharacterInstance* character, render::PrimitiveRenderer* primitiveRenderer)
+int32_t viewGridOffset(int32_t x, int32_t spacing)
 {
-	if (!character)
-		return;
-
-	Aabb2 bounds = character->getBounds();
-
-	Matrix33 T = character->getFullTransform();
-
-	Vector2 e[] =
-	{
-		T * bounds.mn,
-		T * Vector2(bounds.mx.x, bounds.mn.y),
-		T * bounds.mx,
-		T * Vector2(bounds.mn.x, bounds.mx.y)
-	};
-
-	float cx = T.e13;
-	float cy = T.e23;
-	float r = 20.0f;
-
-	primitiveRenderer->drawLine(
-		Vector4(cx - r, cy, 1.0f, 1.0f),
-		Vector4(cx + r, cy, 1.0f, 1.0f),
-		Color4ub(0, 255, 0, 255)
-	);
-	primitiveRenderer->drawLine(
-		Vector4(cx, cy - r, 1.0f, 1.0f),
-		Vector4(cx, cy + r, 1.0f, 1.0f),
-		Color4ub(0, 255, 0, 255)
-	);
-
-	primitiveRenderer->drawLine(
-		Vector4(e[0].x, e[0].y, 1.0f, 1.0f),
-		Vector4(e[1].x, e[1].y, 1.0f, 1.0f),
-		Color4ub(255, 255, 0, 255)
-	);
-	primitiveRenderer->drawLine(
-		Vector4(e[1].x, e[1].y, 1.0f, 1.0f),
-		Vector4(e[2].x, e[2].y, 1.0f, 1.0f),
-		Color4ub(255, 255, 0, 255)
-	);
-	primitiveRenderer->drawLine(
-		Vector4(e[2].x, e[2].y, 1.0f, 1.0f),
-		Vector4(e[3].x, e[3].y, 1.0f, 1.0f),
-		Color4ub(255, 255, 0, 255)
-	);
-	primitiveRenderer->drawLine(
-		Vector4(e[3].x, e[3].y, 1.0f, 1.0f),
-		Vector4(e[0].x, e[0].y, 1.0f, 1.0f),
-		Color4ub(255, 255, 0, 255)
-	);
+	return (x / spacing) * spacing;
 }
 
 		}
@@ -85,9 +37,9 @@ SparkEditControl::SparkEditControl(editor::IEditor* editor, editor::IEditorPageS
 :	m_editor(editor)
 ,	m_site(site)
 ,	m_context(context)
-,	m_editMode(EmIdle)
 ,	m_viewOffset(1920.0f, 1080.0f)
 ,	m_viewScale(0.3f)
+,	m_panView(false)
 {
 }
 
@@ -223,29 +175,54 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 		{
 			m_primitiveRenderer->pushDepthState(false, false, false);
 
-			const Aabb2& bounds = m_context->getRoot()->getCharacterInstance()->getBounds();
-
-			for (int32_t x = int32_t(bounds.mn.x); x < int32_t(bounds.mx.x); x += 40)
+			const Aabb2& bounds = mandatory_non_null_type_cast< const Sprite* >(m_context->getRoot()->getCharacter())->getBounds();
+			if (!bounds.empty())
 			{
-				m_primitiveRenderer->drawLine(
-					Vector4(x, bounds.mn.y, 1.0f, 1.0f),
-					Vector4(x, bounds.mx.y, 1.0f, 1.0f),
-					Color4ub(0, 0, 0, 40)
-				);
-			}
-			for (int32_t y = int32_t(bounds.mn.y); y < int32_t(bounds.mx.y); y += 40)
-			{
-				m_primitiveRenderer->drawLine(
-					Vector4(bounds.mn.x, y, 1.0f, 1.0f),
-					Vector4(bounds.mx.x, y, 1.0f, 1.0f),
-					Color4ub(0, 0, 0, 40)
-				);
-			}
+				for (int32_t x = int32_t(bounds.mn.x); x < int32_t(bounds.mx.x); x += 40)
+				{
+					m_primitiveRenderer->drawLine(
+						Vector4(x, bounds.mn.y, 1.0f, 1.0f),
+						Vector4(x, bounds.mx.y, 1.0f, 1.0f),
+						Color4ub(0, 0, 0, 40)
+					);
+				}
+				for (int32_t y = int32_t(bounds.mn.y); y < int32_t(bounds.mx.y); y += 40)
+				{
+					m_primitiveRenderer->drawLine(
+						Vector4(bounds.mn.x, y, 1.0f, 1.0f),
+						Vector4(bounds.mx.x, y, 1.0f, 1.0f),
+						Color4ub(0, 0, 0, 40)
+					);
+				}
 
-			m_primitiveRenderer->drawLine(Vector4(bounds.mn.x, bounds.mn.y, 1.0f, 1.0f), Vector4(bounds.mx.x, bounds.mn.y, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
-			m_primitiveRenderer->drawLine(Vector4(bounds.mx.x, bounds.mn.y, 1.0f, 1.0f), Vector4(bounds.mx.x, bounds.mx.y, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
-			m_primitiveRenderer->drawLine(Vector4(bounds.mx.x, bounds.mx.y, 1.0f, 1.0f), Vector4(bounds.mn.x, bounds.mx.y, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
-			m_primitiveRenderer->drawLine(Vector4(bounds.mn.x, bounds.mx.y, 1.0f, 1.0f), Vector4(bounds.mn.x, bounds.mn.y, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
+				m_primitiveRenderer->drawLine(Vector4(bounds.mn.x, bounds.mn.y, 1.0f, 1.0f), Vector4(bounds.mx.x, bounds.mn.y, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
+				m_primitiveRenderer->drawLine(Vector4(bounds.mx.x, bounds.mn.y, 1.0f, 1.0f), Vector4(bounds.mx.x, bounds.mx.y, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
+				m_primitiveRenderer->drawLine(Vector4(bounds.mx.x, bounds.mx.y, 1.0f, 1.0f), Vector4(bounds.mn.x, bounds.mx.y, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
+				m_primitiveRenderer->drawLine(Vector4(bounds.mn.x, bounds.mx.y, 1.0f, 1.0f), Vector4(bounds.mn.x, bounds.mn.y, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
+			}
+			else
+			{
+				Aabb2 viewBounds(
+					Vector2(m_viewOffset.x / 2.0f - viewWidth / 2.0f, m_viewOffset.y / 2.0f - viewHeight / 2.0f),
+					Vector2(m_viewOffset.x / 2.0f + viewWidth / 2.0f, m_viewOffset.y / 2.0f + viewHeight / 2.0f)
+				);
+				for (int32_t x = viewGridOffset(int32_t(viewBounds.mn.x), 40); x < int32_t(viewBounds.mx.x); x += 40)
+				{
+					m_primitiveRenderer->drawLine(
+						Vector4(x, viewBounds.mn.y, 1.0f, 1.0f),
+						Vector4(x, viewBounds.mx.y, 1.0f, 1.0f),
+						Color4ub(0, 0, 0, 40)
+					);
+				}
+				for (int32_t y = viewGridOffset(int32_t(viewBounds.mn.y), 40); y < int32_t(viewBounds.mx.y); y += 40)
+				{
+					m_primitiveRenderer->drawLine(
+						Vector4(viewBounds.mn.x, y, 1.0f, 1.0f),
+						Vector4(viewBounds.mx.x, y, 1.0f, 1.0f),
+						Color4ub(0, 0, 0, 40)
+					);
+				}
+			}
 
 			m_primitiveRenderer->popDepthState();
 			m_primitiveRenderer->end();
@@ -262,9 +239,9 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 			{
 				m_primitiveRenderer->pushDepthState(false, false, false);
 
-				const RefArray< CharacterAdapter >& children = m_context->getRoot()->getChildren();
-				for (RefArray< CharacterAdapter >::const_iterator i = children.begin(); i != children.end(); ++i)
-					drawBound((*i)->getCharacterInstance(), m_primitiveRenderer);
+				const RefArray< CharacterAdapter >& adapters = m_context->getAdapters();
+				for (RefArray< CharacterAdapter >::const_iterator i = adapters.begin(); i != adapters.end(); ++i)
+					(*i)->paint(m_primitiveRenderer);
 
 				m_primitiveRenderer->popDepthState();
 				m_primitiveRenderer->end();
@@ -280,31 +257,22 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 
 void SparkEditControl::eventMouseButtonDown(ui::MouseButtonDownEvent* event)
 {
-	m_lastMousePosition = event->getPosition();
+	Vector2 viewPosition = clientToView(event->getPosition());
+	
 	if ((event->getKeyState() & ui::KsMenu) == 0)
 	{
-		Vector2 viewPosition = clientToView(event->getPosition());
-		if ((m_editCharacter = m_context->hitTest(viewPosition)) != 0)
-		{
-			if ((event->getKeyState() & ui::KsControl) == 0)
-			{
-				m_editMode = EmMoveCharacter;
-				m_editAxisFactor = Vector2(1.0f, 1.0f);
-			}
-			else
-			{
-				m_editMode = EmMoveCharacterAxis;
-				m_editAxisFactor = Vector2(0.0f, 0.0f);
-			}
-
-			setCapture();
-		}
+		const RefArray< CharacterAdapter >& adapters = m_context->getAdapters();
+		for (RefArray< CharacterAdapter >::const_iterator i = adapters.begin(); i != adapters.end(); ++i)
+			(*i)->mouseDown(this, viewPosition);
 	}
 	else
 	{
-		m_editMode = EmPanView;
-		setCapture();
+		m_lastMousePosition = event->getPosition();
+		m_panView = true;
 	}
+
+	setCapture();
+	update();
 }
 
 void SparkEditControl::eventMouseButtonUp(ui::MouseButtonUpEvent* event)
@@ -312,45 +280,42 @@ void SparkEditControl::eventMouseButtonUp(ui::MouseButtonUpEvent* event)
 	if (!hasCapture())
 		return;
 
-	m_editMode = EmIdle;
-	m_editCharacter = 0;
+	Vector2 viewPosition = clientToView(event->getPosition());
+
+	if (!m_panView)
+	{
+		const RefArray< CharacterAdapter >& adapters = m_context->getAdapters();
+		for (RefArray< CharacterAdapter >::const_iterator i = adapters.begin(); i != adapters.end(); ++i)
+			(*i)->mouseUp(this, viewPosition);
+	}
+
+	m_panView = false;
 
 	releaseCapture();
+	update();
 }
 
 void SparkEditControl::eventMouseMove(ui::MouseMoveEvent* event)
 {
-	ui::Point mousePosition = event->getPosition();
-	if (m_editMode == EmPanView)
+	Vector2 viewPosition = clientToView(event->getPosition());
+
+	if (!m_panView)
 	{
+		const RefArray< CharacterAdapter >& adapters = m_context->getAdapters();
+		for (RefArray< CharacterAdapter >::const_iterator i = adapters.begin(); i != adapters.end(); ++i)
+			(*i)->mouseMove(this, viewPosition);
+	}
+	else
+	{
+		ui::Point mousePosition = event->getPosition();
 		Vector2 deltaMove(
 			-(mousePosition.x - m_lastMousePosition.x),
 			-(mousePosition.y - m_lastMousePosition.y)
 		);
 		m_viewOffset += 2.0f * deltaMove / m_viewScale;
+		m_lastMousePosition = mousePosition;
 	}
-	else if (m_editMode == EmMoveCharacter || m_editMode == EmMoveCharacterAxis)
-	{
-		Vector2 from = clientToView(m_lastMousePosition);
-		Vector2 to = clientToView(mousePosition);
-		Vector2 delta = to - from;
 
-		if (m_editMode == EmMoveCharacterAxis)
-		{
-			if (abs(delta.x) > abs(delta.y))
-				m_editAxisFactor = Vector2(1.0f, 0.0f);
-			else
-				m_editAxisFactor = Vector2(0.0f, 1.0f);
-
-			m_editMode = EmMoveCharacter;
-		}
-
-		delta *= m_editAxisFactor;
-
-		Matrix33 T = m_editCharacter->getTransform();
-		m_editCharacter->setTransform(translate(delta.x, delta.y) * T);
-	}
-	m_lastMousePosition = mousePosition;
 	update();
 }
 

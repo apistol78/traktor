@@ -20,6 +20,7 @@
 #include "Spark/Editor/Context.h"
 #include "Spark/Editor/SparkEditControl.h"
 #include "Spark/Editor/SparkEditorPage.h"
+#include "Spark/Editor/UniversalGizmo.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
@@ -189,6 +190,33 @@ void SparkEditorPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* event)
 
 void SparkEditorPage::eventGridAdapterSelectionChange(ui::SelectionChangeEvent* event)
 {
+	// De-select all adapters.
+	const RefArray< CharacterAdapter >& adapters = m_context->getAdapters();
+	for (RefArray< CharacterAdapter >::const_iterator i = adapters.begin(); i != adapters.end(); ++i)
+	{
+		(*i)->detachGizmo();
+		(*i)->deselect();
+	}
+
+	// Get selected rows in placement grid.
+	RefArray< ui::custom::GridRow > selectedRows;
+	m_gridPlace->getRows(selectedRows, ui::custom::GridView::GfDescendants | ui::custom::GridView::GfSelectedOnly);
+
+	// Select all adapters from rows.
+	for (RefArray< ui::custom::GridRow >::const_iterator i = selectedRows.begin(); i != selectedRows.end(); ++i)
+	{
+		Ref< CharacterAdapter > adapter = (*i)->getData< CharacterAdapter >(L"ADAPTER");
+		T_FATAL_ASSERT (adapter);
+
+		adapter->attachGizmo(new UniversalGizmo(m_context));
+		adapter->select();
+	}
+
+	// Expose selected item if single item selected.
+	if (selectedRows.size() == 1)
+		m_site->setPropertyObject(selectedRows.front()->getData< CharacterAdapter >(L"ADAPTER")->getCharacter());
+	else
+		m_site->setPropertyObject(m_document->getObject< Sprite >(0));
 }
 
 	}
