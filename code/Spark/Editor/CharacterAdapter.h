@@ -51,6 +51,8 @@ public:
 
 	const RefArray< CharacterAdapter >& getChildren();
 
+	void unlink();
+
 	void attachGizmo(IGizmo* gizmo);
 
 	void detachGizmo();

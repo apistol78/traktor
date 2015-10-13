@@ -1,5 +1,6 @@
 #include "Spark/Character.h"
 #include "Spark/CharacterInstance.h"
+#include "Spark/Sprite.h"
 #include "Spark/External.h"
 #include "Spark/Editor/CharacterAdapter.h"
 #include "Spark/Editor/IGizmo.h"
@@ -51,6 +52,20 @@ CharacterAdapter* CharacterAdapter::getParent()
 const RefArray< CharacterAdapter >& CharacterAdapter::getChildren()
 {
 	return m_children;
+}
+
+void CharacterAdapter::unlink()
+{
+	if (!m_parent || !is_a< Sprite* >(m_parent->getCharacter()))
+		return;
+
+	mandatory_non_null_type_cast< Sprite* >(m_parent->getCharacter())->remove(m_character);
+
+	m_characterInstance = 0;
+	m_character = 0;
+
+	m_parent->m_children.remove(this);
+	m_parent = 0;
 }
 
 void CharacterAdapter::attachGizmo(IGizmo* gizmo)

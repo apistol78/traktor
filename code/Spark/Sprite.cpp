@@ -53,6 +53,23 @@ private:
 	std::wstring m_name;
 };
 
+class FindCharacter
+{
+public:
+	FindCharacter(const Character* character)
+	:	m_character(character)
+	{
+	}
+
+	bool operator () (const Sprite::NamedCharacter& nc) const
+	{
+		return nc.character == m_character;
+	}
+
+private:
+	const Character* m_character;
+};
+
 		}
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spark.Sprite", 0, Sprite, Character)
@@ -69,6 +86,13 @@ void Sprite::place(const std::wstring& name, Character* character)
 	nc.name = name;
 	nc.character = character;
 	m_frame.push_back(nc);
+}
+
+void Sprite::remove(Character* character)
+{
+	AlignedVector< NamedCharacter >::iterator i = std::find_if(m_frame.begin(), m_frame.end(), FindCharacter(character));
+	if (i != m_frame.end())
+		m_frame.erase(i);
 }
 
 void Sprite::serialize(ISerializer& s)

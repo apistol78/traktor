@@ -87,6 +87,7 @@ private:
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< SparkEditControl > m_editControl;
 	Ref< ui::Container > m_panelPlace;
+	Ref< ui::custom::ToolBar > m_toolBarPlace;
 	Ref< ui::custom::GridView > m_gridPlace;
 	Ref< ui::Container > m_panelLibrary;
 	Ref< ui::custom::GridView > m_gridLibrary;
@@ -96,6 +97,8 @@ private:
 	void updateAdaptersGrid();
 
 	void eventToolClick(ui::custom::ToolBarButtonClickEvent* event);
+
+	void eventToolPlaceClick(ui::custom::ToolBarButtonClickEvent* event);
 
 	void eventGridAdapterSelectionChange(ui::SelectionChangeEvent* event);
 };
