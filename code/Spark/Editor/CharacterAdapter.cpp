@@ -2,6 +2,7 @@
 #include "Spark/CharacterInstance.h"
 #include "Spark/External.h"
 #include "Spark/Editor/CharacterAdapter.h"
+#include "Spark/Editor/IGizmo.h"
 
 namespace traktor
 {
@@ -50,6 +51,45 @@ CharacterAdapter* CharacterAdapter::getParent()
 const RefArray< CharacterAdapter >& CharacterAdapter::getChildren()
 {
 	return m_children;
+}
+
+void CharacterAdapter::attachGizmo(IGizmo* gizmo)
+{
+	if ((m_gizmo = gizmo) != 0)
+		m_gizmo->attach(this);
+}
+
+void CharacterAdapter::detachGizmo()
+{
+	if (m_gizmo != 0)
+	{
+		m_gizmo->detach(this);
+		m_gizmo = 0;
+	}
+}
+
+void CharacterAdapter::mouseDown(ui::Widget* widget, const Vector2& position)
+{
+	if (m_gizmo)
+		m_gizmo->mouseDown(widget, this, position);
+}
+
+void CharacterAdapter::mouseUp(ui::Widget* widget, const Vector2& position)
+{
+	if (m_gizmo)
+		m_gizmo->mouseUp(widget, this, position);
+}
+
+void CharacterAdapter::mouseMove(ui::Widget* widget, const Vector2& position)
+{
+	if (m_gizmo)
+		m_gizmo->mouseMove(widget, this, position);
+}
+
+void CharacterAdapter::paint(render::PrimitiveRenderer* primitiveRenderer)
+{
+	if (m_gizmo)
+		m_gizmo->paint(this, primitiveRenderer);
 }
 
 void CharacterAdapter::select()

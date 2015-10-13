@@ -34,6 +34,8 @@ public:
 
 	const RefArray< CharacterAdapter >& getAdapters() const;
 
+	RefArray< CharacterAdapter > getSelectedAdapters() const;
+
 private:
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< CharacterAdapter > m_root;

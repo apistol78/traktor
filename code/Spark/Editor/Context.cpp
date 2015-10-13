@@ -65,5 +65,16 @@ const RefArray< CharacterAdapter >& Context::getAdapters() const
 	return m_adapters;
 }
 
+RefArray< CharacterAdapter > Context::getSelectedAdapters() const
+{
+	RefArray< CharacterAdapter > selectedAdapters;
+	for (RefArray< CharacterAdapter >::const_iterator i = m_adapters.begin(); i != m_adapters.end(); ++i)
+	{
+		if ((*i)->isSelected())
+			selectedAdapters.push_back(*i);
+	}
+	return selectedAdapters;
+}
+
 	}
 }
