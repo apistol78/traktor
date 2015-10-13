@@ -24,12 +24,12 @@ bool Context::setSprite(Sprite* sprite)
 	m_root = 0;
 	m_adapters.clear();
 
-	CharacterAdapterBuilder characterBuilder(m_root, m_adapters);
-	characterBuilder.addFactory(new ExternalFactory(m_resourceManager));
-	characterBuilder.addFactory(new SpriteFactory(m_resourceManager, 0, false));
-	characterBuilder.addFactory(new TextFactory(m_resourceManager));
+	Ref< CharacterAdapterBuilder > characterBuilder = new CharacterAdapterBuilder(m_root, m_adapters);
+	characterBuilder->addFactory(new ExternalFactory(m_resourceManager));
+	characterBuilder->addFactory(new SpriteFactory(m_resourceManager, 0, false));
+	characterBuilder->addFactory(new TextFactory(m_resourceManager));
 
-	if (characterBuilder.create(sprite, 0, L"<< Root >>") == 0)
+	if (characterBuilder->create(sprite, 0, L"<< Root >>") == 0)
 		return false;
 
 	return true;

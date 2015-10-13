@@ -75,7 +75,6 @@ bool SparkEditorPage::create(ui::Container* parent)
 
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(container, ui::WsNone);
-
 	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &SparkEditorPage::eventToolClick);
 
 	m_editControl = new SparkEditControl(m_editor, m_site, m_context);
@@ -83,14 +82,19 @@ bool SparkEditorPage::create(ui::Container* parent)
 	m_editControl->update();
 
 	m_panelPlace = new ui::Container();
-	m_panelPlace->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0, 0));
+	m_panelPlace->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
 	m_panelPlace->setText(i18n::Text(L"SPARK_EDITOR_CHILDREN"));
+
+	m_toolBarPlace = new ui::custom::ToolBar();
+	m_toolBarPlace->create(m_panelPlace, ui::WsNone);
+	m_toolBarPlace->addItem(new ui::custom::ToolBarButton(L"Move Up", ui::Command(L"Spark.Editor.MoveUp"))); 
+	m_toolBarPlace->addItem(new ui::custom::ToolBarButton(L"Move Down", ui::Command(L"Spark.Editor.MoveDown")));
+	m_toolBarPlace->addItem(new ui::custom::ToolBarButton(L"Remove", ui::Command(L"Spark.Editor.Remove")));
+	m_toolBarPlace->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &SparkEditorPage::eventToolPlaceClick);
 
 	m_gridPlace = new ui::custom::GridView();
 	m_gridPlace->create(m_panelPlace, ui::WsDoubleBuffer);
 	m_gridPlace->addColumn(new ui::custom::GridColumn(i18n::Text(L"SPARK_EDITOR_PLACE_ITEM_NAME"), 200));
-	m_gridPlace->addColumn(new ui::custom::GridColumn(L"", 30));
-	m_gridPlace->addColumn(new ui::custom::GridColumn(L"", 30));
 	m_gridPlace->addEventHandler< ui::SelectionChangeEvent >(this, &SparkEditorPage::eventGridAdapterSelectionChange);
 
 	m_site->createAdditionalPanel(m_panelPlace, ui::scaleBySystemDPI(300), false);
@@ -142,8 +146,9 @@ bool SparkEditorPage::handleCommand(const ui::Command& command)
 {
 	if (command == L"Editor.PropertiesChanged")
 	{
-		//m_spriteInstance = m_sprite ? checked_type_cast< SpriteInstance* >(m_characterBuilder->create(m_sprite, 0)) : 0;
-		//m_editControl->setSprite(m_sprite, m_spriteInstance);
+		// Reset sprite in context, need to re-build grid to have row data pointing to new adapters.
+		m_context->setSprite(m_document->getObject< Sprite >(0));
+		updateAdaptersGrid();
 	}
 	else
 		return false;
@@ -164,7 +169,6 @@ void SparkEditorPage::updateAdaptersGrid(ui::custom::GridRow* parentRow, Charact
 	{
 		Ref< ui::custom::GridRow > row = new ui::custom::GridRow(0);
 		row->add(new ui::custom::GridItem(!(*i)->getName().empty() ? (*i)->getName() : L"Unnamed"));
-		row->add(new ui::custom::GridItem(type_name((*i)->getCharacter())));
 		row->setData(L"ADAPTER", *i);
 
 		if (!(*i)->getChildren().empty())
@@ -186,6 +190,35 @@ void SparkEditorPage::updateAdaptersGrid()
 
 void SparkEditorPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* event)
 {
+}
+
+void SparkEditorPage::eventToolPlaceClick(ui::custom::ToolBarButtonClickEvent* event)
+{
+	if (event->getCommand() == L"Spark.Editor.MoveUp")
+	{
+	}
+	else if (event->getCommand() == L"Spark.Editor.MoveDown")
+	{
+	}
+	else if (event->getCommand() == L"Spark.Editor.Remove")
+	{
+		// Remove all selected characters from their parents.
+		RefArray< ui::custom::GridRow > selectedRows;
+		m_gridPlace->getRows(selectedRows, ui::custom::GridView::GfDescendants | ui::custom::GridView::GfSelectedOnly);
+		for (RefArray< ui::custom::GridRow >::const_iterator i = selectedRows.begin(); i != selectedRows.end(); ++i)
+		{
+			Ref< CharacterAdapter > adapter = (*i)->getData< CharacterAdapter >(L"ADAPTER");
+			T_FATAL_ASSERT (adapter);
+			adapter->unlink();
+		}
+
+		// Reset sprite in context, need to re-build grid to have row data pointing to new adapters.
+		m_context->setSprite(m_document->getObject< Sprite >(0));
+		updateAdaptersGrid();
+
+		// Ensure property object is set to document root.
+		m_site->setPropertyObject(m_document->getObject< Sprite >(0));
+	}
 }
 
 void SparkEditorPage::eventGridAdapterSelectionChange(ui::SelectionChangeEvent* event)

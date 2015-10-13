@@ -43,6 +43,8 @@ public:
 
 	void place(const std::wstring& name, Character* character);
 
+	void remove(Character* character);
+
 	const AlignedVector< NamedCharacter >& getDictionary() { return m_dictionary; }
 
 	const AlignedVector< NamedCharacter >& getFrame() const { return m_frame; }
