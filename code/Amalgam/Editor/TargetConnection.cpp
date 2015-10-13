@@ -91,10 +91,7 @@ bool TargetConnection::update()
 	{
 		Ref< ScriptDebuggerHalted > debugger;
 		while (m_transport->recv< ScriptDebuggerHalted >(0, debugger) == net::BidirectionalObjectTransport::RtSuccess)
-		{
-			const script::CallStack& cs = debugger->getCallStack();
-			m_targetDebugger->notifyListeners(cs);
-		}
+			m_targetDebugger->notifyListeners();
 	}
 
 	{

@@ -1,6 +1,7 @@
 #include "Amalgam/ScriptDebuggerBreakpoint.h"
 #include "Amalgam/ScriptDebuggerControl.h"
 #include "Amalgam/ScriptDebuggerHalted.h"
+#include "Amalgam/ScriptDebuggerStackFrame.h"
 #include "Amalgam/ScriptProfilerCallMeasured.h"
 #include "Amalgam/Game/IEnvironment.h"
 #include "Amalgam/Game/Impl/ScriptServer.h"
@@ -17,6 +18,7 @@
 #include "Script/IScriptManager.h"
 #include "Script/ScriptClassFactory.h"
 #include "Script/ScriptModuleFactory.h"
+#include "Script/StackFrame.h"
 
 namespace traktor
 {
@@ -199,6 +201,14 @@ void ScriptServer::threadDebugger()
 				case ScriptDebuggerControl::AcStepOver:
 					m_scriptDebugger->actionStepOver();
 					break;
+
+				case ScriptDebuggerControl::AcCapture:
+					{
+						Ref< script::StackFrame > sf = m_scriptDebugger->captureStackFrame(control->getParam());
+						ScriptDebuggerStackFrame capturedFrame(sf);
+						m_transport->send(&capturedFrame);
+					}
+					break;
 				}
 			}
 		}
@@ -208,9 +218,9 @@ void ScriptServer::threadDebugger()
 		m_scriptDebugger->actionContinue();
 }
 
-void ScriptServer::breakpointReached(script::IScriptDebugger* scriptDebugger, const script::CallStack& callStack)
+void ScriptServer::breakpointReached(script::IScriptDebugger* scriptDebugger)
 {
-	ScriptDebuggerHalted halted(callStack);
+	ScriptDebuggerHalted halted;
 	m_transport->send(&halted);
 }
 

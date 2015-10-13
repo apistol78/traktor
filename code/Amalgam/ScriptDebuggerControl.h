@@ -29,19 +29,25 @@ public:
 		AcBreak,
 		AcContinue,
 		AcStepInto,
-		AcStepOver
+		AcStepOver,
+		AcCapture
 	};
 
 	ScriptDebuggerControl();
 
 	ScriptDebuggerControl(Action action);
 
+	ScriptDebuggerControl(Action action, uint32_t param);
+
 	Action getAction() const { return m_action; }
+
+	uint32_t getParam() const { return m_param; }
 
 	virtual void serialize(ISerializer& s);
 
 private:
 	Action m_action;
+	uint32_t m_param;
 };
 
 	}

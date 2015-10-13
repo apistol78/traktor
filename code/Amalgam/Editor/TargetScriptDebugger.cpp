@@ -1,10 +1,9 @@
 #include "Amalgam/ScriptDebuggerBreakpoint.h"
 #include "Amalgam/ScriptDebuggerControl.h"
+#include "Amalgam/ScriptDebuggerStackFrame.h"
 #include "Amalgam/Editor/TargetConnection.h"
 #include "Amalgam/Editor/TargetScriptDebugger.h"
-#include "Core/Guid.h"
 #include "Net/BidirectionalObjectTransport.h"
-#include "Script/CallStack.h"
 
 namespace traktor
 {
@@ -21,15 +20,26 @@ TargetScriptDebugger::TargetScriptDebugger(net::BidirectionalObjectTransport* tr
 bool TargetScriptDebugger::setBreakpoint(const Guid& scriptId, int32_t lineNumber)
 {
 	ScriptDebuggerBreakpoint bp(true, scriptId, lineNumber);
-	m_transport->send(&bp);
-	return true;
+	return m_transport->send(&bp);
 }
 
 bool TargetScriptDebugger::removeBreakpoint(const Guid& scriptId, int32_t lineNumber)
 {
 	ScriptDebuggerBreakpoint bp(false, scriptId, lineNumber);
-	m_transport->send(&bp);
-	return true;
+	return m_transport->send(&bp);
+}
+
+Ref< script::StackFrame > TargetScriptDebugger::captureStackFrame(uint32_t depth)
+{
+	ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcCapture, depth);
+	if (!m_transport->send(&ctrl))
+		return 0;
+
+	Ref< ScriptDebuggerStackFrame > sf;
+	if (m_transport->recv< ScriptDebuggerStackFrame >(1000, sf) != net::BidirectionalObjectTransport::RtSuccess)
+		return 0;
+
+	return sf->getFrame();
 }
 
 bool TargetScriptDebugger::isRunning() const
@@ -40,40 +50,30 @@ bool TargetScriptDebugger::isRunning() const
 bool TargetScriptDebugger::actionBreak()
 {
 	ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcBreak);
-	m_transport->send(&ctrl);
-	m_currentCallStack = 0;
-	return true;
+	return m_transport->send(&ctrl);
 }
 
 bool TargetScriptDebugger::actionContinue()
 {
 	ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcContinue);
-	m_transport->send(&ctrl);
-	m_currentCallStack = 0;
-	return true;
+	return m_transport->send(&ctrl);
 }
 
 bool TargetScriptDebugger::actionStepInto()
 {
 	ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcStepInto);
-	m_transport->send(&ctrl);
-	m_currentCallStack = 0;
-	return true;
+	return m_transport->send(&ctrl);
 }
 
 bool TargetScriptDebugger::actionStepOver()
 {
 	ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcStepOver);
-	m_transport->send(&ctrl);
-	m_currentCallStack = 0;
-	return true;
+	return m_transport->send(&ctrl);
 }
 
 void TargetScriptDebugger::addListener(IListener* listener)
 {
 	m_listeners.push_back(listener);
-	if (m_currentCallStack)
-		listener->breakpointReached(this, *m_currentCallStack);
 }
 
 void TargetScriptDebugger::removeListener(IListener* listener)
@@ -81,11 +81,10 @@ void TargetScriptDebugger::removeListener(IListener* listener)
 	m_listeners.remove(listener);
 }
 
-void TargetScriptDebugger::notifyListeners(const script::CallStack& callStack)
+void TargetScriptDebugger::notifyListeners()
 {
-	m_currentCallStack = new script::CallStack(callStack);
 	for (std::list< IListener* >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
-		(*i)->breakpointReached(this, *m_currentCallStack);
+		(*i)->breakpointReached(this);
 }
 
 	}

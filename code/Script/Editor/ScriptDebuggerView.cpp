@@ -6,9 +6,9 @@
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPage.h"
 #include "I18N/Text.h"
-#include "Script/CallStack.h"
 #include "Script/LocalComposite.h"
 #include "Script/LocalSimple.h"
+#include "Script/StackFrame.h"
 #include "Script/Editor/ScriptBreakpointEvent.h"
 #include "Script/Editor/ScriptDebuggerView.h"
 #include "Ui/Application.h"
@@ -139,43 +139,53 @@ Ref< ui::custom::GridRow > ScriptDebuggerView::createVariableRow(const script::L
 
 void ScriptDebuggerView::updateLocals(int32_t depth)
 {
-	const std::list< script::CallStack::Frame >& frames = m_callStack.getFrames();
-
 	m_localsGrid->setEnable(true);
 	m_localsGrid->removeAllRows();
 
-	std::list< script::CallStack::Frame >::const_iterator i = frames.begin();
-	std::advance(i, depth);
-
-	for (RefArray< script::Local >::const_iterator j = i->locals.begin(); j != i->locals.end(); ++j)
+	if (depth >= 0 && depth < m_stackFrames.size())
 	{
-		Ref< ui::custom::GridRow > row = createVariableRow(*j);
-		if (row)
-			m_localsGrid->addRow(row);
+		const StackFrame* sf = m_stackFrames[depth];
+		const RefArray< Local >& locals = sf->getLocals();
+
+		for (RefArray< script::Local >::const_iterator j = locals.begin(); j != locals.end(); ++j)
+		{
+			Ref< ui::custom::GridRow > row = createVariableRow(*j);
+			if (row)
+				m_localsGrid->addRow(row);
+		}
 	}
+
+	m_localsGrid->update();
 }
 
-void ScriptDebuggerView::breakpointReached(IScriptDebugger* scriptDebugger, const CallStack& callStack)
+void ScriptDebuggerView::breakpointReached(IScriptDebugger* scriptDebugger)
 {
-	m_callStack = callStack;
+	m_stackFrames.resize(0);
+	for (uint32_t depth = 0; ; ++depth)
+	{
+		Ref< StackFrame > sf = scriptDebugger->captureStackFrame(depth);
+		if (!sf)
+			break;
+
+		m_stackFrames.push_back(sf);
+	}
 
 	m_callStackGrid->setEnable(true);
 	m_callStackGrid->removeAllRows();
 
 	int32_t depth = 0;
 
-	const std::list< script::CallStack::Frame >& frames = m_callStack.getFrames();
-	for (std::list< script::CallStack::Frame >::const_iterator i = frames.begin(); i != frames.end(); ++i)
+	for (RefArray< StackFrame >::const_iterator i = m_stackFrames.begin(); i != m_stackFrames.end(); ++i)
 	{
-		Ref< db::Instance > scriptInstance = m_editor->getSourceDatabase()->getInstance(i->scriptId);
+		Ref< db::Instance > scriptInstance = m_editor->getSourceDatabase()->getInstance((*i)->getScriptId());
 
 		Ref< ui::custom::GridRow > row = new ui::custom::GridRow(0);
 
-		row->add(new ui::custom::GridItem(i->functionName));
-		row->add(new ui::custom::GridItem(toString(i->line + 1)));
+		row->add(new ui::custom::GridItem((*i)->getFunctionName()));
+		row->add(new ui::custom::GridItem(toString((*i)->getLine() + 1)));
 		row->add(new ui::custom::GridItem(scriptInstance ? scriptInstance->getName() : L"(Unknown script)"));
-		row->setData(L"SCRIPT_ID", new PropertyString(i->scriptId.format()));
-		row->setData(L"SCRIPT_LINE", new PropertyInteger(i->line));
+		row->setData(L"SCRIPT_ID", new PropertyString((*i)->getScriptId().format()));
+		row->setData(L"SCRIPT_LINE", new PropertyInteger((*i)->getLine()));
 		row->setData(L"FRAME_DEPTH", new PropertyInteger(depth++));
 
 		m_callStackGrid->addRow(row);
@@ -183,7 +193,8 @@ void ScriptDebuggerView::breakpointReached(IScriptDebugger* scriptDebugger, cons
 
 	updateLocals(0);
 
-	ScriptBreakpointEvent eventBreakPoint(this, &callStack);
+	// Issue event to notify script editor about breakpoint in this view.
+	ScriptBreakpointEvent eventBreakPoint(this, !m_stackFrames.empty() ? m_stackFrames.front() : 0);
 	raiseEvent(&eventBreakPoint);
 }
 
