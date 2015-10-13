@@ -54,7 +54,7 @@ void TrailInstance::update(Context& context, const Transform& transform, bool en
 			m_boundingBox.contain(position);
 		}
 
-		if (m_breakThreshold > FUZZY_EPSILON)
+		if (m_breakThreshold > FUZZY_EPSILON && m_lengthThreshold > FUZZY_EPSILON)	// Breakable
 		{
 			Scalar ln = (position - m_last).length2();
 			if (ln >= m_lengthThreshold * m_lengthThreshold)
@@ -69,32 +69,42 @@ void TrailInstance::update(Context& context, const Transform& transform, bool en
 			}
 			else
 				m_points.back() = position.xyz0() + m_time;
-
-			m_time += Vector4(0.0f, 0.0f, 0.0f, context.deltaTime);
 		}
-		else
+		else if (m_lengthThreshold > FUZZY_EPSILON)	// Segmented by distance
 		{
 			Vector4 direction = (position - m_last).xyz0();
 			Scalar ln = direction.length();
 
-			Vector4 step = direction * Scalar(m_lengthThreshold) / ln;
-
 			int32_t nsteps = int32_t(ln / m_lengthThreshold);
-			for (int32_t i = 0; i < nsteps; ++i)
+			if (nsteps > 0)
 			{
-				m_last += step; 
+				Vector4 step = direction * Scalar(m_lengthThreshold) / ln;
+				for (int32_t i = 0; i < nsteps; ++i)
+				{
+					m_last += step; 
 
-				m_points.push_back(m_last.xyz0() + m_time - Vector4(0.0f, 0.0f, 0.0f, context.deltaTime * float(nsteps - i - 1) / nsteps));
-				m_boundingBox.contain(m_last);
+					m_points.push_back(m_last.xyz0() + m_time - Vector4(0.0f, 0.0f, 0.0f, context.deltaTime * float(nsteps - i - 1) / nsteps));
+					m_boundingBox.contain(m_last);
 
-				ln -= Scalar(m_lengthThreshold);
+					ln -= Scalar(m_lengthThreshold);
+				}
 			}
 
 			if (ln > FUZZY_EPSILON)
 				m_points.back() = position.xyz0() + m_time;
-
-			m_time += Vector4(0.0f, 0.0f, 0.0f, context.deltaTime);
 		}
+		else // Always add points.
+		{
+			Vector4 direction = (position - m_last).xyz0();
+			Scalar ln = direction.length();
+
+			if (ln > FUZZY_EPSILON)
+				m_points.push_back(position.xyz0() + m_time);
+
+			m_last = position;
+		}
+
+		m_time += Vector4(0.0f, 0.0f, 0.0f, context.deltaTime);
 	}
 	else
 		m_time += Vector4(0.0f, 0.0f, 0.0f, context.deltaTime);
