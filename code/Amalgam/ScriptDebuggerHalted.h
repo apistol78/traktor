@@ -2,7 +2,6 @@
 #define traktor_amalgam_ScriptDebuggerHalted_H
 
 #include "Core/Serialization/ISerializable.h"
-#include "Script/CallStack.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -25,16 +24,7 @@ class T_DLLCLASS ScriptDebuggerHalted : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	ScriptDebuggerHalted();
-
-	ScriptDebuggerHalted(const script::CallStack& callStack);
-
-	const script::CallStack& getCallStack() const { return m_callStack; }
-
 	virtual void serialize(ISerializer& s);
-
-private:
-	script::CallStack m_callStack;
 };
 
 	}

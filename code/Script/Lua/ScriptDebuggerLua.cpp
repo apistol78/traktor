@@ -11,9 +11,9 @@
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
-#include "Script/CallStack.h"
 #include "Script/LocalComposite.h"
 #include "Script/LocalSimple.h"
+#include "Script/StackFrame.h"
 #include "Script/Lua/ScriptContextLua.h"
 #include "Script/Lua/ScriptDebuggerLua.h"
 #include "Script/Lua/ScriptManagerLua.h"
@@ -257,6 +257,42 @@ void ScriptDebuggerLua::removeListener(IListener* listener)
 		m_state = StRunning;
 }
 
+Ref< StackFrame > ScriptDebuggerLua::captureStackFrame(uint32_t depth)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+	ScriptContextLua* currentContext = m_scriptManager->m_lockContext;
+	if (!currentContext)
+		return 0;
+
+	lua_Debug ar;
+	std::memset(&ar, 0, sizeof(ar));
+
+	if (!lua_getstack(currentContext->m_luaState, depth, &ar))
+		return 0;
+
+	lua_getinfo(currentContext->m_luaState, "Snlu", &ar);
+
+	Ref< StackFrame > sf = new StackFrame();
+	sf->setScriptId(Guid(mbstows(ar.source)));
+	sf->setFunctionName(ar.name ? mbstows(ar.name) : L"(anonymous)");
+	sf->setLine(max(ar.currentline - 1, 0));
+
+	const char* localName;
+	for (int n = 1; (localName = lua_getlocal(currentContext->m_luaState, &ar, n)) != 0; ++n)
+	{
+		if (*localName != '(')
+		{
+			Ref< Local > local = describeLocal(mbstows(localName), currentContext->m_luaState, -1, 0);
+			if (local)
+				sf->addLocal(local);
+		}
+		lua_pop(currentContext->m_luaState, 1);
+	}
+
+	return sf;
+}
+
 bool ScriptDebuggerLua::isRunning() const
 {
 	return m_state == StRunning;
@@ -309,14 +345,11 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 				// If identifier also match then we halt and trigger "breakpoint reached".
 				if (i->second.find(currentId) != i->second.end())
 				{
-					CallStack cs;
-					captureCallStack(L, cs);
-
 					m_state = StHalted;
 					m_lastId = currentId;
 
 					for (std::set< IListener* >::const_iterator j = m_listeners.begin(); j != m_listeners.end(); ++j)
-						(*j)->breakpointReached(this, cs);
+						(*j)->breakpointReached(this);
 				}
 
 			}
@@ -331,14 +364,10 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 		lua_getinfo(L, "S", ar);
 		if (currentId.create(mbstows(ar->source)))
 		{
-			CallStack cs;
-			captureCallStack(L, cs);
-
 			m_state = StHalted;
 			m_lastId = currentId;
-
 			for (std::set< IListener* >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
-				(*i)->breakpointReached(this, cs);
+				(*i)->breakpointReached(this);
 		}
 	}
 	else if (m_state == StStepInto)
@@ -350,14 +379,10 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 		lua_getinfo(L, "S", ar);
 		if (currentId.create(mbstows(ar->source)))
 		{
-			CallStack cs;
-			captureCallStack(L, cs);
-
 			m_state = StHalted;
 			m_lastId = currentId;
-
 			for (std::set< IListener* >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
-				(*i)->breakpointReached(this, cs);
+				(*i)->breakpointReached(this);
 		}
 	}
 	else if (m_state == StStepOver)
@@ -371,13 +396,10 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 		{
 			if (currentId == m_lastId)
 			{
-				CallStack cs;
-				captureCallStack(L, cs);
-
 				m_state = StHalted;
-
+				m_lastId = currentId;
 				for (std::set< IListener* >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
-					(*i)->breakpointReached(this, cs);
+					(*i)->breakpointReached(this);
 			}
 		}
 	}
@@ -390,37 +412,6 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 			currentThread->sleep(100);
 		}
 		while (m_state == StHalted && !currentThread->stopped());
-	}
-}
-
-void ScriptDebuggerLua::captureCallStack(lua_State* L, CallStack& outCallStack)
-{
-	lua_Debug ar;
-	std::memset(&ar, 0, sizeof(ar));
-
-	for (int level = 0; lua_getstack(L, level, &ar); ++level)
-	{
-		lua_getinfo(L, "Snlu", &ar);
-
-		CallStack::Frame f;
-		f.scriptId = Guid(mbstows(ar.source));
-		f.functionName = ar.name ? mbstows(ar.name) : L"(anonymous)";
-		f.line = max(ar.currentline - 1, 0);
-
-		const char* localName;
-		for (int n = 1; (localName = lua_getlocal(L, &ar, n)) != 0; ++n)
-		{
-			if (*localName != '(')
-			{
-				Ref< Local > local = describeLocal(mbstows(localName), L, -1, 0);
-				if (local)
-					f.locals.push_back(local);
-			}
-			lua_pop(L, 1);
-		}
-
-		outCallStack.pushFrame(f);
-		std::memset(&ar, 0, sizeof(ar));
 	}
 }
 

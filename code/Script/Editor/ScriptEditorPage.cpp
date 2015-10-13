@@ -14,8 +14,8 @@
 #include "Editor/TypeBrowseFilter.h"
 #include "I18N/Format.h"
 #include "I18N/Text.h"
-#include "Script/CallStack.h"
 #include "Script/IScriptProfiler.h"
+#include "Script/StackFrame.h"
 #include "Script/Editor/IScriptOutline.h"
 #include "Script/Editor/Preprocessor.h"
 #include "Script/Editor/Script.h"
@@ -767,15 +767,16 @@ void ScriptEditorPage::eventTimer(ui::TimerEvent* event)
 
 void ScriptEditorPage::eventBreakPoint(ScriptBreakpointEvent* event)
 {
-	const CallStack* callStack = event->getCallStack();
-	const CallStack::Frame& currentFrame = callStack->getCurrentFrame();
+	if (!event->getCurrentFrame())
+		return;
 
-	Guid instanceGuid = m_document->getInstance(0)->getGuid();
+	Guid editScriptId = m_document->getInstance(0)->getGuid();
+	Guid breakScriptId = event->getCurrentFrame()->getScriptId();
 
-	if (currentFrame.scriptId == instanceGuid)
+	if (editScriptId == breakScriptId)
 	{
-		m_edit->showLine(currentFrame.line);
-		m_edit->placeCaret(m_edit->getLineOffset(currentFrame.line));
+		m_edit->showLine(event->getCurrentFrame()->getLine());
+		m_edit->placeCaret(m_edit->getLineOffset(event->getCurrentFrame()->getLine()));
 	}
 }
 

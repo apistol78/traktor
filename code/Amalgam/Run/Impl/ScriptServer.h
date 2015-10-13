@@ -81,7 +81,7 @@ private:
 
 	void threadDebugger();
 
-	virtual void breakpointReached(script::IScriptDebugger* scriptDebugger, const script::CallStack& callStack);
+	virtual void breakpointReached(script::IScriptDebugger* scriptDebugger);
 
 	virtual void callMeasured(const Guid& scriptId, const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration);
 };

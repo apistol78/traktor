@@ -32,6 +32,8 @@ public:
 
 	virtual bool removeBreakpoint(const Guid& scriptId, int32_t lineNumber) T_OVERRIDE T_FINAL;
 
+	virtual Ref< StackFrame > captureStackFrame(uint32_t depth) T_OVERRIDE T_FINAL;
+
 	virtual bool isRunning() const T_OVERRIDE T_FINAL;
 
 	virtual bool actionBreak() T_OVERRIDE T_FINAL;
@@ -67,8 +69,6 @@ private:
 	State m_state;
 
 	void analyzeState(lua_State* L, lua_Debug* ar);
-
-	void captureCallStack(lua_State* L, CallStack& outCallStack);
 
 	void hookCallback(lua_State* L, lua_Debug* ar);
 };

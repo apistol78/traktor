@@ -8,19 +8,19 @@ namespace traktor
 	namespace script
 	{
 
-class CallStack;
+class StackFrame;
 
 class ScriptBreakpointEvent : public ui::Event
 {
 	T_RTTI_CLASS;
 
 public:
-	ScriptBreakpointEvent(ui::EventSubject* sender, const CallStack* callStack);
+	ScriptBreakpointEvent(ui::EventSubject* sender, const StackFrame* currentFrame);
 
-	const CallStack* getCallStack() const;
+	const StackFrame* getCurrentFrame() const { return m_currentFrame; }
 
 private:
-	Ref< const CallStack > m_callStack;
+	Ref< const StackFrame > m_currentFrame;
 };
 
 	}

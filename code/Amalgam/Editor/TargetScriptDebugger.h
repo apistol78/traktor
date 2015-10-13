@@ -26,30 +26,31 @@ class TargetScriptDebugger : public script::IScriptDebugger
 public:
 	TargetScriptDebugger(net::BidirectionalObjectTransport* transport);
 
-	virtual bool setBreakpoint(const Guid& scriptId, int32_t lineNumber);
+	virtual bool setBreakpoint(const Guid& scriptId, int32_t lineNumber) T_OVERRIDE T_FINAL;
 
-	virtual bool removeBreakpoint(const Guid& scriptId, int32_t lineNumber);
+	virtual bool removeBreakpoint(const Guid& scriptId, int32_t lineNumber) T_OVERRIDE T_FINAL;
 
-	virtual bool isRunning() const;
+	virtual Ref< script::StackFrame > captureStackFrame(uint32_t depth) T_OVERRIDE T_FINAL;
 
-	virtual bool actionBreak();
+	virtual bool isRunning() const T_OVERRIDE T_FINAL;
 
-	virtual bool actionContinue();
+	virtual bool actionBreak() T_OVERRIDE T_FINAL;
 
-	virtual bool actionStepInto();
+	virtual bool actionContinue() T_OVERRIDE T_FINAL;
 
-	virtual bool actionStepOver();
+	virtual bool actionStepInto() T_OVERRIDE T_FINAL;
 
-	virtual void addListener(IListener* listener);
+	virtual bool actionStepOver() T_OVERRIDE T_FINAL;
 
-	virtual void removeListener(IListener* listener);
+	virtual void addListener(IListener* listener) T_OVERRIDE T_FINAL;
 
-	void notifyListeners(const script::CallStack& callStack);
+	virtual void removeListener(IListener* listener) T_OVERRIDE T_FINAL;
+
+	void notifyListeners();
 
 private:
 	Ref< net::BidirectionalObjectTransport > m_transport;
 	std::list< IListener* > m_listeners;
-	Ref< script::CallStack > m_currentCallStack;
 };
 
 	}

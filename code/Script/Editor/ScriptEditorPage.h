@@ -107,7 +107,6 @@ private:
 	std::wstring m_replaceValue;
 	int32_t m_compileCountDown;
 
-
 	/*! \name IErrorCallback */
 	/*! \{ */
 

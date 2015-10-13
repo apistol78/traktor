@@ -57,7 +57,7 @@ private:
 	Ref< ui::custom::ToolBar > m_debuggerTools;
 	Ref< ui::custom::GridView > m_callStackGrid;
 	Ref< ui::custom::GridView > m_localsGrid;
-	CallStack m_callStack;
+	RefArray< StackFrame > m_stackFrames;
 	int32_t m_activeFrame;
 
 	Ref< ui::custom::GridRow > createVariableRow(const script::Local* local);
@@ -67,7 +67,7 @@ private:
 	/*! \name IScriptDebugger::IListener */
 	/*! \{ */
 
-	virtual void breakpointReached(IScriptDebugger* scriptDebugger, const CallStack& callStack);
+	virtual void breakpointReached(IScriptDebugger* scriptDebugger);
 
 	/*! \} */
 
