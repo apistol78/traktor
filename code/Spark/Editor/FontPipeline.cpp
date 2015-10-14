@@ -66,7 +66,7 @@ bool FontPipeline::buildDependencies(
 {
 	const FontAsset* fontAsset = mandatory_non_null_type_cast< const FontAsset* >(sourceAsset);
 	pipelineDepends->addDependency(Path(m_assetPath), fontAsset->getFileName().getOriginal());
-	pipelineDepends->addDependency(fontAsset->m_shader, editor::PdfBuild | editor::PdfResource);
+	pipelineDepends->addDependency(Guid(L"{0B7B3724-0AC1-2C45-BD37-D809BEEBA2BC}"), editor::PdfBuild | editor::PdfResource);
 	return true;
 }
 
@@ -352,7 +352,7 @@ bool FontPipeline::buildOutput(
 	}
 
 	fontResource->m_texture = resource::Id< render::ISimpleTexture >(fontTextureOutputGuid);
-	fontResource->m_shader = fontAsset->m_shader;
+	fontResource->m_shader = resource::Id< render::Shader >(Guid(L"{0B7B3724-0AC1-2C45-BD37-D809BEEBA2BC}"));
 
 	// Create output instance.
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(

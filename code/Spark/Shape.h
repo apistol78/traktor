@@ -4,6 +4,7 @@
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Aabb2.h"
+#include "Core/Math/Color4f.h"
 #include "Resource/Proxy.h"
 
 // import/export mechanism.
@@ -22,6 +23,7 @@ class Matrix33;
 	namespace render
 	{
 
+class ITexture;
 class Mesh;
 class RenderContext;
 class Shader;
@@ -43,11 +45,14 @@ class T_DLLCLASS Shape : public Object
 public:
 	struct Part
 	{
-		resource::Proxy< render::Shader > shader;
+		resource::Proxy< render::ITexture > texture;
+		Color4f fillColor;
+		int8_t curveSign;
 	};
 
 	Shape(
 		render::Mesh* mesh,
+		const resource::Proxy< render::Shader >& shader,
 		const AlignedVector< Part >& parts,
 		const Aabb2& bounds
 	);
@@ -58,6 +63,7 @@ public:
 
 private:
 	Ref< render::Mesh > m_mesh;
+	mutable resource::Proxy< render::Shader > m_shader;
 	AlignedVector< Part > m_parts;
 	Aabb2 m_bounds;
 };

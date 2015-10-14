@@ -11,9 +11,7 @@
 #include "Render/Mesh/Mesh.h"
 #include "Render/Mesh/MeshWriter.h"
 #include "Render/Mesh/SystemMeshFactory.h"
-#include "Render/Shader/ShaderGraph.h"
 #include "Spark/ShapeResource.h"
-#include "Spark/Editor/ShapeShaderGenerator.h"
 #include "Spark/Editor/ImageShapeAsset.h"
 #include "Spark/Editor/ImageShapePipeline.h"
 
@@ -67,7 +65,7 @@ bool ImageShapePipeline::buildDependencies(
 {
 	const ImageShapeAsset* shapeAsset = checked_type_cast< const ImageShapeAsset* >(sourceAsset);
 	pipelineDepends->addDependency(traktor::Path(m_assetPath), shapeAsset->getFileName().getOriginal());
-	ShapeShaderGenerator().addDependencies(pipelineDepends);
+	pipelineDepends->addDependency(Guid(L"{E411A034-2FDA-4B44-A378-700D1CB8B6E4}"), editor::PdfBuild | editor::PdfResource);
 	return true;
 }
 
@@ -146,25 +144,11 @@ bool ImageShapePipeline::buildOutput(
 	float w = float(image->getWidth());
 	float h = float(image->getHeight());
 
-	// Generate shader.
-	ShapeShaderGenerator shaderGenerator;
-	Ref< render::ShaderGraph > shader = shaderGenerator.generate(pipelineBuilder->getSourceDatabase(), imageOutputGuid);
-
-	// Build style shader.
-	Guid shaderOutputGuid = outputGuid.permutate(2);
-	std::wstring shaderOutputPath = traktor::Path(outputPath).getPathOnly() + L"/" + outputGuid.format() + L"/" + shaderOutputGuid.format();
-	if (!pipelineBuilder->buildOutput(
-		shader,
-		shaderOutputPath,
-		shaderOutputGuid
-	))
-	{
-		log::error << L"Image shape pipeline failed; unable to build shader" << Endl;
-		return false;
-	}
-
 	// Create shape output resource.
 	Ref< ShapeResource > outputShapeResource = new ShapeResource();
+
+	// Set shader resource.
+	outputShapeResource->m_shader = resource::Id< render::Shader >(Guid(L"{E411A034-2FDA-4B44-A378-700D1CB8B6E4}"));
 
 	// Create output instance.
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(
@@ -241,7 +225,9 @@ bool ImageShapePipeline::buildOutput(
 
 	// Setup shape part.
 	ShapeResource::Part shapePart;
-	shapePart.shader = resource::Id< render::Shader >(shaderOutputGuid);
+	shapePart.texture = resource::Id< render::ITexture >(imageOutputGuid);
+	shapePart.fillColor = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
+	shapePart.curveSign = 0;
 	outputShapeResource->m_parts.push_back(shapePart);
 
 	renderMesh->setParts(meshParts);

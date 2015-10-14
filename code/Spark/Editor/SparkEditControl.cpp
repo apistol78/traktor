@@ -178,7 +178,7 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 			const Aabb2& bounds = mandatory_non_null_type_cast< const Sprite* >(m_context->getRoot()->getCharacter())->getBounds();
 			if (!bounds.empty())
 			{
-				for (int32_t x = int32_t(bounds.mn.x); x < int32_t(bounds.mx.x); x += 40)
+				for (int32_t x = int32_t(bounds.mn.x); x < int32_t(bounds.mx.x); x += m_context->getGridSpacing())
 				{
 					m_primitiveRenderer->drawLine(
 						Vector4(x, bounds.mn.y, 1.0f, 1.0f),
@@ -186,7 +186,7 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 						Color4ub(0, 0, 0, 40)
 					);
 				}
-				for (int32_t y = int32_t(bounds.mn.y); y < int32_t(bounds.mx.y); y += 40)
+				for (int32_t y = int32_t(bounds.mn.y); y < int32_t(bounds.mx.y); y += m_context->getGridSpacing())
 				{
 					m_primitiveRenderer->drawLine(
 						Vector4(bounds.mn.x, y, 1.0f, 1.0f),
@@ -206,7 +206,7 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 					Vector2(m_viewOffset.x / 2.0f - viewWidth / 2.0f, m_viewOffset.y / 2.0f - viewHeight / 2.0f),
 					Vector2(m_viewOffset.x / 2.0f + viewWidth / 2.0f, m_viewOffset.y / 2.0f + viewHeight / 2.0f)
 				);
-				for (int32_t x = viewGridOffset(int32_t(viewBounds.mn.x), 40); x < int32_t(viewBounds.mx.x); x += 40)
+				for (int32_t x = viewGridOffset(int32_t(viewBounds.mn.x), m_context->getGridSpacing()); x < int32_t(viewBounds.mx.x); x += m_context->getGridSpacing())
 				{
 					m_primitiveRenderer->drawLine(
 						Vector4(x, viewBounds.mn.y, 1.0f, 1.0f),
@@ -214,7 +214,7 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 						Color4ub(0, 0, 0, 40)
 					);
 				}
-				for (int32_t y = viewGridOffset(int32_t(viewBounds.mn.y), 40); y < int32_t(viewBounds.mx.y); y += 40)
+				for (int32_t y = viewGridOffset(int32_t(viewBounds.mn.y), m_context->getGridSpacing()); y < int32_t(viewBounds.mx.y); y += m_context->getGridSpacing())
 				{
 					m_primitiveRenderer->drawLine(
 						Vector4(viewBounds.mn.x, y, 1.0f, 1.0f),

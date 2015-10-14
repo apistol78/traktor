@@ -1,4 +1,5 @@
 #include "Core/Math/Matrix33.h"
+#include "Render/ITexture.h"
 #include "Render/Shader.h"
 #include "Render/Context/RenderBlock.h"
 #include "Render/Context/RenderContext.h"
@@ -13,7 +14,12 @@ namespace traktor
 		namespace
 		{
 
+render::handle_t s_handleTextured = 0;
+render::handle_t s_handleCurved = 0;
 render::handle_t s_handleTransform = 0;
+render::handle_t s_handleFillColor = 0;
+render::handle_t s_handleTexture = 0;
+render::handle_t s_handleCurveSign = 0;
 render::handle_t s_handleColorTransform_Mul = 0;
 render::handle_t s_handleColorTransform_Add = 0;
 
@@ -23,14 +29,21 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.Shape", Shape, Object)
 
 Shape::Shape(
 	render::Mesh* mesh,
+	const resource::Proxy< render::Shader >& shader,
 	const AlignedVector< Part >& parts,
 	const Aabb2& bounds
 )
 :	m_mesh(mesh)
+,	m_shader(shader)
 ,	m_parts(parts)
 ,	m_bounds(bounds)
 {
+	s_handleTextured = render::getParameterHandle(L"Spark_Textured");
+	s_handleCurved = render::getParameterHandle(L"Spark_Curved");
 	s_handleTransform = render::getParameterHandle(L"Spark_Transform");
+	s_handleFillColor = render::getParameterHandle(L"Spark_FillColor");
+	s_handleTexture = render::getParameterHandle(L"Spark_Texture");
+	s_handleCurveSign = render::getParameterHandle(L"Spark_CurveSign");
 	s_handleColorTransform_Mul = render::getParameterHandle(L"Spark_ColorTransform_Mul");
 	s_handleColorTransform_Add = render::getParameterHandle(L"Spark_ColorTransform_Add");
 }
@@ -49,16 +62,25 @@ void Shape::render(render::RenderContext* renderContext, const Matrix33& transfo
 
 	for (size_t i = 0; i < parts.size(); ++i)
 	{
+		m_shader->setCombination(s_handleTextured, m_parts[i].texture.getResource() != 0);
+		m_shader->setCombination(s_handleCurved, m_parts[i].curveSign != 0);
+
+		if (!m_shader->getCurrentProgram())
+			continue;
+
 		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("Shape");
 
 		renderBlock->distance = 0.0f;
-		renderBlock->program = m_parts[i].shader->getCurrentProgram();
+		renderBlock->program = m_shader->getCurrentProgram();
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->vertexBuffer = m_mesh->getVertexBuffer();
 		renderBlock->primitives = parts[i].primitives;
 
 		renderBlock->programParams->beginParameters(renderContext);
 		renderBlock->programParams->setMatrixParameter(s_handleTransform, T);
+		renderBlock->programParams->setFloatParameter(s_handleCurveSign, float(m_parts[i].curveSign));
+		renderBlock->programParams->setTextureParameter(s_handleTexture, m_parts[i].texture);
+		renderBlock->programParams->setVectorParameter(s_handleFillColor, m_parts[i].fillColor);
 		renderBlock->programParams->setVectorParameter(s_handleColorTransform_Mul, Vector4(
 			colorTransform.red[0],
 			colorTransform.green[0],

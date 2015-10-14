@@ -36,10 +36,15 @@ public:
 
 	RefArray< CharacterAdapter > getSelectedAdapters() const;
 
+	void setGridSpacing(int32_t gridSpacing);
+
+	int32_t getGridSpacing() const;
+
 private:
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< CharacterAdapter > m_root;
 	RefArray< CharacterAdapter > m_adapters;
+	int32_t m_gridSpacing;
 };
 
 	}

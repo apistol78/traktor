@@ -12,14 +12,10 @@
 #include "Editor/IPipelineSettings.h"
 #include "Render/IndexBuffer.h"
 #include "Render/VertexBuffer.h"
-#include "Render/Editor/Shader/ShaderGraphTechniques.h"
 #include "Render/Mesh/Mesh.h"
 #include "Render/Mesh/MeshWriter.h"
 #include "Render/Mesh/SystemMeshFactory.h"
-#include "Render/Shader/Nodes.h"
-#include "Render/Shader/ShaderGraph.h"
 #include "Spark/ShapeResource.h"
-#include "Spark/Editor/ShapeShaderGenerator.h"
 #include "Spark/Editor/VectorShapeAsset.h"
 #include "Spark/Editor/VectorShapePipeline.h"
 #include "Spark/Editor/Shape/Document.h"
@@ -51,6 +47,7 @@ const float c_controlPoints[3][2] =
 struct Vertex
 {
 	float position[2];
+	float texCoord[2];
 	float controlPoints[2];
 };
 #pragma pack()
@@ -250,23 +247,14 @@ private:
 	Matrix33 m_currentTransform;
 };
 
-bool setDefaultTechnique(render::ShaderGraph* shaderGraph)
+Color4f toColor4f(const Style* style)
 {
-	RefArray< render::VertexOutput > vertexOutputNodes;
-	if (shaderGraph->findNodesOf< render::VertexOutput >(vertexOutputNodes) != 1)
-		return false;
-
-	for (RefArray< render::VertexOutput >::iterator i = vertexOutputNodes.begin(); i != vertexOutputNodes.end(); ++i)
-		(*i)->setTechnique(L"Default");
-
-	RefArray< render::PixelOutput > pixelOutputNodes;
-	if (shaderGraph->findNodesOf< render::PixelOutput >(pixelOutputNodes) != 1)
-		return false;
-
-	for (RefArray< render::PixelOutput >::iterator i = pixelOutputNodes.begin(); i != pixelOutputNodes.end(); ++i)
-		(*i)->setTechnique(L"Default");
-
-	return true;
+	return Color4f(
+		style->getFill().r / 255.0f,
+		style->getFill().g / 255.0f,
+		style->getFill().b / 255.0f,
+		int32_t(style->getOpacity() * 255)
+	);
 }
 
 		}
@@ -304,7 +292,7 @@ bool VectorShapePipeline::buildDependencies(
 {
 	const VectorShapeAsset* shapeAsset = checked_type_cast< const VectorShapeAsset* >(sourceAsset);
 	pipelineDepends->addDependency(traktor::Path(m_assetPath), shapeAsset->getFileName().getOriginal());
-	ShapeShaderGenerator().addDependencies(pipelineDepends);
+	pipelineDepends->addDependency(Guid(L"{E411A034-2FDA-4B44-A378-700D1CB8B6E4}"), editor::PdfBuild | editor::PdfResource);
 	return true;
 }
 
@@ -356,6 +344,9 @@ bool VectorShapePipeline::buildOutput(
 
 	// Create shape output resource.
 	Ref< ShapeResource > outputShapeResource = new ShapeResource();
+
+	// Set shader resource.
+	outputShapeResource->m_shader = resource::Id< render::Shader >(Guid(L"{E411A034-2FDA-4B44-A378-700D1CB8B6E4}"));
 
 	// Create output instance.
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(
@@ -431,7 +422,8 @@ bool VectorShapePipeline::buildOutput(
 	// Define shape render vertex.
 	std::vector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(Vertex, position)));
-	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat2, offsetof(Vertex, controlPoints)));
+	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat2, offsetof(Vertex, texCoord), 0));
+	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat2, offsetof(Vertex, controlPoints), 1));
 
 	Ref< render::Mesh > renderMesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
@@ -447,41 +439,17 @@ bool VectorShapePipeline::buildOutput(
 
 	for (std::list< std::pair< const Style*, TriangleProducer::Batch > >::const_iterator i = batches.begin(); i != batches.end(); ++i)
 	{
-		// Create master style shader.
-		ShapeShaderGenerator shaderGenerator;
-		Ref< render::ShaderGraph > masterStyleShader = shaderGenerator.generate(pipelineBuilder->getSourceDatabase(), i->first);
-		if (!masterStyleShader)
-		{
-			log::error << L"Shape pipeline failed; unable to generate shader" << Endl;
-			return false;
-		}
-
 		// Fill
 		if (!i->second.trianglesFill.empty())
 		{
-			// Create "fill" shader.
-			Ref< render::ShaderGraph > fillStyleShader = render::ShaderGraphTechniques(masterStyleShader).generate(L"Fill");
-			setDefaultTechnique(fillStyleShader);
-
-			// Build style shader.
-			Guid outputShaderGuid = outputGuid.permutate(++permutateCount);
-			std::wstring outputShaderPath = traktor::Path(outputPath).getPathOnly() + L"/" + outputGuid.format() + L"/" + outputShaderGuid.format();
-			if (!pipelineBuilder->buildOutput(
-				fillStyleShader,
-				outputShaderPath,
-				outputShaderGuid
-			))
-			{
-				log::error << L"Shape pipeline failed; unable to build shader" << Endl;
-				return false;
-			}
-
 			// Create vertices.
 			for (uint32_t j = 0; j < i->second.trianglesFill.size(); ++j)
 			{
 				const Vector2& v = i->second.vertices[i->second.trianglesFill[j]];
 				vertex->position[0] = v.x + offset.x;
 				vertex->position[1] = v.y + offset.y;
+				vertex->texCoord[0] = 0.0f;
+				vertex->texCoord[1] = 0.0f;
 				vertex->controlPoints[0] = c_controlPoints[j % 3][0];
 				vertex->controlPoints[1] = c_controlPoints[j % 3][1];
 				vertex++;
@@ -498,7 +466,8 @@ bool VectorShapePipeline::buildOutput(
 
 			// Setup shape part.
 			ShapeResource::Part shapePart;
-			shapePart.shader = resource::Id< render::Shader >(outputShaderGuid);
+			shapePart.fillColor = toColor4f(i->first);
+			shapePart.curveSign = 0;
 			outputShapeResource->m_parts.push_back(shapePart);
 
 			// Increment vertex buffer offset.
@@ -508,29 +477,14 @@ bool VectorShapePipeline::buildOutput(
 		// In
 		if (!i->second.trianglesIn.empty())
 		{
-			// Create "in" shader.
-			Ref< render::ShaderGraph > inStyleShader = render::ShaderGraphTechniques(masterStyleShader).generate(L"In");
-			setDefaultTechnique(inStyleShader);
-
-			// Build style shader.
-			Guid outputShaderGuid = outputGuid.permutate(++permutateCount);
-			std::wstring outputShaderPath = traktor::Path(outputPath).getPathOnly() + L"/" + outputGuid.format() + L"/" + outputShaderGuid.format();
-			if (!pipelineBuilder->buildOutput(
-				inStyleShader,
-				outputShaderPath,
-				outputShaderGuid
-			))
-			{
-				log::error << L"Shape pipeline failed; unable to build shader" << Endl;
-				return false;
-			}
-
 			// Create vertices.
 			for (uint32_t j = 0; j < i->second.trianglesIn.size(); ++j)
 			{
 				const Vector2& v = i->second.vertices[i->second.trianglesIn[j]];
 				vertex->position[0] = v.x + offset.x;
 				vertex->position[1] = v.y + offset.y;
+				vertex->texCoord[0] = 0.0f;
+				vertex->texCoord[1] = 0.0f;
 				vertex->controlPoints[0] = c_controlPoints[j % 3][0];
 				vertex->controlPoints[1] = c_controlPoints[j % 3][1];
 				vertex++;
@@ -547,7 +501,8 @@ bool VectorShapePipeline::buildOutput(
 
 			// Setup shape part.
 			ShapeResource::Part shapePart;
-			shapePart.shader = resource::Id< render::Shader >(outputShaderGuid);
+			shapePart.fillColor = toColor4f(i->first);
+			shapePart.curveSign = 1;
 			outputShapeResource->m_parts.push_back(shapePart);
 
 			// Increment vertex buffer offset.
@@ -557,29 +512,14 @@ bool VectorShapePipeline::buildOutput(
 		// Out
 		if (!i->second.trianglesOut.empty())
 		{
-			// Create "out" shader.
-			Ref< render::ShaderGraph > outStyleShader = render::ShaderGraphTechniques(masterStyleShader).generate(L"Out");
-			setDefaultTechnique(outStyleShader);
-
-			// Build style shader.
-			Guid outputShaderGuid = outputGuid.permutate(++permutateCount);
-			std::wstring outputShaderPath = traktor::Path(outputPath).getPathOnly() + L"/" + outputGuid.format() + L"/" + outputShaderGuid.format();
-			if (!pipelineBuilder->buildOutput(
-				outStyleShader,
-				outputShaderPath,
-				outputShaderGuid
-			))
-			{
-				log::error << L"Shape pipeline failed; unable to build shader" << Endl;
-				return false;
-			}
-
 			// Create vertices.
 			for (uint32_t j = 0; j < i->second.trianglesOut.size(); ++j)
 			{
 				const Vector2& v = i->second.vertices[i->second.trianglesOut[j]];
 				vertex->position[0] = v.x + offset.x;
 				vertex->position[1] = v.y + offset.y;
+				vertex->texCoord[0] = 0.0f;
+				vertex->texCoord[1] = 0.0f;
 				vertex->controlPoints[0] = c_controlPoints[j % 3][0];
 				vertex->controlPoints[1] = c_controlPoints[j % 3][1];
 				vertex++;
@@ -596,7 +536,8 @@ bool VectorShapePipeline::buildOutput(
 
 			// Setup shape part.
 			ShapeResource::Part shapePart;
-			shapePart.shader = resource::Id< render::Shader >(outputShaderGuid);
+			shapePart.fillColor = toColor4f(i->first);
+			shapePart.curveSign = -1;
 			outputShapeResource->m_parts.push_back(shapePart);
 
 			// Increment vertex buffer offset.
