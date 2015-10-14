@@ -23,7 +23,7 @@ namespace traktor
 
 class ICharacterBuilder;
 class IComponentInstance;
-class Shape;
+class IRenderable;
 class Sprite;
 
 /*! \brief Sprite character instance.
@@ -35,6 +35,10 @@ class T_DLLCLASS SpriteInstance : public CharacterInstance
 
 public:
 	SpriteInstance(const ICharacterBuilder* builder, const Sprite* sprite, const CharacterInstance* parent);
+
+	void setRenderable(IRenderable* renderable);
+
+	IRenderable* getRenderable() const;
 
 	Ref< CharacterInstance > create(const std::wstring& id) const;
 
@@ -88,7 +92,7 @@ private:
 
 	Ref< const ICharacterBuilder > m_builder;
 	Ref< const Sprite > m_sprite;
-	resource::Proxy< Shape > m_shape;
+	Ref< IRenderable > m_renderable;
 	DisplayList m_displayList;
 	ColorTransform m_colorTransform;
 	SmallMap< const TypeInfo*, Ref< IComponentInstance > > m_components;

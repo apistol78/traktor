@@ -1,6 +1,6 @@
 #include "Spark/ICharacterBuilder.h"
 #include "Spark/IComponentInstance.h"
-#include "Spark/Shape.h"
+#include "Spark/IRenderable.h"
 #include "Spark/Sprite.h"
 #include "Spark/SpriteInstance.h"
 
@@ -18,6 +18,16 @@ SpriteInstance::SpriteInstance(const ICharacterBuilder* builder, const Sprite* s
 ,	m_mousePressed(false)
 ,	m_mouseInside(false)
 {
+}
+
+void SpriteInstance::setRenderable(IRenderable* renderable)
+{
+	m_renderable = renderable;
+}
+
+IRenderable* SpriteInstance::getRenderable() const
+{
+	return m_renderable;
 }
 
 Ref< CharacterInstance > SpriteInstance::create(const std::wstring& id) const
@@ -224,8 +234,8 @@ Aabb2 SpriteInstance::getBounds() const
 {
 	Aabb2 bounds = m_sprite->getBounds();
 
-	if (m_shape)
-		bounds = m_shape->getBounds();
+	if (m_renderable)
+		bounds = m_renderable->getBounds();
 
 	RefArray< CharacterInstance > characters;
 	m_displayList.getCharacters(characters);
@@ -269,9 +279,9 @@ void SpriteInstance::render(render::RenderContext* renderContext) const
 	for (RefArray< CharacterInstance >::const_iterator i = characters.begin(); i != characters.end(); ++i)
 		(*i)->render(renderContext);
 
-	// Render this sprite's shape.
-	if (m_shape)
-		m_shape->render(renderContext, getFullTransform(), m_colorTransform);
+	// Render this sprite's renderable.
+	if (m_renderable)
+		m_renderable->render(renderContext, getFullTransform(), m_colorTransform);
 }
 
 	}
