@@ -1,10 +1,12 @@
 #include "Sound/Player/ISoundHandle.h"
+#include "Spark/Canvas.h"
 #include "Spark/Character.h"
 #include "Spark/CharacterInstance.h"
 #include "Spark/IComponent.h"
 #include "Spark/IComponentInstance.h"
 #include "Spark/ScriptComponent.h"
 #include "Spark/ScriptComponentInstance.h"
+#include "Spark/ShapeRenderable.h"
 #include "Spark/SoundComponent.h"
 #include "Spark/SoundComponentInstance.h"
 #include "Spark/SparkClassFactory.h"
@@ -39,6 +41,23 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.SparkClassFactory", 0, SparkClass
 
 void SparkClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
+	Ref< AutoRuntimeClass< IRenderable > > classIRenderable = new AutoRuntimeClass< IRenderable >();
+	registrar->registerClass(classIRenderable);
+
+	Ref< AutoRuntimeClass< ShapeRenderable > > classShapeRenderable = new AutoRuntimeClass< ShapeRenderable >();
+	registrar->registerClass(classShapeRenderable);
+
+	Ref< AutoRuntimeClass< Canvas > > classCanvas = new AutoRuntimeClass< Canvas >();
+	classCanvas->addMethod("clear", &Canvas::clear);
+	classCanvas->addMethod("moveTo", &Canvas::moveTo);
+	classCanvas->addMethod("lineTo", &Canvas::lineTo);
+	classCanvas->addMethod("quadraticTo", &Canvas::quadraticTo);
+	classCanvas->addMethod("cubicTo", &Canvas::cubicTo);
+	classCanvas->addMethod("close", &Canvas::close);
+	classCanvas->addMethod("fill", &Canvas::fill);
+	classCanvas->addMethod("stroke", &Canvas::stroke);
+	registrar->registerClass(classCanvas);
+
 	Ref< AutoRuntimeClass< IComponent > > classComponent = new AutoRuntimeClass< IComponent >();
 	registrar->registerClass(classComponent);
 
@@ -81,6 +100,8 @@ void SparkClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classSprite);
 
 	Ref< AutoRuntimeClass< SpriteInstance > > classSpriteInstance = new AutoRuntimeClass< SpriteInstance >();
+	classSpriteInstance->addMethod("setRenderable", &SpriteInstance::setRenderable);
+	classSpriteInstance->addMethod("getRenderable", &SpriteInstance::getRenderable);
 	classSpriteInstance->addMethod("create", &SpriteInstance::create);
 	classSpriteInstance->addMethod("place", &SpriteInstance::place);
 	classSpriteInstance->addMethod("remove", &SpriteInstance::remove);

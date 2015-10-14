@@ -2,6 +2,7 @@
 #include "Spark/ICharacterBuilder.h"
 #include "Spark/IComponent.h"
 #include "Spark/Shape.h"
+#include "Spark/ShapeRenderable.h"
 #include "Spark/Sprite.h"
 #include "Spark/SpriteFactory.h"
 #include "Spark/SpriteInstance.h"
@@ -38,8 +39,10 @@ Ref< CharacterInstance > SpriteFactory::create(const ICharacterBuilder* builder,
 	// Create shape.
 	if (sprite->m_shape)
 	{
-		if (!m_resourceManager->bind(sprite->m_shape, instance->m_shape))
+		resource::Proxy< Shape > shape;
+		if (!m_resourceManager->bind(sprite->m_shape, shape))
 			return 0;
+		instance->m_renderable = new ShapeRenderable(shape);
 	}
 
 	// Create child characters.
