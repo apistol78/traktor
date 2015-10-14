@@ -19,9 +19,9 @@ class Element;
 	namespace spark
 	{
 
-class Shape;
-class Style;
-class Gradient;
+class SvgShape;
+class SvgStyle;
+class SvgGradient;
 
 /*! \brief
  * \ingroup Spark
@@ -31,30 +31,30 @@ class SvgParser : public Object
 	T_RTTI_CLASS;
 
 public:
-	Ref< Shape > parse(xml::Document* doc);
+	Ref< SvgShape > parse(xml::Document* doc);
 
 private:
-	std::map< std::wstring, Ref< Gradient > > m_gradients;
+	std::map< std::wstring, Ref< SvgGradient > > m_gradients;
 
-	Ref< Shape > traverse(xml::Element* elm);
+	Ref< SvgShape > traverse(xml::Element* elm);
 
-	Ref< Shape > parseDocument(xml::Element* elm);
+	Ref< SvgShape > parseDocument(xml::Element* elm);
 
-	Ref< Shape > parseGroup(xml::Element* elm);
+	Ref< SvgShape > parseGroup(xml::Element* elm);
 
-	Ref< Shape > parseCircle(xml::Element* elm);
+	Ref< SvgShape > parseCircle(xml::Element* elm);
 
-	Ref< Shape > parseRect(xml::Element* elm);
+	Ref< SvgShape > parseRect(xml::Element* elm);
 
-	Ref< Shape > parsePolygon(xml::Element* elm);
+	Ref< SvgShape > parsePolygon(xml::Element* elm);
 
-	Ref< Shape > parsePolyLine(xml::Element* elm);
+	Ref< SvgShape > parsePolyLine(xml::Element* elm);
 
-	Ref< Shape > parsePath(xml::Element* elm);
+	Ref< SvgShape > parsePath(xml::Element* elm);
 	
 	void parseDefs(xml::Element* elm);
 	
-	Ref< Style > parseStyle(xml::Element* elm);
+	Ref< SvgStyle > parseStyle(xml::Element* elm);
 
 	Matrix33 parseTransform(xml::Element* elm);
 

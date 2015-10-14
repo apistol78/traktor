@@ -16,15 +16,15 @@
 #include "Render/Mesh/MeshWriter.h"
 #include "Render/Mesh/SystemMeshFactory.h"
 #include "Spark/ShapeResource.h"
+#include "Spark/Triangulator.h"
 #include "Spark/Editor/VectorShapeAsset.h"
 #include "Spark/Editor/VectorShapePipeline.h"
-#include "Spark/Editor/Shape/Document.h"
-#include "Spark/Editor/Shape/PathShape.h"
-#include "Spark/Editor/Shape/Shape.h"
-#include "Spark/Editor/Shape/ShapeVisitor.h"
-#include "Spark/Editor/Shape/Style.h"
+#include "Spark/Editor/Shape/SvgDocument.h"
 #include "Spark/Editor/Shape/SvgParser.h"
-#include "Spark/Editor/Shape/Triangulator.h"
+#include "Spark/Editor/Shape/SvgPathShape.h"
+#include "Spark/Editor/Shape/SvgShape.h"
+#include "Spark/Editor/Shape/SvgShapeVisitor.h"
+#include "Spark/Editor/Shape/SvgStyle.h"
 #include "Xml/Document.h"
 
 namespace traktor
@@ -33,8 +33,6 @@ namespace traktor
 	{
 		namespace
 		{
-
-const float c_pointScale = 100.0f;
 
 const float c_controlPoints[3][2] =
 {
@@ -52,7 +50,7 @@ struct Vertex
 };
 #pragma pack()
 
-class TriangleProducer : public ShapeVisitor
+class TriangleProducer : public SvgShapeVisitor
 {
 public:
 	struct Batch
@@ -71,12 +69,12 @@ public:
 		m_transformStack.push_back(Matrix33::identity());
 	}
 
-	virtual void enter(Shape* shape)
+	virtual void enter(SvgShape* shape)
 	{
 		m_transformStack.push_back(m_transformStack.back() * shape->getTransform());
 		const Matrix33& T = m_transformStack.back();
 
-		Document* document = dynamic_type_cast< Document* >(shape);
+		SvgDocument* document = dynamic_type_cast< SvgDocument* >(shape);
 		if (document)
 		{
 			m_viewBox = document->getViewBox();
@@ -86,147 +84,62 @@ public:
 		if (shape->getStyle())
 			m_styleStack.push_back(shape->getStyle());
 
-		PathShape* pathShape = dynamic_type_cast< PathShape* >(shape);
+		SvgPathShape* pathShape = dynamic_type_cast< SvgPathShape* >(shape);
 		if (pathShape)
 		{
-			AlignedVector< Triangulator::Segment > segments;
-
 			if (m_styleStack.empty() || !m_styleStack.back()->getFillEnable())
 				return;
 
-			const std::vector< SubPath >& subPaths = pathShape->getPath().getSubPaths();
-			for (std::vector< SubPath >::const_iterator i = subPaths.begin(); i != subPaths.end(); ++i)
+			AlignedVector< Triangulator::Triangle > triangles;
+			Triangulator().triangulate(&pathShape->getPath(), triangles);
+
+			if (!triangles.empty())
 			{
-				// Transform points into view.
-				AlignedVector< Vector2 > points(i->points.size());
-				for (uint32_t j = 0; j < i->points.size(); ++j)
-					points[j] = m_size * (T * i->points[j] + m_viewBox.mn) / (m_viewBox.mx - m_viewBox.mn);
+				Batch* batch = 0;
 
-				// Transform origin into view.
-				Vector2 origin = m_size * (T * i->origin + m_viewBox.mn) / (m_viewBox.mx - m_viewBox.mn);
-
-				// Create triangulator segments.
-				bool lastSubPath = bool(i == subPaths.end() - 1);
-				switch (i->type)
+				// Check if we can merge with last batch.
+				if (!m_batches.empty() && *m_batches.back().first == *m_styleStack.back())
 				{
-				case SptLinear:
-					{
-						for (uint32_t j = 0; j < points.size() - 1; ++j)
-						{
-							Triangulator::Segment s;
-							s.curve = false;
-							s.v[0] = Vector2i::fromVector2(points[j] * c_pointScale);
-							s.v[1] = Vector2i::fromVector2(points[j + 1] * c_pointScale);
-							segments.push_back(s);
-						}
-					}
-					break;
-
-				case SptQuadric:
-					{
-						for (uint32_t j = 0; j < points.size() - 1; j += 2)
-						{
-							Triangulator::Segment s;
-							s.curve = true;
-							s.v[0] = Vector2i::fromVector2(points[j] * c_pointScale);
-							s.v[1] = Vector2i::fromVector2(points[j + 2] * c_pointScale);
-							s.c = Vector2i::fromVector2(points[j + 1] * c_pointScale);
-							segments.push_back(s);
-						}
-					}
-					break;
-
-				case SptCubic:
-					{
-						for (uint32_t j = 0; j < points.size() - 1; j += 3)
-						{
-							Bezier3rd b(
-								points[j],
-								points[j + 1],
-								points[j + 2],
-								points[j + 3]
-							);
-
-							AlignedVector< Bezier2nd > a;
-							b.approximate(m_cubicApproximationError, 4, a);
-
-							for (AlignedVector< Bezier2nd >::const_iterator k = a.begin(); k != a.end(); ++k)
-							{
-								Triangulator::Segment s;
-								s.curve = true;
-								s.v[0] = Vector2i::fromVector2(k->cp0 * c_pointScale);
-								s.v[1] = Vector2i::fromVector2(k->cp2 * c_pointScale);
-								s.c = Vector2i::fromVector2(k->cp1 * c_pointScale);
-								segments.push_back(s);
-							}
-						}
-					}
-					break;
+					batch = &m_batches.back().second;
+				}
+				if (!batch)
+				{
+					m_batches.push_back(std::make_pair(m_styleStack.back(), Batch()));
+					batch = &m_batches.back().second;
 				}
 
-				if (lastSubPath)
+				for (AlignedVector< Triangulator::Triangle >::const_iterator i = triangles.begin(); i != triangles.end(); ++i)
 				{
-					Triangulator::Segment s;
-					s.curve = false;
-					s.v[0] = Vector2i::fromVector2(points.back() * c_pointScale);
-					s.v[1] = Vector2i::fromVector2(origin * c_pointScale);
-					segments.push_back(s);
-				}
-			}
+					uint32_t indexBase = batch->vertices.size();
 
-			if (!segments.empty())
-			{
-				AlignedVector< Triangulator::Triangle > triangles;
-				Triangulator().triangulate(segments, triangles);
+					batch->vertices.push_back(i->v[0].toVector2());
+					batch->vertices.push_back(i->v[1].toVector2());
+					batch->vertices.push_back(i->v[2].toVector2());
 
-				if (!triangles.empty())
-				{
-					Batch* batch = 0;
-
-					// Check if we can merge with last batch.
-					if (!m_batches.empty() && *m_batches.back().first == *m_styleStack.back())
+					if (i->type == Triangulator::TcFill)
 					{
-						batch = &m_batches.back().second;
+						batch->trianglesFill.push_back(indexBase + 0);
+						batch->trianglesFill.push_back(indexBase + 1);
+						batch->trianglesFill.push_back(indexBase + 2);
 					}
-					if (!batch)
+					else if (i->type == Triangulator::TcIn)
 					{
-						m_batches.push_back(std::make_pair(m_styleStack.back(), Batch()));
-						batch = &m_batches.back().second;
+						batch->trianglesIn.push_back(indexBase + 0);
+						batch->trianglesIn.push_back(indexBase + 1);
+						batch->trianglesIn.push_back(indexBase + 2);
 					}
-
-					for (AlignedVector< Triangulator::Triangle >::const_iterator i = triangles.begin(); i != triangles.end(); ++i)
+					else if (i->type == Triangulator::TcOut)
 					{
-						uint32_t indexBase = batch->vertices.size();
-
-						batch->vertices.push_back(i->v[0].toVector2() / c_pointScale);
-						batch->vertices.push_back(i->v[1].toVector2() / c_pointScale);
-						batch->vertices.push_back(i->v[2].toVector2() / c_pointScale);
-
-						if (i->type == Triangulator::TcFill)
-						{
-							batch->trianglesFill.push_back(indexBase + 0);
-							batch->trianglesFill.push_back(indexBase + 1);
-							batch->trianglesFill.push_back(indexBase + 2);
-						}
-						else if (i->type == Triangulator::TcIn)
-						{
-							batch->trianglesIn.push_back(indexBase + 0);
-							batch->trianglesIn.push_back(indexBase + 1);
-							batch->trianglesIn.push_back(indexBase + 2);
-						}
-						else if (i->type == Triangulator::TcOut)
-						{
-							batch->trianglesOut.push_back(indexBase + 0);
-							batch->trianglesOut.push_back(indexBase + 1);
-							batch->trianglesOut.push_back(indexBase + 2);
-						}
+						batch->trianglesOut.push_back(indexBase + 0);
+						batch->trianglesOut.push_back(indexBase + 1);
+						batch->trianglesOut.push_back(indexBase + 2);
 					}
 				}
 			}
 		}
 	}
 
-	virtual void leave(Shape* shape)
+	virtual void leave(SvgShape* shape)
 	{
 		m_transformStack.pop_back();
 		if (shape->getStyle())
@@ -235,19 +148,19 @@ public:
 
 	const Aabb2& getViewBox() const { return m_viewBox; }
 
-	const std::list< std::pair< const Style*, Batch > >& getBatches() const { return m_batches; }
+	const std::list< std::pair< const SvgStyle*, Batch > >& getBatches() const { return m_batches; }
 
 private:
 	float m_cubicApproximationError;
-	std::list< std::pair< const Style*, Batch > > m_batches;
+	std::list< std::pair< const SvgStyle*, Batch > > m_batches;
 	Aabb2 m_viewBox;
 	Vector2 m_size;
-	RefArray< const Style > m_styleStack;
+	RefArray< const SvgStyle > m_styleStack;
 	AlignedVector< Matrix33 > m_transformStack;
 	Matrix33 m_currentTransform;
 };
 
-Color4f toColor4f(const Style* style)
+Color4f toColor4f(const SvgStyle* style)
 {
 	return Color4f(
 		style->getFill().r / 255.0f,
@@ -331,7 +244,7 @@ bool VectorShapePipeline::buildOutput(
 	sourceStream = 0;
 
 	// Parse SVG into intermediate shape.
-	Ref< Shape > shape = SvgParser().parse(&document);
+	Ref< SvgShape > shape = SvgParser().parse(&document);
 	if (!shape)
 	{
 		log::error << L"Shape pipeline failed; unable to parse SVG file \"" << shapeAsset->getFileName().getOriginal() << L"\"" << Endl;
@@ -370,11 +283,11 @@ bool VectorShapePipeline::buildOutput(
 
 	// Create render mesh from triangles and write to data stream.
 	const Aabb2& viewBox = triangleProducer.getViewBox();
-	const std::list< std::pair< const Style*, TriangleProducer::Batch > >& batches = triangleProducer.getBatches();
+	const std::list< std::pair< const SvgStyle*, TriangleProducer::Batch > >& batches = triangleProducer.getBatches();
 
 	// Count total number of triangles.
 	uint32_t triangleCount = 0;
-	for (std::list< std::pair< const Style*, TriangleProducer::Batch > >::const_iterator i = batches.begin(); i != batches.end(); ++i)
+	for (std::list< std::pair< const SvgStyle*, TriangleProducer::Batch > >::const_iterator i = batches.begin(); i != batches.end(); ++i)
 	{
 		triangleCount += uint32_t(i->second.trianglesFill.size() / 3);
 		triangleCount += uint32_t(i->second.trianglesIn.size() / 3);
@@ -389,7 +302,7 @@ bool VectorShapePipeline::buildOutput(
 
 	// Measure initial shape bounds.
 	Aabb2 bounds;
-	for (std::list< std::pair< const Style*, TriangleProducer::Batch > >::const_iterator i = batches.begin(); i != batches.end(); ++i)
+	for (std::list< std::pair< const SvgStyle*, TriangleProducer::Batch > >::const_iterator i = batches.begin(); i != batches.end(); ++i)
 	{
 		for (AlignedVector< Vector2 >::const_iterator j = i->second.vertices.begin(); j != i->second.vertices.end(); ++j)
 			bounds.contain(*j);
@@ -437,7 +350,7 @@ bool VectorShapePipeline::buildOutput(
 	uint32_t permutateCount = 0;
 	uint32_t vertexOffset = 0;
 
-	for (std::list< std::pair< const Style*, TriangleProducer::Batch > >::const_iterator i = batches.begin(); i != batches.end(); ++i)
+	for (std::list< std::pair< const SvgStyle*, TriangleProducer::Batch > >::const_iterator i = batches.begin(); i != batches.end(); ++i)
 	{
 		// Fill
 		if (!i->second.trianglesFill.empty())

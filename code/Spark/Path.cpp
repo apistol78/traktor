@@ -1,4 +1,4 @@
-#include "Spark/Editor/Shape/Path.h"
+#include "Spark/Path.h"
 
 namespace traktor
 {
@@ -112,7 +112,7 @@ const Vector2& Path::getCursor() const
 	return m_cursor;
 }
 
-const std::vector< SubPath >& Path::getSubPaths() const
+const AlignedVector< SubPath >& Path::getSubPaths() const
 {
 	return m_subPaths;
 }

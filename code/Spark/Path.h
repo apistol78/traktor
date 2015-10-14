@@ -1,9 +1,17 @@
 #ifndef traktor_spark_Path_H
 #define traktor_spark_Path_H
 
-#include <vector>
 #include "Core/Object.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Vector2.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_SPARK_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
 
 namespace traktor
 {
@@ -29,7 +37,14 @@ struct SubPath
 	SubPathType type;
 	bool closed;
 	Vector2 origin;
-	std::vector< Vector2 > points;
+	AlignedVector< Vector2 > points;
+
+	SubPath()
+	:	type(SptUndefined)
+	,	closed(false)
+	,	origin(0.0f, 0.0f)
+	{
+	}
 
 	SubPath(SubPathType type_, const Vector2& origin_)
 	:	type(type_)
@@ -42,7 +57,7 @@ struct SubPath
 /*! \brief
  * \ingroup Spark
  */
-class Path : public Object
+class T_DLLCLASS Path : public Object
 {
 	T_RTTI_CLASS;
 
@@ -65,10 +80,10 @@ public:
 
 	const Vector2& getCursor() const;
 
-	const std::vector< SubPath >& getSubPaths() const;
+	const AlignedVector< SubPath >& getSubPaths() const;
 
 private:
-	std::vector< SubPath > m_subPaths;
+	AlignedVector< SubPath > m_subPaths;
 	Vector2 m_origin;
 	Vector2 m_cursor;
 	SubPath* m_current;
