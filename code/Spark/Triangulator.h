@@ -5,15 +5,25 @@
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Vector2i.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_SPARK_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
 	namespace spark
 	{
 
+class Path;
+
 /*! \brief Trapezoid triangulation.
  * \ingroup Spark
  */
-class Triangulator : public Object
+class T_DLLCLASS Triangulator : public Object
 {
 	T_RTTI_CLASS;
 
@@ -37,6 +47,8 @@ public:
 		TriangleType type;
 		Vector2i v[3];
 	};
+
+	void triangulate(const Path* path, AlignedVector< Triangle >& outTriangles);
 
 	void triangulate(const AlignedVector< Segment >& segments, AlignedVector< Triangle >& outTriangles);
 

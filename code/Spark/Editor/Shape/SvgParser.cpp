@@ -3,13 +3,13 @@
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
-#include "Spark/Editor/Shape/Document.h"
-#include "Spark/Editor/Shape/Gradient.h"
-#include "Spark/Editor/Shape/Path.h"
-#include "Spark/Editor/Shape/PathShape.h"
-#include "Spark/Editor/Shape/Shape.h"
-#include "Spark/Editor/Shape/Style.h"
+#include "Spark/Path.h"
+#include "Spark/Editor/Shape/SvgDocument.h"
+#include "Spark/Editor/Shape/SvgGradient.h"
 #include "Spark/Editor/Shape/SvgParser.h"
+#include "Spark/Editor/Shape/SvgPathShape.h"
+#include "Spark/Editor/Shape/SvgShape.h"
+#include "Spark/Editor/Shape/SvgStyle.h"
 #include "Xml/Attribute.h"
 #include "Xml/Document.h"
 #include "Xml/Element.h"
@@ -124,14 +124,14 @@ float parseDecimalNumber(std::wstring::iterator& i, std::wstring::iterator end)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.SvgParser", SvgParser, Object)
 
-Ref< Shape > SvgParser::parse(xml::Document* doc)
+Ref< SvgShape > SvgParser::parse(xml::Document* doc)
 {
 	return traverse(doc->getDocumentElement());
 }
 
-Ref< Shape > SvgParser::traverse(xml::Element* elm)
+Ref< SvgShape > SvgParser::traverse(xml::Element* elm)
 {
-	Ref< Shape > shape;
+	Ref< SvgShape > shape;
 
 	std::wstring name = elm->getName();
 	if (name == L"svg")
@@ -171,7 +171,7 @@ Ref< Shape > SvgParser::traverse(xml::Element* elm)
 			if (!is_a< xml::Element >(child))
 				continue;
 
-			Ref< Shape > childShape = traverse(static_cast< xml::Element* >(child));
+			Ref< SvgShape > childShape = traverse(static_cast< xml::Element* >(child));
 			if (childShape)
 				shape->addChild(childShape);
 		}
@@ -180,9 +180,9 @@ Ref< Shape > SvgParser::traverse(xml::Element* elm)
 	return shape;
 }
 
-Ref< Shape > SvgParser::parseDocument(xml::Element* elm)
+Ref< SvgShape > SvgParser::parseDocument(xml::Element* elm)
 {
-	Ref< Document > doc = new Document();
+	Ref< SvgDocument > doc = new SvgDocument();
 
 	float width = parseString< float >(elm->getAttribute(L"width", L"0")->getValue());
 	float height = parseString< float >(elm->getAttribute(L"height", L"0")->getValue());
@@ -204,7 +204,7 @@ Ref< Shape > SvgParser::parseDocument(xml::Element* elm)
 		));
 	}
 
-	Ref< Style > defaultStyle = new Style();
+	Ref< SvgStyle > defaultStyle = new SvgStyle();
 	defaultStyle->setFillEnable(true);
 	defaultStyle->setFill(Color4ub(0, 0, 0, 255));
 	doc->setStyle(defaultStyle);
@@ -212,12 +212,12 @@ Ref< Shape > SvgParser::parseDocument(xml::Element* elm)
 	return doc;
 }
 
-Ref< Shape > SvgParser::parseGroup(xml::Element* elm)
+Ref< SvgShape > SvgParser::parseGroup(xml::Element* elm)
 {
-	return new Shape();
+	return new SvgShape();
 }
 
-Ref< Shape > SvgParser::parseCircle(xml::Element* elm)
+Ref< SvgShape > SvgParser::parseCircle(xml::Element* elm)
 {
 	const float c_circleMagic = 0.5522847498f;
 
@@ -251,10 +251,10 @@ Ref< Shape > SvgParser::parseCircle(xml::Element* elm)
 	);
 	path.close();
 
-	return new PathShape(path);
+	return new SvgPathShape(path);
 }
 
-Ref< Shape > SvgParser::parseRect(xml::Element* elm)
+Ref< SvgShape > SvgParser::parseRect(xml::Element* elm)
 {
 	float x = parseAttr(elm, L"x");
 	float y = parseAttr(elm, L"y");
@@ -286,10 +286,10 @@ Ref< Shape > SvgParser::parseRect(xml::Element* elm)
 		path.close  ();
 	}
 
-	return new PathShape(path);
+	return new SvgPathShape(path);
 }
 
-Ref< Shape > SvgParser::parsePolygon(xml::Element* elm)
+Ref< SvgShape > SvgParser::parsePolygon(xml::Element* elm)
 {
 	Path path;
 	bool first = true;
@@ -311,10 +311,10 @@ Ref< Shape > SvgParser::parsePolygon(xml::Element* elm)
 
 	path.close();
 
-	return new PathShape(path);
+	return new SvgPathShape(path);
 }
 
-Ref< Shape > SvgParser::parsePolyLine(xml::Element* elm)
+Ref< SvgShape > SvgParser::parsePolyLine(xml::Element* elm)
 {
 	if (!elm || !elm->hasAttribute(L"points"))
 		return 0;
@@ -337,10 +337,10 @@ Ref< Shape > SvgParser::parsePolyLine(xml::Element* elm)
 		first = false;
 	}
 
-	return new PathShape(path);
+	return new SvgPathShape(path);
 }
 
-Ref< Shape > SvgParser::parsePath(xml::Element* elm)
+Ref< SvgShape > SvgParser::parsePath(xml::Element* elm)
 {
 	if (!elm || !elm->hasAttribute(L"d"))
 		return 0;
@@ -470,7 +470,7 @@ Ref< Shape > SvgParser::parsePath(xml::Element* elm)
 		}
 	}
 
-	return new PathShape(path);
+	return new SvgPathShape(path);
 }
 
 void SvgParser::parseDefs(xml::Element* elm)
@@ -497,7 +497,7 @@ void SvgParser::parseDefs(xml::Element* elm)
 			
 			if (!stops.empty())
 			{
-				Ref< Gradient > gradient = new Gradient(Gradient::GtLinear);
+				Ref< SvgGradient > gradient = new SvgGradient(SvgGradient::GtLinear);
 				for (RefArray< xml::Element >::iterator i = stops.begin(); i != stops.end(); ++i)
 				{
 					xml::Element* stop = *i;
@@ -522,7 +522,7 @@ void SvgParser::parseDefs(xml::Element* elm)
 			
 			if (!stops.empty())
 			{
-				Ref< Gradient > gradient = new Gradient(Gradient::GtRadial);
+				Ref< SvgGradient > gradient = new SvgGradient(SvgGradient::GtRadial);
 				for (RefArray< xml::Element >::iterator i = stops.begin(); i != stops.end(); ++i)
 				{
 					xml::Element* stop = *i;
@@ -545,17 +545,17 @@ void SvgParser::parseDefs(xml::Element* elm)
 	}
 }
 
-Ref< Style > SvgParser::parseStyle(xml::Element* elm)
+Ref< SvgStyle > SvgParser::parseStyle(xml::Element* elm)
 {
 	if (!elm)
 		return 0;
 
-	Ref< Style > style;
+	Ref< SvgStyle > style;
 	Color4ub color;
 
 	if (elm->hasAttribute(L"fill"))
 	{
-		style = new Style();
+		style = new SvgStyle();
 
 		std::wstring fillDesc = elm->getAttribute(L"fill")->getValue();
 		if (parseColor(fillDesc, color))
@@ -568,7 +568,7 @@ Ref< Style > SvgParser::parseStyle(xml::Element* elm)
 	}
 	else if (elm->hasAttribute(L"style"))
 	{
-		style = new Style();
+		style = new SvgStyle();
 
 		std::vector< std::wstring > styles;
 		Split< std::wstring >::any(elm->getAttribute(L"style")->getValue(), L";", styles);

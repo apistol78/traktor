@@ -2,10 +2,12 @@
 #include <cfloat>
 #include "Core/Log/Log.h"
 #include "Core/Math/Bezier2nd.h"
+#include "Core/Math/Bezier3rd.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Line2.h"
 #include "Core/Math/MathUtils.h"
-#include "Spark/Editor/Shape/Triangulator.h"
+#include "Spark/Path.h"
+#include "Spark/Triangulator.h"
 
 namespace traktor
 {
@@ -37,6 +39,89 @@ bool compareSegmentsX(const Triangulator::Segment& ls, const Triangulator::Segme
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.Triangulator", Triangulator, Object)
+
+void Triangulator::triangulate(const Path* path, AlignedVector< Triangle >& outTriangles)
+{
+	const float c_pointScale = 1.0f;
+	const float m_cubicApproximationError = 1.0f;
+
+	AlignedVector< Segment > segments;
+
+	// Create segments from path.
+	const AlignedVector< SubPath >& subPaths = path->getSubPaths();
+	for (AlignedVector< SubPath >::const_iterator i = subPaths.begin(); i != subPaths.end(); ++i)
+	{
+		bool lastSubPath = bool(i == subPaths.end() - 1);
+		switch (i->type)
+		{
+		case SptLinear:
+			{
+				for (uint32_t j = 0; j < i->points.size() - 1; ++j)
+				{
+					Triangulator::Segment s;
+					s.curve = false;
+					s.v[0] = Vector2i::fromVector2(i->points[j] * c_pointScale);
+					s.v[1] = Vector2i::fromVector2(i->points[j + 1] * c_pointScale);
+					segments.push_back(s);
+				}
+			}
+			break;
+
+		case SptQuadric:
+			{
+				for (uint32_t j = 0; j < i->points.size() - 1; j += 2)
+				{
+					Triangulator::Segment s;
+					s.curve = true;
+					s.v[0] = Vector2i::fromVector2(i->points[j] * c_pointScale);
+					s.v[1] = Vector2i::fromVector2(i->points[j + 2] * c_pointScale);
+					s.c = Vector2i::fromVector2(i->points[j + 1] * c_pointScale);
+					segments.push_back(s);
+				}
+			}
+			break;
+
+		case SptCubic:
+			{
+				for (uint32_t j = 0; j < i->points.size() - 1; j += 3)
+				{
+					Bezier3rd b(
+						i->points[j],
+						i->points[j + 1],
+						i->points[j + 2],
+						i->points[j + 3]
+					);
+
+					AlignedVector< Bezier2nd > a;
+					b.approximate(m_cubicApproximationError, 4, a);
+
+					for (AlignedVector< Bezier2nd >::const_iterator k = a.begin(); k != a.end(); ++k)
+					{
+						Triangulator::Segment s;
+						s.curve = true;
+						s.v[0] = Vector2i::fromVector2(k->cp0 * c_pointScale);
+						s.v[1] = Vector2i::fromVector2(k->cp2 * c_pointScale);
+						s.c = Vector2i::fromVector2(k->cp1 * c_pointScale);
+						segments.push_back(s);
+					}
+				}
+			}
+			break;
+		}
+
+		if (lastSubPath)
+		{
+			Triangulator::Segment s;
+			s.curve = false;
+			s.v[0] = Vector2i::fromVector2(i->points.back() * c_pointScale);
+			s.v[1] = Vector2i::fromVector2(i->origin * c_pointScale);
+			segments.push_back(s);
+		}
+	}
+
+	// Create triangles from segments.
+	triangulate(segments, outTriangles);
+}
 
 void Triangulator::triangulate(const AlignedVector< Segment >& segments, AlignedVector< Triangle >& outTriangles)
 {

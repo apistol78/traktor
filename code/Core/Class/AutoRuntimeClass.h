@@ -1582,6 +1582,42 @@ struct MethodTrunk_6 : public IMethod
 
 template <
 	typename ClassType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type,
+	typename Argument5Type,
+	typename Argument6Type
+>
+struct MethodTrunk_6 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type > : public IMethod
+{
+	typedef void (*method_t)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type);
+
+	method_t m_method;
+
+	MethodTrunk_6(method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
+	{
+		T_VERIFY_ARGUMENTS(6)
+		(*m_method)(
+			mandatory_non_null_type_cast< ClassType* >(object),
+			CastAny< Argument1Type >::get(argv[0]),
+			CastAny< Argument2Type >::get(argv[1]),
+			CastAny< Argument3Type >::get(argv[2]),
+			CastAny< Argument4Type >::get(argv[3]),
+			CastAny< Argument5Type >::get(argv[4]),
+			CastAny< Argument6Type >::get(argv[5])
+		);
+		return Any();
+	}
+};
+
+template <
+	typename ClassType,
 	typename ReturnType,
 	typename Argument1Type,
 	typename Argument2Type,

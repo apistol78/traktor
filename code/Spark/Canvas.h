@@ -2,6 +2,7 @@
 #define traktor_spark_Canvas_H
 
 #include "Spark/IRenderable.h"
+#include "Spark/Path.h"
 
 namespace traktor
 {
@@ -22,9 +23,13 @@ public:
 
 	void lineTo(float x, float y);
 
-	void quadraticTo(float x, float y);
+	void quadricTo(float x1, float y1, float x, float y);
 
-	void cubicTo(float x, float y);
+	void quadricTo(float x, float y);
+
+	void cubicTo(float x1, float y1, float x2, float y2, float x, float y);
+
+	void cubicTo(float x2, float y2, float x, float y);
 
 	void close();
 
@@ -35,6 +40,9 @@ public:
 	virtual Aabb2 getBounds() const T_OVERRIDE T_FINAL;
 
 	virtual void render(render::RenderContext* renderContext, const Matrix33& transform, const ColorTransform& colorTransform) const T_OVERRIDE T_FINAL;
+
+private:
+	Path m_path;
 };
 
 	}

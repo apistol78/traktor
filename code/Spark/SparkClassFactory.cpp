@@ -25,6 +25,26 @@ namespace traktor
 		namespace
 		{
 
+void Canvas_quadricTo_4(Canvas* self, float x1, float y1, float x, float y)
+{
+	self->quadricTo(x1, y1, x, y);
+}
+
+void Canvas_quadricTo_2(Canvas* self, float x, float y)
+{
+	self->quadricTo(x, y);
+}
+
+void Canvas_cubicTo_6(Canvas* self, float x1, float y1, float x2, float y2, float x, float y)
+{
+	self->cubicTo(x1, y1, x2, y2, x, y);
+}
+
+void Canvas_cubicTo_4(Canvas* self, float x2, float y2, float x, float y)
+{
+	self->cubicTo(x2, y2, x, y);
+}
+
 void CharacterInstance_setPosition(CharacterInstance* self, float x, float y)
 {
 	self->setPosition(Vector2(x, y));
@@ -51,8 +71,10 @@ void SparkClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classCanvas->addMethod("clear", &Canvas::clear);
 	classCanvas->addMethod("moveTo", &Canvas::moveTo);
 	classCanvas->addMethod("lineTo", &Canvas::lineTo);
-	classCanvas->addMethod("quadraticTo", &Canvas::quadraticTo);
-	classCanvas->addMethod("cubicTo", &Canvas::cubicTo);
+	classCanvas->addMethod("quadricTo", &Canvas_quadricTo_4);
+	classCanvas->addMethod("quadricTo", &Canvas_quadricTo_2);
+	classCanvas->addMethod("cubicTo", &Canvas_cubicTo_6);
+	classCanvas->addMethod("cubicTo", &Canvas_cubicTo_4);
 	classCanvas->addMethod("close", &Canvas::close);
 	classCanvas->addMethod("fill", &Canvas::fill);
 	classCanvas->addMethod("stroke", &Canvas::stroke);

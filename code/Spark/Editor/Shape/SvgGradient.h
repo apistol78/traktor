@@ -1,5 +1,5 @@
-#ifndef traktor_spark_Gradient_H
-#define traktor_spark_Gradient_H
+#ifndef traktor_spark_SvgGradient_H
+#define traktor_spark_SvgGradient_H
 
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
@@ -13,7 +13,7 @@ namespace traktor
 /*! \brief
  * \ingroup Spark
  */
-class Gradient : public Object
+class SvgGradient : public Object
 {
 	T_RTTI_CLASS;
 	
@@ -30,7 +30,7 @@ public:
 		Color4ub color;
 	};
 
-	Gradient(GradientType gradientType);
+	SvgGradient(GradientType gradientType);
 	
 	GradientType getGradientType() const;
 	
@@ -46,4 +46,4 @@ private:
 	}
 }
 
-#endif	// traktor_spark_Gradient_H
+#endif	// traktor_spark_SvgGradient_H

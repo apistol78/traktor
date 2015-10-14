@@ -1,8 +1,8 @@
-#ifndef traktor_spark_Document_H
-#define traktor_spark_Document_H
+#ifndef traktor_spark_SvgDocument_H
+#define traktor_spark_SvgDocument_H
 
 #include "Core/Math/Aabb2.h"
-#include "Spark/Editor/Shape/Shape.h"
+#include "Spark/Editor/Shape/SvgShape.h"
 
 namespace traktor
 {
@@ -12,12 +12,12 @@ namespace traktor
 /*! \brief
  * \ingroup Spark
  */
-class Document : public Shape
+class SvgDocument : public SvgShape
 {
 	T_RTTI_CLASS;
 
 public:
-	Document();
+	SvgDocument();
 
 	void setViewBox(const Aabb2& viewBox);
 
@@ -35,4 +35,4 @@ private:
 	}
 }
 
-#endif	// traktor_spark_Document_H
+#endif	// traktor_spark_SvgDocument_H

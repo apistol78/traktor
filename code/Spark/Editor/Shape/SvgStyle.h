@@ -1,5 +1,5 @@
-#ifndef traktor_spark_Style_H
-#define traktor_spark_Style_H
+#ifndef traktor_spark_SvgStyle_H
+#define traktor_spark_SvgStyle_H
 
 #include "Core/Object.h"
 #include "Core/Ref.h"
@@ -10,25 +10,25 @@ namespace traktor
 	namespace spark
 	{
 
-class Gradient;
+class SvgGradient;
 
 /*! \brief
  * \ingroup Spark
  */
-class Style : public Object
+class SvgStyle : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	Style();
+	SvgStyle();
 
 	void setFillEnable(bool fillEnable);
 
 	bool getFillEnable() const;
 	
-	void setFillGradient(Gradient* fillGradient);
+	void setFillGradient(const SvgGradient* fillGradient);
 	
-	Gradient* getFillGradient() const;
+	const SvgGradient* getFillGradient() const;
 
 	void setFill(const Color4ub& fill);
 
@@ -38,9 +38,9 @@ public:
 
 	bool getStrokeEnable() const;
 	
-	void setStrokeGradient(Gradient* strokeGradient);
+	void setStrokeGradient(const SvgGradient* strokeGradient);
 	
-	Gradient* getStrokeGradient() const;
+	const SvgGradient* getStrokeGradient() const;
 
 	void setStrokeWidth(float strokeWidth);
 
@@ -54,14 +54,14 @@ public:
 
 	float getOpacity() const;
 
-	bool operator == (const Style& other) const;
+	bool operator == (const SvgStyle& other) const;
 
 private:
 	bool m_fillEnable;
-	Ref< Gradient > m_fillGradient;
+	Ref< const SvgGradient > m_fillGradient;
 	Color4ub m_fill;
 	bool m_strokeEnable;
-	Ref< Gradient > m_strokeGradient;
+	Ref< const SvgGradient > m_strokeGradient;
 	float m_strokeWidth;
 	Color4ub m_stroke;
 	float m_opacity;
@@ -70,4 +70,4 @@ private:
 	}
 }
 
-#endif	// traktor_spark_Style_H
+#endif	// traktor_spark_SvgStyle_H
