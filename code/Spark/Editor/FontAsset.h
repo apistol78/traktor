@@ -2,7 +2,6 @@
 #define traktor_spark_FontAsset_H
 
 #include "Editor/Asset.h"
-#include "Resource/Id.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -14,13 +13,6 @@
 
 namespace traktor
 {
-	namespace render
-	{
-
-class Shader;
-
-	}
-
 	namespace spark
 	{
 
@@ -37,7 +29,6 @@ public:
 private:
 	friend class FontPipeline;
 
-	resource::Id< render::Shader > m_shader;
 	std::wstring m_includeCharacters;
 };
 

@@ -3,6 +3,7 @@
 
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Aabb2.h"
+#include "Core/Math/Color4f.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Resource/Id.h"
 
@@ -20,6 +21,7 @@ namespace traktor
 	{
 
 class IRenderSystem;
+class ITexture;
 class Shader;
 
 	}
@@ -54,11 +56,14 @@ private:
 
 	struct Part
 	{
-		resource::Id< render::Shader > shader;
+		resource::Id< render::ITexture > texture;
+		Color4f fillColor;
+		int8_t curveSign;
 
 		void serialize(ISerializer& s);
 	};
 
+	resource::Id< render::Shader > m_shader;
 	AlignedVector< Part > m_parts;
 	Aabb2 m_bounds;
 };

@@ -16,6 +16,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.Context", Context, Object)
 
 Context::Context(resource::IResourceManager* resourceManager)
 :	m_resourceManager(resourceManager)
+,	m_gridSpacing(40)
 {
 }
 
@@ -74,6 +75,16 @@ RefArray< CharacterAdapter > Context::getSelectedAdapters() const
 			selectedAdapters.push_back(*i);
 	}
 	return selectedAdapters;
+}
+
+void Context::setGridSpacing(int32_t gridSpacing)
+{
+	m_gridSpacing = gridSpacing;
+}
+
+int32_t Context::getGridSpacing() const
+{
+	return m_gridSpacing;
 }
 
 	}

@@ -4,6 +4,7 @@
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Log/Log.h"
 #include "Database/Instance.h"
+#include "Render/ITexture.h"
 #include "Render/Shader.h"
 #include "Render/Mesh/MeshReader.h"
 #include "Render/Mesh/RenderMeshFactory.h"
@@ -41,29 +42,42 @@ Ref< Shape > ShapeResource::create(resource::IResourceManager* resourceManager, 
 		return 0;
 	}
 
-	// Bind shaders.
+	// Bind shader.
+	resource::Proxy< render::Shader > shader;
+	if (!resourceManager->bind(m_shader, shader))
+	{
+		log::error << L"Shape create failed; unable to bind shader" << Endl;
+		return 0;
+	}
+
+	// Bind parts.
 	AlignedVector< Shape::Part > parts(m_parts.size());
 	for (size_t i = 0; i < m_parts.size(); ++i)
 	{
-		if (!resourceManager->bind(m_parts[i].shader, parts[i].shader))
+		if (!m_parts[i].texture.isNull() && !resourceManager->bind(m_parts[i].texture, parts[i].texture))
 		{
-			log::error << L"Shape create failed; unable to bind shader" << Endl;
+			log::error << L"Shape create failed; unable to bind texture" << Endl;
 			return 0;
 		}
+		parts[i].fillColor = m_parts[i].fillColor;
+		parts[i].curveSign = m_parts[i].curveSign;
 	}
 
-	return new Shape(mesh, parts, m_bounds);
+	return new Shape(mesh, shader, parts, m_bounds);
 }
 
 void ShapeResource::serialize(ISerializer& s)
 {
+	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberAlignedVector< Part, MemberComposite< Part > >(L"parts", m_parts);
 	s >> MemberAabb2(L"bounds", m_bounds);
 }
 
 void ShapeResource::Part::serialize(ISerializer& s)
 {
-	s >> resource::Member< render::Shader >(L"shader", shader);
+	s >> resource::Member< render::ITexture >(L"texture", texture);
+	s >> Member< Color4f >(L"fillColor", fillColor);
+	s >> Member< int8_t >(L"curveSign", curveSign);
 }
 
 	}
