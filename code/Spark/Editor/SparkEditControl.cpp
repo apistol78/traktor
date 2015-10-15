@@ -9,7 +9,7 @@
 #include "Spark/CharacterInstance.h"
 #include "Spark/SparkRenderer.h"
 #include "Spark/Editor/CharacterAdapter.h"
-#include "Spark/Editor/Context.h"
+#include "Spark/Editor/EditContext.h"
 #include "Spark/Editor/SparkEditControl.h"
 #include "Ui/Itf/IWidget.h"
 #include "Ui/Application.h"
@@ -33,10 +33,10 @@ int32_t viewGridOffset(int32_t x, int32_t spacing)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.SparkEditControl", SparkEditControl, ui::Widget)
 
-SparkEditControl::SparkEditControl(editor::IEditor* editor, editor::IEditorPageSite* site, Context* context)
+SparkEditControl::SparkEditControl(editor::IEditor* editor, editor::IEditorPageSite* site, EditContext* editContext)
 :	m_editor(editor)
 ,	m_site(site)
-,	m_context(context)
+,	m_editContext(editContext)
 ,	m_viewOffset(1920.0f, 1080.0f)
 ,	m_viewScale(0.3f)
 ,	m_panView(false)
@@ -175,10 +175,10 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 		{
 			m_primitiveRenderer->pushDepthState(false, false, false);
 
-			const Aabb2& bounds = mandatory_non_null_type_cast< const Sprite* >(m_context->getRoot()->getCharacter())->getBounds();
+			const Aabb2& bounds = mandatory_non_null_type_cast< const Sprite* >(m_editContext->getRoot()->getCharacter())->getBounds();
 			if (!bounds.empty())
 			{
-				for (int32_t x = int32_t(bounds.mn.x); x < int32_t(bounds.mx.x); x += m_context->getGridSpacing())
+				for (int32_t x = int32_t(bounds.mn.x); x < int32_t(bounds.mx.x); x += m_editContext->getGridSpacing())
 				{
 					m_primitiveRenderer->drawLine(
 						Vector4(x, bounds.mn.y, 1.0f, 1.0f),
@@ -186,7 +186,7 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 						Color4ub(0, 0, 0, 40)
 					);
 				}
-				for (int32_t y = int32_t(bounds.mn.y); y < int32_t(bounds.mx.y); y += m_context->getGridSpacing())
+				for (int32_t y = int32_t(bounds.mn.y); y < int32_t(bounds.mx.y); y += m_editContext->getGridSpacing())
 				{
 					m_primitiveRenderer->drawLine(
 						Vector4(bounds.mn.x, y, 1.0f, 1.0f),
@@ -206,7 +206,7 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 					Vector2(m_viewOffset.x / 2.0f - viewWidth / 2.0f, m_viewOffset.y / 2.0f - viewHeight / 2.0f),
 					Vector2(m_viewOffset.x / 2.0f + viewWidth / 2.0f, m_viewOffset.y / 2.0f + viewHeight / 2.0f)
 				);
-				for (int32_t x = viewGridOffset(int32_t(viewBounds.mn.x), m_context->getGridSpacing()); x < int32_t(viewBounds.mx.x); x += m_context->getGridSpacing())
+				for (int32_t x = viewGridOffset(int32_t(viewBounds.mn.x), m_editContext->getGridSpacing()); x < int32_t(viewBounds.mx.x); x += m_editContext->getGridSpacing())
 				{
 					m_primitiveRenderer->drawLine(
 						Vector4(x, viewBounds.mn.y, 1.0f, 1.0f),
@@ -214,7 +214,7 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 						Color4ub(0, 0, 0, 40)
 					);
 				}
-				for (int32_t y = viewGridOffset(int32_t(viewBounds.mn.y), m_context->getGridSpacing()); y < int32_t(viewBounds.mx.y); y += m_context->getGridSpacing())
+				for (int32_t y = viewGridOffset(int32_t(viewBounds.mn.y), m_editContext->getGridSpacing()); y < int32_t(viewBounds.mx.y); y += m_editContext->getGridSpacing())
 				{
 					m_primitiveRenderer->drawLine(
 						Vector4(viewBounds.mn.x, y, 1.0f, 1.0f),
@@ -229,9 +229,9 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 		}
 
 		// Draw sprites.
-		if (m_sparkRenderer && m_context->getRoot())
+		if (m_sparkRenderer && m_editContext->getRoot())
 		{
-			m_sparkRenderer->build(m_context->getRoot()->getCharacterInstance(), 0);
+			m_sparkRenderer->build(m_editContext->getRoot()->getCharacterInstance(), 0);
 			m_sparkRenderer->render(m_renderView, projection, 0);
 
 			// Draw bounding boxes.
@@ -239,7 +239,7 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 			{
 				m_primitiveRenderer->pushDepthState(false, false, false);
 
-				const RefArray< CharacterAdapter >& adapters = m_context->getAdapters();
+				const RefArray< CharacterAdapter >& adapters = m_editContext->getAdapters();
 				for (RefArray< CharacterAdapter >::const_iterator i = adapters.begin(); i != adapters.end(); ++i)
 					(*i)->paint(m_primitiveRenderer);
 
@@ -261,7 +261,7 @@ void SparkEditControl::eventMouseButtonDown(ui::MouseButtonDownEvent* event)
 	
 	if ((event->getKeyState() & ui::KsMenu) == 0)
 	{
-		const RefArray< CharacterAdapter >& adapters = m_context->getAdapters();
+		const RefArray< CharacterAdapter >& adapters = m_editContext->getAdapters();
 		for (RefArray< CharacterAdapter >::const_iterator i = adapters.begin(); i != adapters.end(); ++i)
 			(*i)->mouseDown(this, viewPosition);
 	}
@@ -284,7 +284,7 @@ void SparkEditControl::eventMouseButtonUp(ui::MouseButtonUpEvent* event)
 
 	if (!m_panView)
 	{
-		const RefArray< CharacterAdapter >& adapters = m_context->getAdapters();
+		const RefArray< CharacterAdapter >& adapters = m_editContext->getAdapters();
 		for (RefArray< CharacterAdapter >::const_iterator i = adapters.begin(); i != adapters.end(); ++i)
 			(*i)->mouseUp(this, viewPosition);
 	}
@@ -301,7 +301,7 @@ void SparkEditControl::eventMouseMove(ui::MouseMoveEvent* event)
 
 	if (!m_panView)
 	{
-		const RefArray< CharacterAdapter >& adapters = m_context->getAdapters();
+		const RefArray< CharacterAdapter >& adapters = m_editContext->getAdapters();
 		for (RefArray< CharacterAdapter >::const_iterator i = adapters.begin(); i != adapters.end(); ++i)
 			(*i)->mouseMove(this, viewPosition);
 	}

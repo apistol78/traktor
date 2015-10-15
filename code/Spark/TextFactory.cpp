@@ -1,4 +1,5 @@
 #include "Resource/IResourceManager.h"
+#include "Spark/Context.h"
 #include "Spark/Font.h"
 #include "Spark/ICharacterBuilder.h"
 #include "Spark/Text.h"
@@ -12,11 +13,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.TextFactory", TextFactory, ICharacterFactory)
 
-TextFactory::TextFactory(resource::IResourceManager* resourceManager)
-:	m_resourceManager(resourceManager)
-{
-}
-
 TypeInfoSet TextFactory::getCharacterTypes() const
 {
 	TypeInfoSet typeSet;
@@ -24,14 +20,14 @@ TypeInfoSet TextFactory::getCharacterTypes() const
 	return typeSet;
 }
 
-Ref< CharacterInstance > TextFactory::create(const ICharacterBuilder* builder, const Character* character, const CharacterInstance* parent, const std::wstring& name) const
+Ref< CharacterInstance > TextFactory::create(const Context* context, const ICharacterBuilder* builder, const Character* character, const CharacterInstance* parent, const std::wstring& name) const
 {
 	const Text* text = mandatory_non_null_type_cast< const Text* >(character);
 
 	resource::Proxy< Font > font;
 	if (text->m_font)
 	{
-		if (!m_resourceManager->bind(text->m_font, font))
+		if (!context->getResourceManager()->bind(text->m_font, font))
 			return 0;
 	}
 

@@ -18,6 +18,7 @@ namespace traktor
 
 class Character;
 class CharacterInstance;
+class Context;
 class ICharacterBuilder;
 
 /*! \brief Character instance factory interface.
@@ -30,7 +31,7 @@ class T_DLLCLASS ICharacterFactory : public Object
 public:
 	virtual TypeInfoSet getCharacterTypes() const = 0;
 
-	virtual Ref< CharacterInstance > create(const ICharacterBuilder* builder, const Character* character, const CharacterInstance* parent, const std::wstring& name) const = 0;
+	virtual Ref< CharacterInstance > create(const Context* context, const ICharacterBuilder* builder, const Character* character, const CharacterInstance* parent, const std::wstring& name) const = 0;
 };
 
 	}

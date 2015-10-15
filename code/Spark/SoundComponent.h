@@ -33,9 +33,9 @@ class T_DLLCLASS SoundComponent : public IComponent
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< IComponentInstance > createInstance(SpriteInstance* owner, resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer) const;
+	virtual Ref< IComponentInstance > createInstance(const Context* context, SpriteInstance* owner) const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	friend class CharacterPipeline;

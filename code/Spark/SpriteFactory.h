@@ -13,20 +13,6 @@
 
 namespace traktor
 {
-	namespace resource
-	{
-
-class IResourceManager;
-
-	}
-
-	namespace sound
-	{
-
-class ISoundPlayer;
-
-	}
-
 	namespace spark
 	{
 
@@ -38,15 +24,13 @@ class T_DLLCLASS SpriteFactory : public ICharacterFactory
 	T_RTTI_CLASS;
 
 public:
-	SpriteFactory(resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer, bool createComponents);
+	SpriteFactory(bool createComponents);
 
 	virtual TypeInfoSet getCharacterTypes() const;
 
-	virtual Ref< CharacterInstance > create(const ICharacterBuilder* builder, const Character* character, const CharacterInstance* parent, const std::wstring& name) const;
+	virtual Ref< CharacterInstance > create(const Context* context, const ICharacterBuilder* builder, const Character* character, const CharacterInstance* parent, const std::wstring& name) const T_OVERRIDE T_FINAL;
 
 private:
-	Ref< resource::IResourceManager > m_resourceManager;
-	Ref< sound::ISoundPlayer > m_soundPlayer;
 	bool m_createComponents;
 };
 

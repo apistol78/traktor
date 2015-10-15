@@ -29,7 +29,7 @@ class T_DLLCLASS CharacterBuilder : public ICharacterBuilder
 public:
 	void addFactory(ICharacterFactory* factory);
 
-	virtual Ref< CharacterInstance > create(const Character* character, const CharacterInstance* parent, const std::wstring& name) const;
+	virtual Ref< CharacterInstance > create(const Context* context, const Character* character, const CharacterInstance* parent, const std::wstring& name) const;
 
 private:
 	SmallMap< const TypeInfo*, Ref< ICharacterFactory > > m_factories;

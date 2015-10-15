@@ -21,9 +21,10 @@ namespace traktor
 	namespace spark
 	{
 
+class Context;
 class ICharacterBuilder;
 class IComponentInstance;
-class IRenderable;
+class Shape;
 class Sprite;
 
 /*! \brief Sprite character instance.
@@ -34,11 +35,13 @@ class T_DLLCLASS SpriteInstance : public CharacterInstance
 	T_RTTI_CLASS;
 
 public:
-	SpriteInstance(const ICharacterBuilder* builder, const Sprite* sprite, const CharacterInstance* parent);
+	SpriteInstance(const Context* context, const ICharacterBuilder* builder, const Sprite* sprite, const CharacterInstance* parent);
 
-	void setRenderable(IRenderable* renderable);
+	const Context* getContext() const;
 
-	IRenderable* getRenderable() const;
+	void setShape(Shape* shape);
+
+	const resource::Proxy< Shape >& getShape() const;
 
 	Ref< CharacterInstance > create(const std::wstring& id) const;
 
@@ -90,9 +93,10 @@ public:
 private:
 	friend class SpriteFactory;
 
+	Ref< const Context > m_context;
 	Ref< const ICharacterBuilder > m_builder;
 	Ref< const Sprite > m_sprite;
-	Ref< IRenderable > m_renderable;
+	resource::Proxy< Shape > m_shape;
 	DisplayList m_displayList;
 	ColorTransform m_colorTransform;
 	SmallMap< const TypeInfo*, Ref< IComponentInstance > > m_components;

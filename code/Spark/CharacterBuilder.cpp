@@ -16,11 +16,11 @@ void CharacterBuilder::addFactory(ICharacterFactory* factory)
 		m_factories[*i] = factory;
 }
 
-Ref< CharacterInstance > CharacterBuilder::create(const Character* character, const CharacterInstance* parent, const std::wstring& name) const
+Ref< CharacterInstance > CharacterBuilder::create(const Context* context, const Character* character, const CharacterInstance* parent, const std::wstring& name) const
 {
 	SmallMap< const TypeInfo*, Ref< ICharacterFactory > >::const_iterator it = m_factories.find(&type_of(character));
 	if (it != m_factories.end())
-		return it->second->create(this, character, parent, name);
+		return it->second->create(context, this, character, parent, name);
 	else
 		return 0;
 }

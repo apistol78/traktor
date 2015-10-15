@@ -1,30 +1,24 @@
-#ifndef traktor_spark_Context_H
-#define traktor_spark_Context_H
+#ifndef traktor_spark_EditContext_H
+#define traktor_spark_EditContext_H
 
+#include "Core/Object.h"
 #include "Core/Math/Vector2.h"
-#include "Ui/EventSubject.h"
 
 namespace traktor
 {
-	namespace resource
-	{
-
-class IResourceManager;
-
-	}
-
 	namespace spark
 	{
 
 class CharacterAdapter;
+class Context;
 class Sprite;
 
-class Context : public ui::EventSubject
+class EditContext : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	Context(resource::IResourceManager* resourceManager);
+	EditContext(Context* context);
 
 	bool setSprite(Sprite* sprite);
 
@@ -40,8 +34,10 @@ public:
 
 	int32_t getGridSpacing() const;
 
+	Context* getContext() const;
+
 private:
-	Ref< resource::IResourceManager > m_resourceManager;
+	Ref< Context > m_context;
 	Ref< CharacterAdapter > m_root;
 	RefArray< CharacterAdapter > m_adapters;
 	int32_t m_gridSpacing;
@@ -50,4 +46,4 @@ private:
 	}
 }
 
-#endif	// traktor_spark_Context_H
+#endif	// traktor_spark_EditContext_H

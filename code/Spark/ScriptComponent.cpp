@@ -2,6 +2,7 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
+#include "Spark/Context.h"
 #include "Spark/ScriptComponent.h"
 #include "Spark/ScriptComponentInstance.h"
 
@@ -12,13 +13,13 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spark.ScriptComponent", 0, ScriptComponent, IComponent)
 
-Ref< IComponentInstance > ScriptComponent::createInstance(SpriteInstance* owner, resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer) const
+Ref< IComponentInstance > ScriptComponent::createInstance(const Context* context, SpriteInstance* owner) const
 {
 	resource::Proxy< IRuntimeClass > clazz;
-	if (!resourceManager->bind(m_class, clazz))
+	if (context->getResourceManager()->bind(m_class, clazz))
+		return new ScriptComponentInstance(owner, clazz);
+	else
 		return 0;
-
-	return new ScriptComponentInstance(owner, clazz);
 }
 
 void ScriptComponent::serialize(ISerializer& s)

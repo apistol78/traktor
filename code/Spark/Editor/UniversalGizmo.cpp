@@ -2,7 +2,7 @@
 #include "Render/PrimitiveRenderer.h"
 #include "Spark/CharacterInstance.h"
 #include "Spark/Editor/CharacterAdapter.h"
-#include "Spark/Editor/Context.h"
+#include "Spark/Editor/EditContext.h"
 #include "Spark/Editor/UniversalGizmo.h"
 #include "Ui/Widget.h"
 
@@ -95,8 +95,8 @@ void drawWireBoxes(render::PrimitiveRenderer* primitiveRenderer, const Matrix33&
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.UniversalGizmo", UniversalGizmo, IGizmo)
 
-UniversalGizmo::UniversalGizmo(Context* context)
-:	m_context(context)
+UniversalGizmo::UniversalGizmo(EditContext* editContext)
+:	m_editContext(editContext)
 ,	m_mode(EmNone)
 {
 }

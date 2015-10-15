@@ -1,6 +1,6 @@
 #include "Spark/ICharacterBuilder.h"
 #include "Spark/IComponentInstance.h"
-#include "Spark/IRenderable.h"
+#include "Spark/Shape.h"
 #include "Spark/Sprite.h"
 #include "Spark/SpriteInstance.h"
 
@@ -11,8 +11,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.SpriteInstance", SpriteInstance, CharacterInstance)
 
-SpriteInstance::SpriteInstance(const ICharacterBuilder* builder, const Sprite* sprite, const CharacterInstance* parent)
+SpriteInstance::SpriteInstance(const Context* context, const ICharacterBuilder* builder, const Sprite* sprite, const CharacterInstance* parent)
 :	CharacterInstance(parent)
+,	m_context(context)
 ,	m_builder(builder)
 ,	m_sprite(sprite)
 ,	m_mousePressed(false)
@@ -20,21 +21,26 @@ SpriteInstance::SpriteInstance(const ICharacterBuilder* builder, const Sprite* s
 {
 }
 
-void SpriteInstance::setRenderable(IRenderable* renderable)
+const Context* SpriteInstance::getContext() const
 {
-	m_renderable = renderable;
+	return m_context;
 }
 
-IRenderable* SpriteInstance::getRenderable() const
+void SpriteInstance::setShape(Shape* shape)
 {
-	return m_renderable;
+	m_shape = resource::Proxy< Shape >(shape);
+}
+
+const resource::Proxy< Shape >& SpriteInstance::getShape() const
+{
+	return m_shape;
 }
 
 Ref< CharacterInstance > SpriteInstance::create(const std::wstring& id) const
 {
 	const Character* character = m_sprite->getCharacter(id);
 	if (character)
-		return m_builder->create(character, this, id);
+		return m_builder->create(m_context, character, this, id);
 	else
 		return 0;
 }
@@ -234,8 +240,8 @@ Aabb2 SpriteInstance::getBounds() const
 {
 	Aabb2 bounds = m_sprite->getBounds();
 
-	if (m_renderable)
-		bounds = m_renderable->getBounds();
+	if (m_shape)
+		bounds = m_shape->getBounds();
 
 	RefArray< CharacterInstance > characters;
 	m_displayList.getCharacters(characters);
@@ -279,9 +285,9 @@ void SpriteInstance::render(render::RenderContext* renderContext) const
 	for (RefArray< CharacterInstance >::const_iterator i = characters.begin(); i != characters.end(); ++i)
 		(*i)->render(renderContext);
 
-	// Render this sprite's renderable.
-	if (m_renderable)
-		m_renderable->render(renderContext, getFullTransform(), m_colorTransform);
+	// Render this sprite's shape.
+	if (m_shape)
+		m_shape->render(renderContext, getFullTransform(), m_colorTransform);
 }
 
 	}

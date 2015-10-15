@@ -12,12 +12,13 @@
 #include "Render/Resource/TextureFactory.h"
 #include "Resource/ResourceManager.h"
 #include "Spark/CharacterResourceFactory.h"
+#include "Spark/Context.h"
 #include "Spark/FontResourceFactory.h"
 #include "Spark/Sprite.h"
 #include "Spark/SpriteInstance.h"
 #include "Spark/ShapeResourceFactory.h"
 #include "Spark/Editor/CharacterAdapter.h"
-#include "Spark/Editor/Context.h"
+#include "Spark/Editor/EditContext.h"
 #include "Spark/Editor/SparkEditControl.h"
 #include "Spark/Editor/SparkEditorPage.h"
 #include "Spark/Editor/UniversalGizmo.h"
@@ -57,16 +58,23 @@ bool SparkEditorPage::create(ui::Container* parent)
 	Ref< db::Database > database = m_editor->getOutputDatabase();
 
 	// Create resource manager.
-	m_resourceManager = new resource::ResourceManager(true);
-	m_resourceManager->addFactory(new render::ShaderFactory(database, renderSystem));
-	m_resourceManager->addFactory(new render::TextureFactory(database, renderSystem, 0));
-	m_resourceManager->addFactory(new CharacterResourceFactory(database));
-	m_resourceManager->addFactory(new FontResourceFactory(database, renderSystem));
-	m_resourceManager->addFactory(new ShapeResourceFactory(database, renderSystem));
+	Ref< resource::ResourceManager > resourceManager = new resource::ResourceManager(true);
+	resourceManager->addFactory(new render::ShaderFactory(database, renderSystem));
+	resourceManager->addFactory(new render::TextureFactory(database, renderSystem, 0));
+	resourceManager->addFactory(new CharacterResourceFactory(database));
+	resourceManager->addFactory(new FontResourceFactory(database, renderSystem));
+	resourceManager->addFactory(new ShapeResourceFactory(database, renderSystem));
+
+	// Create runtime context.
+	Ref< Context > context = new Context(
+		resourceManager,
+		renderSystem,
+		0
+	);
 
 	// Create editor context.
-	m_context = new Context(m_resourceManager);
-	if (!m_context->setSprite(m_document->getObject< Sprite >(0)))
+	m_editContext = new EditContext(context);
+	if (!m_editContext->setSprite(m_document->getObject< Sprite >(0)))
 		return false;
 
 	// Create user interface.
@@ -77,8 +85,8 @@ bool SparkEditorPage::create(ui::Container* parent)
 	m_toolBar->create(container, ui::WsNone);
 	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &SparkEditorPage::eventToolClick);
 
-	m_editControl = new SparkEditControl(m_editor, m_site, m_context);
-	m_editControl->create(container, ui::WsNone, m_resourceManager, renderSystem);
+	m_editControl = new SparkEditControl(m_editor, m_site, m_editContext);
+	m_editControl->create(container, ui::WsNone, resourceManager, renderSystem);
 	m_editControl->update();
 
 	m_panelPlace = new ui::Container();
@@ -126,7 +134,6 @@ void SparkEditorPage::destroy()
 	safeDestroy(m_panelLibrary);
 	safeDestroy(m_panelPlace);
 	safeDestroy(m_editControl);
-	safeDestroy(m_resourceManager);
 }
 
 void SparkEditorPage::activate()
@@ -147,7 +154,7 @@ bool SparkEditorPage::handleCommand(const ui::Command& command)
 	if (command == L"Editor.PropertiesChanged")
 	{
 		// Reset sprite in context, need to re-build grid to have row data pointing to new adapters.
-		m_context->setSprite(m_document->getObject< Sprite >(0));
+		m_editContext->setSprite(m_document->getObject< Sprite >(0));
 		updateAdaptersGrid();
 	}
 	else
@@ -158,8 +165,7 @@ bool SparkEditorPage::handleCommand(const ui::Command& command)
 
 void SparkEditorPage::handleDatabaseEvent(db::Database* database, const Guid& eventId)
 {
-	if (m_resourceManager)
-		m_resourceManager->reload(eventId, false);
+	m_editContext->getContext()->getResourceManager()->reload(eventId, false);
 }
 
 void SparkEditorPage::updateAdaptersGrid(ui::custom::GridRow* parentRow, CharacterAdapter* adapter)
@@ -184,7 +190,7 @@ void SparkEditorPage::updateAdaptersGrid(ui::custom::GridRow* parentRow, Charact
 void SparkEditorPage::updateAdaptersGrid()
 {
 	m_gridPlace->removeAllRows();
-	updateAdaptersGrid(0, m_context->getRoot());
+	updateAdaptersGrid(0, m_editContext->getRoot());
 	m_gridPlace->update();
 }
 
@@ -213,7 +219,7 @@ void SparkEditorPage::eventToolPlaceClick(ui::custom::ToolBarButtonClickEvent* e
 		}
 
 		// Reset sprite in context, need to re-build grid to have row data pointing to new adapters.
-		m_context->setSprite(m_document->getObject< Sprite >(0));
+		m_editContext->setSprite(m_document->getObject< Sprite >(0));
 		updateAdaptersGrid();
 
 		// Ensure property object is set to document root.
@@ -224,7 +230,7 @@ void SparkEditorPage::eventToolPlaceClick(ui::custom::ToolBarButtonClickEvent* e
 void SparkEditorPage::eventGridAdapterSelectionChange(ui::SelectionChangeEvent* event)
 {
 	// De-select all adapters.
-	const RefArray< CharacterAdapter >& adapters = m_context->getAdapters();
+	const RefArray< CharacterAdapter >& adapters = m_editContext->getAdapters();
 	for (RefArray< CharacterAdapter >::const_iterator i = adapters.begin(); i != adapters.end(); ++i)
 	{
 		(*i)->detachGizmo();
@@ -241,7 +247,7 @@ void SparkEditorPage::eventGridAdapterSelectionChange(ui::SelectionChangeEvent* 
 		Ref< CharacterAdapter > adapter = (*i)->getData< CharacterAdapter >(L"ADAPTER");
 		T_FATAL_ASSERT (adapter);
 
-		adapter->attachGizmo(new UniversalGizmo(m_context));
+		adapter->attachGizmo(new UniversalGizmo(m_editContext));
 		adapter->select();
 	}
 

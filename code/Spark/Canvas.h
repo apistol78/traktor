@@ -1,18 +1,24 @@
 #ifndef traktor_spark_Canvas_H
 #define traktor_spark_Canvas_H
 
-#include "Spark/IRenderable.h"
+#include <list>
+#include "Core/Object.h"
+#include "Core/Math/Color4f.h"
 #include "Spark/Path.h"
+#include "Spark/Triangulator.h"
 
 namespace traktor
 {
 	namespace spark
 	{
 
+class Context;
+class Shape;
+
 /*! \brief
  * \ingroup Spark
  */
-class Canvas : public IRenderable
+class Canvas : public Object
 {
 	T_RTTI_CLASS;
 
@@ -33,16 +39,25 @@ public:
 
 	void close();
 
-	void fill();
+	void rect(float x, float y, float width, float height, float radius);
+
+	void circle(float x, float y, float radius);
+
+	void fill(const Color4f& fillColor);
 
 	void stroke();
 
-	virtual Aabb2 getBounds() const T_OVERRIDE T_FINAL;
-
-	virtual void render(render::RenderContext* renderContext, const Matrix33& transform, const ColorTransform& colorTransform) const T_OVERRIDE T_FINAL;
+	Ref< Shape > createShape(const Context* context) const;
 
 private:
+	struct Batch
+	{
+		Color4f fillColor;
+		AlignedVector< Triangulator::Triangle > triangles;
+	};
+
 	Path m_path;
+	std::list< Batch > m_batches;
 };
 
 	}

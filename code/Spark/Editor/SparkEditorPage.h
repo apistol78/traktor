@@ -22,13 +22,6 @@ class IEditorPageSite;
 
 	}
 
-	namespace resource
-	{
-
-class IResourceManager;
-
-	}
-
 	namespace ui
 	{
 
@@ -51,7 +44,7 @@ class ToolBarButtonClickEvent;
 	{
 
 class CharacterAdapter;
-class Context;
+class EditContext;
 class SparkEditControl;
 
 /*! \brief
@@ -82,8 +75,7 @@ private:
 	editor::IEditor* m_editor;
 	editor::IEditorPageSite* m_site;
 	editor::IDocument* m_document;
-	Ref< resource::IResourceManager > m_resourceManager;
-	Ref< Context > m_context;
+	Ref< EditContext > m_editContext;
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< SparkEditControl > m_editControl;
 	Ref< ui::Container > m_panelPlace;
