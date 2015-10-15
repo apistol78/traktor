@@ -1,8 +1,8 @@
 #include "Resource/IResourceManager.h"
+#include "Spark/Context.h"
 #include "Spark/ICharacterBuilder.h"
 #include "Spark/IComponent.h"
 #include "Spark/Shape.h"
-#include "Spark/ShapeRenderable.h"
 #include "Spark/Sprite.h"
 #include "Spark/SpriteFactory.h"
 #include "Spark/SpriteInstance.h"
@@ -14,10 +14,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.SpriteFactory", SpriteFactory, ICharacterFactory)
 
-SpriteFactory::SpriteFactory(resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer, bool createComponents)
-:	m_resourceManager(resourceManager)
-,	m_soundPlayer(soundPlayer)
-,	m_createComponents(createComponents)
+SpriteFactory::SpriteFactory(bool createComponents)
+:	m_createComponents(createComponents)
 {
 }
 
@@ -28,21 +26,19 @@ TypeInfoSet SpriteFactory::getCharacterTypes() const
 	return typeSet;
 }
 
-Ref< CharacterInstance > SpriteFactory::create(const ICharacterBuilder* builder, const Character* character, const CharacterInstance* parent, const std::wstring& name) const
+Ref< CharacterInstance > SpriteFactory::create(const Context* context, const ICharacterBuilder* builder, const Character* character, const CharacterInstance* parent, const std::wstring& name) const
 {
 	const Sprite* sprite = mandatory_non_null_type_cast< const Sprite* >(character);
 
 	// Create sprite instance.
-	Ref< SpriteInstance > instance = new SpriteInstance(builder, sprite, parent);
+	Ref< SpriteInstance > instance = new SpriteInstance(context, builder, sprite, parent);
 	instance->setTransform(sprite->getTransform());
 
 	// Create shape.
 	if (sprite->m_shape)
 	{
-		resource::Proxy< Shape > shape;
-		if (!m_resourceManager->bind(sprite->m_shape, shape))
+		if (!context->getResourceManager()->bind(sprite->m_shape, instance->m_shape))
 			return 0;
-		instance->m_renderable = new ShapeRenderable(shape);
 	}
 
 	// Create child characters.
@@ -52,7 +48,7 @@ Ref< CharacterInstance > SpriteFactory::create(const ICharacterBuilder* builder,
 		if (!i->character)
 			continue;
 
-		Ref< CharacterInstance > childInstance = builder->create(i->character, instance, i->name);
+		Ref< CharacterInstance > childInstance = builder->create(context, i->character, instance, i->name);
 		if (!childInstance)
 			return 0;
 
@@ -70,7 +66,7 @@ Ref< CharacterInstance > SpriteFactory::create(const ICharacterBuilder* builder,
 			if (!sprite->m_components[i])
 				continue;
 
-			Ref< IComponentInstance > componentInstance = sprite->m_components[i]->createInstance(instance, m_resourceManager, m_soundPlayer);
+			Ref< IComponentInstance > componentInstance = sprite->m_components[i]->createInstance(context, instance);
 			if (!componentInstance)
 				return 0;
 

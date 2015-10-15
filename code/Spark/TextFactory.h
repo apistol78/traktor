@@ -13,13 +13,6 @@
 
 namespace traktor
 {
-	namespace resource
-	{
-
-class IResourceManager;
-
-	}
-
 	namespace spark
 	{
 
@@ -31,14 +24,9 @@ class T_DLLCLASS TextFactory : public ICharacterFactory
 	T_RTTI_CLASS;
 
 public:
-	TextFactory(resource::IResourceManager* resourceManager);
-
 	virtual TypeInfoSet getCharacterTypes() const;
 
-	virtual Ref< CharacterInstance > create(const ICharacterBuilder* builder, const Character* character, const CharacterInstance* parent, const std::wstring& name) const;
-
-private:
-	Ref< resource::IResourceManager > m_resourceManager;
+	virtual Ref< CharacterInstance > create(const Context* context, const ICharacterBuilder* builder, const Character* character, const CharacterInstance* parent, const std::wstring& name) const T_OVERRIDE T_FINAL;
 };
 
 	}

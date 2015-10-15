@@ -8,14 +8,14 @@ namespace traktor
 	namespace spark
 	{
 
-class Context;
+class EditContext;
 
 class UniversalGizmo : public IGizmo
 {
 	T_RTTI_CLASS;
 
 public:
-	UniversalGizmo(Context* context);
+	UniversalGizmo(EditContext* editContext);
 
 	virtual void attach(CharacterAdapter* adapter) T_OVERRIDE T_FINAL;
 
@@ -38,7 +38,7 @@ private:
 		EmRotate
 	};
 
-	Context* m_context;
+	EditContext* m_editContext;
 	Vector2 m_center;
 	Vector2 m_scaleCorners[4];
 	Vector2 m_scaleEdges[4];

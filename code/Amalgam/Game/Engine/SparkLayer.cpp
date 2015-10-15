@@ -10,6 +10,7 @@
 #include "Render/ImageProcess/ImageProcess.h"
 #include "Render/ImageProcess/ImageProcessSettings.h"
 #include "Spark/CharacterBuilder.h"
+#include "Spark/Context.h"
 #include "Spark/ExternalFactory.h"
 #include "Spark/SparkPlayer.h"
 #include "Spark/SparkRenderer.h"
@@ -66,13 +67,22 @@ void SparkLayer::transition(Layer* fromLayer)
 
 void SparkLayer::prepare()
 {
+	if (!m_context)
+	{
+		m_context = new spark::Context(
+			m_environment->getResource()->getResourceManager(),
+			m_environment->getRender()->getRenderSystem(),
+			m_environment->getAudio() ? m_environment->getAudio()->getSoundPlayer() : 0
+		);
+	}
+
 	// Create character builder.
 	if (!m_characterBuilder)
 	{
 		m_characterBuilder = new spark::CharacterBuilder();
-		m_characterBuilder->addFactory(new spark::ExternalFactory(m_environment->getResource()->getResourceManager()));
-		m_characterBuilder->addFactory(new spark::SpriteFactory(m_environment->getResource()->getResourceManager(), m_environment->getAudio() ? m_environment->getAudio()->getSoundPlayer() : 0, true));
-		m_characterBuilder->addFactory(new spark::TextFactory(m_environment->getResource()->getResourceManager()));
+		m_characterBuilder->addFactory(new spark::ExternalFactory());
+		m_characterBuilder->addFactory(new spark::SpriteFactory(true));
+		m_characterBuilder->addFactory(new spark::TextFactory());
 	}
 
 	// Create renderer.
@@ -85,7 +95,7 @@ void SparkLayer::prepare()
 	// Create instance of root sprite.
 	if (!m_characterInstance)
 	{
-		m_characterInstance = m_characterBuilder->create(m_sprite.getResource(), 0, L"");
+		m_characterInstance = m_characterBuilder->create(m_context, m_sprite.getResource(), 0, L"");
 		if (m_characterInstance)
 			m_sparkPlayer = new spark::SparkPlayer(m_characterInstance);
 		else

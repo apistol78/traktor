@@ -35,7 +35,7 @@ class Shader;
 	namespace spark
 	{
 
-class Context;
+class EditContext;
 class SparkRenderer;
 
 /*! \brief
@@ -46,7 +46,7 @@ class SparkEditControl : public ui::Widget
 	T_RTTI_CLASS;
 
 public:
-	SparkEditControl(editor::IEditor* editor, editor::IEditorPageSite* site, Context* context);
+	SparkEditControl(editor::IEditor* editor, editor::IEditorPageSite* site, EditContext* editContext);
 
 	bool create(
 		ui::Widget* parent,
@@ -60,7 +60,7 @@ public:
 private:
 	editor::IEditor* m_editor;
 	editor::IEditorPageSite* m_site;
-	Ref< Context > m_context;
+	Ref< EditContext > m_editContext;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< SparkRenderer > m_sparkRenderer;

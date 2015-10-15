@@ -5,38 +5,38 @@
 #include "Spark/TextFactory.h"
 #include "Spark/Editor/CharacterAdapter.h"
 #include "Spark/Editor/CharacterAdapterBuilder.h"
-#include "Spark/Editor/Context.h"
+#include "Spark/Editor/EditContext.h"
 
 namespace traktor
 {
 	namespace spark
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.Context", Context, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.EditContext", EditContext, Object)
 
-Context::Context(resource::IResourceManager* resourceManager)
-:	m_resourceManager(resourceManager)
+EditContext::EditContext(Context* context)
+:	m_context(context)
 ,	m_gridSpacing(40)
 {
 }
 
-bool Context::setSprite(Sprite* sprite)
+bool EditContext::setSprite(Sprite* sprite)
 {
 	m_root = 0;
 	m_adapters.clear();
 
 	Ref< CharacterAdapterBuilder > characterBuilder = new CharacterAdapterBuilder(m_root, m_adapters);
-	characterBuilder->addFactory(new ExternalFactory(m_resourceManager));
-	characterBuilder->addFactory(new SpriteFactory(m_resourceManager, 0, false));
-	characterBuilder->addFactory(new TextFactory(m_resourceManager));
+	characterBuilder->addFactory(new ExternalFactory());
+	characterBuilder->addFactory(new SpriteFactory(false));
+	characterBuilder->addFactory(new TextFactory());
 
-	if (characterBuilder->create(sprite, 0, L"<< Root >>") == 0)
+	if (characterBuilder->create(m_context, sprite, 0, L"<< Root >>") == 0)
 		return false;
 
 	return true;
 }
 
-CharacterAdapter* Context::hitTest(const Vector2& position) const
+CharacterAdapter* EditContext::hitTest(const Vector2& position) const
 {
 	for (RefArray< CharacterAdapter >::const_iterator i = m_adapters.begin(); i != m_adapters.end(); ++i)
 	{
@@ -56,17 +56,17 @@ CharacterAdapter* Context::hitTest(const Vector2& position) const
 	return 0;
 }
 
-CharacterAdapter* Context::getRoot()
+CharacterAdapter* EditContext::getRoot()
 {
 	return m_root;
 }
 
-const RefArray< CharacterAdapter >& Context::getAdapters() const
+const RefArray< CharacterAdapter >& EditContext::getAdapters() const
 {
 	return m_adapters;
 }
 
-RefArray< CharacterAdapter > Context::getSelectedAdapters() const
+RefArray< CharacterAdapter > EditContext::getSelectedAdapters() const
 {
 	RefArray< CharacterAdapter > selectedAdapters;
 	for (RefArray< CharacterAdapter >::const_iterator i = m_adapters.begin(); i != m_adapters.end(); ++i)
@@ -77,14 +77,19 @@ RefArray< CharacterAdapter > Context::getSelectedAdapters() const
 	return selectedAdapters;
 }
 
-void Context::setGridSpacing(int32_t gridSpacing)
+void EditContext::setGridSpacing(int32_t gridSpacing)
 {
 	m_gridSpacing = gridSpacing;
 }
 
-int32_t Context::getGridSpacing() const
+int32_t EditContext::getGridSpacing() const
 {
 	return m_gridSpacing;
+}
+
+Context* EditContext::getContext() const
+{
+	return m_context;
 }
 
 	}

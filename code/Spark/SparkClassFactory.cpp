@@ -1,12 +1,16 @@
+#include "Core/Class/AutoRuntimeClass.h"
+#include "Core/Class/Boxes.h"
+#include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Sound/Player/ISoundHandle.h"
 #include "Spark/Canvas.h"
 #include "Spark/Character.h"
 #include "Spark/CharacterInstance.h"
+#include "Spark/Context.h"
 #include "Spark/IComponent.h"
 #include "Spark/IComponentInstance.h"
 #include "Spark/ScriptComponent.h"
 #include "Spark/ScriptComponentInstance.h"
-#include "Spark/ShapeRenderable.h"
+#include "Spark/Shape.h"
 #include "Spark/SoundComponent.h"
 #include "Spark/SoundComponentInstance.h"
 #include "Spark/SparkClassFactory.h"
@@ -14,9 +18,6 @@
 #include "Spark/SpriteInstance.h"
 #include "Spark/Text.h"
 #include "Spark/TextInstance.h"
-#include "Core/Class/AutoRuntimeClass.h"
-#include "Core/Class/Boxes.h"
-#include "Core/Class/IRuntimeClassRegistrar.h"
 
 namespace traktor
 {
@@ -55,30 +56,19 @@ void CharacterInstance_setScale(CharacterInstance* self, float x, float y)
 	self->setScale(Vector2(x, y));
 }
 
+Shape* SpriteInstance_getShape(SpriteInstance* self)
+{
+	return self->getShape().getResource();
+}
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.SparkClassFactory", 0, SparkClassFactory, IRuntimeClassFactory)
 
 void SparkClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
-	Ref< AutoRuntimeClass< IRenderable > > classIRenderable = new AutoRuntimeClass< IRenderable >();
-	registrar->registerClass(classIRenderable);
-
-	Ref< AutoRuntimeClass< ShapeRenderable > > classShapeRenderable = new AutoRuntimeClass< ShapeRenderable >();
-	registrar->registerClass(classShapeRenderable);
-
-	Ref< AutoRuntimeClass< Canvas > > classCanvas = new AutoRuntimeClass< Canvas >();
-	classCanvas->addMethod("clear", &Canvas::clear);
-	classCanvas->addMethod("moveTo", &Canvas::moveTo);
-	classCanvas->addMethod("lineTo", &Canvas::lineTo);
-	classCanvas->addMethod("quadricTo", &Canvas_quadricTo_4);
-	classCanvas->addMethod("quadricTo", &Canvas_quadricTo_2);
-	classCanvas->addMethod("cubicTo", &Canvas_cubicTo_6);
-	classCanvas->addMethod("cubicTo", &Canvas_cubicTo_4);
-	classCanvas->addMethod("close", &Canvas::close);
-	classCanvas->addMethod("fill", &Canvas::fill);
-	classCanvas->addMethod("stroke", &Canvas::stroke);
-	registrar->registerClass(classCanvas);
+	Ref< AutoRuntimeClass< Context > > classContext = new AutoRuntimeClass< Context >();
+	registrar->registerClass(classContext);
 
 	Ref< AutoRuntimeClass< IComponent > > classComponent = new AutoRuntimeClass< IComponent >();
 	registrar->registerClass(classComponent);
@@ -118,12 +108,16 @@ void SparkClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classCharacterInstance->addMethod("getBounds", &CharacterInstance::getBounds);
 	registrar->registerClass(classCharacterInstance);
 
+	Ref< AutoRuntimeClass< Shape > > classShape = new AutoRuntimeClass< Shape >();
+	registrar->registerClass(classShape);
+
 	Ref< AutoRuntimeClass< Sprite > > classSprite = new AutoRuntimeClass< Sprite >();
 	registrar->registerClass(classSprite);
 
 	Ref< AutoRuntimeClass< SpriteInstance > > classSpriteInstance = new AutoRuntimeClass< SpriteInstance >();
-	classSpriteInstance->addMethod("setRenderable", &SpriteInstance::setRenderable);
-	classSpriteInstance->addMethod("getRenderable", &SpriteInstance::getRenderable);
+	classSpriteInstance->addMethod("getContext", &SpriteInstance::getContext);
+	classSpriteInstance->addMethod("setShape", &SpriteInstance::setShape);
+	classSpriteInstance->addMethod("getShape", &SpriteInstance_getShape);
 	classSpriteInstance->addMethod("create", &SpriteInstance::create);
 	classSpriteInstance->addMethod("place", &SpriteInstance::place);
 	classSpriteInstance->addMethod("remove", &SpriteInstance::remove);
@@ -145,6 +139,23 @@ void SparkClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classTextInstance->addMethod("setAlpha", &TextInstance::setAlpha);
 	classTextInstance->addMethod("getAlpha", &TextInstance::getAlpha);
 	registrar->registerClass(classTextInstance);
+
+	Ref< AutoRuntimeClass< Canvas > > classCanvas = new AutoRuntimeClass< Canvas >();
+	classCanvas->addConstructor();
+	classCanvas->addMethod("clear", &Canvas::clear);
+	classCanvas->addMethod("moveTo", &Canvas::moveTo);
+	classCanvas->addMethod("lineTo", &Canvas::lineTo);
+	classCanvas->addMethod("quadricTo", &Canvas_quadricTo_4);
+	classCanvas->addMethod("quadricTo", &Canvas_quadricTo_2);
+	classCanvas->addMethod("cubicTo", &Canvas_cubicTo_6);
+	classCanvas->addMethod("cubicTo", &Canvas_cubicTo_4);
+	classCanvas->addMethod("close", &Canvas::close);
+	classCanvas->addMethod("rect", &Canvas::rect);
+	classCanvas->addMethod("circle", &Canvas::circle);
+	classCanvas->addMethod("fill", &Canvas::fill);
+	classCanvas->addMethod("stroke", &Canvas::stroke);
+	classCanvas->addMethod("createShape", &Canvas::createShape);
+	registrar->registerClass(classCanvas);
 }
 
 	}

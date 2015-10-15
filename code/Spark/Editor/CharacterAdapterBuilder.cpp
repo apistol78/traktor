@@ -23,7 +23,7 @@ void CharacterAdapterBuilder::addFactory(ICharacterFactory* factory)
 		m_factories[*i] = factory;
 }
 
-Ref< CharacterInstance > CharacterAdapterBuilder::create(const Character* character, const CharacterInstance* parent, const std::wstring& name) const
+Ref< CharacterInstance > CharacterAdapterBuilder::create(const Context* context, const Character* character, const CharacterInstance* parent, const std::wstring& name) const
 {
 	SmallMap< const TypeInfo*, Ref< ICharacterFactory > >::const_iterator it = m_factories.find(&type_of(character));
 	if (it == m_factories.end())
@@ -39,7 +39,7 @@ Ref< CharacterInstance > CharacterAdapterBuilder::create(const Character* charac
 	}
 
 	m_adapterStack.push_back(adapter);
-	Ref< CharacterInstance > instance = it->second->create(this, character, parent, name);
+	Ref< CharacterInstance > instance = it->second->create(context, this, character, parent, name);
 	m_adapterStack.pop_back();
 
 	adapter->m_name = name;

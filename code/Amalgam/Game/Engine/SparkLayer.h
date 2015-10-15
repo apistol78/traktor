@@ -37,6 +37,7 @@ class RenderTargetSet;
 
 class CharacterBuilder;
 class CharacterInstance;
+class Context;
 class SparkPlayer;
 class SparkRenderer;
 class Sprite;
@@ -104,6 +105,7 @@ private:
 	};
 
 	Ref< IEnvironment > m_environment;
+	Ref< spark::Context > m_context;
 	Ref< spark::CharacterBuilder > m_characterBuilder;
 	resource::Proxy< spark::Sprite > m_sprite;
 	Ref< spark::SparkRenderer > m_sparkRenderer;
