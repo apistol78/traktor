@@ -36,6 +36,14 @@ public:
 
 	Vector2 tangent(float t) const;
 
+	float flatness() const;
+
+	/*! \brief Check if curve is sufficently flat.
+	 *
+	 * \param tolerance Tolerance value as defined by PostScript.
+	 */
+	bool isFlat(float tolerance) const;
+
 	void split(float t, Bezier3rd& outLeft, Bezier3rd& outRight) const;
 
 	void approximate(float errorThreshold, int maxSubdivisions, AlignedVector< Bezier2nd >& outQuadratic) const;

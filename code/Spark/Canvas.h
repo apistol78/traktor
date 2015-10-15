@@ -43,16 +43,16 @@ public:
 
 	void circle(float x, float y, float radius);
 
-	void fill(const Color4f& fillColor);
+	void fill(const Color4f& color);
 
-	void stroke();
+	void stroke(const Color4f& color, float width);
 
 	Ref< Shape > createShape(const Context* context) const;
 
 private:
 	struct Batch
 	{
-		Color4f fillColor;
+		Color4f color;
 		AlignedVector< Triangulator::Triangle > triangles;
 	};
 

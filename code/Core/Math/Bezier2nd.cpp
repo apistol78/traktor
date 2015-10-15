@@ -115,4 +115,9 @@ void Bezier2nd::toBezier3rd(Bezier3rd& out3rd) const
 	);
 }
 
+Bezier2nd Bezier2nd::fromPoints(const Vector2& p0, const Vector2& p1, const Vector2& p2)
+{
+	return Bezier2nd(p0, 2.0f * p1 - 0.5f * (p0 + p2), p2);
+}
+
 }

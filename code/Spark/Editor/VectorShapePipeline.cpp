@@ -61,9 +61,8 @@ public:
 		AlignedVector< uint32_t > trianglesOut;
 	};
 
-	TriangleProducer(float cubicApproximationError)
-	:	m_cubicApproximationError(cubicApproximationError)
-	,	m_viewBox(Vector2(0.0f, 0.0f), Vector2(100.0f, 100.0f))
+	TriangleProducer()
+	:	m_viewBox(Vector2(0.0f, 0.0f), Vector2(100.0f, 100.0f))
 	,	m_size(100.0f, 100.0f)
 	{
 		m_transformStack.push_back(Matrix33::identity());
@@ -91,7 +90,7 @@ public:
 				return;
 
 			AlignedVector< Triangulator::Triangle > triangles;
-			Triangulator().triangulate(&pathShape->getPath(), triangles);
+			Triangulator().fill(&pathShape->getPath(), triangles);
 
 			if (!triangles.empty())
 			{
@@ -151,7 +150,6 @@ public:
 	const std::list< std::pair< const SvgStyle*, Batch > >& getBatches() const { return m_batches; }
 
 private:
-	float m_cubicApproximationError;
 	std::list< std::pair< const SvgStyle*, Batch > > m_batches;
 	Aabb2 m_viewBox;
 	Vector2 m_size;
@@ -252,7 +250,7 @@ bool VectorShapePipeline::buildOutput(
 	}
 
 	// Convert intermediate shape into a set of triangles.
-	TriangleProducer triangleProducer(shapeAsset->m_cubicApproximationError);
+	TriangleProducer triangleProducer;
 	shape->visit(&triangleProducer);
 
 	// Create shape output resource.
