@@ -131,17 +131,22 @@ void Canvas::circle(float x, float y, float radius)
 	m_path.close();
 }
 
-void Canvas::fill(const Color4f& fillColor)
+void Canvas::fill(const Color4f& color)
 {
 	Batch b;
-	b.fillColor = fillColor;
-	Triangulator().triangulate(&m_path, b.triangles);
+	b.color = color;
+	Triangulator().fill(&m_path, b.triangles);
 	if (!b.triangles.empty())
 		m_batches.push_back(b);
 }
 
-void Canvas::stroke()
+void Canvas::stroke(const Color4f& color, float width)
 {
+	Batch b;
+	b.color = color;
+	Triangulator().stroke(&m_path, width, b.triangles);
+	if (!b.triangles.empty())
+		m_batches.push_back(b);
 }
 
 Ref< Shape > Canvas::createShape(const Context* context) const
@@ -207,7 +212,7 @@ Ref< Shape > Canvas::createShape(const Context* context) const
 			meshParts.push_back(meshPart);
 
 			Shape::Part shapePart;
-			shapePart.fillColor = i->fillColor;
+			shapePart.fillColor = i->color;
 			shapePart.curveSign = 0;
 			shapeParts.push_back(shapePart);
 
@@ -239,7 +244,7 @@ Ref< Shape > Canvas::createShape(const Context* context) const
 			meshParts.push_back(meshPart);
 
 			Shape::Part shapePart;
-			shapePart.fillColor = i->fillColor;
+			shapePart.fillColor = i->color;
 			shapePart.curveSign = 1;
 			shapeParts.push_back(shapePart);
 
@@ -271,7 +276,7 @@ Ref< Shape > Canvas::createShape(const Context* context) const
 			meshParts.push_back(meshPart);
 
 			Shape::Part shapePart;
-			shapePart.fillColor = i->fillColor;
+			shapePart.fillColor = i->color;
 			shapePart.curveSign = -1;
 			shapeParts.push_back(shapePart);
 

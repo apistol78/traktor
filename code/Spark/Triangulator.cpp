@@ -6,6 +6,7 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/Line2.h"
 #include "Core/Math/MathUtils.h"
+#include "Core/Math/Ray2.h"
 #include "Spark/Path.h"
 #include "Spark/Triangulator.h"
 
@@ -15,6 +16,9 @@ namespace traktor
 	{
 		namespace
 		{
+
+const float c_pointScale = 1.0f;
+const float c_approximateTolerance = 10.0f;
 
 bool compareSegmentsY(const Triangulator::Segment& ls, const Triangulator::Segment& rs)
 {
@@ -40,12 +44,10 @@ bool compareSegmentsX(const Triangulator::Segment& ls, const Triangulator::Segme
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.Triangulator", Triangulator, Object)
 
-void Triangulator::triangulate(const Path* path, AlignedVector< Triangle >& outTriangles)
+void Triangulator::fill(const Path* path, AlignedVector< Triangle >& outTriangles)
 {
-	const float c_pointScale = 1.0f;
-	const float m_cubicApproximationError = 1.0f;
-
 	AlignedVector< Segment > segments;
+	Segment s;
 
 	// Create segments from path.
 	const AlignedVector< SubPath >& subPaths = path->getSubPaths();
@@ -58,7 +60,6 @@ void Triangulator::triangulate(const Path* path, AlignedVector< Triangle >& outT
 			{
 				for (uint32_t j = 0; j < i->points.size() - 1; ++j)
 				{
-					Triangulator::Segment s;
 					s.curve = false;
 					s.v[0] = Vector2i::fromVector2(i->points[j] * c_pointScale);
 					s.v[1] = Vector2i::fromVector2(i->points[j + 1] * c_pointScale);
@@ -71,7 +72,6 @@ void Triangulator::triangulate(const Path* path, AlignedVector< Triangle >& outT
 			{
 				for (uint32_t j = 0; j < i->points.size() - 1; j += 2)
 				{
-					Triangulator::Segment s;
 					s.curve = true;
 					s.v[0] = Vector2i::fromVector2(i->points[j] * c_pointScale);
 					s.v[1] = Vector2i::fromVector2(i->points[j + 2] * c_pointScale);
@@ -93,11 +93,10 @@ void Triangulator::triangulate(const Path* path, AlignedVector< Triangle >& outT
 					);
 
 					AlignedVector< Bezier2nd > a;
-					b.approximate(m_cubicApproximationError, 4, a);
+					b.approximate(c_approximateTolerance, 4, a);
 
 					for (AlignedVector< Bezier2nd >::const_iterator k = a.begin(); k != a.end(); ++k)
 					{
-						Triangulator::Segment s;
 						s.curve = true;
 						s.v[0] = Vector2i::fromVector2(k->cp0 * c_pointScale);
 						s.v[1] = Vector2i::fromVector2(k->cp2 * c_pointScale);
@@ -111,10 +110,99 @@ void Triangulator::triangulate(const Path* path, AlignedVector< Triangle >& outT
 
 		if (lastSubPath)
 		{
-			Triangulator::Segment s;
 			s.curve = false;
 			s.v[0] = Vector2i::fromVector2(i->points.back() * c_pointScale);
 			s.v[1] = Vector2i::fromVector2(i->origin * c_pointScale);
+			segments.push_back(s);
+		}
+	}
+
+	// Create triangles from segments.
+	triangulate(segments, outTriangles);
+}
+
+void Triangulator::stroke(const Path* path, float width, AlignedVector< Triangle >& outTriangles)
+{
+	AlignedVector< Segment > segments;
+	Segment s;
+	float r, k;
+
+	float halfWidth = width / 2.0f;
+
+	// Create segments from path.
+	const AlignedVector< SubPath >& subPaths = path->getSubPaths();
+	for (size_t i = 0; i < subPaths.size(); ++i)
+	{
+		const SubPath& sp = subPaths[i];
+
+		bool first = bool(i == 0);
+		bool last = bool(i == subPaths.size() - 1);
+
+		if (first)
+		{
+			Vector2 d = (sp.points[1] - sp.points[0]).normalized();
+			Vector2 p = d.perpendicular();
+			
+			s.curve = false;
+			s.v[0] = Vector2i::fromVector2((sp.points[0] - p * halfWidth) * c_pointScale);
+			s.v[1] = Vector2i::fromVector2((sp.points[0] + p * halfWidth) * c_pointScale);
+			segments.push_back(s);
+		}
+
+		switch (sp.type)
+		{
+		case SptLinear:
+			{
+				Vector2 d_01 = (sp.points[1] - sp.points[0]).normalized();
+				Vector2 p_01_l = sp.points[0] - d_01.perpendicular() * halfWidth;
+				Vector2 p_01_r = sp.points[0] + d_01.perpendicular() * halfWidth;
+
+				for (uint32_t j = 1; j < sp.points.size() - 1; ++j)
+				{
+					Vector2 d_12 = (sp.points[j + 1] - sp.points[j]).normalized();
+					Vector2 p_12_l = sp.points[j] - d_12.perpendicular() * halfWidth;
+					Vector2 p_12_r = sp.points[j] + d_12.perpendicular() * halfWidth;
+
+					Vector2 p_l;
+					if (Ray2(p_01_l, d_01).intersect(Ray2(p_12_l, d_12), r, k))
+						p_l = p_01_l + r * d_01;
+					else
+						p_l = p_12_l;
+
+					Vector2 p_r;
+					if (Ray2(p_01_r, d_01).intersect(Ray2(p_12_r, d_12), r, k))
+						p_r = p_01_r + r * d_01;
+					else
+						p_r = p_12_r;
+
+					s.curve = false;
+					s.v[0] = Vector2i::fromVector2(p_01_l * c_pointScale);
+					s.v[1] = Vector2i::fromVector2(p_l * c_pointScale);
+					segments.push_back(s);
+
+					s.curve = false;
+					s.v[0] = Vector2i::fromVector2(p_01_r * c_pointScale);
+					s.v[1] = Vector2i::fromVector2(p_r * c_pointScale);
+					segments.push_back(s);
+
+					d_01 = d_12;
+					p_01_l = p_l;
+					p_01_r = p_r;
+				}
+			}
+			break;
+		}
+
+		if (last)
+		{
+			size_t np = sp.points.size() - 1;
+
+			Vector2 d = (sp.points[np] - sp.points[np - 1]).normalized();
+			Vector2 p = d.perpendicular();
+			
+			s.curve = false;
+			s.v[0] = Vector2i::fromVector2((sp.points[np] - p * halfWidth) * c_pointScale);
+			s.v[1] = Vector2i::fromVector2((sp.points[np] + p * halfWidth) * c_pointScale);
 			segments.push_back(s);
 		}
 	}

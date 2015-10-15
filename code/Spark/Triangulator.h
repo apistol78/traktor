@@ -48,7 +48,9 @@ public:
 		Vector2i v[3];
 	};
 
-	void triangulate(const Path* path, AlignedVector< Triangle >& outTriangles);
+	void fill(const Path* path, AlignedVector< Triangle >& outTriangles);
+
+	void stroke(const Path* path, float width, AlignedVector< Triangle >& outTriangles);
 
 	void triangulate(const AlignedVector< Segment >& segments, AlignedVector< Triangle >& outTriangles);
 

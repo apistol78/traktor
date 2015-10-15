@@ -38,7 +38,6 @@ public:
 private:
 	friend class VectorShapePipeline;
 
-	float m_cubicApproximationError;
 	PivotType m_pivot;
 };
 

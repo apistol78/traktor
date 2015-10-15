@@ -37,6 +37,24 @@ Vector2 Bezier3rd::tangent(float t) const
 	return (3.0f * t * t) * A + (2.0f * t) * B + C;
 }
 
+float Bezier3rd::flatness() const
+{
+	Vector2 u = 3.0f * cp1 - 2.0f * cp0 - cp3; u *= u;
+	Vector2 v = 3.0f * cp2 - 2.0f * cp3 - cp0; v *= v;
+
+	if (u.x < v.x)
+		u.x = v.x;
+	if (u.y < v.y)
+		u.y = v.y;
+
+	return u.x + u.y;
+}
+
+bool Bezier3rd::isFlat(float tolerance) const
+{
+	return flatness() <= 16.0f * tolerance * tolerance;
+}
+
 void Bezier3rd::split(float t, Bezier3rd& outLeft, Bezier3rd& outRight) const
 {
 	Vector2 p = evaluate(t);
@@ -62,40 +80,36 @@ void Bezier3rd::split(float t, Bezier3rd& outLeft, Bezier3rd& outRight) const
 namespace
 {
 
-	void approximateSubdivide(const Bezier3rd& b, float f0, float f1, float errorThreshold, int maxSubdivisions, AlignedVector< Bezier2nd >& outQuadratic)
+	void approximateSubdivide(const Bezier3rd& b, float errorThreshold, int maxSubdivisions, AlignedVector< Bezier2nd >& outQuadratic)
 	{
-		Vector2 p_0 = b.evaluate(f0);
-		Vector2 p_1 = b.evaluate(f1);
-		Vector2 p_m = b.evaluate((f0 + f1) / 2.0f);
-		Vector2 cp = 2.0f * p_m - 0.5f * (p_0 + p_1);
-		
-		Bezier2nd b2(p_0, cp, p_1);
-
-		float maxError = 0.0f;
-		const int32_t errorSteps = 10;
-		for (int32_t i = 1; i < errorSteps - 1; ++i)
+		if (maxSubdivisions <= 1)
 		{
-			float f = float(i) / (errorSteps - 1);
-
-			Vector2 ps = b.evaluate(f0 + f * (f1 - f0));
-			Vector2 pe = b2.evaluate(f);
-
-			float error = (pe - ps).length();
-			maxError = max(error, maxError);
+			Vector2 p_m = b.evaluate(0.5f);
+			outQuadratic.push_back(Bezier2nd::fromPoints(b.cp0, p_m, b.cp3));
+			return;
 		}
 
-		if (outQuadratic.size() >= maxSubdivisions || maxError <= errorThreshold)
+		Bezier3rd bl, br;
+		b.split(0.5f, bl, br);
+
+		if (bl.isFlat(errorThreshold))
 		{
-			outQuadratic.push_back(b2);
-			return;
+			Vector2 p_m = bl.evaluate(0.5f);
+			outQuadratic.push_back(Bezier2nd::fromPoints(bl.cp0, p_m, bl.cp3));
 		}
 		else
 		{
-			AlignedVector< Bezier2nd > ql, qr;
-			approximateSubdivide(b, f0, (f0 + f1) * 0.5f, errorThreshold, maxSubdivisions / 2, ql);
-			approximateSubdivide(b, (f0 + f1) * 0.5f, f1, errorThreshold, maxSubdivisions / 2, qr);
-			outQuadratic.insert(outQuadratic.end(), ql.begin(), ql.end());
-			outQuadratic.insert(outQuadratic.end(), qr.begin(), qr.end());
+			approximateSubdivide(bl, errorThreshold, maxSubdivisions, outQuadratic);
+		}
+
+		if (br.isFlat(errorThreshold))
+		{
+			Vector2 p_m = br.evaluate(0.5f);
+			outQuadratic.push_back(Bezier2nd::fromPoints(br.cp0, p_m, br.cp3));
+		}
+		else
+		{
+			approximateSubdivide(br, errorThreshold, maxSubdivisions, outQuadratic);
 		}
 	}
 
@@ -104,7 +118,7 @@ namespace
 void Bezier3rd::approximate(float errorThreshold, int maxSubdivisions, AlignedVector< Bezier2nd >& outQuadratic) const
 {
 	outQuadratic.resize(0);
-	approximateSubdivide(*this, 0.0f, 1.0f, errorThreshold, maxSubdivisions, outQuadratic);
+	approximateSubdivide(*this, errorThreshold, maxSubdivisions, outQuadratic);
 }
 
 }
