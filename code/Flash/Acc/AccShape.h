@@ -89,6 +89,7 @@ private:
 		AccTextureCache::BitmapRect texture;
 		Matrix33 textureMatrix;
 		bool textureClamp;
+		float curveSign;
 		render::Primitives primitives;
 	};
 
@@ -97,7 +98,7 @@ private:
 	AlignedVector< TesselationBatch > m_tesselationBatches;
 	uint32_t m_tesselationTriangleCount;
 	AccShapeVertexPool::Range m_vertexRange;
-	AlignedVector< RenderBatch > m_renderBatches[3];
+	AlignedVector< RenderBatch > m_renderBatches;
 	Aabb2 m_bounds;
 	uint8_t m_batchFlags;
 	bool m_needUpdate;
