@@ -23,6 +23,13 @@ class Database;
 
 	}
 
+	namespace editor
+	{
+
+class IEditor;
+
+	}
+
 	namespace resource
 	{
 
@@ -68,7 +75,7 @@ class T_DLLCLASS FlashPreviewControl : public ui::Widget
 	T_RTTI_CLASS;
 
 public:
-	FlashPreviewControl();
+	FlashPreviewControl(editor::IEditor* editor);
 
 	bool create(
 		ui::Widget* parent,
@@ -100,6 +107,7 @@ public:
 	FlashMoviePlayer* getMoviePlayer() const { return m_moviePlayer; }
 
 private:
+	editor::IEditor* m_editor;
 	Ref< ui::EventSubject::IEventHandler > m_idleEventHandler;
 	Ref< db::Database > m_database;
 #if T_USE_ACCELERATED_RENDERER

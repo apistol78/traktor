@@ -47,6 +47,14 @@ public:
 	/*extern*/ friend T_MATH_INLINE T_DLLCLASS Vector2i operator + (const Vector2i& l, const Vector2i& r);
 
 	/*extern*/ friend T_MATH_INLINE T_DLLCLASS Vector2i operator - (const Vector2i& l, const Vector2i& r);
+
+	/*extern*/ friend T_MATH_INLINE T_DLLCLASS Vector2i operator * (const Vector2i& l, int32_t r);
+
+	/*extern*/ friend T_MATH_INLINE T_DLLCLASS Vector2i operator * (int32_t l, const Vector2i& r);
+
+	/*extern*/ friend T_MATH_INLINE T_DLLCLASS Vector2i operator / (const Vector2i& l, int32_t r);
+
+	/*extern*/ friend T_MATH_INLINE T_DLLCLASS Vector2i operator / (int32_t l, const Vector2i& r);
 };
 
 }

@@ -1,6 +1,9 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyInteger.h"
+#include "Editor/IEditor.h"
 #include "Flash/Editor/FlashPreviewControl.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashMovieLoader.h"
@@ -80,8 +83,9 @@ int32_t translateVirtualKey(ui::VirtualKey vk)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashPreviewControl", FlashPreviewControl, ui::Widget)
 
-FlashPreviewControl::FlashPreviewControl()
-:	m_playing(false)
+FlashPreviewControl::FlashPreviewControl(editor::IEditor* editor)
+:	m_editor(editor)
+,	m_playing(false)
 ,	m_wireframe(false)
 {
 }
@@ -102,7 +106,7 @@ bool FlashPreviewControl::create(
 	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 16;
 	desc.stencilBits = 8;
-	desc.multiSample = 0;
+	desc.multiSample = m_editor->getSettings()->getProperty< PropertyInteger >(L"Editor.MultiSample", 4);
 	desc.waitVBlank = false;
 	desc.nativeWindowHandle = getIWidget()->getSystemHandle();
 

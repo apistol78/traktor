@@ -126,7 +126,10 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 
 		const Feature::Platform* fp = feature->getPlatform(m_targetConfiguration->getPlatform());
 		if (fp)
-			deploy = deploy->mergeJoin(fp->deploy);
+		{
+			if (fp->deploy)
+				deploy = deploy->mergeJoin(fp->deploy);
+		}
 		else
 			log::warning << L"Feature \"" << feature->getDescription() << L"\" doesn't support selected platform." << Endl;
 

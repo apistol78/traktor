@@ -8,6 +8,8 @@
 #include "Database/Instance.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
+#include "Flash/FlashButton.h"
+#include "Flash/FlashButtonInstance.h"
 #include "Flash/FlashFrame.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashMovieFactory.h"
@@ -130,7 +132,7 @@ bool FlashEditorPage::create(ui::Container* parent)
 	m_profileMovie = new ui::custom::ProfileControl();
 	m_profileMovie->create(splitterV, 2, 10, 0, 10000, ui::WsDoubleBuffer, this);
 
-	m_previewControl = new FlashPreviewControl();
+	m_previewControl = new FlashPreviewControl(m_editor);
 	m_previewControl->create(splitter, ui::WsNone, database, m_resourceManager, renderSystem, soundPlayer);
 	m_previewControl->setMovie(m_movie);
 	m_previewControl->update();
@@ -346,6 +348,32 @@ void FlashEditorPage::updateTreeCharacter(ui::custom::TreeViewItem* parentItem, 
 
 			if (i->second.instance)
 				updateTreeCharacter(layerItem, i->second.instance, pointerHash, nextPointerHash);
+
+			layerItem->setData(L"CHARACTER", i->second.instance);
+		}
+	}
+	else if (FlashButtonInstance* buttonInstance = dynamic_type_cast< FlashButtonInstance* >(characterInstance))
+	{
+		const FlashButton* button = buttonInstance->getButton();
+		uint8_t buttonState = buttonInstance->getState();
+
+		m_treeMovie->createItem(characterItem, L"State " + toString(int32_t(buttonState)));
+
+		Ref< ui::custom::TreeViewItem > layersItem = m_treeMovie->createItem(characterItem, L"Layers(s)", 0, 0);
+
+		const FlashButton::button_layers_t& layers = button->getButtonLayers();
+		for (int32_t j = 0; j < int32_t(layers.size()); ++j)
+		{
+			const FlashButton::ButtonLayer& layer = layers[j];
+
+			Ref< ui::custom::TreeViewItem > layerItem = m_treeMovie->createItem(layersItem, toString(j) + L": " + toString(int32_t(layer.state)), 0, 0);
+			T_ASSERT (layerItem);
+
+			FlashCharacterInstance* referenceInstance = buttonInstance->getCharacterInstance(layer.characterId);
+			if (referenceInstance)
+				updateTreeCharacter(layerItem, referenceInstance, pointerHash, nextPointerHash);
+
+			layerItem->setData(L"CHARACTER", referenceInstance);
 		}
 	}
 
