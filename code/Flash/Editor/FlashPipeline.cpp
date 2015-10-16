@@ -34,12 +34,8 @@ namespace traktor
 
 const resource::Id< render::Shader > c_idShaderSolid(Guid(L"{4F6F6CCE-97EC-624D-96B7-842F1D99D060}"));
 const resource::Id< render::Shader > c_idShaderTextured(Guid(L"{049F4B08-1A54-DB4C-86CC-B533BCFFC65D}"));
-const resource::Id< render::Shader > c_idShaderSolidCurve(Guid(L"{E942960D-81C2-FD4C-B005-009902CBD91E}"));
-const resource::Id< render::Shader > c_idShaderTexturedCurve(Guid(L"{209E791F-C8E8-E646-973B-2910CC99C244}"));
 const resource::Id< render::Shader > c_idShaderSolidMask(Guid(L"{D46877B9-0F90-3A42-AB2D-7346AA607233}"));
 const resource::Id< render::Shader > c_idShaderTexturedMask(Guid(L"{5CDDBEC8-1629-0A4E-ACE5-C8186072D694}"));
-const resource::Id< render::Shader > c_idShaderSolidMaskCurve(Guid(L"{BDC662CF-8A6B-BE42-BAEE-B12313EC3DDC}"));
-const resource::Id< render::Shader > c_idShaderTexturedMaskCurve(Guid(L"{4FCA84E5-A055-BD48-8EAF-EB118B8C9BF7}"));
 const resource::Id< render::Shader > c_idShaderIncrementMask(Guid(L"{8DCBCF05-4640-884E-95AC-F090510788F4}"));
 const resource::Id< render::Shader > c_idShaderDecrementMask(Guid(L"{57F6F4DF-F4EE-6740-907C-027A3A2596D7}"));
 
@@ -117,12 +113,8 @@ bool FlashPipeline::buildDependencies(
 	// AccShape
 	pipelineDepends->addDependency(c_idShaderSolid, editor::PdfBuild | editor::PdfResource);	// Solid
 	pipelineDepends->addDependency(c_idShaderTextured, editor::PdfBuild | editor::PdfResource);	// Textured
-	pipelineDepends->addDependency(c_idShaderSolidCurve, editor::PdfBuild | editor::PdfResource);	// Solid Curve
-	pipelineDepends->addDependency(c_idShaderTexturedCurve, editor::PdfBuild | editor::PdfResource);	// Textured Curve
 	pipelineDepends->addDependency(c_idShaderSolidMask, editor::PdfBuild | editor::PdfResource);	// Solid Mask
 	pipelineDepends->addDependency(c_idShaderTexturedMask, editor::PdfBuild | editor::PdfResource);	// Textured Mask
-	pipelineDepends->addDependency(c_idShaderSolidMaskCurve, editor::PdfBuild | editor::PdfResource);	// Solid Mask Curve
-	pipelineDepends->addDependency(c_idShaderTexturedMaskCurve, editor::PdfBuild | editor::PdfResource);	// Textured Mask Curve
 	pipelineDepends->addDependency(c_idShaderIncrementMask, editor::PdfBuild | editor::PdfResource);	// Increment Mask
 	pipelineDepends->addDependency(c_idShaderDecrementMask, editor::PdfBuild | editor::PdfResource);	// Decrement Mask
 

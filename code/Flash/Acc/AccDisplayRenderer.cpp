@@ -195,7 +195,7 @@ bool AccDisplayRenderer::create(
 
 	m_renderContexts.resize(frameCount);
 	for (uint32_t i = 0; i < frameCount; ++i)
-		m_renderContexts[i] = new render::RenderContext(2 * 1024 * 1024);
+		m_renderContexts[i] = new render::RenderContext(4 * 1024 * 1024);
 
 	// Allocate "global" parameter context; as it's reset for each render
 	// call this can be fairly small.
@@ -366,12 +366,8 @@ void AccDisplayRenderer::setWireframe(bool wireFrame)
 {
 	m_shapeResources->m_shaderSolid->setCombination(L"Wireframe", wireFrame);
 	m_shapeResources->m_shaderTextured->setCombination(L"Wireframe", wireFrame);
-	m_shapeResources->m_shaderSolidCurve->setCombination(L"Wireframe", wireFrame);
-	m_shapeResources->m_shaderTexturedCurve->setCombination(L"Wireframe", wireFrame);
 	m_shapeResources->m_shaderSolidMask->setCombination(L"Wireframe", wireFrame);
 	m_shapeResources->m_shaderTexturedMask->setCombination(L"Wireframe", wireFrame);
-	m_shapeResources->m_shaderSolidMaskCurve->setCombination(L"Wireframe", wireFrame);
-	m_shapeResources->m_shaderTexturedMaskCurve->setCombination(L"Wireframe", wireFrame);
 	m_shapeResources->m_shaderIncrementMask->setCombination(L"Wireframe", wireFrame);
 	m_shapeResources->m_shaderDecrementMask->setCombination(L"Wireframe", wireFrame);
 }
