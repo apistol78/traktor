@@ -65,8 +65,9 @@ public:
 	 * \param transform Shape transform.
 	 * \param shape Shape
 	 * \param cxform Color transform.
+	 * \param blendMode Blend mode.
 	 */
-	virtual void renderShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashShape& shape, const SwfCxTransform& cxform) = 0;
+	virtual void renderShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashShape& shape, const SwfCxTransform& cxform, uint8_t blendMode) = 0;
 
 	/*! \brief Render morph shape.
 	 *
