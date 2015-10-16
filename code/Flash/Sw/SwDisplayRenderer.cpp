@@ -136,7 +136,7 @@ void SwDisplayRenderer::endMask()
 {
 }
 
-void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashShape& shape, const SwfCxTransform& cxform)
+void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashShape& shape, const SwfCxTransform& cxform, uint8_t blendMode)
 {
 	Matrix33 rasterTransform = transform * m_transform;
 

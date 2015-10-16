@@ -118,6 +118,14 @@ public:
 
 	/*! \brief
 	 */
+	void setBlendMode(uint8_t blendMode);
+
+	/*! \brief
+	 */
+	uint8_t getBlendMode() const;
+
+	/*! \brief
+	 */
 	void setVisible(bool visible);
 
 	/*! \brief
@@ -214,6 +222,7 @@ private:
 	Matrix33 m_transform;
 	uint8_t m_filter;
 	SwfColor m_filterColor;
+	uint8_t m_blendMode;
 	SmallMap< uint32_t, Ref< const IActionVMImage > > m_eventScripts;
 };
 

@@ -447,9 +447,12 @@ void AccDisplayRenderer::endMask()
 	}
 }
 
-void AccDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashShape& shape, const SwfCxTransform& cxform)
+void AccDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashShape& shape, const SwfCxTransform& cxform, uint8_t blendMode)
 {
 	Ref< AccShape > accShape;
+
+	if (blendMode != 0 && blendMode != 1)
+		return;
 
 	int32_t tag = shape.getCacheTag();
 	SmallMap< int32_t, ShapeCache >::iterator it = m_shapeCache.find(tag);

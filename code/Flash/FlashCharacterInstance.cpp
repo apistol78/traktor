@@ -20,6 +20,7 @@ FlashCharacterInstance::FlashCharacterInstance(ActionContext* context, const cha
 ,	m_visible(true)
 ,	m_enabled(true)
 ,	m_filter(0)
+,	m_blendMode(0)
 {
 	Atomic::increment(ms_instanceCount);
 
@@ -132,6 +133,16 @@ void FlashCharacterInstance::setFilterColor(const SwfColor& filterColor)
 const SwfColor& FlashCharacterInstance::getFilterColor() const
 {
 	return m_filterColor;
+}
+
+void FlashCharacterInstance::setBlendMode(uint8_t blendMode)
+{
+	m_blendMode = blendMode;
+}
+
+uint8_t FlashCharacterInstance::getBlendMode() const
+{
+	return m_blendMode;
 }
 
 void FlashCharacterInstance::setVisible(bool visible)

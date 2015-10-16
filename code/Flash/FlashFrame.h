@@ -45,7 +45,9 @@ public:
 		PfHasCxTransform = 1 << 7,
 		PfHasMatrix = 1 << 8,
 		PfHasCharacterId = 1 << 9,
-		PfHasMove = 1 << 10
+		PfHasMove = 1 << 10,
+		PfHasOpaqueBackground = 1 << 11,
+		PfHasVisible = 1 << 12
 	};
 
 	struct PlaceObject
@@ -53,6 +55,7 @@ public:
 		uint16_t hasFlags;
 		uint16_t depth;
 		uint8_t bitmapCaching;
+		uint8_t visible;
 		uint8_t blendMode;
 		uint8_t filter;
 		SwfColor filterColor;
@@ -68,6 +71,7 @@ public:
 		:	hasFlags(0)
 		,	depth(0)
 		,	bitmapCaching(0)
+		,	visible(1)
 		,	blendMode(0)
 		,	filter(0)
 		{

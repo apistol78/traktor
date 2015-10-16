@@ -458,6 +458,25 @@ enum SwfScaleModeType
 	SmNoScale = 3
 };
 
+enum SwfBlendMode
+{
+	SbmDefault = 0,
+	SbmNormal = 1,
+	SbmLayer = 2,
+	SbmMultiply = 3,
+	SbmScreen = 4,
+	SbmLighten = 5,
+	SbmDarken = 6,
+	SbmDifference = 7,
+	SbmAdd = 8,
+	SbmSubtract = 9,
+	SbmInvert = 10,
+	SbmAlpha = 11,
+	SbmErase = 12,
+	SbmOverlay = 13,
+	SbmHardlight = 14
+};
+
 //@}
 
 	}

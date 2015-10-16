@@ -187,7 +187,8 @@ void FlashMovieRenderer::renderCharacter(
 			*dictionary,
 			transform * shapeInstance->getTransform(),
 			*shapeInstance->getShape(),
-			cxTransform2
+			cxTransform2,
+			shapeInstance->getBlendMode()
 		);
 		return;
 	}

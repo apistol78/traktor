@@ -933,7 +933,10 @@ bool FlashTagPlaceObject::read(SwfReader* swf, ReadContext& context)
 		}
 		else if (m_placeType == 3)
 		{
-			bs.skip(3);
+			bs.skip(1);
+
+			placeObject.hasFlags |= bs.readBit() ? FlashFrame::PfHasOpaqueBackground : 0;
+			placeObject.hasFlags |= bs.readBit() ? FlashFrame::PfHasVisible : 0;
 
 			bool hasImage = bs.readBit();
 			bool hasClassName = bs.readBit();
@@ -992,6 +995,9 @@ bool FlashTagPlaceObject::read(SwfReader* swf, ReadContext& context)
 
 			if (placeObject.has(FlashFrame::PfHasBitmapCaching))
 				placeObject.bitmapCaching = bs.readUInt8();
+
+			if (placeObject.has(FlashFrame::PfHasVisible))
+				placeObject.visible = bs.readUInt8();
 		}
 
 		if (placeObject.has(FlashFrame::PfHasActions))
