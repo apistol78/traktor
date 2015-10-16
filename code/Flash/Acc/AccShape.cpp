@@ -26,6 +26,8 @@ enum BatchFlags
 	BfHaveTextured = 2
 };
 
+const int32_t c_pointScale = 100;
+
 const float c_controlPoints[3][2] =
 {
 	{ 0.0f, 0.0f },
@@ -60,6 +62,7 @@ bool AccShape::createTesselation(const std::list< Path >& paths)
 {
 	AlignedVector< Segment > segments;
 	Triangulator triangulator;
+	Segment s;
 
 	m_tesselationBatches.resize(0);
 	m_tesselationBatches.reserve(paths.size());
@@ -85,9 +88,8 @@ bool AccShape::createTesselation(const std::list< Path >& paths)
 				{
 				case SpgtLinear:
 					{
-						Segment s;
-						s.v[0] = i->getPoints().at(k->pointsOffset);
-						s.v[1] = i->getPoints().at(k->pointsOffset + 1);
+						s.v[0] = i->getPoints().at(k->pointsOffset) * c_pointScale;
+						s.v[1] = i->getPoints().at(k->pointsOffset + 1) * c_pointScale;
 						s.curve = false;
 						s.fillStyle0 = j->fillStyle0;
 						s.fillStyle1 = j->fillStyle1;
@@ -102,10 +104,9 @@ bool AccShape::createTesselation(const std::list< Path >& paths)
 						const Vector2i& cp1 = i->getPoints().at(k->pointsOffset + 1);
 						const Vector2i& cp2 = i->getPoints().at(k->pointsOffset + 2);
 
-						Segment s;
-						s.v[0] = cp0;
-						s.v[1] = cp2;
-						s.c = cp1;
+						s.v[0] = cp0 * c_pointScale;
+						s.v[1] = cp2 * c_pointScale;
+						s.c = cp1 * c_pointScale;
 						s.curve = true;
 						s.fillStyle0 = j->fillStyle0;
 						s.fillStyle1 = j->fillStyle1;
@@ -127,7 +128,7 @@ bool AccShape::createTesselation(const std::list< Path >& paths)
 		{
 			for (int k = 0; k < 3; ++k)
 			{
-				Vector2 pt = j->v[k].toVector2();
+				Vector2 pt = j->v[k].toVector2() / c_pointScale;
 				m_bounds.mn.x = min< float >(m_bounds.mn.x, pt.x);
 				m_bounds.mn.y = min< float >(m_bounds.mn.y, pt.y);
 				m_bounds.mx.x = max< float >(m_bounds.mx.x, pt.x);
@@ -262,8 +263,8 @@ bool AccShape::updateRenderable(
 
 				for (int k = 0; k < 3; ++k)
 				{
-					vertex->pos[0] = float(j->v[k].x);
-					vertex->pos[1] = float(j->v[k].y);
+					vertex->pos[0] = float(j->v[k].x) / c_pointScale;
+					vertex->pos[1] = float(j->v[k].y) / c_pointScale;
 					vertex->uv[0] = c_controlPoints[k][0];
 					vertex->uv[1] = c_controlPoints[k][1];
 					vertex->color[0] = color.r;

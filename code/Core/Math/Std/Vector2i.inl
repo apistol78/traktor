@@ -49,4 +49,24 @@ T_MATH_INLINE Vector2i operator - (const Vector2i& l, const Vector2i& r)
 	return Vector2i(l.x - r.x, l.x - r.x);
 }
 
+T_MATH_INLINE Vector2i operator * (const Vector2i& l, int32_t r)
+{
+	return Vector2i(l.x * r, l.y * r);
+}
+
+T_MATH_INLINE Vector2i operator * (int32_t l, const Vector2i& r)
+{
+	return Vector2i(r.x * l, r.y * l);
+}
+
+T_MATH_INLINE Vector2i operator / (const Vector2i& l, int32_t r)
+{
+	return Vector2i(l.x / r, l.y / r);
+}
+
+T_MATH_INLINE Vector2i operator / (int32_t l, const Vector2i& r)
+{
+	return Vector2i(l / r.x, l / r.y);
+}
+
 }

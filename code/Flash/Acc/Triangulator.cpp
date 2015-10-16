@@ -265,15 +265,13 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, Aligned
 			const Segment& sr = m_slabs[i + 1];
 
 			if (i == 0)
-				fillStyle = sl.fillStyle0 ? sl.fillStyle0 : sl.fillStyle1;
+				fillStyle = sl.fillStyle0;
 			else
 			{
 				if (sl.fillStyle0 == fillStyle)
 					fillStyle = sl.fillStyle1;
-				else if (sl.fillStyle1 == fillStyle)
-					fillStyle = sl.fillStyle0;
 				else
-					fillStyle = sl.fillStyle0 ? sl.fillStyle0 : sl.fillStyle1;
+					fillStyle = sl.fillStyle0;
 			}
 
 			if (fillStyle)

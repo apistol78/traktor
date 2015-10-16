@@ -160,7 +160,8 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 		const Feature::Platform* fp = feature->getPlatform(m_targetConfiguration->getPlatform());
 		if (fp)
 		{
-			deploy = deploy->mergeJoin(fp->deploy);
+			if (fp->deploy)
+				deploy = deploy->mergeJoin(fp->deploy);
 			if (!fp->executableFile.empty())
 				executableFile = fp->executableFile;
 		}
