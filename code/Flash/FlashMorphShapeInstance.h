@@ -30,7 +30,7 @@ public:
 
 	const FlashMorphShape* getShape() const;
 
-	virtual Aabb2 getBounds() const;
+	virtual Aabb2 getBounds() const T_OVERRIDE T_FINAL;
 
 private:
 	Ref< const FlashMorphShape > m_shape;

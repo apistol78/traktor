@@ -59,18 +59,18 @@ public:
 	 */
 	FlashCharacterInstance* getCharacterInstance(uint16_t referenceId) const;
 
-	virtual void eventMouseDown(int x, int y, int button);
+	virtual void eventMouseDown(int x, int y, int button) T_OVERRIDE T_FINAL;
 
-	virtual void eventMouseUp(int x, int y, int button);
+	virtual void eventMouseUp(int x, int y, int button) T_OVERRIDE T_FINAL;
 
-	virtual void eventMouseMove0(int x, int y, int button);
+	virtual void eventMouseMove0(int x, int y, int button) T_OVERRIDE T_FINAL;
 
-	virtual Aabb2 getBounds() const;
+	virtual Aabb2 getBounds() const T_OVERRIDE T_FINAL;
 
 protected:
-	virtual void trace(visitor_t visitor) const;
+	virtual void trace(visitor_t visitor) const T_OVERRIDE T_FINAL;
 
-	virtual void dereference();
+	virtual void dereference() T_OVERRIDE T_FINAL;
 
 private:
 	Ref< const FlashButton > m_button;

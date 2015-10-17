@@ -250,14 +250,13 @@ bool AccShape::updateRenderable(
 				}
 			}
 
-			if (batch.empty() || batch.back().texture != texture || batch.back().textureClamp != textureClamp || batch.back().curveSign != curveSign)
+			if (batch.empty() || batch.back().texture != texture || batch.back().textureClamp != textureClamp)
 			{
 				batch.push_back(RenderBatch());
 				batch.back().primitives.setNonIndexed(render::PtTriangles, vertexOffset, 0);
 				batch.back().texture = texture;
 				batch.back().textureMatrix = textureMatrix;
 				batch.back().textureClamp = textureClamp;
-				batch.back().curveSign = curveSign;
 			}
 
 			for (int k = 0; k < 3; ++k)
@@ -266,6 +265,7 @@ bool AccShape::updateRenderable(
 				vertex->pos[1] = float(j->v[k].y) / c_pointScale;
 				vertex->uv[0] = c_controlPoints[k][0];
 				vertex->uv[1] = c_controlPoints[k][1];
+				vertex->uv[2] = curveSign;
 				vertex->color[0] = color.r;
 				vertex->color[1] = color.g;
 				vertex->color[2] = color.b;
@@ -407,10 +407,6 @@ void AccShape::render(
 				renderBlock->primitive = j->primitives.type;
 				renderBlock->offset = j->primitives.offset;
 				renderBlock->count = j->primitives.count;
-				renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-				renderBlock->programParams->beginParameters(renderContext);
-				renderBlock->programParams->setFloatParameter(m_shapeResources->m_handleCurveSign, j->curveSign);
-				renderBlock->programParams->endParameters(renderContext);
 				renderContext->draw(render::RpOverlay, renderBlock);
 			}
 		}
@@ -438,7 +434,6 @@ void AccShape::render(
 				renderBlock->programParams->setVectorParameter(m_shapeResources->m_handleTextureMatrix0, textureMatrix0);
 				renderBlock->programParams->setVectorParameter(m_shapeResources->m_handleTextureMatrix1, textureMatrix1);
 				renderBlock->programParams->setFloatParameter(m_shapeResources->m_handleTextureClamp, j->textureClamp ? 1.0f : 0.0f);
-				renderBlock->programParams->setFloatParameter(m_shapeResources->m_handleCurveSign, j->curveSign);
 				renderBlock->programParams->endParameters(renderContext);
 				renderContext->draw(render::RpOverlay, renderBlock);
 			}

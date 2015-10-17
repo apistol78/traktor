@@ -17,9 +17,9 @@ class FlashSoundBuffer : public sound::ISoundBuffer
 public:
 	FlashSoundBuffer(const FlashSound* sound);
 
-	virtual Ref< sound::ISoundBufferCursor > createCursor() const;
+	virtual Ref< sound::ISoundBufferCursor > createCursor() const T_OVERRIDE T_FINAL;
 
-	virtual bool getBlock(sound::ISoundBufferCursor* cursor, const sound::ISoundMixer* mixer, sound::SoundBlock& outBlock) const;
+	virtual bool getBlock(sound::ISoundBufferCursor* cursor, const sound::ISoundMixer* mixer, sound::SoundBlock& outBlock) const T_OVERRIDE T_FINAL;
 
 private:
 	Ref< const FlashSound > m_sound;
