@@ -206,6 +206,7 @@ void FlashMoviePlayer::executeFrame()
 	// the play head and other aspects of the movie.
 
 	m_movieInstance->updateDisplayList();
+
 	if (m_soundPlayer)
 		m_movieInstance->updateSounds(m_soundPlayer);
 

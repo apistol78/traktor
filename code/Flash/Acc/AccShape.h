@@ -89,7 +89,6 @@ private:
 		AccTextureCache::BitmapRect texture;
 		Matrix33 textureMatrix;
 		bool textureClamp;
-		float curveSign;
 		render::Primitives primitives;
 	};
 

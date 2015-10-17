@@ -68,11 +68,11 @@ public:
 
 	const TextLayout* getTextLayout() const;
 
-	virtual Aabb2 getBounds() const;
+	virtual Aabb2 getBounds() const T_OVERRIDE T_FINAL;
 
-	virtual void eventKey(wchar_t unicode);
+	virtual void eventKey(wchar_t unicode) T_OVERRIDE T_FINAL;
 
-	virtual void eventMouseDown(int32_t x, int32_t y, int32_t button);
+	virtual void eventMouseDown(int32_t x, int32_t y, int32_t button) T_OVERRIDE T_FINAL;
 
 private:
 	mutable Semaphore m_lock;

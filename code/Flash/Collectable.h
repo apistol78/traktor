@@ -41,9 +41,9 @@ public:
 
 	virtual ~Collectable();
 
-	virtual void addRef(void* owner) const;
+	virtual void addRef(void* owner) const T_OVERRIDE T_FINAL;
 
-	virtual void release(void* owner) const;
+	virtual void release(void* owner) const T_OVERRIDE T_FINAL;
 
 	void addWeakRef(IWeakRefDispose* weakRefDispose);
 
@@ -70,21 +70,6 @@ private:
 		TcGray = 2,
 		TcWhite = 3
 	};
-
-	//struct MarkGrayVisitor : public IVisitor
-	//{
-	//	virtual void operator () (Collectable* memberObject) const;
-	//};
-
-	//struct ScanVisitor : public IVisitor
-	//{
-	//	virtual void operator () (Collectable* memberObject) const;
-	//};
-
-	//struct ScanBlackVisitor : public IVisitor
-	//{
-	//	virtual void operator () (Collectable* memberObject) const;
-	//};
 
 	static int32_t ms_instanceCount;
 	Collectable* m_prev;	//!< Intrusive list chain members.

@@ -79,42 +79,42 @@ public:
 
 	int32_t getMouseY() const { return m_mouseY; }
 
-	virtual bool enumerateMembers(std::vector< uint32_t >& outMemberNames) const;
+	virtual bool enumerateMembers(std::vector< uint32_t >& outMemberNames) const T_OVERRIDE T_FINAL;
 
-	virtual bool getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue);
+	virtual bool getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue) T_OVERRIDE T_FINAL;
 
-	virtual void preDispatchEvents();
+	virtual void preDispatchEvents() T_OVERRIDE T_FINAL;
 
-	virtual void postDispatchEvents();
+	virtual void postDispatchEvents() T_OVERRIDE T_FINAL;
 
-	virtual void eventInit();
+	virtual void eventInit() T_OVERRIDE T_FINAL;
 
-	virtual void eventConstruct();
+	virtual void eventConstruct() T_OVERRIDE T_FINAL;
 
-	virtual void eventLoad();
+	virtual void eventLoad() T_OVERRIDE T_FINAL;
 
-	virtual void eventFrame();
+	virtual void eventFrame() T_OVERRIDE T_FINAL;
 
-	virtual void eventKey(wchar_t unicode);
+	virtual void eventKey(wchar_t unicode) T_OVERRIDE T_FINAL;
 
-	virtual void eventKeyDown(int32_t keyCode);
+	virtual void eventKeyDown(int32_t keyCode) T_OVERRIDE T_FINAL;
 
-	virtual void eventKeyUp(int32_t keyCode);
+	virtual void eventKeyUp(int32_t keyCode) T_OVERRIDE T_FINAL;
 
-	virtual void eventMouseDown(int32_t x, int32_t y, int32_t button);
+	virtual void eventMouseDown(int32_t x, int32_t y, int32_t button) T_OVERRIDE T_FINAL;
 
-	virtual void eventMouseUp(int32_t x, int32_t y, int32_t button);
+	virtual void eventMouseUp(int32_t x, int32_t y, int32_t button) T_OVERRIDE T_FINAL;
 
-	virtual void eventMouseMove0(int32_t x, int32_t y, int32_t button);
+	virtual void eventMouseMove0(int32_t x, int32_t y, int32_t button) T_OVERRIDE T_FINAL;
 
-	virtual void eventMouseMove1(int32_t x, int32_t y, int32_t button);
+	virtual void eventMouseMove1(int32_t x, int32_t y, int32_t button) T_OVERRIDE T_FINAL;
 
-	virtual Aabb2 getBounds() const;
+	virtual Aabb2 getBounds() const T_OVERRIDE T_FINAL;
 
 protected:
-	virtual void trace(visitor_t visitor) const;
+	virtual void trace(visitor_t visitor) const T_OVERRIDE T_FINAL;
 
-	virtual void dereference();
+	virtual void dereference() T_OVERRIDE T_FINAL;
 
 private:
 	Ref< const FlashSprite > m_sprite;
