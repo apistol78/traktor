@@ -86,6 +86,8 @@ public:
 
 	Path();
 
+	Path(const std::vector< Vector2i >& points, const std::list< SubPath >& subPaths);
+
 	/*! \brief Reset path. */
 	void reset();
 

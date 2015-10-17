@@ -55,6 +55,13 @@ Path::Path()
 	m_points.reserve(256);
 }
 
+Path::Path(const std::vector< Vector2i >& points, const std::list< SubPath >& subPaths)
+:	m_cursor(0, 0)
+,	m_points(points)
+,	m_subPaths(subPaths)
+{
+}
+
 void Path::reset()
 {
 	m_points.resize(0);

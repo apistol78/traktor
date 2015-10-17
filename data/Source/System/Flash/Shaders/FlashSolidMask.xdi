@@ -172,7 +172,7 @@
 			</position>
 			<name>ControlPoints</name>
 			<usage>DuCustom</usage>
-			<type>DtFloat2</type>
+			<type>DtFloat3</type>
 			<index>0</index>
 		</item>
 		<item type="traktor.render.Swizzle">

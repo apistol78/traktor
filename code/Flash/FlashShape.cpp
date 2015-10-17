@@ -248,6 +248,21 @@ bool FlashShape::create(uint16_t fillBitmap, int32_t width, int32_t height)
 	return true;
 }
 
+void FlashShape::addPath(const Path& path)
+{
+	m_paths.push_back(path);
+}
+
+void FlashShape::addFillStyle(const FlashFillStyle& fillStyle)
+{
+	m_fillStyles.push_back(fillStyle);
+}
+
+void FlashShape::addLineStyle(const FlashLineStyle& lineStyle)
+{
+	m_lineStyles.push_back(lineStyle);
+}
+
 Ref< FlashCharacterInstance > FlashShape::createInstance(
 	ActionContext* context,
 	FlashCharacterInstance* parent,
