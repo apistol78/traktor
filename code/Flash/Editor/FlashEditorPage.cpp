@@ -14,6 +14,7 @@
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashMovieFactory.h"
 #include "Flash/FlashMoviePlayer.h"
+#include "Flash/FlashOptimizer.h"
 #include "Flash/FlashSprite.h"
 #include "Flash/FlashSpriteInstance.h"
 #include "Flash/SwfReader.h"
@@ -96,6 +97,12 @@ bool FlashEditorPage::create(ui::Container* parent)
 	m_movie = flash::FlashMovieFactory().createMovie(swf);
 	if (!m_movie)
 		return false;
+
+	/*
+	m_movie = flash::FlashOptimizer().optimizeStaticMovie(m_movie);
+	if (!m_movie)
+		return false;
+	*/
 
 	Ref< db::Database > database = m_editor->getOutputDatabase();
 

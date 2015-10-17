@@ -38,6 +38,12 @@ public:
 
 	bool create(uint16_t fillBitmap, int32_t width, int32_t height);
 
+	void addPath(const Path& path);
+
+	void addFillStyle(const FlashFillStyle& fillStyle);
+
+	void addLineStyle(const FlashLineStyle& lineStyle);
+
 	virtual Ref< FlashCharacterInstance > createInstance(
 		ActionContext* context,
 		FlashCharacterInstance* parent,

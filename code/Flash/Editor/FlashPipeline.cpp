@@ -18,6 +18,7 @@
 #include "Flash/FlashFont.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashMovieFactory.h"
+#include "Flash/FlashOptimizer.h"
 #include "Flash/SwfReader.h"
 #include "Flash/Editor/FlashPipeline.h"
 #include "Flash/Editor/FlashMovieAsset.h"
@@ -106,10 +107,6 @@ bool FlashPipeline::buildDependencies(
 	const FlashMovieAsset* movieAsset = checked_type_cast< const FlashMovieAsset* >(sourceAsset);
 	pipelineDepends->addDependency(Path(m_assetPath), movieAsset->getFileName().getOriginal());
 
-	// Add dependency to dependent flash movies.
-	for (std::vector< Guid >::const_iterator i = movieAsset->m_dependentMovies.begin(); i != movieAsset->m_dependentMovies.end(); ++i)
-		pipelineDepends->addDependency(*i, editor::PdfBuild);
-
 	// AccShape
 	pipelineDepends->addDependency(c_idShaderSolid, editor::PdfBuild | editor::PdfResource);	// Solid
 	pipelineDepends->addDependency(c_idShaderTextured, editor::PdfBuild | editor::PdfResource);	// Textured
@@ -182,6 +179,17 @@ bool FlashPipeline::buildOutput(
 	log::info << movie->getCharacters().size() << L" character(s)" << Endl;
 
 	log::info << DecreaseIndent;
+
+	// Merge all characters of first frame into a single sprite.
+	if (movieAsset->m_staticMovie)
+	{
+		movie = FlashOptimizer().optimizeStaticMovie(movie);
+		if (!movie)
+		{
+			log::error << L"Failed to import Flash; failed to optimize static SWF" << Endl;
+			return false;
+		}
+	}
 
 	// Replace all bitmaps with resource references to textures.
 	SmallMap< uint16_t, Ref< FlashBitmap > > bitmaps = movie->getBitmaps();

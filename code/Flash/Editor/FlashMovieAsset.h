@@ -21,12 +21,14 @@ class T_DLLCLASS FlashMovieAsset : public editor::Asset
 	T_RTTI_CLASS;
 
 public:
+	FlashMovieAsset();
+
 	virtual void serialize(ISerializer& s);
 
 private:
 	friend class FlashPipeline;
 
-	std::vector< Guid > m_dependentMovies;
+	bool m_staticMovie;
 };
 
 	}
