@@ -90,6 +90,56 @@ bool FlashFillStyle::create(uint16_t fillBitmap, const Matrix33& fillBitmapMatri
 	return true;
 }
 
+void FlashFillStyle::transform(const SwfCxTransform& cxform)
+{
+	for (AlignedVector< ColorRecord >::iterator i = m_colorRecords.begin(); i != m_colorRecords.end(); ++i)
+	{
+		i->color.red =   uint8_t(((i->color.red   / 255.0f) * cxform.red[0]   + cxform.red[1]  ) * 255.0f);
+		i->color.green = uint8_t(((i->color.green / 255.0f) * cxform.green[0] + cxform.green[1]) * 255.0f);
+		i->color.blue =  uint8_t(((i->color.blue  / 255.0f) * cxform.blue[0]  + cxform.blue[1] ) * 255.0f);
+		i->color.alpha = uint8_t(((i->color.alpha / 255.0f) * cxform.alpha[0] + cxform.alpha[1]) * 255.0f);
+	}
+}
+
+bool FlashFillStyle::equal(const FlashFillStyle& fillStyle) const
+{
+	if (m_colorRecords.size() != fillStyle.m_colorRecords.size())
+		return false;
+
+	for (uint32_t i = 0; i < uint32_t(m_colorRecords.size()); ++i)
+	{
+		if (abs(m_colorRecords[i].ratio - fillStyle.m_colorRecords[i].ratio) > FUZZY_EPSILON)
+			return false;
+
+		if (
+			abs(m_colorRecords[i].color.red - fillStyle.m_colorRecords[i].color.red) > 1 ||
+			abs(m_colorRecords[i].color.green - fillStyle.m_colorRecords[i].color.green) > 1 ||
+			abs(m_colorRecords[i].color.blue - fillStyle.m_colorRecords[i].color.blue) > 1 ||
+			abs(m_colorRecords[i].color.alpha - fillStyle.m_colorRecords[i].color.alpha) > 1
+		)
+			return false;
+	}
+	
+	if (m_colorRecords.size() >= 2)
+	{
+		if (m_gradientType != fillStyle.m_gradientType)
+			return false;
+		//if (m_gradientMatrix != fillStyle.m_gradientMatrix)
+		//	return false;
+	}
+
+	if (m_fillBitmap != fillStyle.m_fillBitmap)
+		return false;
+
+	//if (m_fillBitmap)
+	//{
+	//	if (m_fillBitmapMatrix != fillStyle.m_fillBitmapMatrix)
+	//		return false;
+	//}
+
+	return true;
+}
+
 void FlashFillStyle::serialize(ISerializer& s)
 {
 	const MemberEnum< GradientType >::Key kGradientType[] =

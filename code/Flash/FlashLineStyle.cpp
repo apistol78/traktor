@@ -27,6 +27,24 @@ bool FlashLineStyle::create(const SwfLineStyle* lineStyle)
 	return true;
 }
 
+void FlashLineStyle::transform(const SwfCxTransform& cxform)
+{
+	m_lineColor.red =   uint8_t(((m_lineColor.red   / 255.0f) * cxform.red[0]   + cxform.red[1]  ) * 255.0f);
+	m_lineColor.green = uint8_t(((m_lineColor.green / 255.0f) * cxform.green[0] + cxform.green[1]) * 255.0f);
+	m_lineColor.blue =  uint8_t(((m_lineColor.blue  / 255.0f) * cxform.blue[0]  + cxform.blue[1] ) * 255.0f);
+	m_lineColor.alpha = uint8_t(((m_lineColor.alpha / 255.0f) * cxform.alpha[0] + cxform.alpha[1]) * 255.0f);
+}
+
+bool FlashLineStyle::equal(const FlashLineStyle& lineStyle) const
+{
+	return
+		m_lineColor.red == lineStyle.m_lineColor.red &&
+		m_lineColor.green == lineStyle.m_lineColor.green &&
+		m_lineColor.blue == lineStyle.m_lineColor.blue &&
+		m_lineColor.alpha == lineStyle.m_lineColor.alpha &&
+		m_lineWidth ==  lineStyle.m_lineWidth;
+}
+
 const SwfColor& FlashLineStyle::getLineColor() const
 {
 	return m_lineColor;

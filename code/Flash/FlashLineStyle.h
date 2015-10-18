@@ -30,6 +30,10 @@ public:
 
 	bool create(const SwfLineStyle* lineStyle);
 
+	void transform(const SwfCxTransform& cxform);
+
+	bool equal(const FlashLineStyle& lineStyle) const;
+
 	const SwfColor& getLineColor() const;
 
 	uint16_t getLineWidth() const;
