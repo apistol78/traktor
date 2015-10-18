@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Flash/FlashFrame.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashMovieRenderer.h"
@@ -43,6 +44,7 @@ public:
 		T_FATAL_ASSERT (!m_maskWrite);
 		m_maskWrite = true;
 		m_maskIncrement = increment;
+		m_mergeShape = 0;
 	}
 
 	virtual void endMask()
@@ -50,7 +52,7 @@ public:
 		m_maskWrite = false;
 		m_maskSprite = 0;
 		m_maskFrame = 0;
-		m_maskDepth = 0;
+		m_mergeShape = 0;
 	}
 
 	virtual void renderShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashShape& shape, const SwfCxTransform& cxform, uint8_t blendMode)
@@ -94,20 +96,27 @@ public:
 			{
 				// End of masking; patch clipping depth.
 				FlashFrame::PlaceObject place = m_outputFrame->getPlaceObjects()[m_maskDepth];
+				T_FATAL_ASSERT (place.has(FlashFrame::PfHasClipDepth));
 				place.clipDepth = m_nextDepth;
 				m_outputFrame->placeObject(place);
 			}
 		}
 		else
 		{
-			// Place cloned character onto frame.
-			FlashFrame::PlaceObject place;
-			place.hasFlags = FlashFrame::PfHasCharacterId | FlashFrame::PfHasMatrix | FlashFrame::PfHasCxTransform;
-			place.depth = m_nextDepth++;
-			place.characterId = cloneShape(shape);
-			place.matrix = transform;
-			place.cxTransform = cxform;
-			m_outputFrame->placeObject(place);
+			if (!m_mergeShape)
+			{
+				m_mergeShape = new FlashShape(m_nextShapeId++);
+				m_outputMovie->defineCharacter(m_mergeShape->getId(), m_mergeShape);
+
+				// Place cloned character onto frame.
+				FlashFrame::PlaceObject place;
+				place.hasFlags = FlashFrame::PfHasCharacterId;
+				place.depth = m_nextDepth++;
+				place.characterId = m_mergeShape->getId();
+				m_outputFrame->placeObject(place);
+			}
+
+			m_mergeShape->merge(shape, transform, cxform);
 		}
 	}
 
@@ -137,6 +146,7 @@ private:
 	std::map< const FlashShape*, uint32_t > m_usedIds;
 	int32_t m_nextDepth;
 	int32_t m_nextShapeId;
+	Ref< FlashShape > m_mergeShape;
 	bool m_maskWrite;
 	bool m_maskIncrement;
 	Ref< FlashSprite > m_maskSprite;

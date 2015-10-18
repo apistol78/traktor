@@ -74,6 +74,9 @@ public:
 		,	visible(1)
 		,	blendMode(0)
 		,	filter(0)
+		,	clipDepth(0)
+		,	ratio(0)
+		,	characterId(0)
 		{
 		}
 

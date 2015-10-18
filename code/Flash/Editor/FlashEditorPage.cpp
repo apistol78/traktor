@@ -331,6 +331,11 @@ void FlashEditorPage::updateTreeCharacter(ui::custom::TreeViewItem* parentItem, 
 
 	characterItem->setData(L"CHARACTER", characterInstance);
 
+	const SwfCxTransform& cxform = characterInstance->getColorTransform();
+	ss.reset();
+	ss << L"Color transform: [0] = {" << cxform.red[0] << L", " << cxform.green[0] << L", " << cxform.blue[0] << L", " << cxform.alpha[0] << L"}, [1] = {" << cxform.red[1] << L", " << cxform.green[1] << L", " << cxform.blue[1] << L", " << cxform.alpha[1] << L"}";
+	m_treeMovie->createItem(characterItem, ss.str());
+
 	if (FlashSpriteInstance* spriteInstance = dynamic_type_cast< FlashSpriteInstance* >(characterInstance))
 	{
 		const FlashSprite* sprite = spriteInstance->getSprite();
@@ -357,7 +362,11 @@ void FlashEditorPage::updateTreeCharacter(ui::custom::TreeViewItem* parentItem, 
 		const FlashDisplayList::layer_map_t& layers = spriteInstance->getDisplayList().getLayers();
 		for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
 		{
-			Ref< ui::custom::TreeViewItem > layerItem = m_treeMovie->createItem(layersItem, toString(i->first), 0, 0);
+			ss.reset();
+			ss << i->first;
+			if (i->second.clipDepth != 0)
+				ss << L", Clip depth: " << i->second.clipDepth << Endl;
+			Ref< ui::custom::TreeViewItem > layerItem = m_treeMovie->createItem(layersItem, ss.str(), 0, 0);
 			T_ASSERT (layerItem);
 
 			if (i->second.instance)

@@ -44,6 +44,8 @@ public:
 
 	void addLineStyle(const FlashLineStyle& lineStyle);
 
+	void merge(const FlashShape& shape, const Matrix33& transform, const SwfCxTransform& cxform);
+
 	virtual Ref< FlashCharacterInstance > createInstance(
 		ActionContext* context,
 		FlashCharacterInstance* parent,

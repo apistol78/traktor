@@ -263,6 +263,89 @@ void FlashShape::addLineStyle(const FlashLineStyle& lineStyle)
 	m_lineStyles.push_back(lineStyle);
 }
 
+void FlashShape::merge(const FlashShape& shape, const Matrix33& transform, const SwfCxTransform& cxform)
+{
+	std::map< uint32_t, uint32_t > fillStyleMap;
+	std::map< uint32_t, uint32_t > lineStyleMap;
+
+	uint32_t lineStyleBase = m_lineStyles.size();
+
+	// Transform fill styles.
+	for (uint32_t i = 0; i < shape.getFillStyles().size(); ++i)
+	{
+		FlashFillStyle fillStyle = shape.getFillStyles()[i];
+		fillStyle.transform(cxform);
+
+		bool found = false;
+		for (uint32_t j = 0; j < m_fillStyles.size(); ++j)
+		{
+			if (m_fillStyles[j].equal(fillStyle))
+			{
+				fillStyleMap[i + 1] = j + 1;
+				found = true;
+				break;
+			}
+		}
+		if (!found)
+		{
+			m_fillStyles.push_back(fillStyle);
+			fillStyleMap[i + 1] = m_fillStyles.size();
+		}
+	}
+
+	// Transform line styles.
+	for (uint32_t i = 0; i < shape.getLineStyles().size(); ++i)
+	{
+		FlashLineStyle lineStyle = shape.getLineStyles()[i];
+		lineStyle.transform(cxform);
+
+		bool found = false;
+		for (uint32_t j = 0; j < m_lineStyles.size(); ++j)
+		{
+			if (m_lineStyles[j].equal(lineStyle))
+			{
+				lineStyleMap[i + 1] = j + 1;
+				found = true;
+				break;
+			}
+		}
+		if (!found)
+		{
+			m_lineStyles.push_back(lineStyle);
+			lineStyleMap[i + 1] = m_lineStyles.size();
+		}
+	}
+
+	// Transform paths and modify styles.
+	for (std::list< Path >::const_iterator i = shape.getPaths().begin(); i != shape.getPaths().end(); ++i)
+	{
+		std::vector< Vector2i > points = i->getPoints();
+		std::list< SubPath > subPaths = i->getSubPaths();
+
+		for (std::vector< Vector2i >::iterator j = points.begin(); j != points.end(); ++j)
+			*j = Vector2i::fromVector2(transform * j->toVector2());
+
+		for (std::list< SubPath >::iterator j = subPaths.begin(); j != subPaths.end(); ++j)
+		{
+			if (j->fillStyle0)
+				j->fillStyle0 = fillStyleMap[j->fillStyle0];
+			if (j->fillStyle1)
+				j->fillStyle1 = fillStyleMap[j->fillStyle1];
+			if (j->lineStyle)
+				j->lineStyle = lineStyleMap[j->lineStyle];
+		}
+
+		m_paths.push_back(Path(points, subPaths));
+	}
+
+	// Expand our bounds with transformed shape's bound.
+	const Aabb2& shapeBounds = shape.getShapeBounds();
+	Vector2 shapeExtents[4];
+	shapeBounds.getExtents(shapeExtents);
+	for (uint32_t i = 0; i < sizeof_array(shapeExtents); ++i)
+		m_shapeBounds.contain(transform * shapeExtents[i]);
+}
+
 Ref< FlashCharacterInstance > FlashShape::createInstance(
 	ActionContext* context,
 	FlashCharacterInstance* parent,
