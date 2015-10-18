@@ -137,9 +137,12 @@ FlashLayer::FlashLayer(
 ,	m_lastMouseY(-1)
 {
 	// Register ourself for UI shake.
-	spray::IFeedbackManager* feedbackManager = m_environment->getWorld()->getFeedbackManager();
-	if (feedbackManager)
-		feedbackManager->addListener(spray::FbtUI, this);
+	if (m_environment->getWorld())
+	{
+		spray::IFeedbackManager* feedbackManager = m_environment->getWorld()->getFeedbackManager();
+		if (feedbackManager)
+			feedbackManager->addListener(spray::FbtUI, this);
+	}
 }
 
 FlashLayer::~FlashLayer()
@@ -150,9 +153,12 @@ FlashLayer::~FlashLayer()
 void FlashLayer::destroy()
 {
 	// Remove ourself from feedback manager.
-	spray::IFeedbackManager* feedbackManager = m_environment->getWorld()->getFeedbackManager();
-	if (feedbackManager)
-		feedbackManager->removeListener(spray::FbtUI, this);
+	if (m_environment->getWorld())
+	{
+		spray::IFeedbackManager* feedbackManager = m_environment->getWorld()->getFeedbackManager();
+		if (feedbackManager)
+			feedbackManager->removeListener(spray::FbtUI, this);
+	}
 
 	m_environment = 0;
 	m_movie.clear();

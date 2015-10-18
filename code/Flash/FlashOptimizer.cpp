@@ -1,11 +1,9 @@
 #include "Flash/FlashFrame.h"
 #include "Flash/FlashMovie.h"
+#include "Flash/FlashMovieRenderer.h"
 #include "Flash/FlashOptimizer.h"
 #include "Flash/FlashShape.h"
 #include "Flash/FlashSprite.h"
-
-
-#include "Flash/FlashMovieRenderer.h"
 #include "Flash/IDisplayRenderer.h"
 
 namespace traktor
@@ -23,6 +21,9 @@ public:
 	,	m_outputFrame(outputFrame)
 	,	m_nextDepth(1)
 	,	m_nextShapeId(2)
+	,	m_maskWrite(false)
+	,	m_maskIncrement(false)
+	,	m_maskDepth(0)
 	{
 	}
 
@@ -39,29 +40,75 @@ public:
 
 	virtual void beginMask(bool increment)
 	{
+		T_FATAL_ASSERT (!m_maskWrite);
+		m_maskWrite = true;
+		m_maskIncrement = increment;
 	}
 
 	virtual void endMask()
 	{
+		m_maskWrite = false;
+		m_maskSprite = 0;
+		m_maskFrame = 0;
+		m_maskDepth = 0;
 	}
 
 	virtual void renderShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashShape& shape, const SwfCxTransform& cxform, uint8_t blendMode)
 	{
-		// Clone shape, don't want cross references between input and output movie.
-		Ref< FlashShape > outputShape = new FlashShape(shape);
-		m_outputMovie->defineCharacter(m_nextShapeId, outputShape);
+		if (m_maskWrite)
+		{
+			if (m_maskIncrement)
+			{
+				// Create a mask sprite; need to have a sprite because the mask can have multiple shapes
+				// and how flash defines mask we must have a container of some sort.
+				if (!m_maskSprite)
+				{
+					m_maskFrame = new FlashFrame();
+					m_maskSprite = new FlashSprite(m_nextShapeId, 1);
+					m_maskSprite->addFrame(m_maskFrame);
 
-		// Place cloned character onto output frame.
-		FlashFrame::PlaceObject place;
-		place.hasFlags = FlashFrame::PfHasCharacterId | FlashFrame::PfHasMatrix | FlashFrame::PfHasCxTransform;
-		place.depth = m_nextDepth;
-		place.characterId = m_nextShapeId;
-		place.matrix = transform;
-		place.cxTransform = cxform;
-		m_outputFrame->placeObject(place);
+					m_outputMovie->defineCharacter(m_nextShapeId, m_maskSprite);
 
-		++m_nextDepth;
-		++m_nextShapeId;
+					// Place mask character onto output frame.
+					FlashFrame::PlaceObject place;
+					place.hasFlags = FlashFrame::PfHasCharacterId | FlashFrame::PfHasClipDepth;
+					place.depth = m_nextDepth++;
+					place.characterId = m_nextShapeId;
+					place.clipDepth = 0;
+					m_outputFrame->placeObject(place);
+
+					m_maskDepth = place.depth;
+
+					m_nextShapeId++;
+				}
+
+				// Place cloned character onto mask frame.
+				FlashFrame::PlaceObject place;
+				place.hasFlags = FlashFrame::PfHasCharacterId | FlashFrame::PfHasMatrix;
+				place.depth = m_nextDepth++;
+				place.characterId = cloneShape(shape);
+				place.matrix = transform;
+				m_maskFrame->placeObject(place);
+			}
+			else
+			{
+				// End of masking; patch clipping depth.
+				FlashFrame::PlaceObject place = m_outputFrame->getPlaceObjects()[m_maskDepth];
+				place.clipDepth = m_nextDepth;
+				m_outputFrame->placeObject(place);
+			}
+		}
+		else
+		{
+			// Place cloned character onto frame.
+			FlashFrame::PlaceObject place;
+			place.hasFlags = FlashFrame::PfHasCharacterId | FlashFrame::PfHasMatrix | FlashFrame::PfHasCxTransform;
+			place.depth = m_nextDepth++;
+			place.characterId = cloneShape(shape);
+			place.matrix = transform;
+			place.cxTransform = cxform;
+			m_outputFrame->placeObject(place);
+		}
 	}
 
 	virtual void renderMorphShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashMorphShape& shape, const SwfCxTransform& cxform)
@@ -85,10 +132,29 @@ public:
 	}
 
 private:
-	FlashMovie* m_outputMovie;
-	FlashFrame* m_outputFrame;
-	uint32_t m_nextDepth;
-	uint32_t m_nextShapeId;
+	Ref< FlashMovie > m_outputMovie;
+	Ref< FlashFrame > m_outputFrame;
+	std::map< const FlashShape*, uint32_t > m_usedIds;
+	int32_t m_nextDepth;
+	int32_t m_nextShapeId;
+	bool m_maskWrite;
+	bool m_maskIncrement;
+	Ref< FlashSprite > m_maskSprite;
+	Ref< FlashFrame > m_maskFrame;
+	int32_t m_maskDepth;
+
+	uint16_t cloneShape(const FlashShape& shape)
+	{
+		std::map< const FlashShape*, uint32_t >::const_iterator i = m_usedIds.find(&shape);
+		if (i != m_usedIds.end())
+			return i->second;
+
+		Ref< FlashShape > outputShape = new FlashShape(shape);
+		m_outputMovie->defineCharacter(m_nextShapeId, outputShape);
+		
+		m_usedIds.insert(std::make_pair(&shape, m_nextShapeId));
+		return m_nextShapeId++;
+	}
 };
 
 		}
