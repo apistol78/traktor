@@ -98,12 +98,6 @@ bool FlashEditorPage::create(ui::Container* parent)
 	if (!m_movie)
 		return false;
 
-	/*
-	m_movie = flash::FlashOptimizer().optimizeStaticMovie(m_movie);
-	if (!m_movie)
-		return false;
-	*/
-
 	Ref< db::Database > database = m_editor->getOutputDatabase();
 
 	m_resourceManager = new resource::ResourceManager(true);
@@ -123,6 +117,8 @@ bool FlashEditorPage::create(ui::Container* parent)
 	
 	m_toolWireframe = new ui::custom::ToolBarButton(L"Wireframe", 6, ui::Command(L"Flash.Editor.Wireframe"), ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolBarPlay->addItem(m_toolWireframe);
+
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Optimize", 6, ui::Command(L"Flash.Editor.Optimize")));
 
 	m_toolBarPlay->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &FlashEditorPage::eventToolClick);
 
@@ -194,6 +190,17 @@ bool FlashEditorPage::handleCommand(const ui::Command& command)
 	{
 		m_previewControl->setWireFrame(m_toolWireframe->isToggled());
 		m_previewControl->update();
+	}
+	else if (command == L"Flash.Editor.Optimize")
+	{
+		Ref< FlashMovie > movie = flash::FlashOptimizer().optimizeStaticMovie(m_movie);
+		if (movie)
+		{
+			m_movie = movie;
+			m_previewControl->setMovie(m_movie);
+			m_previewControl->update();
+			updateTreeMovie();
+		}
 	}
 	else
 		result = false;
