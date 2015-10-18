@@ -940,9 +940,6 @@ bool Application::update()
 			resource::ResourceManagerStatistics rms;
 			m_resourceServer->getResourceManager()->getStatistics(rms);
 
-			script::ScriptStatistics ss;
-			m_scriptServer->getScriptManager()->getStatistics(ss);
-
 			TargetPerformance performance;
 			performance.time = m_updateInfo.m_totalTime;
 			performance.fps = m_fps;
@@ -957,7 +954,6 @@ bool Application::update()
 			performance.interval = updateInterval;
 			performance.collisions = m_renderCollisions;
 			performance.memInUse = uint32_t(Alloc::allocated());
-			performance.memInUseScript = ss.memoryUsage;
 			performance.heapObjects = Object::getHeapObjectCount();
 			performance.build = float(buildTimeEnd - buildTimeStart);
 			performance.render = m_renderDuration;
@@ -966,11 +962,17 @@ bool Application::update()
 			performance.residentResourcesCount = rms.residentCount;
 			performance.exclusiveResourcesCount = rms.exclusiveCount;
 
+			if (m_scriptServer)
+			{
+				script::ScriptStatistics ss;
+				m_scriptServer->getScriptManager()->getStatistics(ss);
+				performance.memInUseScript = ss.memoryUsage;
+			}
+
 			if (m_physicsServer)
 			{
 				physics::PhysicsStatistics ps;
 				m_physicsServer->getPhysicsManager()->getStatistics(ps);
-
 				performance.bodyCount = ps.bodyCount;
 				performance.activeBodyCount = ps.activeCount;
 				performance.manifoldCount = ps.manifoldCount;
