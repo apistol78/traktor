@@ -97,7 +97,7 @@ public:
 				// End of masking; patch clipping depth.
 				FlashFrame::PlaceObject place = m_outputFrame->getPlaceObjects()[m_maskDepth];
 				T_FATAL_ASSERT (place.has(FlashFrame::PfHasClipDepth));
-				place.clipDepth = m_nextDepth;
+				place.clipDepth = m_nextDepth - 1;
 				m_outputFrame->placeObject(place);
 			}
 		}

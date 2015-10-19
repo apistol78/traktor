@@ -15,6 +15,8 @@
 #include "Flash/FlashMovieFactory.h"
 #include "Flash/FlashMoviePlayer.h"
 #include "Flash/FlashOptimizer.h"
+#include "Flash/FlashShape.h"
+#include "Flash/FlashShapeInstance.h"
 #include "Flash/FlashSprite.h"
 #include "Flash/FlashSpriteInstance.h"
 #include "Flash/SwfReader.h"
@@ -72,7 +74,7 @@ bool FlashEditorPage::create(ui::Container* parent)
 		return false;
 
 	std::wstring assetPath = m_editor->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
-	Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, asset->getFileName());
+	traktor::Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, asset->getFileName());
 	Ref< IStream > stream = FileSystem::getInstance().open(fileName, File::FmRead);
 	if (!stream)
 		return false;
@@ -397,6 +399,27 @@ void FlashEditorPage::updateTreeCharacter(ui::custom::TreeViewItem* parentItem, 
 				updateTreeCharacter(layerItem, referenceInstance, pointerHash, nextPointerHash);
 
 			layerItem->setData(L"CHARACTER", referenceInstance);
+		}
+	}
+	else if (FlashShapeInstance* shapeInstance = dynamic_type_cast< FlashShapeInstance* >(characterInstance))
+	{
+		const FlashShape* shape = shapeInstance->getShape();
+
+		const AlignedVector< FlashFillStyle >& fillStyles = shape->getFillStyles();
+		const AlignedVector< FlashLineStyle >& lineStyles = shape->getLineStyles();
+
+		ss.reset();
+		ss << int32_t(fillStyles.size()) << L" fill(s), " << int32_t(lineStyles.size()) << L" line(s)";
+		m_treeMovie->createItem(characterItem, ss.str());
+
+		Ref< ui::custom::TreeViewItem > pathsItem = m_treeMovie->createItem(characterItem, L"Path(s)", 0, 0);
+
+		const AlignedVector< Path >& paths = shape->getPaths();
+		for (AlignedVector< Path >::const_iterator i = paths.begin(); i != paths.end(); ++i)
+		{
+			ss.reset();
+			ss << int32_t(i->getPoints().size()) << L" point(s), " << int32_t(i->getSubPaths().size()) << L" subpath(s)";
+			m_treeMovie->createItem(pathsItem, ss.str());
 		}
 	}
 

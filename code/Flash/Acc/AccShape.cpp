@@ -58,7 +58,7 @@ AccShape::~AccShape()
 	destroy();
 }
 
-bool AccShape::createTesselation(const std::list< Path >& paths)
+bool AccShape::createTesselation(const AlignedVector< Path >& paths)
 {
 	AlignedVector< Segment > segments;
 	Triangulator triangulator;
@@ -72,24 +72,24 @@ bool AccShape::createTesselation(const std::list< Path >& paths)
 	m_bounds.mx.x = m_bounds.mx.y = -std::numeric_limits< float >::max();
 
 	// Create triangles through tessellation.
-	for (std::list< Path >::const_iterator i = paths.begin(); i != paths.end(); ++i)
+	for (AlignedVector< Path >::const_iterator i = paths.begin(); i != paths.end(); ++i)
 	{
 		segments.resize(0);
 
 		m_tesselationBatches.push_back(TesselationBatch());
 		TesselationBatch& batch = m_tesselationBatches.back();
 
-		const std::list< SubPath >& subPaths = i->getSubPaths();
-		for (std::list< SubPath >::const_iterator j = subPaths.begin(); j != subPaths.end(); ++j)
+		const AlignedVector< SubPath >& subPaths = i->getSubPaths();
+		for (AlignedVector< SubPath >::const_iterator j = subPaths.begin(); j != subPaths.end(); ++j)
 		{
-			for (std::vector< SubPathSegment >::const_iterator k = j->segments.begin(); k != j->segments.end(); ++k)
+			for (AlignedVector< SubPathSegment >::const_iterator k = j->segments.begin(); k != j->segments.end(); ++k)
 			{
 				switch (k->type)
 				{
 				case SpgtLinear:
 					{
-						s.v[0] = i->getPoints().at(k->pointsOffset) * c_pointScale;
-						s.v[1] = i->getPoints().at(k->pointsOffset + 1) * c_pointScale;
+						s.v[0] = i->getPoints()[k->pointsOffset] * c_pointScale;
+						s.v[1] = i->getPoints()[k->pointsOffset + 1] * c_pointScale;
 						s.curve = false;
 						s.fillStyle0 = j->fillStyle0;
 						s.fillStyle1 = j->fillStyle1;
@@ -100,13 +100,9 @@ bool AccShape::createTesselation(const std::list< Path >& paths)
 
 				case SpgtQuadratic:
 					{
-						const Vector2i& cp0 = i->getPoints().at(k->pointsOffset);
-						const Vector2i& cp1 = i->getPoints().at(k->pointsOffset + 1);
-						const Vector2i& cp2 = i->getPoints().at(k->pointsOffset + 2);
-
-						s.v[0] = cp0 * c_pointScale;
-						s.v[1] = cp2 * c_pointScale;
-						s.c = cp1 * c_pointScale;
+						s.v[0] = i->getPoints()[k->pointsOffset] * c_pointScale;
+						s.v[1] = i->getPoints()[k->pointsOffset + 2] * c_pointScale;
+						s.c = i->getPoints()[k->pointsOffset + 1] * c_pointScale;
 						s.curve = true;
 						s.fillStyle0 = j->fillStyle0;
 						s.fillStyle1 = j->fillStyle1;
@@ -143,13 +139,13 @@ bool AccShape::createTesselation(const std::list< Path >& paths)
 
 bool AccShape::createTesselation(const FlashShape& shape)
 {
-	const std::list< Path >& paths = shape.getPaths();
+	const AlignedVector< Path >& paths = shape.getPaths();
 	return createTesselation(paths);
 }
 
 bool AccShape::createTesselation(const FlashCanvas& canvas)
 {
-	const std::list< Path >& paths = canvas.getPaths();
+	const AlignedVector< Path >& paths = canvas.getPaths();
 	return createTesselation(paths);
 }
 
@@ -261,8 +257,9 @@ bool AccShape::updateRenderable(
 
 			for (int k = 0; k < 3; ++k)
 			{
-				vertex->pos[0] = float(j->v[k].x) / c_pointScale;
-				vertex->pos[1] = float(j->v[k].y) / c_pointScale;
+				Vector2 P = j->v[k].toVector2() / c_pointScale;
+				vertex->pos[0] = P.x;
+				vertex->pos[1] = P.y;
 				vertex->uv[0] = c_controlPoints[k][0];
 				vertex->uv[1] = c_controlPoints[k][1];
 				vertex->uv[2] = curveSign;

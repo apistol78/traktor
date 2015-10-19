@@ -10,6 +10,23 @@ namespace traktor
 {
 	namespace flash
 	{
+		namespace
+		{
+
+bool compareEqual(const Matrix33& lh, const Matrix33& rh)
+{
+	for (int32_t r = 0; r < 3; ++r)
+	{
+		for (int32_t c = 0; c < 3; ++c)
+		{
+			if (abs(lh.e[r][c] - rh.e[r][c]) > FUZZY_EPSILON)
+				return false;
+		}
+	}
+	return true;
+}
+
+		}
 
 FlashFillStyle::FlashFillStyle()
 :	m_gradientType(GtInvalid)
@@ -90,7 +107,7 @@ bool FlashFillStyle::create(uint16_t fillBitmap, const Matrix33& fillBitmapMatri
 	return true;
 }
 
-void FlashFillStyle::transform(const SwfCxTransform& cxform)
+void FlashFillStyle::transform(const Matrix33& transform, const SwfCxTransform& cxform)
 {
 	for (AlignedVector< ColorRecord >::iterator i = m_colorRecords.begin(); i != m_colorRecords.end(); ++i)
 	{
@@ -99,6 +116,12 @@ void FlashFillStyle::transform(const SwfCxTransform& cxform)
 		i->color.blue =  uint8_t(((i->color.blue  / 255.0f) * cxform.blue[0]  + cxform.blue[1] ) * 255.0f);
 		i->color.alpha = uint8_t(((i->color.alpha / 255.0f) * cxform.alpha[0] + cxform.alpha[1]) * 255.0f);
 	}
+
+	if (m_gradientType != GtInvalid)
+		m_gradientMatrix = transform * m_gradientMatrix;
+
+	if (m_fillBitmap != 0)
+		m_fillBitmapMatrix = transform * m_fillBitmapMatrix;
 }
 
 bool FlashFillStyle::equal(const FlashFillStyle& fillStyle) const
@@ -119,23 +142,24 @@ bool FlashFillStyle::equal(const FlashFillStyle& fillStyle) const
 		)
 			return false;
 	}
-	
-	if (m_colorRecords.size() >= 2)
+
+	if (m_gradientType != fillStyle.m_gradientType)
+		return false;
+
+	if (m_gradientType != GtInvalid)
 	{
-		if (m_gradientType != fillStyle.m_gradientType)
+		if (!compareEqual(m_gradientMatrix, fillStyle.m_gradientMatrix))
 			return false;
-		//if (m_gradientMatrix != fillStyle.m_gradientMatrix)
-		//	return false;
 	}
 
 	if (m_fillBitmap != fillStyle.m_fillBitmap)
 		return false;
 
-	//if (m_fillBitmap)
-	//{
-	//	if (m_fillBitmapMatrix != fillStyle.m_fillBitmapMatrix)
-	//		return false;
-	//}
+	if (m_fillBitmap)
+	{
+		if (!compareEqual(m_fillBitmapMatrix, fillStyle.m_fillBitmapMatrix))
+			return false;
+	}
 
 	return true;
 }
