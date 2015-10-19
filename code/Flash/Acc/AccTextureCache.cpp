@@ -125,6 +125,7 @@ AccTextureCache::BitmapRect AccTextureCache::getGradientTexture(const FlashFillS
 
 		BitmapRect& br = m_cache[hash];
 		br.texture = texture;
+		br.clamp = true;
 		br.rect[0] = 0.0f;
 		br.rect[1] = 0.0f;
 		br.rect[2] = 1.0f;
@@ -161,6 +162,7 @@ AccTextureCache::BitmapRect AccTextureCache::getGradientTexture(const FlashFillS
 
 		BitmapRect& br = m_cache[hash];
 		br.texture = texture;
+		br.clamp = true;
 		br.rect[0] = 0.0f;
 		br.rect[1] = 0.0f;
 		br.rect[2] = 1.0f;
@@ -194,6 +196,7 @@ AccTextureCache::BitmapRect AccTextureCache::getBitmapTexture(const FlashBitmap&
 
 		BitmapRect& br = m_cache[hash];
 		br.texture = texture;
+		br.clamp = false;
 		br.rect[0] = bitmapResource->getX() / w;
 		br.rect[1] = bitmapResource->getY() / h;
 		br.rect[2] = bitmapResource->getWidth() / w;
@@ -218,6 +221,7 @@ AccTextureCache::BitmapRect AccTextureCache::getBitmapTexture(const FlashBitmap&
 
 		BitmapRect& br = m_cache[hash];
 		br.texture = texture;
+		br.clamp = false;
 		br.rect[0] = 0.0f;
 		br.rect[1] = 0.0f;
 		br.rect[2] = 1.0f;

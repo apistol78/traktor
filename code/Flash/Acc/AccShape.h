@@ -88,7 +88,6 @@ private:
 	{
 		AccTextureCache::BitmapRect texture;
 		Matrix33 textureMatrix;
-		bool textureClamp;
 		render::Primitives primitives;
 	};
 

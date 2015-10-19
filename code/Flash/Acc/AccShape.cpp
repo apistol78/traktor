@@ -198,7 +198,6 @@ bool AccShape::updateRenderable(
 		{
 			Color4ub color(255, 255, 255, 255);
 			AccTextureCache::BitmapRect texture;
-			bool textureClamp = false;
 			float curveSign = 0.0f;
 
 			if (j->type == TcIn)
@@ -213,16 +212,13 @@ bool AccShape::updateRenderable(
 				const AlignedVector< FlashFillStyle::ColorRecord >& colorRecords = style.getColorRecords();
 				if (colorRecords.size() > 1)
 				{
-					// Create gradient texture.
 					T_ASSERT (textureCache);
 					texture = textureCache->getGradientTexture(style);
 					textureMatrix = textureTS * style.getGradientMatrix().inverse();
-					textureClamp = true;
 					m_batchFlags |= BfHaveTextured;
 				}
 				else if (colorRecords.size() == 1)
 				{
-					// Solid color.
 					color.r = colorRecords.front().color.red;
 					color.g = colorRecords.front().color.green;
 					color.b = colorRecords.front().color.blue;
@@ -235,24 +231,17 @@ bool AccShape::updateRenderable(
 				{
 					T_ASSERT (textureCache);
 					texture = textureCache->getBitmapTexture(*bitmap);
-					textureMatrix =
-						scale(
-							1.0f / bitmap->getWidth(),
-							1.0f / bitmap->getHeight()
-						) *
-						style.getFillBitmapMatrix().inverse();
-					textureClamp = false;
+					textureMatrix = scale(1.0f / bitmap->getWidth(), 1.0f / bitmap->getHeight()) * style.getFillBitmapMatrix().inverse();
 					m_batchFlags |= BfHaveTextured;
 				}
 			}
 
-			if (batch.empty() || batch.back().texture != texture || batch.back().textureClamp != textureClamp)
+			if (batch.empty() || batch.back().texture != texture)
 			{
 				batch.push_back(RenderBatch());
 				batch.back().primitives.setNonIndexed(render::PtTriangles, vertexOffset, 0);
 				batch.back().texture = texture;
 				batch.back().textureMatrix = textureMatrix;
-				batch.back().textureClamp = textureClamp;
 			}
 
 			for (int k = 0; k < 3; ++k)
@@ -427,10 +416,10 @@ void AccShape::render(
 				renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 				renderBlock->programParams->beginParameters(renderContext);
 				renderBlock->programParams->setTextureParameter(m_shapeResources->m_handleTexture, j->texture.texture);
+				renderBlock->programParams->setFloatParameter(m_shapeResources->m_handleTextureClamp, j->texture.clamp ? 1.0f : 0.0f);
 				renderBlock->programParams->setVectorParameter(m_shapeResources->m_handleTextureRect, Vector4::loadUnaligned(j->texture.rect));
 				renderBlock->programParams->setVectorParameter(m_shapeResources->m_handleTextureMatrix0, textureMatrix0);
 				renderBlock->programParams->setVectorParameter(m_shapeResources->m_handleTextureMatrix1, textureMatrix1);
-				renderBlock->programParams->setFloatParameter(m_shapeResources->m_handleTextureClamp, j->textureClamp ? 1.0f : 0.0f);
 				renderBlock->programParams->endParameters(renderContext);
 				renderContext->draw(render::RpOverlay, renderBlock);
 			}
