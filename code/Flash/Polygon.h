@@ -1,7 +1,7 @@
 #ifndef traktor_flash_Polygon_H
 #define traktor_flash_Polygon_H
 
-#include "Core/Math/Vector2i.h"
+#include "Core/Math/Vector2.h"
 
 namespace traktor
 {
@@ -13,8 +13,8 @@ namespace traktor
 
 struct Segment
 {
-	Vector2i v[2];
-	Vector2i c;
+	Vector2 v[2];
+	Vector2 c;
 	bool curve;
 	uint16_t fillStyle0;
 	uint16_t fillStyle1;
@@ -30,14 +30,14 @@ enum TriangleType
 
 struct Triangle
 {
-	Vector2i v[3];
+	Vector2 v[3];
 	TriangleType type;
 	uint16_t fillStyle;
 };
 
 struct Line
 {
-	Vector2i v[2];
+	Vector2 v[2];
 	uint16_t lineStyle;
 };
 

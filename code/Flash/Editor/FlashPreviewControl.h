@@ -86,7 +86,7 @@ public:
 		sound::ISoundPlayer* soundPlayer
 	);
 
-	void destroy();
+	virtual void destroy() T_OVERRIDE;
 
 	void setMovie(FlashMovie* movie);
 

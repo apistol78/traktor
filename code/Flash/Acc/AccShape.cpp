@@ -26,8 +26,6 @@ enum BatchFlags
 	BfHaveTextured = 2
 };
 
-const int32_t c_pointScale = 100;
-
 const float c_controlPoints[3][2] =
 {
 	{ 0.0f, 0.0f },
@@ -88,8 +86,8 @@ bool AccShape::createTesselation(const AlignedVector< Path >& paths)
 				{
 				case SpgtLinear:
 					{
-						s.v[0] = i->getPoints()[k->pointsOffset] * c_pointScale;
-						s.v[1] = i->getPoints()[k->pointsOffset + 1] * c_pointScale;
+						s.v[0] = (i->getPoints()[k->pointsOffset]);
+						s.v[1] = (i->getPoints()[k->pointsOffset + 1]);
 						s.curve = false;
 						s.fillStyle0 = j->fillStyle0;
 						s.fillStyle1 = j->fillStyle1;
@@ -100,9 +98,9 @@ bool AccShape::createTesselation(const AlignedVector< Path >& paths)
 
 				case SpgtQuadratic:
 					{
-						s.v[0] = i->getPoints()[k->pointsOffset] * c_pointScale;
-						s.v[1] = i->getPoints()[k->pointsOffset + 2] * c_pointScale;
-						s.c = i->getPoints()[k->pointsOffset + 1] * c_pointScale;
+						s.v[0] = (i->getPoints()[k->pointsOffset]);
+						s.v[1] = (i->getPoints()[k->pointsOffset + 2]);
+						s.c = (i->getPoints()[k->pointsOffset + 1]);
 						s.curve = true;
 						s.fillStyle0 = j->fillStyle0;
 						s.fillStyle1 = j->fillStyle1;
@@ -124,7 +122,7 @@ bool AccShape::createTesselation(const AlignedVector< Path >& paths)
 		{
 			for (int k = 0; k < 3; ++k)
 			{
-				Vector2 pt = j->v[k].toVector2() / c_pointScale;
+				Vector2 pt = j->v[k];
 				m_bounds.mn.x = min< float >(m_bounds.mn.x, pt.x);
 				m_bounds.mn.y = min< float >(m_bounds.mn.y, pt.y);
 				m_bounds.mx.x = max< float >(m_bounds.mx.x, pt.x);
@@ -246,7 +244,7 @@ bool AccShape::updateRenderable(
 
 			for (int k = 0; k < 3; ++k)
 			{
-				Vector2 P = j->v[k].toVector2() / c_pointScale;
+				Vector2 P = j->v[k];
 				vertex->pos[0] = P.x;
 				vertex->pos[1] = P.y;
 				vertex->uv[0] = c_controlPoints[k][0];

@@ -10,29 +10,6 @@ namespace traktor
 {
 	namespace flash
 	{
-		namespace
-		{
-
-class MemberVector2i : public MemberComplex
-{
-public:
-	MemberVector2i(const wchar_t* const name, Vector2i& ref)
-	:	MemberComplex(name, true)
-	,	m_ref(ref)
-	{
-	}
-
-	virtual void serialize(ISerializer& s) const
-	{
-		s >> Member< int32_t >(L"x", m_ref.x);
-		s >> Member< int32_t >(L"y", m_ref.y);
-	}
-
-private:
-	Vector2i& m_ref;
-};
-
-		}
 
 void SubPathSegment::serialize(ISerializer& s)
 {
@@ -55,7 +32,7 @@ Path::Path()
 	m_points.reserve(256);
 }
 
-Path::Path(const AlignedVector< Vector2i >& points, const AlignedVector< SubPath >& subPaths)
+Path::Path(const AlignedVector< Vector2 >& points, const AlignedVector< SubPath >& subPaths)
 :	m_cursor(0, 0)
 ,	m_points(points)
 ,	m_subPaths(subPaths)
@@ -73,14 +50,14 @@ void Path::moveTo(int32_t x, int32_t y, CoordinateMode mode)
 {
 	T_ASSERT (m_current.segments.empty());
 	transform(mode, CmAbsolute, x, y);
-	m_cursor = Vector2i(x, y);
+	m_cursor = Vector2(x, y);
 }
 
 void Path::lineTo(int32_t x, int32_t y, CoordinateMode mode)
 {
 	transform(mode, CmAbsolute, x, y);
 
-	Vector2i p(x, y);
+	Vector2 p(x, y);
 	if (p != m_cursor)
 	{
 		uint32_t offset = uint32_t(m_points.size());
@@ -100,12 +77,12 @@ void Path::quadraticTo(int32_t x1, int32_t y1, int32_t x, int32_t y, CoordinateM
 	transform(mode, CmAbsolute, x1, y1);
 	transform(mode, CmAbsolute, x, y);
 
-	Vector2i p(x, y);
+	Vector2 p(x, y);
 	if (p != m_cursor)
 	{
 		uint32_t offset = uint32_t(m_points.size());
 		m_points.push_back(m_cursor);
-		m_points.push_back(Vector2i(x1, y1));
+		m_points.push_back(Vector2(x1, y1));
 		m_points.push_back(p);
 
 		m_current.segments.push_back(SubPathSegment(SpgtQuadratic));
@@ -132,15 +109,15 @@ void Path::end(uint16_t fillStyle0, uint16_t fillStyle1, uint16_t lineStyle)
 Aabb2 Path::getBounds() const
 {
 	Aabb2 bounds;
-	for (AlignedVector< Vector2i >::const_iterator i = m_points.begin(); i != m_points.end(); ++i)
-		bounds.contain(i->toVector2());
+	for (AlignedVector< Vector2 >::const_iterator i = m_points.begin(); i != m_points.end(); ++i)
+		bounds.contain(*i);
 	return bounds;
 }
 
 void Path::serialize(ISerializer& s)
 {
-	s >> MemberVector2i(L"cursor", m_cursor);
-	s >> MemberAlignedVector< Vector2i, MemberVector2i >(L"points", m_points);
+	s >> Member< Vector2 >(L"cursor", m_cursor);
+	s >> MemberAlignedVector< Vector2 >(L"points", m_points);
 	s >> MemberAlignedVector< SubPath, MemberComposite< SubPath > >(L"subPaths", m_subPaths);
 	s >> MemberComposite< SubPath >(L"current", m_current);
 }

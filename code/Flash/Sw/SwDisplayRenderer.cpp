@@ -149,7 +149,7 @@ void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Mat
 	const AlignedVector< Path >& paths = shape.getPaths();
 	for (AlignedVector< Path >::const_iterator i = paths.begin(); i != paths.end(); ++i)
 	{
-		const AlignedVector< Vector2i >& points = i->getPoints();
+		const AlignedVector< Vector2 >& points = i->getPoints();
 
 		// Create spans for each path.
 		const AlignedVector< SubPath >& subPaths = i->getSubPaths();
@@ -167,8 +167,8 @@ void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Mat
 				{
 					Edge edge;
 					edge.type = SpgtLinear;
-					edge.points.push_back(rasterTransform * points[k->pointsOffset].toVector2());
-					edge.points.push_back(rasterTransform * points[k->pointsOffset + 1].toVector2());
+					edge.points.push_back(rasterTransform * points[k->pointsOffset]);
+					edge.points.push_back(rasterTransform * points[k->pointsOffset + 1]);
 					//if (!culled(&edge.points[0], 2, frameWidth, frameHeight))
 						edges.push_back(edge);
 				}
@@ -176,9 +176,9 @@ void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Mat
 				{
 					Vector2 cp[] =
 					{
-						rasterTransform * points[k->pointsOffset].toVector2(),
-						rasterTransform * points[k->pointsOffset + 1].toVector2(),
-						rasterTransform * points[k->pointsOffset + 2].toVector2()
+						rasterTransform * points[k->pointsOffset],
+						rasterTransform * points[k->pointsOffset + 1],
+						rasterTransform * points[k->pointsOffset + 2]
 					};
 
 					//if (!culled(cp, 3, frameWidth, frameHeight))
@@ -357,7 +357,7 @@ void SwDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Mat
 	const AlignedVector< Path >& paths = glyphShape.getPaths();
 	for (AlignedVector< Path >::const_iterator i = paths.begin(); i != paths.end(); ++i)
 	{
-		const AlignedVector< Vector2i >& points = i->getPoints();
+		const AlignedVector< Vector2 >& points = i->getPoints();
 
 		// Create spans for each path.
 		const AlignedVector< SubPath >& subPaths = i->getSubPaths();
@@ -375,40 +375,38 @@ void SwDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Mat
 				{
 					Edge edge;
 					edge.type = SpgtLinear;
-					edge.points.push_back(rasterTransform * points[k->pointsOffset].toVector2());
-					edge.points.push_back(rasterTransform * points[k->pointsOffset + 1].toVector2());
+					edge.points.push_back(rasterTransform * points[k->pointsOffset]);
+					edge.points.push_back(rasterTransform * points[k->pointsOffset + 1]);
 					edges.push_back(edge);
 				}
 				else
 				{
 					Vector2 cp[] =
 					{
-						rasterTransform * points[k->pointsOffset].toVector2(),
-						rasterTransform * points[k->pointsOffset + 1].toVector2(),
-						rasterTransform * points[k->pointsOffset + 2].toVector2()
+						rasterTransform * points[k->pointsOffset],
+						rasterTransform * points[k->pointsOffset + 1],
+						rasterTransform * points[k->pointsOffset + 2]
 					};
 
+					float area = abs(((cp[1].x - cp[0].x) * (cp[2].y - cp[0].y) - (cp[2].x - cp[0].x) * (cp[1].y - cp[0].y)) / 2.0f);
+					float screenArea = area * screenScale;
+
+					int steps = int(sqrtf(screenArea) / 4.0f);
+					steps = min(steps, 8);
+					steps = max(steps, 1);
+
+					Vector2 p1 = evalQuadratic(0.0f, cp[0], cp[1], cp[2]);
+					for (int t = 1; t <= steps; ++t)
 					{
-						float area = abs(((cp[1].x - cp[0].x) * (cp[2].y - cp[0].y) - (cp[2].x - cp[0].x) * (cp[1].y - cp[0].y)) / 2.0f);
-						float screenArea = area * screenScale;
+						Vector2 p2 = evalQuadratic(float(t) / steps, cp[0], cp[1], cp[2]);
 
-						int steps = int(sqrtf(screenArea) / 4.0f);
-						steps = min(steps, 8);
-						steps = max(steps, 1);
+						Edge edge;
+						edge.type = SpgtLinear;
+						edge.points.push_back(p1);
+						edge.points.push_back(p2);
+						edges.push_back(edge);
 
-						Vector2 p1 = evalQuadratic(0.0f, cp[0], cp[1], cp[2]);
-						for (int t = 1; t <= steps; ++t)
-						{
-							Vector2 p2 = evalQuadratic(float(t) / steps, cp[0], cp[1], cp[2]);
-
-							Edge edge;
-							edge.type = SpgtLinear;
-							edge.points.push_back(p1);
-							edge.points.push_back(p2);
-							edges.push_back(edge);
-
-							p1 = p2;
-						}
+						p1 = p2;
 					}
 				}
 			}
