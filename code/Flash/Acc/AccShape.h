@@ -45,7 +45,7 @@ public:
 
 	virtual ~AccShape();
 
-	bool createTesselation(const std::list< Path >& paths);
+	bool createTesselation(const AlignedVector< Path >& paths);
 
 	bool createTesselation(const FlashShape& shape);
 

@@ -167,7 +167,10 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 				layer.instance->setVisible(placeObject.visible != 0);
 
 			if (placeObject.has(FlashFrame::PfHasClipDepth))
+			{
+				layer.clipEnable = true;
 				layer.clipDepth = placeObject.clipDepth + c_depthOffset;
+			}
 
 			if (!layer.instance->getName().empty())
 				layer.name = m_context->getString(layer.instance->getName());
@@ -232,11 +235,11 @@ const FlashCharacterInstance* FlashDisplayList::getObjectMask(const FlashCharact
 			continue;
 		}
 
-		if (layer.clipDepth)
+		if (layer.clipEnable)
 		{
 			for (++i; i != m_layers.end(); ++i)
 			{
-				if (layer.clipDepth > 0 && i->first > layer.clipDepth)
+				if (i->first > layer.clipDepth)
 					break;
 
 				if (i->second.instance == characterInstance)

@@ -146,22 +146,22 @@ void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Mat
 	float frameHeight = m_frameBounds.mx.y;
 	float screenScale = ((m_width / frameWidth) + (m_height / frameHeight)) / 2.0f;
 
-	const std::list< Path >& paths = shape.getPaths();
-	for (std::list< Path >::const_iterator i = paths.begin(); i != paths.end(); ++i)
+	const AlignedVector< Path >& paths = shape.getPaths();
+	for (AlignedVector< Path >::const_iterator i = paths.begin(); i != paths.end(); ++i)
 	{
-		const std::vector< Vector2i >& points = i->getPoints();
+		const AlignedVector< Vector2i >& points = i->getPoints();
 
 		// Create spans for each path.
-		const std::list< SubPath >& subPaths = i->getSubPaths();
-		for (std::list< SubPath >::const_iterator j = subPaths.begin(); j != subPaths.end(); ++j)
+		const AlignedVector< SubPath >& subPaths = i->getSubPaths();
+		for (AlignedVector< SubPath >::const_iterator j = subPaths.begin(); j != subPaths.end(); ++j)
 		{
-			const std::vector< SubPathSegment >& segments = j->segments;
+			const AlignedVector< SubPathSegment >& segments = j->segments;
 
 			// Transform segments into linear edges.
-			static std::vector< Edge > edges;
+			static AlignedVector< Edge > edges;
 			edges.resize(0);
 
-			for (std::vector< SubPathSegment >::const_iterator k = segments.begin(); k != segments.end(); ++k)
+			for (AlignedVector< SubPathSegment >::const_iterator k = segments.begin(); k != segments.end(); ++k)
 			{
 				if (k->type == SpgtLinear)
 				{
@@ -208,7 +208,7 @@ void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Mat
 			}
 
 			// Generate spans from edges.
-			for (std::vector< Edge >::const_iterator k = edges.begin(); k != edges.end(); ++k)
+			for (AlignedVector< Edge >::const_iterator k = edges.begin(); k != edges.end(); ++k)
 			{
 				const Vector2& p1 = k->points[0];
 				const Vector2& p2 = k->points[1];
@@ -354,22 +354,22 @@ void SwDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Mat
 	float frameHeight = m_frameBounds.mx.y;
 	float screenScale = ((m_width / frameWidth) + (m_height / frameHeight)) / 2.0f;
 
-	const std::list< Path >& paths = glyphShape.getPaths();
-	for (std::list< Path >::const_iterator i = paths.begin(); i != paths.end(); ++i)
+	const AlignedVector< Path >& paths = glyphShape.getPaths();
+	for (AlignedVector< Path >::const_iterator i = paths.begin(); i != paths.end(); ++i)
 	{
-		const std::vector< Vector2i >& points = i->getPoints();
+		const AlignedVector< Vector2i >& points = i->getPoints();
 
 		// Create spans for each path.
-		const std::list< SubPath >& subPaths = i->getSubPaths();
-		for (std::list< SubPath >::const_iterator j = subPaths.begin(); j != subPaths.end(); ++j)
+		const AlignedVector< SubPath >& subPaths = i->getSubPaths();
+		for (AlignedVector< SubPath >::const_iterator j = subPaths.begin(); j != subPaths.end(); ++j)
 		{
-			const std::vector< SubPathSegment >& segments = j->segments;
+			const AlignedVector< SubPathSegment >& segments = j->segments;
 
 			// Transform segments into linear edges.
-			static std::vector< Edge > edges;
+			static AlignedVector< Edge > edges;
 			edges.resize(0);
 
-			for (std::vector< SubPathSegment >::const_iterator k = segments.begin(); k != segments.end(); ++k)
+			for (AlignedVector< SubPathSegment >::const_iterator k = segments.begin(); k != segments.end(); ++k)
 			{
 				if (k->type == SpgtLinear)
 				{
@@ -414,7 +414,7 @@ void SwDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Mat
 			}
 
 			// Generate spans from edges.
-			for (std::vector< Edge >::const_iterator k = edges.begin(); k != edges.end(); ++k)
+			for (AlignedVector< Edge >::const_iterator k = edges.begin(); k != edges.end(); ++k)
 			{
 				const Vector2& p1 = k->points[0];
 				const Vector2& p2 = k->points[1];

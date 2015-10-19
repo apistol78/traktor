@@ -1,7 +1,6 @@
 #ifndef traktor_flash_FlashCanvas_H
 #define traktor_flash_FlashCanvas_H
 
-#include <list>
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Flash/Path.h"
@@ -51,7 +50,7 @@ public:
 
 	const Aabb2& getBounds() const { return m_bounds; }
 
-	const std::list< Path >& getPaths() const { return m_paths; }
+	const AlignedVector< Path >& getPaths() const { return m_paths; }
 
 	const AlignedVector< FlashLineStyle >& getLineStyles() const { return m_lineStyles; }
 
@@ -61,7 +60,7 @@ private:
 	int32_t m_cacheTag;
 	int32_t m_dirtyTag;
 	Aabb2 m_bounds;
-	std::list< Path > m_paths;
+	AlignedVector< Path > m_paths;
 	AlignedVector< FlashLineStyle > m_lineStyles;
 	AlignedVector< FlashFillStyle > m_fillStyles;
 	bool m_drawing;

@@ -5,7 +5,6 @@
 #include "Core/Serialization/MemberAabb.h"
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
-#include "Core/Serialization/MemberStl.h"
 #include "Flash/FlashMorphShape.h"
 #include "Flash/FlashMorphShapeInstance.h"
 #include "Flash/Path.h"
@@ -158,7 +157,7 @@ void FlashMorphShape::serialize(ISerializer& s)
 	FlashCharacter::serialize(s);
 
 	s >> MemberAabb2(L"shapeBounds", m_shapeBounds);
-	s >> MemberStlList< Path, MemberComposite< Path > >(L"paths", m_paths);
+	s >> MemberAlignedVector< Path, MemberComposite< Path > >(L"paths", m_paths);
 	s >> MemberAlignedVector< FlashFillStyle, MemberComposite< FlashFillStyle > >(L"fillStyles", m_fillStyles);
 	s >> MemberAlignedVector< FlashLineStyle, MemberComposite< FlashLineStyle > >(L"lineStyles", m_lineStyles);
 }

@@ -142,8 +142,8 @@ bool FlashShape::create(const Aabb2& shapeBounds, const SwfShape* shape, const S
 		fillStyle1 ? fillStyle1 + fillStyleBase : 0,
 		lineStyle ? lineStyle + lineStyleBase : 0
 	);
-	m_paths.push_back(path);
 
+	m_paths.push_back(path);
 	m_shapeBounds = shapeBounds;
 	return true;
 }
@@ -219,9 +219,8 @@ bool FlashShape::create(const SwfShape* shape)
 
 	path.end(fillStyle0, fillStyle1, lineStyle);
 	
-	m_shapeBounds = path.getBounds();
 	m_paths.push_back(path);
-
+	m_shapeBounds = path.getBounds();
 	return true;
 }
 
@@ -268,13 +267,11 @@ void FlashShape::merge(const FlashShape& shape, const Matrix33& transform, const
 	std::map< uint32_t, uint32_t > fillStyleMap;
 	std::map< uint32_t, uint32_t > lineStyleMap;
 
-	uint32_t lineStyleBase = m_lineStyles.size();
-
 	// Transform fill styles.
 	for (uint32_t i = 0; i < shape.getFillStyles().size(); ++i)
 	{
 		FlashFillStyle fillStyle = shape.getFillStyles()[i];
-		fillStyle.transform(cxform);
+		fillStyle.transform(transform, cxform);
 
 		bool found = false;
 		for (uint32_t j = 0; j < m_fillStyles.size(); ++j)
@@ -317,15 +314,15 @@ void FlashShape::merge(const FlashShape& shape, const Matrix33& transform, const
 	}
 
 	// Transform paths and modify styles.
-	for (std::list< Path >::const_iterator i = shape.getPaths().begin(); i != shape.getPaths().end(); ++i)
+	for (AlignedVector< Path >::const_iterator i = shape.getPaths().begin(); i != shape.getPaths().end(); ++i)
 	{
-		std::vector< Vector2i > points = i->getPoints();
-		std::list< SubPath > subPaths = i->getSubPaths();
+		AlignedVector< Vector2i > points = i->getPoints();
+		AlignedVector< SubPath > subPaths = i->getSubPaths();
 
-		for (std::vector< Vector2i >::iterator j = points.begin(); j != points.end(); ++j)
+		for (AlignedVector< Vector2i >::iterator j = points.begin(); j != points.end(); ++j)
 			*j = Vector2i::fromVector2(transform * j->toVector2());
 
-		for (std::list< SubPath >::iterator j = subPaths.begin(); j != subPaths.end(); ++j)
+		for (AlignedVector< SubPath >::iterator j = subPaths.begin(); j != subPaths.end(); ++j)
 		{
 			if (j->fillStyle0)
 				j->fillStyle0 = fillStyleMap[j->fillStyle0];
@@ -363,7 +360,7 @@ void FlashShape::serialize(ISerializer& s)
 	FlashCharacter::serialize(s);
 
 	s >> MemberAabb2(L"shapeBounds", m_shapeBounds);
-	s >> MemberStlList< Path, MemberComposite< Path > >(L"paths", m_paths);
+	s >> MemberAlignedVector< Path, MemberComposite< Path > >(L"paths", m_paths);
 	s >> MemberAlignedVector< FlashFillStyle, MemberComposite< FlashFillStyle > >(L"fillStyles", m_fillStyles);
 	s >> MemberAlignedVector< FlashLineStyle, MemberComposite< FlashLineStyle > >(L"lineStyles", m_lineStyles);
 }

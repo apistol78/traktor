@@ -45,7 +45,7 @@ public:
 
 	const Aabb2& getShapeBounds() const { return m_shapeBounds; }
 
-	const std::list< Path >& getPaths() const { return m_paths; }
+	const AlignedVector< Path >& getPaths() const { return m_paths; }
 
 	const AlignedVector< FlashFillStyle >& getFillStyles() const { return m_fillStyles; }
 
@@ -55,7 +55,7 @@ public:
 
 private:
 	Aabb2 m_shapeBounds;
-	std::list< Path > m_paths;
+	AlignedVector< Path > m_paths;
 	AlignedVector< FlashFillStyle > m_fillStyles;
 	AlignedVector< FlashLineStyle > m_lineStyles;
 };

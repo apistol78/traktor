@@ -37,6 +37,7 @@ public:
 		uint16_t id;
 		uint32_t name;
 		Ref< FlashCharacterInstance > instance;
+		bool clipEnable;
 		int32_t clipDepth;
 		bool immutable;
 		bool collect;
@@ -44,6 +45,7 @@ public:
 		Layer()
 		:	id(0)
 		,	name(0)
+		,	clipEnable(false)
 		,	clipDepth(0)
 		,	immutable(false)
 		,	collect(false)

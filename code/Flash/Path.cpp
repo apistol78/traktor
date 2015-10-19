@@ -1,9 +1,9 @@
 #include "Core/Log/Log.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberEnum.h"
-#include "Core/Serialization/MemberStl.h"
 #include "Flash/Path.h"
 
 namespace traktor
@@ -46,7 +46,7 @@ void SubPath::serialize(ISerializer& s)
 	s >> Member< uint16_t >(L"fillStyle0", fillStyle0);
 	s >> Member< uint16_t >(L"fillStyle1", fillStyle1);
 	s >> Member< uint16_t >(L"lineStyle", lineStyle);
-	s >> MemberStlVector< SubPathSegment, MemberComposite< SubPathSegment > >(L"segments", segments);
+	s >> MemberAlignedVector< SubPathSegment, MemberComposite< SubPathSegment > >(L"segments", segments);
 }
 
 Path::Path()
@@ -55,7 +55,7 @@ Path::Path()
 	m_points.reserve(256);
 }
 
-Path::Path(const std::vector< Vector2i >& points, const std::list< SubPath >& subPaths)
+Path::Path(const AlignedVector< Vector2i >& points, const AlignedVector< SubPath >& subPaths)
 :	m_cursor(0, 0)
 ,	m_points(points)
 ,	m_subPaths(subPaths)
@@ -132,7 +132,7 @@ void Path::end(uint16_t fillStyle0, uint16_t fillStyle1, uint16_t lineStyle)
 Aabb2 Path::getBounds() const
 {
 	Aabb2 bounds;
-	for (std::vector< Vector2i >::const_iterator i = m_points.begin(); i != m_points.end(); ++i)
+	for (AlignedVector< Vector2i >::const_iterator i = m_points.begin(); i != m_points.end(); ++i)
 		bounds.contain(i->toVector2());
 	return bounds;
 }
@@ -140,8 +140,8 @@ Aabb2 Path::getBounds() const
 void Path::serialize(ISerializer& s)
 {
 	s >> MemberVector2i(L"cursor", m_cursor);
-	s >> MemberStlVector< Vector2i, MemberVector2i >(L"points", m_points);
-	s >> MemberStlList< SubPath, MemberComposite< SubPath > >(L"subPaths", m_subPaths);
+	s >> MemberAlignedVector< Vector2i, MemberVector2i >(L"points", m_points);
+	s >> MemberAlignedVector< SubPath, MemberComposite< SubPath > >(L"subPaths", m_subPaths);
 	s >> MemberComposite< SubPath >(L"current", m_current);
 }
 

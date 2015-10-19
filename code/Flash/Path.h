@@ -1,10 +1,10 @@
 #ifndef traktor_flash_Path_H
 #define traktor_flash_Path_H
 
-#include <vector>
-#include <list>
 #include "Core/Config.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Aabb2.h"
+#include "Core/Math/Matrix33.h"
 #include "Core/Math/Vector2i.h"
 
 // import/export mechanism.
@@ -60,7 +60,7 @@ struct SubPath
 	uint16_t fillStyle0;
 	uint16_t fillStyle1;
 	uint16_t lineStyle;
-	std::vector< SubPathSegment > segments;
+	AlignedVector< SubPathSegment > segments;
 
 	SubPath()
 	:	fillStyle0(0)
@@ -86,7 +86,7 @@ public:
 
 	Path();
 
-	Path(const std::vector< Vector2i >& points, const std::list< SubPath >& subPaths);
+	Path(const AlignedVector< Vector2i >& points, const AlignedVector< SubPath >& subPaths);
 
 	/*! \brief Reset path. */
 	void reset();
@@ -139,13 +139,13 @@ public:
 	 *
 	 * \return List of points.
 	 */
-	const std::vector< Vector2i >& getPoints() const { return m_points; }
+	const AlignedVector< Vector2i >& getPoints() const { return m_points; }
 
 	/*! \brief Get sub paths.
 	 *
 	 * \return List of sub-paths.
 	 */
-	const std::list< SubPath >& getSubPaths() const { return m_subPaths; }
+	const AlignedVector< SubPath >& getSubPaths() const { return m_subPaths; }
 
 	/*! \brief Serialize path.
 	 */
@@ -153,8 +153,8 @@ public:
 
 private:
 	Vector2i m_cursor;
-	std::vector< Vector2i > m_points;
-	std::list< SubPath > m_subPaths;
+	AlignedVector< Vector2i > m_points;
+	AlignedVector< SubPath > m_subPaths;
 	SubPath m_current;
 
 	/*! \brief Transform between coordinate modes.

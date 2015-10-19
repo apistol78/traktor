@@ -27,7 +27,7 @@ namespace traktor
 		namespace
 		{
 
-const SwfCxTransform c_cxWhite = { { 0, 255 }, { 0, 255 }, { 0, 255 }, { 0, 255 } };
+const SwfCxTransform c_cxWhite = { { 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 1.0f } };
 
 Timer s_timer;
 
@@ -105,7 +105,7 @@ void FlashMovieRenderer::renderSprite(
 			continue;
 		}
 
-		if (!layer.clipDepth)
+		if (!layer.clipEnable)
 		{
 			renderCharacter(
 				layer.instance,
@@ -128,7 +128,7 @@ void FlashMovieRenderer::renderSprite(
 
 			for (++i; i != layers.end(); ++i)
 			{
-				if (layer.clipDepth > 0 && i->first > layer.clipDepth)
+				if (i->first > layer.clipDepth)
 					break;
 
 				const FlashDisplayList::Layer& clippedLayer = i->second;
