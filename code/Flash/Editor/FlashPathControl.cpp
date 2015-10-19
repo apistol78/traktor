@@ -35,6 +35,8 @@ void FlashPathControl::eventPaint(ui::PaintEvent* event)
 	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(rc);
 
+	rc = rc.inflate(-8, -8);
+
 	Aabb2 bounds = m_path.getBounds();
 
 	canvas.setBackground(Color4ub(255, 0, 0, 255));
@@ -56,6 +58,12 @@ void FlashPathControl::eventPaint(ui::PaintEvent* event)
 	for (uint32_t i = 0; i < uint32_t(subPaths.size()); ++i)
 	{
 		const SubPath& sp = subPaths[i];
+
+		//Vector2 pt = points[sp.segments[0].pointsOffset];
+		//pt = (pt - bounds.mn) / (bounds.mx - bounds.mn);
+		//pt = pt * Vector2(rc.getWidth(), rc.getHeight());
+		//canvas.drawText(ui::Point(pt.x, pt.y), 
+
 		for (uint32_t j = 0; j < uint32_t(sp.segments.size()); ++j)
 		{
 			const SubPathSegment& sps = sp.segments[j];
