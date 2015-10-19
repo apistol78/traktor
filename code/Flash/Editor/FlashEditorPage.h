@@ -54,6 +54,7 @@ class IResourceManager;
 
 class ActionObject;
 class FlashCharacterInstance;
+class FlashPathControl;
 class FlashPreviewControl;
 class FlashMovie;
 
@@ -89,7 +90,8 @@ private:
 	editor::IEditorPageSite* m_site;
 	editor::IDocument* m_document;
 	Ref< ui::custom::TreeView > m_treeMovie;
-	Ref< ui::custom::ProfileControl > m_profileMovie;
+	//Ref< ui::custom::ProfileControl > m_profileMovie;
+	Ref< FlashPathControl > m_pathControl;
 	Ref< FlashPreviewControl > m_previewControl;
 	Ref< ui::custom::ToolBar > m_toolBarPlay;
 	Ref< ui::custom::ToolBarButton > m_toolWireframe;

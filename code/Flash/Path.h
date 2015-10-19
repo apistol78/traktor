@@ -86,7 +86,7 @@ public:
 
 	Path();
 
-	Path(const AlignedVector< Vector2i >& points, const AlignedVector< SubPath >& subPaths);
+	Path(const AlignedVector< Vector2 >& points, const AlignedVector< SubPath >& subPaths);
 
 	/*! \brief Reset path. */
 	void reset();
@@ -133,13 +133,13 @@ public:
 	 *
 	 * \return Cursor position.
 	 */
-	const Vector2i& getCursor() const { return m_cursor; }
+	const Vector2& getCursor() const { return m_cursor; }
 
 	/*! \brief Get points.
 	 *
 	 * \return List of points.
 	 */
-	const AlignedVector< Vector2i >& getPoints() const { return m_points; }
+	const AlignedVector< Vector2 >& getPoints() const { return m_points; }
 
 	/*! \brief Get sub paths.
 	 *
@@ -152,8 +152,8 @@ public:
 	void serialize(ISerializer& s);
 
 private:
-	Vector2i m_cursor;
-	AlignedVector< Vector2i > m_points;
+	Vector2 m_cursor;
+	AlignedVector< Vector2 > m_points;
 	AlignedVector< SubPath > m_subPaths;
 	SubPath m_current;
 

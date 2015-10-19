@@ -4,6 +4,7 @@
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
 #include "Editor/IDocument.h"
@@ -25,6 +26,7 @@
 #include "Flash/Action/Common/Array.h"
 #include "Flash/Editor/FlashEditorPage.h"
 #include "Flash/Editor/FlashMovieAsset.h"
+#include "Flash/Editor/FlashPathControl.h"
 #include "Flash/Editor/FlashPreviewControl.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Resource/ShaderFactory.h"
@@ -134,8 +136,12 @@ bool FlashEditorPage::create(ui::Container* parent)
 	m_treeMovie->create(splitterV, (ui::custom::TreeView::WsDefault & ~ui::WsClientBorder) | ui::WsDoubleBuffer);
 	m_treeMovie->addEventHandler< ui::SelectionChangeEvent >(this, &FlashEditorPage::eventTreeMovieSelect);
 
+	/*
 	m_profileMovie = new ui::custom::ProfileControl();
 	m_profileMovie->create(splitterV, 2, 10, 0, 10000, ui::WsDoubleBuffer, this);
+	*/
+	m_pathControl = new FlashPathControl();
+	m_pathControl->create(splitterV, ui::WsAccelerated | ui::WsDoubleBuffer);
 
 	m_previewControl = new FlashPreviewControl(m_editor);
 	m_previewControl->create(splitter, ui::WsNone, database, m_resourceManager, renderSystem, soundPlayer);
@@ -415,11 +421,16 @@ void FlashEditorPage::updateTreeCharacter(ui::custom::TreeViewItem* parentItem, 
 		Ref< ui::custom::TreeViewItem > pathsItem = m_treeMovie->createItem(characterItem, L"Path(s)", 0, 0);
 
 		const AlignedVector< Path >& paths = shape->getPaths();
-		for (AlignedVector< Path >::const_iterator i = paths.begin(); i != paths.end(); ++i)
+		for (uint32_t i = 0; i < uint32_t(paths.size()); ++i)
 		{
+			const Path& p = paths[i];
+
 			ss.reset();
-			ss << int32_t(i->getPoints().size()) << L" point(s), " << int32_t(i->getSubPaths().size()) << L" subpath(s)";
-			m_treeMovie->createItem(pathsItem, ss.str());
+			ss << i << L". " << int32_t(p.getPoints().size()) << L" point(s), " << int32_t(p.getSubPaths().size()) << L" subpath(s)";
+			
+			Ref< ui::custom::TreeViewItem > pathItem = m_treeMovie->createItem(pathsItem, ss.str());
+			pathItem->setData(L"CHARACTER", characterInstance);
+			pathItem->setData(L"PATH", new PropertyInteger(i));
 		}
 	}
 
@@ -501,6 +512,14 @@ void FlashEditorPage::eventTreeMovieSelect(ui::SelectionChangeEvent* event)
 			cxform.alpha[0] = 1.0f; cxform.alpha[1] = 0.0f;
 
 			m_selectedCharacterInstance->setColorTransform(cxform);
+
+			const PropertyInteger* pathIndex = selectedItems[0]->getData< PropertyInteger >(L"PATH");
+			if (pathIndex)
+			{
+				FlashShapeInstance* shapeInstance = checked_type_cast< FlashShapeInstance*, false >(m_selectedCharacterInstance);
+				const AlignedVector< Path >& paths = shapeInstance->getShape()->getPaths();
+				m_pathControl->setPath(paths[PropertyInteger::get(pathIndex)]);
+			}
 		}
 	}
 

@@ -316,11 +316,11 @@ void FlashShape::merge(const FlashShape& shape, const Matrix33& transform, const
 	// Transform paths and modify styles.
 	for (AlignedVector< Path >::const_iterator i = shape.getPaths().begin(); i != shape.getPaths().end(); ++i)
 	{
-		AlignedVector< Vector2i > points = i->getPoints();
+		AlignedVector< Vector2 > points = i->getPoints();
 		AlignedVector< SubPath > subPaths = i->getSubPaths();
 
-		for (AlignedVector< Vector2i >::iterator j = points.begin(); j != points.end(); ++j)
-			*j = Vector2i::fromVector2(transform * j->toVector2());
+		for (AlignedVector< Vector2 >::iterator j = points.begin(); j != points.end(); ++j)
+			*j = transform * *j;
 
 		for (AlignedVector< SubPath >::iterator j = subPaths.begin(); j != subPaths.end(); ++j)
 		{
