@@ -38,10 +38,12 @@ public:
 	struct BitmapRect
 	{
 		resource::Proxy< render::ISimpleTexture > texture;
+		bool clamp;
 		float rect[4];
 
 		BitmapRect()
 		{
+			clamp = false;
 			rect[0] =
 			rect[1] =
 			rect[2] =
@@ -51,6 +53,8 @@ public:
 		bool operator == (const BitmapRect& rh) const
 		{
 			if (texture != rh.texture)
+				return false;
+			if (clamp != rh.clamp)
 				return false;
 
 			return
