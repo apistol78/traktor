@@ -1,26 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.spark.Sprite">
+	<transform>
+		1, 0, 0, 
+		0, 1, 0, 
+		0, 0, 1
+	</transform>
 	<components>
 		<item type="traktor.spark.ScriptComponent">
 			<class>{6FD3F0E3-8767-DD4A-B16C-C4B3F8668B66}</class>
 		</item>
 	</components>
+	<bounds>
+		<mn>-500, -500</mn>
+		<mx>500, 500</mx>
+	</bounds>
 	<shape>{00000000-0000-0000-0000-000000000000}</shape>
-	<characters/>
-	<place>
+	<dictionary/>
+	<frame>
 		<item>
 			<name>logo</name>
 			<character type="traktor.spark.Sprite">
+				<transform>
+					1, 0, 0, 
+					0, 1, 0, 
+					0, 0, 1
+				</transform>
 				<components/>
+				<bounds>
+					<mn>0, 0</mn>
+					<mx>0, 0</mx>
+				</bounds>
 				<shape>{5CEC374B-7B35-7E49-A734-7BB89CCBF5F8}</shape>
-				<characters/>
-				<place/>
+				<dictionary/>
+				<frame/>
 			</character>
-			<transform>
-				1, 0, 540, 
-				0, 1, 960, 
-				0, 0, 1
-			</transform>
 		</item>
-	</place>
+	</frame>
 </object>

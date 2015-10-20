@@ -81,14 +81,14 @@
 		<fogColor>255, 255, 255, 255</fogColor>
 		<reflectionMap>{00000000-0000-0000-0000-000000000000}</reflectionMap>
 	</worldRenderSettings>
-	<postProcessSettings>
+	<imageProcessSettings>
 		<disabled>{00000000-0000-0000-0000-000000000000}</disabled>
 		<low>{00000000-0000-0000-0000-000000000000}</low>
 		<medium>{00000000-0000-0000-0000-000000000000}</medium>
 		<high>{00000000-0000-0000-0000-000000000000}</high>
 		<ultra>{00000000-0000-0000-0000-000000000000}</ultra>
-	</postProcessSettings>
-	<postProcessParams/>
+	</imageProcessSettings>
+	<imageProcessParams/>
 	<layers>
 		<item type="traktor.world.LayerEntityData">
 			<name>Environment</name>

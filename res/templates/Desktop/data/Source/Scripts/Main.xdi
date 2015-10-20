@@ -3,6 +3,9 @@
 	<dependencies/>
 	<text>
 	<![CDATA[
+import(traktor)
+
+
 local cameraTransformInitial = Transform()
 local cameraPosition = Vector4(0, 0, 0, 1)
 local cameraRotation = Vector4(0, 0, 0, 1)

@@ -3,6 +3,9 @@
 	<dependencies/>
 	<text>
 	<![CDATA[
+import(traktor)
+
+
 local cubePosition = Vector4(0, 0, 0, 1)
 local cubeRotation = Vector4(0, 0, 0, 1)
 
@@ -16,7 +19,8 @@ function update(info)
 
 	-- Read input state values.
 	local moveX = inputMapping:getStateValue("STATE_MOVE_X")
-	local moveZ = inputMapping:getStateValue("STATE_MOVE_Z")	local rotateHead = inputMapping:getStateValue("STATE_ROTATE_HEAD") * 0.1
+	local moveZ = inputMapping:getStateValue("STATE_MOVE_Z")
+	local rotateHead = inputMapping:getStateValue("STATE_ROTATE_HEAD") * 0.1
 	local rotatePitch = inputMapping:getStateValue("STATE_ROTATE_PITCH") * 0.1
 
 	-- Update cube transform.
