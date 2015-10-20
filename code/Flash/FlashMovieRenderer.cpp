@@ -367,7 +367,7 @@ void FlashMovieRenderer::renderCharacter(
 		uint8_t buttonState = buttonInstance->getState();
 
 		const FlashButton::button_layers_t& layers = button->getButtonLayers();
-		for (int32_t j = int32_t(layers.size() - 1); j >= 0; --j)
+		for (int32_t j = 0; j < int32_t(layers.size()); ++j)
 		{
 			const FlashButton::ButtonLayer& layer = layers[j];
 			if ((layer.state & buttonState) == 0)

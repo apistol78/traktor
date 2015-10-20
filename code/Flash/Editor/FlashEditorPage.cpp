@@ -344,6 +344,61 @@ void FlashEditorPage::updateTreeCharacter(ui::custom::TreeViewItem* parentItem, 
 	ss << L"Color transform: [0] = {" << cxform.red[0] << L", " << cxform.green[0] << L", " << cxform.blue[0] << L", " << cxform.alpha[0] << L"}, [1] = {" << cxform.red[1] << L", " << cxform.green[1] << L", " << cxform.blue[1] << L", " << cxform.alpha[1] << L"}";
 	m_treeMovie->createItem(characterItem, ss.str());
 
+	ss.reset();
+	ss << L"Blend mode: ";
+	switch (characterInstance->getBlendMode())
+	{
+	case SbmDefault:
+		ss << L"Default" << Endl;
+		break;
+	case SbmNormal:
+		ss << L"Normal" << Endl;
+		break;
+	case SbmLayer:
+		ss << L"Layer" << Endl;
+		break;
+	case SbmMultiply:
+		ss << L"Multiply" << Endl;
+		break;
+	case SbmScreen:
+		ss << L"Screen" << Endl;
+		break;
+	case SbmLighten:
+		ss << L"Lighten" << Endl;
+		break;
+	case SbmDarken:
+		ss << L"Darken" << Endl;
+		break;
+	case SbmDifference:
+		ss << L"Difference" << Endl;
+		break;
+	case SbmAdd:
+		ss << L"Add" << Endl;
+		break;
+	case SbmSubtract:
+		ss << L"Subtract" << Endl;
+		break;
+	case SbmInvert:
+		ss << L"Invert" << Endl;
+		break;
+	case SbmAlpha:
+		ss << L"Alpha" << Endl;
+		break;
+	case SbmErase:
+		ss << L"Erase" << Endl;
+		break;
+	case SbmOverlay:
+		ss << L"Overlay" << Endl;
+		break;
+	case SbmHardlight:
+		ss << L"Hardlight" << Endl;
+		break;
+	default:
+		ss << L"UNKNOWN" << Endl;
+		break;
+	}
+	m_treeMovie->createItem(characterItem, ss.str());
+
 	if (FlashSpriteInstance* spriteInstance = dynamic_type_cast< FlashSpriteInstance* >(characterInstance))
 	{
 		const FlashSprite* sprite = spriteInstance->getSprite();
