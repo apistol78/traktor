@@ -17,7 +17,6 @@ namespace traktor
 		namespace
 		{
 
-const float c_pointScale = 1.0f;
 const float c_approximateTolerance = 10.0f;
 
 bool compareSegmentsY(const Triangulator::Segment& ls, const Triangulator::Segment& rs)
@@ -61,8 +60,8 @@ void Triangulator::fill(const Path* path, AlignedVector< Triangle >& outTriangle
 				for (uint32_t j = 0; j < i->points.size() - 1; ++j)
 				{
 					s.curve = false;
-					s.v[0] = Vector2i::fromVector2(i->points[j] * c_pointScale);
-					s.v[1] = Vector2i::fromVector2(i->points[j + 1] * c_pointScale);
+					s.v[0] = i->points[j];
+					s.v[1] = i->points[j + 1];
 					segments.push_back(s);
 				}
 			}
@@ -73,9 +72,9 @@ void Triangulator::fill(const Path* path, AlignedVector< Triangle >& outTriangle
 				for (uint32_t j = 0; j < i->points.size() - 1; j += 2)
 				{
 					s.curve = true;
-					s.v[0] = Vector2i::fromVector2(i->points[j] * c_pointScale);
-					s.v[1] = Vector2i::fromVector2(i->points[j + 2] * c_pointScale);
-					s.c = Vector2i::fromVector2(i->points[j + 1] * c_pointScale);
+					s.v[0] = i->points[j];
+					s.v[1] = i->points[j + 2];
+					s.c = i->points[j + 1];
 					segments.push_back(s);
 				}
 			}
@@ -98,9 +97,9 @@ void Triangulator::fill(const Path* path, AlignedVector< Triangle >& outTriangle
 					for (AlignedVector< Bezier2nd >::const_iterator k = a.begin(); k != a.end(); ++k)
 					{
 						s.curve = true;
-						s.v[0] = Vector2i::fromVector2(k->cp0 * c_pointScale);
-						s.v[1] = Vector2i::fromVector2(k->cp2 * c_pointScale);
-						s.c = Vector2i::fromVector2(k->cp1 * c_pointScale);
+						s.v[0] = k->cp0;
+						s.v[1] = k->cp2;
+						s.c = k->cp1;
 						segments.push_back(s);
 					}
 				}
@@ -111,8 +110,8 @@ void Triangulator::fill(const Path* path, AlignedVector< Triangle >& outTriangle
 		if (lastSubPath)
 		{
 			s.curve = false;
-			s.v[0] = Vector2i::fromVector2(i->points.back() * c_pointScale);
-			s.v[1] = Vector2i::fromVector2(i->origin * c_pointScale);
+			s.v[0] = i->points.back();
+			s.v[1] = i->origin;
 			segments.push_back(s);
 		}
 	}
@@ -144,8 +143,8 @@ void Triangulator::stroke(const Path* path, float width, AlignedVector< Triangle
 			Vector2 p = d.perpendicular();
 			
 			s.curve = false;
-			s.v[0] = Vector2i::fromVector2((sp.points[0] - p * halfWidth) * c_pointScale);
-			s.v[1] = Vector2i::fromVector2((sp.points[0] + p * halfWidth) * c_pointScale);
+			s.v[0] = sp.points[0] - p * halfWidth;
+			s.v[1] = sp.points[0] + p * halfWidth;
 			segments.push_back(s);
 		}
 
@@ -176,13 +175,13 @@ void Triangulator::stroke(const Path* path, float width, AlignedVector< Triangle
 						p_r = p_12_r;
 
 					s.curve = false;
-					s.v[0] = Vector2i::fromVector2(p_01_l * c_pointScale);
-					s.v[1] = Vector2i::fromVector2(p_l * c_pointScale);
+					s.v[0] = p_01_l;
+					s.v[1] = p_l;
 					segments.push_back(s);
 
 					s.curve = false;
-					s.v[0] = Vector2i::fromVector2(p_01_r * c_pointScale);
-					s.v[1] = Vector2i::fromVector2(p_r * c_pointScale);
+					s.v[0] = p_01_r;
+					s.v[1] = p_r;
 					segments.push_back(s);
 
 					d_01 = d_12;
@@ -201,8 +200,8 @@ void Triangulator::stroke(const Path* path, float width, AlignedVector< Triangle
 			Vector2 p = d.perpendicular();
 			
 			s.curve = false;
-			s.v[0] = Vector2i::fromVector2((sp.points[np] - p * halfWidth) * c_pointScale);
-			s.v[1] = Vector2i::fromVector2((sp.points[np] + p * halfWidth) * c_pointScale);
+			s.v[0] = sp.points[np] - p * halfWidth;
+			s.v[1] = sp.points[np] + p * halfWidth;
 			segments.push_back(s);
 		}
 	}
@@ -213,7 +212,7 @@ void Triangulator::stroke(const Path* path, float width, AlignedVector< Triangle
 
 void Triangulator::triangulate(const AlignedVector< Segment >& segments, AlignedVector< Triangle >& outTriangles)
 {
-	std::set< int32_t > pys;
+	std::set< float > pys;
 	Segment s;
 	Triangle t;
 
@@ -224,7 +223,7 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, Aligned
 	{
 		if (!i->curve)
 		{
-			if (abs< int32_t >(i->v[0].y - i->v[1].y) > 0)
+			if (abs< float >(i->v[0].y - i->v[1].y) > 0.0f)
 			{
 				s.curve = false;
 				s.v[0] = i->v[0];
@@ -237,15 +236,11 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, Aligned
 		}
 		else
 		{
-			const Vector2i& cp0 = i->v[0];
-			const Vector2i& cp1 = i->c;
-			const Vector2i& cp2 = i->v[1];
+			const Vector2& cp0 = i->v[0];
+			const Vector2& cp1 = i->c;
+			const Vector2& cp2 = i->v[1];
 
-			Bezier2nd b(
-				cp0.toVector2(),
-				cp1.toVector2(),
-				cp2.toVector2()
-			);
+			Bezier2nd b(cp0, cp1, cp2);
 
 			float Tlmmy = b.getLocalMinMaxY();
 			if (Tlmmy > FUZZY_EPSILON && Tlmmy < 1.0f - FUZZY_EPSILON)
@@ -254,32 +249,24 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, Aligned
 				Bezier2nd b0, b1;
 				b.split(Tlmmy, b0, b1);
 
-				Vector2i b0_cp0 = Vector2i::fromVector2(b0.cp0);
-				Vector2i b0_cp1 = Vector2i::fromVector2(b0.cp1);
-				Vector2i b0_cp2 = Vector2i::fromVector2(b0.cp2);
-
-				if (abs< int32_t >(b0_cp0.y - b0_cp2.y) > 0)
+				if (abs< float >(b0.cp0.y - b0.cp2.y) > 0.0f)
 				{
 					s.curve = true;
-					s.v[0] = b0_cp0;
-					s.v[1] = b0_cp2;
-					s.c = b0_cp1;
+					s.v[0] = b0.cp0;
+					s.v[1] = b0.cp2;
+					s.c = b0.cp1;
 					m_segments.push_back(s);
 
 					pys.insert(s.v[0].y);
 					pys.insert(s.v[1].y);
 				}
 
-				Vector2i b1_cp0 = Vector2i::fromVector2(b1.cp0);
-				Vector2i b1_cp1 = Vector2i::fromVector2(b1.cp1);
-				Vector2i b1_cp2 = Vector2i::fromVector2(b1.cp2);
-
-				if (abs< int32_t >(b1_cp0.y - b1_cp2.y) > 0)
+				if (abs< float >(b1.cp0.y - b1.cp2.y) > 0.0f)
 				{
 					s.curve = true;
-					s.v[0] = b1_cp0;
-					s.v[1] = b1_cp2;
-					s.c = b1_cp1;
+					s.v[0] = b1.cp0;
+					s.v[1] = b1.cp2;
+					s.c = b1.cp1;
 					m_segments.push_back(s);
 
 					pys.insert(s.v[0].y);
@@ -288,7 +275,7 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, Aligned
 			}
 			else
 			{
-				if (abs< int32_t >(cp0.y - cp2.y) > 0)
+				if (abs< float >(cp0.y - cp2.y) > 0.0f)
 				{
 					s.curve = true;
 					s.v[0] = cp0;
@@ -317,7 +304,7 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, Aligned
 	std::sort(m_segments.begin(), m_segments.end(), compareSegmentsY);
 
 	pys.erase(pys.begin());
-	for (std::set< int32_t >::iterator i = pys.begin(); i != pys.end(); ++i)
+	for (std::set< float >::iterator i = pys.begin(); i != pys.end(); ++i)
 	{
 		m_slabs.resize(0);
 
@@ -329,19 +316,19 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, Aligned
 
 			if (!j->curve)
 			{
-				int32_t d = j->v[1].y - j->v[0].y;
-				if (d <= 0)
+				float d = j->v[1].y - j->v[0].y;
+				if (d <= 0.0f)
 				{
 					++j;
 					continue;
 				}
 
-				float t = float(*i - j->v[0].y) / d;
+				float t = (*i - j->v[0].y) / d;
 				float x = j->v[0].x + (j->v[1].x - j->v[0].x) * t;
 
 				s.curve = false;
 				s.v[0] = j->v[0];
-				s.v[1] = Vector2i(int32_t(x), *i);
+				s.v[1] = Vector2(int32_t(x), *i);
 				m_slabs.push_back(s);
 
 				j->v[0] = s.v[1];
@@ -350,15 +337,11 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, Aligned
 			{
 				if (*i < j->v[1].y)
 				{
-					const Vector2i& cp0 = j->v[0];
-					const Vector2i& cp1 = j->c;
-					const Vector2i& cp2 = j->v[1];
+					const Vector2& cp0 = j->v[0];
+					const Vector2& cp1 = j->c;
+					const Vector2& cp2 = j->v[1];
 
-					Bezier2nd b(
-						cp0.toVector2(),
-						cp1.toVector2(),
-						cp2.toVector2()
-					);
+					Bezier2nd b(cp0, cp1, cp2);
 
 					float t0, t1;
 					b.intersectX(*i, t0, t1);
@@ -368,27 +351,19 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, Aligned
 					Bezier2nd b0, b1;
 					b.split(t0, b0, b1);
 
-					Vector2i b0_cp0 = Vector2i::fromVector2(b0.cp0);
-					Vector2i b0_cp1 = Vector2i::fromVector2(b0.cp1);
-					Vector2i b0_cp2 = Vector2i::fromVector2(b0.cp2);
-
-					Vector2i b1_cp0 = Vector2i::fromVector2(b1.cp0);
-					Vector2i b1_cp1 = Vector2i::fromVector2(b1.cp1);
-					Vector2i b1_cp2 = Vector2i::fromVector2(b1.cp2);
-
 					s.curve = true;
-					s.v[0] = b0_cp0;
-					s.v[1] = b0_cp2;
-					s.c = b0_cp1;
+					s.v[0] = b0.cp0;
+					s.v[1] = b0.cp2;
+					s.c = b0.cp1;
 					m_slabs.push_back(s);
 
-					j->v[0] = b1_cp0;
-					j->c = b1_cp1;
+					j->v[0] = b1.cp0;
+					j->c = b1.cp1;
 				}
 				else
 				{
-					int32_t d = j->v[1].y - j->v[0].y;
-					if (d <= 0)
+					float d = j->v[1].y - j->v[0].y;
+					if (d <= 0.0f)
 					{
 						++j;
 						continue;
@@ -405,7 +380,7 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, Aligned
 
 			}
 
-			if (abs< int32_t >(j->v[1].y - j->v[0].y) <= 0)
+			if (abs< float >(j->v[1].y - j->v[0].y) <= 0.0f)
 				j = m_segments.erase(j);
 			else
 				j++;
@@ -426,8 +401,8 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, Aligned
 				if (sl.v[0].x >= sr.v[0].x && sl.v[1].x >= sr.v[1].x)
 					continue;
 
-				int32_t y0 = sl.v[0].y;
-				int32_t y1 = sl.v[1].y;
+				float y0 = sl.v[0].y;
+				float y1 = sl.v[1].y;
 				
 				if (y0 >= y1)
 					continue;
@@ -436,11 +411,11 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, Aligned
 
 				if (sl.curve)
 				{
-					t.v[0] = Vector2i(sl.v[0].x, y0);
+					t.v[0] = Vector2(sl.v[0].x, y0);
 					t.v[1] = sl.c;
-					t.v[2] = Vector2i(sl.v[1].x, y1);
+					t.v[2] = Vector2(sl.v[1].x, y1);
 
-					il = bool(Line2(t.v[0].toVector2(), t.v[2].toVector2()).distance(sl.c.toVector2()) >= 0.0f);
+					il = bool(Line2(t.v[0], t.v[2]).distance(sl.c) >= 0.0f);
 					t.type = il ? TcOut : TcIn;
 
 					outTriangles.push_back(t);
@@ -448,11 +423,11 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, Aligned
 
 				if (sr.curve)
 				{
-					t.v[0] = Vector2i(sr.v[0].x, y0);
+					t.v[0] = Vector2(sr.v[0].x, y0);
 					t.v[1] = sr.c;
-					t.v[2] = Vector2i(sr.v[1].x, y1);
+					t.v[2] = Vector2(sr.v[1].x, y1);
 
-					ir = bool(Line2(t.v[0].toVector2(), t.v[2].toVector2()).distance(sr.c.toVector2()) < 0.0f);
+					ir = bool(Line2(t.v[0], t.v[2]).distance(sr.c) < 0.0f);
 					t.type = ir ? TcOut : TcIn;
 
 					outTriangles.push_back(t);
@@ -460,79 +435,79 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, Aligned
 
 				if (!il && !ir)
 				{
-					t.v[0] = Vector2i(sl.v[0].x, y0);
-					t.v[1] = Vector2i(sr.v[0].x, y0);
-					t.v[2] = Vector2i(sl.v[1].x, y1);
+					t.v[0] = Vector2(sl.v[0].x, y0);
+					t.v[1] = Vector2(sr.v[0].x, y0);
+					t.v[2] = Vector2(sl.v[1].x, y1);
 					t.type = TcFill;
 					outTriangles.push_back(t);
 
-					t.v[0] = Vector2i(sr.v[1].x, y1);
-					t.v[1] = Vector2i(sl.v[1].x, y1);
-					t.v[2] = Vector2i(sr.v[0].x, y0);
+					t.v[0] = Vector2(sr.v[1].x, y1);
+					t.v[1] = Vector2(sl.v[1].x, y1);
+					t.v[2] = Vector2(sr.v[0].x, y0);
 					t.type = TcFill;
 					outTriangles.push_back(t);
 				}
 				else if (il && !ir)
 				{
-					t.v[0] = Vector2i(sl.v[0].x, y0);
-					t.v[1] = Vector2i(sr.v[0].x, y0);
+					t.v[0] = Vector2(sl.v[0].x, y0);
+					t.v[1] = Vector2(sr.v[0].x, y0);
 					t.v[2] = sl.c;
 					t.type = TcFill;
 					outTriangles.push_back(t);
 
-					t.v[0] = Vector2i(sr.v[0].x, y0);
-					t.v[1] = Vector2i(sr.v[1].x, y1);
+					t.v[0] = Vector2(sr.v[0].x, y0);
+					t.v[1] = Vector2(sr.v[1].x, y1);
 					t.v[2] = sl.c;
 					t.type = TcFill;
 					outTriangles.push_back(t);
 
-					t.v[0] = Vector2i(sr.v[1].x, y1);
-					t.v[1] = Vector2i(sl.v[1].x, y1);
+					t.v[0] = Vector2(sr.v[1].x, y1);
+					t.v[1] = Vector2(sl.v[1].x, y1);
 					t.v[2] = sl.c;
 					t.type = TcFill;
 					outTriangles.push_back(t);
 				}
 				else if (!il && ir)
 				{
-					t.v[0] = Vector2i(sl.v[0].x, y0);
-					t.v[1] = Vector2i(sr.v[0].x, y0);
+					t.v[0] = Vector2(sl.v[0].x, y0);
+					t.v[1] = Vector2(sr.v[0].x, y0);
 					t.v[2] = sr.c;
 					t.type = TcFill;
 					outTriangles.push_back(t);
 
-					t.v[0] = Vector2i(sl.v[1].x, y1);
-					t.v[1] = Vector2i(sl.v[0].x, y0);
+					t.v[0] = Vector2(sl.v[1].x, y1);
+					t.v[1] = Vector2(sl.v[0].x, y0);
 					t.v[2] = sr.c;
 					t.type = TcFill;
 					outTriangles.push_back(t);
 
-					t.v[0] = Vector2i(sr.v[1].x, y1);
-					t.v[1] = Vector2i(sl.v[1].x, y1);
+					t.v[0] = Vector2(sr.v[1].x, y1);
+					t.v[1] = Vector2(sl.v[1].x, y1);
 					t.v[2] = sr.c;
 					t.type = TcFill;
 					outTriangles.push_back(t);
 				}
 				else	// il && ir
 				{
-					t.v[0] = Vector2i(sl.v[0].x, y0);
-					t.v[1] = Vector2i(sr.v[0].x, y0);
+					t.v[0] = Vector2(sl.v[0].x, y0);
+					t.v[1] = Vector2(sr.v[0].x, y0);
 					t.v[2] = sl.c;
 					t.type = TcFill;
 					outTriangles.push_back(t);
 
-					t.v[0] = Vector2i(sr.v[0].x, y0);
+					t.v[0] = Vector2(sr.v[0].x, y0);
 					t.v[1] = sr.c;
 					t.v[2] = sl.c;
 					t.type = TcFill;
 					outTriangles.push_back(t);
 
-					t.v[0] = Vector2i(sr.v[1].x, y1);
-					t.v[1] = Vector2i(sl.v[1].x, y1);
+					t.v[0] = Vector2(sr.v[1].x, y1);
+					t.v[1] = Vector2(sl.v[1].x, y1);
 					t.v[2] = sr.c;
 					t.type = TcFill;
 					outTriangles.push_back(t);
 
-					t.v[0] = Vector2i(sl.v[1].x, y1);
+					t.v[0] = Vector2(sl.v[1].x, y1);
 					t.v[1] = sl.c;
 					t.v[2] = sr.c;
 					t.type = TcFill;

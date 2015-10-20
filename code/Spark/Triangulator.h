@@ -3,7 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
-#include "Core/Math/Vector2i.h"
+#include "Core/Math/Vector2.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -31,8 +31,8 @@ public:
 	struct Segment
 	{
 		bool curve;
-		Vector2i v[2];
-		Vector2i c;
+		Vector2 v[2];
+		Vector2 c;
 	};
 
 	enum TriangleType
@@ -45,7 +45,7 @@ public:
 	struct Triangle
 	{
 		TriangleType type;
-		Vector2i v[3];
+		Vector2 v[3];
 	};
 
 	void fill(const Path* path, AlignedVector< Triangle >& outTriangles);
