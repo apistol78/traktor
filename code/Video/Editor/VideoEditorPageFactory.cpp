@@ -19,7 +19,7 @@ const TypeInfoSet VideoEditorPageFactory::getEditableTypes() const
 
 bool VideoEditorPageFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const
 {
-	outDependencies.insert(Guid(L"{666412C3-5A4E-1B47-87D3-BC0165D2DC26}"));	// System/SystemAssets
+	outDependencies.insert(Guid(L"{71682019-EB26-234C-8B48-0638F50DA662}"));	// System/Video/Video
 	return false;
 }
 

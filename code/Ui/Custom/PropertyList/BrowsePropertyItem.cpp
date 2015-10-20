@@ -8,7 +8,6 @@
 
 // Resources
 #include "Resources/SmallPen.h"
-#include "Resources/SmallCross.h"
 #include "Resources/SmallDots.h"
 
 namespace traktor
@@ -42,12 +41,6 @@ void BrowsePropertyItem::setValue(const Guid& value)
 	m_value = value;
 	if (m_buttonEdit)
 		m_buttonEdit->setEnable(!m_value.isNull());
-	if (m_buttonBrowse)
-		m_buttonBrowse->setImage(
-			m_value.isNull() ?
-				ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"png") :
-				ui::Bitmap::load(c_ResourceSmallCross, sizeof(c_ResourceSmallCross), L"png")
-		);
 }
 
 const Guid& BrowsePropertyItem::getValue() const
@@ -57,6 +50,8 @@ const Guid& BrowsePropertyItem::getValue() const
 
 void BrowsePropertyItem::createInPlaceControls(Widget* parent)
 {
+	PropertyItem::createInPlaceControls(parent);
+
 	T_ASSERT (!m_buttonEdit);
 	m_buttonEdit = new MiniButton();
 	m_buttonEdit->create(parent, Bitmap::load(c_ResourceSmallPen, sizeof(c_ResourceSmallPen), L"png"));
@@ -65,11 +60,7 @@ void BrowsePropertyItem::createInPlaceControls(Widget* parent)
 	
 	T_ASSERT (!m_buttonBrowse);
 	m_buttonBrowse = new MiniButton();
-	m_buttonBrowse->create(parent,
-		m_value.isNull() ?
-			ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"png") :
-			ui::Bitmap::load(c_ResourceSmallCross, sizeof(c_ResourceSmallCross), L"png")
-	);
+	m_buttonBrowse->create(parent,ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"png"));
 	m_buttonBrowse->addEventHandler< ButtonClickEvent >(this, &BrowsePropertyItem::eventBrowseClick);
 }
 
@@ -85,18 +76,27 @@ void BrowsePropertyItem::destroyInPlaceControls()
 		m_buttonBrowse->destroy();
 		m_buttonBrowse = 0;
 	}
+
+	PropertyItem::destroyInPlaceControls();
 }
 
 void BrowsePropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< WidgetRect >& outChildRects)
 {
+	std::vector< WidgetRect > childRects;
+	PropertyItem::resizeInPlaceControls(rc, childRects);
+
 	int width = rc.getHeight();
+	int right = rc.right - childRects.size() * width;
+
+	outChildRects.insert(outChildRects.end(), childRects.begin(), childRects.end());
+
 	if (m_buttonEdit)
 		outChildRects.push_back(WidgetRect(
 			m_buttonEdit,
 			Rect(
-				rc.right - width * 2,
+				right - width * 2,
 				rc.top,
-				rc.right - width,
+				right - width,
 				rc.bottom
 			)
 		));
@@ -104,9 +104,9 @@ void BrowsePropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Widg
 		outChildRects.push_back(WidgetRect(
 			m_buttonBrowse,
 			Rect(
-				rc.right - width,
+				right - width,
 				rc.top,
-				rc.right,
+				right,
 				rc.bottom
 			)
 		));

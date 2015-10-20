@@ -57,6 +57,8 @@ public:
 
 	const std::map< std::wstring, std::wstring >& getEnvironment() const { return m_environment; }
 
+	const std::list< Guid >& getDependencies() const { return m_dependencies; }
+
 	virtual void serialize(ISerializer& s);
 
 private:
@@ -67,6 +69,7 @@ private:
 	Ref< PropertyGroup > m_migrateProperties;
 	Ref< PropertyGroup > m_runtimeProperties;
 	std::map< std::wstring, std::wstring > m_environment;
+	std::list< Guid > m_dependencies;
 };
 
 	}

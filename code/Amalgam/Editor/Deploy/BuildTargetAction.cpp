@@ -284,6 +284,16 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	if (onlineConfig.isValid() && !onlineConfig.isNull())
 		ss << L" " << onlineConfig.format();
 
+	for (RefArray< const Feature >::const_iterator i = features.begin(); i != features.end(); ++i)
+	{
+		const Feature* feature = *i;
+		T_ASSERT (feature);
+
+		const std::list< Guid >& dependencies = feature->getDependencies();
+		for (std::list< Guid >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+			ss << L" " << *i;
+	}
+
 	if (m_standAlone)
 		ss << L" -standalone";
 
