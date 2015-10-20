@@ -291,7 +291,7 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 
 		const std::list< Guid >& dependencies = feature->getDependencies();
 		for (std::list< Guid >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
-			ss << L" " << *i;
+			ss << L" " << i->format();
 	}
 
 	if (m_standAlone)

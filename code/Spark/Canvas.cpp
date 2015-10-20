@@ -197,9 +197,8 @@ Ref< Shape > Canvas::createShape(const Context* context) const
 			{
 				for (uint32_t k = 0; k < 3; ++k)
 				{
-					Vector2 v = j->v[k].toVector2();
-					vertex->position[0] = v.x;
-					vertex->position[1] = v.y;
+					vertex->position[0] = j->v[k].x;
+					vertex->position[1] = j->v[k].y;
 					vertex++;
 					vertexCount++;
 				}
@@ -227,9 +226,8 @@ Ref< Shape > Canvas::createShape(const Context* context) const
 			{
 				for (uint32_t k = 0; k < 3; ++k)
 				{
-					Vector2 v = j->v[k].toVector2();
-					vertex->position[0] = v.x;
-					vertex->position[1] = v.y;
+					vertex->position[0] = j->v[k].x;
+					vertex->position[1] = j->v[k].y;
 					vertex->controlPoints[0] = c_controlPoints[k][0];
 					vertex->controlPoints[1] = c_controlPoints[k][1];
 					vertex++;
@@ -259,9 +257,8 @@ Ref< Shape > Canvas::createShape(const Context* context) const
 			{
 				for (uint32_t k = 0; k < 3; ++k)
 				{
-					Vector2 v = j->v[k].toVector2();
-					vertex->position[0] = v.x;
-					vertex->position[1] = v.y;
+					vertex->position[0] = j->v[k].x;
+					vertex->position[1] = j->v[k].y;
 					vertex->controlPoints[0] = c_controlPoints[k][0];
 					vertex->controlPoints[1] = c_controlPoints[k][1];
 					vertex++;

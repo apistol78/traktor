@@ -3,6 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Math/Matrix33.h"
 #include "Core/Math/Vector2.h"
 
 // import/export mechanism.
@@ -77,6 +78,8 @@ public:
 	void cubicTo(float x2, float y2, float x, float y, bool relative = false);
 
 	void close();
+
+	void transform(const Matrix33& transform);
 
 	const Vector2& getCursor() const;
 

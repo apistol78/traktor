@@ -872,7 +872,7 @@ int master(const CommandLine& cmdLine)
 			Guid assetGuid(cmdLine.getString(i));
 			if (assetGuid.isNull() || !assetGuid.isValid())
 			{
-				traktor::log::error << L"Invalid root asset guid (" << i << L")" << Endl;
+				traktor::log::error << L"Invalid root asset guid (" << i << L" \"" << cmdLine.getString(i) << "\")" << Endl;
 				return 1;
 			}
 			roots.push_back(assetGuid);

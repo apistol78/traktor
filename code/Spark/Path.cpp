@@ -107,6 +107,18 @@ void Path::close()
 	}
 }
 
+void Path::transform(const Matrix33& transform)
+{
+	for (AlignedVector< SubPath >::iterator i = m_subPaths.begin(); i != m_subPaths.end(); ++i)
+	{
+		i->origin = transform * i->origin;
+		for (AlignedVector< Vector2 >::iterator j = i->points.begin(); j != i->points.end(); ++j)
+			*j = transform * *j;
+	}
+	m_origin = transform * m_origin;
+	m_cursor = transform * m_cursor;
+}
+
 const Vector2& Path::getCursor() const
 {
 	return m_cursor;

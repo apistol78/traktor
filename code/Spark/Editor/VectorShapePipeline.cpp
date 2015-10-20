@@ -89,8 +89,16 @@ public:
 			if (m_styleStack.empty() || !m_styleStack.back()->getFillEnable())
 				return;
 
+			// Transform path by shape's transform and fit into view.
+			Path path = pathShape->getPath();
+			path.transform(
+				T *
+				translate(m_viewBox.mn.x, m_viewBox.mn.y) *
+				scale(m_size.x / (m_viewBox.mx.x - m_viewBox.mn.y), m_size.y / (m_viewBox.mx.y - m_viewBox.mn.y))
+			);
+
 			AlignedVector< Triangulator::Triangle > triangles;
-			Triangulator().fill(&pathShape->getPath(), triangles);
+			Triangulator().fill(&path, triangles);
 
 			if (!triangles.empty())
 			{
@@ -111,9 +119,9 @@ public:
 				{
 					uint32_t indexBase = batch->vertices.size();
 
-					batch->vertices.push_back(i->v[0].toVector2());
-					batch->vertices.push_back(i->v[1].toVector2());
-					batch->vertices.push_back(i->v[2].toVector2());
+					batch->vertices.push_back(i->v[0]);
+					batch->vertices.push_back(i->v[1]);
+					batch->vertices.push_back(i->v[2]);
 
 					if (i->type == Triangulator::TcFill)
 					{
