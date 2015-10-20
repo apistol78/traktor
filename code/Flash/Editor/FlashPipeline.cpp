@@ -33,22 +33,7 @@ namespace traktor
 		namespace
 		{
 
-const resource::Id< render::Shader > c_idShaderSolid(Guid(L"{4F6F6CCE-97EC-624D-96B7-842F1D99D060}"));
-const resource::Id< render::Shader > c_idShaderTextured(Guid(L"{049F4B08-1A54-DB4C-86CC-B533BCFFC65D}"));
-const resource::Id< render::Shader > c_idShaderSolidMask(Guid(L"{D46877B9-0F90-3A42-AB2D-7346AA607233}"));
-const resource::Id< render::Shader > c_idShaderTexturedMask(Guid(L"{5CDDBEC8-1629-0A4E-ACE5-C8186072D694}"));
-const resource::Id< render::Shader > c_idShaderIncrementMask(Guid(L"{8DCBCF05-4640-884E-95AC-F090510788F4}"));
-const resource::Id< render::Shader > c_idShaderDecrementMask(Guid(L"{57F6F4DF-F4EE-6740-907C-027A3A2596D7}"));
-
-const resource::Id< render::Shader > c_idShaderQuadSolid(Guid(L"{1EDAAA67-1E02-8A49-B857-14D7812C96D6}"));
-const resource::Id< render::Shader > c_idShaderQuadTextured(Guid(L"{10426D17-CF0A-4849-A207-24F101A78459}"));
-const resource::Id< render::Shader > c_idShaderQuadSolidMask(Guid(L"{2EDC5E1B-562D-9F46-9E3C-474729FB078E}"));
-const resource::Id< render::Shader > c_idShaderQuadTexturedMask(Guid(L"{98A59F6A-1D90-144C-B688-4CEF382453F2}"));
-const resource::Id< render::Shader > c_idShaderQuadIncrementMask(Guid(L"{16868DF6-A619-5541-83D2-94088A0AC552}"));
-const resource::Id< render::Shader > c_idShaderQuadDecrementMask(Guid(L"{D6821007-47BB-D748-9E29-20829ED09C70}"));
-
-const resource::Id< render::Shader > c_idShaderGlyph(Guid(L"{A8BC2D03-EB52-B744-8D4B-29E39FF0B4F5}"));
-const resource::Id< render::Shader > c_idShaderGlyphMask(Guid(L"{C8FEF24B-D775-A14D-9FF3-E34A17495FB4}"));
+const Guid c_idFlashShaderAssets(L"{14D6A2DB-796D-E54D-9D70-73DE4AE7C4E8}");
 
 struct AtlasBitmap
 {
@@ -106,27 +91,7 @@ bool FlashPipeline::buildDependencies(
 {
 	const FlashMovieAsset* movieAsset = checked_type_cast< const FlashMovieAsset* >(sourceAsset);
 	pipelineDepends->addDependency(Path(m_assetPath), movieAsset->getFileName().getOriginal());
-
-	// AccShape
-	pipelineDepends->addDependency(c_idShaderSolid, editor::PdfBuild | editor::PdfResource);	// Solid
-	pipelineDepends->addDependency(c_idShaderTextured, editor::PdfBuild | editor::PdfResource);	// Textured
-	pipelineDepends->addDependency(c_idShaderSolidMask, editor::PdfBuild | editor::PdfResource);	// Solid Mask
-	pipelineDepends->addDependency(c_idShaderTexturedMask, editor::PdfBuild | editor::PdfResource);	// Textured Mask
-	pipelineDepends->addDependency(c_idShaderIncrementMask, editor::PdfBuild | editor::PdfResource);	// Increment Mask
-	pipelineDepends->addDependency(c_idShaderDecrementMask, editor::PdfBuild | editor::PdfResource);	// Decrement Mask
-
-	// AccQuad
-	pipelineDepends->addDependency(c_idShaderQuadSolid, editor::PdfBuild | editor::PdfResource);	// Solid Quad
-	pipelineDepends->addDependency(c_idShaderQuadTextured, editor::PdfBuild | editor::PdfResource);	// Textured Quad
-	pipelineDepends->addDependency(c_idShaderQuadSolidMask, editor::PdfBuild | editor::PdfResource);	// Solid Mask Quad
-	pipelineDepends->addDependency(c_idShaderQuadTexturedMask, editor::PdfBuild | editor::PdfResource);	// Textured Mask Quad
-	pipelineDepends->addDependency(c_idShaderQuadIncrementMask, editor::PdfBuild | editor::PdfResource);	// Increment Mask Quad
-	pipelineDepends->addDependency(c_idShaderQuadDecrementMask, editor::PdfBuild | editor::PdfResource);	// Decrement Mask Quad
-
-	// AccGlyph
-	pipelineDepends->addDependency(c_idShaderGlyph, editor::PdfBuild | editor::PdfResource);	// Glyph
-	pipelineDepends->addDependency(c_idShaderGlyphMask, editor::PdfBuild | editor::PdfResource);	// Glyph Mask
-
+	pipelineDepends->addDependency(c_idFlashShaderAssets, editor::PdfBuild | editor::PdfResource);	// Solid
 	return true;
 }
 

@@ -14,7 +14,7 @@ namespace traktor
 	namespace amalgam
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.amalgam.Feature", 7, Feature, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.amalgam.Feature", 8, Feature, ISerializable)
 
 Feature::Feature()
 :	m_priority(0)
@@ -44,6 +44,9 @@ void Feature::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 6)
 		s >> MemberStlMap< std::wstring, std::wstring >(L"environment", m_environment);
+
+	if (s.getVersion() >= 8)
+		s >> MemberStlList< Guid >(L"dependencies", m_dependencies);
 }
 
 void Feature::Platform::serialize(ISerializer& s)

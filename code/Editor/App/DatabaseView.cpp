@@ -898,10 +898,9 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			NewInstanceDialog newInstanceDlg(m_editor->checkoutGlobalSettings());
 			newInstanceDlg.create(this);
 
-			if (newInstanceDlg.showModal() == ui::DrOk)
+			if (newInstanceDlg.showModal() == ui::DrOk && newInstanceDlg.getType() != 0)
 			{
 				const TypeInfo* type = newInstanceDlg.getType();
-				T_ASSERT (type);
 
 				std::wstring instanceName = newInstanceDlg.getInstanceName();
 				T_ASSERT (!instanceName.empty());
