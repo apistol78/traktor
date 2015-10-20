@@ -3,6 +3,9 @@
 	<dependencies/>
 	<text>
 	<![CDATA[
+import(traktor)
+
+
 function initialize(params)
 end
 
