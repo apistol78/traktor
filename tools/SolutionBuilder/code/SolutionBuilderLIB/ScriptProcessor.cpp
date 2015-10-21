@@ -298,12 +298,15 @@ bool ScriptProcessor::generateFromSource(const Solution* solution, const Project
 	ss << L"\toutput:printSection(" << id << L")" << Endl;
 	ss << L"end" << Endl;
 
-	Ref< script::IScriptResource > scriptResource = m_scriptManager->compile(L"", ss.str(), 0, 0);
-	if (!scriptResource)
+	Ref< script::IScriptBlob > scriptBlob = m_scriptManager->compile(L"", ss.str(), 0);
+	if (!scriptBlob)
 		return false;
 
-	Ref< script::IScriptContext > scriptContext = m_scriptManager->createContext(scriptResource, 0);
+	Ref< script::IScriptContext > scriptContext = m_scriptManager->createContext();
 	if (!scriptContext)
+		return false;
+
+	if (!scriptContext->load(scriptBlob))
 		return false;
 
 	scriptContext->setGlobal("output", Any::fromObject(o));
