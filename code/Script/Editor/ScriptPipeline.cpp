@@ -75,7 +75,10 @@ ScriptPipeline::~ScriptPipeline()
 
 bool ScriptPipeline::create(const editor::IPipelineSettings* settings)
 {
+	// Get implementation type name; return true if no type specified to silence error from pipeline if scripting isn't used.
 	std::wstring scriptManagerTypeName = settings->getProperty< PropertyString >(L"Editor.ScriptManagerType");
+	if (scriptManagerTypeName.empty())
+		return true;
 
 	// Create script manager instance.
 	const TypeInfo* scriptManagerType = TypeInfo::find(scriptManagerTypeName);
