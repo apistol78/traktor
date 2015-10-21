@@ -21,6 +21,36 @@ namespace traktor
 
 Timer s_timer;
 
+#if defined(__IOS__) || defined(__ANDROID__) || defined(__EMSCRIPTEN__)
+
+template < int Size >
+struct UnalignedView {};
+
+template < >
+struct UnalignedView< 1 > { uint8_t value; };
+
+template < >
+struct UnalignedView< 2 > { uint16_t value __attribute__(( packed )); };
+
+template < >
+struct UnalignedView< 4 > { uint32_t value __attribute__(( packed )); };
+
+template < typename T >
+T unalignedRead(const void* ptr)
+{
+	return ((UnalignedView< sizeof(T) >*)ptr)->value;
+}
+
+#else
+
+template < typename T >
+T unalignedRead(const void *ptr)
+{
+	return *(T T_UNALIGNED *)(ptr);
+}
+
+#endif
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.ActionVMImage1", 0, ActionVMImage1, IActionVMImage)
@@ -64,7 +94,11 @@ void ActionVMImage1::prepare()
 		state.length = 1;
 		if (op & 0x80)
 		{
+#if defined(__EMSCRIPTEN__)			
+			uint16_t length = unalignedRead< uint16_t >(state.pc + 1);
+#else
 			uint16_t& length = *reinterpret_cast< uint16_t* >(state.pc + 1);
+#endif
 #if defined(T_BIG_ENDIAN)
 			swap8in32(length);
 #endif
@@ -178,7 +212,7 @@ void ActionVMImage1::nonConstExecute(ActionFrame* frame)
 		state.length = 1;
 		if (op & 0x80)
 		{
-			state.length = *reinterpret_cast< const uint16_t* >(state.pc + 1);
+			state.length = unalignedRead< uint16_t >(state.pc + 1);
 			state.data = state.pc + 3;
 			state.npc = state.data + state.length;
 		}

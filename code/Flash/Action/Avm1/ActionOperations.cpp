@@ -29,7 +29,7 @@ namespace traktor
 		namespace
 		{
 
-#if defined(__IOS__) || defined(__ANDROID__)
+#if defined(__IOS__) || defined(__ANDROID__) || defined(__EMSCRIPTEN__)
 
 template < int Size >
 struct UnalignedView {};
@@ -49,12 +49,24 @@ T unalignedRead(const void* ptr)
 	return ((UnalignedView< sizeof(T) >*)ptr)->value;
 }
 
+template < typename T >
+void unalignedWrite(void* ptr, T value)
+{
+	((UnalignedView< sizeof(T) >*)ptr)->value = value;
+}
+
 #else
 
 template < typename T >
 T unalignedRead(const void *ptr)
 {
 	return *(T T_UNALIGNED *)(ptr);
+}
+
+template < typename T >
+void unalignedWrite(void* ptr, T value)
+{
+	*(T T_UNALIGNED *)(ptr) = value;
 }
 
 #endif
@@ -1772,7 +1784,7 @@ void opx_gotoFrame(ExecutionState& state)
 {
 	FlashSpriteInstance* movieClip = state.movieClip;
 
-	uint16_t frame = *reinterpret_cast< const uint16_t* >(state.data);
+	uint16_t frame = unalignedRead< uint16_t >(state.data);
 	movieClip->gotoFrame(frame);
 }
 
@@ -1829,7 +1841,7 @@ void opx_constantPool(ExecutionState& state)
 {
 	Ref< ActionDictionary > dictionary = new ActionDictionary();
 
-	uint16_t dictionaryCount = *reinterpret_cast< const uint16_t* >(state.data);
+	uint16_t dictionaryCount = unalignedRead< uint16_t >(state.data);
 	const char* dictionaryEntry = reinterpret_cast< const char* >(state.data + 2);
 
 	for (uint16_t i = 0; i < dictionaryCount; ++i)
@@ -1891,7 +1903,7 @@ void opp_defineFunction2(PreparationState& state)
 #if defined(T_BIG_ENDIAN)
 	swap8in32(*(uint16_t*)data);
 #endif
-	uint16_t argumentCount = *reinterpret_cast< const uint16_t* >(data);
+	uint16_t argumentCount = unalignedRead< uint16_t >(data);
 	data += sizeof(uint16_t);
 
 	data += sizeof(uint8_t);
@@ -1912,7 +1924,7 @@ void opp_defineFunction2(PreparationState& state)
 #if defined(T_BIG_ENDIAN)
 	swap8in32(*(uint16_t*)data);
 #endif
-	uint16_t codeSize = *reinterpret_cast< const uint16_t* >(data);
+	uint16_t codeSize = unalignedRead< uint16_t >(data);
 	data += sizeof(uint16_t);
 
 	state.npc += codeSize;
@@ -1926,13 +1938,13 @@ void opx_defineFunction2(ExecutionState& state)
 	const char T_UNALIGNED * functionName = reinterpret_cast< const char* >(data);
 	data += strlen(functionName) + 1;
 
-	uint16_t argumentCount = *reinterpret_cast< const uint16_t* >(data);
+	uint16_t argumentCount = unalignedRead< uint16_t >(data);
 	data += sizeof(uint16_t);
 
 	uint8_t registerCount = *data;
 	data += sizeof(uint8_t);
 
-	uint16_t flags = *reinterpret_cast< const uint16_t* >(data);
+	uint16_t flags = unalignedRead< uint16_t >(data);
 	data += sizeof(uint16_t);
 
 	std::vector< std::pair< std::string, uint8_t > > argumentsIntoRegisters(argumentCount);
@@ -1947,7 +1959,7 @@ void opx_defineFunction2(ExecutionState& state)
 		argumentsIntoRegisters[i] = std::make_pair(variableName, registerIndex);
 	}
 
-	uint16_t codeSize = *reinterpret_cast< const uint16_t* >(data);
+	uint16_t codeSize = unalignedRead< uint16_t >(data);
 	data += sizeof(uint16_t);
 
 	Ref< ActionVMImage1 > image = new ActionVMImage1(state.npc, codeSize);
@@ -2024,7 +2036,7 @@ void opp_pushData(PreparationState& state)
 				uint16_t index = state.image->addConstData(ActionValue(str));
 
 				*ndp++ = 100;
-				*(uint16_t*)ndp = index;
+				unalignedWrite< uint16_t >(ndp, index);
 				ndp += sizeof(uint16_t);
 
 				data += length + 1;
@@ -2038,7 +2050,7 @@ void opp_pushData(PreparationState& state)
 				uint16_t index = state.image->addConstData(ActionValue(value));
 
 				*ndp++ = 100;
-				*(uint16_t*)ndp = index;
+				unalignedWrite< uint16_t >(ndp, index);
 				ndp += sizeof(uint16_t);
 
 				data += sizeof(float);
@@ -2066,8 +2078,8 @@ void opp_pushData(PreparationState& state)
 				union { double d; uint8_t b[8]; uint32_t dw[2]; } w;
 
 #if defined(T_LITTLE_ENDIAN)
-				w.dw[0] = *(const uint32_t T_UNALIGNED *)&data[4];
-				w.dw[1] = *(const uint32_t T_UNALIGNED *)&data[0];
+				w.dw[0] = unalignedRead< uint32_t >(&data[4]);
+				w.dw[1] = unalignedRead< uint32_t >(&data[0]);
 #elif defined(T_BIG_ENDIAN)
 				w.b[0] = data[3];
 				w.b[1] = data[2];
@@ -2082,7 +2094,7 @@ void opp_pushData(PreparationState& state)
 				uint16_t index = state.image->addConstData(ActionValue(avm_number_t(w.d)));
 
 				*ndp++ = 100;
-				*(uint16_t*)ndp = index;
+				unalignedWrite< uint16_t >(ndp, index);
 				ndp += sizeof(uint16_t);
 
 				data += sizeof(double);
@@ -2096,7 +2108,7 @@ void opp_pushData(PreparationState& state)
 				uint16_t index = state.image->addConstData(ActionValue(avm_number_t(value)));
 
 				*ndp++ = 100;
-				*(uint16_t*)ndp = index;
+				unalignedWrite< uint16_t >(ndp, index);
 				ndp += sizeof(uint16_t);
 
 				data += sizeof(int32_t);
@@ -2114,7 +2126,7 @@ void opp_pushData(PreparationState& state)
 #endif
 
 				*ndp++ = 9;
-				*(uint16_t*)ndp = index;
+				unalignedWrite< uint16_t >(ndp, index);
 				ndp += sizeof(uint16_t);
 
 				data += sizeof(uint16_t);
@@ -2184,8 +2196,8 @@ void opx_pushData(ExecutionState& state)
 			union { double d; uint8_t b[8]; uint32_t dw[2]; } w;
 
 #if defined(T_LITTLE_ENDIAN)
-			w.dw[0] = *(const uint32_t*)&data[4];
-			w.dw[1] = *(const uint32_t*)&data[0];
+			w.dw[0] = unalignedRead< uint32_t >(&data[4]);
+			w.dw[1] = unalignedRead< uint32_t >(&data[0]);
 #elif defined(T_BIG_ENDIAN)
 			w.b[0] = data[3];
 			w.b[1] = data[2];
@@ -2217,7 +2229,7 @@ void opx_pushData(ExecutionState& state)
 		}
 		else if (type == 9)	// Dictionary (16bit index)
 		{
-			uint16_t index2 = *reinterpret_cast< const uint16_t* >(data);
+			uint16_t index2 = unalignedRead< uint16_t >(data);
 			value = state.frame->getDictionary()->get(index2);
 			data += sizeof(uint16_t);
 
@@ -2227,7 +2239,7 @@ void opx_pushData(ExecutionState& state)
 		}
 		else if (type == 100)	// Preconverted constant value.
 		{
-			uint16_t index2 = *reinterpret_cast< const uint16_t* >(data);
+			uint16_t index2 = unalignedRead< uint16_t >(data);
 			value = state.image->getConstData(index2);
 			data += sizeof(uint16_t);
 		}
@@ -2253,7 +2265,7 @@ void opp_branchAlways(PreparationState& state)
 
 void opx_branchAlways(ExecutionState& state)
 {
-	int16_t offset = *reinterpret_cast< const int16_t* >(state.data);
+	int16_t offset = unalignedRead< int16_t >(state.data);
 	state.npc += offset;
 }
 
@@ -2297,7 +2309,7 @@ void opp_defineFunction(PreparationState& state)
 #if defined(T_BIG_ENDIAN)
 	swap8in32(*(uint16_t*)data);
 #endif
-	uint16_t argumentCount = *reinterpret_cast< const uint16_t* >(data);
+	uint16_t argumentCount = unalignedRead< uint16_t >(data);
 	data += sizeof(uint16_t);
 
 	for (int i = 0; i  < argumentCount; ++i)
@@ -2309,7 +2321,7 @@ void opp_defineFunction(PreparationState& state)
 #if defined(T_BIG_ENDIAN)
 	swap8in32(*(uint16_t*)data);
 #endif
-	uint16_t codeSize = *reinterpret_cast< const uint16_t* >(data);
+	uint16_t codeSize = unalignedRead< uint16_t >(data);
 	data += sizeof(uint16_t);
 
 	state.npc += codeSize;
@@ -2324,7 +2336,7 @@ void opx_defineFunction(ExecutionState& state)
 	const char* functionName = reinterpret_cast< const char* >(data);
 	data += strlen(functionName) + 1;
 
-	uint16_t argumentCount = *reinterpret_cast< const uint16_t* >(data);
+	uint16_t argumentCount = unalignedRead< uint16_t >(data);
 	data += sizeof(uint16_t);
 
 	std::vector< std::string > argumentsIntoVariables(argumentCount);
@@ -2336,7 +2348,7 @@ void opx_defineFunction(ExecutionState& state)
 		argumentsIntoVariables[i] = argumentName;
 	}
 
-	uint16_t codeSize = *reinterpret_cast< const uint16_t* >(data);
+	uint16_t codeSize = unalignedRead< uint16_t >(data);
 	data += sizeof(uint16_t);
 
 	Ref< ActionVMImage1 > image = new ActionVMImage1(state.npc, codeSize);
@@ -2393,7 +2405,7 @@ void opx_branchIfTrue(ExecutionState& state)
 	bool condition = stack.pop().getBoolean();
 	if (condition)
 	{
-		int16_t offset = *reinterpret_cast< const int16_t* >(state.data);
+		int16_t offset = unalignedRead< int16_t >(state.data);
 		state.npc += offset;
 	}
 }
@@ -2440,7 +2452,7 @@ void opx_gotoFrame2(ExecutionState& state)
 	// Frame bias
 	if ((state.data[0] & 1) == 1)
 	{
-		uint16_t frameBias = *reinterpret_cast< const uint16_t* >(&state.data[1]);
+		uint16_t frameBias = unalignedRead< uint16_t >(&state.data[1]);
 		frameIndex += frameBias;
 	}
 

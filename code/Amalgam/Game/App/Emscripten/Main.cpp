@@ -17,6 +17,8 @@
 
 using namespace traktor;
 
+extern "C" void __traktor__emscripten__linkage__(); 
+
 namespace
 {
 
@@ -40,7 +42,6 @@ Ref< PropertyGroup > loadSettings(const Path& settingsFile)
 
 void mainLoop()
 {
-	traktor::log::info << L"PING..." << Endl;
 	if (g_application)
 	{
 		if (!g_application->update())
@@ -51,6 +52,8 @@ void mainLoop()
 int main(int argc, const char** argv)
 {
 	CommandLine cmdLine(argc, argv);
+
+	__traktor__emscripten__linkage__();
 
 	Path settingsPath = L"Application.config";
 	if (cmdLine.getCount() >= 1)

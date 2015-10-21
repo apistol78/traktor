@@ -108,6 +108,15 @@ DisplayMode RenderSystemOpenGLES2::getCurrentDisplayMode() const
 	dm.colorBits = 32;
 	return dm;
 
+#elif defined(__EMSCRIPTEN__)
+
+	DisplayMode dm;
+	dm.width = 300;
+	dm.height = 150;
+	dm.refreshRate = 60;
+	dm.colorBits = 32;
+	return dm;
+
 #else
 	return DisplayMode();
 #endif
