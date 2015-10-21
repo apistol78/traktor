@@ -52,6 +52,8 @@
 #			define _WIN32_LEAN_AND_MEAN
 #			include <windows.h>
 #			include <tchar.h>
+#		elif defined(__EMSCRIPTEN__)
+#			include <emscripten.h>
 #		endif
 #		include <EGL/egl.h>
 #		include <GLES2/gl2.h>

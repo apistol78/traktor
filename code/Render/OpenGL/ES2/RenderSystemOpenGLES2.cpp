@@ -110,9 +110,12 @@ DisplayMode RenderSystemOpenGLES2::getCurrentDisplayMode() const
 
 #elif defined(__EMSCRIPTEN__)
 
+	int width, height, fullScreen;
+	emscripten_get_canvas_size(&width, &height, &fullScreen);
+
 	DisplayMode dm;
-	dm.width = 300;
-	dm.height = 150;
+	dm.width = width;
+	dm.height = height;
 	dm.refreshRate = 60;
 	dm.colorBits = 32;
 	return dm;

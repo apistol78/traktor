@@ -116,8 +116,12 @@ function deploy(args)
 
 	-- Build linker command line.
 	local totalMemory = 64 * 1024 * 1024
-	local cmd = "\"" .. emcc .. "\" -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s USE_PTHREADS=0 -s TOTAL_MEMORY=" .. totalMemory
+	local cmd = "\"" .. emcc .. "\" "
+	cmd = cmd .. " -s ERROR_ON_UNDEFINED_SYMBOLS=0"
+	cmd = cmd .. " -s USE_PTHREADS=0"
+	cmd = cmd .. " -s TOTAL_MEMORY=" .. totalMemory
 	cmd = cmd .. " -Wl,-s,ERROR_ON_UNDEFINED_SYMBOLS=0"
+	cmd = cmd .. " -O2"
 	cmd = cmd .. " Linkage.o"
 	for _, m in ipairs(linkerLibraries) do
 		cmd = cmd .. " " .. prepend .. m
@@ -128,7 +132,7 @@ function deploy(args)
 	for _, m in ipairs(linkerExternLibraries) do
 		cmd = cmd .. " " .. prepend .. m
 	end
-	cmd = cmd .. " -o $(DEPLOY_EXECUTABLE).html --embed-file Application.config"
+	cmd = cmd .. " -o $(DEPLOY_EXECUTABLE).js --preload-file Application.config"
 
 	-- Link files into an executable product.
 	local result = run:execute(cmd, nil)
@@ -137,6 +141,12 @@ function deploy(args)
 		stderr:printLn(cmd)
 		return 1
 	end
+
+	-- Create html loader.
+	if run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/emscripten/Index.html.template", os:getEnvironment("DEPLOY_EXECUTABLE") .. ".html") ~= 0 then
+		stderr:printLn("Failed to generate html loader.")
+		return 1
+	end	
 
 	return 0
 end
@@ -234,8 +244,12 @@ function migrate(args)
 
 	-- Build linker command line.
 	local totalMemory = 64 * 1024 * 1024
-	local cmd = "\"" .. emcc .. "\" -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s USE_PTHREADS=0 -s TOTAL_MEMORY=" .. totalMemory
+	local cmd = "\"" .. emcc .. "\" "
+	cmd = cmd .. " -s ERROR_ON_UNDEFINED_SYMBOLS=0"
+	cmd = cmd .. " -s USE_PTHREADS=0"
+	cmd = cmd .. " -s TOTAL_MEMORY=" .. totalMemory
 	cmd = cmd .. " -Wl,-s,ERROR_ON_UNDEFINED_SYMBOLS=0"
+	cmd = cmd .. " -O2"
 	cmd = cmd .. " Linkage.o"
 	for _, m in ipairs(linkerLibraries) do
 		cmd = cmd .. " " .. prepend .. m
@@ -246,7 +260,7 @@ function migrate(args)
 	for _, m in ipairs(linkerExternLibraries) do
 		cmd = cmd .. " " .. prepend .. m
 	end
-	cmd = cmd .. " -o $(DEPLOY_EXECUTABLE).html --embed-file Application.config --embed-file Content.compact"
+	cmd = cmd .. " -o $(DEPLOY_EXECUTABLE).js --preload-file Application.config --preload-file Content.compact"
 
 	-- Link files into an executable product.
 	local result = run:execute(cmd, nil)
@@ -255,6 +269,12 @@ function migrate(args)
 		stderr:printLn(cmd)
 		return 1
 	end
+
+	-- Create html loader.
+	if run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/emscripten/Index.html.template", os:getEnvironment("DEPLOY_EXECUTABLE") .. ".html") ~= 0 then
+		stderr:printLn("Failed to generate html loader.")
+		return 1
+	end	
 
 	stdout:printLn("Done")
 	return 0

@@ -64,7 +64,14 @@ public:
 			if (!clientSocket)
 				continue;
 
-			SocketStream clientStream(clientSocket, true, true, 10000);
+			if (!clientSocket->select(true, false, false, 10000))
+			{
+				clientSocket->close();
+				clientSocket = 0;
+				continue;
+			}
+
+			SocketStream clientStream(clientSocket, true, true, 100);
 			StringReader clientReader(&clientStream, new Utf8Encoding());
 
 			StringOutputStream ss;
@@ -86,6 +93,8 @@ public:
 						break;
 				}
 			}
+
+			clientStream.setTimeout(10000);
 
 			Ref< HttpRequest > request = HttpRequest::parse(ss.str());
 			if (request)
