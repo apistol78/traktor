@@ -82,12 +82,12 @@ bool findDisplayMode(render::IRenderSystem* renderSystem, const render::DisplayM
 		render::DisplayMode currentMode = renderSystem->getCurrentDisplayMode();
 		if (currentMode.width != 0 && currentMode.height != 0)
 		{
-			log::warning << L"Unable to enumerate display modes; using current display mode as fail safe" << Endl;
+			log::warning << L"Unable to enumerate display modes; using current display mode (" << currentMode.width << L" * " << currentMode.height << L") as fail safe" << Endl;
 			outBestMatch = currentMode;
 		}
 		else
 		{
-			log::warning << L"Unable to enumerate display modes; using criteria display mode as fail safe" << Endl;
+			log::warning << L"Unable to enumerate display modes; using criteria display mode (" << criteria.width << L" * " << criteria.height << L") as fail safe" << Endl;
 			outBestMatch = criteria;
 		}
 		return true;
