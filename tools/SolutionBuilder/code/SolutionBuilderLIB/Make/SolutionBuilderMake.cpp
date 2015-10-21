@@ -540,7 +540,12 @@ void SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 				linkProfile += L"_DEBUG";
 			else if (configuration->getTargetProfile() == Configuration::TpRelease)
 				linkProfile += L"_RELEASE";
-			linkProfile += L"_STATIC";
+			if (configuration->getTargetFormat() == Configuration::TfSharedLibrary)
+				linkProfile += L"_SHARED";
+			else if (configuration->getTargetFormat() == Configuration::TfStaticLibrary)
+				linkProfile += L"_STATIC";
+			else
+				linkProfile += L"_EXECUTABLE";
 			linkProfile += L")";
 
 			if (m_platform == MpWin32)
@@ -834,6 +839,9 @@ bool SolutionBuilderMake::scanDependencies(
 	std::set< std::wstring >& resolvedDependencies
 )
 {
+	if (!FileSystem::getInstance().exist(fileName))
+		return false;
+
 	Ref< IStream > file = FileSystem::getInstance().open(fileName, traktor::File::FmRead);
 	if (!file)
 		return false;
