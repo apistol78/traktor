@@ -29,12 +29,15 @@ cp -f $FBX_SDK/lib/gcc4/ub/*.dylib .
 # Assemble Editor bundle.
 mkdir -p TraktorEditor.app/Contents/MacOS
 mkdir -p TraktorEditor.app/Contents/Resources
+mkdir -p TraktorEditor.app/Contents/Resources/res
 
 cp -f *.dylib TraktorEditor.app/Contents/MacOS
 cp -f Traktor.Editor.App TraktorEditor.app/Contents/MacOS
 cp -f $TRAKTOR_HOME/res/osx/Info.plist TraktorEditor.app/Contents
 cp -f $TRAKTOR_HOME/Traktor.Editor.config TraktorEditor.app/Contents/Resources
 cp -f $TRAKTOR_HOME/Traktor.Editor.osx.config TraktorEditor.app/Contents/Resources
+cp -f $TRAKTOR_HOME/res/Light.xss TraktorEditor.app/Contents/Resources/res
+cp -f $TRAKTOR_HOME/res/English.xml TraktorEditor.app/Contents/Resources/res
 
 popd
 
@@ -65,11 +68,14 @@ cp -f $FBX_SDK/lib/gcc4/ub/*.dylib .
 # Assemble Editor bundle.
 mkdir -p TraktorEditor.app/Contents/MacOS
 mkdir -p TraktorEditor.app/Contents/Resources
+mkdir -p TraktorEditor.app/Contents/Resources/res
 
 cp -f *.dylib TraktorEditor.app/Contents/MacOS
 cp -f Traktor.Editor.App_d TraktorEditor.app/Contents/MacOS
 cp -f $TRAKTOR_HOME/res/osx/Info_d.plist TraktorEditor.app/Contents/Info.plist
 cp -f $TRAKTOR_HOME/Traktor.Editor.config TraktorEditor.app/Contents/Resources
 cp -f $TRAKTOR_HOME/Traktor.Editor.osx.config TraktorEditor.app/Contents/Resources
+cp -f $TRAKTOR_HOME/res/Light.xss TraktorEditor.app/Contents/Resources/res
+cp -f $TRAKTOR_HOME/res/English.xml TraktorEditor.app/Contents/Resources/res
 
 popd

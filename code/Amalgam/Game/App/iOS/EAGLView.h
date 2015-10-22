@@ -17,10 +17,6 @@ class Thread;
 
 - (BOOL) createApplication;
 
-- (void) showSplash;
-
-- (void) hideSplash;
-
 - (void) drawView:(id)sender;
 
 - (void) layoutSubviews;
