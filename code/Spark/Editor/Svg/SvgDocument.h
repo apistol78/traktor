@@ -2,7 +2,7 @@
 #define traktor_spark_SvgDocument_H
 
 #include "Core/Math/Aabb2.h"
-#include "Spark/Editor/Shape/SvgShape.h"
+#include "Spark/Editor/Svg/SvgShape.h"
 
 namespace traktor
 {

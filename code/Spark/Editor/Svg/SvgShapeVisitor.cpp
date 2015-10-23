@@ -1,4 +1,4 @@
-#include "Spark/Editor/Shape/SvgShapeVisitor.h"
+#include "Spark/Editor/Svg/SvgShapeVisitor.h"
 
 namespace traktor
 {

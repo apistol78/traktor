@@ -291,6 +291,13 @@ private:
 	void threadAssetMonitor();
 
 	//@}
+
+	/*! \name Open workspace thread. */
+	//@{
+
+	void threadOpenWorkspace(const Path& workspacePath, int32_t& progress);
+
+	//@}
 };
 
 	}

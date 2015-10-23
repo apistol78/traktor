@@ -1,4 +1,4 @@
-#include "Spark/Editor/Shape/SvgGradient.h"
+#include "Spark/Editor/Svg/SvgGradient.h"
 
 namespace traktor
 {
