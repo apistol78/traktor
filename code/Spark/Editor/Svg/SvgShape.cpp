@@ -1,5 +1,5 @@
-#include "Spark/Editor/Shape/SvgShape.h"
-#include "Spark/Editor/Shape/SvgShapeVisitor.h"
+#include "Spark/Editor/Svg/SvgShape.h"
+#include "Spark/Editor/Svg/SvgShapeVisitor.h"
 
 namespace traktor
 {

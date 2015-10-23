@@ -674,6 +674,14 @@
       <second>Building editor resources...</second>
     </item>
     <item>
+      <first>EDITOR_WAIT_OPENING_WORKSPACE_TITLE</first>
+      <second>Opening workspace</second>
+    </item>
+    <item>
+      <first>EDITOR_WAIT_OPENING_WORKSPACE_MESSAGE</first>
+      <second>Opening workspace...</second>
+    </item>
+    <item>
       <first>EDITOR_ABOUT_TITLE</first>
       <second>About</second>
     </item>

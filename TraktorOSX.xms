@@ -15898,10 +15898,10 @@
 					<items/>
 				</item>
 				<item type="Filter">
-					<name>Shape</name>
+					<name>Svg</name>
 					<items>
 						<item type="File">
-							<fileName>Shape/*.*</fileName>
+							<fileName>Svg/*.*</fileName>
 							<items/>
 						</item>
 					</items>
@@ -15911,6 +15911,15 @@
 					<items>
 						<item type="File">
 							<fileName>../../../res/toolbar/Playback.png</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Fxg</name>
+					<items>
+						<item type="File">
+							<fileName>Fxg/*.*</fileName>
 							<items/>
 						</item>
 					</items>

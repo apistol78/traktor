@@ -2,7 +2,7 @@
 #define traktor_spark_SvgPathShape_H
 
 #include "Spark/Path.h"
-#include "Spark/Editor/Shape/SvgShape.h"
+#include "Spark/Editor/Svg/SvgShape.h"
 
 namespace traktor
 {

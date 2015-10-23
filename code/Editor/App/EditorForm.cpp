@@ -185,6 +185,25 @@ struct StatusListener : public IPipelineBuilder::IListener
 	}
 };
 
+class OpenWorkspaceStatus : public RefCountImpl< ui::custom::BackgroundWorkerDialog::IWorkerStatus >
+{
+public:
+	OpenWorkspaceStatus(int32_t& step)
+	:	m_step(step)
+	{
+	}
+
+	virtual bool read(int32_t& outStep, std::wstring& outStatus) T_OVERRIDE T_FINAL
+	{
+		outStep = m_step;
+		outStatus = L"...";
+		return true;
+	}
+
+private:
+	int32_t& m_step;
+};
+
 Ref< PropertyGroup > loadProperties(const Path& pathName)
 {
 	Ref< PropertyGroup > settings;
@@ -1249,32 +1268,30 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 	if (m_workspaceSettings)
 		closeWorkspace();
 
-	m_workspaceSettings = loadProperties(workspacePath);
-	if (!m_workspaceSettings)
+	int32_t progressStep = 0;
+
+	Thread* thread = ThreadManager::getInstance().create(makeFunctor< EditorForm, const Path&, int32_t& >(
+		this,
+		&EditorForm::threadOpenWorkspace,
+		workspacePath,
+		progressStep
+	), L"Open workspace thread");
+	if (!thread)
 		return false;
 
-	// Change working directory to workspace file.
-	FileSystem::getInstance().setCurrentVolumeAndDirectory(workspacePath.getPathOnly());
+	thread->start();
 
-	// Create merged settings.
-	m_mergedSettings = m_globalSettings->mergeJoin(m_workspaceSettings);
-	T_ASSERT (m_mergedSettings);
+	// Show a dialog if processing seems to take more than N second(s).
+	ui::custom::BackgroundWorkerDialog dialog;
+	dialog.create(this, i18n::Text(L"EDITOR_WAIT_OPENING_WORKSPACE_TITLE"), i18n::Text(L"EDITOR_WAIT_OPENING_WORKSPACE_MESSAGE"), false);
+	dialog.execute(thread, new OpenWorkspaceStatus(progressStep));
+	dialog.destroy();
 
-	// Open databases.
-	std::wstring sourceDatabase = m_mergedSettings->getProperty< PropertyString >(L"Editor.SourceDatabase");
-	std::wstring outputDatabase = m_mergedSettings->getProperty< PropertyString >(L"Editor.OutputDatabase");
-
-	m_sourceDatabase = openDatabase(sourceDatabase, false);
-	m_outputDatabase = openDatabase(outputDatabase, true);
+	ThreadManager::getInstance().destroy(thread);
+	thread = 0;
 
 	if (!m_sourceDatabase || !m_outputDatabase)
 	{
-		if (!m_sourceDatabase)
-			log::error << L"Unable to open source database \"" << sourceDatabase << L"\"" << Endl;
-
-		if (!m_outputDatabase)
-			log::error << L"Unable to open output database \"" << outputDatabase << L"\"" << Endl;
-
 		closeWorkspace();
 		return false;
 	}
@@ -1297,8 +1314,8 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 	m_agentsManager = new PipelineAgentsManager(m_discoveryManager, m_streamServer, m_dbConnectionManager);
 	m_agentsManager->create(
 		m_mergedSettings,
-		sourceDatabase,
-		outputDatabase
+		m_mergedSettings->getProperty< PropertyString >(L"Editor.SourceDatabase"),
+		m_mergedSettings->getProperty< PropertyString >(L"Editor.OutputDatabase")
 	);
 
 	// Open pipeline database.
@@ -2769,6 +2786,46 @@ void EditorForm::threadAssetMonitor()
 
 		m_threadAssetMonitor->sleep(1000);
 	}
+}
+
+void EditorForm::threadOpenWorkspace(const Path& workspacePath, int32_t& progress)
+{
+	m_workspaceSettings = loadProperties(workspacePath);
+	if (!m_workspaceSettings)
+		return;
+
+	progress = 100;
+
+	// Change working directory to workspace file.
+	FileSystem::getInstance().setCurrentVolumeAndDirectory(workspacePath.getPathOnly());
+
+	// Create merged settings.
+	m_mergedSettings = m_globalSettings->mergeJoin(m_workspaceSettings);
+	T_ASSERT (m_mergedSettings);
+
+	progress = 200;
+
+	// Open databases.
+	std::wstring sourceDatabase = m_mergedSettings->getProperty< PropertyString >(L"Editor.SourceDatabase");
+	std::wstring outputDatabase = m_mergedSettings->getProperty< PropertyString >(L"Editor.OutputDatabase");
+
+	m_sourceDatabase = openDatabase(sourceDatabase, false);
+	if (!m_sourceDatabase)
+	{
+		log::error << L"Unable to open source database \"" << sourceDatabase << L"\"" << Endl;
+		return;
+	}
+
+	progress = 600;
+
+	m_outputDatabase = openDatabase(outputDatabase, true);
+	if (!m_outputDatabase)
+	{
+		log::error << L"Unable to open output database \"" << outputDatabase << L"\"" << Endl;
+		return;
+	}
+
+	progress = 1000;
 }
 
 	}
