@@ -25,7 +25,7 @@ class Context;
 class ICharacterBuilder;
 class IComponentInstance;
 class Shape;
-class Sprite;
+class SpriteData;
 
 /*! \brief Sprite character instance.
  * \ingroup Spark
@@ -35,7 +35,7 @@ class T_DLLCLASS SpriteInstance : public CharacterInstance
 	T_RTTI_CLASS;
 
 public:
-	SpriteInstance(const Context* context, const ICharacterBuilder* builder, const Sprite* sprite, const CharacterInstance* parent);
+	SpriteInstance(const Context* context, const ICharacterBuilder* builder, const SpriteData* sprite, const CharacterInstance* parent);
 
 	const Context* getContext() const;
 
@@ -95,7 +95,7 @@ private:
 
 	Ref< const Context > m_context;
 	Ref< const ICharacterBuilder > m_builder;
-	Ref< const Sprite > m_sprite;
+	Ref< const SpriteData > m_sprite;
 	resource::Proxy< Shape > m_shape;
 	DisplayList m_displayList;
 	ColorTransform m_colorTransform;

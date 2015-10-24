@@ -1,5 +1,5 @@
-#ifndef traktor_spark_Character_H
-#define traktor_spark_Character_H
+#ifndef traktor_spark_CharacterData_H
+#define traktor_spark_CharacterData_H
 
 #include "Core/Math/Matrix33.h"
 #include "Core/Serialization/ISerializable.h"
@@ -17,15 +17,15 @@ namespace traktor
 	namespace spark
 	{
 
-/*! \brief Character base class.
+/*! \brief CharacterData base class.
  * \ingroup Spark
  */
-class T_DLLCLASS Character : public ISerializable
+class T_DLLCLASS CharacterData : public ISerializable
 {
 	T_RTTI_CLASS;
 
 public:
-	Character();
+	CharacterData();
 
 	/*! \brief Set local transform.
 	 */
@@ -44,4 +44,4 @@ private:
 	}
 }
 
-#endif	// traktor_spark_Character_H
+#endif	// traktor_spark_CharacterData_H

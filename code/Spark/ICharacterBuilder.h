@@ -16,7 +16,7 @@ namespace traktor
 	namespace spark
 	{
 
-class Character;
+class CharacterData;
 class CharacterInstance;
 class Context;
 
@@ -28,7 +28,7 @@ class T_DLLCLASS ICharacterBuilder : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< CharacterInstance > create(const Context* context, const Character* character, const CharacterInstance* parent, const std::wstring& name) const = 0;
+	virtual Ref< CharacterInstance > create(const Context* context, const CharacterData* character, const CharacterInstance* parent, const std::wstring& name) const = 0;
 };
 
 	}

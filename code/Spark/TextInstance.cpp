@@ -1,5 +1,4 @@
 #include "Spark/Font.h"
-#include "Spark/Text.h"
 #include "Spark/TextInstance.h"
 
 namespace traktor

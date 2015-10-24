@@ -14,7 +14,7 @@
 #include "Spark/ExternalFactory.h"
 #include "Spark/SparkPlayer.h"
 #include "Spark/SparkRenderer.h"
-#include "Spark/Sprite.h"
+#include "Spark/SpriteData.h"
 #include "Spark/SpriteFactory.h"
 #include "Spark/SpriteInstance.h"
 #include "Spark/TextFactory.h"
@@ -31,7 +31,7 @@ SparkLayer::SparkLayer(
 	const std::wstring& name,
 	bool permitTransition,
 	IEnvironment* environment,
-	const resource::Proxy< spark::Sprite >& sprite,
+	const resource::Proxy< spark::SpriteData >& sprite,
 	const resource::Proxy< render::ImageProcessSettings >& imageProcessSettings,
 	const Color4ub& background
 )

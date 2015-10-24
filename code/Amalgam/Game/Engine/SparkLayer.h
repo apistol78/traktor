@@ -40,7 +40,7 @@ class CharacterInstance;
 class Context;
 class SparkPlayer;
 class SparkRenderer;
-class Sprite;
+class SpriteData;
 
 	}
 
@@ -60,7 +60,7 @@ public:
 		const std::wstring& name,
 		bool permitTransition,
 		IEnvironment* environment,
-		const resource::Proxy< spark::Sprite >& sprite,
+		const resource::Proxy< spark::SpriteData >& sprite,
 		const resource::Proxy< render::ImageProcessSettings >& imageProcessSettings,
 		const Color4ub& background
 	);
@@ -107,7 +107,7 @@ private:
 	Ref< IEnvironment > m_environment;
 	Ref< spark::Context > m_context;
 	Ref< spark::CharacterBuilder > m_characterBuilder;
-	resource::Proxy< spark::Sprite > m_sprite;
+	resource::Proxy< spark::SpriteData > m_sprite;
 	Ref< spark::SparkRenderer > m_sparkRenderer;
 	Ref< spark::SparkPlayer > m_sparkPlayer;
 	Ref< spark::CharacterInstance > m_characterInstance;

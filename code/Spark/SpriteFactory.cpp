@@ -1,9 +1,9 @@
 #include "Resource/IResourceManager.h"
 #include "Spark/Context.h"
 #include "Spark/ICharacterBuilder.h"
-#include "Spark/IComponent.h"
+#include "Spark/IComponentData.h"
 #include "Spark/Shape.h"
-#include "Spark/Sprite.h"
+#include "Spark/SpriteData.h"
 #include "Spark/SpriteFactory.h"
 #include "Spark/SpriteInstance.h"
 
@@ -22,13 +22,13 @@ SpriteFactory::SpriteFactory(bool createComponents)
 TypeInfoSet SpriteFactory::getCharacterTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Sprite >());
+	typeSet.insert(&type_of< SpriteData >());
 	return typeSet;
 }
 
-Ref< CharacterInstance > SpriteFactory::create(const Context* context, const ICharacterBuilder* builder, const Character* character, const CharacterInstance* parent, const std::wstring& name) const
+Ref< CharacterInstance > SpriteFactory::create(const Context* context, const ICharacterBuilder* builder, const CharacterData* character, const CharacterInstance* parent, const std::wstring& name) const
 {
-	const Sprite* sprite = mandatory_non_null_type_cast< const Sprite* >(character);
+	const SpriteData* sprite = mandatory_non_null_type_cast< const SpriteData* >(character);
 
 	// Create sprite instance.
 	Ref< SpriteInstance > instance = new SpriteInstance(context, builder, sprite, parent);
@@ -43,7 +43,7 @@ Ref< CharacterInstance > SpriteFactory::create(const Context* context, const ICh
 
 	// Create child characters.
 	int32_t depth = -100000;
-	for (AlignedVector< Sprite::NamedCharacter >::const_iterator i = sprite->m_frame.begin(); i != sprite->m_frame.end(); ++i)
+	for (AlignedVector< SpriteData::NamedCharacter >::const_iterator i = sprite->m_frame.begin(); i != sprite->m_frame.end(); ++i)
 	{
 		if (!i->character)
 			continue;

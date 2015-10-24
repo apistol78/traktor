@@ -1,7 +1,7 @@
-#include "Spark/Character.h"
+#include "Spark/CharacterData.h"
 #include "Spark/CharacterInstance.h"
-#include "Spark/Sprite.h"
-#include "Spark/External.h"
+#include "Spark/SpriteData.h"
+#include "Spark/ExternalData.h"
 #include "Spark/Editor/CharacterAdapter.h"
 #include "Spark/Editor/IGizmo.h"
 
@@ -25,7 +25,7 @@ const std::wstring& CharacterAdapter::getName() const
 
 void CharacterAdapter::setTransform(const Matrix33& transform)
 {
-	m_character->setTransform(transform);
+	m_characterData->setTransform(transform);
 	m_characterInstance->setTransform(transform);
 }
 
@@ -34,9 +34,9 @@ const Matrix33& CharacterAdapter::getTransform() const
 	return m_characterInstance->getTransform();
 }
 
-Character* CharacterAdapter::getCharacter()
+CharacterData* CharacterAdapter::getCharacterData()
 {
-	return m_character;
+	return m_characterData;
 }
 
 CharacterInstance* CharacterAdapter::getCharacterInstance()
@@ -56,13 +56,13 @@ const RefArray< CharacterAdapter >& CharacterAdapter::getChildren()
 
 void CharacterAdapter::unlink()
 {
-	if (!m_parent || !is_a< Sprite* >(m_parent->getCharacter()))
+	if (!m_parent || !is_a< SpriteData* >(m_parent->getCharacterData()))
 		return;
 
-	mandatory_non_null_type_cast< Sprite* >(m_parent->getCharacter())->remove(m_character);
+	mandatory_non_null_type_cast< SpriteData* >(m_parent->getCharacterData())->remove(m_characterData);
 
 	m_characterInstance = 0;
-	m_character = 0;
+	m_characterData = 0;
 
 	m_parent->m_children.remove(this);
 	m_parent = 0;
@@ -126,7 +126,7 @@ bool CharacterAdapter::isChildOfExternal() const
 {
 	for (CharacterAdapter* i = m_parent; i; i = i->getParent())
 	{
-		if (is_a< External >(i->getCharacter()))
+		if (is_a< ExternalData >(i->getCharacterData()))
 			return true;
 	}
 	return false;

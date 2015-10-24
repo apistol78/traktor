@@ -2,7 +2,7 @@
 #include "Spark/Context.h"
 #include "Spark/Font.h"
 #include "Spark/ICharacterBuilder.h"
-#include "Spark/Text.h"
+#include "Spark/TextData.h"
 #include "Spark/TextFactory.h"
 #include "Spark/TextInstance.h"
 
@@ -16,13 +16,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.TextFactory", TextFactory, ICharacterFact
 TypeInfoSet TextFactory::getCharacterTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Text >());
+	typeSet.insert(&type_of< TextData >());
 	return typeSet;
 }
 
-Ref< CharacterInstance > TextFactory::create(const Context* context, const ICharacterBuilder* builder, const Character* character, const CharacterInstance* parent, const std::wstring& name) const
+Ref< CharacterInstance > TextFactory::create(const Context* context, const ICharacterBuilder* builder, const CharacterData* character, const CharacterInstance* parent, const std::wstring& name) const
 {
-	const Text* text = mandatory_non_null_type_cast< const Text* >(character);
+	const TextData* text = mandatory_non_null_type_cast< const TextData* >(character);
 
 	resource::Proxy< Font > font;
 	if (text->m_font)

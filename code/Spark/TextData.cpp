@@ -3,16 +3,16 @@
 #include "Core/Serialization/MemberEnum.h"
 #include "Resource/Member.h"
 #include "Spark/Font.h"
-#include "Spark/Text.h"
+#include "Spark/TextData.h"
 
 namespace traktor
 {
 	namespace spark
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spark.Text", 0, Text, Character)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spark.TextData", 0, TextData, CharacterData)
 
-Text::Text()
+TextData::TextData()
 :	m_height(0.0f)
 ,	m_origin(0.0f, 0.0f)
 ,	m_size(0.0f, 0.0f)
@@ -21,7 +21,7 @@ Text::Text()
 {
 }
 
-void Text::serialize(ISerializer& s)
+void TextData::serialize(ISerializer& s)
 {
 	const MemberEnum< Align >::Key c_horizontalAlign_Keys[] =
 	{
@@ -38,7 +38,7 @@ void Text::serialize(ISerializer& s)
 		{ 0 }
 	};
 
-	Character::serialize(s);
+	CharacterData::serialize(s);
 
 	s >> resource::Member< Font >(L"font", m_font);
 	s >> Member< std::wstring >(L"text", m_text);

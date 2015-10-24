@@ -1,4 +1,4 @@
-#include "Spark/Character.h"
+#include "Spark/CharacterData.h"
 #include "Spark/ICharacterFactory.h"
 #include "Spark/Editor/CharacterAdapter.h"
 #include "Spark/Editor/CharacterAdapterBuilder.h"
@@ -23,7 +23,7 @@ void CharacterAdapterBuilder::addFactory(ICharacterFactory* factory)
 		m_factories[*i] = factory;
 }
 
-Ref< CharacterInstance > CharacterAdapterBuilder::create(const Context* context, const Character* character, const CharacterInstance* parent, const std::wstring& name) const
+Ref< CharacterInstance > CharacterAdapterBuilder::create(const Context* context, const CharacterData* character, const CharacterInstance* parent, const std::wstring& name) const
 {
 	SmallMap< const TypeInfo*, Ref< ICharacterFactory > >::const_iterator it = m_factories.find(&type_of(character));
 	if (it == m_factories.end())
@@ -43,7 +43,7 @@ Ref< CharacterInstance > CharacterAdapterBuilder::create(const Context* context,
 	m_adapterStack.pop_back();
 
 	adapter->m_name = name;
-	adapter->m_character = const_cast< Character* >(character);
+	adapter->m_characterData = const_cast< CharacterData* >(character);
 	adapter->m_characterInstance = instance;
 
 	if (!adapter->m_parent)

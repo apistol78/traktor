@@ -11,7 +11,7 @@ namespace traktor
 
 class CharacterAdapter;
 class Context;
-class Sprite;
+class SpriteData;
 
 class EditContext : public Object
 {
@@ -20,7 +20,7 @@ class EditContext : public Object
 public:
 	EditContext(Context* context);
 
-	bool setSprite(Sprite* sprite);
+	bool setSprite(SpriteData* sprite);
 
 	CharacterAdapter* hitTest(const Vector2& position) const;
 

@@ -1,9 +1,9 @@
-#ifndef traktor_spark_SoundComponent_H
-#define traktor_spark_SoundComponent_H
+#ifndef traktor_spark_SoundComponentData_H
+#define traktor_spark_SoundComponentData_H
 
 #include "Core/Containers/SmallMap.h"
 #include "Resource/Id.h"
-#include "Spark/IComponent.h"
+#include "Spark/IComponentData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -28,7 +28,7 @@ class Sound;
 /*! \brief Sound component.
  * \ingroup Spark
  */
-class T_DLLCLASS SoundComponent : public IComponent
+class T_DLLCLASS SoundComponentData : public IComponentData
 {
 	T_RTTI_CLASS;
 
@@ -46,4 +46,4 @@ private:
 	}
 }
 
-#endif	// traktor_spark_SoundComponent_H
+#endif	// traktor_spark_SoundComponentData_H

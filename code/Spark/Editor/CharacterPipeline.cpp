@@ -3,12 +3,12 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
-#include "Spark/External.h"
-#include "Spark/ScriptComponent.h"
-#include "Spark/SoundComponent.h"
-#include "Spark/Sprite.h"
-#include "Spark/Text.h"
+#include "Spark/ExternalData.h"
+#include "Spark/SpriteData.h"
+#include "Spark/TextData.h"
 #include "Spark/Editor/CharacterPipeline.h"
+#include "Spark/Script/ScriptComponentData.h"
+#include "Spark/Sound/SoundComponentData.h"
 
 namespace traktor
 {
@@ -33,7 +33,7 @@ void CharacterPipeline::destroy()
 TypeInfoSet CharacterPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Character >());
+	typeSet.insert(&type_of< CharacterData >());
 	return typeSet;
 }
 
@@ -45,34 +45,34 @@ bool CharacterPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	const Character* character = mandatory_non_null_type_cast< const Character* >(sourceAsset);
+	const CharacterData* character = mandatory_non_null_type_cast< const CharacterData* >(sourceAsset);
 
-	if (const Sprite* sprite = dynamic_type_cast< const Sprite* >(character))
+	if (const SpriteData* sprite = dynamic_type_cast< const SpriteData* >(character))
 	{
 		pipelineDepends->addDependency(sprite->m_shape, editor::PdfBuild | editor::PdfResource);
 
-		for (RefArray< IComponent >::const_iterator i = sprite->m_components.begin(); i != sprite->m_components.end(); ++i)
+		for (RefArray< IComponentData >::const_iterator i = sprite->m_components.begin(); i != sprite->m_components.end(); ++i)
 		{
-			if (const ScriptComponent* scriptComponent = dynamic_type_cast< const ScriptComponent* >(*i))
+			if (const ScriptComponentData* scriptComponent = dynamic_type_cast< const ScriptComponentData* >(*i))
 				pipelineDepends->addDependency(scriptComponent->m_class, editor::PdfBuild);
-			else if (const SoundComponent* soundComponent = dynamic_type_cast< const SoundComponent* >(*i))
+			else if (const SoundComponentData* soundComponent = dynamic_type_cast< const SoundComponentData* >(*i))
 			{
 				for (SmallMap< std::wstring, resource::Id< sound::Sound > >::const_iterator j = soundComponent->m_sounds.begin(); j != soundComponent->m_sounds.end(); ++j)
 					pipelineDepends->addDependency(j->second, editor::PdfBuild | editor::PdfResource);
 			}
 		}
 
-		for (AlignedVector< Sprite::NamedCharacter >::const_iterator i = sprite->m_dictionary.begin(); i != sprite->m_dictionary.end(); ++i)
+		for (AlignedVector< SpriteData::NamedCharacter >::const_iterator i = sprite->m_dictionary.begin(); i != sprite->m_dictionary.end(); ++i)
 			pipelineDepends->addDependency(i->character);
 
-		for (AlignedVector< Sprite::NamedCharacter >::const_iterator i = sprite->m_frame.begin(); i != sprite->m_frame.end(); ++i)
+		for (AlignedVector< SpriteData::NamedCharacter >::const_iterator i = sprite->m_frame.begin(); i != sprite->m_frame.end(); ++i)
 			pipelineDepends->addDependency(i->character);
 	}
-	else if (const Text* text = dynamic_type_cast< const Text* >(character))
+	else if (const TextData* text = dynamic_type_cast< const TextData* >(character))
 	{
 		pipelineDepends->addDependency(text->m_font, editor::PdfBuild | editor::PdfResource);
 	}
-	else if (const External* xternal = dynamic_type_cast< const External* >(character))
+	else if (const ExternalData* xternal = dynamic_type_cast< const ExternalData* >(character))
 	{
 		pipelineDepends->addDependency(xternal->m_reference, editor::PdfBuild | editor::PdfResource);
 	}

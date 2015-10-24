@@ -14,7 +14,7 @@
 #include "Spark/CharacterResourceFactory.h"
 #include "Spark/Context.h"
 #include "Spark/FontResourceFactory.h"
-#include "Spark/Sprite.h"
+#include "Spark/SpriteData.h"
 #include "Spark/SpriteInstance.h"
 #include "Spark/ShapeResourceFactory.h"
 #include "Spark/Editor/CharacterAdapter.h"
@@ -74,7 +74,7 @@ bool SparkEditorPage::create(ui::Container* parent)
 
 	// Create editor context.
 	m_editContext = new EditContext(context);
-	if (!m_editContext->setSprite(m_document->getObject< Sprite >(0)))
+	if (!m_editContext->setSprite(m_document->getObject< SpriteData >(0)))
 		return false;
 
 	// Create user interface.
@@ -120,7 +120,7 @@ bool SparkEditorPage::create(ui::Container* parent)
 
 	updateAdaptersGrid();
 
-	m_site->setPropertyObject(m_document->getObject< Sprite >(0));
+	m_site->setPropertyObject(m_document->getObject< SpriteData >(0));
 	return true;
 }
 
@@ -154,7 +154,7 @@ bool SparkEditorPage::handleCommand(const ui::Command& command)
 	if (command == L"Editor.PropertiesChanged")
 	{
 		// Reset sprite in context, need to re-build grid to have row data pointing to new adapters.
-		m_editContext->setSprite(m_document->getObject< Sprite >(0));
+		m_editContext->setSprite(m_document->getObject< SpriteData >(0));
 		updateAdaptersGrid();
 	}
 	else
@@ -219,11 +219,11 @@ void SparkEditorPage::eventToolPlaceClick(ui::custom::ToolBarButtonClickEvent* e
 		}
 
 		// Reset sprite in context, need to re-build grid to have row data pointing to new adapters.
-		m_editContext->setSprite(m_document->getObject< Sprite >(0));
+		m_editContext->setSprite(m_document->getObject< SpriteData >(0));
 		updateAdaptersGrid();
 
 		// Ensure property object is set to document root.
-		m_site->setPropertyObject(m_document->getObject< Sprite >(0));
+		m_site->setPropertyObject(m_document->getObject< SpriteData >(0));
 	}
 }
 
@@ -253,9 +253,9 @@ void SparkEditorPage::eventGridAdapterSelectionChange(ui::SelectionChangeEvent* 
 
 	// Expose selected item if single item selected.
 	if (selectedRows.size() == 1)
-		m_site->setPropertyObject(selectedRows.front()->getData< CharacterAdapter >(L"ADAPTER")->getCharacter());
+		m_site->setPropertyObject(selectedRows.front()->getData< CharacterAdapter >(L"ADAPTER")->getCharacterData());
 	else
-		m_site->setPropertyObject(m_document->getObject< Sprite >(0));
+		m_site->setPropertyObject(m_document->getObject< SpriteData >(0));
 }
 
 	}

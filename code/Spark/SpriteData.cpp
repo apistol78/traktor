@@ -6,9 +6,9 @@
 #include "Core/Serialization/MemberRefArray.h"
 #include "Core/Serialization/MemberSmallMap.h"
 #include "Resource/Member.h"
-#include "Spark/IComponent.h"
+#include "Spark/IComponentData.h"
 #include "Spark/Shape.h"
-#include "Spark/Sprite.h"
+#include "Spark/SpriteData.h"
 
 namespace traktor
 {
@@ -20,7 +20,7 @@ namespace traktor
 class MemberNamedCharacter : public MemberComplex
 {
 public:
-	MemberNamedCharacter(const wchar_t* const name, Sprite::NamedCharacter& ref)
+	MemberNamedCharacter(const wchar_t* const name, SpriteData::NamedCharacter& ref)
 	:	MemberComplex(name, true)
 	,	m_ref(ref)
 	{
@@ -29,11 +29,11 @@ public:
 	virtual void serialize(ISerializer& s) const
 	{
 		s >> Member< std::wstring >(L"name", m_ref.name);
-		s >> MemberRef< Character >(L"character", m_ref.character);
+		s >> MemberRef< CharacterData >(L"character", m_ref.character);
 	}
 
 private:
-	Sprite::NamedCharacter& m_ref;
+	SpriteData::NamedCharacter& m_ref;
 };
 
 class FindNamedCharacter
@@ -44,7 +44,7 @@ public:
 	{
 	}
 
-	bool operator () (const Sprite::NamedCharacter& nc) const
+	bool operator () (const SpriteData::NamedCharacter& nc) const
 	{
 		return nc.name == m_name;
 	}
@@ -56,31 +56,31 @@ private:
 class FindCharacter
 {
 public:
-	FindCharacter(const Character* character)
+	FindCharacter(const CharacterData* character)
 	:	m_character(character)
 	{
 	}
 
-	bool operator () (const Sprite::NamedCharacter& nc) const
+	bool operator () (const SpriteData::NamedCharacter& nc) const
 	{
 		return nc.character == m_character;
 	}
 
 private:
-	const Character* m_character;
+	const CharacterData* m_character;
 };
 
 		}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spark.Sprite", 0, Sprite, Character)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spark.SpriteData", 0, SpriteData, CharacterData)
 
-const Character* Sprite::getCharacter(const std::wstring& id) const
+const CharacterData* SpriteData::getCharacter(const std::wstring& id) const
 {
 	AlignedVector< NamedCharacter >::const_iterator i = std::find_if(m_dictionary.begin(), m_dictionary.end(), FindNamedCharacter(id));
 	return i != m_dictionary.end() ? i->character : 0;
 }
 
-void Sprite::place(const std::wstring& name, Character* character)
+void SpriteData::place(const std::wstring& name, CharacterData* character)
 {
 	NamedCharacter nc;
 	nc.name = name;
@@ -88,18 +88,18 @@ void Sprite::place(const std::wstring& name, Character* character)
 	m_frame.push_back(nc);
 }
 
-void Sprite::remove(Character* character)
+void SpriteData::remove(CharacterData* character)
 {
 	AlignedVector< NamedCharacter >::iterator i = std::find_if(m_frame.begin(), m_frame.end(), FindCharacter(character));
 	if (i != m_frame.end())
 		m_frame.erase(i);
 }
 
-void Sprite::serialize(ISerializer& s)
+void SpriteData::serialize(ISerializer& s)
 {
-	Character::serialize(s);
+	CharacterData::serialize(s);
 
-	s >> MemberRefArray< IComponent >(L"components", m_components);
+	s >> MemberRefArray< IComponentData >(L"components", m_components);
 	s >> MemberAabb2(L"bounds", m_bounds);
 	s >> resource::Member< Shape >(L"shape", m_shape);
 	s >> MemberAlignedVector< NamedCharacter, MemberNamedCharacter >(L"dictionary", m_dictionary);

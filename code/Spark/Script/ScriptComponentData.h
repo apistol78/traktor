@@ -1,8 +1,8 @@
-#ifndef traktor_spark_ScriptComponent_H
-#define traktor_spark_ScriptComponent_H
+#ifndef traktor_spark_ScriptComponentData_H
+#define traktor_spark_ScriptComponentData_H
 
 #include "Resource/Id.h"
-#include "Spark/IComponent.h"
+#include "Spark/IComponentData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -23,7 +23,7 @@ class IRuntimeClass;
 /*! \brief Script component.
  * \ingroup Spark
  */
-class T_DLLCLASS ScriptComponent : public IComponent
+class T_DLLCLASS ScriptComponentData : public IComponentData
 {
 	T_RTTI_CLASS;
 
@@ -41,4 +41,4 @@ private:
 	}
 }
 
-#endif	// traktor_spark_ScriptComponent_H
+#endif	// traktor_spark_ScriptComponentData_H

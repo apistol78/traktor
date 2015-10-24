@@ -1,5 +1,5 @@
 #include "Database/Database.h"
-#include "Spark/Character.h"
+#include "Spark/CharacterData.h"
 #include "Spark/CharacterResourceFactory.h"
 
 namespace traktor
@@ -17,14 +17,14 @@ CharacterResourceFactory::CharacterResourceFactory(db::Database* db)
 const TypeInfoSet CharacterResourceFactory::getResourceTypes() const
 {
 	TypeInfoSet typeSet;
-	type_of< Character >().findAllOf(typeSet);
+	type_of< CharacterData >().findAllOf(typeSet);
 	return typeSet;
 }
 
 const TypeInfoSet CharacterResourceFactory::getProductTypes() const
 {
 	TypeInfoSet typeSet;
-	type_of< Character >().findAllOf(typeSet);
+	type_of< CharacterData >().findAllOf(typeSet);
 	return typeSet;
 }
 
@@ -35,7 +35,7 @@ bool CharacterResourceFactory::isCacheable() const
 
 Ref< Object > CharacterResourceFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
 {
-	return m_db->getObjectReadOnly< Character >(guid);
+	return m_db->getObjectReadOnly< CharacterData >(guid);
 }
 
 	}

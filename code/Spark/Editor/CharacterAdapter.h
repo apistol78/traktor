@@ -26,7 +26,7 @@ class Widget;
 	namespace spark
 	{
 
-class Character;
+class CharacterData;
 class CharacterInstance;
 class IGizmo;
 
@@ -43,7 +43,7 @@ public:
 
 	const Matrix33& getTransform() const;
 
-	Character* getCharacter();
+	CharacterData* getCharacterData();
 
 	CharacterInstance* getCharacterInstance();
 
@@ -77,7 +77,7 @@ private:
 	friend class CharacterAdapterBuilder;
 
 	std::wstring m_name;
-	Ref< Character > m_character;
+	Ref< CharacterData > m_characterData;
 	Ref< CharacterInstance > m_characterInstance;
 	CharacterAdapter* m_parent;
 	RefArray< CharacterAdapter > m_children;

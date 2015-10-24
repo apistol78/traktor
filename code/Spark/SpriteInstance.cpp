@@ -1,7 +1,7 @@
 #include "Spark/ICharacterBuilder.h"
 #include "Spark/IComponentInstance.h"
 #include "Spark/Shape.h"
-#include "Spark/Sprite.h"
+#include "Spark/SpriteData.h"
 #include "Spark/SpriteInstance.h"
 
 namespace traktor
@@ -11,7 +11,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.SpriteInstance", SpriteInstance, CharacterInstance)
 
-SpriteInstance::SpriteInstance(const Context* context, const ICharacterBuilder* builder, const Sprite* sprite, const CharacterInstance* parent)
+SpriteInstance::SpriteInstance(const Context* context, const ICharacterBuilder* builder, const SpriteData* sprite, const CharacterInstance* parent)
 :	CharacterInstance(parent)
 ,	m_context(context)
 ,	m_builder(builder)
@@ -38,7 +38,7 @@ const resource::Proxy< Shape >& SpriteInstance::getShape() const
 
 Ref< CharacterInstance > SpriteInstance::create(const std::wstring& id) const
 {
-	const Character* character = m_sprite->getCharacter(id);
+	const CharacterData* character = m_sprite->getCharacter(id);
 	if (character)
 		return m_builder->create(m_context, character, this, id);
 	else

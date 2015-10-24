@@ -1,5 +1,5 @@
-#ifndef traktor_spark_IComponent_H
-#define traktor_spark_IComponent_H
+#ifndef traktor_spark_IComponentData_H
+#define traktor_spark_IComponentData_H
 
 #include "Core/Serialization/ISerializable.h"
 
@@ -23,7 +23,7 @@ class IComponentInstance;
 /*! \brief Character component interface.
  * \ingroup Spark
  */
-class T_DLLCLASS IComponent : public ISerializable
+class T_DLLCLASS IComponentData : public ISerializable
 {
 	T_RTTI_CLASS;
 
@@ -34,4 +34,4 @@ public:
 	}
 }
 
-#endif	// traktor_spark_IComponent_H
+#endif	// traktor_spark_IComponentData_H

@@ -1,5 +1,5 @@
 #include "Spark/ExternalFactory.h"
-#include "Spark/Sprite.h"
+#include "Spark/SpriteData.h"
 #include "Spark/SpriteFactory.h"
 #include "Spark/SpriteInstance.h"
 #include "Spark/TextFactory.h"
@@ -20,7 +20,7 @@ EditContext::EditContext(Context* context)
 {
 }
 
-bool EditContext::setSprite(Sprite* sprite)
+bool EditContext::setSprite(SpriteData* sprite)
 {
 	m_root = 0;
 	m_adapters.clear();
