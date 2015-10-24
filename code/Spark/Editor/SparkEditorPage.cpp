@@ -30,6 +30,7 @@
 #include "Ui/Custom/GridView/GridItem.h"
 #include "Ui/Custom/GridView/GridRow.h"
 #include "Ui/Custom/GridView/GridView.h"
+#include "Ui/Custom/StatusBar/StatusBar.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
@@ -79,7 +80,7 @@ bool SparkEditorPage::create(ui::Container* parent)
 
 	// Create user interface.
 	Ref< ui::Container > container = new ui::Container();
-	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%,*", 0, 0));
 
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(container, ui::WsNone);
@@ -87,7 +88,10 @@ bool SparkEditorPage::create(ui::Container* parent)
 
 	m_editControl = new SparkEditControl(m_editor, m_site, m_editContext);
 	m_editControl->create(container, ui::WsNone, resourceManager, renderSystem);
-	m_editControl->update();
+	m_editControl->addEventHandler< ui::MouseMoveEvent >(this, &SparkEditorPage::eventEditorMouseMove);
+
+	m_statusBar = new ui::custom::StatusBar();
+	m_statusBar->create(container, ui::WsDoubleBuffer);
 
 	m_panelPlace = new ui::Container();
 	m_panelPlace->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
@@ -225,6 +229,17 @@ void SparkEditorPage::eventToolPlaceClick(ui::custom::ToolBarButtonClickEvent* e
 		// Ensure property object is set to document root.
 		m_site->setPropertyObject(m_document->getObject< SpriteData >(0));
 	}
+}
+
+void SparkEditorPage::eventEditorMouseMove(ui::MouseMoveEvent* event)
+{
+	Vector2 viewPosition = m_editControl->clientToView(event->getPosition());
+
+	StringOutputStream ss;
+	ss.setDecimals(1);
+	ss << viewPosition.x << L", " << viewPosition.y;
+
+	m_statusBar->setText(ss.str());
 }
 
 void SparkEditorPage::eventGridAdapterSelectionChange(ui::SelectionChangeEvent* event)

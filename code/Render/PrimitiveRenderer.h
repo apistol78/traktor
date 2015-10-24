@@ -277,6 +277,8 @@ public:
 
 	void end();
 
+	void flush();
+
 	const Matrix44& getProjection() const { return m_projection.back(); }
 
 	const Matrix44& getView() const { return m_view.back(); }
@@ -338,8 +340,6 @@ private:
 	float m_viewNearZ;
 	float m_viewWidth;
 	float m_viewHeight;
-
-	void flush();
 
 	void updateTransforms();
 };

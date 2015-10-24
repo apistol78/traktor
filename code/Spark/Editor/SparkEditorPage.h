@@ -26,6 +26,7 @@ class IEditorPageSite;
 	{
 
 class Container;
+class MouseMoveEvent;
 class SelectionChangeEvent;
 
 		namespace custom
@@ -33,6 +34,7 @@ class SelectionChangeEvent;
 
 class GridRow;
 class GridView;
+class StatusBar;
 class ToolBar;
 class ToolBarButton;
 class ToolBarButtonClickEvent;
@@ -77,6 +79,7 @@ private:
 	editor::IDocument* m_document;
 	Ref< EditContext > m_editContext;
 	Ref< ui::custom::ToolBar > m_toolBar;
+	Ref< ui::custom::StatusBar > m_statusBar;
 	Ref< SparkEditControl > m_editControl;
 	Ref< ui::Container > m_panelPlace;
 	Ref< ui::custom::ToolBar > m_toolBarPlace;
@@ -91,6 +94,8 @@ private:
 	void eventToolClick(ui::custom::ToolBarButtonClickEvent* event);
 
 	void eventToolPlaceClick(ui::custom::ToolBarButtonClickEvent* event);
+
+	void eventEditorMouseMove(ui::MouseMoveEvent* event);
 
 	void eventGridAdapterSelectionChange(ui::SelectionChangeEvent* event);
 };
