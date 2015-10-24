@@ -109,8 +109,8 @@ Vector2 SparkEditControl::clientToView(const ui::Point& point) const
 	);
 
 	Vector4 clientPosition(
-		2.0f * float(point.x) / sz.cx - 1.0f,
-		1.0f - 2.0f * float(point.y) / sz.cy,
+		2.0f * float(point.x + 0.5f) / sz.cx - 1.0f,
+		1.0f - 2.0f * float(point.y + 0.5f) / sz.cy,
 		0.0f,
 		1.0f
 	);
@@ -139,6 +139,10 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 		return;
 
 	ui::Size sz = getInnerRect().getSize();
+	Aabb2 viewBounds(
+		clientToView(getInnerRect().getTopLeft()),
+		clientToView(getInnerRect().getBottomRight())
+	);
 
 	if (m_renderView->begin(render::EtCyclop))
 	{
@@ -171,82 +175,108 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 			0.0f, 0.0f, 0.0f, 1.0f
 		);
 
-		if (m_primitiveRenderer->begin(m_renderView, projection))
+		m_primitiveRenderer->begin(m_renderView, projection);
+		m_primitiveRenderer->pushDepthState(false, false, false);
+
+		// Draw grid and bounds.
+		const Aabb2& bounds = mandatory_non_null_type_cast< const SpriteData* >(m_editContext->getRoot()->getCharacterData())->getBounds();
+		if (!bounds.empty())
 		{
-			m_primitiveRenderer->pushDepthState(false, false, false);
-
-			const Aabb2& bounds = mandatory_non_null_type_cast< const SpriteData* >(m_editContext->getRoot()->getCharacterData())->getBounds();
-			if (!bounds.empty())
+			for (int32_t x = int32_t(bounds.mn.x); x < int32_t(bounds.mx.x); x += m_editContext->getGridSpacing())
 			{
-				for (int32_t x = int32_t(bounds.mn.x); x < int32_t(bounds.mx.x); x += m_editContext->getGridSpacing())
-				{
-					m_primitiveRenderer->drawLine(
-						Vector4(x, bounds.mn.y, 1.0f, 1.0f),
-						Vector4(x, bounds.mx.y, 1.0f, 1.0f),
-						Color4ub(0, 0, 0, 40)
-					);
-				}
-				for (int32_t y = int32_t(bounds.mn.y); y < int32_t(bounds.mx.y); y += m_editContext->getGridSpacing())
-				{
-					m_primitiveRenderer->drawLine(
-						Vector4(bounds.mn.x, y, 1.0f, 1.0f),
-						Vector4(bounds.mx.x, y, 1.0f, 1.0f),
-						Color4ub(0, 0, 0, 40)
-					);
-				}
-
-				m_primitiveRenderer->drawLine(Vector4(bounds.mn.x, bounds.mn.y, 1.0f, 1.0f), Vector4(bounds.mx.x, bounds.mn.y, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
-				m_primitiveRenderer->drawLine(Vector4(bounds.mx.x, bounds.mn.y, 1.0f, 1.0f), Vector4(bounds.mx.x, bounds.mx.y, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
-				m_primitiveRenderer->drawLine(Vector4(bounds.mx.x, bounds.mx.y, 1.0f, 1.0f), Vector4(bounds.mn.x, bounds.mx.y, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
-				m_primitiveRenderer->drawLine(Vector4(bounds.mn.x, bounds.mx.y, 1.0f, 1.0f), Vector4(bounds.mn.x, bounds.mn.y, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
-			}
-			else
-			{
-				Aabb2 viewBounds(
-					Vector2(m_viewOffset.x / 2.0f - viewWidth / 2.0f, m_viewOffset.y / 2.0f - viewHeight / 2.0f),
-					Vector2(m_viewOffset.x / 2.0f + viewWidth / 2.0f, m_viewOffset.y / 2.0f + viewHeight / 2.0f)
+				m_primitiveRenderer->drawLine(
+					Vector4(x, bounds.mn.y, 1.0f, 1.0f),
+					Vector4(x, bounds.mx.y, 1.0f, 1.0f),
+					Color4ub(0, 0, 0, 40)
 				);
-				for (int32_t x = viewGridOffset(int32_t(viewBounds.mn.x), m_editContext->getGridSpacing()); x < int32_t(viewBounds.mx.x); x += m_editContext->getGridSpacing())
-				{
-					m_primitiveRenderer->drawLine(
-						Vector4(x, viewBounds.mn.y, 1.0f, 1.0f),
-						Vector4(x, viewBounds.mx.y, 1.0f, 1.0f),
-						Color4ub(0, 0, 0, 40)
-					);
-				}
-				for (int32_t y = viewGridOffset(int32_t(viewBounds.mn.y), m_editContext->getGridSpacing()); y < int32_t(viewBounds.mx.y); y += m_editContext->getGridSpacing())
-				{
-					m_primitiveRenderer->drawLine(
-						Vector4(viewBounds.mn.x, y, 1.0f, 1.0f),
-						Vector4(viewBounds.mx.x, y, 1.0f, 1.0f),
-						Color4ub(0, 0, 0, 40)
-					);
-				}
+			}
+			for (int32_t y = int32_t(bounds.mn.y); y < int32_t(bounds.mx.y); y += m_editContext->getGridSpacing())
+			{
+				m_primitiveRenderer->drawLine(
+					Vector4(bounds.mn.x, y, 1.0f, 1.0f),
+					Vector4(bounds.mx.x, y, 1.0f, 1.0f),
+					Color4ub(0, 0, 0, 40)
+				);
 			}
 
-			m_primitiveRenderer->popDepthState();
-			m_primitiveRenderer->end();
+			m_primitiveRenderer->drawLine(Vector4(bounds.mn.x, bounds.mn.y, 1.0f, 1.0f), Vector4(bounds.mx.x, bounds.mn.y, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
+			m_primitiveRenderer->drawLine(Vector4(bounds.mx.x, bounds.mn.y, 1.0f, 1.0f), Vector4(bounds.mx.x, bounds.mx.y, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
+			m_primitiveRenderer->drawLine(Vector4(bounds.mx.x, bounds.mx.y, 1.0f, 1.0f), Vector4(bounds.mn.x, bounds.mx.y, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
+			m_primitiveRenderer->drawLine(Vector4(bounds.mn.x, bounds.mx.y, 1.0f, 1.0f), Vector4(bounds.mn.x, bounds.mn.y, 1.0f, 1.0f), Color4ub(0, 0, 0, 255));
+		}
+		else
+		{
+			Aabb2 viewBounds(
+				Vector2(m_viewOffset.x / 2.0f - viewWidth / 2.0f, m_viewOffset.y / 2.0f - viewHeight / 2.0f),
+				Vector2(m_viewOffset.x / 2.0f + viewWidth / 2.0f, m_viewOffset.y / 2.0f + viewHeight / 2.0f)
+			);
+			for (int32_t x = viewGridOffset(int32_t(viewBounds.mn.x), m_editContext->getGridSpacing()); x < int32_t(viewBounds.mx.x); x += m_editContext->getGridSpacing())
+			{
+				m_primitiveRenderer->drawLine(
+					Vector4(x, viewBounds.mn.y, 1.0f, 1.0f),
+					Vector4(x, viewBounds.mx.y, 1.0f, 1.0f),
+					Color4ub(0, 0, 0, 40)
+				);
+			}
+			for (int32_t y = viewGridOffset(int32_t(viewBounds.mn.y), m_editContext->getGridSpacing()); y < int32_t(viewBounds.mx.y); y += m_editContext->getGridSpacing())
+			{
+				m_primitiveRenderer->drawLine(
+					Vector4(viewBounds.mn.x, y, 1.0f, 1.0f),
+					Vector4(viewBounds.mx.x, y, 1.0f, 1.0f),
+					Color4ub(0, 0, 0, 40)
+				);
+			}
+		}
+
+		// Draw origo lines.
+		{
+			m_primitiveRenderer->drawLine(
+				Vector4(0.0f, viewBounds.mn.y, 1.0f, 1.0f),
+				Vector4(0.0f, viewBounds.mx.y, 1.0f, 1.0f),
+				Color4ub(0, 0, 0, 80)
+			);
+			m_primitiveRenderer->drawLine(
+				Vector4(viewBounds.mn.x, 0.0f, 1.0f, 1.0f),
+				Vector4(viewBounds.mx.x, 0.0f, 1.0f, 1.0f),
+				Color4ub(0, 0, 0, 80)
+			);
 		}
 
 		// Draw sprites.
 		if (m_sparkRenderer && m_editContext->getRoot())
 		{
+			// Flush to make sure grid is drawn beneath sprites.
+			m_primitiveRenderer->flush();
+
 			m_sparkRenderer->build(m_editContext->getRoot()->getCharacter(), 0);
 			m_sparkRenderer->render(m_renderView, projection, 0);
 
 			// Draw bounding boxes.
-			if (m_primitiveRenderer->begin(m_renderView, projection))
+			const RefArray< CharacterAdapter >& adapters = m_editContext->getAdapters();
+			for (RefArray< CharacterAdapter >::const_iterator i = adapters.begin(); i != adapters.end(); ++i)
+				(*i)->paint(m_primitiveRenderer);
+		}
+
+		// Draw cursor lines.
+		{
+			Vector2 viewPosition = clientToView(getMousePosition());
+			if (viewBounds.inside(viewPosition))
 			{
-				m_primitiveRenderer->pushDepthState(false, false, false);
-
-				const RefArray< CharacterAdapter >& adapters = m_editContext->getAdapters();
-				for (RefArray< CharacterAdapter >::const_iterator i = adapters.begin(); i != adapters.end(); ++i)
-					(*i)->paint(m_primitiveRenderer);
-
-				m_primitiveRenderer->popDepthState();
-				m_primitiveRenderer->end();
+				m_primitiveRenderer->drawLine(
+					Vector4(viewPosition.x, viewBounds.mn.y, 1.0f, 1.0f),
+					Vector4(viewPosition.x, viewBounds.mx.y, 1.0f, 1.0f),
+					Color4ub(255, 255, 255, 80)
+				);
+				m_primitiveRenderer->drawLine(
+					Vector4(viewBounds.mn.x, viewPosition.y, 1.0f, 1.0f),
+					Vector4(viewBounds.mx.x, viewPosition.y, 1.0f, 1.0f),
+					Color4ub(255, 255, 255, 80)
+				);
 			}
 		}
+
+		m_primitiveRenderer->popDepthState();
+		m_primitiveRenderer->end();
 
 		m_renderView->end();
 		m_renderView->present();

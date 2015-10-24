@@ -57,6 +57,8 @@ public:
 
 	void destroy();
 
+	Vector2 clientToView(const ui::Point& point) const;
+
 private:
 	editor::IEditor* m_editor;
 	editor::IEditorPageSite* m_site;
@@ -69,8 +71,6 @@ private:
 	float m_viewScale;
 	bool m_panView;
 	ui::Point m_lastMousePosition;
-
-	Vector2 clientToView(const ui::Point& point) const;
 
 	int32_t hitTest(const ui::Point& point) const;
 
