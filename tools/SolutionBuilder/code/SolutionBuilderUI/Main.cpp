@@ -8,9 +8,6 @@
 #elif defined(__APPLE__)
 #	include <Ui/Cocoa/EventLoopCocoa.h>
 #	include <Ui/Cocoa/WidgetFactoryCocoa.h>
-#elif defined(__LINUX__)
-#	include <Ui/Gtk/EventLoopGtk.h>
-#	include <Ui/Gtk/WidgetFactoryGtk.h>
 #else
 #	include <Ui/Wx/EventLoopWx.h>
 #	include <Ui/Wx/WidgetFactoryWx.h>
@@ -47,12 +44,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	ui::Application::getInstance()->initialize(
 		new ui::EventLoopCocoa(),
 		new ui::WidgetFactoryCocoa(),
-		0
-	);
-#elif defined(__LINUX__)
-	ui::Application::getInstance()->initialize(
-		new ui::EventLoopGtk(),
-		new ui::WidgetFactoryGtk(),
 		0
 	);
 #else

@@ -212,7 +212,10 @@
 						<item>T_STATIC</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>`wx-config --libs`</item>
+						<item>`pkg-config gtk+-2.0 --libs`</item>
+					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 				</item>
@@ -229,7 +232,10 @@
 						<item>T_STATIC</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>`wx-config --libs`</item>
+						<item>`pkg-config gtk+-2.0 --libs`</item>
+					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 				</item>
@@ -278,10 +284,11 @@
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorLinux.xms</solutionFileName>
 					<projectName>Traktor.Xml</projectName>
 				</item>
-				<item type="ExternalDependency" version="2">
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorLinux.xms</solutionFileName>
-					<projectName>Traktor.Ui.Gtk</projectName>
+					<projectName>Traktor.Ui.Wx</projectName>
 				</item>
 			</dependencies>
 		</item>

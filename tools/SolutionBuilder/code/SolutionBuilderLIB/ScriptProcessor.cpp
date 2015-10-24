@@ -145,6 +145,8 @@ bool ScriptProcessor::create()
 {
 	m_scriptManager = new script::ScriptManagerLua();
 
+	BoxesClassFactory().createClasses(m_scriptManager);
+
 	Ref< AutoRuntimeClass< Output > > classOutput = new AutoRuntimeClass< Output >();
 	classOutput->addMethod("print", &Output::print);
 	classOutput->addMethod("printLn", &Output::printLn);

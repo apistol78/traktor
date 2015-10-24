@@ -5,6 +5,8 @@
 		<Option title="<?-- output:print(project:getName()) --?>" />
 		<Option compiler="gcc" />
 		<Build><?--
+			import(traktor)
+
 			local configurations = project:getConfigurations()
 			for i = 0, configurations:size() - 1 do
 
@@ -148,7 +150,7 @@ function collectLinkProducts(solution, project, configuration, outLibraries, out
 	for i = 0, dependencies:size() - 1 do
 		local dep = dependencies:get(i)
 
-		if dep.__index == ProjectDependency then
+		if isa(dep, ProjectDependency) then
 
 			local localSolution = solution
 			local localProject = dep:getProject()
@@ -166,7 +168,7 @@ function collectLinkProducts(solution, project, configuration, outLibraries, out
 				)
 			end
 
-		elseif dep.__index == ExternalDependency then
+		elseif isa(dep, ExternalDependency) then
 
 			local externalSolution = dep:getSolution()
 			local externalProject = dep:getProject()
@@ -218,7 +220,7 @@ end
 						local lib0 = string.sub(lib, 1, 1)
 						if not (lib0 == "'" or lib0 == "`") then
 --?>
-					<Add library="<?-- output:print(lib) --?>" /><?--
+					<Add option="-l<?-- output:print(lib) --?>" /><?--
 						else
 --?>
 					<Add option="<?-- output:print(lib) --?>" /><?--
@@ -231,7 +233,7 @@ end
 						local lib0 = string.sub(lib, 1, 1)
 						if not (lib0 == "'" or lib0 == "`") then
 --?>
-					<Add library="<?-- output:print(lib) --?>" /><?--
+					<Add option="-l<?-- output:print(lib) --?>" /><?--
 						else
 --?>
 					<Add option="<?-- output:print(lib) --?>" /><?--
@@ -278,12 +280,12 @@ end
 		end
 
 		function addItem(project, item)
-			if item.__index == Filter then
+			if isa(item, Filter) then
 				local childItems = item:getItems()
 				for i = 0, childItems:size() - 1 do
 					addItem(project, childItems:get(i))
 				end
-			elseif item.__index == File then
+			elseif isa(item, File) then
 				local files = item:getSystemFiles(project:getSourcePath())
 				for i = 0, files:size() - 1 do
 
