@@ -68,8 +68,6 @@ public:
 	virtual void render(render::RenderContext* renderContext) const T_FINAL;
 
 private:
-	friend class Text;
-
 	resource::Proxy< Font > m_font;
 	std::wstring m_text;
 	float m_height;

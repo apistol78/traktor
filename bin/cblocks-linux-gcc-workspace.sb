@@ -29,7 +29,7 @@
 		<Project filename="<?-- output:print(project:getName() .. "/" .. project:getName() .. ".cbp") --?>"><?--
 				for j = 0, dependencies:size() - 1 do
 					local dep = dependencies:get(j)
-					if dep.__index == ProjectDependency then
+					if isa(dep, ProjectDependency) then
 						local dp = dep:getProject()
 						if dp:getEnable() then
 --?>
