@@ -1,3 +1,4 @@
+#include <cstring>
 #include <list>
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
