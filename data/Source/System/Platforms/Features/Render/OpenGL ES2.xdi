@@ -240,12 +240,6 @@
 				</second>
 			</item>
 			<item>
-				<first>TexturePipeline.ClampSize</first>
-				<second type="traktor.PropertyInteger">
-					<value>512</value>
-				</second>
-			</item>
-			<item>
 				<first>TexturePipeline.CompressionMethod</first>
 				<second type="traktor.PropertyString">
 					<value>None</value>
