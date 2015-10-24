@@ -25,7 +25,7 @@ class ImageProcessSettings;
 	namespace spark
 	{
 
-class Sprite;
+class SpriteData;
 
 	}
 
@@ -49,7 +49,7 @@ public:
 private:
 	friend class StagePipeline;
 
-	resource::Id< spark::Sprite > m_sprite;
+	resource::Id< spark::SpriteData > m_sprite;
 	resource::Id< render::ImageProcessSettings > m_imageProcess;
 	Color4ub m_background;
 };

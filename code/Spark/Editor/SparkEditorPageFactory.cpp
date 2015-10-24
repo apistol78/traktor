@@ -1,4 +1,4 @@
-#include "Spark/Sprite.h"
+#include "Spark/SpriteData.h"
 #include "Spark/Editor/SparkEditorPage.h"
 #include "Spark/Editor/SparkEditorPageFactory.h"
 #include "Ui/Command.h"
@@ -13,7 +13,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.SparkEditorPageFactory", 0, Spark
 const TypeInfoSet SparkEditorPageFactory::getEditableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Sprite >());
+	typeSet.insert(&type_of< SpriteData >());
 	return typeSet;
 }
 

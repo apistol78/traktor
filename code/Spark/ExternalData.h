@@ -1,8 +1,8 @@
-#ifndef traktor_spark_External_H
-#define traktor_spark_External_H
+#ifndef traktor_spark_ExternalData_H
+#define traktor_spark_ExternalData_H
 
 #include "Resource/Id.h"
-#include "Spark/Character.h"
+#include "Spark/CharacterData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -17,17 +17,17 @@ namespace traktor
 	namespace spark
 	{
 
-/*! \brief External reference to character.
+/*! \brief ExternalData reference to character.
  * \ingroup Spark
  */
-class T_DLLCLASS External : public Character
+class T_DLLCLASS ExternalData : public CharacterData
 {
 	T_RTTI_CLASS;
 
 public:
-	External();
+	ExternalData();
 
-	External(const resource::Id< Character >& reference);
+	ExternalData(const resource::Id< CharacterData >& reference);
 
 	virtual void serialize(ISerializer& s);
 
@@ -35,10 +35,10 @@ private:
 	friend class CharacterPipeline;
 	friend class ExternalFactory;
 
-	resource::Id< Character > m_reference;
+	resource::Id< CharacterData > m_reference;
 };
 
 	}
 }
 
-#endif	// traktor_spark_External_H
+#endif	// traktor_spark_ExternalData_H

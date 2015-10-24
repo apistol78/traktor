@@ -14228,6 +14228,24 @@
 											<fileName>*.*</fileName>
 											<items/>
 										</item>
+										<item type="Filter">
+											<name>Script</name>
+											<items>
+												<item type="File">
+													<fileName>Script/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+										<item type="Filter">
+											<name>Sound</name>
+											<items>
+												<item type="File">
+													<fileName>Sound/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
 									</items>
 									<dependencies>
 										<item type="ProjectDependency" version="3">

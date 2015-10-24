@@ -3,7 +3,7 @@
 #include "Amalgam/Game/Engine/SparkLayerData.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Render/ImageProcess/ImageProcessSettings.h"
-#include "Spark/Sprite.h"
+#include "Spark/SpriteData.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 
@@ -22,7 +22,7 @@ SparkLayerData::SparkLayerData()
 Ref< Layer > SparkLayerData::createInstance(Stage* stage, IEnvironment* environment) const
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
-	resource::Proxy< spark::Sprite > sprite;
+	resource::Proxy< spark::SpriteData > sprite;
 	resource::Proxy< render::ImageProcessSettings > imageProcess;
 
 	// Bind proxies to resource manager.
@@ -51,7 +51,7 @@ Ref< Layer > SparkLayerData::createInstance(Stage* stage, IEnvironment* environm
 void SparkLayerData::serialize(ISerializer& s)
 {
 	LayerData::serialize(s);
-	s >> resource::Member< spark::Sprite >(L"sprite", m_sprite);
+	s >> resource::Member< spark::SpriteData >(L"sprite", m_sprite);
 	s >> resource::Member< render::ImageProcessSettings >(L"imageProcess", m_imageProcess);
 	s >> Member< Color4ub >(L"background", m_background);
 }

@@ -1,7 +1,7 @@
 #include "Resource/IResourceManager.h"
 #include "Spark/CharacterInstance.h"
 #include "Spark/Context.h"
-#include "Spark/External.h"
+#include "Spark/ExternalData.h"
 #include "Spark/ExternalFactory.h"
 #include "Spark/ICharacterBuilder.h"
 
@@ -15,15 +15,15 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.ExternalFactory", ExternalFactory, IChara
 TypeInfoSet ExternalFactory::getCharacterTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< External >());
+	typeSet.insert(&type_of< ExternalData >());
 	return typeSet;
 }
 
-Ref< CharacterInstance > ExternalFactory::create(const Context* context, const ICharacterBuilder* builder, const Character* character, const CharacterInstance* parent, const std::wstring& name) const
+Ref< CharacterInstance > ExternalFactory::create(const Context* context, const ICharacterBuilder* builder, const CharacterData* character, const CharacterInstance* parent, const std::wstring& name) const
 {
-	const External* xtrnal = mandatory_non_null_type_cast< const External* >(character);
+	const ExternalData* xtrnal = mandatory_non_null_type_cast< const ExternalData* >(character);
 
-	resource::Proxy< Character > xtrnalCharacter;
+	resource::Proxy< CharacterData > xtrnalCharacter;
 	if (!context->getResourceManager()->bind(xtrnal->m_reference, xtrnalCharacter))
 		return 0;
 

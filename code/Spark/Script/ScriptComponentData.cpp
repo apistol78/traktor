@@ -3,17 +3,17 @@
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 #include "Spark/Context.h"
-#include "Spark/ScriptComponent.h"
-#include "Spark/ScriptComponentInstance.h"
+#include "Spark/Script/ScriptComponentData.h"
+#include "Spark/Script/ScriptComponentInstance.h"
 
 namespace traktor
 {
 	namespace spark
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spark.ScriptComponent", 0, ScriptComponent, IComponent)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spark.ScriptComponentData", 0, ScriptComponentData, IComponentData)
 
-Ref< IComponentInstance > ScriptComponent::createInstance(const Context* context, SpriteInstance* owner) const
+Ref< IComponentInstance > ScriptComponentData::createInstance(const Context* context, SpriteInstance* owner) const
 {
 	resource::Proxy< IRuntimeClass > clazz;
 	if (context->getResourceManager()->bind(m_class, clazz))
@@ -22,7 +22,7 @@ Ref< IComponentInstance > ScriptComponent::createInstance(const Context* context
 		return 0;
 }
 
-void ScriptComponent::serialize(ISerializer& s)
+void ScriptComponentData::serialize(ISerializer& s)
 {
 	s >> resource::Member< IRuntimeClass >(L"class", m_class);
 }

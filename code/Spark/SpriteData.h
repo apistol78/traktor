@@ -1,11 +1,11 @@
-#ifndef traktor_spark_Sprite_H
-#define traktor_spark_Sprite_H
+#ifndef traktor_spark_SpriteData_H
+#define traktor_spark_SpriteData_H
 
 #include "Core/RefArray.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Aabb2.h"
 #include "Resource/Id.h"
-#include "Spark/Character.h"
+#include "Spark/CharacterData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,13 +20,13 @@ namespace traktor
 	namespace spark
 	{
 
-class IComponent;
+class IComponentData;
 class Shape;
 
-/*! \brief Sprite character.
+/*! \brief SpriteData character.
  * \ingroup Spark
  */
-class T_DLLCLASS Sprite : public Character
+class T_DLLCLASS SpriteData : public CharacterData
 {
 	T_RTTI_CLASS;
 
@@ -34,16 +34,16 @@ public:
 	struct NamedCharacter
 	{
 		std::wstring name;
-		Ref< Character > character;
+		Ref< CharacterData > character;
 	};
 
 	const Aabb2& getBounds() const { return m_bounds; }
 
-	const Character* getCharacter(const std::wstring& id) const;
+	const CharacterData* getCharacter(const std::wstring& id) const;
 
-	void place(const std::wstring& name, Character* character);
+	void place(const std::wstring& name, CharacterData* character);
 
-	void remove(Character* character);
+	void remove(CharacterData* character);
 
 	const AlignedVector< NamedCharacter >& getDictionary() { return m_dictionary; }
 
@@ -55,7 +55,7 @@ private:
 	friend class CharacterPipeline;
 	friend class SpriteFactory;
 
-	RefArray< IComponent > m_components;
+	RefArray< IComponentData > m_components;
 	Aabb2 m_bounds;
 	resource::Id< Shape > m_shape;
 	AlignedVector< NamedCharacter > m_dictionary;
@@ -65,4 +65,4 @@ private:
 	}
 }
 
-#endif	// traktor_spark_Sprite_H
+#endif	// traktor_spark_SpriteData_H

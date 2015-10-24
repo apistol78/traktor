@@ -3,21 +3,21 @@
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Sound/Player/ISoundHandle.h"
 #include "Spark/Canvas.h"
-#include "Spark/Character.h"
+#include "Spark/CharacterData.h"
 #include "Spark/CharacterInstance.h"
 #include "Spark/Context.h"
-#include "Spark/IComponent.h"
+#include "Spark/IComponentData.h"
 #include "Spark/IComponentInstance.h"
-#include "Spark/ScriptComponent.h"
-#include "Spark/ScriptComponentInstance.h"
 #include "Spark/Shape.h"
-#include "Spark/SoundComponent.h"
-#include "Spark/SoundComponentInstance.h"
 #include "Spark/SparkClassFactory.h"
-#include "Spark/Sprite.h"
+#include "Spark/SpriteData.h"
 #include "Spark/SpriteInstance.h"
-#include "Spark/Text.h"
+#include "Spark/TextData.h"
 #include "Spark/TextInstance.h"
+#include "Spark/Script/ScriptComponentData.h"
+#include "Spark/Script/ScriptComponentInstance.h"
+#include "Spark/Sound/SoundComponentData.h"
+#include "Spark/Sound/SoundComponentInstance.h"
 
 namespace traktor
 {
@@ -70,27 +70,27 @@ void SparkClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	Ref< AutoRuntimeClass< Context > > classContext = new AutoRuntimeClass< Context >();
 	registrar->registerClass(classContext);
 
-	Ref< AutoRuntimeClass< IComponent > > classComponent = new AutoRuntimeClass< IComponent >();
-	registrar->registerClass(classComponent);
+	Ref< AutoRuntimeClass< IComponentData > > classIComponentData = new AutoRuntimeClass< IComponentData >();
+	registrar->registerClass(classIComponentData);
 
-	Ref< AutoRuntimeClass< IComponentInstance > > classComponentInstance = new AutoRuntimeClass< IComponentInstance >();
-	registrar->registerClass(classComponentInstance);
+	Ref< AutoRuntimeClass< IComponentInstance > > classIComponentInstance = new AutoRuntimeClass< IComponentInstance >();
+	registrar->registerClass(classIComponentInstance);
 
-	Ref< AutoRuntimeClass< ScriptComponent > > classScriptComponent = new AutoRuntimeClass< ScriptComponent >();
-	registrar->registerClass(classScriptComponent);
+	Ref< AutoRuntimeClass< ScriptComponentData > > classScriptComponentData = new AutoRuntimeClass< ScriptComponentData >();
+	registrar->registerClass(classScriptComponentData);
 
 	Ref< AutoRuntimeClass< ScriptComponentInstance > > classScriptComponentInstance = new AutoRuntimeClass< ScriptComponentInstance >();
 	registrar->registerClass(classScriptComponentInstance);
 
-	Ref< AutoRuntimeClass< SoundComponent > > classSoundComponent = new AutoRuntimeClass< SoundComponent >();
+	Ref< AutoRuntimeClass< SoundComponentData > > classSoundComponent = new AutoRuntimeClass< SoundComponentData >();
 	registrar->registerClass(classSoundComponent);
 
 	Ref< AutoRuntimeClass< SoundComponentInstance > > classSoundComponentInstance = new AutoRuntimeClass< SoundComponentInstance >();
 	classSoundComponentInstance->addMethod("play", &SoundComponentInstance::play);
 	registrar->registerClass(classSoundComponentInstance);
 
-	Ref< AutoRuntimeClass< Character > > classCharacter = new AutoRuntimeClass< Character >();
-	registrar->registerClass(classCharacter);
+	Ref< AutoRuntimeClass< CharacterData > > classCharacterData = new AutoRuntimeClass< CharacterData >();
+	registrar->registerClass(classCharacterData);
 
 	Ref< AutoRuntimeClass< CharacterInstance > > classCharacterInstance = new AutoRuntimeClass< CharacterInstance >();
 	classCharacterInstance->addMethod("setTransform", &CharacterInstance::setTransform);
@@ -111,8 +111,8 @@ void SparkClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	Ref< AutoRuntimeClass< Shape > > classShape = new AutoRuntimeClass< Shape >();
 	registrar->registerClass(classShape);
 
-	Ref< AutoRuntimeClass< Sprite > > classSprite = new AutoRuntimeClass< Sprite >();
-	registrar->registerClass(classSprite);
+	Ref< AutoRuntimeClass< SpriteData > > classSpriteData = new AutoRuntimeClass< SpriteData >();
+	registrar->registerClass(classSpriteData);
 
 	Ref< AutoRuntimeClass< SpriteInstance > > classSpriteInstance = new AutoRuntimeClass< SpriteInstance >();
 	classSpriteInstance->addMethod("getContext", &SpriteInstance::getContext);
@@ -127,8 +127,8 @@ void SparkClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classSpriteInstance->addMethod("getComponent", &SpriteInstance::getComponent);
 	registrar->registerClass(classSpriteInstance);
 
-	Ref< AutoRuntimeClass< Text > > classText = new AutoRuntimeClass< Text >();
-	registrar->registerClass(classText);
+	Ref< AutoRuntimeClass< TextData > > classTextData = new AutoRuntimeClass< TextData >();
+	registrar->registerClass(classTextData);
 
 	Ref< AutoRuntimeClass< TextInstance > > classTextInstance = new AutoRuntimeClass< TextInstance >();
 	classTextInstance->addMethod("setText", &TextInstance::setText);

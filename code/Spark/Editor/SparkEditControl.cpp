@@ -5,7 +5,7 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
-#include "Spark/Sprite.h"
+#include "Spark/SpriteData.h"
 #include "Spark/CharacterInstance.h"
 #include "Spark/SparkRenderer.h"
 #include "Spark/Editor/CharacterAdapter.h"
@@ -175,7 +175,7 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 		{
 			m_primitiveRenderer->pushDepthState(false, false, false);
 
-			const Aabb2& bounds = mandatory_non_null_type_cast< const Sprite* >(m_editContext->getRoot()->getCharacter())->getBounds();
+			const Aabb2& bounds = mandatory_non_null_type_cast< const SpriteData* >(m_editContext->getRoot()->getCharacterData())->getBounds();
 			if (!bounds.empty())
 			{
 				for (int32_t x = int32_t(bounds.mn.x); x < int32_t(bounds.mx.x); x += m_editContext->getGridSpacing())

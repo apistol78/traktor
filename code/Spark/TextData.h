@@ -1,9 +1,9 @@
-#ifndef traktor_spark_Text_H
-#define traktor_spark_Text_H
+#ifndef traktor_spark_TextData_H
+#define traktor_spark_TextData_H
 
 #include "Core/Math/Vector2.h"
 #include "Resource/Id.h"
-#include "Spark/Character.h"
+#include "Spark/CharacterData.h"
 #include "Spark/Types.h"
 
 // import/export mechanism.
@@ -21,15 +21,15 @@ namespace traktor
 
 class Font;
 
-/*! \brief Text character.
+/*! \brief TextData character.
  * \ingroup Spark
  */
-class T_DLLCLASS Text : public Character
+class T_DLLCLASS TextData : public CharacterData
 {
 	T_RTTI_CLASS;
 
 public:
-	Text();
+	TextData();
 
 	virtual void serialize(ISerializer& s);
 
@@ -49,4 +49,4 @@ private:
 	}
 }
 
-#endif	// traktor_spark_Text_H
+#endif	// traktor_spark_TextData_H
