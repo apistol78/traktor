@@ -3,9 +3,9 @@
 #include "Spark/ICharacterBuilder.h"
 #include "Spark/IComponentData.h"
 #include "Spark/Shape.h"
+#include "Spark/Sprite.h"
 #include "Spark/SpriteData.h"
 #include "Spark/SpriteFactory.h"
-#include "Spark/SpriteInstance.h"
 
 namespace traktor
 {
@@ -26,55 +26,55 @@ TypeInfoSet SpriteFactory::getCharacterTypes() const
 	return typeSet;
 }
 
-Ref< CharacterInstance > SpriteFactory::create(const Context* context, const ICharacterBuilder* builder, const CharacterData* character, const CharacterInstance* parent, const std::wstring& name) const
+Ref< Character > SpriteFactory::create(const Context* context, const ICharacterBuilder* builder, const CharacterData* characterData, const Character* parent, const std::wstring& name) const
 {
-	const SpriteData* sprite = mandatory_non_null_type_cast< const SpriteData* >(character);
+	const SpriteData* spriteData = mandatory_non_null_type_cast< const SpriteData* >(characterData);
 
 	// Create sprite instance.
-	Ref< SpriteInstance > instance = new SpriteInstance(context, builder, sprite, parent);
-	instance->setTransform(sprite->getTransform());
+	Ref< Sprite > sprite = new Sprite(context, builder, spriteData, parent);
+	sprite->setTransform(spriteData->getTransform());
 
 	// Create shape.
-	if (sprite->m_shape)
+	if (spriteData->m_shape)
 	{
-		if (!context->getResourceManager()->bind(sprite->m_shape, instance->m_shape))
+		if (!context->getResourceManager()->bind(spriteData->m_shape, sprite->m_shape))
 			return 0;
 	}
 
 	// Create child characters.
 	int32_t depth = -100000;
-	for (AlignedVector< SpriteData::NamedCharacter >::const_iterator i = sprite->m_frame.begin(); i != sprite->m_frame.end(); ++i)
+	for (AlignedVector< SpriteData::NamedCharacter >::const_iterator i = spriteData->m_frame.begin(); i != spriteData->m_frame.end(); ++i)
 	{
 		if (!i->character)
 			continue;
 
-		Ref< CharacterInstance > childInstance = builder->create(context, i->character, instance, i->name);
-		if (!childInstance)
+		Ref< Character > child = builder->create(context, i->character, sprite, i->name);
+		if (!child)
 			return 0;
 
-		childInstance->setName(i->name);
+		child->setName(i->name);
 
-		instance->place(depth, childInstance);
+		sprite->place(depth, child);
 		++depth;
 	}
 
 	// Create components.
 	if (m_createComponents)
 	{
-		for (size_t i = 0; i < sprite->m_components.size(); ++i)
+		for (size_t i = 0; i < spriteData->m_components.size(); ++i)
 		{
-			if (!sprite->m_components[i])
+			if (!spriteData->m_components[i])
 				continue;
 
-			Ref< IComponentInstance > componentInstance = sprite->m_components[i]->createInstance(context, instance);
-			if (!componentInstance)
+			Ref< IComponent > component = spriteData->m_components[i]->createInstance(context, sprite);
+			if (!component)
 				return 0;
 
-			instance->setComponent(type_of(sprite->m_components[i]), componentInstance);
+			sprite->setComponent(component);
 		}
 	}
 
-	return instance;
+	return sprite;
 }
 
 	}

@@ -1,10 +1,10 @@
-#ifndef traktor_spark_SpriteInstance_H
-#define traktor_spark_SpriteInstance_H
+#ifndef traktor_spark_Sprite_H
+#define traktor_spark_Sprite_H
 
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Resource/Proxy.h"
-#include "Spark/CharacterInstance.h"
+#include "Spark/Character.h"
 #include "Spark/ColorTransform.h"
 #include "Spark/DisplayList.h"
 
@@ -23,19 +23,19 @@ namespace traktor
 
 class Context;
 class ICharacterBuilder;
-class IComponentInstance;
+class IComponent;
 class Shape;
 class SpriteData;
 
 /*! \brief Sprite character instance.
  * \ingroup Spark
  */
-class T_DLLCLASS SpriteInstance : public CharacterInstance
+class T_DLLCLASS Sprite : public Character
 {
 	T_RTTI_CLASS;
 
 public:
-	SpriteInstance(const Context* context, const ICharacterBuilder* builder, const SpriteData* sprite, const CharacterInstance* parent);
+	Sprite(const Context* context, const ICharacterBuilder* builder, const SpriteData* spriteData, const Character* parent);
 
 	const Context* getContext() const;
 
@@ -43,9 +43,9 @@ public:
 
 	const resource::Proxy< Shape >& getShape() const;
 
-	Ref< CharacterInstance > create(const std::wstring& id) const;
+	Ref< Character > create(const std::wstring& id) const;
 
-	void place(int32_t depth, CharacterInstance* instance);
+	void place(int32_t depth, Character* instance);
 
 	void remove(int32_t depth);
 
@@ -53,15 +53,15 @@ public:
 
 	float getAlpha() const;
 
-	void getCharacters(RefArray< CharacterInstance >& outCharacters) const;
+	void getCharacters(RefArray< Character >& outCharacters) const;
 
 	/*! \brief Set component in character instance.
 	 */
-	void setComponent(const TypeInfo& componentType, IComponentInstance* component);
+	void setComponent(IComponent* component);
 
 	/*! \brief Get component of type.
 	 */
-	IComponentInstance* getComponent(const TypeInfo& componentType) const;
+	IComponent* getComponent(const TypeInfo& componentType) const;
 
 	/*! \name Events */
 	//@{
@@ -95,11 +95,11 @@ private:
 
 	Ref< const Context > m_context;
 	Ref< const ICharacterBuilder > m_builder;
-	Ref< const SpriteData > m_sprite;
+	Ref< const SpriteData > m_spriteData;
 	resource::Proxy< Shape > m_shape;
 	DisplayList m_displayList;
 	ColorTransform m_colorTransform;
-	SmallMap< const TypeInfo*, Ref< IComponentInstance > > m_components;
+	SmallMap< const TypeInfo*, Ref< IComponent > > m_components;
 	bool m_mousePressed;
 	bool m_mouseInside;
 };
@@ -107,4 +107,4 @@ private:
 	}
 }
 
-#endif	// traktor_spark_SpriteInstance_H
+#endif	// traktor_spark_Sprite_H

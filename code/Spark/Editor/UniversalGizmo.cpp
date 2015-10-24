@@ -1,6 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Render/PrimitiveRenderer.h"
-#include "Spark/CharacterInstance.h"
+#include "Spark/Character.h"
 #include "Spark/Editor/CharacterAdapter.h"
 #include "Spark/Editor/EditContext.h"
 #include "Spark/Editor/UniversalGizmo.h"
@@ -103,7 +103,7 @@ UniversalGizmo::UniversalGizmo(EditContext* editContext)
 
 void UniversalGizmo::attach(CharacterAdapter* adapter)
 {
-	CharacterInstance* character = adapter->getCharacterInstance();
+	Character* character = adapter->getCharacter();
 	T_FATAL_ASSERT (character);
 
 	Aabb2 bounds = character->getBounds();
@@ -134,7 +134,7 @@ void UniversalGizmo::mouseDown(ui::Widget* widget, CharacterAdapter* adapter, co
 {
 	int32_t hit;
 
-	CharacterInstance* character = adapter->getCharacterInstance();
+	Character* character = adapter->getCharacter();
 	T_FATAL_ASSERT (character);
 
 	Vector2 localPosition = character->getFullTransform().inverse() * position;
@@ -168,7 +168,7 @@ void UniversalGizmo::mouseUp(ui::Widget* widget, CharacterAdapter* adapter, cons
 
 void UniversalGizmo::mouseMove(ui::Widget* widget, CharacterAdapter* adapter, const Vector2& position)
 {
-	CharacterInstance* character = adapter->getCharacterInstance();
+	Character* character = adapter->getCharacter();
 	T_FATAL_ASSERT (character);
 
 	if (m_mode == EmTranslate)
@@ -237,7 +237,7 @@ void UniversalGizmo::mouseMove(ui::Widget* widget, CharacterAdapter* adapter, co
 
 void UniversalGizmo::paint(CharacterAdapter* adapter, render::PrimitiveRenderer* primitiveRenderer)
 {
-	CharacterInstance* character = adapter->getCharacterInstance();
+	Character* character = adapter->getCharacter();
 	T_FATAL_ASSERT (character);
 
 	Matrix33 T = character->getFullTransform();

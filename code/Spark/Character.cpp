@@ -1,5 +1,5 @@
-#include "Spark/CharacterInstance.h"
-#include "Spark/IComponentInstance.h"
+#include "Spark/Character.h"
+#include "Spark/IComponent.h"
 
 namespace traktor
 {
@@ -36,49 +36,49 @@ Matrix33 composeTransform(const Vector2& translate_, const Vector2& scale_, floa
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.CharacterInstance", CharacterInstance, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.Character", Character, Object)
 
-CharacterInstance::CharacterInstance(const CharacterInstance* parent)
+Character::Character(const Character* parent)
 :	m_parent(parent)
 ,	m_transform(Matrix33::identity())
 ,	m_visible(true)
 {
 }
 
-const CharacterInstance* CharacterInstance::getParent() const
+const Character* Character::getParent() const
 {
 	return m_parent;
 }
 
-void CharacterInstance::setName(const std::wstring& name)
+void Character::setName(const std::wstring& name)
 {
 	m_name = name;
 }
 
-const std::wstring& CharacterInstance::getName() const
+const std::wstring& Character::getName() const
 {
 	return m_name;
 }
 
-void CharacterInstance::setTransform(const Matrix33& transform)
+void Character::setTransform(const Matrix33& transform)
 {
 	m_transform = transform;
 }
 
-const Matrix33& CharacterInstance::getTransform() const
+const Matrix33& Character::getTransform() const
 {
 	return m_transform;
 }
 
-Matrix33 CharacterInstance::getFullTransform() const
+Matrix33 Character::getFullTransform() const
 {
 	Matrix33 T = m_transform;
-	for (const CharacterInstance* parent = m_parent; parent; parent = parent->m_parent)
+	for (const Character* parent = m_parent; parent; parent = parent->m_parent)
 		T = parent->getTransform() * T;
 	return T;
 }
 
-void CharacterInstance::setPosition(const Vector2& position)
+void Character::setPosition(const Vector2& position)
 {
 	Vector2 scale;
 	float rotation;
@@ -86,14 +86,14 @@ void CharacterInstance::setPosition(const Vector2& position)
 	m_transform = composeTransform(position, scale, rotation);
 }
 
-Vector2 CharacterInstance::getPosition() const
+Vector2 Character::getPosition() const
 {
 	Vector2 position;
 	decomposeTransform(m_transform, &position, 0, 0);
 	return position;
 }
 
-void CharacterInstance::setScale(const Vector2& scale)
+void Character::setScale(const Vector2& scale)
 {
 	Vector2 position;
 	float rotation;
@@ -101,14 +101,14 @@ void CharacterInstance::setScale(const Vector2& scale)
 	m_transform = composeTransform(position, scale, rotation);
 }
 
-Vector2 CharacterInstance::getScale() const
+Vector2 Character::getScale() const
 {
 	Vector2 scale;
 	decomposeTransform(m_transform, 0, &scale, 0);
 	return scale;
 }
 
-void CharacterInstance::setRotation(float rotation)
+void Character::setRotation(float rotation)
 {
 	Vector2 position;
 	Vector2 scale;
@@ -116,52 +116,52 @@ void CharacterInstance::setRotation(float rotation)
 	m_transform = composeTransform(position, scale, rotation);
 }
 
-float CharacterInstance::getRotation() const
+float Character::getRotation() const
 {
 	float rotation;
 	decomposeTransform(m_transform, 0, 0, &rotation);
 	return rotation;
 }
 
-void CharacterInstance::setVisible(bool visible)
+void Character::setVisible(bool visible)
 {
 	m_visible = visible;
 }
 
-bool CharacterInstance::getVisible() const
+bool Character::getVisible() const
 {
 	return m_visible;
 }
 
-void CharacterInstance::eventKey(wchar_t unicode)
+void Character::eventKey(wchar_t unicode)
 {
 }
 
-void CharacterInstance::eventKeyDown(int32_t keyCode)
+void Character::eventKeyDown(int32_t keyCode)
 {
 }
 
-void CharacterInstance::eventKeyUp(int32_t keyCode)
+void Character::eventKeyUp(int32_t keyCode)
 {
 }
 
-void CharacterInstance::eventMouseDown(const Vector2& position, int32_t button)
+void Character::eventMouseDown(const Vector2& position, int32_t button)
 {
 }
 
-void CharacterInstance::eventMouseUp(const Vector2& position, int32_t button)
+void Character::eventMouseUp(const Vector2& position, int32_t button)
 {
 }
 
-void CharacterInstance::eventMouseMove(const Vector2& position, int32_t button)
+void Character::eventMouseMove(const Vector2& position, int32_t button)
 {
 }
 
-void CharacterInstance::eventMouseWheel(const Vector2& position, int32_t delta)
+void Character::eventMouseWheel(const Vector2& position, int32_t delta)
 {
 }
 
-void CharacterInstance::eventViewResize(int32_t width, int32_t height)
+void Character::eventViewResize(int32_t width, int32_t height)
 {
 }
 

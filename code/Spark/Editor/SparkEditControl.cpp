@@ -6,7 +6,7 @@
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
 #include "Spark/SpriteData.h"
-#include "Spark/CharacterInstance.h"
+#include "Spark/Character.h"
 #include "Spark/SparkRenderer.h"
 #include "Spark/Editor/CharacterAdapter.h"
 #include "Spark/Editor/EditContext.h"
@@ -231,7 +231,7 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 		// Draw sprites.
 		if (m_sparkRenderer && m_editContext->getRoot())
 		{
-			m_sparkRenderer->build(m_editContext->getRoot()->getCharacterInstance(), 0);
+			m_sparkRenderer->build(m_editContext->getRoot()->getCharacter(), 0);
 			m_sparkRenderer->render(m_renderView, projection, 0);
 
 			// Draw bounding boxes.

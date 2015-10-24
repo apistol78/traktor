@@ -1,17 +1,17 @@
 #include "Core/Class/Boxes.h"
 #include "Core/Class/IRuntimeClass.h"
 #include "Core/Misc/TString.h"
-#include "Spark/ScriptComponentInstance.h"
-#include "Spark/SpriteInstance.h"
+#include "Spark/Sprite.h"
+#include "Spark/Script/ScriptComponent.h"
 
 namespace traktor
 {
 	namespace spark
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.ScriptComponentInstance", ScriptComponentInstance, IComponentInstance)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.ScriptComponent", ScriptComponent, IComponent)
 
-ScriptComponentInstance::ScriptComponentInstance(SpriteInstance* owner, const resource::Proxy< IRuntimeClass >& clazz)
+ScriptComponent::ScriptComponent(Sprite* owner, const resource::Proxy< IRuntimeClass >& clazz)
 :	m_owner(owner)
 ,	m_class(clazz)
 ,	m_methodUpdate(~0U)
@@ -31,9 +31,9 @@ ScriptComponentInstance::ScriptComponentInstance(SpriteInstance* owner, const re
 	IRuntimeClass::prototype_t proto;
 
 	// Place all existing child characters in prototype to be accessible from constructor.
-	RefArray< CharacterInstance > characters;
+	RefArray< Character > characters;
 	m_owner->getCharacters(characters);
-	for (RefArray< CharacterInstance >::const_iterator i = characters.begin(); i != characters.end(); ++i)
+	for (RefArray< Character >::const_iterator i = characters.begin(); i != characters.end(); ++i)
 	{
 		if (!(*i)->getName().empty())
 			proto[wstombs((*i)->getName())] = Any::fromObject(*i);
@@ -59,7 +59,7 @@ ScriptComponentInstance::ScriptComponentInstance(SpriteInstance* owner, const re
 	m_class.consume();
 }
 
-void ScriptComponentInstance::update()
+void ScriptComponent::update()
 {
 	if (m_class.changed())
 	{
@@ -82,7 +82,7 @@ void ScriptComponentInstance::update()
 		m_class->invoke(m_object, m_methodUpdate, 0, 0);
 }
 
-void ScriptComponentInstance::eventKey(wchar_t unicode)
+void ScriptComponent::eventKey(wchar_t unicode)
 {
 	if (m_class && m_object && m_methodEventKey != ~0U)
 	{
@@ -94,7 +94,7 @@ void ScriptComponentInstance::eventKey(wchar_t unicode)
 	}
 }
 
-void ScriptComponentInstance::eventKeyDown(int32_t keyCode)
+void ScriptComponent::eventKeyDown(int32_t keyCode)
 {
 	if (m_class && m_object && m_methodEventKeyDown != ~0U)
 	{
@@ -106,7 +106,7 @@ void ScriptComponentInstance::eventKeyDown(int32_t keyCode)
 	}
 }
 
-void ScriptComponentInstance::eventKeyUp(int32_t keyCode)
+void ScriptComponent::eventKeyUp(int32_t keyCode)
 {
 	if (m_class && m_object && m_methodEventKeyUp != ~0U)
 	{
@@ -118,7 +118,7 @@ void ScriptComponentInstance::eventKeyUp(int32_t keyCode)
 	}
 }
 
-void ScriptComponentInstance::eventMouseDown(const Vector2& position, int32_t button)
+void ScriptComponent::eventMouseDown(const Vector2& position, int32_t button)
 {
 	if (m_class && m_object && m_methodEventMouseDown != ~0U)
 	{
@@ -131,7 +131,7 @@ void ScriptComponentInstance::eventMouseDown(const Vector2& position, int32_t bu
 	}
 }
 
-void ScriptComponentInstance::eventMouseUp(const Vector2& position, int32_t button)
+void ScriptComponent::eventMouseUp(const Vector2& position, int32_t button)
 {
 	if (m_class && m_object && m_methodEventMouseUp != ~0U)
 	{
@@ -144,7 +144,7 @@ void ScriptComponentInstance::eventMouseUp(const Vector2& position, int32_t butt
 	}
 }
 
-void ScriptComponentInstance::eventMousePress(const Vector2& position, int32_t button)
+void ScriptComponent::eventMousePress(const Vector2& position, int32_t button)
 {
 	if (m_class && m_object && m_methodEventMousePress != ~0U)
 	{
@@ -157,7 +157,7 @@ void ScriptComponentInstance::eventMousePress(const Vector2& position, int32_t b
 	}
 }
 
-void ScriptComponentInstance::eventMouseRelease(const Vector2& position, int32_t button)
+void ScriptComponent::eventMouseRelease(const Vector2& position, int32_t button)
 {
 	if (m_class && m_object && m_methodEventMouseRelease != ~0U)
 	{
@@ -170,7 +170,7 @@ void ScriptComponentInstance::eventMouseRelease(const Vector2& position, int32_t
 	}
 }
 
-void ScriptComponentInstance::eventMouseMove(const Vector2& position, int32_t button)
+void ScriptComponent::eventMouseMove(const Vector2& position, int32_t button)
 {
 	if (m_class && m_object && m_methodEventMouseMove != ~0U)
 	{
@@ -183,7 +183,7 @@ void ScriptComponentInstance::eventMouseMove(const Vector2& position, int32_t bu
 	}
 }
 
-void ScriptComponentInstance::eventMouseEnter(const Vector2& position, int32_t button)
+void ScriptComponent::eventMouseEnter(const Vector2& position, int32_t button)
 {
 	if (m_class && m_object && m_methodEventMouseEnter != ~0U)
 	{
@@ -196,7 +196,7 @@ void ScriptComponentInstance::eventMouseEnter(const Vector2& position, int32_t b
 	}
 }
 
-void ScriptComponentInstance::eventMouseLeave(const Vector2& position, int32_t button)
+void ScriptComponent::eventMouseLeave(const Vector2& position, int32_t button)
 {
 	if (m_class && m_object && m_methodEventMouseLeave != ~0U)
 	{
@@ -209,7 +209,7 @@ void ScriptComponentInstance::eventMouseLeave(const Vector2& position, int32_t b
 	}
 }
 
-void ScriptComponentInstance::eventMouseWheel(const Vector2& position, int32_t delta)
+void ScriptComponent::eventMouseWheel(const Vector2& position, int32_t delta)
 {
 	if (m_class && m_object && m_methodEventMouseWheel != ~0U)
 	{
@@ -222,7 +222,7 @@ void ScriptComponentInstance::eventMouseWheel(const Vector2& position, int32_t d
 	}
 }
 
-void ScriptComponentInstance::eventViewResize(int32_t width, int32_t height)
+void ScriptComponent::eventViewResize(int32_t width, int32_t height)
 {
 	if (m_class && m_object && m_methodEventViewResize != ~0U)
 	{

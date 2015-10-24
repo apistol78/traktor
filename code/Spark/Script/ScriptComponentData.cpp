@@ -4,7 +4,7 @@
 #include "Resource/Member.h"
 #include "Spark/Context.h"
 #include "Spark/Script/ScriptComponentData.h"
-#include "Spark/Script/ScriptComponentInstance.h"
+#include "Spark/Script/ScriptComponent.h"
 
 namespace traktor
 {
@@ -13,11 +13,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spark.ScriptComponentData", 0, ScriptComponentData, IComponentData)
 
-Ref< IComponentInstance > ScriptComponentData::createInstance(const Context* context, SpriteInstance* owner) const
+Ref< IComponent > ScriptComponentData::createInstance(const Context* context, Sprite* owner) const
 {
 	resource::Proxy< IRuntimeClass > clazz;
 	if (context->getResourceManager()->bind(m_class, clazz))
-		return new ScriptComponentInstance(owner, clazz);
+		return new ScriptComponent(owner, clazz);
 	else
 		return 0;
 }

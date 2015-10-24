@@ -7,7 +7,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.DisplayList", DisplayList, Object)
 
-void DisplayList::place(int32_t depth, CharacterInstance* instance)
+void DisplayList::place(int32_t depth, Character* instance)
 {
 	if (instance)
 		m_layers[depth].instance = instance;
@@ -27,7 +27,7 @@ const SmallMap< int32_t, DisplayList::Layer >& DisplayList::getLayers() const
 	return m_layers;
 }
 
-void DisplayList::getCharacters(RefArray< CharacterInstance >& outCharacters) const
+void DisplayList::getCharacters(RefArray< Character >& outCharacters) const
 {
 	for (SmallMap< int32_t, Layer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 		outCharacters.push_back(i->second.instance);

@@ -1,5 +1,5 @@
 #include "Spark/CharacterData.h"
-#include "Spark/CharacterInstance.h"
+#include "Spark/Character.h"
 #include "Spark/SpriteData.h"
 #include "Spark/ExternalData.h"
 #include "Spark/Editor/CharacterAdapter.h"
@@ -26,12 +26,12 @@ const std::wstring& CharacterAdapter::getName() const
 void CharacterAdapter::setTransform(const Matrix33& transform)
 {
 	m_characterData->setTransform(transform);
-	m_characterInstance->setTransform(transform);
+	m_character->setTransform(transform);
 }
 
 const Matrix33& CharacterAdapter::getTransform() const
 {
-	return m_characterInstance->getTransform();
+	return m_character->getTransform();
 }
 
 CharacterData* CharacterAdapter::getCharacterData()
@@ -39,9 +39,9 @@ CharacterData* CharacterAdapter::getCharacterData()
 	return m_characterData;
 }
 
-CharacterInstance* CharacterAdapter::getCharacterInstance()
+Character* CharacterAdapter::getCharacter()
 {
-	return m_characterInstance;
+	return m_character;
 }
 
 CharacterAdapter* CharacterAdapter::getParent()
@@ -61,7 +61,7 @@ void CharacterAdapter::unlink()
 
 	mandatory_non_null_type_cast< SpriteData* >(m_parent->getCharacterData())->remove(m_characterData);
 
-	m_characterInstance = 0;
+	m_character = 0;
 	m_characterData = 0;
 
 	m_parent->m_children.remove(this);

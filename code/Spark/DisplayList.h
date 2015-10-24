@@ -18,7 +18,7 @@ namespace traktor
 	namespace spark
 	{
 
-class CharacterInstance;
+class Character;
 
 /*! \brief Display list.
  * \ingroup Spark
@@ -30,16 +30,16 @@ class T_DLLCLASS DisplayList : public Object
 public:
 	struct Layer
 	{
-		Ref< CharacterInstance > instance;
+		Ref< Character > instance;
 	};
 
-	void place(int32_t depth, CharacterInstance* instance);
+	void place(int32_t depth, Character* instance);
 
 	void remove(int32_t depth);
 
 	const SmallMap< int32_t, Layer >& getLayers() const;
 
-	void getCharacters(RefArray< CharacterInstance >& outCharacters) const;
+	void getCharacters(RefArray< Character >& outCharacters) const;
 
 private:
 	SmallMap< int32_t, Layer > m_layers;

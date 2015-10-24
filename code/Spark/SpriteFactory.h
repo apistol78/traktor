@@ -28,7 +28,7 @@ public:
 
 	virtual TypeInfoSet getCharacterTypes() const;
 
-	virtual Ref< CharacterInstance > create(const Context* context, const ICharacterBuilder* builder, const CharacterData* character, const CharacterInstance* parent, const std::wstring& name) const T_OVERRIDE T_FINAL;
+	virtual Ref< Character > create(const Context* context, const ICharacterBuilder* builder, const CharacterData* characterData, const Character* parent, const std::wstring& name) const T_OVERRIDE T_FINAL;
 
 private:
 	bool m_createComponents;

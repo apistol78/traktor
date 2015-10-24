@@ -1,10 +1,9 @@
-#ifndef traktor_spark_SoundComponentInstance_H
-#define traktor_spark_SoundComponentInstance_H
+#ifndef traktor_spark_ScriptComponent_H
+#define traktor_spark_ScriptComponent_H
 
 #include "Core/Ref.h"
-#include "Core/Containers/SmallMap.h"
 #include "Resource/Proxy.h"
-#include "Spark/IComponentInstance.h"
+#include "Spark/IComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,29 +15,23 @@
 
 namespace traktor
 {
-	namespace sound
-	{
 
-class ISoundHandle;
-class ISoundPlayer;
-class Sound;
-
-	}
+class IRuntimeClass;
 
 	namespace spark
 	{
 
-/*! \brief Sound component instance.
+class Sprite;
+
+/*! \brief Script component instance.
  * \ingroup Spark
  */
-class T_DLLCLASS SoundComponentInstance : public IComponentInstance
+class T_DLLCLASS ScriptComponent : public IComponent
 {
 	T_RTTI_CLASS;
 
 public:
-	SoundComponentInstance(sound::ISoundPlayer* soundPlayer, const SmallMap< std::wstring, resource::Proxy< sound::Sound > >& sounds);
-
-	Ref< sound::ISoundHandle > play(const std::wstring& id);
+	ScriptComponent(Sprite* owner, const resource::Proxy< IRuntimeClass >& clazz);
 
 	virtual void update();
 
@@ -67,11 +60,25 @@ public:
 	virtual void eventViewResize(int32_t width, int32_t height);
 
 private:
-	Ref< sound::ISoundPlayer > m_soundPlayer;
-	SmallMap< std::wstring, resource::Proxy< sound::Sound > > m_sounds;
+	Sprite* m_owner;
+	resource::Proxy< IRuntimeClass > m_class;
+	Ref< ITypedObject > m_object;
+	uint32_t m_methodUpdate;
+	uint32_t m_methodEventKey;
+	uint32_t m_methodEventKeyDown;
+	uint32_t m_methodEventKeyUp;
+	uint32_t m_methodEventMouseDown;
+	uint32_t m_methodEventMouseUp;
+	uint32_t m_methodEventMousePress;
+	uint32_t m_methodEventMouseRelease;
+	uint32_t m_methodEventMouseMove;
+	uint32_t m_methodEventMouseEnter;
+	uint32_t m_methodEventMouseLeave;
+	uint32_t m_methodEventMouseWheel;
+	uint32_t m_methodEventViewResize;
 };
 
 	}
 }
 
-#endif	// traktor_spark_SoundComponentInstance_H
+#endif	// traktor_spark_ScriptComponent_H

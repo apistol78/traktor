@@ -26,7 +26,7 @@ class RenderContext;
 	namespace spark
 	{
 
-class CharacterInstance;
+class Character;
 
 /*! \brief Character renderer.
  * \ingroup Spark
@@ -49,7 +49,7 @@ public:
 
 	void destroy();
 
-	void build(const CharacterInstance* character, uint32_t frame);
+	void build(const Character* character, uint32_t frame);
 
 	void render(render::IRenderView* renderView, const Matrix44& projection, uint32_t frame);
 

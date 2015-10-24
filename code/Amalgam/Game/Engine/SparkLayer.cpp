@@ -14,9 +14,9 @@
 #include "Spark/ExternalFactory.h"
 #include "Spark/SparkPlayer.h"
 #include "Spark/SparkRenderer.h"
+#include "Spark/Sprite.h"
 #include "Spark/SpriteData.h"
 #include "Spark/SpriteFactory.h"
-#include "Spark/SpriteInstance.h"
 #include "Spark/TextFactory.h"
 
 namespace traktor
@@ -93,11 +93,11 @@ void SparkLayer::prepare()
 	}
 
 	// Create instance of root sprite.
-	if (!m_characterInstance)
+	if (!m_character)
 	{
-		m_characterInstance = m_characterBuilder->create(m_context, m_sprite.getResource(), 0, L"");
-		if (m_characterInstance)
-			m_sparkPlayer = new spark::SparkPlayer(m_characterInstance);
+		m_character = m_characterBuilder->create(m_context, m_sprite.getResource(), 0, L"");
+		if (m_character)
+			m_sparkPlayer = new spark::SparkPlayer(m_character);
 		else
 			m_sparkPlayer = 0;
 	}
@@ -248,15 +248,15 @@ void SparkLayer::update(const UpdateInfo& info)
 
 void SparkLayer::build(const UpdateInfo& info, uint32_t frame)
 {
-	if (!m_characterInstance)
+	if (!m_character)
 		return;
 
-	m_sparkRenderer->build(m_characterInstance, frame);
+	m_sparkRenderer->build(m_character, frame);
 }
 
 void SparkLayer::render(render::EyeType eye, uint32_t frame)
 {
-	if (!m_sparkRenderer || !m_characterInstance)
+	if (!m_sparkRenderer || !m_character)
 		return;
 
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
@@ -323,9 +323,9 @@ void SparkLayer::resume()
 {
 }
 
-spark::CharacterInstance* SparkLayer::getRoot() const
+spark::Character* SparkLayer::getRoot() const
 {
-	return m_characterInstance;
+	return m_character;
 }
 
 void SparkLayer::updateProjection()
