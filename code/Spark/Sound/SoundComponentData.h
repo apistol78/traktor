@@ -33,7 +33,7 @@ class T_DLLCLASS SoundComponentData : public IComponentData
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< IComponentInstance > createInstance(const Context* context, SpriteInstance* owner) const T_OVERRIDE T_FINAL;
+	virtual Ref< IComponent > createInstance(const Context* context, Sprite* owner) const T_OVERRIDE T_FINAL;
 
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 

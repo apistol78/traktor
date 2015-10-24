@@ -1,5 +1,5 @@
-#ifndef traktor_spark_CharacterInstance_H
-#define traktor_spark_CharacterInstance_H
+#ifndef traktor_spark_Character_H
+#define traktor_spark_Character_H
 
 #include "Core/Object.h"
 #include "Core/Math/Aabb2.h"
@@ -28,16 +28,16 @@ class RenderContext;
 /*! \brief Character instance base class.
  * \ingroup Spark
  */
-class T_DLLCLASS CharacterInstance : public Object
+class T_DLLCLASS Character : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	CharacterInstance(const CharacterInstance* parent);
+	Character(const Character* parent);
 
 	/*! \brief
 	 */
-	const CharacterInstance* getParent() const;
+	const Character* getParent() const;
 
 	/*! \brief
 	 */
@@ -125,7 +125,7 @@ public:
 	virtual void render(render::RenderContext* renderContext) const = 0;
 
 protected:
-	const CharacterInstance* m_parent;
+	const Character* m_parent;
 	std::wstring m_name;
 	Matrix33 m_transform;
 	bool m_visible;
@@ -134,4 +134,4 @@ protected:
 	}
 }
 
-#endif	// traktor_spark_CharacterInstance_H
+#endif	// traktor_spark_Character_H

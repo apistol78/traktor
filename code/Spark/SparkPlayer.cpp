@@ -1,4 +1,4 @@
-#include "Spark/CharacterInstance.h"
+#include "Spark/Character.h"
 #include "Spark/SparkPlayer.h"
 
 namespace traktor
@@ -8,7 +8,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.SparkPlayer", SparkPlayer, Object)
 
-SparkPlayer::SparkPlayer(CharacterInstance* character)
+SparkPlayer::SparkPlayer(Character* character)
 :	m_character(character)
 {
 }

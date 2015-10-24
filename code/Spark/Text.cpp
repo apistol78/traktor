@@ -1,15 +1,15 @@
 #include "Spark/Font.h"
-#include "Spark/TextInstance.h"
+#include "Spark/Text.h"
 
 namespace traktor
 {
 	namespace spark
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.TextInstance", TextInstance, CharacterInstance)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.Text", Text, Character)
 
-TextInstance::TextInstance(const CharacterInstance* parent, const resource::Proxy< Font >& font)
-:	CharacterInstance(parent)
+Text::Text(const Character* parent, const resource::Proxy< Font >& font)
+:	Character(parent)
 ,	m_font(font)
 ,	m_height(0.0f)
 ,	m_horizontalAlign(AnLeft)
@@ -17,71 +17,71 @@ TextInstance::TextInstance(const CharacterInstance* parent, const resource::Prox
 {
 }
 
-void TextInstance::setText(const std::wstring& text)
+void Text::setText(const std::wstring& text)
 {
 	m_text = text;
 }
 
-const std::wstring& TextInstance::getText() const
+const std::wstring& Text::getText() const
 {
 	return m_text;
 }
 
-void TextInstance::setHeight(float height)
+void Text::setHeight(float height)
 {
 	m_height = height;
 }
 
-float TextInstance::getHeight() const
+float Text::getHeight() const
 {
 	return m_height;
 }
 
-void TextInstance::setBounds(const Aabb2& bounds)
+void Text::setBounds(const Aabb2& bounds)
 {
 	m_bounds = bounds;
 }
 
-void TextInstance::setHorizontalAlign(Align horizontalAlign)
+void Text::setHorizontalAlign(Align horizontalAlign)
 {
 	m_horizontalAlign = horizontalAlign;
 }
 
-Align TextInstance::getHorizontalAlign() const
+Align Text::getHorizontalAlign() const
 {
 	return m_horizontalAlign;
 }
 
-void TextInstance::setVerticalAlign(Align verticalAlign)
+void Text::setVerticalAlign(Align verticalAlign)
 {
 	m_verticalAlign = verticalAlign;
 }
 
-Align TextInstance::getVerticalAlign() const
+Align Text::getVerticalAlign() const
 {
 	return m_verticalAlign;
 }
 
-void TextInstance::setAlpha(float alpha)
+void Text::setAlpha(float alpha)
 {
 	m_colorTransform.alpha[0] = alpha;
 }
 
-float TextInstance::getAlpha() const
+float Text::getAlpha() const
 {
 	return m_colorTransform.alpha[0];
 }
 
-Aabb2 TextInstance::getBounds() const
+Aabb2 Text::getBounds() const
 {
 	return m_bounds;
 }
 
-void TextInstance::update()
+void Text::update()
 {
 }
 
-void TextInstance::render(render::RenderContext* renderContext) const
+void Text::render(render::RenderContext* renderContext) const
 {
 	if (!m_font || !m_visible)
 		return;

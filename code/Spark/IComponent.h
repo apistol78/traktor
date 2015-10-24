@@ -1,5 +1,5 @@
-#ifndef traktor_spark_IComponentInstance_H
-#define traktor_spark_IComponentInstance_H
+#ifndef traktor_spark_IComponent_H
+#define traktor_spark_IComponent_H
 
 #include "Core/Object.h"
 
@@ -22,7 +22,7 @@ class Vector2;
 /*! \brief Character component instance.
  * \ingroup Spark
  */
-class T_DLLCLASS IComponentInstance : public Object
+class T_DLLCLASS IComponent : public Object
 {
 	T_RTTI_CLASS;
 
@@ -62,4 +62,4 @@ public:
 	}
 }
 
-#endif	// traktor_spark_IComponentInstance_H
+#endif	// traktor_spark_IComponent_H

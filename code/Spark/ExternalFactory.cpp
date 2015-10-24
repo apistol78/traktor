@@ -1,5 +1,5 @@
 #include "Resource/IResourceManager.h"
-#include "Spark/CharacterInstance.h"
+#include "Spark/Character.h"
 #include "Spark/Context.h"
 #include "Spark/ExternalData.h"
 #include "Spark/ExternalFactory.h"
@@ -19,20 +19,20 @@ TypeInfoSet ExternalFactory::getCharacterTypes() const
 	return typeSet;
 }
 
-Ref< CharacterInstance > ExternalFactory::create(const Context* context, const ICharacterBuilder* builder, const CharacterData* character, const CharacterInstance* parent, const std::wstring& name) const
+Ref< Character > ExternalFactory::create(const Context* context, const ICharacterBuilder* builder, const CharacterData* characterData, const Character* parent, const std::wstring& name) const
 {
-	const ExternalData* xtrnal = mandatory_non_null_type_cast< const ExternalData* >(character);
+	const ExternalData* xtrnalData = mandatory_non_null_type_cast< const ExternalData* >(characterData);
 
 	resource::Proxy< CharacterData > xtrnalCharacter;
-	if (!context->getResourceManager()->bind(xtrnal->m_reference, xtrnalCharacter))
+	if (!context->getResourceManager()->bind(xtrnalData->m_reference, xtrnalCharacter))
 		return 0;
 
-	Ref< CharacterInstance > xtrnalInstance = builder->create(context, xtrnalCharacter, parent, name);
-	if (!xtrnalInstance)
+	Ref< Character > xtrnal = builder->create(context, xtrnalCharacter, parent, name);
+	if (!xtrnal)
 		return 0;
 
-	xtrnalInstance->setTransform(xtrnal->getTransform());
-	return xtrnalInstance;
+	xtrnal->setTransform(xtrnalData->getTransform());
+	return xtrnal;
 }
 
 	}

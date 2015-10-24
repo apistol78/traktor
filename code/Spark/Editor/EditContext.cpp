@@ -1,7 +1,7 @@
 #include "Spark/ExternalFactory.h"
+#include "Spark/Sprite.h"
 #include "Spark/SpriteData.h"
 #include "Spark/SpriteFactory.h"
-#include "Spark/SpriteInstance.h"
 #include "Spark/TextFactory.h"
 #include "Spark/Editor/CharacterAdapter.h"
 #include "Spark/Editor/CharacterAdapterBuilder.h"
@@ -48,9 +48,9 @@ CharacterAdapter* EditContext::hitTest(const Vector2& position) const
 		if ((*i)->isChildOfExternal())
 			continue;
 
-		Vector2 localPosition = (*i)->getCharacterInstance()->getTransform().inverse() * position;
+		Vector2 localPosition = (*i)->getCharacter()->getTransform().inverse() * position;
 
-		if ((*i)->getCharacterInstance()->getBounds().inside(localPosition))
+		if ((*i)->getCharacter()->getBounds().inside(localPosition))
 			return (*i);
 	}
 	return 0;

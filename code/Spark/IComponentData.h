@@ -17,8 +17,8 @@ namespace traktor
 	{
 
 class Context;
-class SpriteInstance;
-class IComponentInstance;
+class Sprite;
+class IComponent;
 
 /*! \brief Character component interface.
  * \ingroup Spark
@@ -28,7 +28,7 @@ class T_DLLCLASS IComponentData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< IComponentInstance > createInstance(const Context* context, SpriteInstance* owner) const = 0;
+	virtual Ref< IComponent > createInstance(const Context* context, Sprite* owner) const = 0;
 };
 
 	}

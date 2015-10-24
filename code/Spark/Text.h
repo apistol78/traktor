@@ -1,8 +1,8 @@
-#ifndef traktor_spark_TextInstance_H
-#define traktor_spark_TextInstance_H
+#ifndef traktor_spark_Text_H
+#define traktor_spark_Text_H
 
 #include "Resource/Proxy.h"
-#include "Spark/CharacterInstance.h"
+#include "Spark/Character.h"
 #include "Spark/ColorTransform.h"
 #include "Spark/Types.h"
 
@@ -32,12 +32,12 @@ class Text;
 /*! \brief Text character instance.
  * \ingroup Spark
  */
-class T_DLLCLASS TextInstance : public CharacterInstance
+class T_DLLCLASS Text : public Character
 {
 	T_RTTI_CLASS;
 
 public:
-	TextInstance(const CharacterInstance* parent, const resource::Proxy< Font >& font);
+	Text(const Character* parent, const resource::Proxy< Font >& font);
 
 	void setText(const std::wstring& text);
 
@@ -82,4 +82,4 @@ private:
 	}
 }
 
-#endif	// traktor_spark_TextInstance_H
+#endif	// traktor_spark_Text_H

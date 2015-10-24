@@ -1,5 +1,5 @@
 #include "Render/Context/RenderContext.h"
-#include "Spark/CharacterInstance.h"
+#include "Spark/Character.h"
 #include "Spark/SparkRenderer.h"
 #include "Spark/DisplayList.h"
 
@@ -28,7 +28,7 @@ void SparkRenderer::destroy()
 	m_renderContexts.clear();
 }
 
-void SparkRenderer::build(const CharacterInstance* character, uint32_t frame)
+void SparkRenderer::build(const Character* character, uint32_t frame)
 {
 	m_renderContexts[frame]->flush();
 	character->render(m_renderContexts[frame]);

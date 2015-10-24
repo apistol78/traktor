@@ -17,7 +17,7 @@ namespace traktor
 	namespace spark
 	{
 
-class CharacterInstance;
+class Character;
 
 /*! \brief
  * \ingroup Spark
@@ -29,7 +29,7 @@ class T_DLLCLASS SparkPlayer : public Object
 public:
 	/*! \brief Construct player.
 	 */
-	SparkPlayer(CharacterInstance* character);
+	SparkPlayer(Character* character);
 
 	/*! \brief Update player.
 	 */
@@ -89,7 +89,7 @@ public:
 	void postViewResize(int32_t width, int32_t height);
 
 private:
-	Ref< CharacterInstance > m_character;
+	Ref< Character > m_character;
 };
 
 	}
