@@ -27,6 +27,8 @@ class T_DLLCLASS KeyboardDeviceDi8 : public IInputDevice
 public:
 	KeyboardDeviceDi8(HWND hWnd, IDirectInputDevice8* diDevice, const DIDEVICEINSTANCE* deviceInstance);
 
+	void destroy();
+
 	virtual std::wstring getName() const;
 
 	virtual InputCategory getCategory() const;

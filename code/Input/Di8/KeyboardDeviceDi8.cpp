@@ -34,6 +34,15 @@ KeyboardDeviceDi8::KeyboardDeviceDi8(HWND hWnd, IDirectInputDevice8* device, con
 	m_connected = SUCCEEDED(hr);
 }
 
+void KeyboardDeviceDi8::destroy()
+{
+	if (m_pWndProc)
+	{
+		SetWindowLongPtr(m_hWnd, GWLP_WNDPROC, (LONG_PTR)m_pWndProc);
+		m_pWndProc = 0;
+	}
+}
+
 std::wstring KeyboardDeviceDi8::getName() const
 {
 	return m_name;

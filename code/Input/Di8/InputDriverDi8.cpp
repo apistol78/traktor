@@ -208,6 +208,12 @@ InputDriverDi8::~InputDriverDi8()
 
 void InputDriverDi8::destroy()
 {
+	for (RefArray< IInputDevice >::iterator i = m_devices.begin(); i != m_devices.end(); ++i)
+	{
+		if (KeyboardDeviceDi8* keyboardDevice = dynamic_type_cast< KeyboardDeviceDi8* >(*i))
+			keyboardDevice->destroy();
+	}
+	m_devices.clear();
 	m_directInput.release();
 }
 
