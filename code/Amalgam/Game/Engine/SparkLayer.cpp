@@ -333,20 +333,20 @@ void SparkLayer::updateProjection()
 	float viewRatio = m_environment->getRender()->getAspectRatio();
 	const Aabb2& bounds = m_sprite->getBounds();
 
-	float renderWidth = bounds.mx.x - bounds.mn.x;
-	float renderHeight = renderWidth / viewRatio;
-	if (renderHeight < bounds.mx.y - bounds.mn.y)
+	float viewWidth = bounds.mx.x - bounds.mn.x;
+	float viewHeight = viewWidth / viewRatio;
+	if (viewHeight < bounds.mx.y - bounds.mn.y)
 	{
-		renderHeight = bounds.mx.y - bounds.mn.y;
-		renderWidth = renderHeight * viewRatio;
+		viewHeight = bounds.mx.y - bounds.mn.y;
+		viewWidth = viewHeight * viewRatio;
 	}
 
-	float offsetX = renderWidth - bounds.mx.x + bounds.mn.x;
-	float offsetY = renderHeight - bounds.mx.y + bounds.mn.y;
+	float offsetX = viewWidth - bounds.mx.x - bounds.mn.x;
+	float offsetY = viewHeight - bounds.mx.y - bounds.mn.y;
 
 	m_projection = Matrix44(
-		2.0f / renderWidth, 0.0f, 0.0f, -1.0f + offsetX / renderWidth,
-		0.0f, -2.0f / renderHeight, 0.0f, 1.0f - offsetY / renderHeight,
+		2.0f / viewWidth, 0.0f, 0.0f, -1.0f + offsetX / viewWidth,
+		0.0f, -2.0f / viewHeight, 0.0f, 1.0f - offsetY / viewHeight,
 		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
 	);
