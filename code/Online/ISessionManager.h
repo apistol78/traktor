@@ -46,6 +46,8 @@ public:
 
 	virtual bool isConnected() const = 0;
 
+	virtual bool requireFullScreen() const = 0;
+
 	virtual bool requireUserAttention() const = 0;
 
 	virtual bool haveDLC(const std::wstring& id) const = 0;

@@ -26,7 +26,7 @@ public:
 		LobbyResult* result
 	);
 
-	virtual void execute(TaskQueue* taskQueue);
+	virtual void execute(TaskQueue* taskQueue) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< IMatchMakingProvider > m_matchMakingProvider;

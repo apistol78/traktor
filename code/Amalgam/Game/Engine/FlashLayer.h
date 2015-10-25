@@ -83,25 +83,25 @@ public:
 
 	void destroy();
 
-	virtual void transition(Layer* fromLayer);
+	virtual void transition(Layer* fromLayer) T_OVERRIDE T_FINAL;
 
-	virtual void prepare();
+	virtual void prepare() T_OVERRIDE T_FINAL;
 
-	virtual void update(const UpdateInfo& info);
+	virtual void update(const UpdateInfo& info) T_OVERRIDE T_FINAL;
 
-	virtual void build(const UpdateInfo& info, uint32_t frame);
+	virtual void build(const UpdateInfo& info, uint32_t frame) T_OVERRIDE T_FINAL;
 
-	virtual void render(render::EyeType eye, uint32_t frame);
+	virtual void render(render::EyeType eye, uint32_t frame) T_OVERRIDE T_FINAL;
 
-	virtual void flush();
+	virtual void flush() T_OVERRIDE T_FINAL;
 
-	virtual void preReconfigured();
+	virtual void preReconfigured() T_OVERRIDE T_FINAL;
 
-	virtual void postReconfigured();
+	virtual void postReconfigured() T_OVERRIDE T_FINAL;
 
-	virtual void suspend();
+	virtual void suspend() T_OVERRIDE T_FINAL;
 
-	virtual void resume();
+	virtual void resume() T_OVERRIDE T_FINAL;
 
 	/*! \brief Get reference to current Flash movie player.
 	 * 
@@ -211,9 +211,9 @@ private:
 
 	void createMoviePlayer();
 
-	virtual flash::ActionValue dispatchExternalCall(const std::string& methodName, int32_t argc, const flash::ActionValue* argv);
+	virtual flash::ActionValue dispatchExternalCall(const std::string& methodName, int32_t argc, const flash::ActionValue* argv) T_OVERRIDE T_FINAL;
 
-	virtual void feedbackValues(spray::FeedbackType type, const float* values, int32_t count);
+	virtual void feedbackValues(spray::FeedbackType type, const float* values, int32_t count) T_OVERRIDE T_FINAL;
 };
 
 	}

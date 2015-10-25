@@ -100,8 +100,6 @@ bool RenderSystemOpenGL::create(const RenderSystemDesc& desc)
 	// Finally create new type of context.
 	const GLint attribs[] =
 	{
-		//WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
-		//WGL_CONTEXT_MINOR_VERSION_ARB, 0,
 		WGL_CONTEXT_MAJOR_VERSION_ARB, 4,
 		WGL_CONTEXT_MINOR_VERSION_ARB, 2,
 		WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,

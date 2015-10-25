@@ -40,29 +40,29 @@ public:
 		WorldServer* worldServer
 	);
 
-	virtual db::Database* getDatabase();
+	virtual db::Database* getDatabase() T_OVERRIDE T_FINAL;
 
-	virtual UpdateControl* getControl();
+	virtual UpdateControl* getControl() T_OVERRIDE T_FINAL;
 
-	virtual IAudioServer* getAudio();
+	virtual IAudioServer* getAudio() T_OVERRIDE T_FINAL;
 
-	virtual IInputServer* getInput();
+	virtual IInputServer* getInput() T_OVERRIDE T_FINAL;
 
-	virtual IOnlineServer* getOnline();
+	virtual IOnlineServer* getOnline() T_OVERRIDE T_FINAL;
 
-	virtual IPhysicsServer* getPhysics();
+	virtual IPhysicsServer* getPhysics() T_OVERRIDE T_FINAL;
 
-	virtual IRenderServer* getRender();
+	virtual IRenderServer* getRender() T_OVERRIDE T_FINAL;
 
-	virtual IResourceServer* getResource();
+	virtual IResourceServer* getResource() T_OVERRIDE T_FINAL;
 
-	virtual IScriptServer* getScript();
+	virtual IScriptServer* getScript() T_OVERRIDE T_FINAL;
 
-	virtual IWorldServer* getWorld();
+	virtual IWorldServer* getWorld() T_OVERRIDE T_FINAL;
 
-	virtual PropertyGroup* getSettings();
+	virtual PropertyGroup* getSettings() T_OVERRIDE T_FINAL;
 
-	virtual bool reconfigure();
+	virtual bool reconfigure() T_OVERRIDE T_FINAL;
 
 	int32_t executeReconfigure();
 

@@ -77,9 +77,9 @@ public:
 
 	void resume();
 
-	virtual Ref< IEnvironment > getEnvironment();
+	virtual Ref< IEnvironment > getEnvironment() T_OVERRIDE T_FINAL;
 
-	virtual Ref< IStateManager > getStateManager();
+	virtual Ref< IStateManager > getStateManager() T_OVERRIDE T_FINAL;
 
 private:
 	Ref< PropertyGroup > m_settings;

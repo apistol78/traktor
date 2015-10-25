@@ -17,29 +17,29 @@ public:
 
 	bool create(const PropertyGroup* defaultSettings, PropertyGroup* settings, void* nativeHandle);
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual void createResourceFactories(IEnvironment* environment);
+	virtual void createResourceFactories(IEnvironment* environment) T_OVERRIDE T_FINAL;
 
-	virtual int32_t reconfigure(IEnvironment* environment, const PropertyGroup* settings);
+	virtual int32_t reconfigure(IEnvironment* environment, const PropertyGroup* settings) T_OVERRIDE T_FINAL;
 
-	virtual UpdateResult update(PropertyGroup* settings);
+	virtual UpdateResult update(PropertyGroup* settings) T_OVERRIDE T_FINAL;
 
-	virtual render::IRenderSystem* getRenderSystem();
+	virtual render::IRenderSystem* getRenderSystem() T_OVERRIDE T_FINAL;
 
-	virtual render::IRenderView* getRenderView();
+	virtual render::IRenderView* getRenderView() T_OVERRIDE T_FINAL;
 
-	virtual float getScreenAspectRatio() const;
+	virtual float getScreenAspectRatio() const T_OVERRIDE T_FINAL;
 
-	virtual float getViewAspectRatio() const;
+	virtual float getViewAspectRatio() const T_OVERRIDE T_FINAL;
 
-	virtual float getAspectRatio() const;
+	virtual float getAspectRatio() const T_OVERRIDE T_FINAL;
 
-	virtual bool getStereoscopic() const;
+	virtual bool getStereoscopic() const T_OVERRIDE T_FINAL;
 
-	virtual bool getVR() const;
+	virtual bool getVR() const T_OVERRIDE T_FINAL;
 
-	virtual int32_t getMultiSample() const;
+	virtual int32_t getMultiSample() const T_OVERRIDE T_FINAL;
 
 private:
 	render::DisplayMode m_originalDisplayMode;

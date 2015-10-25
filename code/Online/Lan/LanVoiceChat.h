@@ -13,13 +13,13 @@ class LanVoiceChat : public IVoiceChatProvider
 	T_RTTI_CLASS;
 
 public:
-	virtual void setCallback(IVoiceChatCallback* callback);
+	virtual void setCallback(IVoiceChatCallback* callback) T_OVERRIDE T_FINAL;
 
-	virtual void setAudience(const std::vector< uint64_t >& audienceHandles);
+	virtual void setAudience(const std::vector< uint64_t >& audienceHandles) T_OVERRIDE T_FINAL;
 
-	virtual void beginTransmission();
+	virtual void beginTransmission() T_OVERRIDE T_FINAL;
 
-	virtual void endTransmission();
+	virtual void endTransmission() T_OVERRIDE T_FINAL;
 };
 
 	}

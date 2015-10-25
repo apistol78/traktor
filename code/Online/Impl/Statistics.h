@@ -17,15 +17,15 @@ class Statistics : public IStatistics
 	T_RTTI_CLASS
 
 public:
-	virtual bool ready() const;
+	virtual bool ready() const T_OVERRIDE T_FINAL;
 
-	virtual bool enumerate(std::set< std::wstring >& outStatIds) const;
+	virtual bool enumerate(std::set< std::wstring >& outStatIds) const T_OVERRIDE T_FINAL;
 
-	virtual bool get(const std::wstring& statId, int32_t& outValue) const;
+	virtual bool get(const std::wstring& statId, int32_t& outValue) const T_OVERRIDE T_FINAL;
 
-	virtual Ref< Result > set(const std::wstring& statId, int32_t value);
+	virtual Ref< Result > set(const std::wstring& statId, int32_t value) T_OVERRIDE T_FINAL;
 
-	virtual Ref< Result > add(const std::wstring& statId, int32_t valueDelta);
+	virtual Ref< Result > add(const std::wstring& statId, int32_t valueDelta) T_OVERRIDE T_FINAL;
 
 private:
 	friend class SessionManager;

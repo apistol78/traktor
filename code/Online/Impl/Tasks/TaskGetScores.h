@@ -27,7 +27,7 @@ public:
 		ScoreArrayResult* result
 	);
 
-	virtual void execute(TaskQueue* taskQueue);
+	virtual void execute(TaskQueue* taskQueue) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< ILeaderboardsProvider > m_leaderboardProvider;

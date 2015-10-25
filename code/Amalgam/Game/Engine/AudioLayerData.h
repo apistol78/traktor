@@ -34,9 +34,9 @@ class T_DLLCLASS AudioLayerData : public LayerData
 public:
 	AudioLayerData();
 
-	virtual Ref< Layer > createInstance(Stage* stage, IEnvironment* environment) const;
+	virtual Ref< Layer > createInstance(Stage* stage, IEnvironment* environment) const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	friend class StagePipeline;

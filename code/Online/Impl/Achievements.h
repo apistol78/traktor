@@ -18,13 +18,13 @@ class Achievements : public IAchievements
 	T_RTTI_CLASS;
 
 public:
-	virtual bool ready() const;
+	virtual bool ready() const T_OVERRIDE T_FINAL;
 
-	virtual bool enumerate(std::set< std::wstring >& outAchievementIds) const;
+	virtual bool enumerate(std::set< std::wstring >& outAchievementIds) const T_OVERRIDE T_FINAL;
 
-	virtual bool have(const std::wstring& achievementId) const;
+	virtual bool have(const std::wstring& achievementId) const T_OVERRIDE T_FINAL;
 
-	virtual Ref< Result > set(const std::wstring& achievementId, bool reward);
+	virtual Ref< Result > set(const std::wstring& achievementId, bool reward) T_OVERRIDE T_FINAL;
 
 private:
 	friend class SessionManager;

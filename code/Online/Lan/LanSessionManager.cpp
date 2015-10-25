@@ -111,6 +111,11 @@ bool LanSessionManager::isConnected() const
 	return true;
 }
 
+bool LanSessionManager::requireFullScreen() const
+{
+	return false;
+}
+
 bool LanSessionManager::requireUserAttention() const
 {
 	return false;

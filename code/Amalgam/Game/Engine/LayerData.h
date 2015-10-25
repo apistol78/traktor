@@ -37,7 +37,7 @@ public:
 
 	virtual Ref< Layer > createInstance(Stage* stage, IEnvironment* environment) const = 0;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE;
 
 protected:
 	friend class StagePipeline;

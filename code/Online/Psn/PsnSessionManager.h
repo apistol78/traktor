@@ -40,6 +40,8 @@ public:
 
 	virtual bool isConnected() const;
 
+	virtual bool requireFullScreen() const;
+
 	virtual bool requireUserAttention() const;
 
 	virtual uint64_t getCurrentUserHandle() const;

@@ -21,13 +21,13 @@ class T_DLLCLASS RuntimePlugin : public IRuntimePlugin
 	T_RTTI_CLASS;
 
 public:
-	virtual bool getDependencies(TypeInfoSet& outDependencies) const;
+	virtual bool getDependencies(TypeInfoSet& outDependencies) const T_OVERRIDE T_FINAL;
 
-	virtual bool startup(IEnvironment* environment);
+	virtual bool startup(IEnvironment* environment) T_OVERRIDE T_FINAL;
 
-	virtual bool shutdown(IEnvironment* environment);
+	virtual bool shutdown(IEnvironment* environment) T_OVERRIDE T_FINAL;
 
-	virtual Ref< IState > createInitialState(IEnvironment* environment) const;
+	virtual Ref< IState > createInitialState(IEnvironment* environment) const T_OVERRIDE T_FINAL;
 };
 
 	}

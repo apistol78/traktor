@@ -22,7 +22,7 @@ public:
 	 *
 	 * \param state New state.
 	 */
-	virtual void enter(IState* state);
+	virtual void enter(IState* state) T_OVERRIDE T_FINAL;
 
 	/*! \brief Get current state.
 	 *

@@ -17,7 +17,7 @@ class TaskUpdateSessionManager : public ITask
 public:
 	TaskUpdateSessionManager(ISessionManagerProvider* provider);
 
-	virtual void execute(TaskQueue* taskQueue);
+	virtual void execute(TaskQueue* taskQueue) T_OVERRIDE T_FINAL;
 
 	bool completed() const { return m_completed; }
 

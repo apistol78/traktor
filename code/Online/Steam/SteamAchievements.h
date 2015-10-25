@@ -19,9 +19,9 @@ class SteamAchievements : public IAchievementsProvider
 public:
 	SteamAchievements(SteamSessionManager* sessionManager, const std::list< std::wstring >& achievementIds);
 
-	virtual bool enumerate(std::map< std::wstring, bool >& outAchievements);
+	virtual bool enumerate(std::map< std::wstring, bool >& outAchievements) T_OVERRIDE T_FINAL;
 
-	virtual bool set(const std::wstring& achievementId, bool reward);
+	virtual bool set(const std::wstring& achievementId, bool reward) T_OVERRIDE T_FINAL;
 
 private:
 	SteamSessionManager* m_sessionManager;
