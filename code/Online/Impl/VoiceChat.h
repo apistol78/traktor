@@ -29,17 +29,17 @@ class VoiceChat
 public:
 	void destroy();
 
-	virtual void setSoundPlayer(sound::ISoundPlayer* soundPlayer);
+	virtual void setSoundPlayer(sound::ISoundPlayer* soundPlayer) T_OVERRIDE T_FINAL;
 
-	virtual void setAudience(const RefArray< IUser >& audience);
+	virtual void setAudience(const RefArray< IUser >& audience) T_OVERRIDE T_FINAL;
 
-	virtual void beginTransmission();
+	virtual void beginTransmission() T_OVERRIDE T_FINAL;
 
-	virtual void endTransmission();
+	virtual void endTransmission() T_OVERRIDE T_FINAL;
 
-	virtual void setMute(bool mute);
+	virtual void setMute(bool mute) T_OVERRIDE T_FINAL;
 
-	virtual bool isTransmitting(IUser* user);
+	virtual bool isTransmitting(IUser* user) T_OVERRIDE T_FINAL;
 
 private:
 	friend class SessionManager;

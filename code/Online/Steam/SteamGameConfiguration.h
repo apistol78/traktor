@@ -17,7 +17,7 @@ class SteamGameConfiguration : public IGameConfiguration
 public:
 	SteamGameConfiguration();
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	friend class SteamSessionManager;

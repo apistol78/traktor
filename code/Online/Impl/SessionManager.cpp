@@ -194,6 +194,11 @@ bool SessionManager::isConnected() const
 	return m_connected;
 }
 
+bool SessionManager::requireFullScreen() const
+{
+	return m_provider ? m_provider->requireFullScreen() : false;
+}
+
 bool SessionManager::requireUserAttention() const
 {
 	return m_provider ? m_provider->requireUserAttention() : false;

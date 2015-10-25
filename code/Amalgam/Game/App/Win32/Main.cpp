@@ -365,8 +365,13 @@ LONG WINAPI exceptionVectoredHandler(struct _EXCEPTION_POINTERS* ep)
 
 	if (outputCallStack)
 	{
+		log::info << L"Thread " << uint32_t(GetCurrentThread()) << L":" << Endl;
+		log::info << IncreaseIndent;
+
 		StackWalkerToConsole sw;
 		sw.ShowCallstack(GetCurrentThread(), ep->ContextRecord);
+
+		log::info << DecreaseIndent;
 	}
 	else if (outputInfo)
 	{

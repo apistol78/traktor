@@ -42,9 +42,9 @@ public:
 
 	virtual UpdateResult update(PropertyGroup* settings);
 
-	virtual int32_t getFrameRate() const;
+	virtual int32_t getFrameRate() const T_OVERRIDE T_FINAL;
 
-	virtual int32_t getThreadFrameQueueCount() const;
+	virtual int32_t getThreadFrameQueueCount() const T_OVERRIDE T_FINAL;
 
 	void setFrameRate(int32_t frameRate);
 

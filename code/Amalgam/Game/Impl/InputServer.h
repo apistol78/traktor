@@ -49,27 +49,27 @@ public:
 
 	void updateRumble(float deltaTime, bool paused);
 
-	virtual bool createInputMapping(const input::InputMappingStateData* stateData);
+	virtual bool createInputMapping(const input::InputMappingStateData* stateData) T_OVERRIDE T_FINAL;
 
-	virtual bool fabricateInputSource(const std::wstring& sourceId, input::InputCategory category, bool analogue);
+	virtual bool fabricateInputSource(const std::wstring& sourceId, input::InputCategory category, bool analogue) T_OVERRIDE T_FINAL;
 
-	virtual bool isFabricating() const;
+	virtual bool isFabricating() const T_OVERRIDE T_FINAL;
 
-	virtual bool abortedFabricating() const;
+	virtual bool abortedFabricating() const T_OVERRIDE T_FINAL;
 
-	virtual bool resetInputSource(const std::wstring& sourceId);
+	virtual bool resetInputSource(const std::wstring& sourceId) T_OVERRIDE T_FINAL;
 
-	virtual bool isIdle() const;
+	virtual bool isIdle() const T_OVERRIDE T_FINAL;
 
-	virtual void apply();
+	virtual void apply() T_OVERRIDE T_FINAL;
 
-	virtual void revert();
+	virtual void revert() T_OVERRIDE T_FINAL;
 
-	virtual input::InputSystem* getInputSystem();
+	virtual input::InputSystem* getInputSystem() T_OVERRIDE T_FINAL;
 
-	virtual input::InputMapping* getInputMapping();
+	virtual input::InputMapping* getInputMapping() T_OVERRIDE T_FINAL;
 
-	virtual input::RumbleEffectPlayer* getRumbleEffectPlayer();
+	virtual input::RumbleEffectPlayer* getRumbleEffectPlayer() T_OVERRIDE T_FINAL;
 
 private:
 	Ref< PropertyGroup > m_settings;

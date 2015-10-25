@@ -54,9 +54,9 @@ class T_DLLCLASS StageData : public ISerializable
 public:
 	StageData();
 
-	virtual Ref< Stage > createInstance(IEnvironment* environment, const Object* params) const;
+	Ref< Stage > createInstance(IEnvironment* environment, const Object* params) const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	const std::wstring& getName() const { return m_name; }
 

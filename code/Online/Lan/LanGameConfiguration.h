@@ -16,7 +16,7 @@ class LanGameConfiguration : public IGameConfiguration
 public:
 	LanGameConfiguration();
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 };
 
 	}

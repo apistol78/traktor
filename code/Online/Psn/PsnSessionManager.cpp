@@ -208,6 +208,11 @@ bool PsnSessionManager::isConnected() const
 	return m_connected;
 }
 
+bool PsnSessionManager::requireFullScreen() const
+{
+	return false;
+}
+
 bool PsnSessionManager::requireUserAttention() const
 {
 	return ms_requireUserAttention;

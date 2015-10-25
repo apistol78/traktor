@@ -5,6 +5,7 @@
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Misc/WildCompare.h"
+#include "Core/System/OS.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
@@ -242,6 +243,15 @@ std::wstring SteamSessionManager::getLanguageCode() const
 bool SteamSessionManager::isConnected() const
 {
 	return ::SteamUser()->BLoggedOn();
+}
+
+bool SteamSessionManager::requireFullScreen() const
+{
+	std::wstring value;
+	if (OS::getInstance().getEnvironment(L"SteamTenfoot", value))
+		return compareIgnoreCase< std::wstring >(value, L"1") == 0;
+	else
+		return false;
 }
 
 bool SteamSessionManager::requireUserAttention() const

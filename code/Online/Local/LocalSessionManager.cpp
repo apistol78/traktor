@@ -172,6 +172,11 @@ bool LocalSessionManager::isConnected() const
 	return true;
 }
 
+bool LocalSessionManager::requireFullScreen() const
+{
+	return false;
+}
+
 bool LocalSessionManager::requireUserAttention() const
 {
 	return false;

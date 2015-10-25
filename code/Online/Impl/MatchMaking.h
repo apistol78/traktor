@@ -17,17 +17,17 @@ class MatchMaking : public IMatchMaking
 	T_RTTI_CLASS;
 
 public:
-	virtual bool ready() const;
+	virtual bool ready() const T_OVERRIDE T_FINAL;
 
-	virtual Ref< LobbyArrayResult > findMatchingLobbies(const LobbyFilter* filter);
+	virtual Ref< LobbyArrayResult > findMatchingLobbies(const LobbyFilter* filter) T_OVERRIDE T_FINAL;
 
-	virtual Ref< LobbyResult > createLobby(uint32_t maxUsers, LobbyAccess access);
+	virtual Ref< LobbyResult > createLobby(uint32_t maxUsers, LobbyAccess access) T_OVERRIDE T_FINAL;
 
-	virtual Ref< ILobby > acceptLobby();
+	virtual Ref< ILobby > acceptLobby() T_OVERRIDE T_FINAL;
 
-	virtual Ref< PartyResult > createParty();
+	virtual Ref< PartyResult > createParty() T_OVERRIDE T_FINAL;
 
-	virtual Ref< IParty > acceptParty();
+	virtual Ref< IParty > acceptParty() T_OVERRIDE T_FINAL;
 
 private:
 	friend class SessionManager;

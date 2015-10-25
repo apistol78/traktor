@@ -48,26 +48,26 @@ public:
 
 	int32_t reconfigure(const PropertyGroup* settings);
 
-	virtual void addEntityFactory(world::IEntityFactory* entityFactory);
+	virtual void addEntityFactory(world::IEntityFactory* entityFactory) T_OVERRIDE T_FINAL;
 
-	virtual void removeEntityFactory(world::IEntityFactory* entityFactory);
+	virtual void removeEntityFactory(world::IEntityFactory* entityFactory) T_OVERRIDE T_FINAL;
 
-	virtual void addEntityRenderer(world::IEntityRenderer* entityRenderer);
+	virtual void addEntityRenderer(world::IEntityRenderer* entityRenderer) T_OVERRIDE T_FINAL;
 
-	virtual void removeEntityRenderer(world::IEntityRenderer* entityRenderer);
+	virtual void removeEntityRenderer(world::IEntityRenderer* entityRenderer) T_OVERRIDE T_FINAL;
 
-	virtual const world::IEntityBuilder* getEntityBuilder();
+	virtual const world::IEntityBuilder* getEntityBuilder() T_OVERRIDE T_FINAL;
 
-	virtual world::WorldEntityRenderers* getEntityRenderers();
+	virtual world::WorldEntityRenderers* getEntityRenderers() T_OVERRIDE T_FINAL;
 
-	virtual world::IEntityEventManager* getEntityEventManager();
+	virtual world::IEntityEventManager* getEntityEventManager() T_OVERRIDE T_FINAL;
 
-	virtual spray::IFeedbackManager* getFeedbackManager();
+	virtual spray::IFeedbackManager* getFeedbackManager() T_OVERRIDE T_FINAL;
 
 	virtual Ref< world::IWorldRenderer > createWorldRenderer(
 		const world::WorldRenderSettings* worldRenderSettings,
 		const render::ImageProcessSettings* imageProcessSettings
-	);
+	) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< world::IEntityBuilder > m_entityBuilder;

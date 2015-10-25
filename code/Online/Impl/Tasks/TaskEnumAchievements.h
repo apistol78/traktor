@@ -24,7 +24,7 @@ public:
 		sink_method_t sinkMethod
 	);
 
-	virtual void execute(TaskQueue* taskQueue);
+	virtual void execute(TaskQueue* taskQueue) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< IAchievementsProvider > m_provider;

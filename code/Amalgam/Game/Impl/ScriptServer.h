@@ -45,7 +45,7 @@ public:
 
 	void cleanup(bool full);
 
-	virtual script::IScriptManager* getScriptManager();
+	virtual script::IScriptManager* getScriptManager() T_OVERRIDE T_FINAL;
 
 private:
 	struct CallSample

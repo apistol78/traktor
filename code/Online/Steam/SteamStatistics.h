@@ -20,9 +20,9 @@ class SteamStatistics : public IStatisticsProvider
 public:
 	SteamStatistics(SteamSessionManager* sessionManager, const std::list< std::wstring >& statIds);
 
-	virtual bool enumerate(std::map< std::wstring, int32_t >& outStats);
+	virtual bool enumerate(std::map< std::wstring, int32_t >& outStats) T_OVERRIDE T_FINAL;
 
-	virtual bool set(const std::wstring& statId, int32_t value);
+	virtual bool set(const std::wstring& statId, int32_t value) T_OVERRIDE T_FINAL;
 
 private:
 	SteamSessionManager* m_sessionManager;

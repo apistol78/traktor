@@ -17,31 +17,31 @@ class Lobby : public ILobby
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< Result > setMetaValue(const std::wstring& key, const std::wstring& value);
+	virtual Ref< Result > setMetaValue(const std::wstring& key, const std::wstring& value) T_OVERRIDE T_FINAL;
 
-	virtual bool getMetaValue(const std::wstring& key, std::wstring& outValue) const;
+	virtual bool getMetaValue(const std::wstring& key, std::wstring& outValue) const T_OVERRIDE T_FINAL;
 
-	virtual Ref< Result > setParticipantMetaValue(const std::wstring& key, const std::wstring& value);
+	virtual Ref< Result > setParticipantMetaValue(const std::wstring& key, const std::wstring& value) T_OVERRIDE T_FINAL;
 
-	virtual bool getParticipantMetaValue(const IUser* user, const std::wstring& key, std::wstring& outValue) const;
+	virtual bool getParticipantMetaValue(const IUser* user, const std::wstring& key, std::wstring& outValue) const T_OVERRIDE T_FINAL;
 
-	virtual Ref< Result > join();
+	virtual Ref< Result > join() T_OVERRIDE T_FINAL;
 
-	virtual bool leave();
+	virtual bool leave() T_OVERRIDE T_FINAL;
 
-	virtual bool getParticipants(RefArray< IUser >& outUsers);
+	virtual bool getParticipants(RefArray< IUser >& outUsers) T_OVERRIDE T_FINAL;
 
-	virtual uint32_t getParticipantCount() const;
+	virtual uint32_t getParticipantCount() const T_OVERRIDE T_FINAL;
 
-	virtual uint32_t getMaxParticipantCount() const;
+	virtual uint32_t getMaxParticipantCount() const T_OVERRIDE T_FINAL;
 
-	virtual uint32_t getFriendsCount() const;
+	virtual uint32_t getFriendsCount() const T_OVERRIDE T_FINAL;
 
-	virtual bool invite(const IUser* user);
+	virtual bool invite(const IUser* user) T_OVERRIDE T_FINAL;
 
-	virtual bool setOwner(const IUser* user);
+	virtual bool setOwner(const IUser* user) T_OVERRIDE T_FINAL;
 
-	virtual const IUser* getOwner() const;
+	virtual const IUser* getOwner() const T_OVERRIDE T_FINAL;
 
 private:
 	friend class MatchMaking;

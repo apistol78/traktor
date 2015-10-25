@@ -39,11 +39,11 @@ public:
 
 	uint32_t getActiveSoundChannels() const;
 
-	virtual sound::SoundSystem* getSoundSystem();
+	virtual sound::SoundSystem* getSoundSystem() T_OVERRIDE T_FINAL;
 
-	virtual sound::ISoundPlayer* getSoundPlayer();
+	virtual sound::ISoundPlayer* getSoundPlayer() T_OVERRIDE T_FINAL;
 
-	virtual sound::SurroundEnvironment* getSurroundEnvironment();
+	virtual sound::SurroundEnvironment* getSurroundEnvironment() T_OVERRIDE T_FINAL;
 
 private:
 	Ref< sound::SoundSystem > m_soundSystem;

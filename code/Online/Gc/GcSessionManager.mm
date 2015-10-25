@@ -145,6 +145,11 @@ bool GcSessionManager::isConnected() const
 	return ([GKLocalPlayer localPlayer].authenticated == YES);
 }
 
+bool GcSessionManager::requireFullScreen() const
+{
+	return false;
+}
+
 bool GcSessionManager::requireUserAttention() const
 {
 	return false;

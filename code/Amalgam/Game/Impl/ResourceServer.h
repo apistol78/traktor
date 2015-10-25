@@ -28,7 +28,7 @@ public:
 
 	void performCleanup();
 
-	virtual resource::IResourceManager* getResourceManager();
+	virtual resource::IResourceManager* getResourceManager() T_OVERRIDE T_FINAL;
 
 private:
 	Ref< resource::IResourceManager > m_resourceManager;

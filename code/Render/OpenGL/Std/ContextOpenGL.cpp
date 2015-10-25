@@ -217,6 +217,7 @@ bool ContextOpenGL::enter()
 		ms_contextStack.set(stack);
 	}
 
+	/*
 #if !defined(__LINUX__) && !defined(__APPLE__)
 	if (glDebugMessageCallbackARB)
 	{
@@ -236,6 +237,7 @@ bool ContextOpenGL::enter()
 		glDebugMessageCallbackAMD(&debugCallbackAMD, 0);
 	}
 #endif
+	*/
 
 	// Flush GL error stack.
 	while (glGetError() != GL_NO_ERROR)
@@ -512,11 +514,7 @@ void ContextOpenGL::bindRenderStateObject(uint32_t renderStateObject)
 
 void ContextOpenGL::bindSamplerStateObject(GLenum textureTarget, uint32_t samplerStateObject, uint32_t stage, bool haveMips)
 {
-	const std::map< uint32_t, SamplerStateObject >& samplerStateObjects = m_resourceContext->m_samplerStateObjects;
-
-	std::map< uint32_t, SamplerStateObject >::const_iterator i = samplerStateObjects.find(samplerStateObject);
-	T_FATAL_ASSERT (i != m_samplerStateObjects.end());
-
+	std::map< uint32_t, SamplerStateObject >::iterator i = m_resourceContext->m_samplerStateObjects.find(samplerStateObject);
 	if (haveMips)
 	{
 		T_OGL_SAFE(glBindSampler(stage, i->second.withMips));
@@ -525,39 +523,6 @@ void ContextOpenGL::bindSamplerStateObject(GLenum textureTarget, uint32_t sample
 	{
 		T_OGL_SAFE(glBindSampler(stage, i->second.noMips));
 	}
-
-	/*
-	const std::vector< SamplerStateOpenGL >& samplerStateList = m_resourceContext->m_samplerStateList;
-
-	T_ASSERT (samplerStateObject > 0);
-	T_ASSERT (samplerStateObject <= samplerStateList.size());
-	const SamplerStateOpenGL& ss = samplerStateList[samplerStateObject - 1];
-
-	T_OGL_SAFE(glTexParameteri(textureTarget, GL_TEXTURE_WRAP_S, ss.wrapS));
-	T_OGL_SAFE(glTexParameteri(textureTarget, GL_TEXTURE_WRAP_T, ss.wrapT));
-
-	if (textureTarget != GL_TEXTURE_2D)
-		T_OGL_SAFE(glTexParameteri(textureTarget, GL_TEXTURE_WRAP_R, ss.wrapR));
-
-	T_OGL_SAFE(glTexParameteri(textureTarget, GL_TEXTURE_MAG_FILTER, ss.magFilter));
-
-	if (haveMips)
-	{
-		T_OGL_SAFE(glTexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, ss.minFilter));
-		if (m_resourceContext->m_maxAnisotropy > 0.0f)
-			T_OGL_SAFE(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, m_resourceContext->m_maxAnisotropy));
-	}
-	else
-		{ T_OGL_SAFE(glTexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR)); }
-
-	if (ss.compare != GL_INVALID_ENUM)
-	{
-		T_OGL_SAFE(glTexParameteri(textureTarget, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE));
-		T_OGL_SAFE(glTexParameteri(textureTarget, GL_TEXTURE_COMPARE_FUNC, ss.compare));
-	}
-	else
-		{ T_OGL_SAFE(glTexParameteri(textureTarget, GL_TEXTURE_COMPARE_MODE, GL_NONE)); }
-	*/
 }
 
 void ContextOpenGL::setMaxAnisotropy(GLfloat maxAnisotropy)

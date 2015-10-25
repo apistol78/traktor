@@ -17,19 +17,19 @@ class SaveData : public ISaveData
 	T_RTTI_CLASS;
 
 public:
-	virtual bool ready() const;
+	virtual bool ready() const T_OVERRIDE T_FINAL;
 
-	virtual bool enumerate(std::set< std::wstring >& outSaveDataIds) const;
+	virtual bool enumerate(std::set< std::wstring >& outSaveDataIds) const T_OVERRIDE T_FINAL;
 
-	virtual Ref< AttachmentResult > get(const std::wstring& saveDataId) const;
+	virtual Ref< AttachmentResult > get(const std::wstring& saveDataId) const T_OVERRIDE T_FINAL;
 
-	virtual Ref< ISerializable > getNow(const std::wstring& saveDataId) const;
+	virtual Ref< ISerializable > getNow(const std::wstring& saveDataId) const T_OVERRIDE T_FINAL;
 
-	virtual Ref< Result > set(const std::wstring& saveDataId, const SaveDataDesc& saveDataDesc, const ISerializable* attachment, bool replace);
+	virtual Ref< Result > set(const std::wstring& saveDataId, const SaveDataDesc& saveDataDesc, const ISerializable* attachment, bool replace) T_OVERRIDE T_FINAL;
 
-	virtual bool setNow(const std::wstring& saveDataId, const SaveDataDesc& saveDataDesc, const ISerializable* attachment, bool replace);
+	virtual bool setNow(const std::wstring& saveDataId, const SaveDataDesc& saveDataDesc, const ISerializable* attachment, bool replace) T_OVERRIDE T_FINAL;
 
-	virtual Ref< Result > remove(const std::wstring& saveDataId);
+	virtual Ref< Result > remove(const std::wstring& saveDataId) T_OVERRIDE T_FINAL;
 
 private:
 	friend class SessionManager;

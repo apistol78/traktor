@@ -19,7 +19,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.OnlineServer", OnlineServer, IOnlineServer)
 
-bool OnlineServer::create(const PropertyGroup* defaultSettings, const PropertyGroup* settings, db::Database* db)
+bool OnlineServer::create(const PropertyGroup* defaultSettings, PropertyGroup* settings, db::Database* db)
 {
 	Guid configGuid(defaultSettings->getProperty< PropertyString >(L"Online.Config"));
 	if (!configGuid.isValid() || configGuid.isNull())
@@ -53,6 +53,10 @@ bool OnlineServer::create(const PropertyGroup* defaultSettings, const PropertyGr
 		log::error << L"Online server failed; unable to create session manager" << Endl;
 		return false;
 	}
+
+	// Check if session manager require fullscreen; ex Steam "Big Picture" mode wants this.
+	if (sessionManager->requireFullScreen())
+		settings->setProperty< PropertyBoolean >(L"Render.FullScreen", true);
 
 	m_sessionManager = sessionManager;
 	return true;

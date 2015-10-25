@@ -65,7 +65,7 @@ public:
 		{
 		}
 
-		virtual void dispatch(const Result& result) const
+		virtual void dispatch(const Result& result) const T_OVERRIDE T_FINAL
 		{
 			(m_object->*m_method)(result);
 		}
