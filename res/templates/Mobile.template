@@ -79,13 +79,13 @@
 			<transform>false</transform>
 		</item>
 		<item>
-			<source>Mobile/data/Source/Template - Target.xdi</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/$(WIZARD_NAME) - Target.xdi</target>
+			<source>Mobile/data/Source/Template.xdi</source>
+			<target>$(WIZARD_OUTPUT_PATH)/data/Source/$(WIZARD_NAME).xdi</target>
 			<transform>true</transform>
 		</item>
 		<item>
-			<source>Mobile/data/Source/Template - Target.xdm</source>
-			<target>$(WIZARD_OUTPUT_PATH)/data/Source/$(WIZARD_NAME) - Target.xdm</target>
+			<source>Mobile/data/Source/Template.xdm</source>
+			<target>$(WIZARD_OUTPUT_PATH)/data/Source/$(WIZARD_NAME).xdm</target>
 			<transform>false</transform>
 		</item>
 		<item>
