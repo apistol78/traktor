@@ -12,6 +12,7 @@
 						<first>DEPLOY_FILES</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
+								<item>AudioToolbox.framework</item>
 								<item>Foundation.framework</item>
 							</value>
 						</second>
