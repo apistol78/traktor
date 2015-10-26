@@ -397,7 +397,7 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 			else if (command == L"ModelTool.UnwrapUV")
 			{
 				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Unwrap UV");
-				itemOperation->setData(L"OPERATION", new UnwrapUV(0, 0.01f));
+				itemOperation->setData(L"OPERATION", new UnwrapUV(0, 0.01f, 0.0f, 0.0f));
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.WeldHoles")

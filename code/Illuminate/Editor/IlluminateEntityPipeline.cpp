@@ -2,11 +2,8 @@
 #include <ctime>
 #include "Core/Functor/Functor.h"
 #include "Core/Log/Log.h"
-#include "Core/Math/Format.h"
 #include "Core/Math/RandomGeometry.h"
 #include "Core/Math/SahTree.h"
-#include "Core/Math/Triangle.h"
-#include "Core/Math/Triangulator.h"
 #include "Core/Math/Winding3.h"
 #include "Core/Reflection/Reflection.h"
 #include "Core/Reflection/RfmObject.h"
@@ -23,6 +20,7 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
+#include "Illuminate/Editor/GBuffer.h"
 #include "Illuminate/Editor/IlluminateEntityData.h"
 #include "Illuminate/Editor/IlluminateEntityPipeline.h"
 #include "Mesh/MeshEntityData.h"
@@ -31,7 +29,6 @@
 #include "Model/ModelFormat.h"
 #include "Model/Operations/CleanDegenerate.h"
 #include "Model/Operations/MergeModel.h"
-#include "Model/Operations/Triangulate.h"
 #include "Model/Operations/UnwrapUV.h"
 #include "Render/Editor/Texture/TextureOutput.h"
 #include "World/Entity/DirectionalLightEntityData.h"
@@ -51,96 +48,7 @@ const int32_t c_outputHeight = 2048;
 const int32_t c_jobTileWidth = 128;
 const int32_t c_jobTileHeight = 128;
 const Scalar c_maxIndirectDistance(200.0f);
-const Scalar c_traceOffset(0.001f);
-const int32_t c_biasDelta[][2] =
-{
-	{ -1, 0 },
-	{  1, 0 },
-	{ 0, -1 },
-	{ 0,  1 }
-};
-
-struct Surface
-{
-	int32_t count;
-	Vector4 points[16];
-	Vector2 texCoords[16];
-	Vector4 normals[16];
-	Vector4 normal;
-	Color4f color;
-	Scalar emissive;
-	Scalar translucency;
-
-	Surface()
-	:	count(0)
-	,	emissive(0.0f)
-	,	translucency(0.0f)
-	{
-	}
-};
-
-struct Light
-{
-	int32_t type;		//<! 0 - directional, 1 - point, 2 - emissive surface
-	Vector4 position;
-	Vector4 direction;
-	Color4f sunColor;
-	Color4f baseColor;
-	Color4f shadowColor;
-	Scalar range;
-	int32_t surface;
-
-	Light()
-	:	type(0)
-	,	surface(0)
-	{
-	}
-};
-
-struct GBuffer
-{
-	int32_t surface;
-	Vector4 position;
-	Vector4 normal;
-};
-
-class GBufferVisitor
-{
-public:
-	GBufferVisitor(
-		int32_t surface,
-		const Vector4 P[3],
-		const Vector4 N[3],
-		AlignedVector< GBuffer >& outGBuffer
-	)
-	:	m_surface(surface)
-	,	m_outGBuffer(outGBuffer)
-	{
-		for (int i = 0; i < 3; ++i)
-		{
-			m_P[i] = P[i];
-			m_N[i] = N[i];
-		}
-	}
-
-	void operator () (int32_t x, int32_t y, float alpha, float beta, float gamma)
-	{
-		if (x >= 0 && y >= 0 && x < c_outputWidth && y < c_outputHeight)
-		{
-			Vector4 position = (m_P[0] * Scalar(alpha) + m_P[1] * Scalar(beta) + m_P[2] * Scalar(gamma)).xyz1();
-			Vector4 normal = (m_N[0] * Scalar(alpha) + m_N[1] * Scalar(beta) + m_N[2] * Scalar(gamma)).xyz0();
-			m_outGBuffer[x + y * c_outputWidth].surface = m_surface;
-			m_outGBuffer[x + y * c_outputWidth].position = position;
-			m_outGBuffer[x + y * c_outputWidth].normal = normal.normalized();
-		}
-	}
-
-private:
-	int32_t m_surface;
-	Vector4 m_P[3];
-	Vector4 m_N[3];
-	AlignedVector< GBuffer >& m_outGBuffer;
-};
+const Scalar c_traceOffset(0.01f);
 
 class JobTraceDirect
 {
@@ -150,10 +58,8 @@ public:
 		int32_t tileX,
 		int32_t tileY,
 		const SahTree& sah,
-		const AlignedVector< GBuffer >& gbuffer,
-		const AlignedVector< Surface >& surfaces,
+		const GBuffer& gbuffer,
 		const AlignedVector< Light >& lights,
-		const drawing::Image* skyProbe,
 		drawing::Image* outputImageDirect
 	)
 	:	m_entityData(entityData)
@@ -161,9 +67,7 @@ public:
 	,	m_tileY(tileY)
 	,	m_sah(sah)
 	,	m_gbuffer(gbuffer)
-	,	m_surfaces(surfaces)
 	,	m_lights(lights)
-	,	m_skyProbe(skyProbe)
 	,	m_outputImageDirect(outputImageDirect)
 	{
 	}
@@ -179,98 +83,52 @@ public:
 		{
 			for (int32_t x = m_tileX; x < m_tileX + c_jobTileWidth; ++x)
 			{
-				int32_t surfaceId = m_gbuffer[x + y * c_outputWidth].surface;
-				if (surfaceId < 0)
+				const GBuffer::Element& gb = m_gbuffer.get(x, y);
+
+				if (gb.surfaceIndex < 0)
 					continue;
 
-				const Vector4& position = m_gbuffer[x + y * c_outputWidth].position;
-				if (position.w() < FUZZY_EPSILON)
-					continue;
-
-				if (!m_sah.checkPoint(surfaceId, position))
-					continue;
-
-				const Vector4& normal = m_gbuffer[x + y * c_outputWidth].normal;
-
-				Color4f direct(0.0f, 0.0f, 0.0f, 1.0f);
-
-				const Surface& surface = m_surfaces[surfaceId];
-				if (surface.emissive > FUZZY_EPSILON)
-					direct += Color4f(1.0f, 1.0f, 1.0f, 0.0f) * surface.color * surface.emissive;
-
-				if (m_skyProbe)
-				{
-					int32_t skyTraceSamples = m_entityData.getSkyProbeSamples();
-					Scalar skyStrength(m_entityData.getSkyProbeStrength());
-					Color4f skyAccum(0.0f, 0.0f, 0.0f, 0.0f);
-
-					for (int32_t i = 0; i < skyTraceSamples; ++i)
-					{
-						Vector4 skyTraceDir = random.nextHemi(normal);
-						if (m_sah.queryAnyIntersection(position - normal * c_traceOffset, skyTraceDir, 1e3f, surfaceId, cache))
-							continue;
-
-						float T_MATH_ALIGN16 e[4];
-						skyTraceDir.storeAligned(e);
-
-						float phi = std::atan2(e[2], e[0]);
-						float omega = std::acos(e[1]);
-
-						int32_t x = int32_t(m_skyProbe->getWidth() * ((phi + PI) / TWO_PI));
-						int32_t y = int32_t(m_skyProbe->getHeight() * (omega / PI));
-
-						Color4f skySample;
-						if (m_skyProbe->getPixel(x, y, skySample))
-							skyAccum += skySample * skyStrength * dot3(normal, skyTraceDir);
-					}
-
-					direct += Color4f(1.0f, 1.0f, 1.0f, 0.0f) * (skyAccum / Scalar(skyTraceSamples));
-				}
+				Color4f radiance(0.0f, 0.0f, 0.0f, 0.0f);
 
 				for (AlignedVector< Light >::const_iterator i = m_lights.begin(); i != m_lights.end(); ++i)
 				{
-					if (i->type == 0)
+					if (i->type == 0)	// Directional
 					{
-						Scalar phi = dot3(-i->direction, normal);
+						//int32_t shadowCount = 0;
+						//for (int32_t j = 0; j < c_shadowSamples; ++j)
+						//{
+						//	Vector4 shadowPosition = position + shadowU * Scalar(c_shadowSampleRadius * (random.nextFloat() * 2.0f - 1.0f)) + shadowV * Scalar(c_shadowSampleRadius * (random.nextFloat() * 2.0f - 1.0f));
+						//	Vector4 shadowOrigin = (shadowPosition + normal * c_traceRayOffset).xyz1();
+						//	if (m_sah.queryAnyIntersection(shadowOrigin, -i->direction, 1e3f, surfaceId, cache))
+						//		shadowCount++;
+						//}
+						//phi *= Scalar(1.0f - float(shadowCount) / c_shadowSamples);
+
+						Scalar phi = dot3(-i->direction, gb.normal);
 						if (phi > 0.0f)
-						{
-							//int32_t shadowCount = 0;
-							//for (int32_t j = 0; j < c_shadowSamples; ++j)
-							//{
-							//	Vector4 shadowPosition = position + shadowU * Scalar(c_shadowSampleRadius * (random.nextFloat() * 2.0f - 1.0f)) + shadowV * Scalar(c_shadowSampleRadius * (random.nextFloat() * 2.0f - 1.0f));
-							//	Vector4 shadowOrigin = (shadowPosition + normal * c_traceRayOffset).xyz1();
-							//	if (m_sah.queryAnyIntersection(shadowOrigin, -i->direction, 1e3f, surfaceId, cache))
-							//		shadowCount++;
-							//}
-							//phi *= Scalar(1.0f - float(shadowCount) / c_shadowSamples);
-
-							Scalar k1 = clamp(phi * Scalar(2.0f), Scalar(0.0f), Scalar(1.0f));
-							Color4f c1 = i->shadowColor * (Scalar(1.0f) - k1) + i->baseColor * k1;
-
-							Scalar k2 = clamp(phi * Scalar(2.0f) - Scalar(1.0f), Scalar(0.0f), Scalar(1.0f));
-							Color4f c2 = c1 * (Scalar(1.0f) - k2) + i->sunColor * k2;
-
-							direct += Color4f(1.0f, 1.0f, 1.0f, 0.0f) * c2;
-						}
-						else
-							direct += Color4f(1.0f, 1.0f, 1.0f, 0.0f) * i->shadowColor;
+							radiance += i->sunColor * phi;
 					}
-					else if (i->type == 1)
+					else if (i->type == 1)	// Point
 					{
-						Vector4 lightDirection = (i->position - position).xyz0();
+						Vector4 lightDirection = (i->position - gb.position).xyz0();
+
+						// Distance
 						Scalar lightDistance = lightDirection.normalize();
 						if (lightDistance >= i->range)
 							continue;
 
-						Scalar phi = dot3(lightDirection, normal);
+						Scalar distanceAttenuate = Scalar(1.0f) - lightDistance / i->range;
+
+						// Cosine
+						Scalar phi = dot3(lightDirection, gb.normal);
 						if (phi <= 0.0f)
 							continue;
 
+						// Shadow
 						Vector4 u, v;
 						orthogonalFrame(lightDirection, u, v);
 
 						float pointLightRadius = m_entityData.getPointLightRadius();
-
 						int32_t shadowSamples = m_entityData.getShadowSamples();
 						int32_t shadowCount = 0;
 						for (int32_t j = 0; j < shadowSamples; ++j)
@@ -283,56 +141,18 @@ public:
 							}
 							while ((a * a) + (b * b) > 1.0f);
 
-							Vector4 shadowDirection = (i->position + u * Scalar(a * pointLightRadius) + v * Scalar(b * pointLightRadius) - position).xyz0();
+							Vector4 shadowDirection = (i->position + u * Scalar(a * pointLightRadius) + v * Scalar(b * pointLightRadius) - gb.position).xyz0();
 
-							if (m_sah.queryAnyIntersection(position - normal * c_traceOffset, shadowDirection.normalized(), lightDistance - FUZZY_EPSILON, surfaceId, cache))
+							if (m_sah.queryAnyIntersection(gb.position + gb.normal * c_traceOffset, shadowDirection.normalized(), lightDistance - FUZZY_EPSILON, gb.surfaceIndex, cache))
 								shadowCount++;
 						}
-						phi *= Scalar(1.0f - float(shadowCount) / shadowSamples);
+						Scalar shadowAttenuate = Scalar(1.0f - float(shadowCount) / shadowSamples);
 
-						Scalar attenuate = Scalar(1.0f) - lightDistance / i->range;
-						direct += Color4f(phi, phi, phi, 0.0f) * i->sunColor * attenuate;
-					}
-					else if (i->type == 2)
-					{
-						const Surface& emissiveSurface = m_surfaces[i->surface];
-
-						Vector4 u = emissiveSurface.points[2] - emissiveSurface.points[0];
-						Vector4 v = emissiveSurface.points[1] - emissiveSurface.points[0];
-
-						const int32_t c_steps = 16;
-
-						Color4f lightAcc(0.0f, 0.0f, 0.0f, 0.0f);
-						for (int32_t iv = 0; iv < c_steps; ++iv)
-						{
-							Scalar fv = Scalar(float(iv) / (c_steps - 1));
-							for (int32_t iu = 0; iu < c_steps; ++iu)
-							{
-								Scalar fu = Scalar(float(iu) / (c_steps - 1));
-								Vector4 lightPosition = (emissiveSurface.points[0] + u * fu + v * fv).xyz1();
-
-								Vector4 lightDirection = (lightPosition - position).xyz0();
-								Scalar lightDistance = lightDirection.normalize();
-								if (lightDistance >= i->range)
-									continue;
-
-								Scalar phi = dot3(lightDirection, normal);
-								if (phi <= 0.0f)
-									continue;
-
-								if (m_sah.queryAnyIntersection(position - normal * c_traceOffset, lightDirection, lightDistance - FUZZY_EPSILON, cache))
-									continue;
-
-								Scalar attenuate = Scalar(1.0f) - lightDistance / i->range;
-								lightAcc += Color4f(phi, phi, phi, 0.0f) * i->sunColor * attenuate;
-							}
-						}
-
-						direct += lightAcc / Scalar(float(c_steps * c_steps));
+						radiance += i->sunColor * shadowAttenuate * distanceAttenuate * phi;
 					}
 				}
 
-				m_outputImageDirect->setPixel(x, y, direct);
+				m_outputImageDirect->setPixel(x, y, Color4f(Vector4(radiance).xyz1()));
 			}
 		}
 	}
@@ -342,10 +162,8 @@ private:
 	int32_t m_tileX;
 	int32_t m_tileY;
 	const SahTree& m_sah;
-	const AlignedVector< GBuffer >& m_gbuffer;
-	const AlignedVector< Surface >& m_surfaces;
+	const GBuffer& m_gbuffer;
 	const AlignedVector< Light >& m_lights;
-	const drawing::Image* m_skyProbe;
 	drawing::Image* m_outputImageDirect;
 };
 
@@ -356,9 +174,9 @@ public:
 		int32_t tileX,
 		int32_t tileY,
 		const SahTree& sah,
-		const AlignedVector< GBuffer >& gbuffer,
+		const GBuffer& gbuffer,
 		const AlignedVector< Surface >& surfaces,
-		const drawing::Image* imageDirect,
+		const drawing::Image* imageIrradiance,
 		drawing::Image* outputImageIndirect,
 		int32_t indirectTraceSamples
 	)
@@ -367,7 +185,7 @@ public:
 	,	m_sah(sah)
 	,	m_gbuffer(gbuffer)
 	,	m_surfaces(surfaces)
-	,	m_imageDirect(imageDirect)
+	,	m_imageIrradiance(imageIrradiance)
 	,	m_outputImageIndirect(outputImageIndirect)
 	,	m_indirectTraceSamples(indirectTraceSamples)
 	{
@@ -378,36 +196,29 @@ public:
 		RandomGeometry random(std::clock());
 		SahTree::QueryCache cache;
 		SahTree::QueryResult result;
-		Color4f tmp;
+		Color4f irradiance;
 
 		for (int32_t y = m_tileY; y < m_tileY + c_jobTileHeight; ++y)
 		{
 			for (int32_t x = m_tileX; x < m_tileX + c_jobTileWidth; ++x)
 			{
-				int32_t surfaceId = m_gbuffer[x + y * c_outputWidth].surface;
-				if (surfaceId < 0)
+				const GBuffer::Element& gb = m_gbuffer.get(x, y);
+
+				if (gb.surfaceIndex < 0)
 					continue;
 
-				const Vector4& position = m_gbuffer[x + y * c_outputWidth].position;
-				if (position.w() < FUZZY_EPSILON)
-					continue;
-
-				if (!m_sah.checkPoint(surfaceId, position))
-					continue;
-
-				Vector4 normal = m_gbuffer[x + y * c_outputWidth].normal;
-				Color4f indirect(0.0f, 0.0f, 0.0f, 0.0f);
+				Color4f radiance(0.0f, 0.0f, 0.0f, 0.0f);
 
 				for (int32_t i = 0; i < m_indirectTraceSamples; )
 				{
 					Vector4 rayDirection = random.nextUnit();
-					Scalar phi = dot3(rayDirection, normal);
-					if (phi <= 0.2f)
+					if (dot3(rayDirection, gb.normal) <= 0.2f)
 						continue;
 
-					if (m_sah.queryClosestIntersection(position - normal * c_traceOffset, rayDirection, surfaceId, result, cache))
+					if (m_sah.queryClosestIntersection(gb.position + gb.normal * c_traceOffset, rayDirection, gb.surfaceIndex, result, cache))
 					{
-						if (dot3(rayDirection, result.normal) >= 0.0f)
+						Scalar phi = -dot3(rayDirection, result.normal);
+						if (phi <= 0.0f)
 						{
 							++i;
 							continue;
@@ -415,14 +226,12 @@ public:
 
 						const Vector4& P = result.position;
 
-						Scalar distance = (P - position).xyz0().length();
+						Scalar distance = (P - gb.position).xyz0().length();
 						if (distance >= c_maxIndirectDistance)
 						{
 							++i;
 							continue;
 						}
-
-						Scalar attenuate = Scalar(1.0f) - distance / c_maxIndirectDistance;
 
 						const Surface& hitSurface = m_surfaces[result.index];
 
@@ -450,18 +259,19 @@ public:
 
 						Vector2 texCoord = texCoord0 + (texCoord2 - texCoord0) * u + (texCoord1 - texCoord0) * v;
 
-						int32_t lx = int32_t(texCoord.x * m_imageDirect->getWidth());
-						int32_t ly = int32_t(texCoord.y * m_imageDirect->getHeight());
-						m_imageDirect->getPixel(lx, ly, tmp);
+						int32_t lx = int32_t(texCoord.x * m_imageIrradiance->getWidth());
+						int32_t ly = int32_t(texCoord.y * m_imageIrradiance->getHeight());
+						m_imageIrradiance->getPixel(lx, ly, irradiance);
 
-						indirect += tmp * attenuate;
+						Scalar distanceAttenuate = Scalar(1.0f) - distance / c_maxIndirectDistance;
+						radiance += (hitSurface.color * irradiance) * phi * distanceAttenuate;
 					}
 
 					++i;
 				}
 
-				indirect /= Scalar(m_indirectTraceSamples);
-				m_outputImageIndirect->setPixel(x, y, indirect);
+				radiance /= Scalar(m_indirectTraceSamples);
+				m_outputImageIndirect->setPixel(x, y, Color4f(Vector4(radiance).xyz1()));
 			}
 		}
 	}
@@ -470,36 +280,12 @@ private:
 	int32_t m_tileX;
 	int32_t m_tileY;
 	const SahTree& m_sah;
-	const AlignedVector< GBuffer >& m_gbuffer;
+	const GBuffer& m_gbuffer;
 	const AlignedVector< Surface >& m_surfaces;
-	const drawing::Image* m_imageDirect;
+	const drawing::Image* m_imageIrradiance;
 	drawing::Image* m_outputImageIndirect;
 	int32_t m_indirectTraceSamples;
 };
-
-uint32_t getAvailableTexCoordChannel(const model::Model& model)
-{
-	uint32_t channel = 0;
-
-	const std::vector< model::Material >& materials = model.getMaterials();
-	for (std::vector< model::Material >::const_iterator i = materials.begin(); i != materials.end(); ++i)
-	{
-		if (!i->getDiffuseMap().name.empty())
-			channel = traktor::max(channel, i->getDiffuseMap().channel + 1);
-		if (!i->getSpecularMap().name.empty())
-			channel = traktor::max(channel, i->getSpecularMap().channel + 1);
-		if (!i->getTransparencyMap().name.empty())
-			channel = traktor::max(channel, i->getTransparencyMap().channel + 1);
-		if (!i->getEmissiveMap().name.empty())
-			channel = traktor::max(channel, i->getEmissiveMap().channel + 1);
-		if (!i->getReflectiveMap().name.empty())
-			channel = traktor::max(channel, i->getReflectiveMap().channel + 1);
-		if (!i->getNormalMap().name.empty())
-			channel = traktor::max(channel, i->getNormalMap().channel + 1);
-	}
-
-	return channel;
-}
 
 Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const ISerializable* object)
 {
@@ -569,14 +355,6 @@ void collectTraceEntities(
 		else if (objectMember->get())
 			collectTraceEntities(objectMember->get(), outDirectionalLightEntityData, outPointLightEntityData, outMeshEntityData);
 	}
-}
-
-Guid advanceGuid(const Guid& seed, int32_t iterations)
-{
-	uint8_t data[16];
-	std::memcpy(data, seed, 16);
-	*(uint32_t*)data += iterations;
-	return Guid(data);
 }
 
 		}
@@ -694,19 +472,6 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 			lights.push_back(light);
 		}
 
-		// Load sky probe.
-		Ref< drawing::Image > skyProbe;
-		const Path& skyProbePath = illumEntityData->getSkyProbe();
-		if (!skyProbePath.empty())
-		{
-			skyProbe = drawing::Image::load(skyProbePath);
-			if (!skyProbe)
-			{
-				log::error << L"Unable to load sky probe image" << Endl;
-				return false;
-			}
-		}
-
 		Ref< model::Model > mergedModel = new model::Model();
 		std::map< std::wstring, Guid > meshMaterialTextures;
 
@@ -747,11 +512,11 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		model::CleanDegenerate().apply(*mergedModel);
 
 		// Get next free channel to store lightmap UV.
-		uint32_t channel = getAvailableTexCoordChannel(*mergedModel);
+		uint32_t channel = mergedModel->getAvailableTexCoordChannel();
 
 		// UV unwrap entire model.
 		log::info << L"UV unwrapping, using channel " << channel << L"..." << Endl;
-		if (!model::UnwrapUV(channel, 5.0f).apply(*mergedModel))
+		if (!model::UnwrapUV(channel, 3.0f, 1.0f / c_outputWidth, 1.0f / c_outputHeight).apply(*mergedModel))
 		{
 			log::error << L"IlluminateEntityPipeline failed; unable to unwrap UV." << Endl;
 			return 0;
@@ -814,85 +579,19 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 
 			s.color = Color4f(rgba);
 			s.emissive = Scalar(material.getEmissive());
-
-			// Add each emissive surface as a light source.
-			if (s.emissive > FUZZY_EPSILON)
-			{
-				Light light;
-				light.type = 2;
-				light.position = Vector4::zero();
-				light.direction = Vector4::zero();
-				light.sunColor = s.color;
-				light.range = Scalar(100.0f);
-				light.surface = j;
-				lights.push_back(light);
-			}
 		}
 
 		// Build acceleration tree.
 		SahTree sah;
 		sah.build(windings);
 
-		// Create GBuffer images.
-		const GBuffer zero = { -1, Vector4::zero(), Vector4::zero() };
-		AlignedVector< GBuffer > gbuffer(c_outputWidth * c_outputHeight, zero);
-
-		// Trace each polygon in UV space.
-		Vector2 dim(c_outputWidth, c_outputHeight);
-		Vector2 uv[3];
-		Vector4 P[3], N[3];
-
-		// Trace first, direct illumination, pass.
-		log::info << L"Generating g-buffer..." << Endl;
-
-		// Then draw solid triangles to fill with correct data.
-		for (uint32_t j = 0; j < surfaces.size(); ++j)
-		{
-			const Surface& s = surfaces[j];
-
-			AlignedVector< Vector2 > texCoords(s.count);
-			for (int32_t k = 0; k < s.count; ++k)
-				texCoords[k] = s.texCoords[k] * dim;
-
-			std::vector< Triangulator::Triangle > triangles;
-			Triangulator().freeze(
-				texCoords,
-				triangles
-			);
-
-			for (std::vector< Triangulator::Triangle >::const_iterator k = triangles.begin(); k != triangles.end(); ++k)
-			{
-				size_t i0 = k->indices[0];
-				size_t i1 = k->indices[1];
-				size_t i2 = k->indices[2];
-
-				uv[0] = texCoords[i0];
-				uv[1] = texCoords[i1];
-				uv[2] = texCoords[i2];
-
-				P[0] = s.points[i0];
-				P[1] = s.points[i1];
-				P[2] = s.points[i2];
-
-				N[0] = s.normals[i0];
-				N[1] = s.normals[i1];
-				N[2] = s.normals[i2];
-
-				GBufferVisitor visitor1(j, P, N, gbuffer);
-				triangle(uv[0], uv[1], uv[2], visitor1);
-
-				std::swap(P[0], P[2]);
-				std::swap(N[0], N[2]);
-				std::swap(uv[0], uv[2]);
-
-				GBufferVisitor visitor2(j, P, N, gbuffer);
-				triangle(uv[0], uv[1], uv[2], visitor2);
-			}
-		}
+		// Create GBuffer.
+		GBuffer gbuffer;
+		gbuffer.create(surfaces, c_outputWidth, c_outputHeight);
 
 		// Create output image.
-		Ref< drawing::Image > outputImageDirect = new drawing::Image(drawing::PixelFormat::getRGBAF32(), c_outputWidth, c_outputHeight);
-		outputImageDirect->clear(Color4f(0.0f, 0.0f, 1.0f, 0.0f));
+		Ref< drawing::Image > outputImageRadiance = new drawing::Image(drawing::PixelFormat::getRGBAF32(), c_outputWidth, c_outputHeight);
+		outputImageRadiance->clear(Color4f(0.0f, 0.0f, 1.0f, 0.0f));
 
 		RefArray< Job > jobs;
 
@@ -908,10 +607,8 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 					y,
 					sah,
 					gbuffer,
-					surfaces,
 					lights,
-					skyProbe,
-					outputImageDirect
+					outputImageRadiance
 				);
 
 				Ref< Job > job = JobManager::getInstance().add(makeFunctor< JobTraceDirect >(trace, &JobTraceDirect::execute));
@@ -934,11 +631,13 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 
 		log::info << L"Dilating direct light map..." << Endl;
 		drawing::DilateFilter dilateFilter(4);
-		outputImageDirect->apply(&dilateFilter);
+		outputImageRadiance->apply(&dilateFilter);
 
-		log::info << L"Convolving direct lighting..." << Endl;
-		for (int32_t j = 0; j < illumEntityData->getDirectConvolveIterations(); ++j)
-			outputImageDirect->apply(drawing::ConvolutionFilter::createGaussianBlur5());
+		if (illumEntityData->getDirectConvolveRadius() > 0)
+		{
+			log::info << L"Convolving direct lighting..." << Endl;
+			outputImageRadiance->apply(drawing::ConvolutionFilter::createGaussianBlur(illumEntityData->getDirectConvolveRadius()));
+		}
 
 		if (illumEntityData->traceIndirectLighting())
 		{
@@ -950,7 +649,8 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 				new drawing::Image(drawing::PixelFormat::getRGBAF32(), c_outputWidth, c_outputHeight),
 				new drawing::Image(drawing::PixelFormat::getRGBAF32(), c_outputWidth, c_outputHeight)
 			};
-			Ref< drawing::Image > imageIndirectSource = outputImageDirect;
+
+			Ref< drawing::Image > imageIrradiance = outputImageRadiance;
 
 			for (int32_t i = 0; i < illumEntityData->getIndirectTraceIterations(); ++i)
 			{
@@ -967,7 +667,7 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 							sah,
 							gbuffer,
 							surfaces,
-							imageIndirectSource,
+							imageIrradiance,
 							outputImageIndirectTarget,
 							illumEntityData->getIndirectTraceSamples()
 						);
@@ -994,28 +694,31 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 				drawing::DilateFilter dilateFilter(4);
 				outputImageIndirectTarget->apply(&dilateFilter);
 
-				log::info << L"Convolving indirect lighting..." << Endl;
-				for (int32_t j = 0; j < illumEntityData->getIndirectConvolveIterations(); ++j)
-					outputImageIndirectTarget->apply(drawing::ConvolutionFilter::createGaussianBlur5());
+				if (illumEntityData->getIndirectConvolveRadius() > 0)
+				{
+					log::info << L"Convolving indirect lighting..." << Endl;
+					outputImageIndirectTarget->apply(drawing::ConvolutionFilter::createGaussianBlur(illumEntityData->getIndirectConvolveRadius()));
+				}
 
+				log::info << L"Merging direct and indirect lighting..." << Endl;
 				for (int32_t y = 0; y < c_outputHeight; ++y)
 				{
 					for (int32_t x = 0; x < c_outputWidth; ++x)
 					{
 						Color4f inA, inB;
 						outputImageIndirectTarget->getPixelUnsafe(x, y, inA);
-						outputImageDirect->getPixelUnsafe(x, y, inB);
-						outputImageDirect->setPixelUnsafe(x, y, (inA + inB) * Color4f(1.0f, 1.0f, 1.0f, 0.0f) + Color4f(0.0f, 0.0f, 0.0f, 1.0f));
+						imageIrradiance->getPixelUnsafe(x, y, inB);
+						outputImageRadiance->setPixelUnsafe(x, y, (inA + inB) * Color4f(1.0f, 1.0f, 1.0f, 0.0f) + Color4f(0.0f, 0.0f, 0.0f, 1.0f));
 					}
 				}
 
-				imageIndirectSource = outputImageIndirectTarget;
+				imageIrradiance = outputImageIndirectTarget;
 			}
 		}
 
 #if defined(_DEBUG)
 		// Save light-map for debugging.
-		outputImageDirect->save(illumEntityData->getSeedGuid().format() + L".png");
+		outputImageRadiance->save(illumEntityData->getSeedGuid().format() + L".png");
 		model::ModelFormat::writeAny(illumEntityData->getSeedGuid().format() + L".obj", mergedModel);
 #endif
 
@@ -1032,11 +735,13 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		textureOutput->m_enableCompression = illumEntityData->compressLightMap();
 		textureOutput->m_sharpenRadius = 0;
 		textureOutput->m_systemTexture = true;
+		textureOutput->m_generateMips = false;
+
 		pipelineBuilder->buildOutput(
 			textureOutput,
-			L"Generated/__Illumination__Texture__" + advanceGuid(illumEntityData->getSeedGuid(), 0).format(),
-			advanceGuid(illumEntityData->getSeedGuid(), 0),
-			outputImageDirect
+			L"Generated/__Illumination__Texture__" + illumEntityData->getSeedGuid().permutate(0).format(),
+			illumEntityData->getSeedGuid().permutate(0),
+			outputImageRadiance
 		);
 
 		// Modify model materials to use our illumination texture.
@@ -1049,7 +754,7 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		mergedModel->setMaterials(materials);
 
 		// Create a new mesh asset which use the fresh baked illumination texture.
-		meshMaterialTextures[L"__Illumination__"] = advanceGuid(illumEntityData->getSeedGuid(), 0);
+		meshMaterialTextures[L"__Illumination__"] = illumEntityData->getSeedGuid().permutate(0);
 
 		Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
 		outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
@@ -1058,15 +763,15 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 
 		pipelineBuilder->buildOutput(
 			outputMeshAsset,
-			L"Generated/__Illumination__Mesh__" + advanceGuid(illumEntityData->getSeedGuid(), 1).format(),
-			advanceGuid(illumEntityData->getSeedGuid(), 1),
+			L"Generated/__Illumination__Mesh__" + illumEntityData->getSeedGuid().permutate(1).format(),
+			illumEntityData->getSeedGuid().permutate(1),
 			mergedModel
 		);
 
 		// Create new mesh entity.
 		Ref< mesh::MeshEntityData > outputMeshEntityData = new mesh::MeshEntityData();
 		outputMeshEntityData->setName(L"__Illumination__");
-		outputMeshEntityData->setMesh(resource::Id< mesh::IMesh >(advanceGuid(illumEntityData->getSeedGuid(), 1)));
+		outputMeshEntityData->setMesh(resource::Id< mesh::IMesh >(illumEntityData->getSeedGuid().permutate(1)));
 
 		// Replace entire illuminate entity group with fresh baked mesh entity.
 		return outputMeshEntityData;
