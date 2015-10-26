@@ -56,6 +56,15 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 		outType = GL_UNSIGNED_BYTE;
 		break;
 
+#if defined(GL_RED_EXT)
+	case TfR16G16B16A16F:
+		outPixelSize = 8;
+		outComponents = GL_RGBA;
+		outFormat = GL_RGBA;
+		outType = GL_HALF_FLOAT_OES;
+		break;
+#endif
+
 	case TfR32G32B32A32F:
 		outPixelSize = 16;
 		outComponents = 4;

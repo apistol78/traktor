@@ -4,8 +4,8 @@
 		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
 			<position>
-				<first>3769</first>
-				<second>334</second>
+				<first>4120</first>
+				<second>342</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -149,8 +149,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>2692</first>
-				<second>516</second>
+				<first>2704</first>
+				<second>326</second>
 			</position>
 			<fragmentGuid>{6BCFD0DF-374A-8749-8FEA-01768C1748FD}</fragmentGuid>
 			<inputPins>
@@ -173,8 +173,8 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>2537</first>
-				<second>516</second>
+				<first>2549</first>
+				<second>326</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -208,25 +208,29 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>2394</first>
-				<second>580</second>
+				<first>2406</first>
+				<second>390</second>
 			</position>
 			<parameterName>ColorCorrection</parameterName>
 			<type>PtTexture3D</type>
 			<frequency>UfOnce</frequency>
 		</item>
+		<item type="traktor.render.Platform">
+			<comment/>
+			<position>
+				<first>3745</first>
+				<second>323</second>
+			</position>
+		</item>
+		<item type="traktor.render.Mul">
+			<comment/>
+			<position>
+				<first>3320</first>
+				<second>478</second>
+			</position>
+		</item>
 	</nodes>
 	<edges>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>Input</name>
-			</destination>
-		</item>
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[2]"/>
@@ -415,6 +419,56 @@
 			<destination>
 				<node ref="/object/nodes/item[13]"/>
 				<name>LUT</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Other</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[19]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[15]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[19]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[19]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
+				<name>OpenGL ES2</name>
 			</destination>
 		</item>
 	</edges>
