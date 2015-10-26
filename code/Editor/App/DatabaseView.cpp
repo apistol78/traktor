@@ -68,6 +68,14 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.DatabaseView.Filter", DatabaseView::Filt
 		namespace
 		{
 
+struct WizardToolPred
+{
+	bool operator () (const IWizardTool* a, const IWizardTool* b) const
+	{
+		return compareIgnoreCase(a->getDescription(), b->getDescription()) < 0;
+	}
+};
+
 struct GroupByNamePred
 {
 	bool operator () (const db::Group* a, const db::Group* b) const
@@ -440,24 +448,30 @@ bool DatabaseView::create(ui::Widget* parent)
 		Ref< ui::MenuItem > menuGroupWizards = new ui::MenuItem(i18n::Text(L"DATABASE_WIZARDS"));
 		Ref< ui::MenuItem > menuInstanceWizards = new ui::MenuItem(i18n::Text(L"DATABASE_WIZARDS"));
 
-		int32_t nextWizardId = 0;
+		// Create instances of all found wizards.
 		for (TypeInfoSet::iterator i = wizardToolTypes.begin(); i != wizardToolTypes.end(); ++i)
 		{
 			Ref< IWizardTool > wizard = dynamic_type_cast< IWizardTool* >((*i)->createInstance());
-			if (!wizard)
-				continue;
+			if (wizard)
+				m_wizardTools.push_back(wizard);
+		}
 
-			std::wstring wizardDescription = wizard->getDescription();
+		// Sort wizard based on their description.
+		m_wizardTools.sort(WizardToolPred());
+
+		// Populate menus.
+		int32_t nextWizardId = 0;
+		for (RefArray< IWizardTool >::iterator i = m_wizardTools.begin(); i != m_wizardTools.end(); ++i)
+		{
+			std::wstring wizardDescription = (*i)->getDescription();
 			T_ASSERT (!wizardDescription.empty());
 
 			int32_t wizardId = nextWizardId++;
 
-			if ((wizard->getFlags() & IWizardTool::WfGroup) != 0)
+			if (((*i)->getFlags() & IWizardTool::WfGroup) != 0)
 				menuGroupWizards->add(new ui::MenuItem(ui::Command(wizardId, L"Editor.Database.Wizard"), wizardDescription));
-			if ((wizard->getFlags() & IWizardTool::WfInstance) != 0)
+			if (((*i)->getFlags() & IWizardTool::WfInstance) != 0)
 				menuInstanceWizards->add(new ui::MenuItem(ui::Command(wizardId, L"Editor.Database.Wizard"), wizardDescription));
-
-			m_wizardTools.push_back(wizard);
 		}
 
 		m_menuGroup[0]->add(menuGroupWizards);
