@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ImageProcessSettings" version="1">
+	<requireHighRange>false</requireHighRange>
+	<definitions>
+		<item type="traktor.render.ImageProcessDefineTexture">
+			<parameter>ColorCorrection</parameter>
+			<texture>{3DEEC673-EDF5-364A-B796-BAC7EF575258}</texture>
+		</item>
+	</definitions>
+	<steps>
+		<item type="traktor.render.ImageProcessStepSetTarget">
+			<target>Output</target>
+		</item>
+		<item type="traktor.render.ImageProcessStepSimple">
+			<shader>{703701E9-2921-6646-9608-2DD2177B93BD}</shader>
+			<sources>
+				<item>
+					<param>Source</param>
+					<source>InputColor</source>
+					<index>0</index>
+				</item>
+			</sources>
+		</item>
+	</steps>
+</object>
