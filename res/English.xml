@@ -1681,6 +1681,22 @@
       <second>Instance(s) not saved</second>
     </item>
     <item>
+      <first>RENDER_IMAGEPROCESS_SHADER_WIZARDTOOL_DESCRIPTION</first>
+      <second>Create image process shader...</second>
+    </item>
+    <item>
+      <first>RENDER_IMAGEPROCESS_SHADER_WIZARDTOOL_NAME</first>
+      <second>Name</second>
+    </item>
+    <item>
+      <first>RENDER_IMAGEPROCESS_SHADER_WIZARDTOOL_DIALOG_TITLE</first>
+      <second>Image process shader</second>
+    </item>
+    <item>
+      <first>RENDER_IMAGEPROCESS_SHADER_WIZARDTOOL_DIALOG_MESSAGE</first>
+      <second>Create image process shader</second>
+    </item>
+    <item>
       <first>RESOUND_BLEND_GRAIN_TEXT</first>
       <second>Blend</second>
     </item>
