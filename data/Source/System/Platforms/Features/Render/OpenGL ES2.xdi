@@ -44,13 +44,13 @@
 						<first>DEPLOY_FILES_SHARED</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>Extern.angle.libEGL.lib</item>
-								<item>Extern.angle.libGLESv2.lib</item>
-								<item>Traktor.Compress.lib</item>
-								<item>Traktor.Core.lib</item>
-								<item>Traktor.Render.OpenGL.ES2.lib</item>
-								<item>Traktor.Render.lib</item>
-								<item>Traktor.Resource.lib</item>
+								<item>Extern.angle.libEGL.dll</item>
+								<item>Extern.angle.libGLESv2.dll</item>
+								<item>Traktor.Compress.dll</item>
+								<item>Traktor.Core.dll</item>
+								<item>Traktor.Render.OpenGL.ES2.dll</item>
+								<item>Traktor.Render.dll</item>
+								<item>Traktor.Resource.dll</item>
 							</value>
 						</second>
 					</item>
@@ -149,13 +149,13 @@
 						<first>DEPLOY_FILES_SHARED</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>Extern.angle.libEGL.lib</item>
-								<item>Extern.angle.libGLESv2.lib</item>
-								<item>Traktor.Compress.lib</item>
-								<item>Traktor.Core.lib</item>
-								<item>Traktor.Render.OpenGL.ES2.lib</item>
-								<item>Traktor.Render.lib</item>
-								<item>Traktor.Resource.lib</item>
+								<item>Extern.angle.libEGL.dll</item>
+								<item>Extern.angle.libGLESv2.dll</item>
+								<item>Traktor.Compress.dll</item>
+								<item>Traktor.Core.dll</item>
+								<item>Traktor.Render.OpenGL.ES2.dll</item>
+								<item>Traktor.Render.dll</item>
+								<item>Traktor.Resource.dll</item>
 							</value>
 						</second>
 					</item>
