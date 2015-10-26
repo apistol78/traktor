@@ -109,10 +109,13 @@ void TextureAssetEditor::updatePreview()
 		128,
 		visibleAlpha
 	);
-
-	Ref< ui::Bitmap > textureBitmap = new ui::Bitmap(textureThumb);
-	m_imageTexture->setImage(textureBitmap, false);
-	m_imageTexture->update();
+	if (textureThumb)
+	{
+		Ref< ui::Bitmap > textureBitmap = new ui::Bitmap(textureThumb);
+		m_imageTexture->setImage(textureBitmap, false);
+	}
+	else
+		m_imageTexture->setImage(0, false);
 }
 
 void TextureAssetEditor::eventPropertyCommand(ui::custom::PropertyCommandEvent* event)
