@@ -38,8 +38,6 @@ public:
 
 	const Guid& getSeedGuid() const { return m_seedGuid; }
 
-	float getLumelsPerUnit() const { return m_lumelsPerUnit; }
-
 	bool traceDirectLighting() const { return m_directLighting; }
 
 	bool traceIndirectLighting() const { return m_indirectLighting; }
@@ -48,42 +46,32 @@ public:
 
 	int32_t getShadowSamples() const { return m_shadowSamples; }
 
-	int32_t getDirectConvolveIterations() const { return m_directConvolveIterations; }
+	int32_t getDirectConvolveRadius() const { return m_directConvolveRadius; }
 
 	int32_t getIndirectTraceSamples() const { return m_indirectTraceSamples; }
 
 	int32_t getIndirectTraceIterations() const { return m_indirectTraceIterations; }
 
-	int32_t getIndirectConvolveIterations() const { return m_indirectConvolveIterations; }
+	int32_t getIndirectConvolveRadius() const { return m_indirectConvolveRadius; }
 
 	bool highDynamicRange() const { return m_highDynamicRange; }
 
 	bool compressLightMap() const { return m_compressLightMap; }
 
-	const Path& getSkyProbe() const { return m_skyProbe; }
-
-	int32_t getSkyProbeSamples() const { return m_skyProbeSamples; }
-
-	float getSkyProbeStrength() const { return m_skyProbeStrength; }
-
 	const RefArray< world::EntityData >& getEntityData() const { return m_entityData; }
 
 private:
 	Guid m_seedGuid;
-	float m_lumelsPerUnit;
 	bool m_directLighting;
 	bool m_indirectLighting;
 	float m_pointLightRadius;
 	int32_t m_shadowSamples;
-	int32_t m_directConvolveIterations;
+	int32_t m_directConvolveRadius;
 	int32_t m_indirectTraceSamples;
 	int32_t m_indirectTraceIterations;
-	int32_t m_indirectConvolveIterations;
+	int32_t m_indirectConvolveRadius;
 	bool m_highDynamicRange;
 	bool m_compressLightMap;
-	Path m_skyProbe;
-	int32_t m_skyProbeSamples;
-	float m_skyProbeStrength;
 	RefArray< world::EntityData > m_entityData;
 };
 

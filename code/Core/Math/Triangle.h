@@ -81,14 +81,8 @@ void triangle(
 	int CY3 = C3 + DX31 * (miny << 4) - DY31 * (minx << 4);
 
 	// Calculate barycentric constants.
-	float baryOffset0 = v1.x * v2.y - v2.x * v1.y;
-	float baryDenom0 = 1.0f / ((v1.y - v2.y) * v0.x + (v2.x - v1.x) * v0.y + baryOffset0);
-
-	float baryOffset1 = v2.x * v0.y - v0.x * v2.y;
-	float baryDenom1 = 1.0f / ((v2.y - v0.y) * v1.x + (v0.x - v2.x) * v1.y + baryOffset1);
-
-	float baryOffset2 = v0.x * v1.y - v1.x * v0.y;
-	float baryDenom2 = 1.0f / ((v0.y - v1.y) * v2.x + (v1.x - v0.x) * v2.y + baryOffset2);
+	float denom = (v1.y - v2.y) * (v0.x - v2.x) + (v2.x - v1.x) * (v0.y - v2.y);
+	float invDenom = 1.0f / denom;
 
 	for(int y = miny; y < maxy; y++)
 	{
@@ -105,9 +99,9 @@ void triangle(
 				float yy = y + 0.5f;
 
 				// Calculate barycentric coordinates.
-				float alpha = ((v1.y - v2.y) * xx + (v2.x - v1.x) * yy + baryOffset0) * baryDenom0;
-				float beta = ((v2.y - v0.y) * xx + (v0.x - v2.x) * yy + baryOffset1) * baryDenom1;
-				float gamma = ((v0.y - v1.y) * xx + (v1.x - v0.x) * yy + baryOffset2) * baryDenom2;
+				float alpha = ((v1.y - v2.y) * (xx - v2.x) + (v2.x - v1.x) * (yy - v2.y)) * invDenom;
+				float beta = ((v2.y - v0.y) * (xx - v2.x) + (v0.x - v2.x) * (yy - v2.y)) * invDenom;
+				float gamma = 1.0f - alpha - beta;
 
 				visitor(x, y, alpha, beta, gamma);
 			}

@@ -151,6 +151,8 @@ public:
 
 	const AlignedVector< Vector2 >& getTexCoords() const { return m_texCoords.values(); }
 
+	uint32_t getAvailableTexCoordChannel() const;
+
 	uint32_t addJoint(const std::wstring& jointName);
 
 	uint32_t getJointCount() const { return int(m_joints.size()); }

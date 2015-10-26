@@ -22,9 +22,11 @@ const float c_texelsPerUnit = 10.0f;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.UnwrapUV", UnwrapUV, IModelOperation)
 
-UnwrapUV::UnwrapUV(int32_t channel, float margin)
+UnwrapUV::UnwrapUV(int32_t channel, float margin, float ustep, float vstep)
 :	m_channel(channel)
 ,	m_margin(margin)
+,	m_ustep(ustep)
+,	m_vstep(vstep)
 {
 }
 
@@ -233,8 +235,13 @@ bool UnwrapUV::apply(Model& model) const
 
 			uv.x = (uv.x * packedRect.width + packedRect.x) / size;
 			uv.y = (uv.y * packedRect.height + packedRect.y) / size;
-			vertex.setTexCoord(m_channel, model.addUniqueTexCoord(uv));
 
+			if (m_ustep > 0.0f)
+				uv.x = std::floor(uv.x / m_ustep) * m_ustep;
+			if (m_vstep > 0.0f)
+				uv.y = std::floor(uv.y / m_vstep) * m_vstep;
+
+			vertex.setTexCoord(m_channel, model.addUniqueTexCoord(uv));
 			originalPolygons[i].setVertex(j, model.addUniqueVertex(vertex));
 		}
 	}

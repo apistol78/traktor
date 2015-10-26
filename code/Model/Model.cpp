@@ -235,6 +235,29 @@ uint32_t Model::addUniqueTexCoord(const Vector2& texCoord)
 	return id != m_texCoords.InvalidIndex ? id : m_texCoords.add(texCoord);
 }
 
+uint32_t Model::getAvailableTexCoordChannel() const
+{
+	uint32_t channel = 0;
+
+	for (std::vector< model::Material >::const_iterator i = m_materials.begin(); i != m_materials.end(); ++i)
+	{
+		if (!i->getDiffuseMap().name.empty())
+			channel = traktor::max(channel, i->getDiffuseMap().channel + 1);
+		if (!i->getSpecularMap().name.empty())
+			channel = traktor::max(channel, i->getSpecularMap().channel + 1);
+		if (!i->getTransparencyMap().name.empty())
+			channel = traktor::max(channel, i->getTransparencyMap().channel + 1);
+		if (!i->getEmissiveMap().name.empty())
+			channel = traktor::max(channel, i->getEmissiveMap().channel + 1);
+		if (!i->getReflectiveMap().name.empty())
+			channel = traktor::max(channel, i->getReflectiveMap().channel + 1);
+		if (!i->getNormalMap().name.empty())
+			channel = traktor::max(channel, i->getNormalMap().channel + 1);
+	}
+
+	return channel;
+}
+
 uint32_t Model::addJoint(const std::wstring& jointName)
 {
 	return addUniqueId< std::vector< std::wstring >, std::wstring, DefaultPredicate< std::wstring > >(m_joints, jointName);
