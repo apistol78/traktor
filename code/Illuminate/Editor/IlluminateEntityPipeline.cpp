@@ -1,8 +1,6 @@
 #include <cstring>
-#include <ctime>
 #include "Core/Functor/Functor.h"
 #include "Core/Log/Log.h"
-#include "Core/Math/RandomGeometry.h"
 #include "Core/Math/SahTree.h"
 #include "Core/Math/Winding3.h"
 #include "Core/Reflection/Reflection.h"
@@ -23,6 +21,8 @@
 #include "Illuminate/Editor/GBuffer.h"
 #include "Illuminate/Editor/IlluminateEntityData.h"
 #include "Illuminate/Editor/IlluminateEntityPipeline.h"
+#include "Illuminate/Editor/JobTraceDirect.h"
+#include "Illuminate/Editor/JobTraceIndirect.h"
 #include "Mesh/MeshEntityData.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
@@ -47,245 +47,6 @@ const int32_t c_outputWidth = 2048;
 const int32_t c_outputHeight = 2048;
 const int32_t c_jobTileWidth = 128;
 const int32_t c_jobTileHeight = 128;
-const Scalar c_maxIndirectDistance(200.0f);
-const Scalar c_traceOffset(0.01f);
-
-class JobTraceDirect
-{
-public:
-	JobTraceDirect(
-		const IlluminateEntityData& entityData,
-		int32_t tileX,
-		int32_t tileY,
-		const SahTree& sah,
-		const GBuffer& gbuffer,
-		const AlignedVector< Light >& lights,
-		drawing::Image* outputImageDirect
-	)
-	:	m_entityData(entityData)
-	,	m_tileX(tileX)
-	,	m_tileY(tileY)
-	,	m_sah(sah)
-	,	m_gbuffer(gbuffer)
-	,	m_lights(lights)
-	,	m_outputImageDirect(outputImageDirect)
-	{
-	}
-
-	void execute()
-	{
-		RandomGeometry random(std::clock());
-		SahTree::QueryCache cache;
-		SahTree::QueryResult result;
-		Color4f tmp;
-
-		for (int32_t y = m_tileY; y < m_tileY + c_jobTileHeight; ++y)
-		{
-			for (int32_t x = m_tileX; x < m_tileX + c_jobTileWidth; ++x)
-			{
-				const GBuffer::Element& gb = m_gbuffer.get(x, y);
-
-				if (gb.surfaceIndex < 0)
-					continue;
-
-				Color4f radiance(0.0f, 0.0f, 0.0f, 0.0f);
-
-				for (AlignedVector< Light >::const_iterator i = m_lights.begin(); i != m_lights.end(); ++i)
-				{
-					if (i->type == 0)	// Directional
-					{
-						//int32_t shadowCount = 0;
-						//for (int32_t j = 0; j < c_shadowSamples; ++j)
-						//{
-						//	Vector4 shadowPosition = position + shadowU * Scalar(c_shadowSampleRadius * (random.nextFloat() * 2.0f - 1.0f)) + shadowV * Scalar(c_shadowSampleRadius * (random.nextFloat() * 2.0f - 1.0f));
-						//	Vector4 shadowOrigin = (shadowPosition + normal * c_traceRayOffset).xyz1();
-						//	if (m_sah.queryAnyIntersection(shadowOrigin, -i->direction, 1e3f, surfaceId, cache))
-						//		shadowCount++;
-						//}
-						//phi *= Scalar(1.0f - float(shadowCount) / c_shadowSamples);
-
-						Scalar phi = dot3(-i->direction, gb.normal);
-						if (phi > 0.0f)
-							radiance += i->sunColor * phi;
-					}
-					else if (i->type == 1)	// Point
-					{
-						Vector4 lightDirection = (i->position - gb.position).xyz0();
-
-						// Distance
-						Scalar lightDistance = lightDirection.normalize();
-						if (lightDistance >= i->range)
-							continue;
-
-						Scalar distanceAttenuate = Scalar(1.0f) - lightDistance / i->range;
-
-						// Cosine
-						Scalar phi = dot3(lightDirection, gb.normal);
-						if (phi <= 0.0f)
-							continue;
-
-						// Shadow
-						Vector4 u, v;
-						orthogonalFrame(lightDirection, u, v);
-
-						float pointLightRadius = m_entityData.getPointLightRadius();
-						int32_t shadowSamples = m_entityData.getShadowSamples();
-						int32_t shadowCount = 0;
-						for (int32_t j = 0; j < shadowSamples; ++j)
-						{
-							float a, b;
-							do
-							{
-								a = random.nextFloat() * 2.0f - 1.0f;
-								b = random.nextFloat() * 2.0f - 1.0f;
-							}
-							while ((a * a) + (b * b) > 1.0f);
-
-							Vector4 shadowDirection = (i->position + u * Scalar(a * pointLightRadius) + v * Scalar(b * pointLightRadius) - gb.position).xyz0();
-
-							if (m_sah.queryAnyIntersection(gb.position + gb.normal * c_traceOffset, shadowDirection.normalized(), lightDistance - FUZZY_EPSILON, gb.surfaceIndex, cache))
-								shadowCount++;
-						}
-						Scalar shadowAttenuate = Scalar(1.0f - float(shadowCount) / shadowSamples);
-
-						radiance += i->sunColor * shadowAttenuate * distanceAttenuate * phi;
-					}
-				}
-
-				m_outputImageDirect->setPixel(x, y, Color4f(Vector4(radiance).xyz1()));
-			}
-		}
-	}
-
-private:
-	const IlluminateEntityData& m_entityData;
-	int32_t m_tileX;
-	int32_t m_tileY;
-	const SahTree& m_sah;
-	const GBuffer& m_gbuffer;
-	const AlignedVector< Light >& m_lights;
-	drawing::Image* m_outputImageDirect;
-};
-
-class JobTraceIndirect
-{
-public:
-	JobTraceIndirect(
-		int32_t tileX,
-		int32_t tileY,
-		const SahTree& sah,
-		const GBuffer& gbuffer,
-		const AlignedVector< Surface >& surfaces,
-		const drawing::Image* imageIrradiance,
-		drawing::Image* outputImageIndirect,
-		int32_t indirectTraceSamples
-	)
-	:	m_tileX(tileX)
-	,	m_tileY(tileY)
-	,	m_sah(sah)
-	,	m_gbuffer(gbuffer)
-	,	m_surfaces(surfaces)
-	,	m_imageIrradiance(imageIrradiance)
-	,	m_outputImageIndirect(outputImageIndirect)
-	,	m_indirectTraceSamples(indirectTraceSamples)
-	{
-	}
-
-	void execute()
-	{
-		RandomGeometry random(std::clock());
-		SahTree::QueryCache cache;
-		SahTree::QueryResult result;
-		Color4f irradiance;
-
-		for (int32_t y = m_tileY; y < m_tileY + c_jobTileHeight; ++y)
-		{
-			for (int32_t x = m_tileX; x < m_tileX + c_jobTileWidth; ++x)
-			{
-				const GBuffer::Element& gb = m_gbuffer.get(x, y);
-
-				if (gb.surfaceIndex < 0)
-					continue;
-
-				Color4f radiance(0.0f, 0.0f, 0.0f, 0.0f);
-
-				for (int32_t i = 0; i < m_indirectTraceSamples; )
-				{
-					Vector4 rayDirection = random.nextUnit();
-					if (dot3(rayDirection, gb.normal) <= 0.2f)
-						continue;
-
-					if (m_sah.queryClosestIntersection(gb.position + gb.normal * c_traceOffset, rayDirection, gb.surfaceIndex, result, cache))
-					{
-						Scalar phi = -dot3(rayDirection, result.normal);
-						if (phi <= 0.0f)
-						{
-							++i;
-							continue;
-						}
-
-						const Vector4& P = result.position;
-
-						Scalar distance = (P - gb.position).xyz0().length();
-						if (distance >= c_maxIndirectDistance)
-						{
-							++i;
-							continue;
-						}
-
-						const Surface& hitSurface = m_surfaces[result.index];
-
-						const Vector4& A = hitSurface.points[0];
-						const Vector4& B = hitSurface.points[1];
-						const Vector4& C = hitSurface.points[2];
-
-						const Vector2& texCoord0 = hitSurface.texCoords[0];
-						const Vector2& texCoord1 = hitSurface.texCoords[1];
-						const Vector2& texCoord2 = hitSurface.texCoords[2];
-
-						Vector4 v0 = C - A;
-						Vector4 v1 = B - A;
-						Vector4 v2 = P - A;
-
-						Scalar d00 = dot3(v0, v0);
-						Scalar d01 = dot3(v0, v1);
-						Scalar d02 = dot3(v0, v2);
-						Scalar d11 = dot3(v1, v1);
-						Scalar d12 = dot3(v1, v2);
-
-						Scalar invDenom = Scalar(1.0f) / (d00 * d11 - d01 * d01);
-						Scalar u = (d11 * d02 - d01 * d12) * invDenom;
-						Scalar v = (d00 * d12 - d01 * d02) * invDenom;
-
-						Vector2 texCoord = texCoord0 + (texCoord2 - texCoord0) * u + (texCoord1 - texCoord0) * v;
-
-						int32_t lx = int32_t(texCoord.x * m_imageIrradiance->getWidth());
-						int32_t ly = int32_t(texCoord.y * m_imageIrradiance->getHeight());
-						m_imageIrradiance->getPixel(lx, ly, irradiance);
-
-						Scalar distanceAttenuate = Scalar(1.0f) - distance / c_maxIndirectDistance;
-						radiance += (hitSurface.color * irradiance) * phi * distanceAttenuate;
-					}
-
-					++i;
-				}
-
-				radiance /= Scalar(m_indirectTraceSamples);
-				m_outputImageIndirect->setPixel(x, y, Color4f(Vector4(radiance).xyz1()));
-			}
-		}
-	}
-
-private:
-	int32_t m_tileX;
-	int32_t m_tileY;
-	const SahTree& m_sah;
-	const GBuffer& m_gbuffer;
-	const AlignedVector< Surface >& m_surfaces;
-	const drawing::Image* m_imageIrradiance;
-	drawing::Image* m_outputImageIndirect;
-	int32_t m_indirectTraceSamples;
-};
 
 Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const ISerializable* object)
 {
@@ -425,8 +186,6 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 	const ISerializable* sourceAsset
 ) const
 {
-	RandomGeometry random;
-
 	if (!m_targetEditor)
 	{
 		const IlluminateEntityData* sourceIlluminateEntityData = checked_type_cast< const IlluminateEntityData* >(sourceAsset);
@@ -602,13 +361,14 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 			for (int32_t x = 0; x < c_outputWidth; x += c_jobTileWidth)
 			{
 				JobTraceDirect* trace = new JobTraceDirect(
-					*sourceIlluminateEntityData,
 					x,
 					y,
 					sah,
 					gbuffer,
 					lights,
-					outputImageRadiance
+					outputImageRadiance,
+					sourceIlluminateEntityData->getShadowSamples(),
+					sourceIlluminateEntityData->getPointLightRadius()
 				);
 
 				Ref< Job > job = JobManager::getInstance().add(makeFunctor< JobTraceDirect >(trace, &JobTraceDirect::execute));

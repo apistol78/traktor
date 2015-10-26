@@ -263,7 +263,7 @@ function migrate(args)
 	cmd = cmd .. " -o $(DEPLOY_EXECUTABLE).js --preload-file Application.config --preload-file Content.compact"
 
 	-- Link files into an executable product.
-	local result = run:execute(cmd, nil)
+	local result = run:execute(cmd) --, nil)
 	if result ~= 0 then
 		stderr:printLn("Unable to build executable product.")
 		stderr:printLn(cmd)
