@@ -1613,6 +1613,18 @@
       <second>Select source model</second>
     </item>
     <item>
+      <first>MESHENTITY_WIZARDTOOL_DESCRIPTION</first>
+      <second>Create mesh entity</second>
+    </item>
+    <item>
+      <first>MESHENTITY_WIZARDTOOL_ERROR_NOT_MESH_ASSET_MESSAGE</first>
+      <second>Select instance must be a mesh asset.</second>
+    </item>
+    <item>
+      <first>MESHENTITY_WIZARDTOOL_ERROR_NOT_MESH_ASSET_CAPTION</first>
+      <second>Not a mesh asset</second>
+    </item>
+    <item>
       <first>NEW_BATCH_DESCRIPTION</first>
       <second>New import batch...</second>
     </item>
