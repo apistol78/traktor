@@ -275,6 +275,15 @@ public:
 		return m_size == 0;
 	}
 
+	/*! \brief Check if vector is full.
+	 *
+	 * \return True if vector full.
+	 */
+	bool full() const
+	{
+		return m_size >= Capacity;
+	}
+
 	/*! \brief Clear vector. */
 	void clear()
 	{

@@ -19,6 +19,7 @@ namespace traktor
 	{
 
 class MouseDeviceAndroid;
+class TouchDeviceAndroid;
 
 class T_DLLCLASS InputDriverAndroid
 :	public IInputDriver
@@ -44,6 +45,7 @@ public:
 private:
 	DelegateInstance* m_instance;
 	Ref< MouseDeviceAndroid > m_mouseDevice;
+	Ref< TouchDeviceAndroid > m_touchDevice;
 	RefArray< IInputDevice > m_devices;
 };
 

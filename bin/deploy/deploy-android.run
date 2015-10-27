@@ -112,8 +112,24 @@ function deploy(args)
 		end
 	end
 
+	-- Create the module initialization file.
+	stdout:printLn("Generating Linkage.cpp...")
+	if run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/Linkage.cpp.template", "Linkage.cpp") ~= 0 then
+		stderr:printLn("Failed to generate Linkage.cpp")
+		return 1
+	end	
+
+	-- Compile linkage file.
+	stdout:printLn("Compiling Linkage.cpp...")
+	local cmd = cl .. " -c Linkage.cpp -o Linkage.o"
+	local result = run:execute(cmd) --, nil)
+	if result ~= 0 then
+		stderr:printLn("Unable to compile file.")
+		return 1
+	end	
+
 	-- Link files into an executable product.
-	local cmd = cl .. " -Wl,--whole-archive " .. wholeLinkFiles .. "-Wl,--no-whole-archive " .. externalLinkFiles .. " -o lib$(DEPLOY_EXECUTABLE).so"
+	local cmd = cl .. " Linkage.o " .. wholeLinkFiles .. wholeLinkFiles .. externalLinkFiles .. " -o lib$(DEPLOY_EXECUTABLE).so"
 	cmd = cmd .. " -lc"
 	cmd = cmd .. " -lm"
 	cmd = cmd .. " -llog"
@@ -194,18 +210,18 @@ function launch(args)
 
 	-- Use ant to build apk package.
 	stdout:printLn("Building package...")
-	run:execute("$(ANT_HOME)/bin/ant.bat debug", "(null)")
+	run:execute("$(ANT_HOME)/bin/ant.bat debug", nil)
 
 	-- Launch application on attached device.
 	stdout:printLn("Installing package...")
-	local result = run:execute("$(ANDROID_HOME)/platform-tools/adb -d install -r \"bin/$(DEPLOY_PROJECT_NAME)-debug.apk\"", "(null)")
+	local result = run:execute("$(ANDROID_HOME)/platform-tools/adb -d install -r \"bin/$(DEPLOY_PROJECT_NAME)-debug.apk\"", nil)
 	if result ~= 0 then
 		stderr:printLn("Failed to install package on device; Please ensure device is attached and in developer mode.")
 		return 1
 	end
 
 	stdout:printLn("Launching...")
-	local result = run:execute("$(ANDROID_HOME)/platform-tools/adb -d shell am start -S -n $(DEPLOY_PROJECT_IDENTIFIER)/android.app.NativeActivity", "(null)")
+	local result = run:execute("$(ANDROID_HOME)/platform-tools/adb -d shell am start -S -n $(DEPLOY_PROJECT_IDENTIFIER)/android.app.NativeActivity", nil)
 	if result ~= 0 then
 		stderr:printLn("Failed to launch package on device; Please ensure device is attached and in developer mode.")
 		return 1
@@ -294,8 +310,24 @@ function migrate(args)
 		end
 	end
 
+	-- Create the module initialization file.
+	stdout:printLn("Generating Linkage.cpp...")
+	if run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/Linkage.cpp.template", "Linkage.cpp") ~= 0 then
+		stderr:printLn("Failed to generate Linkage.cpp")
+		return 1
+	end	
+
+	-- Compile linkage file.
+	stdout:printLn("Compiling Linkage.cpp...")
+	local cmd = cl .. " -c Linkage.cpp -o Linkage.o"
+	local result = run:execute(cmd) --, nil)
+	if result ~= 0 then
+		stderr:printLn("Unable to compile file.")
+		return 1
+	end	
+
 	-- Link files into an executable product.
-	local cmd = cl .. " -Wl,--whole-archive " .. wholeLinkFiles .. "-Wl,--no-whole-archive " .. externalLinkFiles .. " -o lib$(DEPLOY_EXECUTABLE).so"
+	local cmd = cl .. " Linkage.o " .. wholeLinkFiles .. wholeLinkFiles .. externalLinkFiles .. " -o lib$(DEPLOY_EXECUTABLE).so"
 	cmd = cmd .. " -lc"
 	cmd = cmd .. " -lm"
 	cmd = cmd .. " -llog"
@@ -362,11 +394,11 @@ function migrate(args)
 
 	-- Use ant to build apk package.
 	stdout:printLn("Building package...")
-	run:execute("$(ANT_HOME)/bin/ant.bat debug", "(null)")
+	run:execute("$(ANT_HOME)/bin/ant.bat debug", nil)
 
 	-- Install application on attached device.
 	stdout:printLn("Installing package...")
-	local result = run:execute("$(ANDROID_HOME)/platform-tools/adb -d install -r \"bin/$(DEPLOY_PROJECT_NAME)-debug.apk\"", "(null)")
+	local result = run:execute("$(ANDROID_HOME)/platform-tools/adb -d install -r \"bin/$(DEPLOY_PROJECT_NAME)-debug.apk\"", nil)
 	if result ~= 0 then
 		stderr:printLn("Failed to install package on device; Please ensure device is attached and in developer mode.")
 		return 1

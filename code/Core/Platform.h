@@ -50,6 +50,15 @@ namespace traktor
 		{
 		}
 
+#elif defined(__ANDROID__)
+
+		struct ANativeWindow* window;
+
+		SystemWindow()
+		:	window(0)
+		{
+		}
+
 #else
 		void* unk;
 

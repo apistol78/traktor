@@ -225,7 +225,7 @@ int32_t handleInput(struct android_app* app, AInputEvent* event)
 	return 0;
 }
 
-void android_main(struct android_app* state)
+extern "C" void traktor_main(struct android_app* state)
 {
 	AndroidApplication aa(state);
 

@@ -69,6 +69,8 @@ enum InputDefaultControlType
 	DtPositionY2		= 37,
 	DtPositionX3		= 38,
 	DtPositionY3		= 39,
+	DtPositionX4		= 200,
+	DtPositionY4		= 201,
 
 	// Keyboard
 	DtKeyEscape			= 40,

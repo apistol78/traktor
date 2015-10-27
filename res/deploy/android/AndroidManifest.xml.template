@@ -27,7 +27,7 @@
                 elseif landscape and portrait then
                     output:print("sensor")
                 elseif not landscape and not portrait then
-                    output:pinrt("unspecified")
+                    output:print("unspecified")
                 end
             --!>"
         >
