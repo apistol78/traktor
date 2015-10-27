@@ -171,7 +171,9 @@ bool Application::create(
 	// Input
 	T_DEBUG(L"Creating input server...");
 	SystemWindow inputWindow = m_renderServer->getRenderView()->getSystemWindow();
-#if defined(__IOS__)
+#if defined(__ANDROID__)
+	inputWindow.window = (struct ANativeWindow*)nativeWindowHandle;
+#elif defined(__IOS__)
 	inputWindow.view = nativeWindowHandle;
 #endif
 	m_inputServer = new InputServer();

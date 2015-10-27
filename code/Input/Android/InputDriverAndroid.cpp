@@ -1,6 +1,7 @@
 #include "Core/Log/Log.h"
 #include "Input/Android/InputDriverAndroid.h"
 #include "Input/Android/MouseDeviceAndroid.h"
+#include "Input/Android/TouchDeviceAndroid.h"
 
 namespace traktor
 {
@@ -39,6 +40,11 @@ bool InputDriverAndroid::create(void* nativeHandle, const SystemWindow& systemWi
 		m_mouseDevice = new MouseDeviceAndroid();
 		m_devices.push_back(m_mouseDevice);
 	}
+	if (inputCategories & CtTouch)
+	{
+		m_touchDevice = new TouchDeviceAndroid(systemWindow);
+		m_devices.push_back(m_touchDevice);
+	}
 
 	log::info << L"Android input driver created successfully." << Endl;
 	return true;
@@ -66,6 +72,8 @@ void InputDriverAndroid::notifyHandleInput(struct android_app* app, AInputEvent*
 {
 	if (m_mouseDevice)
 		m_mouseDevice->handleInput(event);
+	if (m_touchDevice)
+		m_touchDevice->handleInput(event);
 }
 
 	}
