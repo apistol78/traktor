@@ -57,6 +57,8 @@ const MemberEnum< InputDefaultControlType >::Key g_InputDefaultControlType_Keys[
 	{ L"DtPositionY2", DtPositionY2 },
 	{ L"DtPositionX3", DtPositionX3 },
 	{ L"DtPositionY3", DtPositionY3 },
+	{ L"DtPositionX4", DtPositionX4 },
+	{ L"DtPositionY4", DtPositionY4 },
 	{ L"DtKeyEscape", DtKeyEscape },
 	{ L"DtKey1", DtKey1 },
 	{ L"DtKey2", DtKey2 },
