@@ -11,7 +11,7 @@
 	<key>CFBundleExecutable</key>
 	<string><!-- output:print(os:getEnvironment("DEPLOY_EXECUTABLE")) --!></string>
 	<key>CFBundleIconFile</key>
-	<string>Icon.icns</string>
+	<string><!-- output:print(os:getEnvironment("DEPLOY_PROJECT_NAME"):gsub("%s", "")) --!>.icns</string>
 	<key>DEAConfiguration</key>
 	<string>$(BUNDLE_PATH)/Contents/Resources/Application.config</string>
 </dict>
