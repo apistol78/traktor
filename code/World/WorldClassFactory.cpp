@@ -278,10 +278,6 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classComponentEntityData);
 
 	Ref< AutoRuntimeClass< ComponentEntity > > classComponentEntity = new AutoRuntimeClass< ComponentEntity >();
-	classComponentEntity->addMethod("setEntity", &ComponentEntity::setEntity);
-	classComponentEntity->addMethod("getEntity", &ComponentEntity::getEntity);
-	classComponentEntity->addMethod("setVisible", &ComponentEntity::setVisible);
-	classComponentEntity->addMethod("isVisible", &ComponentEntity::isVisible);
 	registrar->registerClass(classComponentEntity);
 }
 

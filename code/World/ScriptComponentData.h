@@ -1,5 +1,5 @@
-#ifndef traktor_world_ScriptEntityComponentData_H
-#define traktor_world_ScriptEntityComponentData_H
+#ifndef traktor_world_ScriptComponentData_H
+#define traktor_world_ScriptComponentData_H
 
 #include "Resource/Id.h"
 #include "World/IEntityComponentData.h"
@@ -23,7 +23,7 @@ class IRuntimeClass;
 /*! \brief Script entity component data.
  * \ingroup World
  */
-class T_DLLCLASS ScriptEntityComponentData : public IEntityComponentData
+class T_DLLCLASS ScriptComponentData : public IEntityComponentData
 {
 	T_RTTI_CLASS;
 
@@ -41,4 +41,4 @@ private:
 	}
 }
 
-#endif	// traktor_world_ScriptEntityComponentData_H
+#endif	// traktor_world_ScriptComponentData_H

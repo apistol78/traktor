@@ -1,5 +1,5 @@
-#include "Core/Misc/SafeDestroy.h"
 #include "World/IEntityComponent.h"
+#include "World/WorldRenderView.h"
 #include "World/Entity/ComponentEntity.h"
 
 namespace traktor
@@ -10,44 +10,47 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ComponentEntity", ComponentEntity, Entity)
 
 ComponentEntity::ComponentEntity()
-:	m_visible(true)
+:	m_transform(Transform::identity())
 {
 }
 
 void ComponentEntity::destroy()
 {
-	safeDestroy(m_entity);
+	for (RefArray< IEntityComponent >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
+		(*i)->destroy();
+	m_components.clear();
 }
 
 void ComponentEntity::setTransform(const Transform& transform)
 {
-	if (m_entity)
-		m_entity->setTransform(transform);
+	m_transform.set(transform);
 }
 
 bool ComponentEntity::getTransform(Transform& outTransform) const
 {
-	if (m_entity)
-		return m_entity->getTransform(outTransform);
-	else
-		return false;
+	outTransform = m_transform.get();
+	return true;
 }
 
 Aabb3 ComponentEntity::getBoundingBox() const
 {
-	if (m_entity)
-		return m_entity->getBoundingBox();
-	else
-		return Aabb3();
+	Aabb3 boundingBox;
+	for (RefArray< IEntityComponent >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
+		boundingBox.contain((*i)->getBoundingBox());
+	return boundingBox;
 }
 
 void ComponentEntity::update(const UpdateParams& update)
 {
 	for (RefArray< IEntityComponent >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
 		(*i)->update(update);
+}
 
-	if (m_entity)
-		m_entity->update(update);
+void ComponentEntity::render(WorldContext& worldContext, WorldRenderView& worldRenderView, IWorldRenderPass& worldRenderPass)
+{
+	Transform transform = m_transform.get(worldRenderView.getInterval());
+	for (RefArray< IEntityComponent >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
+		(*i)->render(worldContext, worldRenderView, worldRenderPass, transform);
 }
 
 	}

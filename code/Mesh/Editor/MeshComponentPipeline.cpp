@@ -1,34 +1,32 @@
 #include "Core/Serialization/DeepClone.h"
-#include "Database/Instance.h"
-#include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
-#include "World/ScriptComponentData.h"
-#include "World/Editor/EntityComponentPipeline.h"
+#include "Mesh/MeshComponentData.h"
+#include "Mesh/Editor/MeshComponentPipeline.h"
 
 namespace traktor
 {
-	namespace world
+	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.EntityComponentPipeline", 0, EntityComponentPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshComponentPipeline", 0, MeshComponentPipeline, editor::IPipeline)
 
-bool EntityComponentPipeline::create(const editor::IPipelineSettings* settings)
+bool MeshComponentPipeline::create(const editor::IPipelineSettings* settings)
 {
 	return true;
 }
 
-void EntityComponentPipeline::destroy()
+void MeshComponentPipeline::destroy()
 {
 }
 
-TypeInfoSet EntityComponentPipeline::getAssetTypes() const
+TypeInfoSet MeshComponentPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< IEntityComponentData >());
+	typeSet.insert(&type_of< MeshComponentData >());
 	return typeSet;
 }
 
-bool EntityComponentPipeline::buildDependencies(
+bool MeshComponentPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
@@ -36,12 +34,12 @@ bool EntityComponentPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	if (const ScriptComponentData* scriptComponentData = dynamic_type_cast< const ScriptComponentData* >(sourceAsset))
-		pipelineDepends->addDependency(scriptComponentData->m_class, editor::PdfBuild);
+	if (const MeshComponentData* meshComponentData = dynamic_type_cast< const MeshComponentData* >(sourceAsset))
+		pipelineDepends->addDependency(meshComponentData->getMesh(), editor::PdfBuild | editor::PdfResource);
 	return true;
 }
 
-bool EntityComponentPipeline::buildOutput(
+bool MeshComponentPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const editor::IPipelineDependencySet* dependencySet,
 	const editor::PipelineDependency* dependency,
@@ -58,7 +56,7 @@ bool EntityComponentPipeline::buildOutput(
 	return false;
 }
 
-Ref< ISerializable > EntityComponentPipeline::buildOutput(
+Ref< ISerializable > MeshComponentPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const ISerializable* sourceAsset
 ) const

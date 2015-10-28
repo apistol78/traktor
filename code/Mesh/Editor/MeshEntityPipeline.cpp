@@ -26,7 +26,6 @@ bool MeshEntityPipeline::buildDependencies(
 {
 	if (const MeshEntityData* meshEntityData = dynamic_type_cast< const MeshEntityData* >(sourceAsset))
 		pipelineDepends->addDependency(meshEntityData->getMesh(), editor::PdfBuild | editor::PdfResource);
-
 	return true;
 }
 
