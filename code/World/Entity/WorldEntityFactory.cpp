@@ -209,24 +209,12 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 	if (const ComponentEntityData* componentData = dynamic_type_cast< const ComponentEntityData* >(&entityData))
 	{
 		Ref< ComponentEntity > componentEntity = new ComponentEntity();
-
-		// Create controlled entity.
-		if (componentData->m_entityData)
-		{
-			if ((componentEntity->m_entity = builder->create(componentData->m_entityData)) == 0)
-				return 0;
-
-			componentEntity->m_entity->setTransform(componentData->getTransform());
-		}
-
-		// Create components.
 		componentEntity->m_components.resize(componentData->m_components.size());
 		for (uint32_t i = 0; i < componentData->m_components.size(); ++i)
 		{
 			if ((componentEntity->m_components[i] = componentData->m_components[i]->createInstance(componentEntity, m_resourceManager)) == 0)
 				return 0;
 		}
-
 		return componentEntity;
 	}
 

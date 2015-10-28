@@ -34,7 +34,6 @@ private:
 	friend class WorldEntityFactory;
 
 	RefArray< IEntityComponentData > m_components;
-	Ref< EntityData > m_entityData;
 };
 
 	}

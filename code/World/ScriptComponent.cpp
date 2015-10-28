@@ -1,15 +1,15 @@
 #include "Core/Class/IRuntimeClass.h"
 #include "World/Entity.h"
-#include "World/ScriptEntityComponent.h"
+#include "World/ScriptComponent.h"
 
 namespace traktor
 {
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ScriptEntityComponent", ScriptEntityComponent, IEntityComponent)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ScriptComponent", ScriptComponent, IEntityComponent)
 
-ScriptEntityComponent::ScriptEntityComponent(Entity* owner, const resource::Proxy< IRuntimeClass >& clazz)
+ScriptComponent::ScriptComponent(Entity* owner, const resource::Proxy< IRuntimeClass >& clazz)
 :	m_owner(owner)
 ,	m_class(clazz)
 ,	m_methodUpdate(~0U)
@@ -20,7 +20,20 @@ ScriptEntityComponent::ScriptEntityComponent(Entity* owner, const resource::Prox
 	m_class.consume();
 }
 
-void ScriptEntityComponent::update(const UpdateParams& update)
+void ScriptComponent::destroy()
+{
+	m_owner = 0;
+	m_class.clear();
+	m_object = 0;
+	m_methodUpdate = ~0U;
+}
+
+Aabb3 ScriptComponent::getBoundingBox() const
+{
+	return Aabb3();
+}
+
+void ScriptComponent::update(const UpdateParams& update)
 {
 	// Check if class has changed, hot-reload new class.
 	if (m_class.changed())
@@ -40,6 +53,10 @@ void ScriptEntityComponent::update(const UpdateParams& update)
 		};
 		m_class->invoke(m_object, m_methodUpdate, sizeof_array(argv), argv);
 	}
+}
+
+void ScriptComponent::render(WorldContext& worldContext, WorldRenderView& worldRenderView, IWorldRenderPass& worldRenderPass, const Transform& transform)
+{
 }
 
 	}

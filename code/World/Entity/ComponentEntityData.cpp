@@ -1,5 +1,4 @@
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "World/IEntityComponentData.h"
 #include "World/Entity/ComponentEntityData.h"
@@ -15,7 +14,6 @@ void ComponentEntityData::serialize(ISerializer& s)
 {
 	EntityData::serialize(s);
 	s >> MemberRefArray< IEntityComponentData >(L"components", m_components);
-	s >> MemberRef< EntityData >(L"entityData", m_entityData);
 }
 
 	}

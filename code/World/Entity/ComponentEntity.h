@@ -2,6 +2,7 @@
 #define traktor_world_ComponentEntity_H
 
 #include "Core/RefArray.h"
+#include "Core/Math/IntervalTransform.h"
 #include "World/Entity.h"
 
 // import/export mechanism.
@@ -18,6 +19,9 @@ namespace traktor
 	{
 
 class IEntityComponent;
+class IWorldRenderPass;
+class WorldContext;
+class WorldRenderView;
 
 /*! \brief
  * \ingroup World
@@ -29,49 +33,23 @@ class T_DLLCLASS ComponentEntity : public Entity
 public:
 	ComponentEntity();
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() T_OVERRIDE;
 
-	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
+	virtual void setTransform(const Transform& transform) T_OVERRIDE;
 
-	virtual bool getTransform(Transform& outTransform) const T_OVERRIDE T_FINAL;
+	virtual bool getTransform(Transform& outTransform) const T_OVERRIDE;
 
-	virtual Aabb3 getBoundingBox() const T_OVERRIDE T_FINAL;
+	virtual Aabb3 getBoundingBox() const T_OVERRIDE;
 
-	virtual void update(const UpdateParams& update) T_OVERRIDE T_FINAL;
+	virtual void update(const UpdateParams& update) T_OVERRIDE;
 
-	/*! \brief Set controlled entity.
-	 *
-	 * The controlled entity is usually the visual representation
-	 * of this game entity; thus a mesh entity or a like.
-	 *
-	 * \param entity Controlled entity.
-	 */
-	void setEntity(Entity* entity) { m_entity = entity; }
-
-	/*! \brief Get controlled entity.
-	 *
-	 * \return Controlled entity.
-	 */
-	Entity* getEntity() const { return m_entity; }
-
-	/*! \brief Determine if controlled entity should be visible.
-	 *
-	 * \param visible True if controlled entity should be visible.
-	 */
-	void setVisible(bool visible) { m_visible = visible; }
-
-	/*! \brief Return true if controlled entity is visible.
-	 *
-	 * \return True if controlled entity is visible.
-	 */
-	bool isVisible() const { return m_visible; }
+	void render(WorldContext& worldContext, WorldRenderView& worldRenderView, IWorldRenderPass& worldRenderPass);
 
 private:
 	friend class WorldEntityFactory;
 
+	IntervalTransform m_transform;
 	RefArray< IEntityComponent > m_components;
-	Ref< Entity > m_entity;
-	bool m_visible;
 };
 
 	}
