@@ -30,7 +30,7 @@ public:
 	Font(const Font& font);
 
 	Font(const std::wstring& face, int size, bool bold = false, bool italic = false, bool underline = false);
-	
+
 	void setFace(const std::wstring& face);
 
 	std::wstring getFace() const;
@@ -39,7 +39,9 @@ public:
 
 	int getSize() const;
 
-	int getHeight() const;
+	int getPointSize() const;
+
+	int getPixelSize() const;
 
 	void setBold(bool bold);
 

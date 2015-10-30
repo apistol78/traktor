@@ -84,7 +84,7 @@ int32_t GridItem::getHeight() const
 	int32_t height = scaleBySystemDPI(19);
 
 	if (m_font)
-		height = std::max(height, m_font->getHeight() + scaleBySystemDPI(10));
+		height = std::max(height, m_font->getPixelSize() + scaleBySystemDPI(10));
 	if (m_image)
 		height = std::max(height, m_image->getSize().cy + scaleBySystemDPI(4));
 
@@ -107,7 +107,7 @@ void GridItem::paint(Canvas& canvas, const Rect& rect)
 	if (m_image)
 	{
 		Size szImage = m_image->getSize();
-		
+
 		Point pntImage(
 			rcText.left,
 			rcText.top + (rcText.getHeight() - szImage.cy) / 2

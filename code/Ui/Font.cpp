@@ -54,7 +54,15 @@ int Font::getSize() const
 	return m_params.size;
 }
 
-int Font::getHeight() const
+int Font::getPointSize() const
+{
+	if (m_params.size > 0)
+		return m_params.size;
+	else
+		return int((-m_params.size / 72.0f) * 96.0f);
+}
+
+int Font::getPixelSize() const
 {
 	if (m_params.size > 0)
 		return int((m_params.size / 96.0f) * 72.0f);

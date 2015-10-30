@@ -282,7 +282,7 @@ public:
 	virtual void setFont(const Font& font)
 	{
 		m_window->SetFont(wxFont(
-			font.getSize(),
+			font.getPointSize(),
 			wxFONTFAMILY_DEFAULT,
 			font.isItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL,
 			font.isBold() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL,
