@@ -297,7 +297,7 @@ public:
 		wxFont font = m_window->GetFont();
 		return Font(
 			tstows(static_cast< const wxChar* >(font.GetFaceName())),
-			-font.GetPixelSize().GetHeight(),
+			font.GetPointSize(),
 			bool(font.GetWeight() == wxFONTWEIGHT_BOLD),
 			bool(font.GetStyle() == wxFONTSTYLE_ITALIC),
 			font.GetUnderlined()

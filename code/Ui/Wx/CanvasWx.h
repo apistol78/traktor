@@ -16,7 +16,7 @@ public:
 	bool beginPaint(wxWindow* window, bool doubleBuffer);
 
 	void endPaint(wxWindow* window);
-	
+
 	virtual void setForeground(const Color4ub& foreground);
 
 	virtual void setBackground(const Color4ub& background);
@@ -30,7 +30,7 @@ public:
 	virtual void setClipRect(const Rect& rc);
 
 	virtual void resetClipRect();
-	
+
 	virtual void drawPixel(int x, int y, const Color4ub& c);
 
 	virtual void drawLine(int x1, int y1, int x2, int y2);
@@ -56,7 +56,7 @@ public:
 	virtual void drawPolygon(const Point* pnts, int count);
 
 	virtual void fillPolygon(const Point* pnts, int count);
-	
+
 	virtual void drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, IBitmap* bitmap, uint32_t blendMode);
 
 	virtual void drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, uint32_t blendMode);
@@ -64,20 +64,18 @@ public:
 	virtual void drawText(const Point& at, const std::wstring& text);
 
 	virtual void drawText(const Rect& rc, const std::wstring& text, Align halign = AnLeft, Align valign = AnTop);
-	
+
 	virtual Size getTextExtent(const std::wstring& text) const;
 
 	virtual void* getSystemHandle();
-	
+
 private:
-	wxPaintDC* m_dc;
-#if wxUSE_GRAPHICS_CONTEXT
 	wxGraphicsContext* m_context;
-#endif
-	Color4ub m_foreGround;
-	Color4ub m_backGround;
+	wxColour m_foreGround;
+	wxColour m_backGround;
+	wxFont m_font;
 };
-	
+
 	}
 }
 
