@@ -22,7 +22,7 @@ namespace traktor
 	namespace drone
 	{
 
-const wchar_t c_title[] = { L"Traktor Drone; v0.3" };
+const wchar_t c_title[] = { L"Traktor Drone v1.0" };
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drone.DroneForm", DroneForm, ui::Form)
 
@@ -33,7 +33,7 @@ bool DroneForm::create(const CommandLine& cmdLine)
 	if (cmdLine.getCount() >= 1)
 		configurationFile = cmdLine.getString(0);
 
-	if (!ui::Form::create(L"Traktor Drone", 0, 0, ui::WsNone))
+	if (!ui::Form::create(c_title, 0, 0, ui::WsNone))
 		return false;
 
 	Ref< IStream > file = FileSystem::getInstance().open(configurationFile, File::FmRead);
