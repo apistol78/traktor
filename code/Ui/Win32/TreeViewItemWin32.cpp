@@ -96,11 +96,7 @@ int TreeViewItemWin32::getExpandedImage() const
 
 bool TreeViewItemWin32::isExpanded() const
 {
-#if !defined(WINCE)
 	BOOL expanded = TreeView_GetItemState(m_hWndTree, m_hItem, TVIS_EXPANDED) & TVIS_EXPANDED;
-#else
-	BOOL expanded = FALSE;
-#endif
 	return bool(expanded != 0);
 }
 
@@ -121,11 +117,7 @@ void TreeViewItemWin32::collapse()
 
 bool TreeViewItemWin32::isSelected() const
 {
-#if !defined(WINCE)
 	BOOL selected = TreeView_GetItemState(m_hWndTree, m_hItem, TVIS_SELECTED);
-#else
-	BOOL selected = FALSE;
-#endif
 	return bool(selected != 0);
 }
 

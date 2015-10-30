@@ -34,19 +34,12 @@ void signalAbortCallback(int signal)
 	g_running = false;
 }
 
-#if !defined(WINCE)
 int main(int argc, const char** argv)
 {
 	T_FORCE_LINK_REF(db::CompactDatabase);
 	T_FORCE_LINK_REF(db::LocalDatabase);
 
 	CommandLine cmdLine(argc, argv);
-#else
-int WinMain(HINSTANCE, HINSTANCE, LPTSTR cmdLine, int showCmd)
-{
-	const char* argv[] = { "" };
-	CommandLine cmdLine(1, argv);
-#endif
 
 	traktor::log::info << L"Traktor Remote Database Server v1.0.2" << Endl;
 	if (cmdLine.hasOption('h', L"help"))

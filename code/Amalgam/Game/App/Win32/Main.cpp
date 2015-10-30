@@ -398,11 +398,7 @@ void pureVirtualCallHandler(void)
 
 }
 
-#if !defined(WINCE)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
-#else
-int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
-#endif
 {
 	std::vector< std::wstring > argv;
 
@@ -410,11 +406,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 	GetModuleFileName(NULL, szFilename, sizeof_array(szFilename));
 	argv.push_back(szFilename);
 
-#if !defined(WINCE)
 	Split< std::wstring >::any(mbstows(szCmdLine), L" \t", argv);
-#else
-	Split< std::wstring >::any(szCmdLine, L" \t", argv);
-#endif
 	CommandLine cmdLine(argv);
 	Ref< traktor::IStream > logFile;
 

@@ -10,9 +10,6 @@
 #include <commctrl.h>
 #include <shlobj.h>
 #include <tchar.h>
-#if defined(WINCE)
-#	include <aygshell.h>
-#endif
 #include <map>
 #include "Core/Object.h"
 #include "Core/Ref.h"

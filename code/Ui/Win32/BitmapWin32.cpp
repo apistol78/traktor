@@ -128,9 +128,7 @@ void BitmapWin32::copySubImage(drawing::Image* image, const Rect& srcRect, const
 		}
 	}
 
-#if !defined(WINCE)
 	GdiFlush();
-#endif
 
 	const uint8_t* data = reinterpret_cast< const uint8_t* >(color->getData());
 	if (data)

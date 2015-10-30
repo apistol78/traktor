@@ -66,7 +66,6 @@ std::wstring OS::getCommandLine() const
 
 std::wstring OS::getComputerName() const
 {
-#if !defined(WINCE)
 	wchar_t buf[MAX_COMPUTERNAME_LENGTH + 1];
 
 	DWORD size = sizeof_array(buf);
@@ -74,14 +73,10 @@ std::wstring OS::getComputerName() const
 		return L"";
 
 	return buf;
-#else
-	return L"";
-#endif
 }
 
 std::wstring OS::getCurrentUser() const
 {
-#if !defined(WINCE)
 	wchar_t buf[UNLEN + 1];
 	
 	DWORD size = sizeof_array(buf);
@@ -89,14 +84,10 @@ std::wstring OS::getCurrentUser() const
 		return L"";
 
 	return buf;
-#else
-	return L"";
-#endif
 }
 
 std::wstring OS::getUserHomePath() const
 {
-#if !defined(WINCE)
 	TCHAR szPath[MAX_PATH];
 	HRESULT hr;
 
@@ -111,14 +102,10 @@ std::wstring OS::getUserHomePath() const
 		return L"";
 
 	return replaceAll(tstows(szPath), L'\\', L'/');
-#else
-	return L"";
-#endif
 }
 
 std::wstring OS::getUserApplicationDataPath() const
 {
-#if !defined(WINCE)
 	TCHAR szPath[MAX_PATH];
 	HRESULT hr;
 
@@ -133,14 +120,10 @@ std::wstring OS::getUserApplicationDataPath() const
 		return L"";
 
 	return replaceAll(tstows(szPath), L'\\', L'/');
-#else
-	return L"";
-#endif
 }
 
 std::wstring OS::getWritableFolderPath() const
 {
-#if !defined(WINCE)
 	if (s_IEIsProtectedModeProcess && s_IEGetWriteableFolderPath)
 	{
 		HRESULT hr;
@@ -167,13 +150,11 @@ std::wstring OS::getWritableFolderPath() const
 			return path;
 		}
 	}
-#endif
 	return getUserApplicationDataPath();
 }
 
 bool OS::openFile(const std::wstring& file) const
 {
-#if !defined(WINCE)
 	HINSTANCE hInstance = ShellExecute(
 		NULL,
 		_T("open"),
@@ -183,14 +164,10 @@ bool OS::openFile(const std::wstring& file) const
 		SW_SHOWDEFAULT
 	);
 	return int(hInstance) > 32;
-#else
-	return false;
-#endif
 }
 
 bool OS::editFile(const std::wstring& file) const
 {
-#if !defined(WINCE)
 	HINSTANCE hInstance = ShellExecute(
 		NULL,
 		_T("edit"),
@@ -200,14 +177,10 @@ bool OS::editFile(const std::wstring& file) const
 		SW_SHOWDEFAULT
 	);
 	return int(hInstance) > 32;
-#else
-	return false;
-#endif
 }
 
 bool OS::exploreFile(const std::wstring& file) const
 {
-#if !defined(WINCE)
 	HINSTANCE hInstance = ShellExecute(
 		NULL,
 		_T("explore"),
@@ -217,16 +190,11 @@ bool OS::exploreFile(const std::wstring& file) const
 		SW_SHOWDEFAULT
 	);
 	return int(hInstance) > 32;
-#else
-	return false;
-#endif
 }
 
 Ref< Environment > OS::getEnvironment() const
 {
 	Ref< Environment > env = new Environment();
-
-#if !defined(WINCE)
 	LPTCH lpEnv = GetEnvironmentStrings();
 	if (lpEnv)
 	{
@@ -250,23 +218,17 @@ Ref< Environment > OS::getEnvironment() const
 			p = val + _tcslen(val) + 1;
 		}
 	}
-#endif
-
 	return env;
 }
 
 bool OS::getEnvironment(const std::wstring& name, std::wstring& outValue) const
 {
-#if !defined(WINCE)
 	const char* env = getenv(wstombs(name).c_str());
 	if (!env)
 		return false;
 
 	outValue = mbstows(env);
 	return true;
-#else
-	return false;
-#endif
 }
 
 Ref< IProcess > OS::execute(
@@ -349,15 +311,9 @@ Ref< IProcess > OS::execute(
 	if (!arguments.empty())
 		ss << L" " << arguments;
 
-#if !defined(WINCE)
 	_tcscpy_s(cmd, wstots(ss.str()).c_str());
 	_tcscpy_s(cwd, wstots(workingDirectoryAbs.getPathName()).c_str());
-#else
-	_tcscpy_s(cmd, sizeof_array(cmd), wstots(ss.str()).c_str());
-	_tcscpy_s(cwd, sizeof_array(cwd), wstots(workingDirectoryAbs.getPathName()).c_str());
-#endif
 
-#if !defined(WINCE)
 	if (redirect)
 	{
 		// Create IO objects.
@@ -392,16 +348,11 @@ Ref< IProcess > OS::execute(
 			0
 		);
 	}
-#endif
 
 	STARTUPINFO si;
 	std::memset(&si, 0, sizeof(si));
 	si.cb = sizeof(STARTUPINFO);
-#if !defined(WINCE)
 	si.dwFlags = redirect ? STARTF_USESTDHANDLES : 0;
-#else
-	si.dwFlags = 0;
-#endif
 	si.hStdInput = hStdInRead;
 	si.hStdOutput = hStdOutWrite;
 	si.hStdError = hStdErrWrite;
@@ -409,7 +360,6 @@ Ref< IProcess > OS::execute(
 	PROCESS_INFORMATION pi;
 	std::memset(&pi, 0, sizeof(pi));
 
-#if !defined(WINCE)
 	DWORD dwCreationFlags = CREATE_NEW_PROCESS_GROUP;
 
 	if (mute)
@@ -423,9 +373,6 @@ Ref< IProcess > OS::execute(
 
 	if (environment.ptr())
 		dwCreationFlags |= CREATE_UNICODE_ENVIRONMENT;
-#else
-	DWORD dwCreationFlags = mute ? 0 : CREATE_NEW_CONSOLE;
-#endif
 
 	BOOL result = CreateProcess(
 		NULL,
@@ -469,7 +416,6 @@ Ref< ISharedMemory > OS::createSharedMemory(const std::wstring& name, uint32_t s
 bool OS::setOwnProcessPriorityBias(int32_t priorityBias)
 {
 	bool result = false;
-#if !defined(WINCE)
 	switch (priorityBias)
 	{
 	case -1:
@@ -484,7 +430,6 @@ bool OS::setOwnProcessPriorityBias(int32_t priorityBias)
 	default:
 		break;
 	}
-#endif
 	return result;
 }
 
@@ -558,7 +503,6 @@ OS::OS()
 {
 	CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
 
-#if !defined(WINCE)
 	// Load IEFrame library; only available on Vista.
 	s_hIeFrameLib = LoadLibrary(L"ieframe.dll");
 	if (s_hIeFrameLib)
@@ -568,7 +512,6 @@ OS::OS()
 		s_IEGetWriteableFolderPath = (IEGETWRITEABLEFOLDERPATHPROC*)GetProcAddress(s_hIeFrameLib, "IEGetWriteableFolderPath");
 		T_ASSERT (s_IEGetWriteableFolderPath);
 	}
-#endif
 }
 
 OS::~OS()

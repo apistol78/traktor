@@ -20,7 +20,7 @@
 #	include "Spray/Ps3/Spu/JobModifierUpdate.h"
 #endif
 
-#if !TARGET_OS_IPHONE && !defined(_WINCE) && !defined(__EMSCRIPTEN__) && !defined(_PS3)
+#if !TARGET_OS_IPHONE && !defined(__EMSCRIPTEN__) && !defined(_PS3)
 #	define T_USE_UPDATE_JOBS
 #endif
 
@@ -383,11 +383,11 @@ void EmitterInstance::updateTask(float deltaTime)
 		m_skip < 4
 	)
 	{
-#if defined(_WIN32) && !defined(WINCE)
+#if defined(_WIN32)
 		qsort_s(m_renderPoints.ptr(), m_renderPoints.size(), sizeof(Point), pointPredicate, &m_sortPlane);
 #elif defined(__LINUX__)
 		qsort_r(m_renderPoints.ptr(), m_renderPoints.size(), sizeof(Point), pointPredicate, &m_sortPlane);
-#elif !defined(__EMSCRIPTEN__) && !defined(__PNACL__) && !defined(__ANDROID__) && !defined(WINCE) && !defined(_PS3)
+#elif !defined(__EMSCRIPTEN__) && !defined(__PNACL__) && !defined(__ANDROID__) && !defined(_PS3)
 		qsort_r(m_renderPoints.ptr(), m_renderPoints.size(), sizeof(Point), &m_sortPlane, &pointPredicate);
 #endif
 	}

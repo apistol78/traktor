@@ -39,7 +39,6 @@ MenuItem* PopupMenuWin32::show(IWidget* parent, const Point& at)
 		tstring tmp = wstots(item->getText());	
 		UINT flags = item->getText() != L"-" ? MF_STRING : MF_SEPARATOR;
 
-#if !defined(WINCE)
 		if (!item->isEnable())
 			flags |= MF_DISABLED;
 
@@ -50,7 +49,6 @@ MenuItem* PopupMenuWin32::show(IWidget* parent, const Point& at)
 			else
 				flags |= MF_UNCHECKED;
 		}
-#endif
 
 		if (!item->count())
 		{
@@ -117,7 +115,6 @@ HMENU PopupMenuWin32::buildMenu(MenuItem* item)
 		tstring tmp = wstots(subItem->getText());
 		UINT flags = subItem->getText() != L"-" ? MF_STRING : MF_SEPARATOR;
 
-#if !defined(WINCE)
 		if (!subItem->isEnable())
 			flags |= MF_DISABLED;
 
@@ -128,7 +125,6 @@ HMENU PopupMenuWin32::buildMenu(MenuItem* item)
 			else
 				flags |= MF_UNCHECKED;
 		}
-#endif
 
 		if (!subItem->count())
 		{

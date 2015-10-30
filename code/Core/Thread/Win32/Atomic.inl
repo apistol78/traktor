@@ -1,4 +1,4 @@
-#if !defined(WINCE) && !defined(_XBOX)
+#if !defined(_XBOX)
 #	include <intrin.h>
 #else
 #	include "Core/Platform.h"
@@ -11,7 +11,7 @@ namespace traktor
 
 int32_t Atomic::increment(int32_t& value)
 {
-#if !defined(WINCE) && !defined(_XBOX)
+#if !defined(_XBOX)
 	return _InterlockedIncrement((long volatile*)&value);
 #else
 	return InterlockedIncrement((LPLONG)&value);
@@ -20,7 +20,7 @@ int32_t Atomic::increment(int32_t& value)
 
 int32_t Atomic::decrement(int32_t& value)
 {
-#if !defined(WINCE) && !defined(_XBOX)
+#if !defined(_XBOX)
 	return _InterlockedDecrement((long volatile*)&value);
 #else
 	return InterlockedDecrement((LPLONG)&value);
@@ -29,7 +29,7 @@ int32_t Atomic::decrement(int32_t& value)
 
 int32_t Atomic::add(int32_t& value, int32_t delta)
 {
-#if !defined(WINCE) && !defined(_XBOX)
+#if !defined(_XBOX)
 	return _InterlockedExchangeAdd((long volatile*)&value, delta);
 #else
 	return InterlockedExchangeAdd((LPLONG)&value, delta);
@@ -38,7 +38,7 @@ int32_t Atomic::add(int32_t& value, int32_t delta)
 
 uint32_t Atomic::exchange(uint32_t& s, uint32_t v)
 {
-#if !defined(WINCE) && !defined(_XBOX)
+#if !defined(_XBOX)
 	long p = _InterlockedExchange((long volatile*)&s, *(long*)&v);
 #else
 	LONG p = InterlockedExchange((LPLONG)&s, *(LPLONG)&v);
@@ -62,7 +62,7 @@ uint64_t Atomic::exchange(uint64_t& s, uint64_t v)
 
 int32_t Atomic::compareAndSwap(int32_t& value, int32_t compareTo, int32_t replaceWithIfEqual)
 {
-#if !defined(WINCE) && !defined(_XBOX)
+#if !defined(_XBOX)
 	return _InterlockedCompareExchange((long volatile*)&value, replaceWithIfEqual, compareTo);
 #else
 	return InterlockedCompareExchange((LPLONG)&value, replaceWithIfEqual, compareTo);

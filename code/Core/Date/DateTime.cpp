@@ -3,9 +3,6 @@
 #include "Core/Date/DateTime.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
-#if defined(WINCE)
-#   include "time_ce.h"
-#endif
 
 namespace traktor
 {
@@ -15,13 +12,7 @@ namespace traktor
 void getLocalTime(time_t t, struct tm* T)
 {
 #if defined(_MSC_VER)
-#	if !defined(WINCE)
 	::localtime_s(T, &t);
-#	else
-	struct tm* tmp = localtime_ce(&t);
-	T_ASSERT (tmp);
-	std::memcpy(T, tmp, sizeof(struct tm));
-#	endif
 #else
 	struct tm* tmp = ::localtime(&t);
 	T_ASSERT (tmp);
@@ -62,22 +53,13 @@ DateTime::DateTime(uint16_t year, uint8_t month, uint16_t day, uint8_t hour, uin
 	t.tm_yday = 0;
 	t.tm_isdst = 0;
 
-#if !defined(WINCE)
 	m_epoch = mktime(&t);
-#else
-	m_epoch = mktime_ce(&t);
-#endif
 }
 
 DateTime DateTime::now()
 {
-#if !defined(WINCE)
 	time_t t; ::time(&t);
 	return DateTime(uint64_t(t));
-#else
-	time_t t; ::time_ce(&t);
-	return DateTime(uint64_t(t));
-#endif
 }
 
 DateTime DateTime::parse(const std::wstring& str)

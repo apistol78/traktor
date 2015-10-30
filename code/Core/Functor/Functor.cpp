@@ -70,11 +70,7 @@ protected:
 	virtual void destroy() { delete this; }
 
 private:
-#if !defined(WINCE)
 	enum { MaxFunctorCount = 8192+4096 };
-#else
-	enum { MaxFunctorCount = 1024 };
-#endif
 	enum { MaxFunctorSize = 64 };
 
 	void* m_block;

@@ -3,15 +3,8 @@
 
 extern HINSTANCE g_hInstance;
 
-#if defined(WINCE)
-#	define GWLP_USERDATA GWL_USERDATA
-#	define GWLP_WNDPROC GWL_WNDPROC
-#	define SET_WINDOW_LONG_PTR(a, b, c) SetWindowLong(a, b, c)
-#	define GET_WINDOW_LONG_PTR(a, b) GetWindowLong(a, b)
-#else
-#	define SET_WINDOW_LONG_PTR(a, b, c) SetWindowLongPtr(a, b, c)
-#	define GET_WINDOW_LONG_PTR(a, b) GetWindowLongPtr(a, b)
-#endif
+#define SET_WINDOW_LONG_PTR(a, b, c) SetWindowLongPtr(a, b, c)
+#define GET_WINDOW_LONG_PTR(a, b) GetWindowLongPtr(a, b)
 
 namespace traktor
 {
@@ -70,14 +63,10 @@ bool Window::create(
 		return false;
 	}
 
-#if !defined(WINCE)
 	if (_tcscmp(className, _T("TraktorDialogWin32Class")) != 0)
 		SET_WINDOW_LONG_PTR(m_hWnd, GWLP_USERDATA, (LONG_PTR)this);
 	else
 		SET_WINDOW_LONG_PTR(m_hWnd, DWLP_USER, (LONG_PTR)this);
-#else
-	SET_WINDOW_LONG_PTR(m_hWnd, GWLP_USERDATA, (LONG_PTR)this);
-#endif
 
 	if (subClass)
 	{
@@ -85,17 +74,11 @@ bool Window::create(
 		SET_WINDOW_LONG_PTR(m_hWnd, GWLP_WNDPROC, (LONG_PTR)wndProcSubClass);
 	}
 
-#if !defined(WINCE)
-
 	ICONMETRICS im;
 	memset(&im, 0, sizeof(im));
 	im.cbSize = sizeof(im);
 	SystemParametersInfo(SPI_GETICONMETRICS, 0, &im, sizeof(im));
 	m_hFont = CreateFontIndirect(&im.lfFont);
-
-#else
-	m_hFont = (HFONT)GetStockObject(SYSTEM_FONT);
-#endif
 	SendMessage(m_hWnd, WM_SETFONT, (WPARAM)m_hFont.getHandle(), FALSE);
 
 	return true;
@@ -277,11 +260,7 @@ LRESULT CALLBACK Window::dlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 	bool pass;
 
 	// Lookup handler of issued message.
-#if !defined(WINCE)
 	result = invokeMessageHandlers(hWnd, DWLP_USER, message, wParam, lParam, pass);
-#else
-	result = invokeMessageHandlers(hWnd, GWLP_USERDATA, message, wParam, lParam, pass);
-#endif
 	if (!pass)
 		return result;
 

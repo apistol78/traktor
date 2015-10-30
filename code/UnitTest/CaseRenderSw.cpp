@@ -33,7 +33,7 @@ bool equalFuzzy(const Vector4& a, const Vector4& b)
 void CaseRenderSw::run()
 {
 /*
-#if !defined(__GNUC__) && !defined(_WIN64) && !defined(WINCE)
+#if !defined(__GNUC__) && !defined(_WIN64)
 	render::Interpreter interpreter;
 	render::InterpreterFixed interpreterFixed;
 	render::JitX86 jit;

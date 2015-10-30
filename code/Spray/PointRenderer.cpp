@@ -40,8 +40,6 @@ namespace traktor
 const uint32_t c_pointCount = 3000;
 #elif TARGET_OS_IPHONE
 const uint32_t c_pointCount = 1000;
-#elif defined(_WINCE)
-const uint32_t c_pointCount = 1000;
 #elif defined(_PS3)
 const uint32_t c_pointCount = 3000;
 #else

@@ -23,7 +23,6 @@ DialogWin32::DialogWin32(EventSubject* owner)
 
 bool DialogWin32::create(IWidget* parent, const std::wstring& text, int width, int height, int style)
 {
-#if !defined(WINCE)
 	DWORD nativeStyle = WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
 
 	if (style & WsResizable)
@@ -44,10 +43,6 @@ bool DialogWin32::create(IWidget* parent, const std::wstring& text, int width, i
 		m_centerDesktop = true;
 	else
 		m_centerDesktop = false;
-
-#else
-	DWORD nativeStyle = WS_POPUP;
-#endif
 
 	HWND hWndParent = 0;
 	if (parent)
@@ -89,9 +84,7 @@ bool DialogWin32::create(IWidget* parent, const std::wstring& text, int width, i
 	}
 
 	m_hWnd.registerMessageHandler(WM_INITDIALOG, new MethodMessageHandler< DialogWin32 >(this, &DialogWin32::eventInitDialog));
-#if !defined(WINCE)
 	m_hWnd.registerMessageHandler(WM_SIZING, new MethodMessageHandler< DialogWin32 >(this, &DialogWin32::eventSizing));
-#endif
 	m_hWnd.registerMessageHandler(WM_CLOSE, new MethodMessageHandler< DialogWin32 >(this, &DialogWin32::eventClose));
 	m_hWnd.registerMessageHandler(WM_ENDMODAL, new MethodMessageHandler< DialogWin32 >(this, &DialogWin32::eventEndModal));
 
@@ -186,8 +179,6 @@ LRESULT DialogWin32::eventInitDialog(HWND hWnd, UINT message, WPARAM wParam, LPA
 	return TRUE;
 }
 
-#if !defined(WINCE)
-
 LRESULT DialogWin32::eventSizing(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip)
 {
 	LPRECT rc = reinterpret_cast< LPRECT >(lParam);
@@ -232,8 +223,6 @@ LRESULT DialogWin32::eventSizing(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 
 	return TRUE;
 }
-
-#endif
 
 LRESULT DialogWin32::eventClose(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip)
 {

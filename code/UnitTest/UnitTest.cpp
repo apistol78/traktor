@@ -32,8 +32,6 @@ using namespace traktor;
 
 #if !defined(_WIN32) || defined(_CONSOLE)
 int main(int /*argc*/, const char** /*argv*/)
-#elif defined(WINCE)
-int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR, int)
 #else
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #endif

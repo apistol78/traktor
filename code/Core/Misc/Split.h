@@ -77,7 +77,7 @@ template < >
 struct ConvertPolicy< std::wstring, float >
 {
 	static float convert(const std::wstring& piece) {
-#if defined(WIN32) && !defined(WINCE)
+#if defined(WIN32)
 		return float(_wtof(piece.c_str()));
 #else
 		return float(std::wcstod(piece.c_str(), 0));

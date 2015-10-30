@@ -7,8 +7,6 @@ namespace traktor
 	namespace
 	{
 
-#if !defined(WINCE)
-
 class PipeStream : public IStream
 {
 public:
@@ -105,8 +103,6 @@ private:
 	HANDLE m_hPipe;
 };
 
-#endif
-
 	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ProcessWin32", ProcessWin32, IProcess)
@@ -132,24 +128,20 @@ ProcessWin32::ProcessWin32(
 ,	m_hStdErrRead(hStdErrRead)
 ,	m_hStdErrWrite(hStdErrWrite)
 {
-#if !defined(WINCE)
 	m_pipeStdOut = new PipeStream(m_hProcess, m_hStdOutRead);
 	m_pipeStdErr = new PipeStream(m_hProcess, m_hStdErrRead);
-#endif
 }
 
 ProcessWin32::~ProcessWin32()
 {
 	CloseHandle(m_hProcess);
 	CloseHandle(m_hThread);
-#if !defined(WINCE)
 	CloseHandle(m_hStdInRead);
 	CloseHandle(m_hStdInWrite);
 	CloseHandle(m_hStdOutRead);
 	CloseHandle(m_hStdOutWrite);
 	CloseHandle(m_hStdErrRead);
 	CloseHandle(m_hStdErrWrite);
-#endif
 }
 
 bool ProcessWin32::wait(int32_t timeout)
@@ -159,19 +151,16 @@ bool ProcessWin32::wait(int32_t timeout)
 
 Ref< IStream > ProcessWin32::getPipeStream(StdPipe pipe)
 {
-#if !defined(WINCE)
 	if (pipe == SpStdOut)
 		return m_pipeStdOut;
 	else if (pipe == SpStdErr)
 		return m_pipeStdErr;
 	else
-#endif
 		return 0;
 }
 
 bool ProcessWin32::signal(SignalType signalType)
 {
-#if !defined(WINCE)
 	switch (signalType)
 	{
 	case StCtrlC:
@@ -186,9 +175,6 @@ bool ProcessWin32::signal(SignalType signalType)
 		return false;
 	}
 	return true;
-#else
-	return false;
-#endif
 }
 
 bool ProcessWin32::terminate(int32_t exitCode)

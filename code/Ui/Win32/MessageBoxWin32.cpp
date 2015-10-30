@@ -38,13 +38,8 @@ bool MessageBoxWin32::create(IWidget* parent, const std::wstring& message, const
 	if (style & MbStayOnTop)
 		m_type |= MB_TOPMOST;
 
-#if !defined(WINCE)
 	if (!parent)
 		m_type |= MB_TOPMOST | MB_SETFOREGROUND | MB_SYSTEMMODAL;
-#else
-	if (!parent)
-		m_type |= MB_TOPMOST | MB_SETFOREGROUND;
-#endif
 
 	return true;
 }

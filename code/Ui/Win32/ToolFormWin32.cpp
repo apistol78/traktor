@@ -22,11 +22,7 @@ bool ToolFormWin32::create(IWidget* parent, const std::wstring& text, int width,
 		parent ? (HWND)parent->getInternalHandle() : NULL,
 		_T("TraktorWin32Class"),
 		wstots(text).c_str(),
-#if !defined(WINCE)
 		WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | nativeStyle,
-#else
-		nativeStyle,
-#endif
 		nativeStyleEx,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
@@ -38,13 +34,11 @@ bool ToolFormWin32::create(IWidget* parent, const std::wstring& text, int width,
 	if (!WidgetWin32Impl::create(style))
 		return false;
 
-#if !defined(WINCE)
 	m_hWnd.registerMessageHandler(WM_NCLBUTTONDOWN, new MethodMessageHandler< ToolFormWin32 >(this, &ToolFormWin32::eventNcButtonDown));
 	m_hWnd.registerMessageHandler(WM_NCLBUTTONUP, new MethodMessageHandler< ToolFormWin32 >(this, &ToolFormWin32::eventNcButtonUp));
 	m_hWnd.registerMessageHandler(WM_NCRBUTTONDOWN, new MethodMessageHandler< ToolFormWin32 >(this, &ToolFormWin32::eventNcButtonDown));
 	m_hWnd.registerMessageHandler(WM_NCRBUTTONUP, new MethodMessageHandler< ToolFormWin32 >(this, &ToolFormWin32::eventNcButtonUp));
 	m_hWnd.registerMessageHandler(WM_NCMOUSEMOVE, new MethodMessageHandler< ToolFormWin32 >(this, &ToolFormWin32::eventNcMouseMove));
-#endif
 
 	return true;
 }
@@ -73,8 +67,6 @@ void ToolFormWin32::center()
 
 	SetWindowPos(m_hWnd, NULL, pntPos.x, pntPos.y, 0, 0, SWP_NOSIZE);
 }
-
-#if !defined(WINCE)
 
 LRESULT ToolFormWin32::eventNcButtonDown(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass)
 {
@@ -150,8 +142,6 @@ LRESULT ToolFormWin32::eventNcMouseMove(HWND hWnd, UINT message, WPARAM wParam, 
 
 	return 0;
 }
-
-#endif	// !WINCE
 
 	}
 }

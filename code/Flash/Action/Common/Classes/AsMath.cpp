@@ -13,9 +13,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsMath", AsMath, ActionObject)
 
 AsMath::AsMath(ActionContext* context)
 :	ActionObject(context)
-#if !defined(WINCE)
 ,	m_random(std::clock())
-#endif
 {
 	setMember("e", ActionValue(avm_number_t(2.7182818284590452354)));
 	setMember("ln2", ActionValue(avm_number_t(0.69314718055994530942)));

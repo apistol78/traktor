@@ -14,8 +14,6 @@ namespace traktor
 		namespace
 		{
 
-#if !defined(WINCE)
-
 HMENU buildMenu(MenuItem* item)
 {
 	if (item->count() <= 0)
@@ -64,8 +62,6 @@ HMENU buildMenu(MenuItem* item)
 	return hMenu;
 }
 
-#endif
-
 		}
 
 MenuBarWin32::MenuBarWin32(EventSubject* owner)
@@ -80,8 +76,6 @@ bool MenuBarWin32::create(IForm* form)
 	m_hMenu = CreateMenu();
 	if (!m_hMenu)
 		return false;
-
-#if !defined(WINCE)
 
 	MENUINFO mi;
 
@@ -99,9 +93,6 @@ bool MenuBarWin32::create(IForm* form)
 
 	SetMenu(hWndParent, m_hMenu);
 	DrawMenuBar(hWndParent);
-
-#endif
-
 	return true;
 }
 
@@ -112,14 +103,10 @@ void MenuBarWin32::destroy()
 
 	HWND hWndParent = static_cast< HWND >(m_form->getInternalHandle());
 
-#if !defined(WINCE)
-
 	m_form->unregisterMenuBar(this);
 	m_form = 0;
 
 	SetMenu(hWndParent, NULL);
-
-#endif
 
 	DrawMenuBar(hWndParent);
 	DestroyMenu(m_hMenu);
@@ -131,8 +118,6 @@ void MenuBarWin32::destroy()
 
 void MenuBarWin32::add(MenuItem* item)
 {
-#if !defined(WINCE)
-
 	MENUINFO mi;
 	MENUITEMINFO mii;
 	HMENU hSubMenu = NULL;
@@ -172,14 +157,10 @@ void MenuBarWin32::add(MenuItem* item)
 	DrawMenuBar(hWndParent);
 
 	m_menuItems.push_back(item);
-
-#endif
 }
 
 LRESULT MenuBarWin32::eventInitMenuPopup(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass)
 {
-#if !defined(WINCE)
-
 	MENUINFO mi;
 	MENUITEMINFO mii;
 	tstring ts;
@@ -225,15 +206,11 @@ LRESULT MenuBarWin32::eventInitMenuPopup(HWND hWnd, UINT message, WPARAM wParam,
 	}
 
 	pass = false;
-
-#endif
 	return 0;
 }
 
 LRESULT MenuBarWin32::eventMenuCommand(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass)
 {
-#if !defined(WINCE)
-
 	MENUITEMINFO mii;
 
 	memset(&mii, 0, sizeof(mii));
@@ -250,8 +227,6 @@ LRESULT MenuBarWin32::eventMenuCommand(HWND hWnd, UINT message, WPARAM wParam, L
 	m_owner->raiseEvent(&menuClickEvent);
 
 	pass = !menuClickEvent.consumed();
-
-#endif
 	return 0;
 }
 
