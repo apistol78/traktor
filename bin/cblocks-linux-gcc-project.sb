@@ -253,12 +253,12 @@ end
 		</Build><?--
 
 		function addPreBuildItems(project, item)
-			if item.__index == Filter then
+			if isa(item, Filter) then
 				local childItems = item:getItems()
 				for i = 0, childItems:size() - 1 do
 					addPreBuildItems(project, childItems:get(i))
 				end
-			elseif item.__index == File then
+			elseif isa(item, File) then
 				local files = item:getSystemFiles(project:getSourcePath())
 				for i = 0, files:size() - 1 do
 
