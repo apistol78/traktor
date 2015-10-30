@@ -1,7 +1,7 @@
 #ifndef traktor_world_ComponentEntity_H
 #define traktor_world_ComponentEntity_H
 
-#include "Core/RefArray.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Math/IntervalTransform.h"
 #include "World/Entity.h"
 
@@ -43,13 +43,21 @@ public:
 
 	virtual void update(const UpdateParams& update) T_OVERRIDE;
 
+	/*! \brief Set component in character instance.
+	 */
+	void setComponent(IEntityComponent* component);
+
+	/*! \brief Get component of type.
+	 */
+	IEntityComponent* getComponent(const TypeInfo& componentType) const;
+
 	void render(WorldContext& worldContext, WorldRenderView& worldRenderView, IWorldRenderPass& worldRenderPass);
 
 private:
 	friend class WorldEntityFactory;
 
 	IntervalTransform m_transform;
-	RefArray< IEntityComponent > m_components;
+	SmallMap< const TypeInfo*, Ref< IEntityComponent > > m_components;
 };
 
 	}

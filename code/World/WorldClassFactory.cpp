@@ -6,12 +6,16 @@
 #include "World/EntityBuilderWithSchema.h"
 #include "World/EntityData.h"
 #include "World/EntitySchema.h"
+#include "World/IEntityComponent.h"
+#include "World/IEntityComponentData.h"
 #include "World/IEntityEvent.h"
 #include "World/IEntityEventData.h"
 #include "World/IEntityEventInstance.h"
 #include "World/IEntityEventManager.h"
 #include "World/IEntityFactory.h"
 #include "World/IEntityRenderer.h"
+#include "World/ScriptComponent.h"
+#include "World/ScriptComponentData.h"
 #include "World/WorldClassFactory.h"
 #include "World/Entity/CameraEntity.h"
 #include "World/Entity/CameraEntityData.h"
@@ -274,10 +278,24 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classVolumeEntity->addMethod("inside", &VolumeEntity::inside);
 	registrar->registerClass(classVolumeEntity);
 
+	Ref< AutoRuntimeClass< IEntityComponentData > > classIEntityComponentData = new AutoRuntimeClass< IEntityComponentData >();
+	registrar->registerClass(classIEntityComponentData);
+
+	Ref< AutoRuntimeClass< IEntityComponent > > classIEntityComponent = new AutoRuntimeClass< IEntityComponent >();
+	registrar->registerClass(classIEntityComponent);
+
+	Ref< AutoRuntimeClass< ScriptComponentData > > classScriptComponentData = new AutoRuntimeClass< ScriptComponentData >();
+	registrar->registerClass(classScriptComponentData);
+
+	Ref< AutoRuntimeClass< ScriptComponent > > classScriptComponent = new AutoRuntimeClass< ScriptComponent >();
+	registrar->registerClass(classScriptComponent);
+
 	Ref< AutoRuntimeClass< ComponentEntityData > > classComponentEntityData = new AutoRuntimeClass< ComponentEntityData >();
 	registrar->registerClass(classComponentEntityData);
 
 	Ref< AutoRuntimeClass< ComponentEntity > > classComponentEntity = new AutoRuntimeClass< ComponentEntity >();
+	classComponentEntity->addMethod("setComponent", &ComponentEntity::setComponent);
+	classComponentEntity->addMethod("getComponent", &ComponentEntity::getComponent);
 	registrar->registerClass(classComponentEntity);
 }
 

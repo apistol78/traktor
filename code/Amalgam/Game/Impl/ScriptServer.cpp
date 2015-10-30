@@ -15,6 +15,7 @@
 #include "Core/Thread/ThreadManager.h"
 #include "Net/BidirectionalObjectTransport.h"
 #include "Resource/IResourceManager.h"
+#include "Script/IScriptContext.h"
 #include "Script/IScriptManager.h"
 #include "Script/ScriptClassFactory.h"
 #include "Script/ScriptModuleFactory.h"
@@ -128,7 +129,12 @@ void ScriptServer::createResourceFactories(IEnvironment* environment)
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 	db::Database* database = environment->getDatabase();
 
-	resourceManager->addFactory(new script::ScriptClassFactory(database, m_scriptManager->createContext()));
+	// Create script class context; expose environment as a global variable.
+	Ref< script::IScriptContext > context = m_scriptManager->createContext();
+	context->setGlobal("environment", Any::fromObject(environment));
+	resourceManager->addFactory(new script::ScriptClassFactory(database, context));
+
+	// Create script module factory.
 	resourceManager->addFactory(new script::ScriptModuleFactory(database, m_scriptManager));
 }
 

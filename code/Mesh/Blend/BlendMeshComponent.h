@@ -2,6 +2,7 @@
 #define traktor_mesh_BlendMeshComponent_H
 
 #include "Mesh/MeshComponent.h"
+#include "Mesh/Blend/BlendMesh.h"
 #include "Resource/Proxy.h"
 
 // import/export mechanism.
@@ -16,8 +17,6 @@ namespace traktor
 {
 	namespace mesh
 	{
-
-class BlendMesh;
 
 /*! \brief
  * \ingroup Mesh
