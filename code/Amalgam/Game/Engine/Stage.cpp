@@ -380,7 +380,6 @@ bool Stage::validateScriptContext()
 		{
 			// Define members, do this as a prototype as we possibly want to access those in the constructor.
 			IRuntimeClass::prototype_t proto;
-			proto["environment"] = Any::fromObject(m_environment);
 			for (RefArray< Layer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 			{
 				if (!(*i)->getName().empty())

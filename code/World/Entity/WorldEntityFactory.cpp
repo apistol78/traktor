@@ -209,11 +209,13 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 	if (const ComponentEntityData* componentData = dynamic_type_cast< const ComponentEntityData* >(&entityData))
 	{
 		Ref< ComponentEntity > componentEntity = new ComponentEntity();
-		componentEntity->m_components.resize(componentData->m_components.size());
 		for (uint32_t i = 0; i < componentData->m_components.size(); ++i)
 		{
-			if ((componentEntity->m_components[i] = componentData->m_components[i]->createInstance(componentEntity, m_resourceManager)) == 0)
+			Ref< IEntityComponent > component = componentData->m_components[i]->createInstance(componentEntity, m_resourceManager);
+			if (!component)
 				return 0;
+
+			componentEntity->setComponent(component);
 		}
 		return componentEntity;
 	}

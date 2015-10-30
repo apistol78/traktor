@@ -2,6 +2,7 @@
 #define traktor_mesh_StreamMeshComponent_H
 
 #include "Mesh/MeshComponent.h"
+#include "Mesh/Stream/StreamMesh.h"
 #include "Resource/Proxy.h"
 
 // import/export mechanism.
@@ -16,8 +17,6 @@ namespace traktor
 {
 	namespace mesh
 	{
-
-class StreamMesh;
 
 /*! \brief
  * \ingroup Mesh

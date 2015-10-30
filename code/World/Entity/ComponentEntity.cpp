@@ -16,8 +16,8 @@ ComponentEntity::ComponentEntity()
 
 void ComponentEntity::destroy()
 {
-	for (RefArray< IEntityComponent >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
-		(*i)->destroy();
+	for (SmallMap< const TypeInfo*, Ref< IEntityComponent > >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
+		i->second->destroy();
 	m_components.clear();
 }
 
@@ -35,22 +35,33 @@ bool ComponentEntity::getTransform(Transform& outTransform) const
 Aabb3 ComponentEntity::getBoundingBox() const
 {
 	Aabb3 boundingBox;
-	for (RefArray< IEntityComponent >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
-		boundingBox.contain((*i)->getBoundingBox());
+	for (SmallMap< const TypeInfo*, Ref< IEntityComponent > >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
+		boundingBox.contain(i->second->getBoundingBox());
 	return boundingBox;
 }
 
 void ComponentEntity::update(const UpdateParams& update)
 {
-	for (RefArray< IEntityComponent >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
-		(*i)->update(update);
+	for (SmallMap< const TypeInfo*, Ref< IEntityComponent > >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
+		i->second->update(update);
+}
+
+void ComponentEntity::setComponent(IEntityComponent* component)
+{
+	m_components[&type_of(component)] = component;
+}
+
+IEntityComponent* ComponentEntity::getComponent(const TypeInfo& componentType) const
+{
+	SmallMap< const TypeInfo*, Ref< IEntityComponent > >::const_iterator i = m_components.find(&componentType);
+	return i != m_components.end() ? i->second : 0;
 }
 
 void ComponentEntity::render(WorldContext& worldContext, WorldRenderView& worldRenderView, IWorldRenderPass& worldRenderPass)
 {
 	Transform transform = m_transform.get(worldRenderView.getInterval());
-	for (RefArray< IEntityComponent >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
-		(*i)->render(worldContext, worldRenderView, worldRenderPass, transform);
+	for (SmallMap< const TypeInfo*, Ref< IEntityComponent > >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
+		i->second->render(worldContext, worldRenderView, worldRenderPass, transform);
 }
 
 	}
