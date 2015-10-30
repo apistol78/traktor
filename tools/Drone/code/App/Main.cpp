@@ -35,12 +35,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 #if defined(_WIN32)
 	ui::Application::getInstance()->initialize(
 		new ui::EventLoopWin32(),
-		new ui::WidgetFactoryWin32()
+		new ui::WidgetFactoryWin32(),
+		0
 	);
 #else
 	ui::Application::getInstance()->initialize(
 		new ui::EventLoopWx(),
-		new ui::WidgetFactoryWx()
+		new ui::WidgetFactoryWx(),
+		0
 	);
 #endif
 
