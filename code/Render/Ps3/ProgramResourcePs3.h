@@ -1,5 +1,5 @@
-#ifndef traktor_render_ProgramResourceDx10_H
-#define traktor_render_ProgramResourceDx10_H
+#ifndef traktor_render_ProgramResourcePs3_H
+#define traktor_render_ProgramResourcePs3_H
 
 #include <map>
 #include "Render/Ps3/TypesPs3.h"
@@ -44,4 +44,4 @@ private:
 	}
 }
 
-#endif	// traktor_render_ProgramResourceDx10_H
+#endif	// traktor_render_ProgramResourcePs3_H

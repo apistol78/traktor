@@ -141,7 +141,6 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_toolPlatform = new ui::custom::ToolBarDropDown(ui::Command(), 80, i18n::Text(L"SHADERGRAPH_PLATFORM_PERMUTATION"));
 	m_toolPlatform->add(L"DX9");
 	m_toolPlatform->add(L"DX9 Xbox360");
-	m_toolPlatform->add(L"DX10");
 	m_toolPlatform->add(L"DX11");
 	m_toolPlatform->add(L"OpenGL");
 	m_toolPlatform->add(L"OpenGL ES2");
