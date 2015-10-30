@@ -241,7 +241,7 @@ public:
 		LOGFONT lf;
 
 		std::memset(&lf, 0, sizeof(lf));
-		lf.lfHeight = font.getSize();
+		lf.lfHeight = font.getPointSize();
 		lf.lfWidth = 0;
 		lf.lfEscapement = 0;
 		lf.lfOrientation = 0;
