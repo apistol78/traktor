@@ -18,6 +18,8 @@ namespace traktor
 
 class Entity;
 class EntityData;
+class IEntityComponent;
+class IEntityComponentData;
 class IEntityEvent;
 class IEntityEventData;
 class IEntityFactory;
@@ -56,6 +58,13 @@ public:
 	 */
 	virtual const IEntityFactory* getFactory(const IEntityEventData* entityEventData) const = 0;
 
+	/*! \brief Get concrete entity factory which can create component from given data.
+	 *
+	 * \param entityComponentData Entity component data.
+	 * \return Concrete entity factory, null if no factory found.
+	 */
+	virtual const IEntityFactory* getFactory(const IEntityComponentData* entityComponentData) const = 0;
+
 	/*! \brief Create entity from entity data.
 	 *
 	 * \param entityData Entity data.
@@ -63,12 +72,20 @@ public:
 	 */
 	virtual Ref< Entity > create(const EntityData* entityData) const = 0;
 
-	/*! \brief Create entity from entity event data.
+	/*! \brief Create event from entity event data.
 	 *
 	 * \param entityEventData Entity event data.
 	 * \return Entity event, null if unable to create event.
 	 */
 	virtual Ref< IEntityEvent > create(const IEntityEventData* entityEventData) const = 0;
+
+	/*! \brief Create component from component data.
+	 *
+	 * \param owner Owner entity.
+	 * \param entityComponentData Entity component data.
+	 * \return Component instance, null if unable to create instance.
+	 */
+	virtual Ref< IEntityComponent > create(Entity* owner, const IEntityComponentData* entityComponentData) const = 0;
 
 	/*! \brief Get composite entity builder.
 	 *
@@ -90,6 +107,14 @@ public:
 	Ref< EntityEventType > create(const IEntityEventData* entityEventData) const
 	{
 		return checked_type_cast< EntityEventType*, true >(create(entityEventData));
+	}
+
+	/*! \brief
+	 */
+	template < typename EntityComponentType >
+	Ref< EntityComponentType > create(Entity* owner, const IEntityComponentData* entityComponentData) const
+	{
+		return checked_type_cast< EntityComponentType*, true >(create(owner, entityComponentData));
 	}
 };
 

@@ -17,8 +17,18 @@ namespace traktor
 
 class IRuntimeClass;
 
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace world
 	{
+
+class Entity;
+class ScriptComponent;
 
 /*! \brief Script entity component data.
  * \ingroup World
@@ -28,7 +38,7 @@ class T_DLLCLASS ScriptComponentData : public IEntityComponentData
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< IEntityComponent > createInstance(Entity* owner, resource::IResourceManager* resourceManager) const T_FINAL;
+	Ref< ScriptComponent > createComponent(Entity* owner, resource::IResourceManager* resourceManager) const;
 
 	virtual void serialize(ISerializer& s);
 

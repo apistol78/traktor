@@ -2,7 +2,7 @@
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
-#include "World/ScriptComponentData.h"
+#include "World/Entity/ScriptComponentData.h"
 #include "World/Editor/EntityComponentPipeline.h"
 
 namespace traktor

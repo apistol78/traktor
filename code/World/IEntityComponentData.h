@@ -13,18 +13,8 @@
 
 namespace traktor
 {
-	namespace resource
-	{
-
-class IResourceManager;
-
-	}
-
 	namespace world
 	{
-
-class Entity;
-class IEntityComponent;
 
 /*! \brief Component data interface.
  * \ingroup World
@@ -32,9 +22,6 @@ class IEntityComponent;
 class T_DLLCLASS IEntityComponentData : public ISerializable
 {
 	T_RTTI_CLASS;
-
-public:
-	virtual Ref< IEntityComponent > createInstance(Entity* owner, resource::IResourceManager* resourceManager) const = 0;
 };
 
 	}

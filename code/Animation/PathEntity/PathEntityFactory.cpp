@@ -21,6 +21,11 @@ const TypeInfoSet PathEntityFactory::getEntityEventTypes() const
 	return TypeInfoSet();
 }
 
+const TypeInfoSet PathEntityFactory::getEntityComponentTypes() const
+{
+	return TypeInfoSet();
+}
+
 Ref< world::Entity > PathEntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
 	const PathEntityData* pathEntityData = checked_type_cast< const PathEntityData* >(&entityData);
@@ -28,6 +33,11 @@ Ref< world::Entity > PathEntityFactory::createEntity(const world::IEntityBuilder
 }
 
 Ref< world::IEntityEvent > PathEntityFactory::createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const
+{
+	return 0;
+}
+
+Ref< world::IEntityComponent > PathEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, world::Entity* owner, const world::IEntityComponentData& entityComponentData) const
 {
 	return 0;
 }

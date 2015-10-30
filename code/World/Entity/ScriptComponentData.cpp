@@ -2,8 +2,8 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
-#include "World/ScriptComponent.h"
-#include "World/ScriptComponentData.h"
+#include "World/Entity/ScriptComponent.h"
+#include "World/Entity/ScriptComponentData.h"
 
 namespace traktor
 {
@@ -12,7 +12,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.ScriptComponentData", 0, ScriptComponentData, IEntityComponentData)
 
-Ref< IEntityComponent > ScriptComponentData::createInstance(Entity* owner, resource::IResourceManager* resourceManager) const
+Ref< ScriptComponent > ScriptComponentData::createComponent(Entity* owner, resource::IResourceManager* resourceManager) const
 {
 	resource::Proxy< IRuntimeClass > clazz;
 	if (!resourceManager->bind(m_class, clazz))

@@ -32,7 +32,7 @@ MeshComponentData::MeshComponentData()
 {
 }
 
-Ref< world::IEntityComponent > MeshComponentData::createInstance(world::Entity* owner, resource::IResourceManager* resourceManager) const
+Ref< MeshComponent > MeshComponentData::createComponent(world::Entity* owner, resource::IResourceManager* resourceManager) const
 {
 	resource::Proxy< IMesh > mesh;
 	if (!resourceManager->bind(m_mesh, mesh))

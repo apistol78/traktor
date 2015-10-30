@@ -1,6 +1,6 @@
 #include "Core/Class/IRuntimeClass.h"
 #include "World/Entity.h"
-#include "World/ScriptComponent.h"
+#include "World/Entity/ScriptComponent.h"
 
 namespace traktor
 {
@@ -26,6 +26,10 @@ void ScriptComponent::destroy()
 	m_class.clear();
 	m_object = 0;
 	m_methodUpdate = ~0U;
+}
+
+void ScriptComponent::setTransform(const Transform& transform)
+{
 }
 
 Aabb3 ScriptComponent::getBoundingBox() const

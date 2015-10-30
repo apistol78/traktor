@@ -1,6 +1,8 @@
 #include "Physics/World/ArticulatedEntity.h"
 #include "Physics/World/ArticulatedEntityData.h"
 #include "Physics/World/EntityFactory.h"
+#include "Physics/World/RigidBodyComponent.h"
+#include "Physics/World/RigidBodyComponentData.h"
 #include "Physics/World/RigidEntity.h"
 #include "Physics/World/RigidEntityData.h"
 
@@ -35,6 +37,13 @@ const TypeInfoSet EntityFactory::getEntityEventTypes() const
 	return TypeInfoSet();
 }
 
+const TypeInfoSet EntityFactory::getEntityComponentTypes() const
+{
+	TypeInfoSet typeSet;
+	typeSet.insert(&type_of< RigidBodyComponentData >());
+	return typeSet;
+}
+
 Ref< world::Entity > EntityFactory::createEntity(
 	const world::IEntityBuilder* builder,
 	const world::EntityData& entityData
@@ -51,6 +60,14 @@ Ref< world::Entity > EntityFactory::createEntity(
 
 Ref< world::IEntityEvent > EntityFactory::createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const
 {
+	return 0;
+}
+
+Ref< world::IEntityComponent > EntityFactory::createEntityComponent(const world::IEntityBuilder* builder, world::Entity* owner, const world::IEntityComponentData& entityComponentData) const
+{
+	if (const RigidBodyComponentData* rigidBodyComponentData = dynamic_type_cast< const RigidBodyComponentData* >(&entityComponentData))
+		return rigidBodyComponentData->createComponent(owner, builder, m_eventManager, m_resourceManager, m_physicsManager);
+
 	return 0;
 }
 

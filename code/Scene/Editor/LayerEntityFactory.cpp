@@ -22,6 +22,11 @@ const TypeInfoSet LayerEntityFactory::getEntityEventTypes() const
 	return TypeInfoSet();
 }
 
+const TypeInfoSet LayerEntityFactory::getEntityComponentTypes() const
+{
+	return TypeInfoSet();
+}
+
 Ref< world::Entity > LayerEntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
 	const world::LayerEntityData* layerData = checked_type_cast< const world::LayerEntityData*, false >(&entityData);
@@ -40,6 +45,11 @@ Ref< world::Entity > LayerEntityFactory::createEntity(const world::IEntityBuilde
 }
 
 Ref< world::IEntityEvent > LayerEntityFactory::createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const
+{
+	return 0;
+}
+
+Ref< world::IEntityComponent > LayerEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, world::Entity* owner, const world::IEntityComponentData& entityComponentData) const
 {
 	return 0;
 }

@@ -32,6 +32,8 @@ class T_DLLCLASS IEntityComponent : public Object
 public:
 	virtual void destroy() = 0;
 
+	virtual void setTransform(const Transform& transform) = 0;
+
 	virtual Aabb3 getBoundingBox() const = 0;
 
 	virtual void update(const UpdateParams& update) = 0;
