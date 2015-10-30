@@ -1,4 +1,6 @@
 #include "Mesh/AbstractMeshEntityData.h"
+#include "Mesh/MeshComponent.h"
+#include "Mesh/MeshComponentData.h"
 #include "Mesh/MeshEntity.h"
 #include "Mesh/MeshEntityFactory.h"
 
@@ -28,12 +30,14 @@ const TypeInfoSet MeshEntityFactory::getEntityEventTypes() const
 
 const TypeInfoSet MeshEntityFactory::getEntityComponentTypes() const
 {
-	return TypeInfoSet();
+	TypeInfoSet typeSet;
+	typeSet.insert(&type_of< MeshComponentData >());
+	return typeSet;
 }
 
 Ref< world::Entity > MeshEntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
-	const AbstractMeshEntityData* meshEntityData = checked_type_cast< const AbstractMeshEntityData* >(&entityData);
+	const AbstractMeshEntityData* meshEntityData = mandatory_non_null_type_cast< const AbstractMeshEntityData* >(&entityData);
 	return meshEntityData->createEntity(m_resourceManager, builder);
 }
 
@@ -44,7 +48,8 @@ Ref< world::IEntityEvent > MeshEntityFactory::createEntityEvent(const world::IEn
 
 Ref< world::IEntityComponent > MeshEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, world::Entity* owner, const world::IEntityComponentData& entityComponentData) const
 {
-	return 0;
+	const MeshComponentData* meshComponentData = mandatory_non_null_type_cast< const MeshComponentData* >(&entityComponentData);
+	return meshComponentData->createComponent(owner, m_resourceManager);
 }
 
 	}
