@@ -12,7 +12,7 @@
 #include "Render/Mesh/Mesh.h"
 #include "World/IWorldRenderPass.h"
 
-#if !TARGET_OS_IPHONE && !defined(_WINCE) && !defined(_PS3)
+#if !TARGET_OS_IPHONE && !defined(_PS3)
 #	define T_USE_UPDATE_JOBS
 #endif
 

@@ -29,13 +29,7 @@ EventLoopWin32::EventLoopWin32()
 	g_hInstance = (HINSTANCE)GetModuleHandle(NULL);
 #endif
 
-#if !defined(WINCE)
 	OleInitialize(NULL);
-#endif
-
-#if defined(WINCE)
-	SHInitExtraControls();
-#endif
 
 	INITCOMMONCONTROLSEX icc;
 	std::memset(&icc, 0, sizeof(icc));
@@ -152,10 +146,8 @@ int EventLoopWin32::execute(EventSubject* owner)
 		{
 			IdleEvent idleEvent(owner);
 			owner->raiseEvent(&idleEvent);
-#if !defined(WINCE)
 			if (!idleEvent.requestedMore())
 				WaitMessage();
-#endif
 		}
 	}
 

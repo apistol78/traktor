@@ -53,7 +53,7 @@ bool CanvasGdiWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 {
 	T_ASSERT_M (!m_hDC, L"Invalid device context handle");
 
-#if defined(_DEBUG) && !defined(WINCE)
+#if defined(_DEBUG)
 	m_gdiResources = (int32_t)GetGuiResources(GetCurrentProcess(), 0);
 	if (m_hOffScreenBitmap == NULL)
 		m_gdiResources++;
@@ -188,7 +188,7 @@ void CanvasGdiWin32::endPaint(Window& hWnd)
 
 	m_hDC = NULL;
 
-#if defined(_DEBUG) && !defined(WINCE)
+#if defined(_DEBUG)
 	int32_t gdiResources = (int32_t)GetGuiResources(GetCurrentProcess(), 0);
 	int32_t gdiLeak = gdiResources - m_gdiResources;
 	if (gdiLeak > 0)
@@ -238,13 +238,11 @@ void CanvasGdiWin32::setFont(const Font& font)
 
 void CanvasGdiWin32::setLineStyle(LineStyle lineStyle)
 {
-#if !defined(WINCE)
 	if (lineStyle != m_lineStyle)
 	{
 		m_lineStyle = lineStyle;
 		updatePen();
 	}
-#endif
 }
 
 void CanvasGdiWin32::setPenThickness(int thickness)
@@ -275,22 +273,14 @@ void CanvasGdiWin32::resetClipRect()
 
 void CanvasGdiWin32::drawPixel(int x, int y, const Color4ub& c)
 {
-#if !defined(WINCE)
 	SetPixelV(m_hDC, x, y, getColorRef(c));
-#else
-	SetPixel(m_hDC, x, y, getColorRef(c));
-#endif
 }
 
 void CanvasGdiWin32::drawLine(int x1, int y1, int x2, int y2)
 {
 	MoveToEx(m_hDC, x1, y1, NULL);
 	LineTo(m_hDC, x2, y2);
-#if !defined(WINCE)
 	SetPixelV(m_hDC, x2, y2, getColorRef(m_foreGround));
-#else
-	SetPixel(m_hDC, x2, y2, getColorRef(m_foreGround));
-#endif
 }
 
 void CanvasGdiWin32::drawLines(const Point* pnts, int npnts)
@@ -611,12 +601,10 @@ void CanvasGdiWin32::updatePen()
 {
 	int style = PS_SOLID;
 
-#if !defined(WINCE)
 	if (m_lineStyle == LsDot)
 		style = PS_DOT;
 	else if (m_lineStyle == LsDotDash)
 		style = PS_DASHDOT;
-#endif
 
 	if (m_hPen != NULL)
 		DeleteObject(m_hPen);

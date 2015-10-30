@@ -11,11 +11,11 @@
 #	if !defined(_DEBUG)
 #		define T_MATH_USE_INLINE
 #		define T_MATH_INLINE __forceinline
-#		if !defined(WINCE) && !defined(_XBOX)
+#		if !defined(_XBOX)
 #			define T_MATH_USE_SSE2
 #		endif
 #	else	// _DEBUG
-#		if !defined(WINCE) && !defined(_XBOX)
+#		if !defined(_XBOX)
 #			define T_MATH_USE_SSE2
 #		endif
 #	endif

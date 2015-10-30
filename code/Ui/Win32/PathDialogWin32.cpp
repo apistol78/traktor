@@ -14,7 +14,6 @@ PathDialogWin32::PathDialogWin32(EventSubject* owner)
 
 bool PathDialogWin32::create(IWidget* parent, const std::wstring& title)
 {
-#if !defined(WINCE)
 	_tcscpy_s(m_title, sizeof_array(m_title), wstots(title).c_str());
 
 	std::memset(&m_bi, 0, sizeof(m_bi));
@@ -28,9 +27,6 @@ bool PathDialogWin32::create(IWidget* parent, const std::wstring& title)
 	m_bi.iImage = 0;
 
 	return true;
-#else
-	return false;
-#endif
 }
 
 void PathDialogWin32::destroy()
@@ -39,7 +35,6 @@ void PathDialogWin32::destroy()
 
 int PathDialogWin32::showModal(Path& outPath)
 {
-#if !defined(WINCE)
 	PIDLIST_ABSOLUTE idl = SHBrowseForFolder(&m_bi);
 	if (idl == NULL)
 		return DrCancel;
@@ -50,9 +45,6 @@ int PathDialogWin32::showModal(Path& outPath)
 
 	outPath = tstows(path);
 	return DrOk;
-#else
-	return DrCancel;
-#endif
 }
 
 	}

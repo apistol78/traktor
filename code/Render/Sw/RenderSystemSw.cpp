@@ -16,17 +16,12 @@
 #include "Render/Sw/VolumeTextureSw.h"
 
 #if defined(_WIN32)
-#	if !defined(WINCE)
-#		include "Graphics/Gdi/GraphicsSystemGdi.h"
-#	else
-#		include "Graphics/DdWm5/GraphicsSystemDdWm5.h"
-#	endif
+#	include "Graphics/Gdi/GraphicsSystemGdi.h"
 #endif
 
-#if defined(_WIN32) && !defined(WINCE) && !defined(_WIN64)
+#if defined(_WIN32) && !defined(_WIN64)
 //#	include "Render/Sw/Core/x86/JitX86.h"
 //typedef traktor::render::JitX86 ProcessorImpl;
-//#elif !defined(WINCE)
 #	include "Render/Sw/Core/Interpreter.h"
 typedef traktor::render::Interpreter ProcessorImpl;
 #else
@@ -70,11 +65,8 @@ bool RenderSystemSw::create(const RenderSystemDesc& desc)
 	wc.lpszClassName = c_windowClassName;
 	RegisterClass(&wc);
 
-#	if !defined(WINCE)
 	m_graphicsSystem = new graphics::GraphicsSystemGdi();
-#	else
-	m_graphicsSystem = new graphics::GraphicsSystemDdWm5();
-#	endif
+
 #endif
 
 	if (!m_graphicsSystem)
@@ -221,11 +213,8 @@ Ref< IRenderView > RenderSystemSw::createRenderView(const RenderViewEmbeddedDesc
 	graphicsDesc.pixelFormat = graphics::PfeA8R8G8B8;
 
 #if defined(_WIN32)
-#	if !defined(WINCE)
+
 	graphicsSystem = new graphics::GraphicsSystemGdi();
-#	else
-	graphicsSystem = new graphics::GraphicsSystemDdWm5();
-#	endif
 
 	RECT rc;
 	GetClientRect((HWND)desc.nativeWindowHandle, &rc);
@@ -349,12 +338,6 @@ LRESULT WINAPI RenderSystemSw::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 	case WM_CREATE:
 		break;
 	
-#if defined(WINCE)
-	case WM_LBUTTONDOWN:
-		DestroyWindow(hWnd);
-		break;
-#endif
-
 	case WM_KEYDOWN:
 		if (wParam == VK_ESCAPE)
 			DestroyWindow(hWnd);

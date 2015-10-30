@@ -174,7 +174,6 @@ public:
 
 	virtual void setOutline(const Point* p, int np)
 	{
-#if !defined(WINCE)
 		std::vector< POINT > pts(np);
 		for (int i = 0; i < np; ++i)
 		{
@@ -184,7 +183,6 @@ public:
 		HRGN hRegion = CreatePolygonRgn(&pts[0], np, WINDING);
 		SetWindowRgn(m_hWnd, hRegion, TRUE);
 		DeleteObject(hRegion);
-#endif
 	}
 
 	virtual void setRect(const Rect& rect)
@@ -225,16 +223,12 @@ public:
 
 	virtual Rect getNormalRect() const
 	{
-#if !defined(WINCE)
 		WINDOWPLACEMENT wp;
 		std::memset(&wp, 0, sizeof(wp));
 		wp.length = sizeof(wp);
 		GetWindowPlacement(m_hWnd, &wp);
 		const RECT rc = wp.rcNormalPosition;
 		return Rect(rc.left, rc.top, rc.right, rc.bottom);
-#else
-		return Rect(0, 0, 0, 0);
-#endif
 	}
 
 	virtual Size getTextExtent(const std::wstring& text) const
@@ -526,9 +520,7 @@ protected:
 		m_hWnd.registerMessageHandler(WM_PAINT,         new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventPaint));
 		m_hWnd.registerMessageHandler(WM_ERASEBKGND,    new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventEraseBkGnd));
 		m_hWnd.registerMessageHandler(WM_TIMER,         new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventTimer));
-#if !defined(WINCE)
 		m_hWnd.registerMessageHandler(WM_DROPFILES,		new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventDropFiles));
-#endif
 
 		if (style & WsWantAllInput)
 			m_hWnd.registerMessageHandler(WM_GETDLGCODE, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventGetDlgCode));
@@ -583,24 +575,6 @@ protected:
 
 	LRESULT eventButtonDown(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-#if defined(WINCE)
-		if (message == WM_LBUTTONDOWN && m_owner->hasEventHandler< MouseButtonDownEvent >())
-		{
-			SHRGINFO shrg;
-			memset(&shrg, 0, sizeof(shrg));
-			shrg.cbSize = sizeof(shrg);
-			shrg.hwndClient = hWnd;
-			shrg.ptDown.x = GET_X_LPARAM(lParam);
-			shrg.ptDown.y = GET_Y_LPARAM(lParam);
-			shrg.dwFlags = SHRG_RETURNCMD;
-			if (SHRecognizeGesture(&shrg) == GN_CONTEXTMENU)
-			{
-				// Simulate right button down as it's most likely used for context menus in applications.
-				message = WM_RBUTTONDOWN;
-			}
-		}
-#endif
-
 		int32_t button = MbtNone;
 		switch (message)
 		{
@@ -790,7 +764,6 @@ protected:
 		return TRUE;
 	}
 
-#if !defined(WINCE)
 	LRESULT eventDropFiles(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
 		HDROP hDrop = (HDROP)wParam;
@@ -821,7 +794,6 @@ protected:
 		DragFinish(hDrop);
 		return FALSE;
 	}
-#endif
 
 	LRESULT eventGetDlgCode(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{

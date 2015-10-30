@@ -74,13 +74,11 @@ bool TcpSocket::bind(const SocketAddressIPv6& socketAddress, bool reuseAddr)
 #endif
 	}
 
-#if !defined(WINCE)
 	if (info->ai_family == AF_INET6)
 	{
 		int on = 1;
 		::setsockopt(m_socket, IPPROTO_IPV6, IPV6_V6ONLY, (char*)&on, sizeof(on));
 	}
-#endif
 
 	if (::bind(m_socket, (sockaddr *)info->ai_addr, info->ai_addrlen) < 0)
 		return false;

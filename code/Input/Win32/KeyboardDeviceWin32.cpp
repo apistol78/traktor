@@ -14,14 +14,12 @@ KeyboardDeviceWin32::KeyboardDeviceWin32(HWND hWnd)
 ,	m_hWnd(hWnd)
 ,	m_pWndProc(0)
 {
-#if !defined(WINCE)
 	T_FATAL_ASSERT (GetWindowLongPtr(m_hWnd, GWLP_USERDATA) == 0);
 
 	// Subclass window to get access to window events.
 	m_pWndProc = (WNDPROC)GetWindowLongPtr(m_hWnd, GWLP_WNDPROC);
 	SetWindowLongPtr(m_hWnd, GWLP_WNDPROC, (LONG_PTR)&KeyboardDeviceWin32::wndProc);
 	SetWindowLongPtr(m_hWnd, GWLP_USERDATA, (LONG_PTR)this);
-#endif
 
 	// Set initally reset.
 	resetState();
@@ -29,11 +27,9 @@ KeyboardDeviceWin32::KeyboardDeviceWin32(HWND hWnd)
 
 KeyboardDeviceWin32::~KeyboardDeviceWin32()
 {
-#if !defined(WINCE)
 	// Restore original window proc.
 	SetWindowLongPtr(m_hWnd, GWLP_WNDPROC, (LONG_PTR)m_pWndProc);
 	SetWindowLongPtr(m_hWnd, GWLP_USERDATA, 0);
-#endif
 }
 
 std::wstring KeyboardDeviceWin32::getName() const
@@ -58,7 +54,6 @@ int32_t KeyboardDeviceWin32::getControlCount()
 
 std::wstring KeyboardDeviceWin32::getControlName(int32_t control)
 {
-#if !defined(WINCE)
 	UINT scanCode = MapVirtualKey(c_vkControlKeys[control], MAPVK_VK_TO_VSC);
 
 	switch (c_vkControlKeys[control])
@@ -75,9 +70,6 @@ std::wstring KeyboardDeviceWin32::getControlName(int32_t control)
 		return tstows(keyName);
 	else
 		return L"";
-#else
-	return L"";
-#endif
 }
 
 bool KeyboardDeviceWin32::isControlAnalogue(int32_t control) const
@@ -166,7 +158,6 @@ void KeyboardDeviceWin32::setExclusive(bool exclusive)
 
 LRESULT WINAPI KeyboardDeviceWin32::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-#if !defined(WINCE)
 	KeyboardDeviceWin32* this_ = reinterpret_cast< KeyboardDeviceWin32* >(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 	T_ASSERT (this_);
 
@@ -204,9 +195,6 @@ LRESULT WINAPI KeyboardDeviceWin32::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam,
 	}
 
 	return CallWindowProc(this_->m_pWndProc, hWnd, uMsg, wParam, lParam);
-#else
-	return 0;
-#endif
 }
 
 	}

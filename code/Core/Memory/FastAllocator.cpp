@@ -16,13 +16,7 @@ namespace traktor
 
 const uint32_t c_blockCounts[] =
 {
-#if defined(WINCE)
-	1024,
-	1024,
-	1024,
-	1024,
-	1024,
-#elif defined(_PS3)
+#if defined(_PS3)
 	32768,				// 16
 	36864,				// 32
 	20480,				// 64

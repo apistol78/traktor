@@ -45,22 +45,14 @@ public:
 	 */
 	//@{
 
-#if !defined(WINCE)
-
 	void registerMenuBar(MenuBarWin32* menuBar);
 
 	void unregisterMenuBar(MenuBarWin32* menuBar);
 
-#endif
-
 	//@}
 
 private:
-#if !defined(WINCE)
 	MenuBarWin32* m_menuBar;
-#else
-	HWND m_hWndMenuBar;
-#endif
 
 	LRESULT eventInitMenuPopup(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass);
 

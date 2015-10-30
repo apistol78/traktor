@@ -270,9 +270,6 @@ int ListViewWin32::getSelectedItems(std::vector< int >& items) const
 LRESULT ListViewWin32::eventReflectedNotify(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass)
 {
 	LPNMHDR nmhdr = reinterpret_cast< LPNMHDR >(lParam);
-
-#if !defined(WINCE)
-
 	if (nmhdr->code == LVN_ITEMCHANGED)
 	{
 		SelectionChangeEvent selectionChangeEvent(m_owner);
@@ -290,9 +287,6 @@ LRESULT ListViewWin32::eventReflectedNotify(HWND hWnd, UINT message, WPARAM wPar
 		m_owner->raiseEvent(&activateEvent);
 		pass = false;
 	}
-
-#endif
-
 	return 0;
 }
 

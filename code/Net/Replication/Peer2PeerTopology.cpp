@@ -84,9 +84,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.net.Peer2PeerTopology", Peer2PeerTopology, INet
 Peer2PeerTopology::Peer2PeerTopology(IPeer2PeerProvider* provider)
 :	m_provider(provider)
 ,	m_callback(0)
-#if !defined(WINCE)
 ,	m_random(std::clock())
-#endif
 ,	m_time(0.0)
 {
 }

@@ -3,9 +3,7 @@
 
 #include "Ui/Itf/IRichEdit.h"
 #include "Ui/Win32/WidgetWin32Impl.h"
-#if !defined(WINCE)
-#	include <richedit.h>
-#endif
+#include <richedit.h>
 
 namespace traktor
 {
@@ -47,9 +45,7 @@ public:
 	virtual bool undo();
 
 private:
-#if !defined(WINCE)
 	std::vector< CHARFORMAT2 > m_attributes;
-#endif
 
 	LRESULT onGetDlgCode(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip);
 

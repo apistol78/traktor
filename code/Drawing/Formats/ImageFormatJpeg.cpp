@@ -3,11 +3,6 @@
 
 #include <stdio.h>
 
-// Hack as CE basetsd.h define INT32 type as well as jmorecfg.h.
-#if defined(WINCE)
-	#define XMD_H
-#endif
-
 extern "C"
 {
 	#include <jpeglib.h>

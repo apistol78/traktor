@@ -77,14 +77,10 @@ bool ButtonWin32::getState() const
 
 Size ButtonWin32::getPreferedSize() const
 {
-#if !defined(WINCE)
 	Size extent = getTextExtent(getText());
 	SIZE ideal;
 	ideal.cx = max(extent.cx + 24, 60);
 	ideal.cy = extent.cy + 6;
-#else
-	SIZE ideal = { 30, 20 };
-#endif
 	return Size(ideal.cx, ideal.cy);
 }
 

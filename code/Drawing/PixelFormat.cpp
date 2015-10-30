@@ -1,4 +1,4 @@
-#if defined(_MSC_VER) && !defined(WINCE) && !defined(_XBOX)
+#if defined(_MSC_VER) && !defined(_XBOX)
 #	define USE_XMM_INTRINSICS
 #	include <emmintrin.h>
 #elif defined(__APPLE__)

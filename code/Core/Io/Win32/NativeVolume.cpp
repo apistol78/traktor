@@ -1,6 +1,6 @@
 #include <iostream>
 #include <sstream>
-#if !defined(_XBOX) && !defined(WINCE)
+#if !defined(_XBOX)
 #	include <direct.h>
 #endif
 #include "Core/Platform.h"
@@ -41,7 +41,7 @@ NativeVolume::NativeVolume(const Path& currentDirectory)
 
 std::wstring NativeVolume::getDescription() const
 {
-#if defined(_XBOX) || defined(WINCE)
+#if defined(_XBOX)
 
 	return m_currentDirectory.getPathName();
 
@@ -272,7 +272,7 @@ Path NativeVolume::getCurrentDirectory() const
 
 void NativeVolume::mountVolumes(FileSystem& fileSystem)
 {
-#if !defined(_XBOX) && !defined(WINCE)
+#if !defined(_XBOX)
 
 	wchar_t mountPoint[] = { L"A" };
 	wchar_t driveFormat[] = { L"A:" };
@@ -303,16 +303,6 @@ void NativeVolume::mountVolumes(FileSystem& fileSystem)
 
 	Ref< IVolume > volume = new NativeVolume(L"D:");
 	fileSystem.mount(L"D", volume);
-	fileSystem.setCurrentVolume(volume);
-
-#elif defined(WINCE)
-
-	wchar_t moduleName[MAX_PATH];
-	GetModuleFileName(NULL, moduleName, MAX_PATH);
-
-	Path originalDirectory(moduleName);
-	Ref< IVolume > volume = new NativeVolume(originalDirectory.getPathOnly());
-	fileSystem.mount(L"C", volume);
 	fileSystem.setCurrentVolume(volume);
 
 #endif

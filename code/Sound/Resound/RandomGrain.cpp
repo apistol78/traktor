@@ -1,8 +1,4 @@
-#if !defined(WINCE)
-#	include <ctime>
-#else
-#	include <time_ce.h>
-#endif
+#include <ctime>
 #include "Sound/ISoundBuffer.h"
 #include "Sound/Resound/RandomGrain.h"
 
@@ -46,11 +42,7 @@ RandomGrain::RandomGrain(
 	bool humanize
 )
 :	m_grains(grains)
-#if !defined(WINCE)
 ,	m_random(uint32_t(clock()))
-#else
-,	m_random(uint32_t(clock_ce()))
-#endif
 ,	m_humanize(humanize)
 ,	m_last(-1)
 {

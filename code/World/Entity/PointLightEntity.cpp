@@ -1,6 +1,4 @@
-#if !defined(WINCE)
-#	include <ctime>
-#endif
+#include <ctime>
 #include "World/Entity/PointLightEntity.h"
 
 namespace traktor
@@ -28,11 +26,7 @@ PointLightEntity::PointLightEntity(
 ,	m_randomFlickerFilter(randomFlickerFilter)
 ,	m_randomFlickerValue(0.0f)
 ,	m_randomFlicker(1.0f)
-#if !defined(WINCE)
 ,	m_random(uint32_t(clock()))
-#else
-,	m_random(0)
-#endif
 {
 }
 

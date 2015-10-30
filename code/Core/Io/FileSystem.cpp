@@ -9,11 +9,7 @@
 #include "Core/Singleton/SingletonManager.h"
 
 #if defined(_WIN32)
-#	if !defined(WINCE)
-#		include "Core/Io/Win32/NativeVolume.h"
-#	else
-#		include "Core/Io/WinCE/NativeVolume.h"
-#	endif
+#	include "Core/Io/Win32/NativeVolume.h"
 #	define HAS_NATIVE_VOLUME
 #elif defined(__IOS__)		// IOS
 #	include "Core/Io/iOS/NativeVolume.h"

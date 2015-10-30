@@ -46,7 +46,7 @@ bool Library::open(const Path& libraryName)
 
 bool Library::open(const Path& libraryName, const std::vector< Path >& searchPaths, bool includeDefaultPaths)
 {
-#if !defined(WINCE) && !defined(_XBOX)
+#if !defined(_XBOX)
 	TCHAR currentPath[32767];
 
 	if (!GetEnvironmentVariable(_T("PATH"), currentPath, sizeof_array(currentPath)))
@@ -96,11 +96,7 @@ void Library::detach()
 
 void* Library::find(const std::wstring& symbol)
 {
-#if !defined(WINCE)
 	return (void*)GetProcAddress((HMODULE)m_handle, wstombs(symbol).c_str());
-#else
-	return (void*)GetProcAddress((HMODULE)m_handle, symbol.c_str());
-#endif
 }
 
 }

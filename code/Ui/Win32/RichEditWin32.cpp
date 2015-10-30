@@ -16,7 +16,6 @@ bool RichEditWin32::create(IWidget* parent, const std::wstring& text, int style)
 	UINT nativeStyle, nativeStyleEx;
 	getNativeStyles(style, nativeStyle, nativeStyleEx);
 
-#if !defined(WINCE)
 	LoadLibrary(L"riched20.dll");
 
 	if (!m_hWnd.create(
@@ -39,26 +38,6 @@ bool RichEditWin32::create(IWidget* parent, const std::wstring& text, int style)
 		return false;
 
 	m_hWnd.sendMessage(EM_SETEVENTMASK, 0, ENM_CHANGE);
-#else
-	if (!m_hWnd.create(
-		(HWND)parent->getInternalHandle(),
-		L"EDIT",
-		text.c_str(),
-		WS_VISIBLE | WS_CHILD | WS_TABSTOP | WS_HSCROLL | WS_VSCROLL |
-		ES_WANTRETURN | ES_AUTOHSCROLL | ES_AUTOVSCROLL | ES_LEFT | ES_MULTILINE | nativeStyle,
-		nativeStyleEx,
-		0,
-		0,
-		0,
-		0,
-		0,
-		true
-	))
-		return false;
-
-	if (!WidgetWin32Impl::create(style))
-		return false;
-#endif
 
 	m_hWnd.registerMessageHandler(WM_GETDLGCODE, new MethodMessageHandler< RichEditWin32 >(this, &RichEditWin32::onGetDlgCode));
 	m_hWnd.registerMessageHandler(WM_REFLECTED_COMMAND, new MethodMessageHandler< RichEditWin32 >(this, &RichEditWin32::onCommand));
@@ -68,7 +47,6 @@ bool RichEditWin32::create(IWidget* parent, const std::wstring& text, int style)
 
 int RichEditWin32::addAttribute(const Color4ub& textColor, const Color4ub& backColor, bool bold, bool italic, bool underline)
 {
-#if !defined(WINCE)
 	CHARFORMAT2 cf;
 
 	std::memset(&cf, 0, sizeof(cf));
@@ -80,14 +58,10 @@ int RichEditWin32::addAttribute(const Color4ub& textColor, const Color4ub& backC
 	m_attributes.push_back(cf);
 
 	return int(m_attributes.size() - 1);
-#else
-	return 0;
-#endif
 }
 
 void RichEditWin32::setAttribute(int start, int length, int attribute)
 {
-#if !defined(WINCE)
 	CHARRANGE set = { start, start + length };
 	CHARRANGE tmp;
 
@@ -99,47 +73,34 @@ void RichEditWin32::setAttribute(int start, int length, int attribute)
 	m_hWnd.sendMessage(EM_EXSETSEL, 0, (LPARAM)&tmp);
 	m_hWnd.sendMessage(EM_HIDESELECTION, FALSE, 0);
 	m_hWnd.sendMessage(EM_SETEVENTMASK, 0, ENM_CHANGE);
-#endif
 }
 
 void RichEditWin32::clear(bool attributes, bool content)
 {
-#if !defined(WINCE)
 	if (attributes)
 		m_attributes.resize(0);
-#endif
 	if (content)
 		setText(L"");
 }
 
 void RichEditWin32::insert(const std::wstring& text)
 {
-#if !defined(WINCE)
 	SETTEXTEX st;	
 	st.flags = ST_SELECTION;
 	st.codepage = CP_ACP;
 	m_hWnd.sendMessage(EM_SETTEXTEX, (WPARAM)&st, (LPARAM)text.c_str());
-#endif
 }
 
 int RichEditWin32::getCaretOffset() const
 {
-#if !defined(WINCE)
 	CHARRANGE sel;
 	m_hWnd.sendMessage(EM_EXGETSEL, 0, (LPARAM)&sel);
 	return sel.cpMin;
-#else
-	return 0;
-#endif
 }
 
 int RichEditWin32::getLineFromOffset(int offset) const
 {
-#if !defined(WINCE)
 	return int(m_hWnd.sendMessage(EM_EXLINEFROMCHAR, 0, (LPARAM)offset));
-#else
-	return 0;
-#endif
 }
 
 int RichEditWin32::getLineCount() const
@@ -171,11 +132,7 @@ std::wstring RichEditWin32::getLine(int line) const
 
 bool RichEditWin32::redo()
 {
-#if !defined(WINCE)
 	return bool(m_hWnd.sendMessage(EM_REDO, 0, 0) == TRUE);
-#else
-	return false;
-#endif
 }
 
 bool RichEditWin32::undo()
