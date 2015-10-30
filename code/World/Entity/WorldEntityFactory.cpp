@@ -214,8 +214,12 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 		{
 			Ref< IEntityComponent > component = builder->create(componentEntity, componentData->m_components[i]);
 			if (!component)
-				return 0;
-
+			{
+				if (!m_editor)
+					return 0;
+				else
+					continue;
+			}
 			componentEntity->setComponent(component);
 		}
 		return componentEntity;
@@ -245,8 +249,11 @@ Ref< IEntityEvent > WorldEntityFactory::createEntityEvent(const IEntityBuilder* 
 Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, Entity* owner, const IEntityComponentData& entityComponentData) const
 {
 	if (const ScriptComponentData* scriptComponentData = dynamic_type_cast< const ScriptComponentData* >(&entityComponentData))
-		return scriptComponentData->createComponent(owner, m_resourceManager);
-
+	{
+		// Do not instantiate script components inside editor.
+		if (!m_editor)
+			return scriptComponentData->createComponent(owner, m_resourceManager);
+	}
 	return 0;
 }
 
