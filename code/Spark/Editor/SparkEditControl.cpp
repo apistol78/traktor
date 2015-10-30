@@ -243,7 +243,7 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 		}
 
 		// Draw sprites.
-		if (m_sparkRenderer && m_editContext->getRoot())
+		if (m_sparkRenderer && m_editContext->getRoot() && m_editContext->getRoot()->getCharacter())
 		{
 			// Flush to make sure grid is drawn beneath sprites.
 			m_primitiveRenderer->flush();
@@ -288,7 +288,7 @@ void SparkEditControl::eventPaint(ui::PaintEvent* event)
 void SparkEditControl::eventMouseButtonDown(ui::MouseButtonDownEvent* event)
 {
 	Vector2 viewPosition = clientToView(event->getPosition());
-	
+
 	if ((event->getKeyState() & ui::KsMenu) == 0)
 	{
 		const RefArray< CharacterAdapter >& adapters = m_editContext->getAdapters();
