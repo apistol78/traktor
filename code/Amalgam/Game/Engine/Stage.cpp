@@ -143,6 +143,9 @@ void Stage::terminate()
 
 Any Stage::invokeScript(const std::string& fn, uint32_t argc, const Any* argv)
 {
+	if (!validateScriptContext())
+		return Any();
+
 	if (m_object)
 	{
 		uint32_t methodId = findRuntimeClassMethodId(m_class, fn);
@@ -150,9 +153,13 @@ Any Stage::invokeScript(const std::string& fn, uint32_t argc, const Any* argv)
 			return m_class->invoke(m_object, methodId, argc, argv);
 	}
 	
-	if (validateScriptContext() && m_scriptContext->haveFunction(fn))
-		return m_scriptContext->executeFunction(fn, argc, argv);
+	if (m_scriptContext)
+	{
+		if (m_scriptContext->haveFunction(fn))
+			return m_scriptContext->executeFunction(fn, argc, argv);
+	}
 
+	log::error << L"No such script function \"" << mbstows(fn) << L"\"" << Endl;
 	return Any();
 }
 
@@ -387,7 +394,11 @@ bool Stage::validateScriptContext()
 			}
 
 			// Call script constructor.
-			m_object = m_class->construct(this, 0, 0, proto);
+			Any argv[] =
+			{
+				Any::fromObject(const_cast< Object* >(m_params.c_ptr()))
+			};
+			m_object = m_class->construct(this, sizeof_array(argv), argv, proto);
 		}
 
 		if (m_scriptContext)
