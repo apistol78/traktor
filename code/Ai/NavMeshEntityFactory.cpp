@@ -28,6 +28,11 @@ const TypeInfoSet NavMeshEntityFactory::getEntityEventTypes() const
 	return TypeInfoSet();
 }
 
+const TypeInfoSet NavMeshEntityFactory::getEntityComponentTypes() const
+{
+	return TypeInfoSet();
+}
+
 Ref< world::Entity > NavMeshEntityFactory::createEntity(
 	const world::IEntityBuilder* builder,
 	const world::EntityData& entityData
@@ -43,6 +48,11 @@ Ref< world::Entity > NavMeshEntityFactory::createEntity(
 }
 
 Ref< world::IEntityEvent > NavMeshEntityFactory::createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const
+{
+	return 0;
+}
+
+Ref< world::IEntityComponent > NavMeshEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, world::Entity* owner, const world::IEntityComponentData& entityComponentData) const
 {
 	return 0;
 }

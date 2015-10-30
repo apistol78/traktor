@@ -30,19 +30,23 @@ public:
 
 	virtual ~EntityAdapterBuilder();
 
-	virtual void addFactory(const world::IEntityFactory* entityFactory);
+	virtual void addFactory(const world::IEntityFactory* entityFactory) T_OVERRIDE T_FINAL;
 
-	virtual void removeFactory(const world::IEntityFactory* entityFactory);
+	virtual void removeFactory(const world::IEntityFactory* entityFactory) T_OVERRIDE T_FINAL;
 
-	virtual const world::IEntityFactory* getFactory(const world::EntityData* entityData) const;
+	virtual const world::IEntityFactory* getFactory(const world::EntityData* entityData) const T_OVERRIDE T_FINAL;
 
-	virtual const world::IEntityFactory* getFactory(const world::IEntityEventData* entityEventData) const;
+	virtual const world::IEntityFactory* getFactory(const world::IEntityEventData* entityEventData) const T_OVERRIDE T_FINAL;
 
-	virtual Ref< world::Entity > create(const world::EntityData* entityData) const;
+	virtual const world::IEntityFactory* getFactory(const world::IEntityComponentData* entityComponentData) const T_OVERRIDE T_FINAL;
 
-	virtual Ref< world::IEntityEvent > create(const world::IEntityEventData* entityEventData) const;
+	virtual Ref< world::Entity > create(const world::EntityData* entityData) const T_OVERRIDE T_FINAL;
 
-	virtual const world::IEntityBuilder* getCompositeEntityBuilder() const;
+	virtual Ref< world::IEntityEvent > create(const world::IEntityEventData* entityEventData) const T_OVERRIDE T_FINAL;
+
+	virtual Ref< world::IEntityComponent > create(world::Entity* owner, const world::IEntityComponentData* entityComponentData) const T_OVERRIDE T_FINAL;
+
+	virtual const world::IEntityBuilder* getCompositeEntityBuilder() const T_OVERRIDE T_FINAL;
 
 	EntityAdapter* getRootAdapter() const;
 

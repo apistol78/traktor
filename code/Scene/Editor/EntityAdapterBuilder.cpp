@@ -159,6 +159,11 @@ const world::IEntityFactory* EntityAdapterBuilder::getFactory(const world::IEnti
 	return m_entityBuilder->getFactory(entityEventData);
 }
 
+const world::IEntityFactory* EntityAdapterBuilder::getFactory(const world::IEntityComponentData* entityComponentData) const
+{
+	return m_entityBuilder->getFactory(entityComponentData);
+}
+
 Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entityData) const
 {
 	Ref< EntityAdapter > entityAdapter;
@@ -283,6 +288,11 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 Ref< world::IEntityEvent > EntityAdapterBuilder::create(const world::IEntityEventData* entityEventData) const
 {
 	return m_entityBuilder->create(entityEventData);
+}
+
+Ref< world::IEntityComponent > EntityAdapterBuilder::create(world::Entity* owner, const world::IEntityComponentData* entityComponentData) const
+{
+	return m_entityBuilder->create(owner, entityComponentData);
 }
 
 const world::IEntityBuilder* EntityAdapterBuilder::getCompositeEntityBuilder() const

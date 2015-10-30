@@ -37,9 +37,13 @@ public:
 
 	virtual const TypeInfoSet getEntityEventTypes() const T_OVERRIDE T_FINAL;
 
+	virtual const TypeInfoSet getEntityComponentTypes() const T_OVERRIDE T_FINAL;
+
 	virtual Ref< Entity > createEntity(const IEntityBuilder* builder, const EntityData& entityData) const T_OVERRIDE T_FINAL;
 
 	virtual Ref< IEntityEvent > createEntityEvent(const IEntityBuilder* builder, const IEntityEventData& entityEventData) const T_OVERRIDE T_FINAL;
+
+	virtual Ref< IEntityComponent > createEntityComponent(const world::IEntityBuilder* builder, Entity* owner, const IEntityComponentData& entityComponentData) const T_OVERRIDE T_FINAL;
 
 private:
 	mutable Ref< resource::IResourceManager > m_resourceManager;

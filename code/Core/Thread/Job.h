@@ -36,6 +36,11 @@ public:
 
 	void operator delete (void* ptr);
 
+	static void join(Ref< Job >& job)
+	{
+		if (job) { job->wait(); job = 0; }
+	}
+
 private:
 	friend class JobQueue;
 

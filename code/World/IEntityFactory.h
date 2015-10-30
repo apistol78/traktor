@@ -17,6 +17,8 @@ namespace traktor
 	{
 
 class IEntityBuilder;
+class IEntityComponent;
+class IEntityComponentData;
 class IEntityEvent;
 class IEntityEventData;
 class Entity;
@@ -34,15 +36,13 @@ public:
 
 	virtual const TypeInfoSet getEntityEventTypes() const = 0;
 
-	virtual Ref< Entity > createEntity(
-		const IEntityBuilder* builder,
-		const EntityData& entityData
-	) const = 0;
+	virtual const TypeInfoSet getEntityComponentTypes() const = 0;
 
-	virtual Ref< IEntityEvent > createEntityEvent(
-		const IEntityBuilder* builder,
-		const IEntityEventData& entityEventData
-	) const = 0;
+	virtual Ref< Entity > createEntity(const IEntityBuilder* builder, const EntityData& entityData) const = 0;
+
+	virtual Ref< IEntityEvent > createEntityEvent(const IEntityBuilder* builder, const IEntityEventData& entityEventData) const = 0;
+
+	virtual Ref< IEntityComponent > createEntityComponent(const IEntityBuilder* builder, Entity* owner, const IEntityComponentData& entityComponentData) const = 0;
 };
 
 	}

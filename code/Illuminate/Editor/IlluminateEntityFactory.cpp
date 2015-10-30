@@ -22,6 +22,11 @@ const TypeInfoSet IlluminateEntityFactory::getEntityEventTypes() const
 	return TypeInfoSet();
 }
 
+const TypeInfoSet IlluminateEntityFactory::getEntityComponentTypes() const
+{
+	return TypeInfoSet();
+}
+
 Ref< world::Entity > IlluminateEntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
 	const IlluminateEntityData* illumEntityData = checked_type_cast< const IlluminateEntityData* >(&entityData);
@@ -40,6 +45,11 @@ Ref< world::Entity > IlluminateEntityFactory::createEntity(const world::IEntityB
 }
 
 Ref< world::IEntityEvent > IlluminateEntityFactory::createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const
+{
+	return 0;
+}
+
+Ref< world::IEntityComponent > IlluminateEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, world::Entity* owner, const world::IEntityComponentData& entityComponentData) const
 {
 	return 0;
 }

@@ -14,10 +14,25 @@
 
 namespace traktor
 {
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
+	namespace world
+	{
+
+class Entity;
+
+	}
+
 	namespace mesh
 	{
 
 class IMesh;
+class MeshComponent;
 
 /*! \brief
  * \ingroup Mesh
@@ -29,7 +44,7 @@ class T_DLLCLASS MeshComponentData : public world::IEntityComponentData
 public:
 	MeshComponentData();
 
-	virtual Ref< world::IEntityComponent > createInstance(world::Entity* owner, resource::IResourceManager* resourceManager) const T_OVERRIDE T_FINAL;
+	Ref< MeshComponent > createComponent(world::Entity* owner, resource::IResourceManager* resourceManager) const;
 
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 

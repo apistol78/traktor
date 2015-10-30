@@ -37,6 +37,8 @@ public:
 
 	virtual void destroy() T_OVERRIDE;
 
+	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
+
 	virtual void update(const world::UpdateParams& update) T_OVERRIDE T_FINAL;
 
 protected:

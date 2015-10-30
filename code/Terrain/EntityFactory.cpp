@@ -33,6 +33,11 @@ const TypeInfoSet EntityFactory::getEntityEventTypes() const
 	return TypeInfoSet();
 }
 
+const TypeInfoSet EntityFactory::getEntityComponentTypes() const
+{
+	return TypeInfoSet();
+}
+
 Ref< world::Entity > EntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
 	if (const OceanEntityData* oceanData = dynamic_type_cast< const OceanEntityData* >(&entityData))
@@ -58,6 +63,11 @@ Ref< world::Entity > EntityFactory::createEntity(const world::IEntityBuilder* bu
 }
 
 Ref< world::IEntityEvent > EntityFactory::createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const
+{
+	return 0;
+}
+
+Ref< world::IEntityComponent > EntityFactory::createEntityComponent(const world::IEntityBuilder* builder, world::Entity* owner, const world::IEntityComponentData& entityComponentData) const
 {
 	return 0;
 }

@@ -4,6 +4,7 @@
 #include "World/Entity.h"
 #include "World/EntityBuilder.h"
 #include "World/EntityData.h"
+#include "World/IEntityComponentData.h"
 #include "World/IEntityEventData.h"
 #include "World/IEntityFactory.h"
 
@@ -134,6 +135,57 @@ const IEntityFactory* EntityBuilder::getFactory(const IEntityEventData* entityEv
 	return entityFactory;
 }
 
+const IEntityFactory* EntityBuilder::getFactory(const IEntityComponentData* entityComponentData) const
+{
+	if (!entityComponentData)
+		return 0;
+
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+	const TypeInfo& entityComponentDataType = type_of(entityComponentData);
+	const IEntityFactory* entityFactory = 0;
+
+	std::map< const TypeInfo*, const IEntityFactory* >::const_iterator i = m_resolvedFactoryCache.find(&entityComponentDataType);
+	if (i != m_resolvedFactoryCache.end())
+	{
+		// This type of entity has already been created; reuse same factory.
+		entityFactory = i->second;
+	}
+	else
+	{
+		// Need to find factory best suited to create entity from it's data.
+		uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
+		for (RefArray< const IEntityFactory >::const_iterator it = m_entityFactories.begin(); it != m_entityFactories.end() && minClassDifference > 0; ++it)
+		{
+			const TypeInfoSet& typeSet = (*it)->getEntityComponentTypes();
+			for (TypeInfoSet::const_iterator j = typeSet.begin(); j != typeSet.end() && minClassDifference > 0; ++j)
+			{
+				if (is_type_of(**j, entityComponentDataType))
+				{
+					uint32_t classDifference = type_difference(**j, entityComponentDataType);
+					if (classDifference < minClassDifference)
+					{
+						minClassDifference = classDifference;
+						entityFactory = *it;
+					}
+				}
+			}
+		}
+		m_resolvedFactoryCache.insert(std::make_pair(
+			&entityComponentDataType,
+			entityFactory
+		));
+	}
+
+	if (!entityFactory)
+	{
+		log::error << L"Unable to find entity factory for component of " << type_name(entityComponentData) << Endl;
+		return 0;
+	}
+
+	return entityFactory;
+}
+
 Ref< Entity > EntityBuilder::create(const EntityData* entityData) const
 {
 	Ref< const IEntityFactory > entityFactory = getFactory(entityData);
@@ -144,6 +196,12 @@ Ref< IEntityEvent > EntityBuilder::create(const IEntityEventData* entityEventDat
 {
 	Ref< const IEntityFactory > entityFactory = getFactory(entityEventData);
 	return entityFactory ? entityFactory->createEntityEvent(this, *entityEventData) : 0;
+}
+
+Ref< IEntityComponent > EntityBuilder::create(Entity* owner, const IEntityComponentData* entityComponentData) const
+{
+	Ref< const IEntityFactory > entityFactory = getFactory(entityComponentData);
+	return entityFactory ? entityFactory->createEntityComponent(this, owner, *entityComponentData) : 0;
 }
 
 const IEntityBuilder* EntityBuilder::getCompositeEntityBuilder() const

@@ -18,6 +18,10 @@ void MeshComponent::destroy()
 	m_owner = 0;
 }
 
+void MeshComponent::setTransform(const Transform& transform)
+{
+}
+
 void MeshComponent::update(const world::UpdateParams& update)
 {
 }

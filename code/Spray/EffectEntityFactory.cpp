@@ -51,6 +51,11 @@ const TypeInfoSet EffectEntityFactory::getEntityEventTypes() const
 	return typeSet;
 }
 
+const TypeInfoSet EffectEntityFactory::getEntityComponentTypes() const
+{
+	return TypeInfoSet();
+}
+
 Ref< world::Entity > EffectEntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
 	return checked_type_cast< const EffectEntityData* >(&entityData)->createEntity(m_resourceManager, m_eventManager, m_soundPlayer);
@@ -90,6 +95,11 @@ Ref< world::IEntityEvent > EffectEntityFactory::createEntityEvent(const world::I
 	}
 	else
 		return 0;
+}
+
+Ref< world::IEntityComponent > EffectEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, world::Entity* owner, const world::IEntityComponentData& entityComponentData) const
+{
+	return 0;
 }
 
 	}
