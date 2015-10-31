@@ -9605,16 +9605,12 @@
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>T_INPUT_DI8_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
-					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
-					</libraryPaths>
+					<libraryPaths/>
 					<libraries>
 						<item>dinput8.lib</item>
 						<item>dxguid.lib</item>
@@ -9627,16 +9623,12 @@
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>T_INPUT_DI8_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
-					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
-					</libraryPaths>
+					<libraryPaths/>
 					<libraries>
 						<item>dinput8.lib</item>
 						<item>dxguid.lib</item>
@@ -9649,16 +9641,12 @@
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
-					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
-					</libraryPaths>
+					<libraryPaths/>
 					<libraries>
 						<item>dinput8.lib</item>
 						<item>dxguid.lib</item>
@@ -9671,16 +9659,12 @@
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
-					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
-					</libraryPaths>
+					<libraryPaths/>
 					<libraries>
 						<item>dinput8.lib</item>
 						<item>dxguid.lib</item>
@@ -10287,8 +10271,8 @@
 					</libraryPaths>
 					<libraries>
 						<item>d3d9.lib</item>
-						<item>d3dx9.lib</item>
 						<item>dxguid.lib</item>
+						<item>d3dx9.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -10310,8 +10294,8 @@
 					</libraryPaths>
 					<libraries>
 						<item>d3d9.lib</item>
-						<item>d3dx9.lib</item>
 						<item>dxguid.lib</item>
+						<item>d3dx9.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -10333,8 +10317,8 @@
 					</libraryPaths>
 					<libraries>
 						<item>d3d9.lib</item>
-						<item>d3dx9.lib</item>
 						<item>dxguid.lib</item>
+						<item>d3dx9.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -10356,8 +10340,8 @@
 					</libraryPaths>
 					<libraries>
 						<item>d3d9.lib</item>
-						<item>d3dx9.lib</item>
 						<item>dxguid.lib</item>
+						<item>d3dx9.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -11140,16 +11124,12 @@
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>T_SOUND_DS8_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
-					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
-					</libraryPaths>
+					<libraryPaths/>
 					<libraries>
 						<item>dsound.lib</item>
 						<item>dxguid.lib</item>
@@ -11162,16 +11142,12 @@
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>T_SOUND_DS8_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
-					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
-					</libraryPaths>
+					<libraryPaths/>
 					<libraries>
 						<item>dsound.lib</item>
 						<item>dxguid.lib</item>
@@ -11184,16 +11160,12 @@
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
-					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
-					</libraryPaths>
+					<libraryPaths/>
 					<libraries>
 						<item>dsound.lib</item>
 						<item>dxguid.lib</item>
@@ -11206,16 +11178,12 @@
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
-					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
-					</libraryPaths>
+					<libraryPaths/>
 					<libraries>
 						<item>dsound.lib</item>
 						<item>dxguid.lib</item>
@@ -11357,7 +11325,9 @@
 					<libraryPaths>
 						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
 					</libraryPaths>
-					<libraries/>
+					<libraries>
+						<item>xaudio2.lib</item>
+					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 				</item>
@@ -11376,7 +11346,9 @@
 					<libraryPaths>
 						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
 					</libraryPaths>
-					<libraries/>
+					<libraries>
+						<item>xaudio2.lib</item>
+					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 				</item>
@@ -11395,7 +11367,9 @@
 					<libraryPaths>
 						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
 					</libraryPaths>
-					<libraries/>
+					<libraries>
+						<item>xaudio2.lib</item>
+					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 				</item>
@@ -11414,7 +11388,9 @@
 					<libraryPaths>
 						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
 					</libraryPaths>
-					<libraries/>
+					<libraries>
+						<item>xaudio2.lib</item>
+					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 				</item>
@@ -13162,17 +13138,13 @@
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>T_RENDER_DX11_EXPORT</item>
 						<item>_DEBUG</item>
 						<item>T_USE_D3DPERF</item>
 					</definitions>
-					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
-					</libraryPaths>
+					<libraryPaths/>
 					<libraries>
 						<item>d3d11.lib</item>
 						<item>dxgi.lib</item>
@@ -13187,16 +13159,12 @@
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>T_RENDER_DX11_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
-					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
-					</libraryPaths>
+					<libraryPaths/>
 					<libraries>
 						<item>d3d11.lib</item>
 						<item>dxgi.lib</item>
@@ -13210,17 +13178,13 @@
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 						<item>T_USE_D3DPERF</item>
 					</definitions>
-					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
-					</libraryPaths>
+					<libraryPaths/>
 					<libraries>
 						<item>d3d11.lib</item>
 						<item>dxgi.lib</item>
@@ -13235,16 +13199,12 @@
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
-					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
-					</libraryPaths>
+					<libraryPaths/>
 					<libraries>
 						<item>d3d11.lib</item>
 						<item>dxgi.lib</item>
@@ -16320,7 +16280,6 @@
 					<includePaths>
 						<item>$(ANGLE_SDK)/src</item>
 						<item>$(ANGLE_SDK)/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 						<item>$(ANGLE_SDK)/src/libGLESv2</item>
 					</includePaths>
 					<definitions>
@@ -16329,12 +16288,9 @@
 						<item>NOMINMAX</item>
 						<item>ANGLE_ENABLE_D3D9</item>
 					</definitions>
-					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
-					</libraryPaths>
+					<libraryPaths/>
 					<libraries>
 						<item>d3d9.lib</item>
-						<item>d3dx9.lib</item>
 						<item>d3dcompiler.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
@@ -16348,7 +16304,6 @@
 					<includePaths>
 						<item>$(ANGLE_SDK)/src</item>
 						<item>$(ANGLE_SDK)/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 						<item>$(ANGLE_SDK)/src/libGLESv2</item>
 					</includePaths>
 					<definitions>
@@ -16359,12 +16314,9 @@
 						<item>_SECURE_SCL=0</item>
 						<item>ANGLE_ENABLE_D3D9</item>
 					</definitions>
-					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
-					</libraryPaths>
+					<libraryPaths/>
 					<libraries>
 						<item>d3d9.lib</item>
-						<item>d3dx9.lib</item>
 						<item>d3dcompiler.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
@@ -16378,7 +16330,6 @@
 					<includePaths>
 						<item>$(ANGLE_SDK)/src</item>
 						<item>$(ANGLE_SDK)/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 						<item>$(ANGLE_SDK)/src/libGLESv2</item>
 					</includePaths>
 					<definitions>
@@ -16388,12 +16339,9 @@
 						<item>NOMINMAX</item>
 						<item>ANGLE_ENABLE_D3D9</item>
 					</definitions>
-					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
-					</libraryPaths>
+					<libraryPaths/>
 					<libraries>
 						<item>d3d9.lib</item>
-						<item>d3dx9.lib</item>
 						<item>d3dcompiler.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
@@ -16407,7 +16355,6 @@
 					<includePaths>
 						<item>$(ANGLE_SDK)/src</item>
 						<item>$(ANGLE_SDK)/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 						<item>$(ANGLE_SDK)/src/libGLESv2</item>
 					</includePaths>
 					<definitions>
@@ -16418,12 +16365,9 @@
 						<item>_SECURE_SCL=0</item>
 						<item>ANGLE_ENABLE_D3D9</item>
 					</definitions>
-					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
-					</libraryPaths>
+					<libraryPaths/>
 					<libraries>
 						<item>d3d9.lib</item>
-						<item>d3dx9.lib</item>
 						<item>d3dcompiler.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
@@ -16526,16 +16470,13 @@
 					<includePaths>
 						<item>$(ANGLE_SDK)/src</item>
 						<item>$(ANGLE_SDK)/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
 						<item>_CRT_SECURE_NO_DEPRECATE</item>
 						<item>NOMINMAX</item>
 					</definitions>
-					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
-					</libraryPaths>
+					<libraryPaths/>
 					<libraries>
 						<item>d3d9.lib</item>
 						<item>dxguid.lib</item>
@@ -16552,7 +16493,6 @@
 					<includePaths>
 						<item>$(ANGLE_SDK)/src</item>
 						<item>$(ANGLE_SDK)/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 					</includePaths>
 					<definitions>
 						<item>ANGLE_DISABLE_TRACE</item>
@@ -16561,9 +16501,7 @@
 						<item>NOMINMAX</item>
 						<item>_SECURE_SCL=0</item>
 					</definitions>
-					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
-					</libraryPaths>
+					<libraryPaths/>
 					<libraries>
 						<item>d3d9.lib</item>
 						<item>dxguid.lib</item>
@@ -16580,7 +16518,6 @@
 					<includePaths>
 						<item>$(ANGLE_SDK)/src</item>
 						<item>$(ANGLE_SDK)/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -16588,9 +16525,7 @@
 						<item>_CRT_SECURE_NO_DEPRECATE</item>
 						<item>NOMINMAX</item>
 					</definitions>
-					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
-					</libraryPaths>
+					<libraryPaths/>
 					<libraries>
 						<item>d3d9.lib</item>
 						<item>dxguid.lib</item>
@@ -16607,7 +16542,6 @@
 					<includePaths>
 						<item>$(ANGLE_SDK)/src</item>
 						<item>$(ANGLE_SDK)/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -16616,9 +16550,7 @@
 						<item>NOMINMAX</item>
 						<item>_SECURE_SCL=0</item>
 					</definitions>
-					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
-					</libraryPaths>
+					<libraryPaths/>
 					<libraries>
 						<item>d3d9.lib</item>
 						<item>dxguid.lib</item>
