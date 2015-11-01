@@ -272,10 +272,6 @@ public:
 		Size s;
 		tstring tmp = wstots(text);
 		m_window->GetTextExtent(tmp.c_str(), &s.cx, &s.cy);
-#if defined(__WXGTK__)
-		s.cx += 0;
-		s.cy += 4;
-#endif
 		return s;
 	}
 

@@ -1,4 +1,5 @@
 import(traktor)
+import(traktor.run)
 
 
 function string:split(sep)
