@@ -99,22 +99,17 @@ void CanvasWx::setPenThickness(int thickness)
 
 void CanvasWx::setClipRect(const Rect& rc)
 {
-	m_context->Clip(
+	m_context->Clip(wxRegion(
 		rc.left,
 		rc.top,
 		rc.getWidth(),
 		rc.getHeight()
-	);
+	));
 }
 
 void CanvasWx::resetClipRect()
 {
-	m_context->Clip(
-		0,
-		0,
-		65536,
-		65536
-	);
+	m_context->ResetClip();
 }
 
 void CanvasWx::drawPixel(int x, int y, const Color4ub& c)
@@ -135,15 +130,14 @@ void CanvasWx::drawLine(int x1, int y1, int x2, int y2)
 
 void CanvasWx::drawLines(const Point* pnts, int npnts)
 {
-	/*
-	std::vector< wxPoint > wxp(npnts);
-	for (int i = 0; i < npnts; ++i)
+	m_context->SetPen(wxPen(m_foreGround));
+	for (int i = 0; i < npnts - 1; ++i)
 	{
-		wxp[i].x = pnts[i].x;
-		wxp[i].y = pnts[i].y;
+		m_context->StrokeLine(
+			pnts[i].x, pnts[i].y,
+			pnts[i + 1].x, pnts[i + 1].y
+		);
 	}
-	m_dc->DrawLines(npnts, &wxp[0]);
-	*/
 }
 
 void CanvasWx::fillCircle(int x, int y, float radius)
@@ -155,12 +149,9 @@ void CanvasWx::fillCircle(int x, int y, float radius)
 
 void CanvasWx::drawCircle(int x, int y, float radius)
 {
-	/*
-	wxBrush tmp = m_dc->GetBrush();
-	m_dc->SetBrush(wxBrush(*wxBLACK, wxTRANSPARENT));
-	m_dc->DrawCircle(x, y, wxCoord(radius));
-	m_dc->SetBrush(tmp);
-	*/
+	m_context->SetPen(wxPen(m_foreGround));
+	m_context->SetBrush(wxBrush(*wxBLACK, wxTRANSPARENT));
+	m_context->DrawEllipse(x, y, radius, radius);
 }
 
 void CanvasWx::drawEllipticArc(int x, int y, int w, int h, float start, float end)

@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Ui/Wx/WidgetFactoryWx.h"
 #include "Ui/Wx/ButtonWx.h"
 #include "Ui/Wx/CheckBoxWx.h"
@@ -176,7 +177,8 @@ IClipboard* WidgetFactoryWx::createClipboard()
 
 int32_t WidgetFactoryWx::getSystemDPI() const
 {
-	return 96;
+	wxScreenDC dc;
+	return dc.GetPPI().GetHeight();
 }
 
 bool WidgetFactoryWx::getSystemColor(SystemColor systemColor, Color4ub& outColor)

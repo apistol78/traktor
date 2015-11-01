@@ -59,13 +59,19 @@ int Font::getPointSize() const
 	if (m_params.size > 0)
 		return m_params.size;
 	else
+	{
+		// Internal size specified in pixels, transform to points.
 		return int((-m_params.size / 72.0f) * 96.0f);
+	}
 }
 
 int Font::getPixelSize() const
 {
 	if (m_params.size > 0)
+	{
+		// Internal size specified in points, transform to pixels.
 		return int((m_params.size / 96.0f) * 72.0f);
+	}
 	else
 		return -m_params.size;
 }
