@@ -278,7 +278,11 @@ public:
 	virtual void setFont(const Font& font)
 	{
 		m_window->SetFont(wxFont(
+#if defined(__WXGTK__)
+			font.getPointSize() - 6,
+#else
 			font.getPointSize(),
+#endif
 			wxFONTFAMILY_DEFAULT,
 			font.isItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL,
 			font.isBold() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL,
@@ -293,7 +297,11 @@ public:
 		wxFont font = m_window->GetFont();
 		return Font(
 			tstows(static_cast< const wxChar* >(font.GetFaceName())),
+#if defined(__WXGTK__)
+			font.GetPointSize() + 6,
+#else
 			font.GetPointSize(),
+#endif
 			bool(font.GetWeight() == wxFONTWEIGHT_BOLD),
 			bool(font.GetStyle() == wxFONTSTYLE_ITALIC),
 			font.GetUnderlined()

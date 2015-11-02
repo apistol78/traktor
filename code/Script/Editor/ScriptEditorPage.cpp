@@ -158,7 +158,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 #if defined(__APPLE__)
 	m_edit->setFont(ui::Font(L"Menlo Regular", 11));
 #elif defined(__LINUX__)
-	m_edit->setFont(ui::Font(L"Monospace", 11));
+	m_edit->setFont(ui::Font(L"DejaVu Sans Mono", 14));
 #else
 	m_edit->setFont(ui::Font(L"Consolas", ui::scaleBySystemDPI(14)));
 #endif

@@ -56,7 +56,11 @@ void CanvasWx::setBackground(const Color4ub& color)
 void CanvasWx::setFont(const Font& font)
 {
 	m_font = wxFont(
+#if defined(__WXGTK__)
+		font.getPointSize() - 6,
+#else
 		font.getPointSize(),
+#endif
 		wxFONTFAMILY_DEFAULT,
 		font.isItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL,
 		font.isBold() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL,
