@@ -24,6 +24,11 @@ SolutionBuilderCBlocks::~SolutionBuilderCBlocks()
 
 bool SolutionBuilderCBlocks::create(const traktor::CommandLine& cmdLine)
 {
+	if (cmdLine.hasOption('w', L"cblocks-workspace-template"))
+		m_workspaceTemplate = cmdLine.getOption('w', L"cblocks-workspace-template").getString();
+	if (cmdLine.hasOption('p', L"cblocks-project-template"))
+		m_projectTemplate = cmdLine.getOption('p', L"cblocks-project-template").getString();
+
 	m_scriptProcessor = new ScriptProcessor();
 	if (!m_scriptProcessor->create())
 		return false;
@@ -56,7 +61,7 @@ bool SolutionBuilderCBlocks::generate(Solution* solution)
 		// Generate project
 		{
 			std::wstring projectOut;
-			if (!m_scriptProcessor->generateFromFile(solution, project, projectPath, L"$(TRAKTOR_HOME)/bin/cblocks-linux-gcc-project.sb", projectOut))
+			if (!m_scriptProcessor->generateFromFile(solution, project, projectPath, m_projectTemplate, projectOut))
 				return false;
 
 			Ref< IStream > file = FileSystem::getInstance().open(
@@ -77,7 +82,7 @@ bool SolutionBuilderCBlocks::generate(Solution* solution)
 	// Generate workspace
 	{
 		std::wstring cprojectOut;
-		if (!m_scriptProcessor->generateFromFile(solution, 0, solution->getRootPath(), L"$(TRAKTOR_HOME)/bin/cblocks-linux-gcc-workspace.sb", cprojectOut))
+		if (!m_scriptProcessor->generateFromFile(solution, 0, solution->getRootPath(), m_workspaceTemplate, cprojectOut))
 			return false;
 
 		Ref< IStream > file = FileSystem::getInstance().open(
@@ -97,4 +102,6 @@ bool SolutionBuilderCBlocks::generate(Solution* solution)
 
 void SolutionBuilderCBlocks::showOptions() const
 {
+	traktor::log::info << L"\t-w,-cblocks-workspace-template=[workspace template file]" << Endl;
+	traktor::log::info << L"\t-p,-cblocks-project-template=[project template file]" << Endl;
 }
