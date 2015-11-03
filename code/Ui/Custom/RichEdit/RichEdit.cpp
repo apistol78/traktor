@@ -55,6 +55,7 @@ RichEdit::RichEdit()
 ,	m_selectionStop(-1)
 ,	m_lineMargin(c_lineMarginMin)
 ,	m_lineOffsetH(0)
+,	m_widestLineWidth(0)
 {
 }
 
@@ -147,6 +148,7 @@ void RichEdit::setText(const std::wstring& text)
 	if (m_caret >= lastOffset)
 		m_caret = lastOffset;
 
+	updateWidestLine();
 	updateScrollBars();
 }
 
@@ -255,6 +257,7 @@ void RichEdit::clear(bool attributes, bool images, bool content)
 
 	CHECK;
 
+	updateWidestLine();
 	updateScrollBars();
 	update();
 }
@@ -320,6 +323,7 @@ void RichEdit::setLine(int32_t line, const std::wstring& text)
 	}
 
 	ln.stop = ln.start + text.size();
+	updateWidestLine();
 }
 
 std::wstring RichEdit::getLine(int32_t line) const
@@ -357,43 +361,34 @@ std::wstring RichEdit::getSelectedText() const
 
 bool RichEdit::scrollToLine(int32_t line)
 {
-	if (m_scrollBarV->isVisible(false))
-	{
-		m_scrollBarV->setPosition(line);
-		m_scrollBarV->update();
-		update();
-	}
+	m_scrollBarV->setPosition(line);
+	m_scrollBarV->update();
+	update();
 	return true;
 }
 
 int32_t RichEdit::getScrollLine() const
 {
-	if (m_scrollBarV->isVisible(false))
-		return m_scrollBarV->getPosition();
-	else
-		return 0;
+	return m_scrollBarV->getPosition();
 }
 
 bool RichEdit::showLine(int32_t line)
 {
-	if (m_scrollBarV->isVisible(false))
-	{
-		Font font = getFont();
-		Rect rc = getEditRect();
+	Font font = getFont();
+	Rect rc = getEditRect();
 
-		int32_t lineHeight = font.getSize() + c_fontHeightMargin;
-		int32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
+	int32_t lineHeight = font.getSize() + c_fontHeightMargin;
+	int32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
 
-		int32_t top = m_scrollBarV->getPosition();
+	int32_t top = m_scrollBarV->getPosition();
 
-		if (line >= top && line < top + pageLines)
-			return true;
+	if (line >= top && line < top + pageLines)
+		return true;
 
-		m_scrollBarV->setPosition(std::max< int32_t >(line - pageLines / 3, 0));
-		m_scrollBarV->update();
+	m_scrollBarV->setPosition(std::max< int32_t >(line - pageLines / 3, 0));
+	m_scrollBarV->update();
 
-		update();
-	}
+	update();
 	return true;
 }
 
@@ -438,38 +433,47 @@ void RichEdit::updateScrollBars()
 	uint32_t lineHeight = font.getSize() + c_fontHeightMargin;
 	uint32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
 
-	uint32_t lineWidth = 0;
+	m_scrollBarV->setRange(lineCount + pageLines);
+	m_scrollBarV->setPage(pageLines);
+	m_scrollBarV->update();
+
+	if (m_widestLineWidth >= rc.getWidth() - m_lineMargin)
+	{
+		m_scrollBarH->setRange(m_widestLineWidth / c_scrollHSteps);
+		m_scrollBarH->setPage(c_scrollHSteps);
+		m_scrollBarH->setEnable(true);
+	}
+	else
+	{
+		m_scrollBarH->setPosition(0);
+		m_scrollBarH->setEnable(false);
+	}
+
+	m_scrollBarH->update();
+}
+
+void RichEdit::updateWidestLine()
+{
+	m_widestLineWidth = 0;
 	if (m_charWidth > 0)
 	{
-		for (std::vector< Line >::const_iterator i = m_lines.begin(); i != m_lines.end(); ++i)
+		uint32_t lineCount = m_lines.size();
+		for (uint32_t i = 0; i < lineCount; ++i)
 		{
+			const Line& line = m_lines[i];
+
 			uint32_t x = 0;
-			for (int32_t j = i->start; j < i->stop; ++j)
+			for (int32_t j = line.start; j < line.stop; ++j)
 			{
 				if (m_text[j] != '\t')
 					x += m_charWidth;
 				else
 					x = alignUp(x + 4 * m_charWidth, 4 * m_charWidth);
 			}
-			lineWidth = std::max< uint32_t >(lineWidth, x);
+
+			m_widestLineWidth = std::max< uint32_t >(m_widestLineWidth, x);
 		}
 	}
-
-	m_scrollBarV->setRange(lineCount + pageLines);
-	m_scrollBarV->setPage(pageLines);
-	m_scrollBarV->setVisible(lineCount > pageLines);
-	m_scrollBarV->update();
-
-	if (lineWidth >= rc.getWidth() - m_lineMargin)
-	{
-		m_scrollBarH->setRange(lineWidth / c_scrollHSteps);
-		m_scrollBarH->setPage(c_scrollHSteps);
-		m_scrollBarH->setVisible(true);
-	}
-	else
-		m_scrollBarH->setVisible(false);
-
-	m_scrollBarH->update();
 }
 
 void RichEdit::deleteCharacters()
@@ -526,6 +530,8 @@ void RichEdit::deleteCharacters()
 	m_selectionStart = -1;
 	m_selectionStop = -1;
 	m_caret = start;
+
+	updateWidestLine();
 
 	CHECK;
 
@@ -629,6 +635,8 @@ void RichEdit::insertAt(int32_t offset, wchar_t ch)
 			}
 		}
 	}
+
+	updateWidestLine();
 }
 
 void RichEdit::scrollToCaret()
@@ -683,10 +691,8 @@ int32_t RichEdit::getCharacterStops(const std::wstring& text, std::vector< int32
 Rect RichEdit::getEditRect() const
 {
 	Rect rc = getInnerRect();
-	if (m_scrollBarV->isVisible(false))
-		rc.right -= m_scrollBarV->getPreferedSize().cx;
-	if (m_scrollBarH->isVisible(false))
-		rc.bottom -= m_scrollBarH->getPreferedSize().cy;
+	rc.right -= m_scrollBarV->getPreferedSize().cx;
+	rc.bottom -= m_scrollBarH->getPreferedSize().cy;
 	return rc;
 }
 
@@ -1001,30 +1007,29 @@ void RichEdit::eventPaint(PaintEvent* event)
 	Canvas& canvas = event->getCanvas();
 
 	Font font = getFont();
-	Rect rc = getInnerRect();
+	Rect innerRc = getInnerRect();
+	Rect updateRc = event->getUpdateRect();
 
 	// Cache font character width.
 	int32_t charWidth = canvas.getTextExtent(L" ").cx;
 	if (charWidth != m_charWidth)
 	{
 		m_charWidth = charWidth;
+		updateWidestLine();
 		updateScrollBars();
 	}
 
 	// Clear entire background.
 	canvas.setBackground(Color4ub(255, 255, 255));
-	canvas.fillRect(rc);
+	canvas.fillRect(updateRc);
 
-	// Adjust client area if scrollbars are visible.
-	if (m_scrollBarV->isVisible(false))
-		rc.right -= m_scrollBarV->getPreferedSize().cx;
-	if (m_scrollBarH->isVisible(false))
-		rc.bottom -= m_scrollBarH->getPreferedSize().cy;
+	innerRc.right -= m_scrollBarV->getPreferedSize().cx;
+	innerRc.bottom -= m_scrollBarH->getPreferedSize().cy;
 
 	uint32_t lineCount = m_lines.size();
 	uint32_t lineOffset = m_scrollBarV->getPosition();
 	uint32_t lineHeight = abs(font.getSize()) + c_fontHeightMargin;
-	uint32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
+	uint32_t pageLines = (innerRc.getHeight() + lineHeight - 1) / lineHeight;
 
 	// Calculate margin width from highest visible line number.
 	m_lineMargin = c_iconSize + canvas.getTextExtent(toString(lineOffset + pageLines)).cx + 2;
@@ -1032,9 +1037,9 @@ void RichEdit::eventPaint(PaintEvent* event)
 
 	// Background
 	{
-		Rect marginRc(rc.left, rc.top, rc.left + m_lineMargin, rc.bottom);
-		Rect iconsRc(rc.left, rc.top, rc.left + c_iconSize, rc.top + lineHeight);
-		Rect lineRc(rc.left + c_iconSize, rc.top, rc.left + m_lineMargin, rc.top + lineHeight);
+		Rect marginRc(innerRc.left, innerRc.top, innerRc.left + m_lineMargin, innerRc.bottom);
+		Rect iconsRc(innerRc.left, innerRc.top, innerRc.left + c_iconSize, innerRc.top + lineHeight);
+		Rect lineRc(innerRc.left + c_iconSize, innerRc.top, innerRc.left + m_lineMargin, innerRc.top + lineHeight);
 
 		canvas.setForeground(Color4ub(180, 180, 180));
 		canvas.setBackground(Color4ub(200, 200, 200));
@@ -1064,13 +1069,13 @@ void RichEdit::eventPaint(PaintEvent* event)
 	// Formatted text.
 	{
 		canvas.setClipRect(Rect(
-			rc.left + m_lineMargin,
-			rc.top,
-			rc.right,
-			rc.bottom
+			innerRc.left + m_lineMargin,
+			innerRc.top,
+			innerRc.right,
+			innerRc.bottom
 		));
 
-		Rect lineRc(rc.left, rc.top, rc.right, rc.top + lineHeight);
+		Rect lineRc(innerRc.left, innerRc.top, innerRc.right, innerRc.top + lineHeight);
 		uint32_t lineOffsetEnd = std::min(lineOffset + pageLines, lineCount);
 		for (uint32_t i = lineOffset; i < lineOffsetEnd; ++i)
 		{
@@ -1084,6 +1089,7 @@ void RichEdit::eventPaint(PaintEvent* event)
 			{
 				const Attribute& attrib = m_attributes[m_meta[j]];
 
+				// Draw caret.
 				if (m_caret == j)
 				{
 					textRc.left = m_lineMargin + 2 + x - 1 - m_lineOffsetH;
@@ -1093,6 +1099,7 @@ void RichEdit::eventPaint(PaintEvent* event)
 					canvas.fillRect(textRc);
 				}
 
+				// Set attribute colors.
 				bool solidBackground = false;
 				if (j >= m_selectionStart && j < m_selectionStop)
 				{
@@ -1102,11 +1109,13 @@ void RichEdit::eventPaint(PaintEvent* event)
 				}
 				else
 				{
-					canvas.setBackground(attrib.backColor);
 					canvas.setForeground(attrib.textColor);
 					solidBackground = bool(attrib.backColor != Color4ub(255, 255, 255));
+					if (solidBackground)
+						canvas.setBackground(attrib.backColor);
 				}
 
+				// Draw characters.
 				if (m_text[j] != '\t')
 				{
 					textRc.left = m_lineMargin + 2 + x - m_lineOffsetH;
@@ -1115,8 +1124,11 @@ void RichEdit::eventPaint(PaintEvent* event)
 					if (solidBackground)
 						canvas.fillRect(textRc);
 
-					std::wstring ch(&m_text[j], &m_text[j + 1]);
-					canvas.drawText(textRc, ch, AnLeft, AnCenter);
+					if (std::iswgraph(m_text[j]))
+					{
+						std::wstring ch(&m_text[j], &m_text[j + 1]);
+						canvas.drawText(textRc, ch, AnLeft, AnCenter);
+					}
 
 					x += m_charWidth;
 				}
@@ -1159,18 +1171,20 @@ void RichEdit::eventSize(SizeEvent* event)
 
 	Rect inner = getInnerRect();
 
+	updateScrollBars();
+
 	Rect rcV(Point(inner.getWidth() - width, 0), Size(width, inner.getHeight() - height));
 	m_scrollBarV->setRect(rcV);
 
 	Rect rcH(Point(0, inner.getHeight() - height), Size(inner.getWidth() - width, height));
 	m_scrollBarH->setRect(rcH);
-
-	updateScrollBars();
 }
 
 void RichEdit::eventScroll(ScrollEvent* event)
 {
-	update();
+	Rect innerRc = getInnerRect();
+	Rect updateRc(innerRc.left, innerRc.top, m_lineMargin + m_widestLineWidth, innerRc.bottom);
+	update(&updateRc);
 }
 
 #if defined(_DEBUG)
