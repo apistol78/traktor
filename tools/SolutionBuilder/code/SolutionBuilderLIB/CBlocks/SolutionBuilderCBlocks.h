@@ -23,6 +23,8 @@ public:
 	virtual void showOptions() const;
 
 private:
+	std::wstring m_workspaceTemplate;
+	std::wstring m_projectTemplate;
 	traktor::Ref< ScriptProcessor > m_scriptProcessor;
 };
 
