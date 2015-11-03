@@ -154,12 +154,15 @@ private:
 	int32_t m_selectionStop;
 	int32_t m_lineMargin;
 	int32_t m_lineOffsetH;
+	int32_t m_widestLineWidth;
 
 #if defined(_DEBUG)
 	std::vector< Line > m_linesLastGood;
 #endif
 
 	void updateScrollBars();
+
+	void updateWidestLine();
 
 	void deleteCharacters();
 
