@@ -50,12 +50,6 @@ bool ScenePermutationPipeline::buildDependencies(
 
 	pipelineDepends->addDependency(scenePermutationAsset->m_scene, editor::PdfUse);
 
-	for (int32_t i = 0; i < world::QuLast; ++i)
-	{
-		if (scenePermutationAsset->m_overrideImageProcessSettings[i])
-			pipelineDepends->addDependency(scenePermutationAsset->m_overrideImageProcessSettings[i], editor::PdfBuild | editor::PdfResource);
-	}
-
 	if (scenePermutationAsset->m_overrideWorldRenderSettings)
 		pipelineDepends->addDependency(scenePermutationAsset->m_overrideWorldRenderSettings->reflectionMap, editor::PdfBuild | editor::PdfResource);
 
@@ -110,12 +104,6 @@ Ref< ISerializable > ScenePermutationPipeline::buildOutput(
 
 	if (scenePermutationAsset->m_overrideWorldRenderSettings)
 		scenePermutation->setWorldRenderSettings(scenePermutationAsset->m_overrideWorldRenderSettings);
-
-	for (int32_t i = 0; i < world::QuLast; ++i)
-	{
-		if (scenePermutationAsset->m_overrideImageProcessSettings[i])
-			scenePermutation->setImageProcessSettings((world::Quality)i, scenePermutationAsset->m_overrideImageProcessSettings[i]);
-	}
 
 	SmallMap< std::wstring, resource::Id< render::ITexture > > params = templateScene->getImageProcessParams();
 

@@ -17,7 +17,6 @@ Scene::Scene(
 	world::IEntitySchema* entitySchema,
 	world::Entity* rootEntity,
 	world::WorldRenderSettings* worldRenderSettings,
-	const resource::Proxy< render::ImageProcessSettings > imageProcessSettings[world::QuLast],
 	const SmallMap< render::handle_t, resource::Proxy< render::ITexture > >& imageProcessParams
 )
 :	m_entitySchema(entitySchema)
@@ -26,8 +25,6 @@ Scene::Scene(
 ,	m_worldRenderSettings(worldRenderSettings)
 ,	m_imageProcessParams(imageProcessParams)
 {
-	for (int32_t i = 0; i < world::QuLast; ++i)
-		m_imageProcessSettings[i] = imageProcessSettings[i];
 }
 
 Scene::Scene(ISceneController* controller, Scene* scene)
@@ -37,21 +34,11 @@ Scene::Scene(ISceneController* controller, Scene* scene)
 ,	m_worldRenderSettings(scene->m_worldRenderSettings)
 ,	m_imageProcessParams(scene->m_imageProcessParams)
 {
-	for (int32_t i = 0; i < world::QuLast; ++i)
-		m_imageProcessSettings[i] = scene->m_imageProcessSettings[i];
 }
 
 Scene::~Scene()
 {
-	m_rootEntity = 0;
-	m_entitySchema = 0;
-	m_controller = 0;
-	m_worldRenderSettings = 0;
-	
-	for (int32_t i = 0; i < world::QuLast; ++i)
-		m_imageProcessSettings[i].clear();
-
-	m_imageProcessParams.clear();
+	destroy();
 }
 
 void Scene::destroy()
@@ -60,10 +47,6 @@ void Scene::destroy()
 	m_entitySchema = 0;
 	m_controller = 0;
 	m_worldRenderSettings = 0;
-
-	for (int32_t i = 0; i < world::QuLast; ++i)
-		m_imageProcessSettings[i].clear();
-
 	m_imageProcessParams.clear();
 }
 
@@ -94,11 +77,6 @@ ISceneController* Scene::getController() const
 world::WorldRenderSettings* Scene::getWorldRenderSettings() const
 {
 	return m_worldRenderSettings;
-}
-
-const resource::Proxy< render::ImageProcessSettings >& Scene::getImageProcessSettings(world::Quality quality) const
-{
-	return m_imageProcessSettings[int32_t(quality)];
 }
 
 const SmallMap< render::handle_t, resource::Proxy< render::ITexture > >& Scene::getImageProcessParams() const

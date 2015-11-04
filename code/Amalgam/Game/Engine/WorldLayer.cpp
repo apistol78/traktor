@@ -118,10 +118,7 @@ void WorldLayer::transition(Layer* fromLayer)
 	// Get post process quality from settings.
 	int32_t imageProcessQuality = m_environment->getSettings()->getProperty< PropertyInteger >(L"World.ImageProcessQuality", world::QuHigh);
 
-	if (
-		m_scene->getImageProcessSettings((world::Quality)imageProcessQuality) == fromWorldLayer->m_scene->getImageProcessSettings((world::Quality)imageProcessQuality) &&
-		DeepHash(m_scene->getWorldRenderSettings()) == DeepHash(fromWorldLayer->m_scene->getWorldRenderSettings())
-	)
+	if (DeepHash(m_scene->getWorldRenderSettings()) == DeepHash(fromWorldLayer->m_scene->getWorldRenderSettings()))
 	{
 		m_worldRenderer = fromWorldLayer->m_worldRenderer;
 		m_worldRenderView = fromWorldLayer->m_worldRenderView;
@@ -620,14 +617,8 @@ void WorldLayer::createWorldRenderer()
 	int32_t width = renderView->getWidth();
 	int32_t height = renderView->getHeight();
 
-	// Get post process quality from settings.
-	int32_t imageProcessQuality = m_environment->getSettings()->getProperty< PropertyInteger >(L"World.ImageProcessQuality", world::QuHigh);
-
 	// Create world renderer.
-	m_worldRenderer = m_environment->getWorld()->createWorldRenderer(
-		m_scene->getWorldRenderSettings(),
-		m_scene->getImageProcessSettings((world::Quality)imageProcessQuality)
-	);
+	m_worldRenderer = m_environment->getWorld()->createWorldRenderer(m_scene->getWorldRenderSettings());
 	if (!m_worldRenderer)
 	{
 		log::error << L"Unable to create world renderer; world layer disabled" << Endl;

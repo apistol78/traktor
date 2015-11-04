@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.scene.SceneAsset" version="4">
-	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="20">
+	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="22">
 		<viewNearZ>0.1</viewNearZ>
 		<viewFarZ>10000</viewFarZ>
 		<linearLighting>true</linearLighting>
@@ -74,12 +74,20 @@
 			</ultra>
 		</shadowSettings>
 		<fogEnabled>false</fogEnabled>
-		<fogDistance>150</fogDistance>
-		<fogRange>800</fogRange>
-		<fogColor>101, 157, 193, 255</fogColor>
+		<fogDistanceY>0</fogDistanceY>
+		<fogDistanceZ>90</fogDistanceZ>
+		<fogDensityY>0</fogDensityY>
+		<fogDensityZ>0</fogDensityZ>
+		<fogColor>255, 255, 255, 255</fogColor>
 		<reflectionMap>{46ABEF4C-A855-0E43-9CEC-8124D2DEF32C}</reflectionMap>
+		<imageProcess>
+			<disabled>{00000000-0000-0000-0000-000000000000}</disabled>
+			<low>{00000000-0000-0000-0000-000000000000}</low>
+			<medium>{00000000-0000-0000-0000-000000000000}</medium>
+			<high>{00000000-0000-0000-0000-000000000000}</high>
+			<ultra>{00000000-0000-0000-0000-000000000000}</ultra>
+		</imageProcess>		
 	</worldRenderSettings>
-	<imageProcessSettings>{00000000-0000-0000-0000-000000000000}</imageProcessSettings>
 	<layers>
 		<item type="traktor.world.LayerEntityData">
 			<name>Environment</name>

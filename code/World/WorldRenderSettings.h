@@ -81,6 +81,7 @@ public:
 	float fogDensityZ;
 	Color4ub fogColor;
 	resource::Id< render::ITexture > reflectionMap;
+	resource::Id< render::ImageProcessSettings > imageProcess[QuLast];
 
 	WorldRenderSettings();
 

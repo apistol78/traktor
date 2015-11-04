@@ -475,21 +475,31 @@ bool WorldRendererPreLit::create(
 	}
 
 	// Create "visual" post processing filter.
-	if (desc.imageProcessSettings)
 	{
-		m_visualImageProcess = new render::ImageProcess();
-		if (!m_visualImageProcess->create(
-			desc.imageProcessSettings,
-			postProcessTargetPool,
-			resourceManager,
-			renderSystem,
-			width,
-			height,
-			desc.allTargetsPersistent
-		))
+		const resource::Id< render::ImageProcessSettings >& imageProcessSettings = desc.worldRenderSettings->imageProcess[desc.imageProcessQuality];
+		if (imageProcessSettings)
 		{
-			log::warning << L"Unable to create visual post processing; post processing disabled" << Endl;
-			m_visualImageProcess = 0;
+			resource::Proxy< render::ImageProcessSettings > imageProcess;
+			if (!resourceManager->bind(imageProcessSettings, imageProcess))
+				log::warning << L"Unable to create visual post processing image filter; post processing disabled" << Endl;
+
+			if (imageProcess)
+			{
+				m_visualImageProcess = new render::ImageProcess();
+				if (!m_visualImageProcess->create(
+					imageProcess,
+					postProcessTargetPool,
+					resourceManager,
+					renderSystem,
+					width,
+					height,
+					desc.allTargetsPersistent
+					))
+				{
+					log::warning << L"Unable to create visual post processing; post processing disabled" << Endl;
+					m_visualImageProcess = 0;
+				}
+			}
 		}
 	}
 

@@ -4,7 +4,6 @@
 #include "Core/Serialization/MemberSmallMap.h"
 #include "Core/Serialization/MemberStaticArray.h"
 #include "Render/ITexture.h"
-#include "Render/ImageProcess/ImageProcessSettings.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 #include "Scene/ISceneControllerData.h"
@@ -34,18 +33,7 @@ Ref< Scene > SceneResource::createScene(
 	world::IEntityBuilder* entityBuilder
 ) const
 {
-	resource::Proxy< render::ImageProcessSettings > imageProcessSettings[world::QuLast];
 	SmallMap< render::handle_t, resource::Proxy< render::ITexture > > imageProcessParams;
-
-	for (int32_t i = 0; i < world::QuLast; ++i)
-	{
-		if (m_imageProcessSettings[i].isNull())
-			continue;
-
-		if (!resourceManager->bind(m_imageProcessSettings[i], imageProcessSettings[i]))
-			log::error << L"Unable to bind image processing settings " << i << Endl;
-	}
-
 	for (SmallMap< std::wstring, resource::Id< render::ITexture > >::const_iterator i = m_imageProcessParams.begin(); i != m_imageProcessParams.end(); ++i)
 	{
 		if (!resourceManager->bind(i->second, imageProcessParams[render::getParameterHandle(i->first)]))
@@ -76,7 +64,6 @@ Ref< Scene > SceneResource::createScene(
 		entitySchema,
 		rootEntity,
 		m_worldRenderSettings,
-		imageProcessSettings,
 		imageProcessParams
 	);
 }
@@ -89,16 +76,6 @@ void SceneResource::setWorldRenderSettings(world::WorldRenderSettings* worldRend
 Ref< world::WorldRenderSettings > SceneResource::getWorldRenderSettings() const
 {
 	return m_worldRenderSettings;
-}
-
-void SceneResource::setImageProcessSettings(world::Quality quality, const resource::Id< render::ImageProcessSettings >& imageProcessSettings)
-{
-	m_imageProcessSettings[int32_t(quality)] = imageProcessSettings;
-}
-
-const resource::Id< render::ImageProcessSettings >& SceneResource::getImageProcessSettings(world::Quality quality) const
-{
-	return m_imageProcessSettings[int32_t(quality)];
 }
 
 void SceneResource::setImageProcessParams(const SmallMap< std::wstring, resource::Id< render::ITexture > >& imageProcessParams)
@@ -134,8 +111,7 @@ Ref< ISceneControllerData > SceneResource::getControllerData() const
 void SceneResource::serialize(ISerializer& s)
 {
 	s >> MemberRef< world::WorldRenderSettings >(L"worldRenderSettings", m_worldRenderSettings);
-	s >> MemberStaticArray< resource::Id< render::ImageProcessSettings >, sizeof_array(m_imageProcessSettings), resource::Member< render::ImageProcessSettings > >(L"postProcessSettings", m_imageProcessSettings);
-	s >> MemberSmallMap< std::wstring, resource::Id< render::ITexture >, Member< std::wstring >, resource::Member< render::ITexture > >(L"postProcessParams", m_imageProcessParams);
+	s >> MemberSmallMap< std::wstring, resource::Id< render::ITexture >, Member< std::wstring >, resource::Member< render::ITexture > >(L"imageProcessParams", m_imageProcessParams);
 	s >> MemberRef< world::EntityData >(L"entityData", m_entityData);
 	s >> MemberRef< ISceneControllerData >(L"controllerData", m_controllerData);
 }

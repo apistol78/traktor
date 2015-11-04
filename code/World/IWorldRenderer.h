@@ -53,11 +53,11 @@ class WorldRenderView;
 struct WorldCreateDesc
 {
 	const WorldRenderSettings* worldRenderSettings;
-	const render::ImageProcessSettings* imageProcessSettings;
 	WorldEntityRenderers* entityRenderers;
 	Quality shadowsQuality;
 	Quality ambientOcclusionQuality;
 	Quality antiAliasQuality;
+	Quality imageProcessQuality;
 	uint32_t multiSample;
 	uint32_t superSample;
 	uint32_t frameCount;
@@ -66,11 +66,11 @@ struct WorldCreateDesc
 
 	WorldCreateDesc()
 	:	worldRenderSettings(0)
-	,	imageProcessSettings(0)
 	,	entityRenderers(0)
 	,	shadowsQuality(QuDisabled)
 	,	ambientOcclusionQuality(QuDisabled)
 	,	antiAliasQuality(QuDisabled)
+	,	imageProcessQuality(QuDisabled)
 	,	multiSample(0)
 	,	superSample(0)
 	,	frameCount(0)

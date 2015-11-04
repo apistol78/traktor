@@ -366,11 +366,6 @@ void SceneEditorContext::buildEntities()
 
 		T[3] = timer.getElapsedTime();
 
-		// Bind post process settings.
-		resource::Proxy< render::ImageProcessSettings > postProcessSettings[world::QuLast];
-		for (int32_t i = 0; i < world::QuLast; ++i)
-			m_resourceManager->bind(m_sceneAsset->getImageProcessSettings((world::Quality)i), postProcessSettings[i]);
-
 		// Bind post process parameters.
 		SmallMap< render::handle_t, resource::Proxy< render::ITexture > > postProcessParams;
 		const SmallMap< std::wstring, resource::Id< render::ITexture > >& postProcessParamsAsset = m_sceneAsset->getImageProcessParams();
@@ -386,7 +381,6 @@ void SceneEditorContext::buildEntities()
 			entitySchema,
 			rootGroupEntity,
 			m_sceneAsset->getWorldRenderSettings(),
-			postProcessSettings,
 			postProcessParams
 		);
 	}
