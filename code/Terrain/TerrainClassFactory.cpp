@@ -4,7 +4,7 @@
 #include "Terrain/OceanEntity.h"
 #include "Terrain/RiverEntity.h"
 #include "Terrain/TerrainClassFactory.h"
-#include "Terrain/TerrainEntity.h"
+#include "Terrain/TerrainComponent.h"
 
 namespace traktor
 {
@@ -30,8 +30,8 @@ void TerrainClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	Ref< AutoRuntimeClass< RiverEntity > > classRiverEntity = new AutoRuntimeClass< RiverEntity >();
 	registrar->registerClass(classRiverEntity);
 
-	Ref< AutoRuntimeClass< TerrainEntity > > classTerrainEntity = new AutoRuntimeClass< TerrainEntity >();
-	registrar->registerClass(classTerrainEntity);
+	Ref< AutoRuntimeClass< TerrainComponent > > classTerrainComponent = new AutoRuntimeClass< TerrainComponent >();
+	registrar->registerClass(classTerrainComponent);
 }
 
 	}

@@ -8,7 +8,7 @@
 #include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
 #include "Terrain/Terrain.h"
-#include "Terrain/TerrainEntity.h"
+#include "Terrain/TerrainComponent.h"
 #include "Terrain/TerrainSurfaceCache.h"
 #include "Terrain/RubbleLayer.h"
 #include "Terrain/RubbleLayerData.h"
@@ -51,7 +51,7 @@ bool RubbleLayer::create(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
 	const RubbleLayerData& layerData,
-	const TerrainEntity& terrainEntity
+	const TerrainComponent& terrainComponent
 )
 {
 	m_spreadDistance = layerData.m_spreadDistance;
@@ -67,7 +67,7 @@ bool RubbleLayer::create(
 		m_rubble[i].randomScaleAmount = layerData.m_rubble[i].randomScaleAmount;
 	}
 
-	updatePatches(terrainEntity);
+	updatePatches(terrainComponent);
 	return true;
 }
 
@@ -76,13 +76,13 @@ void RubbleLayer::update(const world::UpdateParams& update)
 }
 
 void RubbleLayer::render(
-	TerrainEntity& terrainEntity,
+	TerrainComponent& terrainComponent,
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
 	world::IWorldRenderPass& worldRenderPass
 )
 {
-	const resource::Proxy< Terrain >& terrain = terrainEntity.getTerrain();
+	const resource::Proxy< Terrain >& terrain = terrainComponent.getTerrain();
 
 	// \fixme Assume depth pass enabled; need some information about first pass from camera POV.
 	bool updateClusters = bool(
@@ -143,7 +143,7 @@ void RubbleLayer::render(
 	extraParameters->beginParameters(renderContext);
 	extraParameters->setTextureParameter(s_handleNormals, terrain->getNormalMap());
 	extraParameters->setTextureParameter(s_handleHeightfield, terrain->getHeightMap());
-	extraParameters->setTextureParameter(s_handleSurface, terrainEntity.getSurfaceCache()->getBaseTexture());
+	extraParameters->setTextureParameter(s_handleSurface, terrainComponent.getSurfaceCache()->getBaseTexture());
 	extraParameters->setVectorParameter(s_handleWorldExtent, terrain->getHeightfield()->getWorldExtent());
 	extraParameters->setVectorParameter(s_handleEye, eye);
 	extraParameters->setFloatParameter(s_handleMaxDistance, m_spreadDistance + m_clusterSize);
@@ -178,12 +178,12 @@ void RubbleLayer::render(
 	}
 }
 
-void RubbleLayer::updatePatches(const TerrainEntity& terrainEntity)
+void RubbleLayer::updatePatches(const TerrainComponent& terrainComponent)
 {
 	m_instances.resize(0);
 	m_clusters.resize(0);
 
-	const resource::Proxy< Terrain >& terrain = terrainEntity.getTerrain();
+	const resource::Proxy< Terrain >& terrain = terrainComponent.getTerrain();
 	const resource::Proxy< hf::Heightfield >& heightfield = terrain->getHeightfield();
 
 	// Get set of materials which have undergrowth.

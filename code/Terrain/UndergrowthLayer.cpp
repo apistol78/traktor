@@ -12,7 +12,7 @@
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
 #include "Terrain/Terrain.h"
-#include "Terrain/TerrainEntity.h"
+#include "Terrain/TerrainComponent.h"
 #include "Terrain/TerrainSurfaceCache.h"
 #include "Terrain/UndergrowthLayer.h"
 #include "Terrain/UndergrowthLayerData.h"
@@ -82,7 +82,7 @@ bool UndergrowthLayer::create(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
 	const UndergrowthLayerData& layerData,
-	const TerrainEntity& terrainEntity
+	const TerrainComponent& terrainComponent
 )
 {
 	m_layerData = layerData;
@@ -90,7 +90,7 @@ bool UndergrowthLayer::create(
 	if (!resourceManager->bind(m_layerData.m_shader, m_shader))
 		return false;
 
-	const resource::Proxy< Terrain >& terrain = terrainEntity.getTerrain();
+	const resource::Proxy< Terrain >& terrain = terrainComponent.getTerrain();
 	const resource::Proxy< hf::Heightfield >& heightfield = terrain->getHeightfield();
 
 	std::vector< render::VertexElement > vertexElements;
@@ -149,7 +149,7 @@ bool UndergrowthLayer::create(
 
 	m_indexBuffer->unlock();
 
-	updatePatches(terrainEntity);
+	updatePatches(terrainComponent);
 	return true;
 }
 
@@ -158,13 +158,13 @@ void UndergrowthLayer::update(const world::UpdateParams& update)
 }
 
 void UndergrowthLayer::render(
-	TerrainEntity& terrainEntity,
+	TerrainComponent& terrainComponent,
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
 	world::IWorldRenderPass& worldRenderPass
 )
 {
-	const resource::Proxy< Terrain >& terrain = terrainEntity.getTerrain();
+	const resource::Proxy< Terrain >& terrain = terrainComponent.getTerrain();
 
 	// \fixme Assume depth pass enabled; need some information about first pass from camera POV.
 	bool updateClusters = bool(
@@ -273,7 +273,7 @@ void UndergrowthLayer::render(
 			worldRenderPass.setProgramParameters(renderBlock->programParams, false);
 			renderBlock->programParams->setTextureParameter(s_handleNormals, terrain->getNormalMap());
 			renderBlock->programParams->setTextureParameter(s_handleHeightfield, terrain->getHeightMap());
-			renderBlock->programParams->setTextureParameter(s_handleSurface, terrainEntity.getSurfaceCache()->getBaseTexture());
+			renderBlock->programParams->setTextureParameter(s_handleSurface, terrainComponent.getSurfaceCache()->getBaseTexture());
 			renderBlock->programParams->setVectorParameter(s_handleWorldExtent, terrain->getHeightfield()->getWorldExtent());
 			renderBlock->programParams->setVectorParameter(s_handleEye, eye);
 			renderBlock->programParams->setFloatParameter(s_handleMaxDistance, m_layerData.m_spreadDistance + m_clusterSize);
@@ -289,12 +289,12 @@ void UndergrowthLayer::render(
 	}
 }
 
-void UndergrowthLayer::updatePatches(const TerrainEntity& terrainEntity)
+void UndergrowthLayer::updatePatches(const TerrainComponent& terrainComponent)
 {
 	m_plants.resize(0);
 	m_clusters.resize(0);
 
-	const resource::Proxy< Terrain >& terrain = terrainEntity.getTerrain();
+	const resource::Proxy< Terrain >& terrain = terrainComponent.getTerrain();
 	const resource::Proxy< hf::Heightfield >& heightfield = terrain->getHeightfield();
 
 	// Get set of materials which have undergrowth.

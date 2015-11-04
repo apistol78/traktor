@@ -32,7 +32,7 @@ class IResourceManager;
 	{
 
 class ITerrainLayer;
-class TerrainEntity;
+class TerrainComponent;
 
 class T_DLLCLASS ITerrainLayerData : public ISerializable
 {
@@ -42,7 +42,7 @@ public:
 	virtual Ref< ITerrainLayer > createLayerInstance(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
-		const TerrainEntity& terrainEntity
+		const TerrainComponent& terrainComponent
 	) const = 0;
 };
 

@@ -1,7 +1,7 @@
 #include "Editor/IPipelineDepends.h"
 #include "Terrain/Editor/TerrainEntityPipeline.h"
 #include "Terrain/ITerrainLayerData.h"
-#include "Terrain/TerrainEntityData.h"
+#include "Terrain/TerrainComponentData.h"
 #include "Terrain/OceanEntityData.h"
 #include "Terrain/RiverEntityData.h"
 #include "Terrain/RubbleLayerData.h"
@@ -17,7 +17,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainEntityPipeline", 0, Terr
 TypeInfoSet TerrainEntityPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< TerrainEntityData >());
+	typeSet.insert(&type_of< TerrainComponentData >());
 	typeSet.insert(&type_of< OceanEntityData >());
 	typeSet.insert(&type_of< RiverEntityData >());
 	return typeSet;
@@ -31,11 +31,11 @@ bool TerrainEntityPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	if (const TerrainEntityData* terrainEntityData = dynamic_type_cast< const TerrainEntityData* >(sourceAsset))
+	if (const TerrainComponentData* terrainComponentData = dynamic_type_cast< const TerrainComponentData* >(sourceAsset))
 	{
-		pipelineDepends->addDependency(terrainEntityData->getTerrain(), editor::PdfBuild | editor::PdfResource);
+		pipelineDepends->addDependency(terrainComponentData->getTerrain(), editor::PdfBuild | editor::PdfResource);
 
-		const RefArray< ITerrainLayerData >& layers = terrainEntityData->getLayers();
+		const RefArray< ITerrainLayerData >& layers = terrainComponentData->getLayers();
 		for (RefArray< ITerrainLayerData >::const_iterator i = layers.begin(); i != layers.end(); ++i)
 		{
 			if (const UndergrowthLayerData* undergrowthLayerData = dynamic_type_cast< const UndergrowthLayerData* >(*i))

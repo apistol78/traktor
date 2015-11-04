@@ -10,6 +10,29 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.ComponentEntityData", 0, ComponentEntityData, EntityData)
 
+void ComponentEntityData::setComponent(IEntityComponentData* component)
+{
+	for (RefArray< IEntityComponentData >::iterator i = m_components.begin(); i != m_components.end(); ++i)
+	{
+		if (is_type_a(type_of(*i), type_of(component)))
+		{
+			*i = component;
+			return;
+		}
+	}
+	m_components.push_back(component);
+}
+
+IEntityComponentData* ComponentEntityData::getComponent(const TypeInfo& componentType) const
+{
+	for (RefArray< IEntityComponentData >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
+	{
+		if (is_type_a(componentType, type_of(*i)))
+			return *i;
+	}
+	return 0;
+}
+
 void ComponentEntityData::serialize(ISerializer& s)
 {
 	EntityData::serialize(s);

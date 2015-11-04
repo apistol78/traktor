@@ -13,7 +13,7 @@
 #include "Terrain/ITerrainLayer.h"
 #include "Terrain/ITerrainLayerData.h"
 #include "Terrain/Terrain.h"
-#include "Terrain/TerrainEntity.h"
+#include "Terrain/TerrainComponent.h"
 #include "Terrain/TerrainSurfaceCache.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldContext.h"
@@ -46,7 +46,7 @@ struct CullPatch
 	Vector4 patchOrigin;
 };
 
-typedef std::pair< float, const TerrainEntity::Patch* > cull_patch_t;
+typedef std::pair< float, const TerrainComponent::Patch* > cull_patch_t;
 
 struct PatchFrontToBackPredicate
 {
@@ -58,9 +58,9 @@ struct PatchFrontToBackPredicate
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainEntity", TerrainEntity, world::Entity)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainComponent", TerrainComponent, world::IEntityComponent)
 
-TerrainEntity::TerrainEntity(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
+TerrainComponent::TerrainComponent(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
 :	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
 ,	m_cacheSize(0)
@@ -86,7 +86,7 @@ TerrainEntity::TerrainEntity(resource::IResourceManager* resourceManager, render
 {
 }
 
-bool TerrainEntity::create(const TerrainEntityData& data)
+bool TerrainComponent::create(const TerrainComponentData& data)
 {
 	if (!m_resourceManager->bind(data.getTerrain(), m_terrain))
 		return 0;
@@ -114,7 +114,7 @@ bool TerrainEntity::create(const TerrainEntityData& data)
 	return true;
 }
 
-void TerrainEntity::render(
+void TerrainComponent::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
 	world::IWorldRenderPass& worldRenderPass,
@@ -548,7 +548,7 @@ void TerrainEntity::render(
 	}
 }
 
-void TerrainEntity::setVisualizeMode(VisualizeMode visualizeMode)
+void TerrainComponent::setVisualizeMode(VisualizeMode visualizeMode)
 {
 	m_visualizeMode = visualizeMode;
 
@@ -582,19 +582,27 @@ void TerrainEntity::setVisualizeMode(VisualizeMode visualizeMode)
 	}
 }
 
-Aabb3 TerrainEntity::getBoundingBox() const
+void TerrainComponent::destroy()
+{
+}
+
+void TerrainComponent::setTransform(const Transform& transform)
+{
+}
+
+Aabb3 TerrainComponent::getBoundingBox() const
 {
 	const Vector4& worldExtent = m_heightfield->getWorldExtent();
 	return Aabb3(-worldExtent, worldExtent);
 }
 
-void TerrainEntity::update(const world::UpdateParams& update)
+void TerrainComponent::update(const world::UpdateParams& update)
 {
 	for (RefArray< ITerrainLayer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 		(*i)->update(update);
 }
 
-bool TerrainEntity::updatePatches()
+bool TerrainComponent::updatePatches()
 {
 	uint32_t patchDim = m_terrain->getPatchDim();
 	uint32_t heightfieldSize = m_heightfield->getSize();
@@ -662,7 +670,7 @@ bool TerrainEntity::updatePatches()
 	return true;
 }
 
-bool TerrainEntity::createPatches()
+bool TerrainComponent::createPatches()
 {
 	m_patches.clear();
 	m_patchCount = 0;
@@ -726,10 +734,10 @@ bool TerrainEntity::createPatches()
 			if (!vertexBuffer)
 				return false;
 
-			TerrainEntity::Patch patch = { 0.0f, 0.0f, { 0.0f, 0.0f, 0.0f, 0.0f }, vertexBuffer, c_patchLodSteps, c_surfaceLodSteps };
+			TerrainComponent::Patch patch = { 0.0f, 0.0f, { 0.0f, 0.0f, 0.0f, 0.0f }, vertexBuffer, c_patchLodSteps, c_surfaceLodSteps };
 			m_patches.push_back(patch);
 #else
-			TerrainEntity::Patch patch = { 0.0f, 0.0f, { 0.0f, 0.0f, 0.0f, 0.0f }, c_patchLodSteps, c_surfaceLodSteps };
+			TerrainComponent::Patch patch = { 0.0f, 0.0f, { 0.0f, 0.0f, 0.0f, 0.0f }, c_patchLodSteps, c_surfaceLodSteps };
 			m_patches.push_back(patch);
 #endif
 		}

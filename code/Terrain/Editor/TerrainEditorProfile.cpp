@@ -6,7 +6,6 @@
 #include "Terrain/Editor/OceanEntityEditorFactory.h"
 #include "Terrain/Editor/TerrainEditorPlugin.h"
 #include "Terrain/Editor/TerrainEditorProfile.h"
-#include "Terrain/Editor/TerrainEntityEditorFactory.h"
 #include "Ui/Command.h"
 
 namespace traktor
@@ -94,7 +93,6 @@ void TerrainEditorProfile::createEntityEditorFactories(
 ) const
 {
 	outEntityEditorFactories.push_back(new OceanEntityEditorFactory());
-	outEntityEditorFactories.push_back(new TerrainEntityEditorFactory());
 }
 
 Ref< world::EntityData > TerrainEditorProfile::createEntityData(

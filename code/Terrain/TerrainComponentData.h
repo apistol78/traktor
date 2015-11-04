@@ -1,9 +1,9 @@
-#ifndef traktor_terrain_TerrainEntityData_H
-#define traktor_terrain_TerrainEntityData_H
+#ifndef traktor_terrain_TerrainComponentData_H
+#define traktor_terrain_TerrainComponentData_H
 
 #include "Core/RefArray.h"
 #include "Resource/Id.h"
-#include "World/EntityData.h"
+#include "World/IEntityComponentData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -24,12 +24,12 @@ class Terrain;
 /*! \brief Terrain entity data.
  * \ingroup Terrain
  */
-class T_DLLCLASS TerrainEntityData : public world::EntityData
+class T_DLLCLASS TerrainComponentData : public world::IEntityComponentData
 {
 	T_RTTI_CLASS;
 
 public:
-	TerrainEntityData();
+	TerrainComponentData();
 
 	virtual void serialize(ISerializer& s);
 
@@ -63,4 +63,4 @@ private:
 	}
 }
 
-#endif	// traktor_terrain_TerrainEntityData_H
+#endif	// traktor_terrain_TerrainComponentData_H

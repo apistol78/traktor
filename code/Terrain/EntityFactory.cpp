@@ -1,6 +1,6 @@
 #include "Terrain/EntityFactory.h"
-#include "Terrain/TerrainEntity.h"
-#include "Terrain/TerrainEntityData.h"
+#include "Terrain/TerrainComponent.h"
+#include "Terrain/TerrainComponentData.h"
 #include "Terrain/OceanEntity.h"
 #include "Terrain/OceanEntityData.h"
 #include "Terrain/RiverEntity.h"
@@ -24,7 +24,6 @@ const TypeInfoSet EntityFactory::getEntityTypes() const
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< OceanEntityData >());
 	typeSet.insert(&type_of< RiverEntityData >());
-	typeSet.insert(&type_of< TerrainEntityData >());
 	return typeSet;
 }
 
@@ -35,7 +34,9 @@ const TypeInfoSet EntityFactory::getEntityEventTypes() const
 
 const TypeInfoSet EntityFactory::getEntityComponentTypes() const
 {
-	return TypeInfoSet();
+	TypeInfoSet typeSet;
+	typeSet.insert(&type_of< TerrainComponentData >());
+	return typeSet;
 }
 
 Ref< world::Entity > EntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
@@ -52,13 +53,6 @@ Ref< world::Entity > EntityFactory::createEntity(const world::IEntityBuilder* bu
 		if (river->create(m_resourceManager, m_renderSystem, *riverData))
 			return river;
 	}
-	else if (const TerrainEntityData* terrainData = dynamic_type_cast< const TerrainEntityData* >(&entityData))
-	{
-		Ref< TerrainEntity > terrain = new TerrainEntity(m_resourceManager, m_renderSystem);
-		if (terrain->create(*terrainData))
-			return terrain;
-	}
-
 	return 0;
 }
 
@@ -69,6 +63,12 @@ Ref< world::IEntityEvent > EntityFactory::createEntityEvent(const world::IEntity
 
 Ref< world::IEntityComponent > EntityFactory::createEntityComponent(const world::IEntityBuilder* builder, world::Entity* owner, const world::IEntityComponentData& entityComponentData) const
 {
+	if (const TerrainComponentData* terrainComponentData = dynamic_type_cast< const TerrainComponentData* >(&entityComponentData))
+	{
+		Ref< TerrainComponent > terrainComponent = new TerrainComponent(m_resourceManager, m_renderSystem);
+		if (terrainComponent->create(*terrainComponentData))
+			return terrainComponent;
+	}
 	return 0;
 }
 

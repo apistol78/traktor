@@ -1,6 +1,6 @@
 #include <limits>
 #include "Terrain/EntityRenderer.h"
-#include "Terrain/TerrainEntity.h"
+#include "Terrain/TerrainComponent.h"
 #include "Terrain/OceanEntity.h"
 #include "Terrain/RiverEntity.h"
 #include "World/WorldContext.h"
@@ -43,7 +43,7 @@ void EntityRenderer::setOceanDynamicReflectionEnable(bool oceanReflectionEnable)
 const TypeInfoSet EntityRenderer::getRenderableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< TerrainEntity >());
+	typeSet.insert(&type_of< TerrainComponent >());
 	typeSet.insert(&type_of< OceanEntity >());
 	typeSet.insert(&type_of< RiverEntity >());
 	return typeSet;
@@ -56,8 +56,8 @@ void EntityRenderer::render(
 	Object* renderable
 )
 {
-	if (TerrainEntity* terrainEntity = dynamic_type_cast< TerrainEntity* >(renderable))
-		terrainEntity->render(worldContext, worldRenderView, worldRenderPass, m_terrainDetailDistance, m_terrainCacheSize, m_terrainLayersEnable);
+	if (TerrainComponent* terrainComponent = dynamic_type_cast< TerrainComponent* >(renderable))
+		terrainComponent->render(worldContext, worldRenderView, worldRenderPass, m_terrainDetailDistance, m_terrainCacheSize, m_terrainLayersEnable);
 	else if (OceanEntity* oceanEntity = dynamic_type_cast< OceanEntity* >(renderable))
 		oceanEntity->render(worldContext.getRenderContext(), worldRenderView, worldRenderPass, m_oceanReflectionEnable);
 	else if (RiverEntity* riverEntity = dynamic_type_cast< RiverEntity* >(renderable))

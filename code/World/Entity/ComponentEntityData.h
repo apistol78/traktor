@@ -27,6 +27,14 @@ class T_DLLCLASS ComponentEntityData : public EntityData
 	T_RTTI_CLASS;
 
 public:
+	/*! \brief Set component.
+	 */
+	void setComponent(IEntityComponentData* component);
+
+	/*! \brief Get component of type.
+	 */
+	IEntityComponentData* getComponent(const TypeInfo& componentType) const;
+
 	virtual void serialize(ISerializer& s);
 
 private:

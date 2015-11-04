@@ -1,12 +1,12 @@
-#ifndef traktor_terrain_TerrainEntity_H
-#define traktor_terrain_TerrainEntity_H
+#ifndef traktor_terrain_TerrainComponent_H
+#define traktor_terrain_TerrainComponent_H
 
 #include "Core/RefArray.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Render/Shader.h"
 #include "Resource/Proxy.h"
-#include "Terrain/TerrainEntityData.h"
-#include "World/Entity.h"
+#include "Terrain/TerrainComponentData.h"
+#include "World/IEntityComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -66,7 +66,7 @@ class TerrainSurfaceCache;
 /*! \brief Terrain entity.
  * \ingroup Terrain
  */
-class T_DLLCLASS TerrainEntity : public world::Entity
+class T_DLLCLASS TerrainComponent : public world::IEntityComponent
 {
 	T_RTTI_CLASS;
 
@@ -102,9 +102,9 @@ public:
 		Vector4 surfaceOffset;
 	};
 
-	TerrainEntity(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
+	TerrainComponent(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
 
-	bool create(const TerrainEntityData& data);
+	bool create(const TerrainComponentData& data);
 
 	void render(
 		world::WorldContext& worldContext,
@@ -125,13 +125,17 @@ public:
 
 	uint32_t getPatchCount() const { return m_patchCount; }
 
-	virtual Aabb3 getBoundingBox() const;
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual void update(const world::UpdateParams& update);
+	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
+
+	virtual Aabb3 getBoundingBox() const T_OVERRIDE T_FINAL;
+
+	virtual void update(const world::UpdateParams& update) T_OVERRIDE T_FINAL;
 
 private:
 	friend class TerrainEditModifier;
-	friend class TerrainEntityEditor;
+	friend class TerrainComponentEditor;
 
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
@@ -185,4 +189,4 @@ private:
 	}
 }
 
-#endif	// traktor_terrain_TerrainEntity_H
+#endif	// traktor_terrain_TerrainComponent_H

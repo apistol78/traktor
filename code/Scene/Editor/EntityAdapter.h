@@ -23,6 +23,8 @@ namespace traktor
 
 class Entity;
 class EntityData;
+class IEntityComponent;
+class IEntityComponentData;
 
 	}
 
@@ -53,6 +55,22 @@ public:
 	void setEntity(world::Entity* entity);
 
 	world::Entity* getEntity() const;
+
+	world::IEntityComponentData* getComponentData(const TypeInfo& componentDataType) const;
+
+	world::IEntityComponent* getComponent(const TypeInfo& componentType) const;
+
+	template < typename ComponentDataType >
+	ComponentDataType* getComponentData() const
+	{
+		return checked_type_cast< ComponentDataType* >(getComponentData(type_of< ComponentDataType >()));
+	}
+
+	template < typename ComponentType >
+	ComponentType* getComponent() const
+	{
+		return checked_type_cast< ComponentType* >(getComponent(type_of< ComponentType >()));
+	}
 
 	void setHash(uint32_t hash);
 
