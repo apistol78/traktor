@@ -1,4 +1,5 @@
 #include "Core/Math/Hermite.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Render/IndexBuffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Shader.h"
@@ -7,8 +8,8 @@
 #include "Render/Context/RenderBlock.h"
 #include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
-#include "Terrain/RiverEntity.h"
-#include "Terrain/RiverEntityData.h"
+#include "Terrain/RiverComponent.h"
+#include "Terrain/RiverComponentData.h"
 #include "World/IWorldRenderPass.h"
 
 namespace traktor
@@ -21,7 +22,7 @@ namespace traktor
 struct ControlPointAccessor
 {
 	typedef float time_t;
-	typedef RiverEntityData::ControlPoint key_t;
+	typedef RiverComponentData::ControlPoint key_t;
 
 	static time_t time(const key_t* keys, size_t nkeys, const key_t& key)
 	{
@@ -49,24 +50,20 @@ struct ControlPointAccessor
 	}
 };
 
-typedef Hermite< RiverEntityData::ControlPoint, RiverEntityData::ControlPoint, ControlPointAccessor > hermite_t;
+typedef Hermite< RiverComponentData::ControlPoint, RiverComponentData::ControlPoint, ControlPointAccessor > hermite_t;
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.RiverEntity", RiverEntity, world::Entity)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.RiverComponent", RiverComponent, world::IEntityComponent)
 
-RiverEntity::RiverEntity()
+bool RiverComponent::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const RiverComponentData& data)
 {
-}
-
-bool RiverEntity::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const RiverEntityData& data)
-{
-	const AlignedVector< RiverEntityData::ControlPoint >& path = data.getPath();
+	const AlignedVector< RiverComponentData::ControlPoint >& path = data.getPath();
 	if (path.size() < 2)
 		return false;
 
 	float length = 0.0f;
-	for (AlignedVector< RiverEntityData::ControlPoint >::const_iterator i = path.begin() + 1; i != path.end(); ++i)
+	for (AlignedVector< RiverComponentData::ControlPoint >::const_iterator i = path.begin() + 1; i != path.end(); ++i)
 		length += (i->position - (i - 1)->position).length();
 
 	float dT = std::max(1.0f / length, 0.001f);
@@ -74,10 +71,10 @@ bool RiverEntity::create(resource::IResourceManager* resourceManager, render::IR
 	AlignedVector< Vector4 > silouette;
 
 	hermite_t h(path.c_ptr(), path.size());
-	RiverEntityData::ControlPoint pc = h.evaluate(0.0f);
+	RiverComponentData::ControlPoint pc = h.evaluate(0.0f);
 	for (float T = dT; T <= 1.0f; )
 	{
-		RiverEntityData::ControlPoint pn = h.evaluate(T);
+		RiverComponentData::ControlPoint pn = h.evaluate(T);
 
 		Vector4 d = pn.position - pc.position;
 		Vector4 e = cross(d, Vector4(0.0f, 1.0f, 0.0f, 0.0f)).normalized();
@@ -160,7 +157,26 @@ bool RiverEntity::create(resource::IResourceManager* resourceManager, render::IR
 	return true;
 }
 
-void RiverEntity::render(
+void RiverComponent::destroy()
+{
+	safeDestroy(m_vertexBuffer);
+	safeDestroy(m_indexBuffer);
+}
+
+void RiverComponent::setTransform(const Transform& transform)
+{
+}
+
+Aabb3 RiverComponent::getBoundingBox() const
+{
+	return Aabb3();
+}
+
+void RiverComponent::update(const world::UpdateParams& update)
+{
+}
+
+void RiverComponent::render(
 	render::RenderContext* renderContext,
 	world::WorldRenderView& worldRenderView,
 	world::IWorldRenderPass& worldRenderPass
@@ -189,15 +205,6 @@ void RiverEntity::render(
 	renderBlock->programParams->endParameters(renderContext);
 
 	renderContext->draw(m_shader->getCurrentPriority(), renderBlock);
-}
-
-Aabb3 RiverEntity::getBoundingBox() const
-{
-	return Aabb3();
-}
-
-void RiverEntity::update(const world::UpdateParams& update)
-{
 }
 
 	}

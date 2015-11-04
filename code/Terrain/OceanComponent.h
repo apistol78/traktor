@@ -1,11 +1,11 @@
-#ifndef traktor_terrain_OceanEntity_H
-#define traktor_terrain_OceanEntity_H
+#ifndef traktor_terrain_OceanComponent_H
+#define traktor_terrain_OceanComponent_H
 
 #include "Core/Math/Color4f.h"
 #include "Core/Math/Vector4.h"
 #include "Render/Types.h"
 #include "Resource/Proxy.h"
-#include "World/Entity.h"
+#include "World/IEntityComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -39,6 +39,7 @@ class IResourceManager;
 	namespace world
 	{
 
+class Entity;
 class IWorldRenderPass;
 class WorldRenderView;
 
@@ -47,23 +48,31 @@ class WorldRenderView;
 	namespace terrain
 	{
 
-class OceanEntityData;
+class OceanComponentData;
 
-/*! \brief Ocean entity.
+/*! \brief Ocean component.
  * \ingroup Terrain
  */
-class T_DLLCLASS OceanEntity : public world::Entity
+class T_DLLCLASS OceanComponent : public world::IEntityComponent
 {
 	T_RTTI_CLASS;
 
 public:
 	enum { MaxWaves = 32 };
 
-	OceanEntity();
+	OceanComponent(world::Entity* owner);
 
-	bool create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const OceanEntityData& data);
+	virtual ~OceanComponent();
 
-	virtual void destroy();
+	bool create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const OceanComponentData& data);
+
+	virtual void destroy() T_OVERRIDE T_FINAL;
+
+	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
+
+	virtual Aabb3 getBoundingBox() const T_OVERRIDE T_FINAL;
+
+	virtual void update(const world::UpdateParams& update) T_OVERRIDE T_FINAL;
 
 	void render(
 		render::RenderContext* renderContext,
@@ -71,14 +80,6 @@ public:
 		world::IWorldRenderPass& worldRenderPass,
 		bool reflectionEnable
 	);
-
-	virtual void setTransform(const Transform& transform);
-
-	virtual bool getTransform(Transform& outTransform) const;
-
-	virtual Aabb3 getBoundingBox() const;
-
-	virtual void update(const world::UpdateParams& update);
 
 	void setShallowTint(const Color4f& shallowTint) { m_shallowTint = shallowTint; }
 
@@ -99,12 +100,12 @@ public:
 	float getMaxAmplitude() const { return m_maxAmplitude; }
 
 private:
+	world::Entity* m_owner;
 	resource::Proxy< render::Shader > m_shader;
 	resource::Proxy< render::ITexture > m_reflectionMap;
 	Ref< render::IndexBuffer > m_indexBuffer;
 	Ref< render::VertexBuffer > m_vertexBuffer;
 	render::Primitives m_primitives;
-	Transform m_transform;
 	Color4f m_shallowTint;
 	Color4f m_reflectionTint;
 	Color4f m_deepColor;
@@ -118,4 +119,4 @@ private:
 	}
 }
 
-#endif	// traktor_terrain_OceanEntity_H
+#endif	// traktor_terrain_OceanComponent_H

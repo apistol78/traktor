@@ -34,7 +34,7 @@
 #include "Model/ModelFormat.h"
 #include "Model/Operations/MergeModel.h"
 #include "Model/Operations/Triangulate.h"
-#include "Terrain/OceanEntityData.h"
+#include "Terrain/OceanComponentData.h"
 #include "Terrain/TerrainComponentData.h"
 #include "Terrain/Editor/TerrainAsset.h"
 #include "World/Editor/LayerEntityData.h"
@@ -148,10 +148,10 @@ void collectNavigationEntities(const ISerializable* object, RefArray< world::Ent
 		//{
 		//	outEntityData.push_back(terrainComponentData);
 		//}
-		else if (terrain::OceanEntityData* oceanEntityData = dynamic_type_cast< terrain::OceanEntityData* >(objectMember->get()))
-		{
-			outEntityData.push_back(oceanEntityData);
-		}
+		//else if (terrain::OceanEntityData* oceanEntityData = dynamic_type_cast< terrain::OceanEntityData* >(objectMember->get()))
+		//{
+		//	outEntityData.push_back(oceanEntityData);
+		//}
 		else if (world::LayerEntityData* layerEntityData = dynamic_type_cast< world::LayerEntityData* >(objectMember->get()))
 		{
 			if (layerEntityData->isDynamic() || !layerEntityData->isInclude())
@@ -475,11 +475,11 @@ bool NavMeshPipeline::buildOutput(
 
 			//	navModels.push_back(NavMeshSourceModel(navModel, Transform::identity()));
 			//}
-			else if (const terrain::OceanEntityData* oceanEntityData = dynamic_type_cast< const terrain::OceanEntityData* >(*i))
-			{
-				oceanHeight = max< float >(oceanHeight, oceanEntityData->getTransform().translation().y());
-				oceanClip = true;
-			}
+			//else if (const terrain::OceanEntityData* oceanEntityData = dynamic_type_cast< const terrain::OceanEntityData* >(*i))
+			//{
+			//	oceanHeight = max< float >(oceanHeight, oceanEntityData->getTransform().translation().y());
+			//	oceanClip = true;
+			//}
 		}
 	}
 

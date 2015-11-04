@@ -13,8 +13,9 @@
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
-#include "Terrain/OceanEntity.h"
-#include "Terrain/OceanEntityData.h"
+#include "Terrain/OceanComponent.h"
+#include "Terrain/OceanComponentData.h"
+#include "World/Entity.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldRenderView.h"
 
@@ -49,10 +50,10 @@ const int32_t c_gridCells = (c_gridSize - 1) * (c_gridSize - 1);
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.OceanEntity", OceanEntity, world::Entity)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.OceanComponent", OceanComponent, world::IEntityComponent)
 
-OceanEntity::OceanEntity()
-:	m_transform(Transform::identity())
+OceanComponent::OceanComponent(world::Entity* owner)
+:	m_owner(owner)
 ,	m_opacity(0.0f)
 ,	m_maxAmplitude(0.0f)
 ,	m_allowSSReflections(true)
@@ -68,7 +69,12 @@ OceanEntity::OceanEntity()
 	s_handleWavesB = render::getParameterHandle(L"WavesB");
 }
 
-bool OceanEntity::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const OceanEntityData& data)
+OceanComponent::~OceanComponent()
+{
+	destroy();
+}
+
+bool OceanComponent::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const OceanComponentData& data)
 {
 	std::vector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(OceanVertex, pos)));
@@ -149,8 +155,6 @@ bool OceanEntity::create(resource::IResourceManager* resourceManager, render::IR
 			return false;
 	}
 
-	m_transform = data.getTransform();
-
 	m_shallowTint = data.m_shallowTint;
 	m_reflectionTint = data.m_reflectionTint;
 	m_deepColor = data.m_deepColor;
@@ -168,7 +172,7 @@ bool OceanEntity::create(resource::IResourceManager* resourceManager, render::IR
 	return true;
 }
 
-void OceanEntity::destroy()
+void OceanComponent::destroy()
 {
 	safeDestroy(m_vertexBuffer);
 	safeDestroy(m_indexBuffer);
@@ -176,18 +180,34 @@ void OceanEntity::destroy()
 	m_shader.clear();
 }
 
-void OceanEntity::render(
+void OceanComponent::setTransform(const Transform& transform)
+{
+}
+
+Aabb3 OceanComponent::getBoundingBox() const
+{
+	return Aabb3();
+}
+
+void OceanComponent::update(const world::UpdateParams& update)
+{
+}
+
+void OceanComponent::render(
 	render::RenderContext* renderContext,
 	world::WorldRenderView& worldRenderView,
 	world::IWorldRenderPass& worldRenderPass,
 	bool reflectionEnable
 )
 {
-	const Matrix44& view = worldRenderView.getView();
+	Transform transform;
+	if (!m_owner->getTransform(transform))
+		return;
 
+	const Matrix44& view = worldRenderView.getView();
 	Matrix44 viewInv = view.inverse();
 	Vector4 eye = viewInv.translation().xyz1();
-	if (eye.y() < m_transform.translation().y())
+	if (eye.y() < transform.translation().y())
 		return;
 
 	worldRenderPass.setShaderTechnique(m_shader);
@@ -220,7 +240,7 @@ void OceanEntity::render(
 	worldRenderPass.setProgramParameters(
 		renderBlock->programParams,
 		m_shader->getCurrentPriority(),
-		m_transform.toMatrix44(),
+		transform.toMatrix44(),
 		Aabb3()
 	);
 
@@ -230,26 +250,6 @@ void OceanEntity::render(
 	renderBlock->programParams->endParameters(renderContext);
 
 	renderContext->draw(m_shader->getCurrentPriority(), renderBlock);
-}
-
-void OceanEntity::setTransform(const Transform& transform)
-{
-	m_transform = transform;
-}
-
-bool OceanEntity::getTransform(Transform& outTransform) const
-{
-	outTransform = m_transform;
-	return true;
-}
-
-Aabb3 OceanEntity::getBoundingBox() const
-{
-	return Aabb3();
-}
-
-void OceanEntity::update(const world::UpdateParams& update)
-{
 }
 
 	}

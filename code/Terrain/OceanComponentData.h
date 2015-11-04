@@ -1,10 +1,10 @@
-#ifndef traktor_terrain_OceanEntityData_H
-#define traktor_terrain_OceanEntityData_H
+#ifndef traktor_terrain_OceanComponentData_H
+#define traktor_terrain_OceanComponentData_H
 
 #include "Core/Math/Color4f.h"
 #include "Core/Math/Vector2.h"
 #include "Resource/Id.h"
-#include "World/EntityData.h"
+#include "World/IEntityComponentData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -28,17 +28,15 @@ class Shader;
 	namespace terrain
 	{
 
-class OceanEntity;
-
-/*! \brief Ocean entity data.
+/*! \brief Ocean component data.
  * \ingroup Terrain
  */
-class T_DLLCLASS OceanEntityData : public world::EntityData
+class T_DLLCLASS OceanComponentData : public world::IEntityComponentData
 {
 	T_RTTI_CLASS;
 
 public:
-	OceanEntityData();
+	OceanComponentData();
 
 	virtual void serialize(ISerializer& s);
 
@@ -47,7 +45,7 @@ public:
 	const resource::Id< render::ITexture >& getReflectionMap() const { return m_reflectionMap; }
 
 private:
-	friend class OceanEntity;
+	friend class OceanComponent;
 
 	struct Wave
 	{
@@ -76,4 +74,4 @@ private:
 	}
 }
 
-#endif	// traktor_terrain_OceanEntityData_H
+#endif	// traktor_terrain_OceanComponentData_H

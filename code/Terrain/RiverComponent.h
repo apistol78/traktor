@@ -1,9 +1,9 @@
-#ifndef traktor_terrain_RiverEntity_H
-#define traktor_terrain_RiverEntity_H
+#ifndef traktor_terrain_RiverComponent_H
+#define traktor_terrain_RiverComponent_H
 
 #include "Render/Types.h"
 #include "Resource/Proxy.h"
-#include "World/Entity.h"
+#include "World/IEntityComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -44,29 +44,31 @@ class WorldRenderView;
 	namespace terrain
 	{
 
-class RiverEntityData;
+class RiverComponentData;
 
-/*! \brief River entity.
+/*! \brief River component.
  * \ingroup Terrain
  */
-class T_DLLCLASS RiverEntity : public world::Entity
+class T_DLLCLASS RiverComponent : public world::IEntityComponent
 {
 	T_RTTI_CLASS;
 
 public:
-	RiverEntity();
+	bool create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const RiverComponentData& data);
 
-	bool create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const RiverEntityData& data);
+	virtual void destroy() T_OVERRIDE T_FINAL;
+
+	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
+
+	virtual Aabb3 getBoundingBox() const T_OVERRIDE T_FINAL;
+
+	virtual void update(const world::UpdateParams& update) T_OVERRIDE T_FINAL;
 
 	void render(
 		render::RenderContext* renderContext,
 		world::WorldRenderView& worldRenderView,
 		world::IWorldRenderPass& worldRenderPass
 	);
-
-	virtual Aabb3 getBoundingBox() const;
-
-	virtual void update(const world::UpdateParams& update);
 
 private:
 	Ref< render::VertexBuffer > m_vertexBuffer;
@@ -78,4 +80,4 @@ private:
 	}
 }
 
-#endif	// traktor_terrain_RiverEntity_H
+#endif	// traktor_terrain_RiverComponent_H
