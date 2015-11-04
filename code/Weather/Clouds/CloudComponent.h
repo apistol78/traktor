@@ -1,12 +1,12 @@
-#ifndef traktor_weather_CloudEntity_H
-#define traktor_weather_CloudEntity_H
+#ifndef traktor_weather_CloudComponent_H
+#define traktor_weather_CloudComponent_H
 
 #include "Core/RefArray.h"
 #include "Render/Shader.h"
 #include "Resource/Proxy.h"
 #include "Weather/Clouds/CloudParticleCluster.h"
 #include "Weather/Clouds/CloudParticleData.h"
-#include "World/Entity.h"
+#include "World/IEntityComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -34,6 +34,7 @@ class IndexBuffer;
 	namespace world
 	{
 
+class Entity;
 class IWorldRenderPass;
 class WorldRenderView;
 
@@ -44,12 +45,14 @@ class WorldRenderView;
 
 class CloudMask;
 
-class T_DLLCLASS CloudEntity : public world::Entity
+class T_DLLCLASS CloudComponent : public world::IEntityComponent
 {
 	T_RTTI_CLASS;
 
 public:
-	CloudEntity();
+	CloudComponent(world::Entity* owner);
+
+	virtual ~CloudComponent();
 
 	bool create(
 		render::IRenderSystem* renderSystem,
@@ -65,6 +68,14 @@ public:
 		const CloudParticleData& particleData
 	);
 
+	virtual void destroy() T_OVERRIDE T_FINAL;
+
+	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
+
+	virtual Aabb3 getBoundingBox() const T_OVERRIDE T_FINAL;
+
+	virtual void update(const world::UpdateParams& update) T_OVERRIDE T_FINAL;
+
 	void render(
 		render::RenderContext* renderContext,
 		world::WorldRenderView& worldRenderView,
@@ -72,15 +83,8 @@ public:
 		render::PrimitiveRenderer* primitiveRenderer
 	);
 
-	virtual void update(const world::UpdateParams& update);
-
-	virtual void setTransform(const Transform& transform);
-
-	virtual bool getTransform(Transform& outTransform) const;
-
-	virtual Aabb3 getBoundingBox() const;
-
 private:
+	world::Entity* m_owner;
 	resource::Proxy< render::Shader > m_particleShader;
 	resource::Proxy< render::ITexture > m_particleTexture;
 	resource::Proxy< render::Shader > m_impostorShader;
@@ -96,7 +100,6 @@ private:
 	float m_updateDirectionThreshold;
 	CloudParticleCluster m_cluster;
 	CloudParticleData m_particleData;
-	Transform m_transform;
 	Vector4 m_lastCameraPosition;
 	Vector4 m_lastCameraDirection;
 	float m_timeUntilUpdate;
@@ -114,4 +117,4 @@ private:
 	}
 }
 
-#endif	// traktor_weather_CloudEntity_H
+#endif	// traktor_weather_CloudComponent_H

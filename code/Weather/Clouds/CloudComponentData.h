@@ -1,9 +1,9 @@
-#ifndef traktor_weather_CloudEntityData_H
-#define traktor_weather_CloudEntityData_H
+#ifndef traktor_weather_CloudComponentData_H
+#define traktor_weather_CloudComponentData_H
 
 #include "Resource/Id.h"
 #include "Weather/Clouds/CloudParticleData.h"
-#include "World/EntityData.h"
+#include "World/IEntityComponentData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -31,20 +31,27 @@ class Shader;
 
 	}
 
+	namespace world
+	{
+
+class Entity;
+
+	}
+
 	namespace weather
 	{
 
-class CloudEntity;
+class CloudComponent;
 class CloudMask;
 
-class T_DLLCLASS CloudEntityData : public world::EntityData
+class T_DLLCLASS CloudComponentData : public world::IEntityComponentData
 {
 	T_RTTI_CLASS;
 
 public:
-	CloudEntityData();
+	CloudComponentData();
 
-	Ref< CloudEntity > createEntity(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
+	Ref< CloudComponent > createComponent(world::Entity* owner, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
 	virtual void serialize(ISerializer& s);
 
@@ -72,4 +79,4 @@ private:
 	}
 }
 
-#endif	// traktor_weather_CloudEntityData_H
+#endif	// traktor_weather_CloudComponentData_H
