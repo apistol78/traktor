@@ -1,10 +1,10 @@
 #include "Editor/IPipelineDepends.h"
 #include "Terrain/Editor/TerrainEntityPipeline.h"
 #include "Terrain/ITerrainLayerData.h"
-#include "Terrain/TerrainComponentData.h"
-#include "Terrain/OceanEntityData.h"
-#include "Terrain/RiverEntityData.h"
+#include "Terrain/OceanComponentData.h"
+#include "Terrain/RiverComponentData.h"
 #include "Terrain/RubbleLayerData.h"
+#include "Terrain/TerrainComponentData.h"
 #include "Terrain/UndergrowthLayerData.h"
 
 namespace traktor
@@ -17,9 +17,9 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainEntityPipeline", 0, Terr
 TypeInfoSet TerrainEntityPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
+	typeSet.insert(&type_of< OceanComponentData >());
+	typeSet.insert(&type_of< RiverComponentData >());
 	typeSet.insert(&type_of< TerrainComponentData >());
-	typeSet.insert(&type_of< OceanEntityData >());
-	typeSet.insert(&type_of< RiverEntityData >());
 	return typeSet;
 }
 
@@ -31,7 +31,16 @@ bool TerrainEntityPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	if (const TerrainComponentData* terrainComponentData = dynamic_type_cast< const TerrainComponentData* >(sourceAsset))
+	if (const OceanComponentData* oceanComponentData = dynamic_type_cast< const OceanComponentData* >(sourceAsset))
+	{
+		pipelineDepends->addDependency(oceanComponentData->getShader(), editor::PdfBuild | editor::PdfResource);
+		pipelineDepends->addDependency(oceanComponentData->getReflectionMap(), editor::PdfBuild | editor::PdfResource);
+	}
+	else if (const RiverComponentData* riverComponentData = dynamic_type_cast< const RiverComponentData* >(sourceAsset))
+	{
+		pipelineDepends->addDependency(riverComponentData->getShader(), editor::PdfBuild | editor::PdfResource);
+	}
+	else if (const TerrainComponentData* terrainComponentData = dynamic_type_cast< const TerrainComponentData* >(sourceAsset))
 	{
 		pipelineDepends->addDependency(terrainComponentData->getTerrain(), editor::PdfBuild | editor::PdfResource);
 
@@ -51,15 +60,6 @@ bool TerrainEntityPipeline::buildDependencies(
 				}
 			}
 		}
-	}
-	else if (const OceanEntityData* oceanEntityData = dynamic_type_cast< const OceanEntityData* >(sourceAsset))
-	{
-		pipelineDepends->addDependency(oceanEntityData->getShader(), editor::PdfBuild | editor::PdfResource);
-		pipelineDepends->addDependency(oceanEntityData->getReflectionMap(), editor::PdfBuild | editor::PdfResource);
-	}
-	else if (const RiverEntityData* riverEntityData = dynamic_type_cast< const RiverEntityData* >(sourceAsset))
-	{
-		pipelineDepends->addDependency(riverEntityData->getShader(), editor::PdfBuild | editor::PdfResource);
 	}
 	return true;
 }

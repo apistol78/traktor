@@ -1,10 +1,10 @@
-#ifndef traktor_terrain_RiverEntityData_H
-#define traktor_terrain_RiverEntityData_H
+#ifndef traktor_terrain_RiverComponentData_H
+#define traktor_terrain_RiverComponentData_H
 
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Vector4.h"
 #include "Resource/Id.h"
-#include "World/EntityData.h"
+#include "World/IEntityComponentData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -26,10 +26,10 @@ class Shader;
 	namespace terrain
 	{
 
-/*! \brief River entity data.
+/*! \brief River component data.
  * \ingroup Terrain
  */
-class T_DLLCLASS RiverEntityData : public world::EntityData
+class T_DLLCLASS RiverComponentData : public world::IEntityComponentData
 {
 	T_RTTI_CLASS;
 
@@ -45,7 +45,7 @@ public:
 		void serialize(ISerializer& s);
 	};
 
-	RiverEntityData();
+	RiverComponentData();
 
 	virtual void serialize(ISerializer& s);
 
@@ -64,4 +64,4 @@ private:
 	}
 }
 
-#endif	// traktor_terrain_RiverEntityData_H
+#endif	// traktor_terrain_RiverComponentData_H
