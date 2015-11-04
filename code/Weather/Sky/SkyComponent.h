@@ -1,9 +1,9 @@
-#ifndef traktor_weather_SkyEntity_H
-#define traktor_weather_SkyEntity_H
+#ifndef traktor_weather_SkyComponent_H
+#define traktor_weather_SkyComponent_H
 
 #include "Render/Shader.h"
 #include "Resource/Proxy.h"
-#include "World/Entity.h"
+#include "World/IEntityComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -35,12 +35,12 @@ class IndexBuffer;
 	namespace weather
 	{
 
-class T_DLLCLASS SkyEntity : public world::Entity
+class T_DLLCLASS SkyComponent : public world::IEntityComponent
 {
 	T_RTTI_CLASS;
 
 public:
-	SkyEntity(
+	SkyComponent(
 		render::VertexBuffer* vertexBuffer,
 		render::IndexBuffer* indexBuffer,
 		const render::Primitives& primitives,
@@ -49,6 +49,16 @@ public:
 		float offset
 	);
 
+	virtual ~SkyComponent();
+
+	virtual void destroy() T_OVERRIDE T_FINAL;
+
+	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
+
+	virtual Aabb3 getBoundingBox() const T_OVERRIDE T_FINAL;
+
+	virtual void update(const world::UpdateParams& update) T_OVERRIDE T_FINAL;
+
 	void setSunDirection(const Vector4& sunDirection);
 
 	void render(
@@ -56,10 +66,6 @@ public:
 		world::WorldRenderView& worldRenderView,
 		world::IWorldRenderPass& worldRenderPass
 	);
-
-	virtual Aabb3 getBoundingBox() const;
-
-	virtual void update(const world::UpdateParams& update);
 
 private:
 	Ref< render::VertexBuffer > m_vertexBuffer;
@@ -73,4 +79,4 @@ private:
 	}
 }
 
-#endif	// traktor_weather_SkyEntity_H
+#endif	// traktor_weather_SkyComponent_H

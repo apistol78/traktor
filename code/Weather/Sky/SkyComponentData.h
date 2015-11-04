@@ -1,9 +1,9 @@
-#ifndef traktor_weather_SkyEntityData_H
-#define traktor_weather_SkyEntityData_H
+#ifndef traktor_weather_SkyComponentData_H
+#define traktor_weather_SkyComponentData_H
 
 #include "Core/Math/Vector4.h"
 #include "Resource/Id.h"
-#include "World/EntityData.h"
+#include "World/IEntityComponentData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -33,18 +33,18 @@ class Shader;
 	namespace weather
 	{
 
-class SkyEntity;
+class SkyComponent;
 
-class T_DLLCLASS SkyEntityData : public world::EntityData
+class T_DLLCLASS SkyComponentData : public world::IEntityComponentData
 {
 	T_RTTI_CLASS;
 
 public:
-	SkyEntityData();
+	SkyComponentData();
 
-	Ref< SkyEntity > createEntity(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
+	Ref< SkyComponent > createComponent(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 
@@ -57,4 +57,4 @@ private:
 	}
 }
 
-#endif	// traktor_weather_SkyEntityData_H
+#endif	// traktor_weather_SkyComponentData_H

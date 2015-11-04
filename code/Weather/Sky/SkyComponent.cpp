@@ -1,6 +1,9 @@
 #include <limits>
+#include "Core/Misc/SafeDestroy.h"
+#include "Render/IndexBuffer.h"
+#include "Render/VertexBuffer.h"
 #include "Render/Context/RenderContext.h"
-#include "Weather/Sky/SkyEntity.h"
+#include "Weather/Sky/SkyComponent.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldRenderView.h"
 
@@ -17,9 +20,9 @@ render::handle_t s_handleSunDirection;
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.SkyEntity", SkyEntity, world::Entity)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.SkyComponent", SkyComponent, world::IEntityComponent)
 
-SkyEntity::SkyEntity(
+SkyComponent::SkyComponent(
 	render::VertexBuffer* vertexBuffer,
 	render::IndexBuffer* indexBuffer,
 	const render::Primitives& primitives,
@@ -39,12 +42,38 @@ SkyEntity::SkyEntity(
 	s_handleSunDirection = render::getParameterHandle(L"SunDirection");
 }
 
-void SkyEntity::setSunDirection(const Vector4& sunDirection)
+SkyComponent::~SkyComponent()
+{
+	destroy();
+}
+
+void SkyComponent::destroy()
+{
+	safeDestroy(m_indexBuffer);
+	safeDestroy(m_vertexBuffer);
+}
+
+void SkyComponent::setTransform(const Transform& transform)
+{
+}
+
+Aabb3 SkyComponent::getBoundingBox() const
+{
+	const float c_radius = 1e4f;
+	return Aabb3(Vector4(-c_radius, -c_radius, -c_radius, 1.0f), Vector4(c_radius, c_radius, c_radius, 1.0f));
+}
+
+void SkyComponent::update(const world::UpdateParams& update)
+{
+}
+
+
+void SkyComponent::setSunDirection(const Vector4& sunDirection)
 {
 	m_sunDirection = sunDirection;
 }
 
-void SkyEntity::render(
+void SkyComponent::render(
 	render::RenderContext* renderContext,
 	world::WorldRenderView& worldRenderView,
 	world::IWorldRenderPass& worldRenderPass
@@ -78,16 +107,6 @@ void SkyEntity::render(
 	renderBlock->programParams->endParameters(renderContext);
 
 	renderContext->draw(m_shader->getCurrentPriority(), renderBlock);
-}
-
-Aabb3 SkyEntity::getBoundingBox() const
-{
-	const float c_radius = 1e4f;
-	return Aabb3(Vector4(-c_radius, -c_radius, -c_radius, 1.0f), Vector4(c_radius, c_radius, c_radius, 1.0f));
-}
-
-void SkyEntity::update(const world::UpdateParams& update)
-{
 }
 
 	}
