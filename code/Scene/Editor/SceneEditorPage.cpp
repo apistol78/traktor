@@ -825,12 +825,6 @@ void SceneEditorPage::updateScene()
 		// Check if any scene settings has changed.
 		bool needUpdate = false;
 
-		if (m_currentGuid != sceneAsset->getImageProcessSettings(world::QuHigh))
-		{
-			needUpdate = true;
-			m_currentGuid = sceneAsset->getImageProcessSettings(world::QuHigh);
-		}
-
 		DeepHash hash(sceneAsset->getWorldRenderSettings());
 		if (hash != m_currentHash)
 		{

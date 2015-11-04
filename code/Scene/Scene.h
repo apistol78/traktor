@@ -4,7 +4,6 @@
 #include "Core/Object.h"
 #include "Core/Containers/SmallMap.h"
 #include "Render/Types.h"
-#include "Render/ImageProcess/ImageProcessSettings.h"
 #include "Resource/Proxy.h"
 #include "World/WorldTypes.h"
 
@@ -58,7 +57,6 @@ public:
 		world::IEntitySchema* entitySchema,
 		world::Entity* rootEntity,
 		world::WorldRenderSettings* worldRenderSettings,
-		const resource::Proxy< render::ImageProcessSettings > imageProcessSettings[world::QuLast],
 		const SmallMap< render::handle_t, resource::Proxy< render::ITexture > >& imageProcessParams
 	);
 
@@ -78,8 +76,6 @@ public:
 
 	world::WorldRenderSettings* getWorldRenderSettings() const;
 
-	const resource::Proxy< render::ImageProcessSettings >& getImageProcessSettings(world::Quality quality) const;
-
 	const SmallMap< render::handle_t, resource::Proxy< render::ITexture > >& getImageProcessParams() const;
 
 private:
@@ -87,7 +83,6 @@ private:
 	Ref< world::Entity > m_rootEntity;
 	Ref< ISceneController > m_controller;
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
-	resource::Proxy< render::ImageProcessSettings > m_imageProcessSettings[world::QuLast];
 	SmallMap< render::handle_t, resource::Proxy< render::ITexture > > m_imageProcessParams;
 };
 

@@ -171,10 +171,10 @@ void CameraRenderControl::updateWorldRenderer()
 	wcd.shadowsQuality = m_shadowQuality;
 	wcd.ambientOcclusionQuality = m_ambientOcclusionQuality;
 	wcd.antiAliasQuality = m_antiAliasQuality;
+	wcd.imageProcessQuality = m_imageProcessQuality;
 	wcd.multiSample = m_multiSample;
 	wcd.frameCount = 1;
 	wcd.allTargetsPersistent = true;
-	wcd.imageProcessSettings = sceneInstance->getImageProcessSettings(m_imageProcessQuality);
 
 	if (worldRenderer->create(
 		m_context->getResourceManager(),

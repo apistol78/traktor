@@ -64,10 +64,7 @@ public:
 
 	virtual spray::IFeedbackManager* getFeedbackManager() T_OVERRIDE T_FINAL;
 
-	virtual Ref< world::IWorldRenderer > createWorldRenderer(
-		const world::WorldRenderSettings* worldRenderSettings,
-		const render::ImageProcessSettings* imageProcessSettings
-	) T_OVERRIDE T_FINAL;
+	virtual Ref< world::IWorldRenderer > createWorldRenderer(const world::WorldRenderSettings* worldRenderSettings) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< world::IEntityBuilder > m_entityBuilder;
@@ -82,6 +79,7 @@ private:
 	world::Quality m_shadowQuality;
 	world::Quality m_ambientOcclusionQuality;
 	world::Quality m_antiAliasQuality;
+	world::Quality m_imageProcessQuality;
 	world::Quality m_particleQuality;
 	world::Quality m_terrainQuality;
 	world::Quality m_oceanQuality;

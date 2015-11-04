@@ -18,7 +18,7 @@ namespace traktor
 	namespace scene
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", 11, ScenePipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", 12, ScenePipeline, editor::IPipeline)
 
 ScenePipeline::ScenePipeline()
 :	m_targetEditor(false)
@@ -64,9 +64,6 @@ bool ScenePipeline::buildDependencies(
 {
 	Ref< const SceneAsset > sceneAsset = checked_type_cast< const SceneAsset* >(sourceAsset);
 
-	for (int32_t quality = 0; quality < world::QuLast; ++quality)
-		pipelineDepends->addDependency(sceneAsset->getImageProcessSettings((world::Quality)quality), editor::PdfBuild | editor::PdfResource);
-
 	const SmallMap< std::wstring, resource::Id< render::ITexture > >& params = sceneAsset->getImageProcessParams();
 	for (SmallMap< std::wstring, resource::Id< render::ITexture > >::const_iterator i = params.begin(); i != params.end(); ++i)
 		pipelineDepends->addDependency(i->second, editor::PdfBuild | editor::PdfResource);
@@ -88,6 +85,12 @@ bool ScenePipeline::buildDependencies(
 				pipelineDepends->addDependency(wrs->shadowSettings[i].maskProject, editor::PdfBuild | editor::PdfResource);
 				pipelineDepends->addDependency(wrs->shadowSettings[i].maskFilter, editor::PdfBuild | editor::PdfResource);
 			}
+		}
+		if (!m_suppressImageProcess)
+		{
+			for (int32_t i = 0; i < sizeof_array(wrs->imageProcess); ++i)
+				pipelineDepends->addDependency(wrs->imageProcess[i], editor::PdfBuild | editor::PdfResource);
+
 		}
 	}
 
@@ -138,10 +141,6 @@ bool ScenePipeline::buildOutput(
 
 	Ref< SceneResource > sceneResource = new SceneResource();
 	sceneResource->setWorldRenderSettings(sceneAsset->getWorldRenderSettings());
-
-	for (int32_t i = 0; i < world::QuLast; ++i)
-		sceneResource->setImageProcessSettings((world::Quality)i, sceneAsset->getImageProcessSettings((world::Quality)i));
-
 	sceneResource->setImageProcessParams(sceneAsset->getImageProcessParams());
 	sceneResource->setEntityData(groupEntityData);
 	sceneResource->setControllerData(controllerData);
@@ -156,11 +155,11 @@ bool ScenePipeline::buildOutput(
 		sceneResource->getWorldRenderSettings()->depthPassEnabled = false;
 		log::info << L"Depth pass suppressed" << Endl;
 	}
-	if (m_suppressImageProcess)
+
+	for (uint32_t i = 0; i < world::QuLast; ++i)
 	{
-		for (int32_t i = 0; i < world::QuLast; ++i)
-			sceneResource->setImageProcessSettings((world::Quality)i, resource::Id< render::ImageProcessSettings >());
-		log::info << L"Post processing suppressed" << Endl;
+		if (m_suppressImageProcess)
+			sceneResource->getWorldRenderSettings()->imageProcess[i] = resource::Id< render::ImageProcessSettings >();
 	}
 
 	for (uint32_t i = 0; i < world::QuLast; ++i)

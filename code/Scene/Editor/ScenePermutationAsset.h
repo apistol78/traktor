@@ -16,13 +16,6 @@
 
 namespace traktor
 {
-	namespace render
-	{
-
-class ImageProcessSettings;
-
-	}
-
 	namespace world
 	{
 
@@ -46,7 +39,6 @@ private:
 	Guid m_scene;
 	std::list< std::wstring > m_includeLayers;
 	Ref< world::WorldRenderSettings > m_overrideWorldRenderSettings;
-	resource::Id< render::ImageProcessSettings > m_overrideImageProcessSettings[world::QuLast];
 	SmallMap< std::wstring, resource::Id< render::ITexture > > m_overrideImageProcessParams;
 };
 

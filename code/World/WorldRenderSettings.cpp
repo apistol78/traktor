@@ -33,9 +33,18 @@ const wchar_t* c_ShadowSettings_elementNames[] =
 	L"ultra"
 };
 
+const wchar_t* c_ImageProcess_elementNames[] =
+{
+	L"disabled",
+	L"low",
+	L"medium",
+	L"high",
+	L"ultra"
+};
+
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 21, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 22, WorldRenderSettings, ISerializable)
 
 WorldRenderSettings::WorldRenderSettings()
 :	viewNearZ(1.0f)
@@ -81,6 +90,9 @@ void WorldRenderSettings::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 20)
 		s >> resource::Member< render::ITexture >(L"reflectionMap", reflectionMap);
+
+	if (s.getVersion() >= 22)
+		s >> MemberStaticArray< resource::Id< render::ImageProcessSettings >, sizeof_array(imageProcess), resource::Member< render::ImageProcessSettings > >(L"imageProcess", imageProcess, c_ImageProcess_elementNames);
 }
 
 WorldRenderSettings::ShadowSettings::ShadowSettings()

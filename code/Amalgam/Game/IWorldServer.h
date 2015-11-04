@@ -13,13 +13,6 @@
 
 namespace traktor
 {
-	namespace render
-	{
-
-class ImageProcessSettings;
-
-	}
-
 	namespace spray
 	{
 
@@ -69,10 +62,7 @@ public:
 
 	virtual spray::IFeedbackManager* getFeedbackManager() = 0;
 
-	virtual Ref< world::IWorldRenderer > createWorldRenderer(
-		const world::WorldRenderSettings* worldRenderSettings,
-		const render::ImageProcessSettings* imageProcessSettings
-	) = 0;
+	virtual Ref< world::IWorldRenderer > createWorldRenderer(const world::WorldRenderSettings* worldRenderSettings) = 0;
 };
 
 	}

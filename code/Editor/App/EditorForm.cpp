@@ -1928,8 +1928,6 @@ void EditorForm::saveCurrentDocument()
 			);
 		}
 	}
-
-	m_dataBaseView->updateModified();
 }
 
 void EditorForm::saveAllDocuments()
@@ -1974,8 +1972,6 @@ void EditorForm::saveAllDocuments()
 	}
 
 	checkModified();
-
-	m_dataBaseView->updateModified();
 }
 
 void EditorForm::closeCurrentEditor()

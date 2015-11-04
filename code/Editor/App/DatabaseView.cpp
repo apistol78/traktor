@@ -368,7 +368,6 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_treeDatabase->addImage(ui::Bitmap::load(c_ResourceTypes, sizeof(c_ResourceTypes), L"png"), 23);
 	m_treeDatabase->addImage(ui::Bitmap::load(c_ResourceTypesHidden, sizeof(c_ResourceTypesHidden), L"png"), 23);
 	m_treeDatabase->addEventHandler< ui::custom::TreeViewItemActivateEvent >(this, &DatabaseView::eventInstanceActivate);
-	m_treeDatabase->addEventHandler< ui::custom::TreeViewItemStateChangeEvent >(this, &DatabaseView::eventInstanceStateChanged);
 	m_treeDatabase->addEventHandler< ui::MouseButtonDownEvent >(this, &DatabaseView::eventInstanceButtonDown);
 	m_treeDatabase->addEventHandler< ui::custom::TreeViewContentChangeEvent >(this, &DatabaseView::eventInstanceRenamed);
 	m_treeDatabase->addEventHandler< ui::custom::TreeViewDragEvent >(this, &DatabaseView::eventInstanceDrag);
@@ -599,28 +598,6 @@ void DatabaseView::updateView()
 		setEnable(false);
 
 	m_treeDatabase->applyState(m_treeState);
-
-	updateModified();
-}
-
-void DatabaseView::updateModified()
-{
-	RefArray< ui::custom::TreeViewItem > items;
-	m_treeDatabase->getItems(items, ui::custom::TreeView::GfDescendants | ui::custom::TreeView::GfExpandedOnly);
-
-	for (RefArray< ui::custom::TreeViewItem >::iterator i = items.begin(); i != items.end(); ++i)
-	{
-		const db::Instance* instance = (*i)->getData< db::Instance >(L"INSTANCE");
-		if (instance)
-		{
-			if ((instance->getFlags() & db::IfModified) != 0)
-				(*i)->setTextOutlineColor(Color4ub(250, 140, 140, 255));
-			else
-				(*i)->setTextOutlineColor(Color4ub(0, 0, 0, 0));
-		}
-	}
-
-	m_treeDatabase->update();
 }
 
 bool DatabaseView::highlight(const db::Instance* instance)
@@ -1313,12 +1290,6 @@ void DatabaseView::eventInstanceActivate(ui::custom::TreeViewItemActivateEvent* 
 		return;
 
 	m_editor->openEditor(instance);
-}
-
-void DatabaseView::eventInstanceStateChanged(ui::custom::TreeViewItemStateChangeEvent* event)
-{
-	if (event->getItem()->isExpanded())
-		updateModified();
 }
 
 void DatabaseView::eventInstanceButtonDown(ui::MouseButtonDownEvent* event)

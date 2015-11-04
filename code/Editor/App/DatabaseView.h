@@ -70,8 +70,6 @@ public:
 
 	void updateView();
 
-	void updateModified();
-
 	bool highlight(const db::Instance* instance);
 
 	bool handleCommand(const ui::Command& command);
@@ -114,8 +112,6 @@ private:
 	void eventTimer(ui::TimerEvent* event);
 
 	void eventInstanceActivate(ui::custom::TreeViewItemActivateEvent* event);
-
-	void eventInstanceStateChanged(ui::custom::TreeViewItemStateChangeEvent* event);
 
 	void eventInstanceButtonDown(ui::MouseButtonDownEvent* event);
 

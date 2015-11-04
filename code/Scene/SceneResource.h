@@ -67,10 +67,6 @@ public:
 
 	Ref< world::WorldRenderSettings > getWorldRenderSettings() const;
 
-	void setImageProcessSettings(world::Quality quality, const resource::Id< render::ImageProcessSettings >& imageProcess);
-
-	const resource::Id< render::ImageProcessSettings >& getImageProcessSettings(world::Quality quality) const;
-
 	void setImageProcessParams(const SmallMap< std::wstring, resource::Id< render::ITexture > >& imageProcessParams);
 
 	const SmallMap< std::wstring, resource::Id< render::ITexture > >& getImageProcessParams() const;
@@ -87,7 +83,6 @@ public:
 
 private:
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
-	resource::Id< render::ImageProcessSettings > m_imageProcessSettings[world::QuLast];
 	SmallMap< std::wstring, resource::Id< render::ITexture > > m_imageProcessParams;
 	Ref< world::EntityData > m_entityData;
 	Ref< ISceneControllerData > m_controllerData;
