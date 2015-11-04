@@ -480,7 +480,7 @@ bool WorldRendererForward::create(
 	if (m_settings.depthPassEnabled || m_shadowsQuality > QuDisabled)
 	{
 		for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
-			i->depth = new WorldContext(desc.entityRenderers, 0);
+			i->depth = new WorldContext(desc.entityRenderers);
 	}
 
 	// Allocate "shadow" contexts for each slice.
@@ -489,13 +489,13 @@ bool WorldRendererForward::create(
 		for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
 		{
 			for (int32_t j = 0; j < m_shadowSettings.cascadingSlices; ++j)
-				i->slice[j].shadow = new WorldContext(desc.entityRenderers, 0);
+				i->slice[j].shadow = new WorldContext(desc.entityRenderers);
 		}
 	}
 
 	// Allocate "visual" contexts.
 	for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
-		i->visual = new WorldContext(desc.entityRenderers, 0);
+		i->visual = new WorldContext(desc.entityRenderers);
 
 	// Allocate "global" parameter context; as it's reset for each render
 	// call this can be fairly small.

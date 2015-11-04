@@ -117,13 +117,6 @@ bool AnimatedMeshEntity::supportTechnique(render::handle_t technique) const
 	return m_mesh->supportTechnique(technique);
 }
 
-void AnimatedMeshEntity::precull(
-	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView
-)
-{
-}
-
 void AnimatedMeshEntity::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,

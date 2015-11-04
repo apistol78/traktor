@@ -11,18 +11,16 @@
 #include "Render/Mesh/SystemMeshFactory.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
-#include "World/SwHiZ/OccluderMeshReader.h"
 
 namespace traktor
 {
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.InstanceMeshResource", 4, InstanceMeshResource, IMeshResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.InstanceMeshResource", 5, InstanceMeshResource, IMeshResource)
 
 InstanceMeshResource::InstanceMeshResource()
 :	m_haveRenderMesh(false)
-,	m_haveOccluderMesh(false)
 {
 }
 
@@ -36,16 +34,6 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 {
 	Ref< world::OccluderMesh > occluderMesh;
 	Ref< render::Mesh > renderMesh;
-
-	if (m_haveOccluderMesh)
-	{
-		occluderMesh = world::OccluderMeshReader().read(dataStream);
-		if (!occluderMesh)
-		{
-			log::error << L"Instance mesh create failed; unable to read occluder mesh" << Endl;
-			return 0;
-		}
-	}
 
 #if !T_USE_LEGACY_INSTANCING
 
@@ -204,8 +192,7 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 
 void InstanceMeshResource::serialize(ISerializer& s)
 {
-	T_ASSERT_M(s.getVersion() >= 4, L"Incorrect version");
-	s >> Member< bool >(L"haveOccluderMesh", m_haveOccluderMesh);
+	T_ASSERT_M(s.getVersion() >= 5, L"Incorrect version");
 	s >> Member< bool >(L"haveRenderMesh", m_haveRenderMesh);
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberStlMap<

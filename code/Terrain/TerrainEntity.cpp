@@ -15,7 +15,6 @@
 #include "Terrain/Terrain.h"
 #include "Terrain/TerrainEntity.h"
 #include "Terrain/TerrainSurfaceCache.h"
-#include "World/IWorldCulling.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldContext.h"
 #include "World/WorldRenderView.h"

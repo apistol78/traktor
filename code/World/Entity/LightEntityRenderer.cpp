@@ -14,7 +14,7 @@ namespace traktor
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.LightEntityRenderer", LightEntityRenderer, IEntityRenderer)
 
-const TypeInfoSet LightEntityRenderer::getEntityTypes() const
+const TypeInfoSet LightEntityRenderer::getRenderableTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< DirectionalLightEntity >());
@@ -24,25 +24,17 @@ const TypeInfoSet LightEntityRenderer::getEntityTypes() const
 	return typeSet;
 }
 
-void LightEntityRenderer::precull(
-	WorldContext& worldContext,
-	WorldRenderView& worldRenderView,
-	Entity* entity
-)
-{
-}
-
 void LightEntityRenderer::render(
 	WorldContext& worldContext,
 	WorldRenderView& worldRenderView,
 	IWorldRenderPass& worldRenderPass,
-	Entity* entity
+	Object* renderable
 )
 {
 	Light light;
 
 	// Note: Even though we modify the light here the shadow map isn't affected until next frame.
-	if (const DirectionalLightEntity* directionalLightEntity = dynamic_type_cast< const DirectionalLightEntity* >(entity))
+	if (const DirectionalLightEntity* directionalLightEntity = dynamic_type_cast< const DirectionalLightEntity* >(renderable))
 	{
 		Transform transform;
 		directionalLightEntity->getTransform(transform);
@@ -60,7 +52,7 @@ void LightEntityRenderer::render(
 
 		worldRenderView.addLight(light);
 	}
-	else if (const PointLightEntity* pointLightEntity = dynamic_type_cast< const PointLightEntity* >(entity))
+	else if (const PointLightEntity* pointLightEntity = dynamic_type_cast< const PointLightEntity* >(renderable))
 	{
 		Transform transform;
 		pointLightEntity->getTransform(transform);
@@ -90,7 +82,7 @@ void LightEntityRenderer::render(
 
 		worldRenderView.addLight(light);
 	}
-	else if (const SpotLightEntity* spotLightEntity = dynamic_type_cast< const SpotLightEntity* >(entity))
+	else if (const SpotLightEntity* spotLightEntity = dynamic_type_cast< const SpotLightEntity* >(renderable))
 	{
 		Transform transform;
 		spotLightEntity->getTransform(transform);
@@ -112,7 +104,7 @@ void LightEntityRenderer::render(
 
 		worldRenderView.addLight(light);
 	}
-	else if (const GodRayEntity* godRayEntity = dynamic_type_cast< const GodRayEntity* >(entity))
+	else if (const GodRayEntity* godRayEntity = dynamic_type_cast< const GodRayEntity* >(renderable))
 	{
 		Transform transform;
 		godRayEntity->getTransform(transform);

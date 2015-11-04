@@ -9,14 +9,13 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 11, MeshAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 12, MeshAsset, editor::Asset)
 
 MeshAsset::MeshAsset()
 :	m_meshType(MtInvalid)
 ,	m_scaleFactor(1.0f)
 ,	m_bakeOcclusion(false)
 ,	m_cullDistantFaces(false)
-,	m_generateOccluder(false)
 ,	m_lodSteps(8)
 ,	m_lodMaxDistance(100.0f)
 ,	m_lodCullDistance(200.0f)
@@ -61,8 +60,11 @@ void MeshAsset::serialize(ISerializer& s)
 	if (s.getVersion() >= 3)
 		s >> Member< bool >(L"cullDistantFaces", m_cullDistantFaces);
 
-	if (s.getVersion() >= 5)
-		s >> Member< bool >(L"generateOccluder", m_generateOccluder);
+	if (s.getVersion() >= 5 && s.getVersion() < 12)
+	{
+		bool generateOccluder = false;
+		s >> Member< bool >(L"generateOccluder", generateOccluder);
+	}
 
 	if (s.getVersion() >= 10)
 	{
@@ -71,8 +73,11 @@ void MeshAsset::serialize(ISerializer& s)
 		s >> Member< float >(L"lodCullDistance", m_lodCullDistance);
 	}
 
-	if (s.getVersion() >= 8)
-		s >> Member< Path >(L"occluderModel", m_occluderModel);
+	if (s.getVersion() >= 8 && s.getVersion() < 12)
+	{
+		Path occluderModel;
+		s >> Member< Path >(L"occluderModel", occluderModel);
+	}
 
 	if (s.getVersion() >= 7 && s.getVersion() <= 8)
 	{

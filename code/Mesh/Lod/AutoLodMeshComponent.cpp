@@ -1,7 +1,6 @@
 #include "Mesh/MeshCulling.h"
 #include "Mesh/Lod/AutoLodMesh.h"
 #include "Mesh/Lod/AutoLodMeshComponent.h"
-#include "World/IWorldCulling.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldContext.h"
 #include "World/WorldRenderView.h"
@@ -31,8 +30,10 @@ Aabb3 AutoLodMeshComponent::getBoundingBox() const
 	return m_mesh->getBoundingBox(m_lodDistance);
 }
 
-void AutoLodMeshComponent::render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, world::IWorldRenderPass& worldRenderPass, const Transform& transform)
+void AutoLodMeshComponent::render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, world::IWorldRenderPass& worldRenderPass)
 {
+	Transform transform = m_transform.get(worldRenderView.getInterval());
+	
 	const Vector4& eyePosition = worldRenderView.getEyePosition();
 	m_lodDistance = (transform.translation() - eyePosition).length();
 
@@ -40,9 +41,6 @@ void AutoLodMeshComponent::render(world::WorldContext& worldContext, world::Worl
 		return;
 
 	Aabb3 boundingBox = m_mesh->getBoundingBox(m_lodDistance);
-
-	if (worldContext.getCulling() && !worldContext.getCulling()->queryAabb(boundingBox, transform))
-		return;
 
 	float distance = 0.0f;
 	if (!isMeshVisible(

@@ -8,29 +8,21 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.ClothEntityRenderer", ClothEntityRenderer, world::IEntityRenderer)
 
-const TypeInfoSet ClothEntityRenderer::getEntityTypes() const
+const TypeInfoSet ClothEntityRenderer::getRenderableTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< ClothEntity >());
 	return typeSet;
 }
 
-void ClothEntityRenderer::precull(
-	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
-	world::Entity* entity
-)
-{
-}
-
 void ClothEntityRenderer::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
 	world::IWorldRenderPass& worldRenderPass,
-	world::Entity* entity
+	Object* renderable
 )
 {
-	if (ClothEntity* clothEntity = dynamic_type_cast< ClothEntity* >(entity))
+	if (ClothEntity* clothEntity = dynamic_type_cast< ClothEntity* >(renderable))
 		clothEntity->render(worldContext, worldRenderView, worldRenderPass);
 }
 

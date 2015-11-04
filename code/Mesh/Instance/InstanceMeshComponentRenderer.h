@@ -1,11 +1,14 @@
-#ifndef traktor_animation_BoidsEntityRenderer_H
-#define traktor_animation_BoidsEntityRenderer_H
+#ifndef traktor_mesh_InstanceMeshComponentRenderer_H
+#define traktor_mesh_InstanceMeshComponentRenderer_H
 
+#include "Core/Containers/SmallMap.h"
+#include "Mesh/Instance/InstanceMesh.h"
+#include "Mesh/Instance/InstanceMeshData.h"
 #include "World/IEntityRenderer.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_ANIMATION_EXPORT)
+#if defined(T_MESH_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
@@ -13,13 +16,10 @@
 
 namespace traktor
 {
-	namespace animation
+	namespace mesh
 	{
 
-/*! \brief Boids entity renderer.
- * \ingroup Animation
- */
-class T_DLLCLASS BoidsEntityRenderer : public world::IEntityRenderer
+class T_DLLCLASS InstanceMeshComponentRenderer : public world::IEntityRenderer
 {
 	T_RTTI_CLASS;
 
@@ -38,9 +38,12 @@ public:
 		world::WorldRenderView& worldRenderView,
 		world::IWorldRenderPass& worldRenderPass
 	) T_OVERRIDE T_FINAL;
+
+private:
+	SmallMap< InstanceMesh*, AlignedVector< InstanceMesh::instance_distance_t > > m_meshInstances;
 };
 
 	}
 }
 
-#endif	// traktor_animation_BoidsEntityRenderer_H
+#endif	// traktor_mesh_InstanceMeshComponentRenderer_H

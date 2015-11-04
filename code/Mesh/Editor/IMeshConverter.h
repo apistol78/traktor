@@ -34,7 +34,6 @@ public:
 	virtual bool convert(
 		const MeshAsset* meshAsset,
 		const RefArray< model::Model >& models,
-		const model::Model* occluder,
 		const Guid& materialGuid,
 		const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
 		const std::vector< render::VertexElement >& vertexElements,

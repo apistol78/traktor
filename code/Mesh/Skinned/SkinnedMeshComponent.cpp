@@ -1,7 +1,6 @@
 #include "Mesh/MeshCulling.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "Mesh/Skinned/SkinnedMeshComponent.h"
-#include "World/IWorldCulling.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldContext.h"
 #include "World/WorldRenderView.h"
@@ -36,15 +35,13 @@ Aabb3 SkinnedMeshComponent::getBoundingBox() const
 	return m_mesh->getBoundingBox();
 }
 
-void SkinnedMeshComponent::render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, world::IWorldRenderPass& worldRenderPass, const Transform& transform)
+void SkinnedMeshComponent::render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, world::IWorldRenderPass& worldRenderPass)
 {
 	if (!m_mesh->supportTechnique(worldRenderPass.getTechnique()))
 		return;
 
+	Transform transform = m_transform.get(worldRenderView.getInterval());
 	Aabb3 boundingBox = m_mesh->getBoundingBox();
-
-	if (worldContext.getCulling() && !worldContext.getCulling()->queryAabb(boundingBox, transform))
-		return;
 
 	float distance = 0.0f;
 	if (!isMeshVisible(

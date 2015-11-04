@@ -4,7 +4,6 @@
 #include "Spray/MeshRenderer.h"
 #include "Spray/PointRenderer.h"
 #include "Spray/TrailRenderer.h"
-#include "World/IWorldCulling.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldContext.h"
 #include "World/WorldRenderView.h"
@@ -28,29 +27,21 @@ void EffectEntityRenderer::setLodDistances(float lod1Distance, float lod2Distanc
 	m_pointRenderer->setLodDistances(lod1Distance, lod2Distance);
 }
 
-const TypeInfoSet EffectEntityRenderer::getEntityTypes() const
+const TypeInfoSet EffectEntityRenderer::getRenderableTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< EffectEntity >());
 	return typeSet;
 }
 
-void EffectEntityRenderer::precull(
-	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
-	world::Entity* entity
-)
-{
-}
-
 void EffectEntityRenderer::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
 	world::IWorldRenderPass& worldRenderPass,
-	world::Entity* entity
+	Object* renderable
 )
 {
-	EffectEntity* effectEntity = checked_type_cast< EffectEntity* >(entity);
+	EffectEntity* effectEntity = checked_type_cast< EffectEntity* >(renderable);
 
 	// Do we need to render anything with this technique?
 	if (!effectEntity->haveTechnique(worldRenderPass.getTechnique()))
@@ -64,12 +55,6 @@ void EffectEntityRenderer::render(
 	Vector4 center = worldRenderView.getView() * boundingBox.getCenter().xyz1();
 	Scalar radius = boundingBox.getExtent().length();
 	if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::IrOutside)
-		return;
-
-	if (
-		worldContext.getCulling() &&
-		!worldContext.getCulling()->queryAabb(boundingBox, Transform::identity())
-	)
 		return;
 
 	Matrix44 viewInverse = worldRenderView.getView().inverse();

@@ -2,7 +2,6 @@
 #include "Mesh/Static/StaticMesh.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Mesh/Mesh.h"
-#include "World/IWorldCulling.h"
 #include "World/IWorldRenderPass.h"
 
 namespace traktor
@@ -20,15 +19,6 @@ const Aabb3& StaticMesh::getBoundingBox() const
 bool StaticMesh::supportTechnique(render::handle_t technique) const
 {
 	return m_parts.find(technique) != m_parts.end();
-}
-
-void StaticMesh::precull(
-	world::IWorldCulling* worldCulling,
-	const Transform& worldTransform
-)
-{
-	if (m_occluderMesh)
-		worldCulling->placeOccluder(m_occluderMesh, worldTransform);
 }
 
 void StaticMesh::render(

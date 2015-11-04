@@ -15,7 +15,7 @@ WeatherEntityRenderer::WeatherEntityRenderer(render::PrimitiveRenderer* primitiv
 {
 }
 
-const TypeInfoSet WeatherEntityRenderer::getEntityTypes() const
+const TypeInfoSet WeatherEntityRenderer::getRenderableTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< SkyEntity >());
@@ -23,24 +23,16 @@ const TypeInfoSet WeatherEntityRenderer::getEntityTypes() const
 	return typeSet;
 }
 
-void WeatherEntityRenderer::precull(
-	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
-	world::Entity* entity
-)
-{
-}
-
 void WeatherEntityRenderer::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
 	world::IWorldRenderPass& worldRenderPass,
-	world::Entity* entity
+	Object* renderable
 )
 {
-	if (SkyEntity* skyEntity = dynamic_type_cast< SkyEntity* >(entity))
+	if (SkyEntity* skyEntity = dynamic_type_cast< SkyEntity* >(renderable))
 		skyEntity->render(worldContext.getRenderContext(), worldRenderView, worldRenderPass);
-	else if (CloudEntity* cloudEntity = dynamic_type_cast< CloudEntity* >(entity))
+	else if (CloudEntity* cloudEntity = dynamic_type_cast< CloudEntity* >(renderable))
 		cloudEntity->render(worldContext.getRenderContext(), worldRenderView, worldRenderPass, m_primitiveRenderer);
 }
 

@@ -519,7 +519,6 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
 		outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
 		outputMeshAsset->setMaterialTextures(meshMaterialTextures);
-		outputMeshAsset->setGenerateOccluder(false);
 
 		pipelineBuilder->buildOutput(
 			outputMeshAsset,

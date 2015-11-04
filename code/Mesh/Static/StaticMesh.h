@@ -62,11 +62,6 @@ public:
 
 	bool supportTechnique(render::handle_t technique) const;
 
-	void precull(
-		world::IWorldCulling* worldCulling,
-		const Transform& worldTransform
-	);
-	
 	void render(
 		render::RenderContext* renderContext,
 		const world::IWorldRenderPass& worldRenderPass,

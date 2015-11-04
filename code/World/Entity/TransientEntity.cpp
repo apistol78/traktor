@@ -20,14 +20,6 @@ TransientEntity::TransientEntity(
 {
 }
 
-void TransientEntity::precull(
-	WorldContext& worldContext,
-	WorldRenderView& worldRenderView
-)
-{
-	worldContext.precull(worldRenderView, m_otherEntity);
-}
-
 void TransientEntity::render(
 	WorldContext& worldContext,
 	WorldRenderView& worldRenderView,

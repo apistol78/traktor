@@ -9,6 +9,7 @@
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Editor/IEditor.h"
+#include "Mesh/MeshComponentRenderer.h"
 #include "Mesh/MeshEntityRenderer.h"
 #include "Mesh/MeshFactory.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
@@ -192,6 +193,7 @@ void AnimationPreviewControl::updateWorldRenderer()
 		return;
 
 	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
+	worldEntityRenderers->add(new mesh::MeshComponentRenderer());
 	worldEntityRenderers->add(new mesh::MeshEntityRenderer());
 
 	world::WorldRenderSettings wrs;

@@ -30,26 +30,20 @@ class T_DLLCLASS WeatherEntityRenderer : public world::IEntityRenderer
 public:
 	WeatherEntityRenderer(render::PrimitiveRenderer* primitiveRenderer = 0);
 
-	virtual const TypeInfoSet getEntityTypes() const;
-
-	virtual void precull(
-		world::WorldContext& worldContext,
-		world::WorldRenderView& worldRenderView,
-		world::Entity* entity
-	);
+	virtual const TypeInfoSet getRenderableTypes() const T_OVERRIDE T_FINAL;
 
 	virtual void render(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
 		world::IWorldRenderPass& worldRenderPass,
-		world::Entity* entity
-	);
+		Object* renderable
+	) T_OVERRIDE T_FINAL;
 
 	virtual void flush(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
 		world::IWorldRenderPass& worldRenderPass
-	);
+	) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;

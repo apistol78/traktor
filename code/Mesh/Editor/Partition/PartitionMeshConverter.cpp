@@ -386,7 +386,6 @@ Ref< IMeshResource > PartitionMeshConverter::createResource() const
 bool PartitionMeshConverter::convert(
 	const MeshAsset* meshAsset,
 	const RefArray< model::Model >& models,
-	const model::Model* occluderModel,
 	const Guid& materialGuid,
 	const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
 	const std::vector< render::VertexElement >& vertexElements,

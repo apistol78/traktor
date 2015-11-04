@@ -2,11 +2,13 @@
 #include "Database/Instance.h"
 #include "Mesh/MeshEntityData.h"
 #include "Mesh/MeshEntityFactory.h"
+#include "Mesh/MeshComponentRenderer.h"
 #include "Mesh/MeshEntityRenderer.h"
 #include "Mesh/MeshFactory.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshEditorProfile.h"
 #include "Mesh/Editor/Batch/BatchMeshEntityFactory.h"
+#include "Mesh/Instance/InstanceMeshComponentRenderer.h"
 #include "Mesh/Instance/InstanceMeshEntityRenderer.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
@@ -61,7 +63,9 @@ void MeshEditorProfile::createEntityRenderers(
 	RefArray< world::IEntityRenderer >& outEntityRenderers
 ) const
 {
+	outEntityRenderers.push_back(new mesh::MeshComponentRenderer());
 	outEntityRenderers.push_back(new mesh::MeshEntityRenderer());
+	outEntityRenderers.push_back(new mesh::InstanceMeshComponentRenderer());
 	outEntityRenderers.push_back(new mesh::InstanceMeshEntityRenderer());
 }
 

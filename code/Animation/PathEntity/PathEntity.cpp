@@ -110,15 +110,6 @@ void PathEntity::update(const world::UpdateParams& update)
 	m_entity->update(update);
 }
 
-void PathEntity::precull(
-	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView
-)
-{
-	if (m_entity)
-		worldContext.precull(worldRenderView, m_entity);
-}
-
 void PathEntity::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,

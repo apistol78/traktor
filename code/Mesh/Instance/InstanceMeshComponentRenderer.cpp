@@ -1,7 +1,7 @@
 #include "Mesh/MeshCulling.h"
 #include "Mesh/Instance/InstanceMesh.h"
-#include "Mesh/Instance/InstanceMeshEntity.h"
-#include "Mesh/Instance/InstanceMeshEntityRenderer.h"
+#include "Mesh/Instance/InstanceMeshComponent.h"
+#include "Mesh/Instance/InstanceMeshComponentRenderer.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldContext.h"
 #include "World/WorldRenderView.h"
@@ -11,32 +11,32 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.InstanceMeshEntityRenderer", InstanceMeshEntityRenderer, world::IEntityRenderer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.InstanceMeshComponentRenderer", InstanceMeshComponentRenderer, world::IEntityRenderer)
 
-const TypeInfoSet InstanceMeshEntityRenderer::getRenderableTypes() const
+const TypeInfoSet InstanceMeshComponentRenderer::getRenderableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< InstanceMeshEntity >());
+	typeSet.insert(&type_of< InstanceMeshComponent >());
 	return typeSet;
 }
 
-void InstanceMeshEntityRenderer::render(
+void InstanceMeshComponentRenderer::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
 	world::IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
 {
-	InstanceMeshEntity* meshEntity = checked_type_cast< InstanceMeshEntity* >(renderable);
-	T_ASSERT_M (!meshEntity->getParameterCallback(), L"Instance mesh entities doesn't support parameter callback");
+	InstanceMeshComponent* meshComponent = checked_type_cast< InstanceMeshComponent* >(renderable);
+	T_ASSERT_M (!meshComponent->getParameterCallback(), L"Instance mesh entities doesn't support parameter callback");
 	
-	InstanceMesh* mesh = meshEntity->m_mesh;
+	InstanceMesh* mesh = meshComponent->getMesh();
 
 	if (!mesh->supportTechnique(worldRenderPass.getTechnique()))
 		return;
 
-	Aabb3 boundingBox = meshEntity->getBoundingBox();
-	Transform transform = meshEntity->getTransform(worldRenderView.getInterval());
+	Aabb3 boundingBox = meshComponent->getBoundingBox();
+	Transform transform = meshComponent->getTransform().get(worldRenderView.getInterval());
 
 	float distance = 0.0f;
 	if (!isMeshVisible(
@@ -55,7 +55,7 @@ void InstanceMeshEntityRenderer::render(
 	));
 }
 
-void InstanceMeshEntityRenderer::flush(
+void InstanceMeshComponentRenderer::flush(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
 	world::IWorldRenderPass& worldRenderPass

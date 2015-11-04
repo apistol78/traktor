@@ -26,17 +26,6 @@ bool StaticMeshEntity::supportTechnique(render::handle_t technique) const
 	return m_mesh->supportTechnique(technique);
 }
 
-void StaticMeshEntity::precull(
-	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView
-)
-{
-	m_mesh->precull(
-		worldContext.getCulling(),
-		getTransform(worldRenderView.getInterval())
-	);
-}
-
 void StaticMeshEntity::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,

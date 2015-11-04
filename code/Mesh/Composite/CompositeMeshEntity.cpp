@@ -60,15 +60,6 @@ bool CompositeMeshEntity::supportTechnique(render::handle_t technique) const
 	return false;
 }
 
-void CompositeMeshEntity::precull(
-	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView
-)
-{
-	for (std::map< std::wstring, Ref< MeshEntity > >::iterator i = m_meshEntities.begin(); i != m_meshEntities.end(); ++i)
-		worldContext.precull(worldRenderView, i->second);
-}
-
 void CompositeMeshEntity::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,

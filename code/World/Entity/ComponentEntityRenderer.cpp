@@ -9,29 +9,21 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ComponentEntityRenderer", ComponentEntityRenderer, IEntityRenderer)
 
-const TypeInfoSet ComponentEntityRenderer::getEntityTypes() const
+const TypeInfoSet ComponentEntityRenderer::getRenderableTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< ComponentEntity >());
 	return typeSet;
 }
 
-void ComponentEntityRenderer::precull(
-	WorldContext& worldContext,
-	WorldRenderView& worldRenderView,
-	Entity* entity
-)
-{
-}
-
 void ComponentEntityRenderer::render(
 	WorldContext& worldContext,
 	WorldRenderView& worldRenderView,
 	IWorldRenderPass& worldRenderPass,
-	Entity* entity
+	Object* renderable
 )
 {
-	ComponentEntity* componentEntity = checked_type_cast< ComponentEntity*, false >(entity);
+	ComponentEntity* componentEntity = checked_type_cast< ComponentEntity*, false >(renderable);
 	componentEntity->render(worldContext, worldRenderView, worldRenderPass);
 }
 

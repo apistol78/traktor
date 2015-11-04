@@ -28,17 +28,6 @@ bool AutoLodMesh::supportTechnique(float lodDistance, render::handle_t technique
 		return true;
 }
 
-void AutoLodMesh::precull(
-	float lodDistance,
-	world::IWorldCulling* worldCulling,
-	const Transform& worldTransform
-)
-{
-	StaticMesh* staticMesh = getStaticMesh(lodDistance);
-	if (staticMesh)
-		staticMesh->precull(worldCulling, worldTransform);
-}
-
 void AutoLodMesh::render(
 	float lodDistance,
 	render::RenderContext* renderContext,

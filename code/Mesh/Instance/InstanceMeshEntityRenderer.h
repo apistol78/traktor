@@ -24,19 +24,13 @@ class T_DLLCLASS InstanceMeshEntityRenderer : public world::IEntityRenderer
 	T_RTTI_CLASS;
 
 public:
-	virtual const TypeInfoSet getEntityTypes() const;
-
-	virtual void precull(
-		world::WorldContext& worldContext,
-		world::WorldRenderView& worldRenderView,
-		world::Entity* entity
-	) T_OVERRIDE T_FINAL;
+	virtual const TypeInfoSet getRenderableTypes() const T_OVERRIDE T_FINAL;
 
 	virtual void render(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
 		world::IWorldRenderPass& worldRenderPass,
-		world::Entity* entity
+		Object* renderable
 	) T_OVERRIDE T_FINAL;
 
 	virtual void flush(

@@ -50,12 +50,6 @@ public:
 
 	bool supportTechnique(float lodDistance, render::handle_t technique) const;
 
-	void precull(
-		float lodDistance,
-		world::IWorldCulling* worldCulling,
-		const Transform& worldTransform
-	);
-	
 	void render(
 		float lodDistance,
 		render::RenderContext* renderContext,

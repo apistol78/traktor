@@ -40,8 +40,6 @@ public:
 
 	virtual void update(const UpdateParams& update) T_OVERRIDE T_FINAL;
 
-	virtual void render(WorldContext& worldContext, WorldRenderView& worldRenderView, IWorldRenderPass& worldRenderPass, const Transform& transform) T_OVERRIDE T_FINAL;
-
 private:
 	Entity* m_owner;
 	resource::Proxy< IRuntimeClass > m_class;
