@@ -46,9 +46,5 @@ void RigidBodyComponent::update(const world::UpdateParams& update)
 	m_owner->setTransform(m_body->getTransform());
 }
 
-void RigidBodyComponent::render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, world::IWorldRenderPass& worldRenderPass, const Transform& transform)
-{
-}
-
 	}
 }

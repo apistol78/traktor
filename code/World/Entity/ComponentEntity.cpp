@@ -1,4 +1,5 @@
 #include "World/IEntityComponent.h"
+#include "World/WorldContext.h"
 #include "World/WorldRenderView.h"
 #include "World/Entity/ComponentEntity.h"
 
@@ -59,9 +60,8 @@ IEntityComponent* ComponentEntity::getComponent(const TypeInfo& componentType) c
 
 void ComponentEntity::render(WorldContext& worldContext, WorldRenderView& worldRenderView, IWorldRenderPass& worldRenderPass)
 {
-	Transform transform = m_transform.get(worldRenderView.getInterval());
 	for (SmallMap< const TypeInfo*, Ref< IEntityComponent > >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
-		i->second->render(worldContext, worldRenderView, worldRenderPass, transform);
+		worldContext.build(worldRenderView, worldRenderPass, i->second);
 }
 
 	}

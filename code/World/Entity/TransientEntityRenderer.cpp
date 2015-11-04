@@ -8,31 +8,21 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.TransientEntityRenderer", TransientEntityRenderer, IEntityRenderer)
 
-const TypeInfoSet TransientEntityRenderer::getEntityTypes() const
+const TypeInfoSet TransientEntityRenderer::getRenderableTypes() const
 {
 	TypeInfoSet TypeInfoSet;
 	TypeInfoSet.insert(&type_of< TransientEntity >());
 	return TypeInfoSet;
 }
 
-void TransientEntityRenderer::precull(
-	WorldContext& worldContext,
-	WorldRenderView& worldRenderView,
-	Entity* entity
-)
-{
-	if (TransientEntity* transientEntity = checked_type_cast< TransientEntity* >(entity))
-		transientEntity->precull(worldContext, worldRenderView);
-}
-
 void TransientEntityRenderer::render(
 	WorldContext& worldContext,
 	WorldRenderView& worldRenderView,
 	IWorldRenderPass& worldRenderPass,
-	Entity* entity
+	Object* renderable
 )
 {
-	if (TransientEntity* transientEntity = checked_type_cast< TransientEntity* >(entity))
+	if (TransientEntity* transientEntity = checked_type_cast< TransientEntity* >(renderable))
 		transientEntity->render(worldContext, worldRenderView, worldRenderPass);
 }
 

@@ -15,44 +15,26 @@ EntityRendererAdapter::EntityRendererAdapter(EntityRendererCache* cache, world::
 {
 }
 
-const TypeInfoSet EntityRendererAdapter::getEntityTypes() const
+const TypeInfoSet EntityRendererAdapter::getRenderableTypes() const
 {
-	return m_entityRenderer->getEntityTypes();
-}
-
-void EntityRendererAdapter::precull(
-	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
-	world::Entity* entity
-)
-{
-	EntityAdapter* entityAdapter = m_cache->begin(entity);
-	//if (!entityAdapter || entityAdapter->isVisible())
-	{
-		m_entityRenderer->precull(
-			worldContext,
-			worldRenderView,
-			entity
-		);
-	}
-	m_cache->end();
+	return m_entityRenderer->getRenderableTypes();
 }
 
 void EntityRendererAdapter::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
 	world::IWorldRenderPass& worldRenderPass,
-	world::Entity* entity
+	Object* renderable
 )
 {
-	EntityAdapter* entityAdapter = m_cache->begin(entity);
+	EntityAdapter* entityAdapter = m_cache->begin(renderable);
 	if (!entityAdapter || entityAdapter->isVisible())
 	{
 		m_entityRenderer->render(
 			worldContext,
 			worldRenderView,
 			worldRenderPass,
-			entity
+			renderable
 		);
 	}
 	m_cache->end();

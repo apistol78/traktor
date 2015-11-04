@@ -1,11 +1,11 @@
-#ifndef traktor_animation_BoidsEntityRenderer_H
-#define traktor_animation_BoidsEntityRenderer_H
+#ifndef traktor_mesh_MeshComponentRenderer_H
+#define traktor_mesh_MeshComponentRenderer_H
 
 #include "World/IEntityRenderer.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_ANIMATION_EXPORT)
+#if defined(T_MESH_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
@@ -13,13 +13,12 @@
 
 namespace traktor
 {
-	namespace animation
+	namespace mesh
 	{
 
-/*! \brief Boids entity renderer.
- * \ingroup Animation
- */
-class T_DLLCLASS BoidsEntityRenderer : public world::IEntityRenderer
+class MeshComponent;
+
+class T_DLLCLASS MeshComponentRenderer : public world::IEntityRenderer
 {
 	T_RTTI_CLASS;
 
@@ -43,4 +42,4 @@ public:
 	}
 }
 
-#endif	// traktor_animation_BoidsEntityRenderer_H
+#endif	// traktor_mesh_MeshComponentRenderer_H

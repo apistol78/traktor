@@ -68,10 +68,6 @@ public:
 
 	bool getCullDistantFaces() const { return m_cullDistantFaces; }
 
-	void setGenerateOccluder(bool generateOccluder) { m_generateOccluder = generateOccluder; }
-
-	bool getGenerateOccluder() const { return m_generateOccluder; }
-
 	void setLodSteps(int32_t lodSteps) { m_lodSteps = lodSteps; }
 
 	int32_t getLodSteps() const { return m_lodSteps; }
@@ -84,10 +80,6 @@ public:
 
 	float getLodCullDistance() const { return m_lodCullDistance; }
 
-	void setOccluderModel(const Path& occluderModel) { m_occluderModel = occluderModel; }
-
-	const Path& getOccluderModel() const { return m_occluderModel; }
-
 private:
 	MeshType m_meshType;
 	std::map< std::wstring, Guid > m_materialTemplates;
@@ -96,11 +88,9 @@ private:
 	float m_scaleFactor;
 	bool m_bakeOcclusion;
 	bool m_cullDistantFaces;
-	bool m_generateOccluder;
 	int32_t m_lodSteps;
 	float m_lodMaxDistance;
 	float m_lodCullDistance;
-	Path m_occluderModel;
 };
 
 	}

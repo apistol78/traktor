@@ -35,7 +35,7 @@ class EntityRendererCache : public Object
 public:
 	EntityRendererCache(SceneEditorContext* context);
 
-	EntityAdapter* begin(const world::Entity* entity);
+	EntityAdapter* begin(const Object* renderable);
 
 	void end();
 

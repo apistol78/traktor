@@ -61,11 +61,6 @@ public:
 
 	virtual void update(const world::UpdateParams& update);
 
-	void precull(
-		world::WorldContext& worldContext,
-		world::WorldRenderView& worldRenderView
-	);
-
 	void render(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,

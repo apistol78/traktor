@@ -57,13 +57,6 @@ bool SkinnedMeshEntity::supportTechnique(render::handle_t technique) const
 	return m_mesh->supportTechnique(technique);
 }
 
-void SkinnedMeshEntity::precull(
-	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView
-)
-{
-}
-
 void SkinnedMeshEntity::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,

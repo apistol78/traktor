@@ -18,8 +18,10 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
+#include "Mesh/MeshComponentRenderer.h"
 #include "Mesh/MeshEntityFactory.h"
 #include "Mesh/MeshEntityRenderer.h"
+#include "Mesh/Instance/InstanceMeshComponentRenderer.h"
 #include "Mesh/Instance/InstanceMeshEntityRenderer.h"
 #include "Physics/World/EntityRenderer.h"
 #include "Resource/IResourceManager.h"
@@ -152,7 +154,9 @@ bool WorldServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 	m_entityRenderers->add(new world::LightEntityRenderer());
 	m_entityRenderers->add(new world::SwitchEntityRenderer());
 	m_entityRenderers->add(new world::TransientEntityRenderer());
+	m_entityRenderers->add(new mesh::MeshComponentRenderer());
 	m_entityRenderers->add(new mesh::MeshEntityRenderer());
+	m_entityRenderers->add(new mesh::InstanceMeshComponentRenderer());
 	m_entityRenderers->add(new mesh::InstanceMeshEntityRenderer());
 	m_entityRenderers->add(m_effectEntityRenderer);
 	m_entityRenderers->add(new animation::BoidsEntityRenderer());

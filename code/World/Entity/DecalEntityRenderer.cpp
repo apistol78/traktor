@@ -84,29 +84,21 @@ DecalEntityRenderer::DecalEntityRenderer(render::IRenderSystem* renderSystem)
 	m_indexBuffer->unlock();
 }
 
-const TypeInfoSet DecalEntityRenderer::getEntityTypes() const
+const TypeInfoSet DecalEntityRenderer::getRenderableTypes() const
 {
 	TypeInfoSet TypeInfoSet;
 	TypeInfoSet.insert(&type_of< DecalEntity >());
 	return TypeInfoSet;
 }
 
-void DecalEntityRenderer::precull(
-	WorldContext& worldContext,
-	WorldRenderView& worldRenderView,
-	Entity* entity
-)
-{
-}
-
 void DecalEntityRenderer::render(
 	WorldContext& worldContext,
 	WorldRenderView& worldRenderView,
 	IWorldRenderPass& worldRenderPass,
-	Entity* entity
+	Object* renderable
 )
 {
-	DecalEntity* decalEntity = checked_type_cast< DecalEntity*, false >(entity);
+	DecalEntity* decalEntity = checked_type_cast< DecalEntity*, false >(renderable);
 
 	Transform transform;
 	decalEntity->getTransform(transform);

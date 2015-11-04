@@ -29,7 +29,6 @@
 #include "World/SMProj/LiSPShadowProjection.h"
 #include "World/SMProj/TrapezoidShadowProjection.h"
 #include "World/SMProj/UniformShadowProjection.h"
-#include "World/SwHiZ/WorldCullingSwRaster.h"
 
 //#define T_USE_BUILD_JOBS
 
@@ -557,17 +556,10 @@ bool WorldRendererDeferred::create(
 			return false;
 	}
 
-	// Create software rastering cullers.
-	if (m_settings.occlusionCullingEnabled)
-	{
-		for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
-			i->culling = new WorldCullingSwRaster();
-	}
-
 	// Allocate "gbuffer" context.
 	{
 		for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
-			i->gbuffer = new WorldContext(desc.entityRenderers, i->culling);
+			i->gbuffer = new WorldContext(desc.entityRenderers);
 	}
 
 	// Allocate "shadow" contexts.
@@ -578,14 +570,14 @@ bool WorldRendererDeferred::create(
 			for (int32_t j = 0; j < m_shadowSettings.cascadingSlices; ++j)
 			{
 				for (int32_t k = 0; k < MaxLightShadowCount; ++k)
-					i->slice[j].shadow[k] = new WorldContext(desc.entityRenderers, 0);
+					i->slice[j].shadow[k] = new WorldContext(desc.entityRenderers);
 			}
 		}
 	}
 
 	// Allocate "visual" contexts.
 	for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
-		i->visual = new WorldContext(desc.entityRenderers, i->culling);
+		i->visual = new WorldContext(desc.entityRenderers);
 
 	// Allocate "global" parameter context; as it's reset for each render
 	// call this can be fairly small.
@@ -677,15 +669,6 @@ void WorldRendererDeferred::endBuild(WorldRenderView& worldRenderView, int frame
 
 	// Store some global values.
 	f.time = worldRenderView.getTime();
-
-	// Prepare occluders.
-	if (f.culling)
-	{
-		f.culling->beginPrecull(worldRenderView);
-		for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
-			f.gbuffer->precull(worldRenderView, *i);
-		f.culling->endPrecull();
-	}
 
 #if defined(T_USE_BUILD_JOBS)
 

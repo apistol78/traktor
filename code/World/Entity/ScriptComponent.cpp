@@ -59,9 +59,5 @@ void ScriptComponent::update(const UpdateParams& update)
 	}
 }
 
-void ScriptComponent::render(WorldContext& worldContext, WorldRenderView& worldRenderView, IWorldRenderPass& worldRenderPass, const Transform& transform)
-{
-}
-
 	}
 }

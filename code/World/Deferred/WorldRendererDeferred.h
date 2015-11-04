@@ -33,7 +33,6 @@ class RenderTargetSet;
 class IWorldShadowProjection;
 class LightRendererDeferred;
 class WorldContext;
-class WorldCullingSwRaster;
 
 /*! \brief World renderer deferred implementation.
  * \ingroup World
@@ -81,7 +80,6 @@ private:
 
 	struct Frame
 	{
-		Ref< WorldCullingSwRaster > culling;
 		Slice slice[MaxSliceCount];
 		Ref< WorldContext > gbuffer;
 		Ref< WorldContext > visual;

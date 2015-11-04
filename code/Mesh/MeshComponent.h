@@ -1,6 +1,7 @@
 #ifndef traktor_mesh_MeshComponent_H
 #define traktor_mesh_MeshComponent_H
 
+#include "Core/Math/IntervalTransform.h"
 #include "World/IEntityComponent.h"
 
 // import/export mechanism.
@@ -17,6 +18,9 @@ namespace traktor
 	{
 
 class Entity;
+class IWorldRenderPass;
+class WorldContext;
+class WorldRenderView;
 
 	}
 
@@ -41,10 +45,15 @@ public:
 
 	virtual void update(const world::UpdateParams& update) T_OVERRIDE T_FINAL;
 
+	virtual void render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, world::IWorldRenderPass& worldRenderPass) = 0;
+
+	const IntervalTransform& getTransform() const { return m_transform; }
+
 protected:
 	world::Entity* m_owner;
 	Ref< const IMeshParameterCallback > m_parameterCallback;
 	bool m_screenSpaceCulling;
+	IntervalTransform m_transform;
 };
 
 	}

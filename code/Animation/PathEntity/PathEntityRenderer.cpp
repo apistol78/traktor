@@ -8,31 +8,21 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.PathEntityRenderer", PathEntityRenderer, world::IEntityRenderer)
 
-const TypeInfoSet PathEntityRenderer::getEntityTypes() const
+const TypeInfoSet PathEntityRenderer::getRenderableTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< PathEntity >());
 	return typeSet;
 }
 
-void PathEntityRenderer::precull(
-	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
-	world::Entity* entity
-)
-{
-	PathEntity* pathEntity = checked_type_cast< PathEntity*, false >(entity);
-	pathEntity->precull(worldContext, worldRenderView);
-}
-
 void PathEntityRenderer::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
 	world::IWorldRenderPass& worldRenderPass,
-	world::Entity* entity
+	Object* renderable
 )
 {
-	PathEntity* pathEntity = checked_type_cast< PathEntity*, false >(entity);
+	PathEntity* pathEntity = checked_type_cast< PathEntity*, false >(renderable);
 	pathEntity->render(worldContext, worldRenderView, worldRenderPass);
 }
 

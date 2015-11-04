@@ -18,7 +18,7 @@ void updateEntityRendererMap(
 	outEntityRendererMap.clear();
 	for (RefArray< IEntityRenderer >::const_iterator i = entityRenderers.begin(); i != entityRenderers.end(); ++i)
 	{
-		TypeInfoSet entityTypes = (*i)->getEntityTypes();
+		TypeInfoSet entityTypes = (*i)->getRenderableTypes();
 		for (TypeInfoSet::const_iterator j = entityTypes.begin(); j != entityTypes.end(); ++j)
 		{
 			TypeInfoSet renderableTypes;

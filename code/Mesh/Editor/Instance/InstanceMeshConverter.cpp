@@ -19,8 +19,6 @@
 #include "Render/Mesh/MeshWriter.h"
 #include "Render/VertexBuffer.h"
 #include "Render/IndexBuffer.h"
-#include "World/SwHiZ/OccluderMesh.h"
-#include "World/SwHiZ/OccluderMeshWriter.h"
 
 namespace traktor
 {
@@ -35,7 +33,6 @@ Ref< IMeshResource > InstanceMeshConverter::createResource() const
 bool InstanceMeshConverter::convert(
 	const MeshAsset* meshAsset,
 	const RefArray< model::Model >& models,
-	const model::Model* occluderModel,
 	const Guid& materialGuid,
 	const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
 	const std::vector< render::VertexElement >& vertexElements,
@@ -60,46 +57,6 @@ bool InstanceMeshConverter::convert(
 
 	log::info << L"Flatten materials..." << Endl;
 	model::FlattenDoubleSided().apply(model);
-
-
-	//---------------------------------------
-	// Create occluder mesh.
-
-	if (occluderModel)
-	{
-		log::info << L"Creating occluder mesh..." << Endl;
-
-		Ref< world::OccluderMesh > occluderMesh = new world::OccluderMesh(
-			occluderModel->getVertexCount(),
-			occluderModel->getPolygonCount() * 3
-		);
-
-		float* occluderVertex = occluderMesh->getVertices();
-		for (uint32_t i = 0; i < occluderModel->getVertexCount(); ++i)
-		{
-			const model::Vertex& vertex = occluderModel->getVertex(i);
-			const Vector4& position = occluderModel->getPosition(vertex.getPosition());
-
-			*occluderVertex++ = position.x();
-			*occluderVertex++ = position.y();
-			*occluderVertex++ = position.z();
-			*occluderVertex++ = 1.0f;
-		}
-
-		uint16_t* occluderIndex = occluderMesh->getIndices();
-		for (uint32_t i = 0; i < occluderModel->getPolygonCount(); ++i)
-		{
-			const model::Polygon& polygon = occluderModel->getPolygon(i);
-			T_ASSERT (polygon.getVertexCount() == 3);
-
-			*occluderIndex++ = uint16_t(polygon.getVertex(0));
-			*occluderIndex++ = uint16_t(polygon.getVertex(1));
-			*occluderIndex++ = uint16_t(polygon.getVertex(2));
-		}
-
-		world::OccluderMeshWriter().write(meshResourceStream, occluderMesh);
-	}
-
 
 	//---------------------------------------
 	// Create render mesh.
@@ -241,7 +198,6 @@ bool InstanceMeshConverter::convert(
 		return false;
 
 	checked_type_cast< InstanceMeshResource* >(meshResource)->m_haveRenderMesh = true;
-	checked_type_cast< InstanceMeshResource* >(meshResource)->m_haveOccluderMesh = bool(occluderModel != 0);
 	checked_type_cast< InstanceMeshResource* >(meshResource)->m_shader = resource::Id< render::Shader >(materialGuid);
 	checked_type_cast< InstanceMeshResource* >(meshResource)->m_parts = parts;
 

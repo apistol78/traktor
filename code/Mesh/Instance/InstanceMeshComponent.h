@@ -33,7 +33,9 @@ public:
 
 	virtual Aabb3 getBoundingBox() const T_OVERRIDE T_FINAL;
 
-	virtual void render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, world::IWorldRenderPass& worldRenderPass, const Transform& transform) T_OVERRIDE T_FINAL;
+	virtual void render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, world::IWorldRenderPass& worldRenderPass) T_OVERRIDE T_FINAL;
+
+	inline resource::Proxy< InstanceMesh >& getMesh() { return m_mesh; }
 
 private:
 	resource::Proxy< InstanceMesh > m_mesh;

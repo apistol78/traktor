@@ -26,13 +26,6 @@ bool PartitionMeshEntity::supportTechnique(render::handle_t technique) const
 	return m_mesh->supportTechnique(technique);
 }
 
-void PartitionMeshEntity::precull(
-	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView
-)
-{
-}
-
 void PartitionMeshEntity::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,

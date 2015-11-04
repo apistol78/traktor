@@ -10,34 +10,21 @@ namespace traktor
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.GroupEntityRenderer", GroupEntityRenderer, IEntityRenderer)
 
-const TypeInfoSet GroupEntityRenderer::getEntityTypes() const
+const TypeInfoSet GroupEntityRenderer::getRenderableTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< GroupEntity >());
 	return typeSet;
 }
 
-void GroupEntityRenderer::precull(
-	WorldContext& worldContext,
-	WorldRenderView& worldRenderView,
-	Entity* entity
-)
-{
-	GroupEntity* groupEntity = checked_type_cast< GroupEntity*, false >(entity);
-
-	const RefArray< Entity >& childEntities = groupEntity->getEntities();
-	for (RefArray< Entity >::const_iterator i = childEntities.begin(); i != childEntities.end(); ++i)
-		worldContext.precull(worldRenderView, *i);
-}
-
 void GroupEntityRenderer::render(
 	WorldContext& worldContext,
 	WorldRenderView& worldRenderView,
 	IWorldRenderPass& worldRenderPass,
-	Entity* entity
+	Object* renderable
 )
 {
-	GroupEntity* groupEntity = checked_type_cast< GroupEntity*, false >(entity);
+	GroupEntity* groupEntity = checked_type_cast< GroupEntity*, false >(renderable);
 
 	const RefArray< Entity >& childEntities = groupEntity->getEntities();
 	for (RefArray< Entity >::const_iterator i = childEntities.begin(); i != childEntities.end(); ++i)

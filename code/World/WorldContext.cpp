@@ -1,7 +1,6 @@
 #include "Render/Context/RenderContext.h"
 #include "World/Entity.h"
 #include "World/IEntityRenderer.h"
-#include "World/IWorldCulling.h"
 #include "World/WorldContext.h"
 #include "World/WorldEntityRenderers.h"
 
@@ -18,15 +17,11 @@ const uint32_t c_renderContextSize = 4 * 1024 * 1024;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldContext", WorldContext, Object)
 
-WorldContext::WorldContext(
-	WorldEntityRenderers* entityRenderers,
-	IWorldCulling* culling
-)
+WorldContext::WorldContext(WorldEntityRenderers* entityRenderers)
 :	m_entityRenderers(entityRenderers)
-,	m_culling(culling)
 ,	m_renderContext(new render::RenderContext(c_renderContextSize))
-,	m_lastEntityType(0)
-,	m_lastEntityRenderer(0)
+,	m_lastRenderableType(0)
+,	m_lastRenderer(0)
 {
 }
 
@@ -36,56 +31,29 @@ void WorldContext::clear()
 		m_renderContext->flush();
 }
 
-void WorldContext::precull(WorldRenderView& worldRenderView, Entity* entity)
+void WorldContext::build(WorldRenderView& worldRenderView, IWorldRenderPass& worldRenderPass, Object* renderable)
 {
-	if (!entity)
+	if (!renderable)
 		return;
 
-	IEntityRenderer* entityRenderer = 0;
+	IEntityRenderer* renderer = 0;
 
-	const TypeInfo& entityType = type_of(entity);
-	if (m_lastEntityType == &entityType)
+	const TypeInfo& renderableType = type_of(renderable);
+	if (m_lastRenderableType == &renderableType)
 	{
 		// Fast path, no need to lookup new entity renderer as it's the same as last entity rendered.
-		entityRenderer = m_lastEntityRenderer;
+		renderer = m_lastRenderer;
 	}
 	else
 	{
 		// Need to find entity renderer.
-		entityRenderer = m_entityRenderers->find(entityType);
-
-		m_lastEntityType = &entityType;
-		m_lastEntityRenderer = entityRenderer;
+		renderer = m_entityRenderers->find(renderableType);
+		m_lastRenderableType = &renderableType;
+		m_lastRenderer = renderer;
 	}
 
-	if (entityRenderer)
-		entityRenderer->precull(*this, worldRenderView, entity);
-}
-
-void WorldContext::build(WorldRenderView& worldRenderView, IWorldRenderPass& worldRenderPass, Entity* entity)
-{
-	if (!entity)
-		return;
-
-	IEntityRenderer* entityRenderer = 0;
-
-	const TypeInfo& entityType = type_of(entity);
-	if (m_lastEntityType == &entityType)
-	{
-		// Fast path, no need to lookup new entity renderer as it's the same as last entity rendered.
-		entityRenderer = m_lastEntityRenderer;
-	}
-	else
-	{
-		// Need to find entity renderer.
-		entityRenderer = m_entityRenderers->find(entityType);
-
-		m_lastEntityType = &entityType;
-		m_lastEntityRenderer = entityRenderer;
-	}
-
-	if (entityRenderer)
-		entityRenderer->render(*this, worldRenderView, worldRenderPass, entity);
+	if (renderer)
+		renderer->render(*this, worldRenderView, worldRenderPass, renderable);
 }
 
 void WorldContext::flush(WorldRenderView& worldRenderView, IWorldRenderPass& worldRenderPass)

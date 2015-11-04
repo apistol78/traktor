@@ -1,6 +1,7 @@
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/EntityRendererCache.h"
 #include "Scene/Editor/SceneEditorContext.h"
+#include "World/Entity.h"
 
 namespace traktor
 {
@@ -14,22 +15,24 @@ EntityRendererCache::EntityRendererCache(SceneEditorContext* context)
 {
 }
 
-EntityAdapter* EntityRendererCache::begin(const world::Entity* entity)
+EntityAdapter* EntityRendererCache::begin(const Object* renderable)
 {
-	EntityAdapter* parentRenderAdapter = m_context->findAdapterFromEntity(entity);
-	if (parentRenderAdapter)
+	if (const world::Entity* entity = dynamic_type_cast< const world::Entity* >(renderable))
 	{
-		EntityAdapter* currentEntityAdapter = 0;
+		EntityAdapter* parentRenderAdapter = m_context->findAdapterFromEntity(entity);
+		if (parentRenderAdapter)
+		{
+			EntityAdapter* currentEntityAdapter = 0;
 
-		if (parentRenderAdapter->getEntity() == entity)
-			currentEntityAdapter = parentRenderAdapter;
-		else
-			currentEntityAdapter = parentRenderAdapter->findChildAdapterFromEntity(entity);
+			if (parentRenderAdapter->getEntity() == entity)
+				currentEntityAdapter = parentRenderAdapter;
+			else
+				currentEntityAdapter = parentRenderAdapter->findChildAdapterFromEntity(entity);
 
-		return currentEntityAdapter;
+			return currentEntityAdapter;
+		}
 	}
-	else
-		return 0;
+	return 0;
 }
 
 void EntityRendererCache::end()

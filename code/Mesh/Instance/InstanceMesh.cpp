@@ -3,7 +3,6 @@
 #include "Mesh/Instance/InstanceMesh.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Mesh/Mesh.h"
-#include "World/IWorldCulling.h"
 #include "World/IWorldRenderPass.h"
 
 namespace traktor
@@ -51,15 +50,6 @@ void InstanceMesh::getTechniques(std::set< render::handle_t >& outHandles) const
 {
 	for (SmallMap< render::handle_t, std::vector< Part > >::const_iterator i = m_parts.begin(); i != m_parts.end(); ++i)
 		outHandles.insert(i->first);
-}
-
-void InstanceMesh::precull(
-	world::IWorldCulling* worldCulling,
-	const Transform& worldTransform
-)
-{
-	if (m_occluderMesh)
-		worldCulling->placeOccluder(m_occluderMesh, worldTransform);
 }
 
 void InstanceMesh::render(

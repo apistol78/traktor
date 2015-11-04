@@ -40,7 +40,7 @@ void EntityRenderer::setOceanDynamicReflectionEnable(bool oceanReflectionEnable)
 	m_oceanReflectionEnable = oceanReflectionEnable;
 }
 
-const TypeInfoSet EntityRenderer::getEntityTypes() const
+const TypeInfoSet EntityRenderer::getRenderableTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< TerrainEntity >());
@@ -49,26 +49,18 @@ const TypeInfoSet EntityRenderer::getEntityTypes() const
 	return typeSet;
 }
 
-void EntityRenderer::precull(
-	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
-	world::Entity* entity
-)
-{
-}
-
 void EntityRenderer::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
 	world::IWorldRenderPass& worldRenderPass,
-	world::Entity* entity
+	Object* renderable
 )
 {
-	if (TerrainEntity* terrainEntity = dynamic_type_cast< TerrainEntity* >(entity))
+	if (TerrainEntity* terrainEntity = dynamic_type_cast< TerrainEntity* >(renderable))
 		terrainEntity->render(worldContext, worldRenderView, worldRenderPass, m_terrainDetailDistance, m_terrainCacheSize, m_terrainLayersEnable);
-	else if (OceanEntity* oceanEntity = dynamic_type_cast< OceanEntity* >(entity))
+	else if (OceanEntity* oceanEntity = dynamic_type_cast< OceanEntity* >(renderable))
 		oceanEntity->render(worldContext.getRenderContext(), worldRenderView, worldRenderPass, m_oceanReflectionEnable);
-	else if (RiverEntity* riverEntity = dynamic_type_cast< RiverEntity* >(entity))
+	else if (RiverEntity* riverEntity = dynamic_type_cast< RiverEntity* >(renderable))
 		riverEntity->render(worldContext.getRenderContext(), worldRenderView, worldRenderPass);
 }
 

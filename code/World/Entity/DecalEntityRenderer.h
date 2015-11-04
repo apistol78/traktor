@@ -38,19 +38,13 @@ class T_DLLCLASS DecalEntityRenderer : public IEntityRenderer
 public:
 	DecalEntityRenderer(render::IRenderSystem* renderSystem);
 
-	virtual const TypeInfoSet getEntityTypes() const;
-
-	virtual void precull(
-		WorldContext& worldContext,
-		WorldRenderView& worldRenderView,
-		Entity* entity
-	) T_OVERRIDE T_FINAL;
+	virtual const TypeInfoSet getRenderableTypes() const T_OVERRIDE T_FINAL;
 
 	virtual void render(
 		WorldContext& worldContext,
 		WorldRenderView& worldRenderView,
 		IWorldRenderPass& worldRenderPass,
-		Entity* entity
+		Object* renderable
 	) T_OVERRIDE T_FINAL;
 
 	virtual void flush(

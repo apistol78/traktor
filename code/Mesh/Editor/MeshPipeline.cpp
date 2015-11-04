@@ -31,7 +31,6 @@
 #include "Model/Model.h"
 #include "Model/ModelFormat.h"
 #include "Model/Operations/BakeVertexOcclusion.h"
-#include "Model/Operations/CalculateOccluder.h"
 #include "Model/Operations/CullDistantFaces.h"
 #include "Model/Operations/Transform.h"
 #include "Render/Shader/External.h"
@@ -134,7 +133,7 @@ Guid getVertexShaderGuid(MeshAsset::MeshType meshType)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 25, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 26, MeshPipeline, editor::IPipeline)
 
 MeshPipeline::MeshPipeline()
 :	m_promoteHalf(false)
@@ -178,9 +177,6 @@ bool MeshPipeline::buildDependencies(
 	T_ASSERT (asset);
 
 	pipelineDepends->addDependency(Path(m_assetPath), asset->getFileName().getOriginal());
-
-	if (asset->getGenerateOccluder() && !asset->getOccluderModel().empty())
-		pipelineDepends->addDependency(Path(m_assetPath), asset->getOccluderModel().getOriginal());
 
 	// Determine vertex shader guid.
 	Guid vertexShaderGuid = getVertexShaderGuid(asset->getMeshType());
@@ -568,45 +564,6 @@ bool MeshPipeline::buildOutput(
 		return false;
 	}
 
-	// Generate occluder model.
-	Ref< model::Model > occluderModel;
-	if (asset->getGenerateOccluder())
-	{
-		if (asset->getOccluderModel().empty())
-		{
-			log::info << L"Generating occluder model..." << Endl;
-
-			occluderModel = new model::Model(*models[0]);
-			if (!model::CalculateOccluder().apply(*occluderModel))
-			{
-				log::error << L"Mesh pipeline failed; unable to generate occluder" << Endl;
-				return false;
-			}
-		}
-		else
-		{
-			Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), asset->getOccluderModel().getOriginal());
-			if (!file)
-			{
-				log::error << L"Mesh pipeline failed; unable to open source occluder model (" << asset->getOccluderModel().getOriginal() << L")" << Endl;
-				return false;
-			}
-
-			occluderModel = model::ModelFormat::readAny(
-				file,
-				asset->getOccluderModel().getExtension(),
-				model::ModelFormat::IfMeshPositions | model::ModelFormat::IfMeshVertices | model::ModelFormat::IfMeshPolygons
-			);
-			if (!occluderModel)
-			{
-				log::error << L"Mesh pipeline failed; unable to read source occluder model (" << asset->getOccluderModel().getOriginal() << L")" << Endl;
-				return false;
-			}
-
-			file->close();
-		}
-	}
-
 	// Create mesh converter.
 	Ref< IMeshConverter > converter;
 	switch (asset->getMeshType())
@@ -682,7 +639,6 @@ bool MeshPipeline::buildOutput(
 	if (!converter->convert(
 		asset,
 		models,
-		occluderModel,
 		materialGuid,
 		materialTechniqueMap,
 		vertexElements,

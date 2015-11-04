@@ -18,10 +18,6 @@ namespace traktor
 	namespace world
 	{
 
-class IWorldRenderPass;
-class WorldContext;
-class WorldRenderView;
-
 /*! \brief Entity component.
  * \ingroup World
  */
@@ -37,8 +33,6 @@ public:
 	virtual Aabb3 getBoundingBox() const = 0;
 
 	virtual void update(const UpdateParams& update) = 0;
-
-	virtual void render(WorldContext& worldContext, WorldRenderView& worldRenderView, IWorldRenderPass& worldRenderPass, const Transform& transform) = 0;
 };
 
 	}

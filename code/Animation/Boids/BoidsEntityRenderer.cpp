@@ -8,29 +8,21 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.BoidsEntityRenderer", BoidsEntityRenderer, world::IEntityRenderer)
 
-const TypeInfoSet BoidsEntityRenderer::getEntityTypes() const
+const TypeInfoSet BoidsEntityRenderer::getRenderableTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< BoidsEntity >());
 	return typeSet;
 }
 
-void BoidsEntityRenderer::precull(
-	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
-	world::Entity* entity
-)
-{
-}
-
 void BoidsEntityRenderer::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
 	world::IWorldRenderPass& worldRenderPass,
-	world::Entity* entity
+	Object* renderable
 )
 {
-	if (BoidsEntity* clothEntity = dynamic_type_cast< BoidsEntity* >(entity))
+	if (BoidsEntity* clothEntity = dynamic_type_cast< BoidsEntity* >(renderable))
 		clothEntity->render(worldContext, worldRenderView, worldRenderPass);
 }
 

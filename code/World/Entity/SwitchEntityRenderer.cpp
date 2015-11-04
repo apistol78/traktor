@@ -10,33 +10,21 @@ namespace traktor
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.SwitchEntityRenderer", SwitchEntityRenderer, IEntityRenderer)
 
-const TypeInfoSet SwitchEntityRenderer::getEntityTypes() const
+const TypeInfoSet SwitchEntityRenderer::getRenderableTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< SwitchEntity >());
 	return typeSet;
 }
 
-void SwitchEntityRenderer::precull(
-	WorldContext& worldContext,
-	WorldRenderView& worldRenderView,
-	Entity* entity
-)
-{
-	SwitchEntity* switchEntity = checked_type_cast< SwitchEntity*, false >(entity);
-	Entity* activeEntity = switchEntity->getActiveEntity();
-	if (activeEntity)
-		worldContext.precull(worldRenderView, activeEntity);
-}
-
 void SwitchEntityRenderer::render(
 	WorldContext& worldContext,
 	WorldRenderView& worldRenderView,
 	IWorldRenderPass& worldRenderPass,
-	Entity* entity
+	Object* renderable
 )
 {
-	SwitchEntity* switchEntity = checked_type_cast< SwitchEntity*, false >(entity);
+	SwitchEntity* switchEntity = checked_type_cast< SwitchEntity*, false >(renderable);
 	Entity* activeEntity = switchEntity->getActiveEntity();
 	if (activeEntity)
 		worldContext.build(worldRenderView, worldRenderPass, activeEntity);

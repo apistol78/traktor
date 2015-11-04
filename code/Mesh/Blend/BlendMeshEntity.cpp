@@ -39,13 +39,6 @@ bool BlendMeshEntity::supportTechnique(render::handle_t technique) const
 	return m_mesh->supportTechnique(technique);
 }
 
-void BlendMeshEntity::precull(
-	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView
-)
-{
-}
-
 void BlendMeshEntity::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
