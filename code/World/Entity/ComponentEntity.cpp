@@ -24,12 +24,14 @@ void ComponentEntity::destroy()
 
 void ComponentEntity::setTransform(const Transform& transform)
 {
-	m_transform.set(transform);
+	m_transform = transform;
+	for (SmallMap< const TypeInfo*, Ref< IEntityComponent > >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
+		i->second->setTransform(transform);
 }
 
 bool ComponentEntity::getTransform(Transform& outTransform) const
 {
-	outTransform = m_transform.get();
+	outTransform = m_transform;
 	return true;
 }
 

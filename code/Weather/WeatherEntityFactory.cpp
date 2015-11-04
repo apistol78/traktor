@@ -1,8 +1,8 @@
 #include "Weather/WeatherEntityFactory.h"
-#include "Weather/Sky/SkyEntityData.h"
-#include "Weather/Sky/SkyEntity.h"
 #include "Weather/Clouds/CloudEntityData.h"
 #include "Weather/Clouds/CloudEntity.h"
+#include "Weather/Sky/SkyComponent.h"
+#include "Weather/Sky/SkyComponentData.h"
 
 namespace traktor
 {
@@ -20,7 +20,6 @@ WeatherEntityFactory::WeatherEntityFactory(resource::IResourceManager* resourceM
 const TypeInfoSet WeatherEntityFactory::getEntityTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< SkyEntityData >());
 	typeSet.insert(&type_of< CloudEntityData >());
 	return typeSet;
 }
@@ -32,14 +31,14 @@ const TypeInfoSet WeatherEntityFactory::getEntityEventTypes() const
 
 const TypeInfoSet WeatherEntityFactory::getEntityComponentTypes() const
 {
-	return TypeInfoSet();
+	TypeInfoSet typeSet;
+	typeSet.insert(&type_of< SkyComponentData >());
+	return typeSet;
 }
 
 Ref< world::Entity > WeatherEntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
-	if (const SkyEntityData* skyEntityData = dynamic_type_cast< const SkyEntityData* >(&entityData))
-		return skyEntityData->createEntity(m_resourceManager, m_renderSystem);
-	else if (const CloudEntityData* cloudEntityData = dynamic_type_cast< const CloudEntityData* >(&entityData))
+	if (const CloudEntityData* cloudEntityData = dynamic_type_cast< const CloudEntityData* >(&entityData))
 		return cloudEntityData->createEntity(m_resourceManager, m_renderSystem);
 	else
 		return 0;
@@ -52,7 +51,10 @@ Ref< world::IEntityEvent > WeatherEntityFactory::createEntityEvent(const world::
 
 Ref< world::IEntityComponent > WeatherEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, world::Entity* owner, const world::IEntityComponentData& entityComponentData) const
 {
-	return 0;
+	if (const SkyComponentData* skyComponentData = dynamic_type_cast< const SkyComponentData* >(&entityComponentData))
+		return skyComponentData->createComponent(m_resourceManager, m_renderSystem);
+	else
+		return 0;
 }
 
 	}

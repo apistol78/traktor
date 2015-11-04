@@ -56,7 +56,7 @@ public:
 private:
 	friend class WorldEntityFactory;
 
-	IntervalTransform m_transform;
+	Transform m_transform;
 	SmallMap< const TypeInfo*, Ref< IEntityComponent > > m_components;
 };
 

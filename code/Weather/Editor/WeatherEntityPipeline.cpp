@@ -1,7 +1,7 @@
 #include "Editor/IPipelineDepends.h"
 #include "Weather/Clouds/CloudEntityData.h"
 #include "Weather/Editor/WeatherEntityPipeline.h"
-#include "Weather/Sky/SkyEntityData.h"
+#include "Weather/Sky/SkyComponentData.h"
 
 namespace traktor
 {
@@ -13,7 +13,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.weather.WeatherEntityPipeline", 0, Weat
 TypeInfoSet WeatherEntityPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< SkyEntityData >());
+	typeSet.insert(&type_of< SkyComponentData >());
 	typeSet.insert(&type_of< CloudEntityData >());
 	return typeSet;
 }
@@ -26,8 +26,8 @@ bool WeatherEntityPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	if (const SkyEntityData* skyEntityData = dynamic_type_cast< const SkyEntityData* >(sourceAsset))
-		pipelineDepends->addDependency(skyEntityData->getShader(), editor::PdfBuild | editor::PdfResource);
+	if (const SkyComponentData* skyComponentData = dynamic_type_cast< const SkyComponentData* >(sourceAsset))
+		pipelineDepends->addDependency(skyComponentData->getShader(), editor::PdfBuild | editor::PdfResource);
 	if (const CloudEntityData* cloudEntityData = dynamic_type_cast< const CloudEntityData* >(sourceAsset))
 	{
 		pipelineDepends->addDependency(cloudEntityData->getParticleShader(), editor::PdfBuild | editor::PdfResource);

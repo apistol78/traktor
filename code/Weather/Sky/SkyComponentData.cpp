@@ -9,8 +9,8 @@
 #include "Render/IndexBuffer.h"
 #include "Render/Shader.h"
 #include "Resource/Member.h"
-#include "Weather/Sky/SkyEntity.h"
-#include "Weather/Sky/SkyEntityData.h"
+#include "Weather/Sky/SkyComponent.h"
+#include "Weather/Sky/SkyComponentData.h"
 
 namespace traktor
 {
@@ -27,15 +27,15 @@ const int c_indexCount = c_triangleCount * 3;
 
 		}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.SkyEntityData", 2, SkyEntityData, world::EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.SkyComponentData", 0, SkyComponentData, world::IEntityComponentData)
 
-SkyEntityData::SkyEntityData()
+SkyComponentData::SkyComponentData()
 :	m_sunDirection(0.0f, 1.0f, 0.0f, 0.0f)
 ,	m_offset(0.0f)
 {
 }
 
-Ref< SkyEntity > SkyEntityData::createEntity(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
+Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
 	resource::Proxy< render::Shader > shader;
 	if (!resourceManager->bind(m_shader, shader))
@@ -103,7 +103,7 @@ Ref< SkyEntity > SkyEntityData::createEntity(resource::IResourceManager* resourc
 		c_vertexCount - 1
 	);
 
-	return new SkyEntity(
+	return new SkyComponent(
 		vertexBuffer,
 		indexBuffer,
 		primitives,
@@ -113,17 +113,11 @@ Ref< SkyEntity > SkyEntityData::createEntity(resource::IResourceManager* resourc
 	);
 }
 
-void SkyEntityData::serialize(ISerializer& s)
+void SkyComponentData::serialize(ISerializer& s)
 {
-	world::EntityData::serialize(s);
-
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
-
-	if (s.getVersion() >= 1)
-		s >> Member< Vector4 >(L"sunDirection", m_sunDirection);
-
-	if (s.getVersion() >= 2)
-		s >> Member< float >(L"offset", m_offset);
+	s >> Member< Vector4 >(L"sunDirection", m_sunDirection);
+	s >> Member< float >(L"offset", m_offset);
 }
 
 	}
