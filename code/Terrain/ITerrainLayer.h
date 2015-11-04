@@ -18,7 +18,7 @@ class WorldRenderView;
 	namespace terrain
 	{
 
-class TerrainEntity;
+class TerrainComponent;
 
 class ITerrainLayer : public Object
 {
@@ -28,13 +28,13 @@ public:
 	virtual void update(const world::UpdateParams& update) = 0;
 
 	virtual void render(
-		TerrainEntity& terrainEntity,
+		TerrainComponent& terrainComponent,
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
 		world::IWorldRenderPass& worldRenderPass
 	) = 0;
 
-	virtual void updatePatches(const TerrainEntity& terrainEntity) = 0;
+	virtual void updatePatches(const TerrainComponent& terrainComponent) = 0;
 };
 
 	}

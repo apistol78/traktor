@@ -22,15 +22,14 @@ UndergrowthLayerData::UndergrowthLayerData()
 Ref< ITerrainLayer > UndergrowthLayerData::createLayerInstance(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
-	const TerrainEntity& terrainEntity
+	const TerrainComponent& terrainComponent
 ) const
 {
 	Ref< UndergrowthLayer > layer = new UndergrowthLayer();
-
-	if (!layer->create(resourceManager, renderSystem, *this, terrainEntity))
+	if (layer->create(resourceManager, renderSystem, *this, terrainComponent))
+		return layer;
+	else
 		return 0;
-
-	return layer;
 }
 
 void UndergrowthLayerData::serialize(ISerializer& s)

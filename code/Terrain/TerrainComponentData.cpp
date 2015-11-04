@@ -3,16 +3,16 @@
 #include "Resource/Member.h"
 #include "Terrain/ITerrainLayerData.h"
 #include "Terrain/Terrain.h"
-#include "Terrain/TerrainEntityData.h"
+#include "Terrain/TerrainComponentData.h"
 
 namespace traktor
 {
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.TerrainEntityData", 3, TerrainEntityData, world::EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.TerrainComponentData", 0, TerrainComponentData, world::IEntityComponentData)
 
-TerrainEntityData::TerrainEntityData()
+TerrainComponentData::TerrainComponentData()
 :	m_patchLodDistance(100.0f)
 ,	m_patchLodBias(0.0f)
 ,	m_patchLodExponent(1.0f)
@@ -22,12 +22,8 @@ TerrainEntityData::TerrainEntityData()
 {
 }
 
-void TerrainEntityData::serialize(ISerializer& s)
+void TerrainComponentData::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion() >= 2);
-
-	world::EntityData::serialize(s);
-
 	s >> resource::Member< Terrain >(L"terrain", m_terrain);
 	s >> Member< float >(L"patchLodDistance", m_patchLodDistance);
 	s >> Member< float >(L"patchLodBias", m_patchLodBias);
@@ -35,9 +31,7 @@ void TerrainEntityData::serialize(ISerializer& s)
 	s >> Member< float >(L"surfaceLodDistance", m_surfaceLodDistance);
 	s >> Member< float >(L"surfaceLodBias", m_surfaceLodBias);
 	s >> Member< float >(L"surfaceLodExponent", m_surfaceLodExponent);
-
-	if (s.getVersion() >= 3)
-		s >> MemberRefArray< ITerrainLayerData >(L"layers", m_layers);
+	s >> MemberRefArray< ITerrainLayerData >(L"layers", m_layers);
 }
 
 	}

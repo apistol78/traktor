@@ -20,7 +20,8 @@
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
 #include "Terrain/Terrain.h"
-#include "Terrain/TerrainEntity.h"
+#include "Terrain/TerrainComponent.h"
+#include "Terrain/TerrainComponentData.h"
 #include "Terrain/Editor/AverageBrush.h"
 #include "Terrain/Editor/ColorBrush.h"
 #include "Terrain/Editor/CutBrush.h"
@@ -226,34 +227,34 @@ void TerrainEditModifier::selectionChanged()
 	m_splatImage = 0;
 	m_colorImage = 0;
 
-	// Get terrain entity from selection.
+	// Get terrain component from selection.
 	RefArray< scene::EntityAdapter > entityAdapters;
 	if (m_context->getEntities(entityAdapters, scene::SceneEditorContext::GfDefault | scene::SceneEditorContext::GfSelectedOnly | scene::SceneEditorContext::GfNoExternalChild) <= 0)
 		return;
 
-	m_entity = dynamic_type_cast< TerrainEntity* >(entityAdapters[0]->getEntity());
-	m_entityData = dynamic_type_cast< TerrainEntityData* >(entityAdapters[0]->getEntityData());
+	m_terrainComponent = entityAdapters[0]->getComponent< TerrainComponent >();
+	m_terrainComponentData = entityAdapters[0]->getComponentData< TerrainComponentData >();
 
-	// Ensure we've both entity and it's data.
-	if (!m_entity || !m_entityData)
+	// Ensure we've both component and it's data.
+	if (!m_terrainComponent || !m_terrainComponentData)
 	{
-		m_entity = 0;
-		m_entityData = 0;
+		m_terrainComponent = 0;
+		m_terrainComponentData = 0;
 		return;
 	}
 
 	// Get runtime heightfield.
-	m_heightfield = m_entity->getTerrain()->getHeightfield();
+	m_heightfield = m_terrainComponent->getTerrain()->getHeightfield();
 	if (!m_heightfield)
 	{
-		m_entity = 0;
-		m_entityData = 0;
+		m_terrainComponent = 0;
+		m_terrainComponentData = 0;
 		return;
 	}
 
 	int32_t size = m_heightfield->getSize();
 
-	m_terrainInstance = sourceDatabase->getInstance(m_entityData->getTerrain());
+	m_terrainInstance = sourceDatabase->getInstance(m_terrainComponentData->getTerrain());
 
 	// Get splat image from terrain asset.
 	if (m_terrainInstance)
@@ -307,7 +308,7 @@ void TerrainEditModifier::selectionChanged()
 		}
 
 		// Replace splat map in resource with our texture.
-		m_entity->m_terrain->m_splatMap = resource::Proxy< render::ISimpleTexture >(m_splatMap);
+		m_terrainComponent->m_terrain->m_splatMap = resource::Proxy< render::ISimpleTexture >(m_splatMap);
 	}
 
 	// Get color image from terrain asset.
@@ -366,7 +367,7 @@ void TerrainEditModifier::selectionChanged()
 		}
 
 		// Replace color map in resource with our texture.
-		m_entity->m_terrain->m_colorMap = resource::Proxy< render::ISimpleTexture >(m_colorMap);
+		m_terrainComponent->m_terrain->m_colorMap = resource::Proxy< render::ISimpleTexture >(m_colorMap);
 	}
 
 	// Create normal texture data.
@@ -407,7 +408,7 @@ void TerrainEditModifier::selectionChanged()
 		}
 
 		// Replace normal map in resource with our texture.
-		m_entity->m_terrain->m_normalMap = resource::Proxy< render::ISimpleTexture >(m_normalMap);
+		m_terrainComponent->m_terrain->m_normalMap = resource::Proxy< render::ISimpleTexture >(m_normalMap);
 	}
 
 	// Create cut texture data.
@@ -440,7 +441,7 @@ void TerrainEditModifier::selectionChanged()
 		}
 
 		// Replace cut map in resource with our texture.
-		m_entity->m_terrain->m_cutMap = resource::Proxy< render::ISimpleTexture >(m_cutMap);
+		m_terrainComponent->m_terrain->m_cutMap = resource::Proxy< render::ISimpleTexture >(m_cutMap);
 	}
 
 	// Create material mask texture data.
@@ -473,7 +474,7 @@ void TerrainEditModifier::selectionChanged()
 		}
 
 		// Replace material mask map in resource with our texture.
-		m_entity->m_terrain->m_materialMap = resource::Proxy< render::ISimpleTexture >(m_materialMap);
+		m_terrainComponent->m_terrain->m_materialMap = resource::Proxy< render::ISimpleTexture >(m_materialMap);
 	}
 
 	// Create default brush; try set same brush type as before.
@@ -490,7 +491,7 @@ void TerrainEditModifier::selectionChanged()
 		m_fallOff = new SmoothFallOff();
 
 	// Set visualize mode.
-	m_entity->setVisualizeMode(m_visualizeMode);
+	m_terrainComponent->setVisualizeMode(m_visualizeMode);
 }
 
 bool TerrainEditModifier::cursorMoved(
@@ -500,7 +501,7 @@ bool TerrainEditModifier::cursorMoved(
 	const Vector4& worldRayDirection
 )
 {
-	if (!m_entity || !m_heightfield)
+	if (!m_terrainComponent || !m_heightfield)
 		return false;
 
 	Scalar distance;
@@ -559,7 +560,7 @@ void TerrainEditModifier::apply(
 	const Vector4& viewDelta
 )
 {
-	if (!m_entity || m_center.w() <= FUZZY_EPSILON)
+	if (!m_terrainComponent || m_center.w() <= FUZZY_EPSILON)
 		return;
 
 	Scalar distance;
@@ -582,7 +583,7 @@ void TerrainEditModifier::apply(
 	visitor.brush = m_spatialBrush;
 	line_dda(gx0, gz0, gx1, gz1, visitor);
 
-	m_entity->updatePatches();
+	m_terrainComponent->updatePatches();
 	m_center = center;
 
 	int32_t size = m_heightfield->getSize();
@@ -659,7 +660,7 @@ void TerrainEditModifier::apply(
 		}
 
 		// Replace normal map in resource with our texture.
-		m_entity->m_terrain->m_normalMap = resource::Proxy< render::ISimpleTexture >(m_normalMap);
+		m_terrainComponent->m_terrain->m_normalMap = resource::Proxy< render::ISimpleTexture >(m_normalMap);
 	}
 
 	// Update cuts.
@@ -682,7 +683,7 @@ void TerrainEditModifier::apply(
 		}
 
 		// Replace cut map in resource with our texture.
-		m_entity->m_terrain->m_cutMap = resource::Proxy< render::ISimpleTexture >(m_cutMap);
+		m_terrainComponent->m_terrain->m_cutMap = resource::Proxy< render::ISimpleTexture >(m_cutMap);
 	}
 
 	// Update material mask.
@@ -705,7 +706,7 @@ void TerrainEditModifier::apply(
 		}
 
 		// Replace material mask map in resource with our texture.
-		m_entity->m_terrain->m_materialMap = resource::Proxy< render::ISimpleTexture >(m_materialMap);
+		m_terrainComponent->m_terrain->m_materialMap = resource::Proxy< render::ISimpleTexture >(m_materialMap);
 	}
 }
 
@@ -784,7 +785,7 @@ void TerrainEditModifier::end(const scene::TransformChain& transformChain)
 		!m_heightfieldInstance
 	)
 	{
-		const resource::Id< Terrain >& terrain = m_entityData->getTerrain();
+		const resource::Id< Terrain >& terrain = m_terrainComponentData->getTerrain();
 		Ref< const TerrainAsset > terrainAsset = sourceDatabase->getObjectReadOnly< TerrainAsset >(terrain);
 		if (!terrainAsset)
 			return;
@@ -840,7 +841,7 @@ void TerrainEditModifier::end(const scene::TransformChain& transformChain)
 
 void TerrainEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 {
-	if (!m_entity || !m_heightfield || m_center.w() <= FUZZY_EPSILON)
+	if (!m_terrainComponent || !m_heightfield || m_center.w() <= FUZZY_EPSILON)
 		return;
 
 	float radius = m_context->getGuideSize();
@@ -965,11 +966,11 @@ void TerrainEditModifier::setMaterial(int32_t material)
 	m_material = material;
 }
 
-void TerrainEditModifier::setVisualizeMode(TerrainEntity::VisualizeMode visualizeMode)
+void TerrainEditModifier::setVisualizeMode(TerrainComponent::VisualizeMode visualizeMode)
 {
 	m_visualizeMode = visualizeMode;
-	if (m_entity)
-		m_entity->setVisualizeMode(m_visualizeMode);
+	if (m_terrainComponent)
+		m_terrainComponent->setVisualizeMode(m_visualizeMode);
 }
 
 void TerrainEditModifier::setFallOffImage(drawing::Image* fallOffImage)

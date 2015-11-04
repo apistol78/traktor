@@ -3,7 +3,7 @@
 #include "I18N/Text.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/Events/ModifierChangedEvent.h"
-#include "Terrain/TerrainEntity.h"
+#include "Terrain/TerrainComponent.h"
 #include "Terrain/Editor/AverageBrush.h"
 #include "Terrain/Editor/ColorBrush.h"
 #include "Terrain/Editor/CutBrush.h"
@@ -328,7 +328,7 @@ void TerrainEditorPlugin::updateModifierState()
 
 	int32_t visualize = m_toolVisualize->getSelected();
 	if (visualize >= 0)
-		m_terrainEditModifier->setVisualizeMode((TerrainEntity::VisualizeMode)visualize);
+		m_terrainEditModifier->setVisualizeMode((TerrainComponent::VisualizeMode)visualize);
 
 	m_terrainEditModifier->setStrength(m_sliderStrength->getValue() / 10.0f);
 }

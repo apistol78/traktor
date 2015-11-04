@@ -5,6 +5,8 @@
 #include "World/Editor/LayerEntityData.h"
 #include "World/Entity.h"
 #include "World/EntityData.h"
+#include "World/Entity/ComponentEntity.h"
+#include "World/Entity/ComponentEntityData.h"
 #include "World/Entity/ExternalEntityData.h"
 
 namespace traktor
@@ -42,6 +44,24 @@ void EntityAdapter::setEntity(world::Entity* entity)
 world::Entity* EntityAdapter::getEntity() const
 {
 	return m_entity;
+}
+
+world::IEntityComponentData* EntityAdapter::getComponentData(const TypeInfo& componentDataType) const
+{
+	world::ComponentEntityData* componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(m_entityData);
+	if (componentEntityData)
+		return componentEntityData->getComponent(componentDataType);
+	else
+		return 0;
+}
+
+world::IEntityComponent* EntityAdapter::getComponent(const TypeInfo& componentType) const
+{
+	world::ComponentEntity* componentEntity = dynamic_type_cast< world::ComponentEntity* >(m_entity);
+	if (componentEntity)
+		return componentEntity->getComponent(componentType);
+	else
+		return 0;
 }
 
 void EntityAdapter::setHash(uint32_t hash)

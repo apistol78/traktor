@@ -35,7 +35,7 @@
 #include "Model/Operations/MergeModel.h"
 #include "Model/Operations/Triangulate.h"
 #include "Terrain/OceanEntityData.h"
-#include "Terrain/TerrainEntityData.h"
+#include "Terrain/TerrainComponentData.h"
 #include "Terrain/Editor/TerrainAsset.h"
 #include "World/Editor/LayerEntityData.h"
 #include "World/Entity/ExternalEntityData.h"
@@ -144,10 +144,10 @@ void collectNavigationEntities(const ISerializable* object, RefArray< world::Ent
 		{
 			outEntityData.push_back(animatedMeshEntityData);
 		}
-		else if (terrain::TerrainEntityData* terrainEntityData = dynamic_type_cast< terrain::TerrainEntityData* >(objectMember->get()))
-		{
-			outEntityData.push_back(terrainEntityData);
-		}
+		//else if (terrain::TerrainComponentData* terrainComponentData = dynamic_type_cast< terrain::TerrainComponentData* >(objectMember->get()))
+		//{
+		//	outEntityData.push_back(terrainComponentData);
+		//}
 		else if (terrain::OceanEntityData* oceanEntityData = dynamic_type_cast< terrain::OceanEntityData* >(objectMember->get()))
 		{
 			outEntityData.push_back(oceanEntityData);
@@ -350,131 +350,131 @@ bool NavMeshPipeline::buildOutput(
 					navModels.push_back(NavMeshSourceModel(meshModel, (*i)->getTransform()));
 				}
 			}
-			else if (const terrain::TerrainEntityData* terrainEntityData = dynamic_type_cast< const terrain::TerrainEntityData* >(*i))
-			{
-				const resource::Id< terrain::Terrain >& terrain = terrainEntityData->getTerrain();
+			//else if (const terrain::TerrainComponentData* terrainEntityData = dynamic_type_cast< const terrain::TerrainComponentData* >(*i))
+			//{
+			//	const resource::Id< terrain::Terrain >& terrain = terrainEntityData->getTerrain();
 
-				Ref< const terrain::TerrainAsset > terrainAsset = pipelineBuilder->getObjectReadOnly< terrain::TerrainAsset >(terrain);
-				if (!terrain)
-					continue;
+			//	Ref< const terrain::TerrainAsset > terrainAsset = pipelineBuilder->getObjectReadOnly< terrain::TerrainAsset >(terrain);
+			//	if (!terrain)
+			//		continue;
 
-				Ref< db::Instance > heightfieldAssetInstance = pipelineBuilder->getSourceDatabase()->getInstance(terrainAsset->getHeightfield());
-				if (!heightfieldAssetInstance)
-					continue;
+			//	Ref< db::Instance > heightfieldAssetInstance = pipelineBuilder->getSourceDatabase()->getInstance(terrainAsset->getHeightfield());
+			//	if (!heightfieldAssetInstance)
+			//		continue;
 
-				Ref< const hf::HeightfieldAsset > heightfieldAsset = heightfieldAssetInstance->getObject< const hf::HeightfieldAsset >();
-				if (!heightfieldAsset)
-					continue;
+			//	Ref< const hf::HeightfieldAsset > heightfieldAsset = heightfieldAssetInstance->getObject< const hf::HeightfieldAsset >();
+			//	if (!heightfieldAsset)
+			//		continue;
 
-				Ref< IStream > sourceData = heightfieldAssetInstance->readData(L"Data");
-				if (!sourceData)
-					continue;
+			//	Ref< IStream > sourceData = heightfieldAssetInstance->readData(L"Data");
+			//	if (!sourceData)
+			//		continue;
 
-				Ref< hf::Heightfield > heightfield = hf::HeightfieldFormat().read(
-					sourceData,
-					heightfieldAsset->getWorldExtent()
-				);
-				if (!heightfield)
-					continue;
+			//	Ref< hf::Heightfield > heightfield = hf::HeightfieldFormat().read(
+			//		sourceData,
+			//		heightfieldAsset->getWorldExtent()
+			//	);
+			//	if (!heightfield)
+			//		continue;
 
-				sourceData->close();
-				sourceData = 0;
+			//	sourceData->close();
+			//	sourceData = 0;
 
-				int32_t size = heightfield->getSize();
-				int32_t ix0, iz0;
-				int32_t ix1, iz1;
+			//	int32_t size = heightfield->getSize();
+			//	int32_t ix0, iz0;
+			//	int32_t ix1, iz1;
 
-				float vistaDistance = heightfieldAsset->getVistaDistance();
-				if (vistaDistance > FUZZY_EPSILON)
-				{
-					heightfield->worldToGrid(-vistaDistance / 2.0f, -vistaDistance / 2.0f, ix0, iz0);
-					heightfield->worldToGrid( vistaDistance / 2.0f,  vistaDistance / 2.0f, ix1, iz1);
+			//	float vistaDistance = heightfieldAsset->getVistaDistance();
+			//	if (vistaDistance > FUZZY_EPSILON)
+			//	{
+			//		heightfield->worldToGrid(-vistaDistance / 2.0f, -vistaDistance / 2.0f, ix0, iz0);
+			//		heightfield->worldToGrid( vistaDistance / 2.0f,  vistaDistance / 2.0f, ix1, iz1);
 
-					ix0 = clamp(ix0, 0, size);
-					iz0 = clamp(iz0, 0, size);
-					ix1 = clamp(ix1, 0, size);
-					iz1 = clamp(iz1, 0, size);
-				}
-				else
-				{
-					ix0 = 0;
-					iz0 = 0;
-					ix1 = size;
-					iz1 = size;
-				}
+			//		ix0 = clamp(ix0, 0, size);
+			//		iz0 = clamp(iz0, 0, size);
+			//		ix1 = clamp(ix1, 0, size);
+			//		iz1 = clamp(iz1, 0, size);
+			//	}
+			//	else
+			//	{
+			//		ix0 = 0;
+			//		iz0 = 0;
+			//		ix1 = size;
+			//		iz1 = size;
+			//	}
 
-				log::info << L"NavMesh terrain, using (" << ix0 << L", " << iz0 << L", " << ix1 << L", " << iz1 << L") of totally (0, 0, " << size << L", " << size << L")" << Endl;
+			//	log::info << L"NavMesh terrain, using (" << ix0 << L", " << iz0 << L", " << ix1 << L", " << iz1 << L") of totally (0, 0, " << size << L", " << size << L")" << Endl;
 
-				size = max(ix1 - ix0, iz1 - iz0);
+			//	size = max(ix1 - ix0, iz1 - iz0);
 
-				int32_t outputSize = size / m_terrainStepSize;
+			//	int32_t outputSize = size / m_terrainStepSize;
 
-				Ref< model::Model > navModel = new model::Model();
+			//	Ref< model::Model > navModel = new model::Model();
 
-				navModel->reservePositions(outputSize * outputSize);
+			//	navModel->reservePositions(outputSize * outputSize);
 
-				model::Vertex vertex;
-				for (int32_t iz = iz0; iz < iz1; iz += m_terrainStepSize)
-				{
-					for (int32_t ix = ix0; ix < ix1; ix += m_terrainStepSize)
-					{
-						float wx, wz;
-						heightfield->gridToWorld(ix, iz, wx, wz);
+			//	model::Vertex vertex;
+			//	for (int32_t iz = iz0; iz < iz1; iz += m_terrainStepSize)
+			//	{
+			//		for (int32_t ix = ix0; ix < ix1; ix += m_terrainStepSize)
+			//		{
+			//			float wx, wz;
+			//			heightfield->gridToWorld(ix, iz, wx, wz);
 
-						uint32_t positionId = navModel->addPosition(Vector4(
-							wx,
-							heightfield->getWorldHeight(wx, wz),
-							wz,
-							1.0f
-						));
+			//			uint32_t positionId = navModel->addPosition(Vector4(
+			//				wx,
+			//				heightfield->getWorldHeight(wx, wz),
+			//				wz,
+			//				1.0f
+			//			));
 
-						vertex.setPosition(positionId);
-						navModel->addVertex(vertex);
-					}
-				}
+			//			vertex.setPosition(positionId);
+			//			navModel->addVertex(vertex);
+			//		}
+			//	}
 
-				model::Polygon polygon;
-				for (int32_t iz = 0; iz < outputSize - 1; ++iz)
-				{
-					int32_t offset = iz * outputSize;
-					for (int32_t ix = 0; ix < outputSize - 1; ++ix)
-					{
-						float wx, wz;
-						heightfield->gridToWorld(ix0 + ix * m_terrainStepSize, iz0 + iz * m_terrainStepSize, wx, wz);
+			//	model::Polygon polygon;
+			//	for (int32_t iz = 0; iz < outputSize - 1; ++iz)
+			//	{
+			//		int32_t offset = iz * outputSize;
+			//		for (int32_t ix = 0; ix < outputSize - 1; ++ix)
+			//		{
+			//			float wx, wz;
+			//			heightfield->gridToWorld(ix0 + ix * m_terrainStepSize, iz0 + iz * m_terrainStepSize, wx, wz);
 
-						if (!heightfield->getWorldCut(wx, wz))
-							continue;
-						if (!heightfield->getWorldCut(wx + m_terrainStepSize, wz))
-							continue;
-						if (!heightfield->getWorldCut(wx + m_terrainStepSize, wz + m_terrainStepSize))
-							continue;
-						if (!heightfield->getWorldCut(wx, wz + m_terrainStepSize))
-							continue;
+			//			if (!heightfield->getWorldCut(wx, wz))
+			//				continue;
+			//			if (!heightfield->getWorldCut(wx + m_terrainStepSize, wz))
+			//				continue;
+			//			if (!heightfield->getWorldCut(wx + m_terrainStepSize, wz + m_terrainStepSize))
+			//				continue;
+			//			if (!heightfield->getWorldCut(wx, wz + m_terrainStepSize))
+			//				continue;
 
-						int32_t indices[] =
-						{
-							offset + ix,
-							offset + ix + 1,
-							offset + ix + 1 + outputSize,
-							offset + ix + outputSize
-						};
+			//			int32_t indices[] =
+			//			{
+			//				offset + ix,
+			//				offset + ix + 1,
+			//				offset + ix + 1 + outputSize,
+			//				offset + ix + outputSize
+			//			};
 
-						polygon.clearVertices();
-						polygon.addVertex(indices[0]);
-						polygon.addVertex(indices[1]);
-						polygon.addVertex(indices[3]);
-						navModel->addPolygon(polygon);
+			//			polygon.clearVertices();
+			//			polygon.addVertex(indices[0]);
+			//			polygon.addVertex(indices[1]);
+			//			polygon.addVertex(indices[3]);
+			//			navModel->addPolygon(polygon);
 
-						polygon.clearVertices();
-						polygon.addVertex(indices[1]);
-						polygon.addVertex(indices[2]);
-						polygon.addVertex(indices[3]);
-						navModel->addPolygon(polygon);
-					}
-				}
+			//			polygon.clearVertices();
+			//			polygon.addVertex(indices[1]);
+			//			polygon.addVertex(indices[2]);
+			//			polygon.addVertex(indices[3]);
+			//			navModel->addPolygon(polygon);
+			//		}
+			//	}
 
-				navModels.push_back(NavMeshSourceModel(navModel, Transform::identity()));
-			}
+			//	navModels.push_back(NavMeshSourceModel(navModel, Transform::identity()));
+			//}
 			else if (const terrain::OceanEntityData* oceanEntityData = dynamic_type_cast< const terrain::OceanEntityData* >(*i))
 			{
 				oceanHeight = max< float >(oceanHeight, oceanEntityData->getTransform().translation().y());

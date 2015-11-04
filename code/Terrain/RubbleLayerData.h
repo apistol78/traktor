@@ -34,7 +34,7 @@ public:
 	virtual Ref< ITerrainLayer > createLayerInstance(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
-		const TerrainEntity& terrainEntity
+		const TerrainComponent& terrainComponent
 	) const T_OVERRIDE;
 
 	virtual void serialize(ISerializer& s);

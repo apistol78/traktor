@@ -23,15 +23,14 @@ RubbleLayerData::RubbleLayerData()
 Ref< ITerrainLayer > RubbleLayerData::createLayerInstance(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
-	const TerrainEntity& terrainEntity
+	const TerrainComponent& terrainComponent
 ) const
 {
 	Ref< RubbleLayer > layer = new RubbleLayer();
-
-	if (!layer->create(resourceManager, renderSystem, *this, terrainEntity))
+	if (layer->create(resourceManager, renderSystem, *this, terrainComponent))
+		return layer;
+	else
 		return 0;
-
-	return layer;
 }
 
 void RubbleLayerData::serialize(ISerializer& s)

@@ -40,19 +40,19 @@ public:
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
 		const UndergrowthLayerData& layerData,
-		const TerrainEntity& terrainEntity
+		const TerrainComponent& terrainEntity
 	);
 
-	virtual void update(const world::UpdateParams& update) T_OVERRIDE;
+	virtual void update(const world::UpdateParams& update) T_OVERRIDE T_FINAL;
 
 	virtual void render(
-		TerrainEntity& terrainEntity,
+		TerrainComponent& terrainComponent,
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
 		world::IWorldRenderPass& worldRenderPass
-	) T_OVERRIDE;
+	) T_OVERRIDE T_FINAL;
 
-	virtual void updatePatches(const TerrainEntity& terrainEntity) T_OVERRIDE;
+	virtual void updatePatches(const TerrainComponent& terrainComponent) T_OVERRIDE T_FINAL;
 
 private:
 	struct Cluster
