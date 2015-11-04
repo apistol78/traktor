@@ -6,8 +6,8 @@
 #include "Resource/Member.h"
 #include "Render/ITexture.h"
 #include "Render/Shader.h"
-#include "Weather/Clouds/CloudEntityData.h"
-#include "Weather/Clouds/CloudEntity.h"
+#include "Weather/Clouds/CloudComponent.h"
+#include "Weather/Clouds/CloudComponentData.h"
 #include "Weather/Clouds/CloudMask.h"
 #include "Weather/Clouds/CloudMaskResource.h"
 
@@ -16,9 +16,9 @@ namespace traktor
 	namespace weather
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.CloudEntityData", 1, CloudEntityData, world::EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.CloudComponentData", 0, CloudComponentData, world::IEntityComponentData)
 
-CloudEntityData::CloudEntityData()
+CloudComponentData::CloudComponentData()
 :	m_impostorTargetResolution(256)
 ,	m_impostorSliceCount(1)
 ,	m_updateFrequency(10)
@@ -27,7 +27,7 @@ CloudEntityData::CloudEntityData()
 {
 }
 
-Ref< CloudEntity > CloudEntityData::createEntity(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
+Ref< CloudComponent > CloudComponentData::createComponent(world::Entity* owner, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
 	resource::Proxy< render::Shader > particleShader;
 	resource::Proxy< render::ITexture > particleTexture;
@@ -47,8 +47,8 @@ Ref< CloudEntity > CloudEntityData::createEntity(resource::IResourceManager* res
 			return 0;
 	}
 
-	Ref< CloudEntity > cloudEntity = new CloudEntity();
-	if (cloudEntity->create(
+	Ref< CloudComponent > cloudComponent = new CloudComponent(owner);
+	if (cloudComponent->create(
 		renderSystem,
 		particleShader,
 		particleTexture,
@@ -61,25 +61,17 @@ Ref< CloudEntity > CloudEntityData::createEntity(resource::IResourceManager* res
 		m_updateDirectionThreshold,
 		m_particleData
 	))
-	{
-		cloudEntity->setTransform(getTransform());
-		return cloudEntity;
-	}
+		return cloudComponent;
 
 	return 0;
 }
 
-void CloudEntityData::serialize(ISerializer& s)
+void CloudComponentData::serialize(ISerializer& s)
 {
-	world::EntityData::serialize(s);
-
 	s >> resource::Member< render::Shader >(L"particleShader", m_particleShader);
 	s >> resource::Member< render::ITexture >(L"particleTexture", m_particleTexture);
 	s >> resource::Member< render::Shader >(L"impostorShader", m_impostorShader);
-
-	if (s.getVersion() >= 1)
-		s >> resource::Member< CloudMask >(L"mask", m_mask);
-
+	s >> resource::Member< CloudMask >(L"mask", m_mask);
 	s >> Member< uint32_t >(L"impostorTargetResolution", m_impostorTargetResolution);
 	s >> Member< uint32_t >(L"impostorSliceCount", m_impostorSliceCount);
 	s >> Member< uint32_t >(L"updateFrequency", m_updateFrequency);

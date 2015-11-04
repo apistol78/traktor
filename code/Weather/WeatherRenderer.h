@@ -1,5 +1,5 @@
-#ifndef traktor_weather_WeatherEntityRenderer_H
-#define traktor_weather_WeatherEntityRenderer_H
+#ifndef traktor_weather_WeatherRenderer_H
+#define traktor_weather_WeatherRenderer_H
 
 #include "World/IEntityRenderer.h"
 
@@ -23,12 +23,12 @@ class PrimitiveRenderer;
 	namespace weather
 	{
 
-class T_DLLCLASS WeatherEntityRenderer : public world::IEntityRenderer
+class T_DLLCLASS WeatherRenderer : public world::IEntityRenderer
 {
 	T_RTTI_CLASS;
 
 public:
-	WeatherEntityRenderer(render::PrimitiveRenderer* primitiveRenderer = 0);
+	WeatherRenderer(render::PrimitiveRenderer* primitiveRenderer = 0);
 
 	virtual const TypeInfoSet getRenderableTypes() const T_OVERRIDE T_FINAL;
 
@@ -52,4 +52,4 @@ private:
 	}
 }
 
-#endif	// traktor_weather_WeatherEntityRenderer_H
+#endif	// traktor_weather_WeatherRenderer_H

@@ -4,6 +4,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Vector2.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Render/IndexBuffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
@@ -12,8 +13,9 @@
 #include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
-#include "Weather/Clouds/CloudEntity.h"
+#include "Weather/Clouds/CloudComponent.h"
 #include "Weather/Clouds/CloudMask.h"
+#include "World/Entity.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldRenderView.h"
 
@@ -172,17 +174,23 @@ struct ImpostorUpdateRenderBlock : public render::RenderBlock
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.CloudEntity", CloudEntity, world::Entity)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.CloudComponent", CloudComponent, world::IEntityComponent)
 
-CloudEntity::CloudEntity()
-:	m_handleBillboardView(render::getParameterHandle(L"BillboardView"))
+CloudComponent::CloudComponent(world::Entity* owner)
+:	m_owner(owner)
+,	m_handleBillboardView(render::getParameterHandle(L"BillboardView"))
 ,	m_handleImpostorTarget(render::getParameterHandle(L"ImpostorTarget"))
 ,	m_timeUntilUpdate(0.0f)
 ,	m_updateCount(0)
 {
 }
 
-bool CloudEntity::create(
+CloudComponent::~CloudComponent()
+{
+	destroy();
+}
+
+bool CloudComponent::create(
 	render::IRenderSystem* renderSystem,
 	const resource::Proxy< render::Shader >& particleShader,
 	const resource::Proxy< render::ITexture >& particleTexture,
@@ -268,14 +276,36 @@ bool CloudEntity::create(
 		return false;
 
 	m_particleData = particleData;
-
-	m_transform = Transform::identity();
 	m_lastCameraPosition.set(0.0f, 0.0f, 0.0f, 0.0f);
-
 	return true;
 }
 
-void CloudEntity::render(
+void CloudComponent::destroy()
+{
+	for (RefArray< render::RenderTargetSet >::iterator i = m_impostorTargets.begin(); i != m_impostorTargets.end(); ++i)
+		i->destroy();
+	m_impostorTargets.clear();
+
+	safeDestroy(m_vertexBuffer);
+	safeDestroy(m_indexBuffer);
+}
+
+void CloudComponent::setTransform(const Transform& transform)
+{
+}
+
+Aabb3 CloudComponent::getBoundingBox() const
+{
+	return m_cluster.getBoundingBox();
+}
+
+void CloudComponent::update(const world::UpdateParams& update)
+{
+	m_cluster.update(m_particleData, update.deltaTime);
+	m_timeUntilUpdate -= update.deltaTime;
+}
+
+void CloudComponent::render(
 	render::RenderContext* renderContext,
 	world::WorldRenderView& worldRenderView,
 	world::IWorldRenderPass& worldRenderPass,
@@ -285,13 +315,7 @@ void CloudEntity::render(
 	renderCluster(renderContext, worldRenderView, worldRenderPass, primitiveRenderer, m_cluster);
 }
 
-void CloudEntity::update(const world::UpdateParams& update)
-{
-	m_cluster.update(m_particleData, update.deltaTime);
-	m_timeUntilUpdate -= update.deltaTime;
-}
-
-void CloudEntity::renderCluster(
+void CloudComponent::renderCluster(
 	render::RenderContext* renderContext,
 	world::WorldRenderView& worldRenderView,
 	world::IWorldRenderPass& worldRenderPass,
@@ -305,10 +329,14 @@ void CloudEntity::renderCluster(
 	)
 		return;
 
+	Transform transform;
+	if (!m_owner->getTransform(transform))
+		return;
+
 	const Frustum& viewFrustum = worldRenderView.getViewFrustum();
 	const Matrix44& view = worldRenderView.getView();
 
-	Matrix44 worldView = view * m_transform.toMatrix44();
+	Matrix44 worldView = view * transform.toMatrix44();
 	Vector4 cameraDirection = worldView.inverse().axisZ();
 	Vector4 cameraPosition = worldView.inverse().translation();
 
@@ -457,7 +485,7 @@ void CloudEntity::renderCluster(
 
 					particleRenderBlock->programParams->beginParameters(renderContext);
 
-					worldRenderPass.setProgramParameters(particleRenderBlock->programParams, true, m_transform.toMatrix44(), clusterBoundingBox);
+					worldRenderPass.setProgramParameters(particleRenderBlock->programParams, true, transform.toMatrix44(), clusterBoundingBox);
 
 					particleRenderBlock->programParams->setFloatParameter(L"ParticleDensity", m_particleData.getDensity());
 					particleRenderBlock->programParams->setFloatParameter(L"SunInfluence", m_particleData.getSunInfluence());
@@ -516,7 +544,7 @@ void CloudEntity::renderCluster(
 			scale((maxXY[0] - minXY[0]) / 2.0f, (maxXY[1] - minXY[1]) / 2.0f, 1.0f);
 
 		renderBlock->programParams->beginParameters(renderContext);
-		worldRenderPass.setProgramParameters(renderBlock->programParams, false, m_transform.toMatrix44(), clusterBoundingBox);
+		worldRenderPass.setProgramParameters(renderBlock->programParams, false, transform.toMatrix44(), clusterBoundingBox);
 		renderBlock->programParams->setMatrixParameter(L"View", billboardView);
 		renderBlock->programParams->setFloatParameter(L"SliceDistance", sliceDistance);
 		renderBlock->programParams->setTextureParameter(m_handleImpostorTarget, m_impostorTargets[slice]->getColorTexture(0));
@@ -524,22 +552,6 @@ void CloudEntity::renderCluster(
 
 		renderContext->draw(render::RpAlphaBlend, renderBlock);
 	}
-}
-
-void CloudEntity::setTransform(const Transform& transform)
-{
-	m_transform = transform;
-}
-
-bool CloudEntity::getTransform(Transform& outTransform) const
-{
-	outTransform = m_transform;
-	return true;
-}
-
-Aabb3 CloudEntity::getBoundingBox() const
-{
-	return m_cluster.getBoundingBox();
 }
 
 	}

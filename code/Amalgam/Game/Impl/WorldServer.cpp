@@ -32,8 +32,8 @@
 #include "Terrain/EntityFactory.h"
 #include "Terrain/EntityRenderer.h"
 #include "Terrain/TerrainFactory.h"
-#include "Weather/WeatherEntityFactory.h"
-#include "Weather/WeatherEntityRenderer.h"
+#include "Weather/WeatherFactory.h"
+#include "Weather/WeatherRenderer.h"
 #include "World/EntityBuilder.h"
 #include "World/EntityEventManager.h"
 #include "World/EntityEventResourceFactory.h"
@@ -163,7 +163,7 @@ bool WorldServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 	m_entityRenderers->add(new animation::ClothEntityRenderer());
 	m_entityRenderers->add(new animation::PathEntityRenderer());
 	m_entityRenderers->add(new physics::EntityRenderer());
-	m_entityRenderers->add(new weather::WeatherEntityRenderer());
+	m_entityRenderers->add(new weather::WeatherRenderer());
 	m_entityRenderers->add(m_terrainEntityRenderer);
 
 	int32_t maxEventInstances = settings->getProperty< PropertyInteger >(L"World.MaxEventInstances", 512);
@@ -209,7 +209,7 @@ void WorldServer::createEntityFactories(IEnvironment* environment)
 	m_entityBuilder->addFactory(new mesh::MeshEntityFactory(resourceManager));
 	m_entityBuilder->addFactory(new spray::EffectEntityFactory(resourceManager, m_eventManager, soundPlayer, m_feedbackManager));
 	m_entityBuilder->addFactory(new terrain::EntityFactory(resourceManager, renderSystem));
-	m_entityBuilder->addFactory(new weather::WeatherEntityFactory(resourceManager, renderSystem));
+	m_entityBuilder->addFactory(new weather::WeatherFactory(resourceManager, renderSystem));
 	m_entityBuilder->addFactory(new world::WorldEntityFactory(resourceManager, false));
 }
 

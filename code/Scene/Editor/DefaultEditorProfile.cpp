@@ -15,7 +15,7 @@
 
 // Entity factories
 #include "Scene/Editor/LayerEntityFactory.h"
-#include "Weather/WeatherEntityFactory.h"
+#include "Weather/WeatherFactory.h"
 #include "World/Entity/WorldEntityFactory.h"
 
 // Entity renderers
@@ -25,7 +25,7 @@
 #include "World/Entity/GroupEntityRenderer.h"
 #include "World/Entity/SwitchEntityRenderer.h"
 #include "World/Entity/TransientEntityRenderer.h"
-#include "Weather/WeatherEntityRenderer.h"
+#include "Weather/WeatherRenderer.h"
 
 // Entity editor factories
 #include "Scene/Editor/DefaultEntityEditorFactory.h"
@@ -82,7 +82,7 @@ void DefaultEditorProfile::createEntityFactories(
 ) const
 {
 	outEntityFactories.push_back(new world::WorldEntityFactory(context->getResourceManager(), true));
-	outEntityFactories.push_back(new weather::WeatherEntityFactory(context->getResourceManager(), context->getRenderSystem()));
+	outEntityFactories.push_back(new weather::WeatherFactory(context->getResourceManager(), context->getRenderSystem()));
 	outEntityFactories.push_back(new LayerEntityFactory());
 }
 
@@ -99,7 +99,7 @@ void DefaultEditorProfile::createEntityRenderers(
 	outEntityRenderers.push_back(new world::GroupEntityRenderer());
 	outEntityRenderers.push_back(new world::SwitchEntityRenderer());
 	outEntityRenderers.push_back(new world::TransientEntityRenderer());
-	outEntityRenderers.push_back(new weather::WeatherEntityRenderer(primitiveRenderer));
+	outEntityRenderers.push_back(new weather::WeatherRenderer(primitiveRenderer));
 }
 
 void DefaultEditorProfile::createControllerEditorFactories(

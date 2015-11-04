@@ -1,5 +1,5 @@
-#ifndef traktor_mesh_WeatherEntityPipeline_H
-#define traktor_mesh_WeatherEntityPipeline_H
+#ifndef traktor_mesh_WeatherPipeline_H
+#define traktor_mesh_WeatherPipeline_H
 
 #include "World/Editor/EntityPipeline.h"
 
@@ -16,7 +16,7 @@ namespace traktor
 	namespace weather
 	{
 
-class T_DLLCLASS WeatherEntityPipeline : public world::EntityPipeline
+class T_DLLCLASS WeatherPipeline : public world::EntityPipeline
 {
 	T_RTTI_CLASS;
 
@@ -35,4 +35,4 @@ public:
 	}
 }
 
-#endif	// traktor_mesh_WeatherEntityPipeline_H
+#endif	// traktor_mesh_WeatherPipeline_H

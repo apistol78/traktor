@@ -1,5 +1,5 @@
-#ifndef traktor_weather_WeatherEntityFactory_H
-#define traktor_weather_WeatherEntityFactory_H
+#ifndef traktor_weather_WeatherFactory_H
+#define traktor_weather_WeatherFactory_H
 
 #include "World/IEntityFactory.h"
 
@@ -30,12 +30,12 @@ class IRenderSystem;
 	namespace weather
 	{
 
-class T_DLLCLASS WeatherEntityFactory : public world::IEntityFactory
+class T_DLLCLASS WeatherFactory : public world::IEntityFactory
 {
 	T_RTTI_CLASS;
 
 public:
-	WeatherEntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
+	WeatherFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
 
 	virtual const TypeInfoSet getEntityTypes() const T_OVERRIDE T_FINAL;
 
@@ -57,4 +57,4 @@ private:
 	}
 }
 
-#endif	// traktor_weather_WeatherEntityFactory_H
+#endif	// traktor_weather_WeatherFactory_H
