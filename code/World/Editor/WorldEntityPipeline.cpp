@@ -1,12 +1,11 @@
 #include "Core/Serialization/DeepClone.h"
 #include "Editor/IPipelineDepends.h"
 #include "World/Editor/WorldEntityPipeline.h"
-#include "World/Entity/DecalEntityData.h"
+#include "World/Entity/DecalComponentData.h"
 #include "World/Entity/DecalEventData.h"
 #include "World/Entity/DirectionalLightEntityData.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/GroupEntityData.h"
-#include "World/Entity/NullEntityData.h"
 #include "World/Entity/PointLightEntityData.h"
 #include "World/Entity/SpotLightEntityData.h"
 
@@ -20,12 +19,11 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldEntityPipeline", 0, WorldEnt
 TypeInfoSet WorldEntityPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< DecalEntityData >());
+	typeSet.insert(&type_of< DecalComponentData >());
 	typeSet.insert(&type_of< DecalEventData >());
 	typeSet.insert(&type_of< DirectionalLightEntityData >());
 	typeSet.insert(&type_of< ExternalEntityData >());
 	typeSet.insert(&type_of< GroupEntityData >());
-	typeSet.insert(&type_of< NullEntityData >());
 	typeSet.insert(&type_of< PointLightEntityData >());
 	typeSet.insert(&type_of< SpotLightEntityData >());
 	return typeSet;
@@ -39,8 +37,8 @@ bool WorldEntityPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	if (const DecalEntityData* decalEntityData = dynamic_type_cast< const DecalEntityData* >(sourceAsset))
-		pipelineDepends->addDependency(decalEntityData->getShader(), editor::PdfBuild | editor::PdfResource);
+	if (const DecalComponentData* decalComponentData = dynamic_type_cast< const DecalComponentData* >(sourceAsset))
+		pipelineDepends->addDependency(decalComponentData->getShader(), editor::PdfBuild | editor::PdfResource);
 	else if (const DecalEventData* decalEventData = dynamic_type_cast< const DecalEventData* >(sourceAsset))
 		pipelineDepends->addDependency(decalEventData->getShader(), editor::PdfBuild | editor::PdfResource);
 	else if (const DirectionalLightEntityData* directionalLightEntityData = dynamic_type_cast< const DirectionalLightEntityData* >(sourceAsset))

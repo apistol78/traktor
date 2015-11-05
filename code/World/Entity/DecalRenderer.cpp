@@ -8,8 +8,8 @@
 #include "World/IWorldRenderPass.h"
 #include "World/WorldContext.h"
 #include "World/WorldRenderView.h"
-#include "World/Entity/DecalEntity.h"
-#include "World/Entity/DecalEntityRenderer.h"
+#include "World/Entity/DecalComponent.h"
+#include "World/Entity/DecalRenderer.h"
 
 namespace traktor
 {
@@ -33,9 +33,9 @@ const uint32_t c_maxRenderDecals = 32;
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.world.DecalEntityRenderer", DecalEntityRenderer, IEntityRenderer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.DecalRenderer", DecalRenderer, IEntityRenderer)
 
-DecalEntityRenderer::DecalEntityRenderer(render::IRenderSystem* renderSystem)
+DecalRenderer::DecalRenderer(render::IRenderSystem* renderSystem)
 {
 	s_handleDecalParams = render::getParameterHandle(L"DecalParams");
 	s_handleMagicCoeffs = render::getParameterHandle(L"MagicCoeffs");
@@ -84,28 +84,26 @@ DecalEntityRenderer::DecalEntityRenderer(render::IRenderSystem* renderSystem)
 	m_indexBuffer->unlock();
 }
 
-const TypeInfoSet DecalEntityRenderer::getRenderableTypes() const
+const TypeInfoSet DecalRenderer::getRenderableTypes() const
 {
 	TypeInfoSet TypeInfoSet;
-	TypeInfoSet.insert(&type_of< DecalEntity >());
+	TypeInfoSet.insert(&type_of< DecalComponent >());
 	return TypeInfoSet;
 }
 
-void DecalEntityRenderer::render(
+void DecalRenderer::render(
 	WorldContext& worldContext,
 	WorldRenderView& worldRenderView,
 	IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
 {
-	DecalEntity* decalEntity = checked_type_cast< DecalEntity*, false >(renderable);
+	DecalComponent* decalComponent = checked_type_cast< DecalComponent*, false >(renderable);
+	const Transform& transform = decalComponent->getTransform();
 
-	Transform transform;
-	decalEntity->getTransform(transform);
-
-	float s = decalEntity->getSize();
-	float t = decalEntity->getThickness();
-	float d = decalEntity->getCullDistance();
+	float s = decalComponent->getSize();
+	float t = decalComponent->getThickness();
+	float d = decalComponent->getCullDistance();
 
 	Vector4 center = worldRenderView.getView() * transform.translation().xyz1();
 	if (center.length2() > d * d)
@@ -115,10 +113,10 @@ void DecalEntityRenderer::render(
 	if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::IrOutside)
 		return;
 
-	m_decalEntities.push_back(decalEntity);
+	m_decalComponents.push_back(decalComponent);
 }
 
-void DecalEntityRenderer::flush(
+void DecalRenderer::flush(
 	WorldContext& worldContext,
 	WorldRenderView& worldRenderView,
 	IWorldRenderPass& worldRenderPass
@@ -135,13 +133,13 @@ void DecalEntityRenderer::flush(
 	const Vector4 magicCoeffs(1.0f / p11, 1.0f / p22, 0.0f, 0.0f);
 
 	// Render all decal boxes.
-	uint32_t decalsCount = std::min< uint32_t >(uint32_t(m_decalEntities.size()), c_maxRenderDecals);
+	uint32_t decalsCount = std::min< uint32_t >(uint32_t(m_decalComponents.size()), c_maxRenderDecals);
 	for (uint32_t i = 0; i < decalsCount; ++i)
 	{
-		DecalEntity* decal = m_decalEntities[i];
-		T_ASSERT (decal);
+		DecalComponent* decalComponent = m_decalComponents[i];
+		T_ASSERT (decalComponent);
 
-		render::Shader* shader = decal->getShader();
+		render::Shader* shader = decalComponent->getShader();
 		T_ASSERT (shader);
 
 		worldRenderPass.setShaderTechnique(shader);
@@ -151,7 +149,7 @@ void DecalEntityRenderer::flush(
 		if (!program)
 			continue;
 
-		const Transform& transform = decal->getTransform();
+		const Transform& transform = decalComponent->getTransform();
 		
 		Matrix44 world = transform.toMatrix44();
 		Matrix44 worldView = view * world;
@@ -176,14 +174,14 @@ void DecalEntityRenderer::flush(
 			renderBlock->programParams,
 			true,
 			world,
-			decal->getBoundingBox()
+			decalComponent->getBoundingBox()
 		);
 
 		renderBlock->programParams->setVectorParameter(s_handleDecalParams, Vector4(
-			decal->getSize(),
-			decal->getThickness(),
-			decal->getAlpha(),
-			decal->getAge()
+			decalComponent->getSize(),
+			decalComponent->getThickness(),
+			decalComponent->getAlpha(),
+			decalComponent->getAge()
 		));
 		renderBlock->programParams->setVectorParameter(s_handleMagicCoeffs, magicCoeffs);
 		renderBlock->programParams->setMatrixParameter(s_handleWorldViewInv, worldViewInv);
@@ -193,7 +191,7 @@ void DecalEntityRenderer::flush(
 	}
 
 	// Flush all queued decals.
-	m_decalEntities.resize(0);
+	m_decalComponents.resize(0);
 }
 
 	}

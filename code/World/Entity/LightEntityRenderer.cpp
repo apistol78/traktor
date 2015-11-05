@@ -2,7 +2,7 @@
 #include "Render/ITexture.h"
 #include "World/WorldRenderView.h"
 #include "World/Entity/DirectionalLightEntity.h"
-#include "World/Entity/GodRayEntity.h"
+#include "World/Entity/GodRayComponent.h"
 #include "World/Entity/LightEntityRenderer.h"
 #include "World/Entity/PointLightEntity.h"
 #include "World/Entity/SpotLightEntity.h"
@@ -18,9 +18,9 @@ const TypeInfoSet LightEntityRenderer::getRenderableTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< DirectionalLightEntity >());
+	typeSet.insert(&type_of< GodRayComponent >());
 	typeSet.insert(&type_of< PointLightEntity >());
 	typeSet.insert(&type_of< SpotLightEntity >());
-	typeSet.insert(&type_of< GodRayEntity >());
 	return typeSet;
 }
 
@@ -104,10 +104,9 @@ void LightEntityRenderer::render(
 
 		worldRenderView.addLight(light);
 	}
-	else if (const GodRayEntity* godRayEntity = dynamic_type_cast< const GodRayEntity* >(renderable))
+	else if (const GodRayComponent* godRayComponent = dynamic_type_cast< const GodRayComponent* >(renderable))
 	{
-		Transform transform;
-		godRayEntity->getTransform(transform);
+		Transform transform = godRayComponent->getTransform();
 		worldRenderView.setGodRayDirection(transform.axisZ());
 	}
 }

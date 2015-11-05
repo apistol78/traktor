@@ -20,7 +20,7 @@
 
 // Entity renderers
 #include "World/Entity/ComponentEntityRenderer.h"
-#include "World/Entity/DecalEntityRenderer.h"
+#include "World/Entity/DecalRenderer.h"
 #include "World/Entity/LightEntityRenderer.h"
 #include "World/Entity/GroupEntityRenderer.h"
 #include "World/Entity/SwitchEntityRenderer.h"
@@ -94,7 +94,7 @@ void DefaultEditorProfile::createEntityRenderers(
 ) const
 {
 	outEntityRenderers.push_back(new world::ComponentEntityRenderer());
-	outEntityRenderers.push_back(new world::DecalEntityRenderer(context->getRenderSystem()));
+	outEntityRenderers.push_back(new world::DecalRenderer(context->getRenderSystem()));
 	outEntityRenderers.push_back(new world::LightEntityRenderer());
 	outEntityRenderers.push_back(new world::GroupEntityRenderer());
 	outEntityRenderers.push_back(new world::SwitchEntityRenderer());

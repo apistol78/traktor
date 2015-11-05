@@ -1,8 +1,7 @@
-#ifndef traktor_world_CameraEntityData_H
-#define traktor_world_CameraEntityData_H
+#ifndef traktor_world_CameraComponent_H
+#define traktor_world_CameraComponent_H
 
-#include "World/EntityData.h"
-#include "World/WorldTypes.h"
+#include "World/IEntityComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -17,15 +16,25 @@ namespace traktor
 	namespace world
 	{
 
-/*! \brief Camera entity data.
+class CameraComponentData;
+
+/*! \brief Camera component.
  * \ingroup World
  */
-class T_DLLCLASS CameraEntityData : public EntityData
+class T_DLLCLASS CameraComponent : public IEntityComponent
 {
 	T_RTTI_CLASS;
 
 public:
-	CameraEntityData();
+	CameraComponent(const CameraComponentData* cameraData);
+
+	virtual void destroy() T_OVERRIDE T_FINAL;
+
+	virtual void update(const UpdateParams& update) T_OVERRIDE T_FINAL;
+
+	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
+
+	virtual Aabb3 getBoundingBox() const T_OVERRIDE T_FINAL;
 
 	void setCameraType(CameraType type);
 
@@ -43,8 +52,6 @@ public:
 
 	float getHeight() const;
 
-	virtual void serialize(ISerializer& s);
-
 private:
 	CameraType m_type;
 	float m_fov;
@@ -55,4 +62,4 @@ private:
 	}
 }
 
-#endif	// traktor_world_CameraEntityData_H
+#endif	// traktor_world_CameraComponent_H

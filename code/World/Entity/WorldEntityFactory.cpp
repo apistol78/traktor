@@ -3,23 +3,21 @@
 #include "Resource/IResourceManager.h"
 #include "World/IEntityBuilder.h"
 #include "World/IEntityComponentData.h"
-#include "World/Entity/CameraEntity.h"
-#include "World/Entity/CameraEntityData.h"
+#include "World/Entity/CameraComponent.h"
+#include "World/Entity/CameraComponentData.h"
 #include "World/Entity/ComponentEntity.h"
 #include "World/Entity/ComponentEntityData.h"
-#include "World/Entity/DecalEntity.h"
-#include "World/Entity/DecalEntityData.h"
+#include "World/Entity/DecalComponent.h"
+#include "World/Entity/DecalComponentData.h"
 #include "World/Entity/DecalEvent.h"
 #include "World/Entity/DecalEventData.h"
 #include "World/Entity/DirectionalLightEntity.h"
 #include "World/Entity/DirectionalLightEntityData.h"
 #include "World/Entity/ExternalEntityData.h"
-#include "World/Entity/GodRayEntity.h"
-#include "World/Entity/GodRayEntityData.h"
+#include "World/Entity/GodRayComponent.h"
+#include "World/Entity/GodRayComponentData.h"
 #include "World/Entity/GroupEntity.h"
 #include "World/Entity/GroupEntityData.h"
-#include "World/Entity/NullEntity.h"
-#include "World/Entity/NullEntityData.h"
 #include "World/Entity/PointLightEntity.h"
 #include "World/Entity/PointLightEntityData.h"
 #include "World/Entity/ScriptComponent.h"
@@ -49,12 +47,8 @@ const TypeInfoSet WorldEntityFactory::getEntityTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< ExternalEntityData >());
-	typeSet.insert(&type_of< GodRayEntityData >());
 	typeSet.insert(&type_of< GroupEntityData >());
-	typeSet.insert(&type_of< CameraEntityData >());
-	typeSet.insert(&type_of< DecalEntityData >());
 	typeSet.insert(&type_of< DirectionalLightEntityData >());
-	typeSet.insert(&type_of< NullEntityData >());
 	typeSet.insert(&type_of< PointLightEntityData >());
 	typeSet.insert(&type_of< SpotLightEntityData >());
 	typeSet.insert(&type_of< SwitchEntityData >());
@@ -73,6 +67,9 @@ const TypeInfoSet WorldEntityFactory::getEntityEventTypes() const
 const TypeInfoSet WorldEntityFactory::getEntityComponentTypes() const
 {
 	TypeInfoSet typeSet;
+	typeSet.insert(&type_of< CameraComponentData >());
+	typeSet.insert(&type_of< DecalComponentData >());
+	typeSet.insert(&type_of< GodRayComponentData >());
 	typeSet.insert(&type_of< ScriptComponentData >());
 	return typeSet;
 }
@@ -102,9 +99,6 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 			return builder->create(resolvedEntityData.getResource());
 	}
 
-	if (const GodRayEntityData* godRayData = dynamic_type_cast< const GodRayEntityData* >(&entityData))
-		return new GodRayEntity(godRayData->getTransform());
-
 	if (const GroupEntityData* groupData = dynamic_type_cast< const GroupEntityData* >(&entityData))
 	{
 		Ref< GroupEntity > groupEntity = new GroupEntity(groupData->getTransform());
@@ -118,27 +112,6 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 		}
 
 		return groupEntity;
-	}
-
-	if (const CameraEntityData* cameraData = dynamic_type_cast< const CameraEntityData* >(&entityData))
-		return new CameraEntity(cameraData);
-
-	if (const DecalEntityData* decalData = dynamic_type_cast< const DecalEntityData* >(&entityData))
-	{
-		resource::Proxy< render::Shader > shader;
-		if (!m_resourceManager->bind(decalData->getShader(), shader))
-			return 0;
-
-		Ref< DecalEntity > decalEntity = new DecalEntity(
-			decalData->getTransform(),
-			decalData->getSize(),
-			decalData->getThickness(),
-			decalData->getAlpha(),
-			decalData->getCullDistance(),
-			shader
-		);
-
-		return decalEntity;
 	}
 
 	if (const DirectionalLightEntityData* directionalLightData = dynamic_type_cast< const DirectionalLightEntityData* >(&entityData))
@@ -201,9 +174,6 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 		return switchEntity;
 	}
 
-	if (const NullEntityData* nullData = dynamic_type_cast< const NullEntityData* >(&entityData))
-		return new NullEntity(nullData->getTransform());
-
 	if (const VolumeEntityData* volumeData = dynamic_type_cast< const VolumeEntityData* >(&entityData))
 		return new VolumeEntity(volumeData);
 
@@ -242,18 +212,41 @@ Ref< IEntityEvent > WorldEntityFactory::createEntityEvent(const IEntityBuilder* 
 		if (m_resourceManager->bind(decalData->getShader(), decal->m_shader))
 			return decal;
 	}
-
 	return 0;
 }
 
 Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, Entity* owner, const IEntityComponentData& entityComponentData) const
 {
+	if (const CameraComponentData* cameraComponentData = dynamic_type_cast< const CameraComponentData* >(&entityComponentData))
+		return new CameraComponent(cameraComponentData);
+
+	if (const DecalComponentData* decalComponentData = dynamic_type_cast< const DecalComponentData* >(&entityComponentData))
+	{
+		resource::Proxy< render::Shader > shader;
+		if (!m_resourceManager->bind(decalComponentData->getShader(), shader))
+			return 0;
+
+		Ref< DecalComponent > decalComponent = new DecalComponent(
+			decalComponentData->getSize(),
+			decalComponentData->getThickness(),
+			decalComponentData->getAlpha(),
+			decalComponentData->getCullDistance(),
+			shader
+		);
+
+		return decalComponent;
+	}
+
+	if (const GodRayComponentData* godRayComponentData = dynamic_type_cast< const GodRayComponentData* >(&entityComponentData))
+		return new GodRayComponent(owner);
+
 	if (const ScriptComponentData* scriptComponentData = dynamic_type_cast< const ScriptComponentData* >(&entityComponentData))
 	{
 		// Do not instantiate script components inside editor.
 		if (!m_editor)
 			return scriptComponentData->createComponent(owner, m_resourceManager);
 	}
+
 	return 0;
 }
 

@@ -1,9 +1,9 @@
-#ifndef traktor_world_DecalEntity_H
-#define traktor_world_DecalEntity_H
+#ifndef traktor_world_DecalComponent_H
+#define traktor_world_DecalComponent_H
 
 #include "Core/Math/Float.h"
 #include "Resource/Proxy.h"
-#include "World/Entity.h"
+#include "World/IEntityComponent.h"
 
 namespace traktor
 {
@@ -20,13 +20,12 @@ class Shader;
 /*! \brief
  * \ingroup World
  */
-class T_DLLCLASS DecalEntity : public Entity
+class T_DLLCLASS DecalComponent : public IEntityComponent
 {
 	T_RTTI_CLASS;
 
 public:
-	DecalEntity(
-		const Transform& transform,
+	DecalComponent(
 		float size,
 		float thickness,
 		float alpha,
@@ -34,15 +33,13 @@ public:
 		const resource::Proxy< render::Shader >& shader
 	);
 
-	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual bool getTransform(Transform& outTransform) const T_OVERRIDE T_FINAL;
+	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
 
 	virtual Aabb3 getBoundingBox() const T_OVERRIDE T_FINAL;
 
 	virtual void update(const UpdateParams& update) T_OVERRIDE T_FINAL;
-
-	const Transform& getTransform() const { return m_transform; }
 
 	float getSize() const { return m_size; }
 
@@ -55,6 +52,8 @@ public:
 	float getCullDistance() const { return m_cullDistance; }
 
 	float getAge() const { return m_age; }
+
+	const Transform& getTransform() const { return m_transform; }
 
 private:
 	Transform m_transform;
@@ -69,4 +68,4 @@ private:
 	}
 }
 
-#endif	// traktor_world_DecalEntity_H
+#endif	// traktor_world_DecalComponent_H

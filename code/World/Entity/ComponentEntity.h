@@ -33,6 +33,8 @@ class T_DLLCLASS ComponentEntity : public Entity
 public:
 	ComponentEntity();
 
+	ComponentEntity(const Transform& transform);
+
 	virtual void destroy() T_OVERRIDE;
 
 	virtual void setTransform(const Transform& transform) T_OVERRIDE;
@@ -50,6 +52,14 @@ public:
 	/*! \brief Get component of type.
 	 */
 	IEntityComponent* getComponent(const TypeInfo& componentType) const;
+
+	/*! \brief Get component of type.
+	 */
+	template < typename ComponentType >
+	ComponentType* getComponent() const
+	{
+		return checked_type_cast< ComponentType* >(getComponent(type_of< ComponentType >()));
+	}
 
 	void render(WorldContext& worldContext, WorldRenderView& worldRenderView, IWorldRenderPass& worldRenderPass);
 

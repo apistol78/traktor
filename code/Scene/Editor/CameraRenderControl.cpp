@@ -43,7 +43,7 @@
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
 #include "World/WorldRenderView.h"
-#include "World/Entity/CameraEntity.h"
+#include "World/Entity/CameraComponent.h"
 
 namespace traktor
 {
@@ -306,12 +306,13 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 
 	const world::WorldRenderSettings* worldRenderSettings = sceneInstance->getWorldRenderSettings();
 
+	/*
 	// Get current camera entity.
-	if (!m_context->findAdaptersOfType(type_of< world::CameraEntity >(), m_cameraEntities))
+	if (!m_context->findAdaptersOfType(type_of< world::CameraComponent >(), m_cameraEntities))
 		return;
 
 	// Create world render view.
-	world::CameraEntity* cameraEntity = mandatory_non_null_type_cast< world::CameraEntity* >(m_cameraEntities[0]->getEntity());
+	world::CameraComponent* cameraEntity = mandatory_non_null_type_cast< world::CameraComponent* >(m_cameraEntities[0]->getEntity());
 	if (cameraEntity->getCameraType() == world::CtOrthographic)
 	{
 		m_worldRenderView.setOrthogonal(
@@ -383,6 +384,7 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 		m_renderView->end();
 		m_renderView->present();
 	}
+	*/
 
 	event->consume();
 }

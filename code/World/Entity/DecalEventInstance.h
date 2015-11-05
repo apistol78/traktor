@@ -8,7 +8,7 @@ namespace traktor
 	namespace world
 	{
 
-class DecalEntity;
+class ComponentEntity;
 class DecalEvent;
 
 /*! \brief
@@ -28,7 +28,7 @@ public:
 	virtual void cancel(CancelType when) T_OVERRIDE T_FINAL;
 
 private:
-	Ref< DecalEntity > m_entity;
+	Ref< ComponentEntity > m_entity;
 };
 
 	}

@@ -10,8 +10,8 @@
 #include "World/EntityData.h"
 #include "World/IEntityFactory.h"
 #include "World/Editor/LayerEntityData.h"
+#include "World/Entity/ComponentEntity.h"
 #include "World/Entity/GroupEntity.h"
-#include "World/Entity/NullEntity.h"
 
 namespace traktor
 {
@@ -248,8 +248,8 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 		// If still no entity then we create a null placeholder.
 		if (!entity)
 		{
-			log::debug << L"Unable to create entity from \"" << type_name(entityData) << L"\"; using null entity as placeholder" << Endl;
-			entity = new world::NullEntity(entityData->getTransform());
+			log::debug << L"Unable to create entity from \"" << type_name(entityData) << L"\"; using empty entity as placeholder" << Endl;
+			entity = new world::ComponentEntity(entityData->getTransform());
 		}
 
 		// As a contract the factory should NOT recursively return the same entity.

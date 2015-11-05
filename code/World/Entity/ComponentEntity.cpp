@@ -15,6 +15,11 @@ ComponentEntity::ComponentEntity()
 {
 }
 
+ComponentEntity::ComponentEntity(const Transform& transform)
+:	m_transform(transform)
+{
+}
+
 void ComponentEntity::destroy()
 {
 	for (SmallMap< const TypeInfo*, Ref< IEntityComponent > >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)

@@ -24,9 +24,9 @@
 #include "World/IEntityBuilder.h"
 #include "World/IEntitySchema.h"
 #include "World/IEntityEventManager.h"
-#include "World/Entity/CameraEntity.h"
+#include "World/Entity/CameraComponent.h"
+#include "World/Entity/ComponentEntity.h"
 #include "World/Entity/GroupEntity.h"
-#include "World/Entity/NullEntity.h"
 #include "World/Entity/TransientEntity.h"
 
 namespace traktor
@@ -248,34 +248,38 @@ void WorldLayer::build(const UpdateInfo& info, uint32_t frame)
 		m_scene->getWorldRenderSettings()->viewFarZ
 	);
 
-	if (const world::CameraEntity* cameraEntity = dynamic_type_cast< const world::CameraEntity* >(m_cameraEntity))
+	if (const world::ComponentEntity* cameraEntity = dynamic_type_cast< const world::ComponentEntity* >(m_cameraEntity))
 	{
-		if (cameraEntity->getCameraType() == world::CtOrthographic)
+		const world::CameraComponent* camera = cameraEntity->getComponent< world::CameraComponent >();
+		if (camera)
 		{
-			m_worldRenderView.setOrthogonal(
-				cameraEntity->getWidth(),
-				cameraEntity->getHeight(),
-				m_scene->getWorldRenderSettings()->viewNearZ,
-				m_scene->getWorldRenderSettings()->viewFarZ
-			);
-		}
-		else // CtPerspective
-		{
-			render::IRenderView* renderView = m_environment->getRender()->getRenderView();
-			T_ASSERT (renderView);
+			if (camera->getCameraType() == world::CtOrthographic)
+			{
+				m_worldRenderView.setOrthogonal(
+					camera->getWidth(),
+					camera->getHeight(),
+					m_scene->getWorldRenderSettings()->viewNearZ,
+					m_scene->getWorldRenderSettings()->viewFarZ
+				);
+			}
+			else // CtPerspective
+			{
+				render::IRenderView* renderView = m_environment->getRender()->getRenderView();
+				T_ASSERT (renderView);
 
-			// Get render view dimensions.
-			int32_t width = renderView->getWidth();
-			int32_t height = renderView->getHeight();
+				// Get render view dimensions.
+				int32_t width = renderView->getWidth();
+				int32_t height = renderView->getHeight();
 
-			m_worldRenderView.setPerspective(
-				width,
-				height,
-				m_environment->getRender()->getAspectRatio(),
-				cameraEntity->getFieldOfView(),
-				m_scene->getWorldRenderSettings()->viewNearZ,
-				m_scene->getWorldRenderSettings()->viewFarZ
-			);
+				m_worldRenderView.setPerspective(
+					width,
+					height,
+					m_environment->getRender()->getAspectRatio(),
+					camera->getFieldOfView(),
+					m_scene->getWorldRenderSettings()->viewNearZ,
+					m_scene->getWorldRenderSettings()->viewFarZ
+				);
+			}
 		}
 	}
 
