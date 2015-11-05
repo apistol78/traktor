@@ -128,6 +128,11 @@ void Entity_update(Entity* this_, float totalTime, float deltaTime)
 	this_->update(up);
 }
 
+IEntityComponent* ComponentEntity_getComponent(ComponentEntity* this_, const TypeInfo& componentType)
+{
+	return this_->getComponent(componentType);
+}
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldClassFactory", 0, WorldClassFactory, IRuntimeClassFactory)
@@ -285,7 +290,7 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	Ref< AutoRuntimeClass< ComponentEntity > > classComponentEntity = new AutoRuntimeClass< ComponentEntity >();
 	classComponentEntity->addMethod("setComponent", &ComponentEntity::setComponent);
-	classComponentEntity->addMethod("getComponent", &ComponentEntity::getComponent);
+	classComponentEntity->addMethod("getComponent", &ComponentEntity_getComponent);
 	registrar->registerClass(classComponentEntity);
 }
 
