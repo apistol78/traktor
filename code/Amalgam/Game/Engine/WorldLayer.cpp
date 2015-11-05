@@ -177,6 +177,15 @@ void WorldLayer::update(const UpdateInfo& info)
 
 	info.getProfiler()->beginScope(FptWorldLayer);
 
+	// Update camera transform.
+	if (m_cameraEntity)
+	{
+		Transform cameraTransform;
+		m_cameraEntity->getTransform(cameraTransform);
+		m_cameraTransform.step();
+		m_cameraTransform.set(cameraTransform);
+	}
+
 	// Update scene controller.
 	if (m_controllerEnable)
 	{
@@ -239,43 +248,39 @@ void WorldLayer::build(const UpdateInfo& info, uint32_t frame)
 		m_scene->getWorldRenderSettings()->viewFarZ
 	);
 
-	// Get camera entity and extract view transform.
-	if (m_cameraEntity)
+	if (const world::CameraEntity* cameraEntity = dynamic_type_cast< const world::CameraEntity* >(m_cameraEntity))
 	{
-		Transform cameraTransform;
-
-		if (const world::CameraEntity* cameraEntity = dynamic_type_cast< const world::CameraEntity* >(m_cameraEntity))
+		if (cameraEntity->getCameraType() == world::CtOrthographic)
 		{
-			if (cameraEntity->getCameraType() == world::CtOrthographic)
-			{
-				m_worldRenderView.setOrthogonal(
-					cameraEntity->getWidth(),
-					cameraEntity->getHeight(),
-					m_scene->getWorldRenderSettings()->viewNearZ,
-					m_scene->getWorldRenderSettings()->viewFarZ
-				);
-			}
-			else // CtPerspective
-			{
-				m_worldRenderView.setPerspective(
-					width,
-					height,
-					m_environment->getRender()->getAspectRatio(),
-					cameraEntity->getFieldOfView(),
-					m_scene->getWorldRenderSettings()->viewNearZ,
-					m_scene->getWorldRenderSettings()->viewFarZ
-				);
-			}
-
-			cameraTransform = cameraEntity->getTransform(info.getInterval());
+			m_worldRenderView.setOrthogonal(
+				cameraEntity->getWidth(),
+				cameraEntity->getHeight(),
+				m_scene->getWorldRenderSettings()->viewNearZ,
+				m_scene->getWorldRenderSettings()->viewFarZ
+			);
 		}
-		else if (const world::NullEntity* nullCameraEntity = dynamic_type_cast< const world::NullEntity* >(m_cameraEntity))
-			cameraTransform = nullCameraEntity->getTransform(info.getInterval());
-		else
-			m_cameraEntity->getTransform(cameraTransform);
+		else // CtPerspective
+		{
+			render::IRenderView* renderView = m_environment->getRender()->getRenderView();
+			T_ASSERT (renderView);
 
-		m_worldRenderView.setView((cameraTransform * m_cameraOffset).inverse().toMatrix44());
+			// Get render view dimensions.
+			int32_t width = renderView->getWidth();
+			int32_t height = renderView->getHeight();
+
+			m_worldRenderView.setPerspective(
+				width,
+				height,
+				m_environment->getRender()->getAspectRatio(),
+				cameraEntity->getFieldOfView(),
+				m_scene->getWorldRenderSettings()->viewNearZ,
+				m_scene->getWorldRenderSettings()->viewFarZ
+			);
+		}
 	}
+
+	if (m_cameraEntity)
+		m_worldRenderView.setView((m_cameraTransform.get(info.getInterval()) * m_cameraOffset).inverse().toMatrix44());
 
 	// Update sound listener transform.
 	if (m_environment->getAudio())

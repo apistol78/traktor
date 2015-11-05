@@ -4,6 +4,7 @@
 #include <map>
 #include "Amalgam/Game/Engine/Layer.h"
 #include "Core/RefArray.h"
+#include "Core/Math/IntervalTransform.h"
 #include "Resource/Proxy.h"
 #include "Spray/Feedback/IFeedbackListener.h"
 #include "World/WorldRenderView.h"
@@ -172,6 +173,7 @@ private:
 	Ref< world::GroupEntity > m_dynamicEntities;
 	Ref< const world::Entity > m_cameraEntity;
 	Ref< const world::Entity > m_listenerEntity;
+	IntervalTransform m_cameraTransform;
 	Transform m_cameraOffset;
 	float m_alternateTime;
 	float m_deltaTime;
