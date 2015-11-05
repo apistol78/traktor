@@ -23,7 +23,7 @@
 #include "Illuminate/Editor/IlluminateEntityPipeline.h"
 #include "Illuminate/Editor/JobTraceDirect.h"
 #include "Illuminate/Editor/JobTraceIndirect.h"
-#include "Mesh/MeshEntityData.h"
+#include "Mesh/MeshComponentData.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
 #include "Model/ModelFormat.h"
@@ -32,6 +32,7 @@
 #include "Model/Operations/UnwrapUV.h"
 #include "Render/Editor/Texture/TextureOutput.h"
 #include "World/Entity/DirectionalLightEntityData.h"
+#include "World/Entity/ComponentEntityData.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/GroupEntityData.h"
 #include "World/Entity/PointLightEntityData.h"
@@ -94,7 +95,7 @@ void collectTraceEntities(
 	const ISerializable* object,
 	RefArray< world::DirectionalLightEntityData >& outDirectionalLightEntityData,
 	RefArray< world::PointLightEntityData >& outPointLightEntityData,
-	RefArray< mesh::MeshEntityData >& outMeshEntityData
+	RefArray< world::ComponentEntityData >& outMeshEntityData
 )
 {
 	Ref< Reflection > reflection = Reflection::create(object);
@@ -107,8 +108,11 @@ void collectTraceEntities(
 		Ref< RfmObject > objectMember = checked_type_cast< RfmObject*, false >(objectMembers.front());
 		objectMembers.pop_front();
 
-		if (mesh::MeshEntityData* meshEntityData = dynamic_type_cast< mesh::MeshEntityData* >(objectMember->get()))
-			outMeshEntityData.push_back(meshEntityData);
+		if (world::ComponentEntityData* componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(objectMember->get()))
+		{
+			if (componentEntityData->getComponent< mesh::MeshComponentData >() != 0)
+				outMeshEntityData.push_back(componentEntityData);
+		}
 		else if (world::DirectionalLightEntityData* directionalLightEntityData = dynamic_type_cast< world::DirectionalLightEntityData* >(objectMember->get()))
 			outDirectionalLightEntityData.push_back(directionalLightEntityData);
 		else if (world::PointLightEntityData* pointLightEntityData = dynamic_type_cast< world::PointLightEntityData* >(objectMember->get()))
@@ -149,29 +153,6 @@ bool IlluminateEntityPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	if (!m_targetEditor)
-	{
-		const IlluminateEntityData* sourceIlluminateEntityData = checked_type_cast< const IlluminateEntityData* >(sourceAsset);
-
-		// Flatten entire hierarchy of illuminate entity.
-		Ref< IlluminateEntityData > illumEntityData = checked_type_cast< IlluminateEntityData* >(resolveAllExternal(pipelineDepends, sourceIlluminateEntityData));
-		if (!illumEntityData)
-		{
-			log::error << L"IlluminateEntityPipeline failed; unable to resolve all external entities" << Endl;
-			return 0;
-		}
-
-		// Get all trace entities.
-		RefArray< world::DirectionalLightEntityData > directionalLightEntityData;
-		RefArray< world::PointLightEntityData > pointLightEntityData;
-		RefArray< mesh::MeshEntityData > meshEntityData;
-		collectTraceEntities(illumEntityData, directionalLightEntityData, pointLightEntityData, meshEntityData);
-
-		// Add dependencies to all mesh assets.
-		for (RefArray< mesh::MeshEntityData >::const_iterator i = meshEntityData.begin(); i != meshEntityData.end(); ++i)
-			pipelineDepends->addDependency((*i)->getMesh(), editor::PdfUse);
-	}
-
 	return world::EntityPipeline::buildDependencies(
 		pipelineDepends,
 		sourceInstance,
@@ -201,7 +182,7 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		// Get all trace entities.
 		RefArray< world::DirectionalLightEntityData > directionalLightEntityData;
 		RefArray< world::PointLightEntityData > pointLightEntityData;
-		RefArray< mesh::MeshEntityData > meshEntityData;
+		RefArray< world::ComponentEntityData > meshEntityData;
 		collectTraceEntities(illumEntityData, directionalLightEntityData, pointLightEntityData, meshEntityData);
 
 		// Setup lights.
@@ -236,9 +217,9 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 
 		// Merge all models into one, big, model.
 		log::info << L"Merging meshes..." << Endl;
-		for (RefArray< mesh::MeshEntityData >::const_iterator i = meshEntityData.begin(); i != meshEntityData.end(); ++i)
+		for (RefArray< world::ComponentEntityData >::const_iterator i = meshEntityData.begin(); i != meshEntityData.end(); ++i)
 		{
-			Ref< mesh::MeshAsset > meshAsset = pipelineBuilder->getSourceDatabase()->getObjectReadOnly< mesh::MeshAsset >((*i)->getMesh());
+			Ref< mesh::MeshAsset > meshAsset = pipelineBuilder->getSourceDatabase()->getObjectReadOnly< mesh::MeshAsset >((*i)->getComponent< mesh::MeshComponentData >()->getMesh());
 			if (!meshAsset)
 				continue;
 
@@ -528,12 +509,14 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		);
 
 		// Create new mesh entity.
-		Ref< mesh::MeshEntityData > outputMeshEntityData = new mesh::MeshEntityData();
-		outputMeshEntityData->setName(L"__Illumination__");
-		outputMeshEntityData->setMesh(resource::Id< mesh::IMesh >(illumEntityData->getSeedGuid().permutate(1)));
+		Ref< world::ComponentEntityData > outputEntityData = new world::ComponentEntityData();
+		outputEntityData->setName(L"__Illumination__");
+		outputEntityData->setComponent(new mesh::MeshComponentData(
+			resource::Id< mesh::IMesh >(illumEntityData->getSeedGuid().permutate(1))
+		));
 
 		// Replace entire illuminate entity group with fresh baked mesh entity.
-		return outputMeshEntityData;
+		return outputEntityData;
 	}
 	else
 		return world::EntityPipeline::buildOutput(

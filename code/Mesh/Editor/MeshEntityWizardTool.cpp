@@ -3,10 +3,11 @@
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
-#include "Mesh/MeshEntityData.h"
+#include "Mesh/MeshComponentData.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshEntityWizardTool.h"
 #include "Ui/MessageBox.h"
+#include "World/Entity/ComponentEntityData.h"
 
 namespace traktor
 {
@@ -34,9 +35,9 @@ bool MeshEntityWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, d
 	}
 
 	// Create mesh entity data.
-	Ref< MeshEntityData > entityData = new MeshEntityData();
+	Ref< world::ComponentEntityData > entityData = new world::ComponentEntityData();
 	entityData->setName(instance->getName());
-	entityData->setMesh(resource::Id< IMesh >(instance->getGuid()));
+	entityData->setComponent(new MeshComponentData(resource::Id< IMesh >(instance->getGuid())));
 
 	// Create mesh entity data instance.
 	Ref< db::Instance > entityDataInstance = group->createInstance(

@@ -128,6 +128,11 @@ void Entity_update(Entity* this_, float totalTime, float deltaTime)
 	this_->update(up);
 }
 
+IEntityComponentData* ComponentEntityData_getComponent(ComponentEntityData* this_, const TypeInfo& componentDataType)
+{
+	return this_->getComponent(componentDataType);
+}
+
 IEntityComponent* ComponentEntity_getComponent(ComponentEntity* this_, const TypeInfo& componentType)
 {
 	return this_->getComponent(componentType);
@@ -286,6 +291,8 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classCameraComponent);
 
 	Ref< AutoRuntimeClass< ComponentEntityData > > classComponentEntityData = new AutoRuntimeClass< ComponentEntityData >();
+	classComponentEntityData->addMethod("setComponent", &ComponentEntityData::setComponent);
+	classComponentEntityData->addMethod("getComponent", &ComponentEntityData_getComponent);
 	registrar->registerClass(classComponentEntityData);
 
 	Ref< AutoRuntimeClass< ComponentEntity > > classComponentEntity = new AutoRuntimeClass< ComponentEntity >();
