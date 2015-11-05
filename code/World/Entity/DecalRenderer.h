@@ -1,5 +1,5 @@
-#ifndef traktor_world_DecalEntityRenderer_H
-#define traktor_world_DecalEntityRenderer_H
+#ifndef traktor_world_DecalRenderer_H
+#define traktor_world_DecalRenderer_H
 
 #include "Core/RefArray.h"
 #include "World/IEntityRenderer.h"
@@ -26,17 +26,17 @@ class VertexBuffer;
 	namespace world
 	{
 
-class DecalEntity;
+class DecalComponent;
 
 /*! \brief Decal entity renderer.
  * \ingroup World
  */
-class T_DLLCLASS DecalEntityRenderer : public IEntityRenderer
+class T_DLLCLASS DecalRenderer : public IEntityRenderer
 {
 	T_RTTI_CLASS;
 
 public:
-	DecalEntityRenderer(render::IRenderSystem* renderSystem);
+	DecalRenderer(render::IRenderSystem* renderSystem);
 
 	virtual const TypeInfoSet getRenderableTypes() const T_OVERRIDE T_FINAL;
 
@@ -56,10 +56,10 @@ public:
 private:
 	Ref< render::VertexBuffer > m_vertexBuffer;
 	Ref< render::IndexBuffer > m_indexBuffer;
-	RefArray< DecalEntity > m_decalEntities;
+	RefArray< DecalComponent > m_decalComponents;
 };
 
 	}
 }
 
-#endif	// traktor_world_DecalEntityRenderer_H
+#endif	// traktor_world_DecalRenderer_H

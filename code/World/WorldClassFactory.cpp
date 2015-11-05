@@ -15,14 +15,13 @@
 #include "World/IEntityFactory.h"
 #include "World/IEntityRenderer.h"
 #include "World/WorldClassFactory.h"
-#include "World/Entity/CameraEntity.h"
-#include "World/Entity/CameraEntityData.h"
+#include "World/Entity/CameraComponent.h"
+#include "World/Entity/CameraComponentData.h"
 #include "World/Entity/ComponentEntity.h"
 #include "World/Entity/ComponentEntityData.h"
 #include "World/Entity/DirectionalLightEntity.h"
 #include "World/Entity/GroupEntity.h"
 #include "World/Entity/GroupEntityData.h"
-#include "World/Entity/NullEntity.h"
 #include "World/Entity/PointLightEntity.h"
 #include "World/Entity/ScriptComponent.h"
 #include "World/Entity/ScriptComponentData.h"
@@ -69,7 +68,7 @@ Transform Entity_getTransform(Entity* this_)
 	return transform;
 }
 
-void CameraEntityData_setCameraType(CameraEntityData* this_, const std::wstring& type)
+void CameraComponentData_setCameraType(CameraComponentData* this_, const std::wstring& type)
 {
 	if (compareIgnoreCase< std::wstring >(type, L"orthographic") == 0)
 		this_->setCameraType(CtOrthographic);
@@ -77,7 +76,7 @@ void CameraEntityData_setCameraType(CameraEntityData* this_, const std::wstring&
 		this_->setCameraType(CtPerspective);
 }
 
-std::wstring CameraEntityData_getCameraType(CameraEntityData* this_)
+std::wstring CameraComponentData_getCameraType(CameraComponentData* this_)
 {
 	switch (this_->getCameraType())
 	{
@@ -89,7 +88,7 @@ std::wstring CameraEntityData_getCameraType(CameraEntityData* this_)
 	return L"";
 }
 
-void CameraEntity_setCameraType(CameraEntity* this_, const std::wstring& type)
+void CameraComponent_setCameraType(CameraComponent* this_, const std::wstring& type)
 {
 	if (compareIgnoreCase< std::wstring >(type, L"orthographic") == 0)
 		this_->setCameraType(CtOrthographic);
@@ -97,7 +96,7 @@ void CameraEntity_setCameraType(CameraEntity* this_, const std::wstring& type)
 		this_->setCameraType(CtPerspective);
 }
 
-std::wstring CameraEntity_getCameraType(CameraEntity* this_)
+std::wstring CameraComponent_getCameraType(CameraComponent* this_)
 {
 	switch (this_->getCameraType())
 	{
@@ -203,29 +202,6 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classEntity->addMethod("update", &Entity_update);
 	registrar->registerClass(classEntity);
 
-	Ref< AutoRuntimeClass< CameraEntityData > > classCameraEntityData = new AutoRuntimeClass< CameraEntityData >();
-	classCameraEntityData->addConstructor();
-	classCameraEntityData->addMethod("setCameraType", &CameraEntityData_setCameraType);
-	classCameraEntityData->addMethod("getCameraType", &CameraEntityData_getCameraType);
-	classCameraEntityData->addMethod("setFieldOfView", &CameraEntityData::setFieldOfView);
-	classCameraEntityData->addMethod("getFieldOfView", &CameraEntityData::getFieldOfView);
-	classCameraEntityData->addMethod("setWidth", &CameraEntityData::setWidth);
-	classCameraEntityData->addMethod("getWidth", &CameraEntityData::getWidth);
-	classCameraEntityData->addMethod("setHeight", &CameraEntityData::setHeight);
-	classCameraEntityData->addMethod("getHeight", &CameraEntityData::getHeight);
-	registrar->registerClass(classCameraEntityData);
-
-	Ref< AutoRuntimeClass< CameraEntity > > classCameraEntity = new AutoRuntimeClass< CameraEntity >();
-	classCameraEntity->addMethod("setCameraType", &CameraEntity_setCameraType);
-	classCameraEntity->addMethod("getCameraType", &CameraEntity_getCameraType);
-	classCameraEntity->addMethod("setFieldOfView", &CameraEntity::setFieldOfView);
-	classCameraEntity->addMethod("getFieldOfView", &CameraEntity::getFieldOfView);
-	classCameraEntity->addMethod("setWidth", &CameraEntity::setWidth);
-	classCameraEntity->addMethod("getWidth", &CameraEntity::getWidth);
-	classCameraEntity->addMethod("setHeight", &CameraEntity::setHeight);
-	classCameraEntity->addMethod("getHeight", &CameraEntity::getHeight);
-	registrar->registerClass(classCameraEntity);
-
 	Ref< AutoRuntimeClass< GroupEntity > > classGroupEntity = new AutoRuntimeClass< GroupEntity >();
 	classGroupEntity->addConstructor< const Transform& >();
 	classGroupEntity->addMethod("addEntity", &GroupEntity::addEntity);
@@ -256,10 +232,6 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classDirectionalLightEntity->addMethod("getCastShadow", &DirectionalLightEntity::getCastShadow);
 	registrar->registerClass(classDirectionalLightEntity);
 
-	Ref< AutoRuntimeClass< NullEntity > > classNullEntity = new AutoRuntimeClass< NullEntity >();
-	classNullEntity->addConstructor< const Transform& >();
-	registrar->registerClass(classNullEntity);
-
 	Ref< AutoRuntimeClass< SwitchEntity > > classSwitchEntity = new AutoRuntimeClass< SwitchEntity >();
 	classSwitchEntity->addConstructor();
 	classSwitchEntity->addConstructor< const Transform&, int32_t >();
@@ -289,6 +261,29 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	Ref< AutoRuntimeClass< ScriptComponent > > classScriptComponent = new AutoRuntimeClass< ScriptComponent >();
 	registrar->registerClass(classScriptComponent);
+
+	Ref< AutoRuntimeClass< CameraComponentData > > classCameraComponentData = new AutoRuntimeClass< CameraComponentData >();
+	classCameraComponentData->addConstructor();
+	classCameraComponentData->addMethod("setCameraType", &CameraComponentData_setCameraType);
+	classCameraComponentData->addMethod("getCameraType", &CameraComponentData_getCameraType);
+	classCameraComponentData->addMethod("setFieldOfView", &CameraComponentData::setFieldOfView);
+	classCameraComponentData->addMethod("getFieldOfView", &CameraComponentData::getFieldOfView);
+	classCameraComponentData->addMethod("setWidth", &CameraComponentData::setWidth);
+	classCameraComponentData->addMethod("getWidth", &CameraComponentData::getWidth);
+	classCameraComponentData->addMethod("setHeight", &CameraComponentData::setHeight);
+	classCameraComponentData->addMethod("getHeight", &CameraComponentData::getHeight);
+	registrar->registerClass(classCameraComponentData);
+
+	Ref< AutoRuntimeClass< CameraComponent > > classCameraComponent = new AutoRuntimeClass< CameraComponent >();
+	classCameraComponent->addMethod("setCameraType", &CameraComponent_setCameraType);
+	classCameraComponent->addMethod("getCameraType", &CameraComponent_getCameraType);
+	classCameraComponent->addMethod("setFieldOfView", &CameraComponent::setFieldOfView);
+	classCameraComponent->addMethod("getFieldOfView", &CameraComponent::getFieldOfView);
+	classCameraComponent->addMethod("setWidth", &CameraComponent::setWidth);
+	classCameraComponent->addMethod("getWidth", &CameraComponent::getWidth);
+	classCameraComponent->addMethod("setHeight", &CameraComponent::setHeight);
+	classCameraComponent->addMethod("getHeight", &CameraComponent::getHeight);
+	registrar->registerClass(classCameraComponent);
 
 	Ref< AutoRuntimeClass< ComponentEntityData > > classComponentEntityData = new AutoRuntimeClass< ComponentEntityData >();
 	registrar->registerClass(classComponentEntityData);

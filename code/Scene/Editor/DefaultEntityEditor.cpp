@@ -13,7 +13,7 @@
 #include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
-#include "World/Entity/CameraEntity.h"
+#include "World/Entity/CameraComponent.h"
 #include "World/Entity/DirectionalLightEntity.h"
 #include "World/Entity/GroupEntityData.h"
 #include "World/Entity/PointLightEntity.h"
@@ -178,7 +178,7 @@ void DefaultEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 	boundingBox.mn -= c_expandBoundingBox;
 	boundingBox.mx += c_expandBoundingBox;
 
-	if (is_a< world::CameraEntity >(m_entityAdapter->getEntity()))
+	if (m_entityAdapter->getComponent< world::CameraComponent >() != 0)
 	{
 		primitiveRenderer->pushWorld(transform.toMatrix44());
 		primitiveRenderer->pushDepthState(false, false, false);
@@ -207,7 +207,8 @@ void DefaultEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 		primitiveRenderer->popDepthState();
 		primitiveRenderer->popWorld();
 	}
-	else if (is_a< world::DirectionalLightEntity >(m_entityAdapter->getEntity()))
+
+	if (is_a< world::DirectionalLightEntity >(m_entityAdapter->getEntity()))
 	{
 		if (m_context->shouldDrawGuide(L"Entity.Light"))
 		{

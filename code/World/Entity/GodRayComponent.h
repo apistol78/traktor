@@ -1,8 +1,7 @@
-#ifndef traktor_world_NullEntity_H
-#define traktor_world_NullEntity_H
+#ifndef traktor_world_GodRayComponent_H
+#define traktor_world_GodRayComponent_H
 
-#include "Core/Math/IntervalTransform.h"
-#include "World/Entity.h"
+#include "World/IEntityComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -17,31 +16,33 @@ namespace traktor
 	namespace world
 	{
 
-/*! \brief Null entity.
+class Entity;
+
+/*! \brief God ray origin and direction component.
  * \ingroup World
  */
-class T_DLLCLASS NullEntity : public Entity
+class T_DLLCLASS GodRayComponent : public IEntityComponent
 {
 	T_RTTI_CLASS;
 
 public:
-	NullEntity(const Transform& transform);
+	GodRayComponent(Entity* owner);
+
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
 	virtual void update(const UpdateParams& update) T_OVERRIDE T_FINAL;
 
 	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
 
-	virtual bool getTransform(Transform& outTransform) const T_OVERRIDE T_FINAL;
-
 	virtual Aabb3 getBoundingBox() const T_OVERRIDE T_FINAL;
 
-	Transform getTransform(float interval) const;
+	Transform getTransform() const;
 
 private:
-	IntervalTransform m_transform;
+	Entity* m_owner;
 };
 
 	}
 }
 
-#endif	// traktor_world_NullEntity_H
+#endif	// traktor_world_GodRayComponent_H

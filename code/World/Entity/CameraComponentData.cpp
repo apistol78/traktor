@@ -3,16 +3,16 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberEnum.h"
-#include "World/Entity/CameraEntityData.h"
+#include "World/Entity/CameraComponentData.h"
 
 namespace traktor
 {
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.CameraEntityData", 0, CameraEntityData, EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.CameraComponentData", 0, CameraComponentData, IEntityComponentData)
 
-CameraEntityData::CameraEntityData()
+CameraComponentData::CameraComponentData()
 :	m_type(CtOrthographic)
 ,	m_fov(deg2rad(70.0f))
 ,	m_width(1.0f)
@@ -20,47 +20,47 @@ CameraEntityData::CameraEntityData()
 {
 }
 
-void CameraEntityData::setCameraType(CameraType type)
+void CameraComponentData::setCameraType(CameraType type)
 {
 	m_type = type;
 }
 
-CameraType CameraEntityData::getCameraType() const
+CameraType CameraComponentData::getCameraType() const
 {
 	return m_type;
 }
 
-void CameraEntityData::setFieldOfView(float fov)
+void CameraComponentData::setFieldOfView(float fov)
 {
 	m_fov = fov;
 }
 
-float CameraEntityData::getFieldOfView() const
+float CameraComponentData::getFieldOfView() const
 {
 	return m_fov;
 }
 
-void CameraEntityData::setWidth(float width)
+void CameraComponentData::setWidth(float width)
 {
 	m_width = width;
 }
 
-float CameraEntityData::getWidth() const
+float CameraComponentData::getWidth() const
 {
 	return m_width;
 }
 
-void CameraEntityData::setHeight(float height)
+void CameraComponentData::setHeight(float height)
 {
 	m_height = height;
 }
 
-float CameraEntityData::getHeight() const
+float CameraComponentData::getHeight() const
 {
 	return m_height;
 }
 
-void CameraEntityData::serialize(ISerializer& s)
+void CameraComponentData::serialize(ISerializer& s)
 {
 	const MemberEnum< CameraType >::Key kCameraType[] =
 	{
@@ -68,8 +68,6 @@ void CameraEntityData::serialize(ISerializer& s)
 		{ L"CtPerspective", CtPerspective },
 		{ 0, 0 }
 	};
-
-	EntityData::serialize(s);
 
 	s >> MemberEnum< CameraType >(L"type", m_type, kCameraType);
 	s >> Member< float >(L"fov", m_fov, AttributeAngles());

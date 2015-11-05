@@ -1,8 +1,8 @@
-#ifndef traktor_world_DecalEntityData_H
-#define traktor_world_DecalEntityData_H
+#ifndef traktor_world_DecalComponentData_H
+#define traktor_world_DecalComponentData_H
 
 #include "Resource/Id.h"
-#include "World/EntityData.h"
+#include "World/IEntityComponentData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -27,12 +27,12 @@ class Shader;
 /*! \brief Decal entity data.
  * \ingroup World
  */
-class T_DLLCLASS DecalEntityData : public EntityData
+class T_DLLCLASS DecalComponentData : public IEntityComponentData
 {
 	T_RTTI_CLASS;
 
 public:
-	DecalEntityData();
+	DecalComponentData();
 
 	virtual void serialize(ISerializer& s);
 
@@ -57,4 +57,4 @@ private:
 	}
 }
 
-#endif	// traktor_world_DecalEntityData_H
+#endif	// traktor_world_DecalComponentData_H
