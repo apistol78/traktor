@@ -179,7 +179,7 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 
 	if (const ComponentEntityData* componentData = dynamic_type_cast< const ComponentEntityData* >(&entityData))
 	{
-		Ref< ComponentEntity > componentEntity = new ComponentEntity();
+		Ref< ComponentEntity > componentEntity = new ComponentEntity(componentData->getTransform());
 		for (uint32_t i = 0; i < componentData->m_components.size(); ++i)
 		{
 			Ref< IEntityComponent > component = builder->create(componentEntity, componentData->m_components[i]);

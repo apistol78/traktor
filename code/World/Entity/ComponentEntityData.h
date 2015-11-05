@@ -35,6 +35,14 @@ public:
 	 */
 	IEntityComponentData* getComponent(const TypeInfo& componentType) const;
 
+	/*! \brief Get component of type.
+	 */
+	template < typename ComponentDataType >
+	ComponentDataType* getComponent() const
+	{
+		return checked_type_cast< ComponentDataType* >(getComponent(type_of< ComponentDataType >()));
+	}
+
 	virtual void serialize(ISerializer& s);
 
 private:

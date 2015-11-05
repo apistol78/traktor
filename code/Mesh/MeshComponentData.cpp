@@ -32,6 +32,12 @@ MeshComponentData::MeshComponentData()
 {
 }
 
+MeshComponentData::MeshComponentData(const resource::Id< IMesh >& mesh)
+:	m_mesh(mesh)
+,	m_screenSpaceCulling(false)
+{
+}
+
 Ref< MeshComponent > MeshComponentData::createComponent(world::Entity* owner, resource::IResourceManager* resourceManager) const
 {
 	resource::Proxy< IMesh > mesh;

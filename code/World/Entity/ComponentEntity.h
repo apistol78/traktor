@@ -1,7 +1,7 @@
 #ifndef traktor_world_ComponentEntity_H
 #define traktor_world_ComponentEntity_H
 
-#include "Core/Containers/SmallMap.h"
+#include "Core/RefArray.h"
 #include "Core/Math/IntervalTransform.h"
 #include "World/Entity.h"
 
@@ -67,7 +67,7 @@ private:
 	friend class WorldEntityFactory;
 
 	Transform m_transform;
-	SmallMap< const TypeInfo*, Ref< IEntityComponent > > m_components;
+	RefArray< IEntityComponent > m_components;
 };
 
 	}
