@@ -26,7 +26,6 @@
 #include "World/Entity/ScriptComponent.h"
 #include "World/Entity/ScriptComponentData.h"
 #include "World/Entity/SwitchEntity.h"
-#include "World/Entity/TransientEntity.h"
 #include "World/Entity/VolumeEntity.h"
 
 namespace traktor
@@ -241,10 +240,6 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classSwitchEntity->addMethod("getActive", &SwitchEntity::getActive);
 	classSwitchEntity->addMethod("getActiveEntity", &SwitchEntity::getActiveEntity);
 	registrar->registerClass(classSwitchEntity);
-
-	Ref< AutoRuntimeClass< TransientEntity > > classTransientEntity = new AutoRuntimeClass< TransientEntity >();
-	classTransientEntity->addConstructor< GroupEntity*, Entity*, float >();
-	registrar->registerClass(classTransientEntity);
 
 	Ref< AutoRuntimeClass< VolumeEntity > > classVolumeEntity = new AutoRuntimeClass< VolumeEntity >();
 	classVolumeEntity->addMethod("inside", &VolumeEntity::inside);

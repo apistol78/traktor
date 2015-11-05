@@ -27,7 +27,6 @@
 #include "World/Entity/CameraComponent.h"
 #include "World/Entity/ComponentEntity.h"
 #include "World/Entity/GroupEntity.h"
-#include "World/Entity/TransientEntity.h"
 
 namespace traktor
 {
@@ -471,12 +470,6 @@ void WorldLayer::addEntity(world::Entity* entity)
 {
 	if (m_dynamicEntities)
 		m_dynamicEntities->addEntity(entity);
-}
-
-void WorldLayer::addTransientEntity(world::Entity* entity, float duration)
-{
-	if (m_dynamicEntities)
-		m_dynamicEntities->addEntity(new world::TransientEntity(m_dynamicEntities, entity, duration));
 }
 
 void WorldLayer::removeEntity(world::Entity* entity)

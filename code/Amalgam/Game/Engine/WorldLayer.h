@@ -116,8 +116,6 @@ public:
 
 	void addEntity(world::Entity* entity);
 
-	void addTransientEntity(world::Entity* entity, float duration);
-
 	void removeEntity(world::Entity* entity);
 
 	bool isEntityAdded(const world::Entity* entity) const;
