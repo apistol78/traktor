@@ -47,6 +47,8 @@ public:
 
 	virtual script::IScriptManager* getScriptManager() T_OVERRIDE T_FINAL;
 
+	virtual script::IScriptContext* getScriptContext() T_OVERRIDE T_FINAL;
+
 private:
 	struct CallSample
 	{
@@ -63,6 +65,7 @@ private:
 	};
 
 	Ref< script::IScriptManager > m_scriptManager;
+	Ref< script::IScriptContext > m_scriptContext;
 	Ref< script::IScriptDebugger > m_scriptDebugger;
 	Ref< script::IScriptProfiler > m_scriptProfiler;
 	Ref< net::BidirectionalObjectTransport > m_transport;

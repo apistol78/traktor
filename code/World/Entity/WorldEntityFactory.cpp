@@ -24,8 +24,6 @@
 #include "World/Entity/ScriptComponentData.h"
 #include "World/Entity/SpotLightEntity.h"
 #include "World/Entity/SpotLightEntityData.h"
-#include "World/Entity/SwitchEntity.h"
-#include "World/Entity/SwitchEntityData.h"
 #include "World/Entity/VolumeEntity.h"
 #include "World/Entity/VolumeEntityData.h"
 #include "World/Entity/WorldEntityFactory.h"
@@ -51,7 +49,6 @@ const TypeInfoSet WorldEntityFactory::getEntityTypes() const
 	typeSet.insert(&type_of< DirectionalLightEntityData >());
 	typeSet.insert(&type_of< PointLightEntityData >());
 	typeSet.insert(&type_of< SpotLightEntityData >());
-	typeSet.insert(&type_of< SwitchEntityData >());
 	typeSet.insert(&type_of< VolumeEntityData >());
 	typeSet.insert(&type_of< ComponentEntityData >());
 	return typeSet;
@@ -157,21 +154,6 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 			spotLightData->getRadius(),
 			spotLightData->getCastShadow()
 		);
-	}
-
-	if (const SwitchEntityData* switchEntityData = dynamic_type_cast< const SwitchEntityData* >(&entityData))
-	{
-		Ref< SwitchEntity > switchEntity = new SwitchEntity(switchEntityData->getTransform(), 0);
-
-		const RefArray< EntityData >& switchChildEntityData = switchEntityData->getEntityData();
-		for (RefArray< EntityData >::const_iterator i = switchChildEntityData.begin(); i != switchChildEntityData.end(); ++i)
-		{
-			Ref< Entity > childEntity = builder->create(*i);
-			if (childEntity)
-				switchEntity->addEntity(childEntity);
-		}
-
-		return switchEntity;
 	}
 
 	if (const VolumeEntityData* volumeData = dynamic_type_cast< const VolumeEntityData* >(&entityData))

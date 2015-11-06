@@ -25,7 +25,6 @@
 #include "World/Entity/PointLightEntity.h"
 #include "World/Entity/ScriptComponent.h"
 #include "World/Entity/ScriptComponentData.h"
-#include "World/Entity/SwitchEntity.h"
 #include "World/Entity/VolumeEntity.h"
 
 namespace traktor
@@ -240,16 +239,6 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classDirectionalLightEntity->addMethod("setCastShadow", &DirectionalLightEntity::setCastShadow);
 	classDirectionalLightEntity->addMethod("getCastShadow", &DirectionalLightEntity::getCastShadow);
 	registrar->registerClass(classDirectionalLightEntity);
-
-	Ref< AutoRuntimeClass< SwitchEntity > > classSwitchEntity = new AutoRuntimeClass< SwitchEntity >();
-	classSwitchEntity->addConstructor();
-	classSwitchEntity->addConstructor< const Transform&, int32_t >();
-	classSwitchEntity->addMethod("addEntity", &SwitchEntity::addEntity);
-	classSwitchEntity->addMethod("getEntity", &SwitchEntity::getEntity);
-	classSwitchEntity->addMethod("setActive", &SwitchEntity::setActive);
-	classSwitchEntity->addMethod("getActive", &SwitchEntity::getActive);
-	classSwitchEntity->addMethod("getActiveEntity", &SwitchEntity::getActiveEntity);
-	registrar->registerClass(classSwitchEntity);
 
 	Ref< AutoRuntimeClass< VolumeEntity > > classVolumeEntity = new AutoRuntimeClass< VolumeEntity >();
 	classVolumeEntity->addMethod("inside", &VolumeEntity::inside);

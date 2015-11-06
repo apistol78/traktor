@@ -97,6 +97,8 @@ bool ScriptServer::create(const PropertyGroup* defaultSettings, const PropertyGr
 		m_scriptDebuggerThread->start();
 	}
 
+	// Create shared script context.
+	m_scriptContext = m_scriptManager->createContext();
 	return true;
 }
 
@@ -121,6 +123,7 @@ void ScriptServer::destroy()
 		m_scriptProfiler = 0;
 	}
 
+	safeDestroy(m_scriptContext);
 	safeDestroy(m_scriptManager);
 }
 
@@ -129,13 +132,11 @@ void ScriptServer::createResourceFactories(IEnvironment* environment)
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 	db::Database* database = environment->getDatabase();
 
-	// Create script class context; expose environment as a global variable.
-	Ref< script::IScriptContext > context = m_scriptManager->createContext();
-	context->setGlobal("environment", Any::fromObject(environment));
-	resourceManager->addFactory(new script::ScriptClassFactory(database, context));
-
-	// Create script module factory.
+	resourceManager->addFactory(new script::ScriptClassFactory(database, m_scriptContext));
 	resourceManager->addFactory(new script::ScriptModuleFactory(database, m_scriptManager));
+
+	// Expose environment as a global in shared script environment.
+	m_scriptContext->setGlobal("environment", Any::fromObject(environment));
 }
 
 int32_t ScriptServer::reconfigure(const PropertyGroup* settings)
@@ -152,6 +153,11 @@ void ScriptServer::cleanup(bool full)
 script::IScriptManager* ScriptServer::getScriptManager()
 {
 	return m_scriptManager;
+}
+
+script::IScriptContext* ScriptServer::getScriptContext()
+{
+	return m_scriptContext;
 }
 
 void ScriptServer::threadDebugger()
