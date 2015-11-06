@@ -38,7 +38,11 @@ Scene::Scene(ISceneController* controller, Scene* scene)
 
 Scene::~Scene()
 {
-	destroy();
+	m_rootEntity = 0;
+	m_entitySchema = 0;
+	m_controller = 0;
+	m_worldRenderSettings = 0;
+	m_imageProcessParams.clear();
 }
 
 void Scene::destroy()

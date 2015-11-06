@@ -209,9 +209,15 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 
 	if (!m_pendingStage)
 	{
+		// Set ourself as a global in shared script context.
+		if (m_environment->getScript())
+			m_environment->getScript()->getScriptContext()->setGlobal("stage", Any::fromObject(this));
+
+		// Prepare all layers.
 		for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 			T_MEASURE_STATEMENT_M((*i)->prepare(), 1.0 / 60.0, type_name(*i));
 
+		// Issue script update.
 		if (validateScriptContext())
 		{
 			info.getProfiler()->beginScope(FptScript);
@@ -238,8 +244,13 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 			info.getProfiler()->endScope();
 		}
 
+		// Update each layer.
 		for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 			T_MEASURE_STATEMENT_M((*i)->update(info), 1.0 / 60.0, type_name(*i));
+
+		// Remove ourself as a global in shared script context.
+		if (m_environment->getScript())
+			m_environment->getScript()->getScriptContext()->setGlobal("stage", Any());
 
 		m_fade = max(0.0f, m_fade - info.getSimulationDeltaTime() * m_fadeRate);
 	}

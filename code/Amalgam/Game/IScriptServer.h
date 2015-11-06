@@ -16,6 +16,7 @@ namespace traktor
 	namespace script
 	{
 
+class IScriptContext;
 class IScriptManager;
 
 	}
@@ -35,6 +36,8 @@ class T_DLLCLASS IScriptServer : public IServer
 
 public:
 	virtual script::IScriptManager* getScriptManager() = 0;
+
+	virtual script::IScriptContext* getScriptContext() = 0;
 };
 
 	}
