@@ -66,12 +66,6 @@ public:
 	/*! \brief Destroy script manager. */
 	virtual void destroy() = 0;
 
-	/*! \brief Register script class.
-	 *
-	 * \param scriptClass Script class interface.
-	 */
-	virtual void registerClass(IRuntimeClass* runtimeClass) = 0;
-
 	/*! \brief Compile script into "consumable" blob.
 	 *
 	 * \param fileName Script file name.

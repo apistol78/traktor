@@ -41,7 +41,7 @@ public:
 
 	void findMembers(const ReflectionMemberPredicate& predicate, RefArray< ReflectionMember >& outMembers) const;
 
-	virtual bool replace(const ReflectionMember* source);
+	virtual bool replace(const ReflectionMember* source) T_OVERRIDE T_FINAL;
 
 private:
 	RefArray< ReflectionMember > m_members;

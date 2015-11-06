@@ -48,7 +48,6 @@ AnimatedMeshEntity::AnimatedMeshEntity(
 ,	m_bindings(bindings)
 ,	m_normalizePose(normalizePose)
 ,	m_normalizeTransform(normalizeTransform)
-,	m_totalTime(0.0f)
 ,	m_index(0)
 ,	m_updateController(1)
 ,	m_updateTimeScale(1.0f)

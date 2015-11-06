@@ -33,8 +33,8 @@ public:
 	}
 
 	IdProxy(const IdProxy< ResourceType >& rs)
-	:	m_handle(rs.m_handle)
-	,	m_id(rs.m_id)
+	:	m_id(rs.m_id)
+	,	m_handle(rs.m_handle)
 	,	m_tag(0)
 	{
 	}
@@ -52,8 +52,8 @@ public:
 	}
 
 	explicit IdProxy(ResourceHandle* handle, const Guid& id)
-	:	m_handle(handle)
-	,	m_id(id)
+	:	m_id(id)
+	,	m_handle(handle)
 	,	m_tag(0)
 	{
 	}

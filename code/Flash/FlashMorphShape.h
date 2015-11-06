@@ -41,7 +41,7 @@ public:
 		const Matrix33& transform,
 		const ActionObject* initObject,
 		const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
-	) const;
+	) const T_OVERRIDE T_FINAL;
 
 	const Aabb2& getShapeBounds() const { return m_shapeBounds; }
 
@@ -51,7 +51,7 @@ public:
 
 	const AlignedVector< FlashLineStyle >& getLineStyles() const { return m_lineStyles; }
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	Aabb2 m_shapeBounds;

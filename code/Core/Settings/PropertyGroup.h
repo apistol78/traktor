@@ -70,14 +70,14 @@ public:
 
 	Ref< PropertyGroup > mergeReplace(const PropertyGroup* rightGroup) const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	const std::map< std::wstring, Ref< IPropertyValue > >& getValues() const { return m_value; }
 
 protected:
-	virtual Ref< IPropertyValue > join(const IPropertyValue* rightGroup) const;
+	virtual Ref< IPropertyValue > join(const IPropertyValue* rightGroup) const T_OVERRIDE T_FINAL;
 
-	virtual Ref< IPropertyValue > clone() const;
+	virtual Ref< IPropertyValue > clone() const T_OVERRIDE T_FINAL;
 
 private:
 	std::map< std::wstring, Ref< IPropertyValue > > m_value;

@@ -35,7 +35,7 @@ public:
 
 	const Guid& getResourceId() const { return m_resourceId; }
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	uint32_t m_atlasWidth;

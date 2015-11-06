@@ -31,30 +31,30 @@ class T_DLLCLASS ActionSuper : public ActionFunction
 public:
 	ActionSuper(ActionContext* context, ActionObject* object, ActionObject* superPrototype, ActionFunction* superClass);
 
-	virtual ActionObject* get__proto__();
+	virtual ActionObject* get__proto__() T_OVERRIDE;
 
-	virtual void setMember(uint32_t memberName, const ActionValue& memberValue);
+	virtual void setMember(uint32_t memberName, const ActionValue& memberValue) T_OVERRIDE;
 
-	virtual bool getMember(uint32_t memberName, ActionValue& outMemberValue);
+	virtual bool getMember(uint32_t memberName, ActionValue& outMemberValue) T_OVERRIDE;
 
-	virtual bool getPropertyGet(uint32_t propertyName, Ref< ActionFunction >& outPropertyGet);
+	virtual bool getPropertyGet(uint32_t propertyName, Ref< ActionFunction >& outPropertyGet) T_OVERRIDE;
 
-	virtual bool getPropertySet(uint32_t propertyName, Ref< ActionFunction >& outPropertySet);
+	virtual bool getPropertySet(uint32_t propertyName, Ref< ActionFunction >& outPropertySet) T_OVERRIDE;
 
-	virtual ActionValue valueOf();
+	virtual ActionValue valueOf() T_OVERRIDE;
 
-	virtual ActionValue toString();
+	virtual ActionValue toString() T_OVERRIDE;
 
-	virtual Ref< ActionObject > getSuper();
+	virtual Ref< ActionObject > getSuper() T_OVERRIDE;
 
-	virtual ActionValue call(ActionObject* self, ActionObject* super, const ActionValueArray& args);
+	virtual ActionValue call(ActionObject* self, ActionObject* super, const ActionValueArray& args) T_OVERRIDE;
 
 	ActionObject* getObject() { return m_object; }
 
 protected:
-	virtual void trace(visitor_t visitor) const;
+	virtual void trace(visitor_t visitor) const T_OVERRIDE;
 
-	virtual void dereference();
+	virtual void dereference() T_OVERRIDE;
 
 private:
 	Ref< ActionObject > m_object;

@@ -40,9 +40,9 @@ public:
 protected:
 	ActionObjectRelay(const char* const prototype);
 
-	virtual void trace(visitor_t visitor) const;
+	virtual void trace(visitor_t visitor) const T_OVERRIDE;
 
-	virtual void dereference();
+	virtual void dereference() T_OVERRIDE;
 
 private:
 	const char* const m_prototype;

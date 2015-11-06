@@ -779,9 +779,9 @@ void AsTextField::TextField_set_textColor(FlashEditInstance* self, avm_number_t 
 	uint32_t n = uint32_t(textColor);
 	SwfColor tc =
 	{
-		(n >> 16) & 255,
-		(n >> 8) & 255,
-		(n) & 255,
+		(uint8_t)((n >> 16) & 255),
+		(uint8_t)((n >> 8) & 255),
+		(uint8_t)((n) & 255),
 		255
 	};
 	self->setTextColor(tc);

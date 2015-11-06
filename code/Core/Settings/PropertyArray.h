@@ -55,14 +55,14 @@ public:
 		return PropertyType::get(value);
 	}
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	const RefArray< IPropertyValue >& getValues() const { return m_values; }
 
 protected:
-	virtual Ref< IPropertyValue > join(const IPropertyValue* rightGroup) const;
+	virtual Ref< IPropertyValue > join(const IPropertyValue* rightGroup) const T_OVERRIDE T_FINAL;
 
-	virtual Ref< IPropertyValue > clone() const;
+	virtual Ref< IPropertyValue > clone() const T_OVERRIDE T_FINAL;
 
 private:
 	RefArray< IPropertyValue > m_values;

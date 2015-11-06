@@ -14,7 +14,7 @@ class ScriptBlobLua : public IScriptBlob
 	T_RTTI_CLASS;
 
 public:
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	friend class ScriptContextLua;

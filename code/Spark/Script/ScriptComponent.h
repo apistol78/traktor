@@ -33,31 +33,31 @@ class T_DLLCLASS ScriptComponent : public IComponent
 public:
 	ScriptComponent(Sprite* owner, const resource::Proxy< IRuntimeClass >& clazz);
 
-	virtual void update();
+	virtual void update() T_OVERRIDE T_FINAL;
 
-	virtual void eventKey(wchar_t unicode);
+	virtual void eventKey(wchar_t unicode) T_OVERRIDE T_FINAL;
 
-	virtual void eventKeyDown(int32_t keyCode);
+	virtual void eventKeyDown(int32_t keyCode) T_OVERRIDE T_FINAL;
 
-	virtual void eventKeyUp(int32_t keyCode);
+	virtual void eventKeyUp(int32_t keyCode) T_OVERRIDE T_FINAL;
 
-	virtual void eventMouseDown(const Vector2& position, int32_t button);
+	virtual void eventMouseDown(const Vector2& position, int32_t button) T_OVERRIDE T_FINAL;
 
-	virtual void eventMouseUp(const Vector2& position, int32_t button);
+	virtual void eventMouseUp(const Vector2& position, int32_t button) T_OVERRIDE T_FINAL;
 
-	virtual void eventMousePress(const Vector2& position, int32_t button);
+	virtual void eventMousePress(const Vector2& position, int32_t button) T_OVERRIDE T_FINAL;
 
-	virtual void eventMouseRelease(const Vector2& position, int32_t button);
+	virtual void eventMouseRelease(const Vector2& position, int32_t button) T_OVERRIDE T_FINAL;
 
-	virtual void eventMouseMove(const Vector2& position, int32_t button);
+	virtual void eventMouseMove(const Vector2& position, int32_t button) T_OVERRIDE T_FINAL;
 
-	virtual void eventMouseEnter(const Vector2& position, int32_t button);
+	virtual void eventMouseEnter(const Vector2& position, int32_t button) T_OVERRIDE T_FINAL;
 
-	virtual void eventMouseLeave(const Vector2& position, int32_t button);
+	virtual void eventMouseLeave(const Vector2& position, int32_t button) T_OVERRIDE T_FINAL;
 
-	virtual void eventMouseWheel(const Vector2& position, int32_t delta);
+	virtual void eventMouseWheel(const Vector2& position, int32_t delta) T_OVERRIDE T_FINAL;
 
-	virtual void eventViewResize(int32_t width, int32_t height);
+	virtual void eventViewResize(int32_t width, int32_t height) T_OVERRIDE T_FINAL;
 
 private:
 	Sprite* m_owner;

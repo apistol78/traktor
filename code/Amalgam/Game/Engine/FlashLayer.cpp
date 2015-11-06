@@ -91,7 +91,7 @@ public:
 	{
 	}
 
-	virtual Ref< flash::FlashMovie > load(const std::wstring& name) const
+	virtual Ref< flash::FlashMovie > load(const std::wstring& name) const T_OVERRIDE T_FINAL
 	{
 		std::map< std::wstring, resource::Proxy< flash::FlashMovie > >::const_iterator i = m_externalMovies.find(name);
 		if (i != m_externalMovies.end())

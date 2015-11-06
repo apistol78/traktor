@@ -26,7 +26,7 @@ class T_DLLCLASS VolumeComponentData : public IEntityComponentData
 	T_RTTI_CLASS;
 
 public:
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	const AlignedVector< Aabb3 >& getVolumes() const { return m_volumes; }
 

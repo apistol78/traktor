@@ -28,11 +28,11 @@ class As_traktor_amalgam_DisplayMode : public flash::ActionClass
 public:
 	As_traktor_amalgam_DisplayMode(flash::ActionContext* context, IEnvironment* environment);
 
-	virtual void initialize(flash::ActionObject* self);
+	virtual void initialize(flash::ActionObject* self) T_OVERRIDE T_FINAL;
 
-	virtual void construct(flash::ActionObject* self, const flash::ActionValueArray& args);
+	virtual void construct(flash::ActionObject* self, const flash::ActionValueArray& args) T_OVERRIDE T_FINAL;
 
-	virtual flash::ActionValue xplicit(const flash::ActionValueArray& args);
+	virtual flash::ActionValue xplicit(const flash::ActionValueArray& args) T_OVERRIDE T_FINAL;
 
 private:
 	IEnvironment* m_environment;

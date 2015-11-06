@@ -165,7 +165,7 @@ protected:
 
 	virtual ~OS();
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
 private:
 	void* m_handle;

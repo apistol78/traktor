@@ -24,7 +24,7 @@ class T_DLLCLASS RfpMemberName : public ReflectionMemberPredicate
 public:
 	RfpMemberName(const std::wstring& memberName);
 
-	virtual bool operator () (const ReflectionMember* member) const;
+	virtual bool operator () (const ReflectionMember* member) const T_OVERRIDE T_FINAL;
 
 private:
 	std::wstring m_memberName;

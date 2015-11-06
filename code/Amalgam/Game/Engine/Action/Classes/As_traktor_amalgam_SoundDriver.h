@@ -21,11 +21,11 @@ class As_traktor_amalgam_SoundDriver : public flash::ActionClass
 public:
 	As_traktor_amalgam_SoundDriver(flash::ActionContext* context);
 
-	virtual void initialize(flash::ActionObject* self);
+	virtual void initialize(flash::ActionObject* self) T_OVERRIDE T_FINAL;
 
-	virtual void construct(flash::ActionObject* self, const flash::ActionValueArray& args);
+	virtual void construct(flash::ActionObject* self, const flash::ActionValueArray& args) T_OVERRIDE T_FINAL;
 
-	virtual flash::ActionValue xplicit(const flash::ActionValueArray& args);
+	virtual flash::ActionValue xplicit(const flash::ActionValueArray& args) T_OVERRIDE T_FINAL;
 
 private:
 	void SoundDriver_get_available(flash::CallArgs& ca);

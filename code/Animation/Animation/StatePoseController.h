@@ -45,9 +45,9 @@ public:
 
 	float getTimeFactor() const;
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual void setTransform(const Transform& transform);
+	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
 
 	virtual bool evaluate(
 		float deltaTime,
@@ -56,12 +56,12 @@ public:
 		const AlignedVector< Transform >& jointTransforms,
 		AlignedVector< Transform >& outPoseTransforms,
 		bool& outUpdateController
-	);
+	) T_OVERRIDE T_FINAL;
 
 	virtual void estimateVelocities(
 		const Skeleton* skeleton,
 		AlignedVector< Velocity >& outVelocities
-	);
+	) T_OVERRIDE T_FINAL;
 
 private:
 	resource::Proxy< StateGraph > m_stateGraph;

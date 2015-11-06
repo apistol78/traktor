@@ -918,7 +918,7 @@ class T_DLLCLASS ActionFunctionNative : public ActionFunction
 public:
 	ActionFunctionNative(ActionContext* context, INativeFunction* nativeFunction);
 
-	virtual ActionValue call(ActionObject* self, ActionObject* super, const ActionValueArray& args);
+	virtual ActionValue call(ActionObject* self, ActionObject* super, const ActionValueArray& args) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< INativeFunction > m_nativeFunction;

@@ -36,7 +36,7 @@ public:
 
 	uint32_t getHeight() const { return m_height; }
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE;
 
 protected:
 	uint32_t m_x;

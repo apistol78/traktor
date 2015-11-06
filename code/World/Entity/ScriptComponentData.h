@@ -40,7 +40,7 @@ class T_DLLCLASS ScriptComponentData : public IEntityComponentData
 public:
 	Ref< ScriptComponent > createComponent(Entity* owner, resource::IResourceManager* resourceManager) const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	friend class EntityComponentPipeline;

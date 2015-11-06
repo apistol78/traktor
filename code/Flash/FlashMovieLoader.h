@@ -32,7 +32,7 @@ class T_DLLCLASS FlashMovieLoader : public IFlashMovieLoader
 public:
 	FlashMovieLoader(db::Database* database);
 
-	virtual Ref< FlashMovie > load(const std::wstring& name) const;
+	virtual Ref< FlashMovie > load(const std::wstring& name) const T_OVERRIDE;
 
 private:
 	Ref< db::Database > m_database;

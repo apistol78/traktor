@@ -57,7 +57,7 @@ public:
 
 	const Vector2& getConeLimit() const { return m_coneLimit; }
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	int32_t m_parent;

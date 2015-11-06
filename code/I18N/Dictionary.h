@@ -36,7 +36,7 @@ public:
 
 	const std::map< std::wstring, std::wstring >& get() const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	std::map< std::wstring, std::wstring > m_map;

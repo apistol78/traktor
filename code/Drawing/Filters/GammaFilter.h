@@ -29,7 +29,7 @@ public:
 	GammaFilter(float gammaR, float gammaG, float gammaB, float gammaA = 1.0f);
 
 protected:
-	virtual void apply(Image* image) const;
+	virtual void apply(Image* image) const T_OVERRIDE T_FINAL;
 
 private:
 	float m_gamma[4];

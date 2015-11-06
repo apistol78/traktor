@@ -40,7 +40,7 @@ public:
 
 	void getIndexMask(BitSet& outIndices) const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	struct Joint

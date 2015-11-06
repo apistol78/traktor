@@ -43,7 +43,7 @@ public:
 
 	uint32_t getParam() const { return m_param; }
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	Action m_action;

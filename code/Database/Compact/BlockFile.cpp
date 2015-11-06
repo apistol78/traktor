@@ -46,7 +46,7 @@ public:
 		close();
 	}
 
-	virtual void close()
+	virtual void close() T_OVERRIDE T_FINAL
 	{
 		if (m_stream)
 		{
@@ -80,7 +80,7 @@ public:
 		close();
 	}
 
-	virtual void close()
+	virtual void close() T_OVERRIDE T_FINAL
 	{
 		if (m_stream)
 		{
@@ -90,49 +90,49 @@ public:
 		}
 	}
 	
-	virtual bool canRead() const
+	virtual bool canRead() const T_OVERRIDE T_FINAL
 	{
 		return false;
 	}
 
-	virtual bool canWrite() const
+	virtual bool canWrite() const T_OVERRIDE T_FINAL
 	{
 		return true;
 	}
 
-	virtual bool canSeek() const
+	virtual bool canSeek() const T_OVERRIDE T_FINAL
 	{
 		return false;
 	}
 
-	virtual int tell() const
+	virtual int tell() const T_OVERRIDE T_FINAL
 	{
 		T_ASSERT (m_stream);
 		return m_stream->tell() - m_outBlock.offset;
 	}
 
-	virtual int available() const
+	virtual int available() const T_OVERRIDE T_FINAL
 	{
 		return 0;
 	}
 
-	virtual int seek(SeekOriginType origin, int offset)
+	virtual int seek(SeekOriginType origin, int offset) T_OVERRIDE T_FINAL
 	{
 		return 0;
 	}
 
-	virtual int read(void* block, int nbytes)
+	virtual int read(void* block, int nbytes) T_OVERRIDE T_FINAL
 	{
 		return 0;
 	}
 
-	virtual int write(const void* block, int nbytes)
+	virtual int write(const void* block, int nbytes) T_OVERRIDE T_FINAL
 	{
 		T_ASSERT (m_stream);
 		return m_stream->write(block, nbytes);
 	}
 
-	virtual void flush()
+	virtual void flush() T_OVERRIDE T_FINAL
 	{
 		T_ASSERT (m_stream);
 		m_stream->flush();

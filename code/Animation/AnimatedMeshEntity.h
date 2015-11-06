@@ -58,22 +58,22 @@ public:
 
 	virtual ~AnimatedMeshEntity();
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 	
-	virtual Aabb3 getBoundingBox() const;
+	virtual Aabb3 getBoundingBox() const T_OVERRIDE T_FINAL;
 
-	virtual bool supportTechnique(render::handle_t technique) const;
+	virtual bool supportTechnique(render::handle_t technique) const T_OVERRIDE T_FINAL;
 
 	virtual void render(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
 		world::IWorldRenderPass& worldRenderPass,
 		float distance
-	);
+	) T_OVERRIDE T_FINAL;
 
-	virtual void update(const world::UpdateParams& update);
+	virtual void update(const world::UpdateParams& update) T_OVERRIDE T_FINAL;
 
-	virtual void setTransform(const Transform& transform);
+	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
 
 	bool getJointTransform(render::handle_t jointName, Transform& outTransform) const;
 
@@ -104,7 +104,6 @@ private:
 	AlignedVector< Transform > m_jointTransforms;
 	AlignedVector< Transform > m_poseTransforms;
 	AlignedVector< Vector4 > m_skinTransforms[3];
-	float m_totalTime;
 	int32_t m_index;
 	int32_t m_updateController;
 	float m_updateTimeScale;

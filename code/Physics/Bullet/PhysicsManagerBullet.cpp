@@ -201,7 +201,7 @@ struct ClosestConvexExcludeResultCallback : public btCollisionWorld::ClosestConv
 		if (m_ignoreClusterId != 0 && getClusterId(convexResult.m_hitCollisionObject) == m_ignoreClusterId)
 			return 1.0f;
 
-		if (m_group != ~0UL && (getCollisionGroup(convexResult.m_hitCollisionObject) & m_group) == 0)
+		if (m_group != ~0U && (getCollisionGroup(convexResult.m_hitCollisionObject) & m_group) == 0)
 			return 1.0f;
 
 		return btCollisionWorld::ClosestConvexResultCallback::addSingleResult(convexResult, normalInWorldSpace);
@@ -241,7 +241,7 @@ struct ClosestRayExcludeResultCallback : public btCollisionWorld::RayResultCallb
 		if (m_ignoreClusterId != 0 && getClusterId(rayResult.m_collisionObject) == m_ignoreClusterId)
 			return m_closestHitFraction;
 
-		if (m_group != ~0UL && (getCollisionGroup(rayResult.m_collisionObject) & m_group) == 0)
+		if (m_group != ~0U && (getCollisionGroup(rayResult.m_collisionObject) & m_group) == 0)
 			return m_closestHitFraction;
 
 		bool isStatic = rayResult.m_collisionObject->isStaticOrKinematicObject();
@@ -301,7 +301,7 @@ struct ClosestRayExcludeAndCullResultCallback : public btCollisionWorld::RayResu
 		if (m_ignoreClusterId != 0 && getClusterId(rayResult.m_collisionObject) == m_ignoreClusterId)
 			return m_closestHitFraction;
 
-		if (m_group != ~0UL && (getCollisionGroup(rayResult.m_collisionObject) & m_group) == 0)
+		if (m_group != ~0U && (getCollisionGroup(rayResult.m_collisionObject) & m_group) == 0)
 			return m_closestHitFraction;
 
 		btVector3 hitNormalWorld;
@@ -350,7 +350,7 @@ struct ConvexExcludeResultCallback : public btCollisionWorld::ConvexResultCallba
 		BodyBullet* bodyBullet = reinterpret_cast< BodyBullet* >(convexResult.m_hitCollisionObject->getUserPointer());
 		T_ASSERT (bodyBullet);
 
-		if (m_group != ~0UL && (bodyBullet->getCollisionGroup() & m_group) == 0)
+		if (m_group != ~0U && (bodyBullet->getCollisionGroup() & m_group) == 0)
 			return 1.0f;
 
 		if (m_ignoreClusterId != 0 && bodyBullet->getClusterId() == m_ignoreClusterId)
@@ -1728,7 +1728,7 @@ void PhysicsManagerBullet::nearCallback(btBroadphasePair& collisionPair, btColli
 	{
 		// Filter on cluster id.
 		uint32_t clusterId1 = body1->getClusterId();
-		if (clusterId1 != ~0UL && clusterId1 == body2->getClusterId())
+		if (clusterId1 != ~0U && clusterId1 == body2->getClusterId())
 			return;
 
 		// Filter collision on collision group and mask.

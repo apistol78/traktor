@@ -198,7 +198,7 @@ public:
 
 	//@}
 
-	virtual bool getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue);
+	virtual bool getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue) T_OVERRIDE;
 
 protected:
 	void setParent(FlashCharacterInstance* parent);
@@ -207,9 +207,9 @@ protected:
 
 	bool executeScriptEvent(uint32_t eventName, const ActionValue& arg);
 
-	virtual void trace(visitor_t visitor) const;
+	virtual void trace(visitor_t visitor) const T_OVERRIDE;
 
-	virtual void dereference();
+	virtual void dereference() T_OVERRIDE;
 
 private:
 	static int32_t ms_instanceCount;

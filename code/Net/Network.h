@@ -3,7 +3,7 @@
 
 #include "Core/Config.h"
 
-#if defined(__GNUC__) || defined(_PS3) || defined(__APPLE__)
+#if defined(__GNUC__) || defined(__PS3__) || defined(__APPLE__)
 #	include <sys/time.h>
 #	include <sys/types.h>
 #	include <sys/socket.h>
@@ -11,10 +11,12 @@
 #	include <netinet/in.h>
 #	include <netinet/tcp.h>
 #	include <arpa/inet.h>
-#	include <netdb.h>
+#	if !defined(__PS4__)
+#		include <netdb.h>
+#	endif
 #	include <unistd.h>
 
-#	if defined(_PS3)
+#	if defined(__PS3__)
 #		include <netex/net.h>
 #		include <netex/ifctl.h>
 #		include <netex/libnetctl.h>
@@ -26,7 +28,7 @@
 #	define SOCKET int
 #	define INVALID_SOCKET -1
 
-#	if defined(_PS3)
+#	if defined(__PS3__)
 #		define CLOSE_SOCKET(s) socketclose(s)
 #	else
 #		define CLOSE_SOCKET(s) ::close(s)

@@ -64,12 +64,12 @@ template < typename T >
 class RefCountImpl : public T
 {
 public:
-	virtual void addRef(void* owner) const
+	virtual void addRef(void* owner) const T_OVERRIDE
 	{
 		++m_refCount;
 	}
 
-	virtual void release(void* owner) const
+	virtual void release(void* owner) const T_OVERRIDE
 	{
 		T_ASSERT (m_refCount > 0);
 		if (--m_refCount == 0)

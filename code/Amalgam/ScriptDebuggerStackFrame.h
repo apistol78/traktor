@@ -37,7 +37,7 @@ public:
 
 	script::StackFrame* getFrame() const { return m_frame; }
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< script::StackFrame > m_frame;

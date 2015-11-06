@@ -65,9 +65,9 @@ public:
 		float trackDuration
 	);
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual void setTransform(const Transform& transform);
+	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
 
 	virtual bool evaluate(
 		float deltaTime,
@@ -76,12 +76,12 @@ public:
 		const AlignedVector< Transform >& boneTransforms,
 		AlignedVector< Transform >& outPoseTransforms,
 		bool& outUpdateController
-	);
+	) T_OVERRIDE T_FINAL;
 
 	virtual void estimateVelocities(
 		const Skeleton* skeleton,
 		AlignedVector< Velocity >& outVelocities
-	);
+	) T_OVERRIDE T_FINAL;
 
 	void setEnable(bool enable);
 

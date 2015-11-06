@@ -28,8 +28,6 @@ void InstanceMeshComponentRenderer::render(
 )
 {
 	InstanceMeshComponent* meshComponent = checked_type_cast< InstanceMeshComponent* >(renderable);
-	T_ASSERT_M (!meshComponent->getParameterCallback(), L"Instance mesh entities doesn't support parameter callback");
-	
 	InstanceMesh* mesh = meshComponent->getMesh();
 
 	if (!mesh->supportTechnique(worldRenderPass.getTechnique()))

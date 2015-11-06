@@ -27,7 +27,7 @@ public:
 	BrightnessContrastFilter(float brightness, float contrast);
 
 protected:
-	virtual void apply(Image* image) const;
+	virtual void apply(Image* image) const T_OVERRIDE T_FINAL;
 
 private:
 	float m_brightness;

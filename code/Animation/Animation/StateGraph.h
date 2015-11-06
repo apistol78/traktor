@@ -44,7 +44,7 @@ public:
 
 	Ref< StateNode > getRootState() const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	RefArray< StateNode > m_states;

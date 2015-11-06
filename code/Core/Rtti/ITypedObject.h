@@ -21,11 +21,11 @@ namespace traktor
  */
 //@{
 
-#define T_RTTI_CLASS											\
-	public:														\
-		static const traktor::TypeInfo& getClassTypeInfo();		\
-		virtual const traktor::TypeInfo& getTypeInfo() const;	\
-	private:													\
+#define T_RTTI_CLASS														\
+	public:																	\
+		static const traktor::TypeInfo& getClassTypeInfo();					\
+		virtual const traktor::TypeInfo& getTypeInfo() const T_OVERRIDE;	\
+	private:																\
 		static traktor::TypeInfo ms_typeInfo;
 	
 #define T_IMPLEMENT_RTTI_CLASS_COMMON(CLASS)									\

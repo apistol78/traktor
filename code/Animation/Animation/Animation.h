@@ -94,7 +94,7 @@ public:
 	 */
 	bool getPose(float at, bool linear, int32_t& indexHint, Pose& outPose) const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	AlignedVector< KeyPose > m_poses;
