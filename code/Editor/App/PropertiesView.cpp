@@ -11,6 +11,7 @@
 #include "Editor/App/TextEditorDialog.h"
 #include "I18N/I18N.h"
 #include "I18N/Text.h"
+#include "Ui/Application.h"
 #include "Ui/FileDialog.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/ColorPicker/ColorDialog.h"
@@ -43,6 +44,7 @@ bool PropertiesView::create(ui::Widget* parent)
 
 	m_propertyList = new ui::custom::AutoPropertyList();
 	m_propertyList->create(this, ui::WsDoubleBuffer | ui::WsTabStop, this);
+	m_propertyList->setSeparator(ui::scaleBySystemDPI(150));
 	m_propertyList->addEventHandler< ui::custom::PropertyCommandEvent >(this, &PropertiesView::eventPropertyCommand);
 	m_propertyList->addEventHandler< ui::custom::PropertyContentChangeEvent >(this, &PropertiesView::eventPropertyChange);
 	m_propertyList->addEventHandler< ui::SelectionChangeEvent >(this, &PropertiesView::eventPropertySelect);
