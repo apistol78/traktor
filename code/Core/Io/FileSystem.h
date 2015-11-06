@@ -215,7 +215,7 @@ public:
 	bool getRelativePath(const Path& absolutePath, const Path& relativeToPath, Path& relativePath) const;
 
 protected:
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
 private:
 	std::map< std::wstring, Ref< IVolume > > m_volumes;

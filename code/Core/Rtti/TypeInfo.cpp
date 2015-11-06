@@ -2,7 +2,7 @@
 // If non zero then registry size is fixed.
 #define T_REGISTRY_SIZE 16384
 
-#if T_REGISTRY_SIZE != 0 && !defined(_WIN32)
+#if T_REGISTRY_SIZE != 0 && !defined(_WIN32) && !defined(__PS4__)
 #	include <alloca.h>
 #endif
 #include "Core/Misc/TString.h"
@@ -99,8 +99,6 @@ void __registerTypeInfo(const TypeInfo* typeInfo)
 
 void __unregisterTypeInfo(const TypeInfo* typeInfo)
 {
-	T_ASSERT_M (s_typeInfoRegistry != 0, L"Types never been registered");
-
 	const wchar_t* typeName = typeInfo->getName();
 	if (!typeName)
 		return;

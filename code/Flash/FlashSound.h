@@ -39,7 +39,7 @@ public:
 
 	const int16_t* getSamples(uint8_t channel) const { return m_samples[channel].c_ptr(); }
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	uint8_t m_channels;

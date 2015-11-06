@@ -36,14 +36,14 @@ public:
 
 	virtual ~SocketAddressIPv6();
 	
-	virtual bool valid() const;
+	virtual bool valid() const T_OVERRIDE T_FINAL;
 
-	virtual std::wstring getHostName() const;
+	virtual std::wstring getHostName() const T_OVERRIDE T_FINAL;
 
 	const addrinfo* getAddrInfo(int socktype) const;
 	
 private:
-#if !defined(_PS3) && !defined(__EMSCRIPTEN__) && !defined(__PNACL__) && !defined(_XBOX)
+#if !defined(__PS3__) && !defined(__PS4__) && !defined(__EMSCRIPTEN__) && !defined(__PNACL__) && !defined(_XBOX)
 	addrinfo* m_info;
 #endif
 };

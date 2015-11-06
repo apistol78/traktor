@@ -14,9 +14,9 @@ class ActionVMImage2 : public IActionVMImage
 	T_RTTI_CLASS;
 
 public:
-	virtual void execute(ActionFrame* frame) const;
+	virtual void execute(ActionFrame* frame) const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	friend class ActionVM2;

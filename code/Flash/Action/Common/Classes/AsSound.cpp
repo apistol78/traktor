@@ -27,7 +27,7 @@ public:
 	const FlashSound* getSound() const { return m_sound; }
 
 protected:
-	virtual void dereference()
+	virtual void dereference() T_OVERRIDE T_FINAL
 	{
 		m_sound = 0;
 		ActionObjectRelay::dereference();

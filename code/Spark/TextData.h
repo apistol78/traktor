@@ -31,7 +31,7 @@ class T_DLLCLASS TextData : public CharacterData
 public:
 	TextData();
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	friend class CharacterPipeline;

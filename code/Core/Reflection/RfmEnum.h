@@ -28,7 +28,7 @@ public:
 
 	const std::wstring& get() const { return m_value; }
 
-	virtual bool replace(const ReflectionMember* source);
+	virtual bool replace(const ReflectionMember* source) T_OVERRIDE T_FINAL;
 
 private:
 	std::wstring m_value;

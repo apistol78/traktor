@@ -158,17 +158,17 @@ private:
 
 	static void nearCallback(btBroadphasePair& collisionPair, btCollisionDispatcher& dispatcher, const btDispatcherInfo& dispatchInfo);
 
-	virtual void insertBody(btRigidBody* rigidBody, uint16_t collisionGroup, uint16_t collisionFilter);
+	virtual void insertBody(btRigidBody* rigidBody, uint16_t collisionGroup, uint16_t collisionFilter) T_OVERRIDE T_FINAL;
 
-	virtual void removeBody(btRigidBody* rigidBody);
+	virtual void removeBody(btRigidBody* rigidBody) T_OVERRIDE T_FINAL;
 
-	virtual void insertConstraint(btTypedConstraint* constraint);
+	virtual void insertConstraint(btTypedConstraint* constraint) T_OVERRIDE T_FINAL;
 
-	virtual void removeConstraint(btTypedConstraint* constraint);
+	virtual void removeConstraint(btTypedConstraint* constraint) T_OVERRIDE T_FINAL;
 
-	virtual void destroyBody(BodyBullet* body, btRigidBody* rigidBody, btCollisionShape* shape);
+	virtual void destroyBody(BodyBullet* body, btRigidBody* rigidBody, btCollisionShape* shape) T_OVERRIDE T_FINAL;
 
-	virtual void destroyConstraint(Joint* joint, btTypedConstraint* constraint);
+	virtual void destroyConstraint(Joint* joint, btTypedConstraint* constraint) T_OVERRIDE T_FINAL;
 };
 
 	}

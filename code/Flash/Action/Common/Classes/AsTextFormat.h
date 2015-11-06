@@ -20,11 +20,11 @@ class AsTextFormat : public ActionClass
 public:
 	AsTextFormat(ActionContext* context);
 
-	virtual void construct(ActionObject* self, const ActionValueArray& args);
+	virtual void construct(ActionObject* self, const ActionValueArray& args) T_OVERRIDE T_FINAL;
 
-	virtual void initialize(ActionObject* self);
+	virtual void initialize(ActionObject* self) T_OVERRIDE T_FINAL;
 
-	virtual ActionValue xplicit(const ActionValueArray& args);
+	virtual ActionValue xplicit(const ActionValueArray& args) T_OVERRIDE T_FINAL;
 
 private:
 	std::string TextFormat_get_align(FlashTextFormat* self) const;

@@ -38,7 +38,7 @@ public:
 
 	virtual const Transform& getTransform() const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE;
 
 private:
 	std::wstring m_name;

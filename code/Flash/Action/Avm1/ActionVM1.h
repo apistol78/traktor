@@ -27,7 +27,7 @@ class T_DLLCLASS ActionVM1 : public IActionVM
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< const IActionVMImage > load(BitReader& br) const;
+	virtual Ref< const IActionVMImage > load(BitReader& br) const T_OVERRIDE T_FINAL;
 };
 
 	}

@@ -32,7 +32,7 @@ public:
 	{
 	}
 
-	virtual void addRef(void* owner) const
+	virtual void addRef(void* owner) const T_OVERRIDE
 #if !defined(_DEBUG)
 	{
 		++m_refCount;
@@ -41,7 +41,7 @@ public:
 	;
 #endif
 
-	virtual void release(void* owner) const
+	virtual void release(void* owner) const T_OVERRIDE
 #if !defined(_DEBUG)
 	{
 		if (--m_refCount == 0)

@@ -24,7 +24,7 @@ class T_DLLCLASS TextFactory : public ICharacterFactory
 	T_RTTI_CLASS;
 
 public:
-	virtual TypeInfoSet getCharacterTypes() const;
+	virtual TypeInfoSet getCharacterTypes() const T_OVERRIDE T_FINAL;
 
 	virtual Ref< Character > create(const Context* context, const ICharacterBuilder* builder, const CharacterData* characterData, const Character* parent, const std::wstring& name) const T_OVERRIDE T_FINAL;
 };

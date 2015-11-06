@@ -26,11 +26,11 @@ class T_DLLCLASS Text : public Node
 public:
 	Text(const std::wstring& text);
 
-	virtual std::wstring getName() const;
+	virtual std::wstring getName() const T_OVERRIDE T_FINAL;
 
-	virtual std::wstring getValue() const;
+	virtual std::wstring getValue() const T_OVERRIDE T_FINAL;
 
-	virtual void writeHtml(IStream* stream);
+	virtual void writeHtml(IStream* stream) T_OVERRIDE T_FINAL;
 
 private:
 	std::wstring m_text;

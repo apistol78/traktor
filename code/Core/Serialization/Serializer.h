@@ -30,11 +30,11 @@ public:
 
 	bool writeObject(const ISerializable* o);
 
-	virtual int getVersion() const;
+	virtual int getVersion() const T_OVERRIDE;
 
-	virtual ISerializable* getCurrentObject();
+	virtual ISerializable* getCurrentObject() T_OVERRIDE;
 
-	virtual void failure();
+	virtual void failure() T_OVERRIDE;
 
 	template < typename T >
 	Ref< T > readObject()

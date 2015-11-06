@@ -35,7 +35,7 @@ public:
 	 */
 	const Matrix33& getTransform() const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE;
 
 private:
 	Matrix33 m_transform;

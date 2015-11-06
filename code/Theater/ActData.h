@@ -38,7 +38,7 @@ public:
 
 	Ref< Act > createInstance(const std::map< const world::EntityData*, Ref< world::Entity > >& entityProducts) const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	void setName(const std::wstring& name) { m_name = name; }
 

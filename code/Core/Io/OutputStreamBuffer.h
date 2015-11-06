@@ -24,19 +24,17 @@ class T_DLLCLASS OutputStreamBuffer : public IOutputStreamBuffer
 public:
 	OutputStreamBuffer();
 
-	virtual int32_t getIndent() const;
+	virtual int32_t getIndent() const T_OVERRIDE T_FINAL;
 
-	virtual void setIndent(int32_t indent);
+	virtual void setIndent(int32_t indent) T_OVERRIDE T_FINAL;
 
-	virtual int32_t getDecimals() const;
+	virtual int32_t getDecimals() const T_OVERRIDE T_FINAL;
 
-	virtual void setDecimals(int32_t decimals);
+	virtual void setDecimals(int32_t decimals) T_OVERRIDE T_FINAL;
 
-	virtual bool getPushIndent() const;
+	virtual bool getPushIndent() const T_OVERRIDE T_FINAL;
 
-	virtual void setPushIndent(bool pushIndent);
-
-	virtual int32_t overflow(const wchar_t* buffer, int32_t count) = 0;
+	virtual void setPushIndent(bool pushIndent) T_OVERRIDE T_FINAL;
 
 private:
 	int32_t m_indent;

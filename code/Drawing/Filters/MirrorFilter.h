@@ -29,7 +29,7 @@ public:
 	MirrorFilter(bool flipHorizontal, bool flipVertical);
 
 protected:
-	virtual void apply(Image* image) const;
+	virtual void apply(Image* image) const T_OVERRIDE T_FINAL;
 
 private:
 	bool m_flipHorizontal;

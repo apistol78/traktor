@@ -51,7 +51,7 @@ public:
 
 	const TypeInfo& unbox() const { return m_value; }
 
-	virtual std::wstring toString() const;
+	virtual std::wstring toString() const T_OVERRIDE T_FINAL;
 
 	void* operator new (size_t size);
 
@@ -74,7 +74,7 @@ public:
 
 	uint64_t unbox() const { return m_value; }
 
-	virtual std::wstring toString() const;
+	virtual std::wstring toString() const T_OVERRIDE T_FINAL;
 
 	void* operator new (size_t size);
 
@@ -109,7 +109,7 @@ public:
 
 	const Guid& unbox() const { return m_value; }
 
-	virtual std::wstring toString() const;
+	virtual std::wstring toString() const T_OVERRIDE T_FINAL;
 
 	void* operator new (size_t size);
 
@@ -168,7 +168,7 @@ public:
 
 	const Vector2& unbox() const { return m_value; }
 
-	virtual std::wstring toString() const;
+	virtual std::wstring toString() const T_OVERRIDE T_FINAL;
 
 	void* operator new (size_t size);
 
@@ -239,7 +239,7 @@ public:
 
 	const Vector4& unbox() const { return m_value; }
 
-	virtual std::wstring toString() const;
+	virtual std::wstring toString() const T_OVERRIDE T_FINAL;
 	
 	void* operator new (size_t size);
 
@@ -290,7 +290,7 @@ public:
 
 	Vector4 get(int32_t index);
 
-	virtual std::wstring toString() const;
+	virtual std::wstring toString() const T_OVERRIDE T_FINAL;
 
 	const AlignedVector< Vector4 >& unbox() const
 	{
@@ -354,7 +354,7 @@ public:
 
 	const Quaternion& unbox() const { return m_value; }
 
-	virtual std::wstring toString() const;
+	virtual std::wstring toString() const T_OVERRIDE T_FINAL;
 
 	void* operator new (size_t size);
 
@@ -411,7 +411,7 @@ public:
 
 	const Plane& unbox() const { return m_value; }
 
-	virtual std::wstring toString() const;
+	virtual std::wstring toString() const T_OVERRIDE T_FINAL;
 
 	void* operator new (size_t size);
 
@@ -462,7 +462,7 @@ public:
 
 	const Transform& unbox() const { return m_value; }
 
-	virtual std::wstring toString() const;
+	virtual std::wstring toString() const T_OVERRIDE T_FINAL;
 
 	void* operator new (size_t size);
 
@@ -495,7 +495,7 @@ public:
 
 	const Aabb2& unbox() const { return m_value; }
 
-	virtual std::wstring toString() const;
+	virtual std::wstring toString() const T_OVERRIDE T_FINAL;
 
 	void* operator new (size_t size);
 
@@ -542,7 +542,7 @@ public:
 
 	const Aabb3& unbox() const { return m_value; }
 
-	virtual std::wstring toString() const;
+	virtual std::wstring toString() const T_OVERRIDE T_FINAL;
 
 	void* operator new (size_t size);
 
@@ -587,7 +587,7 @@ public:
 
 	const Frustum& unbox() const { return m_value; }
 
-	virtual std::wstring toString() const;
+	virtual std::wstring toString() const T_OVERRIDE T_FINAL;
 
 	void* operator new (size_t size);
 
@@ -624,7 +624,7 @@ public:
 
 	const Matrix33& unbox() const { return m_value; }
 
-	virtual std::wstring toString() const;
+	virtual std::wstring toString() const T_OVERRIDE T_FINAL;
 
 	void* operator new (size_t size);
 
@@ -687,7 +687,7 @@ public:
 
 	const Matrix44& unbox() const { return m_value; }
 
-	virtual std::wstring toString() const;
+	virtual std::wstring toString() const T_OVERRIDE T_FINAL;
 
 	void* operator new (size_t size);
 
@@ -732,7 +732,7 @@ public:
 
 	const Color4f& unbox() const { return m_value; }
 
-	virtual std::wstring toString() const;
+	virtual std::wstring toString() const T_OVERRIDE T_FINAL;
 
 	void* operator new (size_t size);
 
@@ -779,7 +779,7 @@ public:
 
 	std::wstring formatARGB() const;
 
-	virtual std::wstring toString() const;
+	virtual std::wstring toString() const T_OVERRIDE T_FINAL;
 
 	void* operator new (size_t size);
 
@@ -806,7 +806,7 @@ public:
 
 	const Random& unbox() const { return m_value; }
 
-	virtual std::wstring toString() const;
+	virtual std::wstring toString() const T_OVERRIDE;
 
 	void* operator new (size_t size);
 
@@ -833,7 +833,7 @@ public:
 
 	const RandomGeometry& unbox() const { return m_value; }
 
-	virtual std::wstring toString() const;
+	virtual std::wstring toString() const T_OVERRIDE T_FINAL;
 
 	void* operator new (size_t size);
 
@@ -872,7 +872,7 @@ public:
 
 	Object* back();
 
-	virtual std::wstring toString() const;
+	virtual std::wstring toString() const T_OVERRIDE T_FINAL;
 
 	template < typename ObjectType >
 	RefArray< ObjectType > unbox() const
@@ -909,7 +909,7 @@ public:
 
 	const Any& max() const { return m_max; }
 
-	virtual std::wstring toString() const;
+	virtual std::wstring toString() const T_OVERRIDE T_FINAL;
 
 	template < typename ItemType >
 	Range< ItemType > unbox() const
@@ -968,7 +968,7 @@ public:
 
 	Any get(int32_t index);
 
-	virtual std::wstring toString() const;
+	virtual std::wstring toString() const T_OVERRIDE T_FINAL;
 
 	template < typename ItemType >
 	std::vector< ItemType > unbox() const
@@ -1580,7 +1580,7 @@ class T_DLLCLASS BoxesClassFactory : public IRuntimeClassFactory
 	T_RTTI_CLASS;
 
 public:
-	virtual void createClasses(IRuntimeClassRegistrar* registrar) const;
+	virtual void createClasses(IRuntimeClassRegistrar* registrar) const T_OVERRIDE T_FINAL;
 };
 	
 }

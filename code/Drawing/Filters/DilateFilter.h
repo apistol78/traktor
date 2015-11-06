@@ -27,7 +27,7 @@ public:
 	DilateFilter(int32_t iterations);
 
 protected:
-	virtual void apply(Image* image) const;
+	virtual void apply(Image* image) const T_OVERRIDE T_FINAL;
 
 private:
 	int32_t m_iterations;

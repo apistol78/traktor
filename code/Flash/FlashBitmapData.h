@@ -48,7 +48,7 @@ public:
 
 	const SwfColor* getBits() const { return m_bits.c_ptr(); }
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	AutoArrayPtr< SwfColor > m_bits;

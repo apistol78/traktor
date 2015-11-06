@@ -49,7 +49,7 @@ public:
 
 	const AlignedVector< NamedCharacter >& getFrame() const { return m_frame; }
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	friend class CharacterPipeline;

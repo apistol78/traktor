@@ -21,11 +21,11 @@ class AsSound : public ActionClass
 public:
 	AsSound(ActionContext* context, FlashSoundPlayer* soundPlayer);
 
-	virtual void initialize(ActionObject* self);
+	virtual void initialize(ActionObject* self) T_OVERRIDE T_FINAL;
 
-	virtual void construct(ActionObject* self, const ActionValueArray& args);
+	virtual void construct(ActionObject* self, const ActionValueArray& args) T_OVERRIDE T_FINAL;
 
-	virtual ActionValue xplicit(const ActionValueArray& args);
+	virtual ActionValue xplicit(const ActionValueArray& args) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< FlashSoundPlayer > m_soundPlayer;

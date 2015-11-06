@@ -24,7 +24,7 @@ class T_DLLCLASS RfpMemberType : public ReflectionMemberPredicate
 public:
 	RfpMemberType(const TypeInfo& memberType);
 
-	virtual bool operator () (const ReflectionMember* member) const;
+	virtual bool operator () (const ReflectionMember* member) const T_OVERRIDE T_FINAL;
 
 private:
 	const TypeInfo& m_memberType;

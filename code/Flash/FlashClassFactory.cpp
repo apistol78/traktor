@@ -19,35 +19,35 @@ class ActionObjectClass : public IRuntimeClass
 	T_RTTI_CLASS;
 
 public:
-	virtual const TypeInfo& getExportType() const;
+	virtual const TypeInfo& getExportType() const T_OVERRIDE;
 
-	virtual bool haveConstructor() const;
+	virtual bool haveConstructor() const T_OVERRIDE;
 
-	virtual bool haveUnknown() const;
+	virtual bool haveUnknown() const T_OVERRIDE;
 
-	virtual Ref< ITypedObject > construct(ITypedObject* self, uint32_t argc, const Any* argv, const prototype_t& proto) const;
+	virtual Ref< ITypedObject > construct(ITypedObject* self, uint32_t argc, const Any* argv, const prototype_t& proto) const T_OVERRIDE;
 
-	virtual uint32_t getConstantCount() const;
+	virtual uint32_t getConstantCount() const T_OVERRIDE;
 
-	virtual std::string getConstantName(uint32_t constId) const;
+	virtual std::string getConstantName(uint32_t constId) const T_OVERRIDE;
 
-	virtual Any getConstantValue(uint32_t constId) const;
+	virtual Any getConstantValue(uint32_t constId) const T_OVERRIDE;
 
-	virtual uint32_t getMethodCount() const;
+	virtual uint32_t getMethodCount() const T_OVERRIDE;
 
-	virtual std::string getMethodName(uint32_t methodId) const;
+	virtual std::string getMethodName(uint32_t methodId) const T_OVERRIDE;
 
-	virtual Any invoke(ITypedObject* object, uint32_t methodId, uint32_t argc, const Any* argv) const;
+	virtual Any invoke(ITypedObject* object, uint32_t methodId, uint32_t argc, const Any* argv) const T_OVERRIDE;
 
-	virtual uint32_t getStaticMethodCount() const;
+	virtual uint32_t getStaticMethodCount() const T_OVERRIDE;
 
-	virtual std::string getStaticMethodName(uint32_t methodId) const;
+	virtual std::string getStaticMethodName(uint32_t methodId) const T_OVERRIDE;
 
-	virtual Any invokeStatic(uint32_t methodId, uint32_t argc, const Any* argv) const;
+	virtual Any invokeStatic(uint32_t methodId, uint32_t argc, const Any* argv) const T_OVERRIDE;
 
-	virtual Any invokeUnknown(ITypedObject* object, const std::string& methodName, uint32_t argc, const Any* argv) const;
+	virtual Any invokeUnknown(ITypedObject* object, const std::string& methodName, uint32_t argc, const Any* argv) const T_OVERRIDE;
 
-	virtual Any invokeOperator(ITypedObject* object, uint8_t operation, const Any& arg) const;
+	virtual Any invokeOperator(ITypedObject* object, uint8_t operation, const Any& arg) const T_OVERRIDE;
 };
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionObjectClass", ActionObjectClass, IRuntimeClass)
@@ -218,13 +218,13 @@ class ActionFunctionClass : public ActionObjectClass
 	T_RTTI_CLASS;
 
 public:
-	virtual const TypeInfo& getExportType() const;
+	virtual const TypeInfo& getExportType() const T_OVERRIDE T_FINAL;
 
-	virtual uint32_t getMethodCount() const;
+	virtual uint32_t getMethodCount() const T_OVERRIDE T_FINAL;
 
-	virtual std::string getMethodName(uint32_t methodId) const;
+	virtual std::string getMethodName(uint32_t methodId) const T_OVERRIDE T_FINAL;
 
-	virtual Any invoke(ITypedObject* object, uint32_t methodId, uint32_t argc, const Any* argv) const;
+	virtual Any invoke(ITypedObject* object, uint32_t methodId, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL;
 };
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ActionFunctionClass", ActionFunctionClass, ActionObjectClass)

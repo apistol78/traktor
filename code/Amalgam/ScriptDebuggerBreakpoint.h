@@ -35,7 +35,7 @@ public:
 
 	uint32_t getLineNumber() const { return m_lineNumber; }
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	bool m_add;

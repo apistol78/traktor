@@ -84,11 +84,11 @@ public:
 
 	//@}
 
-	virtual Aabb2 getBounds() const;
+	virtual Aabb2 getBounds() const T_OVERRIDE T_FINAL;
 
-	virtual void update() T_FINAL;
+	virtual void update() T_OVERRIDE T_FINAL;
 
-	virtual void render(render::RenderContext* renderContext) const T_FINAL;
+	virtual void render(render::RenderContext* renderContext) const T_OVERRIDE T_FINAL;
 
 private:
 	friend class SpriteFactory;

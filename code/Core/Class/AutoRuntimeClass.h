@@ -3009,22 +3009,22 @@ public:
 		}
 	}
 
-	virtual const TypeInfo& getExportType() const
+	virtual const TypeInfo& getExportType() const T_OVERRIDE T_FINAL
 	{
 		return type_of< ClassType >();
 	}
 
-	virtual bool haveConstructor() const
+	virtual bool haveConstructor() const T_OVERRIDE T_FINAL
 	{
 		return !m_constructors.empty();
 	}
 
-	virtual bool haveUnknown() const
+	virtual bool haveUnknown() const T_OVERRIDE T_FINAL
 	{
 		return m_unknown != 0;
 	}
 
-	virtual Ref< ITypedObject > construct(ITypedObject* self, uint32_t argc, const Any* argv, const prototype_t& proto) const
+	virtual Ref< ITypedObject > construct(ITypedObject* self, uint32_t argc, const Any* argv, const prototype_t& proto) const T_OVERRIDE T_FINAL
 	{
 		if (argc < m_constructors.size() && m_constructors[argc] != 0)
 			return m_constructors[argc]->construct(argc, argv);
@@ -3032,27 +3032,27 @@ public:
 			return 0;
 	}
 
-	virtual uint32_t getConstantCount() const
+	virtual uint32_t getConstantCount() const T_OVERRIDE T_FINAL
 	{
 		return uint32_t(m_consts.size());
 	}
 
-	virtual std::string getConstantName(uint32_t constId) const
+	virtual std::string getConstantName(uint32_t constId) const T_OVERRIDE T_FINAL
 	{
 		return m_consts[constId].name;
 	}
 
-	virtual Any getConstantValue(uint32_t constId) const
+	virtual Any getConstantValue(uint32_t constId) const T_OVERRIDE T_FINAL
 	{
 		return m_consts[constId].value;
 	}
 
-	virtual uint32_t getMethodCount() const
+	virtual uint32_t getMethodCount() const T_OVERRIDE T_FINAL
 	{
 		return uint32_t(m_methods.size());
 	}
 
-	virtual std::string getMethodName(uint32_t methodId) const
+	virtual std::string getMethodName(uint32_t methodId) const T_OVERRIDE T_FINAL
 	{
 		return m_methods[methodId].name;
 	}
@@ -3072,12 +3072,12 @@ public:
 		}
 	}
 
-	virtual uint32_t getStaticMethodCount() const
+	virtual uint32_t getStaticMethodCount() const T_OVERRIDE T_FINAL
 	{
 		return uint32_t(m_staticMethods.size());
 	}
 
-	virtual std::string getStaticMethodName(uint32_t methodId) const
+	virtual std::string getStaticMethodName(uint32_t methodId) const T_OVERRIDE T_FINAL
 	{
 		return m_staticMethods[methodId].name;
 	}

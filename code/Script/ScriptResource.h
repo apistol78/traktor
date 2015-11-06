@@ -28,7 +28,7 @@ class T_DLLCLASS ScriptResource : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	const std::vector< Guid >& getDependencies() const { return m_dependencies; }
 

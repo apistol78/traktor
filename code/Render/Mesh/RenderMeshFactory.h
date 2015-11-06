@@ -33,7 +33,7 @@ public:
 		unsigned int vertexBufferSize,
 		IndexType indexType,
 		unsigned int indexBufferSize
-	);
+	) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< IRenderSystem > m_renderSystem;

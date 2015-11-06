@@ -76,10 +76,10 @@
 #	elif TARGET_RT_BIG_ENDIAN
 #		define T_BIG_ENDIAN
 #	endif
-#elif defined(_XBOX) || defined(_PS3)
+#elif defined(_XBOX) || defined(__PS3__)
 // Both Xenon and PS3 use a PowerPC derivate.
 #	define T_BIG_ENDIAN
-#elif defined(_WIN32) || defined(__EMSCRIPTEN__) || defined(__PNACL__)
+#elif defined(_WIN32) || defined(__EMSCRIPTEN__) || defined(__PNACL__) || defined(__PS4__)
 // Assume little endian on Win32 as it's probably most common.
 #	define T_LITTLE_ENDIAN
 #elif defined(__GNUC__)
@@ -120,7 +120,7 @@ typedef unsigned __int64 uint64_t;
 #	endif
 #else
 #	if !defined(T_HAVE_TYPES)
-#		if defined(_PS3)
+#		if defined(__PS3__)  || defined(__PS4__)
 #			include <sys/types.h>
 #		else
 #			include <stdint.h>
@@ -135,7 +135,7 @@ typedef unsigned __int64 uint64_t;
 #endif
 
 // Use these macros in c/d tors only.
-#if defined(__ANDROID__) || defined(__EMSCRIPTEN__) || defined(__PNACL__) || defined(_PS3)
+#if defined(__ANDROID__) || defined(__EMSCRIPTEN__) || defined(__PNACL__) || defined(__PS3__) || defined(__PS4__)
 #	define T_EXCEPTION_GUARD_BEGIN
 #	define T_EXCEPTION_GUARD_END
 #endif

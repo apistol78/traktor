@@ -69,6 +69,8 @@ SocketAddressIPv4::SocketAddressIPv4(const std::wstring& host, uint16_t port)
 	uint32_t ia = 0;
 #endif
 
+#if !defined(__PS4__)
+
 	// Try to resolve address, first try string denoted IP number as it will
 	// probably fail faster than gethostbyname.
 #if !defined(__PNACL__)
@@ -88,6 +90,8 @@ SocketAddressIPv4::SocketAddressIPv4(const std::wstring& host, uint16_t port)
 	m_sockaddr.sin_family = AF_INET;
 	m_sockaddr.sin_port = htons(port);
 	m_sockaddr.sin_addr.s_addr = ia;
+
+#endif
 }
 
 bool SocketAddressIPv4::valid() const
@@ -97,7 +101,7 @@ bool SocketAddressIPv4::valid() const
 
 std::wstring SocketAddressIPv4::getHostName() const
 {
-#if !defined(_XBOX)
+#if !defined(_XBOX) && !defined(__PS4__)
 	return mbstows(inet_ntoa(*const_cast< in_addr* >(&m_sockaddr.sin_addr)));
 #else
 	return L"<unsupported>";

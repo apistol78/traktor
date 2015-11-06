@@ -28,11 +28,11 @@ class T_DLLCLASS FtpConnection : public UrlConnection
 public:
 	virtual ~FtpConnection();
 	
-	virtual EstablishResult establish(const Url& url, Url* outRedirectionUrl);
+	virtual EstablishResult establish(const Url& url, Url* outRedirectionUrl) T_OVERRIDE T_FINAL;
 
-	virtual Url getUrl() const;
+	virtual Url getUrl() const T_OVERRIDE T_FINAL;
 
-	virtual Ref< IStream > getStream();
+	virtual Ref< IStream > getStream() T_OVERRIDE T_FINAL;
 
 private:
 	Ref< FtpClient > m_client;

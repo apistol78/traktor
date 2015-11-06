@@ -71,7 +71,7 @@ public:
 
 	/*! \brief
 	 */
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE;
 
 private:
 	uint16_t m_id;

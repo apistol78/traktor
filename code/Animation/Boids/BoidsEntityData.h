@@ -34,7 +34,7 @@ public:
 
 	Ref< BoidsEntity > createEntity(const world::IEntityBuilder* builder) const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	const Ref< world::EntityData >& getBoidEntityData() const { return m_boidEntityData; }
 

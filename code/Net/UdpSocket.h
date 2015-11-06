@@ -30,7 +30,7 @@ class T_DLLCLASS UdpSocket : public Socket
 public:
 	UdpSocket();
 
-	virtual void close();
+	virtual void close() T_OVERRIDE T_FINAL;
 
 	/*! \brief Bind to local address. */
 	bool bind(const SocketAddressIPv4& socketAddress);

@@ -53,7 +53,7 @@ public:
 
 	float getWobbleRate() const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< world::EntityData > m_entityData;

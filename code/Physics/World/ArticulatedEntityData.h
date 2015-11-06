@@ -51,9 +51,9 @@ public:
 		PhysicsManager* physicsManager
 	) const;
 
-	virtual void setTransform(const Transform& transform);
+	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
 	
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	const RefArray< world::EntityData >& getEntityData() const { return m_entityData; }
 

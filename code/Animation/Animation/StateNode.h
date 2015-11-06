@@ -50,7 +50,7 @@ public:
 
 	virtual void evaluate(StateContext& context, Pose& outPose) = 0;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE;
 
 private:
 	std::wstring m_name;

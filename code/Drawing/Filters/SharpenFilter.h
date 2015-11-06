@@ -27,7 +27,7 @@ public:
 	SharpenFilter(int radius, float strength);
 
 protected:
-	virtual void apply(Image* image) const;
+	virtual void apply(Image* image) const T_OVERRIDE T_FINAL;
 
 private:
 	int m_radius;

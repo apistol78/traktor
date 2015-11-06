@@ -82,7 +82,7 @@ public:
 
 	Frame* getClosestKeyFrame(float at);
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	float getStartTime() const { return !m_keys.empty() ? m_keys.front().T : 0.0f; }
 

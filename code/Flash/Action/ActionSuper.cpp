@@ -11,8 +11,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionSuper", ActionSuper, ActionFunction
 ActionSuper::ActionSuper(ActionContext* context, ActionObject* object, ActionObject* superPrototype, ActionFunction* superClass)
 :	ActionFunction(context, "super")
 ,	m_object(object)
-,	m_superPrototype(superPrototype)
 ,	m_superClass(superClass)
+,	m_superPrototype(superPrototype)
 {
 	setOverrideRelay(m_object->getRelay());
 }
