@@ -1,9 +1,9 @@
-#ifndef traktor_world_VolumeEntityData_H
-#define traktor_world_VolumeEntityData_H
+#ifndef traktor_world_VolumeComponentData_H
+#define traktor_world_VolumeComponentData_H
 
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Aabb3.h"
-#include "World/EntityData.h"
+#include "World/IEntityComponentData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -21,7 +21,7 @@ namespace traktor
 /*! \brief
  * \ingroup World
  */
-class T_DLLCLASS VolumeEntityData : public EntityData
+class T_DLLCLASS VolumeComponentData : public IEntityComponentData
 {
 	T_RTTI_CLASS;
 
@@ -37,4 +37,4 @@ private:
 	}
 }
 
-#endif	// traktor_world_VolumeEntityData_H
+#endif	// traktor_world_VolumeComponentData_H

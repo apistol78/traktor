@@ -24,8 +24,8 @@
 #include "World/Entity/ScriptComponentData.h"
 #include "World/Entity/SpotLightEntity.h"
 #include "World/Entity/SpotLightEntityData.h"
-#include "World/Entity/VolumeEntity.h"
-#include "World/Entity/VolumeEntityData.h"
+#include "World/Entity/VolumeComponent.h"
+#include "World/Entity/VolumeComponentData.h"
 #include "World/Entity/WorldEntityFactory.h"
 
 namespace traktor
@@ -49,7 +49,6 @@ const TypeInfoSet WorldEntityFactory::getEntityTypes() const
 	typeSet.insert(&type_of< DirectionalLightEntityData >());
 	typeSet.insert(&type_of< PointLightEntityData >());
 	typeSet.insert(&type_of< SpotLightEntityData >());
-	typeSet.insert(&type_of< VolumeEntityData >());
 	typeSet.insert(&type_of< ComponentEntityData >());
 	return typeSet;
 }
@@ -68,6 +67,7 @@ const TypeInfoSet WorldEntityFactory::getEntityComponentTypes() const
 	typeSet.insert(&type_of< DecalComponentData >());
 	typeSet.insert(&type_of< GodRayComponentData >());
 	typeSet.insert(&type_of< ScriptComponentData >());
+	typeSet.insert(&type_of< VolumeComponentData >());
 	return typeSet;
 }
 
@@ -156,9 +156,6 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 		);
 	}
 
-	if (const VolumeEntityData* volumeData = dynamic_type_cast< const VolumeEntityData* >(&entityData))
-		return new VolumeEntity(volumeData);
-
 	if (const ComponentEntityData* componentData = dynamic_type_cast< const ComponentEntityData* >(&entityData))
 	{
 		Ref< ComponentEntity > componentEntity = new ComponentEntity(componentData->getTransform());
@@ -228,6 +225,9 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 		if (!m_editor)
 			return scriptComponentData->createComponent(owner, m_resourceManager);
 	}
+
+	if (const VolumeComponentData* volumeComponentData = dynamic_type_cast< const VolumeComponentData* >(&entityComponentData))
+		return new VolumeComponent(owner, volumeComponentData);
 
 	return 0;
 }

@@ -1,18 +1,17 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAabb.h"
 #include "Core/Serialization/MemberAlignedVector.h"
-#include "World/Entity/VolumeEntityData.h"
+#include "World/Entity/VolumeComponentData.h"
 
 namespace traktor
 {
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.VolumeEntityData", 0, VolumeEntityData, EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.VolumeComponentData", 0, VolumeComponentData, IEntityComponentData)
 
-void VolumeEntityData::serialize(ISerializer& s)
+void VolumeComponentData::serialize(ISerializer& s)
 {
-	EntityData::serialize(s);
 	s >> MemberAlignedVector< Aabb3, MemberAabb3 >(L"volumes", m_volumes);
 }
 
