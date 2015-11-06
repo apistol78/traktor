@@ -495,7 +495,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	Ref< ui::DockPane > pane = m_dock->getPane();
 	Ref< ui::DockPane > paneCenter, paneLog;
 
-	pane->split(false, ui::scaleBySystemDPI(340), m_paneWest, paneCenter);
+	pane->split(false, ui::scaleBySystemDPI(400), m_paneWest, paneCenter);
 	paneCenter->split(false, ui::scaleBySystemDPI(-250), paneCenter, m_paneEast);
 	paneCenter->split(true, ui::scaleBySystemDPI(-200), paneCenter, paneLog);
 	paneCenter->split(true, ui::scaleBySystemDPI(-200), paneCenter, m_paneSouth);
