@@ -25,7 +25,8 @@
 #include "World/Entity/PointLightEntity.h"
 #include "World/Entity/ScriptComponent.h"
 #include "World/Entity/ScriptComponentData.h"
-#include "World/Entity/VolumeEntity.h"
+#include "World/Entity/VolumeComponent.h"
+#include "World/Entity/VolumeComponentData.h"
 
 namespace traktor
 {
@@ -240,21 +241,11 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classDirectionalLightEntity->addMethod("getCastShadow", &DirectionalLightEntity::getCastShadow);
 	registrar->registerClass(classDirectionalLightEntity);
 
-	Ref< AutoRuntimeClass< VolumeEntity > > classVolumeEntity = new AutoRuntimeClass< VolumeEntity >();
-	classVolumeEntity->addMethod("inside", &VolumeEntity::inside);
-	registrar->registerClass(classVolumeEntity);
-
 	Ref< AutoRuntimeClass< IEntityComponentData > > classIEntityComponentData = new AutoRuntimeClass< IEntityComponentData >();
 	registrar->registerClass(classIEntityComponentData);
 
 	Ref< AutoRuntimeClass< IEntityComponent > > classIEntityComponent = new AutoRuntimeClass< IEntityComponent >();
 	registrar->registerClass(classIEntityComponent);
-
-	Ref< AutoRuntimeClass< ScriptComponentData > > classScriptComponentData = new AutoRuntimeClass< ScriptComponentData >();
-	registrar->registerClass(classScriptComponentData);
-
-	Ref< AutoRuntimeClass< ScriptComponent > > classScriptComponent = new AutoRuntimeClass< ScriptComponent >();
-	registrar->registerClass(classScriptComponent);
 
 	Ref< AutoRuntimeClass< CameraComponentData > > classCameraComponentData = new AutoRuntimeClass< CameraComponentData >();
 	classCameraComponentData->addConstructor();
@@ -278,6 +269,19 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classCameraComponent->addMethod("setHeight", &CameraComponent::setHeight);
 	classCameraComponent->addMethod("getHeight", &CameraComponent::getHeight);
 	registrar->registerClass(classCameraComponent);
+
+	Ref< AutoRuntimeClass< ScriptComponentData > > classScriptComponentData = new AutoRuntimeClass< ScriptComponentData >();
+	registrar->registerClass(classScriptComponentData);
+
+	Ref< AutoRuntimeClass< ScriptComponent > > classScriptComponent = new AutoRuntimeClass< ScriptComponent >();
+	registrar->registerClass(classScriptComponent);
+
+	Ref< AutoRuntimeClass< VolumeComponentData > > classVolumeComponentData = new AutoRuntimeClass< VolumeComponentData >();
+	registrar->registerClass(classVolumeComponentData);
+
+	Ref< AutoRuntimeClass< VolumeComponent > > classVolumeComponent = new AutoRuntimeClass< VolumeComponent >();
+	classVolumeComponent->addMethod("inside", &VolumeComponent::inside);
+	registrar->registerClass(classVolumeComponent);
 
 	Ref< AutoRuntimeClass< ComponentEntityData > > classComponentEntityData = new AutoRuntimeClass< ComponentEntityData >();
 	classComponentEntityData->addMethod("setComponent", &ComponentEntityData::setComponent);
