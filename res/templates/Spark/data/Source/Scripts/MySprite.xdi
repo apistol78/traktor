@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="1">
+	<dependencies/>
+	<text>
+	<![CDATA[
+import(traktor)
+
+MySprite = inherit(traktor.spark.Sprite)
+MySprite_meta = { __index = MySprite }
+
+-- Constructor
+function MySprite.new(o)
+	setmetatable(o, MySprite_meta)
+	o.T = 0
+	return o
+end
+
+-- Periodically updated
+function MySprite:update()
+	self:setRotation(self.T)
+	self.T = self.T + 0.01
+end
+
+-- Called from MyStage script.
+function MySprite:helloWorld()
+	print("Hello world")
+end
+
+-- Key stroke with unicode
+function MySprite:eventKey(unicode)
+	print("Event key, unicode = " .. unicode)
+end
+
+-- Key down, virtual keycode
+function MySprite:eventKeyDown(keyCode)
+	print("Event key down, keyCode = " .. keyCode)
+end
+
+-- Key up, virtual keycode
+function MySprite:eventKeyUp(keyCode)
+	print("Event key up, keyCode = " .. keyCode)
+end
+
+-- Mouse button down, anywhere
+function MySprite:eventMouseDown(position, button)
+	print("Event mouse down, position = " .. position:toString() .. ", button = " .. button)
+end
+
+-- Mouse button up, anywhere
+function MySprite:eventMouseUp(position, button)
+	print("Event mouse up, position = " .. position:toString() .. ", button = " .. button)
+end
+
+-- Mouse button down, inside sprite
+function MySprite:eventMousePress(position, button)
+	print("Event mouse press, position = " .. position:toString() .. ", button = " .. button)
+end
+
+-- Mouse button up, inside sprite
+function MySprite:eventMouseRelease(position, button)
+	print("Event mouse release, position = " .. position:toString() .. ", button = " .. button)
+end
+
+-- Mouse moved
+function MySprite:eventMouseMove(position, button)
+	print("Event mouse move, position = " .. position:toString() .. ", button = " .. button)
+end
+
+-- Mouse cursor entered inside sprite
+function MySprite:eventMouseEnter(position, button)
+	print("Event mouse enter, position = " .. position:toString() .. ", button = " .. button)
+end
+
+-- Mouse cursor leaved from sprite bounds
+function MySprite:eventMouseLeave(position, button)
+	print("Event mouse leave, position = " .. position:toString() .. ", button = " .. button)
+end
+
+-- Mouse wheel rotated
+function MySprite:eventMouseWheel(position, delta)
+	print("Event mouse wheel, position = " .. position:toString() .. ", delta = " .. delta)
+end
+
+-- View resized
+function MySprite:eventViewResize(width, height)
+	print("Event view resize, width = " .. width .. ", height = " .. height)
+end
+	]]>
+	</text>
+</object>
