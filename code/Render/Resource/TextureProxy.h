@@ -16,9 +16,9 @@ class TextureProxy : public ITexture
 public:
 	TextureProxy(const resource::Proxy< ITexture >& texture);
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual ITexture* resolve();
+	virtual ITexture* resolve() T_OVERRIDE T_FINAL;
 
 private:
 	resource::Proxy< ITexture > m_texture;

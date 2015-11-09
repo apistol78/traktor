@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="7">
+<object type="traktor.amalgam.Feature" version="8">
 	<description>Database - Remote</description>
 	<priority>0</priority>
 	<platforms>
@@ -114,19 +114,6 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
-						<first>DEPLOY_FILES_STATIC</first>
-						<second type="traktor.PropertyStringSet">
-							<value>
-								<item>Traktor.Core.lib</item>
-								<item>Traktor.Database.Remote.Client.lib</item>
-								<item>Traktor.Database.Remote.lib</item>
-								<item>Traktor.Database.lib</item>
-								<item>Traktor.Net.lib</item>
-								<item>Traktor.Xml.lib</item>
-							</value>
-						</second>
-					</item>
-					<item>
 						<first>DEPLOY_FILES_SHARED</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
@@ -136,6 +123,19 @@
 								<item>Traktor.Database.dll</item>
 								<item>Traktor.Net.dll</item>
 								<item>Traktor.Xml.dll</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_FILES_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core.lib</item>
+								<item>Traktor.Database.Remote.Client.lib</item>
+								<item>Traktor.Database.Remote.lib</item>
+								<item>Traktor.Database.lib</item>
+								<item>Traktor.Net.lib</item>
+								<item>Traktor.Xml.lib</item>
 							</value>
 						</second>
 					</item>
@@ -148,19 +148,6 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
-						<first>DEPLOY_FILES_STATIC</first>
-						<second type="traktor.PropertyStringSet">
-							<value>
-								<item>Traktor.Core.lib</item>
-								<item>Traktor.Database.Remote.Client.lib</item>
-								<item>Traktor.Database.Remote.lib</item>
-								<item>Traktor.Database.lib</item>
-								<item>Traktor.Net.lib</item>
-								<item>Traktor.Xml.lib</item>
-							</value>
-						</second>
-					</item>
-					<item>
 						<first>DEPLOY_FILES_SHARED</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
@@ -170,6 +157,19 @@
 								<item>Traktor.Database.dll</item>
 								<item>Traktor.Net.dll</item>
 								<item>Traktor.Xml.dll</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_FILES_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core.lib</item>
+								<item>Traktor.Database.Remote.Client.lib</item>
+								<item>Traktor.Database.Remote.lib</item>
+								<item>Traktor.Database.lib</item>
+								<item>Traktor.Net.lib</item>
+								<item>Traktor.Xml.lib</item>
 							</value>
 						</second>
 					</item>
@@ -253,6 +253,11 @@
 				</value>
 			</deploy>
 		</item>
+		<item>
+			<platform>{BF1AA077-C371-364B-8AD5-AEF08AC13580}</platform>
+			<executableFile/>
+			<deploy/>
+		</item>
 	</platforms>
 	<pipelineProperties/>
 	<migrateProperties/>
@@ -271,4 +276,5 @@
 		</value>
 	</runtimeProperties>
 	<environment/>
+	<dependencies/>
 </object>

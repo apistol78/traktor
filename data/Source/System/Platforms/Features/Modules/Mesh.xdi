@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="7">
+<object type="traktor.amalgam.Feature" version="8">
 	<description>Module - Mesh</description>
 	<priority>0</priority>
 	<platforms>
@@ -109,18 +109,6 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
-						<first>DEPLOY_FILES_STATIC</first>
-						<second type="traktor.PropertyStringSet">
-							<value>
-								<item>Traktor.Core.lib</item>
-								<item>Traktor.Mesh.lib</item>
-								<item>Traktor.Render.lib</item>
-								<item>Traktor.Resource.lib</item>
-								<item>Traktor.World.lib</item>
-							</value>
-						</second>
-					</item>
-					<item>
 						<first>DEPLOY_FILES_SHARED</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
@@ -129,6 +117,18 @@
 								<item>Traktor.Render.dll</item>
 								<item>Traktor.Resource.dll</item>
 								<item>Traktor.World.dll</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_FILES_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core.lib</item>
+								<item>Traktor.Mesh.lib</item>
+								<item>Traktor.Render.lib</item>
+								<item>Traktor.Resource.lib</item>
+								<item>Traktor.World.lib</item>
 							</value>
 						</second>
 					</item>
@@ -141,18 +141,6 @@
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
-						<first>DEPLOY_FILES_STATIC</first>
-						<second type="traktor.PropertyStringSet">
-							<value>
-								<item>Traktor.Core.lib</item>
-								<item>Traktor.Mesh.lib</item>
-								<item>Traktor.Render.lib</item>
-								<item>Traktor.Resource.lib</item>
-								<item>Traktor.World.lib</item>
-							</value>
-						</second>
-					</item>
-					<item>
 						<first>DEPLOY_FILES_SHARED</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
@@ -161,6 +149,18 @@
 								<item>Traktor.Render.dll</item>
 								<item>Traktor.Resource.dll</item>
 								<item>Traktor.World.dll</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_FILES_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core.lib</item>
+								<item>Traktor.Mesh.lib</item>
+								<item>Traktor.Render.lib</item>
+								<item>Traktor.Resource.lib</item>
+								<item>Traktor.World.lib</item>
 							</value>
 						</second>
 					</item>
@@ -247,6 +247,11 @@
 				</value>
 			</deploy>
 		</item>
+		<item>
+			<platform>{BF1AA077-C371-364B-8AD5-AEF08AC13580}</platform>
+			<executableFile/>
+			<deploy/>
+		</item>
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">
 		<value>
@@ -293,4 +298,5 @@
 		</value>
 	</runtimeProperties>
 	<environment/>
+	<dependencies/>
 </object>

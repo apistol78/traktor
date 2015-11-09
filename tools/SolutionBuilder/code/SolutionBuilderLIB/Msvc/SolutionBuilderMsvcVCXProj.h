@@ -7,6 +7,7 @@ class Configuration;
 class ProjectItem;
 class SolutionBuilderMsvcVCXDefinition;
 class SolutionBuilderMsvcVCXBuildTool;
+class SolutionBuilderMsvcVCXImportCommon;
 class SolutionBuilderMsvcVCXPropertyGroup;
 
 /*! \brief Visual Studio solution project settings. */
@@ -43,6 +44,7 @@ protected:
 	std::wstring m_targetPrefixes[4];
 	std::wstring m_targetExts[4];
 	traktor::RefArray< SolutionBuilderMsvcVCXPropertyGroup > m_propertyGroups;
+	traktor::RefArray< SolutionBuilderMsvcVCXImportCommon > m_imports;
 	std::map< std::wstring, std::wstring > m_configurationDefinitionsDebug[4];
 	std::map< std::wstring, std::wstring > m_configurationDefinitionsRelease[4];
 	traktor::RefArray< SolutionBuilderMsvcVCXDefinition > m_buildDefinitionsDebug[4];

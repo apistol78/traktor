@@ -1,8 +1,10 @@
 #ifndef traktor_Event_H
 #define traktor_Event_H
 
-#if defined(_PS3)
+#if defined(__PS3__)
 #	include <sys/synchronization.h>
+#elif defined(__PS4__)
+#	include <kernel.h>
 #endif
 #include "Core/Thread/IWaitable.h"
 
@@ -36,9 +38,14 @@ public:
 	virtual bool wait(int32_t timeout = -1);
 	
 private:
-#if defined(_PS3)
+#if defined(__PS3__)
 	sys_lwmutex_t m_mutex;
 	sys_lwcond_t m_cond;
+	uint32_t m_signal;
+	uint32_t m_waiters;
+#elif defined(__PS4__)
+	ScePthreadMutex m_mutex;
+	ScePthreadCond m_cond;
 	uint32_t m_signal;
 	uint32_t m_waiters;
 #else

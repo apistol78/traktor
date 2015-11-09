@@ -247,6 +247,11 @@
 				</value>
 			</deploy>
 		</item>
+		<item>
+			<platform>{BF1AA077-C371-364B-8AD5-AEF08AC13580}</platform>
+			<executableFile/>
+			<deploy/>
+		</item>
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">
 		<value>

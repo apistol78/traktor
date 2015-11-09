@@ -79,9 +79,9 @@ public:
 
 	const std::wstring& getParameterName() const;
 
-	virtual std::wstring getInformation() const;
+	virtual std::wstring getInformation() const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	std::wstring m_parameterName;
@@ -103,9 +103,9 @@ public:
 
 	float getMax() const;
 
-	virtual std::wstring getInformation() const;
+	virtual std::wstring getInformation() const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	float m_min;
@@ -124,9 +124,9 @@ public:
 
 	const traktor::Color4ub& getColor() const;
 
-	virtual std::wstring getInformation() const;
+	virtual std::wstring getInformation() const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	traktor::Color4ub m_color;
@@ -174,9 +174,9 @@ public:
 
 	Operator getOperator() const;
 
-	virtual std::wstring getInformation() const;
+	virtual std::wstring getInformation() const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	Branch m_branch;
@@ -217,9 +217,9 @@ public:
 
 	Axis getAxis() const;
 
-	virtual std::wstring getInformation() const;
+	virtual std::wstring getInformation() const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	Axis m_axis;
@@ -247,9 +247,9 @@ public:
 
 	Operator getOperator() const;
 
-	virtual std::wstring getInformation() const;
+	virtual std::wstring getInformation() const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	Operator m_operator;
@@ -338,9 +338,9 @@ public:
 
 	int32_t getLength() const;
 
-	virtual std::wstring getInformation() const;
+	virtual std::wstring getInformation() const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	std::wstring m_parameterName;
@@ -373,9 +373,9 @@ public:
 
 	float getDefaultValue() const;
 
-	virtual std::wstring getInformation() const;
+	virtual std::wstring getInformation() const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	std::wstring m_name;
@@ -418,9 +418,9 @@ public:
 
 	int32_t getTo() const;
 
-	virtual std::wstring getInformation() const;
+	virtual std::wstring getInformation() const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	int32_t m_from;
@@ -451,9 +451,9 @@ public:
 
 	int32_t getToY() const;
 
-	virtual std::wstring getInformation() const;
+	virtual std::wstring getInformation() const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	int32_t m_fromX;
@@ -497,9 +497,9 @@ public:
 
 	Base getBase() const;
 
-	virtual std::wstring getInformation() const;
+	virtual std::wstring getInformation() const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	Base m_base;
@@ -607,9 +607,9 @@ public:
 
 	const std::wstring& getName() const;
 
-	virtual std::wstring getInformation() const;
+	virtual std::wstring getInformation() const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	std::wstring m_name;
@@ -657,9 +657,9 @@ public:
 
 	uint32_t getRegisterCount() const;
 
-	virtual std::wstring getInformation() const;
+	virtual std::wstring getInformation() const T_OVERRIDE T_FINAL;
 	
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	std::wstring m_technique;
@@ -727,7 +727,7 @@ public:
 
 	const SamplerState& getSamplerState() const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	SamplerState m_state;
@@ -745,9 +745,9 @@ public:
 
 	float get() const;
 
-	virtual std::wstring getInformation() const;
+	virtual std::wstring getInformation() const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	float m_value;
@@ -796,7 +796,7 @@ public:
 
 	const RenderState& getRenderState() const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	uint32_t m_priority;
@@ -837,9 +837,9 @@ public:
 
 	int32_t getTo() const;
 
-	virtual std::wstring getInformation() const;
+	virtual std::wstring getInformation() const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	int32_t m_from;
@@ -869,15 +869,15 @@ public:
 
 	const std::vector< int32_t >& getCases() const;
 
-	virtual int getInputPinCount() const;
+	virtual int getInputPinCount() const T_OVERRIDE T_FINAL;
 
-	virtual const InputPin* getInputPin(int index) const;
+	virtual const InputPin* getInputPin(int index) const T_OVERRIDE T_FINAL;
 
-	virtual int getOutputPinCount() const;
+	virtual int getOutputPinCount() const T_OVERRIDE T_FINAL;
 
-	virtual const OutputPin* getOutputPin(int index) const;
+	virtual const OutputPin* getOutputPin(int index) const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	Branch m_branch;
@@ -898,9 +898,9 @@ public:
 	
 	const std::wstring& get() const;
 
-	virtual std::wstring getInformation() const;
+	virtual std::wstring getInformation() const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	std::wstring m_swizzle;
@@ -940,7 +940,7 @@ public:
 
 	ParameterType getParameterType() const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	Guid m_external;
@@ -1017,9 +1017,9 @@ public:
 	
 	UpdateFrequency getFrequency() const;
 
-	virtual std::wstring getInformation() const;
+	virtual std::wstring getInformation() const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	std::wstring m_parameterName;
@@ -1039,9 +1039,9 @@ public:
 
 	const std::wstring& getName() const;
 
-	virtual std::wstring getInformation() const;
+	virtual std::wstring getInformation() const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	std::wstring m_name;
@@ -1059,9 +1059,9 @@ public:
 
 	const Vector4& get() const;
 
-	virtual std::wstring getInformation() const;
+	virtual std::wstring getInformation() const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	Vector4 m_value;
@@ -1091,9 +1091,9 @@ public:
 
 	int32_t getIndex() const;
 
-	virtual std::wstring getInformation() const;
+	virtual std::wstring getInformation() const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	std::wstring m_name;
@@ -1114,9 +1114,9 @@ public:
 
 	const std::wstring& getTechnique() const;
 
-	virtual std::wstring getInformation() const;
+	virtual std::wstring getInformation() const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	std::wstring m_technique;

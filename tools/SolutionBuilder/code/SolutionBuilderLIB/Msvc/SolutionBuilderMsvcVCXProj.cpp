@@ -20,6 +20,8 @@
 #include "SolutionBuilderLIB/Msvc/GeneratorContext.h"
 #include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcVCXDefinition.h"
 #include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcVCXBuildTool.h"
+#include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcVCXImport.h"
+#include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcVCXImportGroup.h"
 #include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcVCXProj.h"
 #include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcVCXPropertyGroup.h"
 
@@ -35,7 +37,7 @@ namespace
 
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXProj", 4, SolutionBuilderMsvcVCXProj, SolutionBuilderMsvcProject)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXProj", 5, SolutionBuilderMsvcVCXProj, SolutionBuilderMsvcProject)
 
 SolutionBuilderMsvcVCXProj::SolutionBuilderMsvcVCXProj()
 {
@@ -102,6 +104,20 @@ void SolutionBuilderMsvcVCXProj::serialize(traktor::ISerializer& s)
 
 	if (s.getVersion() >= 4)
 		s >> MemberRefArray< SolutionBuilderMsvcVCXPropertyGroup >(L"propertyGroups", m_propertyGroups);
+
+	if (s.getVersion() >= 5)
+		s >> MemberRefArray< SolutionBuilderMsvcVCXImportCommon >(L"imports", m_imports);
+	else
+	{
+		m_imports.push_back(new SolutionBuilderMsvcVCXImport(L"", L"$(VCTargetsPath)\\Microsoft.Cpp.props", L""));
+		Ref< SolutionBuilderMsvcVCXImportGroup > importGroup = new SolutionBuilderMsvcVCXImportGroup(L"PropertySheets", L"");
+		importGroup->addImport(new SolutionBuilderMsvcVCXImport(
+			L"",
+			L"$(LocalAppData)\\Microsoft\\VisualStudio\\10.0\\Microsoft.Cpp.$(Platform).user.props",
+			L"exists('$(LocalAppData)\\Microsoft\\VisualStudio\\10.0\\Microsoft.Cpp.$(Platform).user.props')"
+		));
+		m_imports.push_back(importGroup);
+	}
 
 	if (s.getVersion() >= 3)
 	{
@@ -273,12 +289,9 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 		os << L"</PropertyGroup>" << Endl;
 	}
 
-	os << L"<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.props\" />" << Endl;
-	os << L"<ImportGroup Label=\"PropertySheets\">" << Endl;
-	os << IncreaseIndent;
-	os << L"<Import Project=\"$(LocalAppData)\\Microsoft\\VisualStudio\\10.0\\Microsoft.Cpp.$(Platform).user.props\" Condition=\"exists('$(LocalAppData)\\Microsoft\\VisualStudio\\10.0\\Microsoft.Cpp.$(Platform).user.props')\" />" << Endl;
-	os << DecreaseIndent;
-	os << L"</ImportGroup>" << Endl;
+	// Imports
+	for (RefArray< SolutionBuilderMsvcVCXImportCommon >::const_iterator i = m_imports.begin(); i != m_imports.end(); ++i)
+		(*i)->generate(os);
 
 	// Properties
 	os << L"<PropertyGroup>" << Endl;

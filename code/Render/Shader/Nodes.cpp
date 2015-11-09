@@ -1261,6 +1261,7 @@ const ImmutableNode::InputPinDesc c_Platform_i[] =
 	{ L"OpenGL", true },
 	{ L"OpenGL ES2", true },
 	{ L"GCM", true },
+	{ L"GNM", true },
 	{ L"Software", true },
 	{ L"Other", false },
 	0

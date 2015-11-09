@@ -18494,6 +18494,179 @@
 				</item>
 			</dependencies>
 		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Render.Ps4</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Render/Ps4</sourcePath>
+			<configurations>
+				<item type="Configuration" version="1">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(SCE_ORBIS_SDK_DIR)/target/include_common/shader</item>
+					</includePaths>
+					<definitions>
+						<item>T_RENDER_PS4_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(SCE_ORBIS_SDK_DIR)/target/include_common/shader</item>
+					</includePaths>
+					<definitions>
+						<item>T_RENDER_PS4_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(SCE_ORBIS_SDK_DIR)/target/include_common/shader</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(SCE_ORBIS_SDK_DIR)/target/include_common/shader</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>BlobPs4.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>BlobPs4.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>ProgramCompilerPs4.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>ProgramCompilerPs4.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>ProgramResourcePs4.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>ProgramResourcePs4.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>Pssl.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>Pssl.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>PsslContext.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>PsslContext.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>PsslEmitter.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>PsslEmitter.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>PsslProgram.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>PsslProgram.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>PsslShader.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>PsslShader.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>PsslType.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>PsslType.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>PsslVariable.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>PsslVariable.h</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[12]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[12]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+			</dependencies>
+		</item>
 	</projects>
 	<aggregations/>
 </object>

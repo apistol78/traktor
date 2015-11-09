@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.amalgam.Feature" version="8">
+	<description>Render - PS4 GNM</description>
+	<priority>0</priority>
+	<platforms>
+		<item>
+			<platform>{BF1AA077-C371-364B-8AD5-AEF08AC13580}</platform>
+			<executableFile/>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_FILES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Compress.a</item>
+								<item>Traktor.Core.a</item>
+								<item>Traktor.Render.Ps4.a</item>
+								<item>Traktor.Render.a</item>
+								<item>Traktor.Resource.a</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
+		</item>
+	</platforms>
+	<pipelineProperties type="traktor.PropertyGroup">
+		<value>
+			<item>
+				<first>Editor.Modules</first>
+				<second type="traktor.PropertyStringSet">
+					<value>
+						<item>Traktor.Render</item>
+						<item>Traktor.Render.Editor</item>
+						<item>Traktor.Render.Ps4</item>
+					</value>
+				</second>
+			</item>
+			<item>
+				<first>Editor.RenderSystem</first>
+				<second type="traktor.PropertyString">
+					<value>traktor.render.RenderSystemPs4</value>
+				</second>
+			</item>
+			<item>
+				<first>ShaderPipeline.CompileShaders</first>
+				<second type="traktor.PropertyBoolean">
+					<value>true</value>
+				</second>
+			</item>
+			<item>
+				<first>ShaderPipeline.IncludeOnlyTechniques</first>
+				<second type="traktor.PropertyStringSet">
+					<value>
+						<item>Default</item>
+					</value>
+				</second>
+			</item>
+			<item>
+				<first>ShaderPipeline.Optimize</first>
+				<second type="traktor.PropertyInteger">
+					<value>1</value>
+				</second>
+			</item>
+			<item>
+				<first>ShaderPipeline.ParametersFile</first>
+				<second type="traktor.PropertyString">
+					<value>temp/Parameters.txt</value>
+				</second>
+			</item>
+			<item>
+				<first>ShaderPipeline.ProgramCompiler</first>
+				<second type="traktor.PropertyString">
+					<value>traktor.render.ProgramCompilerPs4</value>
+				</second>
+			</item>
+			<item>
+				<first>TexturePipeline.CompressionMethod</first>
+				<second type="traktor.PropertyString">
+					<value>DXTn</value>
+				</second>
+			</item>
+			<item>
+				<first>TexturePipeline.CompressionQuality</first>
+				<second type="traktor.PropertyInteger">
+					<value>1</value>
+				</second>
+			</item>
+		</value>
+	</pipelineProperties>
+	<migrateProperties type="traktor.PropertyGroup">
+		<value>
+			<item>
+				<first>Migrate.Modules</first>
+				<second type="traktor.PropertyStringSet">
+					<value>
+						<item>Traktor.Render</item>
+						<item>Traktor.Render.Ps4</item>
+					</value>
+				</second>
+			</item>
+		</value>
+	</migrateProperties>
+	<runtimeProperties type="traktor.PropertyGroup">
+		<value>
+			<item>
+				<first>Amalgam.Modules</first>
+				<second type="traktor.PropertyStringSet">
+					<value>
+						<item>Traktor.Render</item>
+						<item>Traktor.Render.Ps4</item>
+					</value>
+				</second>
+			</item>
+			<item>
+				<first>Amalgam.RenderThread</first>
+				<second type="traktor.PropertyBoolean">
+					<value>true</value>
+				</second>
+			</item>
+			<item>
+				<first>Render.DepthBits</first>
+				<second type="traktor.PropertyInteger">
+					<value>16</value>
+				</second>
+			</item>
+			<item>
+				<first>Render.DisplayMode</first>
+				<second type="traktor.PropertyGroup">
+					<value>
+						<item>
+							<first>Television3D</first>
+							<second type="traktor.PropertyGroup">
+								<value>
+									<item>
+										<first>Height</first>
+										<second type="traktor.PropertyInteger">
+											<value>720</value>
+										</second>
+									</item>
+									<item>
+										<first>MultiSample</first>
+										<second type="traktor.PropertyInteger">
+											<value>0</value>
+										</second>
+									</item>
+									<item>
+										<first>Width</first>
+										<second type="traktor.PropertyInteger">
+											<value>960</value>
+										</second>
+									</item>
+								</value>
+							</second>
+						</item>
+						<item>
+							<first>TelevisionFullHD</first>
+							<second type="traktor.PropertyGroup">
+								<value>
+									<item>
+										<first>Height</first>
+										<second type="traktor.PropertyInteger">
+											<value>1080</value>
+										</second>
+									</item>
+									<item>
+										<first>MultiSample</first>
+										<second type="traktor.PropertyInteger">
+											<value>0</value>
+										</second>
+									</item>
+									<item>
+										<first>Width</first>
+										<second type="traktor.PropertyInteger">
+											<value>1920</value>
+										</second>
+									</item>
+								</value>
+							</second>
+						</item>
+						<item>
+							<first>TelevisionHD</first>
+							<second type="traktor.PropertyGroup">
+								<value>
+									<item>
+										<first>Height</first>
+										<second type="traktor.PropertyInteger">
+											<value>720</value>
+										</second>
+									</item>
+									<item>
+										<first>MultiSample</first>
+										<second type="traktor.PropertyInteger">
+											<value>0</value>
+										</second>
+									</item>
+									<item>
+										<first>Width</first>
+										<second type="traktor.PropertyInteger">
+											<value>1280</value>
+										</second>
+									</item>
+								</value>
+							</second>
+						</item>
+						<item>
+							<first>TelevisionStandard</first>
+							<second type="traktor.PropertyGroup">
+								<value>
+									<item>
+										<first>MultiSample</first>
+										<second type="traktor.PropertyInteger">
+											<value>2</value>
+										</second>
+									</item>
+								</value>
+							</second>
+						</item>
+					</value>
+				</second>
+			</item>
+			<item>
+				<first>Render.FullScreen</first>
+				<second type="traktor.PropertyBoolean">
+					<value>true</value>
+				</second>
+			</item>
+			<item>
+				<first>Render.MultiSample</first>
+				<second type="traktor.PropertyInteger">
+					<value>0</value>
+				</second>
+			</item>
+			<item>
+				<first>Render.SkipMips</first>
+				<second type="traktor.PropertyInteger">
+					<value>0</value>
+				</second>
+			</item>
+			<item>
+				<first>Render.StencilBits</first>
+				<second type="traktor.PropertyInteger">
+					<value>4</value>
+				</second>
+			</item>
+			<item>
+				<first>Render.Stereoscopic</first>
+				<second type="traktor.PropertyBoolean">
+					<value>false</value>
+				</second>
+			</item>
+			<item>
+				<first>Render.Type</first>
+				<second type="traktor.PropertyString">
+					<value>traktor.render.RenderSystemPs4</value>
+				</second>
+			</item>
+			<item>
+				<first>Render.WaitVBlank</first>
+				<second type="traktor.PropertyBoolean">
+					<value>true</value>
+				</second>
+			</item>
+		</value>
+	</runtimeProperties>
+	<environment/>
+	<dependencies/>
+</object>
