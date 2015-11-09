@@ -2,10 +2,131 @@
 <object type="SolutionBuilderMsvcSettings">
   <slnVersion>12.00</slnVersion>
   <vsVersion>11</vsVersion>
-  <project type="SolutionBuilderMsvcVCXProj" version="1">
+  <project type="SolutionBuilderMsvcVCXProj" version="5">
     <platform>ORBIS</platform>
     <keyword>Win32Proj</keyword>
-    <toolset>v110</toolset>
+    <targetPrefixes>
+      <item/>
+      <item/>
+      <item/>
+      <item/>
+    </targetPrefixes>
+    <targetExts>
+      <item>.a</item>
+      <item>.a</item>
+      <item>.elf</item>
+      <item>.elf</item>
+    </targetExts>
+    <propertyGroups>
+      <item type="SolutionBuilderMsvcVCXPropertyGroup" version="2">
+        <label>Globals</label>
+        <condition>'$(VCTargetsPath11)' != '' and '$(VSVersion)' == '' and '$(VisualStudioVersion)' == ''</condition>
+        <values>
+          <item>
+            <first>VCTargetsPath</first>
+            <second>$(VCTargetsPath11)</second>
+          </item>
+        </values>
+      </item>
+      <item type="SolutionBuilderMsvcVCXPropertyGroup" version="2">
+        <label>Configuration</label>
+        <condition>'$(Configuration)|$(Platform)'=='DebugStatic|Win32'</condition>
+        <values>
+          <item>
+            <first>PlatformToolset</first>
+            <second>v110</second>
+          </item>
+        </values>
+      </item>
+      <item type="SolutionBuilderMsvcVCXPropertyGroup" version="2">
+        <label>Configuration</label>
+        <condition>'$(Configuration)|$(Platform)'=='ReleaseStatic|Win32'</condition>
+        <values>
+          <item>
+            <first>PlatformToolset</first>
+            <second>v110</second>
+          </item>
+        </values>
+      </item>
+    </propertyGroups>
+    <imports>
+      <item type="SolutionBuilderMsvcVCXImportGroup">
+        <label>PropertySheets</label>
+        <condition/>
+        <imports>
+          <item type="SolutionBuilderMsvcVCXImport">
+            <label>LocalAppDataPlatform</label>
+            <project>$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props</project>
+            <condition>exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')</condition>
+          </item>
+        </imports>
+      </item>
+      <item type="SolutionBuilderMsvcVCXImportGroup">
+        <label>ExtensionSettings</label>
+        <condition/>
+        <imports>
+          <item type="SolutionBuilderMsvcVCXImport">
+            <label/>
+            <project>$(VCTargetsPath)\BuildCustomizations\OrbisWavePsslc.props</project>
+            <condition/>
+          </item>
+          <item type="SolutionBuilderMsvcVCXImport">
+            <label/>
+            <project>$(VCTargetsPath)\BuildCustomizations\SCU.props</project>
+            <condition/>
+          </item>          
+        </imports>
+      </item>
+      <item type="SolutionBuilderMsvcVCXImport">
+        <label/>
+        <project>$(VCTargetsPath)\Microsoft.Cpp.props</project>
+        <condition/>
+      </item>      
+      <item type="SolutionBuilderMsvcVCXImportGroup">
+        <label>ExtensionTargets</label>
+        <condition/>
+        <imports>
+          <item type="SolutionBuilderMsvcVCXImport">
+            <label/>
+            <project>$(VCTargetsPath)\BuildCustomizations\OrbisWavePsslc.targets</project>
+            <condition/>
+          </item>
+          <item type="SolutionBuilderMsvcVCXImport">
+            <label/>
+            <project>$(VCTargetsPath)\BuildCustomizations\SCU.targets</project>
+            <condition/>
+          </item>
+        </imports>
+      </item>
+    </imports>
+    <configurationDefinitionsDebug>
+      <staticLibrary>
+          <item>
+            <first>ConfigurationType</first>
+            <second>StaticLibrary</second>
+          </item>        
+      </staticLibrary>
+      <sharedLibrary>
+      </sharedLibrary>
+      <executable>
+      </executable>
+      <executableConsole>
+      </executableConsole>
+    </configurationDefinitionsDebug>
+    <configurationDefinitionsRelease>
+      <staticLibrary>
+          <item>
+            <first>ConfigurationType</first>
+            <second>StaticLibrary</second>
+          </item>        
+      </staticLibrary>
+      <sharedLibrary>
+      </sharedLibrary>
+      <executable>
+      </executable>
+      <executableConsole>
+      </executableConsole>    
+    </configurationDefinitionsRelease>
     <buildDefinitionsDebug>
       <!-- Static library -->
       <item>
@@ -22,39 +143,13 @@
               <value>%(PROJECT_DEFINITIONS);_PS4;__PS4__;UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
             </item>
             <item>
-              <name>DebugInformationFormat</name>
-              <value>ProgramDatabase</value>
-            </item>
-            <item>
-              <name>MinimalRebuild</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>Optimization</name>
-              <value>Disabled</value>
-            </item>
-            <item>
-              <name>RuntimeLibrary</name>
-              <value>MultiThreadedDebugDLL</value>
-            </item>
-            <item>
-              <name>WarningLevel</name>
-              <value>Level3</value>
-            </item>
-            <item>
               <name>GenerateDebugInformation</name>
               <value>true</value>
             </item>
-          </options>
-        </item>
-        <item type="SolutionBuilderMsvcVCXDefinition">
-          <name>ResourceCompile</name>
-          <fileTypes>rc</fileTypes>
-          <options>
             <item>
-              <name>AdditionalIncludeDirectories</name>
-              <value>$(IntDir);%(AdditionalIncludeDirectories)</value>
-            </item>
+              <name>PrecompiledHeader</name>
+              <value>NotUsing</value>
+            </item>            
           </options>
         </item>
       </item>
@@ -364,78 +459,16 @@
               <value>%(PROJECT_DEFINITIONS);_PS4;__PS4__;UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
             </item>
             <item>
-              <name>BufferSecurityCheck</name>
-              <value>false</value>
-            </item>
-            <item>
-              <name>IntrinsicFunctions</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>FavorSizeOrSpeed</name>
-              <value>Speed</value>
-            </item>
-            <item>
-              <name>FloatingPointModel</name>
-              <value>Fast</value>
-            </item>
-            <item>
-              <name>InlineFunctionExpansion</name>
-              <value>AnySuitable</value>
-            </item>
-            <item>
-              <name>OmitFramePointers</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>Optimization</name>
-              <value>Full</value>
-            </item>
-            <item>
-              <name>RuntimeLibrary</name>
-              <value>MultiThreadedDLL</value>
-            </item>
-            <item>
-              <name>RuntimeTypeInfo</name>
-              <value>false</value>
-            </item>
-            <item>
-              <name>WarningLevel</name>
-              <value>Level3</value>
-            </item>
-            <item>
               <name>OptimizationLevel</name>
               <value>Level2</value>
             </item>
             <item>
-              <name>FastMath</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>Branchless</name>
-              <value>Branchless1</value>
-            </item>
-            <item>
-              <name>AssumeCorrectAlignment</name>
-              <value>Yes</value>
-            </item>
-            <item>
-              <name>CppLanguageStd</name>
-              <value>Cpp11</value>
+              <name>PrecompiledHeader</name>
+              <value>NotUsing</value>
             </item>
           </options>
         </item>
-        <item type="SolutionBuilderMsvcVCXDefinition">
-          <name>ResourceCompile</name>
-          <fileTypes>rc</fileTypes>
-          <options>
-            <item>
-              <name>AdditionalIncludeDirectories</name>
-              <value>$(IntDir);%(AdditionalIncludeDirectories)</value>
-            </item>
-          </options>
-        </item>
-      </item>
+       </item>
       <!-- Shared library -->
       <item>
         <item type="SolutionBuilderMsvcVCXDefinition">

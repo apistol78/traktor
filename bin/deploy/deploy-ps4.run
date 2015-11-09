@@ -1,0 +1,261 @@
+
+
+function string:trim()
+	return self:find'^%s*$' and '' or self:match'^%s*(.*%S)'
+end
+
+
+function string:starts(start)
+   return string.sub(self, 1, string.len(start)) == start
+end
+
+
+function string:split(sep)
+	local sep, fields = sep or ":", {}
+	local pattern = string.format("([^%s]+)", sep)
+	self:gsub(pattern, function(c) fields[#fields+1] = c end)
+	return fields
+end
+
+
+function string:startswith(st)
+	return self:sub(1, #st) == st
+end
+
+
+function string:endswith(send)
+	return #self >= #send and self:find(send, #self - #send + 1, true) and true or false
+end
+
+
+function build(args)
+	stdout:printLn("Building asset(s)...")
+	local cmdline = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App -p -s=Pipeline"
+	for i = 1, args:size() - 1 do
+		cmdline = cmdline .. " " .. args:get(i)
+	end
+	return run:execute(cmdline)
+end
+
+
+function deploy(args)
+	stdout:printLn("Deploying PS4...")
+
+	local host = os:getEnvironment("DEPLOY_HOST_OS")
+	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
+
+	local sdkDir = os:getEnvironment("SCE_ORBIS_SDK_DIR")
+	if #sdkDir <= 0 then
+		stderr:printLn("SCE_ORBIS_SDK_DIR not set; ensure PlayStation 4 SDK is properly installed and try again.")
+		return 1
+	end
+
+	-- Get toolchain binaries.
+	local cl = sdkDir .. "/host_tools/bin/orbis-clang++.exe" 
+	if not run:exist(cl) then
+		stderr:printLn("Unable to determine toolchain binaries; ensure PlayStation 4 SDK is properly installed and try again.")
+		return 1
+	end
+
+	-- Ensure debug symbols are kept when linking.
+	if debug then
+		cl = cl .. " -g"
+	end
+
+	-- Determine path to module libraries.
+	local prepend
+	if not debug then
+	 	prepend = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/ps4/releasestatic/"
+	else
+		stdout:printLn("Using *DEBUG* binaries")
+	 	prepend = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/ps4/debugstatic/"
+	end
+
+	-- Collect libraries to link.
+	local linkerLibraries = {}
+	local linkerExternLibraries = {}
+
+	local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
+	for _, f in ipairs(files) do
+		if f:endswith(".bc") then
+			if debug then
+				f = f:sub(1, f:len() - 3) .. "_d.bc"
+			end
+			if not f:startswith("libExtern") then
+				table.insert(linkerLibraries, f)
+			else
+				table.insert(linkerExternLibraries, f)
+			end
+		elseif f:endswith(".a") or f:endswith(".o") then
+			table.insert(linkerLibraries, f)
+		else
+			stderr:printLn("Unknown deploy file \"" .. f .. "\"")
+		end
+	end
+
+	-- Create the module initialization file.
+	stdout:printLn("Generating Linkage.cpp...")
+	if run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/ps4/Linkage.cpp.template", "Linkage.cpp") ~= 0 then
+		stderr:printLn("Failed to generate Linkage.cpp")
+		return 1
+	end	
+
+	-- Compile linkage file.
+	stdout:printLn("Compiling Linkage.cpp...")
+	local cmd = cl .. " Linkage.cpp -o Linkage.o"
+	local result = run:execute(cmd) --, nil)
+	if result ~= 0 then
+		stderr:printLn("Unable to compile file.")
+		return 1
+	end
+
+	-- Build linker command line.
+	local cmd = cl
+	cmd = cmd .. " -O2"
+	cmd = cmd .. " Linkage.o"
+	for _, m in ipairs(linkerLibraries) do
+		cmd = cmd .. " " .. prepend .. m
+	end
+	for _, m in ipairs(linkerLibraries) do
+		cmd = cmd .. " " .. prepend .. m
+	end
+	for _, m in ipairs(linkerExternLibraries) do
+		cmd = cmd .. " " .. prepend .. m
+	end
+	cmd = cmd .. " -o $(DEPLOY_EXECUTABLE).self"
+
+	-- Link files into an executable product.
+	local result = run:execute(cmd) --, nil)
+	if result ~= 0 then
+		stderr:printLn("Unable to build executable product.")
+		stderr:printLn(cmd)
+		return 1
+	end
+
+	return 0
+end
+
+
+function launch(args)
+	return 0
+end
+
+
+function migrate(args)
+	stdout:printLn("Migrating PS4...")
+	
+	local result = run:execute("$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Database.Migrate.App -p -s=Migrate")
+	if result ~= 0 then
+		stderr:printLn("Unable to migrate content.")
+		return 1
+	end
+
+	local host = os:getEnvironment("DEPLOY_HOST_OS")
+	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
+
+	local sdkDir = os:getEnvironment("SCE_ORBIS_SDK_DIR")
+	if #sdkDir <= 0 then
+		stderr:printLn("SCE_ORBIS_SDK_DIR not set; ensure PlayStation 4 SDK is properly installed and try again.")
+		return 1
+	end
+
+	-- Get toolchain binaries.
+	local cl = sdkDir .. "/host_tools/bin/orbis-clang++.exe" 
+	if not run:exist(cl) then
+		stderr:printLn("Unable to determine toolchain binaries; ensure PlayStation 4 SDK is properly installed and try again.")
+		return 1
+	end
+
+	-- Ensure debug symbols are kept when linking.
+	if debug then
+		cl = cl .. " -g"
+	end
+
+	-- Determine path to module libraries.
+	local prepend
+	if not debug then
+	 	prepend = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/ps4/releasestatic/"
+	else
+		stdout:printLn("Using *DEBUG* binaries")
+	 	prepend = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/ps4/debugstatic/"
+	end
+
+	-- Collect libraries to link.
+	local linkerLibraries = {}
+	local linkerExternLibraries = {}
+
+	local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
+	for _, f in ipairs(files) do
+		if f:endswith(".bc") then
+			if debug then
+				f = f:sub(1, f:len() - 3) .. "_d.bc"
+			end
+			if not f:startswith("libExtern") then
+				table.insert(linkerLibraries, f)
+			else
+				table.insert(linkerExternLibraries, f)
+			end
+		elseif f:endswith(".a") or f:endswith(".o") then
+			table.insert(linkerLibraries, f)
+		else
+			stderr:printLn("Unknown deploy file \"" .. f .. "\"")
+		end
+	end
+
+	-- Create the module initialization file.
+	stdout:printLn("Generating Linkage.cpp...")
+	if run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/ps4/Linkage.cpp.template", "Linkage.cpp") ~= 0 then
+		stderr:printLn("Failed to generate Linkage.cpp")
+		return 1
+	end	
+
+	-- Compile linkage file.
+	stdout:printLn("Compiling Linkage.cpp...")
+	local cmd = cl .. " Linkage.cpp -o Linkage.o"
+	local result = run:execute(cmd) --, nil)
+	if result ~= 0 then
+		stderr:printLn("Unable to compile file.")
+		return 1
+	end
+
+	-- Build linker command line.
+	local cmd = cl
+	cmd = cmd .. " -O2"
+	cmd = cmd .. " Linkage.o"
+	for _, m in ipairs(linkerLibraries) do
+		cmd = cmd .. " " .. prepend .. m
+	end
+	for _, m in ipairs(linkerLibraries) do
+		cmd = cmd .. " " .. prepend .. m
+	end
+	for _, m in ipairs(linkerExternLibraries) do
+		cmd = cmd .. " " .. prepend .. m
+	end
+	cmd = cmd .. " -o $(DEPLOY_EXECUTABLE).self"
+
+	-- Link files into an executable product.
+	local result = run:execute(cmd) --, nil)
+	if result ~= 0 then
+		stderr:printLn("Unable to build executable product.")
+		stderr:printLn(cmd)
+		return 1
+	end
+
+	stdout:printLn("Done")
+	return 0
+end
+
+
+function main(args)
+	local action = args:get(0)
+	if action == "build" then
+		return build(args)
+	elseif action == "deploy" then
+		return deploy(args)
+	elseif action == "launch" then
+		return launch(args)
+	elseif action == "migrate" then
+		return migrate(args)
+	end
+	return 1
+end

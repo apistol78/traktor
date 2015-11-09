@@ -26,6 +26,7 @@ public:
 
 private:
 	std::wstring m_label;
+	std::wstring m_condition;
 	std::map< std::wstring, std::wstring > m_values;
 };
 

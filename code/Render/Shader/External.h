@@ -57,17 +57,17 @@ public:
 
 	void removeOutputPin(const OutputPin* outputPin);
 
-	virtual std::wstring getInformation() const;
+	virtual std::wstring getInformation() const T_OVERRIDE T_FINAL;
 
-	virtual int getInputPinCount() const;
+	virtual int getInputPinCount() const T_OVERRIDE T_FINAL;
 
-	virtual const InputPin* getInputPin(int index) const;
+	virtual const InputPin* getInputPin(int index) const T_OVERRIDE T_FINAL;
 
-	virtual int getOutputPinCount() const;
+	virtual int getOutputPinCount() const T_OVERRIDE T_FINAL;
 
-	virtual const OutputPin* getOutputPin(int index) const;	
+	virtual const OutputPin* getOutputPin(int index) const T_OVERRIDE T_FINAL;	
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 	inline const std::map< std::wstring, float >& getValues() const { return m_values; }
 

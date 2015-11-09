@@ -164,7 +164,7 @@ public:
 	ComRefArray(const ComRefArray< T >& src)
 	:	m_array(src.m_array)
 	{
-		for (container_type::iterator i = m_array.begin(); i != m_array.end(); ++i)
+		for (typename container_type::iterator i = m_array.begin(); i != m_array.end(); ++i)
 		{
 			if (*i)
 				(*i)->AddRef();
@@ -173,7 +173,7 @@ public:
 	
 	virtual ~ComRefArray()
 	{
-		for (container_type::iterator i = m_array.begin(); i != m_array.end(); ++i)
+		for (typename container_type::iterator i = m_array.begin(); i != m_array.end(); ++i)
 		{
 			if (*i)
 				(*i)->Release();
@@ -286,12 +286,12 @@ public:
 
 	ComRefArray< T >& operator = (const ComRefArray< T >& src)
 	{
-		for (container_type::const_iterator i = src.m_array.begin(); i != src.m_array.end(); ++i)
+		for (typename container_type::const_iterator i = src.m_array.begin(); i != src.m_array.end(); ++i)
 		{
 			if (*i)
 				(*i)->AddRef();
 		}
-		for (container_type::iterator i = m_array.begin(); i != m_array.end(); ++i)
+		for (typename container_type::iterator i = m_array.begin(); i != m_array.end(); ++i)
 		{
 			if (*i)
 				(*i)->Release();
