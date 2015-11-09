@@ -24,6 +24,7 @@ class T_DLLCLASS IRuntimeClass : public Object
 	T_RTTI_CLASS;
 
 public:
+	enum { MaxSignatures = 16 };
 	typedef std::map< std::string, Any > prototype_t;
 
 	/*! \brief Get exported native type. */
@@ -53,6 +54,9 @@ public:
 	/*! \brief Get name of exported method. */
 	virtual std::string getMethodName(uint32_t methodId) const = 0;
 
+	/*! \brief Get signature of exported method. */
+	virtual void getMethodSignature(uint32_t methodId, const wchar_t* outSignature[MaxSignatures]) const = 0;
+
 	/*! \brief Invoke exported method. */
 	virtual Any invoke(ITypedObject* object, uint32_t methodId, uint32_t argc, const Any* argv) const = 0;
 
@@ -61,6 +65,9 @@ public:
 
 	/*! \brief Get name of exported method. */
 	virtual std::string getStaticMethodName(uint32_t methodId) const = 0;
+
+	/*! \brief Get signature of exported method. */
+	virtual void getStaticMethodSignature(uint32_t methodId, const wchar_t* outSignature[MaxSignatures]) const = 0;
 
 	/*! \brief Invoke exported static method. */
 	virtual Any invokeStatic(uint32_t methodId, uint32_t argc, const Any* argv) const = 0;
