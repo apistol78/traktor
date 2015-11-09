@@ -37,11 +37,15 @@ public:
 
 	virtual std::string getMethodName(uint32_t methodId) const T_OVERRIDE;
 
+	virtual void getMethodSignature(uint32_t methodId, const wchar_t* outSignature[MaxSignatures]) const T_OVERRIDE;
+
 	virtual Any invoke(ITypedObject* object, uint32_t methodId, uint32_t argc, const Any* argv) const T_OVERRIDE;
 
 	virtual uint32_t getStaticMethodCount() const T_OVERRIDE;
 
 	virtual std::string getStaticMethodName(uint32_t methodId) const T_OVERRIDE;
+
+	virtual void getStaticMethodSignature(uint32_t methodId, const wchar_t* outSignature[MaxSignatures]) const T_OVERRIDE;
 
 	virtual Any invokeStatic(uint32_t methodId, uint32_t argc, const Any* argv) const T_OVERRIDE;
 
@@ -111,6 +115,10 @@ std::string ActionObjectClass::getMethodName(uint32_t methodId) const
 	}
 }
 
+void ActionObjectClass::getMethodSignature(uint32_t methodId, const wchar_t* outSignature[MaxSignatures]) const
+{
+}
+
 Any ActionObjectClass::invoke(ITypedObject* object, uint32_t methodId, uint32_t argc, const Any* argv) const
 {
 	ActionObject* actionObject = checked_type_cast< ActionObject*, false >(object);
@@ -176,6 +184,10 @@ uint32_t ActionObjectClass::getStaticMethodCount() const
 std::string ActionObjectClass::getStaticMethodName(uint32_t methodId) const
 {
 	return "";
+}
+
+void ActionObjectClass::getStaticMethodSignature(uint32_t methodId, const wchar_t* outSignature[MaxSignatures]) const
+{
 }
 
 Any ActionObjectClass::invokeStatic(uint32_t methodId, uint32_t argc, const Any* argv) const

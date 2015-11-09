@@ -10,6 +10,9 @@ namespace traktor
 template < >
 struct CastAny < flash::ActionValue, false >
 {
+	static const wchar_t* const typeName() {
+		return L"flash::ActionValue";
+	}
 	static Any set(const flash::ActionValue& value)
 	{
 		switch (value.getType())
@@ -26,7 +29,6 @@ struct CastAny < flash::ActionValue, false >
 			return Any();
 		}
 	}
-
 	static flash::ActionValue get(const Any& value)
 	{
 		if (value.isBoolean())
@@ -47,6 +49,9 @@ struct CastAny < flash::ActionValue, false >
 template < >
 struct CastAny < const flash::ActionValue&, false >
 {
+	static const wchar_t* const typeName() {
+		return L"const flash::ActionValue&";
+	}
 	static Any set(const flash::ActionValue& value)
 	{
 		switch (value.getType())
@@ -63,7 +68,6 @@ struct CastAny < const flash::ActionValue&, false >
 			return Any();
 		}
 	}
-
 	static flash::ActionValue get(const Any& value)
 	{
 		if (value.isBoolean())

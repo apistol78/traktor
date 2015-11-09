@@ -24,6 +24,9 @@ struct CastAny
 template < >
 struct CastAny < Any, false >
 {
+	static const wchar_t* const typeName() {
+		return L"Any";
+	}
 	static bool accept(const Any& value) {
 		return true;
 	}
@@ -38,6 +41,9 @@ struct CastAny < Any, false >
 template < >
 struct CastAny < const Any&, false >
 {
+	static const wchar_t* const typeName() {
+		return L"const Any&";
+	}
 	static bool accept(const Any& value) {
 		return true;
 	}
@@ -52,6 +58,9 @@ struct CastAny < const Any&, false >
 template < >
 struct CastAny < bool, false >
 {
+	static const wchar_t* const typeName() {
+		return L"bool";
+	}
 	static bool accept(const Any& value) {
 		return value.isBoolean();
 	}
@@ -66,6 +75,9 @@ struct CastAny < bool, false >
 template < >
 struct CastAny < int8_t, false >
 {
+	static const wchar_t* const typeName() {
+		return L"int8_t";
+	}
 	static bool accept(const Any& value) {
 		return value.isNumeric();
 	}
@@ -80,6 +92,9 @@ struct CastAny < int8_t, false >
 template < >
 struct CastAny < uint8_t, false >
 {
+	static const wchar_t* const typeName() {
+		return L"uint8_t";
+	}
 	static bool accept(const Any& value) {
 		return value.isNumeric();
 	}
@@ -94,6 +109,9 @@ struct CastAny < uint8_t, false >
 template < >
 struct CastAny < int16_t, false >
 {
+	static const wchar_t* const typeName() {
+		return L"int16_t";
+	}
 	static bool accept(const Any& value) {
 		return value.isNumeric();
 	}
@@ -108,6 +126,9 @@ struct CastAny < int16_t, false >
 template < >
 struct CastAny < uint16_t, false >
 {
+	static const wchar_t* const typeName() {
+		return L"uint16_t";
+	}
 	static bool accept(const Any& value) {
 		return value.isNumeric();
 	}
@@ -122,6 +143,9 @@ struct CastAny < uint16_t, false >
 template < >
 struct CastAny < int32_t, false >
 {
+	static const wchar_t* const typeName() {
+		return L"int32_t";
+	}
 	static bool accept(const Any& value) {
 		return value.isNumeric();
 	}
@@ -136,6 +160,9 @@ struct CastAny < int32_t, false >
 template < >
 struct CastAny < uint32_t, false >
 {
+	static const wchar_t* const typeName() {
+		return L"uint32_t";
+	}
 	static bool accept(const Any& value) {
 		return value.isNumeric();
 	}
@@ -150,6 +177,9 @@ struct CastAny < uint32_t, false >
 template < >
 struct CastAny < float, false >
 {
+	static const wchar_t* const typeName() {
+		return L"float";
+	}
 	static bool accept(const Any& value) {
 		return value.isFloat();
 	}
@@ -164,6 +194,9 @@ struct CastAny < float, false >
 template < >
 struct CastAny < double, false >
 {
+	static const wchar_t* const typeName() {
+		return L"double";
+	}
 	static bool accept(const Any& value) {
 		return value.isFloat();
 	}
@@ -178,6 +211,9 @@ struct CastAny < double, false >
 template < >
 struct CastAny < Scalar, false >
 {
+	static const wchar_t* const typeName() {
+		return L"Scalar";
+	}
 	static bool accept(const Any& value) {
 		return value.isFloat();
 	}
@@ -192,6 +228,9 @@ struct CastAny < Scalar, false >
 template < >
 struct CastAny < const Scalar&, false >
 {
+	static const wchar_t* const typeName() {
+		return L"const Scalar&";
+	}
 	static bool accept(const Any& value) {
 		return value.isFloat();
 	}
@@ -206,6 +245,9 @@ struct CastAny < const Scalar&, false >
 template < >
 struct CastAny < std::string, false >
 {
+	static const wchar_t* const typeName() {
+		return L"std::string";
+	}
 	static bool accept(const Any& value) {
 		return value.isString();
 	}
@@ -220,6 +262,9 @@ struct CastAny < std::string, false >
 template < >
 struct CastAny < const std::string&, false >
 {
+	static const wchar_t* const typeName() {
+		return L"const std::string&";
+	}
 	static bool accept(const Any& value) {
 		return value.isString();
 	}
@@ -234,6 +279,9 @@ struct CastAny < const std::string&, false >
 template < >
 struct CastAny < const char, true >
 {
+	static const wchar_t* const typeName() {
+		return L"const char";
+	}
 	static bool accept(const Any& value) {
 		return value.isString();
 	}
@@ -248,6 +296,9 @@ struct CastAny < const char, true >
 template < >
 struct CastAny < std::wstring, false >
 {
+	static const wchar_t* const typeName() {
+		return L"std::wstring";
+	}
 	static bool accept(const Any& value) {
 		return value.isString();
 	}
@@ -262,6 +313,9 @@ struct CastAny < std::wstring, false >
 template < >
 struct CastAny < const std::wstring&, false >
 {
+	static const wchar_t* const typeName() {
+		return L"const std::wstring&";
+	}
 	static bool accept(const Any& value) {
 		return value.isString();
 	}
@@ -276,6 +330,9 @@ struct CastAny < const std::wstring&, false >
 template < >
 struct CastAny < const wchar_t, true >
 {
+	static const wchar_t* const typeName() {
+		return L"const wchar_t";
+	}
 	static bool accept(const Any& value) {
 		return value.isString();
 	}
@@ -290,6 +347,9 @@ struct CastAny < const wchar_t, true >
 template < typename Type >
 struct CastAny < Ref< Type >, false >
 {
+	static const wchar_t* const typeName() {
+		return L"Ref< Type >";
+	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< Type >(value.getObjectUnsafe());
 	}
@@ -305,6 +365,9 @@ struct CastAny < Ref< Type >, false >
 template < typename Type >
 struct CastAny < const Ref< Type >&, false >
 {
+	static const wchar_t* const typeName() {
+		return L"const Ref< Type >&";
+	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< Type >(value.getObjectUnsafe());
 	}
@@ -322,14 +385,15 @@ struct CastAny < Type, false >
 {
 	typedef typename IsConst< typename IsReference< Type >::base_t >::type_t type_t;
 
+	static const wchar_t* const typeName() {
+		return L"Type";
+	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< Type >(value.getObjectUnsafe());
 	}
-
 	static Any set(const type_t& value) {
 		return Any::fromObject(new type_t(value));
 	}
-
 	static Type get(const Any& value) {
 		T_CAST_ASSERT (value.getObject() != 0 && is_a< type_t* >(value.getObject()));
 		return Type(*checked_type_cast< type_t*, false >(value.getObject()));
@@ -341,14 +405,15 @@ struct CastAny < Type, true >
 {
 	typedef typename IsConst< Type >::type_t no_const_type_t;
 
+	static const wchar_t* const typeName() {
+		return L"Type";
+	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< Type >(value.getObjectUnsafe());
 	}
-
 	static Any set(Type value) {
 		return Any::fromObject((ITypedObject*)(value));
 	}
-
 	static Type get(const Any& value) {
 		T_CAST_ASSERT (value.getObject() == 0 || is_a< Type >(value.getObject()));
 		return checked_type_cast< Type >(value.getObject());

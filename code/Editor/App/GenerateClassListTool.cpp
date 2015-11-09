@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Class/IRuntimeClass.h"
 #include "Core/Class/IRuntimeClassFactory.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
@@ -24,6 +25,8 @@ public:
 
 	virtual void registerClass(IRuntimeClass* runtimeClass)
 	{
+		const wchar_t* signature[IRuntimeClass::MaxSignatures];
+
 		if (runtimeClass->getExportType().getSuper())
 			m_os << runtimeClass->getExportType().getName() << L" : " << runtimeClass->getExportType().getSuper()->getName() << Endl;
 		else
@@ -35,9 +38,23 @@ public:
 		for (uint32_t i = 0; i < runtimeClass->getConstantCount(); ++i)
 			m_os << mbstows(runtimeClass->getConstantName(i)) << L" = " << runtimeClass->getConstantValue(i).getWideString() << Endl;
 		for (uint32_t i = 0; i < runtimeClass->getMethodCount(); ++i)
-			m_os << mbstows(runtimeClass->getMethodName(i)) << L"()" << Endl;
+		{
+			std::memset(signature, 0, sizeof(signature));
+			runtimeClass->getMethodSignature(i, signature);
+			m_os << (signature[0] ? signature[0] : L"void") << L" " << mbstows(runtimeClass->getMethodName(i)) << L"(";
+			for (uint32_t j = 1; signature[j]; ++j)
+				m_os << (j > 1 ? L", " : L"") << signature[j];
+			m_os << L")" << Endl;
+		}
 		for (uint32_t i = 0; i < runtimeClass->getStaticMethodCount(); ++i)
-			m_os << L"+" << mbstows(runtimeClass->getStaticMethodName(i)) << L"()" << Endl;
+		{
+			std::memset(signature, 0, sizeof(signature));
+			runtimeClass->getStaticMethodSignature(i, signature);
+			m_os << L"static " << (signature[0] ? signature[0] : L"void") << L" " << mbstows(runtimeClass->getStaticMethodName(i)) << L"(";
+			for (uint32_t j = 1; signature[j]; ++j)
+				m_os << (j > 1 ? L", " : L"") << signature[j];
+			m_os << L")" << Endl;
+		}
 		m_os << DecreaseIndent;
 
 		m_os << Endl;
