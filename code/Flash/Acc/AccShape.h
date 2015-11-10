@@ -79,11 +79,6 @@ public:
 	const Aabb2& getBounds() const { return m_bounds; }
 
 private:
-	struct TesselationBatch
-	{
-		AlignedVector< Triangle > triangles;
-	};
-
 	struct RenderBatch
 	{
 		AccTextureCache::BitmapRect texture;
@@ -93,8 +88,7 @@ private:
 
 	AccShapeResources* m_shapeResources;
 	AccShapeVertexPool* m_vertexPool;
-	AlignedVector< TesselationBatch > m_tesselationBatches;
-	uint32_t m_tesselationTriangleCount;
+	AlignedVector< Triangle > m_triangles;
 	AccShapeVertexPool::Range m_vertexRange;
 	AlignedVector< RenderBatch > m_renderBatches;
 	Aabb2 m_bounds;
