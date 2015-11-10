@@ -72,9 +72,12 @@ Ref< flash::ActionObject > FlashLayer_createObject_0(FlashLayer* self)
 	return self->createObject();
 }
 
-Ref< flash::ActionObject > FlashLayer_createObject_1(FlashLayer* self, uint32_t argc, const Any* argv)
+Ref< flash::ActionObject > FlashLayer_createObject_1(FlashLayer* self, const std::vector< Any >& argv)
 {
-	return self->createObject(argc, argv);
+	if (!argv.empty())
+		return self->createObject(argv.size(), &argv.front());
+	else
+		return self->createObject();
 }
 
 world::Entity* WorldLayer_getEntity_1(WorldLayer* self, const std::wstring& name)
@@ -262,7 +265,7 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFlashLayer->addMethod("getGlobal", &FlashLayer::getGlobal);
 	classFlashLayer->addMethod("getRoot", &FlashLayer::getRoot);
 	classFlashLayer->addMethod("createObject", &FlashLayer_createObject_0);
-	classFlashLayer->addVariadicMethod("createObject", &FlashLayer_createObject_1);
+	classFlashLayer->addMethod("createObject", &FlashLayer_createObject_1);
 	classFlashLayer->addMethod("createBitmap", &FlashLayer::createBitmap);
 	classFlashLayer->addMethod("isVisible", &FlashLayer::isVisible);
 	classFlashLayer->addMethod("setVisible", &FlashLayer::setVisible);
