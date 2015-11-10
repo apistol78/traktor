@@ -122,7 +122,8 @@ bool FlashEditorPage::create(ui::Container* parent)
 	m_toolWireframe = new ui::custom::ToolBarButton(L"Wireframe", 6, ui::Command(L"Flash.Editor.Wireframe"), ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolBarPlay->addItem(m_toolWireframe);
 
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Optimize", 6, ui::Command(L"Flash.Editor.Optimize")));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Merge", 6, ui::Command(L"Flash.Editor.Merge")));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Rasterize", 6, ui::Command(L"Flash.Editor.Rasterize")));
 
 	m_toolBarPlay->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &FlashEditorPage::eventToolClick);
 
@@ -199,9 +200,20 @@ bool FlashEditorPage::handleCommand(const ui::Command& command)
 		m_previewControl->setWireFrame(m_toolWireframe->isToggled());
 		m_previewControl->update();
 	}
-	else if (command == L"Flash.Editor.Optimize")
+	else if (command == L"Flash.Editor.Merge")
 	{
-		Ref< FlashMovie > movie = flash::FlashOptimizer().optimizeStaticMovie(m_movie);
+		Ref< FlashMovie > movie = flash::FlashOptimizer().merge(m_movie);
+		if (movie)
+		{
+			m_movie = movie;
+			m_previewControl->setMovie(m_movie);
+			m_previewControl->update();
+			updateTreeMovie();
+		}
+	}
+	else if (command == L"Flash.Editor.Rasterize")
+	{
+		Ref< FlashMovie > movie = flash::FlashOptimizer().rasterize(m_movie);
 		if (movie)
 		{
 			m_movie = movie;

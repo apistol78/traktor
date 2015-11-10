@@ -26,7 +26,9 @@ class T_DLLCLASS FlashOptimizer : public Object
 	T_RTTI_CLASS;
 
 public:
-	Ref< FlashMovie > optimizeStaticMovie(const FlashMovie* movie) const;
+	Ref< FlashMovie > merge(const FlashMovie* movie) const;
+
+	Ref< FlashMovie > rasterize(const FlashMovie* movie) const;
 };
 
 	}
