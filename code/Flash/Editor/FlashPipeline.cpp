@@ -3,6 +3,7 @@
 #include <MaxRectsBinPack.h>
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyInteger.h"
@@ -16,12 +17,15 @@
 #include "Flash/FlashBitmapData.h"
 #include "Flash/FlashBitmapResource.h"
 #include "Flash/FlashFont.h"
+#include "Flash/FlashFrame.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashMovieFactory.h"
 #include "Flash/FlashOptimizer.h"
+#include "Flash/FlashSprite.h"
 #include "Flash/SwfReader.h"
-#include "Flash/Editor/FlashPipeline.h"
+#include "Flash/Editor/FlashEmptyMovieAsset.h"
 #include "Flash/Editor/FlashMovieAsset.h"
+#include "Flash/Editor/FlashPipeline.h"
 #include "Render/Shader.h"
 #include "Render/Editor/Texture/TextureOutput.h"
 #include "Resource/Id.h"
@@ -77,6 +81,7 @@ void FlashPipeline::destroy()
 TypeInfoSet FlashPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
+	typeSet.insert(&type_of< FlashEmptyMovieAsset >());
 	typeSet.insert(&type_of< FlashMovieAsset >());
 	return typeSet;
 }
@@ -89,8 +94,8 @@ bool FlashPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	const FlashMovieAsset* movieAsset = checked_type_cast< const FlashMovieAsset* >(sourceAsset);
-	pipelineDepends->addDependency(Path(m_assetPath), movieAsset->getFileName().getOriginal());
+	if (const FlashMovieAsset* movieAsset = dynamic_type_cast< const FlashMovieAsset* >(sourceAsset))
+		pipelineDepends->addDependency(Path(m_assetPath), movieAsset->getFileName().getOriginal());
 	pipelineDepends->addDependency(c_idFlashShaderAssets, editor::PdfBuild | editor::PdfResource);	// Solid
 	return true;
 }
@@ -108,25 +113,47 @@ bool FlashPipeline::buildOutput(
 	uint32_t reason
 ) const
 {
-	const FlashMovieAsset* movieAsset = checked_type_cast< const FlashMovieAsset* >(sourceAsset);
+	Ref< FlashMovie > movie;
+	bool optimize = false;
 
-	Ref< IStream > sourceStream = pipelineBuilder->openFile(Path(m_assetPath), movieAsset->getFileName().getOriginal());
-	if (!sourceStream)
+	if (const FlashMovieAsset* movieAsset = dynamic_type_cast< const FlashMovieAsset* >(sourceAsset))
 	{
-		log::error << L"Failed to import Flash; unable to open file \"" << movieAsset->getFileName().getOriginal() << L"\"" << Endl;
-		return false;
-	}
+		Ref< IStream > sourceStream = pipelineBuilder->openFile(Path(m_assetPath), movieAsset->getFileName().getOriginal());
+		if (!sourceStream)
+		{
+			log::error << L"Failed to import Flash; unable to open file \"" << movieAsset->getFileName().getOriginal() << L"\"" << Endl;
+			return false;
+		}
 
-	Ref< SwfReader > swf = new SwfReader(sourceStream);
-	Ref< FlashMovie > movie = flash::FlashMovieFactory().createMovie(swf);
-	if (!movie)
+		Ref< SwfReader > swf = new SwfReader(sourceStream);
+		movie = FlashMovieFactory().createMovie(swf);
+		if (!movie)
+		{
+			log::error << L"Failed to import Flash; unable to parse SWF" << Endl;
+			return false;
+		}
+
+		safeClose(sourceStream);
+
+		optimize = movieAsset->m_staticMovie;
+	}
+	else if (const FlashEmptyMovieAsset* emptyMovieAsset = dynamic_type_cast< const FlashEmptyMovieAsset* >(sourceAsset))
 	{
-		log::error << L"Failed to import Flash; unable to parse SWF" << Endl;
-		return false;
-	}
+		SwfColor backgroundColor = { 255, 255, 180, 255 };
+		Ref< FlashSprite > sprite = new FlashSprite(0, emptyMovieAsset->getFrameRate());
 
-	sourceStream->close();
-	sourceStream = 0;
+		Ref< FlashFrame > frame = new FlashFrame();
+		frame->changeBackgroundColor(backgroundColor);
+		sprite->addFrame(frame);
+
+		movie = new FlashMovie(
+			Aabb2(
+				Vector2(0.0f, 0.0f),
+				Vector2(emptyMovieAsset->getStageWidth(), emptyMovieAsset->getStageHeight())
+			),
+			sprite
+		);
+	}
 
 	// Show some information about the Flash.
 	log::info << L"SWF successfully loaded," << Endl;
@@ -146,7 +173,7 @@ bool FlashPipeline::buildOutput(
 	log::info << DecreaseIndent;
 
 	// Merge all characters of first frame into a single sprite.
-	if (movieAsset->m_staticMovie)
+	if (optimize)
 	{
 		movie = FlashOptimizer().optimizeStaticMovie(movie);
 		if (!movie)

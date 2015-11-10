@@ -541,26 +541,6 @@ struct MethodSignature_8 < ClassType, ReturnType, Argument1Type, Argument2Type, 
 	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type) const;
 };
 
-template <
-	typename ClassType,
-	typename ReturnType,
-	bool Const
->
-struct MethodSignature_Variadic
-{
-	typedef ReturnType (ClassType::*method_t)(uint32_t argc, const Any* argv);
-	typedef ReturnType (*static_method_t)(uint32_t argc, const Any* argv);
-};
-
-template <
-	typename ClassType,
-	typename ReturnType
->
-struct MethodSignature_Variadic < ClassType, ReturnType, true >
-{
-	typedef ReturnType (ClassType::*method_t)(uint32_t argc, const Any* argv) const;
-};
-
 
 /*! \} */
 
@@ -1310,61 +1290,6 @@ struct Method_8 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 	}
 };
 
-template <
-	typename ClassType,
-	typename ReturnType,
-	bool Const
->
-class Method_Variadic : public IMethod
-{
-	typedef typename MethodSignature_Variadic< ClassType, ReturnType, Const >::method_t method_t;
-
-	method_t m_method;
-
-	Method_Variadic(method_t method)
-	:	m_method(method)
-	{
-	}
-
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
-	{
-		outSignature[0] = CastAny< ReturnType >::typeName();
-	}
-
-	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
-	{
-		ReturnType returnValue = (mandatory_non_null_type_cast< ClassType* >(object)->*m_method)(argc, argv);
-		return CastAny< ReturnType >::set(returnValue);
-	}
-};
-
-template <
-	typename ClassType,
-	bool Const
->
-class Method_Variadic < ClassType, void, Const > : public IMethod
-{
-	typedef typename MethodSignature_Variadic< ClassType, void, Const >::method_t method_t;
-
-	method_t m_method;
-
-	Method_Variadic(method_t method)
-	:	m_method(method)
-	{
-	}
-
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
-	{
-		outSignature[0] = L"void";
-	}
-
-	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
-	{
-		(mandatory_non_null_type_cast< ClassType* >(object)->*m_method)(argc, argv);
-		return Any();
-	}
-};
-
 /*! \} */
 
 /*! \name Method through trunks */
@@ -2059,59 +1984,6 @@ struct MethodTrunk_8 : public IMethod
 	}
 };
 
-template <
-	typename ClassType,
-	typename ReturnType
->
-struct MethodTrunk_Variadic : public IMethod
-{
-	typedef ReturnType (*method_t)(ClassType*, uint32_t, const Any*);
-
-	method_t m_method;
-
-	MethodTrunk_Variadic(method_t method)
-	:	m_method(method)
-	{
-	}
-
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
-	{
-		outSignature[0] = CastAny< ReturnType >::typeName();
-	}
-
-	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
-	{
-		ReturnType returnValue = (*m_method)(mandatory_non_null_type_cast< ClassType* >(object), argc, argv);
-		return CastAny< ReturnType >::set(returnValue);
-	}
-};
-
-template <
-	typename ClassType
->
-struct MethodTrunk_Variadic < ClassType, void > : public IMethod
-{
-	typedef void (*method_t)(ClassType*, uint32_t, const Any*);
-
-	method_t m_method;
-
-	MethodTrunk_Variadic(method_t method)
-	:	m_method(method)
-	{
-	}
-
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
-	{
-		outSignature[0] = L"void";
-	}
-
-	virtual Any invoke(ITypedObject* object, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
-	{
-		(*m_method)(mandatory_non_null_type_cast< ClassType* >(object), argc, argv);
-		return Any();
-	}
-};
-
 /*! \} */
 
 /*! \name Static method invocations */
@@ -2737,59 +2609,6 @@ struct StaticMethod_7 < ClassType, void, Argument1Type, Argument2Type, Argument3
 	}
 };
 
-template <
-	typename ClassType,
-	typename ReturnType
->
-class StaticMethod_Variadic : public IStaticMethod
-{
-	typedef ReturnType (*method_t)(uint32_t, const Any*);
-
-	method_t m_method;
-
-	StaticMethod_Variadic(method_t method)
-	:	m_method(method)
-	{
-	}
-
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
-	{
-		outSignature[0] = CastAny< ReturnType >::typeName();
-	}
-
-	virtual Any invoke(uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
-	{
-		ReturnType returnValue = (*m_method)(argc, argv);
-		return CastAny< ReturnType >::set(returnValue);
-	}
-};
-
-template <
-	typename ClassType
->
-class StaticMethod_Variadic < ClassType, void > : public IStaticMethod
-{
-	typedef void (*method_t)(uint32_t, const Any*);
-
-	method_t m_method;
-
-	StaticMethod_Variadic(method_t method)
-	:	m_method(method)
-	{
-	}
-
-	virtual void signature(const wchar_t* outSignature[IRuntimeClass::MaxSignatures]) const T_OVERRIDE T_FINAL
-	{
-		outSignature[0] = L"void";
-	}
-
-	virtual Any invoke(uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
-	{
-		(*m_method)(argc, argv);
-		return Any();
-	}
-};
-
 /*! \} */
 
 /*! \name Operator */
@@ -3327,30 +3146,6 @@ public:
 		addMethod(methodName, 8, new MethodTrunk_8< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type >(method));
 	}
 
-	template <
-		typename ReturnType
-	>
-	void addVariadicMethod(const std::string& methodName, ReturnType (ClassType::*method)(uint32_t, const Any*))
-	{
-		addVariadicMethod(methodName, new Method_Variadic< ClassType, ReturnType, false >(method));
-	}
-
-	template <
-		typename ReturnType
-	>
-	void addVariadicMethod(const std::string& methodName, ReturnType (ClassType::*method)(uint32_t, const Any*) const)
-	{
-		addVariadicMethod(methodName, new Method_Variadic< ClassType, ReturnType, true >(method));
-	}
-
-	template <
-		typename ReturnType
-	>
-	void addVariadicMethod(const std::string& methodName, ReturnType (*method)(ClassType*, uint32_t, const Any*))
-	{
-		addVariadicMethod(methodName, new MethodTrunk_Variadic< ClassType, ReturnType >(method));
-	}
-
 	void setUnknownMethod(unknown_method_t unknown)
 	{
 		m_unknown = unknown;
@@ -3453,14 +3248,6 @@ public:
 		addStaticMethod(methodName, 7, new StaticMethod_7< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type >(method));
 	}
 
-	template <
-		typename ReturnType
-	>
-	void addStaticVariadicMethod(const std::string& methodName, ReturnType (*method)(uint32_t, const Any*))
-	{
-		addVariadicMethod(methodName, new StaticMethod_Variadic< ClassType, ReturnType >(method));
-	}
-
 	/*! \} */
 
 	template <
@@ -3560,8 +3347,6 @@ public:
 		const std::vector< IMethod* >& methods = info.methods;
 		if (argc < methods.size() && methods[argc] != 0)
 			return methods[argc]->invoke(object, argc, argv);
-		else if (info.variadic)
-			return info.variadic->invoke(object, argc, argv);
 		else
 		{
 			T_FATAL_ASSERT_M(false, L"No such method");
@@ -3601,8 +3386,6 @@ public:
 		const std::vector< IStaticMethod* >& methods = info.methods;
 		if (argc < methods.size() && methods[argc] != 0)
 			return methods[argc]->invoke(argc, argv);
-		else if (info.variadic)
-			return info.variadic->invoke(argc, argv);
 		else
 		{
 			T_FATAL_ASSERT_M(false, L"No such static method");
@@ -3648,14 +3431,12 @@ private:
 	{
 		std::string name;
 		std::vector< IMethod* > methods;
-		IMethod* variadic;
 	};
 
 	struct StaticMethodInfo
 	{
 		std::string name;
 		std::vector< IStaticMethod* > methods;
-		IStaticMethod* variadic;
 	};
 
 	std::vector< IConstructor* > m_constructors;
@@ -3690,24 +3471,6 @@ private:
 		m.name = methodName;
 		m.methods.resize(argc + 1, 0);
 		m.methods[argc] = method;
-		m.variadic = 0;
-		m_methods.push_back(m);
-	}
-
-	void addVariadicMethod(const std::string& methodName, IMethod* method)
-	{
-		for (typename std::vector< MethodInfo >::iterator i = m_methods.begin(); i != m_methods.end(); ++i)
-		{
-			if (i->name == methodName)
-			{
-				i->variadic = method;
-				return;
-			}
-		}
-
-		MethodInfo m;
-		m.name = methodName;
-		m.variadic = method;
 		m_methods.push_back(m);
 	}
 
@@ -3729,24 +3492,6 @@ private:
 		m.name = methodName;
 		m.methods.resize(argc + 1, 0);
 		m.methods[argc] = method;
-		m.variadic = 0;
-		m_staticMethods.push_back(m);
-	}
-
-	void addStaticVariadicMethod(const std::string& methodName, IStaticMethod* method)
-	{
-		for (typename std::vector< StaticMethodInfo >::iterator i = m_staticMethods.begin(); i != m_staticMethods.end(); ++i)
-		{
-			if (i->name == methodName)
-			{
-				i->variadic = method;
-				return;
-			}
-		}
-
-		StaticMethodInfo m;
-		m.name = methodName;
-		m.variadic = method;
 		m_staticMethods.push_back(m);
 	}
 };
