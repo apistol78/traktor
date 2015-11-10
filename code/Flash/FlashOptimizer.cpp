@@ -1,11 +1,20 @@
 #include "Core/Log/Log.h"
+#include "Core/Misc/AutoPtr.h"
+#include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/String.h"
+#include "Drawing/Image.h"
+#include "Drawing/PixelFormat.h"
+#include "Flash/FlashBitmapData.h"
 #include "Flash/FlashFrame.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashMovieRenderer.h"
 #include "Flash/FlashOptimizer.h"
 #include "Flash/FlashShape.h"
 #include "Flash/FlashSprite.h"
+#include "Flash/FlashSpriteInstance.h"
+#include "Flash/GC.h"
 #include "Flash/IDisplayRenderer.h"
+#include "Flash/Sw/SwDisplayRenderer.h"
 
 namespace traktor
 {
@@ -171,7 +180,7 @@ private:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashOptimizer", FlashOptimizer, Object)
 
-Ref< FlashMovie > FlashOptimizer::optimizeStaticMovie(const FlashMovie* movie) const
+Ref< FlashMovie > FlashOptimizer::merge(const FlashMovie* movie) const
 {
 	Ref< FlashSpriteInstance > movieInstance = movie->createMovieClipInstance(0);
 	if (!movieInstance)
@@ -196,6 +205,67 @@ Ref< FlashMovie > FlashOptimizer::optimizeStaticMovie(const FlashMovie* movie) c
 		1080.0f,
 		Vector4(0.0f, 0.0f, 1.0f, 1.0f)
 	);
+
+	safeDestroy(movieInstance);
+	GC::getInstance().collectCycles(true);
+
+	return outputMovie;
+}
+
+Ref< FlashMovie > FlashOptimizer::rasterize(const FlashMovie* movie) const
+{
+	Ref< FlashSpriteInstance > movieInstance = movie->createMovieClipInstance(0);
+	if (!movieInstance)
+		return 0;
+
+	Aabb2 bounds = movieInstance->getLocalBounds();
+	int32_t frameWidth = int32_t(bounds.mx.x - bounds.mn.x);
+	int32_t frameHeight = int32_t(bounds.mx.y - bounds.mn.y);
+	
+	int32_t pixelWidth = frameWidth / 20;
+	int32_t pixelHeight = frameHeight / 20;
+
+	// Rasterize first frame into an image.
+	Ref< drawing::Image > image = new drawing::Image(drawing::PixelFormat::getA8R8G8B8(), pixelWidth, pixelHeight);
+	image->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+
+	SwDisplayRenderer displayRenderer;
+	displayRenderer.setRasterTarget(image->getData(), image->getWidth(), image->getHeight(), image->getWidth() * 4);
+	FlashMovieRenderer movieRenderer(&displayRenderer);
+
+	movieRenderer.renderFrame(
+		movieInstance,
+		frameBounds,
+		frameWidth,
+		frameHeight,
+		Vector4(0.0f, 0.0f, 1.0f, 1.0f)
+	);
+
+	safeDestroy(movieInstance);
+	GC::getInstance().collectCycles(true);
+
+	//static int32_t ccc = 0;
+	//image->save(L"flash_" + toString(ccc++) + L".tga");
+
+	// Generate a single shape from entire first frame.
+	Ref< FlashShape > outputShape = new FlashShape(2);
+	outputShape->create(1, frameWidth, frameHeight);
+
+	Ref< FlashFrame > outputFrame = new FlashFrame();
+
+	FlashFrame::PlaceObject place;
+	place.hasFlags = FlashFrame::PfHasCharacterId;
+	place.depth = 0;
+	place.characterId = 2;
+	outputFrame->placeObject(place);
+
+	Ref< FlashSprite > outputSprite = new FlashSprite(1, 1);
+	outputSprite->addFrame(outputFrame);
+
+	Ref< FlashMovie > outputMovie = new FlashMovie(movie->getFrameBounds(), outputSprite);
+	outputMovie->defineCharacter(1, outputSprite);
+	outputMovie->defineBitmap(1, new FlashBitmapData(image));
+	outputMovie->defineCharacter(2, outputShape);
 
 	return outputMovie;
 }

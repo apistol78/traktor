@@ -175,7 +175,7 @@ bool FlashPipeline::buildOutput(
 	// Merge all characters of first frame into a single sprite.
 	if (optimize)
 	{
-		movie = FlashOptimizer().optimizeStaticMovie(movie);
+		movie = FlashOptimizer().merge(movie);
 		if (!movie)
 		{
 			log::error << L"Failed to import Flash; failed to optimize static SWF" << Endl;

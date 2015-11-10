@@ -8,6 +8,7 @@
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashMovieFactory.h"
 #include "Flash/FlashMoviePlayer.h"
+#include "Flash/FlashOptimizer.h"
 #include "Flash/FlashSpriteInstance.h"
 #include "Flash/SwfReader.h"
 #include "Flash/Action/ActionContext.h"
@@ -447,6 +448,12 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	Ref< ActionFunctionClass > classActionFunction = new ActionFunctionClass();
 	registrar->registerClass(classActionFunction);
+	
+	Ref< AutoRuntimeClass< FlashOptimizer > > classFlashOptimizer = new AutoRuntimeClass< FlashOptimizer >();
+	classFlashOptimizer->addConstructor();
+	classFlashOptimizer->addMethod("merge", &FlashOptimizer::merge);
+	classFlashOptimizer->addMethod("rasterize", &FlashOptimizer::rasterize);
+	registrar->registerClass(classFlashOptimizer);
 }
 
 	}

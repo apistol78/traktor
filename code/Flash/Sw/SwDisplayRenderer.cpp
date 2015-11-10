@@ -110,6 +110,7 @@ void SwDisplayRenderer::begin(
 	const Vector4& viewOffset
 )
 {
+	/*
 	uint32_t color = castColor(backgroundColor);
 	
 	uint32_t* bits = static_cast< uint32_t* >(m_bits);
@@ -124,7 +125,7 @@ void SwDisplayRenderer::begin(
 		}
 		bits += m_pitch >> 2;
 	}
-
+	*/
 	m_frameBounds = frameBounds;
 }
 
@@ -297,19 +298,19 @@ void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Mat
 
 						if (a == 255)
 						{
-							uint32_t color = (r << 16) | (g << 8) | b;
+							uint32_t color = 0xff000000 | (r << 16) | (g << 8) | b;
 
 							int icx1 = int(cx1);
 							int icx2 = int(cx2);
 
 							float fcx1 = cx1 - icx1;
-							bits[icx1] = lerpColor(bits[icx1], color, 1.0f - fcx1);
+							bits[icx1] = 0xff000000 | lerpColor(bits[icx1], color, 1.0f - fcx1);
 							
 							for (int x = icx1 + 1; x <= icx2 - 1; ++x)
 								bits[x] = color;
 
 							float fcx2 = cx2 - icx2;
-							bits[icx2] = lerpColor(bits[icx2], color, fcx2);
+							bits[icx2] = 0xff000000 | lerpColor(bits[icx2], color, fcx2);
 						}
 						else if (a != 0)
 						{
@@ -328,7 +329,7 @@ void SwDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Mat
 								int fg = dg + (((g - dg) * a) >> 8);
 								int fb = db + (((b - db) * a) >> 8);
 
-								bits[x] = (fr << 16) | (fg << 8) | fb;
+								bits[x] = 0xff000000 | (fr << 16) | (fg << 8) | fb;
 							}
 						}
 					}

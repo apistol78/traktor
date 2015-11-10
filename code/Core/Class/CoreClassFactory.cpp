@@ -5,6 +5,7 @@
 #include "Core/Date/DateTime.h"
 #include "Core/Io/AnsiEncoding.h"
 #include "Core/Io/BufferedStream.h"
+#include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/File.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IEncoding.h"
@@ -44,6 +45,11 @@ RefArray< File > IVolume_find(IVolume* self, const std::wstring& mask)
 	RefArray< File > files;
 	self->find(mask, files);
 	return files;
+}
+
+int32_t IStream_seek(IStream* self, int32_t origin, int32_t offset)
+{
+	return self->seek((IStream::SeekOriginType)origin, offset);
 }
 
 FileSystem* FileSystem_getInstance()
@@ -90,6 +96,11 @@ Any StringReader_readLine(StringReader* self)
 		return Any::fromString(tmp);
 	else
 		return Any();
+}
+
+bool StreamCopy_execute(StreamCopy* self)
+{
+	return self->execute();
 }
 
 std::wstring Environment_get(Environment* self, const std::wstring& name)
@@ -297,12 +308,16 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classIVolume);
 
 	Ref< AutoRuntimeClass< IStream > > classIStream = new AutoRuntimeClass< IStream >();
+	classIStream->addConstant("SeekCurrent", Any::fromInteger(IStream::SeekCurrent));
+	classIStream->addConstant("SeekEnd", Any::fromInteger(IStream::SeekEnd));
+	classIStream->addConstant("SeekSet", Any::fromInteger(IStream::SeekSet));
 	classIStream->addMethod("close", &IStream::close);
 	classIStream->addMethod("canRead", &IStream::canRead);
 	classIStream->addMethod("canWrite", &IStream::canWrite);
 	classIStream->addMethod("canSeek", &IStream::canSeek);
 	classIStream->addMethod("tell", &IStream::tell);
 	classIStream->addMethod("available", &IStream::available);
+	classIStream->addMethod("seek", &IStream_seek);
 	classIStream->addMethod("flush", &IStream::flush);
 	registrar->registerClass(classIStream);
 
@@ -310,6 +325,10 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBufferedStream->addConstructor< IStream* >();
 	classBufferedStream->addConstructor< IStream*, uint32_t >();
 	registrar->registerClass(classBufferedStream);
+
+	Ref< AutoRuntimeClass< DynamicMemoryStream > > classDynamicMemoryStream = new AutoRuntimeClass< DynamicMemoryStream >();
+	classDynamicMemoryStream->addConstructor< bool, bool >();
+	registrar->registerClass(classDynamicMemoryStream);
 
 	Ref< AutoRuntimeClass< FileSystem > > classFileSystem = new AutoRuntimeClass< FileSystem >();
 	classFileSystem->addStaticMethod("getInstance", &FileSystem_getInstance);
@@ -365,7 +384,7 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	Ref< AutoRuntimeClass< StreamCopy > > classStreamCopy = new AutoRuntimeClass< StreamCopy >();
 	classStreamCopy->addConstructor< traktor::IStream*, traktor::IStream* >();
-	classStreamCopy->addMethod("execute", &StreamCopy::execute);
+	classStreamCopy->addMethod("execute", &StreamCopy_execute);
 	registrar->registerClass(classStreamCopy);
 
 	Ref< AutoRuntimeClass< Environment > > classEnvironment = new AutoRuntimeClass< Environment >();
