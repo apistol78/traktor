@@ -146,9 +146,8 @@ void FlashSpriteInstance::updateDisplayList()
 		for (uint32_t i = 0; i <= m_currentFrame; ++i)
 		{
 			FlashFrame* frame = m_sprite->getFrame(i);
-			T_ASSERT (frame);
-
-			m_displayList.updateFrame(this, frame);
+			if (frame)
+				m_displayList.updateFrame(this, frame);
 		}
 		m_displayList.updateEnd();
 	}
@@ -158,9 +157,8 @@ void FlashSpriteInstance::updateDisplayList()
 		for (uint32_t i = m_lastUpdateFrame; i <= m_currentFrame; ++i)
 		{
 			FlashFrame* frame = m_sprite->getFrame(i);
-			T_ASSERT (frame);
-
-			m_displayList.updateFrame(this, frame);
+			if (frame)
+				m_displayList.updateFrame(this, frame);
 		}
 		m_displayList.updateEnd();
 	}
@@ -212,6 +210,27 @@ void FlashSpriteInstance::updateSounds(FlashSoundPlayer* soundPlayer)
 			static_cast< FlashSpriteInstance* >(*i)->updateSounds(soundPlayer);
 	}
 	m_visibleCharacters.resize(0);
+}
+
+Ref< FlashSpriteInstance > FlashSpriteInstance::createEmptyMovieClip(const std::string& clipName, int32_t depth)
+{
+	ActionContext* context = getContext();
+	T_ASSERT (context);
+
+	// Create fake character ID.
+	uint16_t emptyClipId = depth + 40000;
+
+	// Create empty movie character with a single frame.
+	Ref< FlashSprite > emptyClip = new FlashSprite(emptyClipId, 0);
+	emptyClip->addFrame(new FlashFrame());
+
+	// Create new instance of movie clip.
+	Ref< FlashSpriteInstance > emptyClipInstance = checked_type_cast< FlashSpriteInstance* >(emptyClip->createInstance(context, this, clipName, Matrix33::identity(), 0, 0));
+	emptyClipInstance->setName(clipName);
+
+	// Add new instance to display list.
+	m_displayList.showObject(depth, emptyClipId, emptyClipInstance, true);
+	return emptyClipInstance;
 }
 
 void FlashSpriteInstance::removeMovieClip()

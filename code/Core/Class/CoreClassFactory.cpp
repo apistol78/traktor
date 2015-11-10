@@ -4,6 +4,7 @@
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Core/Date/DateTime.h"
 #include "Core/Io/AnsiEncoding.h"
+#include "Core/Io/BufferedStream.h"
 #include "Core/Io/File.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IEncoding.h"
@@ -304,6 +305,11 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classIStream->addMethod("available", &IStream::available);
 	classIStream->addMethod("flush", &IStream::flush);
 	registrar->registerClass(classIStream);
+
+	Ref< AutoRuntimeClass< BufferedStream > > classBufferedStream = new AutoRuntimeClass< BufferedStream >();
+	classBufferedStream->addConstructor< IStream* >();
+	classBufferedStream->addConstructor< IStream*, uint32_t >();
+	registrar->registerClass(classBufferedStream);
 
 	Ref< AutoRuntimeClass< FileSystem > > classFileSystem = new AutoRuntimeClass< FileSystem >();
 	classFileSystem->addStaticMethod("getInstance", &FileSystem_getInstance);

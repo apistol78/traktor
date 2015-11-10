@@ -838,6 +838,21 @@ Vector2 BoxedMatrix33::transform(const BoxedVector2* v) const
 	return m_value * v->unbox();
 }
 
+Matrix33 BoxedMatrix33::translate(float x, float y)
+{
+	return traktor::translate(x, y);
+}
+
+Matrix33 BoxedMatrix33::scale(float x, float y)
+{
+	return traktor::scale(x, y);
+}
+
+Matrix33 BoxedMatrix33::rotate(float angle)
+{
+	return traktor::rotate(angle);
+}
+
 std::wstring BoxedMatrix33::toString() const
 {
 	return L"(matrix33)";
@@ -1563,6 +1578,9 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedMatrix33->addMethod("get", &BoxedMatrix33::get);
 	classBoxedMatrix33->addMethod("concat", &BoxedMatrix33::concat);
 	classBoxedMatrix33->addMethod("transform", &BoxedMatrix33::transform);
+	classBoxedMatrix33->addStaticMethod("translate", &BoxedMatrix33::translate);
+	classBoxedMatrix33->addStaticMethod("scale", &BoxedMatrix33::scale);
+	classBoxedMatrix33->addStaticMethod("rotate", &BoxedMatrix33::rotate);
 	classBoxedMatrix33->addOperator< Vector2, const BoxedVector2* >('*', &BoxedMatrix33::transform);
 	classBoxedMatrix33->addOperator< Matrix33, const BoxedMatrix33* >('*', &BoxedMatrix33::concat);
 	registrar->registerClass(classBoxedMatrix33);

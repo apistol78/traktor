@@ -16,6 +16,8 @@ namespace traktor
 	namespace flash
 	{
 
+T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashMovieFactory", FlashMovieFactory, Object)
+
 FlashMovieFactory::FlashMovieFactory()
 {
 	// Setup tag readers.
@@ -56,7 +58,7 @@ FlashMovieFactory::FlashMovieFactory()
 	m_tagReaders[TiEnableDebugger] = new FlashTagProtect(2);
 	m_tagReaders[TiEnableDebugger2] = new FlashTagProtect(3);
 	m_tagReaders[TiFrameLabel] = new FlashTagFrameLabel();
-	m_tagReaders[TiDoABC] = new FlashTagDoABC();
+	//m_tagReaders[TiDoABC] = new FlashTagDoABC();
 	m_tagReaders[TiDefineSound] = new FlashTagDefineSound();
 	m_tagReaders[TiStartSound] = new FlashTagStartSound(1);
 	m_tagReaders[TiStartSound2] = new FlashTagStartSound(2);

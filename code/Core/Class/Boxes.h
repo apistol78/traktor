@@ -622,6 +622,12 @@ public:
 
 	Vector2 transform(const BoxedVector2* v) const;
 
+	static Matrix33 translate(float x, float y);
+
+	static Matrix33 scale(float x, float y);
+
+	static Matrix33 rotate(float angle);
+
 	const Matrix33& unbox() const { return m_value; }
 
 	virtual std::wstring toString() const T_OVERRIDE T_FINAL;

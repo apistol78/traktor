@@ -1,10 +1,15 @@
 #include "Core/Class/AutoRuntimeClass.h"
+#include "Core/Class/Boxes.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
+#include "Core/Io/IStream.h"
 #include "Drawing/Image.h"
 #include "Flash/FlashCast.h"
 #include "Flash/FlashClassFactory.h"
+#include "Flash/FlashMovie.h"
+#include "Flash/FlashMovieFactory.h"
 #include "Flash/FlashMoviePlayer.h"
 #include "Flash/FlashSpriteInstance.h"
+#include "Flash/SwfReader.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunction.h"
 #include "Flash/Action/ActionValue.h"
@@ -13,6 +18,20 @@ namespace traktor
 {
 	namespace flash
 	{
+		namespace
+		{
+
+ActionObject* ActionObjectRelay_getAsObject_0(ActionObjectRelay* self)
+{
+	return self->getAsObject();
+}
+
+ActionObject* ActionObjectRelay_getAsObject_1(ActionObjectRelay* self, ActionContext* cx)
+{
+	return self->getAsObject(cx);
+}
+
+		}
 
 class ActionObjectClass : public IRuntimeClass
 {
@@ -351,6 +370,11 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashClassFactory", 0, FlashClass
 
 void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
+	Ref< AutoRuntimeClass< FlashMovieFactory > > classFlashMovieFactory = new AutoRuntimeClass< FlashMovieFactory >();
+	classFlashMovieFactory->addConstructor();
+	classFlashMovieFactory->addMethod("createMovie", &FlashMovieFactory::createMovie);
+	registrar->registerClass(classFlashMovieFactory);
+
 	Ref< AutoRuntimeClass< FlashMoviePlayer > > classFlashMoviePlayer = new AutoRuntimeClass< FlashMoviePlayer >();
 	classFlashMoviePlayer->addMethod< void, uint32_t >("gotoAndPlay", &FlashMoviePlayer::gotoAndPlay);
 	classFlashMoviePlayer->addMethod< void, uint32_t >("gotoAndStop", &FlashMoviePlayer::gotoAndStop);
@@ -362,9 +386,61 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFlashMoviePlayer->addMethod("postMouseDown", &FlashMoviePlayer::postMouseDown);
 	classFlashMoviePlayer->addMethod("postMouseUp", &FlashMoviePlayer::postMouseUp);
 	classFlashMoviePlayer->addMethod("postMouseMove", &FlashMoviePlayer::postMouseMove);
+	classFlashMoviePlayer->addMethod("getMovieInstance", &FlashMoviePlayer::getMovieInstance);
 	classFlashMoviePlayer->addMethod("setGlobal", &FlashMoviePlayer::setGlobal);
 	classFlashMoviePlayer->addMethod("getGlobal", &FlashMoviePlayer::getGlobal);
 	registrar->registerClass(classFlashMoviePlayer);
+
+	Ref< AutoRuntimeClass< SwfReader > > classSwfReader = new AutoRuntimeClass< SwfReader >();
+	classSwfReader->addConstructor< IStream* >();
+	registrar->registerClass(classSwfReader);
+
+	Ref< AutoRuntimeClass< FlashCharacterInstance > > classFlashCharacterInstance = new AutoRuntimeClass< FlashCharacterInstance >();
+	classFlashCharacterInstance->addMethod("getContext", &FlashCharacterInstance::getContext);
+	classFlashCharacterInstance->addMethod("getParent", &FlashCharacterInstance::getParent);
+	classFlashCharacterInstance->addMethod("setName", &FlashCharacterInstance::setName);
+	classFlashCharacterInstance->addMethod("getName", &FlashCharacterInstance::getName);
+	classFlashCharacterInstance->addMethod("getTarget", &FlashCharacterInstance::getTarget);
+	classFlashCharacterInstance->addMethod("setTransform", &FlashCharacterInstance::setTransform);
+	classFlashCharacterInstance->addMethod("getTransform", &FlashCharacterInstance::getTransform);
+	classFlashCharacterInstance->addMethod("getFullTransform", &FlashCharacterInstance::getFullTransform);
+	classFlashCharacterInstance->addMethod("setVisible", &FlashCharacterInstance::setVisible);
+	classFlashCharacterInstance->addMethod("isVisible", &FlashCharacterInstance::isVisible);
+	classFlashCharacterInstance->addMethod("setEnabled", &FlashCharacterInstance::setEnabled);
+	classFlashCharacterInstance->addMethod("isEnabled", &FlashCharacterInstance::isEnabled);
+	registrar->registerClass(classFlashCharacterInstance);
+
+	Ref< AutoRuntimeClass< FlashSpriteInstance > > classFlashSpriteInstance = new AutoRuntimeClass< FlashSpriteInstance >();
+	classFlashSpriteInstance->addMethod("getSprite", &FlashSpriteInstance::getSprite);
+	classFlashSpriteInstance->addMethod("gotoFrame", &FlashSpriteInstance::gotoFrame);
+	classFlashSpriteInstance->addMethod("gotoPrevious", &FlashSpriteInstance::gotoPrevious);
+	classFlashSpriteInstance->addMethod("gotoNext", &FlashSpriteInstance::gotoNext);
+	classFlashSpriteInstance->addMethod("getCurrentFrame", &FlashSpriteInstance::getCurrentFrame);
+	classFlashSpriteInstance->addMethod("setPlaying", &FlashSpriteInstance::setPlaying);
+	classFlashSpriteInstance->addMethod("getPlaying", &FlashSpriteInstance::getPlaying);
+	classFlashSpriteInstance->addMethod("createEmptyMovieClip", &FlashSpriteInstance::createEmptyMovieClip);
+	classFlashSpriteInstance->addMethod("removeMovieClip", &FlashSpriteInstance::removeMovieClip);
+	classFlashSpriteInstance->addMethod("getMouseX", &FlashSpriteInstance::getMouseX);
+	classFlashSpriteInstance->addMethod("getMouseY", &FlashSpriteInstance::getMouseY);
+	registrar->registerClass(classFlashSpriteInstance);
+
+	Ref< AutoRuntimeClass< FlashMovie > > classFlashMovie = new AutoRuntimeClass< FlashMovie >();
+	classFlashMovie->addMethod("createExternalMovieClipInstance", &FlashMovie::createExternalMovieClipInstance);
+	registrar->registerClass(classFlashMovie);
+
+	Ref< AutoRuntimeClass< ActionObjectRelay > > classActionObjectRelay = new AutoRuntimeClass< ActionObjectRelay >();
+	classActionObjectRelay->addMethod("getAsObject", &ActionObjectRelay_getAsObject_0);
+	classActionObjectRelay->addMethod("getAsObject", &ActionObjectRelay_getAsObject_1);
+	registrar->registerClass(classActionObjectRelay);
+
+	Ref< AutoRuntimeClass< ActionContext > > classActionContext = new AutoRuntimeClass< ActionContext >();
+	classActionContext->addMethod("lookupClass", &ActionContext::lookupClass);
+	classActionContext->addMethod("getMovie", &ActionContext::getMovie);
+	classActionContext->addMethod("getGlobal", &ActionContext::getGlobal);
+	classActionContext->addMethod("getMovieClip", &ActionContext::getMovieClip);
+	classActionContext->addMethod("getFocus", &ActionContext::getFocus);
+	classActionContext->addMethod("getPressed", &ActionContext::getPressed);
+	registrar->registerClass(classActionContext);
 
 	Ref< ActionObjectClass > classActionObject = new ActionObjectClass();
 	registrar->registerClass(classActionObject);

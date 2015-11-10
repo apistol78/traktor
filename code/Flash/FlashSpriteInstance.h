@@ -59,6 +59,8 @@ public:
 
 	void updateSounds(FlashSoundPlayer* soundPlayer);
 
+	Ref< FlashSpriteInstance > createEmptyMovieClip(const std::string& clipName, int32_t depth);
+
 	void removeMovieClip();
 
 	Ref< FlashSpriteInstance > clone() const;

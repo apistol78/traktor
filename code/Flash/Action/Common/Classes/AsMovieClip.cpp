@@ -421,25 +421,7 @@ void AsMovieClip::MovieClip_clear(FlashSpriteInstance* self) const
 
 Ref< FlashSpriteInstance > AsMovieClip::MovieClip_createEmptyMovieClip(FlashSpriteInstance* self, const std::string& emptyClipName, int32_t depth) const
 {
-	ActionContext* context = self->getContext();
-	T_ASSERT (context);
-
-	// Create fake character ID.
-	uint16_t emptyClipId = depth + 40000;
-
-	// Create empty movie character with a single frame.
-	Ref< FlashSprite > emptyClip = new FlashSprite(emptyClipId, 0);
-	emptyClip->addFrame(new FlashFrame());
-
-	// Create new instance of movie clip.
-	Ref< FlashSpriteInstance > emptyClipInstance = checked_type_cast< FlashSpriteInstance* >(emptyClip->createInstance(context, self, emptyClipName, Matrix33::identity(), 0, 0));
-	emptyClipInstance->setName(emptyClipName);
-
-	// Add new instance to display list.
-	FlashDisplayList& displayList = self->getDisplayList();
-	displayList.showObject(depth, emptyClipId, emptyClipInstance, true);
-
-	return emptyClipInstance;
+	return self->createEmptyMovieClip(emptyClipName, depth);
 }
 
 Ref< FlashEditInstance > AsMovieClip::MovieClip_createTextField(

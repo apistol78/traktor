@@ -47,7 +47,7 @@ uint32_t FlashSprite::getFrameCount() const
 
 FlashFrame* FlashSprite::getFrame(uint32_t frameId) const
 {
-	return m_frames[frameId];
+	return frameId < m_frames.size() ? m_frames[frameId] : 0;
 }
 
 int FlashSprite::findFrame(const std::string& frameLabel) const

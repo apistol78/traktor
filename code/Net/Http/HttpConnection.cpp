@@ -7,8 +7,8 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/Utf8Encoding.h"
-#include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
 
 namespace traktor
 {
@@ -26,7 +26,7 @@ UrlConnection::EstablishResult HttpConnection::establish(const Url& url, Url* ou
 	SocketAddressIPv6 addr(url.getHost(), url.getPort());
 	if (!addr.valid())
 		return ErInvalidUrl;
-	
+
 	// Create and connect socket to host.
 	m_socket = new TcpSocket();
 	if (!m_socket->connect(addr))
@@ -49,6 +49,7 @@ UrlConnection::EstablishResult HttpConnection::establish(const Url& url, Url* ou
 	ss << L"Host: " << url.getHost() << L"\r\n";
 	ss << L"User-Agent: traktor/1.0\r\n";
 	ss << L"Accept: */*\r\n";
+	ss << L"X-Requested-With: XMLHttpRequest\r\n";
 	ss << L"\r\n\r\n";
 
 	Ref< IStream > stream = new SocketStream(m_socket);

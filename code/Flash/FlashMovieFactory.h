@@ -26,6 +26,8 @@ class FlashTag;
  */
 class T_DLLCLASS FlashMovieFactory : public Object
 {
+	T_RTTI_CLASS;
+
 public:
 	FlashMovieFactory();
 
