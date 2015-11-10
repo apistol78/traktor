@@ -114,25 +114,23 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	dependencyTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_MOVE_DEPENDENCY_DOWN"), 3, ui::Command(L"Script.Editor.MoveDependencyDown")));
 	dependencyTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ScriptEditorPage::eventDependencyToolClick);
 
+	Ref< ui::custom::Splitter > splitterDependencies = new ui::custom::Splitter();
+	splitterDependencies->create(tabDependencies, false, 50, true);
+
 	m_dependencyList = new ui::ListBox();
-	if (!m_dependencyList->create(tabDependencies, L"", ui::ListBox::WsSingle))
+	if (!m_dependencyList->create(splitterDependencies, L"", ui::ListBox::WsSingle))
 		return false;
 
 	m_dependencyList->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptEditorPage::eventDependencyListDoubleClick);
 
-	Ref< ui::TabPage > tabDependents = new ui::TabPage();
-	if (!tabDependents->create(tab, i18n::Text(L"SCRIPT_EDITOR_DEPENDENTS"), new ui::TableLayout(L"100%", L"100%", 0, 0)))
-		return false;
-
 	m_dependentList = new ui::ListBox();
-	if (!m_dependentList->create(tabDependents, L"", ui::ListBox::WsSingle))
+	if (!m_dependentList->create(splitterDependencies, L"", ui::ListBox::WsSingle))
 		return false;
 
 	m_dependentList->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptEditorPage::eventDependentListDoubleClick);
 
 	tab->addPage(tabOutline);
 	tab->addPage(tabDependencies);
-	tab->addPage(tabDependents);
 	tab->setActivePage(tabOutline);
 
 	m_site->createAdditionalPanel(m_containerExplorer, ui::scaleBySystemDPI(300), false);
