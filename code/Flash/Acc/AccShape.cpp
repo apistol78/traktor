@@ -45,7 +45,6 @@ const float c_curveSign[3] =
 AccShape::AccShape(AccShapeResources* shapeResources)
 :	m_shapeResources(shapeResources)
 ,	m_vertexPool(0)
-,	m_tesselationTriangleCount(0)
 ,	m_batchFlags(0)
 ,	m_needUpdate(true)
 {
@@ -62,20 +61,11 @@ bool AccShape::createTesselation(const AlignedVector< Path >& paths)
 	Triangulator triangulator;
 	Segment s;
 
-	m_tesselationBatches.resize(0);
-	m_tesselationBatches.reserve(paths.size());
-
-	m_tesselationTriangleCount = 0;
-	m_bounds.mn.x = m_bounds.mn.y =  std::numeric_limits< float >::max();
-	m_bounds.mx.x = m_bounds.mx.y = -std::numeric_limits< float >::max();
-
 	// Create triangles through tessellation.
+	m_triangles.resize(0);
 	for (AlignedVector< Path >::const_iterator i = paths.begin(); i != paths.end(); ++i)
 	{
 		segments.resize(0);
-
-		m_tesselationBatches.push_back(TesselationBatch());
-		TesselationBatch& batch = m_tesselationBatches.back();
 
 		const AlignedVector< SubPath >& subPaths = i->getSubPaths();
 		for (AlignedVector< SubPath >::const_iterator j = subPaths.begin(); j != subPaths.end(); ++j)
@@ -115,19 +105,21 @@ bool AccShape::createTesselation(const AlignedVector< Path >& paths)
 			}
 		}
 
-		triangulator.triangulate(segments, batch.triangles);
-		m_tesselationTriangleCount += uint32_t(batch.triangles.size());
+		triangulator.triangulate(segments, m_triangles);
+	}
 
-		for (AlignedVector< Triangle >::const_iterator j = batch.triangles.begin(); j != batch.triangles.end(); ++j)
+	// Update shape's bounds from all triangles.
+	m_bounds.mn.x = m_bounds.mn.y =  std::numeric_limits< float >::max();
+	m_bounds.mx.x = m_bounds.mx.y = -std::numeric_limits< float >::max();
+	for (AlignedVector< Triangle >::const_iterator j = m_triangles.begin(); j != m_triangles.end(); ++j)
+	{
+		for (int k = 0; k < 3; ++k)
 		{
-			for (int k = 0; k < 3; ++k)
-			{
-				Vector2 pt = j->v[k];
-				m_bounds.mn.x = min< float >(m_bounds.mn.x, pt.x);
-				m_bounds.mn.y = min< float >(m_bounds.mn.y, pt.y);
-				m_bounds.mx.x = max< float >(m_bounds.mx.x, pt.x);
-				m_bounds.mx.y = max< float >(m_bounds.mx.y, pt.y);
-			}
+			Vector2 pt = j->v[k];
+			m_bounds.mn.x = min< float >(m_bounds.mn.x, pt.x);
+			m_bounds.mn.y = min< float >(m_bounds.mn.y, pt.y);
+			m_bounds.mx.x = max< float >(m_bounds.mx.x, pt.x);
+			m_bounds.mx.y = max< float >(m_bounds.mx.y, pt.y);
 		}
 	}
 
@@ -155,12 +147,9 @@ bool AccShape::updateRenderable(
 	const AlignedVector< FlashLineStyle >& lineStyles
 )
 {
-	if (!m_tesselationTriangleCount)
-		return false;
-
 	// Do we need to update?
-	if (!m_needUpdate)
-		return true;
+	if (m_triangles.empty() || !m_needUpdate)
+		return false;
 
 	// Free previous vertex range if any.
 	if (m_vertexRange.vertexBuffer)
@@ -171,7 +160,7 @@ bool AccShape::updateRenderable(
 	}
 
 	// Allocate vertex range.
-	if (!vertexPool->acquireRange(m_tesselationTriangleCount * 3, m_vertexRange))
+	if (!vertexPool->acquireRange(m_triangles.size() * 3, m_vertexRange))
 		return false;
 
 	T_ASSERT (m_vertexRange.vertexBuffer);
@@ -182,7 +171,6 @@ bool AccShape::updateRenderable(
 	uint32_t vertexOffset = 0;
 	Matrix33 textureMatrix;
 
-	m_renderBatches.reserve(m_tesselationBatches.size());
 	m_batchFlags = 0;
 
 	AccShapeVertexPool::Vertex* vertex = static_cast< AccShapeVertexPool::Vertex* >(m_vertexRange.vertexBuffer->lock());
@@ -190,77 +178,74 @@ bool AccShape::updateRenderable(
 		return false;
 
 	AlignedVector< RenderBatch >& batch = m_renderBatches;
-	for (AlignedVector< TesselationBatch >::const_iterator i = m_tesselationBatches.begin(); i != m_tesselationBatches.end(); ++i)
+	for (AlignedVector< Triangle >::const_iterator j = m_triangles.begin(); j != m_triangles.end(); ++j)
 	{
-		for (AlignedVector< Triangle >::const_iterator j = i->triangles.begin(); j != i->triangles.end(); ++j)
+		Color4ub color(255, 255, 255, 255);
+		AccTextureCache::BitmapRect texture;
+		float curveSign = 0.0f;
+
+		if (j->type == TcIn)
+			curveSign = 1.0f;
+		else if (j->type == TcOut)
+			curveSign = -1.0f;
+
+		if (j->fillStyle && j->fillStyle - 1 < uint16_t(fillStyles.size()))
 		{
-			Color4ub color(255, 255, 255, 255);
-			AccTextureCache::BitmapRect texture;
-			float curveSign = 0.0f;
+			const FlashFillStyle& style = fillStyles[j->fillStyle - 1];
 
-			if (j->type == TcIn)
-				curveSign = 1.0f;
-			else if (j->type == TcOut)
-				curveSign = -1.0f;
-
-			if (j->fillStyle && j->fillStyle - 1 < uint16_t(fillStyles.size()))
+			const AlignedVector< FlashFillStyle::ColorRecord >& colorRecords = style.getColorRecords();
+			if (colorRecords.size() > 1)
 			{
-				const FlashFillStyle& style = fillStyles[j->fillStyle - 1];
-
-				const AlignedVector< FlashFillStyle::ColorRecord >& colorRecords = style.getColorRecords();
-				if (colorRecords.size() > 1)
-				{
-					T_ASSERT (textureCache);
-					texture = textureCache->getGradientTexture(style);
-					textureMatrix = textureTS * style.getGradientMatrix().inverse();
-					m_batchFlags |= BfHaveTextured;
-				}
-				else if (colorRecords.size() == 1)
-				{
-					color.r = colorRecords.front().color.red;
-					color.g = colorRecords.front().color.green;
-					color.b = colorRecords.front().color.blue;
-					color.a = colorRecords.front().color.alpha;
-					m_batchFlags |= BfHaveSolid;
-				}
-
-				const FlashBitmap* bitmap = dictionary.getBitmap(style.getFillBitmap());
-				if (bitmap)
-				{
-					T_ASSERT (textureCache);
-					texture = textureCache->getBitmapTexture(*bitmap);
-					textureMatrix = scale(1.0f / bitmap->getWidth(), 1.0f / bitmap->getHeight()) * style.getFillBitmapMatrix().inverse();
-					m_batchFlags |= BfHaveTextured;
-				}
+				T_ASSERT (textureCache);
+				texture = textureCache->getGradientTexture(style);
+				textureMatrix = textureTS * style.getGradientMatrix().inverse();
+				m_batchFlags |= BfHaveTextured;
+			}
+			else if (colorRecords.size() == 1)
+			{
+				color.r = colorRecords.front().color.red;
+				color.g = colorRecords.front().color.green;
+				color.b = colorRecords.front().color.blue;
+				color.a = colorRecords.front().color.alpha;
+				m_batchFlags |= BfHaveSolid;
 			}
 
-			if (batch.empty() || batch.back().texture != texture)
+			const FlashBitmap* bitmap = dictionary.getBitmap(style.getFillBitmap());
+			if (bitmap)
 			{
-				batch.push_back(RenderBatch());
-				batch.back().primitives.setNonIndexed(render::PtTriangles, vertexOffset, 0);
-				batch.back().texture = texture;
-				batch.back().textureMatrix = textureMatrix;
+				T_ASSERT (textureCache);
+				texture = textureCache->getBitmapTexture(*bitmap);
+				textureMatrix = scale(1.0f / bitmap->getWidth(), 1.0f / bitmap->getHeight()) * style.getFillBitmapMatrix().inverse();
+				m_batchFlags |= BfHaveTextured;
 			}
-
-			for (int k = 0; k < 3; ++k)
-			{
-				Vector2 P = j->v[k];
-				vertex->pos[0] = P.x;
-				vertex->pos[1] = P.y;
-				vertex->uv[0] = c_controlPoints[k][0];
-				vertex->uv[1] = c_controlPoints[k][1];
-				vertex->uv[2] = curveSign;
-				vertex->color[0] = color.r;
-				vertex->color[1] = color.g;
-				vertex->color[2] = color.b;
-				vertex->color[3] = color.a;
-				vertex++;
-			}
-
-			batch.back().primitives.count++;
-
-			vertexOffset += 3;
 		}
+
+		if (batch.empty() || batch.back().texture != texture)
+		{
+			batch.push_back(RenderBatch());
+			batch.back().primitives.setNonIndexed(render::PtTriangles, vertexOffset, 0);
+			batch.back().texture = texture;
+			batch.back().textureMatrix = textureMatrix;
+		}
+
+		for (int k = 0; k < 3; ++k)
+		{
+			Vector2 P = j->v[k];
+			vertex->pos[0] = P.x;
+			vertex->pos[1] = P.y;
+			vertex->uv[0] = c_controlPoints[k][0];
+			vertex->uv[1] = c_controlPoints[k][1];
+			vertex->uv[2] = curveSign;
+			vertex->color[0] = color.r;
+			vertex->color[1] = color.g;
+			vertex->color[2] = color.b;
+			vertex->color[3] = color.a;
+			vertex++;
+		}
+
+		batch.back().primitives.count++;
+
+		vertexOffset += 3;
 	}
 
 	m_vertexRange.vertexBuffer->unlock();
@@ -285,7 +270,6 @@ void AccShape::destroy()
 		m_vertexRange = AccShapeVertexPool::Range();
 	}
 
-	m_tesselationBatches.clear();
 	m_renderBatches.clear();
 }
 
