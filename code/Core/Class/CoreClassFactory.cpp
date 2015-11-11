@@ -275,6 +275,9 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classPath);
 
 	Ref< AutoRuntimeClass< File > > classFile = new AutoRuntimeClass< File >();
+	classFile->addConstant("FmRead", Any::fromInteger(File::FmRead));
+	classFile->addConstant("FmWrite", Any::fromInteger(File::FmWrite));
+	classFile->addConstant("FmAppend", Any::fromInteger(File::FmAppend));
 	classFile->addConstructor();
 	classFile->addConstructor< const Path&, uint64_t, uint32_t, const DateTime&, const DateTime&, const DateTime& >();
 	classFile->addConstructor< const Path&, uint64_t, uint32_t >();

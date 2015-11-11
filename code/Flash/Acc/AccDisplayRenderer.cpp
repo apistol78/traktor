@@ -138,6 +138,7 @@ bool AccDisplayRenderer::create(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
 	uint32_t frameCount,
+	uint32_t renderContextSize,
 	bool clearBackground,
 	float stereoscopicOffset
 )
@@ -194,7 +195,7 @@ bool AccDisplayRenderer::create(
 
 	m_renderContexts.resize(frameCount);
 	for (uint32_t i = 0; i < frameCount; ++i)
-		m_renderContexts[i] = new render::RenderContext(2 * 1024 * 1024);
+		m_renderContexts[i] = new render::RenderContext(renderContextSize);
 
 	// Allocate "global" parameter context; as it's reset for each render
 	// call this can be fairly small.

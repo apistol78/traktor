@@ -106,6 +106,14 @@ void Path::end(uint16_t fillStyle0, uint16_t fillStyle1, uint16_t lineStyle)
 	}
 }
 
+Vector2 Path::getOrigin() const
+{
+	if (!m_current.segments.empty())
+		return m_points[m_current.segments.front().pointsOffset];
+	else
+		return m_cursor;
+}
+
 Aabb2 Path::getBounds() const
 {
 	Aabb2 bounds;

@@ -41,7 +41,7 @@ Size Splitter::getMinimumSize() const
 	Size size(0, 0);
 	if (m_vertical == true)
 	{
-		size.cx = c_splitterSize;
+		size.cx = ui::scaleBySystemDPI(c_splitterSize);
 		
 		Widget* left = getLeftWidget();
 		if (left != 0)
@@ -59,7 +59,7 @@ Size Splitter::getMinimumSize() const
 	}
 	else
 	{
-		size.cy = c_splitterSize;
+		size.cy = ui::scaleBySystemDPI(c_splitterSize);
 		
 		Widget* left = getLeftWidget();
 		if (left != 0)
@@ -83,7 +83,7 @@ Size Splitter::getPreferedSize() const
 	Size size(0, 0);
 	if (m_vertical == true)
 	{
-		size.cx = c_splitterSize;
+		size.cx = ui::scaleBySystemDPI(c_splitterSize);
 		
 		Widget* left = getLeftWidget();
 		if (left != 0)
@@ -101,7 +101,7 @@ Size Splitter::getPreferedSize() const
 	}
 	else
 	{
-		size.cy = c_splitterSize;
+		size.cy = ui::scaleBySystemDPI(c_splitterSize);
 		
 		Widget* left = getLeftWidget();
 		if (left != 0)
@@ -125,7 +125,7 @@ Size Splitter::getMaximumSize() const
 	Size size(0, 0);
 	if (m_vertical == true)
 	{
-		size.cx = c_splitterSize;
+		size.cx = ui::scaleBySystemDPI(c_splitterSize);
 		
 		Widget* left = getLeftWidget();
 		if (left != 0)
@@ -143,7 +143,7 @@ Size Splitter::getMaximumSize() const
 	}
 	else
 	{
-		size.cy = c_splitterSize;
+		size.cy = ui::scaleBySystemDPI(c_splitterSize);
 		
 		Widget* left = getLeftWidget();
 		if (left != 0)
@@ -173,9 +173,9 @@ void Splitter::update(const Rect* rc, bool immediate)
 	{
 		Rect rcLeft(0, 0, 0, 0);
 		if (m_vertical == true)
-			rcLeft.setSize(Size(position - c_splitterSize / 2, inner.getHeight()));
+			rcLeft.setSize(Size(position - ui::scaleBySystemDPI(c_splitterSize) / 2, inner.getHeight()));
 		else
-			rcLeft.setSize(Size(inner.getWidth(), position - c_splitterSize / 2));
+			rcLeft.setSize(Size(inner.getWidth(), position - ui::scaleBySystemDPI(c_splitterSize) / 2));
 		left->setRect(rcLeft);
 		left->update();
 	}
@@ -185,13 +185,13 @@ void Splitter::update(const Rect* rc, bool immediate)
 		Rect rcRight(0, 0, 0, 0);
 		if (m_vertical == true)
 		{
-			rcRight.left = position + c_splitterSize;
-			rcRight.setSize(Size(inner.getWidth() - (position + c_splitterSize / 2) - 1, inner.getHeight()));
+			rcRight.left = position + ui::scaleBySystemDPI(c_splitterSize);
+			rcRight.setSize(Size(inner.getWidth() - (position + ui::scaleBySystemDPI(c_splitterSize) / 2) - 1, inner.getHeight()));
 		}
 		else
 		{
-			rcRight.top = position + c_splitterSize;
-			rcRight.setSize(Size(inner.getWidth(), inner.getHeight() - (position + c_splitterSize / 2) - 1));
+			rcRight.top = position + ui::scaleBySystemDPI(c_splitterSize);
+			rcRight.setSize(Size(inner.getWidth(), inner.getHeight() - (position + ui::scaleBySystemDPI(c_splitterSize) / 2) - 1));
 		}
 		right->setRect(rcRight);
 		right->update();
@@ -262,8 +262,8 @@ void Splitter::eventMouseMove(MouseMoveEvent* event)
 	else
 	{
 		if (
-			pos >= position - c_splitterSize / 2 &&
-			pos <= position + c_splitterSize / 2
+			pos >= position - ui::scaleBySystemDPI(c_splitterSize) / 2 &&
+			pos <= position + ui::scaleBySystemDPI(c_splitterSize) / 2
 		)
 		{
 			setCursor(m_vertical ? CrSizeWE : CrSizeNS);
@@ -284,8 +284,8 @@ void Splitter::eventButtonDown(MouseButtonDownEvent* event)
 	int32_t position = getAbsolutePosition();
 
 	if (
-		pos >= position - c_splitterSize / 2 &&
-		pos <= position + c_splitterSize / 2
+		pos >= position - ui::scaleBySystemDPI(c_splitterSize) / 2 &&
+		pos <= position + ui::scaleBySystemDPI(c_splitterSize) / 2
 	)
 	{
 		setCursor(m_vertical ? CrSizeWE : CrSizeNS);

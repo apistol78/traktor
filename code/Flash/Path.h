@@ -125,6 +125,10 @@ public:
 	 */
 	void end(uint16_t fillStyle0, uint16_t fillStyle1, uint16_t lineStyle);
 
+	/*! \brief Get origin of current sub path.
+	 */
+	Vector2 getOrigin() const;
+
 	/*! \brief Get bounds.
 	 */
 	Aabb2 getBounds() const;
