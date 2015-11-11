@@ -219,37 +219,36 @@ Ref< FlashMovie > FlashOptimizer::rasterize(const FlashMovie* movie) const
 		return 0;
 
 	Aabb2 bounds = movieInstance->getLocalBounds();
-	int32_t frameWidth = int32_t(bounds.mx.x - bounds.mn.x);
-	int32_t frameHeight = int32_t(bounds.mx.y - bounds.mn.y);
+	int32_t width = int32_t(bounds.mx.x - bounds.mn.x);
+	int32_t height = int32_t(bounds.mx.y - bounds.mn.y);
 	
-	int32_t pixelWidth = frameWidth / 20;
-	int32_t pixelHeight = frameHeight / 20;
+	int32_t pixelWidth = width / 20;
+	int32_t pixelHeight = height / 20;
 
 	// Rasterize first frame into an image.
 	Ref< drawing::Image > image = new drawing::Image(drawing::PixelFormat::getA8R8G8B8(), pixelWidth, pixelHeight);
 	image->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
-	SwDisplayRenderer displayRenderer;
-	displayRenderer.setRasterTarget(image->getData(), image->getWidth(), image->getHeight(), image->getWidth() * 4);
+	SwDisplayRenderer displayRenderer(image);
 	FlashMovieRenderer movieRenderer(&displayRenderer);
 
 	movieRenderer.renderFrame(
 		movieInstance,
-		frameBounds,
-		frameWidth,
-		frameHeight,
+		bounds,
+		width,
+		height,
 		Vector4(0.0f, 0.0f, 1.0f, 1.0f)
 	);
 
 	safeDestroy(movieInstance);
 	GC::getInstance().collectCycles(true);
 
-	//static int32_t ccc = 0;
-	//image->save(L"flash_" + toString(ccc++) + L".tga");
+	static int32_t ccc = 0;
+	image->save(L"flash_" + toString(ccc++) + L".png");
 
 	// Generate a single shape from entire first frame.
 	Ref< FlashShape > outputShape = new FlashShape(2);
-	outputShape->create(1, frameWidth, frameHeight);
+	outputShape->create(1, width, height);
 
 	Ref< FlashFrame > outputFrame = new FlashFrame();
 
