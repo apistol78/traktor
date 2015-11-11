@@ -13,6 +13,13 @@
 
 namespace traktor
 {
+	namespace drawing
+	{
+
+class Image;
+
+	}
+
 	namespace flash
 	{
 
@@ -24,11 +31,9 @@ class T_DLLCLASS SwDisplayRenderer : public IDisplayRenderer
 	T_RTTI_CLASS;
 
 public:
-	SwDisplayRenderer();
+	SwDisplayRenderer(drawing::Image* image);
 
 	void setTransform(const Matrix33& transform);
-
-	void setRasterTarget(void* bits, uint32_t width, uint32_t height, uint32_t pitch);
 	
 	virtual void begin(
 		const FlashDictionary& dictionary,
@@ -65,13 +70,9 @@ private:
 
 	typedef std::vector< Span > spanline_t;
 
+	Ref< drawing::Image > m_image;
 	Matrix33 m_transform;
 	Aabb2 m_frameBounds;
-
-	void* m_bits;
-	uint32_t m_width;
-	uint32_t m_height;
-	uint32_t m_pitch;
 	std::vector< spanline_t > m_spanlines;
 
 	void insertSpan(spanline_t& spanline, float x, float dx, uint16_t fillStyle);
