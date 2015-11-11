@@ -739,6 +739,7 @@ void FlashLayer::createMoviePlayer()
 			m_environment->getResource()->getResourceManager(),
 			m_environment->getRender()->getRenderSystem(),
 			m_environment->getRender()->getThreadFrameQueueCount(),
+			2 * 1024 * 1024,
 			m_clearBackground,
 			0.006f
 		))

@@ -32,6 +32,7 @@
 #include "Render/Resource/ShaderFactory.h"
 #include "Resource/ResourceManager.h"
 #include "Sound/Player/ISoundPlayer.h"
+#include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
 #include "Ui/TableLayout.h"
@@ -128,10 +129,10 @@ bool FlashEditorPage::create(ui::Container* parent)
 	m_toolBarPlay->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &FlashEditorPage::eventToolClick);
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
-	splitter->create(container, true, 300);
+	splitter->create(container, true, ui::scaleBySystemDPI(300));
 
 	Ref< ui::custom::Splitter > splitterV = new ui::custom::Splitter();
-	splitterV->create(splitter, false, -100);
+	splitterV->create(splitter, false, ui::scaleBySystemDPI(-100));
 
 	m_treeMovie = new ui::custom::TreeView();
 	m_treeMovie->create(splitterV, (ui::custom::TreeView::WsDefault & ~ui::WsClientBorder) | ui::WsDoubleBuffer);

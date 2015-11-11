@@ -121,6 +121,7 @@ bool FlashPreviewControl::create(
 		resourceManager,
 		renderSystem,
 		1,
+		16 * 1024 * 1024,
 		true,
 		0.0f
 	);

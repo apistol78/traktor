@@ -67,11 +67,11 @@ bool AccShape::createTesselation(const AlignedVector< Path >& paths)
 	m_triangles.resize(0);
 	for (AlignedVector< Path >::const_iterator i = paths.begin(); i != paths.end(); ++i)
 	{
-		segments.resize(0);
-
 		const AlignedVector< SubPath >& subPaths = i->getSubPaths();
 		for (AlignedVector< SubPath >::const_iterator j = subPaths.begin(); j != subPaths.end(); ++j)
 		{
+			segments.resize(0);
+
 			for (AlignedVector< SubPathSegment >::const_iterator k = j->segments.begin(); k != j->segments.end(); ++k)
 			{
 				switch (k->type)
@@ -105,9 +105,9 @@ bool AccShape::createTesselation(const AlignedVector< Path >& paths)
 					break;
 				}
 			}
-		}
 
-		triangulator.triangulate(segments, m_triangles);
+			triangulator.triangulate(segments, m_triangles);
+		}
 	}
 
 	// Update shape's bounds from all triangles.

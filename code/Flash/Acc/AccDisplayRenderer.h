@@ -62,6 +62,7 @@ public:
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
 		uint32_t frameCount,
+		uint32_t renderContextSize,
 		bool clearBackground,
 		float stereoscopicOffset
 	);
