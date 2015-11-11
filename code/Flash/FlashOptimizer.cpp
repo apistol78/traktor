@@ -5,6 +5,7 @@
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Flash/FlashBitmapData.h"
+#include "Flash/FlashDictionary.h"
 #include "Flash/FlashFrame.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashMovieRenderer.h"
@@ -46,6 +47,10 @@ public:
 		const Vector4& viewOffset
 	)
 	{
+		// Copy bitmaps into output movie; is in fact shared to reduce memory cost.
+		const SmallMap< uint16_t, Ref< FlashBitmap > >& bitmaps = dictionary.getBitmaps();
+		for (SmallMap< uint16_t, Ref< FlashBitmap > >::const_iterator i = bitmaps.begin(); i != bitmaps.end(); ++i)
+			m_outputMovie->defineBitmap(i->first, i->second);
 	}
 
 	virtual void beginMask(bool increment)

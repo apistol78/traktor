@@ -227,7 +227,7 @@ void LogList::eventPaint(PaintEvent* event)
 		canvas.setForeground(Color4ub(0, 0, 0));
 
 		canvas.drawText(textRect, toString(threadIndex) + L">", AnLeft, AnCenter);
-		textRect.left += 20;
+		textRect.left += ui::scaleBySystemDPI(20);
 
 		size_t s = 0;
 		while (s < i->logText.length())

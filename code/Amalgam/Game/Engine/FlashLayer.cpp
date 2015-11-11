@@ -813,9 +813,6 @@ void FlashLayer::createMoviePlayer()
 		// Set ourself as external call hook.
 		moviePlayer->setExternalCall(this);
 
-		// Pre-cache resources.
-		m_displayRenderer->precache(*context->getDictionary());
-
 		// Execute first frame.
 		while (!moviePlayer->progressFrame(1.0f / 60.0f));
 

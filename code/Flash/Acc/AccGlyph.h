@@ -58,7 +58,6 @@ public:
 	void render(
 		render::RenderContext* renderContext,
 		const Vector4& frameSize,
-		const Vector4& viewSize,
 		const Vector4& viewOffset,
 		float screenOffsetScale,
 		render::ITexture* texture,

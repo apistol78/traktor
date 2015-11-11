@@ -68,8 +68,6 @@ public:
 
 	void destroy();
 
-	void precache(const FlashDictionary& dictionary);
-
 	void build(uint32_t frame);
 
 	void build(render::RenderContext* renderContext, uint32_t frame);
