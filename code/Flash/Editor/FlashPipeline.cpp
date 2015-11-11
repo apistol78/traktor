@@ -139,7 +139,8 @@ bool FlashPipeline::buildOutput(
 	}
 	else if (const FlashEmptyMovieAsset* emptyMovieAsset = dynamic_type_cast< const FlashEmptyMovieAsset* >(sourceAsset))
 	{
-		SwfColor backgroundColor = { 255, 255, 180, 255 };
+		const Color4ub& bc = emptyMovieAsset->getBackgroundColor();
+		SwfColor backgroundColor = { bc.r, bc.g, bc.b, bc.a };
 		Ref< FlashSprite > sprite = new FlashSprite(0, emptyMovieAsset->getFrameRate());
 
 		Ref< FlashFrame > frame = new FlashFrame();

@@ -33,7 +33,6 @@ struct Vertex
 bool s_handleInitialized = false;
 render::handle_t s_handleTransform;
 render::handle_t s_handleFrameSize;
-render::handle_t s_handleViewSize;
 render::handle_t s_handleViewOffset;
 render::handle_t s_handleScreenOffsetScale;
 render::handle_t s_handleCxFormMul;
@@ -52,7 +51,6 @@ bool AccQuad::create(
 	{
 		s_handleTransform = render::getParameterHandle(L"Flash_Transform");
 		s_handleFrameSize = render::getParameterHandle(L"Flash_FrameSize");
-		s_handleViewSize = render::getParameterHandle(L"Flash_ViewSize");
 		s_handleViewOffset = render::getParameterHandle(L"Flash_ViewOffset");
 		s_handleScreenOffsetScale = render::getParameterHandle(L"Flash_ScreenOffsetScale");
 		s_handleCxFormMul = render::getParameterHandle(L"Flash_CxFormMul");
@@ -107,7 +105,6 @@ void AccQuad::render(
 	const Aabb2& bounds,
 	const Matrix33& transform,
 	const Vector4& frameSize,
-	const Vector4& viewSize,
 	const Vector4& viewOffset,
 	const SwfCxTransform& cxform,
 	render::ITexture* texture,
@@ -172,7 +169,6 @@ void AccQuad::render(
 	renderBlock->programParams->beginParameters(renderContext);
 	renderBlock->programParams->setMatrixParameter(s_handleTransform, m);
 	renderBlock->programParams->setVectorParameter(s_handleFrameSize, frameSize);
-	renderBlock->programParams->setVectorParameter(s_handleViewSize, viewSize);
 	renderBlock->programParams->setVectorParameter(s_handleViewOffset, viewOffset);
 	renderBlock->programParams->setFloatParameter(s_handleScreenOffsetScale, 0.0f);
 	renderBlock->programParams->setVectorParameter(s_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));

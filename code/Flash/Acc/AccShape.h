@@ -65,7 +65,6 @@ public:
 		render::RenderContext* renderContext,
 		const Matrix33& transform,
 		const Vector4& frameSize,
-		const Vector4& viewSize,
 		const Vector4& viewOffset,
 		float screenOffsetScale,
 		const SwfCxTransform& cxform,
@@ -73,8 +72,6 @@ public:
 		bool maskIncrement,
 		uint8_t maskReference
 	);
-
-	void preBuild();
 
 	const Aabb2& getBounds() const { return m_bounds; }
 

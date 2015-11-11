@@ -1,6 +1,7 @@
 #ifndef traktor_flash_FlashEmptyMovieAsset_H
 #define traktor_flash_FlashEmptyMovieAsset_H
 
+#include "Core/Math/Color4ub.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -31,10 +32,13 @@ public:
 
 	int32_t getFrameRate() const { return m_frameRate; }
 
+	const Color4ub& getBackgroundColor() const { return m_backgroundColor; }
+
 private:
 	int32_t m_stageWidth;
 	int32_t m_stageHeight;
 	int32_t m_frameRate;
+	Color4ub m_backgroundColor;
 };
 
 	}

@@ -36,7 +36,6 @@ bool AccShapeResources::create(resource::IResourceManager* resourceManager)
 
 	m_handleTransform = render::getParameterHandle(L"Flash_Transform");
 	m_handleFrameSize = render::getParameterHandle(L"Flash_FrameSize");
-	m_handleViewSize = render::getParameterHandle(L"Flash_ViewSize");
 	m_handleViewOffset = render::getParameterHandle(L"Flash_ViewOffset");
 	m_handleScreenOffsetScale = render::getParameterHandle(L"Flash_ScreenOffsetScale");
 	m_handleCxFormMul = render::getParameterHandle(L"Flash_CxFormMul");

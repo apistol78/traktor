@@ -40,6 +40,8 @@ const float c_curveSign[3] =
 	-1.0f
 };
 
+const static Matrix33 c_textureTS = translate(0.5f, 0.5f) * scale(1.0f / 32768.0f, 1.0f / 32768.0f);
+
 		}
 
 AccShape::AccShape(AccShapeResources* shapeResources)
@@ -148,8 +150,10 @@ bool AccShape::updateRenderable(
 )
 {
 	// Do we need to update?
-	if (m_triangles.empty() || !m_needUpdate)
+	if (m_triangles.empty())
 		return false;
+	if (!m_needUpdate)
+		return true;
 
 	// Free previous vertex range if any.
 	if (m_vertexRange.vertexBuffer)
@@ -159,6 +163,9 @@ bool AccShape::updateRenderable(
 		m_vertexRange.vertexBuffer = 0;
 	}
 
+	m_renderBatches.resize(0);
+	m_batchFlags = 0;
+
 	// Allocate vertex range.
 	if (!vertexPool->acquireRange(m_triangles.size() * 3, m_vertexRange))
 		return false;
@@ -166,18 +173,13 @@ bool AccShape::updateRenderable(
 	T_ASSERT (m_vertexRange.vertexBuffer);
 	m_vertexPool = vertexPool;
 
-	const static Matrix33 textureTS = translate(0.5f, 0.5f) * scale(1.0f / 32768.0f, 1.0f / 32768.0f);
-
-	uint32_t vertexOffset = 0;
-	Matrix33 textureMatrix;
-
-	m_batchFlags = 0;
-
 	AccShapeVertexPool::Vertex* vertex = static_cast< AccShapeVertexPool::Vertex* >(m_vertexRange.vertexBuffer->lock());
 	if (!vertex)
 		return false;
 
-	AlignedVector< RenderBatch >& batch = m_renderBatches;
+	uint32_t vertexOffset = 0;
+	Matrix33 textureMatrix;
+
 	for (AlignedVector< Triangle >::const_iterator j = m_triangles.begin(); j != m_triangles.end(); ++j)
 	{
 		Color4ub color(255, 255, 255, 255);
@@ -198,7 +200,7 @@ bool AccShape::updateRenderable(
 			{
 				T_ASSERT (textureCache);
 				texture = textureCache->getGradientTexture(style);
-				textureMatrix = textureTS * style.getGradientMatrix().inverse();
+				textureMatrix = c_textureTS * style.getGradientMatrix().inverse();
 				m_batchFlags |= BfHaveTextured;
 			}
 			else if (colorRecords.size() == 1)
@@ -220,12 +222,12 @@ bool AccShape::updateRenderable(
 			}
 		}
 
-		if (batch.empty() || batch.back().texture != texture)
+		if (m_renderBatches.empty() || m_renderBatches.back().texture != texture)
 		{
-			batch.push_back(RenderBatch());
-			batch.back().primitives.setNonIndexed(render::PtTriangles, vertexOffset, 0);
-			batch.back().texture = texture;
-			batch.back().textureMatrix = textureMatrix;
+			m_renderBatches.push_back(RenderBatch());
+			m_renderBatches.back().primitives.setNonIndexed(render::PtTriangles, vertexOffset, 0);
+			m_renderBatches.back().texture = texture;
+			m_renderBatches.back().textureMatrix = textureMatrix;
 		}
 
 		for (int k = 0; k < 3; ++k)
@@ -243,8 +245,7 @@ bool AccShape::updateRenderable(
 			vertex++;
 		}
 
-		batch.back().primitives.count++;
-
+		m_renderBatches.back().primitives.count++;
 		vertexOffset += 3;
 	}
 
@@ -270,6 +271,7 @@ void AccShape::destroy()
 		m_vertexRange = AccShapeVertexPool::Range();
 	}
 
+	m_triangles.clear();
 	m_renderBatches.clear();
 }
 
@@ -277,7 +279,6 @@ void AccShape::render(
 	render::RenderContext* renderContext,
 	const Matrix33& transform,
 	const Vector4& frameSize,
-	const Vector4& viewSize,
 	const Vector4& viewOffset,
 	float screenOffsetScale,
 	const SwfCxTransform& cxform,
@@ -286,7 +287,7 @@ void AccShape::render(
 	uint8_t maskReference
 )
 {
-	if (m_renderBatches.empty() ||!m_vertexRange.vertexBuffer)
+	if (m_renderBatches.empty() || !m_vertexRange.vertexBuffer)
 		return;
 
 	Matrix44 m(
@@ -330,7 +331,6 @@ void AccShape::render(
 			renderBlockSolid->programParams->beginParameters(renderContext);
 			renderBlockSolid->programParams->setMatrixParameter(m_shapeResources->m_handleTransform, m);
 			renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleFrameSize, frameSize);
-			renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleViewSize, viewSize);
 			renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleViewOffset, viewOffset);
 			renderBlockSolid->programParams->setFloatParameter(m_shapeResources->m_handleScreenOffsetScale, screenOffsetScale);
 			renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
@@ -352,7 +352,6 @@ void AccShape::render(
 			renderBlockTextured->programParams->beginParameters(renderContext);
 			renderBlockTextured->programParams->setMatrixParameter(m_shapeResources->m_handleTransform, m);
 			renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleFrameSize, frameSize);
-			renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleViewSize, viewSize);
 			renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleViewOffset, viewOffset);
 			renderBlockTextured->programParams->setFloatParameter(m_shapeResources->m_handleScreenOffsetScale, screenOffsetScale);
 			renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
@@ -407,14 +406,6 @@ void AccShape::render(
 			}
 		}
 	}
-}
-
-void AccShape::preBuild()
-{
-	if (m_vertexRange.vertexBuffer)
-		m_needUpdate = !m_vertexRange.vertexBuffer->isContentValid();
-	else
-		m_needUpdate = true;
 }
 
 	}

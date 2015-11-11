@@ -40,7 +40,6 @@ private:
 
 	render::handle_t m_handleTransform;
 	render::handle_t m_handleFrameSize;
-	render::handle_t m_handleViewSize;
 	render::handle_t m_handleViewOffset;
 	render::handle_t m_handleScreenOffsetScale;
 	render::handle_t m_handleCxFormMul;

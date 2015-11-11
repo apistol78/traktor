@@ -266,7 +266,7 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	performanceRect = rect;
 	performanceRect.right -= 34;
 	performanceRect.top = rect.top + ui::scaleBySystemDPI(28);
-	performanceRect.bottom = performanceRect.top + c_performanceHeight;
+	performanceRect.bottom = performanceRect.top + ui::scaleBySystemDPI(c_performanceHeight);
 
 	for (uint32_t i = 0; i < connections.size(); ++i)
 	{

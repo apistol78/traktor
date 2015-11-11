@@ -54,7 +54,6 @@ const SwfCxTransform c_cxfYellow = { { 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0
 
 bool rectangleVisible(
 	const Vector4& frameSize,
-	const Vector4& viewSize,
 	const Vector4& viewOffset,
 	const Matrix33& transform,
 	const Aabb2& bounds
@@ -231,86 +230,17 @@ void AccDisplayRenderer::destroy()
 	m_globalContext = 0;
 }
 
-void AccDisplayRenderer::precache(const FlashDictionary& dictionary)
-{
-#if !defined(__PS3__)
-	const wchar_t* c_precacheGlyphs = L"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.,:-+!?";
-
-	const SmallMap< uint16_t, Ref< FlashBitmap > >& bitmaps = dictionary.getBitmaps();
-	for (SmallMap< uint16_t, Ref< FlashBitmap > >::const_iterator i = bitmaps.begin(); i != bitmaps.end(); ++i)
-		m_textureCache->getBitmapTexture(*(i->second));
-
-	const SmallMap< uint16_t, Ref< FlashFont > >& fonts = dictionary.getFonts();
-	for (SmallMap< uint16_t, Ref< FlashFont > >::const_iterator i = fonts.begin(); i != fonts.end(); ++i)
-	{
-		FlashFont* font = (*i).second;
-		for (uint32_t j = 0; c_precacheGlyphs[j]; ++j)
-		{
-			uint16_t glyphIndex = font->lookupIndex(c_precacheGlyphs[j]);
-
-			const FlashShape* glyphShape = font->getShape(glyphIndex);
-			if (!glyphShape)
-				continue;
-
-			uint32_t tag = glyphShape->getCacheTag();
-
-			SmallMap< int32_t, GlyphCache >::iterator it1 = m_glyphCache.find(tag);
-			if (it1 == m_glyphCache.end())
-			{
-				Ref< AccShape > accShape = new AccShape(m_shapeResources);
-				if (!accShape->createTesselation(*glyphShape))
-				{
-					T_DEBUG(L"Glyph tesselation failed");
-					continue;
-				}
-
-				m_glyphCache[tag].shape = accShape;
-				m_glyphCache[tag].index = -1;
-
-				it1 = m_glyphCache.find(tag);
-				T_ASSERT (it1 != m_glyphCache.end());
-			}
-
-			Ref< AccShape > accShape = it1->second.shape;
-			T_ASSERT (accShape);
-
-			if (!accShape->updateRenderable(
-				m_vertexPool,
-				0,
-				dictionary,
-				glyphShape->getFillStyles(),
-				glyphShape->getLineStyles()
-			))
-			{
-				it1->second.index = -1;
-				continue;
-			}
-		}
-	}
-#endif
-}
-
 void AccDisplayRenderer::build(uint32_t frame)
 {
 	m_renderContext = m_renderContexts[frame];
 	m_renderContext->flush();
 
 	m_viewOffset.set(0.0f, 0.0f, 1.0f, 1.0f);
-
-	for (SmallMap< int32_t, ShapeCache >::const_iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
-		i->second.shape->preBuild();
-	for (SmallMap< int32_t, GlyphCache >::iterator i = m_glyphCache.begin(); i != m_glyphCache.end(); ++i)
-		i->second.shape->preBuild();
 }
 
 void AccDisplayRenderer::build(render::RenderContext* renderContext, uint32_t frame)
 {
 	m_renderContext = renderContext;
-
-	for (SmallMap< int32_t, ShapeCache >::const_iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
-		i->second.shape->preBuild();
-	for (SmallMap< int32_t, GlyphCache >::iterator i = m_glyphCache.begin(); i != m_glyphCache.end(); ++i)
-		i->second.shape->preBuild();
 }
 
 void AccDisplayRenderer::render(render::IRenderView* renderView, uint32_t frame, render::EyeType eye, const Vector2& offset, float scale)
@@ -476,7 +406,7 @@ void AccDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Ma
 	))
 		return;
 
-	if (!rectangleVisible(m_frameSize, m_viewSize, m_viewOffset, transform, accShape->getBounds()))
+	if (!rectangleVisible(m_frameSize, m_viewOffset, transform, accShape->getBounds()))
 		return;
 
 	renderEnqueuedGlyphs();
@@ -485,7 +415,6 @@ void AccDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Ma
 		m_renderContext,
 		transform,
 		m_frameSize,
-		m_viewSize,
 		m_viewOffset,
 		1.0f,
 		cxform,
@@ -552,7 +481,7 @@ void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Ma
 	}
 
 	Aabb2 bounds = accShape->getBounds();
-	if (!rectangleVisible(m_frameSize, m_viewSize, m_viewOffset, transform, bounds))
+	if (!rectangleVisible(m_frameSize, m_viewOffset, transform, bounds))
 		return;
 
 	float cachePixelDx = 1.0f / c_cacheGlyphDimX;
@@ -579,7 +508,6 @@ void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Ma
 		int32_t row = index / c_cacheGlyphCountX;
 
 		Vector4 frameSize(bounds.mn.x, bounds.mn.y, bounds.mx.x, bounds.mx.y);
-		Vector4 viewSize(0.0f, 0.0f, 0.0f, 0.0f);
 		Vector4 viewOffset(
 			float(column) / c_cacheGlyphCountX,
 			float(row) / c_cacheGlyphCountY,
@@ -604,7 +532,6 @@ void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Ma
 			bounds,
 			Matrix33::identity(),
 			frameSize,
-			viewSize,
 			viewOffset,
 			c_cxfZero,
 			0,
@@ -618,7 +545,6 @@ void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Ma
 			m_renderContext,
 			Matrix33::identity(),
 			frameSize,
-			viewSize,
 			viewOffsetWithMargin,
 			0.0f,
 			c_cxfYellow,
@@ -655,7 +581,6 @@ void AccDisplayRenderer::renderQuad(const Matrix33& transform, const Aabb2& boun
 		bounds,
 		transform,
 		m_frameSize,
-		m_viewSize,
 		m_viewOffset,
 		cxform,
 		0,
@@ -696,7 +621,7 @@ void AccDisplayRenderer::renderCanvas(const FlashDictionary& dictionary, const M
 	))
 		return;
 
-	if (!rectangleVisible(m_frameSize, m_viewSize, m_viewOffset, transform, accShape->getBounds()))
+	if (!rectangleVisible(m_frameSize, m_viewOffset, transform, accShape->getBounds()))
 		return;
 
 	renderEnqueuedGlyphs();
@@ -705,7 +630,6 @@ void AccDisplayRenderer::renderCanvas(const FlashDictionary& dictionary, const M
 		m_renderContext,
 		transform,
 		m_frameSize,
-		m_viewSize,
 		m_viewOffset,
 		1.0f,
 		cxform,
@@ -754,7 +678,6 @@ void AccDisplayRenderer::renderEnqueuedGlyphs()
 	m_glyph->render(
 		m_renderContext,
 		m_frameSize,
-		m_viewSize,
 		m_viewOffset,
 		1.0f,
 		m_renderTargetGlyphs->getColorTexture(0),
