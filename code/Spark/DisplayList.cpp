@@ -22,6 +22,18 @@ void DisplayList::remove(int32_t depth)
 		m_layers.erase(i);
 }
 
+void DisplayList::remove(Character* instance)
+{
+	for (SmallMap< int32_t, Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+	{
+		if (i->second.instance == instance)
+		{
+			m_layers.erase(i);
+			break;
+		}
+	}
+}
+
 const SmallMap< int32_t, DisplayList::Layer >& DisplayList::getLayers() const
 {
 	return m_layers;

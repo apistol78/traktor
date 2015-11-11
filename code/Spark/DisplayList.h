@@ -37,6 +37,8 @@ public:
 
 	void remove(int32_t depth);
 
+	void remove(Character* instance);
+
 	const SmallMap< int32_t, Layer >& getLayers() const;
 
 	void getCharacters(RefArray< Character >& outCharacters) const;
