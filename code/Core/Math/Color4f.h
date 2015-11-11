@@ -56,6 +56,10 @@ public:
 
 	T_MATH_INLINE Color4f saturated() const;
 
+	T_MATH_INLINE Color4f rgb0() const;
+
+	T_MATH_INLINE Color4f rgb1() const;
+
 	static T_MATH_INLINE Color4f loadAligned(const float* in);
 
 	static T_MATH_INLINE Color4f loadUnaligned(const float* in);
