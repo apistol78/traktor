@@ -61,6 +61,14 @@ Shape* Sprite_getShape(Sprite* self)
 	return self->getShape().getResource();
 }
 
+void Sprite_remove(Sprite* self, const Any& a)
+{
+	if (a.isObject())
+		self->remove(mandatory_non_null_type_cast< Character* >(a.getObject()));
+	else if (a.isInteger())
+		self->remove(a.getIntegerUnsafe());
+}
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.SparkClassFactory", 0, SparkClassFactory, IRuntimeClassFactory)
@@ -120,7 +128,7 @@ void SparkClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classSprite->addMethod("getShape", &Sprite_getShape);
 	classSprite->addMethod("create", &Sprite::create);
 	classSprite->addMethod("place", &Sprite::place);
-	classSprite->addMethod("remove", &Sprite::remove);
+	classSprite->addMethod("remove", &Sprite_remove);
 	classSprite->addMethod("setAlpha", &Sprite::setAlpha);
 	classSprite->addMethod("getAlpha", &Sprite::getAlpha);
 	classSprite->addMethod("setComponent", &Sprite::setComponent);

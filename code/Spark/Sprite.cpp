@@ -55,6 +55,11 @@ void Sprite::remove(int32_t depth)
 	m_displayList.remove(depth);
 }
 
+void Sprite::remove(Character* instance)
+{
+	m_displayList.remove(instance);
+}
+
 void Sprite::setAlpha(float alpha)
 {
 	m_colorTransform.alpha[0] = alpha;

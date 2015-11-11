@@ -49,6 +49,8 @@ public:
 
 	void remove(int32_t depth);
 
+	void remove(Character* instance);
+
 	void setAlpha(float alpha);
 
 	float getAlpha() const;
