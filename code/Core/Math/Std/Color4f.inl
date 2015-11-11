@@ -89,6 +89,16 @@ T_MATH_INLINE Color4f Color4f::saturated() const
 	return Color4f(max(min(m_data, Vector4(1.0f, 1.0f, 1.0f, 1.0f)), Vector4(0.0f, 0.0f, 0.0f, 0.0f)));
 }
 
+T_MATH_INLINE Color4f Color4f::rgb0() const
+{
+	return Color4f(m_data.xyz0());
+}
+
+T_MATH_INLINE Color4f Color4f::rgb1() const
+{
+	return Color4f(m_data.xyz1());
+}
+
 T_MATH_INLINE Color4f Color4f::loadAligned(const float* in)
 {
 	T_ASSERT (in);
