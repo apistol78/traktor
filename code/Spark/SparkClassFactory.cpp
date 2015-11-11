@@ -76,12 +76,17 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.SparkClassFactory", 0, SparkClass
 void SparkClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
 	Ref< AutoRuntimeClass< Context > > classContext = new AutoRuntimeClass< Context >();
+	classContext->addMethod("getResourceManager", &Context::getResourceManager);
+	classContext->addMethod("getRenderSystem", &Context::getRenderSystem);
+	classContext->addMethod("getSoundPlayer", &Context::getSoundPlayer);
 	registrar->registerClass(classContext);
 
 	Ref< AutoRuntimeClass< IComponentData > > classIComponentData = new AutoRuntimeClass< IComponentData >();
+	classIComponentData->addMethod("createInstance", &IComponentData::createInstance);
 	registrar->registerClass(classIComponentData);
 
 	Ref< AutoRuntimeClass< IComponent > > classIComponent = new AutoRuntimeClass< IComponent >();
+	classIComponent->addMethod("update", &IComponent::update);
 	registrar->registerClass(classIComponent);
 
 	Ref< AutoRuntimeClass< ScriptComponentData > > classScriptComponentData = new AutoRuntimeClass< ScriptComponentData >();
@@ -98,11 +103,17 @@ void SparkClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classSoundComponent);
 
 	Ref< AutoRuntimeClass< CharacterData > > classCharacterData = new AutoRuntimeClass< CharacterData >();
+	classCharacterData->addMethod("setTransform", &CharacterData::setTransform);
+	classCharacterData->addMethod("getTransform", &CharacterData::getTransform);
 	registrar->registerClass(classCharacterData);
 
 	Ref< AutoRuntimeClass< Character > > classCharacter = new AutoRuntimeClass< Character >();
+	classCharacter->addMethod("getParent", &Character::getParent);
+	classCharacter->addMethod("setName", &Character::setName);
+	classCharacter->addMethod("getName", &Character::getName);
 	classCharacter->addMethod("setTransform", &Character::setTransform);
 	classCharacter->addMethod("getTransform", &Character::getTransform);
+	classCharacter->addMethod("getFullTransform", &Character::getFullTransform);
 	classCharacter->addMethod("setPosition", &Character::setPosition);
 	classCharacter->addMethod("setPosition", &Character_setPosition);
 	classCharacter->addMethod("getPosition", &Character::getPosition);
@@ -117,9 +128,15 @@ void SparkClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classCharacter);
 
 	Ref< AutoRuntimeClass< Shape > > classShape = new AutoRuntimeClass< Shape >();
+	classShape->addMethod("getBounds", &Shape::getBounds);
 	registrar->registerClass(classShape);
 
 	Ref< AutoRuntimeClass< SpriteData > > classSpriteData = new AutoRuntimeClass< SpriteData >();
+	classSpriteData->addConstructor();
+	classSpriteData->addMethod("getBounds", &SpriteData::getBounds);
+	classSpriteData->addMethod("getCharacter", &SpriteData::getCharacter);
+	classSpriteData->addMethod("place", &SpriteData::place);
+	classSpriteData->addMethod("remove", &SpriteData::remove);
 	registrar->registerClass(classSpriteData);
 
 	Ref< AutoRuntimeClass< Sprite > > classSprite = new AutoRuntimeClass< Sprite >();
@@ -136,6 +153,7 @@ void SparkClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classSprite);
 
 	Ref< AutoRuntimeClass< TextData > > classTextData = new AutoRuntimeClass< TextData >();
+	classTextData->addConstructor();
 	registrar->registerClass(classTextData);
 
 	Ref< AutoRuntimeClass< Text > > classText = new AutoRuntimeClass< Text >();
