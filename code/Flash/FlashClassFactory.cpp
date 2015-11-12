@@ -427,6 +427,8 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFlashSpriteInstance->addMethod("removeMovieClip", &FlashSpriteInstance::removeMovieClip);
 	classFlashSpriteInstance->addMethod("getMouseX", &FlashSpriteInstance::getMouseX);
 	classFlashSpriteInstance->addMethod("getMouseY", &FlashSpriteInstance::getMouseY);
+	classFlashSpriteInstance->addMethod("getLocalBounds", &FlashSpriteInstance::getLocalBounds);
+	classFlashSpriteInstance->addMethod("getBounds", &FlashSpriteInstance::getBounds);
 	registrar->registerClass(classFlashSpriteInstance);
 
 	Ref< AutoRuntimeClass< FlashMovie > > classFlashMovie = new AutoRuntimeClass< FlashMovie >();
