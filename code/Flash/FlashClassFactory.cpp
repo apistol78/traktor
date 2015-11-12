@@ -3,12 +3,16 @@
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Core/Io/IStream.h"
 #include "Drawing/Image.h"
+#include "Flash/FlashBitmap.h"
 #include "Flash/FlashCast.h"
+#include "Flash/FlashCharacter.h"
 #include "Flash/FlashClassFactory.h"
+#include "Flash/FlashFont.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashMovieFactory.h"
 #include "Flash/FlashMoviePlayer.h"
 #include "Flash/FlashOptimizer.h"
+#include "Flash/FlashSound.h"
 #include "Flash/FlashSpriteInstance.h"
 #include "Flash/SwfReader.h"
 #include "Flash/Action/ActionContext.h"
@@ -426,7 +430,14 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classFlashSpriteInstance);
 
 	Ref< AutoRuntimeClass< FlashMovie > > classFlashMovie = new AutoRuntimeClass< FlashMovie >();
+	classFlashMovie->addMethod("defineFont", &FlashMovie::defineFont);
+	classFlashMovie->addMethod("defineBitmap", &FlashMovie::defineBitmap);
+	classFlashMovie->addMethod("defineSound", &FlashMovie::defineSound);
+	classFlashMovie->addMethod("defineCharacter", &FlashMovie::defineCharacter);
+	classFlashMovie->addMethod("setExport", &FlashMovie::setExport);
 	classFlashMovie->addMethod("createExternalMovieClipInstance", &FlashMovie::createExternalMovieClipInstance);
+	classFlashMovie->addMethod("getFrameBounds", &FlashMovie::getFrameBounds);
+	classFlashMovie->addMethod("getMovieClip", &FlashMovie::getMovieClip);
 	registrar->registerClass(classFlashMovie);
 
 	Ref< AutoRuntimeClass< ActionObjectRelay > > classActionObjectRelay = new AutoRuntimeClass< ActionObjectRelay >();
