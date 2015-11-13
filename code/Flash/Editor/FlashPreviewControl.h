@@ -100,8 +100,6 @@ public:
 
 	bool playing() const;
 
-	void setWireFrame(bool wireframe);
-
 	virtual ui::Size getPreferedSize() const;
 
 	FlashMoviePlayer* getMoviePlayer() const { return m_moviePlayer; }
@@ -122,7 +120,6 @@ private:
 	Ref< FlashMovie > m_movie;
 	Timer m_timer;
 	bool m_playing;
-	bool m_wireframe;
 
 	ui::Point getTwips(const ui::Point& pt) const;
 
