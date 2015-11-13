@@ -28,8 +28,12 @@ public:
 
 private:
 	Path m_path;
+	int32_t m_highlight;
+	const SubPathSegment* m_segment;
 
 	void eventPaint(ui::PaintEvent* event);
+
+	void eventMouseMove(ui::MouseMoveEvent* event);
 };
 
 	}

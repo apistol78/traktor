@@ -124,9 +124,10 @@ public:
 
 				// Place cloned character onto frame.
 				FlashFrame::PlaceObject place;
-				place.hasFlags = FlashFrame::PfHasCharacterId;
+				place.hasFlags = FlashFrame::PfHasCharacterId | FlashFrame::PfHasBlendMode;
 				place.depth = m_nextDepth++;
 				place.characterId = m_mergeShape->getId();
+				place.blendMode = blendMode;
 				m_outputFrame->placeObject(place);
 			}
 

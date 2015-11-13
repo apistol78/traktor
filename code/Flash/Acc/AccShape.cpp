@@ -1,5 +1,7 @@
 #include <limits>
 #include "Core/Log/Log.h"
+#include "Core/Math/Bezier2nd.h"
+#include "Core/Math/Const.h"
 #include "Core/Math/Color4ub.h"
 #include "Flash/FlashCanvas.h"
 #include "Flash/FlashDictionary.h"
@@ -67,46 +69,67 @@ bool AccShape::createTesselation(const AlignedVector< Path >& paths)
 	m_triangles.resize(0);
 	for (AlignedVector< Path >::const_iterator i = paths.begin(); i != paths.end(); ++i)
 	{
+		const AlignedVector< Vector2 >& points = i->getPoints();
 		const AlignedVector< SubPath >& subPaths = i->getSubPaths();
-		for (AlignedVector< SubPath >::const_iterator j = subPaths.begin(); j != subPaths.end(); ++j)
+
+		std::set< uint16_t > fillStyles;
+		for (uint32_t j = 0; j < subPaths.size(); ++j)
 		{
-			segments.resize(0);
+			const SubPath& sp = subPaths[j];
+			if (sp.fillStyle0)
+				fillStyles.insert(sp.fillStyle0);
+			if (sp.fillStyle1)
+				fillStyles.insert(sp.fillStyle1);
+		}
 
-			for (AlignedVector< SubPathSegment >::const_iterator k = j->segments.begin(); k != j->segments.end(); ++k)
+		for (std::set< uint16_t >::const_iterator ii = fillStyles.begin(); ii != fillStyles.end(); ++ii)
+		{
+			for (uint32_t j = 0; j < subPaths.size(); ++j)
 			{
-				switch (k->type)
+				const SubPath& sp = subPaths[j];
+				if (sp.fillStyle0 != *ii && sp.fillStyle1 != *ii)
+					continue;
+
+				for (AlignedVector< SubPathSegment >::const_iterator k = sp.segments.begin(); k != sp.segments.end(); ++k)
 				{
-				case SpgtLinear:
+					switch (k->type)
 					{
-						s.v[0] = (i->getPoints()[k->pointsOffset]);
-						s.v[1] = (i->getPoints()[k->pointsOffset + 1]);
-						s.curve = false;
-						s.fillStyle0 = j->fillStyle0;
-						s.fillStyle1 = j->fillStyle1;
-						s.lineStyle = j->lineStyle;
-						segments.push_back(s);
-					}
-					break;
+					case SpgtLinear:
+						{
+							s.v[0] = points[k->pointsOffset];
+							s.v[1] = points[k->pointsOffset + 1];
+							s.curve = false;
+							s.fillStyle0 = sp.fillStyle0;
+							s.fillStyle1 = sp.fillStyle1;
+							s.lineStyle = sp.lineStyle;
+							segments.push_back(s);
+						}
+						break;
 
-				case SpgtQuadratic:
-					{
-						s.v[0] = (i->getPoints()[k->pointsOffset]);
-						s.v[1] = (i->getPoints()[k->pointsOffset + 2]);
-						s.c = (i->getPoints()[k->pointsOffset + 1]);
-						s.curve = true;
-						s.fillStyle0 = j->fillStyle0;
-						s.fillStyle1 = j->fillStyle1;
-						s.lineStyle = j->lineStyle;
-						segments.push_back(s);
-					}
-					break;
+					case SpgtQuadratic:
+						{
+							s.v[0] = points[k->pointsOffset];
+							s.v[1] = points[k->pointsOffset + 2];
+							s.c = points[k->pointsOffset + 1];
+							s.curve = true;
+							s.fillStyle0 = sp.fillStyle0;
+							s.fillStyle1 = sp.fillStyle1;
+							s.lineStyle = sp.lineStyle;
+							segments.push_back(s);
+						}
+						break;
 
-				default:
-					break;
+					default:
+						break;
+					}
 				}
 			}
 
-			triangulator.triangulate(segments, m_triangles);
+			if (!segments.empty())
+			{
+				triangulator.triangulate(segments, m_triangles);
+				segments.resize(0);
+			}
 		}
 	}
 
@@ -284,7 +307,8 @@ void AccShape::render(
 	const SwfCxTransform& cxform,
 	bool maskWrite,
 	bool maskIncrement,
-	uint8_t maskReference
+	uint8_t maskReference,
+	uint8_t blendMode
 )
 {
 	if (m_renderBatches.empty() || !m_vertexRange.vertexBuffer)
@@ -311,6 +335,9 @@ void AccShape::render(
 			shaderSolid = m_shapeResources->m_shaderSolidMask;
 			shaderTextured = m_shapeResources->m_shaderTexturedMask;
 		}
+
+		shaderSolid->setTechnique(m_shapeResources->m_handleTechniques[blendMode]);
+		shaderTextured->setTechnique(m_shapeResources->m_handleTechniques[blendMode]);
 	}
 	else
 	{

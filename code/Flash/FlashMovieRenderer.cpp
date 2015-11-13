@@ -110,7 +110,8 @@ void FlashMovieRenderer::renderSprite(
 			renderCharacter(
 				layer.instance,
 				transform,
-				cxTransform
+				cxTransform,
+				spriteInstance->getBlendMode()
 			);
 			++i;
 		}
@@ -121,7 +122,8 @@ void FlashMovieRenderer::renderSprite(
 			renderCharacter(
 				layer.instance,
 				transform,
-				cxTransform
+				cxTransform,
+				SbmDefault
 			);
 
 			m_displayRenderer->endMask();
@@ -138,7 +140,8 @@ void FlashMovieRenderer::renderSprite(
 				renderCharacter(
 					clippedLayer.instance,
 					transform,
-					cxTransform
+					cxTransform,
+					spriteInstance->getBlendMode()
 				);
 			}
 
@@ -147,7 +150,8 @@ void FlashMovieRenderer::renderSprite(
 			renderCharacter(
 				layer.instance,
 				transform,
-				cxTransform
+				cxTransform,
+				SbmDefault
 			);
 
 			m_displayRenderer->endMask();
@@ -167,7 +171,8 @@ void FlashMovieRenderer::renderSprite(
 void FlashMovieRenderer::renderCharacter(
 	FlashCharacterInstance* characterInstance,
 	const Matrix33& transform,
-	const SwfCxTransform& cxTransform
+	const SwfCxTransform& cxTransform,
+	uint8_t blendMode
 )
 {
 	SwfCxTransform cxTransform2 = concateCxTransform(cxTransform, characterInstance->getColorTransform());
@@ -188,7 +193,7 @@ void FlashMovieRenderer::renderCharacter(
 			transform * shapeInstance->getTransform(),
 			*shapeInstance->getShape(),
 			cxTransform2,
-			shapeInstance->getBlendMode()
+			blendMode
 		);
 		return;
 	}
@@ -380,7 +385,8 @@ void FlashMovieRenderer::renderCharacter(
 			renderCharacter(
 				referenceInstance,
 				buttonTransform * layer.placeMatrix,
-				cxTransform2
+				cxTransform2,
+				buttonInstance->getBlendMode()
 			);
 		}
 

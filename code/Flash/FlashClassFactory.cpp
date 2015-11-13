@@ -413,6 +413,7 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFlashCharacterInstance->addMethod("isVisible", &FlashCharacterInstance::isVisible);
 	classFlashCharacterInstance->addMethod("setEnabled", &FlashCharacterInstance::setEnabled);
 	classFlashCharacterInstance->addMethod("isEnabled", &FlashCharacterInstance::isEnabled);
+	classFlashCharacterInstance->addMethod("getBounds", &FlashCharacterInstance::getBounds);
 	registrar->registerClass(classFlashCharacterInstance);
 
 	Ref< AutoRuntimeClass< FlashSpriteInstance > > classFlashSpriteInstance = new AutoRuntimeClass< FlashSpriteInstance >();

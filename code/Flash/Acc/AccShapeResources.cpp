@@ -1,3 +1,4 @@
+#include "Flash/SwfTypes.h"
 #include "Flash/Acc/AccShapeResources.h"
 #include "Resource/IResourceManager.h"
 
@@ -45,6 +46,22 @@ bool AccShapeResources::create(resource::IResourceManager* resourceManager)
 	m_handleTextureMatrix0 = render::getParameterHandle(L"Flash_TextureMatrix0");
 	m_handleTextureMatrix1 = render::getParameterHandle(L"Flash_TextureMatrix1");
 	m_handleTextureClamp = render::getParameterHandle(L"Flash_TextureClamp");
+
+	m_handleTechniques[SbmDefault] = render::getParameterHandle(L"Flash_Default");
+	m_handleTechniques[SbmNormal] = render::getParameterHandle(L"Flash_Default");
+	m_handleTechniques[SbmLayer] = render::getParameterHandle(L"Flash_Layer");
+	m_handleTechniques[SbmMultiply] = render::getParameterHandle(L"Flash_Multiply");
+	m_handleTechniques[SbmScreen] = render::getParameterHandle(L"Flash_Screen");
+	m_handleTechniques[SbmLighten] = render::getParameterHandle(L"Flash_Lighten");
+	m_handleTechniques[SbmDarken] = render::getParameterHandle(L"Flash_Darken");
+	m_handleTechniques[SbmDifference] = render::getParameterHandle(L"Flash_Difference");
+	m_handleTechniques[SbmAdd] = render::getParameterHandle(L"Flash_Add");
+	m_handleTechniques[SbmSubtract] = render::getParameterHandle(L"Flash_Subtract");
+	m_handleTechniques[SbmInvert] = render::getParameterHandle(L"Flash_Invert");
+	m_handleTechniques[SbmAlpha] = render::getParameterHandle(L"Flash_Alpha");
+	m_handleTechniques[SbmErase] = render::getParameterHandle(L"Flash_Erase");
+	m_handleTechniques[SbmOverlay] = render::getParameterHandle(L"Flash_Overlay");
+	m_handleTechniques[SbmHardlight] = render::getParameterHandle(L"Flash_Hardlight");
 
 	return true;
 }

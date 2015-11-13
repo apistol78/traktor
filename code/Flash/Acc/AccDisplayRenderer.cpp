@@ -378,9 +378,6 @@ void AccDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Ma
 {
 	Ref< AccShape > accShape;
 
-	if (blendMode != 0 && blendMode != 1)
-		return;
-
 	int32_t tag = shape.getCacheTag();
 	SmallMap< int32_t, ShapeCache >::iterator it = m_shapeCache.find(tag);
 	if (it == m_shapeCache.end())
@@ -421,7 +418,8 @@ void AccDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Ma
 		cxform,
 		m_maskWrite,
 		m_maskIncrement,
-		m_maskReference
+		m_maskReference,
+		blendMode
 	);
 }
 
@@ -551,7 +549,8 @@ void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Ma
 			c_cxfYellow,
 			false,
 			false,
-			false
+			false,
+			SbmDefault
 		);
 
 		render::TargetEndRenderBlock* renderBlockEnd = m_renderContext->alloc< render::TargetEndRenderBlock >("Flash glyph render end");
@@ -636,7 +635,8 @@ void AccDisplayRenderer::renderCanvas(const FlashDictionary& dictionary, const M
 		cxform,
 		m_maskWrite,
 		m_maskIncrement,
-		m_maskReference
+		m_maskReference,
+		SbmDefault
 	);
 }
 
