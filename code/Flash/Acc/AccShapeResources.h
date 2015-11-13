@@ -49,6 +49,8 @@ private:
 	render::handle_t m_handleTextureMatrix0;
 	render::handle_t m_handleTextureMatrix1;
 	render::handle_t m_handleTextureClamp;
+
+	render::handle_t m_handleTechniques[SbmLast];
 };
 
 	}

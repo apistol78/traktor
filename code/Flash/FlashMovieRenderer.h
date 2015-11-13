@@ -58,7 +58,8 @@ private:
 	void renderCharacter(
 		FlashCharacterInstance* characterInstance,
 		const Matrix33& transform,
-		const SwfCxTransform& cxTransform
+		const SwfCxTransform& cxTransform,
+		uint8_t blendMode
 	);
 };
 

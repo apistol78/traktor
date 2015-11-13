@@ -63,16 +63,6 @@ bool FlashShape::create(const Aabb2& shapeBounds, const SwfShape* shape, const S
 				else
 					path.lineTo(0, s.deltaY, Path::CmRelative);
 			}
-
-			// Close path whenever reaching origin.
-			if ((path.getCursor() - path.getOrigin()).length2() <= FUZZY_EPSILON * FUZZY_EPSILON)
-			{
-				path.end(
-					fillStyle0 ? fillStyle0 + fillStyleBase : 0,
-					fillStyle1 ? fillStyle1 + fillStyleBase : 0,
-					lineStyle ? lineStyle + lineStyleBase : 0
-				);
-			}
 		}
 		else if (shapeRecord->edgeFlag && !shapeRecord->edge.straightFlag)
 		{
@@ -84,16 +74,6 @@ bool FlashShape::create(const Aabb2& shapeBounds, const SwfShape* shape, const S
 				c.controlDeltaY + c.anchorDeltaY,
 				Path::CmRelative
 			);
-
-			// Close path whenever reaching origin.
-			if ((path.getCursor() - path.getOrigin()).length2() <= FUZZY_EPSILON * FUZZY_EPSILON)
-			{
-				path.end(
-					fillStyle0 ? fillStyle0 + fillStyleBase : 0,
-					fillStyle1 ? fillStyle1 + fillStyleBase : 0,
-					lineStyle ? lineStyle + lineStyleBase : 0
-				);
-			}
 		}
 		else if (!shapeRecord->edgeFlag)
 		{

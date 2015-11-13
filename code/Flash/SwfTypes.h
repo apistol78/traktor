@@ -474,7 +474,8 @@ enum SwfBlendMode
 	SbmAlpha = 11,
 	SbmErase = 12,
 	SbmOverlay = 13,
-	SbmHardlight = 14
+	SbmHardlight = 14,
+	SbmLast
 };
 
 //@}

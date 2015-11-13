@@ -70,7 +70,8 @@ public:
 		const SwfCxTransform& cxform,
 		bool maskWrite,
 		bool maskIncrement,
-		uint8_t maskReference
+		uint8_t maskReference,
+		uint8_t blendMode
 	);
 
 	const Aabb2& getBounds() const { return m_bounds; }
