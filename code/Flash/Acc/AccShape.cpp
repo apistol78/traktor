@@ -127,7 +127,7 @@ bool AccShape::createTesselation(const AlignedVector< Path >& paths)
 
 			if (!segments.empty())
 			{
-				triangulator.triangulate(segments, m_triangles);
+				triangulator.triangulate(segments, *ii, m_triangles);
 				segments.resize(0);
 			}
 		}

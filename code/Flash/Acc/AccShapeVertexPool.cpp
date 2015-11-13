@@ -61,7 +61,7 @@ bool AccShapeVertexPool::acquireRange(int32_t vertexCount, Range& outRange)
 	vertexElements[0] = render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(Vertex, pos));
 	vertexElements[1] = render::VertexElement(render::DuCustom, render::DtFloat3, offsetof(Vertex, uv), 0);
 	vertexElements[2] = render::VertexElement(render::DuColor, render::DtByte4N, offsetof(Vertex, color), 0);
-	T_ASSERT (render::getVertexSize(vertexElements) == sizeof(Vertex));
+	T_FATAL_ASSERT (render::getVertexSize(vertexElements) == sizeof(Vertex));
 
 	Ref< render::VertexBuffer > vertexBuffer = m_renderSystem->createVertexBuffer(
 		vertexElements,
