@@ -293,16 +293,6 @@ void AccDisplayRenderer::flushCaches()
 	m_nextIndex = 0;
 }
 
-void AccDisplayRenderer::setWireframe(bool wireFrame)
-{
-	m_shapeResources->m_shaderSolid->setCombination(L"Wireframe", wireFrame);
-	m_shapeResources->m_shaderTextured->setCombination(L"Wireframe", wireFrame);
-	m_shapeResources->m_shaderSolidMask->setCombination(L"Wireframe", wireFrame);
-	m_shapeResources->m_shaderTexturedMask->setCombination(L"Wireframe", wireFrame);
-	m_shapeResources->m_shaderIncrementMask->setCombination(L"Wireframe", wireFrame);
-	m_shapeResources->m_shaderDecrementMask->setCombination(L"Wireframe", wireFrame);
-}
-
 void AccDisplayRenderer::begin(
 	const FlashDictionary& dictionary,
 	const SwfColor& backgroundColor,

@@ -119,10 +119,6 @@ bool FlashEditorPage::create(ui::Container* parent)
 	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Play", 1, ui::Command(L"Flash.Editor.Play")));
 	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Stop", 2, ui::Command(L"Flash.Editor.Stop")));
 	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Forward", 3, ui::Command(L"Flash.Editor.Forward")));
-	
-	m_toolWireframe = new ui::custom::ToolBarButton(L"Wireframe", 6, ui::Command(L"Flash.Editor.Wireframe"), ui::custom::ToolBarButton::BsDefaultToggle);
-	m_toolBarPlay->addItem(m_toolWireframe);
-
 	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Merge", 6, ui::Command(L"Flash.Editor.Merge")));
 	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Rasterize", 6, ui::Command(L"Flash.Editor.Rasterize")));
 
@@ -132,16 +128,12 @@ bool FlashEditorPage::create(ui::Container* parent)
 	splitter->create(container, true, ui::scaleBySystemDPI(300));
 
 	Ref< ui::custom::Splitter > splitterV = new ui::custom::Splitter();
-	splitterV->create(splitter, false, ui::scaleBySystemDPI(-100));
+	splitterV->create(splitter, false, ui::scaleBySystemDPI(-200));
 
 	m_treeMovie = new ui::custom::TreeView();
 	m_treeMovie->create(splitterV, (ui::custom::TreeView::WsDefault & ~ui::WsClientBorder) | ui::WsDoubleBuffer);
 	m_treeMovie->addEventHandler< ui::SelectionChangeEvent >(this, &FlashEditorPage::eventTreeMovieSelect);
 
-	/*
-	m_profileMovie = new ui::custom::ProfileControl();
-	m_profileMovie->create(splitterV, 2, 10, 0, 10000, ui::WsDoubleBuffer, this);
-	*/
 	m_pathControl = new FlashPathControl();
 	m_pathControl->create(splitterV, ui::WsAccelerated | ui::WsDoubleBuffer);
 
@@ -196,11 +188,6 @@ bool FlashEditorPage::handleCommand(const ui::Command& command)
 		m_previewControl->forward();
 		updateTreeMovie();
 	}
-	else if (command == L"Flash.Editor.Wireframe")
-	{
-		m_previewControl->setWireFrame(m_toolWireframe->isToggled());
-		m_previewControl->update();
-	}
 	else if (command == L"Flash.Editor.Merge")
 	{
 		Ref< FlashMovie > movie = flash::FlashOptimizer().merge(m_movie);
@@ -233,12 +220,6 @@ void FlashEditorPage::handleDatabaseEvent(db::Database* database, const Guid& ev
 {
 	if (m_resourceManager)
 		m_resourceManager->reload(eventId, false);
-}
-
-void FlashEditorPage::getProfileValues(uint32_t* outValues) const
-{
-	outValues[0] = Collectable::getInstanceCount();
-	outValues[1] = FlashCharacterInstance::getInstanceCount();
 }
 
 void FlashEditorPage::updateTreeObject(ui::custom::TreeViewItem* parentItem, const ActionObject* asObject, std::set< const ActionObject* >& objectStack, std::map< const void*, uint32_t >& pointerHash, uint32_t& nextPointerHash)
