@@ -28,12 +28,26 @@ public:
 
 private:
 	Path m_path;
-	int32_t m_highlight;
-	const SubPathSegment* m_segment;
+
+	Vector2 m_viewOffset;
+	float m_viewScale;
+
+	ui::Point m_lastMousePosition;
+
+	std::vector< uint16_t > m_fillStyles;
+	int m_fillStyleIndex;
 
 	void eventPaint(ui::PaintEvent* event);
 
+	void eventMouseButtonDown(ui::MouseButtonDownEvent* event);
+
+	void eventMouseButtonUp(ui::MouseButtonUpEvent* event);
+
 	void eventMouseMove(ui::MouseMoveEvent* event);
+
+	void eventMouseWheel(ui::MouseWheelEvent* event);
+
+	void eventKeyDown(ui::KeyDownEvent* event);
 };
 
 	}

@@ -93,22 +93,28 @@ AccTextureCache::BitmapRect AccTextureCache::getGradientTexture(const FlashFillS
 
 	if (style.getGradientType() == FlashFillStyle::GtLinear)
 	{
-		SwfColor gradientBitmap[256];
+		uint8_t gradientBitmap[256 * 4] = { 0 };
 
-		int x1 = 0;
-		for (int i = 1; i < int(colorRecords.size()); ++i)
+		int32_t x1 = 0;
+		for (int32_t i = 1; i < int32_t(colorRecords.size()); ++i)
 		{
-			int x2 = int(colorRecords[i].ratio * 256);
-			for (int x = x1; x < x2; ++x)
+			int32_t x2 = int32_t(colorRecords[i].ratio * 256);
+			for (int32_t x = x1; x < x2; ++x)
 			{
 				float f = float(x - x1) / (x2 - x1);
-				SwfColor& c = gradientBitmap[x];
-				c.red = uint8_t(colorRecords[i - 1].color.red * (1.0f - f) + colorRecords[i].color.red * f);
-				c.green = uint8_t(colorRecords[i - 1].color.green * (1.0f - f) + colorRecords[i].color.green * f);
-				c.blue = uint8_t(colorRecords[i - 1].color.blue * (1.0f - f) + colorRecords[i].color.blue * f);
-				c.alpha = uint8_t(colorRecords[i - 1].color.alpha * (1.0f - f) + colorRecords[i].color.alpha * f);
+				gradientBitmap[x * 4 + 0] = uint8_t(colorRecords[i - 1].color.red   * (1.0f - f) + colorRecords[i].color.red   * f);
+				gradientBitmap[x * 4 + 1] = uint8_t(colorRecords[i - 1].color.green * (1.0f - f) + colorRecords[i].color.green * f);
+				gradientBitmap[x * 4 + 2] = uint8_t(colorRecords[i - 1].color.blue  * (1.0f - f) + colorRecords[i].color.blue  * f);
+				gradientBitmap[x * 4 + 3] = uint8_t(colorRecords[i - 1].color.alpha * (1.0f - f) + colorRecords[i].color.alpha * f);
 			}
 			x1 = x2;
+		}
+		for (; x1 < 256; ++x1)
+		{
+			gradientBitmap[x1 * 4 + 0] = colorRecords.back().color.red;
+			gradientBitmap[x1 * 4 + 1] = colorRecords.back().color.green;
+			gradientBitmap[x1 * 4 + 2] = colorRecords.back().color.blue;
+			gradientBitmap[x1 * 4 + 3] = colorRecords.back().color.alpha;
 		}
 
 		render::SimpleTextureCreateDesc desc;

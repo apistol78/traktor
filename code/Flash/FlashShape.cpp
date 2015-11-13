@@ -274,21 +274,21 @@ void FlashShape::merge(const FlashShape& shape, const Matrix33& transform, const
 		FlashFillStyle fillStyle = shape.getFillStyles()[i];
 		fillStyle.transform(transform, cxform);
 
-		bool found = false;
-		for (uint32_t j = 0; j < m_fillStyles.size(); ++j)
-		{
-			if (m_fillStyles[j].equal(fillStyle))
-			{
-				fillStyleMap[i + 1] = j + 1;
-				found = true;
-				break;
-			}
-		}
-		if (!found)
-		{
+		//bool found = false;
+		//for (uint32_t j = 0; j < m_fillStyles.size(); ++j)
+		//{
+		//	if (m_fillStyles[j].equal(fillStyle))
+		//	{
+		//		fillStyleMap[i + 1] = j + 1;
+		//		found = true;
+		//		break;
+		//	}
+		//}
+		//if (!found)
+		//{
 			m_fillStyles.push_back(fillStyle);
 			fillStyleMap[i + 1] = m_fillStyles.size();
-		}
+		//}
 	}
 
 	// Transform line styles.
