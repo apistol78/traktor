@@ -4,8 +4,8 @@
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>-985</first>
-				<second>375</second>
+				<first>-791</first>
+				<second>-3</second>
 			</position>
 			<name>ControlPoints</name>
 			<usage>DuCustom</usage>
@@ -15,8 +15,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>-256</first>
-				<second>299</second>
+				<first>-456</first>
+				<second>12</second>
 			</position>
 			<fragmentGuid>{6F008BFC-A1AD-814C-BF7D-010FAC0C7703}</fragmentGuid>
 			<inputPins>
@@ -61,8 +61,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-732</first>
-				<second>144</second>
+				<first>110</first>
+				<second>216</second>
 			</position>
 			<parameterName>Flash_CxFormAdd</parameterName>
 			<type>PtVector</type>
@@ -71,8 +71,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-680</first>
-				<second>-9</second>
+				<first>110</first>
+				<second>140</second>
 			</position>
 			<parameterName>Flash_CxFormMul</parameterName>
 			<type>PtVector</type>
@@ -81,15 +81,15 @@
 		<item type="traktor.render.MulAdd">
 			<comment/>
 			<position>
-				<first>-100</first>
-				<second>-24</second>
+				<first>426</first>
+				<second>89</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>1116</first>
-				<second>137</second>
+				<first>755</first>
+				<second>127</second>
 			</position>
 			<fragmentGuid>{E9468C70-1121-2F4F-91E0-A9879C5707B6}</fragmentGuid>
 			<inputPins>
@@ -97,23 +97,32 @@
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
+				<item>
+					<name>Edge</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins/>
-			<values/>
+			<values>
+				<item>
+					<first>Edge</first>
+					<second>1</second>
+				</item>
+			</values>
 		</item>
 		<item type="traktor.render.Discard">
 			<comment/>
 			<position>
-				<first>557</first>
-				<second>55</second>
+				<first>82</first>
+				<second>25</second>
 			</position>
 			<operator>CoGreater</operator>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>4</first>
-				<second>435</second>
+				<first>-53</first>
+				<second>77</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -151,16 +160,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Color</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item"/>
 				<name>Output</name>
 			</source>
@@ -191,7 +190,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[8]"/>
+				<node ref="/object/nodes/item[6]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -201,12 +200,32 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Output</name>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Color</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[8]"/>
 				<name>Pass</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Edge</name>
 			</destination>
 		</item>
 	</edges>

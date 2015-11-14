@@ -297,17 +297,17 @@ void FlashShape::merge(const FlashShape& shape, const Matrix33& transform, const
 		FlashLineStyle lineStyle = shape.getLineStyles()[i];
 		lineStyle.transform(cxform);
 
-		bool found = false;
-		for (uint32_t j = 0; j < m_lineStyles.size(); ++j)
-		{
-			if (m_lineStyles[j].equal(lineStyle))
-			{
-				lineStyleMap[i + 1] = j + 1;
-				found = true;
-				break;
-			}
-		}
-		if (!found)
+		//bool found = false;
+		//for (uint32_t j = 0; j < m_lineStyles.size(); ++j)
+		//{
+		//	if (m_lineStyles[j].equal(lineStyle))
+		//	{
+		//		lineStyleMap[i + 1] = j + 1;
+		//		found = true;
+		//		break;
+		//	}
+		//}
+		//if (!found)
 		{
 			m_lineStyles.push_back(lineStyle);
 			lineStyleMap[i + 1] = m_lineStyles.size();
@@ -320,8 +320,8 @@ void FlashShape::merge(const FlashShape& shape, const Matrix33& transform, const
 		AlignedVector< Vector2 > points = i->getPoints();
 		AlignedVector< SubPath > subPaths = i->getSubPaths();
 
-		for (AlignedVector< Vector2 >::iterator j = points.begin(); j != points.end(); ++j)
-			*j = transform * *j;
+		//for (AlignedVector< Vector2 >::iterator j = points.begin(); j != points.end(); ++j)
+		//	*j = transform * *j;
 
 		for (AlignedVector< SubPath >::iterator j = subPaths.begin(); j != subPaths.end(); ++j)
 		{
@@ -333,7 +333,7 @@ void FlashShape::merge(const FlashShape& shape, const Matrix33& transform, const
 				j->lineStyle = lineStyleMap[j->lineStyle];
 		}
 
-		m_paths.push_back(Path(points, subPaths));
+		m_paths.push_back(Path(transform, points, subPaths));
 	}
 
 	// Expand our bounds with transformed shape's bound.

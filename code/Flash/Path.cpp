@@ -28,12 +28,14 @@ void SubPath::serialize(ISerializer& s)
 
 Path::Path()
 :	m_cursor(0, 0)
+,	m_transform(Matrix33::identity())
 {
 	m_points.reserve(256);
 }
 
-Path::Path(const AlignedVector< Vector2 >& points, const AlignedVector< SubPath >& subPaths)
+Path::Path(const Matrix33& transform, const AlignedVector< Vector2 >& points, const AlignedVector< SubPath >& subPaths)
 :	m_cursor(0, 0)
+,	m_transform(transform)
 ,	m_points(points)
 ,	m_subPaths(subPaths)
 {
@@ -125,6 +127,7 @@ Aabb2 Path::getBounds() const
 void Path::serialize(ISerializer& s)
 {
 	s >> Member< Vector2 >(L"cursor", m_cursor);
+	s >> Member< Matrix33 >(L"transform", m_transform);
 	s >> MemberAlignedVector< Vector2 >(L"points", m_points);
 	s >> MemberAlignedVector< SubPath, MemberComposite< SubPath > >(L"subPaths", m_subPaths);
 	s >> MemberComposite< SubPath >(L"current", m_current);

@@ -86,7 +86,7 @@ public:
 
 	Path();
 
-	Path(const AlignedVector< Vector2 >& points, const AlignedVector< SubPath >& subPaths);
+	Path(const Matrix33& transform, const AlignedVector< Vector2 >& points, const AlignedVector< SubPath >& subPaths);
 
 	/*! \brief Reset path. */
 	void reset();
@@ -139,6 +139,9 @@ public:
 	 */
 	const Vector2& getCursor() const { return m_cursor; }
 
+	/*! \brief Get path local transform. */
+	const Matrix33& getTransform() const { return m_transform; }
+
 	/*! \brief Get points.
 	 *
 	 * \return List of points.
@@ -157,6 +160,7 @@ public:
 
 private:
 	Vector2 m_cursor;
+	Matrix33 m_transform;
 	AlignedVector< Vector2 > m_points;
 	AlignedVector< SubPath > m_subPaths;
 	SubPath m_current;

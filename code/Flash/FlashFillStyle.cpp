@@ -11,23 +11,6 @@ namespace traktor
 {
 	namespace flash
 	{
-		namespace
-		{
-
-bool compareEqual(const Matrix33& lh, const Matrix33& rh)
-{
-	for (int32_t r = 0; r < 3; ++r)
-	{
-		for (int32_t c = 0; c < 3; ++c)
-		{
-			if (abs(lh.e[r][c] - rh.e[r][c]) > FUZZY_EPSILON)
-				return false;
-		}
-	}
-	return true;
-}
-
-		}
 
 FlashFillStyle::FlashFillStyle()
 :	m_gradientType(GtInvalid)
@@ -123,46 +106,6 @@ void FlashFillStyle::transform(const Matrix33& transform, const SwfCxTransform& 
 
 	if (m_fillBitmap != 0)
 		m_fillBitmapMatrix = transform * m_fillBitmapMatrix;
-}
-
-bool FlashFillStyle::equal(const FlashFillStyle& fillStyle) const
-{
-	if (m_colorRecords.size() != fillStyle.m_colorRecords.size())
-		return false;
-
-	for (uint32_t i = 0; i < uint32_t(m_colorRecords.size()); ++i)
-	{
-		if (abs(m_colorRecords[i].ratio - fillStyle.m_colorRecords[i].ratio) > FUZZY_EPSILON)
-			return false;
-
-		if (
-			abs(m_colorRecords[i].color.red - fillStyle.m_colorRecords[i].color.red) > 1 ||
-			abs(m_colorRecords[i].color.green - fillStyle.m_colorRecords[i].color.green) > 1 ||
-			abs(m_colorRecords[i].color.blue - fillStyle.m_colorRecords[i].color.blue) > 1 ||
-			abs(m_colorRecords[i].color.alpha - fillStyle.m_colorRecords[i].color.alpha) > 1
-		)
-			return false;
-	}
-
-	if (m_gradientType != fillStyle.m_gradientType)
-		return false;
-
-	if (m_gradientType != GtInvalid)
-	{
-		if (!compareEqual(m_gradientMatrix, fillStyle.m_gradientMatrix))
-			return false;
-	}
-
-	if (m_fillBitmap != fillStyle.m_fillBitmap)
-		return false;
-
-	if (m_fillBitmap)
-	{
-		if (!compareEqual(m_fillBitmapMatrix, fillStyle.m_fillBitmapMatrix))
-			return false;
-	}
-
-	return true;
 }
 
 void FlashFillStyle::serialize(ISerializer& s)

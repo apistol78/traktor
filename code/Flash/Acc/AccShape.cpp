@@ -127,8 +127,20 @@ bool AccShape::createTesselation(const AlignedVector< Path >& paths)
 
 			if (!segments.empty())
 			{
+				uint32_t from = m_triangles.size();
+
 				triangulator.triangulate(segments, *ii, m_triangles);
 				segments.resize(0);
+
+				uint32_t to = m_triangles.size();
+
+				// Transform each new triangle with path's transform.
+				for (uint32_t ti = from; ti < to; ++ti)
+				{
+					m_triangles[ti].v[0] = i->getTransform() * m_triangles[ti].v[0];
+					m_triangles[ti].v[1] = i->getTransform() * m_triangles[ti].v[1];
+					m_triangles[ti].v[2] = i->getTransform() * m_triangles[ti].v[2];
+				}
 			}
 		}
 	}
