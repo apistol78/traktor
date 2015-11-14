@@ -73,8 +73,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>-594</first>
-				<second>-88</second>
+				<first>-603</first>
+				<second>-120</second>
 			</position>
 			<fragmentGuid>{46AAC087-9D83-3047-93E2-36B77218D3C7}</fragmentGuid>
 			<inputPins/>
@@ -122,24 +122,24 @@
 		<item type="traktor.render.Discard">
 			<comment/>
 			<position>
-				<first>1028</first>
-				<second>139</second>
+				<first>-230</first>
+				<second>-38</second>
 			</position>
 			<operator>CoGreater</operator>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>616</first>
-				<second>618</second>
+				<first>-404</first>
+				<second>42</second>
 			</position>
 			<value>0</value>
 		</item>
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>-296</first>
-				<second>563</second>
+				<first>-1000</first>
+				<second>-12</second>
 			</position>
 			<name>ControlPoints</name>
 			<usage>DuCustom</usage>
@@ -149,8 +149,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>351</first>
-				<second>454</second>
+				<first>-648</first>
+				<second>-11</second>
 			</position>
 			<fragmentGuid>{6F008BFC-A1AD-814C-BF7D-010FAC0C7703}</fragmentGuid>
 			<inputPins>
@@ -205,16 +205,6 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[3]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Color</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
@@ -284,6 +274,16 @@
 				<name>Output</name>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Color</name>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[10]"/>
 				<name>Pass</name>
 			</destination>
@@ -294,8 +294,8 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Input</name>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Input1</name>
 			</destination>
 		</item>
 	</edges>

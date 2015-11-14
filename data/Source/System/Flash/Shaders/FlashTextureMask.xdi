@@ -30,8 +30,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>1747</first>
-				<second>337</second>
+				<first>1127</first>
+				<second>312</second>
 			</position>
 			<fragmentGuid>{AC47E91D-696B-A647-BB33-022614658D3B}</fragmentGuid>
 			<inputPins>
@@ -46,16 +46,16 @@
 		<item type="traktor.render.Discard">
 			<comment/>
 			<position>
-				<first>1193</first>
-				<second>355</second>
+				<first>-195</first>
+				<second>44</second>
 			</position>
 			<operator>CoGreater</operator>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>436</first>
-				<second>670</second>
+				<first>-606</first>
+				<second>58</second>
 			</position>
 			<fragmentGuid>{6F008BFC-A1AD-814C-BF7D-010FAC0C7703}</fragmentGuid>
 			<inputPins>
@@ -74,8 +74,8 @@
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>-211</first>
-				<second>779</second>
+				<first>-953</first>
+				<second>37</second>
 			</position>
 			<name>ControlPoints</name>
 			<usage>DuCustom</usage>
@@ -85,8 +85,8 @@
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>710</first>
-				<second>814</second>
+				<first>-421</first>
+				<second>137</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -107,8 +107,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>-570</first>
-				<second>184</second>
+				<first>-504</first>
+				<second>199</second>
 			</position>
 			<fragmentGuid>{5C7DF289-D6CE-384F-A65C-B10EF915438E}</fragmentGuid>
 			<inputPins>
@@ -134,8 +134,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>-1191</first>
-				<second>301</second>
+				<first>-1025</first>
+				<second>248</second>
 			</position>
 			<fragmentGuid>{0A178604-7E5C-5B42-9C01-C488DBF3A453}</fragmentGuid>
 			<inputPins/>
@@ -210,31 +210,11 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Pass</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[8]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[7]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<name>Color</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[8]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
@@ -290,12 +270,32 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[2]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Color</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Pass</name>
 			</destination>
 		</item>
 	</edges>

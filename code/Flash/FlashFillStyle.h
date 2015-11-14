@@ -65,8 +65,6 @@ public:
 
 	void transform(const Matrix33& transform, const SwfCxTransform& cxform);
 
-	bool equal(const FlashFillStyle& fillStyle) const;
-
 	const AlignedVector< ColorRecord >& getColorRecords() const { return m_colorRecords; }
 
 	GradientType getGradientType() const { return m_gradientType; }
