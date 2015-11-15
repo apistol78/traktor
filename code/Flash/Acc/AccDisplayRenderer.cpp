@@ -16,6 +16,7 @@
 #include "Flash/Acc/AccGlyph.h"
 #include "Flash/Acc/AccTextureCache.h"
 #include "Flash/Acc/AccShape.h"
+#include "Flash/Acc/AccShapeRenderer.h"
 #include "Flash/Acc/AccShapeResources.h"
 #include "Flash/Acc/AccShapeVertexPool.h"
 #include "Flash/Acc/AccQuad.h"
@@ -49,7 +50,8 @@ const uint32_t c_cacheGlyphCount = c_cacheGlyphCountX * c_cacheGlyphCountY;
 const uint32_t c_cacheGlyphDimX = c_cacheGlyphSize * c_cacheGlyphCountX;
 const uint32_t c_cacheGlyphDimY = c_cacheGlyphSize * c_cacheGlyphCountY;
 
-const SwfCxTransform c_cxfZero = { { 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 1.0f } };
+const SwfCxTransform c_cxfZero = { { 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f } };
+const SwfCxTransform c_cxfIdentity = { { 1.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 0.0f } };
 const SwfCxTransform c_cxfYellow = { { 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f }, { 1.0f, 0.0f } };
 
 bool rectangleVisible(
@@ -193,6 +195,13 @@ bool AccDisplayRenderer::create(
 		return false;
 	}
 
+	m_shapeRenderer = new AccShapeRenderer();
+	if (!m_shapeRenderer->create(renderSystem, resourceManager))
+	{
+		log::error << L"Unable to create accelerated display renderer; failed to shape renderer" << Endl;
+		return false;
+	}
+
 	m_renderContexts.resize(frameCount);
 	for (uint32_t i = 0; i < frameCount; ++i)
 		m_renderContexts[i] = new render::RenderContext(renderContextSize);
@@ -222,6 +231,7 @@ void AccDisplayRenderer::destroy()
 	m_shapeCache.clear();
 	m_glyphCache.clear();
 
+	safeDestroy(m_shapeRenderer);
 	safeDestroy(m_shapeResources);
 	safeDestroy(m_vertexPool);
 
@@ -333,6 +343,7 @@ void AccDisplayRenderer::begin(
 	}
 
 	m_glyph->beginFrame();
+	m_shapeRenderer->beginFrame();
 
 	m_maskWrite = false;
 	m_maskIncrement = false;
@@ -368,6 +379,7 @@ void AccDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Ma
 {
 	Ref< AccShape > accShape;
 
+	// Get accelerated shape.
 	int32_t tag = shape.getCacheTag();
 	SmallMap< int32_t, ShapeCache >::iterator it = m_shapeCache.find(tag);
 	if (it == m_shapeCache.end())
@@ -385,6 +397,7 @@ void AccDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Ma
 		accShape = it->second.shape;
 	}
 
+	// Update geometry if necessary.
 	if (!accShape->updateRenderable(
 		m_vertexPool,
 		m_textureCache,
@@ -394,18 +407,23 @@ void AccDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Ma
 	))
 		return;
 
+	// Check if shape is within frame bounds.
 	if (!rectangleVisible(m_frameSize, m_viewOffset, transform, accShape->getBounds()))
 		return;
 
+	// Flush queueud glyph shapes, must do this to ensure proper draw order.
 	renderEnqueuedGlyphs();
 
-	accShape->render(
+	// Render shape through shape cache.
+	m_shapeRenderer->render(
 		m_renderContext,
-		transform,
-		m_frameSize,
-		m_viewOffset,
-		1.0f,
+		accShape,
+		tag,
 		cxform,
+		m_frameSize,
+		m_viewSize,
+		m_viewOffset,
+		transform,
 		m_maskWrite,
 		m_maskIncrement,
 		m_maskReference,
@@ -634,6 +652,7 @@ void AccDisplayRenderer::end()
 {
 	renderEnqueuedGlyphs();
 
+	m_shapeRenderer->endFrame();
 	m_glyph->endFrame();
 
 #if T_FLUSH_CACHE

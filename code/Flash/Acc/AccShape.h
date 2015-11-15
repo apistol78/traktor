@@ -29,6 +29,7 @@ class VertexBuffer;
 
 class AccShapeResources;
 class AccTextureCache;
+class FlashCanvas;
 class FlashDictionary;
 class FlashFillStyle;
 class FlashLineStyle;
@@ -41,6 +42,13 @@ struct SwfCxTransform;
 class AccShape : public Object
 {
 public:
+	struct RenderBatch
+	{
+		AccTextureCache::BitmapRect texture;
+		Matrix33 textureMatrix;
+		render::Primitives primitives;
+	};
+
 	AccShape(AccShapeResources* shapeResources);
 
 	virtual ~AccShape();
@@ -76,14 +84,9 @@ public:
 
 	const Aabb2& getBounds() const { return m_bounds; }
 
-private:
-	struct RenderBatch
-	{
-		AccTextureCache::BitmapRect texture;
-		Matrix33 textureMatrix;
-		render::Primitives primitives;
-	};
+	const AlignedVector< RenderBatch >& getRenderBatches() const { return m_renderBatches; }
 
+private:
 	AccShapeResources* m_shapeResources;
 	AccShapeVertexPool* m_vertexPool;
 	AlignedVector< Triangle > m_triangles;
