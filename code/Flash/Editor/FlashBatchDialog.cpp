@@ -55,8 +55,8 @@ bool FlashBatchDialog::create(ui::Widget* parent)
 		return false;
 
 	//movieListTools->addImage(ui::Bitmap::load(c_ResourcePlusMinus, sizeof(c_ResourcePlusMinus), L"png"), 4);
-	movieListTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TEXTURE_BATCH_ADD"), 0, ui::Command(L"FlashBatch.Add")));
-	movieListTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TEXTURE_BATCH_REMOVE"), 1, ui::Command(L"FlashBatch.Remove")));
+	movieListTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"FLASH_BATCH_ADD"), 0, ui::Command(L"FlashBatch.Add")));
+	movieListTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"FLASH_BATCH_REMOVE"), 1, ui::Command(L"FlashBatch.Remove")));
 	movieListTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &FlashBatchDialog::eventTextureListToolClick);
 
 	m_movieList = new ui::ListBox();

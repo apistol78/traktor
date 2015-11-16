@@ -57,6 +57,7 @@ class IScriptManager;
 class Preprocessor;
 class Script;
 class ScriptBreakpointEvent;
+class ScriptClassesView;
 
 class T_DLLCLASS ScriptEditorPage
 :	public editor::IEditorPage
@@ -100,6 +101,7 @@ private:
 	Ref< ui::custom::GridView > m_outlineGrid;
 	Ref< ui::ListBox > m_dependencyList;
 	Ref< ui::ListBox > m_dependentList;
+	Ref< ScriptClassesView > m_classesView;
 	Ref< ui::custom::SyntaxRichEdit > m_edit;
 	Ref< ui::custom::StatusBar > m_compileStatus;
 	Ref< ui::Tab > m_tabSessions;

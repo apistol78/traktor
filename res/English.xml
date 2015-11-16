@@ -1109,6 +1109,26 @@
       <second>Export heightfield as mesh...</second>
     </item>
     <item>
+      <first>FLASH_BATCH_WIZARDTOOL_DESCRIPTION</first>
+      <second>Import SWF files...</second>
+    </item>
+    <item>
+      <first>FLASH_BATCH_DIALOG_TITLE</first>
+      <second>Import SWF files</second>
+    </item>
+    <item>
+      <first>FLASH_BATCH_ADD</first>
+      <second>Add...</second>
+    </item>
+    <item>
+      <first>FLASH_BATCH_REMOVE</first>
+      <second>Remove</second>
+    </item>
+    <item>
+      <first>FLASH_BATCH_FILE_TITLE</first>
+      <second>Import SWF file</second>
+    </item>
+    <item>
       <first>NEW_HEIGHTFIELD_WIZARDTOOL_DESCRIPTION</first>
       <second>Create new heightfield...</second>
     </item>
@@ -2083,6 +2103,10 @@
     <item>
       <first>SCENE_EDITOR_SETTINGS_WORLD_RENDERER</first>
       <second>World renderer</second>
+    </item>
+    <item>
+      <first>SCRIPT_EDITOR_CLASSES</first>
+      <second>System classes</second>
     </item>
     <item>
       <first>SCRIPT_EDITOR_EXPLORER</first>
