@@ -39,6 +39,215 @@ bool compareSegmentsX(const Segment& ls, const Segment& rs)
 	return false;
 }
 
+void splitSegment(const Segment& s, float f, Segment& outSt, Segment& outSb)
+{
+	if (s.curve)
+	{
+		Bezier2nd bt, bb;
+		Bezier2nd(s.v[0], s.c, s.v[1]).split(f, bt, bb);
+
+		outSt.curve = true;
+		outSt.v[0] = bt.cp0;
+		outSt.c = bt.cp1;
+		outSt.v[1] = bt.cp2;
+
+		outSb.curve = true;
+		outSb.v[0] = bb.cp0;
+		outSb.c = bb.cp1;
+		outSb.v[1] = bb.cp2;
+	}
+	else
+	{
+		Vector2 m = lerp(s.v[0], s.v[1], f);
+
+		outSt.curve = false;
+		outSt.v[0] = s.v[0];
+		outSt.v[1] = m;
+
+		outSb.curve = false;
+		outSb.v[0] = m;
+		outSb.v[1] = s.v[1];
+	}
+
+	outSt.fillStyle0 = s.fillStyle0;
+	outSt.fillStyle1 = s.fillStyle1;
+	outSt.lineStyle = s.lineStyle;
+
+	outSb.fillStyle0 = s.fillStyle0;
+	outSb.fillStyle1 = s.fillStyle1;
+	outSb.lineStyle = s.lineStyle;
+}
+
+bool isCurve(const Segment& s)
+{
+	if (s.curve)
+		return abs(Line2(s.v[0], s.v[1]).distance(s.c)) > 0.1f;
+	else
+		return false;
+}
+
+void segmentsToTriangles(const Segment& sl, const Segment& sr, int32_t depth, AlignedVector< Triangle >& outTriangles)
+{
+	Triangle t;
+
+	if (depth < 2 && sl.curve)
+	{
+		if (Line2(sr.v[0], sr.v[1]).distance(sl.c) > 0.0f)
+		{
+			Segment slt, slb;
+			Segment srt, srb;
+
+			splitSegment(sl, 0.5f, slt, slb);
+			splitSegment(sr, 0.5f, srt, srb);
+
+			segmentsToTriangles(slt, srt, depth + 1, outTriangles);
+			segmentsToTriangles(slb, srb, depth + 1, outTriangles);
+			return;
+		}
+	}
+
+	if (depth < 2 && sr.curve)
+	{
+		if (Line2(sl.v[0], sl.v[1]).distance(sr.c) < 0.0f)
+		{
+			Segment slt, slb;
+			Segment srt, srb;
+
+			splitSegment(sl, 0.5f, slt, slb);
+			splitSegment(sr, 0.5f, srt, srb);
+
+			segmentsToTriangles(slt, srt, depth + 1, outTriangles);
+			segmentsToTriangles(slb, srb, depth + 1, outTriangles);
+			return;
+		}
+	}
+
+	float y0 = sl.v[0].y;
+	float y1 = sl.v[1].y;
+	T_ASSERT (y0 < y1);
+
+	bool il = false, ir = false;
+
+	if (isCurve(sl))
+	{
+		t.v[0] = Vector2(sl.v[0].x, y0);
+		t.v[1] = sl.c;
+		t.v[2] = Vector2(sl.v[1].x, y1);
+
+		il = bool(Line2(t.v[0], t.v[2]).distance(sl.c) >= 0.0f);
+
+		t.type = il ? TcOut : TcIn;
+		t.fillStyle = sl.fillStyle0;
+		outTriangles.push_back(t);
+	}
+
+	if (isCurve(sr))
+	{
+		t.v[0] = Vector2(sr.v[0].x, y0);
+		t.v[1] = sr.c;
+		t.v[2] = Vector2(sr.v[1].x, y1);
+
+		ir = bool(Line2(t.v[0], t.v[2]).distance(sr.c) < 0.0f);
+
+		t.type = ir ? TcOut : TcIn;
+		t.fillStyle = sl.fillStyle0;
+		outTriangles.push_back(t);
+	}
+
+	if (!il && !ir)
+	{
+		t.v[0] = Vector2(sl.v[0].x, y0);
+		t.v[1] = Vector2(sr.v[0].x, y0);
+		t.v[2] = Vector2(sl.v[1].x, y1);
+		t.type = TcFill;
+		t.fillStyle = sl.fillStyle0;
+		outTriangles.push_back(t);
+
+		t.v[0] = Vector2(sr.v[1].x, y1);
+		t.v[1] = Vector2(sl.v[1].x, y1);
+		t.v[2] = Vector2(sr.v[0].x, y0);
+		t.type = TcFill;
+		t.fillStyle = sl.fillStyle0;
+		outTriangles.push_back(t);
+	}
+	else if (il && !ir)
+	{
+		t.v[0] = Vector2(sl.v[0].x, y0);
+		t.v[1] = Vector2(sr.v[0].x, y0);
+		t.v[2] = sl.c;
+		t.type = TcFill;
+		t.fillStyle = sl.fillStyle0;
+		outTriangles.push_back(t);
+
+		t.v[0] = Vector2(sr.v[0].x, y0);
+		t.v[1] = Vector2(sr.v[1].x, y1);
+		t.v[2] = sl.c;
+		t.type = TcFill;
+		t.fillStyle = sl.fillStyle0;
+		outTriangles.push_back(t);
+
+		t.v[0] = Vector2(sr.v[1].x, y1);
+		t.v[1] = Vector2(sl.v[1].x, y1);
+		t.v[2] = sl.c;
+		t.type = TcFill;
+		t.fillStyle = sl.fillStyle0;
+		outTriangles.push_back(t);
+	}
+	else if (!il && ir)
+	{
+		t.v[0] = Vector2(sl.v[0].x, y0);
+		t.v[1] = Vector2(sr.v[0].x, y0);
+		t.v[2] = sr.c;
+		t.type = TcFill;
+		t.fillStyle = sl.fillStyle0;
+		outTriangles.push_back(t);
+
+		t.v[0] = Vector2(sl.v[1].x, y1);
+		t.v[1] = Vector2(sl.v[0].x, y0);
+		t.v[2] = sr.c;
+		t.type = TcFill;
+		t.fillStyle = sl.fillStyle0;
+		outTriangles.push_back(t);
+
+		t.v[0] = Vector2(sr.v[1].x, y1);
+		t.v[1] = Vector2(sl.v[1].x, y1);
+		t.v[2] = sr.c;
+		t.type = TcFill;
+		t.fillStyle = sl.fillStyle0;
+		outTriangles.push_back(t);
+	}
+	else	// il && ir
+	{
+		t.v[0] = Vector2(sl.v[0].x, y0);
+		t.v[1] = Vector2(sr.v[0].x, y0);
+		t.v[2] = sl.c;
+		t.type = TcFill;
+		t.fillStyle = sl.fillStyle0;
+		outTriangles.push_back(t);
+
+		t.v[0] = Vector2(sr.v[0].x, y0);
+		t.v[1] = sr.c;
+		t.v[2] = sl.c;
+		t.type = TcFill;
+		t.fillStyle = sl.fillStyle0;
+		outTriangles.push_back(t);
+
+		t.v[0] = Vector2(sr.v[1].x, y1);
+		t.v[1] = Vector2(sl.v[1].x, y1);
+		t.v[2] = sr.c;
+		t.type = TcFill;
+		t.fillStyle = sl.fillStyle0;
+		outTriangles.push_back(t);
+
+		t.v[0] = Vector2(sl.v[1].x, y1);
+		t.v[1] = sl.c;
+		t.v[2] = sr.c;
+		t.type = TcFill;
+		t.fillStyle = sl.fillStyle0;
+		outTriangles.push_back(t);
+	}
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.Triangulator", Triangulator, Object)
@@ -47,7 +256,6 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, uint16_
 {
 	std::set< float > pys;
 	Segment s;
-	Triangle t;
 
 	m_segments.resize(0);
 
@@ -264,130 +472,7 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, uint16_
 				if (sl.v[0].x >= sr.v[0].x && sl.v[1].x >= sr.v[1].x)
 					continue;
 
-				float y0 = sl.v[0].y;
-				float y1 = sl.v[1].y;
-				T_ASSERT (y0 < y1);
-
-				bool il = false, ir = false;
-
-				if (sl.curve)
-				{
-					t.v[0] = Vector2(sl.v[0].x, y0);
-					t.v[1] = sl.c;
-					t.v[2] = Vector2(sl.v[1].x, y1);
-
-					il = bool(Line2(t.v[0], t.v[2]).distance(sl.c) >= 0.0f);
-
-					t.type = il ? TcOut : TcIn;
-					t.fillStyle = sl.fillStyle0;
-					outTriangles.push_back(t);
-				}
-
-				if (sr.curve)
-				{
-					t.v[0] = Vector2(sr.v[0].x, y0);
-					t.v[1] = sr.c;
-					t.v[2] = Vector2(sr.v[1].x, y1);
-
-					ir = bool(Line2(t.v[0], t.v[2]).distance(sr.c) < 0.0f);
-
-					t.type = ir ? TcOut : TcIn;
-					t.fillStyle = sl.fillStyle0;
-					outTriangles.push_back(t);
-				}
-
-				if (!il && !ir)
-				{
-					t.v[0] = Vector2(sl.v[0].x, y0);
-					t.v[1] = Vector2(sr.v[0].x, y0);
-					t.v[2] = Vector2(sl.v[1].x, y1);
-					t.type = TcFill;
-					t.fillStyle = sl.fillStyle0;
-					outTriangles.push_back(t);
-
-					t.v[0] = Vector2(sr.v[1].x, y1);
-					t.v[1] = Vector2(sl.v[1].x, y1);
-					t.v[2] = Vector2(sr.v[0].x, y0);
-					t.type = TcFill;
-					t.fillStyle = sl.fillStyle0;
-					outTriangles.push_back(t);
-				}
-				else if (il && !ir)
-				{
-					t.v[0] = Vector2(sl.v[0].x, y0);
-					t.v[1] = Vector2(sr.v[0].x, y0);
-					t.v[2] = sl.c;
-					t.type = TcFill;
-					t.fillStyle = sl.fillStyle0;
-					outTriangles.push_back(t);
-
-					t.v[0] = Vector2(sr.v[0].x, y0);
-					t.v[1] = Vector2(sr.v[1].x, y1);
-					t.v[2] = sl.c;
-					t.type = TcFill;
-					t.fillStyle = sl.fillStyle0;
-					outTriangles.push_back(t);
-
-					t.v[0] = Vector2(sr.v[1].x, y1);
-					t.v[1] = Vector2(sl.v[1].x, y1);
-					t.v[2] = sl.c;
-					t.type = TcFill;
-					t.fillStyle = sl.fillStyle0;
-					outTriangles.push_back(t);
-				}
-				else if (!il && ir)
-				{
-					t.v[0] = Vector2(sl.v[0].x, y0);
-					t.v[1] = Vector2(sr.v[0].x, y0);
-					t.v[2] = sr.c;
-					t.type = TcFill;
-					t.fillStyle = sl.fillStyle0;
-					outTriangles.push_back(t);
-
-					t.v[0] = Vector2(sl.v[1].x, y1);
-					t.v[1] = Vector2(sl.v[0].x, y0);
-					t.v[2] = sr.c;
-					t.type = TcFill;
-					t.fillStyle = sl.fillStyle0;
-					outTriangles.push_back(t);
-
-					t.v[0] = Vector2(sr.v[1].x, y1);
-					t.v[1] = Vector2(sl.v[1].x, y1);
-					t.v[2] = sr.c;
-					t.type = TcFill;
-					t.fillStyle = sl.fillStyle0;
-					outTriangles.push_back(t);
-				}
-				else	// il && ir
-				{
-					t.v[0] = Vector2(sl.v[0].x, y0);
-					t.v[1] = Vector2(sr.v[0].x, y0);
-					t.v[2] = sl.c;
-					t.type = TcFill;
-					t.fillStyle = sl.fillStyle0;
-					outTriangles.push_back(t);
-
-					t.v[0] = Vector2(sr.v[0].x, y0);
-					t.v[1] = sr.c;
-					t.v[2] = sl.c;
-					t.type = TcFill;
-					t.fillStyle = sl.fillStyle0;
-					outTriangles.push_back(t);
-
-					t.v[0] = Vector2(sr.v[1].x, y1);
-					t.v[1] = Vector2(sl.v[1].x, y1);
-					t.v[2] = sr.c;
-					t.type = TcFill;
-					t.fillStyle = sl.fillStyle0;
-					outTriangles.push_back(t);
-
-					t.v[0] = Vector2(sl.v[1].x, y1);
-					t.v[1] = sl.c;
-					t.v[2] = sr.c;
-					t.type = TcFill;
-					t.fillStyle = sl.fillStyle0;
-					outTriangles.push_back(t);
-				}
+				segmentsToTriangles(sl, sr, 0, outTriangles);
 			}
 		}
 	}
