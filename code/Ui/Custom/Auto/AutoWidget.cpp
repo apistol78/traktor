@@ -373,6 +373,10 @@ void AutoWidget::eventScroll(ScrollEvent* event)
 {
 	m_scrollOffset.cx = -m_scrollBarH->getPosition() * 16;
 	m_scrollOffset.cy = -m_scrollBarV->getPosition() * 16;
+
+	ScrollEvent scrollEvent(this, 0);
+	raiseEvent(&scrollEvent);
+
 	update();
 }
 
