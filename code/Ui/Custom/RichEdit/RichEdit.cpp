@@ -953,6 +953,8 @@ void RichEdit::eventButtonDown(MouseButtonDownEvent* event)
 	Font font = getFont();
 	Rect rc = getEditRect();
 
+	int32_t fromCaret = m_caret;
+
 	uint32_t lineCount = m_lines.size();
 	uint32_t lineOffset = m_scrollBarV->getPosition();
 	uint32_t lineHeight = font.getSize() + c_fontHeightMargin;
@@ -983,9 +985,16 @@ void RichEdit::eventButtonDown(MouseButtonDownEvent* event)
 	else
 		m_caret = ln.stop;
 
-	// Remove selection.
-	m_selectionStart = -1;
-	m_selectionStop = -1;
+	if ((event->getKeyState() & ui::KsShift) != 0)
+	{
+		m_selectionStart = std::min(fromCaret, m_caret);
+		m_selectionStop = std::max(fromCaret, m_caret);
+	}
+	else
+	{
+		m_selectionStart = -1;
+		m_selectionStop = -1;
+	}
 
 	update();
 }
