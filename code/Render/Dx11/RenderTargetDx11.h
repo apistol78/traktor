@@ -52,8 +52,10 @@ public:
 private:
 	Ref< ContextDx11 > m_context;
 	ComRef< ID3D11Texture2D > m_d3dTexture;
+	ComRef< ID3D11Texture2D > m_d3dTextureRead;
 	ComRef< ID3D11RenderTargetView > m_d3dRenderTargetView;
 	ComRef< ID3D11ShaderResourceView > m_d3dTextureResourceView;
+	DXGI_FORMAT m_d3dColorFormat;
 	int32_t m_width;
 	int32_t m_height;
 	bool m_generateMips;

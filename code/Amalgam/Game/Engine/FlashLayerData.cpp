@@ -18,6 +18,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.FlashLayerData", LayerData::Ver
 FlashLayerData::FlashLayerData()
 :	m_clearBackground(false)
 ,	m_enableSound(true)
+,	m_contextSize(1)
 {
 }
 
@@ -56,7 +57,8 @@ Ref< Layer > FlashLayerData::createInstance(Stage* stage, IEnvironment* environm
 		externalMovies,
 		imageProcess,
 		m_clearBackground,
-		m_enableSound
+		m_enableSound,
+		m_contextSize
 	);
 }
 
@@ -83,6 +85,9 @@ void FlashLayerData::serialize(ISerializer& s)
 
 	s >> Member< bool >(L"clearBackground", m_clearBackground);
 	s >> Member< bool >(L"enableSound", m_enableSound);
+
+	if (s.getVersion() >= 4)
+		s >> Member< uint32_t >(L"contextSize", m_contextSize);
 }
 
 	}
