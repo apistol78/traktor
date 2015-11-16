@@ -86,6 +86,8 @@ private:
 	void beginEdit(TreeViewItem* item);
 
 	void eventEditFocus(FocusEvent* event);
+
+	void eventScroll(ScrollEvent* event);
 };
 
 		}

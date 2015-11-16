@@ -42,6 +42,8 @@ bool TreeView::create(Widget* parent, int style)
 	m_itemEditor->addEventHandler< FocusEvent >(this, &TreeView::eventEditFocus);
 
 	m_imageState = Bitmap::load(c_ResourceTviState, sizeof(c_ResourceTviState), L"png");
+
+	addEventHandler< ScrollEvent >(this, &TreeView::eventScroll);
 	return true;
 }
 
@@ -191,6 +193,8 @@ void TreeView::layoutCells(const Rect& rc)
 		placeCell(*i, rcRow);
 		rcRow = rcRow.offset(0, height);
 	}
+
+	m_itemEditor->hide();
 }
 
 void TreeView::beginEdit(TreeViewItem* item)
@@ -213,7 +217,7 @@ void TreeView::beginEdit(TreeViewItem* item)
 
 void TreeView::eventEditFocus(FocusEvent* event)
 {
-	if (event->lostFocus())
+	if (event->lostFocus() && m_itemEditor->isVisible(false))
 	{
 		std::wstring originalText = m_editItem->getText();
 		std::wstring newText = m_itemEditor->getText();
@@ -228,6 +232,11 @@ void TreeView::eventEditFocus(FocusEvent* event)
 		if (!changeEvent.consumed())
 			m_editItem->setText(originalText);
 	}
+}
+
+void TreeView::eventScroll(ScrollEvent* event)
+{
+	m_itemEditor->hide();
 }
 
 		}
