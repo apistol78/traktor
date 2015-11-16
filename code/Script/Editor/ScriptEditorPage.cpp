@@ -20,6 +20,7 @@
 #include "Script/Editor/Preprocessor.h"
 #include "Script/Editor/Script.h"
 #include "Script/Editor/ScriptBreakpointEvent.h"
+#include "Script/Editor/ScriptClassesView.h"
 #include "Script/Editor/ScriptDebuggerView.h"
 #include "Script/Editor/ScriptEditorPage.h"
 #include "Ui/Application.h"
@@ -129,8 +130,17 @@ bool ScriptEditorPage::create(ui::Container* parent)
 
 	m_dependentList->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptEditorPage::eventDependentListDoubleClick);
 
+	Ref< ui::TabPage > tabClasses = new ui::TabPage();
+	if (!tabClasses->create(tab, i18n::Text(L"SCRIPT_EDITOR_CLASSES"), new ui::TableLayout(L"100%", L"100%", 0, 0)))
+		return false;
+
+	m_classesView = new ScriptClassesView();
+	if (!m_classesView->create(tabClasses))
+		return false;
+
 	tab->addPage(tabOutline);
 	tab->addPage(tabDependencies);
+	tab->addPage(tabClasses);
 	tab->setActivePage(tabOutline);
 
 	m_site->createAdditionalPanel(m_containerExplorer, ui::scaleBySystemDPI(300), false);
