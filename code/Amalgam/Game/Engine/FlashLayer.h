@@ -76,7 +76,8 @@ public:
 		const std::map< std::wstring, resource::Proxy< flash::FlashMovie > >& externalMovies,
 		const resource::Proxy< render::ImageProcessSettings >& imageProcessSettings,
 		bool clearBackground,
-		bool enableSound
+		bool enableSound,
+		uint32_t contextSize
 	);
 
 	virtual ~FlashLayer();
@@ -198,6 +199,7 @@ private:
 	Ref< render::ImageProcess > m_imageProcess;
 	bool m_clearBackground;
 	bool m_enableSound;
+	uint32_t m_contextSize;
 	bool m_visible;
 	Vector2 m_offset;
 	float m_scale;

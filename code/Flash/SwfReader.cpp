@@ -474,7 +474,7 @@ SwfShapeRecord* SwfReader::readShapeRecord(uint32_t numFillBits, uint32_t numLin
 
 bool SwfReader::readShapeWithStyle(SwfShape*& outShape, SwfStyles*& outStyles, int shapeType)
 {
-	const uint32_t c_maxRecordCount = 4096UL;
+	const uint32_t c_maxRecordCount = 32 * 1024U;
 
 	outStyles = readStyles(shapeType);
 	if (!outStyles)
@@ -519,14 +519,16 @@ bool SwfReader::readShapeWithStyle(SwfShape*& outShape, SwfStyles*& outStyles, i
 
 SwfShape* SwfReader::readShape(int shapeType)
 {
+	const uint32_t c_maxShapeCount = 1024U;
+
 	SwfShape* shape = m_pool->alloc< SwfShape >();
 	shape->numShapeRecords = 0;
-	shape->shapeRecords = m_pool->allocArray< SwfShapeRecord >(256);
+	shape->shapeRecords = m_pool->allocArray< SwfShapeRecord >(c_maxShapeCount);
 
 	uint32_t numFillBits = m_bs->readUnsigned(4);
 	uint32_t numLineBits = m_bs->readUnsigned(4);
 
-	while (shape->numShapeRecords < 256)
+	while (shape->numShapeRecords < c_maxShapeCount)
 	{
 		SwfShapeRecord* shapeRecord = readShapeRecord(numFillBits, numLineBits, shapeType);
 		if (!shapeRecord)

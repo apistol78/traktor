@@ -16,6 +16,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetDx11", RenderTargetDx11, ISi
 
 RenderTargetDx11::RenderTargetDx11(ContextDx11* context)
 :	m_context(context)
+,	m_d3dColorFormat(DXGI_FORMAT_UNKNOWN)
 ,	m_width(0)
 ,	m_height(0)
 ,	m_generateMips(false)
@@ -37,24 +38,54 @@ bool RenderTargetDx11::create(const RenderTargetSetCreateDesc& setDesc, const Re
 	if (dxgiTextureFormats[desc.format] == DXGI_FORMAT_UNKNOWN)
 		return false;
 
+	m_d3dColorFormat = dxgiTextureFormats[desc.format];
+
 	dtd.Width = setDesc.width;
 	dtd.Height = setDesc.height;
-	dtd.MipLevels = setDesc.generateMips ? 0 : 1;
+	dtd.MipLevels = 1;
 	dtd.ArraySize = 1;
-	dtd.Format = dxgiTextureFormats[desc.format];
+	dtd.Format = m_d3dColorFormat;
 	dtd.SampleDesc.Count = 1;
 	dtd.SampleDesc.Quality = 0;
 	dtd.Usage = D3D11_USAGE_DEFAULT;
-	dtd.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	dtd.BindFlags = D3D11_BIND_RENDER_TARGET;
 	dtd.CPUAccessFlags = 0;
-	dtd.MiscFlags = setDesc.generateMips ? D3D11_RESOURCE_MISC_GENERATE_MIPS : 0;
+	dtd.MiscFlags = 0;
 
-	if (setDesc.generateMips)
-		dtd.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
+	// \note Using same heuristics as in RenderTargetDepthDx11.cpp to determine format.
+	DXGI_FORMAT d3dDepthFormat = DXGI_FORMAT_UNKNOWN;
+	if (setDesc.createDepthStencil)
+	{
+		if (!setDesc.usingDepthStencilAsTexture)
+		{
+			if (setDesc.ignoreStencil)
+				d3dDepthFormat = DXGI_FORMAT_D16_UNORM;
+			else
+				d3dDepthFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		}
+		else
+			d3dDepthFormat = DXGI_FORMAT_R32_TYPELESS;
+	}
 
-	if (!setupSampleDesc(m_context->getD3DDevice(), setDesc.multiSample, dtd.Format, DXGI_FORMAT_D16_UNORM, dtd.SampleDesc))
-		return false;
+	if (d3dDepthFormat != DXGI_FORMAT_UNKNOWN)
+	{
+		if (!setupSampleDesc(m_context->getD3DDevice(), setDesc.multiSample, m_d3dColorFormat, d3dDepthFormat, dtd.SampleDesc))
+			return false;
+	}
+	else
+	{
+		if (!setupSampleDesc(m_context->getD3DDevice(), setDesc.multiSample, m_d3dColorFormat, dtd.SampleDesc))
+			return false;
+	}
 
+	if (dtd.SampleDesc.Count <= 1)
+	{
+		dtd.MipLevels = setDesc.generateMips ? 0 : 1;
+		dtd.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+		dtd.MiscFlags = setDesc.generateMips ? D3D11_RESOURCE_MISC_GENERATE_MIPS : 0;
+	}
+
+	// Create render target texture.
 	hr = m_context->getD3DDevice()->CreateTexture2D(
 		&dtd,
 		NULL,
@@ -73,12 +104,46 @@ bool RenderTargetDx11::create(const RenderTargetSetCreateDesc& setDesc, const Re
 		return false;
 	}
 
+	if (dtd.SampleDesc.Count > 1)
+	{
+		// Create resolved read-back texture.
+		dtd.Width = setDesc.width;
+		dtd.Height = setDesc.height;
+		dtd.MipLevels = setDesc.generateMips ? 0 : 1;
+		dtd.ArraySize = 1;
+		dtd.Format = dxgiTextureFormats[desc.format];
+		dtd.SampleDesc.Count = 1;
+		dtd.SampleDesc.Quality = 0;
+		dtd.Usage = D3D11_USAGE_DEFAULT;
+		dtd.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+		dtd.CPUAccessFlags = 0;
+		dtd.MiscFlags = setDesc.generateMips ? D3D11_RESOURCE_MISC_GENERATE_MIPS : 0;
+
+		hr = m_context->getD3DDevice()->CreateTexture2D(
+			&dtd,
+			NULL,
+			&m_d3dTextureRead.getAssign()
+		);
+		if (FAILED(hr))
+		{
+			log::error << L"Unable to create render target, failed to create read-back color texture" << Endl;
+			return false;
+		}
+
+	}
+	else
+	{
+		// No multisampling; able to read-back target directly without resolve.
+		m_d3dTextureRead = m_d3dTexture;
+	}
+
+	// Create shader view to read from read-back texture.
 	dsrvd.Format = dtd.Format;
-	dsrvd.ViewDimension = dtd.SampleDesc.Count > 1 ? D3D11_SRV_DIMENSION_TEXTURE2DMS : D3D11_SRV_DIMENSION_TEXTURE2D;
+	dsrvd.ViewDimension = /*dtd.SampleDesc.Count > 1 ? D3D11_SRV_DIMENSION_TEXTURE2DMS : */D3D11_SRV_DIMENSION_TEXTURE2D;
 	dsrvd.Texture2D.MostDetailedMip = 0;
 	dsrvd.Texture2D.MipLevels = 1;
 
-	hr = m_context->getD3DDevice()->CreateShaderResourceView(m_d3dTexture, &dsrvd, &m_d3dTextureResourceView.getAssign());
+	hr = m_context->getD3DDevice()->CreateShaderResourceView(m_d3dTextureRead, &dsrvd, &m_d3dTextureResourceView.getAssign());
 	if (FAILED(hr))
 	{
 		log::error << L"Unable to create render target, failed to create shader resource view" << Endl;
@@ -96,12 +161,23 @@ void RenderTargetDx11::destroy()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_context->getLock());
 	m_context->releaseComRef(m_d3dTexture);
+	m_context->releaseComRef(m_d3dTextureRead);
 	m_context->releaseComRef(m_d3dRenderTargetView);
 	m_context->releaseComRef(m_d3dTextureResourceView);
 }
 
 ITexture* RenderTargetDx11::resolve()
 {
+	if (m_d3dTexture != m_d3dTextureRead)
+	{
+		m_context->getD3DDeviceContext()->ResolveSubresource(
+			m_d3dTextureRead,
+			0,
+			m_d3dTexture,
+			0,
+			m_d3dColorFormat
+		);
+	}
 	return this;
 }
 

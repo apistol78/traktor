@@ -54,6 +54,7 @@ private:
 	resource::Id< render::ImageProcessSettings > m_imageProcess;
 	bool m_clearBackground;
 	bool m_enableSound;
+	uint32_t m_contextSize;
 };
 
 	}

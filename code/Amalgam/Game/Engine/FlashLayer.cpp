@@ -117,7 +117,8 @@ FlashLayer::FlashLayer(
 	const std::map< std::wstring, resource::Proxy< flash::FlashMovie > >& externalMovies,
 	const resource::Proxy< render::ImageProcessSettings >& imageProcessSettings,
 	bool clearBackground,
-	bool enableSound
+	bool enableSound,
+	uint32_t contextSize
 )
 :	Layer(stage, name, permitTransition)
 ,	m_environment(environment)
@@ -126,6 +127,7 @@ FlashLayer::FlashLayer(
 ,	m_imageProcessSettings(imageProcessSettings)
 ,	m_clearBackground(clearBackground)
 ,	m_enableSound(enableSound)
+,	m_contextSize(contextSize)
 ,	m_visible(true)
 ,	m_offset(0.0f, 0.0f)
 ,	m_scale(1.0f)
@@ -739,7 +741,7 @@ void FlashLayer::createMoviePlayer()
 			m_environment->getResource()->getResourceManager(),
 			m_environment->getRender()->getRenderSystem(),
 			m_environment->getRender()->getThreadFrameQueueCount(),
-			2 * 1024 * 1024,
+			m_contextSize * 1024 * 1024,
 			m_clearBackground,
 			0.006f
 		))
