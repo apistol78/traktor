@@ -92,19 +92,9 @@ void FlashCharacterInstance::setColorTransform(const SwfCxTransform& cxform)
 	m_cxform = cxform;
 }
 
-const SwfCxTransform& FlashCharacterInstance::getColorTransform() const
-{
-	return m_cxform;
-}
-
 void FlashCharacterInstance::setTransform(const Matrix33& transform)
 {
 	m_transform = transform;
-}
-
-const Matrix33& FlashCharacterInstance::getTransform() const
-{
-	return m_transform;
 }
 
 Matrix33 FlashCharacterInstance::getFullTransform() const
@@ -120,19 +110,9 @@ void FlashCharacterInstance::setFilter(uint8_t filter)
 	m_filter = filter;
 }
 
-uint8_t FlashCharacterInstance::getFilter() const
-{
-	return m_filter;
-}
-
 void FlashCharacterInstance::setFilterColor(const SwfColor& filterColor)
 {
 	m_filterColor = filterColor;
-}
-
-const SwfColor& FlashCharacterInstance::getFilterColor() const
-{
-	return m_filterColor;
 }
 
 void FlashCharacterInstance::setBlendMode(uint8_t blendMode)
@@ -140,19 +120,9 @@ void FlashCharacterInstance::setBlendMode(uint8_t blendMode)
 	m_blendMode = blendMode;
 }
 
-uint8_t FlashCharacterInstance::getBlendMode() const
-{
-	return m_blendMode;
-}
-
 void FlashCharacterInstance::setVisible(bool visible)
 {
 	m_visible = visible;
-}
-
-bool FlashCharacterInstance::isVisible() const
-{
-	return m_visible;
 }
 
 void FlashCharacterInstance::setEnabled(bool enabled)
@@ -160,19 +130,9 @@ void FlashCharacterInstance::setEnabled(bool enabled)
 	m_enabled = enabled;
 }
 
-bool FlashCharacterInstance::isEnabled() const
-{
-	return m_enabled;
-}
-
 void FlashCharacterInstance::setEvents(const SmallMap< uint32_t, Ref< const IActionVMImage > >& eventScripts)
 {
 	m_eventScripts = eventScripts;
-}
-
-const SmallMap< uint32_t, Ref< const IActionVMImage > >& FlashCharacterInstance::getEvents() const
-{
-	return m_eventScripts;
 }
 
 void FlashCharacterInstance::preDispatchEvents()

@@ -80,7 +80,7 @@ public:
 	 *
 	 * \return Color transform.
 	 */
-	const SwfCxTransform& getColorTransform() const;
+	const SwfCxTransform& getColorTransform() const { return m_cxform; }
 
 	/*! \brief Set coordinate transformation.
 	 *
@@ -92,7 +92,7 @@ public:
 	 *
 	 * \return Transformation matrix.
 	 */
-	const Matrix33& getTransform() const;
+	const Matrix33& getTransform() const { return m_transform; }
 
 	/*! \brief Get coordinate transformation; concatenated through parents.
 	 *
@@ -106,7 +106,7 @@ public:
 
 	/*! \brief
 	 */
-	uint8_t getFilter() const;
+	uint8_t getFilter() const { return m_filter; }
 
 	/*! \brief
 	 */
@@ -114,7 +114,7 @@ public:
 
 	/*! \brief
 	 */
-	const SwfColor& getFilterColor() const;
+	const SwfColor& getFilterColor() const { return m_filterColor; }
 
 	/*! \brief
 	 */
@@ -122,7 +122,7 @@ public:
 
 	/*! \brief
 	 */
-	uint8_t getBlendMode() const;
+	uint8_t getBlendMode() const { return m_blendMode; }
 
 	/*! \brief
 	 */
@@ -130,7 +130,7 @@ public:
 
 	/*! \brief
 	 */
-	bool isVisible() const;
+	bool isVisible() const { return m_visible; }
 
 	/*! \brief
 	 */
@@ -138,7 +138,7 @@ public:
 
 	/*! \brief
 	 */
-	bool isEnabled() const;
+	bool isEnabled() const { return m_enabled; }
 
 	/*! \brief Set event scripts.
 	 *
@@ -150,7 +150,7 @@ public:
 	 *
 	 * \return Event scripts.
 	 */
-	const SmallMap< uint32_t, Ref< const IActionVMImage > >& getEvents() const;
+	const SmallMap< uint32_t, Ref< const IActionVMImage > >& getEvents() const { return m_eventScripts; }
 
 	/*! \name Events */
 	//@{

@@ -22,16 +22,6 @@ FlashCharacter::FlashCharacter(uint16_t id)
 {
 }
 
-uint16_t FlashCharacter::getId() const
-{
-	return m_id;
-}
-
-int32_t FlashCharacter::getCacheTag() const
-{
-	return m_tag;
-}
-
 void FlashCharacter::serialize(ISerializer& s)
 {
 	s >> Member< uint16_t >(L"id", m_id);

@@ -162,7 +162,6 @@ void FlashSpriteInstance::updateDisplayList()
 		}
 		m_displayList.updateEnd();
 	}
-
 	m_lastUpdateFrame = m_currentFrame;
 
 	// Recursive update of child sprite instances as well.
