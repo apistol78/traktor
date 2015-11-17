@@ -390,7 +390,9 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classIFlashMovieLoader_IHandle);
 
 	Ref< AutoRuntimeClass< FlashMovieLoader > > classFlashMovieLoader = new AutoRuntimeClass< FlashMovieLoader >();
-	classFlashMovieLoader->addConstructor< bool >();
+	classFlashMovieLoader->addConstructor();
+	classFlashMovieLoader->addMethod("setCacheDirectory", &FlashMovieLoader::setCacheDirectory);
+	classFlashMovieLoader->addMethod("setMerge", &FlashMovieLoader::setMerge);
 	registrar->registerClass(classFlashMovieLoader);
 
 	Ref< AutoRuntimeClass< FlashMovieFactory > > classFlashMovieFactory = new AutoRuntimeClass< FlashMovieFactory >();

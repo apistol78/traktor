@@ -1,6 +1,12 @@
+#include "Compress/Lzf/DeflateStreamLzf.h"
+#include "Compress/Lzf/InflateStreamLzf.h"
 #include "Core/Functor/Functor.h"
 #include "Core/Io/DynamicMemoryStream.h"
+#include "Core/Io/FileSystem.h"
 #include "Core/Io/StreamCopy.h"
+#include "Core/Log/Log.h"
+#include "Core/Serialization/BinarySerializer.h"
+#include "Core/System/OS.h"
 #include "Core/Thread/Job.h"
 #include "Core/Thread/JobManager.h"
 #include "Flash/FlashMovie.h"
@@ -20,8 +26,9 @@ namespace traktor
 class FlashMovieLoaderHandle : public IFlashMovieLoader::IHandle
 {
 public:
-	FlashMovieLoaderHandle(const net::Url& url, bool merge)
+	FlashMovieLoaderHandle(const net::Url& url, const std::wstring& cacheDirectory, bool merge)
 	:	m_url(url)
+	,	m_cacheDirectory(cacheDirectory)
 	,	m_merge(merge)
 	{
 		m_job = JobManager::getInstance().add(makeFunctor< FlashMovieLoaderHandle >(this, &FlashMovieLoaderHandle::loader));
@@ -49,12 +56,27 @@ public:
 
 private:
 	net::Url m_url;
+	std::wstring m_cacheDirectory;
 	bool m_merge;
 	Ref< Job > m_job;
 	Ref< FlashMovie > m_movie;
 
 	void loader()
 	{
+		if (!m_cacheDirectory.empty())
+		{
+			std::wstring cacheFileName = net::Url::encode(m_url.getString());
+			Ref< IStream > f = FileSystem::getInstance().open(m_cacheDirectory + L"/" + cacheFileName, File::FmRead);
+			if (f)
+			{
+				compress::InflateStreamLzf is(f);
+				m_movie = BinarySerializer(&is).readObject< FlashMovie >();
+				is.close();
+			}
+			if (m_movie)
+				return;
+		}
+
 		Ref< net::UrlConnection > connection = net::UrlConnection::open(m_url);
 		if (!connection)
 			return;
@@ -75,6 +97,18 @@ private:
 
 		if (m_merge)
 			m_movie = FlashOptimizer().merge(m_movie);
+
+		if (!m_cacheDirectory.empty())
+		{
+			std::wstring cacheFileName = net::Url::encode(m_url.getString());
+			Ref< IStream > f = FileSystem::getInstance().open(m_cacheDirectory + L"/" + cacheFileName, File::FmWrite);
+			if (f)
+			{
+				compress::DeflateStreamLzf ds(f);
+				BinarySerializer(&ds).writeObject(m_movie);
+				ds.close();
+			}
+		}
 	}
 };
 
@@ -82,18 +116,44 @@ private:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashMovieLoader", FlashMovieLoader, IFlashMovieLoader)
 
-FlashMovieLoader::FlashMovieLoader(bool merge)
-:	m_merge(merge)
+FlashMovieLoader::FlashMovieLoader()
+:	m_merge(false)
 {
+}
+
+void FlashMovieLoader::setCacheDirectory(const std::wstring& cacheDirectory)
+{
+	m_cacheDirectory = cacheDirectory;
+}
+
+void FlashMovieLoader::setMerge(bool merge)
+{
+	m_merge = merge;
 }
 
 Ref< IFlashMovieLoader::IHandle > FlashMovieLoader::loadAsync(const net::Url& url) const
 {
-	return new FlashMovieLoaderHandle(url, m_merge);
+	return new FlashMovieLoaderHandle(url, m_cacheDirectory, m_merge);
 }
 
 Ref< FlashMovie > FlashMovieLoader::load(const net::Url& url) const
 {
+	Ref< FlashMovie > movie;
+
+	if (!m_cacheDirectory.empty())
+	{
+		std::wstring cacheFileName = net::Url::encode(url.getString());
+		Ref< IStream > f = FileSystem::getInstance().open(m_cacheDirectory + L"/" + cacheFileName, File::FmRead);
+		if (f)
+		{
+			compress::InflateStreamLzf is(f);
+			movie = BinarySerializer(&is).readObject< FlashMovie >();
+			is.close();
+		}
+		if (movie)
+			return movie;
+	}
+
 	Ref< net::UrlConnection > connection = net::UrlConnection::open(url);
 	if (!connection)
 		return 0;
@@ -108,11 +168,26 @@ Ref< FlashMovie > FlashMovieLoader::load(const net::Url& url) const
 	dms.seek(IStream::SeekSet, 0);
 
 	SwfReader swfReader(&dms);
-	Ref< FlashMovie > movie = FlashMovieFactory().createMovie(&swfReader);
+	movie = FlashMovieFactory().createMovie(&swfReader);
 	if (!movie)
 		return 0;
 
-	return m_merge ? FlashOptimizer().merge(movie) : movie;
+	if (m_merge)
+		movie = FlashOptimizer().merge(movie);
+
+	if (!m_cacheDirectory.empty())
+	{
+		std::wstring cacheFileName = net::Url::encode(url.getString());
+		Ref< IStream > f = FileSystem::getInstance().open(m_cacheDirectory + L"/" + cacheFileName, File::FmWrite);
+		if (f)
+		{
+			compress::DeflateStreamLzf ds(f);
+			BinarySerializer(&ds).writeObject(movie);
+			ds.close();
+		}
+	}
+
+	return movie;
 }
 
 	}
