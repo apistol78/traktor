@@ -6,6 +6,7 @@
 #include "Drawing/Image.h"
 #include "Editor/App/NewWorkspaceDialog.h"
 #include "I18N/Text.h"
+#include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Edit.h"
 #include "Ui/PathDialog.h"
@@ -27,7 +28,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.NewWorkspaceDialog", NewWorkspaceDialog,
 
 bool NewWorkspaceDialog::create(ui::Widget* parent)
 {
-	if (!ui::ConfigDialog::create(parent, i18n::Text(L"EDITOR_NEW_WORKSPACE_TITLE"), 500, 400, ui::ConfigDialog::WsDefaultResizable, new ui::TableLayout(L"100%", L"100%,*", 4, 4)))
+	if (!ui::ConfigDialog::create(parent, i18n::Text(L"EDITOR_NEW_WORKSPACE_TITLE"), ui::scaleBySystemDPI(500), ui::scaleBySystemDPI(400), ui::ConfigDialog::WsDefaultResizable, new ui::TableLayout(L"100%", L"100%,*", 4, 4)))
 		return false;
 
 	addEventHandler< ui::ButtonClickEvent >(this, &NewWorkspaceDialog::eventDialogClick);
