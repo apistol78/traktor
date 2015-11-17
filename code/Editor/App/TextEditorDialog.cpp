@@ -1,7 +1,8 @@
 #include "Editor/App/TextEditorDialog.h"
+#include "I18N/Text.h"
+#include "Ui/Application.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/RichEdit.h"
-#include "I18N/Text.h"
 
 namespace traktor
 {
@@ -12,7 +13,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.TextEditorDialog", TextEditorDialog, ui:
 
 bool TextEditorDialog::create(ui::Widget* parent, const std::wstring& initialText)
 {
-	if (!ui::ConfigDialog::create(parent, i18n::Text(L"TEXT_EDIT"), 500, 400, ui::ConfigDialog::WsDefaultResizable, new ui::FloodLayout()))
+	if (!ui::ConfigDialog::create(parent, i18n::Text(L"TEXT_EDIT"), ui::scaleBySystemDPI(500), ui::scaleBySystemDPI(400), ui::ConfigDialog::WsDefaultResizable, new ui::FloodLayout()))
 		return false;
 
 	m_edit = new ui::RichEdit();
