@@ -1,3 +1,4 @@
+#include "Core/Misc/Adler32.h"
 #include "Flash/FlashFillStyle.h"
 #include "Flash/FlashBitmapData.h"
 #include "Flash/FlashBitmapResource.h"
@@ -83,13 +84,20 @@ void AccTextureCache::clear()
 
 AccTextureCache::BitmapRect AccTextureCache::getGradientTexture(const FlashFillStyle& style)
 {
-	uint64_t hash = reinterpret_cast< uint64_t >(&style);
+	const AlignedVector< FlashFillStyle::ColorRecord >& colorRecords = style.getColorRecords();
+	T_ASSERT (colorRecords.size() > 1);
+
+	Adler32 cs;
+	cs.begin();
+	cs.feed(style.getGradientType());
+	for (AlignedVector< FlashFillStyle::ColorRecord >::const_iterator i = colorRecords.begin(); i != colorRecords.end(); ++i)
+		cs.feed(*i);
+	cs.end();
+
+	uint64_t hash = cs.get();
 	SmallMap< uint64_t, BitmapRect >::iterator it = m_cache.find(hash);
 	if (it != m_cache.end())
 		return it->second;
-
-	const AlignedVector< FlashFillStyle::ColorRecord >& colorRecords = style.getColorRecords();
-	T_ASSERT (colorRecords.size() > 1);
 
 	if (style.getGradientType() == FlashFillStyle::GtLinear)
 	{

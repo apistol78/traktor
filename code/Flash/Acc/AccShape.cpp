@@ -214,22 +214,31 @@ bool AccShape::updateRenderable(
 
 	uint32_t vertexOffset = 0;
 	Matrix33 textureMatrix;
+	uint16_t lastFillStyle = 0;
+	Color4ub color(255, 255, 255, 255);
+	AccTextureCache::BitmapRect texture;
 
 	for (AlignedVector< Triangle >::const_iterator j = m_triangles.begin(); j != m_triangles.end(); ++j)
 	{
-		Color4ub color(255, 255, 255, 255);
-		AccTextureCache::BitmapRect texture;
-		float curveSign = 0.0f;
+		T_ASSERT (j->fillStyle);
 
+		float curveSign = 0.0f;
 		if (j->type == TcIn)
 			curveSign = 1.0f;
 		else if (j->type == TcOut)
 			curveSign = -1.0f;
 
-		if (j->fillStyle && j->fillStyle - 1 < uint16_t(fillStyles.size()))
+		if (
+			!fillStyles.empty() &&
+			j->fillStyle != lastFillStyle
+		)
 		{
+			color = Color4ub(255, 255, 255, 255);
+			texture = AccTextureCache::BitmapRect();
+
 			const FlashFillStyle& style = fillStyles[j->fillStyle - 1];
 
+			// Convert colors, solid or gradients.
 			const AlignedVector< FlashFillStyle::ColorRecord >& colorRecords = style.getColorRecords();
 			if (colorRecords.size() > 1)
 			{
@@ -247,6 +256,7 @@ bool AccShape::updateRenderable(
 				m_batchFlags |= BfHaveSolid;
 			}
 
+			// Convert bitmaps.
 			const FlashBitmap* bitmap = dictionary.getBitmap(style.getFillBitmap());
 			if (bitmap)
 			{
@@ -255,6 +265,8 @@ bool AccShape::updateRenderable(
 				textureMatrix = scale(1.0f / bitmap->getWidth(), 1.0f / bitmap->getHeight()) * style.getFillBitmapMatrix().inverse();
 				m_batchFlags |= BfHaveTextured;
 			}
+
+			lastFillStyle = j->fillStyle;
 		}
 
 		if (m_renderBatches.empty() || m_renderBatches.back().texture != texture)
