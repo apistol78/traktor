@@ -13,7 +13,7 @@ namespace traktor
 		namespace
 		{
 
-void jobLoader(IEnvironment* environment, const Guid& stageGuid, Ref< const Object > params, Ref< StageLoader > stageLoader, Ref< Stage >& outStage)
+void jobLoader(IEnvironment* environment, Guid stageGuid, Ref< const Object > params, Ref< StageLoader > stageLoader, Ref< Stage >& outStage)
 {
 	Ref< StageData > stageData = environment->getDatabase()->getObjectReadOnly< StageData >(stageGuid);
 	if (!stageData)
@@ -64,7 +64,7 @@ Ref< StageLoader > StageLoader::createAsync(IEnvironment* environment, const Gui
 {
 #if !defined(__EMSCRIPTEN__)
 	Ref< StageLoader > stageLoader = new StageLoader();
-	stageLoader->m_job = JobManager::getInstance().add(makeStaticFunctor< IEnvironment*, const Guid&, Ref< const Object >, Ref< StageLoader >, Ref< Stage >& >(&jobLoader, environment, stageGuid, params, stageLoader, stageLoader->m_stage));
+	stageLoader->m_job = JobManager::getInstance().add(makeStaticFunctor< IEnvironment*, Guid, Ref< const Object >, Ref< StageLoader >, Ref< Stage >& >(&jobLoader, environment, stageGuid, params, stageLoader, stageLoader->m_stage));
 	if (stageLoader->m_job)
 		return stageLoader;
 	else

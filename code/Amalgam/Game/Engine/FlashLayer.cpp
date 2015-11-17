@@ -82,18 +82,22 @@ uint32_t translateInputKeyCode(uint32_t inputKeyCode)
 	return 0;
 }
 
-class CustomFlashMovieLoader : public flash::FlashMovieLoader
+class CustomFlashMovieLoader : public flash::IFlashMovieLoader
 {
 public:
-	CustomFlashMovieLoader(db::Database* database, const std::map< std::wstring, resource::Proxy< flash::FlashMovie > >& externalMovies)
-	:	flash::FlashMovieLoader(database)
-	,	m_externalMovies(externalMovies)
+	CustomFlashMovieLoader(const std::map< std::wstring, resource::Proxy< flash::FlashMovie > >& externalMovies)
+	:	m_externalMovies(externalMovies)
 	{
 	}
 
-	virtual Ref< flash::FlashMovie > load(const std::wstring& name) const T_OVERRIDE T_FINAL
+	virtual Ref< IHandle > loadAsync(const net::Url& url) const T_OVERRIDE T_FINAL
 	{
-		std::map< std::wstring, resource::Proxy< flash::FlashMovie > >::const_iterator i = m_externalMovies.find(name);
+		return 0;
+	}
+
+	virtual Ref< flash::FlashMovie > load(const net::Url& url) const T_OVERRIDE T_FINAL
+	{
+		std::map< std::wstring, resource::Proxy< flash::FlashMovie > >::const_iterator i = m_externalMovies.find(url.getFile());
 		if (i != m_externalMovies.end())
 			return i->second.getResource();
 		else
@@ -785,7 +789,7 @@ void FlashLayer::createMoviePlayer()
 		Ref< flash::FlashMoviePlayer > moviePlayer = new flash::FlashMoviePlayer(
 			m_displayRenderer,
 			m_soundRenderer,
-			new CustomFlashMovieLoader(m_environment->getDatabase(), m_externalMovies)
+			new CustomFlashMovieLoader(m_externalMovies)
 		);
 		if (!moviePlayer->create(m_movie, width, height))
 		{

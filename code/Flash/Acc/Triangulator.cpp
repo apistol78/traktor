@@ -86,41 +86,9 @@ bool isCurve(const Segment& s)
 		return false;
 }
 
-void segmentsToTriangles(const Segment& sl, const Segment& sr, int32_t depth, AlignedVector< Triangle >& outTriangles)
+void segmentsToTriangles_2(const Segment& sl, const Segment& sr, AlignedVector< Triangle >& outTriangles)
 {
 	Triangle t;
-
-	if (depth < 2 && sl.curve)
-	{
-		if (Line2(sr.v[0], sr.v[1]).distance(sl.c) > 0.0f)
-		{
-			Segment slt, slb;
-			Segment srt, srb;
-
-			splitSegment(sl, 0.5f, slt, slb);
-			splitSegment(sr, 0.5f, srt, srb);
-
-			segmentsToTriangles(slt, srt, depth + 1, outTriangles);
-			segmentsToTriangles(slb, srb, depth + 1, outTriangles);
-			return;
-		}
-	}
-
-	if (depth < 2 && sr.curve)
-	{
-		if (Line2(sl.v[0], sl.v[1]).distance(sr.c) < 0.0f)
-		{
-			Segment slt, slb;
-			Segment srt, srb;
-
-			splitSegment(sl, 0.5f, slt, slb);
-			splitSegment(sr, 0.5f, srt, srb);
-
-			segmentsToTriangles(slt, srt, depth + 1, outTriangles);
-			segmentsToTriangles(slb, srb, depth + 1, outTriangles);
-			return;
-		}
-	}
 
 	float y0 = sl.v[0].y;
 	float y1 = sl.v[1].y;
@@ -246,6 +214,48 @@ void segmentsToTriangles(const Segment& sl, const Segment& sr, int32_t depth, Al
 		t.fillStyle = sl.fillStyle0;
 		outTriangles.push_back(t);
 	}
+}
+
+void segmentsToTriangles_1(const Segment& sl, const Segment& sr, AlignedVector< Triangle >& outTriangles)
+{
+	if (
+		(sl.curve && Line2(sr.v[0], sr.v[1]).distance(sl.c) > 0.0f) ||
+		(sr.curve && Line2(sl.v[0], sl.v[1]).distance(sr.c) < 0.0f)
+	)
+	{
+		Segment slt, slb;
+		Segment srt, srb;
+
+		splitSegment(sl, 0.5f, slt, slb);
+		splitSegment(sr, 0.5f, srt, srb);
+
+		segmentsToTriangles_2(slt, srt, outTriangles);
+		segmentsToTriangles_2(slb, srb, outTriangles);
+		return;
+	}
+
+	segmentsToTriangles_2(sl, sr, outTriangles);
+}
+
+void segmentsToTriangles(const Segment& sl, const Segment& sr, AlignedVector< Triangle >& outTriangles)
+{
+	if (
+		(sl.curve && Line2(sr.v[0], sr.v[1]).distance(sl.c) > 0.0f) ||
+		(sr.curve && Line2(sl.v[0], sl.v[1]).distance(sr.c) < 0.0f)
+	)
+	{
+		Segment slt, slb;
+		Segment srt, srb;
+
+		splitSegment(sl, 0.5f, slt, slb);
+		splitSegment(sr, 0.5f, srt, srb);
+
+		segmentsToTriangles_1(slt, srt, outTriangles);
+		segmentsToTriangles_1(slb, srb, outTriangles);
+		return;
+	}
+
+	segmentsToTriangles_2(sl, sr, outTriangles);
 }
 
 		}
@@ -472,7 +482,7 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, uint16_
 				if (sl.v[0].x >= sr.v[0].x && sl.v[1].x >= sr.v[1].x)
 					continue;
 
-				segmentsToTriangles(sl, sr, 0, outTriangles);
+				segmentsToTriangles(sl, sr, outTriangles);
 			}
 		}
 	}
