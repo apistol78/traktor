@@ -265,30 +265,15 @@ void FlashShape::addLineStyle(const FlashLineStyle& lineStyle)
 
 void FlashShape::merge(const FlashShape& shape, const Matrix33& transform, const SwfCxTransform& cxform)
 {
-	std::map< uint32_t, uint32_t > fillStyleMap;
-	std::map< uint32_t, uint32_t > lineStyleMap;
+	uint32_t fillStyleBase = uint32_t(m_fillStyles.size());
+	uint32_t lineStyleBase = uint32_t(m_lineStyles.size());
 
 	// Transform fill styles.
 	for (uint32_t i = 0; i < shape.getFillStyles().size(); ++i)
 	{
 		FlashFillStyle fillStyle = shape.getFillStyles()[i];
 		fillStyle.transform(transform, cxform);
-
-		//bool found = false;
-		//for (uint32_t j = 0; j < m_fillStyles.size(); ++j)
-		//{
-		//	if (m_fillStyles[j].equal(fillStyle))
-		//	{
-		//		fillStyleMap[i + 1] = j + 1;
-		//		found = true;
-		//		break;
-		//	}
-		//}
-		//if (!found)
-		//{
-			m_fillStyles.push_back(fillStyle);
-			fillStyleMap[i + 1] = m_fillStyles.size();
-		//}
+		m_fillStyles.push_back(fillStyle);
 	}
 
 	// Transform line styles.
@@ -296,22 +281,7 @@ void FlashShape::merge(const FlashShape& shape, const Matrix33& transform, const
 	{
 		FlashLineStyle lineStyle = shape.getLineStyles()[i];
 		lineStyle.transform(cxform);
-
-		//bool found = false;
-		//for (uint32_t j = 0; j < m_lineStyles.size(); ++j)
-		//{
-		//	if (m_lineStyles[j].equal(lineStyle))
-		//	{
-		//		lineStyleMap[i + 1] = j + 1;
-		//		found = true;
-		//		break;
-		//	}
-		//}
-		//if (!found)
-		{
-			m_lineStyles.push_back(lineStyle);
-			lineStyleMap[i + 1] = m_lineStyles.size();
-		}
+		m_lineStyles.push_back(lineStyle);
 	}
 
 	// Transform paths and modify styles.
@@ -320,17 +290,14 @@ void FlashShape::merge(const FlashShape& shape, const Matrix33& transform, const
 		AlignedVector< Vector2 > points = i->getPoints();
 		AlignedVector< SubPath > subPaths = i->getSubPaths();
 
-		//for (AlignedVector< Vector2 >::iterator j = points.begin(); j != points.end(); ++j)
-		//	*j = transform * *j;
-
 		for (AlignedVector< SubPath >::iterator j = subPaths.begin(); j != subPaths.end(); ++j)
 		{
 			if (j->fillStyle0)
-				j->fillStyle0 = fillStyleMap[j->fillStyle0];
+				j->fillStyle0 = fillStyleBase + j->fillStyle0;
 			if (j->fillStyle1)
-				j->fillStyle1 = fillStyleMap[j->fillStyle1];
+				j->fillStyle1 = fillStyleBase + j->fillStyle1;
 			if (j->lineStyle)
-				j->lineStyle = lineStyleMap[j->lineStyle];
+				j->lineStyle = lineStyleBase + j->lineStyle;
 		}
 
 		m_paths.push_back(Path(transform, points, subPaths));

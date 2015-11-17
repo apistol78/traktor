@@ -152,7 +152,7 @@ bool AccShape::createTesselation(const AlignedVector< Path >& paths)
 	{
 		for (int k = 0; k < 3; ++k)
 		{
-			Vector2 pt = j->v[k];
+			const Vector2& pt = j->v[k];
 			m_bounds.mn.x = min< float >(m_bounds.mn.x, pt.x);
 			m_bounds.mn.y = min< float >(m_bounds.mn.y, pt.y);
 			m_bounds.mx.x = max< float >(m_bounds.mx.x, pt.x);

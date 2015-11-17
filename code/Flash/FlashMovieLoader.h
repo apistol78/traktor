@@ -24,13 +24,18 @@ class T_DLLCLASS FlashMovieLoader : public IFlashMovieLoader
 	T_RTTI_CLASS;
 
 public:
-	FlashMovieLoader(bool merge);
+	FlashMovieLoader();
+
+	void setCacheDirectory(const std::wstring& cacheDirectory);
+
+	void setMerge(bool merge);
 
 	virtual Ref< IHandle > loadAsync(const net::Url& url) const T_OVERRIDE T_FINAL;
 
 	virtual Ref< FlashMovie > load(const net::Url& url) const T_OVERRIDE T_FINAL;
 
 private:
+	std::wstring m_cacheDirectory;
 	bool m_merge;
 };
 
