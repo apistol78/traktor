@@ -72,8 +72,7 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createResourceContext(void* nativeHand
 		EGL_LEVEL, 0,
 		EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
 		EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-		EGL_NATIVE_RENDERABLE, EGL_FALSE,
-		EGL_DEPTH_SIZE, 24,
+		EGL_DEPTH_SIZE, 16,
 		EGL_STENCIL_SIZE, 4,
 		EGL_NONE
 	};
@@ -157,10 +156,6 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createResourceContext(void* nativeHand
 		return 0;
 
 #endif
-
-//	const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
-//	if (extensions)
-//		log::info << L"GL_EXTENSIONS = " << mbstows(extensions) << Endl;
 
 	log::info << L"OpenGL ES 2.0 resource context created successfully" << Endl;
 	return context;
@@ -287,10 +282,6 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(ContextOpenGLES2* resour
 
 #endif
     
-//	const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
-//	if (extensions)
-//		log::info << L"GL_EXTENSIONS = " << mbstows(extensions) << Endl;
-
 	log::info << L"OpenGL ES 2.0 render context created successfully (embedded)" << Endl;
 	return context;
 }
