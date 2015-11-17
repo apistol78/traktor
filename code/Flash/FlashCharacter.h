@@ -40,7 +40,7 @@ public:
 	 *
 	 * \return Id
 	 */
-	uint16_t getId() const;
+	uint16_t getId() const { return m_id; }
 
 	/*! \brief Get character unique tag.
 	 *
@@ -49,7 +49,7 @@ public:
 	 * if multiple Flash players are created
 	 * and destroyed during this time.
 	 */
-	int32_t getCacheTag() const;
+	int32_t getCacheTag() const { return m_tag; }
 
 	/*! \brief Create character instance.
 	 *
