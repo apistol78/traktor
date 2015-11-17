@@ -340,6 +340,17 @@ std::wstring RichEdit::getLine(int32_t line) const
 		return L"";
 }
 
+void RichEdit::setLineData(int32_t line, Object* data)
+{
+	if (line < int32_t(m_lines.size()))
+		m_lines[line].data = data;
+}
+
+Object* RichEdit::getLineData(int32_t line) const
+{
+	return line < m_lines.size() ? m_lines[line].data : 0;
+}
+
 int32_t RichEdit::getSelectionStartOffset() const
 {
 	return m_selectionStart;
@@ -501,9 +512,16 @@ void RichEdit::deleteCharacters()
 			(start <= i->start && stop >= i->stop)
 		)
 		{
-			int32_t tmp = i->start; i = m_lines.erase(i);
+			int32_t start0 = i->start;
+			Ref< Object > data0 = i->data;
+			
+			i = m_lines.erase(i);
+
 			if (i != m_lines.end())
-				i->start = tmp;
+			{
+				i->start = start0;
+				i->data = data0;
+			}
 		}
 		else
 			++i;
@@ -611,8 +629,10 @@ void RichEdit::insertAt(int32_t offset, wchar_t ch)
 				Line line;
 				line.start = i->start;
 				line.stop = offset;
+				line.data = i->data;
 				i->start = offset + 1;
 				i->stop++;
+				i->data = 0;
 				i = m_lines.insert(i, line) + 1;
 			}
 			else if (i->start > offset)

@@ -74,11 +74,17 @@ public:
 	/*! \brief Get length of line. */
 	int32_t getLineLength(int32_t line) const;
 
-	/*! \brief Replace text at a specified line. */
+	/*! \brief Replace text at a specific line. */
 	void setLine(int32_t line, const std::wstring& text);
 
 	/*! \brief Get a single line of text. */
 	std::wstring getLine(int32_t line) const;
+
+	/*! \brief Set user object with specific line. */
+	void setLineData(int32_t line, Object* data);
+
+	/*! \brief Get user object of specific line. */
+	Object* getLineData(int32_t line) const;
 
 	/*! \brief Get selection start offset. */
 	int32_t getSelectionStartOffset() const;
@@ -129,6 +135,7 @@ private:
 		int32_t start;
 		int32_t stop;
 		int32_t image;
+		Ref< Object > data;
 
 		Line()
 		:	start(0)

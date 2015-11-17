@@ -2,6 +2,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
@@ -229,7 +230,19 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	// Get debugger implementation.
 	m_scriptDebuggerSessions = m_editor->getStoreObject< IScriptDebuggerSessions >(L"ScriptDebuggerSessions");
 	if (m_scriptDebuggerSessions)
+	{
 		m_scriptDebuggerSessions->addListener(this);
+
+		Guid instanceGuid = m_document->getInstance(0)->getGuid();
+		for (int32_t i = 0; i < m_edit->getLineCount(); ++i)
+		{
+			if (m_scriptDebuggerSessions->haveBreakpoint(instanceGuid, i))
+			{
+				m_edit->setLineData(i, new PropertyBoolean(true));
+				m_edit->setImage(i, 0);
+			}
+		}
+	}
 
 	updateDependencyList();
 	updateDependentList();
@@ -278,6 +291,7 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 			m_edit->setText(m_script->getText());
 			updateDependencyList();
 			updateDependentList();
+			updateBreakpoints();
 		}
 	}
 	else if (command == L"Editor.Redo")
@@ -288,6 +302,7 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 			m_edit->setText(m_script->getText());
 			updateDependencyList();
 			updateDependentList();
+			updateBreakpoints();
 		}
 	}
 	else if (command == L"Editor.Find")
@@ -496,22 +511,22 @@ void ScriptEditorPage::notifyEndSession(IScriptDebugger* scriptDebugger, IScript
 
 void ScriptEditorPage::notifySetBreakpoint(const Guid& scriptId, int32_t lineNumber)
 {
-	Guid instanceGuid = m_document->getInstance(0)->getGuid();
-	if (scriptId == instanceGuid)
-	{
-		m_edit->setImage(lineNumber, 0);
-		m_edit->update();
-	}
+	//Guid instanceGuid = m_document->getInstance(0)->getGuid();
+	//if (scriptId == instanceGuid)
+	//{
+	//	m_edit->setImage(lineNumber, 0);
+	//	m_edit->update();
+	//}
 }
 
 void ScriptEditorPage::notifyRemoveBreakpoint(const Guid& scriptId, int32_t lineNumber)
 {
-	Guid instanceGuid = m_document->getInstance(0)->getGuid();
-	if (scriptId == instanceGuid)
-	{
-		m_edit->setImage(lineNumber, 1);
-		m_edit->update();
-	}
+	//Guid instanceGuid = m_document->getInstance(0)->getGuid();
+	//if (scriptId == instanceGuid)
+	//{
+	//	m_edit->setImage(lineNumber, 1);
+	//	m_edit->update();
+	//}
 }
 
 void ScriptEditorPage::updateDependencyList()
@@ -550,6 +565,24 @@ void ScriptEditorPage::updateDependentList()
 			}
 		}
 	}
+}
+
+void ScriptEditorPage::updateBreakpoints()
+{
+	Guid instanceGuid = m_document->getInstance(0)->getGuid();
+	m_scriptDebuggerSessions->removeAllBreakpoints(instanceGuid);
+	for (int32_t i = 0; i < m_edit->getLineCount(); ++i)
+	{
+		PropertyBoolean* p = dynamic_type_cast< PropertyBoolean* >(m_edit->getLineData(i));
+		if (p)
+		{
+			m_scriptDebuggerSessions->setBreakpoint(instanceGuid, i);
+			m_edit->setImage(i, 0);
+		}
+		else
+			m_edit->setImage(i, 1);
+	}
+	m_edit->update();
 }
 
 void ScriptEditorPage::buildOutlineGrid(ui::custom::GridView* grid, ui::custom::GridRow* parent, const IScriptOutline::Node* on)
@@ -721,22 +754,23 @@ void ScriptEditorPage::eventScriptChange(ui::ContentChangeEvent* event)
 	m_compileCountDown = 10;
 	m_compileStatus->setText(i18n::Text(L"SCRIPT_EDITOR_STATUS_READY"));
 	m_compileStatus->setAlert(false);
+
+	updateBreakpoints();
 }
 
 void ScriptEditorPage::eventScriptDoubleClick(ui::MouseDoubleClickEvent* event)
 {
 	int32_t offset = m_edit->getCaretOffset();
 	int32_t line = m_edit->getLineFromOffset(offset);
-
 	if (line < 0)
 		return;
 
-	Guid instanceGuid = m_document->getInstance(0)->getGuid();
-
-	if (!m_scriptDebuggerSessions->haveBreakpoint(instanceGuid, line))
-		m_scriptDebuggerSessions->setBreakpoint(instanceGuid, line);
+	if (!m_edit->getLineData(line))
+		m_edit->setLineData(line, new PropertyBoolean(true));
 	else
-		m_scriptDebuggerSessions->removeBreakpoint(instanceGuid, line);
+		m_edit->setLineData(line, 0);
+
+	updateBreakpoints();
 }
 
 void ScriptEditorPage::eventTimer(ui::TimerEvent* event)

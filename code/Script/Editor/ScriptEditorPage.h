@@ -137,6 +137,8 @@ private:
 
 	void updateDependentList();
 
+	void updateBreakpoints();
+
 	void buildOutlineGrid(ui::custom::GridView* grid, ui::custom::GridRow* parent, const IScriptOutline::Node* on);
 
 	void eventOutlineDoubleClick(ui::MouseDoubleClickEvent* event);
