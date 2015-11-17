@@ -10,6 +10,7 @@
 #include "Flash/FlashFont.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashMovieFactory.h"
+#include "Flash/FlashMovieLoader.h"
 #include "Flash/FlashMoviePlayer.h"
 #include "Flash/FlashOptimizer.h"
 #include "Flash/FlashSound.h"
@@ -375,6 +376,23 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashClassFactory", 0, FlashClass
 
 void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
+	Ref< AutoRuntimeClass< IFlashMovieLoader > > classIFlashMovieLoader = new AutoRuntimeClass< IFlashMovieLoader >();
+	classIFlashMovieLoader->addMethod("loadAsync", &IFlashMovieLoader::loadAsync);
+	classIFlashMovieLoader->addMethod("load", &IFlashMovieLoader::load);
+	registrar->registerClass(classIFlashMovieLoader);
+
+	Ref< AutoRuntimeClass< IFlashMovieLoader::IHandle > > classIFlashMovieLoader_IHandle = new AutoRuntimeClass< IFlashMovieLoader::IHandle >();
+	classIFlashMovieLoader_IHandle->addMethod("wait", &IFlashMovieLoader::IHandle::wait);
+	classIFlashMovieLoader_IHandle->addMethod("ready", &IFlashMovieLoader::IHandle::ready);
+	classIFlashMovieLoader_IHandle->addMethod("succeeded", &IFlashMovieLoader::IHandle::succeeded);
+	classIFlashMovieLoader_IHandle->addMethod("get", &IFlashMovieLoader::IHandle::get);
+	classIFlashMovieLoader_IHandle->addMethod("failed", &IFlashMovieLoader::IHandle::failed);
+	registrar->registerClass(classIFlashMovieLoader_IHandle);
+
+	Ref< AutoRuntimeClass< FlashMovieLoader > > classFlashMovieLoader = new AutoRuntimeClass< FlashMovieLoader >();
+	classFlashMovieLoader->addConstructor< bool >();
+	registrar->registerClass(classFlashMovieLoader);
+
 	Ref< AutoRuntimeClass< FlashMovieFactory > > classFlashMovieFactory = new AutoRuntimeClass< FlashMovieFactory >();
 	classFlashMovieFactory->addConstructor();
 	classFlashMovieFactory->addMethod("createMovie", &FlashMovieFactory::createMovie);

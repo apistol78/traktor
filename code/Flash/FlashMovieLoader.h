@@ -13,29 +13,25 @@
 
 namespace traktor
 {
-	namespace db
-	{
 
-class Database;
-
-	}
+class Job;
 
 	namespace flash
 	{
-
-class FlashMovie;
 
 class T_DLLCLASS FlashMovieLoader : public IFlashMovieLoader
 {
 	T_RTTI_CLASS;
 
 public:
-	FlashMovieLoader(db::Database* database);
+	FlashMovieLoader(bool merge);
 
-	virtual Ref< FlashMovie > load(const std::wstring& name) const T_OVERRIDE;
+	virtual Ref< IHandle > loadAsync(const net::Url& url) const T_OVERRIDE T_FINAL;
+
+	virtual Ref< FlashMovie > load(const net::Url& url) const T_OVERRIDE T_FINAL;
 
 private:
-	Ref< db::Database > m_database;
+	bool m_merge;
 };
 
 	}
