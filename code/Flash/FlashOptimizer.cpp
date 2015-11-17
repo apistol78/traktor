@@ -213,8 +213,6 @@ Ref< FlashMovie > FlashOptimizer::merge(const FlashMovie* movie) const
 	);
 
 	safeDestroy(movieInstance);
-	GC::getInstance().collectCycles(true);
-
 	return outputMovie;
 }
 
