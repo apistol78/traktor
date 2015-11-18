@@ -87,7 +87,6 @@ RenderTargetSetOpenGLES2::~RenderTargetSetOpenGLES2()
 
 bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 {
-	T_ASSERT (desc.multiSample <= 1);
 	m_desc = desc;
 
 	// Create color targets.

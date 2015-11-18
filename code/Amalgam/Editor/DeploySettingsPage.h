@@ -37,6 +37,7 @@ private:
 	Ref< ui::CheckBox > m_checkHidePipeline;
 	Ref< ui::CheckBox > m_checkUseDebugBinaries;
 	Ref< ui::CheckBox > m_checkStaticallyLinked;
+	Ref< ui::CheckBox > m_checkUseNsight;
 };
 
 	}
