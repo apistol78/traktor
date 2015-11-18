@@ -1,5 +1,4 @@
-#pragma optimize( "", off )
-
+#include <cstring>
 #include "Core/Class/IRuntimeClass.h"
 #include "Core/Class/IRuntimeClassFactory.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
