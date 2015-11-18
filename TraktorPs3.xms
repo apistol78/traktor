@@ -3094,6 +3094,60 @@
 						</dependencies>
 					</project>
 				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project type="Project" version="1">
+						<enable>true</enable>
+						<name>Extern.RectangleBinPack</name>
+						<sourcePath>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</sourcePath>
+						<configurations>
+							<item type="Configuration" version="1">
+								<name>DebugStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
+								</includePaths>
+								<definitions>
+									<item>_DEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+							<item type="Configuration" version="1">
+								<name>ReleaseStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/RectangleBinPack</item>
+								</includePaths>
+								<definitions>
+									<item>NDEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+						</configurations>
+						<items>
+							<item type="File">
+								<fileName>*.cpp</fileName>
+								<items/>
+							</item>
+							<item type="File">
+								<fileName>*.h</fileName>
+								<items/>
+							</item>
+						</items>
+						<dependencies/>
+					</project>
+				</item>
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
@@ -6281,6 +6335,7 @@
 			</dependencies>
 		</item>
 		<item ref="/object/projects/item[48]/dependencies/item[23]/project"/>
+		<item ref="/object/projects/item[18]/dependencies/item[8]/project"/>
 	</projects>
 	<aggregations/>
 </object>

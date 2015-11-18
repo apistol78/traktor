@@ -45,7 +45,6 @@ public:
 	struct RenderBatch
 	{
 		AccTextureCache::BitmapRect texture;
-		Matrix33 textureMatrix;
 		render::Primitives primitives;
 	};
 

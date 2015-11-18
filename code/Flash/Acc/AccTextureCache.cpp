@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Misc/Adler32.h"
 #include "Flash/FlashFillStyle.h"
 #include "Flash/FlashBitmapData.h"
@@ -13,6 +14,9 @@ namespace traktor
 	{
 		namespace
 		{
+
+const uint32_t c_gradientsWidth = 64;
+const uint32_t c_gradientsHeight = 16 * 1024;
 
 SwfColor interpolateGradient(const AlignedVector< FlashFillStyle::ColorRecord >& colorRecords, float f)
 {
@@ -56,7 +60,18 @@ AccTextureCache::AccTextureCache(
 )
 :	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
+,	m_nextGradient(0)
 {
+	render::SimpleTextureCreateDesc desc;
+	desc.width = c_gradientsWidth;
+	desc.height = c_gradientsHeight;
+	desc.mipCount = 1;
+	desc.format = render::TfR8G8B8A8;
+	desc.immutable = false;
+	m_gradientsTexture = resource::Proxy< render::ISimpleTexture >(m_renderSystem->createSimpleTexture(desc));
+	T_FATAL_ASSERT (m_gradientsTexture);
+
+	m_gradientsData.reset(new uint8_t [c_gradientsWidth * c_gradientsHeight * 4]);
 }
 
 AccTextureCache::~AccTextureCache()
@@ -78,6 +93,8 @@ void AccTextureCache::clear()
 {
 	for (SmallMap< uint64_t, BitmapRect >::iterator i = m_cache.begin(); i != m_cache.end(); ++i)
 		i->second.texture.clear();
+
+	m_nextGradient = 0;
 
 	m_cache.clear();
 }
@@ -101,87 +118,98 @@ AccTextureCache::BitmapRect AccTextureCache::getGradientTexture(const FlashFillS
 
 	if (style.getGradientType() == FlashFillStyle::GtLinear)
 	{
-		uint8_t gradientBitmap[256 * 4] = { 0 };
+		if (m_nextGradient + 1 > c_gradientsHeight)
+			return BitmapRect();
 
+		uint8_t* gd = &m_gradientsData[m_nextGradient * c_gradientsWidth * 4];
 		int32_t x1 = 0;
 		for (int32_t i = 1; i < int32_t(colorRecords.size()); ++i)
 		{
-			int32_t x2 = int32_t(colorRecords[i].ratio * 256);
+			int32_t x2 = int32_t(colorRecords[i].ratio * c_gradientsWidth);
 			for (int32_t x = x1; x < x2; ++x)
 			{
 				float f = float(x - x1) / (x2 - x1);
-				gradientBitmap[x * 4 + 0] = uint8_t(colorRecords[i - 1].color.red   * (1.0f - f) + colorRecords[i].color.red   * f);
-				gradientBitmap[x * 4 + 1] = uint8_t(colorRecords[i - 1].color.green * (1.0f - f) + colorRecords[i].color.green * f);
-				gradientBitmap[x * 4 + 2] = uint8_t(colorRecords[i - 1].color.blue  * (1.0f - f) + colorRecords[i].color.blue  * f);
-				gradientBitmap[x * 4 + 3] = uint8_t(colorRecords[i - 1].color.alpha * (1.0f - f) + colorRecords[i].color.alpha * f);
+				gd[x * 4 + 0] = uint8_t(colorRecords[i - 1].color.red   * (1.0f - f) + colorRecords[i].color.red   * f);
+				gd[x * 4 + 1] = uint8_t(colorRecords[i - 1].color.green * (1.0f - f) + colorRecords[i].color.green * f);
+				gd[x * 4 + 2] = uint8_t(colorRecords[i - 1].color.blue  * (1.0f - f) + colorRecords[i].color.blue  * f);
+				gd[x * 4 + 3] = uint8_t(colorRecords[i - 1].color.alpha * (1.0f - f) + colorRecords[i].color.alpha * f);
 			}
 			x1 = x2;
 		}
-		for (; x1 < 256; ++x1)
+		for (; x1 < c_gradientsWidth; ++x1)
 		{
-			gradientBitmap[x1 * 4 + 0] = colorRecords.back().color.red;
-			gradientBitmap[x1 * 4 + 1] = colorRecords.back().color.green;
-			gradientBitmap[x1 * 4 + 2] = colorRecords.back().color.blue;
-			gradientBitmap[x1 * 4 + 3] = colorRecords.back().color.alpha;
+			gd[x1 * 4 + 0] = colorRecords.back().color.red;
+			gd[x1 * 4 + 1] = colorRecords.back().color.green;
+			gd[x1 * 4 + 2] = colorRecords.back().color.blue;
+			gd[x1 * 4 + 3] = colorRecords.back().color.alpha;
 		}
 
-		render::SimpleTextureCreateDesc desc;
-
-		desc.width = 256;
-		desc.height = 1;
-		desc.mipCount = 1;
-		desc.format = render::TfR8G8B8A8;
-		desc.immutable = true;
-		desc.initialData[0].data = gradientBitmap;
-		desc.initialData[0].pitch = 256 * 4;
-
-		resource::Proxy< render::ISimpleTexture > texture = resource::Proxy< render::ISimpleTexture >(m_renderSystem->createSimpleTexture(desc));
+		render::ITexture::Lock lock;
+		if (m_gradientsTexture->lock(0, lock))
+		{
+			uint8_t* dp = static_cast< uint8_t* >(lock.bits);
+			for (uint32_t y = 0; y < c_gradientsHeight; ++y)
+			{
+				std::memcpy(dp, &m_gradientsData[y * c_gradientsWidth * 4], c_gradientsWidth * 4);
+				dp += lock.pitch;
+			}
+			m_gradientsTexture->unlock(0);
+		}
 
 		BitmapRect& br = m_cache[hash];
-		br.texture = texture;
+		br.texture = resource::Proxy< render::ISimpleTexture >(m_gradientsTexture);
 		br.clamp = true;
 		br.rect[0] = 0.0f;
-		br.rect[1] = 0.0f;
+		br.rect[1] = m_nextGradient * 1.0f / c_gradientsHeight + 0.5f / c_gradientsHeight;
 		br.rect[2] = 1.0f;
-		br.rect[3] = 1.0f;
+		br.rect[3] = 0.0f;
 
+		m_nextGradient += 1;
 		return br;
 	}
 	else if (style.getGradientType() == FlashFillStyle::GtRadial)
 	{
-		SwfColor gradientBitmap[64 * 64];
+		if (m_nextGradient + c_gradientsWidth > c_gradientsHeight)
+			return BitmapRect();
 
-		for (int y = 0; y < 64; ++y)
+		uint8_t* gd = &m_gradientsData[m_nextGradient * c_gradientsWidth * 4];
+		for (int y = 0; y < c_gradientsWidth; ++y)
 		{
-			for (int x = 0; x < 64; ++x)
+			for (int x = 0; x < c_gradientsWidth; ++x)
 			{
 				float fx = x / 31.5f - 1.0f;
 				float fy = y / 31.5f - 1.0f;
 				float f = sqrtf(fx * fx + fy * fy);
-				gradientBitmap[x + y * 64] = interpolateGradient(colorRecords, f);
+				SwfColor c = interpolateGradient(colorRecords, f);
+				gd[x * 4 + 0] = c.red;
+				gd[x * 4 + 1] = c.green;
+				gd[x * 4 + 2] = c.blue;
+				gd[x * 4 + 3] = c.alpha;
 			}
+			gd += c_gradientsWidth * 4;
 		}
 
-		render::SimpleTextureCreateDesc desc;
-
-		desc.width = 64;
-		desc.height = 64;
-		desc.mipCount = 1;
-		desc.format = render::TfR8G8B8A8;
-		desc.immutable = true;
-		desc.initialData[0].data = gradientBitmap;
-		desc.initialData[0].pitch = 64 * 4;
-
-		resource::Proxy< render::ISimpleTexture > texture = resource::Proxy< render::ISimpleTexture >(m_renderSystem->createSimpleTexture(desc));
+		render::ITexture::Lock lock;
+		if (m_gradientsTexture->lock(0, lock))
+		{
+			uint8_t* dp = static_cast< uint8_t* >(lock.bits);
+			for (uint32_t y = 0; y < c_gradientsHeight; ++y)
+			{
+				std::memcpy(dp, &m_gradientsData[y * c_gradientsWidth * 4], c_gradientsWidth * 4);
+				dp += lock.pitch;
+			}
+			m_gradientsTexture->unlock(0);
+		}
 
 		BitmapRect& br = m_cache[hash];
-		br.texture = texture;
+		br.texture = resource::Proxy< render::ISimpleTexture >(m_gradientsTexture);
 		br.clamp = true;
 		br.rect[0] = 0.0f;
-		br.rect[1] = 0.0f;
+		br.rect[1] = m_nextGradient * 1.0f / c_gradientsHeight;
 		br.rect[2] = 1.0f;
-		br.rect[3] = 1.0f;
+		br.rect[3] = c_gradientsWidth / float(c_gradientsHeight);
 
+		m_nextGradient += c_gradientsWidth;
 		return br;
 	}
 

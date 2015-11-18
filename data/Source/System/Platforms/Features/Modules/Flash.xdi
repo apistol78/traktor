@@ -12,6 +12,7 @@
 						<first>DEPLOY_FILES</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
+								<item>libExtern.RectangleBinPack.a</item>
 								<item>libExtern.jpeg-6b.a</item>
 								<item>libExtern.liblzf-3.6.a</item>
 								<item>libExtern.lpng128.a</item>
@@ -117,6 +118,7 @@
 						<first>DEPLOY_FILES</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
+								<item>Extern.RectangleBinPack.lib</item>
 								<item>Extern.jpeg-6b.lib</item>
 								<item>Extern.liblzf-3.6.lib</item>
 								<item>Extern.lpng128.lib</item>
@@ -147,6 +149,7 @@
 						<first>DEPLOY_EXTERN_FILES_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
+								<item>Extern.RectangleBinPack.lib</item>
 								<item>Extern.jpeg-6b.lib</item>
 								<item>Extern.liblzf-3.6.lib</item>
 								<item>Extern.lpng128.lib</item>
@@ -201,6 +204,7 @@
 						<first>DEPLOY_EXTERN_FILES_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
+								<item>Extern.RectangleBinPack.lib</item>
 								<item>Extern.jpeg-6b.lib</item>
 								<item>Extern.liblzf-3.6.lib</item>
 								<item>Extern.lpng128.lib</item>
@@ -255,6 +259,7 @@
 						<first>DEPLOY_FILES</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
+								<item>Extern.RectangleBinPack.lib</item>
 								<item>Extern.jpeg-6b.lib</item>
 								<item>Extern.liblzf-3.6.lib</item>
 								<item>Extern.lpng128.lib</item>
@@ -285,6 +290,7 @@
 						<first>DEPLOY_FILES</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
+								<item>libExtern.RectangleBinPack.bc</item>
 								<item>libExtern.jpeg-6b.bc</item>
 								<item>libExtern.liblzf-3.6.bc</item>
 								<item>libExtern.lpng128.bc</item>
@@ -315,6 +321,7 @@
 						<first>DEPLOY_FILES</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
+								<item>libExtern.RectangleBinPack.a</item>
 								<item>libExtern.jpeg-6b.a</item>
 								<item>libExtern.liblzf-3.6.a</item>
 								<item>libExtern.lpng128.a</item>
@@ -345,6 +352,7 @@
 						<first>DEPLOY_FILES</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
+								<item>libExtern.RectangleBinPack.a</item>
 								<item>libExtern.jpeg-6b.a</item>
 								<item>libExtern.liblzf-3.6.a</item>
 								<item>libExtern.lpng128.a</item>
