@@ -1,0 +1,103 @@
+<!--
+import(traktor)
+
+function string:split(sep)
+  local sep, fields = sep or ":", {}
+  local pattern = string.format("([^%s]+)", sep)
+  self:gsub(pattern, function(c) fields[#fields+1] = c end)
+  return fields
+end
+
+function string:starts(start)
+   return string.sub(self, 1, string.len(start)) == start
+end
+
+local systemRoot = Path(environment:get("DEPLOY_SYSTEM_ROOT")):getPathName()
+
+local files = environment:get("DEPLOY_FILES"):split(" ")
+
+local wholeLinkFilesRelease = ""
+local externalLinkFilesRelease = ""
+local wholeLinkFilesDebug = ""
+local externalLinkFilesDebug = ""
+
+for _, f in ipairs(files) do
+  if f:starts("libExtern") then
+    externalLinkFilesRelease = externalLinkFilesRelease .. ";" .. f:sub(4, #f - 2)
+    externalLinkFilesDebug = externalLinkFilesDebug .. ";" .. f:sub(4, #f - 2) .. "_d"
+  else
+    wholeLinkFilesRelease = wholeLinkFilesRelease .. ";" .. f:sub(4, #f - 2)
+    wholeLinkFilesDebug = wholeLinkFilesDebug .. ";" .. f:sub(4, #f - 2) .. "_d"
+  end
+end
+
+--!><?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="NsightTegraProject">
+    <NsightTegraProjectRevisionNumber>11</NsightTegraProjectRevisionNumber>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="DebugStatic|Tegra-Android">
+      <Configuration>DebugStatic</Configuration>
+      <Platform>Tegra-Android</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="ReleaseStatic|Tegra-Android">
+      <Configuration>ReleaseStatic</Configuration>
+      <Platform>Tegra-Android</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{99574D42-4CEE-4755-A5BF-DCB461F71BA5}</ProjectGuid>
+    <RootNamespace>stardoll</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='DebugStatic|Tegra-Android'">
+    <AndroidTargetAPI>android-16</AndroidTargetAPI>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|Tegra-Android'">
+    <AndroidTargetAPI>android-16</AndroidTargetAPI>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros">
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|Tegra-Android'">
+    <TargetName>libTraktor.Amalgam.Game.App</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|Tegra-Android'">
+    <TargetName>libTraktor.Amalgam.Game.App</TargetName>
+  </PropertyGroup>    
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|Tegra-Android'">
+    <ClCompile>
+      <CppLanguageStandard>gnu++11</CppLanguageStandard>
+      <PreprocessorDefinitions>DISABLE_IMPORTGL</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>android;EGL;GLESv2;OpenSLES<!-- output:print(wholeLinkFilesDebug .. wholeLinkFilesDebug .. externalLinkFilesDebug) --!></AdditionalDependencies>
+      <AdditionalLibraryDirectories><!-- output:print(systemRoot) --!>\bin\latest\android\debugstatic</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|Tegra-Android'">
+    <ClCompile>
+      <CppLanguageStandard>gnu++11</CppLanguageStandard>
+      <PreprocessorDefinitions>DISABLE_IMPORTGL</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>android;EGL;GLESv2;OpenSLES<!-- output:print(wholeLinkFilesRelease .. wholeLinkFilesRelease .. externalLinkFilesRelease) --!></AdditionalDependencies>
+      <AdditionalLibraryDirectories><!-- output:print(systemRoot) --!>\bin\latest\android\releasestatic</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <AndroidBuild Include="AndroidManifest.xml" />
+    <AndroidBuild Include="res\values\strings.xml" />
+    <AndroidBuild Include="assets\Application.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Linkage.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

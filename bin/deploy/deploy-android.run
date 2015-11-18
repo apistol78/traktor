@@ -119,44 +119,84 @@ function deploy(args)
 		return 1
 	end	
 
-	-- Compile linkage file.
-	stdout:printLn("Compiling Linkage.cpp...")
-	local cmd = cl .. " -c Linkage.cpp -o Linkage.o"
-	local result = run:execute(cmd) --, nil)
-	if result ~= 0 then
-		stderr:printLn("Unable to compile file.")
-		return 1
-	end	
+	local useNsight = (os:getEnvironment("DEPLOY_USE_NSIGHT") ~= "")
+	if useNsight then
 
-	-- Link files into an executable product.
-	local cmd = cl .. " Linkage.o " .. wholeLinkFiles .. wholeLinkFiles .. externalLinkFiles .. " -o lib$(DEPLOY_EXECUTABLE).so"
-	cmd = cmd .. " -lc"
-	cmd = cmd .. " -lm"
-	cmd = cmd .. " -llog"
-	cmd = cmd .. " -landroid"
-	cmd = cmd .. " -lgcc"
-	cmd = cmd .. " -lEGL"
-	cmd = cmd .. " -lGLESv2"
-	cmd = cmd .. " -lOpenSLES"
-	cmd = cmd .. " -Wl,-soname,$(DEPLOY_EXECUTABLE)"
-	cmd = cmd .. " -Wl,--no-undefined"
-	cmd = cmd .. " -shared"
-	cmd = cmd .. " -Wl,-z,noexecstack"
-	cmd = cmd .. " -Wl,-rpath-link=" .. ndk .. "/platforms/" .. android .. "/" .. architecture .. "/usr/lib"
-	cmd = cmd .. " --sysroot=" .. ndk .. "/platforms/" .. android .. "/" .. architecture
-	cmd = cmd .. " -lstdc++"
-	cmd = cmd .. " -lsupc++"
-	cmd = cmd .. " -lgnustl_static"
-	cmd = cmd .. " -lgcc"
-	cmd = cmd .. " -L" .. ndk .. "/platforms/" .. android .. "/" .. architecture .. "/usr/lib"
-	cmd = cmd .. " -L" .. ndk .. "/sources/cxx-stl/gnu-libstdc++/4.8/libs/armeabi-v7a"
-	cmd = cmd .. " -L" .. ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. host .."/lib/gcc/arm-linux-androideabi/4.8/armv7-a"
+		-- Create android NSight project.
+		run:mkdir("assets")
+		run:mkdir("res/values")
+		run:mkdir("res/drawable-hdpi")
+		run:mkdir("res/drawable-ldpi")
+		run:mkdir("res/drawable-mdpi")
+		run:mkdir("res/drawable-xhdpi")		
+		run:replace("Application.config", "assets/Application.config")
+		run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/vs/AndroidManifest.xml.template", "AndroidManifest.xml")
+		run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/vs/strings.xml.template", "res/values/strings.xml")
+		run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/vs/project.vcxproj.template", "$(DEPLOY_PROJECT_NAME).vcxproj")
+		run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/vs/project.vcxproj.filters.template", "$(DEPLOY_PROJECT_NAME).vcxproj.filters")
+		run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/vs/solution.sln.template", "$(DEPLOY_PROJECT_NAME).sln")
 
-	local result = run:execute(cmd)
-	if result ~= 0 then
-		stderr:printLn("Unable to build executable product.")
-		stderr:printLn(cmd)
-		return 1
+		-- Create icons.
+		stdout:printLn("Generating Android icon images...")
+
+		local iconFile = os:getEnvironment("DEPLOY_PROJECT_ICON")
+		if #iconFile <= 0 then
+			iconFile = "$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/ic_launcher.png"
+		end
+
+		local iconImage = Image.loadFromFile(iconFile)
+		if iconImage ~= nil then
+			generateImage("res/drawable-hdpi/ic_launcher.png", iconImage, 72, 72)
+			generateImage("res/drawable-ldpi/ic_launcher.png", iconImage, 36, 36)
+			generateImage("res/drawable-mdpi/ic_launcher.png", iconImage, 48, 48)
+			generateImage("res/drawable-xhdpi/ic_launcher.png", iconImage, 96, 96)
+		else
+			stderr:printLn("Failed to generate Android icon images; unable to read source image \"" .. iconFile .. "\".")
+			return 1
+		end
+
+	else
+
+		-- Compile linkage file.
+		stdout:printLn("Compiling Linkage.cpp...")
+		local cmd = cl .. " -c Linkage.cpp -o Linkage.o"
+		local result = run:execute(cmd) --, nil)
+		if result ~= 0 then
+			stderr:printLn("Unable to compile file.")
+			return 1
+		end	
+
+		-- Link files into an executable product.
+		local cmd = cl .. " Linkage.o " .. wholeLinkFiles .. wholeLinkFiles .. externalLinkFiles .. " -o lib$(DEPLOY_EXECUTABLE).so"
+		cmd = cmd .. " -lc"
+		cmd = cmd .. " -lm"
+		cmd = cmd .. " -llog"
+		cmd = cmd .. " -landroid"
+		cmd = cmd .. " -lgcc"
+		cmd = cmd .. " -lEGL"
+		cmd = cmd .. " -lGLESv2"
+		cmd = cmd .. " -lOpenSLES"
+		cmd = cmd .. " -Wl,-soname,$(DEPLOY_EXECUTABLE)"
+		cmd = cmd .. " -Wl,--no-undefined"
+		cmd = cmd .. " -shared"
+		cmd = cmd .. " -Wl,-z,noexecstack"
+		cmd = cmd .. " -Wl,-rpath-link=" .. ndk .. "/platforms/" .. android .. "/" .. architecture .. "/usr/lib"
+		cmd = cmd .. " --sysroot=" .. ndk .. "/platforms/" .. android .. "/" .. architecture
+		cmd = cmd .. " -lstdc++"
+		cmd = cmd .. " -lsupc++"
+		cmd = cmd .. " -lgnustl_static"
+		cmd = cmd .. " -lgcc"
+		cmd = cmd .. " -L" .. ndk .. "/platforms/" .. android .. "/" .. architecture .. "/usr/lib"
+		cmd = cmd .. " -L" .. ndk .. "/sources/cxx-stl/gnu-libstdc++/4.8/libs/armeabi-v7a"
+		cmd = cmd .. " -L" .. ndk .. "/toolchains/" .. toolchain .. "/prebuilt/" .. host .."/lib/gcc/arm-linux-androideabi/4.8/armv7-a"
+
+		local result = run:execute(cmd)
+		if result ~= 0 then
+			stderr:printLn("Unable to build executable product.")
+			stderr:printLn(cmd)
+			return 1
+		end
+
 	end
 
 	stdout:printLn("Done")
@@ -173,60 +213,73 @@ function launch(args)
 		return 1
 	end
 
-	-- Create android project.
-	run:mkdir("assets")
-	run:mkdir("libs/armeabi-v7a")
-	run:mkdir("res/values")
-	run:mkdir("res/drawable-hdpi")
-	run:mkdir("res/drawable-ldpi")
-	run:mkdir("res/drawable-mdpi")
-	run:mkdir("res/drawable-xhdpi")
-	run:replace("Application.config", "assets/Application.config")
-	run:replace("lib$(DEPLOY_EXECUTABLE).so", "libs/armeabi-v7a/lib$(DEPLOY_EXECUTABLE).so")
-	run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/AndroidManifest.xml.template", "AndroidManifest.xml")
-	run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/strings.xml.template", "res/values/strings.xml")
-	run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/project.properties.template", "project.properties")
-	run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/local.properties.template", "local.properties")
-	run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/build.xml.template", "build.xml")
+	local useNsight = (os:getEnvironment("DEPLOY_USE_NSIGHT") ~= "")
+	if useNsight then
 
-	-- Create icons.
-	stdout:printLn("Generating Android icon images...")
+		-- Open generated solution in Visual Studio.
+		local projectName = os:getEnvironment("DEPLOY_PROJECT_NAME")
+		if not os:openFile(projectName .. ".sln") then
+			stderr:printLn("Unable to open " .. projectName .. " solution.")
+		end
 
-	local iconFile = os:getEnvironment("DEPLOY_PROJECT_ICON")
-	if #iconFile <= 0 then
-		iconFile = "$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/ic_launcher.png"
-	end
-
-	local iconImage = Image.loadFromFile(iconFile)
-	if iconImage ~= nil then
-		generateImage("res/drawable-hdpi/ic_launcher.png", iconImage, 72, 72)
-		generateImage("res/drawable-ldpi/ic_launcher.png", iconImage, 36, 36)
-		generateImage("res/drawable-mdpi/ic_launcher.png", iconImage, 48, 48)
-		generateImage("res/drawable-xhdpi/ic_launcher.png", iconImage, 96, 96)
 	else
-		stderr:printLn("Failed to generate Android icon images; unable to read source image \"" .. iconFile .. "\".")
-		return 1
-	end
 
-	-- Use ant to build apk package.
-	stdout:printLn("Building package...")
-	run:execute("$(ANT_HOME)/bin/ant.bat debug", nil)
+		-- Create android project.
+		run:mkdir("assets")
+		run:mkdir("libs/armeabi-v7a")
+		run:mkdir("res/values")
+		run:mkdir("res/drawable-hdpi")
+		run:mkdir("res/drawable-ldpi")
+		run:mkdir("res/drawable-mdpi")
+		run:mkdir("res/drawable-xhdpi")
+		run:replace("Application.config", "assets/Application.config")
+		run:replace("lib$(DEPLOY_EXECUTABLE).so", "libs/armeabi-v7a/lib$(DEPLOY_EXECUTABLE).so")
+		run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/AndroidManifest.xml.template", "AndroidManifest.xml")
+		run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/strings.xml.template", "res/values/strings.xml")
+		run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/project.properties.template", "project.properties")
+		run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/local.properties.template", "local.properties")
+		run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/build.xml.template", "build.xml")
 
-	-- Launch application on attached device.
-	stdout:printLn("Installing package...")
-	local result = run:execute("$(ANDROID_HOME)/platform-tools/adb -d install -r \"bin/$(DEPLOY_PROJECT_NAME)-debug.apk\"", nil)
-	if result ~= 0 then
-		stderr:printLn("Failed to install package on device; Please ensure device is attached and in developer mode.")
-		return 1
-	end
+		-- Create icons.
+		stdout:printLn("Generating Android icon images...")
 
-	stdout:printLn("Launching...")
-	local result = run:execute("$(ANDROID_HOME)/platform-tools/adb -d shell am start -S -n $(DEPLOY_PROJECT_IDENTIFIER)/android.app.NativeActivity", nil)
-	if result ~= 0 then
-		stderr:printLn("Failed to launch package on device; Please ensure device is attached and in developer mode.")
-		return 1
-	end
+		local iconFile = os:getEnvironment("DEPLOY_PROJECT_ICON")
+		if #iconFile <= 0 then
+			iconFile = "$(DEPLOY_SYSTEM_ROOT)/res/deploy/android/ic_launcher.png"
+		end
+
+		local iconImage = Image.loadFromFile(iconFile)
+		if iconImage ~= nil then
+			generateImage("res/drawable-hdpi/ic_launcher.png", iconImage, 72, 72)
+			generateImage("res/drawable-ldpi/ic_launcher.png", iconImage, 36, 36)
+			generateImage("res/drawable-mdpi/ic_launcher.png", iconImage, 48, 48)
+			generateImage("res/drawable-xhdpi/ic_launcher.png", iconImage, 96, 96)
+		else
+			stderr:printLn("Failed to generate Android icon images; unable to read source image \"" .. iconFile .. "\".")
+			return 1
+		end
+
+		-- Use ant to build apk package.
+		stdout:printLn("Building package...")
+		run:execute("$(ANT_HOME)/bin/ant.bat debug", nil)
+
+		-- Launch application on attached device.
+		stdout:printLn("Installing package...")
+		local result = run:execute("$(ANDROID_HOME)/platform-tools/adb -d install -r \"bin/$(DEPLOY_PROJECT_NAME)-debug.apk\"", nil)
+		if result ~= 0 then
+			stderr:printLn("Failed to install package on device; Please ensure device is attached and in developer mode.")
+			return 1
+		end
+
+		stdout:printLn("Launching...")
+		local result = run:execute("$(ANDROID_HOME)/platform-tools/adb -d shell am start -S -n $(DEPLOY_PROJECT_IDENTIFIER)/android.app.NativeActivity", nil)
+		if result ~= 0 then
+			stderr:printLn("Failed to launch package on device; Please ensure device is attached and in developer mode.")
+			return 1
+		end
 	
+	end
+
 	stdout:printLn("Done")
 	return 0
 end

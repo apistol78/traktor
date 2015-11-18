@@ -150,6 +150,7 @@ bool LaunchTargetAction::execute(IProgressListener* progressListener)
 	env->set(L"DEPLOY_OUTPUT_URL", L"http://localhost:44246/" + outputRelativePath.getPathName());
 	env->set(L"DEPLOY_DEBUG", m_globalSettings->getProperty< PropertyBoolean >(L"Amalgam.UseDebugBinaries", false) ? L"YES" : L"");
 	env->set(L"DEPLOY_STATIC_LINK", m_globalSettings->getProperty< PropertyBoolean >(L"Amalgam.StaticallyLinked", false) ? L"YES" : L"");
+	env->set(L"DEPLOY_USE_NSIGHT", m_globalSettings->getProperty< PropertyBoolean >(L"Amalgam.UseNsightTegra", false) ? L"YES" : L"");
 
 	// Flatten feature deploy variables.
 	const std::map< std::wstring, Ref< IPropertyValue > >& values = deploy->getValues();

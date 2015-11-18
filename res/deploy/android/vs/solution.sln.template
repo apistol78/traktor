@@ -1,0 +1,19 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "<!-- output:print(environment:get("DEPLOY_PROJECT_NAME")) --!>", "<!-- output:print(environment:get("DEPLOY_PROJECT_NAME")) --!>.vcxproj", "{99574D42-4CEE-4755-A5BF-DCB461F71BA5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		DebugStatic|Tegra-Android = DebugStatic|Tegra-Android
+		ReleaseStatic|Tegra-Android = ReleaseStatic|Tegra-Android
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{99574D42-4CEE-4755-A5BF-DCB461F71BA5}.DebugStatic|Tegra-Android.ActiveCfg = DebugStatic|Tegra-Android
+		{99574D42-4CEE-4755-A5BF-DCB461F71BA5}.DebugStatic|Tegra-Android.Build.0 = DebugStatic|Tegra-Android
+		{99574D42-4CEE-4755-A5BF-DCB461F71BA5}.ReleaseStatic|Tegra-Android.ActiveCfg = ReleaseStatic|Tegra-Android
+		{99574D42-4CEE-4755-A5BF-DCB461F71BA5}.ReleaseStatic|Tegra-Android.Build.0 = ReleaseStatic|Tegra-Android
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
