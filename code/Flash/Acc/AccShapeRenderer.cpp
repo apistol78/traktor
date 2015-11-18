@@ -1,3 +1,4 @@
+#include <GuillotineBinPack.h>
 #include "Core/Log/Log.h"
 #include "Core/Math/Format.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -16,11 +17,14 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_cacheSlots = 16;
-const uint32_t c_cacheSlotWidth = 256;
-const uint32_t c_cacheSlotHeight = 256;
-const uint32_t c_cacheWidth = c_cacheSlots * c_cacheSlotWidth;
-const uint32_t c_cacheHeight = c_cacheSlotHeight;
+const Matrix33 c_flipped(
+	0.0f, 1, 0,
+	1, 0, 0,
+	0, 0, 1
+);
+
+const uint32_t c_cacheWidth = 2048;
+const uint32_t c_cacheHeight = 2048;
 
 const SwfCxTransform c_cxfZero = { { 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f } };
 const SwfCxTransform c_cxfIdentity = { { 1.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 0.0f } };
@@ -54,30 +58,36 @@ bool AccShapeRenderer::create(render::IRenderSystem* renderSystem, resource::IRe
 		return false;
 	}
 
-	m_cache.resize(c_cacheSlots);
-	for (uint32_t i = 0; i < c_cacheSlots; ++i)
-		m_cache[i].tag = 0;
-
+	m_packer.reset(new rbp::GuillotineBinPack(c_cacheWidth, c_cacheHeight));
 	return true;
 }
 
 void AccShapeRenderer::destroy()
 {
+	m_packer.release();
 	safeDestroy(m_quad);
 	safeDestroy(m_renderTargetShapes);
 }
 
 void AccShapeRenderer::beginFrame()
 {
-	for (int32_t i = 0; i < c_cacheSlots; ++i)
+	for (int32_t i = 0; i < m_cache.size(); ++i)
 	{
-		if (m_cache[i].tag != 0 && ++m_cache[i].unused >= 2)
-			m_cache[i].tag = 0;
+		if (++m_cache[i].unused >= 2)
+		{
+			m_cache.resize(0);
+			m_packer.reset(new rbp::GuillotineBinPack(c_cacheWidth, c_cacheHeight));
+			break;
+		}
 	}
+
+	m_quadCount = 0;
+	m_shapeCount = 0;
 }
 
 void AccShapeRenderer::endFrame()
 {
+	//log::info << L"quad = " << m_quadCount << L", shape = " << m_shapeCount << Endl;
 }
 
 void AccShapeRenderer::render(
@@ -97,7 +107,6 @@ void AccShapeRenderer::render(
 {
 	// Only permit caching of default blended shapes and not while updating stencil mask.
 	if (
-		shape->getRenderBatches().size() > 1 &&
 		blendMode == SbmDefault &&
 		maskWrite == false
 	)
@@ -114,37 +123,39 @@ void AccShapeRenderer::render(
 		int32_t pixelHeight = int32_t(scaleY * (bounds.mx.y - bounds.mn.y) / 20.0f);
 
 		int32_t slot = -1;
-		for (int32_t i = 0; i < c_cacheSlots; ++i)
+		for (int32_t i = 0; i < m_cache.size(); ++i)
 		{
-			if (m_cache[i].tag == tag && m_cache[i].width == pixelWidth && m_cache[i].height == pixelHeight)
+			if (m_cache[i].tag == tag)
 			{
-				slot = i;
-				break;
-			}
-		}
-
-		if (
-			slot < 0 &&
-			pixelWidth <= c_cacheSlotWidth &&
-			pixelHeight <= c_cacheSlotHeight
-		)
-		{
-			for (int32_t i = 0; i < c_cacheSlots; ++i)
-			{
-				if (m_cache[i].tag == 0)
+				if (
+					(!m_cache[i].flipped && m_cache[i].width == pixelWidth && m_cache[i].height == pixelHeight) ||
+					( m_cache[i].flipped && m_cache[i].width == pixelHeight && m_cache[i].height == pixelWidth)
+				)
 				{
 					slot = i;
 					break;
 				}
 			}
-			if (slot >= 0)
-			{
-				Cache& c = m_cache[slot];
-				c.tag = tag;
-				c.width = pixelWidth;
-				c.height = pixelHeight;
+		}
 
-				// Cache shape into offscreen target.
+		if (slot < 0)
+		{
+			rbp::Rect node = m_packer->Insert(pixelWidth, pixelHeight, false, rbp::GuillotineBinPack::RectBestAreaFit, rbp::GuillotineBinPack::SplitShorterLeftoverAxis);
+			if (node.width > 0 && node.height > 0)
+			{
+				Cache c;
+				c.tag = tag;
+				c.x = node.x;
+				c.y = node.y;
+				c.width = node.width;
+				c.height = node.height;
+				c.flipped = bool(node.width != pixelWidth);
+				c.unused = 0;
+				
+				slot = m_cache.size();
+				m_cache.push_back(c);
+
+				// Cache shape into off-screen target.
 				render::TargetBeginRenderBlock* renderBlockBegin = renderContext->alloc< render::TargetBeginRenderBlock >("Flash shape render begin");
 				renderBlockBegin->renderTargetSet = m_renderTargetShapes;
 				renderBlockBegin->renderTargetIndex = 0;
@@ -152,8 +163,8 @@ void AccShapeRenderer::render(
 
 				Vector4 cacheFrameSize(bounds.mn.x, bounds.mn.y, bounds.mx.x, bounds.mx.y);
 				Vector4 cacheViewOffset(
-					float(slot) / c_cacheSlots,
-					0.0f,
+					float(c.x) / c_cacheWidth,
+					float(c.y) / c_cacheHeight,
 					float(c.width) / c_cacheWidth,
 					float(c.height) / c_cacheHeight
 				);
@@ -174,8 +185,8 @@ void AccShapeRenderer::render(
 
 				shape->render(
 					renderContext,
-					Matrix33::identity(),
-					cacheFrameSize,
+					c.flipped ? c_flipped : Matrix33::identity(),
+					c.flipped ? Vector4(bounds.mn.y, bounds.mn.x, bounds.mx.y, bounds.mx.x) : cacheFrameSize,
 					cacheViewOffset,
 					0.0f,
 					c_cxfIdentity,
@@ -193,8 +204,8 @@ void AccShapeRenderer::render(
 		if (slot >= 0)
 		{
 			Vector4 textureOffset(
-				float(slot) / c_cacheSlots,
-				0.0f,
+				float(m_cache[slot].x) / c_cacheWidth,
+				float(m_cache[slot].y) / c_cacheHeight,
 				float(m_cache[slot].width) / c_cacheWidth,
 				float(m_cache[slot].height) / c_cacheHeight
 			);
@@ -202,8 +213,8 @@ void AccShapeRenderer::render(
 			// Blit shape to frame buffer.
 			m_quad->render(
 				renderContext,
-				bounds,
-				transform,
+				m_cache[slot].flipped ? Aabb2(bounds.mn.shuffle< 1, 0 >(), bounds.mx.shuffle< 1, 0 >()) : bounds,
+				transform * (m_cache[slot].flipped ? c_flipped : Matrix33::identity()),
 				frameSize,
 				viewOffset,
 				cxform,
@@ -214,6 +225,7 @@ void AccShapeRenderer::render(
 				maskReference
 			);
 
+			m_quadCount++;
 			m_cache[slot].unused = 0;
 			return;
 		}
@@ -232,6 +244,8 @@ void AccShapeRenderer::render(
 		maskReference,
 		blendMode
 	);
+
+	m_shapeCount++;
 }
 
 	}

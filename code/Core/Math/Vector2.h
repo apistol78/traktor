@@ -48,6 +48,12 @@ public:
 
 	T_MATH_INLINE void set(float x_, float y_);
 
+	template < int iX, int iY >
+	T_MATH_INLINE Vector2 shuffle() const
+	{
+		return Vector2(e[iX], e[iY]);
+	}
+
 	T_MATH_INLINE float length() const;
 
 	T_MATH_INLINE float length2() const;

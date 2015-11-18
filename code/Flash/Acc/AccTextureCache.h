@@ -3,6 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/Containers/SmallMap.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Render/IRenderSystem.h"
 #include "Resource/Proxy.h"
 
@@ -88,7 +89,10 @@ public:
 private:
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
+	Ref< render::ISimpleTexture > m_gradientsTexture;
 	SmallMap< uint64_t, BitmapRect > m_cache;
+	AutoArrayPtr< uint8_t > m_gradientsData;
+	uint32_t m_nextGradient;
 };
 
 	}

@@ -269,26 +269,34 @@ bool AccShape::updateRenderable(
 			lastFillStyle = j->fillStyle;
 		}
 
-		if (m_renderBatches.empty() || m_renderBatches.back().texture != texture)
+		if (m_renderBatches.empty() || m_renderBatches.back().texture.texture != texture.texture)	// \fixme Clamp?
 		{
 			m_renderBatches.push_back(RenderBatch());
 			m_renderBatches.back().primitives.setNonIndexed(render::PtTriangles, vertexOffset, 0);
 			m_renderBatches.back().texture = texture;
-			m_renderBatches.back().textureMatrix = textureMatrix;
 		}
 
 		for (int k = 0; k < 3; ++k)
 		{
-			Vector2 P = j->v[k];
+			const Vector2& P = j->v[k];
+			Vector2 tc = textureMatrix * P;
+
 			vertex->pos[0] = P.x;
 			vertex->pos[1] = P.y;
-			vertex->uv[0] = c_controlPoints[k][0];
-			vertex->uv[1] = c_controlPoints[k][1];
-			vertex->uv[2] = curveSign;
+			vertex->curvature[0] = c_controlPoints[k][0];
+			vertex->curvature[1] = c_controlPoints[k][1];
+			vertex->curvature[2] = curveSign;
+			vertex->texCoord[0] = tc.x;
+			vertex->texCoord[1] = tc.y;
+			vertex->texRect[0] = texture.rect[0];
+			vertex->texRect[1] = texture.rect[1];
+			vertex->texRect[2] = texture.rect[2];
+			vertex->texRect[3] = texture.rect[3];
 			vertex->color[0] = color.r;
 			vertex->color[1] = color.g;
 			vertex->color[2] = color.b;
 			vertex->color[3] = color.a;
+
 			vertex++;
 		}
 
@@ -432,13 +440,6 @@ void AccShape::render(
 		{
 			if (shaderTextured && shaderTextured->getCurrentProgram())
 			{
-				Vector4 textureMatrix0(
-					j->textureMatrix.e11, j->textureMatrix.e12, j->textureMatrix.e13, j->textureMatrix.e23
-				);
-				Vector4 textureMatrix1(
-					j->textureMatrix.e21, j->textureMatrix.e22, 0.0f, 0.0f
-				);
-
 				render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >("Flash AccShape; draw textured batch");
 				renderBlock->program = shaderTextured->getCurrentProgram();
 				renderBlock->vertexBuffer = m_vertexRange.vertexBuffer;
@@ -449,9 +450,6 @@ void AccShape::render(
 				renderBlock->programParams->beginParameters(renderContext);
 				renderBlock->programParams->setTextureParameter(m_shapeResources->m_handleTexture, j->texture.texture);
 				renderBlock->programParams->setFloatParameter(m_shapeResources->m_handleTextureClamp, j->texture.clamp ? 1.0f : 0.0f);
-				renderBlock->programParams->setVectorParameter(m_shapeResources->m_handleTextureRect, Vector4::loadUnaligned(j->texture.rect));
-				renderBlock->programParams->setVectorParameter(m_shapeResources->m_handleTextureMatrix0, textureMatrix0);
-				renderBlock->programParams->setVectorParameter(m_shapeResources->m_handleTextureMatrix1, textureMatrix1);
 				renderBlock->programParams->endParameters(renderContext);
 				renderContext->draw(render::RpOverlay, renderBlock);
 			}

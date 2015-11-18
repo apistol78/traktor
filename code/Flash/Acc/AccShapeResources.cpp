@@ -42,9 +42,6 @@ bool AccShapeResources::create(resource::IResourceManager* resourceManager)
 	m_handleCxFormMul = render::getParameterHandle(L"Flash_CxFormMul");
 	m_handleCxFormAdd = render::getParameterHandle(L"Flash_CxFormAdd");
 	m_handleTexture = render::getParameterHandle(L"Flash_Texture");
-	m_handleTextureRect = render::getParameterHandle(L"Flash_TextureRect");
-	m_handleTextureMatrix0 = render::getParameterHandle(L"Flash_TextureMatrix0");
-	m_handleTextureMatrix1 = render::getParameterHandle(L"Flash_TextureMatrix1");
 	m_handleTextureClamp = render::getParameterHandle(L"Flash_TextureClamp");
 
 	m_handleTechniques[SbmDefault] = render::getParameterHandle(L"Flash_Default");

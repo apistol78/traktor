@@ -1,10 +1,18 @@
 #ifndef traktor_flash_AccShapeRenderer_H
 #define traktor_flash_AccShapeRenderer_H
 
+#include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Matrix33.h"
 #include "Core/Math/Vector4.h"
-#include "Core/Object.h"
+#include "Core/Misc/AutoPtr.h"
+
+namespace rbp
+{
+
+class GuillotineBinPack;
+
+}
 
 namespace traktor
 {
@@ -64,14 +72,21 @@ private:
 	struct Cache
 	{
 		int32_t tag;
+		int32_t x;
+		int32_t y;
 		int32_t width;
 		int32_t height;
 		int32_t unused;
+		bool flipped;
 	};
 
 	Ref< render::RenderTargetSet > m_renderTargetShapes;
 	Ref< AccQuad > m_quad;
 	AlignedVector< Cache > m_cache;
+	AutoPtr< rbp::GuillotineBinPack > m_packer;
+
+	uint32_t m_quadCount;
+	uint32_t m_shapeCount;
 };
 
 	}

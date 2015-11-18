@@ -27,7 +27,9 @@ public:
 	struct Vertex
 	{
 		float pos[2];
-		float uv[3];
+		float curvature[3];
+		float texCoord[2];
+		float texRect[4];
 		uint8_t color[4];
 	};
 #pragma pack()
