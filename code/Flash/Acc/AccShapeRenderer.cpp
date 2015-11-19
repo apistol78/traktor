@@ -91,7 +91,6 @@ void AccShapeRenderer::beginFrame()
 
 void AccShapeRenderer::endFrame()
 {
-	//log::info << L"quad = " << m_quadCount << L", shape = " << m_shapeCount << Endl;
 }
 
 void AccShapeRenderer::beginCacheAsBitmap(
@@ -102,7 +101,8 @@ void AccShapeRenderer::beginCacheAsBitmap(
 	const Matrix33& transform
 )
 {
-	T_FATAL_ASSERT (m_renderIntoSlot < 0);
+	T_ASSERT (m_renderIntoSlot < 0);
+	T_ASSERT (m_renderFromSlot < 0);
 
 	int32_t tag = spriteInstance.getSprite()->getCacheTag();
 	Aabb2 bounds = spriteInstance.getLocalBounds();

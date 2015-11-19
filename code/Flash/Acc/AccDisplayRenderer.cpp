@@ -441,8 +441,8 @@ void AccDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Ma
 	))
 		return;
 
-	// Check if shape is within frame bounds.
-	if (!rectangleVisible(m_frameSize, m_viewOffset, transform, accShape->getBounds()))
+	// Check if shape is within frame bounds, don't cull if we're in the middle of rendering cached bitmap.
+	if (m_cacheAsBitmapDepth == 0 && !rectangleVisible(m_frameSize, m_viewOffset, transform, accShape->getBounds()))
 		return;
 
 	// Flush queueud glyph shapes, must do this to ensure proper draw order.
