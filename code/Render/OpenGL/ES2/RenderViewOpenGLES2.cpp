@@ -192,7 +192,7 @@ bool RenderViewOpenGLES2::setGamma(float gamma)
 
 void RenderViewOpenGLES2::setViewport(const Viewport& viewport)
 {
-	T_ANONYMOUS_VAR(IContext::Scope)(m_context);
+	T_ANONYMOUS_VAR(ContextOpenGLES2::Scope)(m_context);
 
 	if (m_renderTargetStack.empty())
 		m_viewport = viewport;

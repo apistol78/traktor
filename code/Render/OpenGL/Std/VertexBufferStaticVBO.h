@@ -8,7 +8,7 @@ namespace traktor
 	namespace render
 	{
 
-class IContext;
+class ContextOpenGL;
 class VertexElement;
 
 /*!
@@ -19,7 +19,7 @@ class VertexBufferStaticVBO : public VertexBufferOpenGL
 	T_RTTI_CLASS;
 
 public:
-	VertexBufferStaticVBO(IContext* resourceContext, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize);
+	VertexBufferStaticVBO(ContextOpenGL* resourceContext, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize);
 
 	virtual ~VertexBufferStaticVBO();
 
@@ -42,7 +42,7 @@ private:
 		GLuint offset;
 	};
 
-	Ref< IContext > m_resourceContext;
+	Ref< ContextOpenGL > m_resourceContext;
 	GLuint m_array;
 	GLuint m_buffer;
 	GLuint m_vertexStride;

@@ -183,14 +183,14 @@ bool RenderViewOpenGL::reset(const RenderViewDefaultDesc& desc)
 	RenderTargetSetOpenGL::ms_primaryTargetTag++;
 
 	{
-		T_ANONYMOUS_VAR(IContext::Scope)(m_renderContext);
+		T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_renderContext);
 
 		// Ensure no FBO is currently bound.
 		T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 		T_OGL_SAFE(glFinish());
 	}
 	{
-		T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
+		T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
 		safeDestroy(m_primaryTarget);
 
 		// Clean pending resources.
@@ -247,14 +247,14 @@ bool RenderViewOpenGL::reset(int32_t width, int32_t height)
 	RenderTargetSetOpenGL::ms_primaryTargetTag++;
 
 	{
-		T_ANONYMOUS_VAR(IContext::Scope)(m_renderContext);
+		T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_renderContext);
 
 		// Ensure no FBO is currently bound.
 		T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 		T_OGL_SAFE(glFinish());
 	}
 	{
-		T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
+		T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
 		safeDestroy(m_primaryTarget);
 
 		// Clean pending resources.
@@ -362,7 +362,7 @@ bool RenderViewOpenGL::setGamma(float gamma)
 
 void RenderViewOpenGL::setViewport(const Viewport& viewport)
 {
-	T_ANONYMOUS_VAR(IContext::Scope)(m_renderContext);
+	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_renderContext);
 
 	T_OGL_SAFE(glViewport(
 		viewport.left,
@@ -379,7 +379,7 @@ void RenderViewOpenGL::setViewport(const Viewport& viewport)
 
 Viewport RenderViewOpenGL::getViewport()
 {
-	T_ANONYMOUS_VAR(IContext::Scope)(m_renderContext);
+	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_renderContext);
 
 	GLint ext[4];
 	T_OGL_SAFE(glGetIntegerv(GL_VIEWPORT, ext));

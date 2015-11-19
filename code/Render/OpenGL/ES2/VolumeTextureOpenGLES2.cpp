@@ -1,7 +1,7 @@
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Render/OpenGL/Platform.h"
-#include "Render/OpenGL/IContext.h"
+#include "Render/OpenGL/ES2/ContextOpenGLES2.h"
 #include "Render/OpenGL/ES2/VolumeTextureOpenGLES2.h"
 
 namespace traktor
@@ -11,7 +11,7 @@ namespace traktor
 		namespace
 		{
 
-struct DeleteTextureCallback : public IContext::IDeleteCallback
+struct DeleteTextureCallback : public ContextOpenGLES2::IDeleteCallback
 {
 	GLuint m_textureName;
 
@@ -116,7 +116,7 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VolumeTextureOpenGLES2", VolumeTextureOpenGLES2, IVolumeTexture)
 
-VolumeTextureOpenGLES2::VolumeTextureOpenGLES2(IContext* resourceContext)
+VolumeTextureOpenGLES2::VolumeTextureOpenGLES2(ContextOpenGLES2* resourceContext)
 :	m_resourceContext(resourceContext)
 ,	m_textureName(0)
 ,	m_width(0)

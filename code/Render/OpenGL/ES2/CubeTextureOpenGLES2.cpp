@@ -1,6 +1,6 @@
 #include <cstring>
 #include "Render/OpenGL/Platform.h"
-#include "Render/OpenGL/IContext.h"
+#include "Render/OpenGL/ES2/ContextOpenGLES2.h"
 #include "Render/OpenGL/ES2/CubeTextureOpenGLES2.h"
 
 namespace traktor
@@ -20,7 +20,7 @@ const GLenum c_cubeFaces[] =
 	GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
 };
 
-struct DeleteTextureCallback : public IContext::IDeleteCallback
+struct DeleteTextureCallback : public ContextOpenGLES2::IDeleteCallback
 {
 	GLuint m_textureName;
 
@@ -29,7 +29,7 @@ struct DeleteTextureCallback : public IContext::IDeleteCallback
 	{
 	}
 
-	virtual void deleteResource()
+	virtual void deleteResource() T_OVERRIDE T_FINAL
 	{
 		T_OGL_SAFE(glDeleteTextures(1, &m_textureName));
 		delete this;
@@ -125,7 +125,7 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CubeTextureOpenGLES2", CubeTextureOpenGLES2, ICubeTexture)
 
-CubeTextureOpenGLES2::CubeTextureOpenGLES2(IContext* resourceContext)
+CubeTextureOpenGLES2::CubeTextureOpenGLES2(ContextOpenGLES2* resourceContext)
 :	m_resourceContext(resourceContext)
 ,	m_textureName(0)
 ,	m_side(0)

@@ -6,7 +6,7 @@
 #include "Core/Math/Log2.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/OpenGL/Platform.h"
-#include "Render/OpenGL/IContext.h"
+#include "Render/OpenGL/ES2/ContextOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderTargetSetOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderTargetOpenGLES2.h"
 
@@ -23,7 +23,7 @@ namespace traktor
 PFNGLDISCARDFRAMEBUFFEREXTPROC s_glDiscardFramebufferEXT = 0;
 #endif
 
-struct DeleteFramebufferCallback : public IContext::IDeleteCallback
+struct DeleteFramebufferCallback : public ContextOpenGLES2::IDeleteCallback
 {
 	GLuint m_framebufferName;
 
@@ -73,7 +73,7 @@ bool haveExtension(const char* extension)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetOpenGLES2", RenderTargetSetOpenGLES2, RenderTargetSet)
 
-RenderTargetSetOpenGLES2::RenderTargetSetOpenGLES2(IContext* context)
+RenderTargetSetOpenGLES2::RenderTargetSetOpenGLES2(ContextOpenGLES2* context)
 :	m_context(context)
 ,	m_depthBuffer(0)
 {

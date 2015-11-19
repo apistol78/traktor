@@ -1,5 +1,5 @@
 #include "Render/OpenGL/Platform.h"
-#include "Render/OpenGL/IContext.h"
+#include "Render/OpenGL/ES2/ContextOpenGLES2.h"
 #include "Render/OpenGL/ES2/IndexBufferOpenGLES2.h"
 #include "Render/OpenGL/ES2/StateCache.h"
 
@@ -10,7 +10,7 @@ namespace traktor
 		namespace
 		{
 
-struct DeleteBufferCallback : public IContext::IDeleteCallback
+struct DeleteBufferCallback : public ContextOpenGLES2::IDeleteCallback
 {
 	GLuint m_bufferName;
 
@@ -30,7 +30,7 @@ struct DeleteBufferCallback : public IContext::IDeleteCallback
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.IndexBufferOpenGLES2", IndexBufferOpenGLES2, IndexBufferOpenGL)
 
-IndexBufferOpenGLES2::IndexBufferOpenGLES2(IContext* context, IndexType indexType, uint32_t bufferSize, bool dynamic)
+IndexBufferOpenGLES2::IndexBufferOpenGLES2(ContextOpenGLES2* context, IndexType indexType, uint32_t bufferSize, bool dynamic)
 :	IndexBufferOpenGL(indexType, bufferSize)
 ,	m_context(context)
 ,	m_dynamic(dynamic)
@@ -71,7 +71,7 @@ void IndexBufferOpenGLES2::unlock()
 	if (!m_buffer.ptr())
 		return;
 
-	T_ANONYMOUS_VAR(IContext::Scope)(m_context);
+	T_ANONYMOUS_VAR(ContextOpenGLES2::Scope)(m_context);
 
 	int32_t bufferSize = getBufferSize();
 	T_OGL_SAFE(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_name));

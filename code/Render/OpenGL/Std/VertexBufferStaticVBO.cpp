@@ -1,7 +1,7 @@
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Render/VertexElement.h"
-#include "Render/OpenGL/IContext.h"
+#include "Render/OpenGL/Std/ContextOpenGL.h"
 #include "Render/OpenGL/Std/VertexBufferStaticVBO.h"
 
 namespace traktor
@@ -11,7 +11,7 @@ namespace traktor
 		namespace
 		{
 
-struct DeleteBufferCallback : public IContext::IDeleteCallback
+struct DeleteBufferCallback : public ContextOpenGL::IDeleteCallback
 {
 	GLuint m_buffer;
 
@@ -31,7 +31,7 @@ struct DeleteBufferCallback : public IContext::IDeleteCallback
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferStaticVBO", VertexBufferStaticVBO, VertexBufferOpenGL)
 
-VertexBufferStaticVBO::VertexBufferStaticVBO(IContext* resourceContext, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize)
+VertexBufferStaticVBO::VertexBufferStaticVBO(ContextOpenGL* resourceContext, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize)
 :	VertexBufferOpenGL(bufferSize)
 ,	m_resourceContext(resourceContext)
 ,	m_array(0)
@@ -157,7 +157,7 @@ void VertexBufferStaticVBO::destroy()
 void* VertexBufferStaticVBO::lock()
 {
 	T_ASSERT_M(!m_lock, L"Vertex buffer already locked");
-	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
+	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
 	
 	T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, m_buffer));
 	m_lock = static_cast< uint8_t* >(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
@@ -168,7 +168,7 @@ void* VertexBufferStaticVBO::lock()
 void* VertexBufferStaticVBO::lock(uint32_t vertexOffset, uint32_t vertexCount)
 {
 	T_ASSERT_M(!m_lock, L"Vertex buffer already locked");
-	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
+	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
 	
 	T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, m_buffer));
 	m_lock = static_cast< uint8_t* >(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
@@ -179,7 +179,7 @@ void* VertexBufferStaticVBO::lock(uint32_t vertexOffset, uint32_t vertexCount)
 void VertexBufferStaticVBO::unlock()
 {
 	T_ASSERT_M(m_lock, L"Vertex buffer not locked");
-	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
+	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
 	
 	T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, m_buffer));
 	T_OGL_SAFE(glUnmapBuffer(GL_ARRAY_BUFFER));

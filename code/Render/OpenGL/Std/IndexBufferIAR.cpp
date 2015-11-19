@@ -9,7 +9,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.IndexBufferIAR", IndexBufferIAR, IndexBufferOpenGL)
 
-IndexBufferIAR::IndexBufferIAR(IContext* resourceContext, IndexType indexType, uint32_t bufferSize)
+IndexBufferIAR::IndexBufferIAR(ContextOpenGL* resourceContext, IndexType indexType, uint32_t bufferSize)
 :	IndexBufferOpenGL(indexType, bufferSize)
 ,	m_resourceContext(resourceContext)
 ,	m_data(0)

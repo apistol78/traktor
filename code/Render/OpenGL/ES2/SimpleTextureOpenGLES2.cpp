@@ -3,7 +3,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Log2.h"
 #include "Render/OpenGL/Platform.h"
-#include "Render/OpenGL/IContext.h"
+#include "Render/OpenGL/ES2/ContextOpenGLES2.h"
 #include "Render/OpenGL/ES2/SimpleTextureOpenGLES2.h"
 
 namespace traktor
@@ -13,7 +13,7 @@ namespace traktor
 		namespace
 		{
 
-struct DeleteTextureCallback : public IContext::IDeleteCallback
+struct DeleteTextureCallback : public ContextOpenGLES2::IDeleteCallback
 {
 	GLuint m_textureName;
 
@@ -140,7 +140,7 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTextureOpenGLES2", SimpleTextureOpenGLES2, ISimpleTexture)
 
-SimpleTextureOpenGLES2::SimpleTextureOpenGLES2(IContext* context)
+SimpleTextureOpenGLES2::SimpleTextureOpenGLES2(ContextOpenGLES2* context)
 :	m_context(context)
 ,	m_textureName(0)
 ,	m_pot(false)
@@ -276,7 +276,7 @@ bool SimpleTextureOpenGLES2::lock(int level, Lock& lock)
 
 void SimpleTextureOpenGLES2::unlock(int level)
 {
-	T_ANONYMOUS_VAR(IContext::Scope)(m_context);
+	T_ANONYMOUS_VAR(ContextOpenGLES2::Scope)(m_context);
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_textureName));
 	T_OGL_SAFE(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
 	T_OGL_SAFE(glTexImage2D(

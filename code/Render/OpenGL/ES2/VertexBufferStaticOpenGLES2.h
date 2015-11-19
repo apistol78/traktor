@@ -10,7 +10,7 @@ namespace traktor
 	namespace render
 	{
 
-class IContext;
+class ContextOpenGLES2;
 class StateCache;
 class VertexElement;
 
@@ -22,7 +22,7 @@ class VertexBufferStaticOpenGLES2 : public VertexBufferOpenGLES2
 	T_RTTI_CLASS;
 
 public:
-	VertexBufferStaticOpenGLES2(IContext* context, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize);
+	VertexBufferStaticOpenGLES2(ContextOpenGLES2* context, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize);
 
 	virtual ~VertexBufferStaticOpenGLES2();
 
@@ -46,7 +46,7 @@ private:
 		GLuint offset;
 	};
 
-	Ref< IContext > m_context;
+	Ref< ContextOpenGLES2 > m_context;
 	AlignedVector< AttributeDesc > m_attributes;
 	GLuint m_arrayObject;
 	GLuint m_bufferObject;

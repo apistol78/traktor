@@ -11,7 +11,7 @@ namespace traktor
 	namespace render
 	{
 
-class IContext;
+class ContextOpenGLES2;
 		
 /*!
  * \ingroup OGL
@@ -23,7 +23,7 @@ class CubeTextureOpenGLES2
 	T_RTTI_CLASS;
 
 public:
-	CubeTextureOpenGLES2(IContext* resourceContext);
+	CubeTextureOpenGLES2(ContextOpenGLES2* resourceContext);
 
 	virtual ~CubeTextureOpenGLES2();
 
@@ -50,7 +50,7 @@ public:
 	virtual void bindSize(GLint locationSize);
 	
 private:
-	Ref< IContext > m_resourceContext;
+	Ref< ContextOpenGLES2 > m_resourceContext;
 	GLuint m_textureName;
 	int32_t m_side;
 	int32_t m_pixelSize;

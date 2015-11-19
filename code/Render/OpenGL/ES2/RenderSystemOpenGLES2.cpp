@@ -167,7 +167,7 @@ Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewEmbed
 Ref< VertexBuffer > RenderSystemOpenGLES2::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
 #if !defined(T_OFFLINE_ONLY)
-	T_ANONYMOUS_VAR(IContext::Scope)(m_globalContext);
+	T_ANONYMOUS_VAR(ContextOpenGLES2::Scope)(m_globalContext);
 	if (!dynamic)
 		return new VertexBufferStaticOpenGLES2(m_globalContext, vertexElements, bufferSize);
 	else
@@ -180,7 +180,7 @@ Ref< VertexBuffer > RenderSystemOpenGLES2::createVertexBuffer(const std::vector<
 Ref< IndexBuffer > RenderSystemOpenGLES2::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
 #if !defined(T_OFFLINE_ONLY)
-	T_ANONYMOUS_VAR(IContext::Scope)(m_globalContext);
+	T_ANONYMOUS_VAR(ContextOpenGLES2::Scope)(m_globalContext);
 	return new IndexBufferOpenGLES2(m_globalContext, indexType, bufferSize, dynamic);
 #else
 	return 0;
@@ -190,7 +190,7 @@ Ref< IndexBuffer > RenderSystemOpenGLES2::createIndexBuffer(IndexType indexType,
 Ref< ISimpleTexture > RenderSystemOpenGLES2::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
 #if !defined(T_OFFLINE_ONLY)
-	T_ANONYMOUS_VAR(IContext::Scope)(m_globalContext);
+	T_ANONYMOUS_VAR(ContextOpenGLES2::Scope)(m_globalContext);
 	Ref< SimpleTextureOpenGLES2 > texture = new SimpleTextureOpenGLES2(m_globalContext);
 	if (texture->create(desc))
 		return texture;
@@ -204,7 +204,7 @@ Ref< ISimpleTexture > RenderSystemOpenGLES2::createSimpleTexture(const SimpleTex
 Ref< ICubeTexture > RenderSystemOpenGLES2::createCubeTexture(const CubeTextureCreateDesc& desc)
 {
 #if !defined(T_OFFLINE_ONLY)
-	T_ANONYMOUS_VAR(IContext::Scope)(m_globalContext);
+	T_ANONYMOUS_VAR(ContextOpenGLES2::Scope)(m_globalContext);
 	Ref< CubeTextureOpenGLES2 > texture = new CubeTextureOpenGLES2(m_globalContext);
 	if (texture->create(desc))
 		return texture;
@@ -218,7 +218,7 @@ Ref< ICubeTexture > RenderSystemOpenGLES2::createCubeTexture(const CubeTextureCr
 Ref< IVolumeTexture > RenderSystemOpenGLES2::createVolumeTexture(const VolumeTextureCreateDesc& desc)
 {
 #if !defined(T_OFFLINE_ONLY)
-	T_ANONYMOUS_VAR(IContext::Scope)(m_globalContext);
+	T_ANONYMOUS_VAR(ContextOpenGLES2::Scope)(m_globalContext);
 	Ref< VolumeTextureOpenGLES2 > texture = new VolumeTextureOpenGLES2(m_globalContext);
 	if (texture->create(desc))
 		return texture;
@@ -232,7 +232,7 @@ Ref< IVolumeTexture > RenderSystemOpenGLES2::createVolumeTexture(const VolumeTex
 Ref< RenderTargetSet > RenderSystemOpenGLES2::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
 #if !defined(T_OFFLINE_ONLY)
-	T_ANONYMOUS_VAR(IContext::Scope)(m_globalContext);
+	T_ANONYMOUS_VAR(ContextOpenGLES2::Scope)(m_globalContext);
 	Ref< RenderTargetSetOpenGLES2 > renderTargetSet = new RenderTargetSetOpenGLES2(m_globalContext);
 	if (renderTargetSet->create(desc))
 		return renderTargetSet;
@@ -246,7 +246,7 @@ Ref< RenderTargetSet > RenderSystemOpenGLES2::createRenderTargetSet(const Render
 Ref< IProgram > RenderSystemOpenGLES2::createProgram(const ProgramResource* programResource, const wchar_t* const tag)
 {
 #if !defined(T_OFFLINE_ONLY)
-	T_ANONYMOUS_VAR(IContext::Scope)(m_globalContext);
+	T_ANONYMOUS_VAR(ContextOpenGLES2::Scope)(m_globalContext);
 	return ProgramOpenGLES2::create(m_globalContext, programResource);
 #else
 	return 0;
