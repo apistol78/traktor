@@ -122,6 +122,7 @@ AccDisplayRenderer::AccDisplayRenderer()
 ,	m_maskReference(0)
 ,	m_glyphFilter(0)
 ,	m_handleScreenOffset(render::getParameterHandle(L"Flash_ScreenOffset"))
+,	m_cacheAsBitmapDepth(0)
 {
 	std::memset(&m_glyphColor, 0, sizeof(SwfColor));
 	std::memset(&m_glyphFilterColor, 0, sizeof(SwfColor));
@@ -350,16 +351,37 @@ void AccDisplayRenderer::begin(
 	m_maskReference = 0;
 }
 
-void AccDisplayRenderer::beginSprite(const FlashSpriteInstance& sprite)
+void AccDisplayRenderer::beginSprite(const FlashSpriteInstance& sprite, const Matrix33& transform)
 {
 	if (sprite.getCacheAsBitmap())
-		m_shapeRenderer->beginCacheAsBitmap();
+	{
+		if (m_cacheAsBitmapDepth++ == 0)
+		{
+			m_shapeRenderer->beginCacheAsBitmap(
+				m_renderContext,
+				sprite,
+				m_frameSize,
+				m_viewSize,
+				transform
+			);
+		}
+	}
 }
 
-void AccDisplayRenderer::endSprite(const FlashSpriteInstance& sprite)
+void AccDisplayRenderer::endSprite(const FlashSpriteInstance& sprite, const Matrix33& transform)
 {
 	if (sprite.getCacheAsBitmap())
-		m_shapeRenderer->endCacheAsBitmap();
+	{
+		if (--m_cacheAsBitmapDepth == 0)
+		{
+			m_shapeRenderer->endCacheAsBitmap(
+				m_renderContext,
+				m_frameSize,
+				m_viewOffset,
+				transform
+			);
+		}
+	}
 }
 
 void AccDisplayRenderer::beginMask(bool increment)

@@ -53,9 +53,20 @@ public:
 
 	void endFrame();
 
-	void beginCacheAsBitmap();
+	void beginCacheAsBitmap(
+		render::RenderContext* renderContext,
+		const FlashSpriteInstance& spriteInstance,
+		const Vector4& frameSize,
+		const Vector4& viewSize,
+		const Matrix33& transform
+	);
 
-	void endCacheAsBitmap();
+	void endCacheAsBitmap(
+		render::RenderContext* renderContext,
+		const Vector4& frameSize,
+		const Vector4& viewOffset,
+		const Matrix33& transform
+	);
 
 	void render(
 		render::RenderContext* renderContext,
@@ -81,6 +92,8 @@ private:
 		int32_t width;
 		int32_t height;
 		int32_t unused;
+		Aabb2 bounds;
+		Matrix33 transform;
 		bool flipped;
 	};
 
@@ -88,9 +101,8 @@ private:
 	Ref< AccQuad > m_quad;
 	AlignedVector< Cache > m_cache;
 	AutoPtr< rbp::GuillotineBinPack > m_packer;
-	int32_t m_cacheAsBitmap;
-	uint32_t m_quadCount;
-	uint32_t m_shapeCount;
+	int32_t m_renderIntoSlot;
+	int32_t m_renderFromSlot;
 };
 
 	}

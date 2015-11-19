@@ -52,11 +52,11 @@ public:
 
 	/*! \brief Begin rendering sprite.
 	 */
-	virtual void beginSprite(const FlashSpriteInstance& sprite) = 0;
+	virtual void beginSprite(const FlashSpriteInstance& sprite, const Matrix33& transform) = 0;
 
 	/*! \brief End rendering sprite.
 	 */
-	virtual void endSprite(const FlashSpriteInstance& sprite) = 0;
+	virtual void endSprite(const FlashSpriteInstance& sprite, const Matrix33& transform) = 0;
 
 	/*! \brief Begin rendering mask.
 	 *
