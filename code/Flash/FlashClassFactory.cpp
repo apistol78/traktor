@@ -495,7 +495,6 @@ void FlashClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	Ref< AutoRuntimeClass< FlashOptimizer > > classFlashOptimizer = new AutoRuntimeClass< FlashOptimizer >();
 	classFlashOptimizer->addConstructor();
 	classFlashOptimizer->addMethod("merge", &FlashOptimizer::merge);
-	classFlashOptimizer->addMethod("rasterize", &FlashOptimizer::rasterize);
 	registrar->registerClass(classFlashOptimizer);
 }
 

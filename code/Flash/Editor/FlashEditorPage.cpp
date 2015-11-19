@@ -199,17 +199,17 @@ bool FlashEditorPage::handleCommand(const ui::Command& command)
 			updateTreeMovie();
 		}
 	}
-	else if (command == L"Flash.Editor.Rasterize")
-	{
-		Ref< FlashMovie > movie = flash::FlashOptimizer().rasterize(m_movie);
-		if (movie)
-		{
-			m_movie = movie;
-			m_previewControl->setMovie(m_movie);
-			m_previewControl->update();
-			updateTreeMovie();
-		}
-	}
+	//else if (command == L"Flash.Editor.Rasterize")
+	//{
+	//	Ref< FlashMovie > movie = flash::FlashOptimizer().rasterize(m_movie);
+	//	if (movie)
+	//	{
+	//		m_movie = movie;
+	//		m_previewControl->setMovie(m_movie);
+	//		m_previewControl->update();
+	//		updateTreeMovie();
+	//	}
+	//}
 	else
 		result = false;
 
