@@ -118,7 +118,7 @@ Any ActionObjectClass::getConstantValue(uint32_t constId) const
 
 uint32_t ActionObjectClass::getMethodCount() const
 {
-	return 5;
+	return 6;
 }
 
 std::string ActionObjectClass::getMethodName(uint32_t methodId) const
@@ -135,6 +135,8 @@ std::string ActionObjectClass::getMethodName(uint32_t methodId) const
 		return "getProperty";
 	case 4:
 		return "setProperty";
+	case 5:
+		return "getRelay";
 	default:
 		return "";
 	}
@@ -192,6 +194,12 @@ Any ActionObjectClass::invoke(ITypedObject* object, uint32_t methodId, uint32_t 
 				callArgv[0] = CastAny< ActionValue >::get(argv[1]);
 				propertySetFn->call(actionObject, callArgv);
 			}
+		}
+		break;
+
+	case 5:
+		{
+			return Any::fromObject(actionObject->getRelay());
 		}
 		break;
 
